@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.267] - 2026-04-23
+
+### O'Donnell 2015 Phase 6b: discharge AdaptorGrammar sorry
+
+Substrate cleanup: prove `PitmanYor.partitionProb_nonneg` and use
+it to close the `sorry` left in `AdaptorGrammar.corpusProbGivenTables_nonneg`
+from Phase 6.
+
+- **`Core/Probability/PitmanYor.lean`**:
+  - Added `stepPochhammer_nonneg` (general helper:
+    `(∀ k, 0 ≤ x + k·s) → 0 ≤ stepPochhammer x s m`)
+  - Added `PitmanYor.partitionProb_nonneg` — derived from PYP
+    constraints `0 ≤ a ≤ 1` and `b ≥ -a`, each of the three
+    `stepPochhammer` factors in eq 3.14 has nonneg arguments
+    everywhere, and overall `quotient × product` preserves
+    nonnegativity.
+  - Added imports for `Finset.prod_nonneg` and `linarith`.
+- **`AdaptorGrammar.lean`**:
+  - `corpusProbGivenTables_nonneg` now closed:
+    `mul_nonneg (lhsFactor_pos ha D).le (partitionProb_nonneg ...)`.
+  - `sorry` removed.
+
+Build: PitmanYor 2.3s, AdaptorGrammar 7.3s clean. No `sorry` in
+the FG-family substrate.
+
 ## [0.230.266] - 2026-04-23
 
 ### O'Donnell 2015 Phase 6: AdaptorGrammar (MAG)

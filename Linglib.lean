@@ -1185,6 +1185,7 @@ import Linglib.Phenomena.LexicalTypology.Studies.ZaslavskyEtAl2019
 import Linglib.Phenomena.LexicalTypology.Studies.BeaversKoontzGarboden2020
 import Linglib.Phenomena.LexicalTypology.Studies.Lucy1994
 import Linglib.Phenomena.Islands.MannerOfSpeaking
+import Linglib.Phenomena.FillerGap.Studies.Amato2025
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026

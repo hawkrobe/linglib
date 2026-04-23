@@ -2,15 +2,31 @@ import Linglib.Theories.Semantics.Tense.MaximalInformativity
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Boundedness
-import Linglib.Fragments.English.TemporalAdverbials
+import Linglib.Fragments.English.TemporalExpressions
 
 /-!
-# @cite{rouillard-2026}: Temporal *in*-Adverbials — Empirical Data
-@cite{kennedy-2007} @cite{rouillard-2026} @cite{vendler-1957} @cite{ladusaw-1979}
+# Rouillard 2026: Temporal *in*-Adverbials — Empirical Data
+@cite{rouillard-2026} @cite{kennedy-2007} @cite{vendler-1957} @cite{ladusaw-1979}
 
-Empirical distributional data and verification theorems for temporal
-*in*-adverbials (TIAs), following @cite{rouillard-2026} "Maximal informativity
-accounts for the distribution of temporal *in*-adverbials" (*L&P* 49:1–56).
+Empirical distributional data and verification theorems for English
+temporal *in*-adverbials, following @cite{rouillard-2026} "Maximal
+informativity accounts for the distribution of temporal *in*-adverbials".
+
+Rouillard's analysis distinguishes two readings of *in*-adverbials:
+
+- **E-TIA** (Event TIA): "Mary wrote up a paper *in three days*" — measures
+  the runtime of a telic event from onset to telos. Selects telic VPs.
+- **G-TIA** (Gap TIA): "Mary hasn't been sick *in three days*" — measures
+  the gap between the right boundary of the perfect time span and the most
+  recent witnessing event. Strong NPI; requires negation + perfect.
+
+The lexical entries `inTelic` (= Rouillard's E-TIA) and `inGap` (= Rouillard's
+G-TIA) are defined in `Fragments/English/TemporalExpressions.lean` with
+**consensus typological metadata** (Vendler selection, IAI 2001 classification,
+polarity-item status). The Rouillard-specific reanalysis — the `TIAType`
+labels, the M = τ vs M = id parameterization, the syntactic eventLevel /
+perfectLevel distinction — lives below in this file as **partial projections
+from the consensus entries**, not as Fragment-level fields.
 
 ## Data Points
 
@@ -30,9 +46,11 @@ accounts for the distribution of temporal *in*-adverbials" (*L&P* 49:1–56).
 
 ## Architectural Role
 
-This file is a **Phenomena** file: it imports Theories and verifies that
-theoretical predictions match empirical observations. It does NOT define
-new theoretical machinery.
+This file is a **Phenomena/Studies** file: it imports Theories + Fragments
+and verifies that theoretical predictions match empirical observations.
+The Rouillard-specific apparatus (TIAType, MapFunction, AdverbialPosition)
+is co-located here rather than in a Fragment file because it is paper-specific
+analytical machinery, not consensus typological metadata.
 
 -/
 
@@ -42,7 +60,57 @@ open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Semantics.Tense.MaximalInformativity
 open Core.Scale
-open Fragments.English.TemporalAdverbials
+open Fragments.English.TemporalExpressions
+
+-- ════════════════════════════════════════════════════
+-- § 0. Rouillard 2026 Analytical Apparatus
+-- ════════════════════════════════════════════════════
+
+/-- Rouillard's TIA-type classification.
+    Derived from a `DurationExprEntry` via `tiaTypeOf?` below; this enum
+    is paper-specific apparatus, not consensus Fragment metadata. -/
+inductive TIAType where
+  | eTIA   -- Event TIA: measures event durations
+  | gTIA   -- Gap TIA: measures gap durations
+  deriving DecidableEq, Repr
+
+/-- Rouillard's syntactic position for the *in*-adverbial.
+    E-TIAs are VP-adjacent (event-level); G-TIAs are AspP-adjacent
+    (perfect-level). -/
+inductive AdverbialPosition where
+  | eventLevel
+  | perfectLevel
+  deriving DecidableEq, Repr
+
+/-- Rouillard's map function: what the *in*-adverbial relates to time.
+    E-TIAs use the runtime function τ (events → times); G-TIAs use the
+    identity function (times → times). -/
+inductive MapFunction where
+  | runtime    -- τ : events → times (E-TIA)
+  | identity   -- id : times → times (G-TIA)
+  deriving DecidableEq, Repr
+
+/-- Project a `DurationExprEntry` to its Rouillard TIA-type label.
+    Returns `none` for entries outside the *in*-adverbial paradigm. -/
+def tiaTypeOf? (e : DurationExprEntry) : Option TIAType :=
+  match e.kind with
+  | .telicCompletion => some .eTIA
+  | .npiGap          => some .gTIA
+  | _                => none
+
+/-- Project a `DurationExprEntry` to its Rouillard syntactic position. -/
+def positionOf? (e : DurationExprEntry) : Option AdverbialPosition :=
+  match e.kind with
+  | .telicCompletion => some .eventLevel
+  | .npiGap          => some .perfectLevel
+  | _                => none
+
+/-- Project a `DurationExprEntry` to its Rouillard map function. -/
+def mapFunctionOf? (e : DurationExprEntry) : Option MapFunction :=
+  match e.kind with
+  | .telicCompletion => some .runtime
+  | .npiGap          => some .identity
+  | _                => none
 
 -- ════════════════════════════════════════════════════
 -- § 1. E-TIA Distribution Data
@@ -179,32 +247,41 @@ theorem gTIA_all_predicted : gTIAData.all gTIA_predicted = true := by
 -- § 5b. Fragment Bridges: derive predictions from Fragment entries
 -- ════════════════════════════════════════════════════
 
-/-- G-TIA licensing is derived from Fragment entry fields, not stipulated.
-    The prediction `isNegative && hasPerfect` matches the Fragment's
-    `requiresNegative && requiresPerfect` on `inGTIA`. -/
+/-- G-TIA licensing is derived from Fragment fields: the consensus
+    `inGap` entry records `requiresNegation` and `requiresPerfect`. -/
 theorem gTIA_licensing_from_fragment :
-    inGTIA.requiresNegative = true ∧ inGTIA.requiresPerfect = true := by
-  native_decide
+    inGap.requiresNegation = true ∧ inGap.requiresPerfect = true :=
+  ⟨rfl, rfl⟩
 
-/-- E-TIA licensing is derived from Fragment: requires telicity, not polarity. -/
+/-- E-TIA licensing is derived from Fragment: requires telic VP selection,
+    not polarity. -/
 theorem eTIA_licensing_from_fragment :
-    inETIA.requiresTelic = true ∧ inETIA.requiresNegative = false := by
-  native_decide
+    inTelic.vendlerSelection = [.telic] ∧ inTelic.requiresNegation = false :=
+  ⟨rfl, rfl⟩
 
-/-- G-TIA NPI status from Fragment: G-TIA is an NPI, E-TIA is not. -/
-theorem npi_status_from_fragment :
-    inGTIA.isNPI ∧ ¬ inETIA.isNPI := by native_decide
+/-- Polarity-sensitivity status from Fragment: the gap reading is an NPI,
+    the telic-completion reading is not. -/
+theorem polarity_status_from_fragment :
+    inGap.polaritySensitive = true ∧ inTelic.polaritySensitive = false :=
+  ⟨rfl, rfl⟩
 
-/-- Stacking constraint from Fragment: E-TIA is event-level (inner),
-    G-TIA is perfect-level (outer). The syntactic positions determine
-    the only acceptable stacking order. -/
+/-- Stacking constraint via the Rouillard projection: E-TIA is event-level
+    (inner), G-TIA is perfect-level (outer). The syntactic positions
+    determine the only acceptable stacking order. -/
 theorem stacking_positions_from_fragment :
-    inETIA.position = .eventLevel ∧ inGTIA.position = .perfectLevel := by
-  native_decide
+    positionOf? inTelic = some .eventLevel ∧
+    positionOf? inGap = some .perfectLevel :=
+  ⟨rfl, rfl⟩
 
-/-- E-TIA and G-TIA share the preposition *in* (Fragment verification). -/
+/-- The Rouillard projection assigns the expected TIA-type labels. -/
+theorem tiaType_projection :
+    tiaTypeOf? inTelic = some .eTIA ∧
+    tiaTypeOf? inGap = some .gTIA :=
+  ⟨rfl, rfl⟩
+
+/-- E-TIA and G-TIA share the preposition *in*. -/
 theorem shared_preposition_from_fragment :
-    inETIA.preposition = inGTIA.preposition := by native_decide
+    inTelic.form = inGap.form := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. The Perfect Readings (Table 1)
@@ -360,10 +437,15 @@ theorem sinceWhen_blocks_ePerfect :
     sinceWhen_131.ePerfect = false ∧ sinceWhen_131.uPerfect = true := by
   native_decide
 
-/-- Fragment bridge: *since* requires the perfect and specifies the LB of PTS,
-    matching the since-when question's presupposition structure. -/
+/-- Fragment bridge: *since* is veridical (presupposes its complement)
+    and pins the PTS left boundary (IAI 2001 durative classification),
+    matching the since-when question's presupposition structure. The
+    perfect-requirement is not a Fragment-level field on `since_conn`
+    (which is a connective entry, not a duration adverbial); see the
+    discussion in @cite{von-fintel-iatridou-2019}. -/
 theorem since_fragment_bridge :
-    since.requiresPerfect = true ∧ since.specifiesLB = true := by native_decide
+    since_conn.complementVeridical = true ∧
+    since_conn.order = TemporalOrder.since_ := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. TIA Stacking Constraint (§3.2, ex. 60)

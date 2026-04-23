@@ -127,21 +127,15 @@ noncomputable def corpusProbGivenTables (D : Multiset (CFGTree T G.NT))
   ∏ a ∈ G.rules.image (·.input),
     M.toDMPCFG.lhsFactor a D * M.pypFactor a Y
 
-/-- AG corpus probability is nonnegative on any table assignment. -/
+/-- AG corpus probability is nonnegative on any table assignment.
+    Each per-LHS factor is `[DMPCFG-positive] · [PYP-nonneg]`. -/
 theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
     (Y : TableAssignment G) : 0 ≤ M.corpusProbGivenTables D Y := by
   unfold corpusProbGivenTables
   apply Finset.prod_nonneg
   intro a ha
-  refine mul_nonneg (M.toDMPCFG.lhsFactor_pos ha D).le ?_
-  unfold pypFactor
-  -- The Pitman-Yor partition probability is a product/quotient of
-  -- stepPochhammer values. For a > 0, b ≥ -a, and partition sizes
-  -- y_i ≥ 1, every factor is nonnegative — but proving this requires
-  -- structural facts about stepPochhammer that are not yet in the
-  -- substrate. Deferred until `PitmanYor.partitionProb_nonneg` is
-  -- proved.
-  sorry
+  exact mul_nonneg (M.toDMPCFG.lhsFactor_pos ha D).le
+    ((M.pyp a).partitionProb_nonneg (Y a).snd)
 
 end AdaptorGrammar
 
