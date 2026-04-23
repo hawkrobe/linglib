@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.FragmentGrammars.Defs
+import Linglib.Core.Computability.CFGTree
 import Linglib.Core.Probability.PolyaUrn
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
@@ -29,8 +29,8 @@ is that *the same rule's count enters the same Pólya term across all
 derivations in the corpus*. Two derivations using rule `r` are
 correlated through the shared `x_r` in the closed form. As a result,
 `P(D | M) ≠ ∏_d P(d | M)` — DMPCFG derivations are *exchangeable but
-not independent*. This is exactly why
-`StochasticGenerator` takes corpora rather than single derivations.
+not independent*. The corpus probability is a corpus-level function;
+there is no clean per-derivation factorization to expose.
 
 ## Connection to `PolyaUrn`
 
@@ -55,7 +55,6 @@ restricted to those rules. The Type-polymorphic `PolyaUrn α` from
 - `DMPCFG.lhsFactor` — per-LHS Pólya partition probability
   (delegates to `PolyaUrn.partitionProb`).
 - `DMPCFG.corpusProb` — eq 3.9 closed-form corpus probability.
-- `DMPCFG.toStochasticGenerator` — projection to the abstract API.
 
 ## References
 
@@ -170,11 +169,6 @@ theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
   apply Finset.prod_nonneg
   intro a ha
   exact (M.lhsFactor_pos ha D).le
-
-/-- DMPCFG induces a stochastic generator on `G`. -/
-noncomputable def toStochasticGenerator : StochasticGenerator G where
-  corpusProb := M.corpusProb
-  corpusProb_nonneg := M.corpusProb_nonneg
 
 end DMPCFG
 

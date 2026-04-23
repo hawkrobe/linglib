@@ -1,4 +1,5 @@
-import Linglib.Theories.Morphology.FragmentGrammars.Defs
+import Linglib.Core.Computability.CFGTree
+import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
 
@@ -38,8 +39,6 @@ derivations through shared latent state.
   recursive on the tree structure.
 - `MultinomialPCFG.corpusProb` — corpus probability as the product
   of derivation probabilities.
-- `MultinomialPCFG.toStochasticGenerator` — projection to the
-  abstract API in `Defs.lean`.
 
 ## References
 
@@ -129,12 +128,6 @@ theorem corpusProb_nonneg (W : MultinomialPCFG G)
     (D : Multiset (CFGTree T G.NT)) : 0 ≤ W.corpusProb D := by
   unfold corpusProb
   exact Multiset.prod_map_nonneg fun t _ => W.derivProb_nonneg t
-
-/-- A multinomial PCFG induces a stochastic generator on `G`. -/
-noncomputable def toStochasticGenerator (W : MultinomialPCFG G) :
-    StochasticGenerator G where
-  corpusProb := W.corpusProb
-  corpusProb_nonneg := W.corpusProb_nonneg
 
 end MultinomialPCFG
 

@@ -4,6 +4,64 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.265] - 2026-04-23
+
+### O'Donnell 2015 Phase 3 reversal: drop StochasticGenerator G
+
+Removes the abstract typeclass-style API introduced in Phase 3
+(`Theories/Morphology/FragmentGrammars/Defs.lean`,
+`StochasticGenerator G` structure + `toStochasticGenerator`
+projections in `MultinomialPCFG` and `DMPCFG`).
+
+**Why drop it**: the abstraction was speculative. Designed in
+Phase 3 to give all FG-family models (DMPCFG / MAG / FG / DOP) a
+common `corpusProb : Multiset (CFGTree ...) → ℝ` signature so
+cross-model theorems could share an API. Two problems:
+
+1. **The signature doesn't fit MAG / FG.** Both have latent state
+   (table assignments Y for AG, fragment storage for FG); their
+   natural corpus probability is `corpusProbGivenLatent (D, Y)`,
+   not `corpusProb D`. The mathlib analog is
+   `MeasureTheory.Kernel`, not a typeclass. Marginalizing over the
+   latent gives the observable-only marginal — but that's the MH
+   inference target distribution, which we explicitly don't
+   formalize per the Processing-scope rule.
+2. **No theorem consumed it.** All planned cross-model bridges
+   (Hay relative-frequency, Baayen approximation, FG-vs-DM
+   blocking recovery) are about specific named models, not about
+   "all stochastic generators." They're written as direct theorems
+   between specific structures.
+
+**O'Donnell-theory check**: dropping does not distort the book's
+unification. The book unifies via `fragment-lambda` (§2.3.7), a
+program transformation that adds memoization to any procedure —
+not via a typeclass-style API. Each model in the book is a
+specific application of `fragment-lambda` (or precursor); the
+"common interface" was my architectural addition, not the book's.
+
+**Changes**:
+- **Deleted**: `Linglib/Theories/Morphology/FragmentGrammars/Defs.lean`
+  (~85 LOC).
+- **MultinomialPCFG.lean**: removed `toStochasticGenerator`;
+  removed `Defs` import; added direct `Mathlib.Data.Real.Basic`
+  import (was transitively brought in by `Defs`); removed
+  `Defs.lean` reference from docstring.
+- **DMPCFG.lean**: removed `toStochasticGenerator`; removed `Defs`
+  import; rewrote "Why DMPCFG does not factorize" docstring to no
+  longer invoke `StochasticGenerator`.
+- **Linglib.lean**: removed import.
+
+**What's preserved**:
+- Each model's `corpusProb` function, with its natural signature
+  (single-arg for the factorizing models, will be two-arg for AG /
+  FG when we get there).
+- The factorization vs non-factorization distinction (in DMPCFG's
+  docstring).
+- Cross-model bridge theorems can be written directly between
+  specific structures when needed.
+
+Build: full library 5336 jobs green; no `sorry` introduced.
+
 ## [0.230.264] - 2026-04-23
 
 ### O'Donnell 2015 Phase 5b: PolyaUrn refactor + DMPCFG retrofit
