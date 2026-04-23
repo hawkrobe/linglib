@@ -6,48 +6,49 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [0.230.266] - 2026-04-23
 
-### GeurtsPouscoulous2009.lean overhauled to mathlib discipline
+### O'Donnell 2015 Phase 6: AdaptorGrammar (MAG)
 
-Substantial cleanup + deepening of one of the earliest linglib study
-files, audited against the actual paper PDF (S&P 2:4, 2009). The
-rewrite landed inside an unrelated commit (2b3f26f2 / 0.230.265); this
-entry attributes the work properly.
+Third FG-family model: the maximum-a-posteriori adaptor grammar
+(MAG) of @cite{odonnell-2015} §2.4.2 / §3.1.7 — a Dirichlet–
+multinomial PCFG augmented with per-LHS Pitman–Yor memoization
+of subtree expansions.
 
-- **Bib fix**: title was *Embedded implicatures?!* (two punctuation
-  marks), paper title is *Embedded implicatures?!?* (three). Added
-  `number = {4}` and `pages = {1--34}`. Updated stale `sources` field
-  to point at the current study file path.
-- **Dropped sections**: `literatureData` (~30 LOC, attributed to the
-  paper but actually from @cite{geurts-2010} Table 1, a different work);
-  `EmbeddingPrediction` Bool-flag + String-explanation structure
-  (stipulation chain); `simpleRate`/`thinkRate`/`mustRate`/
-  `allVerificationRate` duplicates of values already in `exp1aResults`/
-  `exp3Results`; "NeoGricean variants" comparison section (vacuous
-  decide chain on stipulated `levinsonParams`/`geurtsParams`);
-  "NeoGricean vs RSA agreement" header (no RSA in the file);
-  "Hurford and Singh prediction bridges" (tautological).
-- **Stat-attribution fixes**: Cochran's Q-test (Q = 49.750, Q = 21.68)
-  for Exp 1a–b overall (paper used this, not McNemar's as we said);
-  Wilcoxon's W = 208 for Exp 4; Fisher's Exact for Exp 2 order effects.
-- **Added missing means**: `thinkAvgRate := 575/10` (cross-experiment
-  57.5%, load-bearing for §5.2); `complexConditionsMean := 354/10`
-  (paper's headline 35%); `paradigm_inflation_28pp` (62 − 34).
-- **Page citations**: switched all to paper's article-prefixed format
-  (4:N) instead of bare `p.N`.
-- **`competence_does_not_generalize` renamed** to
-  `gricean_derivation_with_strong_competence` — the original name lied
-  (the proof shows the implication *holds*; the paper's claim is about
-  *implausibility* of the auxiliary premise, not formal failure).
-- **Footnote 7 lemma added**: `footnote7_paraphrase_asymmetry`.
-- **Bridge to Implicature/Defs.lean spine**: `someStudentsSleepUE` is
-  now an `Implicature PassWorld` value with `mechanism := .neoGricean`;
-  `IsCancellable`/`IsReinforceable`/`IsCalculable`/`IsNonDetachable`
-  diagnostics provable on it. First load-bearing consumer of the spine.
-- **`conventionalistPredictsLocalSI` derived** (one-liner from
-  `quantifierMonotonicity != .downward`) instead of stipulated
-  case-by-case.
-- **Local `Monotonicity` enum dropped** — uses canonical
-  `Core.Logic.NaturalLogic.ContextPolarity` instead.
+- **New file**:
+  `Linglib/Theories/Morphology/FragmentGrammars/AdaptorGrammar.lean`
+  (~140 LOC). Provides `AdaptorGrammar G extends DMPCFG G` (so the
+  Dirichlet–multinomial part is structurally inherited), with a
+  `pyp : G.NT → PitmanYor` field for the per-LHS Pitman–Yor process.
+- **Honest two-argument signature**:
+  `corpusProbGivenTables (D : Multiset (CFGTree _)) (Y : TableAssignment G) : ℝ`,
+  per the discussion that produced 0.230.265's `StochasticGenerator G`
+  reversal. `Y` is the latent table-occupancy assignment, exposed
+  rather than marginalized — marginalizing equals the MH inference
+  target, out of scope per Processing-scope.
+- **`TableAssignment G`** is `G.NT → Σ n, Nat.Partition n` — for
+  each LHS, a (total customers, multiset of positive table sizes)
+  pair. Bundled via mathlib's `Nat.Partition` (no new structure).
+- **`pypFactor a Y`** delegates to `(M.pyp a).partitionProb (Y a).snd`
+  — directly uses the `PitmanYor.partitionProb` substrate from
+  Phase 1.
+- **`corpusProbGivenTables`** is the eq from §3.1.7:
+  `∏_a [DMPCFG-factor on X^A] · [PYP-factor on Y^A]`. The DMPCFG
+  factor is `M.toDMPCFG.lhsFactor a D` — directly inherited via
+  `extends DMPCFG`.
+- **`corpusProbGivenTables_nonneg`** has one `sorry` deferred to
+  `PitmanYor.partitionProb_nonneg` (a substrate theorem not yet
+  proved; the per-LHS Dirichlet–multinomial half uses
+  `DMPCFG.lhsFactor_pos` directly). Per CLAUDE.md, `sorry` ≻
+  weakening — the theorem statement is correct as intended; the
+  proof obligation is genuinely on the substrate, not on AG.
+
+**Inheritance payoff**: `AdaptorGrammar` is ~140 LOC because
+DMPCFG provides `pseudo`, `pseudo_pos`, `derivRuleCount`,
+`corpusRuleCount`, `lhsUrn`, `lhsCounts`, `lhsFactor`,
+`lhsFactor_pos` for free via `extends`. AG only adds the PYP layer.
+This validates Phase 5b's PolyaUrn refactor — the Dirichlet–
+multinomial structure is now reusable rather than duplicated.
+
+Build: 7.6s clean, one expected `sorry`.
 
 ## [0.230.265] - 2026-04-23
 
