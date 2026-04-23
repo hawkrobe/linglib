@@ -4,6 +4,46 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.226] - 2026-04-23
+
+### Phonology McCarthyPrince1995: Corr-grounded layer for Javanese
+
+Adds the structural substrate to the foundational reduplication study
+(`Phenomena/Reduplication/Studies/McCarthyPrince1995.lean` — M&P 1995
+§3.4 Javanese intervocalic h-deletion).
+
+Previously, candidate violation profiles were stipulated via λ-tables
+(`mkMax "MAX-IO" (· == .over)`) — the canonical "encoding conclusions
+as definitions" anti-pattern flagged by integration auditing. The new
+layer:
+
+- `JavaneseCorr.RedupRole` enum (`.input | .base | .reduplicant`) — the
+  3-way correspondence family for reduplicative phonology.
+- `JavaneseCorr.Seg` enum + `stemInput`/`baseDeleted`/`baseFaithful`
+  segmental data for /bədah/.
+- `overCorr`, `underCorr`, `normalCorr` — explicit `Corr RedupRole Seg`
+  per candidate, encoding (a) input → base IO-correspondence and
+  (b) base ↔ reduplicant BR-correspondence with the segmental data.
+- `JavaneseCorr.toCorr : JavaneseCand → Corr RedupRole Seg`
+- **Agreement theorems** (proved by `decide`):
+  - `javMaxIO_eq_corr` — original `javMaxIO.eval c` = `(toCorr c).maxViol .input .base`
+  - `javIdentBR_eq_corr` — original `javIdentBR.eval c` = `(toCorr c).maxViol .base .reduplicant`
+  
+  The integration auditor's complaint discharged: MAX-IO and BR identity
+  violations now follow from the segmental data + morphological alignment,
+  not free-parameter constraint tables. (As a side benefit, the agreement
+  theorem exposes that the original `javIdentBR` constraint was empirically
+  MAX-BR — the segmental-deletion case, not featural mismatch — which the
+  Corr-grounded version makes structurally explicit.)
+- `javMaxIOFromCorr` and `javMaxBRFromCorr` provide
+  `Corr.toMaxConstraint`-derived NamedConstraints over `Corr RedupRole Seg`,
+  ready for use in Corr-typed tableaux.
+
+Pattern documented; Balangao (§2) and Akan (§5) refactors deferred to
+follow-up sessions. The Javanese case demonstrates the workable shape:
+parallel layer (no API breakage), agreement theorems by `decide`,
+clear path for the remaining studies.
+
 ## [0.230.225] - 2026-04-23
 
 ### Exhaustification: hoist two negative-IE criteria, refactor 7 callers
