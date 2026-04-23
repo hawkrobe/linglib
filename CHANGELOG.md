@@ -4,6 +4,59 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.223] - 2026-04-23
+
+### Phonology StratalCorr.lean: substrate-level Stratal↔Corr↔TCT bridge
+
+New `Theories/Phonology/OptimalityTheory/StratalCorr.lean`. The
+substrate-level integration between Stratal OT (@cite{kiparsky-2000})
+and TCT (@cite{benua-1997}) over the unifying `Corr Role α` family.
+
+#### What lands
+
+- **`StratalRole` enum** (`.sIn | .sOut | .wOut | .pOut`): the four
+  salient time-points of a 3-stratum derivation. Stem input/output,
+  word output, phrase output. Word/phrase *inputs* are identical to
+  the previous stratum's output (the feeding relation), so they need
+  no separate role.
+- **`stratalDerivToCorr`**: packages a 3-stratum stratal derivation
+  as a `Corr StratalRole α` with parallel-pair feeding edges between
+  adjacent strata.
+- **`StratalToTCT.project`**: projects a stratal correspondence
+  diagram down to a 3-role TCT diagram, encoding Benua's identification:
+  `.sOut` ↦ `.base`, `.pOut` ↦ `.derivative`, `.wOut` folded out
+  (TCT does not distinguish a separate word stratum).
+- **Bridge theorems** (all by `rfl` via the `project` definition):
+  - `project_preserves_phrase_as_derivative` — stratal phrase output IS
+    TCT derivative form
+  - `project_preserves_stem_as_base` — stratal stem output IS TCT base
+  - `project_preserves_underlying_as_input` — UR maps to TCT input
+  - `project_oo_edge_eq_parallel` — the OO edge in the projected TCT
+    diagram is the parallel-pair correspondence between stratal stem
+    and phrase outputs (the formal content of "TCT's OO-Faith replaces
+    the cycle-chain of stratal")
+
+#### Sundanese case study upgraded
+
+`Phenomena/Phonology/Studies/Benua1997.lean`'s `StratalComparison`
+namespace rewired through the new bridge:
+
+- `sundaneseStratalCorr` — stratal derivation as `Corr StratalRole Seg`
+- `sundaneseStratalAsTCT` — projection to `Corr Role Seg`
+- 4 bridge theorems via `rfl` discharging the substrate-level claim
+  that stratal and TCT analyses agree on Sundanese surface form, by
+  construction of the `project` function
+
+#### What's still deferred
+
+The **grammar-level bridge** — a constructive translation
+`stratalToTCT : StratalGrammar → TCTGrammar` provably preserving
+surface predictions for *every* input — requires modeling each
+architecture's GEN/EVAL grammar machinery and is left as the next
+major scientific step. The substrate is now in place: any candidate
+translation maps through the `Corr Role α` types both architectures
+share.
+
 ## [0.230.222] - 2026-04-22
 
 ### Phonology: Stratal-vs-TCT bridge skeleton + bib entries
