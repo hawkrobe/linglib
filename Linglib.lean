@@ -2366,6 +2366,7 @@ import Linglib.Theories.Phonology.Process.Harmony.OT
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.TCT
+import Linglib.Theories.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Theories.Phonology.ParadigmUniformity.Defs
 import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
