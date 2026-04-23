@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Core.IntensionalLogic.Premise
 import Linglib.Core.Lexical.UD
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
@@ -40,7 +40,7 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 namespace Phenomena.Focus.Studies.TurkHirsch2026
 
-open Core.InformationStructure
+open Features.InformationStructure
 open Semantics.Alternatives
 open Semantics.Questions.Hamblin
 

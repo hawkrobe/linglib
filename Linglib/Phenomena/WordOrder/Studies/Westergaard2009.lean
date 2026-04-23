@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.Typology
@@ -80,7 +80,7 @@ def V2Data.toProfile (d : V2Data) : V2Profile where
 namespace Westergaard2009
 
 open Minimalism (ForceHead V2Profile WhElementStatus whBlocksVerbMovement)
-open Core.InformationStructure (DiscourseStatus)
+open Features.InformationStructure (DiscourseStatus)
 
 -- Fragment data (theory-neutral)
 open Fragments.Norwegian (stdNorwegian nordmoreNorwegian)

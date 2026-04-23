@@ -2,7 +2,7 @@ import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Core.SpecificityCondition
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 
 /-!
 # Aissen & Polian 2025: Possessor Extraction and Categorical Subject in Tseltalan
@@ -391,7 +391,7 @@ theorem specificity_divergence_on_piedpiping :
 -- § 9: Categorical Judgment (ψ-Subject)
 -- ============================================================================
 
-open Core.InformationStructure
+open Features.InformationStructure
 
 /-- The grammatical function of a ψ-subject.
     ψ-subjects are always intransitive subjects — they raise from

@@ -32,13 +32,13 @@ are the result of default prosody.
 
 -/
 
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 
-open Core.InformationStructure
+open Features.InformationStructure
 open Semantics.Alternatives
 open Features.Prosody
 open Pragmatics.Expressives

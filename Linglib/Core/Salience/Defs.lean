@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Core.Discourse.Accessibility
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 
 /-!
 # Salience — Flat Dimension Typeclasses
@@ -38,7 +38,7 @@ namespace Core.Salience
 
 open Features.Prominence
 open Core.Discourse.Accessibility
-open Core.InformationStructure
+open Features.InformationStructure
 
 -- ════════════════════════════════════════════════════
 -- § Flat dimension classes

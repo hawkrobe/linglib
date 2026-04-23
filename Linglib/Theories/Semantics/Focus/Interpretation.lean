@@ -27,10 +27,10 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 
 -/
 
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
-open Core.InformationStructure
+open Features.InformationStructure
 
 namespace Semantics.FocusInterpretation
 
@@ -91,7 +91,7 @@ def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
   ∀ p, question p → answerFocus p
 
 -- FIP Applications (Rooth §2)
--- FIPApplication is defined in Core.InformationStructure (opened above)
+-- FIPApplication is defined in Features.InformationStructure (opened above)
 
 /-- Description of each FIP application -/
 def FIPApplication.description : FIPApplication → String

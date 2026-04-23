@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.232] - 2026-04-23
+
+### Dissolved — `Core/InformationStructure.lean` (Tier 1 of Core/ triage)
+
+Top priority on the triage backlog (`memory/project_core_triage.md`):
+435 LOC, 25 consumers, 7-taxonomy dump-bag exactly mirroring the
+`Grammar.lean` pattern.
+
+**Split into:**
+
+- **`Features/InformationStructure.lean`** (~330 LOC, `namespace
+  Features.InformationStructure`) — all substance taxonomies + bridges:
+  `Theme`/`Rheme`/`Focus`/`Background`/`InfoStructure` +
+  `HasInfoStructure` typeclass, `DiscourseStatus` (+ `rank` +
+  `ofAtIssueness`), `PolaritySwitchContext` (+ `toCoherenceRelation`),
+  `PolarityMarkingStrategy` + `PolarityMarkingEntry`, `ExclusionVariety`
+  (+ `toCoherenceRelation`), `FIPApplication`, `JudgmentType` (+
+  `HasψSubject`).
+- **`Theories/Semantics/Focus/Comparability.lean`** (~80 LOC,
+  `namespace Semantics.Focus.Comparability`) — theory predicates over
+  the Features substance: Umbach 2004 `semanticallyIndependent` /
+  `commonIntegrator` / `wellFormedAlts` (alt-set well-formedness);
+  Erteschik-Shir / Abeillé `extractionISClash` + 3 corollary theorems.
+
+**Deleted:**
+
+- `Core.Discourse.DiscourseContext` (defined at the file root, not in
+  the namespace) — zero external consumers; dead code.
+- `Core/InformationStructure.lean` — file removed entirely.
+
+**Consumer updates:** all 25 `import Linglib.Core.InformationStructure`
+sites repointed to `Linglib.Features.InformationStructure`; 3 files
+that use the moved theory predicates (`Phenomena/Focus/Studies/
+Umbach2004.lean`, `Phenomena/Islands/Studies/CartnerEtAl2026.lean`,
+`Theories/Semantics/Focus/BackgroundedIslands.lean`) additionally
+import + open `Semantics.Focus.Comparability`. Bulk perl rename
+`Core.InformationStructure.X` → `Features.InformationStructure.X`
+(55 of 59 qualified references replaced).
+
 ## [0.230.231] - 2026-04-23
 
 ### Core/Constraint + Correspondence: `Type → Type*` universe upgrade

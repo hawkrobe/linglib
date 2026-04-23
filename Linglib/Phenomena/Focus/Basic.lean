@@ -13,9 +13,9 @@ Empirical data on focus interpretation effects (association with focus, contrast
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 
-open Core.InformationStructure (FIPApplication)
+open Features.InformationStructure (FIPApplication)
 
 namespace Phenomena.Focus.Basic
 

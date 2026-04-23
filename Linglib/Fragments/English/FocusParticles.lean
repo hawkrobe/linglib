@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Core.Semantics.ContentLayer
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 
 /-!
 # English Focus-Sensitive Particles
@@ -14,7 +14,7 @@ namespace Fragments.English.FocusParticles
 
 open Semantics.FocusParticles (EvenThreshold)
 open Core.Semantics.ContentLayer (ContentLayer)
-open Core.InformationStructure (FIPApplication ExclusionVariety)
+open Features.InformationStructure (FIPApplication ExclusionVariety)
 
 /-- A focus-sensitive particle lexical entry. -/
 structure Entry where

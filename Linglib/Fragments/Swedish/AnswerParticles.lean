@@ -1,5 +1,5 @@
 import Linglib.Features.Polarity
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Theories.Semantics.Questions.AnsweringSystems
 
 /-!
@@ -23,7 +23,7 @@ Swedish also allows verb-echo answers alongside particles (mixed strategy).
 namespace Fragments.Swedish.AnswerParticles
 
 open Features.Polarity
-open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 open Semantics.Questions (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- A Swedish answer particle entry. -/

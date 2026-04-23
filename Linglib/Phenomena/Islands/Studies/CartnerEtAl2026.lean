@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
+import Linglib.Theories.Semantics.Focus.Comparability
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
@@ -60,7 +61,8 @@ inductive ExtractionPosition where
   | object
   deriving DecidableEq, Repr
 
-open Core.InformationStructure
+open Features.InformationStructure
+open Semantics.Focus.Comparability
 
 namespace CartnerEtAl2026
 

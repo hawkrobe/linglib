@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Core.FormFrequency
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Alignment.Typology
@@ -377,7 +377,7 @@ theorem alignment_correlation_deHoopMalchukov :
 -- § 11: Bridge — Usual Discourse Status (@cite{haspelmath-2021}, §9)
 -- ============================================================================
 
-open Core.InformationStructure
+open Features.InformationStructure
 
 /-- Usual discourse-status association:
     A/R tend to be given (topical); P/T tend to be new (focal).

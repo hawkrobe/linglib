@@ -2,7 +2,8 @@ import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
+import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Theories.Semantics.Focus.Interpretation
 
@@ -41,7 +42,8 @@ foregrounding it and backgrounding the other. We derive:
 
 -/
 
-open Core.InformationStructure
+open Features.InformationStructure
+open Semantics.Focus.Comparability
 open Core.Discourse.AtIssueness
 
 namespace Semantics.Focus.BackgroundedIslands

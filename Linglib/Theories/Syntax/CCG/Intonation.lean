@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 
 /-!
@@ -31,7 +31,7 @@ Intonation selects among these:
 namespace CCG.Intonation
 
 open CCG
-open Core.InformationStructure
+open Features.InformationStructure
 open Features.Prosody
 
 -- Information Feature

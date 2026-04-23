@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.MaxEnt
 import Linglib.Core.Constraint.Variation
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
@@ -71,7 +71,7 @@ contradicting the paper's findings.
 - `Core.Constraint.MaxEntGrammar` — the grammar packages as a generic
   MaxEnt grammar (`maxEntGrammar`), making the softmax probability
   machinery available without redefinition.
-- `Core.InformationStructure.DiscourseStatus` — discourse-status
+- `Features.InformationStructure.DiscourseStatus` — discourse-status
   partition. The paper collapses @cite{prince-1981}'s three-way
   given/inferable/new into two categories (inferable → given);
   `DiscourseStatus.focused` is irrelevant for this construction (it
@@ -102,7 +102,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Core.Constraint.OT Core.Constraint Core.InformationStructure
+open Core.Constraint.OT Core.Constraint Features.InformationStructure
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================

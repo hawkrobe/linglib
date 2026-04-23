@@ -1,4 +1,5 @@
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
+import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
@@ -56,7 +57,8 @@ three levels at which "contrast" appears:
 
 namespace Umbach2004
 
-open Core.InformationStructure
+open Features.InformationStructure
+open Semantics.Focus.Comparability
 open Core.Discourse.Coherence
 
 -- ═══════════════════════════════════════════════════════════════════════

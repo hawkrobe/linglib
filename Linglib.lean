@@ -202,7 +202,8 @@ import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
+import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Features.Prosody
 import Linglib.Features.Definiteness
 import Linglib.Core.Deixis.Feature
@@ -938,7 +939,8 @@ import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987
 import Linglib.Phenomena.Copulas.Studies.Elbourne2026
 import Linglib.Phenomena.Copulas.Studies.Romero2005
-import Linglib.Phenomena.Attitudes.IntensionalExamples
+import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
+import Linglib.Phenomena.Attitudes.Studies.Montague1973
 import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Attitudes.Studies.BondarenkoElliott2026
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
@@ -1042,7 +1044,6 @@ import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
 import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Phenomena.Dialogue.Studies.Anderson2021
-import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
@@ -2221,10 +2222,7 @@ import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
-import Linglib.Theories.Semantics.Exhaustification.Operators.ExhMX
-import Linglib.Theories.Semantics.Exhaustification.Operators.Flat
 import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
-import Linglib.Theories.Semantics.Exhaustification.Operators.MaximizeStrength
 import Linglib.Theories.Semantics.Exhaustification.Combinators
 import Linglib.Theories.Semantics.Exhaustification.Excluder
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice

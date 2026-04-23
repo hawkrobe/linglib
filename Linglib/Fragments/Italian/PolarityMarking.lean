@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 
 /-!
 # Italian Polarity-Marking Strategies
@@ -36,7 +36,7 @@ assign [+Pol] in contexts where a negative polarity is salient.
 
 namespace Fragments.Italian.PolarityMarking
 
-open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like structure: affirmative particle *sì* + complementizer *che*.

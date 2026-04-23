@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Features.InformationStructure
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.French.PolarityMarking
@@ -52,7 +52,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
+open Features.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 open Fragments.French.PolarityMarking (si)
