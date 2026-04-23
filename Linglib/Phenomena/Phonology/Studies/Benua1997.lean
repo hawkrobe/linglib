@@ -1,5 +1,6 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.TCT
+import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Core.Constraint.OT.Basic
 
@@ -100,6 +101,9 @@ namespace Sundanese
 
 Singular: /ɲiar/ → [ɲĩãr] 'seek'
 Plural:   /ɲ-ar-iar/ → [ɲ-ãl-ĩãr] 'seek (pl)'
+
+The data source is @cite{cohn-1990} on Sundanese nasal phonology;
+@cite{benua-1997} reanalyzes it in TCT terms.
 
 Canonical postnasal nasal harmony: vowels are nasalized iff they follow
 a nasal consonant. In the singular [ɲĩãr], the post-ɲ vowels [ĩ ã] are
@@ -381,5 +385,111 @@ example (s : TetruSchema (Corr Role Seg))
     s.ooIdent.eval Sundanese.normalDiagram := by
   rw [hOO, hOO]
   exact Sundanese.overapplied_beats_normal_on_OO_ident
+
+-- ============================================================================
+-- § 5: Stratal-OT vs. TCT — Architectural Comparison
+-- ============================================================================
+
+/-! ### The polemic of Benua's thesis
+
+@cite{benua-1997}'s central architectural argument is that **parallel TCT
+subsumes the predictions of stratal/cyclic phonology** for misapplication
+patterns, eliminating the need for cycles. The two architectures differ
+in *how* they explain misapplication, but converge on the same surface
+predictions for the canonical cases.
+
+This section formalizes the architectural comparison on Sundanese:
+both architectures predict the overapplied surface form
+[ɲ-ãl-ĩãr] for the plural, but for different structural reasons.
+
+- **Stratal explanation**: at the Stem stratum, postnasal harmony
+  applies to /ɲiar/ → [ɲĩãr]. At the Word stratum, the infix /-ar-/
+  is added; IDENT-IO at this stratum preserves the (already-nasal)
+  vowels of the stem-output, blocking the surface-canonical
+  denasalization. The misapplication is *epiphenomenal* under stratal
+  — it falls out of the chain of cycles.
+
+- **TCT explanation**: a single parallel evaluation of the plural,
+  with high-ranked OO-Faith forcing the derivative to match the
+  base's nasal vowels. The misapplication is *primitive* under TCT —
+  OO-Faith is the load-bearing constraint.
+
+The bridge: **on Sundanese, both architectures agree on the surface
+form**. The agreement is documented as an `rfl`-checkable claim about
+the architecturally-distinct derivations producing identical phraseOutput.
+-/
+
+namespace StratalComparison
+
+open Phonology.StratalOT (StratalDerivation)
+
+/-- A two-stratum stratal derivation of the Sundanese plural.
+
+    - **Stem cycle**: input /ɲiar/ harmonized to [ɲĩãr] = `Sundanese.baseOutput`.
+    - **Word cycle**: stem output combined with infix /-ar-/, then
+      Word-stratum harmony produces [ɲ-ãl-ĩãr] = `Sundanese.derivOutputOverapplied`.
+      Crucially, the Word stratum *preserves* the nasal vowels carried
+      over from the Stem cycle (high-ranked IDENT-IO at Word level).
+    - **Phrase cycle**: identity (no further phonological adjustment).
+
+    The full derivation is encoded directly; the actual stratum-by-stratum
+    OT evaluations are deferred to a future expansion (would require
+    stratum-specific constraint rankings + GEN/EVAL machinery instantiated
+    on `Sundanese.Seg`). The point of this section is the *architectural
+    agreement*, not the grammar implementation. -/
+def sundaneseStratalDerivation :
+    StratalDerivation (List Seg) (List Seg) (List Seg) where
+  underlyingForm   := Sundanese.derivInput
+  stemOutput       := Sundanese.baseOutput
+  wordOutput       := Sundanese.derivOutputOverapplied
+  phraseOutput     := Sundanese.derivOutputOverapplied
+
+/-- **Bridge theorem**: on Sundanese, the Stratal-OT-derived surface
+    form equals the TCT-derived overapplied output. The two architectures
+    converge on the same prediction.
+
+    This is `rfl` because both forms are stipulated to equal
+    `Sundanese.derivOutputOverapplied` — the *theorem-content* is in
+    the structural separation: a `StratalDerivation` and a
+    `Corr Role Seg` are entirely different types, but their notion of
+    "surface output" agrees here. The full derivation theorem (where
+    each architecture's surface output is *computed* from its grammar
+    rather than stipulated) is deferred. -/
+theorem stratal_tct_agree_on_sundanese :
+    sundaneseStratalDerivation.surface =
+      ((Sundanese.overappliedDiagram).form .derivative) := rfl
+
+/-- The stratal output equals the TCT-overapplied output by construction.
+    Together with `Sundanese.overapplied_beats_normal_on_OO_ident`, this
+    discharges Benua's *parallel-subsumes-stratal* claim *for this case*:
+    stratal predicts the same surface form that TCT's OO-Faith independently
+    derives. -/
+theorem stratal_phrase_eq_tct_derivative :
+    sundaneseStratalDerivation.phraseOutput =
+      Sundanese.derivOutputOverapplied := rfl
+
+/-! ### What's not yet proved
+
+This bridge is *concrete* (one paradigm) and *structural* (the surface
+forms agree by construction). The full Benua claim — for *every* stratal
+analysis there exists a TCT analysis producing the same surface
+predictions — is a meta-theoretical statement that would need:
+
+1. A model of stratal grammars as functions `Input → Output` derived from
+   stratum-specific constraint rankings (`StratalOT.evalStratum` chained
+   via `chainEval`).
+2. A model of TCT grammars as `TCTGrammar` instances (already exists in
+   `TCT.lean`).
+3. A constructive translation `stratalToTCT : StratalGrammar → TCTGrammar`
+   such that for all inputs, the derived surface forms agree.
+
+Step 3 is the load-bearing piece; @cite{benua-1997}'s polemic is that this
+translation *exists* (and is empirically supported by Sundanese, Tiberian
+Hebrew, and English Ch 5). Formalizing the constructive translation —
+or finding a counterexample — is the next major scientific step in this
+line of work.
+-/
+
+end StratalComparison
 
 end Phenomena.Phonology.Studies.Benua1997
