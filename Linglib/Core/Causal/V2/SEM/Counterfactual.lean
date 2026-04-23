@@ -145,6 +145,16 @@ abbrev manipulates (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.manipulates M s cause true false effect
 
+/-- **Direct causal connection**: `cause` is a parent of `effect` in
+    the SEM's graph. Pure structural predicate (no `develop`); fully
+    decidable structurally via `Finset.decidableMem`. -/
+def hasDirectLaw (M : BoolSEM V) (cause effect : V) : Prop :=
+  cause ∈ M.graph.parents effect
+
+instance (M : BoolSEM V) (cause effect : V) :
+    Decidable (hasDirectLaw M cause effect) :=
+  inferInstanceAs (Decidable (cause ∈ M.graph.parents effect))
+
 -- ════════════════════════════════════════════════════
 -- § Nadathur 2024 Def 10b: causallyNecessary (BoolSEM)
 -- ════════════════════════════════════════════════════
