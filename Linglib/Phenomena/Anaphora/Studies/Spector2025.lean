@@ -932,7 +932,7 @@ DPL (@cite{groenendijk-stokhof-1991}). Key comparison:
 
 The systems agree on 3/4 cases. The disagreement on bathroom sentences
 is significant: standard DPL cannot handle them because negation is a
-test that doesn't export assignments (@cite{krahmer-muskens-1996}),
+test that doesn't export assignments (@cite{krahmer-muskens-1995}),
 while Spector's Transparency-based approach handles them naturally via
 Middle Kleene disjunction.
 -/

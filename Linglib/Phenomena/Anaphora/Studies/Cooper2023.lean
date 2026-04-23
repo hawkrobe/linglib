@@ -5,9 +5,11 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
 
 /-!
-# TTR Underspecification -> Anaphora Data
-@cite{chomsky-1981} @cite{cooper-2023} @cite{kanazawa-1994}
-@cite{groenendijk-stokhof-1991} @cite{muskens-1996} @cite{sutton-2024}
+# Cooper (2023) — TTR Underspecification @cite{cooper-2023}
+
+Connects TTR underspecification to anaphora data, drawing on
+@cite{kanazawa-1994}, @cite{groenendijk-stokhof-1991},
+@cite{muskens-1996}, @cite{sutton-2024}, @cite{chomsky-1981}.
 
 Connects TTR's localization (donkey anaphora) and binding theory
 (reflexivization, anaphoric resolution) from

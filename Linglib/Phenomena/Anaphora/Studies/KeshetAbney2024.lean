@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Mathlib.Data.Set.Basic
@@ -488,18 +487,6 @@ theorem modal_sub_binding_modes :
 -- ============================================================
 -- Bridge 2: Bathroom Sentences
 -- ============================================================
-
-open Hofmann2025 in
-theorem pip_classic_bathroom :
-    bathroomDisjunction.felicitous = true := rfl
-
-open Hofmann2025 in
-theorem pip_negation_blocks :
-    negationBlocks.felicitous = false := rfl
-
-open Hofmann2025 in
-theorem pip_conjunction_fails :
-    conjunctionBlocks.felicitous = false := rfl
 
 /-- Label survival is the core mechanism for bathroom sentences. -/
 theorem bathroom_mechanism :

@@ -957,7 +957,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Typology
-import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
+import Linglib.Phenomena.Anaphora.Studies.Maier2015
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Anaphora.Studies.Charlow2018
 import Linglib.Phenomena.Anaphora.Studies.DalrympleHaug2024

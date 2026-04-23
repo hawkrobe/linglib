@@ -1,8 +1,9 @@
 /-
-# Parasitic Attitudes: @cite{karttunen-1973} Puzzle
+# Maier (2015) — Parasitic Attitudes @cite{maier-2015}
 
-Theory-neutral empirical data on presupposition projection across attitude sequences,
-the puzzle that motivates @cite{maier-2015}'s parasitic attitude analysis.
+@cite{maier-2015}'s analysis of the @cite{karttunen-1973} attitude-projection
+puzzle: non-doxastic attitudes (hope, imagine, dream) are parasitic on
+doxastic ones (believe, know).
 
 ## The Puzzle
 
@@ -31,7 +32,7 @@ but hope cannot filter belief's presuppositions.
 
 import Linglib.Core.Semantics.Presupposition
 
-namespace Phenomena.ParasiticAttitudes.Karttunen1973
+namespace Maier2015
 
 open Core.Presupposition
 
@@ -249,4 +250,4 @@ def nonFilteringCases : List AttitudeSequenceJudgment :=
   [ hopeBelieverNoFiltering
   , imagineBelieverNoFiltering ]
 
-end Phenomena.ParasiticAttitudes.Karttunen1973
+end Maier2015
