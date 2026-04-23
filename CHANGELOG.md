@@ -4,6 +4,72 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.250] - 2026-04-23
+
+### D-H Cutover COMPLETE: legacy `Core/Causal/SEM/` deleted, V2 promoted to canonical
+
+The full V2 substrate cutover is complete. The legacy `CausalDynamics`/
+`CausalLaw`/`Variable`/`Situation`/`normalDevelopment`/`applyLawsOnce`/
+`isFixpoint` substrate is gone; the polymorphic `SEM V α` substrate
+(formerly `Core.Causal.V2.*`) is now the canonical `Core.Causal.*`.
+
+**Substrate**:
+- **Deleted**: `Linglib/Core/Causal/SEM/{Defs,Counterfactual,Monotonicity}.lean`
+  (~1750 LOC)
+- **Renamed**: `Linglib/Core/Causal/V2/` → `Linglib/Core/Causal/`
+  (4 directories + 2 files moved via `git mv`); namespace
+  `Core.Causal.V2.*` → `Core.Causal.*` bulk perl rewrite
+
+**Hub gutting** (legacy bodies deleted, V2 contents promoted to top-level):
+- `Sufficiency.lean` (241 → 43 LOC) — `makeSem` polymorphic
+- `Necessity.lean` (196 → 87 LOC) — `causeSem`/`isINUSCause`/`actuallyCaused` polymorphic
+- `Prevention.lean` (129 → 50 LOC) — `preventSem` polymorphic with `∃ xPrev_alt ≠ xPrev`
+- `CCSelection.lean` (233 → 60 LOC) — `completesForEffect`/`actualizationHolds` polymorphic
+- `CoerciveImplication.lean` (209 → 50 LOC) — `hasCoerciveImplication` polymorphic
+- `ProductionDependence.lean` (legacy substrate-bound theorems removed)
+- `Implicative.lean` (909 → 215 LOC) — polymorphic `manageSem`/`failSem`/
+  `necessityPresup`/`Implicative.toSemantics`. Deleted: `ImplicativeScenario`
+  struct, `PrerequisiteAccount`, `ConcreteExample`, the entire
+  `ComplementEntailing.CausalFrame` + `abilityFrame` machinery.
+
+**Files DELETED entirely** (no consumers, substrate-dependent):
+- `Modality/Ability.lean` (depended on `CausalFrame`)
+- `Causation/Degree.lean` (depended on `CausalFrame`)
+
+**Resultatives.lean port** (1107 → ~480 LOC, V2 sub-namespace promoted
+to top-level): per-scenario `BoolSEM` models (HammerFlat, KickIntoField,
+LaughSilly, FreezeSolid, DrinkTeapotDry, KickDoorDirect, KickDoorViaBall)
+at top level. Local `sufficient`/`completes` predicates as canonical
+surface.
+
+**Study consumer cascade**:
+- BarAsherSiegal2026, NadathurLauer2020, Nadathur2024, CaoWhiteLassiter2025,
+  Glass2023, Tay2024, Levin2026 — all V2-only, legacy bodies gone
+- Karttunen1971 — 4 substrate-bound theorems removed; `KarttunenClass.toImplicativeClass`
+  bridge preserved
+- BellerGerstenberg2025, Lewis1973, KonukEtAl2026, SlomanBarbeyHotaling2009,
+  HardingGerstenbergIcard2025 — already V2-native
+- JinKoenig2021 — added missing `Attitudes.Intensional` import (transitive
+  via deleted Ability.lean)
+
+**Survives untouched**: `Core/Causal/BayesNet.lean` (independent 2-node
+ℚ-valued Bayesian network, no relationship to legacy SEM substrate);
+`Theories/Semantics/Probabilistic/ConditionalAssertability.lean` and
+`Phenomena/Conditionals/Studies/GrusdtLassiterFranke2022.lean` (BayesNet
+consumers; would migrate to V2 PMF in a follow-up phase if desired).
+
+**Build**: 2894 jobs clean across V2 substrate + 9 hubs + 14 study files +
+all downstream consumers.
+
+**Cumulative D-H delta**:
+- ~5500 LOC of legacy `CausalDynamics`-based code deleted
+- ~1700 LOC of polymorphic V2 code retained as the new canonical substrate
+
+The original motivating shoehorn (`CWL2025 SUF := if causallySufficient
+then 1 else 0`) is fully eliminated. SUF is `ENNReal`-valued via
+`SEM.probabilisticSuf`; the deterministic case is recovered as a
+{0,1} indicator via the bridge `probabilisticSuf_of_deterministic`.
+
 ## [0.230.249] - 2026-04-23
 
 ### Tier 4 follow-up: namespace cleanup on the 10 just-moved files (commit `33ba30f2`)

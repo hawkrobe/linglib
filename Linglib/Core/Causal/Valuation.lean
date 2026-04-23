@@ -16,7 +16,7 @@ A `DecidableValuation` aggregator typeclass bundles
 `∀ v, DecidableEq (α v)` for use throughout the API.
 -/
 
-namespace Core.Causal.V2
+namespace Core.Causal
 
 /-- Partial valuation: each vertex `v` either has a value of type `α v`
     (encoded `some x`) or is undetermined (`none`). Generalizes the old
@@ -88,4 +88,4 @@ theorem hasValue_empty_iff (v : V) (x : α v) :
 
 end Valuation
 
-end Core.Causal.V2
+end Core.Causal

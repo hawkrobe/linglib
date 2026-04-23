@@ -1,8 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.Causal.V2.SEM.Bool
-import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Alternatives.Lexical
@@ -517,8 +516,8 @@ For simple causal models, the two coincide.
 
 section StructuralBridge
 
-open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
-open Core.Causal.V2.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Core.Causal.BoolSEM (causallySufficient causallyNecessary hasDirectLaw)
 
 /-- Vertex enum for B&G's bridge models.
     `cause`, `alt`, `effect`, `intermediate` — covers solo, overdetermination, chain. -/
@@ -698,7 +697,7 @@ These are the deepest integration points: a change to `normalDevelopment`,
 
 section EndToEnd
 
-open Core.Causal.V2
+open Core.Causal
 open Semantics.Causation.ProductionDependence (causationType)
 
 /-! End-to-end pipeline theorems linking V2 BoolSEM models to RSA S1

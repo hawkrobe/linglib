@@ -3399,20 +3399,15 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
 -- § Causative Grounding Theorems
 -- ════════════════════════════════════════════════════
 
-/-! These verify that the Fragment's causative annotations are consistent with
-the formal semantics in `Semantics.Causation`. -/
+/-! These verify that the Fragment's causative annotations are consistent
+with the formal semantics in `Semantics.Causation`.
 
-open Semantics.Causation.Prevention (preventSem)
-open Semantics.Causation.Sufficiency (makeSem)
-open Semantics.Causation.Necessity (causeSem)
-
-/-- "make" uses sufficiency semantics. -/
-theorem make_semantics :
-    make.causative.map Causative.toSemantics = some makeSem := rfl
-
-/-- "cause" uses necessity semantics. -/
-theorem cause_semantics :
-    cause.causative.map Causative.toSemantics = some causeSem := rfl
+The semantic-dispatch grounding theorems (e.g., `make_semantics`,
+`cause_semantics`, `prevent_semantics`, `sufficiency_verbs_share_truth_conditions`,
+`lexical_causatives_match_make`) are in the `V2` sub-namespace below,
+parameterized by an arbitrary `SEM V α`. The legacy versions (which
+referenced `Causative.toSemantics` over `CausalDynamics`) were removed
+in Phase D-G in favor of the polymorphic V2 versions. -/
 
 /-- "make" asserts sufficiency — derived from its builder. -/
 theorem make_asserts_sufficiency : make.toVerbCore.assertsSufficiency = true := by native_decide
@@ -3439,10 +3434,6 @@ theorem force_is_coercive :
 theorem let_is_permissive :
     let_.causative.map (·.isPermissive) = some true := rfl
 
-/-- "prevent" uses blocking semantics (`preventSem`). -/
-theorem prevent_semantics :
-    prevent.causative.map Causative.toSemantics = some preventSem := rfl
-
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
@@ -3453,18 +3444,6 @@ theorem prevent_not_sufficiency :
     (@cite{jin-koenig-2021}, §6.1.4). -/
 theorem prevent_is_en_trigger :
     prevent.toVerbCore.isENTrigger = true := rfl
-
-/-- All sufficiency-asserting causatives share the same truth conditions. -/
-theorem sufficiency_verbs_share_truth_conditions :
-    make.causative.map Causative.toSemantics =
-    force.causative.map Causative.toSemantics ∧
-    make.causative.map Causative.toSemantics =
-    let_.causative.map Causative.toSemantics ∧
-    make.causative.map Causative.toSemantics =
-    have_caus.causative.map Causative.toSemantics ∧
-    make.causative.map Causative.toSemantics =
-    get_caus.causative.map Causative.toSemantics :=
-  ⟨rfl, rfl, rfl, rfl⟩
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
 theorem causative_builders_distinguished :
@@ -3493,13 +3472,6 @@ theorem lexical_causatives_assert_sufficiency :
   refine ⟨by native_decide, by native_decide, by native_decide,
           by native_decide, by native_decide⟩
 
-/-- Lexical causatives share truth conditions with periphrastic "make". -/
-theorem lexical_causatives_match_make :
-    kill.causative.map Causative.toSemantics =
-    make.causative.map Causative.toSemantics ∧
-    break_.causative.map Causative.toSemantics =
-    make.causative.map Causative.toSemantics := ⟨rfl, rfl⟩
-
 /-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
 theorem lexical_causatives_differ_from_cause :
     kill.causative ≠ cause.causative ∧
@@ -3510,17 +3482,10 @@ theorem lexical_causatives_differ_from_cause :
 -- § Implicative Grounding Theorems
 -- ════════════════════════════════════════════════════
 
-open Semantics.Causation.Implicative (manageSem failSem)
-
-/-- "manage" uses positive implicative semantics (`manageSem`). -/
-theorem manage_semantics_implicative :
-    manage.implicative.map Implicative.toSemantics =
-      some manageSem := rfl
-
-/-- "fail" uses negative implicative semantics (`failSem`). -/
-theorem fail_semantics_implicative :
-    fail.implicative.map Implicative.toSemantics =
-      some failSem := rfl
+/-! Semantic-dispatch grounding for implicatives is in the `V2`
+sub-namespace (`manage_semantics_implicative`, `fail_semantics_implicative`)
+parameterized by an arbitrary `SEM V α`. The legacy versions were
+removed in Phase D-G. -/
 
 /-- "manage" entails the complement — derived from its builder. -/
 theorem manage_entails_complement_derived :
@@ -3584,63 +3549,63 @@ theorem VerbEntry.toStem_allVacuous {σ : Type} (v : VerbEntry) :
 
 /-! V2 mirror of the rfl theorems above on the BoolSEM substrate.
 Each statement is parameterized by an arbitrary deterministic acyclic
-SEM `M`; `Causative.V2.toSemantics M` dispatches to the V2 hub
-predicates (`Sufficiency.V2.makeSem`, `Necessity.V2.causeSem`,
-`Prevention.V2.preventSem`). The legacy CausalDynamics-based
+SEM `M`; `Causative.toSemantics M` dispatches to the V2 hub
+predicates (`Sufficiency.makeSem`, `Necessity.causeSem`,
+`Prevention.preventSem`). The legacy CausalDynamics-based
 theorems above remain intact. -/
 
 namespace V2
 
-open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
+open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 open Core.Verbs
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
   (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
 
-/-- V2 "make" → `Sufficiency.V2.makeSem` (polymorphic). -/
+/-- V2 "make" → `Sufficiency.makeSem` (polymorphic). -/
 theorem make_semantics :
-    make.causative.map (Causative.V2.toSemantics M) =
-    some (Semantics.Causation.Sufficiency.V2.makeSem M) := rfl
+    make.causative.map (Causative.toSemantics M) =
+    some (Semantics.Causation.Sufficiency.makeSem M) := rfl
 
-/-- V2 "cause" → `Necessity.V2.causeSem` (polymorphic). -/
+/-- V2 "cause" → `Necessity.causeSem` (polymorphic). -/
 theorem cause_semantics :
-    cause.causative.map (Causative.V2.toSemantics M) =
-    some (Semantics.Causation.Necessity.V2.causeSem M) := rfl
+    cause.causative.map (Causative.toSemantics M) =
+    some (Semantics.Causation.Necessity.causeSem M) := rfl
 
-/-- V2 "prevent" → `Prevention.V2.preventSem` (polymorphic). -/
+/-- V2 "prevent" → `Prevention.preventSem` (polymorphic). -/
 theorem prevent_semantics :
-    prevent.causative.map (Causative.V2.toSemantics M) =
-    some (Semantics.Causation.Prevention.V2.preventSem M) := rfl
+    prevent.causative.map (Causative.toSemantics M) =
+    some (Semantics.Causation.Prevention.preventSem M) := rfl
 
-/-- V2: make/force/let/have/get share `Sufficiency.V2.makeSem` truth conditions. -/
+/-- V2: make/force/let/have/get share `Sufficiency.makeSem` truth conditions. -/
 theorem sufficiency_verbs_share_truth_conditions :
-    make.causative.map (Causative.V2.toSemantics M) =
-      force.causative.map (Causative.V2.toSemantics M) ∧
-    make.causative.map (Causative.V2.toSemantics M) =
-      let_.causative.map (Causative.V2.toSemantics M) ∧
-    make.causative.map (Causative.V2.toSemantics M) =
-      have_caus.causative.map (Causative.V2.toSemantics M) ∧
-    make.causative.map (Causative.V2.toSemantics M) =
-      get_caus.causative.map (Causative.V2.toSemantics M) :=
+    make.causative.map (Causative.toSemantics M) =
+      force.causative.map (Causative.toSemantics M) ∧
+    make.causative.map (Causative.toSemantics M) =
+      let_.causative.map (Causative.toSemantics M) ∧
+    make.causative.map (Causative.toSemantics M) =
+      have_caus.causative.map (Causative.toSemantics M) ∧
+    make.causative.map (Causative.toSemantics M) =
+      get_caus.causative.map (Causative.toSemantics M) :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- V2: lexical causatives (kill, break) share truth conditions with periphrastic "make". -/
 theorem lexical_causatives_match_make :
-    kill.causative.map (Causative.V2.toSemantics M) =
-      make.causative.map (Causative.V2.toSemantics M) ∧
-    break_.causative.map (Causative.V2.toSemantics M) =
-      make.causative.map (Causative.V2.toSemantics M) := ⟨rfl, rfl⟩
+    kill.causative.map (Causative.toSemantics M) =
+      make.causative.map (Causative.toSemantics M) ∧
+    break_.causative.map (Causative.toSemantics M) =
+      make.causative.map (Causative.toSemantics M) := ⟨rfl, rfl⟩
 
-/-- V2 "manage" → `Implicative.V2.manageSem` (polymorphic). -/
+/-- "manage" → polymorphic `Implicative.manageSem`. -/
 theorem manage_semantics_implicative :
-    manage.implicative.map (Implicative.V2.toSemantics M) =
-    some (Semantics.Causation.Implicative.V2.manageSem M) := rfl
+    manage.implicative.map (Implicative.toSemantics M) =
+    some (Semantics.Causation.Implicative.manageSem M) := rfl
 
-/-- V2 "fail" → `Implicative.V2.failSem` (polymorphic). -/
+/-- "fail" → polymorphic `Implicative.failSem`. -/
 theorem fail_semantics_implicative :
-    fail.implicative.map (Implicative.V2.toSemantics M) =
-    some (Semantics.Causation.Implicative.V2.failSem M) := rfl
+    fail.implicative.map (Implicative.toSemantics M) =
+    some (Semantics.Causation.Implicative.failSem M) := rfl
 
 end V2
 

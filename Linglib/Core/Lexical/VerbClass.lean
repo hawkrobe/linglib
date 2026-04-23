@@ -478,7 +478,7 @@ inductive Causative where
       Semantic function: `causeSem`. -/
   | cause
   /-- Direct sufficient guarantee: adding cause → effect.
-      Semantic function: `makeSem`. -/
+      Semantic function: `causallySufficient`. -/
   | make
   /-- Coercive sufficiency: overcome resistance, no alternatives.
       Same truth conditions as `make`; distinguished by `isCoercive`. -/
@@ -493,7 +493,7 @@ inductive Causative where
 
 /-- Does this variant assert causal sufficiency (N&L Def 23)?
 
-    DERIVED: true for variants whose `toSemantics` maps to `makeSem`. -/
+    DERIVED: true for variants whose `toSemantics` maps to `causallySufficient`. -/
 def Causative.assertsSufficiency : Causative → Bool
   | .make | .force | .enable => true
   | .cause | .prevent => false

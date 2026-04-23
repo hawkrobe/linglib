@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Causal.V2.SEM.Bool
-import Linglib.Core.Causal.V2.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Bool
+import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # A Communication-First Account of Explanation
@@ -28,7 +28,7 @@ and `developDetOn` for kernel-verifiable structural proofs.
 
 namespace HardingGerstenbergIcard2025
 
-open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
 
 -- ════════════════════════════════════════════════════
 -- § Late Meeting

@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.V2.SEM.Defs
+import Linglib.Core.Causal.SEM.Defs
 
 /-!
 # BoolSEM: Legacy Binary-Substrate Convenience Alias (V2)
@@ -9,11 +9,11 @@ where every vertex has value type `Bool`). Lives in its own file so the
 core `SEM/Defs.lean` stays focused on the general API.
 -/
 
-namespace Core.Causal.V2
+namespace Core.Causal
 
 /-- A `BoolSEM V` is the SBH-style binary substrate: every vertex's
     value is `Bool`. Convenience abbreviation for consumers that don't
     need multi-valued variables. -/
 abbrev BoolSEM (V : Type*) := SEM V (fun _ => Bool)
 
-end Core.Causal.V2
+end Core.Causal

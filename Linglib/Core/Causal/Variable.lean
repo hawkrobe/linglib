@@ -11,7 +11,7 @@ not in the variable itself.
 canonical default. Use directly when you don't need polymorphism.
 -/
 
-namespace Core.Causal.V2
+namespace Core.Causal
 
 /-- A variable in a causal model: a named atom. Semantic content lives in
     the `Mechanism` attached to a vertex, not in the variable itself.
@@ -25,4 +25,4 @@ structure Variable where
 instance : ToString Variable where
   toString v := v.name
 
-end Core.Causal.V2
+end Core.Causal

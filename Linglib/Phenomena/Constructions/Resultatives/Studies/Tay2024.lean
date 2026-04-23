@@ -51,8 +51,6 @@ namespace Tay2024
 open Core (WorldTimeIndex)
 
 open Semantics.Causation.Resultatives
-open Core.Causal
-open Semantics.Causation.Sufficiency (causallySufficient)
 open Morphology.WordStructure
 open Semantics.Verb.ChangeOfState (CoSType priorStatePresup)
 open Fragments.Mandarin.Resultatives
@@ -338,64 +336,103 @@ theorem kulei_is_compound : kulei_morph.IsCompound := by decide
 theorem kulei_surface : kulei_morph.surface = "kulei" := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Causal Models
+-- § 5. Causal Models (V2 BoolSEM)
 -- ════════════════════════════════════════════════════
 
-/-! ## Causal dynamics for V-V compounds
+/-! ## V-V compound causal models on V2 BoolSEM
 
-Each V-V compound maps to a `CausalDynamics` where V1 directly causes V2.
-Direct causation = single causal law, no intermediate with an independent
-energy source. This is the same `completesForEffect` tightness constraint
-identified for English resultatives by @cite{levin-2019}. -/
+Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
+Direct causation = single edge, no intermediate with an independent
+energy source. This is the same tightness constraint identified for
+English resultatives by @cite{levin-2019} — formalized via the
+`completes` predicate from `Semantics.Causation.Resultatives`. -/
 
-private def hittingVar : Variable := mkVar "hitting"
-private def deathVar : Variable := mkVar "death"
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open Semantics.Causation.Resultatives (sufficient completes)
+
+namespace Dasi
+
+inductive V | hitting | death deriving DecidableEq, Fintype, Repr
+def varList : List V := [.hitting, .death]
+def graph : CausalGraph V := ⟨fun | .hitting => ∅ | .death => {.hitting}⟩
 
 /-- dǎ-sǐ "hit-die": hitting → death. Direct causation. -/
-def dasiModel : CausalDynamics :=
-  ⟨[CausalLaw.simple hittingVar deathVar]⟩
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .hitting => const (G := graph) false
+      | .death => deterministic (fun ρ => ρ ⟨.hitting, by simp [graph]⟩) }
 
-private def cryingVar : Variable := mkVar "crying"
-private def tiredVar : Variable := mkVar "tired"
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .hitting => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .death => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem sufficient :
+    Semantics.Causation.Resultatives.sufficient model varList Valuation.empty 1
+      .hitting .death := by
+  unfold Semantics.Causation.Resultatives.sufficient; rfl
+
+theorem tight :
+    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
+      .hitting .death := by
+  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end Dasi
+
+namespace Kulei
+
+inductive V | crying | tired deriving DecidableEq, Fintype, Repr
+def varList : List V := [.crying, .tired]
+def graph : CausalGraph V := ⟨fun | .crying => ∅ | .tired => {.crying}⟩
 
 /-- kū-lèi "cry-tired": crying → tired. Subject-oriented, direct. -/
-def kuleiModel : CausalDynamics :=
-  ⟨[CausalLaw.simple cryingVar tiredVar]⟩
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .crying => const (G := graph) false
+      | .tired => deterministic (fun ρ => ρ ⟨.crying, by simp [graph]⟩) }
 
-private def pushingVar : Variable := mkVar "pushing"
-private def openVar : Variable := mkVar "open"
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .crying => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .tired => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem tight :
+    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
+      .crying .tired := by
+  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end Kulei
+
+namespace Tuikai
+
+inductive V | pushing | openV deriving DecidableEq, Fintype, Repr
+def varList : List V := [.pushing, .openV]
+def graph : CausalGraph V := ⟨fun | .pushing => ∅ | .openV => {.pushing}⟩
 
 /-- tuī-kāi "push-open": pushing → open. Mandarin parallel to
     English "push X open". -/
-def tuikaiModel : CausalDynamics :=
-  ⟨[CausalLaw.simple pushingVar openVar]⟩
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .pushing => const (G := graph) false
+      | .openV => deterministic (fun ρ => ρ ⟨.pushing, by simp [graph]⟩) }
 
-/-! ### Sufficiency and tightness proofs -/
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .pushing => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .openV => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-theorem dasi_sufficient :
-    causallySufficient dasiModel Situation.empty hittingVar deathVar := by
-  native_decide
+theorem tight :
+    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
+      .pushing .openV := by
+  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
 
-theorem dasi_tight :
-    completesForEffect dasiModel Situation.empty hittingVar deathVar = true := by
-  native_decide
-
-theorem kulei_sufficient :
-    causallySufficient kuleiModel Situation.empty cryingVar tiredVar := by
-  native_decide
-
-theorem kulei_tight :
-    completesForEffect kuleiModel Situation.empty cryingVar tiredVar = true := by
-  native_decide
-
-theorem tuikai_tight :
-    completesForEffect tuikaiModel Situation.empty pushingVar openVar = true := by
-  native_decide
-
-/-- All V-V compound models have exactly one law (direct causation). -/
-theorem all_compounds_single_law :
-    [dasiModel, kuleiModel, tuikaiModel].all
-      (·.laws.length == 1) = true := by native_decide
+end Tuikai
 
 -- ════════════════════════════════════════════════════
 -- § 6. Phase Complement Theorems
@@ -465,8 +502,9 @@ theorem vv_compound_become :
 8. Constructional BECOME = inception (shared with English) -/
 
 theorem vv_compound_architecture :
-    -- Tight causation (direct, single law)
-    completesForEffect dasiModel Situation.empty hittingVar deathVar = true ∧
+    -- Tight causation (direct, single edge)
+    Semantics.Causation.Resultatives.completes Dasi.model Dasi.varList
+      Valuation.empty 1 .hitting .death ∧
     -- Morphological compound
     dasi_morph.IsCompound ∧
     -- Subject-oriented resultatives exist (no DOR)
@@ -482,6 +520,6 @@ theorem vv_compound_architecture :
     (allPhaseComplements.any (·.phase.cosType == .cessation)) = true ∧
     -- Constructional BECOME = inception
     resultStateMapsToCoS = .inception := by
-  refine ⟨?_, by decide, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
+  refine ⟨Dasi.tight, by decide, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
 
 end Tay2024

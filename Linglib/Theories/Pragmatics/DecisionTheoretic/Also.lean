@@ -438,7 +438,7 @@ This connects to `Core.Causal` — the causal reading arises from
 non-independence of the conjuncts, and "also" explicitly marks the
 antecedent as presupposed (hence independent).
 
--- TODO: Formalize using CausalDynamics from Core.Causal -/
+-- TODO: Formalize using `Core.Causal.SEM` (`BoolSEM` / `develop`). -/
 
 end Theorems
 

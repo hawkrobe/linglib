@@ -68,11 +68,7 @@ open LevinClass (pushPull hit wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
 open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
-open Core.Causal
-open Semantics.Causation.Sufficiency (causallySufficient)
-open Semantics.Causation.Necessity (causallyNecessary)
-open Semantics.Causation.Resultatives (completesForEffect resultativeCausativeBuilder
-  freezeSolidModel)
+open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
 open Semantics.Verb.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   ArgStructureConstruction)
@@ -481,74 +477,27 @@ The constructional BECOME maps to `CoSType.inception` (¬open → open). -/
     This connects to the existing `ChangeOfState` infrastructure. -/
 def resultativeBECOME : CoSType := .inception
 
-private def pushingVar : Variable := mkVar "pushing"
-private def openVar : Variable := mkVar "open"
-
-/-- "Pat pushed the door open": pushing → open. -/
-def pushDoorOpenModel : CausalDynamics :=
-  ⟨[CausalLaw.simple pushingVar openVar]⟩
-
-/-- The verbal subevent is causally sufficient for the result. -/
-theorem push_sufficient_for_open :
-    causallySufficient pushDoorOpenModel Situation.empty
-      pushingVar openVar = true := by
-  native_decide
-
-/-- The verbal subevent is the completion event (sufficient + necessary),
-    matching the CC-selection analysis in `Resultatives.lean`. -/
-theorem push_completes_for_open :
-    completesForEffect pushDoorOpenModel Situation.empty
-      pushingVar openVar = true := by
-  native_decide
-
 /-- The resultative uses the `.make` builder (sufficiency). -/
 theorem push_open_uses_make :
     resultativeCausativeBuilder = .make := rfl
 
-/-! ### Bridge: ConstructionGrammar ↔ CausalDynamics
-
-Two independent systems model the "construction adds causation" insight:
-- `ArgStructureConstruction.semanticContribution.causation` (Boolean flag)
-- `CausalDynamics.laws` (structural equations)
-
-The Boolean layer predicts alternation behavior; the structural layer
-models how the causation works (sufficiency, necessity, tightness).
-They must agree: `causation = true ↔ dynamics non-empty`. -/
-
-/-- Consistency between the Boolean and structural causation layers. -/
-def causationConsistent (cxn : ArgStructureConstruction)
-    (dyn : CausalDynamics) : Bool :=
-  cxn.semanticContribution.causation == (dyn.laws.length > 0)
-
-/-- The resultative construction + push-open dynamics are consistent:
-    both say "there is causation." -/
-theorem resultative_push_open_consistent :
-    causationConsistent resultative pushDoorOpenModel = true := by native_decide
-
-/-- The resultative construction + freeze-solid dynamics are INconsistent:
-    the construction says causation but the dynamics are empty.
-    This formally captures why freeze-solid is a noncausative resultative —
-    it uses a DIFFERENT construction (noncausative) with no causation flag. -/
-theorem resultative_freeze_solid_inconsistent :
-    causationConsistent resultative freezeSolidModel = false := by native_decide
-
 /-! ### Key contrast: intr-push-open ≠ freeze-solid
 
 "The river froze solid" is a noncausative resultative where *freeze*
-independently shows the causative alternation and the causal dynamics
-are empty (no constructional CAUSE).
+independently shows the causative alternation; the verbal alternation
+plus the noncausative subconstruction explain why it surfaces without
+a causer.
 
 "The door pushed open" is fundamentally different: *push* does NOT
-independently alternate, and the causal dynamics are non-empty. The
-cause exists but is suppressed — this is an **anticausative**, not a
-lexically noncausative. -/
+independently alternate; the construction adds the CAUSE that the verb
+lacks. This is an **anticausative** licensed by the construction, not
+a lexically noncausative.
 
-/-- Intr-*push open* has non-empty dynamics; *freeze solid* has empty.
-    This is the formal reflex of the paper's central claim. -/
-theorem push_open_not_like_freeze_solid :
-    pushDoorOpenModel.laws.length > 0 ∧
-    freezeSolidModel.laws.length = 0 := by
-  constructor <;> decide
+Per-scenario causal models for these contrasts now live in
+`Semantics.Causation.Resultatives` (see `HammerFlat`, `KickIntoField`,
+`FreezeSolid`, etc.) on the V2 `BoolSEM` substrate. The legacy
+`pushDoorOpenModel`/`freezeSolidModel` `CausalDynamics` instances were
+deleted in Phase D-H. -/
 
 /-- *Freeze* independently shows the causative alternation;
     *push* does not. This confirms the classification: *freeze solid*
@@ -584,70 +533,14 @@ formalized in `Causation/Resultatives.lean`:
   motion. → No independent source → the cause IS necessary → the
   anticausative is blocked (PCC requires expressing the cause). -/
 
-private def agentForceVar : Variable := mkVar "agent_force"
-private def themeMomentumVar : Variable := mkVar "theme_momentum"
-private def resultStateVar : Variable := mkVar "result_state"
-
-/-- Projectile model: agent applies force → theme gains momentum →
-    theme reaches result state. The theme's momentum is an independent
-    source (kinetic energy persists after the push). -/
-def projectileModel : CausalDynamics :=
-  ⟨[ CausalLaw.simple agentForceVar themeMomentumVar
-   , CausalLaw.simple themeMomentumVar resultStateVar ]⟩
-
-/-- Continuous-involvement model: agent applies force → result state
-    directly. No intermediate with independent energy. -/
-def continuousModel : CausalDynamics :=
-  ⟨[CausalLaw.simple agentForceVar resultStateVar]⟩
-
-/-- In the projectile model, the theme's momentum is NOT an independent
-    source (no separate law feeds it — the agent's push IS the source).
-    But the crucial point is architectural: the intermediate stage
-    (momentum) means the agent can withdraw after the initial force
-    application. -/
-theorem projectile_tight_from_empty_bg :
-    completesForEffect projectileModel Situation.empty
-      agentForceVar resultStateVar = true := by
-  native_decide
-
-/-- In the continuous model, the agent IS the completion event. -/
-theorem continuous_tight :
-    completesForEffect continuousModel Situation.empty
-      agentForceVar resultStateVar = true := by
-  native_decide
-
-/-- When the theme has its OWN independent energy source (separate from
-    the agent's push), the agent's force is no longer necessary — the
-    theme can reach the result state on its own. This is what licenses
-    the anticausative: the cause can be suppressed because the theme
-    doesn't need it continuously.
-
-    This connects to `independent_source_disrupts_tightness` in
-    `Causation/Resultatives.lean`: an independent source for the
-    intermediate breaks necessity. -/
-private def themeEnergyVar : Variable := mkVar "theme_energy"
-
-def projectileWithEnergyModel : CausalDynamics :=
-  ⟨[ CausalLaw.simple agentForceVar themeMomentumVar
-   , CausalLaw.simple themeMomentumVar resultStateVar
-   , CausalLaw.simple themeEnergyVar themeMomentumVar ]⟩
-
-def themeHasEnergyBg : Situation :=
-  Situation.empty.extend themeEnergyVar true
-
-/-- When the theme has independent energy, the agent's force is no
-    longer necessary — the theme can reach the result state on its own.
-    `completesForEffect` = false because necessity fails. -/
-theorem projectile_energy_breaks_necessity :
-    completesForEffect projectileWithEnergyModel themeHasEnergyBg
-      agentForceVar resultStateVar = false := by
-  native_decide
-
-/-- The theme's momentum HAS an independent source in this model. -/
-theorem theme_has_independent_source :
-    hasIndependentSource projectileWithEnergyModel
-      agentForceVar themeMomentumVar := by
-  native_decide
+/-! The PCC tightness analysis (projectile vs continuous, with the
+    intervening-source breakdown of necessity) is fully formalized on
+    the V2 `BoolSEM` substrate by `Resultatives.KickDoorViaBall` —
+    see `kick_door_via_ball_not_tight` for the canonical not-tight
+    witness. The legacy `projectileModel`/`continuousModel`/
+    `projectileWithEnergyModel` `CausalDynamics` instances + their
+    `completesForEffect` proofs were deleted in Phase D-H; the
+    qualitative claims are recoverable from the V2 scaffolding. -/
 
 -- ════════════════════════════════════════════════════
 -- § 6. Discourse licensing conditions
@@ -876,8 +769,6 @@ theorem end_to_end_push_open :
     predictedAlternationInConstruction
       LevinClass.pushPull.meaningComponents
       resultative .causativeInchoative = true ∧
-    -- Step 4: construction adds CAUSE (non-empty dynamics)
-    pushDoorOpenModel.laws.length > 0 ∧
     -- Step 5: BECOME = inception
     resultativeBECOME == .inception ∧
     -- Step 6: CAUSE = .make (sufficiency)
@@ -886,33 +777,31 @@ theorem end_to_end_push_open :
     anticausativeLicensed .recoverableInContext = true ∧
     -- Step 8-9: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
-  refine ⟨rfl, ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
+  refine ⟨rfl, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Filled resultative: construction–verb–adjective bundle
 -- ════════════════════════════════════════════════════
 
-/-! ## FilledResultative: unifying the Boolean and structural layers
+/-! ## FilledResultative: bundling lexical material with the construction
 
-The construction grammar layer (MeaningComponents, fusion, alternation prediction)
-and the causation layer (CausalDynamics, sufficiency, necessity, tightness) run
-in parallel. `FilledResultative` bundles them into a single type where their
-agreement is a proof obligation — not an informal invariant.
+The construction grammar layer (MeaningComponents, fusion, alternation
+prediction) carries the structural content. `FilledResultative` bundles
+the lexical fillers as proof obligations on the type — the filling must
+satisfy the Boolean-level alternation prediction.
 
 This is the formal reflex of @cite{levin-2026}'s analysis: a resultative
 is a **construction filled with specific lexical material** (verb class,
-adjective), and the filling must satisfy both the Boolean-level alternation
-prediction and the structural-level causal dynamics. -/
+adjective).
 
-/-- A resultative construction instantiated with its lexical fillers.
+The legacy `dynamics : CausalDynamics` field + `causalConsistency` proof
+obligation were dropped in Phase D-H — the parallel structural causation
+layer now lives in `Semantics.Causation.Resultatives` on the V2 `BoolSEM`
+substrate (see `HammerFlat`, `KickIntoField`, etc.). Linking a specific
+`FilledResultative` to its V2 model would be a separate study extension.
+-/
 
-Bundles the three components of @cite{levin-2026}'s analysis:
-1. **Verb class** — contributes manner semantics (force application)
-2. **Adjective** — contributes result state (spatially instantiated)
-3. **Construction** — contributes CAUSE + CoS (event structure)
-
-Plus the causal dynamics that model HOW the causation works.
-The proof fields enforce consistency across the Boolean and structural layers. -/
+/-- A resultative construction instantiated with its lexical fillers. -/
 structure FilledResultative where
   /-- The verb's Levin class (manner root) -/
   verbClass : LevinClass
@@ -920,8 +809,6 @@ structure FilledResultative where
   adjective : AdjectivalPredicateEntry
   /-- The argument structure construction (typically `resultative`) -/
   construction : ArgStructureConstruction
-  /-- The structural causal model for this verb–result combination -/
-  dynamics : CausalDynamics
   /-- The construction adds what the verb lacks: fusion predicts the
       causative alternation for the composed meaning. -/
   alternationPredicted :
@@ -929,8 +816,6 @@ structure FilledResultative where
       verbClass.meaningComponents construction .causativeInchoative = true
   /-- The adjective describes a spatially instantiated state. -/
   adjSpatial : adjective.spatialConfigType.isSome = true
-  /-- The Boolean and structural causation layers agree. -/
-  causalConsistency : causationConsistent construction dynamics = true
 
 /-- Whether this filled resultative can surface as an anticausative
     (intr-*push open*), given discourse and theme conditions.
@@ -943,35 +828,26 @@ def FilledResultative.canAnticausativize (fr : FilledResultative)
 
 /-! ### Concrete instances -/
 
-/-- *push open*: pushPull + open + resultative + push-door-open dynamics. -/
 def pushOpen_filled : FilledResultative :=
   { verbClass := .pushPull
   , adjective := open_
   , construction := resultative
-  , dynamics := pushDoorOpenModel
   , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide
-  , causalConsistency := by native_decide }
+  , adjSpatial := by native_decide }
 
-/-- *pull free*: pushPull + free + resultative. -/
 def pullFree_filled : FilledResultative :=
   { verbClass := .pushPull
   , adjective := free_
   , construction := resultative
-  , dynamics := pushDoorOpenModel  -- same causal shape: force → result
   , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide
-  , causalConsistency := by native_decide }
+  , adjSpatial := by native_decide }
 
-/-- *slam shut*: hit + shut + resultative. -/
 def slamShut_filled : FilledResultative :=
   { verbClass := .hit
   , adjective := shut
   , construction := resultative
-  , dynamics := pushDoorOpenModel
   , alternationPredicted := by native_decide
-  , adjSpatial := by native_decide
-  , causalConsistency := by native_decide }
+  , adjSpatial := by native_decide }
 
 /-! ### FilledResultative → licensing
 
@@ -1025,18 +901,16 @@ spatial adjective, causal consistency) as proof obligations on the type.
 The remaining conditions (discourse, theme) are runtime parameters. -/
 
 /-- `pushOpen_filled` subsumes the core of `end_to_end_push_open`:
-    the type's proof obligations cover steps 1-6. -/
+    the type's proof obligations cover the alternation prediction
+    and the spatial-adjective step. -/
 theorem pushOpen_filled_covers_core :
     -- From alternationPredicted: steps 1-3 (verb blocked alone → construction enables)
     predictedAlternationInConstruction
       pushOpen_filled.verbClass.meaningComponents
       pushOpen_filled.construction .causativeInchoative = true ∧
-    -- From causalConsistency: step 4 (non-empty dynamics)
-    causationConsistent pushOpen_filled.construction pushOpen_filled.dynamics = true ∧
     -- From adjSpatial: step 2 (adjective spatial)
     pushOpen_filled.adjective.spatialConfigType.isSome = true := by
   exact ⟨pushOpen_filled.alternationPredicted,
-         pushOpen_filled.causalConsistency,
          pushOpen_filled.adjSpatial⟩
 
 /-! ### Connection to ResultativeType

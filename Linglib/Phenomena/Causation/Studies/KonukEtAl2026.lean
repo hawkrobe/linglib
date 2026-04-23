@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.V2.SEM.Bool
-import Linglib.Core.Causal.V2.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Bool
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Theories.Semantics.Causation.Strength
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Mathlib.Data.Rat.Defs
@@ -41,7 +41,7 @@ with the explicit vertex list.
 
 namespace KonukEtAl2026
 
-open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
 open Semantics.Causation.Strength (nsm samplingPropensity)
 
 -- ════════════════════════════════════════════════════

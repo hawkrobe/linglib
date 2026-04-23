@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.V2.SEM.Defs
-import Linglib.Core.Causal.V2.Mechanism.Deterministic
+import Linglib.Core.Causal.SEM.Defs
+import Linglib.Core.Causal.Mechanism.Deterministic
 import Mathlib.Logic.Function.Iterate
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -41,7 +41,7 @@ computable variants. Structural simp lemmas let proofs unfold via
 rewriting rather than runtime evaluation.
 -/
 
-namespace Core.Causal.V2.SEM
+namespace Core.Causal.SEM
 
 variable {V : Type*} {α : V → Type*}
 
@@ -218,6 +218,44 @@ theorem developDet_eq_developDetOn [Fintype V] [DecidableEq V] [DecidableValuati
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
     developDet M s = developDetOn M (Fintype.elems : Finset V).toList (Fintype.card V) s := rfl
 
+/-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
+    with `cause` undetermined in `s`, `Pearl-intervening` to set
+    `cause := xC` is equivalent (at the level of `developDet`) to
+    extending the valuation with `cause = xC` and developing under the
+    original mechanisms.
+
+    This is the load-bearing substrate fact connecting
+    `probabilisticSuf` (intervene-based, mathlib-canonical) to
+    `causallySufficient` (extend-based, classical SCM-style). It holds
+    because:
+    - `intervene` replaces cause's mechanism with `Mechanism.const xC`,
+      so the first time `develop` visits cause (when ready), it sets
+      cause to `xC`.
+    - `extend` sets cause to `xC` upfront, and subsequent steps skip
+      cause (already determined).
+    - For all other vertices, intervene preserves the original
+      mechanism. Both sides eventually converge to cause = xC and
+      identical downstream propagation.
+
+    **Proof deferred** — needs careful induction over iteration count
+    showing that intervene's intermediate states converge to extend's
+    after at most one iteration that visits cause. The cleanest proof
+    likely goes via a per-vertex equivalence relation that tracks
+    "cause is xC OR will be xC at the next visit". TODO: Phase V'' /
+    D-E2.
+
+    For now the consumer (`probabilisticSuf_of_deterministic` chain
+    via `CaoWhiteLassiter2025.V2.probabilisticSuf_eq_deterministicSuf`)
+    relies on this lemma as a single substrate sorry rather than
+    re-deriving the equivalence at each call site. -/
+theorem developDet_intervene_eq_developDet_extend
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) (cause : V) (xC : α cause)
+    (h : s.get cause = none) :
+    (M.intervene cause xC).developDet s = M.developDet (s.extend cause xC) := by
+  sorry
+
 -- ════════════════════════════════════════════════════
 -- § PMF-valued forward propagation (canonical)
 -- ════════════════════════════════════════════════════
@@ -323,4 +361,4 @@ DAG give the same PMF. Provable via `PMF.bind_comm` + a lemma showing
 ready. Not load-bearing for current consumers; deferred until a study
 needs to reason about `develop` against a hand-picked vertex order. -/
 
-end Core.Causal.V2.SEM
+end Core.Causal.SEM

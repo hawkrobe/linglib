@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.V2.SEM.Bool
-import Linglib.Core.Causal.V2.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Bool
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.WorldTimeIndex
 import Mathlib.Logic.Relation
 
@@ -53,7 +53,7 @@ the Necessity hub migration to V2.
 namespace Lewis1973
 
 open Core (WorldTimeIndex)
-open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lewis's Counterfactual Predicates (V2)

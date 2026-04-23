@@ -1,3 +1,4 @@
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974

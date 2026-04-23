@@ -191,7 +191,7 @@ theorem prevent_karttunen_class :
     (sufficient-only) despite having different causal mechanisms.
     This is the central insight of @cite{nadathur-lauer-2020}: same
     entailment pattern ≠ same truth conditions. The difference emerges
-    in overdetermination scenarios where `makeSem` is true but `causeSem`
+    in overdetermination scenarios where `causallySufficient` is true but `causeSem`
     is false (see `truth_conditionally_distinct` in Interpretation.lean). -/
 theorem cause_make_same_cell_different_mechanism :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
@@ -339,40 +339,15 @@ theorem force_no_necessity :
     These theorems derive the entailment from the classification,
     not just re-export the theory-layer theorem. -/
 
-/-- A sufficient-positive KarttunenClass predicts complement truth
-    via the polarity field's grounded semantics. -/
-theorem sufficient_positive_class_entails (sc : ImplicativeScenario)
-    (k : KarttunenClass)
-    (_hSuf : k.isSufficient = true) (hPol : k.polarity = .positive)
-    (hSem : k.polarity.toSemantics sc) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true := by
-  rw [hPol] at hSem
-  exact manage_entails_complement sc hSem
-
-/-- A sufficient-negative KarttunenClass predicts complement falsity. -/
-theorem sufficient_negative_class_entails (sc : ImplicativeScenario)
-    (k : KarttunenClass)
-    (_hSuf : k.isSufficient = true) (hPol : k.polarity = .negative)
-    (hSem : k.polarity.toSemantics sc) :
-    ¬ (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true := by
-  rw [hPol] at hSem
-  exact fail_entails_not_complement sc hSem
-
-/-- Instantiation: `KarttunenClass.manage` entails complement truth. -/
-theorem manage_class_entails (sc : ImplicativeScenario)
-    (hSem : KarttunenClass.manage.polarity.toSemantics sc) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true :=
-  sufficient_positive_class_entails sc .manage rfl rfl hSem
-
-/-- Instantiation: `KarttunenClass.fail` entails complement falsity. -/
-theorem fail_class_entails (sc : ImplicativeScenario)
-    (hSem : KarttunenClass.fail.polarity.toSemantics sc) :
-    ¬ (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true :=
-  sufficient_negative_class_entails sc .fail rfl rfl hSem
+/-! `sufficient_positive_class_entails` / `sufficient_negative_class_entails`
+    / `manage_class_entails` / `fail_class_entails` — these grounded
+    `KarttunenClass.polarity.toSemantics` chain theorems were over the
+    legacy `ImplicativeScenario`/`normalDevelopment` substrate; deleted
+    in Phase D-H. The polymorphic V2 analog is direct: for any
+    `BoolSEM V` and a positive (resp. negative) `KarttunenClass`,
+    `Implicative.toSemantics M .positive bg p xP c xC` IS
+    `Implicative.manageSem M bg p xP c xC` IS
+    `SEM.causallySufficient M bg p xP c xC` (rfl-chain). -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Double Negation (§2, ex. 13; §10, ex. 40)

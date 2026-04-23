@@ -63,8 +63,9 @@ def CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
 
 /-- Divisive reference (DIV): P is closed downward under ≤.
     @cite{champollion-2017} §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
-    This is the mereological analog of the subinterval property. -/
-def DIV {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
+    This is the mereological analog of the subinterval property.
+    Only requires `Preorder` since the definition only uses `≤`. -/
+def DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y ≤ x → P y
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
@@ -191,7 +192,7 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
 
     The three axioms — extensive, monotone, idempotent — are grounded
     in Mathlib's `ClosureOperator`. (Compare with the causal-SEM
-    operator `Core.Causal.normalDevelopment`: that operator is
+    operator `Core.Causal.SEM.developDet`: that operator is
     info-extensive but NOT order-monotone, per Schulz @cite{schulz-2011}
     footnote 7, so it does NOT instantiate `ClosureOperator`. The
     mereological case is genuinely closure-operator-shaped.)
@@ -755,5 +756,50 @@ theorem subserves {α : Type*} [Preorder α] {q p : α → Prop}
     (h : IsContentPart q p) : Subserves q p := h.2
 
 end IsContentPart
+
+-- ════════════════════════════════════════════════════
+-- § 16. Strict-Part Reflection and Preservation
+--      (paper @cite{bondarenko-elliott-2026} eqs. 53/54)
+-- ════════════════════════════════════════════════════
+
+/-- **Strict-part reflection** for a partial function.
+    A partial map `f : α → Option β` *reflects* proper parthood when
+    every proper sub-image `q' < f(x)` is the image of some proper
+    sub-input `x' < x`. Generic reusable formulation; specialized in
+    `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` to MSI
+    (Mapping to Sub-parts of the Input). -/
+def StrictPartReflecting {α β : Type*} [Preorder α] [Preorder β]
+    (f : α → Option β) : Prop :=
+  ∀ ⦃x q q'⦄, f x = some q → q' < q → ∃ x', x' < x ∧ f x' = some q'
+
+/-- **Strict-part preservation** for a partial function.
+    A partial map `f : α → Option β` *preserves* proper parthood when
+    every proper sub-input `x' < x` (with `f x` defined) yields a proper
+    sub-image of `f(x)`. Generic reusable formulation; specialized in
+    `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` to MSO
+    (Mapping to Sub-parts of the Output). -/
+def StrictPartPreserving {α β : Type*} [Preorder α] [Preorder β]
+    (f : α → Option β) : Prop :=
+  ∀ ⦃x x' qx⦄, x' < x → f x = some qx → ∃ qx', qx' < qx ∧ f x' = some qx'
+
+-- ════════════════════════════════════════════════════
+-- § 17. IsContentPart counterexample helper
+-- ════════════════════════════════════════════════════
+
+/-- A singleton `{q}` is **not** a conjunctive part of `p` whenever some
+    `q' ∈ p` lacks `q` as a sub-element (i.e., `¬ q ≤ q'`). The Down
+    clause of `IsContentPart` requires every `p`-element to have a
+    `{q}`-element below it; with only `q` available, `q ≤ q'` must hold
+    for every `q' ∈ p`.
+
+    Used for paper @cite{bondarenko-elliott-2026} eq. 95 to discriminate
+    classical entailment from conjunctive parthood. -/
+theorem not_isContentPart_of_singleton_not_le {α : Type*} [Preorder α]
+    {q : α} {p : α → Prop} {q' : α} (hq' : p q') (h : ¬ q ≤ q') :
+    ¬ IsContentPart (· = q) p := by
+  intro ⟨hd, _⟩
+  obtain ⟨t, ht, hle⟩ := hd q' hq'
+  -- ht : t = q (from singleton membership), so q ≤ q' would follow
+  exact h (ht ▸ hle)
 
 end Mereology

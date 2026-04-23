@@ -1,19 +1,21 @@
-/-
+import Linglib.Theories.Semantics.Causation.Sufficiency
+import Linglib.Theories.Semantics.Causation.Necessity
+
+/-!
 # Coercive Implication (@cite{nadathur-lauer-2020})
 
 "X made Y do Z" with volitional Z implies coercion: sufficiency
 (Z was determined) + volitionality (Y could choose otherwise) →
 Y's choice was overridden.
--/
 
-import Linglib.Theories.Semantics.Causation.Sufficiency
-import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Core.Causal.V2.SEM.Counterfactual
+The legacy `CausalDynamics`-based `CoerciveContext` + Kim/Sandy
+examples were deleted in Phase D-H. The polymorphic V2
+`hasCoerciveImplication` is promoted to canonical here.
+-/
 
 namespace Semantics.Causation.CoerciveImplication
 
-open Core.Causal
-open Semantics.Causation.Sufficiency
+open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/
 inductive ActionType
@@ -22,49 +24,6 @@ inductive ActionType
   | Ambiguous
   deriving DecidableEq, Repr, Inhabited
 
-/-- An event tagged with volitionality. -/
-structure TaggedEvent where
-  event : Variable
-  actionType : ActionType
-  deriving Repr
-
-namespace TaggedEvent
-
-/-- Create a volitional event -/
-def volitional (v : Variable) : TaggedEvent :=
-  { event := v, actionType := .Volitional }
-
-/-- Create a non-volitional event -/
-def nonVolitional (v : Variable) : TaggedEvent :=
-  { event := v, actionType := .NonVolitional }
-
-/-- Check if an event is volitional -/
-def isVolitional (te : TaggedEvent) : Bool :=
-  te.actionType == .Volitional
-
-end TaggedEvent
-
-/-- A situation where "make" creates coercive implication. -/
-structure CoerciveContext where
-  /-- The causal dynamics -/
-  dynamics : CausalDynamics
-  /-- The background situation -/
-  background : Situation
-  /-- The causer's action -/
-  causerAction : Variable
-  /-- The causee's action (the effect) -/
-  causeeAction : TaggedEvent
-
-namespace CoerciveContext
-
-/-- Coercion arises when effect is volitional and cause is sufficient. -/
-def hasCoerciveImplication (ctx : CoerciveContext) : Prop :=
-  ctx.causeeAction.isVolitional = true ∧
-  causallySufficient ctx.dynamics ctx.background ctx.causerAction ctx.causeeAction.event
-
-instance (ctx : CoerciveContext) : Decidable ctx.hasCoerciveImplication :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
 /-- Coercion strength: strong (volitional), weak (ambiguous), none. -/
 inductive CoercionStrength
   | Strong
@@ -72,121 +31,8 @@ inductive CoercionStrength
   | None
   deriving DecidableEq, Repr
 
-/-- Compute coercion strength. -/
-def coercionStrength (ctx : CoerciveContext) : CoercionStrength :=
-  if ¬ causallySufficient ctx.dynamics ctx.background ctx.causerAction
-      ctx.causeeAction.event then
-    .None  -- Sufficiency required for coercion
-  else match ctx.causeeAction.actionType with
-    | .Volitional => .Strong
-    | .Ambiguous => .Weak
-    | .NonVolitional => .None
-
-end CoerciveContext
-
--- Examples
-
-section Examples
-
-/-- Kim (causer) -/
-def kim : Variable := mkVar "kim_acts"
-
-/-- Sandy (causee) -/
-def sandy : Variable := mkVar "sandy"
-
-/-- Sandy leaving (volitional) -/
-def sandyLeaves : TaggedEvent :=
-  TaggedEvent.volitional (mkVar "sandy_leaves")
-
-/-- Sandy sneezing (non-volitional) -/
-def sandySneezes : TaggedEvent :=
-  TaggedEvent.nonVolitional (mkVar "sandy_sneezes")
-
-/--
-Dynamics where Kim's action causes Sandy to leave.
--/
-def kimSandyDynamics : CausalDynamics :=
-  ⟨[CausalLaw.simple kim sandyLeaves.event]⟩
-
-/--
-**"Kim made Sandy leave"** - has coercive implication.
-
-Kim's action was sufficient + Sandy leaving is volitional
-→ Sandy was coerced (didn't freely choose to leave)
--/
-theorem kim_sandy_coercive :
-    let ctx : CoerciveContext := {
-      dynamics := kimSandyDynamics
-      background := Situation.empty
-      causerAction := kim
-      causeeAction := sandyLeaves
-    }
-    ctx.hasCoerciveImplication := by
-  native_decide
-
-/--
-Dynamics where Kim causes Sandy to sneeze (odd construction).
--/
-def kimSneezeDynamics : CausalDynamics :=
-  ⟨[CausalLaw.simple kim sandySneezes.event]⟩
-
-/--
-**"Kim made Sandy sneeze"** - NO coercive implication.
-
-Kim's action was sufficient, but sneezing is non-volitional
-→ No coercion inference (you can't override an involuntary action)
--/
-theorem kim_sneeze_not_coercive :
-    let ctx : CoerciveContext := {
-      dynamics := kimSneezeDynamics
-      background := Situation.empty
-      causerAction := kim
-      causeeAction := sandySneezes
-    }
-    ¬ ctx.hasCoerciveImplication := by
-  native_decide
-
-/--
-**Coercion strength is strong for volitional actions**.
--/
-theorem coercion_strong_volitional :
-    let ctx : CoerciveContext := {
-      dynamics := kimSandyDynamics
-      background := Situation.empty
-      causerAction := kim
-      causeeAction := sandyLeaves
-    }
-    ctx.coercionStrength = .Strong := by
-  native_decide
-
-/--
-**Coercion strength is none for non-volitional actions**.
--/
-theorem coercion_none_nonvolitional :
-    let ctx : CoerciveContext := {
-      dynamics := kimSneezeDynamics
-      background := Situation.empty
-      causerAction := kim
-      causeeAction := sandySneezes
-    }
-    ctx.coercionStrength = .None := by
-  native_decide
-
-end Examples
-
-/-! ### V2 namespace for new code
-
-The legacy `CoerciveContext.hasCoerciveImplication` / `coercionStrength`
-above use `CausalDynamics`. New consumers should use V2-flavored
-predicates that take `BoolSEM` directly. -/
-
-namespace V2
-
-open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
-
 /-- V2 coercive implication: causer's action-as-`xCauser` is causally
-    sufficient for a volitional causee action-as-`xEvent`. Polymorphic
-    over value types — Bool models pass `xCauser = xEvent = true`. -/
+    sufficient for a volitional causee action-as-`xEvent`. Polymorphic. -/
 noncomputable def hasCoerciveImplication {V : Type*} {α : V → Type*}
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
@@ -203,7 +49,5 @@ noncomputable instance {V : Type*} {α : V → Type*}
     (bg : Valuation α) (causer : V) (xC : α causer) (vol : Bool)
     (effect : V) (xE : α effect) :
     Decidable (hasCoerciveImplication M bg causer xC vol effect xE) := Classical.dec _
-
-end V2
 
 end Semantics.Causation.CoerciveImplication

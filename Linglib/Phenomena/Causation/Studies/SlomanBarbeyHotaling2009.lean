@@ -1,5 +1,5 @@
-import Linglib.Core.Causal.V2.SEM.Bool
-import Linglib.Core.Causal.V2.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Bool
+import Linglib.Core.Causal.SEM.Counterfactual
 import Mathlib.Data.Finset.Card
 
 /-!
@@ -57,7 +57,7 @@ hubs. Structural predicates avoid the `develop` noncomputable cascade.
 
 namespace SlomanBarbeyHotaling2009
 
-open Core.Causal.V2 (BoolSEM CausalGraph)
+open Core.Causal (BoolSEM CausalGraph)
 
 variable {V : Type*}
 

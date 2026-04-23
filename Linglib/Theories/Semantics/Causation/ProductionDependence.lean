@@ -37,9 +37,6 @@ namespace Semantics.Causation.ProductionDependence
 
 open Core (WorldTimeIndex)
 
-open Core.Causal
-open Semantics.Causation.Sufficiency
-open Semantics.Causation.Necessity
 open Core.Verbs (Causative)
 
 /-! ## Causation Type
@@ -108,62 +105,18 @@ instance : DecidablePred ThickThinClass.IsCausativeMannerVerb :=
 
 /-! ## Asymmetric Entailment: P-CAUSE → D-CAUSE
 
-In the deterministic limit (our `CausalDynamics`), production-based
-causation (P-CAUSE) entails dependence-based causation (D-CAUSE).
+In the deterministic limit, production-based causation (P-CAUSE)
+entails dependence-based causation (D-CAUSE): in a single-pathway
+causal model (no overdetermination), a sufficient cause is also
+necessary. Under overdetermination, sufficiency and necessity come
+apart — exactly when P-CAUSE and D-CAUSE diverge.
 
-Formally: in a single-pathway causal model (no overdetermination),
-if the cause is sufficient for the effect, it is also necessary.
-This captures: if x produces y via direct energy transfer, removing
-x would prevent y. -/
-
-/-- In a single-pathway model (one causal law, no background alternatives),
-    sufficiency implies necessity.
-
-    This is the deterministic formalization of "P-CAUSE entails D-CAUSE":
-    when there is exactly one causal pathway and no overdetermination,
-    a sufficient cause is also necessary.
-
-    Note: This fails under overdetermination (see `truth_conditionally_distinct`),
-    which is exactly when P-CAUSE and D-CAUSE can come apart. -/
-theorem single_pathway_sufficiency_implies_necessity
-    (c e : Variable) (_hne : c ≠ e) :
-    let dyn := CausalDynamics.mk [CausalLaw.simple c e]
-    causallySufficient dyn Situation.empty c e →
-    causallyNecessary dyn Situation.empty c e := by
-  intro _ _
-  exact simple_law_necessity c e
-
-/-- Concrete instance of the single-pathway entailment, fully proved.
-
-    For specific variables a, b, the entailment P-CAUSE → D-CAUSE
-    holds: sufficiency implies necessity in a single-pathway model.
-    This is verified by computation. -/
-theorem single_pathway_concrete :
-    let a := mkVar "a"
-    let b := mkVar "b"
-    let dyn := CausalDynamics.mk [CausalLaw.simple a b]
-    causallySufficient dyn Situation.empty a b ∧
-    causallyNecessary dyn Situation.empty a b := by
-  constructor <;> native_decide
-
-/-- Under overdetermination, sufficiency does NOT imply necessity.
-
-    This is when P-CAUSE and D-CAUSE come apart: a cause can transfer
-    energy (sufficient) but the effect would have occurred anyway from
-    another source (not necessary).
-
-    Reuses the existing witness from `truth_conditionally_distinct`. -/
-theorem overdetermination_breaks_entailment :
-    ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
-      causallySufficient dyn s c e ∧
-      ¬ (causallyNecessary dyn s c e) := by
-  let a := mkVar "a"
-  let b := mkVar "b"
-  let c := mkVar "c"
-  let dyn := CausalDynamics.disjunctiveCausation a b c
-  let s := Situation.empty.extend b true
-  use dyn, s, a, c
-  constructor <;> native_decide
+The legacy `single_pathway_sufficiency_implies_necessity` /
+`single_pathway_concrete` / `overdetermination_breaks_entailment`
+theorems over `CausalDynamics` were deleted in Phase D-H. The
+qualitative claims are witnessed concretely via V2 `BoolSEM` models in
+study files — e.g., the overdetermination case is witnessed by
+`NadathurLauer2020.Preemption.suzy_not_but_for_when_billy_throws`. -/
 
 /-! ## Production Constraint
 
@@ -191,7 +144,7 @@ theorem thin_defaults_dependence :
 
 /-! ## Bridge to Causative
 
-P-CAUSE maps to `makeSem` (sufficiency): production causes are sufficient.
+P-CAUSE maps to `causallySufficient` (sufficiency): production causes are sufficient.
 D-CAUSE maps to `causeSem` (necessity): dependence causes are necessary.
 
 The overt verb *cause* encodes D-CAUSE and uses `Causative.cause`.
@@ -199,12 +152,12 @@ Thick lexical causatives encode P-CAUSE and align with `Causative.make`.
 
 Note: lexical causatives don't literally use `Causative` (which
 classifies periphrastic verbs), but their internal CAUSE operator has the
-same truth conditions as `makeSem` when P-CAUSE applies. -/
+same truth conditions as `causallySufficient` when P-CAUSE applies. -/
 
 /-- Map causation type to the analogous Causative.
 
     This is the structural bridge: P-CAUSE's truth conditions correspond
-    to sufficiency (`makeSem`), D-CAUSE's to necessity (`causeSem`). -/
+    to sufficiency (`causallySufficient`), D-CAUSE's to necessity (`causeSem`). -/
 def CausationType.analogousBuilder : CausationType → Causative
   | .production => .make
   | .dependence => .cause
@@ -329,13 +282,11 @@ theorem production_selects_completion :
 theorem dependence_selects_member :
     CausationType.dependence.selectionMode = .memberOfSufficientSet := rfl
 
-/-- Roundtrip: `CausationType.selectionMode` → `CCSelectionMode.toSemantics`
-    agrees with `CausationType.analogousBuilder` → `Causative.toSemantics`.
-
-    This proves the three independent encodings of sufficiency/necessity
-    (CausationType, CCSelectionMode, Causative) are consistent. -/
-theorem selectionMode_roundtrip (ct : CausationType) :
-    ct.selectionMode.toSemantics = ct.analogousBuilder.toSemantics := by
-  cases ct <;> rfl
+/-! `selectionMode_roundtrip` removed in Phase D-G2 — the legacy bridge
+between `CCSelectionMode.toSemantics` (now deleted) and
+`Causative.toSemantics` (now polymorphic V2-shaped, different signature).
+The three encodings (CausationType, CCSelectionMode, Causative) remain
+consistent at the enum level (`production_selects_completion` etc.); the
+semantic-dispatch consistency follows from the V2 hub structure. -/
 
 end Semantics.Causation.ProductionDependence
