@@ -1,6 +1,7 @@
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Causal.SEM.Monotonicity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Tense.Aspect.Core
@@ -836,3 +837,48 @@ theorem implicative_sufficiency_matches (sc : ImplicativeScenario) :
   Iff.rfl
 
 end Semantics.Causation.ComplementEntailing
+
+-- ════════════════════════════════════════════════════
+-- § V2 namespace for new code
+-- ════════════════════════════════════════════════════
+
+/-! The legacy `manageSem` / `failSem` / `ImplicativeScenario` /
+`PrerequisiteAccount` above remain on the `CausalDynamics` API for
+backward compat with `Karttunen1971.lean`, `Nadathur2024.lean`, and
+`Implicative.toSemantics` dispatch.
+
+New consumers should `open Semantics.Causation.Implicative.V2` and use
+the V2-flavored predicates which delegate to V2 `BoolSEM.causallySufficient`
+(for `manageSem`) and V2 `BoolSEM.causallyNecessary` (for `prerequisite_necessary`,
+when needed).
+
+`ImplicativeScenario`-style struct ports deferred — V2 consumers can
+call the predicates directly on their `BoolSEM`. -/
+
+namespace Semantics.Causation.Implicative.V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+
+/-- V2 manage-sem: prerequisite is causally sufficient for complement. -/
+abbrev manageSem {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (prerequisite complement : V) : Prop :=
+  Core.Causal.V2.BoolSEM.causallySufficient M background prerequisite complement
+
+/-- V2 fail-sem: prerequisite is NOT causally sufficient for complement. -/
+abbrev failSem {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (prerequisite complement : V) : Prop :=
+  ¬ manageSem M background prerequisite complement
+
+/-- V2 necessity presupposition: prerequisite is causally necessary
+    (Nadathur 2024 Def 10b) for complement. -/
+abbrev necessityPresup {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (prerequisite complement : V) : Prop :=
+  Core.Causal.V2.BoolSEM.causallyNecessary M background prerequisite complement
+
+end Semantics.Causation.Implicative.V2
