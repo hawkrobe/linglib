@@ -4,6 +4,53 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.257] - 2026-04-23
+
+### O'Donnell 2015 Phase 2: CFGFragment substrate
+
+Partial-derivation-tree data type for fragment-grammar storage units
+per @cite{odonnell-2015} §2.3.6.
+
+- **New file**: `Linglib/Core/Computability/CFGFragment.lean` (~190
+  LOC). Sibling of `CFGTree.lean`. Provides `CFGFragment T N` (an
+  inductive where leaves carry `Symbol T N` rather than just `T`),
+  `yieldT` / `yieldNT` (terminal yield ignoring open slots /
+  open-slot list), `isComplete`, and `ofCFGTree` (embedding of
+  complete derivations), with five round-trip theorems
+  (`ofCFGTree_isComplete`, `yieldT_ofCFGTree`, `yieldNT_ofCFGTree`,
+  plus list versions).
+- Reuses mathlib's `Symbol T N` (from
+  `Mathlib.Computability.ContextFreeGrammar`) at leaves rather than
+  re-rolling a sum type.
+- Sibling-discipline placement: lives in
+  `Linglib/Core/Computability/` next to `CFGTree.lean`,
+  `PumpingLemma.lean`, etc. — not in a new `Core/Grammar/` directory,
+  honoring the principle of "extend the existing substrate rather
+  than fork it."
+- The inverse projection (complete fragment → `CFGTree`) and
+  composition (substituting subtrees into open slots) are deferred
+  to a Phase 3 file when fragment-grammar semantics needs them.
+
+Build: `Linglib.Core.Computability.CFGFragment` builds in ~1.7s
+clean.
+
+## [0.230.256] - 2026-04-23
+
+### GP2009 quality pass
+
+Follow-up to the Scales.lean cleanup (0.230.255), addressing the
+mathlib-reviewer concerns that migrated to GP2009 during the
+ScalarImplicatures/Basic.lean split.
+
+- All 30× `native_decide` → `decide` per `feedback_proof_style.md`. Build
+  time unchanged; the proofs are small finite data checks that `decide`
+  handles in milliseconds.
+- Inlined `competenceExplainsBelief : Bool` thin wrapper (used once).
+- Renamed `someStudentsSleep_result` / `someStudentsSleep_DE_result` →
+  `someStudentsSleepUE` / `someStudentsSleepDE` (drop redundant `_result`
+  suffix; `UE`/`DE` matches the `SomeNotAllDE` pattern).
+- Replaced deprecated `push_neg at h` with `push Not at h`.
+
 ## [0.230.255] - 2026-04-23
 
 ### Scales.lean quality pass

@@ -1593,6 +1593,7 @@ import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
 import Linglib.Core.Computability.CFGTree
+import Linglib.Core.Computability.CFGFragment
 import Linglib.Core.Computability.PumpingLemma
 import Linglib.Core.Computability.NonContextFree
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
