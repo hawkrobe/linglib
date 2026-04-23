@@ -159,7 +159,7 @@ This contradicts the conventionalist claim that SIs occur
 If SIs were systematic, rates should be uniformly high across
 all embedding types. -/
 theorem embedding_not_systematic :
-    94 - 3 > (85 : Nat) := by native_decide
+    94 - 3 > (85 : Nat) := by decide
 
 /-- Only think shows substantial local SI endorsement among embedded
 conditions. At 50% (1a) and 65% (1b), think is the only embedding
@@ -169,8 +169,8 @@ artifacts of the inference paradigm. -/
 theorem think_uniquely_elevated :
     50 > (35 : Nat) ∧ 65 > (35 : Nat) ∧  -- think in 1a and 1b
     27 < (35 : Nat) ∧ 3 < (35 : Nat) ∧ 32 < (35 : Nat) := by
-  refine ⟨by native_decide, by native_decide, by native_decide,
-          by native_decide, by native_decide⟩
+  refine ⟨by decide, by decide, by decide,
+          by decide, by decide⟩
 
 -- ============================================================================
 -- Step 3: Experiment 2 — Paradigm Bias (§3, n=29)
@@ -200,16 +200,16 @@ This confirms three a priori worries about the inference paradigm (§2):
 (2) the question "Does X imply Y?" makes the SI contextually relevant,
 (3) superficial similarity to valid inferences may cause errors. -/
 theorem paradigm_inflates_SI_rates :
-    exp2.inferenceRate > exp2.verificationRate + 20 := by native_decide
+    exp2.inferenceRate > exp2.verificationRate + 20 := by decide
 
 /-- In the more neutral verification task, SI rate is below 50%.
 This argues against even weak defaultism. -/
 theorem verification_below_half :
-    exp2.verificationRate < 50 := by native_decide
+    exp2.verificationRate < 50 := by decide
 
 /-- Near-perfect control accuracy rules out a positive response bias. -/
 theorem controls_rule_out_bias :
-    exp2.controlAccuracy > 95 := by native_decide
+    exp2.controlAccuracy > 95 := by decide
 
 -- ============================================================================
 -- Step 4: Experiment 3 — Verification Shows No Local SIs (Table 3, §5, n=26)
@@ -265,7 +265,7 @@ empirical finding against mainstream conventionalism. -/
 theorem verification_no_local_SI_in_UE :
     exp3Results.filter (λ r => quantifierMonotonicity r.quantifier == .upwardEntailing)
       |>.all (λ r => r.verificationTrueRate == 100) := by
-  native_decide
+  decide
 
 /-- Inference rates cluster around 50% for ALL conditions (46–62%),
 regardless of monotonicity. The inference paradigm produces a roughly
@@ -275,7 +275,7 @@ The paper reports: "all rates, for DE and non-DE items alike, clustered
 around chance level, give or take 12%" (p.23). -/
 theorem inference_clusters_around_chance :
     exp3Results.all (λ r => r.inferenceRate ≥ 40 ∧ r.inferenceRate ≤ 65) := by
-  native_decide
+  decide
 
 /-- Verification perfectly tracks the classical (non-SI) truth value.
 When the classical reading is true (verificationPred = false, i.e.,
@@ -287,7 +287,7 @@ local-SI reading. -/
 theorem verification_tracks_classical_reading :
     exp3Results.all (λ r =>
       (r.verificationTrueRate ≥ 96 ∨ r.verificationTrueRate ≤ 4)) := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- Step 5: Paradigm Correction — Only "think" Survives
@@ -302,7 +302,7 @@ bias." Only think (avg 57.5%) exceeds the observed paradigm bias level
 theorem only_think_survives_correction :
     27 ≤ (50 : Nat) ∧ 32 ≤ (50 : Nat) ∧ 3 ≤ (50 : Nat) ∧  -- all, want, must: ≤ baseline
     (50 + 65) / 2 > (50 : Nat) := by                          -- think avg: above baseline
-  refine ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  refine ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- Step 6: Gricean Explanation — Competence Under Believe (§8, pp.28-29)
@@ -352,7 +352,7 @@ theorem competence_does_not_generalize
     (strongCompetence : ∀ c, ShotAtAll c ∨ ShotAtNotAll c) :
     ∃ c, ShotAtNotAll c := by
   by_contra h
-  push_neg at h
+  push Not at h
   exact globalSI (fun c => (strongCompetence c).elim id (fun h2 => absurd h2 (h c)))
 
 -- ============================================================================
@@ -417,7 +417,7 @@ theorem no_SI_ambiguity_detected :
       genuineAmbiguityResults.length == 70 ∧
     -- Alleged SI ambiguity: "could be either" rates ≤ 14% for all items
     exp4Results.all (λ r => r.eitherRate ≤ 14) := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Total non-DE responses consistent with conventionalism: only ~10%.
 The paper reports (p.26-27): "only 9 out of 88 responses (i.e. 10%)
@@ -426,12 +426,12 @@ of these responses were associated with non-monotonic *exactly two*." -/
 theorem minimal_conventionalist_support :
     -- 9 out of 88 non-DE trial responses = 10%
     -- (4 non-DE items × 22 participants = 88 responses)
-    (9 : Nat) * 100 / 88 ≤ 11 := by native_decide
+    (9 : Nat) * 100 / 88 ≤ 11 := by decide
 
 /-- The gap between genuine and alleged ambiguity detection is massive:
 70% vs 6% = 64pp. This is the strongest result against conventionalism. -/
 theorem ambiguity_gap :
-    (70 : Nat) - 6 > 60 := by native_decide
+    (70 : Nat) - 6 > 60 := by decide
 
 -- ============================================================================
 -- Literature Survey (from @cite{geurts-2010} Table 1)
@@ -469,12 +469,12 @@ This is inconsistent with defaultism's prediction that SIs are
 the norm and should arise at high rates. -/
 theorem literature_average_below_fifty :
     (literatureData.map (·.upperBoundRate)).sum / literatureData.length < 50 := by
-  native_decide
+  decide
 
 /-- No study in the survey exceeds 65%. -/
 theorem literature_max_below_seventy :
     literatureData.all (·.upperBoundRate < 70) := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- Part II: NeoGricean Bridge — Theory Predictions vs Empirical Data
@@ -502,11 +502,11 @@ def SomeNotAllDE : Prop :=
 instance : Decidable SomeNotAllDE := inferInstanceAs (Decidable (QuantImplicatureArises ..))
 
 /-- "some students sleep": scalar item is "some" in UE context. -/
-def someStudentsSleep_result : List ScalarImplicatureResult :=
+def someStudentsSleepUE : List ScalarImplicatureResult :=
   deriveFromWords ["some", "students", "sleep"] .upward
 
 /-- "some students sleep" in DE: implicature blocked. -/
-def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
+def someStudentsSleepDE : List ScalarImplicatureResult :=
   deriveFromWords ["some", "students", "sleep"] .downward
 
 /-- Exp 1a simple rate (Table 2). -/
@@ -548,11 +548,11 @@ theorem gricean_predicts_embedding_pattern :
     (griceanEmbeddingPredictions.find? (λ p => p.embedding == .think)).isSome ∧
     thinkRate ≥ 50 ∧
     mustRate < 5 := by
-  native_decide
+  decide
 
 /-- NeoGricean predicts SIs arise in UE contexts. -/
 theorem ue_implicature_matches_data :
-    someAllBlocking.implicatureInUE = true := by native_decide
+    someAllBlocking.implicatureInUE = true := by decide
 
 /-- DE blocking prediction matches Experiment 3 verification data. -/
 theorem de_blocking_matches_data :
@@ -564,49 +564,49 @@ theorem gricean_supported :
     simpleRate - mustRate > 85 ∧
     thinkRate ≥ 50 ∧
     allVerificationRate = 100 := by
-  native_decide
+  decide
 
-/-- Competence-based explanation for belief reports. -/
-def competenceExplainsBelief : Bool :=
-  thinkRate > mustRate + 40
-
+/-- Competence-based explanation for belief reports: think-rate exceeds
+must-rate by more than 40pp, consistent with the @cite{geurts-2010}
+account that elevated SI rates under "think" reflect the speaker-
+competence assumption rather than a local SI mechanism. -/
 theorem competence_explains_think_bridge :
-    competenceExplainsBelief = true := by native_decide
+    thinkRate > mustRate + 40 := by decide
 
 -- Comparing Neo-Gricean variants
 
 open _root_.Implicature
 
 theorem defaultism_predicts_high_rate :
-    predictsHighNeutralRate levinsonParams = true := by native_decide
+    predictsHighNeutralRate levinsonParams = true := by decide
 
 theorem contextualism_predicts_moderate_rate :
-    predictsHighNeutralRate geurtsParams = false := by native_decide
+    predictsHighNeutralRate geurtsParams = false := by decide
 
 theorem only_contextualism_predicts_task_effect :
     predictsTaskEffect levinsonParams = false ∧
-    predictsTaskEffect geurtsParams = true := by native_decide
+    predictsTaskEffect geurtsParams = true := by decide
 
 theorem variants_make_different_predictions :
     levinsonParams.predictedNeutralRate ≠ geurtsParams.predictedNeutralRate ∧
     predictsTaskEffect levinsonParams ≠ predictsTaskEffect geurtsParams := by
-  native_decide
+  decide
 
 theorem verification_matches_contextualism :
     let predicted := geurtsParams.predictedNeutralRate
     let observed := exp2.verificationRate
     (max predicted observed) - (min predicted observed) < 5 := by
-  native_decide
+  decide
 
 theorem verification_far_from_defaultism :
     let predicted := levinsonParams.predictedNeutralRate
     let observed := exp2.verificationRate
     predicted - observed > 50 := by
-  native_decide
+  decide
 
 theorem task_effect_observed :
     exp2.inferenceRate > exp2.verificationRate + 20 := by
-  native_decide
+  decide
 
 theorem data_supports_contextualism_over_defaultism :
     predictsTaskEffect geurtsParams = true ∧
@@ -614,17 +614,17 @@ theorem data_supports_contextualism_over_defaultism :
     (max geurtsParams.predictedNeutralRate exp2.verificationRate) -
     (min geurtsParams.predictedNeutralRate exp2.verificationRate) < 5 ∧
     levinsonParams.predictedNeutralRate - exp2.verificationRate > 50 := by
-  native_decide
+  decide
 
 -- NeoGricean vs RSA agreement
 
 /-- NeoGricean derives "not all" from "some". -/
 theorem neogricean_derives_not_all :
-    HasImplicature someStudentsSleep_result "all" := by decide
+    HasImplicature someStudentsSleepUE "all" := by decide
 
 /-- NeoGricean explicitly blocks SIs in DE contexts. -/
 theorem de_blocking :
-    ¬HasImplicature someStudentsSleep_DE_result "all" := by decide
+    ¬HasImplicature someStudentsSleepDE "all" := by decide
 
 -- Hurford and Singh prediction bridges
 

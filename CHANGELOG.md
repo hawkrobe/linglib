@@ -4,6 +4,23 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.256] - 2026-04-23
+
+### GP2009 quality pass
+
+Follow-up to the Scales.lean cleanup (0.230.255), addressing the
+mathlib-reviewer concerns that migrated to GP2009 during the
+ScalarImplicatures/Basic.lean split.
+
+- All 30× `native_decide` → `decide` per `feedback_proof_style.md`. Build
+  time unchanged; the proofs are small finite data checks that `decide`
+  handles in milliseconds.
+- Inlined `competenceExplainsBelief : Bool` thin wrapper (used once).
+- Renamed `someStudentsSleep_result` / `someStudentsSleep_DE_result` →
+  `someStudentsSleepUE` / `someStudentsSleepDE` (drop redundant `_result`
+  suffix; `UE`/`DE` matches the `SomeNotAllDE` pattern).
+- Replaced deprecated `push_neg at h` with `push Not at h`.
+
 ## [0.230.255] - 2026-04-23
 
 ### Scales.lean quality pass
