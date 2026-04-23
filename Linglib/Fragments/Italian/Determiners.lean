@@ -1,11 +1,12 @@
 import Linglib.Features.Gender
-import Linglib.Core.Lexical.Word
+import Linglib.Theories.Semantics.Quantification.Lexicon
 
 /-! # Italian Determiners (Quantifiers)
 
-Quantifier lexicon with syntactic and semantic properties, following
-the `QuantifierEntry` pattern from `Fragments/English/Determiners.lean`
-but extended with gender/number agreement for Italian.
+Quantifier lexicon with syntactic and semantic properties. Reuses the
+shared `QuantifierEntry` from
+`Theories/Semantics/Quantification/Lexicon.lean` and extends it with
+gender agreement.
 
 Italian quantifiers agree in gender and/or number with their NP:
 - *ogni* (every): invariant, singular
@@ -20,53 +21,14 @@ Italian quantifiers agree in gender and/or number with their NP:
 namespace Fragments.Italian.Determiners
 
 open Features (SurfaceGender)
+open Theories.Semantics.Quantification.Lexicon
+  (QuantifierEntry QForce Monotonicity Strength)
 
--- ============================================================================
--- § 1: Shared Enums
--- ============================================================================
-
-/-- Quantificational force. -/
-inductive QForce where
-  | universal
-  | existential
-  | negative
-  | proportional
-  deriving DecidableEq, Repr
-
-/-- Monotonicity in the scope argument. -/
-inductive Monotonicity where
-  | increasing
-  | decreasing
-  | nonMonotone
-  deriving DecidableEq, Repr
-
-/-- Weak/strong classification. -/
-inductive Strength where
-  | weak
-  | strong
-  deriving DecidableEq, Repr
-
--- Gender for agreement: uses Features.SurfaceGender.
-
--- ============================================================================
--- § 2: Quantifier Entry
--- ============================================================================
-
-/-- Italian quantifier entry with gender/number agreement. -/
-structure ItalianQuantifierEntry where
-  form : String
-  qforce : QForce
-  monotonicity : Monotonicity := .increasing
-  strength : Strength := .weak
+/-- Italian quantifier entry: shared `QuantifierEntry` + gender. -/
+structure ItalianQuantifierEntry extends QuantifierEntry where
   /-- Gender agreement (none = invariant) -/
   gender : Option SurfaceGender := none
-  /-- Number restriction -/
-  number : Option Number := none
-  deriving Repr, BEq
-
--- ============================================================================
--- § 3: Quantifier Data
--- ============================================================================
+  deriving Repr
 
 /-- *ogni* — every (invariant, singular, universal). -/
 def ogni : ItalianQuantifierEntry :=
@@ -74,30 +36,30 @@ def ogni : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , number := some .sg }
+  , numberRestriction := some .sg }
 
 /-- *qualche* — some (invariant, singular, existential). -/
 def qualche : ItalianQuantifierEntry :=
   { form := "qualche"
   , qforce := .existential
   , monotonicity := .increasing
-  , number := some .sg }
+  , numberRestriction := some .sg }
 
 /-- *nessuno* — no one (masculine, singular, negative concord). -/
 def nessuno : ItalianQuantifierEntry :=
   { form := "nessuno"
   , qforce := .negative
   , monotonicity := .decreasing
-  , gender := some .masculine
-  , number := some .sg }
+  , numberRestriction := some .sg
+  , gender := some .masculine }
 
 /-- *nessuna* — no one (feminine, singular, negative concord). -/
 def nessuna : ItalianQuantifierEntry :=
   { form := "nessuna"
   , qforce := .negative
   , monotonicity := .decreasing
-  , gender := some .feminine
-  , number := some .sg }
+  , numberRestriction := some .sg
+  , gender := some .feminine }
 
 /-- *tutti* — all (masculine, plural, universal). -/
 def tutti : ItalianQuantifierEntry :=
@@ -105,8 +67,8 @@ def tutti : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , gender := some .masculine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .masculine }
 
 /-- *tutte* — all (feminine, plural, universal). -/
 def tutte : ItalianQuantifierEntry :=
@@ -114,60 +76,56 @@ def tutte : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , gender := some .feminine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .feminine }
 
 /-- *alcuni* — some (masculine, plural, existential). -/
 def alcuni : ItalianQuantifierEntry :=
   { form := "alcuni"
   , qforce := .existential
   , monotonicity := .increasing
-  , gender := some .masculine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .masculine }
 
 /-- *alcune* — some (feminine, plural, existential). -/
 def alcune : ItalianQuantifierEntry :=
   { form := "alcune"
   , qforce := .existential
   , monotonicity := .increasing
-  , gender := some .feminine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .feminine }
 
 /-- *molti* — many (masculine, plural, proportional). -/
 def molti : ItalianQuantifierEntry :=
   { form := "molti"
   , qforce := .proportional
   , monotonicity := .increasing
-  , gender := some .masculine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .masculine }
 
 /-- *molte* — many (feminine, plural, proportional). -/
 def molte : ItalianQuantifierEntry :=
   { form := "molte"
   , qforce := .proportional
   , monotonicity := .increasing
-  , gender := some .feminine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .feminine }
 
 /-- *pochi* — few (masculine, plural, proportional, decreasing). -/
 def pochi : ItalianQuantifierEntry :=
   { form := "pochi"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , gender := some .masculine
-  , number := some .pl }
+  , numberRestriction := some .pl
+  , gender := some .masculine }
 
 /-- *poche* — few (feminine, plural, proportional, decreasing). -/
 def poche : ItalianQuantifierEntry :=
   { form := "poche"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , gender := some .feminine
-  , number := some .pl }
-
--- ============================================================================
--- § 4: Lexicon Access
--- ============================================================================
+  , numberRestriction := some .pl
+  , gender := some .feminine }
 
 /-- All Italian quantifier entries. -/
 def allQuantifiers : List ItalianQuantifierEntry := [
@@ -178,10 +136,6 @@ def allQuantifiers : List ItalianQuantifierEntry := [
 /-- Lookup by form. -/
 def lookup (form : String) : Option ItalianQuantifierEntry :=
   allQuantifiers.find? λ q => q.form == form
-
--- ============================================================================
--- § 5: Verification Theorems
--- ============================================================================
 
 /-- *ogni* is universal, increasing, and strong. -/
 theorem ogni_universal :

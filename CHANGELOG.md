@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.262] - 2026-04-23
+
+### Italian Determiners: drop duplicate enums
+
+`Fragments/Italian/Determiners.lean` redeclared `QForce`/`Monotonicity`/`Strength`
+identical to the shared enums in `Theories/Semantics/Quantification/Lexicon.lean`.
+Refactored `ItalianQuantifierEntry` to `extends QuantifierEntry` plus a
+single language-specific `gender : Option SurfaceGender` field. Renamed
+`number` → `numberRestriction` to match the inherited field. All 12
+entries and 7 verification theorems unchanged in semantics. Zero
+external consumers, so no downstream rewires needed.
+
 ## [0.230.261] - 2026-04-23
 
 ### English Determiners fragment cleanup (Cut B: parameters → studies)
