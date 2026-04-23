@@ -1,4 +1,4 @@
-import Linglib.Core.SearchEfficiency
+import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.Psychophysics
 import Linglib.Theories.Pragmatics.RSA.Channel
@@ -67,7 +67,7 @@ set_option autoImplicit false
 
 namespace GilesEtAl2026
 
-open Core.SearchEfficiency
+open Phenomena.Reference.SearchEfficiency
 
 -- ============================================================================
 -- §1. Regression Results

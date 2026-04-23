@@ -1,4 +1,4 @@
-import Linglib.Core.ExtractionMorphology
+import Linglib.Phenomena.FillerGap.ExtractionMorphology
 import Linglib.Core.Lexical.Word
 
 /-!

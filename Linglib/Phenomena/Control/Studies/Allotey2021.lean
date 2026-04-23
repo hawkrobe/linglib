@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Syntax.Minimalism.LongDistanceAgree
 import Linglib.Fragments.Ga.Predicates
-import Linglib.Core.NullSubject.Basic
+import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Complementation.Typology
 
@@ -63,7 +63,7 @@ namespace Allotey2021
 open Syntax.Minimalism.MinimalPronoun
 open Syntax.Minimalism.LongDistanceAgree
 open Landau2015
-open Core.NullSubject (ProDropProfile)
+open Phenomena.NullSubject (ProDropProfile)
 open Fragments.Ga (EmbeddedClauseType clauseProperties clauseComplementizer
                    complementizer_isFinite_eq_finiteFlag
                    Complementizer Control CTP)

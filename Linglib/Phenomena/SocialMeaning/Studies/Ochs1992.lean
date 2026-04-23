@@ -1,4 +1,4 @@
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -31,7 +31,7 @@ The core formal contribution is modeling indirect indexicality as
 - **Field 2** (`stanceGenderAssoc`): maps interactional stances to
   gender identity poles, with graded (non-exclusive) associations
 - **Composition** (`composedAssoc`): the matrix product of the two
-  fields via `Core.SocialMeaning.composeIndex`, deriving the indirect
+  fields via `Phenomena.SocialMeaning.IndexicalField.composeIndex`, deriving the indirect
   form–gender association
 
 Non-exclusivity is then a *theorem* about the composed field: when
@@ -52,9 +52,9 @@ mediation thesis (Figure 14.1):
 
 ## Connections
 
-* `Core.SocialMeaning.composeIndex`: the composition operation
+* `Phenomena.SocialMeaning.IndexicalField.composeIndex`: the composition operation
   formalized as a general primitive for indirect indexicality
-* `Core.SocialMeaning.IndexicalField`: the composed field is lifted
+* `Phenomena.SocialMeaning.IndexicalField.IndexicalField`: the composed field is lifted
   to an `IndexicalField`, connecting to @cite{eckert-2008}'s framework
   which explicitly builds on @cite{ochs-1992} and @cite{silverstein-1976}
 * `Burnett2019`: RSA model of persona
@@ -66,7 +66,7 @@ set_option autoImplicit false
 
 namespace Ochs1992
 
-open Core.SocialMeaning
+open Phenomena.SocialMeaning.IndexicalField
 
 -- ============================================================================
 -- §1. Types

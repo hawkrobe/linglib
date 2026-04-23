@@ -1,4 +1,4 @@
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Mathlib.Order.Monotone.Basic
 

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.PolarityItems
@@ -48,7 +48,7 @@ open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 -- § 1. High vs Low EN (re-exported from ExpletiveNegation)
 -- ════════════════════════════════════════════════════
 
-open Core (ENType)
+open Phenomena.Negation.ExpletiveNegation (ENType)
 
 /-- Constructions relevant to EN licensing. Each has a theory-derived
     ambidirectionality status (§3) and an empirically-observed EN status

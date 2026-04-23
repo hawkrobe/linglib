@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Core.Relativization.Hierarchy
-import Linglib.Core.SubjectProperties
+import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Causation.Typology
@@ -46,7 +46,7 @@ hierarchy parallel between the AH and causee demotion is proved below.
 @cite{comrie-1989} argues that "subject" is not a primitive grammatical
 relation but a **bundle** of coding and behavioral properties that converge
 in accusative languages and diverge under ergativity. Formalized in
-`Core.SubjectProperties`.
+`Phenomena.Subjecthood.SubjectProperties`.
 
 ## Relative clauses and the AH (Ch 7)
 
@@ -81,7 +81,7 @@ imported by every downstream module. -/
 
 open Features.Prominence (AnimacyLevel ArgumentRole)
 open Phenomena.Alignment.Typology (AlignmentType)
-open Core.SubjectProperties
+open Phenomena.Subjecthood.SubjectProperties
 
 -- ============================================================================
 -- § 2: Alignment → Differential Marking Direction
@@ -131,7 +131,7 @@ properties also pick S=P (**syntactic** ergativity, rare) or S=A
 
 The `toSubjectBundle` function derives the predicted subject property
 bundle from alignment type, so the three stipulated bundles in
-`Core.SubjectProperties` become consequences of alignment classification
+`Phenomena.Subjecthood.SubjectProperties` become consequences of alignment classification
 rather than independent definitions. -/
 
 /-- Derive the predicted subject property bundle from alignment type.

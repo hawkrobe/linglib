@@ -1,6 +1,6 @@
 import Linglib.Core.Alternation
 import Linglib.Theories.Semantics.Causation.Morphological
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Applicative
 
 /-!
@@ -24,7 +24,7 @@ This study file bridges @cite{creissels-2025}'s framework (formalized in
 `Core/Alternation.lean`) to existing linglib infrastructure:
 
 - `MorphologicalCausation.lean`: causativization and decausativization
-- `Core/VoiceSystem.lean`: pivot-based voice system typology
+- `Phenomena/ArgumentStructure/VoiceSystem.lean`: pivot-based voice system typology
 - `Minimalism/Applicative.lean`: Pylkkänen's high/low applicatives
 - `Core/RootDimensions.lean`: Levin's diathesis alternation diagnostics
 -/

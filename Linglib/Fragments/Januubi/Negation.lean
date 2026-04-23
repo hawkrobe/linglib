@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
 # Januubi Arabic: Negation and Expletive Negation Markers

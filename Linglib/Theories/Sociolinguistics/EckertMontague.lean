@@ -1,5 +1,5 @@
 import Linglib.Theories.Sociolinguistics.SCM
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -24,7 +24,7 @@ personae — those consistent with the social properties it indexes.
 ## Bridge: `fromIndexicalField`
 
 The `fromIndexicalField` function converts sign-valued indexical fields
-(from `Core.SocialMeaning`) into grounded fields over the SCM property
+(from `Phenomena.SocialMeaning.IndexicalField`) into grounded fields over the SCM property
 space. This bridges existing studies (BSB2022, B&S2024) to Burnett's
 formalism:
 - positive association → positive pole property
@@ -89,7 +89,7 @@ theorem emField_antitone {Variant : Type} {ps : PropertySpace}
     - `association(v, d) < 0` → negative pole of dimension d
     - `association(v, d) = 0` → no property on dimension d -/
 def scmPropertyIndexed {Variant : Type}
-    (field : Core.SocialMeaning.IndexicalField Variant SocialDimension)
+    (field : Phenomena.SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
     (v : Variant) : SCMProperty → Prop
   | .competent     => field.association v .competence > 0
   | .incompetent   => field.association v .competence < 0
@@ -99,7 +99,7 @@ def scmPropertyIndexed {Variant : Type}
   | .antiSolidary  => field.association v .antiSolidarity > 0
 
 instance {Variant : Type}
-    (field : Core.SocialMeaning.IndexicalField Variant SocialDimension)
+    (field : Phenomena.SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
     (v : Variant) : DecidablePred (scmPropertyIndexed field v) :=
   fun prop => match prop with
   | .competent     => inferInstanceAs (Decidable (_ > _))
@@ -110,7 +110,7 @@ instance {Variant : Type}
   | .antiSolidary  => inferInstanceAs (Decidable (_ > _))
 
 def scmPropertiesFromField {Variant : Type}
-    (field : Core.SocialMeaning.IndexicalField Variant SocialDimension)
+    (field : Phenomena.SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
     (v : Variant) : Finset SCMProperty :=
   Finset.univ.filter (scmPropertyIndexed field v)
 
@@ -118,7 +118,7 @@ def scmPropertiesFromField {Variant : Type}
     consistent: no variant can index both poles of the same dimension,
     because `x > 0` and `x < 0` cannot both hold. -/
 theorem scmPropertiesFromField_consistent {Variant : Type}
-    (field : Core.SocialMeaning.IndexicalField Variant SocialDimension)
+    (field : Phenomena.SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension)
     (v : Variant) :
     scmSpace.isConsistent (scmPropertiesFromField field v) = true := by
   simp only [PropertySpace.isConsistent]
@@ -133,7 +133,7 @@ theorem scmPropertiesFromField_consistent {Variant : Type}
 /-- Convert a sign-valued `IndexicalField` to a `GroundedField` over
     the SCM property space. -/
 def fromIndexicalField {Variant : Type}
-    (field : Core.SocialMeaning.IndexicalField Variant SocialDimension) :
+    (field : Phenomena.SocialMeaning.IndexicalField.IndexicalField Variant SocialDimension) :
     GroundedField Variant scmSpace :=
   { indexedProperties := scmPropertiesFromField field
     indexed_consistent := scmPropertiesFromField_consistent field }

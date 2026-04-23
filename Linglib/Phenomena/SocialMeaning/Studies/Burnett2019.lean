@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SMG
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic

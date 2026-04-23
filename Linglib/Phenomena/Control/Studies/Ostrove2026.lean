@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
-import Linglib.Core.NullSubject.Basic
+import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Complementation.Typology
 
@@ -61,7 +61,7 @@ open Syntax.Minimalism.MinimalPronoun
 open Landau2015
 open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (EmbeddedClauseType clauseProperties)
-open Core.NullSubject (ProDropProfile)
+open Phenomena.NullSubject (ProDropProfile)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Clause Type Verification (26)

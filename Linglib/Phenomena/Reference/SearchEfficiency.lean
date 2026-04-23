@@ -45,7 +45,7 @@ just abstract semantic noise.
 
 set_option autoImplicit false
 
-namespace Core.SearchEfficiency
+namespace Phenomena.Reference.SearchEfficiency
 
 -- ============================================================================
 -- § Display Properties
@@ -125,4 +125,4 @@ def searchEfficiencyPredicts (dt : DisplayType) : Bool :=
   | .baseline  => false  -- intermediate (lower than sLowRHigh)
   | .sHighRLow => false  -- low overinformativeness predicted
 
-end Core.SearchEfficiency
+end Phenomena.Reference.SearchEfficiency

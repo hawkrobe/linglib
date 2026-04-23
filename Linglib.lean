@@ -60,7 +60,7 @@ import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Core.Conjectures
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Parse
@@ -73,9 +73,9 @@ import Linglib.Core.Question.Partition.Lattice
 import Linglib.Core.Question.Partition.Cells
 import Linglib.Core.Question.Partition.Binary
 import Linglib.Core.Question.Partition.Negativity
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
-import Linglib.Core.PolarityPartition
+import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Core.PropertyDomain
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
@@ -105,8 +105,8 @@ import Linglib.Features.AssertionTypes
 import Linglib.Features.ImplicatureTypes
 import Linglib.Features.FelicityTypes
 import Linglib.Features.ScopeTypes
-import Linglib.Core.ExtractionMorphology
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.FillerGap.ExtractionMorphology
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Core.Alternation
 import Linglib.Core.Causal.BayesNet
 import Linglib.Core.Causal.SEM.Counterfactual
@@ -268,7 +268,7 @@ import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Lexical.ExpressiveModifier
 import Linglib.Core.Efficiency
-import Linglib.Core.SearchEfficiency
+import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.Probability.PMFFin
@@ -302,10 +302,10 @@ import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.Roles
 import Linglib.Core.Mood
 import Linglib.Core.Modality.DeonticNecessity
-import Linglib.Core.SubjectProperties
-import Linglib.Core.NullSubject.Basic
-import Linglib.Core.NullSubject.Defs
-import Linglib.Core.NullSubject.Universals
+import Linglib.Phenomena.Subjecthood.SubjectProperties
+import Linglib.Phenomena.NullSubject.Basic
+import Linglib.Phenomena.NullSubject.Defs
+import Linglib.Phenomena.NullSubject.Universals
 import Linglib.Features.Subjectivity
 import Linglib.Datasets.WALS.Datapoint
 import Linglib.Datasets.WALS.Languages

@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
 # English Predicates

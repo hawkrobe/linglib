@@ -65,7 +65,7 @@ named theorem (`ga_disagrees_with_F101A`) rather than papered over.
 
 namespace Phenomena.Pronouns.ProDropRegistry
 
-open Core.NullSubject
+open Phenomena.NullSubject
 open Datasets.WALS.F101A
 
 /-- The languages currently formalized in linglib for the pro-drop /

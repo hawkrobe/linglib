@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Datasets.WALS.Features.F112A
 import Linglib.Datasets.WALS.Features.F113A
 import Linglib.Datasets.WALS.Features.F114A

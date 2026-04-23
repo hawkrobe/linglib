@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
 # Chuj Verb Building Fragment @cite{coon-2019}

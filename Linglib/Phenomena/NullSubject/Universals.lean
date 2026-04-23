@@ -1,5 +1,5 @@
-import Linglib.Core.NullSubject.Basic
-import Linglib.Core.NullSubject.Defs
+import Linglib.Phenomena.NullSubject.Basic
+import Linglib.Phenomena.NullSubject.Defs
 
 /-!
 # Universals over Subject Assignments

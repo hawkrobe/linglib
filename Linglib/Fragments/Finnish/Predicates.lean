@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Semantics.Causation.Implicative
 
 /-!

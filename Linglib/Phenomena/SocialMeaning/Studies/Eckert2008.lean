@@ -1,4 +1,4 @@
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Mathlib.Data.Fintype.Basic
@@ -33,7 +33,7 @@ field by building on ideological connections.
 
 The central formal contribution is showing that Eckert's stance
 accretion is the *same composition operation* as @cite{ochs-1992}'s
-indirect indexicality, both instantiated as `Core.SocialMeaning.composeIndex`:
+indirect indexicality, both instantiated as `Phenomena.SocialMeaning.IndexicalField.composeIndex`:
 
 - **Ochs**: SFP → Stance → GenderPole (form indexes stance indexes gender)
 - **Eckert**: /t/ variant → Stance → Quality (form indexes stance,
@@ -56,8 +56,8 @@ exercises this parallel with concrete data from Figures 3 and 4.
 
 ## Connections
 
-* `Core.SocialMeaning.composeIndex`: the shared composition operation
-* `Core.SocialMeaning.IndexicalField`: Eckert's concept, formalized
+* `Phenomena.SocialMeaning.IndexicalField.composeIndex`: the shared composition operation
+* `Phenomena.SocialMeaning.IndexicalField.IndexicalField`: Eckert's concept, formalized
   as infrastructure in `Core`
 * `Ochs1992`: predecessor —
   `composeIndex` was introduced to formalize Ochs's indirect
@@ -71,7 +71,7 @@ set_option autoImplicit false
 
 namespace Eckert2008
 
-open Core.SocialMeaning
+open Phenomena.SocialMeaning.IndexicalField
 open Phenomena.SocialMeaning.ING
 open Sociolinguistics.EckertMontague
 open Sociolinguistics.SCM

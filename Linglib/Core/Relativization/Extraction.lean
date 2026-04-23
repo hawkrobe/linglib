@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.ExtractionMorphology
+import Linglib.Phenomena.FillerGap.ExtractionMorphology
 
 /-!
 # Bridge: Extraction Morphology ↔ Accessibility Hierarchy

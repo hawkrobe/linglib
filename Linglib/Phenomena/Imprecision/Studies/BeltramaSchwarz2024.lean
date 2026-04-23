@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Roundness
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
@@ -36,7 +36,7 @@ exactness demands in the inference task.
 
 namespace BeltramaSchwarz2024
 
-open Core.SocialMeaning
+open Phenomena.SocialMeaning.IndexicalField
 open Sociolinguistics.SCM
 open Semantics.Numerals.Precision
 open Sociolinguistics.EckertMontague

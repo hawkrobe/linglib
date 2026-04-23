@@ -1,4 +1,4 @@
-import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Data.Rat.Defs
 
 /-!

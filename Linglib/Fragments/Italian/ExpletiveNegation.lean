@@ -1,4 +1,4 @@
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
 # Italian Expletive Negation Environments
@@ -17,7 +17,7 @@ lives in `Greco2020`.
 
 namespace Fragments.Italian.ExpletiveNegation
 
-open Core (ENStrength PolarityLicensing weakENProfile strongENProfile)
+open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing weakENProfile strongENProfile)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The 11 Italian EN construction types

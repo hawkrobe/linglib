@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Core.Negation
+import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Negation.Defs
 import Linglib.Fragments.Italian.ExpletiveNegation

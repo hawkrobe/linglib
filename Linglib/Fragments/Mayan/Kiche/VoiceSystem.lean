@@ -1,4 +1,4 @@
-import Linglib.Core.VoiceSystem
+import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!

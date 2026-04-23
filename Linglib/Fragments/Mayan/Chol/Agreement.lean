@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Features
-import Linglib.Core.ExtractionMorphology
+import Linglib.Phenomena.FillerGap.ExtractionMorphology
 import Linglib.Fragments.Mayan.Params
 
 /-!
