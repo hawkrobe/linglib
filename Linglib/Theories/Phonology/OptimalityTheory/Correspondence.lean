@@ -471,31 +471,31 @@ theorem integrityViol_le_length (c : Corr Role α) (r₁ r₂ : Role) :
 /-- Build a `NamedConstraint` from a `Corr`-violation function. The single
     point of plumbing into `Core.Constraint.OT`'s evaluation machinery —
     every named correspondence constraint factors through this. -/
-def toConstraint {Role α : Type} (family : ConstraintFamily) (label : String)
+def toConstraint {Role α : Type*} (family : ConstraintFamily) (label : String)
     (eval : Corr Role α → ℕ) : NamedConstraint (Corr Role α) where
   name := label
   family := family
   eval := eval
 
 /-- IDENT as a `NamedConstraint`. Specializes `toConstraint` to identViol. -/
-def toIdentConstraint {Role α : Type} [DecidableEq α] (r₁ r₂ : Role)
+def toIdentConstraint {Role α : Type*} [DecidableEq α] (r₁ r₂ : Role)
     (label : String) : NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("IDENT-" ++ label) (fun c => c.identViol r₁ r₂)
 
 /-- IDENT-[F] as a `NamedConstraint`. Featural variant of `toIdentConstraint`. -/
-def toIdentFeatureConstraint {Role α : Type} {F : Type} [DecidableEq F]
+def toIdentFeatureConstraint {Role α : Type*} {F : Type*} [DecidableEq F]
     (proj : α → F) (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("IDENT-" ++ label)
     (fun c => c.identViolFeature proj r₁ r₂)
 
 /-- MAX as a `NamedConstraint`. -/
-def toMaxConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
+def toMaxConstraint {Role α : Type*} (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("MAX-" ++ label) (fun c => c.maxViol r₁ r₂)
 
 /-- DEP as a `NamedConstraint`. -/
-def toDepConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
+def toDepConstraint {Role α : Type*} (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("DEP-" ++ label) (fun c => c.depViol r₁ r₂)
 
@@ -513,27 +513,27 @@ end Corr
 namespace Reduplication
 
 /-- **MAX-IO**: every input segment has a base correspondent. -/
-def maxIO {α : Type} : NamedConstraint (Corr RedupRole α) :=
+def maxIO {α : Type*} : NamedConstraint (Corr RedupRole α) :=
   Corr.toMaxConstraint .input .base "IO"
 
 /-- **MAX-BR**: every base segment has a reduplicant correspondent
     (penalises partial reduplication). -/
-def maxBR {α : Type} : NamedConstraint (Corr RedupRole α) :=
+def maxBR {α : Type*} : NamedConstraint (Corr RedupRole α) :=
   Corr.toMaxConstraint .base .reduplicant "BR"
 
 /-- **DEP-IO**: every base segment has an input correspondent
     (penalises epenthesis). -/
-def depIO {α : Type} : NamedConstraint (Corr RedupRole α) :=
+def depIO {α : Type*} : NamedConstraint (Corr RedupRole α) :=
   Corr.toDepConstraint .input .base "IO"
 
 /-- **IDENT-BR**: corresponding base/reduplicant segments are featurally
     identical. -/
-def identBR {α : Type} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
+def identBR {α : Type*} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
   Corr.toIdentConstraint .base .reduplicant "BR"
 
 /-- **IDENT-IO**: corresponding input/base segments are featurally
     identical. -/
-def identIO {α : Type} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
+def identIO {α : Type*} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
   Corr.toIdentConstraint .input .base "IO"
 
 end Reduplication

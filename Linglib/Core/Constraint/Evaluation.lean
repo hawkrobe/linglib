@@ -836,7 +836,7 @@ instance instDecidableVpProfileLT {n : Nat} (a b : ViolationProfile n) :
 
     This is the bridge between the study-file workflow (define individual
     constraint functions) and the algebraic `Tableau C n` infrastructure. -/
-def buildViolationProfile {C : Type} {n : Nat}
+def buildViolationProfile {C : Type*} {n : Nat}
     (constraints : Fin n → C → Nat) (c : C) : ViolationProfile n :=
   toLex fun i => constraints i c
 
@@ -943,12 +943,12 @@ instance {n : Nat} (a b : SatViolationProfile n) : Decidable (a < b) :=
     Uses `Finset C` for the candidate set (guaranteeing finiteness and
     deduplication) and `ViolationProfile n` for fixed-length profiles with
     decidable `LinearOrder`. -/
-structure Tableau (C : Type) [DecidableEq C] (n : Nat) where
+structure Tableau (C : Type*) [DecidableEq C] (n : Nat) where
   candidates : Finset C
   profile : C → ViolationProfile n
   nonempty : candidates.Nonempty
 
-variable {C : Type} [DecidableEq C] {n : Nat}
+variable {C : Type*} [DecidableEq C] {n : Nat}
 
 /-- A candidate is optimal iff it belongs to the candidate set and its
     profile is ≤ every other candidate's profile. -/

@@ -336,7 +336,7 @@ theorem ERCSet.entails_of_forall_mem {n : Nat} (E E' : List (ERC n))
     This is the fundamental bridge from OT evaluation to OT inference:
     every time a tableau selects a winner, it implicitly generates ERCs
     for all winner-loser pairs. -/
-def tableauERC {C : Type} [DecidableEq C] {n : Nat}
+def tableauERC {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) (w l : C) : ERC n :=
   ercOfProfiles (t.profile w) (t.profile l)
 

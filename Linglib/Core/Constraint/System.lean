@@ -140,7 +140,7 @@ open Core.Constraint.Evaluation
     `LexProfile Nat n` is definitionally `ViolationProfile n`, so the
     `argminDecoder`'s `LinearOrder` requirement is satisfied by the
     standard `Pi.Lex` instance. -/
-noncomputable def tableauSystem {C : Type} [DecidableEq C] {n : Nat}
+noncomputable def tableauSystem {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) : ConstraintSystem C (LexProfile Nat n) where
   candidates := t.candidates
   score := t.profile
@@ -150,7 +150,7 @@ noncomputable def tableauSystem {C : Type} [DecidableEq C] {n : Nat}
     `Tableau.optimal`. Since `Tableau.optimal` IS the argmin filter set
     by definition, the `argminDecoder` reduces to the standard "uniform
     over winners" formula. All other bridge results follow. -/
-theorem tableauSystem_predict_eq {C : Type} [DecidableEq C] {n : Nat}
+theorem tableauSystem_predict_eq {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) (c : C) :
     (tableauSystem t).predict c =
       (if c ∈ t.optimal then ((t.optimal.card : ℝ))⁻¹ else 0) := by
@@ -166,7 +166,7 @@ theorem tableauSystem_predict_eq {C : Type} [DecidableEq C] {n : Nat}
 
 /-- A candidate is in the support of the `tableauSystem` distribution
     iff it is in the tableau's optimal set. -/
-theorem tableauSystem_predict_pos_iff_optimal {C : Type} [DecidableEq C] {n : Nat}
+theorem tableauSystem_predict_pos_iff_optimal {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) (c : C) :
     0 < (tableauSystem t).predict c ↔ c ∈ t.optimal := by
   rw [tableauSystem_predict_eq]
@@ -179,13 +179,13 @@ theorem tableauSystem_predict_pos_iff_optimal {C : Type} [DecidableEq C] {n : Na
 /-- When `Tableau.optimal = {winner}` (the typical deterministic-OT pattern
     used in study files via `by decide`), the unified `predict` view assigns
     probability 1 to the winner. -/
-theorem tableauSystem_predict_unique_winner {C : Type} [DecidableEq C] {n : Nat}
+theorem tableauSystem_predict_unique_winner {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) (winner : C) (h : t.optimal = {winner}) :
     (tableauSystem t).predict winner = 1 := by
   rw [tableauSystem_predict_eq, h]; simp
 
 /-- And losers in a unique-winner tableau receive probability 0. -/
-theorem tableauSystem_predict_loser {C : Type} [DecidableEq C] {n : Nat}
+theorem tableauSystem_predict_loser {C : Type*} [DecidableEq C] {n : Nat}
     (t : Tableau C n) (winner loser : C) (hne : loser ≠ winner)
     (h : t.optimal = {winner}) :
     (tableauSystem t).predict loser = 0 := by
