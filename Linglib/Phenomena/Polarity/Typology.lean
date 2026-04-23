@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F46A
+import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
@@ -265,7 +265,7 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   (cs.map (·.count)).sum
 
-private abbrev ch46 := Core.WALS.F46A.allData
+private abbrev ch46 := Datasets.WALS.F46A.allData
 
 /-- WALS Chapter 46 distribution (N = 326).
 
@@ -282,8 +282,8 @@ def ch46Counts : List WALSCount :=
 
 /-- Look up a language profile's WALS 46A morphological source classification. -/
 def IndefinitePronounProfile.wals46A
-    (p : IndefinitePronounProfile) : Option Core.WALS.F46A.IndefinitePronouns :=
-  (Core.WALS.F46A.lookupISO p.iso).map (·.value)
+    (p : IndefinitePronounProfile) : Option Datasets.WALS.F46A.IndefinitePronouns :=
+  (Datasets.WALS.F46A.lookupISO p.iso).map (·.value)
 
 -- ============================================================================
 -- §6: Language Data
@@ -962,7 +962,7 @@ theorem language_series_counts :
     - Mixed: German, Mandarin (2)
     - Existential construction: Tagalog (1) -/
 
-open Core.WALS.F46A (IndefinitePronouns) in
+open Datasets.WALS.F46A (IndefinitePronouns) in
 /-- WALS 46A morphological-source classification per language (ISO code, value)
     for the 17-language sample. Replaces 17 per-language `_wals` decide-theorems.
     Verifies the `lookupISO`-derived `wals46A` field against expected values. -/
@@ -1033,7 +1033,7 @@ Interrogative-based languages (which build indefinites from wh-words) should
 correlate with our wh-based language list. We verify this and test whether
 morphological source predicts series differentiation. -/
 
-open Core.WALS.F46A (IndefinitePronouns) in
+open Datasets.WALS.F46A (IndefinitePronouns) in
 /-- All four wh-based languages are classified as interrogative-based or
     mixed in WALS 46A. -/
 theorem wh_based_are_interrogative_or_mixed :
@@ -1044,7 +1044,7 @@ theorem wh_based_are_interrogative_or_mixed :
 /-- Languages classified as interrogative-based in WALS 46A. -/
 def interrogativeBasedProfiles : List IndefinitePronounProfile :=
   allLanguages.filter (λ p =>
-    p.wals46A == some Core.WALS.F46A.IndefinitePronouns.interrogativeBased)
+    p.wals46A == some Datasets.WALS.F46A.IndefinitePronouns.interrogativeBased)
 
 /-- Seven of our 17 languages are interrogative-based. -/
 theorem interrogative_based_sample_count :

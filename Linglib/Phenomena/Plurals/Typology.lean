@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Features.Prominence
-import Linglib.Core.WALS.Features.F33A
-import Linglib.Core.WALS.Features.F34A
-import Linglib.Core.WALS.Features.F35A
-import Linglib.Core.WALS.Features.F36A
+import Linglib.Datasets.WALS.Features.F33A
+import Linglib.Datasets.WALS.Features.F34A
+import Linglib.Datasets.WALS.Features.F35A
+import Linglib.Datasets.WALS.Features.F36A
 
 /-!
 # Cross-Linguistic Typology of Nominal Plurality (WALS Chapters 33--36)
@@ -601,7 +601,7 @@ open Features.Prominence (AnimacyRank)
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS33A : Core.WALS.F33A.PluralityCoding → PluralCoding
+private def fromWALS33A : Datasets.WALS.F33A.PluralityCoding → PluralCoding
   | .pluralPrefix => .prefix
   | .pluralSuffix => .suffix
   | .pluralStemChange => .stemChange
@@ -612,7 +612,7 @@ private def fromWALS33A : Core.WALS.F33A.PluralityCoding → PluralCoding
   | .pluralClitic => .pluralClitic
   | .noPlural => .noPlural
 
-private def fromWALS34A : Core.WALS.F34A.PluralityOccurrence → PluralOccurrence
+private def fromWALS34A : Datasets.WALS.F34A.PluralityOccurrence → PluralOccurrence
   | .noNominalPlural => .noNominalPlural
   | .onlyHumanNounsOptional => .humanOnlyOptional
   | .onlyHumanNounsObligatory => .humanOnlyObligatory
@@ -620,7 +620,7 @@ private def fromWALS34A : Core.WALS.F34A.PluralityOccurrence → PluralOccurrenc
   | .allNounsOptionalInInanimates => .allNounsOptionalInanimates
   | .allNounsAlwaysObligatory => .allNounsAlwaysObligatory
 
-private def fromWALS35A : Core.WALS.F35A.PronounPlurality → PronounPlurality
+private def fromWALS35A : Datasets.WALS.F35A.PronounPlurality → PronounPlurality
   | .noIndependentSubjectPronouns => .noIndependentPronouns
   | .numberIndifferentPronouns => .numberIndifferent
   | .personNumberAffixes => .personNumberAffixes
@@ -630,7 +630,7 @@ private def fromWALS35A : Core.WALS.F35A.PronounPlurality → PronounPlurality
   | .personStemPronominalPluralAffix => .personStemPronominalAffix
   | .personStemNominalPluralAffix => .personStemNominalAffix
 
-private def fromWALS36A : Core.WALS.F36A.AssociativePlural → AssociativePlural
+private def fromWALS36A : Datasets.WALS.F36A.AssociativePlural → AssociativePlural
   | .associativeSameAsAdditivePlural => .sameAsAdditive
   | .uniqueAffixalAssociativePlural => .uniqueAffixal
   | .uniquePeriphrasticAssociativePlural => .uniquePeriphrastic
@@ -640,10 +640,10 @@ private def fromWALS36A : Core.WALS.F36A.AssociativePlural → AssociativePlural
 -- WALS Distribution Data (from generated modules)
 -- ============================================================================
 
-private abbrev ch33 := Core.WALS.F33A.allData
-private abbrev ch34 := Core.WALS.F34A.allData
-private abbrev ch35 := Core.WALS.F35A.allData
-private abbrev ch36 := Core.WALS.F36A.allData
+private abbrev ch33 := Datasets.WALS.F33A.allData
+private abbrev ch34 := Datasets.WALS.F34A.allData
+private abbrev ch35 := Datasets.WALS.F35A.allData
+private abbrev ch36 := Datasets.WALS.F36A.allData
 
 theorem ch33_total : ch33.length = 1066 := by native_decide
 theorem ch34_total : ch34.length = 291 := by native_decide
@@ -662,59 +662,59 @@ theorem ch36_total : ch36.length = 236 := by native_decide
 -- as noPlural (focusing on common nouns).
 
 theorem english_ch33 :
-    (Core.WALS.F33A.lookup "eng").map (fromWALS33A ·.value) = some english.coding := by
+    (Datasets.WALS.F33A.lookup "eng").map (fromWALS33A ·.value) = some english.coding := by
   native_decide
 
 theorem turkish_ch33 :
-    (Core.WALS.F33A.lookup "tur").map (fromWALS33A ·.value) = some turkish.coding := by
+    (Datasets.WALS.F33A.lookup "tur").map (fromWALS33A ·.value) = some turkish.coding := by
   native_decide
 
 theorem finnish_ch33 :
-    (Core.WALS.F33A.lookup "fin").map (fromWALS33A ·.value) = some finnish.coding := by
+    (Datasets.WALS.F33A.lookup "fin").map (fromWALS33A ·.value) = some finnish.coding := by
   native_decide
 
 theorem arabic_ch33 :
-    (Core.WALS.F33A.lookup "aeg").map (fromWALS33A ·.value) = some arabic.coding := by
+    (Datasets.WALS.F33A.lookup "aeg").map (fromWALS33A ·.value) = some arabic.coding := by
   native_decide
 
 theorem hungarian_ch33 :
-    (Core.WALS.F33A.lookup "hun").map (fromWALS33A ·.value) = some hungarian.coding := by
+    (Datasets.WALS.F33A.lookup "hun").map (fromWALS33A ·.value) = some hungarian.coding := by
   native_decide
 
 theorem swahili_ch33 :
-    (Core.WALS.F33A.lookup "swa").map (fromWALS33A ·.value) = some swahili.coding := by
+    (Datasets.WALS.F33A.lookup "swa").map (fromWALS33A ·.value) = some swahili.coding := by
   native_decide
 
 theorem indonesian_ch33 :
-    (Core.WALS.F33A.lookup "ind").map (fromWALS33A ·.value) = some indonesian.coding := by
+    (Datasets.WALS.F33A.lookup "ind").map (fromWALS33A ·.value) = some indonesian.coding := by
   native_decide
 
 theorem hindi_ch33 :
-    (Core.WALS.F33A.lookup "hin").map (fromWALS33A ·.value) = some hindi.coding := by
+    (Datasets.WALS.F33A.lookup "hin").map (fromWALS33A ·.value) = some hindi.coding := by
   native_decide
 
 theorem korean_ch33 :
-    (Core.WALS.F33A.lookup "kor").map (fromWALS33A ·.value) = some korean.coding := by
+    (Datasets.WALS.F33A.lookup "kor").map (fromWALS33A ·.value) = some korean.coding := by
   native_decide
 
 theorem tagalog_ch33 :
-    (Core.WALS.F33A.lookup "tag").map (fromWALS33A ·.value) = some tagalog.coding := by
+    (Datasets.WALS.F33A.lookup "tag").map (fromWALS33A ·.value) = some tagalog.coding := by
   native_decide
 
 theorem russian_ch33 :
-    (Core.WALS.F33A.lookup "rus").map (fromWALS33A ·.value) = some russian.coding := by
+    (Datasets.WALS.F33A.lookup "rus").map (fromWALS33A ·.value) = some russian.coding := by
   native_decide
 
 theorem zulu_ch33 :
-    (Core.WALS.F33A.lookup "zul").map (fromWALS33A ·.value) = some zulu.coding := by
+    (Datasets.WALS.F33A.lookup "zul").map (fromWALS33A ·.value) = some zulu.coding := by
   native_decide
 
 theorem hawaiian_ch33 :
-    (Core.WALS.F33A.lookup "haw").map (fromWALS33A ·.value) = some hawaiian.coding := by
+    (Datasets.WALS.F33A.lookup "haw").map (fromWALS33A ·.value) = some hawaiian.coding := by
   native_decide
 
 theorem lezgian_ch33 :
-    (Core.WALS.F33A.lookup "lez").map (fromWALS33A ·.value) = some lezgian.coding := by
+    (Datasets.WALS.F33A.lookup "lez").map (fromWALS33A ·.value) = some lezgian.coding := by
   native_decide
 
 -- ============================================================================
@@ -727,51 +727,51 @@ theorem lezgian_ch33 :
 -- while the profile codes them as noNominalPlural.
 
 theorem english_ch34 :
-    (Core.WALS.F34A.lookup "eng").map (fromWALS34A ·.value) = some english.occurrence := by
+    (Datasets.WALS.F34A.lookup "eng").map (fromWALS34A ·.value) = some english.occurrence := by
   native_decide
 
 theorem turkish_ch34 :
-    (Core.WALS.F34A.lookup "tur").map (fromWALS34A ·.value) = some turkish.occurrence := by
+    (Datasets.WALS.F34A.lookup "tur").map (fromWALS34A ·.value) = some turkish.occurrence := by
   native_decide
 
 theorem finnish_ch34 :
-    (Core.WALS.F34A.lookup "fin").map (fromWALS34A ·.value) = some finnish.occurrence := by
+    (Datasets.WALS.F34A.lookup "fin").map (fromWALS34A ·.value) = some finnish.occurrence := by
   native_decide
 
 theorem arabic_ch34 :
-    (Core.WALS.F34A.lookup "aeg").map (fromWALS34A ·.value) = some arabic.occurrence := by
+    (Datasets.WALS.F34A.lookup "aeg").map (fromWALS34A ·.value) = some arabic.occurrence := by
   native_decide
 
 theorem hungarian_ch34 :
-    (Core.WALS.F34A.lookup "hun").map (fromWALS34A ·.value) = some hungarian.occurrence := by
+    (Datasets.WALS.F34A.lookup "hun").map (fromWALS34A ·.value) = some hungarian.occurrence := by
   native_decide
 
 theorem swahili_ch34 :
-    (Core.WALS.F34A.lookup "swa").map (fromWALS34A ·.value) = some swahili.occurrence := by
+    (Datasets.WALS.F34A.lookup "swa").map (fromWALS34A ·.value) = some swahili.occurrence := by
   native_decide
 
 theorem indonesian_ch34 :
-    (Core.WALS.F34A.lookup "ind").map (fromWALS34A ·.value) = some indonesian.occurrence := by
+    (Datasets.WALS.F34A.lookup "ind").map (fromWALS34A ·.value) = some indonesian.occurrence := by
   native_decide
 
 theorem hindi_ch34 :
-    (Core.WALS.F34A.lookup "hin").map (fromWALS34A ·.value) = some hindi.occurrence := by
+    (Datasets.WALS.F34A.lookup "hin").map (fromWALS34A ·.value) = some hindi.occurrence := by
   native_decide
 
 theorem tagalog_ch34 :
-    (Core.WALS.F34A.lookup "tag").map (fromWALS34A ·.value) = some tagalog.occurrence := by
+    (Datasets.WALS.F34A.lookup "tag").map (fromWALS34A ·.value) = some tagalog.occurrence := by
   native_decide
 
 theorem russian_ch34 :
-    (Core.WALS.F34A.lookup "rus").map (fromWALS34A ·.value) = some russian.occurrence := by
+    (Datasets.WALS.F34A.lookup "rus").map (fromWALS34A ·.value) = some russian.occurrence := by
   native_decide
 
 theorem zulu_ch34 :
-    (Core.WALS.F34A.lookup "zul").map (fromWALS34A ·.value) = some zulu.occurrence := by
+    (Datasets.WALS.F34A.lookup "zul").map (fromWALS34A ·.value) = some zulu.occurrence := by
   native_decide
 
 theorem lezgian_ch34 :
-    (Core.WALS.F34A.lookup "lez").map (fromWALS34A ·.value) = some lezgian.occurrence := by
+    (Datasets.WALS.F34A.lookup "lez").map (fromWALS34A ·.value) = some lezgian.occurrence := by
   native_decide
 
 -- ============================================================================
@@ -788,43 +788,43 @@ theorem lezgian_ch34 :
 -- Hawaiian (WALS: pnStemPronominalAffix, profile: personNumberStem).
 
 theorem english_ch35 :
-    (Core.WALS.F35A.lookup "eng").map (fromWALS35A ·.value) = some english.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "eng").map (fromWALS35A ·.value) = some english.pronounPlurality := by
   native_decide
 
 theorem mandarin_ch35 :
-    (Core.WALS.F35A.lookup "mnd").map (fromWALS35A ·.value) = some mandarin.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "mnd").map (fromWALS35A ·.value) = some mandarin.pronounPlurality := by
   native_decide
 
 theorem arabic_ch35 :
-    (Core.WALS.F35A.lookup "aeg").map (fromWALS35A ·.value) = some arabic.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "aeg").map (fromWALS35A ·.value) = some arabic.pronounPlurality := by
   native_decide
 
 theorem swahili_ch35 :
-    (Core.WALS.F35A.lookup "swa").map (fromWALS35A ·.value) = some swahili.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "swa").map (fromWALS35A ·.value) = some swahili.pronounPlurality := by
   native_decide
 
 theorem indonesian_ch35 :
-    (Core.WALS.F35A.lookup "ind").map (fromWALS35A ·.value) = some indonesian.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "ind").map (fromWALS35A ·.value) = some indonesian.pronounPlurality := by
   native_decide
 
 theorem hindi_ch35 :
-    (Core.WALS.F35A.lookup "hin").map (fromWALS35A ·.value) = some hindi.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "hin").map (fromWALS35A ·.value) = some hindi.pronounPlurality := by
   native_decide
 
 theorem tagalog_ch35 :
-    (Core.WALS.F35A.lookup "tag").map (fromWALS35A ·.value) = some tagalog.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "tag").map (fromWALS35A ·.value) = some tagalog.pronounPlurality := by
   native_decide
 
 theorem russian_ch35 :
-    (Core.WALS.F35A.lookup "rus").map (fromWALS35A ·.value) = some russian.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "rus").map (fromWALS35A ·.value) = some russian.pronounPlurality := by
   native_decide
 
 theorem zulu_ch35 :
-    (Core.WALS.F35A.lookup "zul").map (fromWALS35A ·.value) = some zulu.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "zul").map (fromWALS35A ·.value) = some zulu.pronounPlurality := by
   native_decide
 
 theorem lezgian_ch35 :
-    (Core.WALS.F35A.lookup "lez").map (fromWALS35A ·.value) = some lezgian.pronounPlurality := by
+    (Datasets.WALS.F35A.lookup "lez").map (fromWALS35A ·.value) = some lezgian.pronounPlurality := by
   native_decide
 
 -- ============================================================================
@@ -841,39 +841,39 @@ theorem lezgian_ch35 :
 -- Hawaiian (WALS: uniquePeriphrastic, profile: absent).
 
 theorem english_ch36 :
-    (Core.WALS.F36A.lookup "eng").map (fromWALS36A ·.value) = some english.associativePlural := by
+    (Datasets.WALS.F36A.lookup "eng").map (fromWALS36A ·.value) = some english.associativePlural := by
   native_decide
 
 theorem turkish_ch36 :
-    (Core.WALS.F36A.lookup "tur").map (fromWALS36A ·.value) = some turkish.associativePlural := by
+    (Datasets.WALS.F36A.lookup "tur").map (fromWALS36A ·.value) = some turkish.associativePlural := by
   native_decide
 
 theorem finnish_ch36 :
-    (Core.WALS.F36A.lookup "fin").map (fromWALS36A ·.value) = some finnish.associativePlural := by
+    (Datasets.WALS.F36A.lookup "fin").map (fromWALS36A ·.value) = some finnish.associativePlural := by
   native_decide
 
 theorem hungarian_ch36 :
-    (Core.WALS.F36A.lookup "hun").map (fromWALS36A ·.value) = some hungarian.associativePlural := by
+    (Datasets.WALS.F36A.lookup "hun").map (fromWALS36A ·.value) = some hungarian.associativePlural := by
   native_decide
 
 theorem korean_ch36 :
-    (Core.WALS.F36A.lookup "kor").map (fromWALS36A ·.value) = some korean.associativePlural := by
+    (Datasets.WALS.F36A.lookup "kor").map (fromWALS36A ·.value) = some korean.associativePlural := by
   native_decide
 
 theorem tagalog_ch36 :
-    (Core.WALS.F36A.lookup "tag").map (fromWALS36A ·.value) = some tagalog.associativePlural := by
+    (Datasets.WALS.F36A.lookup "tag").map (fromWALS36A ·.value) = some tagalog.associativePlural := by
   native_decide
 
 theorem russian_ch36 :
-    (Core.WALS.F36A.lookup "rus").map (fromWALS36A ·.value) = some russian.associativePlural := by
+    (Datasets.WALS.F36A.lookup "rus").map (fromWALS36A ·.value) = some russian.associativePlural := by
   native_decide
 
 theorem zulu_ch36 :
-    (Core.WALS.F36A.lookup "zul").map (fromWALS36A ·.value) = some zulu.associativePlural := by
+    (Datasets.WALS.F36A.lookup "zul").map (fromWALS36A ·.value) = some zulu.associativePlural := by
   native_decide
 
 theorem lezgian_ch36 :
-    (Core.WALS.F36A.lookup "lez").map (fromWALS36A ·.value) = some lezgian.associativePlural := by
+    (Datasets.WALS.F36A.lookup "lez").map (fromWALS36A ·.value) = some lezgian.associativePlural := by
   native_decide
 
 -- ============================================================================

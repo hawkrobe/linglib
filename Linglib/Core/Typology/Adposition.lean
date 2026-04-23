@@ -1,4 +1,4 @@
-import Linglib.Core.WALS.Features.F85A
+import Linglib.Datasets.WALS.Features.F85A
 
 /-!
 # Adposition typology: shared record types
@@ -29,7 +29,7 @@ inductive AdpositionOrder where
   deriving DecidableEq, Repr
 
 /-- Convert WALS F85A's `AdpositionNPOrder` to our local `AdpositionOrder`. -/
-def fromWALS85A : Core.WALS.F85A.AdpositionNPOrder → AdpositionOrder
+def fromWALS85A : Datasets.WALS.F85A.AdpositionNPOrder → AdpositionOrder
   | .prepositions => .prepositional
   | .postpositions => .postpositional
   | .inpositions => .inpositional
@@ -42,7 +42,7 @@ def fromWALS85A : Core.WALS.F85A.AdpositionNPOrder → AdpositionOrder
     different facts; consumers (e.g. `LanguageProfile.adposition`) decide
     how to handle missing data. -/
 def adpositionOfWALS (iso : String) : Option AdpositionOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F85A.allData iso with
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F85A.allData iso with
   | some d => some (fromWALS85A d.value)
   | none => none
 

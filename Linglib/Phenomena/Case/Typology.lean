@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Features.Prominence
-import Linglib.Core.WALS.Features.F49A
-import Linglib.Core.WALS.Features.F50A
-import Linglib.Core.WALS.Features.F51A
-import Linglib.Core.WALS.Features.F52A
+import Linglib.Datasets.WALS.Features.F49A
+import Linglib.Datasets.WALS.Features.F50A
+import Linglib.Datasets.WALS.Features.F51A
+import Linglib.Datasets.WALS.Features.F52A
 
 /-!
 # Case Typology (WALS Chapters 49--52)
@@ -36,10 +36,10 @@ namespace Phenomena.Case.Typology
 -- WALS Generated Data References
 -- ============================================================================
 
-private abbrev ch49 := Core.WALS.F49A.allData
-private abbrev ch50 := Core.WALS.F50A.allData
-private abbrev ch51 := Core.WALS.F51A.allData
-private abbrev ch52 := Core.WALS.F52A.allData
+private abbrev ch49 := Datasets.WALS.F49A.allData
+private abbrev ch50 := Datasets.WALS.F50A.allData
+private abbrev ch51 := Datasets.WALS.F51A.allData
+private abbrev ch52 := Datasets.WALS.F52A.allData
 
 -- ============================================================================
 -- Chapter 49: Number of Cases
@@ -165,7 +165,7 @@ theorem ch51_total : ch51.length = 1031 := by native_decide
 /-- Convert F49A case count to our CaseCount.
     F49A has finer bins (3, 4, 5 separate); we merge them.
     `exclusivelyBorderlineCaseMarking` has no clean mapping. -/
-private def fromWALS49A : Core.WALS.F49A.CaseCount → Option CaseCount
+private def fromWALS49A : Datasets.WALS.F49A.CaseCount → Option CaseCount
   | .noMorphologicalCaseMarking => some .none
   | .cases2 => some .two
   | .cases3 => some .threeFour
@@ -517,37 +517,37 @@ theorem allProfiles_count : allProfiles.length = 16 := by native_decide
 -- ============================================================================
 
 theorem finnish_ch49 :
-    (Core.WALS.F49A.lookup "fin").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "fin").bind (fromWALS49A ·.value) =
     some finnish.caseCount := by native_decide
 theorem hungarian_ch49 :
-    (Core.WALS.F49A.lookup "hun").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "hun").bind (fromWALS49A ·.value) =
     some hungarian.caseCount := by native_decide
 theorem turkish_ch49 :
-    (Core.WALS.F49A.lookup "tur").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "tur").bind (fromWALS49A ·.value) =
     some turkish.caseCount := by native_decide
 theorem russian_ch49 :
-    (Core.WALS.F49A.lookup "rus").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "rus").bind (fromWALS49A ·.value) =
     some russian.caseCount := by native_decide
 theorem german_ch49 :
-    (Core.WALS.F49A.lookup "ger").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "ger").bind (fromWALS49A ·.value) =
     some german.caseCount := by native_decide
 theorem japanese_ch49 :
-    (Core.WALS.F49A.lookup "jpn").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "jpn").bind (fromWALS49A ·.value) =
     some japanese.caseCount := by native_decide
 theorem english_ch49 :
-    (Core.WALS.F49A.lookup "eng").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "eng").bind (fromWALS49A ·.value) =
     some english.caseCount := by native_decide
 theorem korean_ch49 :
-    (Core.WALS.F49A.lookup "kor").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "kor").bind (fromWALS49A ·.value) =
     some korean.caseCount := by native_decide
 theorem mandarin_ch49 :
-    (Core.WALS.F49A.lookup "mnd").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "mnd").bind (fromWALS49A ·.value) =
     some mandarin.caseCount := by native_decide
 theorem georgian_ch49 :
-    (Core.WALS.F49A.lookup "geo").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "geo").bind (fromWALS49A ·.value) =
     some georgian.caseCount := by native_decide
 theorem basque_ch49 :
-    (Core.WALS.F49A.lookup "bsq").bind (fromWALS49A ·.value) =
+    (Datasets.WALS.F49A.lookup "bsq").bind (fromWALS49A ·.value) =
     some basque.caseCount := by native_decide
 
 -- ============================================================================

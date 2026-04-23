@@ -1,6 +1,6 @@
-import Linglib.Core.WALS.Features.F81A
-import Linglib.Core.WALS.Features.F82A
-import Linglib.Core.WALS.Features.F83A
+import Linglib.Datasets.WALS.Features.F81A
+import Linglib.Datasets.WALS.Features.F82A
+import Linglib.Datasets.WALS.Features.F83A
 
 /-!
 # Word-order typology: shared record types
@@ -51,7 +51,7 @@ structure WordOrderProfile where
   deriving Repr, DecidableEq
 
 /-- Convert WALS F81A's `BasicWordOrder` to our local `BasicOrder`. -/
-def fromWALS81A : Core.WALS.F81A.BasicWordOrder → BasicOrder
+def fromWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
   | .sov => .sov
   | .svo => .svo
   | .vso => .vso
@@ -61,32 +61,32 @@ def fromWALS81A : Core.WALS.F81A.BasicWordOrder → BasicOrder
   | .noDominantOrder => .noDominant
 
 /-- Convert WALS F82A's `SubjectVerbOrder` to our local `SVOrder`. -/
-def fromWALS82A : Core.WALS.F82A.SubjectVerbOrder → SVOrder
+def fromWALS82A : Datasets.WALS.F82A.SubjectVerbOrder → SVOrder
   | .sv => .sv
   | .vs => .vs
   | .noDominantOrder => .noDominant
 
 /-- Convert WALS F83A's `ObjectVerbOrder` to our local `OVOrder`. -/
-def fromWALS83A : Core.WALS.F83A.ObjectVerbOrder → OVOrder
+def fromWALS83A : Datasets.WALS.F83A.ObjectVerbOrder → OVOrder
   | .ov => .ov
   | .vo => .vo
   | .noDominantOrder => .noDominant
 
 /-- Look up Ch 81 basic order for an ISO 639-3 code; `.noDominant` if absent. -/
 def basicOrderOfWALS (iso : String) : BasicOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F81A.allData iso with
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F81A.allData iso with
   | some d => fromWALS81A d.value
   | none => .noDominant
 
 /-- Look up Ch 82 subject–verb order for an ISO 639-3 code; `.noDominant` if absent. -/
 def svOrderOfWALS (iso : String) : SVOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F82A.allData iso with
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F82A.allData iso with
   | some d => fromWALS82A d.value
   | none => .noDominant
 
 /-- Look up Ch 83 object–verb order for an ISO 639-3 code; `.noDominant` if absent. -/
 def ovOrderOfWALS (iso : String) : OVOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F83A.allData iso with
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F83A.allData iso with
   | some d => fromWALS83A d.value
   | none => .noDominant
 

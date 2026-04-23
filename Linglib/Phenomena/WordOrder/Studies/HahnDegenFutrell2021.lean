@@ -1,7 +1,7 @@
 import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
-import Linglib.Core.WALS.Languages
+import Linglib.Datasets.WALS.Languages
 
 /-!
 # Study 2: 54-Language Word-Order Efficiency
@@ -506,9 +506,9 @@ def iso1to3 : List (String × String) :=
   , ("uk", "ukr"), ("ur", "urd"), ("ug", "uig"), ("vi", "vie") ]
 
 /-- Look up a study language's WALS entry via its ISO code. -/
-def walsLookup (l : LanguageEfficiency) : Option Core.WALS.Language :=
+def walsLookup (l : LanguageEfficiency) : Option Datasets.WALS.Language :=
   match iso1to3.find? (·.1 == l.isoCode) with
-  | some (_, iso3) => Core.WALS.findByIso iso3
+  | some (_, iso3) => Datasets.WALS.findByIso iso3
   | none => none
 
 /-- Languages with WALS entries (51 of 54). -/

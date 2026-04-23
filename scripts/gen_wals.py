@@ -9,8 +9,8 @@ Examples:
     python3 scripts/gen_wals.py                     # all configured features
 
 Reads from:  data/wals-v2020.4/*.csv
-Writes to:   Linglib/Core/WALS/Features/F{ID}.lean
-             Linglib/Core/WALS/Languages.lean
+Writes to:   Linglib/Datasets/WALS/Features/F{ID}.lean
+             Linglib/Datasets/WALS/Languages.lean
 
 Features can be configured in FEATURES (manually curated constructor names)
 or auto-generated from codes.csv (AUTO_FEATURES). AUTO_FEATURES need only
@@ -517,7 +517,7 @@ def generate_feature(feature_id, cfg, langs):
     fid_clean = feature_id
 
     # Import generic Datapoint (must come before docstring)
-    lines.append(f'import Linglib.Core.WALS.Datapoint')
+    lines.append(f'import Linglib.Datasets.WALS.Datapoint')
     lines.append(f'')
 
     # Module docstring
@@ -531,7 +531,7 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'Chapter {cfg["chapter"]}, {len(entries)} languages.')
     lines.append(f'-/')
     lines.append(f'')
-    lines.append(f'namespace Core.WALS.F{fid_clean}')
+    lines.append(f'namespace Datasets.WALS.F{fid_clean}')
     lines.append(f'')
 
     # Value enum
@@ -592,7 +592,7 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'def lookupISO (iso : String) := Datapoint.lookupISO allData iso')
     lines.append(f'')
 
-    lines.append(f'end Core.WALS.F{fid_clean}')
+    lines.append(f'end Datasets.WALS.F{fid_clean}')
     lines.append(f'')
 
     return "\n".join(lines)
@@ -622,7 +622,7 @@ def generate_languages(langs, used_ids):
     lines.append(f'{total} languages referenced across generated features.')
     lines.append('-/')
     lines.append('')
-    lines.append('namespace Core.WALS')
+    lines.append('namespace Datasets.WALS')
     lines.append('')
     lines.append('/-- WALS language metadata. -/')
     lines.append('structure Language where')
@@ -672,7 +672,7 @@ def generate_languages(langs, used_ids):
     lines.append('  if iso.isEmpty then none')
     lines.append('  else languages.find? (·.iso == iso)')
     lines.append('')
-    lines.append('end Core.WALS')
+    lines.append('end Datasets.WALS')
     lines.append('')
 
     return "\n".join(lines)

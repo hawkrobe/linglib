@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Typology.ClassifierSystem
-import Linglib.Core.WALS.Features.F55A
+import Linglib.Datasets.WALS.Features.F55A
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Typology
 import Linglib.Fragments.Mandarin.Nouns
@@ -345,7 +345,7 @@ inductive ClassifierStatus where
   deriving DecidableEq, Repr
 
 /-- Convert WALS 55A numeral classifier values to the local `ClassifierStatus`. -/
-def fromWALS55A : Core.WALS.F55A.NumeralClassifiers → ClassifierStatus
+def fromWALS55A : Datasets.WALS.F55A.NumeralClassifiers → ClassifierStatus
   | .absent => .absent
   | .optional => .optional
   | .obligatory => .obligatory

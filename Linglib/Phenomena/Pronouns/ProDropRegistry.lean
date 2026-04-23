@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.WALS.Features.F101A
+import Linglib.Datasets.WALS.Features.F101A
 import Linglib.Phenomena.Control.Studies.Allotey2021
 import Linglib.Phenomena.Control.Studies.Ostrove2026
 
@@ -66,7 +66,7 @@ named theorem (`ga_disagrees_with_F101A`) rather than papered over.
 namespace Phenomena.Pronouns.ProDropRegistry
 
 open Core.NullSubject
-open Core.WALS.F101A
+open Datasets.WALS.F101A
 
 /-- The languages currently formalized in linglib for the pro-drop /
     overt-PRO universal. Adding a constructor here requires extending
@@ -128,7 +128,7 @@ def F101A.toAllowsProDrop : ExpressionOfPronominalSubjects → Option Bool
 /-- WALS-derived `allowsProDrop` for a language by WALS code. `none`
     if the language is absent from F101A or its value is `mixed`. -/
 def F101A.allowsProDropOf (walsCode : String) : Option Bool :=
-  (Core.WALS.F101A.allData.find? (·.walsCode == walsCode)) |>.bind
+  (Datasets.WALS.F101A.allData.find? (·.walsCode == walsCode)) |>.bind
     (F101A.toAllowsProDrop ·.value)
 
 /-- A registry language's WALS code, when one exists. SMPM

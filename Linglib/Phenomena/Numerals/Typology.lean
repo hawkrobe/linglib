@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F53A
-import Linglib.Core.WALS.Features.F54A
-import Linglib.Core.WALS.Features.F131A
+import Linglib.Datasets.WALS.Features.F53A
+import Linglib.Datasets.WALS.Features.F54A
+import Linglib.Datasets.WALS.Features.F131A
 import Linglib.Phenomena.Classifiers.Typology
 
 /-!
@@ -47,10 +47,10 @@ open Phenomena.Classifiers.Typology (ClassifierStatus ClassifierDistribution
 -- WALS Data Abbreviations
 -- ============================================================================
 
-private abbrev ch53  := Core.WALS.F53A.allData
-private abbrev ch54  := Core.WALS.F54A.allData
-private abbrev ch55  := Core.WALS.F55A.allData
-private abbrev ch131 := Core.WALS.F131A.allData
+private abbrev ch53  := Datasets.WALS.F53A.allData
+private abbrev ch54  := Datasets.WALS.F54A.allData
+private abbrev ch55  := Datasets.WALS.F55A.allData
+private abbrev ch131 := Datasets.WALS.F131A.allData
 
 theorem ch53_total : ch53.length = 321 := by native_decide
 theorem ch54_total : ch54.length = 251 := by native_decide
@@ -236,7 +236,7 @@ inductive NumeralBase where
     - "One, two, three" → various (bare cardinals used as ordinals)
     - "Various" → various
     - "None" → noOrdinals -/
-private def fromWALS53A : Core.WALS.F53A.OrdinalNumerals → OrdinalFormation
+private def fromWALS53A : Datasets.WALS.F53A.OrdinalNumerals → OrdinalFormation
   | .none => .noOrdinals
   | .oneTwoThree => .various
   | .firstTwoThree => .firstSuppletion
@@ -249,7 +249,7 @@ private def fromWALS53A : Core.WALS.F53A.OrdinalNumerals → OrdinalFormation
 /-- Convert WALS 54A distributive numeral values to our DistributiveNumeral type.
     WALS distinguishes seven subtypes; we collapse word-level and mixed strategies
     into `.markedByOtherMeans`. -/
-private def fromWALS54A : Core.WALS.F54A.DistributiveNumerals → DistributiveNumeral
+private def fromWALS54A : Datasets.WALS.F54A.DistributiveNumerals → DistributiveNumeral
   | .noDistributiveNumerals => .noDistributive
   | .markedByReduplication => .markedByReduplication
   | .markedByPrefix => .markedByPrefix
@@ -260,7 +260,7 @@ private def fromWALS54A : Core.WALS.F54A.DistributiveNumerals → DistributiveNu
 
 /-- Convert WALS 131A numeral base values to our NumeralBase type.
     The mapping is one-to-one. -/
-private def fromWALS131A : Core.WALS.F131A.NumeralBases → NumeralBase
+private def fromWALS131A : Datasets.WALS.F131A.NumeralBases → NumeralBase
   | .decimal => .decimal
   | .pureVigesimal => .vigesimal
   | .hybridVigesimalDecimal => .hybridVigesimalDecimal
@@ -828,31 +828,31 @@ theorem suppletion_frequency_matches_hierarchy :
 -- ============================================================================
 
 theorem english_ch53 :
-    (Core.WALS.F53A.lookup "eng").map (fromWALS53A ·.value) = some english.ordinal := by
+    (Datasets.WALS.F53A.lookup "eng").map (fromWALS53A ·.value) = some english.ordinal := by
   native_decide
 theorem bengali_ch53 :
-    (Core.WALS.F53A.lookup "ben").map (fromWALS53A ·.value) = some bengali.ordinal := by
+    (Datasets.WALS.F53A.lookup "ben").map (fromWALS53A ·.value) = some bengali.ordinal := by
   native_decide
 theorem burmese_ch53 :
-    (Core.WALS.F53A.lookup "brm").map (fromWALS53A ·.value) = some burmese.ordinal := by
+    (Datasets.WALS.F53A.lookup "brm").map (fromWALS53A ·.value) = some burmese.ordinal := by
   native_decide
 theorem finnish_ch53 :
-    (Core.WALS.F53A.lookup "fin").map (fromWALS53A ·.value) = some finnish.ordinal := by
+    (Datasets.WALS.F53A.lookup "fin").map (fromWALS53A ·.value) = some finnish.ordinal := by
   native_decide
 theorem georgian_ch53 :
-    (Core.WALS.F53A.lookup "geo").map (fromWALS53A ·.value) = some georgian.ordinal := by
+    (Datasets.WALS.F53A.lookup "geo").map (fromWALS53A ·.value) = some georgian.ordinal := by
   native_decide
 theorem japanese_ch53 :
-    (Core.WALS.F53A.lookup "jpn").map (fromWALS53A ·.value) = some japanese.ordinal := by
+    (Datasets.WALS.F53A.lookup "jpn").map (fromWALS53A ·.value) = some japanese.ordinal := by
   native_decide
 theorem mandarin_ch53 :
-    (Core.WALS.F53A.lookup "mnd").map (fromWALS53A ·.value) = some mandarin.ordinal := by
+    (Datasets.WALS.F53A.lookup "mnd").map (fromWALS53A ·.value) = some mandarin.ordinal := by
   native_decide
 theorem russian_ch53 :
-    (Core.WALS.F53A.lookup "rus").map (fromWALS53A ·.value) = some russian.ordinal := by
+    (Datasets.WALS.F53A.lookup "rus").map (fromWALS53A ·.value) = some russian.ordinal := by
   native_decide
 theorem indonesian_ch53 :
-    (Core.WALS.F53A.lookup "ind").map (fromWALS53A ·.value) = some indonesian.ordinal := by
+    (Datasets.WALS.F53A.lookup "ind").map (fromWALS53A ·.value) = some indonesian.ordinal := by
   native_decide
 
 -- ============================================================================
@@ -860,37 +860,37 @@ theorem indonesian_ch53 :
 -- ============================================================================
 
 theorem english_ch54 :
-    (Core.WALS.F54A.lookup "eng").map (fromWALS54A ·.value) = some english.distributive := by
+    (Datasets.WALS.F54A.lookup "eng").map (fromWALS54A ·.value) = some english.distributive := by
   native_decide
 theorem bengali_ch54 :
-    (Core.WALS.F54A.lookup "ben").map (fromWALS54A ·.value) = some bengali.distributive := by
+    (Datasets.WALS.F54A.lookup "ben").map (fromWALS54A ·.value) = some bengali.distributive := by
   native_decide
 theorem finnish_ch54 :
-    (Core.WALS.F54A.lookup "fin").map (fromWALS54A ·.value) = some finnish.distributive := by
+    (Datasets.WALS.F54A.lookup "fin").map (fromWALS54A ·.value) = some finnish.distributive := by
   native_decide
 theorem hindi_ch54 :
-    (Core.WALS.F54A.lookup "hin").map (fromWALS54A ·.value) = some hindi.distributive := by
+    (Datasets.WALS.F54A.lookup "hin").map (fromWALS54A ·.value) = some hindi.distributive := by
   native_decide
 theorem hungarian_ch54 :
-    (Core.WALS.F54A.lookup "hun").map (fromWALS54A ·.value) = some hungarian.distributive := by
+    (Datasets.WALS.F54A.lookup "hun").map (fromWALS54A ·.value) = some hungarian.distributive := by
   native_decide
 theorem indonesian_ch54 :
-    (Core.WALS.F54A.lookup "ind").map (fromWALS54A ·.value) = some indonesian.distributive := by
+    (Datasets.WALS.F54A.lookup "ind").map (fromWALS54A ·.value) = some indonesian.distributive := by
   native_decide
 theorem korean_ch54 :
-    (Core.WALS.F54A.lookup "kor").map (fromWALS54A ·.value) = some korean.distributive := by
+    (Datasets.WALS.F54A.lookup "kor").map (fromWALS54A ·.value) = some korean.distributive := by
   native_decide
 theorem mandarin_ch54 :
-    (Core.WALS.F54A.lookup "mnd").map (fromWALS54A ·.value) = some mandarin.distributive := by
+    (Datasets.WALS.F54A.lookup "mnd").map (fromWALS54A ·.value) = some mandarin.distributive := by
   native_decide
 theorem thai_ch54 :
-    (Core.WALS.F54A.lookup "tha").map (fromWALS54A ·.value) = some thai.distributive := by
+    (Datasets.WALS.F54A.lookup "tha").map (fromWALS54A ·.value) = some thai.distributive := by
   native_decide
 theorem turkish_ch54 :
-    (Core.WALS.F54A.lookup "tur").map (fromWALS54A ·.value) = some turkish.distributive := by
+    (Datasets.WALS.F54A.lookup "tur").map (fromWALS54A ·.value) = some turkish.distributive := by
   native_decide
 theorem vietnamese_ch54 :
-    (Core.WALS.F54A.lookup "vie").map (fromWALS54A ·.value) = some vietnamese.distributive := by
+    (Datasets.WALS.F54A.lookup "vie").map (fromWALS54A ·.value) = some vietnamese.distributive := by
   native_decide
 
 -- ============================================================================
@@ -898,49 +898,49 @@ theorem vietnamese_ch54 :
 -- ============================================================================
 
 theorem english_ch55 :
-    (Core.WALS.F55A.lookup "eng").map (fromWALS55A ·.value) = some english.classifier := by
+    (Datasets.WALS.F55A.lookup "eng").map (fromWALS55A ·.value) = some english.classifier := by
   native_decide
 theorem burmese_ch55 :
-    (Core.WALS.F55A.lookup "brm").map (fromWALS55A ·.value) = some burmese.classifier := by
+    (Datasets.WALS.F55A.lookup "brm").map (fromWALS55A ·.value) = some burmese.classifier := by
   native_decide
 theorem finnish_ch55 :
-    (Core.WALS.F55A.lookup "fin").map (fromWALS55A ·.value) = some finnish.classifier := by
+    (Datasets.WALS.F55A.lookup "fin").map (fromWALS55A ·.value) = some finnish.classifier := by
   native_decide
 theorem georgian_ch55 :
-    (Core.WALS.F55A.lookup "geo").map (fromWALS55A ·.value) = some georgian.classifier := by
+    (Datasets.WALS.F55A.lookup "geo").map (fromWALS55A ·.value) = some georgian.classifier := by
   native_decide
 theorem hindi_ch55 :
-    (Core.WALS.F55A.lookup "hin").map (fromWALS55A ·.value) = some hindi.classifier := by
+    (Datasets.WALS.F55A.lookup "hin").map (fromWALS55A ·.value) = some hindi.classifier := by
   native_decide
 theorem japanese_ch55 :
-    (Core.WALS.F55A.lookup "jpn").map (fromWALS55A ·.value) = some japanese.classifier := by
+    (Datasets.WALS.F55A.lookup "jpn").map (fromWALS55A ·.value) = some japanese.classifier := by
   native_decide
 theorem mandarin_ch55 :
-    (Core.WALS.F55A.lookup "mnd").map (fromWALS55A ·.value) = some mandarin.classifier := by
+    (Datasets.WALS.F55A.lookup "mnd").map (fromWALS55A ·.value) = some mandarin.classifier := by
   native_decide
 theorem russian_ch55 :
-    (Core.WALS.F55A.lookup "rus").map (fromWALS55A ·.value) = some russian.classifier := by
+    (Datasets.WALS.F55A.lookup "rus").map (fromWALS55A ·.value) = some russian.classifier := by
   native_decide
 theorem swahili_ch55 :
-    (Core.WALS.F55A.lookup "swa").map (fromWALS55A ·.value) = some swahili.classifier := by
+    (Datasets.WALS.F55A.lookup "swa").map (fromWALS55A ·.value) = some swahili.classifier := by
   native_decide
 theorem tagalog_ch55 :
-    (Core.WALS.F55A.lookup "tag").map (fromWALS55A ·.value) = some tagalog.classifier := by
+    (Datasets.WALS.F55A.lookup "tag").map (fromWALS55A ·.value) = some tagalog.classifier := by
   native_decide
 theorem thai_ch55 :
-    (Core.WALS.F55A.lookup "tha").map (fromWALS55A ·.value) = some thai.classifier := by
+    (Datasets.WALS.F55A.lookup "tha").map (fromWALS55A ·.value) = some thai.classifier := by
   native_decide
 theorem tzeltal_ch55 :
-    (Core.WALS.F55A.lookup "tze").map (fromWALS55A ·.value) = some tzeltal.classifier := by
+    (Datasets.WALS.F55A.lookup "tze").map (fromWALS55A ·.value) = some tzeltal.classifier := by
   native_decide
 theorem turkish_ch55 :
-    (Core.WALS.F55A.lookup "tur").map (fromWALS55A ·.value) = some turkish.classifier := by
+    (Datasets.WALS.F55A.lookup "tur").map (fromWALS55A ·.value) = some turkish.classifier := by
   native_decide
 theorem vietnamese_ch55 :
-    (Core.WALS.F55A.lookup "vie").map (fromWALS55A ·.value) = some vietnamese.classifier := by
+    (Datasets.WALS.F55A.lookup "vie").map (fromWALS55A ·.value) = some vietnamese.classifier := by
   native_decide
 theorem yoruba_ch55 :
-    (Core.WALS.F55A.lookup "yor").map (fromWALS55A ·.value) = some yoruba.classifier := by
+    (Datasets.WALS.F55A.lookup "yor").map (fromWALS55A ·.value) = some yoruba.classifier := by
   native_decide
 
 -- ============================================================================
@@ -949,56 +949,56 @@ theorem yoruba_ch55 :
 -- ============================================================================
 
 theorem english_ch131 :
-    (Core.WALS.F131A.lookup "eng").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "eng").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem japanese_ch131 :
-    (Core.WALS.F131A.lookup "jpn").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "jpn").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem mandarin_ch131 :
-    (Core.WALS.F131A.lookup "mnd").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "mnd").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem hindi_ch131 :
-    (Core.WALS.F131A.lookup "hin").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "hin").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem russian_ch131 :
-    (Core.WALS.F131A.lookup "rus").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "rus").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem finnish_ch131 :
-    (Core.WALS.F131A.lookup "fin").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "fin").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem turkish_ch131 :
-    (Core.WALS.F131A.lookup "tur").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "tur").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem hungarian_ch131 :
-    (Core.WALS.F131A.lookup "hun").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "hun").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem korean_ch131 :
-    (Core.WALS.F131A.lookup "kor").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "kor").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem thai_ch131 :
-    (Core.WALS.F131A.lookup "tha").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "tha").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem vietnamese_ch131 :
-    (Core.WALS.F131A.lookup "vie").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "vie").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem indonesian_ch131 :
-    (Core.WALS.F131A.lookup "ind").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "ind").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem swahili_ch131 :
-    (Core.WALS.F131A.lookup "swa").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "swa").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem burmese_ch131 :
-    (Core.WALS.F131A.lookup "brm").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "brm").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem tagalog_ch131 :
-    (Core.WALS.F131A.lookup "tag").map (fromWALS131A ·.value) = some .decimal := by
+    (Datasets.WALS.F131A.lookup "tag").map (fromWALS131A ·.value) = some .decimal := by
   native_decide
 theorem georgian_ch131 :
-    (Core.WALS.F131A.lookup "geo").map (fromWALS131A ·.value) =
+    (Datasets.WALS.F131A.lookup "geo").map (fromWALS131A ·.value) =
       some .hybridVigesimalDecimal := by
   native_decide
 theorem yoruba_ch131 :
-    (Core.WALS.F131A.lookup "yor").map (fromWALS131A ·.value) = some .vigesimal := by
+    (Datasets.WALS.F131A.lookup "yor").map (fromWALS131A ·.value) = some .vigesimal := by
   native_decide
 
 -- ============================================================================

@@ -1,0 +1,421 @@
+import Linglib.Datasets.WALS.Datapoint
+
+/-!
+# WALS Feature 103A: Third Person Zero of Verbal Person Marking
+@cite{wals-2013}
+
+Auto-generated from WALS v2020.4 CLDF data.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 103A`.
+
+Chapter 103, 380 languages.
+-/
+
+namespace Datasets.WALS.F103A
+
+/-- WALS 103A values. -/
+inductive ThirdPersonZeroOfVerbalPersonMarking where
+  /-- No person marking (96 languages). -/
+  | noPersonMarking
+  /-- No zero realization (181 languages). -/
+  | noZeroRealization
+  /-- Zero in some 3sg forms (21 languages). -/
+  | zeroInSome3sgForms
+  /-- Zero in all 3sg forms (45 languages). -/
+  | zeroInAll3sgForms
+  /-- Zero in all 3rd person forms (36 languages). -/
+  | zeroInAll3rdPersonForms
+  /-- Zero only in 3rd nonsingular (1 languages). -/
+  | zeroOnlyIn3rdNonsingular
+  deriving DecidableEq, BEq, Repr
+
+/-- Complete WALS 103A dataset (380 languages). -/
+def allData : List (Datapoint ThirdPersonZeroOfVerbalPersonMarking) :=
+  [ { walsCode := "ani", iso := "hnh", value := .noPersonMarking }
+  , { walsCode := "abi", iso := "axb", value := .zeroInSome3sgForms }
+  , { walsCode := "abk", iso := "abk", value := .noZeroRealization }
+  , { walsCode := "abu", iso := "kgr", value := .noPersonMarking }
+  , { walsCode := "ace", iso := "ace", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "acm", iso := "acv", value := .noZeroRealization }
+  , { walsCode := "aco", iso := "kjq", value := .noZeroRealization }
+  , { walsCode := "adz", iso := "adz", value := .noPersonMarking }
+  , { walsCode := "ain", iso := "ain", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ala", iso := "amp", value := .noZeroRealization }
+  , { walsCode := "alb", iso := "sqi", value := .noZeroRealization }
+  , { walsCode := "ame", iso := "aey", value := .noZeroRealization }
+  , { walsCode := "amh", iso := "amh", value := .noZeroRealization }
+  , { walsCode := "amu", iso := "ame", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "anj", iso := "aty", value := .noZeroRealization }
+  , { walsCode := "ane", iso := "anz", value := .noZeroRealization }
+  , { walsCode := "apu", iso := "apu", value := .noZeroRealization }
+  , { walsCode := "abn", iso := "ard", value := .noPersonMarking }
+  , { walsCode := "aeg", iso := "arz", value := .zeroInAll3sgForms }
+  , { walsCode := "ana", iso := "aro", value := .noPersonMarking }
+  , { walsCode := "arp", iso := "ape", value := .noZeroRealization }
+  , { walsCode := "arm", iso := "hye", value := .zeroInAll3sgForms }
+  , { walsCode := "asm", iso := "cns", value := .zeroInAll3sgForms }
+  , { walsCode := "atk", iso := "aqp", value := .zeroInAll3sgForms }
+  , { walsCode := "ata", iso := "tay", value := .zeroInAll3sgForms }
+  , { walsCode := "au", iso := "avt", value := .noZeroRealization }
+  , { walsCode := "awp", iso := "kwi", value := .noZeroRealization }
+  , { walsCode := "awt", iso := "kmn", value := .noPersonMarking }
+  , { walsCode := "aym", iso := "ayr", value := .zeroInAll3sgForms }
+  , { walsCode := "bab", iso := "bav", value := .noPersonMarking }
+  , { walsCode := "bag", iso := "bmi", value := .noZeroRealization }
+  , { walsCode := "bam", iso := "bam", value := .noPersonMarking }
+  , { walsCode := "bnj", iso := "bdy", value := .noPersonMarking }
+  , { walsCode := "baa", iso := "bbb", value := .noZeroRealization }
+  , { walsCode := "brs", iso := "bsn", value := .zeroOnlyIn3rdNonsingular }
+  , { walsCode := "bar", iso := "bfa", value := .noPersonMarking }
+  , { walsCode := "bsq", iso := "eus", value := .noZeroRealization }
+  , { walsCode := "bkr", iso := "btx", value := .noZeroRealization }
+  , { walsCode := "baw", iso := "bgr", value := .noZeroRealization }
+  , { walsCode := "bej", iso := "bej", value := .noZeroRealization }
+  , { walsCode := "bma", iso := "tzm", value := .noZeroRealization }
+  , { walsCode := "ber", iso := "wti", value := .noZeroRealization }
+  , { walsCode := "bln", iso := "byn", value := .noZeroRealization }
+  , { walsCode := "brr", iso := "bor", value := .zeroInSome3sgForms }
+  , { walsCode := "brh", iso := "brh", value := .zeroInSome3sgForms }
+  , { walsCode := "bri", iso := "bzd", value := .noPersonMarking }
+  , { walsCode := "bro", iso := "tcs", value := .noPersonMarking }
+  , { walsCode := "brm", iso := "mya", value := .noPersonMarking }
+  , { walsCode := "brn", iso := "bds", value := .noZeroRealization }
+  , { walsCode := "bur", iso := "bsk", value := .noZeroRealization }
+  , { walsCode := "bya", iso := "bee", value := .zeroInAll3sgForms }
+  , { walsCode := "cah", iso := "chl", value := .zeroInAll3sgForms }
+  , { walsCode := "cax", iso := "", value := .noZeroRealization }
+  , { walsCode := "can", iso := "cbu", value := .noZeroRealization }
+  , { walsCode := "cnl", iso := "ram", value := .noZeroRealization }
+  , { walsCode := "cap", iso := "kaq", value := .noZeroRealization }
+  , { walsCode := "car", iso := "car", value := .noZeroRealization }
+  , { walsCode := "cav", iso := "cav", value := .noZeroRealization }
+  , { walsCode := "cyv", iso := "cyb", value := .zeroInSome3sgForms }
+  , { walsCode := "cha", iso := "cha", value := .noZeroRealization }
+  , { walsCode := "cpn", iso := "cdm", value := .zeroInAll3sgForms }
+  , { walsCode := "cle", iso := "cle", value := .noZeroRealization }
+  , { walsCode := "cku", iso := "wac", value := .noZeroRealization }
+  , { walsCode := "chr", iso := "crw", value := .noPersonMarking }
+  , { walsCode := "chk", iso := "ckt", value := .noZeroRealization }
+  , { walsCode := "cba", iso := "boi", value := .noZeroRealization }
+  , { walsCode := "cbo", iso := "cao", value := .noZeroRealization }
+  , { walsCode := "cmn", iso := "com", value := .noZeroRealization }
+  , { walsCode := "cmx", iso := "coo", value := .zeroInAll3sgForms }
+  , { walsCode := "coo", iso := "csz", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "cop", iso := "cop", value := .noZeroRealization }
+  , { walsCode := "cor", iso := "crn", value := .zeroInAll3sgForms }
+  , { walsCode := "cre", iso := "crk", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "cri", iso := "crh", value := .zeroInAll3sgForms }
+  , { walsCode := "cub", iso := "cub", value := .noZeroRealization }
+  , { walsCode := "dag", iso := "dgz", value := .noZeroRealization }
+  , { walsCode := "dga", iso := "dga", value := .noPersonMarking }
+  , { walsCode := "dgr", iso := "dta", value := .noZeroRealization }
+  , { walsCode := "dni", iso := "dni", value := .noZeroRealization }
+  , { walsCode := "dio", iso := "dyo", value := .noZeroRealization }
+  , { walsCode := "diz", iso := "mdx", value := .noZeroRealization }
+  , { walsCode := "don", iso := "kmc", value := .noPersonMarking }
+  , { walsCode := "doy", iso := "dow", value := .zeroInAll3sgForms }
+  , { walsCode := "dre", iso := "dhv", value := .noPersonMarking }
+  , { walsCode := "dum", iso := "vam", value := .noZeroRealization }
+  , { walsCode := "dut", iso := "nld", value := .noZeroRealization }
+  , { walsCode := "eka", iso := "ekg", value := .noZeroRealization }
+  , { walsCode := "eng", iso := "eng", value := .noZeroRealization }
+  , { walsCode := "epe", iso := "sja", value := .noPersonMarking }
+  , { walsCode := "err", iso := "erg", value := .noZeroRealization }
+  , { walsCode := "eve", iso := "evn", value := .noZeroRealization }
+  , { walsCode := "ewe", iso := "ewe", value := .noZeroRealization }
+  , { walsCode := "fij", iso := "fij", value := .noZeroRealization }
+  , { walsCode := "fin", iso := "fin", value := .zeroInAll3sgForms }
+  , { walsCode := "fre", iso := "fra", value := .noZeroRealization }
+  , { walsCode := "fua", iso := "fub", value := .noZeroRealization }
+  , { walsCode := "fur", iso := "fvr", value := .noZeroRealization }
+  , { walsCode := "gar", iso := "grt", value := .noPersonMarking }
+  , { walsCode := "geo", iso := "kat", value := .noZeroRealization }
+  , { walsCode := "ger", iso := "deu", value := .noZeroRealization }
+  , { walsCode := "god", iso := "gdo", value := .noPersonMarking }
+  , { walsCode := "goo", iso := "gni", value := .zeroInAll3sgForms }
+  , { walsCode := "grb", iso := "grj", value := .noPersonMarking }
+  , { walsCode := "grk", iso := "ell", value := .noZeroRealization }
+  , { walsCode := "grw", iso := "kal", value := .noZeroRealization }
+  , { walsCode := "gua", iso := "gug", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "gud", iso := "gde", value := .noPersonMarking }
+  , { walsCode := "gmw", iso := "gvs", value := .noZeroRealization }
+  , { walsCode := "guu", iso := "kky", value := .noPersonMarking }
+  , { walsCode := "hai", iso := "hai", value := .noPersonMarking }
+  , { walsCode := "hlu", iso := "hur", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "hmr", iso := "amf", value := .noPersonMarking }
+  , { walsCode := "ham", iso := "hmt", value := .noZeroRealization }
+  , { walsCode := "hat", iso := "had", value := .noZeroRealization }
+  , { walsCode := "hau", iso := "hau", value := .noPersonMarking }
+  , { walsCode := "heb", iso := "heb", value := .zeroInAll3sgForms }
+  , { walsCode := "hin", iso := "hin", value := .noZeroRealization }
+  , { walsCode := "hix", iso := "hix", value := .noZeroRealization }
+  , { walsCode := "hmo", iso := "hnj", value := .noPersonMarking }
+  , { walsCode := "hua", iso := "ygr", value := .noZeroRealization }
+  , { walsCode := "hmu", iso := "hux", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "hun", iso := "hun", value := .noZeroRealization }
+  , { walsCode := "hzb", iso := "huz", value := .noPersonMarking }
+  , { walsCode := "igb", iso := "ibo", value := .noPersonMarking }
+  , { walsCode := "ijo", iso := "ijc", value := .noPersonMarking }
+  , { walsCode := "ika", iso := "arh", value := .zeroInAll3sgForms }
+  , { walsCode := "imo", iso := "imn", value := .noPersonMarking }
+  , { walsCode := "ind", iso := "ind", value := .noZeroRealization }
+  , { walsCode := "ing", iso := "inh", value := .noPersonMarking }
+  , { walsCode := "iqu", iso := "iqu", value := .noZeroRealization }
+  , { walsCode := "irq", iso := "irk", value := .noZeroRealization }
+  , { walsCode := "iri", iso := "gle", value := .noZeroRealization }
+  , { walsCode := "ita", iso := "ita", value := .noZeroRealization }
+  , { walsCode := "jak", iso := "jac", value := .zeroInAll3sgForms }
+  , { walsCode := "jpn", iso := "jpn", value := .noPersonMarking }
+  , { walsCode := "jaq", iso := "jqr", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "juh", iso := "ktz", value := .noPersonMarking }
+  , { walsCode := "kgu", iso := "ktg", value := .zeroInAll3sgForms }
+  , { walsCode := "knd", iso := "kan", value := .noZeroRealization }
+  , { walsCode := "knr", iso := "knc", value := .noZeroRealization }
+  , { walsCode := "kpm", iso := "pam", value := .noZeroRealization }
+  , { walsCode := "kna", iso := "ktn", value := .noZeroRealization }
+  , { walsCode := "krk", iso := "kyh", value := .noZeroRealization }
+  , { walsCode := "kas", iso := "kas", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ktl", iso := "kcr", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "kws", iso := "xaw", value := .noZeroRealization }
+  , { walsCode := "kyl", iso := "eky", value := .noPersonMarking }
+  , { walsCode := "kay", iso := "gyd", value := .noPersonMarking }
+  , { walsCode := "ker", iso := "ker", value := .noPersonMarking }
+  , { walsCode := "ket", iso := "ket", value := .noZeroRealization }
+  , { walsCode := "kew", iso := "kew", value := .noZeroRealization }
+  , { walsCode := "kha", iso := "khk", value := .noPersonMarking }
+  , { walsCode := "khs", iso := "kha", value := .noZeroRealization }
+  , { walsCode := "khm", iso := "khm", value := .noPersonMarking }
+  , { walsCode := "kmu", iso := "kjg", value := .noPersonMarking }
+  , { walsCode := "klv", iso := "kij", value := .noZeroRealization }
+  , { walsCode := "kio", iso := "kio", value := .zeroInAll3sgForms }
+  , { walsCode := "krb", iso := "gil", value := .noZeroRealization }
+  , { walsCode := "kis", iso := "kss", value := .noPersonMarking }
+  , { walsCode := "koa", iso := "cku", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "kob", iso := "kpw", value := .zeroInAll3sgForms }
+  , { walsCode := "klk", iso := "xuo", value := .noPersonMarking }
+  , { walsCode := "kom", iso := "xom", value := .noZeroRealization }
+  , { walsCode := "kon", iso := "kng", value := .noZeroRealization }
+  , { walsCode := "kjo", iso := "kjc", value := .noZeroRealization }
+  , { walsCode := "kor", iso := "kor", value := .noPersonMarking }
+  , { walsCode := "kfe", iso := "kfz", value := .noZeroRealization }
+  , { walsCode := "kos", iso := "kos", value := .noZeroRealization }
+  , { walsCode := "kch", iso := "khq", value := .noPersonMarking }
+  , { walsCode := "kse", iso := "ses", value := .noPersonMarking }
+  , { walsCode := "kro", iso := "kgo", value := .noPersonMarking }
+  , { walsCode := "kuk", iso := "bfa", value := .noPersonMarking }
+  , { walsCode := "knm", iso := "kun", value := .zeroInAll3sgForms }
+  , { walsCode := "krd", iso := "ckb", value := .zeroInSome3sgForms }
+  , { walsCode := "kut", iso := "kut", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "kwz", iso := "xwa", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "lad", iso := "lbj", value := .noPersonMarking }
+  , { walsCode := "lah", iso := "lhu", value := .noPersonMarking }
+  , { walsCode := "lak", iso := "lbe", value := .noZeroRealization }
+  , { walsCode := "lkt", iso := "lkt", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "lan", iso := "laj", value := .zeroInSome3sgForms }
+  , { walsCode := "lrk", iso := "alo", value := .noZeroRealization }
+  , { walsCode := "lat", iso := "lav", value := .zeroInAll3sgForms }
+  , { walsCode := "lav", iso := "lvk", value := .noZeroRealization }
+  , { walsCode := "lel", iso := "lln", value := .noZeroRealization }
+  , { walsCode := "lep", iso := "lep", value := .noPersonMarking }
+  , { walsCode := "lez", iso := "lez", value := .noPersonMarking }
+  , { walsCode := "lim", iso := "lif", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ara", iso := "arw", value := .noZeroRealization }
+  , { walsCode := "kkv", iso := "khl", value := .noZeroRealization }
+  , { walsCode := "luv", iso := "lue", value := .noZeroRealization }
+  , { walsCode := "mle", iso := "mdy", value := .noPersonMarking }
+  , { walsCode := "mab", iso := "mde", value := .noZeroRealization }
+  , { walsCode := "mac", iso := "mbc", value := .zeroInSome3sgForms }
+  , { walsCode := "mne", iso := "nmu", value := .noZeroRealization }
+  , { walsCode := "msn", iso := "mbq", value := .noZeroRealization }
+  , { walsCode := "mak", iso := "myh", value := .zeroInSome3sgForms }
+  , { walsCode := "mal", iso := "plt", value := .noPersonMarking }
+  , { walsCode := "mlk", iso := "mpb", value := .noZeroRealization }
+  , { walsCode := "mnd", iso := "cmn", value := .noPersonMarking }
+  , { walsCode := "myi", iso := "mpc", value := .zeroInAll3sgForms }
+  , { walsCode := "mao", iso := "mri", value := .noPersonMarking }
+  , { walsCode := "map", iso := "arn", value := .noZeroRealization }
+  , { walsCode := "mku", iso := "zmr", value := .zeroInAll3sgForms }
+  , { walsCode := "mar", iso := "mrc", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "mrd", iso := "mrz", value := .noZeroRealization }
+  , { walsCode := "mrt", iso := "vma", value := .noPersonMarking }
+  , { walsCode := "msl", iso := "mls", value := .noZeroRealization }
+  , { walsCode := "mau", iso := "mph", value := .noZeroRealization }
+  , { walsCode := "mcr", iso := "mfe", value := .noPersonMarking }
+  , { walsCode := "may", iso := "ayz", value := .noZeroRealization }
+  , { walsCode := "mby", iso := "myb", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "mei", iso := "mni", value := .noPersonMarking }
+  , { walsCode := "mde", iso := "men", value := .noPersonMarking }
+  , { walsCode := "mis", iso := "miq", value := .noZeroRealization }
+  , { walsCode := "mss", iso := "skd", value := .noZeroRealization }
+  , { walsCode := "mxc", iso := "mig", value := .noZeroRealization }
+  , { walsCode := "miz", iso := "lus", value := .noZeroRealization }
+  , { walsCode := "mlm", iso := "mra", value := .noPersonMarking }
+  , { walsCode := "moh", iso := "moh", value := .noZeroRealization }
+  , { walsCode := "moa", iso := "mte", value := .noZeroRealization }
+  , { walsCode := "mum", iso := "mzm", value := .noPersonMarking }
+  , { walsCode := "mna", iso := "mnb", value := .noZeroRealization }
+  , { walsCode := "mun", iso := "unr", value := .noZeroRealization }
+  , { walsCode := "mup", iso := "sur", value := .noPersonMarking }
+  , { walsCode := "mrl", iso := "mur", value := .noZeroRealization }
+  , { walsCode := "nad", iso := "mbj", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "nht", iso := "nhg", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "nak", iso := "nak", value := .noZeroRealization }
+  , { walsCode := "kho", iso := "naq", value := .noPersonMarking }
+  , { walsCode := "nmb", iso := "nab", value := .zeroInAll3sgForms }
+  , { walsCode := "nai", iso := "gld", value := .noZeroRealization }
+  , { walsCode := "nan", iso := "niq", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "nas", iso := "nas", value := .zeroInSome3sgForms }
+  , { walsCode := "nav", iso := "nav", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ndo", iso := "ndo", value := .noZeroRealization }
+  , { walsCode := "ndy", iso := "djk", value := .noPersonMarking }
+  , { walsCode := "ntu", iso := "yrk", value := .zeroInAll3sgForms }
+  , { walsCode := "nez", iso := "nez", value := .noZeroRealization }
+  , { walsCode := "ngl", iso := "nig", value := .zeroInAll3sgForms }
+  , { walsCode := "ngk", iso := "nam", value := .noZeroRealization }
+  , { walsCode := "nti", iso := "niy", value := .noZeroRealization }
+  , { walsCode := "ngi", iso := "wyb", value := .noZeroRealization }
+  , { walsCode := "nbr", iso := "gym", value := .noPersonMarking }
+  , { walsCode := "niv", iso := "niv", value := .noPersonMarking }
+  , { walsCode := "nko", iso := "cgg", value := .noZeroRealization }
+  , { walsCode := "noo", iso := "snf", value := .noPersonMarking }
+  , { walsCode := "nbd", iso := "dgl", value := .noZeroRealization }
+  , { walsCode := "nug", iso := "nuy", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "nup", iso := "nup", value := .noPersonMarking }
+  , { walsCode := "nuu", iso := "nuk", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "nyu", iso := "nyv", value := .noZeroRealization }
+  , { walsCode := "ond", iso := "one", value := .noZeroRealization }
+  , { walsCode := "orh", iso := "hae", value := .zeroInSome3sgForms }
+  , { walsCode := "oss", iso := "oss", value := .noZeroRealization }
+  , { walsCode := "otm", iso := "ote", value := .zeroInAll3sgForms }
+  , { walsCode := "pms", iso := "pma", value := .zeroInAll3sgForms }
+  , { walsCode := "pai", iso := "pwn", value := .noPersonMarking }
+  , { walsCode := "pal", iso := "pau", value := .noZeroRealization }
+  , { walsCode := "plk", iso := "plu", value := .noZeroRealization }
+  , { walsCode := "pny", iso := "pnw", value := .noPersonMarking }
+  , { walsCode := "psm", iso := "pqm", value := .zeroInAll3sgForms }
+  , { walsCode := "pau", iso := "pad", value := .zeroInAll3sgForms }
+  , { walsCode := "pec", iso := "pay", value := .zeroInAll3sgForms }
+  , { walsCode := "prs", iso := "pes", value := .zeroInAll3sgForms }
+  , { walsCode := "pip", iso := "ppl", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "prh", iso := "myp", value := .noZeroRealization }
+  , { walsCode := "pit", iso := "pjt", value := .zeroInAll3sgForms }
+  , { walsCode := "pol", iso := "pol", value := .noZeroRealization }
+  , { walsCode := "pso", iso := "pom", value := .noPersonMarking }
+  , { walsCode := "psj", iso := "poe", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "pur", iso := "tsz", value := .zeroInAll3sgForms }
+  , { walsCode := "par", iso := "lkr", value := .noZeroRealization }
+  , { walsCode := "qaw", iso := "alc", value := .noPersonMarking }
+  , { walsCode := "qim", iso := "qvi", value := .zeroInSome3sgForms }
+  , { walsCode := "qui", iso := "qui", value := .noZeroRealization }
+  , { walsCode := "ram", iso := "rma", value := .noZeroRealization }
+  , { walsCode := "rap", iso := "rap", value := .noPersonMarking }
+  , { walsCode := "rem", iso := "bfw", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ret", iso := "tnc", value := .noZeroRealization }
+  , { walsCode := "rus", iso := "rus", value := .noZeroRealization }
+  , { walsCode := "sah", iso := "saj", value := .noZeroRealization }
+  , { walsCode := "sal", iso := "sln", value := .noZeroRealization }
+  , { walsCode := "syu", iso := "sll", value := .noZeroRealization }
+  , { walsCode := "sam", iso := "smo", value := .noPersonMarking }
+  , { walsCode := "san", iso := "sag", value := .noPersonMarking }
+  , { walsCode := "snm", iso := "xsu", value := .noPersonMarking }
+  , { walsCode := "srm", iso := "srm", value := .noPersonMarking }
+  , { walsCode := "saw", iso := "hvn", value := .noPersonMarking }
+  , { walsCode := "slp", iso := "spl", value := .noZeroRealization }
+  , { walsCode := "sel", iso := "ona", value := .noPersonMarking }
+  , { walsCode := "sem", iso := "nsm", value := .noPersonMarking }
+  , { walsCode := "sml", iso := "sza", value := .noZeroRealization }
+  , { walsCode := "snt", iso := "set", value := .noZeroRealization }
+  , { walsCode := "shk", iso := "shp", value := .noPersonMarking }
+  , { walsCode := "siu", iso := "sis", value := .zeroInAll3sgForms }
+  , { walsCode := "sla", iso := "den", value := .zeroInAll3sgForms }
+  , { walsCode := "so", iso := "teu", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "spa", iso := "spa", value := .noZeroRealization }
+  , { walsCode := "squ", iso := "squ", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "sue", iso := "sue", value := .noZeroRealization }
+  , { walsCode := "sun", iso := "sun", value := .noPersonMarking }
+  , { walsCode := "sup", iso := "spp", value := .noPersonMarking }
+  , { walsCode := "swa", iso := "swh", value := .noZeroRealization }
+  , { walsCode := "tab", iso := "mky", value := .noZeroRealization }
+  , { walsCode := "tag", iso := "tgl", value := .noPersonMarking }
+  , { walsCode := "tap", iso := "gpn", value := .noZeroRealization }
+  , { walsCode := "tkl", iso := "tkm", value := .zeroInSome3sgForms }
+  , { walsCode := "tau", iso := "tya", value := .noZeroRealization }
+  , { walsCode := "taw", iso := "tbo", value := .noZeroRealization }
+  , { walsCode := "tmr", iso := "tea", value := .noZeroRealization }
+  , { walsCode := "tpn", iso := "ntp", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "trb", iso := "tfr", value := .zeroInSome3sgForms }
+  , { walsCode := "tha", iso := "tha", value := .noPersonMarking }
+  , { walsCode := "tid", iso := "tvo", value := .noZeroRealization }
+  , { walsCode := "tgk", iso := "tgc", value := .noPersonMarking }
+  , { walsCode := "tja", iso := "dih", value := .zeroInSome3sgForms }
+  , { walsCode := "tin", iso := "cir", value := .noZeroRealization }
+  , { walsCode := "tir", iso := "tri", value := .noZeroRealization }
+  , { walsCode := "tiw", iso := "tiw", value := .noZeroRealization }
+  , { walsCode := "tli", iso := "tli", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "tol", iso := "jic", value := .zeroInSome3sgForms }
+  , { walsCode := "tla", iso := "ksd", value := .noZeroRealization }
+  , { walsCode := "tms", iso := "dto", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ton", iso := "tqw", value := .zeroInAll3sgForms }
+  , { walsCode := "tot", iso := "tlc", value := .zeroInAll3sgForms }
+  , { walsCode := "tri", iso := "trc", value := .noZeroRealization }
+  , { walsCode := "tru", iso := "tpy", value := .noZeroRealization }
+  , { walsCode := "tsi", iso := "tsi", value := .noZeroRealization }
+  , { walsCode := "tso", iso := "tsu", value := .noZeroRealization }
+  , { walsCode := "tuk", iso := "", value := .noZeroRealization }
+  , { walsCode := "tun", iso := "tun", value := .noZeroRealization }
+  , { walsCode := "tna", iso := "tuv", value := .noZeroRealization }
+  , { walsCode := "tur", iso := "tur", value := .zeroInAll3sgForms }
+  , { walsCode := "tzu", iso := "tzj", value := .zeroInAll3sgForms }
+  , { walsCode := "udh", iso := "ude", value := .zeroInSome3sgForms }
+  , { walsCode := "uma", iso := "ppk", value := .noZeroRealization }
+  , { walsCode := "una", iso := "mtg", value := .noZeroRealization }
+  , { walsCode := "ung", iso := "ung", value := .noZeroRealization }
+  , { walsCode := "ura", iso := "uur", value := .noZeroRealization }
+  , { walsCode := "uhi", iso := "urf", value := .noPersonMarking }
+  , { walsCode := "urk", iso := "urb", value := .zeroInSome3sgForms }
+  , { walsCode := "usa", iso := "wnu", value := .noZeroRealization }
+  , { walsCode := "vie", iso := "vie", value := .noPersonMarking }
+  , { walsCode := "wam", iso := "wmb", value := .noZeroRealization }
+  , { walsCode := "wbn", iso := "wms", value := .zeroInAll3sgForms }
+  , { walsCode := "wao", iso := "auc", value := .zeroInSome3sgForms }
+  , { walsCode := "wap", iso := "wao", value := .noPersonMarking }
+  , { walsCode := "wra", iso := "wba", value := .noPersonMarking }
+  , { walsCode := "wrd", iso := "wrr", value := .zeroInAll3sgForms }
+  , { walsCode := "wrk", iso := "gae", value := .zeroInAll3sgForms }
+  , { walsCode := "war", iso := "pav", value := .noZeroRealization }
+  , { walsCode := "was", iso := "was", value := .noZeroRealization }
+  , { walsCode := "wsk", iso := "wsk", value := .noZeroRealization }
+  , { walsCode := "wel", iso := "cym", value := .noZeroRealization }
+  , { walsCode := "wma", iso := "mqs", value := .noZeroRealization }
+  , { walsCode := "wic", iso := "wic", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "wch", iso := "mzh", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "wik", iso := "yok", value := .noPersonMarking }
+  , { walsCode := "win", iso := "wnw", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "xok", iso := "xok", value := .noZeroRealization }
+  , { walsCode := "yag", iso := "yad", value := .noZeroRealization }
+  , { walsCode := "yap", iso := "yap", value := .zeroInSome3sgForms }
+  , { walsCode := "yaq", iso := "yaq", value := .noPersonMarking }
+  , { walsCode := "yaw", iso := "yva", value := .zeroInSome3sgForms }
+  , { walsCode := "yel", iso := "yle", value := .zeroInSome3sgForms }
+  , { walsCode := "yes", iso := "yss", value := .noPersonMarking }
+  , { walsCode := "yid", iso := "yii", value := .noPersonMarking }
+  , { walsCode := "yim", iso := "yee", value := .noZeroRealization }
+  , { walsCode := "yor", iso := "yor", value := .noPersonMarking }
+  , { walsCode := "yuc", iso := "yuc", value := .noZeroRealization }
+  , { walsCode := "yko", iso := "yux", value := .noZeroRealization }
+  , { walsCode := "yuk", iso := "gcd", value := .zeroInAll3rdPersonForms }
+  , { walsCode := "ypk", iso := "esu", value := .noZeroRealization }
+  , { walsCode := "yur", iso := "yur", value := .noZeroRealization }
+  , { walsCode := "zan", iso := "zne", value := .noZeroRealization }
+  , { walsCode := "zsq", iso := "zab", value := .noZeroRealization }
+  , { walsCode := "zqc", iso := "zoc", value := .noZeroRealization }
+  , { walsCode := "zul", iso := "zul", value := .noZeroRealization }
+  , { walsCode := "zun", iso := "zun", value := .noPersonMarking }
+  ]
+
+/-- Look up a language by WALS code. -/
+def lookup (code : String) := Datapoint.lookup allData code
+
+/-- Look up a language by ISO 639-3 code. -/
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+
+end Datasets.WALS.F103A

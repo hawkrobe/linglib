@@ -1,12 +1,12 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F106A
-import Linglib.Core.WALS.Features.F107A
-import Linglib.Core.WALS.Features.F108A
-import Linglib.Core.WALS.Features.F108B
-import Linglib.Core.WALS.Features.F109A
-import Linglib.Core.WALS.Features.F109B
-import Linglib.Core.WALS.Features.F105A
-import Linglib.Core.WALS.Features.F111A
+import Linglib.Datasets.WALS.Features.F106A
+import Linglib.Datasets.WALS.Features.F107A
+import Linglib.Datasets.WALS.Features.F108A
+import Linglib.Datasets.WALS.Features.F108B
+import Linglib.Datasets.WALS.Features.F109A
+import Linglib.Datasets.WALS.Features.F109B
+import Linglib.Datasets.WALS.Features.F105A
+import Linglib.Datasets.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
 import Linglib.Core.Lexical.MorphRule
@@ -330,7 +330,7 @@ def NonperiphrCausativeType.hasMorphological : NonperiphrCausativeType -> Bool
 -- ============================================================================
 -- WALS Distribution Data — derived from generated modules
 -- ============================================================================
--- Full per-language data lives in Core.WALS.Features.F{106A..111A}.
+-- Full per-language data lives in Datasets.WALS.Features.F{106A..111A}.
 -- These theorems re-derive aggregate counts from the generated data, ensuring
 -- the numbers in our generalizations below stay in sync with the source.
 
@@ -339,10 +339,10 @@ def NonperiphrCausativeType.hasMorphological : NonperiphrCausativeType -> Bool
 
 -- ---- F105A: Ditransitive Constructions ----
 
-private abbrev f105a := Core.WALS.F105A.allData
+private abbrev f105a := Datasets.WALS.F105A.allData
 
 /-- Convert WALS 105A value to our DitransitiveType. -/
-private def fromWALS105A : Core.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
+private def fromWALS105A : Datasets.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
   | .indirectObjectConstruction  => .indirectObject
   | .doubleObjectConstruction    => .doubleObject
   | .secondaryObjectConstruction => .secondaryObject
@@ -359,12 +359,12 @@ theorem f105a_count_mixed :
 
 -- ---- F109A: Applicative Constructions ----
 
-private abbrev f109a := Core.WALS.F109A.allData
+private abbrev f109a := Datasets.WALS.F109A.allData
 
 /-- Convert WALS 109A value to our ApplicativeType.
     The WALS enum encodes base-transitivity and semantic role together;
     we decompose into `ApplicativeBase` x `AppliedObjectRole`. -/
-private def fromWALS109A : Core.WALS.F109A.ApplicativeType → ApplicativeType
+private def fromWALS109A : Datasets.WALS.F109A.ApplicativeType → ApplicativeType
   | .benefactiveBothBases         => .applicative .bothBases .benefactiveOnly
   | .benefactiveTransOnly         => .applicative .transitiveOnly .benefactiveOnly
   | .benefactiveAndOtherBothBases => .applicative .bothBases .benefactiveAndOther
@@ -393,7 +393,7 @@ theorem f109a_count_noApplicative :
 
 -- ---- F109B: Other Roles of Applied Objects ----
 
-private abbrev f109b := Core.WALS.F109B.allData
+private abbrev f109b := Datasets.WALS.F109B.allData
 
 /-- Convert WALS 109B value to an optional AppliedObjectRole.
     Returns `none` for languages without applicative constructions,
@@ -401,7 +401,7 @@ private abbrev f109b := Core.WALS.F109B.allData
     Instrument, locative, and instrument-and-locative all map to
     `.nonbenefactiveOnly`; the finer distinction is preserved in the
     WALS source data. -/
-private def fromWALS109B : Core.WALS.F109B.AppliedObjectRole → Option AppliedObjectRole
+private def fromWALS109B : Datasets.WALS.F109B.AppliedObjectRole → Option AppliedObjectRole
   | .instrument            => some .nonbenefactiveOnly
   | .locative              => some .nonbenefactiveOnly
   | .instrumentAndLocative => some .nonbenefactiveOnly
@@ -771,7 +771,7 @@ example : finnish.causative = .morphologicalOnly := by native_decide
 -- ============================================================================
 
 /-- Helper: convert WALS 106A value to our ReciprocalType. -/
-private def fromWALS106A : Core.WALS.F106A.ReciprocalType → ReciprocalType
+private def fromWALS106A : Datasets.WALS.F106A.ReciprocalType → ReciprocalType
   | .noReciprocalConstruction => .noDedicated
   | .distinctFromReflexive    => .distinctFromReflexive
   | .mixed                    => .mixed
@@ -782,49 +782,49 @@ private def fromWALS106A : Core.WALS.F106A.ReciprocalType → ReciprocalType
     construction: if the profile disagrees with WALS, the theorem fails. -/
 
 theorem english_reciprocal_wals :
-    (Core.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) = some english.reciprocal := by
+    (Datasets.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) = some english.reciprocal := by
   native_decide
 theorem japanese_reciprocal_wals :
-    (Core.WALS.F106A.lookup "jpn").map (fromWALS106A ·.value) = some japanese.reciprocal := by
+    (Datasets.WALS.F106A.lookup "jpn").map (fromWALS106A ·.value) = some japanese.reciprocal := by
   native_decide
 theorem turkish_reciprocal_wals :
-    (Core.WALS.F106A.lookup "tur").map (fromWALS106A ·.value) = some turkish.reciprocal := by
+    (Datasets.WALS.F106A.lookup "tur").map (fromWALS106A ·.value) = some turkish.reciprocal := by
   native_decide
 theorem swahili_reciprocal_wals :
-    (Core.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) = some swahili.reciprocal := by
+    (Datasets.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) = some swahili.reciprocal := by
   native_decide
 theorem chukchi_reciprocal_wals :
-    (Core.WALS.F106A.lookup "chk").map (fromWALS106A ·.value) = some chukchi.reciprocal := by
+    (Datasets.WALS.F106A.lookup "chk").map (fromWALS106A ·.value) = some chukchi.reciprocal := by
   native_decide
 theorem indonesian_reciprocal_wals :
-    (Core.WALS.F106A.lookup "ind").map (fromWALS106A ·.value) = some indonesian.reciprocal := by
+    (Datasets.WALS.F106A.lookup "ind").map (fromWALS106A ·.value) = some indonesian.reciprocal := by
   native_decide
 theorem french_reciprocal_wals :
-    (Core.WALS.F106A.lookup "fre").map (fromWALS106A ·.value) = some french.reciprocal := by
+    (Datasets.WALS.F106A.lookup "fre").map (fromWALS106A ·.value) = some french.reciprocal := by
   native_decide
 theorem russian_reciprocal_wals :
-    (Core.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) = some russian.reciprocal := by
+    (Datasets.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) = some russian.reciprocal := by
   native_decide
 theorem hindi_reciprocal_wals :
-    (Core.WALS.F106A.lookup "hin").map (fromWALS106A ·.value) = some hindi.reciprocal := by
+    (Datasets.WALS.F106A.lookup "hin").map (fromWALS106A ·.value) = some hindi.reciprocal := by
   native_decide
 theorem westGreenlandic_reciprocal_wals :
-    (Core.WALS.F106A.lookup "grw").map (fromWALS106A ·.value) = some westGreenlandic.reciprocal := by
+    (Datasets.WALS.F106A.lookup "grw").map (fromWALS106A ·.value) = some westGreenlandic.reciprocal := by
   native_decide
 theorem lango_reciprocal_wals :
-    (Core.WALS.F106A.lookup "lan").map (fromWALS106A ·.value) = some lango.reciprocal := by
+    (Datasets.WALS.F106A.lookup "lan").map (fromWALS106A ·.value) = some lango.reciprocal := by
   native_decide
 theorem chamorro_reciprocal_wals :
-    (Core.WALS.F106A.lookup "cha").map (fromWALS106A ·.value) = some chamorro.reciprocal := by
+    (Datasets.WALS.F106A.lookup "cha").map (fromWALS106A ·.value) = some chamorro.reciprocal := by
   native_decide
 theorem modernGreek_reciprocal_wals :
-    (Core.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) = some modernGreek.reciprocal := by
+    (Datasets.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) = some modernGreek.reciprocal := by
   native_decide
 theorem german_reciprocal_wals :
-    (Core.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) = some german.reciprocal := by
+    (Datasets.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) = some german.reciprocal := by
   native_decide
 theorem finnish_reciprocal_wals :
-    (Core.WALS.F106A.lookup "fin").map (fromWALS106A ·.value) = some finnish.reciprocal := by
+    (Datasets.WALS.F106A.lookup "fin").map (fromWALS106A ·.value) = some finnish.reciprocal := by
   native_decide
 
 -- ============================================================================
@@ -835,58 +835,58 @@ theorem finnish_reciprocal_wals :
     Every profile language appears in the 378-language F105A dataset. -/
 
 theorem english_ditransitive_wals :
-    (Core.WALS.F105A.lookup "eng").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookup "eng").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem japanese_ditransitive_wals :
-    (Core.WALS.F105A.lookup "jpn").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "jpn").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem turkish_ditransitive_wals :
-    (Core.WALS.F105A.lookup "tur").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "tur").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem swahili_ditransitive_wals :
-    (Core.WALS.F105A.lookup "swa").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+    (Datasets.WALS.F105A.lookup "swa").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
   native_decide
 theorem dyirbal_ditransitive_wals :
-    (Core.WALS.F105A.lookup "dyi").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookup "dyi").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem chukchi_ditransitive_wals :
-    (Core.WALS.F105A.lookup "chk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "chk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem indonesian_ditransitive_wals :
-    (Core.WALS.F105A.lookup "ind").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookup "ind").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem french_ditransitive_wals :
-    (Core.WALS.F105A.lookup "fre").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "fre").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem russian_ditransitive_wals :
-    (Core.WALS.F105A.lookup "rus").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "rus").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem hindi_ditransitive_wals :
-    (Core.WALS.F105A.lookup "hin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "hin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem westGreenlandic_ditransitive_wals :
-    (Core.WALS.F105A.lookup "grw").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookup "grw").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem kinyarwanda_ditransitive_wals :
-    (Core.WALS.F105A.lookup "kin").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+    (Datasets.WALS.F105A.lookup "kin").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
   native_decide
 theorem lango_ditransitive_wals :
-    (Core.WALS.F105A.lookup "lan").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookup "lan").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem chamorro_ditransitive_wals :
-    (Core.WALS.F105A.lookup "cha").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookup "cha").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem halkomelem_ditransitive_wals :
-    (Core.WALS.F105A.lookup "hli").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookup "hli").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem modernGreek_ditransitive_wals :
-    (Core.WALS.F105A.lookup "grk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "grk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem german_ditransitive_wals :
-    (Core.WALS.F105A.lookup "ger").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "ger").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem finnish_ditransitive_wals :
-    (Core.WALS.F105A.lookup "fin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookup "fin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 
 -- ============================================================================
@@ -899,40 +899,40 @@ theorem finnish_ditransitive_wals :
     are based on other sources or use a different classification. -/
 
 theorem english_applicative_wals :
-    (Core.WALS.F109A.lookup "eng").map (fromWALS109A ·.value) = some english.applicative := by
+    (Datasets.WALS.F109A.lookup "eng").map (fromWALS109A ·.value) = some english.applicative := by
   native_decide
 theorem japanese_applicative_wals :
-    (Core.WALS.F109A.lookup "jpn").map (fromWALS109A ·.value) = some japanese.applicative := by
+    (Datasets.WALS.F109A.lookup "jpn").map (fromWALS109A ·.value) = some japanese.applicative := by
   native_decide
 theorem turkish_applicative_wals :
-    (Core.WALS.F109A.lookup "tur").map (fromWALS109A ·.value) = some turkish.applicative := by
+    (Datasets.WALS.F109A.lookup "tur").map (fromWALS109A ·.value) = some turkish.applicative := by
   native_decide
 theorem swahili_applicative_wals :
-    (Core.WALS.F109A.lookup "swa").map (fromWALS109A ·.value) = some swahili.applicative := by
+    (Datasets.WALS.F109A.lookup "swa").map (fromWALS109A ·.value) = some swahili.applicative := by
   native_decide
 theorem chukchi_applicative_wals :
-    (Core.WALS.F109A.lookup "chk").map (fromWALS109A ·.value) = some chukchi.applicative := by
+    (Datasets.WALS.F109A.lookup "chk").map (fromWALS109A ·.value) = some chukchi.applicative := by
   native_decide
 theorem french_applicative_wals :
-    (Core.WALS.F109A.lookup "fre").map (fromWALS109A ·.value) = some french.applicative := by
+    (Datasets.WALS.F109A.lookup "fre").map (fromWALS109A ·.value) = some french.applicative := by
   native_decide
 theorem russian_applicative_wals :
-    (Core.WALS.F109A.lookup "rus").map (fromWALS109A ·.value) = some russian.applicative := by
+    (Datasets.WALS.F109A.lookup "rus").map (fromWALS109A ·.value) = some russian.applicative := by
   native_decide
 theorem hindi_applicative_wals :
-    (Core.WALS.F109A.lookup "hin").map (fromWALS109A ·.value) = some hindi.applicative := by
+    (Datasets.WALS.F109A.lookup "hin").map (fromWALS109A ·.value) = some hindi.applicative := by
   native_decide
 theorem halkomelem_applicative_wals :
-    (Core.WALS.F109A.lookup "hli").map (fromWALS109A ·.value) = some halkomelem.applicative := by
+    (Datasets.WALS.F109A.lookup "hli").map (fromWALS109A ·.value) = some halkomelem.applicative := by
   native_decide
 theorem modernGreek_applicative_wals :
-    (Core.WALS.F109A.lookup "grk").map (fromWALS109A ·.value) = some modernGreek.applicative := by
+    (Datasets.WALS.F109A.lookup "grk").map (fromWALS109A ·.value) = some modernGreek.applicative := by
   native_decide
 theorem german_applicative_wals :
-    (Core.WALS.F109A.lookup "ger").map (fromWALS109A ·.value) = some german.applicative := by
+    (Datasets.WALS.F109A.lookup "ger").map (fromWALS109A ·.value) = some german.applicative := by
   native_decide
 theorem finnish_applicative_wals :
-    (Core.WALS.F109A.lookup "fin").map (fromWALS109A ·.value) = some finnish.applicative := by
+    (Datasets.WALS.F109A.lookup "fin").map (fromWALS109A ·.value) = some finnish.applicative := by
   native_decide
 
 -- ============================================================================
@@ -944,34 +944,34 @@ theorem finnish_applicative_wals :
     `.noApplicative`, and our converter returns `none`. -/
 
 theorem english_appliedRole_wals :
-    (Core.WALS.F109B.lookup "eng").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "eng").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem japanese_appliedRole_wals :
-    (Core.WALS.F109B.lookup "jpn").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "jpn").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem turkish_appliedRole_wals :
-    (Core.WALS.F109B.lookup "tur").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "tur").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem chukchi_appliedRole_wals :
-    (Core.WALS.F109B.lookup "chk").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "chk").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem french_appliedRole_wals :
-    (Core.WALS.F109B.lookup "fre").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "fre").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem russian_appliedRole_wals :
-    (Core.WALS.F109B.lookup "rus").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "rus").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem hindi_appliedRole_wals :
-    (Core.WALS.F109B.lookup "hin").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "hin").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem modernGreek_appliedRole_wals :
-    (Core.WALS.F109B.lookup "grk").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "grk").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem german_appliedRole_wals :
-    (Core.WALS.F109B.lookup "ger").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "ger").map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem finnish_appliedRole_wals :
-    (Core.WALS.F109B.lookup "fin").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookup "fin").map (fromWALS109B ·.value) = some none := by
   native_decide
 
 /-- Finnish impersonal "passive" has semantic content (existential closure
@@ -992,8 +992,8 @@ theorem finnish_passive_no_agent :
     Although a minority, passives are widespread enough that most
     language families include at least some passive-bearing members. -/
 theorem passives_substantial_minority :
-    let present := (Core.WALS.F107A.allData.filter (·.value == .present)).length
-    let total := Core.WALS.F107A.allData.length
+    let present := (Datasets.WALS.F107A.allData.filter (·.value == .present)).length
+    let total := Datasets.WALS.F107A.allData.length
     -- More than a third of languages have passives
     present * 3 > total := by native_decide
 
@@ -1015,9 +1015,9 @@ theorem majority_of_sample_has_passive :
     @cite{polinsky-2013}: more languages have oblique-patient antipassives
     than implicit-patient antipassives, and the majority have no antipassive. -/
 theorem antipassive_distribution :
-    let oblique := (Core.WALS.F108A.allData.filter (·.value == .obliquePatient)).length
-    let implicit := (Core.WALS.F108A.allData.filter (·.value == .implicitPatient)).length
-    let none_ := (Core.WALS.F108A.allData.filter (·.value == .noAntipassive)).length
+    let oblique := (Datasets.WALS.F108A.allData.filter (·.value == .obliquePatient)).length
+    let implicit := (Datasets.WALS.F108A.allData.filter (·.value == .implicitPatient)).length
+    let none_ := (Datasets.WALS.F108A.allData.filter (·.value == .noAntipassive)).length
     oblique > implicit ∧ none_ > oblique + implicit := by native_decide
 
 /-- In our sample: every ergative language has an antipassive,
@@ -1042,9 +1042,9 @@ theorem most_accusative_lack_antipassive :
     Only 23 languages use neither morphological nor compound causatives.
     This dwarfs periphrastic causatives in frequency. -/
 theorem morphological_causative_dominant :
-    let morphOnly := (Core.WALS.F111A.allData.filter (·.value == .morphologicalOnly)).length
-    let both := (Core.WALS.F111A.allData.filter (·.value == .both)).length
-    let total := Core.WALS.F111A.allData.length
+    let morphOnly := (Datasets.WALS.F111A.allData.filter (·.value == .morphologicalOnly)).length
+    let both := (Datasets.WALS.F111A.allData.filter (·.value == .both)).length
+    let total := Datasets.WALS.F111A.allData.length
     -- Morphological causatives in >80% of languages
     (morphOnly + both) * 10 > total * 8 := by native_decide
 
@@ -1286,15 +1286,15 @@ example : sampleApplicativeCount = 4 := by native_decide
     constructions are present in 60 (34%). In WALS terms, polysemy corresponds
     to Values 3 (mixed) and 4 (identical to reflexive). -/
 theorem polysemy_count :
-    let mixed := (Core.WALS.F106A.allData.filter (·.value == .mixed)).length
-    let identical := (Core.WALS.F106A.allData.filter (·.value == .identicalToReflexive)).length
+    let mixed := (Datasets.WALS.F106A.allData.filter (·.value == .mixed)).length
+    let identical := (Datasets.WALS.F106A.allData.filter (·.value == .identicalToReflexive)).length
     mixed + identical = 60 := by native_decide
 
 /-- 60 out of 175 = 34.3%. -/
 theorem polysemy_percentage :
-    let polysemous := (Core.WALS.F106A.allData.filter
+    let polysemous := (Datasets.WALS.F106A.allData.filter
         (fun d => d.value == .mixed || d.value == .identicalToReflexive)).length
-    let total := Core.WALS.F106A.allData.length
+    let total := Datasets.WALS.F106A.allData.length
     -- More than a third but less than half
     polysemous * 3 > total ∧ polysemous * 2 < total := by native_decide
 
@@ -1528,25 +1528,25 @@ theorem recip_profile_count : allRecipProfiles.length = 12 := by native_decide
 
 /-- Reciprocal profiles agree with WALS Ch 106 data where available. -/
 theorem rp_english_wals :
-    (Core.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) =
       some rp_english.reflexiveRelation := by native_decide
 theorem rp_russian_wals :
-    (Core.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) =
       some rp_russian.reflexiveRelation := by native_decide
 theorem rp_swahili_wals :
-    (Core.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) =
       some rp_swahili.reflexiveRelation := by native_decide
 theorem rp_greek_wals :
-    (Core.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) =
       some rp_greek.reflexiveRelation := by native_decide
 theorem rp_german_wals :
-    (Core.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) =
       some rp_german.reflexiveRelation := by native_decide
 theorem rp_mandarin_wals :
-    (Core.WALS.F106A.lookup "mnd").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "mnd").map (fromWALS106A ·.value) =
       some rp_mandarin.reflexiveRelation := by native_decide
 theorem rp_wambaya_wals :
-    (Core.WALS.F106A.lookup "wam").map (fromWALS106A ·.value) =
+    (Datasets.WALS.F106A.lookup "wam").map (fromWALS106A ·.value) =
       some rp_wambaya.reflexiveRelation := by native_decide
 
 -- ============================================================================

@@ -1,11 +1,11 @@
 import Linglib.Theories.Diachronic.Areal
-import Linglib.Core.WALS.Features.F37A
-import Linglib.Core.WALS.Features.F38A
-import Linglib.Core.WALS.Features.F47A
-import Linglib.Core.WALS.Features.F101A
-import Linglib.Core.WALS.Features.F107A
-import Linglib.Core.WALS.Features.F115A
-import Linglib.Core.WALS.Features.F121A
+import Linglib.Datasets.WALS.Features.F37A
+import Linglib.Datasets.WALS.Features.F38A
+import Linglib.Datasets.WALS.Features.F47A
+import Linglib.Datasets.WALS.Features.F101A
+import Linglib.Datasets.WALS.Features.F107A
+import Linglib.Datasets.WALS.Features.F115A
+import Linglib.Datasets.WALS.Features.F121A
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
@@ -45,7 +45,7 @@ feature data via `LinguisticArea.clusterScore` and `nucleus`.
   is the explicit set Haspelmath plots on the corresponding map. For the
   six features with a directly comparable WALS chapter (37A, 38A, 47A,
   101A, 107A, 115A, 121A), a sibling `wals*Lgs` set is derived from
-  `Core.WALS.F*.allData` via `walsClassifies`. The two are intentionally
+  `Datasets.WALS.F*.allData` via `walsClassifies`. The two are intentionally
   *not* unioned: where they disagree, that disagreement is a fact about
   Haspelmath's classification vs. WALS's encoding and should remain
   visible to readers and to bridge theorems.
@@ -95,7 +95,7 @@ inductive SAELanguage where
 
 /-- WALS code for each `SAELanguage` where one exists. WALS codes are 3-letter
 identifiers used by the World Atlas of Language Structures (the v2020.4 codes
-in `Core.WALS.Features.*`). Returns `none` for languages outside the WALS
+in `Datasets.WALS.Features.*`). Returns `none` for languages outside the WALS
 sample (currently: every `SAELanguage` constructor maps to a code, but the
 return type is `Option String` to accommodate future additions to
 `SAELanguage` that may not be in WALS). -/
@@ -135,21 +135,21 @@ that satisfies the boolean predicate `pred`. Returns `False` when `l` lacks
 a WALS code or the chapter has no entry for it.
 
 This is the bridging primitive for all WALS-grounded isoglosses below. Used as
-`walsClassifies Core.WALS.F121A.allData (· == .particle)` to ask "does WALS
+`walsClassifies Datasets.WALS.F121A.allData (· == .particle)` to ask "does WALS
 121A classify this language as having a particle comparative?". The result
 is propositional with a derivable `Decidable` instance, so it slots directly
 into `Finset.filter`. -/
 def walsClassifies {V : Type} [BEq V]
-    (data : List (Core.WALS.Datapoint V)) (pred : V → Bool)
+    (data : List (Datasets.WALS.Datapoint V)) (pred : V → Bool)
     (l : SAELanguage) : Prop :=
   match l.toWALS with
   | none => False
-  | some code => match Core.WALS.Datapoint.lookup data code with
+  | some code => match Datasets.WALS.Datapoint.lookup data code with
     | none => False
     | some d => pred d.value = true
 
 instance walsClassifies.instDecidable {V : Type} [BEq V]
-    (data : List (Core.WALS.Datapoint V)) (pred : V → Bool)
+    (data : List (Datasets.WALS.Datapoint V)) (pred : V → Bool)
     (l : SAELanguage) : Decidable (walsClassifies data pred l) := by
   unfold walsClassifies
   split
@@ -208,7 +208,7 @@ open SAELanguage
 /-- WALS-derived: languages classified by F37A (Definite Articles) as having
 a definite article (any of the three positive values). -/
 def walsHasDefiniteArticle : Finset SAELanguage :=
-  Finset.univ.filter (walsClassifies Core.WALS.F37A.allData fun v =>
+  Finset.univ.filter (walsClassifies Datasets.WALS.F37A.allData fun v =>
     v == .definiteWordDistinctFromDemonstrative ||
     v == .demonstrativeWordUsedAsDefiniteArticle ||
     v == .definiteAffix)
@@ -217,7 +217,7 @@ def walsHasDefiniteArticle : Finset SAELanguage :=
 having any indefinite article distinct from "no indefinite article" or
 "indefinite-only of an unrelated kind". -/
 def walsHasIndefiniteArticle : Finset SAELanguage :=
-  Finset.univ.filter (walsClassifies Core.WALS.F38A.allData fun v =>
+  Finset.univ.filter (walsClassifies Datasets.WALS.F38A.allData fun v =>
     v == .indefiniteWordDistinctFromOne ||
     v == .indefiniteWordSameAsOne ||
     v == .indefiniteAffix)
@@ -269,7 +269,7 @@ Constructions) as having a passive present. F107A counts *any* passive
 (periphrastic, morphological, etc.), so this is a strict superset of
 Haspelmath's copula+participle criterion. -/
 def walsPassiveLgs : Finset SAELanguage :=
-  Finset.univ.filter (walsClassifies Core.WALS.F107A.allData (· == .present))
+  Finset.univ.filter (walsClassifies Datasets.WALS.F107A.allData (· == .present))
 
 /-- Languages with a canonical participial passive (Map 107.5).
 
@@ -307,7 +307,7 @@ criterion: F115A.noPredicateNegation captures only the rigid V+NI type
 languages where the predicate negative is optional or weakening. -/
 def walsVplusNILgs : Finset SAELanguage :=
   Finset.univ.filter
-    (walsClassifies Core.WALS.F115A.allData (· == .noPredicateNegation))
+    (walsClassifies Datasets.WALS.F115A.allData (· == .noPredicateNegation))
 
 /-- Languages with V + NI negation (no obligatory verbal negation; Map 107.8). -/
 def vplusNILgs : Finset SAELanguage :=
@@ -318,7 +318,7 @@ def vplusNILgs : Finset SAELanguage :=
 /-- WALS-derived parallel: languages classified by F121A (Comparative
 Constructions) as having a particle comparative. -/
 def walsParticleCompLgs : Finset SAELanguage :=
-  Finset.univ.filter (walsClassifies Core.WALS.F121A.allData (· == .particle))
+  Finset.univ.filter (walsClassifies Datasets.WALS.F121A.allData (· == .particle))
 
 /-- Languages with particle comparatives (Map 107.9). -/
 def particleCompLgs : Finset SAELanguage :=
@@ -337,7 +337,7 @@ def relEquativeLgs : Finset SAELanguage :=
 /-- WALS-derived parallel: languages classified by F101A (Expression of
 Pronominal Subjects) as requiring obligatory subject pronouns. -/
 def walsStrictAgrLgs : Finset SAELanguage :=
-  Finset.univ.filter (walsClassifies Core.WALS.F101A.allData
+  Finset.univ.filter (walsClassifies Datasets.WALS.F101A.allData
     (· == .obligatoryPronounsInSubjectPosition))
 
 /-- Languages with strict subject agreement (Map 107.11).
@@ -355,7 +355,7 @@ def strictAgrLgs : Finset SAELanguage :=
 Reflexive Pronouns) as having differentiated forms. -/
 def walsIntRefDiffLgs : Finset SAELanguage :=
   Finset.univ.filter
-    (walsClassifies Core.WALS.F47A.allData (· == .differentiated))
+    (walsClassifies Datasets.WALS.F47A.allData (· == .differentiated))
 
 /-- Languages with differentiated intensifier vs. reflexive forms (Map 107.12). -/
 def intRefDiffLgs : Finset SAELanguage :=

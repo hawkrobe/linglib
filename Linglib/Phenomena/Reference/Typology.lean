@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F37A
-import Linglib.Core.WALS.Features.F38A
-import Linglib.Core.WALS.Features.F41A
-import Linglib.Core.WALS.Features.F42A
-import Linglib.Core.WALS.Features.F43A
+import Linglib.Datasets.WALS.Features.F37A
+import Linglib.Datasets.WALS.Features.F38A
+import Linglib.Datasets.WALS.Features.F41A
+import Linglib.Datasets.WALS.Features.F42A
+import Linglib.Datasets.WALS.Features.F43A
 
 /-!
 # Cross-Linguistic Typology of Articles and Demonstratives (WALS)
@@ -563,39 +563,39 @@ def allLanguages : List ArticleDemProfile :=
 -- WALS Converter Functions
 -- ============================================================================
 
-private abbrev ch37 := Core.WALS.F37A.allData
-private abbrev ch38 := Core.WALS.F38A.allData
-private abbrev ch41 := Core.WALS.F41A.allData
-private abbrev ch42 := Core.WALS.F42A.allData
-private abbrev ch43 := Core.WALS.F43A.allData
+private abbrev ch37 := Datasets.WALS.F37A.allData
+private abbrev ch38 := Datasets.WALS.F38A.allData
+private abbrev ch41 := Datasets.WALS.F41A.allData
+private abbrev ch42 := Datasets.WALS.F42A.allData
+private abbrev ch43 := Datasets.WALS.F43A.allData
 
-private def fromWALS37A : Core.WALS.F37A.DefiniteArticleType → DefiniteArticleType
+private def fromWALS37A : Datasets.WALS.F37A.DefiniteArticleType → DefiniteArticleType
   | .definiteWordDistinctFromDemonstrative => .definiteWord
   | .demonstrativeWordUsedAsDefiniteArticle => .demonstrativeUsed
   | .definiteAffix => .definiteAffix
   | .noDefiniteButIndefiniteArticle => .noDefButIndef
   | .noDefiniteOrIndefiniteArticle => .noArticle
 
-private def fromWALS38A : Core.WALS.F38A.IndefiniteArticleType → IndefiniteArticleType
+private def fromWALS38A : Datasets.WALS.F38A.IndefiniteArticleType → IndefiniteArticleType
   | .indefiniteWordDistinctFromOne => .indefiniteWord
   | .indefiniteWordSameAsOne => .numeralOne
   | .indefiniteAffix => .indefiniteAffix
   | .noIndefiniteButDefiniteArticle => .noIndefButDef
   | .noDefiniteOrIndefiniteArticle => .noArticle
 
-private def fromWALS41A : Core.WALS.F41A.DistanceContrastsInDemonstratives → DemDistanceSystem
+private def fromWALS41A : Datasets.WALS.F41A.DistanceContrastsInDemonstratives → DemDistanceSystem
   | .noDistanceContrast => .noContrast
   | .twoWayContrast => .twoWay
   | .threeWayContrast => .threeWay
   | .fourWayContrast => .fourWay
   | .fiveWayContrast => .fiveOrMore
 
-private def fromWALS42A : Core.WALS.F42A.PronominalAndAdnominalDemonstratives → DemFormRelation
+private def fromWALS42A : Datasets.WALS.F42A.PronominalAndAdnominalDemonstratives → DemFormRelation
   | .identical => .sameForms
   | .differentStem => .differentStems
   | .differentInflection => .differentInflection
 
-private def fromWALS43A : Core.WALS.F43A.ThirdPersonPronounsAndDemonstratives → PronounDemRelation
+private def fromWALS43A : Datasets.WALS.F43A.ThirdPersonPronounsAndDemonstratives → PronounDemRelation
   | .unrelated => .unrelated
   | .relatedForAllDemonstratives => .relatedAll
   | .relatedToRemoteDemonstratives => .relatedRemote
@@ -1223,37 +1223,37 @@ theorem all_stages_attested :
 -- ============================================================================
 
 theorem english_ch37 :
-    (Core.WALS.F37A.lookup "eng").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "eng").map (fromWALS37A ·.value) =
     english.defArticle := by native_decide
 theorem french_ch37 :
-    (Core.WALS.F37A.lookup "fre").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "fre").map (fromWALS37A ·.value) =
     french.defArticle := by native_decide
 theorem german_ch37 :
-    (Core.WALS.F37A.lookup "ger").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "ger").map (fromWALS37A ·.value) =
     german.defArticle := by native_decide
 theorem finnish_ch37 :
-    (Core.WALS.F37A.lookup "fin").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "fin").map (fromWALS37A ·.value) =
     finnish.defArticle := by native_decide
 theorem hungarian_ch37 :
-    (Core.WALS.F37A.lookup "hun").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "hun").map (fromWALS37A ·.value) =
     hungarian.defArticle := by native_decide
 theorem korean_ch37 :
-    (Core.WALS.F37A.lookup "kor").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "kor").map (fromWALS37A ·.value) =
     korean.defArticle := by native_decide
 theorem russian_ch37 :
-    (Core.WALS.F37A.lookup "rus").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "rus").map (fromWALS37A ·.value) =
     russian.defArticle := by native_decide
 theorem turkish_ch37 :
-    (Core.WALS.F37A.lookup "tur").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "tur").map (fromWALS37A ·.value) =
     turkish.defArticle := by native_decide
 theorem arabic_ch37 :
-    (Core.WALS.F37A.lookup "aeg").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "aeg").map (fromWALS37A ·.value) =
     arabic.defArticle := by native_decide
 theorem danish_ch37 :
-    (Core.WALS.F37A.lookup "dsh").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "dsh").map (fromWALS37A ·.value) =
     danish.defArticle := by native_decide
 theorem swahili_ch37 :
-    (Core.WALS.F37A.lookup "swa").map (fromWALS37A ·.value) =
+    (Datasets.WALS.F37A.lookup "swa").map (fromWALS37A ·.value) =
     swahili.defArticle := by native_decide
 
 -- ============================================================================
@@ -1264,25 +1264,25 @@ theorem swahili_ch37 :
 -- ============================================================================
 
 theorem english_ch38 :
-    (Core.WALS.F38A.lookup "eng").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "eng").map (fromWALS38A ·.value) =
     english.indefArticle := by native_decide
 theorem german_ch38 :
-    (Core.WALS.F38A.lookup "ger").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "ger").map (fromWALS38A ·.value) =
     german.indefArticle := by native_decide
 theorem finnish_ch38 :
-    (Core.WALS.F38A.lookup "fin").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "fin").map (fromWALS38A ·.value) =
     finnish.indefArticle := by native_decide
 theorem korean_ch38 :
-    (Core.WALS.F38A.lookup "kor").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "kor").map (fromWALS38A ·.value) =
     korean.indefArticle := by native_decide
 theorem russian_ch38 :
-    (Core.WALS.F38A.lookup "rus").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "rus").map (fromWALS38A ·.value) =
     russian.indefArticle := by native_decide
 theorem turkish_ch38 :
-    (Core.WALS.F38A.lookup "tur").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "tur").map (fromWALS38A ·.value) =
     turkish.indefArticle := by native_decide
 theorem arabic_ch38 :
-    (Core.WALS.F38A.lookup "aeg").map (fromWALS38A ·.value) =
+    (Datasets.WALS.F38A.lookup "aeg").map (fromWALS38A ·.value) =
     arabic.indefArticle := by native_decide
 
 -- ============================================================================
@@ -1293,43 +1293,43 @@ theorem arabic_ch38 :
 -- ============================================================================
 
 theorem english_ch41 :
-    (Core.WALS.F41A.lookup "eng").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "eng").map (fromWALS41A ·.value) =
     english.demDistance := by native_decide
 theorem german_ch41 :
-    (Core.WALS.F41A.lookup "ger").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "ger").map (fromWALS41A ·.value) =
     german.demDistance := by native_decide
 theorem japanese_ch41 :
-    (Core.WALS.F41A.lookup "jpn").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "jpn").map (fromWALS41A ·.value) =
     japanese.demDistance := by native_decide
 theorem mandarin_ch41 :
-    (Core.WALS.F41A.lookup "mnd").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "mnd").map (fromWALS41A ·.value) =
     mandarin.demDistance := by native_decide
 theorem turkish_ch41 :
-    (Core.WALS.F41A.lookup "tur").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "tur").map (fromWALS41A ·.value) =
     turkish.demDistance := by native_decide
 theorem arabic_ch41 :
-    (Core.WALS.F41A.lookup "aeg").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "aeg").map (fromWALS41A ·.value) =
     arabic.demDistance := by native_decide
 theorem finnish_ch41 :
-    (Core.WALS.F41A.lookup "fin").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "fin").map (fromWALS41A ·.value) =
     finnish.demDistance := by native_decide
 theorem hungarian_ch41 :
-    (Core.WALS.F41A.lookup "hun").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "hun").map (fromWALS41A ·.value) =
     hungarian.demDistance := by native_decide
 theorem russian_ch41 :
-    (Core.WALS.F41A.lookup "rus").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "rus").map (fromWALS41A ·.value) =
     russian.demDistance := by native_decide
 theorem korean_ch41 :
-    (Core.WALS.F41A.lookup "kor").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "kor").map (fromWALS41A ·.value) =
     korean.demDistance := by native_decide
 theorem basque_ch41 :
-    (Core.WALS.F41A.lookup "bsq").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "bsq").map (fromWALS41A ·.value) =
     basque.demDistance := by native_decide
 theorem hausa_ch41 :
-    (Core.WALS.F41A.lookup "hau").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "hau").map (fromWALS41A ·.value) =
     hausa.demDistance := by native_decide
 theorem tagalog_ch41 :
-    (Core.WALS.F41A.lookup "tag").map (fromWALS41A ·.value) =
+    (Datasets.WALS.F41A.lookup "tag").map (fromWALS41A ·.value) =
     tagalog.demDistance := by native_decide
 
 -- ============================================================================
@@ -1340,43 +1340,43 @@ theorem tagalog_ch41 :
 -- ============================================================================
 
 theorem english_ch42 :
-    (Core.WALS.F42A.lookup "eng").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "eng").map (fromWALS42A ·.value) =
     english.demFormType := by native_decide
 theorem french_ch42 :
-    (Core.WALS.F42A.lookup "fre").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "fre").map (fromWALS42A ·.value) =
     french.demFormType := by native_decide
 theorem mandarin_ch42 :
-    (Core.WALS.F42A.lookup "mnd").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "mnd").map (fromWALS42A ·.value) =
     mandarin.demFormType := by native_decide
 theorem turkish_ch42 :
-    (Core.WALS.F42A.lookup "tur").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "tur").map (fromWALS42A ·.value) =
     turkish.demFormType := by native_decide
 theorem arabic_ch42 :
-    (Core.WALS.F42A.lookup "aeg").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "aeg").map (fromWALS42A ·.value) =
     arabic.demFormType := by native_decide
 theorem finnish_ch42 :
-    (Core.WALS.F42A.lookup "fin").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "fin").map (fromWALS42A ·.value) =
     finnish.demFormType := by native_decide
 theorem hungarian_ch42 :
-    (Core.WALS.F42A.lookup "hun").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "hun").map (fromWALS42A ·.value) =
     hungarian.demFormType := by native_decide
 theorem russian_ch42 :
-    (Core.WALS.F42A.lookup "rus").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "rus").map (fromWALS42A ·.value) =
     russian.demFormType := by native_decide
 theorem korean_ch42 :
-    (Core.WALS.F42A.lookup "kor").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "kor").map (fromWALS42A ·.value) =
     korean.demFormType := by native_decide
 theorem basque_ch42 :
-    (Core.WALS.F42A.lookup "bsq").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "bsq").map (fromWALS42A ·.value) =
     basque.demFormType := by native_decide
 theorem hausa_ch42 :
-    (Core.WALS.F42A.lookup "hau").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "hau").map (fromWALS42A ·.value) =
     hausa.demFormType := by native_decide
 theorem tagalog_ch42 :
-    (Core.WALS.F42A.lookup "tag").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "tag").map (fromWALS42A ·.value) =
     tagalog.demFormType := by native_decide
 theorem swahili_ch42 :
-    (Core.WALS.F42A.lookup "swa").map (fromWALS42A ·.value) =
+    (Datasets.WALS.F42A.lookup "swa").map (fromWALS42A ·.value) =
     swahili.demFormType := by native_decide
 
 -- ============================================================================
@@ -1387,16 +1387,16 @@ theorem swahili_ch42 :
 -- ============================================================================
 
 theorem japanese_ch43 :
-    (Core.WALS.F43A.lookup "jpn").map (fromWALS43A ·.value) =
+    (Datasets.WALS.F43A.lookup "jpn").map (fromWALS43A ·.value) =
     japanese.pronDemRelation := by native_decide
 theorem turkish_ch43 :
-    (Core.WALS.F43A.lookup "tur").map (fromWALS43A ·.value) =
+    (Datasets.WALS.F43A.lookup "tur").map (fromWALS43A ·.value) =
     turkish.pronDemRelation := by native_decide
 theorem basque_ch43 :
-    (Core.WALS.F43A.lookup "bsq").map (fromWALS43A ·.value) =
+    (Datasets.WALS.F43A.lookup "bsq").map (fromWALS43A ·.value) =
     basque.pronDemRelation := by native_decide
 theorem tagalog_ch43 :
-    (Core.WALS.F43A.lookup "tag").map (fromWALS43A ·.value) =
+    (Datasets.WALS.F43A.lookup "tag").map (fromWALS43A ·.value) =
     tagalog.pronDemRelation := by native_decide
 
 end Phenomena.Reference.Typology

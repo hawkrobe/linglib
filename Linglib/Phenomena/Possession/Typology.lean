@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F57A
-import Linglib.Core.WALS.Features.F58A
-import Linglib.Core.WALS.Features.F58B
-import Linglib.Core.WALS.Features.F59A
+import Linglib.Datasets.WALS.Features.F57A
+import Linglib.Datasets.WALS.Features.F58A
+import Linglib.Datasets.WALS.Features.F58B
+import Linglib.Datasets.WALS.Features.F59A
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 57--59)
@@ -238,13 +238,13 @@ inductive PossessiveAffixPosition where
 -- WALS Converter Functions
 -- ============================================================================
 
-private abbrev ch57 := Core.WALS.F57A.allData
-private abbrev ch58 := Core.WALS.F58A.allData
-private abbrev ch58b := Core.WALS.F58B.allData
-private abbrev ch59 := Core.WALS.F59A.allData
+private abbrev ch57 := Datasets.WALS.F57A.allData
+private abbrev ch58 := Datasets.WALS.F58A.allData
+private abbrev ch58b := Datasets.WALS.F58B.allData
+private abbrev ch59 := Datasets.WALS.F59A.allData
 
 /-- Convert WALS 57A enum to our PossessiveAffixPosition. -/
-private def fromWALS57A : Core.WALS.F57A.PositionOfPronominalPossessiveAffixes →
+private def fromWALS57A : Datasets.WALS.F57A.PositionOfPronominalPossessiveAffixes →
     PossessiveAffixPosition
   | .possessivePrefixes => .prefixes
   | .possessiveSuffixes => .suffixes
@@ -253,7 +253,7 @@ private def fromWALS57A : Core.WALS.F57A.PositionOfPronominalPossessiveAffixes �
 
 /-- Convert WALS 58A enum to our ObligatoryPossession.
     Returns `Option` since our type has `.unclear` which WALS does not encode. -/
-private def fromWALS58A : Core.WALS.F58A.ObligatoryPossessiveInflection →
+private def fromWALS58A : Datasets.WALS.F58A.ObligatoryPossessiveInflection →
     ObligatoryPossession
   | .exists => .exists_
   | .absent => .noObligatory
@@ -276,7 +276,7 @@ inductive NumberOfPossessiveNouns where
   deriving DecidableEq, Repr
 
 /-- Convert WALS 58B enum to our NumberOfPossessiveNouns. -/
-private def fromWALS58B : Core.WALS.F58B.NumberOfPossessiveNouns →
+private def fromWALS58B : Datasets.WALS.F58B.NumberOfPossessiveNouns →
     NumberOfPossessiveNouns
   | .noneReported => .noneReported
   | .one => .one
@@ -286,7 +286,7 @@ private def fromWALS58B : Core.WALS.F58B.NumberOfPossessiveNouns →
 /-- Convert WALS 59A enum to our PossessiveClassification.
     WALS distinguishes "3-5 classes" from "more than 5"; we collapse both
     into `.threeOrMore`. -/
-private def fromWALS59A : Core.WALS.F59A.PossessiveClassification →
+private def fromWALS59A : Datasets.WALS.F59A.PossessiveClassification →
     PossessiveClassification
   | .noPossessiveClassification => .noClassification
   | .twoClasses => .twoWay
@@ -976,49 +976,49 @@ theorem quechua_double : quechua.adnominalStrategy == .doubleMarking := by nativ
 -- ============================================================================
 
 theorem english_ch57 :
-    (Core.WALS.F57A.lookup "eng").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "eng").map (fromWALS57A ·.value) =
     english.affixPosition := by native_decide
 theorem russian_ch57 :
-    (Core.WALS.F57A.lookup "rus").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "rus").map (fromWALS57A ·.value) =
     russian.affixPosition := by native_decide
 theorem japanese_ch57 :
-    (Core.WALS.F57A.lookup "jpn").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "jpn").map (fromWALS57A ·.value) =
     japanese.affixPosition := by native_decide
 theorem turkish_ch57 :
-    (Core.WALS.F57A.lookup "tur").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "tur").map (fromWALS57A ·.value) =
     turkish.affixPosition := by native_decide
 theorem mandarin_ch57 :
-    (Core.WALS.F57A.lookup "mnd").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "mnd").map (fromWALS57A ·.value) =
     mandarin.affixPosition := by native_decide
 theorem finnish_ch57 :
-    (Core.WALS.F57A.lookup "fin").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "fin").map (fromWALS57A ·.value) =
     finnish.affixPosition := by native_decide
 theorem hungarian_ch57 :
-    (Core.WALS.F57A.lookup "hun").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "hun").map (fromWALS57A ·.value) =
     hungarian.affixPosition := by native_decide
 theorem irish_ch57 :
-    (Core.WALS.F57A.lookup "iri").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "iri").map (fromWALS57A ·.value) =
     irish.affixPosition := by native_decide
 theorem swahili_ch57 :
-    (Core.WALS.F57A.lookup "swa").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "swa").map (fromWALS57A ·.value) =
     swahili.affixPosition := by native_decide
 theorem arabic_ch57 :
-    (Core.WALS.F57A.lookup "aeg").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "aeg").map (fromWALS57A ·.value) =
     arabic.affixPosition := by native_decide
 theorem quechua_ch57 :
-    (Core.WALS.F57A.lookup "qim").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "qim").map (fromWALS57A ·.value) =
     quechua.affixPosition := by native_decide
 theorem yoruba_ch57 :
-    (Core.WALS.F57A.lookup "yor").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "yor").map (fromWALS57A ·.value) =
     yoruba.affixPosition := by native_decide
 theorem georgian_ch57 :
-    (Core.WALS.F57A.lookup "geo").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "geo").map (fromWALS57A ·.value) =
     georgian.affixPosition := by native_decide
 theorem hawaiian_ch57 :
-    (Core.WALS.F57A.lookup "haw").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "haw").map (fromWALS57A ·.value) =
     hawaiian.affixPosition := by native_decide
 theorem fijian_ch57 :
-    (Core.WALS.F57A.lookup "fij").map (fromWALS57A ·.value) =
+    (Datasets.WALS.F57A.lookup "fij").map (fromWALS57A ·.value) =
     fijian.affixPosition := by native_decide
 
 -- ============================================================================
@@ -1029,40 +1029,40 @@ theorem fijian_ch57 :
 -- ============================================================================
 
 theorem english_ch58 :
-    (Core.WALS.F58A.lookup "eng").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "eng").map (fromWALS58A ·.value) =
     some english.obligatoryPossession := by native_decide
 theorem russian_ch58 :
-    (Core.WALS.F58A.lookup "rus").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "rus").map (fromWALS58A ·.value) =
     some russian.obligatoryPossession := by native_decide
 theorem japanese_ch58 :
-    (Core.WALS.F58A.lookup "jpn").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "jpn").map (fromWALS58A ·.value) =
     some japanese.obligatoryPossession := by native_decide
 theorem hindi_ch58 :
-    (Core.WALS.F58A.lookup "hin").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "hin").map (fromWALS58A ·.value) =
     some hindiUrdu.obligatoryPossession := by native_decide
 theorem mandarin_ch58 :
-    (Core.WALS.F58A.lookup "mnd").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "mnd").map (fromWALS58A ·.value) =
     some mandarin.obligatoryPossession := by native_decide
 theorem finnish_ch58 :
-    (Core.WALS.F58A.lookup "fin").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "fin").map (fromWALS58A ·.value) =
     some finnish.obligatoryPossession := by native_decide
 theorem swahili_ch58 :
-    (Core.WALS.F58A.lookup "swa").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "swa").map (fromWALS58A ·.value) =
     some swahili.obligatoryPossession := by native_decide
 theorem korean_ch58 :
-    (Core.WALS.F58A.lookup "kor").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "kor").map (fromWALS58A ·.value) =
     some korean.obligatoryPossession := by native_decide
 theorem arabic_ch58 :
-    (Core.WALS.F58A.lookup "aeg").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "aeg").map (fromWALS58A ·.value) =
     some arabic.obligatoryPossession := by native_decide
 theorem yoruba_ch58 :
-    (Core.WALS.F58A.lookup "yor").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "yor").map (fromWALS58A ·.value) =
     some yoruba.obligatoryPossession := by native_decide
 theorem georgian_ch58 :
-    (Core.WALS.F58A.lookup "geo").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "geo").map (fromWALS58A ·.value) =
     some georgian.obligatoryPossession := by native_decide
 theorem fijian_ch58 :
-    (Core.WALS.F58A.lookup "fij").map (fromWALS58A ·.value) =
+    (Datasets.WALS.F58A.lookup "fij").map (fromWALS58A ·.value) =
     some fijian.obligatoryPossession := by native_decide
 
 -- ============================================================================
@@ -1072,43 +1072,43 @@ theorem fijian_ch58 :
 -- ============================================================================
 
 theorem english_ch59 :
-    (Core.WALS.F59A.lookup "eng").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "eng").map (fromWALS59A ·.value) =
     some english.possessiveClassification := by native_decide
 theorem russian_ch59 :
-    (Core.WALS.F59A.lookup "rus").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "rus").map (fromWALS59A ·.value) =
     some russian.possessiveClassification := by native_decide
 theorem japanese_ch59 :
-    (Core.WALS.F59A.lookup "jpn").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "jpn").map (fromWALS59A ·.value) =
     some japanese.possessiveClassification := by native_decide
 theorem turkish_ch59 :
-    (Core.WALS.F59A.lookup "tur").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "tur").map (fromWALS59A ·.value) =
     some turkish.possessiveClassification := by native_decide
 theorem hindi_ch59 :
-    (Core.WALS.F59A.lookup "hin").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "hin").map (fromWALS59A ·.value) =
     some hindiUrdu.possessiveClassification := by native_decide
 theorem mandarin_ch59 :
-    (Core.WALS.F59A.lookup "mnd").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "mnd").map (fromWALS59A ·.value) =
     some mandarin.possessiveClassification := by native_decide
 theorem finnish_ch59 :
-    (Core.WALS.F59A.lookup "fin").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "fin").map (fromWALS59A ·.value) =
     some finnish.possessiveClassification := by native_decide
 theorem hungarian_ch59 :
-    (Core.WALS.F59A.lookup "hun").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "hun").map (fromWALS59A ·.value) =
     some hungarian.possessiveClassification := by native_decide
 theorem swahili_ch59 :
-    (Core.WALS.F59A.lookup "swa").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "swa").map (fromWALS59A ·.value) =
     some swahili.possessiveClassification := by native_decide
 theorem korean_ch59 :
-    (Core.WALS.F59A.lookup "kor").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "kor").map (fromWALS59A ·.value) =
     some korean.possessiveClassification := by native_decide
 theorem arabic_ch59 :
-    (Core.WALS.F59A.lookup "aeg").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "aeg").map (fromWALS59A ·.value) =
     some arabic.possessiveClassification := by native_decide
 theorem yoruba_ch59 :
-    (Core.WALS.F59A.lookup "yor").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "yor").map (fromWALS59A ·.value) =
     some yoruba.possessiveClassification := by native_decide
 theorem georgian_ch59 :
-    (Core.WALS.F59A.lookup "geo").map (fromWALS59A ·.value) =
+    (Datasets.WALS.F59A.lookup "geo").map (fromWALS59A ·.value) =
     some georgian.possessiveClassification := by native_decide
 
 -- ============================================================================
@@ -1117,49 +1117,49 @@ theorem georgian_ch59 :
 -- ============================================================================
 
 theorem english_ch58b :
-    (Core.WALS.F58B.lookup "eng").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "eng").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem russian_ch58b :
-    (Core.WALS.F58B.lookup "rus").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "rus").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem japanese_ch58b :
-    (Core.WALS.F58B.lookup "jpn").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "jpn").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem turkish_ch58b :
-    (Core.WALS.F58B.lookup "tur").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "tur").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem hindi_ch58b :
-    (Core.WALS.F58B.lookup "hin").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "hin").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem mandarin_ch58b :
-    (Core.WALS.F58B.lookup "mnd").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "mnd").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem finnish_ch58b :
-    (Core.WALS.F58B.lookup "fin").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "fin").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem hungarian_ch58b :
-    (Core.WALS.F58B.lookup "hun").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "hun").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem swahili_ch58b :
-    (Core.WALS.F58B.lookup "swa").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "swa").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem korean_ch58b :
-    (Core.WALS.F58B.lookup "kor").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "kor").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem arabic_ch58b :
-    (Core.WALS.F58B.lookup "aeg").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "aeg").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem quechua_ch58b :
-    (Core.WALS.F58B.lookup "qim").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "qim").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem yoruba_ch58b :
-    (Core.WALS.F58B.lookup "yor").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "yor").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem georgian_ch58b :
-    (Core.WALS.F58B.lookup "geo").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "geo").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.noneReported := by native_decide
 theorem fijian_ch58b :
-    (Core.WALS.F58B.lookup "fij").map (fromWALS58B ·.value) =
+    (Datasets.WALS.F58B.lookup "fij").map (fromWALS58B ·.value) =
     some NumberOfPossessiveNouns.twoToFour := by native_decide
 
 -- ============================================================================

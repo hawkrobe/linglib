@@ -1,5 +1,5 @@
 import Linglib.Features.Number
-import Linglib.Core.WALS.Features.F80A
+import Linglib.Datasets.WALS.Features.F80A
 
 /-!
 # Verbal Number and Pluractionality
@@ -123,7 +123,7 @@ theorem verbal_dual_implies_sg_pl :
 -- § 4: Bridge to WALS 80A
 -- ============================================================================
 
-open Core.WALS.F80A (VerbalNumberAndSuppletion)
+open Datasets.WALS.F80A (VerbalNumberAndSuppletion)
 
 /-- Map a VerbalNumberProfile to the corresponding WALS 80A category. -/
 def VerbalNumberProfile.toWALS80A (p : VerbalNumberProfile) : VerbalNumberAndSuppletion :=
@@ -144,8 +144,8 @@ theorem navajo_wals :
 
 /-- WALS 80A confirms that the majority of languages lack verbal number. -/
 theorem wals_majority_no_verbal_number :
-    (Core.WALS.F80A.allData.filter (·.value == .none)).length >
-    (Core.WALS.F80A.allData.filter (·.value != .none)).length := by
+    (Datasets.WALS.F80A.allData.filter (·.value == .none)).length >
+    (Datasets.WALS.F80A.allData.filter (·.value != .none)).length := by
   native_decide
 
 end VerbalNumber

@@ -1,10 +1,10 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Modality.DeonticNecessity
-import Linglib.Core.WALS.Features.F74A
-import Linglib.Core.WALS.Features.F75A
-import Linglib.Core.WALS.Features.F76A
-import Linglib.Core.WALS.Features.F77A
-import Linglib.Core.WALS.Features.F78A
+import Linglib.Datasets.WALS.Features.F74A
+import Linglib.Datasets.WALS.Features.F75A
+import Linglib.Datasets.WALS.Features.F76A
+import Linglib.Datasets.WALS.Features.F77A
+import Linglib.Datasets.WALS.Features.F78A
 
 /-!
 # Cross-Linguistic Typology of Modality and Evidentiality (WALS Chapters 74--78)
@@ -164,11 +164,11 @@ def EvidentialCoding.isBound : EvidentialCoding -> Bool
 -- WALS Distribution Data
 -- ============================================================================
 
-private abbrev ch74 := Core.WALS.F74A.allData
-private abbrev ch75 := Core.WALS.F75A.allData
-private abbrev ch76 := Core.WALS.F76A.allData
-private abbrev ch77 := Core.WALS.F77A.allData
-private abbrev ch78 := Core.WALS.F78A.allData
+private abbrev ch74 := Datasets.WALS.F74A.allData
+private abbrev ch75 := Datasets.WALS.F75A.allData
+private abbrev ch76 := Datasets.WALS.F76A.allData
+private abbrev ch77 := Datasets.WALS.F77A.allData
+private abbrev ch78 := Datasets.WALS.F78A.allData
 
 /-- A single row in a WALS frequency table: a category label and its count. -/
 structure WALSCount where
@@ -237,7 +237,7 @@ theorem ch77_ch78_same_sample : ch77.length = ch78.length := by native_decide
     either `directAndIndirect` or `threeOrMore` here. Grounding theorems
     are only written for languages where the WALS value unambiguously
     determines the local value. -/
-private def fromWALS77A : Core.WALS.F77A.EvidentialityDistinctions → EvidentialSystem
+private def fromWALS77A : Datasets.WALS.F77A.EvidentialityDistinctions → EvidentialSystem
   | .noGrammaticalEvidentials => .noGrammatical
   | .indirectOnly => .indirectOnly
   | .directAndIndirect => .directAndIndirect
@@ -251,7 +251,7 @@ private def fromWALS77A : Core.WALS.F77A.EvidentialityDistinctions → Evidentia
     - `separateParticle` → `particle`
     - `modalMorpheme` → `particle` (closest local category)
     - `mixed` → `partOfTAM` (no exact local match; best-effort) -/
-private def fromWALS78A : Core.WALS.F78A.EvidentialityCoding → EvidentialCoding
+private def fromWALS78A : Datasets.WALS.F78A.EvidentialityCoding → EvidentialCoding
   | .noGrammaticalEvidentials => .notApplicable
   | .verbalAffixOrClitic => .verbalAffix
   | .partOfTheTenseSystem => .partOfTAM
@@ -671,40 +671,40 @@ example : finnish.coding = .notApplicable := by native_decide
 -- ============================================================================
 
 theorem english_ch74 :
-    (Core.WALS.F74A.lookup "eng").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "eng").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem german_ch74 :
-    (Core.WALS.F74A.lookup "ger").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "ger").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem french_ch74 :
-    (Core.WALS.F74A.lookup "fre").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "fre").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem japanese_ch74 :
-    (Core.WALS.F74A.lookup "jpn").map (·.value) = some .affixesOnVerbs := by
+    (Datasets.WALS.F74A.lookup "jpn").map (·.value) = some .affixesOnVerbs := by
   native_decide
 theorem mandarin_ch74 :
-    (Core.WALS.F74A.lookup "mnd").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "mnd").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem korean_ch74 :
-    (Core.WALS.F74A.lookup "kor").map (·.value) = some .otherKindsOfMarkers := by
+    (Datasets.WALS.F74A.lookup "kor").map (·.value) = some .otherKindsOfMarkers := by
   native_decide
 theorem turkish_ch74 :
-    (Core.WALS.F74A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
+    (Datasets.WALS.F74A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
   native_decide
 theorem finnish_ch74 :
-    (Core.WALS.F74A.lookup "fin").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "fin").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem georgian_ch74 :
-    (Core.WALS.F74A.lookup "geo").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "geo").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem abkhaz_ch74 :
-    (Core.WALS.F74A.lookup "abk").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "abk").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem aymara_ch74 :
-    (Core.WALS.F74A.lookup "aym").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F74A.lookup "aym").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem westGreenlandic_ch74 :
-    (Core.WALS.F74A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
+    (Datasets.WALS.F74A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
   native_decide
 
 -- ============================================================================
@@ -712,40 +712,40 @@ theorem westGreenlandic_ch74 :
 -- ============================================================================
 
 theorem english_ch75 :
-    (Core.WALS.F75A.lookup "eng").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "eng").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem german_ch75 :
-    (Core.WALS.F75A.lookup "ger").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "ger").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem french_ch75 :
-    (Core.WALS.F75A.lookup "fre").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "fre").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem japanese_ch75 :
-    (Core.WALS.F75A.lookup "jpn").map (·.value) = some .other := by
+    (Datasets.WALS.F75A.lookup "jpn").map (·.value) = some .other := by
   native_decide
 theorem mandarin_ch75 :
-    (Core.WALS.F75A.lookup "mnd").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "mnd").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem korean_ch75 :
-    (Core.WALS.F75A.lookup "kor").map (·.value) = some .other := by
+    (Datasets.WALS.F75A.lookup "kor").map (·.value) = some .other := by
   native_decide
 theorem turkish_ch75 :
-    (Core.WALS.F75A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
+    (Datasets.WALS.F75A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
   native_decide
 theorem finnish_ch75 :
-    (Core.WALS.F75A.lookup "fin").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "fin").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem georgian_ch75 :
-    (Core.WALS.F75A.lookup "geo").map (·.value) = some .other := by
+    (Datasets.WALS.F75A.lookup "geo").map (·.value) = some .other := by
   native_decide
 theorem abkhaz_ch75 :
-    (Core.WALS.F75A.lookup "abk").map (·.value) = some .verbalConstructions := by
+    (Datasets.WALS.F75A.lookup "abk").map (·.value) = some .verbalConstructions := by
   native_decide
 theorem aymara_ch75 :
-    (Core.WALS.F75A.lookup "aym").map (·.value) = some .other := by
+    (Datasets.WALS.F75A.lookup "aym").map (·.value) = some .other := by
   native_decide
 theorem westGreenlandic_ch75 :
-    (Core.WALS.F75A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
+    (Datasets.WALS.F75A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
   native_decide
 
 -- ============================================================================
@@ -753,40 +753,40 @@ theorem westGreenlandic_ch75 :
 -- ============================================================================
 
 theorem english_ch76 :
-    (Core.WALS.F76A.lookup "eng").map (·.value) =
+    (Datasets.WALS.F76A.lookup "eng").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem german_ch76 :
-    (Core.WALS.F76A.lookup "ger").map (·.value) =
+    (Datasets.WALS.F76A.lookup "ger").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem french_ch76 :
-    (Core.WALS.F76A.lookup "fre").map (·.value) =
+    (Datasets.WALS.F76A.lookup "fre").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem japanese_ch76 :
-    (Core.WALS.F76A.lookup "jpn").map (·.value) =
+    (Datasets.WALS.F76A.lookup "jpn").map (·.value) =
     some .overlapForEitherPossibilityOrNecessity := by native_decide
 theorem mandarin_ch76 :
-    (Core.WALS.F76A.lookup "mnd").map (·.value) =
+    (Datasets.WALS.F76A.lookup "mnd").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem korean_ch76 :
-    (Core.WALS.F76A.lookup "kor").map (·.value) =
+    (Datasets.WALS.F76A.lookup "kor").map (·.value) =
     some .overlapForEitherPossibilityOrNecessity := by native_decide
 theorem turkish_ch76 :
-    (Core.WALS.F76A.lookup "tur").map (·.value) =
+    (Datasets.WALS.F76A.lookup "tur").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem finnish_ch76 :
-    (Core.WALS.F76A.lookup "fin").map (·.value) =
+    (Datasets.WALS.F76A.lookup "fin").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 theorem georgian_ch76 :
-    (Core.WALS.F76A.lookup "geo").map (·.value) =
+    (Datasets.WALS.F76A.lookup "geo").map (·.value) =
     some .overlapForEitherPossibilityOrNecessity := by native_decide
 theorem abkhaz_ch76 :
-    (Core.WALS.F76A.lookup "abk").map (·.value) =
+    (Datasets.WALS.F76A.lookup "abk").map (·.value) =
     some .overlapForEitherPossibilityOrNecessity := by native_decide
 theorem aymara_ch76 :
-    (Core.WALS.F76A.lookup "aym").map (·.value) = some .noOverlap := by
+    (Datasets.WALS.F76A.lookup "aym").map (·.value) = some .noOverlap := by
   native_decide
 theorem westGreenlandic_ch76 :
-    (Core.WALS.F76A.lookup "grw").map (·.value) =
+    (Datasets.WALS.F76A.lookup "grw").map (·.value) =
     some .overlapForBothPossibilityAndNecessity := by native_decide
 
 -- ============================================================================
@@ -811,19 +811,19 @@ theorem westGreenlandic_ch76 :
 -- ============================================================================
 
 theorem english_ch77 :
-    (Core.WALS.F77A.lookup "eng").map (fromWALS77A ·.value) =
+    (Datasets.WALS.F77A.lookup "eng").map (fromWALS77A ·.value) =
     some english.system := by native_decide
 theorem mandarin_ch77 :
-    (Core.WALS.F77A.lookup "mnd").map (fromWALS77A ·.value) =
+    (Datasets.WALS.F77A.lookup "mnd").map (fromWALS77A ·.value) =
     some mandarin.system := by native_decide
 theorem turkish_ch77 :
-    (Core.WALS.F77A.lookup "tur").map (fromWALS77A ·.value) =
+    (Datasets.WALS.F77A.lookup "tur").map (fromWALS77A ·.value) =
     some turkish.system := by native_decide
 theorem bulgarian_ch77 :
-    (Core.WALS.F77A.lookup "bul").map (fromWALS77A ·.value) =
+    (Datasets.WALS.F77A.lookup "bul").map (fromWALS77A ·.value) =
     some bulgarian.system := by native_decide
 theorem westGreenlandic_ch77 :
-    (Core.WALS.F77A.lookup "grw").map (fromWALS77A ·.value) =
+    (Datasets.WALS.F77A.lookup "grw").map (fromWALS77A ·.value) =
     some westGreenlandic.system := by native_decide
 
 -- ============================================================================
@@ -843,31 +843,31 @@ theorem westGreenlandic_ch77 :
 -- ============================================================================
 
 theorem english_ch78 :
-    (Core.WALS.F78A.lookup "eng").map (fromWALS78A ·.value) =
+    (Datasets.WALS.F78A.lookup "eng").map (fromWALS78A ·.value) =
     some english.coding := by native_decide
 theorem mandarin_ch78 :
-    (Core.WALS.F78A.lookup "mnd").map (fromWALS78A ·.value) =
+    (Datasets.WALS.F78A.lookup "mnd").map (fromWALS78A ·.value) =
     some mandarin.coding := by native_decide
 theorem turkish_ch78 :
-    (Core.WALS.F78A.lookup "tur").map (fromWALS78A ·.value) =
+    (Datasets.WALS.F78A.lookup "tur").map (fromWALS78A ·.value) =
     some turkish.coding := by native_decide
 theorem bulgarian_ch78 :
-    (Core.WALS.F78A.lookup "bul").map (fromWALS78A ·.value) =
+    (Datasets.WALS.F78A.lookup "bul").map (fromWALS78A ·.value) =
     some bulgarian.coding := by native_decide
 
 -- Additional Ch 78A grounding for languages in WALS but with values
 -- not directly tied to our profile (raw WALS value verification):
 theorem tuyuca_ch78_raw :
-    (Core.WALS.F78A.lookup "tuy").map (·.value) =
+    (Datasets.WALS.F78A.lookup "tuy").map (·.value) =
     some .partOfTheTenseSystem := by native_decide
 theorem tariana_ch78_raw :
-    (Core.WALS.F78A.lookup "tar").map (·.value) =
+    (Datasets.WALS.F78A.lookup "tar").map (·.value) =
     some .partOfTheTenseSystem := by native_decide
 theorem kashaya_ch78_raw :
-    (Core.WALS.F78A.lookup "ksh").map (·.value) =
+    (Datasets.WALS.F78A.lookup "ksh").map (·.value) =
     some .verbalAffixOrClitic := by native_decide
 theorem westGreenlandic_ch78_raw :
-    (Core.WALS.F78A.lookup "grw").map (·.value) =
+    (Datasets.WALS.F78A.lookup "grw").map (·.value) =
     some .verbalAffixOrClitic := by native_decide
 
 -- ============================================================================

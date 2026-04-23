@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F70A
-import Linglib.Core.WALS.Features.F71A
-import Linglib.Core.WALS.Features.F72A
-import Linglib.Core.WALS.Features.F73A
+import Linglib.Datasets.WALS.Features.F70A
+import Linglib.Datasets.WALS.Features.F71A
+import Linglib.Datasets.WALS.Features.F72A
+import Linglib.Datasets.WALS.Features.F73A
 
 /-!
 # Cross-Linguistic Typology of Imperatives (WALS Chapters 70--73)
@@ -203,10 +203,10 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-private abbrev f70 := Core.WALS.F70A.allData
-private abbrev f71 := Core.WALS.F71A.allData
-private abbrev f72 := Core.WALS.F72A.allData
-private abbrev f73 := Core.WALS.F73A.allData
+private abbrev f70 := Datasets.WALS.F70A.allData
+private abbrev f71 := Datasets.WALS.F71A.allData
+private abbrev f72 := Datasets.WALS.F72A.allData
+private abbrev f73 := Datasets.WALS.F73A.allData
 
 /-- Chapter 70 distribution: morphological imperative types (N = 548). -/
 def ch70Counts : List WALSCount :=
@@ -989,13 +989,13 @@ theorem sample_all_have_optative_data :
     it from the presence of some morphological imperative. Returns `none`
     when the F70A value indicates a morphological imperative exists but
     does not determine whether it extends beyond 2nd person. -/
-private def fromWALS70A : Core.WALS.F70A.MorphologicalImperative → Option MorphImpType
+private def fromWALS70A : Datasets.WALS.F70A.MorphologicalImperative → Option MorphImpType
   | .noSecondPersonImperatives => some .noMorphological
   | _ => none
 
 /-- Convert F71A (prohibitive type) to `ProhibitiveType`. The mapping is
     one-to-one between WALS 71A categories and our four-way classification. -/
-private def fromWALS71A : Core.WALS.F71A.Prohibitive → ProhibitiveType
+private def fromWALS71A : Datasets.WALS.F71A.Prohibitive → ProhibitiveType
   | .normalImperativeNormalNegative => .normalImpNormalNeg
   | .normalImperativeSpecialNegative => .normalImpSpecialNeg
   | .specialImperativeNormalNegative => .specialImpNormalNeg
@@ -1006,13 +1006,13 @@ private def fromWALS71A : Core.WALS.F71A.Prohibitive → ProhibitiveType
     `bothTypesOfSystem` / `neitherTypeOfSystem`. Only two values map cleanly:
     `neitherTypeOfSystem` → `imperativeOnly`, `maximalSystem` → `allThree`.
     The other two are ambiguous and return `none`. -/
-private def fromWALS72A : Core.WALS.F72A.ImperativeHortativeSystems → Option ImpHortSystem
+private def fromWALS72A : Datasets.WALS.F72A.ImperativeHortativeSystems → Option ImpHortSystem
   | .neitherTypeOfSystem => some .imperativeOnly
   | .maximalSystem => some .allThree
   | _ => none
 
 /-- Convert F73A (optative presence) to `OptativePresence`. One-to-one. -/
-private def fromWALS73A : Core.WALS.F73A.Optative → OptativePresence
+private def fromWALS73A : Datasets.WALS.F73A.Optative → OptativePresence
   | .present => .present
   | .absent => .absent
 
@@ -1037,7 +1037,7 @@ theorem ch73_wals_total : f73.length = 319 := by native_decide
 -- ============================================================================
 
 theorem mandarin_ch70 :
-    (Core.WALS.F70A.lookup "mnd").map (fromWALS70A ·.value) =
+    (Datasets.WALS.F70A.lookup "mnd").map (fromWALS70A ·.value) =
     some (some mandarin.morphImp) := by
   native_decide
 
@@ -1055,42 +1055,42 @@ theorem mandarin_ch70 :
 -- ============================================================================
 
 theorem english_ch71 :
-    (Core.WALS.F71A.lookup "eng").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "eng").map (fromWALS71A ·.value) =
     some english.prohibitive := by
   native_decide
 
 theorem japanese_ch71 :
-    (Core.WALS.F71A.lookup "jpn").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "jpn").map (fromWALS71A ·.value) =
     some japanese.prohibitive := by
   native_decide
 
 theorem mandarin_ch71 :
-    (Core.WALS.F71A.lookup "mnd").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "mnd").map (fromWALS71A ·.value) =
     some mandarin.prohibitive := by
   native_decide
 
 theorem turkish_ch71 :
-    (Core.WALS.F71A.lookup "tur").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "tur").map (fromWALS71A ·.value) =
     some turkish.prohibitive := by
   native_decide
 
 theorem russian_ch71 :
-    (Core.WALS.F71A.lookup "rus").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "rus").map (fromWALS71A ·.value) =
     some russian.prohibitive := by
   native_decide
 
 theorem hindiUrdu_ch71 :
-    (Core.WALS.F71A.lookup "hin").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "hin").map (fromWALS71A ·.value) =
     some hindiUrdu.prohibitive := by
   native_decide
 
 theorem tagalog_ch71 :
-    (Core.WALS.F71A.lookup "tag").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "tag").map (fromWALS71A ·.value) =
     some tagalog.prohibitive := by
   native_decide
 
 theorem italian_ch71 :
-    (Core.WALS.F71A.lookup "ita").map (fromWALS71A ·.value) =
+    (Datasets.WALS.F71A.lookup "ita").map (fromWALS71A ·.value) =
     some italian.prohibitive := by
   native_decide
 
@@ -1105,42 +1105,42 @@ theorem italian_ch71 :
 -- ============================================================================
 
 theorem english_ch72 :
-    (Core.WALS.F72A.lookup "eng").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "eng").map (fromWALS72A ·.value) =
     some (some english.impHortSystem) := by
   native_decide
 
 theorem japanese_ch72 :
-    (Core.WALS.F72A.lookup "jpn").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "jpn").map (fromWALS72A ·.value) =
     some (some japanese.impHortSystem) := by
   native_decide
 
 theorem mandarin_ch72 :
-    (Core.WALS.F72A.lookup "mnd").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "mnd").map (fromWALS72A ·.value) =
     some (some mandarin.impHortSystem) := by
   native_decide
 
 theorem turkish_ch72 :
-    (Core.WALS.F72A.lookup "tur").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "tur").map (fromWALS72A ·.value) =
     some (some turkish.impHortSystem) := by
   native_decide
 
 theorem finnish_ch72 :
-    (Core.WALS.F72A.lookup "fin").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "fin").map (fromWALS72A ·.value) =
     some (some finnish.impHortSystem) := by
   native_decide
 
 theorem russian_ch72 :
-    (Core.WALS.F72A.lookup "rus").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "rus").map (fromWALS72A ·.value) =
     some (some russian.impHortSystem) := by
   native_decide
 
 theorem swahili_ch72 :
-    (Core.WALS.F72A.lookup "swa").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "swa").map (fromWALS72A ·.value) =
     some (some swahili.impHortSystem) := by
   native_decide
 
 theorem tagalog_ch72 :
-    (Core.WALS.F72A.lookup "tag").map (fromWALS72A ·.value) =
+    (Datasets.WALS.F72A.lookup "tag").map (fromWALS72A ·.value) =
     some (some tagalog.impHortSystem) := by
   native_decide
 
@@ -1154,52 +1154,52 @@ theorem tagalog_ch72 :
 -- ============================================================================
 
 theorem english_ch73 :
-    (Core.WALS.F73A.lookup "eng").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "eng").map (fromWALS73A ·.value) =
     some (english.optative.getD .absent) := by
   native_decide
 
 theorem japanese_ch73 :
-    (Core.WALS.F73A.lookup "jpn").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "jpn").map (fromWALS73A ·.value) =
     some (japanese.optative.getD .absent) := by
   native_decide
 
 theorem mandarin_ch73 :
-    (Core.WALS.F73A.lookup "mnd").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "mnd").map (fromWALS73A ·.value) =
     some (mandarin.optative.getD .absent) := by
   native_decide
 
 theorem finnish_ch73 :
-    (Core.WALS.F73A.lookup "fin").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "fin").map (fromWALS73A ·.value) =
     some (finnish.optative.getD .absent) := by
   native_decide
 
 theorem russian_ch73 :
-    (Core.WALS.F73A.lookup "rus").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "rus").map (fromWALS73A ·.value) =
     some (russian.optative.getD .absent) := by
   native_decide
 
 theorem georgian_ch73 :
-    (Core.WALS.F73A.lookup "geo").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "geo").map (fromWALS73A ·.value) =
     some (georgian.optative.getD .absent) := by
   native_decide
 
 theorem hindiUrdu_ch73 :
-    (Core.WALS.F73A.lookup "hin").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "hin").map (fromWALS73A ·.value) =
     some (hindiUrdu.optative.getD .absent) := by
   native_decide
 
 theorem hungarian_ch73 :
-    (Core.WALS.F73A.lookup "hun").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "hun").map (fromWALS73A ·.value) =
     some (hungarian.optative.getD .absent) := by
   native_decide
 
 theorem korean_ch73 :
-    (Core.WALS.F73A.lookup "kor").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "kor").map (fromWALS73A ·.value) =
     some (korean.optative.getD .absent) := by
   native_decide
 
 theorem swahili_ch73 :
-    (Core.WALS.F73A.lookup "swa").map (fromWALS73A ·.value) =
+    (Datasets.WALS.F73A.lookup "swa").map (fromWALS73A ·.value) =
     some (swahili.optative.getD .absent) := by
   native_decide
 

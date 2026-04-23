@@ -8,21 +8,21 @@ import Linglib.Fragments.Japanese.Typology
 import Linglib.Fragments.Mandarin.Typology
 import Linglib.Fragments.Korean.Typology
 import Linglib.Fragments.Arabic.Typology
-import Linglib.Core.WALS.Features.F81A
-import Linglib.Core.WALS.Features.F82A
-import Linglib.Core.WALS.Features.F83A
-import Linglib.Core.WALS.Features.F87A
-import Linglib.Core.WALS.Features.F88A
-import Linglib.Core.WALS.Features.F90A
-import Linglib.Core.WALS.Features.F94A
-import Linglib.Core.WALS.Features.F95A
-import Linglib.Core.WALS.Features.F96A
-import Linglib.Core.WALS.Features.F97A
-import Linglib.Core.WALS.Features.F81B
-import Linglib.Core.WALS.Features.F90B
-import Linglib.Core.WALS.Features.F90C
-import Linglib.Core.WALS.Features.F60A
-import Linglib.Core.WALS.Features.F61A
+import Linglib.Datasets.WALS.Features.F81A
+import Linglib.Datasets.WALS.Features.F82A
+import Linglib.Datasets.WALS.Features.F83A
+import Linglib.Datasets.WALS.Features.F87A
+import Linglib.Datasets.WALS.Features.F88A
+import Linglib.Datasets.WALS.Features.F90A
+import Linglib.Datasets.WALS.Features.F94A
+import Linglib.Datasets.WALS.Features.F95A
+import Linglib.Datasets.WALS.Features.F96A
+import Linglib.Datasets.WALS.Features.F97A
+import Linglib.Datasets.WALS.Features.F81B
+import Linglib.Datasets.WALS.Features.F90B
+import Linglib.Datasets.WALS.Features.F90C
+import Linglib.Datasets.WALS.Features.F60A
+import Linglib.Datasets.WALS.Features.F61A
 
 /-!
 # Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
@@ -238,7 +238,7 @@ theorem all_exceptions_single_word :
 -- ============================================================================
 -- WALS Distribution Data — derived from generated modules
 -- ============================================================================
--- Full per-language data lives in Core.WALS.Features.F{81A,82A,83A,...}.
+-- Full per-language data lives in Datasets.WALS.Features.F{81A,82A,83A,...}.
 -- Aggregate counts are derived from the generated data by filtering.
 
 -- ============================================================================
@@ -260,21 +260,21 @@ export Core.Typology.WordOrder
 -- ============================================================================
 
 -- WALS chapter abbreviations for filter-counting generalizations.
-private abbrev ch81 := Core.WALS.F81A.allData
-private abbrev ch82 := Core.WALS.F82A.allData
-private abbrev ch83 := Core.WALS.F83A.allData
-private abbrev ch87 := Core.WALS.F87A.allData
-private abbrev ch88 := Core.WALS.F88A.allData
-private abbrev ch90 := Core.WALS.F90A.allData
-private abbrev ch94 := Core.WALS.F94A.allData
-private abbrev ch95 := Core.WALS.F95A.allData
-private abbrev ch96 := Core.WALS.F96A.allData
-private abbrev ch97 := Core.WALS.F97A.allData
-private abbrev ch81B := Core.WALS.F81B.allData
-private abbrev ch90B := Core.WALS.F90B.allData
-private abbrev ch90C := Core.WALS.F90C.allData
-private abbrev ch60 := Core.WALS.F60A.allData
-private abbrev ch61 := Core.WALS.F61A.allData
+private abbrev ch81 := Datasets.WALS.F81A.allData
+private abbrev ch82 := Datasets.WALS.F82A.allData
+private abbrev ch83 := Datasets.WALS.F83A.allData
+private abbrev ch87 := Datasets.WALS.F87A.allData
+private abbrev ch88 := Datasets.WALS.F88A.allData
+private abbrev ch90 := Datasets.WALS.F90A.allData
+private abbrev ch94 := Datasets.WALS.F94A.allData
+private abbrev ch95 := Datasets.WALS.F95A.allData
+private abbrev ch96 := Datasets.WALS.F96A.allData
+private abbrev ch97 := Datasets.WALS.F97A.allData
+private abbrev ch81B := Datasets.WALS.F81B.allData
+private abbrev ch90B := Datasets.WALS.F90B.allData
+private abbrev ch90C := Datasets.WALS.F90C.allData
+private abbrev ch60 := Datasets.WALS.F60A.allData
+private abbrev ch61 := Datasets.WALS.F61A.allData
 
 set_option maxRecDepth 8192 in
 /-- Generalization 1: SOV is the most common basic order. -/

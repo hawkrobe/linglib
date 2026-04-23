@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F117A
-import Linglib.Core.WALS.Features.F118A
-import Linglib.Core.WALS.Features.F119A
-import Linglib.Core.WALS.Features.F120A
+import Linglib.Datasets.WALS.Features.F117A
+import Linglib.Datasets.WALS.Features.F118A
+import Linglib.Datasets.WALS.Features.F119A
+import Linglib.Datasets.WALS.Features.F120A
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)
@@ -206,10 +206,10 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-private abbrev ch117 := Core.WALS.F117A.allData
-private abbrev ch118 := Core.WALS.F118A.allData
-private abbrev ch119 := Core.WALS.F119A.allData
-private abbrev ch120 := Core.WALS.F120A.allData
+private abbrev ch117 := Datasets.WALS.F117A.allData
+private abbrev ch118 := Datasets.WALS.F118A.allData
+private abbrev ch119 := Datasets.WALS.F119A.allData
+private abbrev ch120 := Datasets.WALS.F120A.allData
 
 /-- Chapter 117 distribution: predicative possession (N = 240). -/
 def ch117Counts : List WALSCount :=
@@ -1180,13 +1180,13 @@ theorem wals_f118_f119_f120_same_sample :
 -- ============================================================================
 
 /-- Map WALS F118A (predicative adjectives) to our `PredAdjStrategy`. -/
-private def fromWALS118A : Core.WALS.F118A.PredicativeAdjectiveType → PredAdjStrategy
+private def fromWALS118A : Datasets.WALS.F118A.PredicativeAdjectiveType → PredAdjStrategy
   | .verbalEncoding => .verbal
   | .nonverbalEncoding => .nonVerbal
   | .mixed => .mixed
 
 /-- Map WALS F119A (nominal and locational predication) to our `NomLocStrategy`. -/
-private def fromWALS119A : Core.WALS.F119A.NominalLocationalPredication → NomLocStrategy
+private def fromWALS119A : Datasets.WALS.F119A.NominalLocationalPredication → NomLocStrategy
   | .different => .different
   | .identical => .identical
 
@@ -1197,13 +1197,13 @@ private def fromWALS119A : Core.WALS.F119A.NominalLocationalPredication → NomL
     therefore lossy: `.impossible` maps exactly, but `.possible` is ambiguous
     between `.restricted` and `.widespread`. We return `Option` for the ambiguous
     case. -/
-private def fromWALS120A : Core.WALS.F120A.ZeroCopulaType → Option ZeroCopulaStatus
+private def fromWALS120A : Datasets.WALS.F120A.ZeroCopulaType → Option ZeroCopulaStatus
   | .impossible => some .impossible
   | .possible => none
 
 /-- Weaker predicate: does WALS F120A say zero copula is at least possible?
     This is decidable even though the restricted/widespread distinction is not. -/
-private def wals120A_allowsZero : Core.WALS.F120A.ZeroCopulaType → Bool
+private def wals120A_allowsZero : Datasets.WALS.F120A.ZeroCopulaType → Bool
   | .impossible => false
   | .possible => true
 
@@ -1251,52 +1251,52 @@ theorem wals_f117a_have_count :
 -- ============================================================================
 
 theorem english_f118a :
-    (Core.WALS.F118A.lookup "eng").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "eng").map (fromWALS118A ·.value) =
     some english.predAdj := by native_decide
 theorem french_f118a :
-    (Core.WALS.F118A.lookup "fre").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "fre").map (fromWALS118A ·.value) =
     some french.predAdj := by native_decide
 theorem spanish_f118a :
-    (Core.WALS.F118A.lookup "spa").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "spa").map (fromWALS118A ·.value) =
     some spanish.predAdj := by native_decide
 theorem russian_f118a :
-    (Core.WALS.F118A.lookup "rus").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "rus").map (fromWALS118A ·.value) =
     some russian.predAdj := by native_decide
 theorem finnish_f118a :
-    (Core.WALS.F118A.lookup "fin").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "fin").map (fromWALS118A ·.value) =
     some finnish.predAdj := by native_decide
 theorem japanese_f118a :
-    (Core.WALS.F118A.lookup "jpn").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "jpn").map (fromWALS118A ·.value) =
     some japanese.predAdj := by native_decide
 theorem mandarin_f118a :
-    (Core.WALS.F118A.lookup "mnd").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "mnd").map (fromWALS118A ·.value) =
     some mandarin.predAdj := by native_decide
 theorem hindi_f118a :
-    (Core.WALS.F118A.lookup "hin").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "hin").map (fromWALS118A ·.value) =
     some hindiUrdu.predAdj := by native_decide
 theorem tagalog_f118a :
-    (Core.WALS.F118A.lookup "tag").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "tag").map (fromWALS118A ·.value) =
     some tagalog.predAdj := by native_decide
 theorem irish_f118a :
-    (Core.WALS.F118A.lookup "iri").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "iri").map (fromWALS118A ·.value) =
     some irish.predAdj := by native_decide
 theorem hungarian_f118a :
-    (Core.WALS.F118A.lookup "hun").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "hun").map (fromWALS118A ·.value) =
     some hungarian.predAdj := by native_decide
 theorem thai_f118a :
-    (Core.WALS.F118A.lookup "tha").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "tha").map (fromWALS118A ·.value) =
     some thai.predAdj := by native_decide
 theorem yoruba_f118a :
-    (Core.WALS.F118A.lookup "yor").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "yor").map (fromWALS118A ·.value) =
     some yoruba.predAdj := by native_decide
 theorem hebrew_f118a :
-    (Core.WALS.F118A.lookup "heb").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "heb").map (fromWALS118A ·.value) =
     some hebrew.predAdj := by native_decide
 theorem arabic_f118a :
-    (Core.WALS.F118A.lookup "aeg").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "aeg").map (fromWALS118A ·.value) =
     some arabic.predAdj := by native_decide
 theorem quechua_f118a :
-    (Core.WALS.F118A.lookup "qcu").map (fromWALS118A ·.value) =
+    (Datasets.WALS.F118A.lookup "qcu").map (fromWALS118A ·.value) =
     some quechua.predAdj := by native_decide
 
 -- ============================================================================
@@ -1306,46 +1306,46 @@ theorem quechua_f118a :
 -- ============================================================================
 
 theorem english_f119a :
-    (Core.WALS.F119A.lookup "eng").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "eng").map (fromWALS119A ·.value) =
     some english.nomLoc := by native_decide
 theorem french_f119a :
-    (Core.WALS.F119A.lookup "fre").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "fre").map (fromWALS119A ·.value) =
     some french.nomLoc := by native_decide
 theorem spanish_f119a :
-    (Core.WALS.F119A.lookup "spa").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "spa").map (fromWALS119A ·.value) =
     some spanish.nomLoc := by native_decide
 theorem russian_f119a :
-    (Core.WALS.F119A.lookup "rus").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "rus").map (fromWALS119A ·.value) =
     some russian.nomLoc := by native_decide
 theorem finnish_f119a :
-    (Core.WALS.F119A.lookup "fin").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "fin").map (fromWALS119A ·.value) =
     some finnish.nomLoc := by native_decide
 theorem japanese_f119a :
-    (Core.WALS.F119A.lookup "jpn").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "jpn").map (fromWALS119A ·.value) =
     some japanese.nomLoc := by native_decide
 theorem mandarin_f119a :
-    (Core.WALS.F119A.lookup "mnd").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "mnd").map (fromWALS119A ·.value) =
     some mandarin.nomLoc := by native_decide
 theorem korean_f119a :
-    (Core.WALS.F119A.lookup "kor").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "kor").map (fromWALS119A ·.value) =
     some korean.nomLoc := by native_decide
 theorem hindi_f119a :
-    (Core.WALS.F119A.lookup "hin").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "hin").map (fromWALS119A ·.value) =
     some hindiUrdu.nomLoc := by native_decide
 theorem irish_f119a :
-    (Core.WALS.F119A.lookup "iri").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "iri").map (fromWALS119A ·.value) =
     some irish.nomLoc := by native_decide
 theorem hungarian_f119a :
-    (Core.WALS.F119A.lookup "hun").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "hun").map (fromWALS119A ·.value) =
     some hungarian.nomLoc := by native_decide
 theorem thai_f119a :
-    (Core.WALS.F119A.lookup "tha").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "tha").map (fromWALS119A ·.value) =
     some thai.nomLoc := by native_decide
 theorem yoruba_f119a :
-    (Core.WALS.F119A.lookup "yor").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "yor").map (fromWALS119A ·.value) =
     some yoruba.nomLoc := by native_decide
 theorem quechua_f119a :
-    (Core.WALS.F119A.lookup "qcu").map (fromWALS119A ·.value) =
+    (Datasets.WALS.F119A.lookup "qcu").map (fromWALS119A ·.value) =
     some quechua.nomLoc := by native_decide
 
 -- ============================================================================
@@ -1358,49 +1358,49 @@ theorem quechua_f119a :
 
 -- Exact grounding: WALS "impossible" matches profile .impossible
 theorem english_f120a :
-    (Core.WALS.F120A.lookup "eng").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "eng").map (fromWALS120A ·.value) =
     some (some english.zeroCopula) := by native_decide
 theorem french_f120a :
-    (Core.WALS.F120A.lookup "fre").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "fre").map (fromWALS120A ·.value) =
     some (some french.zeroCopula) := by native_decide
 theorem spanish_f120a :
-    (Core.WALS.F120A.lookup "spa").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "spa").map (fromWALS120A ·.value) =
     some (some spanish.zeroCopula) := by native_decide
 theorem finnish_f120a :
-    (Core.WALS.F120A.lookup "fin").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "fin").map (fromWALS120A ·.value) =
     some (some finnish.zeroCopula) := by native_decide
 theorem japanese_f120a :
-    (Core.WALS.F120A.lookup "jpn").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "jpn").map (fromWALS120A ·.value) =
     some (some japanese.zeroCopula) := by native_decide
 theorem korean_f120a :
-    (Core.WALS.F120A.lookup "kor").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "kor").map (fromWALS120A ·.value) =
     some (some korean.zeroCopula) := by native_decide
 theorem mandarin_f120a :
-    (Core.WALS.F120A.lookup "mnd").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "mnd").map (fromWALS120A ·.value) =
     some (some mandarin.zeroCopula) := by native_decide
 theorem irish_f120a :
-    (Core.WALS.F120A.lookup "iri").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "iri").map (fromWALS120A ·.value) =
     some (some irish.zeroCopula) := by native_decide
 theorem hindi_f120a :
-    (Core.WALS.F120A.lookup "hin").map (fromWALS120A ·.value) =
+    (Datasets.WALS.F120A.lookup "hin").map (fromWALS120A ·.value) =
     some (some hindiUrdu.zeroCopula) := by native_decide
 
 -- Consistency grounding: WALS "possible" is consistent with profile
 -- allowsZeroCopula (restricted or widespread)
 theorem russian_f120a_consistent :
-    (Core.WALS.F120A.lookup "rus").map (wals120A_allowsZero ·.value) =
+    (Datasets.WALS.F120A.lookup "rus").map (wals120A_allowsZero ·.value) =
     some (russian.allowsZeroCopula) := by native_decide
 theorem hungarian_f120a_consistent :
-    (Core.WALS.F120A.lookup "hun").map (wals120A_allowsZero ·.value) =
+    (Datasets.WALS.F120A.lookup "hun").map (wals120A_allowsZero ·.value) =
     some (hungarian.allowsZeroCopula) := by native_decide
 theorem arabic_f120a_consistent :
-    (Core.WALS.F120A.lookup "aeg").map (wals120A_allowsZero ·.value) =
+    (Datasets.WALS.F120A.lookup "aeg").map (wals120A_allowsZero ·.value) =
     some (arabic.allowsZeroCopula) := by native_decide
 theorem hebrew_f120a_consistent :
-    (Core.WALS.F120A.lookup "heb").map (wals120A_allowsZero ·.value) =
+    (Datasets.WALS.F120A.lookup "heb").map (wals120A_allowsZero ·.value) =
     some (hebrew.allowsZeroCopula) := by native_decide
 theorem quechua_f120a_consistent :
-    (Core.WALS.F120A.lookup "qcu").map (wals120A_allowsZero ·.value) =
+    (Datasets.WALS.F120A.lookup "qcu").map (wals120A_allowsZero ·.value) =
     some (quechua.allowsZeroCopula) := by native_decide
 
 -- ============================================================================
@@ -1413,55 +1413,55 @@ theorem quechua_f120a_consistent :
 -- ============================================================================
 
 theorem english_f117a :
-    (Core.WALS.F117A.lookup "eng").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.have := by native_decide
+    (Datasets.WALS.F117A.lookup "eng").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.have := by native_decide
 theorem spanish_f117a :
-    (Core.WALS.F117A.lookup "spa").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.have := by native_decide
+    (Datasets.WALS.F117A.lookup "spa").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.have := by native_decide
 theorem finnish_f117a :
-    (Core.WALS.F117A.lookup "fin").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "fin").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem russian_f117a :
-    (Core.WALS.F117A.lookup "rus").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "rus").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem japanese_f117a :
-    (Core.WALS.F117A.lookup "jpn").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "jpn").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem korean_f117a :
-    (Core.WALS.F117A.lookup "kor").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "kor").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem mandarin_f117a :
-    (Core.WALS.F117A.lookup "mnd").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.topic := by native_decide
+    (Datasets.WALS.F117A.lookup "mnd").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.topic := by native_decide
 theorem turkish_f117a :
-    (Core.WALS.F117A.lookup "tur").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.genitive := by native_decide
+    (Datasets.WALS.F117A.lookup "tur").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.genitive := by native_decide
 theorem hindi_f117a :
-    (Core.WALS.F117A.lookup "hin").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "hin").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem hungarian_f117a :
-    (Core.WALS.F117A.lookup "hun").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "hun").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem hebrew_f117a :
-    (Core.WALS.F117A.lookup "heb").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "heb").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem irish_f117a :
-    (Core.WALS.F117A.lookup "iri").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "iri").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 theorem swahili_f117a :
-    (Core.WALS.F117A.lookup "swa").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.conjunctional := by native_decide
+    (Datasets.WALS.F117A.lookup "swa").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.conjunctional := by native_decide
 theorem tagalog_f117a :
-    (Core.WALS.F117A.lookup "tag").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.topic := by native_decide
+    (Datasets.WALS.F117A.lookup "tag").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.topic := by native_decide
 theorem thai_f117a :
-    (Core.WALS.F117A.lookup "tha").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.topic := by native_decide
+    (Datasets.WALS.F117A.lookup "tha").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.topic := by native_decide
 theorem yoruba_f117a :
-    (Core.WALS.F117A.lookup "yor").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.have := by native_decide
+    (Datasets.WALS.F117A.lookup "yor").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.have := by native_decide
 theorem arabic_f117a :
-    (Core.WALS.F117A.lookup "aeg").map (·.value) =
-    some Core.WALS.F117A.PredicativePossession.locational := by native_decide
+    (Datasets.WALS.F117A.lookup "aeg").map (·.value) =
+    some Datasets.WALS.F117A.PredicativePossession.locational := by native_decide
 
 end Phenomena.Copulas.Typology

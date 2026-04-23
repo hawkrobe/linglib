@@ -1,19 +1,19 @@
-import Linglib.Core.WALS.Features.F129A
-import Linglib.Core.WALS.Features.F130A
-import Linglib.Core.WALS.Features.F130B
-import Linglib.Core.WALS.Features.F132A
-import Linglib.Core.WALS.Features.F133A
-import Linglib.Core.WALS.Features.F134A
-import Linglib.Core.WALS.Features.F135A
-import Linglib.Core.WALS.Features.F136A
-import Linglib.Core.WALS.Features.F136B
-import Linglib.Core.WALS.Features.F137A
-import Linglib.Core.WALS.Features.F137B
-import Linglib.Core.WALS.Features.F138A
-import Linglib.Core.WALS.Features.F139A
-import Linglib.Core.WALS.Features.F140A
-import Linglib.Core.WALS.Features.F141A
-import Linglib.Core.WALS.Features.F142A
+import Linglib.Datasets.WALS.Features.F129A
+import Linglib.Datasets.WALS.Features.F130A
+import Linglib.Datasets.WALS.Features.F130B
+import Linglib.Datasets.WALS.Features.F132A
+import Linglib.Datasets.WALS.Features.F133A
+import Linglib.Datasets.WALS.Features.F134A
+import Linglib.Datasets.WALS.Features.F135A
+import Linglib.Datasets.WALS.Features.F136A
+import Linglib.Datasets.WALS.Features.F136B
+import Linglib.Datasets.WALS.Features.F137A
+import Linglib.Datasets.WALS.Features.F137B
+import Linglib.Datasets.WALS.Features.F138A
+import Linglib.Datasets.WALS.Features.F139A
+import Linglib.Datasets.WALS.Features.F140A
+import Linglib.Datasets.WALS.Features.F141A
+import Linglib.Datasets.WALS.Features.F142A
 
 /-!
 # Lexical Typology (WALS Chapters 129--142)
@@ -281,15 +281,15 @@ inductive ClickUsage where
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS129A : Core.WALS.F129A.HandAndArm → HandArmRelation
+private def fromWALS129A : Datasets.WALS.F129A.HandAndArm → HandArmRelation
   | .identical => .identical
   | .different => .different
 
-private def fromWALS130A : Core.WALS.F130A.FingerAndHand → FingerHandRelation
+private def fromWALS130A : Datasets.WALS.F130A.FingerAndHand → FingerHandRelation
   | .identical => .identical
   | .different => .different
 
-private def fromWALS132A : Core.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColourCount
+private def fromWALS132A : Datasets.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColourCount
   | .v3  => .three
   | .v35 => .threeHalf
   | .v4  => .four
@@ -298,7 +298,7 @@ private def fromWALS132A : Core.WALS.F132A.NumberOfNonDerivedBasicColourCategori
   | .v55 => .fiveHalf
   | .v6  => .six
 
-private def fromWALS133A : Core.WALS.F133A.NumberOfBasicColourCategories → BasicColourCount
+private def fromWALS133A : Datasets.WALS.F133A.NumberOfBasicColourCategories → BasicColourCount
   | .v34   => .v3to4
   | .v4555 => .v4to5
   | .v665  => .v6to6h
@@ -307,7 +307,7 @@ private def fromWALS133A : Core.WALS.F133A.NumberOfBasicColourCategories → Bas
   | .v910  => .v9to10
   | .v11   => .v11
 
-private def fromWALS134A : Core.WALS.F134A.GreenAndBlue → GreenBlueRelation
+private def fromWALS134A : Datasets.WALS.F134A.GreenAndBlue → GreenBlueRelation
   | .greenVsBlue       => .distinct
   | .greenBlue         => .merged
   | .blackGreenBlue    => .blackGreenBlue
@@ -316,48 +316,48 @@ private def fromWALS134A : Core.WALS.F134A.GreenAndBlue → GreenBlueRelation
   | .yellowGreenVsBlue => .yellowGreenVsBlue
   | .none              => .noTerm
 
-private def fromWALS135A : Core.WALS.F135A.RedAndYellow → RedYellowRelation
+private def fromWALS135A : Datasets.WALS.F135A.RedAndYellow → RedYellowRelation
   | .redVsYellow          => .distinct
   | .redYellow            => .merged
   | .yellowGreenBlueVsRed => .yellowGreenBlueVsRed
   | .yellowGreenVsRed     => .yellowGreenVsRed
   | .none                 => .noTerm
 
-private def fromWALS136A : Core.WALS.F136A.MTPronouns → MTPronounPattern
+private def fromWALS136A : Datasets.WALS.F136A.MTPronouns → MTPronounPattern
   | .noMTPronouns              => .absent
   | .mTPronounsParadigmatic    => .paradigmatic
   | .mTPronounsNonParadigmatic => .nonParadigmatic
 
-private def fromWALS136B : Core.WALS.F136B.MInFirstPersonSingular → MIn1SG
+private def fromWALS136B : Datasets.WALS.F136B.MInFirstPersonSingular → MIn1SG
   | .noMInFirstPersonSingular => .absent
   | .mInFirstPersonSingular   => .present
 
-private def fromWALS137A : Core.WALS.F137A.NMPronouns → NMPronounPattern
+private def fromWALS137A : Datasets.WALS.F137A.NMPronouns → NMPronounPattern
   | .noNMPronouns              => .absent
   | .nMPronounsParadigmatic    => .paradigmatic
   | .nMPronounsNonParadigmatic => .nonParadigmatic
 
-private def fromWALS137B : Core.WALS.F137B.MInSecondPersonSingular → MIn2SG
+private def fromWALS137B : Datasets.WALS.F137B.MInSecondPersonSingular → MIn2SG
   | .noMInSecondPersonSingular => .absent
   | .mInSecondPersonSingular   => .present
 
-private def fromWALS138A : Core.WALS.F138A.Tea → TeaWordOrigin
+private def fromWALS138A : Datasets.WALS.F138A.Tea → TeaWordOrigin
   | .wordsDerivedFromSiniticCha       => .cha
   | .wordsDerivedFromMinNanChineseTe  => .te
   | .others                           => .other
 
-private def fromWALS139A : Core.WALS.F139A.IrregularNegativesInSignLanguages → IrregularNegativeCount
+private def fromWALS139A : Datasets.WALS.F139A.IrregularNegativesInSignLanguages → IrregularNegativeCount
   | .none => .none
   | .one  => .one
   | .some => .some
   | .many => .many
 
-private def fromWALS140A : Core.WALS.F140A.QuestionParticlesInSignLanguages → SignQuestionParticle
+private def fromWALS140A : Datasets.WALS.F140A.QuestionParticlesInSignLanguages → SignQuestionParticle
   | .none        => .none
   | .one         => .one
   | .moreThanOne => .moreThanOne
 
-private def fromWALS141A : Core.WALS.F141A.WritingSystems → WritingSystemType
+private def fromWALS141A : Datasets.WALS.F141A.WritingSystems → WritingSystemType
   | .alphabetic                => .alphabetic
   | .consonantal               => .consonantal
   | .alphasyllabic             => .alphasyllabic
@@ -365,7 +365,7 @@ private def fromWALS141A : Core.WALS.F141A.WritingSystems → WritingSystemType
   | .logographic               => .logographic
   | .mixedLogographicSyllabic  => .mixedLogographicSyllabic
 
-private def fromWALS142A : Core.WALS.F142A.ParaLinguisticUsagesOfClicks → ClickUsage
+private def fromWALS142A : Datasets.WALS.F142A.ParaLinguisticUsagesOfClicks → ClickUsage
   | .logicalMeanings   => .logical
   | .affectiveMeanings => .affective
   | .otherOrNone       => .otherOrNone
@@ -751,22 +751,22 @@ def allLanguages : List LexicalProfile :=
 -- WALS Generated Data Abbreviations
 -- ============================================================================
 
-private abbrev ch129 := Core.WALS.F129A.allData
-private abbrev ch130 := Core.WALS.F130A.allData
-private abbrev ch130b := Core.WALS.F130B.allData
-private abbrev ch132 := Core.WALS.F132A.allData
-private abbrev ch133 := Core.WALS.F133A.allData
-private abbrev ch134 := Core.WALS.F134A.allData
-private abbrev ch135 := Core.WALS.F135A.allData
-private abbrev ch136a := Core.WALS.F136A.allData
-private abbrev ch136b := Core.WALS.F136B.allData
-private abbrev ch137a := Core.WALS.F137A.allData
-private abbrev ch137b := Core.WALS.F137B.allData
-private abbrev ch138 := Core.WALS.F138A.allData
-private abbrev ch139 := Core.WALS.F139A.allData
-private abbrev ch140 := Core.WALS.F140A.allData
-private abbrev ch141 := Core.WALS.F141A.allData
-private abbrev ch142 := Core.WALS.F142A.allData
+private abbrev ch129 := Datasets.WALS.F129A.allData
+private abbrev ch130 := Datasets.WALS.F130A.allData
+private abbrev ch130b := Datasets.WALS.F130B.allData
+private abbrev ch132 := Datasets.WALS.F132A.allData
+private abbrev ch133 := Datasets.WALS.F133A.allData
+private abbrev ch134 := Datasets.WALS.F134A.allData
+private abbrev ch135 := Datasets.WALS.F135A.allData
+private abbrev ch136a := Datasets.WALS.F136A.allData
+private abbrev ch136b := Datasets.WALS.F136B.allData
+private abbrev ch137a := Datasets.WALS.F137A.allData
+private abbrev ch137b := Datasets.WALS.F137B.allData
+private abbrev ch138 := Datasets.WALS.F138A.allData
+private abbrev ch139 := Datasets.WALS.F139A.allData
+private abbrev ch140 := Datasets.WALS.F140A.allData
+private abbrev ch141 := Datasets.WALS.F141A.allData
+private abbrev ch142 := Datasets.WALS.F142A.allData
 
 -- ============================================================================
 -- Dataset Size Verification
@@ -858,43 +858,43 @@ theorem sample_size : allLanguages.length = 15 := by native_decide
 -- ============================================================================
 
 theorem english_f129a :
-    (Core.WALS.F129A.lookup "eng").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "eng").map (fromWALS129A ·.value) =
     english.handArm := by native_decide
 theorem french_f129a :
-    (Core.WALS.F129A.lookup "fre").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "fre").map (fromWALS129A ·.value) =
     french.handArm := by native_decide
 theorem german_f129a :
-    (Core.WALS.F129A.lookup "ger").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "ger").map (fromWALS129A ·.value) =
     german.handArm := by native_decide
 theorem spanish_f129a :
-    (Core.WALS.F129A.lookup "spa").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "spa").map (fromWALS129A ·.value) =
     spanish.handArm := by native_decide
 theorem russian_f129a :
-    (Core.WALS.F129A.lookup "rus").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "rus").map (fromWALS129A ·.value) =
     russian.handArm := by native_decide
 theorem japanese_f129a :
-    (Core.WALS.F129A.lookup "jpn").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "jpn").map (fromWALS129A ·.value) =
     japanese.handArm := by native_decide
 theorem mandarin_f129a :
-    (Core.WALS.F129A.lookup "mnd").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "mnd").map (fromWALS129A ·.value) =
     mandarin.handArm := by native_decide
 theorem korean_f129a :
-    (Core.WALS.F129A.lookup "kor").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "kor").map (fromWALS129A ·.value) =
     korean.handArm := by native_decide
 theorem turkish_f129a :
-    (Core.WALS.F129A.lookup "tur").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "tur").map (fromWALS129A ·.value) =
     turkish.handArm := by native_decide
 theorem finnish_f129a :
-    (Core.WALS.F129A.lookup "fin").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "fin").map (fromWALS129A ·.value) =
     finnish.handArm := by native_decide
 theorem hungarian_f129a :
-    (Core.WALS.F129A.lookup "hun").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "hun").map (fromWALS129A ·.value) =
     hungarian.handArm := by native_decide
 theorem swahili_f129a :
-    (Core.WALS.F129A.lookup "swa").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "swa").map (fromWALS129A ·.value) =
     swahili.handArm := by native_decide
 theorem tagalog_f129a :
-    (Core.WALS.F129A.lookup "tag").map (fromWALS129A ·.value) =
+    (Datasets.WALS.F129A.lookup "tag").map (fromWALS129A ·.value) =
     tagalog.handArm := by native_decide
 
 -- ============================================================================
@@ -902,43 +902,43 @@ theorem tagalog_f129a :
 -- ============================================================================
 
 theorem english_f130a :
-    (Core.WALS.F130A.lookup "eng").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "eng").map (fromWALS130A ·.value) =
     english.fingerHand := by native_decide
 theorem french_f130a :
-    (Core.WALS.F130A.lookup "fre").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "fre").map (fromWALS130A ·.value) =
     french.fingerHand := by native_decide
 theorem german_f130a :
-    (Core.WALS.F130A.lookup "ger").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "ger").map (fromWALS130A ·.value) =
     german.fingerHand := by native_decide
 theorem spanish_f130a :
-    (Core.WALS.F130A.lookup "spa").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "spa").map (fromWALS130A ·.value) =
     spanish.fingerHand := by native_decide
 theorem russian_f130a :
-    (Core.WALS.F130A.lookup "rus").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "rus").map (fromWALS130A ·.value) =
     russian.fingerHand := by native_decide
 theorem japanese_f130a :
-    (Core.WALS.F130A.lookup "jpn").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "jpn").map (fromWALS130A ·.value) =
     japanese.fingerHand := by native_decide
 theorem mandarin_f130a :
-    (Core.WALS.F130A.lookup "mnd").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "mnd").map (fromWALS130A ·.value) =
     mandarin.fingerHand := by native_decide
 theorem korean_f130a :
-    (Core.WALS.F130A.lookup "kor").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "kor").map (fromWALS130A ·.value) =
     korean.fingerHand := by native_decide
 theorem turkish_f130a :
-    (Core.WALS.F130A.lookup "tur").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "tur").map (fromWALS130A ·.value) =
     turkish.fingerHand := by native_decide
 theorem finnish_f130a :
-    (Core.WALS.F130A.lookup "fin").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "fin").map (fromWALS130A ·.value) =
     finnish.fingerHand := by native_decide
 theorem hungarian_f130a :
-    (Core.WALS.F130A.lookup "hun").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "hun").map (fromWALS130A ·.value) =
     hungarian.fingerHand := by native_decide
 theorem swahili_f130a :
-    (Core.WALS.F130A.lookup "swa").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "swa").map (fromWALS130A ·.value) =
     swahili.fingerHand := by native_decide
 theorem tagalog_f130a :
-    (Core.WALS.F130A.lookup "tag").map (fromWALS130A ·.value) =
+    (Datasets.WALS.F130A.lookup "tag").map (fromWALS130A ·.value) =
     tagalog.fingerHand := by native_decide
 
 -- ============================================================================
@@ -947,28 +947,28 @@ theorem tagalog_f130a :
 -- ============================================================================
 
 theorem english_f132a :
-    (Core.WALS.F132A.lookup "eng").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "eng").map (fromWALS132A ·.value) =
     english.nonDerivedColours := by native_decide
 theorem french_f132a :
-    (Core.WALS.F132A.lookup "fre").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "fre").map (fromWALS132A ·.value) =
     french.nonDerivedColours := by native_decide
 theorem german_f132a :
-    (Core.WALS.F132A.lookup "ger").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "ger").map (fromWALS132A ·.value) =
     german.nonDerivedColours := by native_decide
 theorem spanish_f132a :
-    (Core.WALS.F132A.lookup "spa").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "spa").map (fromWALS132A ·.value) =
     spanish.nonDerivedColours := by native_decide
 theorem russian_f132a :
-    (Core.WALS.F132A.lookup "rus").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "rus").map (fromWALS132A ·.value) =
     russian.nonDerivedColours := by native_decide
 theorem japanese_f132a :
-    (Core.WALS.F132A.lookup "jpn").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "jpn").map (fromWALS132A ·.value) =
     japanese.nonDerivedColours := by native_decide
 theorem mandarin_f132a :
-    (Core.WALS.F132A.lookup "mnd").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "mnd").map (fromWALS132A ·.value) =
     mandarin.nonDerivedColours := by native_decide
 theorem korean_f132a :
-    (Core.WALS.F132A.lookup "kor").map (fromWALS132A ·.value) =
+    (Datasets.WALS.F132A.lookup "kor").map (fromWALS132A ·.value) =
     korean.nonDerivedColours := by native_decide
 
 -- ============================================================================
@@ -976,28 +976,28 @@ theorem korean_f132a :
 -- ============================================================================
 
 theorem english_f133a :
-    (Core.WALS.F133A.lookup "eng").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "eng").map (fromWALS133A ·.value) =
     english.basicColours := by native_decide
 theorem french_f133a :
-    (Core.WALS.F133A.lookup "fre").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "fre").map (fromWALS133A ·.value) =
     french.basicColours := by native_decide
 theorem german_f133a :
-    (Core.WALS.F133A.lookup "ger").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "ger").map (fromWALS133A ·.value) =
     german.basicColours := by native_decide
 theorem spanish_f133a :
-    (Core.WALS.F133A.lookup "spa").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "spa").map (fromWALS133A ·.value) =
     spanish.basicColours := by native_decide
 theorem russian_f133a :
-    (Core.WALS.F133A.lookup "rus").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "rus").map (fromWALS133A ·.value) =
     russian.basicColours := by native_decide
 theorem japanese_f133a :
-    (Core.WALS.F133A.lookup "jpn").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "jpn").map (fromWALS133A ·.value) =
     japanese.basicColours := by native_decide
 theorem mandarin_f133a :
-    (Core.WALS.F133A.lookup "mnd").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "mnd").map (fromWALS133A ·.value) =
     mandarin.basicColours := by native_decide
 theorem korean_f133a :
-    (Core.WALS.F133A.lookup "kor").map (fromWALS133A ·.value) =
+    (Datasets.WALS.F133A.lookup "kor").map (fromWALS133A ·.value) =
     korean.basicColours := by native_decide
 
 -- ============================================================================
@@ -1005,28 +1005,28 @@ theorem korean_f133a :
 -- ============================================================================
 
 theorem english_f134a :
-    (Core.WALS.F134A.lookup "eng").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "eng").map (fromWALS134A ·.value) =
     english.greenBlue := by native_decide
 theorem french_f134a :
-    (Core.WALS.F134A.lookup "fre").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "fre").map (fromWALS134A ·.value) =
     french.greenBlue := by native_decide
 theorem german_f134a :
-    (Core.WALS.F134A.lookup "ger").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "ger").map (fromWALS134A ·.value) =
     german.greenBlue := by native_decide
 theorem spanish_f134a :
-    (Core.WALS.F134A.lookup "spa").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "spa").map (fromWALS134A ·.value) =
     spanish.greenBlue := by native_decide
 theorem russian_f134a :
-    (Core.WALS.F134A.lookup "rus").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "rus").map (fromWALS134A ·.value) =
     russian.greenBlue := by native_decide
 theorem japanese_f134a :
-    (Core.WALS.F134A.lookup "jpn").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "jpn").map (fromWALS134A ·.value) =
     japanese.greenBlue := by native_decide
 theorem mandarin_f134a :
-    (Core.WALS.F134A.lookup "mnd").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "mnd").map (fromWALS134A ·.value) =
     mandarin.greenBlue := by native_decide
 theorem korean_f134a :
-    (Core.WALS.F134A.lookup "kor").map (fromWALS134A ·.value) =
+    (Datasets.WALS.F134A.lookup "kor").map (fromWALS134A ·.value) =
     korean.greenBlue := by native_decide
 
 -- ============================================================================
@@ -1034,28 +1034,28 @@ theorem korean_f134a :
 -- ============================================================================
 
 theorem english_f135a :
-    (Core.WALS.F135A.lookup "eng").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "eng").map (fromWALS135A ·.value) =
     english.redYellow := by native_decide
 theorem french_f135a :
-    (Core.WALS.F135A.lookup "fre").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "fre").map (fromWALS135A ·.value) =
     french.redYellow := by native_decide
 theorem german_f135a :
-    (Core.WALS.F135A.lookup "ger").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "ger").map (fromWALS135A ·.value) =
     german.redYellow := by native_decide
 theorem spanish_f135a :
-    (Core.WALS.F135A.lookup "spa").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "spa").map (fromWALS135A ·.value) =
     spanish.redYellow := by native_decide
 theorem russian_f135a :
-    (Core.WALS.F135A.lookup "rus").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "rus").map (fromWALS135A ·.value) =
     russian.redYellow := by native_decide
 theorem japanese_f135a :
-    (Core.WALS.F135A.lookup "jpn").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "jpn").map (fromWALS135A ·.value) =
     japanese.redYellow := by native_decide
 theorem mandarin_f135a :
-    (Core.WALS.F135A.lookup "mnd").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "mnd").map (fromWALS135A ·.value) =
     mandarin.redYellow := by native_decide
 theorem korean_f135a :
-    (Core.WALS.F135A.lookup "kor").map (fromWALS135A ·.value) =
+    (Datasets.WALS.F135A.lookup "kor").map (fromWALS135A ·.value) =
     korean.redYellow := by native_decide
 
 -- ============================================================================
@@ -1063,49 +1063,49 @@ theorem korean_f135a :
 -- ============================================================================
 
 theorem english_f136a :
-    (Core.WALS.F136A.lookup "eng").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "eng").map (fromWALS136A ·.value) =
     english.mtPronouns := by native_decide
 theorem french_f136a :
-    (Core.WALS.F136A.lookup "fre").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "fre").map (fromWALS136A ·.value) =
     french.mtPronouns := by native_decide
 theorem german_f136a :
-    (Core.WALS.F136A.lookup "ger").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "ger").map (fromWALS136A ·.value) =
     german.mtPronouns := by native_decide
 theorem spanish_f136a :
-    (Core.WALS.F136A.lookup "spa").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "spa").map (fromWALS136A ·.value) =
     spanish.mtPronouns := by native_decide
 theorem russian_f136a :
-    (Core.WALS.F136A.lookup "rus").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "rus").map (fromWALS136A ·.value) =
     russian.mtPronouns := by native_decide
 theorem japanese_f136a :
-    (Core.WALS.F136A.lookup "jpn").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "jpn").map (fromWALS136A ·.value) =
     japanese.mtPronouns := by native_decide
 theorem mandarin_f136a :
-    (Core.WALS.F136A.lookup "mnd").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "mnd").map (fromWALS136A ·.value) =
     mandarin.mtPronouns := by native_decide
 theorem korean_f136a :
-    (Core.WALS.F136A.lookup "kor").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "kor").map (fromWALS136A ·.value) =
     korean.mtPronouns := by native_decide
 theorem turkish_f136a :
-    (Core.WALS.F136A.lookup "tur").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "tur").map (fromWALS136A ·.value) =
     turkish.mtPronouns := by native_decide
 theorem finnish_f136a :
-    (Core.WALS.F136A.lookup "fin").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "fin").map (fromWALS136A ·.value) =
     finnish.mtPronouns := by native_decide
 theorem hungarian_f136a :
-    (Core.WALS.F136A.lookup "hun").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "hun").map (fromWALS136A ·.value) =
     hungarian.mtPronouns := by native_decide
 theorem hindi_f136a :
-    (Core.WALS.F136A.lookup "hin").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "hin").map (fromWALS136A ·.value) =
     hindi.mtPronouns := by native_decide
 theorem arabic_f136a :
-    (Core.WALS.F136A.lookup "aeg").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "aeg").map (fromWALS136A ·.value) =
     arabic.mtPronouns := by native_decide
 theorem swahili_f136a :
-    (Core.WALS.F136A.lookup "swa").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "swa").map (fromWALS136A ·.value) =
     swahili.mtPronouns := by native_decide
 theorem tagalog_f136a :
-    (Core.WALS.F136A.lookup "tag").map (fromWALS136A ·.value) =
+    (Datasets.WALS.F136A.lookup "tag").map (fromWALS136A ·.value) =
     tagalog.mtPronouns := by native_decide
 
 -- ============================================================================
@@ -1113,49 +1113,49 @@ theorem tagalog_f136a :
 -- ============================================================================
 
 theorem english_f136b :
-    (Core.WALS.F136B.lookup "eng").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "eng").map (fromWALS136B ·.value) =
     english.mIn1sg := by native_decide
 theorem french_f136b :
-    (Core.WALS.F136B.lookup "fre").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "fre").map (fromWALS136B ·.value) =
     french.mIn1sg := by native_decide
 theorem german_f136b :
-    (Core.WALS.F136B.lookup "ger").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "ger").map (fromWALS136B ·.value) =
     german.mIn1sg := by native_decide
 theorem spanish_f136b :
-    (Core.WALS.F136B.lookup "spa").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "spa").map (fromWALS136B ·.value) =
     spanish.mIn1sg := by native_decide
 theorem russian_f136b :
-    (Core.WALS.F136B.lookup "rus").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "rus").map (fromWALS136B ·.value) =
     russian.mIn1sg := by native_decide
 theorem japanese_f136b :
-    (Core.WALS.F136B.lookup "jpn").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "jpn").map (fromWALS136B ·.value) =
     japanese.mIn1sg := by native_decide
 theorem mandarin_f136b :
-    (Core.WALS.F136B.lookup "mnd").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "mnd").map (fromWALS136B ·.value) =
     mandarin.mIn1sg := by native_decide
 theorem korean_f136b :
-    (Core.WALS.F136B.lookup "kor").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "kor").map (fromWALS136B ·.value) =
     korean.mIn1sg := by native_decide
 theorem turkish_f136b :
-    (Core.WALS.F136B.lookup "tur").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "tur").map (fromWALS136B ·.value) =
     turkish.mIn1sg := by native_decide
 theorem finnish_f136b :
-    (Core.WALS.F136B.lookup "fin").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "fin").map (fromWALS136B ·.value) =
     finnish.mIn1sg := by native_decide
 theorem hungarian_f136b :
-    (Core.WALS.F136B.lookup "hun").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "hun").map (fromWALS136B ·.value) =
     hungarian.mIn1sg := by native_decide
 theorem hindi_f136b :
-    (Core.WALS.F136B.lookup "hin").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "hin").map (fromWALS136B ·.value) =
     hindi.mIn1sg := by native_decide
 theorem arabic_f136b :
-    (Core.WALS.F136B.lookup "aeg").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "aeg").map (fromWALS136B ·.value) =
     arabic.mIn1sg := by native_decide
 theorem swahili_f136b :
-    (Core.WALS.F136B.lookup "swa").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "swa").map (fromWALS136B ·.value) =
     swahili.mIn1sg := by native_decide
 theorem tagalog_f136b :
-    (Core.WALS.F136B.lookup "tag").map (fromWALS136B ·.value) =
+    (Datasets.WALS.F136B.lookup "tag").map (fromWALS136B ·.value) =
     tagalog.mIn1sg := by native_decide
 
 -- ============================================================================
@@ -1163,49 +1163,49 @@ theorem tagalog_f136b :
 -- ============================================================================
 
 theorem english_f137a :
-    (Core.WALS.F137A.lookup "eng").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "eng").map (fromWALS137A ·.value) =
     english.nmPronouns := by native_decide
 theorem french_f137a :
-    (Core.WALS.F137A.lookup "fre").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "fre").map (fromWALS137A ·.value) =
     french.nmPronouns := by native_decide
 theorem german_f137a :
-    (Core.WALS.F137A.lookup "ger").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "ger").map (fromWALS137A ·.value) =
     german.nmPronouns := by native_decide
 theorem spanish_f137a :
-    (Core.WALS.F137A.lookup "spa").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "spa").map (fromWALS137A ·.value) =
     spanish.nmPronouns := by native_decide
 theorem russian_f137a :
-    (Core.WALS.F137A.lookup "rus").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "rus").map (fromWALS137A ·.value) =
     russian.nmPronouns := by native_decide
 theorem japanese_f137a :
-    (Core.WALS.F137A.lookup "jpn").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "jpn").map (fromWALS137A ·.value) =
     japanese.nmPronouns := by native_decide
 theorem mandarin_f137a :
-    (Core.WALS.F137A.lookup "mnd").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "mnd").map (fromWALS137A ·.value) =
     mandarin.nmPronouns := by native_decide
 theorem korean_f137a :
-    (Core.WALS.F137A.lookup "kor").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "kor").map (fromWALS137A ·.value) =
     korean.nmPronouns := by native_decide
 theorem turkish_f137a :
-    (Core.WALS.F137A.lookup "tur").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "tur").map (fromWALS137A ·.value) =
     turkish.nmPronouns := by native_decide
 theorem finnish_f137a :
-    (Core.WALS.F137A.lookup "fin").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "fin").map (fromWALS137A ·.value) =
     finnish.nmPronouns := by native_decide
 theorem hungarian_f137a :
-    (Core.WALS.F137A.lookup "hun").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "hun").map (fromWALS137A ·.value) =
     hungarian.nmPronouns := by native_decide
 theorem hindi_f137a :
-    (Core.WALS.F137A.lookup "hin").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "hin").map (fromWALS137A ·.value) =
     hindi.nmPronouns := by native_decide
 theorem arabic_f137a :
-    (Core.WALS.F137A.lookup "aeg").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "aeg").map (fromWALS137A ·.value) =
     arabic.nmPronouns := by native_decide
 theorem swahili_f137a :
-    (Core.WALS.F137A.lookup "swa").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "swa").map (fromWALS137A ·.value) =
     swahili.nmPronouns := by native_decide
 theorem tagalog_f137a :
-    (Core.WALS.F137A.lookup "tag").map (fromWALS137A ·.value) =
+    (Datasets.WALS.F137A.lookup "tag").map (fromWALS137A ·.value) =
     tagalog.nmPronouns := by native_decide
 
 -- ============================================================================
@@ -1213,49 +1213,49 @@ theorem tagalog_f137a :
 -- ============================================================================
 
 theorem english_f137b :
-    (Core.WALS.F137B.lookup "eng").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "eng").map (fromWALS137B ·.value) =
     english.mIn2sg := by native_decide
 theorem french_f137b :
-    (Core.WALS.F137B.lookup "fre").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "fre").map (fromWALS137B ·.value) =
     french.mIn2sg := by native_decide
 theorem german_f137b :
-    (Core.WALS.F137B.lookup "ger").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "ger").map (fromWALS137B ·.value) =
     german.mIn2sg := by native_decide
 theorem spanish_f137b :
-    (Core.WALS.F137B.lookup "spa").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "spa").map (fromWALS137B ·.value) =
     spanish.mIn2sg := by native_decide
 theorem russian_f137b :
-    (Core.WALS.F137B.lookup "rus").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "rus").map (fromWALS137B ·.value) =
     russian.mIn2sg := by native_decide
 theorem japanese_f137b :
-    (Core.WALS.F137B.lookup "jpn").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "jpn").map (fromWALS137B ·.value) =
     japanese.mIn2sg := by native_decide
 theorem mandarin_f137b :
-    (Core.WALS.F137B.lookup "mnd").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "mnd").map (fromWALS137B ·.value) =
     mandarin.mIn2sg := by native_decide
 theorem korean_f137b :
-    (Core.WALS.F137B.lookup "kor").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "kor").map (fromWALS137B ·.value) =
     korean.mIn2sg := by native_decide
 theorem turkish_f137b :
-    (Core.WALS.F137B.lookup "tur").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "tur").map (fromWALS137B ·.value) =
     turkish.mIn2sg := by native_decide
 theorem finnish_f137b :
-    (Core.WALS.F137B.lookup "fin").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "fin").map (fromWALS137B ·.value) =
     finnish.mIn2sg := by native_decide
 theorem hungarian_f137b :
-    (Core.WALS.F137B.lookup "hun").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "hun").map (fromWALS137B ·.value) =
     hungarian.mIn2sg := by native_decide
 theorem hindi_f137b :
-    (Core.WALS.F137B.lookup "hin").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "hin").map (fromWALS137B ·.value) =
     hindi.mIn2sg := by native_decide
 theorem arabic_f137b :
-    (Core.WALS.F137B.lookup "aeg").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "aeg").map (fromWALS137B ·.value) =
     arabic.mIn2sg := by native_decide
 theorem swahili_f137b :
-    (Core.WALS.F137B.lookup "swa").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "swa").map (fromWALS137B ·.value) =
     swahili.mIn2sg := by native_decide
 theorem tagalog_f137b :
-    (Core.WALS.F137B.lookup "tag").map (fromWALS137B ·.value) =
+    (Datasets.WALS.F137B.lookup "tag").map (fromWALS137B ·.value) =
     tagalog.mIn2sg := by native_decide
 
 -- ============================================================================
@@ -1263,49 +1263,49 @@ theorem tagalog_f137b :
 -- ============================================================================
 
 theorem english_f138a :
-    (Core.WALS.F138A.lookup "eng").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "eng").map (fromWALS138A ·.value) =
     english.tea := by native_decide
 theorem french_f138a :
-    (Core.WALS.F138A.lookup "fre").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "fre").map (fromWALS138A ·.value) =
     french.tea := by native_decide
 theorem german_f138a :
-    (Core.WALS.F138A.lookup "ger").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "ger").map (fromWALS138A ·.value) =
     german.tea := by native_decide
 theorem spanish_f138a :
-    (Core.WALS.F138A.lookup "spa").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "spa").map (fromWALS138A ·.value) =
     spanish.tea := by native_decide
 theorem russian_f138a :
-    (Core.WALS.F138A.lookup "rus").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "rus").map (fromWALS138A ·.value) =
     russian.tea := by native_decide
 theorem japanese_f138a :
-    (Core.WALS.F138A.lookup "jpn").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "jpn").map (fromWALS138A ·.value) =
     japanese.tea := by native_decide
 theorem mandarin_f138a :
-    (Core.WALS.F138A.lookup "mnd").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "mnd").map (fromWALS138A ·.value) =
     mandarin.tea := by native_decide
 theorem korean_f138a :
-    (Core.WALS.F138A.lookup "kor").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "kor").map (fromWALS138A ·.value) =
     korean.tea := by native_decide
 theorem turkish_f138a :
-    (Core.WALS.F138A.lookup "tur").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "tur").map (fromWALS138A ·.value) =
     turkish.tea := by native_decide
 theorem finnish_f138a :
-    (Core.WALS.F138A.lookup "fin").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "fin").map (fromWALS138A ·.value) =
     finnish.tea := by native_decide
 theorem hungarian_f138a :
-    (Core.WALS.F138A.lookup "hun").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "hun").map (fromWALS138A ·.value) =
     hungarian.tea := by native_decide
 theorem hindi_f138a :
-    (Core.WALS.F138A.lookup "hin").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "hin").map (fromWALS138A ·.value) =
     hindi.tea := by native_decide
 theorem arabic_f138a :
-    (Core.WALS.F138A.lookup "aeg").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "aeg").map (fromWALS138A ·.value) =
     arabic.tea := by native_decide
 theorem swahili_f138a :
-    (Core.WALS.F138A.lookup "swa").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "swa").map (fromWALS138A ·.value) =
     swahili.tea := by native_decide
 theorem tagalog_f138a :
-    (Core.WALS.F138A.lookup "tag").map (fromWALS138A ·.value) =
+    (Datasets.WALS.F138A.lookup "tag").map (fromWALS138A ·.value) =
     tagalog.tea := by native_decide
 
 -- ============================================================================
@@ -1314,40 +1314,40 @@ theorem tagalog_f138a :
 -- ============================================================================
 
 theorem english_f142a :
-    (Core.WALS.F142A.lookup "eng").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "eng").map (fromWALS142A ·.value) =
     english.clicks := by native_decide
 theorem german_f142a :
-    (Core.WALS.F142A.lookup "ger").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "ger").map (fromWALS142A ·.value) =
     german.clicks := by native_decide
 theorem spanish_f142a :
-    (Core.WALS.F142A.lookup "spa").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "spa").map (fromWALS142A ·.value) =
     spanish.clicks := by native_decide
 theorem russian_f142a :
-    (Core.WALS.F142A.lookup "rus").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "rus").map (fromWALS142A ·.value) =
     russian.clicks := by native_decide
 theorem japanese_f142a :
-    (Core.WALS.F142A.lookup "jpn").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "jpn").map (fromWALS142A ·.value) =
     japanese.clicks := by native_decide
 theorem korean_f142a :
-    (Core.WALS.F142A.lookup "kor").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "kor").map (fromWALS142A ·.value) =
     korean.clicks := by native_decide
 theorem turkish_f142a :
-    (Core.WALS.F142A.lookup "tur").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "tur").map (fromWALS142A ·.value) =
     turkish.clicks := by native_decide
 theorem finnish_f142a :
-    (Core.WALS.F142A.lookup "fin").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "fin").map (fromWALS142A ·.value) =
     finnish.clicks := by native_decide
 theorem hungarian_f142a :
-    (Core.WALS.F142A.lookup "hun").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "hun").map (fromWALS142A ·.value) =
     hungarian.clicks := by native_decide
 theorem hindi_f142a :
-    (Core.WALS.F142A.lookup "hin").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "hin").map (fromWALS142A ·.value) =
     hindi.clicks := by native_decide
 theorem swahili_f142a :
-    (Core.WALS.F142A.lookup "swa").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "swa").map (fromWALS142A ·.value) =
     swahili.clicks := by native_decide
 theorem tagalog_f142a :
-    (Core.WALS.F142A.lookup "tag").map (fromWALS142A ·.value) =
+    (Datasets.WALS.F142A.lookup "tag").map (fromWALS142A ·.value) =
     tagalog.clicks := by native_decide
 
 -- ============================================================================

@@ -1,10 +1,10 @@
-import Linglib.Core.WALS.Features.F94A
-import Linglib.Core.WALS.Features.F95A
-import Linglib.Core.WALS.Features.F124A
-import Linglib.Core.WALS.Features.F125A
-import Linglib.Core.WALS.Features.F126A
-import Linglib.Core.WALS.Features.F127A
-import Linglib.Core.WALS.Features.F128A
+import Linglib.Datasets.WALS.Features.F94A
+import Linglib.Datasets.WALS.Features.F95A
+import Linglib.Datasets.WALS.Features.F124A
+import Linglib.Datasets.WALS.Features.F125A
+import Linglib.Datasets.WALS.Features.F126A
+import Linglib.Datasets.WALS.Features.F127A
+import Linglib.Datasets.WALS.Features.F128A
 
 /-! # Complementation Typology
 
@@ -766,10 +766,10 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-private abbrev ch94 := Core.WALS.F94A.allData
-private abbrev ch95 := Core.WALS.F95A.allData
+private abbrev ch94 := Datasets.WALS.F94A.allData
+private abbrev ch95 := Datasets.WALS.F95A.allData
 
-open Core.WALS.F94A (OrderOfAdverbialSubordinatorAndClause) in
+open Datasets.WALS.F94A (OrderOfAdverbialSubordinatorAndClause) in
 /-- Chapter 94 distribution: subordinator order (N = 659).
     Counts computed from @cite{dryer-2013-wals}, WALS Online, Ch 94. -/
 def ch94Counts : List WALSCount :=
@@ -816,7 +816,7 @@ inductive OVAdpositionType where
   | ovPrep
   deriving DecidableEq, Repr
 
-open Core.WALS.F95A (RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) in
+open Datasets.WALS.F95A (RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) in
 /-- Chapter 95 distribution: OV order × adposition type (N = 1142).
     Counts computed from @cite{dryer-2013-wals}, WALS Online, Ch 95. -/
 def ch95Counts : List WALSCount :=
@@ -1675,29 +1675,29 @@ inductive WantCompStrategy where
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS124A : Core.WALS.F124A.WantComplementSubject → WantCompStrategy
+private def fromWALS124A : Datasets.WALS.F124A.WantComplementSubject → WantCompStrategy
   | .subjectIsLeftImplicit => .subjectImplicit
   | .subjectIsExpressedOvertly => .subjectOvert
   | .bothConstructionTypesExist => .both
   | .desiderativeVerbalAffix => .desidAffix
   | .desiderativeParticle => .desidParticle
 
-private def fromWALS125A : Core.WALS.F125A.PurposeClauseType → BalancedDeranked
+private def fromWALS125A : Datasets.WALS.F125A.PurposeClauseType → BalancedDeranked
   | .balanced => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked => .deranked
 
-private def fromWALS126A : Core.WALS.F126A.WhenClauseType → BalancedDeranked
+private def fromWALS126A : Datasets.WALS.F126A.WhenClauseType → BalancedDeranked
   | .balanced => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked => .deranked
 
-private def fromWALS127A : Core.WALS.F127A.ReasonClauseType → BalancedDeranked
+private def fromWALS127A : Datasets.WALS.F127A.ReasonClauseType → BalancedDeranked
   | .balanced => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked => .deranked
 
-private def fromWALS128A : Core.WALS.F128A.UtteranceComplementType → BalancedDeranked
+private def fromWALS128A : Datasets.WALS.F128A.UtteranceComplementType → BalancedDeranked
   | .balanced => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked => .deranked
@@ -1706,11 +1706,11 @@ private def fromWALS128A : Core.WALS.F128A.UtteranceComplementType → BalancedD
 -- WALS Distribution Data (from generated modules)
 -- ============================================================================
 
-private abbrev ch124 := Core.WALS.F124A.allData
-private abbrev ch125 := Core.WALS.F125A.allData
-private abbrev ch126 := Core.WALS.F126A.allData
-private abbrev ch127 := Core.WALS.F127A.allData
-private abbrev ch128 := Core.WALS.F128A.allData
+private abbrev ch124 := Datasets.WALS.F124A.allData
+private abbrev ch125 := Datasets.WALS.F125A.allData
+private abbrev ch126 := Datasets.WALS.F126A.allData
+private abbrev ch127 := Datasets.WALS.F127A.allData
+private abbrev ch128 := Datasets.WALS.F128A.allData
 
 theorem ch124_total : ch124.length = 283 := by native_decide
 theorem ch125_total : ch125.length = 170 := by native_decide
@@ -2021,49 +2021,49 @@ matches the corresponding WALS chapter's data via the converter function.
 -/
 
 theorem english_ch124 :
-    (Core.WALS.F124A.lookup "eng").map (fromWALS124A ·.value) = compEnglish.wantComp := by
+    (Datasets.WALS.F124A.lookup "eng").map (fromWALS124A ·.value) = compEnglish.wantComp := by
   native_decide
 theorem japanese_ch124 :
-    (Core.WALS.F124A.lookup "jpn").map (fromWALS124A ·.value) = compJapanese.wantComp := by
+    (Datasets.WALS.F124A.lookup "jpn").map (fromWALS124A ·.value) = compJapanese.wantComp := by
   native_decide
 theorem turkish_ch124 :
-    (Core.WALS.F124A.lookup "tur").map (fromWALS124A ·.value) = compTurkish.wantComp := by
+    (Datasets.WALS.F124A.lookup "tur").map (fromWALS124A ·.value) = compTurkish.wantComp := by
   native_decide
 theorem hindi_ch124 :
-    (Core.WALS.F124A.lookup "hin").map (fromWALS124A ·.value) = compHindi.wantComp := by
+    (Datasets.WALS.F124A.lookup "hin").map (fromWALS124A ·.value) = compHindi.wantComp := by
   native_decide
 theorem mandarin_ch124 :
-    (Core.WALS.F124A.lookup "mnd").map (fromWALS124A ·.value) = compMandarin.wantComp := by
+    (Datasets.WALS.F124A.lookup "mnd").map (fromWALS124A ·.value) = compMandarin.wantComp := by
   native_decide
 theorem korean_ch124 :
-    (Core.WALS.F124A.lookup "kor").map (fromWALS124A ·.value) = compKorean.wantComp := by
+    (Datasets.WALS.F124A.lookup "kor").map (fromWALS124A ·.value) = compKorean.wantComp := by
   native_decide
 theorem german_ch124 :
-    (Core.WALS.F124A.lookup "ger").map (fromWALS124A ·.value) = compGerman.wantComp := by
+    (Datasets.WALS.F124A.lookup "ger").map (fromWALS124A ·.value) = compGerman.wantComp := by
   native_decide
 theorem russian_ch124 :
-    (Core.WALS.F124A.lookup "rus").map (fromWALS124A ·.value) = compRussian.wantComp := by
+    (Datasets.WALS.F124A.lookup "rus").map (fromWALS124A ·.value) = compRussian.wantComp := by
   native_decide
 theorem persian_ch124 :
-    (Core.WALS.F124A.lookup "prs").map (fromWALS124A ·.value) = compPersian.wantComp := by
+    (Datasets.WALS.F124A.lookup "prs").map (fromWALS124A ·.value) = compPersian.wantComp := by
   native_decide
 theorem yoruba_ch124 :
-    (Core.WALS.F124A.lookup "yor").map (fromWALS124A ·.value) = compYoruba.wantComp := by
+    (Datasets.WALS.F124A.lookup "yor").map (fromWALS124A ·.value) = compYoruba.wantComp := by
   native_decide
 theorem tagalog_ch124 :
-    (Core.WALS.F124A.lookup "tag").map (fromWALS124A ·.value) = compTagalog.wantComp := by
+    (Datasets.WALS.F124A.lookup "tag").map (fromWALS124A ·.value) = compTagalog.wantComp := by
   native_decide
 theorem navajo_ch124 :
-    (Core.WALS.F124A.lookup "nav").map (fromWALS124A ·.value) = compNavajo.wantComp := by
+    (Datasets.WALS.F124A.lookup "nav").map (fromWALS124A ·.value) = compNavajo.wantComp := by
   native_decide
 theorem finnish_ch124 :
-    (Core.WALS.F124A.lookup "fin").map (fromWALS124A ·.value) = compFinnish.wantComp := by
+    (Datasets.WALS.F124A.lookup "fin").map (fromWALS124A ·.value) = compFinnish.wantComp := by
   native_decide
 theorem spanish_ch124 :
-    (Core.WALS.F124A.lookup "spa").map (fromWALS124A ·.value) = compSpanish.wantComp := by
+    (Datasets.WALS.F124A.lookup "spa").map (fromWALS124A ·.value) = compSpanish.wantComp := by
   native_decide
 theorem french_ch124 :
-    (Core.WALS.F124A.lookup "fre").map (fromWALS124A ·.value) = compFrench.wantComp := by
+    (Datasets.WALS.F124A.lookup "fre").map (fromWALS124A ·.value) = compFrench.wantComp := by
   native_decide
 
 -- ============================================================================
@@ -2071,52 +2071,52 @@ theorem french_ch124 :
 -- ============================================================================
 
 theorem english_ch125 :
-    (Core.WALS.F125A.lookup "eng").map (fromWALS125A ·.value) = compEnglish.purposeClause := by
+    (Datasets.WALS.F125A.lookup "eng").map (fromWALS125A ·.value) = compEnglish.purposeClause := by
   native_decide
 theorem japanese_ch125 :
-    (Core.WALS.F125A.lookup "jpn").map (fromWALS125A ·.value) = compJapanese.purposeClause := by
+    (Datasets.WALS.F125A.lookup "jpn").map (fromWALS125A ·.value) = compJapanese.purposeClause := by
   native_decide
 theorem turkish_ch125 :
-    (Core.WALS.F125A.lookup "tur").map (fromWALS125A ·.value) = compTurkish.purposeClause := by
+    (Datasets.WALS.F125A.lookup "tur").map (fromWALS125A ·.value) = compTurkish.purposeClause := by
   native_decide
 theorem mandarin_ch125 :
-    (Core.WALS.F125A.lookup "mnd").map (fromWALS125A ·.value) = compMandarin.purposeClause := by
+    (Datasets.WALS.F125A.lookup "mnd").map (fromWALS125A ·.value) = compMandarin.purposeClause := by
   native_decide
 theorem korean_ch125 :
-    (Core.WALS.F125A.lookup "kor").map (fromWALS125A ·.value) = compKorean.purposeClause := by
+    (Datasets.WALS.F125A.lookup "kor").map (fromWALS125A ·.value) = compKorean.purposeClause := by
   native_decide
 theorem german_ch125 :
-    (Core.WALS.F125A.lookup "ger").map (fromWALS125A ·.value) = compGerman.purposeClause := by
+    (Datasets.WALS.F125A.lookup "ger").map (fromWALS125A ·.value) = compGerman.purposeClause := by
   native_decide
 theorem russian_ch125 :
-    (Core.WALS.F125A.lookup "rus").map (fromWALS125A ·.value) = compRussian.purposeClause := by
+    (Datasets.WALS.F125A.lookup "rus").map (fromWALS125A ·.value) = compRussian.purposeClause := by
   native_decide
 theorem persian_ch125 :
-    (Core.WALS.F125A.lookup "prs").map (fromWALS125A ·.value) = compPersian.purposeClause := by
+    (Datasets.WALS.F125A.lookup "prs").map (fromWALS125A ·.value) = compPersian.purposeClause := by
   native_decide
 theorem irish_ch125 :
-    (Core.WALS.F125A.lookup "iri").map (fromWALS125A ·.value) = compIrish.purposeClause := by
+    (Datasets.WALS.F125A.lookup "iri").map (fromWALS125A ·.value) = compIrish.purposeClause := by
   native_decide
 theorem basque_ch125 :
-    (Core.WALS.F125A.lookup "bsq").map (fromWALS125A ·.value) = compBasque.purposeClause := by
+    (Datasets.WALS.F125A.lookup "bsq").map (fromWALS125A ·.value) = compBasque.purposeClause := by
   native_decide
 theorem yoruba_ch125 :
-    (Core.WALS.F125A.lookup "yor").map (fromWALS125A ·.value) = compYoruba.purposeClause := by
+    (Datasets.WALS.F125A.lookup "yor").map (fromWALS125A ·.value) = compYoruba.purposeClause := by
   native_decide
 theorem tagalog_ch125 :
-    (Core.WALS.F125A.lookup "tag").map (fromWALS125A ·.value) = compTagalog.purposeClause := by
+    (Datasets.WALS.F125A.lookup "tag").map (fromWALS125A ·.value) = compTagalog.purposeClause := by
   native_decide
 theorem finnish_ch125 :
-    (Core.WALS.F125A.lookup "fin").map (fromWALS125A ·.value) = compFinnish.purposeClause := by
+    (Datasets.WALS.F125A.lookup "fin").map (fromWALS125A ·.value) = compFinnish.purposeClause := by
   native_decide
 theorem spanish_ch125 :
-    (Core.WALS.F125A.lookup "spa").map (fromWALS125A ·.value) = compSpanish.purposeClause := by
+    (Datasets.WALS.F125A.lookup "spa").map (fromWALS125A ·.value) = compSpanish.purposeClause := by
   native_decide
 theorem french_ch125 :
-    (Core.WALS.F125A.lookup "fre").map (fromWALS125A ·.value) = compFrench.purposeClause := by
+    (Datasets.WALS.F125A.lookup "fre").map (fromWALS125A ·.value) = compFrench.purposeClause := by
   native_decide
 theorem arabic_ch125 :
-    (Core.WALS.F125A.lookup "arg").map (fromWALS125A ·.value) = compArabic.purposeClause := by
+    (Datasets.WALS.F125A.lookup "arg").map (fromWALS125A ·.value) = compArabic.purposeClause := by
   native_decide
 
 -- ============================================================================
@@ -2124,55 +2124,55 @@ theorem arabic_ch125 :
 -- ============================================================================
 
 theorem english_ch126 :
-    (Core.WALS.F126A.lookup "eng").map (fromWALS126A ·.value) = compEnglish.whenClause := by
+    (Datasets.WALS.F126A.lookup "eng").map (fromWALS126A ·.value) = compEnglish.whenClause := by
   native_decide
 theorem japanese_ch126 :
-    (Core.WALS.F126A.lookup "jpn").map (fromWALS126A ·.value) = compJapanese.whenClause := by
+    (Datasets.WALS.F126A.lookup "jpn").map (fromWALS126A ·.value) = compJapanese.whenClause := by
   native_decide
 theorem turkish_ch126 :
-    (Core.WALS.F126A.lookup "tur").map (fromWALS126A ·.value) = compTurkish.whenClause := by
+    (Datasets.WALS.F126A.lookup "tur").map (fromWALS126A ·.value) = compTurkish.whenClause := by
   native_decide
 theorem hindi_ch126 :
-    (Core.WALS.F126A.lookup "hin").map (fromWALS126A ·.value) = compHindi.whenClause := by
+    (Datasets.WALS.F126A.lookup "hin").map (fromWALS126A ·.value) = compHindi.whenClause := by
   native_decide
 theorem mandarin_ch126 :
-    (Core.WALS.F126A.lookup "mnd").map (fromWALS126A ·.value) = compMandarin.whenClause := by
+    (Datasets.WALS.F126A.lookup "mnd").map (fromWALS126A ·.value) = compMandarin.whenClause := by
   native_decide
 theorem korean_ch126 :
-    (Core.WALS.F126A.lookup "kor").map (fromWALS126A ·.value) = compKorean.whenClause := by
+    (Datasets.WALS.F126A.lookup "kor").map (fromWALS126A ·.value) = compKorean.whenClause := by
   native_decide
 theorem german_ch126 :
-    (Core.WALS.F126A.lookup "ger").map (fromWALS126A ·.value) = compGerman.whenClause := by
+    (Datasets.WALS.F126A.lookup "ger").map (fromWALS126A ·.value) = compGerman.whenClause := by
   native_decide
 theorem russian_ch126 :
-    (Core.WALS.F126A.lookup "rus").map (fromWALS126A ·.value) = compRussian.whenClause := by
+    (Datasets.WALS.F126A.lookup "rus").map (fromWALS126A ·.value) = compRussian.whenClause := by
   native_decide
 theorem persian_ch126 :
-    (Core.WALS.F126A.lookup "prs").map (fromWALS126A ·.value) = compPersian.whenClause := by
+    (Datasets.WALS.F126A.lookup "prs").map (fromWALS126A ·.value) = compPersian.whenClause := by
   native_decide
 theorem irish_ch126 :
-    (Core.WALS.F126A.lookup "iri").map (fromWALS126A ·.value) = compIrish.whenClause := by
+    (Datasets.WALS.F126A.lookup "iri").map (fromWALS126A ·.value) = compIrish.whenClause := by
   native_decide
 theorem basque_ch126 :
-    (Core.WALS.F126A.lookup "bsq").map (fromWALS126A ·.value) = compBasque.whenClause := by
+    (Datasets.WALS.F126A.lookup "bsq").map (fromWALS126A ·.value) = compBasque.whenClause := by
   native_decide
 theorem yoruba_ch126 :
-    (Core.WALS.F126A.lookup "yor").map (fromWALS126A ·.value) = compYoruba.whenClause := by
+    (Datasets.WALS.F126A.lookup "yor").map (fromWALS126A ·.value) = compYoruba.whenClause := by
   native_decide
 theorem tagalog_ch126 :
-    (Core.WALS.F126A.lookup "tag").map (fromWALS126A ·.value) = compTagalog.whenClause := by
+    (Datasets.WALS.F126A.lookup "tag").map (fromWALS126A ·.value) = compTagalog.whenClause := by
   native_decide
 theorem finnish_ch126 :
-    (Core.WALS.F126A.lookup "fin").map (fromWALS126A ·.value) = compFinnish.whenClause := by
+    (Datasets.WALS.F126A.lookup "fin").map (fromWALS126A ·.value) = compFinnish.whenClause := by
   native_decide
 theorem spanish_ch126 :
-    (Core.WALS.F126A.lookup "spa").map (fromWALS126A ·.value) = compSpanish.whenClause := by
+    (Datasets.WALS.F126A.lookup "spa").map (fromWALS126A ·.value) = compSpanish.whenClause := by
   native_decide
 theorem french_ch126 :
-    (Core.WALS.F126A.lookup "fre").map (fromWALS126A ·.value) = compFrench.whenClause := by
+    (Datasets.WALS.F126A.lookup "fre").map (fromWALS126A ·.value) = compFrench.whenClause := by
   native_decide
 theorem arabic_ch126 :
-    (Core.WALS.F126A.lookup "arg").map (fromWALS126A ·.value) = compArabic.whenClause := by
+    (Datasets.WALS.F126A.lookup "arg").map (fromWALS126A ·.value) = compArabic.whenClause := by
   native_decide
 
 -- ============================================================================
@@ -2180,55 +2180,55 @@ theorem arabic_ch126 :
 -- ============================================================================
 
 theorem english_ch127 :
-    (Core.WALS.F127A.lookup "eng").map (fromWALS127A ·.value) = compEnglish.reasonClause := by
+    (Datasets.WALS.F127A.lookup "eng").map (fromWALS127A ·.value) = compEnglish.reasonClause := by
   native_decide
 theorem japanese_ch127 :
-    (Core.WALS.F127A.lookup "jpn").map (fromWALS127A ·.value) = compJapanese.reasonClause := by
+    (Datasets.WALS.F127A.lookup "jpn").map (fromWALS127A ·.value) = compJapanese.reasonClause := by
   native_decide
 theorem turkish_ch127 :
-    (Core.WALS.F127A.lookup "tur").map (fromWALS127A ·.value) = compTurkish.reasonClause := by
+    (Datasets.WALS.F127A.lookup "tur").map (fromWALS127A ·.value) = compTurkish.reasonClause := by
   native_decide
 theorem hindi_ch127 :
-    (Core.WALS.F127A.lookup "hin").map (fromWALS127A ·.value) = compHindi.reasonClause := by
+    (Datasets.WALS.F127A.lookup "hin").map (fromWALS127A ·.value) = compHindi.reasonClause := by
   native_decide
 theorem mandarin_ch127 :
-    (Core.WALS.F127A.lookup "mnd").map (fromWALS127A ·.value) = compMandarin.reasonClause := by
+    (Datasets.WALS.F127A.lookup "mnd").map (fromWALS127A ·.value) = compMandarin.reasonClause := by
   native_decide
 theorem korean_ch127 :
-    (Core.WALS.F127A.lookup "kor").map (fromWALS127A ·.value) = compKorean.reasonClause := by
+    (Datasets.WALS.F127A.lookup "kor").map (fromWALS127A ·.value) = compKorean.reasonClause := by
   native_decide
 theorem german_ch127 :
-    (Core.WALS.F127A.lookup "ger").map (fromWALS127A ·.value) = compGerman.reasonClause := by
+    (Datasets.WALS.F127A.lookup "ger").map (fromWALS127A ·.value) = compGerman.reasonClause := by
   native_decide
 theorem russian_ch127 :
-    (Core.WALS.F127A.lookup "rus").map (fromWALS127A ·.value) = compRussian.reasonClause := by
+    (Datasets.WALS.F127A.lookup "rus").map (fromWALS127A ·.value) = compRussian.reasonClause := by
   native_decide
 theorem persian_ch127 :
-    (Core.WALS.F127A.lookup "prs").map (fromWALS127A ·.value) = compPersian.reasonClause := by
+    (Datasets.WALS.F127A.lookup "prs").map (fromWALS127A ·.value) = compPersian.reasonClause := by
   native_decide
 theorem irish_ch127 :
-    (Core.WALS.F127A.lookup "iri").map (fromWALS127A ·.value) = compIrish.reasonClause := by
+    (Datasets.WALS.F127A.lookup "iri").map (fromWALS127A ·.value) = compIrish.reasonClause := by
   native_decide
 theorem basque_ch127 :
-    (Core.WALS.F127A.lookup "bsq").map (fromWALS127A ·.value) = compBasque.reasonClause := by
+    (Datasets.WALS.F127A.lookup "bsq").map (fromWALS127A ·.value) = compBasque.reasonClause := by
   native_decide
 theorem yoruba_ch127 :
-    (Core.WALS.F127A.lookup "yor").map (fromWALS127A ·.value) = compYoruba.reasonClause := by
+    (Datasets.WALS.F127A.lookup "yor").map (fromWALS127A ·.value) = compYoruba.reasonClause := by
   native_decide
 theorem tagalog_ch127 :
-    (Core.WALS.F127A.lookup "tag").map (fromWALS127A ·.value) = compTagalog.reasonClause := by
+    (Datasets.WALS.F127A.lookup "tag").map (fromWALS127A ·.value) = compTagalog.reasonClause := by
   native_decide
 theorem finnish_ch127 :
-    (Core.WALS.F127A.lookup "fin").map (fromWALS127A ·.value) = compFinnish.reasonClause := by
+    (Datasets.WALS.F127A.lookup "fin").map (fromWALS127A ·.value) = compFinnish.reasonClause := by
   native_decide
 theorem spanish_ch127 :
-    (Core.WALS.F127A.lookup "spa").map (fromWALS127A ·.value) = compSpanish.reasonClause := by
+    (Datasets.WALS.F127A.lookup "spa").map (fromWALS127A ·.value) = compSpanish.reasonClause := by
   native_decide
 theorem french_ch127 :
-    (Core.WALS.F127A.lookup "fre").map (fromWALS127A ·.value) = compFrench.reasonClause := by
+    (Datasets.WALS.F127A.lookup "fre").map (fromWALS127A ·.value) = compFrench.reasonClause := by
   native_decide
 theorem arabic_ch127 :
-    (Core.WALS.F127A.lookup "arg").map (fromWALS127A ·.value) = compArabic.reasonClause := by
+    (Datasets.WALS.F127A.lookup "arg").map (fromWALS127A ·.value) = compArabic.reasonClause := by
   native_decide
 
 -- ============================================================================
@@ -2237,55 +2237,55 @@ theorem arabic_ch127 :
 -- ============================================================================
 
 theorem english_ch128 :
-    (Core.WALS.F128A.lookup "eng").map (fromWALS128A ·.value) = compEnglish.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "eng").map (fromWALS128A ·.value) = compEnglish.utteranceComp := by
   native_decide
 theorem japanese_ch128 :
-    (Core.WALS.F128A.lookup "jpn").map (fromWALS128A ·.value) = compJapanese.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "jpn").map (fromWALS128A ·.value) = compJapanese.utteranceComp := by
   native_decide
 theorem turkish_ch128 :
-    (Core.WALS.F128A.lookup "tur").map (fromWALS128A ·.value) = compTurkish.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "tur").map (fromWALS128A ·.value) = compTurkish.utteranceComp := by
   native_decide
 theorem hindi_ch128 :
-    (Core.WALS.F128A.lookup "hin").map (fromWALS128A ·.value) = compHindi.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "hin").map (fromWALS128A ·.value) = compHindi.utteranceComp := by
   native_decide
 theorem mandarin_ch128 :
-    (Core.WALS.F128A.lookup "mnd").map (fromWALS128A ·.value) = compMandarin.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "mnd").map (fromWALS128A ·.value) = compMandarin.utteranceComp := by
   native_decide
 theorem korean_ch128 :
-    (Core.WALS.F128A.lookup "kor").map (fromWALS128A ·.value) = compKorean.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "kor").map (fromWALS128A ·.value) = compKorean.utteranceComp := by
   native_decide
 theorem russian_ch128 :
-    (Core.WALS.F128A.lookup "rus").map (fromWALS128A ·.value) = compRussian.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "rus").map (fromWALS128A ·.value) = compRussian.utteranceComp := by
   native_decide
 theorem persian_ch128 :
-    (Core.WALS.F128A.lookup "prs").map (fromWALS128A ·.value) = compPersian.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "prs").map (fromWALS128A ·.value) = compPersian.utteranceComp := by
   native_decide
 theorem irish_ch128 :
-    (Core.WALS.F128A.lookup "iri").map (fromWALS128A ·.value) = compIrish.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "iri").map (fromWALS128A ·.value) = compIrish.utteranceComp := by
   native_decide
 theorem basque_ch128 :
-    (Core.WALS.F128A.lookup "bsq").map (fromWALS128A ·.value) = compBasque.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "bsq").map (fromWALS128A ·.value) = compBasque.utteranceComp := by
   native_decide
 theorem yoruba_ch128 :
-    (Core.WALS.F128A.lookup "yor").map (fromWALS128A ·.value) = compYoruba.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "yor").map (fromWALS128A ·.value) = compYoruba.utteranceComp := by
   native_decide
 theorem tagalog_ch128 :
-    (Core.WALS.F128A.lookup "tag").map (fromWALS128A ·.value) = compTagalog.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "tag").map (fromWALS128A ·.value) = compTagalog.utteranceComp := by
   native_decide
 theorem swahili_ch128 :
-    (Core.WALS.F128A.lookup "swa").map (fromWALS128A ·.value) = compSwahili.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "swa").map (fromWALS128A ·.value) = compSwahili.utteranceComp := by
   native_decide
 theorem finnish_ch128 :
-    (Core.WALS.F128A.lookup "fin").map (fromWALS128A ·.value) = compFinnish.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "fin").map (fromWALS128A ·.value) = compFinnish.utteranceComp := by
   native_decide
 theorem spanish_ch128 :
-    (Core.WALS.F128A.lookup "spa").map (fromWALS128A ·.value) = compSpanish.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "spa").map (fromWALS128A ·.value) = compSpanish.utteranceComp := by
   native_decide
 theorem french_ch128 :
-    (Core.WALS.F128A.lookup "fre").map (fromWALS128A ·.value) = compFrench.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "fre").map (fromWALS128A ·.value) = compFrench.utteranceComp := by
   native_decide
 theorem arabic_ch128 :
-    (Core.WALS.F128A.lookup "arg").map (fromWALS128A ·.value) = compArabic.utteranceComp := by
+    (Datasets.WALS.F128A.lookup "arg").map (fromWALS128A ·.value) = compArabic.utteranceComp := by
   native_decide
 
 -- ============================================================================

@@ -1,11 +1,11 @@
-import Linglib.Core.WALS.Features.F39A
-import Linglib.Core.WALS.Features.F39B
-import Linglib.Core.WALS.Features.F40A
-import Linglib.Core.WALS.Features.F44A
-import Linglib.Core.WALS.Features.F45A
-import Linglib.Core.WALS.Features.F46A
-import Linglib.Core.WALS.Features.F47A
-import Linglib.Core.WALS.Features.F48A
+import Linglib.Datasets.WALS.Features.F39A
+import Linglib.Datasets.WALS.Features.F39B
+import Linglib.Datasets.WALS.Features.F40A
+import Linglib.Datasets.WALS.Features.F44A
+import Linglib.Datasets.WALS.Features.F45A
+import Linglib.Datasets.WALS.Features.F46A
+import Linglib.Datasets.WALS.Features.F47A
+import Linglib.Datasets.WALS.Features.F48A
 
 /-!
 # Cross-Linguistic Typology of Pronouns (WALS Chapters 39--40, 44--48)
@@ -210,16 +210,16 @@ inductive PersonMarkingOnAdpositions where
 -- WALS Converter Functions
 -- ============================================================================
 
-private abbrev ch39 := Core.WALS.F39A.allData
-private abbrev ch39b := Core.WALS.F39B.allData
-private abbrev ch40 := Core.WALS.F40A.allData
-private abbrev ch44 := Core.WALS.F44A.allData
-private abbrev ch45 := Core.WALS.F45A.allData
-private abbrev ch46 := Core.WALS.F46A.allData
-private abbrev ch47 := Core.WALS.F47A.allData
-private abbrev ch48 := Core.WALS.F48A.allData
+private abbrev ch39 := Datasets.WALS.F39A.allData
+private abbrev ch39b := Datasets.WALS.F39B.allData
+private abbrev ch40 := Datasets.WALS.F40A.allData
+private abbrev ch44 := Datasets.WALS.F44A.allData
+private abbrev ch45 := Datasets.WALS.F45A.allData
+private abbrev ch46 := Datasets.WALS.F46A.allData
+private abbrev ch47 := Datasets.WALS.F47A.allData
+private abbrev ch48 := Datasets.WALS.F48A.allData
 
-private def fromWALS39A : Core.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns → InclusiveExclusive
+private def fromWALS39A : Datasets.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns → InclusiveExclusive
   | .noWe => .noWe
   | .weTheSameAsI => .weEqualsI
   | .noInclusiveExclusive => .noDistinction
@@ -238,19 +238,19 @@ inductive InclusiveExclusivePamaNyungan where
   | differentiated
   deriving DecidableEq, Repr
 
-private def fromWALS39B : Core.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
+private def fromWALS39B : Datasets.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
     InclusiveExclusivePamaNyungan
   | .noInclusiveExclusiveOpposition => .noOpposition
   | .inclusiveAndExclusiveDifferentiated => .differentiated
 
-private def fromWALS40A : Core.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection → InclusiveExclusiveVerbal
+private def fromWALS40A : Datasets.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection → InclusiveExclusiveVerbal
   | .noPersonMarking => .noPersonMarking
   | .weTheSameAsI => .weEqualsI
   | .noInclusiveExclusive => .noDistinction
   | .onlyInclusive => .onlyInclusive
   | .inclusiveExclusive => .inclusiveExclusive
 
-private def fromWALS44A : Core.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns → GenderInPronouns
+private def fromWALS44A : Datasets.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns → GenderInPronouns
   | .in3rdPerson1stAndOr2ndPerson => .in3rdAndOtherPersons
   | .v3rdPersonOnlyButAlsoNonSingular => .in3rdPersonIncludingNonSg
   | .v3rdPersonSingularOnly => .in3rdPersonSgOnly
@@ -258,24 +258,24 @@ private def fromWALS44A : Core.WALS.F44A.GenderDistinctionsInIndependentPersonal
   | .v3rdPersonNonSingularOnly => .in3rdPersonNonSgOnly
   | .noGenderDistinctions => .noGenderDistinctions
 
-private def fromWALS45A : Core.WALS.F45A.PolitenessDistinctionsInPronouns → PolitenessDistinction
+private def fromWALS45A : Datasets.WALS.F45A.PolitenessDistinctionsInPronouns → PolitenessDistinction
   | .noPolitenessDistinction => .none
   | .binaryPolitenessDistinction => .binary
   | .multiplePolitenessDistinctions => .multiple
   | .pronounsAvoidedForPoliteness => .pronounsAvoided
 
-private def fromWALS46A : Core.WALS.F46A.IndefinitePronouns → IndefinitePronounType
+private def fromWALS46A : Datasets.WALS.F46A.IndefinitePronouns → IndefinitePronounType
   | .interrogativeBased => .interrogativeBased
   | .genericNounBased => .genericNounBased
   | .special => .special
   | .mixed => .mixed
   | .existentialConstruction => .existentialConstruction
 
-private def fromWALS47A : Core.WALS.F47A.IntensifierReflexive → IntensifierReflexive
+private def fromWALS47A : Datasets.WALS.F47A.IntensifierReflexive → IntensifierReflexive
   | .identical => .identical
   | .differentiated => .differentiated
 
-private def fromWALS48A : Core.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnAdpositions
+private def fromWALS48A : Datasets.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnAdpositions
   | .noAdpositions => .noAdpositions
   | .noPersonMarking => .noPersonMarking
   | .pronounsOnly => .pronounsOnly

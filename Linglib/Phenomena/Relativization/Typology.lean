@@ -1,7 +1,7 @@
 import Linglib.Core.Relativization.Profile
 import Linglib.Core.Typology.LanguageProfile
-import Linglib.Core.WALS.Features.F122A
-import Linglib.Core.WALS.Features.F123A
+import Linglib.Datasets.WALS.Features.F122A
+import Linglib.Datasets.WALS.Features.F123A
 import Linglib.Fragments.English.Typology
 import Linglib.Fragments.German.Typology
 import Linglib.Fragments.French.Typology
@@ -98,8 +98,8 @@ open Core.Relativization
 -- WALS Data Abbreviations
 -- ============================================================================
 
-private abbrev ch122 := Core.WALS.F122A.allData
-private abbrev ch123 := Core.WALS.F123A.allData
+private abbrev ch122 := Datasets.WALS.F122A.allData
+private abbrev ch123 := Datasets.WALS.F123A.allData
 
 -- ============================================================================
 -- Cross-Linguistic Sample
@@ -262,7 +262,7 @@ def groundedOblLanguages : List Core.Typology.LanguageProfile :=
     edited inconsistently. -/
 theorem subj_strategy_consistent_with_WALS :
     groundedSubjLanguages.all (fun p =>
-      (Core.WALS.F122A.lookupISO p.iso).map (fromWALS122A ·.value) =
+      (Datasets.WALS.F122A.lookupISO p.iso).map (fromWALS122A ·.value) =
         p.relativization.map (·.subjStrategy)) = true := by
   decide
 
@@ -271,7 +271,7 @@ theorem subj_strategy_consistent_with_WALS :
     ISO. -/
 theorem obl_strategy_consistent_with_WALS :
     groundedOblLanguages.all (fun p =>
-      (Core.WALS.F123A.lookupISO p.iso).map (fromWALS123A ·.value) =
+      (Datasets.WALS.F123A.lookupISO p.iso).map (fromWALS123A ·.value) =
         p.relativization.map (·.oblStrategy)) = true := by
   decide
 

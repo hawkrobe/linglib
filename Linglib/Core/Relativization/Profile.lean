@@ -1,7 +1,7 @@
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Hierarchy
-import Linglib.Core.WALS.Features.F122A
-import Linglib.Core.WALS.Features.F123A
+import Linglib.Datasets.WALS.Features.F122A
+import Linglib.Datasets.WALS.Features.F123A
 
 /-!
 # `RelativizationProfile`: per-language relativization typology
@@ -93,7 +93,7 @@ structure RelativizationProfile where
     profile is `.mixed` cannot be grounded against WALS via this
     converter alone — see the per-language theorems in
     `Phenomena/Relativization/Typology.lean`. -/
-def fromWALS122A : Core.WALS.F122A.SubjectRelativization → SubjRelStrategy
+def fromWALS122A : Datasets.WALS.F122A.SubjectRelativization → SubjRelStrategy
   | .relativePronoun => .relativePronoun
   | .nonReduction    => .nonReduction
   | .pronounRetention => .pronounRetention
@@ -102,7 +102,7 @@ def fromWALS122A : Core.WALS.F122A.SubjectRelativization → SubjRelStrategy
 /-- Convert a WALS 123A oblique relativization value to `OblRelStrategy`.
     WALS `.notPossible` becomes `.notRelativizable`; `.mixed` profiles
     cannot be grounded against WALS via this converter. -/
-def fromWALS123A : Core.WALS.F123A.ObliqueRelativization → OblRelStrategy
+def fromWALS123A : Datasets.WALS.F123A.ObliqueRelativization → OblRelStrategy
   | .relativePronoun => .relativePronoun
   | .nonReduction    => .nonReduction
   | .pronounRetention => .pronounRetention

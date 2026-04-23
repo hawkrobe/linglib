@@ -1,7 +1,7 @@
 import Linglib.Features.Coordination
-import Linglib.Core.WALS.Features.F56A
-import Linglib.Core.WALS.Features.F63A
-import Linglib.Core.WALS.Features.F64A
+import Linglib.Datasets.WALS.Features.F56A
+import Linglib.Datasets.WALS.Features.F63A
+import Linglib.Datasets.WALS.Features.F64A
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Latin.Coordination
@@ -628,14 +628,14 @@ in `Studies/BillEtAl2025.lean`.
 -- ============================================================================
 
 /-- Short alias for WALS Ch 56 type. -/
-abbrev ConjQuantRelation := Core.WALS.F56A.ConjunctionsAndUniversalQuantifiers
+abbrev ConjQuantRelation := Datasets.WALS.F56A.ConjunctionsAndUniversalQuantifiers
 
 -- ============================================================================
 -- Chapter 63: Noun Phrase Conjunction
 -- ============================================================================
 
 /-- Short alias for WALS Ch 63 type. -/
-abbrev ConjComitativeRelation := Core.WALS.F63A.NounPhraseConjunction
+abbrev ConjComitativeRelation := Datasets.WALS.F63A.NounPhraseConjunction
 
 /--
 @cite{stassen-2000} AND/WITH classification of languages.
@@ -663,7 +663,7 @@ def ConjComitativeRelation.toAndWithStatus : ConjComitativeRelation → AndWithS
 -- ============================================================================
 
 /-- Short alias for WALS Ch 64 type. -/
-abbrev NomVerbalConjRelation := Core.WALS.F64A.NominalAndVerbalConjunction
+abbrev NomVerbalConjRelation := Datasets.WALS.F64A.NominalAndVerbalConjunction
 
 -- ============================================================================
 -- Coordination Profile Structure
@@ -960,9 +960,9 @@ def allWALSProfiles : List CoordinationProfile :=
 -- WALS Data Abbreviations
 -- ============================================================================
 
-private abbrev ch56 := Core.WALS.F56A.allData
-private abbrev ch63 := Core.WALS.F63A.allData
-private abbrev ch64 := Core.WALS.F64A.allData
+private abbrev ch56 := Datasets.WALS.F56A.allData
+private abbrev ch63 := Datasets.WALS.F63A.allData
+private abbrev ch64 := Datasets.WALS.F64A.allData
 
 -- ============================================================================
 -- Per-Language WALS Grounding Theorems
@@ -970,119 +970,119 @@ private abbrev ch64 := Core.WALS.F64A.allData
 
 -- F56A grounding (9 languages present)
 theorem english_f56a :
-    (Core.WALS.F56A.lookup "eng").map (·.value) =
+    (Datasets.WALS.F56A.lookup "eng").map (·.value) =
     englishWALS.conjQuant := by native_decide
 theorem french_f56a :
-    (Core.WALS.F56A.lookup "fre").map (·.value) =
+    (Datasets.WALS.F56A.lookup "fre").map (·.value) =
     frenchWALS.conjQuant := by native_decide
 theorem japanese_f56a :
-    (Core.WALS.F56A.lookup "jpn").map (·.value) =
+    (Datasets.WALS.F56A.lookup "jpn").map (·.value) =
     japaneseWALS.conjQuant := by native_decide
 theorem mandarin_f56a :
-    (Core.WALS.F56A.lookup "mnd").map (·.value) =
+    (Datasets.WALS.F56A.lookup "mnd").map (·.value) =
     mandarinWALS.conjQuant := by native_decide
 theorem turkish_f56a :
-    (Core.WALS.F56A.lookup "tur").map (·.value) =
+    (Datasets.WALS.F56A.lookup "tur").map (·.value) =
     turkishWALS.conjQuant := by native_decide
 theorem finnish_f56a :
-    (Core.WALS.F56A.lookup "fin").map (·.value) =
+    (Datasets.WALS.F56A.lookup "fin").map (·.value) =
     finnishWALS.conjQuant := by native_decide
 theorem hungarian_f56a :
-    (Core.WALS.F56A.lookup "hun").map (·.value) =
+    (Datasets.WALS.F56A.lookup "hun").map (·.value) =
     hungarianWALS.conjQuant := by native_decide
 theorem hindi_f56a :
-    (Core.WALS.F56A.lookup "hin").map (·.value) =
+    (Datasets.WALS.F56A.lookup "hin").map (·.value) =
     hindiWALS.conjQuant := by native_decide
 theorem tagalog_f56a :
-    (Core.WALS.F56A.lookup "tag").map (·.value) =
+    (Datasets.WALS.F56A.lookup "tag").map (·.value) =
     tagalogWALS.conjQuant := by native_decide
 
 -- F63A grounding (14 languages present; German absent)
 theorem english_f63a :
-    (Core.WALS.F63A.lookup "eng").map (·.value) =
+    (Datasets.WALS.F63A.lookup "eng").map (·.value) =
     englishWALS.conjComitative := by native_decide
 theorem french_f63a :
-    (Core.WALS.F63A.lookup "fre").map (·.value) =
+    (Datasets.WALS.F63A.lookup "fre").map (·.value) =
     frenchWALS.conjComitative := by native_decide
 theorem spanish_f63a :
-    (Core.WALS.F63A.lookup "spa").map (·.value) =
+    (Datasets.WALS.F63A.lookup "spa").map (·.value) =
     spanishWALS.conjComitative := by native_decide
 theorem russian_f63a :
-    (Core.WALS.F63A.lookup "rus").map (·.value) =
+    (Datasets.WALS.F63A.lookup "rus").map (·.value) =
     russianWALS.conjComitative := by native_decide
 theorem japanese_f63a :
-    (Core.WALS.F63A.lookup "jpn").map (·.value) =
+    (Datasets.WALS.F63A.lookup "jpn").map (·.value) =
     japaneseWALS.conjComitative := by native_decide
 theorem mandarin_f63a :
-    (Core.WALS.F63A.lookup "mnd").map (·.value) =
+    (Datasets.WALS.F63A.lookup "mnd").map (·.value) =
     mandarinWALS.conjComitative := by native_decide
 theorem korean_f63a :
-    (Core.WALS.F63A.lookup "kor").map (·.value) =
+    (Datasets.WALS.F63A.lookup "kor").map (·.value) =
     koreanWALS.conjComitative := by native_decide
 theorem turkish_f63a :
-    (Core.WALS.F63A.lookup "tur").map (·.value) =
+    (Datasets.WALS.F63A.lookup "tur").map (·.value) =
     turkishWALS.conjComitative := by native_decide
 theorem finnish_f63a :
-    (Core.WALS.F63A.lookup "fin").map (·.value) =
+    (Datasets.WALS.F63A.lookup "fin").map (·.value) =
     finnishWALS.conjComitative := by native_decide
 theorem hungarian_f63a :
-    (Core.WALS.F63A.lookup "hun").map (·.value) =
+    (Datasets.WALS.F63A.lookup "hun").map (·.value) =
     hungarianWALS.conjComitative := by native_decide
 theorem hindi_f63a :
-    (Core.WALS.F63A.lookup "hin").map (·.value) =
+    (Datasets.WALS.F63A.lookup "hin").map (·.value) =
     hindiWALS.conjComitative := by native_decide
 theorem arabic_f63a :
-    (Core.WALS.F63A.lookup "aeg").map (·.value) =
+    (Datasets.WALS.F63A.lookup "aeg").map (·.value) =
     arabicWALS.conjComitative := by native_decide
 theorem swahili_f63a :
-    (Core.WALS.F63A.lookup "swa").map (·.value) =
+    (Datasets.WALS.F63A.lookup "swa").map (·.value) =
     swahiliWALS.conjComitative := by native_decide
 theorem tagalog_f63a :
-    (Core.WALS.F63A.lookup "tag").map (·.value) =
+    (Datasets.WALS.F63A.lookup "tag").map (·.value) =
     tagalogWALS.conjComitative := by native_decide
 
 -- F64A grounding (14 languages present; Swahili absent)
 theorem english_f64a :
-    (Core.WALS.F64A.lookup "eng").map (·.value) =
+    (Datasets.WALS.F64A.lookup "eng").map (·.value) =
     englishWALS.nomVerbalConj := by native_decide
 theorem german_f64a :
-    (Core.WALS.F64A.lookup "ger").map (·.value) =
+    (Datasets.WALS.F64A.lookup "ger").map (·.value) =
     germanWALS.nomVerbalConj := by native_decide
 theorem french_f64a :
-    (Core.WALS.F64A.lookup "fre").map (·.value) =
+    (Datasets.WALS.F64A.lookup "fre").map (·.value) =
     frenchWALS.nomVerbalConj := by native_decide
 theorem spanish_f64a :
-    (Core.WALS.F64A.lookup "spa").map (·.value) =
+    (Datasets.WALS.F64A.lookup "spa").map (·.value) =
     spanishWALS.nomVerbalConj := by native_decide
 theorem russian_f64a :
-    (Core.WALS.F64A.lookup "rus").map (·.value) =
+    (Datasets.WALS.F64A.lookup "rus").map (·.value) =
     russianWALS.nomVerbalConj := by native_decide
 theorem japanese_f64a :
-    (Core.WALS.F64A.lookup "jpn").map (·.value) =
+    (Datasets.WALS.F64A.lookup "jpn").map (·.value) =
     japaneseWALS.nomVerbalConj := by native_decide
 theorem mandarin_f64a :
-    (Core.WALS.F64A.lookup "mnd").map (·.value) =
+    (Datasets.WALS.F64A.lookup "mnd").map (·.value) =
     mandarinWALS.nomVerbalConj := by native_decide
 theorem korean_f64a :
-    (Core.WALS.F64A.lookup "kor").map (·.value) =
+    (Datasets.WALS.F64A.lookup "kor").map (·.value) =
     koreanWALS.nomVerbalConj := by native_decide
 theorem turkish_f64a :
-    (Core.WALS.F64A.lookup "tur").map (·.value) =
+    (Datasets.WALS.F64A.lookup "tur").map (·.value) =
     turkishWALS.nomVerbalConj := by native_decide
 theorem finnish_f64a :
-    (Core.WALS.F64A.lookup "fin").map (·.value) =
+    (Datasets.WALS.F64A.lookup "fin").map (·.value) =
     finnishWALS.nomVerbalConj := by native_decide
 theorem hungarian_f64a :
-    (Core.WALS.F64A.lookup "hun").map (·.value) =
+    (Datasets.WALS.F64A.lookup "hun").map (·.value) =
     hungarianWALS.nomVerbalConj := by native_decide
 theorem hindi_f64a :
-    (Core.WALS.F64A.lookup "hin").map (·.value) =
+    (Datasets.WALS.F64A.lookup "hin").map (·.value) =
     hindiWALS.nomVerbalConj := by native_decide
 theorem arabic_f64a :
-    (Core.WALS.F64A.lookup "aeg").map (·.value) =
+    (Datasets.WALS.F64A.lookup "aeg").map (·.value) =
     arabicWALS.nomVerbalConj := by native_decide
 theorem tagalog_f64a :
-    (Core.WALS.F64A.lookup "tag").map (·.value) =
+    (Datasets.WALS.F64A.lookup "tag").map (·.value) =
     tagalogWALS.nomVerbalConj := by native_decide
 
 -- ============================================================================

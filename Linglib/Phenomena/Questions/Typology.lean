@@ -1,6 +1,6 @@
-import Linglib.Core.WALS.Features.F92A
-import Linglib.Core.WALS.Features.F93A
-import Linglib.Core.WALS.Features.F116A
+import Linglib.Datasets.WALS.Features.F92A
+import Linglib.Datasets.WALS.Features.F93A
+import Linglib.Datasets.WALS.Features.F116A
 
 /-!
 # Cross-Linguistic Question Typology
@@ -195,9 +195,9 @@ def allConjunctDisjunctData : List ConjunctDisjunctDatum :=
 -- WALS Abbreviations
 -- ============================================================================
 
-private abbrev ch92  := Core.WALS.F92A.allData
-private abbrev ch93  := Core.WALS.F93A.allData
-private abbrev ch116 := Core.WALS.F116A.allData
+private abbrev ch92  := Datasets.WALS.F92A.allData
+private abbrev ch93  := Datasets.WALS.F93A.allData
+private abbrev ch116 := Datasets.WALS.F116A.allData
 
 -- ============================================================================
 -- WALS Local Types
@@ -301,7 +301,7 @@ inductive PolarQuestionStrategy where
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS92A : Core.WALS.F92A.PositionOfPolarQuestionParticles → QParticlePosition
+private def fromWALS92A : Datasets.WALS.F92A.PositionOfPolarQuestionParticles → QParticlePosition
   | .initial               => .initial
   | .final                 => .final
   | .secondPosition        => .secondPosition
@@ -309,12 +309,12 @@ private def fromWALS92A : Core.WALS.F92A.PositionOfPolarQuestionParticles → QP
   | .inEitherOfTwoPositions => .eitherOfTwo
   | .noQuestionParticle    => .noParticle
 
-private def fromWALS93A : Core.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions → WhMovementStrategy
+private def fromWALS93A : Datasets.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions → WhMovementStrategy
   | .initialInterrogativePhrase    => .initial
   | .notInitialInterrogativePhrase => .inSitu
   | .mixed                         => .mixed
 
-private def fromWALS116A : Core.WALS.F116A.PolarQuestionType → PolarQuestionStrategy
+private def fromWALS116A : Datasets.WALS.F116A.PolarQuestionType → PolarQuestionStrategy
   | .questionParticle                     => .particle
   | .interrogativeVerbMorphology          => .verbMorphology
   | .mixtureOfPreviousTwoTypes            => .particleOrMorphology
@@ -409,27 +409,27 @@ def allQuestionProfiles : List QuestionProfile :=
 -- ============================================================================
 
 theorem english_ch92 :
-    (Core.WALS.F92A.lookup "eng").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "eng").map (fromWALS92A ·.value) =
       english_qProfile.qParticlePos := by
   native_decide
 theorem hindi_ch92 :
-    (Core.WALS.F92A.lookup "hin").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "hin").map (fromWALS92A ·.value) =
       hindi_qProfile.qParticlePos := by
   native_decide
 theorem japanese_ch92 :
-    (Core.WALS.F92A.lookup "jpn").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "jpn").map (fromWALS92A ·.value) =
       japanese_qProfile.qParticlePos := by
   native_decide
 theorem italian_ch92 :
-    (Core.WALS.F92A.lookup "ita").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "ita").map (fromWALS92A ·.value) =
       italian_qProfile.qParticlePos := by
   native_decide
 theorem newari_ch92 :
-    (Core.WALS.F92A.lookup "new").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "new").map (fromWALS92A ·.value) =
       newari_qProfile.qParticlePos := by
   native_decide
 theorem mandarin_ch92 :
-    (Core.WALS.F92A.lookup "mnd").map (fromWALS92A ·.value) =
+    (Datasets.WALS.F92A.lookup "mnd").map (fromWALS92A ·.value) =
       mandarin_qProfile.qParticlePos := by
   native_decide
 
@@ -439,23 +439,23 @@ theorem mandarin_ch92 :
 -- ============================================================================
 
 theorem english_ch93 :
-    (Core.WALS.F93A.lookup "eng").map (fromWALS93A ·.value) =
+    (Datasets.WALS.F93A.lookup "eng").map (fromWALS93A ·.value) =
       english_qProfile.whMovement := by
   native_decide
 theorem hindi_ch93 :
-    (Core.WALS.F93A.lookup "hin").map (fromWALS93A ·.value) =
+    (Datasets.WALS.F93A.lookup "hin").map (fromWALS93A ·.value) =
       hindi_qProfile.whMovement := by
   native_decide
 theorem japanese_ch93 :
-    (Core.WALS.F93A.lookup "jpn").map (fromWALS93A ·.value) =
+    (Datasets.WALS.F93A.lookup "jpn").map (fromWALS93A ·.value) =
       japanese_qProfile.whMovement := by
   native_decide
 theorem newari_ch93 :
-    (Core.WALS.F93A.lookup "new").map (fromWALS93A ·.value) =
+    (Datasets.WALS.F93A.lookup "new").map (fromWALS93A ·.value) =
       newari_qProfile.whMovement := by
   native_decide
 theorem mandarin_ch93 :
-    (Core.WALS.F93A.lookup "mnd").map (fromWALS93A ·.value) =
+    (Datasets.WALS.F93A.lookup "mnd").map (fromWALS93A ·.value) =
       mandarin_qProfile.whMovement := by
   native_decide
 
@@ -464,27 +464,27 @@ theorem mandarin_ch93 :
 -- ============================================================================
 
 theorem english_ch116 :
-    (Core.WALS.F116A.lookup "eng").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "eng").map (fromWALS116A ·.value) =
       english_qProfile.polarStrategy := by
   native_decide
 theorem hindi_ch116 :
-    (Core.WALS.F116A.lookup "hin").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "hin").map (fromWALS116A ·.value) =
       hindi_qProfile.polarStrategy := by
   native_decide
 theorem japanese_ch116 :
-    (Core.WALS.F116A.lookup "jpn").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "jpn").map (fromWALS116A ·.value) =
       japanese_qProfile.polarStrategy := by
   native_decide
 theorem italian_ch116 :
-    (Core.WALS.F116A.lookup "ita").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "ita").map (fromWALS116A ·.value) =
       italian_qProfile.polarStrategy := by
   native_decide
 theorem newari_ch116 :
-    (Core.WALS.F116A.lookup "new").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "new").map (fromWALS116A ·.value) =
       newari_qProfile.polarStrategy := by
   native_decide
 theorem mandarin_ch116 :
-    (Core.WALS.F116A.lookup "mnd").map (fromWALS116A ·.value) =
+    (Datasets.WALS.F116A.lookup "mnd").map (fromWALS116A ·.value) =
       mandarin_qProfile.polarStrategy := by
   native_decide
 

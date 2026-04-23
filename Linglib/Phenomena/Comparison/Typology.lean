@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
-import Linglib.Core.WALS.Features.F121A
+import Linglib.Datasets.WALS.Features.F121A
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)
@@ -212,7 +212,7 @@ inductive SuperlativeStrategy where
     The generated WALS data (v2020.4) uses four categories; the "mixed" type
     is not represented as a separate WALS value. Languages in the WALS dataset
     are assigned to whichever single type best characterizes them. -/
-private def fromWALS121A : Core.WALS.F121A.ComparativeType → ComparativeType
+private def fromWALS121A : Datasets.WALS.F121A.ComparativeType → ComparativeType
   | .locational => .locational
   | .exceed     => .exceed
   | .conjoined  => .conjoined
@@ -222,7 +222,7 @@ private def fromWALS121A : Core.WALS.F121A.ComparativeType → ComparativeType
 -- WALS Distribution Data (from generated module)
 -- ============================================================================
 
-private abbrev ch121 := Core.WALS.F121A.allData
+private abbrev ch121 := Datasets.WALS.F121A.allData
 
 /-- Ch 121 total: 167 languages in the generated WALS dataset. -/
 theorem ch121_total : ch121.length = 167 := by native_decide
@@ -810,40 +810,40 @@ theorem locational_has_standard_marker :
 -- ============================================================================
 
 theorem english_ch121 :
-    (Core.WALS.F121A.lookup "eng").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "eng").map (fromWALS121A ·.value) =
     some english.comparativeType := by native_decide
 theorem japanese_ch121 :
-    (Core.WALS.F121A.lookup "jpn").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "jpn").map (fromWALS121A ·.value) =
     some japanese.comparativeType := by native_decide
 theorem mandarin_ch121 :
-    (Core.WALS.F121A.lookup "mnd").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "mnd").map (fromWALS121A ·.value) =
     some mandarin.comparativeType := by native_decide
 theorem korean_ch121 :
-    (Core.WALS.F121A.lookup "kor").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "kor").map (fromWALS121A ·.value) =
     some korean.comparativeType := by native_decide
 theorem turkish_ch121 :
-    (Core.WALS.F121A.lookup "tur").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "tur").map (fromWALS121A ·.value) =
     some turkish.comparativeType := by native_decide
 theorem yoruba_ch121 :
-    (Core.WALS.F121A.lookup "yor").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "yor").map (fromWALS121A ·.value) =
     some yoruba.comparativeType := by native_decide
 theorem hindiUrdu_ch121 :
-    (Core.WALS.F121A.lookup "hin").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "hin").map (fromWALS121A ·.value) =
     some hindiUrdu.comparativeType := by native_decide
 theorem russian_ch121 :
-    (Core.WALS.F121A.lookup "rus").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "rus").map (fromWALS121A ·.value) =
     some russian.comparativeType := by native_decide
 theorem swahili_ch121 :
-    (Core.WALS.F121A.lookup "swa").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "swa").map (fromWALS121A ·.value) =
     some swahili.comparativeType := by native_decide
 theorem thai_ch121 :
-    (Core.WALS.F121A.lookup "tha").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "tha").map (fromWALS121A ·.value) =
     some thai.comparativeType := by native_decide
 theorem arabic_ch121 :
-    (Core.WALS.F121A.lookup "ams").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "ams").map (fromWALS121A ·.value) =
     some arabic.comparativeType := by native_decide
 theorem french_ch121 :
-    (Core.WALS.F121A.lookup "fre").map (fromWALS121A ·.value) =
+    (Datasets.WALS.F121A.lookup "fre").map (fromWALS121A ·.value) =
     some french.comparativeType := by native_decide
 
 -- Discrepancy: Finnish is .particle in WALS F121A but .locational in our profile

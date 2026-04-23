@@ -3,9 +3,9 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
 import Linglib.Features.Prominence
-import Linglib.Core.WALS.Features.F98A
-import Linglib.Core.WALS.Features.F99A
-import Linglib.Core.WALS.Features.F100A
+import Linglib.Datasets.WALS.Features.F98A
+import Linglib.Datasets.WALS.Features.F99A
+import Linglib.Datasets.WALS.Features.F100A
 -- Fragment imports for bridge theorems (verify Fragment ↔ Typology consistency)
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Japanese.Case
@@ -55,9 +55,9 @@ namespace Phenomena.Alignment.Typology
 -- WALS Generated Data References
 -- ============================================================================
 
-private abbrev ch98 := Core.WALS.F98A.allData
-private abbrev ch99 := Core.WALS.F99A.allData
-private abbrev ch100 := Core.WALS.F100A.allData
+private abbrev ch98 := Datasets.WALS.F98A.allData
+private abbrev ch99 := Datasets.WALS.F99A.allData
+private abbrev ch100 := Datasets.WALS.F100A.allData
 
 -- ============================================================================
 -- Alignment Types
@@ -126,7 +126,7 @@ instance : DecidablePred AlignmentType.IsAbsErg :=
 
 /-- Convert F98A NP case alignment to our AlignmentType.
     WALS distinguishes standard and marked-nominative accusative; we merge both. -/
-private def fromWALS98A : Core.WALS.F98A.NPCaseAlignment → AlignmentType
+private def fromWALS98A : Datasets.WALS.F98A.NPCaseAlignment → AlignmentType
   | .neutral => .neutral
   | .nominativeAccusative => .accusative
   | .nominativeAccusative_3 => .accusative  -- marked nominative, still accusative
@@ -137,7 +137,7 @@ private def fromWALS98A : Core.WALS.F98A.NPCaseAlignment → AlignmentType
 /-- Convert F99A pronoun case alignment to our AlignmentType.
     WALS has a "none" category (no pronouns or no case on pronouns);
     we map it to neutral. -/
-private def fromWALS99A : Core.WALS.F99A.PronounCaseAlignment → AlignmentType
+private def fromWALS99A : Datasets.WALS.F99A.PronounCaseAlignment → AlignmentType
   | .neutral => .neutral
   | .nominativeAccusative => .accusative
   | .nominativeAccusative_3 => .accusative
@@ -149,7 +149,7 @@ private def fromWALS99A : Core.WALS.F99A.PronounCaseAlignment → AlignmentType
 /-- Convert F100A verbal person alignment to our AlignmentType.
     WALS has "hierarchical" and "split" categories not in our type;
     returns `none` for these. -/
-private def fromWALS100A : Core.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
+private def fromWALS100A : Datasets.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
   | .neutral => some .neutral
   | .accusative => some .accusative
   | .ergative => some .ergative
@@ -877,34 +877,34 @@ theorem active_np_implies_active_pron :
 -- ============================================================================
 
 theorem english_ch98 :
-    (Core.WALS.F98A.lookup "eng").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "eng").map (fromWALS98A ·.value) =
     some english.npAlignment := by native_decide
 theorem japanese_ch98 :
-    (Core.WALS.F98A.lookup "jpn").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "jpn").map (fromWALS98A ·.value) =
     some japanese.npAlignment := by native_decide
 theorem russian_ch98 :
-    (Core.WALS.F98A.lookup "rus").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "rus").map (fromWALS98A ·.value) =
     some russian.npAlignment := by native_decide
 theorem mandarin_ch98 :
-    (Core.WALS.F98A.lookup "mnd").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "mnd").map (fromWALS98A ·.value) =
     some mandarin.npAlignment := by native_decide
 theorem turkish_ch98 :
-    (Core.WALS.F98A.lookup "tur").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "tur").map (fromWALS98A ·.value) =
     some turkish.npAlignment := by native_decide
 theorem german_ch98 :
-    (Core.WALS.F98A.lookup "ger").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "ger").map (fromWALS98A ·.value) =
     some german.npAlignment := by native_decide
 theorem swahili_ch98 :
-    (Core.WALS.F98A.lookup "swa").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "swa").map (fromWALS98A ·.value) =
     some swahili.npAlignment := by native_decide
 theorem tagalog_ch98 :
-    (Core.WALS.F98A.lookup "tag").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "tag").map (fromWALS98A ·.value) =
     some tagalog.npAlignment := by native_decide
 theorem nezPerce_ch98 :
-    (Core.WALS.F98A.lookup "nez").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "nez").map (fromWALS98A ·.value) =
     some nezPerce.npAlignment := by native_decide
 theorem finnish_ch98 :
-    (Core.WALS.F98A.lookup "fin").map (fromWALS98A ·.value) =
+    (Datasets.WALS.F98A.lookup "fin").map (fromWALS98A ·.value) =
     some finnish.npAlignment := by native_decide
 
 -- ============================================================================
@@ -913,34 +913,34 @@ theorem finnish_ch98 :
 -- ============================================================================
 
 theorem english_ch99 :
-    (Core.WALS.F99A.lookup "eng").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "eng").map (fromWALS99A ·.value) =
     some english.pronAlignment := by native_decide
 theorem japanese_ch99 :
-    (Core.WALS.F99A.lookup "jpn").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "jpn").map (fromWALS99A ·.value) =
     some japanese.pronAlignment := by native_decide
 theorem russian_ch99 :
-    (Core.WALS.F99A.lookup "rus").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "rus").map (fromWALS99A ·.value) =
     some russian.pronAlignment := by native_decide
 theorem mandarin_ch99 :
-    (Core.WALS.F99A.lookup "mnd").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "mnd").map (fromWALS99A ·.value) =
     some mandarin.pronAlignment := by native_decide
 theorem turkish_ch99 :
-    (Core.WALS.F99A.lookup "tur").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "tur").map (fromWALS99A ·.value) =
     some turkish.pronAlignment := by native_decide
 theorem german_ch99 :
-    (Core.WALS.F99A.lookup "ger").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "ger").map (fromWALS99A ·.value) =
     some german.pronAlignment := by native_decide
 theorem swahili_ch99 :
-    (Core.WALS.F99A.lookup "swa").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "swa").map (fromWALS99A ·.value) =
     some swahili.pronAlignment := by native_decide
 theorem tagalog_ch99 :
-    (Core.WALS.F99A.lookup "tag").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "tag").map (fromWALS99A ·.value) =
     some tagalog.pronAlignment := by native_decide
 theorem nezPerce_ch99 :
-    (Core.WALS.F99A.lookup "nez").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "nez").map (fromWALS99A ·.value) =
     some nezPerce.pronAlignment := by native_decide
 theorem finnish_ch99 :
-    (Core.WALS.F99A.lookup "fin").map (fromWALS99A ·.value) =
+    (Datasets.WALS.F99A.lookup "fin").map (fromWALS99A ·.value) =
     some finnish.pronAlignment := by native_decide
 
 -- ============================================================================
@@ -949,34 +949,34 @@ theorem finnish_ch99 :
 -- ============================================================================
 
 theorem english_ch100 :
-    (Core.WALS.F100A.lookup "eng").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "eng").bind (fromWALS100A ·.value) =
     some english.verbAlignment := by native_decide
 theorem russian_ch100 :
-    (Core.WALS.F100A.lookup "rus").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "rus").bind (fromWALS100A ·.value) =
     some russian.verbAlignment := by native_decide
 theorem mandarin_ch100 :
-    (Core.WALS.F100A.lookup "mnd").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "mnd").bind (fromWALS100A ·.value) =
     some mandarin.verbAlignment := by native_decide
 theorem turkish_ch100 :
-    (Core.WALS.F100A.lookup "tur").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "tur").bind (fromWALS100A ·.value) =
     some turkish.verbAlignment := by native_decide
 theorem german_ch100 :
-    (Core.WALS.F100A.lookup "ger").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "ger").bind (fromWALS100A ·.value) =
     some german.verbAlignment := by native_decide
 theorem swahili_ch100 :
-    (Core.WALS.F100A.lookup "swa").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "swa").bind (fromWALS100A ·.value) =
     some swahili.verbAlignment := by native_decide
 theorem tagalog_ch100 :
-    (Core.WALS.F100A.lookup "tag").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "tag").bind (fromWALS100A ·.value) =
     some tagalog.verbAlignment := by native_decide
 theorem basque_ch100 :
-    (Core.WALS.F100A.lookup "bsq").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "bsq").bind (fromWALS100A ·.value) =
     some basque.verbAlignment := by native_decide
 theorem finnish_ch100 :
-    (Core.WALS.F100A.lookup "fin").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "fin").bind (fromWALS100A ·.value) =
     some finnish.verbAlignment := by native_decide
 theorem japanese_ch100 :
-    (Core.WALS.F100A.lookup "jpn").bind (fromWALS100A ·.value) =
+    (Datasets.WALS.F100A.lookup "jpn").bind (fromWALS100A ·.value) =
     some japanese.verbAlignment := by native_decide
 
 -- ============================================================================

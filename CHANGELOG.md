@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.205] - 2026-04-22
+
+### Restructured — promoted `Core/WALS/` to top-level `Linglib/Datasets/WALS/`
+
+Continues the substance/substrate split started in 0.230.203 / 0.230.204.
+WALS (World Atlas of Language Structures, 194 files of CLDF-derived
+typological data, ~25k LOC) is a *dataset*, not framework-agnostic
+infrastructure — it doesn't belong in `Core/` and isn't `Features/`
+either. Mathlib precedent: datasets and reference data live at
+top-level under their own bucket (cf. `Mathlib/Data/`). The 194 files
+are auto-generated from CLDF data via `scripts/gen_wals.py` and have a
+clear lineage; they're vocabulary in the descriptive-typology sense
+but they're *data*, not theory.
+
+**Mechanical execution**: `git mv Linglib/Core/WALS Linglib/Datasets/WALS`
+(single directory move — git tracks the rename atomically); perl
+substitution of `Core.WALS` → `Datasets.WALS` and `Core/WALS` →
+`Datasets/WALS` across all `.lean` files; `Linglib.lean` import paths
+updated; `scripts/gen_wals.py` updated to write new files at the
+new path. 194 file renames + ~40 consumer-side import/namespace
+updates. Build is clean modulo the same 7 pre-existing /
+parallel-session failures from 0.230.204.
+
+**Top-level structure now reads**:
+```
+Theories/, Phenomena/, Fragments/, Paradigms/   <-- substance
+Features/, Core/, Datasets/, Tactics/           <-- substrate
+```
+The substance/substrate split is now visually obvious. `Core/`
+shrinks dramatically (was ~63 top-level files + 30 subdirs; WALS was
+the largest subdirectory at 194 files). Subsequent slices: dissolve
+the MOVE-PHENOMENA tier (8 files: ExtractionMorphology, PolarityPartition,
+SearchEfficiency, SubjectProperties, VoiceSystem, SocialMeaning,
+Negation, NullSubject) into `Phenomena/`; resolve subdir-clash files
+(Mood / Modality / Question / Time / Lexical); identify the rest of
+`Core/` as STAY-CORE (eventually maybe `Foundation/`).
+
 ## [0.230.204] - 2026-04-22
 
 ### Restructured — `Features/` slice 2: 7 more taxonomy files moved from `Core/`

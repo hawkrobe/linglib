@@ -1,0 +1,421 @@
+import Linglib.Datasets.WALS.Datapoint
+
+/-!
+# WALS Feature 100A: Alignment of Verbal Person Marking
+@cite{siewierska-2013b}
+
+Auto-generated from WALS v2020.4 CLDF data.
+**Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 100A`.
+
+Chapter 100, 380 languages.
+-/
+
+namespace Datasets.WALS.F100A
+
+/-- WALS 100A values. -/
+inductive VerbalPersonAlignment where
+  /-- Neutral (84 languages). -/
+  | neutral
+  /-- Accusative (212 languages). -/
+  | accusative
+  /-- Ergative (19 languages). -/
+  | ergative
+  /-- Active (26 languages). -/
+  | active
+  /-- Hierarchical (11 languages). -/
+  | hierarchical
+  /-- Split (28 languages). -/
+  | split
+  deriving DecidableEq, BEq, Repr
+
+/-- Complete WALS 100A dataset (380 languages). -/
+def allData : List (Datapoint VerbalPersonAlignment) :=
+  [ { walsCode := "ani", iso := "hnh", value := .accusative }
+  , { walsCode := "abi", iso := "axb", value := .accusative }
+  , { walsCode := "abk", iso := "abk", value := .ergative }
+  , { walsCode := "abu", iso := "kgr", value := .neutral }
+  , { walsCode := "ace", iso := "ace", value := .active }
+  , { walsCode := "acm", iso := "acv", value := .accusative }
+  , { walsCode := "aco", iso := "kjq", value := .active }
+  , { walsCode := "adz", iso := "adz", value := .neutral }
+  , { walsCode := "ain", iso := "ain", value := .split }
+  , { walsCode := "ala", iso := "amp", value := .accusative }
+  , { walsCode := "alb", iso := "sqi", value := .accusative }
+  , { walsCode := "ame", iso := "aey", value := .accusative }
+  , { walsCode := "amh", iso := "amh", value := .accusative }
+  , { walsCode := "amu", iso := "ame", value := .active }
+  , { walsCode := "anj", iso := "aty", value := .accusative }
+  , { walsCode := "ane", iso := "anz", value := .accusative }
+  , { walsCode := "apu", iso := "apu", value := .active }
+  , { walsCode := "abn", iso := "ard", value := .neutral }
+  , { walsCode := "aeg", iso := "arz", value := .accusative }
+  , { walsCode := "ana", iso := "aro", value := .neutral }
+  , { walsCode := "arp", iso := "ape", value := .active }
+  , { walsCode := "arm", iso := "hye", value := .accusative }
+  , { walsCode := "asm", iso := "cns", value := .accusative }
+  , { walsCode := "atk", iso := "aqp", value := .split }
+  , { walsCode := "ata", iso := "tay", value := .ergative }
+  , { walsCode := "au", iso := "avt", value := .accusative }
+  , { walsCode := "awp", iso := "kwi", value := .hierarchical }
+  , { walsCode := "awt", iso := "kmn", value := .neutral }
+  , { walsCode := "aym", iso := "ayr", value := .hierarchical }
+  , { walsCode := "bab", iso := "bav", value := .neutral }
+  , { walsCode := "bag", iso := "bmi", value := .accusative }
+  , { walsCode := "bam", iso := "bam", value := .neutral }
+  , { walsCode := "bnj", iso := "bdy", value := .neutral }
+  , { walsCode := "baa", iso := "bbb", value := .accusative }
+  , { walsCode := "brs", iso := "bsn", value := .accusative }
+  , { walsCode := "bar", iso := "bfa", value := .neutral }
+  , { walsCode := "bsq", iso := "eus", value := .ergative }
+  , { walsCode := "bkr", iso := "btx", value := .accusative }
+  , { walsCode := "baw", iso := "bgr", value := .accusative }
+  , { walsCode := "bej", iso := "bej", value := .accusative }
+  , { walsCode := "bma", iso := "tzm", value := .accusative }
+  , { walsCode := "ber", iso := "wti", value := .accusative }
+  , { walsCode := "bln", iso := "byn", value := .accusative }
+  , { walsCode := "brr", iso := "bor", value := .accusative }
+  , { walsCode := "brh", iso := "brh", value := .accusative }
+  , { walsCode := "bri", iso := "bzd", value := .neutral }
+  , { walsCode := "bro", iso := "tcs", value := .neutral }
+  , { walsCode := "brm", iso := "mya", value := .neutral }
+  , { walsCode := "brn", iso := "bds", value := .accusative }
+  , { walsCode := "bur", iso := "bsk", value := .split }
+  , { walsCode := "bya", iso := "bee", value := .accusative }
+  , { walsCode := "cah", iso := "chl", value := .accusative }
+  , { walsCode := "cax", iso := "", value := .active }
+  , { walsCode := "can", iso := "cbu", value := .accusative }
+  , { walsCode := "cnl", iso := "ram", value := .ergative }
+  , { walsCode := "cap", iso := "kaq", value := .accusative }
+  , { walsCode := "car", iso := "car", value := .ergative }
+  , { walsCode := "cav", iso := "cav", value := .ergative }
+  , { walsCode := "cyv", iso := "cyb", value := .split }
+  , { walsCode := "cha", iso := "cha", value := .ergative }
+  , { walsCode := "cpn", iso := "cdm", value := .hierarchical }
+  , { walsCode := "cle", iso := "cle", value := .accusative }
+  , { walsCode := "cku", iso := "wac", value := .split }
+  , { walsCode := "chr", iso := "crw", value := .neutral }
+  , { walsCode := "chk", iso := "ckt", value := .split }
+  , { walsCode := "cba", iso := "boi", value := .accusative }
+  , { walsCode := "cbo", iso := "cao", value := .accusative }
+  , { walsCode := "cmn", iso := "com", value := .accusative }
+  , { walsCode := "cmx", iso := "coo", value := .accusative }
+  , { walsCode := "coo", iso := "csz", value := .accusative }
+  , { walsCode := "cop", iso := "cop", value := .accusative }
+  , { walsCode := "cor", iso := "crn", value := .accusative }
+  , { walsCode := "cre", iso := "crk", value := .hierarchical }
+  , { walsCode := "cri", iso := "crh", value := .accusative }
+  , { walsCode := "cub", iso := "cub", value := .accusative }
+  , { walsCode := "dag", iso := "dgz", value := .accusative }
+  , { walsCode := "dga", iso := "dga", value := .neutral }
+  , { walsCode := "dgr", iso := "dta", value := .accusative }
+  , { walsCode := "dni", iso := "dni", value := .accusative }
+  , { walsCode := "dio", iso := "dyo", value := .accusative }
+  , { walsCode := "diz", iso := "mdx", value := .accusative }
+  , { walsCode := "don", iso := "kmc", value := .neutral }
+  , { walsCode := "doy", iso := "dow", value := .accusative }
+  , { walsCode := "dre", iso := "dhv", value := .neutral }
+  , { walsCode := "dum", iso := "vam", value := .accusative }
+  , { walsCode := "dut", iso := "nld", value := .accusative }
+  , { walsCode := "eka", iso := "ekg", value := .accusative }
+  , { walsCode := "eng", iso := "eng", value := .accusative }
+  , { walsCode := "epe", iso := "sja", value := .neutral }
+  , { walsCode := "err", iso := "erg", value := .accusative }
+  , { walsCode := "eve", iso := "evn", value := .accusative }
+  , { walsCode := "ewe", iso := "ewe", value := .accusative }
+  , { walsCode := "fij", iso := "fij", value := .accusative }
+  , { walsCode := "fin", iso := "fin", value := .accusative }
+  , { walsCode := "fre", iso := "fra", value := .accusative }
+  , { walsCode := "fua", iso := "fub", value := .accusative }
+  , { walsCode := "fur", iso := "fvr", value := .accusative }
+  , { walsCode := "gar", iso := "grt", value := .neutral }
+  , { walsCode := "geo", iso := "kat", value := .accusative }
+  , { walsCode := "ger", iso := "deu", value := .accusative }
+  , { walsCode := "god", iso := "gdo", value := .neutral }
+  , { walsCode := "goo", iso := "gni", value := .accusative }
+  , { walsCode := "grb", iso := "grj", value := .neutral }
+  , { walsCode := "grk", iso := "ell", value := .accusative }
+  , { walsCode := "grw", iso := "kal", value := .accusative }
+  , { walsCode := "gua", iso := "gug", value := .active }
+  , { walsCode := "gud", iso := "gde", value := .neutral }
+  , { walsCode := "gmw", iso := "gvs", value := .accusative }
+  , { walsCode := "guu", iso := "kky", value := .neutral }
+  , { walsCode := "hai", iso := "hai", value := .neutral }
+  , { walsCode := "hlu", iso := "hur", value := .split }
+  , { walsCode := "hmr", iso := "amf", value := .neutral }
+  , { walsCode := "ham", iso := "hmt", value := .accusative }
+  , { walsCode := "hat", iso := "had", value := .accusative }
+  , { walsCode := "hau", iso := "hau", value := .neutral }
+  , { walsCode := "heb", iso := "heb", value := .accusative }
+  , { walsCode := "hin", iso := "hin", value := .accusative }
+  , { walsCode := "hix", iso := "hix", value := .split }
+  , { walsCode := "hmo", iso := "hnj", value := .neutral }
+  , { walsCode := "hua", iso := "ygr", value := .accusative }
+  , { walsCode := "hmu", iso := "hux", value := .accusative }
+  , { walsCode := "hun", iso := "hun", value := .accusative }
+  , { walsCode := "hzb", iso := "huz", value := .accusative }
+  , { walsCode := "igb", iso := "ibo", value := .neutral }
+  , { walsCode := "ijo", iso := "ijc", value := .accusative }
+  , { walsCode := "ika", iso := "arh", value := .active }
+  , { walsCode := "imo", iso := "imn", value := .neutral }
+  , { walsCode := "ind", iso := "ind", value := .accusative }
+  , { walsCode := "ing", iso := "inh", value := .neutral }
+  , { walsCode := "iqu", iso := "iqu", value := .accusative }
+  , { walsCode := "irq", iso := "irk", value := .accusative }
+  , { walsCode := "iri", iso := "gle", value := .accusative }
+  , { walsCode := "ita", iso := "ita", value := .accusative }
+  , { walsCode := "jak", iso := "jac", value := .ergative }
+  , { walsCode := "jpn", iso := "jpn", value := .neutral }
+  , { walsCode := "jaq", iso := "jqr", value := .accusative }
+  , { walsCode := "juh", iso := "ktz", value := .neutral }
+  , { walsCode := "kgu", iso := "ktg", value := .accusative }
+  , { walsCode := "knd", iso := "kan", value := .accusative }
+  , { walsCode := "knr", iso := "knc", value := .accusative }
+  , { walsCode := "kpm", iso := "pam", value := .ergative }
+  , { walsCode := "kna", iso := "ktn", value := .ergative }
+  , { walsCode := "krk", iso := "kyh", value := .hierarchical }
+  , { walsCode := "kas", iso := "kas", value := .split }
+  , { walsCode := "ktl", iso := "kcr", value := .accusative }
+  , { walsCode := "kws", iso := "xaw", value := .hierarchical }
+  , { walsCode := "kyl", iso := "eky", value := .neutral }
+  , { walsCode := "kay", iso := "gyd", value := .neutral }
+  , { walsCode := "ker", iso := "ker", value := .accusative }
+  , { walsCode := "ket", iso := "ket", value := .active }
+  , { walsCode := "kew", iso := "kew", value := .active }
+  , { walsCode := "kha", iso := "khk", value := .neutral }
+  , { walsCode := "khs", iso := "kha", value := .accusative }
+  , { walsCode := "khm", iso := "khm", value := .neutral }
+  , { walsCode := "kmu", iso := "kjg", value := .neutral }
+  , { walsCode := "klv", iso := "kij", value := .accusative }
+  , { walsCode := "kio", iso := "kio", value := .hierarchical }
+  , { walsCode := "krb", iso := "gil", value := .accusative }
+  , { walsCode := "kis", iso := "kss", value := .accusative }
+  , { walsCode := "koa", iso := "cku", value := .active }
+  , { walsCode := "kob", iso := "kpw", value := .accusative }
+  , { walsCode := "klk", iso := "xuo", value := .neutral }
+  , { walsCode := "kom", iso := "xom", value := .accusative }
+  , { walsCode := "kon", iso := "kng", value := .accusative }
+  , { walsCode := "kjo", iso := "kjc", value := .ergative }
+  , { walsCode := "kor", iso := "kor", value := .neutral }
+  , { walsCode := "kfe", iso := "kfz", value := .accusative }
+  , { walsCode := "kos", iso := "kos", value := .accusative }
+  , { walsCode := "kch", iso := "khq", value := .neutral }
+  , { walsCode := "kse", iso := "ses", value := .neutral }
+  , { walsCode := "kro", iso := "kgo", value := .neutral }
+  , { walsCode := "kuk", iso := "bfa", value := .neutral }
+  , { walsCode := "knm", iso := "kun", value := .accusative }
+  , { walsCode := "krd", iso := "ckb", value := .accusative }
+  , { walsCode := "kut", iso := "kut", value := .accusative }
+  , { walsCode := "kwz", iso := "xwa", value := .accusative }
+  , { walsCode := "lad", iso := "lbj", value := .neutral }
+  , { walsCode := "lah", iso := "lhu", value := .neutral }
+  , { walsCode := "lak", iso := "lbe", value := .ergative }
+  , { walsCode := "lkt", iso := "lkt", value := .active }
+  , { walsCode := "lan", iso := "laj", value := .accusative }
+  , { walsCode := "lrk", iso := "alo", value := .active }
+  , { walsCode := "lat", iso := "lav", value := .accusative }
+  , { walsCode := "lav", iso := "lvk", value := .accusative }
+  , { walsCode := "lel", iso := "lln", value := .accusative }
+  , { walsCode := "lep", iso := "lep", value := .neutral }
+  , { walsCode := "lez", iso := "lez", value := .neutral }
+  , { walsCode := "lim", iso := "lif", value := .hierarchical }
+  , { walsCode := "ara", iso := "arw", value := .active }
+  , { walsCode := "kkv", iso := "khl", value := .accusative }
+  , { walsCode := "luv", iso := "lue", value := .accusative }
+  , { walsCode := "mle", iso := "mdy", value := .neutral }
+  , { walsCode := "mab", iso := "mde", value := .accusative }
+  , { walsCode := "mac", iso := "mbc", value := .ergative }
+  , { walsCode := "mne", iso := "nmu", value := .accusative }
+  , { walsCode := "msn", iso := "mbq", value := .accusative }
+  , { walsCode := "mak", iso := "myh", value := .accusative }
+  , { walsCode := "mal", iso := "plt", value := .neutral }
+  , { walsCode := "mlk", iso := "mpb", value := .accusative }
+  , { walsCode := "mnd", iso := "cmn", value := .neutral }
+  , { walsCode := "myi", iso := "mpc", value := .accusative }
+  , { walsCode := "mao", iso := "mri", value := .neutral }
+  , { walsCode := "map", iso := "arn", value := .hierarchical }
+  , { walsCode := "mku", iso := "zmr", value := .accusative }
+  , { walsCode := "mar", iso := "mrc", value := .accusative }
+  , { walsCode := "mrd", iso := "mrz", value := .accusative }
+  , { walsCode := "mrt", iso := "vma", value := .neutral }
+  , { walsCode := "msl", iso := "mls", value := .accusative }
+  , { walsCode := "mau", iso := "mph", value := .accusative }
+  , { walsCode := "mcr", iso := "mfe", value := .neutral }
+  , { walsCode := "may", iso := "ayz", value := .accusative }
+  , { walsCode := "mby", iso := "myb", value := .accusative }
+  , { walsCode := "mei", iso := "mni", value := .neutral }
+  , { walsCode := "mde", iso := "men", value := .neutral }
+  , { walsCode := "mis", iso := "miq", value := .accusative }
+  , { walsCode := "mss", iso := "skd", value := .accusative }
+  , { walsCode := "mxc", iso := "mig", value := .accusative }
+  , { walsCode := "miz", iso := "lus", value := .split }
+  , { walsCode := "mlm", iso := "mra", value := .neutral }
+  , { walsCode := "moh", iso := "moh", value := .active }
+  , { walsCode := "moa", iso := "mte", value := .accusative }
+  , { walsCode := "mum", iso := "mzm", value := .neutral }
+  , { walsCode := "mna", iso := "mnb", value := .accusative }
+  , { walsCode := "mun", iso := "unr", value := .accusative }
+  , { walsCode := "mup", iso := "sur", value := .accusative }
+  , { walsCode := "mrl", iso := "mur", value := .accusative }
+  , { walsCode := "nad", iso := "mbj", value := .ergative }
+  , { walsCode := "nht", iso := "nhg", value := .accusative }
+  , { walsCode := "nak", iso := "nak", value := .accusative }
+  , { walsCode := "kho", iso := "naq", value := .accusative }
+  , { walsCode := "nmb", iso := "nab", value := .accusative }
+  , { walsCode := "nai", iso := "gld", value := .accusative }
+  , { walsCode := "nan", iso := "niq", value := .accusative }
+  , { walsCode := "nas", iso := "nas", value := .active }
+  , { walsCode := "nav", iso := "nav", value := .accusative }
+  , { walsCode := "ndo", iso := "ndo", value := .accusative }
+  , { walsCode := "ndy", iso := "djk", value := .neutral }
+  , { walsCode := "ntu", iso := "yrk", value := .accusative }
+  , { walsCode := "nez", iso := "nez", value := .split }
+  , { walsCode := "ngl", iso := "nig", value := .split }
+  , { walsCode := "ngk", iso := "nam", value := .accusative }
+  , { walsCode := "nti", iso := "niy", value := .accusative }
+  , { walsCode := "ngi", iso := "wyb", value := .split }
+  , { walsCode := "nbr", iso := "gym", value := .neutral }
+  , { walsCode := "niv", iso := "niv", value := .neutral }
+  , { walsCode := "nko", iso := "cgg", value := .accusative }
+  , { walsCode := "noo", iso := "snf", value := .accusative }
+  , { walsCode := "nbd", iso := "dgl", value := .accusative }
+  , { walsCode := "nug", iso := "nuy", value := .hierarchical }
+  , { walsCode := "nup", iso := "nup", value := .neutral }
+  , { walsCode := "nuu", iso := "nuk", value := .accusative }
+  , { walsCode := "nyu", iso := "nyv", value := .accusative }
+  , { walsCode := "ond", iso := "one", value := .active }
+  , { walsCode := "orh", iso := "hae", value := .accusative }
+  , { walsCode := "oss", iso := "oss", value := .accusative }
+  , { walsCode := "otm", iso := "ote", value := .accusative }
+  , { walsCode := "pms", iso := "pma", value := .accusative }
+  , { walsCode := "pai", iso := "pwn", value := .neutral }
+  , { walsCode := "pal", iso := "pau", value := .accusative }
+  , { walsCode := "plk", iso := "plu", value := .accusative }
+  , { walsCode := "pny", iso := "pnw", value := .accusative }
+  , { walsCode := "psm", iso := "pqm", value := .hierarchical }
+  , { walsCode := "pau", iso := "pad", value := .split }
+  , { walsCode := "pec", iso := "pay", value := .accusative }
+  , { walsCode := "prs", iso := "pes", value := .accusative }
+  , { walsCode := "pip", iso := "ppl", value := .accusative }
+  , { walsCode := "prh", iso := "myp", value := .accusative }
+  , { walsCode := "pit", iso := "pjt", value := .accusative }
+  , { walsCode := "pol", iso := "pol", value := .accusative }
+  , { walsCode := "pso", iso := "pom", value := .neutral }
+  , { walsCode := "psj", iso := "poe", value := .split }
+  , { walsCode := "pur", iso := "tsz", value := .accusative }
+  , { walsCode := "par", iso := "lkr", value := .ergative }
+  , { walsCode := "qaw", iso := "alc", value := .neutral }
+  , { walsCode := "qim", iso := "qvi", value := .accusative }
+  , { walsCode := "qui", iso := "qui", value := .accusative }
+  , { walsCode := "ram", iso := "rma", value := .accusative }
+  , { walsCode := "rap", iso := "rap", value := .neutral }
+  , { walsCode := "rem", iso := "bfw", value := .accusative }
+  , { walsCode := "ret", iso := "tnc", value := .accusative }
+  , { walsCode := "rus", iso := "rus", value := .accusative }
+  , { walsCode := "sah", iso := "saj", value := .accusative }
+  , { walsCode := "sal", iso := "sln", value := .accusative }
+  , { walsCode := "syu", iso := "sll", value := .accusative }
+  , { walsCode := "sam", iso := "smo", value := .neutral }
+  , { walsCode := "san", iso := "sag", value := .neutral }
+  , { walsCode := "snm", iso := "xsu", value := .neutral }
+  , { walsCode := "srm", iso := "srm", value := .neutral }
+  , { walsCode := "saw", iso := "hvn", value := .neutral }
+  , { walsCode := "slp", iso := "spl", value := .accusative }
+  , { walsCode := "sel", iso := "ona", value := .accusative }
+  , { walsCode := "sem", iso := "nsm", value := .accusative }
+  , { walsCode := "sml", iso := "sza", value := .split }
+  , { walsCode := "snt", iso := "set", value := .accusative }
+  , { walsCode := "shk", iso := "shp", value := .neutral }
+  , { walsCode := "siu", iso := "sis", value := .accusative }
+  , { walsCode := "sla", iso := "den", value := .accusative }
+  , { walsCode := "so", iso := "teu", value := .accusative }
+  , { walsCode := "spa", iso := "spa", value := .accusative }
+  , { walsCode := "squ", iso := "squ", value := .accusative }
+  , { walsCode := "sue", iso := "sue", value := .accusative }
+  , { walsCode := "sun", iso := "sun", value := .neutral }
+  , { walsCode := "sup", iso := "spp", value := .neutral }
+  , { walsCode := "swa", iso := "swh", value := .accusative }
+  , { walsCode := "tab", iso := "mky", value := .active }
+  , { walsCode := "tag", iso := "tgl", value := .neutral }
+  , { walsCode := "tap", iso := "gpn", value := .split }
+  , { walsCode := "tkl", iso := "tkm", value := .accusative }
+  , { walsCode := "tau", iso := "tya", value := .accusative }
+  , { walsCode := "taw", iso := "tbo", value := .accusative }
+  , { walsCode := "tmr", iso := "tea", value := .accusative }
+  , { walsCode := "tpn", iso := "ntp", value := .accusative }
+  , { walsCode := "trb", iso := "tfr", value := .split }
+  , { walsCode := "tha", iso := "tha", value := .neutral }
+  , { walsCode := "tid", iso := "tvo", value := .accusative }
+  , { walsCode := "tgk", iso := "tgc", value := .accusative }
+  , { walsCode := "tja", iso := "dih", value := .accusative }
+  , { walsCode := "tin", iso := "cir", value := .accusative }
+  , { walsCode := "tir", iso := "tri", value := .split }
+  , { walsCode := "tiw", iso := "tiw", value := .accusative }
+  , { walsCode := "tli", iso := "tli", value := .active }
+  , { walsCode := "tol", iso := "jic", value := .accusative }
+  , { walsCode := "tla", iso := "ksd", value := .accusative }
+  , { walsCode := "tms", iso := "dto", value := .accusative }
+  , { walsCode := "ton", iso := "tqw", value := .active }
+  , { walsCode := "tot", iso := "tlc", value := .accusative }
+  , { walsCode := "tri", iso := "trc", value := .accusative }
+  , { walsCode := "tru", iso := "tpy", value := .ergative }
+  , { walsCode := "tsi", iso := "tsi", value := .split }
+  , { walsCode := "tso", iso := "tsu", value := .active }
+  , { walsCode := "tuk", iso := "", value := .accusative }
+  , { walsCode := "tun", iso := "tun", value := .active }
+  , { walsCode := "tna", iso := "tuv", value := .split }
+  , { walsCode := "tur", iso := "tur", value := .accusative }
+  , { walsCode := "tzu", iso := "tzj", value := .ergative }
+  , { walsCode := "udh", iso := "ude", value := .accusative }
+  , { walsCode := "uma", iso := "ppk", value := .ergative }
+  , { walsCode := "una", iso := "mtg", value := .accusative }
+  , { walsCode := "ung", iso := "ung", value := .split }
+  , { walsCode := "ura", iso := "uur", value := .accusative }
+  , { walsCode := "uhi", iso := "urf", value := .neutral }
+  , { walsCode := "urk", iso := "urb", value := .accusative }
+  , { walsCode := "usa", iso := "wnu", value := .accusative }
+  , { walsCode := "vie", iso := "vie", value := .neutral }
+  , { walsCode := "wam", iso := "wmb", value := .split }
+  , { walsCode := "wbn", iso := "wms", value := .accusative }
+  , { walsCode := "wao", iso := "auc", value := .accusative }
+  , { walsCode := "wap", iso := "wao", value := .neutral }
+  , { walsCode := "wra", iso := "wba", value := .accusative }
+  , { walsCode := "wrd", iso := "wrr", value := .accusative }
+  , { walsCode := "wrk", iso := "gae", value := .active }
+  , { walsCode := "war", iso := "pav", value := .accusative }
+  , { walsCode := "was", iso := "was", value := .split }
+  , { walsCode := "wsk", iso := "wsk", value := .accusative }
+  , { walsCode := "wel", iso := "cym", value := .accusative }
+  , { walsCode := "wma", iso := "mqs", value := .accusative }
+  , { walsCode := "wic", iso := "wic", value := .active }
+  , { walsCode := "wch", iso := "mzh", value := .accusative }
+  , { walsCode := "wik", iso := "yok", value := .neutral }
+  , { walsCode := "win", iso := "wnw", value := .accusative }
+  , { walsCode := "xok", iso := "xok", value := .neutral }
+  , { walsCode := "yag", iso := "yad", value := .active }
+  , { walsCode := "yap", iso := "yap", value := .accusative }
+  , { walsCode := "yaq", iso := "yaq", value := .neutral }
+  , { walsCode := "yaw", iso := "yva", value := .split }
+  , { walsCode := "yel", iso := "yle", value := .split }
+  , { walsCode := "yes", iso := "yss", value := .neutral }
+  , { walsCode := "yid", iso := "yii", value := .neutral }
+  , { walsCode := "yim", iso := "yee", value := .split }
+  , { walsCode := "yor", iso := "yor", value := .neutral }
+  , { walsCode := "yuc", iso := "yuc", value := .active }
+  , { walsCode := "yko", iso := "yux", value := .accusative }
+  , { walsCode := "yuk", iso := "gcd", value := .split }
+  , { walsCode := "ypk", iso := "esu", value := .ergative }
+  , { walsCode := "yur", iso := "yur", value := .accusative }
+  , { walsCode := "zan", iso := "zne", value := .accusative }
+  , { walsCode := "zsq", iso := "zab", value := .accusative }
+  , { walsCode := "zqc", iso := "zoc", value := .accusative }
+  , { walsCode := "zul", iso := "zul", value := .accusative }
+  , { walsCode := "zun", iso := "zun", value := .neutral }
+  ]
+
+/-- Look up a language by WALS code. -/
+def lookup (code : String) := Datapoint.lookup allData code
+
+/-- Look up a language by ISO 639-3 code. -/
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+
+end Datasets.WALS.F100A

@@ -52,22 +52,22 @@ namespace Phenomena.Morphology.Typology
 
 open Core.Morphology
 
-private abbrev ch20 := Core.WALS.F20A.allData
-private abbrev ch21 := Core.WALS.F21A.allData
-private abbrev ch22 := Core.WALS.F22A.allData
-private abbrev ch26 := Core.WALS.F26A.allData
-private abbrev ch27 := Core.WALS.F27A.allData
-private abbrev ch23 := Core.WALS.F23A.allData
-private abbrev ch24 := Core.WALS.F24A.allData
-private abbrev ch25a := Core.WALS.F25A.allData
-private abbrev ch25b := Core.WALS.F25B.allData
-private abbrev ch28 := Core.WALS.F28A.allData
-private abbrev ch29 := Core.WALS.F29A.allData
-private abbrev ch21b := Core.WALS.F21B.allData
-private abbrev ch62 := Core.WALS.F62A.allData
-private abbrev ch79a := Core.WALS.F79A.allData
-private abbrev ch79b := Core.WALS.F79B.allData
-private abbrev ch80 := Core.WALS.F80A.allData
+private abbrev ch20 := Datasets.WALS.F20A.allData
+private abbrev ch21 := Datasets.WALS.F21A.allData
+private abbrev ch22 := Datasets.WALS.F22A.allData
+private abbrev ch26 := Datasets.WALS.F26A.allData
+private abbrev ch27 := Datasets.WALS.F27A.allData
+private abbrev ch23 := Datasets.WALS.F23A.allData
+private abbrev ch24 := Datasets.WALS.F24A.allData
+private abbrev ch25a := Datasets.WALS.F25A.allData
+private abbrev ch25b := Datasets.WALS.F25B.allData
+private abbrev ch28 := Datasets.WALS.F28A.allData
+private abbrev ch29 := Datasets.WALS.F29A.allData
+private abbrev ch21b := Datasets.WALS.F21B.allData
+private abbrev ch62 := Datasets.WALS.F62A.allData
+private abbrev ch79a := Datasets.WALS.F79A.allData
+private abbrev ch79b := Datasets.WALS.F79B.allData
+private abbrev ch80 := Datasets.WALS.F80A.allData
 
 -- ============================================================================
 -- §1. Language Data Records
@@ -250,7 +250,7 @@ Sources:
 -- §4.1 Chapter 20: Fusion of Selected Inflectional Formatives
 -- ============================================================================
 
-open Core.WALS.F20A (FusionType) in
+open Datasets.WALS.F20A (FusionType) in
 /-- Map WALS 20A fine-grained fusion types to coarse categories.
     Mixed types are mapped by their non-concatenative component. -/
 def toFusion : FusionType → Fusion
@@ -261,30 +261,30 @@ def toFusion : FusionType → Fusion
   | .isolatingConcatenative => .concatenative
 
 -- Grounding: example languages verified against F20A data
-theorem vietnamese_isolating : Core.WALS.F20A.lookup "vie" =
+theorem vietnamese_isolating : Datasets.WALS.F20A.lookup "vie" =
     some ⟨"vie", "vie", .exclusivelyIsolating⟩ := by native_decide
-theorem indonesian_isolating : Core.WALS.F20A.lookup "ind" =
+theorem indonesian_isolating : Datasets.WALS.F20A.lookup "ind" =
     some ⟨"ind", "ind", .exclusivelyIsolating⟩ := by native_decide
-theorem turkish_concatenative : Core.WALS.F20A.lookup "tur" =
+theorem turkish_concatenative : Datasets.WALS.F20A.lookup "tur" =
     some ⟨"tur", "tur", .exclusivelyConcatenative⟩ := by native_decide
-theorem finnish_concatenative : Core.WALS.F20A.lookup "fin" =
+theorem finnish_concatenative : Datasets.WALS.F20A.lookup "fin" =
     some ⟨"fin", "fin", .exclusivelyConcatenative⟩ := by native_decide
-theorem swahili_concatenative : Core.WALS.F20A.lookup "swa" =
+theorem swahili_concatenative : Datasets.WALS.F20A.lookup "swa" =
     some ⟨"swa", "swh", .exclusivelyConcatenative⟩ := by native_decide
-theorem arabic_ablaut : Core.WALS.F20A.lookup "aeg" =
+theorem arabic_ablaut : Datasets.WALS.F20A.lookup "aeg" =
     some ⟨"aeg", "arz", .ablautConcatenative⟩ := by native_decide
-theorem hebrew_ablaut : Core.WALS.F20A.lookup "heb" =
+theorem hebrew_ablaut : Datasets.WALS.F20A.lookup "heb" =
     some ⟨"heb", "heb", .ablautConcatenative⟩ := by native_decide
 -- Note: Russian and German are exclusivelyConcatenative in WALS 20A (case formatives),
 -- despite being commonly called "fusional" in typological tradition.
-theorem russian_concatenative : Core.WALS.F20A.lookup "rus" =
+theorem russian_concatenative : Datasets.WALS.F20A.lookup "rus" =
     some ⟨"rus", "rus", .exclusivelyConcatenative⟩ := by native_decide
-theorem german_concatenative : Core.WALS.F20A.lookup "ger" =
+theorem german_concatenative : Datasets.WALS.F20A.lookup "ger" =
     some ⟨"ger", "deu", .exclusivelyConcatenative⟩ := by native_decide
 -- Note: Mandarin and Thai are isolatingConcatenative (mixed), not exclusively isolating.
-theorem mandarin_isoConcatenative : Core.WALS.F20A.lookup "mnd" =
+theorem mandarin_isoConcatenative : Datasets.WALS.F20A.lookup "mnd" =
     some ⟨"mnd", "cmn", .isolatingConcatenative⟩ := by native_decide
-theorem thai_isoConcatenative : Core.WALS.F20A.lookup "tha" =
+theorem thai_isoConcatenative : Datasets.WALS.F20A.lookup "tha" =
     some ⟨"tha", "tha", .isolatingConcatenative⟩ := by native_decide
 
 /-- A single row in a WALS distribution table: a label and a language count. -/
@@ -311,7 +311,7 @@ theorem ch20_total :
 -- §4.2 Chapter 21: Exponence of Selected Inflectional Formatives
 -- ============================================================================
 
-open Core.WALS.F21A (ExponenceType) in
+open Datasets.WALS.F21A (ExponenceType) in
 /-- Map WALS 21A fine-grained exponence types to coarse categories.
     All polyexponential subtypes (case+number, case+referentiality,
     case+TAM) map to `.polyexponential`. -/
@@ -321,17 +321,17 @@ def toExponence : ExponenceType → Exponence
   | .noCase => .noCase
 
 -- Grounding: example languages verified against F21A data
-theorem turkish_monoexp : Core.WALS.F21A.lookup "tur" =
+theorem turkish_monoexp : Datasets.WALS.F21A.lookup "tur" =
     some ⟨"tur", "tur", .monoexponentialCase⟩ := by native_decide
-theorem finnish_caseNumber : Core.WALS.F21A.lookup "fin" =
+theorem finnish_caseNumber : Datasets.WALS.F21A.lookup "fin" =
     some ⟨"fin", "fin", .caseNumber⟩ := by native_decide
-theorem german_caseNumber : Core.WALS.F21A.lookup "ger" =
+theorem german_caseNumber : Datasets.WALS.F21A.lookup "ger" =
     some ⟨"ger", "deu", .caseNumber⟩ := by native_decide
-theorem russian_caseNumber : Core.WALS.F21A.lookup "rus" =
+theorem russian_caseNumber : Datasets.WALS.F21A.lookup "rus" =
     some ⟨"rus", "rus", .caseNumber⟩ := by native_decide
-theorem english_noCase : Core.WALS.F21A.lookup "eng" =
+theorem english_noCase : Datasets.WALS.F21A.lookup "eng" =
     some ⟨"eng", "eng", .noCase⟩ := by native_decide
-theorem kayardild_caseTam : Core.WALS.F21A.lookup "kay" =
+theorem kayardild_caseTam : Datasets.WALS.F21A.lookup "kay" =
     some ⟨"kay", "gyd", .caseTam⟩ := by native_decide
 
 /-- WALS Chapter 21 distribution, derived from F21A data (@cite{bickel-nichols-2013b}). -/
@@ -350,7 +350,7 @@ theorem ch21_total :
 -- §4.3 Chapter 22: Inflectional Synthesis of the Verb
 -- ============================================================================
 
-open Core.WALS.F22A (InflectionalSynthesis) in
+open Datasets.WALS.F22A (InflectionalSynthesis) in
 /-- Map WALS 22A fine-grained categories to coarse synthesis levels.
     Boundaries align with WALS bin edges to avoid splitting categories. -/
 def toVerbSynthesis : InflectionalSynthesis → VerbSynthesis
@@ -359,21 +359,21 @@ def toVerbSynthesis : InflectionalSynthesis → VerbSynthesis
   | .categoriesPerWord8_9 | .categoriesPerWord10_11 | .categoriesPerWord12_13 => .high
 
 -- Grounding: example languages verified against F22A data
-theorem mandarin_0_1 : Core.WALS.F22A.lookup "mnd" =
+theorem mandarin_0_1 : Datasets.WALS.F22A.lookup "mnd" =
     some ⟨"mnd", "cmn", .categoryPerWord0_1⟩ := by native_decide
-theorem english_2_3 : Core.WALS.F22A.lookup "eng" =
+theorem english_2_3 : Datasets.WALS.F22A.lookup "eng" =
     some ⟨"eng", "eng", .categoriesPerWord2_3⟩ := by native_decide
-theorem thai_2_3 : Core.WALS.F22A.lookup "tha" =
+theorem thai_2_3 : Datasets.WALS.F22A.lookup "tha" =
     some ⟨"tha", "tha", .categoriesPerWord2_3⟩ := by native_decide
-theorem spanish_4_5 : Core.WALS.F22A.lookup "spa" =
+theorem spanish_4_5 : Datasets.WALS.F22A.lookup "spa" =
     some ⟨"spa", "spa", .categoriesPerWord4_5⟩ := by native_decide
-theorem russian_4_5 : Core.WALS.F22A.lookup "rus" =
+theorem russian_4_5 : Datasets.WALS.F22A.lookup "rus" =
     some ⟨"rus", "rus", .categoriesPerWord4_5⟩ := by native_decide
-theorem swahili_4_5 : Core.WALS.F22A.lookup "swa" =
+theorem swahili_4_5 : Datasets.WALS.F22A.lookup "swa" =
     some ⟨"swa", "swh", .categoriesPerWord4_5⟩ := by native_decide
-theorem georgian_8_9 : Core.WALS.F22A.lookup "geo" =
+theorem georgian_8_9 : Datasets.WALS.F22A.lookup "geo" =
     some ⟨"geo", "kat", .categoriesPerWord8_9⟩ := by native_decide
-theorem abkhaz_10_11 : Core.WALS.F22A.lookup "abk" =
+theorem abkhaz_10_11 : Datasets.WALS.F22A.lookup "abk" =
     some ⟨"abk", "abk", .categoriesPerWord10_11⟩ := by native_decide
 
 /-- WALS Chapter 22 distribution, derived from F22A data (@cite{bickel-nichols-2013c}). -/
@@ -394,7 +394,7 @@ theorem ch22_total :
 -- §4.4 Chapter 25: Locus of Marking: Whole-Language Typology
 -- ============================================================================
 
-open Core.WALS.F25A (LocusOfMarkingWholeLanguageTypology) in
+open Datasets.WALS.F25A (LocusOfMarkingWholeLanguageTypology) in
 /-- Map WALS 25A values to the 5-way `LocusOfMarking` classification. -/
 def toLocusOfMarking : LocusOfMarkingWholeLanguageTypology → LocusOfMarking
   | .headMarking => .headMarking
@@ -408,30 +408,30 @@ def toLocusOfMarking : LocusOfMarkingWholeLanguageTypology → LocusOfMarking
 -- ============================================================================
 
 -- Grounding: example languages verified against F26A data
-theorem turkish_strongSuffix : Core.WALS.F26A.lookup "tur" =
+theorem turkish_strongSuffix : Datasets.WALS.F26A.lookup "tur" =
     some ⟨"tur", "tur", .stronglySuffixing⟩ := by native_decide
-theorem japanese_strongSuffix : Core.WALS.F26A.lookup "jpn" =
+theorem japanese_strongSuffix : Datasets.WALS.F26A.lookup "jpn" =
     some ⟨"jpn", "jpn", .stronglySuffixing⟩ := by native_decide
 -- Note: Russian and German are strongly (not weakly) suffixing in WALS 26A.
-theorem russian_strongSuffix : Core.WALS.F26A.lookup "rus" =
+theorem russian_strongSuffix : Datasets.WALS.F26A.lookup "rus" =
     some ⟨"rus", "rus", .stronglySuffixing⟩ := by native_decide
-theorem german_strongSuffix : Core.WALS.F26A.lookup "ger" =
+theorem german_strongSuffix : Datasets.WALS.F26A.lookup "ger" =
     some ⟨"ger", "deu", .stronglySuffixing⟩ := by native_decide
-theorem arabic_eg_weakSuffix : Core.WALS.F26A.lookup "aeg" =
+theorem arabic_eg_weakSuffix : Datasets.WALS.F26A.lookup "aeg" =
     some ⟨"aeg", "arz", .weaklySuffixing⟩ := by native_decide
-theorem swahili_weakPrefix : Core.WALS.F26A.lookup "swa" =
+theorem swahili_weakPrefix : Datasets.WALS.F26A.lookup "swa" =
     some ⟨"swa", "swh", .weaklyPrefixing⟩ := by native_decide
-theorem navajo_strongPrefix : Core.WALS.F26A.lookup "nav" =
+theorem navajo_strongPrefix : Datasets.WALS.F26A.lookup "nav" =
     some ⟨"nav", "nav", .strongPrefixing⟩ := by native_decide
 -- Note: Thai, Tagalog, and Vietnamese are littleAffixation, not prefixing.
-theorem thai_littleAffix : Core.WALS.F26A.lookup "tha" =
+theorem thai_littleAffix : Datasets.WALS.F26A.lookup "tha" =
     some ⟨"tha", "tha", .littleAffixation⟩ := by native_decide
-theorem tagalog_littleAffix : Core.WALS.F26A.lookup "tag" =
+theorem tagalog_littleAffix : Datasets.WALS.F26A.lookup "tag" =
     some ⟨"tag", "tgl", .littleAffixation⟩ := by native_decide
-theorem vietnamese_littleAffix : Core.WALS.F26A.lookup "vie" =
+theorem vietnamese_littleAffix : Datasets.WALS.F26A.lookup "vie" =
     some ⟨"vie", "vie", .littleAffixation⟩ := by native_decide
 -- Note: Mandarin is strongly suffixing in WALS 26A (few affixes but all suffixal).
-theorem mandarin_strongSuffix : Core.WALS.F26A.lookup "mnd" =
+theorem mandarin_strongSuffix : Datasets.WALS.F26A.lookup "mnd" =
     some ⟨"mnd", "cmn", .stronglySuffixing⟩ := by native_decide
 
 /-- WALS Chapter 26 distribution, derived from F26A data (@cite{dryer-haspelmath-2013}). -/
@@ -452,17 +452,17 @@ theorem ch26_total :
 -- ============================================================================
 
 -- Grounding: example languages verified against F27A data
-theorem tagalog_fullPartial : Core.WALS.F27A.lookup "tag" =
+theorem tagalog_fullPartial : Datasets.WALS.F27A.lookup "tag" =
     some ⟨"tag", "tgl", .productiveFullAndPartialReduplication⟩ := by native_decide
-theorem swahili_fullPartial : Core.WALS.F27A.lookup "swa" =
+theorem swahili_fullPartial : Datasets.WALS.F27A.lookup "swa" =
     some ⟨"swa", "swh", .productiveFullAndPartialReduplication⟩ := by native_decide
 -- Note: Indonesian has full reduplication ONLY (not partial) in WALS 27A.
-theorem indonesian_fullOnly : Core.WALS.F27A.lookup "ind" =
+theorem indonesian_fullOnly : Datasets.WALS.F27A.lookup "ind" =
     some ⟨"ind", "ind", .fullReduplicationOnly⟩ := by native_decide
-theorem english_noRedup : Core.WALS.F27A.lookup "eng" =
+theorem english_noRedup : Datasets.WALS.F27A.lookup "eng" =
     some ⟨"eng", "eng", .noProductiveReduplication⟩ := by native_decide
 -- Note: Arabic (Egyptian) has productive reduplication in WALS 27A, not "none."
-theorem arabic_eg_fullPartial : Core.WALS.F27A.lookup "aeg" =
+theorem arabic_eg_fullPartial : Datasets.WALS.F27A.lookup "aeg" =
     some ⟨"aeg", "arz", .productiveFullAndPartialReduplication⟩ := by native_decide
 
 /-- WALS Chapter 27 distribution, derived from F27A data (@cite{rubino-2013}). -/
@@ -903,31 +903,31 @@ if WALS data changes, the corresponding theorem breaks.
 -- --------------------------------------------------------------------------
 
 theorem english_ch20 :
-    (Core.WALS.F20A.lookup "eng").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "eng").bind (fromWALS20A ·.value) =
     some englishMorph.fusion := by native_decide
 theorem japanese_ch20 :
-    (Core.WALS.F20A.lookup "jpn").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "jpn").bind (fromWALS20A ·.value) =
     some japaneseMorph.fusion := by native_decide
 theorem turkish_ch20 :
-    (Core.WALS.F20A.lookup "tur").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "tur").bind (fromWALS20A ·.value) =
     some turkishMorph.fusion := by native_decide
 theorem finnish_ch20 :
-    (Core.WALS.F20A.lookup "fin").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "fin").bind (fromWALS20A ·.value) =
     some finnishMorph.fusion := by native_decide
 theorem swahili_ch20 :
-    (Core.WALS.F20A.lookup "swa").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "swa").bind (fromWALS20A ·.value) =
     some swahiliMorph.fusion := by native_decide
 theorem hindi_ch20 :
-    (Core.WALS.F20A.lookup "hin").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "hin").bind (fromWALS20A ·.value) =
     some hindiMorph.fusion := by native_decide
 theorem tagalog_ch20 :
-    (Core.WALS.F20A.lookup "tag").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "tag").bind (fromWALS20A ·.value) =
     some tagalogMorph.fusion := by native_decide
 theorem hungarian_ch20 :
-    (Core.WALS.F20A.lookup "hun").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "hun").bind (fromWALS20A ·.value) =
     some hungarianMorph.fusion := by native_decide
 theorem korean_ch20 :
-    (Core.WALS.F20A.lookup "kor").bind (fromWALS20A ·.value) =
+    (Datasets.WALS.F20A.lookup "kor").bind (fromWALS20A ·.value) =
     some koreanMorph.fusion := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -935,37 +935,37 @@ theorem korean_ch20 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch22 :
-    (Core.WALS.F22A.lookup "eng").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "eng").map (fromWALS22A ·.value) =
     some englishMorph.verbSynthesis := by native_decide
 theorem mandarin_ch22 :
-    (Core.WALS.F22A.lookup "mnd").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "mnd").map (fromWALS22A ·.value) =
     some mandarinMorph.verbSynthesis := by native_decide
 theorem japanese_ch22 :
-    (Core.WALS.F22A.lookup "jpn").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "jpn").map (fromWALS22A ·.value) =
     some japaneseMorph.verbSynthesis := by native_decide
 theorem turkish_ch22 :
-    (Core.WALS.F22A.lookup "tur").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "tur").map (fromWALS22A ·.value) =
     some turkishMorph.verbSynthesis := by native_decide
 theorem russian_ch22 :
-    (Core.WALS.F22A.lookup "rus").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "rus").map (fromWALS22A ·.value) =
     some russianMorph.verbSynthesis := by native_decide
 theorem georgian_ch22 :
-    (Core.WALS.F22A.lookup "geo").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "geo").map (fromWALS22A ·.value) =
     some georgianMorph.verbSynthesis := by native_decide
 theorem indonesian_ch22 :
-    (Core.WALS.F22A.lookup "ind").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "ind").map (fromWALS22A ·.value) =
     some indonesianMorph.verbSynthesis := by native_decide
 theorem korean_ch22 :
-    (Core.WALS.F22A.lookup "kor").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "kor").map (fromWALS22A ·.value) =
     some koreanMorph.verbSynthesis := by native_decide
 theorem spanish_ch22 :
-    (Core.WALS.F22A.lookup "spa").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "spa").map (fromWALS22A ·.value) =
     some spanishMorph.verbSynthesis := by native_decide
 theorem hungarian_ch22 :
-    (Core.WALS.F22A.lookup "hun").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "hun").map (fromWALS22A ·.value) =
     some hungarianMorph.verbSynthesis := by native_decide
 theorem thai_ch22 :
-    (Core.WALS.F22A.lookup "tha").map (fromWALS22A ·.value) =
+    (Datasets.WALS.F22A.lookup "tha").map (fromWALS22A ·.value) =
     some thaiMorph.verbSynthesis := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -973,31 +973,31 @@ theorem thai_ch22 :
 -- --------------------------------------------------------------------------
 
 theorem japanese_ch26 :
-    (Core.WALS.F26A.lookup "jpn").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "jpn").map (fromWALS26A ·.value) =
     some japaneseMorph.prefixSuffix := by native_decide
 theorem turkish_ch26 :
-    (Core.WALS.F26A.lookup "tur").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "tur").map (fromWALS26A ·.value) =
     some turkishMorph.prefixSuffix := by native_decide
 theorem finnish_ch26 :
-    (Core.WALS.F26A.lookup "fin").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "fin").map (fromWALS26A ·.value) =
     some finnishMorph.prefixSuffix := by native_decide
 theorem swahili_ch26 :
-    (Core.WALS.F26A.lookup "swa").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "swa").map (fromWALS26A ·.value) =
     some swahiliMorph.prefixSuffix := by native_decide
 theorem hindi_ch26 :
-    (Core.WALS.F26A.lookup "hin").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "hin").map (fromWALS26A ·.value) =
     some hindiMorph.prefixSuffix := by native_decide
 theorem georgian_ch26 :
-    (Core.WALS.F26A.lookup "geo").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "geo").map (fromWALS26A ·.value) =
     some georgianMorph.prefixSuffix := by native_decide
 theorem korean_ch26 :
-    (Core.WALS.F26A.lookup "kor").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "kor").map (fromWALS26A ·.value) =
     some koreanMorph.prefixSuffix := by native_decide
 theorem hungarian_ch26 :
-    (Core.WALS.F26A.lookup "hun").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "hun").map (fromWALS26A ·.value) =
     some hungarianMorph.prefixSuffix := by native_decide
 theorem thai_ch26 :
-    (Core.WALS.F26A.lookup "tha").map (fromWALS26A ·.value) =
+    (Datasets.WALS.F26A.lookup "tha").map (fromWALS26A ·.value) =
     some thaiMorph.prefixSuffix := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1005,25 +1005,25 @@ theorem thai_ch26 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch27 :
-    (Core.WALS.F27A.lookup "eng").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "eng").map (fromWALS27A ·.value) =
     some englishMorph.reduplication := by native_decide
 theorem finnish_ch27 :
-    (Core.WALS.F27A.lookup "fin").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "fin").map (fromWALS27A ·.value) =
     some finnishMorph.reduplication := by native_decide
 theorem russian_ch27 :
-    (Core.WALS.F27A.lookup "rus").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "rus").map (fromWALS27A ·.value) =
     some russianMorph.reduplication := by native_decide
 theorem swahili_ch27 :
-    (Core.WALS.F27A.lookup "swa").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "swa").map (fromWALS27A ·.value) =
     some swahiliMorph.reduplication := by native_decide
 theorem german_ch27 :
-    (Core.WALS.F27A.lookup "ger").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "ger").map (fromWALS27A ·.value) =
     some germanMorph.reduplication := by native_decide
 theorem spanish_ch27 :
-    (Core.WALS.F27A.lookup "spa").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "spa").map (fromWALS27A ·.value) =
     some spanishMorph.reduplication := by native_decide
 theorem tagalog_ch27 :
-    (Core.WALS.F27A.lookup "tag").map (fromWALS27A ·.value) =
+    (Datasets.WALS.F27A.lookup "tag").map (fromWALS27A ·.value) =
     some tagalogMorph.reduplication := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1031,52 +1031,52 @@ theorem tagalog_ch27 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch23 :
-    (Core.WALS.F23A.lookup "eng").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "eng").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem mandarin_ch23 :
-    (Core.WALS.F23A.lookup "mnd").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "mnd").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem japanese_ch23 :
-    (Core.WALS.F23A.lookup "jpn").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "jpn").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem turkish_ch23 :
-    (Core.WALS.F23A.lookup "tur").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "tur").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem finnish_ch23 :
-    (Core.WALS.F23A.lookup "fin").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "fin").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem russian_ch23 :
-    (Core.WALS.F23A.lookup "rus").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "rus").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem swahili_ch23 :
-    (Core.WALS.F23A.lookup "swa").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "swa").map (fromWALS23A ·.value) =
     some (.headMarking : LocusClause) := by native_decide
 theorem hindi_ch23 :
-    (Core.WALS.F23A.lookup "hin").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "hin").map (fromWALS23A ·.value) =
     some (.doubleMarking : LocusClause) := by native_decide
 theorem tagalog_ch23 :
-    (Core.WALS.F23A.lookup "tag").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "tag").map (fromWALS23A ·.value) =
     some (.doubleMarking : LocusClause) := by native_decide
 theorem hungarian_ch23 :
-    (Core.WALS.F23A.lookup "hun").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "hun").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem georgian_ch23 :
-    (Core.WALS.F23A.lookup "geo").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "geo").map (fromWALS23A ·.value) =
     some (.doubleMarking : LocusClause) := by native_decide
 theorem thai_ch23 :
-    (Core.WALS.F23A.lookup "tha").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "tha").map (fromWALS23A ·.value) =
     some (.noMarking : LocusClause) := by native_decide
 theorem indonesian_ch23 :
-    (Core.WALS.F23A.lookup "ind").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "ind").map (fromWALS23A ·.value) =
     some (.noMarking : LocusClause) := by native_decide
 theorem korean_ch23 :
-    (Core.WALS.F23A.lookup "kor").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "kor").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem german_ch23 :
-    (Core.WALS.F23A.lookup "ger").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "ger").map (fromWALS23A ·.value) =
     some (.dependentMarking : LocusClause) := by native_decide
 theorem spanish_ch23 :
-    (Core.WALS.F23A.lookup "spa").map (fromWALS23A ·.value) =
+    (Datasets.WALS.F23A.lookup "spa").map (fromWALS23A ·.value) =
     some (.doubleMarking : LocusClause) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1084,52 +1084,52 @@ theorem spanish_ch23 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch24 :
-    (Core.WALS.F24A.lookup "eng").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "eng").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem mandarin_ch24 :
-    (Core.WALS.F24A.lookup "mnd").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "mnd").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem japanese_ch24 :
-    (Core.WALS.F24A.lookup "jpn").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "jpn").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem turkish_ch24 :
-    (Core.WALS.F24A.lookup "tur").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "tur").map (fromWALS24A ·.value) =
     some (.doubleMarking : LocusPossessive) := by native_decide
 theorem finnish_ch24 :
-    (Core.WALS.F24A.lookup "fin").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "fin").map (fromWALS24A ·.value) =
     some (.doubleMarking : LocusPossessive) := by native_decide
 theorem russian_ch24 :
-    (Core.WALS.F24A.lookup "rus").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "rus").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem swahili_ch24 :
-    (Core.WALS.F24A.lookup "swa").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "swa").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem hindi_ch24 :
-    (Core.WALS.F24A.lookup "hin").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "hin").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem tagalog_ch24 :
-    (Core.WALS.F24A.lookup "tag").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "tag").map (fromWALS24A ·.value) =
     some (.other : LocusPossessive) := by native_decide
 theorem hungarian_ch24 :
-    (Core.WALS.F24A.lookup "hun").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "hun").map (fromWALS24A ·.value) =
     some (.headMarking : LocusPossessive) := by native_decide
 theorem georgian_ch24 :
-    (Core.WALS.F24A.lookup "geo").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "geo").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem thai_ch24 :
-    (Core.WALS.F24A.lookup "tha").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "tha").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem indonesian_ch24 :
-    (Core.WALS.F24A.lookup "ind").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "ind").map (fromWALS24A ·.value) =
     some (.noMarking : LocusPossessive) := by native_decide
 theorem korean_ch24 :
-    (Core.WALS.F24A.lookup "kor").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "kor").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem german_ch24 :
-    (Core.WALS.F24A.lookup "ger").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "ger").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 theorem spanish_ch24 :
-    (Core.WALS.F24A.lookup "spa").map (fromWALS24A ·.value) =
+    (Datasets.WALS.F24A.lookup "spa").map (fromWALS24A ·.value) =
     some (.dependentMarking : LocusPossessive) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1137,55 +1137,55 @@ theorem spanish_ch24 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch25a :
-    (Core.WALS.F25A.lookup "eng").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "eng").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem mandarin_ch25a :
-    (Core.WALS.F25A.lookup "mnd").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "mnd").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem japanese_ch25a :
-    (Core.WALS.F25A.lookup "jpn").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "jpn").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem russian_ch25a :
-    (Core.WALS.F25A.lookup "rus").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "rus").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem korean_ch25a :
-    (Core.WALS.F25A.lookup "kor").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "kor").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem german_ch25a :
-    (Core.WALS.F25A.lookup "ger").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "ger").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
 theorem turkish_ch25a :
-    (Core.WALS.F25A.lookup "tur").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "tur").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem finnish_ch25a :
-    (Core.WALS.F25A.lookup "fin").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "fin").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem swahili_ch25a :
-    (Core.WALS.F25A.lookup "swa").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "swa").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem hindi_ch25a :
-    (Core.WALS.F25A.lookup "hin").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "hin").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem tagalog_ch25a :
-    (Core.WALS.F25A.lookup "tag").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "tag").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem hungarian_ch25a :
-    (Core.WALS.F25A.lookup "hun").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "hun").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem georgian_ch25a :
-    (Core.WALS.F25A.lookup "geo").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "geo").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem thai_ch25a :
-    (Core.WALS.F25A.lookup "tha").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "tha").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem indonesian_ch25a :
-    (Core.WALS.F25A.lookup "ind").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "ind").map (fromWALS25A ·.value) =
     some (.zeroMarking : WholeLanguageMarking) := by native_decide
 theorem spanish_ch25a :
-    (Core.WALS.F25A.lookup "spa").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "spa").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem arabic_eg_ch25a :
-    (Core.WALS.F25A.lookup "aeg").map (fromWALS25A ·.value) =
+    (Datasets.WALS.F25A.lookup "aeg").map (fromWALS25A ·.value) =
     some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1193,43 +1193,43 @@ theorem arabic_eg_ch25a :
 -- --------------------------------------------------------------------------
 
 theorem english_ch25b :
-    (Core.WALS.F25B.lookup "eng").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "eng").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem mandarin_ch25b :
-    (Core.WALS.F25B.lookup "mnd").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "mnd").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem japanese_ch25b :
-    (Core.WALS.F25B.lookup "jpn").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "jpn").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem turkish_ch25b :
-    (Core.WALS.F25B.lookup "tur").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "tur").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem finnish_ch25b :
-    (Core.WALS.F25B.lookup "fin").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "fin").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem russian_ch25b :
-    (Core.WALS.F25B.lookup "rus").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "rus").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem swahili_ch25b :
-    (Core.WALS.F25B.lookup "swa").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "swa").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem hindi_ch25b :
-    (Core.WALS.F25B.lookup "hin").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "hin").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem thai_ch25b :
-    (Core.WALS.F25B.lookup "tha").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "tha").map (fromWALS25B ·.value) =
     some (.zeroMarking : ZeroMarkingAP) := by native_decide
 theorem indonesian_ch25b :
-    (Core.WALS.F25B.lookup "ind").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "ind").map (fromWALS25B ·.value) =
     some (.zeroMarking : ZeroMarkingAP) := by native_decide
 theorem korean_ch25b :
-    (Core.WALS.F25B.lookup "kor").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "kor").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem german_ch25b :
-    (Core.WALS.F25B.lookup "ger").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "ger").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 theorem spanish_ch25b :
-    (Core.WALS.F25B.lookup "spa").map (fromWALS25B ·.value) =
+    (Datasets.WALS.F25B.lookup "spa").map (fromWALS25B ·.value) =
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1237,52 +1237,52 @@ theorem spanish_ch25b :
 -- --------------------------------------------------------------------------
 
 theorem english_ch28 :
-    (Core.WALS.F28A.lookup "eng").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "eng").map (fromWALS28A ·.value) =
     some (.coreCasesOnly : CaseSyncretism) := by native_decide
 theorem japanese_ch28 :
-    (Core.WALS.F28A.lookup "jpn").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "jpn").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem turkish_ch28 :
-    (Core.WALS.F28A.lookup "tur").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "tur").map (fromWALS28A ·.value) =
     some (.noSyncretism : CaseSyncretism) := by native_decide
 theorem finnish_ch28 :
-    (Core.WALS.F28A.lookup "fin").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "fin").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem russian_ch28 :
-    (Core.WALS.F28A.lookup "rus").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "rus").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem swahili_ch28 :
-    (Core.WALS.F28A.lookup "swa").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "swa").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem hindi_ch28 :
-    (Core.WALS.F28A.lookup "hin").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "hin").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem hungarian_ch28 :
-    (Core.WALS.F28A.lookup "hun").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "hun").map (fromWALS28A ·.value) =
     some (.noSyncretism : CaseSyncretism) := by native_decide
 theorem georgian_ch28 :
-    (Core.WALS.F28A.lookup "geo").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "geo").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem thai_ch28 :
-    (Core.WALS.F28A.lookup "tha").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "tha").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem indonesian_ch28 :
-    (Core.WALS.F28A.lookup "ind").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "ind").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem korean_ch28 :
-    (Core.WALS.F28A.lookup "kor").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "kor").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem mandarin_ch28 :
-    (Core.WALS.F28A.lookup "mnd").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "mnd").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 theorem german_ch28 :
-    (Core.WALS.F28A.lookup "ger").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "ger").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem spanish_ch28 :
-    (Core.WALS.F28A.lookup "spa").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "spa").map (fromWALS28A ·.value) =
     some (.coreAndNonCore : CaseSyncretism) := by native_decide
 theorem tagalog_ch28 :
-    (Core.WALS.F28A.lookup "tag").map (fromWALS28A ·.value) =
+    (Datasets.WALS.F28A.lookup "tag").map (fromWALS28A ·.value) =
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1290,52 +1290,52 @@ theorem tagalog_ch28 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch29 :
-    (Core.WALS.F29A.lookup "eng").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "eng").map (fromWALS29A ·.value) =
     some (.syncretic : VerbalSyncretism) := by native_decide
 theorem japanese_ch29 :
-    (Core.WALS.F29A.lookup "jpn").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "jpn").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 theorem turkish_ch29 :
-    (Core.WALS.F29A.lookup "tur").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "tur").map (fromWALS29A ·.value) =
     some (.notSyncretic : VerbalSyncretism) := by native_decide
 theorem finnish_ch29 :
-    (Core.WALS.F29A.lookup "fin").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "fin").map (fromWALS29A ·.value) =
     some (.notSyncretic : VerbalSyncretism) := by native_decide
 theorem russian_ch29 :
-    (Core.WALS.F29A.lookup "rus").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "rus").map (fromWALS29A ·.value) =
     some (.notSyncretic : VerbalSyncretism) := by native_decide
 theorem swahili_ch29 :
-    (Core.WALS.F29A.lookup "swa").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "swa").map (fromWALS29A ·.value) =
     some (.syncretic : VerbalSyncretism) := by native_decide
 theorem hindi_ch29 :
-    (Core.WALS.F29A.lookup "hin").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "hin").map (fromWALS29A ·.value) =
     some (.syncretic : VerbalSyncretism) := by native_decide
 theorem hungarian_ch29 :
-    (Core.WALS.F29A.lookup "hun").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "hun").map (fromWALS29A ·.value) =
     some (.notSyncretic : VerbalSyncretism) := by native_decide
 theorem georgian_ch29 :
-    (Core.WALS.F29A.lookup "geo").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "geo").map (fromWALS29A ·.value) =
     some (.notSyncretic : VerbalSyncretism) := by native_decide
 theorem thai_ch29 :
-    (Core.WALS.F29A.lookup "tha").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "tha").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 theorem indonesian_ch29 :
-    (Core.WALS.F29A.lookup "ind").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "ind").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 theorem korean_ch29 :
-    (Core.WALS.F29A.lookup "kor").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "kor").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 theorem mandarin_ch29 :
-    (Core.WALS.F29A.lookup "mnd").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "mnd").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 theorem german_ch29 :
-    (Core.WALS.F29A.lookup "ger").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "ger").map (fromWALS29A ·.value) =
     some (.syncretic : VerbalSyncretism) := by native_decide
 theorem spanish_ch29 :
-    (Core.WALS.F29A.lookup "spa").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "spa").map (fromWALS29A ·.value) =
     some (.syncretic : VerbalSyncretism) := by native_decide
 theorem tagalog_ch29 :
-    (Core.WALS.F29A.lookup "tag").map (fromWALS29A ·.value) =
+    (Datasets.WALS.F29A.lookup "tag").map (fromWALS29A ·.value) =
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1424,52 +1424,52 @@ theorem ch29_count_notSyncretic :
 -- --------------------------------------------------------------------------
 
 theorem english_ch21b :
-    (Core.WALS.F21B.lookup "eng").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "eng").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem mandarin_ch21b :
-    (Core.WALS.F21B.lookup "mnd").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "mnd").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem japanese_ch21b :
-    (Core.WALS.F21B.lookup "jpn").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "jpn").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem turkish_ch21b :
-    (Core.WALS.F21B.lookup "tur").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "tur").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem finnish_ch21b :
-    (Core.WALS.F21B.lookup "fin").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "fin").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem russian_ch21b :
-    (Core.WALS.F21B.lookup "rus").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "rus").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem swahili_ch21b :
-    (Core.WALS.F21B.lookup "swa").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "swa").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem hindi_ch21b :
-    (Core.WALS.F21B.lookup "hin").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "hin").map (fromWALS21B ·.value) =
     some (.tamAgreement : TAMExponence) := by native_decide
 theorem tagalog_ch21b :
-    (Core.WALS.F21B.lookup "tag").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "tag").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem hungarian_ch21b :
-    (Core.WALS.F21B.lookup "hun").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "hun").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem georgian_ch21b :
-    (Core.WALS.F21B.lookup "geo").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "geo").map (fromWALS21B ·.value) =
     some (.tamAgreement : TAMExponence) := by native_decide
 theorem thai_ch21b :
-    (Core.WALS.F21B.lookup "tha").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "tha").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem indonesian_ch21b :
-    (Core.WALS.F21B.lookup "ind").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "ind").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem korean_ch21b :
-    (Core.WALS.F21B.lookup "kor").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "kor").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem german_ch21b :
-    (Core.WALS.F21B.lookup "ger").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "ger").map (fromWALS21B ·.value) =
     some (.monoexponential : TAMExponence) := by native_decide
 theorem spanish_ch21b :
-    (Core.WALS.F21B.lookup "spa").map (fromWALS21B ·.value) =
+    (Datasets.WALS.F21B.lookup "spa").map (fromWALS21B ·.value) =
     some (.tamAgreement : TAMExponence) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1477,52 +1477,52 @@ theorem spanish_ch21b :
 -- --------------------------------------------------------------------------
 
 theorem english_ch62 :
-    (Core.WALS.F62A.lookup "eng").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "eng").map (fromWALS62A ·.value) =
     some (.mixed : ActionNominal) := by native_decide
 theorem mandarin_ch62 :
-    (Core.WALS.F62A.lookup "mnd").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "mnd").map (fromWALS62A ·.value) =
     some (.noActionNominals : ActionNominal) := by native_decide
 theorem japanese_ch62 :
-    (Core.WALS.F62A.lookup "jpn").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "jpn").map (fromWALS62A ·.value) =
     some (.doublePossessive : ActionNominal) := by native_decide
 theorem turkish_ch62 :
-    (Core.WALS.F62A.lookup "tur").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "tur").map (fromWALS62A ·.value) =
     some (.possessiveAccusative : ActionNominal) := by native_decide
 theorem finnish_ch62 :
-    (Core.WALS.F62A.lookup "fin").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "fin").map (fromWALS62A ·.value) =
     some (.doublePossessive : ActionNominal) := by native_decide
 theorem russian_ch62 :
-    (Core.WALS.F62A.lookup "rus").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "rus").map (fromWALS62A ·.value) =
     some (.ergativePossessive : ActionNominal) := by native_decide
 theorem swahili_ch62 :
-    (Core.WALS.F62A.lookup "swa").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "swa").map (fromWALS62A ·.value) =
     some (.possessiveAccusative : ActionNominal) := by native_decide
 theorem hindi_ch62 :
-    (Core.WALS.F62A.lookup "hin").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "hin").map (fromWALS62A ·.value) =
     some (.possessiveAccusative : ActionNominal) := by native_decide
 theorem tagalog_ch62 :
-    (Core.WALS.F62A.lookup "tag").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "tag").map (fromWALS62A ·.value) =
     some (.possessiveAccusative : ActionNominal) := by native_decide
 theorem hungarian_ch62 :
-    (Core.WALS.F62A.lookup "hun").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "hun").map (fromWALS62A ·.value) =
     some (.restricted : ActionNominal) := by native_decide
 theorem georgian_ch62 :
-    (Core.WALS.F62A.lookup "geo").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "geo").map (fromWALS62A ·.value) =
     some (.ergativePossessive : ActionNominal) := by native_decide
 theorem thai_ch62 :
-    (Core.WALS.F62A.lookup "tha").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "tha").map (fromWALS62A ·.value) =
     some (.mixed : ActionNominal) := by native_decide
 theorem indonesian_ch62 :
-    (Core.WALS.F62A.lookup "ind").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "ind").map (fromWALS62A ·.value) =
     some (.ergativePossessive : ActionNominal) := by native_decide
 theorem korean_ch62 :
-    (Core.WALS.F62A.lookup "kor").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "kor").map (fromWALS62A ·.value) =
     some (.sentential : ActionNominal) := by native_decide
 theorem german_ch62 :
-    (Core.WALS.F62A.lookup "ger").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "ger").map (fromWALS62A ·.value) =
     some (.ergativePossessive : ActionNominal) := by native_decide
 theorem spanish_ch62 :
-    (Core.WALS.F62A.lookup "spa").map (fromWALS62A ·.value) =
+    (Datasets.WALS.F62A.lookup "spa").map (fromWALS62A ·.value) =
     some (.ergativePossessive : ActionNominal) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1530,52 +1530,52 @@ theorem spanish_ch62 :
 -- --------------------------------------------------------------------------
 
 theorem english_ch79a :
-    (Core.WALS.F79A.lookup "eng").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "eng").map (fromWALS79A ·.value) =
     some (.tense : SuppletionTA) := by native_decide
 theorem mandarin_ch79a :
-    (Core.WALS.F79A.lookup "mnd").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "mnd").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem japanese_ch79a :
-    (Core.WALS.F79A.lookup "jpn").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "jpn").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem turkish_ch79a :
-    (Core.WALS.F79A.lookup "tur").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "tur").map (fromWALS79A ·.value) =
     some (.tense : SuppletionTA) := by native_decide
 theorem finnish_ch79a :
-    (Core.WALS.F79A.lookup "fin").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "fin").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem russian_ch79a :
-    (Core.WALS.F79A.lookup "rus").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "rus").map (fromWALS79A ·.value) =
     some (.tenseAndAspect : SuppletionTA) := by native_decide
 theorem swahili_ch79a :
-    (Core.WALS.F79A.lookup "swa").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "swa").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem hindi_ch79a :
-    (Core.WALS.F79A.lookup "hin").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "hin").map (fromWALS79A ·.value) =
     some (.tenseAndAspect : SuppletionTA) := by native_decide
 theorem tagalog_ch79a :
-    (Core.WALS.F79A.lookup "tag").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "tag").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem hungarian_ch79a :
-    (Core.WALS.F79A.lookup "hun").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "hun").map (fromWALS79A ·.value) =
     some (.tense : SuppletionTA) := by native_decide
 theorem georgian_ch79a :
-    (Core.WALS.F79A.lookup "geo").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "geo").map (fromWALS79A ·.value) =
     some (.tenseAndAspect : SuppletionTA) := by native_decide
 theorem thai_ch79a :
-    (Core.WALS.F79A.lookup "tha").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "tha").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem indonesian_ch79a :
-    (Core.WALS.F79A.lookup "ind").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "ind").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem korean_ch79a :
-    (Core.WALS.F79A.lookup "kor").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "kor").map (fromWALS79A ·.value) =
     some (.none : SuppletionTA) := by native_decide
 theorem german_ch79a :
-    (Core.WALS.F79A.lookup "ger").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "ger").map (fromWALS79A ·.value) =
     some (.tense : SuppletionTA) := by native_decide
 theorem spanish_ch79a :
-    (Core.WALS.F79A.lookup "spa").map (fromWALS79A ·.value) =
+    (Datasets.WALS.F79A.lookup "spa").map (fromWALS79A ·.value) =
     some (.tenseAndAspect : SuppletionTA) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1583,52 +1583,52 @@ theorem spanish_ch79a :
 -- --------------------------------------------------------------------------
 
 theorem english_ch79b :
-    (Core.WALS.F79B.lookup "eng").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "eng").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem mandarin_ch79b :
-    (Core.WALS.F79B.lookup "mnd").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "mnd").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem japanese_ch79b :
-    (Core.WALS.F79B.lookup "jpn").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "jpn").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem turkish_ch79b :
-    (Core.WALS.F79B.lookup "tur").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "tur").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem finnish_ch79b :
-    (Core.WALS.F79B.lookup "fin").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "fin").map (fromWALS79B ·.value) =
     some (.imperative : SuppletionImperative) := by native_decide
 theorem russian_ch79b :
-    (Core.WALS.F79B.lookup "rus").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "rus").map (fromWALS79B ·.value) =
     some (.imperative : SuppletionImperative) := by native_decide
 theorem swahili_ch79b :
-    (Core.WALS.F79B.lookup "swa").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "swa").map (fromWALS79B ·.value) =
     some (.imperative : SuppletionImperative) := by native_decide
 theorem hindi_ch79b :
-    (Core.WALS.F79B.lookup "hin").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "hin").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem tagalog_ch79b :
-    (Core.WALS.F79B.lookup "tag").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "tag").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem hungarian_ch79b :
-    (Core.WALS.F79B.lookup "hun").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "hun").map (fromWALS79B ·.value) =
     some (.alternating : SuppletionImperative) := by native_decide
 theorem georgian_ch79b :
-    (Core.WALS.F79B.lookup "geo").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "geo").map (fromWALS79B ·.value) =
     some (.imperative : SuppletionImperative) := by native_decide
 theorem thai_ch79b :
-    (Core.WALS.F79B.lookup "tha").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "tha").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem indonesian_ch79b :
-    (Core.WALS.F79B.lookup "ind").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "ind").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem korean_ch79b :
-    (Core.WALS.F79B.lookup "kor").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "kor").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem german_ch79b :
-    (Core.WALS.F79B.lookup "ger").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "ger").map (fromWALS79B ·.value) =
     some (.none : SuppletionImperative) := by native_decide
 theorem spanish_ch79b :
-    (Core.WALS.F79B.lookup "spa").map (fromWALS79B ·.value) =
+    (Datasets.WALS.F79B.lookup "spa").map (fromWALS79B ·.value) =
     some (.imperative : SuppletionImperative) := by native_decide
 
 -- --------------------------------------------------------------------------
@@ -1636,52 +1636,52 @@ theorem spanish_ch79b :
 -- --------------------------------------------------------------------------
 
 theorem english_ch80 :
-    (Core.WALS.F80A.lookup "eng").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "eng").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem mandarin_ch80 :
-    (Core.WALS.F80A.lookup "mnd").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "mnd").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem japanese_ch80 :
-    (Core.WALS.F80A.lookup "jpn").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "jpn").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem turkish_ch80 :
-    (Core.WALS.F80A.lookup "tur").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "tur").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem finnish_ch80 :
-    (Core.WALS.F80A.lookup "fin").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "fin").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem russian_ch80 :
-    (Core.WALS.F80A.lookup "rus").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "rus").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem swahili_ch80 :
-    (Core.WALS.F80A.lookup "swa").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "swa").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem hindi_ch80 :
-    (Core.WALS.F80A.lookup "hin").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "hin").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem tagalog_ch80 :
-    (Core.WALS.F80A.lookup "tag").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "tag").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem hungarian_ch80 :
-    (Core.WALS.F80A.lookup "hun").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "hun").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem georgian_ch80 :
-    (Core.WALS.F80A.lookup "geo").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "geo").map (fromWALS80A ·.value) =
     some (.pairsNoSuppletion : VerbalNumber) := by native_decide
 theorem thai_ch80 :
-    (Core.WALS.F80A.lookup "tha").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "tha").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem indonesian_ch80 :
-    (Core.WALS.F80A.lookup "ind").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "ind").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem korean_ch80 :
-    (Core.WALS.F80A.lookup "kor").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "kor").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem german_ch80 :
-    (Core.WALS.F80A.lookup "ger").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "ger").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 theorem spanish_ch80 :
-    (Core.WALS.F80A.lookup "spa").map (fromWALS80A ·.value) =
+    (Datasets.WALS.F80A.lookup "spa").map (fromWALS80A ·.value) =
     some (.none : VerbalNumber) := by native_decide
 
 -- --------------------------------------------------------------------------

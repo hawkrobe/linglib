@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.WALS.Features.F65A
-import Linglib.Core.WALS.Features.F66A
-import Linglib.Core.WALS.Features.F67A
-import Linglib.Core.WALS.Features.F68A
-import Linglib.Core.WALS.Features.F69A
+import Linglib.Datasets.WALS.Features.F65A
+import Linglib.Datasets.WALS.Features.F66A
+import Linglib.Datasets.WALS.Features.F67A
+import Linglib.Datasets.WALS.Features.F68A
+import Linglib.Datasets.WALS.Features.F69A
 
 /-!
 # Cross-Linguistic Typology of Tense and Aspect (WALS Chapters 65--69)
@@ -45,11 +45,11 @@ namespace Phenomena.TenseAspect.Typology
 -- WALS Data Abbreviations
 -- ============================================================================
 
-private abbrev ch65 := Core.WALS.F65A.allData
-private abbrev ch66 := Core.WALS.F66A.allData
-private abbrev ch67 := Core.WALS.F67A.allData
-private abbrev ch68 := Core.WALS.F68A.allData
-private abbrev ch69 := Core.WALS.F69A.allData
+private abbrev ch65 := Datasets.WALS.F65A.allData
+private abbrev ch66 := Datasets.WALS.F66A.allData
+private abbrev ch67 := Datasets.WALS.F67A.allData
+private abbrev ch68 := Datasets.WALS.F68A.allData
+private abbrev ch69 := Datasets.WALS.F69A.allData
 
 -- ============================================================================
 -- Types: WALS Chapter 65 — Perfective/Imperfective Aspect
@@ -167,31 +167,31 @@ def TAAffixPosition.hasAffixes : TAAffixPosition → Bool
 -- ============================================================================
 
 /-- Convert WALS 65A enum to local `AspectMarking`. -/
-private def fromWALS65A : Core.WALS.F65A.PerfectiveImperfective → AspectMarking
+private def fromWALS65A : Datasets.WALS.F65A.PerfectiveImperfective → AspectMarking
   | .grammaticalMarking => .grammatical
   | .noGrammaticalMarking => .none
 
 /-- Convert WALS 66A enum to local `PastMarking`. -/
-private def fromWALS66A : Core.WALS.F66A.PastTenseType → PastMarking
+private def fromWALS66A : Datasets.WALS.F66A.PastTenseType → PastMarking
   | .presentNoRemotenessDistinctions => .marked
   | .present23RemotenessDistinctions => .markedRemoteness2_3
   | .present4OrMoreRemotenessDistinctions => .markedRemoteness4plus
   | .noPastTense => .none
 
 /-- Convert WALS 67A enum to local `FutureMarking`. -/
-private def fromWALS67A : Core.WALS.F67A.FutureTenseType → FutureMarking
+private def fromWALS67A : Datasets.WALS.F67A.FutureTenseType → FutureMarking
   | .inflectionalFutureExists => .inflectional
   | .noInflectionalFuture => .none
 
 /-- Convert WALS 68A enum to local `PerfectType`. -/
-private def fromWALS68A : Core.WALS.F68A.PerfectType → PerfectType
+private def fromWALS68A : Datasets.WALS.F68A.PerfectType → PerfectType
   | .fromPossessive => .fromPossessive
   | .fromFinishAlready => .fromFinishAlready
   | .otherPerfect => .other
   | .noPerfect => .none
 
 /-- Convert WALS 69A enum to local `TAAffixPosition`. -/
-private def fromWALS69A : Core.WALS.F69A.TenseAspectAffixPosition → TAAffixPosition
+private def fromWALS69A : Datasets.WALS.F69A.TenseAspectAffixPosition → TAAffixPosition
   | .tenseAspectPrefixes => .prefixing
   | .tenseAspectSuffixes => .suffixing
   | .tenseAspectTone => .tonal
@@ -554,46 +554,46 @@ example : quechua.past = .markedRemoteness2_3 := by native_decide
 -- ============================================================================
 
 theorem russian_ch65 :
-    (Core.WALS.F65A.lookup "rus").map (fromWALS65A ·.value) = some russian.aspect := by
+    (Datasets.WALS.F65A.lookup "rus").map (fromWALS65A ·.value) = some russian.aspect := by
   native_decide
 theorem french_ch65 :
-    (Core.WALS.F65A.lookup "fre").map (fromWALS65A ·.value) = some french.aspect := by
+    (Datasets.WALS.F65A.lookup "fre").map (fromWALS65A ·.value) = some french.aspect := by
   native_decide
 theorem spanish_ch65 :
-    (Core.WALS.F65A.lookup "spa").map (fromWALS65A ·.value) = some spanish.aspect := by
+    (Datasets.WALS.F65A.lookup "spa").map (fromWALS65A ·.value) = some spanish.aspect := by
   native_decide
 theorem finnish_ch65 :
-    (Core.WALS.F65A.lookup "fin").map (fromWALS65A ·.value) = some finnish.aspect := by
+    (Datasets.WALS.F65A.lookup "fin").map (fromWALS65A ·.value) = some finnish.aspect := by
   native_decide
 theorem turkish_ch65 :
-    (Core.WALS.F65A.lookup "tur").map (fromWALS65A ·.value) = some turkish.aspect := by
+    (Datasets.WALS.F65A.lookup "tur").map (fromWALS65A ·.value) = some turkish.aspect := by
   native_decide
 theorem korean_ch65 :
-    (Core.WALS.F65A.lookup "kor").map (fromWALS65A ·.value) = some korean.aspect := by
+    (Datasets.WALS.F65A.lookup "kor").map (fromWALS65A ·.value) = some korean.aspect := by
   native_decide
 theorem mandarin_ch65 :
-    (Core.WALS.F65A.lookup "mnd").map (fromWALS65A ·.value) = some mandarin.aspect := by
+    (Datasets.WALS.F65A.lookup "mnd").map (fromWALS65A ·.value) = some mandarin.aspect := by
   native_decide
 theorem vietnamese_ch65 :
-    (Core.WALS.F65A.lookup "vie").map (fromWALS65A ·.value) = some vietnamese.aspect := by
+    (Datasets.WALS.F65A.lookup "vie").map (fromWALS65A ·.value) = some vietnamese.aspect := by
   native_decide
 theorem thai_ch65 :
-    (Core.WALS.F65A.lookup "tha").map (fromWALS65A ·.value) = some thai.aspect := by
+    (Datasets.WALS.F65A.lookup "tha").map (fromWALS65A ·.value) = some thai.aspect := by
   native_decide
 theorem indonesian_ch65 :
-    (Core.WALS.F65A.lookup "ind").map (fromWALS65A ·.value) = some indonesian.aspect := by
+    (Datasets.WALS.F65A.lookup "ind").map (fromWALS65A ·.value) = some indonesian.aspect := by
   native_decide
 theorem hindi_ch65 :
-    (Core.WALS.F65A.lookup "hin").map (fromWALS65A ·.value) = some hindi.aspect := by
+    (Datasets.WALS.F65A.lookup "hin").map (fromWALS65A ·.value) = some hindi.aspect := by
   native_decide
 theorem arabic_ch65 :
-    (Core.WALS.F65A.lookup "aeg").map (fromWALS65A ·.value) = some arabic.aspect := by
+    (Datasets.WALS.F65A.lookup "aeg").map (fromWALS65A ·.value) = some arabic.aspect := by
   native_decide
 theorem tagalog_ch65 :
-    (Core.WALS.F65A.lookup "tag").map (fromWALS65A ·.value) = some tagalog.aspect := by
+    (Datasets.WALS.F65A.lookup "tag").map (fromWALS65A ·.value) = some tagalog.aspect := by
   native_decide
 theorem lango_ch65 :
-    (Core.WALS.F65A.lookup "lan").map (fromWALS65A ·.value) = some lango.aspect := by
+    (Datasets.WALS.F65A.lookup "lan").map (fromWALS65A ·.value) = some lango.aspect := by
   native_decide
 
 -- ============================================================================
@@ -602,55 +602,55 @@ theorem lango_ch65 :
 -- ============================================================================
 
 theorem english_ch66 :
-    (Core.WALS.F66A.lookup "eng").map (fromWALS66A ·.value) = some english.past := by
+    (Datasets.WALS.F66A.lookup "eng").map (fromWALS66A ·.value) = some english.past := by
   native_decide
 theorem russian_ch66 :
-    (Core.WALS.F66A.lookup "rus").map (fromWALS66A ·.value) = some russian.past := by
+    (Datasets.WALS.F66A.lookup "rus").map (fromWALS66A ·.value) = some russian.past := by
   native_decide
 theorem french_ch66 :
-    (Core.WALS.F66A.lookup "fre").map (fromWALS66A ·.value) = some french.past := by
+    (Datasets.WALS.F66A.lookup "fre").map (fromWALS66A ·.value) = some french.past := by
   native_decide
 theorem spanish_ch66 :
-    (Core.WALS.F66A.lookup "spa").map (fromWALS66A ·.value) = some spanish.past := by
+    (Datasets.WALS.F66A.lookup "spa").map (fromWALS66A ·.value) = some spanish.past := by
   native_decide
 theorem finnish_ch66 :
-    (Core.WALS.F66A.lookup "fin").map (fromWALS66A ·.value) = some finnish.past := by
+    (Datasets.WALS.F66A.lookup "fin").map (fromWALS66A ·.value) = some finnish.past := by
   native_decide
 theorem turkish_ch66 :
-    (Core.WALS.F66A.lookup "tur").map (fromWALS66A ·.value) = some turkish.past := by
+    (Datasets.WALS.F66A.lookup "tur").map (fromWALS66A ·.value) = some turkish.past := by
   native_decide
 theorem japanese_ch66 :
-    (Core.WALS.F66A.lookup "jpn").map (fromWALS66A ·.value) = some japanese.past := by
+    (Datasets.WALS.F66A.lookup "jpn").map (fromWALS66A ·.value) = some japanese.past := by
   native_decide
 theorem korean_ch66 :
-    (Core.WALS.F66A.lookup "kor").map (fromWALS66A ·.value) = some korean.past := by
+    (Datasets.WALS.F66A.lookup "kor").map (fromWALS66A ·.value) = some korean.past := by
   native_decide
 theorem mandarin_ch66 :
-    (Core.WALS.F66A.lookup "mnd").map (fromWALS66A ·.value) = some mandarin.past := by
+    (Datasets.WALS.F66A.lookup "mnd").map (fromWALS66A ·.value) = some mandarin.past := by
   native_decide
 theorem vietnamese_ch66 :
-    (Core.WALS.F66A.lookup "vie").map (fromWALS66A ·.value) = some vietnamese.past := by
+    (Datasets.WALS.F66A.lookup "vie").map (fromWALS66A ·.value) = some vietnamese.past := by
   native_decide
 theorem thai_ch66 :
-    (Core.WALS.F66A.lookup "tha").map (fromWALS66A ·.value) = some thai.past := by
+    (Datasets.WALS.F66A.lookup "tha").map (fromWALS66A ·.value) = some thai.past := by
   native_decide
 theorem indonesian_ch66 :
-    (Core.WALS.F66A.lookup "ind").map (fromWALS66A ·.value) = some indonesian.past := by
+    (Datasets.WALS.F66A.lookup "ind").map (fromWALS66A ·.value) = some indonesian.past := by
   native_decide
 theorem swahili_ch66 :
-    (Core.WALS.F66A.lookup "swa").map (fromWALS66A ·.value) = some swahili.past := by
+    (Datasets.WALS.F66A.lookup "swa").map (fromWALS66A ·.value) = some swahili.past := by
   native_decide
 theorem yoruba_ch66 :
-    (Core.WALS.F66A.lookup "yor").map (fromWALS66A ·.value) = some yoruba.past := by
+    (Datasets.WALS.F66A.lookup "yor").map (fromWALS66A ·.value) = some yoruba.past := by
   native_decide
 theorem hindi_ch66 :
-    (Core.WALS.F66A.lookup "hin").map (fromWALS66A ·.value) = some hindi.past := by
+    (Datasets.WALS.F66A.lookup "hin").map (fromWALS66A ·.value) = some hindi.past := by
   native_decide
 theorem arabic_ch66 :
-    (Core.WALS.F66A.lookup "aeg").map (fromWALS66A ·.value) = some arabic.past := by
+    (Datasets.WALS.F66A.lookup "aeg").map (fromWALS66A ·.value) = some arabic.past := by
   native_decide
 theorem tagalog_ch66 :
-    (Core.WALS.F66A.lookup "tag").map (fromWALS66A ·.value) = some tagalog.past := by
+    (Datasets.WALS.F66A.lookup "tag").map (fromWALS66A ·.value) = some tagalog.past := by
   native_decide
 
 -- ============================================================================
@@ -662,46 +662,46 @@ theorem tagalog_ch66 :
 -- ============================================================================
 
 theorem english_ch67 :
-    (Core.WALS.F67A.lookup "eng").map (fromWALS67A ·.value) = some english.future := by
+    (Datasets.WALS.F67A.lookup "eng").map (fromWALS67A ·.value) = some english.future := by
   native_decide
 theorem russian_ch67 :
-    (Core.WALS.F67A.lookup "rus").map (fromWALS67A ·.value) = some russian.future := by
+    (Datasets.WALS.F67A.lookup "rus").map (fromWALS67A ·.value) = some russian.future := by
   native_decide
 theorem french_ch67 :
-    (Core.WALS.F67A.lookup "fre").map (fromWALS67A ·.value) = some french.future := by
+    (Datasets.WALS.F67A.lookup "fre").map (fromWALS67A ·.value) = some french.future := by
   native_decide
 theorem spanish_ch67 :
-    (Core.WALS.F67A.lookup "spa").map (fromWALS67A ·.value) = some spanish.future := by
+    (Datasets.WALS.F67A.lookup "spa").map (fromWALS67A ·.value) = some spanish.future := by
   native_decide
 theorem finnish_ch67 :
-    (Core.WALS.F67A.lookup "fin").map (fromWALS67A ·.value) = some finnish.future := by
+    (Datasets.WALS.F67A.lookup "fin").map (fromWALS67A ·.value) = some finnish.future := by
   native_decide
 theorem turkish_ch67 :
-    (Core.WALS.F67A.lookup "tur").map (fromWALS67A ·.value) = some turkish.future := by
+    (Datasets.WALS.F67A.lookup "tur").map (fromWALS67A ·.value) = some turkish.future := by
   native_decide
 theorem japanese_ch67 :
-    (Core.WALS.F67A.lookup "jpn").map (fromWALS67A ·.value) = some japanese.future := by
+    (Datasets.WALS.F67A.lookup "jpn").map (fromWALS67A ·.value) = some japanese.future := by
   native_decide
 theorem mandarin_ch67 :
-    (Core.WALS.F67A.lookup "mnd").map (fromWALS67A ·.value) = some mandarin.future := by
+    (Datasets.WALS.F67A.lookup "mnd").map (fromWALS67A ·.value) = some mandarin.future := by
   native_decide
 theorem vietnamese_ch67 :
-    (Core.WALS.F67A.lookup "vie").map (fromWALS67A ·.value) = some vietnamese.future := by
+    (Datasets.WALS.F67A.lookup "vie").map (fromWALS67A ·.value) = some vietnamese.future := by
   native_decide
 theorem thai_ch67 :
-    (Core.WALS.F67A.lookup "tha").map (fromWALS67A ·.value) = some thai.future := by
+    (Datasets.WALS.F67A.lookup "tha").map (fromWALS67A ·.value) = some thai.future := by
   native_decide
 theorem indonesian_ch67 :
-    (Core.WALS.F67A.lookup "ind").map (fromWALS67A ·.value) = some indonesian.future := by
+    (Datasets.WALS.F67A.lookup "ind").map (fromWALS67A ·.value) = some indonesian.future := by
   native_decide
 theorem hindi_ch67 :
-    (Core.WALS.F67A.lookup "hin").map (fromWALS67A ·.value) = some hindi.future := by
+    (Datasets.WALS.F67A.lookup "hin").map (fromWALS67A ·.value) = some hindi.future := by
   native_decide
 theorem yoruba_ch67 :
-    (Core.WALS.F67A.lookup "yor").map (fromWALS67A ·.value) = some yoruba.future := by
+    (Datasets.WALS.F67A.lookup "yor").map (fromWALS67A ·.value) = some yoruba.future := by
   native_decide
 theorem lango_ch67 :
-    (Core.WALS.F67A.lookup "lan").map (fromWALS67A ·.value) = some lango.future := by
+    (Datasets.WALS.F67A.lookup "lan").map (fromWALS67A ·.value) = some lango.future := by
   native_decide
 
 -- ============================================================================
@@ -714,43 +714,43 @@ theorem lango_ch67 :
 -- ============================================================================
 
 theorem english_ch68 :
-    (Core.WALS.F68A.lookup "eng").map (fromWALS68A ·.value) = some english.perfect := by
+    (Datasets.WALS.F68A.lookup "eng").map (fromWALS68A ·.value) = some english.perfect := by
   native_decide
 theorem russian_ch68 :
-    (Core.WALS.F68A.lookup "rus").map (fromWALS68A ·.value) = some russian.perfect := by
+    (Datasets.WALS.F68A.lookup "rus").map (fromWALS68A ·.value) = some russian.perfect := by
   native_decide
 theorem french_ch68 :
-    (Core.WALS.F68A.lookup "fre").map (fromWALS68A ·.value) = some french.perfect := by
+    (Datasets.WALS.F68A.lookup "fre").map (fromWALS68A ·.value) = some french.perfect := by
   native_decide
 theorem spanish_ch68 :
-    (Core.WALS.F68A.lookup "spa").map (fromWALS68A ·.value) = some spanish.perfect := by
+    (Datasets.WALS.F68A.lookup "spa").map (fromWALS68A ·.value) = some spanish.perfect := by
   native_decide
 theorem finnish_ch68 :
-    (Core.WALS.F68A.lookup "fin").map (fromWALS68A ·.value) = some finnish.perfect := by
+    (Datasets.WALS.F68A.lookup "fin").map (fromWALS68A ·.value) = some finnish.perfect := by
   native_decide
 theorem japanese_ch68 :
-    (Core.WALS.F68A.lookup "jpn").map (fromWALS68A ·.value) = some japanese.perfect := by
+    (Datasets.WALS.F68A.lookup "jpn").map (fromWALS68A ·.value) = some japanese.perfect := by
   native_decide
 theorem korean_ch68 :
-    (Core.WALS.F68A.lookup "kor").map (fromWALS68A ·.value) = some korean.perfect := by
+    (Datasets.WALS.F68A.lookup "kor").map (fromWALS68A ·.value) = some korean.perfect := by
   native_decide
 theorem mandarin_ch68 :
-    (Core.WALS.F68A.lookup "mnd").map (fromWALS68A ·.value) = some mandarin.perfect := by
+    (Datasets.WALS.F68A.lookup "mnd").map (fromWALS68A ·.value) = some mandarin.perfect := by
   native_decide
 theorem swahili_ch68 :
-    (Core.WALS.F68A.lookup "swa").map (fromWALS68A ·.value) = some swahili.perfect := by
+    (Datasets.WALS.F68A.lookup "swa").map (fromWALS68A ·.value) = some swahili.perfect := by
   native_decide
 theorem yoruba_ch68 :
-    (Core.WALS.F68A.lookup "yor").map (fromWALS68A ·.value) = some yoruba.perfect := by
+    (Datasets.WALS.F68A.lookup "yor").map (fromWALS68A ·.value) = some yoruba.perfect := by
   native_decide
 theorem hindi_ch68 :
-    (Core.WALS.F68A.lookup "hin").map (fromWALS68A ·.value) = some hindi.perfect := by
+    (Datasets.WALS.F68A.lookup "hin").map (fromWALS68A ·.value) = some hindi.perfect := by
   native_decide
 theorem arabic_ch68 :
-    (Core.WALS.F68A.lookup "aeg").map (fromWALS68A ·.value) = some arabic.perfect := by
+    (Datasets.WALS.F68A.lookup "aeg").map (fromWALS68A ·.value) = some arabic.perfect := by
   native_decide
 theorem tagalog_ch68 :
-    (Core.WALS.F68A.lookup "tag").map (fromWALS68A ·.value) = some tagalog.perfect := by
+    (Datasets.WALS.F68A.lookup "tag").map (fromWALS68A ·.value) = some tagalog.perfect := by
   native_decide
 
 -- ============================================================================
@@ -761,49 +761,49 @@ theorem tagalog_ch68 :
 -- ============================================================================
 
 theorem english_ch69 :
-    (Core.WALS.F69A.lookup "eng").map (fromWALS69A ·.value) = some english.affixPosition := by
+    (Datasets.WALS.F69A.lookup "eng").map (fromWALS69A ·.value) = some english.affixPosition := by
   native_decide
 theorem french_ch69 :
-    (Core.WALS.F69A.lookup "fre").map (fromWALS69A ·.value) = some french.affixPosition := by
+    (Datasets.WALS.F69A.lookup "fre").map (fromWALS69A ·.value) = some french.affixPosition := by
   native_decide
 theorem spanish_ch69 :
-    (Core.WALS.F69A.lookup "spa").map (fromWALS69A ·.value) = some spanish.affixPosition := by
+    (Datasets.WALS.F69A.lookup "spa").map (fromWALS69A ·.value) = some spanish.affixPosition := by
   native_decide
 theorem finnish_ch69 :
-    (Core.WALS.F69A.lookup "fin").map (fromWALS69A ·.value) = some finnish.affixPosition := by
+    (Datasets.WALS.F69A.lookup "fin").map (fromWALS69A ·.value) = some finnish.affixPosition := by
   native_decide
 theorem turkish_ch69 :
-    (Core.WALS.F69A.lookup "tur").map (fromWALS69A ·.value) = some turkish.affixPosition := by
+    (Datasets.WALS.F69A.lookup "tur").map (fromWALS69A ·.value) = some turkish.affixPosition := by
   native_decide
 theorem japanese_ch69 :
-    (Core.WALS.F69A.lookup "jpn").map (fromWALS69A ·.value) = some japanese.affixPosition := by
+    (Datasets.WALS.F69A.lookup "jpn").map (fromWALS69A ·.value) = some japanese.affixPosition := by
   native_decide
 theorem korean_ch69 :
-    (Core.WALS.F69A.lookup "kor").map (fromWALS69A ·.value) = some korean.affixPosition := by
+    (Datasets.WALS.F69A.lookup "kor").map (fromWALS69A ·.value) = some korean.affixPosition := by
   native_decide
 theorem vietnamese_ch69 :
-    (Core.WALS.F69A.lookup "vie").map (fromWALS69A ·.value) = some vietnamese.affixPosition := by
+    (Datasets.WALS.F69A.lookup "vie").map (fromWALS69A ·.value) = some vietnamese.affixPosition := by
   native_decide
 theorem thai_ch69 :
-    (Core.WALS.F69A.lookup "tha").map (fromWALS69A ·.value) = some thai.affixPosition := by
+    (Datasets.WALS.F69A.lookup "tha").map (fromWALS69A ·.value) = some thai.affixPosition := by
   native_decide
 theorem indonesian_ch69 :
-    (Core.WALS.F69A.lookup "ind").map (fromWALS69A ·.value) = some indonesian.affixPosition := by
+    (Datasets.WALS.F69A.lookup "ind").map (fromWALS69A ·.value) = some indonesian.affixPosition := by
   native_decide
 theorem swahili_ch69 :
-    (Core.WALS.F69A.lookup "swa").map (fromWALS69A ·.value) = some swahili.affixPosition := by
+    (Datasets.WALS.F69A.lookup "swa").map (fromWALS69A ·.value) = some swahili.affixPosition := by
   native_decide
 theorem yoruba_ch69 :
-    (Core.WALS.F69A.lookup "yor").map (fromWALS69A ·.value) = some yoruba.affixPosition := by
+    (Datasets.WALS.F69A.lookup "yor").map (fromWALS69A ·.value) = some yoruba.affixPosition := by
   native_decide
 theorem hindi_ch69 :
-    (Core.WALS.F69A.lookup "hin").map (fromWALS69A ·.value) = some hindi.affixPosition := by
+    (Datasets.WALS.F69A.lookup "hin").map (fromWALS69A ·.value) = some hindi.affixPosition := by
   native_decide
 theorem tagalog_ch69 :
-    (Core.WALS.F69A.lookup "tag").map (fromWALS69A ·.value) = some tagalog.affixPosition := by
+    (Datasets.WALS.F69A.lookup "tag").map (fromWALS69A ·.value) = some tagalog.affixPosition := by
   native_decide
 theorem lango_ch69 :
-    (Core.WALS.F69A.lookup "lan").map (fromWALS69A ·.value) = some lango.affixPosition := by
+    (Datasets.WALS.F69A.lookup "lan").map (fromWALS69A ·.value) = some lango.affixPosition := by
   native_decide
 
 -- ============================================================================

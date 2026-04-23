@@ -1,41 +1,41 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Negation
-import Linglib.Core.WALS.Features.F112A
-import Linglib.Core.WALS.Features.F113A
-import Linglib.Core.WALS.Features.F114A
-import Linglib.Core.WALS.Features.F115A
-import Linglib.Core.WALS.Features.F143A
-import Linglib.Core.WALS.Features.F143B
-import Linglib.Core.WALS.Features.F143C
-import Linglib.Core.WALS.Features.F143D
-import Linglib.Core.WALS.Features.F143E
-import Linglib.Core.WALS.Features.F143F
-import Linglib.Core.WALS.Features.F143G
-import Linglib.Core.WALS.Features.F144A
-import Linglib.Core.WALS.Features.F144B
-import Linglib.Core.WALS.Features.F144C
-import Linglib.Core.WALS.Features.F144D
-import Linglib.Core.WALS.Features.F144E
-import Linglib.Core.WALS.Features.F144F
-import Linglib.Core.WALS.Features.F144G
-import Linglib.Core.WALS.Features.F144H
-import Linglib.Core.WALS.Features.F144I
-import Linglib.Core.WALS.Features.F144J
-import Linglib.Core.WALS.Features.F144K
-import Linglib.Core.WALS.Features.F144L
-import Linglib.Core.WALS.Features.F144M
-import Linglib.Core.WALS.Features.F144N
-import Linglib.Core.WALS.Features.F144O
-import Linglib.Core.WALS.Features.F144P
-import Linglib.Core.WALS.Features.F144Q
-import Linglib.Core.WALS.Features.F144R
-import Linglib.Core.WALS.Features.F144S
-import Linglib.Core.WALS.Features.F144T
-import Linglib.Core.WALS.Features.F144U
-import Linglib.Core.WALS.Features.F144V
-import Linglib.Core.WALS.Features.F144W
-import Linglib.Core.WALS.Features.F144X
-import Linglib.Core.WALS.Features.F144Y
+import Linglib.Datasets.WALS.Features.F112A
+import Linglib.Datasets.WALS.Features.F113A
+import Linglib.Datasets.WALS.Features.F114A
+import Linglib.Datasets.WALS.Features.F115A
+import Linglib.Datasets.WALS.Features.F143A
+import Linglib.Datasets.WALS.Features.F143B
+import Linglib.Datasets.WALS.Features.F143C
+import Linglib.Datasets.WALS.Features.F143D
+import Linglib.Datasets.WALS.Features.F143E
+import Linglib.Datasets.WALS.Features.F143F
+import Linglib.Datasets.WALS.Features.F143G
+import Linglib.Datasets.WALS.Features.F144A
+import Linglib.Datasets.WALS.Features.F144B
+import Linglib.Datasets.WALS.Features.F144C
+import Linglib.Datasets.WALS.Features.F144D
+import Linglib.Datasets.WALS.Features.F144E
+import Linglib.Datasets.WALS.Features.F144F
+import Linglib.Datasets.WALS.Features.F144G
+import Linglib.Datasets.WALS.Features.F144H
+import Linglib.Datasets.WALS.Features.F144I
+import Linglib.Datasets.WALS.Features.F144J
+import Linglib.Datasets.WALS.Features.F144K
+import Linglib.Datasets.WALS.Features.F144L
+import Linglib.Datasets.WALS.Features.F144M
+import Linglib.Datasets.WALS.Features.F144N
+import Linglib.Datasets.WALS.Features.F144O
+import Linglib.Datasets.WALS.Features.F144P
+import Linglib.Datasets.WALS.Features.F144Q
+import Linglib.Datasets.WALS.Features.F144R
+import Linglib.Datasets.WALS.Features.F144S
+import Linglib.Datasets.WALS.Features.F144T
+import Linglib.Datasets.WALS.Features.F144U
+import Linglib.Datasets.WALS.Features.F144V
+import Linglib.Datasets.WALS.Features.F144W
+import Linglib.Datasets.WALS.Features.F144X
+import Linglib.Datasets.WALS.Features.F144Y
 
 /-!
 # Cross-Linguistic Typology of Negation (WALS Chapters 112--115, 143--144)
@@ -274,7 +274,7 @@ inductive NegIndefiniteStrategy where
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS112A : Core.WALS.F112A.NegativeMorphemeType → NegMorphemeType
+private def fromWALS112A : Datasets.WALS.F112A.NegativeMorphemeType → NegMorphemeType
   | .negativeAffix => .affix
   | .negativeParticle => .particle
   | .negativeAuxiliaryVerb => .auxVerb
@@ -282,12 +282,12 @@ private def fromWALS112A : Core.WALS.F112A.NegativeMorphemeType → NegMorphemeT
   | .variationBetweenNegativeWordAndAffix => .variation
   | .doubleNegation => .doubleNeg
 
-private def fromWALS113A : Core.WALS.F113A.NegationSymmetry → NegSymmetry
+private def fromWALS113A : Datasets.WALS.F113A.NegationSymmetry → NegSymmetry
   | .symmetric => .symmetric
   | .asymmetric => .asymmetric
   | .both => .both
 
-private def fromWALS114A : Core.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
+private def fromWALS114A : Datasets.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
   | .aFin => .finiteness
   | .aNonreal => .realityStatus
   | .aCat => .otherCategories
@@ -296,7 +296,7 @@ private def fromWALS114A : Core.WALS.F114A.AsymmetricNegationSubtype → Asymmet
   | .aNonrealAndACat => .nonRealAndCat
   | .nonAssignable => .nonAssignable
 
-private def fromWALS115A : Core.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
+private def fromWALS115A : Datasets.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
   | .predicateNegationAlsoPresent => .cooccur
   | .noPredicateNegation => .preclude
   | .mixedBehaviour => .mixed
@@ -353,7 +353,7 @@ inductive NegMorphemePosition where
   | none
   deriving DecidableEq, Repr
 
-private def fromWALS143A : Core.WALS.F143A.NegVerbOrder → NegVerbPosition
+private def fromWALS143A : Datasets.WALS.F143A.NegVerbOrder → NegVerbPosition
   | .negv => .preverbalParticle
   | .vneg => .postverbalParticle
   | .negV => .preverbalAffix
@@ -376,10 +376,10 @@ private def fromWALS143A : Core.WALS.F143A.NegVerbOrder → NegVerbPosition
 -- WALS Distribution Data (from generated modules)
 -- ============================================================================
 
-private abbrev ch112 := Core.WALS.F112A.allData
-private abbrev ch113 := Core.WALS.F113A.allData
-private abbrev ch114 := Core.WALS.F114A.allData
-private abbrev ch115 := Core.WALS.F115A.allData
+private abbrev ch112 := Datasets.WALS.F112A.allData
+private abbrev ch113 := Datasets.WALS.F113A.allData
+private abbrev ch114 := Datasets.WALS.F114A.allData
+private abbrev ch115 := Datasets.WALS.F115A.allData
 
 theorem ch112_total : ch112.length = 1157 := by native_decide
 theorem ch113_total : ch113.length = 297 := by native_decide
@@ -390,13 +390,13 @@ theorem ch115_total : ch115.length = 206 := by native_decide
 theorem ch113_ch114_same_sample : ch113.length = ch114.length := by native_decide
 
 -- Chapter 143 sub-features
-private abbrev ch143A := Core.WALS.F143A.allData
-private abbrev ch143B := Core.WALS.F143B.allData
-private abbrev ch143C := Core.WALS.F143C.allData
-private abbrev ch143D := Core.WALS.F143D.allData
-private abbrev ch143E := Core.WALS.F143E.allData
-private abbrev ch143F := Core.WALS.F143F.allData
-private abbrev ch143G := Core.WALS.F143G.allData
+private abbrev ch143A := Datasets.WALS.F143A.allData
+private abbrev ch143B := Datasets.WALS.F143B.allData
+private abbrev ch143C := Datasets.WALS.F143C.allData
+private abbrev ch143D := Datasets.WALS.F143D.allData
+private abbrev ch143E := Datasets.WALS.F143E.allData
+private abbrev ch143F := Datasets.WALS.F143F.allData
+private abbrev ch143G := Datasets.WALS.F143G.allData
 
 theorem ch143A_total : ch143A.length = 1325 := by native_decide
 theorem ch143B_total : ch143B.length = 119 := by native_decide
@@ -414,31 +414,31 @@ theorem ch143_same_sample :
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- Chapter 144 sub-features
-private abbrev ch144A := Core.WALS.F144A.allData
-private abbrev ch144B := Core.WALS.F144B.allData
-private abbrev ch144C := Core.WALS.F144C.allData
-private abbrev ch144D := Core.WALS.F144D.allData
-private abbrev ch144E := Core.WALS.F144E.allData
-private abbrev ch144F := Core.WALS.F144F.allData
-private abbrev ch144G := Core.WALS.F144G.allData
-private abbrev ch144H := Core.WALS.F144H.allData
-private abbrev ch144I := Core.WALS.F144I.allData
-private abbrev ch144J := Core.WALS.F144J.allData
-private abbrev ch144K := Core.WALS.F144K.allData
-private abbrev ch144L := Core.WALS.F144L.allData
-private abbrev ch144M := Core.WALS.F144M.allData
-private abbrev ch144N := Core.WALS.F144N.allData
-private abbrev ch144O := Core.WALS.F144O.allData
-private abbrev ch144P := Core.WALS.F144P.allData
-private abbrev ch144Q := Core.WALS.F144Q.allData
-private abbrev ch144R := Core.WALS.F144R.allData
-private abbrev ch144S := Core.WALS.F144S.allData
-private abbrev ch144T := Core.WALS.F144T.allData
-private abbrev ch144U := Core.WALS.F144U.allData
-private abbrev ch144V := Core.WALS.F144V.allData
-private abbrev ch144W := Core.WALS.F144W.allData
-private abbrev ch144X := Core.WALS.F144X.allData
-private abbrev ch144Y := Core.WALS.F144Y.allData
+private abbrev ch144A := Datasets.WALS.F144A.allData
+private abbrev ch144B := Datasets.WALS.F144B.allData
+private abbrev ch144C := Datasets.WALS.F144C.allData
+private abbrev ch144D := Datasets.WALS.F144D.allData
+private abbrev ch144E := Datasets.WALS.F144E.allData
+private abbrev ch144F := Datasets.WALS.F144F.allData
+private abbrev ch144G := Datasets.WALS.F144G.allData
+private abbrev ch144H := Datasets.WALS.F144H.allData
+private abbrev ch144I := Datasets.WALS.F144I.allData
+private abbrev ch144J := Datasets.WALS.F144J.allData
+private abbrev ch144K := Datasets.WALS.F144K.allData
+private abbrev ch144L := Datasets.WALS.F144L.allData
+private abbrev ch144M := Datasets.WALS.F144M.allData
+private abbrev ch144N := Datasets.WALS.F144N.allData
+private abbrev ch144O := Datasets.WALS.F144O.allData
+private abbrev ch144P := Datasets.WALS.F144P.allData
+private abbrev ch144Q := Datasets.WALS.F144Q.allData
+private abbrev ch144R := Datasets.WALS.F144R.allData
+private abbrev ch144S := Datasets.WALS.F144S.allData
+private abbrev ch144T := Datasets.WALS.F144T.allData
+private abbrev ch144U := Datasets.WALS.F144U.allData
+private abbrev ch144V := Datasets.WALS.F144V.allData
+private abbrev ch144W := Datasets.WALS.F144W.allData
+private abbrev ch144X := Datasets.WALS.F144X.allData
+private abbrev ch144Y := Datasets.WALS.F144Y.allData
 
 theorem ch144A_total : ch144A.length = 1190 := by native_decide
 theorem ch144B_total : ch144B.length = 609 := by native_decide
@@ -833,58 +833,58 @@ def allLanguages : List NegationProfile :=
 -- ============================================================================
 
 theorem english_ch112 :
-    (Core.WALS.F112A.lookup "eng").map (fromWALS112A ·.value) = some english.morphemeType := by
+    (Datasets.WALS.F112A.lookup "eng").map (fromWALS112A ·.value) = some english.morphemeType := by
   native_decide
 theorem german_ch112 :
-    (Core.WALS.F112A.lookup "ger").map (fromWALS112A ·.value) = some german.morphemeType := by
+    (Datasets.WALS.F112A.lookup "ger").map (fromWALS112A ·.value) = some german.morphemeType := by
   native_decide
 theorem french_ch112 :
-    (Core.WALS.F112A.lookup "fre").map (fromWALS112A ·.value) = some french.morphemeType := by
+    (Datasets.WALS.F112A.lookup "fre").map (fromWALS112A ·.value) = some french.morphemeType := by
   native_decide
 theorem russian_ch112 :
-    (Core.WALS.F112A.lookup "rus").map (fromWALS112A ·.value) = some russian.morphemeType := by
+    (Datasets.WALS.F112A.lookup "rus").map (fromWALS112A ·.value) = some russian.morphemeType := by
   native_decide
 theorem finnish_ch112 :
-    (Core.WALS.F112A.lookup "fin").map (fromWALS112A ·.value) = some finnish.morphemeType := by
+    (Datasets.WALS.F112A.lookup "fin").map (fromWALS112A ·.value) = some finnish.morphemeType := by
   native_decide
 theorem japanese_ch112 :
-    (Core.WALS.F112A.lookup "jpn").map (fromWALS112A ·.value) = some japanese.morphemeType := by
+    (Datasets.WALS.F112A.lookup "jpn").map (fromWALS112A ·.value) = some japanese.morphemeType := by
   native_decide
 theorem mandarin_ch112 :
-    (Core.WALS.F112A.lookup "mnd").map (fromWALS112A ·.value) = some mandarin.morphemeType := by
+    (Datasets.WALS.F112A.lookup "mnd").map (fromWALS112A ·.value) = some mandarin.morphemeType := by
   native_decide
 theorem turkish_ch112 :
-    (Core.WALS.F112A.lookup "tur").map (fromWALS112A ·.value) = some turkish.morphemeType := by
+    (Datasets.WALS.F112A.lookup "tur").map (fromWALS112A ·.value) = some turkish.morphemeType := by
   native_decide
 theorem czech_ch112 :
-    (Core.WALS.F112A.lookup "cze").map (fromWALS112A ·.value) = some czech.morphemeType := by
+    (Datasets.WALS.F112A.lookup "cze").map (fromWALS112A ·.value) = some czech.morphemeType := by
   native_decide
 theorem spanish_ch112 :
-    (Core.WALS.F112A.lookup "spa").map (fromWALS112A ·.value) = some spanish.morphemeType := by
+    (Datasets.WALS.F112A.lookup "spa").map (fromWALS112A ·.value) = some spanish.morphemeType := by
   native_decide
 theorem italian_ch112 :
-    (Core.WALS.F112A.lookup "ita").map (fromWALS112A ·.value) = some italian.morphemeType := by
+    (Datasets.WALS.F112A.lookup "ita").map (fromWALS112A ·.value) = some italian.morphemeType := by
   native_decide
 theorem burmese_ch112 :
-    (Core.WALS.F112A.lookup "brm").map (fromWALS112A ·.value) = some burmese.morphemeType := by
+    (Datasets.WALS.F112A.lookup "brm").map (fromWALS112A ·.value) = some burmese.morphemeType := by
   native_decide
 theorem maori_ch112 :
-    (Core.WALS.F112A.lookup "mao").map (fromWALS112A ·.value) = some maori.morphemeType := by
+    (Datasets.WALS.F112A.lookup "mao").map (fromWALS112A ·.value) = some maori.morphemeType := by
   native_decide
 theorem izi_ch112 :
-    (Core.WALS.F112A.lookup "izi").map (fromWALS112A ·.value) = some izi.morphemeType := by
+    (Datasets.WALS.F112A.lookup "izi").map (fromWALS112A ·.value) = some izi.morphemeType := by
   native_decide
 theorem yukaghir_ch112 :
-    (Core.WALS.F112A.lookup "yko").map (fromWALS112A ·.value) = some kolYukaghir.morphemeType := by
+    (Datasets.WALS.F112A.lookup "yko").map (fromWALS112A ·.value) = some kolYukaghir.morphemeType := by
   native_decide
 theorem rama_ch112 :
-    (Core.WALS.F112A.lookup "ram").map (fromWALS112A ·.value) = some rama.morphemeType := by
+    (Datasets.WALS.F112A.lookup "ram").map (fromWALS112A ·.value) = some rama.morphemeType := by
   native_decide
 theorem hixkaryana_ch112 :
-    (Core.WALS.F112A.lookup "hix").map (fromWALS112A ·.value) = some hixkaryana.morphemeType := by
+    (Datasets.WALS.F112A.lookup "hix").map (fromWALS112A ·.value) = some hixkaryana.morphemeType := by
   native_decide
 theorem imbaburaQuechua_ch112 :
-    (Core.WALS.F112A.lookup "qim").map (fromWALS112A ·.value) =
+    (Datasets.WALS.F112A.lookup "qim").map (fromWALS112A ·.value) =
     some imbaburaQuechua.morphemeType := by native_decide
 
 -- ============================================================================
@@ -893,52 +893,52 @@ theorem imbaburaQuechua_ch112 :
 -- ============================================================================
 
 theorem english_ch113 :
-    (Core.WALS.F113A.lookup "eng").map (fromWALS113A ·.value) = some english.symmetry := by
+    (Datasets.WALS.F113A.lookup "eng").map (fromWALS113A ·.value) = some english.symmetry := by
   native_decide
 theorem german_ch113 :
-    (Core.WALS.F113A.lookup "ger").map (fromWALS113A ·.value) = some german.symmetry := by
+    (Datasets.WALS.F113A.lookup "ger").map (fromWALS113A ·.value) = some german.symmetry := by
   native_decide
 theorem french_ch113 :
-    (Core.WALS.F113A.lookup "fre").map (fromWALS113A ·.value) = some french.symmetry := by
+    (Datasets.WALS.F113A.lookup "fre").map (fromWALS113A ·.value) = some french.symmetry := by
   native_decide
 theorem russian_ch113 :
-    (Core.WALS.F113A.lookup "rus").map (fromWALS113A ·.value) = some russian.symmetry := by
+    (Datasets.WALS.F113A.lookup "rus").map (fromWALS113A ·.value) = some russian.symmetry := by
   native_decide
 theorem finnish_ch113 :
-    (Core.WALS.F113A.lookup "fin").map (fromWALS113A ·.value) = some finnish.symmetry := by
+    (Datasets.WALS.F113A.lookup "fin").map (fromWALS113A ·.value) = some finnish.symmetry := by
   native_decide
 theorem japanese_ch113 :
-    (Core.WALS.F113A.lookup "jpn").map (fromWALS113A ·.value) = some japanese.symmetry := by
+    (Datasets.WALS.F113A.lookup "jpn").map (fromWALS113A ·.value) = some japanese.symmetry := by
   native_decide
 theorem mandarin_ch113 :
-    (Core.WALS.F113A.lookup "mnd").map (fromWALS113A ·.value) = some mandarin.symmetry := by
+    (Datasets.WALS.F113A.lookup "mnd").map (fromWALS113A ·.value) = some mandarin.symmetry := by
   native_decide
 theorem turkish_ch113 :
-    (Core.WALS.F113A.lookup "tur").map (fromWALS113A ·.value) = some turkish.symmetry := by
+    (Datasets.WALS.F113A.lookup "tur").map (fromWALS113A ·.value) = some turkish.symmetry := by
   native_decide
 theorem spanish_ch113 :
-    (Core.WALS.F113A.lookup "spa").map (fromWALS113A ·.value) = some spanish.symmetry := by
+    (Datasets.WALS.F113A.lookup "spa").map (fromWALS113A ·.value) = some spanish.symmetry := by
   native_decide
 theorem italian_ch113 :
-    (Core.WALS.F113A.lookup "ita").map (fromWALS113A ·.value) = some italian.symmetry := by
+    (Datasets.WALS.F113A.lookup "ita").map (fromWALS113A ·.value) = some italian.symmetry := by
   native_decide
 theorem burmese_ch113 :
-    (Core.WALS.F113A.lookup "brm").map (fromWALS113A ·.value) = some burmese.symmetry := by
+    (Datasets.WALS.F113A.lookup "brm").map (fromWALS113A ·.value) = some burmese.symmetry := by
   native_decide
 theorem maori_ch113 :
-    (Core.WALS.F113A.lookup "mao").map (fromWALS113A ·.value) = some maori.symmetry := by
+    (Datasets.WALS.F113A.lookup "mao").map (fromWALS113A ·.value) = some maori.symmetry := by
   native_decide
 theorem yukaghir_ch113 :
-    (Core.WALS.F113A.lookup "yko").map (fromWALS113A ·.value) = some kolYukaghir.symmetry := by
+    (Datasets.WALS.F113A.lookup "yko").map (fromWALS113A ·.value) = some kolYukaghir.symmetry := by
   native_decide
 theorem rama_ch113 :
-    (Core.WALS.F113A.lookup "ram").map (fromWALS113A ·.value) = some rama.symmetry := by
+    (Datasets.WALS.F113A.lookup "ram").map (fromWALS113A ·.value) = some rama.symmetry := by
   native_decide
 theorem hixkaryana_ch113 :
-    (Core.WALS.F113A.lookup "hix").map (fromWALS113A ·.value) = some hixkaryana.symmetry := by
+    (Datasets.WALS.F113A.lookup "hix").map (fromWALS113A ·.value) = some hixkaryana.symmetry := by
   native_decide
 theorem imbaburaQuechua_ch113 :
-    (Core.WALS.F113A.lookup "qim").map (fromWALS113A ·.value) =
+    (Datasets.WALS.F113A.lookup "qim").map (fromWALS113A ·.value) =
     some imbaburaQuechua.symmetry := by native_decide
 
 -- ============================================================================
@@ -947,52 +947,52 @@ theorem imbaburaQuechua_ch113 :
 -- ============================================================================
 
 theorem english_ch114 :
-    (Core.WALS.F114A.lookup "eng").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "eng").map (fromWALS114A ·.value) =
     some english.asymmetrySubtype := by native_decide
 theorem german_ch114 :
-    (Core.WALS.F114A.lookup "ger").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "ger").map (fromWALS114A ·.value) =
     some german.asymmetrySubtype := by native_decide
 theorem french_ch114 :
-    (Core.WALS.F114A.lookup "fre").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "fre").map (fromWALS114A ·.value) =
     some french.asymmetrySubtype := by native_decide
 theorem russian_ch114 :
-    (Core.WALS.F114A.lookup "rus").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "rus").map (fromWALS114A ·.value) =
     some russian.asymmetrySubtype := by native_decide
 theorem finnish_ch114 :
-    (Core.WALS.F114A.lookup "fin").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "fin").map (fromWALS114A ·.value) =
     some finnish.asymmetrySubtype := by native_decide
 theorem japanese_ch114 :
-    (Core.WALS.F114A.lookup "jpn").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "jpn").map (fromWALS114A ·.value) =
     some japanese.asymmetrySubtype := by native_decide
 theorem mandarin_ch114 :
-    (Core.WALS.F114A.lookup "mnd").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "mnd").map (fromWALS114A ·.value) =
     some mandarin.asymmetrySubtype := by native_decide
 theorem turkish_ch114 :
-    (Core.WALS.F114A.lookup "tur").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "tur").map (fromWALS114A ·.value) =
     some turkish.asymmetrySubtype := by native_decide
 theorem spanish_ch114 :
-    (Core.WALS.F114A.lookup "spa").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "spa").map (fromWALS114A ·.value) =
     some spanish.asymmetrySubtype := by native_decide
 theorem italian_ch114 :
-    (Core.WALS.F114A.lookup "ita").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "ita").map (fromWALS114A ·.value) =
     some italian.asymmetrySubtype := by native_decide
 theorem burmese_ch114 :
-    (Core.WALS.F114A.lookup "brm").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "brm").map (fromWALS114A ·.value) =
     some burmese.asymmetrySubtype := by native_decide
 theorem maori_ch114 :
-    (Core.WALS.F114A.lookup "mao").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "mao").map (fromWALS114A ·.value) =
     some maori.asymmetrySubtype := by native_decide
 theorem yukaghir_ch114 :
-    (Core.WALS.F114A.lookup "yko").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "yko").map (fromWALS114A ·.value) =
     some kolYukaghir.asymmetrySubtype := by native_decide
 theorem rama_ch114 :
-    (Core.WALS.F114A.lookup "ram").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "ram").map (fromWALS114A ·.value) =
     some rama.asymmetrySubtype := by native_decide
 theorem hixkaryana_ch114 :
-    (Core.WALS.F114A.lookup "hix").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "hix").map (fromWALS114A ·.value) =
     some hixkaryana.asymmetrySubtype := by native_decide
 theorem imbaburaQuechua_ch114 :
-    (Core.WALS.F114A.lookup "qim").map (fromWALS114A ·.value) =
+    (Datasets.WALS.F114A.lookup "qim").map (fromWALS114A ·.value) =
     some imbaburaQuechua.asymmetrySubtype := by native_decide
 
 -- ============================================================================
@@ -1001,40 +1001,40 @@ theorem imbaburaQuechua_ch114 :
 -- ============================================================================
 
 theorem english_ch115 :
-    (Core.WALS.F115A.lookup "eng").map (fromWALS115A ·.value) = some .mixed := by
+    (Datasets.WALS.F115A.lookup "eng").map (fromWALS115A ·.value) = some .mixed := by
   native_decide
 theorem german_ch115 :
-    (Core.WALS.F115A.lookup "ger").map (fromWALS115A ·.value) = some .preclude := by
+    (Datasets.WALS.F115A.lookup "ger").map (fromWALS115A ·.value) = some .preclude := by
   native_decide
 theorem french_ch115 :
-    (Core.WALS.F115A.lookup "fre").map (fromWALS115A ·.value) = some .mixed := by
+    (Datasets.WALS.F115A.lookup "fre").map (fromWALS115A ·.value) = some .mixed := by
   native_decide
 theorem russian_ch115 :
-    (Core.WALS.F115A.lookup "rus").map (fromWALS115A ·.value) = some .cooccur := by
+    (Datasets.WALS.F115A.lookup "rus").map (fromWALS115A ·.value) = some .cooccur := by
   native_decide
 theorem finnish_ch115 :
-    (Core.WALS.F115A.lookup "fin").map (fromWALS115A ·.value) = some .cooccur := by
+    (Datasets.WALS.F115A.lookup "fin").map (fromWALS115A ·.value) = some .cooccur := by
   native_decide
 theorem japanese_ch115 :
-    (Core.WALS.F115A.lookup "jpn").map (fromWALS115A ·.value) = some .cooccur := by
+    (Datasets.WALS.F115A.lookup "jpn").map (fromWALS115A ·.value) = some .cooccur := by
   native_decide
 theorem mandarin_ch115 :
-    (Core.WALS.F115A.lookup "mnd").map (fromWALS115A ·.value) = some .cooccur := by
+    (Datasets.WALS.F115A.lookup "mnd").map (fromWALS115A ·.value) = some .cooccur := by
   native_decide
 theorem turkish_ch115 :
-    (Core.WALS.F115A.lookup "tur").map (fromWALS115A ·.value) = some .cooccur := by
+    (Datasets.WALS.F115A.lookup "tur").map (fromWALS115A ·.value) = some .cooccur := by
   native_decide
 theorem spanish_ch115 :
-    (Core.WALS.F115A.lookup "spa").map (fromWALS115A ·.value) = some .mixed := by
+    (Datasets.WALS.F115A.lookup "spa").map (fromWALS115A ·.value) = some .mixed := by
   native_decide
 theorem italian_ch115 :
-    (Core.WALS.F115A.lookup "ita").map (fromWALS115A ·.value) = some .mixed := by
+    (Datasets.WALS.F115A.lookup "ita").map (fromWALS115A ·.value) = some .mixed := by
   native_decide
 theorem nelemwa_ch115 :
-    (Core.WALS.F115A.lookup "nel").map (fromWALS115A ·.value) =
+    (Datasets.WALS.F115A.lookup "nel").map (fromWALS115A ·.value) =
     some .negExistential := by native_decide
 theorem imbaburaQuechua_ch115 :
-    (Core.WALS.F115A.lookup "qim").map (fromWALS115A ·.value) =
+    (Datasets.WALS.F115A.lookup "qim").map (fromWALS115A ·.value) =
     some .cooccur := by native_decide
 
 -- ============================================================================
@@ -1283,55 +1283,55 @@ theorem sample_symmetry_counts :
 -- ============================================================================
 
 theorem english_ch143A :
-    (Core.WALS.F143A.lookup "eng").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "eng").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem german_ch143A :
-    (Core.WALS.F143A.lookup "ger").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "ger").map (fromWALS143A ·.value) =
     some NegVerbPosition.mixedSingle := by native_decide
 theorem french_ch143A :
-    (Core.WALS.F143A.lookup "fre").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "fre").map (fromWALS143A ·.value) =
     some NegVerbPosition.optDoubleNeg := by native_decide
 theorem russian_ch143A :
-    (Core.WALS.F143A.lookup "rus").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "rus").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem finnish_ch143A :
-    (Core.WALS.F143A.lookup "fin").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "fin").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem japanese_ch143A :
-    (Core.WALS.F143A.lookup "jpn").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "jpn").map (fromWALS143A ·.value) =
     some NegVerbPosition.postverbalAffix := by native_decide
 theorem mandarin_ch143A :
-    (Core.WALS.F143A.lookup "mnd").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "mnd").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem turkish_ch143A :
-    (Core.WALS.F143A.lookup "tur").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "tur").map (fromWALS143A ·.value) =
     some NegVerbPosition.postverbalAffix := by native_decide
 theorem czech_ch143A :
-    (Core.WALS.F143A.lookup "cze").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "cze").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalAffix := by native_decide
 theorem spanish_ch143A :
-    (Core.WALS.F143A.lookup "spa").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "spa").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem italian_ch143A :
-    (Core.WALS.F143A.lookup "ita").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "ita").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem burmese_ch143A :
-    (Core.WALS.F143A.lookup "brm").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "brm").map (fromWALS143A ·.value) =
     some NegVerbPosition.obligDoublNeg := by native_decide
 theorem maori_ch143A :
-    (Core.WALS.F143A.lookup "mao").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "mao").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalParticle := by native_decide
 theorem izi_ch143A :
-    (Core.WALS.F143A.lookup "izi").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "izi").map (fromWALS143A ·.value) =
     some NegVerbPosition.obligDoublNeg := by native_decide
 theorem yukaghir_ch143A :
-    (Core.WALS.F143A.lookup "yko").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "yko").map (fromWALS143A ·.value) =
     some NegVerbPosition.preverbalAffix := by native_decide
 theorem rama_ch143A :
-    (Core.WALS.F143A.lookup "ram").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "ram").map (fromWALS143A ·.value) =
     some NegVerbPosition.mixedSingle := by native_decide
 theorem hixkaryana_ch143A :
-    (Core.WALS.F143A.lookup "hix").map (fromWALS143A ·.value) =
+    (Datasets.WALS.F143A.lookup "hix").map (fromWALS143A ·.value) =
     some NegVerbPosition.postverbalAffix := by native_decide
 
 -- ============================================================================
@@ -1340,39 +1340,39 @@ theorem hixkaryana_ch143A :
 -- ============================================================================
 
 theorem english_ch144A :
-    (Core.WALS.F144A.lookup "eng").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "eng").map (·.value) = some .snegvo := by native_decide
 theorem german_ch144A :
-    (Core.WALS.F144A.lookup "ger").map (·.value) = some .moreThanOnePosition := by native_decide
+    (Datasets.WALS.F144A.lookup "ger").map (·.value) = some .moreThanOnePosition := by native_decide
 theorem french_ch144A :
-    (Core.WALS.F144A.lookup "fre").map (·.value) = some .optdoubleneg := by native_decide
+    (Datasets.WALS.F144A.lookup "fre").map (·.value) = some .optdoubleneg := by native_decide
 theorem russian_ch144A :
-    (Core.WALS.F144A.lookup "rus").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "rus").map (·.value) = some .snegvo := by native_decide
 theorem finnish_ch144A :
-    (Core.WALS.F144A.lookup "fin").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "fin").map (·.value) = some .snegvo := by native_decide
 theorem japanese_ch144A :
-    (Core.WALS.F144A.lookup "jpn").map (·.value) = some .morphneg := by native_decide
+    (Datasets.WALS.F144A.lookup "jpn").map (·.value) = some .morphneg := by native_decide
 theorem mandarin_ch144A :
-    (Core.WALS.F144A.lookup "mnd").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "mnd").map (·.value) = some .snegvo := by native_decide
 theorem turkish_ch144A :
-    (Core.WALS.F144A.lookup "tur").map (·.value) = some .morphneg := by native_decide
+    (Datasets.WALS.F144A.lookup "tur").map (·.value) = some .morphneg := by native_decide
 theorem czech_ch144A :
-    (Core.WALS.F144A.lookup "cze").map (·.value) = some .morphneg := by native_decide
+    (Datasets.WALS.F144A.lookup "cze").map (·.value) = some .morphneg := by native_decide
 theorem spanish_ch144A :
-    (Core.WALS.F144A.lookup "spa").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "spa").map (·.value) = some .snegvo := by native_decide
 theorem italian_ch144A :
-    (Core.WALS.F144A.lookup "ita").map (·.value) = some .snegvo := by native_decide
+    (Datasets.WALS.F144A.lookup "ita").map (·.value) = some .snegvo := by native_decide
 theorem burmese_ch144A :
-    (Core.WALS.F144A.lookup "brm").map (·.value) = some .obligdoubleneg := by native_decide
+    (Datasets.WALS.F144A.lookup "brm").map (·.value) = some .obligdoubleneg := by native_decide
 theorem maori_ch144A :
-    (Core.WALS.F144A.lookup "mao").map (·.value) = some .negsvo := by native_decide
+    (Datasets.WALS.F144A.lookup "mao").map (·.value) = some .negsvo := by native_decide
 theorem izi_ch144A :
-    (Core.WALS.F144A.lookup "izi").map (·.value) = some .obligdoubleneg := by native_decide
+    (Datasets.WALS.F144A.lookup "izi").map (·.value) = some .obligdoubleneg := by native_decide
 theorem yukaghir_ch144A :
-    (Core.WALS.F144A.lookup "yko").map (·.value) = some .morphneg := by native_decide
+    (Datasets.WALS.F144A.lookup "yko").map (·.value) = some .morphneg := by native_decide
 theorem rama_ch144A :
-    (Core.WALS.F144A.lookup "ram").map (·.value) = some .moreThanOnePosition := by native_decide
+    (Datasets.WALS.F144A.lookup "ram").map (·.value) = some .moreThanOnePosition := by native_decide
 theorem hixkaryana_ch144A :
-    (Core.WALS.F144A.lookup "hix").map (·.value) = some .morphneg := by native_decide
+    (Datasets.WALS.F144A.lookup "hix").map (·.value) = some .morphneg := by native_decide
 
 -- ============================================================================
 -- Ch 143A Distribution: Preverbal Negation Dominates

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
-import Linglib.Core.WALS.Features.F85A
+import Linglib.Datasets.WALS.Features.F85A
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Theories.Semantics.Events.SpatialTrace
@@ -41,7 +41,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
-- `Core.WALS.Features.F85A`: cross-linguistic adposition order
+- `Datasets.WALS.Features.F85A`: cross-linguistic adposition order
 -/
 
 namespace BroekhuisCorver2026
@@ -295,7 +295,7 @@ theorem no_rPron_not_postP :
 
 /-- Dutch is listed as "prepositions" in WALS F85A (code "dut"). -/
 theorem dutch_wals_prepositions :
-    (Core.WALS.F85A.allData.find?
+    (Datasets.WALS.F85A.allData.find?
       (fun d => d.walsCode == "dut")).map (·.value)
     = some .prepositions := by native_decide
 
