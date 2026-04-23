@@ -4,6 +4,49 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.249] - 2026-04-23
+
+### Tier 4 follow-up: namespace cleanup on the 10 just-moved files (commit `33ba30f2`)
+
+Closes the deferred namespace debt from the Tier 4 batch (`0.230.243`).
+The 10 files moved out of `Core/` to `Theories/` kept their original
+`namespace Core.X` declarations; this commit makes the namespaces match
+their new file paths (mathlib discipline: namespace ≡ directory path
+tail).
+
+**Renames:**
+
+| File | Old namespace | New namespace |
+|---|---|---|
+| `Theories/Pragmatics/InformationTheory/ChannelCapacity.lean` | `Core.ChannelCapacity` | `Pragmatics.InformationTheory.ChannelCapacity` |
+| `Theories/Pragmatics/RSA/Divergence.lean` | `Core.Divergence` | `RSA.Divergence` |
+| `Theories/Pragmatics/RSA/Distributions.lean` | `Core.Distributions` | `RSA.Distributions` |
+| `Theories/Pragmatics/Efficiency.lean` | `Core.Efficiency` | `Pragmatics.Efficiency` |
+| `Theories/Pragmatics/GameTheory.lean` | `Core.GameTheory` | `Pragmatics.GameTheory` |
+| `Theories/Semantics/Composition/Continuation.lean` | `Core.Continuation` | `Semantics.Composition.Continuation` |
+| `Theories/Semantics/Conditionals/SelectionFunction.lean` | `Core` outer + `SelectionFunction` inner | `Semantics.Conditionals` outer + `SelectionFunction` inner |
+| `Theories/Semantics/Attitudes/ContentIndividual.lean` | bare `Core` | `Semantics.Attitudes` |
+| `Theories/Semantics/Spatial/Path.lean` | `Core.Path` | `Semantics.Spatial.Path` |
+| `Theories/Syntax/Binding/SpecificityCondition.lean` | `Core.SpecificityCondition` | `Syntax.Binding.SpecificityCondition` |
+
+**SelectionFunction layout note:** the file's `SelectionFunction`
+*structure* is declared inside an inner `namespace SelectionFunction`,
+so flattening to a single `Semantics.Conditionals.SelectionFunction`
+namespace would yield qualified path
+`Semantics.Conditionals.SelectionFunction.SelectionFunction` and break
+consumers. The outer wrapper became `Semantics.Conditionals`; inner
+`SelectionFunction` block preserved — consumer-facing path stays
+`Semantics.Conditionals.SelectionFunction.X`.
+
+**Consumer updates** (~30 sites): qualified `Core.X.Y` references plus
+`open Core.X` declarations across LexicalTypology / Quantification /
+Imprecision / Modality / ScalarImplicatures / Emotion / Possession /
+Islands / TenseAspect / WordOrder / Conditionals studies + Composition
+/ Conditionals / Modality / Events theory files + Diachronic /
+Pragmatics. `Core/Agent/BToM.lean` docstring mention updated. Also
+caught `_root_.Core.selectionPrefers` ref in
+`CarianiSantorio2018.lean` (beyond the original known list) by grep.
+
 ## [0.230.248] - 2026-04-23
 
 ### Phonology consumer refactors: AkinboFwangwar2026 + McCarthyPrince1995 §§2.5/5b
