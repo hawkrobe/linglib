@@ -183,11 +183,12 @@ theorem IsReinforceable.toCancellable
 -- Calculability (Grice 1975) — lifted from `ImplicatureMechanism`
 -- ============================================================
 
-/-- An implicature is calculable iff its mechanism is. -/
-def IsCalculable (i : Implicature W) : Prop :=
+/-- An implicature is calculable iff its mechanism is. Polymorphic in
+the strength type: only the `mechanism` field is inspected. -/
+def IsCalculable {S : Type} (i : Implicature W S) : Prop :=
   i.mechanism.isCalculable
 
-instance (i : Implicature W) : Decidable (IsCalculable i) :=
+instance {S : Type} (i : Implicature W S) : Decidable (IsCalculable i) :=
   inferInstanceAs (Decidable i.mechanism.isCalculable)
 
 /-- The lexical mechanism is the unique non-calculable mechanism. -/
@@ -201,11 +202,12 @@ theorem isCalculable_iff_not_lexical (i : Implicature W) :
 -- Non-detachability (Grice 1975) — lifted from `ImplicatureKind`
 -- ============================================================
 
-/-- An implicature is non-detachable iff its kind is. -/
-def IsNonDetachable (i : Implicature W) : Prop :=
+/-- An implicature is non-detachable iff its kind is. Polymorphic in
+the strength type: only the `kind` field is inspected. -/
+def IsNonDetachable {S : Type} (i : Implicature W S) : Prop :=
   i.kind.isNonDetachable
 
-instance (i : Implicature W) : Decidable (IsNonDetachable i) :=
+instance {S : Type} (i : Implicature W S) : Decidable (IsNonDetachable i) :=
   inferInstanceAs (Decidable i.kind.isNonDetachable)
 
 
@@ -233,8 +235,8 @@ structure GriceanProfile (φ : W → Prop) (i : Implicature W) : Prop where
 cooperative reasoning — they're lexically encoded — so they fail
 calculability. The agreement with @cite{grice-1975}'s original
 distinction is the contentful theorem here. -/
-theorem conventional_not_calculable
-    (i : Implicature W) (_hKind : i.kind = .conventional)
+theorem conventional_not_calculable {S : Type}
+    (i : Implicature W S) (_hKind : i.kind = .conventional)
     (hLex : i.mechanism = .lexical) : ¬ IsCalculable i := by
   unfold IsCalculable ImplicatureMechanism.isCalculable
   rw [hLex]
@@ -243,8 +245,8 @@ theorem conventional_not_calculable
 /-- Manner implicatures are by definition form-relative, so they fail
 non-detachability. The agreement with @cite{horn-1984}'s Division of
 Pragmatic Labor is the contentful theorem. -/
-theorem manner_is_detachable
-    (i : Implicature W) (h : i.kind = .manner) : ¬ IsNonDetachable i := by
+theorem manner_is_detachable {S : Type}
+    (i : Implicature W S) (h : i.kind = .manner) : ¬ IsNonDetachable i := by
   unfold IsNonDetachable ImplicatureKind.isNonDetachable
   rw [h]
   exact id
