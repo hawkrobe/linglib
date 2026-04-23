@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.245] - 2026-04-23
+
+### Exhaustification: unify Set/Finset hierarchies (single source of truth for IsCompatible/IsMCSet)
+
+Resolves the architectural fault line flagged by the integration audit: the Finset side (`Innocent.lean`) had its own parallel definitions of `IsCompatible`/`IsMCSet`/`IE` instead of deriving them from the canonical Set side (`Operators/Basic.lean`).
+
+**Restructured `Innocent.lean`** following the standard mathlib "abstract spec + computable refinement" pattern (cf. `Set.Finite` + `Set.Finite.toFinset`, `Set.image` + `Finset.image`):
+
+- **`Innocent.IsCompatible` is now an `abbrev`** for `Exhaustification.IsCompatible (asSetOfSets ALT) (↑φ) (asSetOfSets E)`. Same for `IsMCSet`. Set-side theorems (Spector Thm 9, Thm 10, IE characterization, etc.) automatically apply to Finset usage.
+- **`asSetOfSets : Finset (Finset W) → Set (Set W)`** is the canonical coercion (lift inner Finsets to Sets via `Set.image`).
+- **`isCompatible_iff_finset` and `isMCSet_iff_finset`** bridge theorems prove the abbrevs are equivalent to the explicit Finset characterizations (`E ⊆ excludables ∧ φ ∈ E ∧ (E.inf id).Nonempty` etc.).
+- **`Decidable IsCompatible` / `Decidable IsMCSet`** are derived via `decidable_of_iff` from the bridge theorems — decidability is recovered, not stipulated independently.
+- **`IE`/`innocentlyExcludable`** stay as Finset filters (the data structure is Finset for `Excluder` integration), now using the unified `IsMCSet` predicate.
+- **`phi_mem_IE`** re-derived through `isCompatible_iff_finset`.
+
+Net: ~+90 lines on the bridge infrastructure, but the parallel hierarchy collapses to a single source of truth. The 5 supporting helpers (`mem_asSetOfSets`, `coe_univ_sdiff`, `finset_ext_of_coe_eq`, `mem_inf_id_iff`) are general-purpose Finset ↔ Set bridge lemmas that future code can reuse.
+
+**Why this works (and why the deleted SetFinsetBridge.lean didn't)**: the deleted bridge tried to maintain two parallel APIs and prove them equivalent — 320 lines of dead infrastructure with 0 consumers. The unified architecture makes one definition canonical and the other a derived abbrev. The bridge `iff`s are load-bearing (they provide the `Decidable` instances), not decorative.
+
+All 16 downstream consumers (BarLevFox2020, BarLev2021, Spector2016, AlonsoOvalleMoghiseh2025, Fox2007, Spector2013, Magri2014, ChowErlewine2022, BrehenyEtAl2018, Denic2023, Magri2009, CremersWilcoxSpector2023, ExhaustivityLimit, WangDavidson2026, Trivalent, Tolerant) build clean against the new API.
+
+This addresses the deferred Set/Finset duplication item from the 0.230.238 audit roll-up.
+
 ## [0.230.244] - 2026-04-23
 
 ### Tier 4 leftover: `Core/Alternation.lean` → `Theories/Syntax/ArgumentStructure/`
