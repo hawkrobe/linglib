@@ -1,7 +1,5 @@
-import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Causation.Sufficiency
-import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Theories.Semantics.Causation.CCSelection
+import Linglib.Core.Causal.V2.SEM.Bool
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 /-!
@@ -10,218 +8,239 @@ import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 The progressive picks out type-level causal processes rather than
 token-level completed events. This module formalizes the distinction
-using structural equation models, following @cite{nadathur-bar-asher-siegal-2024}'s
+using V2 SEMs, following @cite{nadathur-bar-asher-siegal-2024}'s
 reframing of the imperfective paradox through causal models.
 
 ## Type-Level vs Token-Level
 
 @cite{bar-asher-siegal-2026}: SEM models distinguish two levels:
-
-- **Type-level**: General causal laws — `CausalDynamics` encodes what
-  WOULD happen given conditions. Laws are nomological structures
-  (Hausman 1998, Woodward 2003).
-- **Token-level**: Specific event instances — a `Situation` anchored
-  to the actual world. `actuallyCaused` checks whether a particular
-  cause brought about a particular effect.
+- **Type-level**: General causal structure (graph + mechanisms).
+- **Token-level**: A specific causal trajectory completed in the actual world.
 
 ## The Imperfective Paradox
 
 "Mary was opening the door" (progressive) vs "Mary opened the door"
-(perfective):
-
-- **Progressive**: a type-level causal process is underway. Mary's action
-  is part of a causal trajectory that, under normal conditions, leads to
-  the door being open. No commitment to actual completion.
-- **Perfective**: token-level causation completed. Mary's action actually
-  caused the door to open.
-
-The paradox: the progressive entails the process is underway but NOT
+(perfective). The progressive entails the process is underway but NOT
 that it completed. "Mary was opening the door (when it got stuck)" is
-coherent — the type-level process was in progress, but the token-level
-result never obtained.
+coherent — type-level process in progress, token-level result never obtained.
 
-## Formalization
+## V2 substrate
 
-A `CausalProcess` packages a `CausalDynamics` with an initiating action
-and a result state. Progressive semantics checks that the initiator is
-type-level sufficient (the causal trajectory exists); perfective semantics
-checks token-level completion (the effect actually obtained).
-
-## Bridge to TemporalDecomposition
-
-`CausallyGroundedEvent` (§ 5) connects this module to
-`Events.TemporalDecomposition`: the causal process provides the
-explanatory mechanism (why activity leads to result), while
-`SubeventPhases` provides the observable interval structure (activity
-trace precedes result trace). The imperfective paradox is formalized
-at both levels — causal (`progressive_not_entails_perfective`) and
-temporal (`progressive_before_result`).
+`CausalProcess V` is polymorphic over the vertex type. `progressiveTrue`
+checks type-level sufficiency (the cause develops to the result via
+`developOn`). `perfectiveTrue` adds token-level completion via a local
+`completesForEffect` (defined inline to avoid the CCSelection cascade
+during the V2 migration period).
 -/
 
 namespace Semantics.Causation.Progressive
 
 open Core (WorldTimeIndex)
-
-open Core.Causal
-open Semantics.Causation.Sufficiency
-open Semantics.Causation.Necessity
-open Semantics.Causation.CCSelection
+open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
 
 -- ════════════════════════════════════════════════════
--- § 1. Causal Process
+-- § 1. Causal Process (V2)
 -- ════════════════════════════════════════════════════
 
-/-- A causal process for telic predicates.
+/-- A causal process for telic predicates, parameterized over a vertex type `V`.
 
-    @cite{nadathur-bar-asher-siegal-2024}: telic predicates encode structured
-    causal models. The process specifies an initiating action and a result
-    state connected by causal laws. The progressive asserts the process is
-    underway (type-level); the perfective asserts it completed (token-level).
+    Bundles a `BoolSEM V` (the type-level causal model), an explicit
+    vertex list (for `developOn`-based kernel reduction), the initiating
+    action vertex, the result vertex, and any enabling-condition valuation. -/
+structure CausalProcess (V : Type*) [Fintype V] [DecidableEq V] where
+  /-- The type-level causal model. -/
+  M : BoolSEM V
+  /-- Topologically-ordered vertex list for structural unfolding. -/
+  vertexList : List V
+  /-- The initiating action vertex. -/
+  initiator : V
+  /-- The result-state vertex. -/
+  result : V
+  /-- Background enabling conditions (default: empty). -/
+  enablingConditions : Valuation (fun _ : V => Bool) := Valuation.empty
 
-    - `dynamics`: the type-level causal model
-    - `initiator`: the causing event/action variable
-    - `result`: the result state variable
-    - `enablingConditions`: background conditions assumed to hold
-      (e.g., the door is unlocked, oxygen is present) -/
-structure CausalProcess where
-  dynamics : CausalDynamics
-  initiator : Variable
-  result : Variable
-  enablingConditions : Situation := Situation.empty
+namespace CausalProcess
+
+variable {V : Type*} [Fintype V] [DecidableEq V]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Progressive vs Perfective Semantics
 -- ════════════════════════════════════════════════════
 
 /-- Type-level sufficiency: the causal trajectory from initiator to
-    result exists under normal conditions.
-
-    @cite{nadathur-bar-asher-siegal-2024}: the progressive asserts that
-    a type-level causal process is underway — the initiator is sufficient
-    for the result given the enabling conditions. No commitment to the
+    result exists. The progressive asserts this — no commitment to the
     result actually obtaining in the actual world. -/
-def CausalProcess.typeLevelHolds (proc : CausalProcess) : Prop :=
-  (normalDevelopment proc.dynamics
+noncomputable def typeLevelHolds (proc : CausalProcess V)
+    [SEM.IsDeterministic proc.M] : Prop :=
+  (developOn proc.M proc.vertexList 1
     (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true
 
-instance (proc : CausalProcess) : Decidable proc.typeLevelHolds :=
-  inferInstanceAs (Decidable (Situation.hasValue ..))
+noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+    Decidable proc.typeLevelHolds := Classical.dec _
 
-/-- Token-level completion: the initiator actually occurred and the
-    causal chain ran to completion, producing the result.
-
-    @cite{nadathur-bar-asher-siegal-2024}: the perfective asserts
-    token-level completion — the causal process finished, and the
-    result state actually obtained. -/
-def CausalProcess.tokenLevelCompleted (proc : CausalProcess) : Prop :=
-  let fullSituation := proc.enablingConditions.extend proc.initiator true
-  (normalDevelopment proc.dynamics fullSituation).hasValue proc.result true
-
-instance (proc : CausalProcess) : Decidable proc.tokenLevelCompleted :=
-  inferInstanceAs (Decidable (Situation.hasValue ..))
-
-/-- Progressive semantics: type-level process underway, completion open.
-
-    Holds when the causal trajectory exists (type-level sufficiency
-    holds) — regardless of whether the result actually obtained. This
-    captures "Mary was opening the door": the action is part of a causal
-    trajectory to door-opening, even if the door never opens. -/
-def CausalProcess.progressiveTrue (proc : CausalProcess) : Prop :=
+/-- Progressive semantics: type-level process underway, completion open. -/
+noncomputable def progressiveTrue (proc : CausalProcess V)
+    [SEM.IsDeterministic proc.M] : Prop :=
   proc.typeLevelHolds
 
-instance (proc : CausalProcess) : Decidable proc.progressiveTrue :=
-  inferInstanceAs (Decidable proc.typeLevelHolds)
+noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+    Decidable proc.progressiveTrue := Classical.dec _
+
+/-- Local but-for completion test (avoids CCSelection import during migration):
+    cause being true → effect; cause being false → ¬ effect. -/
+noncomputable def completesForEffect (proc : CausalProcess V)
+    [SEM.IsDeterministic proc.M] : Prop :=
+  (developOn proc.M proc.vertexList 1
+    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true ∧
+  ¬ (developOn proc.M proc.vertexList 1
+      (proc.enablingConditions.extend proc.initiator false)).hasValue proc.result true
+
+noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+    Decidable proc.completesForEffect := Classical.dec _
 
 /-- Perfective semantics: token-level causation completed.
 
-    Holds when the causal chain ran to completion and the
-    initiator was the completing condition of the only actualized
-    sufficient set. This captures "Mary opened the door." -/
-def CausalProcess.perfectiveTrue (proc : CausalProcess) : Prop :=
-  completesForEffect proc.dynamics proc.enablingConditions
-    proc.initiator proc.result
+    Holds when the causal chain ran to completion AND the initiator was
+    necessary (removing it would prevent the result). This captures
+    "Mary opened the door." -/
+noncomputable def perfectiveTrue (proc : CausalProcess V)
+    [SEM.IsDeterministic proc.M] : Prop :=
+  proc.completesForEffect
 
-instance (proc : CausalProcess) : Decidable proc.perfectiveTrue :=
-  inferInstanceAs (Decidable (completesForEffect ..))
+noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
+    Decidable proc.perfectiveTrue := Classical.dec _
+
+end CausalProcess
 
 -- ════════════════════════════════════════════════════
--- § 3. The Imperfective Paradox
+-- § 3. Imperfective Paradox: maryOpening
 -- ════════════════════════════════════════════════════
 
-/-- Example: "Mary was opening the door" / "Mary opened the door."
-
+/-! Example: "Mary was opening the door" / "Mary opened the door."
     Simple model: Mary's action → door opens. -/
-def maryOpening : CausalProcess :=
-  { dynamics := CausalDynamics.mk [CausalLaw.simple (mkVar "action") (mkVar "door_open")],
-    initiator := mkVar "action",
-    result := mkVar "door_open" }
 
-/-- The progressive is true: Mary's action is type-level sufficient
-    for the door opening. -/
-theorem maryOpening_progressive :
-    maryOpening.progressiveTrue := by native_decide
+/-- Vertex type for the door-opening example. -/
+inductive MaryVar | action | doorOpen
+  deriving DecidableEq, Fintype, Repr
 
-/-- The perfective is true: Mary's action completed the causal process. -/
-theorem maryOpening_perfective :
-    maryOpening.perfectiveTrue := by native_decide
+def maryVarList : List MaryVar := [.action, .doorOpen]
 
-/-- Perfective entails progressive (for the same process).
+/-- Door-opening graph: doorOpen ← action. -/
+def maryGraph : CausalGraph MaryVar :=
+  ⟨fun | .action => ∅ | .doorOpen => {.action}⟩
 
-    If the causal chain completed (perfective), then the type-level
-    trajectory existed (progressive). Completion implies the causal
-    model had the relevant sufficiency. -/
-theorem perfective_entails_progressive (proc : CausalProcess)
+/-- Door-opening SEM: doorOpen := action. -/
+noncomputable def marySEM : BoolSEM MaryVar :=
+  { graph := maryGraph
+    mech := fun v => match v with
+      | .action => const (G := maryGraph) false
+      | .doorOpen => deterministic (fun ρ => ρ ⟨.action, by simp [maryGraph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic marySEM where
+  mech_det v := match v with
+    | .action => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .doorOpen => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+noncomputable def maryOpening : CausalProcess MaryVar :=
+  { M := marySEM, vertexList := maryVarList,
+    initiator := .action, result := .doorOpen }
+
+noncomputable instance : SEM.IsDeterministic maryOpening.M :=
+  inferInstanceAs (SEM.IsDeterministic marySEM)
+
+/-- The progressive is true: Mary's action is type-level sufficient. -/
+theorem maryOpening_progressive : maryOpening.progressiveTrue := by
+  unfold CausalProcess.progressiveTrue CausalProcess.typeLevelHolds
+  rfl
+
+/-- The perfective is true: Mary's action completed the process. -/
+theorem maryOpening_perfective : maryOpening.perfectiveTrue := by
+  refine ⟨?_, ?_⟩
+  · rfl
+  · intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+/-- Perfective entails progressive (for the same process). -/
+theorem perfective_entails_progressive {V : Type*} [Fintype V] [DecidableEq V]
+    (proc : CausalProcess V) [SEM.IsDeterministic proc.M]
     (h : proc.perfectiveTrue) :
-    proc.progressiveTrue :=
-  (show completesForEffect .. from h).1
+    proc.progressiveTrue := h.1
 
-/-- Progressive does NOT entail perfective in general.
+-- ════════════════════════════════════════════════════
+-- § 4. Imperfective Paradox: overdetermination witness
+-- ════════════════════════════════════════════════════
 
-    The imperfective paradox: the type-level process can be underway
-    (progressive true) even when a disruption prevents token-level
-    completion. Witnessed by a model where an intervening blocker
-    prevents the result despite the initiator being sufficient in
-    isolation. -/
+/-! Witness for `progressive ∧ ¬ perfective`: an overdetermination model
+    where the type-level process exists but the actual outcome would
+    obtain regardless of the initiator. -/
+
+/-- 3-vertex overdetermination model: A and B both cause R (disjunctively).
+    With B in the background, A is sufficient but not necessary. -/
+inductive OdVar | a | b | r
+  deriving DecidableEq, Fintype, Repr
+
+def odVarList : List OdVar := [.a, .b, .r]
+
+def odGraph : CausalGraph OdVar :=
+  ⟨fun | .a => ∅ | .b => ∅ | .r => {.a, .b}⟩
+
+/-- R := A ∨ B (disjunctive overdetermination). -/
+noncomputable def odSEM : BoolSEM OdVar :=
+  { graph := odGraph
+    mech := fun v => match v with
+      | .a => const (G := odGraph) false
+      | .b => const (G := odGraph) false
+      | .r => deterministic (fun ρ =>
+          ρ ⟨.a, by simp [odGraph]⟩ || ρ ⟨.b, by simp [odGraph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic odSEM where
+  mech_det v := match v with
+    | .a | .b => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .r => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+noncomputable def overdetProc : CausalProcess OdVar :=
+  { M := odSEM, vertexList := odVarList,
+    initiator := .a, result := .r,
+    enablingConditions := Valuation.empty.extend .b true }
+
+noncomputable instance : SEM.IsDeterministic overdetProc.M :=
+  inferInstanceAs (SEM.IsDeterministic odSEM)
+
+/-- Progressive holds for the overdetermination witness. -/
+theorem overdet_progressive : overdetProc.progressiveTrue := by
+  unfold CausalProcess.progressiveTrue CausalProcess.typeLevelHolds
+  rfl
+
+/-- Perfective FAILS for the overdetermination witness — even with
+    `initiator = false`, the backup B in `enablingConditions` produces
+    the result. -/
+theorem overdet_not_perfective : ¬ overdetProc.perfectiveTrue := by
+  intro ⟨_, hNot⟩
+  apply hNot
+  rfl
+
+/-- **Imperfective paradox**: progressive does NOT entail perfective.
+    Witnessed by the overdetermination scenario. -/
 theorem progressive_not_entails_perfective :
-    ∃ (proc : CausalProcess),
-      proc.progressiveTrue ∧ ¬ proc.perfectiveTrue := by
-  -- Overdetermination: action is type-level sufficient (progressive),
-  -- but a backup cause in the enabling conditions means the result
-  -- still obtains without the action (perfective fails).
-  use { dynamics := ⟨[CausalLaw.simple (mkVar "a") (mkVar "r"),
-                       CausalLaw.simple (mkVar "b") (mkVar "r")]⟩,
-        initiator := mkVar "a",
-        result := mkVar "r",
-        enablingConditions := Situation.empty.extend (mkVar "b") true }
-  constructor <;> native_decide
+    overdetProc.progressiveTrue ∧ ¬ overdetProc.perfectiveTrue :=
+  ⟨overdet_progressive, overdet_not_perfective⟩
 
 -- ════════════════════════════════════════════════════
--- § 4. Connecting to Inertial Modality
+-- § 5. Type-level = development under inertia (Dowty 1979)
 -- ════════════════════════════════════════════════════
 
-/-- The causal process account subsumes the simple inertial account.
-
-    @cite{dowty-1979}: the progressive is true iff the outcome holds in
+/-- @cite{dowty-1979}: the progressive is true iff the outcome holds in
     all inertia worlds (normal continuations). The causal model account
-    refines this: "normal continuation" means "the causal model predicts
-    the result from the initiator" — i.e., type-level sufficiency.
-
-    `normalDevelopment` IS the formal counterpart of Dowty's "inertia
-    worlds": it computes what would happen given normal law-application
-    without interruption. So `typeLevelHolds` (progressive semantics)
-    reduces to checking normalDevelopment in the sense of Dowty.
-
-    This theorem confirms: type-level sufficiency is equivalent to
-    the result holding in the "normal development" of the initiator
-    (the causal model's inertia). -/
-theorem typeLevelHolds_is_normalDevelopment (proc : CausalProcess) :
+    refines this: "normal continuation" means "the SEM develops the
+    initiator into the result" — i.e., type-level sufficiency. -/
+theorem typeLevelHolds_is_developOn {V : Type*} [Fintype V] [DecidableEq V]
+    (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     proc.typeLevelHolds ↔
-    (normalDevelopment proc.dynamics
+    (developOn proc.M proc.vertexList 1
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge to Temporal Decomposition
+-- § 6. Bridge to Temporal Decomposition
 -- ════════════════════════════════════════════════════
 
 /-- A causally grounded telic event: bridges `CausalProcess` (causal
@@ -229,67 +248,18 @@ theorem typeLevelHolds_is_normalDevelopment (proc : CausalProcess) :
 
     @cite{nadathur-bar-asher-siegal-2024}: telic predicates encode
     structured causal models. The activity phase corresponds to the
-    initiating action (the `CausalProcess.initiator`); the result phase
-    corresponds to the effect variable (`CausalProcess.result`). The
-    causal model explains WHY the activity leads to the result: the
-    initiator is type-level sufficient for the effect.
-
-    This bridges ProgressiveCausation (§ 2–3) and TemporalDecomposition
-    (§ 6–7): the causal process provides the explanatory mechanism,
-    while `SubeventPhases` provides the observable interval structure.
-
-    - Causal side: `process.progressiveTrue` = type-level sufficiency
-    - Temporal side: `IMPF (phasePred phases.activityTrace)` = progressive
-    - Both formalize the same phenomenon at different levels of description -/
-structure CausallyGroundedEvent (Time : Type*) [LinearOrder Time] where
+    initiating action; the result phase corresponds to the effect
+    variable. The causal model explains WHY the activity leads to the
+    result: the initiator is type-level sufficient. -/
+structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
+    (Time : Type*) [LinearOrder Time] where
   /-- The causal process underlying the event -/
-  process : CausalProcess
+  process : CausalProcess V
+  /-- IsDeterministic instance for proc.M (carried explicitly). -/
+  detInst : SEM.IsDeterministic process.M
   /-- The temporal phases: activity and result with ordering -/
   phases : Semantics.Events.SubeventPhases Time
-  /-- The causal trajectory is viable: the initiator is type-level
-      sufficient for the result under enabling conditions -/
-  causallyViable : process.typeLevelHolds
-
-/-- A causally grounded event's progressive is always true: the causal
-    trajectory from initiator to result exists (by `causallyViable`).
-
-    This is the causal counterpart of
-    `TemporalDecomposition.progressive_before_result`: the temporal
-    theorem says IMPF(activity) CAN hold before the result; the causal
-    theorem says WHY — the initiator is type-level sufficient for the
-    result in the causal model. -/
-theorem CausallyGroundedEvent.progressiveTrue
-    {Time : Type*} [LinearOrder Time]
-    (cge : CausallyGroundedEvent Time) :
-    cge.process.progressiveTrue := cge.causallyViable
-
-/-- Token-level completion (perfective) is NOT guaranteed for causally
-    grounded events. The causal trajectory exists (progressive), but
-    an intervening event may prevent the result from obtaining.
-
-    This is the causal explanation of
-    `TemporalDecomposition.progressive_before_result`: in temporal
-    terms, the reference time can be inside the activity phase but
-    before the result. In causal terms, the initiator is sufficient
-    but an overdetermining backup cause breaks the completion test.
-
-    "Mary was opening the door [when it jammed]" — the causal process
-    is underway (type-level sufficient) but the token-level result
-    need not obtain. -/
-theorem causallyGroundedEvent_progressive_not_perfective :
-    ∃ (cge : CausallyGroundedEvent ℤ),
-      cge.process.progressiveTrue ∧
-      ¬ cge.process.perfectiveTrue := by
-  refine ⟨{
-    process := {
-      dynamics := ⟨[CausalLaw.simple (mkVar "a") (mkVar "r"),
-                     CausalLaw.simple (mkVar "b") (mkVar "r")]⟩,
-      initiator := mkVar "a",
-      result := mkVar "r",
-      enablingConditions := Situation.empty.extend (mkVar "b") true },
-    phases := ⟨⟨0, 10, by omega⟩, ⟨15, 20, by omega⟩, by dsimp; omega⟩,
-    causallyViable := by native_decide }, ?_, ?_⟩
-  · native_decide
-  · native_decide
+  /-- The causal trajectory is viable: initiator is type-level sufficient. -/
+  causallyViable : @CausalProcess.typeLevelHolds V _ _ process detInst
 
 end Semantics.Causation.Progressive
