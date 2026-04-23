@@ -1,6 +1,7 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.TCT
 import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Core.Constraint.OT.Basic
 
@@ -421,7 +422,11 @@ the architecturally-distinct derivations producing identical phraseOutput.
 
 namespace StratalComparison
 
-open Phonology.StratalOT (StratalDerivation)
+open Phonology.StratalOT (StratalDerivation StratalRole stratalDerivToCorr)
+open Phonology.StratalToTCT (project project_preserves_phrase_as_derivative
+                             project_preserves_stem_as_base
+                             project_preserves_underlying_as_input
+                             project_oo_edge_eq_parallel)
 
 /-- A two-stratum stratal derivation of the Sundanese plural.
 
@@ -433,10 +438,10 @@ open Phonology.StratalOT (StratalDerivation)
     - **Phrase cycle**: identity (no further phonological adjustment).
 
     The full derivation is encoded directly; the actual stratum-by-stratum
-    OT evaluations are deferred to a future expansion (would require
-    stratum-specific constraint rankings + GEN/EVAL machinery instantiated
-    on `Sundanese.Seg`). The point of this section is the *architectural
-    agreement*, not the grammar implementation. -/
+    OT evaluations are deferred (would require stratum-specific constraint
+    rankings + GEN/EVAL machinery instantiated on `Sundanese.Seg`). The
+    point of this section is the *architectural agreement*, not the
+    grammar implementation. -/
 def sundaneseStratalDerivation :
     StratalDerivation (List Seg) (List Seg) (List Seg) where
   underlyingForm   := Sundanese.derivInput
@@ -444,50 +449,86 @@ def sundaneseStratalDerivation :
   wordOutput       := Sundanese.derivOutputOverapplied
   phraseOutput     := Sundanese.derivOutputOverapplied
 
-/-- **Bridge theorem**: on Sundanese, the Stratal-OT-derived surface
-    form equals the TCT-derived overapplied output. The two architectures
-    converge on the same prediction.
+/-- The stratal derivation expressed as a `Corr StratalRole Seg`.
+    Now stratal and TCT analyses share a substrate type — the
+    `Corr` family. Cross-stratum feeding edges (`.sIn↔.sOut`,
+    `.sOut↔.wOut`, `.wOut↔.pOut`) carry parallel-pair correspondences. -/
+def sundaneseStratalCorr : Corr StratalRole Seg :=
+  stratalDerivToCorr Sundanese.derivInput Sundanese.baseOutput
+    Sundanese.derivOutputOverapplied Sundanese.derivOutputOverapplied
 
-    This is `rfl` because both forms are stipulated to equal
-    `Sundanese.derivOutputOverapplied` — the *theorem-content* is in
-    the structural separation: a `StratalDerivation` and a
-    `Corr Role Seg` are entirely different types, but their notion of
-    "surface output" agrees here. The full derivation theorem (where
-    each architecture's surface output is *computed* from its grammar
-    rather than stipulated) is deferred. -/
-theorem stratal_tct_agree_on_sundanese :
-    sundaneseStratalDerivation.surface =
-      ((Sundanese.overappliedDiagram).form .derivative) := rfl
+/-- The stratal derivation projected down to TCT roles. The `.sOut`
+    becomes TCT `.base`; the `.pOut` becomes TCT `.derivative`; the
+    `.wOut` is folded out (TCT doesn't distinguish a separate word
+    stratum). -/
+def sundaneseStratalAsTCT : Corr Role Seg :=
+  project Sundanese.derivInput Sundanese.baseOutput
+    Sundanese.derivOutputOverapplied Sundanese.derivOutputOverapplied
 
-/-- The stratal output equals the TCT-overapplied output by construction.
-    Together with `Sundanese.overapplied_beats_normal_on_OO_ident`, this
-    discharges Benua's *parallel-subsumes-stratal* claim *for this case*:
-    stratal predicts the same surface form that TCT's OO-Faith independently
-    derives. -/
+/-- **Bridge theorem (substrate level)**: the stratal derivation's
+    phrase output, when projected to a TCT diagram, IS the TCT
+    derivative form. True by `rfl` via
+    `project_preserves_phrase_as_derivative`. The two architectures
+    share their notion of "surface form" by construction once they
+    are projected onto the same `Corr` substrate. -/
 theorem stratal_phrase_eq_tct_derivative :
-    sundaneseStratalDerivation.phraseOutput =
-      Sundanese.derivOutputOverapplied := rfl
+    sundaneseStratalAsTCT.form .derivative = Sundanese.derivOutputOverapplied :=
+  project_preserves_phrase_as_derivative _ _ _ _
+
+/-- **Bridge theorem (Sundanese-specific)**: the stratal derivation
+    and the directly-built TCT diagram (Sundanese.overappliedDiagram)
+    agree on the surface form. Both produce
+    `Sundanese.derivOutputOverapplied` — the empirical convergence
+    claim of @cite{benua-1997}. -/
+theorem stratal_tct_agree_on_sundanese_surface :
+    sundaneseStratalAsTCT.form .derivative =
+      Sundanese.overappliedDiagram.form .derivative :=
+  rfl
+
+/-- **Bridge theorem (architectural)**: the stratal stem output IS the
+    TCT base. Benua's identification of "stratum-1 result = OO-base"
+    is true by construction of the `project` function. -/
+theorem stratal_stem_is_tct_base :
+    sundaneseStratalAsTCT.form .base = Sundanese.baseOutput :=
+  project_preserves_stem_as_base _ _ _ _
+
+/-- **Bridge theorem (substrate level)**: the OO-correspondence edge
+    in the projected TCT diagram is the parallel-pair correspondence
+    between the stratal stem output and phrase output. The formal
+    content of "the OO-Faith of TCT replaces the cycle-chain of stratal":
+    the OO edge is *recovered* from the stratal feeding chain by
+    composing `(.sOut, .wOut)` and `(.wOut, .pOut)` into the direct
+    `(.base, .derivative)` correspondence. -/
+theorem stratal_chain_collapses_to_oo_edge :
+    sundaneseStratalAsTCT.edge .base .derivative =
+      Phonology.StratalOT.parallelEdge Sundanese.baseOutput
+        Sundanese.derivOutputOverapplied :=
+  project_oo_edge_eq_parallel _ _ _ _
 
 /-! ### What's not yet proved
 
-This bridge is *concrete* (one paradigm) and *structural* (the surface
-forms agree by construction). The full Benua claim — for *every* stratal
-analysis there exists a TCT analysis producing the same surface
-predictions — is a meta-theoretical statement that would need:
+This bridge is *substrate-level* (the stratal and TCT diagrams share
+the `Corr` family) and *concrete* (one paradigm). The full Benua claim
+— for *every* stratal analysis there exists a TCT analysis producing
+the same surface predictions — is a meta-theoretical statement
+requiring:
 
-1. A model of stratal grammars as functions `Input → Output` derived from
-   stratum-specific constraint rankings (`StratalOT.evalStratum` chained
-   via `chainEval`).
-2. A model of TCT grammars as `TCTGrammar` instances (already exists in
-   `TCT.lean`).
+1. A model of stratal grammars as functions `Input → Output` derived
+   from stratum-specific constraint rankings (`StratalOT.evalStratum`
+   chained via `chainEval`).
+2. A model of TCT grammars as `TCTGrammar` instances (already exists
+   in `TCT.lean`).
 3. A constructive translation `stratalToTCT : StratalGrammar → TCTGrammar`
-   such that for all inputs, the derived surface forms agree.
+   such that for all inputs, the derived surface forms agree —
+   essentially: "TCT's OO-Faith with stratum-1-output as base = stratum-2's
+   IDENT-IO with stratum-1-output as input."
 
-Step 3 is the load-bearing piece; @cite{benua-1997}'s polemic is that this
-translation *exists* (and is empirically supported by Sundanese, Tiberian
-Hebrew, and English Ch 5). Formalizing the constructive translation —
-or finding a counterexample — is the next major scientific step in this
-line of work.
+Step 3 is the load-bearing piece; @cite{benua-1997}'s polemic is that
+this translation *exists* (and is empirically supported by Sundanese,
+Tiberian Hebrew, and English). Formalizing the constructive translation
+— or finding a counterexample — is the next major scientific step.
+The substrate is now in place: any candidate translation would map
+through the `Corr Role α` type that both architectures now share.
 -/
 
 end StratalComparison
