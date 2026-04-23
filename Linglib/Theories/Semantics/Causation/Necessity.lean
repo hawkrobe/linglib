@@ -1,5 +1,6 @@
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Causal.SEM.Monotonicity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Mathlib.Tactic.Use
 
 /-!
@@ -127,5 +128,69 @@ theorem actual_cause_necessary (dyn : CausalDynamics)
     (h : actuallyCaused dyn s cause effect) :
     causallyNecessary dyn (s.remove cause) cause effect :=
   h.2.2
+
+-- ════════════════════════════════════════════════════
+-- § V2 wrappers (new code: use these; old API kept for legacy consumers)
+-- ════════════════════════════════════════════════════
+
+/-! ### V2 namespace for new code
+
+The old `causeSem` / `causallyNecessary` above remain on the legacy
+`CausalDynamics` API for backward compat with `Causative.toSemantics`
+rfl theorems in `Fragments/English/Predicates/Verbal.lean`.
+
+New consumers should `open Semantics.Causation.Necessity.V2` and use
+the V2-flavored versions which delegate to V2's `causallyNecessary`. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2.BoolSEM (causallyNecessary)
+
+/-- V2 causal-necessity semantics for "cause": effect develops from cause
+    AND cause is causally necessary (Nadathur 2024 Def 10b) for effect.
+    BoolSEM-flavored. -/
+noncomputable def causeSem {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (causeEvent effectEvent : V) : Prop :=
+  (M.develop (background.extend causeEvent true)).hasValue effectEvent true ∧
+  Core.Causal.V2.BoolSEM.causallyNecessary M background causeEvent effectEvent
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation _) (cause effect : V) :
+    Decidable (causeSem M bg cause effect) := Classical.dec _
+
+/-- V2 INUS cause (Mackie): insufficient but necessary part of an
+    unnecessary but sufficient condition. -/
+noncomputable def isINUSCause {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (cause effect : V)
+    (enablingConditions : Valuation (fun _ : V => Bool)) : Prop :=
+  Core.Causal.V2.BoolSEM.causallySufficient M enablingConditions cause effect ∧
+  Core.Causal.V2.BoolSEM.causallyNecessary M enablingConditions cause effect ∧
+  ¬ Core.Causal.V2.BoolSEM.causallySufficient M Valuation.empty cause effect
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (cause effect : V) (enablingConditions : Valuation _) :
+    Decidable (isINUSCause M cause effect enablingConditions) := Classical.dec _
+
+/-- V2 actual causation: cause factually occurred, effect factually
+    occurred, and cause was causally necessary (Def 10b) — tested
+    against the actual situation with cause stripped from the background. -/
+noncomputable def actuallyCaused {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
+  s.hasValue cause true ∧
+  causeSem M (s.remove cause) cause effect
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (s : Valuation _) (cause effect : V) :
+    Decidable (actuallyCaused M s cause effect) := Classical.dec _
+
+end V2
 
 end Semantics.Causation.Necessity
