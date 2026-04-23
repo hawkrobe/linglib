@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.264] - 2026-04-23
+
+### O'Donnell 2015 Phase 5b: PolyaUrn refactor + DMPCFG retrofit
+
+Substrate cleanup before Phase 6 (`AdaptorGrammar`). Pólya urn made
+Type-polymorphic; DMPCFG retrofitted to use it.
+
+**`Core/Probability/PolyaUrn.lean`**:
+- Refactored `PolyaUrn (K : ℕ)` → `PolyaUrn (α : Type)` — alphabet
+  is now an arbitrary type. Operations require `[Fintype α]`;
+  positivity theorems require `[Nonempty α]` (replacing
+  `[NeZero K]`). Backwards-compatible: `PolyaUrn (Fin K)` still
+  works because `Fin K` has automatic `Fintype` and `[NeZero K] ↔
+  [Nonempty (Fin K)]`.
+- Added `partitionProb_pos` and `partitionProb_nonneg` — strict
+  positivity / nonnegativity of the closed-form Dirichlet–
+  multinomial mass on nonempty alphabets. Pulled from DMPCFG, now
+  a general theorem on the substrate.
+
+**`Theories/Morphology/FragmentGrammars/DMPCFG.lean`** (retrofitted):
+- Added `RulesWithLHS a` abbreviation for the per-LHS rule subtype.
+- Added `lhsUrn : G.NT → PolyaUrn (RulesWithLHS a)` and
+  `lhsCounts : G.NT → (Multiset _) → RulesWithLHS a → ℕ`.
+- `lhsFactor` is now a one-liner:
+  `(M.lhsUrn a).partitionProb (lhsCounts a D)`.
+- `lhsFactor_pos` is now 3 lines, delegating to
+  `PolyaUrn.partitionProb_pos`.
+- Removed `pseudoSumLHS`, `pseudoSumLHS_pos`, `corpusSumLHS` — all
+  subsumed by `PolyaUrn` API or unused.
+- Removed inlined Γ-positivity proof — substrate provides it.
+
+**Architectural payoff**: DMPCFG's per-LHS Pólya structure is now
+**explicit** in the type signature (`lhsUrn` returns a `PolyaUrn`)
+rather than buried in an inlined formula. AdaptorGrammar (Phase 6)
+will use the same per-LHS Pólya idiom for its Dirichlet–multinomial
+factor, with the substrate already in place.
+
+Build: PolyaUrn 7.5s, DMPCFG 9.3s, full library 5336 jobs green.
+
 ## [0.230.263] - 2026-04-23
 
 ### O'Donnell 2015 Phase 5: DMPCFG instance

@@ -4,10 +4,11 @@ import Linglib.Theories.Syntax.Minimalism.NestedAgree
 
 /-!
 # @cite{amato-2025} — Italian auxiliary selection via Nested Agree
-@cite{amato-2023}
 
-@cite{amato-2025} (NLLT) advances *Nested Agree* — the configuration of
-ordered probes plus maximized matching, formalized at
+The cyclic-Agree person-feature analysis adopted here originates in
+@cite{amato-2023}'s monograph; @cite{amato-2025} (NLLT) advances
+*Nested Agree* — the configuration of ordered probes plus maximized
+matching, formalized at
 `Theories/Syntax/Minimalism/NestedAgree.lean` — as a unifying account
 across at least six syntactic phenomena:
 
@@ -65,6 +66,7 @@ namespace Phenomena.AuxiliaryVerbs.Studies.Amato2025
 
 open Phenomena.AuxiliaryVerbs.Selection
 open Phenomena.AuxiliaryVerbs.Studies.Olivier2026
+open Minimalism
 open Minimalism.NestedAgree
 
 /-! ## Probe stack (Nested Agree on Perf) -/
@@ -303,82 +305,105 @@ theorem amato_vp_reflexive_climbed_predicts_be (c : RestructuringClauseAmato)
   simp [predictedMatrixAuxAmato, PersonAgreeSucceeds, VIsPhiActive,
     hSize, hClass, hClimb]
 
-/-! ## Bridge to the NestedAgree theory -/
+/-! ## Bridge to the NestedAgree theory
 
-/-- Translate an Amato clause to an abstract `NestedAgreeConfig`.
+    The translation builds an abstract `SyntacticObject` standing in
+    for the Italian Perf+vP structure (Perf with vP complement; vP =
+    DPsubj + v' = v + DPobj) and uses `phiActive` to mark v as
+    φ-active iff `VIsPhiActive c` — the structural primitive both
+    `PersonAgreeSucceeds` and the abstract NestedAgree machinery
+    consume. The bridge theorem `personAgree_iff_runStack_hits` then
+    proves that the abstract `runStack` outcome tracks the linguistic
+    predicate by chasing through the shared primitive on a fixed
+    `SyntacticObject` substrate (`cCommandsIn`, `containsOrEq`). -/
 
-    Token alphabet: `0` = DPsubj, `1` = the lower v (the shared goal),
-    `2` = DPobj (or the cliticized reflexive). Probe 0 = Infl-Agree;
-    probe 1 = π-Agree.
+private def aT : LIToken := ⟨LexicalItem.simple .T [], 0⟩
+private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩
+private def aDPsubj : LIToken := ⟨LexicalItem.simple .D [], 2⟩
+private def aDPobj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-    The `daughters` function — v's reachable subtree — is derived from
-    the structural primitive `VIsPhiActive`: a φ-defective v is *not*
-    reachable as a goal, so it does not appear in its own daughters.
-    This is *not* "encode the answer (PersonAgreeSucceeds) into the
-    config"; both `daughters` and `PersonAgreeSucceeds` derive from the
-    common structural primitive `VIsPhiActive`, which reads independent
-    clause data (complement size, verb class, clitic position).
+/-- Abstract `SyntacticObject` for an Italian Perf+vP structure:
+    `Perf [DPsubj [v DPobj]]`. The same tree models all Amato §3
+    cases; what changes between them is `phiActive` on `v`. -/
+private def perfTree : SyntacticObject :=
+  .node (.leaf aT)
+    (.node (.leaf aDPsubj)
+      (.node (.leaf aV) (.leaf aDPobj)))
 
-    `searchDomain` is now derived (`Theories/Syntax/Minimalism/NestedAgree.lean`),
-    not stipulated as a field. The matryoshka follows by `rfl`. -/
+/-- Translate an Amato clause to an abstract `NestedAgreeConfig` over
+    a Minimalist `SyntacticObject`. `phiActive` flags v as φ-active
+    iff `VIsPhiActive c`; all other heads are phi-active by default
+    (irrelevant for the worked example). The `daughters` /
+    `initialDomain` / `searchDomain` fields are *derived* in
+    `NestedAgree.lean` from `cCommandsIn` on `perfTree`, not
+    stipulated here. -/
 def toNestedConfig (c : RestructuringClauseAmato) : NestedAgreeConfig where
   stack := [⟨.T, some .C⟩, ⟨.T, some .C⟩]
-  goalLabel := 1
-  daughters
-    | 1 => if VIsPhiActive c then [1, 2] else [2]
-    | _ => []
-  initialDomain := [0, 1, 2]
+  root := perfTree
+  probingHead := .leaf aT
+  goalHead := .leaf aV
+  phiActive := fun y =>
+    if y = SyntacticObject.leaf aV then decide (VIsPhiActive c) else true
 
-/-- Every Amato clause yields a well-formed Nested Agree configuration
-    *under the precondition that v is φ-active*. The precondition is
-    structurally meaningful — it is exactly conjunct (B) of
-    `IsNestedAgreeConfig` (the goal lies in its own daughters): a
-    φ-defective v is not in `daughters 1`, so the configuration is
-    correctly excluded from `IsNestedAgreeConfig`. That is the formal
-    expression of @cite{amato-2025}'s "the chain breaks down at π-Agree"
-    for unaccusative and vP-reflexive-with-climbing cases. -/
+/-- Every Amato clause whose v is φ-active yields a well-formed Nested
+    Agree configuration. The precondition is structurally meaningful
+    — `IsNestedAgreeConfig` requires `goalHead` (= v) to be in
+    `initialDomain` (= Perf's c-command, filtered by `phiActive`); a
+    φ-defective v has `phiActive (.leaf aV) = false` and is correctly
+    excluded. This is the formal expression of @cite{amato-2025}'s
+    "the chain breaks down at π-Agree" for unaccusative and
+    vP-reflexive-with-climbing cases. -/
 theorem amato_clause_is_nested (c : RestructuringClauseAmato)
     (h : PersonAgreeSucceeds c) :
     IsNestedAgreeConfig (toNestedConfig c) := by
+  unfold IsNestedAgreeConfig NestedAgreeConfig.initialDomain
+  rw [List.mem_filter]
   refine ⟨?_, ?_⟩
-  · -- (A) goalLabel = 1 ∈ initialDomain = [0, 1, 2]
-    show (1 : Token) ∈ ([0, 1, 2] : List Token); decide
-  · -- (B) goalLabel = 1 ∈ daughters 1 = if VIsPhiActive c then [1,2] else [2]
-    show (1 : Token) ∈ (if VIsPhiActive c then ([1, 2] : List Token) else [2])
-    have h' : VIsPhiActive c := h
-    rw [if_pos h']
+  · -- .leaf aV ∈ perfTree.subtrees: purely structural, c-free after unfold.
+    show SyntacticObject.leaf aV ∈ perfTree.subtrees
     decide
+  · -- (decide (cCommandsIn perfTree perf v) && phiActive v) = true
+    rw [Bool.and_eq_true]
+    refine ⟨?_, ?_⟩
+    · -- Perf c-commands v: purely structural after unfold.
+      show decide (cCommandsIn perfTree (SyntacticObject.leaf aT)
+        (SyntacticObject.leaf aV)) = true
+      decide
+    · -- phiActive (.leaf aV) = decide (VIsPhiActive c) = true (from h).
+      show (decide (VIsPhiActive c)) = true
+      exact decide_eq_true h
 
 /-- Bridge: π-Agree succeeds iff `runStack` finds the goal at probe 1.
-    Both sides reduce through the shared `VIsPhiActive` primitive — the
-    abstract Nested-Agree machinery faithfully tracks the linguistic
-    predicate. *Not* a stipulation: `PersonAgreeSucceeds` and the
-    `daughters` field of `toNestedConfig` derive from `VIsPhiActive`
-    independently; this theorem documents that the abstraction is a
-    faithful model. -/
+    Both sides reduce through the shared `VIsPhiActive` primitive on
+    the same `SyntacticObject` substrate — the abstract Nested-Agree
+    machinery faithfully models the linguistic predicate. The proof
+    chases through `cCommandsIn`/`containsOrEq` on `perfTree`, not
+    through a stipulated `daughters` field. -/
 theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
     PersonAgreeSucceeds c ↔ (runStack (toNestedConfig c) 1).isSome = true := by
   rw [runStack_some_iff]
   unfold PersonAgreeSucceeds
-  -- (toNestedConfig c).length = stack.length = 2; goalLabel = 1
   constructor
   · intro h
     refine ⟨?_, ?_⟩
-    · show 1 < 2; decide
-    · -- searchDomain 1 = daughters goalLabel = daughters 1
-      --              = if VIsPhiActive c then [1,2] else [2]
-      show (1 : Token) ∈ (if VIsPhiActive c then ([1, 2] : List Token) else [2])
-      rw [if_pos h]; decide
+    · -- length = stack.length = 2 > 1: structural after unfold.
+      show 1 < ([⟨.T, some .C⟩, ⟨.T, some .C⟩] : List ProbeProfile).length
+      decide
+    · -- goalHead ∈ searchDomain 1 = daughters; reflexively in its
+      -- own daughters when phi-active.
+      show SyntacticObject.leaf aV ∈ (toNestedConfig c).searchDomain 1
+      rw [searchDomain_succ]
+      exact goalHead_mem_daughters _ (amato_clause_is_nested c h)
   · rintro ⟨_, hMem⟩
-    by_contra hne
-    -- hMem : 1 ∈ (toNestedConfig c).searchDomain 1
-    --      = (toNestedConfig c).daughters 1
-    --      = if VIsPhiActive c then [1,2] else [2]
-    -- ¬ VIsPhiActive c ⇒ branch is [2] ⇒ 1 ∉ [2]
-    have hMem' : (1 : Token) ∈ (if VIsPhiActive c then ([1, 2] : List Token) else [2]) :=
-      hMem
-    rw [if_neg hne] at hMem'
-    exact absurd hMem' (by decide)
+    -- hMem : goalHead ∈ daughters; the filter requires phiActive,
+    -- which reduces to `decide (VIsPhiActive c)`.
+    rw [searchDomain_succ] at hMem
+    show VIsPhiActive c
+    have hMemFilter := (List.mem_filter.mp hMem).2
+    rw [Bool.and_eq_true] at hMemFilter
+    -- hMemFilter.2 : phiActive (.leaf aV) = true
+    --             ≡ decide (VIsPhiActive c) = true
+    exact of_decide_eq_true hMemFilter.2
 
 /-! ## Bridge to @cite{olivier-2026}: agreement and divergence -/
 

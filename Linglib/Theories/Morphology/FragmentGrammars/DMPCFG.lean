@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.FragmentGrammars.Defs
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Linglib.Core.Probability.PolyaUrn
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
@@ -34,14 +34,12 @@ not independent*. This is exactly why
 
 ## Connection to `PolyaUrn`
 
-The per-LHS factor `lhsFactor M D A` is the closed-form Pólya-urn
+The per-LHS factor `lhsFactor M D A` IS the closed-form Pólya-urn
 partition probability over rules with LHS `A`, using `M.pseudo`
-restricted to those rules. The formula is inlined here rather than
-constructed from `Linglib.Core.Probability.PolyaUrn` because the
-current `PolyaUrn (K : ℕ)` parameterization does not compose cleanly
-with `Finset.filter`-shaped rule restrictions; bridging via subtypes
-would require Type-polymorphic `PolyaUrn`, which we defer until a
-second consumer needs it (per "don't speculatively factor").
+restricted to those rules. The Type-polymorphic `PolyaUrn α` from
+`Linglib.Core.Probability.PolyaUrn` is constructed per-LHS via
+`lhsUrn`; positivity of `corpusProb` is derived structurally from
+`PolyaUrn.partitionProb_pos`.
 
 ## Main definitions
 
@@ -50,7 +48,12 @@ second consumer needs it (per "don't speculatively factor").
   derivation tree.
 - `DMPCFG.corpusRuleCount` — count of rule applications across a
   corpus.
-- `DMPCFG.lhsFactor` — per-LHS Pólya partition factor.
+- `DMPCFG.lhsUrn` — per-LHS `PolyaUrn` over the subtype of rules
+  with that LHS.
+- `DMPCFG.lhsCounts` — per-LHS corpus counts as a function on the
+  subtype.
+- `DMPCFG.lhsFactor` — per-LHS Pólya partition probability
+  (delegates to `PolyaUrn.partitionProb`).
 - `DMPCFG.corpusProb` — eq 3.9 closed-form corpus probability.
 - `DMPCFG.toStochasticGenerator` — projection to the abstract API.
 
@@ -107,27 +110,34 @@ def corpusRuleCount (r : ContextFreeRule T G.NT)
 
 variable (M : DMPCFG G)
 
-/-- Sum of pseudo-counts over rules with LHS `a`: the `Σ π^A` term. -/
-noncomputable def pseudoSumLHS (a : G.NT) : ℝ :=
-  ∑ r ∈ G.rules.filter (·.input = a), M.pseudo r
-
-/-- Total rule-count for rules with LHS `a` across the corpus: the `Σ x^A` term. -/
-def corpusSumLHS (a : G.NT) (D : Multiset (CFGTree T G.NT)) : ℕ :=
-  ∑ r ∈ G.rules.filter (·.input = a), corpusRuleCount r D
+/-- The subtype of rules with LHS `a` (as a sort, for indexing). -/
+abbrev RulesWithLHS (a : G.NT) : Type :=
+  { r : ContextFreeRule T G.NT // r ∈ G.rules.filter (·.input = a) }
 
 /--
-Per-LHS Pólya–urn factor in the eq 3.9 product. For LHS `a` with
-pseudo-counts `π_i^A` and corpus counts `x_i^A`,
+Per-LHS Pólya urn over the subtype of rules with LHS `a`,
+parameterized by `M.pseudo` restricted to those rules.
+-/
+noncomputable def lhsUrn (a : G.NT) :
+    ProbabilityTheory.PolyaUrn (RulesWithLHS (G := G) a) where
+  pseudo := fun ⟨r, _⟩ => M.pseudo r
+  pseudo_pos := fun ⟨r, hr⟩ => M.pseudo_pos r (Finset.mem_filter.mp hr).1
+
+/-- Per-LHS corpus rule-count vector as a function on the subtype. -/
+def lhsCounts (a : G.NT) (D : Multiset (CFGTree T G.NT)) :
+    RulesWithLHS (G := G) a → ℕ :=
+  fun ⟨r, _⟩ => corpusRuleCount r D
+
+/--
+Per-LHS factor in the eq 3.9 product: the Pólya partition probability
+of the corpus rule-counts under the per-LHS pseudo-counts.
 
 ```
   Γ(Σ π_i^A) / Γ(Σ π_i^A + Σ x_i^A)  ·  ∏_i Γ(π_i^A + x_i^A) / Γ(π_i^A) .
 ```
 -/
 noncomputable def lhsFactor (a : G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
-  Gamma (M.pseudoSumLHS a) /
-    Gamma (M.pseudoSumLHS a + (corpusSumLHS a D : ℝ)) *
-    ∏ r ∈ G.rules.filter (·.input = a),
-      Gamma (M.pseudo r + corpusRuleCount r D) / Gamma (M.pseudo r)
+  (M.lhsUrn a).partitionProb (lhsCounts a D)
 
 /--
 DMPCFG corpus probability — eq 3.9 of @cite{odonnell-2015}. Product
@@ -138,43 +148,20 @@ so the product is over `G.rules.image (·.input)`.
 noncomputable def corpusProb (D : Multiset (CFGTree T G.NT)) : ℝ :=
   ∏ a ∈ G.rules.image (·.input), M.lhsFactor a D
 
-/-- For LHSs that have at least one rule, the pseudo-count sum is positive. -/
-theorem pseudoSumLHS_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input)) :
-    0 < M.pseudoSumLHS a := by
+omit [DecidableEq T] in
+/-- For LHSs that have at least one rule, the subtype is nonempty. -/
+theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT}
+    (ha : a ∈ G.rules.image (·.input)) :
+    Nonempty (RulesWithLHS (G := G) a) := by
   obtain ⟨r0, hr0_mem, hr0_input⟩ := Finset.mem_image.mp ha
-  unfold pseudoSumLHS
-  apply Finset.sum_pos
-  · intro r hr
-    rw [Finset.mem_filter] at hr
-    exact M.pseudo_pos r hr.1
-  · refine ⟨r0, ?_⟩
-    rw [Finset.mem_filter]
-    exact ⟨hr0_mem, hr0_input⟩
+  exact ⟨r0, Finset.mem_filter.mpr ⟨hr0_mem, hr0_input⟩⟩
 
-/-- The per-LHS factor is strictly positive when the LHS has rules. -/
+/-- The per-LHS factor is strictly positive when the LHS has rules.
+    Direct corollary of `PolyaUrn.partitionProb_pos`. -/
 theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
     (D : Multiset (CFGTree T G.NT)) : 0 < M.lhsFactor a D := by
-  have h_psum_pos : 0 < M.pseudoSumLHS a := M.pseudoSumLHS_pos ha
-  have h_corp_nn : (0 : ℝ) ≤ (corpusSumLHS a D : ℝ) := Nat.cast_nonneg _
-  have hΓ_num_pos : 0 < Gamma (M.pseudoSumLHS a) := Gamma_pos_of_pos h_psum_pos
-  have hΓ_den_pos : 0 < Gamma (M.pseudoSumLHS a + (corpusSumLHS a D : ℝ)) :=
-    Gamma_pos_of_pos (by linarith)
-  have hRatio_pos :
-      0 < Gamma (M.pseudoSumLHS a) /
-            Gamma (M.pseudoSumLHS a + (corpusSumLHS a D : ℝ)) :=
-    div_pos hΓ_num_pos hΓ_den_pos
-  have hProd_pos :
-      0 < ∏ r ∈ G.rules.filter (·.input = a),
-            Gamma (M.pseudo r + corpusRuleCount r D) / Gamma (M.pseudo r) := by
-    apply Finset.prod_pos
-    intro r hr
-    rw [Finset.mem_filter] at hr
-    have h_psr_pos : 0 < M.pseudo r := M.pseudo_pos r hr.1
-    have h_corp_r_nn : (0 : ℝ) ≤ (corpusRuleCount r D : ℝ) := Nat.cast_nonneg _
-    refine div_pos (Gamma_pos_of_pos ?_) (Gamma_pos_of_pos h_psr_pos)
-    linarith
-  unfold lhsFactor
-  exact mul_pos hRatio_pos hProd_pos
+  haveI := nonempty_rulesWithLHS_of_mem_image ha
+  exact (M.lhsUrn a).partitionProb_pos _
 
 /-- DMPCFG corpus probabilities are nonnegative (in fact, positive). -/
 theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
