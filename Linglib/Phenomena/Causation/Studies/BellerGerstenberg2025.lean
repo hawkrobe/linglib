@@ -594,9 +594,33 @@ noncomputable instance : SEM.IsDeterministic chainModel where
 -- the simp-resistant `match` in `IsStrictAncestor`. Acyclicity is
 -- semantically obvious for these 4-vertex toy graphs.
 
-noncomputable instance soloGraph_isDAG : CausalGraph.IsDAG soloGraph := ⟨sorry⟩
-noncomputable instance overdetGraph_isDAG : CausalGraph.IsDAG overdetGraph := ⟨sorry⟩
-noncomputable instance chainGraph_isDAG : CausalGraph.IsDAG chainGraph := ⟨sorry⟩
+/-- Depth function for `BGVar`: roots at 0, intermediate at 1, effect at 2.
+    Strictly increases along every parent edge in all three BG2025 graphs
+    (`soloGraph`, `overdetGraph`, `chainGraph`), so `IsDAG.of_depth`
+    discharges acyclicity uniformly. -/
+def bgDepth : BGVar → ℕ
+  | .cause => 0
+  | .alt => 0
+  | .intermediate => 1
+  | .effect => 2
+
+instance soloGraph_isDAG : CausalGraph.IsDAG soloGraph :=
+  CausalGraph.IsDAG.of_depth soloGraph bgDepth (by
+    intro u v h
+    cases v <;> simp [soloGraph, CausalGraph.parents] at h <;>
+      subst h <;> decide)
+
+instance overdetGraph_isDAG : CausalGraph.IsDAG overdetGraph :=
+  CausalGraph.IsDAG.of_depth overdetGraph bgDepth (by
+    intro u v h
+    cases v <;> simp [overdetGraph, CausalGraph.parents] at h <;>
+      rcases h with h | h <;> subst h <;> decide)
+
+instance chainGraph_isDAG : CausalGraph.IsDAG chainGraph :=
+  CausalGraph.IsDAG.of_depth chainGraph bgDepth (by
+    intro u v h
+    cases v <;> simp [chainGraph, CausalGraph.parents] at h <;>
+      subst h <;> decide)
 
 noncomputable instance : CausalGraph.IsDAG soloModel.graph := soloGraph_isDAG
 noncomputable instance : CausalGraph.IsDAG overdetModel.graph := overdetGraph_isDAG

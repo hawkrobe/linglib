@@ -45,4 +45,24 @@ class IsDAG (G : CausalGraph V) : Prop where
   /-- The strict-ancestor relation has no infinite descending chain. -/
   wf : WellFounded G.IsStrictAncestor
 
+/-- **Depth-based IsDAG construction**: a graph is acyclic if every edge
+    strictly decreases some `ℕ`-valued depth function (parent depth <
+    child depth). Reuses `Subrelation.wf` over `InvImage Nat.lt depth`,
+    which is well-founded by `Nat`'s standard wellfoundedness.
+
+    The standard mathlib pattern for proving wellfoundedness of finite
+    inductive relations: define a measure into `ℕ`, show the relation
+    decreases it, conclude. -/
+theorem IsDAG.of_depth (G : CausalGraph V) (depth : V → ℕ)
+    (hdepth : ∀ {u v : V}, u ∈ G.parents v → depth u < depth v) :
+    IsDAG G where
+  wf := by
+    have hsub : ∀ u v, G.IsStrictAncestor u v → depth u < depth v := by
+      intro u v huv
+      induction huv with
+      | single hp => exact hdepth hp
+      | tail _ hp ih => exact lt_trans ih (hdepth hp)
+    exact Subrelation.wf (fun {a b} => hsub a b)
+      (InvImage.wf depth Nat.lt_wfRel.wf)
+
 end Core.Causal.V2.CausalGraph

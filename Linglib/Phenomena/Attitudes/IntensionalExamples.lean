@@ -13,7 +13,7 @@ Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordina
 
 import Linglib.Theories.Semantics.Attitudes.Intensional
 
-namespace Phenomena.Complementation.Attitudes.IntensionalExamples
+namespace Phenomena.Attitudes.IntensionalExamples
 
 open Core.IntensionalLogic
 open Semantics.Attitudes.Intensional
@@ -197,4 +197,4 @@ theorem name_vs_concept_independence :
     simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
     cases this
 
-end Phenomena.Complementation.Attitudes.IntensionalExamples
+end Phenomena.Attitudes.IntensionalExamples

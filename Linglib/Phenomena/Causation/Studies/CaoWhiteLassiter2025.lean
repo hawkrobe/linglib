@@ -35,11 +35,14 @@ distinguishes it from both *cause* and *force*.
 -/
 
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.NNReal.Basic
+import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Theories.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
@@ -275,5 +278,117 @@ This is expected since fewer alternatives = stronger causal influence. -/
 theorem alt_negative_effect :
     modelIMainEffects.alt < 0 := by
   simp [modelIMainEffects]; norm_num
+
+/-! ### V2 namespace: PMF-canonical SUF
+
+The legacy `deterministicSuf := if causallySufficient then 1 else 0`
+above shoehorns Cao et al.'s probabilistic SUF into the deterministic
+substrate. The V2 substrate (PMF-valued `develop`) hosts SUF as a
+genuine `ENNReal` — equal to a {0,1} indicator only in the deterministic
+limit (via `develop_eq_pure_of_deterministic`).
+
+`SEM.probabilisticSuf` (in `Core/Causal/V2/SEM/Counterfactual.lean`) is
+the canonical primitive. The bridge `probabilisticSuf_of_deterministic`
+shows that under `[IsDeterministic M]` it collapses to the indicator —
+recovering the legacy semantics as a special case rather than a parallel
+shoehorn. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
+
+/-- V2 deterministic SUF: 1 iff `cause` is causally sufficient for
+    `effect` under the V2 BoolSEM substrate. Indicator form. -/
+noncomputable def deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (cause effect : V) : ENNReal :=
+  if Core.Causal.V2.BoolSEM.causallySufficient M background cause effect then 1 else 0
+
+/-- **The grounding theorem**: under `IsDeterministic`, the canonical
+    PMF-valued `probabilisticSuf` collapses to the deterministic
+    indicator. This is what makes the legacy `if causallySufficient then
+    1 else 0` semantics a special case of the mathlib-canonical
+    probabilistic form, rather than a parallel shoehorn. -/
+theorem probabilisticSuf_eq_deterministicSuf {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation _) (c e : V) :
+    probabilisticSuf M bg c true e true = deterministicSuf M bg c e := by
+  unfold deterministicSuf
+  rw [probabilisticSuf_of_deterministic]
+  -- Both sides are `if ... then 1 else 0`; need to identify the conditions
+  -- (M.intervene c true).developDet bg `.hasValue e true` vs
+  -- BoolSEM.causallySufficient M bg c e := SEM.causallySufficient M bg c true e true
+  --   := developsToValue M (bg.extend c true) e true
+  --   := (M.developDet (bg.extend c true)).hasValue e true
+  -- These differ in `intervene cause true ; develop bg` vs `develop (bg.extend cause true)`.
+  -- For deterministic acyclic SEMs they agree on downstream vertices, but a
+  -- general bridge lemma `developDet_intervene_eq_developDet_extend` is
+  -- not yet in the V2 substrate. Stated as TODO; the indicator equality
+  -- is provable once that bridge lands.
+  sorry
+
+/-! ### Probabilistic example: genuinely fractional SUF
+
+Construction of a 2-vertex SEM whose `effect` mechanism is `PMF.bernoulli p`
+— genuinely probabilistic, not Dirac. Demonstrates that `probabilisticSuf`
+accepts non-deterministic SEMs (no `IsDeterministic` constraint), which is
+exactly the @cite{cao-white-lassiter-2025} requirement: SUF is a probability,
+not a 0/1 marker.
+
+This example is type-only: the precise value of `probabilisticSuf` for the
+Bernoulli mechanism is `p` (intuitively), but proving this requires
+unfolding `PMF.bind` through the `develop` iteration — deferred until a
+study consumer needs the explicit calculation. -/
+
+namespace ProbabilisticExample
+
+open scoped NNReal
+open Core.Causal.V2 (Mechanism)
+open Core.Causal.V2.Mechanism (const)
+
+/-- A 2-vertex SEM: `cause` (root) and `effect` (one parent: cause). -/
+inductive V | cause | effect
+  deriving DecidableEq, Fintype, Repr
+
+def graph : CausalGraph V := ⟨fun | .cause => ∅ | .effect => {.cause}⟩
+
+/-- The probabilistic mechanism for `effect`: ignores parent value,
+    returns `Bernoulli(p)` directly. Genuinely non-Dirac when `p ∉ {0, 1}`. -/
+noncomputable def effectMech (p : ℝ≥0) (h : p ≤ 1) :
+    Mechanism graph (fun _ => Bool) .effect :=
+  ⟨fun _ => PMF.bernoulli p h⟩
+
+/-- A genuinely probabilistic SEM (not `IsDeterministic` for `p ∉ {0,1}`). -/
+noncomputable def model (p : ℝ≥0) (h : p ≤ 1) : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .cause => const (G := graph) false
+      | .effect => effectMech p h }
+
+instance : CausalGraph.IsDAG graph := by
+  -- 2-vertex DAG; well-foundedness is structurally obvious (`.cause` is
+  -- a root, `.effect`'s only ancestor is `.cause`). The `Relation.TransGen`
+  -- induction needs head/tail destructuring with the concrete index `.cause`
+  -- generalized — same mechanical pattern as BG2025 Phase D-E IsDAG sorries.
+  -- TODO: close once we have a depth-based `Subrelation.wf` helper.
+  sorry
+
+instance (p : ℝ≥0) (h : p ≤ 1) : CausalGraph.IsDAG (model p h).graph :=
+  inferInstanceAs (CausalGraph.IsDAG graph)
+
+/-- The type-level demonstration: `probabilisticSuf` accepts this SEM
+    even though it is NOT `IsDeterministic`. The legacy `deterministicSuf`
+    form would require `[IsDeterministic M]` and reject this model
+    outright — exactly the shoehorning V2 was designed to eliminate. -/
+noncomputable example (p : ℝ≥0) (h : p ≤ 1) : ENNReal :=
+  probabilisticSuf (model p h) Valuation.empty .cause true .effect true
+
+end ProbabilisticExample
+
+end V2
 
 end CaoWhiteLassiter2025

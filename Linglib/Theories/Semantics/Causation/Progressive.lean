@@ -28,7 +28,7 @@ coherent — type-level process in progress, token-level result never obtained.
 
 `CausalProcess V` is polymorphic over the vertex type. `progressiveTrue`
 checks type-level sufficiency (the cause develops to the result via
-`developOn`). `perfectiveTrue` adds token-level completion via a local
+`developDetOn`). `perfectiveTrue` adds token-level completion via a local
 `completesForEffect` (defined inline to avoid the CCSelection cascade
 during the V2 migration period).
 -/
@@ -45,7 +45,7 @@ open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
 /-- A causal process for telic predicates, parameterized over a vertex type `V`.
 
     Bundles a `BoolSEM V` (the type-level causal model), an explicit
-    vertex list (for `developOn`-based kernel reduction), the initiating
+    vertex list (for `developDetOn`-based kernel reduction), the initiating
     action vertex, the result vertex, and any enabling-condition valuation. -/
 structure CausalProcess (V : Type*) [Fintype V] [DecidableEq V] where
   /-- The type-level causal model. -/
@@ -72,7 +72,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
     result actually obtaining in the actual world. -/
 noncomputable def typeLevelHolds (proc : CausalProcess V)
     [SEM.IsDeterministic proc.M] : Prop :=
-  (developOn proc.M proc.vertexList 1
+  (developDetOn proc.M proc.vertexList 1
     (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true
 
 noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
@@ -90,9 +90,9 @@ noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     cause being true → effect; cause being false → ¬ effect. -/
 noncomputable def completesForEffect (proc : CausalProcess V)
     [SEM.IsDeterministic proc.M] : Prop :=
-  (developOn proc.M proc.vertexList 1
+  (developDetOn proc.M proc.vertexList 1
     (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true ∧
-  ¬ (developOn proc.M proc.vertexList 1
+  ¬ (developDetOn proc.M proc.vertexList 1
       (proc.enablingConditions.extend proc.initiator false)).hasValue proc.result true
 
 noncomputable instance (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
@@ -235,7 +235,7 @@ theorem progressive_not_entails_perfective :
 theorem typeLevelHolds_is_developOn {V : Type*} [Fintype V] [DecidableEq V]
     (proc : CausalProcess V) [SEM.IsDeterministic proc.M] :
     proc.typeLevelHolds ↔
-    (developOn proc.M proc.vertexList 1
+    (developDetOn proc.M proc.vertexList 1
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
 

@@ -234,3 +234,40 @@ theorem selectionMode_consistent_make :
     Causative.make.selectionMode.toSemantics := rfl
 
 end Semantics.Causation.Interpretation
+
+/-! ### V2 namespace for new code
+
+Legacy `Causative.toSemantics` above dispatches over the legacy
+`CausalDynamics` API. V2 dispatch parallels this on the V2 BoolSEM
+substrate, allowing per-verb-cluster migration of consumers without
+touching unmigrated callers. -/
+
+namespace Core.Verbs
+
+namespace Causative.V2
+
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
+
+/-- V2 force-dynamic dispatch: map a causative classification to its V2
+    polymorphic semantic function. All variants share arity
+    `(bg, cause, xC, effect, xE)` — Bool models pass `xC = xE = true`,
+    other models supply genuine values. -/
+noncomputable def toSemantics {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
+    Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
+  | .cause => Semantics.Causation.Necessity.V2.causeSem M
+  | .make => Semantics.Causation.Sufficiency.V2.makeSem M
+  | .force => Semantics.Causation.Sufficiency.V2.makeSem M
+  | .enable => Semantics.Causation.Sufficiency.V2.makeSem M
+  | .prevent => Semantics.Causation.Prevention.V2.preventSem M
+
+/-- V2 selection-mode dispatch is identical to the legacy version: the
+    mode is a discrete property of the variant, independent of the SEM
+    substrate. -/
+abbrev selectionMode : Causative → Semantics.Causation.CCSelection.CCSelectionMode :=
+  Causative.selectionMode
+
+end Causative.V2
+
+end Core.Verbs

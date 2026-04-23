@@ -862,8 +862,11 @@ theorem verbMH_plur_cophEval_optimal :
 The OT tableau winners exhibit zero basemap correspondence violations:
 their surface tones exactly match what the basemap output would produce.
 This structurally connects the anchor-constraint-based analysis to
-@cite{rolle-2018}'s MxBM-C theory — dominance as transparadigmatic
-uniformity (@cite{benua-1997}). -/
+@cite{rolle-2018}'s MxBM-C theory — *transparadigmatic uniformity* in
+@cite{rolle-2018}'s sense, building on the OO-correspondence lineage
+of @cite{benua-1997}. (Note: "transparadigmatic uniformity" is Rolle's
+coinage; @cite{benua-1997}'s own term for the analogous pull is
+"paradigmatic identity" / "OO-Identity".) -/
 
 /-- The Tableau 24 winner's tones [M, M] match the basemap output
     for a whole-word M melody over a bisyllabic host. -/

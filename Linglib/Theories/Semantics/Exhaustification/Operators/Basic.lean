@@ -163,6 +163,47 @@ if and only if ¬a ∈ IE_(ALT,φ).
 def IsInnocentlyExcludable (a : Set World) : Prop :=
   a ∈ ALT ∧ (aᶜ) ∈ IE ALT φ
 
+/--
+Sufficient condition for innocent excludability: every alternative is IE
+when there exists a world where φ holds and every alternative is false.
+
+The set `S = {φ} ∪ {bᶜ | b ∈ ALT}` is then the unique MC-set: it is
+compatible by hypothesis, and every compatible set is a subset of it
+(by Definition 3.2(b), every element is `φ` or `bᶜ` for some `b ∈ ALT`).
+By maximality, every MC-set equals `S`. Since `aᶜ ∈ S` for every `a ∈ ALT`,
+each alternative is innocently excludable.
+
+This is the typical situation in alternative-set scenarios where the
+prejacent and the negations of all alternatives are jointly satisfiable
+(e.g., 3-button conditional perfection paradigms).
+-/
+theorem IsInnocentlyExcludable.of_full_exclusion_consistent
+    {a : Set World} (ha : a ∈ ALT)
+    (h_consist : ∃ w, φ w ∧ ∀ b ∈ ALT, ¬ b w) :
+    IsInnocentlyExcludable ALT φ a := by
+  refine ⟨ha, ?_⟩
+  intro E hE_mc
+  -- S_max = {ψ | ψ = φ ∨ ∃ b ∈ ALT, ψ = bᶜ}
+  let S_max : Set (Set World) := fun ψ => ψ = φ ∨ ∃ b ∈ ALT, ψ = bᶜ
+  -- Step 1: E ⊆ S_max (from compatibility: every element is φ or b'ᶜ)
+  have h_sub : E ⊆ S_max := by
+    intro ψ hψ
+    rcases hE_mc.1.2.1 ψ hψ with h | ⟨b', hb'_mem, hb'_eq⟩
+    · exact Or.inl h
+    · exact Or.inr ⟨b', hb'_mem, hb'_eq⟩
+  -- Step 2: S_max is compatible (φ ∈ S_max, every element is φ or bᶜ, consistent)
+  have h_compat : IsCompatible ALT φ S_max := by
+    refine ⟨Or.inl rfl, fun ψ hψ => hψ, ?_⟩
+    obtain ⟨w, hw_phi, hw_not⟩ := h_consist
+    exact ⟨w, fun ψ hψ => by
+      rcases hψ with h | ⟨b', hb', heq⟩
+      · rw [h]; exact hw_phi
+      · rw [heq]; exact hw_not b' hb'⟩
+  -- Step 3: By maximality of E, S_max ⊆ E
+  have h_sup : S_max ⊆ E := hE_mc.2 _ h_compat h_sub
+  -- Step 4: aᶜ ∈ S_max, so aᶜ ∈ E
+  exact h_sup (Or.inr ⟨a, ha, rfl⟩)
+
 -- DEFINITION 4: exh_ie (Spector p.8)
 
 /--

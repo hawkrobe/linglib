@@ -182,23 +182,27 @@ predicates that take `BoolSEM` directly. -/
 
 namespace V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 coercive implication: causer's action is causally sufficient for
-    a volitional causee action. -/
-noncomputable def hasCoerciveImplication {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (causerAction : V) (causeeIsVolitional : Bool) (causeeEvent : V) : Prop :=
+/-- V2 coercive implication: causer's action-as-`xCauser` is causally
+    sufficient for a volitional causee action-as-`xEvent`. Polymorphic
+    over value types — Bool models pass `xCauser = xEvent = true`. -/
+noncomputable def hasCoerciveImplication {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (causerAction : V) (xCauser : α causerAction)
+    (causeeIsVolitional : Bool)
+    (causeeEvent : V) (xEvent : α causeeEvent) : Prop :=
   causeeIsVolitional = true ∧
-  Core.Causal.V2.BoolSEM.causallySufficient M background causerAction causeeEvent
+  SEM.causallySufficient M background causerAction xCauser causeeEvent xEvent
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation _) (causer : V) (vol : Bool) (effect : V) :
-    Decidable (hasCoerciveImplication M bg causer vol effect) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α) (causer : V) (xC : α causer) (vol : Bool)
+    (effect : V) (xE : α effect) :
+    Decidable (hasCoerciveImplication M bg causer xC vol effect xE) := Classical.dec _
 
 end V2
 

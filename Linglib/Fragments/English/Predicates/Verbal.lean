@@ -3578,4 +3578,70 @@ def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
 theorem VerbEntry.toStem_allVacuous {σ : Type} (v : VerbEntry) :
     (v.toStem (σ := σ)).paradigm.all (·.isVacuous) = true := rfl
 
+-- ════════════════════════════════════════════════════
+-- § V2 Causative Grounding Theorems (Phase D-D)
+-- ════════════════════════════════════════════════════
+
+/-! V2 mirror of the rfl theorems above on the BoolSEM substrate.
+Each statement is parameterized by an arbitrary deterministic acyclic
+SEM `M`; `Causative.V2.toSemantics M` dispatches to the V2 hub
+predicates (`Sufficiency.V2.makeSem`, `Necessity.V2.causeSem`,
+`Prevention.V2.preventSem`). The legacy CausalDynamics-based
+theorems above remain intact. -/
+
+namespace V2
+
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
+open Core.Verbs
+
+variable {V : Type*} {α : V → Type*}
+  [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+
+/-- V2 "make" → `Sufficiency.V2.makeSem` (polymorphic). -/
+theorem make_semantics :
+    make.causative.map (Causative.V2.toSemantics M) =
+    some (Semantics.Causation.Sufficiency.V2.makeSem M) := rfl
+
+/-- V2 "cause" → `Necessity.V2.causeSem` (polymorphic). -/
+theorem cause_semantics :
+    cause.causative.map (Causative.V2.toSemantics M) =
+    some (Semantics.Causation.Necessity.V2.causeSem M) := rfl
+
+/-- V2 "prevent" → `Prevention.V2.preventSem` (polymorphic). -/
+theorem prevent_semantics :
+    prevent.causative.map (Causative.V2.toSemantics M) =
+    some (Semantics.Causation.Prevention.V2.preventSem M) := rfl
+
+/-- V2: make/force/let/have/get share `Sufficiency.V2.makeSem` truth conditions. -/
+theorem sufficiency_verbs_share_truth_conditions :
+    make.causative.map (Causative.V2.toSemantics M) =
+      force.causative.map (Causative.V2.toSemantics M) ∧
+    make.causative.map (Causative.V2.toSemantics M) =
+      let_.causative.map (Causative.V2.toSemantics M) ∧
+    make.causative.map (Causative.V2.toSemantics M) =
+      have_caus.causative.map (Causative.V2.toSemantics M) ∧
+    make.causative.map (Causative.V2.toSemantics M) =
+      get_caus.causative.map (Causative.V2.toSemantics M) :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- V2: lexical causatives (kill, break) share truth conditions with periphrastic "make". -/
+theorem lexical_causatives_match_make :
+    kill.causative.map (Causative.V2.toSemantics M) =
+      make.causative.map (Causative.V2.toSemantics M) ∧
+    break_.causative.map (Causative.V2.toSemantics M) =
+      make.causative.map (Causative.V2.toSemantics M) := ⟨rfl, rfl⟩
+
+/-- V2 "manage" → `Implicative.V2.manageSem` (polymorphic). -/
+theorem manage_semantics_implicative :
+    manage.implicative.map (Implicative.V2.toSemantics M) =
+    some (Semantics.Causation.Implicative.V2.manageSem M) := rfl
+
+/-- V2 "fail" → `Implicative.V2.failSem` (polymorphic). -/
+theorem fail_semantics_implicative :
+    fail.implicative.map (Implicative.V2.toSemantics M) =
+    some (Semantics.Causation.Implicative.V2.failSem M) := rfl
+
+end V2
+
 end Fragments.English.Predicates.Verbal

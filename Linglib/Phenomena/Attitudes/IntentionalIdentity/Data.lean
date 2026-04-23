@@ -22,7 +22,7 @@ belief states).
 
 -/
 
-namespace Phenomena.Complementation.Attitudes.IntentionalIdentity
+namespace Phenomena.Attitudes.IntentionalIdentity
 
 /-- An intentional identity datum: two attitude reports linked
 by a pronoun or definite description across agents. -/
@@ -77,4 +77,4 @@ theorem all_nonexistent_ok :
   simp [iiData] at hd
   rcases hd with rfl | rfl <;> rfl
 
-end Phenomena.Complementation.Attitudes.IntentionalIdentity
+end Phenomena.Attitudes.IntentionalIdentity

@@ -414,7 +414,18 @@ end Stability
 -- ============================================================
 
 /-- Entailment condition for truthmakers: p entails S.
-    This is condition (ii) of the paper's definition (p. 540). -/
+    This is condition (ii) of the paper's definition (p. 540).
+
+    NOTE on cross-framework relationship: this is the **classical
+    (world-extensional)** truthmaker notion of @cite{santorio-2018}, NOT
+    the Fine-style mereological truthmaker formalized in
+    `Theories/Semantics/Truthmaker/Basic.lean`. The two are
+    inequivalent: `IsTruthmaker p S` here is just `ExactEntails`
+    (`Truthmaker/Inexact.lean`) on the Bool-extension of worlds —
+    `(p · = true) ⊨ₑ (S · = true)`. Fine's `IsContentPart` adds an
+    Up clause and parthood structure that this Bool/world version
+    lacks. The same English word "truthmaker" denotes two
+    non-equivalent relations across the two frameworks. -/
 def IsTruthmaker {W : Type*} (p S : W → Bool) : Prop :=
   ∀ w, p w = true → S w = true
 

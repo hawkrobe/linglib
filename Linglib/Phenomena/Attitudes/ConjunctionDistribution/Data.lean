@@ -13,7 +13,7 @@ conjunction in their complement, and some do not.
 
 -/
 
-namespace Phenomena.Complementation.Attitudes.ConjunctionDistribution
+namespace Phenomena.Attitudes.ConjunctionDistribution
 
 /-- A single empirical datum about conjunction distribution.
     Records whether a given verb distributes over conjunction in its
@@ -48,4 +48,4 @@ theorem distributing_count : (data.filter (·.distributes)).length = 6 := rfl
 /-- Count of non-distributing verbs in the dataset. -/
 theorem non_distributing_count : (data.filter (! ·.distributes)).length = 2 := rfl
 
-end Phenomena.Complementation.Attitudes.ConjunctionDistribution
+end Phenomena.Attitudes.ConjunctionDistribution

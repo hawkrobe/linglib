@@ -192,7 +192,7 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 The belief formation causal model uses `Core.Causal.V2` — the V2 SEM
 substrate (PMF-canonical Mechanism, BoolSEM specialization for the
 deterministic-binary case). The PLC predicate is defined via
-`SEM.developOn` with an explicit vertex list so kernel reduction
+`SEM.developDetOn` with an explicit vertex list so kernel reduction
 works structurally (no `native_decide`; mathlib-quality `rfl`/`decide`
 proofs).
 -/
@@ -204,7 +204,7 @@ open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
 -- ============================================================================
 
 /-- Standard variables in belief formation. Inductive enum so the type
-    is `Fintype` and the develop fixpoint reduces structurally. -/
+    is `Fintype` and the developDet fixpoint reduces structurally. -/
 inductive BeliefVar
   | p | not_p
   | indic_p | indic_not_p
@@ -252,8 +252,8 @@ noncomputable instance : SEM.IsDeterministic beliefSEM where
     | .B_a_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
     | .B_a_not_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-/-- Explicit vertex list for `developOn`. Topological order ensures one
-    `stepOnceOn` pass propagates the entire chain. -/
+/-- Explicit vertex list for `developDetOn`. Topological order ensures one
+    `stepOnceDetOn` pass propagates the entire chain. -/
 def beliefVarList : List BeliefVar :=
   [.p, .not_p, .indic_p, .indic_not_p, .acq_a_ip, .acq_a_inp, .B_a_p, .B_a_not_p]
 
@@ -264,15 +264,15 @@ def beliefVarList : List BeliefVar :=
 /-- **Predicate Lexicalization Constraint (PLC)** (@cite{roberts-ozyildiz-2025}).
 
     A verbal predicate with at-issue content α can have presupposition π iff
-    setting π to true and running the belief-formation SEM's `developOn`
+    setting π to true and running the belief-formation SEM's `developDetOn`
     produces α at the at-issue vertex.
 
-    Defined via `developOn` with the explicit `beliefVarList` so kernel
+    Defined via `developDetOn` with the explicit `beliefVarList` so kernel
     reduction works structurally (no `native_decide`). One iteration of
-    `stepOnceOn` over a topologically-ordered list propagates the entire
+    `stepOnceDetOn` over a topologically-ordered list propagates the entire
     chain; we use `8 = beliefVarList.length` iterations conservatively. -/
 noncomputable def satisfiesPLC (presup atIssue : BeliefVar) : Prop :=
-  (developOn beliefSEM beliefVarList 1
+  (developDetOn beliefSEM beliefVarList 1
     (Valuation.empty.extend presup true)).hasValue atIssue true
 
 noncomputable instance (presup atIssue : BeliefVar) : Decidable (satisfiesPLC presup atIssue) :=

@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.CombinationKind
 import Linglib.Core.Lexical.DiathesisAlternation
+import Linglib.Core.Lexical.UD
 
 /-!
 # Argument Structure Constructions

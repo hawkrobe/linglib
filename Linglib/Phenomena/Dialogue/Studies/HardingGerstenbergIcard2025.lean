@@ -23,7 +23,7 @@ enum. Different "structural alternatives" (e.g., M_T vs M_∧) become
 different SEMs over the SAME vertex type with different mechanisms at
 the effect vertex. Explanations (`literallyTrue`, `manipulationReward`)
 use V2's `BoolSEM.manipulates` (Woodward's interventionist criterion)
-and `developOn` for kernel-verifiable structural proofs.
+and `developDetOn` for kernel-verifiable structural proofs.
 -/
 
 namespace HardingGerstenbergIcard2025
@@ -97,7 +97,7 @@ structure Explanation where
 /-- **Literal meaning** of an explanation under a given SEM and context. -/
 noncomputable def literallyTrue (M : BoolSEM V) [SEM.IsDeterministic M]
     (s : Valuation (fun _ : V => Bool)) (expl : Explanation) : Prop :=
-  (developOn M lmVarList 1 s).hasValue expl.effect true ∧
+  (developDetOn M lmVarList 1 s).hasValue expl.effect true ∧
   s.hasValue expl.cause true
 
 noncomputable instance (M : BoolSEM V) [SEM.IsDeterministic M]
@@ -108,15 +108,15 @@ noncomputable instance (M : BoolSEM V) [SEM.IsDeterministic M]
 
 /-- In M_T, the effect (C) develops from T. -/
 theorem developsTo_C_in_T_by_T :
-    (developOn semT lmVarList 1 lateBg).hasValue .C true := by rfl
+    (developDetOn semT lmVarList 1 lateBg).hasValue .C true := by rfl
 
 /-- In M_∧, the effect (C) develops from T ∧ B (both true in lateBg). -/
 theorem developsTo_C_in_Conj_by_TB :
-    (developOn semConj lmVarList 1 lateBg).hasValue .C true := by rfl
+    (developDetOn semConj lmVarList 1 lateBg).hasValue .C true := by rfl
 
-/-- Empty context with B alone in M_T: C does NOT develop (T undetermined). -/
+/-- Empty context with B alone in M_T: C does NOT developDet (T undetermined). -/
 theorem no_develop_in_T_without_T :
-    ¬ (developOn semT lmVarList 1 (Valuation.empty.extend .B true)).hasValue .C true := by
+    ¬ (developDetOn semT lmVarList 1 (Valuation.empty.extend .B true)).hasValue .C true := by
   intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 end LateMeeting
@@ -211,24 +211,24 @@ def roofBg : Valuation (fun _ : V => Bool) :=
 -- ── Develop theorems ──
 
 /-- In M_R with R=1: F develops to true. -/
-theorem F_in_R_by_R : (developOn semR roofVarList 1 roofBg).hasValue .F true := by rfl
+theorem F_in_R_by_R : (developDetOn semR roofVarList 1 roofBg).hasValue .F true := by rfl
 
 /-- In M_D with D=1: F develops to true. -/
-theorem F_in_D_by_D : (developOn semD roofVarList 1 roofBg).hasValue .F true := by rfl
+theorem F_in_D_by_D : (developDetOn semD roofVarList 1 roofBg).hasValue .F true := by rfl
 
 /-- In M_∧ with R=1 ∧ D=1: F develops to true. -/
 theorem F_in_Conj_by_RD :
-    (developOn semConj roofVarList 1 roofBg).hasValue .F true := by rfl
+    (developDetOn semConj roofVarList 1 roofBg).hasValue .F true := by rfl
 
 /-- In M_∨ with R=1 ∨ D=1: F develops to true. -/
 theorem F_in_Disj_by_R :
-    (developOn semDisj roofVarList 1 roofBg).hasValue .F true := by rfl
+    (developDetOn semDisj roofVarList 1 roofBg).hasValue .F true := by rfl
 
 -- ── R-only and D-only worlds ──
 
-/-- In M_D with R=1, D=0: F does NOT develop (only R won't fire D's law). -/
+/-- In M_D with R=1, D=0: F does NOT developDet (only R won't fire D's law). -/
 theorem F_not_in_D_by_R_only :
-    ¬ (developOn semD roofVarList 1
+    ¬ (developDetOn semD roofVarList 1
       (Valuation.empty.extend .R true |>.extend .D false)).hasValue .F true := by
   intro h; exact Bool.false_ne_true (Option.some.inj h)
 
@@ -280,11 +280,11 @@ def milkBgCharlie : Valuation (fun _ : V => Bool) :=
 
 /-- When both drank, M develops (either disjunct fires). -/
 theorem M_develops_when_both :
-    (developOn milkSEM milkVarList 1 milkBgBoth).hasValue .M true := by rfl
+    (developDetOn milkSEM milkVarList 1 milkBgBoth).hasValue .M true := by rfl
 
 /-- When only Charlie drank, M still develops (disjunct from Ch fires). -/
 theorem M_develops_when_charlie_only :
-    (developOn milkSEM milkVarList 1 milkBgCharlie).hasValue .M true := by rfl
+    (developDetOn milkSEM milkVarList 1 milkBgCharlie).hasValue .M true := by rfl
 
 end MilkTheft
 

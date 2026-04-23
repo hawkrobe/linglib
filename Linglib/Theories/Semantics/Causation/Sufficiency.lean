@@ -218,19 +218,23 @@ backward compat with `Causative.toSemantics` rfl theorems in
 (Modality/, Resultatives/Studies/, Karttunen1971, CWL2025, Glass2023, etc.).
 
 New consumers should `open Semantics.Causation.Sufficiency.V2` and use
-the V2-flavored `makeSem` which delegates to V2 `BoolSEM.causallySufficient`. -/
+the V2-flavored `makeSem` which delegates to `SEM.causallySufficient`
+polymorphically. -/
 
 namespace V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 sufficiency semantics for "make": cause is causally sufficient
-    for effect. BoolSEM-flavored alias of `BoolSEM.causallySufficient`. -/
-abbrev makeSem {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (causeEvent effectEvent : V) : Prop :=
-  Core.Causal.V2.BoolSEM.causallySufficient M background causeEvent effectEvent
+/-- V2 sufficiency semantics for "make": setting `cause := xC` develops
+    `effect = xE`. Polymorphic over the value type `α` — Bool models
+    pass `xC = xE = true` at the call site; gradient/multi-valued models
+    pass other values directly. Alias of `SEM.causallySufficient`. -/
+abbrev makeSem {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
+    [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (cause : V) (xC : α cause) (effect : V) (xE : α effect) : Prop :=
+  SEM.causallySufficient M background cause xC effect xE
 
 end V2
 

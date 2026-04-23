@@ -220,8 +220,8 @@ The selection function s(w, A) can be grounded via causal intervention:
 
 s(w, A) = the world that results from intervening to make A true at w
 
-This connects to @cite{nadathur-lauer-2020}: `develop M (s.extend A true)`
-gives the counterfactual A-world (or, Pearl-style, `(M.intervene A true).develop s`).
+This connects to @cite{nadathur-lauer-2020}: `developDet M (s.extend A true)`
+gives the counterfactual A-world (or, Pearl-style, `(M.intervene A true).developDet s`).
 Counterfactual dependence (necessity) corresponds to selection-based conditionals.
 
 The intervention-based counterfactual primitive lives in

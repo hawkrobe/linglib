@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.Process.Harmony.Defs
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
@@ -16,7 +17,10 @@ Given a `HarmonySystem sys`:
 - **SPREAD**: markedness — penalizes target segments in the suffix whose
   harmony feature doesn't match the trigger value. Drives harmony.
 - **IDENT-[F]**: faithfulness — penalizes input→output changes on the
-  harmony feature. Resists harmony.
+  harmony feature. Defined as `Corr.identViol` on the `(input, output)`
+  edge of a binary parallel-pair correspondence between feature-projected
+  tiers, i.e., IDENT-IO of @cite{mccarthy-prince-1995} specialized to
+  the harmony feature.
 
 ## Key result
 
@@ -30,6 +34,7 @@ violations. Under SPREAD ≫ IDENT, the harmonized output is optimal.
 namespace Phonology.Harmony
 
 open Phonology (Segment Feature)
+open Phonology.Correspondence (Corr)
 open Core.Constraint.OT
 
 -- ============================================================================
@@ -55,12 +60,19 @@ def spreadViolations (sys : HarmonySystem) (triggerVal : Bool)
   ) |>.length
 
 /-- IDENT-[F] violations: count positions where the harmony feature
-    changed between input and output. -/
+    changed between input and output.
+
+    **Derived from `Corr.identViol`** on the `(false, true)` edge of a
+    binary parallel-pair correspondence between the feature-projected
+    tiers `input.map (·.spec sys.feature)` and
+    `output.map (·.spec sys.feature)`. This structurally identifies
+    IDENT-[F] as IDENT-IO of @cite{mccarthy-prince-1995} restricted to
+    the harmony feature. -/
 def identViolations (sys : HarmonySystem)
     (input output : List Segment) : Nat :=
-  (input.zip output).filter (λ (i, o) =>
-    i.spec sys.feature != o.spec sys.feature
-  ) |>.length
+  (Corr.parallel
+    (input.map  (·.spec sys.feature))
+    (output.map (·.spec sys.feature))).identViol .lhs .rhs
 
 -- ============================================================================
 -- § 3: VH Candidate and Named Constraints
@@ -158,21 +170,16 @@ theorem spreadSuffix_zero_spread (sys : HarmonySystem) (val : Bool)
 -- § 6: Faithfulness Baseline
 -- ============================================================================
 
-/-- The faithful candidate (no changes) has zero IDENT violations. -/
+/-- The faithful candidate (no changes) has zero IDENT violations.
+    Derived from `Corr.identity_ident_zero`. -/
 theorem faithful_zero_ident (sys : HarmonySystem) (suffix : List Segment) :
     identViolations sys suffix suffix = 0 := by
-  induction suffix with
-  | nil => rfl
-  | cons s rest ih =>
-    unfold identViolations
-    simp only [List.zip_cons_cons, List.filter_cons, bne_self_eq_false,
-      Bool.false_eq_true, ↓reduceIte]
-    change identViolations sys rest rest = 0
-    exact ih
+  show (Corr.identity _).identViol .lhs .rhs = 0
+  exact Corr.identity_ident_zero _
 
 /-- IDENT on empty suffixes is zero. -/
 theorem identViolations_nil (sys : HarmonySystem) :
-    identViolations sys [] [] = 0 := rfl
+    identViolations sys [] [] = 0 := faithful_zero_ident sys []
 
 -- ============================================================================
 -- § 7: OT Motivation for spreadSuffix

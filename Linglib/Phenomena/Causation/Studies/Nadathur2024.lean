@@ -5,6 +5,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Phenomena.Complementation.Studies.Karttunen1971
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 /-!
 # Nadathur 2024: Causal Semantics for Implicative Verbs
@@ -469,5 +470,101 @@ theorem jaksaa_end_to_end :
     -- Layer 3: ImplicativeClass → Finnish fragment
     jaksaa.toImplicativeClass = ImplicativeClass.jaksaa := by
   exact ⟨by native_decide, by native_decide, rfl, rfl⟩
+
+/-! ### V2 namespace for new code
+
+Legacy Dreyfus dynamics above use `CausalDynamics` + `Situation` with
+positive/negative preconditions. V2 mirror rebuilds the 8-vertex Dreyfus
+scenario on `BoolSEM` substrate, with the negative `¬BRK` precondition
+encoded directly in the Boolean mechanism for COM. Demonstrates the
+dare-vs-manage divergence at the sufficiency layer; full Def 10b
+necessity proofs deferred. -/
+
+namespace V2
+
+open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+
+/-- Dreyfus scenario vertices (@cite{nadathur-2024} §6.1.1, Figure 3). -/
+inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V :=
+  [.INT, .NRV, .LST, .BRK, .SEC, .MSG, .COM, .SPY]
+
+/-- Graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK}, SPY←{SEC,COM}. -/
+def graph : CausalGraph V := ⟨fun
+  | .INT => ∅
+  | .NRV => ∅
+  | .LST => ∅
+  | .BRK => ∅
+  | .SEC => {.INT}
+  | .MSG => {.INT, .NRV}
+  | .COM => {.MSG, .LST, .BRK}
+  | .SPY => {.SEC, .COM}⟩
+
+/-- Dreyfus SEM with the negative `¬BRK` precondition encoded directly
+    in the COM mechanism — first-class on V2's Boolean substrate. -/
+noncomputable def dreyfusSEM : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .INT => const (G := graph) false
+      | .NRV => const (G := graph) false
+      | .LST => const (G := graph) false
+      | .BRK => const (G := graph) false
+      | .SEC => deterministic (fun ρ => ρ ⟨.INT, by simp [graph]⟩)
+      | .MSG => deterministic (fun ρ =>
+          ρ ⟨.INT, by simp [graph]⟩ && ρ ⟨.NRV, by simp [graph]⟩)
+      | .COM => deterministic (fun ρ =>
+          ρ ⟨.MSG, by simp [graph]⟩ && ρ ⟨.LST, by simp [graph]⟩ &&
+          !ρ ⟨.BRK, by simp [graph]⟩)
+      | .SPY => deterministic (fun ρ =>
+          ρ ⟨.SEC, by simp [graph]⟩ && ρ ⟨.COM, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic dreyfusSEM where
+  mech_det v := match v with
+    | .INT => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .NRV => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .LST => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .BRK => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .SEC => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .MSG => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .COM => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .SPY => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- Background: Dreyfus intends, has collected secrets, channel intact. -/
+def dreyfusBg : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .INT true |>.extend .SEC true |>.extend .BRK false
+
+/-- (34a) **dare felicitous for MSG**: NRV is sufficient for MSG.
+    With INT already true and BRK irrelevant for MSG, adding NRV=true
+    yields MSG=true. -/
+theorem nrv_sufficient_for_msg :
+    (developDetOn dreyfusSEM varList 1 (dreyfusBg.extend .NRV true)).hasValue .MSG true := by
+  rfl
+
+/-- (34c) **dare INFELICITOUS for COM**: NRV is NOT sufficient for COM.
+    Even with NRV=true, COM also requires LST=true (which is undetermined
+    in `dreyfusBg`), so COM does not develop to true. -/
+theorem nrv_not_sufficient_for_com :
+    ¬ (developDetOn dreyfusSEM varList 2
+        (dreyfusBg.extend .NRV true)).hasValue .COM true := by
+  intro h
+  exact Bool.false_ne_true (Option.some.inj h)
+
+/-- (34d) **dare INFELICITOUS for SPY**: NRV is NOT sufficient for SPY
+    (SPY depends on COM, which requires LST). -/
+theorem nrv_not_sufficient_for_spy :
+    ¬ (developDetOn dreyfusSEM varList 3
+        (dreyfusBg.extend .NRV true)).hasValue .SPY true := by
+  intro h
+  exact Bool.false_ne_true (Option.some.inj h)
+
+/-! Necessity-side claims (manage_send_msg_felicitous etc.) require V2
+`causallyNecessary` (Def 10b) over multi-parent mechanisms with negative
+preconditions. The legacy theorems above witness the claims on the legacy
+substrate; full V2 migration is deferred until the supersituation
+enumeration infrastructure handles multi-parent disjunctive cases. -/
+
+end V2
 
 end Nadathur2024

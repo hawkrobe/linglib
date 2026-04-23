@@ -1,5 +1,6 @@
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Tier
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
@@ -22,7 +23,7 @@ MxBM-C addresses the erasure problem. The origin problem is solved by
 floating tone representation (the tune is part of the trigger's UR);
 the scope problem by CoP-scope (`CoPScope.lean`).
 
-## Key insight: dominance as transparadigmatic uniformity
+## Key insight: dominance as basemap faithfulness
 
 A **basemap** is an abstract I/O mapping derived from a "deficient
 projection" of the input: all valued (lexical) tones on the target
@@ -47,12 +48,22 @@ computational result of replacive-dominant GT. Under MxBM-C, this
 result *emerges* from basemap faithfulness: `tonalOverwrite_basemap_faithful`
 proves that the overwrite function produces the same tonal output as
 basemap-faithful evaluation.
+
+## Connection to `Correspondence.lean`
+
+Matrix-Basemap Correspondence is the IDENT-OO correspondence relation of
+@cite{mccarthy-prince-1995} / @cite{benua-1997} specialized to the tonal
+tier. `basemapViolations` is defined as `Corr.identViol` on the
+`(matrix, basemap)` edge of a binary correspondence diagram between the
+two tonal tiers — making the connection true by construction rather than
+via a separate Hamming-distance implementation.
 -/
 
 namespace Phonology.Autosegmental.BasemapCorrespondence
 
 open Phonology.Autosegmental.GrammaticalTone
 open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Correspondence (Corr)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -60,22 +71,22 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 -- ============================================================================
 
 /-- Strip all tones from a host word, replacing them with a default tone.
-    This is the **deficient projection** of @cite{rolle-2018} Ch 5:
-    the input with all valued (lexical) tones removed, leaving only the
-    segmental skeleton ready to receive floating (grammatical) tones.
+    The **deficient projection** of @cite{rolle-2018} Ch 5: the input with
+    all valued (lexical) tones removed, leaving only the segmental skeleton
+    ready to receive floating (grammatical) tones.
 
     The `defaultTone` is the tone assigned to "unvalued" TBUs —
     language-specific (often L in African tone languages). -/
-def deficientProjection {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (defaultTone : TRN) : List (TBU S) :=
-  host.map (λ tbu => { tbu with tone := defaultTone })
+def deficientProjection {S : Type} (host : List (TBU S)) (defaultTone : TRN) :
+    List (TBU S) :=
+  host.map fun tbu => { tbu with tone := defaultTone }
 
 /-- Deficient projection produces uniform tone: every TBU gets the
     default tone. -/
-theorem deficientProjection_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
+theorem deficientProjection_uniform {S : Type}
     (host : List (TBU S)) (defaultTone : TRN) :
     (deficientProjection host defaultTone).map TBU.tone =
-    host.map (λ _ => defaultTone) := by
+    host.map fun _ => defaultTone := by
   simp only [deficientProjection, List.map_map]; congr 1
 
 -- ============================================================================
@@ -90,8 +101,7 @@ theorem deficientProjection_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
     For replacive-dominant GT with a whole-word melody, the basemap
     output has the grammatical tune on every TBU. -/
 def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (spec : Spec)
-    (defaultTone : TRN) : List (TBU S) :=
+    (host : List (TBU S)) (spec : Spec) (defaultTone : TRN) : List (TBU S) :=
   tonalOverwrite (deficientProjection host defaultTone) spec
 
 -- ============================================================================
@@ -114,96 +124,53 @@ def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
   Phonology.Tier.apply_tonal tbus
 
 -- ============================================================================
--- § 4: Matrix-Basemap Correspondence Constraint
+-- § 4: Matrix-Basemap Correspondence — derived from `Corr`
 -- ============================================================================
 
-/-- Count violations of Matrix-Basemap Correspondence: the number of
-    positions where two tonal tiers differ.
+/-- Matrix-Basemap Correspondence violation count: Hamming distance between
+    the matrix tonal tier and the basemap tonal tier.
 
-    In @cite{rolle-2018}'s analysis, dominant GT triggers have a
-    cophonology that ranks this constraint high — forcing the matrix
-    output to match the basemap, which erases the target's underlying
-    tones. Non-dominant triggers leave this constraint low-ranked,
-    so underlying tones can surface. -/
+    **Derived from `Corr.identViol`** on the `(false, true)` edge of the
+    binary parallel-pair correspondence between the two tiers. This
+    structurally identifies MxBM-C as IDENT-OO of @cite{mccarthy-prince-1995}
+    / @cite{benua-1997} specialized to the tonal tier — no separate Hamming
+    implementation, no bridge theorem required.
+
+    On unequal-length tiers, the underlying `Corr.parallel` truncates to the
+    shorter prefix (matching `List.zip` semantics). -/
 def basemapViolations (tier₁ tier₂ : List TRN) : Nat :=
-  (tier₁.zip tier₂).foldl
-    (λ count (m, b) => if m == b then count else count + 1) 0
-
-/-- Basemap violations on empty tiers is zero. -/
-theorem basemapViolations_nil : basemapViolations [] [] = 0 := rfl
-
-/-- The fold accumulator in `basemapViolations` never decreases. -/
-private theorem foldl_mismatch_mono
-    (pairs : List (TRN × TRN)) (acc : Nat) :
-    (pairs.foldl (λ count (m, b) => if m == b then count else count + 1) acc) ≥ acc := by
-  induction pairs generalizing acc with
-  | nil => exact Nat.le_refl acc
-  | cons p ps ih =>
-    simp only [List.foldl_cons]
-    have h_step : (if p.1 == p.2 then acc else acc + 1) ≥ acc := by
-      split <;> omega
-    exact Nat.le_trans h_step (ih _)
-
-/-- Removing matching heads doesn't change violation count. -/
-private theorem basemapViolations_cons_eq (x : TRN) (xs ys : List TRN) :
-    basemapViolations (x :: xs) (x :: ys) = basemapViolations xs ys := by
-  unfold basemapViolations
-  rw [List.zip_cons_cons, List.foldl_cons]
-  have hxx : (x == x) = true := beq_self_eq_true x
-  simp [hxx]
-
-/-- Mismatching heads contribute at least one violation. -/
-private theorem basemapViolations_cons_ne (x y : TRN) (xs ys : List TRN)
-    (hne : x ≠ y) :
-    basemapViolations (x :: xs) (y :: ys) ≥ 1 := by
-  unfold basemapViolations
-  rw [List.zip_cons_cons, List.foldl_cons]
-  have hne' : (x == y) = false := by
-    rw [beq_eq_false_iff_ne]; exact hne
-  have : ∀ (acc : Nat), acc ≥ 1 →
-      (xs.zip ys).foldl (λ count (m, b) => if m == b then count else count + 1) acc ≥ 1 :=
-    fun acc hacc => Nat.le_trans hacc (foldl_mismatch_mono _ _)
-  apply this
-  simp [hne']
+  (Corr.parallel tier₁ tier₂).identViol .lhs .rhs
 
 /-- Self-comparison has zero basemap violations: a tonal tier is
-    perfectly faithful to itself. -/
+    perfectly faithful to itself. Derived from `Corr.identity_ident_zero`. -/
 theorem basemapViolations_self_eq_zero (t : List TRN) :
-    basemapViolations t t = 0 := by
-  induction t with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [basemapViolations_cons_eq]
-    exact ih
+    basemapViolations t t = 0 :=
+  Corr.identity_ident_zero t
 
-/-- Zero basemap violations with equal-length tiers implies the tiers
-    are identical.
-
-    This is the inverse of `basemapViolations_self_eq_zero`: if two
-    tiers of the same length have no mismatches, they must be equal
-    element-by-element. The equal-length hypothesis is necessary because
-    `List.zip` silently drops elements from the longer list. -/
+/-- Zero basemap violations with equal-length tiers implies the tiers are
+    identical. The equal-length hypothesis is necessary because the
+    underlying `Corr.parallel` truncates to `min`. -/
 theorem basemapViolations_eq_zero_imp
     (t₁ t₂ : List TRN) (hLen : t₁.length = t₂.length)
     (hZero : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
-  induction t₁ generalizing t₂ with
-  | nil =>
-    cases t₂ with
-    | nil => rfl
-    | cons _ _ => simp at hLen
-  | cons x xs ih =>
-    cases t₂ with
-    | nil => simp at hLen
-    | cons y ys =>
-      have hLen' : xs.length = ys.length := by simpa using hLen
-      have hxy : x = y := by
-        rcases Decidable.em (x = y) with rfl | hne
-        · rfl
-        · exact absurd hZero (by have := basemapViolations_cons_ne x y xs ys hne; omega)
-      rw [hxy] at hZero
-      rw [basemapViolations_cons_eq] at hZero
-      rw [hxy]
-      exact congrArg (y :: ·) (ih ys hLen' hZero)
+  unfold basemapViolations Corr.identViol at hZero
+  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at hZero
+  apply List.ext_getElem hLen
+  intro n hn₁ hn₂
+  have hmem : (n, n) ∈ (Corr.parallel t₁ t₂).edge .lhs .rhs := by
+    rw [Corr.parallel_edge_lhs_rhs, Finset.mem_image]
+    refine ⟨n, ?_, rfl⟩
+    rw [Finset.mem_range, Nat.lt_min]
+    exact ⟨hn₁, hn₂⟩
+  have := hZero hmem
+  simp only [Corr.parallel_form_lhs, Corr.parallel_form_rhs,
+             not_not] at this
+  rw [List.getElem?_eq_getElem hn₁, List.getElem?_eq_getElem hn₂] at this
+  exact Option.some_inj.mp this
+
+-- ============================================================================
+-- § 5: NamedConstraint Bridge
+-- ============================================================================
 
 /-- Wrap `basemapViolations` as a `NamedConstraint` for use in OT
     tableaux and cophonological evaluation.
@@ -219,27 +186,21 @@ theorem basemapViolations_eq_zero_imp
     just raw `List TRN`. -/
 def mkBasemapConstraint {C : Type}
     (basemapTier : List TRN)
-    (extractTier : C → List TRN) : NamedConstraint C :=
-  { name := "BM-FAITH"
-  , family := .faithfulness
-  , eval := λ c => basemapViolations (extractTier c) basemapTier }
+    (extractTier : C → List TRN) : NamedConstraint C where
+  name := "BM-FAITH"
+  family := .faithfulness
+  eval c := basemapViolations (extractTier c) basemapTier
 
 -- ============================================================================
--- § 5: Dominance as Basemap Faithfulness
+-- § 6: Dominance as Basemap Faithfulness
 -- ============================================================================
 
-/-- Helper: whole-word tonalOverwrite reduces to map. -/
-private theorem tonalOverwrite_whole_eq_map {S : Type} [DecidableEq S] [BEq S] [Repr S]
+/-- Helper: whole-word `tonalOverwrite` reduces to `List.map`. -/
+private theorem tonalOverwrite_whole_eq_map {S : Type}
+    [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (t : TRN) :
     tonalOverwrite host ⟨"", [t], .whole⟩ =
-    host.map (λ tbu => { tbu with tone := t }) := rfl
-
-/-- Helper: whole-word tonalOverwrite tonal tier is constant. -/
-private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : TRN) :
-    tonalTier (tonalOverwrite host ⟨"", [t], .whole⟩) =
-    host.map (λ _ => t) := by
-  simp only [tonalTier_eq_map, tonalOverwrite, List.map_map]; congr 1
+    host.map fun tbu => { tbu with tone := t } := rfl
 
 /-- The central theorem of MxBM-C: for replacive-dominant GT with a
     whole-word single-tone melody, the matrix output's tonal tier
@@ -249,14 +210,9 @@ private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Re
     a special deletion rule or markedness constraint, but faithfulness
     to an abstract basemap. The target's underlying tones go unrealized
     because the output must match what would happen if those tones
-    were never there.
-
-    Both `tonalOverwrite host spec` and `basemapOutput host spec dt`
-    produce the tonal tier `[t, t, ..., t]` when `spec` has a
-    whole-word single-tone melody `[t]`, because `tonalOverwrite`
-    replaces all tones regardless of input — and the basemap's
-    deficient projection changes input tones before the same overwrite. -/
-theorem tonalOverwrite_basemap_faithful {S : Type} [DecidableEq S] [BEq S] [Repr S]
+    were never there. -/
+theorem tonalOverwrite_basemap_faithful {S : Type}
+    [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (t : TRN) (defaultTone : TRN) :
     let spec : Spec := ⟨"", [t], .whole⟩
     tonalTier (tonalOverwrite host spec) =
@@ -271,10 +227,11 @@ theorem tonalOverwrite_basemap_faithful {S : Type} [DecidableEq S] [BEq S] [Repr
     different lexical tones but identical segmental content produce
     the same basemap tonal tier.
 
-    This is the formal content of "transparadigmatic uniformity"
+    The formal content of "transparadigmatic uniformity"
     (@cite{rolle-2018} Ch 5): the basemap abstracts away from the
     paradigmatic tonal variation of the target. -/
-theorem basemapOutput_tone_independent_whole {S : Type} [DecidableEq S] [BEq S] [Repr S]
+theorem basemapOutput_tone_independent_whole {S : Type}
+    [DecidableEq S] [BEq S] [Repr S]
     (host₁ host₂ : List (TBU S)) (t defaultTone : TRN)
     (hLen : host₁.length = host₂.length) :
     let spec : Spec := ⟨"", [t], .whole⟩
@@ -283,16 +240,17 @@ theorem basemapOutput_tone_independent_whole {S : Type} [DecidableEq S] [BEq S] 
   simp only [tonalTier_eq_map, basemapOutput, deficientProjection]
   rw [tonalOverwrite_whole_eq_map, tonalOverwrite_whole_eq_map]
   simp only [List.map_map]
-  -- Both sides reduce to host.map (f ∘ g ∘ ...), where f ∘ g ∘ ... = (λ _ => t).
-  -- Constant maps over lists of equal length produce equal lists.
-  have mapConst : ∀ (xs : List (TBU S)),
-      List.map (TBU.tone ∘ (λ tbu : TBU S => { tbu with tone := t }) ∘
-        λ tbu : TBU S => { tbu with tone := defaultTone }) xs =
+  have mapConst : ∀ xs : List (TBU S),
+      List.map (TBU.tone ∘ (fun tbu : TBU S => { tbu with tone := t }) ∘
+        fun tbu : TBU S => { tbu with tone := defaultTone }) xs =
       List.replicate xs.length t := by
-    intro xs; induction xs with
+    intro xs
+    induction xs with
     | nil => rfl
-    | cons _ _ ih => simp only [List.map_cons, Function.comp, List.length_cons,
-                                 List.replicate_succ]; exact congrArg _ ih
+    | cons _ _ ih =>
+      simp only [List.map_cons, Function.comp_def, List.length_cons,
+                 List.replicate_succ]
+      exact congrArg _ ih
   rw [mapConst, mapConst, hLen]
 
 end Phonology.Autosegmental.BasemapCorrespondence

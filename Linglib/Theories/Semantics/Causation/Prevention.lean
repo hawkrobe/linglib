@@ -93,29 +93,36 @@ Legacy `preventSem` above is a structural predicate over CausalDynamics
 laws (checks for an inhibitory law explicitly). V2 takes a behavioral
 view: setting preventer=false produces effect=true; preventer=true
 blocks effect=true. The two definitions are equivalent for direct
-prevention models but the V2 form delegates to V2's `develop` semantics
+prevention models but the V2 form delegates to V2's `developDet` semantics
 rather than introspecting law structure. -/
 
 namespace V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 prevention semantics: preventer's value flips effect's value
-    under V2 `develop`. Specifically, preventer=false ⇒ effect=true
-    (the law fires), and preventer=true ⇒ ¬ effect=true (blocked). -/
-noncomputable def preventSem {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation (fun _ : V => Bool))
-    (preventer effect : V) : Prop :=
-  (M.develop (bg.extend preventer false)).hasValue effect true ∧
-  ¬ (M.develop (bg.extend preventer true)).hasValue effect true
+/-- V2 prevention semantics: preventer-as-`xPrev` blocks effect-from-
+    being-`xE`, AND there exists some alternative preventer value that
+    would have allowed `effect = xE` to develop. Polymorphic over value
+    types; arity-uniform with `makeSem`/`causeSem` so `Causative.V2.toSemantics`
+    can dispatch uniformly. Bool models recover the standard
+    `false vs true` flip via the `∃ xPrev_alt ≠ xPrev` clause
+    (with `xPrev = true`, the only alternative is `false`). -/
+noncomputable def preventSem {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α)
+    (preventer : V) (xPrev : α preventer)
+    (effect : V) (xE : α effect) : Prop :=
+  ¬ (M.developDet (bg.extend preventer xPrev)).hasValue effect xE ∧
+  ∃ xPrev_alt : α preventer, xPrev_alt ≠ xPrev ∧
+    (M.developDet (bg.extend preventer xPrev_alt)).hasValue effect xE
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation _) (preventer effect : V) :
-    Decidable (preventSem M bg preventer effect) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α) (preventer : V) (xP : α preventer)
+    (effect : V) (xE : α effect) :
+    Decidable (preventSem M bg preventer xP effect xE) := Classical.dec _
 
 end V2
 

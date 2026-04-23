@@ -144,52 +144,59 @@ the V2-flavored versions which delegate to V2's `causallyNecessary`. -/
 
 namespace V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
-open Core.Causal.V2.BoolSEM (causallyNecessary)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 causal-necessity semantics for "cause": effect develops from cause
-    AND cause is causally necessary (Nadathur 2024 Def 10b) for effect.
-    BoolSEM-flavored. -/
-noncomputable def causeSem {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (causeEvent effectEvent : V) : Prop :=
-  (M.develop (background.extend causeEvent true)).hasValue effectEvent true ∧
-  Core.Causal.V2.BoolSEM.causallyNecessary M background causeEvent effectEvent
+/-- V2 causal-necessity semantics for "cause": setting cause to xC
+    develops effect to xE AND cause-as-xC is causally necessary
+    (Nadathur 2024 Def 10b) for effect-as-xE. Polymorphic. -/
+noncomputable def causeSem {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (cause : V) (xC : α cause) (effect : V) (xE : α effect) : Prop :=
+  (M.developDet (background.extend cause xC)).hasValue effect xE ∧
+  SEM.causallyNecessary M background cause xC effect xE
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation _) (cause effect : V) :
-    Decidable (causeSem M bg cause effect) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Decidable (causeSem M bg cause xC effect xE) := Classical.dec _
 
 /-- V2 INUS cause (Mackie): insufficient but necessary part of an
-    unnecessary but sufficient condition. -/
-noncomputable def isINUSCause {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (cause effect : V)
-    (enablingConditions : Valuation (fun _ : V => Bool)) : Prop :=
-  Core.Causal.V2.BoolSEM.causallySufficient M enablingConditions cause effect ∧
-  Core.Causal.V2.BoolSEM.causallyNecessary M enablingConditions cause effect ∧
-  ¬ Core.Causal.V2.BoolSEM.causallySufficient M Valuation.empty cause effect
+    unnecessary but sufficient condition. Polymorphic. -/
+noncomputable def isINUSCause {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (cause : V) (xC : α cause) (effect : V) (xE : α effect)
+    (enablingConditions : Valuation α) : Prop :=
+  SEM.causallySufficient M enablingConditions cause xC effect xE ∧
+  SEM.causallyNecessary M enablingConditions cause xC effect xE ∧
+  ¬ SEM.causallySufficient M Valuation.empty cause xC effect xE
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (cause effect : V) (enablingConditions : Valuation _) :
-    Decidable (isINUSCause M cause effect enablingConditions) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (cause : V) (xC : α cause) (effect : V) (xE : α effect)
+    (enablingConditions : Valuation α) :
+    Decidable (isINUSCause M cause xC effect xE enablingConditions) := Classical.dec _
 
-/-- V2 actual causation: cause factually occurred, effect factually
-    occurred, and cause was causally necessary (Def 10b) — tested
-    against the actual situation with cause stripped from the background. -/
-noncomputable def actuallyCaused {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
-  s.hasValue cause true ∧
-  causeSem M (s.remove cause) cause effect
+/-- V2 actual causation: cause factually took value xC, and was causally
+    necessary (Def 10b) for effect-as-xE — tested against the actual
+    situation with cause stripped from the background. Polymorphic. -/
+noncomputable def actuallyCaused {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Prop :=
+  s.hasValue cause xC ∧
+  causeSem M (s.remove cause) cause xC effect xE
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (s : Valuation _) (cause effect : V) :
-    Decidable (actuallyCaused M s cause effect) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
+    Decidable (actuallyCaused M s cause xC effect xE) := Classical.dec _
 
 end V2
 

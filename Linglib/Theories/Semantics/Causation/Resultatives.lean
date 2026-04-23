@@ -817,4 +817,291 @@ theorem phase_complements_cover_cos_types :
 
 end CrossLinguistic
 
+/-! ### V2 namespace for new code
+
+Legacy resultative models above are built on `CausalDynamics` + `Situation`.
+V2 mirrors them on `BoolSEM` + `Valuation` substrate. Each scenario
+gets its own enum (`Fintype + DecidableEq + Repr`) so kernel reduction
+closes the structural sufficiency/completion theorems without
+`native_decide`. Pattern matches `Lewis1973.lean`: local `developDetOn`-
+based predicates (no `IsDAG` required for these structural proofs;
+`Sufficiency.V2.makeSem` / `CCSelection.V2.completesForEffect` are
+available for downstream V2 consumers via the hub V2 surfaces).
+
+The big `independent_source_disrupts_tightness` proof (legacy
+`applyLawsOnce`/`isFixpoint` reasoning over `CausalDynamics`) is not
+ported here — the qualitative claim is witnessed concretely by
+`KickDoorViaBall.kick_door_via_ball_not_tight`. -/
+
+namespace V2
+
+open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+
+/-- Local sufficiency predicate (V2): with `cause` set true under
+    `bg`, `developDetOn` of `M` produces `effect = true`. -/
+noncomputable def sufficient {W : Type*} [Fintype W] [DecidableEq W]
+    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (vs : List W) (bg : Valuation (fun _ : W => Bool)) (n : Nat)
+    (cause effect : W) : Prop :=
+  (developDetOn M vs n (bg.extend cause true)).hasValue effect true
+
+/-- Local completion predicate (V2): sufficient + but-for. -/
+noncomputable def completes {W : Type*} [Fintype W] [DecidableEq W]
+    (M : BoolSEM W) [SEM.IsDeterministic M]
+    (vs : List W) (bg : Valuation (fun _ : W => Bool)) (n : Nat)
+    (cause effect : W) : Prop :=
+  sufficient M vs bg n cause effect ∧
+  ¬ (developDetOn M vs n (bg.extend cause false)).hasValue effect true
+
+-- ════════════════════════════════════════════════════
+-- § HammerFlat: hammering → flat
+-- ════════════════════════════════════════════════════
+
+namespace HammerFlat
+
+inductive V | hammering | flat
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.hammering, .flat]
+
+def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .hammering => const (G := graph) false
+      | .flat => deterministic (fun ρ => ρ ⟨.hammering, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .hammering => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .flat => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem hammer_sufficient_for_flat :
+    sufficient model varList Valuation.empty 1 .hammering .flat := by
+  unfold sufficient; rfl
+
+theorem hammer_completes_flat :
+    completes model varList Valuation.empty 1 .hammering .flat := by
+  refine ⟨by unfold sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end HammerFlat
+
+-- ════════════════════════════════════════════════════
+-- § KickIntoField: kicking → in_field
+-- ════════════════════════════════════════════════════
+
+namespace KickIntoField
+
+inductive V | kicking | in_field
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .in_field]
+
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .in_field => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .in_field => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem kick_sufficient_for_field :
+    sufficient model varList Valuation.empty 1 .kicking .in_field := by
+  unfold sufficient; rfl
+
+theorem kick_completes_field :
+    completes model varList Valuation.empty 1 .kicking .in_field := by
+  refine ⟨by unfold sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end KickIntoField
+
+-- ════════════════════════════════════════════════════
+-- § LaughSilly: laughing → silly (fake reflexive)
+-- ════════════════════════════════════════════════════
+
+namespace LaughSilly
+
+inductive V | laughing | silly
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.laughing, .silly]
+
+def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .laughing => const (G := graph) false
+      | .silly => deterministic (fun ρ => ρ ⟨.laughing, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .laughing => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .silly => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem laugh_sufficient_for_silly :
+    sufficient model varList Valuation.empty 1 .laughing .silly := by
+  unfold sufficient; rfl
+
+end LaughSilly
+
+-- ════════════════════════════════════════════════════
+-- § FreezeSolid: noncausative (no edges)
+-- ════════════════════════════════════════════════════
+
+namespace FreezeSolid
+
+inductive V | freezing | solid
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.freezing, .solid]
+
+/-- Empty graph: no causal relations (noncausative resultative). -/
+def graph : CausalGraph V := ⟨fun _ => ∅⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun _ => const (G := graph) false }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det _ := inferInstanceAs (Mechanism.IsDeterministic (const _))
+
+/-- Freezing is NOT sufficient for solidity in the empty-edge model. -/
+theorem freeze_not_sufficient :
+    ¬ sufficient model varList Valuation.empty 1 .freezing .solid := by
+  intro h
+  unfold sufficient at h
+  exact Bool.false_ne_true (Option.some.inj h)
+
+end FreezeSolid
+
+-- ════════════════════════════════════════════════════
+-- § DrinkTeapotDry: drinking → tea_removal → teapot_dry (passive chain)
+-- ════════════════════════════════════════════════════
+
+namespace DrinkTeapotDry
+
+inductive V | drinking | tea_removal | teapot_dry
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.drinking, .tea_removal, .teapot_dry]
+
+def graph : CausalGraph V := ⟨fun
+  | .drinking => ∅
+  | .tea_removal => {.drinking}
+  | .teapot_dry => {.tea_removal}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .drinking => const (G := graph) false
+      | .tea_removal => deterministic (fun ρ => ρ ⟨.drinking, by simp [graph]⟩)
+      | .teapot_dry => deterministic (fun ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .drinking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .tea_removal => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .teapot_dry => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- Tight despite being a chain: removing drinking leaves tea_removal
+    undetermined (no independent source), so teapot_dry doesn't fire. -/
+theorem drink_completes_dry :
+    completes model varList Valuation.empty 1 .drinking .teapot_dry := by
+  refine ⟨by unfold sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end DrinkTeapotDry
+
+-- ════════════════════════════════════════════════════
+-- § KickDoorDirect: kicking → door_open
+-- ════════════════════════════════════════════════════
+
+namespace KickDoorDirect
+
+inductive V | kicking | door_open
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .door_open]
+
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .door_open => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem kick_door_completes_direct :
+    completes model varList Valuation.empty 1 .kicking .door_open := by
+  refine ⟨by unfold sufficient; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end KickDoorDirect
+
+-- ════════════════════════════════════════════════════
+-- § KickDoorViaBall: kicking → ball_motion → door_open + ball_energy → ball_motion
+-- ════════════════════════════════════════════════════
+
+namespace KickDoorViaBall
+
+inductive V | kicking | ball_motion | ball_energy | door_open
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .ball_energy, .ball_motion, .door_open]
+
+/-- Ball motion has TWO parents: kicking and ball_energy. The ball
+    has its own independent energy source, so kicking is not necessary. -/
+def graph : CausalGraph V := ⟨fun
+  | .kicking => ∅
+  | .ball_energy => ∅
+  | .ball_motion => {.kicking, .ball_energy}
+  | .door_open => {.ball_motion}⟩
+
+/-- Ball motion fires if EITHER kicking or ball_energy is true (∨-mechanism). -/
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .ball_energy => const (G := graph) false
+      | .ball_motion => deterministic (fun ρ =>
+          ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
+      | .door_open => deterministic (fun ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .ball_energy => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .ball_motion => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- Background where the ball has its own energy. -/
+def ballHasEnergyBg : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .ball_energy true
+
+/-- NOT tight: removing kicking still allows ball_energy → ball_motion
+    → door_open. The kick is not necessary. -/
+theorem kick_door_via_ball_not_tight :
+    ¬ completes model varList ballHasEnergyBg 1 .kicking .door_open := by
+  intro ⟨_, hNot⟩
+  apply hNot
+  rfl
+
+end KickDoorViaBall
+
+end V2
+
 end Semantics.Causation.Resultatives

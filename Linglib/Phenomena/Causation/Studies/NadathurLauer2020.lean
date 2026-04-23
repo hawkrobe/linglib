@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 /-!
 # Structural Causation Tests
@@ -345,5 +346,79 @@ theorem make_cause_truth_conditionally_distinct :
       (Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true)
       (mkVar "l") (mkVar "f") := by native_decide
   exact hNotC (heq ▸ hM)
+
+/-! ### V2 namespace for new code
+
+Legacy preemption/prevention/enabling/chain scenarios above use
+`CausalDynamics`. V2 mirror rebuilds the canonical Preemption scenario
+(Suzy + Billy throwing) on `BoolSEM` substrate, demonstrating the
+make/cause divergence under overdetermination — the central
+@cite{nadathur-lauer-2020} prediction. Other scenarios (Prevention,
+Enabling, ChainBypass) follow the same pattern; deferred until consumer
+demand. -/
+
+namespace V2
+
+open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
+
+namespace Preemption
+
+/-- Preemption vertices: two throwers and the bottle. -/
+inductive V | suzy | billy | shatters
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.suzy, .billy, .shatters]
+
+def graph : CausalGraph V := ⟨fun
+  | .suzy => ∅
+  | .billy => ∅
+  | .shatters => {.suzy, .billy}⟩
+
+/-- Disjunctive mechanism: shatters iff Suzy OR Billy throws. -/
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .suzy => const (G := graph) false
+      | .billy => const (G := graph) false
+      | .shatters => deterministic (fun ρ =>
+          ρ ⟨.suzy, by simp [graph]⟩ || ρ ⟨.billy, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .suzy => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .billy => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .shatters => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- Local sufficiency predicate (V2). -/
+noncomputable def sufficient (vs : List V) (bg : Valuation (fun _ : V => Bool))
+    (n : Nat) (cause effect : V) : Prop :=
+  (developDetOn model vs n (bg.extend cause true)).hasValue effect true
+
+/-- Local but-for predicate (V2). -/
+noncomputable def butFor (vs : List V) (bg : Valuation (fun _ : V => Bool))
+    (n : Nat) (cause effect : V) : Prop :=
+  ¬ (developDetOn model vs n (bg.extend cause false)).hasValue effect true
+
+/-- Suzy's throw is sufficient for shattering (in any background). -/
+theorem suzy_sufficient : sufficient varList Valuation.empty 1 .suzy .shatters := by
+  unfold sufficient; rfl
+
+/-- Billy's throw is sufficient for shattering (in any background). -/
+theorem billy_sufficient : sufficient varList Valuation.empty 1 .billy .shatters := by
+  unfold sufficient; rfl
+
+/-- **Overdetermination**: with Billy already throwing, Suzy's throw is
+    NOT but-for-necessary — the bottle still shatters via Billy when
+    Suzy doesn't throw. Captures @cite{nadathur-lauer-2020}'s prediction
+    that "Suzy caused the bottle to shatter" is INFELICITOUS under
+    overdetermination (cause requires necessity), while "Suzy made the
+    bottle shatter" remains true (make requires only sufficiency). -/
+theorem suzy_not_but_for_when_billy_throws :
+    ¬ butFor varList (Valuation.empty.extend .billy true) 1 .suzy .shatters := by
+  intro h; apply h; rfl
+
+end Preemption
+
+end V2
 
 end Phenomena.Causation.StructuralCausation

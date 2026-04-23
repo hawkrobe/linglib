@@ -27,7 +27,7 @@ what follows about conjunction distribution and neg-raising?
    Both derivations agree on standard doxastic verbs.
 
 3. **Mereological grounding**: The conjunction distribution theorem
-   (`mono_att_distrib_and_iff` in `Truthmaker.Basic`) proves that the
+   (`attHolds_tmAnd_iff` in `Truthmaker.Basic`) proves that the
    distribution follows from the `SemilatticeSup` structure of states.
 
 -/
@@ -127,6 +127,6 @@ theorem conjunction_distribution_grounded :
       (p q : Semantics.Truthmaker.TMProp S) (x : E),
     Semantics.Truthmaker.attHolds σ (Semantics.Truthmaker.tmAnd p q) x ↔
     Semantics.Truthmaker.attHolds σ p x ∧ Semantics.Truthmaker.attHolds σ q x :=
-  λ _ _ _ σ p q x => Semantics.Truthmaker.mono_att_distrib_and_iff σ p q x
+  fun _ _ _ σ p q x => Semantics.Truthmaker.attHolds_tmAnd_iff σ p q x
 
 end Semantics.Attitudes.Monotonicity

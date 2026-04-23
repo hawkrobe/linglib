@@ -389,16 +389,15 @@ def bCausesSound : (Button3World → Bool)
 def cCausesSound : (Button3World → Bool)
   | .pressC_plays => true | _ => false
 
-/-- The answer space for the 3-button experimental paradigm.
+/-- Causal relation for the 3-button paradigm: each button causes the
+target sound exactly when its associated `*CausesSound` predicate holds. -/
+def button3Causes : Button3Trigger → Set Button3World
+  | .A => fun w => aCausesSound w = true
+  | .B => fun w => bCausesSound w = true
+  | .C => fun w => cCausesSound w = true
 
-Maps the scenario into the `AnswerSpace` structure: three triggers (buttons),
-each with a causal relation to the target sound. -/
-def button3AnswerSpace : AnswerSpace Button3Trigger Button3World :=
-  { causes := fun t w => match t with
-      | .A => aCausesSound w = true
-      | .B => bCausesSound w = true
-      | .C => cCausesSound w = true
-    triggers := {.A, .B, .C} }
+/-- The salient triggers in the 3-button paradigm: all three buttons. -/
+def button3Triggers : Set Button3Trigger := {.A, .B, .C}
 
 -- ============================================================================
 -- Section B: Theory Chain — Exhaustification → Perfection (3 Buttons)
@@ -422,31 +421,33 @@ the witness `pressA_plays` establishes consistency of φ ∧ ∀a∈ALT. ¬a
 (at pressA_plays, A causes the sound but B and C do not). -/
 theorem theory_chain_3button_perfection
     (w : Button3World)
-    (h_exh : exhaustifiedAnswer button3AnswerSpace .A w)
+    (h_exh : exhaustifiedAnswer button3Causes button3Triggers .A w)
     (h_coverage : soundPlays w = true →
-      ∃ t' ∈ button3AnswerSpace.triggers, button3AnswerSpace.causes t' w)
+      ∃ t' ∈ button3Triggers, button3Causes t' w)
     (hnp : pressA w = false) : soundPlays w = false := by
   -- Step 1: Trigger A requires pressing A
-  have h_trp : ∀ w', button3AnswerSpace.causes .A w' → pressA w' = true := by
-    intro w' h; cases w' <;> simp_all [button3AnswerSpace, aCausesSound, pressA]
+  have h_trp : ∀ w', button3Causes .A w' → pressA w' = true := by
+    intro w' h; cases w' <;> simp_all [button3Causes, aCausesSound, pressA]
   -- Step 2: All alternative triggers are IE (via general lemma)
-  have h_ie : ∀ t' ∈ button3AnswerSpace.triggers, t' ≠ .A →
+  have h_ie : ∀ t' ∈ button3Triggers, t' ≠ .A →
       Exhaustification.IsInnocentlyExcludable
-        (answerAlternatives button3AnswerSpace .A)
-        (answerProp button3AnswerSpace .A)
-        (answerProp button3AnswerSpace t') := by
+        (answerAlternatives button3Causes button3Triggers .A)
+        (button3Causes .A)
+        (button3Causes t') := by
     intro t' _ht' hne
     -- Apply the general IE lemma: all alternatives are IE when full exclusion
     -- is consistent. Witness: pressA_plays (A causes, B and C do not).
     apply all_alt_innocently_excludable
     · -- Consistency: ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w)
       refine ⟨.pressA_plays, rfl, ?_⟩
-      intro a ⟨t'', ht''_mem, ht''_ne, ht''_eq⟩
+      intro a ha
+      obtain ⟨t'', ht''_mem, ht''_ne, ht''_eq⟩ := mem_answerAlternatives.mp ha
       cases t'' with
       | A => exact absurd rfl ht''_ne
-      | B => subst ht''_eq; simp [answerProp, button3AnswerSpace, bCausesSound]
-      | C => subst ht''_eq; simp [answerProp, button3AnswerSpace, cCausesSound]
+      | B => rw [← ht''_eq]; simp [button3Causes, bCausesSound]
+      | C => rw [← ht''_eq]; simp [button3Causes, cCausesSound]
     · -- t' ∈ ALT
+      rw [mem_answerAlternatives]
       cases t' with
       | A => exact absurd rfl hne
       | B => exact ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion, rfl⟩
@@ -455,7 +456,7 @@ theorem theory_chain_3button_perfection
   have h_not_p : ¬(pressA w = true) := by simp [hnp]
   -- Step 4: Apply the theory chain
   have h_not_sound : ¬(soundPlays w = true) :=
-    exhaustification_yields_perfection button3AnswerSpace .A
+    exhaustification_yields_perfection button3Causes button3Triggers .A
       (fun w => pressA w = true) (fun w => soundPlays w = true) w
       h_trp h_ie h_coverage h_exh h_not_p
   exact Bool.of_not_eq_true h_not_sound
@@ -480,24 +481,25 @@ theorem three_button_perfection :
 
 /-- What @cite{von-fintel-2001}'s account predicts about non-asserted triggers:
 each specific alternative trigger is excluded (universal, per-trigger). -/
-def vonFintelPrediction {Trigger W : Type*}
-    (as : AnswerSpace Trigger W) (t : Trigger) (w : W) : Prop :=
-  ∀ t' ∈ as.triggers, t' ≠ t → ¬as.causes t' w
+def vonFintelPrediction {ι W : Type*}
+    (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
+  ∀ t' ∈ triggers, t' ≠ t → ¬causes t' w
 
 /-- What @cite{horn-2000}'s account predicts: some non-asserted trigger is
 excluded, but we don't know which (existential, unspecified). -/
-def hornPrediction {Trigger W : Type*}
-    (as : AnswerSpace Trigger W) (t : Trigger) (w : W) : Prop :=
-  ∃ t' ∈ as.triggers, t' ≠ t ∧ ¬as.causes t' w
+def hornPrediction {ι W : Type*}
+    (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
+  ∃ t' ∈ triggers, t' ≠ t ∧ ¬causes t' w
 
 /-- **Von Fintel entails Horn**: per-trigger exclusion implies existential exclusion.
 
 If we know that every specific alternative trigger is excluded (von Fintel),
 then certainly some trigger is excluded (Horn). -/
 theorem vonFintel_entails_horn
-    {Trigger W : Type*} (as : AnswerSpace Trigger W) (t : Trigger) (w : W)
-    (h_other : ∃ t' ∈ as.triggers, t' ≠ t)
-    (h_vf : vonFintelPrediction as t w) : hornPrediction as t w := by
+    {ι W : Type*} (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W)
+    (h_other : ∃ t' ∈ triggers, t' ≠ t)
+    (h_vf : vonFintelPrediction causes triggers t w) :
+    hornPrediction causes triggers t w := by
   obtain ⟨t', ht'_mem, ht'_ne⟩ := h_other
   exact ⟨t', ht'_mem, ht'_ne, h_vf t' ht'_mem ht'_ne⟩
 
@@ -515,17 +517,17 @@ This is the paper's key argument against Horn: participants respond "No" to
 won't play it." -/
 theorem horn_not_entails_vonFintel :
     ∃ (w : Button3World),
-      hornPrediction button3AnswerSpace .A w ∧
-      ¬vonFintelPrediction button3AnswerSpace .A w := by
+      hornPrediction button3Causes button3Triggers .A w ∧
+      ¬vonFintelPrediction button3Causes button3Triggers .A w := by
   -- At pressB_plays: B causes sound (✓), C doesn't (✓)
   -- Horn: ∃ t'≠A, ¬causes t' → C. ✓
   -- von Fintel: ∀ t'≠A, ¬causes t' → B causes sound. ✗
   refine ⟨.pressB_plays, ?_, ?_⟩
   · exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion,
-      by simp [button3AnswerSpace, cCausesSound]⟩
+      by simp [button3Causes, cCausesSound]⟩
   · intro h
     have := h .B (Or.inr (Or.inl rfl)) Button3Trigger.noConfusion
-    simp [button3AnswerSpace, bCausesSound] at this
+    simp [button3Causes, bCausesSound] at this
 
 /-- **Von Fintel is strictly stronger than Horn.**
 
@@ -534,14 +536,14 @@ stronger predictions than Horn's unconditional alternative. The 3-button
 paradigm discriminates between the two accounts. -/
 theorem vonFintel_strictly_stronger_than_horn :
     -- von Fintel → Horn (forward direction)
-    (∀ w : Button3World, vonFintelPrediction button3AnswerSpace .A w →
-      hornPrediction button3AnswerSpace .A w) ∧
+    (∀ w : Button3World, vonFintelPrediction button3Causes button3Triggers .A w →
+      hornPrediction button3Causes button3Triggers .A w) ∧
     -- Horn ↛ von Fintel (backward direction fails)
-    (∃ w : Button3World, hornPrediction button3AnswerSpace .A w ∧
-      ¬vonFintelPrediction button3AnswerSpace .A w) := by
+    (∃ w : Button3World, hornPrediction button3Causes button3Triggers .A w ∧
+      ¬vonFintelPrediction button3Causes button3Triggers .A w) := by
   constructor
   · intro w h
-    exact vonFintel_entails_horn button3AnswerSpace .A w
+    exact vonFintel_entails_horn button3Causes button3Triggers .A w
       ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion⟩ h
   · exact horn_not_entails_vonFintel
 

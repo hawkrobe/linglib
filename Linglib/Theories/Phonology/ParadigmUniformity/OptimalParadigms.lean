@@ -24,12 +24,11 @@ only in their anchoring choice.
 
 ## Connection to Correspondence Theory
 
-OP constraints are output-to-output (OO) faithfulness constraints
-(@cite{mccarthy-prince-1995}) applied *symmetrically* across all
-paradigm members. `mkOPMaxV` is the symmetric pairwise lift of
-OO-MAX restricted to vowel positions; the `vowelMismatch` function
-passed to it is structurally analogous to `Corr.maxViol` in
-`Correspondence.lean`.
+OP-MAX-V is **derived from `Corr.maxViol`** via a tier projection:
+`vowelMismatch a b := (Corr.parallel (proj a) (proj b)).maxViol .lhs .rhs`
+where `proj : Form → List Vowel` extracts the vocalic tier. This makes
+the docstring claim "OP-MAX-V reduces to MAX-IO on the vowel tier"
+true by construction rather than by stipulation.
 
 ## Empirical status
 
@@ -44,23 +43,35 @@ that phonological behavior tracks paradigm structure. See
 namespace Phonology.ParadigmUniformity
 
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
-open Phonology.Correspondence (Corr CorrDomain)
+open Phonology.Correspondence (Corr)
 
 -- ============================================================================
--- § 1: OP-MAX-V
+-- § 1: OP-MAX-V derived from `Corr.maxViol` via tier projection
 -- ============================================================================
 
-/-- Build an OP-MAX-V constraint: penalises paradigm non-uniformity with
-    respect to vowel positions.
+/-- Vowel mismatch between two forms, derived from `Corr.maxViol` on the
+    vowel-tier projection. The structural realization of "OP-MAX-V is
+    MAX-IO on the vowel tier": no stipulated callback, the count comes
+    from the unifying `Corr` substrate. -/
+def vowelMismatchFromTier {Form Vowel : Type}
+    (proj : Form → List Vowel) (a b : Form) : ℕ :=
+  (Corr.parallel (proj a) (proj b)).maxViol .lhs .rhs
 
-    `vowelMismatch a b` counts positions where form `a` has a vowel and
-    form `b` does not. The full constraint sums this over all ordered
-    pairs in the paradigm.
+/-- Build an OP-MAX-V constraint from a tier projection. The symmetric
+    pairwise lift of OO-MAX restricted to vocalic positions, with the
+    underlying violation count derived from `Corr.maxViol` rather than
+    stipulated.
 
-    Conceptually, this is the symmetric pairwise lift of OO-MAX
-    restricted to vocalic positions. When the forms are modelled as
-    `Corr` (output-to-output correspondence), `vowelMismatch` reduces
-    to `Corr.maxViol` on the vowel tier. -/
+    For backward compatibility, `mkOPMaxV` (below) still accepts an
+    abstract `vowelMismatch : Form → Form → Nat` callback; the new
+    `mkOPMaxVFromTier` should be preferred for new study files. -/
+def mkOPMaxVFromTier {Form Vowel : Type} (proj : Form → List Vowel) :
+    NamedConstraint (List Form) :=
+  liftPairwise "OP-MAX-V" .faithfulness (vowelMismatchFromTier proj)
+
+/-- Build an OP-MAX-V constraint with an abstract vowel-mismatch callback.
+    Kept for compatibility with study files that supply paper-specific
+    mismatch counts. New code should use `mkOPMaxVFromTier`. -/
 def mkOPMaxV {Form : Type} (vowelMismatch : Form → Form → Nat) :
     NamedConstraint (List Form) :=
   liftPairwise "OP-MAX-V" .faithfulness vowelMismatch

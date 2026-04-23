@@ -60,7 +60,7 @@ open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
 -- ════════════════════════════════════════════════════
 
 /-- Lewis's but-for counterfactual: setting cause to `false` (the absent
-    value) prevents the effect under `developOn`.
+    value) prevents the effect under `developDetOn`.
 
     "If c had not occurred, e would not have occurred." Polymorphic
     over the vertex type W so each scenario can use its own enum. -/
@@ -68,7 +68,7 @@ noncomputable def lewisButFor {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
     (vs : List W) (bg : Valuation (fun _ : W => Bool))
     (cause effect : W) : Prop :=
-  ¬ (developOn M vs 1 (bg.extend cause false)).hasValue effect true
+  ¬ (developDetOn M vs 1 (bg.extend cause false)).hasValue effect true
 
 noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
@@ -78,13 +78,13 @@ noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]
 /-- Lewis's causal dependence (@cite{lewis-1973-causation} p. 563).
 
     Three conjuncts: cause develops, effect develops, and without cause
-    the effect does not develop. -/
+    the effect does not developDet. -/
 noncomputable def lewisDependence {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
     (vs : List W) (bg : Valuation (fun _ : W => Bool))
     (cause effect : W) : Prop :=
-  (developOn M vs 1 bg).hasValue cause true ∧
-  (developOn M vs 1 bg).hasValue effect true ∧
+  (developDetOn M vs 1 bg).hasValue cause true ∧
+  (developDetOn M vs 1 bg).hasValue effect true ∧
   lewisButFor M vs bg cause effect
 
 noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]

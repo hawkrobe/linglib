@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 

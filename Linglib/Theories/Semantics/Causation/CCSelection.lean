@@ -199,31 +199,33 @@ the V2-flavored versions which delegate to V2 BoolSEM predicates. -/
 
 namespace V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 `completesForEffect`: cause being true develops effect; cause being
-    false does not. The simple but-for completion check. -/
-noncomputable def completesForEffect {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (cause effect : V) : Prop :=
-  (M.develop (background.extend cause true)).hasValue effect true ∧
-  ¬ (M.develop (background.extend cause false)).hasValue effect true
+/-- V2 `completesForEffect`: cause-as-`xC` develops effect-as-`xE`;
+    cause-as-`xC_alt` does not. The polymorphic but-for completion
+    check. Bool models pass `xC = xE = true`, `xC_alt = false`. -/
+noncomputable def completesForEffect {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (cause : V) (xC xC_alt : α cause) (effect : V) (xE : α effect) : Prop :=
+  (M.developDet (background.extend cause xC)).hasValue effect xE ∧
+  ¬ (M.developDet (background.extend cause xC_alt)).hasValue effect xE
 
-noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation _) (cause effect : V) :
-    Decidable (completesForEffect M bg cause effect) := Classical.dec _
+noncomputable instance {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α) (cause : V) (xC xC_alt : α cause)
+    (effect : V) (xE : α effect) :
+    Decidable (completesForEffect M bg cause xC xC_alt effect xE) := Classical.dec _
 
 /-- V2 `actualizationHolds`: alias for `completesForEffect`. -/
-abbrev actualizationHolds {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [Core.Causal.V2.SEM.IsDeterministic M]
-    (bg : Valuation (fun _ : V => Bool))
-    (cause effect : V) : Prop :=
-  completesForEffect M bg cause effect
+abbrev actualizationHolds {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation α)
+    (cause : V) (xC xC_alt : α cause) (effect : V) (xE : α effect) : Prop :=
+  completesForEffect M bg cause xC xC_alt effect xE
 
 end V2
 

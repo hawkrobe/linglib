@@ -857,28 +857,53 @@ call the predicates directly on their `BoolSEM`. -/
 
 namespace Semantics.Causation.Implicative.V2
 
-open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
 
-/-- V2 manage-sem: prerequisite is causally sufficient for complement. -/
-abbrev manageSem {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (prerequisite complement : V) : Prop :=
-  Core.Causal.V2.BoolSEM.causallySufficient M background prerequisite complement
+/-- V2 manage-sem: prerequisite-as-`xP` is causally sufficient for
+    complement-as-`xC`. Polymorphic over value types — Bool models
+    pass `xP = xC = true`. -/
+abbrev manageSem {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (prerequisite : V) (xP : α prerequisite)
+    (complement : V) (xC : α complement) : Prop :=
+  SEM.causallySufficient M background prerequisite xP complement xC
 
-/-- V2 fail-sem: prerequisite is NOT causally sufficient for complement. -/
-abbrev failSem {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (prerequisite complement : V) : Prop :=
-  ¬ manageSem M background prerequisite complement
+/-- V2 fail-sem: prerequisite-as-`xP` is NOT causally sufficient for
+    complement-as-`xC`. -/
+abbrev failSem {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (prerequisite : V) (xP : α prerequisite)
+    (complement : V) (xC : α complement) : Prop :=
+  ¬ manageSem M background prerequisite xP complement xC
 
-/-- V2 necessity presupposition: prerequisite is causally necessary
-    (Nadathur 2024 Def 10b) for complement. -/
-abbrev necessityPresup {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
-    (background : Valuation (fun _ : V => Bool))
-    (prerequisite complement : V) : Prop :=
-  Core.Causal.V2.BoolSEM.causallyNecessary M background prerequisite complement
+/-- V2 necessity presupposition: prerequisite-as-`xP` is causally
+    necessary (Nadathur 2024 Def 10b) for complement-as-`xC`.
+    Polymorphic. -/
+abbrev necessityPresup {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (background : Valuation α)
+    (prerequisite : V) (xP : α prerequisite)
+    (complement : V) (xC : α complement) : Prop :=
+  SEM.causallyNecessary M background prerequisite xP complement xC
 
 end Semantics.Causation.Implicative.V2
+
+namespace Core.Verbs.Implicative.V2
+
+open Core.Causal.V2 (SEM CausalGraph Valuation DecidableValuation)
+
+/-- V2 dispatch: map an `Implicative` polarity to its V2 polymorphic
+    semantics. -/
+noncomputable def toSemantics {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
+    Implicative → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
+  | .positive => Semantics.Causation.Implicative.V2.manageSem M
+  | .negative => Semantics.Causation.Implicative.V2.failSem M
+
+end Core.Verbs.Implicative.V2

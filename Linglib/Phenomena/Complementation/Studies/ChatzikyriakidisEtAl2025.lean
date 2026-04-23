@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
+import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 import Mathlib.Data.Set.Basic
 
@@ -36,7 +36,7 @@ attitude contexts without requiring witnesses. Two agents can think
 
 -/
 
-namespace Phenomena.Complementation.Attitudes.IntentionalIdentity.Bridge
+namespace Phenomena.Attitudes.IntentionalIdentity.Bridge
 
 open Semantics.TypeTheoretic
 
@@ -121,4 +121,4 @@ theorem intensional_distinction_enables_ii :
     ¬ witchType.intEq ⟨Empty, "ghost_who_haunts"⟩ :=
   ⟨⟨Equiv.refl Empty⟩, by simp [IType.intEq, witchType]⟩
 
-end Phenomena.Complementation.Attitudes.IntentionalIdentity.Bridge
+end Phenomena.Attitudes.IntentionalIdentity.Bridge

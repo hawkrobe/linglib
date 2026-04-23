@@ -666,4 +666,94 @@ theorem convexClosure_mono {α : Type*} [PartialOrder α] {S T : Set α}
     (h : S ⊆ T) : convexClosure S ⊆ convexClosure T :=
   fun _ ⟨a, ha, b, hb, hac, hcb⟩ => ⟨a, h ha, b, h hb, hac, hcb⟩
 
+/-- A set is **convex** under the partial order: every element between
+    two members is itself a member. The fixed-point of `convexClosure`. -/
+def IsConvex {α : Type*} [PartialOrder α] (S : Set α) : Prop :=
+  ∀ ⦃s u : α⦄, s ∈ S → u ∈ S → ∀ ⦃t : α⦄, s ≤ t → t ≤ u → t ∈ S
+
+theorem IsConvex.convexClosure {α : Type*} [PartialOrder α] (S : Set α) :
+    IsConvex (convexClosure S) := by
+  rintro s u ⟨a, ha, _, _, hale, _⟩ ⟨_, _, b, hb, _, hleb⟩ t hst htu
+  exact ⟨a, ha, b, hb, le_trans hale hst, le_trans htu hleb⟩
+
+/-- `convexClosure` as a mathlib `ClosureOperator (Set α)`.
+    Sibling to `algClosureOp`. -/
+def convexClosureOp {α : Type*} [PartialOrder α] :
+    ClosureOperator (Set α) where
+  toOrderHom := {
+    toFun := convexClosure
+    monotone' := fun _ _ hST => convexClosure_mono hST
+  }
+  le_closure' := fun S _ hx => subset_convexClosure S hx
+  idempotent' := convexClosure_idempotent
+
+-- ════════════════════════════════════════════════════
+-- § 15. Conjunctive Parthood (Jago Def 5; @cite{jago-2026})
+-- ════════════════════════════════════════════════════
+
+/-- **Down clause** of conjunctive parthood: every element of `p` has a
+    part in `q`. Generic poset relation; specialized in
+    `Theories/Semantics/Truthmaker/Basic.lean` to content parthood. -/
+def IsSubsumedBy {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
+  ∀ s, p s → ∃ t, q t ∧ t ≤ s
+
+/-- **Up clause** of conjunctive parthood: every element of `q` extends
+    to an element of `p`. -/
+def Subserves {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
+  ∀ s, q s → ∃ t, p t ∧ s ≤ t
+
+/-- **Conjunctive parthood** (@cite{jago-2026} Def 5):
+    `q` is a content part of `p` iff both Down (`IsSubsumedBy`) and Up
+    (`Subserves`) clauses hold. -/
+def IsContentPart {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
+  IsSubsumedBy q p ∧ Subserves q p
+
+namespace IsSubsumedBy
+
+@[refl] theorem refl {α : Type*} [Preorder α] (p : α → Prop) :
+    IsSubsumedBy p p :=
+  fun s hp => ⟨s, hp, le_refl s⟩
+
+theorem trans {α : Type*} [Preorder α] {p q r : α → Prop}
+    (hpq : IsSubsumedBy p q) (hqr : IsSubsumedBy q r) : IsSubsumedBy p r := by
+  intro s hr
+  obtain ⟨t, hqt, htles⟩ := hqr s hr
+  obtain ⟨u, hpu, hulet⟩ := hpq t hqt
+  exact ⟨u, hpu, le_trans hulet htles⟩
+
+end IsSubsumedBy
+
+namespace Subserves
+
+@[refl] theorem refl {α : Type*} [Preorder α] (p : α → Prop) :
+    Subserves p p :=
+  fun s hp => ⟨s, hp, le_refl s⟩
+
+theorem trans {α : Type*} [Preorder α] {p q r : α → Prop}
+    (hpq : Subserves p q) (hqr : Subserves q r) : Subserves p r := by
+  intro s hp
+  obtain ⟨t, hqt, hslet⟩ := hpq s hp
+  obtain ⟨u, hru, htleu⟩ := hqr t hqt
+  exact ⟨u, hru, le_trans hslet htleu⟩
+
+end Subserves
+
+namespace IsContentPart
+
+@[refl] theorem refl {α : Type*} [Preorder α] (p : α → Prop) :
+    IsContentPart p p :=
+  ⟨IsSubsumedBy.refl p, Subserves.refl p⟩
+
+theorem trans {α : Type*} [Preorder α] {p q r : α → Prop}
+    (hpq : IsContentPart p q) (hqr : IsContentPart q r) : IsContentPart p r :=
+  ⟨hpq.1.trans hqr.1, hpq.2.trans hqr.2⟩
+
+theorem subsumed {α : Type*} [Preorder α] {q p : α → Prop}
+    (h : IsContentPart q p) : IsSubsumedBy q p := h.1
+
+theorem subserves {α : Type*} [Preorder α] {q p : α → Prop}
+    (h : IsContentPart q p) : Subserves q p := h.2
+
+end IsContentPart
+
 end Mereology

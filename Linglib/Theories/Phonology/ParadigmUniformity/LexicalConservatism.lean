@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.ParadigmUniformity.Defs
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 
 /-!
 # Lexical Conservatism — Steriade 2000
@@ -55,6 +56,7 @@ without auxiliary stipulation; LC handles it by paradigm membership.
 namespace Phonology.ParadigmUniformity
 
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
+open Phonology.Correspondence (Corr)
 
 -- ============================================================================
 -- § 1: Anchored paradigm
@@ -88,6 +90,32 @@ def lcParadigm {Form : Type} (candidate : Form) (anchor : Option Form) :
 def mkLCFaith {Form : Type} (name : String) (mismatch : Form → Form → Nat) :
     NamedConstraint (List Form) :=
   liftPairwise name .faithfulness mismatch
+
+/-- Featural mismatch derived from `Corr.identViol` via a tier projection.
+    The structural realization of "LC-FAITH on tier τ": the count comes
+    from the unifying `Corr` substrate, not a stipulated callback.
+
+    `mismatch f f = 0` follows automatically from `Corr.identity_ident_zero`,
+    discharging the `h_diagonal` precondition of `lc_unanchored_zero`
+    by construction. -/
+def mismatchFromTier {Form τ : Type} [DecidableEq τ]
+    (proj : Form → List τ) (a b : Form) : ℕ :=
+  (Corr.parallel (proj a) (proj b)).identViol .lhs .rhs
+
+/-- The diagonal-zero property of `mismatchFromTier` is now a *theorem*,
+    derived from `Corr.identity_ident_zero` rather than stipulated as a
+    precondition. -/
+theorem mismatchFromTier_self_zero {Form τ : Type} [DecidableEq τ]
+    (proj : Form → List τ) (f : Form) :
+    mismatchFromTier proj f f = 0 :=
+  Corr.identity_ident_zero (proj f)
+
+/-- Build an LC-FAITH constraint with the mismatch derived from a
+    tier projection. New code should use this in preference to the
+    abstract `mkLCFaith` callback form. -/
+def mkLCFaithFromTier {Form τ : Type} [DecidableEq τ] (name : String)
+    (proj : Form → List τ) : NamedConstraint (List Form) :=
+  mkLCFaith name (mismatchFromTier proj)
 
 -- ============================================================================
 -- § 3: Unanchored paradigms have zero LC-FAITH violations

@@ -35,7 +35,7 @@ The two scenarios (threshold game + disjunctive rule) share a single
 `KonukVar` inductive enum (9 vertices). Each scenario's win-vertex
 mechanism is a Boolean function of its parents (threshold-≥-2 for
 `win`; (A∧B)∨(C∧D) for `exp2Win`). Compound sufficiency/necessity
-are polymorphic predicates over `BoolSEM` defined via `developOn`
+are polymorphic predicates over `BoolSEM` defined via `developDetOn`
 with the explicit vertex list.
 -/
 
@@ -107,11 +107,11 @@ def konukVarList : List KonukVar :=
 -- ════════════════════════════════════════════════════
 
 /-- A compound cause is **sufficient** iff setting all its variables to
-    true produces the effect under `developOn`. -/
+    true produces the effect under `developDetOn`. -/
 noncomputable def compoundSufficient (M : BoolSEM KonukVar)
     [SEM.IsDeterministic M] (bg : Valuation (fun _ : KonukVar => Bool))
     (causes : List KonukVar) (effect : KonukVar) : Prop :=
-  (developOn M konukVarList 1
+  (developDetOn M konukVarList 1
     (causes.foldl (fun s' v => s'.extend v true) bg)).hasValue effect true
 
 noncomputable instance (M : BoolSEM KonukVar) [SEM.IsDeterministic M]
@@ -120,11 +120,11 @@ noncomputable instance (M : BoolSEM KonukVar) [SEM.IsDeterministic M]
   Classical.dec _
 
 /-- A compound cause is **necessary** iff setting all its variables to
-    false prevents the effect under `developOn`. -/
+    false prevents the effect under `developDetOn`. -/
 noncomputable def compoundNecessary (M : BoolSEM KonukVar)
     [SEM.IsDeterministic M] (bg : Valuation (fun _ : KonukVar => Bool))
     (causes : List KonukVar) (effect : KonukVar) : Prop :=
-  ¬ (developOn M konukVarList 1
+  ¬ (developDetOn M konukVarList 1
     (causes.foldl (fun s' v => s'.extend v false) bg)).hasValue effect true
 
 noncomputable instance (M : BoolSEM KonukVar) [SEM.IsDeterministic M]

@@ -13,20 +13,24 @@ that proposed it.
 The same two combinators appear in:
 
 - McCarthy's *Optimal Paradigms* (@cite{mccarthy-2005}), where the
-  comparison ranges over inflectional paradigm members and the
-  constraints are output-to-output faithfulness.
-- Benua's *Transderivational Identity* (1997) and Ito-Mester's
-  correspondence-theoretic OO-faithfulness, where the comparison is
-  base-derivative.
-- Steriade's *Lexical Conservatism* (1997, 2000), where surfacing
-  variants are pulled toward attested wordforms of the lexeme.
-- Burzio's *Surface-to-surface* identity.
+  comparison ranges *symmetrically* over inflectional paradigm members
+  and the constraints are output-to-output faithfulness.
+- Steriade's *Lexical Conservatism* (@cite{steriade-2000}), where
+  surfacing variants are pulled toward *attested* wordforms of the
+  lexeme; anchoring is optional (singletons get zero pressure).
 
-These differ over **which set of forms** the lift ranges and **which
-form (if any) anchors** the comparison; they agree on the lift itself.
-The lift sits in a `Defs.lean` à la mathlib's `Algebra/Order/Group/Defs`,
-with paper-specific sibling files (`OptimalParadigms.lean` etc.) supplying
-the anchoring.
+@cite{benua-1997}'s Transderivational Correspondence Theory (TCT) and
+Itô–Mester's correspondence-theoretic OO-faithfulness use a different
+*evaluation discipline* — asymmetric base-priority via recursive
+evaluation, not symmetric pairwise comparison — and therefore live in
+`OptimalityTheory/TCT.lean` (architecture) and
+`ParadigmUniformity/Transderivational.lean` (PU face), not via
+`liftPairwise`. Antifaithfulness (@cite{alderete-2001}) is the
+polarity-flipped sibling, in `ParadigmUniformity/Antifaithfulness.lean`.
+
+The combinators here capture the *symmetric, anchorless* lift shared by
+OP and (sans anchor) LC; they do **not** themselves encode the recursive
+or polarity-flipped variants.
 
 ## Connection to lexical-frequency theories
 

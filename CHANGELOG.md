@@ -4,6 +4,57 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.216] - 2026-04-22
+
+### Phase V': polymorphize V2 hubs to `SEM V α`
+
+Phase D-D added 7 V2 rfl theorems to Verbal.lean against the
+`BoolSEM`-bound `Causative.V2.toSemantics`. The user's question
+"why is everything in BoolSEM when it could be done generically?"
+exposed that the BoolSEM constraint was inertia from the legacy
+`makeSem`/`causeSem`/`preventSem` signatures, not principled. This
+refactor lifts the constraint: hubs and the dispatch are polymorphic
+over `SEM V α`; Bool models pass `xC = xE = true` at the call site.
+
+**V2 substrate** (`Core/Causal/V2/SEM/Counterfactual.lean`):
+- `SEM.causallyNecessary` now polymorphic — `(M : SEM V α) (s : Valuation α)
+  (cause : V) (xC : α cause) (effect : V) (xE : α effect)` with
+  `[∀ v, Fintype (α v)]` constraint for the polymorphic `allExtensions`
+  enumeration.
+- Polymorphic `allExtensions`, `freeExtensions`, `isConsistentSuper`
+  added (replacing Bool-specific versions).
+- `BoolSEM.causallyNecessary` becomes a one-line abbrev specialization.
+
+**Hub V2 wrappers** — all switch from `BoolSEM V` to `SEM V α`:
+- `Sufficiency.V2.makeSem` — `(cause : V) (xC : α cause) (effect : V) (xE : α effect)`
+- `Necessity.V2.{causeSem, isINUSCause, actuallyCaused}` — same arity expansion
+- `Prevention.V2.preventSem` — restructured to single-value
+  `(preventer : V) (xPrev : α preventer) (effect : V) (xE : α effect)`
+  with `∃ xPrev_alt ≠ xPrev` clause for arity-uniformity with the
+  other dispatchable variants
+- `CCSelection.V2.{completesForEffect, actualizationHolds}` — adds `xC xC_alt xE`
+- `CoerciveImplication.V2.hasCoerciveImplication` — adds `xCauser xEvent`
+- `Implicative.V2.{manageSem, failSem, necessityPresup, toSemantics}` — fully polymorphic
+
+**Dispatchers** (`Causative.V2.toSemantics`, `Implicative.V2.toSemantics`):
+all variants now have arity-uniform `Causative → Valuation α → ∀ c : V, α c
+→ ∀ e : V, α e → Prop`. The `.prevent` case fits because `preventSem` was
+restructured to single-value form.
+
+**Verbal.V2 theorems** (Phase D-D, 7 theorems): updated signatures —
+parameterize over `SEM V α` instead of `BoolSEM V`. All still close
+via `rfl` because the dispatch-to-hub identity is preserved
+definitionally.
+
+Build: 2820 jobs clean across V2 substrate + 4 hub V2 sub-namespaces
++ Causative/Implicative dispatchers + 12 deterministic consumers +
+4 V2-aware studies + Verbal.lean V2 theorems.
+
+Study V2 sub-namespaces (Resultatives, BAS2026, N2024, NL2020,
+CWL2025) keep their concrete BoolSEM models — the polymorphism is at
+the hub layer, not forced on every consumer. Studies with genuinely
+Bool-valued models stay Bool at the call site.
+
 ## [0.230.215] - 2026-04-22
 
 ### Polished — second-round audit follow-ups on the Grammar dissolution

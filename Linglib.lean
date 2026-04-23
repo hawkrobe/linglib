@@ -936,8 +936,8 @@ import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987
 import Linglib.Phenomena.Copulas.Studies.Elbourne2026
 import Linglib.Phenomena.Copulas.Studies.Romero2005
-import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamples
-import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
+import Linglib.Phenomena.Attitudes.IntensionalExamples
+import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging
@@ -957,7 +957,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Typology
-import Linglib.Phenomena.Anaphora.Studies.Maier2015
+import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Anaphora.Studies.Charlow2018
 import Linglib.Phenomena.Anaphora.Studies.DalrympleHaug2024
@@ -1039,7 +1039,7 @@ import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
 import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Phenomena.Dialogue.Studies.Anderson2021
-import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
+import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
@@ -1528,6 +1528,7 @@ import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.Phonology.Alternation
 import Linglib.Phenomena.Phonology.Studies.AfkirZellou2025
 import Linglib.Phenomena.Phonology.Studies.Belth2026
+import Linglib.Phenomena.Phonology.Studies.Benua1997
 import Linglib.Phenomena.Phonology.Studies.Berent2026
 import Linglib.Phenomena.Phonology.Studies.BerentEtAl2016
 import Linglib.Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
@@ -2067,6 +2068,9 @@ import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Semantics.Attitudes.Representationality
 import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Theories.Semantics.Truthmaker.Basic
+import Linglib.Theories.Semantics.Truthmaker.Inexact
+import Linglib.Theories.Semantics.Truthmaker.Closure
+import Linglib.Theories.Semantics.Truthmaker.Entailment
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
@@ -2361,9 +2365,12 @@ import Linglib.Theories.Phonology.Process.Harmony.Defs
 import Linglib.Theories.Phonology.Process.Harmony.OT
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
+import Linglib.Theories.Phonology.OptimalityTheory.TCT
 import Linglib.Theories.Phonology.ParadigmUniformity.Defs
 import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
+import Linglib.Theories.Phonology.ParadigmUniformity.Antifaithfulness
+import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Theories.Phonology.OptimalityTheory.Doubling
