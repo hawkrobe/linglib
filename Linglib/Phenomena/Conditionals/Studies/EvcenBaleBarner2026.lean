@@ -428,30 +428,33 @@ theorem theory_chain_3button_perfection
   -- Step 1: Trigger A requires pressing A
   have h_trp : ∀ w', button3Causes .A w' → pressA w' = true := by
     intro w' h; cases w' <;> simp_all [button3Causes, aCausesSound, pressA]
-  -- Step 2: All alternative triggers are IE (via general lemma)
+  -- Step 2: All alternative triggers are IE
+  -- Apply the general IE criterion (`IsInnocentlyExcludable.of_full_exclusion_consistent`):
+  -- every alternative is IE when the prejacent and the negations of all
+  -- alternatives are jointly satisfiable. Witness: `pressA_plays` (A causes, B and C do not).
+  have h_consist : ∃ w, button3Causes .A w ∧
+      ∀ b ∈ answerAlternatives button3Causes button3Triggers .A, ¬ b w := by
+    refine ⟨.pressA_plays, rfl, ?_⟩
+    intro b hb
+    obtain ⟨t'', _, ht''_ne, ht''_eq⟩ := mem_answerAlternatives.mp hb
+    cases t'' with
+    | A => exact absurd rfl ht''_ne
+    | B => rw [← ht''_eq]; simp [button3Causes, bCausesSound]
+    | C => rw [← ht''_eq]; simp [button3Causes, cCausesSound]
   have h_ie : ∀ t' ∈ button3Triggers, t' ≠ .A →
       Exhaustification.IsInnocentlyExcludable
         (answerAlternatives button3Causes button3Triggers .A)
         (button3Causes .A)
         (button3Causes t') := by
     intro t' _ht' hne
-    -- Apply the general IE lemma: all alternatives are IE when full exclusion
-    -- is consistent. Witness: pressA_plays (A causes, B and C do not).
-    apply all_alt_innocently_excludable
-    · -- Consistency: ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w)
-      refine ⟨.pressA_plays, rfl, ?_⟩
-      intro a ha
-      obtain ⟨t'', ht''_mem, ht''_ne, ht''_eq⟩ := mem_answerAlternatives.mp ha
-      cases t'' with
-      | A => exact absurd rfl ht''_ne
-      | B => rw [← ht''_eq]; simp [button3Causes, bCausesSound]
-      | C => rw [← ht''_eq]; simp [button3Causes, cCausesSound]
-    · -- t' ∈ ALT
+    have ht'_alt : button3Causes t' ∈
+        answerAlternatives button3Causes button3Triggers .A := by
       rw [mem_answerAlternatives]
       cases t' with
       | A => exact absurd rfl hne
       | B => exact ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion, rfl⟩
       | C => exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion, rfl⟩
+    exact .of_full_exclusion_consistent ht'_alt h_consist
   -- Step 3: ¬(pressA w = true)
   have h_not_p : ¬(pressA w = true) := by simp [hnp]
   -- Step 4: Apply the theory chain

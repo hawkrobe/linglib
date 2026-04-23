@@ -4,6 +4,202 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.220] - 2026-04-22
+
+### Conditionals/Exhaustivity mathlib-audit follow-ups
+
+Mathlib-style PR review of `Theories/Semantics/Conditionals/Exhaustivity.lean` and follow-through on the audit:
+
+- **Dropped `AnswerSpace` thin two-field bundle.** The structure had no invariant tying `causes` and `triggers` together — mathlib reviewer would reject as a trivial wrapper. `answerAlternatives`, `exhaustifiedAnswer`, `exhaustifiedAnswer_excludes`, and `exhaustification_yields_perfection` now take `(causes : ι → Set W) (triggers : Set ι)` as separate explicit arguments. `answerProp` deleted (was an η-expanded alias for `causes t`). `AnswerSpace.perfection` wrapper deleted.
+- **`answerAlternatives` reformulated using `Set.image`**: `causes '' (triggers \ {t})` (mathlib idiom). `@[simp] mem_answerAlternatives` lemma added so consumers can flatten the set-builder.
+- **`all_alt_innocently_excludable` relocated and renamed.** Moved from `Conditionals/Exhaustivity.lean` to `Exhaustification/Operators/Basic.lean` (next to `IsInnocentlyExcludable` definition). Renamed to `IsInnocentlyExcludable.of_full_exclusion_consistent` for dot-notation. The lemma is purely about IE — no conditional content — so it belongs with the type it constructs.
+- **Dead code purged**: `antecedentFocusQUD` and `consequentFocusQUD` deleted (dead defs, no consumers). `singleton_alt_innocently_excludable` deleted (subsumed by the general lemma; no consumers).
+- **Hygiene**: 4 unused imports dropped (`Question.PrecisionProjection`, `Discourse.QUDStack`, `Discourse.Strategy`, `Conditionals.Basic`). Bare `unfold` in `exhaustifiedAnswer_excludes` replaced with direct term proof. Mid-proof `open Exhaustification in` lifted to file-level `open Exhaustification`. ASCII banner comments replaced with `/-! ### -/` markdown headers. `answerProp` η-reduced. `_ht : t ∈ triggers` unused-arg dropped from `perfection_from_exclusion_and_coverage`.
+- **Consumer `EvcenBaleBarner2026.lean`** updated: `button3AnswerSpace` split into `button3Causes` + `button3Triggers` top-level defs; `vonFintelPrediction`/`hornPrediction` re-parameterized; IE call site updated to `IsInnocentlyExcludable.of_full_exclusion_consistent`.
+
+## [0.230.219] - 2026-04-22
+
+### `Phenomena/Attitudes/` promoted to top-level + first study file
+
+Promoted `Complementation/Attitudes/` to a new top-level
+`Phenomena/Attitudes/` directory. Three files relocated:
+- `Complementation/Attitudes/IntensionalExamples.lean` → `Attitudes/IntensionalExamples.lean`
+- `Complementation/Attitudes/ConjunctionDistribution/Data.lean` → `Attitudes/ConjunctionDistribution/Data.lean`
+- `Complementation/Attitudes/IntentionalIdentity/Data.lean` → `Attitudes/IntentionalIdentity/Data.lean`
+
+Namespaces and imports updated. The single downstream consumer
+(`Phenomena/Complementation/Studies/ChatzikyriakidisEtAl2025.lean`)
+gets its imports and `Bridge` namespace renamed.
+
+### `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` added
+
+First real consumer of the Truthmaker subtree
+(@cite{bondarenko-elliott-2026}, *Semantics & Pragmatics* 19(2)).
+
+**Formalized**:
+- Domain setup + informational parthood (paper eqs. 38, 43): `propLE p q := q ⊆ p`
+  (the *flipped* pointwise `≤` on `Set W` matching the paper's convention).
+- MSI / MSO / TECM / BelievingDIV constraints as `Prop` predicates
+  (paper eqs. 44, 48, 59, footnote 18).
+- `Believes` LF (eq. 11, simplified — drops the `e ≤ w` location parameter
+  since the propositional Strawson-entailment claim doesn't need it).
+- **`believes_closure_under_entailment`** (eq. 45): MSI implies positive
+  belief is closed under informational entailment.
+- **`not_believes_reverses`** (eq. 46): MSI implies negation reverses
+  the direction.
+- **`negated_directCP_SDE`**: re-export under SDE-flavored name for the
+  direct-CP configuration.
+- **`conjunctive_parthood_blocks_disj_intro`** (§6.3, eq. 95): the
+  paper's discriminating witness for `Mereology.IsContentPart` —
+  given `p₃ ⊆ p₁` ("American linguist" ⊆ "linguist") and
+  `¬ p₃ ⊆ p₂` ("American linguist" ⊄ "philosopher"), `{p₁, p₂}` is
+  *not* a conjunctive part of `{p₃}`. This is the first downstream
+  payoff of the Jago-Def-5 promotion in `Core/Mereology.lean`.
+
+**Documented (full proof sketch in docstring) but not formalized**:
+the Section 5 main theorem `negated_sharvit_SDE` (the
+believe-the-rumor SUE-not-SDE / SDE-not-SUE asymmetry). The chain
+MSI ∘ MSO ∘ TECM ∘ BelievingDIV ∘ uniqueness is the paper's main
+mechanism; formalizing the full version requires a CONT-totality
+assumption on believing events that the paper treats as definitional.
+
+### Bib additions
+- `sharvit-2024` (the empirical-puzzle source).
+- `cheng-1973` (cited for the divisive-reference analogy in BelievingDIV).
+
+## [0.230.218] - 2026-04-22
+
+### Phase D-E: depth-based `IsDAG.of_depth` helper + 4 IsDAG sorries closed
+
+Adds `Core.Causal.V2.CausalGraph.IsDAG.of_depth` — a reusable helper
+that derives `IsDAG G` from any `ℕ`-valued depth function strictly
+increasing along parent edges. Implemented via `Subrelation.wf` over
+`InvImage Nat.lt depth` (mathlib's standard pattern for proving
+wellfoundedness of finite inductive relations).
+
+Uses the helper to close 4 IsDAG sorries:
+- **BellerGerstenberg2025**: `bgDepth : BGVar → ℕ` (cause/alt = 0,
+  intermediate = 1, effect = 2) discharges `soloGraph_isDAG`,
+  `overdetGraph_isDAG`, `chainGraph_isDAG` via `IsDAG.of_depth`.
+  Each proof is a 4-line tactic block: cases on `v`, simp the parents
+  finset, subst, decide.
+- **CaoWhiteLassiter2025**: `vDepth : V → ℕ` (cause = 0, effect = 1)
+  discharges the 2-vertex `ProbabilisticExample.graph` IsDAG
+  similarly.
+
+The `noncomputable` qualifier on the BG2025 IsDAG instances was
+dropped — they're now genuine `Prop` instances backed by
+`Subrelation.wf`, no PMF/Quotient noncomputability inherited.
+
+Build: 2695 jobs clean.
+
+Remaining sorries in V2 study sub-namespaces (deferred):
+- BG2025: 3 sub-goals in `solo_cause_chain` (RSA S1 strict
+  inequalities and `expressionMeaning` over `causalWorldFromModel` —
+  need V2 develop-reduction lemmas, not pure IsDAG mechanics)
+- CWL2025: `probabilisticSuf_eq_deterministicSuf` bridge (needs an
+  `intervene≡extend` substrate lemma for deterministic SEMs)
+
+These are substantive theorem-level work — separate Phase D-E2 if
+prioritized.
+
+## [0.230.217] - 2026-04-22
+
+### Phonology Correspondence v2: Side enum, Quiver instance, featural IDENT, structured TETRU
+
+Follow-up sweep on the `Corr (Role α : Type*)` substrate (introduced in
+0.230.213), addressing punch list from a four-agent review (mathlib,
+integration, linguistics-domain, cross-framework).
+
+#### Substrate cleanup
+
+- **`Bool` role replaced by named `Side` enum** (`.lhs | .rhs`).
+  `parallel` / `identity` now produce `Corr Side α`. `BasemapCorrespondence.basemapViolations`
+  and `Process.Harmony.OT.identViolations` updated. Theorem statements
+  read `(identity s).maxViol .lhs .rhs = 0` instead of opaque `false true`.
+- **`CorrDomain` enum deleted** — was dead code (defined, opened in
+  `OptimalParadigms.lean`, never used in the polymorphic API).
+- **`IsContiguous` reuses mathlib `List.Chain'`** — `abbrev` over
+  `List.Chain' (fun a b => b = a + 1)`. Custom `decIsContiguous` replaced
+  with explicit decidability instance (mathlib provides no default for
+  arbitrary `Chain'` predicates).
+- **Featural IDENT primitive `Corr.identViolFeature`**: counts pairs
+  where projecting both elements through `proj : α → F` yields different
+  values. Required for Benua's Tiberian Hebrew analysis (`IDENT-[continuant]`).
+  `toIdentFeatureConstraint` `NamedConstraint` bridge added.
+- **`Quiver` instance for correspondence diagrams**: `RoleQuiv c` is the
+  definitional newtype carrying `Quiver` for a specific `Corr Role α`,
+  with morphisms `r₁ → r₂` being correspondence pairs. The promised
+  bridge to `Mathlib.Combinatorics.Quiver.Path` for stratal/OT-CC
+  evaluation.
+
+#### TCT substance: `TetruSchema` + real misapplication theorem
+
+- `TetruSchema (C : Type)` structure with named slots `m1`, `ooIdent`,
+  `m2`, `ioFaith`. `tetruRanking` becomes `TetruSchema.toRanking`
+  returning the dominance-ordered list. Replaces position-indexed
+  theorems (`r[0]?`, `r[1]?`) with structural projections via
+  `toRanking_zero`/`_one`/`_two`/`_three` simp lemmas.
+- **`TetruSchema.misapplication_wins`**: the real load-bearing theorem,
+  replacing the placeholder `example : True := trivial`. Under TETRU
+  with M₁ tying, the OO-Ident-better candidate strictly beats the other
+  at the OO-Ident position. The structural content of @cite{benua-1997}'s
+  misapplication-unification claim.
+- TCT base-priority prose softened: type signature *encodes* base
+  priority (modeling choice), does not *deduce* it.
+
+#### Architecture: `diagramWithEdge`
+
+- **`Transderivational.diagramWithEdge`**: load-bearing constructor
+  taking input + base + derivative + explicit OO edge + wf proof.
+  Eliminates the duplicated `morpho_wf_helper` from `Benua1997.lean`.
+  The original `diagram` becomes a parallel-pair specialization.
+- Every infixation/truncation/reduplication study from now on uses this
+  one constructor instead of hand-rolling 9-clause `wf` case-splits.
+
+#### Benua 1997 study: bug fixes + Hebrew with featural IDENT
+
+- **Sundanese counterfactual data bug fixed** (caught by linguistics
+  expert + verified against the PDF p. 67 ex. 49):
+  `derivOutputNormal[4]` corrected from `nasalV` to `oralV`. Canonical
+  harmony stops at the oral consonant `l` at position 2; both root
+  vowels (positions 3 and 4) should be oral.
+  `identOOViol normalDiagram = 2` (was 1).
+- Refactored to use `diagramWithEdge` — `morpho_wf_helper` and the
+  duplicated 9-clause `wf` proofs deleted.
+- **Tiberian Hebrew redone with featural IDENT** (`identContViol` via
+  `Corr.identViolFeature continuant`). Documents that featural OO-IDENT
+  alone does not decide between underapplied and canonical (canonical
+  satisfies featural IDENT-[cont] better) — full Hebrew analysis requires
+  IO-IDENT-[cont] above OO-IDENT plus `*MAX-V`. The structural diagrams
+  ship correctly; the additional constraints are noted as deferred.
+- New `unified architectural theorem`: `TetruSchema.toRanking[1]`
+  evaluation tying `Sundanese.overapplied` and `.normal` derivable from
+  `overapplied_beats_normal_on_OO_ident`.
+
+#### OP / LC: derive from `Corr` instead of stipulating
+
+- **`OptimalParadigms.mkOPMaxVFromTier`**: builds OP-MAX-V via
+  `vowelMismatchFromTier proj a b := (Corr.parallel (proj a) (proj b)).maxViol .lhs .rhs`.
+  The docstring claim "OP-MAX-V is MAX-IO on the vowel tier" now true
+  by construction. Old `mkOPMaxV` callback form kept for backward compat
+  pending consumer migration.
+- **`LexicalConservatism.mkLCFaithFromTier`**: same pattern with
+  `mismatchFromTier proj a b := (Corr.parallel (proj a) (proj b)).identViol .lhs .rhs`.
+  `mismatchFromTier_self_zero` is now a *theorem* derived from
+  `Corr.identity_ident_zero`, discharging the `h_diagonal` precondition
+  of `lc_unanchored_zero` by construction rather than as a hypothesis.
+
+### Deferred (real follow-up work)
+
+- McCarthyPrince1995 study refactor to use `Corr` (532 lines, separate session)
+- Stratal-OT vs TCT head-to-head bridge (needs `StratalOT` re-parameterization over `Corr`)
+- Antifaithfulness morpheme-trigger field (needs Alderete 2001 PDF re-read)
+- Sympathy / OT-CC formalizations
+- WeightedCorr for MaxEnt/HG bridge
+- Bib entries: Bermúdez-Otero 2018, Albright 2002/2008, Cohn 1990, Krämer 2012
+  (require DOI verification)
+
 ## [0.230.216] - 2026-04-22
 
 ### Phase V': polymorphize V2 hubs to `SEM V α`

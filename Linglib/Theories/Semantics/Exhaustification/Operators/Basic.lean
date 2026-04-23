@@ -178,6 +178,7 @@ prejacent and the negations of all alternatives are jointly satisfiable
 (e.g., 3-button conditional perfection paradigms).
 -/
 theorem IsInnocentlyExcludable.of_full_exclusion_consistent
+    {ALT : Set (Set World)} {φ : Set World}
     {a : Set World} (ha : a ∈ ALT)
     (h_consist : ∃ w, φ w ∧ ∀ b ∈ ALT, ¬ b w) :
     IsInnocentlyExcludable ALT φ a := by
