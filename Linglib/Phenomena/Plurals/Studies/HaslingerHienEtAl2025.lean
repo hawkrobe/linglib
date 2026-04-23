@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Theories.Semantics.Quantification.ONEModifiers
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
-import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Distributives
 
 /-!
@@ -279,25 +278,38 @@ theorem german_dng_explained :
 
     These predictions match the Fragment's DistMaxClass assignments. -/
 
-open Fragments.English.Determiners in
+/-- English each's DistMaxClass: +dist (ONE_AT forces atom complement),
+    +max. The classification is local to this study because it lifts
+    fragment lexical-class metadata into the @cite{haslinger-etal-2025-nllt}
+    DistMaxClass typology, which is paper-specific. -/
+def each_distMaxClass : DistMaxClass := .distMax
+
+/-- English every's DistMaxClass: +dist (ONE_∅ forces non-overlap), +max. -/
+def every_distMaxClass : DistMaxClass := .distMax
+
+/-- English all's DistMaxClass: −dist (CUM complement), +max. -/
+def all_distMaxClass : DistMaxClass := .nonDistMax
+
+/-- English each: distributes via `distMaximal`. -/
+def eachSem {Atom W : Type*} [DecidableEq Atom] (P : Atom → W → Bool) :
+    Finset Atom → W → Bool :=
+  distMaximal P
+
 /-- English each's DistMaxClass matches the ONE_AT prediction:
     [+dist] (ONE_AT forces atom complement) and [+max]. -/
 theorem each_matches_ONE_AT_prediction :
     each_distMaxClass = .distMax := rfl
 
-open Fragments.English.Determiners in
 /-- English every's DistMaxClass matches the ONE_∅ prediction:
     [+dist] (ONE_∅ forces non-overlap) and [+max]. -/
 theorem every_matches_ONE_empty_prediction :
     every_distMaxClass = .distMax := rfl
 
-open Fragments.English.Determiners in
 /-- English all's DistMaxClass matches bare Q_∀ prediction:
     [−dist] (no ONE, CUM complement → collective) and [+max]. -/
 theorem all_matches_bare_QForall_prediction :
     all_distMaxClass = .nonDistMax := rfl
 
-open Fragments.English.Determiners in
 /-- The NLLT theory predicts each ⊂ every in presuppositional strength.
     Both share DistMaxClass (both are +dist, +max), but each additionally
     requires atomicity (ONE_AT). This distinction doesn't show up in
@@ -306,9 +318,8 @@ open Fragments.English.Determiners in
 theorem each_every_same_distmax_different_presup :
     each_distMaxClass = every_distMaxClass := rfl
 
-open Fragments.English.Determiners in
-/-- The Fragment's `eachSem` = `distMaximal` is the computational
-    counterpart of Q_∀[ONE_AT]: both distribute over atoms.
+/-- `eachSem` = `distMaximal` is the computational counterpart of
+    Q_∀[ONE_AT]: both distribute over atoms.
     Q_∀[ONE_AT] ⊢ ∀x, P(x) → Q(x) (by `every_distributes`),
     and `distMaximal` checks ∀a ∈ X, P(a)(w). -/
 theorem eachSem_is_distMaximal {Atom W : Type*} [DecidableEq Atom]

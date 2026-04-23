@@ -148,11 +148,11 @@ open Minimalism
 theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
     (h : labelCat (.node (.leaf tok) b) = some .D)
     (h_phase : isDPhaseHead (.node (.leaf tok) b) = true) :
-    ∀ (strength : PICStrength) (goal : SyntacticObject),
+    ∀ (goal : SyntacticObject),
       contains b goal →
-      phaseImpenetrable strength (.node (.leaf tok) b) goal := by
-  intro strength goal hcontains
-  cases strength <;> exact hcontains
+      phaseImpenetrable (.node (.leaf tok) b) goal := by
+  intro goal hcontains
+  exact hcontains
 
 end PhaseBridge
 

@@ -1,25 +1,11 @@
 {
-  "10A": {
-    "contrastAbsent": "absent",
-    "contrastPresent": "present"
-  },
-  "56A": {
-    "formallyDifferent": "different",
-    "formallySimilarWithInterrogative": "similarWithInterrogative",
-    "formallySimilarWithoutInterrogative": "similarWithoutInterrogative"
-  },
-  "73A": {
-    "inflectionalOptativeAbsent": "absent",
-    "inflectionalOptativePresent": "present"
-  },
-  "90F": {
-    "adjoinedOrCorrelative": "orCorrelative",
-    "adjoinedRelativeClauseDominant": "relativeClauseDominant"
-  },
-  "90G": {
-    "doubleHeadedAsNondominantType": "asNondominantType",
-    "doubleHeadedDominant": "dominant",
-    "doubleHeadedOrInternallyHeaded": "orInternallyHeaded",
-    "doubleHeadedOrReln": "orReln"
+  "90D": {
+    "internallyHeadedExists": "exists_",
+    "internallyHeadedOccursAsNondominantType": "occursAsNondominantType",
+    "internallyHeadedOrCorrelative": "orCorrelative",
+    "internallyHeadedOrDoubleHeaded": "orDoubleHeaded",
+    "internallyHeadedOrNrel": "orNrel",
+    "internallyHeadedOrReln": "orReln",
+    "internallyHeadedRelativeClauseDominant": "relativeClauseDominant"
   }
 }

@@ -209,7 +209,7 @@ theorem deriveMood_finite :
 theorem sa_is_phase_head (so : SyntacticObject)
     (h : labelCat so = some .SA) :
     isSAPhaseHead so = true := by
-  simp [isSAPhaseHead, h]
+  simp only [isSAPhaseHead, isPhaseHeadOf, h, beq_self_eq_true]
 
 -- E8: Bridge to YoonEtAl2020 — the HEARER P-role (structural, S&T)
 --     corresponds to the addressee in social utility φ-weighting (pragmatic,

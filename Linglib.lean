@@ -1006,6 +1006,7 @@ import Linglib.Phenomena.TenseAspect.Studies.Smith1997
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Phenomena.AuxiliaryVerbs.Studies.Amato2025
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Anderson2006
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Sorace2000
@@ -1407,6 +1408,7 @@ import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
@@ -1772,6 +1774,7 @@ import Linglib.Theories.Syntax.Minimalism.Checking
 import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Theories.Syntax.Minimalism.Probe
 import Linglib.Theories.Syntax.Minimalism.CyclicAgree
+import Linglib.Theories.Syntax.Minimalism.NestedAgree
 import Linglib.Theories.Syntax.Minimalism.PersonGeometry
 import Linglib.Theories.Syntax.Minimalism.PConstraint
 import Linglib.Theories.Syntax.Minimalism.ObligatoryOperations
@@ -1827,6 +1830,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.DegreeMovement
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.FragmentGrammars.Defs
+import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
@@ -1943,6 +1947,7 @@ import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.ConditionalAssertability
+import Linglib.Theories.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface

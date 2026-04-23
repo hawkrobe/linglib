@@ -49,30 +49,34 @@ inductive SelectionRule where
 
 /-! ## Functions -/
 
-/-- Canonical auxiliary selection (Burzio's generalization, Romance pattern):
-    unaccusatives and reflexives → *be*, everything else → *have*.
-
-    **NB**: This models the Romance pattern (Italian, French). German differs:
-    reflexives take *haben* (e.g., *hat sich gewaschen* 'has REFL washed'),
-    not *sein*. For German-specific selection, see `germanSelection`. -/
-def canonicalSelection : TransitivityClass → PerfectAux
+/-- Auxiliary selection driven by a single binary parameter: does the
+    language treat reflexives as BE-selecting (Romance pattern) or
+    HAVE-selecting (German pattern)? Unaccusatives always select BE,
+    unergatives and transitives always select HAVE; the only point of
+    cross-linguistic variation in this small typology is the reflexive
+    row (@cite{burzio-1986}, @cite{sorace-2000}). -/
+def selection (reflexIsBe : Bool) : TransitivityClass → PerfectAux
   | .unaccusative => .be
+  | .reflexive    => if reflexIsBe then .be else .have
   | .unergative   => .have
   | .transitive   => .have
-  | .reflexive    => .be
 
-/-- German auxiliary selection: differs from Romance in that reflexives take
-    *haben*, not *sein* (@cite{burzio-1986}). -/
-def germanSelection : TransitivityClass → PerfectAux
-  | .unaccusative => .be
-  | .reflexive    => .have
-  | _             => .have
+/-- Canonical (Romance) auxiliary selection: reflexives → *be*. -/
+def canonicalSelection : TransitivityClass → PerfectAux := selection true
 
-/-- Does this transitivity class canonically select *be*? -/
-def selectsBe : TransitivityClass → Bool
-  | .unaccusative => true
-  | .reflexive    => true
-  | _             => false
+/-- German auxiliary selection: reflexives → *haben*, not *sein*
+    (@cite{burzio-1986}). -/
+def germanSelection : TransitivityClass → PerfectAux := selection false
+
+/-- Does this transitivity class canonically select *be*?
+    Defined off `canonicalSelection` so the equivalence is true by
+    construction. -/
+def SelectsBe (c : TransitivityClass) : Prop :=
+  canonicalSelection c = .be
+
+instance : DecidablePred SelectsBe := fun c => by
+  unfold SelectsBe
+  infer_instance
 
 /-! ## Data -/
 
@@ -151,32 +155,13 @@ def allData : List AuxSelectionDatum :=
 
 /-! ## Theorems -/
 
-/-- Unaccusatives canonically select *be*. -/
-theorem unaccusative_selects_be :
-    canonicalSelection .unaccusative = .be := rfl
-
-/-- Transitives canonically select *have*. -/
-theorem transitive_selects_have :
-    canonicalSelection .transitive = .have := rfl
-
-/-- Italian *arrivare* matches the canonical pattern. -/
-theorem italian_arrivare_matches_canonical :
-    canonicalSelection italianArrivare.transitivityClass = italianArrivare.selectedAux := rfl
-
-/-- English *arrive* breaks the canonical pattern (have-only system). -/
+/-- English *arrive* breaks the canonical pattern: the verb is unaccusative
+    yet the language has a have-only perfect system, so the canonical
+    Romance prediction (.be) and the actually-selected auxiliary (.have)
+    disagree. This is the data point worth stating as a theorem; the
+    other previously-listed equalities all reduce to `rfl` over the
+    `selection` lookup table and have been removed. -/
 theorem english_breaks_canonical :
     canonicalSelection englishArrive.transitivityClass ≠ englishArrive.selectedAux := by decide
-
-/-- German reflexives take *haben*, not *sein* — unlike Romance. -/
-theorem german_reflexive_takes_have :
-    germanSelection .reflexive = .have := rfl
-
-/-- Romance reflexives take *be* (canonical pattern). -/
-theorem romance_reflexive_takes_be :
-    canonicalSelection .reflexive = .be := rfl
-
-/-- German and Romance agree on unaccusatives (both select *be*). -/
-theorem german_romance_agree_on_unaccusative :
-    germanSelection .unaccusative = canonicalSelection .unaccusative := rfl
 
 end Phenomena.AuxiliaryVerbs.Selection

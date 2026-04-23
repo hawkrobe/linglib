@@ -36,9 +36,6 @@ def tous : QuantifierEntry :=
   , allowsMass := true
   , monotonicity := .increasing
   , strength := .strong
-  , gqtThreshold := 1
-  , ptPrototype := 1
-  , ptSpread := 1
   }
 
 /-- *chaque* — universal, singular distributive (≈ English *each*). -/
@@ -48,9 +45,6 @@ def chaque : QuantifierEntry :=
   , numberRestriction := some .sg
   , monotonicity := .increasing
   , strength := .strong
-  , gqtThreshold := 1
-  , ptPrototype := 1
-  , ptSpread := 1
   }
 
 /-- *aucun* — negative, singular. NOT anti-dual: French has no
@@ -63,9 +57,6 @@ def aucun : QuantifierEntry :=
   , numberRestriction := some .sg
   , monotonicity := .decreasing
   , strength := .strong
-  , gqtThreshold := 0
-  , ptPrototype := 0
-  , ptSpread := 1
   }
 
 /-- *les deux* — definite dual ('the two'). The pronounceable
@@ -85,9 +76,6 @@ def quelques : QuantifierEntry :=
   , qforce := .existential
   , numberRestriction := some .pl
   , monotonicity := .increasing
-  , gqtThreshold := 0
-  , ptPrototype := 1/3
-  , ptSpread := 3
   }
 
 /-- *un* — existential, singular. -/
@@ -118,9 +106,6 @@ def toujours : QuantifierEntry :=
   , numberRestriction := some .pl
   , monotonicity := .increasing
   , strength := .strong
-  , gqtThreshold := 1
-  , ptPrototype := 1
-  , ptSpread := 1
   }
 
 /-- All French quantifier entries. -/

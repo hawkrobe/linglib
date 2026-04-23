@@ -30,6 +30,10 @@ namespace Minimalism
 -- Part 1: Phase Head Identification (derived from labelCat)
 -- ============================================================================
 
+/-- Generic phase-head test: is the labeling category of `so` exactly `c`? -/
+def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
+  labelCat so == some c
+
 /-- Identify phase heads from the formal category system.
 
     Only C is a phase head by default. @cite{keine-2020} (ch. 5)
@@ -48,18 +52,13 @@ namespace Minimalism
     is tracked by `VoiceHead.phaseHead` in `Core/Voice.lean`, with
     bridge theorems in `Core/Voice.lean` § 8. -/
 def isPhaseHead (so : SyntacticObject) : Bool :=
-  match labelCat so with
-  | some .C => true    -- CP phase
-  | _ => false
+  isPhaseHeadOf .C so
 
 /-- Traditional phase identification where both C and v are phase heads.
     Use this for analyses that assume vP phasehood (@cite{chomsky-2000},
     @cite{chomsky-2001}). @cite{keine-2020} argues against vP phases. -/
 def isPhaseHeadV (so : SyntacticObject) : Bool :=
-  match labelCat so with
-  | some .C => true    -- CP phase
-  | some .v => true    -- v*P phase
-  | _ => false
+  isPhaseHeadOf .C so || isPhaseHeadOf .v so
 
 /-- D as a phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}).
 
@@ -71,17 +70,13 @@ def isPhaseHeadV (so : SyntacticObject) : Bool :=
     - **Scope barriers**: QR cannot escape DP.
     - **Spell-out domains**: definite D triggers Transfer of its complement. -/
 def isDPhaseHead (so : SyntacticObject) : Bool :=
-  match labelCat so with
-  | some .D => true
-  | _ => false
+  isPhaseHeadOf .D so
 
 /-- SA as a phase head.
     SAP is the highest phase — since it cannot embed,
     allocutive agreement probing from SA is root-only. -/
 def isSAPhaseHead (so : SyntacticObject) : Bool :=
-  match labelCat so with
-  | some .SA => true
-  | _ => false
+  isPhaseHeadOf .SA so
 
 /-- Extended phase head identification (C, v, optionally D) -/
 def isPhaseHeadExt (so : SyntacticObject) (dpIsPhase : Bool := false) : Bool :=
@@ -97,7 +92,15 @@ def isPhaseHeadExt (so : SyntacticObject) (dpIsPhase : Bool := false) : Bool :=
       immediately lower phase is accessible. The complement is frozen
       as soon as the phase head is merged.
     - `weak` (PIC₂, @cite{chomsky-2001}): The complement of a phase is accessible
-      until the next higher phase head is merged. -/
+      until the next higher phase head is merged.
+
+    TODO: the strong/weak distinction is not yet operationalized in
+    `phaseImpenetrable`, which currently models only the structural
+    "goal sits in the complement" check shared by both variants. The
+    real distinction lies in *when* the check fires relative to merge
+    of the next phase head — that requires a derivational timeline
+    that this static API doesn't yet expose. Callers may pass either
+    constructor without effect on the predicate. -/
 inductive PICStrength where
   | strong   -- PIC₁: complement frozen immediately
   | weak     -- PIC₂: complement accessible until next phase
@@ -129,22 +132,15 @@ structure Phase where
 /-- Phase Impenetrability Condition: material inside a phase complement
     is inaccessible to operations outside the phase.
 
-    Under the strong PIC, the complement is frozen
-    as soon as the phase head is merged. Under the weak PIC,
-    it is frozen when the next phase head is merged. -/
-def phaseImpenetrable (strength : PICStrength) (phase goal : SyntacticObject) : Prop :=
-  match strength with
-  | .strong =>
-    -- Strong PIC: goal is inside the complement and thus inaccessible
-    match phase with
-    | .node _ complement => contains complement goal
-    | _ => False
-  | .weak =>
-    -- Weak PIC: goal is inside the complement; accessible until next phase
-    -- Modeled the same structurally — the difference is WHEN this is checked
-    match phase with
-    | .node _ complement => contains complement goal
-    | _ => False
+    The strong/weak (PIC₁/PIC₂) distinction is about *when* the check
+    fires relative to the merge of the next phase head; structurally
+    both variants ask the same question — is the goal sitting inside
+    the phase's complement? — so this predicate is currently
+    strength-agnostic. See `PICStrength` for the TODO. -/
+def phaseImpenetrable (phase goal : SyntacticObject) : Prop :=
+  match phase with
+  | .node _ complement => contains complement goal
+  | _ => False
 
 -- ============================================================================
 -- Part 5: Anti-Locality (@cite{abels-2012}, Ch. 4)
@@ -169,22 +165,15 @@ def antiLocality (head complement mover : SyntacticObject) : Prop :=
 -- Part 6: Stranding Generalization
 -- ============================================================================
 
-/-- Stranding Generalization:
-    Complements of phase heads cannot be stranded by movement of the head.
-
-    DERIVED from Anti-locality + PIC:
-    - By Anti-locality, complement of H can't move to Spec-HP
-    - By PIC, complement of H can't move out of HP (frozen)
-    - Therefore: complement of a phase head is immovable = stranded -/
-theorem stranding_from_antilocality_pic
-    (ph : Phase)
-    (h_imm : immediatelyContains ph.head ph.complement)
-    (h_anti : antiLocality ph.head ph.complement ph.complement) :
-    -- Anti-locality tells us complement ≠ complement, which is absurd.
-    -- This means the derivation where the complement moves to Spec-H is blocked.
-    False := by
-  have := h_anti h_imm
-  exact absurd rfl this
+-- Stranding Generalization: complements of phase heads cannot be stranded
+-- by movement of the head. The derivation is Anti-locality + PIC:
+-- Anti-locality blocks complement-to-Spec-HP movement, and PIC blocks
+-- complement-out-of-HP movement, so the complement is immobile relative
+-- to its phase head. We do not state this as a Lean theorem here: the
+-- previous version derived `False` from a self-application of
+-- `antiLocality ph.head ph.complement ph.complement`, where the conclusion
+-- was already supplied by the hypothesis. A real stranding theorem needs
+-- a derivation/movement model that's not yet in this file.
 
 -- ============================================================================
 -- Part 7: Transfer
@@ -292,17 +281,15 @@ structure FeatureInheritance where
     Under PIC, an element inside a phase complement is inaccessible.
     This means movement must target the edge before the phase is complete. -/
 def isPhaseBounded (mover target : SyntacticObject)
-    (phases : List Phase) (strength : PICStrength) : Prop :=
-  ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head mover ∧
+    (phases : List Phase) : Prop :=
+  ¬∃ ph ∈ phases, phaseImpenetrable ph.head mover ∧
     contains target ph.head
 
-/-- Phase-bounded locality subsumes Relativized Minimality (@cite{rizzi-1990}) for Agree:
-    if a goal is inside a phase complement, no probe outside can reach it. -/
-theorem pic_blocks_agree (strength : PICStrength) (phase _probe goal : SyntacticObject)
-    (h_impenetrable : phaseImpenetrable strength phase goal)
-    (_h_outside : ¬contains phase _probe) :
-    -- Probe cannot access goal across the phase boundary
-    phaseImpenetrable strength phase goal := h_impenetrable
+-- Phase-bounded locality subsumes Relativized Minimality (@cite{rizzi-1990})
+-- for Agree: if a goal is inside a phase complement, no probe outside can
+-- reach it. The actual blocking-of-Agree statement lives downstream of the
+-- Agree relation (see `Agree.validAgreeWithPIC`); a standalone theorem here
+-- would just restate `phaseImpenetrable` as itself.
 
 -- ============================================================================
 -- Part 10: N/D-Incorporation and Phase Deactivation
@@ -356,18 +343,20 @@ incorporation is no longer an active phase barrier. -/
 theorem incorporation_deactivates (s : DPPhaseStatus)
     (h_phase : s.wasPhase = true) (h_inc : s.incorporated = true) :
     s.isActivePhase = false := by
-  simp [DPPhaseStatus.isActivePhase, h_phase, h_inc]
+  simp only [DPPhaseStatus.isActivePhase, h_phase, h_inc, Bool.not_true,
+             Bool.and_false]
 
 /-- Without incorporation, a D-phase remains active. -/
 theorem no_incorporation_preserves (s : DPPhaseStatus)
     (h_phase : s.wasPhase = true) (h_no_inc : s.incorporated = false) :
     s.isActivePhase = true := by
-  simp [DPPhaseStatus.isActivePhase, h_phase, h_no_inc]
+  simp only [DPPhaseStatus.isActivePhase, h_phase, h_no_inc, Bool.not_false,
+             Bool.and_true]
 
 /-- Non-phases are never active barriers, regardless of incorporation. -/
 theorem non_phase_never_active (s : DPPhaseStatus)
     (h : s.wasPhase = false) :
     s.isActivePhase = false := by
-  simp [DPPhaseStatus.isActivePhase, h]
+  simp only [DPPhaseStatus.isActivePhase, h, Bool.false_and]
 
 end Minimalism

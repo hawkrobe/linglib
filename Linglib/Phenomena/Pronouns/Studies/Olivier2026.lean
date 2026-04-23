@@ -117,7 +117,9 @@ open Phenomena.AuxiliaryVerbs.Studies.Olivier2026
     clitic has climbed shows AS exactly when the reflexive
     triggers it. -/
 theorem reflexive_climbing_aligns_with_as_predicate :
-    triggersAuxSwitchOnClimbing .reflexive =
-      auxiliarySwitchOccurs beWantReflexiveClimbed := rfl
+    triggersAuxSwitchOnClimbing .reflexive = true ∧
+      AuxiliarySwitchOccurs beWantReflexiveClimbed := by
+  refine ⟨rfl, ?_⟩
+  decide
 
 end Phenomena.Pronouns.Studies.Olivier2026

@@ -1,5 +1,6 @@
-import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
+import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Theories.Semantics.Probabilistic.PrototypeTheory
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -301,7 +302,8 @@ to demonstrate the key theoretical insights computably.
 
 namespace RSAModel
 
-open Phenomena.ScalarImplicatures.VanTielQuantity
+open Phenomena.Quantification.Inventory
+  renaming QuantityWord → ModelQuantityWord
 
 /-- Domain size (simplified from 432 to 10) -/
 abbrev domainSize : Nat := 10
@@ -309,47 +311,67 @@ abbrev domainSize : Nat := 10
 /-- Intersection set sizes (simplified from 0-432 to 0-10) -/
 abbrev WorldState := Fin 11
 
-def allWorlds : List WorldState := Phenomena.ScalarImplicatures.VanTielQuantity.allWorlds domainSize
+def allWorlds : List WorldState := List.finRange (domainSize + 1)
 
 def modelTotalSetSize : Nat := 10
 
--- Re-export types from Phenomena.ScalarImplicatures.VanTielQuantity for backwards compatibility
-abbrev ModelQuantityWord := Phenomena.ScalarImplicatures.VanTielQuantity.Utterance
+def allModelQuantityWords : List ModelQuantityWord := ModelQuantityWord.toList
 
-def allModelQuantityWords : List ModelQuantityWord := Phenomena.ScalarImplicatures.VanTielQuantity.allUtterances
+/-- Monotonicity of each model word (lifted from the canonical inventory). -/
+def modelMonotonicity (q : ModelQuantityWord) :
+    Theories.Semantics.Quantification.Lexicon.Monotonicity :=
+  q.monotonicity
 
--- Re-export monotonicity
-abbrev ModelMonotonicity := Phenomena.ScalarImplicatures.VanTielQuantity.Monotonicity
+-- GQT Parameters (per-paper threshold settings, B&C-style)
 
-def modelMonotonicity := Phenomena.ScalarImplicatures.VanTielQuantity.monotonicity
+/-- Per-word GQT threshold for the simplified `domainSize = 10` domain.
+    Values are scaled from B&C-style fractions:
+    none = 0, few = ⌊10/3⌋ = 3, some = 1 (≥1 reading), half = 5,
+    most = 6 (>half), all = 10. -/
+def threshold : ModelQuantityWord → Nat
+  | .none_ => 0
+  | .few   => 3
+  | .some_ => 1
+  | .half  => 5
+  | .most  => 6
+  | .all   => domainSize
 
--- GQT Semantics (using unified Determiners infrastructure)
-
-/-- Threshold for each quantity word (from unified entry) -/
-def threshold (m : ModelQuantityWord) : Nat :=
-  Fragments.English.Determiners.QuantityWord.gqtThreshold domainSize m
-
-/-- GQT meaning: binary truth based on threshold -/
+/-- GQT meaning via the parametric operator from
+    `Theories.Semantics.Quantification.Quantifier`. -/
 def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
-  Phenomena.ScalarImplicatures.VanTielQuantity.gqtMeaning domainSize m t
+  Semantics.Quantification.Quantifier.gqtMeaning
+    domainSize m.monotonicity (threshold m) t
 
-/-- GQT meaning as rational -/
+/-- GQT meaning as rational (for RSA arithmetic). -/
 def gqtMeaningRat (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Fragments.English.Determiners.QuantityWord.gqtMeaningRat domainSize m t
+  Semantics.Quantification.Quantifier.gqtMeaningRat
+    domainSize m.monotonicity (threshold m) t
 
--- PT Semantics (using unified Determiners infrastructure)
+-- PT Parameters (per-paper prototype + spread settings)
 
-/-- Prototype (peak truth) for each quantity word (from unified entry) -/
-def prototype (m : ModelQuantityWord) : Nat :=
-  Fragments.English.Determiners.QuantityWord.ptPrototype domainSize m
+/-- Per-word PT prototype (peak production count) for the simplified domain. -/
+def prototype : ModelQuantityWord → Nat
+  | .none_ => 0
+  | .few   => 2
+  | .some_ => 3
+  | .half  => 5
+  | .most  => 8
+  | .all   => domainSize
 
-/-- Spread parameter (from unified entry) -/
-def spread (m : ModelQuantityWord) : ℚ :=
-  Fragments.English.Determiners.QuantityWord.ptSpread m
+/-- Per-word PT spread (Gaussian width). -/
+def spread : ModelQuantityWord → ℚ
+  | .none_ => 1
+  | .few   => 2
+  | .some_ => 3
+  | .half  => 2
+  | .most  => 2
+  | .all   => 1
 
-/-- PT meaning: gradient truth based on distance from prototype -/
+/-- PT meaning via the parametric operator from
+    `Theories.Semantics.Probabilistic.PrototypeTheory`. -/
 def ptMeaning (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Fragments.English.Determiners.QuantityWord.ptMeaning domainSize m t
+  Theories.Semantics.Probabilistic.PrototypeTheory.ptMeaning
+    domainSize (prototype m) (spread m) t
 
 -- Salience: Lexical Accessibility
 
@@ -401,8 +423,8 @@ end RSAModel
 /-! Connects the RSA quantity-word production model to the empirical
 monotonicity classifications. -/
 
-/-- Convert RSA model's QuantityWord to empirical data type. -/
-def toDataWord : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance → QuantityWord
+/-- Convert canonical 6-element model word to the 17-element empirical data type. -/
+def toDataWord : Phenomena.Quantification.Inventory.QuantityWord → QuantityWord
   | .none_ => .none_
   | .few   => .few
   | .some_ => .some_
@@ -414,13 +436,15 @@ def toDataWord : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance → Quan
 
 Note: "half" is classified as nonMonotone in the three-way system but as
 "increasing" in the binary empirical classification. -/
-theorem monotonicity_matches_data_increasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
+theorem monotonicity_matches_data_increasing
+    (q : Phenomena.Quantification.Inventory.QuantityWord) :
     q ≠ .half →
     (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
-theorem monotonicity_matches_data_decreasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
+theorem monotonicity_matches_data_decreasing
+    (q : Phenomena.Quantification.Inventory.QuantityWord) :
     (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide

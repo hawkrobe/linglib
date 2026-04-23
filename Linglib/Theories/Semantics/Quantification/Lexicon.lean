@@ -1,19 +1,13 @@
 import Linglib.Core.Lexical.Word
-import Mathlib.Data.Rat.Defs
 
 /-!
 # Quantifier lexicon — shared structure
 @cite{horn-1972} @cite{barwise-cooper-1981}
 
 A theory-level structure for quantifier lexical entries shared across
-language fragments. Originally defined inside
-`Fragments/English/Determiners.lean`, but several theory files
-(`Theories/Syntax/HPSG/Core/FromFragments.lean`,
-`Theories/Syntax/CCG/Core/FromFragments.lean`,
-`Theories/Syntax/Minimalism/FromFragments.lean`) and several
-fragments (English, French, Italian) all need it; promoting it here
-removes a Theory→Fragment import direction violation and lets all
-language fragments share a single `QuantifierEntry` shape.
+language fragments. Carries only descriptive lexical-typological data
+— per-paper model parameters (GQT thresholds, PT prototypes, …) live
+in the study files that commit to specific values.
 
 ## Fields
 
@@ -24,11 +18,9 @@ language fragments share a single `QuantifierEntry` shape.
   and French *les deux* whose meaning composition uses the dual core
   concept @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025})
 - `allowsMass` — accepts mass NPs?
-- `monotonicity` — increasing / decreasing / non-monotone
+- `monotonicity` — increasing / decreasing / non-monotone (typological label)
 - `strength` — weak / strong (Barwise & Cooper §4.3 Table II;
   weak determiners pass `there is/are`)
-- `gqtThreshold`, `ptPrototype`, `ptSpread` — generalized-quantifier
-  threshold and prototype-theoretic dispersion
 -/
 
 set_option autoImplicit false
@@ -65,9 +57,6 @@ structure QuantifierEntry where
   allowsMass : Bool := false
   monotonicity : Monotonicity := .increasing
   strength : Strength := .weak
-  gqtThreshold : ℚ := 0
-  ptPrototype : ℚ := 0
-  ptSpread : ℚ := 2
   deriving Repr, BEq, DecidableEq
 
 /-- Project the lexical entry to a Core `Word`: form, category DET,

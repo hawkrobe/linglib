@@ -1,19 +1,20 @@
-import Linglib.Fragments.English.Determiners
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Quantity Domains for Scalar Implicatures
 
-Building blocks for quantity/scalar domains used in scalar-implicature
-studies (RSA models, EXH models, neo-Gricean derivations).
+Building blocks for tutorial-style scalar quantity domains used in
+scalar-implicature studies (RSA models, EXH models, neo-Gricean
+derivations). The canonical 6-element ⟨none, few, some, half, most, all⟩
+paradigm now lives in `Phenomena.Quantification.Inventory`; this file
+covers the smaller 3- and 4-element domains used as toy tutorial scales.
 
 ## Components
 
-- `Utterance`: Scalar utterances (none, some, all)
-- `ExtUtterance`: Extended with "most"
+- `Utterance`: 3-element scalar utterances (none, some, all)
+- `ExtUtterance`: 4-element extension with "most"
 - `meaning`: Literal semantics for scalar utterances
 - `extMeaning`: Extended semantics with "most"
-- `VanTielQuantity`: 6-word scale used in @cite{van-tiel-etal-2016}
-
 -/
 
 namespace Phenomena.ScalarImplicatures.QuantityDomain
@@ -83,35 +84,3 @@ def extMeaning (n : Nat) : ExtUtterance → Fin (n + 1) → Bool
 def allExtUtterances : List ExtUtterance := [.none_, .some_, .most, .all]
 
 end Phenomena.ScalarImplicatures.QuantityDomain
-
--- VanTiel Quantity Domain (6-word scale)
-
--- Uses unified QuantityWord from Fragments.English.Determiners
-
-namespace Phenomena.ScalarImplicatures.VanTielQuantity
-
--- Re-export QuantityWord as Utterance for backwards compatibility
-open Fragments.English.Determiners in
-abbrev Utterance := QuantityWord
-
--- Re-export Monotonicity
-open Fragments.English.Determiners in
-abbrev Monotonicity := Fragments.English.Determiners.Monotonicity
-
-def allUtterances : List Utterance := Fragments.English.Determiners.QuantityWord.toList
-
-/-- Get monotonicity from unified entry -/
-def monotonicity (u : Utterance) : Monotonicity :=
-  Fragments.English.Determiners.QuantityWord.monotonicity u
-
--- GQT Semantics (from Determiners)
-
-/-- GQT meaning from unified entry -/
-def gqtMeaning (n : Nat) (m : Utterance) (t : Fin (n + 1)) : Bool :=
-  Fragments.English.Determiners.QuantityWord.gqtMeaning n m t
-
--- All worlds for a domain of size n
-def allWorlds (n : Nat) : List (Fin (n + 1)) :=
-  List.finRange (n + 1)
-
-end Phenomena.ScalarImplicatures.VanTielQuantity

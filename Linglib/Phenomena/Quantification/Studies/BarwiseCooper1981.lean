@@ -1,6 +1,7 @@
 import Linglib.Features.Acceptability
 import Linglib.Paradigms.Measurement
 import Linglib.Fragments.English.Determiners
+import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Theories.Semantics.Quantification.DomainRestriction
 
 /-!
@@ -56,7 +57,8 @@ to the GQ property predicates in `Core.Quantification` and
 
 namespace Phenomena.Quantification.Bridge
 
-open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
+open Fragments.English.Determiners (Monotonicity Strength)
+open Phenomena.Quantification.Inventory
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier
 open Semantics.Quantification.DomainRestriction (DomainRestrictor

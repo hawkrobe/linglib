@@ -468,20 +468,27 @@ def defectivelyIntervenes (root : SyntacticObject) (probe x goal : SyntacticObje
 /-- Valid Agree with Phase Impenetrability Condition.
 
     Agree is blocked if the goal is inside a phase complement
-    (and thus inaccessible under PIC). -/
+    (and thus inaccessible under PIC). The `strength` parameter
+    selects the PIC variant (PIC₁ vs PIC₂); see `PICStrength`. It is
+    not yet consumed by `phaseImpenetrable` itself but is retained on
+    the Agree-level interface so that derivational variants can wire
+    it in without breaking call sites. -/
 def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
     (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
+  let _ := strength
   validAgree rel root ∧
-    ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
+    ¬∃ ph ∈ phases, phaseImpenetrable ph.head rel.goal
 
 /-- PIC-bounded Agree with Activity Condition.
 
     The full Agree constraint: probe c-commands goal, feature matching holds,
-    goal is active, AND no intervening phase boundary blocks the relation. -/
+    goal is active, AND no intervening phase boundary blocks the relation.
+    See `validAgreeWithPIC` for the role of `strength`. -/
 def fullAgree (strength : PICStrength) (phases : List Phase)
     (rel : AgreeRelation) (root : SyntacticObject) : Prop :=
+  let _ := strength
   validAgreeWithActivity rel root ∧
-    ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
+    ¬∃ ph ∈ phases, phaseImpenetrable ph.head rel.goal
 
 -- ============================================================================
 -- § 13: Clause-Typing Agree Configurations

@@ -1,9 +1,12 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Fragments.ToyDomain
 import Linglib.Theories.Semantics.Composition.TypeShifting
+import Linglib.Theories.Semantics.Quantification.Lexicon
 import Linglib.Core.Logic.Quantification
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 
 /-!
 # Generalized Quantifiers
@@ -317,6 +320,19 @@ noncomputable def half_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
     count (fun x : F.Entity => R x)
 
 open Classical in
+/-- `⟦both⟧(R)(S) = ⟦every⟧(R)(S) ∧ |R| ≥ 2`.
+    K&S §2.3: `both` = `every` restricted to dual restrictors. -/
+noncomputable def both_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    every_sem F R S ∧ (Finset.univ.filter (fun x : F.Entity => R x)).card ≥ 2
+
+open Classical in
+/-- `⟦neither⟧` = `pgqMeet ⟦no⟧ (|R| ≥ 2)` (K&S (83b)). -/
+noncomputable def neither_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  pgqMeet (no_sem F)
+    (fun (R : F.Entity → Prop) _ => (Finset.univ.filter (fun x : F.Entity => R x)).card ≥ 2)
+
+open Classical in
 /-- `⟦at least n⟧(R)(S) = |R ∩ S| ≥ n` -/
 noncomputable def at_least_n_sem (F : Frame) [Fintype F.Entity] (n : Nat) :
     F.Denot Ty.det :=
@@ -538,6 +554,18 @@ theorem half_conservative : PConservative (half_sem F) := by
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _]; exact h
+
+/-- `⟦both⟧` is conservative (inherits from `every_sem`). -/
+theorem both_conservative : PConservative (both_sem F) := by
+  intro R S
+  simp only [both_sem]
+  rw [every_conservative R S]
+
+/-- `⟦neither⟧` is conservative (inherits from `no_sem`). -/
+theorem neither_conservative : PConservative (neither_sem F) := by
+  intro R S
+  simp only [neither_sem, pgqMeet]
+  rw [no_conservative R S]
 
 /-- `⟦at least n⟧` is conservative: |R ∩ S| = |R ∩ (R ∩ S)|. -/
 theorem at_least_n_conservative (n : Nat) : PConservative (at_least_n_sem F n) := by
@@ -1413,6 +1441,34 @@ theorem half_proportional : Proportional (half_sem F) := by
   exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
 
 end FintypeProofs
+
+/-! ## Generalized-Quantifier-Theoretic (GQT) meaning operator
+
+A parametric truth-conditional GQT operator: given a monotonicity
+direction and a numerical threshold, `gqtMeaning` returns the literal
+GQT denotation as a `Bool` over a finite "intersection-count" world.
+Used by quantity-implicature studies (e.g., van Tiel et al. 2021) that
+plug per-paper threshold parameters into the same GQT machinery.
+-/
+
+open Theories.Semantics.Quantification.Lexicon (Monotonicity) in
+/-- GQT meaning: at threshold `θ`, with monotonicity `mono`, in a domain of
+size `n`, is the count `t` true? -/
+def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) : Bool :=
+  match mono with
+  | .increasing  => t.val ≥ θ
+  | .decreasing  => t.val ≤ θ
+  | .nonMonotone => t.val == θ
+
+open Theories.Semantics.Quantification.Lexicon (Monotonicity) in
+/-- Rational version of `gqtMeaning` (1 if true, 0 if false). -/
+def gqtMeaningRat (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) : ℚ :=
+  if gqtMeaning n mono θ t then 1 else 0
+
+open Theories.Semantics.Quantification.Lexicon (Monotonicity) in
+theorem gqtMeaningRat_nonneg (n : Nat) (mono : Monotonicity) (θ : Nat)
+    (t : Fin (n + 1)) : 0 ≤ gqtMeaningRat n mono θ t := by
+  simp only [gqtMeaningRat]; split_ifs <;> norm_num
 
 /-! ## Open conjectures (van de Pol et al. 2023)
 

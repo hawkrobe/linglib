@@ -1,5 +1,6 @@
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Hierarchy
+import Linglib.Datasets.WALS.Features.F90D
 import Linglib.Datasets.WALS.Features.F122A
 import Linglib.Datasets.WALS.Features.F123A
 
@@ -65,6 +66,37 @@ inductive OblRelStrategy where
   deriving DecidableEq, Repr
 
 -- ============================================================================
+-- Internally-headed strategy (WALS Ch 90D)
+-- ============================================================================
+
+/-- WALS Ch 90D: status of the internally-headed strategy in a language.
+
+WALS distinguishes whether the internally-headed strategy is the dominant
+relativization pattern, co-dominant with another (RelN, NRel, correlative,
+double-headed), present as a non-dominant alternative, merely attested, or
+absent entirely. -/
+inductive InternallyHeadedStrategy where
+  /-- Internally-headed is the dominant strategy. -/
+  | dominant
+  /-- Co-dominant with a relative-noun construction. -/
+  | coRelN
+  /-- Co-dominant with a noun-relative construction. -/
+  | coNRel
+  /-- Co-dominant with a correlative construction. -/
+  | coCorrelative
+  /-- Co-dominant with a double-headed construction. -/
+  | coDoubleHeaded
+  /-- Present as a non-dominant alternative. -/
+  | nondominant
+  /-- Attested but not dominant or co-dominant (WALS lumps this as "exists"). -/
+  | attested
+  /-- The internally-headed strategy is not attested in this language.
+      WALS 90D codes only languages that *have* the strategy in some form, so
+      this case is for hand-coded profiles whose Fragment asserts absence. -/
+  | absent
+  deriving DecidableEq, Repr
+
+-- ============================================================================
 -- Profile structure
 -- ============================================================================
 
@@ -79,6 +111,10 @@ structure RelativizationProfile where
   rcPosition : Core.RCPosition
   /-- Lowest @cite{keenan-comrie-1977} AH position that can be relativized. -/
   lowestRelativizable : Core.AHPosition
+  /-- Status of the head-internal relativization strategy (WALS 90D). Defaults
+      to `.absent`, since most languages outside East Asia, Mesoamerica, and a
+      few isolates lack this construction. -/
+  internallyHeaded : InternallyHeadedStrategy := .absent
   /-- Free-text notes on the relativization system, including
       `@cite{...}` keys for hand-coded values. -/
   notes : String := ""
@@ -108,5 +144,18 @@ def fromWALS123A : Datasets.WALS.F123A.ObliqueRelativization → OblRelStrategy
   | .pronounRetention => .pronounRetention
   | .gap             => .gap
   | .notPossible     => .notRelativizable
+
+/-- Convert a WALS 90D internally-headed value to `InternallyHeadedStrategy`.
+    WALS does not code an `.absent` case (the chapter only sampled languages
+    that *have* the strategy), so absence is asserted by hand in the Fragment. -/
+def fromWALS90D : Datasets.WALS.F90D.InternallyHeadedRelativeClauses →
+    InternallyHeadedStrategy
+  | .relativeClauseDominant   => .dominant
+  | .orReln                   => .coRelN
+  | .orNrel                   => .coNRel
+  | .orCorrelative            => .coCorrelative
+  | .orDoubleHeaded           => .coDoubleHeaded
+  | .occursAsNondominantType  => .nondominant
+  | .exists_                  => .attested
 
 end Core.Relativization

@@ -56,6 +56,41 @@ the relevant Voice* → vMOD edge (giving KEEP); Italian permits it
 optionally; Sardinian-style varieties realise it obligatorily. We
 do not formalise the language-level configuration here; this study
 file commits only to the per-clause prediction.
+
+## Analytic commitments and empirical caveats
+
+### DM elsewhere inversion (vs @cite{amato-2025})
+
+Olivier (rule 55) takes HAVE as the more specific allomorph and
+BE as elsewhere. @cite{amato-2025} (rule 48) takes the opposite
+convention: HAVE is `vAux[Pers:α]` and BE is the elsewhere
+allomorph. This inversion is load-bearing for Olivier's account of
+how Modern French acquirers default to a non-AS grammar
+(HAVE-elsewhere is the unmarked acquirer's hypothesis). The two
+analyses are formalised as parallel theory instances in this file
+and in `Amato2025.lean`; neither is canonical at this layer.
+
+### 19th-century counterexamples
+
+The diachronic French corpus shows roughly 29% of climbing-with-
+modal-with-compound-with-reflexive cases in 1800–1849 *not*
+exhibiting AS. Olivier attributes these to Chateaubriand-stylistic
+decorum (Iglesias 2015). The categorical generalisation formalised
+below should therefore be read as "strong tendency", not
+exceptionless. The decorum-based attribution is post-hoc and
+unfalsifiable; a future revision should encode exception rates by
+period rather than treating the generalisation as universally
+quantified.
+
+### Modern French data skepticism
+
+The Modern French AS attestations in the paper's appendix include
+online forum posts where the author notes spelling errors in
+homophonous infinitive/participle pairs (*pu*/*pues*,
+*déplacer*/*déplacées*). These could be performance errors rather
+than grammatical AS. We do *not* encode Modern French AS as a
+theorem in this file; we encode only the diachronic French
+(14th–19th c.) and the Italian/Sardinian generalisations.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Studies.Olivier2026
@@ -123,14 +158,18 @@ structure RestructuringClause where
     Conditions (1)–(3) are necessary; condition (4) is the
     reflexive-specific trigger. Unaccusative complements license AS
     without any overt clitic trigger. -/
-def auxiliarySwitchOccurs (c : RestructuringClause) : Bool :=
-  c.matrixModal && c.compoundTense &&
-  selectsBe c.embeddedClass &&
+def AuxiliarySwitchOccurs (c : RestructuringClause) : Prop :=
+  c.matrixModal = true ∧ c.compoundTense = true ∧
+  SelectsBe c.embeddedClass ∧
   (match c.embeddedClass with
-   | .reflexive => match c.refCliticPos with
-                   | .climbed => true
-                   | _        => false
-   | _ => true)
+   | .reflexive => c.refCliticPos = .climbed
+   | _ => True)
+
+instance : DecidablePred AuxiliarySwitchOccurs := fun c => by
+  unfold AuxiliarySwitchOccurs
+  -- Each conjunct is decidable (Bool eq, SelectsBe via DecidablePred,
+  -- match on TransitivityClass with decidable cases).
+  cases c.embeddedClass <;> infer_instance
 
 /-- The three (purely structural) preconditions on AS, used as
     discriminators in completeness theorems below. -/
@@ -147,14 +186,14 @@ inductive ASCondition where
 def conditionsSatisfied (c : RestructuringClause) : List ASCondition :=
   (if c.matrixModal then [.matrixIsModal] else []) ++
   (if c.compoundTense then [.matrixInCompoundTense] else []) ++
-  (if selectsBe c.embeddedClass then [.embeddedSelectsBe] else [])
+  (if SelectsBe c.embeddedClass then [.embeddedSelectsBe] else [])
 
 /-- The matrix auxiliary actually predicted for a restructuring
     clause: BE if AS is triggered, HAVE otherwise. The HAVE default
     matches what a modal (unergative-like) matrix verb would select
     on its own argument structure. -/
 def predictedMatrixAux (c : RestructuringClause) : PerfectAux :=
-  if auxiliarySwitchOccurs c then .be else .have
+  if AuxiliarySwitchOccurs c then .be else .have
 
 /-! ## Examples (paper examples 1–3, schematic)
 
@@ -260,62 +299,93 @@ def diachronicSample : List DiachronicDatum :=
 /-- A non-modal matrix never triggers Auxiliary Switch. -/
 theorem as_requires_modal (c : RestructuringClause)
     (h : c.matrixModal = false) :
-    auxiliarySwitchOccurs c = false := by
-  simp only [auxiliarySwitchOccurs, h, Bool.false_and]
+    ¬ AuxiliarySwitchOccurs c := by
+  intro ⟨hM, _⟩
+  exact Bool.false_ne_true (h ▸ hM)
 
 /-- A non-compound matrix tense never triggers Auxiliary Switch. -/
 theorem as_requires_compound (c : RestructuringClause)
     (h : c.compoundTense = false) :
-    auxiliarySwitchOccurs c = false := by
-  simp only [auxiliarySwitchOccurs, h, Bool.and_false, Bool.false_and]
+    ¬ AuxiliarySwitchOccurs c := by
+  intro ⟨_, hC, _⟩
+  exact Bool.false_ne_true (h ▸ hC)
 
 /-- A transitive embedded verb never triggers Auxiliary Switch. -/
 theorem as_requires_be_selecting (c : RestructuringClause)
     (h : c.embeddedClass = .transitive) :
-    auxiliarySwitchOccurs c = false := by
-  simp only [auxiliarySwitchOccurs, h, selectsBe, Bool.and_false, Bool.false_and]
+    ¬ AuxiliarySwitchOccurs c := by
+  intro ⟨_, _, hsel, _⟩
+  -- SelectsBe .transitive reduces to canonicalSelection .transitive = .be,
+  -- but canonicalSelection .transitive = .have ≠ .be.
+  rw [h] at hsel
+  exact PerfectAux.noConfusion hsel
 
-/-- A modal matrix in compound tense with a reflexive complement
-    whose clitic has climbed: AS is triggered. -/
-theorem reflexive_climbing_triggers_as :
-    auxiliarySwitchOccurs beWantReflexiveClimbed = true := rfl
+/-! ### Per-example smoke tests
 
-/-- A modal matrix in compound tense with a reflexive complement
-    whose clitic stays low: AS is NOT triggered (matrix surfaces
-    as HAVE). -/
-theorem reflexive_low_no_as :
-    auxiliarySwitchOccurs haveWantReflexiveLow = false := rfl
+    Single-witness checks on the example clauses defined above. The
+    universally-quantified versions below are the load-bearing claims;
+    these document expected outputs. -/
 
-/-- A modal matrix in compound tense with an unaccusative complement
-    triggers AS even with no overt clitic — unaccusatives carry the
+example : AuxiliarySwitchOccurs beWantReflexiveClimbed := by decide
+example : ¬ AuxiliarySwitchOccurs haveWantReflexiveLow := by decide
+example : AuxiliarySwitchOccurs beWantCome := by decide
+example : predictedMatrixAux haveWantTransitive = .have := by decide
+example : predictedMatrixAux beWantReflexiveClimbed = .be := by decide
+
+/-! ### Universally-quantified predictions -/
+
+/-- For *any* modal-compound-reflexive clause with a climbed clitic,
+    @cite{olivier-2026} predicts AS. Generalizes the one-witness smoke
+    test above. -/
+theorem reflexive_climbing_triggers_as
+    (c : RestructuringClause)
+    (hM : c.matrixModal = true) (hC : c.compoundTense = true)
+    (hRefl : c.embeddedClass = .reflexive)
+    (hClimb : c.refCliticPos = .climbed) :
+    AuxiliarySwitchOccurs c := by
+  refine ⟨hM, hC, ?_, ?_⟩
+  · show SelectsBe c.embeddedClass; rw [hRefl]; decide
+  · -- reflexive branch of the trigger match: requires refCliticPos = .climbed
+    rw [hRefl]; exact hClimb
+
+/-- For *any* modal-compound-reflexive clause whose clitic stays low,
+    AS does NOT trigger — climbing is the load-bearing trigger condition
+    (one of @cite{olivier-2026}'s central empirical claims). -/
+theorem reflexive_low_no_as
+    (c : RestructuringClause)
+    (hRefl : c.embeddedClass = .reflexive)
+    (hLow : c.refCliticPos ≠ .climbed) :
+    ¬ AuxiliarySwitchOccurs c := by
+  intro ⟨_, _, _, hTrigger⟩
+  rw [hRefl] at hTrigger
+  exact hLow hTrigger
+
+/-- For *any* modal-compound-unaccusative clause with no clitic, AS is
+    predicted even without a climbing trigger — unaccusatives carry the
     relevant ID-feature inherently. -/
-theorem unaccusative_no_clitic_can_as :
-    auxiliarySwitchOccurs beWantCome = true := rfl
-
-/-- HAVE is predicted for the transitive case. -/
-theorem have_predicted_for_transitive :
-    predictedMatrixAux haveWantTransitive = .have := rfl
-
-/-- BE is predicted for the climbed-reflexive case. -/
-theorem be_predicted_for_reflexive_climbed :
-    predictedMatrixAux beWantReflexiveClimbed = .be := rfl
+theorem unaccusative_no_clitic_triggers_as
+    (c : RestructuringClause)
+    (hM : c.matrixModal = true) (hC : c.compoundTense = true)
+    (hUnacc : c.embeddedClass = .unaccusative) :
+    AuxiliarySwitchOccurs c := by
+  refine ⟨hM, hC, ?_, ?_⟩
+  · show SelectsBe c.embeddedClass; rw [hUnacc]; decide
+  · -- unaccusative branch of the trigger match: True
+    rw [hUnacc]; trivial
 
 /-! ## Bridge to canonical (non-restructuring) auxiliary selection -/
 
-/-- For clauses that fail any of the three structural conditions,
-    the predicted matrix auxiliary equals HAVE — which matches what
-    `canonicalSelection` returns for an unergative matrix
-    (modal verbs are unergative-like in the relevant sense).
-
-    This makes the connection between the AS-restructuring rule and
-    the canonical Burzio rule explicit: outside the restructuring
-    window, the matrix auxiliary is whatever its own argument
-    structure dictates. -/
+/-- For clauses that fail any AS condition, the predicted matrix
+    auxiliary equals HAVE — matching `canonicalSelection .unergative`
+    (modal verbs being unergative-like). This is true *by definition*
+    of `predictedMatrixAux` (it returns HAVE in the non-AS branch); the
+    theorem documents the design intent — outside the restructuring
+    window, the matrix auxiliary is whatever its own argument structure
+    dictates under the canonical Burzio rule. -/
 theorem selection_matches_canonical_outside_restructuring
     (c : RestructuringClause)
-    (h : auxiliarySwitchOccurs c = false) :
+    (h : ¬ AuxiliarySwitchOccurs c) :
     predictedMatrixAux c = canonicalSelection .unergative := by
-  simp only [predictedMatrixAux, h, Bool.false_eq_true, ↓reduceIte,
-             canonicalSelection]
+  simp only [predictedMatrixAux, if_neg h, canonicalSelection, selection]
 
 end Phenomena.AuxiliaryVerbs.Studies.Olivier2026

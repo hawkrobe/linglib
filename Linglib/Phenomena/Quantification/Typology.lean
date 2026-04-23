@@ -1,6 +1,7 @@
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Japanese.Determiners
+import Linglib.Phenomena.Quantification.Inventory
 
 /-!
 # Cross-Linguistic Quantifier Typology
@@ -26,7 +27,8 @@ a common `QuantifierInventory` structure, following the pattern established in
 
 namespace Phenomena.Quantification.Typology
 
-open Fragments.English.Determiners (QForce Monotonicity Strength QuantityWord)
+open Fragments.English.Determiners (QForce Monotonicity Strength)
+open Phenomena.Quantification.Inventory (QuantityWord)
 
 -- ============================================================================
 -- Common inventory structure

@@ -2,33 +2,39 @@ import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
-# Bridge: Auxiliary Selection × Vendler Aspect Classes
+# Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
 @cite{sorace-2000}
 
 Connects the auxiliary selection data in
 `Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
 classification from `Theories.Semantics.Tense.Aspect.LexicalAspect`.
 
-## Predictions verified
-
-- `achievement_typically_unaccusative`: Vendler achievements map to
-  unaccusativity
-- `achievement_selects_be`: Achievements therefore select *be* in
-  split-auxiliary languages
-
 ## Known gaps
 
-- @cite{sorace-2000} gradient hierarchy not yet formalized
+- @cite{sorace-2000}'s gradient Auxiliary Selection Hierarchy is
+  not yet formalized — `vendlerClassToTypicalTransitivity` is a
+  flat lookup, not a derivation from proto-role entailments. A
+  principled version would build the mapping out of
+  `Theories/Semantics/Verb/EntailmentProfile.lean` so that, e.g.,
+  the achievement → unaccusative arrow falls out of
+  `changeOfState ∧ ¬volition`. TODO when EntailmentProfile-based
+  unaccusativity diagnostics are wired up.
 -/
 
-namespace Phenomena.AuxiliaryVerbs.Selection.Bridge
+namespace Phenomena.AuxiliaryVerbs.Studies.Sorace2000
 
 open Core.Verbs
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to
     unaccusativity: canonical achievements are change-of-state verbs whose
-    subject is a theme/patient. -/
+    subject is a theme/patient.
+
+    TODO: derive this from proto-role entailments in
+    `Theories/Semantics/Verb/EntailmentProfile.lean` (cf. file docstring).
+    Today this is a stipulated lookup; the rfl-trivial theorems that
+    chained it with `canonicalSelection` have been dropped because they
+    just unpacked two lookup tables. -/
 def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
   | .achievement    => .unaccusative
   | .accomplishment => .transitive
@@ -36,12 +42,4 @@ def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
   | .state          => .unergative
   | .semelfactive   => .unergative
 
-/-- Achievements are typically unaccusative. -/
-theorem achievement_typically_unaccusative :
-    vendlerClassToTypicalTransitivity .achievement = .unaccusative := rfl
-
-/-- Achievements typically select *be* in split-auxiliary languages. -/
-theorem achievement_selects_be :
-    canonicalSelection (vendlerClassToTypicalTransitivity .achievement) = .be := rfl
-
-end Phenomena.AuxiliaryVerbs.Selection.Bridge
+end Phenomena.AuxiliaryVerbs.Studies.Sorace2000

@@ -26,7 +26,7 @@ from collections import defaultdict
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "wals-v2020.4"
-OUT  = ROOT / "Linglib" / "Core" / "WALS"
+OUT  = ROOT / "Linglib" / "Datasets" / "WALS"
 
 # ── Helpers for auto-generating Lean constructor names ─────────────────────
 
@@ -397,7 +397,14 @@ def strip_common_camel_prefix(ctors):
         # Lowercase the first letter to keep lowerCamelCase.
         head = rest[0]
         head = head[0].lower() + head[1:]
-        rename[c] = head + ''.join(rest[1:])
+        stripped = head + ''.join(rest[1:])
+        # Per-name fallback: a single Lean reserved word (e.g. `exists` from
+        # `internallyHeadedExists`) used to discard the entire rename, leaving
+        # every constructor with the verbose prefix. Suffix the colliding name
+        # with `_` instead — `exists_` is a valid Lean identifier.
+        if stripped in LEAN_RESERVED:
+            stripped = stripped + "_"
+        rename[c] = stripped
 
     # Reject if any stripped name collides or is empty.
     new_names = list(rename.values())
@@ -408,11 +415,45 @@ def strip_common_camel_prefix(ctors):
     # Reject if any stripped name starts with a non-letter (e.g. digit-only rest).
     if any(not n[0].isalpha() for n in new_names):
         return {c: c for c in ctors}
-    # Reject if any stripped name collides with a Lean keyword.
-    if any(n in LEAN_RESERVED for n in new_names):
-        return {c: c for c in ctors}
 
     return rename
+
+
+# Chapter→bibkey map, derived once from the curated AUTO_FEATURES entries.
+# Authors of WALS chapters are stable across features within a chapter, so a
+# feature like 90D (chapter 90) inherits the bibkey from any curated 90X.
+_CHAPTER_AUTHOR = {}
+for _fid, _cfg in AUTO_FEATURES.items():
+    _ch_match = re.match(r'\d+', _fid)
+    if not _ch_match:
+        continue
+    _ch = int(_ch_match.group())
+    _author = _cfg.get("author")
+    if _author and _ch not in _CHAPTER_AUTHOR:
+        _CHAPTER_AUTHOR[_ch] = _author
+# Same for FEATURES (curated entries use a `chapter` key directly).
+for _fid, _cfg in FEATURES.items():
+    _ch = _cfg.get("chapter")
+    _author = _cfg.get("author")
+    if _ch is not None and _author and _ch not in _CHAPTER_AUTHOR:
+        _CHAPTER_AUTHOR[_ch] = _author
+
+# Track chapters we've already warned about, so each missing author prints once.
+_WARNED_CHAPTERS = set()
+
+def chapter_author(chapter):
+    """Look up the bibkey for the author of a WALS chapter.
+
+    Falls back to `dryer-2013-wals` (the umbrella WALS entry) and prints a
+    one-time warning for any chapter without a curated author. Add the chapter
+    to FEATURES or AUTO_FEATURES with an `author` field to silence the warning.
+    """
+    if chapter in _CHAPTER_AUTHOR:
+        return _CHAPTER_AUTHOR[chapter]
+    if chapter not in _WARNED_CHAPTERS:
+        print(f"  ⚠ chapter {chapter}: no curated author, using dryer-2013-wals fallback")
+        _WARNED_CHAPTERS.add(chapter)
+    return "dryer-2013-wals"
 
 
 def resolve_feature(feature_id, codes, params):
@@ -454,12 +495,13 @@ def resolve_feature(feature_id, codes, params):
     nontrivial_rename = {old: new for old, new in rename.items() if old != new}
 
     # Determine enum name: from AUTO_FEATURES if present, else derived from feature name
+    chapter = param.get("chapter", 0)
     if auto:
         enum_name = auto["enum"]
-        author = auto.get("author", "wals-2013")
+        author = auto.get("author") or chapter_author(chapter)
     else:
         enum_name = feature_name_to_enum(param.get("name", feature_id))
-        author = "wals-2013"
+        author = chapter_author(chapter)
 
     return {
         "name": param.get("name", feature_id),
@@ -678,13 +720,31 @@ def generate_languages(langs, used_ids):
     return "\n".join(lines)
 
 
+REFERENCES_BIB = ROOT / "blog" / "data" / "references.bib"
+
+def load_bib_keys():
+    """Return the set of bibkeys defined in blog/data/references.bib."""
+    keys = set()
+    with open(REFERENCES_BIB, encoding="utf-8") as f:
+        for line in f:
+            m = re.match(r'\s*@\w+\{\s*([^,\s]+)\s*,', line)
+            if m:
+                keys.add(m.group(1))
+    return keys
+
+
 def main():
+    # Strip flags out of argv before treating remaining args as feature IDs.
+    args = sys.argv[1:]
+    check_only = "--check" in args
+    args = [a for a in args if not a.startswith("--")]
+
     # Load codes.csv and parameters.csv for auto-generation
     codes = load_codes()
     params = load_parameters()
 
-    if len(sys.argv) > 1:
-        feature_ids = sys.argv[1:]
+    if args:
+        feature_ids = args
     else:
         # Generate ALL features found in parameters.csv
         feature_ids = sorted(params.keys(),
@@ -699,6 +759,30 @@ def main():
             continue
         resolved[fid] = cfg
     feature_ids = list(resolved.keys())
+
+    # Validate every emitted @cite{} key against references.bib BEFORE writing
+    # any files. A broken cite key in the bib breaks the bibliography generator
+    # and propagates silently across however many features share that author,
+    # so abort up front rather than emit known-broken Lean files.
+    bib_keys = load_bib_keys()
+    bad_cites = {fid: cfg["author"] for fid, cfg in resolved.items()
+                 if cfg["author"] not in bib_keys}
+    if bad_cites:
+        print(f"\nERROR: {len(bad_cites)} feature(s) reference unknown bibkeys:")
+        # Group by bibkey for readable output.
+        by_key = defaultdict(list)
+        for fid, key in bad_cites.items():
+            by_key[key].append(fid)
+        for key, fids in sorted(by_key.items()):
+            shown = ", ".join(fids[:8])
+            more = "" if len(fids) <= 8 else f" (+{len(fids) - 8} more)"
+            print(f"  {key} → {shown}{more}")
+        print("\nAdd the entries to blog/data/references.bib or fix the chapter→author map.")
+        sys.exit(1)
+
+    if check_only:
+        print(f"--check OK: {len(resolved)} features, all @cite keys resolve.")
+        return
 
     print(f"Loading WALS data from {DATA}")
     langs = load_languages()
@@ -722,12 +806,17 @@ def main():
         out_path.write_text(content, encoding="utf-8")
         print(f"  → {out_path.relative_to(ROOT)} ({len(entries)} entries)")
 
-    # Generate Languages module
-    print("Generating Languages.lean...")
-    content = generate_languages(langs, used_language_ids)
-    out_path = OUT / "Languages.lean"
-    out_path.write_text(content, encoding="utf-8")
-    print(f"  → {out_path.relative_to(ROOT)} ({len(used_language_ids)} languages)")
+    # Generate Languages module — only on a full-set run. Single-feature regens
+    # would otherwise shrink Languages.lean to that feature's language subset
+    # and silently drop ~3500 entries that downstream files depend on.
+    if not args:
+        print("Generating Languages.lean...")
+        content = generate_languages(langs, used_language_ids)
+        out_path = OUT / "Languages.lean"
+        out_path.write_text(content, encoding="utf-8")
+        print(f"  → {out_path.relative_to(ROOT)} ({len(used_language_ids)} languages)")
+    else:
+        print("Skipping Languages.lean (single-feature run).")
 
     # Emit per-feature constructor rename map for downstream consumer rewriting.
     # Curated FEATURES never get a rename entry (their _rename is absent).

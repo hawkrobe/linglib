@@ -4,29 +4,93 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.261] - 2026-04-23
+
+### English Determiners fragment cleanup (Cut B: parameters → studies)
+
+`Fragments/English/Determiners.lean` shrunk from 773 → ~210 LOC by
+removing all theory-laden content from the lexicon. The fragment now
+carries only descriptive lexical data (form, qforce, number, mass,
+monotonicity-as-label, strength-as-label). Per-paper model parameters
+move to study files; theory-machinery moves to theory files.
+
+- **`QuantifierEntry` fields dropped**: `gqtThreshold`, `ptPrototype`,
+  `ptSpread`. These are model parameters of GQT/PT theories of
+  quantifier meaning, not properties of the words. Drops from `English/`
+  + `French/Determiners.lean`.
+- **`QuantityWord` enum** (canonical 6-element ⟨none, few, some, half,
+  most, all⟩ paradigm) moves to new `Phenomena/Quantification/Inventory.lean`
+  along with `entry`/`monotonicity`/`toList` accessors and the
+  `gqDenotation` mapping to `every_sem`/`some_sem`/etc. Cross-paper
+  shared data, not English-fragment-specific.
+- **`both_sem`/`neither_sem`** + their `_conservative` proofs move to
+  `Theories/Semantics/Quantification/Quantifier.lean` (the canonical
+  GQ-denotation file).
+- **GQT meaning operator** `gqtMeaning (n) (mono) (θ) (t)` lives in
+  `Theories/Semantics/Quantification/Quantifier.lean` as a parametric
+  function consuming a threshold + monotonicity. Studies plug in their
+  own threshold values.
+- **PT meaning operator** lives in new
+  `Theories/Semantics/Probabilistic/PrototypeTheory.lean`. The previous
+  `approxGaussian` (broken: non-monotone, dropped to 0 at xSq=4)
+  replaced with a proper non-negative monotone-decreasing tent kernel
+  (`bumpKernel`) that genuinely approximates a Gaussian bump.
+- **Per-paper parameters** (B&C-style threshold values, prototype peaks,
+  spreads) inlined in `Phenomena/ScalarImplicatures/Studies/VanTielEtAl2021.lean`'s
+  `RSAModel` namespace. Each study commits to its own values rather
+  than dressing them up as lexical facts.
+- **Dead code dropped**: 16 `_bridge` theorems (vacuous `⟨rfl, lemma⟩`
+  decorations with zero consumers), `Scale`/`someAllScale`/`someMostAllScale`
+  (duplicate of `Alternatives.HornScale` with zero consumers),
+  `inferentialClass`/`doubleMono` accessors (zero consumers).
+- **`*_distMaxClass`** + `eachSem`/`allSem` move to
+  `Phenomena/Plurals/Studies/HaslingerHienEtAl2025.lean` (their sole
+  consumer); the `Haslinger` study no longer imports `Determiners`.
+- **`Phenomena/ScalarImplicatures/QuantityDomain.lean`** partially
+  dissolved: `VanTielQuantity` re-export shim removed, but the
+  3-element `Utterance` and 4-element `ExtUtterance` toy scales kept
+  as legitimate cross-paper data for tutorial-style RSA studies
+  (Goodman-Stuhlmüller 2013, Potts et al. 2016, Macuch-Silva et al. 2024).
+- **Consumers updated**: `BarwiseCooper1981`, `Typology`, `VonFintel1993`,
+  `VanTielEtAl2021` now import `QuantityWord` from `Inventory.lean`.
+
+Build green; full repo (5335 jobs) compiles.
+
 ## [0.230.260] - 2026-04-23
 
-### Implicature/Diagnostics.lean — Gricean tests over Implicature
+### O'Donnell 2015 Phase 4: MultinomialPCFG instance
 
-Second piece of the API expansion (after Defs.lean in 0.230.259).
-Formalizes the four classical Gricean diagnostics over the
-`Implicature W` type, so they apply uniformly to neo-Gricean,
-EXH-derived, and RSA-derived inferences.
+First concrete `StochasticGenerator` instance: the simplest
+weighted-CFG model from @cite{odonnell-2015} §3.1.2 (eq 3.5).
 
-- **New file**: `Linglib/Theories/Pragmatics/Implicature/Diagnostics.lean`
-  (~210 LOC). Declares `IsCancellable φ i` and `IsReinforceable φ i`
-  (joint with assertion) and `IsCalculable i` / `IsNonDetachable i`
-  (lifted from `ImplicatureMechanism.isCalculable` and
-  `ImplicatureKind.isNonDetachable`). Bundles into
-  `GriceanProfile φ i`.
-- **Failure-mode theorems** (load-bearing for the contemporary critique
-  of grammaticalism per @cite{bassi-delpinal-sauerland-2021}):
-  `conventional_not_calculable` and `manner_is_detachable`. The
-  diagnostics divide the implicature space rather than uniformly hold.
-- **Reinforceable ⇒ Cancellable** (`IsReinforceable.toCancellable`):
-  the diagnostics are not independent.
-- Cites @cite{grice-1975}, @cite{sadock-1978}, @cite{hirschberg-1985},
-  @cite{horn-1984}, @cite{levinson-2000}.
+- **New file**:
+  `Linglib/Theories/Morphology/FragmentGrammars/MultinomialPCFG.lean`
+  (~140 LOC). Provides `MultinomialPCFG G` (bundled-normalization
+  structure: `ruleProb` + `_nonneg` + `_normalized`), `derivProb`
+  (mutual recursion on `CFGTree` × `List CFGTree`), `corpusProb`
+  (factorized via `Multiset.prod`), nonnegativity proofs, and
+  `toStochasticGenerator` projection.
+- **Bundled-normalization design** (mathlib `PMF`/`ProbabilityMeasure`
+  precedent): `ruleProb_normalized : ∀ a, ∑ r ∈ G.rules.filter
+  (·.input = a), ruleProb r = 1` lives in the structure, not as a
+  separate `IsProperPCFG` typeclass. The unbundled "weighted CFG"
+  abstraction is deferred until `DMPCFG` arrives (it works with
+  pre-Dirichlet unnormalized hyperparameters), per "don't
+  speculatively factor."
+- **Why corpusProb factorizes here**: the factorization
+  `P(D | G) = ∏_d P(d | G)` is a *property of multinomial PCFGs*,
+  not a property of stochastic generators in general. `DMPCFG` /
+  `MAG` / `FG` / `DOP` couple derivations through shared latent
+  state and *do not* factorize. This is the architectural reason
+  `StochasticGenerator` takes corpora rather than single
+  derivations.
+- Uses `Multiset.prod_map_nonneg` from
+  `Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset` —
+  the cleanest mathlib API for "product of nonneg map values."
+- Requires `[DecidableEq G.NT]` (needed for
+  `G.rules.filter (·.input = a)`).
+
+Build: 1.9s clean.
 
 ## [0.230.259] - 2026-04-23
 
