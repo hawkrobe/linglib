@@ -1,6 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.NormNum
+import Linglib.Core.Lexical.Word
+import Linglib.Features.ClauseForm
 
 /-!
 # Acceptability Judgment Paradigm
@@ -178,5 +180,88 @@ def of3 (p₀ p₁ p₂ : Prop)
     | ⟨2, _⟩ => inferInstance
 
 end AccountPredictions
+
+-- ============================================================================
+-- §4. Introspective Minimal Pairs (Pre-Experimental)
+-- ============================================================================
+
+/-! Minimal pairs as **introspective grammaticality contrasts** —
+    the methodological tradition that Sprouse's factorial-design
+    machinery above was introduced to discipline. A minimal pair records
+    a single (typically the analyst's) judgment per sentence: one is
+    grammatical, one is not, and they differ minimally in the property
+    being tested.
+
+    Two parallel families:
+
+    * **Word-based** (`MinimalPair`, `PhenomenonData`): sentences are
+      `List Word`, requiring feature specifications. Used by analyses
+      that operate on parsed/featural representations (HPSG, DG, Minimalism).
+    * **String-based** (`SentencePair`, `StringPhenomenonData`): sentences
+      are raw strings, parseable by any theory. Used by phenomenon data
+      files that should remain free of theoretical commitments. -/
+
+-- §4.1 Word-based
+
+/-- A minimal pair: grammatical vs ungrammatical, with context. -/
+structure MinimalPair where
+  grammatical : List Word
+  ungrammatical : List Word
+  clauseType : ClauseForm
+  description : String
+  citation : Option String := none
+
+/-- Collection of minimal pairs for a phenomenon. -/
+structure PhenomenonData where
+  name : String
+  pairs : List MinimalPair
+  generalization : String
+
+/-- Check if a grammaticality predicate captures a minimal pair.
+
+    Captures the pair iff the predicate accepts the grammatical sentence
+    and rejects the ungrammatical sentence. -/
+def capturesMinimalPairBy (pred : List Word → Bool) (pair : MinimalPair) : Bool :=
+  pred pair.grammatical && !pred pair.ungrammatical
+
+/-- Check if a grammaticality predicate captures all minimal pairs in a
+    phenomenon dataset. -/
+def capturesPhenomenonData (pred : List Word → Bool) (phenom : PhenomenonData) : Bool :=
+  phenom.pairs.all (capturesMinimalPairBy pred)
+
+-- §4.2 String-based (theory-neutral)
+
+/-- String-based minimal pair for theory-neutral phenomena.
+
+    Unlike `MinimalPair` which uses `List Word` (requiring feature
+    specifications), this type uses raw strings that can be parsed by any
+    theory. This keeps empirical data in `Phenomena/` free from
+    theoretical commitments. -/
+structure SentencePair where
+  /-- The grammatical sentence -/
+  grammatical : String
+  /-- The ungrammatical sentence -/
+  ungrammatical : String
+  /-- Clause form (declarative, question, etc.) -/
+  clauseType : ClauseForm
+  /-- Description of what the pair tests -/
+  description : String
+  /-- Optional citation for the data -/
+  citation : Option String := none
+  deriving Repr, BEq
+
+/-- String-based phenomenon data for theory-neutral representation.
+
+    This is the string-based analogue of `PhenomenonData`. Phenomena files
+    should use this type so that empirical data is decoupled from any
+    particular grammatical theory's representation. -/
+structure StringPhenomenonData where
+  /-- Name of the phenomenon -/
+  name : String
+  /-- List of minimal pairs -/
+  pairs : List SentencePair
+  /-- Generalization captured by this data -/
+  generalization : String
+  deriving Repr
 
 end Paradigms.AcceptabilityJudgment

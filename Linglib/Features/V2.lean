@@ -1,5 +1,5 @@
 /-!
-# V2Data
+# V2
 
 Theory-neutral V2 data: for each clause form, whether verb movement to
 second position is observed. Used by `Fragments/{Lang}/V2.lean` files
