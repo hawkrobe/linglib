@@ -4,6 +4,77 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.222] - 2026-04-22
+
+### Phonology: Stratal-vs-TCT bridge skeleton + bib entries
+
+Adds the architectural comparison between Stratal OT (@cite{kiparsky-2000})
+and Transderivational Correspondence Theory (@cite{benua-1997}) on the
+Sundanese plural — both architectures predict the same overapplied
+surface form [ɲ-ãl-ĩãr], for structurally distinct reasons.
+
+- `Phenomena/Phonology/Studies/Benua1997.lean` `StratalComparison`
+  namespace: builds `sundaneseStratalDerivation : StratalDerivation`
+  and proves `stratal_tct_agree_on_sundanese`. The agreement is `rfl`
+  by construction (concrete case); the full bridge — for *every*
+  stratal grammar there exists a TCT grammar producing the same surface
+  predictions — is documented as the next major scientific step.
+- Adds @cite{cohn-1990} attribution for Sundanese data (the source
+  Benua reanalyzes).
+
+### Bib
+
+3 new entries (all UCLA/UMass dissertations — well-attested, no
+DOI/page numbers fabricated):
+
+- `cohn-1990` — Cohn's UCLA dissertation on nasal phonology, the data
+  source for Sundanese.
+- `albright-2002` — Albright's UCLA dissertation on derivative-base
+  identification (paradigm learnability).
+- `wolf-2008` — Wolf's UMass dissertation *Optimal Interleaving*
+  (OT-CC); cited prospectively for the chain-correspondence sibling
+  theory.
+
+Per CLAUDE.md anti-hallucination policy, three additional candidates
+(Bermúdez-Otero 2018 stratal handbook chapter, Krämer 2012 *Underlying
+Representations*, McCarthy 2000 Sympathy paper) were *not* added —
+they need DOI/venue verification before merging.
+
+## [0.230.221] - 2026-04-22
+
+### Phase D-E2: substrate `intervene≡extend` bridge stub + CWL bridge consumed
+
+Adds `Core.Causal.V2.SEM.developDet_intervene_eq_developDet_extend`
+as a substrate-level theorem (sorry-stub with detailed TODO comment):
+for an acyclic deterministic SEM with `cause` undetermined in `s`,
+Pearl-intervening to set `cause := xC` is equivalent at the
+`developDet` level to extending the valuation with `cause = xC` and
+developing under the original mechanisms. This is the load-bearing
+fact connecting `probabilisticSuf` (intervene-based, mathlib-canonical)
+to `causallySufficient` (extend-based, classical SCM-style).
+
+Uses the substrate lemma to consume CWL2025's
+`probabilisticSuf_eq_deterministicSuf` bridge sorry: that proof now
+reads as a 4-line tactic block (rw probabilisticSuf_of_deterministic;
+rw the bridge; unfold abbrev chain; congr 1). The hypothesis
+`bg.get c = none` is added — trivially satisfied by SUF's standard
+empty-background usage.
+
+Net sorry count for V2 study sub-namespaces:
+- Before D-E: 4 sorries scattered across BG (3 EndToEnd) + CWL (1 IsDAG + 1 bridge)
+- After D-E (closed 4 IsDAG via depth helper) + D-E2:
+  1 substrate sorry (`developDet_intervene_eq_developDet_extend`),
+  1 study sorry (`solo_cause_chain` 3 sub-goals).
+
+The CWL bridge migration is the model for converting study-level
+sorries into substrate-level ones — better location for the missing
+fact, single source of truth.
+
+BG2025 `solo_cause_chain` sorries remain — they need substrate-level
+`developDet` reducibility lemmas for concrete BoolSEMs (a different
+kind of work than the bridge lemma; involves `Fintype.elems.toList`
+permutation invariance).
+
 ## [0.230.220] - 2026-04-22
 
 ### Conditionals/Exhaustivity mathlib-audit follow-ups
