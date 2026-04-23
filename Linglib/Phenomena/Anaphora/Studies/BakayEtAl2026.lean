@@ -1,6 +1,6 @@
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
 import Linglib.Fragments.Turkish.Anaphors
-import Linglib.Phenomena.Anaphora.Compare
+import Linglib.Phenomena.Anaphora.Studies.BarkerPullum1990
 
 /-!
 # Bakay, Akkuş & Dillon (2026)
@@ -40,7 +40,7 @@ components:
    (c-command, clause-mate) predict the target advantage
 
 C-command is verified computationally on tree addresses using the
-binary-branching `cCommand` from `Phenomena.Anaphora.Compare`.
+binary-branching `cCommand` from `BarkerPullum1990`.
 
 -/
 
@@ -49,7 +49,7 @@ set_option autoImplicit false
 namespace BakayEtAl2026
 
 open Processing.CueBasedRetrieval
-open Phenomena.Anaphora.Compare (cCommand Dir Address dominates)
+open BarkerPullum1990 (cCommand Dir Address dominates)
 
 -- ============================================================================
 -- §1: Feature Inventory

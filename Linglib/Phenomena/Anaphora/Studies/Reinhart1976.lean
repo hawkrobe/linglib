@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Anaphora.Compare
+import Linglib.Phenomena.Anaphora.Studies.BarkerPullum1990
 
 /-!
 # Reinhart (1976) @cite{reinhart-1976}
@@ -34,7 +34,7 @@ set_option autoImplicit false
 
 namespace Reinhart1976
 
-open Phenomena.Anaphora.Compare
+open BarkerPullum1990
 open Core.Order
 open Set
 

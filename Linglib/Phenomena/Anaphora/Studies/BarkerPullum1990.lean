@@ -1,46 +1,34 @@
-/-
-# Coreference: Cross-Theoretic Comparison
+/-!
+# Barker & Pullum (1990) — A Theory of Command Relations @cite{barker-pullum-1990}
 
-Compares how different syntactic theories handle coreference patterns, unified through
-@cite{barker-pullum-1990}'s algebraic theory of command relations.
+*Linguistics and Philosophy* 13(1): 1–34.
 
-## Part A: Abstract Framework
+@cite{barker-pullum-1990}'s algebraic theory of command relations provides
+a unified framework for cross-theoretic comparison: command relations form
+a **complete lattice** under the antitone map `P ↦ C_P`, and the
+**Intersection Theorem** `C_{P∪Q} = C_P ∩ C_Q` explains why theories
+that disagree on the underlying generating property still converge on
+configurational structures.
 
-Command relations form a **complete lattice** and the map P ↦ C_P is **antitone**:
+## Concrete command relations
 
-    C_{P∪Q} = C_P ∩ C_Q (Intersection Theorem)
+Different syntactic theories use different "command" relations:
+- **Minimalism**: c-command (tree geometry; @cite{reinhart-1976})
+- **HPSG**: o-command (obliqueness hierarchy; @cite{pollard-sag-1994})
+- **Dependency Grammar**: d-command (dependency paths; @cite{hudson-1990})
 
-The **Configurational Equivalence Corollary** explains WHY theories agree:
-when upper bounds coincide for a node, all command relations agree on that node.
+Under the *configurational assumption* (tree structure encodes obliqueness),
+all three converge — explained by the Intersection Theorem
+(`unique_upper_bound_equivalence`).
 
-## Part B: Concrete Command Relations
+## Algebraic structure
 
-Different theories use different "command" relations:
-- **Minimalism**: C-command (tree geometry)
-- **HPSG**: O-command (obliqueness hierarchy)
-- **Dependency Grammar (Hudson)**: D-command (dependency paths)
-- **Dependency Grammar (CRDC)**: Valency frames (full vs. conjunct valents)
-
-## Part C: Configurational Equivalence
-
-**Main Theorem**: Under the *configurational assumption* (tree structure encodes
-obliqueness), these four approaches are equivalent. This explains why
-the theories make identical predictions on simple transitive clauses.
-
+§ J also formalizes @cite{kracht-1993}'s extension showing that command
+relations form a **distributoid** — an algebraic structure (D, ∩, ∪, ∘)
+in which composition distributes over intersection. (TODO: split § J into
+its own `Studies/Kracht1993.lean` once the dependencies are isolated.)
 -/
 
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Theories.Syntax.Minimalism.Coreference
-import Linglib.Theories.Syntax.HPSG.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.Anaphora.Studies.Chomsky1981
-import Linglib.Phenomena.Anaphora.Studies.SagWasowBender2003
-import Linglib.Phenomena.Anaphora.Studies.Hudson1990
-import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Core.Tree
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command
@@ -50,49 +38,10 @@ import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Data.Set.Lattice
 import Mathlib.Order.Heyting.Basic
 
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev they := Fragments.English.Pronouns.they.toWord
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev himself := Fragments.English.Pronouns.himself.toWord
-private abbrev herself := Fragments.English.Pronouns.herself.toWord
-private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev him := Fragments.English.Pronouns.him.toWord
-private abbrev her := Fragments.English.Pronouns.her.toWord
-private abbrev them := Fragments.English.Pronouns.them.toWord
-private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
-
-namespace Phenomena.Anaphora.Compare
+namespace BarkerPullum1990
 
 open Set
 open Core.Order
-open Phenomena.Anaphora.Coreference
-
--- PART A: @cite{barker-pullum-1990} ABSTRACT FRAMEWORK
--- (Definitions and theorems live in `Linglib.Core.Order.{TreeOrder, Command}`;
---  re-exported here via `open Core.Order`.)
-
-/-
-## Interpretation
-
-The `unique_upper_bound_equivalence` theorem says:
-
-**When the subject has exactly one dominating node x (like S in standard clause structure),
-any two theories that agree on whether x is in their generating property P
-will make the same predictions about what the subject commands.**
-
-This is WHY Minimalism (c-command over maximal projections) agrees with HPSG (o-command)
-agrees with DG (d-command) for standard transitive clauses:
-
-1. In [S [NP John] [VP saw himself]], NP_John has exactly one proper dominator: S
-2. c-command: S is a maximal projection ✓
-3. All theories agree S "counts" as a binder-blocking category
-4. Therefore, all theories agree: John commands the object position
-
-The theories differ in WHAT they consider the generating property P,
-but for standard structures, they agree on whether the critical node x ∈ P.
--/
 
 -- PART B: CONCRETE COMMAND RELATIONS
 
@@ -316,69 +265,6 @@ When tree structure encodes obliqueness (configurational assumption),
 these P's have the same upper bounds for subject position, so by B&P
 the command relations must agree.
 -/
-
--- PART D: EMPIRICAL VERIFICATION
-
--- D.1: Theory Agreement Theorems
-
-/--
-**Main Agreement Theorem: Reflexive Coreference**
-
-All four theories correctly predict the reflexive coreference patterns.
--/
-theorem all_theories_capture_reflexive_coreference :
-    Chomsky1981.capturesCoreferenceData reflexiveCoreferenceData ∧
-    SagWasowBender2003.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
-  constructor
-  · exact Chomsky1981.captures_reflexive_coreference
-  constructor
-  · exact SagWasowBender2003.captures_reflexive_coreference
-  constructor
-  · exact Hudson1990.captures_reflexive_coreference
-  · exact OsborneLi2023.captures_reflexive_coreference
-
-/--
-**Main Agreement Theorem: Complementary Distribution**
--/
-theorem all_theories_capture_complementary_distribution :
-    Chomsky1981.capturesCoreferenceData complementaryDistributionData ∧
-    SagWasowBender2003.capturesCoreferenceData complementaryDistributionData = true ∧
-    Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
-    OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
-  constructor
-  · exact Chomsky1981.captures_complementary_distribution
-  constructor
-  · exact SagWasowBender2003.captures_complementary_distribution
-  constructor
-  · exact Hudson1990.captures_complementary_distribution
-  · exact OsborneLi2023.captures_complementary_distribution
-
-/--
-**Main Agreement Theorem: Pronominal Disjoint Reference**
--/
-theorem all_theories_capture_pronominal_disjoint_reference :
-    Chomsky1981.capturesCoreferenceData pronominalDisjointReferenceData ∧
-    SagWasowBender2003.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by
-  constructor
-  · exact Chomsky1981.captures_pronominal_disjoint_reference
-  constructor
-  · exact SagWasowBender2003.captures_pronominal_disjoint_reference
-  constructor
-  · exact Hudson1990.captures_pronominal_disjoint_reference
-  · exact OsborneLi2023.captures_pronominal_disjoint_reference
-
-
-/-- Total minimal pairs tested -/
-def totalPairsTested : Nat :=
-  Nat.add (Nat.add reflexiveCoreferenceData.pairs.length
-    pronominalDisjointReferenceData.pairs.length)
-    complementaryDistributionData.pairs.length
-
-#guard totalPairsTested == 9
 
 -- PART E: SPECIFIC COMMAND RELATIONS (B&P INSTANTIATIONS)
 
@@ -1187,4 +1073,4 @@ The Heyting algebra structure now uses Mathlib's `HeytingAlgebra` typeclass:
    and intersections of basic command relations.
 -/
 
-end Phenomena.Anaphora.Compare
+end BarkerPullum1990

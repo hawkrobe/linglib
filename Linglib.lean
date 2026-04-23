@@ -1600,7 +1600,7 @@ import Linglib.Theories.Semantics.Questions.RelevanceTheories
 import Linglib.Theories.Semantics.TypeTheoretic.CNsAsTypes
 import Linglib.Theories.Semantics.TypeTheoretic.FrameComposition
 -- Phenomenon-level comparisons (moved from Comparisons/)
-import Linglib.Phenomena.Anaphora.Compare
+import Linglib.Phenomena.Anaphora.Studies.BarkerPullum1990
 import Linglib.Phenomena.Assertion.Compare
 import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
