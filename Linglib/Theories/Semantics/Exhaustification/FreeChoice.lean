@@ -58,9 +58,6 @@ def diamond (p : Set World) : Prop := ∃ w, p w
 /-- Necessity modal: □p holds iff p is true at all accessible worlds. -/
 def box (p : Set World) : Prop := ∀ w, p w
 
-/-- Disjunction of propositions (thin alias for `Set.union`). -/
-def pdisj (p q : Set World) : Set World := p ∪ q
-
 /-- The alternative set for ◇(p ∨ q) consists of {◇p, ◇q, ◇(p ∧ q)}.
 
 This is the standard alternative set: subdomain alternatives ◇p, ◇q
@@ -75,7 +72,7 @@ namespace FCAltSet
 variable (a : FCAltSet World)
 
 /-- The assertion: ◇(p ∨ q) -/
-def assertion : Prop := diamond (pdisj a.p a.q)
+def assertion : Prop := diamond (a.p ∪ a.q)
 
 /-- Alternative: ◇p -/
 def altP : Prop := diamond a.p
@@ -129,7 +126,7 @@ theorem free_choice_forward (a : FCAltSet World) (h : a.exh2) : a.freeChoice := 
   unfold FCAltSet.freeChoice
   unfold FCAltSet.exhAltP at hnexhP
   unfold FCAltSet.exhAltQ at hnexhQ
-  unfold FCAltSet.assertion diamond pdisj at hassert
+  unfold FCAltSet.assertion diamond at hassert
   obtain ⟨w, hw⟩ := hassert
   constructor
   · -- Show ◇p
@@ -161,7 +158,7 @@ theorem free_choice_backward (a : FCAltSet World)
   unfold FCAltSet.exh2 FCAltSet.exh1
   refine ⟨⟨?_, hnpq⟩, ?_, ?_⟩
   · -- assertion: ◇(p ∨ q) from ◇p
-    unfold FCAltSet.assertion diamond pdisj
+    unfold FCAltSet.assertion diamond
     obtain ⟨w, hw⟩ := hp
     exact ⟨w, Or.inl hw⟩
   · -- ¬(◇p ∧ ¬◇q)
@@ -441,7 +438,7 @@ namespace ModalFCAltSet
 
 variable (a : ModalFCAltSet World)
 
-def assertion : Prop := a.M (pdisj a.p a.q)
+def assertion : Prop := a.M (a.p ∪ a.q)
 def altP : Prop := a.M a.p
 def altQ : Prop := a.M a.q
 def altPQ : Prop := a.M (a.p ∩ a.q)
@@ -484,7 +481,7 @@ theorem fc_duality_forward (a : ModalFCAltSet World)
 
 /-- **Corollary: ◇ satisfies the distributivity condition.** -/
 theorem diamond_distributes (p q : Set World) :
-    diamond (pdisj p q) → diamond p ∨ diamond q := by
+    diamond (p ∪ q) → diamond p ∨ diamond q := by
   intro ⟨w, hw⟩
   cases hw with
   | inl hp => exact Or.inl ⟨w, hp⟩
@@ -492,7 +489,7 @@ theorem diamond_distributes (p q : Set World) :
 
 /-- Reverse: ◇A ∨ ◇B → ◇(A ∨ B). -/
 theorem diamond_collects (p q : Set World) :
-    diamond p ∨ diamond q → diamond (pdisj p q) := by
+    diamond p ∨ diamond q → diamond (p ∪ q) := by
   intro h
   cases h with
   | inl hp => obtain ⟨w, hw⟩ := hp; exact ⟨w, Or.inl hw⟩
@@ -503,7 +500,7 @@ theorem diamond_collects (p q : Set World) :
     reductionist thesis: the difference between narrow-scope ◇(A ∨ B) and
     wide-scope ◇A ∨ ◇B matters only for pragmatic enrichment. -/
 theorem diamond_distributes_iff (p q : Set World) :
-    diamond (pdisj p q) ↔ diamond p ∨ diamond q :=
+    diamond (p ∪ q) ↔ diamond p ∨ diamond q :=
   ⟨diamond_distributes p q, diamond_collects p q⟩
 
 end FCDuality

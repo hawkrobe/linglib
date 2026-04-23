@@ -4,7 +4,6 @@ import Mathlib.Order.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Powerset
-import Linglib.Theories.Semantics.Entailment.Polarity
 
 /-!
 # Exhaustivity Operators: `exhMW` and `exhIE`
@@ -41,9 +40,6 @@ Finset side.
 -/
 
 namespace Exhaustification
-
--- Re-export `ContextPolarity` from the consolidated polarity module.
-open Semantics.Entailment.Polarity (ContextPolarity)
 
 variable {World : Type*}
 
@@ -106,9 +102,13 @@ def exhMW : Set World :=
 
 /--
 A world u is minimal among φ-worlds relative to <_ALT.
+
+Definitionally equal to `u ∈ exhMW ALT φ` — the named version is preserved
+because Spector 2016's prose talks about minimal worlds independently of
+the `exhMW` operator that selects them.
 -/
 def IsMinimal (u : World) : Prop :=
-  φ u ∧ ¬∃ v, φ v ∧ (v <[ALT] u)
+  u ∈ exhMW ALT φ
 
 -- Basic property
 theorem exhMW_entails : exhMW ALT φ ⊆ φ :=
@@ -134,6 +134,18 @@ def IsCompatible (E : Set (Set World)) : Prop :=
   φ ∈ E ∧
   (∀ ψ ∈ E, ψ = φ ∨ ∃ a ∈ ALT, ψ = aᶜ) ∧
   SetConsistent E
+
+/--
+A compatible set's consistency witness satisfies `φ` (since `φ ∈ E`)
+and every member of `E`. Frequently used pattern: instead of unpacking
+`hE.2.2` into the witness and then applying it to `hE.1` separately,
+this packages both in one `obtain`.
+-/
+theorem IsCompatible.exists_phi_witness
+    {ALT : Set (Set World)} {φ : Set World} {E : Set (Set World)}
+    (hE : IsCompatible ALT φ E) : ∃ v, φ v ∧ ∀ ψ ∈ E, ψ v := by
+  obtain ⟨hφE, _, v, hv⟩ := hE
+  exact ⟨v, hv φ hφE, hv⟩
 
 /--
 Definition 3.3: MC_(ALT,φ)-sets
@@ -217,6 +229,36 @@ theorem IsMCSet.not_isInnocentlyExcludable_of_compl_notMem
     ¬IsInnocentlyExcludable ALT φ a := by
   intro ⟨_, hIE⟩
   exact h (hIE E hE)
+
+/--
+Sufficient condition for innocent excludability via MC-set extension: if
+extending every MC-set with `aᶜ` is consistent, then `aᶜ` lies in every
+MC-set (by maximality), so `a` is innocently excludable.
+
+Captures the recurring "for any MC-set E, `E ∪ {aᶜ}` is compatible →
+`aᶜ ∈ E` by maximality" pattern in scalar-implicature proofs. Callers
+provide the consistency witness; the rest of the maximality argument is
+discharged here.
+-/
+theorem IsInnocentlyExcludable.of_extension_consistent
+    {ALT : Set (Set World)} {φ : Set World} {a : Set World}
+    (ha : a ∈ ALT)
+    (h_extend : ∀ E, IsMCSet ALT φ E → SetConsistent (E ∪ {aᶜ})) :
+    IsInnocentlyExcludable ALT φ a := by
+  refine ⟨ha, ?_⟩
+  intro E hE
+  by_contra h_not_in
+  have hext_compat : IsCompatible ALT φ (E ∪ {aᶜ}) := by
+    refine ⟨Set.mem_union_left _ hE.1.1, ?_, h_extend E hE⟩
+    intro ψ hψ
+    rcases hψ with hψ_E | hψ_singleton
+    · exact hE.1.2.1 ψ hψ_E
+    · right
+      exact ⟨a, ha, Set.mem_singleton_iff.mp hψ_singleton⟩
+  have hsub : E ⊆ E ∪ {aᶜ} := Set.subset_union_left
+  have h_not_sup : ¬(E ∪ {aᶜ} ⊆ E) :=
+    fun hle => h_not_in (hle (Set.mem_union_right E rfl))
+  exact h_not_sup (hE.2 _ hext_compat hsub)
 
 -- DEFINITION 4: exh_ie (Spector p.8)
 

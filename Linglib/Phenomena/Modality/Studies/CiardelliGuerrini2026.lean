@@ -66,7 +66,7 @@ are vacuous. This yields Δ(A ∘ B), not ΔA ∘ ΔB.
 namespace CiardelliGuerrini2026
 
 open Core.Modality
-open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff FCAltSet free_choice_forward)
+open Exhaustification.FreeChoice (diamond diamond_distributes_iff FCAltSet free_choice_forward)
 open Fragments.English.Auxiliaries
 
 -- ============================================================================
@@ -90,7 +90,7 @@ matters only for compositional derivation and pragmatic enrichment.
     only for pragmatic enrichment. This is the central observation of
     @cite{ciardelli-guerrini-2026}. -/
 example {World : Type*} (p q : Set World) :
-    diamond (pdisj p q) ↔ diamond p ∨ diamond q :=
+    diamond (p ∪ q) ↔ diamond p ∨ diamond q :=
   diamond_distributes_iff p q
 
 -- ============================================================================
@@ -345,7 +345,7 @@ theorem wideScope_blocks_fc {World : Type*} (A B : Set World)
 /-- Truth-conditional equivalence: the scope distinction is semantically
     vacuous. ◇(A∨B) ↔ ◇A∨◇B in standard modal logic. -/
 theorem scope_equivalence {World : Type*} (A B : Set World) :
-    diamond (pdisj A B) ↔ diamond A ∨ diamond B :=
+    diamond (A ∪ B) ↔ diamond A ∨ diamond B :=
   diamond_distributes_iff A B
 
 /-- **The Reductionist Thesis** (@cite{ciardelli-guerrini-2026}, formalized).

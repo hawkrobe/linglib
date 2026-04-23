@@ -97,42 +97,25 @@ Prediction: exh(some) → ¬all.
 theorem someAll_implicature :
     ∀ w : SemQuantWorld, exhIE someAllScale.alts someQ w → ¬allQ w := by
   intro w hexh hall
-  have hie_neg_all : (allQᶜ) ∈ IE someAllScale.alts someQ := by
-    intro E hE_mc
-    by_contra h_not_in
-    let E' := E ∪ {allQᶜ}
-    have hcompat : IsCompatible someAllScale.alts someQ E' := by
-      obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-      refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
-      · intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · exact hform ψ hψ_E
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          right
-          refine ⟨allQ, ?_, hψ_new⟩
-          exact Set.mem_insert_of_mem _ rfl
-      · use ⟨1, by omega⟩
-        intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-          · simp [someQ]
-          · simp [someAllScale, SemanticScale.alts] at ha
-            rcases ha with rfl | rfl
-            · exfalso
-              obtain ⟨u, hu⟩ := hcons
-              exact hu (someQᶜ) hψ_E (hu someQ hphi)
-            · intro h; have : (1 : Nat) = 3 := h; omega
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          rw [hψ_new]
-          intro h; have : (1 : Nat) = 3 := h; omega
-    have hsubset : E ⊆ E' := Set.subset_union_left
-    have hE'_not_sub_E : ¬(E' ⊆ E) := by
-      intro hle
-      apply h_not_in
-      exact hle (Set.mem_union_right E (Set.mem_singleton _))
-    exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_all_w : (allQᶜ) w := hexh (allQᶜ) hie_neg_all
-  exact hneg_all_w hall
+  have hie : IsInnocentlyExcludable someAllScale.alts someQ allQ := by
+    apply IsInnocentlyExcludable.of_extension_consistent
+    · show allQ ∈ ({someQ, allQ} : Set _)
+      exact Set.mem_insert_of_mem _ rfl
+    · intro E hE_mc
+      refine ⟨⟨1, by omega⟩, fun ψ hψ => ?_⟩
+      rcases hψ with hψ_E | hψ_new
+      · rcases hE_mc.1.2.1 ψ hψ_E with rfl | ⟨a, ha, rfl⟩
+        · simp [someQ]
+        · simp [someAllScale, SemanticScale.alts] at ha
+          rcases ha with rfl | rfl
+          · exfalso
+            obtain ⟨v, hv_phi, hv⟩ := hE_mc.1.exists_phi_witness
+            exact hv (someQᶜ) hψ_E hv_phi
+          · intro h; have : (1 : Nat) = 3 := h; omega
+      · simp only [Set.mem_singleton_iff] at hψ_new
+        rw [hψ_new]
+        intro h; have : (1 : Nat) = 3 := h; omega
+  exact hexh _ hie.2 hall
 
 /--
 Prediction: exh(or) → ¬and.
@@ -140,42 +123,25 @@ Prediction: exh(or) → ¬and.
 theorem orAnd_implicature :
     ∀ w : ConnWorld, exhIE orAndScale.alts orConn w → ¬andConn w := by
   intro w hexh hand
-  have hie_neg_and : (andConnᶜ) ∈ IE orAndScale.alts orConn := by
-    intro E hE_mc
-    by_contra h_not_in
-    let E' := E ∪ {andConnᶜ}
-    have hcompat : IsCompatible orAndScale.alts orConn E' := by
-      obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-      refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
-      · intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · exact hform ψ hψ_E
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          right
-          refine ⟨andConn, ?_, hψ_new⟩
-          exact Set.mem_insert_of_mem _ rfl
-      · use ConnWorld.onlyA
-        intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-          · simp [orConn]
-          · simp [orAndScale, SemanticScale.alts] at ha
-            rcases ha with rfl | rfl
-            · exfalso
-              obtain ⟨u, hu⟩ := hcons
-              exact hu (orConnᶜ) hψ_E (hu orConn hphi)
-            · intro h; exact h
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          rw [hψ_new]
-          intro h; exact h
-    have hsubset : E ⊆ E' := Set.subset_union_left
-    have hE'_not_sub_E : ¬(E' ⊆ E) := by
-      intro hle
-      apply h_not_in
-      exact hle (Set.mem_union_right E (Set.mem_singleton _))
-    exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_and_w : (andConnᶜ) w := hexh (andConnᶜ) hie_neg_and
-  exact hneg_and_w hand
+  have hie : IsInnocentlyExcludable orAndScale.alts orConn andConn := by
+    apply IsInnocentlyExcludable.of_extension_consistent
+    · show andConn ∈ ({orConn, andConn} : Set _)
+      exact Set.mem_insert_of_mem _ rfl
+    · intro E hE_mc
+      refine ⟨ConnWorld.onlyA, fun ψ hψ => ?_⟩
+      rcases hψ with hψ_E | hψ_new
+      · rcases hE_mc.1.2.1 ψ hψ_E with rfl | ⟨a, ha, rfl⟩
+        · simp [orConn]
+        · simp [orAndScale, SemanticScale.alts] at ha
+          rcases ha with rfl | rfl
+          · exfalso
+            obtain ⟨v, hv_phi, hv⟩ := hE_mc.1.exists_phi_witness
+            exact hv (orConnᶜ) hψ_E hv_phi
+          · intro h; exact h
+      · simp only [Set.mem_singleton_iff] at hψ_new
+        rw [hψ_new]
+        intro h; exact h
+  exact hexh _ hie.2 hand
 
 /--
 Prediction: exh(possible) → ¬necessary.
@@ -183,42 +149,25 @@ Prediction: exh(possible) → ¬necessary.
 theorem possibleNecessary_implicature :
     ∀ w : ModalWorld, exhIE possibleNecessaryScale.alts possibleP w → ¬necessaryP w := by
   intro w hexh hnec
-  have hie_neg_nec : (necessaryPᶜ) ∈ IE possibleNecessaryScale.alts possibleP := by
-    intro E hE_mc
-    by_contra h_not_in
-    let E' := E ∪ {necessaryPᶜ}
-    have hcompat : IsCompatible possibleNecessaryScale.alts possibleP E' := by
-      obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-      refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
-      · intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · exact hform ψ hψ_E
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          right
-          refine ⟨necessaryP, ?_, hψ_new⟩
-          exact Set.mem_insert_of_mem _ rfl
-      · use ModalWorld.some
-        intro ψ hψ
-        rcases hψ with hψ_E | hψ_new
-        · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-          · simp [possibleP]
-          · simp [possibleNecessaryScale, SemanticScale.alts] at ha
-            rcases ha with rfl | rfl
-            · exfalso
-              obtain ⟨u, hu⟩ := hcons
-              exact hu (possiblePᶜ) hψ_E (hu possibleP hphi)
-            · intro h; exact h
-        · simp only [Set.mem_singleton_iff] at hψ_new
-          rw [hψ_new]
-          intro h; exact h
-    have hsubset : E ⊆ E' := Set.subset_union_left
-    have hE'_not_sub_E : ¬(E' ⊆ E) := by
-      intro hle
-      apply h_not_in
-      exact hle (Set.mem_union_right E (Set.mem_singleton _))
-    exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_nec_w : (necessaryPᶜ) w := hexh (necessaryPᶜ) hie_neg_nec
-  exact hneg_nec_w hnec
+  have hie : IsInnocentlyExcludable possibleNecessaryScale.alts possibleP necessaryP := by
+    apply IsInnocentlyExcludable.of_extension_consistent
+    · show necessaryP ∈ ({possibleP, necessaryP} : Set _)
+      exact Set.mem_insert_of_mem _ rfl
+    · intro E hE_mc
+      refine ⟨ModalWorld.some, fun ψ hψ => ?_⟩
+      rcases hψ with hψ_E | hψ_new
+      · rcases hE_mc.1.2.1 ψ hψ_E with rfl | ⟨a, ha, rfl⟩
+        · simp [possibleP]
+        · simp [possibleNecessaryScale, SemanticScale.alts] at ha
+          rcases ha with rfl | rfl
+          · exfalso
+            obtain ⟨v, hv_phi, hv⟩ := hE_mc.1.exists_phi_witness
+            exact hv (possiblePᶜ) hψ_E hv_phi
+          · intro h; exact h
+      · simp only [Set.mem_singleton_iff] at hψ_new
+        rw [hψ_new]
+        intro h; exact h
+  exact hexh _ hie.2 hnec
 
 /--
 Main Result: Theory correctly predicts all three Horn scale implicatures.
@@ -398,8 +347,8 @@ theorem orAnd_exh_breaks_entailment :
         · exact Or.inl rfl
         · rcases ha with rfl | rfl
           · exfalso
-            obtain ⟨u, hu⟩ := hE'_compat.2.2
-            exact hu (orConnᶜ) hψ'_E' (hu orConn hE'_compat.1)
+            obtain ⟨v, hv_phi, hv⟩ := hE'_compat.exists_phi_witness
+            exact hv (orConnᶜ) hψ'_E' hv_phi
           · exact Or.inr rfl
     have hψ_in : ψ ∈ ({orConn, andConnᶜ} : Set (Set ConnWorld)) := hψ_IE _ hMC
     rcases hψ_in with rfl | rfl

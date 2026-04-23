@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.230] - 2026-04-23
+
+### Exhaustification subdir audit (Phases B+C): hygiene + pattern hoisting
+
+Following the parallel mathlib + integration audits of `Theories/Semantics/Exhaustification/`, applying the small wins now and queuing larger relocations.
+
+**Phase B — hygiene:**
+- `IsMinimal` (Operators/Basic.lean) was a verbatim duplicate of `exhMW` membership. Redefined as `IsMinimal := u ∈ exhMW ALT φ` — definitionally equal, named concept preserved for Spector 2016 study consumers.
+- Dropped unused `Linglib.Theories.Semantics.Entailment.Polarity` import + commented-out `ContextPolarity` re-export from Operators/Basic.lean (no downstream consumers).
+- Dropped `pdisj : Set World → Set World → Set World` (thin alias for `∪`, 11 unfold-noise sites). Updated `Phenomena/Modality/Studies/CiardelliGuerrini2026.lean` consumer.
+- Made `Trivalent.classicalPart` definitionally `Truth3.toBoolOrFalse ∘ p` (was `fun w => p w == .true` — same Bool function, but explicit composition makes the Truth3 → Bool conversion visible).
+
+**Phase C — pattern hoisting:**
+Two new criteria added to `Operators/Basic.lean`:
+- **`IsCompatible.exists_phi_witness`**: packages MC-set's consistency witness with `φ` membership in one `obtain`. 3 known callers.
+- **`IsInnocentlyExcludable.of_extension_consistent`**: when extending every MC-set with `aᶜ` is consistent, then `a` is IE. Encapsulates the recurring "by_contra + maximality + extension-consistency" pattern. 6 callers identified across the subdir.
+
+3 implicature theorems in `ScalePredictions.lean` (someAll, orAnd, possibleNec) refactored to use both lemmas. Each was ~38 lines; now ~22. Net –48 lines in ScalePredictions, +52 in Operators/Basic.
+
+The third audit promotion in three commits (after `of_full_exclusion_consistent` 0.230.220 and `not_isInnocentlyExcludable_of_compl_notMem` + `not_isInnocentlyExcludable_of_phi_subset` 0.230.225). The IE criterion API surface is now substantial — five extracted constructors/destructors live next to `IsInnocentlyExcludable` for discoverability.
+
+Phases D-G (thin bundles, dead module decisions, file relocations, existsIn unification) follow.
+
 ## [0.230.229] - 2026-04-23
 
 ### Phonology Correspondence: reduplication substrate promoted to Correspondence.lean

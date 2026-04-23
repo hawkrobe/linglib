@@ -59,9 +59,11 @@ open Exhaustification (innocent predToFinset altsFromPreds)
 
     The IE computation operates on these classical truth conditions —
     entailment, consistency, and maximality are all defined bivalently.
-    The trivalent layer applies only *after* IE is computed. -/
+    The trivalent layer applies only *after* IE is computed.
+
+    Pointwise lift of `Truth3.toBoolOrFalse`. -/
 def classicalPart {W : Type} (p : W → Truth3) : W → Bool :=
-  fun w => p w == .true
+  Truth3.toBoolOrFalse ∘ p
 
 
 -- ════════════════════════════════════════════════════════════════
