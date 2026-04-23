@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 /-!
 # Prevention Semantics
@@ -85,5 +86,37 @@ theorem preventSem_with_accessory :
     · subst hpacc
       show (Situation.empty.extend (mkVar "acc") true).hasValue (mkVar "acc") true
       unfold Situation.hasValue Situation.extend; simp
+
+/-! ### V2 namespace for new code
+
+Legacy `preventSem` above is a structural predicate over CausalDynamics
+laws (checks for an inhibitory law explicitly). V2 takes a behavioral
+view: setting preventer=false produces effect=true; preventer=true
+blocks effect=true. The two definitions are equivalent for direct
+prevention models but the V2 form delegates to V2's `develop` semantics
+rather than introspecting law structure. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+
+/-- V2 prevention semantics: preventer's value flips effect's value
+    under V2 `develop`. Specifically, preventer=false ⇒ effect=true
+    (the law fires), and preventer=true ⇒ ¬ effect=true (blocked). -/
+noncomputable def preventSem {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation (fun _ : V => Bool))
+    (preventer effect : V) : Prop :=
+  (M.develop (bg.extend preventer false)).hasValue effect true ∧
+  ¬ (M.develop (bg.extend preventer true)).hasValue effect true
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation _) (preventer effect : V) :
+    Decidable (preventSem M bg preventer effect) := Classical.dec _
+
+end V2
 
 end Semantics.Causation.Prevention

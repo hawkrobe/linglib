@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 /-!
 # Causative Construction Selection (CC-Selection)
@@ -184,5 +185,46 @@ def CausalDependency.actualized (dep : CausalDependency) : Prop :=
 
 instance (dep : CausalDependency) : Decidable dep.actualized :=
   inferInstanceAs (Decidable (actualizationHolds ..))
+
+/-! ### V2 namespace for new code
+
+Legacy `completesForEffect` / `ccConstraintSatisfied` / `typeLevelSufficiency`
+/ `tokenLevelCausation` / `actualizationHolds` above remain on the
+CausalDynamics API for backward compat with `Resultatives.lean`,
+`Lewis1973.lean` (legacy bridge theorems), `Progressive.lean` (already
+inlines the predicate), and study files.
+
+New consumers should `open Semantics.Causation.CCSelection.V2` and use
+the V2-flavored versions which delegate to V2 BoolSEM predicates. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+
+/-- V2 `completesForEffect`: cause being true develops effect; cause being
+    false does not. The simple but-for completion check. -/
+noncomputable def completesForEffect {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (cause effect : V) : Prop :=
+  (M.develop (background.extend cause true)).hasValue effect true ∧
+  ¬ (M.develop (background.extend cause false)).hasValue effect true
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation _) (cause effect : V) :
+    Decidable (completesForEffect M bg cause effect) := Classical.dec _
+
+/-- V2 `actualizationHolds`: alias for `completesForEffect`. -/
+abbrev actualizationHolds {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation (fun _ : V => Bool))
+    (cause effect : V) : Prop :=
+  completesForEffect M bg cause effect
+
+end V2
 
 end Semantics.Causation.CCSelection

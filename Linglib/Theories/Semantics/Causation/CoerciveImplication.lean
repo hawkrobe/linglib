@@ -8,6 +8,7 @@ Y's choice was overridden.
 
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 namespace Semantics.Causation.CoerciveImplication
 
@@ -172,5 +173,33 @@ theorem coercion_none_nonvolitional :
   native_decide
 
 end Examples
+
+/-! ### V2 namespace for new code
+
+The legacy `CoerciveContext.hasCoerciveImplication` / `coercionStrength`
+above use `CausalDynamics`. New consumers should use V2-flavored
+predicates that take `BoolSEM` directly. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+
+/-- V2 coercive implication: causer's action is causally sufficient for
+    a volitional causee action. -/
+noncomputable def hasCoerciveImplication {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (causerAction : V) (causeeIsVolitional : Bool) (causeeEvent : V) : Prop :=
+  causeeIsVolitional = true ∧
+  Core.Causal.V2.BoolSEM.causallySufficient M background causerAction causeeEvent
+
+noncomputable instance {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [Core.Causal.V2.SEM.IsDeterministic M]
+    (bg : Valuation _) (causer : V) (vol : Bool) (effect : V) :
+    Decidable (hasCoerciveImplication M bg causer vol effect) := Classical.dec _
+
+end V2
 
 end Semantics.Causation.CoerciveImplication
