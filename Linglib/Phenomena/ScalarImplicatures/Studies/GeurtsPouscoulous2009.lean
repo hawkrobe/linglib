@@ -494,13 +494,12 @@ open Implicature.Scales
 open Exhaustification
 open Phenomena.ScalarImplicatures
 
-/-- Geurts-specific worked example: "some" in UE → "not all" implicature. -/
-def someNotAll_UE : ImplicatureCheck :=
-  ⟨quantImplicatureArises .some_ .all .upward⟩
+/-- Geurts-specific worked example: in DE context, the "some → not all"
+    implicature is blocked. -/
+def SomeNotAllDE : Prop :=
+  QuantImplicatureArises .some_ .all .downward
 
-/-- Geurts-specific worked example: "some" in DE → no "not all" implicature. -/
-def someNotAll_DE : ImplicatureCheck :=
-  ⟨quantImplicatureArises .some_ .all .downward⟩
+instance : Decidable SomeNotAllDE := inferInstanceAs (Decidable (QuantImplicatureArises ..))
 
 /-- "some students sleep": scalar item is "some" in UE context. -/
 def someStudentsSleep_result : List ScalarImplicatureResult :=
@@ -557,9 +556,8 @@ theorem ue_implicature_matches_data :
 
 /-- DE blocking prediction matches Experiment 3 verification data. -/
 theorem de_blocking_matches_data :
-    someNotAll_DE.implicatureArises = false ∧
-    allVerificationRate = 100 := by
-  native_decide
+    ¬SomeNotAllDE ∧ allVerificationRate = 100 :=
+  ⟨by decide, rfl⟩
 
 /-- Gricean account supported over conventionalism. -/
 theorem gricean_supported :
@@ -622,13 +620,11 @@ theorem data_supports_contextualism_over_defaultism :
 
 /-- NeoGricean derives "not all" from "some". -/
 theorem neogricean_derives_not_all :
-    hasImplicature someStudentsSleep_result "all" = true := by
-  native_decide
+    HasImplicature someStudentsSleep_result "all" := by decide
 
 /-- NeoGricean explicitly blocks SIs in DE contexts. -/
 theorem de_blocking :
-    hasImplicature someStudentsSleep_DE_result "all" = false := by
-  native_decide
+    ¬HasImplicature someStudentsSleep_DE_result "all" := by decide
 
 -- Hurford and Singh prediction bridges
 

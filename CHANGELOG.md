@@ -4,6 +4,34 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.255] - 2026-04-23
+
+### Scales.lean quality pass
+
+Follows up on the mathlib-reviewer findings carried into 0.230.252. Three
+audit-flagged smells in `Implicature/Scales.lean` addressed; cascading
+into `Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean`.
+
+- **Dropped dead long-disjunction infrastructure** (~80 LOC): `LongDisjunction`,
+  `binaryConjunctions`, `fullConjunction`, `analyzeLongDisjunction`,
+  `SubstitutionComparison`, `compareSubstitution`, `substitutionAlternative`,
+  `DisjunctionInference`, `DisjunctionAnalysis`, `analyzeDisjunction`. All
+  zero external consumers; `compareSubstitution` was the canonical
+  "stipulated, not derived" anti-pattern (hardcoded `2^n - n - 1` and
+  `substitutionResult := 1`); `analyzeDisjunction` hardcoded
+  `compatible := true`. Better to delete than to ship as-is.
+- **Dropped `ImplicatureCheck` single-Bool wrapper struct** per
+  `feedback_no_thin_bundled_struct.md`. Inlined `someNotAll_DE` (renamed
+  `SomeNotAllDE` post-Prop-migration) into GP2009 as a bare definition.
+  Dead `someNotAll_UE` deleted.
+- **Bool → Prop migration** for the two propositional predicates per
+  `feedback_bool_migration_scope.md`: `quantImplicatureArises` →
+  `QuantImplicatureArises : Prop`, `hasImplicature` → `HasImplicature : Prop`,
+  both with `Decidable` instances. GP2009 theorems now read as direct
+  Props (no `... = true`/`... = false` encoding), proved with `decide`.
+
+`Scales.lean` shrunk from 273 LOC to 132 LOC (-52%). Full repo build green.
+
 ## [0.230.253] - 2026-04-23
 
 ### O'Donnell 2015 Phase 1: PolyaUrn substrate + audit fixes

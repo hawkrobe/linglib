@@ -69,155 +69,15 @@ def scaleAlternatives (sm : ScaleMembership) (ctx : ContextPolarity) : List Stri
   | .modal pos =>
     filterAlts Alternatives.Modals.modalScale pos Alternatives.Modals.entails ctx
 
+/-- Does an alternative arise as a scalar implicature of a quantifier term?
+    True iff `alt` is among the polarity-appropriate Horn-scale alternatives
+    of `term`. -/
+def QuantImplicatureArises (term alt : QuantExpr) (ctx : ContextPolarity) : Prop :=
+  toString alt ∈ scaleAlternatives (.quantifier term) ctx
 
--- ============================================================
--- DE Blocking (using HornScale directly)
--- ============================================================
-
-/-- Lightweight wrapper preserving the `.implicatureArises` accessor. -/
-structure ImplicatureCheck where
-  implicatureArises : Bool
-  deriving Repr, DecidableEq
-
-/-- Does an alternative arise as a scalar implicature of a quantifier term? -/
-def quantImplicatureArises (term alt : QuantExpr) (ctx : ContextPolarity) : Bool :=
-  (scaleAlternatives (.quantifier term) ctx).contains (toString alt)
-
-
--- ============================================================
--- Disjunction Inferences (Exclusivity vs Ignorance)
--- ============================================================
-
-/--
-Two types of inferences from disjunction.
-
-1. Exclusivity (scalar): "A or B" → "not (A and B)"
-   Derived from Horn set ⟨or, and⟩.
-
-2. Ignorance (non-scalar): "A or B" → "speaker doesn't know which"
-   Derived from competence failure for individual disjuncts.
--/
-inductive DisjunctionInference where
-  | exclusivity  -- "not both" (from ⟨or, and⟩ scale)
-  | ignorance    -- "speaker doesn't know which"
-  deriving DecidableEq, Repr
-
-/--
-Result of analyzing a disjunctive utterance.
--/
-structure DisjunctionAnalysis where
-  /-- The disjunctive statement -/
-  statement : String
-  /-- Does exclusivity implicature arise? -/
-  exclusivityArises : Bool
-  /-- Does ignorance implicature arise? -/
-  ignoranceArises : Bool
-  /-- Can both arise together? -/
-  compatible : Bool
-  deriving Repr
-
-/--
-Analyze a simple disjunction in context.
-
-Both exclusivity AND ignorance can arise together.
--/
-def analyzeDisjunction (ctx : ContextPolarity) : DisjunctionAnalysis :=
-  let exclusivity := (scaleAlternatives (.connective .or_) ctx).contains "and"
-  { statement := "A or B"
-  , exclusivityArises := exclusivity
-  , ignoranceArises := true  -- Typically arises for disjunctions
-  , compatible := true       -- Both can hold simultaneously
-  }
-
-
--- ============================================================
--- Long Disjunction Problem (@cite{geurts-2010} p.61-64)
--- ============================================================
-
-/--
-The long disjunction problem (@cite{geurts-2010} p.61-64).
-
-For "A or B or C", the alternatives are not just {A, B, C}.
-We need ALL conjunctive closures:
-- Core: A, B, C
-- Binary: A∧B, A∧C, B∧C
-- Full: A∧B∧C
-
-The substitution method (replacing "or" with "and") fails
-to generate all necessary alternatives for n > 2.
--/
-structure LongDisjunction where
-  /-- The disjuncts -/
-  disjuncts : List String
-  /-- Core alternatives (individual disjuncts) -/
-  coreAlternatives : List String
-  /-- Derived alternatives (conjunctions) -/
-  derivedAlternatives : List String
-  deriving Repr
-
-/--
-Generate all binary conjunctions from a list.
--/
-def binaryConjunctions (terms : List String) : List String :=
-  terms.flatMap λ t1 =>
-    terms.filterMap λ t2 =>
-      if t1 < t2 then some s!"{t1}∧{t2}" else none
-
-/--
-Generate the full conjunction of all terms.
--/
-def fullConjunction (terms : List String) : String :=
-  "∧".intercalate terms
-
-/--
-Analyze a long disjunction, computing all alternatives.
--/
-def analyzeLongDisjunction (disjuncts : List String) : LongDisjunction :=
-  { disjuncts := disjuncts
-  , coreAlternatives := disjuncts
-  , derivedAlternatives :=
-      binaryConjunctions disjuncts ++
-      [fullConjunction disjuncts]
-  }
-
-/--
-The simple substitution method: replace "or" with "and".
-
-For "A or B": substitute to get "A and B" ✓
-For "A or B or C": substitute to get "A and B and C" ✓
-  But MISSES: "A and B", "A and C", "B and C" ✗
-
-This is why we need closure under conjunction.
--/
-def substitutionAlternative (disjuncts : List String) : String :=
-  fullConjunction disjuncts
-
-/--
-What substitution method produces vs what's needed.
--/
-structure SubstitutionComparison where
-  /-- Number of disjuncts -/
-  n : Nat
-  /-- What substitution gives -/
-  substitutionResult : Nat
-  /-- What's actually needed -/
-  neededAlternatives : Nat
-  /-- Does substitution suffice? -/
-  substitutionSuffices : Bool
-  deriving Repr
-
-/--
-Compare substitution method to full closure.
--/
-def compareSubstitution (n : Nat) : SubstitutionComparison :=
-  -- Substitution gives 1 alternative (full conjunction)
-  -- Needed: all subsets of size ≥ 2, which is 2^n - n - 1
-  let needed := 2^n - n - 1
-  { n := n
-  , substitutionResult := 1
-  , neededAlternatives := needed
-  , substitutionSuffices := needed == 1
-  }
+instance (term alt : QuantExpr) (ctx : ContextPolarity) :
+    Decidable (QuantImplicatureArises term alt ctx) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 
 -- ============================================================
@@ -265,9 +125,13 @@ def deriveFromWords (words : List String) (ctx : ContextPolarity)
     | some sm => some (deriveScalarImplicatures word sm ctx)
 
 /--
-Check if any implicature in the results negates a given alternative.
+Does any implicature in the results negate a given alternative?
 -/
-def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Bool :=
-  results.any λ r => r.implicatures.contains s!"not({alt})"
+def HasImplicature (results : List ScalarImplicatureResult) (alt : String) : Prop :=
+  ∃ r ∈ results, s!"not({alt})" ∈ r.implicatures
+
+instance (results : List ScalarImplicatureResult) (alt : String) :
+    Decidable (HasImplicature results alt) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 end Implicature.Scales
