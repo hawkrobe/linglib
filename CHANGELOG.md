@@ -4,6 +4,133 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.229] - 2026-04-23
+
+### Phonology Correspondence: reduplication substrate promoted to Correspondence.lean
+
+Per a four-agent audit of the proposed `Theories/Phonology/Reduplication/`
+directory: the audit converged on **don't create the directory** —
+mathlib treats single-substrate areas as one file. Correspondence.lean
+gains the reduplication primitives directly, matching the existing
+`Side` enum + `Corr.parallel` pattern.
+
+#### Promoted to `Correspondence.lean` substrate
+
+- **`RedupRole` enum** (`.input | .base | .reduplicant`) — 3-role
+  reduplicative correspondence sibling of `Side` (binary).
+  + `RedupRole.label` for constraint-name display.
+- **`range_image_wf`** — generic well-formedness lemma: parallel-pair
+  edges of length `n` are well-formed for forms of length `≥ n`.
+  Promoted out of the study file; will be reused by every multi-role
+  `Corr` constructor (Transderivational, StratalCorr, BasemapCorrespondence).
+- **`Corr.reduplication input base reduplicant : Corr RedupRole α`** —
+  the canonical M&P 1995 `(I, B, R)` triple constructor with parallel-pair
+  IO/BR/IR edges (truncated to shorter form's length). Three `@[simp]`
+  form-projection lemmas. For non-parallel BR alignments (infixation,
+  morphologically-determined skip), use
+  `ParadigmUniformity.Transderivational.diagramWithEdge` instead.
+- **`Reduplication` namespace** with 5 inline NamedConstraint specializations:
+  `maxIO`, `maxBR`, `depIO`, `identBR`, `identIO`. Each is a 1-line
+  use of the role-polymorphic `Corr.toMaxConstraint`/`toIdentConstraint`
+  with the appropriate role pair and label. Replaces the bundled-thin-
+  structure anti-pattern of a separate `Faithfulness.lean` file
+  (flagged by `feedback_no_thin_bundled_struct.md`).
+
+#### McCarthyPrince1995 Javanese collapse
+
+`Phenomena/Reduplication/Studies/McCarthyPrince1995.lean §1.5` shrinks
+~80 LOC:
+
+- Local `RedupRole` enum deleted (uses `Phonology.Correspondence.RedupRole`).
+- Local `range_image_wf`, `ioFaithfulEdge`, `ioDeletedEdge`, `brFullEdge`,
+  `brPartialEdge` helpers all deleted (subsumed by `Corr.reduplication`'s
+  built-in parallel-pair edge construction).
+- `overCorr`/`underCorr`/`normalCorr` collapse from ~30-line records
+  with hand-rolled 9-clause `wf` matches to 1-line `Corr.reduplication`
+  calls each.
+- `javMaxIOFromCorr`/`javMaxBRFromCorr` become `abbrev`s pointing at
+  the paper-agnostic `Reduplication.maxIO`/`maxBR`. The constraint
+  identity is now structural at the type level rather than re-derived
+  per study file.
+- Agreement theorems `javMaxIO_eq_corr` and `javIdentBR_eq_corr`
+  unchanged (proofs still close via `cases c <;> decide`).
+
+Net: -47 LOC across the two files, with the substrate now reusable
+for Balangao/Akan/Tagalog and any future reduplicative study.
+
+### Deferred (Stage 2)
+
+The mathlib reviewer flagged a deeper move: a unified
+`Corr.diagram : (Role → List α) → (Role → Role → Bool) → Corr Role α`
+constructor that subsumes `parallel`, `reduplication`,
+`Transderivational.diagramWithEdge`, `BasemapCorrespondence`'s
+parallel construction, and `StratalCorr.stratalDerivToCorr`. Estimated
+~200 LOC of duplicate edge-case-handling deletable across the
+codebase. Separate session.
+
+Also deferred per audit: `Type → Type*` upgrade on
+`NamedConstraint` (touches `Core/Constraint/OT/Basic.lean` and many
+consumers); `Doubling.lean` ↔ `Reduplication` bridge theorem
+(formalize REALIZE-MORPH availability ↔ MAX-BR-faithful ranking
+agreement); `Fragments/Javanese/Phonology.lean` (gold-plating until
+a second Javanese study needs it).
+
+## [0.230.228] - 2026-04-23
+
+### Phase D-G2: legacy `Causative.toSemantics` cascade complete
+
+Substantial cascade: deletes the legacy Bool-implicit
+`CausalDynamics`-based `Causative.toSemantics` dispatch and all
+downstream consumers, then promotes `Causative.V2.toSemantics` to be
+the canonical `Causative.toSemantics` (now polymorphic over `SEM V α`).
+
+**Deletions:**
+
+- `Theories/Semantics/Causation/Interpretation.lean`:
+  legacy `Causative.toSemantics` def (5 lines) + 10 grounding
+  theorems that referenced it (`sufficiency_variants_use_makeSem`,
+  `cause_uses_causeSem`, `make_force_same_truth_conditions`,
+  `enable_make_same_truth_conditions`, `truth_conditionally_distinct`,
+  `assertsSufficiency_iff_makeSem`,
+  `sufficiency_implies_causallySufficient`,
+  `necessity_implies_causallyNecessary`,
+  `selectionMode_consistent_cause`, `selectionMode_consistent_make`).
+- `Phenomena/Causation/Studies/CaoWhiteLassiter2025.lean`:
+  legacy `graded_subsumes_binary` (used `Causative.toSemantics` over
+  `CausalDynamics`). V2 polymorphic analog
+  (`probabilisticSuf_eq_deterministicSuf`) was already present.
+- `Theories/Semantics/Causation/ProductionDependence.lean`:
+  `selectionMode_roundtrip` (the legacy bridge between
+  `CCSelectionMode.toSemantics` and `Causative.toSemantics`).
+- `Theories/Semantics/Causation/CCSelection.lean`:
+  `CCSelectionMode.toSemantics` def — its sole consumer
+  (`selectionMode_roundtrip`) was deleted with it.
+
+**Promotion:**
+
+- `Causative.V2.toSemantics` → `Causative.toSemantics` (canonical).
+  Polymorphic signature `(M : SEM V α) ... → Causative → Valuation α →
+  ∀ c : V, α c → ∀ e : V, α e → Prop` from Phase V'. The V2
+  sub-namespace was the staging area; with the legacy dispatch gone
+  it's promoted to the unqualified name.
+- `Verbal.lean` consumers updated via mechanical perl rename
+  (`Causative.V2.toSemantics` → `Causative.toSemantics`).
+
+**Stays as legacy** (deferred to D-H or specific later phases):
+- `Sufficiency.makeSem`, `Necessity.causeSem`, `Prevention.preventSem`
+  (legacy hub abbrevs) — used transitively by `ccConstraintSatisfied`
+  which has 21 consumers; cascade too large for this phase.
+- The structural theorems in Sufficiency/Prevention/Necessity that
+  prove facts about `CausalDynamics` directly (e.g.,
+  `disjunctive_each_sufficient`) — they don't reference the legacy
+  hub abbrevs; they go away in D-H along with the substrate.
+
+Build: D-G2 cascade clean (Interpretation, Verbal, ProductionDependence,
+CCSelection, CWL2025, all downstream Causation studies). Pre-existing
+parallel-session breakages elsewhere (LanguageProfile,
+ModalityProbabilityOrdering, OT.Correspondence, Stalnaker1981)
+untouched.
+
 ## [0.230.227] - 2026-04-23
 
 ### Dissolved — `Core/PropertyDomain.lean`
