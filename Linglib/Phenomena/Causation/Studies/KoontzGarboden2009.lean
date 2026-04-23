@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 
 /-!
 # @cite{koontz-garboden-2009} — Anticausativization

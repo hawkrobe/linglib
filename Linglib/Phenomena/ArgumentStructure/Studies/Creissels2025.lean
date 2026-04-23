@@ -1,4 +1,4 @@
-import Linglib.Syntax.ArgumentStructure.Alternation
+import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Applicative
