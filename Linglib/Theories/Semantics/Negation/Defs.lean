@@ -35,7 +35,7 @@ coherent architecture with three layers:
 
 namespace Semantics.Negation
 
-open Core (ENType ENStrength PolarityLicensing PolarityClass
+open Phenomena.Negation.ExpletiveNegation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Core.NaturalLogic (DEStrength strengthSufficient)
 open Semantics.Entailment (World)

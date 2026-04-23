@@ -68,7 +68,7 @@ paper picks them up.
 namespace Minimalism.NegScope
 
 open Minimalism (Cat fValue isCPArea)
-open Core (ENType ENStrength PolarityLicensing PolarityClass
+open Phenomena.Negation.ExpletiveNegation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 
 -- ════════════════════════════════════════════════════
@@ -332,7 +332,7 @@ namespace Greco2020
 
 open Minimalism (Cat fValue isPhaseHead isCPArea)
 open Minimalism.NegScope (NegMergePosition)
-open Core (ENStrength PolarityLicensing PolarityClass
+open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 open Fragments.Italian.ExpletiveNegation (ENEnvironment)
 open Phenomena.Negation.Typology (NegationProfile italian spanish french)

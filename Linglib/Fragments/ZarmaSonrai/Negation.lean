@@ -163,7 +163,7 @@ def enNegatorForAspect : ENAspect → String
 theorem fear_uses_ipfv_neg : enNegatorForAspect .ipfv = "si" := rfl
 theorem delay_uses_pfv_neg : enNegatorForAspect .pfv = "batu" := rfl
 
-open Core (ENBlockingReason)
+open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
 
 /-- Why WITHOUT and TOO…TO do not trigger EN in Zarma-Sonrai.
 
