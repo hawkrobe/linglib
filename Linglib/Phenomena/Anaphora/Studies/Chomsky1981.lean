@@ -1,57 +1,62 @@
 import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
-open Paradigms.AcceptabilityJudgment
-
 /-!
-# Bridge: Minimalist Coreference Theory to Anaphora Phenomena
+# Chomsky (1981) — Binding Principles A/B/C @cite{chomsky-1981}
 
-Connects Minimalist binding theory (c-command, locality) to the empirical
-coreference data in `Phenomena.Anaphora.Coreference`.
+*Lectures on Government and Binding*. Foris.
 
-## Main results
+The Government-and-Binding binding theory of @cite{chomsky-1981}
+classifies nominal expressions into three types and constrains their
+distribution by c-command + a local binding domain:
 
-- `captures_reflexive_coreference`: Minimalism correctly predicts reflexive binding
-- `captures_complementary_distribution`: Minimalism captures complementary distribution
-- `captures_pronominal_disjoint_reference`: Minimalism captures disjoint reference
-- `reflexive_pairs_captured`: Per-pair verification
+- **Principle A**: an anaphor must be bound (c-commanded by a coindexed
+  antecedent) in its local domain
+- **Principle B**: a pronoun must be free (not bound) in its local domain
+- **Principle C**: an R-expression must be free everywhere
+
+This file verifies the implementation in
+`Theories/Syntax/Minimalism/Coreference.lean` against the empirical
+minimal-pair data in `Phenomena/Anaphora/Coreference.lean`.
+
+Companion to `Reinhart1976.lean` (which formalizes the c-command
+relation that Principles A/B/C presuppose) and to
+`SagWasowBender2003.lean` (the HPSG re-axiomatization that subsumes
+Principle C under Principle B).
 -/
 
-namespace MinimalismCoreference
+namespace Chomsky1981
 
+open Paradigms.AcceptabilityJudgment
 open Minimalism.Phenomena.Coreference
 open Phenomena.Anaphora.Coreference
 
-/-- Check if Minimalism correctly predicts a minimal pair for coreference.
+/-- Coverage of a `PhenomenonData` set under Minimalist binding theory.
 
-    Grammatical sentence should pass, ungrammatical should fail. -/
-def capturesCoreferenceMinimalPair (pair : MinimalPair) : Prop :=
-  grammaticalForCoreference pair.grammatical ∧
-  ¬ grammaticalForCoreference pair.ungrammatical
-
-instance (pair : MinimalPair) : Decidable (capturesCoreferenceMinimalPair pair) := by
-  unfold capturesCoreferenceMinimalPair; infer_instance
-
-/-- Check all pairs in a PhenomenonData -/
+    Stated `Prop`-valued (with a `Decidable` instance) because the
+    underlying `grammaticalForCoreference` predicate is `Prop`-valued. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Prop :=
-  ∀ p ∈ phenom.pairs, capturesCoreferenceMinimalPair p
+  ∀ p ∈ phenom.pairs,
+    grammaticalForCoreference p.grammatical ∧ ¬ grammaticalForCoreference p.ungrammatical
 
 instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) := by
   unfold capturesCoreferenceData; infer_instance
 
-/-- Minimalism captures reflexiveCoreferenceData -/
+/-- Minimalism captures `reflexiveCoreferenceData`. -/
 theorem captures_reflexive_coreference :
     capturesCoreferenceData reflexiveCoreferenceData := by
   native_decide
 
-/-- Minimalism captures complementaryDistributionData -/
+/-- Minimalism captures `complementaryDistributionData`. -/
 theorem captures_complementary_distribution :
     capturesCoreferenceData complementaryDistributionData := by
   native_decide
 
-/-- Minimalism captures pronominalDisjointReferenceData -/
+/-- Minimalism captures `pronominalDisjointReferenceData`. -/
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData := by
   native_decide
@@ -64,11 +69,10 @@ private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
 private abbrev himself := Fragments.English.Pronouns.himself.toWord
 private abbrev herself := Fragments.English.Pronouns.herself.toWord
 private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
 private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
-/-- Check each pair individually for reflexiveCoreferenceData -/
+/-- Per-pair verification of reflexive binding judgments. -/
 theorem reflexive_pairs_captured :
     (grammaticalForCoreference [john, sees, himself] ∧
      ¬ grammaticalForCoreference [himself, sees, john]) ∧
@@ -82,11 +86,10 @@ theorem reflexive_pairs_captured :
      ¬ grammaticalForCoreference [they, see, himself]) := by
   native_decide
 
-/-- Minimalism captures the parseable reciprocal pair: plural antecedent
-    required, singular antecedent blocked. -/
+/-- Reciprocal binding: plural antecedent required, singular blocked. -/
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] ∧
     ¬ grammaticalForCoreference [john, sees, eachOther] := by
   native_decide
 
-end MinimalismCoreference
+end Chomsky1981

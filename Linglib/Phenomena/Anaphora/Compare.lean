@@ -37,8 +37,8 @@ import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
-import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
+import Linglib.Phenomena.Anaphora.Studies.Chomsky1981
+import Linglib.Phenomena.Anaphora.Studies.SagWasowBender2003
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Core.Tree
@@ -327,14 +327,14 @@ the command relations must agree.
 All four theories correctly predict the reflexive coreference patterns.
 -/
 theorem all_theories_capture_reflexive_coreference :
-    MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData ∧
-    HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Chomsky1981.capturesCoreferenceData reflexiveCoreferenceData ∧
+    SagWasowBender2003.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
   constructor
-  · exact MinimalismCoreference.captures_reflexive_coreference
+  · exact Chomsky1981.captures_reflexive_coreference
   constructor
-  · exact HPSGCoreference.captures_reflexive_coreference
+  · exact SagWasowBender2003.captures_reflexive_coreference
   constructor
   · exact Hudson1990.captures_reflexive_coreference
   · exact OsborneLi2023.captures_reflexive_coreference
@@ -343,14 +343,14 @@ theorem all_theories_capture_reflexive_coreference :
 **Main Agreement Theorem: Complementary Distribution**
 -/
 theorem all_theories_capture_complementary_distribution :
-    MinimalismCoreference.capturesCoreferenceData complementaryDistributionData ∧
-    HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Chomsky1981.capturesCoreferenceData complementaryDistributionData ∧
+    SagWasowBender2003.capturesCoreferenceData complementaryDistributionData = true ∧
     Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
     OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
   constructor
-  · exact MinimalismCoreference.captures_complementary_distribution
+  · exact Chomsky1981.captures_complementary_distribution
   constructor
-  · exact HPSGCoreference.captures_complementary_distribution
+  · exact SagWasowBender2003.captures_complementary_distribution
   constructor
   · exact Hudson1990.captures_complementary_distribution
   · exact OsborneLi2023.captures_complementary_distribution
@@ -359,14 +359,14 @@ theorem all_theories_capture_complementary_distribution :
 **Main Agreement Theorem: Pronominal Disjoint Reference**
 -/
 theorem all_theories_capture_pronominal_disjoint_reference :
-    MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData ∧
-    HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Chomsky1981.capturesCoreferenceData pronominalDisjointReferenceData ∧
+    SagWasowBender2003.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by
   constructor
-  · exact MinimalismCoreference.captures_pronominal_disjoint_reference
+  · exact Chomsky1981.captures_pronominal_disjoint_reference
   constructor
-  · exact HPSGCoreference.captures_pronominal_disjoint_reference
+  · exact SagWasowBender2003.captures_pronominal_disjoint_reference
   constructor
   · exact Hudson1990.captures_pronominal_disjoint_reference
   · exact OsborneLi2023.captures_pronominal_disjoint_reference

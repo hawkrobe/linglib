@@ -944,10 +944,9 @@ import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Phenomena.Anaphora.Studies.Reinhart1976
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
-import Linglib.Phenomena.Anaphora.Studies.DGNominal
-import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
+import Linglib.Phenomena.Anaphora.Studies.SagWasowBender2003
 import Linglib.Phenomena.Anaphora.Studies.BakayEtAl2026
-import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
+import Linglib.Phenomena.Anaphora.Studies.Chomsky1981
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
 import Linglib.Phenomena.Anaphora.Studies.Heim1982
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993

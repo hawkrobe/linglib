@@ -1,50 +1,50 @@
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
-open Paradigms.AcceptabilityJudgment
-
 /-!
-# Bridge: HPSG Coreference Theory to Anaphora Phenomena
+# Sag, Wasow & Bender (2003) — HPSG Binding Theory @cite{sag-wasow-bender-2003}
 
-Connects HPSG binding theory (o-command, LOCAL domains) to the empirical
-coreference data in `Phenomena.Anaphora.Coreference`.
+*Syntactic Theory: A Formal Introduction* (2nd ed.), Ch. 7.
 
-## Main results
+The HPSG binding theory of @cite{sag-wasow-bender-2003} reduces the
+Chomskyan three-way classification (anaphor / pronoun / R-expression →
+Principles A/B/C) to two principles based on the `MODE` feature:
 
-- `captures_reflexive_coreference`: HPSG correctly predicts reflexive binding
-- `captures_complementary_distribution`: HPSG captures complementary distribution
-- `captures_pronominal_disjoint_reference`: HPSG captures disjoint reference
-- `reflexive_pairs_captured`: Per-pair verification
+- **Principle A**: `[MODE ana]` must be outranked on ARG-ST by a coindexed element
+- **Principle B**: `[MODE ref]` must NOT be outranked on ARG-ST by a coindexed element
+
+Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes
+Principle C. See `Theories/Syntax/HPSG/Coreference.lean` for the
+implementation; this file verifies it against the empirical minimal-pair
+data in `Phenomena/Anaphora/Coreference.lean` via the
+`Paradigms.AcceptabilityJudgment` contract.
 -/
 
-namespace HPSGCoreference
+namespace SagWasowBender2003
 
+open Paradigms.AcceptabilityJudgment
 open HPSG.Coreference
 open Phenomena.Anaphora.Coreference
 
-/-- Check if HPSG correctly predicts a minimal pair for coreference.
-
-    Grammatical sentence should pass, ungrammatical should fail. -/
-def capturesCoreferenceMinimalPair (pair : MinimalPair) : Bool :=
-  grammaticalForCoreference pair.grammatical &&
-  !grammaticalForCoreference pair.ungrammatical
-
-/-- Check all pairs in a PhenomenonData -/
+/-- Coverage of a `PhenomenonData` set under HPSG binding. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
-  phenom.pairs.all capturesCoreferenceMinimalPair
+  capturesPhenomenonData grammaticalForCoreference phenom
 
-/-- HPSG captures reflexiveCoreferenceData -/
+/-- HPSG captures `reflexiveCoreferenceData`. -/
 theorem captures_reflexive_coreference :
     capturesCoreferenceData reflexiveCoreferenceData = true := by
   native_decide
 
-/-- HPSG captures complementaryDistributionData -/
+/-- HPSG captures `complementaryDistributionData`. -/
 theorem captures_complementary_distribution :
     capturesCoreferenceData complementaryDistributionData = true := by
   native_decide
 
-/-- HPSG captures pronominalDisjointReferenceData -/
+/-- HPSG captures `pronominalDisjointReferenceData`. -/
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData = true := by
   native_decide
@@ -57,11 +57,10 @@ private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
 private abbrev himself := Fragments.English.Pronouns.himself.toWord
 private abbrev herself := Fragments.English.Pronouns.herself.toWord
 private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
 private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
-/-- Check each pair individually for reflexiveCoreferenceData -/
+/-- Per-pair verification of reflexive binding judgments. -/
 theorem reflexive_pairs_captured :
     -- Pair 1: john sees himself vs himself sees john
     (grammaticalForCoreference [john, sees, himself] = true ∧
@@ -80,13 +79,12 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
-/-- HPSG captures the parseable reciprocal pair: plural antecedent
-    required, singular antecedent blocked. (Pairs 1-2 of
-    reciprocalCoreferenceData use 5-word coordinated sentences that
-    exceed the simple clause parser.) -/
+/-- Reciprocal binding: plural antecedent required, singular blocked.
+    (Pairs 1–2 of `reciprocalCoreferenceData` use 5-word coordinated
+    sentences that exceed the simple clause parser.) -/
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] = true ∧
     grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
-end HPSGCoreference
+end SagWasowBender2003
