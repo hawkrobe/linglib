@@ -1,3 +1,12 @@
+import Linglib.Core.Tree
+import Linglib.Core.Order.Tree
+import Linglib.Core.Order.Command
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.GaloisConnection.Basic
+import Mathlib.Order.CompleteLattice.Basic
+import Mathlib.Data.Set.Lattice
+import Mathlib.Order.Heyting.Basic
+
 /-!
 # Barker & Pullum (1990) — A Theory of Command Relations @cite{barker-pullum-1990}
 
@@ -28,15 +37,6 @@ relations form a **distributoid** — an algebraic structure (D, ∩, ∪, ∘)
 in which composition distributes over intersection. (TODO: split § J into
 its own `Studies/Kracht1993.lean` once the dependencies are isolated.)
 -/
-
-import Linglib.Core.Tree
-import Linglib.Core.Order.Tree
-import Linglib.Core.Order.Command
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.GaloisConnection.Basic
-import Mathlib.Order.CompleteLattice.Basic
-import Mathlib.Data.Set.Lattice
-import Mathlib.Order.Heyting.Basic
 
 namespace BarkerPullum1990
 

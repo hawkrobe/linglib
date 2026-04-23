@@ -154,7 +154,7 @@ open Fragments.Singlish.Questions (WhStrategy fullMovement partialMovement
   whInSitu theHell)
 open Fragments.Mandarin.Questions (daodi)
 open Phenomena.Questions.Typology (WhInterpMechanism)
-open Phenomena.Islands (IslandSource)
+-- IslandSource is declared at top level in Phenomena/Islands/Studies/Ross1967.lean
 open Core.Lexical.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalism.ANDL

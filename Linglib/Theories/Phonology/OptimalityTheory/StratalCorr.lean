@@ -99,10 +99,10 @@ def StratalRole.label : StratalRole → String
     `(0, 0), (1, 1), …` up to the shorter length. The substrate edge
     type for both within-stratum (IO-correspondence) and cross-stratum
     (feeding) relations. -/
-def parallelEdge (s₁ s₂ : List α) : Finset (ℕ × ℕ) :=
+def parallelEdge {α : Type*} (s₁ s₂ : List α) : Finset (ℕ × ℕ) :=
   (Finset.range (min s₁.length s₂.length)).image fun i => (i, i)
 
-theorem parallelEdge_wf (s₁ s₂ : List α) :
+theorem parallelEdge_wf {α : Type*} (s₁ s₂ : List α) :
     ∀ p ∈ parallelEdge s₁ s₂, p.1 < s₁.length ∧ p.2 < s₂.length := by
   intro p hmem
   simp only [parallelEdge, Finset.mem_image, Finset.mem_range] at hmem
@@ -114,7 +114,7 @@ theorem parallelEdge_wf (s₁ s₂ : List α) :
 -- § 3: StratalDerivation → Corr StratalRole α
 -- ============================================================================
 
-/-- A stratal derivation over a *uniform* segment type `α`, packaged as
+/-! A stratal derivation over a *uniform* segment type `α`, packaged as
     a `Corr StratalRole α`. The cross-role edges encode:
 
     - `(.sIn ↔ .sOut)`: stem-stratum IO-correspondence
@@ -129,6 +129,7 @@ theorem parallelEdge_wf (s₁ s₂ : List α) :
     Specialized to homogeneous candidate types; the heterogeneous case
     `StratalDerivation S W P` doesn't fit `Corr Role α` directly without
     a uniform encoding. -/
+
 /-- Adjacent strata in a 4-role chain: `.sIn ↔ .sOut`, `.sOut ↔ .wOut`,
     `.wOut ↔ .pOut`. The chain-shape predicate for `Corr.diagram`. -/
 def adjacentStrata : StratalRole → StratalRole → Bool

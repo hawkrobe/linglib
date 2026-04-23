@@ -243,7 +243,7 @@ def nmBooks : Finset NMBook := Finset.univ
 -- John reads the books: FALSE in maryAll, TRUE in bothAll, GAP in maryAllJohnA, FALSE in noneRead
 
 theorem john_reads_gap_maryAllJohnA :
-    pluralTruthValue (nmRead .john) nmBooks .maryAllJohnA = .gap := by native_decide
+    pluralTruthValue (nmRead .john) nmBooks .maryAllJohnA = .indet := by native_decide
 
 theorem john_reads_false_maryAll :
     pluralTruthValue (nmRead .john) nmBooks .maryAll = .false := by native_decide
@@ -316,7 +316,7 @@ theorem upward_homogeneity_gap
     (b : Finset Atom) (hb : b ∈ domain)
     (hov : Semantics.Homogeneity.overlaps x b = true)
     (hPb : P b = true) :
-    generalisedTV P domain x = .gap := by
+    generalisedTV P domain x = .indet := by
   simp only [generalisedTV, hPx, Bool.false_eq_true, ite_false]
   have : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b = true ∧ P b = true :=
     ⟨b, hb, hov, hPb⟩

@@ -132,17 +132,17 @@ open Phonology.Correspondence (Corr RedupRole)
 /-- Phonological segments for the Javanese stem. Minimal abstract
     inventory (just the contrasts that matter for h-deletion). -/
 inductive Seg where
-  | b | ə | d | a | h
+  | b | schwa | d | a | h
   deriving DecidableEq, Repr
 
 /-- The input stem `/bədah/` (5 segments). -/
-def stemInput : List Seg := [.b, .ə, .d, .a, .h]
+def stemInput : List Seg := [.b, .schwa, .d, .a, .h]
 
 /-- The base output `[bəda]` (h deleted, 4 segments). For `.over`. -/
-def baseDeleted : List Seg := [.b, .ə, .d, .a]
+def baseDeleted : List Seg := [.b, .schwa, .d, .a]
 
 /-- The base output `[bədah]` (h preserved, 5 segments). For `.under`/`.normal`. -/
-def baseFaithful : List Seg := [.b, .ə, .d, .a, .h]
+def baseFaithful : List Seg := [.b, .schwa, .d, .a, .h]
 
 /-- The `Corr` for the `over` candidate: h deleted from base and
     reduplicant. -/
@@ -289,7 +289,7 @@ namespace BalangaoCorr
 open Phonology.Correspondence (Corr RedupRole)
 
 /-- Phonological segments for the Balangao stem. Minimal abstract
-    inventory (just the contrasts that matter for /tagtag/-reduplication). -/
+    inventory (just the contrasts that matter for `tagtag`-reduplication). -/
 inductive Seg where
   | t | a | g
   deriving DecidableEq, Repr
@@ -681,9 +681,9 @@ open Phonology.Correspondence (Corr RedupRole)
     abstract inventory tracking the [coronal] feature contrast. -/
 inductive Seg where
   | k          -- velar [-coronal]
-  | tɕ         -- palatal affricate [+coronal] (the palatalization output)
+  | tCpal         -- palatal affricate [+coronal] (the palatalization output)
   | a          -- low back vowel
-  | ɪ          -- high front vowel (the reduplicant's vowel)
+  | iSmCap          -- high front vowel (the reduplicant's vowel)
   deriving DecidableEq, Repr
 
 /-- The [coronal] feature projection. Vowels are `false` (out of the
@@ -691,9 +691,9 @@ inductive Seg where
     doesn't enter the IDENT-[coronal] computation). -/
 def coronal : Seg → Bool
   | .k  => false
-  | .tɕ => true
+  | .tCpal => true
   | .a  => false
-  | .ɪ  => false
+  | .iSmCap  => false
 
 /-- Input `/ka/`. -/
 def stemInput : List Seg := [.k, .a]
@@ -702,13 +702,13 @@ def stemInput : List Seg := [.k, .a]
 def baseFaithful : List Seg := [.k, .a]
 
 /-- Palatalized base (`tɕ a`) — for `.over` (palatalization in B). -/
-def basePalatalized : List Seg := [.tɕ, .a]
+def basePalatalized : List Seg := [.tCpal, .a]
 
 /-- Palatalized reduplicant (`tɕ ɪ`) — for `.over` and `.normal`. -/
-def redPalatalized : List Seg := [.tɕ, .ɪ]
+def redPalatalized : List Seg := [.tCpal, .iSmCap]
 
 /-- Faithful reduplicant (`k ɪ`) — for `.under`. -/
-def redFaithful : List Seg := [.k, .ɪ]
+def redFaithful : List Seg := [.k, .iSmCap]
 
 /-- The `Corr` for the `over` candidate: palatalization in both B and R. -/
 def overCorr : Corr RedupRole Seg :=

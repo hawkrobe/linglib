@@ -867,8 +867,8 @@ private theorem all_neg_eq_map_all_neg {α : Type*} :
     a mathematical identity at the level of truth-value computation. -/
 theorem shouldEval_eq_dist (domain : List World) (p : World → Bool)
     (hne : domain ≠ []) :
-    shouldEval domain p = dist (domain.map p) := by
-  unfold shouldEval dist
+    shouldEval domain p = Core.Duality.dist (domain.map p) := by
+  unfold shouldEval Core.Duality.dist
   rw [all_eq_map_all_id, all_neg_eq_map_all_neg]
   cases domain with
   | nil => exact absurd rfl hne

@@ -107,13 +107,13 @@ instance : DecidablePred verdiFrench := fun w => by cases w <;> unfold verdiFren
     others false (.bothFrench). -/
 theorem bizet_italian_indeterminate :
     selectionalCounterfactual bvSim compatriots bizetItalian .actual
-    = .gap := by decide
+    = .indet := by decide
 
 /-- "If B&V had been compatriots, Verdi would have been French" is also
     indeterminate, for the same reason. -/
 theorem verdi_french_indeterminate :
     selectionalCounterfactual bvSim compatriots verdiFrench .actual
-    = .gap := by decide
+    = .indet := by decide
 
 /-- **CEM holds for Bizet--Verdi under selectional semantics.** Derived
     from the generic `cem_selectional` — concrete examples inherit from
@@ -181,8 +181,8 @@ theorem selectional_might_verdi_true :
 theorem might_would_asymmetry :
     selectionalMight bvSim compatriots bizetItalian .actual ∧
     selectionalMight bvSim compatriots verdiFrench .actual ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .gap ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .gap :=
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 /-- **Singleton collapse**: with a single closest world, Lewis's `might`
@@ -250,8 +250,8 @@ theorem distribution_fails_bizetverdi :
 theorem distribution_needs_uniqueness :
     selectionalCounterfactual bvSim compatriots
       (λ w => bizetItalian w ∨ verdiFrench w) .actual = .true ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .gap ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .gap :=
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet :=
   ⟨by decide, by decide, by decide⟩
 
 end DistributionWorked
@@ -329,11 +329,11 @@ theorem narrow_scope_true :
     is indeterminate (gap) under selectional semantics. -/
 theorem wide_scope_A_gap :
     selectionalCounterfactual courtSim vacancy appointA .actual
-    = .gap := by decide
+    = .indet := by decide
 
 theorem wide_scope_B_gap :
     selectionalCounterfactual courtSim vacancy appointB .actual
-    = .gap := by decide
+    = .indet := by decide
 
 /-- The scope contrast: narrow scope (someone appointed) is true, but
     wide scope for each individual is indeterminate. This illustrates
@@ -342,8 +342,8 @@ theorem wide_scope_B_gap :
     interacts with the selection function. -/
 theorem scope_contrast :
     selectionalCounterfactual courtSim vacancy someoneAppointed .actual = .true ∧
-    selectionalCounterfactual courtSim vacancy appointA .actual = .gap ∧
-    selectionalCounterfactual courtSim vacancy appointB .actual = .gap :=
+    selectionalCounterfactual courtSim vacancy appointA .actual = .indet ∧
+    selectionalCounterfactual courtSim vacancy appointB .actual = .indet :=
   ⟨by decide, by decide, by decide⟩
 
 end QuantifierScope

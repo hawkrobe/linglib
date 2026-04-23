@@ -60,7 +60,10 @@ NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 -- Theory Bridge (before namespace, so V2Data.toProfile is at root level)
 -- ============================================================================
 
-open Minimalism (ForceHead V2Profile) Features in
+namespace Features.V2Data
+
+open Minimalism (ForceHead V2Profile)
+
 /-- Map theory-neutral V2 observations to's
     split-ForceP micro-parameter representation. The mapping:
     - `declarativeV2`   → Decl° (verb movement in declaratives)
@@ -70,12 +73,14 @@ open Minimalism (ForceHead V2Profile) Features in
     - `imperativeV2`    → Imp°  (verb movement in imperatives)
     - `embeddedFinV2` → Fin°  (V-to-I in embedded finite clauses)
     - `embeddedQuestionV2`   → Wh°   (verb movement in embedded questions) -/
-def V2Data.toProfile (d : V2Data) : V2Profile where
+def toProfile (d : Features.V2Data) : V2Profile where
   name := d.name
   verbMovement
     | .Decl => d.declarativeV2  | .Int  => d.whQuestionV2   | .Pol  => d.yesNoQuestionV2
     | .Excl => d.exclamativeV2  | .Imp  => d.imperativeV2   | .Fin  => d.embeddedFinV2
     | .Wh   => d.embeddedQuestionV2
+
+end Features.V2Data
 
 namespace Westergaard2009
 
@@ -282,7 +287,7 @@ def cueWhHeadInInt : MicroCue :=
 
 /-- Whether a cue is expressed (+) in a given language's input.
     Children exposed to a + cue will set the corresponding parameter. -/
-def cueExpressed (lang : V2Data) (c : MicroCue) : Bool :=
+def cueExpressed (lang : Features.V2Data) (c : MicroCue) : Bool :=
   lang.toProfile.verbMovement c.target
 
 -- Cue verification (4 cues × selected languages)

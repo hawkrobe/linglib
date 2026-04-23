@@ -149,7 +149,7 @@ def hasObligatoryClassifierSystem (p : LanguageProfile) : Prop :=
 
 instance (p : LanguageProfile) : Decidable p.hasObligatoryClassifierSystem :=
   match h : p.classifierSystem with
-  | none => isFalse fun ⟨_, h', _⟩ => by rw [h] at h'; exact Option.noConfusion h'
+  | none => isFalse fun ⟨_, h', _⟩ => by rw [h] at h'; nomatch h'
   | some cs =>
     if hb : cs.isObligatory = true then
       isTrue ⟨cs, h, hb⟩

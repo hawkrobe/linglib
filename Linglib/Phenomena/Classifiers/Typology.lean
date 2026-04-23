@@ -350,4 +350,22 @@ def fromWALS55A : Datasets.WALS.F55A.NumeralClassifiers → ClassifierStatus
   | .optional => .optional
   | .obligatory => .obligatory
 
+/-- WALS Chapter 55 distribution: language counts per classifier status.
+    Total: 400 languages. Used by `Phenomena/Numerals/Typology.lean` for
+    the cross-paper distribution check. -/
+structure ClassifierDistribution where
+  absent : Nat
+  optional : Nat
+  obligatory : Nat
+  deriving Repr
+
+def ClassifierDistribution.total (d : ClassifierDistribution) : Nat :=
+  d.absent + d.optional + d.obligatory
+
+/-- Actual WALS Ch 55 counts (260 absent + 62 optional + 78 obligatory = 400). -/
+def ch55Distribution : ClassifierDistribution :=
+  { absent := 260
+  , optional := 62
+  , obligatory := 78 }
+
 end Phenomena.Classifiers.Typology

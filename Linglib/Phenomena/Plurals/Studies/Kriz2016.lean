@@ -95,7 +95,7 @@ def posExt (S : SentenceTV W) : Set W := {w | S w = .true}
 def negExt (S : SentenceTV W) : Set W := {w | S w = .false}
 
 /-- Extension gap: worlds where the sentence is neither true nor false. -/
-def gapExt (S : SentenceTV W) : Set W := {w | S w = .gap}
+def gapExt (S : SentenceTV W) : Set W := {w | S w = .indet}
 
 /-- The three extensions partition the world space. -/
 theorem extensions_partition (S : SentenceTV W) (w : W) :
@@ -176,7 +176,7 @@ theorem supervaluationTV_false_iff {Spec W : Type*} (eval : W → Spec → Bool)
 /-- A supervaluation sentence is gapped iff witnesses exist on both sides. -/
 theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Bool)
     (space : W → SpecSpace Spec) (w : W) :
-    supervaluationTV eval space w = .gap ↔
+    supervaluationTV eval space w = .indet ↔
     (∃ s ∈ (space w).admissible, eval w s = true) ∧
     (∃ s ∈ (space w).admissible, eval w s = false) :=
   superTrue_indet_iff (eval w) (space w)
@@ -460,7 +460,7 @@ def overlaps (a b : Finset Atom) : Bool :=
 def generalisedTV (P : Finset Atom → Bool) (domain : Finset (Finset Atom))
     (a : Finset Atom) : Truth3 :=
   if P a then .true
-  else if decide (∃ b ∈ domain, overlaps a b = true ∧ P b = true) then .gap
+  else if decide (∃ b ∈ domain, overlaps a b = true ∧ P b = true) then .indet
   else .false
 
 /-- Generalised homogeneity is a genuine three-way partition. -/
@@ -468,7 +468,7 @@ theorem generalisedTV_trichotomy (P : Finset Atom → Bool)
     (domain : Finset (Finset Atom)) (a : Finset Atom) :
     generalisedTV P domain a = .true ∨
     generalisedTV P domain a = .false ∨
-    generalisedTV P domain a = .gap := by
+    generalisedTV P domain a = .indet := by
   simp only [generalisedTV]; split_ifs <;> simp
 
 /-- If P holds of a, the generalised truth value is TRUE. -/
@@ -538,7 +538,7 @@ theorem generalisedTV_distributive_reduction
       simp only [generalisedTV, hPaFalse, Bool.false_eq_true, ite_false,
         decide_eq_false hNoWitness]
       symm; exact (superTrue_false_iff _ _).mpr hnone
-    · -- Mixed: both return .indet/.gap
+    · -- Mixed: both return .indet/.indet
       have hPaFalse : (decide (∀ x ∈ a, pred x = true)) = false := decide_eq_false hall
       -- Find an atom with pred = true
       push_neg at hnone
@@ -560,7 +560,7 @@ theorem generalisedTV_distributive_reduction
         cases h : pred z with
         | false => rfl
         | true => exact absurd h hpz
-      -- .gap is abbrev for .indet; use symm to match superTrue_indet_iff
+      -- .indet is abbrev for .indet; use symm to match superTrue_indet_iff
       symm
       exact (superTrue_indet_iff _ _).mpr ⟨⟨x, hxa, hpx_true⟩, ⟨z, hza, hpz_false⟩⟩
 
@@ -598,7 +598,7 @@ theorem removed_prevents_nonmax (q : QUD W) (S : SentenceTV W) (w : W)
 /-- The gap enables non-maximal use: if S is gapped at w and w's cell
     contains a true-world, then S is usable at w (assuming addressing). -/
 theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
-    (hGap : S w = .gap)
+    (hGap : S w = .indet)
     (hEquiv : q.r w w')
     (hTrue : S w' = .true)
     (hAddr : addressesIssue q S) :
@@ -606,7 +606,7 @@ theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
   ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
 
 /-- Gap-worlds are never false, so they satisfy the first usability condition. -/
-theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .gap) :
+theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .indet) :
     S w ≠ .false := by simp [h]
 
 end CrossDomain
@@ -714,7 +714,7 @@ omit [DecidableEq Atom] in
 of a world where some-but-not-all atoms satisfy P makes the sentence
 homogeneous, enabling non-maximal readings via Sufficient Truth. -/
 theorem bare_plural_homogeneous (P : Atom → W → Bool) (x : Finset Atom)
-    (w : W) (hGap : barePluralTV P x w = .gap) :
+    (w : W) (hGap : barePluralTV P x w = .indet) :
     isHomogeneous (barePluralTV P x) := by
   intro h; rw [Set.eq_empty_iff_forall_notMem] at h
   exact h w hGap
@@ -793,7 +793,7 @@ without being literally true.
 This is an instance of the general `Semantics.Homogeneity.gap_enables_nonmax`. -/
 theorem plural_gap_enables_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
     (w w' : W)
-    (hGap : barePluralTV P x w = .gap)
+    (hGap : barePluralTV P x w = .indet)
     (hEquiv : q.r w w')
     (hTrue : barePluralTV P x w' = .true)
     (hAddr : addressesIssue q (barePluralTV P x)) :
@@ -884,10 +884,10 @@ theorem bare_allSmiled :
     barePluralTV smiled profs .allSmiled = .true := by native_decide
 
 theorem bare_smithNeutral :
-    barePluralTV smiled profs .smithNeutral = .gap := by native_decide
+    barePluralTV smiled profs .smithNeutral = .indet := by native_decide
 
 theorem bare_onlyLeeSmiled :
-    barePluralTV smiled profs .onlyLeeSmiled = .gap := by native_decide
+    barePluralTV smiled profs .onlyLeeSmiled = .indet := by native_decide
 
 theorem bare_noneSmiled :
     barePluralTV smiled profs .noneSmiled = .false := by native_decide
@@ -1069,7 +1069,7 @@ omit [DecidableEq Atom] in
     returns `.indet` — witnesses exist on both sides. -/
 theorem homogeneity_gap_is_indefiniteness (P : Atom → W → Bool)
     (x : Finset Atom) (hne : x.Nonempty) (w : W)
-    (hgap : barePluralTV P x w = .gap) :
+    (hgap : barePluralTV P x w = .indet) :
     superTrue (fun a => P a w) ⟨x, hne⟩ = Truth3.indet := by
   rw [← barePluralTV_eq_superTrue P x hne w]; exact hgap
 
@@ -1079,7 +1079,7 @@ omit [DecidableEq Atom] in
     Fine's fidelity theorem: singleton specification spaces are classical. -/
 theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
     (x : Finset Atom) (w : W) :
-    allPluralTV P x w ≠ .gap := by
+    allPluralTV P x w ≠ .indet := by
   simp only [allPluralTV]; split_ifs <;> simp
 
 end Phenomena.Plurals.Studies.Kriz2016

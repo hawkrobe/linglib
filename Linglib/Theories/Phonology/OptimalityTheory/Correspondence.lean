@@ -194,19 +194,12 @@ def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
 -- ============================================================================
 
 /-- A list of natural numbers is contiguous (no gaps) iff its consecutive
-    elements differ by 1. Defined as `List.Chain' (fun a b => b = a + 1)`
+    elements differ by 1. Defined as `List.IsChain (fun a b => b = a + 1)`
     — mathlib's standard "consecutive" predicate. -/
-abbrev IsContiguous (l : List ℕ) : Prop := List.Chain' (fun a b => b = a + 1) l
+abbrev IsContiguous (l : List ℕ) : Prop := List.IsChain (fun a b => b = a + 1) l
 
-instance : (l : List ℕ) → Decidable (IsContiguous l)
-  | [] => .isTrue List.Chain'.nil
-  | [_] => .isTrue (List.chain'_singleton _)
-  | a :: b :: rest =>
-    if h₁ : b = a + 1 then
-      match instDecidableIsContiguous (b :: rest) with
-      | .isTrue h₂ => .isTrue (List.Chain'.cons h₁ h₂)
-      | .isFalse h₂ => .isFalse fun h => h₂ h.tail
-    else .isFalse fun h => h₁ (List.chain'_cons.mp h).1
+instance : (l : List ℕ) → Decidable (IsContiguous l) :=
+  inferInstanceAs ((l : List ℕ) → Decidable (List.IsChain _ l))
 
 /-- **(A.4a) I-CONTIGUITY** — "No Skipping." Domain(ℛ) is a contiguous
     substring of `form r₁`. Violated by internal deletion. -/
@@ -399,7 +392,7 @@ def reduplication (input base reduplicant : List α) : Corr RedupRole α :=
 @[simp] theorem parallel_edge_rhs_lhs (s₁ s₂ : List α) :
     (parallel s₁ s₂).edge .rhs .lhs =
       (Finset.range (min s₁.length s₂.length)).image (fun i => (i, i)) := by
-  simp [parallel]
+  simp [parallel, Nat.min_comm]
 
 /-- Identity correspondence has zero MAX violations. -/
 theorem identity_max_zero (s : List α) :
@@ -506,7 +499,7 @@ end Corr
 -- § 10b: Reduplication-specific NamedConstraints (M&P 1995 §3)
 -- ============================================================================
 
-/-- The canonical M&P 1995 reduplicative-faithfulness constraints, as
+/-! The canonical M&P 1995 reduplicative-faithfulness constraints, as
     `NamedConstraint (Corr RedupRole α)`. Each is a 1-line specialization
     of the role-polymorphic `Corr.toMaxConstraint`/`toIdentConstraint`
     family above. Study files import these names instead of re-rolling

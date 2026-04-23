@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Powerset
 import Linglib.Core.Tree
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Fragments.Armenian.Typology
@@ -150,7 +151,6 @@ theorem strictPl_subset_genNum :
     daghaNerStrictPl ⊆ daghaGenNum := by
   intro x hx
   simp [daghaNerStrictPl, daghaGenNum] at *
-  rcases hx with ⟨_, hcard⟩
   exact Finset.card_pos.mp (by omega)
 
 /-- The general-number set has 7 elements (3 singletons + 3 pairs + 1 triple). -/
@@ -243,9 +243,28 @@ def waLex : List (Tree Cat String) :=
     meaning. -/
 theorem singularDef_pluralDef_equalComplexity :
     equalComplexity waLex singularDef pluralDef := by
+  -- Intermediate trees for the pluralDef → singularDef chain:
+  -- After V substitution then Det substitution.
+  let pluralVNer := pluralDef
+  let intermed1 : Tree Cat String :=
+    .node .S [
+      .node .DP [
+        .node .NumP [
+          .node .NP [.terminal .N "dəgha"],
+          .terminal .Num "-ner"],
+        .terminal .Det "-ə"],
+      .node .VP [.terminal .V "vaze-ts"]]
+  let intermed2 : Tree Cat String :=
+    .node .S [
+      .node .DP [
+        .node .NumP [
+          .node .NP [.terminal .N "dəgha"],
+          .terminal .Num "-ner"],
+        .terminal .Det "-n"],
+      .node .VP [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
-  · -- pluralDef → ... → singularDef via three substitutions (V → Det → Num)
-    refine .head ?_ (.head ?_ (.single ?_))
+  · -- pluralDef → intermed1 → intermed2 → singularDef
+    refine .head (b := intermed1) ?_ (.head (b := intermed2) ?_ (.single ?_))
     · -- substitute V "vaze-ts-in" with V "vaze-ts" at [1, 0]
       apply StructOp.inChild ⟨1, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
@@ -259,8 +278,8 @@ theorem singularDef_pluralDef_equalComplexity :
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
-  · -- singularDef → ... → pluralDef (mirror)
-    refine .head ?_ (.head ?_ (.single ?_))
+  · -- singularDef → intermed2 → intermed1 → pluralDef (mirror)
+    refine .head (b := intermed2) ?_ (.head (b := intermed1) ?_ (.single ?_))
     · apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩

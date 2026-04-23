@@ -188,7 +188,7 @@ def ah : SentenceFinalParticle :=
 
     Parametric values: parasitic movement (must adjoin to wh-phrase;
     cannot move on its own), matrix-scope host requirement. -/
-def theHell : ExpressiveWhModifier :=
+def theHell : Core.Lexical.ExpressiveModifier.ExpressiveWhModifier :=
   { form := "the hell"
   , gloss := "the-hell (ANDL intensifier)"
   , movementType := .parasitic

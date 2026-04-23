@@ -40,7 +40,7 @@ abbrev ProbAssignment (W : Type*) := W → ℚ
     For each world v in `Finset.univ`, generate the proposition "at least
     as probable as v": w satisfies this iff P(w) ≥ P(v). The resulting
     ordering ranks worlds by probability: w ≥_A z iff P(w) ≥ P(z). -/
-def probToOrdering {W : Type*} [Fintype W] (prob : ProbAssignment W) :
+noncomputable def probToOrdering {W : Type*} [Fintype W] (prob : ProbAssignment W) :
     OrderingSource W := fun _ =>
   (Finset.univ : Finset W).toList.map fun v => fun w => prob w ≥ prob v
 

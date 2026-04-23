@@ -353,7 +353,7 @@ end TiberianHebrew
 -- § 4: The Unified Misapplication Theorem
 -- ============================================================================
 
-/-- **The unified architectural claim of @cite{benua-1997}**: both
+/-! **The unified architectural claim of @cite{benua-1997}**: both
     overapplication (Sundanese, §2) and underapplication (Tiberian Hebrew,
     §3) are formalized as the *same* construction — a 3-role TCT
     correspondence diagram with IDENT-OO (segmental or featural) on the
@@ -372,6 +372,7 @@ end TiberianHebrew
 
     The shared structural mechanism: `TetruSchema.misapplication_wins`
     (in `TCT.lean`). -/
+
 /-- The Sundanese case study, as an instance of the unifying
     `TetruSchema.misapplication_wins` theorem. Given any TETRU schema
     where M₁ ties between the two candidates and OO-Ident is the

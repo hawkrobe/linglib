@@ -398,23 +398,34 @@ Is this presuppositional profile valid (attestable)?
 
 Valid means: either satisfies PLC (factives) or not subject to PLC
 (nonfactives, postsuppositions). Invalid = violates PLC (contrafactives).
--/
-noncomputable def presupClassIsValid (pc : PresupClass) : Bool :=
-  match presupClassSatisfiesPLC pc with
-  | none => true
-  | some b => b
+
+Direct (computable) classification. The PLC-derivation chain
+(via `presupClassSatisfiesPLC`) is given as
+`presupClassIsValid_eq_via_plc` below. -/
+def presupClassIsValid : PresupClass → Bool
+  | .factive       => true
+  | .nonfactive    => true
+  | .contrafactive => false
+  | .other         => true
+
+/-- The PLC derivation: `presupClassIsValid` agrees with running the
+    `presupClassSatisfiesPLC` chain (taking `none` as `true`). This
+    bridges the direct classifier to the @cite{roberts-ozyildiz-2025}
+    causal account. -/
+theorem presupClassIsValid_eq_via_plc (pc : PresupClass) :
+    presupClassIsValid pc = (presupClassSatisfiesPLC pc).getD true := by
+  cases pc <;> simp [presupClassIsValid, presupClassSatisfiesPLC,
+    presupClassToCausalVars]
+  · exact factive_satisfies_plc
+  · exact strong_contrafactive_violates_plc
 
 /-- Factive presuppositions are valid (satisfy PLC). -/
 theorem factive_presup_valid :
-    presupClassIsValid .factive = true := by
-  simp [presupClassIsValid, presupClassSatisfiesPLC, presupClassToCausalVars]
-  exact factive_satisfies_plc
+    presupClassIsValid .factive = true := rfl
 
 /-- Contrafactive presuppositions are invalid (violate PLC). -/
 theorem contrafactive_presup_invalid :
-    presupClassIsValid .contrafactive = false := by
-  simp [presupClassIsValid, presupClassSatisfiesPLC, presupClassToCausalVars]
-  exact strong_contrafactive_violates_plc
+    presupClassIsValid .contrafactive = false := rfl
 
 /-- Nonfactive verbs are trivially valid (no presupposition to check). -/
 theorem nonfactive_presup_valid :

@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Entailment.Polarity
 
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
