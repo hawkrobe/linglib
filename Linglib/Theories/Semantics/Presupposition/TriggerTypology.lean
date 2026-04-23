@@ -1,44 +1,40 @@
-/-
-# Implicature Presupposition Integration
-@cite{wang-2025}
-
-Extends Implicature infrastructure with presupposition handling, connecting
-to the core presupposition projection from Core.Presupposition.
-
-## Key Concepts
-
-1. Presupposition Triggers: Lexical items that introduce presuppositions
-   - Definites: "the" presupposes existence and uniqueness
-   - Factives: "know", "regret" presuppose their complement
-   - Change-of-state: "stop", "start" presuppose prior state
-   - Iteratives: "again", "still" presuppose prior occurrence
-   - Clefts: "It was X that..." presupposes existence
-
-2. Interaction with Exhaustification
-   - Exhaustification can strengthen presuppositions
-   - Presupposition failure may block SI computation
-
-## Architecture
-
-Theory-neutral examples (King, factive verbs, etc.) are in:
-  `Phenomena.Presupposition.Basic`
-
-This module provides Implicature-specific infrastructure:
-  - Trigger types for alternative generation
-  - Derivation tracking for SI computation
-  - SI-presupposition interaction
-
--/
-
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Pragmatics.Implicature.Core.Basic
-namespace Implicature.Presuppositions
+
+/-!
+# Presupposition Trigger Typology
+@cite{wang-2025}
+
+Cross-linguistic typology of presupposition triggers, classifying triggers
+by what non-presuppositional alternative they have. The classification
+follows @cite{wang-2025} Table 4.1 and is consumed by:
+
+- `Phenomena/Presupposition/Studies/Wang2025.lean` — IC ≫ FP ≫ MP
+  constraint-based competition analysis
+- `Fragments/Mandarin/Particles.lean` — Mandarin trigger entries
+
+## Classification
+
+Three patterns of trigger ↔ alternative relationship:
+1. **Deletion alternatives** — trigger can be deleted (ye/also → ∅)
+2. **Replacement alternatives** — specific lexical replacement (zhidao/know → believe)
+3. **No structural alternative** — no available alternative (jiu/only)
+
+The alternative-structure axis predicts obligatoriness:
+- Deletion / replacement → trigger can be optional or obligatory
+- No alternative → trigger is mandatorily omitted under partial CG support
+
+## Relation to MP infrastructure
+
+This file provides the **typology**; the constraint-based formulation of
+Maximize Presupposition lives in `MaximizePresupposition.lean`, and the
+paper-specific IC/FP/MP ranking in `Phenomena/Presupposition/Studies/Wang2025.lean`.
+-/
+
+namespace Semantics.Presupposition.TriggerTypology
 
 open Core.Presupposition
 open Semantics.Entailment.Polarity
-open Implicature
-
 
 /--
 Types of presupposition triggers in natural language.
@@ -78,8 +74,7 @@ structure TriggerOccurrence where
 /--
 A derivation extended with presupposition tracking.
 
-This extends the basic Implicature infrastructure to track presuppositions
-through the derivation, enabling:
+Tracks presuppositions through the derivation, enabling:
 - Presupposition projection computation
 - Interaction between presuppositions and SIs
 -/
@@ -113,28 +108,8 @@ structure ExhWithPresup (W : Type*) where
 
 
 -- ============================================================================
--- @cite{wang-2025} Alternative Structure Classification
+-- @cite{wang-2025} Table 4.1: Alternative-structure typology
 -- ============================================================================
-
-/-!
-## Alternative Structure for Presupposition Triggers
-
-@cite{wang-2025} Table 4.1 classifies presuppositional triggers by what
-non-presuppositional alternative they have. This determines their behavior
-under the IC >> FP >> MP constraint ranking.
-
-Three patterns:
-1. **Deletion alternatives**: trigger can be deleted (ye/also → ∅, you/again → ∅)
-2. **Replacement alternatives**: trigger has a specific lexical alternative
-   (zhidao/know → believe, buzai/no-longer → not)
-3. **No structural alternative**: no available alternative (jiu/only → ∅)
-
-This classification predicts obligatoriness:
-- Deletion/replacement alternatives → trigger can be optional or obligatory
-- No alternative → trigger is mandatorily omitted when presupposition only
-  partially holds
-
--/
 
 /--
 @cite{wang-2025} Table 4.1: How a presupposition trigger relates to its
@@ -150,39 +125,10 @@ inductive AltStructure where
   deriving DecidableEq, Repr
 
 /--
-@cite{wang-2025} pragmatic constraint ranking: IC >> FP >> MP.
+Obligatoriness pattern predicted by the alternative-structure typology.
 
-- IC (Internal Coherence): S_p's presupposition is consistent with its assertion.
-  Non-violable.
-- FP (Felicity Presupposition): S_p's presupposition is entailed by the CG.
-  Violable but ranked above MP.
-- MP (Maximize Presupposition): Prefer the presuppositional S_p over its
-  non-presuppositional alternative S when context supports it.
-  Violable.
--/
-inductive PragConstraint where
-  /-- Internal Coherence: presupposition consistent with assertion (non-violable) -/
-  | IC
-  /-- Felicity Presupposition: CG entails presupposition (violable) -/
-  | FP
-  /-- Maximize Presupposition: prefer presuppositional form (violable) -/
-  | MP
-  deriving DecidableEq, Repr
-
-/-- IC is non-violable; FP and MP are violable. -/
-def PragConstraint.isViolable : PragConstraint → Bool
-  | .IC => false
-  | .FP => true
-  | .MP => true
-
-/-- The canonical constraint ranking: IC >> FP >> MP. -/
-def constraintRanking : List PragConstraint := [.IC, .FP, .MP]
-
-/--
-Obligatoriness pattern predicted by the alternative competition framework.
-
-@cite{wang-2025} derives three patterns from the interaction of trigger type,
-alternative structure, and constraint ranking:
+@cite{wang-2025} derives three patterns from the interaction of trigger
+type, alternative structure, and constraint ranking:
 1. Obligatory: trigger must be used when CG supports presupposition
 2. Optional: trigger may or may not be used
 3. Blocked: trigger must NOT be used (mandatorily omitted)
@@ -225,5 +171,4 @@ def PresupTrigger.defaultAltStructure : PresupTrigger → AltStructure
   | .cleft => .none              -- no obvious alternative
   | .aspectual => .replacement   -- "start" → "do"
 
-
-end Implicature.Presuppositions
+end Semantics.Presupposition.TriggerTypology

@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.Implicature.Core.Basic
-import Linglib.Theories.Pragmatics.Implicature.Core.Competence
+import Linglib.Theories.Pragmatics.Implicature.Basic
+import Linglib.Theories.Pragmatics.Implicature.Competence
 
 /-!
 # @cite{bale-etal-2025} — Competence by Default

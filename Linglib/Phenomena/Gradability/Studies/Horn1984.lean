@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
+import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 
 /-!

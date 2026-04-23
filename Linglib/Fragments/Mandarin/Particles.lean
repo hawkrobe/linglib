@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Implicature.Presuppositions
+import Linglib.Theories.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Mandarin Presuppositional Particles
@@ -25,15 +25,15 @@ experimental data (@cite{wang-2025} Experiments 1-3).
 
 ## Cross-Module Connections
 
-- `Implicature.Presuppositions.AltStructure`: alternative classification
-- `Implicature.Presuppositions.PresupTrigger`: trigger type
+- `Semantics.Presupposition.TriggerTypology.AltStructure`: alternative classification
+- `Semantics.Presupposition.TriggerTypology.PresupTrigger`: trigger type
 - `Wang2025`: experimental data
 
 -/
 
 namespace Fragments.Mandarin.Particles
 
-open Implicature.Presuppositions (PresupTrigger AltStructure PresupTriggerEntry)
+open Semantics.Presupposition.TriggerTypology (PresupTrigger AltStructure PresupTriggerEntry)
 
 /-- Mandarin presupposition triggers studied in @cite{wang-2025} Experiments 1-2. -/
 inductive MandarinTrigger where

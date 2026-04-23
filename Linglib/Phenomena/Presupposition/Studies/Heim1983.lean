@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Implicature.Presuppositions
+import Linglib.Theories.Semantics.Presupposition.TriggerTypology
 import Linglib.Phenomena.Presupposition.Basic
 
 /-!
@@ -18,7 +18,7 @@ examples from Phenomena for NeoGricean SI computation.
 namespace Heim1983
 
 open Core.Presupposition
-open Implicature.Presuppositions
+open Semantics.Presupposition.TriggerTypology
 open Phenomena.Presupposition
 
 /--

@@ -1,4 +1,7 @@
-/-
+import Linglib.Core.Lexical.Word
+import Linglib.Theories.Semantics.Entailment.Polarity
+
+/-!
 # Neo-Gricean Pragmatics: Basic Definitions
 
 Core formalization of the Standard Recipe from @cite{geurts-2010} Chapter 2.
@@ -293,5 +296,62 @@ def predictsHighNeutralRate (p : NeoGriceanParams) : Bool :=
   p.predictedNeutralRate > 50
 
 
+-- ============================================================
+-- Word-driven NeoGricean Parsing
+-- ============================================================
+
+open Semantics.Entailment.Polarity (ContextPolarity) in
+/-- Implicature's internal representation for implicature analysis.
+
+    Bundles the Standard Recipe result with context information. -/
+structure NeoGriceanStructure where
+  /-- The Standard Recipe result (weak/strong implicature, competence) -/
+  result : StandardRecipeResult
+  /-- Context polarity (upward vs downward entailing) -/
+  polarity : ContextPolarity
+  /-- Position of the scalar item (if any) -/
+  scalarPosition : Option Nat
+  /-- Which variant of Implicature (for baseline rate) -/
+  params : NeoGriceanParams := geurtsParams
+  deriving Repr
+
+/-- Check if a word is a scalar quantifier -/
+def isScalarQuantifierWord (w : Word) : Bool :=
+  w.form == "some" || w.form == "every" || w.form == "all" || w.form == "most"
+
+/-- Find the position of a scalar item in a word list -/
+def findScalarPositionInWords (ws : List Word) : Option Nat :=
+  ws.findIdx? isScalarQuantifierWord
+
+open Semantics.Entailment.Polarity (ContextPolarity) in
+/-- Determine context polarity from words.
+    Simplified: checks for negation markers. -/
+def determinePolarityFromWords (ws : List Word) : ContextPolarity :=
+  if ws.any (λ w => w.form == "no" || w.form == "not" || w.form == "never")
+  then .downward
+  else .upward
+
+open Semantics.Entailment.Polarity (ContextPolarity) in
+/-- Parse words into Implicature structure.
+
+    For now, uses a simplified analysis:
+    - Finds scalar item position
+    - Determines polarity from negation markers
+    - Assumes competence holds and derives strong implicature in UE -/
+def parseToNeoGricean (ws : List Word) : Option NeoGriceanStructure :=
+  let scalarPos := findScalarPositionInWords ws
+  let polarity := determinePolarityFromWords ws
+  let beliefState : BeliefState :=
+    match scalarPos, polarity with
+    | some _, .upward => .disbelief  -- Strong implicature in UE
+    | some _, .downward => .noOpinion  -- Blocked in DE
+    | some _, .nonMonotonic => .noOpinion  -- Blocked in NM
+    | none, _ => .belief  -- No scalar item
+  let result := applyStandardRecipe beliefState
+  some { result := result
+       , polarity := polarity
+       , scalarPosition := scalarPos
+       , params := geurtsParams
+       }
 
 end Implicature

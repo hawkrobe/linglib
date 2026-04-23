@@ -55,7 +55,7 @@ Economy and structural complexity are **complementary**:
   alternatives → blocks vacuous/weakening insertions
 -/
 
-namespace Implicature.FoxSpector2018
+namespace Phenomena.ScalarImplicatures.Studies.FoxSpector2018
 
 open Exhaustification
 
@@ -454,4 +454,4 @@ theorem vacuous_violates_economy (ALT : Set (Set World))
   exact hext C hC (exhIE ALT φ) φ (fun w => Iff.of_eq (congrFun hvac w)) w
 
 
-end Implicature.FoxSpector2018
+end Phenomena.ScalarImplicatures.Studies.FoxSpector2018

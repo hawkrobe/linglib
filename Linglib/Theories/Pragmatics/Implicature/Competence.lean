@@ -23,7 +23,7 @@ Detailed competence analysis from @cite{geurts-2010} Chapter 2.3.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Basic
 
 namespace Implicature.Competence
 

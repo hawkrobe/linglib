@@ -4,6 +4,121 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.253] - 2026-04-23
+
+### O'Donnell 2015 Phase 1: PolyaUrn substrate + audit fixes
+
+Pure-math substrate for the Dirichlet–multinomial likelihood,
+needed by all five FG-family models (DMPCFG / MAG / FG / DOP1 /
+ENDOP) per @cite{odonnell-2015} §3.1.3 (eq 3.7).
+
+- **New file**: `Linglib/Core/Probability/PolyaUrn.lean` (~95 LOC).
+  Provides `ProbabilityTheory.PolyaUrn K` (structure with
+  pseudo-counts), `total`, `total_pos` (under `[NeZero K]`),
+  `partitionProb` (closed-form Dirichlet–multinomial mass),
+  `partitionProb_zero`. Imports only mathlib's `Real.Gamma` and
+  `BigOperators.Fin` — no linglib-specific deps; potentially
+  upstream-able to mathlib.
+- **Architecture finding**: the previously-planned
+  `Core/Grammar/CFG.lean` is dropped from the plan because
+  `Mathlib.Computability.ContextFreeGrammar` already provides the
+  CFG type, and `Linglib.Core.Computability.CFGTree` already wraps
+  it with `ValidFor`, `yield`, `subtreeAt?`, `replaceAt`,
+  `ruleAt?`, plus a full pumping-lemma pipeline. Downstream FG
+  files will use those directly.
+- **Audit fixes** to Phase 0's `FrequencySpectrum.lean`:
+  added `@[ext]` to `SuffixSpectrum`; rewrote `moreProductiveThan`
+  as `>` on `Suffix.productivityIndex` (mathlib pattern: encode to
+  ℕ, lift the order); added `DecidableRel` instance.
+- **Audit fixes** to PolyaUrn: added `@[ext]` to the structure.
+
+Build: `Linglib.Core.Probability.PolyaUrn` builds in ~4.5s clean.
+Bibliography validates with `odonnell-2015` resolving cleanly.
+
+## [0.230.252] - 2026-04-23
+
+### Implicature/ directory restructuring
+
+Audit of `Theories/Pragmatics/Implicature/` (12 files, ~4.6K LOC) found
+~53% was misfiled paper-replication material. Restructured per the audit
+plan: paper replications moved to `Phenomena/X/Studies/`; `Core/`,
+`Constraints/`, and `ScalarImplicatures/` subdirectories dissolved;
+trigger typology promoted to `Theories/Semantics/Presupposition/`.
+
+**File moves**:
+- `Implicature/Analyticity.lean` → `Phenomena/Polarity/Studies/Gajewski2002.lean`
+- `Implicature/Core/FoxSpector2018.lean` → `Phenomena/ScalarImplicatures/Studies/FoxSpector2018.lean`
+- `Implicature/Constraints/Wang2025.lean` → merged into existing
+  `Phenomena/Presupposition/Studies/Wang2025.lean`
+- `Implicature/Constraints/NumericalExpressions.lean` → merged into existing
+  `Phenomena/Numerals/Studies/Cummins2015.lean`
+- `Implicature/Evaluativity.lean` (985 LOC) → merged into
+  `Phenomena/Gradability/Studies/Rett2015Implicature.lean` (absorbing
+  the prior "bridge" file)
+- `Implicature/ConventionalImplicatures.lean` → merged into
+  `Phenomena/Expressives/Studies/LoGuercio2025.lean`
+- `Implicature/Presuppositions.lean` → split: trigger typology →
+  `Theories/Semantics/Presupposition/TriggerTypology.lean`;
+  Wang IC/FP/MP `PragConstraint` → into the merged Wang2025 study file
+
+**Subdirectory dissolutions**:
+- `Implicature/Core/` (5 files) → flattened to top-level siblings:
+  `Basic.lean`, `Competence.lean`, `EpistemicBlocking.lean`, `Markedness.lean`
+- `Implicature/Constraints/` deleted after both files moved
+- `Implicature/ScalarImplicatures/` (singleton subdir) split into
+  `Implicature/Scales.lean` (generic helpers) +
+  `Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean`
+  (Geurts-specific worked examples). The bottom-of-file
+  `Implicature.NeoGriceanStructure` Word-based parsing material was
+  absorbed into `Implicature/Basic.lean`.
+
+**Final shape**: `Theories/Pragmatics/Implicature/` is now a flat
+5-file directory: `Basic.lean`, `Competence.lean`, `EpistemicBlocking.lean`,
+`Markedness.lean`, `Scales.lean` (zero subdirectories).
+
+**Carried forward** (audit findings not addressed by this restructuring):
+- `EpistemicBlocking.lean` could optionally migrate to
+  `Phenomena/ScalarImplicatures/Studies/Sauerland2004.lean` once a Sauerland 2004
+  data anchor is added.
+- `Markedness.lean` imports `Fragments/English/Predicates/Adjectival` for
+  worked examples that ideally belong in `Phenomena/Gradability/Studies/Horn1984.lean`.
+- The Geurts disjunction infrastructure (`compareSubstitution`, `analyzeDisjunction`)
+  in `Scales.lean` carries the audit-flagged "stipulated, not derived" smell.
+- Once `MaximizePresupposition.lean` reunites all three Maximize-X formulations
+  (MP, MCI, Wang IC/FP/MP), they could become parallel applications of one
+  shared `Maximize` skeleton.
+
+## [0.230.251] - 2026-04-23
+
+### O'Donnell 2015 Phase 0: bibliography + theory-neutral data anchor
+
+Phase 0 of formalizing @cite{odonnell-2015} (*Productivity and Reuse
+in Language*). Establishes the data anchor that downstream FG / MAG /
+DMPCFG / DOP study files will bridge to, with no theoretical
+machinery yet.
+
+- **New bib entry**: `odonnell-2015` in `blog/data/references.bib`
+  (subfield `morphology`; ISBN-only, no DOI verified).
+- **New file**: `Linglib/Phenomena/Morphology/Productivity/FrequencySpectrum.lean`
+  (~135 LOC, zero linglib imports beyond Lean core). Encodes the
+  qualitative shape of Figure 1.1 — *-ness*/*-ity*/*-th* type/token
+  frequency spectra — as `Suffix`, `PeakLocation`, `TypeTokenRatio`,
+  `SuffixSpectrum`, `observed`, `moreProductiveThan`. Specific
+  numerical maxima are deliberately not formalized; per CLAUDE.md
+  regression-summary numbers belong in prose.
+- **Architecture**: new `Phenomena/Morphology/Productivity/`
+  subdirectory. Theory-neutral observations sit at this level; all
+  theoretical interpretations (FG/MAG/etc.) will land in
+  `Theories/Probabilistic/Grammar/` (not yet created) and be
+  consumed by `Phenomena/Morphology/Studies/ODonnell2015*.lean`
+  files.
+
+The mathlib-discipline split being established: `Core/Probability/`
++ `Core/Grammar/` for interpretation-free math substrate;
+`Theories/Probabilistic/Grammar/` for the named theoretical models
+(PCFG, DMPCFG, MAG, FG, DOP) and their linguistic claims;
+`Phenomena/Morphology/Studies/` for the empirical applications.
+
 ## [0.230.250] - 2026-04-23
 
 ### D-H Cutover COMPLETE: legacy `Core/Causal/SEM/` deleted, V2 promoted to canonical

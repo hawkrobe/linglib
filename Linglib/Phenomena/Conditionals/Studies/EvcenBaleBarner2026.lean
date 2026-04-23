@@ -3,7 +3,7 @@ import Linglib.Paradigms.Measurement
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Pragmatics.Implicature.Core.Competence
+import Linglib.Theories.Pragmatics.Implicature.Competence
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
@@ -716,7 +716,7 @@ theorem cp_is_pragmatic :
 /-! ## Competence Bridge
 
 The competence assumption in conditional perfection is the same mechanism
-formalized in `Implicature.Core.Competence` and tested experimentally by
+formalized in `Implicature.Competence` and tested experimentally by
 @cite{bale-etal-2025} for scalar implicatures. Both paradigms:
 - Map full speaker knowledge to `BeliefState.disbelief` (speaker knows ¬ψ)
 - Map partial knowledge to `BeliefState.noOpinion` (speaker is agnostic)
@@ -771,7 +771,7 @@ theorem pk_processAlternative_weak :
 Both @cite{evcen-bale-barner-2026} (conditional perfection) and
 @cite{bale-etal-2025} (scalar implicatures) map full knowledge to strong
 inference and partial knowledge to weak-only, via the identical
-`processAlternative` machinery from `Implicature.Core.Competence`. -/
+`processAlternative` machinery from `Implicature.Competence`. -/
 theorem cp_si_competence_unity :
     -- CP: full knowledge → strong, partial → weak
     (processAlternative true (toBeliefStateCP .fullKnowledge)).strongDerived = true ∧

@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Features.Acceptability
 import Linglib.Paradigms.Measurement
-import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.Implicature.Scales
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
@@ -490,9 +490,25 @@ experimental findings above.
 - Singh asymmetry predictions match felicity judgments
 -/
 
-open Implicature.ScalarImplicatures
+open Implicature.Scales
 open Exhaustification
 open Phenomena.ScalarImplicatures
+
+/-- Geurts-specific worked example: "some" in UE → "not all" implicature. -/
+def someNotAll_UE : ImplicatureCheck :=
+  ⟨quantImplicatureArises .some_ .all .upward⟩
+
+/-- Geurts-specific worked example: "some" in DE → no "not all" implicature. -/
+def someNotAll_DE : ImplicatureCheck :=
+  ⟨quantImplicatureArises .some_ .all .downward⟩
+
+/-- "some students sleep": scalar item is "some" in UE context. -/
+def someStudentsSleep_result : List ScalarImplicatureResult :=
+  deriveFromWords ["some", "students", "sleep"] .upward
+
+/-- "some students sleep" in DE: implicature blocked. -/
+def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
+  deriveFromWords ["some", "students", "sleep"] .downward
 
 /-- Exp 1a simple rate (Table 2). -/
 def simpleRate : Nat := 93

@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.Implicature.Evaluativity
+import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 
@@ -72,7 +72,7 @@ The RSA model adds two things the Neo-Gricean account lacks:
 namespace Phenomena.Gradability.BumfordRett2021
 
 open RSA
-open Implicature.Evaluativity (Polarity)
+open Phenomena.Gradability.Studies.Rett2015Implicature (Polarity)
 open Semantics.Degree (AdjectivalConstruction)
 
 -- ============================================================================
@@ -459,7 +459,7 @@ abbrev posConstruction  : AdjectivalConstruction := .positive
 abbrev eqConstruction   : AdjectivalConstruction := .equative
 abbrev compConstruction : AdjectivalConstruction := .comparative
 
-open Implicature.Evaluativity (deriveEvaluativity)
+open Phenomena.Gradability.Studies.Rett2015Implicature (deriveEvaluativity)
 
 /-- Cross-theory agreement: the RSA model and @cite{rett-2015}'s Neo-Gricean
     account agree on the full evaluativity paradigm.

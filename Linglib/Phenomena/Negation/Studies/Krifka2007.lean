@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.Antonymy
-import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
+import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Core.Constraint.OT.Basic
 
