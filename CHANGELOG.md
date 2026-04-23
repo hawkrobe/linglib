@@ -4,6 +4,60 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.231] - 2026-04-23
+
+### Core/Constraint + Correspondence: `Type → Type*` universe upgrade
+
+Foundational mathlib-discipline fix. The `NamedConstraint (C : Type)`
+restriction in `Core/Constraint/OT/Basic.lean` was the textbook PR-1
+issue mathlib reviewers catch immediately — universe-polymorphic
+linguistic types (e.g., `Verb α : Type*` for `α : Type*`) couldn't
+have NamedConstraints over them, even though they should be able to.
+Every downstream wrapper (`mkTableau`, `Tableau`, `tableauERC`,
+`tableauSystem`, `Corr.toMaxConstraint` family, `Reduplication.maxIO`/
+`maxBR`/etc.) inherited the restriction.
+
+#### What changed
+
+`Type → Type*` on:
+
+- `Core/Constraint/OT/Basic.lean`: `NamedConstraint`, `mkMark`,
+  `mkFaith`, `mkMarkGrad`, `mkFaithGrad`, `mkProfile`, `mkTableau` +
+  all 5 `mkTableau_*` theorems, `mkFactorialOptima`,
+  `mkFactorialTypologySize`, `permutations`, `insertEverywhere`,
+  `mem_of_mem_insertEverywhere`, `mem_of_mem_permutations`,
+  `permutations_subset`
+- `Core/Constraint/Evaluation.lean`: `buildViolationProfile`,
+  `Tableau` (structure), `variable {C : Type}` line. The `Tableau.*`
+  methods inherit via the variable.
+- `Core/Constraint/OT/ERC.lean`: `tableauERC`
+- `Core/Constraint/System.lean`: `tableauSystem`,
+  `tableauSystem_predict_eq`, `_pos_iff_optimal`,
+  `_unique_winner`, `_loser`
+- `Theories/Phonology/OptimalityTheory/Correspondence.lean`:
+  `toConstraint`, `toIdentConstraint`, `toIdentFeatureConstraint`
+  (with `{F : Type*}`), `toMaxConstraint`, `toDepConstraint`, and
+  the `Reduplication` namespace (`maxIO`, `maxBR`, `depIO`,
+  `identBR`, `identIO`).
+
+Mechanical change. No proof rewrites — every consumer just *uses* the
+defs without re-stating type parameters, so the upgrade is transparent
+to the ~50 study files downstream.
+
+#### Why this matters
+
+- Universe-polymorphic linguistic types now work as candidate types
+  for NamedConstraints (was: silently failed at every `Tableau` call
+  due to elaboration restriction).
+- Removes a maintenance debt that was destined to bite as more
+  consumers added `Type*` candidate types.
+- Mathlib pattern: `Type*` is the default; deviations are bugs caught
+  at PR review.
+
+The fix took 5 files, 38 line edits, no proof changes. Proves the
+mathlib reviewer's prediction that the fix is "mechanical" once the
+foundation is changed.
+
 ## [0.230.230] - 2026-04-23
 
 ### Exhaustification subdir audit (Phases B+C): hygiene + pattern hoisting
