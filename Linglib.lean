@@ -273,6 +273,8 @@ import Linglib.Core.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.PolyaUrn
+import Linglib.Core.Probability.PitmanYor
 import Linglib.Theories.Pragmatics.RSA.Divergence
 import Linglib.Theories.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Core.Inheritance.Basic
@@ -1294,6 +1296,7 @@ import Linglib.Phenomena.Morphology.Studies.HalleMarantz1993
 import Linglib.Phenomena.Morphology.Typology
 import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013
 import Linglib.Phenomena.Morphology.CategoryChanging
+import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Morphology.Studies.Adamson2024

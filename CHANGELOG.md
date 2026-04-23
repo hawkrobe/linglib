@@ -4,23 +4,6 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.256] - 2026-04-23
-
-### GP2009 quality pass
-
-Follow-up to the Scales.lean cleanup (0.230.255), addressing the
-mathlib-reviewer concerns that migrated to GP2009 during the
-ScalarImplicatures/Basic.lean split.
-
-- All 30× `native_decide` → `decide` per `feedback_proof_style.md`. Build
-  time unchanged; the proofs are small finite data checks that `decide`
-  handles in milliseconds.
-- Inlined `competenceExplainsBelief : Bool` thin wrapper (used once).
-- Renamed `someStudentsSleep_result` / `someStudentsSleep_DE_result` →
-  `someStudentsSleepUE` / `someStudentsSleepDE` (drop redundant `_result`
-  suffix; `UE`/`DE` matches the `SomeNotAllDE` pattern).
-- Replaced deprecated `push_neg at h` with `push Not at h`.
-
 ## [0.230.255] - 2026-04-23
 
 ### Scales.lean quality pass
@@ -48,6 +31,35 @@ into `Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean`.
   Props (no `... = true`/`... = false` encoding), proved with `decide`.
 
 `Scales.lean` shrunk from 273 LOC to 132 LOC (-52%). Full repo build green.
+
+## [0.230.254] - 2026-04-23
+
+### O'Donnell 2015 Phase 1 cont.: PitmanYor substrate
+
+Companion to PolyaUrn (0.230.253). Pure-math substrate for the
+Pitman–Yor process, needed by adaptor grammars and fragment
+grammars per @cite{odonnell-2015} §2.3.4 and §2.3.6.
+
+- **New file**: `Linglib/Core/Probability/PitmanYor.lean` (~95 LOC).
+  Provides `ProbabilityTheory.stepPochhammer` (the iterated step
+  product `∏ (x + k·s)` of @cite{odonnell-2015} eq 3.13, generalizing
+  rising factorial and geometric power), `stepPochhammer_zero`,
+  `PitmanYor` (structure with discount/concentration and the
+  validity constraints `a ∈ [0,1]`, `b ≥ -a`),
+  `PitmanYor.partitionProb` (closed-form mass over `Nat.Partition n`
+  per eq 3.14).
+- Reuses `Mathlib.Combinatorics.Enumerative.Partition.Basic` —
+  `Nat.Partition n` is the mathlib-native multiset-of-positive-parts
+  representation, so exchangeability is built in by construction
+  rather than proved separately.
+- The sequential sampler (eq 3.12) is not formalized; only the
+  closed-form mass, which is what downstream FG-family constructions
+  consume.
+- Imports only mathlib (`BigOperators.Fin`, `Real.Basic`,
+  `Combinatorics.Enumerative.Partition.Basic`); no linglib-specific
+  deps; potentially upstream-able to mathlib.
+
+Build: `Linglib.Core.Probability.PitmanYor` builds in ~6.0s clean.
 
 ## [0.230.253] - 2026-04-23
 
