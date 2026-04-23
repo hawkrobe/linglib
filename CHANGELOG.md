@@ -4,6 +4,64 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.234] - 2026-04-23
+
+### Exhaustification subdir audit (Phases D+E): drop thin bundles + 3 dead modules
+
+**Phase D — thin bundles:**
+- Dropped `ModalFCAltSet` (FreeChoice.lean) — 0 external callers, 9 trivial method definitions over a no-invariant 3-field bundle. The `fc_duality_forward` theorem that consumed it (parameterizing FC duality over arbitrary modal operators) was also dead and is removed. The reframed FCDuality section now contains just `diamond_distributes`/`diamond_collects`/`diamond_distributes_iff` — the actual lemmas downstream uses.
+- Dropped `entailment` field from `HurfordSemantic` and `SinghSemantic` (ScalePredictions.lean) — same "set-on-construction-but-never-read" pattern as the AnswerSpace audit found earlier. Field assigned at 4 call sites, read at 0. The structures stay (other fields are genuinely consumed by `.isRescued`/`.exhBreaksEntailment`/`.predictedFelicitous` methods).
+- Dropped `ModalOp` abbrev — only consumer was the deleted `ModalFCAltSet`.
+
+**Phase E — dead module deletion:**
+Three operator files deleted, all paper-anchored with 0 external callers and 0 references in their nominal study files:
+- `Operators/MaximizeStrength.lean` (47 lines): `exhMW_strengthens` was a verbatim duplicate of `exhMW_entails` (Operators/Basic.lean:114); the other two theorems were 1-line `Monotone`/`Antitone` applications.
+- `Operators/Flat.lean` (64 lines): defines `flat` operator from @cite{wang-2025}; `Phenomena/Presupposition/Studies/Wang2025.lean` doesn't import it.
+- `Operators/ExhMX.lean` (84 lines): defines `exhMXReading` from @cite{wang-2025}; same — no consumer.
+
+If a future paper formalization needs these, restore from git (commit before this one).
+
+`Linglib.lean` import wiring updated to drop the three deleted files.
+
+Net: ~250 lines removed across 4 files (3 deleted + ScalePredictions/FreeChoice cleanup).
+
+## [0.230.233] - 2026-04-23
+
+### B&E 2026 audit follow-through: dedup, generalization, cross-framework refutation
+
+Applied the post-landing audit on `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean`. Twelve targeted fixes across three files (`BondarenkoElliott2026.lean`, `Core/Mereology.lean`, `Linglib.lean`) plus one rename and the cross-framework headline theorem.
+
+**Citation/docstring fixes**:
+- `TheRumorThat` cited as eq. 47 → corrected to eqs. 60a/61a (eq. 47 is "There's a rumor that p", not the iota construction).
+- Section 5 deferral docstring: replaced incorrect "CONT-totality" framing with the actual missing pieces (`RumorDIV` axiom + world parameter reintroduction + iota uniqueness presupposition).
+- §6.3 docstring: now explicitly names the failing conjunct of paper eq. 94 (the second/Down clause).
+- Replaced enumerated "What this file formalizes" prose with mathlib-style `## Main results` + `## Implementation notes` sections.
+
+**Code dedup**:
+- `propLE`/`propLT` reduced from `def`s with five hand-rolled lemmas to `abbrev`s over `Set W`'s `≤`/`<` (refl/trans/`<`-extraction now come for free from `Preorder (Set W)`).
+- `BelievingDIV` factored as `Mereology.DIV believe ∧ HolderPreservedUnderParts HOLDER`.
+- `Mereology.DIV` typeclass requirement weakened from `[PartialOrder]` to `[Preorder]` (only uses `≤`).
+- Deleted `negated_directCP_SDE` (pure re-export of `not_believes_reverses`).
+- Dropped `@[simp]` from `propLE_refl` (analogue of `le_refl`, which mathlib doesn't simp).
+- Set-membership proofs hardened: `Set.mem_singleton_iff.mp` / `Set.mem_insert_iff.mpr` instead of defeq-fragile coercion.
+
+**Promotions to `Core/Mereology.lean`** (§16, §17 added):
+- `StrictPartReflecting` and `StrictPartPreserving` — the generic mereological-functoriality conditions on partial functions over preorders. Future mereological-attitude papers (Hacquard, Moltmann, Pasternak) reuse instead of redefining MSI/MSO.
+- `not_isContentPart_of_singleton_not_le` — the §6.3 discriminating witness as a generic `IsContentPart`-failure lemma. The §6.3 demo in the study file becomes a one-line application.
+- B&E file now exports `MSO_iff_strictPartPreserving : MSO THEME ↔ Mereology.StrictPartPreserving THEME` (Iff.rfl) tying its paper-named def to the generic.
+
+**§6.1 closure under conjunction (eq. 78, 79)** — new section with `CONTSum` (content-of-sum-is-intersection) + `BelievingsClosedUnderSum` axioms + `believes_closure_under_conjunction` theorem. Closes the paper-coverage gap (entailment + conjunction now both formalized).
+
+**Cross-framework: B&E vs Hintikka refutation (paper §1)**:
+- `hintikkaBox_inter` — Hintikka's universal-quantifier semantics always closes under intersection (the over-closure B&E argues against on empirical grounds).
+- `believes_does_not_always_close_under_intersection` — concrete witness over `Bool`-events with disjoint contents `{true}` and `{false}`. The model violates `CONTSum`; the agent "believes" each disjoint proposition but not their (empty) intersection. **The B&E vs Hintikka clash is now a Lean theorem rather than a docstring claim.** Self-contained `hintikkaBox` defined inline to avoid the heavyweight `Doxastic` import.
+
+**File reorganization**:
+- `Phenomena/Attitudes/IntensionalExamples.lean` (theory-laden, imported `Theories.Semantics.Attitudes.Intensional`) → `Phenomena/Attitudes/Studies/Montague1973.lean`. Citation corrected (file was misattributed; @cite{montague-1973} is the actual reference). Per CLAUDE.md "top-level Phenomena files are theory-neutral data".
+- Stale `Phenomena/Complementation/Attitudes/IntentionalIdentity/...` paths in `references.bib` (`chatzikyriakidis-etal-2025` and `geach-1967` entries) updated to the new `Phenomena/Attitudes/IntentionalIdentity/Data.lean` location.
+- `Linglib.lean` import order: four `Phenomena.Attitudes.*` imports were split across lines 941-943 and 1042; now contiguous.
+- Generated `blog/content/bibliography.md` regenerated from updated `references.bib`.
+
 ## [0.230.232] - 2026-04-23
 
 ### Dissolved — `Core/InformationStructure.lean` (Tier 1 of Core/ triage)

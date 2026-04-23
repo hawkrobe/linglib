@@ -16,10 +16,8 @@ each Horn scale, and derives Hurford rescue and Singh asymmetry predictions.
 namespace Exhaustification
 
 open Alternatives (SemanticScale SemQuantWorld ConnWorld ModalWorld
-  someQ allQ all_entails_some some_not_entails_all someAllScale
-  orConn andConn and_entails_or or_not_entails_and orAndScale
-  possibleP necessaryP necessary_entails_possible possible_not_entails_necessary
-  possibleNecessaryScale)
+  someQ allQ someAllScale orConn andConn orAndScale
+  possibleP necessaryP possibleNecessaryScale)
 
 -- ============================================================
 -- Hurford's Constraint
@@ -34,8 +32,6 @@ structure HurfordSemantic (World : Type*) where
   disjunctA : Set World
   /-- Second disjunct meaning -/
   disjunctB : Set World
-  /-- The entailment that creates the violation -/
-  entailment : (disjunctA ⊆ disjunctB) ∨ (disjunctB ⊆ disjunctA)
   /-- Alternative set for exhaustification -/
   alts : Set (Set World)
 
@@ -65,8 +61,6 @@ structure SinghSemantic (World : Type*) where
   weaker : Set World
   /-- Stronger disjunct meaning -/
   stronger : Set World
-  /-- Stronger entails weaker -/
-  entailment : stronger ⊆ weaker
   /-- Alternative set -/
   alts : Set (Set World)
   /-- Is weaker mentioned first? -/
@@ -191,7 +185,6 @@ Semantic structure for "some or all" (rescued Hurford case).
 def someOrAll_semantic : HurfordSemantic SemQuantWorld :=
   { disjunctA := someQ
   , disjunctB := allQ
-  , entailment := Or.inr all_entails_some
   , alts := {someQ, allQ}
   }
 
@@ -270,7 +263,6 @@ Semantic structure for "American or Californian" (true Hurford violation).
 def americanCalifornian_semantic : HurfordSemantic HyponymWorld :=
   { disjunctA := americanP
   , disjunctB := californianP
-  , entailment := Or.inr californian_entails_american
   , alts := {americanP, californianP}
   }
 
@@ -306,7 +298,6 @@ Semantic structure for "A or B, or both" (weak-first Singh case).
 def orThenBoth_semantic : SinghSemantic ConnWorld :=
   { weaker := orConn
   , stronger := andConn
-  , entailment := and_entails_or
   , alts := {orConn, andConn}
   , weakerFirst := true
   }
@@ -317,7 +308,6 @@ Semantic structure for "both, or A or B" (strong-first Singh case).
 def bothThenOr_semantic : SinghSemantic ConnWorld :=
   { weaker := orConn
   , stronger := andConn
-  , entailment := and_entails_or
   , alts := {orConn, andConn}
   , weakerFirst := false
   }

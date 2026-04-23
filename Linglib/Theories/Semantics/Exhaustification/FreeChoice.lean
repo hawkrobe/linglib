@@ -409,77 +409,19 @@ end ScalarReversal
 -- ============================================================================
 
 /-!
-## Free Choice Duality
+## Diamond distributes over union
 
-@cite{chierchia-2013} Ch. 5–6:
-
-The Free Choice derivation is *uniform* across modal forces. Both
-existential FC (◇(p∨q) → ◇p ∧ ◇q) and universal FC (□(p∨q) → □p ∧ □q,
-i.e., "subtrigging") follow from the same double-exhaustification mechanism.
-
-We prove this by parameterizing over an arbitrary modal operator.
+@cite{chierchia-2013} Ch. 5–6 motivates the FC derivation as uniform
+across modal forces; this section provides the basic distribution
+lemma `◇(A ∪ B) ↔ ◇A ∨ ◇B` consumed by @cite{ciardelli-guerrini-2026}'s
+reductionist thesis.
 -/
 
 section FCDuality
 
 variable {World : Type*}
 
-/-- A modal operator: maps a proposition about worlds to a truth value. -/
-abbrev ModalOp (World : Type*) := Set World → Prop
-
-/-- The FC alt set parameterized by modal operator M:
-    Assertion M(p ∨ q), alternatives M(p), M(q), M(p ∧ q). -/
-structure ModalFCAltSet (World : Type*) where
-  M : ModalOp World
-  p : Set World
-  q : Set World
-
-namespace ModalFCAltSet
-
-variable (a : ModalFCAltSet World)
-
-def assertion : Prop := a.M (a.p ∪ a.q)
-def altP : Prop := a.M a.p
-def altQ : Prop := a.M a.q
-def altPQ : Prop := a.M (a.p ∩ a.q)
-def exh1 : Prop := a.assertion ∧ ¬a.altPQ
-def exhAltP : Prop := a.altP ∧ ¬a.altQ
-def exhAltQ : Prop := a.altQ ∧ ¬a.altP
-def exh2 : Prop := a.exh1 ∧ ¬a.exhAltP ∧ ¬a.exhAltQ
-def freeChoice : Prop := a.altP ∧ a.altQ
-
-end ModalFCAltSet
-
-/-- **Theorem 6 (FC Duality).**
-
-For ANY modal operator M satisfying distributivity over disjunction
-(M(p ∨ q) → M(p) ∨ M(q)), double exhaustification yields free choice.
-
-This covers:
-- ◇ (possibility): ◇(p∨q) → ◇p ∨ ◇q trivially
-- □ (necessity): □(p∨q) → □p ∨ □q (when the box distributes)
-- Deontic, epistemic, ability modals
-
-The proof is structurally identical to the ◇ case. -/
-theorem fc_duality_forward (a : ModalFCAltSet World)
-    (h_distrib : a.assertion → a.altP ∨ a.altQ)
-    (h : a.exh2) : a.freeChoice := by
-  obtain ⟨⟨hassert, _hnpq⟩, hnexhP, hnexhQ⟩ := h
-  unfold ModalFCAltSet.freeChoice
-  unfold ModalFCAltSet.exhAltP at hnexhP
-  unfold ModalFCAltSet.exhAltQ at hnexhQ
-  have hdisj := h_distrib hassert
-  constructor
-  · by_contra hnp
-    cases hdisj with
-    | inl hp => exact hnp hp
-    | inr hq => exact hnexhQ ⟨hq, hnp⟩
-  · by_contra hnq
-    cases hdisj with
-    | inl hp => exact hnexhP ⟨hp, hnq⟩
-    | inr hq => exact hnq hq
-
-/-- **Corollary: ◇ satisfies the distributivity condition.** -/
+/-- ◇ distributes over union. -/
 theorem diamond_distributes (p q : Set World) :
     diamond (p ∪ q) → diamond p ∨ diamond q := by
   intro ⟨w, hw⟩

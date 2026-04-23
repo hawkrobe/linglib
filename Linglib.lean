@@ -15,7 +15,8 @@ import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
