@@ -129,53 +129,24 @@ theorem parallelEdge_wf (s₁ s₂ : List α) :
     Specialized to homogeneous candidate types; the heterogeneous case
     `StratalDerivation S W P` doesn't fit `Corr Role α` directly without
     a uniform encoding. -/
+/-- Adjacent strata in a 4-role chain: `.sIn ↔ .sOut`, `.sOut ↔ .wOut`,
+    `.wOut ↔ .pOut`. The chain-shape predicate for `Corr.diagram`. -/
+def adjacentStrata : StratalRole → StratalRole → Bool
+  | .sIn,  .sOut | .sOut, .sIn
+  | .sOut, .wOut | .wOut, .sOut
+  | .wOut, .pOut | .pOut, .wOut => true
+  | _, _ => false
+
+/-- A stratal derivation as a 4-role `Corr StratalRole α`, with parallel-pair
+    feeding edges along the adjacent-strata chain. Defined via `Corr.diagram`
+    with the `adjacentStrata` predicate. The pre-Stage-2 hand-rolled version
+    had ~50 LOC of `match` + `wf` boilerplate including 3 redundant
+    swap-image clauses (no-ops since parallel-pair edges are symmetric). -/
 def stratalDerivToCorr {α : Type}
-    (input stemOut wordOut phraseOut : List α) : Corr StratalRole α where
-  form
-    | .sIn  => input
-    | .sOut => stemOut
-    | .wOut => wordOut
-    | .pOut => phraseOut
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .sIn,  .sOut => parallelEdge input stemOut
-    | .sOut, .sIn  => (parallelEdge input stemOut).image fun p => (p.2, p.1)
-    | .sOut, .wOut => parallelEdge stemOut wordOut
-    | .wOut, .sOut => (parallelEdge stemOut wordOut).image fun p => (p.2, p.1)
-    | .wOut, .pOut => parallelEdge wordOut phraseOut
-    | .pOut, .wOut => (parallelEdge wordOut phraseOut).image fun p => (p.2, p.1)
-    | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .sIn, .sOut, h => exact parallelEdge_wf _ _ p h
-    | .sOut, .sIn, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-        exact ⟨h2, h1⟩
-    | .sOut, .wOut, h => exact parallelEdge_wf _ _ p h
-    | .wOut, .sOut, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-        exact ⟨h2, h1⟩
-    | .wOut, .pOut, h => exact parallelEdge_wf _ _ p h
-    | .pOut, .wOut, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-        exact ⟨h2, h1⟩
-    | .sIn, .sIn, h => exact absurd h (Finset.notMem_empty _)
-    | .sIn, .wOut, h => exact absurd h (Finset.notMem_empty _)
-    | .sIn, .pOut, h => exact absurd h (Finset.notMem_empty _)
-    | .sOut, .sOut, h => exact absurd h (Finset.notMem_empty _)
-    | .sOut, .pOut, h => exact absurd h (Finset.notMem_empty _)
-    | .wOut, .sIn, h => exact absurd h (Finset.notMem_empty _)
-    | .wOut, .wOut, h => exact absurd h (Finset.notMem_empty _)
-    | .pOut, .sIn, h => exact absurd h (Finset.notMem_empty _)
-    | .pOut, .sOut, h => exact absurd h (Finset.notMem_empty _)
-    | .pOut, .pOut, h => exact absurd h (Finset.notMem_empty _)
+    (input stemOut wordOut phraseOut : List α) : Corr StratalRole α :=
+  Corr.diagram
+    (fun | .sIn => input | .sOut => stemOut | .wOut => wordOut | .pOut => phraseOut)
+    adjacentStrata
 
 @[simp] theorem stratalDerivToCorr_form_sIn {α : Type}
     (input stemOut wordOut phraseOut : List α) :
@@ -230,54 +201,15 @@ def stratalToTCTRole : StratalRole → Option Role
 
 /-- Project a stratal correspondence diagram down to a 3-role TCT
     diagram. The `.wOut` form is dropped; the OO-correspondence between
-    `.sOut` and `.pOut` is reconstructed as the *composition* of
-    `(.sOut, .wOut)` and `(.wOut, .pOut)` parallel-pair edges in the
-    stratal Corr — when both intermediate edges are parallel-pair, the
-    composed correspondence is itself the parallel-pair correspondence
-    between `.sOut` and `.pOut` (truncated by the chain's minimum length).
+    `.sOut` and `.pOut` is reconstructed as the parallel-pair correspondence
+    between `c.form .sOut` and `c.form .pOut` (truncated by `min`).
 
-    For the canonical case (homogeneous segment type, parallel-pair
-    feeding throughout): `(project c).edge .base .derivative` is the
-    parallel-pair correspondence between `c.form .sOut` and
-    `c.form .pOut`. -/
+    Defined via `Corr.diagram` with off-diagonal edge predicate. -/
 def project {α : Type}
     (input stemOut wordOut phraseOut : List α) : Corr Role α :=
-  { form
-      | .input      => input
-      | .base       => stemOut
-      | .derivative => phraseOut
-    edge r₁ r₂ := match r₁, r₂ with
-      | .input, .base       => parallelEdge input stemOut
-      | .base,  .input      => (parallelEdge input stemOut).image fun p => (p.2, p.1)
-      | .input, .derivative => parallelEdge input phraseOut
-      | .derivative, .input => (parallelEdge input phraseOut).image fun p => (p.2, p.1)
-      | .base,  .derivative => parallelEdge stemOut phraseOut
-      | .derivative, .base  => (parallelEdge stemOut phraseOut).image fun p => (p.2, p.1)
-      | _, _ => ∅
-    wf := by
-      intro r₁ r₂ p hmem
-      match r₁, r₂, hmem with
-      | .input, .base, h => exact parallelEdge_wf _ _ p h
-      | .base, .input, h =>
-          simp only [Finset.mem_image] at h
-          obtain ⟨q, hq, rfl⟩ := h
-          have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-          exact ⟨h2, h1⟩
-      | .input, .derivative, h => exact parallelEdge_wf _ _ p h
-      | .derivative, .input, h =>
-          simp only [Finset.mem_image] at h
-          obtain ⟨q, hq, rfl⟩ := h
-          have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-          exact ⟨h2, h1⟩
-      | .base, .derivative, h => exact parallelEdge_wf _ _ p h
-      | .derivative, .base, h =>
-          simp only [Finset.mem_image] at h
-          obtain ⟨q, hq, rfl⟩ := h
-          have ⟨h1, h2⟩ := parallelEdge_wf _ _ q hq
-          exact ⟨h2, h1⟩
-      | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-      | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-      | .derivative, .derivative, h => exact absurd h (Finset.notMem_empty _) }
+  Corr.diagram
+    (fun | .input => input | .base => stemOut | .derivative => phraseOut)
+    (fun r₁ r₂ => decide (r₁ ≠ r₂))
 
 -- ============================================================================
 -- § 5: Bridge Theorems

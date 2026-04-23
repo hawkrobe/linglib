@@ -274,6 +274,57 @@ theorem range_image_wf (n m₁ m₂ : ℕ) (h₁ : n ≤ m₁) (h₂ : n ≤ m�
   obtain ⟨i, hi, rfl⟩ := hmem
   exact ⟨lt_of_lt_of_le hi h₁, lt_of_lt_of_le hi h₂⟩
 
+/-- **The unifying `Corr` constructor**: build a correspondence diagram from
+    a `Role → List α` form function plus a `Role → Role → Bool` edge
+    predicate. Where `hasEdge r₁ r₂ = true`, a parallel-pair correspondence
+    `(0, 0), (1, 1), …` is created, truncated to `min` of the two forms'
+    lengths. Where `false`, no correspondence.
+
+    The substrate constructor for the major correspondence-theoretic
+    architectures (M&P 1995 reduplication, Benua 1997 TCT, Rolle 2018 MxBM-C,
+    stratal OT). Convenience wrappers `Corr.parallel`, `Corr.identity`,
+    `Corr.reduplication` are 3-line specializations.
+
+    **Symmetry**: parallel-pair edges `(i, i)` are invariant under swap, so
+    the `(r₁, r₂)` and `(r₂, r₁)` directions produce identical position-pair
+    sets. Callers' `hasEdge` predicates are typically symmetric (e.g.,
+    `· ≠ ·`, `adjacentStrata`); the constructor does not enforce symmetry,
+    but constraint families behave most predictably when it holds.
+
+    **For non-parallel edge structures** (infixation, morphologically-
+    determined alignment, partial reduplication with skip patterns), use
+    `ParadigmUniformity.Transderivational.diagramWithEdge` instead. -/
+def diagram {Role : Type*} (form : Role → List α)
+    (hasEdge : Role → Role → Bool) : Corr Role α where
+  form := form
+  edge r₁ r₂ := bif hasEdge r₁ r₂ then
+    (Finset.range (min (form r₁).length (form r₂).length)).image fun i => (i, i)
+  else ∅
+  wf := by
+    intro r₁ r₂ p hmem
+    cases h : hasEdge r₁ r₂ with
+    | false => simp [h] at hmem
+    | true =>
+        rw [h] at hmem
+        simp only [cond_true] at hmem
+        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p hmem
+
+@[simp] theorem diagram_form {Role : Type*} (form : Role → List α)
+    (hasEdge : Role → Role → Bool) (r : Role) :
+    (diagram form hasEdge).form r = form r := rfl
+
+@[simp] theorem diagram_edge_of_true {Role : Type*} (form : Role → List α)
+    (hasEdge : Role → Role → Bool) {r₁ r₂ : Role} (h : hasEdge r₁ r₂ = true) :
+    (diagram form hasEdge).edge r₁ r₂ =
+      (Finset.range (min (form r₁).length (form r₂).length)).image
+        (fun i => (i, i)) := by
+  simp [diagram, h]
+
+@[simp] theorem diagram_edge_of_false {Role : Type*} (form : Role → List α)
+    (hasEdge : Role → Role → Bool) {r₁ r₂ : Role} (h : hasEdge r₁ r₂ = false) :
+    (diagram form hasEdge).edge r₁ r₂ = ∅ := by
+  simp [diagram, h]
+
 /-- The parallel-pair correspondence between two strings. Forms `.lhs ↦ s₁`,
     `.rhs ↦ s₂`; for cross-side edges, position `i` of one is paired with
     position `i` of the other, ranging up to the shorter length. The
@@ -283,22 +334,13 @@ theorem range_image_wf (n m₁ m₂ : ℕ) (h₁ : n ≤ m₁) (h₂ : n ≤ m�
 
     On unequal-length inputs, the truncation matches `List.zip` semantics:
     only positions `< min s₁.length s₂.length` are paired. For equal-length
-    inputs, every position participates. -/
-def parallel (s₁ s₂ : List α) : Corr Side α where
-  form
-    | .lhs => s₁
-    | .rhs => s₂
-  edge r₁ r₂ :=
-    if r₁ = r₂ then ∅
-    else (Finset.range (min s₁.length s₂.length)).image fun i => (i, i)
-  wf := by
-    intro r₁ r₂ p hmem
-    by_cases hreq : r₁ = r₂
-    · simp [hreq] at hmem
-    · simp only [if_neg hreq, Finset.mem_image, Finset.mem_range] at hmem
-      obtain ⟨i, hi, hp⟩ := hmem
-      cases hp
-      cases r₁ <;> cases r₂ <;> simp_all
+    inputs, every position participates.
+
+    Defined as a thin wrapper around `Corr.diagram`. -/
+def parallel (s₁ s₂ : List α) : Corr Side α :=
+  diagram
+    (fun | .lhs => s₁ | .rhs => s₂)
+    (fun r₁ r₂ => decide (r₁ ≠ r₂))
 
 /-- The identity correspondence on a single string. The fully-faithful
     candidate of @cite{mccarthy-prince-1995}: input = output, every
@@ -308,64 +350,23 @@ def identity (s : List α) : Corr Side α := parallel s s
 /-- The reduplicative correspondence diagram: 3-role `Corr RedupRole α`
     over input + base + reduplicant forms. Cross-role edges are
     parallel-pair correspondences (truncated to the shorter form's
-    length):
+    length): `(.input, .base)` IO-correspondence, `(.base, .reduplicant)`
+    BR-correspondence, `(.input, .reduplicant)` IR-correspondence (M&P
+    1995 §6 Full Model).
 
-    - `(.input, .base)` and reverse: IO-correspondence
-    - `(.base, .reduplicant)` and reverse: BR-correspondence
-    - `(.input, .reduplicant)` and reverse: IR-correspondence
-      (M&P 1995 §6 Full Model)
+    Defined as a thin wrapper around `Corr.diagram` with the off-diagonal
+    edge predicate. The pre-Stage-2 hand-rolled version had 6 redundant
+    reverse-direction `match` clauses (`.image (p.2, p.1)`) which are
+    no-ops since parallel-pair edges `(i, i)` are symmetric under swap.
 
-    The canonical 3-role substrate of @cite{mccarthy-prince-1995}'s
-    reduplicative correspondence theory. Study files build their
-    paper-specific candidates as `Corr.reduplication input base reduplicant`,
-    then derive constraint values via `Corr.maxViol .input .base` etc.
-    rather than stipulating violation tables.
-
-    For non-parallel BR alignments (e.g., infixation, partial reduplication
-    with morphologically-determined skip patterns), see
+    For non-parallel BR alignments (infixation, partial reduplication with
+    morphologically-determined skip patterns), see
     `ParadigmUniformity.Transderivational.diagramWithEdge` for the
     explicit-edge variant. -/
-def reduplication (input base reduplicant : List α) : Corr RedupRole α where
-  form
-    | .input       => input
-    | .base        => base
-    | .reduplicant => reduplicant
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .input, .base       => (Finset.range (min input.length base.length)).image fun i => (i, i)
-    | .base,  .input      => (Finset.range (min input.length base.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
-    | .input, .reduplicant => (Finset.range (min input.length reduplicant.length)).image fun i => (i, i)
-    | .reduplicant, .input => (Finset.range (min input.length reduplicant.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
-    | .base,  .reduplicant => (Finset.range (min base.length reduplicant.length)).image fun i => (i, i)
-    | .reduplicant, .base  => (Finset.range (min base.length reduplicant.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
-    | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .input, .base, h =>
-        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
-    | .base, .input, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
-        exact ⟨h2, h1⟩
-    | .input, .reduplicant, h =>
-        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
-    | .reduplicant, .input, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
-        exact ⟨h2, h1⟩
-    | .base, .reduplicant, h =>
-        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
-    | .reduplicant, .base, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
-        exact ⟨h2, h1⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
+def reduplication (input base reduplicant : List α) : Corr RedupRole α :=
+  diagram
+    (fun | .input => input | .base => base | .reduplicant => reduplicant)
+    (fun r₁ r₂ => decide (r₁ ≠ r₂))
 
 @[simp] theorem reduplication_form_input (input base reduplicant : List α) :
     (reduplication input base reduplicant).form .input = input := rfl

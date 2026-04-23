@@ -121,16 +121,16 @@ def diagramWithEdge {α : Type}
     `(i, i)` correspondence up to `min base.length derivative.length`.
     Convenient for cases where base and derivative have no morphological
     re-alignment (rare in paradigm phonology — most studies need
-    `diagramWithEdge` with an explicit alignment). -/
+    `diagramWithEdge` with an explicit alignment).
+
+    Defined via `Corr.diagram` with off-diagonal edge predicate. The
+    pre-Stage-2 version reduced to `diagramWithEdge` with a hand-rolled
+    parallel-pair edge + length-bounds proof; `Corr.diagram` makes the
+    pattern direct. -/
 def diagram {α : Type} (input base derivative : List α) : Corr Role α :=
-  diagramWithEdge input base derivative
-    ((Finset.range (min base.length derivative.length)).image fun i => (i, i))
-    (by
-      intro p hmem
-      simp only [Finset.mem_image, Finset.mem_range] at hmem
-      obtain ⟨i, hi, rfl⟩ := hmem
-      exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-             lt_of_lt_of_le hi (min_le_right _ _)⟩)
+  Corr.diagram
+    (fun | .input => input | .base => base | .derivative => derivative)
+    (fun r₁ r₂ => decide (r₁ ≠ r₂))
 
 -- ============================================================================
 -- § 2: IDENT-OO and MAX-OO specializations
