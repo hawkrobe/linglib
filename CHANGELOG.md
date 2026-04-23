@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.258] - 2026-04-23
+
+### O'Donnell 2015 Phase 3: FragmentGrammars typeclass anchor
+
+First Theories/ slice for the FG-family. Establishes the abstract
+API that DMPCFG / MAG / FG / DOP will all instantiate.
+
+- **New file**: `Linglib/Theories/Morphology/FragmentGrammars/Defs.lean`
+  (~85 LOC). Provides `Morphology.FragmentGrammars.StochasticGenerator G`
+  — a structure (not typeclass; one CFG admits many generators per
+  parameter choice, mirroring `MeasureTheory.Measure α`) assigning
+  probability mass to multisets of derivations of a CFG.
+- **Architectural placement**: `Theories/Morphology/FragmentGrammars/`
+  as a sibling of `DM/`, `PFM/`, `WP/`, `Nanosyntax/`. Treats FG as
+  a competing theoretical framework for morphology (storage /
+  productivity perspective vs. DM's representation / realization
+  perspective). Bridge theorems with DM (categorical-blocking
+  recovery in the high-discount limit, *-ability* paradox
+  discriminator) become first-class consequences of this placement.
+- **Why corpora rather than single derivations**: for multinomial
+  PCFGs the corpus probability factorizes through derivation
+  probabilities; for `DMPCFG` / `MAG` / `FG` it does *not* factorize
+  because of shared latent state across derivations. The abstract
+  API takes corpora as inputs.
+
+Build: ~5.6s clean. No new mathlib deps.
+
 ## [0.230.257] - 2026-04-23
 
 ### O'Donnell 2015 Phase 2: CFGFragment substrate
