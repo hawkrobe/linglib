@@ -1,5 +1,6 @@
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Causal.SEM.Monotonicity
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 
 /-!
 # Causal Sufficiency
@@ -208,5 +209,29 @@ theorem conjunctive_sufficient_with_other (a b c : Variable)
   rw [normalDevelopment_eq_applyLawsOnce_of_fixpoint _ _ (hApp ▸ hFix), hApp]
   show (s.extend c true).hasValue c true
   rw [Situation.extend_hasValue_same]
+
+/-! ### V2 namespace for new code
+
+The old `makeSem` above remains on the legacy `CausalDynamics` API for
+backward compat with `Causative.toSemantics` rfl theorems in
+`Fragments/English/Predicates/Verbal.lean` and other downstream consumers
+(Modality/, Resultatives/Studies/, Karttunen1971, CWL2025, Glass2023, etc.).
+
+New consumers should `open Semantics.Causation.Sufficiency.V2` and use
+the V2-flavored `makeSem` which delegates to V2 `BoolSEM.causallySufficient`. -/
+
+namespace V2
+
+open Core.Causal.V2 (BoolSEM CausalGraph Valuation)
+
+/-- V2 sufficiency semantics for "make": cause is causally sufficient
+    for effect. BoolSEM-flavored alias of `BoolSEM.causallySufficient`. -/
+abbrev makeSem {V : Type*} [Fintype V] [DecidableEq V]
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [Core.Causal.V2.SEM.IsDeterministic M]
+    (background : Valuation (fun _ : V => Bool))
+    (causeEvent effectEvent : V) : Prop :=
+  Core.Causal.V2.BoolSEM.causallySufficient M background causeEvent effectEvent
+
+end V2
 
 end Semantics.Causation.Sufficiency
