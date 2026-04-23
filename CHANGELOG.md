@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.260] - 2026-04-23
+
+### Implicature/Diagnostics.lean — Gricean tests over Implicature
+
+Second piece of the API expansion (after Defs.lean in 0.230.259).
+Formalizes the four classical Gricean diagnostics over the
+`Implicature W` type, so they apply uniformly to neo-Gricean,
+EXH-derived, and RSA-derived inferences.
+
+- **New file**: `Linglib/Theories/Pragmatics/Implicature/Diagnostics.lean`
+  (~210 LOC). Declares `IsCancellable φ i` and `IsReinforceable φ i`
+  (joint with assertion) and `IsCalculable i` / `IsNonDetachable i`
+  (lifted from `ImplicatureMechanism.isCalculable` and
+  `ImplicatureKind.isNonDetachable`). Bundles into
+  `GriceanProfile φ i`.
+- **Failure-mode theorems** (load-bearing for the contemporary critique
+  of grammaticalism per @cite{bassi-delpinal-sauerland-2021}):
+  `conventional_not_calculable` and `manner_is_detachable`. The
+  diagnostics divide the implicature space rather than uniformly hold.
+- **Reinforceable ⇒ Cancellable** (`IsReinforceable.toCancellable`):
+  the diagnostics are not independent.
+- Cites @cite{grice-1975}, @cite{sadock-1978}, @cite{hirschberg-1985},
+  @cite{horn-1984}, @cite{levinson-2000}.
+
 ## [0.230.259] - 2026-04-23
 
 ### Implicature/Defs.lean — cross-mechanism spine

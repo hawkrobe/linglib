@@ -2207,6 +2207,7 @@ import Linglib.Theories.Pragmatics.AvoidAmbiguity
 import Linglib.Theories.Pragmatics.Implicature.Basic
 import Linglib.Theories.Pragmatics.Implicature.Competence
 import Linglib.Theories.Pragmatics.Implicature.Defs
+import Linglib.Theories.Pragmatics.Implicature.Diagnostics
 import Linglib.Theories.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Theories.Pragmatics.Implicature.Scales
