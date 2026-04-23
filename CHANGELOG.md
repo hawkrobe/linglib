@@ -4,6 +4,50 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.207] - 2026-04-22
+
+### Major refactor — Core/Causal mathlib-style V2 substrate (Phase A through C-3)
+
+Multi-day arc culminating in a feature-complete V2 SEM substrate alongside the
+legacy `Core/Causal/SEM/` API. Triggered by an audit of `@cite{sloman-barbey-hotaling-2009}`
+that exposed architectural debt (single conflated `CausalDynamics` carrying graph
+topology + Bool-only mechanism content + disjunctive aggregation).
+
+**V2 substrate** (`Core/Causal/V2/`, ~700 LOC across 10 files):
+- `Variable + Graph (with IsDAG mixin) + Mechanism (PMF-canonical) + Valuation + SEM`
+- `intervene` (one-line via `Mechanism.const`), `manipulates` (Woodward), `hasDirectLaw`
+- `causallySufficient` (polymorphic + BoolSEM alias)
+- `causallyNecessary` — Nadathur 2024 Def 10b ported
+- Structural rewrite infrastructure: `singleStepAt + stepOnceOn + developOn` + simp lemmas
+- Mathlib alignment: `IsDAG` mirrors `IsMarkovKernel`; `Mechanism.deterministic := dirac ∘ f`
+  mirrors `Kernel.deterministic`; `Polynomial`-style noncomputable canonical + computable evaluator
+
+**Consumer migrations** (8 of 11 fully migrated to V2 + 3 hub V2 wrappers):
+- Full: Strength, Conditionals/Counterfactual, Doxastic (8-vertex SEM, 4 native_decide → rfl),
+  KonukEtAl2026 (9-vertex, 10 native_decide → structural; multi-parent Bool mechs),
+  HardingGerstenbergIcard2025 (3 scenarios × multi competing SEMs, 25+ native_decide → structural,
+  added SEM.manipulates), Progressive (inline-bypass hub via local completesForEffect),
+  Lewis1973 (599 → 281 LOC; lewisCausation := Relation.TransGen drops bespoke TC search +
+  lewis_decide macro).
+- Partial: BellerGerstenberg2025 (bridge migrated; 3 IsDAG sorries + 1 EndToEnd theorem
+  pending Phase D structural-proof cleanup).
+- Hub V2 wrappers (additive — no consumer breakage): `Sufficiency.V2.makeSem`,
+  `Necessity.V2.{causeSem,isINUSCause,actuallyCaused}`, `Implicative.V2.{manageSem,failSem,necessityPresup}`.
+
+**New study file**: `SlomanBarbeyHotaling2009.lean` — pure structural predicates over
+BoolSEM graph shape; closes the original audit task that motivated the refactor.
+
+**Net impact**: ~1500 LOC consumer code migrated; ~70+ native_decide replaced with
+mathlib-quality structural proofs (rfl / Option.some.inj / Relation.TransGen patterns);
+V2 substrate feature-complete for any future causation work.
+
+**Phase D (legacy removal) deferred**: 3 BG2025 sorries + cascade-migration of Verbal.lean
+(60+ rfl theorems via Causative.toSemantics) + ~17 downstream consumers off legacy hub
+API → final deletion of `Core/Causal/SEM/{Defs,Counterfactual,Monotonicity}.lean` +
+`Core/Causal/BayesNet.lean` + rename `Core/Causal/V2/` → `Core/Causal/`. Multi-day
+coordinated arc; memory note `project_core_causal_refactor.md` has full state for
+future-session pickup.
+
 ## [0.230.206] - 2026-04-22
 
 ### Restructured — MOVE-PHENOMENA tier: 8 misclassified `Core/` files relocated to `Phenomena/`
