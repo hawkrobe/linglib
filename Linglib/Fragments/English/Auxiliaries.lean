@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Register
+import Linglib.Features.Register
 
 /-!
 # English Auxiliaries Lexicon Fragment
@@ -54,7 +54,7 @@ namespace Fragments.English.Auxiliaries
 
 section Modals
 open Core.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
-open Core.Register (Level)
+open Features.Register (Level)
 
 /-- Auxiliary type -/
 inductive AuxType where
@@ -257,7 +257,7 @@ end Modals
 
 section ModalAdverbs
 open Core.Modality (ForceFlavor ModalForce ModalFlavor)
-open Core.Register (Level)
+open Features.Register (Level)
 
 /-- Modal adverb entry: an adverb expressing modal force and flavor
     without auxiliary morphology.

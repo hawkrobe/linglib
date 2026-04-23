@@ -7,7 +7,7 @@ import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Core.Subjectivity
+import Linglib.Features.Subjectivity
 
 /-!
 # @cite{ritchie-schiller-2024} — Default Domain Restriction Possibilities
@@ -515,7 +515,7 @@ theorem spatialQUD_distinguishes_all :
     salience, manipulability) target features that are objective in the sense
     that they don't depend on speaker perspective or taste. -/
 
-open Core.Subjectivity (SubjectivityLevel)
+open Features.Subjectivity (SubjectivityLevel)
 
 /-- DDRPs are nonsubjective: the three cognitive heuristics (availability,
     salience, manipulability) all target spatiotemporal properties that don't
@@ -536,6 +536,6 @@ theorem ddpr_precedes_subjective :
     precede *all* subjective and intersubjective interpretations. -/
 theorem ddpr_is_minimum :
     ∀ l : SubjectivityLevel, ddprSubjectivityLevel ≤ l := by
-  intro l; exact Core.Subjectivity.nonSubjective_le l
+  intro l; exact Features.Subjectivity.nonSubjective_le l
 
 end RitchieSchiller2024

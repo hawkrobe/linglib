@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # Georgian Coordination Morphemes
@@ -24,7 +24,7 @@ to the Transparency Principle prediction).
 
 namespace Fragments.Georgian.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

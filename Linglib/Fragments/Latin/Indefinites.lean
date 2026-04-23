@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 
 /-!
 # Latin Indefinite Pronouns
@@ -17,7 +17,7 @@ set_option autoImplicit false
 
 namespace Fragments.Latin.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 /-- Latin *ali-*: non-specific + specific unknown (AAB pattern).
     D&A type (iv) epistemic: var(∅,x). Distribution matches profile.

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Core.Evidentiality
+import Linglib.Features.Evidentiality
 
 /-!
 # Informational Backgrounds — @cite{kratzer-2012} §2.3d
@@ -26,7 +26,7 @@ namespace Phenomena.Modality.InformationalBackgroundsBridge
 
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
-open Core.Evidentiality
+open Features.Evidentiality
 
 /-! ## Propositions -/
 

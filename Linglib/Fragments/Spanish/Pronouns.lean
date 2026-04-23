@@ -29,7 +29,7 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 namespace Fragments.Spanish.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- § 1: Strong Pronouns

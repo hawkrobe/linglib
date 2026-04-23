@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 import Linglib.Core.Lexical.PolarityItem
 
 /-!
@@ -29,7 +29,7 @@ set_option autoImplicit false
 
 namespace Fragments.Russian.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 -- ============================================================================
 -- §1. Russian Indefinite Entries

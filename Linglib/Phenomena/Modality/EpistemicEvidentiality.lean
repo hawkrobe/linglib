@@ -1,4 +1,4 @@
-import Linglib.Core.Evidentiality
+import Linglib.Features.Evidentiality
 
 /-!
 # Epistemic Evidentiality — Empirical Data
@@ -29,7 +29,7 @@ The placement of the bare prejacent is Karttunen's Problem:
 
 namespace Phenomena.Modality.EpistemicEvidentiality
 
-open Core.Evidentiality
+open Features.Evidentiality
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Datum Structures
@@ -427,7 +427,7 @@ theorem bare_always_felicitous :
     allMinimalPairs.all (λ d => d.bareFelicitous) = true := by native_decide
 
 -- ════════════════════════════════════════════════════════════════════════════
--- Bridge to Core.Evidentiality
+-- Bridge to Features.Evidentiality
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Map VF&G's four-way evidence types to Cumming's three-way canonical
@@ -448,7 +448,7 @@ instance : HasEvidentialPerspective EvidenceType where
 /-- All VF&G evidence types are nonfuture: their perspective is always
     retrospective or contemporaneous (T ≤ A). -/
 theorem all_evidence_types_nonfuture (e : EvidenceType) :
-    Core.Evidentiality.IsNonfuture e := by
+    Features.Evidentiality.IsNonfuture e := by
   cases e <;> decide
 
 end Phenomena.Modality.EpistemicEvidentiality

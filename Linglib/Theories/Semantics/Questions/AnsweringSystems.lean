@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 
 /-!
 # Answering System Typology
@@ -77,7 +77,7 @@ structure PolarAnswerProfile where
     "Doesn't John drink?" under each answering system?
 
     Returns the polarity of the proposition expressed by "yes". -/
-def AnsweringSystem.yesToNegativeQuestion : AnsweringSystem → Core.Polarity
+def AnsweringSystem.yesToNegativeQuestion : AnsweringSystem → Features.Polarity
   | .truthBased    => .negative  -- "yes" = "he doesn't drink"
   | .polarityBased => .positive  -- "yes" = "he does drink"
 

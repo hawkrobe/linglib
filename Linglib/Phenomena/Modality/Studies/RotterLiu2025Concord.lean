@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.Register
+import Linglib.Features.Register
 import Linglib.Theories.Semantics.Modality.Typology
 
 /-!
@@ -24,7 +24,7 @@ pronoun systems (Basque `hi`/`zu`, Japanese `boku`/`watashi`), where
 forms sharing the same referential semantics differ in formality.
 
 Register properties are derived from the fragment's `AuxEntry.register`
-field and the `Core.Register.Level` type, not stipulated locally.
+field and the `Features.Register.Level` type, not stipulated locally.
 
 ## Section C: Competing predictions
 
@@ -41,7 +41,7 @@ namespace Phenomena.Modality.ModalConcord.Bridge
 open Phenomena.Modality.ModalConcord
 open Fragments.English.Auxiliaries
 open Core.Modality (ModalForce ModalFlavor ForceFlavor)
-open Core.Register (Level areVariants)
+open Features.Register (Level areVariants)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
 
 /-! ## Section A: Semantic equivalence in the fragment -/
@@ -88,7 +88,7 @@ theorem both_satisfy_sav :
 /-! ## Section B: Register variants
 
 Register properties are derived directly from the fragment's `AuxEntry.register`
-field, which uses `Core.Register.Level` (formal/neutral/informal). -/
+field, which uses `Features.Register.Level` (formal/neutral/informal). -/
 
 /-- *Must* is marked formal in the fragment. -/
 theorem must_is_formal : must.register = Level.formal := rfl

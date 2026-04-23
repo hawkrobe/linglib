@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Noun.Kind.Generics
-import Linglib.Core.Genericity
+import Linglib.Features.Genericity
 
 /-!
 # @cite{nickel-2009}: Generics and the Ways of Normality

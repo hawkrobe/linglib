@@ -10,13 +10,13 @@ the two categories are often conveyed by overlapping morphology (e.g.,
 Turkish *-mIş*), but they answer distinct questions ("what is the source of
 the evidence?" vs "is the content surprising?").
 
-This module is intentionally separate from `Core.Evidentiality` to reflect
+This module is intentionally separate from `Features.Evidentiality` to reflect
 that independence; bundling structures that combine source, authority, and
 mirativity (e.g. `Core.Epistemicity.EpistemicProfile`) import both.
 
 -/
 
-namespace Core.Mirativity
+namespace Features.Mirativity
 
 /-- Mirativity value: whether the propositional content aligns with
     speaker expectations. -/
@@ -29,4 +29,4 @@ inductive MirativityValue where
   | neutral
   deriving DecidableEq, Repr, Inhabited
 
-end Core.Mirativity
+end Features.Mirativity

@@ -44,7 +44,7 @@ import Linglib.Core.Lexical.Pronouns
 namespace Fragments.Korean.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- First Person

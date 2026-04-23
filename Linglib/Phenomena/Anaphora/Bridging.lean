@@ -33,11 +33,11 @@ Mandarin vs English contrast in bridging:
 
 -/
 
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 
 namespace Phenomena.Anaphora.Bridging
 
-open Core.Definiteness (BridgingSubtype DefPresupType)
+open Features.Definiteness (BridgingSubtype DefPresupType)
 
 -- Data Structure
 
@@ -48,7 +48,7 @@ inductive Felicity where
   | odd      -- Clearly infelicitous
   deriving DecidableEq, Repr
 
--- Type of bridging relation: uses `BridgingSubtype` from `Core/Definiteness.lean`.
+-- Type of bridging relation: uses `BridgingSubtype` from `Features/Definiteness.lean`.
 
 /-- Definite form used in the bridging context -/
 inductive DefiniteForm where

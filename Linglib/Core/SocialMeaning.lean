@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Register
+import Linglib.Features.Register
 
 /-!
 # Social Meaning and the Indexical Field @cite{eckert-2008}
@@ -33,7 +33,7 @@ ideologically linked traits (Figures 3–4 in @cite{eckert-2008}).
 
 ## Connections
 
-* `Core.Register.SocialIndex`: competence/solidarity is one axis of the
+* `Features.Register.SocialIndex`: competence/solidarity is one axis of the
   social space that indexical fields map into
 * `RSA.CombinedUtility`: social utility as a component of speaker utility
 * `RSA.NoncooperativeCommunication.SpeakerOrientation`: cooperative vs.
@@ -138,9 +138,9 @@ instance : LinearOrder ContextualStyle :=
   LinearOrder.lift' ContextualStyle.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [ContextualStyle.toNat])
 
-/-- Bridge to `Core.Register.Level`: maps the 5-point Labovian style scale
+/-- Bridge to `Features.Register.Level`: maps the 5-point Labovian style scale
     to the 3-point register scale used by Fragment lexical entries. -/
-def ContextualStyle.toRegisterLevel : ContextualStyle → Core.Register.Level
+def ContextualStyle.toRegisterLevel : ContextualStyle → Features.Register.Level
   | .casual | .careful => .informal
   | .reading           => .neutral
   | .wordList | .minimalPair => .formal

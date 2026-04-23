@@ -7,7 +7,7 @@ References: @cite{hudson-1990}, @cite{gibson-2025}
 
 import Linglib.Core.Dependency.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
-import Linglib.Core.CoreferenceStatus
+import Linglib.Features.CoreferenceStatus
 
 namespace DepGrammar.Coreference
 

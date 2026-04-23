@@ -4,6 +4,98 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.203] - 2026-04-22
+
+### Restructured — established `Linglib/Features/` as the linguistic-primitives top level
+
+Architectural conversation about `Core/`'s 100+ files (63 top-level +
+30 subdirectories, 171k LOC) concluded that `Core/` had been functioning
+as a kitchen-sink "Init/-style" bucket — the antipattern mathlib has
+been deprecating for years. The fix is structural separation, not just
+internal cleanup: small framework-agnostic linguistic-feature taxonomies
+(Person, Mood, Polarity, Evidentiality, Mirativity, …) belong in their
+own top-level `Features/` directory, distinct from the formal-substrate
+machinery (Probability, Causal, IntensionalLogic, …) that should
+eventually live under `Foundation/` or stay scoped under `Core/`.
+
+The naming discussion landed on **`Features/`** (over `Vocabulary/`,
+`Categories/`, `Primitives/`) because:
+- `Features` is the canonical linguistic term-of-art for Person,
+  Number, Gender, Tense, Aspect, Mood, Polarity, Evidentiality,
+  Mirativity (phi-features, morphosyntactic features, feature
+  geometry — every framework uses the term)
+- A new linguist looking for "where does Mood live?" would
+  immediately check `Features/`; `Vocabulary/` falsely suggests
+  *lexicon* (which is `Fragments/`)
+- `Categories/` overloads with category theory
+
+**First slice (15 files moved this commit):**
+`AssertionTypes`, `CoreferenceStatus`, `Coordination`, `Definiteness`,
+`Evidentiality`, `FelicityTypes`, `Genericity`, `ImplicatureTypes`,
+`IndefiniteType`, `Logophoricity`, `Mirativity`, `Polarity`, `Register`,
+`ScopeTypes`, `Subjectivity`. All small (<250 LOC each), all clearly
+framework-agnostic feature taxonomies, none with subdirectory namespace
+clashes in `Core/`.
+
+**Mechanical execution**: `git mv` for each file; `perl -pi -e` regex
+substitution across all `.lean` files for `\bCore\.X\b → Features.X`
+(115+ files touched); namespace declarations rewritten in moved files;
+two patterns the regex didn't catch fixed by hand (`open Core (Polarity)`
+in 5 files; `export Core (Polarity)` in `Phenomena/Plurals/Homogeneity.lean`;
+`namespace Core` in `Polarity.lean` itself, where the original namespace
+was `Core` not `Core.Polarity`). One atomic commit; build is clean
+modulo 5 pre-existing failures from parallel-session work
+(`Core/Typology/LanguageProfile`,
+`Theories/Semantics/Modality/ProbabilityOrdering`,
+`Fragments/Singlish/Questions`,
+`Phenomena/Conditionals/Studies/Stalnaker1981`,
+`Phenomena/Plurals/Studies/Kriz2016`).
+
+**Deferred to subsequent slices:**
+- *Subdir clashes* (would split `Core.X` namespace across two locations):
+  `Mood`, `Modality`, `Question`, `Time`, `Lexical`. Need a separate
+  decision about what to do with each parallel `Core/X/` subdirectory
+  (move to Features/X/, demote to Theories/, or leave).
+- *Big files needing audit* (might contain theory work, not just feature
+  taxonomy): `Number` (628 LOC), `Prominence` (608), `Person` (381),
+  `Prosody` (323), `Negation` (273), `Gender` (248).
+- *Misclassified files* that should move to `Phenomena/` or `Theories/`
+  rather than `Features/`: `ExtractionMorphology`, `NestedRestriction`,
+  `NullSubject`, `PolarityPartition`, `PrivativePair`,
+  `SearchEfficiency`, `SubjectProperties`, `VerbCluster`, `VoiceSystem`,
+  `SocialMeaning`, `SelectionFunction`, `ChannelCapacity`, …
+- *Promote `Core/WALS/` to top-level `Datasets/WALS/`* (194 files of
+  auto-generated CLDF data, clearly its own domain).
+
+The full architectural plan: `Features/` (linguistic primitives,
+this commit), `Core/` continues as the formal substrate (eventually
+maybe renamed to `Foundation/`), `Datasets/` for typological data
+(WALS), `Tactics/` unchanged. This is the substance/substrate split —
+top-level reads as a linguistics library that uses math, not a math
+library with linguistic appendages.
+
+**Prior context (Evidence.lean → Evidentiality.lean+Mirativity.lean)**:
+this slice builds on the earlier `Core/Evidence.lean` mathlib-style
+overhaul that landed (without its own CHANGELOG entry) in the
+`db5b2927` bulk commit during the same session. That refactor split
+the old `Core/Evidence.lean` into `Core/Evidentiality.lean` (Source +
+Perspective + `class HasEvidentialPerspective` + polymorphic
+`IsNonfuture` derived from the typeclass) and `Core/Mirativity.lean`
+(DeLancey-orthogonal `MirativityValue` only); added typeclass
+instances for `EPCondition`, `TAMEEntry`, and `EvidenceType` co-located
+with their bearer types (mathlib `Mathlib/Topology/Order.lean`
+pattern); converted the parallel `IsNonfuture` reinventions in
+`Theories/Semantics/Tense/Evidential.lean` and
+`Phenomena/Modality/EpistemicEvidentiality.lean` into one-line aliases
+delegating to the typeclass; renamed `Core.Evidence` namespace to
+`Core.Evidentiality` (the linguistically-canonical term — "Evidence"
+collides with proof-theoretic / Bayesian / legal usage); fixed stale
+path refs `Core/Discourse/Evidence.lean` and
+`Core/Discourse/Epistemicity.lean` in
+`Theories/Syntax/Minimalism/SpeechActs.lean`. The 0.230.203 Features/
+move then relocated `Evidentiality.lean` and `Mirativity.lean` from
+`Core/` to `Features/` along with the other 13 files.
+
 ## [0.230.198] - 2026-04-22
 
 ### Fixed — audit response on the classifier-typology PR (parallel session)

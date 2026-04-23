@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 
 /-!
 # German Indefinite Pronouns
@@ -21,7 +21,7 @@ set_option autoImplicit false
 
 namespace Fragments.German.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 /-- German *irgend-*: epistemic indefinite (type iv).
     D&A semantics: var(∅,x). Diachronically extended from non-specific

@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 
 /-!
 # Yakut (Sakha) Indefinite Pronouns
@@ -17,7 +17,7 @@ set_option autoImplicit false
 
 namespace Fragments.Yakut.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 /-- Yakut *-ere*: specific unknown + specific known (ABB).
     D&A type (ii) specific: dep(v,x).

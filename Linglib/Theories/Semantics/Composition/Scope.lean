@@ -20,7 +20,7 @@ This module provides:
 
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Core.ScopeTypes
+import Linglib.Features.ScopeTypes
 
 namespace Semantics.Scope
 

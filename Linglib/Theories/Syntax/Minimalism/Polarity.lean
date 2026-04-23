@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Agree
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 
 /-!
 # Syntactic Polarity: PolP and [±Pol]
@@ -16,11 +16,11 @@ of yes/no answers.
 3. In polar questions, [±Pol] is unvalued — the answer values it
 4. "Yes"/"No" are focus-movement remnants of PolP ellipsis under identity
 
-## Connection to Core.Polarity
+## Connection to Features.Polarity
 
-`Core.Polarity` provides the semantic type (`.positive` / `.negative`).
+`Features.Polarity` provides the semantic type (`.positive` / `.negative`).
 This file provides the syntactic feature `[±Pol]` that participates in
-Agree and maps to `Core.Polarity` at LF.
+Agree and maps to `Features.Polarity` at LF.
 
 ## Connection to Cat.Pol
 
@@ -39,7 +39,7 @@ open Core
     In polar questions: unvalued [uPol] — waiting for an answer to value it -/
 inductive PolFeature where
   /-- Valued polarity: [+Pol] (affirmative) or [-Pol] (negative) -/
-  | valued : Core.Polarity → PolFeature
+  | valued : Features.Polarity → PolFeature
   /-- Unvalued polarity: the feature in polar questions that the answer resolves -/
   | unvalued : PolFeature
   deriving DecidableEq, Repr
@@ -51,8 +51,8 @@ def PolFeature.toFeatureVal : PolFeature → GramFeature
   | .valued .negative => .valued (.pol false)
   | .unvalued         => .unvalued (.pol true)  -- placeholder value for type matching
 
-/-- Recover `Core.Polarity` from a valued syntactic [±Pol] feature. -/
-def PolFeature.toPolarity : PolFeature → Option Core.Polarity
+/-- Recover `Features.Polarity` from a valued syntactic [±Pol] feature. -/
+def PolFeature.toPolarity : PolFeature → Option Features.Polarity
   | .valued p => some p
   | .unvalued => none
 
@@ -80,25 +80,25 @@ def PolHead.question : PolHead :=
   { feature := .unvalued }
 
 /-- Value an unvalued [±Pol] feature — the core operation in answering
-    a polar question. The answer provides a `Core.Polarity` that values
+    a polar question. The answer provides a `Features.Polarity` that values
     the feature.
 
     Returns `none` if the feature is already valued (nothing to do). -/
-def PolFeature.value (f : PolFeature) (p : Core.Polarity) : Option PolFeature :=
+def PolFeature.value (f : PolFeature) (p : Features.Polarity) : Option PolFeature :=
   match f with
   | .unvalued => some (.valued p)
   | .valued _ => none  -- already valued
 
 /-- Valuing an unvalued feature always succeeds. -/
-theorem value_unvalued (p : Core.Polarity) :
+theorem value_unvalued (p : Features.Polarity) :
     PolFeature.unvalued.value p = some (.valued p) := rfl
 
 /-- Valuing a valued feature always fails. -/
-theorem value_valued (p q : Core.Polarity) :
+theorem value_valued (p q : Features.Polarity) :
     (PolFeature.valued p).value q = none := rfl
 
 /-- Round-trip: valuing then extracting polarity recovers the answer. -/
-theorem value_then_toPolarity (p : Core.Polarity) :
+theorem value_then_toPolarity (p : Features.Polarity) :
     (PolFeature.unvalued.value p).bind PolFeature.toPolarity = some p := rfl
 
 /-- The [±Pol] feature matches itself in the Agree system. -/

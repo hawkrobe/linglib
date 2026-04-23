@@ -17,7 +17,7 @@ Used by:
 
 -/
 
-namespace Core.Definiteness
+namespace Features.Definiteness
 
 -- ============================================================================
 -- §1: The Core Binary Distinction
@@ -228,4 +228,4 @@ theorem strategy_finer_than_articleType :
     DefMarkingStrategy.generallyMarked ≠ .markedAnaphoric :=
   ⟨rfl, by decide⟩
 
-end Core.Definiteness
+end Features.Definiteness

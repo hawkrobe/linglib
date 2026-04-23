@@ -222,7 +222,7 @@ theorem hon_levels_ordered :
 
 /-- Convert register level to theory HonLevel.
     informal → non-honorific, neutral → honorific, formal → high-honorific. -/
-def levelToHonLevel : Core.Register.Level → HonLevel
+def levelToHonLevel : Features.Register.Level → HonLevel
   | .informal => .nh
   | .neutral  => .h
   | .formal   => .hh

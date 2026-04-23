@@ -32,7 +32,7 @@ languages vary in which semantic pieces (J, MU, type-shifter) are
 overtly realized.
 -/
 
-namespace Core.Coordination
+namespace Features.Coordination
 
 /-- Role of a coordination morpheme. -/
 inductive CoordRole where
@@ -153,4 +153,4 @@ inductive CoordSymmetry where
   | asymmetric
   deriving DecidableEq, Repr, BEq
 
-end Core.Coordination
+end Features.Coordination

@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 import Linglib.Core.WALS.Features.F56A
 import Linglib.Core.WALS.Features.F63A
 import Linglib.Core.WALS.Features.F64A
@@ -72,7 +72,7 @@ where the comitative-to-coordinator grammaticalization is still transparent.
 
 namespace Phenomena.Coordination.Typology
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- @cite{haspelmath-2007}: Structural Typology
@@ -165,7 +165,7 @@ def DiachronicSource.expectedPattern : DiachronicSource → Syndesis
 -- ============================================================================
 
 /-- A coordination entry annotated with its diachronic source.
-    Wraps `CoordEntry` (from `Core.Coordination`) with typological metadata.
+    Wraps `CoordEntry` (from `Features.Coordination`) with typological metadata.
     For languages with Fragment files, `entry` references the Fragment entry
     directly — no data duplication. -/
 structure SourcedEntry where

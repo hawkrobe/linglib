@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # Dargwa (Tanti) Coordination @cite{sumbatova-2021}
@@ -32,7 +32,7 @@ is predicted by M&S: languages can have MU without J.
 
 namespace Fragments.Dargwa.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

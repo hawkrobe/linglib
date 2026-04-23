@@ -14,7 +14,7 @@ only the anaphoric type has a dedicated form.
 namespace Fragments.Mandarin.Definiteness
 
 open Core.Nominal (ArticleInventory)
-open Core.Definiteness (DefMarkingStrategy)
+open Features.Definiteness (DefMarkingStrategy)
 
 /-- Mandarin: no overt indefinite/unique articles; demonstratives carry the
     anaphoric load (*nà* 'that'); possessives via *de*. -/

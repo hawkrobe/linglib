@@ -488,9 +488,9 @@ theorem wan_refl_distinct_from_log :
 
 /-- The Wan logophoric pronoun satisfies at least the pivot role in
     @cite{sells-1987}'s hierarchy, connecting this fragment to the
-    logophoricity theory in `Core/Logophoricity.lean`. -/
+    logophoricity theory in `Features/Logophoricity.lean`. -/
 theorem wan_log_is_at_least_pivot :
-    Core.Logophoricity.LogophoricRole.pivot ≤
+    Features.Logophoricity.LogophoricRole.pivot ≤
     Fragments.Wan.Reciprocals.logophoricRole := by decide
 
 -- ════════════════════════════════════════════════════════════════

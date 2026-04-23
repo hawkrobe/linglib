@@ -1,4 +1,4 @@
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Mereology
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
@@ -47,7 +47,7 @@ type of definiteness.
 
 namespace Moroney2021
 
-open Core.Definiteness
+open Features.Definiteness
 open Core.Deixis (Feature)
 
 -- ============================================================================
@@ -55,7 +55,7 @@ open Core.Deixis (Feature)
 -- ============================================================================
 
 -- `DefMarkingStrategy` and `strategyToArticleType` live in
--- `Core.Definiteness`. Per-language strategy assignments are derived from
+-- `Features.Definiteness`. Per-language strategy assignments are derived from
 -- `Core.Nominal.ArticleInventory` via `toMarkingStrategy` (see §7 / §14) —
 -- the inventory is the single source of truth for definiteness data.
 
@@ -74,7 +74,7 @@ inductive DefForm where
 
 /-- Cross-linguistic datum: what form does language L use for definite use
 type U? Connects @cite{hawkins-1978}'s use types (already in
-`Core.Definiteness.DefiniteUseType`) to actual morphological expression. -/
+`Features.Definiteness.DefiniteUseType`) to actual morphological expression. -/
 structure DefExpressionDatum where
   language : String
   useType : DefiniteUseType
@@ -381,7 +381,7 @@ theorem shan_exists_is_last_resort :
 theorem shan_article_type :
     strategyToArticleType .unmarked = .none_ := rfl
 
-/-- `Core.Definiteness.articleTypeToDistinguishedPresup` correctly returns
+/-- `Features.Definiteness.articleTypeToDistinguishedPresup` correctly returns
 zero morphologically distinguished presupposition types for Shan. -/
 theorem shan_no_morphological_distinction :
     (articleTypeToDistinguishedPresup .none_).length = 0 := rfl

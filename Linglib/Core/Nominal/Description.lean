@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Variables
 import Linglib.Core.Deixis.Feature
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 
 /-!
 # Nominal Descriptions: Unified Sum Type
@@ -146,7 +146,7 @@ def usesSituationPronoun : NominalKind F → Bool
     presupposition type it expresses, where applicable. Bare and indefinite
     return `none` because they are not (in themselves) definites. -/
 def expectedPresupType :
-    NominalKind F → Option Core.Definiteness.DefPresupType
+    NominalKind F → Option Features.Definiteness.DefPresupType
   | .bare _              => none
   | .indefinite _        => none
   | .unique _ _          => some .uniqueness

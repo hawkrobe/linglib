@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # Irish Coordination Morphemes
@@ -15,7 +15,7 @@ encodes the structural pattern (a_co_b only, J-only strategy).
 
 namespace Fragments.Irish.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

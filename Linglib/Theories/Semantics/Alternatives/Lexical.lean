@@ -11,7 +11,7 @@ stronger members entail weaker members. Scale ordering determines scalar implica
 
 -/
 
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Mathlib.Data.Rat.Defs
 
 namespace Alternatives
@@ -300,7 +300,7 @@ theorem de_blocks_some_not_all :
 /-- Sentence polarity determines monotonicity context:
     positive sentences are upward-entailing, negative are downward-entailing.
     This is the Ladusaw (1979) / Fauconnier (1975) connection. -/
-def Polarity.toMonotonicity : Core.Polarity → Monotonicity
+def Polarity.toMonotonicity : Features.Polarity → Monotonicity
   | .positive => .upward
   | .negative => .downward
 

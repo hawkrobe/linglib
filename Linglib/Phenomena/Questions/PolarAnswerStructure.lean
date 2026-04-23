@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Theories.Semantics.Questions.AnsweringSystems
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Fragments.Swedish.AnswerParticles
@@ -60,7 +60,7 @@ structure PolarAnswerDatum where
   /-- Is the question negated? -/
   negativeQuestion : Bool
   /-- The polarity of the answer clause -/
-  answerPolarity : Core.Polarity
+  answerPolarity : Features.Polarity
   /-- Is this answer felicitous? -/
   felicitous : Bool := true
   /-- Language -/

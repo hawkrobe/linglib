@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Fragments.English.Determiners
 
@@ -46,7 +46,7 @@ open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)
-open Core.Definiteness (DefPresupType Definiteness)
+open Features.Definiteness (DefPresupType Definiteness)
 open Semantics.Reference.Donnellan (definitePrProp attributiveContent)
 
 -- ============================================================================

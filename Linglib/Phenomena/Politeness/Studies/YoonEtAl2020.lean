@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
-import Linglib.Core.Subjectivity
+import Linglib.Features.Subjectivity
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -594,7 +594,7 @@ theorem kind_h0_prefers_negation :
     @cite{narrog-2010} §4.2 connects this to modality: strong obligation
     is face-threatening precisely because it is performative and volitive,
     making the speaker's imposition on the addressee maximally salient. -/
-def socialGoalSubjectivityLevel : Core.Subjectivity.SubjectivityLevel :=
+def socialGoalSubjectivityLevel : Features.Subjectivity.SubjectivityLevel :=
   .intersubjective
 
 end YoonEtAl2020

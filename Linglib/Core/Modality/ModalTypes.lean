@@ -1,4 +1,4 @@
-import Linglib.Core.Register
+import Linglib.Features.Register
 
 /-!
 # Modal Typological Types
@@ -176,15 +176,15 @@ def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor
 structure ModalItem where
   form : String
   meaning : List ForceFlavor
-  register : Core.Register.Level := .neutral
+  register : Features.Register.Level := .neutral
   deriving Repr, BEq
 
 /-- Two modal items are register variants if they differ in register. -/
 def ModalItem.areRegisterVariants (a b : ModalItem) : Prop :=
-  Core.Register.areVariants a.register b.register
+  Features.Register.areVariants a.register b.register
 
 instance (a b : ModalItem) : Decidable (a.areRegisterVariants b) :=
-  inferInstanceAs (Decidable (Core.Register.areVariants _ _))
+  inferInstanceAs (Decidable (Features.Register.areVariants _ _))
 
 -- ============================================================================
 -- §5. Concord Types

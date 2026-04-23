@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Reference.DirectReference
@@ -34,7 +34,7 @@ namespace Phenomena.Anaphora.Typology
 
 open Phenomena.Anaphora.Coreference
 
-open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
+open Features.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
 open Core.Nominal (ArticleInventory)
 
@@ -454,7 +454,7 @@ theorem dem_productivity_from_article_system :
 
 /-! ### Definite use types (@cite{hawkins-1978}, @cite{schwarz-2013} §2.1)
 
-Types and mappings are defined in `Core/Definiteness.lean`:
+Types and mappings are defined in `Features/Definiteness.lean`:
 `DefiniteUseType`, `BridgingSubtype`, `useTypeToPresupType`, `bridgingPresupType`. -/
 
 /-! ### @cite{schwarz-2013} cross-linguistic article paradigm data -/

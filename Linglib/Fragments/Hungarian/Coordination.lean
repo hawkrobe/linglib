@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # Hungarian Coordination Morphemes
@@ -24,7 +24,7 @@ Connection to BillEtAl2025: Hungarian is one of two test languages.
 
 namespace Fragments.Hungarian.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

@@ -13,7 +13,7 @@ Coreference constraints via c-command and locality following @cite{chomsky-1981}
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Core.CoreferenceStatus
+import Linglib.Features.CoreferenceStatus
 
 namespace Minimalism.Phenomena.Coreference
 

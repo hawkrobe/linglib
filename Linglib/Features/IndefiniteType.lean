@@ -31,7 +31,7 @@ Used by:
 
 set_option autoImplicit false
 
-namespace Core.IndefiniteType
+namespace Features.IndefiniteType
 
 -- ============================================================================
 -- §1. Indefinite Type Classification (@cite{degano-aloni-2025})
@@ -180,4 +180,4 @@ theorem classify_abb : classifyTriple "A" "B" "B" = .ABB := rfl
 theorem classify_abc : classifyTriple "A" "B" "C" = .ABC := rfl
 theorem classify_aba : classifyTriple "A" "B" "A" = .ABA := rfl
 
-end Core.IndefiniteType
+end Features.IndefiniteType

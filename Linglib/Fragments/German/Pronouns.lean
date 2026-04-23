@@ -29,7 +29,7 @@ in assumed-identity copular constructions (@cite{keine-et-al-2019},
 namespace Fragments.German.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- § 1: Strong Pronouns

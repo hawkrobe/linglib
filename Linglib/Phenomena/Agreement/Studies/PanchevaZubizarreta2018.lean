@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.PConstraint
-import Linglib.Core.Logophoricity
+import Linglib.Features.Logophoricity
 
 /-!
 # Pancheva & Zubizarreta (2018): The Person Case Constraint
@@ -156,7 +156,7 @@ theorem weak_departs_on_uniqueness :
 -- § 5: Logophoric Role Correspondence (§6.2)
 -- ============================================================================
 
-open Core.Logophoricity
+open Features.Logophoricity
 
 /-- The P-Prominence setting that corresponds to a logophoric role.
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Core.InformationStructure
 import Linglib.Theories.Semantics.Questions.AnsweringSystems
 
@@ -22,7 +22,7 @@ Swedish also allows verb-echo answers alongside particles (mixed strategy).
 
 namespace Fragments.Swedish.AnswerParticles
 
-open Core.Polarity
+open Features.Polarity
 open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 open Semantics.Questions (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
@@ -31,7 +31,7 @@ structure AnswerParticle where
   /-- Citation form -/
   form : String
   /-- The polarity this particle assigns -/
-  polarity : Core.Polarity
+  polarity : Features.Polarity
   /-- Does this particle require a negative context? -/
   requiresNegativeContext : Bool
   /-- Is this a polarity-reversing particle? -/

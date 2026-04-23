@@ -1,5 +1,5 @@
 import Linglib.Phenomena.WordOrder.Typology
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 import Linglib.Core.Tree
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Mathlib.Data.Finset.Basic
@@ -45,7 +45,7 @@ DP-first (~77%), supporting bottom-up accounts instead.
 
 namespace BrueningAlKhalaf2020
 
-open Core.Coordination
+open Features.Coordination
 open Core.Tree (Cat)
 open Core.Tree.Cat (NP VP AdjP AdvP PP)
 open Phenomena.WordOrder.Typology

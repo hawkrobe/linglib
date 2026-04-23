@@ -13,7 +13,7 @@ Note: This is distinct from other polarity-like distinctions in the library:
 - `Semantics.Presupposition.OntologicalPreconditions.Polarity` — event assertion (`.affirmed`/`.negated`)
 -/
 
-namespace Core
+namespace Features
 
 /--
 Sentence polarity: whether a sentence is affirmative or negated.
@@ -23,4 +23,4 @@ inductive Polarity where
   | negative
   deriving Repr, DecidableEq, Inhabited
 
-end Core
+end Features

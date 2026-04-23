@@ -28,7 +28,7 @@ asymmetric c-command in a `SyntacticObject` tree. Bridge files in
 
 -/
 
-import Linglib.Core.ScopeTypes
+import Linglib.Features.ScopeTypes
 import Linglib.Theories.Syntax.Minimalism.Phase
 
 namespace Minimalism.Phenomena.Scope

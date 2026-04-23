@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 import Linglib.Fragments.Japanese.Determiners
 
 /-!
@@ -45,7 +45,7 @@ quantification = interrogative (all are ∨ over elements).
 
 namespace Fragments.Japanese.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

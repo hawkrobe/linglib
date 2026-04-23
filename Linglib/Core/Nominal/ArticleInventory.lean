@@ -1,5 +1,5 @@
 import Linglib.Core.Nominal.Description
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 
 /-!
 # Article Inventory: Surface Forms → Derived Typology
@@ -30,7 +30,7 @@ the type-shift hierarchy, not the article inventory).
 namespace Core.Nominal
 
 open Core.IntensionalLogic
-open Core.Definiteness
+open Features.Definiteness
 
 -- The structure is declared before `open Core.IntensionalLogic.Variables`
 -- because that namespace introduces a `g[n ↦ x]` notation whose `[`
@@ -147,7 +147,7 @@ def toMarkingStrategy (inv : ArticleInventory) : DefMarkingStrategy :=
 
 /-- Derived classification into the Schwarz/Patel-Grosz–Grosz 3-cell
     `ArticleType` typology. Lossy: collapses `.generallyMarked` and
-    `.markedAnaphoric` to `.weakOnly`, as `Core.Definiteness`
+    `.markedAnaphoric` to `.weakOnly`, as `Features.Definiteness`
     `strategyToArticleType` already documents. -/
 def toArticleType (inv : ArticleInventory) : ArticleType :=
   strategyToArticleType inv.toMarkingStrategy

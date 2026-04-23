@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # German Coordination Morphology
@@ -14,7 +14,7 @@ are adversative.
 
 namespace Fragments.German.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 /-- *und* — conjunction proper (J particle, free word).
     "Die Stadt beendet [DP die Überarbeitung] und [CP dass für

@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 
 /-!
 # English Indefinite Pronouns
@@ -13,7 +13,7 @@ set_option autoImplicit false
 
 namespace Fragments.English.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 /-- English *some-*: unmarked (type i), all three functions (AAA).
     @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/

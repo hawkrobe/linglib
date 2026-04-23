@@ -13,7 +13,7 @@ import Linglib.Core.Lexical.Pronouns
 namespace Fragments.Basque.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- First Person

@@ -30,7 +30,7 @@ and reflexive cases, while 3sg/3pl are not.
 namespace Fragments.Italian.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- § 1: Strong Pronouns

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.BiasedPQ
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 
 /-!
 # Biased Declarative Questions
@@ -156,7 +156,7 @@ def DeclQuestionType.questionClass : DeclQuestionType → DeclQuestionClass
   | .NRQ => .rejecting
 
 /-- What a declarative of this type denotes (positive = p, negative = not-p). -/
-def DeclQuestionType.declPolarity : DeclQuestionType → Core.Polarity
+def DeclQuestionType.declPolarity : DeclQuestionType → Features.Polarity
   | .PDQ => .positive
   | .NDQ => .negative
   | .PRQ => .positive
@@ -263,7 +263,7 @@ def rejectQBiasProfile (im : IllocutionaryModifier) : BiasProfile :=
     the speaker must not have already assumed the declarative's content.
 
     @cite{seeliger-repp-2018}: "DQs pattern with each other" (p. 136). -/
-def dqBiasProfile (pol : Core.Polarity) : BiasProfile :=
+def dqBiasProfile (pol : Features.Polarity) : BiasProfile :=
   match pol with
   | .positive => { evidential := .plusPos, epistemic := .minusPos }
   | .negative => { evidential := .plusNeg, epistemic := .minusNeg }

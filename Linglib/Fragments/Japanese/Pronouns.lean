@@ -15,7 +15,7 @@ import Linglib.Core.Lexical.Pronouns
 namespace Fragments.Japanese.Pronouns
 
 open Core.Pronouns
-open Core.Register (Level)
+open Features.Register (Level)
 
 -- ============================================================================
 -- First Person

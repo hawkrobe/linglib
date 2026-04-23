@@ -56,7 +56,7 @@ structure TVJTrial where
   /-- Test sentence -/
   sentence : String
   /-- Polarity of test sentence -/
-  polarity : Core.Polarity
+  polarity : Features.Polarity
   /-- Does accepting the sentence indicate computing multiplicity? -/
   acceptanceIndicatesMultiplicity : Bool
   deriving Repr
@@ -92,7 +92,7 @@ structure InferenceRate where
   /-- Inference type -/
   inferenceType : String
   /-- Polarity of context -/
-  polarity : Core.Polarity
+  polarity : Features.Polarity
   /-- Rate of inference-consistent responses (qualitative) -/
   rate : String
   deriving Repr
@@ -212,7 +212,7 @@ structure TernaryJudgment where
   /-- Test sentence -/
   sentence : String
   /-- Polarity -/
-  polarity : Core.Polarity
+  polarity : Features.Polarity
   /-- Preferred reward level (qualitative) -/
   preferredReward : String
   deriving Repr

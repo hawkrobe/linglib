@@ -14,7 +14,7 @@ is the `.generallyMarked` strategy: a single form covers all
 namespace Fragments.English.Definiteness
 
 open Core.Nominal (ArticleInventory)
-open Core.Definiteness (DefMarkingStrategy)
+open Features.Definiteness (DefMarkingStrategy)
 
 /-- English: indefinite *a/an*; the syncretic definite *the* (one form for
     both unique and anaphoric); demonstratives *this/that*; possessives

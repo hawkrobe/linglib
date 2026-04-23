@@ -50,7 +50,7 @@ so the M&S derivation is the definition itself, not a theorem.
 
 namespace BillEtAl2025
 
-open Core.Coordination
+open Features.Coordination
 open Core.IntensionalLogic (Frame)
 
 -- Conjunction Particle Typology

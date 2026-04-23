@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 import Linglib.Theories.Semantics.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Verb.Habituals
 import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Core.Genericity
+import Linglib.Features.Genericity
 
 /-!
 # @cite{boneh-doron-2013} — Hab and Gen in the Expression of Habituality

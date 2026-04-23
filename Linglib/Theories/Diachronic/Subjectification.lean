@@ -1,4 +1,4 @@
-import Linglib.Core.Subjectivity
+import Linglib.Features.Subjectivity
 
 /-!
 # Subjectification and Intersubjectification
@@ -14,7 +14,7 @@ change, attested across modality, connectives, discourse markers, and
 spatial expressions.
 
 The synchronic infrastructure (the `SubjectivityLevel` type and ordering)
-lives in `Core.Subjectivity`. This module formalizes the **diachronic claims**:
+lives in `Features.Subjectivity`. This module formalizes the **diachronic claims**:
 that the ordering reflects a historical trajectory, that each transition is
 unidirectional, and that specific semantic domains exhibit this pattern.
 
@@ -33,7 +33,7 @@ unidirectional, and that specific semantic domains exhibit this pattern.
 
 namespace Diachronic.Subjectification
 
-open Core.Subjectivity
+open Features.Subjectivity
 
 -- ============================================================================
 -- §1. The Diachronic Cline

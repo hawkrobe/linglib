@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 
 /-!
@@ -52,7 +52,7 @@ namespace Fragments.Akan.Determiners
 open Semantics.Quantification.ChoiceFunction
 open Semantics.Definiteness
 open Semantics.Quantification.UnifiedUniversal
-open Core.Definiteness
+open Features.Definiteness
 open Core.Presupposition
 
 -- ════════════════════════════════════════════════════
@@ -112,7 +112,7 @@ def noSem {E : Type}
       → covert ∃ or type-shift
 
     @cite{owusu-2022}, @cite{philipp-2022}. Akan is classified as
-    `WeakArticleStrategy.bareNominal` in `Core/Definiteness.lean`. -/
+    `WeakArticleStrategy.bareNominal` in `Features/Definiteness.lean`. -/
 inductive BareNPReading where
   | definite    -- covert ι: globally unique referent
   | indefinite  -- covert ∃: non-singleton denotation

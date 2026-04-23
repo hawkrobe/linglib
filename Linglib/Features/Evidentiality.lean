@@ -19,7 +19,7 @@ This module supplies the shared vocabulary that bridges
 
 -/
 
-namespace Core.Evidentiality
+namespace Features.Evidentiality
 
 /-- Canonical three-way evidential source classification (@cite{aikhenvald-2004}). -/
 inductive EvidentialSource where
@@ -97,12 +97,12 @@ instance : HasEvidentialPerspective EvidentialSource where
 instance : HasEvidentialPerspective EvidentialPerspective where
   toEvidentialPerspective := some
 
-/-- Dot-notation alias for `Core.Evidentiality.IsNonfuture` on perspectives. -/
+/-- Dot-notation alias for `Features.Evidentiality.IsNonfuture` on perspectives. -/
 def EvidentialPerspective.IsNonfuture (p : EvidentialPerspective) : Prop :=
-  Core.Evidentiality.IsNonfuture p
+  Features.Evidentiality.IsNonfuture p
 
 instance : DecidablePred EvidentialPerspective.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (Core.Evidentiality.IsNonfuture _))
+  fun _ => inferInstanceAs (Decidable (Features.Evidentiality.IsNonfuture _))
 
 -- ════════════════════════════════════════════════════════════════
 -- § Simp lemmas
@@ -117,4 +117,4 @@ instance : DecidablePred EvidentialPerspective.IsNonfuture :=
 @[simp] theorem EvidentialSource.toEvidentialPerspective_inference :
     EvidentialSource.toEvidentialPerspective .inference = some .retrospective := rfl
 
-end Core.Evidentiality
+end Features.Evidentiality

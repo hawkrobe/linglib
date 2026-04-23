@@ -222,7 +222,7 @@ Diagnostics confirm:
 
 /-- Selectional preconditions project through negation.
     "The robot didn't kick the tree" still implies it has feet. -/
-theorem selectional_projects_through_negation (req event : W → Prop) (pol : Core.Polarity) :
+theorem selectional_projects_through_negation (req event : W → Prop) (pol : Features.Polarity) :
     ({ eventType := selectionalEventPhase req event, polarity := pol } :
       EventSentence W).presupposition = req := rfl
 

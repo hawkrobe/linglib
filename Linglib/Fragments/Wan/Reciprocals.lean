@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Pronouns
-import Linglib.Core.Logophoricity
+import Linglib.Features.Logophoricity
 
 /-!
 # Wan (Mande) Reciprocal and Logophoric Fragment
@@ -34,7 +34,7 @@ hierarchy: it refers to the individual whose mental state is reported.
 namespace Fragments.Wan.Reciprocals
 
 open Core.Pronouns
-open Core.Logophoricity
+open Features.Logophoricity
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Pronoun Entries

@@ -34,7 +34,7 @@ Two tests from @cite{roberts-simons-2024} §2.1:
 
 -/
 
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
@@ -128,7 +128,7 @@ Under assertion-only, there's no structural reason for shared presuppositions.
 -/
 
 -- Sentence polarity from Core — .positive = affirmed, .negative = negated
-open Core (Polarity)
+open Features (Polarity)
 
 /--
 A sentence that refers to an event type and makes a claim about it.

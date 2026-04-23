@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 
@@ -51,7 +51,7 @@ implicatures are independent, with homogeneity acquired earlier.
 
 namespace TieuKrizChemla2019
 
-open Core (Polarity)
+open Features (Polarity)
 open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
   switchesExample)
 

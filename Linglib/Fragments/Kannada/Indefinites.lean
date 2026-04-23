@@ -1,4 +1,4 @@
-import Linglib.Core.IndefiniteType
+import Linglib.Features.IndefiniteType
 
 /-!
 # Kannada Indefinite Pronouns
@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 namespace Fragments.Kannada.Indefinites
 
-open Core.IndefiniteType
+open Features.IndefiniteType
 
 /-- Kannada *-oo*: specific unknown (type vii).
     D&A semantics: dep(v,x) ∧ var(∅,x). Rare conjunctive type.

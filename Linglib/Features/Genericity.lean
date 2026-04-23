@@ -13,7 +13,7 @@ in the introduction to *Genericity* (Mari, Beyssade, Del Prete, OUP 2013):
    @cite{krifka-2013}'s descriptive/definitional split (ch. 15).
 -/
 
-namespace Core.Genericity
+namespace Features.Genericity
 
 /-- The principal linguistic forms that express generic meaning.
 
@@ -71,4 +71,4 @@ inductive GenericReading where
   | definitional
   deriving DecidableEq, Repr
 
-end Core.Genericity
+end Features.Genericity

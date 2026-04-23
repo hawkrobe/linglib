@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Noun.Kind.Generics
-import Linglib.Core.Genericity
+import Linglib.Features.Genericity
 
 /-!
 # @cite{krifka-2013}: Definitional Generics
@@ -61,7 +61,7 @@ only universal closure which requires a rule-like interpretation.
 
 namespace Krifka2013
 
-open Core.Genericity (GenericForm GenericReading)
+open Features.Genericity (GenericForm GenericReading)
 
 
 -- ═══ Two-Index Semantics (§15.3.1) ═══

@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 
 /-!
 # Homogeneity: Empirical Data
@@ -26,9 +26,9 @@ Homogeneity is characterized by non-complementary truth conditions:
 namespace Phenomena.Plurals.Homogeneity
 
 
--- Re-export Core.Polarity so downstream files that import Homogeneity
+-- Re-export Features.Polarity so downstream files that import Homogeneity
 -- continue to see Phenomena.Plurals.Homogeneity.Polarity.
-export Core (Polarity)
+export Features (Polarity)
 
 /--
 Judgment type for homogeneity scenarios.

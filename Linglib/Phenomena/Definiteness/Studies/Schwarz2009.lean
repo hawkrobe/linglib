@@ -1,4 +1,4 @@
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
@@ -63,7 +63,7 @@ We verify:
 
 namespace Phenomena.Definiteness.Studies.Schwarz2009
 
-open Core.Definiteness
+open Features.Definiteness
 open Core.IntensionalLogic
 open Core.IntensionalLogic.Variables
 open Core.Nominal

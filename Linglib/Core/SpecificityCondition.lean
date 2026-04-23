@@ -1,4 +1,4 @@
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 
 /-!
 # Specificity Condition
@@ -41,7 +41,7 @@ coverage (@cite{shen-huang-2026} §4.1).
 
 namespace Core.SpecificityCondition
 
-open Core.Definiteness
+open Features.Definiteness
 
 -- ============================================================================
 -- §1. Specificity

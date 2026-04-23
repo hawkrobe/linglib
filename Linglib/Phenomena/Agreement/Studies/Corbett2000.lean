@@ -129,6 +129,20 @@ def japaneseNS : NumberSystem :=
     values := [.singular, .plural]
     hasGeneral := true }
 
+/-- Western Armenian (ISO `hyw`): singular–plural within the system, but
+    general number exists for *singular indefinites* (bare *dəgha* "boy"
+    can refer to one or more boys). Per @cite{bale-khanjian-2014} eqs. 3
+    and 9: ⟦dəgha⟧ contains both singular individuals and groups; only
+    plural *dəgha-ner* is strictly ≥2. The general-number reading is
+    *blocked* in definite contexts via syntactic-complexity competition
+    with the same-complexity plural alternative — see
+    `Phenomena/Plurals/Studies/BaleKhanjian2014.lean`. Korean (Kim 2005)
+    and Turkish (Bliss 2004) pattern alike per BK 2014 §2.3 and fn 14. -/
+def westernArmenianNS : NumberSystem :=
+  { name := "Western Armenian"
+    values := [.singular, .plural]
+    hasGeneral := true }
+
 /-- Pirahã (Mura): no number category at all. -/
 def pirahaNS : NumberSystem :=
   { name := "Pirahã", values := [] }
@@ -153,7 +167,7 @@ def mebengokreNS : NumberSystem :=
 
 def allNumberSystems : List NumberSystem :=
   [englishNS, russianNS, upperSorbianNS, baysoNS, sloveneNS,
-   larikeNS, lihirNS, japaneseNS, pirahaNS,
+   larikeNS, lihirNS, japaneseNS, westernArmenianNS, pirahaNS,
    winnebagoNS, rembarrnganS, mebengokreNS]
 
 -- Size checks
@@ -165,6 +179,8 @@ theorem piraha_zero : pirahaNS.size = 0 := by native_decide
 -- General number
 theorem bayso_has_general : baysoNS.hasGeneral = true := by native_decide
 theorem japanese_has_general : japaneseNS.hasGeneral = true := by native_decide
+theorem western_armenian_has_general :
+    westernArmenianNS.hasGeneral = true := by native_decide
 theorem english_no_general : englishNS.hasGeneral = false := by native_decide
 
 -- Facultative number

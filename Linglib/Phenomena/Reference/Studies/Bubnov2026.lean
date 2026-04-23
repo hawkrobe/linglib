@@ -51,7 +51,7 @@ This study connects six modules:
 - `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the
   negative result — nanosyntax predicts containment patterns that
   indefinites lack
-- `Core.IndefiniteType`: `IndefiniteSpecType` with derived semantic
+- `Features.IndefiniteType`: `IndefiniteSpecType` with derived semantic
   profiles (`profileSK/SU/NS`) and `classifyTriple` for computing
   syncretism patterns from forms
 - `Fragments.{Russian,English,German,Latin,Yakut,Kannada}.Indefinites`:
@@ -68,7 +68,7 @@ namespace Bubnov2026
 open Semantics.Quantification.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021
-open Core.IndefiniteType
+open Features.IndefiniteType
 open Fragments.Russian.Indefinites
 open Fragments.English.Indefinites
 open Fragments.German.Indefinites

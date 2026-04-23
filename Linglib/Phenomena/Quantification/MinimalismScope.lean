@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Scope
-import Linglib.Core.ScopeTypes
+import Linglib.Features.ScopeTypes
 import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 

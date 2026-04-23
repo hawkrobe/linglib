@@ -15,7 +15,7 @@ typology this is the `.bipartite` strategy: distinct forms for each
 namespace Fragments.German.Definiteness
 
 open Core.Nominal (ArticleInventory)
-open Core.Definiteness (DefMarkingStrategy)
+open Features.Definiteness (DefMarkingStrategy)
 
 /-- German: indefinite *ein-*; *distinct* weak (contracted, e.g., *im*) and
     strong (*dem*) definite articles; demonstratives; possessives. The

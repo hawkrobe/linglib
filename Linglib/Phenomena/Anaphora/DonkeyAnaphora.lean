@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Thai.Definiteness
@@ -249,7 +249,7 @@ def discourseDonkeyData : List DiscourseDonkeyDatum := [
 ]
 
 -- ============================================================================
--- §6: Bridge to Core.Definiteness
+-- §6: Bridge to Features.Definiteness
 -- ============================================================================
 
 /-! ### Donkey anaphora as a definiteness use type
@@ -267,7 +267,7 @@ The cross-linguistic pattern:
 This parallels the general pattern for anaphoric definites in
 @cite{moroney-2021} Table 4.4. -/
 
-open Core.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
+open Features.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
   ArticleType)
 open Core.Nominal (ArticleInventory)
 

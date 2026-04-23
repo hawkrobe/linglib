@@ -1,4 +1,4 @@
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 
 /-!
 # Latin Coordination Morphemes
@@ -22,7 +22,7 @@ encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
 namespace Fragments.Latin.Coordination
 
-open Core.Coordination
+open Features.Coordination
 
 -- ============================================================================
 -- Lexical entries

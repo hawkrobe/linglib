@@ -3,7 +3,7 @@ import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.Typology
 import Linglib.Phenomena.WordOrder.Typology
-import Linglib.Core.Coordination
+import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
 
 /-!
@@ -49,7 +49,7 @@ out linear/temporal closeness accounts and supports bottom-up analyses.
 
 namespace Schwarzer2026
 
-open Core.Coordination
+open Features.Coordination
 open Core.Verbs (ComplementType VerbCore)
 open Fragments.German.Predicates
 open Phenomena.WordOrder.Typology

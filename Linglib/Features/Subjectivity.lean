@@ -21,7 +21,7 @@ intersubjectification.
   subjectified speaker).
 -/
 
-namespace Core.Subjectivity
+namespace Features.Subjectivity
 
 open Core.Epistemicity (EpistemicAuthority)
 
@@ -87,4 +87,4 @@ inductive Performativity where
   | descriptive    -- utterance describes an existing state (assessment, report)
   deriving DecidableEq, Repr, Inhabited
 
-end Core.Subjectivity
+end Features.Subjectivity

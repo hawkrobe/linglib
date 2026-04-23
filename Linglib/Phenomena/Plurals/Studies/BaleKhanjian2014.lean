@@ -91,9 +91,21 @@ with classifiers).
   `Theories/Semantics/Presupposition/MaximizePresupposition.lean` could be
   applied; deferred).
 - Korean / Turkish parallels (BK 2014 fn 14 + §2.3 cite Kim 2005 on Korean,
-  Bliss 2004 on Turkish; not formalized here).
+  @cite{bliss-2004} on Turkish; not formalized here).
 - The compositional semantics of `[-n]/[-ə]` as `sup`/`f_σ`-decomposed
   definiteness (BK 2014 §6, derivation 37–39; deferred to a future pass).
+- The §2.1 predicate-distribution data for general number (eqs. 4–5,
+  *John-ə yev Brad-ə dəgha en* "John and Brad are boys (sg.)") which
+  is the *primary* empirical anchor for the general-number claim,
+  originally argued by @cite{donabedian-1993}.
+
+## Post-2014 engagement
+
+@cite{marti-2020} *Numerals and the theory of number* (S&P 13:3) revisits
+the BGK 2011 / BK 2014 assumptions about Turkish and Western Armenian
+and proposes an alternative numeral-semantic analysis that doesn't rely
+on syntactic-complexity competition. A Marti 2020 study file would be
+the natural cross-paper test case here.
 -/
 
 set_option autoImplicit false
@@ -213,71 +225,50 @@ def waLex : List (Tree Cat String) :=
   , .terminal .V "vaze-ts", .terminal .V "vaze-ts-in"
   , .terminal .N "dəgha" ]
 
-/-- Intermediate tree on the singular→plural derivation: `singularDef`
-    after substituting `Num "-∅"` with `Num "-ner"` at path [0, 0, 1].
-    Same as `pluralDef` except still has `Det "-n"` and `V "vaze-ts"`. -/
-private def intermedNum : Tree Cat String :=
-  .node .S [
-    .node .DP [
-      .node .NumP [
-        .node .NP [.terminal .N "dəgha"],
-        .terminal .Num "-ner"],
-      .terminal .Det "-n"],
-    .node .VP [.terminal .V "vaze-ts"]]
-
-/-- Intermediate tree on the singular→plural derivation: `intermedNum`
-    after substituting `Det "-n"` with `Det "-ə"` at path [0, 1]. -/
-private def intermedNumDet : Tree Cat String :=
-  .node .S [
-    .node .DP [
-      .node .NumP [
-        .node .NP [.terminal .N "dəgha"],
-        .terminal .Num "-ner"],
-      .terminal .Det "-ə"],
-    .node .VP [.terminal .V "vaze-ts"]]
-
 /-- **The headline definite-case theorem**: `singularDef` and `pluralDef`
     have *equal* @cite{katzir-2007} complexity — each is derivable from
     the other by a chain of three same-category leaf substitutions
-    (`Num "-∅" ↔ "-ner"`, `Det "-n" ↔ "-ə"`, `V "vaze-ts" ↔ "vaze-ts-in"`),
-    threaded through the `intermedNum` / `intermedNumDet` intermediates.
+    (`Num "-∅" ↔ "-ner"`, `Det "-n" ↔ "-ə"`, `V "vaze-ts" ↔ "vaze-ts-in"`).
 
-    This is the load-bearing claim from @cite{bale-khanjian-2014} §5: the
-    plural definite is a viable structural alternative to the singular
-    definite, licensing Katzir-mediated competition, which derives the
-    strict-singular meaning. -/
+    Substrate helpers `equalComplexity_terminal_subst`,
+    `equalComplexity_inChild`, and `equalComplexity.trans` are available
+    in `Alternatives/Structural.lean` for cleaner future versions. The
+    direct-construction proof below explicitly walks each
+    `StructOp.inChild` chain (mechanical but verbose); a future
+    `katzir_path_subst` tactic could collapse this to ~5 lines.
+
+    Load-bearing claim from @cite{bale-khanjian-2014} §5: the plural
+    definite is a viable structural alternative to the singular definite,
+    licensing Katzir-mediated competition that derives the strict-singular
+    meaning. -/
 theorem singularDef_pluralDef_equalComplexity :
     equalComplexity waLex singularDef pluralDef := by
   refine ⟨?_, ?_⟩
-  · -- atMostAsComplex waLex singularDef pluralDef = ReflTransGen ... pluralDef singularDef
-    -- Three substitutions reverse-direction: V → Det → Num
+  · -- pluralDef → ... → singularDef via three substitutions (V → Det → Num)
     refine .head ?_ (.head ?_ (.single ?_))
-    · -- pluralDef → intermedNumDet: substitute V "vaze-ts-in" with V "vaze-ts" at [1, 0]
+    · -- substitute V "vaze-ts-in" with V "vaze-ts" at [1, 0]
       apply StructOp.inChild ⟨1, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
-    · -- intermedNumDet → intermedNum: substitute Det "-ə" with Det "-n" at [0, 1]
+    · -- substitute Det "-ə" with Det "-n" at [0, 1]
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
-    · -- intermedNum → singularDef: substitute Num "-ner" with Num "-∅" at [0, 0, 1]
+    · -- substitute Num "-ner" with Num "-∅" at [0, 0, 1]
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
-  · -- atMostAsComplex waLex pluralDef singularDef = ReflTransGen ... singularDef pluralDef
+  · -- singularDef → ... → pluralDef (mirror)
     refine .head ?_ (.head ?_ (.single ?_))
-    · -- singularDef → intermedNum: substitute Num "-∅" with Num "-ner" at [0, 0, 1]
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨0, by simp⟩
-      apply StructOp.inChild ⟨1, by simp⟩
-      exact StructOp.subst rfl (by simp [waLex])
-    · -- intermedNum → intermedNumDet: substitute Det "-n" with Det "-ə" at [0, 1]
+    · apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
-    · -- intermedNumDet → pluralDef: substitute V "vaze-ts" with V "vaze-ts-in" at [1, 0]
+    · apply StructOp.inChild ⟨0, by simp⟩
       apply StructOp.inChild ⟨1, by simp⟩
+      exact StructOp.subst rfl (by simp [waLex])
+    · apply StructOp.inChild ⟨1, by simp⟩
       apply StructOp.inChild ⟨0, by simp⟩
       exact StructOp.subst rfl (by simp [waLex])
 
@@ -291,6 +282,37 @@ theorem singularDef_pluralDef_equalComplexity :
     general-number meaning. -/
 theorem singularIndef_size_lt_pluralIndef_size :
     singularIndef.size < pluralIndef.size := by decide
+
+/-! ## §3a: Cross-paper disagreement with @cite{sauerland-2003}
+
+@cite{bale-khanjian-2014} explicitly reject Gricean / phi-MP accounts
+of number competition (introduction + §3, citing @cite{krifka-1989},
+@cite{sauerland-2003}, @cite{spector-2007}). Sauerland's
+`mp_blocks_plural_at_atom` says that for any *atomic* individual, MP
+selects the singular form over the plural — pre-empting general number.
+
+BK 2014's data contradict this for indefinite singulars: *dəgha vaze-ts*
+"one or more boys ran" (eq. 3) is felicitous about a single atomic boy,
+even though Sauerland would predict pre-emption. The (formalized)
+witness: the singleton `{Boy.a}` (a single atomic boy) is in the
+general-number denotation `daghaGenNum` (eq. 9), and BK 2014's
+empirical claim is that the singular indefinite is felicitous about
+this referent. Sauerland's account predicts pre-emption; BK's data
+deny it.
+
+A *full* contradiction theorem requires bridging Sauerland's entity-
+level MP (`Sauerland2003.mp_blocks_plural_at_atom : ∀ x : E, Atom x → ...`)
+to BK's tree-level Katzir competition. Such a bridge is not currently
+in linglib; this section provides the witness and the structural
+argument in prose. -/
+
+/-- Witness for the Sauerland-vs-BK disagreement: the singleton `{Boy.a}`
+    is an atomic individual that BK 2014 say can be picked out by the
+    indefinite singular *dəgha* (general-number reading), but
+    @cite{sauerland-2003}'s `mp_blocks_plural_at_atom` would predict
+    pre-emption by the strict-singular reading. -/
+theorem singleton_atom_in_genNum :
+    ({Boy.a} : Plurality) ∈ daghaGenNum := by decide
 
 /-- The asymmetry between (in)definites: equal complexity for definites,
     strict size increase for indefinites. The empirical wedge that drives

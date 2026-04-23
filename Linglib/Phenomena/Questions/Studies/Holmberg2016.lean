@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Questions.AnsweringSystems
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Syntax.Minimalism.Polarity
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Phenomena.Questions.PolarAnswerStructure
 
 /-!

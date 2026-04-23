@@ -1,4 +1,4 @@
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 
 /-!
 # Multiplicity Inferences: Empirical Data
@@ -41,7 +41,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Plurals.Multiplicity
 
-open Core (Polarity)
+open Features (Polarity)
 
 -- ============================================================================
 -- §1  Empirical Data

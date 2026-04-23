@@ -13,7 +13,7 @@ the @cite{moroney-2021} typology this is the `.markedAnaphoric` strategy.
 namespace Fragments.Thai.Definiteness
 
 open Core.Nominal (ArticleInventory)
-open Core.Definiteness (DefMarkingStrategy)
+open Features.Definiteness (DefMarkingStrategy)
 
 /-- Thai @cite{jenks-2015}: same definite-marking pattern as Mandarin —
     bare nouns for uniqueness contexts, demonstratives for anaphoric

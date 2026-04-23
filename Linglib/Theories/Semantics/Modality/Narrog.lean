@@ -1,6 +1,6 @@
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Subjectivity
+import Linglib.Features.Subjectivity
 
 /-!
 # Narrog's Semantic Map of Modality and Mood
@@ -45,7 +45,7 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
 namespace Semantics.Modality.Narrog
 
 open Core.Modality (ModalFlavor)
-open Core.Subjectivity (SubjectivityLevel Performativity)
+open Features.Subjectivity (SubjectivityLevel Performativity)
 
 -- ============================================================================
 -- §1. Volitivity

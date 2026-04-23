@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Polarity
+import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Theories.Semantics.Exhaustification.Innocent
@@ -75,7 +75,7 @@ single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
 
 namespace Magri2014
 
-open Core (Polarity)
+open Features (Polarity)
 
 
 -- ============================================================

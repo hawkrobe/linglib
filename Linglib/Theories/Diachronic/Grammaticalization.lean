@@ -26,7 +26,7 @@ greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-20
 - `Core.Lexical.Binominal`: the bleaching cline for binominals (N+PP →
   pseudo-partitive → evaluative → modifier → intensifier) is a specialized
   grammaticalization path in the nominal domain.
-- `Core.Subjectivity`: Traugott's subjectification cline is a semantic
+- `Features.Subjectivity`: Traugott's subjectification cline is a semantic
   dimension of grammaticalization (see `Diachronic.Subjectification`).
 -/
 

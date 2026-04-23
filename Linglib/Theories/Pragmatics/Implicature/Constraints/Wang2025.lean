@@ -2,7 +2,7 @@ import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Core.FelicityTypes
+import Linglib.Features.FelicityTypes
 import Linglib.Theories.Pragmatics.Implicature.Presuppositions
 import Linglib.Theories.Pragmatics.Expressives.Basic
 

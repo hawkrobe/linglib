@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Register
+import Linglib.Features.Register
 import Linglib.Core.Prominence
 import Linglib.Core.Gender
 
@@ -37,7 +37,7 @@ clitics (Galician) that realize speaker-addressee agreement.
 
 namespace Core.Pronouns
 
-open Core.Register (Level)
+open Features.Register (Level)
 open Core (SurfaceGender)
 
 -- ============================================================================

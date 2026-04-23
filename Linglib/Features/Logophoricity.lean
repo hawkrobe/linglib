@@ -35,7 +35,7 @@ The bridge to Minimalist P-Prominence (@cite{pancheva-zubizarreta-2018}) is
 in `PanchevaZubizarreta2018`.
 -/
 
-namespace Core.Logophoricity
+namespace Features.Logophoricity
 
 -- ============================================================================
 -- § 1: Logophoric Roles
@@ -128,4 +128,4 @@ theorem pov_satisfied :
 theorem pov_violated :
     pointOfViewPrinciple true false = false := rfl
 
-end Core.Logophoricity
+end Features.Logophoricity

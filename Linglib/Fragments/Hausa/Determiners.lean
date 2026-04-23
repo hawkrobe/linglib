@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Theories.Semantics.Quantification.ONEModifiers
 import Linglib.Theories.Semantics.Quantification.ChoiceFunction
-import Linglib.Core.Definiteness
+import Linglib.Features.Definiteness
 
 /-!
 # Hausa Determiners
@@ -51,7 +51,7 @@ namespace Fragments.Hausa.Determiners
 open Semantics.Quantification.UnifiedUniversal
 open Semantics.Quantification.ONEModifiers
 open Semantics.Quantification.ChoiceFunction
-open Core.Definiteness
+open Features.Definiteness
 
 -- ════════════════════════════════════════════════════
 -- § 1. UQ System Classification
