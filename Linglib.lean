@@ -1831,6 +1831,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.DegreeMovement
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.FragmentGrammars.Defs
 import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
+import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion

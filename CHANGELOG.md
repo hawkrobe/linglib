@@ -4,6 +4,48 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.263] - 2026-04-23
+
+### O'Donnell 2015 Phase 5: DMPCFG instance
+
+Second concrete `StochasticGenerator` instance: the
+Dirichlet–multinomial PCFG (full-parsing model) of
+@cite{odonnell-2015} §2.4.1 / §3.1.4.
+
+- **New file**:
+  `Linglib/Theories/Morphology/FragmentGrammars/DMPCFG.lean`
+  (~190 LOC). Provides `DMPCFG G` (per-rule pseudo-counts with
+  positivity on `G.rules`), `derivRuleCount` /
+  `derivRuleCountList` (mutual recursion), `corpusRuleCount`,
+  `pseudoSumLHS`, `corpusSumLHS`, `lhsFactor` (per-LHS Pólya
+  partition probability), `corpusProb` (eq 3.9 closed form),
+  `pseudoSumLHS_pos`, `lhsFactor_pos`, `corpusProb_nonneg`,
+  `toStochasticGenerator`.
+- **Correctness check**: `lhsFactor` matches eq 3.9 exactly —
+  `Γ(Σπ)/Γ(Σπ + Σx) · ∏ Γ(π+x)/Γ(π)`. The corpus product
+  iterates over `G.rules.image (·.input)` — only LHSs that have
+  rules in `G` — which avoids the `Γ(0)` singularity for unused
+  nonterminals.
+- **Why DMPCFG does not factorize across derivations**: the same
+  rule's count enters the same Pólya term across all derivations
+  in the corpus. Two derivations using rule `r` are correlated
+  through the shared `x_r` in the closed form. This is why
+  `StochasticGenerator` takes corpora rather than single
+  derivations — anticipated correctly in Phase 3.
+- **Pólya substrate (deferred)**: the per-LHS factor IS a Pólya
+  partition probability over `M.pseudo` restricted to rules with
+  the given LHS. Inlined here rather than constructed from
+  `Linglib.Core.Probability.PolyaUrn` because the current
+  `PolyaUrn (K : ℕ)` shape doesn't compose cleanly with
+  `Finset.filter`-shaped rule restrictions; would require
+  Type-polymorphic `PolyaUrn`. Per "don't speculatively factor,"
+  deferred until a second consumer needs it.
+- Adds `[DecidableEq T]` constraint (needed for
+  `Decidable (r = ⟨nt, cs.map rootSymbol⟩)`, which uses
+  `ContextFreeRule.instDecidableEq`).
+
+Build: 6.7s clean.
+
 ## [0.230.262] - 2026-04-23
 
 ### Italian Determiners: drop duplicate enums

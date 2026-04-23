@@ -4,45 +4,55 @@ import Mathlib.Data.Set.Basic
 # Implicature: Cross-Mechanism Spine
 @cite{grice-1975} @cite{horn-1972} @cite{gazdar-1979} @cite{sauerland-2004}
 @cite{chierchia-fox-spector-2012} @cite{bar-lev-fox-2020}
+@cite{frank-goodman-2012} @cite{goodman-stuhlmuller-2013}
 
-Defines the central `Implicature W` type — the cross-mechanism representation
-of a pragmatic inference. Every parallel mechanism in the library
-(neo-Gricean Standard Recipe, EXH with Innocent Exclusion / Inclusion,
-RSA recursion, IBR fixed point) can produce values of this type, enabling:
+Defines the central `Implicature W S` type — the cross-mechanism
+representation of a pragmatic inference, parameterized by a **world type
+`W`** and a **strength type `S`**.
 
-1. **Cross-mechanism agreement theorems** — e.g. that the Sauerland
-   secondary procedure agrees with `exhIE` for non-FC cases (per
-   @cite{chierchia-fox-spector-2012} §3) and characteristically diverges
-   for free choice (per @cite{bar-lev-fox-2020}).
-2. **Mechanism-independent diagnostics** — `Implicature/Diagnostics.lean`
-   states Grice's tests (cancellability, reinforceability, calculability,
-   non-detachability) over the `Implicature` type so they apply uniformly
-   to neo-Gricean, EXH-derived, and RSA-derived inferences.
-3. **Empirical comparison** — head-to-head experiments in the modern
-   literature (cf. @cite{cremers-wilcox-spector-2023}) ask which
-   mechanism best predicts observed inferences. The `mechanism` field
-   tracks provenance so these comparisons can be formalized.
+## Why polymorphic in `S`?
 
-## Design choices
+The ontology of "what an implicature is" is contested in the literature:
 
-The structure carries four fields and deliberately omits a "trigger"
-field. Lexical / structural triggers are study-file concerns; baking
-them into the spine would couple `Implicature` to either `Word`,
-`Tree`, or `Alternatives.AlternativeSource`, none of which is
-appropriate at this level. Wrapping structures in study files can add
-trigger metadata if needed.
+- The **discrete / grammaticalist tradition** (@cite{sauerland-2004},
+  @cite{chierchia-2004}, @cite{fox-2007}, @cite{bar-lev-fox-2020})
+  treats an implicature as a discrete proposition — instantiated by
+  `S := Prop`.
+- The **graded / Bayesian tradition** (@cite{frank-goodman-2012},
+  @cite{goodman-stuhlmuller-2013}, @cite{bergen-levy-goodman-2016})
+  treats interpretation as a posterior shift; "the implicature" is a
+  change in degrees of belief, not a discrete proposition. Instantiated
+  by `S := ℝ≥0` or similar graded type.
+- **Trivalent** accounts (presupposition-bearing, partial) instantiate
+  with `S := Truth3`.
 
-The `Mechanism` enum lists the canonical derivations in the
-contemporary literature; new mechanisms (graph-based, dynamic, etc.)
-can be added without disrupting consumers, since pattern-matches
-typically fall into a default branch.
+Parameterizing rather than committing lets each mechanism use its
+native output type. The categorical Gricean diagnostics
+(`Diagnostics.lean`) are then specialized to `S = Prop` — they're an
+artifact of the discrete ontology and don't generalize to ℝ-valued
+contents. Cross-mechanism comparison between, say, RSA and Sauerland
+requires explicit projection (thresholding a posterior), which is itself
+a contestable empirical claim that should be formalized as such, not
+hidden in a coercion.
+
+## Default `S := Prop`
+
+Most consumers want categorical implicatures. The default keeps
+existing call sites unchanged: `Implicature W` means `Implicature W Prop`.
+
+## Bridge architecture
+
+Cross-mechanism agreement theorems (in sibling files) state results in
+terms of `Agree`, the pointwise content-equality relation. For
+`S = Prop`, this collapses to the iff version under propositional
+extensionality.
 
 ## Naming
 
 Following `Filter.Filter`-style mathlib precedent: the central struct
-`Implicature` is declared at the root, while the supporting enums
-(`Implicature.Kind`, `Implicature.Mechanism`) and helper definitions
-live under `namespace Implicature`. The existing per-file sub-namespaces
+`Implicature` is declared at the root, while supporting enums
+(`ImplicatureKind`, `ImplicatureMechanism`) and helper definitions live
+under `namespace Implicature`. The existing per-file sub-namespaces
 (`Implicature.Markedness`, `Implicature.Scales`, …) coexist because
 Lean permits a type and a namespace to share a name.
 -/
@@ -99,22 +109,28 @@ instance : DecidablePred ImplicatureKind.isConversational
 The derivation mechanism that produced an implicature.
 
 Tracking provenance lets cross-mechanism agreement and disagreement
-theorems be stated. The canonical mechanisms in the contemporary
-literature:
+theorems be stated. Different mechanisms naturally produce different
+strength types (the `S` parameter of `Implicature`):
 
-- **neoGricean** — Standard Recipe; Quantity-driven competition over
-  alternatives (@cite{geurts-2010}, @cite{sauerland-2004})
+- **neoGricean** / **exhIE** / **exhII** / **exhIEII** — discrete
+  outputs (`S := Prop`)
+- **rsa** — graded posterior (`S := ℝ≥0` or similar)
+- **ibr** — discrete fixed-point output (`S := Prop`)
+- **lexical** — discrete; encoded in the lexical entry (`S := Prop`)
+
+The mechanism field tracks provenance regardless of strength type.
+
+Citations:
+- **neoGricean** — Standard Recipe (@cite{geurts-2010},
+  @cite{sauerland-2004})
 - **exhIE** — Innocent Exclusion (@cite{fox-2007})
 - **exhII** — Innocent Inclusion (@cite{bar-lev-fox-2020})
 - **exhIEII** — combined IE+II, the canonical post-2020 EXH
   (@cite{bar-lev-fox-2020})
 - **rsa** — Bayesian listener-speaker recursion
   (@cite{frank-goodman-2012}, @cite{goodman-stuhlmuller-2013})
-- **ibr** — Iterated Best Response game-theoretic fixed point
-  (@cite{franke-2011})
-- **lexical** — the inference is encoded in a lexical entry; no
-  pragmatic derivation is required (e.g. conventional implicatures
-  per @cite{potts-2005})
+- **ibr** — Iterated Best Response (@cite{franke-2011})
+- **lexical** — encoded in lexical entries (@cite{potts-2005})
 -/
 inductive ImplicatureMechanism where
   | neoGricean
@@ -127,70 +143,72 @@ inductive ImplicatureMechanism where
   deriving DecidableEq, Repr
 
 /--
-A pragmatic inference, parameterized by a world type `W`.
+A pragmatic inference, parameterized by:
+- **`W`** — the world type
+- **`S`** — the strength type (default `Prop` for the discrete /
+  Gricean / grammaticalist ontology; instantiate with `ℝ≥0` for
+  graded / RSA-style; with `Truth3` for trivalent)
 
 Every value carries:
 - `kind`      — taxonomic classification
-- `content`   — the inferred proposition (`W → Prop`)
-- `altsUsed`  — the alternative set that drove derivation (the
-  Horn scale, the structural-alternative closure, the LU lexicon, ...)
+- `content`   — the inferred per-world strength (`W → S`)
+- `altsUsed`  — the alternative set that drove derivation
 - `mechanism` — provenance, recording which derivation produced it
 
-Two `Implicature W` values agree iff they predict the same content;
-see `Implicature.Agree` below. The cross-mechanism bridge files
-(`Implicature/Exh.lean`, the α→∞ limit theorems in `RSA/Limits.lean`)
-state agreement results in this form.
+The `S` parameter encodes a real theoretical commitment: see the file
+docstring. For `S = Prop`, `content` is a discrete proposition and the
+Gricean diagnostics in `Diagnostics.lean` apply directly. For
+`S = ℝ≥0` (RSA), the diagnostics require an interpretive projection.
 -/
-structure Implicature (W : Type*) where
+structure Implicature (W : Type*) (S : Type := Prop) where
   /-- Taxonomic classification (scalar / freeChoice / ignorance / ...). -/
   kind : ImplicatureKind
-  /-- The inferred proposition. -/
-  content : W → Prop
+  /-- The inferred per-world strength. For `S = Prop`, a discrete
+  proposition; for graded `S` (e.g. `ℝ≥0`), a probability or score. -/
+  content : W → S
   /-- The alternative set that drove derivation. -/
-  altsUsed : Set (W → Prop)
+  altsUsed : Set (W → S)
   /-- The derivation mechanism that produced this inference. -/
   mechanism : ImplicatureMechanism
 
 namespace Implicature
 
-variable {W : Type*}
+variable {W : Type*} {S : Type}
 
 /-- Is this inference a conversational implicature? Lifts
-`ImplicatureKind.isConversational` to `Implicature`. -/
-def isConversational (i : Implicature W) : Prop :=
+`ImplicatureKind.isConversational` to `Implicature`. Polymorphic in
+the strength type: classification doesn't depend on content. -/
+def isConversational (i : Implicature W S) : Prop :=
   i.kind.isConversational
 
-instance (i : Implicature W) : Decidable i.isConversational :=
+instance (i : Implicature W S) : Decidable i.isConversational :=
   inferInstanceAs (Decidable i.kind.isConversational)
 
 /--
-Two implicatures **agree** iff they predict the same content at every
+Two implicatures **agree** iff they assign the same strength to every
 world.
 
-This is the load-bearing relation for cross-mechanism comparison: a
-typical bridge theorem has the shape
+For the default `S = Prop`, this is `∀ w, i.content w = j.content w`,
+which collapses to the iff version under propositional extensionality.
+For `S = ℝ`, it's literal numeric equality of the per-world scores.
 
-```
-theorem sauerland_agrees_with_exhIE (φ : W → Prop) (alts : Set (W → Prop))
-    (h : nonFreeChoice alts) :
-    Agree (Implicature.fromSauerland φ alts)
-          (Implicature.fromExhIE φ alts)
-```
-
-For free choice, the analogous theorem characteristically *fails* —
-that non-equivalence is itself a result (per
-@cite{bar-lev-fox-2020}).
+Bridge theorems state cross-mechanism agreement in this form. Two
+implicatures with different `mechanism` fields can `Agree` (the
+canonical Sauerland ≡ exhIE result for non-FC cases per
+@cite{chierchia-fox-spector-2012} §3) or characteristically *fail* to
+agree (the FC non-equivalence per @cite{bar-lev-fox-2020}).
 -/
-def Agree (i j : Implicature W) : Prop :=
-  ∀ w, i.content w ↔ j.content w
+def Agree (i j : Implicature W S) : Prop :=
+  ∀ w, i.content w = j.content w
 
-@[refl] theorem Agree.refl (i : Implicature W) : Agree i i :=
-  fun _ => Iff.rfl
+@[refl] theorem Agree.refl (i : Implicature W S) : Agree i i :=
+  fun _ => rfl
 
-@[symm] theorem Agree.symm {i j : Implicature W} (h : Agree i j) : Agree j i :=
+@[symm] theorem Agree.symm {i j : Implicature W S}
+    (h : Agree i j) : Agree j i :=
   fun w => (h w).symm
 
-theorem Agree.trans {i j k : Implicature W}
+theorem Agree.trans {i j k : Implicature W S}
     (hij : Agree i j) (hjk : Agree j k) : Agree i k :=
   fun w => (hij w).trans (hjk w)
 

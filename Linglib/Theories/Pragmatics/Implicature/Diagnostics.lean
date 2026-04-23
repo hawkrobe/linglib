@@ -37,6 +37,22 @@ two arguments.
 derived, and lift cleanly from the `mechanism` (and, for non-detachability,
 the `kind`) field of `Implicature`. These take one argument.
 
+## Strength specialization
+
+The Gricean diagnostics defined here are specialized to the **discrete /
+categorical** ontology — they operate on `Implicature W` (which is
+`Implicature W Prop` after the default). The `S = Prop` `content` lets
+us write `¬ i.content w` and similar. For graded mechanisms (RSA-style
+`Implicature W ℝ`), the diagnostics do not apply directly: cancellability
+and reinforceability would require a thresholding interpretation, which
+is itself an empirical commitment. Future work could add a separate
+`GradedDiagnostics.lean` if and when graded-content study files demand
+it.
+
+The kind- and mechanism-level helpers (`isCalculable`,
+`isNonDetachable`) and the failure-mode theorems are polymorphic in `S`
+because they only inspect the `kind` and `mechanism` fields.
+
 ## Failure modes are diagnostic
 
 A *conventional* implicature (Potts 2005) is by definition lexically
