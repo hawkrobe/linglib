@@ -88,14 +88,18 @@ theorem antifaith_plus_ident_eq_edge_card [DecidableEq α]
 /-- The identity correspondence — input = output, all pairs identical —
     achieves *maximum* antifaith violations: every paired position counts. -/
 theorem identity_antifaith_max [DecidableEq α] (s : List α) :
-    antifaithViol (Corr.identity s) false true = s.length := by
-  have hAdd := antifaith_plus_ident_eq_edge_card (Corr.identity s) false true
+    antifaithViol (Corr.identity s)
+        Phonology.Correspondence.Side.lhs
+        Phonology.Correspondence.Side.rhs = s.length := by
+  have hAdd := antifaith_plus_ident_eq_edge_card (Corr.identity s)
+                  Phonology.Correspondence.Side.lhs
+                  Phonology.Correspondence.Side.rhs
   rw [Corr.identity_ident_zero] at hAdd
   rw [Nat.add_zero] at hAdd
   rw [hAdd]
-  show ((Corr.identity s).edge false true).card = s.length
-  show ((Corr.parallel s s).edge false true).card = s.length
-  rw [Corr.parallel_edge_off_diag]
+  show ((Corr.identity s).edge .lhs .rhs).card = s.length
+  show ((Corr.parallel s s).edge .lhs .rhs).card = s.length
+  rw [Corr.parallel_edge_lhs_rhs]
   rw [Finset.card_image_of_injective _ (fun _ _ h => (Prod.mk.injEq _ _ _ _).mp h |>.1)]
   simp
 

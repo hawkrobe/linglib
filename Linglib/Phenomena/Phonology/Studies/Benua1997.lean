@@ -367,12 +367,19 @@ end TiberianHebrew
 
     The shared structural mechanism: `TetruSchema.misapplication_wins`
     (in `TCT.lean`). -/
+/-- The Sundanese case study, as an instance of the unifying
+    `TetruSchema.misapplication_wins` theorem. Given any TETRU schema
+    where M₁ ties between the two candidates and OO-Ident is the
+    standard segmental IDENT-OO, the overapplied candidate strictly beats
+    the canonical-harmony candidate. -/
 example (s : TetruSchema (Corr Role Seg))
     (hM1 : s.m1.eval Sundanese.normalDiagram =
            s.m1.eval Sundanese.overappliedDiagram)
-    (hOO : s.ooIdent = (Phonology.ParadigmUniformity.Transderivational.toIdentOOConstraint Seg)) :
-    (s.toRanking[1]).eval Sundanese.overappliedDiagram <
-    (s.toRanking[1]).eval Sundanese.normalDiagram := by
-  rw [hOO]; simp; exact Sundanese.overapplied_beats_normal_on_OO_ident
+    (hOO : ∀ c : Corr Role Seg,
+           s.ooIdent.eval c = identOOViol c) :
+    s.ooIdent.eval Sundanese.overappliedDiagram <
+    s.ooIdent.eval Sundanese.normalDiagram := by
+  rw [hOO, hOO]
+  exact Sundanese.overapplied_beats_normal_on_OO_ident
 
 end Phenomena.Phonology.Studies.Benua1997

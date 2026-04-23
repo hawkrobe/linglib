@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Sort
 import Mathlib.Data.List.Chain
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Combinatorics.Quiver.Basic
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 
@@ -32,7 +33,7 @@ position-pairs). Each constraint family is a function
 `Corr Role α → Role → Role → ℕ`: `MAX-IO` is `c.maxViol .input .output`;
 `IDENT-OO` is `c.identViol .o₁ .o₂`. The "same constraint schema generates
 distinct constraints for each domain" claim of @cite{mccarthy-prince-1995}
-§1 becomes literally true at the type level — there is one
+becomes literally true at the type level — there is one
 `Corr.identViol`; named instances are partial applications.
 
 ## Edges as `Finset`
@@ -389,6 +390,25 @@ def toMaxConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
 def toDepConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("DEP-" ++ label) (fun c => c.depViol r₁ r₂)
+
+-- ============================================================================
+-- § 11: Quiver Structure
+-- ============================================================================
+
+/-- A correspondence diagram `c : Corr Role α` carries a labeled-quiver
+    structure on `Role`: the morphisms from `r₁` to `r₂` are the
+    correspondence pairs `(i, j) ∈ c.edge r₁ r₂`. The `Quiver` instance
+    cannot live on `Role` itself (it would need to depend on the value
+    `c`); instead we wrap `Role` in a definitional newtype `RoleQuiv c`
+    and put the `Quiver` instance there.
+
+    Use case: stratal/OT-CC chained evaluation, where derivations are
+    paths in the role-quiver. `Quiver.Path` and the rest of mathlib's
+    `Combinatorics.Quiver` API then become available. -/
+def RoleQuiv {Role α : Type*} (_ : Corr Role α) : Type _ := Role
+
+instance {Role α : Type*} (c : Corr Role α) : Quiver (RoleQuiv c) where
+  Hom r₁ r₂ := { p : ℕ × ℕ // p ∈ c.edge r₁ r₂ }
 
 end Corr
 

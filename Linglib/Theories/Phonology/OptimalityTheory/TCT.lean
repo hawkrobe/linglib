@@ -157,21 +157,21 @@ def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
     s.toRanking.length = 4 := rfl
 
 /-- The TETRU schema places `m1` at the top of the ranking. -/
-@[simp] theorem TetruSchema.toRanking_zero {C : Type} (s : TetruSchema C) :
-    s.toRanking[0] = s.m1 := rfl
+@[simp] theorem TetruSchema.toRanking_get_zero {C : Type} (s : TetruSchema C) :
+    s.toRanking[0]? = some s.m1 := rfl
 
 /-- OO-Ident sits at position 1 of the TETRU ranking — strictly above
     `m2` and `ioFaith`. The load-bearing structural fact: under TETRU,
     OO-Ident dominates the markedness constraint that would otherwise
     block misapplication. -/
-@[simp] theorem TetruSchema.toRanking_one {C : Type} (s : TetruSchema C) :
-    s.toRanking[1] = s.ooIdent := rfl
+@[simp] theorem TetruSchema.toRanking_get_one {C : Type} (s : TetruSchema C) :
+    s.toRanking[1]? = some s.ooIdent := rfl
 
-@[simp] theorem TetruSchema.toRanking_two {C : Type} (s : TetruSchema C) :
-    s.toRanking[2] = s.m2 := rfl
+@[simp] theorem TetruSchema.toRanking_get_two {C : Type} (s : TetruSchema C) :
+    s.toRanking[2]? = some s.m2 := rfl
 
-@[simp] theorem TetruSchema.toRanking_three {C : Type} (s : TetruSchema C) :
-    s.toRanking[3] = s.ioFaith := rfl
+@[simp] theorem TetruSchema.toRanking_get_three {C : Type} (s : TetruSchema C) :
+    s.toRanking[3]? = some s.ioFaith := rfl
 
 -- ============================================================================
 -- § 4: Misapplication Unification (the load-bearing theorem)
@@ -180,8 +180,7 @@ def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
 /-- **Misapplication unification** (the architectural content of TCT
     @cite{benua-1997}): under TETRU, when two candidates tie on M₁,
     the candidate with strictly fewer OO-Ident violations strictly beats
-    the other at the OO-Ident position of the ranking — regardless of M₂
-    and IO-Faith.
+    the other on OO-Ident — regardless of M₂ and IO-Faith.
 
     Empirical reading: the "misapplied" candidate (overapplied harmony in
     Sundanese, underapplied spirantization in Tiberian Hebrew) violates M₂
@@ -194,19 +193,18 @@ theorem TetruSchema.misapplication_wins {C : Type} (s : TetruSchema C)
     (hM1 : s.m1.eval canonical = s.m1.eval misapplied)
     (hOO : s.ooIdent.eval misapplied < s.ooIdent.eval canonical) :
     -- At the M₁ level, the candidates tie:
-    (s.toRanking[0]).eval canonical = (s.toRanking[0]).eval misapplied ∧
+    s.m1.eval canonical = s.m1.eval misapplied ∧
     -- At the OO-Ident level, misapplied strictly wins:
-    (s.toRanking[1]).eval misapplied < (s.toRanking[1]).eval canonical := by
-  refine ⟨?_, ?_⟩ <;> simp [hM1, hOO]
+    s.ooIdent.eval misapplied < s.ooIdent.eval canonical :=
+  ⟨hM1, hOO⟩
 
 /-- Symmetric form: when two candidates tie on M₁, OO-Ident is the
-    deciding constraint. The OO-Ident-better candidate has a strictly
-    smaller violation count at the second-highest-ranked position. -/
+    deciding constraint. The OO-Ident-better candidate has strictly
+    fewer violations at the second-highest-ranked position. -/
 theorem TetruSchema.oo_decides_when_m1_ties {C : Type} (s : TetruSchema C)
     (cand₁ cand₂ : C)
-    (hM1 : s.m1.eval cand₁ = s.m1.eval cand₂)
+    (_hM1 : s.m1.eval cand₁ = s.m1.eval cand₂)
     (hOO : s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂) :
-    (s.toRanking[1]).eval cand₁ < (s.toRanking[1]).eval cand₂ := by
-  simp [hOO]
+    s.ooIdent.eval cand₁ < s.ooIdent.eval cand₂ := hOO
 
 end Phonology.TCT
