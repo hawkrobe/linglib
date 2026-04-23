@@ -4,6 +4,82 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.206] - 2026-04-22
+
+### Restructured — MOVE-PHENOMENA tier: 8 misclassified `Core/` files relocated to `Phenomena/`
+
+Continues the audit-driven `Core/` cleanup (slices 1-3: `Features/`
+extraction; slice 4: WALS → `Datasets/`). This slice executes the
+MOVE-PHENOMENA tier identified by the per-file audit: 8 files in
+`Core/` that have empirical/phenomenon content (cross-linguistic
+typologies, paper-anchored analyses, phenomenon-named taxonomies)
+rather than framework-agnostic primitives.
+
+**Per-file routing**:
+| Source (`Core/`) | Target (`Phenomena/`) |
+|---|---|
+| `NullSubject/` (3-file dir) | `NullSubject/` (new top-level) |
+| `PolarityPartition.lean` | `Polarity/PolarityPartition.lean` |
+| `SearchEfficiency.lean` | `Reference/SearchEfficiency.lean` |
+| `SubjectProperties.lean` | `Subjecthood/SubjectProperties.lean` (new dir) |
+| `SocialMeaning.lean` | `SocialMeaning/IndexicalField.lean` (framework module, distinct from existing `Studies/Eckert2008.lean` paper file) |
+| `Negation.lean` | `Negation/ExpletiveNegation.lean` |
+| `ExtractionMorphology.lean` | `FillerGap/ExtractionMorphology.lean` |
+| `VoiceSystem.lean` | `ArgumentStructure/VoiceSystem.lean` |
+
+**Notes on individual moves**:
+- *SocialMeaning split clarified*: `Core/SocialMeaning.lean` was
+  framework infrastructure (`IndexicalField`, `StratificationProfile`
+  parametric structures), not a paper replication. The existing
+  `Phenomena/SocialMeaning/Studies/Eckert2008.lean` is the paper
+  replication and imports the framework. Renamed to
+  `IndexicalField.lean` (named for the central concept, framework-level
+  module at top of `Phenomena/SocialMeaning/`).
+- *Negation framework module*: `Core/Negation.lean` was bare
+  `namespace Core` with `ENType`, `ENStrength`, `PolarityLicensing`
+  etc. as top-level Core symbols (Polarity-style gotcha). Renamed
+  namespace to `Phenomena.Negation.ExpletiveNegation` matching new
+  path; substituted all 7 top-level symbols across consumers; updated
+  multi-line `open Core (ENType ENStrength …)` patterns in Greco2020,
+  Negation/Defs, Italian/ExpletiveNegation, Bias to point to the new
+  namespace.
+- *Two new top-level Phenomena dirs*: `Subjecthood/` (Comrie-1989
+  subject bundle = coding + behavioral properties; cross-cuts
+  Alignment/Ergativity/Agreement, deserves its own basic-level
+  category) and `NullSubject/` (cross-linguistic null subject
+  phenomenon, 3 files of typological + universal claims).
+- *Two files with `namespace Interfaces`*: `ExtractionMorphology` and
+  `VoiceSystem` keep their `Interfaces` namespace (matching the
+  existing pattern from slice 1's `AssertionTypes`/`FelicityTypes`/
+  etc.). Path-namespace mismatch tolerated; substituting `Interfaces.X`
+  to match new paths would require enumerating top-level decls per
+  file and isn't in scope for this slice.
+
+**Mechanical execution**: per-file `git mv` (8 source paths, 6
+distinct target subdirectories); per-file namespace rename (different
+target namespace per file, unlike the uniform `Core.X → Features.X`
+pattern of earlier slices); selective substitution per moved-symbol
+set; manual fix of three multi-line `open Core (…)` patterns the
+single-line regex didn't catch; CRLF line-ending fix on three files.
+
+**Build status**: 11 failures, 7 pre-existing/parallel-session
+(`Core.Typology.LanguageProfile`, `Phenomena.Plurals.Studies.Kriz2016`,
+`Phenomena.Conditionals.Studies.Stalnaker1981`, plus a new cluster
+caused by parallel-session Phase C-2b work in
+`Core/Causal/V2/SEM/Counterfactual.lean` — `allExtensionsBool` not
+resolving in `causallyNecessary` namespace, affecting `Attitudes.Intensional`,
+`Attitudes.Monotonicity`, `Attitudes.Representationality`,
+`Attitudes.Parasitic`, `Tense.SequenceOfTense`, `Focus.Sensitivity`,
+`Quantification.Studies.Mirrazi2024`, `Reference.Studies.Schlenker2003`).
+None of the failures are caused by this slice.
+
+**`Core/` continues to shrink**: roughly 50 of 63 original top-level
+files remain (post-slices 1-3 features extraction; post-slice 4
+WALS promotion; post-this-slice phenomena extraction). Subsequent
+work: subdir-clash files (Mood/Modality/Question/Time/Lexical),
+the long tail of `Core/` subdirectories (Agent/, Constraint/,
+Logic/, Causal/, Order/, etc.) each deserving its own audit.
+
 ## [0.230.205] - 2026-04-22
 
 ### Restructured — promoted `Core/WALS/` to top-level `Linglib/Datasets/WALS/`
