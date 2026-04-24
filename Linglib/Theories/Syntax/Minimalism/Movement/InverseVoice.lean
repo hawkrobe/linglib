@@ -85,12 +85,10 @@ theorem InverseVoiceConstruction.transitivity_failure_blocks
 
 /-! ## Instances
 
-Currently only QI and LI have study-file consumers (`Storment2026.lean`
-attests the QI ∥ LI shared-mechanism claim). Passive (Collins 2005),
-middle (Gotah 2024), dative shift (Collins 2021/2024), and causatives
+QI/LI from @cite{storment-2026}, passive from @cite{collins-2005}.
+Middle (Gotah 2024), dative shift (Collins 2021/2024), and causatives
 (Belletti 2017) are accommodated by the family abstraction but await
-their own study files before adding canonical instances here — adding
-them now would be premature architecture. -/
+their own study files before adding canonical instances here. -/
 
 /-- Quotative inversion in its canonical form: anticausative Voice
     permits smuggling of the VP containing the quotative operator. -/
@@ -106,12 +104,39 @@ def liCanonical : InverseVoiceConstruction where
   voice := voiceAnticausative
   satisfiesTransitivityConstraint := true
 
-/-- QI and LI are both licensed and share a Voice head — the §6 claim
-    that they are unified by smuggling reduces to two equalities. -/
-theorem qi_li_unified :
+/-- The passive in its canonical form (@cite{collins-2005}): Voice
+    headed by *by* permits smuggling of PartP containing the underlying
+    object. *Passive* Voice rather than *anticausative* — Collins's §4
+    proposes that *by* is the Voice head, distinct from the
+    anticausative Voice projected by unaccusatives. -/
+def passiveCanonical : InverseVoiceConstruction where
+  kind := .passive
+  voice := voicePassive
+  satisfiesTransitivityConstraint := true
+
+/-- QI, LI, and passive are all licensed inverse-voice constructions.
+    QI and LI share a Voice head (anticausative); passive uses the
+    by-headed Voice. Three constructions, two Voice heads, one
+    smuggling mechanism. -/
+theorem inverse_voice_canonical_licensed :
     qiCanonical.licensed = true ∧
     liCanonical.licensed = true ∧
-    qiCanonical.voice = liCanonical.voice :=
+    passiveCanonical.licensed = true :=
   ⟨rfl, rfl, rfl⟩
+
+/-- QI and LI share a Voice head per Storment §6; passive's Voice is
+    distinct (it's headed by *by* per Collins §4). All three Voice
+    heads pass the smuggling-permits test, which is the unifying
+    invariant — not Voice-head identity. -/
+theorem inverse_voice_share_smuggling_invariant :
+    qiCanonical.voice.permitsSmuggling = true ∧
+    liCanonical.voice.permitsSmuggling = true ∧
+    passiveCanonical.voice.permitsSmuggling = true ∧
+    qiCanonical.voice = liCanonical.voice ∧
+    qiCanonical.voice ≠ passiveCanonical.voice := by
+  refine ⟨rfl, rfl, rfl, rfl, ?_⟩
+  intro h
+  injection h with h
+  cases h
 
 end Minimalism

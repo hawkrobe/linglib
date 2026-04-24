@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.275] - 2026-04-23
+
+### Collins2005 audit + refactor — InverseVoice abstraction validated
+
+Validated the `InverseVoiceConstruction` family abstraction (introduced 0.230.274) by extending it with a second consumer, Collins's smuggling analysis of the English passive.
+
+- **`InverseVoice.lean`**: `passiveCanonical` instance re-added (now justified by Collins2005 consumer; removed during YAGNI cleanup last commit). Three canonical instances (QI, LI, passive); two distinct Voice heads (anticausative vs. by-headed); one shared smuggling-permits invariant. New theorems: `inverse_voice_canonical_licensed`, `inverse_voice_share_smuggling_invariant`.
+
+- **`Collins2005.lean` audit findings against PDF**:
+  - **Anachronism removed**: §1 `passive_anticausative_both_smuggle` and §5 `unified_smuggling` referenced @cite{storment-2026} as if Collins discussed it. Per the new meta-bridges convention, formalizer-side cross-paper syntheses don't live in the source paper's study file. The Collins↔Storment shared-smuggling claim now lives in the `InverseVoiceConstruction` abstraction (Theories layer).
+  - **`native_decide` eliminated** (line 124 → structural `simp only`).
+  - **Docstring**: fixed typo (`@cite{legate-2003}Connects` → space added) and rewrote module docstring to enumerate Collins's 6 central claims (UTAH, PartP-not-head-movement, by-as-Voice-head, Case dissociation, smuggling, short passives).
+
+- **5 missing Collins claims added as theorems** (file 142→204 LOC):
+  - §4 (eq. 32): `passive_voice_checks_case` + `active_passive_dissociation` — Case-checking dissociates from v to Voice in the passive.
+  - §3 (15–19): `particle_stranding_requires_xp_movement` + `pseudo_passive_requires_xp_movement` — XP-movement (PartP), not head movement.
+  - §6 (45–47): `short_and_long_passive_share_voice` — empty pronominal in Spec,vP; same Voice configuration.
+  - §8 (63–64): `by_dp_coordination_requires_voiceP` — coordination test for VoiceP constituency.
+  - §7: `passive_is_inverse_voice` — affirms membership in the family abstraction.
+
 ## [0.230.274] - 2026-04-23
 
 ### Storment2026 mathlib-style refactor + cross-theory meta-bridges convention
