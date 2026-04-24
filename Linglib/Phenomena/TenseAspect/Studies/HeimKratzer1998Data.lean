@@ -3,16 +3,25 @@ import Linglib.Core.Time.Boundedness
 import Linglib.Core.Time.Tense
 
 /-!
-# Tense Phenomena: Empirical Data
-@cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982} @cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991} @cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012} @cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{condoravdi-2002} @cite{schlenker-2003}
+# Tense Phenomena: Multi-Source Empirical Data (centered on @cite{heim-kratzer-1998})
+@cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982}
+@cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991}
+@cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000}
+@cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012}
+@cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009}
+@cite{wurmbrand-2014} @cite{condoravdi-2002} @cite{schlenker-2003}
 
-Unified entry point for tense phenomena. Absorbs the former
-`Phenomena/SequenceOfTense/Data.lean` and extends coverage to
-10+ temporal phenomena that distinguish tense theories.
+Multi-source empirical data on tense phenomena. Was
+`Phenomena/TenseAspect/Data.lean`; relocated to `Studies/` per the
+provenance-tracking policy. The data spans 18 cited papers and
+cannot be assigned to a single canonical owner; this file is named
+after `HeimKratzer1998` because the file's bridge theorems consume
+HK's compositional-tense framework
+(`Studies/HeimKratzer1998.lean`). Other consumers
+(e.g., `Studies/Abusch1997.lean`) import from here.
 
-Theory-neutral empirical data only — no theoretical commitments.
-Bridge theorems connecting this data to specific tense theories
-are in `Studies/HeimKratzer1998.lean`.
+Coverage: 10+ temporal phenomena that distinguish tense theories,
+absorbing the former `Phenomena/SequenceOfTense/Data.lean`.
 
 ## Phenomena Covered
 

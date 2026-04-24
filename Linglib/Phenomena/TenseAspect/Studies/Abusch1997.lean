@@ -1,4 +1,4 @@
-import Linglib.Phenomena.TenseAspect.Data
+import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 
@@ -18,9 +18,9 @@ Core.Context.Tower (ContextTower, push, innermost, origin)
     ↓
 Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
-This file: tower operations produce the Reichenbach frames in Data.lean
+This file: tower operations produce the Reichenbach frames in HeimKratzer1998Data.lean
     ↓
-Phenomena.TenseAspect.Data (matrixSaid, embeddedSickSimultaneous, etc.)
+Phenomena.TenseAspect (matrixSaid, embeddedSickSimultaneous, etc.; data lives in Studies/HeimKratzer1998Data.lean)
 ```
 
 ## Key Results

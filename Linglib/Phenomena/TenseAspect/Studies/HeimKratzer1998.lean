@@ -1,4 +1,4 @@
-import Linglib.Phenomena.TenseAspect.Data
+import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
 import Linglib.Theories.Semantics.Tense.TemporalDeRe
 import Linglib.Theories.Semantics.Tense.FeatureChecking
 import Linglib.Theories.Semantics.Tense.Decomposition

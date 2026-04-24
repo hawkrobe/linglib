@@ -1489,7 +1489,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
-import Linglib.Phenomena.TenseAspect.Data
+import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
 import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998
 import Linglib.Phenomena.TenseAspect.Studies.TsiliaZhao2026
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
