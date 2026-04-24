@@ -2,7 +2,7 @@ import Linglib.Datasets.WALS.Datapoint
 
 /-!
 # WALS Feature 108B: Productivity of the Antipassive Construction
-@cite{polinsky-2013}
+@cite{polinsky-2013-antipassive}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 108B`.

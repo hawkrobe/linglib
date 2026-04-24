@@ -2,7 +2,7 @@ import Linglib.Datasets.WALS.Datapoint
 
 /-!
 # WALS Feature 110A: Periphrastic Causative Constructions
-@cite{song-2013}
+@cite{song-2013-periphrastic}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 110A`.

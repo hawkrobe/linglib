@@ -5,6 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Syntax.Minimalism.VoiceProjection
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Phenomena.Causation.Typology
+import Linglib.Phenomena.ArgumentStructure.Typology
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 
 /-!
@@ -769,5 +770,35 @@ theorem voice_appl_licensing_matrix :
     Minimalism.applLowSource.licensedWith Minimalism.voiceAnticausative = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
     (unfold Minimalism.ApplHead.licensedWith; decide)
+
+/-! ## §17. WALS-vs-Pylkkänen divergence on English/Japanese applicatives
+
+The WALS Ch 109 typology classifies English and Japanese as having
+"no applicative" (no overt valence-increasing morphology). Pylkkänen's
+analysis classifies the English double-object construction (DOC) and
+the Japanese -ni recipient construction as **low recipient applicatives**
+(structural Appl head merged below V relating recipient to theme).
+
+The divergence is not empirical — both accounts agree on the same
+constructions. It is a methodological choice about what counts as an
+"applicative." WALS counts overt verbal applicative morphology;
+Pylkkänen counts the structural ApplP projection regardless of
+morphological exponent. The substrate is designed to make this kind
+of cross-framework editorial disagreement visible. -/
+
+/-- WALS Ch 109 (`Phenomena.ArgumentStructure.Typology.english.applicative`)
+    and Pylkkänen's analysis (`english_appl.classification`) make
+    contradictory predictions about English: WALS says no applicative,
+    Pylkkänen says low recipient. Same for Japanese. The disagreement
+    is about the criterion for "applicative," not about the data. -/
+theorem wals_pylkkanen_diverge_on_english :
+    Phenomena.ArgumentStructure.Typology.english.applicative
+        = .noApplicative ∧
+    english_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
+
+theorem wals_pylkkanen_diverge_on_japanese :
+    Phenomena.ArgumentStructure.Typology.japanese.applicative
+        = .noApplicative ∧
+    japanese_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
 
 end Pylkkanen2008

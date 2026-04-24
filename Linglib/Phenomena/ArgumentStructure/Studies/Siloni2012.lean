@@ -412,35 +412,14 @@ theorem no_I_reading_either_formation (f : RecipFormation) :
   · exact syntactic_no_I_reading
 
 -- ════════════════════════════════════════════════════
--- § 8. Verification Against Typology.lean
+-- § 8. Bridge to Typology.lean primitive
 -- ════════════════════════════════════════════════════
 
-/-- Hungarian formation agrees with Typology.lean. -/
-theorem hungarian_agrees :
-    rp_hungarian.formation = some hungarian.formation := by native_decide
-
-/-- French formation agrees with Typology.lean. -/
-theorem french_agrees :
-    rp_french.formation = some french.formation := by native_decide
-
-/-- Czech formation agrees with Typology.lean. -/
-theorem czech_agrees :
-    rp_czech.formation = some czech.formation := by native_decide
-
-/-- Swahili is classified as lexical in Typology.lean (Nordlinger 2023).
-    Siloni (2012) does not discuss Swahili directly, but the prediction
-    is consistent: Swahili has verb-marked reciprocals (-ana) that
-    license discontinuous constructions — a lexical property. -/
-theorem swahili_consistent :
-    rp_swahili.formation = some RecipFormation.lexical := by native_decide
-
-/-- Greek is classified as lexical in Typology.lean.
-    Consistent: Greek allows discontinuous reciprocals with *me*. -/
-theorem greek_consistent :
-    rp_greek.formation = some RecipFormation.lexical := by native_decide
-
 /-- The discontinuity prediction from `predictedProperties` agrees
-    with `RecipFormation.allowsDiscontinuous` in Typology.lean. -/
+    with `RecipFormation.allowsDiscontinuous` in Typology.lean.
+    Cross-paper verifications against Nordlinger (2023)'s `RecipProfile`
+    classifications live in `Studies/Nordlinger2023.lean` (the newer
+    paper checks consistency with the older). -/
 theorem discontinuity_bridge (f : RecipFormation) :
     (predictedProperties f).discontinuous = f.allowsDiscontinuous := by
   cases f <;> rfl

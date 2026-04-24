@@ -1,3 +1,4 @@
+import Linglib.Core.Case.Basic
 import Linglib.Core.Lexical.Word
 import Linglib.Datasets.WALS.Features.F106A
 import Linglib.Datasets.WALS.Features.F107A
@@ -13,8 +14,10 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 105--111)
-@cite{maslova-nedjalkov-2013} @cite{polinsky-2013} @cite{siewierska-2013} @cite{song-2013}
-@cite{haspelmath-2013}
+@cite{maslova-nedjalkov-2013} @cite{siewierska-2013}
+@cite{haspelmath-2013-ditransitive}
+@cite{polinsky-2013-antipassive} @cite{polinsky-2013-applicative}
+@cite{song-2013-periphrastic} @cite{song-2013-nonperiphrastic}
 @cite{nordlinger-2023}
 @cite{dalrymple-et-al-1998} @cite{siloni-2008} @cite{siloni-2012}
 @cite{konig-kokutani-2006} @cite{dixon-1972} @cite{ryding-2005}
@@ -23,7 +26,7 @@ import Linglib.Core.Lexical.MorphRule
 Typological data on valence-changing and voice constructions, drawn from
 WALS (World Atlas of Language Structures) chapters 105--111:
 
-- **Ch 105** (@cite{haspelmath-2013}): Ditransitive constructions ('give') --
+- **Ch 105** (@cite{haspelmath-2013-ditransitive}): Ditransitive constructions ('give') --
   how R (recipient) and T (theme) align with monotransitive P (patient).
   378 languages.
 - **Ch 106** (@cite{maslova-nedjalkov-2013}): Reciprocal constructions and their
@@ -31,13 +34,13 @@ WALS (World Atlas of Language Structures) chapters 105--111:
 - **Ch 107** (@cite{siewierska-2013}): Passive constructions -- presence/absence across
   373 languages. Passives occur in 44% of sampled languages, concentrated
   in Eurasia and Africa.
-- **Ch 108** (@cite{polinsky-2013}): Antipassive constructions -- detransitivizing
+- **Ch 108** (@cite{polinsky-2013-antipassive}): Antipassive constructions -- detransitivizing
   operations that demote the patient. 194 languages.
-- **Ch 109** (@cite{polinsky-2013}): Applicative constructions -- valence-increasing
+- **Ch 109** (@cite{polinsky-2013-applicative}): Applicative constructions -- valence-increasing
   operations adding an applied object. 183 languages.
-- **Ch 110** (@cite{song-2013}): Periphrastic causative constructions -- sequential vs
+- **Ch 110** (@cite{song-2013-periphrastic}): Periphrastic causative constructions -- sequential vs
   purposive types. 118 languages.
-- **Ch 111** (@cite{song-2013}): Nonperiphrastic causative constructions -- morphological
+- **Ch 111** (@cite{song-2013-nonperiphrastic}): Nonperiphrastic causative constructions -- morphological
   vs compound types. 310 languages.
 
 This module focuses on Ch 105--109 (ditransitives, reciprocals, passives,
@@ -198,7 +201,7 @@ inductive PassivePresence where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- Ch 108: Antipassive Constructions (@cite{polinsky-2013})
+-- Ch 108: Antipassive Constructions (@cite{polinsky-2013-antipassive})
 -- ============================================================================
 
 /-- WALS Ch 108: Antipassive construction type.
@@ -235,14 +238,15 @@ inductive AntipassiveProductivity where
   | notProductive
   deriving DecidableEq, Repr
 
-/-- Morphological alignment system (simplified for antipassive correlation). -/
-inductive AlignmentType where
-  | accusative
-  | ergative
-  deriving DecidableEq, Repr
+/-- Morphological alignment system (simplified for antipassive correlation).
+    The canonical accusative/ergative dichotomy lives in `Core.AlignmentFamily`;
+    this file uses that type directly rather than re-declaring it. A richer
+    typology (active-stative, tripartite, hierarchical, etc.) is available in
+    `Phenomena.Alignment.Typology.AlignmentType`. -/
+abbrev AlignmentType := Core.AlignmentFamily
 
 -- ============================================================================
--- Ch 105: Ditransitive Constructions: The Verb 'Give' (@cite{haspelmath-2013})
+-- Ch 105: Ditransitive Constructions: The Verb 'Give' (@cite{haspelmath-2013-ditransitive})
 -- ============================================================================
 
 /-- WALS Ch 105: How ditransitive verbs (prototypically 'give') encode
@@ -264,7 +268,7 @@ inductive DitransitiveType where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- Ch 109: Applicative Constructions (@cite{polinsky-2013})
+-- Ch 109: Applicative Constructions (@cite{polinsky-2013-applicative})
 -- ============================================================================
 
 /-- WALS Ch 109: Transitivity of the base verb for applicative formation.
@@ -494,10 +498,13 @@ def turkish : ValenceProfile :=
 
 /-- Swahili: reciprocal distinct ("-ana"), passive ("-w-"),
     no antipassive, applicative ("-i-" / "-e-" benefactive + locative
-    from both bases), morphological causative ("-ish-" / "-esh-"). -/
+    from both bases), morphological causative ("-ish-" / "-esh-").
+
+    `iso = "swh"` (Standard Swahili individual code) matches WALS;
+    "swa" is the macrolanguage code, which WALS does not use. -/
 def swahili : ValenceProfile :=
   { language := "Swahili"
-  , iso := "swa"
+  , iso := "swh"
   , reciprocal := .distinctFromReflexive
   , passive := .present
   , antipassive := .noAntipassive
@@ -555,7 +562,13 @@ def indonesian : ValenceProfile :=
     distinct "l'un l'autre" ('each other'). WALS Ch 106 codes French as
     Value 3 (mixed).
     Periphrastic passive ("être + past participle"), no antipassive,
-    no applicative, compound causative ("faire + INF"). -/
+    no applicative.
+
+    Nonperiphrastic causative (Ch 111): WALS codes French as `.both`.
+    The periphrastic *faire + INF* construction is Ch 110 (periphrastic
+    causatives), excluded from Ch 111 by definition; the previous value
+    `.compoundOnly` here appears to have arisen from misclassifying
+    *faire + INF* as compound. -/
 def french : ValenceProfile :=
   { language := "French"
   , iso := "fra"
@@ -564,7 +577,7 @@ def french : ValenceProfile :=
   , antipassive := .noAntipassive
   , alignment := .accusative
   , applicative := .noApplicative
-  , causative := .compoundOnly }
+  , causative := .both }
 
 /-- Russian: mixed reciprocal type — both reflexive-identical "-sja"/"-s'"
     and distinct "drug druga" ('each other'). WALS Ch 106 codes Russian as
@@ -647,15 +660,15 @@ def kinyarwanda : ValenceProfile :=
 
 /-- Lango (Nilotic, Uganda): reciprocal identical to reflexive.
     WALS Ch 106 codes Lango as Value 4 (identical to reflexive).
-    Passive absent, antipassive with oblique patient (accusative
-    alignment — one of the accusative-language antipassives),
-    no applicative, morphological causative. -/
+    Passive absent, antipassive with implicit patient (per WALS Ch 108
+    coding — accusative alignment, one of the accusative-language
+    antipassives), no applicative, morphological causative. -/
 def lango : ValenceProfile :=
   { language := "Lango"
   , iso := "laj"
   , reciprocal := .identicalToReflexive
   , passive := .absent
-  , antipassive := .obliquePatient
+  , antipassive := .implicitPatient
   , alignment := .accusative
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
@@ -760,7 +773,7 @@ example : chukchi.alignment = .ergative := by native_decide
 example : swahili.applicative.hasApplicative = true := by native_decide
 example : kinyarwanda.applicative.hasApplicative = true := by native_decide
 
-example : french.causative = .compoundOnly := by native_decide
+example : french.causative = .both := by native_decide
 example : modernGreek.causative = .neither := by native_decide
 
 example : finnish.passive = .present := by native_decide
@@ -770,8 +783,9 @@ example : finnish.causative = .morphologicalOnly := by native_decide
 -- WALS Grounding: Profile reciprocal types match generated WALS data
 -- ============================================================================
 
-/-- Helper: convert WALS 106A value to our ReciprocalType. -/
-private def fromWALS106A : Datasets.WALS.F106A.ReciprocalType → ReciprocalType
+/-- Helper: convert WALS 106A value to our ReciprocalType. Public so that
+    `Studies/Nordlinger2023.lean` can reuse it for `RecipProfile` grounding. -/
+def fromWALS106A : Datasets.WALS.F106A.ReciprocalType → ReciprocalType
   | .noReciprocalConstruction => .noDedicated
   | .distinctFromReflexive    => .distinctFromReflexive
   | .mixed                    => .mixed
@@ -782,49 +796,49 @@ private def fromWALS106A : Datasets.WALS.F106A.ReciprocalType → ReciprocalType
     construction: if the profile disagrees with WALS, the theorem fails. -/
 
 theorem english_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) = some english.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO english.iso).map (fromWALS106A ·.value) = some english.reciprocal := by
   native_decide
 theorem japanese_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "jpn").map (fromWALS106A ·.value) = some japanese.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO japanese.iso).map (fromWALS106A ·.value) = some japanese.reciprocal := by
   native_decide
 theorem turkish_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "tur").map (fromWALS106A ·.value) = some turkish.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO turkish.iso).map (fromWALS106A ·.value) = some turkish.reciprocal := by
   native_decide
 theorem swahili_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) = some swahili.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO swahili.iso).map (fromWALS106A ·.value) = some swahili.reciprocal := by
   native_decide
 theorem chukchi_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "chk").map (fromWALS106A ·.value) = some chukchi.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO chukchi.iso).map (fromWALS106A ·.value) = some chukchi.reciprocal := by
   native_decide
 theorem indonesian_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "ind").map (fromWALS106A ·.value) = some indonesian.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO indonesian.iso).map (fromWALS106A ·.value) = some indonesian.reciprocal := by
   native_decide
 theorem french_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "fre").map (fromWALS106A ·.value) = some french.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO french.iso).map (fromWALS106A ·.value) = some french.reciprocal := by
   native_decide
 theorem russian_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) = some russian.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO russian.iso).map (fromWALS106A ·.value) = some russian.reciprocal := by
   native_decide
 theorem hindi_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "hin").map (fromWALS106A ·.value) = some hindi.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO hindi.iso).map (fromWALS106A ·.value) = some hindi.reciprocal := by
   native_decide
 theorem westGreenlandic_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "grw").map (fromWALS106A ·.value) = some westGreenlandic.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO westGreenlandic.iso).map (fromWALS106A ·.value) = some westGreenlandic.reciprocal := by
   native_decide
 theorem lango_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "lan").map (fromWALS106A ·.value) = some lango.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO lango.iso).map (fromWALS106A ·.value) = some lango.reciprocal := by
   native_decide
 theorem chamorro_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "cha").map (fromWALS106A ·.value) = some chamorro.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO chamorro.iso).map (fromWALS106A ·.value) = some chamorro.reciprocal := by
   native_decide
 theorem modernGreek_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) = some modernGreek.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO modernGreek.iso).map (fromWALS106A ·.value) = some modernGreek.reciprocal := by
   native_decide
 theorem german_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) = some german.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO german.iso).map (fromWALS106A ·.value) = some german.reciprocal := by
   native_decide
 theorem finnish_reciprocal_wals :
-    (Datasets.WALS.F106A.lookup "fin").map (fromWALS106A ·.value) = some finnish.reciprocal := by
+    (Datasets.WALS.F106A.lookupISO finnish.iso).map (fromWALS106A ·.value) = some finnish.reciprocal := by
   native_decide
 
 -- ============================================================================
@@ -835,58 +849,58 @@ theorem finnish_reciprocal_wals :
     Every profile language appears in the 378-language F105A dataset. -/
 
 theorem english_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "eng").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookupISO english.iso).map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem japanese_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "jpn").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO japanese.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem turkish_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "tur").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO turkish.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem swahili_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "swa").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+    (Datasets.WALS.F105A.lookupISO swahili.iso).map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
   native_decide
 theorem dyirbal_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "dyi").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookupISO dyirbal.iso).map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem chukchi_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "chk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO chukchi.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem indonesian_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "ind").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookupISO indonesian.iso).map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem french_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "fre").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO french.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem russian_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "rus").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO russian.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem hindi_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "hin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO hindi.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem westGreenlandic_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "grw").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookupISO westGreenlandic.iso).map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem kinyarwanda_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "kin").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+    (Datasets.WALS.F105A.lookupISO kinyarwanda.iso).map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
   native_decide
 theorem lango_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "lan").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+    (Datasets.WALS.F105A.lookupISO lango.iso).map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
   native_decide
 theorem chamorro_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "cha").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookupISO chamorro.iso).map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem halkomelem_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "hli").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+    (Datasets.WALS.F105A.lookupISO halkomelem.iso).map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
   native_decide
 theorem modernGreek_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "grk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO modernGreek.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem german_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "ger").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO german.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 theorem finnish_ditransitive_wals :
-    (Datasets.WALS.F105A.lookup "fin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+    (Datasets.WALS.F105A.lookupISO finnish.iso).map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
   native_decide
 
 -- ============================================================================
@@ -899,40 +913,40 @@ theorem finnish_ditransitive_wals :
     are based on other sources or use a different classification. -/
 
 theorem english_applicative_wals :
-    (Datasets.WALS.F109A.lookup "eng").map (fromWALS109A ·.value) = some english.applicative := by
+    (Datasets.WALS.F109A.lookupISO english.iso).map (fromWALS109A ·.value) = some english.applicative := by
   native_decide
 theorem japanese_applicative_wals :
-    (Datasets.WALS.F109A.lookup "jpn").map (fromWALS109A ·.value) = some japanese.applicative := by
+    (Datasets.WALS.F109A.lookupISO japanese.iso).map (fromWALS109A ·.value) = some japanese.applicative := by
   native_decide
 theorem turkish_applicative_wals :
-    (Datasets.WALS.F109A.lookup "tur").map (fromWALS109A ·.value) = some turkish.applicative := by
+    (Datasets.WALS.F109A.lookupISO turkish.iso).map (fromWALS109A ·.value) = some turkish.applicative := by
   native_decide
 theorem swahili_applicative_wals :
-    (Datasets.WALS.F109A.lookup "swa").map (fromWALS109A ·.value) = some swahili.applicative := by
+    (Datasets.WALS.F109A.lookupISO swahili.iso).map (fromWALS109A ·.value) = some swahili.applicative := by
   native_decide
 theorem chukchi_applicative_wals :
-    (Datasets.WALS.F109A.lookup "chk").map (fromWALS109A ·.value) = some chukchi.applicative := by
+    (Datasets.WALS.F109A.lookupISO chukchi.iso).map (fromWALS109A ·.value) = some chukchi.applicative := by
   native_decide
 theorem french_applicative_wals :
-    (Datasets.WALS.F109A.lookup "fre").map (fromWALS109A ·.value) = some french.applicative := by
+    (Datasets.WALS.F109A.lookupISO french.iso).map (fromWALS109A ·.value) = some french.applicative := by
   native_decide
 theorem russian_applicative_wals :
-    (Datasets.WALS.F109A.lookup "rus").map (fromWALS109A ·.value) = some russian.applicative := by
+    (Datasets.WALS.F109A.lookupISO russian.iso).map (fromWALS109A ·.value) = some russian.applicative := by
   native_decide
 theorem hindi_applicative_wals :
-    (Datasets.WALS.F109A.lookup "hin").map (fromWALS109A ·.value) = some hindi.applicative := by
+    (Datasets.WALS.F109A.lookupISO hindi.iso).map (fromWALS109A ·.value) = some hindi.applicative := by
   native_decide
 theorem halkomelem_applicative_wals :
-    (Datasets.WALS.F109A.lookup "hli").map (fromWALS109A ·.value) = some halkomelem.applicative := by
+    (Datasets.WALS.F109A.lookupISO halkomelem.iso).map (fromWALS109A ·.value) = some halkomelem.applicative := by
   native_decide
 theorem modernGreek_applicative_wals :
-    (Datasets.WALS.F109A.lookup "grk").map (fromWALS109A ·.value) = some modernGreek.applicative := by
+    (Datasets.WALS.F109A.lookupISO modernGreek.iso).map (fromWALS109A ·.value) = some modernGreek.applicative := by
   native_decide
 theorem german_applicative_wals :
-    (Datasets.WALS.F109A.lookup "ger").map (fromWALS109A ·.value) = some german.applicative := by
+    (Datasets.WALS.F109A.lookupISO german.iso).map (fromWALS109A ·.value) = some german.applicative := by
   native_decide
 theorem finnish_applicative_wals :
-    (Datasets.WALS.F109A.lookup "fin").map (fromWALS109A ·.value) = some finnish.applicative := by
+    (Datasets.WALS.F109A.lookupISO finnish.iso).map (fromWALS109A ·.value) = some finnish.applicative := by
   native_decide
 
 -- ============================================================================
@@ -944,35 +958,71 @@ theorem finnish_applicative_wals :
     `.noApplicative`, and our converter returns `none`. -/
 
 theorem english_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "eng").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO english.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem japanese_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "jpn").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO japanese.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem turkish_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "tur").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO turkish.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem chukchi_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "chk").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO chukchi.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem french_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "fre").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO french.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem russian_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "rus").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO russian.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem hindi_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "hin").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO hindi.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem modernGreek_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "grk").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO modernGreek.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem german_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "ger").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO german.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
 theorem finnish_appliedRole_wals :
-    (Datasets.WALS.F109B.lookup "fin").map (fromWALS109B ·.value) = some none := by
+    (Datasets.WALS.F109B.lookupISO finnish.iso).map (fromWALS109B ·.value) = some none := by
   native_decide
+
+-- ============================================================================
+-- WALS Grounding: F108A Antipassive Type (per-language)
+-- ============================================================================
+
+/-- Convert WALS 108A value to our AntipassiveType. -/
+private def fromWALS108A : Datasets.WALS.F108A.AntipassiveType → AntipassiveType
+  | .implicitPatient => .implicitPatient
+  | .obliquePatient  => .obliquePatient
+  | .noAntipassive   => .noAntipassive
+
+/-- Lango: WALS Ch 108 codes Lango as `.implicitPatient` (the patient-like
+    argument is left unexpressed). This grounding theorem ties the profile
+    field to the WALS dataset by ISO code, so future drift in either
+    direction is caught at typecheck. -/
+theorem lango_antipassive_wals :
+    (Datasets.WALS.F108A.lookupISO lango.iso).map (fromWALS108A ·.value)
+      = some lango.antipassive := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: F111A Nonperiphrastic Causative (per-language)
+-- ============================================================================
+
+/-- Convert WALS 111A value to our NonperiphrCausativeType. -/
+private def fromWALS111A : Datasets.WALS.F111A.NonperiphrCausativeType → NonperiphrCausativeType
+  | .neither           => .neither
+  | .morphologicalOnly => .morphologicalOnly
+  | .compoundOnly      => .compoundOnly
+  | .both              => .both
+
+/-- French: WALS Ch 111 codes French as `.both` (morphological + compound
+    causatives). The `faire + INF` periphrastic causative is Ch 110, not
+    Ch 111, so it is excluded from this classification. -/
+theorem french_causative_wals :
+    (Datasets.WALS.F111A.lookupISO french.iso).map (fromWALS111A ·.value)
+      = some french.causative := by native_decide
 
 /-- Finnish impersonal "passive" has semantic content (existential closure
     over agent) — derived from the Fragment's voice head. -/
@@ -1012,7 +1062,7 @@ theorem majority_of_sample_has_passive :
 
 /-- In the WALS Ch 108 data, antipassives occur in both accusative and
     ergative languages, but the correlation with ergativity is strong.
-    @cite{polinsky-2013}: more languages have oblique-patient antipassives
+    @cite{polinsky-2013-antipassive}: more languages have oblique-patient antipassives
     than implicit-patient antipassives, and the majority have no antipassive. -/
 theorem antipassive_distribution :
     let oblique := (Datasets.WALS.F108A.allData.filter (·.value == .obliquePatient)).length
@@ -1048,8 +1098,9 @@ theorem morphological_causative_dominant :
     -- Morphological causatives in >80% of languages
     (morphOnly + both) * 10 > total * 8 := by native_decide
 
-/-- In our sample, all but two languages have a morphological or compound
-    causative (Modern Greek has neither; French has compound only). -/
+/-- In our sample, every language but Modern Greek has at least a
+    morphological or compound causative (Modern Greek has neither —
+    only periphrastic). -/
 theorem almost_all_have_nonperiphr_causative :
     let withNonperiphr := allProfiles.filter fun p =>
       p.causative != .neither
@@ -1077,7 +1128,7 @@ theorem applicative_implies_morph_causative :
 -- ============================================================================
 
 /-- WALS Ch 111: Among languages with morphological causatives, suffixation
-    is by far the most common pattern. @cite{song-2013} lists examples:
+    is by far the most common pattern. @cite{song-2013-nonperiphrastic} lists examples:
     Japanese "-(s)ase", Turkish "-dUr", Swahili "-ish-" / "-esh-".
     Prefixes (Abkhaz "r-"), infixes (Lepcha "-y-"), and circumfixes
     (Georgian "a-...-ineb") exist but are rare. This parallels Greenberg's
@@ -1150,7 +1201,7 @@ theorem some_languages_have_both_app_and_antipass :
   native_decide
 
 -- ============================================================================
--- Antipassive Alignment Data (from @cite{polinsky-2013}, Table 1)
+-- Antipassive Alignment Data (from @cite{polinsky-2013-antipassive}, Table 1)
 -- ============================================================================
 
 /-- Languages with antipassives classified by alignment, from WALS Ch 108
@@ -1244,15 +1295,16 @@ theorem ergative_AP_more_common :
     Uto-Aztecan). The dearth in Eurasia correlates with rich case marking:
     languages with case can use oblique cases instead of applicatives.
 
-    In our sample, only Bantu and Austronesian languages have applicatives. -/
-theorem applicatives_only_in_bantu_and_austronesian :
+    In our sample, applicatives appear only in Bantu, Austronesian, and
+    Salishan languages — none of the Eurasian profiles. -/
+theorem applicatives_only_in_bantu_austronesian_salishan :
     let withApplicative := allProfiles.filter fun p =>
       p.applicative.hasApplicative
     withApplicative.all fun p =>
-      -- Swahili (swa), Kinyarwanda (kin) = Bantu
+      -- Swahili (swh), Kinyarwanda (kin) = Bantu
       -- Chamorro (cha) = Austronesian
       -- Halkomelem (hur) = Salishan
-      p.iso == "swa" || p.iso == "kin" || p.iso == "cha" || p.iso == "hur" := by
+      p.iso == "swh" || p.iso == "kin" || p.iso == "cha" || p.iso == "hur" := by
   native_decide
 
 -- ============================================================================
@@ -1273,7 +1325,8 @@ def sampleApplicativeCount : Nat :=
 
 example : samplePassiveCount .present = 16 := by native_decide
 example : samplePassiveCount .absent = 3 := by native_decide
-example : sampleAntipassiveCount .obliquePatient = 6 := by native_decide
+example : sampleAntipassiveCount .obliquePatient = 5 := by native_decide
+example : sampleAntipassiveCount .implicitPatient = 1 := by native_decide
 example : sampleAntipassiveCount .noAntipassive = 13 := by native_decide
 example : sampleApplicativeCount = 4 := by native_decide
 
@@ -1299,450 +1352,6 @@ theorem polysemy_percentage :
     polysemous * 3 > total ∧ polysemous * 2 < total := by native_decide
 
 -- ============================================================================
--- Reciprocal Profiles (@cite{nordlinger-2023})
--- ============================================================================
-
-/-- Extended reciprocal profile for a single language.
-
-    Captures the morphosyntactic strategy, valency effect, and
-    discontinuity licensing from @cite{nordlinger-2023}'s review,
-    going beyond the WALS 4-way reflexive-reciprocal classification. -/
-structure RecipProfile where
-  language : String
-  iso : String
-  /-- Primary reciprocal strategy (Evans 2008 typology) -/
-  primaryStrategy : RecipStrategy
-  /-- Secondary strategy, if the language uses more than one -/
-  secondaryStrategy : Option RecipStrategy := none
-  /-- Valency effect of the primary strategy -/
-  valency : RecipValency
-  /-- Formation locus of verb-marked reciprocals (Siloni 2012) -/
-  formation : Option RecipFormation := none
-  /-- Reciprocal-reflexive relationship (WALS Ch 106) -/
-  reflexiveRelation : ReciprocalType
-  deriving Repr, DecidableEq
-
--- Language data: 12 reciprocal profiles from @cite{nordlinger-2023}
-
-/-- English: bipartite NP "each other" (bivalent, distinct from reflexive).
-    Also has lexical reciprocals ("quarrel", "meet") as secondary strategy.
-    @cite{nordlinger-2023} ex. 1b, 7, 24; ex. 44 (all 6 reciprocity types). -/
-def rp_english : RecipProfile :=
-  { language := "English", iso := "eng"
-  , primaryStrategy := .bipartiteNP
-  , secondaryStrategy := some .lexical
-  , valency := .bivalent
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- Russian: reciprocal pronoun "drug druga" (bivalent, distinct) plus
-    reflexive-identical verbal postfix "-sja"/"-s'" (monovalent, identical).
-    Unlike French "se" (a separable clitic), Russian "-sja" is a bound
-    suffix — classified as `.verbalAffix` per Evans (2008).
-    @cite{nordlinger-2023} ex. 9, 31. -/
-def rp_russian : RecipProfile :=
-  { language := "Russian", iso := "rus"
-  , primaryStrategy := .recipPronoun
-  , secondaryStrategy := some .verbalAffix
-  , valency := .bivalent
-  , reflexiveRelation := .mixed }
-
-/-- Swahili: verbal affix "-ana" (monovalent, distinct from reflexive "-ji-").
-    Can form discontinuous reciprocals with comitative "na"
-    (Hurst 2012; @cite{nordlinger-2023} ex. 12, 37, 40).
-    Lexically formed per Siloni's analysis. -/
-def rp_swahili : RecipProfile :=
-  { language := "Swahili", iso := "swa"
-  , primaryStrategy := .verbalAffix
-  , valency := .monovalent
-  , formation := some .lexical
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- Hungarian: verbal affix "-oz-" (monovalent, distinct).
-    Can form discontinuous reciprocals with comitative "-val"/"-vel"
-    (Dimitriadis 2008; @cite{nordlinger-2023} ex. 19, 30, 38).
-    Lexically formed per Siloni's analysis. -/
-def rp_hungarian : RecipProfile :=
-  { language := "Hungarian", iso := "hun"
-  , primaryStrategy := .verbalAffix
-  , valency := .monovalent
-  , formation := some .lexical
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- French: reflexive clitic "se" (monovalent, identical to reflexive) plus
-    distinct "l'un l'autre" (bivalent, bipartite NP).
-    "se" reciprocals are syntactically formed per Siloni (2008) and
-    CANNOT form discontinuous reciprocals (@cite{nordlinger-2023} ex. 39).
-    @cite{nordlinger-2023} ex. 28, 35, 39, 47.
-    "se" is a clitic, not an affix — @cite{nordlinger-2023} p. 83:
-    "the clitics *se* in French and Czech." -/
-def rp_french : RecipProfile :=
-  { language := "French", iso := "fra"
-  , primaryStrategy := .recipClitic
-  , secondaryStrategy := some .bipartiteNP
-  , valency := .monovalent
-  , formation := some .syntactic
-  , reflexiveRelation := .mixed }
-
-/-- Greek (Modern): nonactive voice morphology (monovalent, identical to
-    reflexive in form) plus distinct constructions.
-    CAN form discontinuous reciprocals with "me" (= 'with'):
-    "O Giannis filithike me ti Maria" (@cite{nordlinger-2023} ex. 27b, 36).
-    Lexically formed per Siloni's analysis. -/
-def rp_greek : RecipProfile :=
-  { language := "Modern Greek", iso := "ell"
-  , primaryStrategy := .verbalAffix
-  , valency := .monovalent
-  , formation := some .lexical
-  , reflexiveRelation := .mixed }
-
-/-- German: reflexive pronoun "sich" (bivalent — fills object position,
-    identical to reflexive) plus distinct reciprocal pronoun "einander"
-    (bivalent, single-word pronoun). Both strategies preserve transitivity
-    because the reciprocal form occupies the object slot.
-    @cite{nordlinger-2023} via WALS Ch 106. -/
-def rp_german : RecipProfile :=
-  { language := "German", iso := "deu"
-  , primaryStrategy := .recipPronoun
-  , secondaryStrategy := some .recipPronoun
-  , valency := .bivalent
-  , reflexiveRelation := .mixed }
-
-/-- Mandarin: compound verb strategy "dǎ-lái-dǎ-qù"
-    (beat-come-beat-go = 'beat each other'). Distinct from reflexive.
-    @cite{nordlinger-2023} ex. 13 (citing König & Kokutani 2006). -/
-def rp_mandarin : RecipProfile :=
-  { language := "Mandarin", iso := "cmn"
-  , primaryStrategy := .compoundVerb
-  , valency := .monovalent
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- Wambaya: reciprocal clitic "-ngg-" (RR morpheme in auxiliary).
-    Identical to reflexive.
-    @cite{nordlinger-2023} ex. 11 (citing Nordlinger 1998, p. 142). -/
-def rp_wambaya : RecipProfile :=
-  { language := "Wambaya", iso := "wmb"
-  , primaryStrategy := .recipClitic
-  , valency := .bivalent
-  , reflexiveRelation := .identicalToReflexive }
-
-/-- Icelandic: bipartite NP "hvor...annad" with independent case inflection
-    on each part. Bivalent — retains full transitivity.
-    @cite{nordlinger-2023} ex. 17 (citing Hurst & Nordlinger 2021). -/
-def rp_icelandic : RecipProfile :=
-  { language := "Icelandic", iso := "isl"
-  , primaryStrategy := .bipartiteNP
-  , valency := .bivalent
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- Chicheŵa: verbal affix "-an-" (monovalent).
-    @cite{nordlinger-2023} ex. 20 (citing Dalrymple et al. 1994). -/
-def rp_chichewa : RecipProfile :=
-  { language := "Chicheŵa", iso := "nya"
-  , primaryStrategy := .verbalAffix
-  , valency := .monovalent
-  , reflexiveRelation := .distinctFromReflexive }
-
-/-- Czech: reflexive clitic "se" (monovalent, identical to reflexive).
-    Syntactically formed per Siloni — cannot form discontinuous reciprocals.
-    @cite{nordlinger-2023} ex. 29; Siloni (2008).
-    "se" is a clitic — @cite{nordlinger-2023} p. 83. -/
-def rp_czech : RecipProfile :=
-  { language := "Czech", iso := "ces"
-  , primaryStrategy := .recipClitic
-  , valency := .monovalent
-  , formation := some .syntactic
-  , reflexiveRelation := .identicalToReflexive }
-
-def allRecipProfiles : List RecipProfile :=
-  [ rp_english, rp_russian, rp_swahili, rp_hungarian, rp_french
-  , rp_greek, rp_german, rp_mandarin, rp_wambaya, rp_icelandic
-  , rp_chichewa, rp_czech ]
-
--- ============================================================================
--- Reciprocal Strategy-Valency Correlation (@cite{nordlinger-2023}, §3.2)
--- ============================================================================
-
-/-- @cite{nordlinger-2023} (§3.2): NP/argument strategies tend to
-    preserve valency (bivalent), while verb-marking strategies tend to
-    reduce valency (monovalent). Nedjalkov (2007a) links this to the
-    morphosyntactic type: morphological markers "reduce the valency of
-    the underlying verb by deleting the direct or indirect object."
-
-    In our sample: all nominal-strategy profiles are bivalent. -/
-theorem nominal_strategy_bivalent :
-    (allRecipProfiles.filter fun p => p.primaryStrategy.isNominal).all
-      fun p => p.valency == .bivalent := by native_decide
-
-/-- Verbal affixes (Swahili "-ana", Hungarian "-oz-", Greek nonactive,
-    Chicheŵa "-an-") are uniformly monovalent in our sample. -/
-theorem verbal_affix_monovalent :
-    (allRecipProfiles.filter fun p => p.primaryStrategy == .verbalAffix).all
-      fun p => p.valency == .monovalent := by native_decide
-
-/-- Converse of `nominal_strategy_bivalent`: monovalent reciprocal
-    strategies are never nominal (NP/argument). This captures Nedjalkov
-    (2007a, p. 21): morphological reciprocal markers "reduce the valency
-    of the underlying verb." @cite{nordlinger-2023} §3.2. -/
-theorem monovalent_implies_verbal :
-    (allRecipProfiles.filter fun p => p.valency == .monovalent).all
-      fun p => !p.primaryStrategy.isNominal := by native_decide
-
-/-- Clitics (French/Czech "se") are also monovalent — the clitic
-    absorbs the object argument. Wambaya "-ngg-" is the exception:
-    bivalent despite being a clitic (ergative case preserves transitivity).
-    @cite{nordlinger-2023} §3.2; Evans et al. (2007). -/
-theorem clitic_mostly_monovalent :
-    let clitics := allRecipProfiles.filter fun p => p.primaryStrategy == .recipClitic
-    -- 2 of 3 clitics are monovalent (French, Czech); Wambaya is bivalent
-    (clitics.filter fun p => p.valency == .monovalent).length = 2 ∧
-    (clitics.filter fun p => p.valency == .bivalent).length = 1 := by native_decide
-
--- ============================================================================
--- Siloni's Discontinuity Prediction (@cite{nordlinger-2023}, §3.3)
--- ============================================================================
-
-/-- Siloni (2008, 2012) predicts: discontinuous reciprocals (subject +
-    comitative "with"-phrase) are possible only when the reciprocal verb
-    is lexically formed, not syntactically formed.
-
-    Lexically formed: Greek, Swahili, Hungarian — CAN be discontinuous.
-    Syntactically formed: French, Czech — CANNOT be discontinuous.
-
-    This is verified in our sample: every profile with a formation locus
-    matches Siloni's prediction. -/
-theorem siloni_discontinuity_prediction :
-    (allRecipProfiles.filter fun p => p.formation.isSome).all fun p =>
-      match p.formation with
-      | some f => f.allowsDiscontinuous ==
-          -- Lexically formed: Greek, Swahili, Hungarian = CAN
-          -- Syntactically formed: French, Czech = CANNOT
-          (p.iso == "ell" || p.iso == "swa" || p.iso == "hun")
-      | none => true := by native_decide
-
-/-- Profile count verification. -/
-theorem recip_profile_count : allRecipProfiles.length = 12 := by native_decide
-
--- ============================================================================
--- WALS Grounding for Reciprocal Profiles
--- ============================================================================
-
-/-- Reciprocal profiles agree with WALS Ch 106 data where available. -/
-theorem rp_english_wals :
-    (Datasets.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) =
-      some rp_english.reflexiveRelation := by native_decide
-theorem rp_russian_wals :
-    (Datasets.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) =
-      some rp_russian.reflexiveRelation := by native_decide
-theorem rp_swahili_wals :
-    (Datasets.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) =
-      some rp_swahili.reflexiveRelation := by native_decide
-theorem rp_greek_wals :
-    (Datasets.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) =
-      some rp_greek.reflexiveRelation := by native_decide
-theorem rp_german_wals :
-    (Datasets.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) =
-      some rp_german.reflexiveRelation := by native_decide
-theorem rp_mandarin_wals :
-    (Datasets.WALS.F106A.lookup "mnd").map (fromWALS106A ·.value) =
-      some rp_mandarin.reflexiveRelation := by native_decide
-theorem rp_wambaya_wals :
-    (Datasets.WALS.F106A.lookup "wam").map (fromWALS106A ·.value) =
-      some rp_wambaya.reflexiveRelation := by native_decide
-
--- ============================================================================
--- ValenceProfile-RecipProfile Cross-Validation
--- ============================================================================
-
-/-- For languages with both a ValenceProfile and a RecipProfile, the
-    reflexive-reciprocal classification must agree. -/
-theorem english_profiles_agree :
-    english.reciprocal = rp_english.reflexiveRelation := rfl
-theorem russian_profiles_agree :
-    russian.reciprocal = rp_russian.reflexiveRelation := rfl
-theorem swahili_profiles_agree :
-    swahili.reciprocal = rp_swahili.reflexiveRelation := rfl
-theorem french_profiles_agree :
-    french.reciprocal = rp_french.reflexiveRelation := rfl
-theorem german_profiles_agree :
-    german.reciprocal = rp_german.reflexiveRelation := rfl
-theorem modernGreek_profiles_agree :
-    modernGreek.reciprocal = rp_greek.reflexiveRelation := rfl
-
--- ============================================================================
--- Semantic Reciprocity Types (@cite{nordlinger-2023}, §4)
--- ============================================================================
-
-/-- Semantic type of reciprocal relation.
-
-    @cite{nordlinger-2023} (§4) summarizes the semantic typology from
-    Dalrymple et al. (1998) and Evans et al. (2011), distinguishing six
-    types of mutual relation that reciprocal constructions can encode:
-
-    - `strong`: every participant reciprocates with every other
-      ("The members of this family love one another.")
-    - `pairwise`: participants are paired off
-      ("The people at the dinner party were married to one another.")
-    - `chain`: sequential, each with the next
-      ("The graduating students followed one another up onto the stage.")
-    - `radial`: one central participant reciprocates with all others
-      ("The teacher and her pupils intimidated one another.")
-    - `melee`: widespread but not exhaustive reciprocation
-      ("The drunks in the pub were punching one another.")
-    - `ring`: circular chain, last links back to first
-      ("The children chased each other round in a ring.") -/
-inductive ReciprocityType where
-  | strong
-  | pairwise
-  | chain
-  | radial
-  | melee
-  | ring
-  deriving DecidableEq, Repr
-
-/-- Whether a reciprocity type requires every participant to be involved
-    in at least one reciprocal pair. Radial IS participant-exhaustive —
-    the center reciprocates with each peripheral — but is not
-    pair-exhaustive (peripherals do not reciprocate with each other).
-    Melee is the only type where some participants may be uninvolved. -/
-def ReciprocityType.exhaustive : ReciprocityType → Bool
-  | .strong   => true
-  | .pairwise => true
-  | .chain    => true
-  | .radial   => true
-  | .melee    => false
-  | .ring     => true
-
-/-- Whether a reciprocity type is symmetric: within each active pair,
-    if A acts on B then B acts on A. Chain and ring are directional
-    (A follows B does not entail B follows A). Radial IS symmetric —
-    the teacher intimidates each pupil AND each pupil intimidates the
-    teacher — it just doesn't cover all pairs. -/
-def ReciprocityType.symmetric : ReciprocityType → Bool
-  | .strong   => true
-  | .pairwise => true
-  | .chain    => false
-  | .radial   => true
-  | .melee    => true
-  | .ring     => false
-
--- ============================================================================
--- Reciprocity Type Properties (@cite{nordlinger-2023}, §4)
--- ============================================================================
-
-/-- Strong, pairwise, and radial are the three symmetric AND
-    participant-exhaustive reciprocity types. Among these, only
-    strong is also pair-exhaustive (every possible pair reciprocates). -/
-theorem exhaustive_symmetric_types :
-    ReciprocityType.strong.exhaustive = true ∧
-    ReciprocityType.strong.symmetric = true ∧
-    ReciprocityType.pairwise.exhaustive = true ∧
-    ReciprocityType.pairwise.symmetric = true ∧
-    ReciprocityType.radial.exhaustive = true ∧
-    ReciprocityType.radial.symmetric = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Chain and ring are non-symmetric (directional) — they model
-    sequential actions where A acts on B but B does not act on A.
-    The difference: ring links the last element back to the first,
-    chain does not. -/
-theorem directional_types :
-    ReciprocityType.chain.symmetric = false ∧
-    ReciprocityType.ring.symmetric = false ∧
-    ReciprocityType.chain.exhaustive = true ∧
-    ReciprocityType.ring.exhaustive = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Melee is the only non-exhaustive type — some group members
-    may not participate at all. -/
-theorem melee_unique_nonexhaustive :
-    ReciprocityType.melee.exhaustive = false ∧
-    ReciprocityType.melee.symmetric = true := ⟨rfl, rfl⟩
-
-/-- English "each other" can express all six reciprocity types
-    (Evans et al. 2011b, p. 8; @cite{nordlinger-2023} ex. 44).
-    This is an empirical observation about English, not a structural
-    property — some languages restrict which types their reciprocal
-    construction can express. -/
-def englishReciprocityTypes : List ReciprocityType :=
-  [.strong, .pairwise, .chain, .radial, .melee, .ring]
-
-theorem english_expresses_all_types :
-    englishReciprocityTypes.length = 6 := rfl
-
--- ============================================================================
--- Swahili Reciprocal MorphRule (@cite{nordlinger-2023}, §3)
--- ============================================================================
-
-open Core.Morphology in
-/-- Swahili reciprocal suffix "-an-" as a `MorphRule`.
-
-    Realizes valence reduction: transitive → intransitive. The reciprocal
-    suffix removes the object argument, making the verb monovalent
-    (the participants are encoded in a plural subject).
-
-    Example: "pend-" (love) → "pend-an-" (love each other)
-    @cite{nordlinger-2023} ex. 40 (citing Dimitriadis 2004). -/
-def swahiliReciprocalRule : MorphRule Bool :=
-  { category := .valence
-  , value := "reciprocal"
-  , formRule := fun stem => stem ++ "an"
-  , featureRule := fun f => { f with valence := some .intransitive }
-  , semEffect := id
-  }
-
-open Core.Morphology in
-/-- The Swahili reciprocal suffix is a valence-changing operation. -/
-theorem swahili_recip_is_valence :
-    swahiliReciprocalRule.category = .valence := rfl
-
-open Core.Morphology in
-/-- The Swahili reciprocal suffix reduces transitivity. -/
-theorem swahili_recip_reduces_valence :
-    (swahiliReciprocalRule.featureRule { valence := some .transitive }).valence
-      = some .intransitive := rfl
-
--- ============================================================================
--- Reciprocal Marker Polysemy (@cite{nordlinger-2023}, §4.2)
--- ============================================================================
-
-/-- Extended readings of reciprocal markers beyond core reciprocal meaning.
-
-    @cite{nordlinger-2023} (§4.2) notes that reciprocal markers are often
-    polysemous, expressing related but non-reciprocal meanings. These
-    extended uses include collective, sociative, and iterative readings,
-    in addition to the reflexive overlap captured by WALS Ch 106. -/
-inductive RecipMarkerPolysemy where
-  | reciprocal   -- core mutual action reading
-  | reflexive    -- same-participant reading (overlap with reflexives)
-  | collective   -- joint action, no mutual entailment ("they gathered")
-  | sociative    -- joint/associative action ("they walked together")
-  | iterative    -- repeated action ("they kept hitting")
-  deriving DecidableEq, Repr
-
-/-- Polysemy pattern: which extended readings a language's reciprocal
-    marker(s) can express. -/
-structure RecipPolysemyPattern where
-  language : String
-  readings : List RecipMarkerPolysemy
-  deriving Repr
-
-/-- Russian "drug druga": reciprocal only (no collective/sociative). -/
-def polysemy_russian : RecipPolysemyPattern :=
-  { language := "Russian", readings := [.reciprocal] }
-
-/-- French "se": reciprocal + reflexive + collective.
-    "Les enfants se sont rassemblés" (collective, no mutual action). -/
-def polysemy_french : RecipPolysemyPattern :=
-  { language := "French", readings := [.reciprocal, .reflexive, .collective] }
-
-/-- Wambaya "-ngg-" (RR): reciprocal + reflexive (identical forms). -/
-def polysemy_wambaya : RecipPolysemyPattern :=
-  { language := "Wambaya", readings := [.reciprocal, .reflexive] }
-
-/-- Languages with reciprocal-reflexive identity show reflexive polysemy. -/
-theorem reflexive_polysemy_tracks_wals :
-    polysemy_wambaya.readings.any (· == .reflexive) = true ∧
-    rp_wambaya.reflexiveRelation = .identicalToReflexive := ⟨rfl, rfl⟩
-
--- ============================================================================
 -- Fragment Connection: English Reciprocal-Reflexive Distinction
 -- ============================================================================
 
@@ -1755,19 +1364,5 @@ theorem english_reciprocal_distinct_from_reflexive :
     eachOther.pronounType ≠ PronounType.reflexive ∧
     oneAnother.pronounType ≠ PronounType.reflexive := by
   exact ⟨by decide, by decide⟩
-
-open Fragments.English.Pronouns in
-
-/-- The English profiles (both ValenceProfile and RecipProfile) are
-    grounded in the Fragment: English has reciprocal pronouns that are
-    categorically different from reflexive pronouns, and the profile
-    records "each other" as a bipartite NP strategy. -/
-theorem english_profile_grounded :
-    english.reciprocal = .distinctFromReflexive ∧
-    rp_english.primaryStrategy = .bipartiteNP ∧
-    rp_english.valency = .bivalent ∧
-    eachOther.pronounType = .reciprocal ∧
-    eachOther.pronounType ≠ PronounType.reflexive := by
-  exact ⟨rfl, rfl, rfl, rfl, by decide⟩
 
 end Phenomena.ArgumentStructure.Typology
