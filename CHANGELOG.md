@@ -4,6 +4,57 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.273] - 2026-04-23
+
+### O'Donnell 2015 fragment-lambda (Option B: CFG-instantiated)
+
+The book's central universal construction (`fragment-lambda`,
+@cite{odonnell-2015} §2.3.7), instantiated to the CFG case. The
+abstract universal version (over arbitrary generative monads) is
+deferred — see the file's module docstring for the substantial
+type-theoretic substrate it would require (free monads, stochastic
+memoization as a monad effect, probabilistic lazy evaluation,
+probabilistic fixed points — none in mathlib, all open research
+problems).
+
+- **New file**:
+  `Linglib/Theories/Morphology/FragmentGrammars/FragmentLambda.lean`
+  (~120 LOC). Provides:
+  - `fragmentLambda M halt` — CFG-instantiated constructor: takes
+    an `AdaptorGrammar` plus per-(rule, position) Beta-binomial
+    pseudo-counts, returns a `FragmentGrammar`.
+  - `FragmentGrammar.eq_fragmentLambda` — every `FragmentGrammar`
+    factors through `fragmentLambda` applied to its underlying AG.
+    Closes by `rfl`.
+  - `FragmentGrammar.corpusProbGivenStorage_eq_AG_times_haltFactor`
+    — the **decomposition identity**: corpus probability factors
+    as `[AG corpus prob] × [Π_(r,i) halt-prior factor]`. Makes the
+    book's central claim that "FG = fragment-lambda(AG)" precise:
+    the only thing fragment-lambda contributes beyond AG is the
+    halt-prior factor. Closes by `rfl`.
+- **Why both theorems are `rfl`**: by construction. The
+  substantive content is the *naming* — having `fragmentLambda` as
+  a named operation and the decomposition as a named theorem makes
+  the connection to @cite{odonnell-2015} §2.3.7 explicit in the
+  Lean library, so future code can refer to "the fragment-lambda
+  step" rather than re-deriving from `FragmentGrammar.mk`.
+- **Documentation of the deferred Option A** (~50 LOC of module
+  docstring): names the four mathlib gaps (Free monads, stochastic
+  memoization, probabilistic laziness, probabilistic fixed
+  points), the type-theoretic project they constitute, and the
+  research venues such a formalization would target (POPL/ICFP for
+  the PL theory, LICS for the categorical semantics à la
+  quasi-Borel spaces). The deep version is a publishable research
+  project; the shallow version (this file) captures the
+  linguistic content.
+
+Build: 11s clean. The shallow + deep versions are not in conflict —
+if the deep substrate is ever built, the shallow version becomes a
+corollary. **The four-model FG-family framework**
+(MultinomialPCFG, DMPCFG, AdaptorGrammar, FragmentGrammar) is now
+complete, with the universal-construction layer (`FragmentLambda`)
+as the capstone.
+
 ## [0.230.272] - 2026-04-23
 
 ### O'Donnell 2015 audit-fix: Ch 7 contrasts + corpusProb_empty
