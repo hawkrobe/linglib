@@ -21,8 +21,7 @@ Theory-neutral scope-freezing examples primarily compiled from
 `Phenomena/Quantification/Data.lean`; renamed per the
 provenance-tracking policy.
 
-Downstream consumers (`RSAScopeFreezing.lean`, `Steedman2000.lean`)
-import from here.
+Downstream consumer `Steedman2000.lean` imports from here.
 
 ## Part II: Theoretical analysis (Minimalist QR)
 

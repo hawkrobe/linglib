@@ -2305,8 +2305,6 @@ import Linglib.Phenomena.Dialogue.Studies.HardingGerstenbergIcard2025
 import Linglib.Phenomena.Dialogue.Studies.Ginzburg2012
 import Linglib.Phenomena.Dialogue.Studies.PurverGinzburg2004
 -- Nouwen2024RSA merged into Nouwen2024
-import Linglib.Phenomena.Quantification.Studies.ScopeFreezing
-import Linglib.Phenomena.Quantification.Studies.RSAScopeFreezing
 import Linglib.Phenomena.Quantification.Studies.Steedman2000
 import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
