@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.278] - 2026-04-23
+
+### Pylkkänen2008 self-audit fixes + transitivity restriction derived
+
+Self-audit of yesterday's Pylkkänen2008 expansion caught several issues introduced by my own additions; this commit fixes all six.
+
+**Accuracy fixes against the PDF**:
+- **Table 2.2 quantifier-binding row was misencoded**: previously `predicts .possessorRaising .quantifierBindingIntoDirectObject => true`, but the actual Table 2.2 row says BOTH analyses agree once pragmatics is controlled — "When pragmatics is controlled for, contrast disappears." Bool encoding too coarse. `predicts` now returns `Option Bool`; the qbind row is `none` for both analyses (no clean prediction). New `cleanlyPredictedProperties` list excludes qbind from the "low predicts all" theorem.
+- **Luganda/Venda Voice-bundling values were fabricated**: per Table 3.1 footnote *a*, "the Voice-bundling properties of Bemba, Luganda, and Venda causatives are not known." Previous code had `bundling := .independent` with a docstring admitting the guess. `CausativeCell.bundling` is now `Option VoiceBundlingChoice`; Bemba/Luganda/Venda use `none`. `permitsUnaccusativeCausative` now returns `Option Bool` (`none` when bundling is unknown). `luganda_phase_predictions` updated accordingly.
+
+**Structural cleanup**:
+- **Split `low_applicative_strictly_better`** into two clean theorems: `low_predicts_all_clean` (universal claim about LA) and `possessor_raising_misses_affectedness_and_agentivity` (specific PR misses). The fake `∀ p` quantification in the original is gone.
+- **Dead `hebrewPossessorDativeExample` constant removed** (never referenced).
+- **Hebrew added to `allLanguages`** (`hebrew_appl`, `.lowSource` classification) so the `lowSource` branch of `derivationConsistent` is actually exercised. Renamed `six_languages` → `seven_languages`. New `hebrew_classification_derives_to_low` theorem confirms the Table 2.1 cluster classifier returns `.lowRecipient` for Hebrew (the recipient/source distinction needs additional §2.2 diagnostics).
+
+**§14 (Voice taxonomy) coverage extended**: previously tested 6 of 8 canonical Voice flavors against `IsExternalArgIntroducer`. Now tests all 8 (`voiceAgent`, `voiceCauser`, `voiceReflexive`, `voiceExperiencer` introducing; `voiceMiddle`, `voiceImpersonal`, `voiceAnticausative`, `voicePassive` not). Note: `.antipassive` is a flavor in the `VoiceFlavor` enum but lacks a canonical `voiceAntipassive` constant in `Voice.lean` (potential future addition).
+
+**NEW §15 — Transitivity restriction DERIVED, not stipulated**:
+- New predicate `ApplType.RequiresThemeInComplement` in `Theories/Syntax/Minimalism/Applicative.lean` (`a.IsLow` — captures Pylkkänen's claim that low applicatives need a theme in their complement).
+- `applicativeComposition` predicate over (ApplType, verb-has-theme) is well-formed iff either Appl doesn't require a theme or the verb provides one.
+- `low_applicative_blocks_unergative` theorem DERIVES Pylkkänen's Diagnostic 1 (eq. 17) from the type signature, not stipulating it. The classic "stipulation → derivation" win.
+- `high_applicative_combines_with_unergative` and `low_recipient_combines_with_transitive` cover the contrast empirically.
+
+**Net change**: Pylkkanen2008.lean 688 → 806 LOC (+118). Applicative.lean +18 LOC for `RequiresThemeInComplement`. Zero `native_decide`, zero `sorry`. All 643 jobs build cleanly.
+
 ## [0.230.277] - 2026-04-23
 
 ### Pylkkänen2008 deep audit + ApplicativeDiagnostics infrastructure

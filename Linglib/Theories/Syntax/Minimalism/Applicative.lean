@@ -88,6 +88,24 @@ def ApplType.RequiresEventSemantics (a : ApplType) : Prop :=
 instance : DecidablePred ApplType.RequiresEventSemantics :=
   fun _ => inferInstanceAs (Decidable (_ = _))
 
+/-- Does this applicative type require its complement to provide an
+    unsaturated theme argument? Low applicatives do — they relate the
+    applied argument to the theme via transfer-of-possession. High
+    applicatives don't — they relate the applied argument to the event
+    described by the verb, not to a theme.
+
+    This predicate is the source of @cite{pylkkanen-2008}'s
+    transitivity restriction (Diagnostic 1, eq. 17 of book): low
+    applicatives cannot combine with unergatives because unergative
+    VPs lack an unsaturated theme. The semantic mismatch is shown
+    in eq. 103 (page 55): combining low Appl with an unergative VP
+    yields `agent(e, x) ∧ theme(e, x)` — a contradiction. -/
+def ApplType.RequiresThemeInComplement (a : ApplType) : Prop :=
+  a.IsLow
+
+instance : DecidablePred ApplType.RequiresThemeInComplement :=
+  fun a => inferInstanceAs (Decidable a.IsLow)
+
 -- ============================================================================
 -- § 3: Applicative Head Structure
 -- ============================================================================

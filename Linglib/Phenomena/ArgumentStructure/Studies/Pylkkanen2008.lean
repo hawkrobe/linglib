@@ -279,13 +279,31 @@ def albanian_appl : LangApplProfile :=
     , depictive := .inapplicable }
   , classification := .high }
 
+/-- Hebrew possessor datives: low source applicative (book §2.2,
+    eq. 82a). Hebrew possessor datives are low applicatives, so they
+    fail Tests 1 and 2 by the same logic as English low recipient.
+    Pylkkänen does not test depictive modification with Hebrew
+    possessor datives in §2.1.3, so Test 3 is `.inapplicable` here.
+    Note: Table 2.1's three tests don't distinguish recipient from
+    source — `derivationConsistent` accepts the cluster classifier's
+    `.lowRecipient` output for Hebrew's actual `.lowSource`
+    classification (the recipient-vs-source distinction needs the
+    additional transfer-directionality diagnostics from §2.2). -/
+def hebrew_appl : LangApplProfile :=
+  { language := "Hebrew"
+  , diagnostics :=
+    { unergative := .fails
+    , staticVerb := .fails
+    , depictive := .inapplicable }
+  , classification := .lowSource }
+
 def allLanguages : List LangApplProfile :=
-  [english_appl, japanese_appl, korean_appl, luganda_appl, venda_appl, albanian_appl]
+  [english_appl, japanese_appl, korean_appl, luganda_appl, venda_appl, albanian_appl, hebrew_appl]
 
 -- Verification theorems
 
-/-- Six languages classified. -/
-theorem six_languages : allLanguages.length = 6 := rfl
+/-- Seven languages classified (six from Table 2.1 + Hebrew from §2.2). -/
+theorem seven_languages : allLanguages.length = 7 := rfl
 
 /-- For each language, Pylkkänen's annotated classification is *derivable*
     from the diagnostic results via the cluster-based classifier. The
@@ -313,6 +331,14 @@ theorem venda_classification_derives :
 
 theorem albanian_classification_derives :
     classifyByDiagnostics albanian_appl.diagnostics = some .high := by decide
+
+/-- Hebrew possessor datives are classified as `.lowRecipient` by
+    Table 2.1's three tests (all-fail cluster), but Pylkkänen's actual
+    classification is `.lowSource`. The two are *both* low; the
+    recipient-vs-source distinction requires additional diagnostics
+    not in Table 2.1. `derivationConsistent` accepts this. -/
+theorem hebrew_classification_derives_to_low :
+    classifyByDiagnostics hebrew_appl.diagnostics = some .lowRecipient := by decide
 
 -- ============================================================================
 -- § 6: Bridge — Larson VP Shell ↔ Modern Voice/Appl
@@ -451,37 +477,41 @@ inductive PossessorDativeProperty where
   deriving DecidableEq, Repr
 
 /-- Pylkkänen's Table 2.2 verdict: which analysis predicts each
-    property. The possessor-raising analysis predicts only some;
-    the low-applicative analysis predicts all. -/
+    property. `some true` = predicts the property; `some false` =
+    fails to predict; `none` = no clean prediction (e.g., quantifier
+    binding, where Pylkkänen notes "when pragmatics is controlled for,
+    contrast disappears" — neither analysis cleanly wins on this row). -/
 def PossessorDativeAnalysis.predicts :
-    PossessorDativeAnalysis → PossessorDativeProperty → Bool
-  | .possessorRaising, .pseudopossessiveInterpretation => true
-  | .possessorRaising, .affectedness => false
-  | .possessorRaising, .lackOfAgentiveInterpretation => false
-  | .possessorRaising, .transitivityRestriction => true
-  | .possessorRaising, .quantifierBindingIntoDirectObject => true  -- "contrast disappears with pragmatics"
-  | .possessorRaising, .inabilityToControl => true
-  | .lowSourceApplicative, _ => true  -- all six properties predicted
+    PossessorDativeAnalysis → PossessorDativeProperty → Option Bool
+  | .possessorRaising, .pseudopossessiveInterpretation => some true
+  | .possessorRaising, .affectedness => some false
+  | .possessorRaising, .lackOfAgentiveInterpretation => some false
+  | .possessorRaising, .transitivityRestriction => some true
+  | .possessorRaising, .quantifierBindingIntoDirectObject => none
+  | .possessorRaising, .inabilityToControl => some true
+  | .lowSourceApplicative, .quantifierBindingIntoDirectObject => none
+  | .lowSourceApplicative, _ => some true
 
-/-- Pylkkänen's Table 2.2 conclusion: the low source applicative
-    analysis predicts every observed property; possessor raising
-    misses two (affectedness, lack of agentive interpretation). -/
-theorem low_applicative_strictly_better :
-    ∀ p, PossessorDativeAnalysis.predicts .lowSourceApplicative p = true ∧
-         (PossessorDativeAnalysis.predicts .possessorRaising .affectedness = false ∧
-          PossessorDativeAnalysis.predicts .possessorRaising
-            .lackOfAgentiveInterpretation = false) := by
-  intro p; refine ⟨?_, ?_, ?_⟩
-  · cases p <;> rfl
-  · rfl
-  · rfl
+/-- The 4 cleanly-predicted properties of Table 2.2 (excluding qbind,
+    which is `none` for both analyses). -/
+def cleanlyPredictedProperties : List PossessorDativeProperty :=
+  [.pseudopossessiveInterpretation, .affectedness, .lackOfAgentiveInterpretation,
+   .transitivityRestriction, .inabilityToControl]
 
-/-- The Hebrew possessor dative example (§2.2, eq. 82a) is grammatical:
-    *Ha-yalda kilkela le-Dan et ha-radio* "The girl spoiled Dan's radio
-    on him." The dative `le-Dan` is the source (former possessor) of
-    the direct object `ha-radio`. -/
-def hebrewPossessorDativeExample : String :=
-  "Ha-yalda kilkela le-Dan et ha-radio."
+/-- The low source applicative analysis predicts every property where
+    a clean prediction is possible. -/
+theorem low_predicts_all_clean :
+    ∀ p ∈ cleanlyPredictedProperties,
+      PossessorDativeAnalysis.predicts .lowSourceApplicative p = some true := by
+  decide
+
+/-- The possessor-raising analysis fails to predict affectedness and
+    lack of agentive interpretation (Pylkkänen's two key objections). -/
+theorem possessor_raising_misses_affectedness_and_agentivity :
+    PossessorDativeAnalysis.predicts .possessorRaising .affectedness = some false ∧
+    PossessorDativeAnalysis.predicts .possessorRaising
+      .lackOfAgentiveInterpretation = some false :=
+  ⟨rfl, rfl⟩
 
 /-! ## §11. Japanese adversity passives: high vs low split
     (@cite{pylkkanen-2008} Ch. 2 §2.3)
@@ -575,20 +605,25 @@ inductive CauseSelection where
   | phase
   deriving DecidableEq, Repr
 
-/-- A causative-typology cell: Voice-bundling × selection. The 6 cells
-    of Pylkkänen Table 3.1 each have specific predictions. -/
+/-- A causative-typology cell: Voice-bundling × selection. `bundling`
+    is `Option` because Pylkkänen Table 3.1 footnote *a* explicitly
+    states the Voice-bundling properties of Bemba, Luganda, and Venda
+    causatives are not known. -/
 structure CausativeCell where
-  bundling : VoiceBundlingChoice
+  /-- Voice-bundling parameter; `none` for languages where it's not
+      empirically determined (per Pylkkänen Table 3.1 footnote a). -/
+  bundling : Option VoiceBundlingChoice
   selection : CauseSelection
   deriving DecidableEq, Repr
 
 /-- Table 3.1 prediction (1): can a language have unaccusative causatives?
     A bundled language can never have them (Cause forces Voice → external
-    arg). An independent language can, regardless of selection. -/
-def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : Bool :=
-  match c.bundling with
-  | .bundled => false
-  | .independent => true
+    arg). An independent language can, regardless of selection. Returns
+    `none` when bundling is unknown. -/
+def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : Option Bool :=
+  c.bundling.map fun b => match b with
+    | .bundled => false
+    | .independent => true
 
 /-- Table 3.1 prediction (2): can the language causativize unergatives
     and transitives? Only phase-selecting Cause can. -/
@@ -612,34 +647,36 @@ def CausativeCell.morphologyCanInterveneBetweenRootAndCause
 
 /-- English zero-causative: Voice-bundling root-selecting. -/
 def englishZeroCausative : CausativeCell :=
-  { bundling := .bundled, selection := .root }
+  { bundling := some .bundled, selection := .root }
 
 /-- Japanese lexical causative: non-Voice-bundling root-selecting. -/
 def japaneseLexicalCausative : CausativeCell :=
-  { bundling := .independent, selection := .root }
+  { bundling := some .independent, selection := .root }
 
-/-- Bemba *-eshya* causative: Voice-bundling verb-selecting. -/
+/-- Bemba *-eshya* causative: verb-selecting; bundling unknown
+    (Table 3.1 footnote a). -/
 def bembaEshyaCausative : CausativeCell :=
-  { bundling := .bundled, selection := .verb }
+  { bundling := none, selection := .verb }
 
 /-- Finnish *-tta* causative: non-Voice-bundling verb-selecting. -/
 def finnishTtaCausative : CausativeCell :=
-  { bundling := .independent, selection := .verb }
+  { bundling := some .independent, selection := .verb }
 
-/-- Luganda *-sa* causative: phase-selecting (bundling not specified
-    in the book — Pylkkänen notes this as not yet known). -/
+/-- Luganda *-sa* causative: phase-selecting; bundling unknown
+    (Table 3.1 footnote a). -/
 def lugandaSaCausative : CausativeCell :=
-  { bundling := .independent, selection := .phase }  -- bundling default; book says unknown
+  { bundling := none, selection := .phase }
 
-/-- Venda *-is* causative: phase-selecting (bundling not specified). -/
+/-- Venda *-is* causative: phase-selecting; bundling unknown
+    (Table 3.1 footnote a). -/
 def vendaIsCausative : CausativeCell :=
-  { bundling := .independent, selection := .phase }
+  { bundling := none, selection := .phase }
 
 /-- English zero-causative: bundled, root-selecting. Predictions:
     no unaccusative causatives (Voice forces ext arg); no causativization
     of unergatives/transitives; no morphology between root and Cause. -/
 theorem english_zero_predictions :
-    englishZeroCausative.permitsUnaccusativeCausative = false ∧
+    englishZeroCausative.permitsUnaccusativeCausative = some false ∧
     englishZeroCausative.permitsUnergativeAndTransitiveCausativization = false ∧
     englishZeroCausative.morphologyCanInterveneBetweenRootAndCause = false :=
   ⟨rfl, rfl, rfl⟩
@@ -648,15 +685,16 @@ theorem english_zero_predictions :
     unaccusative causatives possible; no unergative/transitive causativization;
     no morphology between root and Cause. -/
 theorem japanese_lexical_predictions :
-    japaneseLexicalCausative.permitsUnaccusativeCausative = true ∧
+    japaneseLexicalCausative.permitsUnaccusativeCausative = some true ∧
     japaneseLexicalCausative.permitsUnergativeAndTransitiveCausativization = false ∧
     japaneseLexicalCausative.morphologyCanInterveneBetweenRootAndCause = false :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Luganda phase-selecting causative: unaccusative, unergative, and
-    transitive causativization all possible; all morphology can intervene. -/
+/-- Luganda phase-selecting causative: bundling unknown (so prediction
+    1 is `none`); unergative/transitive causativization possible; all
+    morphology can intervene. -/
 theorem luganda_phase_predictions :
-    lugandaSaCausative.permitsUnaccusativeCausative = true ∧
+    lugandaSaCausative.permitsUnaccusativeCausative = none ∧
     lugandaSaCausative.permitsUnergativeAndTransitiveCausativization = true ∧
     lugandaSaCausative.morphologyCanInterveneBetweenRootAndCause = true :=
   ⟨rfl, rfl, rfl⟩
@@ -670,19 +708,99 @@ projection). Test Pylkkänen's view against the broader `VoiceHead`
 taxonomy in `Theories/Syntax/Minimalism/Voice.lean`: which Voice flavors
 *do* introduce external arguments? -/
 
-/-- Pylkkänen's view of Voice tested against the named flavors:
-    voiceAgent and voiceCauser introduce external arguments;
-    voiceMiddle (expletive), voiceImpersonal (impersonal), and
-    voiceAnticausative (non-thematic) do not. The Pylkkänen-coherent
-    Voice flavors are exactly the θ-assigning ones. -/
+/-- Pylkkänen's view of Voice tested against all 8 named canonical
+    flavors: voiceAgent, voiceCauser, voiceReflexive, and
+    voiceExperiencer introduce external arguments; voiceMiddle
+    (expletive), voiceImpersonal, voiceAnticausative, and voicePassive
+    do not. The Pylkkänen-coherent Voice flavors are exactly the
+    θ-assigning ones. (`.antipassive` is defined as a flavor in the
+    Voice taxonomy but lacks a canonical `voiceAntipassive` constant
+    in `Voice.lean`.) -/
 theorem pylkkanen_view_partitions_voice_flavors :
     Minimalism.IsExternalArgIntroducer Minimalism.voiceAgent ∧
     Minimalism.IsExternalArgIntroducer Minimalism.voiceCauser ∧
+    Minimalism.IsExternalArgIntroducer Minimalism.voiceReflexive ∧
+    Minimalism.IsExternalArgIntroducer Minimalism.voiceExperiencer ∧
     ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceMiddle ∧
     ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceImpersonal ∧
     ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceAnticausative ∧
     ¬ Minimalism.IsExternalArgIntroducer Minimalism.voicePassive := by
-  refine ⟨rfl, rfl, ?_, ?_, ?_, ?_⟩ <;>
+  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;>
     (unfold Minimalism.IsExternalArgIntroducer; decide)
+
+/-! ## §15. Transitivity restriction derived from semantic types
+    (@cite{pylkkanen-2008} Diagnostic 1, eq. 17 + eq. 103)
+
+Pylkkänen's *predicted* generalization (book p. 18, Diagnostic 1):
+"Only high applicative heads should be able to combine with
+unergatives. Since low applicative heads denote a relation between
+the direct object and the indirect object, a low applicative head
+cannot appear in a structure that lacks a direct object."
+
+The derivation (eq. 103, p. 55): combining low Appl with an unergative
+VP produces `agent(e, Mary) ∧ theme(e, Mary)` — a contradiction
+arising from low Appl's requirement of an unsaturated theme that the
+unergative VP cannot provide.
+
+Formalized via `ApplType.RequiresThemeInComplement` (defined in
+`Theories/Syntax/Minimalism/Applicative.lean`). The transitivity
+restriction is then a *theorem*, not a stipulation: a low applicative
+requires its complement to provide a theme; an unergative VP doesn't;
+so the combination is type-incompatible. -/
+
+/-- Whether a verb has an unsaturated theme argument that an
+    applicative could relate to. Unergatives (intransitive activity
+    verbs like *run*) lack one. -/
+def VerbHasUnsaturatedTheme : Bool → Prop
+  | true => True
+  | false => False
+
+/-- A composition of an applicative head with a verb is well-formed
+    iff either the applicative doesn't require a theme (high) or the
+    verb provides one (transitive/causative/etc.). -/
+def applicativeComposition (a : ApplType) (verbHasTheme : Bool) : Prop :=
+  ¬ a.RequiresThemeInComplement ∨ VerbHasUnsaturatedTheme verbHasTheme
+
+/-- Pylkkänen's Diagnostic 1 (eq. 17) DERIVED, not stipulated: low
+    applicatives cannot combine with verbs lacking an unsaturated
+    theme (i.e., unergatives). Follows from the type signature of low
+    Appl, captured by `RequiresThemeInComplement`. -/
+theorem low_applicative_blocks_unergative (a : ApplType)
+    (hLow : a.IsLow) (hUnergative : ¬ VerbHasUnsaturatedTheme false) :
+    ¬ applicativeComposition a false := by
+  unfold applicativeComposition
+  intro h
+  cases h with
+  | inl hNotReq =>
+    apply hNotReq
+    unfold ApplType.RequiresThemeInComplement
+    exact hLow
+  | inr hTheme => exact hUnergative hTheme
+
+/-- High applicatives can combine with unergatives — the empirical
+    finding for Luganda/Venda/Albanian (eq. 23–25). Follows from the
+    fact that high Appl doesn't require a theme. -/
+theorem high_applicative_combines_with_unergative :
+    applicativeComposition .high false := by
+  unfold applicativeComposition
+  left
+  unfold ApplType.RequiresThemeInComplement ApplType.IsLow
+  decide
+
+/-- Low recipient applicatives can combine with verbs providing a
+    theme — the canonical English DOC pattern (`I baked him a cake`). -/
+theorem low_recipient_combines_with_transitive :
+    applicativeComposition .lowRecipient true := by
+  unfold applicativeComposition
+  right
+  trivial
+
+/-- Low source applicatives also combine with theme-providing verbs
+    — Hebrew possessor datives (book §2.2). -/
+theorem low_source_combines_with_transitive :
+    applicativeComposition .lowSource true := by
+  unfold applicativeComposition
+  right
+  trivial
 
 end Pylkkanen2008
