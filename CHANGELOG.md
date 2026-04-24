@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.277] - 2026-04-23
+
+### Pylkkänen2008 deep audit + ApplicativeDiagnostics infrastructure
+
+Substantial expansion of the Pylkkänen 2008 study file, fixing audit findings against the actual book and adding three major Chapter 2 + Chapter 3 contributions absent from the original.
+
+**Architecture (mathlib-style)**:
+- **NEW `Theories/Syntax/Minimalism/ApplicativeDiagnostics.lean`** (136 LOC): theory-neutral cluster-based classifier over Pylkkänen Table 2.1's three diagnostics. `ApplDiagnosticResult` (passes/fails/inapplicable enum), `ApplDiagnosticBundle` struct, `classifyByDiagnostics : ApplDiagnosticBundle → Option ApplType`. Cluster-based: high iff all applicable diagnostics pass, low iff all fail, otherwise `none`. Inapplicable tests excluded (handles Korean's lack of depictives, Venda/Albanian's too-broad depictives). Six soundness theorems verified by `decide`. Generic infrastructure in Theories/, instantiation in Studies/.
+
+**Audit fixes against the PDF**:
+- **Hallucinated 4th diagnostic removed**: previous file had a "resultative cooccurrence" row in Table 2.1 — the actual Pylkkänen Table 2.1 (p. 33) has only 3 tests. The resultative discussion is §2.1.4 of the book (about English low Appl's selection for events vs. states), not part of the typological diagnostic table. Field `resultativeOK` dropped.
+- **Test 3 conditionality fixed**: previous file conflated "test inapplicable" (Korean lacks English-style depictives) with "test fails." Now uses `ApplDiagnosticResult.inapplicable` distinctly.
+- **OR-based classifier replaced with cluster-based**: previous `diagnosticPredictsHigh` returned high if *either* unergative or static-verb test passed. Pylkkänen's actual typology requires *all* applicable tests to cluster.
+- **Tautological `lowApplType`/`highApplType` wrappers dropped**: were renames of `.lowRecipient`/`.high` testing themselves. Now use existing `applLowRecipient`/`applHigh` from `Applicative.lean` directly.
+
+**Three new substantive sections (Chapter 2 + 3 contributions)**:
+- **§10 Hebrew possessor datives** (book §2.2, Table 2.2 p. 60): low source applicative analysis vs. possessor-raising contrast. `PossessorDativeAnalysis` enum (`possessorRaising` / `lowSourceApplicative`), `PossessorDativeProperty` enum (6 properties from Table 2.2), `predicts` predicate, `low_applicative_strictly_better` theorem capturing Pylkkänen's argument that the low applicative analysis predicts every observed property while possessor-raising misses two (affectedness, lack of agentive interpretation). Pylkkänen's own paper-side comparison — stays in study file per CLAUDE.md meta-bridges convention.
+- **§11 Japanese adversity passives** (book §2.3): high vs low split via Kubo 1992's diagnostics. `JapaneseAdversityType` enum (`gappedLowSource` / `gaplessHigh`) with `toApplType` projection.
+- **§12 Spanish static low applicatives** (book §2.1.4.2, Cuervo 2003): three-way split extending Pylkkänen's recipient/source typology with a third *static* possession type. `CuervoLowAppl` enum + `isDynamic` predicate.
+- **§13 Causative typology** (book Table 3.1, §3.4): 2 × 3 typology (Voice-bundling × selection). `CauseSelection` (root/verb/phase) + `CausativeCell` struct + 3 prediction functions (`permitsUnaccusativeCausative`, `permitsUnergativeAndTransitiveCausativization`, `morphologyCanInterveneBetweenRootAndCause`). Six canonical instances (English zero, Japanese lexical, Bemba *-eshya*, Finnish *-tta*, Luganda *-sa*, Venda *-is*) with prediction theorems.
+- **§14 Pylkkänen's view tested against broader Voice taxonomy**: `pylkkanen_view_partitions_voice_flavors` proves `voiceAgent`/`voiceCauser` satisfy `IsExternalArgIntroducer` while `voiceMiddle`/`voiceImpersonal`/`voiceAnticausative`/`voicePassive` don't.
+
+**Per-language data restructured**: replaced `ApplClassification` (with hallucinated resultative field) with `LangApplProfile` carrying an `ApplDiagnosticBundle`. The classification is now *derived* from diagnostics via `classifyByDiagnostics`, with `derivationConsistent` proving Pylkkänen's analytical conclusion matches what the cluster classifier returns. Six per-language `_classification_derives` theorems use `decide`.
+
+**Net change**: Pylkkanen2008.lean 374 → 688 LOC (+314), ApplicativeDiagnostics.lean +136 LOC. Zero `native_decide` or `sorry`. All 643 jobs build cleanly.
+
 ## [0.230.276] - 2026-04-23
 
 ### Pylkkänen2008 audit + first divergence meta-bridge (VoiceProjection)

@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalism.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Syntax.Minimalism.VoiceProjection
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
@@ -35,14 +36,20 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
    Appl; Bantu languages (Chaga, Luganda, Venda) and Albanian have HIGH
    Appl.
 
-## Diagnostics (Table 2.1)
+## Diagnostics (Table 2.1, p. 33)
 
-| Test                                         | High | Low |
-|----------------------------------------------|------|-----|
-| 1. Can unergatives be applicativized?        | Yes  | No  |
-| 2. Can static verbs be applicativized?       | Yes  | No  |
-| 3. Depictive modification of applied arg?    | Yes  | No  |
-| 4. Resultative cooccurrence with applicative?| Yes  | No  |
+| Test                                                        | High | Low |
+|-------------------------------------------------------------|------|-----|
+| 1. Can unergatives be applicativized?                       | Yes  | No  |
+| 2. Can static verbs be applicativized?                      | Yes  | No  |
+| 3. (If language has English-style depictives) is the        |      |     |
+|    applied argument available for depictive modification?   | Yes  | No  |
+
+Test 3 is *conditional* on the language having depictive secondary
+predicates with the English distribution. Korean lacks them entirely,
+and Venda/Albanian have too-broad depictives — in those languages
+Test 3 is *inapplicable*, not "fails." See `ApplDiagnosticResult`
+in `Theories/Syntax/Minimalism/ApplicativeDiagnostics.lean`.
 
 ## Cross-references
 
@@ -154,119 +161,158 @@ theorem eat_is_high_appl :
 -- ============================================================================
 
 /-! The lexical items `appl_low_t` and `appl_high_t` correspond to
-`ApplType` values from the theory layer. The ditransitive uses a low
-recipient applicative (English DOC = transfer *to*); the benefactive
-uses a high applicative (Chaga = individual-event relation). -/
+`ApplHead` instances from `Theories/Syntax/Minimalism/Applicative.lean`:
+the ditransitive uses `applLowRecipient` (English DOC = transfer *to*);
+the benefactive uses `applHigh` (Chaga = individual-event relation). -/
 
-/-- The low applicative head corresponds to a recipient applicative. -/
-def lowApplType : ApplType := .lowRecipient
+/-- The ditransitive's applicative is low (recipient). -/
+theorem ditransitive_uses_low_recipient :
+    applLowRecipient.applType = .lowRecipient ∧ applLowRecipient.applType.IsLow := by
+  refine ⟨rfl, ?_⟩; unfold ApplType.IsLow; decide
 
-/-- The high applicative head corresponds to a high applicative. -/
-def highApplType : ApplType := .high
-
-/-- The ditransitive uses a low applicative. -/
-theorem ditransitive_appl_is_low : lowApplType.IsLow := by decide
-
-/-- The benefactive uses a high applicative. -/
-theorem benefactive_appl_is_high : ¬ highApplType.IsLow := by decide
+/-- The benefactive's applicative is high. -/
+theorem benefactive_uses_high :
+    applHigh.applType = .high ∧ ¬ applHigh.applType.IsLow := by
+  refine ⟨rfl, ?_⟩; unfold ApplType.IsLow; decide
 
 -- ============================================================================
--- § 5: Cross-linguistic Applicative Typology (Table 2.1)
+-- § 5: Cross-linguistic Applicative Typology (Table 2.1, §2.1.2–§2.1.3)
 -- ============================================================================
 
-/-! ### Cross-linguistic classification (§2.1.2–§2.1.4)
+/-! @cite{pylkkanen-2008} tests the high/low distinction in six languages
+using three diagnostics (Table 2.1, p. 33). The diagnostics cluster
+into two groups, confirming the typological split. The classifier
+`Minimalism.classifyByDiagnostics` derives the high/low classification
+from the diagnostic results; we verify that for each language, the
+classifier output matches Pylkkänen's annotated classification. -/
 
-@cite{pylkkanen-2008} tests the high/low distinction in six languages
-using four diagnostics. The diagnostics cluster into two groups,
-confirming the typological split. -/
-
-/-- A language's applicative classification with diagnostic evidence. -/
-structure ApplClassification where
+/-- A language's diagnostic profile and Pylkkänen's annotated
+    classification. The diagnostic results live in
+    `Minimalism.ApplDiagnosticBundle`; `classification` records
+    Pylkkänen's analytical conclusion. -/
+structure LangApplProfile where
   language : String
-  applType : ApplType
-  /-- Can unergatives be applicativized? (§2.1.2) -/
-  unergativeOK : Option Bool := none
-  /-- Can static verbs be applicativized? (§2.1.2) -/
-  staticVerbOK : Option Bool := none
-  /-- Is the applied argument available for depictive modification? (§2.1.3) -/
-  depictiveOK : Option Bool := none
-  /-- Can resultatives cooccur with the applicative? (§2.1.4) -/
-  resultativeOK : Option Bool := none
-  deriving Repr, DecidableEq
+  diagnostics : ApplDiagnosticBundle
+  /-- Pylkkänen's annotated classification (§2.1.2 conclusion). -/
+  classification : ApplType
+  deriving Repr
 
-/-- Do the diagnostics predict a HIGH applicative?
-    At least one "yes" on unergatives or static verbs → high. -/
-def diagnosticPredictsHigh (d : ApplClassification) : Bool :=
-  d.unergativeOK == some true || d.staticVerbOK == some true
+/-- Pylkkänen's analytical conclusion is *derivable* from the
+    diagnostics: the cluster classifier returns the same result,
+    modulo the recipient/source distinction (which Table 2.1's three
+    tests don't make — separating low recipient from low source needs
+    additional transfer-directionality diagnostics from §2.2/§2.3). -/
+def LangApplProfile.derivationConsistent (l : LangApplProfile) : Bool :=
+  match classifyByDiagnostics l.diagnostics with
+  | some t =>
+    decide (t = l.classification ∨
+            (t = .lowRecipient ∧ l.classification = .lowSource))
+  | none => false
 
-/-- Diagnostic prediction is consistent with the annotated classification. -/
-def diagnosticsConsistent (d : ApplClassification) : Bool :=
-  diagnosticPredictsHigh d == !decide d.applType.IsLow
+-- Language data (§2.1.2–§2.1.3, examples cited by paper line)
 
--- Language data (§2.1.2–§2.1.4)
+/-- English: low recipient. *I ran him (20a); *I held him the bag (20b);
+    *John told Mary the news drunk (27e). -/
+def english_appl : LangApplProfile :=
+  { language := "English"
+  , diagnostics :=
+    { unergative := .fails
+    , staticVerb := .fails
+    , depictive := .fails }
+  , classification := .lowRecipient }
 
-def english_appl : ApplClassification :=
-  { language := "English", applType := .lowRecipient
-  , unergativeOK := some false    -- *I ran him.
-  , staticVerbOK := some false    -- *I held him the bag.
-  , depictiveOK := some false     -- *John told Mary the news drunk.
-  , resultativeOK := some false } -- *He painted me this flower blue.
+/-- Japanese: low recipient. *Taroo-ga Hanako-ni hasit-ta (21a);
+    *Taroo-ga Hanako-ni kanojo-no kaban-o mot-ta (21b);
+    *Taroo-ga hadaka-de Hanako-ni hon-o yonda (40a). -/
+def japanese_appl : LangApplProfile :=
+  { language := "Japanese"
+  , diagnostics :=
+    { unergative := .fails
+    , staticVerb := .fails
+    , depictive := .fails }
+  , classification := .lowRecipient }
 
-def japanese_appl : ApplClassification :=
-  { language := "Japanese", applType := .lowRecipient
-  , unergativeOK := some false    -- *Taro ran for Hanako.
-  , staticVerbOK := some false    -- *Taro held Hanako her bag.
-  , depictiveOK := some false }   -- *depictive on applied arg
+/-- Korean: low recipient. *Mary-ka John-hanthey talli-ess-ta (22a);
+    *John-i Mary-hanthey kabang-ul cap-ass-ta (22b). Korean lacks
+    English-style depictives entirely (§2.1.3.2.2), so Test 3 is
+    *inapplicable*. -/
+def korean_appl : LangApplProfile :=
+  { language := "Korean"
+  , diagnostics :=
+    { unergative := .fails
+    , staticVerb := .fails
+    , depictive := .inapplicable }
+  , classification := .lowRecipient }
 
-def korean_appl : ApplClassification :=
-  { language := "Korean", applType := .lowRecipient
-  , unergativeOK := some false    -- *Mary ran to/from John.
-  , staticVerbOK := some false }  -- *John held Mary her bag.
-  -- Korean lacks depictive secondary predicates entirely
+/-- Luganda: high. Mukasa ya-tambu-le-dde Katonga (23a); Katonga
+    ya-kwaant-i-dde Mukasa ensawo (23b); Mustafa ya-ko-le-dde Katonga
+    nga mulwadde (43a). -/
+def luganda_appl : LangApplProfile :=
+  { language := "Luganda"
+  , diagnostics :=
+    { unergative := .passes
+    , staticVerb := .passes
+    , depictive := .passes }
+  , classification := .high }
 
-def luganda_appl : ApplClassification :=
-  { language := "Luganda", applType := .high
-  , unergativeOK := some true     -- Mukasa walked for Katonga.
-  , staticVerbOK := some true     -- Katonga held the bag for Mukasa.
-  , depictiveOK := some true      -- Mustafa worked for Katonga while Katonga was sick.
-  , resultativeOK := some true }  -- Mukasa painted the wall blue for Katonga.
+/-- Venda: high. Ndi-do-shum-el-a musadzi (24a); Nd-o-far-el-a Mukasa
+    khali (24b). Venda postverbal APs have too broad a distribution to
+    qualify as English-style depictives, so Test 3 is *inapplicable*
+    (§2.1.3.2.4). -/
+def venda_appl : LangApplProfile :=
+  { language := "Venda"
+  , diagnostics :=
+    { unergative := .passes
+    , staticVerb := .passes
+    , depictive := .inapplicable }
+  , classification := .high }
 
-def venda_appl : ApplClassification :=
-  { language := "Venda", applType := .high
-  , unergativeOK := some true     -- I will work for the lady.
-  , staticVerbOK := some true }   -- I held the pot for Mukasa.
-  -- Venda depictives have too broad a distribution to test
+/-- Albanian: high. I vrapova (25a); Agimi i mban Drites çanten time
+    (25b). Albanian "depictives" can also modify implicit external
+    arguments and DPs inside PPs, so they don't qualify as English-style
+    depictives — Test 3 is *inapplicable* (§2.1.3.2.5). -/
+def albanian_appl : LangApplProfile :=
+  { language := "Albanian"
+  , diagnostics :=
+    { unergative := .passes
+    , staticVerb := .passes
+    , depictive := .inapplicable }
+  , classification := .high }
 
-def albanian_appl : ApplClassification :=
-  { language := "Albanian", applType := .high
-  , unergativeOK := some true     -- I ran for him.
-  , staticVerbOK := some true }   -- Agim holds my bag for Drita.
-  -- Albanian depictives have too broad a distribution to test
-
-def allLanguages : List ApplClassification :=
+def allLanguages : List LangApplProfile :=
   [english_appl, japanese_appl, korean_appl, luganda_appl, venda_appl, albanian_appl]
 
 -- Verification theorems
 
-/-- Six languages are classified. -/
+/-- Six languages classified. -/
 theorem six_languages : allLanguages.length = 6 := rfl
 
--- Low languages: diagnostics correctly predict NO high applicative
+/-- For each language, Pylkkänen's annotated classification is *derivable*
+    from the diagnostic results via the cluster-based classifier. The
+    classification isn't stipulated and verified against itself — it's
+    derived from the data and proved consistent with the analytical
+    conclusion. -/
+theorem all_classifications_derive_from_diagnostics :
+    allLanguages.all LangApplProfile.derivationConsistent = true := by decide
 
-theorem english_not_high : diagnosticPredictsHigh english_appl = false := rfl
-theorem japanese_not_high : diagnosticPredictsHigh japanese_appl = false := rfl
-theorem korean_not_high : diagnosticPredictsHigh korean_appl = false := rfl
+/-- Per-language verification of the derivation. -/
+theorem english_classification_derives :
+    classifyByDiagnostics english_appl.diagnostics = some .lowRecipient := by decide
 
--- High languages: diagnostics correctly predict high applicative
+theorem japanese_classification_derives :
+    classifyByDiagnostics japanese_appl.diagnostics = some .lowRecipient := by decide
 
-theorem luganda_is_high : diagnosticPredictsHigh luganda_appl = true := rfl
-theorem venda_is_high : diagnosticPredictsHigh venda_appl = true := rfl
-theorem albanian_is_high : diagnosticPredictsHigh albanian_appl = true := rfl
+theorem korean_classification_derives :
+    classifyByDiagnostics korean_appl.diagnostics = some .lowRecipient := by decide
 
-/-- The diagnostics are consistent with the annotated classification
-    for all six languages. -/
-theorem all_diagnostics_consistent :
-    allLanguages.all diagnosticsConsistent = true := by decide
+theorem luganda_classification_derives :
+    classifyByDiagnostics luganda_appl.diagnostics = some .high := by decide
+
+theorem venda_classification_derives :
+    classifyByDiagnostics venda_appl.diagnostics = some .high := by decide
+
+theorem albanian_classification_derives :
+    classifyByDiagnostics albanian_appl.diagnostics = some .high := by decide
 
 -- ============================================================================
 -- § 6: Bridge — Larson VP Shell ↔ Modern Voice/Appl
@@ -372,5 +418,271 @@ Formalizing the bieventive vs. θ-role contrast at the level of
 detail Pylkkänen offers requires event semantics infrastructure
 beyond this study file's scope; the substantive claim is recorded
 here for cross-reference. -/
+
+/-! ## §10. Hebrew possessor datives as low source applicatives
+    (@cite{pylkkanen-2008} Ch. 2 §2.2, Table 2.2 p. 60)
+
+The second major Chapter 2 contribution: possessor datives in Hebrew
+(and German, French, Korean) are *low source applicatives* — not double
+object constructions, not possessor-raising. The relation is reversed
+directionality: the dative argument is the *source* (former possessor)
+of the direct object, not the recipient.
+
+Pylkkänen's Table 2.2 contrasts the predictions of the *possessor-
+raising* analysis (Landau 1999, Ura 1996, Kubo 1992) with the *low
+applicative* analysis on six properties. The contrast is the paper's
+own argument — Pylkkänen explicitly compares the two analyses. -/
+
+/-- The two competing analyses of possessor dative constructions
+    (@cite{pylkkanen-2008} §2.2). -/
+inductive PossessorDativeAnalysis where
+  | possessorRaising  -- Landau 1999, Ura 1996, Kubo 1992
+  | lowSourceApplicative  -- Pylkkänen 2008
+  deriving DecidableEq, Repr
+
+/-- Property of possessor dative constructions tested in Table 2.2. -/
+inductive PossessorDativeProperty where
+  | pseudopossessiveInterpretation
+  | affectedness
+  | lackOfAgentiveInterpretation
+  | transitivityRestriction
+  | quantifierBindingIntoDirectObject
+  | inabilityToControl
+  deriving DecidableEq, Repr
+
+/-- Pylkkänen's Table 2.2 verdict: which analysis predicts each
+    property. The possessor-raising analysis predicts only some;
+    the low-applicative analysis predicts all. -/
+def PossessorDativeAnalysis.predicts :
+    PossessorDativeAnalysis → PossessorDativeProperty → Bool
+  | .possessorRaising, .pseudopossessiveInterpretation => true
+  | .possessorRaising, .affectedness => false
+  | .possessorRaising, .lackOfAgentiveInterpretation => false
+  | .possessorRaising, .transitivityRestriction => true
+  | .possessorRaising, .quantifierBindingIntoDirectObject => true  -- "contrast disappears with pragmatics"
+  | .possessorRaising, .inabilityToControl => true
+  | .lowSourceApplicative, _ => true  -- all six properties predicted
+
+/-- Pylkkänen's Table 2.2 conclusion: the low source applicative
+    analysis predicts every observed property; possessor raising
+    misses two (affectedness, lack of agentive interpretation). -/
+theorem low_applicative_strictly_better :
+    ∀ p, PossessorDativeAnalysis.predicts .lowSourceApplicative p = true ∧
+         (PossessorDativeAnalysis.predicts .possessorRaising .affectedness = false ∧
+          PossessorDativeAnalysis.predicts .possessorRaising
+            .lackOfAgentiveInterpretation = false) := by
+  intro p; refine ⟨?_, ?_, ?_⟩
+  · cases p <;> rfl
+  · rfl
+  · rfl
+
+/-- The Hebrew possessor dative example (§2.2, eq. 82a) is grammatical:
+    *Ha-yalda kilkela le-Dan et ha-radio* "The girl spoiled Dan's radio
+    on him." The dative `le-Dan` is the source (former possessor) of
+    the direct object `ha-radio`. -/
+def hebrewPossessorDativeExample : String :=
+  "Ha-yalda kilkela le-Dan et ha-radio."
+
+/-! ## §11. Japanese adversity passives: high vs low split
+    (@cite{pylkkanen-2008} Ch. 2 §2.3)
+
+Japanese adversity passives split into *gapped* (low source applicative)
+and *gapless* (high applicative) by Kubo 1992's diagnostics. Both have
+the *-rare-* morphology and the adversative meaning; they differ in
+whether the affected argument is structurally inside or outside VP. -/
+
+/-- The two types of Japanese adversity passive (@cite{pylkkanen-2008}
+    §2.3). -/
+inductive JapaneseAdversityType where
+  /-- Gapped: low source applicative. The affected DP is inside VP,
+      with a transfer-of-possession relation to the underlying object. -/
+  | gappedLowSource
+  /-- Gapless: high applicative. The affected DP is outside VP,
+      relating to the event as a whole. -/
+  | gaplessHigh
+  deriving DecidableEq, Repr
+
+/-- The classification of an adversity passive type into the standard
+    `ApplType` taxonomy. -/
+def JapaneseAdversityType.toApplType : JapaneseAdversityType → ApplType
+  | .gappedLowSource => .lowSource
+  | .gaplessHigh => .high
+
+theorem gapped_is_low_source :
+    JapaneseAdversityType.gappedLowSource.toApplType = .lowSource := rfl
+
+theorem gapless_is_high :
+    JapaneseAdversityType.gaplessHigh.toApplType = .high := rfl
+
+/-! ## §12. Spanish static low applicatives (@cite{cuervo-2003}, in
+    @cite{pylkkanen-2008} §2.1.4.2)
+
+Spanish has a third type of low applicative — a *static* possession
+relation, not transfer (eq. 78b of the book). This extends Pylkkänen's
+two-way split (recipient/source) into a three-way split (recipient/
+source/static), per Cuervo 2003. The static applicative combines with
+small clause predicates (as in `Pablo le admira la paciencia a
+Valeria` "Pablo admires Valeria's patience"), unlike English low
+recipients which require event-creating verbs. -/
+
+/-- Cuervo's three-way split of low applicatives. The third type
+    (`staticPossession`) is Pylkkänen's §2.1.4.2 extension; it is
+    *not* in the canonical `ApplType` taxonomy because it requires
+    static rather than dynamic semantics. -/
+inductive CuervoLowAppl where
+  | recipient    -- transfer TO (Pylkkänen)
+  | source       -- transfer FROM (Pylkkänen)
+  | staticPossession  -- static IN-THE-POSSESSION (Cuervo 2003, Spanish)
+  deriving DecidableEq, Repr
+
+/-- Both of Pylkkänen's two low types correspond to dynamic transfer;
+    Cuervo's third is static. -/
+def CuervoLowAppl.isDynamic : CuervoLowAppl → Bool
+  | .recipient | .source => true
+  | .staticPossession => false
+
+/-- The static low applicative is *not* one of Pylkkänen's two types
+    — it requires the event-vs-state generalization in §2.1.4.2. -/
+theorem static_not_dynamic :
+    CuervoLowAppl.staticPossession.isDynamic = false := rfl
+
+/-! ## §13. Causative typology (@cite{pylkkanen-2008} Table 3.1, §3.4)
+
+Pylkkänen's Table 3.1 (p. 87) is a 2 × 3 typology of causative
+constructions, parameterized by:
+
+- **Voice-bundling** (already formalized in §8):
+  bundled (English) vs. independent (Japanese, Finnish)
+- **Selection**: what the Cause head's complement is
+  (root, verb, or phase)
+
+The combination predicts cross-linguistic patterns about which
+verb classes can be causativized and which adverbs can take scope
+under Cause. -/
+
+/-- The selection axis of Pylkkänen's causative typology
+    (@cite{pylkkanen-2008} §3.4): what does Cause select for? -/
+inductive CauseSelection where
+  /-- Cause + √Root: causes a category-free root.
+      Example: English *zero-causative* (English `melt`). -/
+  | root
+  /-- Cause + v + √Root: causes a category-defined verb.
+      Examples: Bemba *-eshya* causative; Finnish *-tta* causative. -/
+  | verb
+  /-- Cause + (something at least as big as a phase, can include external args):
+      causativizes unergatives and transitives.
+      Examples: Luganda *-sa* causative; Venda *-is* causative. -/
+  | phase
+  deriving DecidableEq, Repr
+
+/-- A causative-typology cell: Voice-bundling × selection. The 6 cells
+    of Pylkkänen Table 3.1 each have specific predictions. -/
+structure CausativeCell where
+  bundling : VoiceBundlingChoice
+  selection : CauseSelection
+  deriving DecidableEq, Repr
+
+/-- Table 3.1 prediction (1): can a language have unaccusative causatives?
+    A bundled language can never have them (Cause forces Voice → external
+    arg). An independent language can, regardless of selection. -/
+def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : Bool :=
+  match c.bundling with
+  | .bundled => false
+  | .independent => true
+
+/-- Table 3.1 prediction (2): can the language causativize unergatives
+    and transitives? Only phase-selecting Cause can. -/
+def CausativeCell.permitsUnergativeAndTransitiveCausativization
+    (c : CausativeCell) : Bool :=
+  match c.selection with
+  | .phase => true
+  | .root | .verb => false
+
+/-- Table 3.1 prediction (3): can morphology intervene between root and
+    Cause? Root-selecting Cause: no morphology can intervene; verb-selecting
+    Cause: only non-external-argument morphology; phase-selecting Cause:
+    all kinds of morphology. -/
+def CausativeCell.morphologyCanInterveneBetweenRootAndCause
+    (c : CausativeCell) : Bool :=
+  match c.selection with
+  | .root => false
+  | .verb | .phase => true
+
+-- Six canonical instances (Pylkkänen Table 3.1, languages in column headers)
+
+/-- English zero-causative: Voice-bundling root-selecting. -/
+def englishZeroCausative : CausativeCell :=
+  { bundling := .bundled, selection := .root }
+
+/-- Japanese lexical causative: non-Voice-bundling root-selecting. -/
+def japaneseLexicalCausative : CausativeCell :=
+  { bundling := .independent, selection := .root }
+
+/-- Bemba *-eshya* causative: Voice-bundling verb-selecting. -/
+def bembaEshyaCausative : CausativeCell :=
+  { bundling := .bundled, selection := .verb }
+
+/-- Finnish *-tta* causative: non-Voice-bundling verb-selecting. -/
+def finnishTtaCausative : CausativeCell :=
+  { bundling := .independent, selection := .verb }
+
+/-- Luganda *-sa* causative: phase-selecting (bundling not specified
+    in the book — Pylkkänen notes this as not yet known). -/
+def lugandaSaCausative : CausativeCell :=
+  { bundling := .independent, selection := .phase }  -- bundling default; book says unknown
+
+/-- Venda *-is* causative: phase-selecting (bundling not specified). -/
+def vendaIsCausative : CausativeCell :=
+  { bundling := .independent, selection := .phase }
+
+/-- English zero-causative: bundled, root-selecting. Predictions:
+    no unaccusative causatives (Voice forces ext arg); no causativization
+    of unergatives/transitives; no morphology between root and Cause. -/
+theorem english_zero_predictions :
+    englishZeroCausative.permitsUnaccusativeCausative = false ∧
+    englishZeroCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    englishZeroCausative.morphologyCanInterveneBetweenRootAndCause = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Japanese lexical causative: independent, root-selecting. Predictions:
+    unaccusative causatives possible; no unergative/transitive causativization;
+    no morphology between root and Cause. -/
+theorem japanese_lexical_predictions :
+    japaneseLexicalCausative.permitsUnaccusativeCausative = true ∧
+    japaneseLexicalCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    japaneseLexicalCausative.morphologyCanInterveneBetweenRootAndCause = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Luganda phase-selecting causative: unaccusative, unergative, and
+    transitive causativization all possible; all morphology can intervene. -/
+theorem luganda_phase_predictions :
+    lugandaSaCausative.permitsUnaccusativeCausative = true ∧
+    lugandaSaCausative.permitsUnergativeAndTransitiveCausativization = true ∧
+    lugandaSaCausative.morphologyCanInterveneBetweenRootAndCause = true :=
+  ⟨rfl, rfl, rfl⟩
+
+/-! ## §14. Broader Voice taxonomy under Pylkkänen's view
+
+Pylkkänen's Voice = external-argument introducer. Per
+`Theories/Syntax/Minimalism/VoiceProjection.lean`, this is one of two
+competing views of Voice (the other being Collins/Storment's smuggling
+projection). Test Pylkkänen's view against the broader `VoiceHead`
+taxonomy in `Theories/Syntax/Minimalism/Voice.lean`: which Voice flavors
+*do* introduce external arguments? -/
+
+/-- Pylkkänen's view of Voice tested against the named flavors:
+    voiceAgent and voiceCauser introduce external arguments;
+    voiceMiddle (expletive), voiceImpersonal (impersonal), and
+    voiceAnticausative (non-thematic) do not. The Pylkkänen-coherent
+    Voice flavors are exactly the θ-assigning ones. -/
+theorem pylkkanen_view_partitions_voice_flavors :
+    Minimalism.IsExternalArgIntroducer Minimalism.voiceAgent ∧
+    Minimalism.IsExternalArgIntroducer Minimalism.voiceCauser ∧
+    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceMiddle ∧
+    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceImpersonal ∧
+    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceAnticausative ∧
+    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voicePassive := by
+  refine ⟨rfl, rfl, ?_, ?_, ?_, ?_⟩ <;>
+    (unfold Minimalism.IsExternalArgIntroducer; decide)
 
 end Pylkkanen2008

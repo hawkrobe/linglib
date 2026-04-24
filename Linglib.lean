@@ -1983,7 +1983,6 @@ import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Monotonicity
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Phenomena.Entailment.Studies.Montague1973
-import Linglib.Theories.Semantics.Entailment.PolarityBuilder
 import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
@@ -2413,3 +2412,5 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.
 import Linglib.Theories.Syntax.Minimalism.VoiceProjection
+-- Pylkkänen 2008 Table 2.1 cluster-based applicative classifier.
+import Linglib.Theories.Syntax.Minimalism.ApplicativeDiagnostics
