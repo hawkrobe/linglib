@@ -58,7 +58,7 @@ This study connects six modules:
   per-language indefinite entries witnessing the typology
 - `Fragments.German.ModalIndefinites`: bridge connecting the Degano
   & Aloni typology to the Alonso-Ovalle & Royer modal indefinite
-  classification for *irgend-*
+  classification for *irgendEntry-*
 -/
 
 set_option autoImplicit false
@@ -77,15 +77,22 @@ open Fragments.Latin.Indefinites
 open Fragments.Yakut.Indefinites
 open Fragments.Kannada.Indefinites
 
-/-- String substring test, used as a CONSERVATIVE proxy for morphological
-    containment. If two forms don't even share substrings, they certainly
-    don't share morphemes. This is sufficient for @cite{bubnov-2026}'s
-    negative result: Russian indefinite forms share no morphological material.
+/-- Substring check on `List Char`. Kernel-reducible (no `String.splitOn`). -/
+private def listContainsSub : List Char → List Char → Bool
+  | _,                  []          => true
+  | [],                 _ :: _      => false
+  | cs@(_ :: rest),     needle      => needle.isPrefixOf cs || listContainsSub rest needle
+
+/-- Conservative substring proxy for morphological containment. If two forms
+    don't share substrings, they certainly don't share morphemes — sufficient
+    for @cite{bubnov-2026}'s negative result that Russian indefinite forms
+    share no morphological material. Operates on `String.toList` so kernel
+    `decide` can reduce it (unlike `String.splitOn`).
 
     For the full Haspelmath implicational map with adjacency structure and
     contiguity checking, see `Phenomena.Polarity.Typology.IndefiniteFunction`. -/
 private def morphContains (s sub : String) : Bool :=
-  (s.splitOn sub).length > 1
+  listContainsSub s.toList sub.toList
 
 -- ============================================================================
 -- §1. Morphological Containment: Present in Case, Absent in Indefinites
@@ -102,7 +109,7 @@ private def morphContains (s sub : String) : Bool :=
 theorem russian_no_containment :
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false ∧
-    morphContains "koe-" "-nibud'" = false := by native_decide
+    morphContains "koe-" "-nibud'" = false := by decide
 
 /-- In case morphology, containment IS attested. In indefinites, it
     is NOT. This asymmetry supports @cite{bubnov-2026}'s claim that
@@ -112,7 +119,7 @@ theorem case_has_containment_indefinites_dont :
     (.acc : Core.Case) ≤ .gen ∧
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false :=
-  ⟨by decide, by decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- §2. Type (vi) is Contradictory — Derived from Team Semantics
@@ -181,7 +188,7 @@ theorem specificKnown_profile :
     IndefiniteSpecType.profileNS .specificKnown = false := ⟨rfl, rfl, rfl⟩
 
 /-- Type (vii) specific unknown: dep(v,x) ∧ var(∅,x) → only SU.
-    Rare: conjunctive requirement. Kannada *-oo* is canonical. -/
+    Rare: conjunctive requirement. Kannada *-ooEntry* is canonical. -/
 theorem specificUnknown_profile :
     IndefiniteSpecType.profileSK .specificUnknown = false ∧
     IndefiniteSpecType.profileSU .specificUnknown = true ∧
@@ -198,7 +205,7 @@ theorem specificUnknown_profile :
 -- Path 1 (extension from NS to the left, Figure 3):
 --   var(v,x) → var(∅,x) → no restriction
 --   (iii) non-specific → (iv) epistemic → (i) unmarked
---   Attested: German *irgend-* (@cite{aloni-port-2015}),
+--   Attested: German *irgendEntry-* (@cite{aloni-port-2015}),
 --             French *quelque*
 --
 -- Path 2 (constancy weakening):
@@ -265,108 +272,108 @@ def dekierAfterLoss : List LexEntry :=
 
 theorem dekier_initial_ab :
     spellout dekierInitial nsRank = some "A" ∧
-    spellout dekierInitial suRank = some "B" := by native_decide
+    spellout dekierInitial suRank = some "B" := by decide
 
 theorem dekier_after_loss_bb :
     spellout dekierAfterLoss nsRank = some "B" ∧
-    spellout dekierAfterLoss suRank = some "B" := by native_decide
+    spellout dekierAfterLoss suRank = some "B" := by decide
 
 -- ============================================================================
 -- §6. Bridge to Fragment Data
 -- ============================================================================
 
-/-- *-nibud'* distribution matches the non-specific semantic profile. -/
+/-- *-nibudEntry'* distribution matches the non-specific semantic profile. -/
 theorem nibud_matches_nonSpecific :
-    nibud.specType = .nonSpecific ∧
-    nibud.allowsSK = nibud.specType.profileSK ∧
-    nibud.allowsSU = nibud.specType.profileSU ∧
-    nibud.allowsNS = nibud.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    nibudEntry.specType = .nonSpecific ∧
+    nibudEntry.allowsSK = nibudEntry.specType.profileSK ∧
+    nibudEntry.allowsSU = nibudEntry.specType.profileSU ∧
+    nibudEntry.allowsNS = nibudEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- *-to* is typed as epistemic (var(∅,x)) per @cite{bubnov-2026} §7.
     Its actual distribution (SU only) is narrower than the epistemic
-    profile (SU + NS) because *-nibud'* blocks it for NS. -/
+    profile (SU + NS) because *-nibudEntry'* blocks it for NS. -/
 theorem to_is_epistemic :
-    to_.specType = .epistemic ∧
-    to_.allowsSU = true ∧
-    to_.allowsNS = false ∧
-    to_.specType.profileNS = true := ⟨rfl, rfl, rfl, rfl⟩
+    toEntry.specType = .epistemic ∧
+    toEntry.allowsSU = true ∧
+    toEntry.allowsNS = false ∧
+    toEntry.specType.profileNS = true := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- *koe-* distribution matches the specific-known semantic profile. -/
+/-- *koeEntry-* distribution matches the specific-known semantic profile. -/
 theorem koe_matches_specificKnown :
-    koe.specType = .specificKnown ∧
-    koe.allowsSK = koe.specType.profileSK ∧
-    koe.allowsSU = koe.specType.profileSU ∧
-    koe.allowsNS = koe.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    koeEntry.specType = .specificKnown ∧
+    koeEntry.allowsSK = koeEntry.specType.profileSK ∧
+    koeEntry.allowsSU = koeEntry.specType.profileSU ∧
+    koeEntry.allowsNS = koeEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Latin *ali-* distribution matches the epistemic semantic profile.
-    Unlike Russian *-to*, there is no competition: *-dam* only covers
-    SK, so *ali-* fills both SU and NS unblocked. -/
+/-- Latin *aliEntry-* distribution matches the epistemic semantic profile.
+    Unlike Russian *-to*, there is no competition: *-damEntry* only covers
+    SK, so *aliEntry-* fills both SU and NS unblocked. -/
 theorem ali_matches_epistemic :
-    ali.specType = .epistemic ∧
-    ali.allowsSK = ali.specType.profileSK ∧
-    ali.allowsSU = ali.specType.profileSU ∧
-    ali.allowsNS = ali.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    aliEntry.specType = .epistemic ∧
+    aliEntry.allowsSK = aliEntry.specType.profileSK ∧
+    aliEntry.allowsSU = aliEntry.specType.profileSU ∧
+    aliEntry.allowsNS = aliEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Yakut *-ere* distribution matches the specific profile. -/
+/-- Yakut *-ereEntry* distribution matches the specific profile. -/
 theorem ere_matches_specific :
-    ere.specType = .specific ∧
-    ere.allowsSK = ere.specType.profileSK ∧
-    ere.allowsSU = ere.specType.profileSU ∧
-    ere.allowsNS = ere.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    ereEntry.specType = .specific ∧
+    ereEntry.allowsSK = ereEntry.specType.profileSK ∧
+    ereEntry.allowsSU = ereEntry.specType.profileSU ∧
+    ereEntry.allowsNS = ereEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Kannada *-oo* is the canonical type (vii) specific unknown:
+/-- Kannada *-ooEntry* is the canonical type (vii) specific unknown:
     dep(v,x) ∧ var(∅,x). Rare conjunctive type. -/
 theorem oo_matches_specificUnknown :
-    oo.specType = .specificUnknown ∧
-    oo.allowsSK = oo.specType.profileSK ∧
-    oo.allowsSU = oo.specType.profileSU ∧
-    oo.allowsNS = oo.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    ooEntry.specType = .specificUnknown ∧
+    ooEntry.allowsSK = ooEntry.specType.profileSK ∧
+    ooEntry.allowsSU = ooEntry.specType.profileSU ∧
+    ooEntry.allowsNS = ooEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- English *some-* distribution matches the unmarked profile (type i). -/
 theorem some_matches_unmarked :
-    some_.specType = .unmarked ∧
-    some_.allowsSK = some_.specType.profileSK ∧
-    some_.allowsSU = some_.specType.profileSU ∧
-    some_.allowsNS = some_.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    someEntry.specType = .unmarked ∧
+    someEntry.allowsSK = someEntry.specType.profileSK ∧
+    someEntry.allowsSU = someEntry.specType.profileSU ∧
+    someEntry.allowsNS = someEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Yakut *-eme* distribution matches the non-specific profile (type iii). -/
+/-- Yakut *-emeEntry* distribution matches the non-specific profile (type iii). -/
 theorem eme_matches_nonSpecific :
-    eme.specType = .nonSpecific ∧
-    eme.allowsSK = eme.specType.profileSK ∧
-    eme.allowsSU = eme.specType.profileSU ∧
-    eme.allowsNS = eme.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    emeEntry.specType = .nonSpecific ∧
+    emeEntry.allowsSK = emeEntry.specType.profileSK ∧
+    emeEntry.allowsSU = emeEntry.specType.profileSU ∧
+    emeEntry.allowsNS = emeEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Latin *-dam* distribution matches the specific-known profile (type v). -/
+/-- Latin *-damEntry* distribution matches the specific-known profile (type v). -/
 theorem dam_matches_specificKnown :
-    dam.specType = .specificKnown ∧
-    dam.allowsSK = dam.specType.profileSK ∧
-    dam.allowsSU = dam.specType.profileSU ∧
-    dam.allowsNS = dam.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    damEntry.specType = .specificKnown ∧
+    damEntry.allowsSK = damEntry.specType.profileSK ∧
+    damEntry.allowsSU = damEntry.specType.profileSU ∧
+    damEntry.allowsNS = damEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Kannada *-aadaruu* distribution matches the non-specific profile. -/
+/-- Kannada *-aadaruuEntry* distribution matches the non-specific profile. -/
 theorem aadaruu_matches_nonSpecific :
-    aadaruu.specType = .nonSpecific ∧
-    aadaruu.allowsSK = aadaruu.specType.profileSK ∧
-    aadaruu.allowsSU = aadaruu.specType.profileSU ∧
-    aadaruu.allowsNS = aadaruu.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    aadaruuEntry.specType = .nonSpecific ∧
+    aadaruuEntry.allowsSK = aadaruuEntry.specType.profileSK ∧
+    aadaruuEntry.allowsSU = aadaruuEntry.specType.profileSU ∧
+    aadaruuEntry.allowsNS = aadaruuEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §7. Bridge to German Modal Indefinites
 -- ============================================================================
 
-/-- German *irgend-* is classified as type (iv) epistemic in the Degano
+/-- German *irgendEntry-* is classified as type (iv) epistemic in the Degano
     & Aloni typology, and as not-at-issue epistemic in the Alonso-Ovalle
     & Royer modal indefinite typology. These are compatible perspectives:
-    the modal analysis describes WHAT *irgend-* does (domain widening);
+    the modal analysis describes WHAT *irgendEntry-* does (domain widening);
     the team-semantic analysis describes its DISTRIBUTIONAL restriction
     (varying across epistemic alternatives).
 
-    @cite{bubnov-2026} §6: German *irgend-* instantiates the diachronic
+    @cite{bubnov-2026} §6: German *irgendEntry-* instantiates the diachronic
     path (iii) non-specific → (iv) epistemic (@cite{aloni-port-2015}). -/
 theorem irgend_compatible_classifications :
-    irgend.specType = .epistemic ∧
+    irgendEntry.specType = .epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasEpistemic := by
+    irgendeinEntry.hasFlavor .epistemic := by
   exact ⟨rfl, rfl, by decide⟩
 
 -- ============================================================================

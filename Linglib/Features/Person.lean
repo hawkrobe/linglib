@@ -92,6 +92,14 @@ def PersonLevel.toFeatures : PersonLevel → Features.Person.Features
   | .second => Features.Person.second
   | .third  => Features.Person.third
 
+/-- Convert `UD.Person` to `PersonLevel`. The UD `.zero` (impersonal)
+    case has no `PersonLevel` analogue; everything else is direct. -/
+def PersonLevel.ofUDPerson : UD.Person → Option PersonLevel
+  | .first  => some .first
+  | .second => some .second
+  | .third  => some .third
+  | .zero   => none
+
 end Features.Prominence
 
 namespace Features.Person

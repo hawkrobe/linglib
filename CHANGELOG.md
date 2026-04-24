@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.274] - 2026-04-23
+
+### Storment2026 mathlib-style refactor + cross-theory meta-bridges convention
+
+- **CLAUDE.md convention**: New "Cross-theory meta-bridges live in topic-named files, not study files" rule under Phenomena Grouping Principles. A study file formalizes the paper's own claims; cross-theory comparisons the paper doesn't make are the formalizer's synthesis and live in topic-named files (e.g. `ProtoRoles.lean`, not `DowtyDivergence.lean`). Audited wording with the existing chronological-dependency rule and the existing `*Bridge.lean` Theories convention.
+
+- **VerbCore↔smuggling bridge** (NEW `Theories/Interfaces/SyntaxSemantics/VerbSmuggling.lean`): promotes `derivedQI` / `voiceFor` / `hasComplement` as `VerbCore` methods. `voiceFor` consults `derivedUnaccusative` (which already reads `voiceType.assignsTheta`) so the chain is grounded in the deeper Voice-as-not-introducing-external-argument characterization, not the surface `unaccusative : Bool` annotation.
+
+- **Probing primitives** (NEW `Theories/Syntax/Minimalism/Probing/`): `DefectiveGoal.lean` formalizes Roberts 2010 eq (49) — goal features ⊊ probe features. `DefectiveCircumvention.lean` formalizes Storment 2025/2026 eq (59): four-outcome probing operation (`trackHigher`, `defaultAgreement`, `trackLower`, `featureClash`). Wired into Storment2026 §14: the Setswana-vs-English QI agreement contrast reduces to the `allowReprobe` parameter; English 1st/2nd person agent failure derives from feature clash.
+
+- **Inverse-voice family** (NEW `Theories/Syntax/Minimalism/Movement/InverseVoice.lean`): `InverseVoiceConstruction` schema unifying QI / LI / passive / dative shift / middles / causatives per Storment §4.3 + §6 + §7. Two canonical instances (`qiCanonical`, `liCanonical`) currently — passive/middle/dative-shift instances deferred until study files exist that need them (no premature architecture).
+
+- **Cross-theory meta-bridges** (NEW under `Phenomena/ArgumentStructure/Unaccusativity/`):
+  - `ProtoRoles.lean` — how Dowty proto-role profiles relate to QI-based unaccusativity. Documents the MoS divergence (proto-agent profile but QI-unaccusative). Was §7 of Storment2026; neither Dowty nor Storment makes the comparison.
+  - `VerbClasses.lean` — how Levin classes align with QI-based unaccusativity. ∀-quantified `decide` theorems over `alignedUnaccusatives`/`alignedNonUnaccusatives` lists; the §37.3 within-class split (whisper vs speak) is the fault line.
+  - `IslandSensitivity.lean` — bridges Storment 2026 (QI-licenses-MoS) with Lu-Pan-Degen 2025 (MoS islands are discourse-sourced). Compatibility, not contradiction: different operations.
+
+- **Storment2026.lean slimmed** from 697→412 LOC. 51 per-verb `rfl` theorems collapsed to 6 ∀-quantified `decide` theorems over `mosUnaccusatives`/`communicationUnergatives` lists. `qi_data_consistent`'s `native_decide` replaced with ∀-quantified `decide` over verb/datum pairs (zero `native_decide` in the file). §11 quote vs. quotative-operator distinction made explicit (Storment §3.5 + eq. 103). `derivedQI`/`voiceFor`/`hasComplement` removed in favor of the new VerbCore methods.
+
+- **Hallucination fixes** (`Phenomena/ArgumentStructure/Unaccusativity/Data.lean`):
+  - `qi_whisper_double_obj` (invented example) → `qi_warn_double_obj` using Storment eq (125) verbatim (`*"There is danger ahead," warned Mary John`). *Warn* is naturally ditransitive, isolating the transitivity constraint.
+  - Removed unused `qi_say`.
+
+- **Bibliography**: added verified entries `storment-2025` (Stony Brook PhD dissertation, *Projecting (Your) Voice: A Theory of Inversion and Defective Circumvention*, May 2025, advisor Bailyn) and `roberts-2010` (Ian G. Roberts, *Agreement and Head Movement: Clitics, Incorporation, and Defective Goals*, MIT Press, LIM #59).
+
 ## [0.230.273] - 2026-04-23
 
 ### O'Donnell 2015 fragment-lambda (Option B: CFG-instantiated)

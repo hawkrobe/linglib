@@ -46,7 +46,7 @@ namespace Deal2024
 
 open Features.Prominence (PersonLevel)
 open Minimalism (decomposePerson)
-open Minimalism.PConstraint (pccLicit strongGrammar ultraStrongGrammar
+open Minimalism.PConstraint (IsLicit strongGrammar ultraStrongGrammar
   weakGrammar meFirstGrammar)
 open Minimalism.CyclicAgree (activeResidue personSpec partialProbe)
 
@@ -293,37 +293,37 @@ theorem strong_entails_weak (io do_ : PersonLevel) :
 
 /-- Deal's Strong PCC matches P&Z's Strong PCC on all 9 cells. -/
 theorem strong_matches_pz (io do_ : PersonLevel) :
-    isLicit strong io do_ = pccLicit strongGrammar io do_ := by
-  cases io <;> cases do_ <;> rfl
+    isLicit strong io do_ = true ↔ IsLicit strongGrammar io do_ := by
+  cases io <;> cases do_ <;> decide
 
 /-- Deal's Weak PCC matches P&Z's Weak PCC on all 9 cells. -/
 theorem weak_matches_pz (io do_ : PersonLevel) :
-    isLicit weak io do_ = pccLicit weakGrammar io do_ := by
-  cases io <;> cases do_ <;> rfl
+    isLicit weak io do_ = true ↔ IsLicit weakGrammar io do_ := by
+  cases io <;> cases do_ <;> decide
 
 /-- Deal's Me-first PCC matches P&Z's Me-first PCC on all 9 cells. -/
 theorem mefirst_matches_pz (io do_ : PersonLevel) :
-    isLicit meFirst io do_ = pccLicit meFirstGrammar io do_ := by
-  cases io <;> cases do_ <;> rfl
+    isLicit meFirst io do_ = true ↔ IsLicit meFirstGrammar io do_ := by
+  cases io <;> cases do_ <;> decide
 
 /-- Strictly descending agrees with ultra-strong on 7 of 9 cells.
     All non-reflexive-SAP combinations match. -/
 theorem sd_matches_ultra_non_reflexive :
-    isLicit strictlyDescending .first .second = pccLicit ultraStrongGrammar .first .second ∧
-    isLicit strictlyDescending .first .third = pccLicit ultraStrongGrammar .first .third ∧
-    isLicit strictlyDescending .second .first = pccLicit ultraStrongGrammar .second .first ∧
-    isLicit strictlyDescending .second .third = pccLicit ultraStrongGrammar .second .third ∧
-    isLicit strictlyDescending .third .first = pccLicit ultraStrongGrammar .third .first ∧
-    isLicit strictlyDescending .third .second = pccLicit ultraStrongGrammar .third .second ∧
-    isLicit strictlyDescending .third .third = pccLicit ultraStrongGrammar .third .third :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    (isLicit strictlyDescending .first .second = true ↔ IsLicit ultraStrongGrammar .first .second) ∧
+    (isLicit strictlyDescending .first .third = true ↔ IsLicit ultraStrongGrammar .first .third) ∧
+    (isLicit strictlyDescending .second .first = true ↔ IsLicit ultraStrongGrammar .second .first) ∧
+    (isLicit strictlyDescending .second .third = true ↔ IsLicit ultraStrongGrammar .second .third) ∧
+    (isLicit strictlyDescending .third .first = true ↔ IsLicit ultraStrongGrammar .third .first) ∧
+    (isLicit strictlyDescending .third .second = true ↔ IsLicit ultraStrongGrammar .third .second) ∧
+    (isLicit strictlyDescending .third .third = true ↔ IsLicit ultraStrongGrammar .third .third) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Strictly descending diverges from ultra-strong on ⟨1,1⟩:
     Deal bans it (1P DO satisfies SAT:[SPKR]), P&Z allows it
     (P-Primacy rescues: 1P IO is [+author]). -/
 theorem sd_ultra_discrepancy_1_1 :
     isLicit strictlyDescending .first .first = false ∧
-    pccLicit ultraStrongGrammar .first .first = true := ⟨rfl, rfl⟩
+    IsLicit ultraStrongGrammar .first .first := ⟨rfl, by decide⟩
 
 /-- Strictly descending diverges from ultra-strong on ⟨2,2⟩:
     Deal allows it (2P lacks [SPKR]; narrowing requires [PART];
@@ -331,7 +331,7 @@ theorem sd_ultra_discrepancy_1_1 :
     lacks [+author] so no P-Primacy rescue). -/
 theorem sd_ultra_discrepancy_2_2 :
     isLicit strictlyDescending .second .second = true ∧
-    pccLicit ultraStrongGrammar .second .second = false := ⟨rfl, rfl⟩
+    ¬ IsLicit ultraStrongGrammar .second .second := ⟨rfl, by decide⟩
 
 -- ============================================================================
 -- § 15: Bridge to CyclicAgree (@cite{bejar-rezac-2009})

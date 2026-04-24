@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 
 /-!
 # Italian Modal Indefinite Fragment
@@ -8,10 +8,11 @@ Lexical entry for Italian modal indefinite *un qualsiasi*.
 
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Italian.ModalIndefinites
 
-open Core.ModalIndefinite
-open Core.Modality (ModalFlavor)
+open Features.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
@@ -33,16 +34,8 @@ def unQualsiasiEntry : ModalIndefiniteEntry where
   anchorConstraint := some .unrestricted
   source := "Chierchia 2013"
 
-
--- ════════════════════════════════════════════════════
--- § 2. Per-Entry Verification
--- ════════════════════════════════════════════════════
-
-theorem unQualsiasi_at_issue : unQualsiasiEntry.status = .atIssue := rfl
-theorem unQualsiasi_rc : unQualsiasiEntry.hasCircumstantial := by decide
-theorem unQualsiasi_no_epistemic : ¬ unQualsiasiEntry.hasEpistemic := by decide
-theorem unQualsiasi_not_ub : unQualsiasiEntry.upperBounded = false := rfl
-theorem unQualsiasi_unrestricted : unQualsiasiEntry.anchorConstraint = some .unrestricted := rfl
+/-- The Italian modal indefinite paradigm. -/
+def paradigm : List ModalIndefiniteEntry := [unQualsiasiEntry]
 
 
 end Fragments.Italian.ModalIndefinites

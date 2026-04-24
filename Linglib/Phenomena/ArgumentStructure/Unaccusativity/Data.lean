@@ -156,16 +156,6 @@ def qi_talk : DiagnosticDatum :=
   , result := .fails
   , sentence := "*\"Hello,\" talked Mary." }
 
-/-- `say` passes QI (@cite{storment-2026}, ex. 9). Its VerbEntry captures the
-    transitive indirect-speech frame ("John said that...") rather than the
-    QI frame, so it is not connected to the smuggling bridge. -/
-def qi_say : DiagnosticDatum :=
-  { verbForm := "say"
-  , diagnostic := .quotativeInversion
-  , result := .passes
-  , sentence := "\"I'm tired,\" said Mary."
-  , note := "say is a standard QI verb; its VerbEntry captures the transitive indirect-speech frame rather than the QI frame" }
-
 -- ════════════════════════════════════════════════════
 -- § Quotative Inversion — Additional English Data (@cite{storment-2026})
 -- ════════════════════════════════════════════════════
@@ -198,14 +188,16 @@ def qi_whisper_pronoun : DiagnosticDatum :=
   , note := "Pronominal subjects degrade QI — full DPs preferred postverbally (§3)" }
 
 /-- QI blocked with multiple DP arguments: the transitivity constraint
-    (@cite{storment-2026}, §5, ex. 125). T⁰ can license only one DP (the theme);
-    a second DP argument has no Case licenser. -/
-def qi_whisper_double_obj : DiagnosticDatum :=
-  { verbForm := "whisper"
+    (@cite{storment-2026}, §5, eq. 125). T⁰ can license only one DP (the theme);
+    a second DP argument has no Case licenser. *Warn* is naturally ditransitive
+    (`warn ⟨GOAL⟩ ⟨THEME⟩`), so the QI failure isolates the transitivity
+    constraint rather than confounding it with verb subcategorization. -/
+def qi_warn_double_obj : DiagnosticDatum :=
+  { verbForm := "warn"
   , diagnostic := .quotativeInversion
   , result := .fails
-  , sentence := "*\"I will go to school,\" whispered Mary the news."
-  , note := "QI blocked with two DP arguments — transitivity constraint from Case licensing (§5)" }
+  , sentence := "*\"There is danger ahead,\" warned Mary John."
+  , note := "QI blocked with two DP arguments — transitivity constraint from Case licensing (§5, eq. 125)" }
 
 -- ════════════════════════════════════════════════════
 -- § QI and LI: Distributional Contrasts (@cite{storment-2026}, §5–§6)
@@ -526,9 +518,9 @@ def allData : List DiagnosticDatum :=
   [ qi_whisper, qi_murmur, qi_shout, qi_cry, qi_scream
   , qi_mumble, qi_mutter, qi_shriek, qi_yell, qi_groan
   , qi_grumble, qi_hiss, qi_sigh, qi_whimper, qi_snap
-  , qi_speak, qi_talk, qi_say
+  , qi_speak, qi_talk
   , qi_whisper_transitive, qi_shout_heavysubj, qi_whisper_pronoun
-  , qi_whisper_double_obj
+  , qi_warn_double_obj
   , qi_setswana_botsa, qi_setswana_bua, qi_setswana_transitivity
   , there_arrive, there_run, there_sleep
   , loc_arrive, loc_whisper

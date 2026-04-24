@@ -35,7 +35,7 @@ Using data from 45 languages, @cite{dekier-2021} shows:
 
 4. **Prefix vs suffix**: spellout-driven movement produces suffixes
    (unary foot), subderivation produces prefixes (binary foot).
-   Russian *-nibud'* and *-to* are suffixes; *koe-* is a prefix.
+   Russian *-nibudEntry'* and *-to* are suffixes; *koeEntry-* is a prefix.
 
 ## Connection to linglib
 
@@ -145,7 +145,7 @@ def fullParadigms : List ParadigmEntry :=
    pLatin,
    pRussian, pLithuanian]
 
-theorem full_paradigm_count : fullParadigms.length = 20 := by native_decide
+theorem full_paradigm_count : fullParadigms.length = 20 := by decide
 
 /-- The paradigm-gap languages from Table 8 (6 languages). -/
 def gapParadigms : List ParadigmEntry :=
@@ -166,42 +166,42 @@ def englishLex : List LexEntry := [⟨2, "some-"⟩]
 theorem english_spellout :
     spellout englishLex nsRank = some "some-" ∧
     spellout englishLex suRank = some "some-" ∧
-    spellout englishLex skRank = some "some-" := by native_decide
+    spellout englishLex skRank = some "some-" := by decide
 
-/-- Yakut ABB: *-eme* at rank 0 (F₁P), *-ere* at rank 2 (F₃P).
-    Elsewhere gives *-eme* for NS, *-ere* covers SU and SK. -/
+/-- Yakut ABB: *-emeEntry* at rank 0 (F₁P), *-ereEntry* at rank 2 (F₃P).
+    Elsewhere gives *-emeEntry* for NS, *-ereEntry* covers SU and SK. -/
 def yakutLex : List LexEntry := [⟨0, "-eme"⟩, ⟨2, "-ere"⟩]
 
 theorem yakut_spellout :
     spellout yakutLex nsRank = some "-eme" ∧
     spellout yakutLex suRank = some "-ere" ∧
-    spellout yakutLex skRank = some "-ere" := by native_decide
+    spellout yakutLex skRank = some "-ere" := by decide
 
-/-- Latin AAB: *ali-* at rank 1 (F₂P), *-dam* at rank 2 (F₃P).
-    *ali-* covers NS and SU via Superset; *-dam* wins for SK
+/-- Latin AAB: *aliEntry-* at rank 1 (F₂P), *-damEntry* at rank 2 (F₃P).
+    *aliEntry-* covers NS and SU via Superset; *-damEntry* wins for SK
     via Elsewhere (closer match).
 
-    Note: the nanosyntactic derivation is complex — *ali-* is
-    a prefix (subderivation), *-dam* is a suffix (constituent
+    Note: the nanosyntactic derivation is complex — *aliEntry-* is
+    a prefix (subderivation), *-damEntry* is a suffix (constituent
     extraction). -/
 def latinLex : List LexEntry := [⟨1, "ali-"⟩, ⟨2, "-dam"⟩]
 
 theorem latin_spellout :
     spellout latinLex nsRank = some "ali-" ∧
     spellout latinLex suRank = some "ali-" ∧
-    spellout latinLex skRank = some "-dam" := by native_decide
+    spellout latinLex skRank = some "-dam" := by decide
 
 /-- Russian ABC: three entries, one per rank. Each layer gets its
     own exponent.
-    *-nibud'* ⇔ F₁P (suffix), *-to* ⇔ F₂P (suffix),
-    *koe-* ⇔ F₃P (prefix). -/
+    *-nibudEntry'* ⇔ F₁P (suffix), *-to* ⇔ F₂P (suffix),
+    *koeEntry-* ⇔ F₃P (prefix). -/
 def russianLex : List LexEntry :=
   [⟨0, "-nibud'"⟩, ⟨1, "-to"⟩, ⟨2, "koe-"⟩]
 
 theorem russian_spellout :
     spellout russianLex nsRank = some "-nibud'" ∧
     spellout russianLex suRank = some "-to" ∧
-    spellout russianLex skRank = some "koe-" := by native_decide
+    spellout russianLex skRank = some "koe-" := by decide
 
 /-- Lithuanian ABC: three entries at ranks 0, 1, 2.
     @cite{dekier-2021} Table 7. -/
@@ -211,28 +211,35 @@ def lithuanianLex : List LexEntry :=
 theorem lithuanian_spellout :
     spellout lithuanianLex nsRank = some "-nors" ∧
     spellout lithuanianLex suRank = some "kaž-" ∧
-    spellout lithuanianLex skRank = some "kai-" := by native_decide
+    spellout lithuanianLex skRank = some "kai-" := by decide
 
 -- ============================================================================
 -- §4. Syncretism Patterns — Verified
 -- ============================================================================
 
--- Patterns are COMPUTED from spellout results, not stipulated.
+/-! Patterns are COMPUTED from spellout results, not stipulated. We
+    derive the syncretism check from each Fragment file's canonical
+    `.form` data rather than restating the form strings here. Note:
+    Russian's Fragment form `"-нибудь (-nibud')"` differs from Dekier's
+    Table 7 transliteration `"-nibud'"`; `classifyTriple` only inspects
+    distinctness, so both classifications coincide as ABC. -/
 
 theorem english_is_aaa :
-    classifyTriple "some-" "some-" "some-" = .AAA := by native_decide
+    classifyTriple someEntry.form someEntry.form someEntry.form = .AAA := by decide
 
 theorem yakut_is_abb :
-    classifyTriple "-eme" "-ere" "-ere" = .ABB := by native_decide
+    classifyTriple emeEntry.form ereEntry.form ereEntry.form = .ABB := by decide
 
 theorem latin_is_aab :
-    classifyTriple "ali-" "ali-" "-dam" = .AAB := by native_decide
+    classifyTriple aliEntry.form aliEntry.form damEntry.form = .AAB := by decide
 
 theorem russian_is_abc :
-    classifyTriple "-nibud'" "-to" "koe-" = .ABC := by native_decide
+    classifyTriple nibudEntry.form toEntry.form koeEntry.form = .ABC := by decide
 
+/-- Lithuanian forms have no Fragment file yet (no `Fragments.Lithuanian.Indefinites`),
+    so the strings stay inline here. -/
 theorem lithuanian_is_abc :
-    classifyTriple "-nors" "kaž-" "kai-" = .ABC := by native_decide
+    classifyTriple "-nors" "kaž-" "kai-" = .ABC := by decide
 
 -- ============================================================================
 -- §5. *ABA Impossibility
@@ -255,12 +262,12 @@ theorem no_aba_in_sample :
     abaViolation latinLex nsRank suRank skRank = false ∧
     abaViolation russianLex nsRank suRank skRank = false ∧
     abaViolation lithuanianLex nsRank suRank skRank = false := by
-  native_decide
+  decide
 
 /-- The ABA pattern itself is unattested cross-linguistically.
     This aligns with the *ABA generalization of @cite{bobaljik-2012}. -/
 theorem aba_unattested_pattern :
-    ¬ (classifyTriple "A" "B" "A").IsAttested := by native_decide
+    ¬ (classifyTriple "A" "B" "A").IsAttested := by decide
 
 -- ============================================================================
 -- §6. Paradigm Gaps
@@ -284,7 +291,7 @@ def kannadaLex : List LexEntry := [⟨0, "-aadaruu"⟩, ⟨1, "-oo"⟩]
 theorem kannada_gap :
     spellout kannadaLex nsRank = some "-aadaruu" ∧
     spellout kannadaLex suRank = some "-oo" ∧
-    spellout kannadaLex skRank = none := by native_decide
+    spellout kannadaLex skRank = none := by decide
 
 -- Chinese (A--): single entry at rank 0
 def chineseLex : List LexEntry := [⟨0, "wh-pron"⟩]
@@ -292,7 +299,7 @@ def chineseLex : List LexEntry := [⟨0, "wh-pron"⟩]
 theorem chinese_gap :
     spellout chineseLex nsRank = some "wh-pron" ∧
     spellout chineseLex suRank = none ∧
-    spellout chineseLex skRank = none := by native_decide
+    spellout chineseLex skRank = none := by decide
 
 -- Empty lexicon (---): Swahili, Irish, Filipino
 def emptyLex : List LexEntry := []
@@ -300,7 +307,7 @@ def emptyLex : List LexEntry := []
 theorem empty_gap :
     spellout emptyLex nsRank = none ∧
     spellout emptyLex suRank = none ∧
-    spellout emptyLex skRank = none := by native_decide
+    spellout emptyLex skRank = none := by decide
 
 /-- Consequence: if NS (rank 0) has no form, nothing does. -/
 theorem no_ns_implies_no_su_sk (lex : List LexEntry)
@@ -337,9 +344,9 @@ theorem no_su_implies_no_sk (lex : List LexEntry)
       left branch. Result: marker + stem.
 
     In Russian:
-    - *-nibud'* (F₁P, rank 0): suffix — stem rolls up past F₁
+    - *-nibudEntry'* (F₁P, rank 0): suffix — stem rolls up past F₁
     - *-to* (F₂P, rank 1): suffix — stem rolls up past F₂
-    - *koe-* (F₃P, rank 2): prefix — subderived [F₁, F₂, F₃]
+    - *koeEntry-* (F₃P, rank 2): prefix — subderived [F₁, F₂, F₃]
 
     Prediction: in a language with both prefixes and suffixes,
     the morphological boundary (prefix/suffix break) correlates with
@@ -364,7 +371,7 @@ theorem russian_suffix_prefix_split :
     russianMarkers.all (fun m =>
       match m.morphType with
       | .suffix => m.rank < 2
-      | .prefix => m.rank ≥ 2) = true := by native_decide
+      | .prefix => m.rank ≥ 2) = true := by decide
 
 -- ============================================================================
 -- §8. The Hierarchy Direction
@@ -386,7 +393,7 @@ theorem russian_suffix_prefix_split :
 
 /-- The hierarchy respects the rank ordering. -/
 theorem hierarchy_ordering : nsRank < suRank ∧ suRank < skRank :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- §9. Bridge to Fragment Data
@@ -400,45 +407,45 @@ theorem hierarchy_ordering : nsRank < suRank ∧ suRank < skRank :=
 /-- English *some-* fills all three functions — consistent with a
     single nanosyntactic entry at rank 2 (F₃P). -/
 theorem english_bridge :
-    some_.allowsNS = true ∧ some_.allowsSU = true ∧
-    some_.allowsSK = true ∧
+    someEntry.allowsNS = true ∧ someEntry.allowsSU = true ∧
+    someEntry.allowsSK = true ∧
     spellout englishLex nsRank = some "some-" ∧
     spellout englishLex suRank = some "some-" ∧
     spellout englishLex skRank = some "some-" := ⟨rfl, rfl, rfl,
-  by native_decide, by native_decide, by native_decide⟩
+  by decide, by decide, by decide⟩
 
 /-- Russian paradigm: three fragments match three spellout results. -/
 theorem russian_bridge :
-    nibud.allowsNS = true ∧ to_.allowsSU = true ∧ koe.allowsSK = true ∧
+    nibudEntry.allowsNS = true ∧ toEntry.allowsSU = true ∧ koeEntry.allowsSK = true ∧
     spellout russianLex nsRank = some "-nibud'" ∧
     spellout russianLex suRank = some "-to" ∧
     spellout russianLex skRank = some "koe-" := ⟨rfl, rfl, rfl,
-  by native_decide, by native_decide, by native_decide⟩
+  by decide, by decide, by decide⟩
 
 /-- Yakut paradigm: two fragments match two spellout results. -/
 theorem yakut_bridge :
-    eme.allowsNS = true ∧ ere.allowsSK = true ∧ ere.allowsSU = true ∧
+    emeEntry.allowsNS = true ∧ ereEntry.allowsSK = true ∧ ereEntry.allowsSU = true ∧
     spellout yakutLex nsRank = some "-eme" ∧
     spellout yakutLex suRank = some "-ere" ∧
     spellout yakutLex skRank = some "-ere" := ⟨rfl, rfl, rfl,
-  by native_decide, by native_decide, by native_decide⟩
+  by decide, by decide, by decide⟩
 
 /-- Latin paradigm: two fragments match two spellout results. -/
 theorem latin_bridge :
-    ali.allowsNS = true ∧ ali.allowsSU = true ∧ dam.allowsSK = true ∧
+    aliEntry.allowsNS = true ∧ aliEntry.allowsSU = true ∧ damEntry.allowsSK = true ∧
     spellout latinLex nsRank = some "ali-" ∧
     spellout latinLex suRank = some "ali-" ∧
     spellout latinLex skRank = some "-dam" := ⟨rfl, rfl, rfl,
-  by native_decide, by native_decide, by native_decide⟩
+  by decide, by decide, by decide⟩
 
 /-- Kannada: the SK gap in the nanosyntactic model aligns with the
     absence of a SK-covering form in the fragment data. -/
 theorem kannada_bridge :
-    aadaruu.allowsNS = true ∧ oo.allowsSU = true ∧
+    aadaruuEntry.allowsNS = true ∧ ooEntry.allowsSU = true ∧
     spellout kannadaLex nsRank = some "-aadaruu" ∧
     spellout kannadaLex suRank = some "-oo" ∧
     spellout kannadaLex skRank = none := ⟨rfl, rfl,
-  by native_decide, by native_decide, by native_decide⟩
+  by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- §10. ParadigmEntry ↔ Spellout Consistency
@@ -451,37 +458,37 @@ theorem kannada_bridge :
 theorem pEnglish_matches_spellout :
     pEnglish.nsForm = spellout englishLex nsRank ∧
     pEnglish.suForm = spellout englishLex suRank ∧
-    pEnglish.skForm = spellout englishLex skRank := by native_decide
+    pEnglish.skForm = spellout englishLex skRank := by decide
 
 theorem pYakut_matches_spellout :
     pYakut.nsForm = spellout yakutLex nsRank ∧
     pYakut.suForm = spellout yakutLex suRank ∧
-    pYakut.skForm = spellout yakutLex skRank := by native_decide
+    pYakut.skForm = spellout yakutLex skRank := by decide
 
 theorem pLatin_matches_spellout :
     pLatin.nsForm = spellout latinLex nsRank ∧
     pLatin.suForm = spellout latinLex suRank ∧
-    pLatin.skForm = spellout latinLex skRank := by native_decide
+    pLatin.skForm = spellout latinLex skRank := by decide
 
 theorem pRussian_matches_spellout :
     pRussian.nsForm = spellout russianLex nsRank ∧
     pRussian.suForm = spellout russianLex suRank ∧
-    pRussian.skForm = spellout russianLex skRank := by native_decide
+    pRussian.skForm = spellout russianLex skRank := by decide
 
 theorem pLithuanian_matches_spellout :
     pLithuanian.nsForm = spellout lithuanianLex nsRank ∧
     pLithuanian.suForm = spellout lithuanianLex suRank ∧
-    pLithuanian.skForm = spellout lithuanianLex skRank := by native_decide
+    pLithuanian.skForm = spellout lithuanianLex skRank := by decide
 
 theorem pKannada_matches_spellout :
     pKannada.nsForm = spellout kannadaLex nsRank ∧
     pKannada.suForm = spellout kannadaLex suRank ∧
-    pKannada.skForm = spellout kannadaLex skRank := by native_decide
+    pKannada.skForm = spellout kannadaLex skRank := by decide
 
 theorem pChinese_matches_spellout :
     pChinese.nsForm = spellout chineseLex nsRank ∧
     pChinese.suForm = spellout chineseLex suRank ∧
-    pChinese.skForm = spellout chineseLex skRank := by native_decide
+    pChinese.skForm = spellout chineseLex skRank := by decide
 
 -- ============================================================================
 -- §11. The 45-Language Sample
@@ -506,7 +513,7 @@ theorem sample_no_aba :
     fullParadigms.all (fun p =>
       match p.nsForm, p.suForm, p.skForm with
       | some ns, some su, some sk => decide (classifyTriple ns su sk).IsAttested
-      | _, _, _ => true) = true := by native_decide
+      | _, _, _ => true) = true := by decide
 
 /-- All paradigm-gap languages have gaps at the TOP of the hierarchy,
     consistent with the monotonicity prediction. -/
@@ -515,6 +522,6 @@ theorem gaps_at_top :
       -- if SK is present, SU must be present
       (p.skForm.isSome → p.suForm.isSome) ∧
       -- if SU is present, NS must be present
-      (p.suForm.isSome → p.nsForm.isSome)) = true := by native_decide
+      (p.suForm.isSome → p.nsForm.isSome)) = true := by decide
 
 end Dekier2021

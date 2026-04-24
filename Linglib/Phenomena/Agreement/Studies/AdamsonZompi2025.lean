@@ -55,8 +55,8 @@ namespace AdamsonZompi2025
 
 open Features.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
-open Minimalism.PConstraint (PCCGrammar pccLicit weakGrammar strongGrammar
-  isInherentlyProximate)
+open Minimalism.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
+  IsInherentlyProximate)
 
 -- ============================================================================
 -- § 1: Dual Person Features

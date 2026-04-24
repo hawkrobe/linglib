@@ -80,7 +80,7 @@ import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Modality.TemporalAxes
@@ -2400,3 +2400,13 @@ import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdSemantics
+-- Storment2026 mathlib-style refactor: VerbCore↔smuggling bridge,
+-- Probing primitives (Roberts 2010, Storment 2025), InverseVoice family,
+-- and three meta-bridges in Unaccusativity/.
+import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
+import Linglib.Theories.Syntax.Minimalism.Probing.DefectiveGoal
+import Linglib.Theories.Syntax.Minimalism.Probing.DefectiveCircumvention
+import Linglib.Theories.Syntax.Minimalism.Movement.InverseVoice
+import Linglib.Phenomena.ArgumentStructure.Unaccusativity.ProtoRoles
+import Linglib.Phenomena.ArgumentStructure.Unaccusativity.VerbClasses
+import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity

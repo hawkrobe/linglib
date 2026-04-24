@@ -8,6 +8,11 @@ Framework-agnostic types for recording cross-linguistic properties of modal
 indefinites — indefinite determiners/DPs that conventionally encode a modal
 component (e.g., Chuj *yalnhej*, Spanish *algún*, German *irgendein*).
 
+Sibling of `Features/IndefiniteType.lean`: that file classifies indefinites
+by Degano & Aloni's variation/constancy types (Haspelmath's NS/SU/SK map);
+this file classifies modal indefinites by Alonso-Ovalle & Royer's three
+dimensions (status × content × upper-boundedness).
+
 ## Three Dimensions of Variation
 
 Following @cite{alonso-ovalle-royer-2024}:
@@ -18,7 +23,9 @@ Following @cite{alonso-ovalle-royer-2024}:
 
 -/
 
-namespace Core.ModalIndefinite
+set_option autoImplicit false
+
+namespace Features.ModalIndefinite
 
 open Core.Modality (ModalFlavor)
 
@@ -126,17 +133,13 @@ structure ModalIndefiniteEntry where
   source : String := ""
   deriving Repr
 
-def ModalIndefiniteEntry.hasEpistemic (e : ModalIndefiniteEntry) : Prop :=
-  .epistemic ∈ e.flavors
+/-- Whether the entry's modal component supports a given flavor. Generic
+    over `ModalFlavor` rather than cherry-picking named projections. -/
+def ModalIndefiniteEntry.hasFlavor (e : ModalIndefiniteEntry) (f : ModalFlavor) : Prop :=
+  f ∈ e.flavors
 
-instance (e : ModalIndefiniteEntry) : Decidable e.hasEpistemic :=
-  inferInstanceAs (Decidable (_ ∈ _))
-
-def ModalIndefiniteEntry.hasCircumstantial (e : ModalIndefiniteEntry) : Prop :=
-  .circumstantial ∈ e.flavors
-
-instance (e : ModalIndefiniteEntry) : Decidable e.hasCircumstantial :=
+instance (e : ModalIndefiniteEntry) (f : ModalFlavor) : Decidable (e.hasFlavor f) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
 
-end Core.ModalIndefinite
+end Features.ModalIndefinite

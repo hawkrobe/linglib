@@ -1,4 +1,5 @@
 import Mathlib.Order.Nat
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Prominence Scales and Differential Argument Marking @cite{just-2024} @cite{haspelmath-2021}
@@ -221,7 +222,7 @@ inductive PersonLevel where
   | first
   | second
   | third
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Numeric rank on the person scale: 1st (2) > 2nd (1) > 3rd (0). -/
 def PersonLevel.rank : PersonLevel → Nat

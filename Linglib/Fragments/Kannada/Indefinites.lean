@@ -21,25 +21,31 @@ open Features.IndefiniteType
 /-- Kannada *-oo*: specific unknown (type vii).
     D&A semantics: dep(v,x) ∧ var(∅,x). Rare conjunctive type.
     @cite{haspelmath-1997}, @cite{degano-aloni-2025}. -/
-def oo : IndefiniteEntry where
+def ooEntry : IndefiniteEntry where
   language := "Kannada"
   form := "-oo"
   gloss := "some (specific unknown)"
   specType := .specificUnknown
-  allowsSK := false; allowsSU := true; allowsNS := false
+  allowsSK := false
+  allowsSU := true
+  allowsNS := false
   source := "Haspelmath 1997, Degano & Aloni 2025"
 
 /-- Kannada *-aadaruu*: non-specific.
     D&A type (iii): var(v,x). -/
-def aadaruu : IndefiniteEntry where
+def aadaruuEntry : IndefiniteEntry where
   language := "Kannada"
   form := "-aadaruu"
   gloss := "some (non-specific)"
   specType := .nonSpecific
-  allowsSK := false; allowsSU := false; allowsNS := true
+  allowsSK := false
+  allowsSU := false
+  allowsNS := true
   source := "Haspelmath 1997"
 
-theorem oo_consistent : oo.distributionConsistent = true := rfl
-theorem aadaruu_consistent : aadaruu.distributionConsistent = true := rfl
+/-- The Kannada indefinite paradigm: SK gap, NS + SU only. -/
+def paradigm : List IndefiniteEntry := [ooEntry, aadaruuEntry]
+
+theorem paradigm_consistent : paradigm.all (·.distributionConsistent) := by decide
 
 end Fragments.Kannada.Indefinites

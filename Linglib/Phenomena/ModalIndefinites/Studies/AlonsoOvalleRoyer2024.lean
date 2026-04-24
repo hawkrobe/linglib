@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Phenomena.Causation.Studies.Coon2019
@@ -67,7 +67,7 @@ speech event despite intervening projections.
 namespace AlonsoOvalleRoyer2024
 
 open Core.Modality (ModalFlavor)
-open Core.ModalIndefinite
+open Features.ModalIndefinite
 open Semantics.Modality.EventRelativity
 open Fragments.Chuj.ModalIndefinites
 open Fragments.Spanish.ModalIndefinites
@@ -122,7 +122,7 @@ epistemic and random choice flavors. This is the core empirical
 contribution of @cite{alonso-ovalle-royer-2024}. -/
 theorem yalnhej_unique_profile :
     (allEntries.filter (λ e =>
-      e.status == .atIssue && decide e.hasEpistemic && decide e.hasCircumstantial)).length = 1 := rfl
+      e.status == .atIssue && decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 1 := rfl
 
 
 -- ════════════════════════════════════════════════════
@@ -168,7 +168,7 @@ theorem at_issue_iff_anchored :
 event anchoring (speech acts lack normative content). -/
 theorem volitional_blocks_epistemic :
     unoCualquieraEntry.anchorConstraint = some .volitionalOnly ∧
-    ¬ unoCualquieraEntry.hasEpistemic := ⟨rfl, by decide⟩
+    ¬ unoCualquieraEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
 
 /-- Unrestricted anchor constraint is necessary but not sufficient for
 epistemic: *yalnhej* gets epistemic because f is defined for the
@@ -177,11 +177,11 @@ yet only have circumstantial (their lexical semantics restricts to
 indiscriminacy/FC readings). -/
 theorem unrestricted_with_epistemic :
     yalnhejEntry.anchorConstraint = some .unrestricted ∧
-    yalnhejEntry.hasEpistemic := ⟨rfl, by decide⟩
+    yalnhejEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
 
 theorem unrestricted_without_epistemic :
     nimporteQuelEntry.anchorConstraint = some .unrestricted ∧
-    ¬ nimporteQuelEntry.hasEpistemic := ⟨rfl, by decide⟩
+    ¬ nimporteQuelEntry.hasFlavor .epistemic := ⟨rfl, by decide⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -406,20 +406,20 @@ theorem yalnhej_nonmaximal :
 tolerate more than one modal flavour. -/
 theorem multi_flavor_items :
     (allEntries.filter (λ e =>
-      decide e.hasEpistemic && decide e.hasCircumstantial)).length = 2 := rfl
+      decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 2 := rfl
 
 /-- Epistemic-only items: *algún* conveys only speaker ignorance
 (§6.2, example 118). -/
 theorem epistemic_only_items :
     (allEntries.filter (λ e =>
-      decide e.hasEpistemic && !decide e.hasCircumstantial)).length = 1 := rfl
+      decide (e.hasFlavor .epistemic) && !decide (e.hasFlavor .circumstantial))).length = 1 := rfl
 
 /-- RC-only items: *uno cualquiera*, *n'importe quel*, *un qualsiasi*,
 *komon* convey only random choice / indiscriminacy
 (§6.2, examples 119–121). -/
 theorem rc_only_items :
     (allEntries.filter (λ e =>
-      !decide e.hasEpistemic && decide e.hasCircumstantial)).length = 4 := rfl
+      !decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 4 := rfl
 
 
 -- ════════════════════════════════════════════════════
@@ -504,6 +504,236 @@ explaining the ambiguity of *yalnhej* under imperatives. -/
 theorem harmonic_neq_nonharmonic :
     EventBinder.vpEvent.availableFlavors ≠
     EventBinder.speechAct.availableFlavors := by decide
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Part IV: Worked Examples — Book and Card Scenarios
+-- ════════════════════════════════════════════════════════════════
+
+/-! Concrete model-theoretic witnesses for the typological claims of
+Part I. These instantiate `Theories/Semantics/Modality/ModalIndefinites.lean`
+on small finite domains to demonstrate (a) non-maximality, (b) the
+upper-bounded vs. non-upper-bounded contrast, and (c) the harmonic
+vs. non-harmonic anchoring distinction. The toy domains live here
+in the study file (per CLAUDE.md: examples that name a paper's analyses
+belong with the paper, not in the abstract theory file). -/
+
+open Semantics.Modality.ModalIndefinites
+
+
+-- ════════════════════════════════════════════════════
+-- § 13. Book Scenario: Non-Maximality and Upper-Boundedness
+-- ════════════════════════════════════════════════════
+
+/-- Three books for testing the modal indefinite semantics. -/
+inductive Book where | a | b | c
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Three possible worlds varying in which books are available. -/
+inductive BookWorld where
+  | abc   -- all three available
+  | ab    -- only a, b available
+  | ac    -- only a, c available
+  deriving DecidableEq, Repr, Inhabited
+
+instance : Fintype BookWorld where
+  elems := {.abc, .ab, .ac}
+  complete := λ w => by cases w <;> decide
+
+private def allBooks : List Book := [.a, .b, .c]
+private def allBW : List BookWorld := [.abc, .ab, .ac]
+
+/-- "is a book": always true for our domain. -/
+private def isBook : Book → BookWorld → Prop := λ _ _ => True
+
+instance (book : Book) : DecidablePred (isBook book) := fun _ => instDecidableTrue
+
+/-- "is available": varies by world. -/
+private def isAvailable : Book → BookWorld → Prop
+  | .a, _ => True            -- book a always available
+  | .b, .abc => True
+  | .b, .ab => True
+  | .b, .ac => False
+  | .c, .abc => True
+  | .c, .ab => False
+  | .c, .ac => True
+
+instance : ∀ (book : Book), DecidablePred (isAvailable book)
+  | .a, _ => instDecidableTrue
+  | .b, .abc => instDecidableTrue
+  | .b, .ab => instDecidableTrue
+  | .b, .ac => instDecidableFalse
+  | .c, .abc => instDecidableTrue
+  | .c, .ab => instDecidableFalse
+  | .c, .ac => instDecidableTrue
+
+/-- A speech event and a described event. -/
+inductive SpeechOrDescribed where | speech | described
+  deriving DecidableEq, Repr
+
+/-- Epistemic anchoring: the speaker considers all three worlds possible. -/
+private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
+  λ _ _ => []  -- empty background → all worlds accessible
+
+/-- "Yalnhej bought a book" in world abc:
+    ∃x[book(x) ∧ avail(x)] ∧ ∀y[book(y) → ◇_{EPI}(avail(y))]
+    Every book is available in some accessible world. -/
+theorem yalnhej_book_abc :
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
+  decide
+
+/-- Not upper-bounded: in world abc, all three books ARE available,
+    yet the MI denotation holds. The anti-singleton condition fails
+    (all books satisfy the scope), showing yalnhej is non-UB. -/
+theorem yalnhej_not_upper_bounded_abc :
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
+    ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
+  refine ⟨?_, ?_⟩
+  · decide
+  · decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 14. Non-Maximality (A-@cite{alonso-ovalle-royer-2024}, §3.2.4)
+-- ════════════════════════════════════════════════════
+
+/-! Yalnhej is compatible with partial-domain scenarios: the speaker
+can felicitously use *yalnhej* even when not all P are Q. This
+distinguishes it from maximal free relatives (*whatever*), which
+require every domain member to satisfy the scope. Unlike
+upper-boundedness (which blocks ∀P→Q), non-maximality is about
+COMPATIBILITY with ¬∀P→Q — a weaker property.
+
+We demonstrate non-maximality using the 3-book model: in world `ab`
+(books a,b available but NOT c), the MI denotation still holds because
+every book is available in SOME accessible world, even though not every
+book is available in the actual world. -/
+
+/-- MI holds in world ab where book c is NOT available.
+    The existential component (∃x P∧Q) holds (book a is available).
+    The modal component (∀y P→◇Q) holds (each book is available
+    in some accessible world). Crucially, ¬∀y P→Q(y)(ab): book c
+    is not available in ab. This shows yalnhej is compatible with
+    not-all-P-being-Q — non-maximality. -/
+theorem yalnhej_nonmaximal_ab :
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab := by
+  decide
+
+/-- Three-way contrast: maximality vs yalnhej vs *algún*.
+    In world abc (all books available): MI holds + UB fails.
+    In world ab (not all available): MI holds + UB holds.
+    A maximal item (*whatever*) would require all books available
+    (fail in ab). *Algún* (UB) would require not-all (fail in abc).
+    *Yalnhej* (non-UB) succeeds in BOTH. -/
+theorem yalnhej_three_way_contrast :
+    -- yalnhej OK in abc (all available)
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
+    -- yalnhej OK in ab (not all available) — non-maximal
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab ∧
+    -- UB fails in abc (all satisfy scope → anti-singleton violated)
+    ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 15. Card Scenario: Harmonic Interpretations (A-@cite{alonso-ovalle-royer-2024}, §4.3)
+-- ════════════════════════════════════════════════════
+
+/-! When a modal indefinite occurs under an external modal (imperative,
+deontic, attitude verb), the MI's anchoring event can be CO-INDEXED
+with the external modal's event. This "harmonic" configuration
+gives "any X is fine" readings — the MI's modal domain aligns with
+the embedding modal's domain.
+
+Non-harmonic: the MI's anchor is independent of the external modal.
+  "Grab yalnhej card" = grab a random card (MI anchors to described event).
+Harmonic: the MI's anchor is co-indexed with the imperative/deontic event.
+  "Grab yalnhej card" = any card is fine (MI anchors to imperative event).
+
+We model this with a card-grabbing scenario: three cards, worlds varying
+in which cards are grabbable, and two event types (local vs imperative). -/
+
+/-- Three cards for testing harmonic readings. -/
+inductive Card where | c1 | c2 | c3
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Three worlds varying in which cards are grabbable. -/
+inductive CardWorld where
+  | all    -- all three grabbable
+  | only1  -- only c1 grabbable
+  | only2  -- only c2 grabbable
+  deriving DecidableEq, Repr, Inhabited
+
+private def allCards : List Card := [.c1, .c2, .c3]
+private def allCW : List CardWorld := [.all, .only1, .only2]
+
+/-- "is a card": always true in our domain. -/
+private def isCard : Card → CardWorld → Prop := λ _ _ => True
+
+instance (c : Card) : DecidablePred (isCard c) := fun _ => instDecidableTrue
+
+/-- "can grab": which cards are grabbable in which worlds. -/
+private def canGrab : Card → CardWorld → Prop
+  | .c1, .all   => True
+  | .c1, .only1 => True
+  | .c1, .only2 => False
+  | .c2, .all   => True
+  | .c2, .only1 => False
+  | .c2, .only2 => True
+  | .c3, .all   => True
+  | .c3, .only1 => False
+  | .c3, .only2 => False
+
+instance : ∀ (c : Card), DecidablePred (canGrab c)
+  | .c1, .all   => instDecidableTrue
+  | .c1, .only1 => instDecidableTrue
+  | .c1, .only2 => instDecidableFalse
+  | .c2, .all   => instDecidableTrue
+  | .c2, .only1 => instDecidableFalse
+  | .c2, .only2 => instDecidableTrue
+  | .c3, .all   => instDecidableTrue
+  | .c3, .only1 => instDecidableFalse
+  | .c3, .only2 => instDecidableFalse
+
+/-- Three event types: speech, local (described), imperative. -/
+inductive GrabEvent where | speech | local | imperative
+  deriving DecidableEq, Repr
+
+/-- Anchoring function for the card scenario.
+    - Speech event: empty background (all worlds accessible).
+    - Local event: restricts to worlds where local circumstances hold
+      (only world `only1` — current situation has only c1 available).
+    - Imperative event: all worlds accessible (any card COULD be
+      grabbed if permitted). -/
+private def fGrab : AnchoringFn GrabEvent CardWorld
+  | .speech, _ => []  -- all worlds accessible
+  | .local, _ => [λ w => w == .only1]  -- only `only1` accessible
+  | .imperative, _ => []  -- all worlds accessible (permission domain)
+
+/-- Non-harmonic MI fails: when the MI anchors to the local event,
+    only world `only1` is accessible. In `only1`, only c1 is grabbable.
+    The modal component ∀y[card(y) → ◇_{local}(grab(y))] fails because
+    c2 and c3 are not grabbable in any locally accessible world. -/
+theorem nonharmonic_fails :
+    ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 := by
+  decide
+
+/-- Harmonic MI succeeds: when the MI's anchor is co-indexed with the
+    imperative event, all worlds are accessible. Every card is grabbable
+    in some world (c1 in `only1`, c2 in `only2`, c3 in `all`). The
+    modal component ∀y[card(y) → ◇_{imperative}(grab(y))] holds.
+    This gives the "any card is fine" reading. -/
+theorem harmonic_succeeds :
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
+  decide
+
+/-- Harmonic ≠ non-harmonic: the two readings are formally distinct.
+    Same world of evaluation (.only1), same domain, same predicates —
+    only the anchoring event differs. -/
+theorem harmonic_neq_nonharmonic_witness :
+    ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 ∧
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 end AlonsoOvalleRoyer2024

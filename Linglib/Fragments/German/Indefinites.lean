@@ -27,14 +27,20 @@ open Features.IndefiniteType
     D&A semantics: var(∅,x). Diachronically extended from non-specific
     to epistemic (@cite{aloni-port-2015}).
     @cite{bubnov-2026} §6, Table 3. -/
-def irgend : IndefiniteEntry where
+def irgendEntry : IndefiniteEntry where
   language := "German"
   form := "irgend-"
   gloss := "some (epistemic)"
   specType := .epistemic
-  allowsSK := false; allowsSU := true; allowsNS := true
+  allowsSK := false
+  allowsSU := true
+  allowsNS := true
   source := "Aloni & Port 2015, Bubnov 2026"
 
-theorem irgend_consistent : irgend.distributionConsistent = true := rfl
+/-- The German indefinite paradigm (one entry; *kein-*, *manch-*, etc.
+    not yet formalized). -/
+def paradigm : List IndefiniteEntry := [irgendEntry]
+
+theorem paradigm_consistent : paradigm.all (·.distributionConsistent) := by decide
 
 end Fragments.German.Indefinites

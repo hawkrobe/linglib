@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 
 /-!
 # Chuj Modal Indefinite Fragment
@@ -6,10 +6,6 @@ import Linglib.Core.Modality.ModalIndefinite
 
 Lexical entries for Chuj modal indefinites *yalnhej* (singular) and
 *komon* (mass/plural), following @cite{alonso-ovalle-royer-2024}.
-
-These entries reuse the `ModalIndefiniteEntry` type from
-`Core/ModalIndefinite.lean`, instantiating the three-dimensional
-typological profile for Chuj.
 
 ## Connection to VerbBuilding.lean
 
@@ -26,10 +22,11 @@ This connection is proved in `Phenomena/ModalIndefinites/Studies/AlonsoOvalleRoy
 
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Chuj.ModalIndefinites
 
-open Core.ModalIndefinite
-open Core.Modality (ModalFlavor)
+open Features.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
@@ -66,29 +63,18 @@ def komonEntry : ModalIndefiniteEntry where
   anchorConstraint := some .unrestricted
   source := "Alonso-Ovalle & Royer 2021"
 
+/-- The Chuj modal indefinite paradigm. -/
+def paradigm : List ModalIndefiniteEntry := [yalnhejEntry, komonEntry]
+
 
 -- ════════════════════════════════════════════════════
--- § 2. Per-Entry Verification
+-- § 2. Cross-Entry Contrast
 -- ════════════════════════════════════════════════════
-
-theorem yalnhej_at_issue : yalnhejEntry.status = .atIssue := rfl
-theorem yalnhej_has_epistemic : yalnhejEntry.hasEpistemic := by decide
-theorem yalnhej_has_rc : yalnhejEntry.hasCircumstantial := by decide
-theorem yalnhej_not_ub : yalnhejEntry.upperBounded = false := rfl
-theorem yalnhej_pos_sensitive : yalnhejEntry.positionSensitive = true := rfl
-theorem yalnhej_unrestricted : yalnhejEntry.anchorConstraint = some .unrestricted := rfl
-theorem yalnhej_number_neutral : yalnhejEntry.numberNeutral = true := rfl
-
-theorem komon_at_issue : komonEntry.status = .atIssue := rfl
-theorem komon_rc_only : ¬ komonEntry.hasEpistemic ∧ komonEntry.hasCircumstantial := by
-  refine ⟨?_, ?_⟩ <;> decide
-theorem komon_not_ub : komonEntry.upperBounded = false := rfl
-theorem komon_unrestricted : komonEntry.anchorConstraint = some .unrestricted := rfl
 
 /-- *yalnhej* and *komon* differ in flavor inventory: *yalnhej* has
     epistemic + RC, *komon* has RC only. -/
 theorem yalnhej_komon_flavor_difference :
-    yalnhejEntry.hasEpistemic ∧ ¬ komonEntry.hasEpistemic := by
+    yalnhejEntry.hasFlavor .epistemic ∧ ¬ komonEntry.hasFlavor .epistemic := by
   refine ⟨?_, ?_⟩ <;> decide
 
 

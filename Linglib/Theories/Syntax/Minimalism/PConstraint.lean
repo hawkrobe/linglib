@@ -1,317 +1,357 @@
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Logic.Equiv.Defs
+import Mathlib.Order.Defs.PartialOrder
+import Linglib.Features.Logophoricity
 import Linglib.Features.Prominence
 import Linglib.Theories.Syntax.Minimalism.PersonGeometry
 
 /-!
-# The P-Constraint: Person Hierarchy Effects via Point-of-View
+# The P-Constraint
 @cite{pancheva-zubizarreta-2018}
 
-@cite{pancheva-zubizarreta-2018} (P&Z) attribute PCC effects to the encoding
-of point-of-view centers within a phase defined by an argument-introducing
-verbal head (Appl). Their P-Constraint has four parametric components:
+A parametric theory of person-sensitivity in clitic clusters, due to
+@cite{pancheva-zubizarreta-2018}. The P-Constraint is triggered by an
+*interpretable* person feature on Appl, which marks the indirect object as a
+**point-of-view center** (a logophoric pivot/self/source in the sense of
+@cite{sells-1987}).
 
-1. **Domain of application**: the interpretable person feature is present on
-   all Appl heads (default), or only on those whose phase contains a
-   [+author]-marked DP (restricted).
-2. **P-Prominence**: an *n*-valued D at the phase edge must enter an Agree
-   relation with the interpretable person feature. *n* is [+PROXIMATE]
-   (default), restricted to [+PARTICIPANT] or [+AUTHOR].
-3. **P-Uniqueness**: at most one DP in α can agree with the interpretable
-   person feature (default: active).
-4. **P-Primacy**: if P-Uniqueness is active and multiple DPs can agree,
-   the [+AUTHOR] DP takes priority (default: inactive).
+## Architecture
 
-## Contextual Proximate Marking
+Empirical predictions for the eight named grammar instances live in the
+study file `Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean`. This
+file holds only the parametric API:
 
-SAPs are inherently [+PROXIMATE]. 3P arguments are [-PROXIMATE] by default
-but can be contextually marked [+PROXIMATE] when co-occurring with another
-3P in the same Appl domain. This contextual mechanism applies ONLY to the
-[+PROXIMATE] prominence setting — [+PARTICIPANT] and [+AUTHOR] are inherent
-features with no contextual variant.
+- `PProminence` — what the IO must satisfy (proximate, participant, author)
+- `PProminence.equivLogophoric : PProminence ≃ LogophoricRole` — the
+  isomorphism the paper draws in §6.2 (proximate↔pivot, participant↔self,
+  author↔source)
+- `PCCGrammar` — a `Fintype` parameter space (24 grammars total)
+- The four parametric clauses as named `Prop` predicates with `Decidable`
+  instances: `DomainExempt`, `IOSatisfiesProminence`, `UniquenessSatisfied`,
+  `PrimacyRescues`
+- `IsLicit` — the main predicate, defined as the disjunction implementing
+  the algorithm of (12)
+- `licitFinset`, `licitCount` — empirical-prediction enumeration via
+  `Finset.filter`
+- `ApplDomain` and `PConstraintSatisfied` — a minimal semantic model in
+  which `IsLicit` is *derived* from selecting the IO as POV center
+- `Preorder PCCGrammar` — entailment by licit-set containment
 
-## PCC Typology
+## Convention deviation
 
-| Variety       | P-Prominence  | P-Uniqueness | P-Primacy | Domain     | Licit |
-|---------------|---------------|-------------|-----------|------------|-------|
-| Strong        | +proximate    | active      | inactive  | all (dflt) | 3     |
-| Ultra-strong  | +proximate    | active      | active    | all        | 5     |
-| Weak          | +proximate    | inactive    | (n/a)     | all        | 7     |
-| Super-strong  | +participant  | active      | inactive  | all        | 2     |
-| Me-first      | +author       | active      | inactive  | restricted | 6     |
-
+`IsLicit` is the canonical `Prop`-valued predicate. The earlier
+`pccLicit : ... → Bool` API has been removed. Use `IsLicit g io do_` and
+its `Decidable` instance directly; for proofs about specific cells, prefer
+`by decide`.
 -/
 
 namespace Minimalism.PConstraint
 
 open Features.Prominence (PersonLevel)
+open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
 open Minimalism (DecomposedPerson decomposePerson)
 
 -- ============================================================================
--- § 1: Proximacy
+-- § 1: P-Prominence and the Logophoric Bridge
 -- ============================================================================
 
-/-- Whether a DP is inherently [+PROXIMATE]. SAPs are inherently
-    [+PROXIMATE]; 3P is not (requires contextual marking). -/
-def isInherentlyProximate (p : PersonLevel) : Bool :=
-  (decomposePerson p).hasProximate
+/-- P-Prominence settings. The interpretable person feature on Appl requires
+    a DP at the phase edge to bear one of these positive specifications.
+
+    Per @cite{pancheva-zubizarreta-2018} §6.2, these settings are the
+    syntactic correlates of @cite{sells-1987}'s logophoric roles:
+    `.proximate` ↔ pivot, `.participant` ↔ self, `.author` ↔ source. The
+    isomorphism is exposed as `PProminence.equivLogophoric`. -/
+inductive PProminence : Type where
+  | proximate    -- default: requires [+PROXIMATE]
+  | participant  -- restricted: requires [+PARTICIPANT]
+  | author       -- most restricted: requires [+AUTHOR]
+  deriving DecidableEq, Repr, Fintype
+
+/-- The bijection between P-Prominence settings and logophoric roles
+    (@cite{pancheva-zubizarreta-2018} §6.2). -/
+def PProminence.equivLogophoric : PProminence ≃ LogophoricRole where
+  toFun
+    | .proximate   => .pivot
+    | .participant => .self
+    | .author      => .source
+  invFun
+    | .pivot  => .proximate
+    | .self   => .participant
+    | .source => .author
+  left_inv p := by cases p <;> rfl
+  right_inv r := by cases r <;> rfl
 
 -- ============================================================================
--- § 2: P-Prominence Settings
+-- § 2: PCC Grammar — Parameter Space
 -- ============================================================================
 
-/-- P-Prominence settings: what feature value the interpretable person
-    feature on Appl requires for Agree.
+/-- A PCC grammar, parameterized by the four binary settings of the
+    P-Constraint (@cite{pancheva-zubizarreta-2018} (12)).
 
-    Correspond to logophoric roles (Sells 1987):
-    - `.proximate` → pivot (default, least restrictive)
-    - `.participant` → self (attitude holder)
-    - `.author` → source (most restrictive) -/
-inductive PProminence where
-  | proximate    -- default: [+PROXIMATE]
-  | participant  -- restricted: [+PARTICIPANT]
-  | author       -- most restricted: [+AUTHOR]
-  deriving DecidableEq, Repr
-
-/-- Does a DP inherently satisfy the P-Prominence condition? -/
-def satisfiesProminence (setting : PProminence) (p : PersonLevel) : Bool :=
-  let dp := decomposePerson p
-  match setting with
-  | .proximate   => dp.hasProximate
-  | .participant => dp.hasParticipant
-  | .author      => dp.hasAuthor
-
--- ============================================================================
--- § 3: PCC Grammar — Full Parametric System
--- ============================================================================
-
-/-- A PCC grammar is parameterized by four settings of the P-Constraint. -/
+    The 24-element parameter space (3 prominence values × 2³ Bool flags) is
+    enumerated by the `Fintype` instance below. -/
 structure PCCGrammar where
-  /-- P-Prominence: what person feature the IO must satisfy.
-      Default: `proximate`. -/
+  /-- P-Prominence: what feature value the IO must inherit at the phase edge.
+      Default: `.proximate`. -/
   prominence : PProminence := .proximate
-  /-- P-Uniqueness: at most one DP can agree with the interpretable
-      person feature. Default: `true` (active). -/
+  /-- P-Uniqueness: at most one DP can agree with the interpretable person
+      feature on Appl. Default: `true` (active). -/
   uniqueness : Bool := true
-  /-- P-Primacy: when both DPs satisfy P-Prominence, the [+author]
-      DP takes priority as IO. Conditional on P-Uniqueness.
-      Default: `false` (inactive). -/
+  /-- P-Primacy: when both DPs satisfy P-Prominence, the [+author] DP takes
+      priority. Conditional on P-Uniqueness. Default: `false`. -/
   primacy : Bool := false
-  /-- Domain: whether the interpretable person feature is present on
-      ALL Appl heads (false = default) or only when a [+author] DP
-      is present (true = restricted). -/
+  /-- Domain: whether the interpretable person feature is present on ALL
+      Appl heads (`false` = default), or only when a [+author] DP is present
+      (`true` = restricted). -/
   restrictedDomain : Bool := false
   deriving DecidableEq, Repr
 
+/-- `PCCGrammar` is in bijection with `PProminence × Bool × Bool × Bool`. -/
+def PCCGrammar.equivQuadruple :
+    PCCGrammar ≃ PProminence × Bool × Bool × Bool where
+  toFun g := (g.prominence, g.uniqueness, g.primacy, g.restrictedDomain)
+  invFun := fun ⟨p, u, pr, rd⟩ =>
+    { prominence := p, uniqueness := u, primacy := pr, restrictedDomain := rd }
+  left_inv _ := rfl
+  right_inv := fun ⟨_, _, _, _⟩ => rfl
+
+instance : Fintype PCCGrammar := Fintype.ofEquiv _ PCCGrammar.equivQuadruple.symm
+
 -- ============================================================================
--- § 4: Grammar Instances
+-- § 3: Named Grammar Instances
 -- ============================================================================
 
-/-- **Strong PCC**: all defaults. DO must be 3P. -/
-def strongGrammar : PCCGrammar := ⟨.proximate, true, false, false⟩
+/-- **Strong PCC** — all defaults. DO must be 3P. -/
+def strongGrammar : PCCGrammar := {}
 
-/-- **Ultra-strong PCC**: P-Primacy active. Allows ⟨1,2⟩ but not ⟨2,1⟩. -/
-def ultraStrongGrammar : PCCGrammar := ⟨.proximate, true, true, false⟩
+/-- **Ultra-strong PCC** — adds P-Primacy. Allows ⟨1,2⟩ but not ⟨2,1⟩. -/
+def ultraStrongGrammar : PCCGrammar := { primacy := true }
 
-/-- **Weak PCC**: P-Uniqueness inactive. Allows SAP co-occurrence. -/
-def weakGrammar : PCCGrammar := ⟨.proximate, false, false, false⟩
+/-- **Weak PCC** — drops P-Uniqueness. Allows SAP co-occurrence. -/
+def weakGrammar : PCCGrammar := { uniqueness := false }
 
-/-- **Super-strong PCC**: [+participant] prominence. IO must be SAP. -/
-def superStrongGrammar : PCCGrammar := ⟨.participant, true, false, false⟩
+/-- **Super-strong PCC** — [+participant] prominence. IO must be SAP. -/
+def superStrongGrammar : PCCGrammar := { prominence := .participant }
 
-/-- **Me-first PCC**: [+author] prominence, restricted domain. -/
-def meFirstGrammar : PCCGrammar := ⟨.author, true, false, true⟩
+/-- **Me-first PCC** — [+author] prominence, restricted domain. -/
+def meFirstGrammar : PCCGrammar :=
+  { prominence := .author, restrictedDomain := true }
 
 /-- **PG1** (predicted): [+participant] + P-Primacy. -/
-def pg1Grammar : PCCGrammar := ⟨.participant, true, true, false⟩
+def pg1Grammar : PCCGrammar :=
+  { prominence := .participant, primacy := true }
 
 /-- **PG2** (predicted): [+participant], no P-Uniqueness. -/
-def pg2Grammar : PCCGrammar := ⟨.participant, false, false, false⟩
+def pg2Grammar : PCCGrammar :=
+  { prominence := .participant, uniqueness := false }
 
 /-- **PG3** (predicted): [+author], unrestricted domain. -/
-def pg3Grammar : PCCGrammar := ⟨.author, true, false, false⟩
+def pg3Grammar : PCCGrammar := { prominence := .author }
 
 -- ============================================================================
--- § 5: PCC Evaluation
+-- § 4: Subpredicate Decomposition (the four clauses of (12))
 -- ============================================================================
 
-/-- Is a ditransitive clitic combination licit under a given PCC grammar?
+/-- A DP is *inherently* [+PROXIMATE] iff it is a SAP (@cite{pancheva-zubizarreta-2018}
+    (11)). Third person can only be [+PROXIMATE] contextually. -/
+def IsInherentlyProximate (p : PersonLevel) : Prop :=
+  (decomposePerson p).hasProximate = true
 
-    `ioPerson` and `doPerson` are the **interpretable** person values.
+instance (p : PersonLevel) : Decidable (IsInherentlyProximate p) :=
+  inferInstanceAs (Decidable (_ = true))
 
-    The logic:
-    1. **Domain**: if restricted and no [+author] DP present, P-Constraint
-       does not apply.
-    2. **P-Prominence**: IO must satisfy the prominence condition. For
-       [+proximate], a 3P IO can satisfy contextually when paired with
-       another 3P (contextual proximate marking). For [+participant] and
-       [+author], satisfaction is inherent only.
-    3. **P-Uniqueness**: if active, at most one DP may inherently satisfy
-       the prominence condition. Contextually-marked 3P IOs don't
-       trigger this (the DO in ⟨3,3⟩ stays [-proximate]).
-    4. **P-Primacy**: when P-Uniqueness is violated, if the IO is
-       [+author], it takes priority and the violation is rescued. -/
-def pccLicit (g : PCCGrammar) (ioPerson doPerson : PersonLevel) : Bool :=
-  let ioDp := decomposePerson ioPerson
-  let doDp := decomposePerson doPerson
-  -- Step 1: Domain restriction
-  if g.restrictedDomain && !ioDp.hasAuthor && !doDp.hasAuthor then true
-  else
-    let ioInherently := satisfiesProminence g.prominence ioPerson
-    -- Contextual proximate marking: a 3P IO can satisfy [+proximate]
-    -- when the DO is also 3P. This mechanism applies ONLY to [+proximate].
-    let ioContextually := g.prominence == .proximate &&
-                          !ioInherently &&
-                          !(satisfiesProminence g.prominence doPerson)
-    let ioSatisfies := ioInherently || ioContextually
-    -- Step 2: P-Prominence — IO must satisfy
-    if !ioSatisfies then false
-    else if g.uniqueness then
-      -- Step 3: P-Uniqueness — does DO also inherently satisfy?
-      -- (Contextually-marked 3P DO doesn't count — only IO gets
-      -- the contextual marking in ⟨3,3⟩.)
-      let doInherently := satisfiesProminence g.prominence doPerson
-      if doInherently then
-        -- Violation — check P-Primacy rescue
-        if g.primacy then ioDp.hasAuthor
-        else false
-      else true
-    else true
+/-- A DP inherently satisfies a P-Prominence setting. -/
+def SatisfiesProminence (s : PProminence) (p : PersonLevel) : Prop :=
+  match s with
+  | .proximate   => (decomposePerson p).hasProximate = true
+  | .participant => (decomposePerson p).hasParticipant = true
+  | .author      => (decomposePerson p).hasAuthor = true
 
--- ============================================================================
--- § 6: Verification — Strong PCC
--- ============================================================================
+instance (s : PProminence) (p : PersonLevel) :
+    Decidable (SatisfiesProminence s p) := by
+  cases s <;> exact inferInstanceAs (Decidable (_ = true))
 
-theorem strong_1_3 : pccLicit strongGrammar .first .third = true := rfl
-theorem strong_2_3 : pccLicit strongGrammar .second .third = true := rfl
-theorem strong_3_3 : pccLicit strongGrammar .third .third = true := rfl
-theorem strong_3_1 : pccLicit strongGrammar .third .first = false := rfl
-theorem strong_3_2 : pccLicit strongGrammar .third .second = false := rfl
-theorem strong_1_2 : pccLicit strongGrammar .first .second = false := rfl
-theorem strong_2_1 : pccLicit strongGrammar .second .first = false := rfl
-theorem strong_1_1 : pccLicit strongGrammar .first .first = false := rfl
-theorem strong_2_2 : pccLicit strongGrammar .second .second = false := rfl
+/-- **Clause (12a) — Domain.** When the domain is restricted and no [+author]
+    DP is present, the P-Constraint does not apply. -/
+def DomainExempt (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+  g.restrictedDomain = true ∧
+    (decomposePerson io).hasAuthor = false ∧
+    (decomposePerson do_).hasAuthor = false
 
--- ============================================================================
--- § 7: Verification — Ultra-strong PCC
--- ============================================================================
+instance (g : PCCGrammar) (io do_ : PersonLevel) :
+    Decidable (DomainExempt g io do_) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-theorem ultra_1_3 : pccLicit ultraStrongGrammar .first .third = true := rfl
-theorem ultra_2_3 : pccLicit ultraStrongGrammar .second .third = true := rfl
-theorem ultra_3_3 : pccLicit ultraStrongGrammar .third .third = true := rfl
-/-- Ultra-strong allows ⟨1,2⟩: P-Primacy rescues (1P is [+author]). -/
-theorem ultra_1_2 : pccLicit ultraStrongGrammar .first .second = true := rfl
-theorem ultra_1_1 : pccLicit ultraStrongGrammar .first .first = true := rfl
-/-- Ultra-strong bans ⟨2,1⟩: 2P IO lacks [+author], no P-Primacy rescue. -/
-theorem ultra_2_1 : pccLicit ultraStrongGrammar .second .first = false := rfl
-theorem ultra_3_1 : pccLicit ultraStrongGrammar .third .first = false := rfl
-theorem ultra_3_2 : pccLicit ultraStrongGrammar .third .second = false := rfl
-theorem ultra_2_2 : pccLicit ultraStrongGrammar .second .second = false := rfl
+/-- **Clause (12b) — P-Prominence.** The IO satisfies the prominence
+    requirement, either inherently or — for `.proximate` only — by
+    contextual marking when paired with another non-proximate 3P
+    (@cite{pancheva-zubizarreta-2018} §4.1.4). -/
+def IOSatisfiesProminence (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+  SatisfiesProminence g.prominence io ∨
+    (g.prominence = .proximate ∧
+     ¬ SatisfiesProminence g.prominence io ∧
+     ¬ SatisfiesProminence g.prominence do_)
+
+instance (g : PCCGrammar) (io do_ : PersonLevel) :
+    Decidable (IOSatisfiesProminence g io do_) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- **Clause (12c) — P-Uniqueness.** The DO does not also inherently satisfy
+    the prominence requirement. (Contextual proximate-marking on the IO
+    does not propagate to the DO.) -/
+def UniquenessSatisfied (g : PCCGrammar) (do_ : PersonLevel) : Prop :=
+  ¬ SatisfiesProminence g.prominence do_
+
+instance (g : PCCGrammar) (do_ : PersonLevel) :
+    Decidable (UniquenessSatisfied g do_) :=
+  inferInstanceAs (Decidable (¬ _))
+
+/-- **Clause (12d) — P-Primacy.** When P-Uniqueness would block, a [+author]
+    IO rescues. -/
+def PrimacyRescues (g : PCCGrammar) (io : PersonLevel) : Prop :=
+  g.primacy = true ∧ (decomposePerson io).hasAuthor = true
+
+instance (g : PCCGrammar) (io : PersonLevel) : Decidable (PrimacyRescues g io) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
--- § 8: Verification — Weak PCC
+-- § 5: Licit Person Combinations
 -- ============================================================================
 
-theorem weak_1_3 : pccLicit weakGrammar .first .third = true := rfl
-theorem weak_2_3 : pccLicit weakGrammar .second .third = true := rfl
-theorem weak_3_3 : pccLicit weakGrammar .third .third = true := rfl
-theorem weak_1_2 : pccLicit weakGrammar .first .second = true := rfl
-theorem weak_2_1 : pccLicit weakGrammar .second .first = true := rfl
-theorem weak_1_1 : pccLicit weakGrammar .first .first = true := rfl
-theorem weak_2_2 : pccLicit weakGrammar .second .second = true := rfl
-theorem weak_3_1 : pccLicit weakGrammar .third .first = false := rfl
-theorem weak_3_2 : pccLicit weakGrammar .third .second = false := rfl
+/-- The PCC verdict on a ⟨IO, DO⟩ person combination under grammar `g`.
+
+    Implements (12) compositionally:
+    - Domain-exempt configurations are vacuously licit.
+    - Otherwise, the IO must satisfy P-Prominence; and either
+      P-Uniqueness is inactive, or it is satisfied, or P-Primacy rescues. -/
+def IsLicit (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+  DomainExempt g io do_ ∨
+    (IOSatisfiesProminence g io do_ ∧
+      (g.uniqueness = false ∨
+       UniquenessSatisfied g do_ ∨
+       PrimacyRescues g io))
+
+instance (g : PCCGrammar) (io do_ : PersonLevel) :
+    Decidable (IsLicit g io do_) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
 -- ============================================================================
--- § 9: Verification — Super-strong PCC
+-- § 6: Enumeration via `Finset`
 -- ============================================================================
 
-theorem super_1_3 : pccLicit superStrongGrammar .first .third = true := rfl
-theorem super_2_3 : pccLicit superStrongGrammar .second .third = true := rfl
-/-- Super-strong bans ⟨3,3⟩: 3P IO is not [+participant]. -/
-theorem super_3_3 : pccLicit superStrongGrammar .third .third = false := rfl
-theorem super_3_1 : pccLicit superStrongGrammar .third .first = false := rfl
-theorem super_3_2 : pccLicit superStrongGrammar .third .second = false := rfl
-theorem super_1_2 : pccLicit superStrongGrammar .first .second = false := rfl
-theorem super_2_1 : pccLicit superStrongGrammar .second .first = false := rfl
+/-- The set of person combinations the grammar predicts to be licit. -/
+def licitFinset (g : PCCGrammar) : Finset (PersonLevel × PersonLevel) :=
+  Finset.univ.filter fun p => IsLicit g p.1 p.2
+
+/-- Cardinality of the licit set (out of 9 total combinations). -/
+def licitCount (g : PCCGrammar) : ℕ := (licitFinset g).card
+
+@[simp]
+theorem mem_licitFinset (g : PCCGrammar) (p : PersonLevel × PersonLevel) :
+    p ∈ licitFinset g ↔ IsLicit g p.1 p.2 := by
+  simp [licitFinset]
 
 -- ============================================================================
--- § 10: Verification — Me-first PCC
+-- § 7: Markedness
 -- ============================================================================
 
-theorem mefirst_1_2 : pccLicit meFirstGrammar .first .second = true := rfl
-theorem mefirst_1_3 : pccLicit meFirstGrammar .first .third = true := rfl
-theorem mefirst_2_3 : pccLicit meFirstGrammar .second .third = true := rfl
-theorem mefirst_3_2 : pccLicit meFirstGrammar .third .second = true := rfl
-theorem mefirst_3_3 : pccLicit meFirstGrammar .third .third = true := rfl
-theorem mefirst_2_2 : pccLicit meFirstGrammar .second .second = true := rfl
-theorem mefirst_3_1 : pccLicit meFirstGrammar .third .first = false := rfl
-theorem mefirst_2_1 : pccLicit meFirstGrammar .second .first = false := rfl
-
--- ============================================================================
--- § 11: Entailment Relations
--- ============================================================================
-
-/-- Strong PCC entails Weak PCC: anything licit under strong is licit
-    under weak. (Strong is strictly more restrictive.) -/
-theorem strong_entails_weak (io do_ : PersonLevel) :
-    pccLicit strongGrammar io do_ = true → pccLicit weakGrammar io do_ = true := by
-  cases io <;> cases do_ <;> decide
-
-/-- Strong PCC entails Ultra-strong PCC: anything licit under strong
-    is licit under ultra-strong. (Ultra-strong adds P-Primacy, which
-    only rescues — never bans — so it is less restrictive.) -/
-theorem strong_entails_ultra (io do_ : PersonLevel) :
-    pccLicit strongGrammar io do_ = true → pccLicit ultraStrongGrammar io do_ = true := by
-  cases io <;> cases do_ <;> decide
-
--- ============================================================================
--- § 12: Markedness — Parameter Departures from Default
--- ============================================================================
-
-/-- Count licit combinations (out of 9 = 3×3). -/
-def licitCount (g : PCCGrammar) : Nat :=
-  let ps : List PersonLevel := [.first, .second, .third]
-  (ps.flatMap (λ io => ps.filter (λ do_ => pccLicit g io do_))).length
-
-/-- Count parameter departures from the default (strong PCC). -/
-def parameterDepartures (g : PCCGrammar) : Nat :=
-  (if g.prominence != .proximate then 1 else 0) +
-  (if !g.uniqueness then 1 else 0) +
+/-- Number of parametric departures from the default (strong PCC).
+    This is the markedness rank — strong = 0, ultra/weak/super/pg3 = 1,
+    me-first/pg1/pg2 = 2 (@cite{pancheva-zubizarreta-2018} §4.5 (31)). -/
+def parameterDepartures (g : PCCGrammar) : ℕ :=
+  (if g.prominence = .proximate then 0 else 1) +
+  (if g.uniqueness then 0 else 1) +
   (if g.primacy then 1 else 0) +
   (if g.restrictedDomain then 1 else 0)
 
-/-- Strong PCC is the default (0 departures). -/
-theorem strong_is_default : parameterDepartures strongGrammar = 0 := rfl
-
-/-- Ultra-strong and weak each have 1 departure. -/
-theorem ultra_one_departure : parameterDepartures ultraStrongGrammar = 1 := rfl
-theorem weak_one_departure : parameterDepartures weakGrammar = 1 := rfl
-
-/-- Me-first has 2 departures (prominence + domain). -/
-theorem mefirst_two_departures : parameterDepartures meFirstGrammar = 2 := rfl
-
 -- ============================================================================
--- § 13: Polite Pronouns
+-- § 8: Entailment Preorder
 -- ============================================================================
 
-/-- A polite pronoun with interpretable 2nd person is inherently
-    [+PROXIMATE], triggering PCC effects in DO position. -/
-theorem proximate_from_interpretable_2nd :
-    isInherentlyProximate .second = true := rfl
+instance : LE PCCGrammar where
+  le g₁ g₂ := licitFinset g₁ ⊆ licitFinset g₂
 
-/-- PCC effect with polite pronoun in DO, 3rd person IO (Weak PCC). -/
-theorem polite_do_triggers_weak_pcc :
-    pccLicit weakGrammar .third .second = false := rfl
+instance : Preorder PCCGrammar where
+  le_refl _ := Finset.Subset.refl _
+  le_trans _ _ _ h₁₂ h₂₃ := Finset.Subset.trans h₁₂ h₂₃
 
-/-- Morphosyntactic accounts evaluate agreement person (3rd) → licit. -/
-theorem agreement_person_wrongly_predicts_licit :
-    pccLicit weakGrammar .third .third = true := rfl
+instance (g₁ g₂ : PCCGrammar) : Decidable (g₁ ≤ g₂) :=
+  inferInstanceAs (Decidable (_ ⊆ _))
+
+/-- Entailment in unfolded form: every licit cell of `g₁` is licit in `g₂`. -/
+theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :
+    g₁ ≤ g₂ ↔ ∀ io do_ : PersonLevel, IsLicit g₁ io do_ → IsLicit g₂ io do_ := by
+  constructor
+  · intro h io do_ hlic
+    have : (io, do_) ∈ licitFinset g₁ := by simp [hlic]
+    have := h this
+    simpa using this
+  · intro h p hp
+    rcases p with ⟨io, do_⟩
+    simp at hp ⊢
+    exact h io do_ hp
 
 -- ============================================================================
--- § 14: Impossible Grammar — Me-first + *<3,3>
+-- § 9: Semantic Grounding — the P-Constraint over Appl Domains
 -- ============================================================================
 
-/-- Me-first grammar cannot exhibit *<3,3> effects: the domain
-    restriction exempts ⟨3,3⟩ combinations entirely. -/
-theorem mefirst_allows_3_3 : pccLicit meFirstGrammar .third .third = true := rfl
+/-- A minimal model of the Appl phase: the two arguments and the chosen
+    point-of-view center. The interpretable person feature on Appl
+    (@cite{pancheva-zubizarreta-2018} (10)) marks one DP as the perspectival
+    center; in the unmarked case this is the IO at the phase edge. -/
+structure ApplDomain where
+  /-- The indirect-object argument introduced by Appl. -/
+  io : PersonLevel
+  /-- The direct-object argument inside VP. -/
+  do_ : PersonLevel
+  /-- The DP selected as point-of-view center within the phase. -/
+  povCenter : PersonLevel
+  deriving DecidableEq, Repr
+
+/-- The IO is the canonical POV-center candidate (@cite{pancheva-zubizarreta-2018}
+    page 1320). -/
+def ApplDomain.povIsIO (a : ApplDomain) : Prop := a.povCenter = a.io
+
+instance (a : ApplDomain) : Decidable a.povIsIO :=
+  inferInstanceAs (Decidable (a.povCenter = a.io))
+
+/-- The P-Constraint as a semantic predicate over an Appl domain.
+    A domain satisfies the P-Constraint iff either it is exempt, or the
+    POV center is the IO and the IO inherits the prominence value with
+    uniqueness/primacy as required. -/
+def PConstraintSatisfied (g : PCCGrammar) (a : ApplDomain) : Prop :=
+  DomainExempt g a.io a.do_ ∨
+    (a.povIsIO ∧
+     IOSatisfiesProminence g a.io a.do_ ∧
+     (g.uniqueness = false ∨
+      UniquenessSatisfied g a.do_ ∨
+      PrimacyRescues g a.io))
+
+instance (g : PCCGrammar) (a : ApplDomain) :
+    Decidable (PConstraintSatisfied g a) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- **Central derivation.** A ⟨IO, DO⟩ combination is licit iff there
+    exists an Appl domain over those arguments — with the IO chosen as
+    POV center — that satisfies the P-Constraint. The four parametric
+    clauses are not stipulated verdicts; they are the conditions under
+    which IO-as-POV-center is consistent with the interpretable person
+    feature on Appl. -/
+theorem isLicit_iff_exists_appl_satisfying
+    (g : PCCGrammar) (io do_ : PersonLevel) :
+    IsLicit g io do_ ↔
+      ∃ a : ApplDomain, a.io = io ∧ a.do_ = do_ ∧ PConstraintSatisfied g a := by
+  constructor
+  · intro h
+    refine ⟨⟨io, do_, io⟩, rfl, rfl, ?_⟩
+    rcases h with hexempt | ⟨hprom, hrest⟩
+    · exact Or.inl hexempt
+    · exact Or.inr ⟨rfl, hprom, hrest⟩
+  · rintro ⟨a, hio, hdo, hsat⟩
+    rcases hsat with hexempt | ⟨_, hprom, hrest⟩
+    · subst hio; subst hdo; exact Or.inl hexempt
+    · subst hio; subst hdo; exact Or.inr ⟨hprom, hrest⟩
 
 end Minimalism.PConstraint

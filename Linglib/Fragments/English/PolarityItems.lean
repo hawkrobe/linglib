@@ -46,13 +46,14 @@ def any : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
-      , .modalPossibility, .modalNecessity, .imperative, .generic ]
+      , .modalPossibility, .modalNecessity, .imperative, .generic
+      , .onlyFocus, .adversative ]
   , scalarDirection := .strengthening  -- domain widening → stronger assertion
   , scalarValue := .low               -- existential = low on quantifier scale
   , canonicity := .canonical           -- low NPI = canonical
   , likelihoodEffect := .impeding      -- theme/patient role in typical use
   , alternativeType := .domain         -- D-MIN domain alternatives (Chierchia 2006)
-  , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
+  , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC. Also licensed in focus of 'only' (@cite{von-fintel-1999} ex. 10) and adversative complements (ex. 28b)"
   }
 
 /-- "ever" - temporal NPI -/
@@ -62,12 +63,12 @@ def ever : PolarityItemEntry :=
   , baseForce := .temporal
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
-      , .superlative, .comparativeS ]
+      , .superlative, .comparativeS, .onlyFocus, .adversative ]
   , scalarDirection := .strengthening  -- temporal endpoint → stronger assertion
   , scalarValue := .low               -- minimal temporal extent
   , canonicity := .canonical
   , alternativeType := .domain         -- D-MAX domain alternatives (Chierchia 2006)
-  , notes := "Temporal NPI; also in superlatives ('best ever')"
+  , notes := "Temporal NPI; also in superlatives ('best ever'), focus of 'only' (@cite{von-fintel-1999} ex. 10), and adversative attitudes (ex. 28a)"
   }
 
 /-- "yet" - temporal NPI (different from "ever") -/

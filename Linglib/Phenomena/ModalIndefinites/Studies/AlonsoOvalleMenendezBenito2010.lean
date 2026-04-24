@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 import Linglib.Fragments.Spanish.ModalIndefinites
 
 /-!
@@ -57,7 +57,7 @@ Two parameters (uniqueness × domain constraint) yield a 2×2 typology:
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Core.ModalIndefinite
+open Features.ModalIndefinite
 open Fragments.Spanish.ModalIndefinites
 
 
@@ -613,7 +613,7 @@ theorem algún_entry_not_at_issue :
     the Modal Variation inference concerns the SPEAKER's beliefs, mediated
     by ASSERT ((20)). The fragment entry records epistemic-only flavor. -/
 theorem algún_entry_epistemic_only :
-    algúnEntry.hasEpistemic ∧ ¬ algúnEntry.hasCircumstantial := by
+    algúnEntry.hasFlavor .epistemic ∧ ¬ algúnEntry.hasFlavor .circumstantial := by
   refine ⟨?_, ?_⟩ <;> decide
 
 

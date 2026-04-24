@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 
 /-!
 # Spanish Modal Indefinite Fragment
@@ -13,10 +13,11 @@ Lexical entries for Spanish modal indefinites *algún* and *uno cualquiera*.
 
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Spanish.ModalIndefinites
 
-open Core.ModalIndefinite
-open Core.Modality (ModalFlavor)
+open Features.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
@@ -54,22 +55,13 @@ def unoCualquieraEntry : ModalIndefiniteEntry where
   anchorConstraint := some .volitionalOnly
   source := "Alonso-Ovalle & Menéndez-Benito 2018"
 
+/-- The Spanish modal indefinite paradigm. -/
+def paradigm : List ModalIndefiniteEntry := [algúnEntry, unoCualquieraEntry]
+
 
 -- ════════════════════════════════════════════════════
--- § 2. Per-Entry Verification
+-- § 2. Cross-Entry Contrast
 -- ════════════════════════════════════════════════════
-
-theorem algún_not_at_issue : algúnEntry.status = .notAtIssue := rfl
-theorem algún_epistemic : algúnEntry.hasEpistemic := by decide
-theorem algún_no_rc : ¬ algúnEntry.hasCircumstantial := by decide
-theorem algún_ub : algúnEntry.upperBounded = true := rfl
-theorem algún_no_anchor : algúnEntry.anchorConstraint = none := rfl
-
-theorem unoCualquiera_at_issue : unoCualquieraEntry.status = .atIssue := rfl
-theorem unoCualquiera_rc : unoCualquieraEntry.hasCircumstantial := by decide
-theorem unoCualquiera_no_epistemic : ¬ unoCualquieraEntry.hasEpistemic := by decide
-theorem unoCualquiera_ub : unoCualquieraEntry.upperBounded = true := rfl
-theorem unoCualquiera_volitional : unoCualquieraEntry.anchorConstraint = some .volitionalOnly := rfl
 
 /-- *algún* and *uno cualquiera* share upper-boundedness but differ in
     status and flavor: *algún* is not-at-issue + epistemic, *uno cualquiera*

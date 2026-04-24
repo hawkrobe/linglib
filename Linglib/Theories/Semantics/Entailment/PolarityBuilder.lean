@@ -141,15 +141,26 @@ def atMost2Profile : MonotonicityProfile :=
   { name := "atMost2_student", entSig := .anti }
 
 /--
-"Only" profile: Strawson-DE only (not classically DE).
+"Only" profile: Strawson-DE only (no classical monotonicity claim).
 
-Von Fintel's central example: "only" is Strawson-DE but not DE.
-It licenses weak NPIs despite not being classically DE.
-`entSig` is `mono` (only is UE in its presupposition argument),
-but the key fact is it's Strawson-DE without being classically DE.
+Von Fintel's central example (@cite{von-fintel-1999} §2): `only` is
+Strawson-DE in its scope but neither classically DE nor classically UE.
+It licenses weak NPIs purely on the strength of being Strawson-DE.
+
+`entSig` is `.all` (no classical-monotonicity claim — `only`'s scope
+satisfies neither `Antitone` nor `Monotone` as a `Set World → Set World`
+function; see `onlyFull_not_de` in `StrawsonEntailment.lean`). The
+Strawson-DE behavior is captured by the explicit `isStrawsonDE := true`
+flag, which is independent of `entSig` because Strawson-DE is not in
+the @cite{icard-2012} signature lattice.
+
+(An earlier version used `entSig := .mono`, which encoded the
+symmetric/conjunctionalist analysis of `only` as upward entailing —
+exactly the analysis von Fintel argues against in §2.3 in his rejection
+of Atlas's pseudo-anti-additivity proposal.)
 -/
 def onlyProfile : MonotonicityProfile :=
-  { name := "only", entSig := .mono, isStrawsonDE := true }
+  { name := "only", entSig := .all, isStrawsonDE := true }
 
 -- ============================================================================
 -- Section 4: Bridge Theorems (per-context verification)
@@ -328,13 +339,11 @@ theorem fragment_builder_agree_negation_liftAFinger :
     isLicensedIn liftAFinger .negation ∧
     negationProfile.licensesItem liftAFinger = true := ⟨by decide, rfl⟩
 
-/-- "Only" empirically licenses "ever" (via onlyFocus) and the Builder agrees. -/
+/-- "Only" empirically licenses "ever" (via onlyFocus, @cite{von-fintel-1999} ex. 10)
+    and the Builder derives the same licensing from `onlyProfile`'s Strawson-DE flag. -/
 theorem fragment_builder_agree_only_ever :
-    ¬ isLicensedIn ever .onlyFocus ∧  -- "ever" doesn't list onlyFocus
-    onlyProfile.licensesItem ever = true :=    -- but Builder derives licensing
-  ⟨by decide, rfl⟩
-  -- Note: the Fragment is conservative (only lists attested contexts);
-  -- the Builder generalizes (any Strawson-DE context licenses weak NPIs).
+    isLicensedIn ever .onlyFocus ∧
+    onlyProfile.licensesItem ever = true := ⟨by decide, rfl⟩
 
 /-- "At most 2" empirically blocks "lift a finger" and the Builder agrees. -/
 theorem fragment_builder_agree_atMost2_liftAFinger :

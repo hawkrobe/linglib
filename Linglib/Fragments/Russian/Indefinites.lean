@@ -39,7 +39,7 @@ open Features.IndefiniteType
     Typically in imperatives, questions, irrealis contexts.
     "Купи что-нибудь" (Buy something [I don't care what]).
     D&A type (iii): var(v,x). -/
-def nibud : IndefiniteEntry where
+def nibudEntry : IndefiniteEntry where
   language := "Russian"
   form := "-нибудь (-nibud')"
   gloss := "some...or other (non-specific)"
@@ -57,7 +57,7 @@ def nibud : IndefiniteEntry where
     var(∅,x) — D&A type (iv) epistemic. The semantic profile of type (iv)
     permits both SU and NS contexts, but *-to* only appears for SU because
     *-nibud'* (type iii) blocks it for NS. -/
-def to_ : IndefiniteEntry where
+def toEntry : IndefiniteEntry where
   language := "Russian"
   form := "-то (-to)"
   gloss := "some (particular, unknown)"
@@ -71,7 +71,7 @@ def to_ : IndefiniteEntry where
     Speaker knows the referent's identity.
     "Кое-кто пришёл" (Someone [I know who] came).
     D&A type (v): dep(∅,x). -/
-def koe : IndefiniteEntry where
+def koeEntry : IndefiniteEntry where
   language := "Russian"
   form := "кое- (koe-)"
   gloss := "some (I know which)"
@@ -83,7 +83,7 @@ def koe : IndefiniteEntry where
 
 /-- The Russian paradigm exhibits an ABC pattern: three distinct forms
     for three distinct functions. No morphological containment. -/
-def paradigm : List IndefiniteEntry := [nibud, to_, koe]
+def paradigm : List IndefiniteEntry := [nibudEntry, toEntry, koeEntry]
 
 -- ============================================================================
 -- §2. ABC Pattern Verification
@@ -91,34 +91,18 @@ def paradigm : List IndefiniteEntry := [nibud, to_, koe]
 
 /-- All three forms are distinct (ABC, not AAB/ABB/AAA). -/
 theorem abc_all_distinct :
-    nibud.form ≠ to_.form ∧
-    to_.form ≠ koe.form ∧
-    nibud.form ≠ koe.form := by
-  exact ⟨by decide, by decide, by decide⟩
-
-/-- Each form covers exactly one function. -/
-theorem nibud_ns_only :
-    nibud.allowsSK = false ∧ nibud.allowsSU = false ∧
-    nibud.allowsNS = true := ⟨rfl, rfl, rfl⟩
-
-theorem to_su_only :
-    to_.allowsSK = false ∧ to_.allowsSU = true ∧
-    to_.allowsNS = false := ⟨rfl, rfl, rfl⟩
-
-theorem koe_sk_only :
-    koe.allowsSK = true ∧ koe.allowsSU = false ∧
-    koe.allowsNS = false := ⟨rfl, rfl, rfl⟩
+    nibudEntry.form ≠ toEntry.form ∧
+    toEntry.form ≠ koeEntry.form ∧
+    nibudEntry.form ≠ koeEntry.form :=
+  ⟨by decide, by decide, by decide⟩
 
 /-- All entries have consistent distributions (actual ⊆ semantic profile). -/
-theorem all_entries_consistent :
-    nibud.distributionConsistent = true ∧
-    to_.distributionConsistent = true ∧
-    koe.distributionConsistent = true := ⟨rfl, rfl, rfl⟩
+theorem paradigm_consistent : paradigm.all (·.distributionConsistent) := by decide
 
 /-- *-to*'s actual distribution is narrower than its semantic profile:
     type (iv) epistemic permits NS, but *-to* doesn't appear there. -/
 theorem to_distribution_narrower_than_profile :
-    to_.specType.profileNS = true ∧
-    to_.allowsNS = false := ⟨rfl, rfl⟩
+    toEntry.specType.profileNS = true ∧
+    toEntry.allowsNS = false := ⟨rfl, rfl⟩
 
 end Fragments.Russian.Indefinites

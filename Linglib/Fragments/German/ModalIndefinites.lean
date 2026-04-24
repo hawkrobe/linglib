@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 
 /-!
 # German Modal Indefinite Fragment
@@ -9,10 +9,11 @@ domain-widening indefinite (@cite{kratzer-shimoyama-2002}).
 
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.German.ModalIndefinites
 
-open Core.ModalIndefinite
-open Core.Modality (ModalFlavor)
+open Features.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
@@ -34,17 +35,8 @@ def irgendeinEntry : ModalIndefiniteEntry where
   canBePredicate := true
   source := "Kratzer & Shimoyama 2002"
 
-
--- ════════════════════════════════════════════════════
--- § 2. Per-Entry Verification
--- ════════════════════════════════════════════════════
-
-theorem irgendein_not_at_issue : irgendeinEntry.status = .notAtIssue := rfl
-theorem irgendein_has_epistemic : irgendeinEntry.hasEpistemic := by decide
-theorem irgendein_has_rc : irgendeinEntry.hasCircumstantial := by decide
-theorem irgendein_not_ub : irgendeinEntry.upperBounded = false := rfl
-theorem irgendein_has_unremarkable : irgendeinEntry.hasUnremarkableReading = true := rfl
-theorem irgendein_no_anchor : irgendeinEntry.anchorConstraint = none := rfl
+/-- The German modal indefinite paradigm. -/
+def paradigm : List ModalIndefiniteEntry := [irgendeinEntry]
 
 
 end Fragments.German.ModalIndefinites

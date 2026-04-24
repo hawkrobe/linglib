@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Features.ModalIndefinite
 
 /-!
 # French Modal Indefinite Fragment
@@ -8,10 +8,11 @@ Lexical entry for French modal indefinite *n'importe quel*.
 
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.French.ModalIndefinites
 
-open Core.ModalIndefinite
-open Core.Modality (ModalFlavor)
+open Features.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
@@ -33,16 +34,8 @@ def nimporteQuelEntry : ModalIndefiniteEntry where
   anchorConstraint := some .unrestricted
   source := "Jayez & Tovena 2006"
 
-
--- ════════════════════════════════════════════════════
--- § 2. Per-Entry Verification
--- ════════════════════════════════════════════════════
-
-theorem nimporteQuel_at_issue : nimporteQuelEntry.status = .atIssue := rfl
-theorem nimporteQuel_rc : nimporteQuelEntry.hasCircumstantial := by decide
-theorem nimporteQuel_no_epistemic : ¬ nimporteQuelEntry.hasEpistemic := by decide
-theorem nimporteQuel_not_ub : nimporteQuelEntry.upperBounded = false := rfl
-theorem nimporteQuel_unrestricted : nimporteQuelEntry.anchorConstraint = some .unrestricted := rfl
+/-- The French modal indefinite paradigm. -/
+def paradigm : List ModalIndefiniteEntry := [nimporteQuelEntry]
 
 
 end Fragments.French.ModalIndefinites
