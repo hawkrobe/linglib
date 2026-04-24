@@ -912,7 +912,6 @@ import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
 import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Assertion.Studies.Rudin2025
-import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Caha2009
 import Linglib.Phenomena.Case.Studies.Scott2023
@@ -930,7 +929,6 @@ import Linglib.Phenomena.Case.Studies.Pesetsky2013
 import Linglib.Phenomena.Case.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Case.Studies.Comrie1989
 import Linglib.Phenomena.ClauseChaining.Typology
-import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987
@@ -1016,7 +1014,6 @@ import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
 import Linglib.Phenomena.TenseAspect.Studies.Cumming2026
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970
 import Linglib.Phenomena.Countability.Studies.Moon2026
-import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested.Data
 import Linglib.Phenomena.Conditionals.Studies.Lassiter2025
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
@@ -1072,7 +1069,6 @@ import Linglib.Phenomena.Causation.Studies.MartinSchaeferKastner2025
 import Linglib.Phenomena.Causation.Studies.NadathurLauer2020
 import Linglib.Phenomena.Causation.Studies.MunozPerez2026
 import Linglib.Phenomena.Causation.Studies.Coon2019
-import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
 import Linglib.Phenomena.Coordination.Studies.Bruening2025
@@ -1347,7 +1343,6 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020PMF
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
-import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
@@ -1362,7 +1357,6 @@ import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
 import Linglib.Phenomena.Pronouns.Studies.Olivier2026
-import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024
 import Linglib.Phenomena.PsychVerbs.Studies.Pesetsky1995

@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ClauseChaining.Data
+import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Korean.MedialVerbs
@@ -47,7 +47,189 @@ the origin (the final verb's context).
    DS = `.agent` differs
 -/
 
-open Phenomena.ClauseChaining
+namespace Phenomena.ClauseChaining
+
+open Typology
+
+-- ============================================================================
+-- Language data (was `Phenomena/ClauseChaining/Data.lean`; inlined per the
+-- provenance-tracking policy). @cite{sarvasy-aikhenvald-2025} is the natural
+-- owner — the parameter sample comes from this paper.
+-- ============================================================================
+
+/-- Nungon (Trans-New Guinea, Finisterre-Huon; @cite{sarvasy-2017}, 2025 Ch. 7).
+
+    The best-described clause chaining language. Obligatory SR with
+    temporal encoding: four distinct medial forms (SS-SEQ, SS-SIM,
+    DS-SEQ, DS-SIM). Medial verbs are maximally reduced (bare stem +
+    SR suffix). The final verb alone carries tense, agreement, and full mood.
+    Non-canonical stand-alone medial clauses are attested. -/
+def nungon : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .ssDsTemporal
+  srTarget            := some .subjectOnly
+  srObligatory        := true
+  srMarkedness        := some .ssUnmarked
+  medialMorph         := {
+    tense     := .absent
+    agreement := .absent
+    mood      := .restricted
+    polarity  := .restricted
+    aspect    := .absent
+  }
+  relationsMarked     := [.sequential, .simultaneous]
+  hasRecapLinkage     := true
+  hasSummaryLinkage   := false
+  medialCanStandAlone := true
+
+/-- Manambu (Ndu family, East Sepik; @cite{aikhenvald-2008}, 2025 Ch. 6). -/
+def manambu : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .ssDs
+  srTarget            := some .subjectOnly
+  srObligatory        := true
+  srMarkedness        := some .ssUnmarked
+  medialMorph         := {
+    tense     := .restricted
+    agreement := .restricted
+    mood      := .restricted
+    polarity  := .restricted
+    aspect    := .restricted
+  }
+  relationsMarked     := [.sequential, .simultaneous, .causal]
+  hasRecapLinkage     := true
+  hasSummaryLinkage   := true
+  medialCanStandAlone := true
+
+/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; @cite{merlan-rumsey-1991}). -/
+def kuWaru : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .ssDs
+  srTarget            := some .subjectOnly
+  srObligatory        := true
+  srMarkedness        := some .ssUnmarked
+  medialMorph         := {
+    tense     := .absent
+    agreement := .absent
+    mood      := .restricted
+    polarity  := .absent
+    aspect    := .absent
+  }
+  relationsMarked     := [.sequential, .simultaneous]
+  hasRecapLinkage     := true
+  hasSummaryLinkage   := true
+  medialCanStandAlone := false
+
+/-- Korean (Koreanic; @cite{sohn-1999}). -/
+def korean : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .none
+  srTarget            := none
+  srObligatory        := false
+  srMarkedness        := none
+  medialMorph         := {
+    tense     := .restricted
+    agreement := .absent
+    mood      := .restricted
+    polarity  := .full
+    aspect    := .restricted
+  }
+  relationsMarked     := [.sequential, .simultaneous, .causal,
+                          .conditional, .concessive, .contrastive,
+                          .manner, .purpose]
+  hasRecapLinkage     := false
+  hasSummaryLinkage   := false
+  medialCanStandAlone := true
+
+/-- Turkish (Turkic; @cite{goksel-kerslake-2005}). -/
+def turkish : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .none
+  srTarget            := none
+  srObligatory        := false
+  srMarkedness        := none
+  medialMorph         := {
+    tense     := .restricted
+    agreement := .absent
+    mood      := .restricted
+    polarity  := .full
+    aspect    := .restricted
+  }
+  relationsMarked     := [.sequential, .simultaneous, .causal,
+                          .conditional, .concessive, .manner, .purpose]
+  hasRecapLinkage     := false
+  hasSummaryLinkage   := false
+  medialCanStandAlone := false
+
+/-- Korowai (Trans-New Guinea, Greater Awyu; @cite{de-vries-2025} Ch. 5). -/
+def korowai : ClauseChainingParams where
+  direction           := .medialFinal
+  srSystem            := .multiTrack
+  srTarget            := some .topicBased
+  srObligatory        := false
+  srMarkedness        := some .ssUnmarked
+  medialMorph         := {
+    tense     := .restricted
+    agreement := .restricted
+    mood      := .restricted
+    polarity  := .restricted
+    aspect    := .absent
+  }
+  relationsMarked     := [.sequential, .simultaneous, .causal, .conditional]
+  hasRecapLinkage     := true
+  hasSummaryLinkage   := false
+  medialCanStandAlone := false
+
+/-- All language data entries. -/
+def allLanguages : List ClauseChainingParams :=
+  [nungon, manambu, kuWaru, korean, turkish, korowai]
+
+theorem nungon_has_sr : nungon.hasSR = true := rfl
+theorem manambu_has_sr : manambu.hasSR = true := rfl
+theorem kuWaru_has_sr : kuWaru.hasSR = true := rfl
+theorem korean_no_sr : korean.hasSR = false := rfl
+theorem turkish_no_sr : turkish.hasSR = false := rfl
+theorem korowai_has_sr : korowai.hasSR = true := rfl
+
+theorem nungon_tense_from_final : nungon.tenseFromFinalVerb = true := rfl
+theorem manambu_tense_not_from_final : manambu.tenseFromFinalVerb = false := rfl
+theorem korean_tense_not_from_final : korean.tenseFromFinalVerb = false := rfl
+
+theorem nungon_has_bridging : nungon.hasBridging = true := rfl
+theorem korean_no_bridging : korean.hasBridging = false := rfl
+theorem kuWaru_has_bridging : kuWaru.hasBridging = true := rfl
+
+theorem nungon_temporal_via_sr : nungon.temporalViaSR = true := rfl
+theorem manambu_not_temporal_via_sr : manambu.temporalViaSR = false := rfl
+
+theorem nungon_medial_is_converb : nungon.medialVerbForm = UD.VerbForm.Conv := rfl
+theorem korean_medial_is_converb : korean.medialVerbForm = UD.VerbForm.Conv := rfl
+theorem turkish_medial_is_converb : turkish.medialVerbForm = UD.VerbForm.Conv := rfl
+
+/-- All sampled languages are medial-final. -/
+theorem all_medial_final :
+    allLanguages.all (·.direction == .medialFinal) = true := by decide
+
+/-- Every language with SR tracks at least subject continuity. -/
+theorem sr_languages_have_target :
+    allLanguages.all (λ p => !p.hasSR || p.srTarget.isSome) = true := by decide
+
+/-- In every SR language in the sample, SS is the unmarked member. -/
+theorem sr_languages_ss_unmarked :
+    allLanguages.all (λ p => !p.hasSR || p.srMarkedness == some .ssUnmarked) = true := by decide
+
+/-- Languages without SR mark more interclausal semantic relations
+(7+ relation types). SR languages encode fewer relation types
+because the SR morpheme absorbs sequential/simultaneous distinctions. -/
+theorem noSR_richer_relations :
+    allLanguages.all (λ p => p.hasSR || p.relationsMarked.length ≥ 7) = true := by decide
+
+end Phenomena.ClauseChaining
+
+
+-- ============================================================================
+-- Sarvasy & Aikhenvald 2025 study content
+-- ============================================================================
 
 namespace SarvasyAikhenvald2025
 
@@ -55,7 +237,8 @@ namespace SarvasyAikhenvald2025
 -- Part I: Fragment Verification
 -- ============================================================================
 
-open Typology Data
+open Phenomena.ClauseChaining
+open Phenomena.ClauseChaining.Typology
 open Fragments.Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
 open Fragments.Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers
   markersWithSubjAgreement MarkerEntry SRValue)

@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.PsychLink
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Phenomena.PsychVerbs.Data
+import Linglib.Phenomena.PsychVerbs.Studies.Pesetsky1995
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2022
 
@@ -56,7 +56,7 @@ open Semantics.Causation.Psych
 open Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
-open Phenomena.PsychVerbs.Data
+open Phenomena.PsychVerbs
 open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
 open Semantics.Verb.EntailmentProfile

@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Comparison.Typology
-import Linglib.Phenomena.ClauseChaining.Data
+import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Fragments.Japanese.Comparison
@@ -375,13 +375,13 @@ theorem turkish_three_layer :
     form should be converbal (non-finite), not fully finite. -/
 theorem korean_deranking_consistent :
     koreanCT = .absoluteDeranking ∧
-    Phenomena.ClauseChaining.Data.korean.medialVerbForm =
+    Phenomena.ClauseChaining.korean.medialVerbForm =
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 
 theorem turkish_deranking_consistent :
     turkishCT = .absoluteDeranking ∧
-    Phenomena.ClauseChaining.Data.turkish.medialVerbForm =
+    Phenomena.ClauseChaining.turkish.medialVerbForm =
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 

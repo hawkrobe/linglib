@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Polysemy.Data
+import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Theories.Diachronic.Lexicalization
 
 /-!
@@ -27,7 +27,7 @@ Using WordNet data from English, French, and Finnish (1900–2000):
 Word reuse IS polysemy generation: when "mouse" acquires the sense
 "computer peripheral", the word becomes polysemous. This study provides
 an information-theoretic explanation for WHY productive polysemy exists —
-it is communicatively efficient. This bridges `Phenomena.Polysemy.Data`
+it is communicatively efficient. This bridges `Phenomena.Polysemy.Studies.Gotham2017`
 (synchronic copredication judgments) to a diachronic functional account.
 -/
 
@@ -91,7 +91,7 @@ theorem both_literalities :
     alongside its existing one. This connects the diachronic process
     of lexicalization to the synchronic phenomenon of polysemy.
 
-    The copredication data in `Phenomena.Polysemy.Data` captures the
+    The copredication data in `Phenomena.Polysemy.Studies.Gotham2017` captures the
     synchronic *consequence* of reuse (multiple aspects coexist);
     this paper explains the diachronic *cause* (efficiency pressure). -/
 def reuseIsPolysemyGeneration : List FormConceptPair → List String :=

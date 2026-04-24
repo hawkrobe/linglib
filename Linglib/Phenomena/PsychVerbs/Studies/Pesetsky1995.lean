@@ -1,6 +1,7 @@
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Theories.Syntax.Minimalism.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -37,11 +38,159 @@ adjunction through the Cascade spine, and nonaffixal overt prepositions
 
 set_option autoImplicit false
 
+namespace Phenomena.PsychVerbs
+
+-- ============================================================================
+-- Belletti-Rizzi 1988 / Kim 2024 empirical data
+-- (Was `Phenomena/PsychVerbs/Data.lean`; inlined per the provenance-tracking
+--  policy. @cite{pesetsky-1995} is the natural owner since it directly
+--  consumes the @cite{belletti-rizzi-1988} classification.)
+-- ============================================================================
+
+/-- @cite{belletti-rizzi-1988} classification of psych verbs. -/
+inductive PsychVerbClass where
+  | classI    -- Experiencer-subject: enjoy, like, fear / It. temere
+  | classII   -- Object-experiencer: frighten, concern / It. preoccupare
+  | classIII  -- Dative experiencer (Romance): It. piacere
+  deriving DecidableEq, Repr
+
+/-- Aspectual reading of a Class II psych verb. -/
+inductive ClassIIReading where
+  | eventive  -- External cause: "the noise frightened John"
+  | stative   -- Internal cause: "the problem concerns John"
+  deriving DecidableEq, Repr
+
+/-- B&R syntactic diagnostic for discriminating psych verb classes (§§1–2). -/
+inductive BRDiagnostic where
+  | anaphoricCliticization -- §1.1: partitive ne extraction from subject
+  | arbitraryPro           -- §1.2: arb pro interpretation of subject
+  | causativeFare          -- §1.3: embedding under fare/make infinitive
+  | backwardBinding        -- §2.1: anaphor in subject bound by object
+  | adjectivalPassive      -- §1.5: passive is adjectival (not verbal)
+  deriving DecidableEq, Repr
+
+/-- Result of a B&R diagnostic applied to each class.
+    `classI`/`classII` record whether the class *passes* the test. -/
+structure BRDiagnosticResult where
+  diagnostic : BRDiagnostic
+  classI : Bool
+  classII : Bool
+  deriving Repr, BEq
+
+/-- @cite{belletti-rizzi-1988} diagnostic data.
+
+    | Diagnostic | Class I (*temere*) | Class II (*preoccupare*) |
+    |---|---|---|
+    | Anaphoric clitic *ne* (§1.1) | ✗ | ✓ (11a) |
+    | Arbitrary *pro* (§1.2) | ✓ (24a) | ✗ (24b) |
+    | Causative *fare* (§1.3) | ✓ (35) | ✗ (36) |
+    | Backward binding (§2.1) | ✗ | ✓ (57a) |
+    | Adjectival passive (§1.5) | ✗ | ✓ (47) | -/
+def brDiagnosticData : List BRDiagnosticResult := [
+  ⟨.anaphoricCliticization, false, true⟩,
+  ⟨.arbitraryPro,           true,  false⟩,
+  ⟨.causativeFare,          true,  false⟩,
+  ⟨.backwardBinding,        false, true⟩,
+  ⟨.adjectivalPassive,      false, true⟩
+]
+
+/-- Every B&R diagnostic discriminates Class I from Class II. -/
+theorem br_diagnostics_discriminate :
+    brDiagnosticData.all (fun d => d.classI != d.classII) = true := by decide
+
+/-- Class I passes arb-pro and causative-fare but fails the other three. -/
+theorem classI_pattern :
+    brDiagnosticData.all (fun d =>
+      match d.diagnostic with
+      | .anaphoricCliticization => d.classI == false
+      | .arbitraryPro => d.classI == true
+      | .causativeFare => d.classI == true
+      | .backwardBinding => d.classI == false
+      | .adjectivalPassive => d.classI == false
+    ) = true := by decide
+
+/-- Class II shows the mirror pattern. -/
+theorem classII_pattern :
+    brDiagnosticData.all (fun d =>
+      match d.diagnostic with
+      | .anaphoricCliticization => d.classII == true
+      | .arbitraryPro => d.classII == false
+      | .causativeFare => d.classII == false
+      | .backwardBinding => d.classII == true
+      | .adjectivalPassive => d.classII == true
+    ) = true := by decide
+
+/-- The Class I/II distinction is characterized by theta-role reversal. -/
+inductive SubjectRole where
+  | experiencer  -- Class I: subject = experiencer
+  | stimulus     -- Class II: subject = stimulus/cause
+  deriving DecidableEq, Repr
+
+/-- Map from B&R class to expected subject role. -/
+def PsychVerbClass.expectedSubjectRole : PsychVerbClass → Option SubjectRole
+  | .classI => some .experiencer
+  | .classII => some .stimulus
+  | .classIII => none
+
+/-- Intensionality datum (@cite{kim-2024} Ch. 4): does substitution of
+co-referential terms fail in subject position? -/
+structure IntensionalityDatum where
+  verb : String
+  reading : ClassIIReading
+  substitutionFails : Bool
+  deriving Repr, BEq
+
+/-- Empirical intensionality data from @cite{kim-2024}. -/
+def intensionalityData : List IntensionalityDatum := [
+  ⟨"concern", .stative, true⟩,
+  ⟨"interest", .stative, true⟩,
+  ⟨"frighten", .eventive, false⟩,
+  ⟨"amuse", .eventive, false⟩
+]
+
+/-- The T/SM restriction (@cite{kim-2024} Ch. 5): Cause and Subject Matter
+cannot cooccur. -/
+structure TSMRestriction where
+  causePresent : Bool
+  smPresent : Bool
+  wellFormed : Bool
+  deriving Repr, BEq
+
+/-- Cause and SM cannot cooccur. -/
+def tsmData : List TSMRestriction := [
+  ⟨true, false, true⟩,
+  ⟨false, true, true⟩,
+  ⟨true, true, false⟩,
+  ⟨false, false, true⟩
+]
+
+/-- Stative Class II verbs create intensional subject positions. -/
+theorem stative_substitution_fails :
+    (intensionalityData.filter (·.reading == .stative)).all
+      (·.substitutionFails) = true := by decide
+
+/-- Eventive Class II verbs have extensional subject positions. -/
+theorem eventive_substitution_succeeds :
+    (intensionalityData.filter (·.reading == .eventive)).all
+      (!·.substitutionFails) = true := by decide
+
+/-- Cause + SM cooccurrence is always ill-formed. -/
+theorem cause_sm_cooccurrence_illformed :
+    (tsmData.filter (fun d => d.causePresent && d.smPresent)).all
+      (!·.wellFormed) = true := by decide
+
+end Phenomena.PsychVerbs
+
+
+-- ============================================================================
+-- Pesetsky 1995 cascade analysis
+-- ============================================================================
+
 namespace Pesetsky1995
 
 open Minimalism
 open Semantics.Causation.Psych
-open Phenomena.PsychVerbs.Data
+open Phenomena.PsychVerbs
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

@@ -30,12 +30,32 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
-import Linglib.Phenomena.Coordination.Data
 
 namespace Phenomena.Coordination
 
 open CCG
 open Semantics.Montague
+
+/-- Theory-neutral data: a non-constituent coordination sentence
+paired with its semantically equivalent fully-spelled-out version.
+Both are grammatical; native speakers judge them to have the same
+truth conditions. (Originally in `Coordination/Data.lean`; inlined
+0.230.270 per the provenance-tracking policy.) -/
+structure SemanticEquivalence where
+  /-- The non-constituent coordination sentence -/
+  sentence : List String
+  /-- The semantically equivalent spelled-out version -/
+  equivalentTo : List String
+  /-- Both are grammatical -/
+  bothGrammatical : Bool := true
+  deriving Repr
+
+/-- "John likes and Mary hates beans" ≡
+"John likes beans and Mary hates beans" — the canonical
+non-constituent coordination test pair (@cite{steedman-2000}). -/
+def johnLikesAndMaryHatesBeans : SemanticEquivalence :=
+  { sentence := ["John", "likes", "and", "Mary", "hates", "beans"]
+  , equivalentTo := ["John", "likes", "beans", "and", "Mary", "hates", "beans"] }
 
 -- Empirical Fact 1: Non-constituent coordination is GRAMMATICAL
 

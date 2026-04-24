@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.271] - 2026-04-23
+
+### Phenomena/X/Data.lean dissolution (batch 1: 6 of 8)
+
+Per the provenance-tracking policy in MEMORY.md ("data goes back into
+Studies/ files"). Six top-level `Phenomena/*/Data.lean` files
+dissolved; data either deleted (zero-consumer) or migrated into the
+canonical owning study file:
+
+- **`Case/Data.lean`** (73 LOC) — deleted; zero consumers (dead code).
+- **`Conditionals/Data.lean`** (299 LOC) — deleted; zero consumers.
+- **`Coordination/Data.lean`** (214 LOC) — only `johnLikesAndMaryHatesBeans`
+  + `SemanticEquivalence` were live (in @cite{steedman-2000}); inlined
+  there. ~190 LOC of dead code dropped.
+- **`Polysemy/Data.lean`** (105 LOC) — migrated to
+  @cite{gotham-2017} (oldest study file owning the data); ErkHerbelot2024
+  and XuEtAl2024 import from there. XuEtAl had a docstring-only mention
+  (no actual usage).
+- **`PsychVerbs/Data.lean`** (200 LOC) — migrated to @cite{pesetsky-1995}
+  (oldest study file consuming the @cite{belletti-rizzi-1988}
+  classification); HartshorneEtAl2016 + Kim2024_UPH import from there.
+  All 6 `native_decide` proofs in the migrated content switched to
+  `decide`. Namespace simplified `.PsychVerbs.Data` → `.PsychVerbs`.
+- **`ClauseChaining/Data.lean`** (268 LOC) — migrated to
+  @cite{sarvasy-aikhenvald-2025} (the paper the data comes from);
+  Stassen1985 (cross-paper consumer) updated. All 4 `native_decide` →
+  `decide`. Namespace `.Data` → `.Phenomena.ClauseChaining`.
+
+Total: ~1160 LOC removed (mostly dead code), ~330 LOC migrated into
+study files. Remaining: `Quantification/Data.lean` (444 LOC, 4
+consumers) + `TenseAspect/Data.lean` (1433 LOC, 2 consumers) — batch 2.
+
 ## [0.230.270] - 2026-04-23
 
 ### O'Donnell 2015 Phase 7': first study file

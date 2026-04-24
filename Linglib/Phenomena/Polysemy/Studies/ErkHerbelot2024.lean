@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
-import Linglib.Phenomena.Polysemy.Data
+import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 
 /-!
@@ -422,7 +422,7 @@ theorem quarrel_rated_high :
 /-!
 ## SDS and Copredication
 
-Copredication (from `Phenomena.Polysemy.Data`) is a degenerate case of SDS
+Copredication (from `Phenomena.Polysemy.Studies.Gotham2017`) is a degenerate case of SDS
 where both concepts have non-zero posterior under *different* selectional
 constraints applied simultaneously.
 
@@ -439,7 +439,7 @@ aspect's concept.
 open Phenomena.Polysemy in
 
 /-- Copredication is acceptable when both aspects survive selectional filtering.
-This connects `Polysemy.Data.bookHeavyInteresting` to SDS: the acceptability
+This connects `Polysemy.Studies.Gotham2017.bookHeavyInteresting` to SDS: the acceptability
 follows from both concepts having non-zero posterior. -/
 theorem copredication_both_aspects_active :
     bookHeavyInteresting.judgment = .acceptable := rfl

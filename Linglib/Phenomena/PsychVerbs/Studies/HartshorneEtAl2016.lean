@@ -1,4 +1,4 @@
-import Linglib.Phenomena.PsychVerbs.Data
+import Linglib.Phenomena.PsychVerbs.Studies.Pesetsky1995
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.PsychLink
 
@@ -51,7 +51,7 @@ of CAUSE (the outermost predicate), so it is highest → subject.
 
 namespace HartshorneEtAl2016
 
-open Phenomena.PsychVerbs.Data (PsychVerbClass ClassIIReading SubjectRole)
+open Phenomena.PsychVerbs (PsychVerbClass ClassIIReading SubjectRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Semantic Type Distinction
