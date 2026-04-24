@@ -1,12 +1,12 @@
 import Linglib.Theories.Syntax.CCG.Scope
-import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Studies.Bruening2001
 
 /-!
 # CCG Scope Bridge
 @cite{steedman-2000}
 
 Connects CCG scope theory (from `Theories.Syntax.CCG.Scope`) to
-empirical scope-word-order data (from `Phenomena.Quantification.Data`).
+empirical scope-word-order data (from `Phenomena.Quantification.Bruening2001`).
 
 Proves that CCG derivation types correctly predict scope availability
 based on verb order (verb raising vs. verb projection raising).
@@ -18,9 +18,9 @@ namespace Phenomena.Quantification.CCGBridge
 open CCG
 open CCG.Scope
 open ScopeTheory
-open Phenomena.Quantification.Data
+open Phenomena.Quantification.Bruening2001
 
-/-- Map Phenomena.Quantification.Data.VerbOrder to CCG derivation type. -/
+/-- Map Phenomena.Quantification.Bruening2001.VerbOrder to CCG derivation type. -/
 def verbOrderToDerivationType : VerbOrder → DerivationType
   | .verbRaising => .composed           -- Object + embedded verb via composition
   | .verbProjectionRaising => .directApp -- Matrix verb first, standard application

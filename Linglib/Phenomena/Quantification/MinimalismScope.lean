@@ -1,13 +1,13 @@
 import Linglib.Theories.Syntax.Minimalism.Scope
 import Linglib.Features.ScopeTypes
-import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Studies.Bruening2001
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
 /-!
 # Bridge: Minimalist Scope Theory to Quantification Phenomena
 
 Connects Minimalist QR/Scope Economy theory to empirical scope freezing data
-in `Phenomena.Quantification.Data`.
+in `Phenomena.Quantification.Bruening2001`.
 
 ## Main results
 
@@ -26,7 +26,7 @@ where the goal asymmetrically c-commands the theme.
 namespace Phenomena.Quantification.MinimalismBridge
 
 open ScopeTheory
-open Phenomena.Quantification.Data
+open Phenomena.Quantification.Bruening2001
 open Minimalism.Phenomena.Scope
 
 -- Freezing Context Analysis

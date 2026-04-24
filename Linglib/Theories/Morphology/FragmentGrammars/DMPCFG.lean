@@ -170,6 +170,33 @@ theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
   intro a ha
   exact (M.lhsFactor_pos ha D).le
 
+/-- Corpus rule-counts vanish on the empty corpus. -/
+@[simp]
+theorem corpusRuleCount_zero (r : ContextFreeRule T G.NT) :
+    corpusRuleCount r (0 : Multiset (CFGTree T G.NT)) = 0 := by
+  simp [corpusRuleCount]
+
+/-- Per-LHS counts vanish on the empty corpus. -/
+@[simp]
+theorem lhsCounts_zero (a : G.NT) :
+    lhsCounts (G := G) a (0 : Multiset (CFGTree T G.NT)) = fun _ => 0 := by
+  funext ⟨r, _⟩
+  simp [lhsCounts]
+
+/-- The empty corpus has probability 1 under any DMPCFG: each
+    per-LHS Pólya factor is `partitionProb` on the all-zero count
+    vector, which equals 1 by `PolyaUrn.partitionProb_zero`. -/
+@[simp]
+theorem corpusProb_zero : M.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
+  unfold corpusProb
+  apply Finset.prod_eq_one
+  intro a ha
+  haveI := nonempty_rulesWithLHS_of_mem_image ha
+  show M.lhsFactor a 0 = 1
+  unfold lhsFactor
+  rw [lhsCounts_zero]
+  exact (M.lhsUrn a).partitionProb_zero
+
 end DMPCFG
 
 end Morphology.FragmentGrammars

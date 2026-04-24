@@ -129,6 +129,12 @@ theorem corpusProb_nonneg (W : MultinomialPCFG G)
   unfold corpusProb
   exact Multiset.prod_map_nonneg fun t _ => W.derivProb_nonneg t
 
+/-- The empty corpus has probability 1 — the empty product. -/
+@[simp]
+theorem corpusProb_zero (W : MultinomialPCFG G) :
+    W.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
+  simp [corpusProb]
+
 end MultinomialPCFG
 
 end Morphology.FragmentGrammars

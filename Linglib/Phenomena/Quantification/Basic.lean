@@ -10,10 +10,10 @@ Numeral imprecision data has been consolidated into `Phenomena.Imprecision.Numer
 
 -/
 
-import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Studies.Bruening2001
 
 namespace Phenomena.Quantification
 
-export Data (Availability FreezingContext)
+export Bruening2001 (Availability FreezingContext)
 
 end Phenomena.Quantification

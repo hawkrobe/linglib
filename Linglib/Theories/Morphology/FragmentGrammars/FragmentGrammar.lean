@@ -196,6 +196,49 @@ theorem corpusProbGivenStorage_nonneg
     intro i _
     exact (M.fgFactor_pos r i (Z r i)).le
 
+/-- The "empty" halt-count assignment: zero recurse-decisions and
+    zero halt-decisions at every (rule, position) pair. The
+    corresponding `fgFactor` evaluates to `1` because the Beta-
+    binomial ratio is `B(α, β) / B(α, β) = 1`. -/
+def emptyHaltCounts (G : ContextFreeGrammar T) : HaltCounts G :=
+  fun _ _ => (0, 0)
+
+/-- The per-(rule, position) factor at zero counts is `1`: the
+    Beta-binomial ratio degenerates to `B(α, β) / B(α, β)`. -/
+@[simp]
+theorem fgFactor_zero (r : ContextFreeRule T G.NT) (i : ℕ) :
+    M.fgFactor r i (0, 0) = 1 := by
+  unfold fgFactor
+  have h_Γα : 0 < Gamma (M.haltPriorRecurse r i) :=
+    Gamma_pos_of_pos (M.haltPriorRecurse_pos r i)
+  have h_Γβ : 0 < Gamma (M.haltPriorHalt r i) :=
+    Gamma_pos_of_pos (M.haltPriorHalt_pos r i)
+  have h_Γαβ : 0 < Gamma (M.haltPriorRecurse r i + M.haltPriorHalt r i) :=
+    Gamma_pos_of_pos (by
+      linarith [M.haltPriorRecurse_pos r i, M.haltPriorHalt_pos r i])
+  simp only [Nat.cast_zero, add_zero]
+  field_simp
+
+/-- FG corpus probability is `1` on the empty corpus paired with
+    the empty table assignment and empty halt-count assignment.
+    Each `fgFactor` is `1`, the AG factor is `1`, so the overall
+    product is `1`. -/
+@[simp]
+theorem corpusProbGivenStorage_empty :
+    M.corpusProbGivenStorage (0 : Multiset (CFGTree T G.NT))
+      (AdaptorGrammar.emptyTables G) (emptyHaltCounts G) = 1 := by
+  unfold corpusProbGivenStorage
+  rw [show M.toAdaptorGrammar.corpusProbGivenTables 0 (AdaptorGrammar.emptyTables G) = 1
+      from M.toAdaptorGrammar.corpusProbGivenTables_empty]
+  rw [one_mul]
+  apply Finset.prod_eq_one
+  intro r _
+  apply Finset.prod_eq_one
+  intro i _
+  show M.fgFactor r i ((emptyHaltCounts G) r i) = 1
+  unfold emptyHaltCounts
+  exact M.fgFactor_zero r i
+
 end FragmentGrammar
 
 end Morphology.FragmentGrammars

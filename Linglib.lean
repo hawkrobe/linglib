@@ -1403,7 +1403,7 @@ import Linglib.Phenomena.Classifiers.Studies.LittleMoroneyRoyer2022
 import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
-import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Studies.Bruening2001
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981

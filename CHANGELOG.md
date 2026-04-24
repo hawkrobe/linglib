@@ -4,37 +4,120 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.272] - 2026-04-23
+
+### O'Donnell 2015 audit-fix: Ch 7 contrasts + corpusProb_empty
+
+Audit pass on the O'Donnell 2015 formalization (Phases 0–7'),
+addressing hallucinations, scope-anchoring drift, and missing
+foundational theorems identified in a deep-audit review against the
+PDF.
+
+**Hallucination fixes**:
+
+- `FragmentGrammar.lean` / `ODonnell2015Derivational.lean`:
+  `§7.3.2` (Hay relative-frequency) → `Ch 8 / §7.3.3`
+  (productivity-and-ordering generalization, where the *-ability*
+  paradox actually appears). The §7.3.2 citation was from
+  approximate memory — the failure mode CLAUDE.md specifically
+  warns about.
+- `FrequencySpectrum.lean`: "CELEX + SWITCHBOARD" → "CELEX-derived
+  training corpus." Ch 7 uses CELEX (extended via heuristic
+  segmentation, hand-corrected). SWITCHBOARD is Ch 5 (past tense),
+  not Ch 7.
+
+**Scope refocus to Chapter 7's actual contrasts**:
+
+- `FrequencySpectrum.lean` rewritten: `{ness, ity, th}` (Ch 1
+  Fig 1.1 contrasts) → `{ness, ion, ate}` (Ch 7 Fig 7.3 / Table
+  7.1 contrasts). The Ch 7 set is the central empirical
+  discriminator: only FG places *-ness* in its top-5 productive
+  suffixes; all four competing models (DMPCFG/MAG/DOP1/ENDOP)
+  wrongly predict *-ion* as productive; three of them wrongly
+  predict *-ate* as productive. The Ch 1 set was a less central
+  example.
+- `ODonnell2015Derivational.lean` rewritten correspondingly:
+  five-rule grammar `N → A ness | V ion | V ate`, `A → adj`,
+  `V → v`. Categorical typing (Adj vs V) makes the *-ate*/`-ion`
+  selectional restrictions visible.
+
+**New foundational theorems** (`corpusProb_empty` for all four
+FG-family models):
+
+- `MultinomialPCFG.corpusProb_zero` — empty corpus has probability
+  1 (one-line `simp [corpusProb]` since empty multiset product is
+  1).
+- `DMPCFG.corpusProb_zero` + helpers `corpusRuleCount_zero`,
+  `lhsCounts_zero` — each per-LHS Pólya factor on the all-zero
+  count vector is 1, via `PolyaUrn.partitionProb_zero` (which
+  needed `nonempty_rulesWithLHS_of_mem_image` to discharge the
+  `[Nonempty]` instance).
+- `AdaptorGrammar.emptyTables` (definition) +
+  `corpusProbGivenTables_empty` — per-LHS PYP factor on empty
+  partition is 1; combined with DMPCFG factor = 1.
+- `FragmentGrammar.emptyHaltCounts` (definition) + `fgFactor_zero`
+  + `corpusProbGivenStorage_empty` — per-(rule, position) Beta-
+  binomial ratio at zero counts is `B(α,β)/B(α,β) = 1` via
+  `field_simp`.
+
+All four marked `@[simp]`. These are the foundational sanity
+theorems (a probability distribution should assign 1 to "no
+data"); their absence was a structural-maturity gap.
+
+Build: full library 5333 jobs green. Two PolyaUrn helper imports
+(`Multiset.notMem_zero` for `Nat.Partition` empty constructor)
+verified via grep on mathlib usage.
+
 ## [0.230.271] - 2026-04-23
 
-### Phenomena/X/Data.lean dissolution (batch 1: 6 of 8)
+### TemporalAdverbials refactor: mathlib-PR-review cascade
 
-Per the provenance-tracking policy in MEMORY.md ("data goes back into
-Studies/ files"). Six top-level `Phenomena/*/Data.lean` files
-dissolved; data either deleted (zero-consumer) or migrated into the
-canonical owning study file:
+Mathlib-style PR review of the consensus-schema refactor (0.230.268)
+flagged 4 majors. All addressed:
 
-- **`Case/Data.lean`** (73 LOC) — deleted; zero consumers (dead code).
-- **`Conditionals/Data.lean`** (299 LOC) — deleted; zero consumers.
-- **`Coordination/Data.lean`** (214 LOC) — only `johnLikesAndMaryHatesBeans`
-  + `SemanticEquivalence` were live (in @cite{steedman-2000}); inlined
-  there. ~190 LOC of dead code dropped.
-- **`Polysemy/Data.lean`** (105 LOC) — migrated to
-  @cite{gotham-2017} (oldest study file owning the data); ErkHerbelot2024
-  and XuEtAl2024 import from there. XuEtAl had a docstring-only mention
-  (no actual usage).
-- **`PsychVerbs/Data.lean`** (200 LOC) — migrated to @cite{pesetsky-1995}
-  (oldest study file consuming the @cite{belletti-rizzi-1988}
-  classification); HartshorneEtAl2016 + Kim2024_UPH import from there.
-  All 6 `native_decide` proofs in the migrated content switched to
-  `decide`. Namespace simplified `.PsychVerbs.Data` → `.PsychVerbs`.
-- **`ClauseChaining/Data.lean`** (268 LOC) — migrated to
-  @cite{sarvasy-aikhenvald-2025} (the paper the data comes from);
-  Stassen1985 (cross-paper consumer) updated. All 4 `native_decide` →
-  `decide`. Namespace `.Data` → `.Phenomena.ClauseChaining`.
+- **Bool → Prop on `DurationExprEntry`**: 4 propositional fields
+  (`isPostposition`, `polaritySensitive`, `requiresPerfect`,
+  `requiresNegation`) migrated from `Bool` to `Prop` with default
+  `:= False`. Concrete entries set `:= True` where appropriate;
+  consumer theorems rewritten from `= true ∧ = false` Bool conjunctions
+  to direct/negated Prop form (proofs `⟨trivial, not_false, ...⟩`).
+  Per CLAUDE.md "no intrinsic Bool" feedback. `TemporalExprEntry`'s
+  pre-existing 11 Bool fields left for a separate Fragment-wide
+  migration (Determiners + others).
+- **Three projections collapse to one record**:
+  `tiaTypeOf?` / `positionOf?` / `mapFunctionOf?` (3 nearly-identical
+  match-on-`kind` functions) replaced by one
+  `DurationExprEntry.rouillardClassification?` returning a
+  `RouillardClassification` record (`tiaType : TIAType`, `position :
+  AdverbialPosition`). Member-style dot-notation works via
+  `_root_.Fragments.English.TemporalExpressions.DurationExprEntry.`
+  qualified declaration. The map-function dimension was redundant
+  with TIA type and dropped (dead `MapFunction` enum + `mapFunctionOf?`
+  removed in same pass).
+- **`native_decide` → `decide`**: all 10 remaining `native_decide`
+  invocations in `Rouillard2026.lean` (pre-existing pattern from
+  before the original refactor) flipped to `decide`. All accepted
+  without restructuring — the data sets were small enough.
+- **`vendlerSelection : List Telicity` → `Option Telicity`**:
+  empty-list-as-no-restriction was a footgun; `Option` is clearer
+  (`none` = unrestricted, `some t` = requires `t`).
 
-Total: ~1160 LOC removed (mostly dead code), ~330 LOC migrated into
-study files. Remaining: `Quantification/Data.lean` (444 LOC, 4
-consumers) + `TenseAspect/Data.lean` (1433 LOC, 2 consumers) — batch 2.
+Minor cleanups in same pass: repeated `open Fragments.English.FunctionWords in`
+(twice each in two sections) consolidated into `section` blocks; stale
+docstring references to the removed `MapFunction` updated.
+
+**Deferred** (per reviewer): extract a `TemporalExpr` parent type
+(sum or typeclass) sharing `form` + `polaritySensitive` between
+`TemporalExprEntry` and `DurationExprEntry` — real abstraction the
+file is gesturing at, but defer until a third sibling structure
+arrives. Whole-file Bool→Prop on `TemporalExprEntry` deferred to a
+broader Fragment-wide Bool migration. Section banners (`-- ====` ASCII
+mixed with `-- ════` Unicode across the two files) cosmetic only;
+defer until a Fragment-wide style sweep.
+
+Builds: TemporalExpressions + Rouillard2026 + 5 transitive consumers
+(AlstottAravind2026 ×2, OgiharaST2024, TemporalConnectives.Compare,
+Rett2020) all green.
 
 ## [0.230.270] - 2026-04-23
 

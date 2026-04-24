@@ -137,6 +137,37 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
   exact mul_nonneg (M.toDMPCFG.lhsFactor_pos ha D).le
     ((M.pyp a).partitionProb_nonneg (Y a).snd)
 
+/-- The "empty" table assignment: every nonterminal gets the
+    `Nat.Partition 0` consisting of no tables. The corresponding
+    PYP factor evaluates to 1, so this is the natural Y to use
+    when stating the empty-corpus probability. -/
+def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
+  fun _ => ⟨0, { parts := 0,
+                  parts_pos := fun {i} h => absurd h (Multiset.notMem_zero i),
+                  parts_sum := rfl }⟩
+
+/-- AG corpus probability is `1` on the empty corpus paired with
+    the empty table assignment: each per-LHS factor is
+    `DMPCFG.lhsFactor a 0 · PitmanYor.partitionProb (empty) = 1 · 1`. -/
+@[simp]
+theorem corpusProbGivenTables_empty :
+    M.corpusProbGivenTables (0 : Multiset (CFGTree T G.NT)) (emptyTables G) = 1 := by
+  unfold corpusProbGivenTables
+  apply Finset.prod_eq_one
+  intro a ha
+  haveI := DMPCFG.nonempty_rulesWithLHS_of_mem_image ha
+  show M.toDMPCFG.lhsFactor a 0 * M.pypFactor a (emptyTables G) = 1
+  have h_dm : M.toDMPCFG.lhsFactor a 0 = 1 := by
+    unfold DMPCFG.lhsFactor
+    rw [DMPCFG.lhsCounts_zero]
+    exact (M.toDMPCFG.lhsUrn a).partitionProb_zero
+  have h_py : M.pypFactor a (emptyTables G) = 1 := by
+    unfold pypFactor emptyTables
+    -- The empty Nat.Partition 0 has parts.card = 0 and total = 0,
+    -- so all stepPochhammer m-values are 0, products are empty = 1
+    simp [PitmanYor.partitionProb]
+  rw [h_dm, h_py, mul_one]
+
 end AdaptorGrammar
 
 end Morphology.FragmentGrammars

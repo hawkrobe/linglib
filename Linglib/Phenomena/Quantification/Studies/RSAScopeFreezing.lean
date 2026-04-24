@@ -1,12 +1,12 @@
 import Linglib.Phenomena.Quantification.Studies.ScopeFreezing
-import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.Quantification.Studies.Bruening2001
 import Mathlib.Data.Rat.Defs
 
 /-!
 # Bridge: RSA Scope Freezing → Quantification Phenomena
 
 Connects the RSA scope-freezing model to empirical scope availability data
-from `Phenomena.Quantification.Data`. The RSA model provides domain types
+from `Phenomena.Quantification.Bruening2001`. The RSA model provides domain types
 and meaning functions; this bridge file applies them to concrete freezing
 examples (possessor baseline/frozen) and states rescue/suppression predictions.
 
@@ -21,7 +21,7 @@ namespace RSA.ScopeFreezing.Bridge
 
 open RSA.ScopeFreezing
 open Semantics.Scope (ScopeConfig)
-open Phenomena.Quantification.Data
+open Phenomena.Quantification.Bruening2001
 
 -- Interpretation Prior from Grammar Parse
 

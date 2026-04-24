@@ -1,18 +1,24 @@
-/-
-# Quantification Phenomena — Data
+/-!
+# @cite{bruening-2001} — Scope Freezing Examples
 @cite{bruening-2001} @cite{larson-1988} @cite{may-1985}
 
-Theory-neutral empirical data on quantifier scope.
+Empirical data on quantifier scope freezing, primarily compiled from
+@cite{bruening-2001} ("QR obeys Superiority"). Includes contributions
+from @cite{larson-1988} (double-object construction examples) and
+@cite{may-1985} (foundational scope-availability vocabulary).
+
+This file is the canonical owner of the scope-freezing example set;
+downstream consumers (`MinimalismScope.lean`, `RSAScopeFreezing.lean`,
+`Steedman2000.lean`) import from here. Was formerly
+`Phenomena/Quantification/Data.lean`; renamed per the
+provenance-tracking policy ("data goes back into Studies/ files").
 
 ## Sections
 - `ScopeFreezing`: Configurations where inverse scope becomes unavailable
 - `ScopeWordOrder`: Word order effects on scope in verb-final constructions
-
-Numeral imprecision data has been consolidated into `Phenomena.Imprecision.Numerals`.
-
 -/
 
-namespace Phenomena.Quantification.Data
+namespace Phenomena.Quantification.Bruening2001
 
 -- ============================================================================
 -- § Scope Freezing
@@ -441,4 +447,4 @@ theorem wordOrder_predicts_german_97 :
 
 end ScopeWordOrder
 
-end Phenomena.Quantification.Data
+end Phenomena.Quantification.Bruening2001
