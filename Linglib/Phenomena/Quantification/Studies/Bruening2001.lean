@@ -5,7 +5,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 /-!
 # @cite{bruening-2001} — QR Obeys Superiority
 @cite{bruening-2001} @cite{larson-1988} @cite{may-1985}
-@cite{pylkknen-2008}
+@cite{pylkkanen-2008}
 
 Bruening's *Linguistic Inquiry* paper "QR Obeys Superiority: Frozen
 Scope and ACD" — both the empirical scope-freezing data set and the
@@ -27,7 +27,7 @@ Downstream consumer `Steedman2000.lean` imports from here.
 
 Bruening's central thesis — *QR obeys Superiority* — is derived
 formally: double-object scope freezing follows from asymmetric
-c-command in @cite{pylkknen-2008}'s Voice + low-Appl tree, where the
+c-command in @cite{pylkkanen-2008}'s Voice + low-Appl tree, where the
 goal asymmetrically c-commands the theme. Other freezing contexts
 (possessor, passive, attitude) are analyzed via DP-phase /
 adjunct-island / clause-boundary barriers.
@@ -484,7 +484,7 @@ open Minimalism.Phenomena.Scope
 /-! Connects Minimalist QR / Scope Economy theory to the empirical
 scope-freezing data above. The central claim is Bruening's "QR obeys
 superiority": double-object freezing falls out of asymmetric c-command
-in the @cite{pylkknen-2008} ditransitive tree. -/
+in the @cite{pylkkanen-2008} ditransitive tree. -/
 
 -- Freezing Context Analysis
 
@@ -587,14 +587,14 @@ theorem baseline_is_ambiguous :
 -- DOC Scope Freezing — superiority derived from c-command
 -- ============================================================================
 
-/-! @cite{pylkknen-2008}'s low-Appl tree (`ditransitiveTree`) produces
+/-! @cite{pylkkanen-2008}'s low-Appl tree (`ditransitiveTree`) produces
 the DOC structure where V takes ApplP as complement, so the goal in
 Spec-ApplP asymmetrically c-commands the theme in complement of Appl.
 QR of the theme over the goal is blocked by superiority, derived
 from c-command rather than stipulated. -/
 
 open Pylkkanen2008 in
-/-- DOC scope freezing config with @cite{pylkknen-2008}'s tree:
+/-- DOC scope freezing config with @cite{pylkkanen-2008}'s tree:
     superiority is derived from goal asymmetrically c-commanding theme
     in the Voice + low-Appl structure. -/
 def docScopeConfig : MinimalistScopeConfig :=
@@ -609,7 +609,7 @@ def docScopeConfig : MinimalistScopeConfig :=
 
 open Pylkkanen2008 in
 /-- Superiority in the DOC is DERIVED from c-command in
-@cite{pylkknen-2008}'s tree: goal (Mary) asymmetrically c-commands
+@cite{pylkkanen-2008}'s tree: goal (Mary) asymmetrically c-commands
 theme (a letter) via low Appl, so QR of theme over goal is blocked. -/
 theorem doc_superiority_from_tree :
     superiorityBlocked docScopeConfig = true := by decide
@@ -619,7 +619,7 @@ theorem doc_superiority_from_tree :
 | Context | Minimalist Explanation |
 |---------|----------------------|
 | Possessor | DP phase blocks QR |
-| Double object | Superiority: goal c-commands theme (@cite{pylkknen-2008} tree) |
+| Double object | Superiority: goal c-commands theme (@cite{pylkkanen-2008} tree) |
 | Passive | Adjunct island |
 | Heavy NP | NOT grammatical (processing) |
 | Attitude | Clause boundary |

@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Voice
 
 /-!
 # Applicative Heads
-@cite{cuervo-2003} @cite{pylkknen-2008} @cite{wood-2015}
+@cite{cuervo-2003} @cite{pylkkanen-2008} @cite{wood-2015}
 
 Applicative heads introduce applied arguments (benefactives, goals,
 sources) into the verbal structure. The high/low distinction determines
@@ -11,9 +11,9 @@ whether the applied argument relates to the event as a whole (high)
 or to the theme (low).
 
 Low applicatives further split into **recipient** (transfer *to*) and
-**source** (transfer *from*), following @cite{pylkknen-2008} Table 1.1.
+**source** (transfer *from*), following @cite{pylkkanen-2008} Table 1.1.
 
-## Semantic Denotations (@cite{pylkknen-2008})
+## Semantic Denotations (@cite{pylkkanen-2008})
 
 - **High Appl**: λx.λe. Appl(e, x) — relates individual to event
   (ethical datives: "he ate food on-me")
@@ -22,7 +22,7 @@ Low applicatives further split into **recipient** (transfer *to*) and
 - **Low Appl (source)**: λx.λy. HAVE-FROM(y, x) — transfer FROM
   (possessive datives: "they broke his arm")
 
-## High/Low Asymmetry (@cite{pylkknen-2008}, @cite{schaefer-2008})
+## High/Low Asymmetry (@cite{pylkkanen-2008}, @cite{schaefer-2008})
 
 High applicatives require Voice with event semantics; low applicatives
 are independent of Voice. This predicts high Appl is blocked when
@@ -30,12 +30,12 @@ Voice is semantically null (middles, anticausatives).
 
 Note: @cite{wood-2015} Ch. 5 argues that Icelandic lacks true high
 applicatives entirely. The high/low interaction modeled here follows
-the cross-linguistic typology of @cite{pylkknen-2008}.
+the cross-linguistic typology of @cite{pylkkanen-2008}.
 -/
 
 namespace Minimalism
 
-/-- High vs low applicatives (@cite{pylkknen-2008}, Table 1.1).
+/-- High vs low applicatives (@cite{pylkkanen-2008}, Table 1.1).
 
     - **High**: Above VP, relates applied argument to the event
       (benefactive: Chaga "he ate food for wife")
@@ -45,9 +45,9 @@ namespace Minimalism
       applied argument (Korean, Hebrew possessor datives, Japanese
       adversity passives) -/
 inductive ApplType where
-  | high          -- Above VP: individual-event relation (@cite{pylkknen-2008})
-  | lowRecipient  -- Below VP: transfer TO applied arg (@cite{pylkknen-2008})
-  | lowSource     -- Below VP: transfer FROM applied arg (@cite{pylkknen-2008} §2.2, §2.3)
+  | high          -- Above VP: individual-event relation (@cite{pylkkanen-2008})
+  | lowRecipient  -- Below VP: transfer TO applied arg (@cite{pylkkanen-2008})
+  | lowSource     -- Below VP: transfer FROM applied arg (@cite{pylkkanen-2008} §2.2, §2.3)
   deriving DecidableEq, Repr
 
 /-- Is this a low applicative (either recipient or source)? -/
@@ -113,7 +113,7 @@ def applLowSource : ApplHead :=
   { applType := .lowSource }
 
 -- ============================================================================
--- § 4: Voice–Applicative Interaction (@cite{pylkknen-2008}, @cite{schaefer-2008})
+-- § 4: Voice–Applicative Interaction (@cite{pylkkanen-2008}, @cite{schaefer-2008})
 -- ============================================================================
 
 /-- Is this applicative licensed in the context of a given Voice head?
@@ -121,7 +121,7 @@ def applLowSource : ApplHead :=
     High applicatives require Voice with event semantics; when Voice is
     semantically null (middles, anticausatives), high Appl is blocked.
     Low applicatives relate to the theme and are always licensed
-    (@cite{pylkknen-2008}). -/
+    (@cite{pylkkanen-2008}). -/
 def ApplHead.licensedWith (appl : ApplHead) (voice : VoiceHead) : Bool :=
   if appl.applType.RequiresEventSemantics then voice.hasSemantics
   else true
@@ -144,7 +144,7 @@ theorem ethical_dative_with_agent :
     applHigh.licensedWith voiceAgent = true := rfl
 
 /-- High Appl is BLOCKED with middle Voice (no event semantics)
-    (@cite{pylkknen-2008}). -/
+    (@cite{pylkkanen-2008}). -/
 theorem ethical_dative_blocked_in_middle :
     applHigh.licensedWith voiceMiddle = false := rfl
 

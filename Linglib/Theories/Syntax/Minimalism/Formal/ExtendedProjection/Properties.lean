@@ -46,7 +46,7 @@ def epSemanticType : Cat → EPSemanticType
   | .n                 => .intermediate   -- F1: categorizer (gender/class, @cite{marantz-2001})
   | .a                 => .intermediate   -- F1: adjectival categorizer (@cite{panagiotidis-2015})
   | .Voice             => .intermediate   -- F1: introduces external argument (@cite{kratzer-1996})
-  | .Appl              => .intermediate   -- F1: introduces applied argument (@cite{pylkknen-2008})
+  | .Appl              => .intermediate   -- F1: introduces applied argument (@cite{pylkkanen-2008})
   | .Num               => .intermediate   -- F2: number inflection (@cite{ritter-1991})
   | .Q                 => .intermediate   -- F3: quantity/classifier (@cite{borer-2005})
   | .D                 => .entity         -- F4: entity-denoting (in nominal EP)

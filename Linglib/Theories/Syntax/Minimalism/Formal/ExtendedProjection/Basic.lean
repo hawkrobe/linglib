@@ -51,7 +51,7 @@ def catFeatures : Cat → CatFeatures
   | .V     => ⟨true,  false⟩   -- [+V, -N]
   | .v     => ⟨true,  false⟩   -- [+V, -N] (light verb)
   | .Voice => ⟨true,  false⟩   -- [+V, -N] (@cite{kratzer-1996})
-  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (@cite{pylkknen-2008})
+  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (@cite{pylkkanen-2008})
   | .T     => ⟨true,  false⟩   -- [+V, -N]
   | .Foc   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
   | .Top   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)

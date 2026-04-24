@@ -1,10 +1,12 @@
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.VoiceProjection
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 
 /-!
-# @cite{pylkknen-2008} — Introducing Arguments
-@cite{pylkknen-2008} @cite{cuervo-2003} @cite{barss-lasnik-1986}
+# @cite{pylkkanen-2008} — Introducing Arguments
+@cite{pylkkanen-2008} @cite{cuervo-2003} @cite{barss-lasnik-1986}
 
 *Linguistic Inquiry Monographs* 49. MIT Press.
 
@@ -112,40 +114,40 @@ def benefactiveTree : SyntacticObject :=
 
 /-- Agent c-commands goal. -/
 theorem ditransitive_agent_ccommands_goal :
-    cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by native_decide
+    cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by decide
 
 /-- Agent c-commands theme. -/
 theorem ditransitive_agent_ccommands_theme :
-    cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by native_decide
+    cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
 
 /-- Goal c-commands theme — the @cite{barss-lasnik-1986} asymmetry
     derived structurally from V selecting ApplP. -/
 theorem ditransitive_goal_ccommands_theme :
-    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by native_decide
+    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
 
 /-- Theme does NOT c-command goal: the asymmetry is structural. -/
 theorem ditransitive_theme_not_ccommands_goal :
-    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by native_decide
+    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by decide
 
 -- Benefactive (high Appl): benefactive > theme
 
 /-- Benefactive c-commands theme. -/
 theorem benefactive_benef_ccommands_theme :
-    cCommandsIn benefactiveTree DP_wife_t DP_food_t := by native_decide
+    cCommandsIn benefactiveTree DP_wife_t DP_food_t := by decide
 
 /-- Theme does NOT c-command benefactive. -/
 theorem benefactive_theme_not_ccommands_benef :
-    ¬ cCommandsIn benefactiveTree DP_food_t DP_wife_t := by native_decide
+    ¬ cCommandsIn benefactiveTree DP_food_t DP_wife_t := by decide
 
 -- Appl head containment
 
 /-- Low applicative marks the ditransitive. -/
 theorem send_is_low_appl :
-    containsB ditransitiveTree appl_low_t = true := by native_decide
+    containsB ditransitiveTree appl_low_t = true := by decide
 
 /-- High applicative marks the benefactive. -/
 theorem eat_is_high_appl :
-    containsB benefactiveTree appl_high_t = true := by native_decide
+    containsB benefactiveTree appl_high_t = true := by decide
 
 -- ============================================================================
 -- § 4: ApplType Association
@@ -174,7 +176,7 @@ theorem benefactive_appl_is_high : ¬ highApplType.IsLow := by decide
 
 /-! ### Cross-linguistic classification (§2.1.2–§2.1.4)
 
-@cite{pylkknen-2008} tests the high/low distinction in six languages
+@cite{pylkkanen-2008} tests the high/low distinction in six languages
 using four diagnostics. The diagnostics cluster into two groups,
 confirming the typological split. -/
 
@@ -264,7 +266,7 @@ theorem albanian_is_high : diagnosticPredictsHigh albanian_appl = true := rfl
 /-- The diagnostics are consistent with the annotated classification
     for all six languages. -/
 theorem all_diagnostics_consistent :
-    allLanguages.all diagnosticsConsistent = true := by native_decide
+    allLanguages.all diagnosticsConsistent = true := by decide
 
 -- ============================================================================
 -- § 6: Bridge — Larson VP Shell ↔ Modern Voice/Appl
@@ -280,7 +282,7 @@ open Larson1988 in
 /-- @cite{larson-1988}'s DOC and the modern Voice + low-Appl derivation
     produce the same c-command hierarchy: IO asymmetrically c-commands DO.
 
-    This proves that @cite{larson-1988} and @cite{pylkknen-2008},
+    This proves that @cite{larson-1988} and @cite{pylkkanen-2008},
     despite different decompositions, converge on the same structural
     prediction for @cite{barss-lasnik-1986} asymmetries. -/
 theorem larson_modern_same_hierarchy :
@@ -290,6 +292,85 @@ theorem larson_modern_same_hierarchy :
     -- Modern Voice/Appl: goal > theme (same asymmetry)
     cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
     ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+
+/-! ## §7. Voice as the head that introduces the external argument
+    (@cite{pylkkanen-2008} Ch. 3 §3.2 + Ch. 4 §4.2)
+
+@cite{pylkkanen-2008}'s central claim about Voice (Ch. 4 §4.2,
+"Eliminating Linking"): the external argument is *not* projected by
+the verb itself but by a separate Voice head, following
+@cite{kratzer-1996}. Voice combines with VP via Event Identification
+(Ch. 1 eq. 10), introducing the external argument and relating it to
+the event described by the verb.
+
+This is one of the two competing views of Voice surveyed in
+`Theories/Syntax/Minimalism/VoiceProjection.lean`. The other view,
+defended by @cite{collins-2005} and @cite{storment-2026}, treats Voice
+as a *structural* head (the smuggling projection) and assigns
+external-argument introduction to *v* instead. The two views are
+orthogonal — see `VoiceProjection.lean` for the substantive contrast. -/
+
+/-- Pylkkänen's view applied to the canonical agentive Voice: it
+    satisfies `IsExternalArgIntroducer` (it does the job Pylkkänen
+    attributes to Voice). -/
+theorem voice_introduces_external_arg_pylkkanen :
+    Minimalism.IsExternalArgIntroducer Minimalism.voiceAgent := by decide
+
+/-! ## §8. Voice-bundling for the English zero-causative
+    (@cite{pylkkanen-2008} Ch. 3 §3.3, eq. 42)
+
+A second contribution of Ch. 3: the difference between English (which
+lacks unaccusative causatives) and Japanese/Finnish (which have them)
+reduces to whether the language *bundles* Cause and Voice into a
+single morphological head. English bundles ([Cause, Voice]); Japanese
+and Finnish do not. Voice-bundling is what forces causatives to
+introduce an external argument in English even though Cause itself
+does not (eq. 42).
+
+The bundling claim is a parametric difference between languages, not a
+universal — it is a *crosslinguistic variation* parameter. The
+formalization here documents the contrast at the type level; concrete
+verb-by-verb instantiation lives in language-specific Fragment files. -/
+
+/-- The Voice-bundling parameter (Ch. 3 §3.3) is a binary language-
+    specific choice. English bundles; Japanese and Finnish do not. -/
+inductive VoiceBundlingChoice where
+  /-- English-type: Cause and Voice are bundled into one head;
+      every causative therefore introduces an external argument. -/
+  | bundled
+  /-- Japanese/Finnish-type: Cause and Voice are independent;
+      unaccusative causatives (Cause without Voice) are possible. -/
+  | independent
+  deriving DecidableEq, Repr
+
+/-- The empirical prediction of Voice-bundling: a bundled language
+    cannot have unaccusative causatives (since Cause forces Voice to
+    project, which introduces the external argument). -/
+def VoiceBundlingChoice.permitsUnaccusativeCausative :
+    VoiceBundlingChoice → Bool
+  | .bundled => false
+  | .independent => true
+
+theorem english_no_unaccusative_causative :
+    VoiceBundlingChoice.permitsUnaccusativeCausative .bundled = false := rfl
+
+theorem japanese_finnish_unaccusative_causative_possible :
+    VoiceBundlingChoice.permitsUnaccusativeCausative .independent = true := rfl
+
+/-! ## §9. Cause is not a θ-role (@cite{pylkkanen-2008} Ch. 3 §3.2)
+
+Pylkkänen's other major Ch. 3 argument: the causative head Cause
+introduces a *causing event*, not a θ-role on the external argument.
+Evidence: Japanese adversity causatives (eq. 19–25) have causative
+morphology and meaning but no external argument. The bieventive
+analysis (Cause = relation between two events) is required by such
+data; the θ-role analysis (Cause = relation between a causer and a
+caused event) cannot accommodate them.
+
+Formalizing the bieventive vs. θ-role contrast at the level of
+detail Pylkkänen offers requires event semantics infrastructure
+beyond this study file's scope; the substantive claim is recorded
+here for cross-reference. -/
 
 end Pylkkanen2008

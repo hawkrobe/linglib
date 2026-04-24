@@ -6,7 +6,7 @@ import Linglib.Fragments.Icelandic.Predicates
 
 /-!
 # @cite{wood-2015} — Icelandic Morphosyntax and Argument Structure
-@cite{wood-2015} @cite{kratzer-1996} @cite{pylkknen-2008} @cite{schaefer-2008} @cite{cuervo-2003}
+@cite{wood-2015} @cite{kratzer-1996} @cite{pylkkanen-2008} @cite{schaefer-2008} @cite{cuervo-2003}
 
 @cite{wood-2015} establishes that Icelandic -st (from historical
 reflexive *sik*) spells out Voice across MULTIPLE syntactic
@@ -33,7 +33,7 @@ configurations, not a single "reflexive" or "anticausative" morpheme.
 4. **Applicative interaction** (Ch. 5): @cite{wood-2015} shows -st
    cannot merge in SpecApplP because Appl assigns dative case
    and -st lacks case features. The high/low Appl interaction
-   theorems below follow @cite{pylkknen-2008} and @cite{schaefer-2008},
+   theorems below follow @cite{pylkkanen-2008} and @cite{schaefer-2008},
    not @cite{wood-2015}'s Icelandic-specific analysis (which argues
    Icelandic lacks true high applicatives).
 -/
@@ -125,18 +125,18 @@ theorem parametric_diversity :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 4: High vs Low Applicative Interaction (@cite{pylkknen-2008}, @cite{schaefer-2008})
+-- § 4: High vs Low Applicative Interaction (@cite{pylkkanen-2008}, @cite{schaefer-2008})
 -- ============================================================================
 
 /-- High applicatives are blocked when Voice has no event semantics
-    (@cite{pylkknen-2008}, @cite{schaefer-2008}). Note: @cite{wood-2015}
+    (@cite{pylkkanen-2008}, @cite{schaefer-2008}). Note: @cite{wood-2015}
     Ch. 5 argues Icelandic lacks true high applicatives; the asymmetry
     formalized here follows the cross-linguistic typology. -/
 theorem ethical_blocked_in_middle :
     applHigh.licensedWith voiceMiddle = false := rfl
 
 /-- Low applicatives survive when Voice has no event semantics
-    because they relate to the theme, not the event (@cite{pylkknen-2008}). -/
+    because they relate to the theme, not the event (@cite{pylkkanen-2008}). -/
 theorem possessive_survives_middle :
     applLowRecipient.licensedWith voiceMiddle = true := rfl
 
@@ -150,7 +150,7 @@ theorem ethical_ok_in_active :
 
 /-- The full asymmetry: high applicatives require Voice with event
     semantics; low applicatives are independent of Voice
-    (@cite{pylkknen-2008}, @cite{schaefer-2008}). -/
+    (@cite{pylkkanen-2008}, @cite{schaefer-2008}). -/
 theorem dative_voice_asymmetry :
     -- Ethical dative: blocked when Voice has no semantics
     applHigh.licensedWith voiceMiddle = false ∧

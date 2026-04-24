@@ -727,7 +727,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
 -- § 16. Bridge to Pylkkänen 2008 (High/Low Typology)
 -- ════════════════════════════════════════════════════
 
-/-! O'dam applicatives challenge the @cite{pylkknen-2008} binary
+/-! O'dam applicatives challenge the @cite{pylkkanen-2008} binary
     high/low classification. They exhibit properties of BOTH types:
 
     - **High-like**: can applicativize unergatives (agent introduction)

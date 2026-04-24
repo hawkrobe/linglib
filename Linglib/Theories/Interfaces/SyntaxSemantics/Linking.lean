@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Verb.EntailmentProfile
 /-!
 # Linking Theory Interface
 
-@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkknen-2008} @cite{rappaport-hovav-levin-1998}
+@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkkanen-2008} @cite{rappaport-hovav-levin-1998}
 
 General interface for theories of argument realization — how verbs'
 arguments get their thematic roles.
@@ -265,7 +265,7 @@ inductive ArgPosition where
   | directObject    -- Direct object
   | indirectObject  -- Indirect object / dative
   | oblique         -- Oblique / PP complement
-  | applied         -- Applied argument (@cite{pylkknen-2008})
+  | applied         -- Applied argument (@cite{pylkkanen-2008})
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════

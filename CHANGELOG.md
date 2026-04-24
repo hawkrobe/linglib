@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.276] - 2026-04-23
+
+### Pylkkänen2008 audit + first divergence meta-bridge (VoiceProjection)
+
+First substantive *contrast* test of the cross-theory meta-bridges convention. Earlier meta-bridges (ProtoRoles, VerbClasses, IslandSensitivity) documented alignments or compatibilities; this one surfaces a substantive theoretical disagreement.
+
+- **NEW `Theories/Syntax/Minimalism/VoiceProjection.lean`** — formalizer-side meta-bridge surfacing the Pylkkänen vs. Collins/Storment disagreement about what Voice *is*. Two predicates over `VoiceHead`:
+  - `IsExternalArgIntroducer` (Pylkkänen / Kratzer view: Voice = θ-assigning head)
+  - `IsSmugglingProjection` (Collins / Storment view: Voice = structural landing site)
+
+  The two predicates are orthogonal — `voiceAgent` satisfies the first but not the second; `voicePassive` and `voiceAnticausative` satisfy the second but not the first. Tested with three theorems (`voiceAgent_pylkkanen_yes_collins_no`, `voicePassive_collins_yes_pylkkanen_no`, `voiceAnticausative_collins_yes_pylkkanen_no`) plus `views_not_equivalent` and `views_jointly_unsatisfiable_for_canonical_voices`. Linglib's `VoiceHead` already encodes both axes (`assignsTheta` and `permitsSmuggling` are independent fields), so the disagreement is *structurally visible* — the central thesis of the meta-bridges convention.
+
+- **`Pylkkanen2008.lean` audit** (295 → 374 LOC):
+  - All 20 `native_decide` invocations migrated to `decide` (concrete tree c-command checks; `decide` works on all of them).
+  - Added §7 "Voice as the head that introduces the external argument" with `voice_introduces_external_arg_pylkkanen` theorem and a cross-reference to `VoiceProjection.lean`.
+  - Added §8 "Voice-bundling for the English zero-causative" — Ch. 3 §3.3, eq. 42. New `VoiceBundlingChoice` enum with `permitsUnaccusativeCausative` predicate; English (bundled) blocks unaccusative causatives, Japanese/Finnish (independent) permit them.
+  - Added §9 docstring stub for "Cause is not a θ-role" (Ch. 3 §3.2) — substantive claim recorded for cross-reference; full formalization deferred (requires event semantics infrastructure).
+
+- **Bib key normalization**: renamed `pylkknen-2008` → `pylkkanen-2008` (the natural English-keyboard transliteration of *Pylkkänen*; previous key was missing an `a`). Updated 11 Lean files using the broken form, the bib entry, and the rendered bibliography. Eliminates 3 pre-existing `gen_bibliography.py --check` warnings.
+
 ## [0.230.275] - 2026-04-23
 
 ### Collins2005 audit + refactor — InverseVoice abstraction validated

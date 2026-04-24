@@ -601,7 +601,7 @@ theorem causative_alternation_parallel :
 
 /-! ### The Template → Voice → Applicative chain
 
-@cite{pylkknen-2008} establishes that high applicatives require Voice
+@cite{pylkkanen-2008} establishes that high applicatives require Voice
 with event semantics, while low applicatives are independent of Voice.
 @cite{hewett-2026}'s template system instantiates this: each template
 determines a VoiceFlavor (via `toVoiceFlavor`), and that flavor

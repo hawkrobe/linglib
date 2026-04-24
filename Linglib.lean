@@ -2410,3 +2410,6 @@ import Linglib.Theories.Syntax.Minimalism.Movement.InverseVoice
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.ProtoRoles
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.VerbClasses
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
+-- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
+-- under the cross-theory meta-bridges convention.
+import Linglib.Theories.Syntax.Minimalism.VoiceProjection
