@@ -21,15 +21,54 @@ dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
 ## Cross-Module Connections
 
 - `Theories.Semantics.Causation.Resultatives`: `ResultativeRealization`,
-  `ResultOrientation`, `PhaseComplement`, `CoSType`
-- `Tay2024`: thesis-specific
-  theorems and analysis that import this Fragment
+  `ResultOrientation`
+- `Theories.Semantics.Verb.ChangeOfState.Theory`: `CoSType`
+- `Tay2024`: thesis-specific theorems and analysis that import this Fragment
+
+`PhaseComplement` (the closed-class V2 morpheme enum) lives here rather
+than in `Theories/`: it enumerates Mandarin-specific morphemes
+(dǎo/wán/hǎo/diào/zhù), so the data is Mandarin-anchored. Cross-linguistic
+typological parameters (`ResultativeRealization`, `ResultOrientation`)
+remain in `Theories.Semantics.Causation.Resultatives`.
 -/
 
 namespace Fragments.Mandarin.Resultatives
 
-open Semantics.Causation.Resultatives
+open Semantics.Causation.Resultatives (ResultativeRealization ResultOrientation)
 open Semantics.Verb.ChangeOfState (CoSType)
+
+-- ════════════════════════════════════════════════════
+-- § 0. Phase complement morpheme enum
+-- ════════════════════════════════════════════════════
+
+/-- Mandarin phase complements: a closed class of grammaticalized V2
+    morphemes that fix the change-of-state semantics of the result.
+    @cite{tay-2024} discusses these as a typologically distinctive
+    Mandarin device. -/
+inductive PhaseComplement where
+  | dao
+  | wan
+  | hao
+  | diao
+  | zhu
+  deriving DecidableEq, Repr
+
+/-- Mapping from each phase complement to its `CoSType` semantics.
+
+    `wan → cessation` models the *activity-aspectual* reading
+    (P-during-event, ¬P-after = activity ceased), not a patient-result
+    reading. The patient-result reading ("the food is gone") would
+    require a separate `.completion` `CoSType`; cessation is the
+    closest fit in the current taxonomy.
+
+    -- UNVERIFIED: Tay 2024's exact taxonomy of wan; the cessation
+    classification is the project's best fit, not a literal citation. -/
+def PhaseComplement.cosType : PhaseComplement → CoSType
+  | .dao  => .inception
+  | .wan  => .cessation
+  | .hao  => .inception
+  | .diao => .inception
+  | .zhu  => .continuation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Compound Data

@@ -2,7 +2,6 @@ import Linglib.Features.InformationStructure
 import Linglib.Core.IntensionalLogic.Premise
 import Linglib.Core.Lexical.UD
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
-import Linglib.Theories.Semantics.Alternatives.Categorical
 import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Fragments.Turkish.QuestionParticles
@@ -135,13 +134,21 @@ theorem mustP_iff_mustGrounded (w : PolarWorld) :
     simp [pProp, p] at this
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §2  Operators as CatItems (UPOS-tagged)
+-- §2  Operators as UPOS-tagged items
 -- ═══════════════════════════════════════════════════════════════════════
+
+/-- A denotation tagged with its UD UPOS category. Study-internal
+    utility used to model @cite{turk-hirsch-2026}'s claim that *mI*'s
+    PART tag licenses only PART-tagged alternatives. -/
+structure TaggedDen (α : Type) where
+  cat : UD.UPOS
+  den : α
+  deriving Repr
 
 /-- The lexicon of propositional operators at type ⟨⟨s,t⟩,t⟩.
     Polarity heads (Σ, NEG) are tagged `PART`; the deontic modal is `AUX`.
     This UPOS distinction is what category match exploits. -/
-def opLexicon : List (CatItem (PolarWorld → Bool)) :=
+def opLexicon : List (TaggedDen (PolarWorld → Bool)) :=
   [⟨.PART, p⟩, ⟨.PART, notP⟩, ⟨.AUX, mustP⟩]
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -151,12 +158,12 @@ def opLexicon : List (CatItem (PolarWorld → Bool)) :=
 /-- Type-theoretic alternatives (@cite{rooth-1985} D_τ): all operators
     regardless of UPOS → {p, ¬p, □p}. Over-generates. -/
 def typeTheoAlternatives : List (PolarWorld → Bool) :=
-  typeTheoAlts opLexicon
+  opLexicon.map (·.den)
 
 /-- Category-match alternatives: only `PART`-tagged
     operators → {p, ¬p}. Correct. -/
 def catMatchAlternatives : List (PolarWorld → Bool) :=
-  categoryMatchAlts .PART opLexicon
+  (opLexicon.filter (·.cat == .PART)).map (·.den)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §4  Hamblin questions

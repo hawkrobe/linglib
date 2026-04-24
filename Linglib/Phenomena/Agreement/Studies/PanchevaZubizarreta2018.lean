@@ -1,7 +1,9 @@
 import Linglib.Theories.Syntax.Minimalism.PConstraint
+import Linglib.Features.Logophoricity
 import Linglib.Features.Person
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Clitics
+import Linglib.Phenomena.Anaphora.Studies.CharnavelMateu2015
 
 /-!
 # Pancheva & Zubizarreta (2018): The Person Case Constraint
@@ -26,8 +28,14 @@ PG3) that the four-parameter space generates.
 - **`isLicit_imp_io_pov`** — the four parametric clauses are recovered as
   the conditions under which selecting the IO as point-of-view center
   satisfies the P-Constraint semantically (§6.3, eq. 48).
-- **`prominence_logophoric_role`** — the explicit
-  `PProminence ≃ LogophoricRole` correspondence the paper draws in §6.2.
+- **`pProminence_to_sellsRole`** — P&Z's identification of their P-Prominence
+  values with @cite{sells-1987}'s logophoric roles (§6.2). This mapping is
+  P&Z's specific theoretical claim, not a framework-neutral fact;
+  @cite{charnavel-mateu-2015} (page 10) reject the claim that pivot is the
+  relevant role for clitic clusters.
+- **`readings_disagree_on_proximate`** and **`mefirst_wedge_with_cm`** —
+  P&Z's rejection (page 1308) of @cite{charnavel-mateu-2015}'s unification
+  of PCC and CLR (§ 10 below).
 
 ## Forward references
 
@@ -42,6 +50,19 @@ open Features.Prominence (PersonLevel)
 open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
 open Minimalism (DecomposedPerson decomposePerson)
 open Minimalism.PConstraint
+
+-- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
+-- defined here in the study file rather than baked into PConstraint.
+-- @cite{charnavel-mateu-2015} (page 10) reject the claim that pivot is
+-- the relevant logophoric role for clitic clusters.
+
+/-- P&Z's identification of P-Prominence values with @cite{sells-1987}'s
+    logophoric roles (paper §6.2). This is the paper's theoretical claim,
+    not a framework-neutral fact. -/
+def pProminence_to_sellsRole : PProminence → LogophoricRole
+  | .proximate   => .pivot
+  | .participant => .self
+  | .author      => .source
 
 -- ============================================================================
 -- § 1: Person Hierarchy as Derived (paper §2.1)
@@ -184,27 +205,29 @@ theorem strong_le_ultra : strongGrammar ≤ ultraStrongGrammar := by decide
 theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 -- ============================================================================
--- § 6: Logophoric Bridge (paper §6.2)
+-- § 6: Logophoric Reading (P&Z §6.2 — paper-specific claim)
 -- ============================================================================
 
-/-- The three P-Prominence settings correspond to the three logophoric
-    roles of @cite{sells-1987}: a [+proximate]-grammar IO is interpreted
-    as a pivot, [+participant] as a self, [+author] as a source. -/
+/-- P&Z's claim (§6.2): each P-Prominence setting corresponds to a logophoric
+    role of @cite{sells-1987}. *This is the paper's theoretical reading.*
+    @cite{charnavel-mateu-2015} dispute that pivot is the relevant role for
+    clitic clusters; the bridge file `Anaphora/Antilogophoricity.lean`
+    documents this disagreement explicitly. -/
 theorem prominence_logophoric_role :
-    PProminence.equivLogophoric .proximate = .pivot ∧
-    PProminence.equivLogophoric .participant = .self ∧
-    PProminence.equivLogophoric .author = .source := ⟨rfl, rfl, rfl⟩
+    pProminence_to_sellsRole .proximate = .pivot ∧
+    pProminence_to_sellsRole .participant = .self ∧
+    pProminence_to_sellsRole .author = .source := ⟨rfl, rfl, rfl⟩
 
-/-- The five attested grammars and the [+author]-prominence predicted
-    family map onto the logophoric hierarchy: strong/ultra/weak ⇒ pivot,
-    super ⇒ self, me-first/pg3 ⇒ source. -/
+/-- Under P&Z's reading: the five attested grammars and the
+    [+author]-prominence predicted family map onto Sells's hierarchy as
+    strong/ultra/weak ⇒ pivot, super ⇒ self, me-first/pg3 ⇒ source. -/
 theorem family_logophoric_assignments :
-    PProminence.equivLogophoric strongGrammar.prominence = .pivot ∧
-    PProminence.equivLogophoric ultraStrongGrammar.prominence = .pivot ∧
-    PProminence.equivLogophoric weakGrammar.prominence = .pivot ∧
-    PProminence.equivLogophoric superStrongGrammar.prominence = .self ∧
-    PProminence.equivLogophoric meFirstGrammar.prominence = .source ∧
-    PProminence.equivLogophoric pg3Grammar.prominence = .source := by decide
+    pProminence_to_sellsRole strongGrammar.prominence = .pivot ∧
+    pProminence_to_sellsRole ultraStrongGrammar.prominence = .pivot ∧
+    pProminence_to_sellsRole weakGrammar.prominence = .pivot ∧
+    pProminence_to_sellsRole superStrongGrammar.prominence = .self ∧
+    pProminence_to_sellsRole meFirstGrammar.prominence = .source ∧
+    pProminence_to_sellsRole pg3Grammar.prominence = .source := by decide
 
 -- ============================================================================
 -- § 7: Point-of-View Derivation (paper §6.3, eq. 48)
@@ -346,5 +369,61 @@ theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar .first .first := by
     structurally unavailable here (paper §4.4). -/
 theorem mefirst_three_three_exempt :
     IsLicit meFirstGrammar .third .third := by decide
+
+-- ============================================================================
+-- § 10: P&Z's rejection of @cite{charnavel-mateu-2015}'s unification
+--
+-- Paper page 1308: "We do not think the CLR and the PCC should be unified
+-- along the lines suggested by Charnavel and Mateu (2015). The two
+-- phenomena are related but nevertheless distinct."
+--
+-- C&M unify CLR and PCC under their `Antilogophoric` predicate
+-- (`Phenomena.Anaphora.Studies.CharnavelMateu2015`). P&Z separate them:
+-- PCC is the syntactic P-Constraint over Appl (`IsLicit` here); CLR is a
+-- distinct semantic constraint operating over logophoric centres directly.
+-- ============================================================================
+
+open Phenomena.Anaphora.Studies.CharnavelMateu2015 (LogoCenter CLRViolated)
+
+/-- P&Z's reading of the dative clitic — as a `pivot` (Sells's broadest
+    role) — is incompatible with @cite{charnavel-mateu-2015}'s reading
+    (page 10), which assigns the dative clitic to `empathyLocus` and
+    rejects pivot as relevant for clitic clusters. The two readings map
+    `.proximate` to incompatible places. -/
+def pProminence_to_cmCenter : PProminence → LogoCenter
+  | .proximate   => .empathyLocus
+  | .participant => .discourseParticipant
+  | .author      => .discourseParticipant
+
+theorem readings_disagree_on_proximate :
+    pProminence_to_sellsRole .proximate = .pivot ∧
+    pProminence_to_cmCenter .proximate = .empathyLocus ∧
+    pProminence_to_sellsRole .proximate ≠ .self ∧
+    pProminence_to_sellsRole .proximate ≠ .source := by
+  refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
+
+/-- **The me-first wedge.** P&Z predict me-first speakers should *lack*
+    CLR effects: the P-Constraint marks the IO as a perspectival centre
+    only when triggered, and me-first restricts the trigger to contexts
+    with a [+author] DP. In ⟨3,3⟩ contexts no centre is marked, so no
+    perspective conflict.
+
+    C&M predict me-first speakers should still show CLR effects: dative
+    clitics are *inherently* empathy loci (paper §3.5.1), independent of
+    any P-Constraint setting. The accusative clitic read *de se* is then
+    an attitude holder, and the antilogophoric clash obtains regardless
+    of the syntactic licensing of the IO.
+
+    Formally: under P&Z's account, ⟨3,3⟩ in a me-first grammar is licit
+    (`mefirst_three_three_exempt`) and there is no separate CLR predicate
+    to check. Under C&M's account, the configuration is `CLRViolated`.
+
+    Resolution requires Bulgarian/Romanian me-first speakers tested on de
+    se readings of accusative clitics in 3.DAT 3.ACC clusters; P&Z
+    (page 1316) cite indirect evidence supporting their position; C&M
+    did not test me-first varieties. -/
+theorem mefirst_wedge_with_cm :
+    IsLicit meFirstGrammar .third .third ∧
+    CLRViolated (.empathyLocus, .attitudeHolder) := ⟨by decide, by decide⟩
 
 end Phenomena.Agreement.Studies.PanchevaZubizarreta2018

@@ -4,6 +4,238 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.288] - 2026-04-24
+
+### Bulk parallel-session in-flight work + V2Profile / InformationStructure refactor finish
+
+Bundles ~58 files across CHANGELOG, Linglib.lean, Core/, Features/, Fragments/, Phenomena/, Theories/, plus blog/data/references.bib + bibliography.md regen, alongside this-session fixes that close out the V2Profile (struct → `Set ForceHead = Profile ForceHead`) refactor and the parallel `PolarityMarkingEntry` Bool-fields → `environments : Profile PolarityMarkingEnv` refactor.
+
+V2Profile finish: per-language `def`s in `Fragments/{German,English,Danish,Norwegian}/V2.lean` switched to `abbrev` so set-literal membership reduces under `decide`; `Westergaard2009.lean` `DiffersExactlyOn` proofs now use `simp only [Set.mem_symmDiff]; decide`; `HarizanovGribanova2019.lean` adds `V2Profile` to its `Minimalism` open; `SeeligerRepp2018.lean` adds `PolarityMarkingEnv` open and migrates `dochPreUtterance.{contrastOk,sentenceInternal}` field reads to `PolarityMarkingEnv.{correction,sentenceInternal} ∈ .environments`.
+
+InformationStructure finish: `Features/InformationStructure.lean` swaps `Mathlib.Data.Fintype.Basic` for `Mathlib.Tactic.DeriveFintype` so `PolarityMarkingEnv` deriving works; drops `deriving Repr` from `PolarityMarkingEntry` (Set field has no Repr). `Fragments/{Dutch/Particles, German/PolarityMarking, English/PolarityMarking, French/PolarityMarking, Italian/PolarityMarking, Spanish/PolarityMarking, Swedish/AnswerParticles}.lean` — entries switched to `abbrev`, three Bool fields collapsed into `environments := {.sentenceInternal?, .contrast?, .correction?}`, all per-entry `_sentenceInternal/_contrastOk/_correctionOk` rfl theorems rewritten as `∈/∉ .environments` via `decide`. `TurcoBraunDimroth2014.lean` consumer migrated: bridge theorems (`dutch_particle_internal_german_doch_not`, `both_strategies_context_general`) rewritten in environment-set form, `all_reversal_correction_only`/`all_nonreversal_context_general`/`sentence_internality_by_strategy` re-stated as quantified `∈/∉ .environments` claims with `simp_all + decide`, `italian_spanish_cognates` simplified to `siChe.environments = siQue.environments`. `german_doch_production_matches_fragment` consumes the new field shape.
+
+5346 jobs green.
+
+## [0.230.287] - 2026-04-24
+
+### Karttunen1973.lean second-pass deepening
+
+Three-agent second pass (mathlib-reviewer, integration-auditor, linguistics-domain-expert *with the actual PDF this time*) on the post-0.230.283 file. All three independently converged on the same `negExt` body bug. Domain expert with PDF access flagged six substantive missing pieces and one prior misattribution. Integration auditor flagged the 10-rfl block as stipulation-not-derivation and the disagreement theorem as enum-tag-not-content.
+
+**Critical Core fix.** `PrProp.negExt` body in `Core/Semantics/Presupposition.lean` was the **truth operator t**, not the external negation `~t`, despite the docstring. Truth-table check: T→T, F→F, #→F (which is K1973 fn 18's `t`, not its `¬`). All three reviewers caught this independently. Split: introduced `PrProp.truthOp` for what the body actually was; redefined `PrProp.negExt p := neg (truthOp p)` to match K1973 fn 18's actual `~t(A)` definition. Updated the agreement theorem from `(neg p).assertion ↔ ¬(negExt p).assertion` (which was rfl-true for the *wrong reason*) to `(neg p).assertion ↔ (negExt p).assertion` (the genuine extensional equivalence at defined points). Added `negExt_assertion` and `negExt_assertion_of_presup_failure` to make the truth-table behavior explicit.
+
+**Stipulation → derivation, with limits acknowledged.** Replaced 10 individual `rfl`-against-Fragment-fields theorems (`say_is_plug`, `tell_is_plug`, `know_is_hole`, etc.) with two list-quantified `decide`-proved theorems (`k1973_plug_classification`, `k1973_hole_classification`) over `k1973PlugVerbs : List VerbEntry` and `k1973HoleVerbs : List VerbEntry`. Per the integration auditor's finding, a clean `inferProjection : VerbCore → ProjectionBehavior` *cannot* exist: the Fragment has `reveal` as `speechActVerb := true` AND a factive soft-trigger that should be a hole. K1973's lists are lexical, not structural. The list-quantified consolidation is the right "derive don't stipulate" — the K-attested classification is now the dataset, the `decide` is the verification.
+
+**Contentful believe disagreement.** Replaced enum-tag inequality `(.plug : ProjectionBehavior) ≠ .hole := by decide` with a concrete two-world `AttWorld` scenario: `plug_vs_hole_diverge_at_actual` exhibits a world where K1973's plug-treatment predicts no speaker commitment to "Mary used to smoke" while K1973's flat hole-treatment predicts the speaker IS committed. The disagreement is now Lean-content, not meta-content.
+
+**§9 X-set example formalized.** Added Geraldine/Mormons (K1973 ex 25–28) as a four-world model with `isMormon`, `hasWornHolyUnderwear`, and `belief28`. `geraldine_simple_rule_24b_fails` exhibits the witness `notMormon_notWorn` that breaks the simple K rule; `geraldine_revised_rule_24b'_excludes_problem_world` shows the X-set background (28) excludes the otherwise-unfilterable `mormon_notWorn` world. The §9 X-set is now a concrete consumer-facing primitive, not just docstring prose.
+
+**LocalContext bridge consumption.** §6 of the file now invokes `LocalContext.local_context_matches_impFilter` directly via `k1973_section9_local_context_correspondence` — making the K1973 → CCP relation a Lean dependency, not a docstring claim. Per the integration auditor: previously the file imported `LocalContext.lean` but used no name from it.
+
+**K's actual content surfaced.** Added theorems for K1973 contributions previously missing from the file: `cumulativity_principle` (Langendoen-Savin / Morgan principle), `disjFilterLeft_eliminates_presup_when_neg_entails` (rule 24b in its actual asymmetric form, via `disjFilterLeft` rather than the K&P-symmetric `orFilter`), `harman_derivation_principles_hold` (the §8 Harman derivation as a conjunction of the principles K's argument relies on), `promise_force_minimal_pair` (substitute for K's *order*/*force* (5)/(6) since *order* lacks Fragment annotation), `tell_that_clause_is_plug` with footnote-6 docstring noting the indirect-question hole-behavior split (Permesly 1973).
+
+**Realize attribution corrected.** Domain expert with PDF access: K1973 fn 6 paragraph 3 explicitly cites `realize` ("factive verbs, such as *realize*, … are holes irrespective of the type of the complement"). Previous docstring's "not in K's §4 enumeration … extends naturally" understated. Now cites fn 6.
+
+**Believe §11 verdict accurately captured.** Docstring now records the (37)/(38) Hintikka-1962 conjunction-equivalence machinery that lets *believe*-as-hole survive (37), and (42) `believe + hope` as the example that defeats the trick — the actual reason K's §11 ends on tentative plug. (Full formalization of the Hintikka modal apparatus deferred — would require introducing a `believe` modal operator over `PrProp`.)
+
+**Beaver2001 refactored to consume Core.** `sk_neg_presup` now delegates to `PrProp.neg_presup` instead of inline `rfl`. `filtering_weaker_than_sk` now uses `← PrProp.impFilter_presup_eq_andFilter_presup` + `PrProp.impFilter_eliminates_presup`, sharing the proof obligation with the conditional case.
+
+**Dropped/restructured.** Dropped `JackWorld` toy model (the schematic theorems already cover the content; toy world was doing half-duty). Dropped the Paris/Marseilles example from the rewrite plan: K's (35) actually breaks K's *own* asymmetric filter just as badly as Łukasiewicz/Van Fraassen — it's a methodological argument against truth-functional approaches generally, not a clean K-vs-L/VF theorem. K's (35) motivates the §9 turn to context-relativization, which is what the Geraldine example formalizes.
+
+**Process lesson logged.** First-pass `linguistics-domain-expert` ranked HIGH-severity items it could not verify (rule numbers, §8 framing, §10 table) and got 4 of 6 wrong on PDF check. Second-pass agent with PDF access produced six concrete substantive findings, all verifiable. Memory updated: attach the PDF when dispatching domain-expert audits of paper-replication files. See `feedback_audit_agent_severity_calibration.md`.
+
+## [0.230.286] - 2026-04-24
+
+### V2 substrate audit followup: refutation theorems, Profile reuse, citations
+
+Second four-agent audit of the V2 substrate after 0.230.284's Bool→Prop refactor surfaced bugs (Belfast .Imp asymmetry; duplicate `.Fin ∈ german` theorem; `de_emb` description's V-to-I/V-final logical inconsistency; `pol_universal` Germanic-universal over-claim), code-quality issues (unused `DiffersOnExactlyOne`; `simp_all (config := {decide := true})` proofs; verbose namespace qualification in `Schwarzer2026`; `Profile.lean` import order), cross-framework dialogue gaps (the `westergaard_german_plus_fin` "pin" was Westergaard-internal validation, not a real cross-framework artifact; HPSG `[INV±]` unbridged), one substance schema fix (`WhBlocksVerbMovement` too thin; needs target-head parameter), and missing citations (Roberts 1993, Haider 2010, Holmberg 2015, Wiklund et al. 2009). All addressed in this pass except the IndefiniteType migration (deferred — 18 files / 112 refs is its own session).
+
+**Profile.lean improvements**: import order fixed (Finset.Card before Fintype.Card alphabetically); `DiffersOnExactlyOne` deleted, replaced with `DiffersExactlyOn (p q) (i : ι)` which IS what the cross-Germanic comparison theorems need; module docstring documents why `activeCount` over `Set.ncard` (`decide`-compatibility for finite-enum profiles).
+
+**Cross-framework refutation theorem in HG2019**: new `westergaardToMovementParam : V2Profile → VMovementParam` projection (`.Fin ∈ p ↔ .raises`) plus `germanHG : VMovementParam := .inSitu` plus `theorem hg_westergaard_german_disagree : germanHG ≠ westergaardToMovementParam german := by decide`. The long-standing Vikner-vs.-Haider / Westergaard-vs.-H&G dispute about V-to-I in German is now a Lean refutation theorem, not docstring stalemate. The `westergaard_german_plus_fin` pin theorem is now `:= Westergaard2009.fin_only_german.1` (re-export instead of duplicate `decide`).
+
+**HPSG [INV±] ↔ V2Profile bridge**: two new theorems in Westergaard2009 §7b (`westergaard_hpsg_agree_english_matrix_question`, `westergaard_hpsg_agree_english_embedded_question`) connecting Westergaard's `.Int`/`.Pol`/`.Wh` membership for English to @cite{sag-wasow-bender-2003}'s INV-based licensing on the same surface contrasts. Makes the cross-framework agreement on English SAI legible.
+
+**Westergaard2009 fixes**: `pol_universal` docstring no longer claims a Germanic universal (restricted to "Westergaard's six Table 3.1 rows"; flags Yiddish embedded *tsi* + Pol°-as-epiphenomenal-on-Int° as known complications). `de_emb` description acknowledges that V-to-I → verb-final in German embedded only holds under Westergaard's tacit head-final FinP assumption (Vikner-style); cites Haider 2010 + H&G as alternatives. New `cueGivenSubjectNonV2` MicroCue materializes Ch. 10 (37) (the TopP/[−FOC] cue that was described in the §10 docstring but never instantiated). Pol° docstring on the V1 surface order now acknowledges the Spec-PolP question (empty vs covert Q-operator per Roberts 1993, Rizzi 1996). The two `simp_all (config := {decide := true})` proofs (`no_en_differ_only_on_decl`, `danish_no_differ_only_on_excl`) rewritten to use `Profile.DiffersExactlyOn` with `cases fh <;> first | …` proof structure — exposes what's being checked instead of hiding behind opaque tactic config.
+
+**Belfast .Imp UNVERIFIED tag**: the `.Imp` membership in `belfastEnglish` is empirically suspect (Henry 1995 doesn't attribute matrix imperative V-to-C to Belfast distinct from Standard English, which is already V1; @cite{westergaard-2009} Table 3.1 transcription preserved through previous refactors but never PDF-checked). UNVERIFIED tag added in `Fragments/English/V2.lean` docstring.
+
+**`WhBlocksVerbMovement → WhBlocksMovementTo`**: now parameterized on the target ForceHead — wh-heads block movement only to `.Int` (matrix wh) and `.Wh` (embedded wh), not to other heads. The bare predicate would have wrongly predicted blocking in echo questions / relatives. `wh_blocking` theorem updated to assert blocking-at-`.Int`-and-`.Wh` plus non-blocking elsewhere.
+
+**`Schwarzer2026` open blocks**: `open Minimalism (ForceHead)` and `open Fragments.German (german)` at section level; verbose `Minimalism.ForceHead.Decl ∈ Fragments.German.german` patterns now read `ForceHead.Decl ∈ german`.
+
+**`InformationStructure` migration to Profile**: `PolarityMarkingEntry.{sentenceInternal, contrastOk, correctionOk}` → `environments : Profile PolarityMarkingEnv` over a 3-element enum. Two consumers migrated (`Fragments/Dutch/Particles.lean`, `Fragments/German/PolarityMarking.lean`); per-field theorems become `.X ∈ entry.environments` decidable Set membership.
+
+**Bib entries added**: `roberts-1993` (Verbs and Diachronic Syntax, Kluwer), `haider-2010` (Syntax of German, CUP), `holmberg-2015` (Verb second, HSK 42), `wiklund-bentzen-hroarsdottir-hrafnbjargarson-2009` (V2 in Scandinavian *that*-clauses, Lingua 119). DOIs omitted per CLAUDE.md "If you cannot verify a DOI exists, omit it" — web access blocked at audit time. Cited from Westergaard2009 module + Pol° docstrings and HG2019 dispute docstring.
+
+**Deferred to follow-up pass**: `Features/IndefiniteType.lean` Profile migration (18 files / 112 refs across `Fragments/{German,Latin,Yakut,Russian,English,Kannada,Spanish,French,Italian,Chuj,Farsi}/{Indefinites,ModalIndefinites}.lean` + Phenomena consumers); larger than fits a single audit-followup session. Audit also confirmed `Features/ModalIndefinite.lean` is NOT a Profile candidate (overcalled in 0.230.284) — its three Bools are domain-typed (status × content × upper-boundedness), not a flat set-over-enum. The bigger structural follow-up is `VMovementParam` Profile-promotion (cross-framework reconciler suggested `Profile VMovementTarget` over `{Neg, Adv, FQ, C}` so Pollock's diagnostic-convergence becomes a one-line set equality); deferred.
+
+Files touched: `Core/Typology/Profile.lean`, `Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean`, `Phenomena/WordOrder/Studies/Westergaard2009.lean`, `Phenomena/WordOrder/Studies/HarizanovGribanova2019.lean`, `Phenomena/Coordination/Studies/Schwarzer2026.lean`, `Fragments/English/V2.lean` (UNVERIFIED tag only), `Features/InformationStructure.lean`, `Fragments/Dutch/Particles.lean`, `Fragments/German/PolarityMarking.lean`, `blog/data/references.bib` (4 new entries). Zero new sorrys.
+
+## [0.230.285] - 2026-04-24
+
+### HardingGerstenbergIcard2025: §3 communication-first explanation framework
+
+Substantive overhaul of `Phenomena/Dialogue/Studies/HardingGerstenbergIcard2025.lean` (291 → 653 LOC). Audit found the file's docstring promised an RSA-based "communication-first account" but only delivered scenario `BoolSEM` witnesses — none of @cite{harding-gerstenberg-icard-2025} §3's formal apparatus (L0 / Speaker / Pragmatic Listener / Manipulation Game / Goodness) was implemented; the local `literallyTrue` predicate checked sufficiency + cause-fired rather than HP actual causation.
+
+**Substrate added** (study-internal, no new directory — paper-anchored framework, no second consumer yet):
+- `actualCause` predicate (HP-style with existential Boolean witness; collapses to but-for at the actual context, lifts to off-actual witnesses for overdetermination cases like Milk Theft); paper p. 8 explicitly licenses any actual-cause account, and the existential form is the simplest that handles M_∨ correctly.
+- `ExplanationGame V W` polymorphic structure: per-world `modelOf`, `contextOf`, `vs`, `n`, `isDet`, `isDag`, `prior`, plus `factVar`. Encodes a finite-K knowledge state with prior probabilities.
+- §3.1: `Message`, `meaning` (lifts `actualCause` to messages), `l0Score` / `l0Z` / `l0` (eq. 2 normalized posterior).
+- §3.3: `worldManipulates` (uses canonical `BoolSEM.manipulates`), `reward` (paper Def 3 expectation), `condReward` (under L0).
+- §3.2: `isBestAction` (β=∞ argmax), `uS` (speaker utility at actual world).
+- §3.4: `goodness` (eq. 8 collapsed to single-scalar Δ utility at actual world for β=∞).
+
+**Reuse story**: `actualCause`'s witness clause delegates to `BoolSEM.completesForEffectOn` — the developDetOn-flavored canonical predicate promoted to `Core/Causal/SEM/Counterfactual.lean` in 0.230.282 (Resultatives overhaul). HGI is now the second consumer (after BarAsherSiegal2026 and the Resultatives Levin2026 scenarios), validating the canonicalization. `BoolSEM.manipulates` powers the Manipulation Game directly. No new substrate primitives needed.
+
+**Three scenarios formalized** with worked theorems matching paper predictions:
+
+- **Late Meeting** (Example 5, p. 13): K = {(M_T, u), (M_∧, u)} with u = (T=1, B=1). 7 theorems — T manipulates C in M_T and M_∧; B manipulates C only in M_∧ (not in M_T); "because T" is true at both worlds; B is not but-for C at the actual context (the full `¬ meaning ⟨B⟩ M_T` claim requires a witness-irrelevance lemma and is deferred).
+- **Roof Replacement** (Example 3, p. 10): K = 4 structures × {u = (R=1, D=1)}. 5 theorems — R manipulates F in M_R and M_∧; R fails to manipulate in M_D and (overdetermination) M_∨; D-side symmetric. Captures the framework's prediction that the manipulation game alone makes R and D equally informative; a downstream-relevant decision (paper §4.1) breaks the tie.
+- **Milk Theft** (Example 4, p. 11): K = {(M_∨, u_C), (M_∨, u_D), (M_∨, u_{C,D})}. 6 theorems — Charlie manipulates M in u_C and Dana in u_D; in u_{C,D} (overdetermination) neither single variable manipulates M. HP-style actual cause via off-actual witness: Charlie IS an actual cause at u_{C,D} despite failing but-for there (witness u_C). Joint actions for the conjunctive-message prediction require extending the action set to subsets of V; deferred.
+
+**KickDoorViaBall-style attribution discipline**: docstring marks UNVERIFIED claims (the simple existential witness form vs. full HP with off-pathway W-witnesses; differences flagged for the disjunctive Milk-Theft case). Paper p. 8 footnote explicitly licenses substituting any actual-cause account.
+
+**Out of scope (deferred)**: full HP with off-pathway W-witnesses (the simple existential form covers the worked predictions); witness-irrelevance lemma for the negative-meaning theorems (would let `¬ meaning ⟨B⟩ M_T`-style claims close); joint actions (subsets of V) for Milk Theft's conjunctive-message prediction; β finite (current theorems use β = ∞ argmax convention the paper adopts). §4 (Explaining Explanation: explanatory virtues, normality, simplicity, proportionality) entirely deferred; this overhaul covers §3 only.
+
+Files touched: `Phenomena/Dialogue/Studies/HardingGerstenbergIcard2025.lean` (291 → 653 LOC). 18 worked theorems; zero new sorrys.
+
+## [0.230.284] - 2026-04-24
+
+### V2 substrate Bool→Prop migration; V2Data deleted; polymorphic Profile
+
+Four-agent audit (linguistics-domain-expert (syntax), mathlib-reviewer, integration-auditor, cross-framework-reconciler) of `Fragments/German/V2.lean` (a randomly-picked 22-line file) escalated through three rounds: a misnamed-field minimal fix, a Bool→Prop discipline check, and a substrate-shape-and-API rebuild. Verdict converged on full mathlib-discipline pass per CLAUDE.md "Bool migration scope" + "No 'intrinsic Bool' excuse."
+
+**New `Core/Typology/Profile.lean`** (~30 LOC). `abbrev Profile (ι : Type u) := Set ι` with two helpers (`Profile.activeCount [Fintype ι]`, `Profile.DiffersOnExactlyOne`). Polymorphic over the parameter-name enum so V2, NPI environments, evidentiality, WALS features, Greenberg antecedents, etc. share one comparison API. Set abbrev (vs. struct wrapper) keeps mathlib's lattice (`∪`, `∩`, `\`, `symmDiff`) and set-literal syntax (`{.A, .B}`) available for fragment files.
+
+**`V2Profile` recast** (`Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean`): now `abbrev V2Profile := Profile ForceHead`. Drops the `name : String` field (unused metadata). Drops local `V2Profile.activeCount` and `V2Profile.differOnExactlyOne` (subsumed by polymorphic helpers). `ForceHead` derives `Fintype` so `decide` and `activeCount` work. Bool→Prop+DecidablePred for `ForceHead.IsRootClause` and `WhBlocksVerbMovement`.
+
+**`Features/V2.lean` deleted.** The `V2Data` struct was a 7-field Bool record locally-equivalent to `V2Profile` via a 7-line bijection (`V2Data.toProfile` in Westergaard2009). Per mathlib reviewer: "Bridge lemmas between two locally-equivalent notions are often a sign one should be eliminated." Both struct and bridge gone; fragments write `V2Profile` set literals directly.
+
+**Four V2 fragment files rewritten** (`Fragments/{German,English,Norwegian,Danish}/V2.lean`) as one-line set literals: `def german : V2Profile := {.Decl, .Int, .Pol, .Fin}` etc. Drops semicolon-packed multi-field layout (mathlib reviewer flagged), `name : String` fields, and the misleading `embeddedFinV2 : Bool` (now expressed as `.Fin` membership with the V-to-I caveat documented at the V2Profile docstring level rather than per-fragment).
+
+**`Westergaard2009.lean` rebuilt**: dropped `V2Data.toProfile` mapper. 42 `#guard ... == true/false` lines collapsed to one `theorem table_3_1_complete` (six `rfl`s). 5× `native_decide → decide` per CLAUDE.md mathlib-discipline. 12 cross-language theorems migrated from `verbMovement .X = true` to `.X ∈ profile` Set membership. `CueExpressed` is now `Prop` with `Decidable` instance. UNVERIFIED tag added for the Table 3.1 page reference (cited as p. 41 in earlier drafts; not independently confirmed against the published Benjamins edition).
+
+**`HarizanovGribanova2019.lean` cleaned**: dropped self-defeating `hgPredictsGermanEmbeddedVerbToI : Bool := false` and `westergaardPredictsGermanEmbeddedVerbToI : Bool` defs (under Prop migration these collapse to `False`/`True` and the disagreement theorem becomes a tautology). Dropped `BulgarianParticipleData` struct (a 6-field record with one all-defaults instance — a docstring with extra steps). The H&G-vs-Westergaard V-to-I dispute now lives as docstring prose (since "no V-to-I" is the *absence* of an operation, not a positive Lean witness); a `westergaard_german_plus_fin` theorem pins the codebase's commitment to Westergaard's side so flipping `german`'s `.Fin` membership breaks here as a signal.
+
+**`Schwarzer2026.lean` consumer migration**: `german.declarativeV2 = true` / `german.embeddedVerbToI = true` patterns rewritten as `ForceHead.Decl ∈ german` / `ForceHead.Fin ∈ german` Set membership.
+
+**Profile migration candidates identified (deferred)**: three Features/ files have the same set-of-active-properties shape over a fixed enum and would benefit from the same recast — `Features/IndefiniteType.lean` (`IndefiniteEntry.{allowsSK, allowsSU, allowsNS}` → `Set IndefiniteContext`), `Features/ModalIndefinite.lean` (5 properties on a modal indefinite item), `Features/InformationStructure.lean` (`{sentenceInternal, contrastOk, correctionOk}` for polarity strategies). Person/Number/Gender feature bundles are NOT Profile candidates — they're geometric decompositions where dependencies matter (atomic ⇒ minimal), better served by `FeatureGeometry`/`PrivativePair`. Migration deferred to a focused future pass.
+
+**Substantive findings from the four-agent audit also recorded** (not all addressed): the V2Data schema collapses V1/V2/V3 (`yesNoQInverted` was renamed from misleading `yesNoQuestionV2` mid-pass before V2Data was deleted entirely); cannot represent symmetric/asymmetric V2 (Icelandic vs. German), bridge-verb embedded V2, or subject-initial vs. non-subject-initial asymmetries — these are post-2010 V2 typology consensus per Wolfe 2018, Holmberg 2015, Walkden 2017, none cited. A genuine `EmbeddingContext` axis (root / bridgeComp / factiveComp / relative / adjunct) would capture the missing distinctions; deferred. The `V2Profile`/`HPSG.[INV±]`/`VMovementParam` parallel-encoding-of-V-movement issue (cross-framework reconciler) remains unaddressed.
+
+LOC: −60 (`Features/V2.lean` gone, `V2Profile` activeCount/differOnExactlyOne hoisted), +30 (`Profile.lean`); 4 fragments halved; Westergaard2009 minor reduction (42 #guards → 1 theorem). Zero new sorrys. native_decide fully eliminated from the V2 substrate.
+
+Files touched: `Core/Typology/Profile.lean` (NEW), `Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean`, `Fragments/{German,English,Norwegian,Danish}/V2.lean`, `Phenomena/WordOrder/Studies/Westergaard2009.lean`, `Phenomena/WordOrder/Studies/HarizanovGribanova2019.lean`, `Phenomena/Coordination/Studies/Schwarzer2026.lean`, `Linglib.lean` (Profile import added, Features/V2 import removed), `Features/V2.lean` (DELETED).
+
+## [0.230.283] - 2026-04-24
+
+### Karttunen1973.lean deep audit + fix-up
+
+Four-agent audit (mathlib-reviewer, integration-auditor, presupposition-domain expert, cross-framework-reconciler) of `Phenomena/Presupposition/Studies/Karttunen1973.lean` followed by ground-truthing the substantive claims against the actual @cite{karttunen-1973} PDF. Rewrite addresses substantive misattributions, code-quality issues, and silent cross-framework divergence.
+
+**Substantive fixes against the K1973 PDF.**
+- `believe_is_hole` direction was backwards relative to K1973. The file's docstring asserted "Karttunen §4 initially considers whether attitude verbs are plugs, then argues they are holes" — but K1973 §4 (p. 175) postpones the question, and §11 (pp. 188–190) tentatively concludes propositional attitudes are **plugs** ("we do not seem to have any other alternative except to classify all propositional attitude verbs as plugs, although I am still not convinced that this is the right approach", p. 190). Fragment annotation `believe.projectionBehavior = some .hole` reflects the post-Heim-1992 consensus, not K1973. Rewrote §3 to make the disagreement explicit and added `karttunen1973_vs_heim1992_on_believe` theorem proving the two analyses are incompatible.
+- Dropped `claim_is_plug` — `claim` is not in K1973 p. 174's plug list ("say, mention, tell, ask, promise, warn, request, order, accuse, criticize, blame"). Fragment annotation stays (post-K1973 consensus); the claim is no longer attributed to K1973.
+- Added `realize_is_hole` with explicit note that `realize` is not in K1973's §4 enumeration but is a Kiparsky-class factive of the same kind.
+- Verified rule numbers (13)/(17)/(24) are correct against K1973 pp. 178/179/181 (linguistics-domain-expert had over-flagged these as unverified).
+- Verified §8 classical-equivalence framing (K1973 p. 181 attributes the argument to Gilbert Harman p.c. — file's framing was exact).
+- Verified §10 three-valued table (K1973 p. 187 explicitly says "the internal Bochvar connectives are holes" — domain expert's "category error" objection was wrong).
+
+**Core promotions.**
+- `PrProp.negExt` (Bochvar exclusion negation, plug) added to `Core/Semantics/Presupposition.lean` next to `PrProp.neg` (choice negation, hole), with `negExt_presup` and `neg_assertion_iff_not_negExt_assertion`. K1973 §10 fn 18 defines `⌜¬A⌝ ≡ ⌜~t(A)⌝`. The Core file's docstring already advertised the Bochvar internal/external distinction; the operator is now shipped so that `Heim1992`/`Schlenker2009`/`Sharvit2025`/`SolstadBott2024` study files can consume it instead of working around exclusion negation ad hoc.
+- `PrProp.impFilter_presup_eq_andFilter_presup` added to Core. The K1973 §8 claim that `if A then B` and `A and B` share filtering is a fact about the Core definitions, not K-specific; promoting it lets `Beaver2001` and PIP study files re-export rather than re-derive.
+
+**Cross-framework visibility.** Added `karttunen1973_vs_heim1992_on_believe`: makes the K1973-vs-Heim1992 disagreement on propositional attitudes explicit Lean content rather than three coexisting silent positions (K1973 plug, Fragment hole, BeliefEmbedding holder-shifting). Section 9 docstring now cites `LocalContext.lean::local_context_matches_impFilter` as the realization of K1973 §9's "X = ∅ collapses to the simple condition" remark.
+
+**Code-quality fixes.**
+- Deleted byte-identical duplicates: `negation_preserves` ≡ `neg_internal_preserves` (both re-exports of `PrProp.neg_presup`); `simple_is_special_case_of_revised` ≡ `rule13b` (both call `impFilter_eliminates_presup`).
+- Renamed all paper-rule-numbered theorems to mathlib-style content names: `rule13a` → `impFilter_presup_of_antecedent_undefined`, `rule17_same_presup_as_rule13` → `andFilter_presup_eq_impFilter_presup`, `ex11a_presup_filtered` → `ex11a_jack_conditional_filtered`, etc. Paper rule numbers stay in docstrings. Verified zero downstream consumers via grep.
+- Replaced six bare `simp [...]` calls with `simp only [...]`.
+- Dropped unused `open Classical`.
+- `negExternal` removed (now `Core.Presupposition.PrProp.negExt`).
+
+**Process lesson.** The presupposition-domain expert ranked HIGH-severity items it could not verify against the source (rule numbers, §8 framing, §10 table classification). Three of those turned out wrong on PDF check. The file's actual defects were mostly at the silent-divergence and code-quality levels caught by the cross-framework and mathlib-style agents — both more empirically grounded since their evidence is the linglib codebase itself.
+
+## [0.230.282] - 2026-04-23
+
+### Resultatives.lean overhaul: reuse-first architecture
+
+Four-agent audit (mathlib-reviewer, linguistics-domain-expert (semantics), integration-auditor, cross-framework-reconciler) of `Theories/Semantics/Causation/Resultatives.lean` (571 LOC) found three structural problems and several substance/code-quality issues. User pushed back on the audit's "add new predicates" recommendation, asking why existing causal infrastructure couldn't be reused. Architecture refactored to extend rather than parallel.
+
+**Canonical predicates promoted to `Core.Causal.BoolSEM`** (`Core/Causal/SEM/Counterfactual.lean`): `causallySufficientOn` and `completesForEffectOn` (developDetOn-flavored, kernel-`rfl`-reducible) now live alongside the existing developDet-based `causallySufficient`. Naming follows `completesForEffect` (CCSelection.lean). Replaces verbatim-duplicated local `sufficient`/`completes` predicates that had been copy-pasted into both `Phenomena/Causation/Studies/BarAsherSiegal2026.lean:131-143` and `Theories/Semantics/Causation/Resultatives.lean:59-71`.
+
+**Three consumers migrated** to the canonical predicates:
+- `BarAsherSiegal2026.lean`: dropped local sufficient/completes; door-opening theorems use `BoolSEM.completesForEffectOn`.
+- `Tay2024.lean`: replaced 4 qualified `Semantics.Causation.Resultatives.{sufficient,completes}` call sites with `BoolSEM.{causallySufficientOn,completesForEffectOn}`.
+- `Resultatives.lean`: dropped local definitions outright (no longer the canonical home).
+
+**Per-scenario `BoolSEM` models moved** from `Theories/` to their paper home. The 7 scenario namespaces (HammerFlat, KickIntoField, KickDoorDirect, LaughSilly, FreezeSolid, DrinkTeapotDry, plus the renamed-from-KickDoorViaBall `IndependentSourceBreaksNecessity`) now live in `Phenomena/Constructions/Resultatives/Studies/Levin2026.lean` §7. Per the linguistics audit + cross-framework reconciler, `KickDoorViaBall` is renamed `IndependentSourceBreaksNecessity` and its docstring weakened: this is *our model* of independent-source breakage, not a direct formalization of a specific Levin 2019 sentence-licensing argument. A genuine refutation theorem against Goldberg & Jackendoff licensing-not-necessity using this scenario as witness is flagged as deferred.
+
+**Mandarin-specific phase-complement data moved** to `Fragments/Mandarin/Resultatives.lean`. The `PhaseComplement` enum (dao/wan/hao/diao/zhu) and `cosType` mapping are Mandarin-anchored data (the morphemes are Mandarin morphemes), not theory-neutral typology — they belong in the Mandarin Fragment, not in `Theories/`. Cross-linguistic typological parameters (`ResultativeRealization`, `ResultOrientation`) stay in `Resultatives.lean`. The `wan → cessation` mapping carries an UNVERIFIED note that it models the activity-aspectual reading rather than a patient-result reading; broader `CoSType` expansion deferred per user scope.
+
+**`Resultatives.lean` trimmed 571 → 275 LOC.** Drops:
+- Local `sufficient`/`completes` (now canonical in Core).
+- 7 BoolSEM scenario namespaces (now in Levin2026).
+- `PhaseComplement` enum + cosType (now in Mandarin Fragment).
+- Vacuous `coercive`/`permissive` flags from `deriveCausativeBuilder` (zero external consumers via grep) and the three theorems (`coercive_derives_force`/`permissive_derives_enable`/`coercive_overrides_permissive`) that asserted force/enable derivability never instantiated by any actual resultative entry.
+- Unused `@cite{nadathur-lauer-2020}` and `@cite{embick-2009}` from header (cited but never invoked in the body).
+- Phase D-H deletion-history meta-commentary (per `feedback_no_meta_commentary_in_files`).
+- `inceptive_phases_share_presup` and `phase_complements_cover_cos_types` (Tay2024.lean already has better-organized equivalents).
+
+**Renamed for snake_case consistency**: `causativeResultativeHasCAUSE` → `causative_resultative_has_cause`; `resultativeAspectShift` → `resultative_aspect_shift`; `resultativeTelicizes` → `resultative_telicizes`. The signatures of `noncausative_no_builder`/`non_means_no_builder`/`derived_asserts_sufficiency` are simplified (deleted flag arguments). `causative_means_derives_make` collapses to a one-line consequence of `means_cause_derives_make`. `make_unique_neutral_sufficiency` retains the structural uniqueness statement.
+
+**Decidability**: `native_decide` → `decide` for the small finite checks (`allResultativesFullyCompositional`, `causative_decompose_like_parent`, `noncausative_fewer_steps`, `decomposition_reflects_transitivity`). The four `allEntries`-list-`.all` checks (`causative_resultative_has_cause`, `causative_means_have_cause`, `activity_entries_become_accomplishments`, `all_have_become`) keep `native_decide` because list evaluation cost exceeds kernel `decide` budget.
+
+**Out of scope (deferred)**: migrating `Progressive.lean` and `HardingGerstenbergIcard2025.lean` to use the new canonical predicates (same inline pattern); adding `.completion` constructor to `CoSType` (cascading change); cross-framework refutation theorems against Beavers-Koontz-Garboden 2020 manner∧result roots and the Dendikken1995 ↔ Resultatives bridge; parametric `ChainModel n` extraction (Plan agent argued labels carry semantic meaning).
+
+Files touched: `Core/Causal/SEM/Counterfactual.lean`, `Theories/Semantics/Causation/Resultatives.lean`, `Phenomena/Causation/Studies/BarAsherSiegal2026.lean`, `Phenomena/Constructions/Resultatives/Studies/Levin2026.lean`, `Phenomena/Constructions/Resultatives/Studies/Tay2024.lean`, `Fragments/Mandarin/Resultatives.lean`. No new files; no new sorrys.
+
+## [0.230.281] - 2026-04-23
+
+### Delete misnamed `Categorical.lean`; rename + extend F&K 2011 anchor
+
+Audit by four parallel reviewers (mathlib-reviewer, linguistics-domain-expert, integration-auditor, cross-framework-reconciler) plus direct read of the Fox & Katzir 2011 PDF (NLS 19:87–107) showed that `Theories/Semantics/Alternatives/Categorical.lean` (131 LOC) misattributed a fabricated UPOS-tag-equality "category match" to F&K. Their actual proposal (eq. 37) is structural complexity per @cite{katzir-2007}, with a contextual substitution source — formalized in `Structural.lean` and the (renamed) `FoxKatzir2011.lean`.
+
+**Deleted**: `Linglib/Theories/Semantics/Alternatives/Categorical.lean` (131 LOC). Sole consumer `Phenomena/Focus/Studies/TurkHirsch2026.lean` migrated to a study-internal `TaggedDen` helper (5 lines, no theoretical attribution). Stale back-reference in `Features/InformationStructure.lean:17` cleaned. Import dropped from `Linglib.lean`.
+
+**Renamed**: `Theories/Semantics/Alternatives/ContextualConstraint.lean` → `FoxKatzir2011.lean`. The file was already correctly cited as F&K 2011 in its docstring but the filename didn't anchor the paper. Per CLAUDE.md "every Lean file is anchored," the paper-named file now hosts the F&K-specific content; theory-neutral symmetry/relevance-closure stays in `Symmetric.lean`.
+
+**Extended `FoxKatzir2011.lean` (220 → ~470 LOC)** with the F&K operators and second worked example:
+- §4 `nSI` / `nAF` selectors (footnotes 4 and 8): strictly-stronger and non-weaker filters over an alternative set, with `nSI_subset_nAF` proved structurally.
+- §5 `SI` (eq. 4), `SM` (eq. 5), `EXC` (eq. 17), `Only` (eq. 18) operators at the proposition level (`Finset W` / `Finset (Finset W)`); `SM_subset_S`, `Only_subset_S`, `Only_subset_SM` proved.
+- §6 second worked example — F&K §4.1 disjunction "John did all of the homework or did none" (eqs. 38–41): `all_none_symmetric` proves the disjuncts symmetrically partition the disjunction; `disjunction_neither_ie` and `disjunction_no_si` prove that bare disjunction has no SIs (innocent exclusion is vacuous); under universal embedding `RWorld` (eqs. 40–41), `embedded_not_symmetric`, `embedded_admits_si`, and `embedded_exh_isolates_either` show the previously symmetric pair becomes non-symmetric and SIs arise.
+- §7 cross-references `Symmetric.context_cannot_break_symmetry` (eq. 28 / §5.1) so the F&K paper anchor surfaces it.
+
+**Bib bookkeeping**: `references.bib` `fox-katzir-2011` `sources` field was pointing at three files deleted in an earlier refactor (`Pragmatics/NeoGricean/Core/{FoxKatzir2011,Symmetry,Alternatives}.lean`); now points at the renamed `FoxKatzir2011.lean` plus its theory-neutral substrates `Symmetric.lean` and `Structural.lean`.
+
+**Out of scope** (deferred per user choice): focus marking on trees (the simplification at §3 of `FoxKatzir2011.lean` stays in place); §5.2 allowable restriction / exhaustive relevance (eqs. 55–56). All theorems closed via `decide`; zero `native_decide` or `sorry` added in this change.
+
+## [0.230.280] - 2026-04-23
+
+### Causation substrate refactor + N&L 2020 study file overhaul
+
+Two-part architectural change. First the substrate: `Core/Causal/SEM/`'s deterministic forward-development was redefined per-vertex via well-founded recursion (mathlib `Polynomial.eval` pattern), making concrete proofs over `Sufficiency.makeSem` / `Necessity.causeSem` structurally tractable for the first time. Then a unified PMF-valued counterfactual primitive (`counterfactualSimulate`, Pearl 3-step via Lassiter RRR) was added to the Counterfactual module, with B&G W/H/S derived predicates and deterministic-collapse bridges. Built on top, `NadathurLauer2020.lean` was completely rewritten from a misdirected 80-LOC stub into a 721-LOC faithful study replication with 14 structurally-proved theorems across Fire/Bus/Lighthouse/Permission/Command/Persuasion scenarios + cancellability witnesses.
+
+**Substrate: `Core/Causal/SEM/Deterministic.lean` (new, 124 LOC)** — `developDetVtx M s v : α v` defined via `IsDAG.wf.fix` (per-vertex recursion on `IsStrictAncestor`); the canonical `developDet : SEM → Valuation → Valuation` is the some-wrapped version. Reduces structurally via `WellFounded.fix_eq + rfl`. Replaces the deleted `Basic.lean::developDet` (Fintype-based, noncomputable, opaque under reduction — worst of both worlds; the previous canonical was a façade type that no consumer could actually prove anything about on concrete SEMs). Companion lemmas `developDetVtx_unfold`, `developDetVtx_extended`, `developDetVtx_undet`, `developDet_hasValue_iff`. Mathlib analogue: `Mathlib.Probability.Kernel.Deterministic` — plain-function specialization sibling to the general PMF type.
+
+**Substrate: `Core/Causal/SEM/Counterfactual.lean` refactor** — `causallyNecessary` (Nadathur 2024 Def 10b) reformulated with abstract quantification over `Valuation α` (`∃ s', s.le s' ∧ ...` / `∀ s', s.le s' → ...`) instead of the previous `allExtensions`/`freeExtensions` enumeration (which was opaque due to `Fintype.elems.toList` blocking structural reduction). Added `cfSeed` (Lassiter §3 Rewind/Revise/selectively-Regenerate seed valuation) and `counterfactualSimulate M observed antecedent xAnt : PMF (Valuation α)` as the canonical Pearl 3-step counterfactual primitive. Subsumes Lewis 1973 / N&L 2020 (deterministic Dirac case) and B&G 2025 (graded). Derived predicates: `whetherCause` (B&G Eq 1), `sufficientCause` (B&G Eq 3). Bridges: `counterfactualSimulate_eq_pure_of_deterministic`, `whetherCause_eq_indicator_of_deterministic` (proved structurally given `develop_eq_pure_of_deterministic`).
+
+**Substrate: `Core/Causal/SEM/Interventional.lean` (new, 50 LOC)** — `probabilisticSuf` (CWL 2025 graded ALT) moved out of `Counterfactual.lean`. Conceptual cleanup: interventional probability `P(E | do(C))` is genuinely distinct from counterfactual reasoning (no observation conditioning, no abduction step) — Lassiter §1's distinction. The architecture now has four files where each top-level primitive is at maximum generality available for its mathematical scope: `Basic.lean` (general PMF `develop` + computational specialization `developDetOn`), `Deterministic.lean` (per-vertex deterministic specialization), `Counterfactual.lean` (counterfactual reasoning, deterministic discrete + general PMF), `Interventional.lean` (interventional probability).
+
+**Sorrys**: `develop_eq_pure_of_deterministic` and `developDet_intervene_eq_developDet_extend` deferred under the new substrate (the previous proofs went via the iteration-based `developDet`; the new per-vertex definition needs a different argument). No new regressions — `developDet_intervene_eq_developDet_extend` was already sorry'd before the refactor; CWL2025's chain to `probabilisticSuf_eq_deterministicSuf` was already broken by that single sorry.
+
+**`NadathurLauer2020.lean` (rewritten, 80 → 721 LOC, 0 → 14 theorems)** — previous file formalized only Suzy/Billy preemption (the one scenario N&L footnote 8 explicitly says "we will not discuss") with locally-defined `sufficient`/`butFor` predicates duplicating substrate primitives, in a `Phenomena.Causation.StructuralCausation.Preemption` namespace that didn't match the file path. New file uses `Sufficiency.makeSem` / `Necessity.causeSem` directly (now structurally tractable), with proofs in the canonical `Phenomena.Causation.Studies.NadathurLauer2020` namespace.
+
+Scenarios formalized:
+- **§3.6.1 Fire (Fig 2)**: `make_infelicitous_for_fire`, `make_felicitous_for_fire_with_known_line` — necessary-but-insufficient cause.
+- **§3.6.2 Bus (Fig 3)**: `make_felicitous_for_bus`, `cause_infelicitous_for_bus` — sufficient-but-unnecessary cause. Cause-side fails via the precondition clause (eager-default substrate semantics: B = R ∨ Bk already evaluates to true under s_b = {V=1, R=1}); same empirical conclusion as N&L's noAlternative-clause derivation.
+- **§3.6.3 Lighthouse (Fig 4)**: `make_felicitous_for_storms`, `make_infelicitous_for_earthquake` — temporal-location constraint (Def 28). Local `TemporalIndex` + `validBackgroundFor` infrastructure.
+- **§4.1 Volitional (Def 43)**: `volitionalActionConstraint` predicate + Permission/Command/Persuasion sub-scenarios (Figs 5-7). Permission-make-infelicitous via constraint violation; Command/Persuasion make-felicitous.
+- **§4.2 Cancellability**: `necessity_cancellable` + `necessity_reinforceable` structural witnesses derived from existing Bus/Fire scenarios.
+
+Project-canonical-vs-paper-stipulated: substrate uses Nadathur 2024 Def 10b necessity; N&L 2020's Def 24 is noted in docstring as superseded (N&L fn 18 anticipates this). Suzy/Billy preemption deliberately NOT included — Lewis 1973's `Overdetermination` namespace owns the canonical formalization (chronological-priority rule). Repointed `ProductionDependence.lean:119` and `GrusdtLassiterFranke2022.lean:498` docstring back-pointers.
+
 ## [0.230.279] - 2026-04-23
 
 ### Pylkkänen2008 deep-audit fixes (Phases 1–5 of the 3-reviewer punch list)

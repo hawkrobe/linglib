@@ -35,11 +35,13 @@ there is no clean per-derivation factorization to expose.
 ## Connection to `PolyaUrn`
 
 The per-LHS factor `lhsFactor M D A` IS the closed-form Pólya-urn
-partition probability over rules with LHS `A`, using `M.pseudo`
+*per-sequence likelihood* over rules with LHS `A`, using `M.pseudo`
 restricted to those rules. The Type-polymorphic `PolyaUrn α` from
 `Linglib.Core.Probability.PolyaUrn` is constructed per-LHS via
 `lhsUrn`; positivity of `corpusProb` is derived structurally from
-`PolyaUrn.partitionProb_pos`.
+`PolyaUrn.seqProb_pos`. (We use `seqProb`, not the count-vector PMF
+`polyaUrnPMFReal`, because a corpus IS a specific labeled sequence
+of derivations, not a draw from the unlabeled-count distribution.)
 
 ## Main definitions
 
@@ -52,8 +54,8 @@ restricted to those rules. The Type-polymorphic `PolyaUrn α` from
   with that LHS.
 - `DMPCFG.lhsCounts` — per-LHS corpus counts as a function on the
   subtype.
-- `DMPCFG.lhsFactor` — per-LHS Pólya partition probability
-  (delegates to `PolyaUrn.partitionProb`).
+- `DMPCFG.lhsFactor` — per-LHS Pólya per-sequence likelihood
+  (delegates to `PolyaUrn.seqProb`).
 - `DMPCFG.corpusProb` — eq 3.9 closed-form corpus probability.
 
 ## References
@@ -136,7 +138,7 @@ of the corpus rule-counts under the per-LHS pseudo-counts.
 ```
 -/
 noncomputable def lhsFactor (a : G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
-  (M.lhsUrn a).partitionProb (lhsCounts a D)
+  (M.lhsUrn a).seqProb (lhsCounts a D)
 
 /--
 DMPCFG corpus probability — eq 3.9 of @cite{odonnell-2015}. Product
@@ -156,11 +158,11 @@ theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT}
   exact ⟨r0, Finset.mem_filter.mpr ⟨hr0_mem, hr0_input⟩⟩
 
 /-- The per-LHS factor is strictly positive when the LHS has rules.
-    Direct corollary of `PolyaUrn.partitionProb_pos`. -/
+    Direct corollary of `PolyaUrn.seqProb_pos`. -/
 theorem lhsFactor_pos {a : G.NT} (ha : a ∈ G.rules.image (·.input))
     (D : Multiset (CFGTree T G.NT)) : 0 < M.lhsFactor a D := by
   haveI := nonempty_rulesWithLHS_of_mem_image ha
-  exact (M.lhsUrn a).partitionProb_pos _
+  exact (M.lhsUrn a).seqProb_pos _
 
 /-- DMPCFG corpus probabilities are nonnegative (in fact, positive). -/
 theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
@@ -184,8 +186,8 @@ theorem lhsCounts_zero (a : G.NT) :
   simp [lhsCounts]
 
 /-- The empty corpus has probability 1 under any DMPCFG: each
-    per-LHS Pólya factor is `partitionProb` on the all-zero count
-    vector, which equals 1 by `PolyaUrn.partitionProb_zero`. -/
+    per-LHS Pólya factor is `seqProb` on the all-zero count
+    vector, which equals 1 by `PolyaUrn.seqProb_zero`. -/
 @[simp]
 theorem corpusProb_zero : M.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
   unfold corpusProb
@@ -195,7 +197,7 @@ theorem corpusProb_zero : M.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
   show M.lhsFactor a 0 = 1
   unfold lhsFactor
   rw [lhsCounts_zero]
-  exact (M.lhsUrn a).partitionProb_zero
+  exact (M.lhsUrn a).seqProb_zero
 
 end DMPCFG
 

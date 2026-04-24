@@ -123,8 +123,9 @@ noncomputable def causeSemGlass {V : Type*} [Fintype V] [DecidableEq V]
 /-- Glass's *cause* is truth-conditionally identical to N&L's *make*
     (`causallySufficient`). The difference is pragmatic. -/
 theorem glass_cause_is_causallySufficient {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
-    @causeSemGlass V _ _ M _ _ =
-    @Core.Causal.BoolSEM.causallySufficient V _ _ M _ _ := rfl
+    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    (bg : Valuation (fun _ : V => Bool)) (cause effect : V) :
+    causeSemGlass M bg cause effect ↔
+      Core.Causal.BoolSEM.causallySufficient M bg cause effect := Iff.rfl
 
 end Glass2023

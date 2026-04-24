@@ -86,6 +86,14 @@ theorem L1_eq_of_score_eq (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W)
     cfg.L1 u w₁ = cfg.L1 u w₂ :=
   cfg.L1agent.policy_eq_of_score_eq u w₁ w₂ h
 
+/-- Iff form of `L1_lt_of_score_lt`: at the same `u`, L1 strict ordering
+    coincides with `L1agent.score` strict ordering. Use this when rewriting
+    a goal in score form (rather than reducing a hypothesis). -/
+theorem L1_lt_iff_score_lt (cfg : RSAConfig U W) (u : U) (w₁ w₂ : W) :
+    cfg.L1 u w₁ < cfg.L1 u w₂ ↔
+      cfg.L1agent.score u w₁ < cfg.L1agent.score u w₂ :=
+  cfg.L1agent.policy_lt_iff_score_lt u w₁ w₂
+
 /-- L1 cross-utterance comparison via cross-product. Different `u` means
     different denominators, so we use the cross-product trick (no positivity
     hypothesis needed — it's derived from the cross-product). -/
@@ -113,6 +121,15 @@ theorem S1_eq_of_score_eq (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
     cfg.S1 l w u₁ = cfg.S1 l w u₂ :=
   (cfg.S1agent l).policy_eq_of_score_eq w u₁ u₂ h
 
+/-- Iff form of `S1_lt_of_score_lt`: at the same `(l, w)`, S1 strict ordering
+    coincides with `S1agent.score` strict ordering. Use this when rewriting
+    a goal in score form (rather than reducing a hypothesis). -/
+theorem S1_lt_iff_score_lt (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
+    (u₁ u₂ : U) :
+    cfg.S1 l w u₁ < cfg.S1 l w u₂ ↔
+      (cfg.S1agent l).score w u₁ < (cfg.S1agent l).score w u₂ :=
+  (cfg.S1agent l).policy_lt_iff_score_lt w u₁ u₂
+
 /-- S1 cross-world comparison via cross-product (different `w` → different
     denominator). -/
 @[gcongr]
@@ -133,6 +150,14 @@ theorem L0_lt_of_meaning_lt (cfg : RSAConfig U W) (l : cfg.Latent) (u : U)
     (h : cfg.meaning cfg.initial l u w₁ < cfg.meaning cfg.initial l u w₂) :
     cfg.L0 l u w₁ < cfg.L0 l u w₂ :=
   (cfg.L0agent l).policy_lt_of_score_lt u w₁ w₂ h
+
+/-- Iff form of `L0_lt_of_meaning_lt`: at the same `(l, u)`, L0 strict ordering
+    coincides with meaning strict ordering (the L0 score IS the meaning). -/
+theorem L0_lt_iff_meaning_lt (cfg : RSAConfig U W) (l : cfg.Latent) (u : U)
+    (w₁ w₂ : W) :
+    cfg.L0 l u w₁ < cfg.L0 l u w₂ ↔
+      cfg.meaning cfg.initial l u w₁ < cfg.meaning cfg.initial l u w₂ :=
+  (cfg.L0agent l).policy_lt_iff_score_lt u w₁ w₂
 
 -- ============================================================================
 -- §2. L1 score-shape unfolding

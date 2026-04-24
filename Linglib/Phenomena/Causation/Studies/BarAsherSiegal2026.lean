@@ -32,11 +32,13 @@ under overdetermination (both pathways active simultaneously). This
 captures @cite{bar-asher-siegal-2026}'s point that *open* is infelicitous
 when an alternative explanation exists.
 
-The legacy `CausalDynamics`-based door scenario, situational-necessity
-(Def 12b) machinery, and the Sloman-style member-mode divergence theorem
-were deleted in Phase D-H. Member-mode (Def 10b causally-necessary)
-divergence between *open* and *cause* awaits V2's `causallyNecessary`
-infrastructure for multi-parent disjunctive mechanisms.
+Member-mode (Def 10b causally-necessary) divergence between *open* and
+*cause* awaits substrate support for multi-parent disjunctive mechanisms.
+
+Sufficiency/completion predicates are imported from
+`Core.Causal.BoolSEM` (`causallySufficientOn`, `completesForEffectOn`)
+rather than re-stipulated locally — see CLAUDE.md "Theory-hub denotation
+as study-file constraint."
 -/
 
 namespace BarAsherSiegal2026
@@ -128,37 +130,25 @@ noncomputable instance : SEM.IsDeterministic manualModel where
 def unlocked : Valuation (fun _ : V => Bool) :=
   Valuation.empty.extend .lock false
 
-/-- Local sufficiency predicate: with `cause = true` under `bg`,
-    `developDetOn` of `M` produces `effect = true`. -/
-noncomputable def sufficient (M : BoolSEM V) [SEM.IsDeterministic M]
-    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
-    (cause effect : V) : Prop :=
-  (developDetOn M vs n (bg.extend cause true)).hasValue effect true
-
-/-- Local completion predicate: sufficient + but-for. -/
-noncomputable def completes (M : BoolSEM V) [SEM.IsDeterministic M]
-    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
-    (cause effect : V) : Prop :=
-  sufficient M vs bg n cause effect ∧
-  ¬ (developDetOn M vs n (bg.extend cause false)).hasValue effect true
+open BoolSEM (causallySufficientOn completesForEffectOn)
 
 /-- **Manual-only model**: handle completes the sufficient set for
     doorOpens (full *open* and *cause* felicity, per @cite{bar-asher-siegal-2026}).
     Both completion and member modes succeed because there's no
     alternative pathway. -/
 theorem handle_completes_manual :
-    completes manualModel varList unlocked 1 .handle .doorOpens := by
+    completesForEffectOn manualModel varList unlocked 1 .handle .doorOpens := by
   refine ⟨?_, ?_⟩
-  · unfold sufficient; rfl
+  · unfold causallySufficientOn; rfl
   · intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 /-- **Full model with handle alone**: handle completes the manual
     sufficient set, satisfying *open*-style completion CC-selection.
     The automatic pathway doesn't fire because button=false in `unlocked`. -/
 theorem handle_completes_full :
-    completes fullModel varList unlocked 2 .handle .doorOpens := by
+    completesForEffectOn fullModel varList unlocked 2 .handle .doorOpens := by
   refine ⟨?_, ?_⟩
-  · unfold sufficient; rfl
+  · unfold causallySufficientOn; rfl
   · intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 /-- **Overdetermination in the full model**: when both pathways are
@@ -168,7 +158,7 @@ theorem handle_completes_full :
     This captures @cite{bar-asher-siegal-2026}'s point that *open* is
     infelicitous under overdetermination. -/
 theorem handle_no_completion_overdetermined :
-    ¬ completes fullModel varList
+    ¬ completesForEffectOn fullModel varList
         (unlocked.extend .button true |>.extend .electricity true)
         2 .handle .doorOpens := by
   intro ⟨_, hNot⟩

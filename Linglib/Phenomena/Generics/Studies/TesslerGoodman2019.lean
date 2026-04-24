@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Limits
+import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -458,17 +459,6 @@ Dividing by prior(p) > 0 and cross-multiplying:
 noncomputable def expectedBin (prior : Prevalence → ℝ) : ℝ :=
   (∑ w : Prevalence, prior w * (w.toNat : ℝ)) / (∑ w : Prevalence, prior w)
 
-open Core in
-/-- Policy comparison ↔ score comparison for any RationalAction.
-    Combines `policy_lt_of_score_lt` and `policy_not_lt_of_score_le`. -/
-private theorem policy_gt_iff_score_gt {S A : Type*} [Fintype A]
-    (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
-    ra.policy s a₁ > ra.policy s a₂ ↔ ra.score s a₁ > ra.score s a₂ :=
-  ⟨fun h => by
-    by_contra hle; push_neg at hle
-    exact absurd h (not_lt.mpr (ra.policy_monotone s a₁ a₂ hle)),
-   ra.policy_lt_of_score_lt s a₂ a₁⟩
-
 /-- The endorsement condition reduces to a cue validity comparison:
     a generic is endorsed iff the referent prevalence bin exceeds
     the prior expected bin. This is the paper's central analytical
@@ -487,14 +477,14 @@ theorem endorsement_iff_exceeds_expected
     (p.toNat : ℝ) > expectedBin prior := by
   set cfg := mkGenericCfg prior hp
   set l0 := cfg.L0agent ()
-  -- Step 1: S1 policy → S1 score → L0 policy
+  -- Step 1: S1 policy → S1 score → L0 policy. The first equivalence is
+  -- `RSA.RSAConfig.S1_lt_iff_score_lt` (peeled `gt` becomes `lt` of swapped
+  -- arguments); the second uses `Real.rpow_one` since this model has α = 1.
   have hs1_eq : ∀ u, (cfg.S1agent ()).score p u = l0.policy u p :=
     fun u => Real.rpow_one _
   have step1 : cfg.S1 () p .generic > cfg.S1 () p .silent ↔
       l0.policy .generic p > l0.policy .silent p := by
-    rw [show cfg.S1 () p .generic > cfg.S1 () p .silent ↔
-        (cfg.S1agent ()).score p .generic > (cfg.S1agent ()).score p .silent from
-      policy_gt_iff_score_gt _ _ _ _, hs1_eq, hs1_eq]
+    rw [gt_iff_lt, RSA.RSAConfig.S1_lt_iff_score_lt, hs1_eq, hs1_eq, ← gt_iff_lt]
   rw [step1]
   -- Step 2: L0 totalScore facts
   have htg : l0.totalScore .generic = ∑ w, prior w * (w.toNat : ℝ) :=

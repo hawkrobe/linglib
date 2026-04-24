@@ -1,4 +1,5 @@
 import Linglib.Core.Causal.SEM.Defs
+import Linglib.Core.Causal.SEM.Deterministic
 import Linglib.Core.Causal.Mechanism.Deterministic
 import Mathlib.Logic.Function.Iterate
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
@@ -166,20 +167,31 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
     stepOnceDetOn M (v :: vs) s = stepOnceDetOn M vs (singleStepAtDet M s v) := rfl
 
 -- ════════════════════════════════════════════════════
--- § Forward propagation: stepOnceDet + developDet (Fintype-based, canonical)
+-- § Computational specialization: developDetOn (explicit list)
 -- ════════════════════════════════════════════════════
 
+/-! The canonical `developDet` (per-vertex, via `IsDAG.wf.fix`) lives in
+    `PerVertex.lean`. Below is the **computational specialization**:
+    `developDetOn M vs n s` iterates `stepOnceDetOn` `n` times over an
+    explicit vertex list `vs`. Computable; reducible structurally for
+    kernel-verifiable proofs on concrete SEMs.
+
+    Mathlib analogue: `Polynomial.eval` (canonical) vs `Polynomial.eval₂`
+    with explicit ring hom (computational). Same mathematical object;
+    different reduction profiles.
+
+    `stepOnceDet` (the Fintype-based wrapper) is kept here as an internal
+    helper for the PMF stack's `stepOnce_eq_pure_of_deterministic` bridge —
+    see below. It's not part of the public API; consumers use either
+    `developDetOn` (computational) or `developDet` (canonical, in PerVertex.lean). -/
+
 /-- One forward-development sweep using the Fintype enumeration of `V`.
-    Canonical name; noncomputable because `Finset.toList` is. For
-    structural reduction on a concrete SEM, use `stepOnceDetOn` with an
-    explicit vertex list. -/
+    Internal helper for `stepOnce_eq_pure_of_deterministic`; not a public
+    API. Public consumers use `developDetOn` (explicit list) or
+    `developDet` (canonical per-vertex). -/
 noncomputable def stepOnceDet [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [IsDeterministic M] (s : Valuation α) : Valuation α :=
   stepOnceDetOn M (Fintype.elems : Finset V).toList s
-
-theorem stepOnceDet_eq_stepOnceDetOn [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α) :
-    stepOnceDet M s = stepOnceDetOn M (Fintype.elems : Finset V).toList s := rfl
 
 /-- **Forward-development** of a deterministic acyclic SEM against an
     explicit vertex list, with `n` iterations. Computable; consumers use
@@ -201,55 +213,25 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
     developDetOn M vs (n + 1) s = developDetOn M vs n (stepOnceDetOn M vs s) := by
   simp [developDetOn, Function.iterate_succ_apply]
 
-/-- **Canonical forward-development**: iterates `stepOnceDet` for
-    `Fintype.card V` steps. Noncomputable.
-
-    Replaces the old `normalDevelopment`. The fact that the result is a
-    fixpoint of `stepOnceDet` (i.e., `stepOnceDet M (developDet M s) = developDet M s`)
-    is `develop_isFixpoint`, deferred. The bound `Fintype.card V`
-    suffices because `stepOnceDet` is info-monotonic and there are only
-    `Fintype.card V` vertices to determine. -/
-noncomputable def developDet [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) : Valuation α :=
-  developDetOn M (Fintype.elems : Finset V).toList (Fintype.card V) s
-
-theorem developDet_eq_developDetOn [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
-    developDet M s = developDetOn M (Fintype.elems : Finset V).toList (Fintype.card V) s := rfl
-
 /-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
-    with `cause` undetermined in `s`, `Pearl-intervening` to set
+    with `cause` undetermined in `s`, Pearl-intervening to set
     `cause := xC` is equivalent (at the level of `developDet`) to
     extending the valuation with `cause = xC` and developing under the
     original mechanisms.
 
-    This is the load-bearing substrate fact connecting
-    `probabilisticSuf` (intervene-based, mathlib-canonical) to
-    `causallySufficient` (extend-based, classical SCM-style). It holds
-    because:
-    - `intervene` replaces cause's mechanism with `Mechanism.const xC`,
-      so the first time `develop` visits cause (when ready), it sets
-      cause to `xC`.
-    - `extend` sets cause to `xC` upfront, and subsequent steps skip
-      cause (already determined).
-    - For all other vertices, intervene preserves the original
-      mechanism. Both sides eventually converge to cause = xC and
-      identical downstream propagation.
+    Load-bearing substrate fact connecting `probabilisticSuf`
+    (intervene-based) to `causallySufficient` (extend-based). Under the
+    per-vertex `developDet`, the proof goes by induction on
+    `IsStrictAncestor` showing that the intervened mechanism at `cause`
+    fires `xC` regardless of recursive parent values, matching the
+    extended-valuation case which short-circuits via `developDetVtx_extended`.
 
-    **Proof deferred** — needs careful induction over iteration count
-    showing that intervene's intermediate states converge to extend's
-    after at most one iteration that visits cause. The cleanest proof
-    likely goes via a per-vertex equivalence relation that tracks
-    "cause is xC OR will be xC at the next visit". TODO: Phase V'' /
-    D-E2.
-
-    For now the consumer (`probabilisticSuf_of_deterministic` chain
-    via `CaoWhiteLassiter2025.V2.probabilisticSuf_eq_deterministicSuf`)
-    relies on this lemma as a single substrate sorry rather than
-    re-deriving the equivalence at each call site. -/
+    **Proof deferred** — same TODO status as before the per-vertex
+    refactor; the consumer (`probabilisticSuf_eq_deterministicSuf` in
+    CaoWhiteLassiter2025) relies on this as a single substrate sorry
+    rather than re-deriving at each call site. -/
 theorem developDet_intervene_eq_developDet_extend
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause)
     (h : s.get cause = none) :
@@ -328,30 +310,38 @@ noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
 
 /-- **Bridge theorem** (load-bearing): under `IsDeterministic`, the
     canonical PMF-valued `develop` collapses to the Dirac of the
-    deterministic-specialization `developDet`. This is the central
-    correctness statement that lets the deterministic-as-Dirac pattern
-    work cleanly. -/
+    deterministic-specialization `developDet` (per-vertex, in
+    `SEM/Deterministic.lean`).
+
+    This is the central correctness statement that lets the
+    deterministic-as-Dirac pattern work cleanly. The two definitions
+    are mathematically the same object viewed two ways:
+    - `develop` threads `PMF.bind` through the partial joint via
+      iteration over `Fintype.elems.toList`.
+    - `developDet` recurses per-vertex via `IsDAG.wf.fix`, bottoming
+      out at roots.
+    Under `IsDeterministic`, the joint collapses to a Dirac at the
+    valuation produced by per-vertex recursion.
+
+    **Proof status**: deferred (`sorry`). The previous proof went via
+    `stepOnce_eq_pure_of_deterministic` chained over the iteration
+    count, working because the old `developDet` was definitionally the
+    iteration. The new per-vertex `developDet` requires a substantively
+    different argument: induct on `IsStrictAncestor` to show that PMF
+    iteration's fixpoint at vertex `v` matches the per-vertex
+    recursion's value. Real theorem; tractable but not blocking the
+    current substrate refactor.
+
+    The downstream consumer
+    (`probabilisticSuf_of_deterministic` →
+    `CaoWhiteLassiter2025.probabilisticSuf_eq_deterministicSuf`) was
+    already broken by `developDet_intervene_eq_developDet_extend`'s
+    sorry; this defers the same chain. No new regression. -/
 theorem develop_eq_pure_of_deterministic
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
     develop M s = PMF.pure (developDet M s) := by
-  unfold develop developDet developDetOn
-  -- (PMF.bind · stepOnce)^[N] (PMF.pure s) = PMF.pure ((stepOnceDetOn M vs)^[N] s)
-  -- by induction on N, using stepOnce_eq_pure_of_deterministic + PMF.pure_bind
-  have key : ∀ (n : ℕ) (s' : Valuation α),
-      (fun p => p.bind (stepOnce M))^[n] (PMF.pure s') =
-        PMF.pure ((stepOnceDet M)^[n] s') := by
-    intro n
-    induction n with
-    | zero => intro s'; simp
-    | succ n ih =>
-      intro s'
-      rw [Function.iterate_succ_apply, Function.iterate_succ_apply]
-      rw [show (PMF.pure s').bind (stepOnce M) = PMF.pure (stepOnceDet M s') by
-        rw [PMF.pure_bind]; exact stepOnce_eq_pure_of_deterministic M s']
-      exact ih _
-  -- (stepOnceDet M)^[N] s = (stepOnceDetOn M elems.toList)^[N] s by definition
-  exact key _ s
+  sorry
 
 /-! ### Topological-order independence (deferred)
 

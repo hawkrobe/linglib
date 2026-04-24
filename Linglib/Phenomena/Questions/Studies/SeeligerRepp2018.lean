@@ -62,6 +62,7 @@ open Semantics.Questions.DeclarativeQuestions
 open Fragments.Swedish.QuestionParticles
 open Fragments.German.QuestionParticles
 open Fragments.German.PolarityMarking (dochPreUtterance)
+open Features.InformationStructure (PolarityMarkingEnv)
 
 -- ============================================================================
 -- S 1: Swedish val marks DQs, not assertions
@@ -218,10 +219,10 @@ theorem dochWohl_is_question_marker :
 theorem doch_dual_role :
     -- The polarity *doch* is a correction particle (not sentence-internal)
     dochPreUtterance.strategy = .polarityReversal ∧
-    dochPreUtterance.correctionOk = true ∧
-    dochPreUtterance.sentenceInternal = false ∧
+    PolarityMarkingEnv.correction ∈ dochPreUtterance.environments ∧
+    PolarityMarkingEnv.sentenceInternal ∉ dochPreUtterance.environments ∧
     -- The RQ *doch wohl* is a question marker (not usable in assertions)
-    dochWohl.declOk = false := ⟨rfl, rfl, rfl, rfl⟩
+    dochWohl.declOk = false := ⟨rfl, by decide, by decide, rfl⟩
 
 -- ============================================================================
 -- S 6: Bridge to Romero's bias framework

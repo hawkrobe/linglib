@@ -1,3 +1,4 @@
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
@@ -493,11 +494,10 @@ independently alternate; the construction adds the CAUSE that the verb
 lacks. This is an **anticausative** licensed by the construction, not
 a lexically noncausative.
 
-Per-scenario causal models for these contrasts now live in
-`Semantics.Causation.Resultatives` (see `HammerFlat`, `KickIntoField`,
-`FreezeSolid`, etc.) on the V2 `BoolSEM` substrate. The legacy
-`pushDoorOpenModel`/`freezeSolidModel` `CausalDynamics` instances were
-deleted in Phase D-H. -/
+Per-scenario causal models for these contrasts live below in §7
+(`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
+substrate, using `BoolSEM.causallySufficientOn` / `completesForEffectOn`
+from `Core.Causal.SEM.Counterfactual`. -/
 
 /-- *Freeze* independently shows the causative alternation;
     *push* does not. This confirms the classification: *freeze solid*
@@ -534,13 +534,16 @@ formalized in `Causation/Resultatives.lean`:
   anticausative is blocked (PCC requires expressing the cause). -/
 
 /-! The PCC tightness analysis (projectile vs continuous, with the
-    intervening-source breakdown of necessity) is fully formalized on
-    the V2 `BoolSEM` substrate by `Resultatives.KickDoorViaBall` —
-    see `kick_door_via_ball_not_tight` for the canonical not-tight
-    witness. The legacy `projectileModel`/`continuousModel`/
-    `projectileWithEnergyModel` `CausalDynamics` instances + their
-    `completesForEffect` proofs were deleted in Phase D-H; the
-    qualitative claims are recoverable from the V2 scaffolding. -/
+    intervening-source breakdown of necessity) is formalized on the
+    `BoolSEM` substrate below by `IndependentSourceBreaksNecessity` (§7)
+    — see `independent_source_breaks_necessity` for the canonical
+    not-tight witness.
+
+    Note: the witness is *our model*, not Levin 2019's specific
+    sentence-licensing argument. A genuine refutation theorem against
+    Goldberg & Jackendoff's licensing-not-necessity stance — using this
+    scenario as the disagreement witness — is the natural next step;
+    currently deferred. -/
 
 -- ════════════════════════════════════════════════════
 -- § 6. Discourse licensing conditions
@@ -794,11 +797,10 @@ This is the formal reflex of @cite{levin-2026}'s analysis: a resultative
 is a **construction filled with specific lexical material** (verb class,
 adjective).
 
-The legacy `dynamics : CausalDynamics` field + `causalConsistency` proof
-obligation were dropped in Phase D-H — the parallel structural causation
-layer now lives in `Semantics.Causation.Resultatives` on the V2 `BoolSEM`
-substrate (see `HammerFlat`, `KickIntoField`, etc.). Linking a specific
-`FilledResultative` to its V2 model would be a separate study extension.
+The structural-causation layer for these resultatives lives in §7 below
+on the `BoolSEM` substrate (see `HammerFlat`, `KickIntoField`, etc.).
+Linking a specific `FilledResultative` to its `BoolSEM` model would be a
+separate study extension.
 -/
 
 /-- A resultative construction instantiated with its lexical fillers. -/
@@ -972,5 +974,258 @@ theorem resultative_cause_matches_make_verb :
 theorem resultative_cause_differs_from_cause_verb :
     cause.causative ≠ some resultativeCausativeBuilder := by
   decide
+
+-- ════════════════════════════════════════════════════
+-- § 7. BoolSEM scenario witnesses
+-- ════════════════════════════════════════════════════
+
+/-! ## Per-scenario causal models
+
+Each causative resultative maps to a concrete `BoolSEM V` where the
+verbal subevent causally determines the result vertex. Sufficiency and
+completion are stated via the canonical `BoolSEM.causallySufficientOn` /
+`completesForEffectOn` predicates so kernel reduction closes the
+structural theorems via `unfold + rfl`.
+
+Per-scenario inductive `V` enums give `Fintype + DecidableEq + Repr`
+so `developDetOn` reduces structurally without `native_decide`. -/
+
+section Scenarios
+open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
+open BoolSEM (causallySufficientOn completesForEffectOn)
+
+namespace HammerFlat
+
+inductive V | hammering | flat
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.hammering, .flat]
+
+def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .hammering => const (G := graph) false
+      | .flat => deterministic (fun ρ => ρ ⟨.hammering, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .hammering => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .flat => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem hammer_sufficient_for_flat :
+    causallySufficientOn model varList Valuation.empty 1 .hammering .flat := by
+  unfold causallySufficientOn; rfl
+
+theorem hammer_completes_flat :
+    completesForEffectOn model varList Valuation.empty 1 .hammering .flat := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end HammerFlat
+
+namespace KickIntoField
+
+inductive V | kicking | in_field
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .in_field]
+
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .in_field => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .in_field => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem kick_sufficient_for_field :
+    causallySufficientOn model varList Valuation.empty 1 .kicking .in_field := by
+  unfold causallySufficientOn; rfl
+
+theorem kick_completes_field :
+    completesForEffectOn model varList Valuation.empty 1 .kicking .in_field := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end KickIntoField
+
+namespace LaughSilly
+
+inductive V | laughing | silly
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.laughing, .silly]
+
+def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .laughing => const (G := graph) false
+      | .silly => deterministic (fun ρ => ρ ⟨.laughing, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .laughing => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .silly => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem laugh_sufficient_for_silly :
+    causallySufficientOn model varList Valuation.empty 1 .laughing .silly := by
+  unfold causallySufficientOn; rfl
+
+end LaughSilly
+
+namespace FreezeSolid
+
+/-! "The river froze solid" — noncausative resultative. Empty graph
+    captures the absence of constructional CAUSE. -/
+
+inductive V | freezing | solid
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.freezing, .solid]
+
+/-- Empty graph: no causal relations (noncausative resultative). -/
+def graph : CausalGraph V := ⟨fun _ => ∅⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun _ => const (G := graph) false }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det _ := inferInstanceAs (Mechanism.IsDeterministic (const _))
+
+/-- Freezing is NOT sufficient for solidity in the empty-edge model. -/
+theorem freeze_not_sufficient :
+    ¬ causallySufficientOn model varList Valuation.empty 1 .freezing .solid := by
+  intro h
+  unfold causallySufficientOn at h
+  exact Bool.false_ne_true (Option.some.inj h)
+
+end FreezeSolid
+
+namespace DrinkTeapotDry
+
+/-! "Drink the teapot dry" — passive chain: drinking → tea_removal →
+    teapot_dry. Tight because tea_removal has no independent source. -/
+
+inductive V | drinking | tea_removal | teapot_dry
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.drinking, .tea_removal, .teapot_dry]
+
+def graph : CausalGraph V := ⟨fun
+  | .drinking => ∅
+  | .tea_removal => {.drinking}
+  | .teapot_dry => {.tea_removal}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .drinking => const (G := graph) false
+      | .tea_removal => deterministic (fun ρ => ρ ⟨.drinking, by simp [graph]⟩)
+      | .teapot_dry => deterministic (fun ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .drinking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .tea_removal => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .teapot_dry => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+/-- Tight despite being a chain: removing drinking leaves tea_removal
+    undetermined (no independent source), so teapot_dry doesn't fire. -/
+theorem drink_completes_dry :
+    completesForEffectOn model varList Valuation.empty 1 .drinking .teapot_dry := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end DrinkTeapotDry
+
+namespace KickDoorDirect
+
+inductive V | kicking | door_open
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .door_open]
+
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .door_open => deterministic (fun ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+theorem kick_door_completes_direct :
+    completesForEffectOn model varList Valuation.empty 1 .kicking .door_open := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
+  intro h; exact Bool.false_ne_true (Option.some.inj h)
+
+end KickDoorDirect
+
+namespace IndependentSourceBreaksNecessity
+
+/-! NOT-tight case: kick → ball_motion → door_open + ball_energy →
+    ball_motion. Ball has its own independent energy source, so kicking
+    is not necessary for door_open in this model.
+
+    *In our model*, parallel mechanisms break but-for necessity. This
+    is an illustration of the general independent-source phenomenon
+    rather than a direct formalization of any specific paper's
+    sentence-licensing argument. -/
+
+inductive V | kicking | ball_motion | ball_energy | door_open
+  deriving DecidableEq, Fintype, Repr
+
+def varList : List V := [.kicking, .ball_energy, .ball_motion, .door_open]
+
+def graph : CausalGraph V := ⟨fun
+  | .kicking => ∅
+  | .ball_energy => ∅
+  | .ball_motion => {.kicking, .ball_energy}
+  | .door_open => {.ball_motion}⟩
+
+noncomputable def model : BoolSEM V :=
+  { graph := graph
+    mech := fun
+      | .kicking => const (G := graph) false
+      | .ball_energy => const (G := graph) false
+      | .ball_motion => deterministic (fun ρ =>
+          ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
+      | .door_open => deterministic (fun ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
+
+noncomputable instance : SEM.IsDeterministic model where
+  mech_det v := match v with
+    | .kicking => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .ball_energy => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .ball_motion => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+
+def ballHasEnergyBg : Valuation (fun _ : V => Bool) :=
+  Valuation.empty.extend .ball_energy true
+
+/-- NOT tight: removing kicking still allows ball_energy → ball_motion
+    → door_open. The kick is not necessary. -/
+theorem independent_source_breaks_necessity :
+    ¬ completesForEffectOn model varList ballHasEnergyBg 1 .kicking .door_open := by
+  intro ⟨_, hNot⟩
+  apply hNot
+  rfl
+
+end IndependentSourceBreaksNecessity
+
+end Scenarios
 
 end Levin2026

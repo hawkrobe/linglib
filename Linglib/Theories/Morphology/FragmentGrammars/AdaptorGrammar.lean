@@ -136,6 +136,7 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
   intro a ha
   exact mul_nonneg (M.toDMPCFG.lhsFactor_pos ha D).le
     ((M.pyp a).partitionProb_nonneg (Y a).snd)
+    -- ↑ `PitmanYor.partitionProb_nonneg` (different file from `PolyaUrn`)
 
 /-- The "empty" table assignment: every nonterminal gets the
     `Nat.Partition 0` consisting of no tables. The corresponding
@@ -160,7 +161,7 @@ theorem corpusProbGivenTables_empty :
   have h_dm : M.toDMPCFG.lhsFactor a 0 = 1 := by
     unfold DMPCFG.lhsFactor
     rw [DMPCFG.lhsCounts_zero]
-    exact (M.toDMPCFG.lhsUrn a).partitionProb_zero
+    exact (M.toDMPCFG.lhsUrn a).seqProb_zero
   have h_py : M.pypFactor a (emptyTables G) = 1 := by
     unfold pypFactor emptyTables
     -- The empty Nat.Partition 0 has parts.card = 0 and total = 0,

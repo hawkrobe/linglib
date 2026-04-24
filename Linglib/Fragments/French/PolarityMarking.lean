@@ -33,27 +33,25 @@ affirmative particles like Dutch *wel* and from Verum focus.
 
 namespace Fragments.French.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- *si* — French polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative assertion or question.
     Clause-initial or standalone; not sentence-internal.
     Correction-only: requires a negative context to reverse. -/
-def si : PolarityMarkingEntry where
+abbrev si : PolarityMarkingEntry where
   label := "si"
   form := some "si"
-  sentenceInternal := false
-  contrastOk := false
-  correctionOk := true
+  environments := {.correction}
   strategy := .polarityReversal
 
 def allPolarityMarkings : List PolarityMarkingEntry := [si]
 
 -- Per-entry verification theorems
 theorem si_form : si.form = some "si" := rfl
-theorem si_not_sentenceInternal : si.sentenceInternal = false := rfl
-theorem si_not_contrastOk : si.contrastOk = false := rfl
-theorem si_correctionOk : si.correctionOk = true := rfl
+theorem si_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ si.environments := by decide
+theorem si_not_contrastOk : PolarityMarkingEnv.contrast ∉ si.environments := by decide
+theorem si_correctionOk : PolarityMarkingEnv.correction ∈ si.environments := by decide
 theorem si_strategy : si.strategy = .polarityReversal := rfl
 
 end Fragments.French.PolarityMarking

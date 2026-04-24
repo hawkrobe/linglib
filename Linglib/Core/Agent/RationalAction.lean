@@ -151,6 +151,17 @@ theorem RationalAction.policy_lt_of_score_lt (ra : RationalAction S A) (s : S)
   simp only [policy, ne_of_gt htot_pos, ↓reduceIte]
   exact div_lt_div_of_pos_right hlt htot_pos
 
+/-- Iff combining `policy_lt_of_score_lt` with the contrapositive of
+    `policy_monotone`: at the same state, policy strict ordering coincides
+    with score strict ordering. -/
+theorem RationalAction.policy_lt_iff_score_lt (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) :
+    ra.policy s a₁ < ra.policy s a₂ ↔ ra.score s a₁ < ra.score s a₂ :=
+  ⟨fun h => by
+    by_contra hle; push_neg at hle
+    exact absurd h (not_lt.mpr (ra.policy_monotone s a₂ a₁ hle)),
+   ra.policy_lt_of_score_lt s a₁ a₂⟩
+
 /-- Cross-state policy comparison: compares policy values at different states
     (different denominators). Used for S2 cross-world comparisons where
     S2(u|w₁) vs S2(u|w₂) have different normalization constants.

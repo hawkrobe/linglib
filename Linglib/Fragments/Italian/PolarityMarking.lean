@@ -36,7 +36,7 @@ assign [+Pol] in contexts where a negative polarity is salient.
 
 namespace Fragments.Italian.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like structure: affirmative particle *sì* + complementizer *che*.
@@ -44,21 +44,19 @@ open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy
     Correction-only: requires a negative context to reverse.
     @cite{garassino-jacob-2018}: cognate of Spanish *sí que*;
     rare in corpus data but grammatically available. -/
-def siChe : PolarityMarkingEntry where
+abbrev siChe : PolarityMarkingEntry where
   label := "sì che"
   form := some "sì che"
-  sentenceInternal := false
-  contrastOk := false
-  correctionOk := true
+  environments := {.correction}
   strategy := .polarityReversal
 
 def allPolarityMarkings : List PolarityMarkingEntry := [siChe]
 
 -- Per-entry verification theorems
 theorem siChe_form : siChe.form = some "sì che" := rfl
-theorem siChe_not_sentenceInternal : siChe.sentenceInternal = false := rfl
-theorem siChe_not_contrastOk : siChe.contrastOk = false := rfl
-theorem siChe_correctionOk : siChe.correctionOk = true := rfl
+theorem siChe_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ siChe.environments := by decide
+theorem siChe_not_contrastOk : PolarityMarkingEnv.contrast ∉ siChe.environments := by decide
+theorem siChe_correctionOk : PolarityMarkingEnv.correction ∈ siChe.environments := by decide
 theorem siChe_strategy : siChe.strategy = .polarityReversal := rfl
 
 end Fragments.Italian.PolarityMarking

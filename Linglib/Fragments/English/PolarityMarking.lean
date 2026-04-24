@@ -35,7 +35,7 @@ German Verum focus.
 
 namespace Fragments.English.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- Emphatic *do* (Verum-focus use) — English polarity-marking strategy.
     Pitch accent on auxiliary *do* in an affirmative sentence contradicting
@@ -43,12 +43,10 @@ open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy
     Available in both contrast and correction contexts.
     @cite{wilder-2013}: VF-*do* targets the assertion operator,
     like German Verum focus. -/
-def emphaticDo : PolarityMarkingEntry where
+abbrev emphaticDo : PolarityMarkingEntry where
   label := "emphatic do"
   prosodicTarget := some "auxiliary do"
-  sentenceInternal := true
-  contrastOk := true
-  correctionOk := true
+  environments := {.sentenceInternal, .contrast, .correction}
   strategy := .verumFocus
 
 def allPolarityMarkings : List PolarityMarkingEntry := [emphaticDo]
@@ -56,9 +54,9 @@ def allPolarityMarkings : List PolarityMarkingEntry := [emphaticDo]
 -- Per-entry verification theorems
 theorem emphaticDo_no_form : emphaticDo.form = none := rfl
 theorem emphaticDo_prosodicTarget : emphaticDo.prosodicTarget = some "auxiliary do" := rfl
-theorem emphaticDo_sentenceInternal : emphaticDo.sentenceInternal = true := rfl
-theorem emphaticDo_contrastOk : emphaticDo.contrastOk = true := rfl
-theorem emphaticDo_correctionOk : emphaticDo.correctionOk = true := rfl
+theorem emphaticDo_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∈ emphaticDo.environments := by decide
+theorem emphaticDo_contrastOk : PolarityMarkingEnv.contrast ∈ emphaticDo.environments := by decide
+theorem emphaticDo_correctionOk : PolarityMarkingEnv.correction ∈ emphaticDo.environments := by decide
 theorem emphaticDo_strategy : emphaticDo.strategy = .verumFocus := rfl
 
 end Fragments.English.PolarityMarking

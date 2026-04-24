@@ -179,6 +179,21 @@ def until_ : PolarityItemEntry :=
   , notes := "Durative 'until' is NPI: 'didn't leave until 5'"
   }
 
+/-- "either" — additive strong NPI (@cite{rullmann-2003}, @cite{gajewski-2011}).
+
+    Per @cite{gajewski-2011} (exs. 39c, 40c, 41c, p. 120):
+    *Only John likes pancakes, either / *If Bill likes pancakes, either / *Mary
+    is sorry that she likes pancakes, either — strong NPI ungrammatical under
+    Strawson-DE / Strawson-AA operators despite vF1999 having shown those
+    contexts to be Strawson-DE. -/
+def either_npi : PolarityItemEntry :=
+  { form := "either"
+  , polarityType := .npiStrong
+  , baseForce := .additive
+  , licensingContexts := [.negation, .nobody]
+  , notes := "Strong additive NPI per @cite{rullmann-2003}, @cite{gajewski-2011}: ungrammatical under SAA-only operators (only, conditional antecedents, emotive factives)"
+  }
+
 -- ----------------------------------------------------------------------------
 -- Free Choice Items
 -- ----------------------------------------------------------------------------

@@ -111,12 +111,12 @@ causal model (no overdetermination), a sufficient cause is also
 necessary. Under overdetermination, sufficiency and necessity come
 apart — exactly when P-CAUSE and D-CAUSE diverge.
 
-The legacy `single_pathway_sufficiency_implies_necessity` /
-`single_pathway_concrete` / `overdetermination_breaks_entailment`
-theorems over `CausalDynamics` were deleted in Phase D-H. The
-qualitative claims are witnessed concretely via V2 `BoolSEM` models in
-study files — e.g., the overdetermination case is witnessed by
-`NadathurLauer2020.Preemption.suzy_not_but_for_when_billy_throws`. -/
+The qualitative claim is witnessed concretely via V2 `BoolSEM` models
+in study files — e.g., the overdetermination case is witnessed by
+`Lewis1973.Overdetermination.overdetermination_no_butfor_a` (the
+chronologically-canonical owner of the symmetric-overdetermination
+scenario; see also the analogous V2 sufficient-but-unnecessary
+divergence in `NadathurLauer2020.Bus.cause_infelicitous_for_bus`). -/
 
 /-! ## Production Constraint
 

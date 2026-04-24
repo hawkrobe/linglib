@@ -1,20 +1,18 @@
-import Linglib.Features.V2
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Danish V2 Profile
 @cite{westergaard-2009}
 
-V2 verb-placement data for Danish (Table 3.1).
+V2 micro-parameter profile for Danish (Table 3.1).
 -/
 
 namespace Fragments.Danish
 
-open Features
+open Minimalism (ForceHead V2Profile)
 
-/-- Danish: like Standard Norwegian but with V2 also in exclamatives. -/
-def danish : V2Data where
-  name := "Danish"
-  declarativeV2 := true;  whQuestionV2 := true;  yesNoQuestionV2 := true
-  exclamativeV2 := true;  imperativeV2 := false; embeddedFinV2 := false; embeddedQuestionV2 := false
+/-- Danish: like Standard Norwegian plus V-to-C in exclamatives. -/
+abbrev danish : V2Profile :=
+  {.Decl, .Int, .Pol, .Excl}
 
 end Fragments.Danish

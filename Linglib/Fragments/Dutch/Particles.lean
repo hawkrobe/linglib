@@ -15,27 +15,25 @@ finite verb.
 
 namespace Fragments.Dutch.Particles
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- *wel* — Dutch affirmative polarity particle.
     Sentence-internal, accented, available in both contrast and correction.
     @cite{turco-braun-dimroth-2014}: dominant strategy in Dutch for neg→affirm switches. -/
-def wel : PolarityMarkingEntry where
+abbrev wel : PolarityMarkingEntry where
   label := "wel"
   form := some "wel"
   prosodicTarget := some "particle"
-  sentenceInternal := true
-  contrastOk := true
-  correctionOk := true
+  environments := {.sentenceInternal, .contrast, .correction}
   strategy := .particle
 
 def allPolarityMarkings : List PolarityMarkingEntry := [wel]
 
 -- Per-entry verification theorems
 theorem wel_form : wel.form = some "wel" := rfl
-theorem wel_sentenceInternal : wel.sentenceInternal = true := rfl
-theorem wel_contrastOk : wel.contrastOk = true := rfl
-theorem wel_correctionOk : wel.correctionOk = true := rfl
+theorem wel_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∈ wel.environments := by decide
+theorem wel_contrastOk : PolarityMarkingEnv.contrast ∈ wel.environments := by decide
+theorem wel_correctionOk : PolarityMarkingEnv.correction ∈ wel.environments := by decide
 theorem wel_strategy : wel.strategy = .particle := rfl
 
 end Fragments.Dutch.Particles

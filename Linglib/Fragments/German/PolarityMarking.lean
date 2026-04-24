@@ -25,19 +25,17 @@ German's strategy is non-particulate.
 
 namespace Fragments.German.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
+open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- Verum focus — pitch accent on the finite verb.
     Dominant strategy in German for neg→affirm switches in both contexts.
     Sentence-internal; available in both contrast and correction.
     @cite{hohle-1992}, @cite{turco-braun-dimroth-2014}: ~82% in contrast,
     ~78% in correction. -/
-def verumFocus : PolarityMarkingEntry where
+abbrev verumFocus : PolarityMarkingEntry where
   label := "Verum focus"
   prosodicTarget := some "finite verb"
-  sentenceInternal := true
-  contrastOk := true
-  correctionOk := true
+  environments := {.sentenceInternal, .contrast, .correction}
   strategy := .verumFocus
 
 /-- *doch* — polarity-reversing correction particle (@cite{holmberg-2016}).
@@ -46,28 +44,26 @@ def verumFocus : PolarityMarkingEntry where
     @cite{turco-braun-dimroth-2014}: it precedes the utterance rather than
     appearing within the VP/middle field. Cross-linguistically the same
     class as Swedish *jo* and French *si*. -/
-def dochPreUtterance : PolarityMarkingEntry where
+abbrev dochPreUtterance : PolarityMarkingEntry where
   label := "doch (pre-utterance)"
   form := some "doch"
-  sentenceInternal := false
-  contrastOk := false
-  correctionOk := true
+  environments := {.correction}
   strategy := .polarityReversal
 
 def allPolarityMarkings : List PolarityMarkingEntry := [verumFocus, dochPreUtterance]
 
 -- Per-entry verification theorems: verumFocus
 theorem vf_prosodicTarget : verumFocus.prosodicTarget = some "finite verb" := rfl
-theorem vf_sentenceInternal : verumFocus.sentenceInternal = true := rfl
-theorem vf_contrastOk : verumFocus.contrastOk = true := rfl
-theorem vf_correctionOk : verumFocus.correctionOk = true := rfl
+theorem vf_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∈ verumFocus.environments := by decide
+theorem vf_contrastOk : PolarityMarkingEnv.contrast ∈ verumFocus.environments := by decide
+theorem vf_correctionOk : PolarityMarkingEnv.correction ∈ verumFocus.environments := by decide
 theorem vf_strategy : verumFocus.strategy = .verumFocus := rfl
 
 -- Per-entry verification theorems: dochPreUtterance
 theorem doch_form : dochPreUtterance.form = some "doch" := rfl
-theorem doch_not_sentenceInternal : dochPreUtterance.sentenceInternal = false := rfl
-theorem doch_not_contrastOk : dochPreUtterance.contrastOk = false := rfl
-theorem doch_correctionOk : dochPreUtterance.correctionOk = true := rfl
+theorem doch_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ dochPreUtterance.environments := by decide
+theorem doch_not_contrastOk : PolarityMarkingEnv.contrast ∉ dochPreUtterance.environments := by decide
+theorem doch_correctionOk : PolarityMarkingEnv.correction ∈ dochPreUtterance.environments := by decide
 theorem doch_strategy : dochPreUtterance.strategy = .polarityReversal := rfl
 
 end Fragments.German.PolarityMarking

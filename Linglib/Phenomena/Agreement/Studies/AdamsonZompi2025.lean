@@ -408,33 +408,33 @@ theorem pcc_participant_equivalence (io do_ : PersonLevel) :
 -- ============================================================================
 
 /-- The P-Constraint (@cite{pancheva-zubizarreta-2018}) derives PCC effects
-    from point-of-view encoding. `pccLicit` from `PConstraint.lean` evaluates
+    from point-of-view encoding. `IsLicit` from `PConstraint.lean` evaluates
     the constraint over interpretable person values.
 
     The Weak PCC (P-Uniqueness inactive) produces the same judgments as
     our `weakPCC` function. -/
 theorem pconstraint_matches_weakPCC (io do_ : PersonLevel) :
-    pccLicit weakGrammar io do_ = weakPCC io do_ := by
-  cases io <;> cases do_ <;> rfl
+    IsLicit weakGrammar io do_ ↔ weakPCC io do_ = true := by
+  cases io <;> cases do_ <;> decide
 
 /-- The Strong PCC (P-Uniqueness active) produces the same judgments as
     our `strongPCC` function. -/
 theorem pconstraint_matches_strongPCC (io do_ : PersonLevel) :
-    pccLicit strongGrammar io do_ = strongPCC io do_ := by
-  cases io <;> cases do_ <;> rfl
+    IsLicit strongGrammar io do_ ↔ strongPCC io do_ = true := by
+  cases io <;> cases do_ <;> decide
 
 /-- LEI is inherently [+PROXIMATE] by virtue of interpretable 2nd person.
     This is what triggers PCC effects under P&Z's account. -/
 theorem lei_is_proximate :
-    isInherentlyProximate lei.interpretablePerson = true := rfl
+    IsInherentlyProximate lei.interpretablePerson := by decide
 
 /-- The P-Constraint correctly predicts LEI triggers PCC (Weak grammar). -/
 theorem pconstraint_bans_lei :
-    pccLicit weakGrammar .third lei.interpretablePerson = false := rfl
+    ¬ IsLicit weakGrammar .third lei.interpretablePerson := by decide
 
 /-- The P-Constraint correctly predicts imposters do NOT trigger PCC. -/
 theorem pconstraint_allows_imposter :
-    pccLicit weakGrammar .third imposter.interpretablePerson = true := rfl
+    IsLicit weakGrammar .third imposter.interpretablePerson := by decide
 
 -- ============================================================================
 -- § 10: Integration with Agree — Why Morphosyntactic Accounts Fail

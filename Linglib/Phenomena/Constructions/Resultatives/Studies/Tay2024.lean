@@ -339,16 +339,16 @@ theorem kulei_surface : kulei_morph.surface = "kulei" := rfl
 -- § 5. Causal Models (V2 BoolSEM)
 -- ════════════════════════════════════════════════════
 
-/-! ## V-V compound causal models on V2 BoolSEM
+/-! ## V-V compound causal models on BoolSEM
 
 Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
 Direct causation = single edge, no intermediate with an independent
 energy source. This is the same tightness constraint identified for
-English resultatives by @cite{levin-2019} — formalized via the
-`completes` predicate from `Semantics.Causation.Resultatives`. -/
+English resultatives by @cite{levin-2019} — formalized via the canonical
+`completesForEffectOn` predicate from `Core.Causal.SEM.Counterfactual`. -/
 
 open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
-open Semantics.Causation.Resultatives (sufficient completes)
+open BoolSEM (causallySufficientOn completesForEffectOn)
 
 namespace Dasi
 
@@ -369,14 +369,12 @@ noncomputable instance : SEM.IsDeterministic model where
     | .death => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem sufficient :
-    Semantics.Causation.Resultatives.sufficient model varList Valuation.empty 1
-      .hitting .death := by
-  unfold Semantics.Causation.Resultatives.sufficient; rfl
+    causallySufficientOn model varList Valuation.empty 1 .hitting .death := by
+  unfold causallySufficientOn; rfl
 
 theorem tight :
-    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
-      .hitting .death := by
-  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+    completesForEffectOn model varList Valuation.empty 1 .hitting .death := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
   intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 end Dasi
@@ -400,9 +398,8 @@ noncomputable instance : SEM.IsDeterministic model where
     | .tired => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem tight :
-    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
-      .crying .tired := by
-  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+    completesForEffectOn model varList Valuation.empty 1 .crying .tired := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
   intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 end Kulei
@@ -427,9 +424,8 @@ noncomputable instance : SEM.IsDeterministic model where
     | .openV => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 theorem tight :
-    Semantics.Causation.Resultatives.completes model varList Valuation.empty 1
-      .pushing .openV := by
-  refine ⟨by unfold Semantics.Causation.Resultatives.sufficient; rfl, ?_⟩
+    completesForEffectOn model varList Valuation.empty 1 .pushing .openV := by
+  refine ⟨by unfold causallySufficientOn; rfl, ?_⟩
   intro h; exact Bool.false_ne_true (Option.some.inj h)
 
 end Tuikai
@@ -503,7 +499,7 @@ theorem vv_compound_become :
 
 theorem vv_compound_architecture :
     -- Tight causation (direct, single edge)
-    Semantics.Causation.Resultatives.completes Dasi.model Dasi.varList
+    completesForEffectOn Dasi.model Dasi.varList
       Valuation.empty 1 .hitting .death ∧
     -- Morphological compound
     dasi_morph.IsCompound ∧

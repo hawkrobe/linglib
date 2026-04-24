@@ -8,7 +8,6 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.PolarityItem
-import Linglib.Features.V2
 import Linglib.Features.ClauseForm
 import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Core.Lexical.Pronouns
@@ -192,6 +191,7 @@ import Linglib.Core.Typology.WordOrder
 import Linglib.Core.Typology.Adposition
 import Linglib.Core.Typology.ClassifierSystem
 import Linglib.Core.Typology.LanguageProfile
+import Linglib.Core.Typology.Profile
 import Linglib.Core.Typology.Universal
 import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
@@ -273,6 +273,7 @@ import Linglib.Core.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Theories.Pragmatics.RSA.Divergence
@@ -1985,7 +1986,7 @@ import Linglib.Theories.Semantics.Entailment.Intolerance
 import Linglib.Theories.Semantics.Entailment.Monotonicity
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Phenomena.Entailment.Studies.Montague1973
-import Linglib.Theories.Semantics.Entailment.PresuppLicensing
+import Linglib.Theories.Semantics.Entailment.PresuppositionLicensing
 import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
@@ -2220,8 +2221,7 @@ import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Theories.Pragmatics.Implicature.Scales
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
-import Linglib.Theories.Semantics.Alternatives.Categorical
-import Linglib.Theories.Semantics.Alternatives.ContextualConstraint
+import Linglib.Theories.Semantics.Alternatives.FoxKatzir2011
 import Linglib.Theories.Semantics.Alternatives.Indirect
 import Linglib.Theories.Semantics.Alternatives.Pronounceable
 import Linglib.Theories.Semantics.Alternatives.Source

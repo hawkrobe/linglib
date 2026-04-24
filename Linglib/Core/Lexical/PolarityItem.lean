@@ -108,6 +108,16 @@ structure ContextProperties where
   prototype : String
   /-- BibTeX keys for the works that established this classification. -/
   citations : List String
+  /-- Strawson-DE flag (@cite{von-fintel-1999}): when `true`, the
+      `signature` field over-promises classical DE — the context is in
+      fact only DE under presupposition (Strawson-DE), not classically.
+      Default `false` (the signature stands as a classical claim).
+
+      Examples requiring this flag: `.onlyFocus`, `.adversative`,
+      `.sinceTemporal`, `.superlative` — all classical-DE-on-paper but
+      shown by @cite{von-fintel-1999} to be only Strawson-DE. The
+      witness operators are in `Theories/Semantics/Entailment/StrawsonEntailment.lean`. -/
+  isStrawsonOnly : Bool := false
   deriving Repr
 
 /-- Canonical map from licensing contexts to their theoretical properties.
@@ -155,7 +165,8 @@ def contextProperties : LicensingContext → ContextProperties
   | .onlyFocus =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "Only Mary saw anyone."
-      , citations := ["horn-1996", "von-fintel-1999"] }
+      , citations := ["horn-1996", "von-fintel-1999"]
+      , isStrawsonOnly := true }
   | .tooTo =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "He was too tired to say anything."
@@ -179,11 +190,13 @@ def contextProperties : LicensingContext → ContextProperties
   | .adversative =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "I'm sorry I said anything."
-      , citations := ["kadmon-landman-1993"] }
+      , citations := ["kadmon-landman-1993", "von-fintel-1999"]
+      , isStrawsonOnly := true }
   | .sinceTemporal =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "It's been five years since anyone visited."
-      , citations := ["iatridou-1990"] }
+      , citations := ["iatridou-1990", "von-fintel-1999"]
+      , isStrawsonOnly := true }
   | .doubtVerb =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "I doubt anyone came."
@@ -215,7 +228,8 @@ def contextProperties : LicensingContext → ContextProperties
   | .superlative =>
       { signature := .mono, mechanism := .byOtherMechanism
       , prototype := "The tallest student who saw anyone..."
-      , citations := ["herdan-sharvit-2006"] }
+      , citations := ["herdan-sharvit-2006", "von-fintel-1999"]
+      , isStrawsonOnly := true }
 
 -- ============================================================================
 -- Scalar Value (@cite{israel-2001} Figure 1)
@@ -331,6 +345,7 @@ inductive BaseForce where
   | degree        -- Degree/extent (at all, in the least)
   | temporal      -- Time reference (ever, yet)
   | manner        -- Manner/way (whatsoever)
+  | additive      -- Additive particle (either, also, too)
   deriving DecidableEq, Repr
 
 -- ============================================================================

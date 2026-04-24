@@ -42,6 +42,7 @@ import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Interventional
 import Linglib.Theories.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025

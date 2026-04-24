@@ -191,10 +191,26 @@ noncomputable def eval (p : PrProp W) : Prop3 W := fun w =>
 -- Classical Connectives
 -- ════════════════════════════════════════════════════════════════
 
-/-- Classical negation of a presuppositional proposition. -/
+/-- Classical (internal / choice) negation: a hole.
+    Lets the presupposition through unchanged. -/
 def neg (p : PrProp W) : PrProp W where
   presup := p.presup
   assertion := fun w => ¬p.assertion w
+
+/-- Bochvar's truth operator `t`: a plug-as-affirmation.
+    Always defined; maps presupposition failure to `False`.
+    @cite{karttunen-1973} §10 footnote 18: `t(A)` has truth-table
+    `T → T`, `F → F`, `# → F`. Composing classical negation with `t`
+    yields external negation: `negExt p = neg (truthOp p)`. -/
+def truthOp (p : PrProp W) : PrProp W where
+  presup := fun _ => True
+  assertion := fun w => p.presup w ∧ p.assertion w
+
+/-- Bochvar external (exclusion) negation: a plug.
+    Always defined; true when `p` is false or undefined, false only when
+    `p` is true. Equals `neg (truthOp p)` per @cite{karttunen-1973} §10
+    fn 18: `⌜¬A⌝ ≡ ⌜~t(A)⌝`. -/
+def negExt (p : PrProp W) : PrProp W := neg (truthOp p)
 
 /-- Classical conjunction: both presuppositions must hold. -/
 def and (p q : PrProp W) : PrProp W where
@@ -429,6 +445,35 @@ theorem neg_neg_assertion (p : PrProp W) (w : W) :
 theorem neg_neg (p : PrProp W) : neg (neg p) = p :=
   ext_pointwise (fun _ => Iff.rfl) (fun _ => Classical.not_not)
 
+/-- The truth operator is always defined (it's a plug). -/
+@[simp] theorem truthOp_presup (p : PrProp W) (w : W) :
+    (truthOp p).presup w := trivial
+
+/-- External negation is always defined (it's a plug). -/
+@[simp] theorem negExt_presup (p : PrProp W) (w : W) :
+    (negExt p).presup w := trivial
+
+/-- Internal and external negation agree on assertion when the presupposition
+    holds. They diverge only at presupposition failure: `neg p` is undefined,
+    `negExt p` is true. @cite{karttunen-1973} §10 fn 18. -/
+theorem neg_assertion_iff_negExt_assertion_when_defined (p : PrProp W) (w : W)
+    (h : p.presup w) :
+    (neg p).assertion w ↔ (negExt p).assertion w := by
+  simp only [neg, negExt, truthOp, h, true_and]
+
+/-- External negation has the dual assertion to the truth operator at every
+    world: `negExt = ¬truthOp` extensionally, by definition (negExt = neg ∘ truthOp
+    and neg is `¬` on assertion). -/
+theorem negExt_assertion (p : PrProp W) (w : W) :
+    (negExt p).assertion w ↔ ¬(truthOp p).assertion w := Iff.rfl
+
+/-- Karttunen §10 fn 18 truth table for external negation, presup-failure case:
+    when `p`'s presupposition fails, `negExt p` is true (the plug behavior). -/
+theorem negExt_assertion_of_presup_failure (p : PrProp W) (w : W)
+    (h : ¬p.presup w) :
+    (negExt p).assertion w := by
+  simp only [negExt, neg, truthOp, h, false_and, not_false_eq_true]
+
 -- ════════════════════════════════════════════════════════════════
 -- Filtering Theorems
 -- ════════════════════════════════════════════════════════════════
@@ -445,6 +490,13 @@ theorem impFilter_trivializes_presup (p q : PrProp W)
     (h : p.assertion = q.presup) :
     (impFilter p q).presup = p.presup :=
   impFilter_eliminates_presup p q (fun _ ha => h ▸ ha)
+
+/-- The filtering presupposition of `impFilter` and `andFilter` are identical.
+    This is the formal content of @cite{karttunen-1973} §8: the filtering
+    rules for *if A then B* and *A and B* coincide because both reduce to
+    `p.presup ∧ (p.assertion → q.presup)`. -/
+theorem impFilter_presup_eq_andFilter_presup (p q : PrProp W) :
+    (impFilter p q).presup = (andFilter p q).presup := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- ofBProp Theorems

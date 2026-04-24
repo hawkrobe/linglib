@@ -494,9 +494,12 @@ theorem perfection_modulated_by_context :
     parameterised on the legacy `CausalDynamics` / `Situation` /
     `causallySufficient` / `causallyNecessary` substrate was dropped along
     with that substrate. The qualitative claim — *structural sufficiency
-    ∧ necessity ⇒ probabilistic ACausesC* — is now witnessed concretely in
-    @cite{nadathur-lauer-2020} preemption study (`NadathurLauer2020`) at
-    the V2 SEM level; the GLF2022 RSA model above uses `WorldState` directly
-    without going through a structural-causal extractor. -/
+    ∧ necessity ⇒ probabilistic ACausesC* — is now witnessed at the V2
+    SEM level by @cite{nadathur-lauer-2020}'s Fire/Bus/Lighthouse scenarios
+    (`Phenomena.Causation.Studies.NadathurLauer2020.{Fire,Bus,Lighthouse}`):
+    the make/cause divergence cases concretely demonstrate sufficiency
+    without necessity (Bus) and necessity without sufficiency (Fire); the
+    GLF2022 RSA model above uses `WorldState` directly without going
+    through a structural-causal extractor. -/
 
 end GrusdtLassiterFranke2022

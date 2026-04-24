@@ -109,9 +109,10 @@ theorem mk_disjunction_asymmetric :
   ⟨.true, .indet, by simp [Truth3.joinMiddle, Truth3.join]⟩
 
 /-- Fact 2.1, negation: SK negation preserves presupposition.
-    The presupposition of ¬φ is exactly π(φ). -/
+    The presupposition of ¬φ is exactly π(φ). Re-export of
+    `PrProp.neg_presup`. -/
 theorem sk_neg_presup (p : PrProp W) :
-    (PrProp.neg p).presup = p.presup := rfl
+    (PrProp.neg p).presup = p.presup := PrProp.neg_presup p
 
 /-- Fact 2.1, uniformity: all SK binary connectives produce the
     SAME presupposition — π(φ) ∧ π(ψ) — regardless of the connective.
@@ -212,12 +213,14 @@ example (p q : PrProp W) : (PrProp.orFilter p q).presup =
 /-- Filtering vs SK: filtering conjunction is strictly weaker than SK
     conjunction in its presupposition requirements. When p's assertion
     entails q's presupposition, filtering drops q's presupposition
-    entirely — SK never does. -/
+    entirely — SK never does. Re-uses
+    `PrProp.impFilter_presup_eq_andFilter_presup` to share the proof
+    obligation with the conditional case. -/
 theorem filtering_weaker_than_sk (p q : PrProp W)
     (h : ∀ w, p.assertion w → q.presup w) :
     (PrProp.andFilter p q).presup = p.presup := by
-  funext w; simp only [PrProp.andFilter]
-  exact propext ⟨fun ⟨hp, _⟩ => hp, fun hp => ⟨hp, h w⟩⟩
+  rw [← PrProp.impFilter_presup_eq_andFilter_presup]
+  exact PrProp.impFilter_eliminates_presup p q h
 
 -- ══════════════════════════════════════════════════════════
 -- § 4. Static ↔ Dynamic Agreement

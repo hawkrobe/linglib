@@ -5,7 +5,7 @@ import Linglib.Fragments.German.Typology
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
-import Linglib.Features.V2
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # @cite{schwarzer-2026} — Selection-Violating Coordination in German
@@ -78,16 +78,17 @@ The competing analyses make different predictions for the preverbal
 (= OV) condition. All agree on the postverbal (= VO) condition.
 -/
 
+open Minimalism (ForceHead)
+open Fragments.German (german)
+
 /-- German has V2 in root declaratives: the finite verb moves to C°,
     placing it in second position. Complements follow the verb. -/
-theorem german_root_v2 :
-    Fragments.German.german.declarativeV2 = true := rfl
+theorem german_root_v2 : ForceHead.Decl ∈ german := by decide
 
 /-- German has V-to-I movement in embedded finite clauses (not full
     V-to-C). Combined with the independently motivated SOV base order,
     this yields verb-final surface order in embedded clauses. -/
-theorem german_embedded_v_to_i :
-    Fragments.German.german.embeddedFinV2 = true := rfl
+theorem german_embedded_v_to_i : ForceHead.Fin ∈ german := by decide
 
 /-- In German root declaratives, V2 places the verb before its complements.
     Coordination of complements is therefore postverbal.
@@ -104,16 +105,16 @@ def germanRootComplementPosition : VerbPosition := .postverbal
     corresponding to examples (16a/b) in the paper. -/
 def germanEmbeddedComplementPosition : VerbPosition := .preverbal
 
-/-- V2 root → postverbal complement position, grounded in V2Data. -/
+/-- V2 root → postverbal complement position, grounded in V2Profile. -/
 theorem german_v2_grounds_postverbal :
-    Fragments.German.german.declarativeV2 = true ∧
-    germanRootComplementPosition = .postverbal := ⟨rfl, rfl⟩
+    ForceHead.Decl ∈ german ∧
+    germanRootComplementPosition = .postverbal := ⟨by decide, rfl⟩
 
 /-- Embedded V-to-I + SOV base → preverbal complement position,
-    grounded in V2Data. -/
+    grounded in V2Profile. -/
 theorem german_vfinal_grounds_preverbal :
-    Fragments.German.german.embeddedFinV2 = true ∧
-    germanEmbeddedComplementPosition = .preverbal := ⟨rfl, rfl⟩
+    ForceHead.Fin ∈ german ∧
+    germanEmbeddedComplementPosition = .preverbal := ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- § 2: Selection Profile Classification

@@ -52,7 +52,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Features.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
+open Features.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 open Fragments.French.PolarityMarking (si)
@@ -273,7 +273,8 @@ theorem dutch_vf_correction_only :
 
 The "others" category in German is exclusively doch+VF combinations
 (p. 102). These appear only in correction, consistent with
-`dochPreUtterance.contrastOk = false` in the Fragment. -/
+`PolarityMarkingEnv.contrast ∉ dochPreUtterance.environments` in the
+Fragment. -/
 
 /-- German "others" (doch+VF) appears only in correction, never contrast. -/
 theorem german_doch_vf_correction_only :
@@ -283,9 +284,9 @@ theorem german_doch_vf_correction_only :
 
 /-- The production data matches the Fragment: doch is correction-only. -/
 theorem german_doch_production_matches_fragment :
-    dochPreUtterance.contrastOk = false ∧
+    PolarityMarkingEnv.contrast ∉ dochPreUtterance.environments ∧
     germanContrast.pctByStrategy .other = 0 :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 /-! ## Verification Theorems — Dutch *wel* Accent -/
 
@@ -330,14 +331,17 @@ theorem strategies_differ :
     This captures the key typological contrast: Dutch has a sentence-internal
     particle for polarity switches, German does not. -/
 theorem dutch_particle_internal_german_doch_not :
-    wel.sentenceInternal = true ∧ dochPreUtterance.sentenceInternal = false :=
-  ⟨rfl, rfl⟩
+    PolarityMarkingEnv.sentenceInternal ∈ wel.environments ∧
+    PolarityMarkingEnv.sentenceInternal ∉ dochPreUtterance.environments :=
+  ⟨by decide, by decide⟩
 
 /-- Both Dutch *wel* and German VF are available in both contexts. -/
 theorem both_strategies_context_general :
-    (wel.contrastOk = true ∧ wel.correctionOk = true) ∧
-    (verumFocus.contrastOk = true ∧ verumFocus.correctionOk = true) :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+    (PolarityMarkingEnv.contrast ∈ wel.environments ∧
+     PolarityMarkingEnv.correction ∈ wel.environments) ∧
+    (PolarityMarkingEnv.contrast ∈ verumFocus.environments ∧
+     PolarityMarkingEnv.correction ∈ verumFocus.environments) :=
+  ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
 
 /-! ## Bridge Theorems — Polarity-Marking Levels
 
@@ -395,51 +399,52 @@ theorem strategy_level_partition :
               siQue, siChe, strategyLevel]
 
 /-- **Generalization 2 — Reversal particles are correction-only.**
-    Every polarity-reversal entry has `contrastOk = false` and
-    `correctionOk = true`. -/
+    Every polarity-reversal entry has `.contrast` absent and
+    `.correction` present in `environments`. -/
 theorem all_reversal_correction_only :
     ∀ e ∈ allEntries, e.strategy = .polarityReversal →
-      e.contrastOk = false ∧ e.correctionOk = true := by
+      PolarityMarkingEnv.contrast ∉ e.environments ∧
+      PolarityMarkingEnv.correction ∈ e.environments := by
   intro e he hs
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe]
+              siQue, siChe] <;> decide
 
 /-- **Generalization 3 — Non-reversal strategies are context-general.**
-    Every particle or Verum-focus entry has both `contrastOk = true`
-    and `correctionOk = true`. -/
+    Every particle or Verum-focus entry has both `.contrast` and
+    `.correction` present in `environments`. -/
 theorem all_nonreversal_context_general :
     ∀ e ∈ allEntries,
       e.strategy = .particle ∨ e.strategy = .verumFocus →
-      e.contrastOk = true ∧ e.correctionOk = true := by
+      PolarityMarkingEnv.contrast ∈ e.environments ∧
+      PolarityMarkingEnv.correction ∈ e.environments := by
   intro e he hs
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe]
+              siQue, siChe] <;> decide
 
 /-- **Generalization 4 — Sentence-internality splits by strategy type.**
     Polarity-reversal entries are not sentence-internal; particles and
     Verum-focus entries are. -/
 theorem sentence_internality_by_strategy :
     ∀ e ∈ allEntries,
-      (e.strategy = .polarityReversal → e.sentenceInternal = false) ∧
+      (e.strategy = .polarityReversal →
+        PolarityMarkingEnv.sentenceInternal ∉ e.environments) ∧
       (e.strategy = .particle ∨ e.strategy = .verumFocus →
-        e.sentenceInternal = true) := by
+        PolarityMarkingEnv.sentenceInternal ∈ e.environments) := by
   intro e he
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     refine ⟨?_, ?_⟩ <;> intro h <;>
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe]
+              siQue, siChe] <;> decide
 
 /-- Italian *sì che* and Spanish *sí que* are cognates with identical
-    formal properties (strategy, sentence-internality, contrast/correction). -/
+    formal properties (strategy, environments). -/
 theorem italian_spanish_cognates :
     siChe.strategy = siQue.strategy ∧
-    siChe.sentenceInternal = siQue.sentenceInternal ∧
-    siChe.contrastOk = siQue.contrastOk ∧
-    siChe.correctionOk = siQue.correctionOk := ⟨rfl, rfl, rfl, rfl⟩
+    siChe.environments = siQue.environments := ⟨rfl, rfl⟩
 
 end TurcoBraunDimroth2014

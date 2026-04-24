@@ -1,5 +1,6 @@
 import Linglib.Core.Causal.SEM.Basic
 import Linglib.Core.Causal.SEM.Bool
+import Linglib.Core.Causal.SEM.Deterministic
 
 /-!
 # SEM: Causal Counterfactual Predicates (V2)
@@ -14,27 +15,39 @@ aliases for legacy SBH-style binary semantics.
   `cause` then developing produces `xE` at `effect`. Polymorphic generalization
   of @cite{nadathur-lauer-2020} Definition 23.
 
-**Necessity** is *not* exposed as a Core primitive. The 2026 canonical
-literature on causal-verb semantics (@cite{nadathur-2024} Def 10b,
-@cite{cao-white-lassiter-2025} graded ALT, @cite{beller-gerstenberg-2025}
-counterfactual simulation) has moved past simple Lewis but-for. Each
-necessity flavor is theory-specific:
-- Lewis-style but-for: `¬ causallySufficient M s cause xC_alt effect xE`
-  (one-liner — define in `Phenomena/Causation/Studies/Lewis1973.lean`)
-- Nadathur 2024 Def 10b: precondition + achievable + supersituation
-  (port lazily alongside `Theories/Semantics/Causation/Necessity.lean` migration)
-- CWL graded: not a discrete predicate (graded ALT measure)
+- **`causallyNecessary M s cause xC effect xE`**: @cite{nadathur-2024}
+  Definition 10b — precondition + achievability + but-for clauses.
+  Refactored to use abstract quantification over `Valuation α` (see "Refactor"
+  below); the previous `allExtensions`/`freeExtensions` enumeration was
+  noncomputable and opaque to structural reduction.
 
 `BoolSEM`-namespace aliases specialize the polymorphic predicates to
 `α := fun _ => Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
 
+## Refactor (post-`Deterministic.lean`)
+
+Internally these predicates call `developDetVtx M s v = x` (per-vertex,
+structurally reducible via `WellFounded.fix_eq`) instead of the old opaque
+`(M.developDet s).hasValue v x`. The `(M.developDet s).hasValue v x` API
+shape still works via `developDet_hasValue_iff` — same call sites, cleanly
+reducible internals.
+
+`causallyNecessary`'s achievability/but-for clauses are now stated as abstract
+quantifications over `Valuation α` (`∃ s', s.le s' ∧ ...` / `∀ s', s.le s' → ...`)
+rather than enumeration over a noncomputable `allExtensions` list. Concrete
+proofs supply existential witnesses directly and discharge universals by case
+analysis on which free vertices `s'` fixes (the `isConsistentSuper` clause
+constrains `s'`'s values to agree with `developDetVtx M s`). Same paper
+content; structurally provable.
+
 ## Computability
 
-`developDet` is `noncomputable` (cascading from `PMF.pure` and `Finset.toList`),
-so all predicates here are `noncomputable`. `Decidable` instances are provided
-via `Classical.dec`; consumers wanting `decide` to reduce concretely on small
-SEMs should use `native_decide` or supply structural proofs. Matches the
-mathlib idiom for probability-flavored predicates (`Mathlib/Probability/`).
+`developDet` is noncomputable (cascading from `WellFounded.fix`). Predicates
+here are noncomputable. `Decidable` instances via `Classical.dec`. Concrete
+proofs reduce structurally via `developDetVtx_unfold` + `rfl` rather than
+through `Fintype.elems.toList` opacity (which blocked the previous substrate).
+Matches the mathlib `Polynomial.eval` precedent: noncomputable canonical
+definition, structurally reducible per-vertex unfolding lemmas.
 -/
 
 namespace Core.Causal.SEM
@@ -107,45 +120,145 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
   Classical.dec _
 
 -- ════════════════════════════════════════════════════
--- § Probabilistic sufficiency (PMF-canonical)
+-- § Unified counterfactual primitive (PMF-canonical)
 -- ════════════════════════════════════════════════════
 
-/-! Mathlib-canonical probabilistic SUF: probability that `effect` takes
-value `xE` under `do(cause := xC)` — the @cite{cao-white-lassiter-2025}
-graded measure. PMF-valued via `develop`; deterministic SEMs collapse to
-{0,1} via `develop_eq_pure_of_deterministic`. -/
+/-! Pearl-style counterfactual simulation via Lassiter's RRR heuristic
+    (@cite{lassiter-2017-probabilistic-language} §3): "Rewind to the
+    antecedent's causal layer, Revise the antecedent, selectively
+    Regenerate descendants while preserving causally-independent
+    observations." Subsumes:
+    - @cite{lewis-1973-causation} / @cite{nadathur-lauer-2020} deterministic
+      counterfactuals (Dirac specialization)
+    - @cite{beller-gerstenberg-2025} W/H/S aspects (graded probability)
+    - @cite{lassiter-2017-probabilistic-language} probabilistic counterfactuals
+      with overt probability operators
 
-/-- **Probabilistic sufficiency** (@cite{cao-white-lassiter-2025}):
-    probability that `effect` takes value `xE` after Pearl-intervening
-    to set `cause := xC`. Defined via the canonical PMF-valued
-    `develop`; reduces to a {0,1} indicator under `IsDeterministic` via
-    `probabilisticSuf_of_deterministic`. -/
-noncomputable def probabilisticSuf [Fintype V] [DecidableEq V] [DecidableValuation α]
+    Key insight: under the high-stability assumption (Lucas & Kemp 2015
+    ESM), Pearl 3-step abduction reduces to "preserve causally-independent
+    observations, regenerate descendants" — no explicit exogenous noise
+    types needed. The existing `develop` PMF naturally produces the right
+    distribution when fed the counterfactual seed valuation.
+
+    Morgenbesser's coin example (Barker 1998, Lassiter §1): bet → win ←
+    heads. Observed `{bet:=false, win:=false, heads:=true}`. Counterfactual
+    `bet := true`. Then `cfSeed = {bet:=true, heads:=true, win:=none}`
+    (heads is causally independent so preserved; win is descendant of bet
+    so regenerated). `develop` computes `win := bet ∧ heads = true`. The
+    counterfactual probability of winning is 1, matching Lassiter's
+    prediction (and contradicting "Rewind, Revise, Re-run" without
+    selective regeneration). -/
+
+/-- **Counterfactual seed** (Lassiter §3 RRR): the partial valuation that
+    `counterfactualSimulate` feeds to `develop`. Sets `antecedent := xAnt`,
+    leaves descendants of antecedent undetermined (to be regenerated),
+    preserves `observed` values for causally-independent vertices. -/
+noncomputable def cfSeed [DecidableEq V]
+    (M : SEM V α) (observed : Valuation α)
+    (antecedent : V) (xAnt : α antecedent) : Valuation α := fun v =>
+  if h : v = antecedent then some (h ▸ xAnt)
+  else
+    haveI : Decidable (M.graph.IsStrictAncestor antecedent v) := Classical.dec _
+    if M.graph.IsStrictAncestor antecedent v then none
+    else observed.get v
+
+/-- **Pearl 3-step counterfactual via Lassiter RRR**, PMF-valued. Given
+    actually-observed `observed` and a counterfactual intervention
+    `antecedent := xAnt`, returns the probability distribution over
+    counterfactual valuations.
+
+    For deterministic SEMs, collapses to a Dirac at `developDet M (cfSeed ...)`
+    (see `counterfactualSimulate_eq_pure_of_deterministic` below).
+
+    Subsumes (with appropriate derived predicates):
+    - `causallyNecessary` (@cite{nadathur-2024} Def 10b, discrete)
+    - `whetherCause` (@cite{beller-gerstenberg-2025} Eq 1, graded)
+    - `sufficientCause` (@cite{beller-gerstenberg-2025} Eq 3, graded)
+    - Lassiter probabilistic counterfactuals with overt probability operators
+
+    `probabilisticSuf` (@cite{cao-white-lassiter-2025}) is **not** a special
+    case — it's interventional probability without observation conditioning;
+    lives in `Interventional.lean`. -/
+noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) : ENNReal :=
-  ∑' v : Valuation α, if v.hasValue effect xE
-                      then ((M.intervene cause xC).develop s) v
-                      else 0
+    (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
+    PMF (Valuation α) :=
+  develop M (cfSeed M observed antecedent xAnt)
 
-/-- Bridge: under `IsDeterministic`, `probabilisticSuf` is the {0,1}
-    indicator of whether the deterministic intervened development hits
-    `effect = xE`. -/
-theorem probabilisticSuf_of_deterministic
+-- ════════════════════════════════════════════════════
+-- § Derived graded predicates (B&G 2025 W/H/S, etc.)
+-- ════════════════════════════════════════════════════
+
+/-- **Whether-causation** (@cite{beller-gerstenberg-2025} Eq 1):
+    `W(A → e) = P(e' ≠ e | s, remove(A))`. Probability that the counterfactual
+    outcome differs from the actual outcome `xEff_actual` if the antecedent
+    were `xAnt_alt` instead of its actual value.
+
+    For deterministic SEMs, collapses to a {0,1} indicator (see
+    `whetherCause_eq_indicator_of_deterministic`). -/
+noncomputable def whetherCause [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
+    (effect : V) (xEff_actual : α effect) : ENNReal :=
+  ∑' v : Valuation α, if v.hasValue effect xEff_actual
+                      then 0
+                      else (counterfactualSimulate M observed antecedent xAnt_alt) v
+
+/-- **Sufficient-causation** (@cite{beller-gerstenberg-2025} Eq 3):
+    `S(A → e) = P(W(A → e') | s, remove(\A))`. Probability that A would
+    have been a whether-cause if all alternative causes had been removed.
+
+    The caller supplies `alternativesRemoved : Valuation α` — the
+    supersituation of `s` where alternative causes are set to their absent
+    values. In the typical case this is `s` with the causally-independent
+    siblings of `antecedent` set to their absent values. The substrate
+    doesn't currently provide a `removeAlternatives` constructor; callers
+    build it explicitly via `s.extend altᵢ xAbsentᵢ` chains. -/
+noncomputable def sufficientCause [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph]
+    (alternativesRemoved : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
+    (effect : V) (xEff_actual : α effect) : ENNReal :=
+  whetherCause M alternativesRemoved antecedent xAnt_alt effect xEff_actual
+
+-- ════════════════════════════════════════════════════
+-- § Bridge theorems: deterministic collapse
+-- ════════════════════════════════════════════════════
+
+/-- Bridge: under `IsDeterministic`, `counterfactualSimulate` is the Dirac
+    of the per-vertex counterfactual valuation `developDet M (cfSeed ...)`.
+    Follows immediately from `develop_eq_pure_of_deterministic` (Basic.lean,
+    currently sorry'd pending the per-vertex `developDet` proof — same
+    chain as before the refactor, no new sorrys introduced). -/
+theorem counterfactualSimulate_eq_pure_of_deterministic
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
-    probabilisticSuf M s cause xC effect xE =
-      if ((M.intervene cause xC).developDet s).hasValue effect xE then 1 else 0 := by
-  unfold probabilisticSuf
+    (observed : Valuation α) (antecedent : V) (xAnt : α antecedent) :
+    counterfactualSimulate M observed antecedent xAnt =
+      PMF.pure (M.developDet (cfSeed M observed antecedent xAnt)) := by
+  unfold counterfactualSimulate
   rw [develop_eq_pure_of_deterministic]
-  -- Goal: ∑' v, if v.hasValue effect xE then PMF.pure (developDet ...) v else 0 = if ...
-  -- PMF.pure x assigns 1 to x and 0 elsewhere
-  rw [tsum_eq_single ((M.intervene cause xC).developDet s)
+
+/-- Bridge: under `IsDeterministic`, `whetherCause` is the {0,1} indicator
+    of whether the counterfactual outcome differs from `xEff_actual`. The
+    graded B&G W collapses to the discrete Lewis-style "would the effect
+    have been different?" — exactly the collapse Lassiter §3 / Lucas-Kemp
+    predict for high-stability deterministic systems. -/
+theorem whetherCause_eq_indicator_of_deterministic
+    [Fintype V] [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (observed : Valuation α) (antecedent : V) (xAnt_alt : α antecedent)
+    (effect : V) (xEff_actual : α effect) :
+    whetherCause M observed antecedent xAnt_alt effect xEff_actual =
+      if (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual
+        then 0 else 1 := by
+  unfold whetherCause
+  rw [counterfactualSimulate_eq_pure_of_deterministic]
+  rw [tsum_eq_single (M.developDet (cfSeed M observed antecedent xAnt_alt))
       (fun v hv => by
         rw [PMF.pure_apply_of_ne _ _ hv]; simp)]
-  by_cases h : ((M.intervene cause xC).developDet s).hasValue effect xE
-  · simp [h, PMF.pure_apply_self]
+  by_cases h : (M.developDet (cfSeed M observed antecedent xAnt_alt)).hasValue effect xEff_actual
   · simp [h]
+  · simp [h, PMF.pure_apply_self]
 
 -- ════════════════════════════════════════════════════
 -- § Nadathur 2024 Def 10b: causallyNecessary (BoolSEM only)
@@ -196,6 +309,44 @@ instance (M : BoolSEM V) (cause effect : V) :
     Decidable (hasDirectLaw M cause effect) :=
   inferInstanceAs (Decidable (cause ∈ M.graph.parents effect))
 
+/-! ### `developDetOn`-flavored variants
+
+The `causallySufficient` and `completesForEffect` predicates above use the
+canonical `developDet` (per-vertex `WellFounded.fix`), which reduces only
+through `developDetVtx_unfold` lemmas. Paper-replication study files with
+concrete inductive vertex types prefer the `developDetOn`-based variants
+below, which iterate a `stepOnceDetOn` on an explicit vertex list and
+reduce structurally by `rfl` after `unfold`.
+
+Choose:
+- `causallySufficient` / `completesForEffect` — polymorphic, downstream-derivable;
+- `causallySufficientOn` / `completesForEffectOn` — concrete, kernel-`rfl`-reducible. -/
+
+/-- `developDetOn`-flavored sufficiency: with `cause = true` under `bg`,
+    iterating `stepOnceDetOn` on `vs` `n` times produces `effect = true`. -/
+noncomputable def causallySufficientOn (M : BoolSEM V) [SEM.IsDeterministic M]
+    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
+    (cause effect : V) : Prop :=
+  (SEM.developDetOn M vs n (bg.extend cause true)).hasValue effect true
+
+/-- `developDetOn`-flavored completion: sufficiency + but-for. The
+    `developDetOn` analogue of `Semantics.Causation.CCSelection.completesForEffect`. -/
+noncomputable def completesForEffectOn (M : BoolSEM V) [SEM.IsDeterministic M]
+    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
+    (cause effect : V) : Prop :=
+  causallySufficientOn M vs bg n cause effect ∧
+  ¬ (SEM.developDetOn M vs n (bg.extend cause false)).hasValue effect true
+
+noncomputable instance (M : BoolSEM V) [SEM.IsDeterministic M]
+    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
+    (cause effect : V) :
+    Decidable (causallySufficientOn M vs bg n cause effect) := Classical.dec _
+
+noncomputable instance (M : BoolSEM V) [SEM.IsDeterministic M]
+    (vs : List V) (bg : Valuation (fun _ : V => Bool)) (n : Nat)
+    (cause effect : V) :
+    Decidable (completesForEffectOn M vs bg n cause effect) := Classical.dec _
+
 -- ════════════════════════════════════════════════════
 -- § Nadathur 2024 Def 10b: causallyNecessary (polymorphic)
 -- ════════════════════════════════════════════════════
@@ -204,86 +355,74 @@ end Core.Causal.BoolSEM
 
 namespace Core.Causal.SEM
 
-variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V]
+variable {V : Type*} {α : V → Type*}
 
-/-- All `α`-extensions of a valuation over a list of vertices. Each
-    vertex can be left undetermined, or set to any value of `α v`.
-    Polymorphic generalization of the Bool-specific `allExtensionsBool`. -/
-noncomputable def allExtensions [∀ v, Fintype (α v)]
-    (s : Valuation α) : List V → List (Valuation α)
-  | [] => [s]
-  | v :: vs =>
-    let rest := allExtensions s vs
-    rest ++ ((Fintype.elems : Finset (α v)).toList.flatMap
-              fun x => rest.map (·.extend v x))
+/-- **Consistent supersituation** check (@cite{nadathur-2024} Def 9b):
+    `s'` is consistent with `base` under `M` iff every value `s'` fixes
+    on a vertex undetermined in `base` agrees with what per-vertex
+    development of `base` would produce.
 
-/-- Free-extension list: vertices to range over in supersituation
-    quantification. Excludes `effect` and any vertex already determined
-    in `base`. Noncomputable because of `Finset.toList`. -/
-noncomputable def freeExtensions [DecidableValuation α]
-    (base : Valuation α) (effect : V) : List V :=
-  (Fintype.elems : Finset V).toList.filter fun v =>
-    decide (v ≠ effect ∧ (base.get v).isNone)
-
-/-- **Consistent supersituation** check (@cite{nadathur-2024} Def 9b),
-    polymorphic over value types: `s'` is a consistent supersituation
-    of `base` iff for each vertex `x` undetermined in `base` whose value
-    `s'` sets, that value agrees with what `developDet` would produce
-    from `base` alone. -/
-noncomputable def isConsistentSuper [∀ v, Fintype (α v)] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    Refactored from the previous `∀ yv ≠ xv, ¬ hasValue` form: in the
+    deterministic case the vertex's value is unique, so the condition
+    simplifies to "the s'-fixed value equals the developed value." -/
+def isConsistentSuper (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (base s' : Valuation α) : Prop :=
   ∀ (x : V) (xv : α x),
-    base.get x = none → s'.get x = some xv →
-      ∀ (yv : α x), yv ≠ xv → ¬ (M.developDet base).hasValue x yv
+    base.get x = none → s'.get x = some xv → developDetVtx M base x = xv
 
-noncomputable instance [∀ v, Fintype (α v)] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (base s' : Valuation α) :
     Decidable (isConsistentSuper M base s') := Classical.dec _
 
 namespace causallyNecessary
 
 /-- **Precondition** (@cite{nadathur-2024} Def 10b): neither
-    `cause = xC` nor `effect = xE` is already entailed by `s` under `M`. -/
-noncomputable def precondition [∀ v, Fintype (α v)] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    `cause = xC` nor `effect = xE` is already entailed by `s` under `M`.
+    Stated directly via `developDetVtx`. -/
+def precondition (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
-  ¬ (M.developDet s).hasValue cause xC ∧
-  ¬ (M.developDet s).hasValue effect xE
+  developDetVtx M s cause ≠ xC ∧ developDetVtx M s effect ≠ xE
 
-noncomputable instance [∀ v, Fintype (α v)] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (precondition M s cause xC effect xE) := Classical.dec _
 
-/-- **Achievability** clause (i) of @cite{nadathur-2024} Def 10b. -/
-noncomputable def achievable [∀ v, Fintype (α v)] [DecidableValuation α]
+/-- **Achievability** clause (i) of @cite{nadathur-2024} Def 10b.
+    Abstract quantification over `Valuation α`: there exists a
+    supersituation of `s.extend cause xC` (consistent with the per-vertex
+    development) under which `effect` develops to `xE`.
+
+    Concrete proofs supply the existential witness directly (typically
+    just the extended valuation itself, or a minimal further extension). -/
+def achievable [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
   let sCause := s.extend cause xC
-  ∃ s' ∈ allExtensions sCause (freeExtensions sCause effect),
-    isConsistentSuper M sCause s' ∧
-    (M.developDet s').hasValue effect xE
+  ∃ s' : Valuation α,
+    sCause.le s' ∧ isConsistentSuper M sCause s' ∧ developDetVtx M s' effect = xE
 
-noncomputable instance [∀ v, Fintype (α v)] [DecidableValuation α]
+noncomputable instance [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (achievable M s cause xC effect xE) := Classical.dec _
 
-/-- **But-for** clause (ii) of @cite{nadathur-2024} Def 10b. -/
-noncomputable def noAlternative [∀ v, Fintype (α v)] [DecidableValuation α]
+/-- **But-for** clause (ii) of @cite{nadathur-2024} Def 10b. Abstract
+    quantification: every consistent supersituation of `s` that doesn't
+    fix `cause = xC` must fail to develop `effect = xE`.
+
+    Concrete proofs case-analyze on which free vertices `s'` fixes; the
+    `isConsistentSuper` clause forces those values to agree with
+    `developDetVtx M s`, narrowing the cases to a finite enumeration. -/
+def noAlternative [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
-  ∀ s' ∈ allExtensions s (freeExtensions s effect),
-    isConsistentSuper M s s' →
-    (M.developDet s').hasValue effect xE →
-    (M.developDet s').hasValue cause xC
+  ∀ s' : Valuation α, s.le s' → s'.get cause ≠ some xC →
+    isConsistentSuper M s s' → developDetVtx M s' effect ≠ xE
 
-noncomputable instance [∀ v, Fintype (α v)] [DecidableValuation α]
+noncomputable instance [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (noAlternative M s cause xC effect xE) := Classical.dec _
@@ -295,15 +434,17 @@ end causallyNecessary
 
     ⟨cause, xC⟩ is causally necessary for ⟨effect, xE⟩ relative to `s`
     under `M` iff:
-    - **Precondition**: `s ⊭ cause = xC` and `s ⊭ effect = xE`
-    - **(i) Achievability**: `s.extend cause xC` has a consistent
-      supersituation achieving `effect = xE`
-    - **(ii) But-for**: no consistent supersituation of `s` achieves
-      `effect = xE` without `cause = xC`
+    - **Precondition**: `s` does not develop `cause` to `xC` nor `effect` to `xE`.
+    - **(i) Achievability**: some consistent supersituation of `s.extend cause xC`
+      develops `effect` to `xE`.
+    - **(ii) But-for**: no consistent supersituation of `s` lacking
+      `cause = xC` develops `effect` to `xE`.
 
     Supersedes the simple but-for test from @cite{nadathur-lauer-2020}
-    Definition 24. -/
-noncomputable def causallyNecessary [∀ v, Fintype (α v)] [DecidableValuation α]
+    Definition 24. Refactored from the previous `allExtensions`/`freeExtensions`
+    enumeration to abstract `Valuation α` quantification — see
+    `Counterfactual.lean` module docstring. -/
+def causallyNecessary [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Prop :=
@@ -311,7 +452,7 @@ noncomputable def causallyNecessary [∀ v, Fintype (α v)] [DecidableValuation 
   causallyNecessary.achievable M s cause xC effect xE ∧
   causallyNecessary.noAlternative M s cause xC effect xE
 
-noncomputable instance [∀ v, Fintype (α v)] [DecidableValuation α]
+noncomputable instance [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (causallyNecessary M s cause xC effect xE) := Classical.dec _

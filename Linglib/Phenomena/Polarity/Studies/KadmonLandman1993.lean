@@ -267,16 +267,16 @@ open Semantics.Entailment.StrawsonEntailment
     K&L's lexical-semantic argument (sorry → want ¬A → "wanting emptiness
     is DE") is captured by the contraposition step in that proof:
     p ≤ q and ¬q(w') implies ¬p(w') at all best worlds. -/
-theorem sorry_licenses_any (bestOf : World → List World) :
-    IsStrawsonDE (sorryFull bestOf) (λ p w => p w) :=
-  sorryFull_isStrawsonDE bestOf
+theorem sorry_licenses_any (dox bestOf : World → Set World) :
+    IsStrawsonDE (sorryFull dox bestOf) (λ p w => ∀ w' ∈ dox w, p w') :=
+  sorryFull_isStrawsonDE dox bestOf
 
 /-- **K&L's prediction derived:** *sorry* is NOT classically DE — the
-    factivity presupposition blocks it. This is why the "constant
-    perspective" qualifier matters: DE holds only when the perspective
-    (and factivity) is held constant. -/
+    doxastic factivity presupposition blocks it. -/
 theorem sorry_not_classically_de :
-    ¬IsDownwardEntailing (sorryFull (λ _ => [World.w1])) :=
+    ¬IsDownwardEntailing
+      (sorryFull (fun (w : World) => ({w} : Set World))
+                 (fun (_ : World) => ({World.w1} : Set World))) :=
   sorryFull_not_de
 
 /-- **K&L's prediction derived:** *glad* does NOT license NPIs because
@@ -286,10 +286,9 @@ theorem sorry_not_classically_de :
     K&L: "wanting a set to have members does not entail wanting each
     particular subset to have members. My wish could be satisfied in
     another way." -/
-theorem glad_does_not_license (bestOf : World → List World) :
-    ∀ p q : Set World, (∀ w, p w → q w) →
-      ∀ w, gladFull bestOf p w → gladFull bestOf q w :=
-  gladFull_isUE bestOf
+theorem glad_does_not_license (dox bestOf : World → Set World) :
+    Monotone (gladFull dox bestOf) :=
+  gladFull_isUE dox bestOf
 
 /-- K&L's "settle for less" analysis (§3.3.2): *glad* CAN license *any*
     on a special interpretation where the speaker settles for less than
@@ -365,7 +364,7 @@ The formal proof is imported from `StrawsonEntailment.conditional_antecedent_DE`
     corresponds to Kratzer's modal base — the implicit restriction that
     is held constant. -/
 theorem conditional_satisfies_strengthening
-    (domain : World → List World) (β : Set World) :
+    (domain : World → Set World) (β : Set World) :
     IsDownwardEntailing (λ α => condNecessity domain α β) :=
   conditional_antecedent_DE domain β
 
@@ -381,7 +380,7 @@ theorem conditional_satisfies_strengthening
     presupposition), while adversatives are only *Strawson*-DE (factivity
     presupposition blocks classical DE). -/
 theorem conditional_de_on_constant_domain
-    (domain : World → List World) (β : Set World) :
+    (domain : World → Set World) (β : Set World) :
     IsDE_OnConstant (λ d α => condNecessity d α β) domain :=
   conditional_antecedent_DE domain β
 

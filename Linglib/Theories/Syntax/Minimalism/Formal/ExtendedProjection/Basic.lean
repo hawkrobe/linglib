@@ -23,6 +23,7 @@ Standard EPs:
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Labeling
+import Linglib.Core.Typology.Profile
 
 namespace Minimalism
 
@@ -633,13 +634,16 @@ inductive ForceHead where
   | Imp    -- imperatives (ImpP)
   | Fin    -- embedded clauses (FinP = V-to-I)
   | Wh     -- embedded questions (WhP)
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Whether a ForceHead is a root-clause head (in the Force domain)
-    or a lower/embedded head. -/
-def ForceHead.isRootClause : ForceHead → Bool
-  | .Decl | .Int | .Pol | .Excl | .Imp => true
-  | .Fin  | .Wh                        => false
+/-- A root-clause force head (in the Force domain), as opposed to a
+    lower/embedded head (Fin, Wh). -/
+def ForceHead.IsRootClause : ForceHead → Prop
+  | .Decl | .Int | .Pol | .Excl | .Imp => True
+  | .Fin  | .Wh                        => False
+
+instance : DecidablePred ForceHead.IsRootClause := by
+  intro fh; cases fh <;> simp [ForceHead.IsRootClause] <;> infer_instance
 
 /-- Map a ForceHead to the corresponding `Cat`. The five root-clause
     heads all map to `Cat.Force` (they are flavors of Force); `Fin` maps
@@ -654,23 +658,14 @@ theorem forceHead_verbal (fh : ForceHead) :
     catFamily fh.toCat = .verbal := by
   cases fh <;> decide
 
-/-- A V2 profile: for each clause-type head, whether verb movement
-    to that head is required (+) or absent (−) in a given language/dialect.
-
-    This is the formalization of @cite{westergaard-2009}'s micro-parameter
-    model: V2 is not one parameter but seven independent ones. -/
-structure V2Profile where
-  name : String
-  verbMovement : ForceHead → Bool
-
-/-- Count how many heads trigger verb movement in a profile. -/
-def V2Profile.activeCount (p : V2Profile) : Nat :=
-  [ForceHead.Decl, .Int, .Pol, .Excl, .Imp, .Fin, .Wh].countP p.verbMovement
-
-/-- Whether two profiles differ on exactly one head. -/
-def V2Profile.differOnExactlyOne (p q : V2Profile) (fh : ForceHead) : Prop :=
-  p.verbMovement fh ≠ q.verbMovement fh ∧
-  ∀ fh', fh' ≠ fh → p.verbMovement fh' = q.verbMovement fh'
+/-- @cite{westergaard-2009}'s micro-parameter profile for V2: the set of
+    clause-type heads at which verb movement is active (+) for a given
+    language or dialect. Recast as `Core.Typology.Profile ForceHead` so
+    that fragment files can be written as set literals
+    (e.g. `{.Decl, .Int, .Pol, .Fin}`) and cross-language comparison
+    reuses the polymorphic `Profile.activeCount` /
+    `Profile.DiffersOnExactlyOne` API. -/
+abbrev V2Profile : Type := Core.Typology.Profile ForceHead
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 11: Wh-Element Head/Phrase Status (@cite{westergaard-2009})
@@ -703,11 +698,20 @@ theorem wh_mono_is_head : WhElementStatus.fromSyllableCount 1 = .head := rfl
 /-- Polysyllabic wh-words are phrases. -/
 theorem wh_poly_is_phrase : WhElementStatus.fromSyllableCount 2 = .phrase := rfl
 
-/-- When a wh-element is a head in Int°, verb movement to Int° is blocked,
-    making non-V2 possible. When it's a phrase in SpecIntP, Int° is free
-    for the verb → V2 obligatory. -/
-def whBlocksVerbMovement : WhElementStatus → Bool
-  | .head   => true   -- wh occupies Int°, verb can't move there
-  | .phrase => false  -- wh in SpecIntP, Int° available for verb
+/-- A wh-head in target position blocks verb movement to that head.
+    Parameterized on the target ForceHead because the blocking effect is
+    local: a monosyllabic *ka* head occupying Int° blocks V-to-Int°, but
+    the same *ka* in an embedded relative or echo question doesn't block
+    V-to-Decl° / V-to-Fin° / etc. Westergaard's blocking effect is
+    specifically about the wh-question heads `.Int` (matrix) and `.Wh`
+    (embedded). -/
+def WhBlocksMovementTo : WhElementStatus → ForceHead → Prop
+  | .head,   .Int | .head,   .Wh => True
+  | .head,   _                   => False  -- head doesn't block other heads
+  | .phrase, _                   => False  -- phrase in Spec, never blocks
+
+instance : DecidableRel WhBlocksMovementTo := by
+  intro w fh
+  cases w <;> cases fh <;> simp [WhBlocksMovementTo] <;> infer_instance
 
 end Minimalism

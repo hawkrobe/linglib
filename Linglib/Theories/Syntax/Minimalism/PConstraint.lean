@@ -1,8 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Logic.Equiv.Defs
 import Mathlib.Order.Defs.PartialOrder
-import Linglib.Features.Logophoricity
 import Linglib.Features.Prominence
 import Linglib.Theories.Syntax.Minimalism.PersonGeometry
 
@@ -18,14 +16,14 @@ A parametric theory of person-sensitivity in clitic clusters, due to
 
 ## Architecture
 
-Empirical predictions for the eight named grammar instances live in the
-study file `Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean`. This
-file holds only the parametric API:
+Empirical predictions for the eight named grammar instances, and the
+correspondence P&Z draw between P-Prominence settings and Sells's
+logophoric roles (§6.2), live in the study file
+`Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean`. This file holds
+only the framework-neutral parametric API — no commitment to any particular
+theory of logophoric roles:
 
 - `PProminence` — what the IO must satisfy (proximate, participant, author)
-- `PProminence.equivLogophoric : PProminence ≃ LogophoricRole` — the
-  isomorphism the paper draws in §6.2 (proximate↔pivot, participant↔self,
-  author↔source)
 - `PCCGrammar` — a `Fintype` parameter space (24 grammars total)
 - The four parametric clauses as named `Prop` predicates with `Decidable`
   instances: `DomainExempt`, `IOSatisfiesProminence`, `UniquenessSatisfied`,
@@ -49,39 +47,23 @@ its `Decidable` instance directly; for proofs about specific cells, prefer
 namespace Minimalism.PConstraint
 
 open Features.Prominence (PersonLevel)
-open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
 open Minimalism (DecomposedPerson decomposePerson)
 
 -- ============================================================================
--- § 1: P-Prominence and the Logophoric Bridge
+-- § 1: P-Prominence
 -- ============================================================================
 
 /-- P-Prominence settings. The interpretable person feature on Appl requires
     a DP at the phase edge to bear one of these positive specifications.
-
-    Per @cite{pancheva-zubizarreta-2018} §6.2, these settings are the
-    syntactic correlates of @cite{sells-1987}'s logophoric roles:
-    `.proximate` ↔ pivot, `.participant` ↔ self, `.author` ↔ source. The
-    isomorphism is exposed as `PProminence.equivLogophoric`. -/
+    The settings are framework-neutral feature specifications;
+    @cite{pancheva-zubizarreta-2018} §6.2 give them a logophoric reading
+    (proximate↔pivot, participant↔self, author↔source) that lives in the
+    study file. -/
 inductive PProminence : Type where
   | proximate    -- default: requires [+PROXIMATE]
   | participant  -- restricted: requires [+PARTICIPANT]
   | author       -- most restricted: requires [+AUTHOR]
   deriving DecidableEq, Repr, Fintype
-
-/-- The bijection between P-Prominence settings and logophoric roles
-    (@cite{pancheva-zubizarreta-2018} §6.2). -/
-def PProminence.equivLogophoric : PProminence ≃ LogophoricRole where
-  toFun
-    | .proximate   => .pivot
-    | .participant => .self
-    | .author      => .source
-  invFun
-    | .pivot  => .proximate
-    | .self   => .participant
-    | .source => .author
-  left_inv p := by cases p <;> rfl
-  right_inv r := by cases r <;> rfl
 
 -- ============================================================================
 -- § 2: PCC Grammar — Parameter Space

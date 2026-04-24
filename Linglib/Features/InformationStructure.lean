@@ -1,5 +1,7 @@
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Discourse.Coherence
+import Linglib.Core.Typology.Profile
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Features.InformationStructure
@@ -14,8 +16,7 @@ contexts, focus-marking strategies, exclusion variety, judgment type.
 Theory-level predicates over these taxonomies (Umbach's alt-set
 well-formedness, Erteschik-Shir/Abeillé extraction-IS clash) live in
 `Theories/Semantics/Focus/Comparability.lean`. Focus-specific compositional
-operations (`AltMeaning`, `CatItem`, `typeTheoAlts`) live in
-`Theories/Semantics/Alternatives/`.
+operations (`AltMeaning`) live in `Theories/Semantics/Alternatives/`.
 -/
 
 namespace Features.InformationStructure
@@ -199,11 +200,27 @@ inductive PolarityMarkingStrategy where
   | unmarked
   deriving DecidableEq, Repr
 
+/-- Environments / contexts a polarity-marking strategy may be available
+    in. Bundles the structural-position dimension (`sentenceInternal`
+    vs. pre-utterance) with the discourse-context dimensions (`contrast`,
+    `correction`) so per-language entries record one set rather than
+    three parallel Bools. -/
+inductive PolarityMarkingEnv where
+  /-- Position: marker appears sentence-internally (vs. pre-utterance). -/
+  | sentenceInternal
+  /-- Discourse: marker is available in contrast contexts. -/
+  | contrast
+  /-- Discourse: marker is available in correction contexts. -/
+  | correction
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
 /-- A cross-linguistic polarity-marking entry.
 
     Unified structure for all strategies — particles (Dutch *wel*),
     prosodic (German VF), or other. Language-specific Fragment files
-    instantiate this with appropriate optional fields. -/
+    instantiate this with appropriate optional fields. The
+    `environments` field records the set of `PolarityMarkingEnv`
+    positions/contexts the marker is available in. -/
 structure PolarityMarkingEntry where
   /-- Descriptive label (e.g., "wel", "Verum focus", "doch (pre-utterance)") -/
   label : String
@@ -211,15 +228,10 @@ structure PolarityMarkingEntry where
   form : Option String := none
   /-- What bears prosodic prominence, if the strategy is prosodic -/
   prosodicTarget : Option String := none
-  /-- Whether the marker appears sentence-internally (vs. pre-utterance) -/
-  sentenceInternal : Bool
-  /-- Available in contrast contexts -/
-  contrastOk : Bool
-  /-- Available in correction contexts -/
-  correctionOk : Bool
+  /-- Set of positions/contexts in which this marker is available. -/
+  environments : Core.Typology.Profile PolarityMarkingEnv
   /-- The polarity-marking strategy category -/
   strategy : PolarityMarkingStrategy
-  deriving Repr, DecidableEq
 
 -- Exclusion Variety
 
