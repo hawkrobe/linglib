@@ -1818,6 +1818,7 @@ import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.Derivation
 import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalism.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalism.SmallClause
 import Linglib.Theories.Syntax.Minimalism.Copula
 import Linglib.Theories.Syntax.Minimalism.Cascade
@@ -1980,9 +1981,11 @@ import Linglib.Theories.Semantics.Plurality.ExistentialPL
 import Linglib.Phenomena.Quantification.Studies.Montague1973
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
+import Linglib.Theories.Semantics.Entailment.Intolerance
 import Linglib.Theories.Semantics.Entailment.Monotonicity
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Phenomena.Entailment.Studies.Montague1973
+import Linglib.Theories.Semantics.Entailment.PresuppLicensing
 import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
@@ -2250,6 +2253,7 @@ import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
 import Linglib.Phenomena.Polarity.Studies.Gajewski2002
+import Linglib.Phenomena.Polarity.Studies.Gajewski2011
 import Linglib.Phenomena.Polarity.Studies.Israel2001
 import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
@@ -2412,5 +2416,3 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.
 import Linglib.Theories.Syntax.Minimalism.VoiceProjection
--- Pylkkänen 2008 Table 2.1 cluster-based applicative classifier.
-import Linglib.Theories.Syntax.Minimalism.ApplicativeDiagnostics

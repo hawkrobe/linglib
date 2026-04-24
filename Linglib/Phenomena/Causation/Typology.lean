@@ -403,4 +403,140 @@ theorem compact_not_periphrastic :
       CausativeComplexity.periphrastic := by
   simp [CausativeConstructionType.toComplexity]
 
+/-! ## Pylkkänen 2008 Causative Typology (Table 3.1, §3.4)
+
+@cite{pylkkanen-2008} Ch. 3 §3.4 proposes a 2 × 3 typology of
+causative constructions, parameterized by Voice-bundling (English vs.
+Japanese/Finnish) × selection (root, verb, or phase). Orthogonal to
+@cite{song-1996}'s expression-style typology above: Pylkkänen
+classifies the syntactic *configuration* of causative construction;
+Song classifies the morphosyntactic *packaging*. A given language is
+characterized along both axes.
+
+The types and instances live here so that other studies of causation
+(@cite{wood-2015}, future Cuervo/McGinnis files) can consume the same
+cells; per-paper analyses live in `Studies/`. -/
+
+/-- @cite{pylkkanen-2008} §3.3: whether Cause and Voice are bundled
+    into one morphological head. English bundles ([Cause, Voice]);
+    Japanese and Finnish do not. -/
+inductive VoiceBundlingChoice where
+  | bundled       -- English-type
+  | independent   -- Japanese/Finnish-type
+  deriving DecidableEq, Repr
+
+/-- @cite{pylkkanen-2008} §3.4: what does Cause select for? -/
+inductive CauseSelection where
+  /-- Cause + √Root: causes a category-free root (English zero-causative). -/
+  | root
+  /-- Cause + v + √Root: causes a category-defined verb (Bemba *-eshya*,
+      Finnish *-tta*). -/
+  | verb
+  /-- Cause + (something at least as big as a phase, can include
+      external args): causativizes unergatives and transitives
+      (Luganda *-sa*, Venda *-is*). -/
+  | phase
+  deriving DecidableEq, Repr
+
+/-- A 3-valued verdict on a causative typology prediction. -/
+inductive PredictsVerdict where
+  | predicts
+  | antipredicts
+  | noCleanPrediction
+  deriving DecidableEq, Repr
+
+/-- Three levels of root-Cause morpheme intervention. The three-way
+    distinction is essential — collapsing to Bool would lose §3.4's
+    central typological claim. -/
+inductive MorphologyAccess where
+  | none                  -- root-selecting Cause
+  | categoryDefiningOnly  -- verb-selecting Cause
+  | allMorphology         -- phase-selecting Cause
+  deriving DecidableEq, Repr
+
+/-- A causative-typology cell: Voice-bundling × selection.
+    `bundling` is `Option` because Pylkkänen Table 3.1 footnote *a*
+    explicitly states the Voice-bundling properties of Bemba,
+    Luganda, and Venda causatives are not known. -/
+structure CausativeCell where
+  bundling : Option VoiceBundlingChoice
+  selection : CauseSelection
+  deriving DecidableEq, Repr
+
+/-- Table 3.1 prediction (1): can a language have unaccusative
+    causatives? Bundled → no (Voice forces ext arg); independent →
+    yes; unknown → no clean prediction. -/
+def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : PredictsVerdict :=
+  match c.bundling with
+  | none => .noCleanPrediction
+  | some .bundled => .antipredicts
+  | some .independent => .predicts
+
+/-- Table 3.1 prediction (2): can the language causativize unergatives
+    and transitives? Only phase-selecting Cause can. -/
+def CausativeCell.permitsUnergativeAndTransitiveCausativization
+    (c : CausativeCell) : Bool :=
+  match c.selection with
+  | .phase => true
+  | .root | .verb => false
+
+/-- Table 3.1 prediction (3): what morphology can intervene between
+    root and Cause? -/
+def CausativeCell.morphologyAccess (c : CausativeCell) : MorphologyAccess :=
+  match c.selection with
+  | .root => .none
+  | .verb => .categoryDefiningOnly
+  | .phase => .allMorphology
+
+-- Six canonical instances (Pylkkänen Table 3.1)
+
+/-- English zero-causative: Voice-bundling root-selecting. -/
+def englishZeroCausative : CausativeCell :=
+  { bundling := some .bundled, selection := .root }
+
+/-- Japanese lexical causative: non-Voice-bundling root-selecting. -/
+def japaneseLexicalCausative : CausativeCell :=
+  { bundling := some .independent, selection := .root }
+
+/-- Bemba *-eshya* causative: verb-selecting; bundling unknown
+    (Table 3.1 footnote a). -/
+def bembaEshyaCausative : CausativeCell :=
+  { bundling := none, selection := .verb }
+
+/-- Finnish *-tta* causative: non-Voice-bundling verb-selecting. -/
+def finnishTtaCausative : CausativeCell :=
+  { bundling := some .independent, selection := .verb }
+
+/-- Luganda *-sa* causative: phase-selecting; bundling unknown. -/
+def lugandaSaCausative : CausativeCell :=
+  { bundling := none, selection := .phase }
+
+/-- Venda *-is* causative: phase-selecting; bundling unknown. -/
+def vendaIsCausative : CausativeCell :=
+  { bundling := none, selection := .phase }
+
+theorem english_zero_predictions :
+    englishZeroCausative.permitsUnaccusativeCausative = .antipredicts ∧
+    englishZeroCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    englishZeroCausative.morphologyAccess = .none :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem japanese_lexical_predictions :
+    japaneseLexicalCausative.permitsUnaccusativeCausative = .predicts ∧
+    japaneseLexicalCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    japaneseLexicalCausative.morphologyAccess = .none :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem finnish_tta_predictions :
+    finnishTtaCausative.permitsUnaccusativeCausative = .predicts ∧
+    finnishTtaCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    finnishTtaCausative.morphologyAccess = .categoryDefiningOnly :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem luganda_phase_predictions :
+    lugandaSaCausative.permitsUnaccusativeCausative = .noCleanPrediction ∧
+    lugandaSaCausative.permitsUnergativeAndTransitiveCausativization = true ∧
+    lugandaSaCausative.morphologyAccess = .allMorphology :=
+  ⟨rfl, rfl, rfl⟩
+
 end Phenomena.Causation.Typology

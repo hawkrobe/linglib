@@ -738,18 +738,20 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
     However, O'dam applicatives are NOT ambiguous in the way Kinyarwanda
     *-ish* is: with a given verb, the function is deterministic. -/
 
-/-- O'dam passes both high-applicative diagnostics from Table 2.1. -/
-def odam_appl : Pylkkanen2008.ApplClassification :=
+/-- O'dam passes both high-applicative diagnostics from Table 2.1.
+    Test 3 (depictive modification) is `.inapplicable` here because
+    @cite{everdell-2024} doesn't test depictives with O'dam applicatives. -/
+def odam_appl : Pylkkanen2008.LangApplProfile :=
   { language := "O'dam"
-  , applType := .high  -- closest fit (agent-introduction for intransitives)
-  , unergativeOK := some true      -- *kox-chuda'* 'put to sleep'
-  , staticVerbOK := some true      -- *saab-tuda'* 'make fast'
-  }
+  , diagnostics :=
+    { unergative := .passes      -- *kox-chuda'* 'put to sleep'
+    , staticVerb := .passes      -- *saab-tuda'* 'make fast'
+    , depictive := .inapplicable }
+  , classification := .high }  -- closest fit (agent-introduction for intransitives)
 
-/-- O'dam patterns as high by the diagnostics. -/
+/-- O'dam patterns as high by the cluster classifier. -/
 theorem odam_diagnostics_predict_high :
-    Pylkkanen2008.diagnosticPredictsHigh
-      odam_appl = true := rfl
+    Minimalism.classifyByDiagnostics odam_appl.diagnostics = some .high := by decide
 
 /-- But O'dam also performs promotion (a low-like function). The
     dissertation shows this dual behavior is NOT ambiguity — the

@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.279] - 2026-04-23
+
+### Pylkkänen2008 deep-audit fixes (Phases 1–5 of the 3-reviewer punch list)
+
+Three parallel audits (mathlib code-quality, linguistics-substantive, linglib integration) found 16 issues in yesterday's Pylkkänen expansion. Phases 1–5 of the remediation land in this commit; Phase 6 (LangApplProfile → Core/Typology, mkLeafPhon extraction) deferred per YAGNI.
+
+**Critical break fixed**: `Linglib/Phenomena/ArgumentStructure/Studies/Everdell2024.lean` was broken by the prior refactor (referenced deleted `Pylkkanen2008.ApplClassification` + `diagnosticPredictsHigh`). Now uses the new `LangApplProfile` + `classifyByDiagnostics` infrastructure. Lesson: search downstream consumers before renaming exported symbols.
+
+**Phase 1 — easy fixes**:
+- `Linglib.lean` import alphabetical order: `ApplicativeDiagnostics` moved next to `Applicative` (was 600+ lines below in a "Pylkkänen 2008" comment block)
+- §11 attribution: gapped/gapless distinction is **Kubo 1992**'s; @cite{pylkkanen-2008} reanalyzes
+- §12 attribution: three-way split is **@cite{cuervo-2003}**'s, briefly endorsed by Pylkkänen
+- Dropped 4 redundant per-language `*_classification_derives` theorems (kept English+Luganda anchors + Hebrew lowSource case); aggregate `all_classifications_derive_from_diagnostics` covers all 7
+- `-- UNVERIFIED:` markers on the 3 equation citations I couldn't verify against the PDF (eq. 10 Event Identification, eq. 17 Diagnostic 1, eq. 42 Voice-bundling)
+
+**Phase 2 — accuracy + structural**:
+- **Table 2.2 quantifier-binding row reencoded per linguistics expert**: previously both analyses encoded as `none` ("no clean prediction"). Per Pylkkänen §2.2.5 (p. 56–57), the analyses make *opposing* predictions: possessor-raising predicts the Landau qbind contrast (`.predicts`), low source predicts no contrast (`.antipredicts`). Empirically vindicates LA when pragmatics is controlled. New theorem `analyses_oppose_on_qbind` makes the disagreement explicit. Renamed `quantifierBindingIntoDirectObject` → `quantifierBindingContrast` for clarity.
+- **`Option Bool` → `PredictsVerdict` 3-valued enum**: `predicts | antipredicts | noCleanPrediction`. Used in §10 (PossessorDativeAnalysis.predicts) and §13 (CausativeCell.permitsUnaccusativeCausative). Removes the `Option Bool` ambiguity (`none` could mean missing-data or no-prediction).
+- **`Bool` → `MorphologyAccess` 3-valued enum** for §13's `morphologyCanInterveneBetweenRootAndCause`. Pylkkänen Table 3.1's three-way distinction (root: none / verb: categoryDefiningOnly / phase: allMorphology) was collapsed to Bool, losing §3.4's central claim. Now explicit.
+- **`derivationConsistent` Prop+DecidablePred refactor**: was `Bool` with `decide` inside the body (Prop masquerading as Bool). Now `LangApplProfile.DerivationConsistent : Prop` with `DecidablePred` instance; `all_classifications_derive_from_diagnostics` becomes `∀ l ∈ allLanguages, ...DerivationConsistent l`.
+
+**Phase 3 — §15 wired to actual EntailmentProfile semantics**:
+- Replaced placeholder `VerbHasUnsaturatedTheme : Bool → Prop | true => True | false => False` (Bool-keyed True/False indicator — exactly the "thin bundled struct" anti-pattern from CLAUDE.md) with `hasUnsaturatedTheme : Option EntailmentProfile → Prop` consuming actual `Core.Verbs.EntailmentProfile.pPatientScore` from `Theories/Semantics/Verb/EntailmentProfile.lean`.
+- New imports: `Theories.Semantics.Verb.EntailmentProfile`. New `themeBearingProfile` constant for transitive theorems.
+- Honest docstring: explicitly notes that the composition theorem is *structural* and does *not* re-derive the type clash from event-semantic λ-calculus (that requires compositional type-driven semantics infrastructure not yet in `Theories/Semantics/Composition/`). Captures the empirical content without overclaiming derivation.
+
+**Phase 4 — bib/citation hygiene**: Removed unverified `@cite{kubo-1992}` (no bib entry; can't verify metadata without external lookup); replaced with descriptive prose ("Kubo's 1992 work, cited by @cite{pylkkanen-2008}; not yet in linglib bib"). Eliminated 1 unresolved-cite warning.
+
+**Phase 5 — architectural extraction + licensedWith bridge**:
+- **§13 Causative typology extracted to `Phenomena/Causation/Typology.lean`**: `VoiceBundlingChoice` + `CauseSelection` + `MorphologyAccess` + `PredictsVerdict` + `CausativeCell` + 6 canonical instances + 4 prediction theorems all moved. Lives alongside @cite{song-1996}'s orthogonal expression-typology in the same file. Other studies of causation (Wood 2015, Cuervo 2003, future Pylkkänen-derived files) consume the same cell inventory from a single location. Pylkkanen2008.lean §13 is now a 9-line cross-reference; §8 imports VoiceBundlingChoice from Causation/Typology and just affirms instance choices via `english_zero_is_bundled` + `japanese_lexical_is_independent`.
+- **NEW §16 Voice × Appl licensing matrix**: exercises `Applicative.lean.licensedWith` (which existed but wasn't tested by the canonical Pylkkänen study). Cross-tests high vs low Appl against Voice flavors via `voice_appl_licensing_matrix` theorem.
+
+**Net change**: Pylkkanen2008.lean 806 → 720 LOC (-86, due to §13 extraction). Causation/Typology.lean +130 LOC (the extracted cells). Everdell2024.lean: refactored to use new LangApplProfile API. Zero `native_decide`, zero `sorry`.
+
+**Phase 6 deferred**: LangApplProfile → Core/Typology/LanguageProfile would speculatively add an `applType` field; LanguageProfile's docstring says "Fields are append-only and (apart from iso/name/wordOrder) all optional. … A new field only lands when the same PR uses it in at least one stated universal/theorem; no speculative fields." mkLeafPhon extraction touches Larson1988/Kratzer1996/Bruening2001 and isn't load-bearing for Pylkkanen2008's correctness. Both per YAGNI; promote when a second consumer earns it.
+
 ## [0.230.278] - 2026-04-23
 
 ### Pylkkänen2008 self-audit fixes + transitivity restriction derived
