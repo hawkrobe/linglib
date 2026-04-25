@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.332] - 2026-04-24
+
+### Discourse/ restructure Phase 5: Centering → `Discourse/Coherence/Centering/` + bridge rename
+
+`git mv`:
+- `Theories/Discourse/Centering/` (7 files: `Defs`, `Basic`, `Transition`, `Rules`, `Coherence`, `Instances/{GrammaticalRole,ThematicRole}`) → `Theories/Discourse/Coherence/Centering/`
+- `Theories/Interfaces/SemanticsDiscourse/CenteringDRT.lean` → `Theories/Interfaces/SemanticsDiscourse/CenteringDRSExpr.lean` (in-place rename inside the bridge convention; new name reflects content — file bridges DRS *syntax*, not generic DRT)
+
+Namespace rename: `Discourse.Centering.*` → `Discourse.Coherence.Centering.*` across all 7 Centering files + every consumer (the 2 bridge files in `Theories/Interfaces/`, plus other consumers using the namespace). Import-path swap across all `.lean` files via bulk perl substitution.
+
+`Theories/Discourse/` is now structured as `Discourse/Coherence/Centering/` with room for future SDRT/RST also under `Coherence/`. The `Discourse/` tree no longer contains compositional dynamic-semantics machinery (which lives at `Theories/Semantics/Dynamic/{Connectives,Effects,Boxes,...}` per the prior sibling-architecture revision).
+
+511 jobs green for the moved Centering files + both bridge files (`CenteringDRSExpr`, `CenteringCoherence`).
+
 ## [0.230.331] - 2026-04-24
 
 ### Discourse/ restructure: sibling-architecture revision — `Theories/Discourse/{Connectives,Effects,Boxes,DiscourseRef,Intensional}` → `Theories/Semantics/Dynamic/{...}`

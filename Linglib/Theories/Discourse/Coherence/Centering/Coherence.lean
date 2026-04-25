@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Transition
+import Linglib.Theories.Discourse.Coherence.Centering.Transition
 import Linglib.Core.Discourse.Coherence
 
 /-!
@@ -28,7 +28,7 @@ ranking-and-instantiation to the discourse genre.
 
 set_option autoImplicit false
 
-namespace Discourse.Centering
+namespace Discourse.Coherence.Centering
 
 open Core.Discourse.Coherence
 
@@ -84,4 +84,4 @@ theorem coherence_respects_rule2 :
       (CoherenceRelation.preferredTransition .contrast).rank := by
   refine ⟨?_, ?_⟩ <;> decide
 
-end Discourse.Centering
+end Discourse.Coherence.Centering
