@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.327] - 2026-04-24
+
+### Discourse/ restructure Phase 2a: Effects/ subtree + flat type-defs (4 file moves)
+
+(Originally tagged 0.230.326 in commit message of `1928dc35` but a concurrent session also claimed 0.230.326 for the Roberts2023 follow-through below; promoting this entry to 0.230.327 to keep the dev clock monotonic.)
+
+Continuing the mathlib-style discourse restructure (plan: `~/.claude/plans/inherited-mapping-wilkinson.md`). Phase 2 splits into 2a (simple moves) + 2b (file merges) + 2c (new typeclass instances); this commit lands 2a only.
+
+`git mv`:
+- `Theories/Semantics/Dynamic/Context.lean` → `Theories/Discourse/Effects/HasFiberedLookup.lean` (the unifying typeclass with `Entity`/`PMF` instances + `HasJointState`/`HasIndivDrefs`/`HasPropDrefs`/`HasDiscourseCommitment`/`HasMultiDC`)
+- `Theories/Semantics/Dynamic/Core/DiscourseRef.lean` → `Theories/Discourse/DiscourseRef.lean` (flat at root: `IDref`, `PDref`, `ConceptDRef`, `MassCount`, `Entity` with universal falsifier ⋆)
+- `Theories/Semantics/Dynamic/Core/Intensional.lean` → `Theories/Discourse/Intensional.lean` (flat at root: `IContext`, `ICDRTAssignment`, `ICDRTUpdate`, the static-to-dynamic bridge)
+- `Theories/Semantics/Dynamic/Bilateral/Basic.lean` → `Theories/Discourse/Effects/Bilateral.lean` (`BilateralDen` pair-effect for DNE)
+
+State-type files live flat at the `Discourse/` root (no `State/` subdir per the audited layout — only 2 files don't justify a wrapper directory; mathlib analog: `Mathlib/Data/Set/Basic.lean` and `Mathlib/Data/Multiset/Basic.lean` sit flat under `Mathlib/Data/`).
+
+Import paths updated in 12 consumer files (`Probability/Lookup`, `Nondeterminism/Charlow2019`, `Bilateral/{ICDRT,ICDRTConnectives,BUS}`, `Phenomena/Anaphora/Studies/Hofmann2025`, `Phenomena/Plurals/Studies/Enguehard2024`, `Phenomena/Modality/Studies/ElliottSudo2025`, `Theories/Semantics/PIP/Basic`, `Theories/Semantics/Noun/Kind/Anaphora`, `Theories/Semantics/Dynamic/Core/{Intensional,ContextFilter}`) plus `Linglib.lean`. Namespaces unchanged.
+
+Deferred to Phase 2b: merging `Core/{ContextFilter,Update}.lean` into `Connectives/CCP.lean`; combining `Nondeterminism/{Basic,PointwiseUpdate}.lean` into `Effects/Nondeterminism.lean`; combining `Probability/{Basic,Lookup}.lean` into `Effects/Probability.lean`. Deferred to Phase 2c: adding `HasFiberedLookup` instances for `Set` (Charlow) and `BilateralDen`. `Translation.lean` deletion deferred to Phase 4c (PLA dissolution; `PLA/Semantics` is its only consumer).
+
+635 + 968 jobs green for the moved files and their direct consumers (`Hofmann2025`, `Bilateral.ICDRT`, `Bilateral.BUS`, `Enguehard2024`, `PIP.Basic`, `Noun.Kind.Anaphora`). Full `lake build` fails only at `Phenomena/Modality/Studies/Cariani2013.lean` (an untracked file from a concurrent session; `Decidable` typeclass synthesis failure on `permitted rc p`; imports `Modality/Desire` not `Dynamic/`; preexisting and unrelated to this restructure). 4 files moved, 12 import sites updated.
+
 ## [0.230.326] - 2026-04-24
 
 ### Roberts2023 pragmatic_deontic_routing strengthened (mathlib-reviewer follow-through)
