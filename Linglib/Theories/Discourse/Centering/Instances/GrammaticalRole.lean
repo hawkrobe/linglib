@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Defs
+import Linglib.Theories.Discourse.Centering.Defs
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
 
@@ -23,7 +23,7 @@ The thematic-role variant lives in the sibling `ThematicRole.lean`.
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 -- ════════════════════════════════════════════════════
 -- § Grammatical Role
@@ -54,4 +54,4 @@ theorem subject_gt_object : (GrammaticalRole.subject : GrammaticalRole) > .objec
 
 theorem object_gt_other : (GrammaticalRole.object : GrammaticalRole) > .other := by decide
 
-end Discourse.Coherence.Centering
+end Discourse.Centering

@@ -1,7 +1,7 @@
 import Linglib.Core.CylindricAlgebra
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
-import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
+import Linglib.Phenomena.Anaphora.Studies.Charlow2019
 
 /-!
 # Cylindric Algebra Bridges for Dynamic Semantics

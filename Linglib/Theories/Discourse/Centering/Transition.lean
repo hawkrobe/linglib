@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Basic
+import Linglib.Theories.Discourse.Centering.Basic
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
 
@@ -34,7 +34,7 @@ lives in `Rules.lean`.
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 -- ════════════════════════════════════════════════════
 -- § 1. Transition Type
@@ -152,4 +152,4 @@ theorem extended_eq_strict_when_defined
     simp only [hcb] at h ⊢
     exact Option.some.inj h
 
-end Discourse.Coherence.Centering
+end Discourse.Centering

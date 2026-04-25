@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Transition
+import Linglib.Theories.Discourse.Centering.Transition
 
 /-!
 # Centering Theory — Rules 1 and 2
@@ -22,7 +22,7 @@ Rule 1 takes the current utterance as a generic `[Realizes U E]
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 variable {E R : Type}
 
@@ -74,4 +74,4 @@ theorem rule2_retentions_preferred_over_shifts :
 theorem rule2_continuations_preferred_over_shifts :
     pairRank .continuation .continuation > pairRank .shifting .shifting := by decide
 
-end Discourse.Coherence.Centering
+end Discourse.Centering

@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.335] - 2026-04-24
+
+### Discourse/ restructure: Coherence/ wrapper flattened + Charlow2019.lean dissolved
+
+Two independent edits in one commit.
+
+**Coherence/ flatten** (Phase 5 follow-up): `Theories/Discourse/Coherence/Centering/` → `Theories/Discourse/Centering/`. The `Coherence/` wrapper from Phase 5 was anticipating future SDRT/RST siblings, but with only Centering inside it didn't earn its directory rent. Mathlib pattern: directories exist when they have ≥2-3 children doing similar work. Restore the wrapper later if SDRT/RST justify it. Namespace `Discourse.Coherence.Centering` → `Discourse.Centering` across all 7 Centering files + the 2 bridge files in `Theories/Interfaces/`. `Theories/Discourse/Coherence/` directory deleted.
+
+**Phase 4e — Charlow2019.lean dissolved** (1 consumer):
+- `git mv` `Theories/Semantics/Dynamic/Nondeterminism/Charlow2019.lean` (306 LOC) → `Phenomena/Anaphora/Studies/Charlow2019.lean`. The substrate (`NDMeaning`, `liftPW`/`lowerPW`) already moved to `Effects/Nondeterminism.lean` in Phase 2b; this commit moves the paper-anchored content (theorems about destructive-update + truth preservation, the `↑` operator distinguishing static from dynamic).
+- Namespace `Semantics.Dynamic.Charlow2019` preserved (no consumer-side `open` churn for `Core/CylindricAlgebra/DynamicSemantics.lean`).
+- `Theories/Semantics/Dynamic/Nondeterminism/` directory deleted.
+
+651 jobs green for the affected build slice (`Centering.{Basic,Defs,Coherence}`, `Charlow2019`, `CylindricAlgebra/DynamicSemantics`, both `CenteringDRSExpr` + `CenteringCoherence` bridges). 1 framework directory eliminated; 1 wrapper directory eliminated.
+
+### Removed 8 ErkHerbelot2024 numerical `example` sorries
+
+The Table 1 + Table 2 closed-form posterior values (`P(BAT-STICK | obs, α=1/2) = 3/4`, etc.) had been left as `example` declarations with `sorry` discharge after a multi-session push to close them stalled out at scale (estimated ~400-600 LOC per example for the full PMF + Gamma-function arithmetic). User decision: remove the `example`s entirely rather than leave 8 `sorry`s indefinitely.
+
+**Removed from `Linglib/Phenomena/Polysemy/Studies/ErkHerbelot2024.lean`:**
+- 4 bat-in-player Table 1 numerical `example`s (BAT-STICK = 3/4, BAT-ANIMAL = 1/4 at α=1/2; 11/12, 1/12 at α=1/10)
+- 4 astronomer Table 2 numerical `example`s (STAR-PERSON = 285/337, STAR-SUN = 52/337 at α=1/2; 19/31, 12/31 at α=1/10)
+- `batSym_total` + `seqProb_3_0_half` private helpers (existed only as scaffolding for the discharge attempt)
+- "Mathlib-style restructuring" + "Closed-form derivation (verification path)" + "Helper lemmas for seqProb evaluation" docstring sections
+
+**Kept:**
+- Closed-form derivation prose docstrings under `§6` (bat) and `§7` (astronomer) — full hand-verification of all 8 numerical claims, with comparison to paper Tables 1–2
+- `batSentence_h_supp` (structural support characterization, ~80 LOC discharge via 6 blocker lemmas + by_cases cascade)
+- `batStick_increases_as_alpha_decreases` + `starSun_increases_as_alpha_decreases` (qualitative α-monotonicity theorems on the documented values)
+
+File: 905 → 739 LOC. Sorry-free. Build clean.
+
 ## [0.230.334] - 2026-04-24
 
 ### Discourse/ restructure Phase 4 pilot: `ABLE/` + `FileChange/` dissolved into Studies/ subdirectories

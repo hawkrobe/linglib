@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Defs
+import Linglib.Theories.Discourse.Centering.Defs
 import Mathlib.Data.List.Perm.Basic
 
 /-!
@@ -28,7 +28,7 @@ enforced by the type `Option E`, not by a separate theorem.
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 variable {E R : Type}
 
@@ -246,4 +246,4 @@ theorem cb_eq_none_iff [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
 @[simp] theorem cb_empty_prev [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
     (cur : U) : cb (Utterance.mk [] : Utterance E R) cur = none := rfl
 
-end Discourse.Coherence.Centering
+end Discourse.Centering

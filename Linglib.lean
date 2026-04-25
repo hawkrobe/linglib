@@ -1568,6 +1568,7 @@ import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
 import Linglib.Phenomena.Tone.Studies.AkinboFwangwar2026
+import Linglib.Phenomena.Tone.Studies.McPhersonLamont2026
 import Linglib.Phenomena.CompensatoryLengthening.Studies.Hayes1989
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -1704,7 +1705,7 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
-import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
+import Linglib.Phenomena.Anaphora.Studies.Charlow2019
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism
 import Linglib.Theories.Semantics.Dynamic.Effects.Probability
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic

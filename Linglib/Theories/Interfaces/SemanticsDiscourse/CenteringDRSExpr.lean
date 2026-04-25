@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Basic
+import Linglib.Theories.Discourse.Centering.Basic
 import Linglib.Theories.Semantics.Dynamic.Boxes.Syntax
 
 /-!
@@ -33,7 +33,7 @@ set_option autoImplicit false
 
 namespace Interfaces.SemanticsDiscourse.CenteringDRT
 
-open Discourse.Coherence.Centering
+open Discourse.Centering
 open Semantics.Dynamic.Core.DRSExpr (DRSExpr occurs)
 
 /-- A DRS realizes a dref `e` iff `e` occurs anywhere in the DRS.

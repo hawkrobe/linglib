@@ -35,7 +35,7 @@ study file rather than re-stipulated there.
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cf Ranking Plug-In
@@ -141,4 +141,4 @@ instance {U E : Type} [Pronominalizes U E] (u : U) (e : E) :
     Decidable (pronominalizes u e) :=
   inferInstanceAs (Decidable (Pronominalizes.decide u e = true))
 
-end Discourse.Coherence.Centering
+end Discourse.Centering

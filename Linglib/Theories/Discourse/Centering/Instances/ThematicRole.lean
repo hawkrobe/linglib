@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Coherence.Centering.Defs
+import Linglib.Theories.Discourse.Centering.Defs
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
 
@@ -27,7 +27,7 @@ object outranks its subject.
 
 set_option autoImplicit false
 
-namespace Discourse.Coherence.Centering
+namespace Discourse.Centering
 
 -- ════════════════════════════════════════════════════
 -- § Thematic Role (Sidner 1979 ranker)
@@ -64,4 +64,4 @@ theorem experiencer_gt_agent :
 theorem agent_gt_theme :
     (ThematicRole.agent : ThematicRole) > .theme := by decide
 
-end Discourse.Coherence.Centering
+end Discourse.Centering
