@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.334] - 2026-04-24
+
+### Discourse/ restructure Phase 4 pilot: `ABLE/` + `FileChange/` dissolved into Studies/ subdirectories
+
+(Concurrent session also took 0.230.333 for the RuytenbeekEtAl2017 audit; bumping this entry to 0.230.334 — actual change was commit `16deb517`.)
+
+Two simplest framework-directory dissolutions complete (each had a single paper-anchored consumer). Pattern: framework substrate becomes a sibling file in a paper-named study subdirectory; mathlib precedent (linglib has `Studies/AlstottAravind2026/`, `Studies/Charlow2021/` already).
+
+**4b — `ABLE/` → `Phenomena/Presupposition/Studies/Beaver2001/`** (1 consumer):
+- `git mv` `Theories/Semantics/Dynamic/ABLE/Basic.lean` (495 LOC) → `Phenomena/Presupposition/Studies/Beaver2001/ABLE.lean`
+- `git mv` `Phenomena/Presupposition/Studies/Beaver2001.lean` (521 LOC) → `Phenomena/Presupposition/Studies/Beaver2001/Basic.lean`
+- New study subdirectory houses both paper apparatus + ABLE fragment definition; namespace `Semantics.Dynamic.ABLE` preserved (no consumer-side `open` churn)
+- `Theories/Semantics/Dynamic/ABLE/` directory deleted
+
+**4a — `FileChange/` → `Phenomena/Anaphora/Studies/Heim1982/`** (1 consumer):
+- `git mv` `Theories/Semantics/Dynamic/FileChange/Basic.lean` (504 LOC) → `Phenomena/Anaphora/Studies/Heim1982/FileChangeSemantics.lean`
+- `git mv` `Phenomena/Anaphora/Studies/Heim1982.lean` (322 LOC) → `Phenomena/Anaphora/Studies/Heim1982/Basic.lean`
+- Same pattern. Namespace `Semantics.Dynamic.FileChangeSemantics` preserved.
+- `Theories/Semantics/Dynamic/FileChange/` directory deleted
+
+Bulk perl substitution updated import paths. `Linglib.lean` updated. 884 + 365 jobs green for the affected slices.
+
+The plan's intended `Effects/Partial.lean` for the Option-effect substrate (Heim FCS + Beaver ∂) is deferred — neither paper file actually needs it as a generic; the paper-specific apparatus suffices for the current consumer base. Can be promoted later if a third Option-effect paper appears.
+
+Remaining framework dirs to dissolve: `CDRT/`, `DPL/`, `PLA/` (7 files, complex), `Bilateral/` (BUS+ICDRT remnants), `Nondeterminism/Charlow2019.lean`, `DRT/` (LDRT split — Phase 3b), plus `Core/{ContextFilter,Update,Translation,DynamicTy2}` substrate cleanup.
+
 ## [0.230.333] - 2026-04-24
 
 ### RuytenbeekEtAl2017 mechanism-2 refactor + Roberts2023 cascade (4-agent audit follow-through)
