@@ -10,7 +10,7 @@ Dynamic semantics with two update dimensions (positive and negative) that valida
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
+import Linglib.Theories.Discourse.Effects.Bilateral
 
 namespace Semantics.Dynamic.BUS
 

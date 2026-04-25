@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Core.Intensional
+import Linglib.Theories.Discourse.Intensional
 
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update

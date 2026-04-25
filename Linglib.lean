@@ -1681,13 +1681,13 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics — Core
 import Linglib.Theories.Discourse.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
-import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
+import Linglib.Theories.Discourse.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Discourse.Connectives.Defs
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Theories.Semantics.Dynamic.Context
-import Linglib.Theories.Semantics.Dynamic.Core.Intensional
+import Linglib.Theories.Discourse.Effects.HasFiberedLookup
+import Linglib.Theories.Discourse.Intensional
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Discourse.Connectives.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
@@ -1700,7 +1700,7 @@ import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.DRT.Basic
-import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
+import Linglib.Theories.Discourse.Effects.Bilateral
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
+import Linglib.Theories.Discourse.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 
 /-!

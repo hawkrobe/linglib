@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
+import Linglib.Theories.Discourse.DiscourseRef
 import Linglib.Theories.Discourse.Connectives.Defs
-import Linglib.Theories.Semantics.Dynamic.Context
+import Linglib.Theories.Discourse.Effects.HasFiberedLookup
 import Mathlib.Data.Set.Basic
 
 /-!

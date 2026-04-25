@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Assignment
 import Linglib.Core.WorldTimeIndex
-import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
+import Linglib.Theories.Discourse.DiscourseRef
 
 /-!
 # Context Filters and Situation Contexts

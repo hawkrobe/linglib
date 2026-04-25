@@ -10,7 +10,7 @@ are retained.
 
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Discourse.Connectives.CCP
-import Linglib.Theories.Semantics.Dynamic.Context
+import Linglib.Theories.Discourse.Effects.HasFiberedLookup
 
 namespace Semantics.Dynamic.Charlow2019
 

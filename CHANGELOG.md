@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.326] - 2026-04-24
+
+### Roberts2023 pragmatic_deontic_routing strengthened (mathlib-reviewer follow-through)
+
+Audit follow-up to 0.230.324: the previous `pragmatic_deontic_routing` had three problems flagged by mathlib-reviewer. (1) Conjunct (c) `K.toPOSW.cs w ↔ (K.toPOSW.star p).cs w` was degenerate — `star_cs` makes the two sides definitionally equal. (2) Conjunct (a) `(directionUpdate p s t pr).cg = K.cg` was a verbatim restatement of `Scoreboard.direction_preserves_cg`, an existing `@[simp]` lemma — orphan-wrapper anti-pattern. (3) The theorem captured only the *negative* half of Roberts's headline claim (no informational change) but never reached the *positive* substrate theorem `Scoreboard.direction_demotes_violators` that proves prejacent-violators are demoted relative to prejacent-satisfiers under directionUpdate.
+
+Note that POSW.lean **deliberately does not** provide a `boxLe_star_self` analogue of `boxCs_plus_self` — the design comment at lines 270-272/325-328 explains why: with Portner's update rule `(c.star p).le w v ↔ c.le w v ∧ (p v → p w)`, a non-p best-of-c world remains best in `c.star p` because the `p v → p w` constraint is vacuous when `p v` is false. So the strongest substrate-truth available is the **strict-refinement** form (non-p worlds demoted *relative to* p worlds), not universal preferential necessity. `direction_demotes_violators` is the right shape.
+
+**Refactor**: collapsed `pragmatic_deontic_routing` to a single named theorem doing the positive-half work, with the addressee-in-bounds hypothesis `hin` (the substrate counterpart of Roberts's conservativity presupposition, eq. (65)). Type signature `¬ (K.directionUpdate p s t pr).toPOSW.le w v` IS the routing claim — proves prejacent-satisfier `v` is no longer at-most-as-good as prejacent-violator `w` after direction. One-line proof composing `Scoreboard.direction_demotes_violators`. Docstring cross-references `direction_preserves_cg` for the negative half rather than restating it as a conjunct.
+
+Earned its keep on the three mathlib-reviewer criteria for compositional one-liners: (i) bundles the precondition `hin` with paper-attributed name; (ii) the type signature is the claim — `¬ le w v` between violator/satisfier under `directionUpdate` is what "deontic routing" *means* at the substrate; (iii) downstream consumers can `exact pragmatic_deontic_routing ...` instead of reconstructing the composition. Re-anchors rather than renames.
+
+Build green (5365 jobs).
+
 ## [0.230.325] - 2026-04-24
 
 ### Discourse/ restructure Phase 1: Connectives/ subtree (file moves only)
