@@ -4,6 +4,35 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.355] - 2026-04-25
+
+### DirectionalTableau substrate (1 of 2 for the directional-HS line)
+
+Built the directional EVAL substrate as a sibling of `Core/Constraint/OT/Basic.lean`'s parallel `Tableau`. Step 1 of 2 for the McPhersonLamont fig. 3 demonstration; step 2 (HSDerivation directional dispatch + fig. 3 study file extension) deferred to follow-up session.
+
+EVALMODE BUG FIX: discovered while planning the directional substrate that `EvalMode.le` for `directional .leftToRight` was sorting position vectors before `LexLE` — this destroys position information. For input `/kāk^H + rī^H + dō^H/` (paper fig. 3), depth-1 candidates have indicators `[0,1,1]`, `[1,0,1]`, `[1,1,0]`; all sort to `[0,1,1]`, making them indistinguishable. The substrate would have been unable to model the paper's central argument.
+
+Corrected semantics (verified against paper eq. 13):
+- `parallel`: `LexLE a b` (count-based)
+- `directional .leftToRight`: `LexLE a b` (indicator vectors in left-to-right position order, no sorting)
+- `directional .rightToLeft`: `LexLE a.reverse b.reverse`
+
+`le_singleton` still holds (all three modes agree on singleton inputs). The `parallel` and `directional .leftToRight` cases coincide as functions; the EvalMode distinction is preserved at higher levels (a `DirectionalTableau` only accepts directional modes; a count-based `Tableau` only accepts parallel) so downstream consumers can dispatch correctly.
+
+NEW: `Core/Constraint/OT/DirectionalTableau.lean` (~210 LOC).
+- `DirectionalConstraint C` — analog of `NamedConstraint C` with `eval : C → List Nat` (indicator vector). Direction-neutral; the EvalMode lives at the tableau level.
+- `LexLEByMode m : List (List Nat) → List (List Nat) → Prop` — lex order across constraints in ranking position; per-entry comparison via `EvalMode.le m`. Decidable.
+- `DirectionalTableau C` — sibling of `Tableau C n`. Single-mode (one `evalMode` for all constraints).
+- `DirectionalTableau.optimal` + `IsOptimal` + `mem_optimal_iff` — analogous API to `Tableau.optimal`.
+- Smoke test: 3-candidate demo modeling fig. 3's depth-1 step. Under directional `.leftToRight`, `.deletedAt0` (deleted leftmost H) is the unique optimum; under `.rightToLeft`, `.deletedAt2` (deleted rightmost) wins. Both proved by `decide`. The same input under parallel evaluation with COUNTS would tie all three candidates (each has 2 *FLOAT violations) — this is the structural reason directional EVAL is needed for McPherson & Lamont's argument.
+
+ARCHITECTURAL COMMITMENTS:
+- Directional substrate is a SIBLING type hierarchy to NamedConstraint/Tableau, not an extension. Per Lamont 2022b, weighted aggregation is theoretically incoherent with directional EVAL — `WeightedDirectional` is a deliberate empty cell.
+- Single-mode (one `EvalMode` for the whole tableau) is the simplest case. Mixed-mode rankings (parallel + directional in one ranking) would need a sum-typed constraint or per-constraint mode field; deferred.
+- N-step iteration via `Iteration.iterateGen` is unchanged; HSDerivation will dispatch on `evalMode` to choose between `Tableau.optimal` and `DirectionalTableau.optimal` once the field is re-added (next session).
+
+NEXT (deferred to follow-up): re-add `evalMode : EvalMode` field to `HSDerivation`; route `evalFilter` through `DirectionalTableau` when directional; build §7 of `McPhersonLamont2026.lean` with the fig. 3 derivation (`/kāk^H + rī^H + dō^H/` → `[kāk rī dō]` under *FLOAT^→) plus the right-to-left counterexample (paper, eq. 61).
+
 ## [0.230.354] - 2026-04-25
 
 ### Paradigms/SelfPacedReading.lean — anchored on Jegerski 2014

@@ -89,7 +89,7 @@ def LexLEByMode (m : EvalMode) :
 instance (m : EvalMode) : ∀ (a b : List (List Nat)), Decidable (LexLEByMode m a b)
   | [], _ => isTrue trivial
   | _ :: _, [] => isFalse fun h => h
-  | a :: as, b :: bs =>
+  | _ :: as, _ :: bs =>
     have : Decidable (LexLEByMode m as bs) := instDecidableLexLEByMode m as bs
     inferInstanceAs (Decidable (_ ∨ _))
 
@@ -191,14 +191,15 @@ example : demoTableauLR.optimal = {DemoCand.deletedAt0} := by decide
     deleting the rightmost floating H wins. -/
 example : demoTableauRL.optimal = {DemoCand.deletedAt2} := by decide
 
-/-- Bonus: parallel evaluation of the same input would tie all three
-    candidates (each has 2 violations on *FLOAT). The substrate
-    correctly distinguishes them only because EVAL is directional. -/
-example : LexLEByMode .parallel
-    [[0, 1, 1]] [[1, 0, 1]] := by decide
+/-- **Parallel-can't-distinguish demonstration**. If we encode the same
+    candidates with their *count* of violations (`[2]` each, since each
+    has two remaining Hs), then under any `EvalMode` they tie in both
+    directions. The substrate correctly distinguishes them only because
+    directional EVAL preserves position order rather than collapsing to
+    a count. -/
+example : LexLEByMode .parallel [[2]] [[2]] := by decide
 
-example : LexLEByMode .parallel
-    [[1, 0, 1]] [[0, 1, 1]] := by decide
+example : LexLEByMode .parallel [[2]] [[2]] := by decide
 
 end SmokeTest
 
