@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Theories.Semantics.Presupposition.LocalContext
-import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
+import Linglib.Phenomena.Presupposition.Studies.Beaver2001.ABLE
 import Mathlib.Data.Set.Basic
 
 /-!

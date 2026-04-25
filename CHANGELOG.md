@@ -4,6 +4,56 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.333] - 2026-04-24
+
+### RuytenbeekEtAl2017 mechanism-2 refactor + Roberts2023 cascade (4-agent audit follow-through)
+
+Random-pick continuation: the Roberts2023 audit's `empirical_wedge_circumstantial_decls` exposed that sibling `RuytenbeekEtAl2017.lean` (666 LOC) only formalized mechanism 1 (Kaufmann shared-deontic-semantics) of the paper's two-mechanism account; mechanism 2 (Clark 1979 preparatory-condition questioning) was prose-only despite both being central to the paper's anti-literalist argument. Four-agent audit (linguistics-domain-expert with PDF, mathlib-reviewer, integration-auditor, cross-framework-reconciler) returned strong convergence on substrate-disconnect, hard-coded-empirical-numbers, and silent-divergence patterns.
+
+**PDF ground-truth verification** (against `1-s2.0-S0378216617301649-main.pdf`, pp.50-62) before applying audit recommendations:
+- canDeclarative.modalFlavor → .deontic per p.58 Discussion: VERIFIED ("most salient reading of pouvoir is permission … granting permission may sometimes be interpreted as a reason to act"). p.50's "ability modal" claim was about `Pouvez-vous VP?` (interrogative, Study 1), not `Vous pouvez VP` (declarative, Study 2).
+- Empirical numbers fabricated: VERIFIED and worse than audit said. Fig 3 shows can ≈ 45/123 move responses, file had 98/123 — `canYou_force_mismatch` (claimed `> 1/2`) was likely false against the data. Fig 5 fixation values were also flipped (file `fix1_pos_yesno = 230` should be ~280; `fix1_ctrl_yesno = 280` should be ~225). Paper text's χ²(2)=1.66, p=0.43 says fixation differences are NOT statistically significant — file's `study1_question_has_fixation` ordering encoded a direction the paper explicitly does not commit to.
+- Study 2 missing two conditions: VERIFIED (p.56 lists 5 conditions: 3 `You must`, 3 control imperatives, 6 `You can/may`, 6 `It is possible`, 6 control declaratives; file had 4).
+- Francik & Clark 1985 misattribution: VERIFIED (paper's reference list pp.61-62 has Clark 1979, Searle 1969/1975a/b, Morgan 1978, Shapiro & Murphy 1993 but NOT Francik & Clark 1985 — file's §9 invoked a paper Ruytenbeek themselves do not cite).
+- β/z values that ARE in paper text: VERIFIED (z = -3.29, p = 0.0028 for can vs possible; β = 2833, 2990, 2878, etc.).
+
+**Refactor** (RuytenbeekEtAl2017.lean: 666 → 385 LOC, -42%):
+
+Dropped (substrate reinvention / hard-coded empirics / encoded-conclusions):
+- `frantextCanYou`/`frantextPossible` corpus structures with reconstructed integer counts (paper reports %s only); `frantext*_total` `rfl`-over-literal theorems
+- `Study1Result`/`Study2Result` structures with hand-eyeballed `moveProp`/`moveRT`/`yesNoRT` integers; all `study1_*`/`study2_*` ordering theorems over those literals
+- `FixationResult` structure with hand-eyeballed and partly-flipped fixation ms values; 5 fixation ordering theorems (the latter pair encoded an ordering the paper's χ²(2)=1.66, p=0.43 explicitly says is null)
+- `Study1Response`/`Study2Response` enums (declared but never used)
+- §9 §-bridge invoking `@cite{francik-clark-1985}` (paper does not cite it; analyst-added cross-paper synthesis)
+
+Kept and strengthened:
+- `SentType` enum reorganised with paper-page constructor docstrings
+- `SentType.modalFlavor`: imperative branch derived from `Assert.primaryFlavor .imperative` (Layered Grounding); `canDeclarative` fixed `.circumstantial → .deontic` per p.58
+- `SentType.modalForce` unchanged
+
+NEW substantive content (the two mechanisms operationalized):
+- `directiveCompatible : ModalFlavor → Prop` (mechanism 1, was `Bool`) with `DecidablePred` instance
+- `SentType.directiveCompatibleMech1 : SentType → Prop` (was `isDirectiveCompatible : SentType → Bool`) with `DecidablePred` via `match`-on-Option
+- `SentType.queriedPrep : SentType → Option PreparatoryCondition` (NEW — mechanism 2's preparatory-condition projection consuming `Core.Discourse.PreparatoryCondition`)
+- `SentType.directiveCompatibleMech2 : SentType → Prop` (NEW)
+- `SentType.isDirective : SentType → Prop` (NEW joint diagnostic — `s = .imperative ∨ mech1 ∨ mech2`)
+- 8 prediction theorems (one per `SentType`) replacing the empirical-fit clusters; `joint_diagnostic_partitions_sentence_types` exposes the qualitative finding as a single derived theorem
+- 4 force-type-mismatch theorems (mustDeclarative + canDeclarative + canYouInterrog + possibleInterrog) replacing the prior pair
+- 3 French-fragment consistency theorems via `forceFlavors` membership
+
+`imperative_modalFlavor_eq_assert` makes the layered-grounding identity visible. The Kaufmann/Hacquard `primaryFlavor` is now the single source of truth for the imperative's flavor; Ruytenbeek's stipulation cascade collapses to one derivation.
+
+`Roberts2023.lean` updated in lockstep:
+- `roberts_fails_ruytenbeek_mechanism_one`: `... = false` → `¬ ...` (Bool→Prop migration)
+- `empirical_wedge_circumstantial_decls` renamed `empirical_wedge_possible_declarative` and narrowed: `canDeclarative` is no longer in the wedge (after the `.circumstantial → .deontic` fix it no longer shares Roberts's imperative flavor; the two accounts now AGREE on `canDeclarative` being directive, for different reasons). Only `possibleDecl` remains as the discriminating case where Ruytenbeek's mechanism 1 says no-directive and Roberts predicts pragmatic flavor-sharing.
+- Renamed reference `isDirectiveCompatible` → `directiveCompatibleMech1`/`Mech2`.
+
+Decided NOT to add a `mech2_consistent_with_francikClark` cross-paper consistency theorem (analyst-added synthesis the paper does not make).
+
+Build green (5363 jobs); zero `sorry`/`native_decide` introduced; full diff -1045/+627 LOC across both files.
+
+Deferred: refining mechanism 1 to distinguish necessity from possibility (the must >> can asymmetry, z = -8.11 from p.57, is not predicted by `flavor = .deontic` alone); cross-language extension; Brown-Levinson face-theory substrate; Morgan 1978 conventionalization-gradient substrate; engagement with Kissine 2013, Holtgraves 2008, Terkourafi 2015.
+
 ## [0.230.332] - 2026-04-24
 
 ### Discourse/ restructure Phase 5: Centering → `Discourse/Coherence/Centering/` + bridge rename

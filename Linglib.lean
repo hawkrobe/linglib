@@ -953,7 +953,7 @@ import Linglib.Phenomena.Anaphora.Studies.SagWasowBender2003
 import Linglib.Phenomena.Anaphora.Studies.BakayEtAl2026
 import Linglib.Phenomena.Anaphora.Studies.Chomsky1981
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
-import Linglib.Phenomena.Anaphora.Studies.Heim1982
+import Linglib.Phenomena.Anaphora.Studies.Heim1982.Basic
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Studies.AbneyKeshet2025
@@ -1401,7 +1401,7 @@ import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Presupposition.Studies.Grove2022
-import Linglib.Phenomena.Presupposition.Studies.Beaver2001
+import Linglib.Phenomena.Presupposition.Studies.Beaver2001.Basic
 import Linglib.Phenomena.Presupposition.Studies.Blutner2000
 import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
 import Linglib.Phenomena.Presupposition.Studies.Glass2025
@@ -1692,9 +1692,9 @@ import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Connectives.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 -- Theories: Dynamic Semantics — ABLE (Beaver 2001)
-import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
+import Linglib.Phenomena.Presupposition.Studies.Beaver2001.ABLE
 -- Theories: Dynamic Semantics — Frameworks
-import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
+import Linglib.Phenomena.Anaphora.Studies.Heim1982.FileChangeSemantics
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames

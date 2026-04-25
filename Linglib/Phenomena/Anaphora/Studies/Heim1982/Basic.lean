@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
+import Linglib.Phenomena.Anaphora.Studies.Heim1982.FileChangeSemantics
 import Linglib.Phenomena.Anaphora.CrossSentential
 
 /-!
