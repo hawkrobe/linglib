@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Dynamic.DiscourseRef
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
+import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
+import Linglib.Core.Assignment
 
 /-!
 # Kind Anaphora: Static-Dynamic Bridge
@@ -208,53 +209,59 @@ end Projection
 
 section DPLBridge
 
-open Semantics.Dynamic.DPL (DPLRel)
+open Semantics.Dynamic.Core.DynProp (DRS dneg test)
+open _root_.Core (Assignment)
 
 variable {W E : Type*}
 
-/-- Embed a homogeneous DPL assignment (Nat → E) into a heterogeneous
-    Krifka-style assignment (Nat → DRefVal W E) by wrapping every value
-    in `.entity`. -/
-def embedAssign (g : Nat → E) : HAssign W E :=
+/-- Embed a homogeneous DPL-style assignment (`Assignment E = Nat → E`,
+    @cite{groenendijk-stokhof-1991}) into a heterogeneous Krifka-style
+    assignment (`Nat → DRefVal W E`) by wrapping every value in `.entity`. -/
+def embedAssign (g : Assignment E) : HAssign W E :=
   λ n => .entity (g n)
 
-/-- Lift a DPL relation to operate on heterogeneous assignments via
-    the entity embedding. -/
-def liftDPL (φ : DPLRel E) : DSent W E :=
-  λ g h => ∃ g' h' : Nat → E, embedAssign g' = g ∧ embedAssign h' = h ∧ φ g' h'
+/-- Lift a DPL-style relation (`DRS (Assignment E)`) to operate on
+    heterogeneous assignments via the entity embedding. -/
+def liftDPL (φ : DRS (Assignment E)) : DSent W E :=
+  λ g h => ∃ g' h' : Assignment E, embedAssign g' = g ∧ embedAssign h' = h ∧ φ g' h'
 
-/-- `dNeg` and `DPLRel.neg` have identical structure.
+/-- `dNeg` and `test (dneg φ)` (the substrate form of @cite{groenendijk-stokhof-1991}'s
+    DPL negation) have identical structure.
 
     Both are: `λ g h => g = h ∧ ¬∃ k, φ g k`.
-    @cite{krifka-2026}'s negation (34) generalizes DPL negation
-    (@cite{groenendijk-stokhof-1991}) from homogeneous (Nat → E)
-    to heterogeneous (Nat → DRefVal W E) assignments. The structure
-    is preserved because the projection mechanism depends only on
-    `g = h`, which is the same in both systems. -/
+    @cite{krifka-2026}'s negation (34) generalizes DPL negation from homogeneous
+    (`Nat → E`) to heterogeneous (`Nat → DRefVal W E`) assignments. The structure
+    is preserved because the projection mechanism depends only on `g = h`. -/
 theorem dNeg_structure (φ : DSent W E) (g h : HAssign W E) :
     dNeg φ g h ↔ (g = h ∧ ¬∃ k, φ g k) :=
   Iff.rfl
 
-theorem dplNeg_structure (φ : DPLRel E) (g h : Nat → E) :
-    DPLRel.neg φ g h ↔ (g = h ∧ ¬∃ k, φ g k) :=
-  Iff.rfl
+theorem dplNeg_structure (φ : DRS (Assignment E)) (g h : Assignment E) :
+    test (dneg φ) g h ↔ (g = h ∧ ¬∃ k, φ g k) := by
+  simp only [test, dneg]
+  exact ⟨fun ⟨heq, hneg⟩ => ⟨heq, heq ▸ hneg⟩,
+         fun ⟨heq, hneg⟩ => ⟨heq, heq ▸ hneg⟩⟩
 
 /-- Negation commutes with the DPL→heterogeneous embedding.
 
-    Lifting a DPL negation produces the same result as negating the
+    Lifting a DPL-style negation produces the same result as negating the
     lifted relation, modulo the entity-only constraint on assignments. -/
-theorem liftDPL_neg (φ : DPLRel E) (g h : HAssign W E) :
-    liftDPL (W := W) (DPLRel.neg φ) g h →
+theorem liftDPL_neg (φ : DRS (Assignment E)) (g h : HAssign W E) :
+    liftDPL (W := W) (test (dneg φ)) g h →
     dNeg (liftDPL (W := W) φ) g h := by
   intro ⟨g', h', hg, hh, hEq, hNex⟩
+  -- hEq : g' = h'  (test's first conjunct)
+  -- hNex : ¬∃ k, φ h' k  (test (dneg φ) puts the dneg-condition at the second arg)
   refine ⟨?_, ?_⟩
   · rw [← hg, ← hh]; exact congrArg embedAssign hEq
   · intro ⟨k, g'', h'', hg'', hk, hφ⟩
     rw [← hg] at hg''
-    have : g' = g'' := by
+    have hgeq : g' = g'' := by
       have := congrFun hg''.symm
       funext n; have := this n; simp [embedAssign] at this; exact this
-    exact hNex ⟨h'', this ▸ hφ⟩
+    -- h' = g' (hEq.symm) = g'' (hgeq), so hφ : φ g'' h'' ↦ φ h' h''
+    have hh'eq : h' = g'' := hEq.symm.trans hgeq
+    exact hNex ⟨h'', hh'eq ▸ hφ⟩
 
 end DPLBridge
 

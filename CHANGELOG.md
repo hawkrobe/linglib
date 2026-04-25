@@ -4,6 +4,95 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.338] - 2026-04-24
+
+### Clark1983 Bool→Prop refactor + 3-tier subgoal + PreparatoryCondition substrate (option B audit)
+
+Continuation of the substrate-grounding line of work after Roberts2023 / Ruytenbeek2017. Sweep had identified `Clark1983.lean` as a HIGH-priority substrate-disconnect: the file imports `Core.Discourse.IllocutionaryForce` (containing Searle's `PreparatoryCondition` hierarchy) but never operationalizes it despite §11 being titled "Bridge to indirect speech acts" and using *Do you know what time it is?* → request as the canonical example. Four-agent audit (linguistics-domain-expert with PDF, mathlib-reviewer, integration-auditor, cross-framework-reconciler) returned strong convergence on `same_mechanism` being vacuous (proved via `Classical.or_iff_not_imp_left.mpr id` — pure law-of-excluded-middle).
+
+**PDF ground-truth verification** (against `Clark, H.H. _Making sense of nonce sense_ 1983 (1).pdf`, pp. 297–331):
+- Page citations spot-checked OK (pp. 300, 304, 313–321, 325–328 all verified).
+- §-numbering hallucination CONFIRMED: file claimed §1–§12 numbered structure; paper has unnumbered named sections only. Renamed file sections to §A–§L with explicit disclaimer that these are Lean-file organization, not paper structure.
+- Table 9.2 example errors CONFIRMED: `denominalNoun` had "*a waller*, *a cupper*" (not in paper); paper p.303 §4 gives *Nixonite, bicycler, saxophonist*. `eponymousVerb` had "*to do a Nixon*" (Nixon is paper's eponymous-NOUN example *Nixonite*; eponymous-verb examples are *do a Napoleon*, *do a Manhattan*, *do a Pimlico* per p.315). `nonPredicatingAdj` missing *marine* (Levi 1978 attribution per p.304). All fixed.
+- 3-tier subgoal structure CONFIRMED: PDF pp. 325–326 explicitly numbers Ed's hierarchy in three subgoals; subgoal (2) is the substantive convention-recognition (NOT "a CG-based bridge" as the previous file's docstring claimed). The previous `GoalHierarchy` collapsed it to a 2-tier (direct, intended) + CG.
+
+**Refactor** (Clark1983.lean: 1007 → 733 LOC, -27%):
+
+Dropped (decorative imports / dead inductives / encoded-conclusions):
+- `Mathlib.Data.Fintype.BigOperators` was load-bearing (kept it for `Fintype.card_fun` in non-denumerability proof; audit was wrong here)
+- `Core.Discourse.Commitment` import (zero references past import)
+- `Core.Discourse.Intentionality` import + `open ... (IntentionalState PsychMode)` (decorative; opened then never used)
+- `ParserArchitecture` enum (declared, never destructured)
+- `ParserFailure` enum (declared, never destructured; failure modes only in prose)
+- `IndirectUseProperty` enum (declared, named the five properties, but no theorem mentioned a constructor)
+- All three deletions move the type-name content into prose docstrings under §C / §E
+
+NEW substantive content (the 3-tier substrate operationalized):
+- `GoalHierarchy` gains `invokesConvention : Prop` field exposing subgoal (2) — the meta-recognition that the speaker invokes a convention licensing direct → intended. Conventional uses populate it with `True`; source classes populate it with substantive content.
+- `IndirectAct W` (NEW): direct content + intended content + `prepCondition : Option PreparatoryCondition` consuming `Core.Discourse.IllocutionaryForce`'s Searle hierarchy + common ground.
+- `IndirectAct.toGoalHierarchy` projection populates subgoal (2) via `prepCondition.isSome = true`.
+- `DenominalVerbConvention.toGoalHierarchy` projection populates subgoal (2) via the conjunction of conditions (b–d) and (f) — the two universal-quantifier fields the structure already requires.
+- `timeQuestionExample : IndirectAct Unit` with `prepCondition := some .knowledge` realizing Clark's canonical *Do you know what time it is?* → request example.
+- `time_question_routes_via_knowledge` theorem makes the substrate connection explicit (`prepCondition = some .knowledge` by `rfl`) — same `.knowledge` substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean` and `Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean` consume.
+
+Replaced `same_mechanism` (vacuous, proved via LEM):
+- New `goal_hierarchy_innovative_iff` exposes the substrate-level criterion as `Iff.rfl`.
+- New `shared_innovativeness_criterion` proves both `IndirectAct.toGoalHierarchy` and `DenominalVerbConvention.toGoalHierarchy` projections respect the `isInnovative` classification at the source-class criterion. Two `Iff.rfl` proofs witness that the projections preserve the classification — the substrate is a uniform interface, not theory-specific.
+
+Bool → Prop migration (~15 sites): `GoalHierarchy.directMeaning`/`intendedMeaning`, `DenominalVerbConvention.situation`/`nounDenotation`, `ContextualMeaning.directMeaning`/`compute` all moved from `W → Bool` to `W → Prop`. `StereosWorld` fields stay `Bool` (physical world-state, not propositional positions). Meaning lambdas now `λ w => w.feature = true`. Proofs updated to use `simp` over Prop equality where `congr_fun` previously gave Bool equality.
+
+Other fixes:
+- `bombecksGoalHierarchy.invokesConvention := True` (was the substantive CG-entailment Prop) — aligned with `stereosMeaning.evaluate`'s output so `stereos_bombeck` works as record equality. The substantive convention-witness for this class of cases lives in `DenominalVerbConvention.toGoalHierarchy` and `IndirectAct.toGoalHierarchy`, not in occasion-specific `ContextualMeaning` evaluations.
+- `push_neg` → `push Not` (deprecated tactic)
+- Module docstring acknowledges the §-numbering disclaimer and substrate hookup.
+
+Build green (1813 jobs); zero new `sorry`/`native_decide`.
+
+Deferred (out of option-B scope):
+- FiniteLexicon ↔ LU-RSA Lexicon reconciliation (parallel "lexicon" types in §C and §H; need a bridge theorem or one of the two should go)
+- `bombecksCG` non-tautology (CG is constructed to bake in the ownersCommon conclusion; pragmatic inference is bypassed; would need LU-RSA marginalization or `ErkHerbelot2024` PMF-over-scenarios substrate to derive the shifted reading)
+- Pustejovsky GL / Asher-Lascarides type-coercion sibling engagement (`DenominalVerbConvention` is structurally GL qualia-exploitation; cross-framework agent flagged the silent disagreement)
+- Frame Semantics / Construction Grammar engagement
+- Engagement with Pinker 1989, Lieber 2004, Sutton 2017/2024, Recanati / Carston
+
+## [0.230.337] - 2026-04-24
+
+### Harmonic Serialism substrate + McPherson & Lamont 2026 ranking-paradox theorem
+
+Three new substrate files in `Core/Constraint/OT/` plus a stub study file landing the headline ERC-paradox theorem from the motivating paper. Grounded in @cite{pruitt-2023}'s synthesis of the rule/constraint × serial/parallel field, with @cite{lamont-2022b}'s reframing of directionality as an EVAL property (not a constraint property).
+
+NEW: `Core/Constraint/OT/EvalMode.lean` (~140 LOC).
+- `inductive Direction | leftToRight | rightToLeft`
+- `inductive EvalMode | parallel | directional (dir : Direction)`
+- `evalModeLE m a b : Prop` — comparison of position-vector profiles under a chosen mode; `parallel` defers to existing `LexLE` (Layered Grounding)
+- `evalModeLE_singleton` — single-violation degeneracy: all `EvalMode`s agree with `Nat ≤` when comparing `[k]` and `[k']`. Structural bridge to count-based world.
+
+NEW: `Core/Constraint/OT/Iteration.lean` (~120 LOC). Pure combinator.
+- `iterateStep (gen : C → Finset C) (eval : Finset C → Finset C)` — returns optimal **set** (not `Option C`); ties are visible per @cite{pruitt-2023} divergent-tie discussion. Does not paper over with `Classical.choice`.
+- `IsFixedPoint c := iterateStep gen eval c = {c}` — convergence as singleton optimum
+- `iterateGen` with explicit `pick : Finset C → Option C` for tie-breaking and `Nat` step bound (HS not in general guaranteed to converge per @cite{lamont-2022b})
+- `iterateGen_idempotent_at_fixedPoint` (durability of convergence) and `harmonicImprovement` (parametric in harmony order so the lemma stays agnostic about EvalMode)
+- Ranking is **durable** per @cite{pruitt-2023} §3.1 — `eval` is fixed across iterations; no `Nat → Eval` parameter
+
+NEW: `Core/Constraint/OT/HarmonicSerialism.lean` (~150 LOC).
+- `HSDerivation C n` structure bundling `gen`, `ranking`, `evalMode`, length-witness
+- `optimalSet` reuses existing `Tableau.optimal` via inner-tableau construction (Layered Grounding — does not duplicate parallel optimization)
+- `Converged` as the per-`HSDerivation` specialization of `IsFixedPoint`
+- Smoke test: 2-character toy alphabet, trivial-GEN convergence demonstrated end-to-end
+- Directional `EvalMode` arms currently route to parallel optimum as a stub; true directional dispatch arrives with a `DirectionalTableau` consumer (deferred until the McPherson & Lamont 2026 Poko derivations land in a follow-up study file)
+- Docstring explicitly notes @cite{pruitt-2023} Table 1's negative finding that HS does NOT solve counterfeeding underapplication — does not oversell HS as the serial OT solution to opacity
+
+NEW: `Phenomena/Tone/Studies/McPhersonLamont2026.lean` (~110 LOC). Stub.
+- Ships the ranking-paradox theorem from @cite{mcpherson-lamont-2026} eq. 59 on existing `Core.Constraint.OT.ERC` infrastructure — independent of the new HS substrate
+- `parallel_OT_inadequate : ¬ ERCSet.consistent pokoSupport` proved structurally (mathlib's `Equiv.Perm` Fintype builds via `Quot.lift` and stalls under `decide`; the structural argument is anyway closer to the paper's exposition)
+- Defers full Poko derivations, the directional-HS positive demonstration, and the autosegmental floating-tone extension to a follow-up study file once `DirectionalTableau` materializes
+
+NEW bib entries (8): `mcpherson-lamont-2026` (DOI 10.1017/S0952675726100268), `pruitt-2023` (DOI 10.1146/annurev-linguistics-031220-120748), `lamont-2022b` (DOI 10.7275/30850384, UMass dissertation), `eisner-2002` (DOI 10.3115/1073083.1073095), `eisner-2000` (ACL Anthology URL, no DOI for COLING), `lamont-2022a` (LI 53:617-632, DOI omitted pending verification), `mccarthy-2008b` (Phonology 25:271-319, DOI omitted), `mccarthy-2010` (Lang Ling Compass 4:1001-1018, DOI omitted). Per CLAUDE.md hallucination-prevention: omit DOI rather than guess.
+
+Out of scope (explicitly): DirectionalNoisyHG / serial MaxEnt (theoretically empty cell per Lamont reframing), generic violation-type parameterization of `NamedConstraint` (cascading refactor through Weighted/MaxEnt/NoisyHG), StratalHS (deferred), OT-CC / OI / Serial Markedness Reduction / HS+positional faithfulness (deferred — substrate doesn't preclude), the rule-vs-constraint axis unification (rule branch lives in `Theories/Phonology/Process/RuleBased/`), Pruitt's Table 1 cells as theorems, full McPherson & Lamont study file (Poko derivations, autosegmental floating-tone extension, full Hasse diagram), `Theories/Phonology/Tone/Constraints.lean` for shared tonal markedness.
+
+Architectural commitment: substrate is a **sibling** of `Core/Constraint/OT/{Basic,ERC,Antimatroid}.lean` and `Theories/Phonology/OptimalityTheory/`, modifying no existing file. The current stack is load-bearing for ~30 study files; adding directional dispatch is a local change to one match arm in `optimalSet`, not a refactor.
+
 ## [0.230.336] - 2026-04-24
 
 ### Discourse/ restructure: substrate enhancement — `Connectives/Assignment.lean` (Stage A of DPL dissolution)
