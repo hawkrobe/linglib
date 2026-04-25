@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 
 /-!
 # Nondeterminism Effect: Plural/Choice Alternatives

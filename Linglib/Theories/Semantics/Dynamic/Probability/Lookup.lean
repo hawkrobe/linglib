@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Context
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 

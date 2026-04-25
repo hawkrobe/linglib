@@ -20,7 +20,7 @@
 -/
 
 import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 
 namespace Semantics.Dynamic.PLA
 

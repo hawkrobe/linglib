@@ -32,7 +32,7 @@ Instead of DRS boxes, CDRT uses:
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 
 namespace Semantics.Dynamic.CDRT

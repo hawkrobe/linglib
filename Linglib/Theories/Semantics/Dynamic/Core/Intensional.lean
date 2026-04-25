@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
-import Linglib.Theories.Semantics.Dynamic.Core.DynProp
+import Linglib.Theories.Discourse.Connectives.Defs
 import Linglib.Theories.Semantics.Dynamic.Context
 import Mathlib.Data.Set.Basic
 

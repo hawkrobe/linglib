@@ -9,7 +9,7 @@ Core update operations for dynamic semantics over `Possibility W E` states.
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 
 namespace Semantics.Dynamic.Core
 

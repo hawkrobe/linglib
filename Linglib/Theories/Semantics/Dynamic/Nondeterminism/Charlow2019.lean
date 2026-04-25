@@ -9,7 +9,7 @@ are retained.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Context
 
 namespace Semantics.Dynamic.Charlow2019

@@ -30,8 +30,14 @@ import Linglib.Core.Logic.Quantification.NumberTree
 import Linglib.Core.Logic.Quantification.Lattice
 import Linglib.Core.Logic.Quantification.Logicality
 import Linglib.Core.Logic.Quantification.Polyadic
+import Linglib.Core.Logic.Opposition.Aristotelian
+import Linglib.Core.Logic.Opposition.Atoms
+import Linglib.Core.Logic.Opposition.Bitstring
+import Linglib.Core.Logic.Opposition.Diagram
+import Linglib.Core.Logic.Opposition.Partition
+import Linglib.Core.Logic.Opposition.Probabilistic
+import Linglib.Core.Logic.Opposition.Square
 import Linglib.Core.Logic.PolarizedIndividuals
-import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Core.IntensionalLogic.Rigidity
@@ -903,9 +909,6 @@ import Linglib.Theories.Semantics.Focus.PolarityLevel
 import Linglib.Phenomena.TemporalConnectives.Studies.AlstottAravind2026
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
-import Linglib.Phenomena.Focus.AdditiveParticles.Data
-import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
-import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Ahn2015
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
@@ -939,6 +942,7 @@ import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Attitudes.Studies.Montague1973
 import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Attitudes.Studies.BondarenkoElliott2026
+import Linglib.Phenomena.Attitudes.Studies.Pasternak2019
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging
@@ -1105,6 +1109,9 @@ import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025
 import Linglib.Phenomena.Focus.Studies.OzyildizEtAl2025
+import Linglib.Phenomena.Focus.AdditiveParticles.Data
+import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Ahn2015
+import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Focus.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
@@ -1123,14 +1130,14 @@ import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gender.Studies.Kramer2020
 import Linglib.Phenomena.Gradability.ComparisonClass
-import Linglib.Phenomena.Gradability.Studies.Rett2015
+import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
-import Linglib.Phenomena.Gradability.Studies.Nouwen2024
 import Linglib.Phenomena.Gradability.Studies.Fine1975
 import Linglib.Phenomena.Gradability.Studies.Kamp1975
 import Linglib.Phenomena.Gradability.Studies.Klein1980
+import Linglib.Phenomena.Gradability.Studies.Nouwen2024
 import Linglib.Phenomena.Gradability.Studies.Partee2010
-import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
+import Linglib.Phenomena.Gradability.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
 import Linglib.Phenomena.Comparison.Compare
@@ -1260,6 +1267,9 @@ import Linglib.Theories.Semantics.BSML.FreeChoice
 import Linglib.Theories.Semantics.BSML.Negation
 import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Phenomena.Modality.Studies.Aloni2022
+import Linglib.Phenomena.Modality.Studies.Cariani2013
+import Linglib.Phenomena.Modality.Studies.Heim1992
+import Linglib.Phenomena.Modality.Studies.Lassiter2017
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.CarianiSantorio2018
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
@@ -1669,17 +1679,17 @@ import Linglib.Phenomena.WordOrder.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Discourse.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
-import Linglib.Theories.Semantics.Dynamic.Core.DynProp
+import Linglib.Theories.Discourse.Connectives.Defs
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Context
 import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
-import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
+import Linglib.Theories.Discourse.Connectives.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 -- Theories: Dynamic Semantics — ABLE (Beaver 2001)
 import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
@@ -1936,6 +1946,9 @@ import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
 import Linglib.Theories.Semantics.Quantification.PolarizedIndividuals
 import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Theories.Semantics.Quantification.Syllogistic.Defs
+import Linglib.Theories.Semantics.Quantification.Syllogistic.Forms
+import Linglib.Theories.Semantics.Quantification.Syllogistic.Square
 import Linglib.Theories.Semantics.Quantification.Lexicon
 import Linglib.Theories.Semantics.Quantification.Exceptive
 import Linglib.Theories.Semantics.Quantification.Possessive
@@ -2398,10 +2411,13 @@ import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SMG
 -- Theories: SDS
+import Linglib.Theories.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
--- SDS/Examples.lean moved to Phenomena/Polysemy/Studies/ErkHerbelot2024.lean
+import Linglib.Theories.Semantics.Probabilistic.SDS.GraphicalModel
+import Linglib.Theories.Semantics.Probabilistic.SDS.JointPosterior
 import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
+import Linglib.Theories.Semantics.Probabilistic.SDS.ScenarioMix
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdSemantics
 -- Storment2026 mathlib-style refactor: VerbCore↔smuggling bridge,
