@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
+import Linglib.Theories.Discourse.Boxes.Syntax
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Discourse.Connectives.WeakestPrecondition
 import Linglib.Theories.Discourse.Connectives.CCP
@@ -562,9 +562,9 @@ where
     | _, [] => true
     | bound, c :: cs => allBound bound c && allBoundConds (bound ++ adr c) cs
 
-example : allBound [] exManAdoresWoman = true := by native_decide
-example : allBound [] exDonkey = true := by native_decide
-example : allBound [] exFree = false := by native_decide
+example : allBound [] exManAdoresWoman = true := by decide
+example : allBound [] exDonkey = true := by decide
+example : allBound [] exFree = false := by decide
 
 section Proposition1
 

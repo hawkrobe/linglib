@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.330] - 2026-04-24
+
+### Discourse/ restructure Phase 3a: Boxes/ subtree (2 file moves + native_decide → decide)
+
+`git mv`:
+- `Theories/Semantics/Dynamic/Core/DRSExpr.lean` → `Theories/Discourse/Boxes/Syntax.lean` (the K&R-anchored DRS box syntax: `DRSExpr` inductive, `adr`, `occurs`, `acc`, `allOccurring`, `isFree`, `isProper`)
+- `Theories/Semantics/Dynamic/Core/Accessibility.lean` → `Theories/Discourse/Boxes/Accessibility.lean` (the Muskens-anchored interpretation bridge: `interp : DRSExpr → DRS (Assignment E)`, `mergingLemma`, `reduce`/`reduce_sound`, `freshInv`, `proposition_1`, cylindric algebra bridges)
+
+Naming: the directory is `Boxes/` (not `Syntax/`) because DRS-as-boxes is one of several possible surface representations; `Syntax/` would be too generic and would clash with future alternative surfaces (CCG-style λ-DRT, etc.). The file inside is `Syntax.lean` (the syntax of boxes) — mathlib pattern of having the boxed-content file named for what's inside the directory.
+
+Import paths updated in 4 consumers (`Phenomena/Anaphora/Studies/KampReyle1993`, `Theories/Semantics/Dynamic/DRT/Basic`, `Theories/Interfaces/SemanticsDiscourse/CenteringDRT`, plus the now-internal cross-import between `Boxes/Syntax` and `Boxes/Accessibility`) plus `Linglib.lean`. Namespaces unchanged.
+
+**Bonus content edit**: replaced `native_decide` with `decide` in 6 example assertions (`Boxes/Syntax.lean` lines 168/182/187 + `Boxes/Accessibility.lean` lines 565/566/567) per `feedback_proof_style.md`. `decide` is kernel-checked; `native_decide` is not. The 6 examples (`isProper exManAdoresWoman`, `isProper exDonkey`, `isProper exFree`, `allBound [] exManAdoresWoman`, etc.) build in ~3s with `decide` — small enough that the kernel-check cost is negligible.
+
+614 + 370 jobs green for the moved files + their direct consumers (`KampReyle1993`, `DRT.Basic`, `CenteringDRT`). 2 file moves, 4 import sites updated, 6 native_decide replaced with decide.
+
+Deferred to Phase 3b: splitting `Dynamic/DRT/Basic.lean` into K&R-anchored content (→ `KampReyle1993.lean`) + LDRT substrate (→ new `Connectives/Layered.lean`) + denial details (→ `VanDerSandtMaier2003.lean`).
+
 ## [0.230.329] - 2026-04-24
 
 ### Discourse/ restructure Phase 2b (partial): Effects/ file merges (Nondeterminism + Probability)

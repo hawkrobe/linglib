@@ -165,7 +165,7 @@ def exManAdoresWoman : DRSExpr :=
   .box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]]
 
 /-- The example DRS is proper: all drefs (1, 2) are introduced by the box. -/
-example : isProper exManAdoresWoman = true := by native_decide
+example : isProper exManAdoresWoman = true := by decide
 
 /-- "If a farmer owns a donkey, he beats it" as a syntactic DRS.
 
@@ -179,11 +179,11 @@ def exDonkey : DRSExpr :=
 
 /-- The donkey sentence is proper: drefs 1, 2 are introduced in the
 antecedent and accessible in the consequent. -/
-example : isProper exDonkey = true := by native_decide
+example : isProper exDonkey = true := by decide
 
 /-- "He₁ stinks" (with no antecedent) is NOT proper: dref 1 is free. -/
 def exFree : DRSExpr := .box [] [.atom 0 [1]]
 
-example : isProper exFree = false := by native_decide
+example : isProper exFree = false := by decide
 
 end Semantics.Dynamic.Core.DRSExpr

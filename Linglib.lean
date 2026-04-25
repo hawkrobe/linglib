@@ -1682,8 +1682,8 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 import Linglib.Theories.Discourse.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Theories.Discourse.DiscourseRef
-import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
-import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
+import Linglib.Theories.Discourse.Boxes.Accessibility
+import Linglib.Theories.Discourse.Boxes.Syntax
 import Linglib.Theories.Discourse.Connectives.Defs
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Discourse.Effects.HasFiberedLookup
