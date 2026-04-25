@@ -140,6 +140,8 @@ import Linglib.Core.Constraint.Evaluation
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.Antimatroid
+import Linglib.Core.Constraint.OT.EvalMode
+import Linglib.Core.Constraint.OT.Iteration
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.PartitionDT
 import Linglib.Core.Agent.BayesianUpdate
@@ -1680,6 +1682,7 @@ import Linglib.Phenomena.WordOrder.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
+import Linglib.Theories.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Theories.Semantics.Dynamic.DiscourseRef

@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.336] - 2026-04-24
+
+### Discourse/ restructure: substrate enhancement — `Connectives/Assignment.lean` (Stage A of DPL dissolution)
+
+Pre-work for Phase 4f (DPL dissolution). Discovered while planning that the substrate's `AssignmentStructure` typeclass (in `Dynamic/Core/DynamicTy2.lean`) **cannot be instantiated for `Assignment E := Nat → E`** — the typeclass takes abstract drefs `S → E`, but only *projection* drefs make sense for `Assignment E` (there's no canonical way to extend `g : Assignment E` along, say, `λ g => g 0 + g 1`). This is why Phase 1 exploration found "0 `AssignmentStructure` instances anywhere."
+
+The DPL operators `DPLRel.exists_`/`DPLRel.forall_` were therefore providing a *real* service the substrate lacked — clean syntax for dynamic quantification at a `Nat` index. Substrate-first DPL refactoring requires this gap to close first.
+
+NEW: `Theories/Semantics/Dynamic/Connectives/Assignment.lean` (105 LOC). Substrate operations specialized to `Assignment E`:
+- `randomAssignAt n : DRS (Assignment E)` — open file card `n`
+- `existsAt n φ` — `dseq (randomAssignAt n) φ` with direct unfolding lemma
+- `forallAt n φ` — `test (dneg (existsAt n (test (dneg φ))))` with direct truth-condition lemma
+- `closeAt φ` — `test (closure φ)` (alias)
+
+These are paper-anchored alias targets:
+| Substrate | DPL | CDRT | FCS | PLA |
+|---|---|---|---|---|
+| `existsAt n` | `[x_n] ∧ ·` | `[u_n]; ·` | file-card | `∃x_n` |
+| `forallAt n` | `∀x_n` | `[[u_n]]` | (n/a) | `∀x_n` |
+
+After Stage B + C land, `DPLRel.exists_` etc. delete and consumers use `existsAt n` directly.
+
+76 jobs green for the new file. Linglib.lean updated with one new import.
+
 ## [0.230.335] - 2026-04-24
 
 ### Discourse/ restructure: Coherence/ wrapper flattened + Charlow2019.lean dissolved
