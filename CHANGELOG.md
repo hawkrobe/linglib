@@ -4,6 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.329] - 2026-04-24
+
+### Discourse/ restructure Phase 2b (partial): Effects/ file merges (Nondeterminism + Probability)
+
+(Tag bump 0.230.328 → 0.230.329 because a concurrent session also claimed 0.230.328 for the Cariani2013 audit cleanup below; commit `b7af2924` was the actual change.)
+
+Continuing the discourse restructure. Phase 2b consolidates per-effect modules into single files at `Theories/Discourse/Effects/`. Two merges land in this commit; the third (`ContextFilter` + `Update` → `Connectives/CCP.lean`) defers to a follow-up commit because it would balloon `CCP.lean` past 1200 LOC and warrants its own atomic change.
+
+`git rm` + new file `Theories/Discourse/Effects/Nondeterminism.lean` (180 LOC):
+- Combines `Dynamic/Nondeterminism/Basic.lean` (62 LOC; `NDMeaning` Set monad) and `Dynamic/Nondeterminism/PointwiseUpdate.lean` (118 LOC; Charlow's `liftPW`/`lowerPW` with `lowerPW_liftPW`, `liftPW_injective`, `liftPW_preserves_distributive`, `liftPW_lowerPW_not_id` proved theorems)
+- Both source files preserved their original namespaces (`Semantics.Dynamic.Nondeterminism` and `Semantics.Dynamic.Core.PointwiseUpdate`); merged file declares both blocks separately so `open` lines in consumers stay valid
+- 1 consumer updated: `Phenomena/Plurals/Studies/Charlow2021/CumulativeReadings.lean`
+- `Dynamic/Nondeterminism/Charlow2019.lean` (paper-anchored study) stays in place pending Phase 4e
+
+`git rm` + new file `Theories/Discourse/Effects/Probability.lean` (467 LOC):
+- Combines `Dynamic/Probability/Basic.lean` (`ProbMonad`, `PState`, `CondProbMonad`, `ChoiceProbMonad`, threshold semantics — abstract probability-monad infrastructure for Grove & White's PDS) and `Dynamic/Probability/Lookup.lean` (`BayesianState`, `instBayesianHasFiberedLookup`, `supportFiber`, `uniformFiber` — the `HasFiberedLookup PMF` instance + Bayesian↔Charlow bridges)
+- Single namespace `Semantics.Dynamic.Probabilistic` shared by both source files; merged into one block
+- Zero external consumers (both files were imported only by `Linglib.lean`)
+
+702 + 2529 jobs green for the affected build slices. 2 file pairs merged into 2 files; 1 consumer updated; namespaces unchanged.
+
 ## [0.230.328] - 2026-04-24
 
 ### Cariani2013 four-agent audit cleanup (Tier 1+2+3+4)
