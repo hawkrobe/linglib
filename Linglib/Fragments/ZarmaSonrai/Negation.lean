@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
@@ -40,18 +40,43 @@ the complement clause, not with the trigger class itself.
 
 namespace Fragments.ZarmaSonrai.Negation
 
+open Core.Lexical.NegMarker
+
 -- ════════════════════════════════════════════════════
 -- § 1. Standard Negation
 -- ════════════════════════════════════════════════════
 
-/-- Negation marker for imperfective aspect contexts. -/
-def ipfvNeg : String := "si"
+/-- *si* — imperfective negation marker. Aspect-conditioned alternation
+    with perfective *mana*/*batu*. Parallel to Mandarin's bù/méi split. -/
+def si : NegMarkerEntry :=
+  { form := "si"
+  , morphemeType := .particle
+  , position := .preverbal }
 
-/-- Negation marker for perfective aspect contexts (variant 1). -/
-def pfvNeg : String := "mana"
+/-- *mana* — perfective negation marker (one of two variants). -/
+def mana : NegMarkerEntry :=
+  { form := "mana"
+  , morphemeType := .particle
+  , position := .preverbal }
 
-/-- Negation marker for perfective aspect contexts (variant 2). -/
-def pfvNeg2 : String := "batu"
+/-- *batu* — perfective negation marker (second variant; also surfaces
+    as a verb 'wait/delay'). -/
+def batu : NegMarkerEntry :=
+  { form := "batu"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The Zarma-Sonrai negation system: three aspect-conditioned markers.
+    *si* (imperfective) listed first per ordering convention; the two
+    perfective variants follow. The Fragment-side joint consumed by
+    `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "dje" [si, mana, batu]
+
+/-- Legacy String accessors (used by `enNegatorForAspect` in this file). -/
+def ipfvNeg : String := si.form
+def pfvNeg : String := mana.form
+def pfvNeg2 : String := batu.form
 
 -- ════════════════════════════════════════════════════
 -- § 2. Expletive Negation Markers

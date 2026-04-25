@@ -18,7 +18,6 @@ in `Theories/Semantics.Intensional/Reference/`.
 -/
 
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Reference.DirectReference
 

@@ -34,7 +34,6 @@ namespace KayFillmore1999
 
 open FillmoreKayOConnor1988
 open Features (Acceptability)
-open Paradigms.Measurement
 
 /-- Check if a string contains a substring. -/
 def containsSubstr (s : String) (sub : String) : Bool :=

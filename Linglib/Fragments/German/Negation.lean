@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # German Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 German expresses standard negation with the particle *nicht*, which
 appears after the finite verb in main clauses and before the non-finite
@@ -26,11 +26,30 @@ no structural changes beyond the negation marker itself.
 
 namespace Fragments.German.Negation
 
-/-- The German standard negation marker. -/
-def negMarker : String := "nicht"
+open Core.Lexical.NegMarker
 
-/-- *kein* — negative determiner (fuses negation + indefinite article). -/
+/-- *nicht* — German's standard negation particle.
+    Attaches to the VP at clause-final position; surfaces after the
+    finite verb in V2 main clauses (*Ich singe nicht*) and before the
+    non-finite verb in periphrastic constructions (*Er hat nicht
+    gelesen*). The V2/SOV alternation is why WALS Ch 143A classifies
+    German as `.type1Type2` (mixed NegV / VNeg) rather than a single
+    position; the `position` field uses `.other` to flag this. -/
+def nicht : NegMarkerEntry :=
+  { form := "nicht"
+  , morphemeType := .particle
+  , position := .other }
+
+/-- *kein* — negative determiner (fuses negation + indefinite article).
+    Lives here as a lexical fact about German negation morphology;
+    the morphosyntactic analysis of NQ-type negative quantifiers in
+    non-NC languages is a separate axis from the operator. -/
 def negDeterminer : String := "kein"
+
+/-- The German negation system: a single particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "deu" [nicht]
 
 /-- A negation example showing symmetric structure. -/
 structure NegExample where
@@ -79,8 +98,6 @@ def allExamples : List NegExample :=
   [present, presentPerfect, preterite, subjunctiveII, future]
 
 /-! ## Verification -/
-
-theorem negMarker_is_nicht : negMarker = "nicht" := rfl
 
 private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 

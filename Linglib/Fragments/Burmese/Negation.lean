@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Burmese Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Burmese expresses standard negation with a circumfix: prefix *ma-* on
 the verb and suffix *-bu* replacing the TAM markers of the affirmative.
@@ -28,11 +28,30 @@ future (*-laimeh*), but the negative collapses all three to *ma-...-bu*.
 
 namespace Fragments.Burmese.Negation
 
-/-- The Burmese negative prefix. -/
+open Core.Lexical.NegMarker
+
+/-- The Burmese negative prefix. Component of the bipartite *ma-...-bu*
+    circumfix; see `circumfix` for the substrate-typed entry. -/
 def negPrefix : String := "ma-"
 
-/-- The Burmese negative suffix (replaces TAM markers). -/
+/-- The Burmese negative suffix (replaces TAM markers). Component of the
+    bipartite *ma-...-bu* circumfix. -/
 def negSuffix : String := "-bu"
+
+/-- *ma-...-bu* — Burmese's bipartite negation circumfix.
+    The prefix attaches to the verb stem; the suffix replaces the
+    affirmative TAM markers (realis *-deh*, irrealis *-meh*, future
+    *-laimeh*), neutralizing TAM distinctions. WALS classifies Burmese
+    as `.doubleNegation` (Ch 112A). -/
+def circumfix : NegMarkerEntry :=
+  { form := "ma-...-bu"
+  , morphemeType := .doubleNeg
+  , position := .discontinuous }
+
+/-- The Burmese negation system: a single bipartite circumfix.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "mya" [circumfix]
 
 /-- A Burmese negation paradigm entry showing TAM neutralization. -/
 structure NegParadigmEntry where
@@ -70,8 +89,6 @@ def burmeseTAM : TAMAvailability :=
 
 /-! ## Verification -/
 
-theorem negPrefix_is_ma : negPrefix = "ma-" := rfl
-theorem negSuffix_is_bu : negSuffix = "-bu" := rfl
 theorem sa_paradigm_size : saParadigm.length = 3 := by native_decide
 
 /-- All negative forms are identical: TAM is neutralized. -/

@@ -213,8 +213,7 @@ theorem dataset_size : allData.length = 9 := by native_decide
 -- ════════════════════════════════════════════════════════════════════════════
 
 open Fragments.Mandarin.QuestionParticles (nandao)
-open Semantics.Modality (Kernel Background nandaoFelicitous)
-open Semantics.Attitudes.Intensional (World)
+open Semantics.Modality (Kernel Background nandaoFelicitous World)
 
 /-- The nandao Fragment entry's evidential bias requirement matches the
 empirical generalization: all felicitous nandao-Qs have evidential bias. -/
@@ -233,7 +232,7 @@ theorem fragment_data_epistemic :
 /-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
 Theory predicate to the Fragment's `requiresEvidentialBias = true` and
 the empirical generalization `evidential_bias_necessary`. -/
-theorem kernel_requires_evidence (k : Kernel) (u : Background) (φ : (World → Prop))
+theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ : (World → Prop))
     [DecidablePred φ] (h : nandaoFelicitous k u φ) :
     k.evidenceSupports φ :=
   h.1
@@ -337,22 +336,22 @@ open Core.Question (alt polar
     check on the witness). The witness `p` is supplied externally so
     decidability is concrete; for the noncomputable choice from a
     `SingletonQuestion` use `SingletonQuestion.witness`. -/
-def nandaoFullFelicity (Q : Core.Question World) (k : Kernel) (u : Background)
+def nandaoFullFelicity (Q : Core.Question World) (k : Kernel World) (u : Background World)
     (p : Set World) [DecidablePred p] : Prop :=
   alt Q = {p} ∧ nandaoFelicitous k u p
 
 /-- **Layer-1 projection**: integrated felicity entails the §4
     singleton presupposition. -/
-theorem nandaoFullFelicity_isSingleton {Q : Core.Question World} {k : Kernel}
-    {u : Background} {p : Set World} [DecidablePred p]
+theorem nandaoFullFelicity_isSingleton {Q : Core.Question World} {k : Kernel World}
+    {u : Background World} {p : Set World} [DecidablePred p]
     (h : nandaoFullFelicity Q k u p) :
     Core.Question.IsSingleton Q :=
   ⟨p, h.1⟩
 
 /-- **Layer-2 projection**: integrated felicity entails the §2
     Kernel-bias check on the witness. -/
-theorem nandaoFullFelicity_kernel {Q : Core.Question World} {k : Kernel}
-    {u : Background} {p : Set World} [DecidablePred p]
+theorem nandaoFullFelicity_kernel {Q : Core.Question World} {k : Kernel World}
+    {u : Background World} {p : Set World} [DecidablePred p]
     (h : nandaoFullFelicity Q k u p) :
     nandaoFelicitous k u p :=
   h.2
@@ -365,7 +364,7 @@ theorem nandaoFullFelicity_kernel {Q : Core.Question World} {k : Kernel}
     blocked from nandao licensing. -/
 theorem nandao_polar_no_witness {p₀ : Set World}
     (hne : p₀ ≠ ∅) (hnu : p₀ ≠ Set.univ)
-    (k : Kernel) (u : Background) :
+    (k : Kernel World) (u : Background World) :
     ¬ ∃ (p : Set World) (_ : DecidablePred p),
         nandaoFullFelicity (polar p₀) k u p := by
   rintro ⟨p, _, hfull, _⟩
@@ -377,7 +376,7 @@ theorem nandao_polar_no_witness {p₀ : Set World}
     = {p}` (`alt_declarative`). This makes the §2 ↔ §5 connection
     explicit on the canonical felicitous case. -/
 theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
-    (k : Kernel) (u : Background) :
+    (k : Kernel World) (u : Background World) :
     nandaoFullFelicity (Core.Question.declarative p) k u p ↔
       nandaoFelicitous k u p := by
   unfold nandaoFullFelicity

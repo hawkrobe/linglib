@@ -44,48 +44,23 @@ maximise perceptual discriminability, making colour inherently more
 search-efficient than attributes whose category boundaries are not
 perceptually optimised.
 
-## Current Status: Shallow Integration
+## Bundles using this primitive
 
-Currently, implementations import this module but don't deeply integrate:
-- Proofs still unfold definitions manually rather than using shared lemmas
-- No common typeclass that implementations instantiate
-- Theorems must be re-proven in each implementation
+The `noiseChannel` operation is the per-feature primitive consumed by
+*structure-shaped* bundles, not a typeclass. Every paper picks its own
+reliability parameters, so there is no canonical `NoisySemantics` instance
+per `(U, W)` pair — each study constructs an explicit value of one of:
 
-## Future Work: Deep Integration
+- `RSA.NoisyLex` (`Noisy.lean`) — Product-of-Experts noisy semantics
+  (@cite{degen-etal-2020}, @cite{waldon-degen-2021},
+  @cite{schlotterbeck-wang-2023}). PoE prefix product via
+  `RSA.prefixMeaning` (`Sequential.lean`).
+- `RSA.IncrementalSemantics` (`Incremental.lean`) — extension-counting
+  Boolean semantics (@cite{cohn-gordon-goodman-potts-2019}).
 
-Proper integration would involve:
-
-### 1. Typeclass for Noisy Semantics
-```lean
-class NoisySemantics (U W : Type) where
-  φ : U → W → ℚ
-  noiseParams : FeatureType → NoiseParams
-  φ_decomposition : φ u w = Π features, noiseChannel (noiseParams f) (booleanMatch f u w)
-```
-
-### 2. Generic Theorems
-```lean
-theorem discrimination_from_params [NoisySemantics U W] (f : FeatureType) :
-    featureDiscrimination f = (noiseParams f).discrimination
-```
-
-### 3. Automatic Instantiation
-```lean
-instance : NoisySemantics ReferringExpression Object := DegenSemantics
-instance : NoisySemantics Utterance Meaning := BergenSemantics
-
--- Theorems apply to both automatically
-#check @discrimination_from_params _ _ DegenSemantics
-```
-
-### 4. Information-Theoretic Measures
-The current "discrimination" measure (match - mismatch) is a proxy for
-informativeness but not actual mutual information I(X;Y). A proper
-treatment would compute channel capacity:
-```
-C = 1 - H(ε) -- for binary symmetric channel with error rate ε
-```
-
+Information-theoretic refinement (channel capacity `C = 1 - H(ε)` for
+binary symmetric channels) is a future direction; the current
+`noiseGap` is a discrimination *proxy*, not mutual information.
 -/
 
 namespace RSA.Noise

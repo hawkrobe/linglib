@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.MorphRule
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Finnish Negation: The Negative Auxiliary *ei* @cite{karlsson-2017}
-@cite{bybee-1985} @cite{miestamo-2005}
+@cite{bybee-1985} @cite{miestamo-2005} @cite{haspelmath-2013}
 
 Finnish expresses sentential negation through a **conjugated negative
 auxiliary verb** *ei*. The negative verb inflects
@@ -33,6 +33,31 @@ rather than within a synthetic word.
 namespace Fragments.Finnish.Negation
 
 open Core.Morphology (MorphCategory MorphRule InflDistribution)
+open Core.Lexical.NegMarker
+
+-- ============================================================================
+-- § 0: Marker + System (Fragment-side joint)
+-- ============================================================================
+
+/-- *ei* — Finnish's negative auxiliary verb, cited in 3sg form.
+    Genuine auxiliary: inflects for person and number (`negParadigm` below
+    has the 6 present-tense forms) and bears the agreement and tense
+    markers that the lexical verb would otherwise carry. The lexical verb
+    appears in the connegative form (`connegativeRule`). The 6 surface
+    forms (en/et/ei/emme/ette/eivät) are accessible via `negParadigm`. -/
+def ei : NegMarkerEntry :=
+  { form := "ei"
+  , morphemeType := .auxVerb
+  , position := .preverbal }
+
+/-- The Finnish negation system: a single negative auxiliary with a
+    person/number paradigm. Multiple paradigm-form *surface* realizations
+    (`negParadigm`) are not multiple *markers* — they're inflectional
+    variants of one auxiliary, captured cross-linguistically by the single
+    `NegMarkerEntry`. The Fragment-side joint consumed by
+    `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "fin" [ei]
 
 -- ============================================================================
 -- § 1: Negative Auxiliary Paradigm

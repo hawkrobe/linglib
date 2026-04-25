@@ -115,11 +115,11 @@ def englishNot : NegAuxDatum :=
   , gloss := "does not go" }
 
 /-- Italian *non* — preverbal negative particle (symmetric negation).
-    Form derived from `Fragments.Italian.Negation.negMarker`. -/
+    Form derived from `Fragments.Italian.Negation.non.form`. -/
 def italianNon : NegAuxDatum :=
   { language := "Italian"
   , strategy := .negParticle
-  , form := Fragments.Italian.Negation.negMarker
+  , form := Fragments.Italian.Negation.non.form
   , gloss := "non mangia 'NEG eats' (he doesn't eat)" }
 
 def allData : List NegAuxDatum :=
@@ -159,7 +159,7 @@ theorem finnish_form_from_fragment :
 
 /-- The Italian negative particle form derives from the Fragment negation marker. -/
 theorem italian_form_from_fragment :
-    italianNon.form = Fragments.Italian.Negation.negMarker := rfl
+    italianNon.form = Fragments.Italian.Negation.non.form := rfl
 
 /-! ## Bridge to Negation Typology (WALS Ch 112)
 

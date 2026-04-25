@@ -2,9 +2,9 @@ import Linglib.Features.Evidentiality
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Fragments.Bulgarian.Evidentials
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fin.Basic
 
 /-!
 # @cite{izvorski-1997}: The Present Perfect as an Epistemic Modal — Data @cite{izvorski-1997}
@@ -163,11 +163,14 @@ theorem all_evidentialSurvives :
 -- ════════════════════════════════════════════════════
 
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional (World allWorlds)
 open Core.Presupposition
 open Features.Evidentiality
 open Semantics.Tense.Evidential
 open Fragments.Bulgarian.Evidentials
+
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
 
 /-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
 def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
@@ -176,20 +179,30 @@ def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
   assertion := λ w => necessity f g p w
 
 def johnDrank : World → Prop
-  | .w0 => True
-  | .w1 => True
-  | .w2 => False
-  | .w3 => False
+  | 0 => True
+  | 1 => True
+  | 2 => False
+  | 3 => False
 
-instance : DecidablePred johnDrank := fun w => by cases w <;> unfold johnDrank <;> infer_instance
+instance : DecidablePred johnDrank := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 def bottlesEmpty : World → Prop
-  | .w0 => True
-  | .w1 => False
-  | .w2 => True
-  | .w3 => False
+  | 0 => True
+  | 1 => False
+  | 2 => True
+  | 3 => False
 
-instance : DecidablePred bottlesEmpty := fun w => by cases w <;> unfold bottlesEmpty <;> infer_instance
+instance : DecidablePred bottlesEmpty := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable True)
+  | 3 => inferInstanceAs (Decidable False)
 
 def evBase : ModalBase World := λ _ => [bottlesEmpty]
 
@@ -200,7 +213,7 @@ def beliefOrdering : OrderingSource World := λ _ => [johnDrank]
 theorem ev_presup_satisfied (w : World) :
     (izvorskiEv evBase beliefOrdering johnDrank).presup w := by
   -- ⋂evBase = {w0, w2}; both are accessible
-  refine ⟨.w0, ?_⟩
+  refine ⟨(0 : World), ?_⟩
   intro p hp
   simp only [evBase, List.mem_singleton] at hp
   rw [hp]
@@ -223,10 +236,15 @@ theorem restricted_base_enlarges_access
   fun p hp => hw' p (h w p hp)
 
 private def pOnlyW0 : World → Prop
-  | .w0 => True
+  | 0 => True
   | _ => False
 
-instance : DecidablePred pOnlyW0 := fun w => by cases w <;> unfold pOnlyW0 <;> infer_instance
+instance : DecidablePred pOnlyW0 := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-- The izvorski operator can diverge from the bare prejacent: at `w0`,
     `pOnlyW0 w0 = True`, but the necessity claim is False (since `w1, w2, w3`
@@ -234,15 +252,15 @@ instance : DecidablePred pOnlyW0 := fun w => by cases w <;> unfold pOnlyW0 <;> i
 theorem izvorski_koev_diverge :
     ∃ (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) (w : World),
       ¬ (izvorskiEv f g p).assertion w ∧ p w := by
-  refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_, trivial⟩
+  refine ⟨emptyBackground, emptyBackground, pOnlyW0, (0 : World), ?_, trivial⟩
   intro h
   simp only [izvorskiEv] at h
   rw [necessity_iff_all] at h
-  have hAcc : .w1 ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+  have hAcc : (1 : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
     rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hBest : .w1 ∈ bestWorlds emptyBackground emptyBackground (W := World) .w0 :=
+  have hBest : (1 : World) ∈ bestWorlds emptyBackground emptyBackground (W := World) (0 : World) :=
     ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
-  exact (h .w1 hBest : pOnlyW0 .w1)
+  exact (h (1 : World) hBest : pOnlyW0 (1 : World))
 
 theorem izvorski_collapses_to_koev_when_realistic
     (f : ModalBase World) (p : World → Prop) (w : World)

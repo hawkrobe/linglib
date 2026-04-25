@@ -1,10 +1,14 @@
-import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Core.Mood.IllocutionaryMood
+import Linglib.Core.Mood.POSW
+import Linglib.Core.Mood.POSWTarget
+import Linglib.Core.Discourse.Scoreboard
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Assert
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Roberts (2023): Imperatives in Dynamic Pragmatics
@@ -18,404 +22,291 @@ A semantics and dynamic pragmatics for imperative mood that combines the
 best features of @cite{kaufmann-2012} and @cite{portner-2004}:
 
 1. **Semantic type**: Imperatives denote *de se* properties indexed to the
-   addressee (type ⟨s, ⟨e, t⟩⟩), not propositions — following @cite{portner-2004}.
-2. **Modal in semantic content**: The content includes a futurate circumstantial
-   modal with Kratzerian modal base *f* and goal-based ordering source *g* —
-   following @cite{kaufmann-2012}. But the modal is NOT deontic.
-3. **Pragmatic deontic flavor**: The perceived deontic force arises entirely
-   from the pragmatics of accepting a direction — updating G (the addressee's
-   goals/plans on the scoreboard), not from the LF.
+   addressee — following @cite{portner-2004}.
+2. **Modal in semantic content**: The content includes a futurate
+   circumstantial modal with Kratzerian modal base *f* and goal-based
+   ordering source *g* — following @cite{kaufmann-2012}. But the modal
+   is **not deontic**.
+3. **Pragmatic deontic flavor**: The perceived deontic force arises
+   entirely from the pragmatics of accepting a direction — updating the
+   addressee's preference structure (the goals component G of the
+   discourse scoreboard) — not from the LF.
 
-## Desiderata Satisfied
+## Substrate hookup
 
-Roberts identifies 9 desiderata (a)–(i) for an imperative semantics (§1)
-and shows the account satisfies all of them. See `section Desiderata` below.
+This file is a **configuration of existing infrastructure**, not a
+standalone formalization of an imperative mood ontology:
 
-## Formal Architecture
+- The futurate modal base reuses
+  `Core.Modality.HistoricalAlternatives.futureHistoryBase`.
+- The goal-based ordering and circumstantial modal base are
+  `Kratzer.OrderingSource` / `ModalBase`, packaged as
+  `TeleologicalFlavor` (no parallel types).
+- The architectural commitment "imperative force targets the
+  preferential POSW component, not the informational" is
+  `Core.Mood.POSWTarget`'s `HasPOSWTarget IllocutionaryMood`
+  instance — Roberts agrees with @cite{portner-2018} on the
+  POSW component, disagrees with @cite{kaufmann-2012} only on
+  the prejacent's modal flavor.
+- The scoreboard updates are `Core.Discourse.Scoreboard`'s
+  assertion/interrogation/direction; the *derivation* that
+  `directionUpdate` factors as `POSW.star` lives in Scoreboard.lean
+  (`toPOSW_direction_eq_star`).
 
-- **Circumstance** ⟨w, t⟩: world-time pair (§2.1.2, (45))
-- **SameHistory**: w' agrees with w on all facts up to t (47)
-- **FUT**: future circumstances — same history, later time (48)
-- **Timely future**: FUT filtered for goal-relevance (50)
-- **Futurate circumstantial modal base** *f*: (51)
-- **Goal-based ordering source** *g*: (49)
-- **Applicable circumstances** APPLIC: best timely futures (53)
-- **Imperative character ¡**: (54)/(67)
-- **Scoreboard updates**: assertion (57), interrogation (58), direction (59)
+## Equation citations
+
+All equation numbers verified against the published PDF:
+(45) circumstance, (47) SameHistory, (48) FUT, (49) goal-based
+ordering source, (50) timely future, (51) futurate circumstantial
+modal base, (53) APPLIC, (54)/(67) imperative character ¡,
+(57) assertion, (58) interrogation, (59) direction, (65)
+conservativity. Example "Have a cookie" is (60) in §2.2 (not §3).
 -/
 
 namespace Roberts2023
 
 open Core (WorldTimeIndex)
-open Core.Discourse
+open Core.Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
+open Core.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
+open Core.Modality.HistoricalAlternatives
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional
 
-/-! ## §2.1.2 Basic Ontology -/
+abbrev World := Fin 4
 
-/-- A **circumstance** is a world-time pair ⟨w, t⟩.
+/-! ## §2.1.2 Basic Ontology
 
-    @cite{roberts-2023} (45): "A circumstance is a world/time pair ⟨w, t⟩."
+Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
+(48) all instantiate the canonical world-time substrate in
+`Core.WorldTimeIndex` and `Core.Modality.HistoricalAlternatives`:
 
-    Unified with `Core.WorldTimeIndex` from the temporal infrastructure —
-    both are world-time pairs, differing only in field names. -/
-abbrev Circumstance (W T : Type*) := WorldTimeIndex W T
+  Roberts                        Linglib substrate
+  ────────────────────────────   ────────────────────────────
+  ⟨w, t⟩ circumstance            `WorldTimeIndex W T`
+  SameHistory(w', w, t)          `WorldHistory W T` predicate
+  FUT(⟨w, t⟩)                    `futureHistoryBase history s`
 
-/-- A **proposition** in the circumstantial sense: a set of circumstances. -/
-abbrev CProp (W T : Type*) := Circumstance W T → Bool
+No new types are introduced for these. -/
 
-/-- **SameHistory**: w' is exactly the same as w up to time t.
+/-! ## §2.1.2 The Imperative Character
 
-    @cite{roberts-2023} (47): "SameHistory(w', w, t) is true just in case
-    world w' is exactly the same as world w in all matters of particular
-    fact up to time t."
+Roberts's `¡` (eq. 54/67) bundles the addressee, the prejacent, and
+the modal parameters. The modal flavor is **teleological** — facts
+plus goals — represented directly by `Kratzer.TeleologicalFlavor`.
+The "futurate" property of the modal base is enforced separately as
+the predicate `IsFuturate` below, which uses `futureHistoryBase`. -/
 
-    Parametrized by a history-comparison function. -/
-def SameHistory {W T : Type*} (histEq : W → W → T → Bool) (w' w : W) (t : T) : Bool :=
-  histEq w' w t
-
-/-- **FUT**: the future circumstances of ⟨w, t⟩.
-
-    @cite{roberts-2023} (48): FUT(⟨w, t⟩) = {⟨w', t'⟩ | SameHistory(w, w', t) & t < t'}.
-    These are the possible futures — worlds agreeing with w up to t,
-    at times strictly after t. -/
-def FUT {W T : Type*} [LT T] [DecidableRel (α := T) (· < ·)]
-    (histEq : W → W → T → Bool) (allW : List W) (allT : List T)
-    (c : Circumstance W T) : List (Circumstance W T) :=
-  (allW.flatMap λ w' => allT.filterMap λ t' =>
-    if SameHistory histEq w' c.world c.time && decide (c.time < t') then
-      some ⟨w', t'⟩
-    else
-      none)
-
-/-! ## §2.1.2 Goal-based ordering and applicable circumstances -/
-
-/-- A **goal-based ordering source** maps a circumstance to a list of
-    propositions reflecting the agent's hierarchically organized goals.
-
-    @cite{roberts-2023} (49): "a goal_i-based ordering source g is a function
-    that takes a circumstance ⟨w, t⟩ and yields an ordered set of propositions G
-    reflecting x_i's hierarchically organized goals and intentions." -/
-abbrev GoalOrderingSource (W T : Type*) := Circumstance W T → List ((W → Bool))
-
-/-- A **futurate circumstantial modal base** maps circumstances to
-    sets of propositions whose intersection gives the accessible worlds.
-
-    @cite{roberts-2023} (51): constraints (a) w' = w, (b) t < t',
-    (c) preconditions for realizing P hold in a timely fashion. -/
-abbrev CircumstantialModalBase (W T : Type*) := Circumstance W T → List ((W → Bool))
-
-/-! ## §2.1.2 The Imperative Character -/
-
-/-- The **imperative character ¡** — the semantic contribution of
-    imperative mood in English.
-
-    @cite{roberts-2023} (54)/(67): Given context K, the imperative mood ¡
-    presupposes x_i = ADDRESSEE(K), f is a futurate circumstantial modal
-    base, g is an x_i-goal-dependent ordering source, and yields:
-    "the property of being an addressee x s.t. in any applicable
-    circumstances one comes to realize P in a timely fashion."
-
-    We compose this from the existing Kratzer infrastructure: the applicable
-    circumstances are the `bestWorlds` under the futurate modal base and
-    goal ordering, and the prejacent must hold at all of them.
-
-    The modal parameters are bundled as a `TeleologicalFlavor` — this
-    makes Roberts' central claim structural: the imperative's modal is
-    **teleological/circumstantial** (facts + goals), not deontic
-    (facts + norms). -/
-structure ImperativeCharacter where
-  /-- The addressee (target of the directive) -/
+/-- Roberts's imperative character `¡` (@cite{roberts-2023} (54)/(67)).
+    Bundles the addressee, the prejacent property, and the
+    teleological-flavor parameters. -/
+structure ImperativeCharacter (W : Type*) where
+  /-- The addressee (target of the directive). -/
   addressee : Nat
-  /-- The prejacent: VP denotation (property the addressee should realize).
-      Simplified to a world-predicate (the addressee is implicit). -/
-  prejacent : World → Prop
-  /-- The modal parameters: futurate circumstantial modal base + goal-based
-      ordering source, bundled as a `TeleologicalFlavor`. -/
-  flavor : TeleologicalFlavor World
+  /-- The prejacent: VP denotation. -/
+  prejacent : W → Prop
+  /-- Modal parameters: futurate circumstantial modal base + goal-based
+      ordering source, packaged as a `TeleologicalFlavor`. -/
+  flavor : TeleologicalFlavor W
 
-/-- Convenience accessor: the futurate circumstantial modal base. -/
-abbrev ImperativeCharacter.modalBase (ic : ImperativeCharacter) : ModalBase World :=
-  ic.flavor.circumstances
+/-- Necessity reading of the imperative character: the prejacent holds
+    at every applicable circumstance (= every best world under the
+    teleological flavor). Eq. (54)/(67) flattened to a world index. -/
+def ImperativeCharacter.realize {W : Type*}
+    (ic : ImperativeCharacter W) (w : W) : Prop :=
+  ic.flavor.toKratzerParams.necessity ic.prejacent w
 
-/-- Convenience accessor: the goal-based ordering source. -/
-abbrev ImperativeCharacter.orderingSource (ic : ImperativeCharacter) : OrderingSource World :=
-  ic.flavor.goals
+/-! ## §4 Conservativity Presupposition
 
-/-- Evaluate the imperative character at a world: the prejacent holds
-    at all best (applicable) worlds under the futurate modal base and
-    goal-based ordering.
+Eq. (65), after @cite{kaufmann-2012}: an imperative subject NP must
+live on the addressee set. Stated as a property of the bundle. -/
 
-    This is a **necessity** claim: ∀w' ∈ Best(f, g, w). P(w').
-    The modal force is universal (not deontic — circumstantial). -/
-def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Prop :=
-  necessity ic.modalBase ic.orderingSource ic.prejacent w
+/-- Conservativity presupposition: the subject's quantificational
+    domain is a subset of the addressee set. -/
+def ImperativeCharacter.conservativeOn {W : Type*}
+    (_ic : ImperativeCharacter W) (domain addressees : List Nat) : Prop :=
+  ∀ e ∈ domain, e ∈ addressees
 
-/-- The imperative character yields a Kratzer necessity over the
-    futurate circumstantial modal base. -/
-theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) :
-    ic.realize w ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w := Iff.rfl
+/-! ## §3 Architectural commitments
 
-/-- The imperative character evaluates as `KratzerParams` necessity
-    under the teleological parameters. This connects Roberts' formalization
-    directly to the Kratzer infrastructure. -/
-theorem imperativeCharacter_eq_kratzer_necessity (ic : ImperativeCharacter) (w : World) :
-    ic.realize w ↔
-    ic.flavor.toKratzerParams.necessity ic.prejacent w := Iff.rfl
+Roberts's central architectural claim is that the deontic flavor of
+imperatives is **pragmatic** — it lives in the preferential POSW
+component (the addressee's goals/plans), not in the LF as a deontic
+modal. This is precisely the @cite{portner-2018} `POSWTarget`
+assignment for `IllocutionaryMood.imperative`, derived (not
+restipulated) here. -/
 
-/-- Roberts' imperative uses teleological (circumstantial) flavor.
-    This is the structural encoding of her central claim:
-    the modal is NOT deontic — contra @cite{kaufmann-2012}. -/
-theorem imperativeCharacter_is_teleological :
-    TeleologicalFlavor.flavorTag = .circumstantial := rfl
+/-- **Roberts's architectural commitment**, derived from
+    @cite{portner-2018}'s `HasPOSWTarget IllocutionaryMood`
+    instance: the imperative targets the preferential POSW
+    component (= the addressee's preference structure), not the
+    informational component (= CG).
 
-/-! ## §4 Imperative Subjects: Conservativity Presupposition -/
+    This is the type-level shadow of "deontic force is pragmatic,
+    not LF": deontic-style content lives where the preference
+    component does, and the imperative refines that component
+    (via `POSW.star` / `Scoreboard.directionUpdate`) rather than
+    the informational one. -/
+theorem imperative_targets_preferential :
+    HasPOSWTarget.target IllocutionaryMood.imperative = .preferential := rfl
 
-/-- **Conservativity constraint on imperative subjects** (@cite{roberts-2023} (65),
-    after @cite{kaufmann-2012}):
+/-- **Pragmatic-deontic routing** (@cite{roberts-2023} §3, headline claim).
 
-    An imperative subject NP must live on the set of addressees.
-    SL(Q) = ADDR(K) — the smallest set Q lives on is the addressee set.
+    Directing `p` to addressee `t` routes the deontic content through
+    the **preferential** component of the projected POSW: every
+    prejacent-violator `w` (`¬ p w`) is demoted relative to every
+    prejacent-satisfier `v` (`p v`) in the preference order
+    (`¬ (· ).toPOSW.le w v`).
 
-    This is a presupposition constraining which NPs can serve as
-    imperative subjects (you, everyone, nobody, somebody — all must
-    quantify over (subsets of) addressees). -/
-structure ConservativityPresup where
-  /-- The subject's quantificational domain -/
-  domain : List Nat
-  /-- The addressee set -/
-  addressees : List Nat
-  /-- The presupposition: domain is a subset of addressees -/
-  livesOn : ∀ e, e ∈ domain → e ∈ addressees
+    The dual negative claim — that the **informational** component
+    (CG) is untouched — is `Scoreboard.direction_preserves_cg` (a
+    `@[simp]` lemma). The two together discharge Roberts's claim
+    that deontic content arises pragmatically via the preference
+    structure rather than via assertion to common ground.
 
-/-! ## §3 Desiderata Verification -/
+    The hypothesis `hin : t < K.goals.length` is the substrate
+    counterpart of Roberts's conservativity presupposition (eq. (65)):
+    the addressee must be a real participant for the directive to
+    have its preferential effect. Composes
+    `Scoreboard.direction_demotes_violators` (the substrate theorem
+    that does the work) with the POSWTarget assignment
+    `imperative_targets_preferential` (the architectural commitment
+    that this preference-side change *is* the deontic content). -/
+theorem pragmatic_deontic_routing
+    {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t pr : Nat)
+    (hin : t < K.goals.length) {w v : W} (hpv : p v) (hpw : ¬ p w) :
+    ¬ (K.directionUpdate p s t pr).toPOSW.le w v :=
+  Scoreboard.direction_demotes_violators K p s t pr hin w v hpv hpw
 
-/-- **(a) Not truth-evaluable**: Imperatives denote properties (type
-    `indexedProperty`), not propositions. Properties require an
-    individual argument and cannot be evaluated for truth or falsity. -/
-theorem desideratum_a_not_truth_evaluable :
-    SemanticType.indexedProperty ≠ SemanticType.proposition := nofun
+/-! ## §1 Desideratum (h): Futurate Flavor
 
-/-- **(b) No evaluative adverbs**: Since imperatives are not propositional,
-    evaluative sentential adverbs (which require propositional arguments)
-    cannot modify them. "#Unfortunately, go to bed!" -/
-theorem desideratum_b_type_mismatch :
-    defaultSemanticType .imperative = .indexedProperty ∧
-    defaultSemanticType .declarative = .proposition := ⟨rfl, rfl⟩
+Restated against `futureHistoryBase` (the canonical Condoravdi/CIR
+substrate in `Core.Modality.HistoricalAlternatives`) rather than a
+local `FUT` enumeration. -/
 
-/-- **(c) Cannot be conditional antecedent**: Conditional antecedents
-    require propositions. Imperatives denote properties → type mismatch.
-    "*If eat your vegetables, then..." -/
-theorem desideratum_c_conditional_antecedent :
-    defaultSemanticType .imperative ≠ defaultSemanticType .declarative := nofun
+/-- **(h) Futurate flavor** (@cite{roberts-2023} Table 1, §1, exx.
+    33–35). Every circumstance in the future-history base of
+    ⟨w, t⟩ has a strictly later time than t. Direct consequence of
+    `futureHistoryBase`'s definition. -/
+theorem futurate {W T : Type*} [LT T]
+    (history : WorldHistory W T)
+    (s s' : WorldTimeIndex W T) (h : s' ∈ futureHistoryBase history s) :
+    s.time < s'.time := h.2
 
-/-- **(d) Differs from deontic declaratives**: The IFLP maps different
-    semantic types to different speech acts. Imperatives update G;
-    deontic declaratives update CG. -/
-theorem desideratum_d_different_updates :
-    forceLinkingPrinciple .indexedProperty ≠
-    forceLinkingPrinciple .proposition := nofun
+/-! ## §2.2 Force Linking — integration tests
 
-/-- **(e) Conditional imperatives** (@cite{roberts-2023} Table 1, §1):
-    Imperatives may be explicitly or implicitly conditional.
-    "If you're hungry, have some cheese and crackers." (17)
+These are smoke tests that the `IllocutionaryMood` infrastructure
+agrees with Roberts's IFLP and her sincerity-condition triad.
+Each `rfl` is a structural check that the `Scoreboard` enum
+assignment matches the paper. -/
 
-    Roberts' account handles this because the imperative's semantic content
-    includes a Kratzerian modal with modal base *f* — the modal base
-    restricts the circumstances under which the prejacent must be realized,
-    making all imperatives inherently conditional. This is formalized by
-    `ImperativeCharacter.modalBase`: the `bestWorlds` computation is
-    parameterized by the modal base, which determines the applicable
-    circumstances.
-
-    Desiderata (e) and (f) are problems for @cite{portner-2004}'s account,
-    which has no modal and therefore cannot use Kratzerian parameters *f*
-    and *g* for modal interpretation. They favor @cite{kaufmann-2012}'s
-    assumption of semantic modality in imperatives. -/
-theorem desideratum_e_conditional :
-    ∀ (ic : ImperativeCharacter),
-    ic.realize = λ w => necessity ic.modalBase ic.orderingSource ic.prejacent w :=
-  λ _ => rfl
-
-/-- **(f) Range of modal flavors** (@cite{roberts-2023} Table 1, §1):
-    Imperatives display a range of flavors, with two main types
-    (@cite{kaufmann-2012}'s terminology):
-
-    **Practical**: something the target can do. Only felicitous if it can
-    be assumed that it's possible for the target to realize the property
-    denoted by the VP. Sub-types include commands, prohibitions, permission,
-    suggestions, pleas, advice, instructions, warnings, concessives.
-
-    **Expressive**: nothing can be done; either the matter is already settled,
-    or the target isn't in a position to do anything about it. Grounded in
-    the wishes, hopes, etc. of the speaker. Sub-types: well-wishes
-    ("Enjoy the movie!"), hopes ("Be the lady!").
-
-    Roberts notes that expressives are bouletic, not deontic, and optative
-    in mood rather than directive. The range of flavors follows from the
-    Kratzerian architecture: different modal bases and ordering sources
-    yield different flavors without lexical ambiguity. -/
-inductive ImperativeUse where
-  /-- Practical: the target can do something. Circumstantial modal base,
-      goal-based ordering. Sub-types: command, prohibition, permission,
-      suggestion, plea, advice, instruction, warning, concessive. -/
-  | practical
-  /-- Expressive: nothing can be done. Bouletic ordering, optative mood.
-      Sub-types: well-wish ("Enjoy the movie!"), hope ("Be the lady!").
-
-      @cite{roberts-2023} (p. 13): expressives "aren't deontic in import.
-      They are instead buletic, pertaining to the speaker's preferences
-      and priorities." She explicitly declines to formalize them: "I will
-      assume that these uses of the imperative are optative in mood,
-      rather than directive. [...] I will not address this use of the
-      imperative in what follows."
-
-      The `.bouletic` flavor mapping below is our extension of Roberts'
-      remark — she identifies the flavor but does not provide a formal
-      semantics for expressive imperatives. -/
-  | expressive
-  deriving DecidableEq, Repr
-
-/-- Practical imperatives use a goal-based ordering (circumstantial flavor);
-    expressive imperatives use a desire-based ordering (bouletic flavor).
-    The Kratzer infrastructure generates the range without stipulation. -/
-def ImperativeUse.flavorTag : ImperativeUse → Core.Modality.ModalFlavor
-  | .practical => .circumstantial
-  | .expressive => .bouletic
-
-/-- Practical and expressive imperatives have different modal flavors —
-    captured by the ordering source, not by the mood itself. -/
-theorem desideratum_f_flavor_range :
-    ImperativeUse.practical.flavorTag ≠ ImperativeUse.expressive.flavorTag := nofun
-
-/-- **(g) Negation narrow scope**: Deontic force cannot occur under
-    negation. "Don't go out!" = direction to not go out, NOT "there's
-    no obligation." Two reasons: (1) property type blocks propositional
-    negation; (2) deontic flavor is pragmatic, not semantic. -/
-theorem desideratum_g_negation_type :
-    defaultSemanticType .imperative = .indexedProperty := rfl
-
-/-- **(h) Futurate flavor** (@cite{roberts-2023} Table 1, §1):
-    Imperatives display evidence of temporal reference, always pertaining
-    to a present or future time:
-
-    - (33) "Relax!"
-    - (34) "Please have this done by the time I get back."
-    - (35a) "Vote tomorrow!" vs (35b) "#Please vote by last night!"
-
-    Tags and rejections use futurate *will*: "Take out the garbage,
-    will you?" / "No, I won't." (@cite{von-fintel-iatridou-2017})
-
-    This follows from the futurate circumstantial modal base (51):
-    the FUT operator (48) restricts applicable circumstances to those
-    where the time is strictly later than the utterance time (`c.t < t'`).
-    Past times are structurally excluded. -/
-theorem desideratum_h_futurate {W T : Type*} [LT T] [DecidableRel (α := T) (· < ·)]
-    (histEq : W → W → T → Bool) (allW : List W) (allT : List T)
-    (c : Circumstance W T) :
-    ∀ c' ∈ FUT histEq allW allT c, decide (c.time < c'.time) = true := by
-  intro c' hc'
-  unfold FUT at hc'
-  simp only [List.mem_flatMap, List.mem_filterMap] at hc'
-  obtain ⟨_, _, t', _, hif⟩ := hc'
-  split at hif
-  · next h =>
-    simp only [Option.some.injEq] at hif; subst hif
-    simp only [Bool.and_eq_true] at h; exact h.2
-  · simp at hif
-
-/-- **(i) Deontic parallels — pragmatic**: Direction update adds to G
-    (not CG). The deontic inference arises because G contents are
-    reflected in CG as deontic propositions. -/
-theorem desideratum_i_direction_preserves_cg
-    {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t : Nat) :
-    (K.directionUpdate p s t).cg = K.cg := rfl
-
-/-- The three canonical speech acts update orthogonal scoreboard components:
-    assertion → CG, interrogation → QUD, direction → G. -/
-theorem desideratum_i_assertion_preserves_goals
-    {W : Type*} (K : Scoreboard W) (p : W → Prop) (a : Nat) :
-    (K.assertionUpdate p a).goals = K.goals := rfl
-
-/-- Interrogation preserves CG (only QUD is updated). -/
-theorem desideratum_i_interrogation_preserves_cg
-    {W : Type*} (K : Scoreboard W) (q : W → Prop) (a : Nat) :
-    (K.interrogationUpdate q a).cg = K.cg := rfl
-
-/-- Interrogation preserves G (only QUD is updated). -/
-theorem desideratum_i_interrogation_preserves_goals
-    {W : Type*} (K : Scoreboard W) (q : W → Prop) (a : Nat) :
-    (K.interrogationUpdate q a).goals = K.goals := rfl
-
-/-- Direction preserves QUD (only G is updated). -/
-theorem desideratum_i_direction_preserves_qud
-    {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t : Nat) :
-    (K.directionUpdate p s t).qud = K.qud := rfl
-
-/-! ## §2.2 The Force Linking Principle -/
-
-/-- The IFLP round-trips for all three core moods:
-    proposition → declarative, set of propositions → interrogative,
-    indexed property → imperative. -/
+/-- The IFLP round-trips for all three core moods. -/
 theorem iflp_roundtrip :
     forceLinkingPrinciple (defaultSemanticType .declarative) = .declarative ∧
     forceLinkingPrinciple (defaultSemanticType .interrogative) = .interrogative ∧
     forceLinkingPrinciple (defaultSemanticType .imperative) = .imperative :=
   ⟨rfl, rfl, rfl⟩
 
-/-- The three moods correspond to the three Searlean intentional states:
-    assertion expresses belief, interrogation expresses desire (for answer),
-    direction expresses desire (for action → intention upon acceptance). -/
+/-- Sincerity conditions: assertion expresses belief; interrogation
+    and direction both express desire. -/
 theorem sincerity_triad :
     sincerityCondition .declarative = .belief ∧
     sincerityCondition .interrogative = .desire ∧
     sincerityCondition .imperative = .desire := ⟨rfl, rfl, rfl⟩
 
-/-- Direction of fit matches across all three core moods. -/
+/-- Direction-of-fit triad: assertion is mind-to-world, interrogation
+    and direction are world-to-mind. -/
 theorem direction_of_fit_triad :
     (sincerityCondition .declarative).directionOfFit = .mindToWorld ∧
     (sincerityCondition .interrogative).directionOfFit = .worldToMind ∧
     (sincerityCondition .imperative).directionOfFit = .worldToMind :=
   ⟨rfl, rfl, rfl⟩
 
-/-! ## §5 Comparison with Other Accounts -/
+/-! ## §5 Comparison with @cite{kaufmann-2012} / @cite{ruytenbeek-etal-2017}
 
-/-- Roberts agrees with @cite{portner-2004} on semantic type (property). -/
-theorem agrees_with_portner_on_type :
-    defaultSemanticType .imperative = .indexedProperty := rfl
+Roberts's central disagreement with @cite{kaufmann-2012}: the
+imperative's **prejacent-internal** modal flavor is teleological
+(circumstantial + goals), not deontic. @cite{ruytenbeek-etal-2017}
+adopt Kaufmann's position: their `SentType.imperative.modalFlavor =
+some .deontic` (`RuytenbeekEtAl2017.lean` line 102) and their
+`directiveCompatible` test fires only on `.deontic` flavor. This
+is a *substantive* disagreement, not a naming dispute: the two
+accounts make opposite predictions about whether circumstantial
+declaratives ("Il est possible de VP" with goal-relevance) should
+pattern with imperatives in directive force. -/
 
-/-- Roberts' imperative modal is circumstantial, not deontic
-    (contra @cite{kaufmann-2012}). The deontic flavor is entirely pragmatic.
+/-- The flavor Roberts assigns to the imperative's prejacent-internal
+    modal: teleological/circumstantial. -/
+def robertsImperativeFlavor : Core.Modality.ModalFlavor :=
+  TeleologicalFlavor.flavorTag
 
-    The goal-based ordering source matches `TeleologicalFlavor` in the
-    Kratzer infrastructure: circumstances + goals → circumstantial tag. -/
-theorem roberts_modal_is_circumstantial :
-    TeleologicalFlavor.flavorTag = .circumstantial := rfl
+/-- **Cross-paper disagreement** — @cite{ruytenbeek-etal-2017} Study 2
+    encodes the @cite{kaufmann-2012} position by stipulating
+    `SentType.imperative.modalFlavor = some .deontic`. Roberts's
+    account predicts `.circumstantial`. The two prejacent-internal
+    flavors are distinct. -/
+theorem disagrees_with_ruytenbeek_imperative_flavor :
+    some robertsImperativeFlavor ≠
+    RuytenbeekEtAl2017.SentType.imperative.modalFlavor := by decide
 
-/-- @cite{kaufmann-2012} treats the imperative's modal as deontic.
-    Roberts disagrees: the modal is circumstantial-futurate. -/
-theorem modal_flavor_disagreement :
-    TeleologicalFlavor.flavorTag ≠ DeonticFlavor.flavorTag := nofun
+/-- **Cross-paper disagreement** — Roberts's flavor for the imperative
+    prejacent fails @cite{ruytenbeek-etal-2017}'s mechanism-1
+    `directiveCompatible` test (which checks deontic flavor only).
+    Under Roberts, an imperative is directive *despite* not having
+    deontic flavor in its prejacent — the directive force comes from
+    the `POSW.star` update on the addressee's preference structure
+    (see `pragmatic_deontic_routing`), not from the prejacent's
+    flavor matching the imperative's. -/
+theorem roberts_fails_ruytenbeek_mechanism_one :
+    ¬ RuytenbeekEtAl2017.directiveCompatible robertsImperativeFlavor := by decide
 
-/-- Roberts' account predicts that the imperative modal flavor differs
-    from what `Assert.primaryFlavor` assigns (which follows @cite{kaufmann-2012}).
-    This is the central theoretical disagreement: Kaufmann says deontic,
-    Roberts says circumstantial. @cite{ruytenbeek-etal-2017} provide
-    experimental evidence for Kaufmann's view (Study 2). -/
-theorem roberts_disagrees_with_assert :
-    TeleologicalFlavor.flavorTag ≠
-    Semantics.Modality.Assert.primaryFlavor .imperative := nofun
+/-- @cite{kaufmann-2012}'s position is exposed in
+    `Theories/Semantics/Modality/Assert.lean` as
+    `primaryFlavor .imperative = .deontic`. Roberts disagrees. -/
+theorem disagrees_with_assert :
+    robertsImperativeFlavor ≠
+    Semantics.Modality.Assert.primaryFlavor .imperative := by decide
 
-/-! ## Worked Examples -/
+/-- **Empirical wedge** — `possibleDecl` ("Il est possible de VP") is
+    the construction where Roberts and Ruytenbeek/Kaufmann's mechanism 1
+    make opposite predictions. `RuytenbeekEtAl2017.lean` encodes its
+    flavor as `.circumstantial`; under Roberts the imperative prejacent
+    is *also* `.circumstantial`, so Roberts groups them together by
+    prejacent flavor while Ruytenbeek's mechanism 1 (`directiveCompatible
+    flavor ↔ flavor = .deontic`) does not.
 
-/-- Example: "Move!" (@cite{roberts-2023} (55))
+    `canDeclarative` was originally part of this wedge but was removed
+    after the 2026-04-24 audit ground-truthed Ruytenbeek p.58 Discussion:
+    *Vous pouvez VP*'s most salient reading is permission (deontic
+    possibility), not ability (circumstantial). With that fix the two
+    accounts now agree that `canDeclarative` is mechanism-1-licensed
+    (Ruytenbeek) / not-flavor-shared-with-imperative (Roberts), so the
+    wedge collapses for that construction.
 
-    Trivial case: empty modal base, empty ordering. All worlds
-    are accessible and best, so the imperative reduces to: the
-    prejacent holds at all worlds. -/
-def moveExample : ImperativeCharacter where
+    The `canYouInterrog` and `possibleInterrog` findings (Study 1) do
+    not discriminate the accounts either: Ruytenbeek's mechanism 2
+    (preparatory-condition questioning) handles them, and Roberts would
+    derive the same pattern from pragmatic-deontic routing on the
+    addressee's preference structure. Only `possibleDecl` — a
+    declarative with no preparatory-condition queried and no
+    flavor-share-with-imperative under Ruytenbeek — remains as a
+    discriminating case. -/
+theorem empirical_wedge_possible_declarative :
+    RuytenbeekEtAl2017.SentType.possibleDecl.modalFlavor =
+      some robertsImperativeFlavor ∧
+    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.directiveCompatibleMech1 ∧
+    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.directiveCompatibleMech2 :=
+  ⟨rfl, by decide, by decide⟩
+
+/-! ## Worked Examples
+
+These instantiate `ImperativeCharacter` with the local 4-world toy
+type `World := Fin 4` defined above. -/
+
+/-- Example: "Move!" (@cite{roberts-2023} (55), worked derivation).
+    Trivial case — empty modal base and ordering, prejacent always
+    holds. -/
+def moveExample : ImperativeCharacter World where
   addressee := 0
-  prejacent := λ _w => True  -- MOVE simplified to always-true
+  prejacent := λ _ => True
   flavor := ⟨emptyBackground, emptyBackground⟩
 
 theorem move_trivial : ∀ w, moveExample.realize w := by
@@ -425,115 +316,88 @@ theorem move_trivial : ∀ w, moveExample.realize w := by
   intro _ _; trivial
 
 /-- Example: "Nobody move!" (@cite{roberts-2023} (42), attributed to
-    @cite{veltman-2018})
-
-    Negation is INTERNAL (predicate term negation ¬MOVE), not
-    EXTERNAL (¬□ — "no obligation to move"). This follows from
-    the property type: propositional negation can't scope over
-    a property. -/
-def nobodyMoveExample : ImperativeCharacter where
+    @cite{veltman-2018}). Negation is **internal** (predicate-term
+    negation `¬MOVE`), not external (`¬□`) — propositional negation
+    cannot scope over a property. -/
+def nobodyMoveExample : ImperativeCharacter World where
   addressee := 0
-  prejacent := λ _w => False  -- ¬MOVE: nobody moves
+  prejacent := λ _ => False
   flavor := ⟨emptyBackground, emptyBackground⟩
 
-/-- "Nobody move!" with trivial modality: the prejacent (¬MOVE)
-    must hold at all worlds → nobody moves in any applicable
-    circumstance. -/
+private theorem empty_best (w : World) :
+    w ∈ bestWorlds (W := World) emptyBackground emptyBackground w := by
+  have hAcc : w ∈ accessibleWorlds (emptyBackground (W := World)) w := by
+    rw [empty_base_universal_access]; exact Set.mem_univ _
+  exact ⟨hAcc, fun _ _ q hq _ => by simp [emptyBackground] at hq⟩
+
 theorem nobody_move_total_prohibition :
     ∀ w, ¬ nobodyMoveExample.realize w := by
   intro w h
   have h' : necessity (W := World) emptyBackground emptyBackground (λ _ => False) w := h
   rw [necessity_iff_all] at h'
-  have hAcc : w ∈ accessibleWorlds (emptyBackground (W := World)) w := by
-    rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hBest : w ∈ bestWorlds emptyBackground emptyBackground (W := World) w :=
-    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
-  exact h' w hBest
+  exact h' w (empty_best w)
 
-/-! ## Weak Imperatives: Suggestions and Advice
+/-! ## §1 (38) Weak imperatives — suggestions and advice
 
-@cite{roberts-2023} §1 (example (38)): suggestions like "Hire an attorney"
-carry weaker modal force than commands like "Finish your homework!" (37).
-The difference is NOT in the mood or semantic type — both are imperatives
-denoting properties. The difference is in the **ordering source**: suggestions
-use a refined ordering where the prejacent itself serves as a secondary
-ordering criterion, yielding weak necessity (should/ought).
-
-This connects directly to the @cite{von-fintel-iatridou-2008} analysis
-formalized in `Directive.lean`: WN ≡ SN_Xg — weak necessity IS strong
-necessity with X-marked ordering source. -/
+Suggestions like "Hire an attorney" carry weaker modal force than
+commands. The mood and semantic type are unchanged; the force
+difference lives in the **ordering source**, where the prejacent
+itself serves as a secondary ordering criterion (yielding weak
+necessity in the sense of @cite{von-fintel-iatridou-2008}, which
+linglib formalizes in `Theories/Semantics/Modality/Directive.lean`). -/
 
 open Semantics.Modality.Directive in
-/-- Evaluate a suggestion/advice imperative: weak necessity under the
-    primary ordering + secondary ordering that favors the prejacent.
-
-    @cite{roberts-2023} §1: "should in (38) is a weak modal, since the
-    directive does not imply that the addressee is necessarily under an
-    obligation." -/
-def ImperativeCharacter.weakRealize
-    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource World)
-    (w : World) : Prop :=
-  weakNecessity ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
+/-- Weak (suggestion/advice) reading of an imperative character: weak
+    necessity under the primary teleological ordering plus a
+    secondary ordering favoring the prejacent. -/
+def ImperativeCharacter.weakRealize {W : Type*}
+    (ic : ImperativeCharacter W) (secondaryGoals : OrderingSource W)
+    (w : W) : Prop :=
+  weakNecessity ic.flavor.circumstances ic.flavor.goals secondaryGoals
+    ic.prejacent w
 
 open Semantics.Modality.Directive in
-/-- **Commands entail suggestions**: if a command holds (strong necessity),
-    the corresponding suggestion holds a fortiori (weak necessity).
-
-    This delegates to `Directive.strong_entails_weak` — the universal
-    quantification over a *refined* best set is logically weaker. -/
-theorem strong_imperative_entails_suggestion
-    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource World) (w : World)
+/-- Commands entail suggestions: strong necessity entails weak
+    necessity (`Directive.strong_entails_weak`), so a command-strength
+    imperative a fortiori realizes the suggestion. -/
+theorem strong_imperative_entails_suggestion {W : Type*}
+    (ic : ImperativeCharacter W) (secondaryGoals : OrderingSource W) (w : W)
     (h : ic.realize w) :
     ic.weakRealize secondaryGoals w :=
-  strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w h
+  strong_entails_weak ic.flavor.circumstances ic.flavor.goals secondaryGoals
+    ic.prejacent w h
 
-/-- Example: "Have a cookie." (@cite{roberts-2023} §3, (60))
-
-    An invitation, not a command. The hostess proposes that the guest
-    adopt the goal of eating a cookie, but the guest is free to decline.
-    Modeled as weak necessity: the primary ordering is empty (no
-    obligation), and the secondary ordering favors cookie-eating worlds. -/
-def haveCookieExample : ImperativeCharacter where
+/-- Example: "Have a cookie." (@cite{roberts-2023} §2.2, (60)).
+    Invitation, not command — the hostess proposes the goal of
+    eating a cookie; the guest may decline. Modeled as weak
+    necessity over an empty primary ordering, with a secondary
+    ordering favoring cookie-eating worlds. -/
+def haveCookieExample : ImperativeCharacter World where
   addressee := 0
-  prejacent := λ w => w = .w0  -- EAT-COOKIE holds at w0
+  prejacent := λ w => w = (0 : World)
   flavor := ⟨emptyBackground, emptyBackground⟩
 
-/-- The invitation "Have a cookie" is NOT a strong command: with
-    empty ordering, the prejacent fails at some best worlds. -/
 theorem cookie_not_command :
-    ¬ haveCookieExample.realize .w1 := by
+    ¬ haveCookieExample.realize (1 : World) := by
   intro h
-  have h' : necessity (W := World) emptyBackground emptyBackground (λ w => w = .w0) .w1 := h
+  have h' : necessity (W := World) emptyBackground emptyBackground
+      (λ w => w = (0 : World)) (1 : World) := h
   rw [necessity_iff_all] at h'
-  have hAcc : .w1 ∈ accessibleWorlds (emptyBackground (W := World)) .w1 := by
-    rw [empty_base_universal_access]; exact Set.mem_univ _
-  have hBest : .w1 ∈ bestWorlds emptyBackground emptyBackground (W := World) .w1 :=
-    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
-  exact absurd (h' .w1 hBest) (by decide)
+  exact absurd (h' (1 : World) (empty_best (1 : World))) (by decide)
 
 open Semantics.Modality.Directive in
-/-- But "Have a cookie" IS a weak suggestion when the secondary
-    ordering favors cookie-eating: among worlds that are otherwise
-    tied, cookie-eating worlds are preferred. -/
 theorem cookie_is_suggestion :
     haveCookieExample.weakRealize
-      (λ _ => [λ w => w = .w0])  -- secondary: favor cookie-eating
-      .w0 := by
+      (λ _ => [λ w => w = (0 : World)]) (0 : World) := by
   show necessity _ _ _ _
   rw [necessity_iff_all]
   intro w hw
-  -- w must be in bestWorlds; under combined ordering w must satisfy the secondary
-  -- ordering (favor `w = .w0`). Since `.w0` is in the accessible set and beats all
-  -- non-w0 worlds, the only best world is `.w0`.
-  rcases hw with ⟨hAcc, hBest⟩
   by_contra hne
-  -- Case-split on w; only w0 satisfies prejacent
-  have : w ≠ .w0 := hne
-  have hw0Acc : .w0 ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+  rcases hw with ⟨_, hBest⟩
+  have hw0Acc : (0 : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
     rw [empty_base_universal_access]; exact Set.mem_univ _
-  -- Use hBest with w'' = .w0, q = the secondary goal
-  have hgoal : (λ w' : World => w' = .w0) .w0 := rfl
-  have hweq : w = .w0 := hBest .w0 hw0Acc (λ w' : World => w' = .w0)
+  have hgoal : (λ w' : World => w' = (0 : World)) (0 : World) := rfl
+  have hweq : w = (0 : World) := hBest (0 : World) hw0Acc (λ w' : World => w' = (0 : World))
     (by simp [combineOrdering]) hgoal
   exact hne hweq
 

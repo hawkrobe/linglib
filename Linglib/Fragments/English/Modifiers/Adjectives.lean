@@ -283,6 +283,33 @@ def sure : AdjModifierEntry :=
   , scaleType := .upperBounded
   , dimension := .confidence }
 
+/-- `doubtful`: negative-polarity counterpart of `confident` on the
+    confidence scale. Picks out the *lower* portion of the holder's
+    confidence ordering (CSW §5.2 (63c) "Ann doubts that..." adjectival
+    form). -/
+def doubtful : AdjModifierEntry :=
+  { form := "doubtful"
+  , formComp := some "more doubtful"
+  , formSuper := some "most doubtful"
+  , scaleType := .lowerBounded
+  , dimension := .confidence }
+
+/-- `unsure`: negative-polarity counterpart of `sure`. -/
+def unsure : AdjModifierEntry :=
+  { form := "unsure"
+  , formComp := some "more unsure"
+  , formSuper := some "most unsure"
+  , scaleType := .lowerBounded
+  , dimension := .confidence }
+
+/-- `uncertain`: negative-polarity counterpart of `certain`. -/
+def uncertain : AdjModifierEntry :=
+  { form := "uncertain"
+  , formComp := some "more uncertain"
+  , formSuper := some "most uncertain"
+  , scaleType := .lowerBounded
+  , dimension := .confidence }
+
 -- ============================================================================
 -- Non-Gradable / Absolute Adjectives
 -- ============================================================================

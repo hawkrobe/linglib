@@ -23,7 +23,15 @@ semantic theories instantiate these.
 
 namespace Core.Duality
 
-/-- Existential vs universal classification. -/
+/-- Existential vs universal classification.
+
+    **Cross-reference**: `Core.Opposition.SquareOps.dual` (in
+    `Core/Logic/Opposition/Square.lean`) is a more general duality operation
+    over arbitrary GQ-shaped operators (`outerNeg ∘ innerNeg`). The 2-element
+    `DualityType` enum here is a degenerate special case capturing only the
+    A↔I corner-pair of the Aristotelian square. A future cleanup could derive
+    `DualityType` as the orbit of a base operator under `SquareOps.dual`.
+    Deferred until consumer demand. -/
 inductive DualityType where
   | existential
   | universal

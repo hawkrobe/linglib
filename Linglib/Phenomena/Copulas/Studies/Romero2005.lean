@@ -1,5 +1,4 @@
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
 

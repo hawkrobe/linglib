@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Features.Evidentiality
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Informational Backgrounds — @cite{kratzer-2012} §2.3d
@@ -24,24 +24,40 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.3d.
 
 namespace Phenomena.Modality.InformationalBackgroundsBridge
 
-open Semantics.Attitudes.Intensional (World)
+abbrev World := Fin 4
+
 open Semantics.Modality.Kratzer
 open Features.Evidentiality
 
 /-! ## Propositions -/
 
 /-- It is raining. -/
-def raining : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+def raining : World → Prop
+  | 0 => True
+  | 1 => True
+  | 2 => False
+  | 3 => False
 
-instance : DecidablePred raining := fun w => by cases w <;> unfold raining <;> infer_instance
+instance : DecidablePred raining := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-- The weather report says it is raining. -/
-def reportSaysRain : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => False
+def reportSaysRain : World → Prop
+  | 0 => True
+  | 1 => False
+  | 2 => True
+  | 3 => False
 
-instance : DecidablePred reportSaysRain :=
-  fun w => by cases w <;> unfold reportSaysRain <;> infer_instance
+instance : DecidablePred reportSaysRain := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable True)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-! ## Conversational backgrounds -/
 
@@ -64,14 +80,14 @@ theorem informational_alone_not_necessity (w : World) :
     ¬ necessity informationalBg emptyBackground raining w := by
   rw [necessity_iff_all]
   intro h
-  have hAccW2 : (.w2 : World) ∈ accessibleWorlds informationalBg w := by
+  have hAccW2 : ((2 : World) : World) ∈ accessibleWorlds informationalBg w := by
     intro p hp
     simp [informationalBg] at hp
     subst hp
     decide
-  have hBestW2 : (.w2 : World) ∈ bestWorlds informationalBg emptyBackground w := by
+  have hBestW2 : ((2 : World) : World) ∈ bestWorlds informationalBg emptyBackground w := by
     rw [empty_ordering_emptyBackground]; exact hAccW2
-  have := h .w2 hBestW2
+  have := h (2 : World) hBestW2
   simp [raining] at this
 
 /-- **Report + reliability entails rain.** The strong base gives
@@ -85,26 +101,26 @@ theorem with_reliability_necessity (w : World) :
     hw' reportSaysRain (by simp [strongEpistemicBg])
   have hRel : reliabilityAssumption w' :=
     hw' reliabilityAssumption (by simp [strongEpistemicBg])
-  cases w' with
-  | w0 => decide
-  | w1 => exact absurd hReport (by decide)
-  | w2 => exact absurd (hRel hReport) (by decide)
-  | w3 => exact absurd hReport (by decide)
+  match w' with
+  | 0 => decide
+  | 1 => exact absurd hReport (by decide)
+  | 2 => exact absurd (hRel hReport) (by decide)
+  | 3 => exact absurd hReport (by decide)
 
 /-- **The informational base is not realistic.** At w1 (it rains but
     the report doesn't say so), w1 ∉ ∩f(w1) because reportSaysRain w1 = false. -/
 theorem informational_not_realistic : ¬ isRealistic informationalBg := by
   intro h
-  have h1 : reportSaysRain .w1 :=
-    h .w1 reportSaysRain (by simp [informationalBg])
+  have h1 : reportSaysRain (1 : World) :=
+    h (1 : World) reportSaysRain (by simp [informationalBg])
   exact absurd h1 (by decide)
 
 /-- **The strong epistemic base is also not realistic.** At w1, the
     report doesn't say rain, so w1 fails the reportSaysRain proposition. -/
 theorem strong_epistemic_not_realistic : ¬ isRealistic strongEpistemicBg := by
   intro h
-  have h1 : reportSaysRain .w1 :=
-    h .w1 reportSaysRain (by simp [strongEpistemicBg])
+  have h1 : reportSaysRain (1 : World) :=
+    h (1 : World) reportSaysRain (by simp [strongEpistemicBg])
   exact absurd h1 (by decide)
 
 /-- **Possibility holds under report alone.** Even without reliability,
@@ -112,7 +128,7 @@ theorem strong_epistemic_not_realistic : ¬ isRealistic strongEpistemicBg := by
 theorem informational_possibility (w : World) :
     possibility informationalBg emptyBackground raining w := by
   rw [possibility_iff_any]
-  refine ⟨.w0, ?_, ?_⟩
+  refine ⟨(0 : World), ?_, ?_⟩
   · rw [empty_ordering_emptyBackground]
     intro p hp
     simp [informationalBg] at hp

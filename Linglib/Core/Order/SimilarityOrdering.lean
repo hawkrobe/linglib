@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Filter
+import Mathlib.Order.Preorder.Finite
 import Linglib.Core.Order.Normality
 
 /-!
@@ -142,6 +143,34 @@ theorem mem_closestWorlds_of_subset [DecidableEq W]
     w ∈ sim.closestWorlds w₀ B := by
   rw [mem_closestWorlds] at hw ⊢
   exact ⟨hwB, fun w'' hw'' => hw.2 w'' (hBA hw'')⟩
+
+/-- **Limit Assumption** (closest-world existence): every non-empty
+    `Finset` has a closest world under the centered preorder.
+    Discharges the @cite{lewis-1973} "Limit Assumption" automatically
+    on finite types — corresponds to mathlib's
+    `Finite.exists_minimal` once the centered relation is exposed
+    as a `Preorder`.
+
+    The proof routes through `Set.Finite.exists_minimal`, which gives
+    a `Minimal (· ∈ A) m`. Membership in `closestWorlds w₀ A` is
+    equivalent (the filter condition `closer w₀ m w'' ∨ ¬ closer w₀ w'' m`
+    matches `Minimal`'s `∀ y, y ≤ m → m ≤ y` by case-splitting on
+    `closer w₀ w'' m`). -/
+theorem closestWorlds_nonempty [DecidableEq W]
+    (sim : SimilarityOrdering W) (w₀ : W) {A : Finset W} (hne : A.Nonempty) :
+    (sim.closestWorlds w₀ A).Nonempty := by
+  letI : Preorder W :=
+    { le := sim.closer w₀
+      le_refl := sim.closer_refl w₀
+      le_trans := sim.closer_trans w₀ }
+  obtain ⟨m, hmA, hmin⟩ :=
+    A.finite_toSet.exists_minimal (Finset.coe_nonempty.mpr hne)
+  refine ⟨m, ?_⟩
+  rw [mem_closestWorlds]
+  refine ⟨hmA, fun w'' hw'' => ?_⟩
+  by_cases h : sim.closer w₀ w'' m
+  · exact Or.inl (hmin hw'' h)
+  · exact Or.inr h
 
 end SimilarityOrdering
 

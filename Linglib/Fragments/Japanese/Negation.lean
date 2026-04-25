@@ -1,8 +1,9 @@
 import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Japanese Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Japanese expresses standard negation with the suffix *-nai* on the verb
 stem. This is **asymmetric** negation of type A/Fin+A/Cat: the negative
@@ -35,9 +36,24 @@ category marking.
 namespace Fragments.Japanese.Negation
 
 open Core.Morphology (MorphCategory)
+open Core.Lexical.NegMarker
 
-/-- The Japanese negative suffix. -/
-def negSuffix : String := "-nai"
+/-- *-nai* — Japanese's negative verbal suffix.
+    Attaches to the verb stem (mizenkei/continuative form) and itself
+    inflects as an i-adjective: *tabe-nai* (NPST), *tabe-naka-tta* (PST),
+    *tabe-naku-te* (GER). The shift of TAM marking from the stem to the
+    *-nai* suffix is the A/Fin+A/Cat asymmetry captured by
+    `japaneseNegDistribution` below. -/
+def negSuffix : NegMarkerEntry :=
+  { form := "-nai"
+  , morphemeType := .affix
+  , position := .morphological }
+
+/-- The Japanese negation system: a single verbal affix with rich
+    morphological redistribution (see `japaneseNegDistribution`).
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "jpn" [negSuffix]
 
 /-- A Japanese negation paradigm entry. -/
 structure NegParadigmEntry where
@@ -98,7 +114,6 @@ def japaneseNegDistribution : NegInflDistribution :=
 
 /-! ## Verification -/
 
-theorem negSuffix_is_nai : negSuffix = "-nai" := rfl
 theorem taberu_paradigm_size : taberuParadigm.length = 5 := by native_decide
 theorem yomu_paradigm_size : yomuParadigm.length = 2 := by native_decide
 

@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Set.Basic
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion
@@ -31,6 +31,10 @@ predicates carry `[DecidablePred p]` constraints.
 namespace Phenomena.Assertion.Studies.Rudin2025
 
 open Core.CommonGround
+
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
 
 /-! ## Part 1: Core Types -/
 
@@ -275,7 +279,6 @@ end SimpleVersion
 section OrderingVersion
 
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Epistemic state (ordering version): a modal base (set of worlds)
     paired with an ordering source (set of propositions ranking those worlds).
@@ -643,7 +646,6 @@ end OrderingVersion
 section RelationalSemantics
 
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Relational semantics for might:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ f_i(w), p(w') = true,

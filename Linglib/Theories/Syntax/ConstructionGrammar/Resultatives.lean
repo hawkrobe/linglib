@@ -2,34 +2,45 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 /-!
-# @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
+# ConstructionGrammar.Resultatives — Theory of the resultative construction family
 @cite{goldberg-jackendoff-2004}
 
-Formalization of the core claims from @cite{goldberg-jackendoff-2004}.
+Theory-side primitives for the four-way resultative construction family
+(causative/noncausative × property/path RP), the dual subevent structure,
+typed verbal/constructional subevent relations, and the compositional
+fusion machinery linking verb meaning to constructional contribution.
 
-## Key claims
+Paper data and per-datum verifications for @cite{goldberg-jackendoff-2004}
+itself live in `Phenomena/Constructions/Resultatives/Studies/GoldbergJackendoff2004.lean`,
+which imports this file.
 
-1. The English resultative is not one construction but a **family of four subconstructions**
-   organized along two dimensions: causative/noncausative × property/path RP
-2. Every resultative has a **dual subevent structure**: a verbal subevent (from the verb)
-   and a constructional subevent (CAUSE + BECOME/GO from the construction)
-3. The verbal and constructional subevents are linked by typed semantic relations:
-   MEANS, RESULT, INSTANCE, or CO-OCCURRENCE
-4. **Full Argument Realization (FAR)**: all obligatory arguments of both verb and
-   construction must be syntactically realized; shared arguments fuse
-5. **Semantic Coherence**: verb role rV and construction role rC may fuse only if
-   rV is construable as an instance of rC
-6. **Aspectual constraint**: resultatives are telic iff the RP denotes a bounded path/property
-7. **Temporal constraint**: the constructional subevent cannot temporally precede
-   the verbal subevent
+## Core types
 
+- `SubeventKind`, `SubeventRelation`, `RPType`, `Boundedness`,
+  `ObjectSelection`, `TemporalOrder`
+- `ResultativeSubconstruction` — the 2×2 family
+- `SubeventDesc`, `DualSubevent` — event-structural features
+- `ResultativeEntry` — schema for any resultative datum
+- `ArgSource` — argument-fusion bookkeeping
+
+## Key derivations (no per-paper data)
+
+- `ResultativeSubconstruction.constructionalDesc` — derived hasCause/hasBecome
+- `resultativeAspect`, `resultativeVendlerClass` — bounded RP → telic
+- `adjScaleToRPBoundedness` — Kennedy 2007 scale → G&J boundedness
+- `ResultativeSubconstruction.toConstruction` — derived family of
+  `ArgStructureConstruction` instances + `inheritanceLink`
+- `farSatisfied`, `rolesCoherent`, `temporalConstraintSatisfied` —
+  the three substantive constraints (Principles 37, 44, §4.2)
+
+The fusion theorems (`alternation_chain`, `noncausative_partial_chain`,
+`instrumentSpec_blocks_across_subconstructions`, etc.) are universally
+quantified over arbitrary `MeaningComponents` and `ResultativeSubconstruction`.
 -/
 
-namespace ConstructionGrammar.Studies.GoldbergJackendoff2004
+namespace ConstructionGrammar.Resultatives
 
 open ConstructionGrammar
 open Core.Verbs
@@ -45,7 +56,8 @@ inductive SubeventKind where
   | constructional
   deriving Repr, DecidableEq
 
-/-- How the verbal and constructional subevents are related (§3).
+/-- How the verbal and constructional subevents are related (§3 of
+@cite{goldberg-jackendoff-2004}).
 
 - **means**: The verbal subevent is the means by which the constructional subevent
   is brought about. This is the default relation for all four core subconstructions
@@ -80,7 +92,8 @@ inductive RPType where
   | path
   deriving Repr, DecidableEq
 
-/-- The four subconstructions in the resultative family (§2, Table 1).
+/-- The four subconstructions in the resultative family
+(@cite{goldberg-jackendoff-2004} §2, Table 1).
 
 |               | Property RP      | Path RP          |
 |---------------|------------------|------------------|
@@ -114,7 +127,7 @@ def ResultativeSubconstruction.rpType : ResultativeSubconstruction → RPType
   | .noncausativeProperty => .property
   | .noncausativePath => .path
 
-/-! ## Dual subevent structure (§3) -/
+/-! ## Dual subevent structure (§3 of @cite{goldberg-jackendoff-2004}) -/
 
 /-- Description of a subevent via event-structural features.
 
@@ -130,9 +143,8 @@ structure SubeventDesc where
   hasBecome : Bool := false
   deriving Repr, BEq, DecidableEq
 
-/-- The dual subevent structure of a resultative (§3, Principle 25).
-
-Every resultative has exactly two subevents linked by a semantic relation. -/
+/-- The dual subevent structure of a resultative
+(@cite{goldberg-jackendoff-2004} §3, Principle 25). -/
 structure DualSubevent where
   /-- The verbal subevent (from the verb's lexical semantics) -/
   verbal : SubeventDesc
@@ -182,10 +194,10 @@ theorem all_constructional_have_become_derived (sc : ResultativeSubconstruction)
 
 /-! ## Bridge to event structure templates
 
-G&J's constructional subevent maps to Rappaport Hovav & Levin's event
-structure templates: causative → accomplishment template, noncausative →
-achievement template. The hasCause/hasBecome features of SubeventDesc
-are exactly Template.HasCause/Template.HasResultState. -/
+@cite{goldberg-jackendoff-2004}'s constructional subevent maps to Rappaport
+Hovav & Levin's event structure templates: causative → accomplishment template,
+noncausative → achievement template. The hasCause/hasBecome features of
+SubeventDesc are exactly Template.HasCause/Template.HasResultState. -/
 
 open Semantics.Verb.EventStructure (Template)
 
@@ -220,7 +232,7 @@ inductive Boundedness where
   | unbounded
   deriving Repr, DecidableEq
 
-/-! ## Object selection (§2, ex. 7–9)
+/-! ## Object selection (§2 of @cite{goldberg-jackendoff-2004}, ex. 7–9)
 
 Within transitive resultatives, the object may be independently selected
 by the verb (selected) or licensed only by the construction (unselected).
@@ -286,7 +298,7 @@ def ResultativeEntry.dualSubevent (e : ResultativeEntry) : DualSubevent :=
 def ResultativeEntry.verbMC (e : ResultativeEntry) : MeaningComponents :=
   e.levinClass.meaningComponents
 
-/-! ## Aspectual profile (§4, Principle 27)
+/-! ## Aspectual profile (§4 of @cite{goldberg-jackendoff-2004}, Principle 27)
 
 The resultative's aspect is derived compositionally:
 - Always dynamic (involves change)
@@ -308,8 +320,9 @@ def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
 /-! ## Semantic roles and argument licensing
 
 Uses the canonical `ThetaRole` from the linking interface rather than
-a paper-specific enum. G&J's four resultative-relevant roles map to:
-agent, patient, theme, goal (= "resultGoal" in G&J's terminology). -/
+a paper-specific enum. @cite{goldberg-jackendoff-2004}'s four
+resultative-relevant roles map to: agent, patient, theme, goal
+(= "resultGoal" in their terminology). -/
 
 /-- An argument with its source (verb or construction). -/
 structure ArgSource where
@@ -389,148 +402,8 @@ def temporalConstraintSatisfied (rel : SubeventRelation) (order : TemporalOrder)
   | .means, .constructionalFirst => false
   | _, _ => true
 
-/-! ## Empirical data: resultative entries -/
-
-def hammerFlat : ResultativeEntry :=
-  { verb := "hammer", subconstruction := .causativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , objectSelection := some .selected  -- cf. "She hammered the metal"
-  , levinClass := .hit }               -- Levin §18.1
-
-def kickIntoField : ResultativeEntry :=
-  { verb := "kick", subconstruction := .causativePath
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , objectSelection := some .selected  -- cf. "She kicked the ball"
-  , levinClass := .hit }               -- Levin §18.1
-
-def freezeSolid : ResultativeEntry :=
-  { verb := "freeze", subconstruction := .noncausativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .achievement
-  , levinClass := .otherCoS }          -- Levin §45.4
-
-def rollIntoField : ResultativeEntry :=
-  { verb := "roll", subconstruction := .noncausativePath
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , levinClass := .mannerOfMotion }    -- Levin §51.3
-
-def drinkSick : ResultativeEntry :=
-  { verb := "drink", subconstruction := .causativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , objectSelection := some .unselected  -- cf. *"They drank the pub"
-  , levinClass := .eat }                 -- Levin §39.1
-
-def laughSilly : ResultativeEntry :=
-  { verb := "laugh", subconstruction := .causativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , objectSelection := some .fakeReflexive  -- cf. *"She laughed him silly"
-  , levinClass := .performance }             -- Levin §26.7
-
-def swingShut : ResultativeEntry :=
-  { verb := "swing", subconstruction := .noncausativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , levinClass := .mannerOfMotion }    -- Levin §51.3
-
-def wipeClean : ResultativeEntry :=
-  { verb := "wipe", subconstruction := .causativeProperty
-  , rpBoundedness := .bounded, bareVerbClass := .activity
-  , objectSelection := some .selected  -- cf. "He wiped the table"
-  , levinClass := .wipe }              -- Levin §10.4
-
-/-- All resultative entries. -/
-def allEntries : List ResultativeEntry :=
-  [ hammerFlat, kickIntoField, freezeSolid, rollIntoField
-  , drinkSick, laughSilly, swingShut, wipeClean ]
-
-/-! ## Per-datum verification theorems -/
-
--- Subconstruction classification
-theorem hammerFlat_is_causativeProperty :
-    hammerFlat.subconstruction = .causativeProperty := rfl
-
-theorem kickIntoField_is_causativePath :
-    kickIntoField.subconstruction = .causativePath := rfl
-
-theorem freezeSolid_is_noncausativeProperty :
-    freezeSolid.subconstruction = .noncausativeProperty := rfl
-
-theorem rollIntoField_is_noncausativePath :
-    rollIntoField.subconstruction = .noncausativePath := rfl
-
--- Subevent relations: all core entries default to MEANS
-theorem hammerFlat_means : hammerFlat.subeventRelation = .means := rfl
-theorem freezeSolid_means : freezeSolid.subeventRelation = .means := rfl
-theorem drinkSick_means : drinkSick.subeventRelation = .means := rfl
-
-/-- All four core subconstructions use MEANS (§3, summary 97a–d).
-    RESULT is reserved for sound-emission and disappearance subconstructions. -/
-theorem all_core_entries_use_means :
-    allEntries.all (·.subeventRelation == .means) = true := by
-  native_decide
-
--- Derived subevent structure: CAUSE follows from subconstruction
-
-/-- Causative entries have CAUSE in their derived constructional subevent. -/
-theorem causative_entries_have_cause :
-    (allEntries.filter (·.subconstruction.isCausative)).all
-      (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
-
-/-- Noncausative entries lack CAUSE in their derived constructional subevent. -/
-theorem noncausative_entries_no_cause :
-    (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
-      (λ e => !e.dualSubevent.constructional.hasCause) = true := by
-  native_decide
-
-/-- All derived constructional subevents have BECOME. -/
-theorem all_constructional_have_become :
-    allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
-  native_decide
-
--- Object selection: intransitive entries have no object selection
-
-/-- Noncausative (intransitive) entries have no object selection. -/
-theorem noncausative_no_object_selection :
-    (allEntries.filter (λ e => !e.subconstruction.isCausative)).all
-      (λ e => e.objectSelection == none) = true := by
-  native_decide
-
-/-- All causative entries specify an object selection mode. -/
-theorem causative_have_object_selection :
-    (allEntries.filter (·.subconstruction.isCausative)).all
-      (λ e => e.objectSelection.isSome) = true := by
-  native_decide
-
--- Aspectual predictions
-
-/-- Bounded RP yields telic resultative (= accomplishment). -/
-theorem bounded_rp_telic :
-    resultativeVendlerClass .bounded = .accomplishment := rfl
-
-/-- Unbounded RP yields atelic resultative (= activity). -/
-theorem unbounded_rp_atelic :
-    resultativeVendlerClass .unbounded = .activity := rfl
-
-/-- All entries with bounded RP are telic. -/
-theorem bounded_entries_telic :
-    (allEntries.filter (·.rpBoundedness == .bounded)).all
-      (λ e => (resultativeAspect e.rpBoundedness).telicity == .telic) = true := by
-  native_decide
-
-/-- Resultative telicizes an activity verb: adding bounded RP to an activity
-    yields an accomplishment (§4, Principle 27). -/
-theorem resultative_telicizes_activity :
-    activityProfile.telicize.toVendlerClass = .accomplishment := rfl
-
-/-- The resultative's derived aspect matches telicization of the bare verb
-    when the bare verb is an activity and the RP is bounded. -/
-theorem resultative_aspect_matches_telicize (e : ResultativeEntry)
-    (hVerb : e.bareVerbClass = .activity) (hBounded : e.rpBoundedness = .bounded) :
-    resultativeVendlerClass e.rpBoundedness =
-    (e.bareVerbClass.toProfile.telicize).toVendlerClass := by
-  rw [hVerb, hBounded]
-  rfl
-
-/-! ## Closed-scale → bounded RP bridge (§8, Principle 27)
+/-! ## Closed-scale → bounded RP bridge (§8 of @cite{goldberg-jackendoff-2004},
+Principle 27)
 
 @cite{goldberg-jackendoff-2004} §8: productive property RPs "tend to be
 nongradable" and "encode a clearly delimited state." The formal correlate
@@ -541,9 +414,9 @@ their scale. `dry` (upper-bounded, has max) is productive; `wet`
 
 The aspectual chain: `hasMax → bounded RP → telic resultative`. -/
 
-/-- Map Kennedy's scale boundedness to G&J's RP boundedness.
-    Scales with a maximum endpoint yield bounded RPs (the RP denotes a
-    delimited endstate). Scales without a maximum yield unbounded RPs. -/
+/-- Map @cite{kennedy-2007}'s scale boundedness to @cite{goldberg-jackendoff-2004}'s
+RP boundedness. Scales with a maximum endpoint yield bounded RPs (the RP denotes
+a delimited endstate). Scales without a maximum yield unbounded RPs. -/
 def adjScaleToRPBoundedness (b : Core.Scale.Boundedness) : Boundedness :=
   if b.hasMax then .bounded else .unbounded
 
@@ -782,11 +655,7 @@ theorem noncausative_fewer_steps :
     (decompose causativePropertyConstruction).length := by
   native_decide
 
-/-! ## Verb–construction fusion (integration with ArgumentStructure.lean)
-
-The `toConstruction` now carries `semanticContribution`, so the
-`composedMeaning` / `predictedAlternationInConstruction` machinery from
-ArgumentStructure.lean works directly with derived subconstructions. -/
+/-! ## Verb–construction fusion (integration with ArgumentStructure.lean) -/
 
 /-- A manner verb (no CoS, no causation, no instrumentSpec) in a causative
     subconstruction acquires causative alternation: the subconstruction's
@@ -855,114 +724,40 @@ theorem resultative_alternation_predicted (mc : MeaningComponents)
     ResultativeSubconstruction.semanticContribution,
     MeaningComponents.fuse, MeaningComponents.predictedAlternation]
 
-/-! ## Per-entry verb class participation
+/-! ## Universal aspect predictions -/
 
-Each `ResultativeEntry` carries its Levin class. The fused meaning
-(`verbMC.fuse cxn.semanticContribution`) determines which alternations
-are predicted for the verb *in the construction*.
+/-- Bounded RP yields telic resultative (= accomplishment). -/
+theorem bounded_rp_telic :
+    resultativeVendlerClass .bounded = .accomplishment := rfl
 
-The key G&J insight: manner verbs (hit, performance, manner-of-motion)
-that lack CoS or causation in isolation acquire them from the
-construction. The `fusedMC` captures this compositionally. -/
+/-- Unbounded RP yields atelic resultative (= activity). -/
+theorem unbounded_rp_atelic :
+    resultativeVendlerClass .unbounded = .activity := rfl
 
-/-- All entries acquire CoS from the construction, regardless of verb class. -/
-theorem all_entries_fused_cos :
-    allEntries.all (λ e => e.fusedMC.changeOfState) = true := by
-  native_decide
+/-- Resultative telicizes an activity verb: adding bounded RP to an activity
+    yields an accomplishment (§4 of @cite{goldberg-jackendoff-2004},
+    Principle 27). -/
+theorem resultative_telicizes_activity :
+    activityProfile.telicize.toVendlerClass = .accomplishment := rfl
 
-/-- All entries participate in the resultative alternation (none are instrument-spec). -/
-theorem all_entries_resultative_alternation :
-    allEntries.all (λ e =>
-      predictedAlternationInConstruction e.verbMC
-        e.subconstruction.toConstruction .resultative) = true := by
-  native_decide
-
-/-- Causative entries all acquire the causative alternation. -/
-theorem causative_entries_causative_alternation :
-    (allEntries.filter (·.subconstruction.isCausative)).all (λ e =>
-      predictedAlternationInConstruction e.verbMC
-        e.subconstruction.toConstruction .causativeInchoative) = true := by
-  native_decide
-
-/-- Noncausative entries do NOT acquire the causative alternation
-    (unless the verb already has causation — freeze/otherCoS does). -/
-theorem noncausative_entries_no_new_causation :
-    (allEntries.filter (λ e => !e.subconstruction.isCausative)).all (λ e =>
-      predictedAlternationInConstruction e.verbMC
-        e.subconstruction.toConstruction .causativeInchoative
-      = e.verbMC.predictedAlternation .causativeInchoative) = true := by
-  native_decide
-
-/-! ### Verb-specific participation
-
-The construction-verb interaction across the four canonical Levin classes
-that G&J discuss: manner verbs (hit = hammer/kick), change-of-state
-verbs (otherCoS = freeze), motion verbs (mannerOfMotion = roll/swing),
-and removing verbs (wipe). -/
-
-/-- Hammer (hit-class): no CoS or causation alone → both added by causative construction. -/
-theorem hammer_gains_cos_causation :
-    hammerFlat.verbMC.changeOfState = false ∧
-    hammerFlat.verbMC.causation = false ∧
-    hammerFlat.fusedMC.changeOfState = true ∧
-    hammerFlat.fusedMC.causation = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor <;> native_decide
-
-/-- Freeze (otherCoS): already has CoS + causation → construction doesn't change profile. -/
-theorem freeze_already_has_cos :
-    freezeSolid.verbMC.changeOfState = true ∧
-    freezeSolid.verbMC.causation = true ∧
-    freezeSolid.fusedMC = freezeSolid.verbMC := by
-  constructor; native_decide
-  constructor <;> native_decide
-
-/-- Roll (manner-of-motion): gains CoS from construction; no causation (noncausative). -/
-theorem roll_gains_cos_only :
-    rollIntoField.verbMC.changeOfState = false ∧
-    rollIntoField.fusedMC.changeOfState = true ∧
-    rollIntoField.fusedMC.causation = false := by
-  constructor; native_decide
-  constructor <;> native_decide
-
-/-- Laugh (performance): pure manner verb — construction adds CoS + causation. -/
-theorem laugh_gains_cos_causation :
-    laughSilly.verbMC.changeOfState = false ∧
-    laughSilly.verbMC.causation = false ∧
-    laughSilly.fusedMC.changeOfState = true ∧
-    laughSilly.fusedMC.causation = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor <;> native_decide
-
-/-- Wipe (wipe-class): already has full profile — construction is redundant. -/
-theorem wipe_already_has_everything :
-    wipeClean.verbMC.changeOfState = true ∧
-    wipeClean.verbMC.causation = true ∧
-    wipeClean.fusedMC = wipeClean.verbMC := by
-  constructor; native_decide
-  constructor <;> native_decide
+/-- The resultative's derived aspect matches telicization of the bare verb
+    when the bare verb is an activity and the RP is bounded. -/
+theorem resultative_aspect_matches_telicize (e : ResultativeEntry)
+    (hVerb : e.bareVerbClass = .activity) (hBounded : e.rpBoundedness = .bounded) :
+    resultativeVendlerClass e.rpBoundedness =
+    (e.bareVerbClass.toProfile.telicize).toVendlerClass := by
+  rw [hVerb, hBounded]
+  rfl
 
 /-! ## General chain theorems
 
 The full derivation pipeline connecting adjective scale structure,
 RP boundedness, aspect, and alternation participation. These are
 universally quantified — they hold for ANY verb class and ANY
-subconstruction satisfying the hypotheses, not just the attested entries.
-
-The two chains are logically independent (aspect and alternation don't
-interact at the MeaningComponents level), but they share a common input:
-the subconstruction type determines both the constructional semantics
-(CoS, causation) and the default subevent relation (MEANS). -/
+subconstruction satisfying the hypotheses, not just the attested entries. -/
 
 /-- **Aspect chain**: any adjective with a scale maximum, used as an RP
-    in a resultative, produces a telic accomplishment.
-
-    The derivation composes two independently-defined functions:
-    `adjScaleToRPBoundedness` (Kennedy 2007 → G&J) and
-    `resultativeVendlerClass` (G&J → Vendler). Neither function knows
-    about the other; the chain theorem proves they compose correctly. -/
+    in a resultative, produces a telic accomplishment. -/
 theorem aspect_chain (b : Core.Scale.Boundedness) (hMax : b.hasMax = true) :
     let rpB := adjScaleToRPBoundedness b
     rpB = .bounded ∧
@@ -975,9 +770,7 @@ theorem aspect_chain (b : Core.Scale.Boundedness) (hMax : b.hasMax = true) :
   · rw [closed_scale_telic_resultative b hMax]; rfl
 
 /-- **Alternation chain**: corollary of `fuse_cos_caus_enables` for
-    causative resultative subconstructions. The subconstruction contributes
-    CoS + causation + ¬instrumentSpec, satisfying the general enabling
-    theorem's hypotheses. -/
+    causative resultative subconstructions. -/
 theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hCausative : sc.isCausative = true) :
     let fused := composedMeaning mc sc.toConstruction
@@ -989,9 +782,7 @@ theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruct
   simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
   exact fuse_cos_caus_enables mc _ hCoS hCaus hInstr hNoInst
 
-/-- **Noncausative contrast**: corollary of `fuse_cos_only_partial`.
-    Noncausative subconstructions contribute CoS but not causation,
-    so only CoS-dependent alternations fire. -/
+/-- **Noncausative contrast**: corollary of `fuse_cos_only_partial`. -/
 theorem noncausative_partial_chain (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hNonCaus : sc.isCausative = false)
@@ -1005,8 +796,7 @@ theorem noncausative_partial_chain (mc : MeaningComponents)
   simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
   exact fuse_cos_only_partial mc _ hCoS hNoCausC hNoCaus hInstr hNoInst
 
-/-- **instrumentSpec blocking**: corollary of `instrumentSpec_blocks_after_fuse`.
-    Cut-class verbs remain blocked in all subconstructions. -/
+/-- **instrumentSpec blocking**: corollary of `instrumentSpec_blocks_after_fuse`. -/
 theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = true) :
@@ -1017,244 +807,4 @@ theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
   simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
   exact instrumentSpec_blocks_after_fuse mc _ hInstr
 
-/-! ## Empirical data: grammaticality judgments
-
-Theory-neutral grammaticality judgments and aspectual contrasts drawn
-from §§2–8 of the paper. These provide the shared data layer that
-other studies (Dendikken, Tay, Levin) connect to their own analyses. -/
-
-open Features (Acceptability)
-open Paradigms.Measurement
-
-/-- What type of resultative is exemplified.
-
-Extends the paper's 2×2 matrix (§2) with fake reflexives (§5) and
-anticausative property resultatives (@cite{levin-2026}). -/
-inductive ResultativeType where
-  | causativeProperty
-  | causativePath
-  | noncausativeProperty
-  | noncausativePath
-  | fakeReflexive
-  /-- Anticausative: verb doesn't alternate alone; construction licenses it
-      (@cite{levin-2026}). Distinct from `noncausativeProperty` (e.g., *freeze
-      solid*) where the verb independently shows the causative alternation. -/
-  | anticausativeProperty
-  deriving Repr, DecidableEq
-
-/-- A single resultative example with judgment data. -/
-structure ResultativeDatum where
-  /-- Example identifier -/
-  exId : String
-  /-- The sentence -/
-  sentence : String
-  /-- Acceptability judgment -/
-  judgment : Acceptability
-  /-- Which resultative subtype -/
-  resType : ResultativeType
-  /-- What phenomenon this illustrates -/
-  phenomenon : String
-  deriving Repr, BEq
-
-/-! ### Causative property resultatives (§2, ex. 5a, 7a) -/
-
-def hammer_flat : ResultativeDatum :=
-  { exId := "1a"
-  , sentence := "She hammered the metal flat"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "causative + property RP: agent causes patient to become flat" }
-
-def wipe_clean : ResultativeDatum :=
-  { exId := "1b"
-  , sentence := "He wiped the table clean"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "causative + property RP: agent causes patient to become clean" }
-
-def paint_red : ResultativeDatum :=
-  { exId := "1c"
-  , sentence := "They painted the house red"
-  , judgment := .ok
-  , resType := .causativeProperty
-  , phenomenon := "causative + property RP: agent causes patient to become red" }
-
-/-! ### Causative path resultatives (§2, ex. 5b) -/
-
-def kick_into_field : ResultativeDatum :=
-  { exId := "2a"
-  , sentence := "She kicked the ball into the field"
-  , judgment := .ok
-  , resType := .causativePath
-  , phenomenon := "causative + path RP: agent causes theme to go to goal" }
-
-def push_off_table : ResultativeDatum :=
-  { exId := "2b"
-  , sentence := "He pushed the glass off the table"
-  , judgment := .ok
-  , resType := .causativePath
-  , phenomenon := "causative + path RP: agent causes theme to move from source" }
-
-/-! ### Noncausative property resultatives (§2, ex. 6a) -/
-
-def freeze_solid : ResultativeDatum :=
-  { exId := "3a"
-  , sentence := "The river froze solid"
-  , judgment := .ok
-  , resType := .noncausativeProperty
-  , phenomenon := "noncausative + property RP: theme becomes result state" }
-
-def swing_shut : ResultativeDatum :=
-  { exId := "3b"
-  , sentence := "The gate swung shut"
-  , judgment := .ok
-  , resType := .noncausativeProperty
-  , phenomenon := "noncausative + property RP: unaccusative verb + result state" }
-
-/-! ### Noncausative path resultatives (§2, ex. 6b) -/
-
-def roll_into_field : ResultativeDatum :=
-  { exId := "4a"
-  , sentence := "The ball rolled into the field"
-  , judgment := .ok
-  , resType := .noncausativePath
-  , phenomenon := "noncausative + path RP: theme moves along path" }
-
-def slide_off_table : ResultativeDatum :=
-  { exId := "4b"
-  , sentence := "The book slid off the table"
-  , judgment := .ok
-  , resType := .noncausativePath
-  , phenomenon := "noncausative + path RP: theme moves from source" }
-
-/-! ### Fake reflexive resultatives (§5, ex. 9) -/
-
-def laugh_silly : ResultativeDatum :=
-  { exId := "5a"
-  , sentence := "She laughed herself silly"
-  , judgment := .ok
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive: intransitive verb + reflexive + result" }
-
-def drink_sick : ResultativeDatum :=
-  { exId := "5b"
-  , sentence := "He drank himself sick"
-  , judgment := .ok
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive: verb lacks patient; construction adds it" }
-
-def run_ragged : ResultativeDatum :=
-  { exId := "5c"
-  , sentence := "She ran herself ragged"
-  , judgment := .ok
-  , resType := .fakeReflexive
-  , phenomenon := "fake reflexive: unergative verb + reflexive + result" }
-
-/-! ### Aspectual contrasts (§4, Principle 27) -/
-
-/-- An aspectual contrast pair. -/
-structure AspectualContrast where
-  /-- Sentence with temporal adverbial -/
-  sentence : String
-  /-- Acceptability -/
-  judgment : Acceptability
-  /-- Which adverbial type -/
-  adverbialType : String
-  /-- Description -/
-  description : String
-  deriving Repr, BEq
-
-def hammer_flat_in : AspectualContrast :=
-  { sentence := "She hammered the metal flat in an hour"
-  , judgment := .ok
-  , adverbialType := "in-adverbial"
-  , description := "resultative is telic: in-adverbial OK" }
-
-def hammer_flat_for : AspectualContrast :=
-  { sentence := "*She hammered the metal flat for an hour"
-  , judgment := .unacceptable
-  , adverbialType := "for-adverbial"
-  , description := "resultative is telic: for-adverbial bad" }
-
-def hammer_bare_for : AspectualContrast :=
-  { sentence := "She hammered the metal for an hour"
-  , judgment := .ok
-  , adverbialType := "for-adverbial"
-  , description := "bare activity is atelic: for-adverbial OK" }
-
-def hammer_bare_in : AspectualContrast :=
-  { sentence := "??She hammered the metal in an hour"
-  , judgment := .marginal
-  , adverbialType := "in-adverbial"
-  , description := "bare activity is atelic: in-adverbial degraded" }
-
-/-! ### Unacceptable resultatives (§6, semantic coherence violations) -/
-
-def eat_full : ResultativeDatum :=
-  { exId := "7a"
-  , sentence := "*She ate the food full"
-  , judgment := .unacceptable
-  , resType := .causativeProperty
-  , phenomenon := "semantic incoherence: patient of eat ≠ entity that becomes full" }
-
-def sleep_flat : ResultativeDatum :=
-  { exId := "7b"
-  , sentence := "*She slept the bed flat"
-  , judgment := .unacceptable
-  , resType := .causativeProperty
-  , phenomenon := "semantic incoherence: sleep cannot cause flatness" }
-
-/-! ### Aggregate data -/
-
-def allExamples : List ResultativeDatum :=
-  [ hammer_flat, wipe_clean, paint_red
-  , kick_into_field, push_off_table
-  , freeze_solid, swing_shut
-  , roll_into_field, slide_off_table
-  , laugh_silly, drink_sick, run_ragged
-  , eat_full, sleep_flat ]
-
-def aspectualContrasts : List AspectualContrast :=
-  [ hammer_flat_in, hammer_flat_for, hammer_bare_for, hammer_bare_in ]
-
-/-! ### Empirical verification -/
-
-/-- All four resultative types are attested in the data. -/
-theorem has_all_resultative_types :
-    (allExamples.any (·.resType == .causativeProperty)) = true ∧
-    (allExamples.any (·.resType == .causativePath)) = true ∧
-    (allExamples.any (·.resType == .noncausativeProperty)) = true ∧
-    (allExamples.any (·.resType == .noncausativePath)) = true ∧
-    (allExamples.any (·.resType == .fakeReflexive)) = true := by
-  constructor; native_decide
-  constructor; native_decide
-  constructor; native_decide
-  constructor; native_decide
-  native_decide
-
-/-- Both grammatical and ungrammatical examples are represented. -/
-theorem has_both_judgments :
-    (allExamples.any (·.judgment == .ok)) = true ∧
-    (allExamples.any (·.judgment == .unacceptable)) = true := by
-  constructor; native_decide
-  native_decide
-
-/-- The aspectual contrast data includes both in- and for-adverbials. -/
-theorem aspectual_both_adverbials :
-    (aspectualContrasts.any (·.adverbialType == "in-adverbial")) = true ∧
-    (aspectualContrasts.any (·.adverbialType == "for-adverbial")) = true := by
-  constructor; native_decide
-  native_decide
-
-/-- Telic resultatives accept in-adverbials and reject for-adverbials. -/
-theorem telic_adverbial_pattern :
-    hammer_flat_in.judgment == .ok ∧
-    hammer_flat_for.judgment == .unacceptable := by
-  constructor <;> native_decide
-
-/-- Atelic bare activities accept for-adverbials. -/
-theorem atelic_adverbial_pattern :
-    hammer_bare_for.judgment == .ok := by
-  native_decide
-
-end ConstructionGrammar.Studies.GoldbergJackendoff2004
+end ConstructionGrammar.Resultatives

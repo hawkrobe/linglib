@@ -25,7 +25,14 @@ namespace Features
 
     See `Antonymy.lean` module docstring for the diagnostics. Used in
     gradable-adjective semantics to distinguish licensing patterns of
-    the two-threshold model. -/
+    the two-threshold model.
+
+    **Cross-reference**: `Core.Opposition.AristotelianRel` (in
+    `Core/Logic/Opposition/Aristotelian.lean`) is a 5-valued enum that
+    subsumes both constructors here. A future cleanup could replace
+    `NegationType` with `{ r : AristotelianRel // r ∈ {.contradictory, .contrary} }`
+    or have consumers take `AristotelianRel` directly. Deferred until
+    consumer demand pulls the unification. -/
 inductive NegationType where
   | contradictory
   | contrary

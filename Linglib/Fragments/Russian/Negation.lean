@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Russian Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Russian expresses standard negation with the preverbal particle *не* (*ne*).
 Negation is **symmetric**: adding *не* introduces no structural changes —
@@ -14,13 +14,30 @@ Russian has obligatory negative concord (WALS: co-occur):
 - *Никто не пришёл* 'Nobody NEG came' = 'Nobody came'
 - *Ничего не видел* 'Nothing NEG saw' = '(I) saw nothing'
 
-N-words (*ни-* series) always co-occur with predicate negation *не*.
+N-words of the *ни-* series always co-occur with predicate negation *не*.
+The lexical-reactive side — `никто`, `ничего`, `никогда`, `кто-либо`, etc. —
+lives in `Fragments/Russian/PolarityItems.lean` per the operator/lexical-
+reactive split documented in `Core/Lexical/NegMarker.lean`. The
+`NegConcordExample` data below illustrates the marker's NC behavior at
+the sentence level, which is operator-side typology consumed by
+`Phenomena/Negation/Studies/Miestamo2005.lean`.
 -/
 
 namespace Fragments.Russian.Negation
 
-/-- The standard negation particle. -/
-def negMarker : String := "не"
+open Core.Lexical.NegMarker
+
+/-- *не* — Russian's standard preverbal negation particle.
+    A free word, syntactically immediately preverbal. -/
+def ne : NegMarkerEntry :=
+  { form := "не"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The Russian negation system: a single preverbal particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "rus" [ne]
 
 /-- A Russian negation example. -/
 structure NegExample where
@@ -100,7 +117,7 @@ def allConcordExamples : List NegConcordExample := [nikto, nichego, nikogda]
 
 private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 
-theorem negMarker_is_ne : negMarker = "не" := rfl
+theorem ne_form : ne.form = "не" := rfl
 
 theorem all_examples_count : allExamples.length = 4 := by native_decide
 

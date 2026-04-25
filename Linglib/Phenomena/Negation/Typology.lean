@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Datasets.WALS.Features.F112A
 import Linglib.Datasets.WALS.Features.F113A
@@ -99,36 +100,11 @@ namespace Phenomena.Negation.Typology
 -- Chapter 112: Negative Morpheme Types
 -- ============================================================================
 
-/-- WALS Ch 112: How standard (clausal) negation is expressed.
-
-    Six categories based on the morphological status of the negative marker:
-    (1) affix on the verb, (2) free particle, (3) auxiliary verb inflecting
-    for verbal categories, (4) negative word whose status is unclear,
-    (5) variation between word and affix constructions in the same language,
-    (6) bipartite ("double") negation requiring two co-occurring markers. -/
-inductive NegMorphemeType where
-  /-- Negative affix on the verb (e.g., Kolyma Yukaghir `el-jaqa-te-je`
-      'NEG-achieve-FUT-1SG'). -/
-  | affix
-  /-- Negative particle: free word, no verbal inflection
-      (e.g., English `not`, Musgu `pay`). -/
-  | particle
-  /-- Negative auxiliary verb: inflects for person, number, or TAM like
-      verbs in the language (e.g., Finnish `e-n` 'NEG-1SG'). -/
-  | auxVerb
-  /-- Negative word whose status as verb or particle is unclear, typically
-      in isolating languages with little verbal morphology
-      (e.g., Maori `kaahore`). -/
-  | wordUnclear
-  /-- Language uses both a negative word and a negative affix in different
-      constructions (e.g., Rama: preverbal particle in one construction,
-      verbal suffix in another). -/
-  | variation
-  /-- Bipartite negation: two co-occurring negative morphemes, one preceding
-      and one following the verb (e.g., French `ne...pas`,
-      Izi `to-ome-du` 'NEG-do-NEG'). -/
-  | doubleNeg
-  deriving DecidableEq, Repr
+-- WALS Ch 112: How standard (clausal) negation is expressed.
+-- The enum is declared in `Core.Lexical.NegMarker` and re-exported here
+-- so existing references resolve unchanged. See that file for the value
+-- documentation.
+export Core.Lexical.NegMarker (NegMorphemeType)
 
 -- ============================================================================
 -- Chapter 113: Symmetric vs Asymmetric Standard Negation
@@ -274,13 +250,8 @@ inductive NegIndefiniteStrategy where
 -- WALS Converter Functions
 -- ============================================================================
 
-private def fromWALS112A : Datasets.WALS.F112A.NegativeMorphemeType → NegMorphemeType
-  | .negativeAffix => .affix
-  | .negativeParticle => .particle
-  | .negativeAuxiliaryVerb => .auxVerb
-  | .negativeWordUnclearIfVerbOrParticle => .wordUnclear
-  | .variationBetweenNegativeWordAndAffix => .variation
-  | .doubleNegation => .doubleNeg
+private def fromWALS112A : Datasets.WALS.F112A.NegativeMorphemeType → NegMorphemeType :=
+  Core.Lexical.NegMarker.ofWALS112A
 
 private def fromWALS113A : Datasets.WALS.F113A.NegationSymmetry → NegSymmetry
   | .symmetric => .symmetric

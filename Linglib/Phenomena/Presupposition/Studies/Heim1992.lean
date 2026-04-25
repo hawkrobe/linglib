@@ -26,6 +26,12 @@ connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
 `doxOfAccessRel` (from `BeliefEmbedding.lean`) to `presupFiltered`
 (from `LocalContext.lean`).
 
+The *other* half of @cite{heim-1992} — comparative-belief desire
+semantics for `want`/`wish`/`hope` — is at
+`Phenomena/Modality/Studies/Heim1992.lean`. Both halves of the paper are
+formalized; the substrate splits along the natural Phenomena boundary
+(presupposition vs modality).
+
 -/
 
 namespace Heim1992

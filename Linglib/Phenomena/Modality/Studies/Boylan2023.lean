@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Putting *oughts* together
@@ -72,8 +72,11 @@ Dessert) and comparisons (conflict account, Kratzer bridge).
 
 namespace Boylan2023
 
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
+
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Computable list of accessible worlds for use in the Boylan framework.
     `accessibleWorlds` is now `Set`-valued (noncomputable); for the `decide`-
@@ -536,9 +539,9 @@ structure): 3 workers, where exactly one is absent in each non-ideal world.
 section Office
 
 /-- Who is present at work in each world. -/
-def aliceIn : (World → Bool) := λ w => w != .w1
-def bobIn   : (World → Bool) := λ w => w != .w2
-def carolIn : (World → Bool) := λ w => w != .w3
+def aliceIn : (World → Bool) := λ w => w != (1 : World)
+def bobIn   : (World → Bool) := λ w => w != (2 : World)
+def carolIn : (World → Bool) := λ w => w != (3 : World)
 
 /-- Everyone is in the office. -/
 def everyoneIn : (World → Bool) := λ w => aliceIn w && bobIn w && carolIn w
@@ -571,38 +574,38 @@ def officeCandidates : List ((World → Bool)) :=
 /-- PBEST contains exactly 4 propositions (the 3 individual-in props
     and not-everyone-in; everyoneIn is dominated). -/
 theorem office_pbest_length :
-    (PBEST officeOrdering .w0 officeCandidates (accessibleWorldsList officeBase .w0)).length = 4 := by
+    (PBEST officeOrdering (0 : World) officeCandidates (accessibleWorldsList officeBase (0 : World))).length = 4 := by
   decide
 
 /-- The best propositions are pairwise consistent: any two workers can
     both be in (pairwise but not globally). -/
 theorem office_pairwise_consistent :
-    pairwiseConsistent (PBEST officeOrdering .w0 officeCandidates
-      (accessibleWorldsList officeBase .w0))
-      (accessibleWorldsList officeBase .w0) = true := by
+    pairwiseConsistent (PBEST officeOrdering (0 : World) officeCandidates
+      (accessibleWorldsList officeBase (0 : World)))
+      (accessibleWorldsList officeBase (0 : World)) = true := by
   decide
 
 /-- *ought* is defined in The Office (pairwise consistency holds). -/
 theorem office_ought_defined :
-    oughtDefined officeOrdering .w0 officeCandidates
-      (accessibleWorldsList officeBase .w0) = true := by
+    oughtDefined officeOrdering (0 : World) officeCandidates
+      (accessibleWorldsList officeBase (0 : World)) = true := by
   decide
 
 /-- "Alice should be in the office" is true: there is a best proposition
     (namely aliceIn) such that Alice is in at every world in it. -/
 theorem alice_should_be_in :
-    ought officeOrdering officeBase officeCandidates aliceIn .w0 = some true := by
+    ought officeOrdering officeBase officeCandidates aliceIn (0 : World) = some true := by
   decide
 
 /-- "Bob should be in the office" is true. -/
 theorem bob_should_be_in :
-    ought officeOrdering officeBase officeCandidates bobIn .w0 = some true := by
+    ought officeOrdering officeBase officeCandidates bobIn (0 : World) = some true := by
   decide
 
 /-- "Everyone should be in the office" is FALSE: no best proposition
     entails that everyone is in. This is Agglomeration failure. -/
 theorem not_everyone_should_be_in :
-    ought officeOrdering officeBase officeCandidates everyoneIn .w0 = some false := by
+    ought officeOrdering officeBase officeCandidates everyoneIn (0 : World) = some false := by
   decide
 
 /-- **Fact 5 (Epistemic Agglomeration Failure)**: There exist parameters
@@ -614,7 +617,7 @@ theorem epistemic_agglomeration_failure :
       ought ord f cands φ w = some true ∧
       ought ord f cands ψ w = some true ∧
       ought ord f cands (λ v => φ v && ψ v) w = some false :=
-  ⟨officeOrdering, officeBase, officeCandidates, aliceIn, bobIn, .w0,
+  ⟨officeOrdering, officeBase, officeCandidates, aliceIn, bobIn, (0 : World),
    by decide, by decide, by decide⟩
 
 end Office
@@ -643,10 +646,10 @@ We model this with 4 worlds:
 section Dessert
 
 /-- Propositions for each dessert outcome. -/
-def justPie     : (World → Bool) := λ w => w == .w0
-def justCannoli : (World → Bool) := λ w => w == .w1
-def justCake    : (World → Bool) := λ w => w == .w2
-def noGood      : (World → Bool) := λ w => w == .w3
+def justPie     : (World → Bool) := λ w => w == (0 : World)
+def justCannoli : (World → Bool) := λ w => w == (1 : World)
+def justCake    : (World → Bool) := λ w => w == (2 : World)
+def noGood      : (World → Bool) := λ w => w == (3 : World)
 
 /-- "I have pie or cannoli" — the disjunctive ought. -/
 def pieOrCannoli : (World → Bool) := λ w => justPie w || justCannoli w
@@ -658,10 +661,10 @@ def pieOrCannoli : (World → Bool) := λ w => justPie w || justCannoli w
     is at least as good as the other's worst. We implement this as:
     value = minimum world index among satisfying worlds (lower = better). -/
 def dessertValue : World → Nat
-  | .w0 => 3  -- pie: best
-  | .w1 => 3  -- cannoli: equally best
-  | .w2 => 2  -- cheesecake: second
-  | .w3 => 0  -- illness/nothing: worst
+  | 0 => 3  -- pie: best
+  | 1 => 3  -- cannoli: equally best
+  | 2 => 2  -- cheesecake: second
+  | 3 => 0  -- illness/nothing: worst
 
 /-- Worst value among worlds satisfying a proposition. -/
 def worstValue (p : (World → Bool)) : Nat :=
@@ -686,31 +689,31 @@ def dessertCandidatesHowGood : List ((World → Bool)) :=
 /-- "I ought to have pie or cannoli" is true under *how good?*. -/
 theorem ought_pie_or_cannoli :
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      pieOrCannoli .w0 = some true := by
+      pieOrCannoli (0 : World) = some true := by
   decide
 
 /-- "I ought to have (just) pie" is FALSE: no single best proposition
     in the *how good?* partition entails just pie. -/
 theorem not_ought_just_pie :
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      justPie .w0 = some false := by
+      justPie (0 : World) = some false := by
   decide
 
 /-- "I ought to have (just) cannoli" is FALSE. -/
 theorem not_ought_just_cannoli :
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      justCannoli .w0 = some false := by
+      justCannoli (0 : World) = some false := by
   decide
 
 /-- **Indifference**: When multiple incompatible options are equally best,
     the strongest true *ought*-claim is disjunctive. -/
 theorem dessert_indifference :
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      pieOrCannoli .w0 = some true ∧
+      pieOrCannoli (0 : World) = some true ∧
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      justPie .w0 = some false ∧
+      justPie (0 : World) = some false ∧
     ought dessertOrdering dessertBase dessertCandidatesHowGood
-      justCannoli .w0 = some false :=
+      justCannoli (0 : World) = some false :=
   ⟨by decide, by decide, by decide⟩
 
 end Dessert
@@ -740,8 +743,8 @@ def dessertCandidatesWhat : List ((World → Bool)) :=
 /-- Under *what will I do?* with deontic ordering, PBEST contains
     two equally-best options (pie and cannoli are tied). -/
 theorem dessert_what_pbest_length :
-    (PBEST dessertOrdering .w0 dessertCandidatesWhat
-      (accessibleWorldsList dessertBase .w0)).length = 2 := by
+    (PBEST dessertOrdering (0 : World) dessertCandidatesWhat
+      (accessibleWorldsList dessertBase (0 : World))).length = 2 := by
   decide
 
 /-- But these are inconsistent (no world has both just-pie and just-cannoli),
@@ -749,17 +752,17 @@ theorem dessert_what_pbest_length :
     the deontic case forces the coarser *how good?* question. -/
 theorem dessert_what_undefined :
     ought dessertOrdering dessertBase dessertCandidatesWhat
-      justPie .w0 = none := by
+      justPie (0 : World) = none := by
   decide
 
 /-- Modified dessert values where pie is uniquely best.
     Used to show Boylan's *ought* agrees with Kratzer necessity when
     there is a unique best option (§7, Fact 3). -/
 def dessertValueStrict : World → Nat
-  | .w0 => 4  -- pie: uniquely best
-  | .w1 => 3  -- cannoli: second
-  | .w2 => 2  -- cheesecake: third
-  | .w3 => 0  -- nothing: worst
+  | 0 => 4  -- pie: uniquely best
+  | 1 => 3  -- cannoli: second
+  | 2 => 2  -- cheesecake: third
+  | 3 => 0  -- nothing: worst
 
 def worstValueStrict (p : (World → Bool)) : Nat :=
   let satisfying := allWorlds.filter p |>.map dessertValueStrict
@@ -773,18 +776,18 @@ def dessertStrictCandidates : List ((World → Bool)) :=
 
 /-- With a unique best option, PBEST is a singleton. -/
 theorem strict_pbest_singleton :
-    (PBEST dessertStrictOrd .w0 dessertStrictCandidates
-      (accessibleWorldsList dessertBase .w0)).length = 1 := by
+    (PBEST dessertStrictOrd (0 : World) dessertStrictCandidates
+      (accessibleWorldsList dessertBase (0 : World))).length = 1 := by
   decide
 
 /-- **Fact 3 (concrete)**: When PBEST is a singleton {p},
     ought φ = true iff ∀w' ∈ p. φ(w') — matching Kratzer necessity
     relativized to the unique best proposition. -/
 theorem deontic_ought_is_box :
-    ought dessertStrictOrd dessertBase dessertStrictCandidates justPie .w0
+    ought dessertStrictOrd dessertBase dessertStrictCandidates justPie (0 : World)
       = some true ∧
     ought dessertStrictOrd dessertBase dessertStrictCandidates
-      (λ w => !justPie w) .w0
+      (λ w => !justPie w) (0 : World)
       = some false :=
   ⟨by decide, by decide⟩
 
@@ -809,19 +812,19 @@ def notCannoli : (World → Bool) := λ w => !justCannoli w
 
 theorem strict_ought_pie :
     ought dessertStrictOrd dessertBase dessertStrictCandidates
-      justPie .w0 = some true := by
+      justPie (0 : World) = some true := by
   decide
 
 theorem strict_ought_not_cannoli :
     ought dessertStrictOrd dessertBase dessertStrictCandidates
-      notCannoli .w0 = some true := by
+      notCannoli (0 : World) = some true := by
   decide
 
 /-- **Fact 4 (concrete)**: The conjunction of two true deontic
     *ought*-claims is also true. -/
 theorem no_deontic_agglomeration_failure :
     ought dessertStrictOrd dessertBase dessertStrictCandidates
-      (λ w => justPie w && notCannoli w) .w0 = some true := by
+      (λ w => justPie w && notCannoli w) (0 : World) = some true := by
   decide
 
 end DeonticAgglomeration
@@ -865,10 +868,10 @@ theorem kratzer_agglomerates :
 /-- Boylan gets the right pattern: all three individual *ought*s true,
     conjunction false. -/
 theorem boylan_correct_office :
-    ought officeOrdering officeBase officeCandidates aliceIn .w0 = some true ∧
-    ought officeOrdering officeBase officeCandidates bobIn .w0 = some true ∧
-    ought officeOrdering officeBase officeCandidates carolIn .w0 = some true ∧
-    ought officeOrdering officeBase officeCandidates everyoneIn .w0 = some false :=
+    ought officeOrdering officeBase officeCandidates aliceIn (0 : World) = some true ∧
+    ought officeOrdering officeBase officeCandidates bobIn (0 : World) = some true ∧
+    ought officeOrdering officeBase officeCandidates carolIn (0 : World) = some true ∧
+    ought officeOrdering officeBase officeCandidates everyoneIn (0 : World) = some false :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
@@ -935,11 +938,11 @@ def officeBestConflict : List ((World → Bool)) :=
 
 theorem conflict_predicts_alice_absent :
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase .w0) (λ w => !aliceIn w) = true := by
+      (accessibleWorldsList officeBase (0 : World)) (λ w => !aliceIn w) = true := by
   decide
 
 theorem boylan_no_alice_absent :
-    ought officeOrdering officeBase officeCandidates (λ w => !aliceIn w) .w0
+    ought officeOrdering officeBase officeCandidates (λ w => !aliceIn w) (0 : World)
       = some false := by
   decide
 
@@ -948,9 +951,9 @@ theorem boylan_no_alice_absent :
     Boylan's semantics avoids this entirely (see `no_dilemma` above). -/
 theorem conflict_dilemma :
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase .w0) aliceIn = true ∧
+      (accessibleWorldsList officeBase (0 : World)) aliceIn = true ∧
     conflictOught officeBestConflict
-      (accessibleWorldsList officeBase .w0) (λ w => !aliceIn w) = true :=
+      (accessibleWorldsList officeBase (0 : World)) (λ w => !aliceIn w) = true :=
   ⟨by decide, by decide⟩
 
 -- ============================================================================

@@ -69,15 +69,16 @@ def epistemicForce (a : AuxEntry) : Option ModalForce :=
 -- §2. Form Agreement
 -- ============================================================================
 
-/-! Per-entry verification: the Fragment's `form` matches the Theory's `name`.
-These are true by construction since `toEpistemicEntry` pattern-matches on
-the Fragment's form and returns the corresponding Theory entry. -/
+/-! Per-entry verification: the Fragment's `form` maps to the Theory's
+threshold value from @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+Table 1(b). These check the form→entry→threshold pipeline; they break
+if either the Fragment's form field or the Theory's threshold changes. -/
 
-theorem must_form : (toEpistemicEntry must).map (·.name) = some "must" := rfl
-theorem should_form : (toEpistemicEntry should).map (·.name) = some "should" := rfl
-theorem may_form : (toEpistemicEntry may).map (·.name) = some "may" := rfl
-theorem might_form : (toEpistemicEntry might).map (·.name) = some "might" := rfl
-theorem could_form : (toEpistemicEntry could).map (·.name) = some "could" := rfl
+theorem must_threshold   : (toEpistemicEntry must).map (·.θ)   = some (19/20 : ℚ) := rfl
+theorem should_threshold : (toEpistemicEntry should).map (·.θ) = some (4/5 : ℚ)   := rfl
+theorem may_threshold    : (toEpistemicEntry may).map (·.θ)    = some (3/10 : ℚ)  := rfl
+theorem might_threshold  : (toEpistemicEntry might).map (·.θ)  = some (1/5 : ℚ)   := rfl
+theorem could_threshold  : (toEpistemicEntry could).map (·.θ)  = some (1/5 : ℚ)   := rfl
 
 /-- Non-epistemic modals have no threshold entry. -/
 theorem shall_no_threshold : toEpistemicEntry shall = none := rfl

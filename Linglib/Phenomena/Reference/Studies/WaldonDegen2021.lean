@@ -1,6 +1,8 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Theories.Pragmatics.RSA.Noisy
+import Linglib.Theories.Pragmatics.RSA.Sequential
 
 /-!
 # @cite{waldon-degen-2021} — Continuous-Incremental RSA (CI-RSA)
@@ -338,7 +340,7 @@ theorem semantic_values_positive :
   intro w; cases w <;> norm_num [semanticValueQ]
 
 -- ============================================================================
--- §12. Noise Theory Connection
+-- §12. Noise Theory Connection + Substrate Bridge
 -- ============================================================================
 
 /-- `lexContinuousQ` is an instance of the unified noise channel from
@@ -354,6 +356,29 @@ theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
       (if wordApplies w r then 1 else 0 : ℚ) := by
   simp only [lexContinuousQ, RSA.Noise.noiseChannel]
   split <;> ring
+
+/-- `lexContinuousQ` packaged as a `RSA.NoisyLex` bundle. The bundle is
+    the substrate this study and @cite{schlotterbeck-wang-2023} share —
+    each provides its own `lex` and reliability parameters; the PoE
+    prefix-product machinery (`RSA.prefixMeaning` and friends) is reused. -/
+def noisyLex : RSA.NoisyLex Word Referent where
+  lex w r := lexContinuousQ r w
+  lex_nonneg w r := by
+    cases w <;> cases r <;>
+      (unfold lexContinuousQ; simp only [wordApplies, semanticValueQ];
+       split_ifs <;> norm_num)
+
+/-- `uttContinuousQ` is the `NoisyLex.prefixMeaning` of the bundled lex
+    (modulo argument order). Substrate-bridge analogue of S&W's
+    `prefix_meaning_product` for the W&D extension-averaging context.
+
+    Uses the polymorphic `RSA.prefixMeaning_eq_foldl_mul` from
+    `Sequential.lean` — no need for a study-local foldl helper. -/
+theorem uttContinuousQ_eq_prefixMeaning (r : Referent) (u : List Word) :
+    uttContinuousQ r u = noisyLex.prefixMeaning u r := by
+  unfold uttContinuousQ NoisyLex.prefixMeaning
+  rw [RSA.prefixMeaning_eq_foldl_mul]
+  rfl
 
 -- ============================================================================
 -- §13. Prediction 4: Overall Cross-Linguistic Redundancy

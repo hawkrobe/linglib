@@ -24,7 +24,6 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 
 namespace Phenomena.Modality.ConditionalModality
 
-open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
 
 /-! ## Section A: Conditional parameter derivations (§2.9) -/
@@ -67,12 +66,12 @@ theorem strict_conditional_fails (w : World) :
   rw [necessity_iff_all, empty_ordering_emptyBackground]
   intro h
   -- w1 is accessible: it satisfies rained, and emptyBackground gives universal access
-  have hAccW1 : (.w1 : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
+  have hAccW1 : ((1 : World) : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
     intro p hp
     simp [restrictedBase, emptyBackground] at hp
     subst hp
     exact w1_rained_dry.1
-  have := h .w1 hAccW1
+  have := h (1 : World) hAccW1
   exact w1_rained_dry.2 this
 
 /-- **Ordering conditional succeeds** (§2.9): With empty base and normalcy
@@ -87,24 +86,24 @@ theorem ordering_conditional_succeeds (w : World) :
   -- w' satisfies rained (it's in the restricted base)
   have hRainedW' : rained w' := hAcc rained (by simp [restrictedBase])
   -- w0 is accessible (rained, and emptyBackground gives universal access)
-  have hAccW0 : (.w0 : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
+  have hAccW0 : ((0 : World) : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
     intro p hp
     simp [restrictedBase, emptyBackground] at hp
     subst hp
     exact w0_rained_wet.1
   -- The normalcy proposition is satisfied at w0
-  have hNormW0 : ¬ (rained .w0 ∧ ¬ streetWet .w0) := by
+  have hNormW0 : ¬ (rained (0 : World) ∧ ¬ streetWet (0 : World)) := by
     intro ⟨_, hNotWet⟩; exact hNotWet w0_rained_wet.2
   -- So w' must satisfy the normalcy proposition (since w' is best)
   have hNormW' : ¬ (rained w' ∧ ¬ streetWet w') :=
-    hBest .w0 hAccW0 (λ w' => ¬ (rained w' ∧ ¬ streetWet w')) (by simp [normalcySource]) hNormW0
+    hBest (0 : World) hAccW0 (λ w' => ¬ (rained w' ∧ ¬ streetWet w')) (by simp [normalcySource]) hNormW0
   -- Now case on w': only w0, w2, w3 satisfy the normalcy proposition,
   -- and w' must satisfy rained, so w' = w0
-  cases w' with
-  | w0 => exact w0_rained_wet.2
-  | w1 => exact absurd ⟨w1_rained_dry.1, w1_rained_dry.2⟩ hNormW'
-  | w2 => exact absurd hRainedW' w2_dry_wet.1
-  | w3 => exact absurd hRainedW' w3_dry_dry.1
+  match w' with
+  | 0 => exact w0_rained_wet.2
+  | 1 => exact absurd ⟨w1_rained_dry.1, w1_rained_dry.2⟩ hNormW'
+  | 2 => exact absurd hRainedW' w2_dry_wet.1
+  | 3 => exact absurd hRainedW' w3_dry_dry.1
 
 /-! ## Section B: The ordering source makes the difference -/
 

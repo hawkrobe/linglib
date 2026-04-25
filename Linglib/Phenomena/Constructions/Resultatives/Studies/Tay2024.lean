@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Morphology.Core.WordStructure
--- Data dissolved into GoldbergJackendoff2004 (imported transitively via Causation.Resultatives)
+import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
 
 /-!
@@ -42,7 +42,7 @@ Connects:
   `ResultOrientation`, `PhaseComplement`)
 - `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
 - `Fragments.Mandarin.Resultatives`: compound and phase complement lexical entries
-- `Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004`: English
+- `Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004`: English
   data for cross-linguistic contrast
 -/
 
@@ -91,7 +91,7 @@ theorem subject_oriented_count :
     reflexives for subject-result patterns. All fake reflexives are
     grammatical, but require the reflexive pronoun. -/
 theorem english_subject_result_requires_reflexive :
-    (ConstructionGrammar.Studies.GoldbergJackendoff2004.allExamples.filter
+    (Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004.allExamples.filter
       (·.resType == .fakeReflexive)).all
       (·.judgment == .ok) = true := by
   native_decide

@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Quantification
+import Linglib.Core.Logic.Opposition.Aristotelian
 
 /-!
 # Square of Opposition
@@ -35,7 +36,7 @@ concrete instantiations live in their respective theory modules.
 
 -/
 
-namespace Core.SquareOfOpposition
+namespace Core.Opposition
 
 open Core.Quantification (GQ outerNeg innerNeg dualQ)
 
@@ -155,6 +156,76 @@ theorem subaltern_from_contradictions {W : Type*} (sq : Square (W → Bool))
   simp at hEI_w
   exact hEI_w
 
+-- ============================================================================
+-- §4.5 Bridge to `Aristotelian.lean` predicates
+-- ============================================================================
+
+/-! The `SquareRelations` axioms above are deliberately weaker than the
+Aristotelian-relation predicates from `Aristotelian.lean`: each field asserts
+just one direction (e.g., `subalternAI` asserts `A → I` but not its strictness;
+`contraryAE` asserts impossibility of joint truth but not impossibility of
+joint falsity). This is intentional — it lets users provide minimal axioms
+and have the rest derived via `subaltern_from_contradictions` etc.
+
+The bridge lemmas below convert those weaker axioms into the full Aristotelian
+predicates, when the necessary side conditions (proper-subalternation
+witnesses, etc.) are provided. -/
+
+/-- The `contradAO` axiom is exactly `Contradictory sq.A sq.O`. -/
+theorem SquareRelations.toContradictoryAO {W : Type*} {sq : Square (W → Bool)}
+    (rel : SquareRelations sq) : Contradictory sq.A sq.O := by
+  refine ⟨?_, ?_⟩
+  · intro w ⟨hA, hO⟩
+    have := rel.contradAO w
+    rw [hA, hO] at this
+    exact Bool.noConfusion this
+  · intro w
+    have := rel.contradAO w
+    cases hA : sq.A w
+    · right; rw [hA] at this; simpa using this.symm
+    · left; rfl
+
+/-- The `contradEI` axiom is exactly `Contradictory sq.E sq.I`. -/
+theorem SquareRelations.toContradictoryEI {W : Type*} {sq : Square (W → Bool)}
+    (rel : SquareRelations sq) : Contradictory sq.E sq.I := by
+  refine ⟨?_, ?_⟩
+  · intro w ⟨hE, hI⟩
+    have := rel.contradEI w
+    rw [hE, hI] at this
+    exact Bool.noConfusion this
+  · intro w
+    have := rel.contradEI w
+    cases hE : sq.E w
+    · right; rw [hE] at this; simpa using this.symm
+    · left; rfl
+
+/-- A `SquareRelations` lifts to `Subaltern sq.A sq.I` when given a witness
+    `w` showing `I` does not entail `A`. The witness is needed because
+    `Aristotelian.Subaltern` is *proper* subalternation (strict). -/
+theorem SquareRelations.toSubalternAI {W : Type*} {sq : Square (W → Bool)}
+    (rel : SquareRelations sq) (w : W)
+    (hwI : sq.I w = true) (hwA : sq.A w = false) :
+    Subaltern sq.A sq.I :=
+  ⟨rel.subalternAI, fun h => by
+    have := h w hwI
+    rw [hwA] at this
+    exact Bool.noConfusion this⟩
+
+/-- A `SquareRelations` lifts to `Contrary sq.A sq.E` when given a witness
+    `w` where neither `A` nor `E` holds (the joint-non-exhaustion condition
+    that distinguishes Aristotelian `Contrary` from mere "cannot both be true"). -/
+theorem SquareRelations.toContraryAE {W : Type*} {sq : Square (W → Bool)}
+    (rel : SquareRelations sq) (w : W)
+    (hwA : sq.A w = false) (hwE : sq.E w = false) :
+    Contrary sq.A sq.E :=
+  ⟨fun w' ⟨hA, hE⟩ => by
+     have := rel.contraryAE w' hA
+     rw [hE] at this; exact Bool.noConfusion this,
+   fun h => by
+     rcases h w with hA | hE
+     · rw [hwA] at hA; exact Bool.noConfusion hA
+     · rw [hwE] at hE; exact Bool.noConfusion hE⟩
+
 /-- From the outer/inner negation structure, the contradiction diagonals
 hold definitionally: A ↔ ¬(outerNeg A) and innerNeg A ↔ ¬(dual A). -/
 theorem outerNeg_contradiction {α : Type*} (q : GQ α) (R S : α → Prop) :
@@ -246,4 +317,4 @@ theorem subalternation_is_scale_ordering {W : Type*} (sq : Square (W → Bool))
     ∀ w, sq.A w = true → sq.I w = true :=
   rel.subalternAI
 
-end Core.SquareOfOpposition
+end Core.Opposition

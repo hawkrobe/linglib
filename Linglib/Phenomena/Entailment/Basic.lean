@@ -17,7 +17,6 @@ Core patterns in semantic entailment: truth conditions and entailment judgments.
 -/
 
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Entailment
 

@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Hixkaryana Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Hixkaryana (Carib; Brazil) expresses standard negation with the suffix
 *-hira* on the verb. Negation is **asymmetric (A/Fin)**: the negative
@@ -22,8 +22,20 @@ becomes the finite element carrying person/tense marking.
 
 namespace Fragments.Hixkaryana.Negation
 
-/-- The standard negation suffix. -/
-def negSuffix : String := "-hira"
+open Core.Lexical.NegMarker
+
+/-- *-hira* — Hixkaryana's standard negation suffix.
+    Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
+    over as the finite element. -/
+def hira : NegMarkerEntry :=
+  { form := "-hira"
+  , morphemeType := .affix
+  , position := .morphological }
+
+/-- The Hixkaryana negation system: a single deverbalizing suffix.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "hix" [hira]
 
 /-- A Hixkaryana negation example. -/
 structure NegExample where
@@ -49,8 +61,6 @@ def immPast : NegExample :=
 def allExamples : List NegExample := [immPast]
 
 /-! ## Verification -/
-
-theorem negSuffix_is_hira : negSuffix = "-hira" := rfl
 
 theorem all_examples_count : allExamples.length = 1 := by native_decide
 

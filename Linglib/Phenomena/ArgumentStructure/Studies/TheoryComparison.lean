@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Core.Dependency.Basic
 
@@ -28,7 +28,8 @@ special mechanisms.
 namespace TheoryComparison
 
 open ConstructionGrammar
-open ConstructionGrammar.Studies.GoldbergJackendoff2004
+open ConstructionGrammar.Resultatives
+open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 open Minimalism
 open DepGrammar
 

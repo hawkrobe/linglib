@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Logic.SquareOfOpposition
+import Linglib.Core.Logic.Opposition.Square
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.Basic
 
@@ -42,7 +42,7 @@ black" = "Consider the crows: each one is black."
   condition that Belnap derives is exactly what @cite{strawson-1952}
   stipulated as a presupposition of universals
 - `content_square_relations`: concrete `SquareRelations` instance from
-  `Core.SquareOfOpposition`, connecting to the abstract algebraic framework
+  `Core.Opposition.Square`, connecting to the abstract algebraic framework
 - `contrapositive_different_assertiveness`: ∀x(Cx/Bx) and ∀x(¬Bx/¬Cx)
   have different assertiveness conditions — relevant to the confirmation
   paradox
@@ -72,7 +72,7 @@ namespace Belnap1970
 
 open Core.Presupposition (PrProp)
 open Core.Duality (Truth3)
-open Core.SquareOfOpposition (Square SquareRelations)
+open Core.Opposition (Square SquareRelations)
 open Semantics.Quantification.Quantifier
 open Core.IntensionalLogic (Frame)
 open Semantics.Montague (toyModel ToyEntity)
@@ -182,7 +182,7 @@ theorem assertive_iff_restrictor_nonempty {m : Frame} [Fintype m.Entity]
 -- ════════════════════════════════════════════════════════════════
 
 /-- The **Belnap square**: the four Aristotelian forms as Belnap
-    restricted quantification, packaged as a `Core.SquareOfOpposition.Square`
+    restricted quantification, packaged as a `Core.Opposition.Square`
     of partial propositions (`PrProp Unit`).
 
     A: ∀x(Cx/Bx)   "All C are B"

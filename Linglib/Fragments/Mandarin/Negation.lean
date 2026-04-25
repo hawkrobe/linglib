@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
@@ -34,14 +34,32 @@ not-exceed-threshold).
 
 namespace Fragments.Mandarin.Negation
 
-/-- The general negation particle. -/
-def buParticle : String := "bù"
+open Core.Lexical.NegMarker
 
-/-- The perfective/existential negation particle. -/
-def meiParticle : String := "méi"
+/-- 不 *bù* — the general non-perfective negation particle.
+    Used with imperfective, stative, modal, and future contexts;
+    excluded from perfective and existential. Symmetric: simply adds
+    to the verb without further structural change. -/
+def bu : NegMarkerEntry :=
+  { form := "bù"
+  , morphemeType := .particle
+  , position := .preverbal }
 
-/-- The full form of perfective negation. -/
-def meiyouParticle : String := "méi-yǒu"
+/-- 没 *méi* (long form 没有 *méi-yǒu*) — the perfective/existential
+    negation particle. Asymmetric: incompatible with the perfective
+    aspect marker 了 *le*; required as the negator of 有 *yǒu* 'have'.
+    The choice between *bù* and *méi* is aspect-conditioned. -/
+def mei : NegMarkerEntry :=
+  { form := "méi"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The Mandarin negation system: two aspect-conditioned markers.
+    *bù* (default, non-perfective) listed first per the ordering
+    convention in `NegationSystem`; *méi* second. The Fragment-side
+    joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "cmn" [bu, mei]
 
 /-- A Mandarin negation example. -/
 structure NegExample where
@@ -105,9 +123,6 @@ def negatorContexts : List NegatorDistribution :=
   ]
 
 /-! ## Verification -/
-
-theorem buParticle_is_bu : buParticle = "bù" := rfl
-theorem meiParticle_is_mei : meiParticle = "méi" := rfl
 
 theorem all_examples_count : allExamples.length = 5 := by native_decide
 

@@ -1,4 +1,6 @@
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Rigidity
+import Mathlib.Data.Fin.Basic
 
 /-! # Montague (1973) intensional examples @cite{montague-1973}
 
@@ -8,12 +10,13 @@ Toy examples in Montague's PTQ-style intensional logic:
 - De dicto vs de re readings
 
 Uses the infrastructure from
-`Theories/Semantics/Attitudes/Intensional.lean`. -/
+`Core/IntensionalLogic/Examples.lean`. -/
 
 namespace Phenomena.Attitudes.Studies.Montague1973
 
+abbrev World := Fin 4
+
 open Core.IntensionalLogic
-open Semantics.Attitudes.Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where
@@ -30,65 +33,65 @@ def toyIFrame : Frame := {
 
 /-- "sleeps" as a world-dependent property. -/
 def sleeps : toyIFrame.Denot (Ty.intens (.e ⇒ .t)) :=
-  λ w x => match w, x with
-    | .w0, .john => True
-    | .w1, .mary => True
-    | .w2, .john => True
-    | .w2, .mary => True
+  λ (w : World) x => match w, x with
+    | 0, .john => True
+    | 1, .mary => True
+    | 2, .john => True
+    | 2, .mary => True
     | _, _ => False
 
 /-- "is happy" as a world-dependent property. -/
 def happy : toyIFrame.Denot (Ty.intens (.e ⇒ .t)) :=
-  λ w x => match w, x with
-    | .w0, .john => True
-    | .w0, .mary => True
-    | .w1, .mary => True
-    | .w2, .john => True
+  λ (w : World) x => match w, x with
+    | 0, .john => True
+    | 0, .mary => True
+    | 1, .mary => True
+    | 2, .john => True
     | _, _ => False
 
 /-- "the morning star" - an individual concept that picks out potentially
 different individuals in different worlds. -/
 def morningStar : toyIFrame.Denot Ty.indConcept :=
-  λ w => match w with
-    | .w0 => .hesperus
-    | .w1 => .hesperus
-    | .w2 => .phosphorus  -- different in w2!
-    | .w3 => .hesperus
+  λ (w : World) => match w with
+    | 0 => .hesperus
+    | 1 => .hesperus
+    | 2 => .phosphorus  -- different in w2!
+    | 3 => .hesperus
 
 /-- "the evening star" - another individual concept -/
 def eveningStar : toyIFrame.Denot Ty.indConcept :=
-  λ w => match w with
-    | .w0 => .hesperus
-    | .w1 => .phosphorus  -- different in w1!
-    | .w2 => .hesperus
-    | .w3 => .hesperus
+  λ (w : World) => match w with
+    | 0 => .hesperus
+    | 1 => .phosphorus  -- different in w1!
+    | 2 => .hesperus
+    | 3 => .hesperus
 
 /-- In the actual world (w0), morning star = evening star.
 But their INTENSIONS differ (they pick out different things in other worlds). -/
 theorem extensions_equal_at_w0 :
-    down morningStar .w0 = down eveningStar .w0 := rfl
+    down morningStar (0 : World) = down eveningStar (0 : World) := rfl
 
 theorem intensions_differ :
     morningStar ≠ eveningStar := by
   intro h
-  have : morningStar .w1 = eveningStar .w1 := congrFun h .w1
+  have : morningStar (1 : World) = eveningStar (1 : World) := congrFun h (1 : World)
   simp only [morningStar, eveningStar] at this
   cases this
 
 /-- Doxastic accessibility relation: which worlds are compatible with
 what an agent believes. R(a, w, w') means w' is compatible with what a believes in w. -/
 def believes_access : ToyIEntity → World → World → Bool
-  | .john, .w0, .w0 => true
-  | .john, .w0, .w2 => true
-  | .mary, .w0, .w1 => true
-  | .mary, .w0, .w2 => true
+  | .john, 0, 0 => true
+  | .john, 0, 2 => true
+  | .mary, 0, 1 => true
+  | .mary, 0, 2 => true
   | _, w, w' => w == w'
 
 /-- "believe" as an attitude verb.
 ⟦believe⟧(a)(p)(w) = ∀w'. R(a,w,w') → p(w') -/
 def believe : toyIFrame.Denot (.e ⇒ Ty.prop ⇒ .t) :=
   λ agent prop =>
-    ∀ w' : World, believes_access agent .w0 w' = true → prop w'
+    ∀ w' : World, believes_access agent (0 : World) w' = true → prop w'
 
 /-- Extended believe that's world-dependent. -/
 def believeAt : World → toyIFrame.Denot (.e ⇒ Ty.prop ⇒ .t) :=
@@ -103,7 +106,8 @@ def johnBelievesMary_deDicto : toyIFrame.Denot .t :=
 /-- John does NOT believe Mary sleeps: Mary doesn't sleep in w0 (John's accessible world). -/
 theorem johnDoesNotBelieveMarySleeps : ¬johnBelievesMary_deDicto := by
   intro h
-  exact h .w0 rfl
+  have := h (0 : World) rfl
+  simp [sleeps] at this
 
 /-- "John believes John sleeps" (de dicto) -/
 def johnBelievesJohnSleeps : toyIFrame.Denot .t :=
@@ -113,16 +117,20 @@ def johnBelievesJohnSleeps : toyIFrame.Denot .t :=
 /-- John believes he sleeps: he sleeps in both w0 and w2. -/
 theorem johnBelievesJohnSleeps_true : johnBelievesJohnSleeps := by
   intro w' h
-  cases w' <;> simp_all [believes_access, sleeps]
+  match w', h with
+  | 0, _ => simp [sleeps]
+  | 1, h => simp [believes_access] at h
+  | 2, _ => simp [sleeps]
+  | 3, h => simp [believes_access] at h
 
 /-- Proposition: "John ate some cookies" (simplified) -/
 def someCookies : toyIFrame.Denot Ty.prop := λ _ => True
 
 /-- Proposition: "John ate all cookies" (simplified) -/
 def allCookies : toyIFrame.Denot Ty.prop :=
-  λ w => match w with
-    | .w0 | .w1 => True
-    | .w2 | .w3 => False
+  λ (w : World) => match w with
+    | 0 | 1 => True
+    | 2 | 3 => False
 
 /-- "Mary believes John ate some cookies" -/
 def maryBelievesSome : toyIFrame.Denot .t := believe .mary someCookies
@@ -136,12 +144,12 @@ theorem maryBelievesSome_true : maryBelievesSome := by
 
 /-- Belief is intensional: co-extensional expressions can differ under belief. -/
 theorem belief_intensional :
-    (down morningStar .w0 = down eveningStar .w0)
+    (down morningStar (0 : World) = down eveningStar (0 : World))
     ∧ (morningStar ≠ eveningStar) := by
   constructor
   · rfl
   · intro h
-    have : morningStar .w1 = eveningStar .w1 := congrFun h .w1
+    have : morningStar (1 : World) = eveningStar (1 : World) := congrFun h (1 : World)
     simp only [morningStar, eveningStar] at this
     cases this
 
@@ -169,7 +177,7 @@ def hesperus_rigid : Core.Intension World ToyIEntity :=
 different worlds. This contrasts with `hesperus_rigid` which IS rigid. -/
 theorem morningStar_not_rigid : ¬ Core.Intension.IsRigid morningStar := by
   intro h
-  have h12 := h .w1 .w2
+  have h12 := h (1 : World) (2 : World)
   simp only [morningStar] at h12
   cases h12
 
@@ -182,15 +190,15 @@ theorem hesperus_rigid_isRigid : Core.Intension.IsRigid hesperus_rigid :=
 one world while diverging at others. -/
 theorem name_vs_concept_independence :
     -- They agree at w0 (both pick out .hesperus)
-    Core.Intension.CoRefer hesperus_rigid morningStar .w0 ∧
+    Core.Intension.CoRefer hesperus_rigid morningStar (0 : World) ∧
     -- But they are NOT co-extensional
     ¬ Core.Intension.CoExtensional hesperus_rigid morningStar := by
   constructor
-  · -- CoRefer at w0: hesperus_rigid .w0 = morningStar .w0
+  · -- CoRefer at w0: hesperus_rigid (0 : World) = morningStar (0 : World)
     rfl
   · -- Not co-extensional: they disagree at w2
     intro h
-    have := h .w2
+    have := h (2 : World)
     simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
     cases this
 

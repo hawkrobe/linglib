@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Modal Force and its Realization across Languages
@@ -42,8 +42,9 @@ namespace AghaJeretic2026
 
 open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
-open Semantics.Attitudes.Intensional (World)
 open Fragments.English.Auxiliaries
+
+abbrev World := Fin 4
 
 -- ============================================================================
 -- §1. Entailment Asymmetry (§2.1)
@@ -129,8 +130,8 @@ entailment chain via the proven theorems in `Directive.lean`. -/
 theorem must_entails_ought_kratzer :
     ∀ (f : Semantics.Modality.Kratzer.ModalBase World)
       (g g' : Semantics.Modality.Kratzer.OrderingSource World)
-      (p : Semantics.Attitudes.Intensional.World → Prop) (_ : DecidablePred p)
-      (w : Semantics.Attitudes.Intensional.World),
+      (p : World → Prop) (_ : DecidablePred p)
+      (w : World),
     strongNecessity f g p w →
     weakNecessity f g g' p w :=
   fun f g g' p _ w => strong_entails_weak f g g' p w

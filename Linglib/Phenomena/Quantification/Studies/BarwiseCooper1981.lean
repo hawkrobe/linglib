@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Fragments.English.Determiners
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Theories.Semantics.Quantification.DomainRestriction

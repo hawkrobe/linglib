@@ -22,7 +22,6 @@ Given: dogs ⊆ animals
 -/
 
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Entailment.Monotonicity
 

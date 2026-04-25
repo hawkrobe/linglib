@@ -15,8 +15,8 @@ before example sentences:
 The semantic-vs-syntactic split (`#` vs `*`) and dialect marker (`%`) are
 linguistically substantive distinctions, not just gradient acceptability;
 this is why the type is a labeled enum rather than a Likert-style ordinal.
-For experimental Likert ratings, use the methodology types in
-`Paradigms/Measurement.lean` (`ScaleType.ordinal` + `MeasureSpec`).
+For experimental Likert ratings, see paradigm-specific contracts under
+`Paradigms/` (e.g., `AcceptabilityJudgment.lean`'s `DDResult`).
 -/
 
 namespace Features

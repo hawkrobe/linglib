@@ -1,7 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Logic.Equiv.Basic
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 /-!
 # L-Analyticity in Natural Language
@@ -272,7 +271,6 @@ theorem everyBut_not_LAnalytic [Inhabited Entity] [DecidableEq Entity]
       exact absurd hxa (hS x ⟨trivial, hns⟩)
 
 open Features (Acceptability)
-open Paradigms.Measurement
 
 /-- Predict acceptability from logical skeleton: L-analytic → unacceptable. -/
 def predictGrammaticality (skel : LogicalSkeleton Entity)

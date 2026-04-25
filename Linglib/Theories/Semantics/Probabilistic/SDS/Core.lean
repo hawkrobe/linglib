@@ -213,6 +213,69 @@ def conflictDegree {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ]
       |sel θ₁ - scen θ₁| + |sel θ₂ - scen θ₂|
   | _, _ => 0
 
+/--
+Posterior uncertainty as Gini impurity: `1 - Σ_θ P(θ)²`.
+
+For a two-concept system, ranges from 0 (one concept has probability 1) to
+0.5 (uniform 50/50). For a `k`-concept uniform distribution, equals
+`(k-1)/k`. Captures "how spread out is the posterior" without requiring
+real-valued logarithms.
+-/
+def posteriorUncertainty {α Θ : Type*} [SDSConstraintSystem α Θ] (sys : α) : ℚ :=
+  let support := SDSConstraintSystem.paramSupport sys
+  let probs := support.map (SDSConstraintSystem.normalizedPosterior sys)
+  1 - probs.foldl (fun acc p => acc + p * p) 0
+
+/--
+Two parameter values are *tied* under the posterior if their normalized
+posteriors are within `tolerance` of each other (default `1/10`).
+-/
+def isTied {α Θ : Type*} [SDSConstraintSystem α Θ]
+    (sys : α) (θ₁ θ₂ : Θ) (tolerance : ℚ := 1/10) : Bool :=
+  let p₁ := SDSConstraintSystem.normalizedPosterior sys θ₁
+  let p₂ := SDSConstraintSystem.normalizedPosterior sys θ₂
+  decide (|p₁ - p₂| ≤ tolerance)
+
+/--
+Substrate property: `hasConflict` is true exactly when the selectional and
+scenario factors have *different* argmax elements (and both argmaxes exist).
+
+This is the formal content of "selectional and scenario disagree on which
+parameter to prefer." Polymorphic over any `SDSConstraintSystem`; the
+`DisambiguationScenario` case (the paper's bat/star/port examples) is the
+intended consumer.
+-/
+theorem hasConflict_iff_different_argmax
+    {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ] (sys : α) :
+    hasConflict sys = true ↔
+      (∃ θ₁ θ₂,
+        listArgmax (SDSConstraintSystem.paramSupport sys)
+                   (SDSConstraintSystem.selectionalFactor sys) = some θ₁ ∧
+        listArgmax (SDSConstraintSystem.paramSupport sys)
+                   (SDSConstraintSystem.scenarioFactor sys) = some θ₂ ∧
+        θ₁ != θ₂) := by
+  show (match listArgmax (SDSConstraintSystem.paramSupport sys)
+                          (SDSConstraintSystem.selectionalFactor sys),
+              listArgmax (SDSConstraintSystem.paramSupport sys)
+                          (SDSConstraintSystem.scenarioFactor sys) with
+        | some θ₁, some θ₂ => θ₁ != θ₂
+        | _, _ => false) = true ↔ _
+  cases hsel : listArgmax (SDSConstraintSystem.paramSupport sys)
+                           (SDSConstraintSystem.selectionalFactor sys) with
+  | none => simp
+  | some θ₁ =>
+    cases hscen : listArgmax (SDSConstraintSystem.paramSupport sys)
+                              (SDSConstraintSystem.scenarioFactor sys) with
+    | none => simp
+    | some θ₂ =>
+      constructor
+      · intro h
+        exact ⟨θ₁, θ₂, rfl, rfl, h⟩
+      · rintro ⟨θ₁', θ₂', heq1, heq2, hne⟩
+        cases Option.some.inj heq1
+        cases Option.some.inj heq2
+        exact hne
+
 -- Degenerate Cases
 
 /--
@@ -276,7 +339,12 @@ This module provides:
 ### Utilities
 - `hasConflict`: Detect when factors disagree (predicts ambiguity)
 - `conflictDegree`: Quantify disagreement between factors
+- `posteriorUncertainty`: Gini impurity of the posterior
+- `isTied`: Two parameter values tied within a tolerance
 - `hasUniformScenario`: Check for degenerate/trivial scenario factors
+
+### Substrate theorems
+- `hasConflict_iff_different_argmax`: `hasConflict` is true iff selectional/scenario argmaxes differ
 
 ### Insight
 

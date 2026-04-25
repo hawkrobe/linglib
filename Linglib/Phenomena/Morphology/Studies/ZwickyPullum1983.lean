@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # @cite{zwicky-pullum-1983}: Cliticization vs. Inflection
@@ -246,7 +246,8 @@ section ScopeBridge
 
 open Core.Modality (ModalForce)
 open Core.IntensionalLogic (AccessRel boxR diamondR)
-open Semantics.Attitudes.Intensional (World)
+
+abbrev World := Fin 4
 
 /-- Scope of negation relative to a modal operator. -/
 inductive NegModalScope where
@@ -298,20 +299,30 @@ when P holds at w1 and fails at w2, both accessible worlds disagree,
 so ◇P and ◇¬P are both true while ¬◇P is false. -/
 private def kripkeR : AccessRel World := fun w v =>
   match w with
-  | .w0 => v = .w1 ∨ v = .w2
-  | .w1 => v = .w1
-  | .w2 => v = .w2
-  | .w3 => v = .w3
+  | 0 => v = (1 : World) ∨ v = (2 : World)
+  | 1 => v = (1 : World)
+  | 2 => v = (2 : World)
+  | 3 => v = (3 : World)
 
 private instance : DecidableRel kripkeR := fun w v => by
-  unfold kripkeR; cases w <;> infer_instance
+  unfold kripkeR
+  match w with
+  | 0 => infer_instance
+  | 1 => infer_instance
+  | 2 => infer_instance
+  | 3 => infer_instance
 
 /-- Witness proposition: true at w0/w1, false at w2/w3. -/
 private def witnessP : World → Prop := fun w =>
-  match w with | .w0 | .w1 => True | .w2 | .w3 => False
+  match w with | 0 | 1 => True | 2 | 3 => False
 
 private instance : DecidablePred witnessP := fun w => by
-  unfold witnessP; cases w <;> infer_instance
+  unfold witnessP
+  match w with
+  | 0 => infer_instance
+  | 1 => infer_instance
+  | 2 => infer_instance
+  | 3 => infer_instance
 
 /-- NOT(CAN(P)) and CAN(NOT(P)) are not equivalent in general.
 
@@ -324,7 +335,7 @@ theorem neg_over_poss_ne_poss_over_neg :
       ¬ diamondR R p w ↔ diamondR R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
-  have := h witnessP .w0
+  have := h witnessP (0 : World)
   simp [diamondR, kripkeR, witnessP] at this
 
 /-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
@@ -338,7 +349,7 @@ theorem neg_over_nec_ne_nec_over_neg :
       ¬ boxR R p w ↔ boxR R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
-  have := h witnessP .w0
+  have := h witnessP (0 : World)
   simp [boxR, kripkeR, witnessP] at this
 
 end ScopeBridge

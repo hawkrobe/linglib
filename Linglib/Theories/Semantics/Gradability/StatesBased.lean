@@ -73,6 +73,34 @@ variable {S : Type*} [Preorder S]
 def StatesBasedEntry.inPositiveRegion (entry : StatesBasedEntry S) (s : S) : Prop :=
   entry.contrastPoint ≤ s
 
+/-- A state is in the *lower* region iff it is at or below the contrast
+    point. The dual of `inPositiveRegion`, used for negative-polarity
+    adjectives like `short`, `cool`, `doubts` (CSW §5.2 (63c)).
+
+    The same `StatesBasedEntry` shape hosts either region; whether a
+    lexical entry is positive- or negative-polarity is determined by
+    which membership predicate consumers invoke. Mathlib analogue:
+    `Mathlib.Order.UpperLower` provides `UpperSet` and `LowerSet` as
+    separate types over the same preorder. -/
+def StatesBasedEntry.inLowerRegion (entry : StatesBasedEntry S) (s : S) : Prop :=
+  s ≤ entry.contrastPoint
+
+/-- Two entries with strictly-ordered contrast points carve out
+    disjoint upper/lower regions. If `e_pos.contrastPoint > e_low.contrastPoint`
+    (encoded as `¬ e_pos.contrastPoint ≤ e_low.contrastPoint`), no state
+    is simultaneously above `e_pos`'s point and below `e_low`'s.
+
+    This is the substrate witness for negative-polarity-vs-positive-
+    polarity exclusion (e.g., CSW (63a)/(63c): no holder simultaneously
+    `confident(p)` and `doubts(p)`). -/
+theorem disjoint_regions {S : Type*} [Preorder S]
+    (e_pos e_low : StatesBasedEntry S)
+    (h_strict : ¬ e_pos.contrastPoint ≤ e_low.contrastPoint)
+    (s : S) :
+    ¬ (e_pos.inPositiveRegion s ∧ e_low.inLowerRegion s) := by
+  intro ⟨h_pos, h_low⟩
+  exact h_strict (le_trans h_pos h_low)
+
 -- ════════════════════════════════════════════════════
 -- § 2. Scale-Mate Relationship
 -- ════════════════════════════════════════════════════
@@ -108,11 +136,35 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
 -- § 3. Comparative Morphology on States
 -- ════════════════════════════════════════════════════
 
-/-- CSW's monotonicity constraint (eq. 21): a measure function `μ` is
-    admissible for a background ordering iff it preserves strict order.
+/-- The monotonicity-preservation requirement on measure functions used in
+    monotonicity-requiring constructions: `μ` is admissible for a background
+    ordering iff `s₁ ≺ s₂` entails `μ(s₁) < μ(s₂)`. This is Mathlib's
+    `StrictMono`.
 
-    If `s₁ ≺ s₂` in the background ordering, then `μ(s₁) < μ(s₂)`.
-    This is Mathlib's `StrictMono`. -/
+    **Single-name canonical Prop for a multi-tradition convergence.** This
+    one Prop names the same condition that appears under different labels
+    across the literature; linglib hosts it once here and lets every
+    consumer credit its own source:
+
+    - @cite{schwarzschild-2002, schwarzschild-2006} — *Monotonicity Constraint*
+      on the measure function in nominal pseudopartitives.
+    - @cite{krifka-1989} — extensive measure functions on quantized objects.
+    - @cite{wellwood-2015} — `μ` admissibility for `much`-comparatives;
+      `Theories/Semantics/Measurement.lean::admissibleMeasure_of_mereoDim`
+      bridges to the bundled `MereoDim` typeclass.
+    - @cite{cariani-santorio-wellwood-2024} (eq. 21) — CSW use this exact
+      formulation for confidence orderings.
+    - @cite{pasternak-2019} (def 4) — `μ_int` monotonicity on the
+      part-whole structure of mental states.
+    - @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} —
+      `EpistemicThreshold.isProbabilistic` is a strengthening of this
+      (Monotone, not StrictMono).
+
+    The bundled-typeclass form is `Core/Scales/MereoDim.lean::MereoDim`
+    (with `[PartialOrder]` carriers); the unbundled-Prop form is here
+    (with `[Preorder]`, more permissive). Use `MereoDim` when typeclass
+    inference is desired; use `admissibleMeasure` when the witness is
+    passed explicitly. -/
 abbrev admissibleMeasure {D : Type*} [Preorder D] (μ : S → D) : Prop :=
   StrictMono μ
 

@@ -8,6 +8,7 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.PolarityItem
+import Linglib.Core.Lexical.NegMarker
 import Linglib.Features.ClauseForm
 import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Core.Lexical.Pronouns
@@ -15,7 +16,6 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
@@ -142,6 +142,7 @@ import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.Antimatroid
 import Linglib.Core.Constraint.OT.EvalMode
 import Linglib.Core.Constraint.OT.Iteration
+import Linglib.Core.Constraint.OT.HarmonicSerialism
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.PartitionDT
 import Linglib.Core.Agent.BayesianUpdate
@@ -522,6 +523,7 @@ import Linglib.Tactics.ENNRealArith
 import Linglib.Paradigms.VisualWorld
 import Linglib.Paradigms.WugTest
 import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Paradigms.SelfPacedReading
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Arabic.Morph
@@ -578,6 +580,7 @@ import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
+import Linglib.Fragments.Czech.PolarityItems
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Mwaghavul.Basic
@@ -681,6 +684,7 @@ import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.French.Negation
+import Linglib.Fragments.French.PolarityItems
 import Linglib.Fragments.French.ModalIndefinites
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.French.PolarityMarking
@@ -840,6 +844,7 @@ import Linglib.Fragments.Spanish.Morph
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.Negation
+import Linglib.Fragments.Spanish.PolarityItems
 import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Portuguese.MoodChoice
@@ -1216,6 +1221,7 @@ import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
+import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Linglib.Phenomena.Numerals.Studies.BylininaNouwen2020
@@ -1357,7 +1363,6 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020PMF
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
-import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
@@ -1669,7 +1674,6 @@ import Linglib.Phenomena.WordOrder.Studies.Chomsky1995
 import Linglib.Phenomena.WordOrder.Studies.SagWasowBender2003
 import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989
-import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
@@ -1768,7 +1772,8 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Syntax.ConstructionGrammar.Slot
 import Linglib.Theories.Syntax.ConstructionGrammar.GrammarDist
 import Linglib.Phenomena.Constructions.Studies.Dunn2025
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 -- Theories: HPSG
 import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Theories.Syntax.HPSG.Core.FromFragments
@@ -2086,7 +2091,6 @@ import Linglib.Theories.Semantics.Attitudes.EmbeddingConstraints
 import Linglib.Theories.Semantics.Attitudes.ContentComposition
 import Linglib.Theories.Semantics.Attitudes.ContextQuantification
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Parasitic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.SituationDependent
@@ -2143,7 +2147,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
-import Linglib.Theories.Semantics.Modality.Desire
+import Linglib.Theories.Semantics.Attitudes.Desire
 import Linglib.Theories.Semantics.Modality.EpistemicLogic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 import Linglib.Theories.Semantics.Modality.KnowledgeProbability
@@ -2300,6 +2304,9 @@ import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Speaker.Noncooperative
 import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
+import Linglib.Theories.Pragmatics.RSA.Sequential
+import Linglib.Theories.Pragmatics.RSA.Noisy
+import Linglib.Theories.Pragmatics.RSA.Composition
 import Linglib.Phenomena.ArealTypology.Studies.Haspelmath2001
 import Linglib.Theories.Diachronic.Areal
 import Linglib.Theories.Diachronic.Grammaticalization
@@ -2339,6 +2346,7 @@ import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Gradability.Studies.WaldonEtAl2023
 import Linglib.Phenomena.Gradability.Studies.RudolphKocurek2024
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
+import Linglib.Phenomena.Reference.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Phenomena.Reference.Studies.Longobardi2005
 import Linglib.Phenomena.Reference.Studies.Zimmermann2026

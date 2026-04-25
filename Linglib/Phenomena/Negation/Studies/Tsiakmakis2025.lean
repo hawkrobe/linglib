@@ -2,6 +2,7 @@ import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Fragments.Greek.Negation
 import Linglib.Fragments.Italian.Negation
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation
@@ -83,10 +84,11 @@ namespace Tsiakmakis2025
 
 open JinKoenig2021
   (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
-open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
   (bestWorlds necessity necessity_iff_all ModalBase OrderingSource)
 open Core.Modality (ModalFlavor)
+
+abbrev World := Fin 4
 
 -- ════════════════════════════════════════════════════
 -- § 1. The NEG₁ / NEG₂ Distinction
@@ -366,12 +368,12 @@ def frenchNeForbid : NegatorDatum :=
   , construction := "negative-predicate complements: défendre que...ne (§5.2, ex. 62)" }
 
 def italianNonTemporal : NegatorDatum :=
-  { language := "Italian", form := Fragments.Italian.Negation.negMarker, negType := .neg1
+  { language := "Italian", form := Fragments.Italian.Negation.non.form, negType := .neg1
   , hostCategory := .temporalExpressions
   , construction := "finché non (until; §5.4, ex. 68)" }
 
 def italianNonComparative : NegatorDatum :=
-  { language := "Italian", form := Fragments.Italian.Negation.negMarker, negType := .neg1
+  { language := "Italian", form := Fragments.Italian.Negation.non.form, negType := .neg1
   , hostCategory := .comparatives
   , construction := "più...di quanto non (more...than; §5.7, ex. 77)" }
 
@@ -736,6 +738,6 @@ theorem greek_min_form_grounded :
 
 /-- Italian *non* data derives its form from the Italian negation fragment. -/
 theorem italian_non_form_grounded :
-    italianNonTemporal.form = Fragments.Italian.Negation.negMarker := rfl
+    italianNonTemporal.form = Fragments.Italian.Negation.non.form := rfl
 
 end Tsiakmakis2025

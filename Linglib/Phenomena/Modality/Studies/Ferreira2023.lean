@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Ferreira (2023): A square of necessities
@@ -44,10 +44,11 @@ SN → SN_Xg → SN_Xfg), forming a diamond. No reverse entailments hold.
 
 namespace Ferreira2023
 
+abbrev World := Fin 4
+
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Kratzer.XMarking
 open Semantics.Modality.Directive
-open Semantics.Attitudes.Intensional
 open Core.Modality
 
 /-! ## Portuguese modal typology -/
@@ -112,35 +113,35 @@ theorem dever_not_entails_terQue :
     ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World),
         snXg f g p w → sn f g p w) := by
   intro h
-  -- Counterexample: f is universal access (emptyBackground), p = (· = .w0).
-  -- xMarkOrdering favors p-worlds, so best = {.w0}; snXg holds (p .w0 = True).
-  -- But sn fails: .w1 is best under empty ordering, p .w1 = False.
+  -- Counterexample: f is universal access (emptyBackground), p = (· = (0 : World)).
+  -- xMarkOrdering favors p-worlds, so best = {(0 : World)}; snXg holds (p (0 : World) = True).
+  -- But sn fails: (1 : World) is best under empty ordering, p (1 : World) = False.
   have hCE := h
     (emptyBackground (W := World))
     (emptyBackground (W := World))
-    (fun w : World => w = .w0)
-    .w0
+    (fun w : World => w = (0 : World))
+    (0 : World)
   -- Establish snXg
-  have hAcc : ∀ w' : World, w' ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+  have hAcc : ∀ w' : World, w' ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
     intro w'; rw [empty_base_universal_access]; exact Set.mem_univ _
   have hSnXg : snXg (emptyBackground (W := World)) (emptyBackground (W := World))
-                 (fun w : World => w = .w0) .w0 := by
+                 (fun w : World => w = (0 : World)) (0 : World) := by
     intro w' hw'
     obtain ⟨_, hBest⟩ := hw'
-    have hIdent : (fun w : World => w = .w0) ∈
-        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = .w0) .w0 := by
+    have hIdent : (fun w : World => w = (0 : World)) ∈
+        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (0 : World)) (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest .w0 (hAcc .w0) (fun w : World => w = .w0) hIdent rfl
+    exact hBest (0 : World) (hAcc (0 : World)) (fun w : World => w = (0 : World)) hIdent rfl
   -- snXg → sn would force w1 = w0, contradiction
   have hSn := hCE hSnXg
   rw [sn, necessity_iff_all] at hSn
-  have hW1Best : (.w1 : World) ∈
-      bestWorlds (emptyBackground (W := World)) (emptyBackground (W := World)) .w0 := by
-    refine ⟨hAcc .w1, ?_⟩
+  have hW1Best : ((1 : World) : World) ∈
+      bestWorlds (emptyBackground (W := World)) (emptyBackground (W := World)) (0 : World) := by
+    refine ⟨hAcc (1 : World), ?_⟩
     intro w'' _ q hq _
     simp [emptyBackground] at hq
-  have : (.w1 : World) = .w0 := hSn .w1 hW1Best
-  exact World.noConfusion this
+  have : ((1 : World) : World) = (0 : World) := hSn (1 : World) hW1Best
+  exact absurd this (by decide)
 
 /-- *dever* p ⊨ *poder* p: weak necessity entails possibility, completing
     the ascending scale *poder* p < *dever* p < *ter que* p.
@@ -164,25 +165,25 @@ theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
 theorem dever_consistent_with_not_p :
     ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World),
       snXg f g p w ∧ ¬ p w := by
-  -- Model: f = universal access, g = empty, p = (· = .w1).
-  -- xMarkOrdering favors p-worlds, so best = {.w1}; snXg holds.
-  -- p .w0 = False, so the conjunction is satisfiable.
+  -- Model: f = universal access, g = empty, p = (· = (1 : World)).
+  -- xMarkOrdering favors p-worlds, so best = {(1 : World)}; snXg holds.
+  -- p (0 : World) = False, so the conjunction is satisfiable.
   refine ⟨emptyBackground,
          emptyBackground,
-         (fun w : World => w = .w1),
-         .w0,
+         (fun w : World => w = (1 : World)),
+         (0 : World),
          ?_, ?_⟩
   · -- snXg: every best world satisfies p
     intro w' hw'
     obtain ⟨_, hBest⟩ := hw'
-    have hAcc1 : (.w1 : World) ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+    have hAcc1 : ((1 : World) : World) ∈ accessibleWorlds (emptyBackground (W := World)) (0 : World) := by
       rw [empty_base_universal_access]; exact Set.mem_univ _
-    have hIdent : (fun w : World => w = .w1) ∈
-        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = .w1) .w0 := by
+    have hIdent : (fun w : World => w = (1 : World)) ∈
+        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = (1 : World)) (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest .w1 hAcc1 (fun w : World => w = .w1) hIdent rfl
-  · -- ¬ p .w0
-    intro h; exact World.noConfusion h
+    exact hBest (1 : World) hAcc1 (fun w : World => w = (1 : World)) hIdent rfl
+  · -- ¬ p (0 : World)
+    intro h; exact absurd h (by decide)
 
 /-- *ter que* p ∧ ¬p is contradictory when the base is realistic:
     if w ∈ ∩f(w) and all best worlds satisfy p, then w satisfies p
@@ -209,53 +210,53 @@ theorem devia_not_entails_deve :
         IsStarRevision f f' p →
         snXfg f' g p w → snXg f g p w) := by
   intro h
-  -- Counterexample: f narrow = {.w1}, f' wide = {.w0, .w1}, p = (· = .w0).
+  -- Counterexample: f narrow = {(1 : World)}, f' wide = {(0 : World), (1 : World)}, p = (· = (0 : World)).
   -- Under f' (wide), best worlds favor p, so snXfg holds.
-  -- Under f (narrow), only .w1 is accessible, p .w1 = False, so snXg fails.
-  let fNarrow : ModalBase World := fun _ => [fun w => w = .w1]
-  let fWide : ModalBase World := fun _ => [fun w => w = .w0 ∨ w = .w1]
-  let p : World → Prop := fun w => w = .w0
-  have hNarrowAcc : ∀ w' : World, w' ∈ accessibleWorlds fNarrow .w0 ↔ w' = .w1 := by
+  -- Under f (narrow), only (1 : World) is accessible, p (1 : World) = False, so snXg fails.
+  let fNarrow : ModalBase World := fun _ => [fun w => w = (1 : World)]
+  let fWide : ModalBase World := fun _ => [fun w => w = (0 : World) ∨ w = (1 : World)]
+  let p : World → Prop := fun w => w = (0 : World)
+  have hNarrowAcc : ∀ w' : World, w' ∈ accessibleWorlds fNarrow (0 : World) ↔ w' = (1 : World) := by
     intro w'
-    refine ⟨fun hw' => hw' (fun z => z = .w1) (by simp [fNarrow]), ?_⟩
+    refine ⟨fun hw' => hw' (fun z => z = (1 : World)) (by simp [fNarrow]), ?_⟩
     intro heq q hq; simp [fNarrow] at hq; subst hq; exact heq
-  have hWideAcc : ∀ w' : World, w' ∈ accessibleWorlds fWide .w0 ↔ (w' = .w0 ∨ w' = .w1) := by
+  have hWideAcc : ∀ w' : World, w' ∈ accessibleWorlds fWide (0 : World) ↔ (w' = (0 : World) ∨ w' = (1 : World)) := by
     intro w'
-    refine ⟨fun hw' => hw' (fun z => z = .w0 ∨ z = .w1) (by simp [fWide]), ?_⟩
+    refine ⟨fun hw' => hw' (fun z => z = (0 : World) ∨ z = (1 : World)) (by simp [fWide]), ?_⟩
     intro heq q hq; simp [fWide] at hq; subst hq; exact heq
   have hRev : IsStarRevision fNarrow fWide p := by
     refine ⟨?_, ?_⟩
     · intro w w' hw' q hq
-      have hw'1 : w' = .w1 := hw' (fun z => z = .w1) (by simp [fNarrow])
+      have hw'1 : w' = (1 : World) := hw' (fun z => z = (1 : World)) (by simp [fNarrow])
       simp [fWide] at hq; subst hq; exact Or.inr hw'1
     · intro w w' hw' hnew
-      have hWide' : w' = .w0 ∨ w' = .w1 := hw' (fun z => z = .w0 ∨ z = .w1) (by simp [fWide])
-      have hNotW1 : w' ≠ .w1 := by
+      have hWide' : w' = (0 : World) ∨ w' = (1 : World) := hw' (fun z => z = (0 : World) ∨ z = (1 : World)) (by simp [fWide])
+      have hNotW1 : w' ≠ (1 : World) := by
         intro heq; apply hnew
         intro q hq; simp [fNarrow] at hq; subst hq; exact heq
       rcases hWide' with hw0 | hw1
       · exact hw0
       · exact absurd hw1 hNotW1
-  have hSnXfg : snXfg fWide (emptyBackground (W := World)) p .w0 := by
+  have hSnXfg : snXfg fWide (emptyBackground (W := World)) p (0 : World) := by
     intro w' hw'
     obtain ⟨_, hBest⟩ := hw'
-    have hAcc0 : (.w0 : World) ∈ accessibleWorlds fWide .w0 := (hWideAcc .w0).mpr (Or.inl rfl)
-    have hPMem : p ∈ xMarkOrdering (emptyBackground (W := World)) p .w0 := by
+    have hAcc0 : ((0 : World) : World) ∈ accessibleWorlds fWide (0 : World) := (hWideAcc (0 : World)).mpr (Or.inl rfl)
+    have hPMem : p ∈ xMarkOrdering (emptyBackground (W := World)) p (0 : World) := by
       simp [xMarkOrdering, combineOrdering, emptyBackground]
-    exact hBest .w0 hAcc0 p hPMem rfl
-  have hNotSnXg : ¬ snXg fNarrow (emptyBackground (W := World)) p .w0 := by
+    exact hBest (0 : World) hAcc0 p hPMem rfl
+  have hNotSnXg : ¬ snXg fNarrow (emptyBackground (W := World)) p (0 : World) := by
     intro hSn
-    have hAcc1 : (.w1 : World) ∈ accessibleWorlds fNarrow .w0 := (hNarrowAcc .w1).mpr rfl
-    have hBest1 : (.w1 : World) ∈
-        bestWorlds fNarrow (xMarkOrdering (emptyBackground (W := World)) p) .w0 := by
+    have hAcc1 : ((1 : World) : World) ∈ accessibleWorlds fNarrow (0 : World) := (hNarrowAcc (1 : World)).mpr rfl
+    have hBest1 : ((1 : World) : World) ∈
+        bestWorlds fNarrow (xMarkOrdering (emptyBackground (W := World)) p) (0 : World) := by
       refine ⟨hAcc1, ?_⟩
       intro w'' hw''
-      have hw''1 : w'' = .w1 := (hNarrowAcc w'').mp hw''
+      have hw''1 : w'' = (1 : World) := (hNarrowAcc w'').mp hw''
       subst hw''1
-      exact ordering_reflexive _ (.w1 : World)
-    have hPw1 : p .w1 := hSn .w1 hBest1
-    exact World.noConfusion hPw1
-  exact hNotSnXg (h fNarrow fWide (emptyBackground (W := World)) p .w0 hRev hSnXfg)
+      exact ordering_reflexive _ ((1 : World) : World)
+    have hPw1 : p (1 : World) := hSn (1 : World) hBest1
+    exact absurd hPw1 (by decide)
+  exact hNotSnXg (h fNarrow fWide (emptyBackground (W := World)) p (0 : World) hRev hSnXfg)
 
 /-! ## Square instantiation: Portuguese occupies all four vertices -/
 

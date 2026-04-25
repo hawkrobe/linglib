@@ -1,6 +1,7 @@
-import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Theories.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Theories.Pragmatics.RSA.Divergence
+import Linglib.Core.Logic.Opposition.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -21,155 +22,95 @@ Three speaker models are formalized:
   r = .82 with 3 parameters: α, φ, β)
 
 State Communication and Belief Alignment produce identical conclusion distributions
-after softmax normalization (they differ by an additive constant H(post) that cancels);
-their distinct fitted parameters reflect the fitting procedure, not the functional form.
-This equivalence is proved as `stateCom_eq_beliefAlignment`.
+after softmax normalization within each syllogism (the additive entropy term
+H(L₀(·|premises)) is conclusion-independent and cancels in the per-syllogism softmax;
+between syllogisms, this entropy varies, which is why the paper's MCMC fits report
+different optimal α values for SC vs BA — same functional form, different scale).
+This per-syllogism cancellation is proved as `stateCom_eq_beliefAlignment`.
 
-## Grounding in Linglib
+## Substrate (`Semantics.Quantification.Syllogistic`)
 
-- Syllogistic quantifiers are `every_sem`/`some_sem`/`no_sem`
-  from `Quantifier.lean` applied to Venn diagram regions as entities
-- Subalternation (All→Some) proved via `subalternation_a_i` from `Quantifier.lean`
+This file consumes the syllogistic substrate at `Theories/Semantics/Quantification/`:
+
+- `Region`, `VennState`, `AristQuant`, `Syllogism`, `Conclusion` types
+- `hasA`/`hasB`/`hasC` region predicates
+- `syllAll`/`syllSome`/`syllSomeNot`/`syllNone` (modern FOL reading)
+- `barbara`/`allAB_allCB`/`someSome` named syllogisms
+- `state_A_AC`/`state_AB_BC`/`state_ABC` witness states
+- Validity (`barbara_valid`) + invalidity (`allAB_allCB_invalid`) theorems
+
+Per footnote 2 of @cite{tessler-tenenbaum-goodman-2022}, this paper takes the
+**Aristotelian** stance on the All form: "All As are Bs is false if there are no As."
+The substrate is modern (FOL); existential import is added here as a paper-local
+wrapper `tesslerAll`. Other Aristotelian forms (E, I, O) take the modern reading
+in this paper, so the asymmetric stance is encoded honestly.
+
+## RSA pipeline
+
 - Noisy semantics via `RSA.Noise.noiseChannel`
 - Belief Alignment utility via `RSA.Divergence.klDivergence`
 - SC ≡ BA equivalence via `RSA.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy`
 - "Nothing follows" as vacuous utterance (true in every state)
+
+## See also
+
+- `Core.Opposition.Probabilistic` — the Bayesian listener's posterior
+  probabilities `P_μ[c]` jointly satisfy the probabilistic Aristotelian
+  inequalities (subalternation `P[A] ≤ P[I]`, contradiction `P[A]+P[O]=1`,
+  etc.). Tessler's speaker models are functionals of these probabilities;
+  this is the natural framework for unifying RSA-syllogistic models with
+  the broader Demey–Smessaert opposition-diagram tradition.
+
+The paper engages the mental-models tradition (Khemlani & Johnson-Laird) and
+the Probability Heuristics Model @cite{chater-oaksford-1999}, fits parameters
+on the Ragni et al. 2019 dataset; bib entries for the latter two are deferred
+pending verified DOI/page metadata.
 -/
 
 set_option autoImplicit false
 
 namespace TesslerTenenbaumGoodman2022
 
-open Semantics.Quantification.Quantifier (every_sem some_sem no_sem
-  subalternation_a_i)
-open Core.IntensionalLogic (Frame)
+open Semantics.Quantification.Syllogistic
+  (Region VennState AristQuant Syllogism Conclusion
+   hasA hasB hasC syllAll syllSome syllSomeNot syllNone
+   barbara allAB_allCB someSome
+   state_AB_BC state_ABC state_A_AC)
 
 -- ============================================================================
--- §1. Ontology: Venn Diagram Regions and States
+-- §1. Tessler's Aristotelian All (footnote 2)
 -- ============================================================================
 
-/-- The 7 non-empty regions of a three-circle (A, B, C) Venn diagram.
-    The empty region {¬A, ¬B, ¬C} does not affect quantifier truth
-    conditions for all, some, some...not, none, and is excluded. -/
-inductive Region where
-  | A | B | C | AB | AC | BC | ABC
-  deriving DecidableEq, Repr, Inhabited
+/-- The paper's Aristotelian "All": existential import on the restrictor.
+    "All Xs are Ys" presupposes that some X exists, per footnote 2:
+    "All As are Bs is false if there are no As." -/
+def tesslerAll (s : VennState) (X Y : Region → Bool) : Bool :=
+  syllAll s X Y && decide (∃ r : Region, s r = true ∧ X r = true)
 
-instance : Fintype Region where
-  elems := {.A, .B, .C, .AB, .AC, .BC, .ABC}
-  complete := fun x => by cases x <;> simp
+/-- Paper-specific quantifier eval: Aristotelian on All, modern on the others. -/
+def tesslerSyllQuantEval (q : AristQuant) (s : VennState)
+    (X Y : Region → Bool) : Bool :=
+  match q with
+  | .all     => tesslerAll s X Y
+  | .some    => syllSome s X Y
+  | .someNot => syllSomeNot s X Y
+  | .no      => syllNone s X Y
 
-/-- A Venn state: which regions are populated. 2⁷ = 128 possible states. -/
-abbrev VennState := Region → Bool
+/-- Truth value of premise 1 in state s (Tessler-Aristotelian). -/
+def premise1Truth (syl : Syllogism) (s : VennState) : Bool :=
+  if syl.order1AB then tesslerSyllQuantEval syl.q1 s hasA hasB
+  else tesslerSyllQuantEval syl.q1 s hasB hasA
 
-/-- Region predicates: does region r have property X? -/
-def hasA : Region → Bool | .A | .AB | .AC | .ABC => true | _ => false
-def hasB : Region → Bool | .B | .AB | .BC | .ABC => true | _ => false
-def hasC : Region → Bool | .C | .AC | .BC | .ABC => true | _ => false
+/-- Truth value of premise 2 in state s (Tessler-Aristotelian). -/
+def premise2Truth (syl : Syllogism) (s : VennState) : Bool :=
+  if syl.order2BC then tesslerSyllQuantEval syl.q2 s hasB hasC
+  else tesslerSyllQuantEval syl.q2 s hasC hasB
 
--- ============================================================================
--- §2. Quantifier Semantics Grounded in GQ Denotations
--- ============================================================================
-
-/-- Regions as a Montague model, enabling reuse of `every_sem`/`some_sem`/`no_sem`. -/
-def regionModel : Frame := { Entity := Region, Index := Unit }
-
-instance regionFM : Fintype regionModel.Entity where
-  elems := ({Region.A, Region.B, Region.C, Region.AB, Region.AC, Region.BC, Region.ABC} : Finset Region)
-  complete := fun x => by cases x <;> (unfold regionModel; simp)
-
-/-- "All Xs are Ys" in state s: every populated X-region also has Y,
-    AND there is at least one populated X-region (existential import).
-
-    Per @cite{tessler-tenenbaum-goodman-2022} footnote 4: "All As are Bs
-    is false if there are no As." This ensures All entails Some.
-    Grounded in `every_sem` and `some_sem` from `Quantifier.lean`. -/
-def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (∀ r : Region, (s r = true ∧ X r = true) → Y r = true) &&
-  decide (∃ r : Region, s r = true ∧ X r = true)
-
-/-- "Some Xs are Ys": some populated X-region also has Y. -/
-def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (∃ r : Region, (s r = true ∧ X r = true) ∧ Y r = true)
-
-/-- "Some Xs are not Ys": some populated X-region lacks Y. -/
-def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (∃ r : Region, (s r = true ∧ X r = true) ∧ ¬(Y r = true))
-
-/-- "No Xs are Ys": no populated X-region has Y. -/
-def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (∀ r : Region, (s r = true ∧ X r = true) → ¬(Y r = true))
-
--- ============================================================================
--- §3. Premise and Conclusion Space
--- ============================================================================
-
-/-- Syllogistic quantifier: the four Aristotelian quantifiers. -/
-inductive SyllQuant where
-  | all | some | someNot | no
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype SyllQuant where
-  elems := {.all, .some, .someNot, .no}
-  complete := fun x => by cases x <;> simp
-
-/-- A syllogism is a pair of quantified premises sharing middle term B.
-    `order1AB = true` means premise 1 is "Q₁ A-B"; false means "Q₁ B-A".
-    `order2BC = true` means premise 2 is "Q₂ B-C"; false means "Q₂ C-B".
-    This gives 4 × 2 × 4 × 2 = 64 syllogisms. -/
-structure Syllogism where
-  q1 : SyllQuant
-  order1AB : Bool
-  q2 : SyllQuant
-  order2BC : Bool
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The 9 possible conclusions: 4 quantifiers × 2 term orders + NVC. -/
-inductive Conclusion where
-  | allAC | allCA
-  | someAC | someCA
-  | someNotAC | someNotCA
-  | noAC | noCA
-  | nvc  -- "nothing follows" / no valid conclusion
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype Conclusion where
-  elems := {.allAC, .allCA, .someAC, .someCA,
-            .someNotAC, .someNotCA, .noAC, .noCA, .nvc}
-  complete := fun x => by cases x <;> simp
-
-/-- Does the conclusion use A→C term order (vs C→A)?
-    Used for the figural bias parameter β. -/
-def Conclusion.isAC : Conclusion → Bool
-  | .allAC | .someAC | .someNotAC | .noAC => true
-  | _ => false
-
-/-- Figural bias prior weight, determined by the Aristotelian figure.
-
-    The "figural effect" biases toward conclusions whose end-term order
-    matches the chain direction through the middle term B:
-    - **Figure 1** (A-B, B-C): B is predicate of P1, subject of P2 →
-      chain reads A→B→C → **A-C** conclusions get weight β
-    - **Figure 4** (B-A, C-B): B is subject of P1, predicate of P2 →
-      chain reads C→B→A → **C-A** conclusions get weight β
-    - **Figures 2 & 3**: B occupies the same position in both premises →
-      no directional chain → all conclusions get weight 1
-
-    NVC always gets weight 1 (no directional bias for "nothing follows").
-    The paper fits β ≈ 2.01 (MAP). -/
-def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
-  if c = .nvc then 1
-  else if syl.order1AB && syl.order2BC then      -- Figure 1: A-B, B-C → prefer A-C
-    if c.isAC then β else 1
-  else if !syl.order1AB && !syl.order2BC then    -- Figure 4: B-A, C-B → prefer C-A
-    if !c.isAC then β else 1
-  else 1                                          -- Figures 2 & 3: no bias
-
-/-- Literal meaning of each conclusion in a Venn state.
-    "Nothing follows" is true in every state — the vacuous utterance. -/
+/-- Literal meaning of each conclusion in a Venn state, using Tessler-Aristotelian
+    All. NVC ("nothing follows") is the vacuous utterance, true everywhere. -/
 def concMeaning : Conclusion → VennState → Bool
-  | .allAC, s      => syllAll s hasA hasC
-  | .allCA, s      => syllAll s hasC hasA
+  | .allAC, s      => tesslerAll s hasA hasC
+  | .allCA, s      => tesslerAll s hasC hasA
   | .someAC, s     => syllSome s hasA hasC
   | .someCA, s     => syllSome s hasC hasA
   | .someNotAC, s  => syllSomeNot s hasA hasC
@@ -178,160 +119,68 @@ def concMeaning : Conclusion → VennState → Bool
   | .noCA, s       => syllNone s hasC hasA
   | .nvc, _        => true
 
-/-- "Nothing follows" is always true: the key insight enabling the Belief
-    Alignment model to rationally produce NVC when premises are uninformative. -/
-theorem nvc_always_true (s : VennState) : concMeaning .nvc s = true := rfl
+/-- "Nothing follows" is always true. -/
+@[simp] theorem nvc_always_true (s : VennState) :
+    concMeaning .nvc s = true := rfl
 
 -- ============================================================================
--- §4. Logical Validity: Barbara Syllogism
--- ============================================================================
-
-/-- **Barbara** (All A-B, All B-C ⊢ All A-C) is logically valid.
-
-    The proof chains through populated regions: if r is a populated
-    A-region, premise 1 gives it B, making it a populated B-region,
-    and premise 2 gives it C. This is a *state-restricted* form of
-    transitivity — stricter than `every_transitive` from `Quantifier.lean`,
-    which applies to unrestricted universal quantification. Here the
-    restrictors shift between premises (`s ∧ hasA` vs `s ∧ hasB`),
-    and the middle term B bridges them via the population predicate s. -/
-theorem barbara_valid (s : VennState)
-    (h1 : syllAll s hasA hasB = true)
-    (h2 : syllAll s hasB hasC = true) :
-    syllAll s hasA hasC = true := by
-  unfold syllAll at *
-  simp only [Bool.and_eq_true, decide_eq_true_eq] at *
-  obtain ⟨h1e, h1s⟩ := h1
-  obtain ⟨h2e, _⟩ := h2
-  refine ⟨?_, h1s⟩
-  intro r hr
-  have h1r := h1e r hr
-  have hrB : s r = true ∧ hasB r = true := ⟨hr.1, h1r⟩
-  have h2r := h2e r hrB
-  cases r <;> simp_all [hasA, hasB, hasC]
-
-/-- Barbara also validates "Some A are C" (by subalternation: All → Some).
-    Uses `barbara_valid` for the All A-C premise, then extracts the
-    existential import — with existential import in `syllAll`, the
-    non-emptiness hypothesis is built in, so no separate witness needed. -/
-theorem barbara_some_valid (s : VennState)
-    (h1 : syllAll s hasA hasB = true)
-    (h2 : syllAll s hasB hasC = true) :
-    syllSome s hasA hasC = true := by
-  have hAllAC := barbara_valid s h1 h2
-  unfold syllAll at hAllAC
-  simp only [Bool.and_eq_true, decide_eq_true_eq] at hAllAC
-  obtain ⟨hEvery, hSome⟩ := hAllAC
-  unfold syllSome
-  simp only [decide_eq_true_eq]
-  obtain ⟨r, hr⟩ := hSome
-  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
-
--- ============================================================================
--- §5. Logical Invalidity
--- ============================================================================
-
-/-- Witness state for invalid syllogisms: only AB and BC populated.
-    Compatible with "All A-B, All C-B" but falsifies All/Some A-C. -/
-private def state_AB_BC : VennState
-  | .AB => true | .BC => true | _ => false
-
-/-- Witness state: only ABC populated. Compatible with "All A-B, All C-B"
-    but falsifies No/SomeNot A-C. -/
-private def state_ABC : VennState
-  | .ABC => true | _ => false
-
-/-- "All A-B, All C-B" is logically invalid: no Aristotelian conclusion
-    holds in all compatible states. Proof by two counterexamples. -/
-theorem allAB_allCB_invalid :
-    -- State 1 falsifies All/Some A-C and C-A
-    concMeaning .allAC state_AB_BC = false ∧
-    concMeaning .someAC state_AB_BC = false ∧
-    concMeaning .allCA state_AB_BC = false ∧
-    concMeaning .someCA state_AB_BC = false ∧
-    -- State 2 falsifies No/SomeNot A-C and C-A
-    concMeaning .noAC state_ABC = false ∧
-    concMeaning .someNotAC state_ABC = false ∧
-    concMeaning .noCA state_ABC = false ∧
-    concMeaning .someNotCA state_ABC = false := by
-  native_decide
-
--- ============================================================================
--- §6. Noisy Semantics via RSA.Noise.noiseChannel
+-- §2. Noisy Semantics via RSA.Noise.noiseChannel
 -- ============================================================================
 
 /-- Noisy semantics ℒ(u, s): a small probability φ of misjudging truth value.
-    Directly instantiates `RSA.Noise.noiseChannel(1−φ, φ, ⟦u⟧)`:
-    ℒ(u,s) = 1−φ when ⟦u⟧(s) = true, φ when false. -/
+    Directly instantiates `RSA.Noise.noiseChannel(1−φ, φ, ⟦u⟧)`. -/
 def noisyConcMeaning (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
   RSA.Noise.noiseChannel (1 - φ) φ (if concMeaning c s then 1 else 0)
 
-/-- When noise is zero, noisy meaning reduces to literal meaning. -/
+/-- Noise zero ⇒ noisy meaning is literal meaning. -/
 theorem noisyConcMeaning_zero (c : Conclusion) (s : VennState) :
     noisyConcMeaning 0 c s = if concMeaning c s then 1 else 0 := by
   simp only [noisyConcMeaning, RSA.Noise.noiseChannel]
   split <;> ring
 
-/-- Noisy semantics assigns the NVC utterance a constant value in every state,
-    since `concMeaning .nvc s = true` for all s. This means L₀(s|NVC) = P(s):
-    hearing "nothing follows" does not update the listener's beliefs. -/
+/-- NVC's noisy meaning is `1 − φ` everywhere — hearing "nothing follows"
+    does not update the listener's beliefs. -/
 theorem noisyConcMeaning_nvc (φ : ℚ) (s : VennState) :
     noisyConcMeaning φ .nvc s = 1 - φ := by
   simp only [noisyConcMeaning, concMeaning, RSA.Noise.noiseChannel, ↓reduceIte]
   ring
 
 -- ============================================================================
--- §7. L₀ Premise Interpretation
+-- §3. L₀ Premise Interpretation
 -- ============================================================================
 
 /-- L₀ joint likelihood of two premises in state s (unnormalized).
-
-    Computes ℒ(u₁,s) · ℒ(u₂,s) — the likelihood term only. The full L₀
-    posterior (eq. 2) also includes the state prior P(s). The paper fixes
-    θ = 0.5 per region, making P(s) = 0.5⁷ = 1/128 for all states — a
-    uniform prior that cancels in normalization. For this reason, the
-    likelihood alone determines the relative posterior weights. -/
+    The uniform prior θ = 0.5 cancels in normalization (eq. 2). -/
 def l0PremiseLikelihood (φ : ℚ) (p1 p2 : VennState → Bool)
     (s : VennState) : ℚ :=
   RSA.Noise.noiseChannel (1 - φ) φ (if p1 s then 1 else 0) *
   RSA.Noise.noiseChannel (1 - φ) φ (if p2 s then 1 else 0)
 
 -- ============================================================================
--- §8. Speaker Models (eqs. 3, 4, 6)
+-- §4. Speaker Models (eqs. 3, 4, 6)
 -- ============================================================================
 
 /-- **S₀ (Literal Speaker, eq. 3)**: scores conclusions by expected literal
     truth under the reasoner's posterior.
 
-    S₀(u₃ | u₁,u₂) ∝ exp[α · Σ_s ℒ(u₃,s) · L₀(s|u₁,u₂)]
-
-    Here ℒ(u₃,s) is the *deterministic* semantic function (not the noisy
-    version inside L₀). This speaker samples states from the posterior and
-    randomly selects conclusions that are literally true. -/
+    `S₀(u₃ | u₁,u₂) ∝ exp[α · Σ_s ℒ(u₃,s) · L₀(s|u₁,u₂)]` -/
 noncomputable def literalSpeakerScore
     (premPost : VennState → ℝ) (α : ℝ) (c : Conclusion) : ℝ :=
   Real.exp (α * ∑ s : VennState,
     (if concMeaning c s then (1 : ℝ) else 0) * premPost s)
 
-/-- **State Communication (S₁, eq. 4)**: scores conclusions by expected
-    log-likelihood — standard RSA informativity applied to syllogisms.
+/-- **State Communication (S₁, eq. 4)**: standard RSA informativity.
 
-    S₁(u₃ | u₁,u₂) ∝ exp[α · Σ_s L₀(s|u₁,u₂) · ln L₀(s|u₃)]
-
-    The two L₀ agents are distinct: L₀(s|u₁,u₂) is the reasoner who
-    interpreted the premises; L₀(s|u₃) is a hypothetical naive listener
-    who interprets just the conclusion. Both use noisy semantics (same φ). -/
+    `S₁(u₃ | u₁,u₂) ∝ exp[α · Σ_s L₀(s|u₁,u₂) · ln L₀(s|u₃)]` -/
 noncomputable def stateComScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
   Real.exp (α * ∑ s : VennState,
     premPost s * Real.log (naivePost c s))
 
-/-- **Belief Alignment (S₁, eq. 6)**: the paper's winning model.
-    Scores conclusions by negative KL divergence between the reasoner's
-    full posterior and the naive listener's posterior given the conclusion.
+/-- **Belief Alignment (S₁, eq. 6)** — the paper's winning model.
 
-    S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]
+    `S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]`
 
     Uses `RSA.Divergence.klDivergence` directly. -/
 noncomputable def beliefAlignmentScore
@@ -340,21 +189,21 @@ noncomputable def beliefAlignmentScore
   Real.exp (α * (-RSA.Divergence.klDivergence premPost (naivePost c)))
 
 -- ============================================================================
--- §9. State Communication ≡ Belief Alignment
+-- §5. State Communication ≡ Belief Alignment (per-syllogism)
 -- ============================================================================
 
-/-- State Communication and Belief Alignment differ by an additive constant
-    (the entropy H(post)) that does not depend on the conclusion.
+/-- State Communication and Belief Alignment differ by a multiplicative factor
+    `exp(α · H(premPost))` that depends only on the reasoner's premise posterior,
+    not on the conclusion. **Within** a single syllogism's softmax over
+    conclusions, this factor cancels — the two models predict identical
+    conclusion distributions. **Between** syllogisms, `H(premPost)` varies,
+    so the same conclusion-distribution data is fit by *different* α values
+    under SC vs BA — explaining the paper's distinct fit statistics
+    (r = .67 vs .82) without any difference in functional form.
 
-    By `kl_eq_neg_crossEntropy_plus_negEntropy` from `Divergence.lean`:
+    Derivation via `kl_eq_neg_crossEntropy_plus_negEntropy`:
       KL(P ∥ Q) = Σ P·log P − Σ P·log Q
-
-    So: −KL(P ∥ Q) = Σ P·log Q − Σ P·log P = [State Com utility] + H(P).
-
-    Since H(P) is constant in the conclusion c, it cancels in softmax
-    normalization: both models produce identical conclusion distributions.
-    The paper's different fit statistics (r = .67 vs .82) reflect different
-    optimal α values found by MCMC, not different functional forms. -/
+      −KL(P ∥ Q) = Σ P·log Q − Σ P·log P = [SC utility] + H(P)  -/
 theorem stateCom_eq_beliefAlignment
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion)
@@ -369,15 +218,11 @@ theorem stateCom_eq_beliefAlignment
     + α * ∑ s, premPost s * Real.log (naivePost c s) from by ring]
   rw [Real.exp_add]
 
--- ============================================================================
--- §10. Speaker Model Properties
--- ============================================================================
-
-/-- The Belief Alignment score for NVC depends on how much the premises
-    shifted beliefs from the prior. When premises are uninformative
-    (posterior ≈ prior), KL(post ‖ prior) ≈ 0, so −KL ≈ 0, and
-    exp(α · 0) = 1 — the maximum score. This is why the model
-    naturally produces NVC for uninformative premise combinations. -/
+/-- The Belief Alignment score for NVC, when the naive listener for NVC
+    receives the prior, is `exp(α · −KL(post ‖ prior))`. When premises are
+    uninformative (posterior ≈ prior), KL ≈ 0, so the NVC score approaches
+    `exp(0) = 1`, the maximum — explaining the model's preference for NVC
+    on uninformative premise combinations. -/
 theorem beliefAlignment_nvc_uninformative
     (post prior : VennState → ℝ) (α : ℝ) :
     beliefAlignmentScore post (fun c => if c = .nvc then prior else fun _ => 0) α .nvc =
@@ -385,97 +230,42 @@ theorem beliefAlignment_nvc_uninformative
   simp [beliefAlignmentScore]
 
 -- ============================================================================
--- §11. Informativity: "All" More Informative Than "Some"
+-- §6. Subalternation: "All A-C" entails "Some A-C"
 -- ============================================================================
 
-/-- Subalternation in the region model: "All A are C" entails "Some A are C".
-    With existential import built into `syllAll`, no separate non-emptiness
-    hypothesis is needed — `syllAll` guarantees at least one A exists.
-
-    For the Belief Alignment model, this means "All A-C" produces a
-    more peaked L₀ posterior than "Some A-C", yielding lower KL
-    divergence and hence higher speaker utility — explaining why
-    Barbara participants prefer "All" over the also-valid "Some". -/
+/-- "All A-C" entails "Some A-C" under Tessler-Aristotelian All (existential
+    import is built into `tesslerAll` so the witness is free). With the
+    substrate's modern `syllAll` this would require an explicit `∃A` hypothesis. -/
 theorem all_entails_some_AC (s : VennState)
     (h : concMeaning .allAC s = true) :
     concMeaning .someAC s = true := by
-  simp only [concMeaning] at *
-  unfold syllAll at h
-  simp only [Bool.and_eq_true, decide_eq_true_eq] at h
-  obtain ⟨hEvery, hSome⟩ := h
-  unfold syllSome
+  simp only [concMeaning, tesslerAll, Bool.and_eq_true, decide_eq_true_eq] at h
+  obtain ⟨hAll, ⟨r, hsr, hAr⟩⟩ := h
+  unfold concMeaning syllSome
   simp only [decide_eq_true_eq]
-  obtain ⟨r, hr⟩ := hSome
-  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
+  refine ⟨r, ⟨hsr, hAr⟩, ?_⟩
+  rw [Semantics.Quantification.Syllogistic.syllAll_eq_true_iff] at hAll
+  exact hAll r ⟨hsr, hAr⟩
 
-/-- Strict informativity: "All A-C" is compatible with strictly fewer states.
-    Witness: `state_A_AC` has regions .A and .AC populated. Region .A has
-    property A but not C, so "All A-C" fails while "Some A-C" holds
-    (region .AC has both A and C). -/
-private def state_A_AC : VennState
-  | .A => true | .AC => true | _ => false
-
+/-- Strict informativity: "All A-C" is compatible with strictly fewer states
+    than "Some A-C". Witness: `state_A_AC`. -/
 theorem all_strictly_stronger_than_some :
     concMeaning .someAC state_A_AC = true ∧
     concMeaning .allAC state_A_AC = false := by
-  native_decide
+  decide
 
 -- ============================================================================
--- §12. Premise Evaluation and Named Syllogisms
+-- §7. L₀ Posterior (Computable in ℚ via `Finset.univ`)
 -- ============================================================================
 
-/-- Evaluate a syllogistic quantifier on given terms in a Venn state. -/
-def syllQuantEval (q : SyllQuant) (s : VennState) (X Y : Region → Bool) : Bool :=
-  match q with
-  | .all => syllAll s X Y
-  | .some => syllSome s X Y
-  | .someNot => syllSomeNot s X Y
-  | .no => syllNone s X Y
-
-/-- Truth value of premise 1 in state s. -/
-def premise1Truth (syl : Syllogism) (s : VennState) : Bool :=
-  if syl.order1AB then syllQuantEval syl.q1 s hasA hasB
-  else syllQuantEval syl.q1 s hasB hasA
-
-/-- Truth value of premise 2 in state s. -/
-def premise2Truth (syl : Syllogism) (s : VennState) : Bool :=
-  if syl.order2BC then syllQuantEval syl.q2 s hasB hasC
-  else syllQuantEval syl.q2 s hasC hasB
-
--- Named syllogisms
-
-/-- Barbara: All A-B, All B-C. Figure 1 (paradigmatic valid syllogism). -/
-def barbara : Syllogism := ⟨.all, true, .all, true⟩
-
-/-- All A-B, All C-B. Figure 3 (paradigmatic invalid syllogism). -/
-def allAB_allCB : Syllogism := ⟨.all, true, .all, false⟩
-
-/-- Some A-B, Some B-C. Figure 1. -/
-def someSome : Syllogism := ⟨.some, true, .some, true⟩
-
--- ============================================================================
--- §13. L₀ Posterior (Computable in ℚ)
--- ============================================================================
-
-/-- All 128 Venn diagram states, enumerated for computable summation.
-    Each state is a function `Region → Bool` indicating which regions
-    are populated. Generated by the List monad over all 7 regions. -/
-def allStates : List VennState := do
-  let a ← [true, false]; let b ← [true, false]; let c ← [true, false]
-  let ab ← [true, false]; let ac ← [true, false]; let bc ← [true, false]
-  let abc ← [true, false]
-  pure fun | .A => a | .B => b | .C => c | .AB => ab
-           | .AC => ac | .BC => bc | .ABC => abc
-
-/-- Unnormalized L₀ likelihood for a syllogism in state s.
-    Computes ℒ(p₁,s) · ℒ(p₂,s) where ℒ is noisy semantics.
-    The uniform prior (θ = 0.5) cancels in normalization. -/
+/-- Unnormalized L₀ likelihood for a syllogism in state s. -/
 def l0Unnorm (φ : ℚ) (syl : Syllogism) (s : VennState) : ℚ :=
   l0PremiseLikelihood φ (premise1Truth syl) (premise2Truth syl) s
 
-/-- Normalization constant: Σ_s L₀_unnorm(s). Computable via `allStates`. -/
+/-- Normalization constant: Σ_s L₀_unnorm(s) over all 128 Venn states.
+    Uses `Finset.univ` over `VennState = Region → Bool` via `Pi.fintype`. -/
 def l0Z (φ : ℚ) (syl : Syllogism) : ℚ :=
-  (allStates.map (l0Unnorm φ syl)).sum
+  ∑ s : VennState, l0Unnorm φ syl s
 
 /-- Normalized L₀ posterior: L₀(s|premises) = L₀_unnorm(s) / Z. -/
 def l0Post (φ : ℚ) (syl : Syllogism) (s : VennState) : ℚ :=
@@ -483,7 +273,7 @@ def l0Post (φ : ℚ) (syl : Syllogism) (s : VennState) : ℚ :=
 
 /-- Normalization constant for naive L₀ on a single conclusion. -/
 def naiveL0Z (φ : ℚ) (c : Conclusion) : ℚ :=
-  (allStates.map (noisyConcMeaning φ c)).sum
+  ∑ s : VennState, noisyConcMeaning φ c s
 
 /-- Naive L₀ posterior for a conclusion: L₀(s|c) ∝ ℒ(c,s).
     The naive listener has heard only the conclusion, not the premises. -/
@@ -491,11 +281,29 @@ def naiveL0Post (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
   noisyConcMeaning φ c s / naiveL0Z φ c
 
 -- ============================================================================
--- §14. Full Belief Alignment Pipeline (noncomputable, over ℝ)
+-- §8. Figural Bias and Full Belief Alignment Pipeline
 -- ============================================================================
 
+/-- Figural bias prior weight, determined by which of A, C appears in subject
+    position of one of the premises (per the paper's figural-effects discussion).
+
+    - Both premises in A-B/B-C order (Figure 1): only A appears in subject
+      position (of P1) → A-C conclusions get weight β.
+    - Both in B-A/C-B order (Figure 4): only C in subject (of P2) → C-A
+      conclusions get weight β.
+    - Mixed (Figures 2 & 3): both or neither of A, C appear in subject
+      position → no figural bias (weight 1 for all conclusions).
+
+    NVC always gets weight 1. The paper fits β ≈ 2.01 (MAP). -/
+def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
+  if c = .nvc then 1
+  else if syl.order1AB && syl.order2BC then      -- Figure 1: prefer A-C
+    if Semantics.Quantification.Syllogistic.Conclusion.isAC c then β else 1
+  else if !syl.order1AB && !syl.order2BC then    -- Figure 4: prefer C-A
+    if !Semantics.Quantification.Syllogistic.Conclusion.isAC c then β else 1
+  else 1                                          -- Figures 2 & 3: no bias
+
 /-- Belief Alignment score for conclusion c given syllogism syl.
-    Uses the full pipeline: premises → L₀ posterior → KL → exp.
     Parameters: α (rationality), φ (noise), β (figural bias). -/
 noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
@@ -504,128 +312,90 @@ noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (fun s => (l0Post φ syl s : ℝ))
     (fun s => (naiveL0Post φ c s : ℝ))))
 
-/-- Conclusion probability: P(c|syl) = baScore(c) / Σ_c' baScore(c'). -/
+/-- Conclusion probability: `P(c|syl) = baScore(c) / Σ_c' baScore(c')`. -/
 noncomputable def conclusionProb (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
   baScore α φ β syl c / ∑ c' : Conclusion, baScore α φ β syl c'
 
 -- ============================================================================
--- §15. Fitted Parameters
+-- §9. Fitted Parameters (MAP from Ragni et al. 2019 dataset)
 -- ============================================================================
 
-/-- MAP estimates from the Bayesian data analysis on Ragni et al. 2019 data.
-    α ≈ 6.88, φ ≈ 0.06, β ≈ 2.01. -/
+/-- MAP estimates from the Bayesian data analysis. α ≈ 6.88, φ ≈ 0.06,
+    β ≈ 2.01. Numerical evaluation of `conclusionProb` at these parameters
+    is not performed in-Lean (would require Float, banned project-wide);
+    the paper's reported predictions can be reproduced via the model code
+    at https://github.com/mhtessler/syllogism-paper. -/
 noncomputable def α_fit : ℝ := 688 / 100
 def φ_fit : ℚ := 6 / 100
 def β_fit : ℚ := 201 / 100
 
 -- ============================================================================
--- §16. Float-Based Numerical Evaluation
+-- §10. L₀ Posterior Concentration
 -- ============================================================================
 
-/-- Convert ℚ to Float for numerical evaluation. -/
-private def ratToFloat (q : ℚ) : Float :=
-  let num : Float := match q.num with
-    | .ofNat n => n.toFloat
-    | .negSucc n => -(n + 1).toFloat
-  num / q.den.toFloat
-
-/-- KL divergence over `allStates` in Float arithmetic.
-    Skips states with P(s) = 0 (contributes 0 to KL by convention). -/
-def klFloat (P Q : VennState → Float) : Float :=
-  allStates.foldl (fun acc s =>
-    let p := P s
-    let q := Q s
-    if p > 0 then acc + p * (Float.log p - Float.log q)
-    else acc) 0.0
-
-/-- All 9 conclusions as a list. -/
-def allConclusions : List Conclusion :=
-  [.allAC, .allCA, .someAC, .someCA, .someNotAC, .someNotCA, .noAC, .noCA, .nvc]
-
-/-- Compute conclusion distribution for a syllogism using Float arithmetic.
-    L₀ posteriors are computed exactly in ℚ (via `l0Post`, `naiveL0Post`),
-    then converted to Float for the KL divergence and softmax steps.
-    Parameters: α (rationality, Float), φ and β (exact in ℚ). -/
-def predictFloat (α : Float) (φ β : ℚ) (syl : Syllogism) :
-    List (Conclusion × Float) :=
-  -- L₀ posterior (exact in ℚ, converted to Float)
-  let postFloat : VennState → Float := fun s => ratToFloat (l0Post φ syl s)
-  -- For each conclusion, compute BA score
-  let scores := allConclusions.map fun c =>
-    let naiveFloat : VennState → Float := fun s => ratToFloat (naiveL0Post φ c s)
-    let kl := klFloat postFloat naiveFloat
-    let figural := ratToFloat (figuralWeight β syl c)
-    (c, figural * Float.exp (α * (-kl)))
-  -- Normalize
-  let total := (scores.map Prod.snd).foldl (· + ·) 0.0
-  scores.map fun (c, v) => (c, v / total)
-
-/-- Short name for display. -/
-def Conclusion.short : Conclusion → String
-  | .allAC => "Aac" | .allCA => "Aca"
-  | .someAC => "Iac" | .someCA => "Ica"
-  | .someNotAC => "Oac" | .someNotCA => "Oca"
-  | .noAC => "Eac" | .noCA => "Eca"
-  | .nvc => "NVC"
-
-/-- Compact string output for a syllogism's predicted distribution,
-    showing conclusions sorted by predicted probability. -/
-def showPrediction (α : Float) (φ β : ℚ) (syl : Syllogism) : String :=
-  let preds := predictFloat α φ β syl
-  let sorted := preds.toArray.qsort (fun a b => a.2 > b.2) |>.toList
-  String.intercalate ", " <| sorted.filterMap fun (c, p) =>
-    let pct := Float.toString (p * 100) |>.take 5
-    if p > 0.005 then some s!"{c.short}:{pct}%" else none
-
--- Verified numerical predictions (α=6.88, φ=0.06, β=2.01):
--- (with existential import: "All Xs are Ys" requires Xs to exist)
---
--- Fig 1: Barbara (All A-B, All B-C)   → Aac:96.69%  (A-C bias)
--- Fig 3: All A-B, All C-B (invalid)   → NVC:73.83%, Aac=Aca:6.94%  (no bias)
--- Fig 1: Some A-B, Some B-C           → Iac:41.42%, NVC:26.54%, Ica:20.60%
--- Fig 4: All B-A, All C-B             → Aca:96.69%  (C-A bias, mirror of Fig 1)
--- Fig 2: All B-A, All B-C             → Ica=Iac:35.26%, NVC:17.04%  (no bias)
---
--- #eval showPrediction 6.88 φ_fit β_fit barbara
--- #eval showPrediction 6.88 φ_fit β_fit allAB_allCB
--- #eval showPrediction 6.88 φ_fit β_fit someSome
-
--- ============================================================================
--- §17. L₀ Posterior Concentration (Computable Verification)
--- ============================================================================
-
-/-- For Barbara (All A-B, All B-C), every L₀-probable state satisfies
-    All A-C. Proof: states where both premises are literally true form
-    a subset of states where All A-C holds (by `barbara_valid`).
-
-    With noise φ, the L₀ posterior concentrates on these states: the
-    likelihood ℒ(p₁,s)·ℒ(p₂,s) is (1−φ)² for consistent states but
-    only (1−φ)·φ, φ·(1−φ), or φ² for inconsistent ones.
-
-    This theorem verifies computably that every state where BOTH premises
-    are literally true also satisfies All A-C — the semantic backbone
-    of the Belief Alignment model's "All A-C" preference for Barbara. -/
+/-- For Barbara, every state where both premises are literally true also
+    satisfies "All A-C" — the L₀ posterior concentrates on All-A-C states.
+    Reduces to `barbara_premises_imply_allAC` from the substrate plus the
+    Tessler-Aristotelian `concMeaning` wrapping. -/
 theorem barbara_l0_concentrates_on_allAC (s : VennState) :
     premise1Truth barbara s = true →
     premise2Truth barbara s = true →
     concMeaning .allAC s = true := by
   intro h1 h2
-  simp only [premise1Truth, premise2Truth, barbara, ↓reduceIte, syllQuantEval] at h1 h2
-  exact barbara_valid s h1 h2
+  simp only [premise1Truth, premise2Truth, barbara, ↓reduceIte,
+             tesslerSyllQuantEval, tesslerAll,
+             Bool.and_eq_true, decide_eq_true_eq] at h1 h2
+  obtain ⟨hAB, hExA⟩ := h1
+  obtain ⟨hBC, _⟩ := h2
+  unfold concMeaning tesslerAll
+  simp only [Bool.and_eq_true, decide_eq_true_eq]
+  refine ⟨?_, hExA⟩
+  exact Semantics.Quantification.Syllogistic.barbara_valid s hAB hBC
 
 /-- For the invalid syllogism (All A-B, All C-B), the L₀ posterior does NOT
     concentrate on any single conclusion — some consistent states satisfy
-    All A-C while others falsify it. -/
+    "All A-C" while others falsify it. -/
 theorem allAB_allCB_l0_does_not_concentrate :
-    -- state_ABC satisfies both premises AND All A-C
     (premise1Truth allAB_allCB state_ABC = true ∧
      premise2Truth allAB_allCB state_ABC = true ∧
      concMeaning .allAC state_ABC = true) ∧
-    -- state_AB_BC satisfies both premises but NOT All A-C
     (premise1Truth allAB_allCB state_AB_BC = true ∧
      premise2Truth allAB_allCB state_AB_BC = true ∧
      concMeaning .allAC state_AB_BC = false) := by
-  native_decide
+  decide
+
+-- ============================================================================
+-- §11. Probabilistic-Aristotelian constraints on the L₀ posterior
+-- ============================================================================
+
+/-- "All A-C" *properly* subalternates "Some A-C" in the Tessler-Aristotelian
+    reading: All entails Some (via existential import in `tesslerAll`), and
+    `state_A_AC` witnesses that the converse fails (Some without All). -/
+theorem allAC_subaltern_someAC :
+    Core.Opposition.Subaltern (concMeaning .allAC) (concMeaning .someAC) := by
+  refine ⟨fun s h => all_entails_some_AC s h, ?_⟩
+  intro hConv
+  have hSome : concMeaning .someAC state_A_AC = true :=
+    all_strictly_stronger_than_some.1
+  have hAll : concMeaning .allAC state_A_AC = false :=
+    all_strictly_stronger_than_some.2
+  have := hConv state_A_AC hSome
+  rw [hAll] at this
+  exact Bool.noConfusion this
+
+/-- **Probabilistic subalternation on the L₀ posterior.** Tessler's Bayesian
+    listener model assigns to every conclusion `c` an L₀ posterior probability
+    `μ({s | concMeaning c s = true})`. Aristotelian subalternation lifts to
+    this probabilistic level: under any μ, `P_μ[allAC] ≤ P_μ[someAC]`.
+
+    The lift is automatic via `Core.Opposition.Subaltern.toProb` once
+    `allAC_subaltern_someAC` is established. The probabilistic Aristotelian
+    diagram (Demey-Smessaert 2018-style, with the convex generalization in
+    `Probabilistic.lean`) is implicitly the framework Tessler's Bayesian
+    listener computes within. -/
+theorem prob_subaltern_allAC_someAC (μ : PMF VennState) :
+    Core.Opposition.ProbSubaltern μ (concMeaning .allAC) (concMeaning .someAC) :=
+  allAC_subaltern_someAC.toProb μ
 
 end TesslerTenenbaumGoodman2022

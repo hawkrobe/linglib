@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Theories.Syntax.Minimalism.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Fragments.English.Predicates.Verbal

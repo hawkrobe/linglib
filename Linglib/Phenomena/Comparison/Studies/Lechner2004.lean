@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 /-!
 # Lechner 2004: Ellipsis in Comparatives

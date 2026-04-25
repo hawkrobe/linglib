@@ -68,14 +68,34 @@ def alcuno : PolarityItemEntry :=
   , scalarDirection := .strengthening
   , notes := "Formal NPI; 'Non ho visto alcuno studente'" }
 
-/-- *neanche/nemmeno* — Additive focus NPI (*not even*). -/
+/-- *neanche/nemmeno/neppure* — Additive focus NPI (*not even*).
+    Three near-synonymous register variants. -/
 def neanche : PolarityItemEntry :=
-  { form := "neanche/nemmeno"
+  { form := "neanche/nemmeno/neppure"
   , polarityType := .npiWeak
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody]
   , scalarDirection := .strengthening
   , notes := "Focus NPI: 'Non ha neanche provato' (didn't even try)" }
+
+/-- *mica* — Emphatic negation reinforcer / colloquial NPI.
+    Co-occurs with *non* postverbally to add emphasis: *Non mi piace mica*
+    "I don't like it AT ALL". The load-bearing diagnostic in
+    @cite{cinque-1999}'s adverb hierarchy and Zanuttini's NegP cartography:
+    *mica* sits in a dedicated functional projection above the lexical-VP
+    negation slot. Morphologically a frozen noun ("crumb"), grammaticalized
+    into a focus particle in northern Italian especially. Distinct from
+    additive *neanche* (which adds a discourse-given alternative) — *mica*
+    contradicts an inferred prior expectation. -/
+def mica : PolarityItemEntry :=
+  { form := "mica"
+  , polarityType := .npiWeak
+  , baseForce := .degree
+  , licensingContexts := [.negation]
+  , scalarDirection := .strengthening
+  , notes :=
+      "Emphatic negation reinforcer; postverbal with non; northern Italian " ++
+      "colloquial; @cite{cinque-1999} adverb hierarchy" }
 
 /-- *pur* (in *con tutta la fantasia che pur si possa avere*, "with all the
     fantasy in the world that one could have") — weak NPI licensed in
@@ -176,6 +196,18 @@ def uno_qualsiasi : PolarityItemEntry :=
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative]
   , alternativeType := .domain
   , notes := "Existential FCI; 'un dottore qualsiasi' = a doctor whatever; needs modal" }
+
+-- ============================================================================
+-- Joint
+-- ============================================================================
+
+/-- The Italian polarity-item inventory: the Fragment-side joint consumed
+    by `Phenomena/Polarity/Typology.lean`. Every
+    `Fragments/{Lang}/PolarityItems.lean` exposes `def items` of this type
+    (see the operator/lexical-reactive split in `Core/Lexical/NegMarker.lean`). -/
+def items : List PolarityItemEntry :=
+  [nessuno, niente, mai, alcuno, neanche, mica, pur, affatto,
+   qualsiasi, qualunque, uno_qualsiasi]
 
 -- ============================================================================
 -- Verification

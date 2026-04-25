@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Causation.ProductionDependence
@@ -11,7 +11,8 @@ Theory-side connection between the resultative construction and the
 causative semantics infrastructure. Per-scenario `BoolSEM` witnesses
 (HammerFlat, IndependentSourceBreaksNecessity, etc.) live with the paper
 that uses them — see `Phenomena.Constructions.Resultatives.Studies.Levin2026`
-and `Studies.Tay2024`.
+and `Studies.Tay2024`. Per-datum @cite{goldberg-jackendoff-2004} verifications
+live in `Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004`.
 
 Sections:
 
@@ -39,7 +40,7 @@ Sections:
 namespace Semantics.Causation.Resultatives
 
 open ConstructionGrammar
-open ConstructionGrammar.Studies.GoldbergJackendoff2004
+open ConstructionGrammar.Resultatives
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Semantics.Verb.ChangeOfState
@@ -53,19 +54,6 @@ open Semantics.Causation.CCSelection
 theorem causative_iff_has_cause (sc : ResultativeSubconstruction) :
     sc.isCausative = sc.constructionalDesc.hasCause := by
   cases sc <;> rfl
-
-/-- All causative entries in the data have CAUSE. -/
-theorem causative_resultative_has_cause :
-    (allEntries.filter (·.subconstruction.isCausative)).all
-      (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
-
-/-- MEANS-relation causative entries all have CAUSE. -/
-theorem causative_means_have_cause :
-    (allEntries.filter (λ e =>
-      e.subconstruction.isCausative && e.subeventRelation == .means
-    )).all (·.dualSubevent.constructional.hasCause) = true := by
-  native_decide
 
 /-! ## CC-selection (@cite{baglini-bar-asher-siegal-2025})
 
@@ -200,24 +188,10 @@ theorem resultative_aspect_agrees_with_telicize :
     activityProfile.telicize.toVendlerClass :=
   rfl
 
-/-- Activity verbs in the data with bounded RPs become accomplishments. -/
-theorem activity_entries_become_accomplishments :
-    (allEntries.filter (λ e =>
-      e.bareVerbClass == .activity && e.rpBoundedness == .bounded
-    )).all (λ e =>
-      resultativeVendlerClass e.rpBoundedness == .accomplishment
-    ) = true := by
-  native_decide
-
 /-! ## ChangeOfState: BECOME = inception (¬P → P) -/
 
 /-- Constructional BECOME = CoS inception. -/
 def resultStateMapsToCoS : CoSType := .inception
-
-/-- All resultative entries have BECOME. -/
-theorem all_have_become :
-    allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
-  native_decide
 
 /-- Inception presupposes ¬P before. -/
 theorem inception_presupposes_not_prior {W : Type*} (P : W → Prop) (w : W) :

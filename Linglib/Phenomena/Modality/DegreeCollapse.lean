@@ -21,7 +21,6 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.5.
 
 namespace Phenomena.Modality.DegreeCollapse
 
-open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
 open Phenomena.Modality.ConditionalModality
 
@@ -50,23 +49,23 @@ streetWet holds only at w0, so strength = 1/2. -/
 
 /-- With the normalcy ordering, the only best world is `w0`. -/
 theorem best_normalcy :
-    bestWorlds (restrictedBase emptyBackground rained) normalcySource .w0 = {.w0} := by
+    bestWorlds (restrictedBase emptyBackground rained) normalcySource (0 : World) = {(0 : World)} := by
   ext w'
   constructor
   · rintro ⟨hAcc, hBest⟩
-    -- hAcc : w' ∈ accessibleWorlds (restrictedBase emptyBackground rained) .w0
+    -- hAcc : w' ∈ accessibleWorlds (restrictedBase emptyBackground rained) (0 : World)
     -- means rained w' (since emptyBackground adds nothing)
     have hRained : rained w' := by
       have := hAcc rained (by simp [restrictedBase])
       exact this
-    -- hBest : ∀ w'' accessible, atLeastAsGoodAs (normalcySource .w0) w' w''
-    -- Apply hBest to .w1 (which is accessible: rained w1)
-    have hAccW1 : .w1 ∈ accessibleWorlds (restrictedBase emptyBackground rained) .w0 := by
+    -- hBest : ∀ w'' accessible, atLeastAsGoodAs (normalcySource (0 : World)) w' w''
+    -- Apply hBest to (1 : World) (which is accessible: rained w1)
+    have hAccW1 : (1 : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) (0 : World) := by
       intro p hp
       simp [restrictedBase, emptyBackground] at hp
       subst hp
       exact w1_rained_dry.1
-    have hBetterW1 := hBest .w1 hAccW1
+    have hBetterW1 := hBest (1 : World) hAccW1
     -- atLeastAsGoodAs uses normalcySource, which is [λ w' => ¬(rained w' ∧ ¬ streetWet w')]
     -- For w1: rained w1 ∧ ¬streetWet w1 holds, so ¬(rained ∧ ¬streetWet) FAILS at w1
     -- For w' to be at least as good as w1: every prop satisfied by w1 must be satisfied by w'
@@ -74,17 +73,17 @@ theorem best_normalcy :
     -- We need to use the OTHER direction: w' must satisfy the normalcy prop if accessible
     -- Actually, the constraint is: w' ≤ w1, i.e. for any normalcy prop p satisfied by w1, w' satisfies it
     -- But w1 satisfies no normalcy props, so this gives us nothing about w'.
-    -- Let me use a different test: apply hBest to .w0 to ensure w' ≤ w0
+    -- Let me use a different test: apply hBest to (0 : World) to ensure w' ≤ w0
     -- w0 satisfies the normalcy prop (¬(rained ∧ ¬streetWet) = ¬(T ∧ F) = T)
-    have hAccW0 : .w0 ∈ accessibleWorlds (restrictedBase emptyBackground rained) .w0 := by
+    have hAccW0 : (0 : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) (0 : World) := by
       intro p hp
       simp [restrictedBase, emptyBackground] at hp
       subst hp
       exact w0_rained_wet.1
-    have hBetterW0 := hBest .w0 hAccW0
-    -- hBetterW0 : atLeastAsGoodAs (normalcySource .w0) w' .w0
+    have hBetterW0 := hBest (0 : World) hAccW0
+    -- hBetterW0 : atLeastAsGoodAs (normalcySource (0 : World)) w' (0 : World)
     -- w0 satisfies the normalcy prop, so w' must too
-    have hNormalcyAtW0 : ¬ (rained .w0 ∧ ¬ streetWet .w0) := by
+    have hNormalcyAtW0 : ¬ (rained (0 : World) ∧ ¬ streetWet (0 : World)) := by
       intro ⟨_, hNW⟩; exact hNW trivial
     have hNormalcyAtWp : ¬ (rained w' ∧ ¬ streetWet w') := by
       have := hBetterW0 (λ w' => ¬ (rained w' ∧ ¬ streetWet w'))
@@ -95,12 +94,12 @@ theorem best_normalcy :
     have hWet : streetWet w' := by
       by_contra hNW
       exact hNormalcyAtWp ⟨hRained, hNW⟩
-    -- Now: rained w' ∧ streetWet w' → w' = .w0 (only w0 has both)
-    cases w' with
-    | w0 => rfl
-    | w1 => exact absurd hWet w1_rained_dry.2
-    | w2 => exact absurd hRained w2_dry_wet.1
-    | w3 => exact absurd hRained w3_dry_dry.1
+    -- Now: rained w' ∧ streetWet w' → w' = (0 : World) (only w0 has both)
+    match w' with
+    | 0 => rfl
+    | 1 => exact absurd hWet w1_rained_dry.2
+    | 2 => exact absurd hRained w2_dry_wet.1
+    | 3 => exact absurd hRained w3_dry_dry.1
   · rintro rfl
     refine ⟨?_, ?_⟩
     · intro p hp
@@ -108,9 +107,9 @@ theorem best_normalcy :
       subst hp
       exact w0_rained_wet.1
     · intro w'' _hw''
-      -- Need: atLeastAsGoodAs (normalcySource .w0) .w0 w''
+      -- Need: atLeastAsGoodAs (normalcySource (0 : World)) (0 : World) w''
       -- The only normalcy prop simplifies to (rained → streetWet);
-      -- .w0 satisfies it since streetWet .w0 = True.
+      -- (0 : World) satisfies it since streetWet (0 : World) = True.
       intro p hp _hpw
       simp [normalcySource] at hp
       subst hp
@@ -118,7 +117,7 @@ theorem best_normalcy :
 
 /-- Without the normalcy ordering, both `w0` and `w1` are best. -/
 theorem best_empty :
-    bestWorlds (restrictedBase emptyBackground rained) emptyBackground .w0 =
+    bestWorlds (restrictedBase emptyBackground rained) emptyBackground (0 : World) =
     {w | rained w} := by
   ext w'
   constructor
@@ -133,26 +132,31 @@ theorem best_empty :
     · intro w'' _
       intro p hp; simp [emptyBackground] at hp
 
-/-- The set `{w | rained w}` equals `{.w0, .w1}`. -/
-theorem rained_set_eq : ({w | rained w} : Set World) = {.w0, .w1} := by
-  ext w; cases w <;> simp [rained]
+/-- The set `{w | rained w}` equals `{(0 : World), (1 : World)}`. -/
+theorem rained_set_eq : ({w | rained w} : Set World) = {(0 : World), (1 : World)} := by
+  ext w
+  match w with
+  | 0 => simp [rained]
+  | 1 => simp [rained]
+  | 2 => simp [rained]
+  | 3 => simp [rained]
 
 /-- `ncard` of a singleton is 1. -/
-private theorem ncard_singleton_w0 : ({.w0} : Set World).ncard = 1 := by
+private theorem ncard_singleton_w0 : ({(0 : World)} : Set World).ncard = 1 := by
   rw [Set.ncard_singleton]
 
-/-- `ncard` of `{.w0, .w1}` is 2. -/
-private theorem ncard_pair_w0_w1 : ({.w0, .w1} : Set World).ncard = 2 := by
+/-- `ncard` of `{(0 : World), (1 : World)}` is 2. -/
+private theorem ncard_pair_w0_w1 : ({(0 : World), (1 : World)} : Set World).ncard = 2 := by
   rw [Set.ncard_pair]
   intro h; cases h
 
 /-- **With normalcy ordering**: strength = 1. Best = {w0}, streetWet w0 = true. -/
 theorem strength_with_normalcy :
-    modalStrength (restrictedBase emptyBackground rained) normalcySource streetWet .w0 = 1 := by
+    modalStrength (restrictedBase emptyBackground rained) normalcySource streetWet (0 : World) = 1 := by
   unfold modalStrength
   simp only
   rw [best_normalcy, ncard_singleton_w0]
-  have hInter : (({.w0} : Set World) ∩ {w' | streetWet w'}) = {.w0} := by
+  have hInter : (({(0 : World)} : Set World) ∩ {w' | streetWet w'}) = {(0 : World)} := by
     ext w; constructor
     · rintro ⟨h1, _⟩; exact h1
     · rintro rfl; exact ⟨rfl, trivial⟩
@@ -162,13 +166,17 @@ theorem strength_with_normalcy :
 /-- **Without normalcy ordering**: strength = 1/2. Best = {w0, w1},
     streetWet w0 = true, streetWet w1 = false. -/
 theorem strength_without_normalcy :
-    modalStrength (restrictedBase emptyBackground rained) emptyBackground streetWet .w0 = 1 / 2 := by
+    modalStrength (restrictedBase emptyBackground rained) emptyBackground streetWet (0 : World) = 1 / 2 := by
   unfold modalStrength
   simp only
   rw [best_empty, rained_set_eq, ncard_pair_w0_w1]
-  have hInter : (({.w0, .w1} : Set World) ∩ {w' | streetWet w'}) = {.w0} := by
+  have hInter : (({(0 : World), (1 : World)} : Set World) ∩ {w' | streetWet w'}) = {(0 : World)} := by
     ext w
-    cases w <;> simp [streetWet]
+    match w with
+    | 0 => simp [streetWet]
+    | 1 => simp [streetWet]
+    | 2 => simp [streetWet]
+    | 3 => simp [streetWet]
   rw [hInter, ncard_singleton_w0]
   norm_num
 

@@ -408,6 +408,19 @@
   role      = {formalized},
   sources   = {Phenomena/Quantification/Studies/TesslerTenenbaumGoodman2022.lean}
 }
+@article{demey-smessaert-2018,
+  author    = {Demey, Lorenz and Smessaert, Hans},
+  year      = {2018},
+  title     = {Combinatorial Bitstring Semantics for Arbitrary Logical Fragments},
+  journal   = {Journal of Philosophical Logic},
+  volume    = {47},
+  pages     = {325--363},
+  doi       = {10.1007/s10992-017-9430-5},
+  subfield  = {logic/opposition},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Core/Logic/Opposition/Aristotelian.lean, Core/Logic/Opposition/Diagram.lean, Core/Logic/Opposition/Probabilistic.lean, Core/Logic/Opposition/Partition.lean, Core/Logic/Opposition/Bitstring.lean}
+}
 @inproceedings{scontras-tonhauser-2025,
   author    = {Scontras, Gregory and Tonhauser, Judith},
   year      = {2025},
@@ -5189,6 +5202,29 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Imprecision/Projection.lean}
+}% REF: McRae, K., Cree, G. S., Seidenberg, M. S. & McNorgan, C. (2005). Semantic feature production norms for a large set of living and nonliving things. Behavior Research Methods 37: 547-559.
+@article{mcrae-etal-2005,
+  author    = {McRae, Ken and Cree, George S. and Seidenberg, Mark S. and McNorgan, Chris},
+  year      = {2005},
+  title     = {Semantic feature production norms for a large set of living and nonliving things},
+  journal   = {Behavior Research Methods},
+  doi       = {10.3758/BF03192726},
+  volume    = {37},
+  pages     = {547--559},
+  subfield  = {semantics/compositional},
+  role      = {cited},
+  validated = {true}
+}% REF: Herbelot, A. & Vecchi, E. M. (2016). Many speakers, many worlds: interannotator variations in the quantification of feature norms. Linguistic Issues in Language Technology 13: 37-57.
+@article{herbelot-vecchi-2016,
+  author    = {Herbelot, Aurélie and Vecchi, Eva Maria},
+  year      = {2016},
+  title     = {Many speakers, many worlds: interannotator variations in the quantification of feature norms},
+  journal   = {Linguistic Issues in Language Technology},
+  volume    = {13},
+  pages     = {37--57},
+  subfield  = {semantics/compositional},
+  role      = {cited},
+  validated = {true}
 }% REF: Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic Constraints for Meaning in Context. Journal of Semanti
 @article{erk-herbelot-2024,
   author    = {Erk, Katrin and Herbelot, Aurélie},
@@ -14114,6 +14150,7 @@
   url       = {https://wals.info/chapter/108},
   subfield  = {syntax},
   role      = {cited},
+  sources   = {Phenomena/ArgumentStructure/Typology.lean}
 }% REF: Polinsky, M. (2013). Applicative constructions. In Dryer & Haspelmath (eds.), WALS Online. Ch. 109.
 @incollection{polinsky-2013-applicative,
   author    = {Polinsky, Maria},
@@ -14151,6 +14188,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
+  sources   = {Phenomena/ArgumentStructure/Typology.lean}
 }% REF: Song, J. J. (2013). Nonperiphrastic causative constructions. In Dryer & Haspelmath (eds.), WALS Online. Ch. 111.
 @incollection{song-2013-nonperiphrastic,
   author    = {Song, Jae Jung},
@@ -20635,6 +20673,157 @@
   sources   = {Theories/Phonology/Subregular/OCP.lean}
 }
 
+% REF: McPherson & Lamont (2026). Poko postlexical tone requires serial,
+% directional evaluation. Phonology 43, e1. DOI verified against Cambridge.
+@article{mcpherson-lamont-2026,
+  author    = {McPherson, Laura and Lamont, Andrew},
+  year      = {2026},
+  title     = {Poko postlexical tone requires serial, directional evaluation},
+  journal   = {Phonology},
+  volume    = {43},
+  pages     = {e1},
+  doi       = {10.1017/S0952675726100268},
+  subfield  = {phonology},
+  role      = {formalized},
+  sources   = {Phenomena/Tone/Studies/McPhersonLamont2026.lean}
+}
+
+% REF: Pruitt (2023). Serialism and Opacity in Phonological Theory.
+% The current synthesis of the serial/parallel × rule/constraint matrix.
+% DOI verified against Annual Reviews.
+@article{pruitt-2023,
+  author    = {Pruitt, Kathryn},
+  year      = {2023},
+  title     = {Serialism and Opacity in Phonological Theory},
+  journal   = {Annual Review of Linguistics},
+  volume    = {9},
+  pages     = {497--517},
+  doi       = {10.1146/annurev-linguistics-031220-120748},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/HarmonicSerialism.lean;Core/Constraint/OT/Iteration.lean}
+}
+
+% REF: Lamont (2022). Directional Constraint Evaluation Solves the Problem
+% of Ties in Harmonic Serialism. Linguistic Inquiry 53(3):617-632.
+% DOI deliberately omitted pending verification.
+@article{lamont-2022a,
+  author    = {Lamont, Andrew},
+  year      = {2022},
+  title     = {Directional Constraint Evaluation Solves the Problem of Ties in {Harmonic Serialism}},
+  journal   = {Linguistic Inquiry},
+  volume    = {53},
+  number    = {3},
+  pages     = {617--632},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/EvalMode.lean;Core/Constraint/OT/HarmonicSerialism.lean;Phenomena/Tone/Studies/McPhersonLamont2026.lean}
+}
+
+% REF: Lamont (2022). Directional Harmonic Serialism. PhD dissertation,
+% University of Massachusetts Amherst. DOI verified against ScholarWorks.
+@phdthesis{lamont-2022b,
+  author    = {Lamont, Andrew},
+  year      = {2022},
+  title     = {Directional {Harmonic Serialism}},
+  school    = {University of Massachusetts Amherst},
+  doi       = {10.7275/30850384},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/EvalMode.lean;Core/Constraint/OT/HarmonicSerialism.lean;Phenomena/Tone/Studies/McPhersonLamont2026.lean}
+}
+
+% REF: McCarthy (2008). The gradual path to cluster simplification.
+% Phonology 25:271-319. Foundational HS paper. DOI deliberately omitted
+% pending verification.
+@article{mccarthy-2008b,
+  author    = {McCarthy, John J.},
+  year      = {2008},
+  title     = {The gradual path to cluster simplification},
+  journal   = {Phonology},
+  volume    = {25},
+  number    = {2},
+  pages     = {271--319},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/HarmonicSerialism.lean;Core/Constraint/OT/Iteration.lean}
+}
+
+% REF: McCarthy (2010). An Introduction to Harmonic Serialism. Language
+% and Linguistics Compass 4:1001-1018. DOI deliberately omitted pending
+% verification.
+@article{mccarthy-2010,
+  author    = {McCarthy, John J.},
+  year      = {2010},
+  title     = {An Introduction to {Harmonic Serialism}},
+  journal   = {Language and Linguistics Compass},
+  volume    = {4},
+  number    = {10},
+  pages     = {1001--1018},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/HarmonicSerialism.lean}
+}
+
+% REF: Eisner (2000). Directional Constraint Evaluation in Optimality
+% Theory. COLING 2000. URL verified against ACL Anthology; no DOI.
+@inproceedings{eisner-2000,
+  author    = {Eisner, Jason},
+  year      = {2000},
+  title     = {Directional Constraint Evaluation in {Optimality Theory}},
+  booktitle = {COLING 2000 Volume 1: The 18th International Conference on Computational Linguistics},
+  url       = {https://aclanthology.org/C00-1038/},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/EvalMode.lean}
+}
+
+% REF: McCarthy (2000). Harmonic serialism and parallelism. Source of
+% the "durable ranking" formulation in HS, quoted in Pruitt 2023 page 508
+% (NELS 30 proceedings; URL verified against UMass ScholarWorks; no DOI).
+@inproceedings{mccarthy-2000,
+  author    = {McCarthy, John J.},
+  year      = {2000},
+  title     = {Harmonic serialism and parallelism},
+  booktitle = {Proceedings of the 30th Annual Meeting of the North East Linguistic Society ({NELS} 30)},
+  editor    = {Hirotani, M. and Coetzee, A. and Hall, N. and Kim, J.},
+  address   = {Amherst, MA},
+  publisher = {Graduate Linguistic Student Association},
+  url       = {https://scholarworks.umass.edu/nels/vol30/iss2/8},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/Iteration.lean}
+}
+
+% REF: Pruitt (2009). Two types of ties (some notes). Manuscript,
+% University of Massachusetts Amherst. Source of the "divergent tie"
+% terminology cited in McPherson and Lamont 2026 fig. 3 caption.
+@unpublished{pruitt-2009,
+  author    = {Pruitt, Kathryn},
+  year      = {2009},
+  title     = {Two types of ties (some notes)},
+  note      = {Manuscript, University of Massachusetts Amherst},
+  url       = {https://bpb-us-e2.wpmucdn.com/websites/d/22326/files/2019/09/Ties-in-HS.pdf},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Phenomena/Tone/Studies/McPhersonLamont2026.lean}
+}
+
+% REF: Eisner (2002). Comprehension and Compilation in Optimality Theory.
+% ACL 2002, pp. 56-63. DOI verified against ACL Anthology.
+@inproceedings{eisner-2002,
+  author    = {Eisner, Jason},
+  year      = {2002},
+  title     = {Comprehension and Compilation in {Optimality Theory}},
+  booktitle = {Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {56--63},
+  doi       = {10.3115/1073083.1073095},
+  url       = {https://aclanthology.org/P02-1008/},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Core/Constraint/OT/EvalMode.lean}
+}
+
 % REF: Breiss, Katsuda & Kawahara (2026). Token frequency modulates optional
 % paradigm uniformity in Japanese voiced velar nasalization. Phonology 43, e7.
 @article{breiss-katsuda-kawahara-2026,
@@ -21895,4 +22084,122 @@
   subfield  = {syntax/v2},
   role      = {cited},
   sources   = {Phenomena/WordOrder/Studies/Westergaard2009.lean}
+}
+
+@article{pasternak-2019,
+  author    = {Pasternak, Robert},
+  year      = {2019},
+  title     = {A lot of hatred and a ton of desire: intensity in the mereology of mental states},
+  journal   = {Linguistics and Philosophy},
+  volume    = {42},
+  pages     = {267--316},
+  doi       = {10.1007/s10988-018-9247-x},
+  subfield  = {semantics/attitudes},
+  role      = {cited},
+  sources   = {Phenomena/Attitudes/Studies/Pasternak2019.lean}
+}
+
+@article{schwarzschild-2006,
+  author    = {Schwarzschild, Roger},
+  year      = {2006},
+  title     = {The role of dimensions in the syntax of noun phrases},
+  journal   = {Syntax},
+  volume    = {9},
+  pages     = {67--110},
+  doi       = {10.1111/j.1467-9612.2006.00083.x},
+  subfield  = {semantics/measurement},
+  role      = {cited},
+  sources   = {Phenomena/Attitudes/Studies/Pasternak2019.lean}
+}
+
+@article{wellwood-hacquard-pancheva-2012,
+  author    = {Wellwood, Alexis and Hacquard, Valentine and Pancheva, Roumyana},
+  year      = {2012},
+  title     = {Measuring and comparing individuals and events},
+  journal   = {Journal of Semantics},
+  volume    = {29},
+  pages     = {207--228},
+  doi       = {10.1093/jos/ffr011},
+  subfield  = {semantics/comparison},
+  role      = {cited},
+  sources   = {Phenomena/Attitudes/Studies/Pasternak2019.lean}
+}
+
+@incollection{yalcin-2018,
+  author    = {Yalcin, Seth},
+  year      = {2018},
+  title     = {Belief as Question-Sensitive},
+  booktitle = {Philosophy and Phenomenological Research},
+  publisher = {Wiley},
+  subfield  = {semantics},
+  role      = {cited},
+  validated = {false},
+  sources   = {Theories/Semantics/Modality/Desire.lean}
+}
+
+@phdthesis{lassiter-2011,
+  author    = {Lassiter, Daniel},
+  year      = {2011},
+  title     = {Measurement and Modality: The Scalar Basis of Modal Semantics},
+  school    = {New York University},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  validated = {false},
+  sources   = {Theories/Semantics/Modality/Desire.lean;Phenomena/Modality/Studies/Lassiter2017.lean}
+}
+
+@book{lassiter-2017,
+  author    = {Lassiter, Daniel},
+  year      = {2017},
+  title     = {Graded Modality: Qualitative and Quantitative Perspectives},
+  publisher = {Oxford University Press},
+  series    = {Oxford Studies in Semantics and Pragmatics},
+  number    = {10},
+  isbn      = {978-0-19-870134-7},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  validated = {false},
+  sources   = {Theories/Semantics/Modality/Desire.lean;Phenomena/Modality/Studies/Lassiter2017.lean}
+}
+
+@article{cariani-2013,
+  author    = {Cariani, Fabrizio},
+  year      = {2013},
+  title     = {{``Ought''} and resolution semantics},
+  journal   = {No\^{u}s},
+  volume    = {47},
+  pages     = {534--558},
+  subfield  = {semantics/modality},
+  role      = {formalized},
+  validated = {false},
+  sources   = {Phenomena/Modality/Studies/Cariani2013.lean}
+}
+
+@article{cariani-2016,
+  author    = {Cariani, Fabrizio},
+  year      = {2016},
+  title     = {Consequence and Contrast in Deontic Semantics},
+  journal   = {Journal of Philosophy},
+  volume    = {113},
+  number    = {8},
+  pages     = {396--416},
+  subfield  = {semantics/modality},
+  role      = {cited},
+  validated = {false},
+  sources   = {Theories/Semantics/Modality/Desire.lean;Phenomena/Modality/Studies/Lassiter2017.lean}
+}
+
+@incollection{jegerski-2014,
+  author    = {Jegerski, Jill},
+  year      = {2014},
+  title     = {Self-paced reading},
+  booktitle = {Research Methods in Second Language Psycholinguistics},
+  editor    = {Jegerski, Jill and VanPatten, Bill},
+  pages     = {20--49},
+  publisher = {Routledge},
+  address   = {New York},
+  subfield  = {processing/methodology},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Paradigms/SelfPacedReading.lean}
 }

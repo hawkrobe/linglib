@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # English Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 English expresses standard negation with the particle *not* (contracted *n't*).
 WALS classifies English as **both symmetric and asymmetric** (SymAsy):
@@ -24,11 +24,28 @@ WALS classifies English as **mixed**:
 
 namespace Fragments.English.Negation
 
-/-- The standard negation particle. -/
-def negMarker : String := "not"
+open Core.Lexical.NegMarker
 
-/-- The contracted form. -/
+/-- *not* — English's standard negation particle.
+    The contracted form *n't* attaches as a clitic to auxiliaries
+    (*isn't*, *don't*, *won't*); see `negContracted` for the citation form
+    of that allomorph. With lexical verbs, *do*-support is required:
+    *He does not eat*, not **He not eats*. -/
+def not : NegMarkerEntry :=
+  { form := "not"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The contracted form *n't*. Phonologically a clitic on the auxiliary;
+    syntactically the same negation marker as *not*. Listed for the
+    completeness of the citation forms; downstream consumers should
+    treat *not* as the canonical entry. -/
 def negContracted : String := "n't"
+
+/-- The English negation system: a single preverbal particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "eng" [not]
 
 /-- An English negation example. -/
 structure NegExample where
@@ -76,8 +93,6 @@ def allExamples : List NegExample :=
   [modal, copula, auxHave, lexicalPresent, lexicalPast]
 
 /-! ## Verification -/
-
-theorem negMarker_is_not : negMarker = "not" := rfl
 
 theorem all_examples_count : allExamples.length = 5 := by native_decide
 

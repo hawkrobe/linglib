@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Czech Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Czech expresses standard negation with the verbal prefix *ne-*.
 Negation is **symmetric**: the prefix attaches directly to the verb
@@ -15,13 +15,35 @@ standard Slavic pattern:
 - *Nikdo nepřišel* 'Nobody NEG.came' = 'Nobody came'
 - *Nic neviděl* 'Nothing NEG.saw' = '(He) saw nothing'
 
-N-words (*ni-* series) always co-occur with the *ne-* prefix on the verb.
+N-words of the *ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) always
+co-occur with the *ne-* prefix on the verb. The lexeme entries live in
+the sibling `Fragments/Czech/PolarityItems.lean` per the operator/
+lexical-reactive split documented in `Core/Lexical/NegMarker.lean`. The
+`NegConcordExample` data below illustrates the marker's interaction with
+the n-word system at the sentence level.
 -/
 
 namespace Fragments.Czech.Negation
 
-/-- The standard negation prefix. -/
-def negPrefix : String := "ne-"
+open Core.Lexical.NegMarker
+
+/-- *ne-* — Czech's standard negation prefix.
+    Attaches directly to the verb stem: *nepřijde* 'will not come',
+    *neviděl* 'didn't see'. Symmetric across the paradigm. -/
+def ne : NegMarkerEntry :=
+  { form := "ne-"
+  , morphemeType := .affix
+  , position := .preverbal }
+
+/-- The Czech negation system: a single verbal prefix.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "ces" [ne]
+
+/-- Legacy String accessor for the prefix. Kept for back-compat with
+    `Phenomena/Negation/Studies/Miestamo2005.lean`. New consumers should
+    use `ne.form`. -/
+def negPrefix : String := ne.form
 
 /-- A Czech negation example. -/
 structure NegExample where
@@ -98,8 +120,6 @@ def nikdy : NegConcordExample :=
 def allConcordExamples : List NegConcordExample := [nikdo, nic, nikdy]
 
 /-! ## Verification -/
-
-theorem negPrefix_is_ne : negPrefix = "ne-" := rfl
 
 theorem all_examples_count : allExamples.length = 4 := by native_decide
 

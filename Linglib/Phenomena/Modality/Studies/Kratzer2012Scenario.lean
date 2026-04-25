@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Conditional Modality Data — Rain and Wet Streets (@cite{kratzer-2012} §2.9)
@@ -22,22 +22,41 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 
 namespace Phenomena.Modality.ConditionalModality
 
-open Semantics.Attitudes.Intensional (World allWorlds)
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
+
 open Semantics.Modality.Kratzer
 
 /-! ## Atemporal propositions -/
 
 /-- It rained: true at w0 (normal rain) and w1 (rain + broken drainage). -/
-def rained : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+def rained : World → Prop
+  | 0 => True
+  | 1 => True
+  | 2 => False
+  | 3 => False
 
-instance : DecidablePred rained := fun w => by cases w <;> unfold rained <;> infer_instance
+instance : DecidablePred rained := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-- The street is wet: true at w0 (rain → wet) and w2 (sprinkler). -/
-def streetWet : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => False
+def streetWet : World → Prop
+  | 0 => True
+  | 1 => False
+  | 2 => True
+  | 3 => False
 
-instance : DecidablePred streetWet := fun w => by cases w <;> unfold streetWet <;> infer_instance
+instance : DecidablePred streetWet := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable True)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-! ## Temporal propositions and the type bridge -/
 
@@ -66,10 +85,10 @@ def normalcySource : OrderingSource World := λ _ => [λ w' => ¬ (rained w' ∧
 
 /-! ## Theory-neutral facts -/
 
-theorem w0_rained_wet : rained .w0 ∧ streetWet .w0 := ⟨trivial, trivial⟩
-theorem w1_rained_dry : rained .w1 ∧ ¬ streetWet .w1 := ⟨trivial, id⟩
-theorem w2_dry_wet    : ¬ rained .w2 ∧ streetWet .w2 := ⟨id, trivial⟩
-theorem w3_dry_dry    : ¬ rained .w3 ∧ ¬ streetWet .w3 := ⟨id, id⟩
+theorem w0_rained_wet : rained (0 : World) ∧ streetWet (0 : World) := ⟨trivial, trivial⟩
+theorem w1_rained_dry : rained (1 : World) ∧ ¬ streetWet (1 : World) := ⟨trivial, id⟩
+theorem w2_dry_wet    : ¬ rained (2 : World) ∧ streetWet (2 : World) := ⟨id, trivial⟩
+theorem w3_dry_dry    : ¬ rained (3 : World) ∧ ¬ streetWet (3 : World) := ⟨id, id⟩
 
 /-- Temporal projection at yesterday recovers the atemporal `rained`. -/
 theorem atTime_rainedAt_yesterday : atTime rainedAt (-1) = rained := by

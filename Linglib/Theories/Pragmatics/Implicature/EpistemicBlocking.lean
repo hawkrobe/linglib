@@ -69,7 +69,9 @@ instance {W : Type*} (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ]
     Decidable (possible e φ) :=
   inferInstanceAs (Decidable (∃ w ∈ e.possible, φ w))
 
-/-- Standard epistemic duality: ¬K¬φ ↔ Pφ. -/
+/-- Standard epistemic duality: ¬K¬φ ↔ Pφ. One of five sibling `theorem duality`s
+    (see `Theories/Semantics/Modality/Kratzer/Operators.lean::duality` for the
+    unification opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
 theorem duality {W : Type*} (e : EpistemicState W) (φ : W → Prop) :
     ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by
   simp only [knows, possible, not_forall, not_not, exists_prop]

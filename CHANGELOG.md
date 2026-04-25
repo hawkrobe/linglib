@@ -4,6 +4,431 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.354] - 2026-04-25
+
+### Paradigms/SelfPacedReading.lean — anchored on Jegerski 2014
+
+NEW PARADIGM FILE following the `Paradigms/` discipline (anchor on a methodological review; the review's data-field ontology IS the file's type structure). Bibliography entry `@incollection{jegerski-2014}` added.
+
+CONTENTS (per @cite{jegerski-2014} sections cited in docstrings):
+- §1 `Region := Int` with named convenience constructors `critical : Region`, `spillover (n : Nat) : Region`, `precritical (n : Nat) : Region`. Mathlib-style structured numeric type. `IsSpillover` / `IsPrecritical` predicates with decidability instances.
+- §2 `Presentation` enum with the four historical SPR display variants (`movingWindow` = noncumulative+linear modern default; `cumulative` = deprecated; `centered` = avoided; `bidirectional` = post-Jegerski BSPR variant per @cite{paape-vasishth-2026}).
+- §3 `Segmentation := wordByWord | phraseByPhrase` per Jegerski ex. (5)–(6).
+- §4 `DistractorTask := comprehensionQuestion | acceptabilityJudgment` per Jegerski's "Issues in Development..." section.
+- §5 `ReadingTime (Cell : Type) (R : Type) := Cell → Region → R` — polymorphic codomain (ℚ for empirical ms, ℝ for theory).
+- §6 Paradigm-level qualitative predicates (`RegionRTHigher`, `Spillover`, `CriticalEffect`) — quantified over explicit cell pairs since SPR has no paradigm-invariant manipulation analog to VisualWorld's contrast.
+- §7 Stratified `When P` versions for studies that report effects per-stratum.
+
+ARCHITECTURAL CHOICES (vs `Paradigms/VisualWorld.lean`):
+- No lens-based typeclass for the manipulated factor. SPR studies cross paper-specific factors (CoercionType, garden-path, congruity); no canonical paradigm-invariant lens shape exists. Cell pairs go in explicitly.
+- `Region := Int` (mathlib-style) rather than an enum. Negative offsets, arithmetic, decidable equality all free; named constructors keep call sites readable.
+- Statistical metadata (β/SE/p-value/BF10/significance flags) deliberately out of scope — analysis pipeline detail per the established `Processing scope` rule.
+
+CONSUMER MIGRATION:
+- `Phenomena/TenseAspect/Studies/AlstottAravind2026.lean`: deleted local 3-constructor `SpilloverRegion` enum; `ExperimentResult.region : Region`; `.verb → .critical`, `.verbPlus1 → .spillover 1`, `.verbPlus2 → .spillover 2`; `rfl` proofs survive.
+- Other SPR mentions in `Phenomena/Processing/Studies/GiulianelliEtAl2026.lean` (paper explicitly states findings are not formalised — out of Processing scope) and `Phenomena/SyntacticAmbiguity/Studies/PaapeVasishth2026.lean` (BSPR variant with custom MPT mixture analysis) not migrated; their analyses are too custom for the qualitative paradigm predicates.
+
+5377 jobs green.
+
+## [0.230.353] - 2026-04-25
+
+### Negation/ Phase D: 9 Negation-only Fragments migrated to `NegMarker` substrate
+
+Final phase of the substrate consolidation that began in 0.230.345 (Phase A+B: substrate + Italian/Russian pilot) and continued in 0.230.350 (Phase C: 7 dual-file Fragments). Phase D migrates the 9 single-file (Negation.lean only) Fragments and creates 3 new sibling `PolarityItems.lean` files where the Fragment had a non-trivial n-word inventory previously buried in the Negation file's bespoke schema.
+
+PER-LANGUAGE MIGRATIONS (9 markers):
+- **French** (`fra`): bipartite *(ne) pas* — first cross-linguistic test of the `position := .discontinuous` substrate value. Encoded as a single `NegMarkerEntry` (one logical construction, not two competing markers, per the markers-list-is-for-alternation discipline). Constituent String defs `neClitic`/`pasReinforcer` kept for backwards compat with JinKoenig2021 (uses *ne* alone as EN marker) and Miestamo2005 (legacy two-element negMarkers list). New sibling `Fragments/French/PolarityItems.lean` for *personne*/*rien*/*jamais*/*plus* — the bespoke `NegReinforcer` struct with `restrictedNeg : Bool` deleted; the *ne*-clitic dependency captured via `licensingContexts := [.negation, ...]` + the `notes` field.
+- **Spanish** (`spa`): single particle *no* (`.particle`/`.preverbal`); Italian-pattern migration. Deleted bespoke `NWordEntry` schema + 4 n-word defs + 3 trivial rfl theorems (incl. `preverbal_no_absent`/`postverbal_no_required` rfl-on-stipulated-Bool — same anti-pattern as Italian Phase B). New sibling `Fragments/Spanish/PolarityItems.lean` for *nadie*/*nada*/*nunca*/*ninguno*/*jamás* as `PolarityItemEntry`s.
+- **Greek** (`ell`): mood-conditioned multi-marker — *δεν* (indicative) + *μη(ν)* (subjunctive/modal). The first true mood-conditioned multi-marker case; renamed local `NegMarkerEntry` struct to `MoodMarkerEntry` to avoid name-collision with the Core type while preserving Tsiakmakis 2025's NEG₁/NEG₂ paper apparatus. Added Core-typed `dhenMarker` and `minMarker` plus `negationSystem` joint with both markers. Deleted 3 trivial rfl theorems on the `MoodMarkerEntry` Bool fields.
+- **Czech** (`ces`): single prefix *ne-* (`.affix`/`.preverbal`); strict-NC Slavic. New sibling `Fragments/Czech/PolarityItems.lean` for the *ni-* series (*nikdo*/*nic*/*nikdy*/*nikam*) plus determiner *žádný* — five strong NPIs (npiStrong + indefPlusNeg morphology) reflecting Czech's strict-NC behavior.
+- **Burmese** (`mya`): bipartite circumfix *ma-...-bu* (`.doubleNeg`/`.discontinuous`); A/Cat asymmetry preserves TAM-neutralization data. Constituent String defs `negPrefix`/`negSuffix` kept for backwards compat.
+- **Hixkaryana** (`hix`): single suffix *-hira* (`.affix`/`.morphological`); A/Fin asymmetry (deverbalization + copula). `negSuffix` consumer in Miestamo2005 migrated to `hira.form`.
+- **Maori** (`mri`): single quasi-auxiliary *kāhore* (`.wordUnclear`/`.preverbal`); WALS Ch 112A's `wordUnclear` morpheme type validated. `negWord` consumer migrated to `kahore.form`.
+- **Januubi Arabic**: single particle *maa* (`.particle`/`.preverbal`); no WALS datapoint (recently-documented dialect, no ISO 639-3 code), `NegationSystem.ofISO ""` returns `none` for all WALS fields cleanly.
+- **Zarma-Sonrai** (`dje`): three aspect-conditioned markers — *si* (imperfective) + *mana*/*batu* (perfective). Three-marker case; further validation of `markers : List` design.
+
+CONSUMER MIGRATIONS:
+- `Phenomena/Negation/Studies/Miestamo2005.lean`: per-language String references migrated to `<lang>.<markername>.form`.
+
+CLEANUP: deleted ~12 trivial `<marker>_is_X : <marker> = "X" := rfl` and `preverbal_X_absent : ex.hasNo = false := rfl` theorems across migrated files (the `rfl`-on-stipulated-data anti-pattern fixed since Italian Phase B).
+
+NEW PolarityItems siblings (3 new files, ~250 LOC total):
+- `Fragments/French/PolarityItems.lean` — *personne*, *rien*, *jamais*, *plus*
+- `Fragments/Spanish/PolarityItems.lean` — *nadie*, *nada*, *nunca*, *ninguno*, *jamás*
+- `Fragments/Czech/PolarityItems.lean` — *nikdo*, *nic*, *nikdy*, *nikam*, *žádný*
+
+Each exposes `def items : List PolarityItemEntry` per the joint convention.
+
+ARCHITECTURE LEARNINGS confirmed across Phase D:
+- The bipartite-as-single-marker encoding (French *(ne) pas*, Burmese *ma-...-bu*) is correct and consistent with WALS's one-value-per-language typological coding.
+- The mood-conditioned multi-marker encoding (Greek *δεν*/*μη(ν)*) is a clean fit for `markers : List`; cleanly distinct from the bipartite case.
+- The aspect-conditioned multi-marker encoding (Mandarin bù/méi, Zarma-Sonrai si/mana/batu) is the same shape as mood-conditioning — `markers : List` handles both.
+- The validator/secondary-morpheme pattern (Quechua *-chu*, French *ne*, Burmese *bu* element) consistently lives as raw String defs alongside the substrate marker, not promoted to substrate. Mathlib pattern: a substrate type earns its keep through ≥3 consumers wanting typed access.
+- WALS's `ofISO` smart-constructor handles missing-from-WALS languages cleanly (returns `none` for all fields), so newly-documented dialects (Januubi) plug in without special cases.
+
+1892 jobs green for the full Negation+PolarityItems+downstream-consumer scope. Pre-existing concurrent-session breakage in `Theories/Semantics/Modality/{Kernel,ProbabilityOrdering}.lean`, `Phenomena/Modality/Studies/Heim1992.lean`, `Phenomena/Attitudes/Studies/Montague1973.lean`, and `Core/IntensionalLogic/Examples.lean` is unrelated.
+
+## [0.230.352] - 2026-04-25
+
+### RSA substrate deepening: polymorphic Sequential, parameterized Noisy builder, real sorry'd Composition equivalence
+
+Self-audit pass on the RSA substrate landed in 0.230.348. With PDF in hand for ground-truth, identified ~18 inelegances and missing pieces; this pass addresses the substrate-internal ones (12 of 18). The bigger items (project-wide `trajectoryProb` vs S&W's `S1^inc` divergence, `Phenomena/Reference/Scenes.lean` shared substrate, PMF/Gradability/Fragments integration, Nouwen2024 audit) remain as future work, flagged in the relevant docstrings.
+
+SEQUENTIAL.LEAN:
+- **Polymorphized** `prefixMeaning` from monomorphic ℚ to `[CommMonoid R]` (CommMonoidWithZero + ordering for nonneg/pos lemmas). Same operator now applies over ℝ (proof studies) or PMF-valued semantics (future migration). Old ℚ-specific signature was a casting friction point.
+- **Renamed** `prefixMeaning_swap_head3` → `prefixMeaning_swap_head` and **generalized** to arbitrary tail (was 3-element-specific).
+- **Added** `prefixMeaning_eq_foldl_mul` + `foldl_mul_lex_eq_acc_mul_prefixMeaning` polymorphic helper, replacing W&D's private Word-specific copy. Bridges the imperative `foldl` form (used by W&D's original code) to the canonical `prod`-of-mapped form (mathlib's BigOperators idiom).
+
+NOISY.LEAN:
+- **Added** `toRSAConfigSeqWithUtility scene α α_pos cost` builder using `rpow + exp(-α·cost)` speaker — for studies that want α≠1 or per-word cost while keeping PoE-prefix L0 (the `S1^inc with β=1` builder's α=1, no-cost defaults are too rigid).
+- **Added** `@[simp]` lemmas: `toRSAConfig_meaning`, `toRSAConfig_α`, `toRSAConfigSeq_meaning`, `toRSAConfigSeq_α`, `toRSAConfigSeq_transition`, `toRSAConfigSeq_initial`, `toRSAConfigSeqWithUtility_meaning`, `toRSAConfigSeqWithUtility_α` — bundle-level `@[simp]` reductions that downstream proofs can rely on without unfolding.
+- **Added headline theorem** `toRSAConfigSeq_meaning_perm`: the meaning depends on `(ctx, u)` only through the multiset `ctx ++ [u]`. The order-independence claim at the bundle layer, hoisted from the per-study-file lemmas it was being re-proved as.
+- **Documented scope**: PoE-prefix builders only; extension-averaging variants (W&D's `mkCIRSA`) need bespoke configs; lex/prefixMeaning still useful as building blocks (W&D's `uttContinuousQ_eq_prefixMeaning` bridge).
+
+COMPOSITION.LEAN:
+- **Replaced** dishonest `True := by trivial` placeholder with a real **sorry'd** `trajectoryProb_eq_compose_chain` statement. Single-stage degenerate case as the entry point; full n-stage chain induction left as TODO. Per CLAUDE.md "prefer sorry over weakening theorem statements" — the placeholder was worse than a sorry because it looked closed.
+- **Added** `composeWithPrior_assoc_worldPrior` (worldPrior-layer associativity) + 3 more `@[simp]` field projection lemmas (`composeWithPrior_latentPrior`, `composeWithPrior_transition`, `composeWithPrior_initial`).
+
+SCHLOTTERBECKWANG2023.LEAN:
+- **Docstring rewritten** to lead with "SCOPE WARNING: this formalizes the *symmetric-PoE sanity-check slice*, not S&W's main asymmetric model." The previous framing buried the limitation in a §"Scope" subsection. Also documents that linglib's `trajectoryProb` is not literally S&W's `S1^inc` (per-step softmaxes vs accumulated utilities with global normalization) — pointer to `trajectoryProb_eq_compose_chain` TODO.
+- **Conjunction args → two-arg hyps**: `(hs : 0 ≤ sRel ∧ sRel ≤ 1)` → `(hs0 : 0 ≤ sRel) (hs1 : sRel ≤ 1)`. Mathlib idiom; no destructuring at call sites.
+- **Renamed** `prefix_meaning_swap3` → `prefix_meaning_swap_head` (matches the substrate's renamed lemma; generalized to any-length prefix).
+- **Dropped** unused `lexQ_pos`.
+
+WALDONDEGEN2021.LEAN:
+- **Removed** private Word-specific `foldl_mul_eq_acc_mul_prod`. `uttContinuousQ_eq_prefixMeaning` now uses the polymorphic `RSA.prefixMeaning_eq_foldl_mul` from `Sequential.lean`. ~20 LOC of duplication eliminated.
+
+LINGLIB.LEAN: added imports for new substrate (`Sequential`, `Noisy`, `Composition`).
+
+DEFERRED (with explicit pointers in docstrings):
+- A≡C equivalence proof (`trajectoryProb_eq_compose_chain` carries `sorry` + TODO).
+- `trajectoryProb` vs S&W `S1^inc` divergence — project-wide issue affecting CGGP, W&D, S&W; deserves its own audit.
+- `Phenomena/Reference/Scenes.lean` shared color-size domain (audit-flagged).
+- Nouwen2024 `seqAdjCfg` double-counting audit (task #11; would give `composeWithPrior` its first non-substrate consumer).
+- PMF / Gradability / Fragments integration.
+
+2678 jobs green (modulo `Linglib/Core/IntensionalLogic/Examples.lean` untracked from another session).
+
+## [0.230.351] - 2026-04-25
+
+### HS substrate mathlib-PR audit pass: termination theorem + 3 hallucination fixes + Layered Grounding fix
+
+Multi-axis review (mathlib-reviewer agent + own re-read with paper PDFs) of the four-file HS substrate from 0.230.346. Verified findings against primary sources before acting.
+
+CITATION FIXES (verified hallucinations):
+- "in HS the constraint ranking is 'durable'..." quote in `Iteration.lean` was attributed to `@cite{mccarthy-2008b}` ("The gradual path to cluster simplification") — verified against Pruitt 2023 page 508 §3.2: actual source is **McCarthy 2000** (NELS 30 proceedings, p. 11). Added `mccarthy-2000` bib entry (verified UMass ScholarWorks URL); re-attributed.
+- Header citation `@cite{mccarthy-2008b}` in both `Iteration.lean` and `HarmonicSerialism.lean` replaced with `@cite{mccarthy-2000}` — McCarthy 2008b is the cluster-simplification paper, not foundational HS.
+
+NEW STRUCTURAL THEOREM (the missing core HS result):
+- `iterateGen_eventually_constant` — if `lt` is well-founded and every non-converged step with a strictly different `pick` result is `lt`-improving, then `iterateGen` is eventually constant. Proof by `WellFounded.induction` with three terminal cases: converged at fixed point, `pick` failed, `pick` returned input. The structural justification for HS as a search procedure.
+
+NEW API: `iterateGen_succ_of_converged`/`_of_step`/`_of_pickFail` (single-step API for each terminal case), `HSDerivation.converged_of_singleton_gen` (sufficient condition that GEN producing only the input forces convergence), `pickByOrder [LinearOrder C]` (canonical tie-breaker utility, promoted out of HSDerivation namespace).
+
+LAYERED GROUNDING FIX: `HSDerivation.tableauFor` now calls `mkProfile D.ranking` instead of inlining `buildViolationProfile (fun i c => (D.ranking.get i).eval c) c'`. Added `tableauFor_profile := rfl` as `@[simp]`.
+
+NAMING: `HSDerivation.optimal` → `HSDerivation.stepOptimum` (avoids shadowing `Tableau.optimal`).
+
+SIMP HYGIENE FIX: `converged_iff_isFixedPt` was marked `@[simp]` in the wrong direction (rewriting simpler form to more complex). Renamed to `isFixedPt_hsStep_singleton_iff_converged` with the right direction; kept `converged_iff_isFixedPt` as a non-simp convenience alias.
+
+DRY: `private def ercFor (winner loser : Cand)` factor in McPhersonLamont2026.lean for `ercA`/`ercB`; smoke test now uses substrate `pickByOrder` instead of locally-defined `pickMin`.
+
+PROOF COMPRESSION: `EvalMode.le_singleton` from 22 lines to 3 (discovered `le m [k] [k']` definitionally reduces to `LexLE [k] [k']` for all modes via `sortAsc [k] = sortDesc [k] = [k]` by `rfl`); HarmonicSerialism smoke test from 7-line `ext`+`simp only`+`refine` chain to one-liner via `converged_of_singleton_gen`.
+
+NEW BIB ENTRY: `mccarthy-2000`.
+
+EXPLICITLY DEFERRED: `EvalMode.le` → `Compare` rename (defer until consumer); `Tableau21` → content-name (paper numbers stable); `DeriveResult` inductive replacing `Option C` (no consumer demand); constraint violation matrix DRY (cosmetic).
+
+## [0.230.350] - 2026-04-25
+
+### Negation/ Phase C: 7 dual-file Fragments migrated to `NegMarker` substrate
+
+Continuation of the substrate consolidation that landed in 0.230.345. The remaining dual-file Fragments (those with both `Negation.lean` and `PolarityItems.lean`) now expose `def negationSystem : NegationSystem` via `NegationSystem.ofISO`, with bespoke `def negMarker : String` (or `negParticle`/`negSuffix`) defs replaced by `NegMarkerEntry`. WALS classifications are pulled from `Datasets/WALS` rather than hand-encoded.
+
+PER-LANGUAGE MIGRATIONS:
+- **Mandarin** (`cmn`): two-marker system — *bù* (general non-perfective) and *méi* (perfective/existential), both `.particle`/`.preverbal`. The cross-linguistic stress test that motivated `markers : List` in the substrate. Folded `meiyouParticle` (long form *méi-yǒu*) into *méi*'s docstring rather than a separate marker. Kept `NegExample`/`NegatorDistribution` paradigm + theorems + the EN trigger-class data (consumed by JinKoenig2021).
+- **English** (`eng`): single particle *not* (`.particle`/`.preverbal`); kept *n't* as `negContracted : String` for clitic citation; kept `NegExample`/do-support paradigm + 4 theorems.
+- **German** (`deu`): single particle *nicht*. WALS classifies German as `.type1Type2` (mixed NegV/VNeg) due to V2/SOV alternation; chose `position := .other` rather than forcing a preverbal/postverbal binary. Kept *kein* as `negDeterminer : String`.
+- **Turkish** (`tur`): verbal affix *-mA-* (`.affix`/`.morphological`); abstract citation form, surface harmony alternants `-ma-`/`-me-` handled by morphology layer. Kept `NegParadigmEntry` for *gelmek* paradigm.
+- **Quechua** (Imbabura, `qvi`): single particle *mana* (`.particle`/`.preverbal`); kept *-chu* as `chuSuffix : String` (validator enclitic, not a negation marker — its A/NonReal asymmetry is paradigmatic).
+- **Japanese** (`jpn`): suffix *-nai* (`.affix`/`.morphological`); kept rich `NegInflDistribution` morphological-redistribution data + paradigm tables.
+- **Finnish** (`fin`): negative auxiliary *ei* (`.auxVerb`/`.preverbal`, citation 3sg form); the genuine multi-form auxiliary case. The 6 paradigm forms (en/et/ei/emme/ette/eivät) live in `negParadigm` as before — they're inflectional variants of one auxiliary, not multiple markers, so `negationSystem.markers` correctly has length 1.
+
+CONSUMER MIGRATIONS:
+- `Phenomena/Negation/Studies/Miestamo2005.lean`: per-language `negMarker`/`negParticle`/`negSuffix` references → `<lang>.<markername>.form`. Finnish + Russian had no `String` to migrate (paradigm-based; consumers already use `negParadigm.map (·.form)`).
+
+CLEANUP: deleted trivial `negMarker_is_X : negMarker = "X" := rfl` theorems across all migrated files (the same anti-pattern fixed in Italian Phase B — rfl on stipulated data).
+
+1889 jobs green for all touched files (substrate + 8 Fragments + 5 consumers, verified in isolation). Concurrent-session breakage in `Theories/Semantics/Modality/Kernel.lean`, `ProbabilityOrdering.lean`, `Phenomena/Modality/Studies/Heim1992.lean`, `Phenomena/Attitudes/Studies/Montague1973.lean`, and `Core/IntensionalLogic/Examples.lean` is unrelated.
+
+## [0.230.349] - 2026-04-25
+
+### Studies/ misclassification: G&J 2004 split out of Theories/
+
+`Theories/Syntax/ConstructionGrammar/Studies/GoldbergJackendoff2004.lean` (1258 LOC) violated the "Studies live in `Studies/`, not in `Theories/`" rule. Worse, `Theories/Semantics/Causation/Resultatives.lean` imported it, and four of its theorems quantified over the paper-specific `allEntries` list — so the Theory layer was effectively reaching into paper data.
+
+SPLIT:
+- NEW `Theories/Syntax/ConstructionGrammar/Resultatives.lean` (theory primitives): `ResultativeSubconstruction`, `SubeventDesc`, `SubeventRelation`, `RPType`, `Boundedness`, `ObjectSelection`, `TemporalOrder`, `ResultativeEntry`, `ArgSource`, the `constructionalDesc`/`semanticContribution`/`toConstruction` derivations, the family/inheritance defs, and all universally-quantified theorems (`alternation_chain`, `noncausative_partial_chain`, `aspect_chain`, `closed_scale_telic_resultative`, etc.). Namespace `ConstructionGrammar.Resultatives`.
+- NEW `Phenomena/Constructions/Resultatives/Studies/GoldbergJackendoff2004.lean` (paper data): the eight `ResultativeEntry` instances (`hammerFlat`, `kickIntoField`, ...), `allEntries`, all per-datum verifications, the empirical `ResultativeType`/`ResultativeDatum`/`AspectualContrast` data layer with judgment examples, plus the four `allEntries`-quantifying theorems migrated out of `Causation/Resultatives.lean` (`causative_resultative_has_cause`, `causative_means_have_cause`, `activity_entries_become_accomplishments`, `all_have_become`). Namespace `Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004`.
+- DELETED old `Theories/Syntax/ConstructionGrammar/Studies/GoldbergJackendoff2004.lean`.
+- `Theories/Semantics/Causation/Resultatives.lean`: import + namespace updated; 4 paper-data theorems removed (now in Studies file).
+- 4 Phenomena consumers (`TheoryComparison.lean`, `Dendikken1995.lean`, `Tay2024.lean`, `Levin2026.lean`): import + namespace refs updated; `Tay2024.lean` and `Levin2026.lean` gained explicit Studies-file imports (previously transitive via `Causation/Resultatives.lean`).
+
+DEFERRED: similar dual-existence cleanup for `Theories/Syntax/ConstructionGrammar/Studies/FillmoreKayOConnor1988.lean` (586 LOC, has 361-LOC duplicate filename in `Phenomena/Constructions/Studies/`) and `GoldbergShirtz2025.lean` (224 LOC, has 266-LOC duplicate); these need separate audits since the Theories versions are the substantive ones and the Phenomena duplicates wrap them.
+
+5371 jobs green (modulo two untracked parallel-session files unrelated to this change).
+
+Companion entry: see 0.230.347 below for `Paradigms/Measurement.lean` deletion in the same audit cycle.
+
+## [0.230.348] - 2026-04-25
+
+### RSA substrate: Sequential.lean + Noisy.lean + Composition.lean (audit-driven)
+
+Multi-agent audit of `SchlotterbeckWang2023.lean` flagged that `lexContinuousQ` + `prefixMeaningQ` + `mkIncRSA` were duplicated near-verbatim with `WaldonDegen2021.lean`. Channel.lean's "Future Work: Deep Integration" roadmap proposed a `NoisySemantics` typeclass — the wrong shape (no canonical instance per `(U, W)` pair). Two new substrate files + one operation file land the right structure-shaped substrate, mathlib-precedented after `Mathlib/Probability/Kernel/`.
+
+NEW SUBSTRATE:
+- `Theories/Pragmatics/RSA/Sequential.lean` (~85 LOC): generic `prefixMeaning : (U → W → ℚ) → List U → W → ℚ` with `prefixMeaning_perm` (via `List.Perm.prod_eq`), `_swap`, `_swap_head3`, `_nonneg`, `_pos`, `_cons`, `_append`, `_singleton`, `_nil` lemmas. PoE prefix-product, no RSA-specific assumptions beyond ℚ-valued lex.
+- `Theories/Pragmatics/RSA/Noisy.lean` (~120 LOC): `structure NoisyLex (U W : Type)` carrying `lex` + `lex_nonneg`. Builders: `toRSAConfig` (one-shot, default `Ctx = Unit`) and `toRSAConfigSeq scene` (sequential, `Ctx = List U`, off-scene worlds → 0). `ofChannel applies rPlus rMinus` constructor matches the @cite{degen-etal-2020} Bernoulli-channel form; `ofChannel_lex_eq_noiseChannel` bridges to `RSA.Noise.noiseChannel`.
+- `Theories/Pragmatics/RSA/Composition.lean` (~90 LOC): `RSAConfig.composeWithPrior prev u_prev next` — canonical stage-to-stage Bayesian composition operation. Sets `next.worldPrior` to `prev.L1 u_prev`, otherwise inherits all fields. `@[simp]` lemmas for the field projections. State-only `trajectoryProb_eq_compose_chain` (currently `True` placeholder with TODO) documenting the within-utterance speaker-chain (A) vs stage-to-stage listener-chain (C) Bayesian equivalence.
+
+CHANNEL.LEAN: stripped 32-line "Future Work: Deep Integration" roadmap section proposing a `NoisySemantics` typeclass. Replaced with a one-paragraph pointer naming the structure-shaped bundles (`NoisyLex`, `IncrementalSemantics`) that consume `noiseChannel`. The typeclass framing was wrong: every paper picks its own reliability parameters, so there is no canonical instance per type pair.
+
+CONSUMERS:
+- `Phenomena/Reference/Studies/SchlotterbeckWang2023.lean` — relocated from `WordOrder/Studies/` (anchor cluster is the referential-communication chain CGGP19 → Degen20 → WD21 → SW23, not word-order typology). Full reduction to `NoisyLex.toRSAConfigSeq sceneAMembers/sceneBMembers`. Removed: `mkIncRSA` factory, `prefixMeaningQ` def + nonneg proofs, `prefix_meaning_swap` standalone proofs (now corollaries of substrate), `boolToRat` helper (mathlib has `if then 1 else 0`), `Finding`/`formalize`/`all_findings_verified` indirection (~50 LOC of restatement). `native_decide` → structural `decide`/`simp only` + `norm_num` (kernel-checkable per CLAUDE.md). Bare `simp` → `simp only`. File-level `set_option autoImplicit false` dropped (project disables it globally). Docstring updated: dimension-vs-color noise asymmetry corrected (k%-threshold for size à la Schmidt et al. 2009 / Cremers 2022 / Franke et al. 2019, not "Gaussian"); α-vs-β variable-name collision noted (S&W's β = 1 is the file's `RSAConfig.α`); scope of formalization clarified (symmetric-PoE sanity-check slice, not full asymmetric model with `P_Lang` and bias `b`).
+- `Phenomena/Reference/Studies/WaldonDegen2021.lean` — partial refactor (preserved `englishSS`/`englishCS`/`prediction1_english_asymmetry` for the `KursatDegen2021.lean` dependency). Added `noisyLex : NoisyLex Word Referent` bundle and `uttContinuousQ_eq_prefixMeaning` substrate-bridge theorem (with `foldl_mul_eq_acc_mul_prod` helper). The full extension-averaging `mkCIRSA` config is preserved as-is; that's a deeper refactor for another pass.
+
+DEFERRED:
+- Audit `Nouwen2024.seqAdjCfg` for double-counting: its `meaning` field uses `evalCfg.L1` AND its `worldPrior` uses `evalCfg.L1`; the docstring formula `P₂ ∝ S1 · L1_eval · P(θ)` only expects `L1_eval` once. Once resolved, the worldPrior plumbing collapses to `composeWithPrior evalCfg .eval_pos adjBaseCfg` (the only existing C-style consumer).
+- Honest faithfulness fix for S&W: implement asymmetric semantics (k%-threshold dimension + binomial-ε color) + `P_Lang` constraint, derive ordering from speaker reasoning rather than scene membership. Pair with a yet-to-be-written `ScontrasDegenGoodman2017.lean` (subjectivity hypothesis — competing non-RSA explanation) for cross-framework theorem.
+- Bib entries for Schmidt et al. 2009, Cremers 2022, Franke-Scontras-Šimonić 2019, Fukumura 2018 left as prose docstring mentions; adding bib entries for unread papers carries DOI/metadata fabrication risk per project hallucination rules.
+
+2676 jobs green (modulo one untracked parallel-session file `Linglib/Core/IntensionalLogic/Examples.lean` unrelated to this change).
+
+## [0.230.347] - 2026-04-25
+
+### Paradigms/Measurement.lean — deleted (audit-driven)
+
+Multi-agent audit (integration + mathlib + psycholinguistics-methodology, all three independent) converged on deletion. The file's own docstring already conceded it was a "low-discipline placeholder" pending per-paradigm anchored files.
+
+CONSUMER AUDIT (the actionable layer): of 26 importers, only **3 def sites** in 2 files (`Phenomena/TenseAspect/Studies/AlstottAravind2026.lean`, `Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean`) ever constructed a `MeasureSpec` value, and *zero* theorems quantified over those values — pure prose-metadata. The remaining 23 importers just `open`ed the namespace and never referenced anything from it.
+
+ACTIONS:
+- Inlined the 3 def sites as docstring comments (the `unit : String` was the only information being recorded).
+- Stripped dead `import Linglib.Paradigms.Measurement` + `open Paradigms.Measurement` lines from 25 consumers.
+- Updated `Features/Acceptability.lean` docstring cross-reference to point at `Paradigms/AcceptabilityJudgment.lean`'s `DDResult` instead.
+- `git rm Linglib/Paradigms/Measurement.lean`; dropped its line from `Linglib.lean`.
+
+DEEPER FINDINGS (deferred, see plan):
+- `ScaleType` was not a partition (`binary ⊂ ordinal`, `proportion ⊂ continuous`) and didn't match Stevens 1946 nominal/ordinal/interval/ratio. If a cross-paradigm scale type is wanted later it should live in `Core/`, not `Paradigms/`, and follow Stevens.
+- `TaskType` conflated four orthogonal dimensions (what's measured / response format / modality+timing / population-specific protocols). Per-paradigm anchored files (`SelfPacedReading.lean`, `EyeTrackingReading.lean`, `TruthValueJudgment.lean`, `InferenceEndorsement.lean`) per the existing `Paradigms/` discipline are the right successor — none yet exist.
+- Side findings: `Features/Acceptability.lean` is itself a thin parallel placeholder that should fold into `Paradigms/AcceptabilityJudgment.lean`; `Theories/Syntax/ConstructionGrammar/Studies/GoldbergJackendoff2004.lean` violates "no `Studies/` under `Theories/`" (1027-line file, separable cleanup).
+
+5370 jobs green (modulo one untracked parallel-session file unrelated to this change).
+
+## [0.230.346] - 2026-04-25
+
+### McPhersonLamont2026 positive half: vanilla HS converges on tableau (21)
+
+Added §6 to the Poko study file — paper, eq. 21 page 13. Input `/nān + rī^H/` ('my pig'). Vanilla parallel HS, with `*FLOAT, *TAUTDOCK ≫ MAX(H)` (paper eq. 20), converges to the H-deletion form in 1 substantive HS step + 1 fixed-point detection.
+
+This is the **first real consumer of the `HSDerivation` substrate** beyond the Core/ smoke test. End-to-end pipeline validated:
+- `gen : Cand21 → Finset Cand21` produces 3-candidate sets (faithful + delete + dock)
+- `ranking : List (NamedConstraint Cand21)` over `[*FLOAT, *TAUTDOCK, MAX(H), DEP(link)/H]` with paper-grounded violation counts
+- `optimal` correctly returns `{.deleted}` for input
+- `Converged` correctly detects the H-deleted form's fixed-point status
+- `derive pickMin .input 2 = some .deleted` proved by `decide` (~2.4s build time, full kernel reduction through `Tableau.optimal` + `LexLE` + `Finset.min'`)
+- `pickMin` uses `Finset.min'` via a derived `LinearOrder Cand21` (LinearOrder.lift' through a `toNat` injection) — exercises the substrate's expectation that callers supply a computable tie-breaker
+
+Three new theorems:
+- `Tableau21.step1_optimal_is_deleted : derivation.optimal .input = {.deleted}`
+- `Tableau21.deleted_converged : derivation.Converged .deleted`
+- `Tableau21.converges_to_deleted : derivation.derive pickMin .input 2 = some .deleted`
+
+The McPhersonLamont2026.lean file now ships **both halves** of the paper's argument: the negative-half ranking-paradox theorem (`parallel_OT_inadequate`, `weighted_HG_inadequate`) over the existing ERC infrastructure, plus this positive-half HS-succeeds demonstration over the new `HSDerivation` substrate. Constraints in the positive-half demo are independent of the paradox-half constraints (different candidate type) — clean separation of concerns within the same paper anchor.
+
+Sets the pattern for the deferred directional-HS demonstrations on the harder paper cases (fig. 3, eq. 60–62): same structure, but with `EvalMode.directional .leftToRight` and a `DirectionalTableau` consumer (substrate work, deferred). The ergonomic friction surfaced — `pickMin` via `Finset.min'` requires a `LinearOrder` on the candidate type — is genuine substrate ergonomics that would benefit from a `pickByOrder` utility in `HarmonicSerialism.lean` (deferred YAGNI).
+
+## [0.230.345] - 2026-04-25
+
+### Negation/ Phase A+B: `NegMarker` substrate + Italian/Russian pilot
+
+The 18 `Fragments/{Lang}/Negation.lean` files currently use six bespoke schemas (`NWordEntry`, `NegReinforcer`, `NegExample`, `NegParadigmEntry`, `NegForm`+`InflDistribution`, `NegMarkerEntry`) for the negation operator while their `PolarityItems.lean` siblings uniformly reuse `Core.Lexical.PolarityItem.PolarityItemEntry`. Italian's `Negation.lean` further doubly-encoded n-words (also in `PolarityItems.lean`) with conflicting distributional claims — `mai_requires_non = false` was certified by `rfl` despite preverbal *Mai più!* / *Mai detto questo*. This is Phases A + B of the multi-PR plan to consolidate (substrate + pilot of 2 languages); Phases C–D (remaining 39 Fragments) follow.
+
+NEW SUBSTRATE — `Linglib/Core/Lexical/NegMarker.lean`:
+- `NegMorphemeType` (affix/particle/auxVerb/wordUnclear/variation/doubleNeg) — promoted from `Phenomena/Negation/Typology.lean` (which now `export`s it for back-compat)
+- `NegMarkerPosition` (preverbal/postverbal/discontinuous/morphological/other) — coarsening of WALS Ch 144A's full SVO grid
+- `NegMarkerEntry { form, gloss, morphemeType, position }` — per-marker
+- `NegationSystem { markers : List NegMarkerEntry, wals112A, wals143A, wals144A }` — the Fragment-side joint; bundled (not `markers : List` alone) so future typological fields can land without breaking the contract; multiple markers handle Greek δεν/μη(ν), Mandarin bù/méi, Korean an/-ji anh-
+- `NegationSystem.ofISO` smart constructor — pulls WALS values from `Datasets.WALS` by ISO code so Fragments never hand-encode WALS classifications (mirrors the `withWordOrderFromWALS` pattern on `LanguageProfile`)
+
+ARCHITECTURE — operator vs lexical-reactive split:
+- `Negation.lean` exposes `def negationSystem : NegationSystem` (the operator)
+- `PolarityItems.lean` exposes `def items : List PolarityItemEntry` (lexical items reactive to polarity)
+- N-words are PolarityItems (they react to negation), not part of the negation operator
+- Litmus test: "does this *express* negation, or does its distribution *react to* negation?"
+
+PILOT MIGRATIONS:
+- Italian (`Fragments/Italian/Negation.lean`, 133 LOC → 33 LOC): deleted bespoke `NWordEntry`, `NegConcordExample`, 7 n-word defs, 3 example defs, 3 trivial `rfl` theorems (incl. the empirically wrong `mai_requires_non = false`), dead `Core.Lexical.Word` import. Added `non : NegMarkerEntry` + `negationSystem` joint. Migrated 4 consumers (Miestamo2005, Rett2026, Tsiakmakis2025, AuxiliaryVerbs/NegativeAuxiliaries) from `negMarker : String` to `non.form`.
+- Italian (`Fragments/Italian/PolarityItems.lean`): added `neppure` to the `neanche/nemmeno` slash-form (third register variant); added `def items : List PolarityItemEntry` joint.
+- Russian (`Fragments/Russian/Negation.lean`): replaced `def negMarker : String` with `def ne : NegMarkerEntry` + `negationSystem` joint. Migrated Miestamo2005 reference. Kept `NegExample` paradigm + `NegConcordExample` data (operator-side NC illustration, not duplicate lexical entries — Russian wasn't doubly-encoded the way Italian was).
+- Russian (`Fragments/Russian/PolarityItems.lean`): added `nichego` and `nikogda` as `PolarityItemEntry`s (previously only present in Negation.lean as parts of NC example sentences); added `def items` joint.
+
+5372 jobs green.
+
+## [0.230.344] - 2026-04-25
+
+### HS substrate naming + simp hygiene batch
+
+Final mathlib-discipline cleanup pass on the HS substrate. Pure cosmetics, no semantic change, all four files build clean with zero warnings.
+
+NAMING:
+- `EvalMode.evalModeLE` → `EvalMode.le` — drops the redundant `evalMode` token (the namespace already says it; matches mathlib `LE.le` convention)
+- `HSDerivation.optimalSet` → `HSDerivation.optimal` — matches `Tableau.optimal` cousin in `Core/Constraint/Evaluation.lean`; one consistent vocabulary for "the optimal subset" across the substrate
+
+NEW `@[simp]` LEMMAS for downstream consumers:
+- `Iteration.iterateGen_zero` — `iterateGen gen eval pick c 0 = some c` (rfl)
+- `HarmonicSerialism.optimal_eq_iterateStep` — `D.optimal c = iterateStep D.gen D.evalFilter c` (was already a theorem; now @[simp])
+- `HarmonicSerialism.optimal_of_empty_gen` — `D.gen c = ∅ → D.optimal c = ∅`
+- `HarmonicSerialism.converged_iff_isFixedPt` — bridge to mathlib's `Function.IsFixedPt`, now @[simp] for downstream rewriting
+
+Docstring fix in `EvalMode.lean`: added one-line caveat that the singleton-degeneracy theorem (`evalModeLE_singleton` → renamed to `EvalMode.le_singleton`) does *not* mean parallel and directional are equivalent in general — multi-violation profiles distinguish them, which is the paper's whole point (paper, eqs. 60–62).
+
+EXPLICITLY SKIPPED: `EvalMode.Direction` → `Core.LeftRight` extraction. The cross-framework reconciler had recommended unifying with `Phonology.HarmonyDir` and `Phonology.Side`, but verification showed those are different concepts (`HarmonyDir = rightward | leftward | bidirectional`; `Side = lhs | rhs`); a 2-valued `Core.LeftRight` cannot consume the 3-valued `HarmonyDir`. The naming-only extraction without unification would be busy work.
+
+EXPLICITLY KEPT: `iterateStep gen eval c := eval (gen c)` — the mathlib reviewer flagged this as a "one-liner with no value-add"; kept because it names a real concept ("HS step") even though the body is trivial. Mathlib has many such named one-liners (e.g., `Function.swap`).
+
+## [0.230.343] - 2026-04-25
+
+### McPhersonLamont2026 derive-don't-stipulate refactor
+
+Refactored the eq. 59 ranking-paradox stub from hand-typed W/L vectors to ERCs derived from candidate violation profiles. The W/L pattern in eq. 59 is now a *consequence* of constraint definitions on paper-anchored candidates, not a stipulation.
+
+NEW: `inductive Cand` with four candidates (`nanWinner`, `nanLoser`, `kakWinner`, `kakLoser`) — each docstring traces to the paper's eq. 57c/57b/58c/58b row. NEW: four `NamedConstraint Cand` instances (`maxH`, `depLinkH`, `maxM`, `maxLinkM`) built via existing `mkFaithGrad` from `Phonology.Constraints`, with violation counts from the paper's tableau cells.
+
+`ercA` / `ercB` now derived via `ercOfProfiles` (the canonical `ViolationProfile → ERC` bridge in `Core/Constraint/OT/ERC.lean:171`), making this the **first consumer of `ercOfProfiles`** in linglib — the bridge has been sitting unused since the ERC layer was built.
+
+Two `example : ... := by decide` sanity checks confirm the derived ERCs match paper eq. 59 (`ercA = [W,L,L,L]` and `ercB = [L,W,W,W]`). These act as built-in regression tests: a future violation-count error would surface as a sanity-check failure, not as a silently miscoded W/L vector.
+
+Per CLAUDE.md "Derive, don't duplicate" / "Layered grounding" / "Don't encode conclusions as definitions" — addresses an anti-pattern that the integration-auditor flagged as the highest-leverage cleanup. Sets the pattern for the deferred positive-half Poko follow-up: candidates are already a real type, constraints are real `NamedConstraint` instances, and the new study file can plug into the same infrastructure.
+
+`parallel_OT_inadequate` and `weighted_HG_inadequate` theorems retain identical statements; proofs use `(by decide)` instead of `rfl` where reduction now passes through `ercOfProfiles + mkProfile + buildViolationProfile`.
+
+## [0.230.342] - 2026-04-25
+
+### Clark1983 paper-grounded deepening (4-agent follow-up audit)
+
+Continuation of the substrate-grounding line of work after the option-B refactor (0.230.338). Four-agent follow-up audit (linguistics-domain-expert with PDF, mathlib-reviewer, integration-auditor, cross-framework-reconciler) converged on three substrate-disconnect findings; PDF-grounded the linguistics expert's HIGH items (pp. 320–327) and applied paper-grounded deepening only — declined the substrate-property additions that were editorial reformulations of Clark's claims.
+
+**PDF verifications** (against `Clark, H.H. _Making sense of nonce sense_ 1983 (1).pdf`, pp. 320–327):
+- AmEx vs Credit cards experiment (pp. 321–323): VERIFIED with concrete percentages — 100% yes-answers to *AmEx?* (interpreted as direct only, 4-subgoal hierarchy); 84% yes-able to *Credit cards?* with 46% additionally inferring the indirect request and giving the list (5-subgoal hierarchy + indirect-request layer). Paper conclusion p. 323: "it is the content of those noun phrases that forced the restaurateurs to infer very different goals." Paper's only experimental result.
+- Condition (f) role-typing (p. 321 + p. 325–326): VERIFIED. Paper p. 321 gives (f) verbatim ("the parent noun denotes one role in the situation, and the remaining surface arguments of the denominal verb denote other roles in the situation"). Paper p. 325 makes the role assignment explicit for *Max teapotted a policeman*: "teapots play one role in the action, Max is the agent, and the policeman is the patient." Previous `nounParticipates : ∀ w, situation w → nounDenotation w` field captured the extensional half of (f) but lost the role-typing.
+- *teapot* as running example: VERIFIED. Paper uses *teapot* on pp. 320, 321, 325, 326, 327 — canonical denominal-verb example. File had zero `DenominalVerb` instance for it.
+
+**Refactor** (Clark1983.lean: 733 → 932 LOC, +27% all paper-grounded; net 1007 → 932 = -7% from original):
+
+Declined: editorial deepening (the `cgCoherent` substrate property + matching `IndirectAct` field that was being staged, replacing vacuous `shared_innovativeness_criterion` with `shared_cgCoherence`). The user's pushback noted that `cgCoherent` was an editorial reformulation of Clark's condition (b–d) "speaker has good reason to believe listener can readily compute uniquely from mutual knowledge" — adding more substrate properties on top of that interpretation compounds editorializing rather than addressing it. The line-1-vs-level-2 framing was MY analysis, not paper content. Removed the staged `GoalHierarchy.cgCoherent` definition.
+
+Done (paper-grounded deepening only):
+
+`DenominalVerbConvention` extended with role-typing fields per paper p. 321 condition (f):
+- `parentNounRole : ThetaRole` — the role the parent noun denotes in the situation
+- `otherArgRoles : List ThetaRole` — the roles the other surface arguments denote
+- `rolesDistinct : parentNounRole ∉ otherArgRoles` — "one role" vs "other roles" structural content
+- `toGoalHierarchy.invokesConvention` updated to expose the role-distinctness alongside cgDeterminesSituation and nounParticipates
+- Consumes `Theories.Interfaces.SyntaxSemantics.Linking.ThetaRole` for the role enum
+
+NEW worked instance for paper p. 320–321 + 325–326 (paper's running example):
+- `TeapotWorld` toy world, `teapotSituation` (rubbing + teapot present), `teapotNoun` (teapot present), `teapotCG`
+- `teapotConvention : DenominalVerbConvention TeapotWorld` with `parentNounRole := .instrument` and `otherArgRoles := [.agent, .patient]` per paper p. 325
+- `teapot_is_innovative_denominal` theorem witnessing the strict extension of nounDenotation by situation
+- `teapot_role_assignment_distinct` theorem exposing the role assignment for downstream reference
+
+NEW worked instances for paper p. 321–323 (AmEx vs Credit cards experiment):
+- `amexQuestion : IndirectAct Unit` (intended = direct, 4-subgoal hierarchy in docstring per p. 322)
+- `creditCardsQuestion : IndirectAct Unit` (intended ≠ direct, 5-subgoal hierarchy + indirect-request layer in docstring per p. 322–323)
+- `amex_credit_cards_diverge_in_intent` theorem witnessing the substrate-level contrast (same direct content, different intended content)
+- `amex_question_is_conventional` and `credit_cards_question_is_innovative` derived classifications
+- Both use `prepCondition := none` per paper's argument that the mechanism is goal-hierarchy reconstruction, NOT Searle preparatory-condition questioning
+
+`IndirectAct.toGoalHierarchy.invokesConvention` simplified from `act.prepCondition.isSome = true` to `True` — honest about the substrate not formally distinguishing Searle-style from Clark-style indirect-act mechanisms. The specific `prepCondition` content lives at the source-class level.
+
+Cleanup (mathlib-reviewer M2/M3): removed `conventional_or_innovative` (just `Classical.em`), `traditional_is_special_case` (proof was literally `h`), `conventional_bridge_trivial` (rfl over construction). Replaced bare `simp at this` (line 904) with `exact absurd this (by decide)`.
+
+`Linglib.lean` import position fix: moved `Phenomena.Nonliteral.Studies.Clark1983` from line 1362 (between Politeness and Polysemy) to alphabetical position within `Phenomena.Nonliteral.Studies/` (before `RelevanceTheory`).
+
+Build green (5371 jobs). Zero new `sorry`/`native_decide`.
+
+Deferred (out of paper-grounded-deepening scope):
+- Negative arguments against lexical rules (Clark vs McCawley/Green, paper pp. 313–316) and semi-sentences (Clark vs Katz, paper pp. 316–318) — paper's only negative argument, ~6 pages, would require choosing how to formalize "no finite list works" as a falsification theorem
+- Parsing-problem diagnostics (paper p. 299) — non-parsing vs mis-parsing as theory-distinguishing predicates
+- Genuinely tree-shaped GoalHierarchy (paper p. 324 *Julia is a virologist* with 7 nested subgoals attached to constituents) — would touch every consumer
+- LU-RSA bridge §H operationalization (paper §H imports `Lexicon` but doesn't invoke L0/S1/L1)
+- `bombecksCG` non-tautology via genuine pragmatic inference (LU-RSA marginalization or ErkHerbelot 2024 PMF substrate)
+- Promotion of `IndirectAct` substrate to `Phenomena/Directives/Studies/Searle1975.lean` (cross-framework-recommended substrate move; bigger than this audit's scope)
+- Promotion of `GoalHierarchy` to `Core/Discourse/` and connection to `Goal`/`Strategy` substrates (integration-auditor recommendation; bigger than this audit's scope)
+
+## [0.230.341] - 2026-04-25
+
+### HS substrate audit-driven fixes (4 confirmed audit findings; bib parser bug fix)
+
+Multi-agent audit (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert with the actual paper PDF) of the four-file HS substrate from 0.230.337. Verified the agents' specific claims independently before acting; one finding (linguistics expert: "There is no Table 1 in Pruitt 2023") was disconfirmed against the PDF and the citation kept.
+
+FIXES applied:
+
+- **Hallucinations in docstrings**: spurious `nān rī ̃ na` diacritics → `nān rī nā`; "(Pruitt 2023 §3.1)" cite for ranking durability dropped (durable-ranking quote is in §3.2 not §3.1; per CLAUDE.md "never cite section numbers from memory") with a verbatim quote of the McCarthy 2008b "durable" passage substituted; "(Pruitt 2023 sense)" for "divergent tie" → `@cite{pruitt-2009}` (paper attributes the term to Pruitt 2009 manuscript at fig. 3 caption); strengthened HG inadequacy gloss with the paper's actual inequality contradiction (`w(MAX(H)) > sum` AND `w(MAX(H)) < sum/2`); added factor-out caveat that eq. 59 uses 4 of ~20 constraints because the comparison restricts to `*FLOAT`-satisfying candidates.
+
+- **Mathlib hygiene**: `EvalMode.sortAsc` reroll of insertion sort → `List.insertionSort (· ≤ ·)` (mathlib `Data/List/Sort.lean:65`, computable, reduces under `decide`); `IsFixedPoint` rename eliminated entirely — original critique was "shadows mathlib's `Function.IsFixedPt`," but the deeper issue was the local name itself. New shape: substrate exposes `hsStep : Finset C → Finset C` (powerset lift of one HS step), and convergence is spelled `Function.IsFixedPt (hsStep gen eval) {c}` directly. `@[simp] hsStep_singleton` bridges `hsStep gen eval {c} = iterateStep gen eval c`, so the convergence hypothesis can be stated equivalently as `iterateStep gen eval c = {c}` (the form used in `iterateGen_idempotent_at_fixedPoint`). Per-`HSDerivation` ergonomic name `Converged` retained with `converged_iff_isFixedPt` bridge to mathlib.
+
+- **HSDerivation simplification**: dropped `n : Nat` parameter and `ranking_length : ranking.length = n` proof field (the "list + length proof" anti-pattern per `feedback_no_thin_bundled_struct.md`) — width is now inferred from `D.ranking.length` directly. Dropped `evalMode : EvalMode` field per "no concealed-stub" mathlib reviewer finding (was silently routing directional callers to parallel optimum); will be reintroduced when a real `DirectionalTableau` consumer arrives.
+
+- **Refactor for substrate composability**: factored `optimalSet : C → Finset C` into `evalFilter : Finset C → Finset C` + composition with `gen`; the `evalFilter` signature is what `Iteration.iterateGen` consumes. Added `optimalSet_eq_iterateStep` connecting them by `rfl`. Added `converged_iff_isHSFixedPt` connecting `Converged` to `IsHSFixedPt` by `rfl`. Smoke test refactored to use a named helper lemma rather than relying on mathlib-internal `↓reduceDIte`.
+
+NEW: `HSDerivation.derive` smart constructor — `iterateGen D.gen D.evalFilter pick c steps`. Avoids every study file rebuilding the wiring locally.
+
+NEW: companion theorem `weighted_HG_inadequate : ¬ ∃ w : Fin 4 → ℚ, w MAX_H > w DEP_link_H + w MAX_M + w MAX_link_M ∧ w DEP_link_H + w MAX_M + w MAX_link_M > w MAX_H` (proved by `linarith`). Makes the paper's "weighted HG also fails" claim a theorem in linglib rather than only a docstring assertion.
+
+NEW: `pruitt-2009` bib entry (unpublished manuscript, verified UMass-hosted URL). Originator of the "divergent tie" terminology cited in the paper at fig. 3 caption.
+
+NEW: cross-reference docstring section in `HarmonicSerialism.lean` "## Sibling architectures" — explicit comparison table (Parallel OT / Stratal OT / HS / Stratal HS) along the two axes (ranking-across-calls × candidate-across-calls). Surfaces that HS and Stratal OT are sister specializations (not nested), and that Stratal HS is the missing 2×2 cell. Also notes that linglib offers `Theories/Phonology/Process/RuleBased/` and `StratalOT.lean` as architecturally-distinct alternatives for counterfeeding cases that HS cannot solve (per Pruitt 2023 Table 1 row).
+
+BIB-PARSER FIX: discovered while validating the audit-fix bib changes — `@cite{...}` syntax inside a `% comment` block in `references.bib` confuses the gen_bibliography.py regex parser (it interprets the `@cite{` as a bib entry start). Removed the `@cite{...}` from the new `pruitt-2009` REF comment block. Per-entry comments should reference cited papers in plain prose, never via `@cite{}`.
+
+Audit findings DISCONFIRMED against verification:
+- "There is no Table 1 in Pruitt 2023, only Figures 1-7" (linguistics expert) — Pruitt 2023 page 13 has an explicit "Table 1 Summary of four frameworks' general power for the three types of residual opacity" with row entries for SPE/DM/HS/Classic OT × CF-U/CB-O/CS-O/D. Citation `(Pruitt 2023 Table 1)` kept.
+- "W/L row attribution is reversed in eq. 59" — the expert's own re-read concluded "your gloss is correct, on a careful re-read." No change.
+- "Unify `EvalMode.Direction` with `Phonology.HarmonyDir`/`Side`" (cross-framework reconciler) — verified that the three enums are conceptually related but not literally the same (`HarmonyDir = rightward | leftward | bidirectional` for vowel-harmony spreading; `Side = lhs | rhs` for correspondence; `EvalMode.Direction = leftToRight | rightToLeft` for lex-comparison). Three sister concepts; `Core.LeftRight` extraction is a separate refactor not in scope here.
+
+## [0.230.340] - 2026-04-25
+
+### Pronouns/Olivier2026 refactor: stipulation table → derived projection
+
+Four-agent audit (mathlib-reviewer, linglib-integration-auditor, cross-framework-reconciler, linguistics-domain-expert with PDF ground-truth against the published NLLT paper, doi:10.1007/s11049-026-09709-4) returned convergent findings on `Phenomena/Pronouns/Studies/Olivier2026.lean`:
+
+1. **rfl-stipulation anti-pattern**: 5 `rfl` theorems unpacking a per-clitic-type Bool table (`cliticProfile`); the "derived from cliticProfile" docstring claim was false.
+2. **Reinvented PersonGeometry / Voice* / KEEP-SHARE primitives** that already exist in `Theories/Syntax/Minimalism/{PersonGeometry, Voice, Phase}.lean` (Phase.lean's `TransferStyle` already cites @cite{olivier-2026} for Voice* → vMOD share).
+3. **Docstring contradicted Olivier fn 27**: claimed locatives/partitives "bear no φ at all"; paper explicitly says they carry φ-sets.
+4. **ID-feature treated as per-clitic-type Bool, not configurational**; paper §6.2 / §7.1 derive ID-matching from EA-binding via Voice* under SHARE.
+5. **Bridge theorem load-bearing on one literal witness** rather than a quantified iff.
+6. **Linguistics agent's HIGH-severity flag on dative AS REJECTED by the paper** (Olivier example 36b is *Gli hai per caso potuto andare incontro?* — climbed dative + HAVE; the agent's *Maria gli è voluta parlare* counterexample is from a different verb-selection context covered by the unaccusative path). Recorded as calibration data point: domain-expert HIGH on rule/case claims still needs paper verification.
+
+**Refactor**: replaced `CliticFeatureProfile` thin record + 5 rfl theorems with `CliticType.boundByEAviaVoiceStar` (the load-bearing structural property from §6.2) + `CliticType.embeddedClassOnClimbing` (the projection to `TransitivityClass`) + `CliticType.canonicalScenario` (builds a `RestructuringClause` from the AuxVerbs sibling). Central theorem `triggersAS_iff_boundByEAviaVoiceStar` proves the AS-trigger asymmetry as an iff for all 5 clitic types via the AuxVerbs sibling's `AuxiliarySwitchOccurs` predicate. Five `rfl` theorems become 5 `decide` smoke `example`s following from the iff. Bridge theorem `reflexive_canonical_eq_beWantReflexiveClimbed` confirms the `.reflexive` canonical scenario is definitionally equal to the AuxVerbs sibling's existing witness. Docstring rewritten to (i) cite the actual mechanism (Voice*, KEEP/SHARE/DONATE, EA-binding, T-vAux ID-matching) with proper @cite{} keys to @cite{wurmbrand-shimamura-2017}, @cite{wood-2015}, @cite{ouali-2008}; (ii) add @cite{cardinaletti-shlonsky-2004} per Olivier's own attribution ("not novel"); (iii) note Olivier fn 18 / Cinque 2006 fn 49 colloquial-Italian caveat as out of scope.
+
+5368 jobs green. Anti-pattern surface eliminated; substrate engagement raised from 0 to 3 imports of existing infrastructure.
+
+## [0.230.339] - 2026-04-24
+
+### Discourse/ Phase 4f Stage B (2/5): KeshetAbney2024 migrated off DPL.Basic
+
+Continuation of the substrate-first DPL dissolution (after Stage A `Connectives/Assignment.lean` in 0.230.336 and Stage B 1/5 `Noun/Kind/Anaphora` in 0.230.337). `Phenomena/Anaphora/Studies/KeshetAbney2024.lean` had three Lean code references to the DPL aliases (all in §Bridge 7 "DPL Comparison"):
+- `dpl_neg_is_test` — used `DPLRel E` + `DPLRel.neg φ` (now `DRS (Assignment E)` + `test (dneg φ)`)
+- `pip_solves_dpl_negation_problem` — used fully-qualified `Semantics.Dynamic.DPL.{DPLRel, DPLRel.neg, DPLRel.exists_, dpl_dne_fails_anaphora}` (now substrate-named)
+- The cite of `dpl_dne_fails_anaphora` is restated as a `private` local helper since `GroenendijkStokhof1991.lean` (Stage B 4/5) hasn't been migrated yet — the canonical home will be there.
+
+**Substrate proof of `dpl_dne_fails_anaphora` (private)**: structurally parallel to the original DPL proof, with the convention-difference between `DPLRel.neg` (checks `¬∃k, φ g k`) and `test (dneg φ)` (checks `¬∃k, φ h k`) absorbed by `existsAt_iff` and a `calc` block over `Assignment.update_at`. Witnesses: x=0, φ:=(=), `let g₀ : Assignment E := fun _ => e₁`, output `g₀.update 0 e₂`. RHS holds via `(existsAt_iff _ _ _ _).mpr ⟨e₂, rfl⟩`; LHS forces `g₀ = g₀.update 0 e₂`, but applying both at index 0 gives `e₁ = e₂` via `Assignment.update_at`, contradicting `e₁ ≠ e₂`.
+
+**Mathlib-discipline audit pass** (single mathlib-reviewer round): bare `simp` eliminated (replaced with `calc` + `Assignment.update_at` term-mode); §Bridge 7 opens scoped to a `section DPLComparison ... end DPLComparison` (file-level `Semantics.Dynamic.Core (...)` open reverted to original 4 identifiers); docstring meta-commentary removed per `feedback_no_meta_commentary_in_files.md`. Deferred (orthogonal pre-existing decisions): `dpl_neg_is_test` is a `.1`-projection wrapper that could move to `Connectives/Defs.lean` as a simp lemma; `pip_solves_dpl_negation_problem` is a conjunction-of-existing-theorems wrapper. Both flagged for GS1991-migration cleanup.
+
+969 jobs green; KeshetAbney2024.lean built in 2.4s post-cleanup with no proof regressions. Three consumers remain (Charlow2019, CylindricAlgebra/DynamicSemantics, GroenendijkStokhof1991) before Stage C deletes `DPL/Basic.lean`.
+
 ## [0.230.338] - 2026-04-24
 
 ### Clark1983 Bool→Prop refactor + 3-tier subgoal + PreparatoryCondition substrate (option B audit)

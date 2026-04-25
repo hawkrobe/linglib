@@ -1,6 +1,7 @@
 import Linglib.Core.Mereology
 import Linglib.Theories.Semantics.Truthmaker.Inexact
 import Linglib.Theories.Semantics.Truthmaker.Entailment
+import Linglib.Phenomena.Attitudes.Studies.Pasternak2019
 
 /-! # Bondarenko & Elliott (2026) @cite{bondarenko-elliott-2026}
 
@@ -177,6 +178,24 @@ def HolderPreservedUnderParts (HOLDER : V → Option E) : Prop :=
     all parts of a single eventuality). -/
 def BelievingDIV (believe : V → Prop) (HOLDER : V → Option E) : Prop :=
   Mereology.DIV believe ∧ HolderPreservedUnderParts HOLDER
+
+/-! **Cross-paper bridge to @cite{pasternak-2019}.** B&E's `BelievingDIV`
+is a *strengthening* of Pasternak's `MentalStateHomogeneity` (which is
+itself defined as `Mereology.DIV` over a preorder, modulo biconditional
+reflexivity — see `Pasternak2019.mentalStateHomogeneity_iff`). The
+strengthening adds `HolderPreservedUnderParts`: B&E require not only
+that all parts of a believing are believings (Pasternak's homogeneity),
+but that all parts share the *same holder*. The bridge theorem makes
+formal what is otherwise a silent agreement: B&E's belief mereology IS
+Pasternak's mental-state mereology, restricted to belief and augmented
+with the per-eventuality-holder-uniqueness axiom B&E need for their
+MSI/TECM machinery (paper §3). -/
+omit [Preorder E] in
+theorem belief_div_specializes_pasternak_homogeneity
+    (believe : V → Prop) (HOLDER : V → Option E)
+    (h : BelievingDIV believe HOLDER) :
+    Phenomena.Attitudes.Studies.Pasternak2019.MentalStateHomogeneity believe :=
+  h.1
 
 end Constraints
 

@@ -236,7 +236,7 @@ theorem licensed_activates_weakEN :
 -- to `Phenomena/Questions/Studies/Romero2024.lean` so that this file does not
 -- have to import the BiasedPQ stack (CommonGround / InformationStructure /
 -- Discourse.{IllocutionaryForce,Intentionality,Commitment} / Kratzer.Flavor /
--- Attitudes.Intensional). The bridge is predicate-level — sharing only the
+-- Core.IntensionalLogic.Examples). The bridge is predicate-level — sharing only the
 -- licensing predicate, not the form-level structure — and lives naturally in
 -- the polar-question phenomenon directory.
 

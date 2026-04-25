@@ -1,6 +1,5 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.Lexical.PolarityItem
 
@@ -26,7 +25,6 @@ Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
 namespace FillmoreKayOConnor1988
 
 open Features (Acceptability)
-open Paradigms.Measurement
 
 /-- A single attested or judged example. -/
 structure ExampleDatum where

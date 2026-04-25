@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Maori Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Maori expresses standard negation with the word *kāhore* (also written
 *kaahore*). WALS classifies the negator's morpheme type as **wordUnclear** —
@@ -28,8 +28,21 @@ form with *e...ana* or bare.
 
 namespace Fragments.Maori.Negation
 
-/-- The standard negation word. -/
-def negWord : String := "kāhore"
+open Core.Lexical.NegMarker
+
+/-- *kāhore* — Maori's standard sentential negation word.
+    WALS Ch 112A classifies this as `.wordUnclear` — in Maori's isolating
+    morphology, *kāhore* could be analyzed as a verb or a particle.
+    Functions as a quasi-auxiliary that takes the TAM-particle position. -/
+def kahore : NegMarkerEntry :=
+  { form := "kāhore"
+  , morphemeType := .wordUnclear
+  , position := .preverbal }
+
+/-- The Maori negation system: a single quasi-auxiliary word.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "mri" [kahore]
 
 /-- A Maori negation example. -/
 structure NegExample where
@@ -65,8 +78,6 @@ def past : NegExample :=
 def allExamples : List NegExample := [progressive, past]
 
 /-! ## Verification -/
-
-theorem negWord_is_kahore : negWord = "kāhore" := rfl
 
 theorem all_examples_count : allExamples.length = 2 := by native_decide
 

@@ -1,8 +1,8 @@
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Directive
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Fragments.English.Auxiliaries
+import Mathlib.Data.Fin.Basic
 
 /-!
 # On Necessity and Comparison
@@ -75,9 +75,10 @@ lower-negation reading, while "I don't think you have to go" does not
 
 namespace Rubinstein2014
 
+abbrev World := Fin 4
+
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
-open Semantics.Attitudes.Intensional (World)
 open Core.Modality (ModalForce)
 
 -- ============================================================================
@@ -203,50 +204,50 @@ theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop) [Deci
 private def ce_pt : PriorityTypology where
   circumstances := emptyBackground
   nonNegotiable := emptyBackground
-  negotiable := λ _ => [λ w => w = .w1]
+  negotiable := λ _ => [λ w => w = (1 : World)]
 
-private def ce_p : World → Prop := λ w => w = .w1
+private def ce_p : World → Prop := λ w => w = (1 : World)
 
-instance : DecidablePred ce_p := fun w => decEq w .w1
+instance : DecidablePred ce_p := fun w => decEq w (1 : World)
 
 /-- The converse fails: weak necessity does NOT entail strong necessity.
     If p holds at all BEST favored worlds but not at all favored worlds,
     weak necessity holds but strong necessity does not.
 
     Concretely: with `circumstances = nonNegotiable = ∅` and
-    `negotiable = [λw => w = .w1]`, we have
-    `favoredWorlds ce_pt .w0 = Set.univ` and
-    `bestAmong univ [λw => w = .w1] = {.w1}`. Thus `ce_p` (which says
-    `w = .w1`) holds at all best worlds but not at all favored worlds. -/
+    `negotiable = [λw => w = (1 : World)]`, we have
+    `favoredWorlds ce_pt (0 : World) = Set.univ` and
+    `bestAmong univ [λw => w = (1 : World)] = {(1 : World)}`. Thus `ce_p` (which says
+    `w = (1 : World)`) holds at all best worlds but not at all favored worlds. -/
 theorem weak_not_entails_strong_R :
     ¬(∀ (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World),
       weakNecessityR pt p w → strongNecessityR pt p w) := by
   intro h
-  -- Compute favoredWorlds ce_pt .w0 = univ
-  have hFav : favoredWorlds ce_pt .w0 = Set.univ := by
+  -- Compute favoredWorlds ce_pt (0 : World) = univ
+  have hFav : favoredWorlds ce_pt (0 : World) = Set.univ := by
     unfold favoredWorlds ce_pt emptyBackground propIntersection
     ext w; simp
-  -- Show weakNecessityR ce_pt ce_p .w0 holds:
-  -- Every world in `bestAmong univ [λw => w = .w1]` satisfies ce_p.
-  have hWeak : weakNecessityR ce_pt ce_p .w0 := by
+  -- Show weakNecessityR ce_pt ce_p (0 : World) holds:
+  -- Every world in `bestAmong univ [λw => w = (1 : World)]` satisfies ce_p.
+  have hWeak : weakNecessityR ce_pt ce_p (0 : World) := by
     intro w' hw'
-    -- hw' : w' ∈ bestAmong (favoredWorlds ce_pt .w0) (ce_pt.negotiable .w0)
+    -- hw' : w' ∈ bestAmong (favoredWorlds ce_pt (0 : World)) (ce_pt.negotiable (0 : World))
     obtain ⟨_hMem, hBest⟩ := hw'
-    -- Apply hBest with the test world .w1, which is in favoredWorlds.
-    have hW1Fav : .w1 ∈ favoredWorlds ce_pt .w0 := by rw [hFav]; exact Set.mem_univ _
-    -- The single ordering proposition is (λ w => w = .w1).
-    have hProp : (λ w : World => w = .w1) ∈ ce_pt.negotiable .w0 := by
+    -- Apply hBest with the test world (1 : World), which is in favoredWorlds.
+    have hW1Fav : (1 : World) ∈ favoredWorlds ce_pt (0 : World) := by rw [hFav]; exact Set.mem_univ _
+    -- The single ordering proposition is (λ w => w = (1 : World)).
+    have hProp : (λ w : World => w = (1 : World)) ∈ ce_pt.negotiable (0 : World) := by
       simp [ce_pt]
-    have := hBest .w1 hW1Fav (λ w : World => w = .w1) hProp rfl
+    have := hBest (1 : World) hW1Fav (λ w : World => w = (1 : World)) hProp rfl
     exact this
-  -- Show strongNecessityR ce_pt ce_p .w0 fails: ce_p .w0 = (.w0 = .w1) is false.
-  have hNotStrong : ¬ strongNecessityR ce_pt ce_p .w0 := by
+  -- Show strongNecessityR ce_pt ce_p (0 : World) fails: ce_p (0 : World) = ((0 : World) = (1 : World)) is false.
+  have hNotStrong : ¬ strongNecessityR ce_pt ce_p (0 : World) := by
     intro hS
-    have hW0Fav : .w0 ∈ favoredWorlds ce_pt .w0 := by rw [hFav]; exact Set.mem_univ _
-    have : ce_p .w0 := hS .w0 hW0Fav
-    -- ce_p .w0 unfolds to `.w0 = .w1`, which is false
+    have hW0Fav : (0 : World) ∈ favoredWorlds ce_pt (0 : World) := by rw [hFav]; exact Set.mem_univ _
+    have : ce_p (0 : World) := hS (0 : World) hW0Fav
+    -- ce_p (0 : World) unfolds to `(0 : World) = (1 : World)`, which is false
     exact absurd this (by intro h; cases h)
-  exact hNotStrong (h ce_pt ce_p .w0 hWeak)
+  exact hNotStrong (h ce_pt ce_p (0 : World) hWeak)
 
 -- ============================================================================
 -- §6. Bridge to Directive.lean
@@ -514,8 +515,8 @@ We model this with two propositions:
 - reportInternational: a negotiable ideal promoted by the speaker (in g)
 - reportAll: the conjunction (the prejacent of should/have-to) -/
 
-private def reportDomestic : World → Prop := λ w => w = .w0 ∨ w = .w1
-private def reportInternational : World → Prop := λ w => w = .w0 ∨ w = .w2
+private def reportDomestic : World → Prop := λ w => w = (0 : World) ∨ w = (1 : World)
+private def reportInternational : World → Prop := λ w => w = (0 : World) ∨ w = (2 : World)
 private def reportAll : World → Prop := λ w => reportDomestic w ∧ reportInternational w
 
 instance : DecidablePred reportDomestic := fun w => by
@@ -541,9 +542,9 @@ private def taxScenarioB : PriorityTypology where
   negotiable := emptyBackground
 
 /-- In scenario A, the favored worlds are exactly those satisfying
-    `reportDomestic`, namely `{.w0, .w1}`. -/
+    `reportDomestic`, namely `{(0 : World), (1 : World)}`. -/
 private theorem favored_taxScenarioA :
-    favoredWorlds taxScenarioA .w0 = {w | reportDomestic w} := by
+    favoredWorlds taxScenarioA (0 : World) = {w | reportDomestic w} := by
   unfold favoredWorlds taxScenarioA emptyBackground propIntersection
   ext w
   simp
@@ -552,46 +553,46 @@ private theorem favored_taxScenarioA :
     satisfy reportAll (the ordering picks out worlds where international
     revenue is also reported).
 
-    The single negotiable ideal `reportInternational` holds at .w0 (which is
+    The single negotiable ideal `reportInternational` holds at (0 : World) (which is
     in favored worlds and satisfies all of `reportInternational`), so any
     "best" favored world must also satisfy it. The only favored world
-    satisfying both is .w0, so `reportAll` holds at all best favored worlds. -/
+    satisfying both is (0 : World), so `reportAll` holds at all best favored worlds. -/
 theorem tax_should_holds :
-    weakNecessityR taxScenarioA reportAll .w0 := by
+    weakNecessityR taxScenarioA reportAll (0 : World) := by
   intro w' hw'
   obtain ⟨hFav, hBest⟩ := hw'
-  -- w' ∈ favoredWorlds taxScenarioA .w0, so reportDomestic w'
+  -- w' ∈ favoredWorlds taxScenarioA (0 : World), so reportDomestic w'
   have hDom : reportDomestic w' := by
     rw [favored_taxScenarioA] at hFav; exact hFav
-  -- .w0 is favored (it's in {.w0, .w1})
-  have hW0Fav : (.w0 : World) ∈ favoredWorlds taxScenarioA .w0 := by
-    rw [favored_taxScenarioA]; show reportDomestic .w0
+  -- (0 : World) is favored (it's in {(0 : World), (1 : World)})
+  have hW0Fav : ((0 : World) : World) ∈ favoredWorlds taxScenarioA (0 : World) := by
+    rw [favored_taxScenarioA]; show reportDomestic (0 : World)
     unfold reportDomestic; left; rfl
-  -- .w0 satisfies reportInternational
-  have hW0Int : reportInternational .w0 := by
+  -- (0 : World) satisfies reportInternational
+  have hW0Int : reportInternational (0 : World) := by
     unfold reportInternational; left; rfl
-  -- The ordering proposition `reportInternational` is in negotiable .w0
-  have hPropMem : reportInternational ∈ taxScenarioA.negotiable .w0 := by
+  -- The ordering proposition `reportInternational` is in negotiable (0 : World)
+  have hPropMem : reportInternational ∈ taxScenarioA.negotiable (0 : World) := by
     simp [taxScenarioA]
-  -- So w' must satisfy reportInternational (it's at-least-as-good as .w0)
-  have hInt : reportInternational w' := hBest .w0 hW0Fav reportInternational hPropMem hW0Int
+  -- So w' must satisfy reportInternational (it's at-least-as-good as (0 : World))
+  have hInt : reportInternational w' := hBest (0 : World) hW0Fav reportInternational hPropMem hW0Int
   exact ⟨hDom, hInt⟩
 
 /-- In scenario A, strong necessity FAILS: not all favored worlds
     satisfy reportAll (worlds reporting only domestic revenue survive).
 
-    .w1 is favored (satisfies reportDomestic) but does not satisfy
-    reportInternational, so reportAll fails at .w1. -/
+    (1 : World) is favored (satisfies reportDomestic) but does not satisfy
+    reportInternational, so reportAll fails at (1 : World). -/
 theorem tax_must_fails :
-    ¬ strongNecessityR taxScenarioA reportAll .w0 := by
+    ¬ strongNecessityR taxScenarioA reportAll (0 : World) := by
   intro h
-  -- .w1 ∈ favoredWorlds (satisfies reportDomestic via the second disjunct)
-  have hW1Fav : (.w1 : World) ∈ favoredWorlds taxScenarioA .w0 := by
-    rw [favored_taxScenarioA]; show reportDomestic .w1
+  -- (1 : World) ∈ favoredWorlds (satisfies reportDomestic via the second disjunct)
+  have hW1Fav : ((1 : World) : World) ∈ favoredWorlds taxScenarioA (0 : World) := by
+    rw [favored_taxScenarioA]; show reportDomestic (1 : World)
     unfold reportDomestic; right; rfl
-  have hAll : reportAll .w1 := h .w1 hW1Fav
-  -- reportAll .w1 implies reportInternational .w1, but
-  -- reportInternational .w1 = (.w1 = .w0 ∨ .w1 = .w2), both false
+  have hAll : reportAll (1 : World) := h (1 : World) hW1Fav
+  -- reportAll (1 : World) implies reportInternational (1 : World), but
+  -- reportInternational (1 : World) = ((1 : World) = (0 : World) ∨ (1 : World) = (2 : World)), both false
   obtain ⟨_, hInt⟩ := hAll
   rcases hInt with h | h <;> cases h
 
@@ -601,9 +602,9 @@ theorem tax_must_fails :
     With both `reportDomestic` and `reportInternational` non-negotiable,
     favored worlds must satisfy both, so `reportAll` holds trivially. -/
 theorem tax_must_holds_after_promotion :
-    strongNecessityR taxScenarioB reportAll .w0 := by
+    strongNecessityR taxScenarioB reportAll (0 : World) := by
   intro w' hw'
-  -- hw' : w' ∈ favoredWorlds taxScenarioB .w0 = propIntersection ([] ++ [reportDomestic, reportInternational])
+  -- hw' : w' ∈ favoredWorlds taxScenarioB (0 : World) = propIntersection ([] ++ [reportDomestic, reportInternational])
   -- So w' satisfies both reportDomestic and reportInternational.
   unfold favoredWorlds taxScenarioB emptyBackground propIntersection at hw'
   simp at hw'
@@ -612,8 +613,8 @@ theorem tax_must_holds_after_promotion :
 /-- The should→have-to shift: the SAME proposition goes from weak-only
     to strong necessity when the negotiable ideal is promoted. -/
 theorem should_to_haveto_shift :
-    ¬ strongNecessityR taxScenarioA reportAll .w0 ∧
-    strongNecessityR taxScenarioB reportAll .w0 :=
+    ¬ strongNecessityR taxScenarioA reportAll (0 : World) ∧
+    strongNecessityR taxScenarioB reportAll (0 : World) :=
   ⟨tax_must_fails, tax_must_holds_after_promotion⟩
 
 -- ============================================================================

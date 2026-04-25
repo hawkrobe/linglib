@@ -22,6 +22,7 @@ themselves are `W → Prop`; reasoning is classical.
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
 import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Opposition.Aristotelian
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Modality.Kratzer
@@ -175,6 +176,15 @@ property — the modal logic is inherited for free. -/
 **Theorem: Modal duality holds.**
 
 □p ↔ ¬◇¬p
+
+This is the contradiction diagonal of the Kratzer modal Aristotelian square
+(`{□p, ◇p, □¬p, ◇¬p}`). The abstract framework lives in
+`Core.Logic.Opposition.Square.fromBox` (a `Square (W → Bool)` from any
+box-style modal operator) — the bridge from Kratzer's `Prop`-valued box to
+that `Bool`-valued framework requires `DecidablePred` glue, deferred. Five
+sibling `theorem duality`s (Inertia, Temporal, BiasedPQ, EventRelativity,
+EpistemicBlocking) instantiate the same pattern and would unify under one
+`Square.fromBox` instance once the Prop↔Bool coercion is settled.
 -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop)
     (w : W) :
@@ -183,6 +193,32 @@ theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop)
   refine ⟨fun h ⟨j, hj, hnp⟩ => hnp (h j hj), fun h j hj => ?_⟩
   by_contra hc
   exact h ⟨j, hj, hc⟩
+
+/-- **Bundled** (Prop↔Bool gap closure demo, parallel to
+    `Quantifier.every_satisfies_isContradictory_pointwise`): the modal A↔O
+    contradiction diagonal `□p` vs `◇¬p` packaged as
+    `Core.Opposition.IsContradictory` over the Pi-instance Boolean algebra
+    on `W → Prop`. Follows from `duality` (`□p ↔ ¬◇¬p`).
+
+    Demonstrates that the polymorphic `IsContradictory` works on Prop-valued
+    modal predicates the same way it does on Bool-valued GQ scope predicates.
+    The other 4 Kratzer-square corners (E ↔ ¬I, A ⊓ E = ⊥, etc.) follow the
+    same template. -/
+theorem necessity_satisfies_isContradictory_pointwise
+    (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) :
+    Core.Opposition.IsContradictory
+      ((necessity f g p) : W → Prop)
+      (possibility f g (fun w' => ¬ p w')) := by
+  refine ⟨?_, ?_⟩
+  · funext w
+    apply propext
+    refine ⟨fun ⟨h1, h2⟩ => (duality f g p w).mp h1 h2, fun h => h.elim⟩
+  · funext w
+    apply propext
+    refine ⟨fun _ => trivial, fun _ => ?_⟩
+    by_cases h : possibility f g (fun w' => ¬ p w') w
+    · exact Or.inr h
+    · exact Or.inl ((duality f g p w).mpr h)
 
 
 /--

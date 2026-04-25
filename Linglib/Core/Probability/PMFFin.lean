@@ -162,4 +162,30 @@ theorem probOfSet_pos_of_condProbSet_gt (p : PMF α) (cond target : Set α)
   rw [condProbSet_of_zero p cond target hZero] at h
   exact absurd h (not_lt.mpr (zero_le _))
 
+/-- The "impact" of evidence `R` on proposition `A`: `P(A | R) / P(A)`.
+The Bayes-factor face of conditional probability; equals `1` when `R`
+provides no information about `A`, exceeds `1` when `R` raises `A`'s
+probability, falls below `1` when `R` lowers it. Used in probabilistic
+answerhood (Thomas 2026 Def. 62b) and structurally identical to RSA's
+posterior-ratio update. -/
+noncomputable def impactRatio (p : PMF α) (R A : Set α) : ℝ≥0∞ :=
+  p.condProbSet R A / p.probOfSet A
+
+/-- When `A ⊆ R ⊆ R'` and `P(R) < P(R')` strictly, conditioning on the
+larger set `R'` strictly decreases `P(A | ·)` (for `A` of positive prior).
+
+Proof: `condProbSet R A = P(A∩R)/P(R) = P(A)/P(R)` since `A ⊆ R`, and
+similarly `condProbSet R' A = P(A)/P(R')`. The conclusion is then ENNReal
+strict-antitone-in-denominator, `ENNReal.div_lt_div_left`. -/
+theorem condProbSet_strict_anti_of_probOfSet_lt
+    (p : PMF α) (A R R' : Set α)
+    [DecidablePred (· ∈ A)] [DecidablePred (· ∈ R)] [DecidablePred (· ∈ R')]
+    (hAR : A ⊆ R) (hAR' : A ⊆ R')
+    (hPosA : p.probOfSet A > 0)
+    (hLt : p.probOfSet R < p.probOfSet R') :
+    p.condProbSet R A > p.condProbSet R' A := by
+  rw [condProbSet_eq_div, condProbSet_eq_div,
+      Set.inter_eq_right.mpr hAR, Set.inter_eq_right.mpr hAR']
+  exact ENNReal.div_lt_div_left hPosA.ne' (probOfSet_ne_top p A) hLt
+
 end PMF

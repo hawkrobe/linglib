@@ -1,9 +1,9 @@
 import Linglib.Theories.Syntax.ArgumentStructure.Alternation
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Fragments.English.Predicates.Verbal
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Chierchia (1984): Topics in the Syntax and Semantics of Infinitives and Gerunds
@@ -88,10 +88,13 @@ the meaning postulate.
 
 namespace Chierchia1984
 
-open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer
 open Semantics.Composition.TypeShifting (ComplSemLayer)
 open Core.Verbs (VerbCore ControlType ComplementType)
+
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Complement Denotations: Property vs. Proposition

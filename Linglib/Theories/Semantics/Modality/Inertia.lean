@@ -63,7 +63,12 @@ def inertialPossibility (p : InertialParams W) (prop : W → Prop) (w : W) : Pro
 
 /-- Inertial modality satisfies modal duality: □p ↔ ¬◇¬p.
     Inherited from `Kratzer.duality` since inertial necessity/possibility
-    are `boxR`/`diamondR` over the same Kratzer best-worlds relation. -/
+    are `boxR`/`diamondR` over the same Kratzer best-worlds relation.
+
+    See `Kratzer/Operators.lean::duality` docstring for the broader context:
+    one of five modality-flavor `theorem duality`s that would unify under a
+    `Core.Logic.Opposition.Square.fromBox` instance once the Prop↔Bool
+    coercion lands. -/
 theorem inertial_duality (p : InertialParams W) (prop : W → Prop) (w : W) :
     inertialNecessity p prop w ↔ ¬ inertialPossibility p (fun w' => ¬ prop w') w :=
   Kratzer.duality p.circumstances p.inertia prop w

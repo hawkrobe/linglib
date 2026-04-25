@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.SmallClause
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 
 /-!
 # Resultative — Small Clause Bridge
@@ -39,7 +39,7 @@ onto SC predicate categories:
 namespace Dendikken1995
 
 open Minimalism
-open ConstructionGrammar.Studies.GoldbergJackendoff2004
+open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 
 /-! ## §1. Resultative types → SC predicate categories
 

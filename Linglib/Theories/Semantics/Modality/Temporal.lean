@@ -96,7 +96,9 @@ theorem temporal_eq_static {Time : Type*}
     necessity f g p w :=
   Iff.rfl
 
-/-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. -/
+/-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. One of five sibling `theorem duality`s
+    (see `Modality/Kratzer/Operators.lean::duality` for the unification
+    opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
 theorem temporal_duality {Time : Type*}
     (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
     (t : Time) (p : W → Prop) (w : W) :

@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Imbabura Quechua Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Imbabura Quechua expresses standard negation with the preverbal particle
 *mana*, optionally reinforced by the suffix *-chu* on the verb.
@@ -28,12 +28,29 @@ asymmetry).
 
 namespace Fragments.Quechua.Negation
 
-/-- The standard negation particle. -/
-def negParticle : String := "mana"
+open Core.Lexical.NegMarker
 
-/-- The validator enclitic triggered in negative (and interrogative) contexts.
-    Glossed as VAL (validator); shared with polar questions. -/
+/-- *mana* — Imbabura Quechua's standard preverbal negation particle.
+    The load-bearing element of the negation construction; the *-chu*
+    enclitic is a separate validator (also used in polar interrogatives)
+    whose obligatory appearance under negation drives the WALS A/NonReal
+    asymmetry classification. -/
+def mana : NegMarkerEntry :=
+  { form := "mana"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The validator enclitic *-chu*, triggered in negative and interrogative
+    contexts. Glossed as VAL (validator); shared with polar questions.
+    Not a negation marker — its appearance under negation is what
+    distinguishes the asymmetric Quechua negative paradigm
+    (@cite{miestamo-2005} p. 158). -/
 def chuSuffix : String := "-chu"
+
+/-- The Imbabura Quechua negation system: a single preverbal particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "qvi" [mana]
 
 /-- An Imbabura Quechua negation example. -/
 structure NegExample where
@@ -70,8 +87,6 @@ def allExamples : List NegExample :=
 
 /-! ## Verification -/
 
-theorem negParticle_is_mana : negParticle = "mana" := rfl
-theorem chuSuffix_is_chu : chuSuffix = "-chu" := rfl
 theorem example_count : allExamples.length = 3 := by native_decide
 
 /-- Mixed: some symmetric, some asymmetric = SymAsy. -/

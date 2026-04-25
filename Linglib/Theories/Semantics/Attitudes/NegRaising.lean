@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Core.Logic.SquareOfOpposition
+import Linglib.Core.Logic.Opposition.Square
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening
@@ -43,7 +43,7 @@ includes cases where p is false, so strengthening to know(¬p) would require
 
 namespace Semantics.Attitudes.NegRaising
 
-open Core.SquareOfOpposition (Square SquareRelations)
+open Core.Opposition (Square SquareRelations)
 open Semantics.Attitudes.Doxastic
   (DoxasticPredicate Veridicality boxAt diaAt AccessRel)
 

@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 /-!
 # Assertion Phenomena: Theory-Neutral Data

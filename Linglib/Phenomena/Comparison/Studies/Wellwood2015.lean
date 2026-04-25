@@ -376,34 +376,55 @@ def IsMaxDeg (S : Set ℚ) (δ : ℚ) : Prop :=
 -- § 9. Universal Comparative Truth Condition
 -- ════════════════════════════════════════════════════
 
-/-- The than-clause degree set: the set of degrees d such that some
-    b-eventuality satisfying P has a measured value at least d.
+/-- Heterogeneous than-clause degree set, allowing distinct matrix and
+    than-clause predicates: degrees d such that some b-eventuality
+    satisfying `Pthan` has a measured value at least d.
 
-    {d | ∃α'. role(b, α') ∧ P(α') ∧ μ(extract(α')) ≥ d}
-
-    This is the ABS-mediated degree set from the than-clause
-    (eq. 40 for nominal, eq. 47 for verbal, eq. 63 for adjectival). -/
-def thanDegrees {Ent α Measured : Type*}
-    (role : Ent → α → Prop) (P : α → Prop)
+    Used by intensity comparatives (`Phenomena/Attitudes/Studies/Pasternak2019.lean`)
+    where the matrix and than-clause have different themes, e.g.,
+    `Ann hates Bill more than Matt hates Jeff` — both sides use the
+    `hate` predicate but conjoined with different theme-roles. -/
+def thanDegreesHetero {Ent α Measured : Type*}
+    (role : Ent → α → Prop) (Pthan : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ)
     (b : Ent) : Set ℚ :=
-  {d | ∃ eb, role b eb ∧ P eb ∧ μ (extract eb) ≥ d}
+  {d | ∃ eb, role b eb ∧ Pthan eb ∧ μ (extract eb) ≥ d}
 
-/-- The paper's compositional comparative truth condition (eqs. 42, 48, 65).
+/-- The paper's compositional comparative truth condition, generalized
+    to allow distinct matrix and than-clause predicates (`Pmatrix`,
+    `Pthan`). The original homogeneous form (eqs. 42, 48, 65 of @cite{wellwood-2015}
+    where matrix and than-clause use the same `P`) is the special case
+    where `Pmatrix = Pthan`; see `comparativeTruth` below.
+
+    The heterogeneous form is needed for intensity comparatives
+    (@cite{pasternak-2019} (53)) where matrix and than-clause have
+    different themes, e.g., `Ann hates Bill more than Matt hates Jeff`. -/
+def comparativeTruthHetero {Ent α Measured : Type*}
+    (role : Ent → α → Prop) (Pmatrix Pthan : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ)
+    (a b : Ent) : Prop :=
+  ∃ ea, role a ea ∧ Pmatrix ea ∧
+    ∃ δ, IsMaxDeg (thanDegreesHetero role Pthan extract μ b) δ ∧ μ (extract ea) > δ
+
+/-- The original (homogeneous) comparative truth condition: matrix and
+    than-clause use the same predicate. One-line specialization of the
+    heterogeneous form. Existing consumers (`nominalComparative`,
+    `verbalComparative`, `adjectivalComparative`) and downstream proof
+    scripts unchanged.
 
     "a V-s more P than b does" is true iff there exists an a-eventuality
     ea satisfying P, and a degree δ that is the max of the than-clause
     degree set, such that μ(extract(ea)) > δ.
 
-    This is the result of composing:
+    Compositional derivation (eqs. 42, 48, 65 of @cite{wellwood-2015}):
     (1) `much_μ` introduces the measure function A(μ)
     (2) `-er` introduces strict comparison (>) against the standard δ
     (3) The than-clause provides δ = max{d | ∃eb. role(b,eb) ∧ P(eb) ∧ μ(extract(eb)) ≥ d}
     (4) Predicate Modification conjoins the degree condition with the base predicate
     (5) Existential closure over the matrix eventuality
 
-    The three domains differ only in the thematic role, extraction
-    function, and measured ontological sort:
+    The three Wellwood-2015 domains differ only in the thematic role,
+    extraction function, and measured ontological sort:
 
     | Domain     | role   | extract  | Measured | Example            |
     |------------|--------|----------|----------|--------------------|
@@ -414,8 +435,15 @@ def comparativeTruth {Ent α Measured : Type*}
     (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ)
     (a b : Ent) : Prop :=
-  ∃ ea, role a ea ∧ P ea ∧
-    ∃ δ, IsMaxDeg (thanDegrees role P extract μ b) δ ∧ μ (extract ea) > δ
+  comparativeTruthHetero role P P extract μ a b
+
+/-- The original `thanDegrees` is the homogeneous specialization of
+    `thanDegreesHetero`. -/
+def thanDegrees {Ent α Measured : Type*}
+    (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ)
+    (b : Ent) : Set ℚ :=
+  thanDegreesHetero role P extract μ b
 
 -- ════════════════════════════════════════════════════
 -- § 10. Three Domain Instantiations
@@ -454,8 +482,40 @@ def adjectivalComparative {Entity Time : Type*} [LinearOrder Time]
 -- § 11. Maximality Reduction
 -- ════════════════════════════════════════════════════
 
-/-- Under unique-event assumptions, the max of the than-clause degree set
-    is μ(extract(eb)), and the comparative reduces to direct comparison.
+/-- Heterogeneous-predicate maximality reduction. Under unique-witness
+    assumptions on both matrix (`Pmatrix`) and than-clause (`Pthan`),
+    the comparative reduces to direct measure comparison. The original
+    homogeneous `comparativeTruth_max` is the special case `Pmatrix = Pthan`. -/
+theorem comparativeTruthHetero_max {Ent α Measured : Type*}
+    {role : Ent → α → Prop}
+    {Pmatrix Pthan : α → Prop}
+    {extract : α → Measured}
+    {μ : Measured → ℚ}
+    {a b : Ent}
+    {ea eb : α}
+    (ha : role a ea ∧ Pmatrix ea)
+    (ha_unique : ∀ e, role a e → Pmatrix e → e = ea)
+    (hb : role b eb ∧ Pthan eb)
+    (hb_unique : ∀ e, role b e → Pthan e → e = eb) :
+    comparativeTruthHetero role Pmatrix Pthan extract μ a b ↔
+      μ (extract eb) < μ (extract ea) := by
+  constructor
+  · rintro ⟨ea', ha_role, ha_P, δ, ⟨hδ_in, hδ_max⟩, hgt⟩
+    have h_ea_eq := ha_unique ea' ha_role ha_P; subst h_ea_eq
+    obtain ⟨eb', hb_role', hb_P', hge⟩ := hδ_in
+    have h_eb_eq := hb_unique eb' hb_role' hb_P'
+    rw [h_eb_eq] at hge
+    have hδ_eq : δ = μ (extract eb) :=
+      le_antisymm hge (hδ_max _ ⟨eb, hb.1, hb.2, le_refl _⟩)
+    rw [hδ_eq] at hgt; exact hgt
+  · intro hlt
+    exact ⟨ea, ha.1, ha.2, μ (extract eb),
+      ⟨⟨eb, hb.1, hb.2, le_refl _⟩,
+       fun d ⟨eb', hr, hp, hge⟩ => by rw [hb_unique eb' hr hp] at hge; exact hge⟩,
+      hlt⟩
+
+/-- Original maximality reduction (homogeneous case): one-line
+    specialization of `comparativeTruthHetero_max`.
 
     When b has a unique P-eventuality eb, the than-clause degree set
     {d | μ(extract(eb)) ≥ d} has max = μ(extract(eb)), so the
@@ -472,24 +532,8 @@ theorem comparativeTruth_max {Ent α Measured : Type*}
     (hb : role b eb ∧ P eb)
     (hb_unique : ∀ e, role b e → P e → e = eb) :
     comparativeTruth role P extract μ a b ↔
-      μ (extract eb) < μ (extract ea) := by
-  constructor
-  · -- Forward: max-based → direct comparison
-    rintro ⟨ea', ha_role, ha_P, δ, ⟨hδ_in, hδ_max⟩, hgt⟩
-    have h_ea_eq := ha_unique ea' ha_role ha_P; subst h_ea_eq
-    -- δ = μ(extract eb): the max of {d | ∃eb'. role b eb' ∧ P eb' ∧ μ(extract eb') ≥ d}
-    obtain ⟨eb', hb_role', hb_P', hge⟩ := hδ_in
-    have h_eb_eq := hb_unique eb' hb_role' hb_P'
-    rw [h_eb_eq] at hge
-    have hδ_eq : δ = μ (extract eb) :=
-      le_antisymm hge (hδ_max _ ⟨eb, hb.1, hb.2, le_refl _⟩)
-    rw [hδ_eq] at hgt; exact hgt
-  · -- Backward: direct comparison → max-based
-    intro hlt
-    exact ⟨ea, ha.1, ha.2, μ (extract eb),
-      ⟨⟨eb, hb.1, hb.2, le_refl _⟩,
-       fun d ⟨eb', hr, hp, hge⟩ => by rw [hb_unique eb' hr hp] at hge; exact hge⟩,
-      hlt⟩
+      μ (extract eb) < μ (extract ea) :=
+  comparativeTruthHetero_max ha ha_unique hb hb_unique
 
 -- ════════════════════════════════════════════════════
 -- § 12. Bridges to Existing Infrastructure

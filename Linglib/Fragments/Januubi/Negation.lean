@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
@@ -43,12 +43,30 @@ clauses.
 
 namespace Fragments.Januubi.Negation
 
+open Core.Lexical.NegMarker
+
 -- ════════════════════════════════════════════════════
 -- § 1. Standard Negation
 -- ════════════════════════════════════════════════════
 
+/-- *maa* — Januubi Arabic's standard sentential negation particle.
+    Same form used as the EN marker across all attested EN-trigger
+    classes (see § 2 below); Januubi shows no negator-trigger covariation
+    unlike French and Mandarin. -/
+def maa : NegMarkerEntry :=
+  { form := "maa"
+  , morphemeType := .particle
+  , position := .preverbal }
+
 /-- The standard sentential negation marker in Januubi Arabic. -/
-def standardNeg : String := "maa"
+def standardNeg : String := maa.form
+
+/-- The Januubi negation system: a single particle.
+    No WALS datapoint for Januubi-specific dialect; the lookup returns
+    `none` and the WALS fields stay unset. The Fragment-side joint
+    consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "" [maa]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Expletive Negation Markers

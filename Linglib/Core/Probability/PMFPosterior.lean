@@ -90,7 +90,7 @@ theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
   calc ∑' a, μ a * κ a b
       ≤ ∑' a, μ a := by
         refine ENNReal.tsum_le_tsum (fun a => ?_)
-        calc μ a * κ a b ≤ μ a * 1 := mul_le_mul_left' (PMF.coe_le_one _ _) _
+        calc μ a * κ a b ≤ μ a * 1 := mul_le_mul_right (PMF.coe_le_one _ _) _
           _ = μ a := mul_one _
     _ = 1 := PMF.tsum_coe μ
 
@@ -98,18 +98,46 @@ theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≠ ∞ :=
   (lt_of_le_of_lt (marginal_le_one κ μ b) ENNReal.one_lt_top).ne
 
+-- Reweight: PMF × non-negative weight → PMF (the algebraic primitive
+-- behind both Bayesian posterior and Product of Experts)
+
+/-- Reweight a PMF by a non-negative weight function and renormalize.
+The pointwise product `p · w` must have non-zero finite total mass —
+the natural precondition for `PMF.normalize`.
+
+This is the algebraic primitive that `posterior` and `productOfExperts`
+both factor through: posterior takes `w := κ · b` (the kernel slice at
+an observation), PoE takes `w := q ·` (the second PMF). -/
+noncomputable def reweight (p : PMF α) (w : α → ℝ≥0∞)
+    (h_pos : (∑' a, p a * w a) ≠ 0) (h_fin : (∑' a, p a * w a) ≠ ∞) : PMF α :=
+  PMF.normalize (fun a => p a * w a) h_pos h_fin
+
+@[simp]
+theorem reweight_apply (p : PMF α) (w : α → ℝ≥0∞)
+    (h_pos : (∑' a, p a * w a) ≠ 0) (h_fin : (∑' a, p a * w a) ≠ ∞) (a : α) :
+    p.reweight w h_pos h_fin a = p a * w a * (∑' x, p x * w x)⁻¹ :=
+  PMF.normalize_apply _ _ _
+
+theorem mem_support_reweight_iff (p : PMF α) (w : α → ℝ≥0∞)
+    (h_pos : (∑' a, p a * w a) ≠ 0) (h_fin : (∑' a, p a * w a) ≠ ∞) (a : α) :
+    a ∈ (p.reweight w h_pos h_fin).support ↔ p a ≠ 0 ∧ w a ≠ 0 := by
+  rw [reweight, mem_support_normalize_iff]
+  exact mul_ne_zero_iff
+
 /-- Bayesian posterior: for an observation `b`, the conditional
 distribution over `α`. Well-defined when the marginal at `b` is
-non-zero. The `≠ ∞` hypothesis required by `PMF.normalize` is supplied
-automatically (the marginal is bounded above by `1`). -/
+non-zero. The `≠ ∞` hypothesis is supplied automatically (the marginal
+is bounded above by `1`). -/
 noncomputable def posterior (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) : PMF α :=
-  PMF.normalize (fun a => μ a * κ a b) h (marginal_ne_top κ μ b)
+  μ.reweight (fun a => κ a b) h (marginal_ne_top κ μ b)
 
 theorem posterior_apply (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) (a : α) :
-    posterior κ μ b h a = μ a * κ a b * (marginal κ μ b)⁻¹ :=
-  PMF.normalize_apply _ _ a
+    posterior κ μ b h a = μ a * κ a b * (marginal κ μ b)⁻¹ := by
+  show (μ.reweight _ _ _) a = _
+  rw [reweight_apply]
+  rfl
 
 /-- On a finite type the marginal is a `Finset.sum`. -/
 theorem marginal_eq_sum [Fintype α] (κ : α → PMF β) (μ : PMF α) (b : β) :
@@ -126,9 +154,47 @@ theorem posterior_apply_fintype [Fintype α] (κ : α → PMF β) (μ : PMF α) 
 and the kernel's support at the observed `b`. -/
 theorem mem_support_posterior_iff (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) (a : α) :
-    a ∈ (posterior κ μ b h).support ↔ μ a ≠ 0 ∧ κ a b ≠ 0 := by
-  rw [posterior, mem_support_normalize_iff]
-  exact mul_ne_zero_iff
+    a ∈ (posterior κ μ b h).support ↔ μ a ≠ 0 ∧ κ a b ≠ 0 :=
+  mem_support_reweight_iff _ _ _ _ _
+
+-- Product of Experts: combine two PMFs by pointwise product + renormalization
+
+/-- Product of Experts: combine two PMFs over the same type by multiplying
+mass at each point and renormalizing. Symmetric in `p`, `q`. The crucial
+precondition (paper @cite{erk-herbelot-2024} fn 10): at least one point
+must have non-zero mass under both factors. -/
+noncomputable def productOfExperts (p q : PMF α)
+    (h_pos : (∑' a, p a * q a) ≠ 0) : PMF α :=
+  p.reweight (fun a => q a) h_pos
+    (by
+      apply ne_of_lt
+      calc (∑' a, p a * q a)
+          ≤ ∑' a, p a := ENNReal.tsum_le_tsum (fun a => by
+            calc p a * q a ≤ p a * 1 := mul_le_mul_right (PMF.coe_le_one _ _) _
+              _ = p a := mul_one _)
+        _ = 1 := PMF.tsum_coe p
+        _ < ∞ := ENNReal.one_lt_top)
+
+@[simp]
+theorem productOfExperts_apply (p q : PMF α) (h_pos : (∑' a, p a * q a) ≠ 0) (a : α) :
+    p.productOfExperts q h_pos a = p a * q a * (∑' x, p x * q x)⁻¹ :=
+  reweight_apply _ _ _ _ _
+
+/-- PoE is commutative in the two factors (modulo the positivity hypothesis,
+which is itself symmetric). -/
+theorem productOfExperts_comm (p q : PMF α) (h : (∑' a, p a * q a) ≠ 0) :
+    p.productOfExperts q h = q.productOfExperts p (by simpa [mul_comm] using h) := by
+  ext a
+  simp only [productOfExperts_apply, mul_comm (p a) (q a)]
+  congr 1
+  exact congr_arg _ (tsum_congr fun a => mul_comm _ _)
+
+/-- PoE support: points with non-zero mass under both factors. The formal
+content of @cite{erk-herbelot-2024} fn 10's caveat about disjoint supports. -/
+theorem mem_support_productOfExperts_iff (p q : PMF α)
+    (h : (∑' a, p a * q a) ≠ 0) (a : α) :
+    a ∈ (p.productOfExperts q h).support ↔ p a ≠ 0 ∧ q a ≠ 0 :=
+  mem_support_reweight_iff _ _ _ _ _
 
 /-- Bayes' rule: the joint factors as marginal × posterior. -/
 theorem marginal_mul_posterior_apply (κ : α → PMF β) (μ : PMF α) (b : β)

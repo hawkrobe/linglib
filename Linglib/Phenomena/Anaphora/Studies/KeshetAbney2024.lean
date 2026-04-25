@@ -1,7 +1,8 @@
 import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Felicity
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
+import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
+import Linglib.Theories.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Mathlib.Data.Set.Basic
@@ -1006,13 +1007,19 @@ theorem pip_quantifier_blocking :
 -- Bridge 7: DPL Comparison — Why PIP Succeeds Where DPL Fails
 -- ============================================================
 
+section DPLComparison
+
+open Semantics.Dynamic.Core (existsAt existsAt_iff)
+open Semantics.Dynamic.Core.DynProp (DRS dneg test)
+open _root_.Core (Assignment)
+
 /-!
 ### PIP vs DPL: The Architectural Difference
 
 DPL negation is a **test**: `⟦¬φ⟧(g, h) iff g = h ∧ ¬∃k. φ(g, k)`.
 The output assignment equals the input — no bindings are exported through
-negation. This is why `¬¬∃xφ ≠ ∃xφ` in DPL (`dpl_dne_fails_anaphora`):
-double negation doesn't recover the binding.
+negation. This is why `¬¬∃xφ ≠ ∃xφ` in DPL (`dpl_dne_fails_anaphora`
+below): double negation doesn't recover the binding.
 
 PIP negation propagates **labels** from the body: `(negation φ d).labels =
 (φ d).labels`. The info state is complemented, but the label registry
@@ -1020,18 +1027,22 @@ survives. This is exactly what enables bathroom sentences and double-negation
 anaphora.
 
 The following theorems make this architectural difference explicit.
--/
+
+**Substrate names**: DPL relations are `DRS (Assignment E)` from
+`Theories/Semantics/Dynamic/Connectives/`. The DPL operator aliases are
+substrate operations: `DPLRel.neg φ` is `test (dneg φ)`,
+`DPLRel.exists_ x φ` is `existsAt x φ`. -/
 
 /--
 DPL negation resets the output assignment — it cannot export bindings.
 
 This is the key structural property of DPL that blocks cross-negation
-anaphora: after `¬φ`, the output assignment equals the input, so any
-variables bound inside φ are inaccessible.
+anaphora: after `¬φ` (`test (dneg φ)`), the output assignment equals the
+input, so any variables bound inside φ are inaccessible.
 -/
 theorem dpl_neg_is_test :
-    ∀ (E : Type*) (φ : Semantics.Dynamic.DPL.DPLRel E) (g h : Nat → E),
-    Semantics.Dynamic.DPL.DPLRel.neg φ g h → g = h :=
+    ∀ (E : Type*) (φ : DRS (Assignment E)) (g h : Assignment E),
+    test (dneg φ) g h → g = h :=
   λ _ _ _ _ h => h.1
 
 /--
@@ -1050,30 +1061,54 @@ theorem pip_neg_preserves_labels :
   λ d φ α desc h => labels_survive_negation d α φ desc h
 
 /--
+DPL double negation does not recover anaphora.
+
+For `Nontrivial E`, there exist `x : Nat` and `φ : DRS (Assignment E)` such
+that `test (dneg (test (dneg (existsAt x φ))))` ≠ `existsAt x φ`. The
+substrate-name restatement of @cite{groenendijk-stokhof-1991}'s observation
+that DPL negation collapses positive update information.
+
+`private` until promoted to
+`Phenomena/Anaphora/Studies/GroenendijkStokhof1991.lean`, the canonical home
+for DPL theorems in substrate form. -/
+private theorem dpl_dne_fails_anaphora {E : Type*} [Nontrivial E] :
+    ∃ (x : Nat) (φ : DRS (Assignment E)),
+      test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ := by
+  obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
+  refine ⟨0, fun g h => g = h, fun heq => hne ?_⟩
+  let g₀ : Assignment E := fun _ => e₁
+  have hrhs : existsAt 0 (fun (g h : Assignment E) => g = h) g₀ (g₀.update 0 e₂) :=
+    (existsAt_iff _ _ _ _).mpr ⟨e₂, rfl⟩
+  rw [← heq] at hrhs
+  calc e₁
+      = g₀ 0 := rfl
+    _ = (g₀.update 0 e₂) 0 := congr_fun hrhs.1 0
+    _ = e₂ := Assignment.update_at g₀ 0 e₂
+
+/--
 The contrast: DPL negation blocks anaphora (test), PIP negation allows it
 (labels survive). This is the architectural reason bathroom sentences are
 infelicitous in DPL but felicitous in PIP.
 
 Concretely:
-- `dpl_dne_fails_anaphora`: ¬¬∃x.φ ≠ ∃x.φ in DPL (double negation
+- `dpl_dne_fails_anaphora` (above): ¬¬∃x.φ ≠ ∃x.φ in DPL (double negation
   doesn't recover binding)
 - `bathroom_mechanism`: labels survive through negation in PIP (the
   bathroom sentence works because αBath is registered despite negation)
 -/
 theorem pip_solves_dpl_negation_problem :
     -- DPL: ¬¬∃xφ ≠ ∃xφ (double negation fails for anaphora)
-    (∃ (x : Nat) (φ : Semantics.Dynamic.DPL.DPLRel Nat),
-      Semantics.Dynamic.DPL.DPLRel.neg
-        (Semantics.Dynamic.DPL.DPLRel.neg
-          (Semantics.Dynamic.DPL.DPLRel.exists_ x φ)) ≠
-        Semantics.Dynamic.DPL.DPLRel.exists_ x φ) ∧
+    (∃ (x : Nat) (φ : DRS (Assignment Nat)),
+      test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ) ∧
     -- PIP: labels survive negation (bathroom sentences work)
     (∀ d : Discourse BWorld BEntity,
       (negation
         (existsLabeled αBath vBath {.bathroom}
           isBathroom
           (atom isBathroom)) d).labels.registered αBath = true) :=
-  ⟨Semantics.Dynamic.DPL.dpl_dne_fails_anaphora, bathroom_mechanism⟩
+  ⟨dpl_dne_fails_anaphora, bathroom_mechanism⟩
+
+end DPLComparison
 
 
 -- ============================================================

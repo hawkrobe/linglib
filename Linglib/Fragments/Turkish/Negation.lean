@@ -1,8 +1,8 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Turkish Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Turkish expresses standard negation with the verbal suffix *-mA-*
 (/-ma-/ or /-me-/ depending on vowel harmony). The suffix is inserted
@@ -28,9 +28,23 @@ marker appears, not just insertion of the negative morpheme.
 
 namespace Fragments.Turkish.Negation
 
-/-- The Turkish negative verbal suffix (underlying form).
-    Surfaces as *-ma-* or *-me-* by vowel harmony. -/
-def negSuffix : String := "-mA-"
+open Core.Lexical.NegMarker
+
+/-- *-mA-* — Turkish's negative verbal suffix (underlying form).
+    Surfaces as *-ma-* (back-vowel stems) or *-me-* (front-vowel stems)
+    by vowel harmony. Inserted between the verb stem and the TAM suffix:
+    *gel-iyor* → *gel-m-iyor* (come-NEG-PROG). The form here is the
+    abstract citation form; the harmony-conditioned alternants are
+    captured by the language's morphology layer, not the marker entry. -/
+def negSuffix : NegMarkerEntry :=
+  { form := "-mA-"
+  , morphemeType := .affix
+  , position := .morphological }
+
+/-- The Turkish negation system: a single verbal affix.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "tur" [negSuffix]
 
 /-- A Turkish negation paradigm entry. -/
 structure NegParadigmEntry where
@@ -69,7 +83,6 @@ def gelParadigm : List NegParadigmEntry :=
 
 /-! ## Verification -/
 
-theorem negSuffix_is_mA : negSuffix = "-mA-" := rfl
 theorem gel_paradigm_size : gelParadigm.length = 5 := by native_decide
 
 /-- Most constructions are symmetric. -/

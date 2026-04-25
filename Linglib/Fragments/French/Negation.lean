@@ -1,8 +1,9 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # French Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+@cite{zanuttini-1997} @cite{cinque-1999}
 
 French uses bipartite negation *ne...pas*, with the preverbal clitic *ne*
 and the postverbal reinforcer *pas*. In colloquial speech, *ne* is
@@ -27,11 +28,41 @@ informal speech, variable in formal registers.
 
 namespace Fragments.French.Negation
 
-/-- The French preverbal negative clitic. -/
+open Core.Lexical.NegMarker
+
+/-- The French preverbal negative clitic. Phonologically a clitic on the
+    finite verb (or auxiliary); syntactically the head of NegP per
+    @cite{zanuttini-1997}'s cartography. Near-categorically dropped in
+    spoken French (Jespersen cycle stage III), categorically present in
+    formal written French. -/
 def neClitic : String := "ne"
 
-/-- The French postverbal negative reinforcer. -/
+/-- The French postverbal negative reinforcer *pas*. Originally a noun
+    'step' grammaticalized via the Jespersen cycle into the load-bearing
+    negation marker of modern French. Sits in the specifier of NegP per
+    @cite{zanuttini-1997}. -/
 def pasReinforcer : String := "pas"
+
+/-- *(ne) pas* — French's bipartite standard negation.
+    The two morphemes flank the finite verb: *Je **ne** mange **pas***
+    (formal), *Je mange **pas*** (colloquial, *ne*-drop). Encoded as a
+    single `NegMarkerEntry` with discontinuous position because *ne* and
+    *pas* together constitute one logical negation construction (one
+    WALS Ch 112A value, one Ch 143A value). The constituent forms
+    `neClitic` and `pasReinforcer` are exposed separately for downstream
+    consumers that need them (JinKoenig2021 uses *ne* alone as the EN
+    marker; Miestamo2005 lists both as `negMarkers`). -/
+def bipartite : NegMarkerEntry :=
+  { form := "(ne) pas"
+  , morphemeType := .doubleNeg
+  , position := .discontinuous }
+
+/-- The French negation system: a single bipartite construction.
+    *Length-1* `markers` list — *ne* and *pas* are not alternative
+    markers but two morphemes of one bipartite construction. The
+    Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "fra" [bipartite]
 
 /-- A French negation example. -/
 structure NegExample where
@@ -85,28 +116,7 @@ def subjonctif : NegExample :=
 def allExamples : List NegExample :=
   [present, passeCompose, imparfait, futurSimple, subjonctif]
 
-/-- Other negative reinforcers (besides *pas*). -/
-structure NegReinforcer where
-  form : String
-  gloss : String
-  restrictedNeg : Bool  -- requires ne
-  deriving Repr, BEq
-
-/-- *plus* 'no more/longer'. -/
-def plus : NegReinforcer := { form := "plus", gloss := "no.more", restrictedNeg := true }
-/-- *jamais* 'never'. -/
-def jamais : NegReinforcer := { form := "jamais", gloss := "never", restrictedNeg := true }
-/-- *rien* 'nothing'. -/
-def rien : NegReinforcer := { form := "rien", gloss := "nothing", restrictedNeg := true }
-/-- *personne* 'nobody'. -/
-def personne : NegReinforcer := { form := "personne", gloss := "nobody", restrictedNeg := true }
-
-def allReinforcers : List NegReinforcer := [plus, jamais, rien, personne]
-
 /-! ## Verification -/
-
-theorem neClitic_is_ne : neClitic = "ne" := rfl
-theorem pasReinforcer_is_pas : pasReinforcer = "pas" := rfl
 
 /-- All tenses are available under negation (no paradigmatic gaps). -/
 theorem all_tenses_available : allExamples.length = 5 := by native_decide

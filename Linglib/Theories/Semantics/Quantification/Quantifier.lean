@@ -7,6 +7,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
+import Linglib.Core.Logic.Opposition.Aristotelian
 
 /-!
 # Generalized Quantifiers
@@ -1017,6 +1018,20 @@ theorem every_filtrating : PFiltrating (every_sem F) := by
 -- @cite{belnap-1970} @cite{strawson-1952}
 -- ============================================================================
 
+/-! The six theorems below establish the four Aristotelian relations among
+GQ denotations `(every_sem, some_sem, no_sem, pouterNeg every_sem)` at fixed
+restrictor `R`. They work over `Prop`-valued predicates, while
+`Core.Logic.Opposition.Aristotelian` formulates the same relations over
+`Bool`-valued predicates. The two frameworks are mathematically equivalent
+but type-different; bridging them at the predicate level would require either
+a `Prop`-valued version of the Aristotelian relations or a Bool-coercion of
+the GQ machinery — both architectural decisions beyond this section's scope.
+
+For consumers wanting to instantiate the abstract `Square (W → Bool)` from
+`Core.Opposition.Square`, pass `decide`-coerced versions of the GQ predicates.
+The downstream `Phenomena/Quantification/Studies/BarwiseCooper1981.lean` §8
+duality theorems are the natural site to package this bridge. -/
+
 /-- **Contradiction (A vs O)**: the A-form and O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : F.Entity → Prop) :
     every_sem F R S ↔ ¬(pouterNeg (every_sem F) R S) := by
@@ -1060,6 +1075,37 @@ theorem subcontrariety_i_o (R S : F.Entity → Prop)
   · exact Or.inl h
   · right; intro hA
     apply h; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
+
+/-- **Bundled** (Prop↔Bool gap closure demo): the canonical A↔O contradiction
+    diagonal, packaged as `Core.Opposition.IsContradictory` over the
+    Pi-instance Boolean algebra on `(F.Entity → Prop) → Prop`. For a fixed
+    restrictor `R`, the GQ semantics `every_sem F R` and its outer-negation
+    `pouterNeg (every_sem F) R` are pointwise contradictory in the BA-generic
+    sense.
+
+    This bundling demonstrates that `Aristotelian.lean`'s polymorphic
+    `IsContradictory`/`IsSubaltern`/etc. work uniformly on Prop-valued
+    predicates (the GQ convention) and Bool-valued predicates (the Tessler
+    convention), via `Pi.instBooleanAlgebra` for `Prop` and `Bool` respectively.
+    The audit's "Prop↔Bool gap" is closed at the type level. Bundling
+    theorems for the other 5 corners (E↔I, A∧E, A→I, E→O, I∨O) follow the
+    same template. -/
+theorem every_satisfies_isContradictory_pointwise (R : F.Entity → Prop) :
+    Core.Opposition.IsContradictory
+      ((every_sem F R) : (F.Entity → Prop) → Prop)
+      (pouterNeg (every_sem F) R) := by
+  refine ⟨?_, ?_⟩
+  · funext S
+    apply propext
+    refine ⟨?_, fun h => h.elim⟩
+    rintro ⟨h1, h2⟩
+    exact h2 h1
+  · funext S
+    apply propext
+    refine ⟨fun _ => trivial, fun _ => ?_⟩
+    by_cases h : every_sem F R S
+    · exact Or.inl h
+    · exact Or.inr h
 
 -- ============================================================================
 -- Basic Left Monotonicities (@cite{peters-westerstahl-2006} §5.5)

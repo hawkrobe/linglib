@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.French.Modals
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Weak Necessity Modals as Homogeneous Pluralities of Worlds
@@ -577,14 +577,17 @@ section DirectiveBridge
 open Semantics.Modality.Directive (weakNecessity)
 open Semantics.Modality.Kratzer (ModalBase OrderingSource)
 
+/-- Local 4-world type for the bivalence demonstration. -/
+abbrev BridgeWorld := Fin 4
+
 /-- `Directive.weakNecessity` is bivalent: as a Prop, it is classically
     true or false — never indeterminate. This contrasts with `shouldEval`,
     which can return `Truth3.indet`. -/
 theorem directive_bivalent
-    (f : ModalBase Semantics.Attitudes.Intensional.World)
-    (g g' : OrderingSource Semantics.Attitudes.Intensional.World)
-    (p : (Semantics.Attitudes.Intensional.World → Prop))
-    (w : Semantics.Attitudes.Intensional.World) :
+    (f : ModalBase BridgeWorld)
+    (g g' : OrderingSource BridgeWorld)
+    (p : (BridgeWorld → Prop))
+    (w : BridgeWorld) :
     weakNecessity f g g' p w ∨ ¬ weakNecessity f g g' p w :=
   em _
 

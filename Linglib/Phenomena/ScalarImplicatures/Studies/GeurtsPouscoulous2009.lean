@@ -1,6 +1,5 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Paradigms.Measurement
 import Linglib.Theories.Pragmatics.Implicature.Basic
 import Linglib.Theories.Pragmatics.Implicature.Competence
 import Linglib.Theories.Pragmatics.Implicature.Defs
@@ -75,7 +74,6 @@ lemmas in `Diagnostics.lean` apply.
 
 namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
-open Paradigms.Measurement
 open Semantics.Entailment.Polarity (ContextPolarity)
 
 
@@ -168,17 +166,9 @@ the data tables rather than restating them. -/
 def lookupRate (results : List EmbeddingResult) (e : EmbeddingType) : Nat :=
   ((results.find? (·.embedding == e)).map (·.localSIRate)).getD 0
 
--- ============================================================================
--- Measure specifications (paradigm contracts)
--- ============================================================================
-
-/-- Inference task: "Does X imply Y?" -/
-def inferenceMeasure : MeasureSpec :=
-  { scale := .proportion, task := .inferenceEndorsement, unit := "percentage 0-100" }
-
-/-- Verification task: "Is this true of the picture?" -/
-def verificationMeasure : MeasureSpec :=
-  { scale := .proportion, task := .truthValueJudgment, unit := "percentage 0-100" }
+/-! Measures: the inference task ("Does X imply Y?") and the verification task
+    ("Is this true of the picture?") both report endorsement rates as
+    percentages 0-100. -/
 
 
 -- ============================================================================

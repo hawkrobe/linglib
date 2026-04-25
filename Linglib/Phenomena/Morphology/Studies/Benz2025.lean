@@ -1,6 +1,5 @@
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Fragments.German.Predicates
 
 /-!
@@ -37,7 +36,6 @@ namespace Benz2025
 
 open Morphology.DM.Allosemy
 open Features (Acceptability)
-open Paradigms.Measurement
 open Fragments.German.Predicates
 open Core.Verbs
 

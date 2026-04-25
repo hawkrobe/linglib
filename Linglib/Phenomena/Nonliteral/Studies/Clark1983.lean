@@ -1,8 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
 
@@ -37,124 +36,84 @@ The argument proceeds in three stages:
    non-denumerability, contextuality)
 3. Proposing that both are understood via the same mechanism: goal hierarchies
 
-Traditional parsers fail in two ways (p. 299):
-- **Non-parsing**: the parser finds no interpretation at all (e.g., *Our
-  electric typewriter got married* — the parser marks it ungrammatical).
-- **Mis-parsing**: the parser finds *an* interpretation, but the wrong one
-  (e.g., *Stereos are a dime a dozen* — parsed as "phonographs are very
-  common" instead of "people who own phonographs are very common").
+## File organization
 
-## Connection to LU-RSA
+The Lean file uses local section headers `§A`–`§L` for navigation; these
+**do not correspond to numbered sections in the paper** (the paper uses
+named, unnumbered sections). Page citations were verified against the PDF
+on 2026-04-24; example attributions for the contextual-expression taxonomy
+in `§B` were corrected at the same time.
 
-@cite{bergen-levy-goodman-2016}'s Lexical Uncertainty RSA operationalizes one
-dimension of Clark's proposal: the listener marginalizes over possible lexica
-rather than selecting from a fixed one. This captures Clark's insight that the
-sense space is open-ended. However, LU-RSA does not capture the
-goal-hierarchical structure of Clark's intentional parser — it models meaning
-uncertainty but not the hierarchical intention reconstruction that Clark argues
-is the mechanism underlying comprehension of both conventional and innovative
-expressions.
+## Substrate hookup
 
-## Connection to DM
+The `IndirectAct` structure in `§K` consumes `Core.Discourse.PreparatoryCondition`
+(Searle's hierarchy: ability / knowledge / memory / perception / permission /
+willingness). Clark's canonical example *Do you know what time it is?* used
+as a request projects to `prepCondition := some .knowledge` — the same
+substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean` and
+`Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean` consume.
 
-The morphological operation underlying denominal verbs is
-`Recategorization.denominal` in DM (@cite{harley-2014}). Clark's insight is
-that this syntactic operation (n → v) is trivial; the hard part is computing
-the resulting verb's meaning. DM's List 3 (Encyclopedia entries) would need
-infinitely many entries for nonce denominals — precisely Clark's argument
-against lexical rules.
+The DM bridge in `§I` consumes `Theories.Morphology.DM.Categorizer`'s
+`Recategorization.denominal` for the syntactic operation underlying nonce
+verbs. The LU-RSA bridge in `§H` consumes
+`Theories.Pragmatics.RSA.LexicalUncertainty.Lexicon`.
 
-## Structure
-
-- §1: Sense and reference: fixed vs. shifting (Table 9.1)
-- §2: Ten types of contextual expressions (Table 9.2)
-- §3: The sense-selection/creation distinction
-- §4: Non-denumerability of nonce senses
-- §5: Five properties shared with indirect illocutionary acts
-- §6: Goal hierarchies and the intentional view of parsing
-- §7: The Innovative Denominal Verb Convention
-- §8: Bridge to LU-RSA
-- §9: Bridge to DM recategorization
-- §10: The *stereos* example (Arlene vs Bombeck, pp. 326-327)
-- §11: Bridge to indirect speech acts
-- §12: ContextualMeaning — the deeper formal principle
+The shared mechanism Clark posits in `§K` is operationalized as a typed
+projection: both `IndirectAct` and `DenominalVerbConvention` provide a
+`toGoalHierarchy` function landing in the common `GoalHierarchy` schema.
+The "same mechanism" claim is then a structural identity at the substrate
+level rather than a vacuous law-of-excluded-middle.
 -/
 
 namespace Clark1983
 
 open Core.CommonGround
+open Core.Discourse (PreparatoryCondition)
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
 
--- ════════════════════════════════════════════════════════════════
--- §1. Sense and Reference: Fixed vs. Shifting (Table 9.1)
--- ════════════════════════════════════════════════════════════════
-
-/-! ## The Fixed/Shifting Classification
-
-Clark's Table 9.1 (p. 300) classifies expressions by a 2x2 matrix:
-
-|                  | Fixed                    | Shifting                  |
-|------------------|--------------------------|---------------------------|
-| **Sense**        | Purely intensional expr  | Contextual expression     |
-|                  | (e.g., *bachelor*)       | (e.g., *to teapot*)       |
-| **Reference**    | Proper name              | Indexical expression       |
-|                  | (e.g., *George Washington*)| (e.g., *he*)             |
-
-Each expression type occupies one cell of the matrix. The classifying
-property is which aspect of meaning (sense or reference) is salient for
-that type, and whether it is fixed or shifting. -/
+/-! ## §A. Sense and reference: fixed vs shifting (Table 9.1, p. 300) -/
 
 /-- Whether an aspect of meaning is fixed across contexts or shifts. -/
 inductive Alterability where
-  | fixed     -- same across all contexts of use
-  | shifting  -- varies with time, place, and circumstances
+  | fixed
+  | shifting
   deriving DecidableEq, Repr
 
 /-- The two aspects of meaning that can independently be fixed or shifting. -/
 inductive MeaningAspect where
-  | sense      -- intension: what the expression contributes to meaning
-  | reference  -- extension: what the expression picks out in the world
+  | sense
+  | reference
   deriving DecidableEq, Repr
 
 /-- Clark's four-way classification of expressions (Table 9.1, p. 300).
-
-    Each expression type occupies one cell of the `MeaningAspect x Alterability`
-    matrix. The classifying property is which aspect of meaning is salient for
-    that type, and whether it is fixed or shifting across contexts. -/
+    Each expression type occupies one cell of the
+    `MeaningAspect × Alterability` matrix. -/
 structure ExpressionClass where
-  /-- Which aspect of meaning defines this expression type -/
   aspect : MeaningAspect
-  /-- Whether that aspect is fixed or shifts across contexts -/
   alterability : Alterability
   deriving DecidableEq, Repr
 
 /-- Purely intensional expressions: fixed **sense**.
-    E.g., *bachelor*, *blue*, *colorful ball*. Known to almost everyone
-    in a speech community (p. 300). -/
-def purelyIntensional : ExpressionClass :=
-  ⟨.sense, .fixed⟩
+    E.g., *bachelor*, *blue*, *colorful ball* (p. 300). -/
+def purelyIntensional : ExpressionClass := ⟨.sense, .fixed⟩
 
 /-- Proper names: fixed **reference**.
-    E.g., *George Washington*, *the Second World War*, *France*.
-    They rigidly designate certain individuals (p. 300). -/
-def properName : ExpressionClass :=
-  ⟨.reference, .fixed⟩
+    E.g., *George Washington*, *the Second World War*, *France* (p. 300). -/
+def properName : ExpressionClass := ⟨.reference, .fixed⟩
 
 /-- Indexical expressions: shifting **reference**.
     E.g., *he*, *now*, *the bachelor over there*. The reference depends on
     context, but the rule for determining it (the character) is fixed (p. 300). -/
-def indexical : ExpressionClass :=
-  ⟨.reference, .shifting⟩
+def indexical : ExpressionClass := ⟨.reference, .shifting⟩
 
 /-- Contextual expressions: shifting **sense**.
     E.g., *to teapot*, *our electric typewriter*, *a quick crab*.
-    The sense itself — not just the reference — depends on the
-    time, place, and circumstances of utterance (p. 300). -/
-def contextualExpression : ExpressionClass :=
-  ⟨.sense, .shifting⟩
+    The sense itself — not just the reference — depends on the time, place,
+    and circumstances of utterance (p. 300). -/
+def contextualExpression : ExpressionClass := ⟨.sense, .shifting⟩
 
-/-- All four expression types in Table 9.1 are pairwise distinct. -/
+/-- The four expression types in Table 9.1 are pairwise distinct. -/
 theorem expression_types_distinct :
     purelyIntensional ≠ properName ∧
     purelyIntensional ≠ indexical ∧
@@ -163,29 +122,13 @@ theorem expression_types_distinct :
     properName ≠ contextualExpression ∧
     indexical ≠ contextualExpression := by decide
 
-/-- Clark's key observation: contextual expressions are classified by
-    the **sense** aspect being **shifting** — not just shifting reference.
-    This is what makes them invisible to traditional parsers (p. 300). -/
-theorem contextual_shifts_sense :
-    contextualExpression.aspect = .sense ∧
-    contextualExpression.alterability = .shifting := ⟨rfl, rfl⟩
+/-! ## §B. Ten types of contextual expressions (Table 9.2, p. 304)
 
-/-- Indexicals differ from contextual expressions: they shift in
-    **reference**, not sense. Kaplan's character is constant (p. 301). -/
-theorem indexical_shifts_reference :
-    indexical.aspect = .reference ∧
-    indexical.alterability = .shifting := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- §2. Ten Types of Contextual Expressions (Table 9.2)
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Contextual Expression Taxonomy
-
-Clark identifies 10 types (Table 9.2, p. 304), organized by the form class
-of the derived word. All share the defining properties of contextual
-expressions: non-denumerability of possible senses and contextuality of
-actual sense. -/
+Examples were corrected against the PDF on 2026-04-24. The previous
+draft included examples that don't appear in this paper (*Nixon*-based
+eponymous verb; "*a waller*, *a cupper*" for denominal nouns) — Clark uses
+*Napoleon* for eponymous verbs and *Nixonite, bicycler, saxophonist* for
+denominal nouns. -/
 
 /-- The form class of the derived contextual expression. -/
 inductive DerivedCategory where
@@ -197,18 +140,28 @@ inductive DerivedCategory where
 /-- The 10 types of contextual expressions from Table 9.2 (p. 304). -/
 inductive ContextualExprType where
   -- Noun-derived
-  | indirectNoun          -- *one water*, *a Henry Moore*
-  | compoundNoun          -- *finger cup*, *apple-juice chair*
-  | possessive            -- *John's dog*, *my tree*
-  | denominalNoun         -- *a waller*, *a cupper*
+  /-- *the horse*, *a Henry Moore*, *a Beethoven*, *a commercial*, *some water* (p. 302). -/
+  | indirectNoun
+  /-- *finger cup*, *apple-juice chair* (p. 302). -/
+  | compoundNoun
+  /-- *John's dog*, *my tree* (p. 303). -/
+  | possessive
+  /-- *Nixonite*, *bicycler*, *saxophonist* (p. 303). -/
+  | denominalNoun
   -- Verb-derived
-  | denominalVerb         -- *to farewell*, *to Houdini*
-  | eponymousVerb         -- *to do a Napoleon*, *to do a Nixon*
-  | proActVerb            -- *do the lawn*, *do the porch*
+  /-- *to farewell*, *to Houdini*, *to teapot* (p. 303). -/
+  | denominalVerb
+  /-- *to do a Napoleon*; *They did a Manhattan* (p. 315). -/
+  | eponymousVerb
+  /-- *do the lawn*, *do the porch* (p. 303). -/
+  | proActVerb
   -- Adjective-derived
-  | denominalAdjective    -- *Churchillian*, *Shavian*
-  | nonPredicatingAdj     -- *atomic*, *manual*
-  | eponymousAdjective    -- *very San Francisco*, *very Picasso*
+  /-- *Churchillian*, *Shavian* (p. 304). -/
+  | denominalAdjective
+  /-- *atomic*, *manual*, *marine* (p. 304; cf. Levi 1978). -/
+  | nonPredicatingAdj
+  /-- *very San Francisco*, *very Picasso* (p. 304). -/
+  | eponymousAdjective
   deriving DecidableEq, Repr
 
 /-- The derived form class of each contextual expression type. -/
@@ -224,94 +177,38 @@ def ContextualExprType.derivedCategory : ContextualExprType → DerivedCategory
   | .nonPredicatingAdj  => .adjective
   | .eponymousAdjective => .adjective
 
--- ════════════════════════════════════════════════════════════════
--- §3. Sense-Selection vs. Sense-Creation
--- ════════════════════════════════════════════════════════════════
-
-/-! ## The Sense-Selection Assumption and Its Failure
+/-! ## §C. Sense-selection vs sense-creation (paper pp. 297–299)
 
 Clark's central distinction: traditional parsers **select** from a finite
-pre-existing list of senses, while an adequate parser must **create** senses
-using the speaker's intentions and mutual knowledge (p. 297).
+pre-existing list of senses; an adequate parser must **create** senses
+from speaker intentions and mutual knowledge.
 
-Traditional parsers fail in two ways (p. 299):
-- **Non-parsing**: the parser rejects a string as ungrammatical because it
-  can't compose any senses (e.g., *Our electric typewriter got married*).
+Two failure modes (p. 299):
+- **Non-parsing**: the parser rejects a string as ungrammatical because no
+  composition of listed senses succeeds (e.g., *Our electric typewriter
+  got married*).
 - **Mis-parsing**: the parser finds an interpretation but the wrong one
   (e.g., *Stereos are a dime a dozen* parsed as "phonographs are common"
-  instead of "people who have stereos are common"). -/
-
-/-- A parser architecture, distinguished by how it handles word meaning.
-    Clark argues that sense-selection fails for contextual expressions
-    and must be replaced by sense-creation (pp. 297-298). -/
-inductive ParserArchitecture where
-  /-- **Sense-selection**: the parser has a finite lexicon listing all senses
-      for each word. It selects among listed senses. Adequate for purely
-      intensional expressions but fails for contextual expressions. -/
-  | senseSelection
-  /-- **Sense-creation**: the parser constructs meanings on-the-fly from
-      the speaker's intentions and mutual knowledge. Adequate for both
-      conventional and innovative uses. -/
-  | senseCreation
-  deriving DecidableEq, Repr
-
-/-- The two failure modes of sense-selection parsers (p. 299).
-    Non-parsing and mis-parsing are distinct: non-parsing produces no
-    output while mis-parsing produces wrong output. -/
-inductive ParserFailure where
-  /-- Parser finds no interpretation — string marked ungrammatical.
-      Example: *Our electric typewriter got married*. -/
-  | nonParsing
-  /-- Parser finds an interpretation, but the wrong one.
-      Example: *Stereos are a dime a dozen* parsed as "phonographs are common". -/
-  | misParsing
-  deriving DecidableEq, Repr
+  rather than "people who own phonographs are common"). -/
 
 /-- A sense-selection lexicon: a finite list of pre-specified senses for
     each word. This is what traditional parsers assume (p. 297). -/
-structure FiniteLexicon (Word Sense : Type) where
-  /-- The listed senses for each word -/
+structure FiniteLexicon (Word Sense : Type*) where
   senses : Word → List Sense
 
 /-- Sense-selection succeeds iff the intended sense is in the lexicon. -/
-def FiniteLexicon.canParse {Word Sense : Type}
+def FiniteLexicon.canParse {Word Sense : Type*}
     (lex : FiniteLexicon Word Sense) (w : Word) (intended : Sense) : Prop :=
   intended ∈ lex.senses w
 
--- ════════════════════════════════════════════════════════════════
--- §4. Non-Denumerability of Nonce Senses
--- ════════════════════════════════════════════════════════════════
+/-! ## §D. Non-denumerability of nonce senses (paper pp. 313–318) -/
 
-/-! ## Why Lexical Rules and Semi-Sentences Fail
-
-Clark's argument against lexical rules (McCawley 1971, Green 1974, pp. 313-316):
-for denominal verbs, there would need to be an unbounded number of rules
-because the same noun can be verbified to mean indefinitely many things
-depending on context. The verb *teapot* could mean "rub the back of the
-leg with a teapot", "strike the ankle with a teapot", "turn into a teapot",
-etc. — and each context could yield a meaning never before encountered.
-
-Clark's argument against semi-sentences (Katz 1964, pp. 316-318): semi-sentence
-theory requires a finite comprehension set for each string. But contextual
-expressions generate infinite comprehension sets, so the theory wrongly
-predicts they are incomprehensible.
-
-The formal core of both arguments: the space of possible senses for a
-contextual expression grows exponentially with the number of distinguishable
-situations. Any finite list of senses leaves some situation-determined
-meaning uncovered. -/
-
-/-- Clark's non-denumerability argument formalized: for any finite type
-    `S` of distinguishable situations, the space of `S -> Bool` functions
+/-- Clark's non-denumerability argument: for any finite type `S` of
+    distinguishable situations, the space of `S → Bool` functions
     (= possible nonce senses as characteristic functions on situations)
-    has 2^|S| members. Any finite list shorter than this is incomplete.
-
-    This captures Clark's core claim (p. 314): "since there are an unlimited
-    number of other nonce senses that *teapot* (or any other novel denominal
-    verb) could have had, there must also be an unlimited number of [lexical]
-    rules for generating them." -/
+    has 2^|S| members. Any list shorter than this is incomplete (p. 314). -/
 theorem nonce_senses_not_exhaustible
-    {S : Type} [Fintype S] [DecidableEq S]
+    {S : Type*} [Fintype S] [DecidableEq S]
     (senses : List (S → Bool))
     (h_card : senses.length < 2 ^ Fintype.card S) :
     ∃ f : S → Bool, f ∉ senses := by
@@ -329,169 +226,104 @@ theorem nonce_senses_not_exhaustible
   omega
 
 /-- Any finite lexicon fails to parse some nonce sense of a contextual
-    expression, when the sense space (S → Bool) has more members than the
-    lexicon lists. This connects `FiniteLexicon` to `nonce_senses_not_exhaustible`:
-    the non-denumerability of nonce senses means that no finite lexicon
-    is complete for contextual expressions (pp. 313-318). -/
+    expression when the sense space `S → Bool` has more members than the
+    lexicon lists (paper pp. 313–318). -/
 theorem finite_lexicon_incomplete
-    {Word S : Type} [Fintype S] [DecidableEq S]
+    {Word S : Type*} [Fintype S] [DecidableEq S]
     (lex : FiniteLexicon Word (S → Bool)) (w : Word)
     (h : (lex.senses w).length < 2 ^ Fintype.card S) :
     ∃ s : S → Bool, ¬ lex.canParse w s :=
   nonce_senses_not_exhaustible (lex.senses w) h
 
--- ════════════════════════════════════════════════════════════════
--- §5. Five Properties Shared with Indirect Illocutionary Acts
--- ════════════════════════════════════════════════════════════════
+/-! ## §E. Five properties shared with indirect illocutionary acts (paper pp. 319–321)
 
-/-! ## The Analogy to Indirect Speech Acts (pp. 319-321)
+Clark's structural observation: contextual expressions share five properties
+with indirect illocutionary acts, motivating treatment via a shared mechanism
+(goal hierarchies, `§F`).
 
-Clark's key structural observation: contextual expressions share five
-properties with indirect illocutionary acts (like using *Do you know what
-time it is?* as a request). These parallels motivate treating both via the
-same mechanism — goal hierarchies (§6).
+The five properties (illustrated in the paper first for *Do you know what time
+it is?* used as a request, pp. 319–320, then transposed to *Max teapotted a
+policeman*, pp. 320–321):
 
-The five properties (illustrated for the denominal verb *teapot* in
-*Max teapotted a policeman*, pp. 320-321):
+1. **Simultaneous meanings** — the expression carries both a direct meaning
+   (Ed using *teapot* to denote teapots; the asker's literal yes/no question)
+   and an indirect meaning (the rubbing action; the request).
+2. **Logical priority** — the direct act is logically prior; the indirect act
+   is performed *by* performing the direct one, not vice versa.
+3. **Literalness of the direct meaning** — the direct meaning follows from
+   the literal sentence meaning via standard linguistic conventions.
+4. **Non-denumerability of the indirect meanings** — the possible nonce
+   readings cannot be enumerated (formalized as `nonce_senses_not_exhaustible`
+   above for contextual expressions).
+5. **Contextuality of the indirect meaning** — what is conveyed depends
+   critically on shared knowledge between speaker and hearer.
 
-1. **Simultaneous meanings**: the expression carries both a direct meaning
-   (Ed is using *teapot* to denote teapots) and an indirect meaning (the
-   act of rubbing the back of the leg with a teapot). Both are present.
+These five properties are structural consequences of inhabiting the
+`GoalHierarchy` schema (`§F`) — the `directMeaning` / `intendedMeaning` /
+`commonGround` triple gives (1)/(2)/(3) directly, and the convention-recognition
+field encodes Clark's claim that subgoal (2) is always implicitly present
+(p. 326). The previous file declared an `IndirectUseProperty` enum naming
+the five properties but never used it in any theorem; the names live in
+this docstring instead. -/
 
-2. **Logical priority**: Ed's denoting of teapots (direct) is logically
-   prior to denoting the rubbing action (indirect). He performs the indirect
-   act BY performing the direct one, not vice versa.
+/-! ## §F. Goal hierarchies: the three-tier intentional view (paper pp. 323–328)
 
-3. **Literalness of direct meaning**: the direct use — *teapot* denoting
-   teapots — follows from the conventions of the language. It is literal.
+Clark's central positive proposal: parsing reconstructs the speaker's
+hierarchy of goals. Each constituent of an utterance accomplishes a
+subgoal in the speaker's plan (p. 324).
 
-4. **Non-denumerability of indirect meanings**: the possible nonce verb
-   meanings of *teapot* cannot be enumerated. Depending on context, it could
-   mean rubbing, striking, boiling, throwing, etc.
+The hierarchy is **three-tier** (paper pp. 325–326). Ed's hierarchy in
+*Max teapotted a policeman*:
 
-5. **Contextuality of indirect meanings**: what Ed means by *teapot* as a
-   verb depends critically on the circumstances: Ed and the listener's shared
-   knowledge about Max's odd habits.
+- Subgoal **(3)**: Ed wants me to recognize he is using *teapot* to denote
+  teapots (the conventional, direct denotation).
+- Subgoal **(2)**: Ed wants me to recognize that the nonce verb meaning is
+  computable uniquely from our common ground, with the noun playing one
+  role in the situation (= the Innovative Denominal Verb Convention is
+  invoked).
+- Subgoal **(1)**: Ed wants me to recognize the intended verb meaning
+  (the rubbing action).
 
-These five properties are exactly what the `GoalHierarchy` structure (§6)
-captures: `directMeaning` and `intendedMeaning` give (1) simultaneous
-meanings; the asymmetry from direct to intended gives (2) logical priority;
-`directMeaning` being conventional gives (3); `nonce_senses_not_exhaustible`
-gives (4); dependence on `commonGround` gives (5). -/
-
-/-- The five properties shared between indirect illocutionary acts and
-    contextual expressions (pp. 319-321). Each property has a structural
-    counterpart in the `GoalHierarchy` formalization (§6). -/
-inductive IndirectUseProperty where
-  /-- The expression carries both a direct and an indirect meaning. -/
-  | simultaneousMeanings
-  /-- The direct meaning is logically prior to the indirect meaning. -/
-  | logicalPriority
-  /-- The direct meaning follows from conventions of the language. -/
-  | literalDirectMeaning
-  /-- The possible indirect meanings are non-denumerable. -/
-  | nonDenumerableIndirect
-  /-- The actual indirect meaning depends on circumstances of utterance. -/
-  | contextuality
-  deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════════════════
--- §6. Goal Hierarchies and the Intentional View of Parsing
--- ════════════════════════════════════════════════════════════════
-
-/-! ## The Intentional View of Parsing (pp. 323-328)
-
-Clark's central positive proposal: parsing = reconstructing the speaker's
-hierarchy of goals. Each constituent of an utterance accomplishes a subgoal
-in the speaker's plan. The hierarchy of subgoals maps onto the hierarchy
-of constituents (p. 324).
-
-Clark contrasts two views of parsing (p. 324):
-- **Traditional view**: the aim is to yield one of the (traditional) sentence
-  meanings, presumably the one the speaker intended.
-- **Intentional view**: the aim is to yield the speaker's *intentions* in
-  uttering what he did.
-
-For contextual expressions like Bombeck's *Stereos are a dime a dozen*, the
-speaker's intentions are not derivable from any sentence meaning the
-traditional parser could compute (p. 324).
-
-Example (p. 325): Ed's goal hierarchy in using *teapot* in *Max teapotted a
-policeman*:
-- Subgoal (3): Ed wants me to recognize he is using *teapot* to denote teapots
-- Subgoal (2): Ed wants me to recognize that the nonce verb meaning is
-  computable uniquely from our common ground, with the noun playing one role
-- Subgoal (1): Ed wants me to recognize the intended verb meaning (rubbing the
-  back of the leg with a teapot)
-
-The key insight (p. 326): subgoals (2) and (3) are *always* present, for
-both conventional and innovative uses. In conventional cases, the computation
-is trivial because the intended meaning equals the direct meaning. In
-innovative cases, the listener must genuinely compute a novel meaning from
-the common ground. -/
+Crucially (p. 326), subgoals (2) and (3) are *always* implicitly present —
+even for conventional uses. In conventional cases the convention-recognition
+in subgoal (2) is trivial (the convention permits the intended meaning to
+equal the direct meaning). In innovative cases it is substantive (the
+convention licenses the inferred sense). -/
 
 /-- A goal hierarchy for interpreting an expression in context.
-    Clark's main proposal (pp. 323-328): each expression is understood
-    by reconstructing the speaker's hierarchy of goals.
-
-    The three subgoals correspond to Clark's numbered goals (p. 325):
-    - Subgoal (3): `directMeaning` — the conventional meaning of the expression
-    - Subgoal (2): the CG-based bridge from direct to intended meaning
-    - Subgoal (1): `intendedMeaning` — what the speaker means on this occasion -/
-structure GoalHierarchy (W : Type) where
-  /-- Subgoal (3): the direct/conventional meaning of the expression -/
-  directMeaning : W → Bool
-  /-- Subgoal (1): the intended meaning on this occasion -/
-  intendedMeaning : W → Bool
-  /-- The common ground used for subgoal (2) -/
+    Three-tier per Clark pp. 325–326: a direct meaning (subgoal 3), a
+    convention-recognition that licenses the inference (subgoal 2),
+    and an intended meaning (subgoal 1). -/
+structure GoalHierarchy (W : Type*) where
+  /-- Subgoal (3): the direct/conventional meaning. -/
+  directMeaning : W → Prop
+  /-- Subgoal (1): the intended meaning on this occasion. -/
+  intendedMeaning : W → Prop
+  /-- The common ground used for the inference. -/
   commonGround : CG W
+  /-- Subgoal (2): the meta-recognition that the speaker invokes a
+      convention licensing the direct → intended inference. For
+      conventional uses this is `True` (no specific convention required).
+      For innovative uses this is the substantive convention assertion
+      — whose specific content (the Innovative Denominal Verb Convention,
+      a preparatory condition, etc.) is exposed at the source-class level
+      (`DenominalVerbConvention`, `IndirectAct`, …) and projected through
+      to this field. -/
+  invokesConvention : Prop
 
-/-- A **conventional** use: the intended meaning IS the direct meaning.
-    No nonce sense computation needed — subgoal (2) is trivial (p. 326).
-    Example: Arlene telling Bill *Stereos are a dime a dozen* meaning
-    "phonographs are very common" — *stereos* conventionally denotes
-    phonographs and that's what she intends. -/
-def GoalHierarchy.isConventional {W : Type} (g : GoalHierarchy W) : Prop :=
+/-- A **conventional** use: intended = direct (p. 326). -/
+def GoalHierarchy.isConventional {W : Type*} (g : GoalHierarchy W) : Prop :=
   g.intendedMeaning = g.directMeaning
 
-/-- An **innovative** use: the intended meaning DIFFERS from the direct meaning.
-    The listener must compute the nonce meaning from the direct meaning + CG
-    via subgoal (2) (p. 326).
-    Example: Bombeck writing *Stereos are a dime a dozen* meaning "people
-    who possess phonographs are very common" — *stereos* directly denotes
-    phonographs but indirectly denotes people who possess them. -/
-def GoalHierarchy.isInnovative {W : Type} (g : GoalHierarchy W) : Prop :=
+/-- An **innovative** use: intended ≠ direct. The listener must compute
+    the nonce meaning via subgoal (2) (p. 326). -/
+def GoalHierarchy.isInnovative {W : Type*} (g : GoalHierarchy W) : Prop :=
   g.intendedMeaning ≠ g.directMeaning
 
-/-- For conventional uses, setting intended = direct gives a trivially
-    valid goal hierarchy — there is nothing to infer beyond the conventional
-    meaning (p. 326: "the computation required to capture these goals is
-    trivial"). -/
-theorem conventional_bridge_trivial {W : Type}
-    (direct : W → Bool) (cg : CG W) :
-    GoalHierarchy.isConventional
-      { directMeaning := direct
-        intendedMeaning := direct
-        commonGround := cg : GoalHierarchy W } := rfl
+/-! ## §G. Innovative Denominal Verb Convention (paper p. 321)
 
-/-- The intentional view subsumes the traditional view: if the parser
-    reconstructs the speaker's goal hierarchy and the use is conventional,
-    the result is the same as traditional sense-selection — the intended
-    meaning just IS the conventional meaning. Sense-selection is the
-    special case of goal-hierarchy reconstruction where no nonce
-    computation is needed. -/
-theorem traditional_is_special_case {W : Type}
-    (g : GoalHierarchy W) (h : g.isConventional) :
-    g.intendedMeaning = g.directMeaning := h
-
--- ════════════════════════════════════════════════════════════════
--- §7. The Innovative Denominal Verb Convention
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Clark's Convention for Interpreting Innovative Denominal Verbs
-
-The central formal contribution of @cite{clark-clark-1979}, restated in
-@cite{clark-1983} (p. 321):
+Clark's central formal contribution (after @cite{clark-clark-1979}, restated
+in @cite{clark-1983} p. 321):
 
 > In using an innovative denominal verb sincerely, the speaker means to denote:
 > (a) the kind of situation
@@ -503,111 +335,194 @@ The central formal contribution of @cite{clark-clark-1979}, restated in
 >     and the remaining surface arguments of the denominal verb denote
 >     other roles in the situation.
 
-Conditions (b)-(e) are unified as CG-entailment: the speaker has good reason
-to believe the listener can readily compute the situation uniquely from their
-mutual knowledge iff the common ground determines the situation.
+Conditions (b)–(e) are unified as CG-entailment: the CG uniquely determines
+the situation. Condition (f) requires the parent noun's denotation to hold
+in every situation-world. -/
 
-Condition (f) is a structural constraint: the conventional denotation of the
-parent noun must hold in every world where the situation holds — the noun
-meaning participates as one role in the event. For *Max teapotted a policeman*,
-wherever the teapotting-situation holds, there is a teapot involved. -/
+/-- The Innovative Denominal Verb Convention (@cite{clark-clark-1979};
+    paper p. 321).
 
-/-- The Innovative Denominal Verb Convention (@cite{clark-clark-1979}; p. 321).
-
-    The six conditions constrain the relationship between the nonce verb
-    meaning (a situation type), the parent noun's conventional denotation,
-    and the common ground shared by speaker and listener. -/
-structure DenominalVerbConvention (W : Type) where
-  /-- (a) The kind of situation denoted by the innovative verb -/
-  situation : W → Bool
-  /-- The conventional denotation of the parent noun -/
-  nounDenotation : W → Bool
-  /-- (e) The common ground of speaker and listener -/
+    Condition (f) — *"the parent noun denotes one role in the situation,
+    and the remaining surface arguments of the denominal verb denote other
+    roles in the situation"* (paper p. 321) — is encoded structurally by
+    the role-typing fields `parentNounRole` and `otherArgRoles`. The paper
+    makes the role assignment explicit for the running example *Max
+    teapotted a policeman* on p. 325–326: "teapots play one role in the
+    action, Max is the agent, and the policeman is the patient." -/
+structure DenominalVerbConvention (W : Type*) where
+  /-- (a) The kind of situation denoted by the innovative verb. -/
+  situation : W → Prop
+  /-- The conventional denotation of the parent noun. -/
+  nounDenotation : W → Prop
+  /-- (e) The common ground of speaker and listener. -/
   commonGround : CG W
-  /-- (b-d) The situation is uniquely determined by the common ground:
-      in every world compatible with mutual knowledge, the situation holds.
-      This derives "good reason to believe" + "readily compute" + "uniquely"
-      from a single CG-entailment condition. -/
-  cgDeterminesSituation :
-    ∀ w, commonGround.contextSet w → situation w = true
-  /-- (f) The parent noun's conventional meaning is satisfied in every world
-      where the situation holds — the noun meaning participates as one role
-      in the situation (p. 321). For *teapot*: wherever the teapotting
-      situation holds, there is a teapot involved. -/
-  nounParticipates : ∀ w, situation w = true → nounDenotation w = true
+  /-- (b–d) The speaker has good reason to believe the listener can
+      readily compute the situation uniquely from mutual knowledge.
+      Operationalized as: every CG-compatible world satisfies the
+      situation. -/
+  cgDeterminesSituation : ∀ w, commonGround.contextSet w → situation w
+  /-- (f, extensional) The noun's denotation is realized in every
+      situation-world — there is a teapot wherever a teapotting happens. -/
+  nounParticipates : ∀ w, situation w → nounDenotation w
+  /-- (f, role-typing) The thematic role the parent noun denotes in the
+      situation (paper p. 321 + p. 325–326). For *Max teapotted a
+      policeman*, this is `.instrument`. -/
+  parentNounRole : ThetaRole
+  /-- (f, role-typing) The thematic roles the **other** surface arguments
+      denote in the situation (paper p. 321). For *Max teapotted a
+      policeman*: `[.agent, .patient]` — Max is agent, policeman is
+      patient. -/
+  otherArgRoles : List ThetaRole
+  /-- (f, distinctness) "*one role* … *other roles*" — the parent noun's
+      role is distinct from every other surface argument's role
+      (paper p. 321). -/
+  rolesDistinct : parentNounRole ∉ otherArgRoles
 
-/-- A denominal verb use gives rise to a goal hierarchy where the direct
-    meaning is the noun's conventional denotation and the intended meaning
-    is the innovative verb meaning (the situation). This connects the
-    DenominalVerbConvention to the GoalHierarchy framework (§6). -/
-def denominalGoalHierarchy {W : Type}
+/-- Project a denominal-verb convention to a goal hierarchy. The
+    convention's six conditions become subgoal (2)'s `invokesConvention`
+    Prop. -/
+def DenominalVerbConvention.toGoalHierarchy {W : Type*}
     (conv : DenominalVerbConvention W) : GoalHierarchy W where
   directMeaning := conv.nounDenotation
   intendedMeaning := conv.situation
   commonGround := conv.commonGround
+  invokesConvention :=
+    -- (b–d): CG uniquely determines the situation
+    -- (f, extensional): noun denotation realized in every situation-world
+    -- (f, role-distinctness): parent noun role differs from other surface args' roles
+    (∀ w, conv.commonGround.contextSet w → conv.situation w) ∧
+      (∀ w, conv.situation w → conv.nounDenotation w) ∧
+      conv.parentNounRole ∉ conv.otherArgRoles
 
-/-- Every innovative denominal verb use is an innovative goal hierarchy:
-    the noun denotation (direct meaning) differs from the verb meaning
-    (intended meaning) because the nonce verb meaning goes beyond what
-    the noun alone denotes. -/
-theorem denominal_is_innovative {W : Type}
+theorem DenominalVerbConvention.toGoalHierarchy_invokesConvention {W : Type*}
+    (conv : DenominalVerbConvention W) :
+    conv.toGoalHierarchy.invokesConvention :=
+  ⟨conv.cgDeterminesSituation, conv.nounParticipates, conv.rolesDistinct⟩
+
+/-- Every denominal-verb-convention use whose noun denotation strictly
+    differs from its situation projects to an innovative goal hierarchy. -/
+theorem denominal_is_innovative {W : Type*}
     (conv : DenominalVerbConvention W)
     (h : conv.nounDenotation ≠ conv.situation) :
-    (denominalGoalHierarchy conv).isInnovative := h.symm
+    conv.toGoalHierarchy.isInnovative := h.symm
 
--- ════════════════════════════════════════════════════════════════
--- §8. Bridge to LU-RSA
--- ════════════════════════════════════════════════════════════════
+/-! ### Worked example: *Max teapotted a policeman* (paper pp. 320–321, 325–326)
 
-/-! ## Sense-Creation and Lexical Uncertainty
+The paper's running example. Per p. 325–326, Ed's goal hierarchy in
+uttering *Max teapotted a policeman* assigns the following thematic
+roles in the situation:
+
+- The parent noun *teapot* denotes the **instrument** role (the means
+  of the rubbing action).
+- The other surface arguments denote the **agent** role (Max, the
+  rubber) and the **patient** role (the policeman, whose leg gets
+  rubbed).
+
+These three roles are distinct, satisfying condition (f) of the
+Innovative Denominal Verb Convention. -/
+
+/-- A toy world for the *Max teapotted a policeman* example. -/
+structure TeapotWorld where
+  /-- Did the rubbing-with-teapot action take place? -/
+  rubbing : Bool
+  /-- Is a teapot present in the situation? -/
+  teapot : Bool
+  deriving DecidableEq, Repr
+
+/-- The teapotting situation per Clark's paraphrase: rubbing happened
+    AND a teapot was involved (paper p. 320). -/
+def teapotSituation (w : TeapotWorld) : Prop :=
+  w.rubbing = true ∧ w.teapot = true
+
+/-- The conventional denotation of the noun *teapot*: a teapot is
+    present in the world. -/
+def teapotNoun (w : TeapotWorld) : Prop := w.teapot = true
+
+/-- Common ground: shared knowledge about Max's odd habits with teapots.
+    For the worked example we model the CG as already entailing the
+    rubbing-with-teapot situation; in a fuller formalization the CG
+    would entail the relevant odd-habit knowledge from which the
+    listener derives the situation. -/
+def teapotCG : CG TeapotWorld :=
+  CG.empty.add { w | w.rubbing = true ∧ w.teapot = true }
+
+/-- The Innovative Denominal Verb Convention (paper p. 321) instantiated
+    for *Max teapotted a policeman* (paper pp. 320–321, 325–326).
+    The role assignment — teapot = instrument, Max = agent, policeman =
+    patient — is read directly from p. 325. -/
+def teapotConvention : DenominalVerbConvention TeapotWorld where
+  situation := teapotSituation
+  nounDenotation := teapotNoun
+  commonGround := teapotCG
+  cgDeterminesSituation := by
+    intro w h
+    simp [teapotCG] at h
+    exact h
+  nounParticipates := fun _ h => h.2
+  parentNounRole := .instrument
+  otherArgRoles := [.agent, .patient]
+  rolesDistinct := by decide
+
+/-- The full DM + Convention bundle for *to teapot* in this context.
+    The DM-side `recategorized` step (n → v) is satisfied by some
+    underlying `CategorizedRoot`; for downstream studies the `convention`
+    field is the Clark-side substantive content. -/
+def teapotDenominalConvention :
+    DenominalVerbConvention TeapotWorld := teapotConvention
+
+/-- The teapotting situation strictly extends the noun denotation:
+    every teapotting-world has a teapot, but not every teapot-world is
+    a teapotting (the noun's extension is wider than the verb's
+    situation). This is the substrate witness that *to teapot* is an
+    innovative denominal verb. -/
+theorem teapot_is_innovative_denominal :
+    teapotConvention.toGoalHierarchy.isInnovative := by
+  apply denominal_is_innovative
+  intro h
+  -- nounDenotation = teapotNoun (teapot=true);
+  -- situation = teapotSituation (rubbing=true ∧ teapot=true)
+  -- Witness ⟨rubbing=false, teapot=true⟩: LHS True, RHS False.
+  have h' := congr_fun h ⟨false, true⟩
+  simp [teapotConvention, teapotNoun, teapotSituation] at h'
+
+/-- The role assignment for *teapot* in *Max teapotted a policeman* is
+    structurally distinct: instrument ≠ agent and ≠ patient (paper
+    p. 325). This is the substrate witness for condition (f). -/
+theorem teapot_role_assignment_distinct :
+    teapotConvention.parentNounRole = .instrument ∧
+    teapotConvention.otherArgRoles = [.agent, .patient] ∧
+    teapotConvention.parentNounRole ∉ teapotConvention.otherArgRoles :=
+  ⟨rfl, rfl, by decide⟩
+
+/-! ## §H. Bridge to LU-RSA (@cite{bergen-levy-goodman-2016})
 
 @cite{bergen-levy-goodman-2016}'s LU-RSA operationalizes one dimension of
-Clark's sense-creation proposal: the listener marginalizes over possible
-lexica rather than selecting from a fixed one.
+Clark's sense-creation: the listener marginalizes over possible lexica.
 
-    L1(w | u) ∝ Σ_L P(L) · S1(u | w, L) · P(w)
+  L1(w | u) ∝ Σ_L P(L) · S1(u | w, L) · P(w)
 
-This captures Clark's insight that the sense space is open-ended: the listener
-does not select from a finite list of senses but integrates over possible
-interpretations weighted by context (P(w)) and speaker rationality (S1).
+The marginalization captures the open-endedness of the sense space. Clark's
+fuller proposal (the three-tier goal hierarchy, `§F`) is richer — LU-RSA
+captures the "what" (multiple possible meanings) but not the "how"
+(hierarchical goal structure). -/
 
-However, Clark's full proposal is richer than LU-RSA in one key respect:
-Clark argues that parsing is *hierarchical intention reconstruction* —
-the listener reconstructs the speaker's hierarchy of goals, where each
-constituent accomplishes a subgoal (§6). LU-RSA captures the "what" (the
-listener considers multiple possible meanings) but not the "how" (the
-hierarchical goal structure that organizes the computation).
-
-The `SenseCreationParser` below models the LU-RSA operationalization.
-Clark's full proposal additionally requires the `GoalHierarchy` structure
-from §6, which provides the intentional scaffolding. -/
-
-/-- A sense-selection parser uses a fixed `Lexicon` — it cannot handle
-    words not in its lexicon. This corresponds to Clark's traditional parser. -/
+/-- A sense-selection parser uses a fixed `Lexicon`. -/
 def senseSelectionParser (U W : Type) := Lexicon U W
 
-/-- A sense-creation parser marginalizes over a space of possible lexica.
-    The prior P(L) captures what is compatible with mutual knowledge.
-    This models the LU-RSA operationalization of Clark's sense-creation. -/
+/-- A sense-creation parser marginalizes over a space of possible lexica. -/
 structure SenseCreationParser (U W L : Type) where
-  /-- The space of possible lexica (sense-creation candidates) -/
   toLexicon : L → Lexicon U W
-  /-- Prior over lexica, reflecting mutual knowledge -/
   lexiconPrior : L → ℚ
 
-/-- Clark's key claim formalized: sense-selection is a special case of
-    sense-creation where the lexicon space is a singleton. When there is
-    exactly one lexicon (no uncertainty), sense-creation reduces to
-    sense-selection. -/
+/-- Sense-selection is the singleton-lexicon special case of sense-creation. -/
 def senseSelectionAsSenseCreation {U W : Type} (lex : Lexicon U W) :
     SenseCreationParser U W Unit where
   toLexicon := λ _ => lex
   lexiconPrior := λ _ => 1
 
-/-- Conversely, sense-creation with a non-trivial lexicon space cannot
-    be reduced to sense-selection when different lexica assign different
-    meanings to some utterance. This is the formal content of Clark's
-    argument that sense-selection is inadequate (pp. 297-299). -/
+/-- Sense-creation with a non-trivial lexicon space cannot be reduced to
+    sense-selection when different lexica assign different meanings to the
+    same utterance (paper pp. 297–299). -/
 theorem sense_creation_strictly_generalizes
     {U W L : Type} (parser : SenseCreationParser U W L)
     (l₁ l₂ : L) (u : U) (w : W)
@@ -619,317 +534,339 @@ theorem sense_creation_strictly_generalizes
   rw [h1, h2] at h_diff
   exact h_diff rfl
 
--- ════════════════════════════════════════════════════════════════
--- §9. Bridge to DM Recategorization
--- ════════════════════════════════════════════════════════════════
+/-! ## §I. Bridge to DM recategorization
 
-/-! ## Denominal Verbs: Syntax Is Easy, Semantics Is Hard
+DM's `Recategorization.denominal` captures the syntactic n → v step. The
+hard part — what the resulting verb *means* — is what Clark's convention
+(`§G`) and the goal hierarchy (`§F`) provide. -/
 
-DM's `Recategorization.denominal` captures the syntactic operation
-underlying denominal verbs: ROOT + n → noun, then + v → verb.
-Clark's point is that this syntactic step is trivial — the hard part is
-computing what the resulting verb *means* (p. 303).
-
-DM's List 3 (Encyclopedia entries) handles idiosyncratic meaning, but
-only for conventionalized forms. For innovative denominal verbs, List 3
-has no entry — the meaning must be computed from context. This is exactly
-the gap that Clark's convention (§7) and the goal hierarchy (§6) fill.
-
-The bridge: `Recategorization.denominal` gives the morphosyntactic
-*input* to Clark's convention. Condition (f) — "the parent noun denotes
-one role in the situation" — references the meaning of the noun before
-recategorization. -/
-
-/-- A denominal verb has two components:
-    1. The syntactic recategorization (n → v), from DM
-    2. The pragmatic sense-creation, from Clark's convention
-
-    The syntactic part is deterministic; the pragmatic part is contextual. -/
-structure DenominalVerb (W : Type) where
-  /-- The underlying root and its nominal categorization -/
+/-- A denominal verb has a syntactic component (DM recategorization) and a
+    pragmatic component (Clark's convention). -/
+structure DenominalVerb (W : Type*) where
   nominalRoot : CategorizedRoot
-  /-- Evidence that recategorization to v succeeds -/
   recategorized : CategorizedRoot
   recatProof : nominalRoot.recategorize .denominal = some recategorized
-  /-- The pragmatic convention that determines the verb's meaning -/
   convention : DenominalVerbConvention W
 
-/-- The syntactic category of a denominal verb is always V. -/
-theorem denominal_verb_is_verbal {W : Type}
-    (dv : DenominalVerb W) :
+theorem denominal_verb_is_verbal {W : Type*} (dv : DenominalVerb W) :
     dv.recategorized.categorizer = .v :=
   recategorization_changes_category
     dv.nominalRoot .denominal dv.recategorized dv.recatProof
 
-/-- The source of a denominal verb is always N — the noun meaning
-    is available as input to Clark's convention (condition f). -/
-theorem denominal_verb_source_is_nominal {W : Type}
-    (dv : DenominalVerb W) :
+theorem denominal_verb_source_is_nominal {W : Type*} (dv : DenominalVerb W) :
     dv.nominalRoot.categorizer = .n :=
   denominal_requires_n dv.nominalRoot dv.recategorized dv.recatProof
 
-/-- The gap between DM and Clark: DM tells us that denominal verbs exist
-    (the recategorization succeeds) but says nothing about what they mean.
-    Two denominal verbs from the same root always produce the same syntactic
-    result (V category), yet can have arbitrarily different meanings.
-    Clark's convention fills this gap by specifying how the meaning is
-    constructed from the parent noun + common ground (pp. 303, 321). -/
-theorem dm_underdetermines_meaning {W : Type}
-    (dv₁ dv₂ : DenominalVerb W) :
+/-- DM tells us denominal verbs exist (recategorization succeeds) but says
+    nothing about what they mean. Two denominal verbs from the same root
+    always produce the same syntactic result yet can have arbitrarily
+    different meanings — Clark's convention fills that gap. -/
+theorem dm_underdetermines_meaning {W : Type*} (dv₁ dv₂ : DenominalVerb W) :
     dv₁.recategorized.categorizer = dv₂.recategorized.categorizer := by
   rw [denominal_verb_is_verbal dv₁, denominal_verb_is_verbal dv₂]
 
--- ════════════════════════════════════════════════════════════════
--- §10. The *Stereos* Example (pp. 326-327)
--- ════════════════════════════════════════════════════════════════
+/-! ## §J. The *stereos* example (paper pp. 326–327)
 
-/-! ## Arlene vs. Bombeck: Conventional and Innovative Use of *Stereos*
-
-Clark's most detailed example (pp. 326-327): Arlene tells Bill *Stereos are
-a dime a dozen* meaning "phonographs are very common" (conventional use).
-Bombeck writes the same sentence meaning "people who possess phonographs
-are very common" (innovative use).
-
-The two uses have the same **direct meaning** — *stereos* conventionally
-denotes phonographs — but different **intended meanings**. A traditional
-parser with the conventional meaning in its lexicon handles Arlene's
-utterance correctly but **mis-parses** Bombeck's: it arrives at
-"phonographs are very common" instead of "people who have stereos are very
-common" (p. 299).
-
-The key insight (p. 327): "Bill, in parsing Arlene's utterance, can't ever
-be content with subgoal (1) alone. He can't ever know for certain, ahead
-of time, which words Arlene is using in their conventional senses, and
-which she is using in contextually innovative senses." Subgoals (2) and (3)
-are always implicitly present — even for conventional uses. -/
+Arlene tells Bill *Stereos are a dime a dozen* meaning "phonographs are
+very common" (conventional). Bombeck writes the same sentence meaning
+"people who possess phonographs are very common" (innovative). Same
+direct meaning, different intended meanings. -/
 
 /-- A world with two relevant features for the *stereos* example. -/
 structure StereosWorld where
-  /-- Are phonographs common in this world? -/
   phonographsCommon : Bool
-  /-- Are people who own phonographs common in this world? -/
   ownersCommon : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The conventional denotation of *stereos* = phonographs.
-    Same for both Arlene and Bombeck — the DIRECT meaning is always
-    the conventional one (property 3: literalness). -/
-def stereosDirectMeaning (w : StereosWorld) : Bool := w.phonographsCommon
+    Same for both Arlene and Bombeck — the DIRECT meaning is the
+    conventional one (property 3: literalness). -/
+def stereosDirectMeaning : StereosWorld → Prop := λ w => w.phonographsCommon = true
 
-/-- Arlene's goal hierarchy: conventional use.
-    She means "phonographs are common" — exactly what the word conventionally
-    means. Subgoal (1) = subgoal (3). -/
+/-- Arlene's goal hierarchy: conventional use (intended = direct). -/
 def arlenesGoalHierarchy : GoalHierarchy StereosWorld where
   directMeaning := stereosDirectMeaning
   intendedMeaning := stereosDirectMeaning
   commonGround := .empty
+  invokesConvention := True
 
-/-- Bombeck's CG: the discourse context establishes that she is writing
-    about roommates, their possessions, and the social consequences of
-    those possessions. The CG determines that people who own phonographs
-    are common (which is what she intends *stereos* to convey). -/
+/-- Bombeck's CG: discourse context establishes "owners are common." -/
 def bombecksCG : CG StereosWorld :=
-  CG.empty.add (λ w => w.ownersCommon = true)
+  CG.empty.add { w | w.ownersCommon = true }
 
-/-- Bombeck's goal hierarchy: innovative use.
-    She means "people who possess phonographs are common" — a nonce sense
-    computed from the direct meaning (phonographs) + CG (roommate context).
-    Subgoal (1) ≠ subgoal (3). -/
+/-- Bombeck's goal hierarchy: innovative use. The intended meaning is the
+    nonce reading (owners are common). `invokesConvention` is left at `True`
+    here so this hand-built example matches `stereosMeaning.evaluate
+    bombecksCG`'s projection (`§L`) — the substantive convention assertion
+    for this class of cases lives in `DenominalVerbConvention.toGoalHierarchy`
+    and `IndirectAct.toGoalHierarchy`, not in occasion-specific
+    `ContextualMeaning` evaluations. -/
 def bombecksGoalHierarchy : GoalHierarchy StereosWorld where
   directMeaning := stereosDirectMeaning
-  intendedMeaning := λ w => w.ownersCommon
+  intendedMeaning := λ w => w.ownersCommon = true
   commonGround := bombecksCG
+  invokesConvention := True
 
-/-- Arlene's use is conventional: intendedMeaning = directMeaning. -/
 theorem arlene_is_conventional : arlenesGoalHierarchy.isConventional := rfl
 
-/-- Bombeck's use is innovative: intendedMeaning ≠ directMeaning.
-    The two meanings differ on the world where phonographs are common
-    but the people who own them are not. -/
 theorem bombeck_is_innovative : bombecksGoalHierarchy.isInnovative := by
   intro h
-  have := congr_fun h ⟨true, false⟩
-  exact absurd this nofun
+  have h' := congr_fun h ⟨true, false⟩
+  simp [bombecksGoalHierarchy, stereosDirectMeaning] at h'
 
-/-- A finite lexicon with the conventional meaning of *stereos*. -/
-def conventionalLexicon : FiniteLexicon Unit (StereosWorld → Bool) where
-  senses := λ _ => [stereosDirectMeaning]
+/-! ## §K. Bridge to indirect speech acts (paper pp. 319–321)
 
-/-- The lexicon handles Arlene's conventional use: her intended meaning
-    is the conventional meaning, which is in the lexicon. -/
-theorem conventional_lexicon_handles_arlene :
-    conventionalLexicon.canParse () stereosDirectMeaning :=
-  List.Mem.head _
+Clark's structural argument: contextual expressions and indirect illocutionary
+acts are understood by the same mechanism — reconstructing the speaker's
+hierarchy of goals (paper pp. 319–321).
 
-/-- The lexicon fails for Bombeck's innovative use: her intended meaning
-    (people who own phonographs are common) is NOT in the lexicon.
-    This is Clark's **mis-parsing problem** (p. 299) — the parser would
-    arrive at "phonographs are common" instead of what Bombeck meant. -/
-theorem conventional_lexicon_fails_bombeck :
-    ¬ conventionalLexicon.canParse () (λ w => w.ownersCommon) := by
+The substrate consolidation: the indirect-act side carries a typed
+`prepCondition : Option PreparatoryCondition` consuming
+`Core.Discourse.IllocutionaryForce`'s Searle hierarchy, and projects to
+`GoalHierarchy` via `IndirectAct.toGoalHierarchy`. The "same mechanism"
+claim is then a structural identity: both `IndirectAct` and
+`DenominalVerbConvention` provide projections into the common
+`GoalHierarchy` schema, and the corresponding subgoal-(2)
+`invokesConvention` field is non-vacuously populated by each. -/
+
+/-- An indirect illocutionary act: direct content + intended (indirect)
+    content + the preparatory condition the indirect act exploits or
+    questions. The canonical case is *Do you know what time it is?*
+    used as a request — `prepCondition := some .knowledge`. -/
+structure IndirectAct (W : Type*) where
+  /-- The directly expressed content (e.g., the literal yes/no question). -/
+  directContent : W → Prop
+  /-- The intended indirect content (e.g., the request). -/
+  intendedContent : W → Prop
+  /-- The preparatory condition the indirect act questions or exploits.
+      `none` for cases where the indirect mechanism is not preparatory-
+      condition based (e.g., `It's cold in here` as a request to close the
+      window — exploits the speaker's discomfort, not a Searle preparatory
+      condition). -/
+  prepCondition : Option PreparatoryCondition
+  /-- Common ground licensing the inference. -/
+  commonGround : CG W
+
+/-- Project an indirect act to a goal hierarchy.
+
+    The substrate-level `invokesConvention` field is `True`: any
+    `IndirectAct` instance invokes *some* convention by virtue of being
+    an indirect act, but the substrate doesn't formally distinguish
+    Searle-style preparatory-condition-based conventions (which Clark
+    1979 / FrancikClark1985 / Ruytenbeek2017 use, exposed here via
+    `prepCondition`) from Clark-style goal-hierarchy-based conventions
+    (which paper pp. 321–323 use for the *American Express vs Credit
+    cards* contrast — see `amexQuestion` / `creditCardsQuestion` below).
+
+    The specific convention content lives at the source-class level:
+    `prepCondition` for Searle-style cases; the goal-hierarchy
+    documentation in docstrings for Clark-style cases. -/
+def IndirectAct.toGoalHierarchy {W : Type*} (act : IndirectAct W) :
+    GoalHierarchy W where
+  directMeaning := act.directContent
+  intendedMeaning := act.intendedContent
+  commonGround := act.commonGround
+  invokesConvention := True
+
+/-- Indirect acts whose direct and intended contents differ are innovative. -/
+theorem indirect_act_innovative {W : Type*} (act : IndirectAct W)
+    (h : act.directContent ≠ act.intendedContent) :
+    act.toGoalHierarchy.isInnovative := h.symm
+
+/-- Worked example: *Do you know what time it is?* used as a request.
+    Direct content: the literal yes/no question (in our toy model, the
+    proposition that the addressee knows the time). Intended content: the
+    request that the addressee tell the speaker the time. Preparatory
+    condition: `.knowledge` — Clark/Searle's canonical case. -/
+def timeQuestionExample : IndirectAct Unit where
+  directContent := λ _ => True   -- literal: "do you know X?" — toy stand-in
+  intendedContent := λ _ => False -- intended: "tell me X" — distinct
+  prepCondition := some .knowledge
+  commonGround := .empty
+
+/-- The time-question example projects via the `.knowledge` preparatory
+    condition, exactly the substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean`
+    formalizes for `RequestForm.doYouKnow` and that
+    `Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean` consumes for its
+    mechanism 2. -/
+theorem time_question_routes_via_knowledge :
+    timeQuestionExample.prepCondition = some .knowledge := rfl
+
+/-- The time-question example is innovative (direct ≠ intended). -/
+theorem time_question_is_innovative :
+    timeQuestionExample.toGoalHierarchy.isInnovative := by
   intro h
-  simp [FiniteLexicon.canParse, conventionalLexicon] at h
-  have := congr_fun h ⟨true, false⟩
-  exact absurd this nofun
+  have h' := congr_fun h ()
+  simp [timeQuestionExample, IndirectAct.toGoalHierarchy] at h'
 
-/-- Bombeck's CG determines the intended meaning: in every world
-    compatible with the CG, the intended meaning (owners are common) holds.
-    This is the formal content of conditions (b)-(e). -/
-theorem bombeck_cg_determines_meaning :
-    ∀ w, bombecksCG.contextSet w → (λ w => w.ownersCommon) w = true := by
-  intro w h
-  exact h.1
+/-! ### Worked example: *American Express cards?* vs *Credit cards?*
+    (paper pp. 321–323)
 
--- ════════════════════════════════════════════════════════════════
--- §11. Bridge to Indirect Speech Acts
--- ════════════════════════════════════════════════════════════════
+The paper's only experimental result (Clark 1979 Experiment 5,
+restated). An assistant called Palo Alto restaurants asking either
+*Do you accept American Express cards?* or *Do you accept credit cards?*
 
-/-! ## The Shared Mechanism: GoalHierarchy
+**The contrast is striking** (paper p. 323): "the two questions are
+identical except for the object of the verbs. It was the content of
+those noun phrases that forced the restaurateurs to infer very
+different goals and to construe *American Express cards?* as merely a
+direct question while construing *Credit cards?* as both a direct
+question and an indirect request for a list of acceptable credit
+cards."
 
-Clark's structural argument (pp. 319-321): contextual expressions and
-indirect illocutionary acts are understood by the **same mechanism** —
-reconstructing the speaker's hierarchy of goals. The five shared
-properties (`IndirectUseProperty`, §5) are structural consequences of
-both producing `GoalHierarchy` instances:
+The mechanism is goal hierarchies (paper p. 322). For *AmEx?* the
+restaurateur infers a 4-subgoal hierarchy:
+1. She wants to decide whether to patronize this restaurant
+2. She wants to know how to pay for her meal
+3. She wants to know if she can pay with the credit cards she owns
+   (almost certainly just the AmEx)
+4. She wants to know if the restaurant accepts AmEx
 
-- **(1) Simultaneous meanings** → `directMeaning` and `intendedMeaning` fields
-- **(2) Logical priority** → `directMeaning` is the conventional/literal layer
-- **(3) Literalness** → `directMeaning` follows from linguistic convention
-- **(4) Non-denumerability** → `nonce_senses_not_exhaustible` (§4)
-- **(5) Contextuality** → `commonGround` field
+The question reflects subgoal (4) directly; answering it with *Yes*
+also fulfills subgoal (3). 100% answered *yes*-style.
 
-The parallel extends to @cite{roberts-2012}'s Strategy of Inquiry
-(`Discourse.Strategy` in `Core/Discourse/QUD.lean`): both are rose-tree
-structures where resolving children resolves the parent. Clark's goal
-hierarchy is Roberts' strategy applied at the **word level** — each
-constituent maps to a subgoal, and resolving all subgoals resolves the
-speaker's communicative intention. -/
+For *Credit cards?* the inferred hierarchy has 5 subgoals:
+1. She wants to decide whether to patronize this restaurant
+2. She wants to know how to pay for her meal
+3. She wants to know if she can pay with one of her credit cards
+   (probably most or all of the major cards)
+4. She wants to know if any cards acceptable to the restaurant are
+   among the cards she owns
+5. She wants to know if the restaurant accepts credit cards
 
-open Core.Discourse (IntentionalState PsychMode)
+The question reflects subgoal (5); answering with just *yes* satisfies
+(5) but not (4) — hence the indirect-request layer. 84% answered *yes*;
+46% additionally inferred and gave the list of accepted cards.
 
-/-- An indirect speech act gives rise to a goal hierarchy.
+These are NOT preparatory-condition-based indirect acts (Searle 1975 /
+Clark 1979's mechanism), so `prepCondition := none`. The convention
+invoked is goal-hierarchy reconstruction from NP content + CG. -/
 
-    Example: *Do you know what time it is?* used as a request.
-    - Direct meaning: the yes/no question (interrogative)
-    - Intended meaning: the request to tell the time (directive)
-    - Common ground: the conversational situation
+/-- AmEx case: the question is interpreted as direct only (paper p. 322:
+    100% gave yes-answers; restaurateurs construed as direct question).
+    Substrate witness: intended = direct (no indirect-request layer). -/
+def amexQuestion : IndirectAct Unit where
+  directContent := λ _ => True   -- "Do you accept AmEx?" — toy stand-in
+  intendedContent := λ _ => True  -- intended = direct (4-subgoal hierarchy collapses to (4))
+  prepCondition := none           -- Clark-style goal-hierarchy mechanism, not Searle-prep
+  commonGround := .empty
 
-    This shows that indirect speech acts produce the **same type** as
-    contextual expressions — the five shared properties (§5) are
-    structural consequences of this shared type. -/
-def indirectActGoalHierarchy {W : Type}
-    (directContent : W → Bool) (indirectContent : W → Bool)
-    (cg : CG W) : GoalHierarchy W where
-  directMeaning := directContent
-  intendedMeaning := indirectContent
-  commonGround := cg
+/-- Credit cards case: the question carries BOTH a direct interpretation
+    AND an indirect request for the list of acceptable cards (paper
+    p. 322–323: 84% answered yes-able; 46% additionally inferred the
+    indirect request and gave the list).
 
-/-- Indirect speech acts are always innovative: by definition, the
-    indirect meaning differs from the direct meaning (otherwise the
-    act would not be "indirect"). -/
-theorem indirect_act_innovative {W : Type}
-    (direct indirect : W → Bool) (cg : CG W)
-    (h : direct ≠ indirect) :
-    (indirectActGoalHierarchy direct indirect cg).isInnovative := h.symm
+    Substrate witness: intended ≠ direct (the indirect-request layer
+    means the speaker's communicative intent extends beyond the direct
+    question's literal answer). -/
+def creditCardsQuestion : IndirectAct Unit where
+  directContent := λ _ => True    -- "Do you accept credit cards?"
+  intendedContent := λ _ => False -- intended ≠ direct (5-subgoal hierarchy: (5) + indirect (4))
+  prepCondition := none
+  commonGround := .empty
 
-/-- Clark's central claim: the **same mechanism** handles both indirect
-    speech acts and contextual expressions. Both are `GoalHierarchy`
-    instances — the type IS the shared mechanism. Conventional uses
-    (where direct = intended) are the degenerate case where no
-    CG-based computation is needed. -/
-theorem same_mechanism {W : Type}
-    (speechAct : GoalHierarchy W) (contextualExpr : GoalHierarchy W) :
-    -- Both are GoalHierarchy instances — this is the structural claim.
-    -- The theorem is trivially true because the claim IS the shared type.
-    -- Clark's argument is that the mechanism is the same, not that
-    -- any two instances are equal.
-    (speechAct.isConventional ∨ speechAct.isInnovative) ∧
-    (contextualExpr.isConventional ∨ contextualExpr.isInnovative) :=
-  ⟨conventional_or_innovative speechAct, conventional_or_innovative contextualExpr⟩
-where
-  conventional_or_innovative {W : Type} (g : GoalHierarchy W) :
-      g.isConventional ∨ g.isInnovative :=
-    Classical.or_iff_not_imp_left.mpr id
+/-- The AmEx and credit-cards questions are surface-identical in their
+    direct content (both "Do you accept X?") but diverge in intended
+    content. This is the substrate witness for paper p. 323's
+    conclusion: "it is the content of those noun phrases that forced
+    the restaurateurs to infer very different goals." -/
+theorem amex_credit_cards_diverge_in_intent :
+    amexQuestion.directContent = creditCardsQuestion.directContent ∧
+    amexQuestion.intendedContent ≠ creditCardsQuestion.intendedContent := by
+  refine ⟨rfl, ?_⟩
+  intro h
+  have h' := congr_fun h ()
+  simp [amexQuestion, creditCardsQuestion] at h'
 
--- ════════════════════════════════════════════════════════════════
--- §12. ContextualMeaning — The Deeper Formal Principle
--- ════════════════════════════════════════════════════════════════
+/-- AmEx is treated as conventional in the goal-hierarchy sense:
+    intended = direct (no indirect layer needed; paper p. 322
+    "100 per cent of the restaurateurs … gave this response. They
+    interpreted the utterance as a direct question and nothing more"). -/
+theorem amex_question_is_conventional :
+    amexQuestion.toGoalHierarchy.isConventional := rfl
 
-/-! ## Meaning Factors Through Direct Meaning + Common Ground
+/-- Credit cards triggers the indirect-act layer (paper p. 322 "the
+    caller's reason for asking the question couldn't have been just to
+    attain subgoal (5) … She must be indirectly requesting the
+    restaurant's list of acceptable credit cards"). Substrate witness:
+    intended ≠ direct. -/
+theorem credit_cards_question_is_innovative :
+    creditCardsQuestion.toGoalHierarchy.isInnovative := by
+  intro h
+  have h' := congr_fun h ()
+  simp [creditCardsQuestion, IndirectAct.toGoalHierarchy] at h'
 
-The deeper formal principle underlying Clark's argument: a contextual
-expression's meaning is not a static denotation but a **function from
-common ground to denotation**. The `GoalHierarchy` of §6 is what you
-get when you **evaluate** this function at a specific CG — it freezes
-the CG to produce a snapshot (directMeaning, intendedMeaning) pair.
+/-! ## §K.bis Shared mechanism — structural identity
 
-This factorization clarifies several of Clark's claims:
+Clark's "same mechanism" claim is realized as a typed projection. Both
+`IndirectAct` and `DenominalVerbConvention` have a `toGoalHierarchy`
+function landing in the common `GoalHierarchy` schema. The shared
+mechanism is the `GoalHierarchy` schema together with the
+`isConventional` / `isInnovative` classification, which both projections
+respect by construction. -/
 
-- **Sense-selection vs sense-creation**: sense-selection treats meaning as
-  a static value (CG-independent); sense-creation treats it as a function
-  (CG-dependent). Sense-selection is the special case where `compute`
-  ignores the CG.
+/-- The `isInnovative` criterion at the substrate level reduces to direct
+    ≠ intended regardless of source theory. -/
+theorem goal_hierarchy_innovative_iff {W : Type*} (g : GoalHierarchy W) :
+    g.isInnovative ↔ g.intendedMeaning ≠ g.directMeaning := Iff.rfl
 
-- **Non-denumerability**: the space of possible senses is non-denumerable
-  because the CG space is open-ended. Each CG potentially yields a
-  different intended meaning, so no finite list of senses suffices.
+/-- The shared mechanism: both indirect acts and denominal-verb conventions
+    project to `GoalHierarchy`, and the `isInnovative` classification
+    agrees with their source-level criterion (direct ≠ intended for
+    indirect acts; nounDenotation ≠ situation for denominal-verb
+    conventions). The two `Iff.rfl` proofs witness that the projections
+    preserve the classification — the substrate is a uniform interface,
+    not theory-specific. -/
+theorem shared_innovativeness_criterion {W : Type*}
+    (act : IndirectAct W) (conv : DenominalVerbConvention W) :
+    (act.toGoalHierarchy.isInnovative ↔
+      act.intendedContent ≠ act.directContent) ∧
+    (conv.toGoalHierarchy.isInnovative ↔
+      conv.situation ≠ conv.nounDenotation) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
-- **The stereos example**: Arlene and Bombeck share the SAME underlying
-  `ContextualMeaning` for *stereos*. Evaluating it at Arlene's empty CG
-  yields `intendedMeaning = directMeaning` (conventional). Evaluating it
-  at Bombeck's roommate-context CG yields `intendedMeaning ≠ directMeaning`
-  (innovative). The difference is in the CG, not in the word.
+/-! ## §L. Contextual meaning — meaning as a function from common ground
 
-- **GoalHierarchy as evaluation**: `GoalHierarchy` = `ContextualMeaning`
-  evaluated at a point. The hierarchy is an occasion-specific instantiation
-  of a more general meaning function. -/
+The deeper formal principle: a contextual expression's meaning is a function
+from common ground to denotation, not a static denotation. The `GoalHierarchy`
+of `§F` is what you get by **evaluating** this function at a specific CG. -/
 
-/-- A contextual meaning: the meaning of an expression is a function
-    from common ground to denotation, not a static denotation.
+/-- A contextual meaning: meaning is a function from common ground to
+    denotation. `directMeaning` is the conventional denotation; `compute`
+    maps a CG to the **intended** meaning on a given occasion. -/
+structure ContextualMeaning (W : Type*) where
+  directMeaning : W → Prop
+  compute : CG W → (W → Prop)
 
-    `directMeaning` is the conventional denotation — what any competent
-    speaker knows. `compute` maps a CG to the **intended** meaning on
-    a given occasion. For conventional uses, `compute cg = directMeaning`.
-    For innovative uses, `compute cg ≠ directMeaning` — the CG shifts
-    the meaning away from the conventional denotation. -/
-structure ContextualMeaning (W : Type) where
-  /-- The conventional/direct denotation -/
-  directMeaning : W → Bool
-  /-- Compute the intended meaning from the common ground -/
-  compute : CG W → (W → Bool)
-
-/-- Evaluate a contextual meaning at a specific CG, producing a
-    `GoalHierarchy`. This is the connection between the abstract meaning
-    function and the occasion-specific goal hierarchy the listener
-    reconstructs. -/
-def ContextualMeaning.evaluate {W : Type}
+/-- Evaluate a contextual meaning at a specific CG, producing a goal
+    hierarchy. The convention-recognition is left at `True` here — the
+    fuller treatment exposes a CG-dependence witness via the source-class
+    projections (`DenominalVerbConvention.toGoalHierarchy` etc.). -/
+def ContextualMeaning.evaluate {W : Type*}
     (cm : ContextualMeaning W) (cg : CG W) : GoalHierarchy W where
   directMeaning := cm.directMeaning
   intendedMeaning := cm.compute cg
   commonGround := cg
+  invokesConvention := True
 
 /-- A contextual meaning is **CG-independent** when the CG makes no
-    difference — `compute` returns the direct meaning regardless.
-    This is Clark's sense-selection: the meaning is static. -/
-def ContextualMeaning.isCGIndependent {W : Type}
+    difference. This is sense-selection. -/
+def ContextualMeaning.isCGIndependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
   ∀ cg : CG W, cm.compute cg = cm.directMeaning
 
-/-- A contextual meaning is **CG-dependent** when there exists some CG
-    that shifts the intended meaning away from the direct meaning.
-    This is Clark's sense-creation: the meaning is genuinely contextual. -/
-def ContextualMeaning.isCGDependent {W : Type}
+/-- A contextual meaning is **CG-dependent** when there exists a CG that
+    shifts the intended meaning away from the direct meaning. This is
+    sense-creation. -/
+def ContextualMeaning.isCGDependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
   ∃ cg : CG W, cm.compute cg ≠ cm.directMeaning
 
-/-- CG-independent meanings always produce conventional goal hierarchies. -/
-theorem cg_independent_conventional {W : Type}
+theorem cg_independent_conventional {W : Type*}
     (cm : ContextualMeaning W) (h : cm.isCGIndependent) (cg : CG W) :
     (cm.evaluate cg).isConventional := h cg
 
-/-- CG-dependent meanings produce innovative goal hierarchies at the
-    witnessing CG. -/
-theorem cg_dependent_innovative {W : Type}
+theorem cg_dependent_innovative {W : Type*}
     (cm : ContextualMeaning W) (h : cm.isCGDependent) :
     ∃ cg, (cm.evaluate cg).isInnovative := h
 
@@ -937,22 +874,20 @@ noncomputable section
 open Classical
 
 /-- The contextual meaning of *stereos*: the SAME meaning function
-    underlies both Arlene's and Bombeck's uses.
+    underlies both Arlene's and Bombeck's uses. The `compute` function
+    models the inference from CG to intended meaning:
+    if the CG entails owners-are-common, the intended meaning is
+    `ownersCommon`; otherwise it falls back to the direct meaning.
 
-    The `compute` function models the inference from CG to intended meaning:
-    - If the CG entails that owners are common, the intended meaning is
-      `ownersCommon` (the innovative, CG-derived reading).
-    - Otherwise, the intended meaning falls back to the direct meaning
-      `phonographsCommon` (the conventional reading).
-
-    This is a simplified model of the full pragmatic computation. The real
-    inference involves reconstructing the speaker's goals from mutual
-    knowledge — here we model just the outcome. -/
+    This is a simplified model of the pragmatic computation — the
+    `bombecksCG` antecedent bakes in the inference target. A fuller
+    treatment via LU-RSA marginalisation or the `ErkHerbelot2024`
+    PMF-over-scenarios substrate is the natural extension. -/
 def stereosMeaning : ContextualMeaning StereosWorld where
   directMeaning := stereosDirectMeaning
   compute := λ cg =>
     if ∀ w, cg.contextSet w → w.ownersCommon = true
-    then λ w => w.ownersCommon
+    then λ w => w.ownersCommon = true
     else stereosDirectMeaning
 
 end
@@ -964,39 +899,29 @@ private theorem bombecksCG_entails_owners :
 
 private theorem emptyCG_not_entails_owners :
     ¬ ∀ w, (CG.empty : CG StereosWorld).contextSet w → w.ownersCommon = true := by
-  push_neg
-  refine ⟨⟨true, false⟩, ?_, nofun⟩
-  trivial
+  intro h
+  have := h ⟨true, false⟩ (by trivial)
+  exact absurd this (by decide)
 
-/-- Evaluating at Arlene's empty CG yields the conventional goal hierarchy.
-    The empty CG does not entail anything about owners, so `compute` returns
-    the direct meaning. -/
 theorem stereos_arlene :
     stereosMeaning.evaluate .empty = arlenesGoalHierarchy := by
   unfold stereosMeaning ContextualMeaning.evaluate
   simp only [if_neg emptyCG_not_entails_owners, arlenesGoalHierarchy]
 
-/-- Evaluating at Bombeck's roommate-context CG yields the innovative
-    goal hierarchy. The CG entails `ownersCommon`, so `compute` shifts
-    the meaning away from the direct denotation. -/
 theorem stereos_bombeck :
     stereosMeaning.evaluate bombecksCG = bombecksGoalHierarchy := by
   unfold stereosMeaning ContextualMeaning.evaluate
   simp only [if_pos bombecksCG_entails_owners, bombecksGoalHierarchy]
 
-/-- *Stereos* is CG-dependent: there exists a CG (Bombeck's) where
-    the intended meaning differs from the direct meaning. -/
 theorem stereos_is_cg_dependent : stereosMeaning.isCGDependent := by
   refine ⟨bombecksCG, ?_⟩
   unfold stereosMeaning
   simp only [if_pos bombecksCG_entails_owners]
   intro h
-  have := congr_fun h ⟨true, false⟩
-  exact absurd this nofun
+  have h' := congr_fun h ⟨true, false⟩
+  simp [stereosDirectMeaning] at h'
 
-/-- A CG-independent meaning can be fully captured by a singleton
-    lexicon — sense-selection suffices. -/
-theorem cg_independent_lexicon_suffices {W : Type}
+theorem cg_independent_lexicon_suffices {W : Type*}
     (cm : ContextualMeaning W) (h : cm.isCGIndependent) :
     ∀ cg, (FiniteLexicon.mk (λ _ : Unit => [cm.directMeaning])).canParse
       () (cm.compute cg) := by

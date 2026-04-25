@@ -1,133 +1,55 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-! # Italian Negation Fragment
+@cite{haspelmath-2013} @cite{dryer-2013-wals} @cite{zanuttini-1997} @cite{cinque-1999}
 
-Italian sentential negation and negative concord (n-words).
+Italian sentential negation: the standard preverbal negation particle *non*
+and its packaging as a `NegationSystem`. The marker is a free particle
+in preverbal position; WALS Ch 143A classifies Italian as `.negv`.
+Italian object clitics attach between *non* and the verb (*non lo vedo*,
+not **lo non vedo*) — the canonical syntactic analysis is
+@cite{zanuttini-1997}'s NegP cartography, refined by @cite{cinque-1999}'s
+adverb hierarchy.
 
-## Negation Strategy
+## Sibling files
 
-Italian uses the preverbal particle *non* for standard negation:
-- *Non ho visto nessuno* 'NEG have seen nobody' = 'I didn't see anyone'
+Italian negation is distributed across four coordinated files. This file
+holds only the operator (the marker + system). The other axes:
 
-## Negative Concord
+- `Fragments/Italian/PolarityItems.lean` — lexical reactives: n-words
+  (*nessuno*, *niente*, *mai*, *neanche/nemmeno/neppure*), the formal NPI
+  *alcuno*, the emphatic reinforcer *mica*, the FCIs *qualsiasi/qualunque*.
+  The operator/lexical-reactive split is documented in
+  `Core/Lexical/NegMarker.lean`.
+- `Fragments/Italian/ExpletiveNegation.lean` — the 11 environments where
+  *non* appears vacuously (Greco 2020): *temere/dubitare* complements,
+  *prima che*, *a meno che*, comparative *quanto*, etc. Distinct axis from
+  standard sentential negation.
+- `Fragments/Italian/PolarityMarking.lean` — sentence-level polarity
+  strategies (emphatic affirmation, focus particles).
 
-Italian is a negative concord language (like Spanish): n-words co-occur
-with *non* in postverbal position, but can stand alone preverbally:
-- Postverbal: *Non ho visto nessuno* (non required)
-- Preverbal: *Nessuno è venuto* (non absent)
-
-This matches the `.mixed` strategy in WALS Ch 115, paralleling Spanish.
-
-## N-Words
-
-Italian n-words: *nessuno/nessuna* (nobody), *niente/nulla* (nothing),
-*mai* (never), *neanche/nemmeno/neppure* (not even).
+Bias-conditioned *non₂* (the non-truth-functional comparative *non* of
+Napoli & Nespor 1976) surfaces obliquely via the `pur` and `affatto`
+entries in `PolarityItems.lean`.
 -/
 
 namespace Fragments.Italian.Negation
 
--- ============================================================================
--- § 1: Negation Marker
--- ============================================================================
+open Core.Lexical.NegMarker
 
-/-- The Italian standard negation marker. -/
-def negMarker : String := "non"
+/-- *non* — Italian's standard preverbal negation particle.
+    `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
+    A free word, not a clitic; syntactically immediately preverbal. -/
+def non : NegMarkerEntry :=
+  { form := "non"
+  , morphemeType := .particle
+  , position := .preverbal }
 
--- ============================================================================
--- § 2: N-Word Entries
--- ============================================================================
-
-/-- An Italian n-word entry. -/
-structure NWordEntry where
-  /-- Surface form -/
-  form : String
-  /-- Gloss -/
-  gloss : String
-  /-- Can this n-word appear preverbally without *non*? -/
-  preverbalAlone : Bool
-  deriving Repr, BEq
-
-/-- *nessuno* — nobody (masculine). Can appear preverbally alone. -/
-def nessuno : NWordEntry :=
-  { form := "nessuno", gloss := "nobody.M", preverbalAlone := true }
-
-/-- *nessuna* — nobody (feminine). Can appear preverbally alone. -/
-def nessuna : NWordEntry :=
-  { form := "nessuna", gloss := "nobody.F", preverbalAlone := true }
-
-/-- *niente* — nothing. Requires *non* postverbally;
-    can appear preverbally alone. -/
-def niente : NWordEntry :=
-  { form := "niente", gloss := "nothing", preverbalAlone := true }
-
-/-- *nulla* — nothing (formal). Same distribution as *niente*. -/
-def nulla : NWordEntry :=
-  { form := "nulla", gloss := "nothing.FORMAL", preverbalAlone := true }
-
-/-- *mai* — never. Requires *non* (typically postverbal: *non... mai*). -/
-def mai : NWordEntry :=
-  { form := "mai", gloss := "never", preverbalAlone := false }
-
-/-- *neanche* — not even. Requires *non* postverbally;
-    can appear preverbally alone. -/
-def neanche : NWordEntry :=
-  { form := "neanche", gloss := "not.even", preverbalAlone := true }
-
-/-- *nemmeno* — not even (variant). Same distribution as *neanche*. -/
-def nemmeno : NWordEntry :=
-  { form := "nemmeno", gloss := "not.even", preverbalAlone := true }
-
-def allNWords : List NWordEntry :=
-  [nessuno, nessuna, niente, nulla, mai, neanche, nemmeno]
-
--- ============================================================================
--- § 3: Negative Concord Examples
--- ============================================================================
-
-/-- A negative concord example: a sentence with *non* and an n-word. -/
-structure NegConcordExample where
-  /-- Italian sentence -/
-  sentence : String
-  /-- English translation -/
-  translation : String
-  /-- Is *non* present? -/
-  hasNon : Bool
-  /-- Position of the n-word -/
-  nwordPosition : String  -- "preverbal" or "postverbal"
-  deriving Repr, BEq
-
-/-- Postverbal n-word requires *non*. -/
-def ex_postverbal : NegConcordExample :=
-  { sentence := "Non ho visto nessuno"
-  , translation := "I didn't see anyone"
-  , hasNon := true
-  , nwordPosition := "postverbal" }
-
-/-- Preverbal n-word stands alone (no *non*). -/
-def ex_preverbal : NegConcordExample :=
-  { sentence := "Nessuno è venuto"
-  , translation := "Nobody came"
-  , hasNon := false
-  , nwordPosition := "preverbal" }
-
-/-- Postverbal *mai* requires *non*. -/
-def ex_mai : NegConcordExample :=
-  { sentence := "Non ho mai visto Roma"
-  , translation := "I have never seen Rome"
-  , hasNon := true
-  , nwordPosition := "postverbal" }
-
--- ============================================================================
--- § 4: Verification Theorems
--- ============================================================================
-
-/-- *nessuno* can appear preverbally without *non*. -/
-theorem nessuno_preverbal : nessuno.preverbalAlone = true := rfl
-
-/-- *mai* requires *non* (cannot appear preverbally alone). -/
-theorem mai_requires_non : mai.preverbalAlone = false := rfl
-
-/-- The negation marker is *non*. -/
-theorem negMarker_is_non : negMarker = "non" := rfl
+/-- The Italian negation system: a single preverbal particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`.
+    WALS classifications are pulled from `Datasets/WALS/Features/F112A.lean`
+    et al. via `NegationSystem.ofISO` — never hand-encoded. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "ita" [non]
 
 end Fragments.Italian.Negation

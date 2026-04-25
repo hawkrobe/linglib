@@ -41,6 +41,26 @@ def nikto : PolarityItemEntry :=
   , scalarDirection := .strengthening
   , notes := "N-word; negative concord: 'nikto ne prišël'" }
 
+/-- *ничего* (nichego) — Non-human N-word; obligatory negative concord.
+    'Ničego ne videl' (NEG saw nothing) = "(I) saw nothing". -/
+def nichego : PolarityItemEntry :=
+  { form := "ничего (nichego)"
+  , polarityType := .npiWeak
+  , baseForce := .existential
+  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , scalarDirection := .strengthening
+  , notes := "Non-human N-word; genitive form ничего; co-occurs with не" }
+
+/-- *никогда* (nikogda) — Temporal N-word; obligatory negative concord.
+    'Nikogda ne prixodil' (never NEG came) = "(He) never came". -/
+def nikogda : PolarityItemEntry :=
+  { form := "никогда (nikogda)"
+  , polarityType := .npiWeak
+  , baseForce := .temporal
+  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , scalarDirection := .strengthening
+  , notes := "Temporal N-word; co-occurs with не" }
+
 -- ============================================================================
 -- FCI
 -- ============================================================================
@@ -55,6 +75,15 @@ def ktoUgodno : PolarityItemEntry :=
   , notes := "Free choice: 'kto ugodno možet èto sdelat'' (anyone can do that)" }
 
 -- ============================================================================
+-- Joint
+-- ============================================================================
+
+/-- The Russian polarity-item inventory: the Fragment-side joint consumed
+    by `Phenomena/Polarity/Typology.lean`. -/
+def items : List PolarityItemEntry :=
+  [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
+
+-- ============================================================================
 -- Verification
 -- ============================================================================
 
@@ -62,7 +91,7 @@ theorem nikto_ktoUgodno_distinct :
     nikto.polarityType ≠ ktoUgodno.polarityType := by decide
 
 theorem russian_npis_strengthening :
-    [ktoLibo, nikto].all
+    [ktoLibo, nikto, nichego, nikogda].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
 end Fragments.Russian.PolarityItems

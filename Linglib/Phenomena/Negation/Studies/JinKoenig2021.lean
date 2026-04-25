@@ -1,4 +1,3 @@
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
@@ -13,6 +12,7 @@ import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.English.Predicates.Verbal
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Jin & Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -603,7 +603,8 @@ alongside p (in worlds outside the modal base) triggers EN. -/
 
 open Semantics.Modality.Kratzer (necessity possibility necessity_iff_all possibility_iff_any
   ModalBase OrderingSource bestWorlds)
-open Semantics.Attitudes.Intensional (World)
+
+abbrev World := Fin 4
 
 /-- IMPOSSIBLE maps to the logical operator licensing condition. -/
 theorem impossible_licensing :

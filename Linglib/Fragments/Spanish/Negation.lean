@@ -1,8 +1,9 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NegMarker
 
 /-!
 # Spanish Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013}
+@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+@cite{zanuttini-1997}
 
 Spanish expresses standard negation with the preverbal particle *no*.
 Negation is **symmetric**: adding *no* introduces no structural changes
@@ -25,13 +26,30 @@ Spanish has position-dependent negative concord (WALS Ch 115: mixed):
 - Preverbal n-words preclude *no*: *Nadie vino* 'Nobody came'
 - Postverbal n-words require *no*: *No vi nada* 'NEG saw nothing'
 
-The pattern parallels Italian (*nessuno*/*non*).
+The pattern parallels Italian (*nessuno*/*non*). N-word lexemes —
+*nadie*, *nada*, *nunca*, *ninguno* — live in the sibling
+`Fragments/Spanish/PolarityItems.lean` per the operator/lexical-reactive
+split documented in `Core/Lexical/NegMarker.lean`. The
+`NegConcordExample` data below illustrates the marker's interaction with
+the n-word system at the sentence level (operator-side typology).
 -/
 
 namespace Fragments.Spanish.Negation
 
-/-- The Spanish standard negation marker. -/
-def negMarker : String := "no"
+open Core.Lexical.NegMarker
+
+/-- *no* — Spanish's standard preverbal negation particle.
+    A free word, syntactically immediately preverbal:
+    *Juan **no** come* 'Juan doesn't eat'. -/
+def no : NegMarkerEntry :=
+  { form := "no"
+  , morphemeType := .particle
+  , position := .preverbal }
+
+/-- The Spanish negation system: a single preverbal particle.
+    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+def negationSystem : NegationSystem :=
+  NegationSystem.ofISO "spa" [no]
 
 /-- A Spanish negation example. -/
 structure NegExample where
@@ -74,32 +92,6 @@ def subjunctive : NegExample :=
 def allExamples : List NegExample :=
   [present, preterite, imperfect, future, subjunctive]
 
-/-- A Spanish n-word entry. -/
-structure NWordEntry where
-  form : String
-  gloss : String
-  /-- Can this n-word appear preverbally without *no*? -/
-  preverbalAlone : Bool
-  deriving Repr, BEq
-
-/-- *nadie* — nobody. Preverbal alone: *Nadie vino*. -/
-def nadie : NWordEntry :=
-  { form := "nadie", gloss := "nobody", preverbalAlone := true }
-
-/-- *nada* — nothing. Postverbal requires *no*: *No vi nada*. -/
-def nada : NWordEntry :=
-  { form := "nada", gloss := "nothing", preverbalAlone := true }
-
-/-- *nunca* — never. Preverbal alone: *Nunca viene*. -/
-def nunca : NWordEntry :=
-  { form := "nunca", gloss := "never", preverbalAlone := true }
-
-/-- *ninguno* — no one / none. -/
-def ninguno : NWordEntry :=
-  { form := "ninguno", gloss := "none", preverbalAlone := true }
-
-def allNWords : List NWordEntry := [nadie, nada, nunca, ninguno]
-
 /-- A negative concord example showing the position-dependent pattern. -/
 structure NegConcordExample where
   sentence : String
@@ -124,8 +116,6 @@ def postverbalNada : NegConcordExample :=
 
 /-! ## Verification -/
 
-theorem negMarker_is_no : negMarker = "no" := rfl
-
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
 theorem all_tenses_available : allExamples.length = 5 := by native_decide
 
@@ -135,11 +125,5 @@ private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 theorem all_negative_contain_no :
     allExamples.all (fun e => hasSubstr e.negative " no ") = true := by
   native_decide
-
-/-- Preverbal n-word: *no* absent. -/
-theorem preverbal_no_absent : preverbalNadie.hasNo = false := rfl
-
-/-- Postverbal n-word: *no* required. -/
-theorem postverbal_no_required : postverbalNada.hasNo = true := rfl
 
 end Fragments.Spanish.Negation

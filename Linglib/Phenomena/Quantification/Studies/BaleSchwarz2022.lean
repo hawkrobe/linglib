@@ -1,5 +1,4 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases

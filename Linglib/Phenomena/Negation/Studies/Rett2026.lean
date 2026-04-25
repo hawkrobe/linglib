@@ -138,7 +138,7 @@ def frenchBefore : ENDatum :=
 def italianBefore : ENDatum :=
   { language := "Italian", construction := "prima che"
   , constructionType := .before
-  , negMarker := Fragments.Italian.Negation.negMarker
+  , negMarker := Fragments.Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [mai.form, alcuno.form] }
 
@@ -166,7 +166,7 @@ def spanishComparative : ENDatum :=
 def italianComparative : ENDatum :=
   { language := "Italian", construction := "più ... di quanto"
   , constructionType := .comparative
-  , negMarker := Fragments.Italian.Negation.negMarker
+  , negMarker := Fragments.Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [pur.form]
   , mannerEffect := some { evaluative := true, atypical := false } }
@@ -182,7 +182,7 @@ def frenchFear : ENDatum :=
 def italianUntil : ENDatum :=
   { language := "Italian", construction := "finché"
   , constructionType := .until
-  , negMarker := Fragments.Italian.Negation.negMarker
+  , negMarker := Fragments.Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [mai.form, alcuno.form] }
 
@@ -192,7 +192,7 @@ def italianUntil : ENDatum :=
 def italianExclamative : ENDatum :=
   { language := "Italian", construction := "wh-exclamative"
   , constructionType := .fear
-  , negMarker := Fragments.Italian.Negation.negMarker
+  , negMarker := Fragments.Italian.Negation.non.form
   , enType := .high, isOptional := false
   , licensedNPIForms := [] }
 
@@ -204,7 +204,7 @@ def italianExclamative : ENDatum :=
 def italianSneg : ENDatum :=
   { language := "Italian", construction := "surprise negation (Sneg)"
   , constructionType := .fear
-  , negMarker := Fragments.Italian.Negation.negMarker
+  , negMarker := Fragments.Italian.Negation.non.form
   , enType := .high, isOptional := false
   , licensedNPIForms := [] }
 

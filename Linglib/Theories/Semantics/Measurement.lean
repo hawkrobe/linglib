@@ -103,36 +103,17 @@ theorem toBoundedness_coherent :
 -- § 2. `much` as Structure-Preserving Map
 -- ════════════════════════════════════════════════════
 
-/-- Admissibility constraint on measure functions introduced by `much`.
-
-    `much_μ` has the denotation ⟦much_μ⟧^A = A(μ) —
-    simply a variable-assignment lookup returning a measure function μ.
-    The *admissibility condition* on that measure function requires
-    strict monotonicity (order preservation):
-
-      for all α, β ∈ D_≤Part, if α ≺^Part β then μ(α) ≺^Deg μ(β)
-
-    `MuchSem μ` captures this felicity condition, not `much`'s denotation
-    itself. It is `StrictMono`, equivalently `MereoDim.toStrictMono` or
-    CSW's `admissibleMeasure`. -/
-abbrev MuchSem {A D : Type*} [Preorder A] [Preorder D] (μ : A → D) : Prop :=
-  StrictMono μ
-
-/-- `MuchSem` is definitionally equal to CSW's admissible measure
-    constraint. Both require strict order preservation.
-    This makes the–CSW identification explicit: changing
-    either definition breaks this theorem. -/
-theorem muchSem_eq_admissibleMeasure
-    {S D : Type*} [Preorder S] [Preorder D] (μ : S → D) :
-    MuchSem μ ↔ Semantics.Gradability.StatesBased.admissibleMeasure μ :=
-  Iff.rfl
-
-/-- Every `MereoDim` witness provides a `MuchSem` proof.
-    `MereoDim` bundles `StrictMono` in a typeclass; `MuchSem` is the
-    unbundled predicate. -/
-theorem muchSem_of_mereoDim
+/-- Every `MereoDim` witness yields the unbundled `admissibleMeasure`
+    Prop. `MereoDim` (Core/Scales/MereoDim.lean) bundles `StrictMono` in a
+    typeclass with `[PartialOrder]` carriers; `admissibleMeasure`
+    (Theories/Semantics/Gradability/StatesBased.lean) is the equivalent
+    Prop with the more permissive `[Preorder]` carriers. The single
+    multi-tradition naming convention lives on `admissibleMeasure`'s
+    docstring. -/
+theorem admissibleMeasure_of_mereoDim
     {A D : Type*} [PartialOrder A] [PartialOrder D]
-    {μ : A → D} (h : MereoDim μ) : MuchSem μ :=
+    {μ : A → D} (h : MereoDim μ) :
+    Semantics.Gradability.StatesBased.admissibleMeasure (S := A) μ :=
   h.toStrictMono
 
 -- ════════════════════════════════════════════════════

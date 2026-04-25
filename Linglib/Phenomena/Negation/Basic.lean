@@ -19,7 +19,6 @@ Empirical data: semantic and pragmatic properties of sentential negation.
 -/
 
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Negation
 

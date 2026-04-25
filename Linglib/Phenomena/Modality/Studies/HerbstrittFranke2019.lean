@@ -143,14 +143,14 @@ example : speakerBeliefQ 4 1 ⟨5, by omega⟩ = 25/231 := by native_decide
 def θ_possibly  : ℚ := 247/1000
 
 /-- Semantic threshold for "probably" (posterior mean from Table 6).
-    HDI: [0.500, 0.594].
-
-    Note: this differs from the LaBToM threshold (0.70) used in
-    `Attitudes.EpistemicThreshold.EpistemicEntry.likely_`. The discrepancy
-    may reflect differences between the production task here and the
-    Theory-of-Mind task in @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025},
-    or genuine differences between "probably" and "likely". -/
+    HDI: [0.500, 0.594]. The disagreement with LaBToM's `likely_.θ = 7/10`
+    is formalized in §8 (`labtom_likely_above_hf_probably_hdi`). -/
 def θ_probably  : ℚ := 549/1000
+
+/-- Upper bound of the 95% HDI for `θ_probably` (Table 6).
+    Below LaBToM's `likely_.θ = 0.70`, witnessing that the LaBToM
+    point estimate falls outside HF's 95% credible interval. -/
+def θ_probably_upper : ℚ := 594/1000
 
 /-- Semantic threshold for "certainly" (posterior mean from Table 6).
     HDI: [0.904, 1.000]. -/
@@ -526,6 +526,37 @@ appropriate when the speaker is nearly but not absolutely sure, and that
 Hellinger distance correctly captures this by making "certainly" available
 as a message with bounded disutility.
 -/
+
+/-!
+### Disagreement with LaBToM @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+
+HF and LaBToM both infer credence thresholds for English probability
+vocabulary by Bayesian fitting against experimental data, but pick
+different thresholds where their lexicons overlap. HF's posterior mean
+for `probably` is 0.549 with 95% HDI [0.500, 0.594]; LaBToM's point
+estimate for `likely` is 0.700. LaBToM's value lies above the upper
+bound of HF's HDI — the methodologies disagree at the 95%-credibility
+level, not just on the point estimate.
+
+Candidate explanations: lexical (`probably` ≠ `likely`; CSW §5.3 (78)
+exhibits a divergence between the two), task (production with urns vs
+Theory-of-Mind in a gridworld), or posterior uncertainty (LaBToM
+reports point values where HF reports intervals). The theorem below
+makes the disagreement audit-visible.
+
+HF and LaBToM agree on `certainly`/`certain` to within 0.001
+(0.949 vs 0.950) — well inside both HDIs. No theorem on that pair;
+the empirical signal isn't there. -/
+
+open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
+
+/-- LaBToM's `likely_.θ = 0.70` lies above the upper bound of HF's
+    95% HDI for `θ_probably` ([0.500, 0.594]). The two parameter-fitted
+    theories disagree at the 95%-credibility level. -/
+theorem labtom_likely_above_hf_probably_hdi :
+    θ_probably_upper < EpistemicEntry.likely_.θ := by
+  show (594 / 1000 : ℚ) < 7 / 10
+  norm_num
 
 /-!
 ### Modal Concord

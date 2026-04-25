@@ -5,6 +5,21 @@ Integrates with @cite{erk-herbelot-2024} Product of Experts for disambiguation.
 - Resnik, P. (1996). Selectional constraints: An information-theoretic model.
 - Erk, K. (2007). A simple, similarity-based model for selectional preferences.
 - Erk, K. & Herbelot, A. (2024). How to Marry a Star. Journal of Semantics.
+
+## Substrate-promotion forward-pointer
+
+This file uses ℚ-valued selectional preferences (`Concept → ℚ`) and
+the legacy `poe2` from `Core/Agent/ProductOfExperts.lean`. The newer
+SDS substrate (`Theories/Semantics/Probabilistic/SDS/ConceptNode.lean`,
+post-Phase-1 audit) uses `Role → PMF Concept` (ℝ≥0∞-valued, paper-faithful)
+and `PMF.productOfExperts` from `Core/Probability/PMFPosterior.lean`.
+
+The two substrates are parallel: a `RoleWithConstraint Concept` here
+(ℚ) corresponds to a `SelectionalDist Role Concept` there (PMF). The
+unification — promoting this file's definitions to ℝ≥0∞ + PMF and
+deleting `Core/Agent/ProductOfExperts.lean` — is its own project, since
+this file has 15+ definitions and several downstream consumers. Until
+that lands, prefer the SDS substrate for new work.
 -/
 
 import Mathlib.Data.Rat.Defs

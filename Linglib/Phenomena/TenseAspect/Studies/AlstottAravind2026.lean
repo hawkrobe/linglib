@@ -1,13 +1,13 @@
 import Linglib.Features.Acceptability
-import Linglib.Paradigms.Measurement
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare
+import Linglib.Paradigms.SelfPacedReading
 
 open Features (Acceptability)
-open Paradigms.Measurement
+open Paradigms.SelfPacedReading (Region)
 
 /-!
 # @cite{alstott-aravind-2026}: On aspectual coercion in *before*- and *after*-clauses
@@ -63,14 +63,11 @@ inductive CoercionType where
   | complement   -- Complement coercion (sanity check)
   deriving DecidableEq, Repr, Inhabited
 
-/-- Spillover region where an effect was measured. -/
-inductive SpilloverRegion where
-  | verb      -- at the critical verb
-  | verbPlus1 -- one word after verb
-  | verbPlus2 -- two words after verb
-  deriving DecidableEq, Repr, Inhabited
+/-- Result from a self-paced reading experiment.
 
-/-- Result from a self-paced reading experiment. -/
+    Region uses `Paradigms.SelfPacedReading.Region` (offset from the
+    designated critical region): `Region.critical` is the verb,
+    `Region.spillover 1` is verb+1, `Region.spillover 2` is verb+2. -/
 structure ExperimentResult where
   experiment : Experiment
   condition : String
@@ -81,8 +78,8 @@ structure ExperimentResult where
   se : Rat
   /-- p-value -/
   pValue : Rat
-  /-- Spillover region where effect was measured -/
-  region : SpilloverRegion
+  /-- Region (offset from critical verb) where effect was measured -/
+  region : Region
   /-- Whether the effect reached significance (Bonferroni-corrected α = 0.025) -/
   significant : Bool
   /-- Whether the analysis was exploratory (not pre-registered) -/
@@ -117,7 +114,7 @@ def exp1a_rt : ExperimentResult :=
   , effectBeta := -23/1000   -- β = -0.023
   , se := 1/100              -- SE = 0.01
   , pValue := 12/100         -- p = 0.12
-  , region := .verbPlus1
+  , region := .spillover 1
   , significant := false }
 
 def exp1a_naturalness : NaturalnessResult :=
@@ -143,7 +140,7 @@ def exp1b_rt : ExperimentResult :=
   , effectBeta := 33/1000    -- β = 0.033
   , se := 13/1000
   , pValue := 1/100          -- p = 0.01
-  , region := .verbPlus1
+  , region := .spillover 1
   , significant := true }
 
 def exp1b_naturalness : NaturalnessResult :=
@@ -170,7 +167,7 @@ def exp2_rt : ExperimentResult :=
   , effectBeta := 6/100      -- β = 0.06
   , se := 2/100
   , pValue := 3/1000         -- p = 0.003
-  , region := .verbPlus2
+  , region := .spillover 2
   , significant := true
   , exploratory := true }
 
@@ -196,7 +193,7 @@ def exp3_rt : ExperimentResult :=
   , effectBeta := -3/1000    -- β = -0.003
   , se := 13/1000            -- SE = 0.013
   , pValue := 78/100         -- p = 0.78
-  , region := .verbPlus1
+  , region := .spillover 1
   , significant := false }
 
 def exp3_naturalness : NaturalnessResult :=
@@ -223,7 +220,7 @@ def exp4_rt : ExperimentResult :=
   , effectBeta := 66/1000    -- β = 0.066
   , se := 24/1000            -- SE = 0.024
   , pValue := 8/1000         -- p = 0.008
-  , region := .verbPlus2
+  , region := .spillover 2
   , significant := true
   , exploratory := true }
 
@@ -248,7 +245,7 @@ def complement_coercion_exp1a : ExperimentResult :=
   , effectBeta := 38/1000    -- β = 0.038 (noun+1)
   , se := 15/1000            -- SE = 0.015
   , pValue := 1/100          -- p = 0.01
-  , region := .verbPlus1     -- noun+1 in complement trials
+  , region := .spillover 1     -- noun+1 in complement trials
   , significant := true }
 
 /-- Complement coercion in Exp 1b at noun+1. -/
@@ -259,7 +256,7 @@ def complement_coercion_exp1b : ExperimentResult :=
   , effectBeta := 35/1000    -- β = 0.035
   , se := 13/1000            -- SE = 0.013
   , pValue := 9/1000         -- p = 0.009
-  , region := .verbPlus1
+  , region := .spillover 1
   , significant := true }
 
 /-- Complement coercion in Exp 3 at noun+1. -/
@@ -270,7 +267,7 @@ def complement_coercion_exp3 : ExperimentResult :=
   , effectBeta := 35/1000    -- β = 0.035
   , se := 13/1000            -- SE = 0.013
   , pValue := 9/1000         -- p = 0.009
-  , region := .verbPlus1
+  , region := .spillover 1
   , significant := true }
 
 -- ============================================================================
@@ -305,11 +302,8 @@ theorem complement_coercion_replicates :
     complement_coercion_exp3.significant = true :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Processing measure: all experiments use self-paced reading. -/
-def processingMeasure : MeasureSpec :=
-  { scale := .continuous
-  , task := .selfPacedReading
-  , unit := "log-transformed reading time (ms)" }
+/-! Processing measure: all experiments use self-paced reading; the dependent
+    variable is log-transformed reading time (ms). -/
 
 /-- Delayed effect in connective contexts: cost at verb+2 (not verb+1).
     Both connective experiments (2, 4) show verb+2 spillover, while the
@@ -317,9 +311,9 @@ def processingMeasure : MeasureSpec :=
     coercion in connectives being slower to detect than semantic coercion
     in modifier contexts. Both connective results are exploratory. -/
 theorem connective_vs_modifier_spillover :
-    exp2_rt.region = .verbPlus2 ∧ exp2_rt.exploratory = true ∧
-    exp4_rt.region = .verbPlus2 ∧ exp4_rt.exploratory = true ∧
-    exp1b_rt.region = .verbPlus1 ∧ exp1b_rt.exploratory = false :=
+    exp2_rt.region = .spillover 2 ∧ exp2_rt.exploratory = true ∧
+    exp4_rt.region = .spillover 2 ∧ exp4_rt.exploratory = true ∧
+    exp1b_rt.region = .spillover 1 ∧ exp1b_rt.exploratory = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

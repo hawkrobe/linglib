@@ -116,7 +116,7 @@ def finnish : MiestamoDatum :=
       "Derived: neg aux being a verb structurally entails finiteness change." }
 
 /-- German: symmetric, no asymmetry. Particle *nicht*.
-    Form derived from `Fragments.German.Negation.negMarker`. -/
+    Form derived from `Fragments.German.Negation.nicht.form`. -/
 def german : MiestamoDatum :=
   { language := "German"
   , morphemeType := .particle
@@ -124,14 +124,14 @@ def german : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.German.Negation.negMarker]
+  , negMarkers := [Fragments.German.Negation.nicht.form]
   , asymmetryDescription := "Symmetric: adding nicht introduces no " ++
       "structural or paradigmatic changes." }
 
 /-- Japanese: constructional + paradigmatic, A/Fin+A/Cat.
     Suffix *-nai* changes verb to i-adjective (constructional) and shifts
     tense marking to the suffix (paradigmatic).
-    Form derived from `Fragments.Japanese.Negation.negSuffix`. -/
+    Form derived from `Fragments.Japanese.Negation.negSuffix.form`. -/
 def japanese : MiestamoDatum :=
   { language := "Japanese"
   , morphemeType := .affix
@@ -139,14 +139,14 @@ def japanese : MiestamoDatum :=
   , asymmetrySubtype := .finAndCat
   , asymmetryDimensions := [.constructional, .paradigmatic]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.Japanese.Negation.negSuffix]
+  , negMarkers := [Fragments.Japanese.Negation.negSuffix.form]
   , asymmetryDescription := "Constructional: -nai turns verb into i-adjective. " ++
       "Paradigmatic: tense/mood marked on -nai, not on stem. " ++
       "Independent: affix type does not predict category change." }
 
 /-- Turkish: SymAsy with paradigmatic A/Cat (aorist only).
     Most constructions symmetric; aorist negative uses *-z* instead of *-(I)r*.
-    Form derived from `Fragments.Turkish.Negation.negSuffix`. -/
+    Form derived from `Fragments.Turkish.Negation.negSuffix.form`. -/
 def turkish : MiestamoDatum :=
   { language := "Turkish"
   , morphemeType := .affix
@@ -154,7 +154,7 @@ def turkish : MiestamoDatum :=
   , asymmetrySubtype := .otherCategories
   , asymmetryDimensions := [.paradigmatic]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.Turkish.Negation.negSuffix]
+  , negMarkers := [Fragments.Turkish.Negation.negSuffix.form]
   , asymmetryDescription := "Paradigmatic: aorist marker -(I)r → -z under negation. " ++
       "Most other TAM constructions are symmetric. " ++
       "Independent: suffix type does not predict aorist change." }
@@ -191,7 +191,7 @@ def burmese : MiestamoDatum :=
       "Independent: circumfix type does not predict TAM neutralization." }
 
 /-- Italian: symmetric. Particle *non*, no structural change.
-    Form derived from `Fragments.Italian.Negation.negMarker`. -/
+    Form derived from `Fragments.Italian.Negation.non.form`. -/
 def italian : MiestamoDatum :=
   { language := "Italian"
   , morphemeType := .particle
@@ -199,12 +199,12 @@ def italian : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.Italian.Negation.negMarker]
+  , negMarkers := [Fragments.Italian.Negation.non.form]
   , asymmetryDescription := "Symmetric: non adds negation without " ++
       "structural or paradigmatic change." }
 
 /-- Spanish: symmetric. Particle *no*, no structural change.
-    Form derived from `Fragments.Spanish.Negation.negMarker`. -/
+    Form derived from `Fragments.Spanish.Negation.no.form`. -/
 def spanish : MiestamoDatum :=
   { language := "Spanish"
   , morphemeType := .particle
@@ -212,7 +212,7 @@ def spanish : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.Spanish.Negation.negMarker]
+  , negMarkers := [Fragments.Spanish.Negation.no.form]
   , asymmetryDescription := "Symmetric: no adds negation without " ++
       "structural or paradigmatic change. " ++
       "Position-dependent n-word concord (parallels Italian)." }
@@ -231,8 +231,8 @@ def mandarin : MiestamoDatum :=
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.Mandarin.Negation.buParticle,
-                    Fragments.Mandarin.Negation.meiParticle]
+  , negMarkers := [Fragments.Mandarin.Negation.bu.form,
+                    Fragments.Mandarin.Negation.mei.form]
   , asymmetryDescription := "Constructional: méi(yǒu) introduces the " ++
       "existential verb yǒu as the finite element; the lexical verb " ++
       "loses finite status (A/Fin/Neg-FE). bù constructions are symmetric. " ++
@@ -241,7 +241,7 @@ def mandarin : MiestamoDatum :=
 /-- English: SymAsy with constructional A/Cat (do-support).
     With modals/be/have, negation is symmetric; with lexical verbs,
     *do*-support introduces a structural change (constructional asymmetry).
-    Form derived from `Fragments.English.Negation.negMarker`. -/
+    Form derived from `Fragments.English.Negation.not.form`. -/
 def english : MiestamoDatum :=
   { language := "English"
   , morphemeType := .particle
@@ -249,14 +249,14 @@ def english : MiestamoDatum :=
   , asymmetrySubtype := .otherCategories
   , asymmetryDimensions := [.constructional]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.English.Negation.negMarker]
+  , negMarkers := [Fragments.English.Negation.not.form]
   , asymmetryDescription := "Constructional: do-support introduces auxiliary do " ++
       "with lexical verbs (He eats → He does not eat). " ++
       "Symmetric with modals/be/have. " ++
       "Independent: particle type does not predict do-support." }
 
 /-- Russian: symmetric. Particle *не* (*ne*), no structural change.
-    Form derived from `Fragments.Russian.Negation.negMarker`. -/
+    Form derived from `Fragments.Russian.Negation.ne.form`. -/
 def russian : MiestamoDatum :=
   { language := "Russian"
   , morphemeType := .particle
@@ -264,7 +264,7 @@ def russian : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.Russian.Negation.negMarker]
+  , negMarkers := [Fragments.Russian.Negation.ne.form]
   , asymmetryDescription := "Symmetric: не adds negation without " ++
       "structural or paradigmatic change. " ++
       "Obligatory negative concord (Slavic pattern)." }
@@ -286,7 +286,7 @@ def czech : MiestamoDatum :=
 /-- Maori: constructional A/Fin, source unclear.
     *Kāhore* functions as a quasi-auxiliary, changing the finiteness
     structure. WALS classifies morpheme type as wordUnclear.
-    Form derived from `Fragments.Maori.Negation.negWord`. -/
+    Form derived from `Fragments.Maori.Negation.kahore.form`. -/
 def maori : MiestamoDatum :=
   { language := "Maori"
   , morphemeType := .wordUnclear
@@ -294,14 +294,14 @@ def maori : MiestamoDatum :=
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
   , asymmetrySource := some .derived
-  , negMarkers := [Fragments.Maori.Negation.negWord]
+  , negMarkers := [Fragments.Maori.Negation.kahore.form]
   , asymmetryDescription := "Constructional: kāhore takes the TAM position, " ++
       "verb appears in nominalized form (A/Fin). " ++
       "Derived: quasi-auxiliary status structurally entails finiteness change." }
 
 /-- Hixkaryana: constructional A/Fin, independent.
     Suffix *-hira* deverbalizes the verb; a copula becomes the finite
-    element. Form derived from `Fragments.Hixkaryana.Negation.negSuffix`. -/
+    element. Form derived from `Fragments.Hixkaryana.Negation.hira.form`. -/
 def hixkaryana : MiestamoDatum :=
   { language := "Hixkaryana"
   , morphemeType := .affix
@@ -309,7 +309,7 @@ def hixkaryana : MiestamoDatum :=
   , asymmetrySubtype := .finiteness
   , asymmetryDimensions := [.constructional]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.Hixkaryana.Negation.negSuffix]
+  , negMarkers := [Fragments.Hixkaryana.Negation.hira.form]
   , asymmetryDescription := "Constructional: -hira deverbalizes the verb, " ++
       "copula becomes the finite element (A/Fin). " ++
       "Independent: affix type does not predict deverbalization." }
@@ -319,7 +319,7 @@ def hixkaryana : MiestamoDatum :=
     constructions. *-chu* also appears in polar interrogatives — it is a
     general "validator" expressing assertion authority (@cite{miestamo-2005}
     p. 158). Some constructions symmetric, others require *-chu*.
-    Form derived from `Fragments.Quechua.Negation.negParticle`. -/
+    Form derived from `Fragments.Quechua.Negation.mana.form`. -/
 def imbaburaQuechua : MiestamoDatum :=
   { language := "Quechua (Imbabura)"
   , morphemeType := .particle
@@ -327,7 +327,7 @@ def imbaburaQuechua : MiestamoDatum :=
   , asymmetrySubtype := .realityStatus
   , asymmetryDimensions := [.paradigmatic]
   , asymmetrySource := some .independent
-  , negMarkers := [Fragments.Quechua.Negation.negParticle]
+  , negMarkers := [Fragments.Quechua.Negation.mana.form]
   , asymmetryDescription := "Paradigmatic: negative requires -chu validator " ++
       "enclitic, a category absent from the affirmative paradigm (A/NonReal). " ++
       "No constructional change: clause structure is preserved. " ++
@@ -518,7 +518,7 @@ theorem finnish_marker_count :
 
 /-- German negation marker derives from Fragment. -/
 theorem german_marker_from_fragment :
-    german.negMarkers = [Fragments.German.Negation.negMarker] := rfl
+    german.negMarkers = [Fragments.German.Negation.nicht.form] := rfl
 
 /-- German marker is *nicht*. -/
 theorem german_marker_is_nicht :
@@ -526,7 +526,7 @@ theorem german_marker_is_nicht :
 
 /-- Japanese negation marker derives from Fragment. -/
 theorem japanese_marker_from_fragment :
-    japanese.negMarkers = [Fragments.Japanese.Negation.negSuffix] := rfl
+    japanese.negMarkers = [Fragments.Japanese.Negation.negSuffix.form] := rfl
 
 /-- Japanese marker is *-nai*. -/
 theorem japanese_marker_is_nai :
@@ -534,7 +534,7 @@ theorem japanese_marker_is_nai :
 
 /-- Turkish negation marker derives from Fragment. -/
 theorem turkish_marker_from_fragment :
-    turkish.negMarkers = [Fragments.Turkish.Negation.negSuffix] := rfl
+    turkish.negMarkers = [Fragments.Turkish.Negation.negSuffix.form] := rfl
 
 /-- Turkish marker is *-mA-*. -/
 theorem turkish_marker_is_mA :
@@ -560,7 +560,7 @@ theorem burmese_markers_are_ma_bu :
 
 /-- Italian negation marker derives from Fragment. -/
 theorem italian_marker_from_fragment :
-    italian.negMarkers = [Fragments.Italian.Negation.negMarker] := rfl
+    italian.negMarkers = [Fragments.Italian.Negation.non.form] := rfl
 
 /-- Italian marker is *non*. -/
 theorem italian_marker_is_non :
@@ -568,7 +568,7 @@ theorem italian_marker_is_non :
 
 /-- Spanish negation marker derives from Fragment. -/
 theorem spanish_marker_from_fragment :
-    spanish.negMarkers = [Fragments.Spanish.Negation.negMarker] := rfl
+    spanish.negMarkers = [Fragments.Spanish.Negation.no.form] := rfl
 
 /-- Spanish marker is *no*. -/
 theorem spanish_marker_is_no :
@@ -576,8 +576,8 @@ theorem spanish_marker_is_no :
 
 /-- Mandarin negation markers derive from Fragment. -/
 theorem mandarin_markers_from_fragment :
-    mandarin.negMarkers = [Fragments.Mandarin.Negation.buParticle,
-                            Fragments.Mandarin.Negation.meiParticle] := rfl
+    mandarin.negMarkers = [Fragments.Mandarin.Negation.bu.form,
+                            Fragments.Mandarin.Negation.mei.form] := rfl
 
 /-- Mandarin markers are *bù* and *méi*. -/
 theorem mandarin_markers_are_bu_mei :
@@ -585,7 +585,7 @@ theorem mandarin_markers_are_bu_mei :
 
 /-- English negation marker derives from Fragment. -/
 theorem english_marker_from_fragment :
-    english.negMarkers = [Fragments.English.Negation.negMarker] := rfl
+    english.negMarkers = [Fragments.English.Negation.not.form] := rfl
 
 /-- English marker is *not*. -/
 theorem english_marker_is_not :
@@ -593,7 +593,7 @@ theorem english_marker_is_not :
 
 /-- Russian negation marker derives from Fragment. -/
 theorem russian_marker_from_fragment :
-    russian.negMarkers = [Fragments.Russian.Negation.negMarker] := rfl
+    russian.negMarkers = [Fragments.Russian.Negation.ne.form] := rfl
 
 /-- Russian marker is *не*. -/
 theorem russian_marker_is_ne :
@@ -609,7 +609,7 @@ theorem czech_marker_is_ne :
 
 /-- Maori negation word derives from Fragment. -/
 theorem maori_marker_from_fragment :
-    maori.negMarkers = [Fragments.Maori.Negation.negWord] := rfl
+    maori.negMarkers = [Fragments.Maori.Negation.kahore.form] := rfl
 
 /-- Maori marker is *kāhore*. -/
 theorem maori_marker_is_kahore :
@@ -617,7 +617,7 @@ theorem maori_marker_is_kahore :
 
 /-- Hixkaryana negation suffix derives from Fragment. -/
 theorem hixkaryana_marker_from_fragment :
-    hixkaryana.negMarkers = [Fragments.Hixkaryana.Negation.negSuffix] := rfl
+    hixkaryana.negMarkers = [Fragments.Hixkaryana.Negation.hira.form] := rfl
 
 /-- Hixkaryana marker is *-hira*. -/
 theorem hixkaryana_marker_is_hira :
@@ -625,7 +625,7 @@ theorem hixkaryana_marker_is_hira :
 
 /-- Imbabura Quechua negation particle derives from Fragment. -/
 theorem imbaburaQuechua_marker_from_fragment :
-    imbaburaQuechua.negMarkers = [Fragments.Quechua.Negation.negParticle] := rfl
+    imbaburaQuechua.negMarkers = [Fragments.Quechua.Negation.mana.form] := rfl
 
 /-- Imbabura Quechua marker is *mana*. -/
 theorem imbaburaQuechua_marker_is_mana :

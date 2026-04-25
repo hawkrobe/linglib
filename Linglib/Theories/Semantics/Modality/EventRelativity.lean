@@ -137,7 +137,9 @@ instance {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
     Decidable (necessity f e allW p w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. -/
+/-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s
+    (see `Theories/Semantics/Modality/Kratzer/Operators.lean::duality` for the
+    unification opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
 theorem duality {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
     (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by

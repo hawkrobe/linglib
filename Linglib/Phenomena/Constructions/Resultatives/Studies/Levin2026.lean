@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives
--- Data dissolved into GoldbergJackendoff2004 (imported transitively via Causation.Resultatives)
+import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -73,7 +73,7 @@ open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
 open Semantics.Verb.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   ArgStructureConstruction)
-open ConstructionGrammar.Studies.GoldbergJackendoff2004 (ResultativeType)
+open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004 (ResultativeType)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb classes in the construction

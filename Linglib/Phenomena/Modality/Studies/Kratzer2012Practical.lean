@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Practical Reasoning — @cite{kratzer-2012} §2.8
@@ -24,32 +24,56 @@ Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.8.
 
 namespace Phenomena.Modality.PracticalReasoningBridge
 
-open Semantics.Attitudes.Intensional (World allWorlds)
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
+
 open Semantics.Modality.Kratzer
 open Core.Modality (ModalFlavor)
 
 /-! ## Propositions -/
 
 /-- The agent reaches Harlem (the goal). -/
-def reachesGoal : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+def reachesGoal : World → Prop
+  | 0 => True
+  | 1 => True
+  | 2 => False
+  | 3 => False
 
-instance : DecidablePred reachesGoal :=
-  fun w => by cases w <;> unfold reachesGoal <;> infer_instance
+instance : DecidablePred reachesGoal := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-- The agent takes the A train. -/
-def takesATrain : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+def takesATrain : World → Prop
+  | 0 => True
+  | 1 => True
+  | 2 => False
+  | 3 => False
 
-instance : DecidablePred takesATrain :=
-  fun w => by cases w <;> unfold takesATrain <;> infer_instance
+instance : DecidablePred takesATrain := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
 
 /-- No delay (distinguishes w0 from w1). -/
-def noDelay : World → Prop := λ w =>
-  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => True
+def noDelay : World → Prop
+  | 0 => True
+  | 1 => False
+  | 2 => True
+  | 3 => True
 
-instance : DecidablePred noDelay :=
-  fun w => by cases w <;> unfold noDelay <;> infer_instance
+instance : DecidablePred noDelay := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable True)
+  | 3 => inferInstanceAs (Decidable True)
 
 /-! ## Conversational backgrounds -/
 
@@ -91,15 +115,15 @@ theorem teleological_necessity (w : World) :
   rw [necessity_iff_all]
   intro w' hw'
   obtain ⟨_, hBest⟩ := hw'
-  have hReachW0 : reachesGoal .w0 := by decide
+  have hReachW0 : reachesGoal (0 : World) := by decide
   have hReachW' : reachesGoal w' :=
-    hBest .w0 (all_accessible w .w0) reachesGoal
+    hBest (0 : World) (all_accessible w (0 : World)) reachesGoal
       (by simp [goalOrdering]) hReachW0
-  cases w' with
-  | w0 => decide
-  | w1 => decide
-  | w2 => exact hReachW'.elim
-  | w3 => exact hReachW'.elim
+  match w' with
+  | 0 => decide
+  | 1 => decide
+  | 2 => exact hReachW'.elim
+  | 3 => exact hReachW'.elim
 
 /-- **Without goal restriction, A train is not necessary.**
     With empty ordering, all worlds are best, and w2/w3 don't take the A train. -/
@@ -107,10 +131,10 @@ theorem unrestricted_not_necessary (w : World) :
     ¬ necessity circumstantialBase emptyBackground takesATrain w := by
   rw [necessity_iff_all]
   intro h
-  have hBestW2 : (.w2 : World) ∈ bestWorlds circumstantialBase emptyBackground w := by
+  have hBestW2 : ((2 : World) : World) ∈ bestWorlds circumstantialBase emptyBackground w := by
     rw [empty_ordering_emptyBackground]
-    exact all_accessible w .w2
-  exact (h .w2 hBestW2).elim
+    exact all_accessible w (2 : World)
+  exact (h (2 : World) hBestW2).elim
 
 /-- **Efficiency refines**: Adding a no-delay criterion still yields necessity.
     Best worlds = {w0} (goal + no delay), and w0 takes the A train. -/
@@ -119,19 +143,19 @@ theorem efficiency_refines (w : World) :
   rw [necessity_iff_all]
   intro w' hw'
   obtain ⟨_, hBest⟩ := hw'
-  have hReachW0 : reachesGoal .w0 := by decide
-  have hNoDelayW0 : noDelay .w0 := by decide
+  have hReachW0 : reachesGoal (0 : World) := by decide
+  have hNoDelayW0 : noDelay (0 : World) := by decide
   have hReachW' : reachesGoal w' :=
-    hBest .w0 (all_accessible w .w0) reachesGoal
+    hBest (0 : World) (all_accessible w (0 : World)) reachesGoal
       (by simp [efficiencyOrdering]) hReachW0
   have hNoDelayW' : noDelay w' :=
-    hBest .w0 (all_accessible w .w0) noDelay
+    hBest (0 : World) (all_accessible w (0 : World)) noDelay
       (by simp [efficiencyOrdering]) hNoDelayW0
-  cases w' with
-  | w0 => decide
-  | w1 => exact hNoDelayW'.elim
-  | w2 => exact hReachW'.elim
-  | w3 => exact hReachW'.elim
+  match w' with
+  | 0 => decide
+  | 1 => exact hNoDelayW'.elim
+  | 2 => exact hReachW'.elim
+  | 3 => exact hReachW'.elim
 
 /-- **Teleological uses circumstantial flavor tag.** -/
 theorem harlem_uses_teleological :

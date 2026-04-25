@@ -1,5 +1,4 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Semantics.Attitudes.Intensional
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -38,8 +37,6 @@ With attitude verbs:
 -/
 
 namespace Phenomena.ScalarImplicatures.Embedded.Attitudes
-
-open Semantics.Attitudes.Intensional
 
 -- World Structure for Belief Contexts
 
