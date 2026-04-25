@@ -30,7 +30,7 @@ are exactly the image of `lift`. Non-distributive operations like
 input state rather than filtering per-element.
 -/
 
-import Linglib.Theories.Discourse.Connectives.Defs
+import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
 import Linglib.Core.Assignment
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs

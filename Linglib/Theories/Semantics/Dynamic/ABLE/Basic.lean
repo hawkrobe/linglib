@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # ABLE: A Bit Like English

@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.331] - 2026-04-24
+
+### Discourse/ restructure: sibling-architecture revision — `Theories/Discourse/{Connectives,Effects,Boxes,DiscourseRef,Intensional}` → `Theories/Semantics/Dynamic/{...}`
+
+In-flight architectural correction. Phases 1–3a placed compositional dynamic-semantics machinery under `Theories/Discourse/`, treating dynamic semantics as a discourse-level subfield. After a clarifying check on field convention, this is wrong: in 2026 the formal-semantics community (Heim & Kratzer, Chierchia, Charlow, von Fintel) treats dynamic semantics as **technical machinery for compositional meaning** — sibling to discourse-coherence theory (Centering, SDRT, RST, Hobbs/Kehler), not its child. Asher & Lascarides explicitly *integrate* DRT with rhetorical relations precisely because the two are conceptually distinct. Centering theory doesn't depend on dynamic semantics at all. Computational DRSs are a target representation divorced from DRT-the-linguistic-theory.
+
+The mathlib-style internal reorganization (`Connectives/`, `Effects/`, `Boxes/`, flat type-defs) is preserved — only the parent prefix changes.
+
+`git mv` (parent-directory renames):
+- `Theories/Discourse/Connectives/` → `Theories/Semantics/Dynamic/Connectives/` (3 files: `Defs`, `CCP`, `WeakestPrecondition`)
+- `Theories/Discourse/Effects/` → `Theories/Semantics/Dynamic/Effects/` (4 files: `HasFiberedLookup`, `Bilateral`, `Nondeterminism`, `Probability`)
+- `Theories/Discourse/Boxes/` → `Theories/Semantics/Dynamic/Boxes/` (2 files: `Syntax`, `Accessibility`)
+- `Theories/Discourse/DiscourseRef.lean` → `Theories/Semantics/Dynamic/DiscourseRef.lean` (flat at `Dynamic/` root)
+- `Theories/Discourse/Intensional.lean` → `Theories/Semantics/Dynamic/Intensional.lean` (flat at `Dynamic/` root)
+
+Bulk import-path swap across 29 files: `Linglib.Theories.Discourse.{Connectives,Effects,Boxes,DiscourseRef,Intensional}.*` → `Linglib.Theories.Semantics.Dynamic.{...}.*`. Plus `Linglib.lean` updated.
+
+`Theories/Discourse/` now contains only `Centering/` (7 files), reserved for genuine discourse-coherence theory. Phase 5 (later) absorbs Centering into `Discourse/Coherence/Centering/` to make room for future SDRT/RST.
+
+The plan file `~/.claude/plans/inherited-mapping-wilkinson.md` is now stale on the parent prefix but the rest (Connectives/Effects/Boxes/ internal organization, framework dissolution into Phenomena/Studies/, paper-anchored absorption targets) remains accurate. Plan-file update deferred.
+
+2538 + 647 jobs green for moved files + sample consumers (`KampReyle1993`, `Hofmann2025`, `CenteringDRT`, `Centering.Basic`). Full `lake build` fails only on `Phenomena/Polysemy/Studies/ErkHerbelot2024.lean` (missing `PolyaUrn.symmetric`/`PolyaUrn.seqProb` — concurrent-session work in `Core/Probability/PolyaUrn.lean`, unrelated to this restructure).
+
 ## [0.230.330] - 2026-04-24
 
 ### Discourse/ restructure Phase 3a: Boxes/ subtree (2 file moves + native_decide → decide)

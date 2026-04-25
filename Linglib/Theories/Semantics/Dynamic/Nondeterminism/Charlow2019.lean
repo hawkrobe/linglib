@@ -9,8 +9,8 @@ are retained.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Discourse.Connectives.CCP
-import Linglib.Theories.Discourse.Effects.HasFiberedLookup
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Effects.HasFiberedLookup
 
 namespace Semantics.Dynamic.Charlow2019
 

@@ -5,7 +5,7 @@ import Linglib.Phenomena.Plurals.Studies.Sauerland2003
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
-import Linglib.Theories.Discourse.Effects.Bilateral
+import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FinCases

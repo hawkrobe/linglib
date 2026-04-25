@@ -33,7 +33,7 @@ dref's as functions taking info states as arguments.
 
 -/
 
-import Linglib.Theories.Discourse.Connectives.Defs
+import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
 
 namespace Semantics.Dynamic.Core
 

@@ -1,7 +1,7 @@
-import Linglib.Theories.Discourse.Boxes.Syntax
+import Linglib.Theories.Semantics.Dynamic.Boxes.Syntax
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Theories.Discourse.Connectives.WeakestPrecondition
-import Linglib.Theories.Discourse.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Connectives.WeakestPrecondition
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 import Linglib.Core.CylindricAlgebra
 import Mathlib.Tactic.SimpRw
 

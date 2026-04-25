@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Normality
-import Linglib.Theories.Discourse.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # Default Reasoning in Update Semantics

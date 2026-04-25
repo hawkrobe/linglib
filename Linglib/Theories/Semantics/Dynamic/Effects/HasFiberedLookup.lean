@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.DiscourseRef
+import Linglib.Theories.Semantics.Dynamic.DiscourseRef
 
 /-!
 # Dynamic Context — Effect-Functor-Parameterized Interface

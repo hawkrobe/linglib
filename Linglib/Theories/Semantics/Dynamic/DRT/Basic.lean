@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Boxes.Accessibility
+import Linglib.Theories.Semantics.Dynamic.Boxes.Accessibility
 import Linglib.Core.Semantics.ContentLayer
 import Mathlib.Data.Set.Basic
 

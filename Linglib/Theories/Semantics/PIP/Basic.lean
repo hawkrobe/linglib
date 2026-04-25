@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Intensional
+import Linglib.Theories.Semantics.Dynamic.Intensional
 
 /-!
 # Plural Intensional Presuppositional Predicate Calculus (PIP)

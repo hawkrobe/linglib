@@ -4,8 +4,8 @@ import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Set.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
-import Linglib.Theories.Discourse.Effects.HasFiberedLookup
-import Linglib.Theories.Discourse.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # Probability Effect: Probabilistic Dynamic Semantics

@@ -1679,17 +1679,17 @@ import Linglib.Phenomena.WordOrder.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
-import Linglib.Theories.Discourse.Connectives.CCP
+import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
-import Linglib.Theories.Discourse.DiscourseRef
-import Linglib.Theories.Discourse.Boxes.Accessibility
-import Linglib.Theories.Discourse.Boxes.Syntax
-import Linglib.Theories.Discourse.Connectives.Defs
+import Linglib.Theories.Semantics.Dynamic.DiscourseRef
+import Linglib.Theories.Semantics.Dynamic.Boxes.Accessibility
+import Linglib.Theories.Semantics.Dynamic.Boxes.Syntax
+import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
-import Linglib.Theories.Discourse.Effects.HasFiberedLookup
-import Linglib.Theories.Discourse.Intensional
+import Linglib.Theories.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Theories.Semantics.Dynamic.Intensional
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
-import Linglib.Theories.Discourse.Connectives.WeakestPrecondition
+import Linglib.Theories.Semantics.Dynamic.Connectives.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 -- Theories: Dynamic Semantics — ABLE (Beaver 2001)
 import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
@@ -1700,13 +1700,13 @@ import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.DRT.Basic
-import Linglib.Theories.Discourse.Effects.Bilateral
+import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
-import Linglib.Theories.Discourse.Effects.Nondeterminism
-import Linglib.Theories.Discourse.Effects.Probability
+import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism
+import Linglib.Theories.Semantics.Dynamic.Effects.Probability
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Fragment
 import Linglib.Theories.Semantics.Quantification.Dynamic.Basic

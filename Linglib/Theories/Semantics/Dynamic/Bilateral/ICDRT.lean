@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Intensional
+import Linglib.Theories.Semantics.Dynamic.Intensional
 
 /-!
 # Bilateral Denotations for ICDRT Contexts
