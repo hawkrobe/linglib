@@ -1,6 +1,6 @@
-import Linglib.Theories.Discourse.Centering.Coherence
-import Linglib.Theories.Discourse.Centering.Rules
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Theories.Discourse.Coherence.Centering.Coherence
+import Linglib.Theories.Discourse.Coherence.Centering.Rules
+import Linglib.Theories.Discourse.Coherence.Centering.Instances.GrammaticalRole
 
 /-!
 # Centering ↔ Coherence Bridge — Combined Predictions
@@ -28,15 +28,15 @@ set_option autoImplicit false
 
 namespace Interfaces.PragmaticsDiscourse.CenteringCoherence
 
-open Discourse.Centering
+open Discourse.Coherence.Centering
 open Core.Discourse.Coherence
 
 /-- The Rule-2 score implied by a pair of consecutive coherence
     relations: convert each to its preferred transition and sum the
     transition ranks. -/
 def coherencePairScore (r₁ r₂ : CoherenceRelation) : Nat :=
-  pairRank (Discourse.Centering.CoherenceRelation.preferredTransition r₁)
-           (Discourse.Centering.CoherenceRelation.preferredTransition r₂)
+  pairRank (Discourse.Coherence.Centering.CoherenceRelation.preferredTransition r₁)
+           (Discourse.Coherence.Centering.CoherenceRelation.preferredTransition r₂)
 
 /-- A pair of explanation/result relations achieves the maximum
     Rule-2 score (both transitions are continuations). -/
