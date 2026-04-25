@@ -1704,11 +1704,9 @@ import Linglib.Theories.Discourse.Effects.Bilateral
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
-import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
-import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
-import Linglib.Theories.Semantics.Dynamic.Probability.Basic
-import Linglib.Theories.Semantics.Dynamic.Probability.Lookup
+import Linglib.Theories.Discourse.Effects.Nondeterminism
+import Linglib.Theories.Discourse.Effects.Probability
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Fragment
 import Linglib.Theories.Semantics.Quantification.Dynamic.Basic

@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.328] - 2026-04-24
+
+### Cariani2013 four-agent audit cleanup (Tier 1+2+3+4)
+
+Four parallel audits of `Phenomena/Modality/Studies/Cariani2013.lean` (linguistics-domain-expert, linglib-integration-auditor, cross-framework-reconciler, mathlib-reviewer) flagged 16 items grouped into Tiers 1–5. This commit lands Tiers 1–4 (correction, reinvention, coverage, hygiene); Tier 5 (architectural lifts to a generic InferencePrinciples substrate) is deferred to its own session.
+
+**Tier 1 (correction)**:
+
+- `ought_reduces_to_boxing_when_all_meet_benchmark` renamed → `ought_iff_visible_and_optimal_of_all_meet_benchmark`. Original name overclaimed: under the all-meet-benchmark hypothesis, Cariani's `ought` reduces to `Visibility ∧ Optimality`, but Optimality (best options ⊆ ways-of-p) is not the same operator as boxing (∀ best world, p) — boxing quantifies over worlds, Optimality over options. Renamed to honest description; docstring spells out the partial reduction.
+- §3 docstring records that the paper's *informal* §2 introduces clauses in Visibility–Optimality–StrongPermissibility order, while the *formal* §4 lexical entry orders them Optimality–StrongPermissibility–Visibility. Truth conditions identical; ordering choice is presentational.
+- Docstring downgrades the PB↔Cariani relation from "deep formal precedent" to "parallel discovery": Cariani 2013 doesn't cite Crnič 2011; PB 2025 cites Crnič but not Cariani 2013.
+
+**Tier 2 (reinvention cleanup — substrate sharing)**:
+
+- `isVisible` is now `abbrev isVisible rc p := isConsidered rc.options p`. Cariani's predicate IS Phillips-Brown's predicate; the substrate `Theories/Semantics/Modality/Desire.lean::isConsidered` is the shared canonical name. The bridge theorem `cariani_visible_eq_phillipsbrown_isConsidered` (previously a non-trivial proof) renamed → `isVisible_iff_isConsidered`, body `:= Iff.rfl`. Linglib's "import don't restipulate" discipline applied across the desire/deontic-modality boundary.
+
+**Tier 3 (substantive coverage)**:
+
+- `permitted` operator added — Cariani p.556 fn 23 "first entry": `∃ option ≥ benchmark, way-of-p`. Definitionally identical to `isPermissible`; exposed as a named lexical entry for cross-paper consumption.
+- `cariani_ought_inheritance_failure_implies_duality_concern` — boundary theorem connecting INHERITANCE failure to the right-to-left direction of DUALITY (`¬ permitted ¬p → ought p`) that Cariani §5 p.547 explicitly rejects.
+- `ross_ought_stay_home_false` — adds the third Ross's-puzzle data point alongside the existing `ought attend = true` / `ought (attend ∨ burn) = false` pair, completing the §I empirical paradigm.
+- `ought_negation_via_coarse_falsemaking` — paper §2 p.541 / §4 p.546 COARSE FALSEMAKING principle as a named lemma: an impermissible way-of-p falsifies `ought p`. Direct contrapositive of the Strong Permissibility clause; the mechanism by which Cariani derives `¬ ought (attend ∨ burn)`.
+- PB2025 docstring updated with a "Parallel discovery: Cariani 2013 `isVisible`" section pointing back to the bridge.
+
+**Tier 4 (mathlib-style hygiene)**:
+
+- Dropped `Linglib.Theories.Semantics.Modality.Kratzer.Operators` import — was unused.
+- `rossRank` / `procRank` refactored from inline Bool checks against propositions to enum-keyed `rossWorldRank` / `procWorldRank` lookup composed with `Finset.sup` over the option's underlying world set. Avoids proposition introspection in rank functions.
+- `RossW.noConfusion` usages replaced with `decide` / `cases` (per `feedback_proof_style.md`).
+
+Tier 5 explicitly deferred:
+
+- Promote INHERITANCE / AGGLOMERATION / WEAKENING / SLOMAN / SMITH / COARSENESS / DUALITY to a generic `Theories/Semantics/Modality/InferencePrinciples.lean` substrate with per-operator verdicts. Cleaner architecture but ~3–4 sessions to refactor vF/Heim/PB/Lassiter/Cariani to all instantiate the generic principles.
+- Refactor `betterThanDec`/`meetsBenchmarkDec` from `ResolutionContext` structure fields to typeclass arguments. Currently a structural field bundle; cleaner as `[DecidableRel rc.betterThan]` + `[DecidablePred rc.meetsBenchmark]` once the consumer pattern is stable.
+
+Build green (1776 jobs, 2 files rebuilt: Cariani2013.lean + PhillipsBrown2025.lean). Zero new sorries. Cariani2013.lean grew ~340 → ~600 LOC.
+
 ## [0.230.327] - 2026-04-24
 
 ### Discourse/ restructure Phase 2a: Effects/ subtree + flat type-defs (4 file moves)

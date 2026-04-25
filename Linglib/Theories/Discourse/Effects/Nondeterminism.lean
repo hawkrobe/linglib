@@ -2,9 +2,80 @@ import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Discourse.Connectives.CCP
 
 /-!
-# Pointwise ↔ Update-Theoretic Bridge
-@cite{charlow-2021} @cite{muskens-1996} @cite{charlow-2019}
+# Nondeterminism Effect: Plural / Choice Alternatives
+@cite{charlow-2019} @cite{charlow-2021} @cite{muskens-1996}
 
+The nondeterminism effect models indefinites as introducing sets of alternatives
+rather than single values. This underlies:
+- Indefinites as choice functions
+- Plural / cumulative readings
+- Set-valued update (pointwise lifting)
+
+The key type is `Set α` (or `List α` for computational purposes) — meanings
+are sets of possible values rather than single values.
+
+This file consolidates two former modules:
+- `NDMeaning` (Set monad on meanings) — was `Dynamic/Nondeterminism/Basic.lean`
+- `liftPW` / `lowerPW` (Charlow's ↑ / ↓ pointwise/collectivized bridge) —
+  was `Dynamic/Nondeterminism/PointwiseUpdate.lean`
+
+The companion paper-level study (Charlow 2019's `StateCCP`, distributivity,
+destructive-update theorems) lives in `Dynamic/Nondeterminism/Charlow2019.lean`
+pending Phase 4e of the discourse restructure (where it migrates to
+`Phenomena/Anaphora/Studies/Charlow2019.lean`).
+-/
+
+-- ════════════════════════════════════════════════════════════════
+-- § 1. Set-Monad Meanings (NDMeaning)
+-- ════════════════════════════════════════════════════════════════
+
+namespace Semantics.Dynamic.Nondeterminism
+
+open Semantics.Dynamic.Core
+
+/--
+A nondeterministic meaning: produces a set of possible outputs.
+
+This is the semantic type for indefinites — "a man" denotes the set
+of all men, and the nondeterminism effect handles choice.
+-/
+def NDMeaning (α : Type*) (β : Type*) := α → Set β
+
+/--
+Bind for the nondeterminism monad (Set).
+
+Sequencing nondeterministic computations: for each possible value from
+the first computation, run the second and collect all results.
+-/
+def NDMeaning.bind {α β γ : Type*} (m : NDMeaning α β) (f : β → Set γ) : NDMeaning α γ :=
+  λ a => { c | ∃ b ∈ m a, c ∈ f b }
+
+/--
+Pure / return for nondeterminism: a single deterministic value.
+-/
+def NDMeaning.pure {α β : Type*} (b : β) : NDMeaning α β :=
+  λ _ => {b}
+
+/--
+Alternative / choice: union of two nondeterministic meanings.
+-/
+def NDMeaning.alt {α β : Type*} (m₁ m₂ : NDMeaning α β) : NDMeaning α β :=
+  λ a => m₁ a ∪ m₂ a
+
+/--
+Maximization: select maximal elements from a nondeterministic meaning
+with respect to some ordering. Used for cumulative readings.
+-/
+def NDMeaning.maximize {α β : Type*} (m : NDMeaning α β) (better : β → β → Prop) : NDMeaning α β :=
+  λ a => { b ∈ m a | ∀ b' ∈ m a, ¬better b b' }
+
+end Semantics.Dynamic.Nondeterminism
+
+-- ════════════════════════════════════════════════════════════════
+-- § 2. Pointwise ↔ Update-Theoretic Bridge (Charlow's ↑ / ↓)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
 Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, @cite{muskens-1996})
 to the update-theoretic `StateCCP W E := State W E → State W E` type.
 
@@ -15,12 +86,10 @@ The key operations are @cite{charlow-2021}'s ↑ (lift) and ↓ (lower):
 The central result: `liftPW D` is always distributive,
 meaning pointwise meanings can never produce irreducibly context-level effects.
 Cumulative readings require non-distributive M_v, which lives only in `StateCCP`.
-
 -/
 
 namespace Semantics.Dynamic.Core.PointwiseUpdate
 
-open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core
 
 variable {W E : Type*}
