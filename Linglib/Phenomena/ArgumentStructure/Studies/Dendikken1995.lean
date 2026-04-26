@@ -359,8 +359,11 @@ def sc1_send_doc_dstr : SyntacticObject :=
     incorporation step (V → V+P) uses `formAbstractIncorporation`
     to honour book §3.10.1's LF-reanalysis attribution.
 
-    On non-matching shapes, returns the input unchanged (identity). -/
-def predicateInversion : SyntacticObject → SyntacticObject
+    Returns `none` on non-matching shapes — the operation is genuinely
+    partial (Predicate Inversion applies only to certain SC1
+    configurations), and the `Option` codomain makes that explicit
+    so downstream proofs can't pass by accident on inapplicable input. -/
+def predicateInversion : SyntacticObject → Option SyntacticObject
   | .node spec1 (.node (.leaf v_tok)
       (.node _spec2 (.node x (.node np (.node (.leaf p_tok) np_obj))))) =>
         let v_plus_p := formAbstractIncorporation v_tok p_tok
@@ -369,29 +372,35 @@ def predicateInversion : SyntacticObject → SyntacticObject
         let new_xp : SyntacticObject := merge x new_sc3
         let new_sc2 : SyntacticObject := merge pp_moved new_xp
         let new_vp : SyntacticObject := merge (.leaf v_plus_p) new_sc2
-        merge spec1 new_vp
-  | so => so
+        some (merge spec1 new_vp)
+  | _ => none
 
 /-- **The derivation theorem**: applying `predicateInversion` to the
     DOC D-structure yields exactly the (previously stipulated) DOC
     S-structure `sc1_send_post`. The S-structure is now *derived*,
     not just asserted. -/
 theorem predicateInversion_sc1_send_doc_dstr_eq_sc1_send_post :
-    predicateInversion sc1_send_doc_dstr = sc1_send_post := rfl
+    predicateInversion sc1_send_doc_dstr = some sc1_send_post := rfl
 
-/-- Predicate Inversion changes the tree shape (it raises an embedded
-    PP to the specifier of the SC two levels up). The PI-derived
-    output is *not* structurally isomorphic to its input. -/
+/-- Predicate Inversion is genuinely applicable to the DOC D-structure —
+    the partial-operation pattern matches. -/
+theorem predicateInversion_sc1_send_doc_dstr_isSome :
+    (predicateInversion sc1_send_doc_dstr).isSome = true := rfl
+
+/-- The PI-derived output is *not* structurally isomorphic to its input
+    (Predicate Inversion is structure-changing). -/
 theorem predicateInversion_changes_shape :
-    structurallyIsomorphic (predicateInversion sc1_send_doc_dstr) sc1_send_doc_dstr
-      = false := by decide
+    structurallyIsomorphic
+      ((predicateInversion sc1_send_doc_dstr).getD sc1_send_doc_dstr)
+      sc1_send_doc_dstr = false := by decide
 
-/-- **Structure preservation**: Predicate Inversion preserves
-    `IsSmallClause` of the input SC1. The post-inversion SC1 still
-    has the SC structure `[Spec_θ' [VP_HAVE …]]` — V at the head of
-    its predicate, hence head category `.V`, hence `IsSmallClause`. -/
-theorem predicateInversion_preserves_IsSmallClause_sc1 :
-    IsSmallClause (predicateInversion sc1_send_doc_dstr) := by decide
+/-- **`IsSmallClause` witness for the post-inversion SC1.** Narrowly
+    scoped to this concrete D-structure / S-structure pair; a fully
+    general `predicateInversion`-preserves-`IsSmallClause` theorem
+    would quantify over arbitrary inputs and require a richer pattern
+    discipline (gate deferred). -/
+theorem post_inversion_sc1_send_isSmallClause :
+    IsSmallClause sc1_send_post := by decide
 
 /-- The pre-PI DOC D-structure also satisfies `IsSmallClause` —
     the SC analysis is invariant under whether overt `to` or empty

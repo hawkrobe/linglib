@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.SmallClause
+import Linglib.Phenomena.ArgumentStructure.Studies.Dendikken1995
 
 /-!
 # Transitive causatives — den Dikken's affixal-particle analysis
@@ -281,5 +282,64 @@ theorem affixal_particles_share_category :
     X_sanuma_ma.headCat = .P ∧
     X_indonesian_kan.headCat = .P := by
   refine ⟨rfl, rfl, rfl⟩
+
+/-! ## §9. Structural assimilation theorem (book ex. 47/48)
+
+The book's central ch. 5 claim is that triadic and transitive
+causative constructions share the SC-in-SC structural backbone.
+Now that both are formalised as sibling Dendikken1995 study files,
+the parallel can be witnessed as a Lean theorem rather than a
+docstring assertion. -/
+
+/-- The French causative SC1 and the triadic SC1 share tree shape —
+    the structural assimilation thesis at the geometric level. Both
+    instantiate the same 7-level right-branching SC-in-SC template;
+    they differ only in lexical content (V_emb vs BE in the lower-VP
+    V slot, X = ∅ vs Prt_off, dative à vs to, etc.). -/
+theorem causative_triadic_same_shape :
+    sc1_faire_manger.shape =
+      (Phenomena.ArgumentStructure.Studies.Dendikken1995.sc1_send).shape := rfl
+
+/-- The Dutch *ver-* causative also matches the triadic shape — the
+    affixal particle X position is structurally the same as the
+    triadic particle X position. -/
+theorem dutch_ver_triadic_same_shape :
+    sc1_ver_schaffen.shape =
+      (Phenomena.ArgumentStructure.Studies.Dendikken1995.sc1_send).shape := rfl
+
+/-! ## §10. Bridge to Pylkkänen's applicative typology
+
+Den Dikken's affixal-particle X position is the structural slot
+Pylkkänen (2008) reanalyses as a low Applicative head — the two
+analyses agree on category P, despite different theoretical framings
+(particle vs. applicative). The bridge theorems below witness this
+categorial coincidence using the existing `ApplType.toSCPredCategory`
+API in `Theories/Syntax/Minimalism/SmallClause.lean`.
+
+Per chronological dependency (this is a 1995 file; Pylkkänen 2008 is
+later), the `ApplType` enum is referenced via the substrate, not via
+direct import of the Pylkkanen2008 study file. -/
+
+/-- The Dutch *ver-* affixal particle and a Pylkkänen low-recipient
+    applicative head share SC predicate category P. -/
+theorem dutch_ver_matches_low_recipient_appl :
+    X_dutch_ver.headCat = .P ∧
+    ApplType.toSCPredCategory .lowRecipient = some .P := by
+  refine ⟨rfl, rfl⟩
+
+/-- The Sanuma *-ma* affixal particle and a Pylkkänen low-source
+    applicative head share SC predicate category P. -/
+theorem sanuma_ma_matches_low_source_appl :
+    X_sanuma_ma.headCat = .P ∧
+    ApplType.toSCPredCategory .lowSource = some .P := by
+  refine ⟨rfl, rfl⟩
+
+/-- High applicatives DO NOT match the affixal-particle X — they project
+    no SC at all in den Dikken's framework. The substrate's
+    `high_appl_no_SC` theorem (in `SmallClause.lean`) records this. -/
+theorem high_appl_not_affixal_particle :
+    ApplType.toSCPredCategory .high = none ∧
+    X_indonesian_kan.headCat = .P := by
+  refine ⟨rfl, rfl⟩
 
 end Phenomena.Constructions.Causatives.Studies.Dendikken1995
