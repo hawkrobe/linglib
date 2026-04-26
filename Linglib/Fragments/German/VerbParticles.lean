@@ -38,8 +38,9 @@ and never split.
   passive-incorporation parameter that German shares but in a
   different morphological guise.
 - `Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995.lean` —
-  the SC analysis applied to English; the German data is the primary
-  cross-linguistic test case @cite{dendikken-1995} engages.
+  the SC analysis applied to English; den Dikken's primary
+  cross-linguistic anchor is Dutch (his native language), with German
+  and Norwegian as additional Germanic test cases.
 
 -/
 
@@ -105,33 +106,24 @@ theorem einschalten_citation : einschalten.citationForm = einschalten.particle +
 theorem abfahren_citation    : abfahren.citationForm    = abfahren.particle    ++ abfahren.verb    := rfl
 theorem mitkommen_citation   : mitkommen.citationForm   = mitkommen.particle   ++ mitkommen.verb   := rfl
 
-/-! ## *ge-* insertion + *zu*-infinitive structure
+/-! ## Structural notes (no theorem unpacking)
 
 The past participle of separable prefix verbs inserts *ge-* between the
-particle and the verb's own participle stem (e.g. *anrufen* →
-*an-ge-rufen*); the *zu*-infinitive inserts *zu* between particle and
-verb (*an-zu-rufen*). This is the morphological diagnostic for
-separability vs. inseparable prefix verbs (which have neither *ge-* nor
-sandwiched *zu*: *verstehen* → *verstanden* / *zu verstehen*).
+particle and the verb's own participle stem (*anrufen* → *an-ge-rufen*);
+the *zu*-infinitive inserts *zu* between particle and verb
+(*an-zu-rufen*). The diagnostic for separability is that the particle
+remains word-initial in both forms — inseparable prefix verbs (e.g.
+*verstehen*) lack *ge-* entirely and place *zu* before the whole word
+(*zu verstehen*).
 
 Each entry's `pastParticiple` and `zuInfinitive` fields record the
-surface forms directly (we don't algorithmically derive them — German
-verb-stem participle morphology varies between regular *-t* and ablaut
-families). Per-entry equality theorems below witness the prefix
-structure: the participle and *zu*-infinitive both expose the particle
-in word-initial position, the structural reflex of separability. -/
-
-theorem anrufen_pp     : anrufen.pastParticiple     = "angerufen"     := rfl
-theorem aufmachen_pp   : aufmachen.pastParticiple   = "aufgemacht"    := rfl
-theorem einschalten_pp : einschalten.pastParticiple = "eingeschaltet" := rfl
-theorem abfahren_pp    : abfahren.pastParticiple    = "abgefahren"    := rfl
-theorem mitkommen_pp   : mitkommen.pastParticiple   = "mitgekommen"   := rfl
-
-theorem anrufen_zu     : anrufen.zuInfinitive     = "anzurufen"     := rfl
-theorem aufmachen_zu   : aufmachen.zuInfinitive   = "aufzumachen"   := rfl
-theorem einschalten_zu : einschalten.zuInfinitive = "einzuschalten" := rfl
-theorem abfahren_zu    : abfahren.zuInfinitive    = "abzufahren"    := rfl
-theorem mitkommen_zu   : mitkommen.zuInfinitive   = "mitzukommen"   := rfl
+forms directly. We do NOT add `rfl` theorems unpacking each abbrev —
+the surface forms are inspectable in the `abbrev` bodies above and
+re-asserting them as theorems adds no verification beyond what the
+struct literal already type-checks. (A genuine inventory-level
+prefix-property theorem via `String.isPrefixOf` was attempted but
+`decide` doesn't reduce on `String.isPrefixOf` over field projections;
+recovering it would need `native_decide`, which the project disprefers.) -/
 
 /-- Inventory entries are well-formed: non-empty verb and particle. -/
 theorem inventory_well_formed :
