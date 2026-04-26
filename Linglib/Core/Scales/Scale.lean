@@ -12,7 +12,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Scales
-@cite{fox-hackl-2006} @cite{holliday-icard-2013} @cite{kennedy-2007} @cite{krantz-1971} @cite{krifka-1989} @cite{rouillard-2026} @cite{link-1983} @cite{rett-2026} @cite{rullmann-1995}
+@cite{fox-hackl-2006} @cite{hay-kennedy-levin-1999} @cite{holliday-icard-2013} @cite{kennedy-2007} @cite{kennedy-mcnally-2005} @cite{krantz-1971} @cite{krifka-1989} @cite{link-1983} @cite{rett-2026} @cite{rotstein-winter-2004} @cite{rouillard-2026} @cite{rullmann-1995}
 
 Root algebraic infrastructure for all scale-based reasoning in linglib.
 
@@ -61,18 +61,27 @@ via measure functions. All three paths factor through `ComparativeScale`.
 Below the root structures, the file provides measurement scale infrastructure
 shared by degree semantics and temporal measurement:
 
-| Kennedy (Adjectives)                | Rouillard (TIAs)                     |
+| Kennedy (Adjectival scales)         | Rouillard (TIAs / VPs)               |
 |-------------------------------------|--------------------------------------|
 | Degree scale                        | Duration measurement domain          |
-| Open scale (tall, expensive)        | Atelic VP / DIV predicate            |
-| → "??completely tall"               | → "*was sick in three days"          |
-| Closed scale (full, empty)          | Telic VP / QUA predicate             |
-| → "completely full" ✓               | → "wrote a paper in three days" ✓   |
+| Open scale (tall, expensive)        | Atelic DA verb (lengthen, cool)      |
+| → "??completely tall"               | → "*lengthened in three days"        |
+| Closed scale (full, empty)          | Telic DA verb (straighten, dry)      |
+| → "completely full" ✓               | → "straightened in three days" ✓    |
 | Interpretive Economy | MIP                 |
 
 Both domains use `Boundedness` to classify scales, and `Boundedness.isLicensed`
-derives the licensing prediction. Actual scale types encode boundedness via
-Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`, `NoMinOrder`).
+derives a "any endpoint exists" prediction (NOT @cite{kennedy-2007}'s full
+modifier-class licensing matrix — see `Boundedness.isLicensed` docstring).
+Actual scale types encode boundedness via Mathlib typeclasses (`OrderTop`,
+`OrderBot`, `NoMaxOrder`, `NoMinOrder`).
+
+**Cross-domain caveat.** The Kennedy-↔-Rouillard alignment above holds only
+for **degree achievements** — verbs derived from gradable adjectives, where
+@cite{hay-kennedy-levin-1999} establishes the scale-↔-telicity arrow. States
+("be sick", "be full") and accomplishments ("write a paper") are outside HKL
+1999's scope; their telicity needs separate justification (Krifka 1989/1998
+on predicate quantization, or specific aspectual analyses).
 
 -/
 
@@ -83,14 +92,30 @@ namespace Core.Scale
 -- ════════════════════════════════════════════════════
 
 /-- Classification of scale boundedness.
-    @cite{kennedy-2007}: four scale types based on which endpoints exist.
+    @cite{kennedy-mcnally-2005} eq (1) and @cite{kennedy-2007} §4.2 eq (59):
+    four scale types based on which endpoints exist (independently
+    discovered by @cite{rotstein-winter-2004}).
     @cite{rouillard-2026}: temporal domains have similar boundary structure
     (closed intervals have both bounds, open intervals lack them).
 
     This enum is the **lexical data tag** for classifying scales in fragment
-    entries and phenomena files. The actual order-theoretic properties of
-    concrete scale types are encoded via Mathlib typeclasses (`OrderTop`,
-    `OrderBot`, `NoMaxOrder`, `NoMinOrder`). -/
+    entries and phenomena files — a role mathlib's typeclass instances cannot
+    play (you cannot store an `[OrderTop α]` instance in a record field).
+    The actual order-theoretic properties of concrete scale types are
+    encoded via Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`,
+    `NoMinOrder`); the two encodings serve different roles and both are real.
+
+    **Standard-type dimension.** @cite{kennedy-2007} §4.3 eq (66) (Interpretive
+    Economy) DERIVES standard type (relative / min-absolute / max-absolute)
+    from scale structure for `open_`, `lowerBounded`, and `upperBounded`. For
+    `closed`, all three interpretations are licensed (see eq 67: *opaque*,
+    *transparent*) — this enum doesn't capture that disambiguation. Fragment
+    entries with `boundedness = .closed` may need a separate `standardType`
+    slot if downstream theorems care about the distinction.
+
+    **Open-bounded sub-distinction.** @cite{kennedy-2007} fn 28: open scales
+    can be further distinguished by whether they approach a value (e.g. 0 for
+    cost) but don't include it, vs. completely unbounded. Not captured here. -/
 inductive Boundedness where
   | open_        -- no inherent bounds (Kennedy: tall; Rouillard: atelic VP)
   | lowerBounded -- minimum exists, no maximum (Kennedy: wet; Rouillard: N/A)
@@ -108,24 +133,25 @@ def Boundedness.hasMin : Boundedness → Bool
   | .lowerBounded | .closed => true
   | .open_ | .upperBounded => false
 
-/-- Licensing prediction: a bounded scale (any endpoint exists) admits a
-    maximally informative element, licensing degree modifiers (Kennedy) or
-    TIA numerals (Rouillard). An open scale does not.
-    @cite{kennedy-2007}: Interpretive Economy requires non-trivial scale contribution.
-    @cite{rouillard-2026}: MIP requires the numeral to be maximally informative. -/
+/-- "Any endpoint exists" predicate: returns `true` whenever the scale
+    has at least one bound (max or min). An open scale returns `false`.
+
+    **NOT @cite{kennedy-2007}'s full licensing prediction.** Kennedy's actual
+    prediction is the 4×2 modifier-class matrix in @cite{kennedy-2007}
+    eq (61) (= @cite{kennedy-mcnally-2005} eq (15)): maximizers
+    (*completely, perfectly*) require an UPPER endpoint; minimizers
+    (*slightly, partially*) require a LOWER endpoint; proportional modifiers
+    (*half*) require BOTH. A single Bool can't encode this — to be faithful,
+    split into `licensesMaximizer`/`licensesMinimizer`/`licensesProportional`.
+
+    The current Bool is sufficient for callers that only need to distinguish
+    "open" from "any-endpoint-exists" (e.g. Interpretive Economy gating a
+    relative vs. absolute interpretation, @cite{kennedy-2007} §4.3, or
+    Rouillard's MIP, @cite{rouillard-2026}). For modifier-specific
+    licensing, consumers must consult `hasMax`/`hasMin` directly. -/
 def Boundedness.isLicensed : Boundedness → Bool
   | .closed | .lowerBounded | .upperBounded => true
   | .open_ => false
-
-/-- Derive a `Boundedness` tag from order-theoretic properties of a type.
-    Useful when you have a concrete type and want to classify it for
-    compatibility with lexical data. -/
-def Boundedness.ofType (hasTop : Bool) (hasBot : Bool) : Boundedness :=
-  match hasTop, hasBot with
-  | true, true => .closed
-  | true, false => .upperBounded
-  | false, true => .lowerBounded
-  | false, false => .open_
 
 -- ════════════════════════════════════════════════════
 -- § 1a′. Rational Unit Interval
@@ -170,9 +196,6 @@ def exceeds (d θ : Rat01) : Prop := θ.val < d.val
 
 instance (d θ : Rat01) : Decidable (exceeds d θ) :=
   inferInstanceAs (Decidable (θ.val < d.val))
-
-/-- Closed-bounded: both 0 and 1 are attained. -/
-def boundedness : Boundedness := .closed
 
 end Rat01
 
@@ -266,13 +289,6 @@ def isLicensed {α : Type*} [Preorder α] (S : ComparativeScale α) : Bool :=
 
 end ComparativeScale
 
-/-- An additive scale is representable if there exists a monotone additive
-    function into (ℚ, ≤). -/
-def AdditiveScale.IsRepresentable {α : Type*} [SemilatticeSup α]
-    (S : AdditiveScale α) : Prop :=
-  ∃ (μ : α → ℚ), Monotone μ ∧
-    ∀ (x y : α), S.disjoint x y → μ (x ⊔ y) = μ x + μ y
-
 -- ════════════════════════════════════════════════════
 -- § 1d. Scale Polarity
 -- ════════════════════════════════════════════════════
@@ -286,34 +302,7 @@ inductive ScalePolarity where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 1e. Positive Region
--- ════════════════════════════════════════════════════
-
-/-- A positive region on an ordered type: the abstract interface for
-    "when does a gradable predicate hold?"
-    Kennedy: compare to a threshold. CSW: qualitative background ordering.
-    Both instantiate this. -/
-class PositiveRegion (α : Type*) (θ : Type*) where
-  /-- Is value `x` in the positive region given parameter `p`? -/
-  inRegion : α → θ → Bool
-
--- ════════════════════════════════════════════════════
--- § 1f. Scale Representation (@cite{krantz-1971})
--- ════════════════════════════════════════════════════
-
-/-- A representation of a qualitative ordering by a quantitative measure.
-    @cite{krantz-1971}: the fundamental bridge from comparative to numerical.
-    Instances: AdditiveScale.IsRepresentable, Kennedy's μ, CSW's g(μ).
-
-    Krantz, D. et al. (1971). Foundations of measurement, Vol. 1. -/
-structure ScaleRepresentation (S : Type*) [Preorder S] (D : Type*) [Preorder D] where
-  /-- The measure/representation function -/
-  μ : S → D
-  /-- Order-preservation -/
-  monotone : Monotone μ
-
--- ════════════════════════════════════════════════════
--- § 1g. Directed Measure (Root Algebraic Primitive)
+-- § 1e. Directed Measure (Root Algebraic Primitive)
 -- ════════════════════════════════════════════════════
 
 /-- A directed measurement on a bounded scale: the algebraic primitive
@@ -359,31 +348,11 @@ namespace DirectedMeasure
 
 variable {D : Type*} [LinearOrder D] {E : Type*}
 
-/-- The degree property derived from direction:
-    - positive → μ(x) ≥ d (upward: meets threshold)
-    - negative → μ(x) ≤ d (downward: at most threshold)
-
-    This replaces a stored `degProp` field with a derived one.
-    The degree property is not independent data — it is determined by
-    the direction choice. Definitionally equal to `atLeastDeg dm.μ`
-    (positive) and `atMostDeg dm.μ` (negative), proved in §8b. -/
-def degProp (dm : DirectedMeasure D E) : D → E → Prop :=
-  match dm.direction with
-  | .positive => fun d e => dm.μ e ≥ d
-  | .negative => fun d e => dm.μ e ≤ d
-
-/-- Licensing: licensed iff the bounded scale admits an optimum. -/
+/-- Licensing: licensed iff the bounded scale admits an optimum.
+    See `Boundedness.isLicensed` for the caveat — this checks
+    "any endpoint exists", not @cite{kennedy-2007}'s full
+    modifier-class licensing matrix. -/
 def licensed (dm : DirectedMeasure D E) : Bool := dm.boundedness.isLicensed
-
-/-- Blocking: blocked iff open scale → information collapse. -/
-def blocked (dm : DirectedMeasure D E) : Bool := !dm.licensed
-
-/-- Licensing is determined solely by boundedness, regardless of
-    domain, measure function, or direction. -/
-theorem licensing_from_boundedness (d₁ d₂ : DirectedMeasure D E)
-    (h : d₁.boundedness = d₂.boundedness) :
-    d₁.licensed = d₂.licensed := by
-  simp [licensed, Boundedness.isLicensed, h]
 
 end DirectedMeasure
 
@@ -393,15 +362,21 @@ end DirectedMeasure
 
 /-! ### Scale types as Mathlib typeclass combinations
 
-A measurement scale is just a `LinearOrder`. Density is `DenselyOrdered`,
-and boundedness is `OrderTop`/`OrderBot`/`NoMaxOrder`/`NoMinOrder`.
-No wrapper classes needed — use Mathlib directly:
+For **theorems about concrete scales** — proving facts about a particular
+type — use Mathlib typeclasses directly:
 
 - **Measurement scale**: `[LinearOrder α]`
 - **Dense measurement scale** (@cite{fox-2007} UDM): `[LinearOrder α] [DenselyOrdered α]`
 - **Upper-bounded scale**: `[LinearOrder α] [OrderTop α]`
 - **Lower-bounded scale**: `[LinearOrder α] [OrderBot α]`
 - **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`
+
+For **lexical-data tagging** — storing scale classification in fragment
+entries or pattern-matching on it in derivation tables — use the §1
+`Boundedness` enum. Mathlib typeclass instances cannot be stored in record
+fields or matched against; the enum and the typeclass system serve different
+roles and both are real. (The earlier "no wrapper classes needed" advice
+was wrong about lexical data.)
 
 Instances:
 - Degree scales for gradable adjectives
@@ -580,7 +555,7 @@ theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
 Five degree properties covering all comparison relations, parameterized by
 a measure function `μ : W → α`. These are the building blocks for the named
 numeral meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree
-questions (`DegreeQuestion`).
+questions (`Theories/Semantics/Degree/Question.lean`).
 
 - `atLeastDeg`: closed `≥`, always has max⊨
 - `moreThanDeg`: open `>`, fails on dense scales
@@ -1258,11 +1233,6 @@ abbrev deg (n : Nat) {max : Nat} (h : n ≤ max := by omega) : Degree max :=
 /-- Construct a threshold by literal: `thr 5 : Threshold 10`. -/
 abbrev thr (n : Nat) {max : Nat} (h : n < max := by omega) : Threshold max :=
   ⟨⟨n, h⟩⟩
-
-/-- Kennedy positive region: degree `d` is in the positive region given
-    threshold `θ` iff `θ < d` (i.e., the degree exceeds the threshold). -/
-instance {max : Nat} : PositiveRegion (Degree max) (Threshold max) where
-  inRegion d θ := (θ : Degree max) < d
 
 -- ════════════════════════════════════════════════════
 -- § 12. Bool Decision Wrappers

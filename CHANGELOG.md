@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.420] - 2026-04-26
+
+### Core/Scales/Scale.lean §1 cluster: dead-code drop + docstring honesty (Tier A+B from audit)
+
+Audit-driven cleanup of the §1 Boundedness cluster in `Linglib/Core/Scales/Scale.lean` after a 4-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler), with substantive linguistics flags ground-truthed against `@cite{kennedy-2007}` Ch. 4 (eqs 59, 61, 66, 67) and `@cite{hay-kennedy-levin-1999}` (the SALT 9 paper anchoring the scale↔telicity arrow).
+
+**Tier A — dead-code drops (8 exports, 0 consumers each per per-file grep):**
+- `ScaleRepresentation` structure (§1f) — `OrderHom S D` is mathlib's bundled monotone-function equivalent; the Krantz 1971 attribution didn't capture Krantz's actual representation theorem (which requires uniqueness up to admissible transformation).
+- `PositiveRegion` typeclass and its `Degree max → Threshold max` instance (§1e + line 1239) — 1-method typeclass that's just a function; its naming overlap with `StatesBasedEntry.inPositiveRegion` (a separate, heavily used method in `Theories/Semantics/Gradability/StatesBased.lean`) was a confusion-source.
+- `Boundedness.ofType` (`Bool × Bool → Boundedness` constructor) — no callers derive a tag from typeclass-instance Bools.
+- `AdditiveScale.IsRepresentable` — only docstring mentions of it remained.
+- `DirectedMeasure.degProp`, `DirectedMeasure.blocked`, `DirectedMeasure.licensing_from_boundedness` — all 0-consumer; the kept `DirectedMeasure.licensed` (2 consumers) gets the `boundedness.isLicensed` directly.
+- `Rat01.boundedness := .closed` constant — `Set.Icc 0 1` is closed by construction; redundant tag.
+
+Net: 1284 → 1254 LOC (drops compensated by added docstring nuance below).
+
+**Tier B — docstring honesty (3 corrections validated against the source PDFs):**
+
+1. **§1 `Boundedness` enum docstring**: now cites `@cite{kennedy-mcnally-2005}` eq (1) and `@cite{kennedy-2007}` §4.2 eq (59) as the canonical sources for the 4-way scale-structure typology (independently discovered by `@cite{rotstein-winter-2004}`). Adds two notes that the audit surfaced as genuine gaps: (a) the **standard-type dimension** — Kennedy 2007 §4.3 eq (66) (Interpretive Economy) DERIVES standard type (relative / min-absolute / max-absolute) from scale structure for `open_`/`lowerBounded`/`upperBounded`, but `closed` scales are genuinely AMBIGUOUS (eq 67 *opaque/transparent*); fragment entries with `boundedness = .closed` may need a separate `standardType` slot; (b) the **open-bounded sub-distinction** — Kennedy 2007 fn 28 flags that open scales can be further split by whether they approach a value (e.g. cost approaching 0) or are completely unbounded; not captured here.
+
+2. **`Boundedness.isLicensed` docstring**: explicitly flagged as **NOT @cite{kennedy-2007}'s full licensing prediction**. Kennedy's actual prediction is the 4×2 modifier-class matrix in eq (61) (= K&M 2005 eq 15): maximizers (*completely, perfectly*) require an UPPER endpoint; minimizers (*slightly, partially*) require a LOWER endpoint; proportional modifiers (*half*) require BOTH. A single Bool can't encode this. The current Bool is sufficient for "any-endpoint-exists" callers (Interpretive Economy gating, Rouillard MIP); modifier-specific licensing must consult `hasMax`/`hasMin` directly. Naming kept (rename would touch 19 consumer files).
+
+3. **§2 docstring contradiction resolved**: the previous "no wrapper classes needed" advice was wrong about lexical data (you can't store `[OrderTop α]` instances in record fields). Now states explicitly: mathlib typeclasses for theorems about concrete scales; `Boundedness` enum for lexical-data tagging in fragment entries. Both serve different roles; both are real.
+
+4. **Kennedy/Rouillard cross-domain matrix tightened**: previous examples were "be sick" (state) and "wrote a paper" (accomplishment) — both **outside HKL 1999's scope**, which is restricted to degree achievements (verbs derived from gradable adjectives like *lengthen, cool, straighten*). Replaced with HKL-faithful examples and added an explicit caveat that the cross-column alignment only holds for DAs; states and accomplishments need separate justification (Krifka 1989/1998 on predicate quantization, etc.).
+
+5. `DirectedMeasure.licensed` docstring updated to point at the `Boundedness.isLicensed` caveat.
+
+**Bib additions:** `hay-kennedy-levin-1999` newly added (SALT 9, Mathews & Strolovitch eds., CLC Publications, pp. 127–144; no DOI — SALT 9 predates LSA's archival project). `kennedy-mcnally-2005` and `rotstein-winter-2004` already in bib; cite list at top of Scale.lean updated to include all three.
+
+**Verification provenance:** Kennedy 2007 typology verified at p.33 eq (59) — exactly matches the §1 4-way enum. Modifier-class matrix verified at p.34 eq (61). Interpretive Economy + totally-closed ambiguity verified at p.36 eq (66) and p.37 eq (67). HKL 1999 thesis verified at p.3 — restricted to degree achievements. Linguistics-expert flag #1 (two-dimensional typology) was REVISED: scale structure and standard type are NOT orthogonal; IE derives one from the other for non-totally-closed scales. Linguistics-expert flag #3 (HKL 1999 scope) confirmed.
+
+**Tier C deferred** (substantive integration work): `MereologicalStatus` (Wellwood 2015) silent divergence from `MereoTag`; Krifka 1989 `QUA P` predicate formalization; Extent.lean ↔ fragment-entry `scaleType` bridge — all flagged for follow-up.
+
+**Backward compatibility.** All consumer-facing exports (`Boundedness`, `Boundedness.{hasMax,hasMin,isLicensed}`, `Rat01`, `Rat01.{zero,one,half,exceeds}`, `MereoTag`, `MereoTag.toBoundedness`, `LicensingPipeline` + `.{isLicensed,universal}`, `ComparativeScale`, `AdditiveScale`, `ScalePolarity`, `DirectedMeasure`, `DirectedMeasure.licensed`) keep signatures. 5391-job full transitive build passes.
+
 ## [0.230.419] - 2026-04-26
 
 ### Core/Scales/Extent.lean mathlib distillation: 256 → 127 LOC
