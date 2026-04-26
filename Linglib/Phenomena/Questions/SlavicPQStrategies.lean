@@ -1,10 +1,10 @@
-import Linglib.Fragments.Russian.QuestionParticles
-import Linglib.Fragments.Ukrainian.QuestionParticles
-import Linglib.Fragments.Polish.QuestionParticles
-import Linglib.Fragments.Bulgarian.QuestionParticles
-import Linglib.Fragments.Serbian.QuestionParticles
-import Linglib.Fragments.Slovenian.QuestionParticles
-import Linglib.Fragments.Macedonian.QuestionParticles
+import Linglib.Fragments.Slavic.Russian.QuestionParticles
+import Linglib.Fragments.Slavic.Ukrainian.QuestionParticles
+import Linglib.Fragments.Slavic.Polish.QuestionParticles
+import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
+import Linglib.Fragments.Slavic.Serbian.QuestionParticles
+import Linglib.Fragments.Slavic.Slovenian.QuestionParticles
+import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 
 /-!
 # Cross-Slavic Polar Question Strategies
@@ -119,7 +119,7 @@ def upperSorbian : SlavicPQProfile :=
 def slovenian : SlavicPQProfile :=
   { language := "Slovenian", code := "sl"
   , defaultStrategy := .clauseInitialParticle
-  , particle := some Fragments.Slovenian.QuestionParticles.ali.form
+  , particle := some Fragments.Slavic.Slovenian.QuestionParticles.ali.form
   , declPQ := .unavailable
   , exampleNum := some "28" }
 
@@ -127,7 +127,7 @@ def slovenian : SlavicPQProfile :=
 def ukrainian : SlavicPQProfile :=
   { language := "Ukrainian", code := "uk"
   , defaultStrategy := .clauseInitialParticle
-  , particle := some Fragments.Ukrainian.QuestionParticles.cy.romanization
+  , particle := some Fragments.Slavic.Ukrainian.QuestionParticles.cy.romanization
   , declPQ := .available
   , exampleNum := some "29" }
 
@@ -137,7 +137,7 @@ Verb-initial PQs are possible but unacceptable in quiz scenarios
 def polish : SlavicPQProfile :=
   { language := "Polish", code := "pl"
   , defaultStrategy := .clauseInitialParticle
-  , particle := some Fragments.Polish.QuestionParticles.czy.form
+  , particle := some Fragments.Slavic.Polish.QuestionParticles.czy.form
   , declPQ := .marginal
   , exampleNum := some "30" }
 
@@ -149,7 +149,7 @@ Serbian has the richest PQ repertoire among Slavic languages
 def serbian : SlavicPQProfile :=
   { language := "Serbian", code := "sr"
   , defaultStrategy := .particlePlusMovement
-  , particle := some Fragments.Serbian.QuestionParticles.daLi.form
+  , particle := some Fragments.Slavic.Serbian.QuestionParticles.daLi.form
   , declPQ := .unavailable
   , exampleNum := some "31" }
 
@@ -161,7 +161,7 @@ Bulgarian *li* (ex. 32). -/
 def macedonian : SlavicPQProfile :=
   { language := "Macedonian", code := "mk"
   , defaultStrategy := .clauseInitialParticle
-  , particle := some Fragments.Macedonian.QuestionParticles.dali.romanization
+  , particle := some Fragments.Slavic.Macedonian.QuestionParticles.dali.romanization
   , declPQ := .unavailable
   , negationTriggersBias := false  -- dali + neg is unbiased
   , exampleNum := some "32" }
@@ -171,7 +171,7 @@ def macedonian : SlavicPQProfile :=
 def bulgarian : SlavicPQProfile :=
   { language := "Bulgarian", code := "bg"
   , defaultStrategy := .verbAttachedParticle
-  , particle := some Fragments.Bulgarian.QuestionParticles.li.romanization
+  , particle := some Fragments.Slavic.Bulgarian.QuestionParticles.li.romanization
   , declPQ := .marginal  -- colloquial only
   , exampleNum := some "33" }
 
@@ -182,7 +182,7 @@ IntonPQs are arguably unbiased (§4.2.3). -/
 def russian : SlavicPQProfile :=
   { language := "Russian", code := "ru"
   , defaultStrategy := .intonationOnly
-  , particle := some Fragments.Russian.QuestionParticles.li.romanization
+  , particle := some Fragments.Slavic.Russian.QuestionParticles.li.romanization
   , declPQ := .unavailable
   , exampleNum := some "34" }
 
@@ -240,7 +240,7 @@ structure BiasParticle where
 
 def razve : BiasParticle :=
   { language := "Russian"
-  , form := Fragments.Russian.QuestionParticles.razve_.romanization
+  , form := Fragments.Slavic.Russian.QuestionParticles.razve_.romanization
   , gloss := "really/RAZVE"
   , outerNeg := true, innerNeg := true }
 
@@ -254,7 +254,7 @@ def copak : BiasParticle :=
 
 def zar : BiasParticle :=
   { language := "Serbian"
-  , form := Fragments.Serbian.QuestionParticles.zar_.form
+  , form := Fragments.Slavic.Serbian.QuestionParticles.zar_.form
   , gloss := "RAZVE.SR"
   , outerNeg := true, innerNeg := true }
 
@@ -285,22 +285,22 @@ there are no separate "bridge" theorems — the connection is by construction. -
 
 /-- All RAZVE-family Fragment entries require evidential bias. -/
 theorem razve_family_all_evidential :
-    Fragments.Russian.QuestionParticles.razve_.requiresEvidentialBias = true ∧
-    Fragments.Ukrainian.QuestionParticles.xiba.requiresEvidentialBias = true ∧
-    Fragments.Polish.QuestionParticles.czyzby.requiresEvidentialBias = true ∧
-    Fragments.Bulgarian.QuestionParticles.nima.requiresEvidentialBias = true ∧
-    Fragments.Serbian.QuestionParticles.zar_.requiresEvidentialBias = true :=
+    Fragments.Slavic.Russian.QuestionParticles.razve_.requiresEvidentialBias = true ∧
+    Fragments.Slavic.Ukrainian.QuestionParticles.xiba.requiresEvidentialBias = true ∧
+    Fragments.Slavic.Polish.QuestionParticles.czyzby.requiresEvidentialBias = true ∧
+    Fragments.Slavic.Bulgarian.QuestionParticles.nima.requiresEvidentialBias = true ∧
+    Fragments.Slavic.Serbian.QuestionParticles.zar_.requiresEvidentialBias = true :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- All neutral PQ Fragment entries do NOT require evidential bias. -/
 theorem neutral_particles_no_evidential :
-    Fragments.Russian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Fragments.Ukrainian.QuestionParticles.cy.requiresEvidentialBias = false ∧
-    Fragments.Polish.QuestionParticles.czy.requiresEvidentialBias = false ∧
-    Fragments.Bulgarian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Fragments.Serbian.QuestionParticles.daLi.requiresEvidentialBias = false ∧
-    Fragments.Slovenian.QuestionParticles.ali.requiresEvidentialBias = false ∧
-    Fragments.Macedonian.QuestionParticles.dali.requiresEvidentialBias = false :=
+    Fragments.Slavic.Russian.QuestionParticles.li.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Ukrainian.QuestionParticles.cy.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Polish.QuestionParticles.czy.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Bulgarian.QuestionParticles.li.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Serbian.QuestionParticles.daLi.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Slovenian.QuestionParticles.ali.requiresEvidentialBias = false ∧
+    Fragments.Slavic.Macedonian.QuestionParticles.dali.requiresEvidentialBias = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Questions.SlavicPQStrategies

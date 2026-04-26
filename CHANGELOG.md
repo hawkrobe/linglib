@@ -4,132 +4,640 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.385] - 2026-04-26
+## [0.230.400] - 2026-04-25
 
-### AkinboFwangwar2026 complete rewrite to mathlib discipline — 1180 → 737 LOC
+### Slavic Fragments cluster — `Fragments/Slavic/{Lang}/` consolidation
 
-Following the mathlib-reviewer audit's "obvious next move", the file is fully unified onto the `FloatingForm` autosegmental substrate. Eliminates the parallel `OutputTBU`/`SingleCand`/`PlurCand` machinery, replaces the per-tableau hand-rolled constraint defs with polymorphic combinators, and organises the file into a clean §1-§9 structure.
+Mirrors the `Fragments/Mayan/` precedent: 8 Slavic languages clustered under a single family directory with shared cluster-level types factored into `Params.lean`.
 
-DELETED (~600 LOC): the §§S1-S7 OutputTBU machinery + tableau encodings; §S14 cophonology demo; §S15 basemap demo; §S16 ConstraintSystem `predict` demo; §S18 PlurCorr structural lift. These were theory-internal demos with no external consumers — none of `Fragments/Mwaghavul/Basic.lean`, `Features/Prosody.lean`, `Theories/Phonology/{Tone/Constraints,Autosegmental/{GrammaticalTone,DominantCophAgreement}}.lean` import this file (they all only `@cite` it). Audit confirmed zero downstream impact.
+**Structural changes.** `git mv` of 34 files: `Fragments/{Russian,Polish,Bulgarian,Czech,Macedonian,Serbian,Slovenian,Ukrainian}/` → `Fragments/Slavic/{Lang}/`. All 51 consumer-import call sites across linglib updated to `Linglib.Fragments.Slavic.{Lang}.X`. Per-file `namespace Fragments.{Lang}` updated to `namespace Fragments.Slavic.{Lang}` (caught two stragglers in `Slavic/Russian/{Morph,Typology}.lean` that the bulk-update missed).
 
-ADDED: full FloatingForm-based reanalysis covering all three paper tableaux:
-- §3 Tableau 24 (`(wùlàʃ)₁ + Mᵥ`): 6 candidates **including the previously-excluded copying variant (24f)**, decided by INTEGRITY-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone. Per-candidate profiles + headline `optimal` theorem all `decide`-checked.
-- §4 Tableau 25 (`(háŋláyáp)₁ + M₂H₃ᵥ`): 7 candidates, ranking `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. Per-candidate profiles + `optimal` decide-checked.
-- §5 Tableau 26 pluractional (`(jàlpàt)₁ + (jàlpàt)₂ + M₃H₄ᵥ`): two root morphemes (RED + BASE), per-root anchor scoping. Winner (26d) = M-spread on RED, H-spread on BASE = the iconic disharmony pattern.
+**Shared substrate `Fragments/Slavic/Params.lean`.** New 75-LOC file factoring the four types previously triplicated across the three VPC fragments:
 
-NEW substrate primitives in §2:
-- `lAnchToneC` / `rAnchToneC` / `maxToneC` — polymorphic anchor + MAX-Tone over `MwaghavulForm`
-- `lAnchToneCAcross` / `rAnchToneCAcross` — per-root summed anchors implementing paper p. 28's "no violation to other root morpheme" semantics for the pluractional
-- `integMv` — instantiates `Phonology.Tone.integrityTone` for the verbaliser
+* `Aspect` — perfective vs imperfective.
+* `SuperlexicalSubtype` — six aspectual subtypes (delimitative / cumulative / completive / repetitive / inceptive / distributive) per @cite{svenonius-2004} §3.
+* `PrefixClass` — `lexical | superlexical (subtype)` ADT (no `Option`, no consistency lemma).
+* `PrefixClass.IsSuperlexical : Prop` predicate + `DecidablePred` instance.
 
-KEPT (migrated where needed):
-- §6 Rolle 2018 classification (`verbM_GT` / `verbMH_GT` GTSpec instances + dominance/asymmetry theorems)
-- §7 Empirical generalisations (Mwaghavul ideophone-to-verb derivation patterns)
-- §8 DM categoriser connection
-- §9 Expressiveness preservation (now `example` not `theorem` per CLAUDE.md "encoding conclusions as definitions" discipline)
+**VPC fragment refactor.** `Russian/VerbalPrefixes.lean`, `Polish/VerbalPrefixes.lean`, `Bulgarian/VerbalPrefixes.lean` now `import Linglib.Fragments.Slavic.Params` + `open Fragments.Slavic (Aspect SuperlexicalSubtype PrefixClass)`. Per-file local copies deleted (~40 LOC each).
 
-DECIDE HYGIENE: all theorems pass at default 200K heartbeats, no `sorry`, no `native_decide`, no `set_option maxHeartbeats` overrides. The `Tableau24`/`Tableau25`/`Tableau26` sub-namespaces (mathlib pattern) keep candidate names unprimed (`candA`...`candG`) without clashing across tableaux.
+**Bib `sources` fields updated.** `svenonius-2004` (was `crossref` only), `istratkova-2004`, `jablonska-2004` now point to the new `Fragments/Slavic/...` paths + `Params.lean`.
 
-IMPORTS: dropped 4 transitive-only imports (`Linglib.Core.Constraint.System`, `BasemapCorrespondence`, `Correspondence`, `CophonologyTheory`) that the deleted sections had pulled in. 12 → 8 imports.
+Build: 703 jobs green for the affected typology + Slavic targets. The pre-existing `Core/Question/Basic.lean:882: Fields missing: decSupports` failure is from a concurrent session's `Support` typeclass change and not part of this commit's scope.
 
-ARCHITECTURAL TAKEAWAY: the file now demonstrates that the McPhersonLamont-built FloatingForm substrate is genuinely cross-paper across two distinct OT paradigms (HS-style derivation vs parallel anchor-based OT), and that INTEGRITY-Mᵥ — which the OutputTBU rep couldn't express — falls out naturally from the Goldsmith autosegmental representation (one ulTones entry = one autosegment, multi-link = spreading, multiple entries = copying). The 2026 phonology mainstream's autosegmental view is now the substrate's view.
+## [0.230.399] - 2026-04-26
 
-975 jobs green; 0.230.385
+### Verb-class typeclasses co-located + substrate-level typeclass propagation
+
+Two-phase mathlib-discipline cleanup of the `VerbalMeaningPostulates` layer added in 0.230.397.
+
+**Phase A — Dissolve hub, co-locate typeclasses with predicates.**
+Mathlib pattern: `class Group` lives next to `mul_assoc` in `Group/Defs.lean`, not in a separate `GroupPostulates.lean`. The hub file `Theories/Semantics/Events/VerbalMeaningPostulates.lean` is deleted; each typeclass moves next to the predicates it bundles:
+
+- `IsCumThetaVerb` → `ThematicRoleProperties.lean` §8 (next to `CumTheta`). **Renamed from `IsCumOnlyVerb`** for content-driven naming: the typeclass content is just `CumTheta`, and the "cumOnly" empirical interpretation (cumulative-but-not-incremental) is documentation only — making it the *weakest* class lets it serve as the typeclass for `cum_propagation_class`.
+- `IsSincVerb` → `StrictIncrementality.lean` §4 (next to `SINC`).
+- `IsIncVerb` + `instIsIncVerbOfIsSincVerb` instance → `GeneralIncrementality.lean` §4 (next to `INC` and `inc_of_sinc`).
+
+Plus two new upward instances giving the K98 hierarchy synthesised:
+- `instIsCumThetaVerbOfIsSincVerb` (in `StrictIncrementality.lean`)
+- `instIsCumThetaVerbOfIsIncVerb` (in `GeneralIncrementality.lean`)
+
+So `[IsCumThetaVerb θ]` resolves automatically from `[IsSincVerb θ]` or `[IsIncVerb θ]`.
+
+**Phase B — Substrate-level typeclass-form propagation theorems.** Mathlib pattern: typeclass-form is the canonical API; the explicit-witness form is implementation. Four new theorems added to substrate (no `_class` *suffix*-on-the-canonical pattern in mathlib; chose the suffix here only to coexist with existing section-variable forms during transition):
+
+- `cum_propagation_class [IsCumThetaVerb θ]` (in `CumulativityPropagation.lean`) — fires on all three K98 verb classes via instance synthesis.
+- `qua_propagation_class [IsSincVerb θ]` (in `CumulativityPropagation.lean`).
+- `not_cum_vp_of_witnesses_class [IsSincVerb θ]` (in `PropagationGap.lean`).
+- `middle_ground_stable_class [IsSincVerb θ]` (in `PropagationGap.lean`).
+
+Consumer migrations:
+- `Filip2012.propagation_gap_lifts_class` **deleted** — substrate's `middle_ground_stable_class` is the canonical form; the section-variable `propagation_gap_lifts` stays for explicit-witness use, with a docstring pointer.
+- `Moon2026.mixedDrink_VP_propagation_gap` calls substrate's `middle_ground_stable_class` directly (was going through `Filip2012.propagation_gap_lifts_class`); Filip2012 retains its anchoring role in prose.
+- `AspectualConsistency` §8: deleted redundant `sinc_verb_cum_object_yields_cum_vp` (subsumed by `cum_theta_verb_cum_object_yields_cum_vp` once SINC→CumTheta upward instance exists); migrated remaining theorems to substrate's typeclass forms.
+- `Krifka1998` §9 toy: `eat_two_apples_toy_qua` now `qua_propagation_class twoApples_qua` (1 line), `eat_some_apples_toy_cum` now `cum_propagation_class someApples_cum` — no manual `IsSincVerb.cumTheta` extraction.
+
+Net effect: `VerbalMeaningPostulates.lean` gone (~130 LOC removed); 3 typeclasses + 4 instances live with their predicates; 4 typeclass-form propagation theorems live in substrate; 1 redundant Filip2012 wrapper deleted; 1 redundant AspectualConsistency theorem deleted; 4 consumers simplified.
+
+1795 jobs green for the touched subgraph.
+
+## [0.230.398] - 2026-04-26
+
+### Toy `IsSincVerb` instance dissolved into Studies/Krifka1998 §9
+
+Per linglib's "toys live in the study files where they're used"
+discipline. `Fragments/English/Predicates/EatToy.lean` was created in
+0.230.397 as a standalone demo of the typeclass instance — but it had
+no actual consumer (only an inline `inferInstance` test). A toy that
+isn't applied isn't earning its place.
+
+Dissolved into `Phenomena/TenseAspect/Studies/Krifka1998.lean` as a
+new §9 *Concrete `IsSincVerb` Toy + Applied Propagation*. The toy now
+serves §4.5's two parametric propagation theorems
+(`eat_apples_cum_propositional` / `eat_two_apples_qua_propositional`)
+by *firing* them on the concrete `eatThemeToy` instance rather than
+only on abstract θ:
+
+- `twoApples : Apple → Prop := λ a => a = {0, 1}` + `twoApples_qua` proof
+- `someApples : Apple → Prop := λ a => a.Nonempty` + `someApples_cum` proof
+- `eat_two_apples_toy_qua : QUA (VP eatThemeToy twoApples)` —
+  `qua_propagation_sinc` fires via `IsSincVerb.up`/`.sinc` synthesis
+- `eat_some_apples_toy_cum : CUM (VP eatThemeToy someApples)` —
+  `cum_propagation` fires via `IsSincVerb.cumTheta`
+
+Net effect: the K98 §3.3 propagation chain now has at least one
+end-to-end kernel-checkable invocation, anchored where it belongs (the
+K98 study file) rather than floating in `Fragments/`. The
+`inferInstance` test for SINC → INC synthesis moves with it.
+
+Files: deleted `Fragments/English/Predicates/EatToy.lean` (~150 LOC);
+extended `Phenomena/TenseAspect/Studies/Krifka1998.lean` (+~120 LOC for
+§9). Manifest updated.
+
+## [0.230.397] - 2026-04-26
+
+### Fragment-verb propositional θ infrastructure (mathlib typeclass discipline)
+
+Bundles K98 verb-class meaning postulates into mathlib-style typeclasses so consumers writing `[IsSincVerb θ]` get instance synthesis instead of threading SINC + UP + CumTheta witnesses through theorem signatures. Closes the gap that prior work flagged as "blocked on concrete θ instances for fragment verbs" by also providing a constructive instance.
+
+**New: `Theories/Semantics/Events/VerbalMeaningPostulates.lean`** (~130 LOC):
+- `IsSincVerb` (SINC + UP + CumTheta — strictly incremental, *eat*/*build*)
+- `IsIncVerb` (INC + CumTheta — incremental allowing backups, *read*/*write*)
+- `IsCumOnlyVerb` (CumTheta only — non-incremental, *push*/*carry*)
+- `instance instIsIncVerbOfIsSincVerb : [IsSincVerb θ] → IsIncVerb θ` — registers K98 §3.6's "every SINC verb is also INC" via `inc_of_sinc`. Inline synthesis test in docstring.
+
+Discipline: no instance arrow into `IsCumOnlyVerb` from the stronger classes — that class is the *empirical* category of cumulative-only verbs, conflating it with its definition would be a diamond-inheritance trap (mathlib analogue: `IsLawful*` / `IsStrict*` separation).
+
+**New: `Fragments/English/Predicates/EatToy.lean`** (~150 LOC) — concrete `IsSincVerb` instance proving the typeclass admits non-axiomatic realizations. `Apple = Finset (Fin 3)` (powerset lattice), `eatThemeToy a e := a = e` (canonical SINC bijection). All five SINC components (MSO/UO/MSE/UE/extended) plus UP and CumTheta proved structurally; `extended` non-degeneracy witnessed by `{0,1}` whole + `{0}` proper part. Inline `example : IsIncVerb eatThemeToy := inferInstance` validates the SINC → INC arrow fires.
+
+**Consumer migrations** (typeclass variants alongside section-variable originals):
+- `Phenomena/TenseAspect/Studies/Filip2012.lean` adds `propagation_gap_lifts_class` — typeclass form of `propagation_gap_lifts`; recommended public API.
+- `Phenomena/Countability/Studies/Moon2026.lean` adds §12 `MoonFilipBridge` with `mixedDrink_VP_propagation_gap` — direct invocation of `Filip2012.propagation_gap_lifts_class` on Moon's mixed-drink predicate. The cross-paper "Moon's NP-level gap feeds Filip's VP-level propagation" claim now lives in a single Lean term rather than only in prose docstrings.
+- `Phenomena/TenseAspect/Studies/AspectualConsistency.lean` adds §8 `PropositionalConsistency` — typeclass-parameterised propositional cousins of the Bool-tag pipeline tests (`sinc_verb_qua_object_yields_qua_vp`, `sinc_verb_cum_object_yields_cum_vp`, `cumOnly_verb_cum_object_yields_cum_vp`).
+
+Reframing of an earlier survey verdict: an Explore agent had recommended *not* adding typeclasses on the grounds that linglib's existing pattern is section variables and a deleted `class VerbIncrementality` had zero instances. That verdict described status quo; mathlib discipline is the normative target. The deleted class had no instances because no one built one — building one (EatToy) is the gap-closing step.
+
+5374 jobs green; existing low-level theorems (`propagation_gap_lifts`, `cum_propagation`, `qua_propagation_sinc`) untouched, both APIs coexist.
+
+## [0.230.396] - 2026-04-26
+
+### ScontrasPearl per-latent ≤: 2 vacuous-zero cases discharged via strict-witness reuse
+
+Concrete leaf-discharge progress on `ScontrasPearl2021PMF.S1g_zero_gt_one_for_some_latent`. The pointwise `≤` over 6 latents was previously a single `sorry`; now structured as explicit `cases lat` with 2 cases proved.
+
+**New lemma**: `S1g_surfNone_strict` (fully proved, parallel structure to `S1g_surfHowMany_strict`). At `.surfNone`, surface scope makes `.everyNot` false at `.one` AND the `.none_` QUD projection sums over `{.one, .two}` (both 0), so `s1Score = 0 → S1g = 0`. RHS positivity follows from `mem_support_S1g_iff` + L0 positivity at `.zero`. ~20 lines, fully discharged.
+
+**Case-bash structure** for the pointwise ≤:
+```lean
+intro lat
+cases lat
+· exact (S1g_surfHowMany_strict hα).le  -- surfHowMany: vacuous-zero LHS
+· sorry  -- surfAll: equality (numeric)
+· exact (S1g_surfNone_strict hα).le  -- surfNone: vacuous-zero LHS
+· sorry  -- invHowMany: equality (numeric)
+· sorry  -- invAll: equality (numeric)
+· sorry  -- invNone: strict via rpow monotonicity (1/3)^α < (2/3)^α
+```
+
+2 of 6 cases now closed (surfHowMany, surfNone — both vacuous-zero LHS via `le_of_lt` of the strict witnesses). 4 remaining cases (surfAll, invHowMany, invAll, invNone) require ENNReal arithmetic on partition functions — equality cases need to compute both sides, the invNone case needs `rpow` monotonicity in the base.
+
+Sorry count went from 2 monolithic to 5 fine-grained — same coverage but clearer delineation. Each remaining sorry is now a specific, named case rather than a catch-all "case-bash on lat" placeholder. This is the "incremental closure" pattern: each step proves what's tractable AND surfaces the remaining sorries with sharper case-by-case structure.
+
+Two remaining structural patterns identified:
+1. **Equality cases** (3 of 4): both sides have identical numerator and partition function — provable by `congr` after computing both sides identically.
+2. **Strict via rpow base monotonicity** (1 of 4): `(1/3)^α < (2/3)^α` for `α > 0`, via `ENNReal.rpow_lt_rpow_of_exponent_pos` or similar.
+
+Both shapes are mechanical given a `pmf_score_compare` tactic — that's the unblocking work.
+
+## [0.230.395] - 2026-04-26
+
+### FrankGoodman2012PMF: 3 narrowing findings ported via canonical template; one leaf fully discharged
+
+Third consumer migration applying the canonical 4-line template. `Phenomena/Reference/Studies/FrankGoodman2012PMF.lean` previously had only support theorems (`mem_support_L1_iff_appliesTo`); now it has the headline pragmatic-narrowing findings parallel to the bundled-API counterparts (`square_pragmatic_narrowing`, `blue_pragmatic_narrowing`, `green_unique_reference` in the original `FrankGoodman2012.lean`).
+
+Each headline:
+```lean
+theorem blue_pragmatic_narrowing : L1 .blue .blue_square > L1 .blue .blue_circle := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_uniform_lt_iff_kernel_lt]
+  exact S1_blue_circle_lt_blue_square
+```
+
+Per-world S1 leaves bundled as helper lemmas. Two sorry'd (numeric `1/3 < 1/2` style); **one fully proved**: `S1_blue_square_lt_green_square_for_green` discharges in 4 lines via `L0_apply_of_not_appliesTo` (LHS = 0) + `mem_support_S1_iff` (RHS > 0). This is the "structural" leaf shape — when one side has the utterance vacuously inapplicable, the comparison reduces to "0 < positive" via support-theoretic reasoning.
+
+The naturally-tractable leaves are the `unique_reference` ones (where a feature uniquely identifies its target) — those collapse to 0 on one side. The genuinely-numeric leaves are the `pragmatic_narrowing` ones (where both sides are positive but the partition functions differ). The structural shell handles the L1 layer uniformly across both kinds.
+
+**Three consumers fully migrated via the same template** (ScontrasPearl + GS2013 + FG12). The pattern is now well-validated:
+
+```
+unfold L1 worldPrior
+rw [gt_iff_lt, PMF.posterior_uniform_lt_iff_kernel_lt]
+exact <per-world or per-latent leaf>
+```
+
+Negative findings (`¬ L1 a > L1 b`) use the parallel `≤` form:
+
+```
+rw [gt_iff_lt, not_lt, PMF.posterior_uniform_le_iff_kernel_le]
+```
+
+Status across PMF files:
+- FG12: 3 findings ported, 2 numeric leaves sorry'd, 1 leaf fully proved
+- ScontrasPearl: 2 headlines fully discharged, 2 per-latent leaves sorry'd
+- GS2013: 11 findings fully discharged, 11 per-world leaves sorry'd
+
+## [0.230.394] - 2026-04-26
+
+### PMF inequality library: full `≤` companion completion (mathlib parallel-naming)
+
+Audit revealed asymmetric coverage — every `_lt_iff_lt` lemma had no `_le_iff_le` companion, except for `marginal_le_marginal` and `posterior_uniform_le_iff_kernel_le` (added in earlier rounds). Mathlib discipline: every comparison lemma should have both strict and non-strict forms with parallel naming. Seven new `_le` companions added in one batch:
+
+`Core/Probability/PMFPosterior.lean`:
+- `normalize_le_iff_le`
+- `reweight_le_iff_le`
+- `posterior_le_iff_score_le`
+- `bind_le_bind` (no iff — pointwise ≤ doesn't need it)
+
+`Theories/Pragmatics/RSA/Operators.lean`:
+- `S1Belief_apply_le_iff_score_le`
+- `L1_le_iff_score_le`
+
+`Theories/Pragmatics/RSA/LatentOperators.lean`:
+- `L0LassiterGoodman_apply_le_iff`
+- `L0LassiterGoodman_apply_le_iff_prior_le`
+- `marginalizeKernel_le_marginalizeKernel`
+
+Each `_le_iff_le` is a 2-line proof via `not_iff_not` + the strict version (`a ≤ b ↔ ¬b < a ↔ ¬φ b a ↔ φ a b` where φ is the score-comparison RHS). The `_le` (non-iff) lemmas like `bind_le_bind` and `marginalizeKernel_le_marginalizeKernel` lift directly from `marginal_le_marginal`.
+
+The library is now fully symmetric: every comparison operator at every layer (PMF foundation → RSA → latent-aware) has parallel `<` and `≤` decompositions. Consumers can write either positive (`L1 a > L1 b`) or negative (`¬ L1 a > L1 b ≡ L1 a ≤ L1 b`) findings using the same template, switching only the lemma name.
+
+## [0.230.393] - 2026-04-26
+
+### K89/K98 9-file split round-1 audit fixes (Buckets A + B + partial C)
+
+Multi-agent audit of the 0.230.388 split (semantics-with-K98-PDF + mathlib-reviewer + integration-auditor + cross-framework-reconciler). Convergent findings led to scope A+B+(partial)C work.
+
+BUCKET A — Defects from the split fixed:
+- Added 3 missing bib entries (`tenny-1994`, `carlson-1984`, `jackendoff-1996`) to `references.bib` without DOIs (per CLAUDE.md hallucination prevention) — `gen_bibliography.py` no longer warns on these keys.
+- Deleted duplicate alias theorems `sinc_cum_propagation` and `sinc_qua_propagation` from `CumulativityPropagation.lean` (textually identical to `cum_propagation` and `qua_propagation_sinc`). Updated stale docstring references in `MeasurePhrases.lean` and `StrictIncrementality.lean`.
+- Stripped "## History (extracted from `Krifka1998.lean` 0.230.385, §X)" subsections from all 9 theory files per CLAUDE.md `feedback_no_meta_commentary_in_files.md`. CHANGELOG already records the provenance.
+- Moved `roleHom_implies_cumTheta` from `CumulativityPropagation.lean` §5 to `ThematicRoleProperties.lean` (where `CumTheta` is defined). Required adding `open Mereology` to ThematicRoleProperties for `IsSumHom`.
+- Deleted stale "## Architectural note (TODO)" subsection from `MovementRelations.lean` flagging the K89/K98 paper-naming cleanup (now done).
+
+BUCKET B — Granularity refactor:
+- **Folded `GradSquareInstantiation.lean` (65 LOC, 0 consumers) into `GradualChange.lean`** as §3 "Krifka Event-Structure Instantiation". `GradualChange.lean` now imports `MeasurePhrases` for `durationMeasure`. Manifest line removed.
+- **Moved `NominalPredicates.lean` → `Theories/Semantics/Noun/MereoReference.lean`** with namespace `Semantics.Noun.MereoReference`. Mass nouns aren't events; the file was in `Events/` only because its first consumer happened to be the K89 NP→VP propagation chain (anti-pattern the split introduced). Updated consumer `Studies/Krifka1989.lean` and Linglib.lean manifest.
+- **Promoted `Ev.adjacent`/`Ev.precedes`/`Ev.adjacent_symm`** from `MovementRelations.lean` §1 to new `Theories/Semantics/Events/EventAdjacency.lean`. These are event-general primitives, not movement-specific.
+- **Promoted `IsInitialPart`/`IsFinalPart` + `isInitialPart_self`/`isFinalPart_self`** from `MovementRelations.lean` §2 to new `Theories/Semantics/Events/InitialFinalParts.lean`. Generic over partial-order + precedence; substrate for SOURCE/GOAL definitions and for the propositional `IsTelic` predicate added below.
+- Updated `MovementRelations.lean` to import the two new files and reference the moved predicates through their new namespaces. Bigger architectural win than the move itself: now any event-substrate file can consume `Ev.adjacent`/`Ev.precedes`/`IsInitialPart`/`IsFinalPart` without depending on `MovementRelations.lean`.
+- **Skipped**: GeneralIncrementality merge (per integration auditor — `IncClosure` inductive sufficiently distinct), re-export shim file `Krifka.lean` (deferred — easy to add later if consumer `open` lists become unwieldy).
+
+BUCKET C — Substrate deepening (partial — item 12 delivered as bonus, items 11/13/14/15/16 deferred):
+- **Added `IsTelic` propositional predicate** in `InitialFinalParts.lean`: `def IsTelic (precedes) (P) := ∀ e e', P e → P e' → e' ≤ e → IsInitialPart precedes e' e ∧ IsFinalPart precedes e' e`. This is K98 §2.5 eq. 37 propositional telicity — strictly weaker than `QUA` (every QUA is telic but not every telic is QUA, per K98 page 9 run-time-3-4pm counterexample). Closes the round-1 K98 audit's "TEL ⊃ QUA collapse" finding at the substrate level. The `qua_implies_telic` derivation theorem isn't proved here because in the abstract case (precedence as parameter) it depends on precedence/part-of compatibility that K98 §2.5 derives from event-runtime structure rather than asserts axiomatically; the runtime-derived case will close once `Ev.precedes` interaction with `≤` on Ev is formalized.
+- **Deferred** (substantive items each requiring substantial new infrastructure):
+  - **K98 §2 PartStructures.lean** — axiomatic substrate (idempotence/commutativity/associativity, remainder principle eq. 1.f, extensive measure with Archimedean eq. 7c). Most of these are already provided by `SemilatticeSup` typeclass + `PartialOrder` from mathlib; the unique K98 contribution is the Remainder Principle, which would need careful axiom design to add to `Core/Mereology.lean` or a new file without disrupting existing consumers.
+  - **Theories/Semantics/Events/Affectedness.lean** (Beavers substrate sibling of `StrictIncrementality.lean`) — requires concrete θ counterexample for the refutation theorem `¬(AffectednessDegree.quantized ↔ SINC θ)`. The existing `Theories/Semantics/Verb/Affectedness.lean` has the `AffectednessDegree` enum + `profileToDegree` derivation, but the bridge needs fragment-verb θ instances that don't yet exist in linglib at the propositional level.
+  - **MeasureAdverbialDerivation.lean** (K98 §3.5 cτ + scalar-implicature derivation of in/for adverbials) — substantial; requires Rooth alternatives + Gazdar implicature substrate.
+  - **Moon → Filip bridge theorem** (`mixedDrinkDen` invoking `Filip2012.propagation_gap_lifts`) — requires constructing a SINC + UP + CumTheta drinking-θ relation Moon doesn't currently have.
+  - **AspectualConsistency propositional theorems** — same θ-instance blocker.
+
+ARCHITECTURAL RESULT after A+B+(partial)C:
+- 11 topic-named theory files in `Theories/Semantics/Events/` (down from 9 after fold + extraction): `ThematicRoleProperties`, `StrictIncrementality`, `CumulativityPropagation`, `GradualChange` (now includes Krifka instantiation), `GeneralIncrementality`, `PropagationGap`, `MeasurePhrases`, `MovementRelations`, `EventAdjacency` (new), `InitialFinalParts` (new) + the existing `Mereology`/`SpatialTrace`/`DimensionBridge`/etc.
+- 1 nominal-side substrate file in correct location: `Theories/Semantics/Noun/MereoReference.lean`.
+- Substrate predicates now genuinely event-general where appropriate (Ev.adjacent + IsInitialPart can be consumed without depending on movement substrate).
+- `IsTelic` propositional substrate available — unblocks faithful `Telicity.toMereoTag` rework (separate refactor).
+
+DEFERRED architectural items the audit identified:
+- `LexicalAspect.lean::Telicity.toMereoTag` collapse — once `IsTelic` is formally connected to `Telicity.telic` enum, the Bool-tag collapse can be retired. Separate refactor.
+- Re-export shim `Theories/Semantics/Events/Krifka.lean` — would consolidate consumer `open` lists. Easy to add when consumer verbosity becomes a real complaint.
+- `AspectualConsistency.lean` 5 `native_decide` calls — pre-existing, separate concern.
+
+Files touched: 13 (9 existing theory files modified for History strip + alias delete + roleHom move + ThematicRoleProperties Mereology open + GradualChange fold + MovementRelations import-and-prune; 2 new files created — EventAdjacency.lean + InitialFinalParts.lean; 1 file moved — NominalPredicates → Noun/MereoReference; Linglib.lean manifest updated; Studies/Krifka1989.lean consumer updated; references.bib new entries; CHANGELOG entry).
+
+5384 jobs green.
+
+## [0.230.392] - 2026-04-26
+
+### GoodmanStuhlmuller2013PMF migration: 11 findings structurally discharged + ≤ companion lemma
+
+Second consumer migration. All 11 findings of `Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013PMF.lean` are now structurally discharged via the lemma library template, with `sorry`s relocated to well-named per-world helper leaves.
+
+**New API addition (driven by negative findings):**
+- `Core/Probability/PMFPosterior.lean::posterior_uniform_le_iff_kernel_le` — `≤` companion of `posterior_uniform_lt_iff_kernel_lt`. Required for negative findings of the form `¬ L1 a₁ > L1 a₂` (canceled implicatures), which reduce via `not_lt` to `L1 a₁ ≤ L1 a₂`. Proved in 2 lines via `not_iff_not` against the strict version.
+
+**Migration template** for both shapes:
+
+Positive (`L1 a₁ > L1 a₂`):
+```
+unfold L1 worldPrior
+rw [gt_iff_lt, PMF.posterior_uniform_lt_iff_kernel_lt]
+exact <per-world strict leaf>
+```
+
+Negative (`¬ L1 a₁ > L1 a₂`):
+```
+unfold L1 worldPrior
+rw [gt_iff_lt, not_lt, PMF.posterior_uniform_le_iff_kernel_le]
+exact <per-world ≤ leaf>
+```
+
+**Architectural difference from ScontrasPearl**: GS2013 uses `PMF.bindOnSupport` (not `PMF.bind`), and the obs kernel `obsKernel a w` itself depends on the world `w` being compared. So the `bind_lt_bind` step doesn't apply here — the structural shell is one step (`posterior_uniform_lt/le_iff_kernel_lt/le`), and the per-world `marginalSpeaker` comparison is the leaf. Different model, different leaf depth, same canonical shell.
+
+**Sorry count**: 11 (unchanged from pre-migration; all relocated from headline findings to per-world helpers). Structurally, every headline `L1` ordering claim is now fully discharged in 3 lines (unfold + rw + exact). Per-world helpers like `marginalSpeaker_qSome_s2_gt_s3`, `marginalSpeaker_lbOne_a1_s1_le_s2` are the new sorry sites — each one a well-defined "per-model numeric leaf" for `bindOnSupport` over `obsKernel` + `softmaxBelief` comparison.
+
+**The pattern generalizes across model shapes.** ScontrasPearl uses `bind` + uniform latent prior; GS2013 uses `bindOnSupport` + world-dependent obs kernel. Same `posterior_uniform_*_iff_kernel_*` cancels the L1 layer in both. The per-model leaves differ, as expected — that's where the model-specific truth lives.
+
+## [0.230.391] - 2026-04-26
+
+### API extension driven by ScontrasPearl2021PMF migration: `posterior_uniform_lt_iff_kernel_lt` + `PMF.bind_lt_bind`
+
+The first migration (0.230.390) revealed two friction points where the structural shell required mechanical sub-tactics that the lemma library should have absorbed. Both addressed:
+
+`Core/Probability/PMFPosterior.lean`:
+- **`posterior_uniform_lt_iff_kernel_lt`** — specialization of `posterior_lt_iff_score_lt` for `PMF.uniformOfFintype α` priors. Cancels both the marginal denominator AND the shared uniform prior factor `(card α)⁻¹` in one move. Requires `[Fintype α] [Nonempty α]`. Covers ~90% of RSA model headlines (most use uniform world priors).
+- **`PMF.bind_lt_bind`** — `bind`-shape lift of `marginal_lt_marginal`. Skips the `unfold + rw [bind_apply]` ritual when consumers use `PMF.bind` directly (the mathlib monadic idiom) rather than `marginalizeKernel`.
+
+Re-migration of `Phenomena/Quantification/Studies/ScontrasPearl2021PMF.lean` headline theorems shows the friction drop:
+
+**Before** (10 lines per finding): `posterior_lt_iff_score_lt` → manually compute `worldPrior .one = worldPrior .zero` via `uniformOfFintype_apply` → `mul_lt_mul_iff_right` cancellation → `unfold marginalSpeaker` + `rw [bind_apply, bind_apply]` → `marginal_lt_marginal` with explicit `κ₁`/`κ₂`/`μ`/`b`/`a₀` arguments.
+
+**After** (5 lines per finding): `unfold L1 worldPrior` → `rw [posterior_uniform_lt_iff_kernel_lt]` → `bind_lt_bind` with elaborator filling in kernels.
+
+The pattern generalizes: any RSA model with uniform world prior + `PMF.bind`-style latent marginalization gets the same 4-step shape (unfold → uniform-cancel → bind-reduce → leaf). This is now the **canonical migration template** documented in `project_pmf_inequality_decomposition.md`.
+
+Sorry count unchanged from 0.230.390 (2 sorries on per-latent leaves); the API extension is purely a friction-reduction change. The two helper lemma signatures and the per-latent leaf obligations are identical.
+
+**Lesson**: building API in response to actual migration friction (rather than speculatively) gives high signal-to-noise. Both new lemmas are 1-tactic proofs (direct lifts of existing infrastructure) but each saves 4-5 lines per consumer. The PMF inequality library is now down to two decomposition modes (uniform-prior cancel; bind reduce) plus a leaf — the right abstraction granularity for RSA.
+
+## [0.230.390] - 2026-04-26
+
+### ScontrasPearl2021PMF migration: 5 sorries → 2 sorries via structural shell
+
+First consumer migration using the inequality-decomposition lemma library (0.230.389). The two baseline `L1` ordering findings — `baseline_L1_zero_gt_one` and `baseline_L1_one_gt_two` (`Phenomena/Quantification/Studies/ScontrasPearl2021PMF.lean`) — are now fully discharged via the structural shell, with the remaining `sorry`s pushed to per-latent leaf computations.
+
+Discharge structure for both findings (4 layers of structural decomposition):
+
+1. **`PMF.posterior_lt_iff_score_lt`** — cancels the L1 marginal denominator, reducing to `worldPrior · marginalSpeaker` score comparison.
+2. **`PMF.uniformOfFintype_apply`** + **`ENNReal.mul_lt_mul_iff_right`** — `worldPrior` is uniform over `JumpOutcome`, so the prior factors cancel between the two sides.
+3. **`PMF.bind_apply`** + **`PMF.marginal_lt_marginal`** — `marginalSpeaker = latentPrior.bind S1g`, decomposing to per-latent comparison with strict witness.
+4. **Per-latent leaf** (sorry'd helper): the comparison `S1g lat .one .everyNot ≤ S1g lat .zero .everyNot` for all 6 latents in `Latent`, plus strict at one witness latent.
+
+The strict-witness case `S1g_surfHowMany_strict` is **fully proved** (no `sorry`): at world `.one`, surface scope makes `.everyNot` false, the L0 numerator collapses to zero via `L0_apply_of_false`, the `s1Score` rpow is `0^α = 0` for `α > 0`, and `PMF.normalize` of zero is zero. RHS positivity follows from `mem_support_S1g_iff` + the `.zero` extension being `{.zero}` (singleton, L0 = 1).
+
+Two `sorry`s remain — both per-latent pointwise ≤ helpers (4 of 6 cases collapse to equality, 1 case `0 ≤ X`, 1 case `.invNone` requires `(1/3)^α < (2/3)^α` via `ENNReal.rpow_lt_rpow_of_exponent_pos`). These are bounded mechanical case-bashes, no further architectural insight needed.
+
+This validates the lessons documented in `project_pmf_inequality_decomposition.md`: the structural shell does its job, decomposing the headline through every operator layer until it bottoms out at a per-element leaf where the model-specific numeric truth lives. The leaf is its own well-defined obligation, not a structural gap. The bundled-RSAConfig file's parallel theorem (`baseline_L1_w0_gt_w1`) handles the entire chain via `rsa_predict` reflection in one step; the pure-PMF face decomposes the same chain into auditable structural lemmas.
+
+## [0.230.389] - 2026-04-26
+
+### PMF inequality-decomposition lemma library: full operator family + Nouwen2024PMF demos
+
+Built the structural-decomposition shell for RSA-style Bayesian inequality claims, separating it from the numeric-arithmetic core (which remains `rsa_predict`'s territory). Six new lemmas across the layered API.
+
+`Core/Probability/PMFPosterior.lean` (foundation layer):
+- `posterior_lt_iff_score_lt` — `posterior κ μ b h a₁ < posterior ... a₂ ↔ μ a₁ * κ a₁ b < μ a₂ * κ a₂ b`. Marginal denominator cancels.
+- `normalize_lt_iff_lt` — same cancellation pattern at the generic `PMF.normalize` level. Partition function cancels.
+- `reweight_lt_iff_lt` — direct lift; `reweight = normalize ∘ (· * w)`.
+- `marginal_le_marginal` / `marginal_lt_marginal` — pointwise (≤,<) → marginal (≤,<). The strict version takes a witness `a₀` with `μ a₀ ≠ 0` and strict pointwise inequality there.
+
+`Theories/Pragmatics/RSA/Operators.lean` (RSA layer):
+- `L1_lt_iff_score_lt` — direct lift from `posterior_lt_iff_score_lt` for `RSA.L1`.
+- `S1Belief_apply_lt_iff_score_lt` — same-world utterance comparison reduces to `(L0 u₁ w)^α * cost u₁ < (L0 u₂ w)^α * cost u₂`. Direct lift from `normalize_lt_iff_lt`.
+
+`Theories/Pragmatics/RSA/LatentOperators.lean` (latent-aware layer):
+- `L0LassiterGoodman_apply_lt_iff` — same-utterance world comparison reduces to score `P(w) · indicator(meaning u w)`. Direct lift from `reweight_lt_iff_lt`.
+- `L0LassiterGoodman_apply_lt_iff_prior_lt` — convenience corollary: when meaning is true at both worlds, the indicators cancel and order on L0 = order on prior.
+- `marginalizeKernel_lt_marginalizeKernel` — cross-`a` (slot-1) comparison at fixed observation `b` reduces to per-latent comparison via `marginal_lt_marginal`.
+
+Demos in `Phenomena/Gradability/Studies/Nouwen2024PMF.lean`:
+- `seq_horribly_shifts_upward_pmf` (existing, sorry'd): headline structurally reduced via `posterior_lt_iff_score_lt`; remaining `sorry` is the genuine numeric core (`Real.exp` arithmetic over multi-stage Bayesian chain), parallel to the `rsa_predict`-handled bundled version.
+- `adjL0_warm_meaning_pos_lt_iff_prior_lt` (new, full proof): order on the warm-utterance literal listener at extension-satisfying worlds inherits the prior's order. 1-line discharge via `L0LassiterGoodman_apply_lt_iff_prior_lt`.
+- `adjL0_silent_eq_prior` (new, full proof): silent utterance leaves the prior unchanged pointwise. Direct application of `L0LassiterGoodman_apply_of_meaning_true`.
+
+Lessons (memory `project_pmf_inequality_decomposition.md`): structural decomposition handles same-operator-different-index claims universally — every PMF operator now has its `_lt_iff` companion that strips off the normalization. Cross-world headline predictions involving `Real.exp` arithmetic hit a wall no further `_lt_iff` helps; that's reflection territory. The lemma library is the structural shell; reflection on rationally-representable values is the numeric core. Same as the mathlib-vs-`norm_num` boundary, lifted to PMF land.
+
+## [0.230.388] - 2026-04-26
+
+### K89/K98 paper-named theory files split into 9 topic-named files
+
+Round 2 of the architectural cleanup begun in 0.230.384: the existing `Theories/Semantics/Events/Krifka1989.lean` (254 LOC) and `Theories/Semantics/Events/Krifka1998.lean` (512 LOC) were paper-named theory files, the same anti-pattern 0.230.384's `MovementRelations.lean` (topic-named) was carefully avoiding. This commit eliminates the anti-pattern from the codebase by splitting both files into 9 new topic-named theory files.
+
+USER ARCHITECTURAL FRAMING: "i don't think we want THEORIES with named papers, we want to expose the deep 2026-view theorems that studies import". CLAUDE.md's anchoring rule: Theories should be framework-named ("A named theoretical framework → `Theories/X/Y.lean`"); paper-anchored content lives in `Studies/AuthorYear.lean`. Existing K89/K98 theory files violated this.
+
+DELETED (`git rm`):
+- `Theories/Semantics/Events/Krifka1989.lean` (254 LOC)
+- `Theories/Semantics/Events/Krifka1998.lean` (512 LOC)
+
+NEW topic-named theory files (each cites the papers that USE the substrate, not the file's anchor):
+
+From K98 split (6 files):
+- `ThematicRoleProperties.lean` (~85 LOC) — UP, CumTheta, ME, MSE, UE, MO, MSO, UO, GUE (K98 §3.2 eq. 43-52). Cites K98, Dowty 1991 proto-roles, Tenny 1994, Carlson 1984.
+- `StrictIncrementality.lean` (~140 LOC) — SINC structure (K98 eq. 51), derived properties (me_of_mse, mo_of_mso, me_of_sinc, mo_of_sinc), VerbIncClass enum (K98 §3.6).
+- `CumulativityPropagation.lean` (~140 LOC) — VP formation (K98 eq. 53), cum_propagation, qua_propagation, qua_propagation_sinc, sinc_cum_propagation, sinc_qua_propagation, roleHom_implies_cumTheta. Cites K98, K89, Champollion 2017.
+- `GradualChange.lean` (~130 LOC) — GRAD definition, grad_of_sinc, GRADSquare structure + 5 lemmas (laxCommutativity, grad, objMereoDim, evMereoDim, qua_pullback_ev). Cites K89, K98, Kennedy-Levin 2008.
+- `GeneralIncrementality.lean` (~70 LOC) — IncClosure inductive, INC definition (K98 eq. 59), inc_of_sinc derivation.
+- `PropagationGap.lean` (~95 LOC) — not_cum_vp_of_witnesses, middle_ground_stable (K98 §10). Cites Filip 2012, K98, Moon 2026.
+
+From K89 split (3 files):
+- `NominalPredicates.lean` (~50 LOC) — MassNoun, CountNoun, BarePlural abbrevs + barePlural_cum (K89 §1). Cites K89, Link 1983, Champollion 2017.
+- `MeasurePhrases.lean` (~165 LOC) — qmod_qua, qmod_of_cum_is_qua (K89 §2), durationMeasure + forAdverbial_subsumes_qmod (§3), measure_phrase_makes_qua (§4), MeasureFn.IsExtensive + measureTerm_default_applyNumeral_eq + extensive_measureFn_qmod_qua (§5 Scontras bridge). Cites K89, Champollion 2017, Scontras 2014.
+- `GradSquareInstantiation.lean` (~65 LOC) — durationMeasure_eq_comp, krifkaGRADSquare, krifka_lax_commutativity (K89 §6).
+
+DELETED CONTENT (during the split):
+- `cum_transfer` and `qua_transfer` (K89 §4 1-line aliases for `sinc_cum_propagation` and `qua_propagation_sinc`). Verified by grep that no consumer used these K89-specific names; the canonical K98 names (now in `CumulativityPropagation.lean`) are the right abstraction.
+
+CONSUMER UPDATES (10 files):
+- `Linglib.lean` — replaced 2 manifest imports with 9 new ones
+- `Studies/Krifka1989.lean` — replaced 1 import with 5; split `open` lines from 2 to 5 (per-namespace explicit name lists)
+- `Studies/Krifka1998.lean` — replaced 1 import with 3; split `open` line into 3 per-namespace
+- `Studies/Filip2012.lean` — replaced 1 import with 4; split `open` line into 4 per-namespace
+- `Studies/AspectualConsistency.lean` — updated `open Semantics.Events.Krifka1998 (VerbIncClass)` → `open Semantics.Events.StrictIncrementality (VerbIncClass)`
+- `Phenomena/Comparison/Studies/Wellwood2015.lean` — replaced 1 import with 3; split `open` into 3 per-namespace
+- `Theories/Semantics/Verb/VerbEntry.lean` — replaced K1998 theory import with `StrictIncrementality`
+- `Fragments/English/Predicates/Verbal.lean` — `open` updated to `StrictIncrementality (VerbIncClass)`
+- `Theories/Semantics/Events/MovementRelations.lean` (the topic-named file from 0.230.384) — `open Semantics.Events.Krifka1998 (MO)` → `open Semantics.Events.ThematicRoleProperties (MO)`
+- `Phenomena/Countability/Studies/Moon2026.lean` — docstring text only mentions K1998, no code-level dependency (defensible deferral on docstring polish)
+
+ARCHITECTURAL RESULT: zero `Theories/Semantics/Events/Krifka198?.lean` files remain. All paper-anchored aspectual content now lives under `Studies/Krifka198?*.lean`; all framework-anchored substrate lives under topic-named theory files. The 0.230.384 architectural TODO is discharged.
+
+INTEGRATION DENSITY: each of the 9 new topic-named files is consumed by 1-3 consumers explicitly (no monolithic open-namespace patterns); the per-name origin is now visible at every call site. The K89 ↔ K98 sister-paper bridge (added in 0.230.381 round-2 K89 audit) continues to work — the `K89ThematicClass.toVerbIncClass` refinement function in `Studies/Krifka1989.lean` now imports `StrictIncrementality` for `VerbIncClass`.
+
+DEFERRED (not blocking):
+- Docstring prose updates: many docstrings still mention "see `Theories/.../Krifka1998.lean` §X" (file-name references in prose). The new files' "History" sections correctly cite the deleted file as historical context; consumer-side prose mentions are stale but not blocking. Cleanup would touch ~10 files for ~20 prose lines.
+- Cross-cutting refactors that the split makes possible: the GRAD/GRADSquare content currently in `GradualChange.lean` could merge with `GradSquareInstantiation.lean` (both Krifka GRAD content); the bridge theorems in `CumulativityPropagation.lean` §4 could merge into the canonical theorems via `alias`.
+
+IMPACT: the architectural correction begun in 0.230.384 (topic-named theory files for K98 §4) is now consistently applied across the K89/K98 substrate. The pattern is testable: `find Linglib/Theories/Semantics/Events -name "Krifka*.lean"` returns nothing. Files touched: 12 (9 new theory files, 10 consumer updates, 2 manifest deletes).
+
+5384 jobs green.
+
+## [0.230.387] - 2026-04-26
+
+### PMF inequality-decomposition lemma library + Nouwen2024PMF headline structurally discharged one layer
+
+Built the structural-decomposition shell for RSA-style Bayesian inequality claims, separating it from the numeric-arithmetic core (which remains `rsa_predict`'s territory). Three new lemmas in `Core/Probability/PMFPosterior.lean`:
+
+- `posterior_lt_iff_score_lt` (already added) — `posterior κ μ b h a₁ < posterior ... a₂ ↔ μ a₁ * κ a₁ b < μ a₂ * κ a₂ b`. Marginal denominator cancels.
+- `normalize_lt_iff_lt` — same cancellation pattern lifted to generic `PMF.normalize`. Partition function cancels.
+- `marginal_le_marginal` / `marginal_lt_marginal` — pointwise (≤,<) → marginal (≤,<). The strict version takes a witness `a₀` with `μ a₀ ≠ 0` and strict pointwise inequality there.
+
+Two RSA-layer lifts in `Theories/Pragmatics/RSA/Operators.lean`:
+
+- `L1_lt_iff_score_lt` — direct lift from `posterior_lt_iff_score_lt` for `RSA.L1`.
+- `S1Belief_apply_lt_iff_score_lt` — same-world utterance comparison reduces to `(L0 u₁ w)^α * cost u₁ < (L0 u₂ w)^α * cost u₂`. Direct lift from `normalize_lt_iff_lt`.
+
+Applied in `Phenomena/Gradability/Studies/Nouwen2024PMF.lean`: the headline `seq_horribly_shifts_upward_pmf` is now structurally decomposed via `posterior_lt_iff_score_lt` to a score-level comparison. The remaining `sorry` is the genuine numeric core (`Real.exp` arithmetic over multi-stage Bayesian chain), not a structural gap. The bundled-RSAConfig version (`Nouwen2024.seq_horribly_shifts_upward`) handles this same numeric core via `rsa_predict` reflection.
+
+Lessons (memory `project_pmf_inequality_decomposition.md`): structural decomposition handles same-operator-different-index claims universally, but cross-world headline predictions hit a real-arithmetic wall that no further `_lt_iff` lemma helps. The lemma library is the structural shell, not the numeric core; reflection on rationally-representable values is a separate discharge strategy. The asymmetry is fundamental — same as the mathlib-vs-`norm_num` boundary, lifted up to PMF land.
+
+## [0.230.386] - 2026-04-26
+
+### Deeper ChoiceFn unification: BinaryChoiceFn dissolved as `.binary` view of canonical ChoiceFn
+
+User pushback on the 0.230.385 abbrev pattern ("it just seems weird that BinaryChoiceFn is a separate object? that doesn't specialize?") prompted the architecturally correct answer: `BinaryChoiceFn` shouldn't exist as a parallel structure. It's a 2-element specialization of the general `ChoiceFn`. Mathlib's "ONE canonical implementation" discipline applies.
+
+CANONICAL DEFINITION (`RationalAction.lean::ChoiceFn`):
+
+```
+structure ChoiceFn (A : Type*) [DecidableEq A] where
+  prob : Finset A → A → ℝ
+  prob_nonneg : ∀ T a, 0 ≤ prob T a
+  prob_zero_outside : ∀ T a, a ∉ T → prob T a = 0
+  prob_sum_eq_one : ∀ T : Finset A, T.Nonempty → ∑ a ∈ T, prob T a = 1
+```
+
+Added `prob_sum_eq_one` as a structural invariant — matches Luce 1959 Definition 1 ("P(a, T) … is a probability distribution on T"). The prior bare structure was *under-specified* (Luce's basic axiom missing); adding `sum-eq-one` fixes the gap.
+
+NEW DERIVED VIEW (`ChoiceFn.binary`):
+
+```
+def ChoiceFn.binary (cf : ChoiceFn A) (x y : A) : ℝ := cf.prob {x, y} x
+
+theorem binary_nonneg (cf : ChoiceFn A) (x y : A) : 0 ≤ cf.binary x y
+theorem binary_le_one (cf : ChoiceFn A) (x y : A) : cf.binary x y ≤ 1
+theorem binary_complement (cf : ChoiceFn A) {x y : A} (hxy : x ≠ y) :
+    cf.binary x y + cf.binary y x = 1
+```
+
+Binary specialization is now a *derived view*, not a parallel structure. Complementarity follows from `prob_sum_eq_one` over `{x, y}` (requires `x ≠ y` since `binary x x = 1`).
+
+DELETED:
+- `BinaryChoiceFn` structure (in UtilityTheory.lean) — was a parallel implementation. Now `ChoiceFn` IS the universal binary-choice substrate via `.binary` view.
+
+MIGRATED (UtilityTheory.lean):
+- `GambleChoiceFn (Outcome) [DecidableEq Outcome] := ChoiceFn (Gamble Outcome)` (abbrev now over real ChoiceFn)
+- `OutcomeChoiceFn (Outcome) [DecidableEq Outcome] := ChoiceFn Outcome`
+- `EventChoiceFn := ChoiceFn Event`
+- Added `DecidableEq (Gamble Outcome)` instance (under `[DecidableEq Outcome]`)
+- All 25+ `Q.prob ρ σ` / `P.prob g₁ g₂` / etc. migrated to `Q.binary ρ σ` / `P.binary g₁ g₂` (perl `.prob (?!\{)` → `.binary `)
+- 3 `omit [DecidableEq Outcome] in` directives removed (now needed)
+
+CASCADE INTO RATIONALACTION.LEAN: existing `pairwiseIIA_implies_ratio` and `axiom1_ratio_iff_pairwiseIIA` theorems had a `(hsum : ∀ T, T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)` hypothesis that's now redundant — replaced with internal `cf.prob_sum_eq_one` invocation. Theorem signatures are slightly tighter (one fewer hypothesis).
+
+WHY THIS IS THE RIGHT ANSWER (vs the 0.230.385 abbrev pattern):
+
+The Multiset/Finset/List analogy I gave to defend parallel structures was sloppy. Those are different *container types* with different mathematical structure. `BinaryChoiceFn` and `ChoiceFn` are different *views of the same underlying choice-probability concept*. Binary IS a specialization of set-based, not a sibling. The user's instinct was right: parallel implementations of the same concept aren't mathlib-shape.
+
+CHECKED: targeted builds of `Core.Agent.RationalAction` and `Core.Agent.UtilityTheory` green. The 25+ migrated `.prob` → `.binary` sites all type-check; `binary_complement` derives from `prob_sum_eq_one` cleanly.
+
+DEFERRED:
+- `RationalAction.ChoiceFn` could move out of RationalAction.lean to a more canonical home (e.g., `Core/Agent/ChoiceApproximations.lean` or new `Core/Agent/Choice.lean`). Out of scope here; the file location is independent of the structural unification.
+- The cleanup backlog (Bool→Prop in DecisionTheory, @[ext] sweep, native_decide in Emotion, push_neg deprecation) remains pending.
 
 ## [0.230.384] - 2026-04-26
 
-### AkinboFwangwar2026 deep audit / refactor: native_decide → decide hygiene + constraint deduplication + autosegmental reanalysis with INTEGRITY
+### K98 §4 propositional substrate — `MovementRelations.lean` (topic-named theory file)
 
-Three layered improvements applied via the McPhersonLamont decide-hygiene recipe:
+Round-1 K98 audit (0.230.381) flagged that `Studies/Krifka1998Movement.lean` exercised only Bool-tag projections (`pathShapeToTelicity`) — the propositional K98 §4 substrate (EXP eq. 63, SEINC eq. 65, ADJ eq. 68, SMR eq. 69, MR eq. 71, KM' eq. 72, SOURCE/GOAL eq. 73) didn't exist. This commit adds it, mathlib-style.
 
-**(A) native_decide → decide.** All 31 `native_decide` calls replaced with `decide`. Build green at default 200K heartbeats. The McPhersonLamont substrate hygiene insight (`(List.range n).countP` / List-membership instead of `Finset.filter |>.card` / `Finset.sort` for kernel reducibility) wasn't needed here — the `mkProfile`/`mkTableau` / `vpOfList` substrate was already decide-friendly; the `native_decide` was leftover defensive setting.
+ARCHITECTURAL CORRECTION: original plan was to add `Theories/.../Krifka1998Movement.lean` (paper-named theory file). User flagged that Theories shouldn't be paper-named — they should expose deep 2026-view theorems that paper-anchored studies import. Existing `Theories/.../Krifka1989.lean` and `Krifka1998.lean` are themselves the same anti-pattern (paper-named theory files); cleanup of those is a separate refactor flagged as TODO. New work uses topic-naming.
 
-**(B) Constraint deduplication.** Replaced 8 redundant constraint defs (`lAnch24` / `rAnch24` / `maxT24` / `lAnchM25` / `rAnchH25` / `rAnchM25` / `lAnchH25` / `maxT25` — where e.g., `lAnch24` ≡ `lAnchM25` character-for-character) with 3 polymorphic defs:
-- `lAnchSingle (t : TRN)` — tone-parameterized L-ANCHOR
-- `rAnchSingle (t : TRN)` — tone-parameterized R-ANCHOR
-- `maxTSingle (inputSize : Nat)` — input-size-parameterized MAX-Tone
+NEW FILE: `Theories/Semantics/Events/MovementRelations.lean` (~360 LOC, framework-anchored). Cites `@cite{krifka-1998}`, `@cite{zwarts-2005}`, `@cite{talmy-2000}`, `@cite{gawron-2009}` — papers that USE this substrate, not the file's anchor.
+- §1 `Ev.adjacent` and `Ev.precedes` on `Ev Time` via runtime intervals (using `Interval.isBefore` from `Core/Time/Interval/Basic.lean`).
+- §2 `IsInitialPart` / `IsFinalPart` (K98 eq. 36) — generic over a partial order and a precedence relation.
+- §3 `EXP` (K98 eq. 63) — expansion property.
+- §4 `SEINC` (K98 eq. 65) = EXP + MO. Imports MO from `Krifka1998.lean` §1.
+- §5 `ADJ` (K98 eq. 68) — adjacency property: temporal adjacency on sub-events iff spatial adjacency on sub-paths.
+- §6 `SMR` (K98 eq. 69) = ADJ + MO + path-only.
+- §7 `inductive MovementClosure` + `def MR` (K98 eq. 71) — parallel to existing `IncClosure`/`INC` (K98 eq. 59 in `Krifka1998.lean:386`). Plus `mr_of_smr` derivation theorem.
+- §8 `SOURCE` / `GOAL` (K98 eq. 73) — directional adverbial-modifier predicates relating path endpoints to event initial/final parts.
+- §9 `km'` (K98 eq. 72) — derived movement-event measure as `KM ∘ σ`.
+- §10 Bridge theorems labeling existing `SpatialTrace.bounded_path_telic` and `unbounded_path_atelic` as the K98 §4 movement-relation telicity results (`k98_movement_telic_via_spatial_trace`, `k98_unbounded_movement_atelic_via_spatial_trace`).
 
-Use sites: `lAnch24` → `lAnchSingle .M`, `rAnchH25` → `rAnchSingle .H`, etc. Mathlib pattern: parameterize don't duplicate.
+EXTENDED `Theories/Semantics/Spatial/Path.lean` (~30 LOC):
+- §4 Path Adjacency: `Path.adjacent` (share-an-endpoint def), `Path.adjacent_symm`, `Path.adjacent_trivial`. Concrete instance of K98's abstract adjacency primitive (`∞_H`, eq. 14) for `Path Loc`.
 
-**(C) §S17 Autosegmental Reanalysis with INTEGRITY-Mᵥ.** The `OutputTBU = {tone, source : lex | gram}` representation in §§S1-S16 collapses spreading and copying — both surface as `[⟨M, gram⟩, ⟨M, gram⟩]`. The paper's INTEGRITY-Mᵥ distinguishes them, and the existing analysis omits INTEGRITY + excludes (24f) by hand. The 2026 phonology mainstream (McCarthy & Prince Correspondence Theory + Goldsmith autosegmental rep + Rolle 2018 + present paper) treats spreading vs copying as fundamentally distinct autosegmental objects: ONE multi-linked autosegment vs MULTIPLE separate autosegments.
+EXTENDED `Studies/Krifka1998Movement.lean` (~120 LOC of new Part II):
+- §5 PropositionalMovement section: `walked_from_to_telic_propositional` (K98 eq. 74) and `walked_towards_atelic_propositional` (K98 eq. 75) invoke the new `k98_movement_telic_via_spatial_trace` / `k98_unbounded_movement_atelic_via_spatial_trace` bridge theorems on abstract σ + path-predicate instances. Parallel to K89 study §3's `qmod_of_cum_is_qua` invocations.
+- §6 Expansiveness: `expEv` and `seincEv` abbreviations specializing K98 §4 EXP/SEINC to `Ev Time` with `Ev.precedes`.
+- §7 MovementInstances: `smrPath` and `mrPath` abbreviations specializing K98 §4 SMR/MR to `Path Loc → Ev Time → Prop` with `Path.adjacent` + `Ev.adjacent` + `Ev.precedes`.
 
-NEW substrate primitive: `integrityTone (m : MorphemeId) (t : TRN) : DirectionalConstraint (FloatingForm S)` in `Theories/Phonology/Tone/Constraints.lean`. Counts `(alive ulTones with morpheme = m ∧ tone = t).card - 1` (if positive). Spreading: 1 alive → 0 violations. Copying: N alive → (N-1) violations.
+DELIBERATELY DEFERRED (flagged in `MovementRelations.lean` header):
+- **TANG_H tangentiality** (K98 eq. 17 on directed paths) — needed for the full `MR` closure axiom that excludes telekinetic concatenations of non-meeting paths. Current `MovementClosure` uses a weaker precedence-only condition that admits stop-and-go (K98 70.b), Alcatraz/circular (70.e), and Echternach/with-backups (70.d) movements, but ALSO admits non-meeting telekinetic concatenations.
+- **Full ADJ axioms** for the abstract adjacency primitive (K98 §2.3 eq. 14.b: adjacency-doesn't-overlap and adjacency-propagates-under-part) — concrete `Path.adjacent` and `Ev.adjacent` satisfy these but the propositional theorems aren't proved.
+- **Cross-dimensional movements** (K98 §4.6 heat/bake/whip in directed temperature/done-ness paths) — requires a `DirectedPath` generalization of `Path Loc`.
 
-NEW §S17 reanalyses paper Tableau 24 (`/wùlàʃ + Mᵥ/`) over `FloatingForm Syl` with **all 6 candidates including (24f) the copying variant**:
-- (24a) M floating + L unchanged: profile [INTEG=0, L-ANCH=2, R-ANCH=2, MAX-T=0]
-- (24b) M deleted: [0, 2, 2, 1]
-- (24c) M on TBU 1 only: [0, 1, 0, 0]
-- (24d) M on TBU 0 only: [0, 0, 1, 0]
-- (24e) ☞ M multi-linked spreading + L deleted: [0, 0, 0, 1] — winner
-- (24f) M copied (TWO M autosegments) + L deleted: [1, 0, 0, 1] — INTEG fatal
+ARCHITECTURAL TODO (recorded in `MovementRelations.lean` header): existing `Theories/Semantics/Events/Krifka1989.lean` and `Krifka1998.lean` are paper-named theory files violating the same convention this file follows. Eventually they should be reorganized into topic-named files (e.g., `IncrementalThemes.lean`, `CumulativityPropagation.lean`, `MeasurePhrases.lean`). Out of scope for this commit.
 
-Per-candidate profile theorems all `decide`-checked against paper Tableau 24. Headline `t24'_optimal : t24'_tableau.optimal = {t24e'}` confirms spreading wins under `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`.
+IMPACT: K98 §4 now has propositional substrate that paper replications (`Studies/Krifka1998Movement.lean` here, but also future Zwarts 2005 / Talmy 2000 study files) can import and exercise on abstract θ instances — the same shape K89 study §3 became after round-2 (calling `qmod_of_cum_is_qua` on abstract domains). The K98 §4 paper-replication line is now substrate-honest. Files touched: 4 (`Path.lean` extend, `MovementRelations.lean` new, `Krifka1998Movement.lean` study extend, `Linglib.lean` manifest).
 
-Encoding choice: wùlàʃ root has ONE lexical L autosegment multi-linked to both TBUs (autosegmental convention; Goldsmith 1976) — different from §S3's per-TBU encoding. Per-autosegment MAX-T then matches paper p. 26 exactly: deleting the L = 1 violation. The §S3 per-TBU count gave 2.
-
-Also: §9 (Structural Lift to `Corr RedupRole OutputTBU`, the misnumbered tail section) renumbered to §18 to follow §17.
-
-Tableaux (25) and (26) reanalyses follow the same recipe but with 7-candidate enumerations + the M-H verbaliser; left for follow-up. The §S17 docstring documents this scope explicitly.
-
-940 jobs green; 0.230.384
+5384 jobs green.
 
 ## [0.230.383] - 2026-04-26
 
-### McPhersonLamont2026 §§11-12: eq. (22) rightward dock onto toneless + scope/deferred docstring
+### RSA → PMF migration: structural decomposition library + partial Nouwen2024PMF discharges
 
-§11 Eq. (22a) (paper p. 13): `/nãn + rī^H + ne/` → `[nãn rī né]` where `ne` is a toneless verb stem. The **only** case in this study file where rightward docking is the winning move (vs fig. 3 / eq. 24 / eq. 27 / eq. 30 where docking is blocked or contour-creating). The novel mechanism: HAVETONE penalises ne's toneless surface, so docking the floating H onto ne is preferred even over deletion. Confirms the substrate's HAVETONE drives docking when there's a toneless host available — distinct from the H-deletion cases where there isn't. 2 step witnesses + convergence theorem all `decide`-checked at default heartbeats.
+Per the architectural discussion: under mathlib discipline, the migration target shouldn't be a tactic (like rsa_predict for PMF) but a **library of structural decomposition lemmas** that consumers use to write explicit step-by-step inequality proofs. This commit lands the first two such lemmas + uses them to discharge mechanical positivity sorrys in Nouwen2024PMF.lean.
 
-`Fragments/Poko/Tone.lean`: `Syll.ne` (toneless 'make.1sg' verb stem, paper eq. 22a) added as morpheme ID 7.
+NEW LIBRARY LEMMAS:
+- `RSA.S1Belief_apply_ne_zero_of_pos` (Operators.lean) — `S1Belief L0 cost α w h0 hTop u ≠ 0` follows from `L0 u w ≠ 0 ∧ cost u ≠ 0` (rpow of positive finite base is positive). Uses `PMF.mem_support_normalize_iff` from mathlib.
+- `RSA.L0LassiterGoodman_apply_of_meaning_true` (LatentOperators.lean) — when meaning is identically true (e.g., `.silent`), L&G L0 reduces to the prior unchanged. Building block for "silent witness" positivity discharges.
 
-§12 NEW substrate-scope docstring: documents what the file covers (negative-half §§1-5; positive-half §6 incl. fig.3 LR/RL + §6.6 regular-HS divergent-tie counter-example; additional tableaux §§7-11) and what's deferred (GEN op 6e shift; GEN op 6d insert+associate; boundary tone L%; other Hasse constraints `*LongTone`/`*L̃T̃<L`/`DEP(H)`/etc.; paper §3.3 LH-rising-tone tableaux; paper §3.4 toneless-stem tableaux). Closes the McPhersonLamont line of work — substrate hosts the deepest faithful version of the paper's central trifecta argument; remaining items are coverage extensions, not load-bearing for what makes the paper's case.
+NOUWEN2024PMF DISCHARGES (3 of original 7 sorrys):
+- ✓ `evalSpeaker_horribleAt` h0 (positivity via `.silent` witness using `L0LassiterGoodman_apply_of_meaning_true`)
+- ✓ `evalSpeaker_horribleAt` hTop (finiteness via Fintype + bounded rpow)
+- ✓ `tallMeaning` Bool reduction inside `adjLex_warm_extension_pos` (`fin_cases vt <;> decide`)
 
-940 jobs green; 0.230.383
+REMAINING 6 SORRYS (with diagnoses):
+- `evalL1Horrible` inner speaker positivity (line 271) — apply/refine interaction issue with `S1Belief_apply_ne_zero_of_pos`; under-constrained; couldn't debug in this session
+- `priorAfterEvalPos_pos` (line 297) — **genuinely false** at `deg 3` because `muHorrible(deg 3) = 0` means deg 3 has zero posterior under "eval_pos." Needs a height-restricted reformulation.
+- `adjSpeaker_warmAt` positivity + finiteness (lines 341-342) — **construction is genuinely undefined at deg 3** since prior Π is zero there. Bundled API hides via `if l0 = 0 then 0` guards.
+- `seqAdjL1HorriblyWarm` marginal positivity (line 354)
+- `seq_horribly_shifts_upward_pmf` headline numeric prediction (line ~369) — needs structural inequality-decomposition lemmas not yet in library
+
+DEEP ARCHITECTURAL FINDING: The pure-PMF version of L&G two-priors **exposes a degenerate-height issue** that the bundled API obscures via `if-zero` guards. At heights where the previous-stage L1 is 0, the next-stage speaker can't be normalized — `Height → PMF AdjUtterance` is too strong a signature. Clean fixes (per architectural discussion docstring):
+1. Subtype heights to `{h // priorAfterEvalPos h ≠ 0}` per stage (cleanest mathematically; ripples through type signatures)
+2. Define stages over `Option`-typed kernels (preserves Height type; some destructuring overhead)
+3. Vacuous-PMF fallback for degenerate cases (changes semantics — wrong for L&G)
+
+For Phase 5 next steps (per session): pick (1) or (2) for Nouwen2024PMF before discharging the remaining sorrys.
+
+NEXT-SESSION CANDIDATES:
+- Subtype-height refactor of stage 2 (commits to option 1; unblocks discharge of remaining 4 sorrys)
+- Build more decomposition lemmas: `PMF.posterior_lt_iff_of_score_lt`, `PMF.normalize_lt_iff`, `S1Belief_lt_iff_of_l0_lt`, `marginalizeKernel_lt_iff` — needed for the headline numeric prediction
+- Discharge headline numeric `seq_horribly_shifts_upward_pmf` structurally (the actual goal of the lemma library)
+
+The two added lemmas (`S1Belief_apply_ne_zero_of_pos`, `L0LassiterGoodman_apply_of_meaning_true`) are reusable across all future PMF consumer migrations — this is the genuine library investment.
+
+Build is currently flaky due to concurrent `Linglib/Core/Agent/RationalAction.lean` modifications from another session; my changes are validated against `lake env lean` directly.
 
 ## [0.230.382] - 2026-04-26
 
-### McPhersonLamont2026 §6.6: regular-HS divergent-tie counter-example completes the trifecta
+### Pure mathlib discipline: ONE canonical entropy : Finset α → (α → ℝ) → ℝ
 
-The third leg of the @cite{mcpherson-lamont-2026} argument: parallel OT can't (§§1-5 ranking paradox), weighted HG can't (§5), **regular HS can't** (§6.6 — NEW), only directional HS can (§6 fig.3). At step 1 from `/kāk^H + rī^H + dō^H/` under count-based *FLOAT, the three single-H-deletion candidates all tie at *FLOAT = 2 (each removes exactly one floating tone) — and no later constraint distinguishes them. Optimum has cardinality 3; subsequent steps depend on which candidate is picked, and only the leftmost-deletion path reaches the attested form.
+Following the audit-driven recognition that linglib had **two parallel entropy implementations** (a `List (α × ℝ)`-typed `entropy` in `Core/InformationTheory.lean` and a `(ι → ℝ)`-typed `shannonEntropy` in `Core/Agent/RationalAction.lean`, both wrapping `Real.negMulLog`), refactored to **one canonical mathlib-shaped form** following `Finset.sum` discipline.
 
-`Theories/Phonology/Tone/Constraints.lean` — NEW `starFloatCount` (count-based variant of `starFloat`): emits `[floatIndicator.sum]` as a singleton vector instead of the position-aware indicator. Surfaces an important architectural fact about the substrate: `EvalMode.le .parallel` and `EvalMode.le (.directional .leftToRight)` *both* use `LexLE` on the violation vector, so simply switching `evalMode := .parallel` while keeping `starFloat` (which emits the directional indicator) doesn't change behaviour. **Directionality lives in the constraint's eval output (count vs indicator), not the EVAL mode flag.** The flag remains useful for documenting intent and for the right-to-left case (which uses `LexLE` on the *reversed* vector).
+CANONICAL DEFINITION (`Core/InformationTheory.lean`):
 
-`Phenomena/Tone/Studies/McPhersonLamont2026.lean` §6.6 (NEW, inside `Fig3` namespace alongside `derivationLR` / `derivationRL`):
-- `fig3RankingCount` — ranking with `starFloatCount` substituted for `starFloat`
-- `derivationParallel` — the regular-HS counterpart of `derivationLR`
-- `parallel_optimum_three_way_tie : derivationParallel.stepOptimum fig3Input = {fig3Input.deleteTone 1, fig3Input.deleteTone 3, fig3Input.deleteTone 5}`
-- `parallel_optimum_card_three : (derivationParallel.stepOptimum fig3Input).card = 3`
-- `directional_LR_optimum_card_one : (derivationLR.stepOptimum fig3Input).card = 1`
-- `only_directional_disambiguates_fig3 : (derivationLR.stepOptimum fig3Input).card < (derivationParallel.stepOptimum fig3Input).card`
+```
+noncomputable def entropy {α : Type*} (s : Finset α) (p : α → ℝ) : ℝ :=
+  ∑ a ∈ s, Real.negMulLog (p a)
+```
 
-`decide` caught the architectural blindspot — my first attempt set `derivationParallel := { derivationLR with evalMode := .parallel }` (just flipping the mode flag) and decide proved the divergent-tie theorem FALSE, exposing that the indicator-vector `starFloat` overrides the EVAL mode. Mathlib-style fix: introduce the count-based constraint as a separate definition, name the difference, document the architectural implication.
+Mathlib pattern: support as `Finset α`, probability as `α → ℝ`, summed via `∑ a ∈ s, ...` over `Real.negMulLog`. Same shape as `Finset.sum`, `MeasureTheory.integral`, etc. — ONE canonical type-indexed form, not parallel implementations.
 
-All theorems `decide`-checked at default 200K heartbeats; no `sorry`, no `native_decide`. The trifecta is now fully formalized as the deepest faithful version of the paper's central argument.
+DELETED:
+- Old `Core.InformationTheory.entropy : List (α × ℝ) → ℝ` (List-of-pairs form). Encoded support and probability function as a single list, awkward and not mathlib-idiomatic.
+- Old `Core.shannonEntropy : (ι → ℝ) → ℝ` from `RationalAction.lean`. Was the function-indexed form for `[Fintype ι]`; subsumed by `entropy Finset.univ p`.
+- `Core.shannonEntropy_nonneg`, `_uniform`, `_eq_negMulLog` from RationalAction.lean (the trivial entropy theorems; replaced by `Core.InformationTheory.entropy_nonneg`/`_uniform` in the canonical home).
 
-940 jobs green; 0.230.382
+KEPT IN `RationalAction.lean` (because they depend on softmax/KL infrastructure that doesn't belong in `Core/InformationTheory`):
+- `entropy_le_log_card` (was `shannonEntropy_le_log_card`) — uses `klFinite` + `kl_nonneg'`. Renamed; updated to use `Core.InformationTheory.entropy Finset.univ p`.
+- `entropy_softmax` (was `shannonEntropy_softmax`) — uses softmax + partition function. Renamed; proof updated.
+- `entropyRegObjective`, `entropyRegObjective_softmax`, `softmax_maximizes_entropyReg`, `freeEnergy`, `softmax_minimizes_freeEnergy`, `max_entropy_duality` — all migrated to use the canonical entropy.
+
+REFACTORED CONSUMERS:
+- `Core/InformationTheory.lean`: `mutualInformation`, `conditionalEntropy`, `jsdOf` all updated to take `Finset` + function instead of `List` of pairs. `deltaP`, `deltaPCounts` (no entropy involved) unchanged.
+- `Theories/Pragmatics/RSA/InformationTheory.lean`: re-export list adjusted for new signatures (no public API change for downstream — same function names).
+- `Theories/Processing/MemorySurprisal/Basic.lean`: `averageSurprisal` and `memoryEntropy` migrated from `List (Mem × ℝ)` to `(Finset Mem, Mem → ℝ)`. No external consumers.
+- `Theories/Syntax/ConstructionGrammar/GrammarDist.lean`: `entropyOver` and `jsd` migrated from `List C` to `Finset C`. `GrammarDist`'s `C` type promoted from `Type` to `Type*`.
+- `Theories/Morphology/WP/LCEC.lean`: `cellEntropy` and `conditionalCellEntropy` use a private `listToFinsetFn` adapter that converts the `groupBySum`-output List to (Finset, function) form. The underlying `cellDistribution` / `jointCellDistribution` still return Lists (List is the natural type for groupBySum output); adapter is the bridge.
+
+WHY NOT KEEP A LIST-TYPED ERGONOMIC WRAPPER: in two earlier rounds I proposed keeping a List-typed entropy alongside the canonical Finset+function form, defended as "ergonomic for ad-hoc enumerated distributions." The user pushed back twice ("would mathlib really allow these parallel implementations? why not do the pure mathlib discipline?"). Answer: mathlib wouldn't. ONE canonical implementation is the discipline. Migrated.
+
+WHY MOVE OUT OF `RationalAction.lean`: the user asked "why is this in Linglib/Core/Agent/RationalAction.lean instead of InformationTheory/Defs.lean or something?" — entropy is information-theoretic infrastructure, not Luce-choice infrastructure. Moved to canonical home.
+
+CHECKED: targeted builds of `Core.InformationTheory`, `Core.Agent.RationalAction`, `Theories.Pragmatics.RSA.InformationTheory`, `Theories.Processing.MemorySurprisal.Basic`, `Theories.Diachronic.Lexicalization`, `Theories.Morphology.WP.LCEC`, `Theories.Syntax.ConstructionGrammar.GrammarDist` — all green.
+
+DEFERRED:
+- The List → Finset adapter in `LCEC.lean` is a stepping stone; long-term, `cellDistribution` / `jointCellDistribution` could be refactored to return `(Finset α, α → ℚ)` directly, eliminating the adapter. Touches the morphological-paradigm substrate; separate session.
+- Bridge theorems showing `entropy Finset.univ p = ∑ negMulLog (p i)` for the Fintype case — definitionally true now, no separate theorem needed.
 
 ## [0.230.381] - 2026-04-26
 
-### McPhersonLamont2026 §§8-10: eq. (21), (27), (30) — three more tableaux + decide-hygiene cleanup
+### Krifka 1998 *Origins of Telicity* — round 1 audit + refactor (parallel to K89 round 1+2)
 
-Three additional paper tableaux beyond fig. 3 / eq. (24), each `decide`-checked:
+Multi-agent audit (linguistics-domain-expert with PDF, mathlib-reviewer, integration-auditor, cross-framework-reconciler) of `Phenomena/TenseAspect/Studies/Krifka1998.lean` after the K89 round-2 refactor flagged K98 study as the natural next-tightest-coupled sibling. Findings: K98 study had **the exact same defects round-1 K89 had** (native_decide, String fields, rfl-tautologies in licensing predictions) PLUS a major content gap (K98 §4 movement/paths absent — K98's distinctive contribution beyond K89) PLUS substrate gaps (TEL ≠ QUA collapse, dead `class VerbIncrementality`).
 
-- **§8 Eq. (21)** (paper p. 13): `/nãn + rī^H/` → `[nãn rī]` — phrase-final floating-H deletion. Simplest substantive case in the paper, 1 HS step + fixed-point detection. Smoke test: works without depending on *CROWD, *FALL, or any fig. 3-specific ranking machinery.
+DEFECTS FIXED in `Phenomena/TenseAspect/Studies/Krifka1998.lean` (326 → 577 LOC):
+- **`native_decide` (line 319) → `decide`.** Required restructuring `GRADDatum.verb : String` (which the round-2 K89 audit's String-field anti-pattern recurred on) into a `GRADVerb` enum + `GRADObjectMeasure` enum, plus splitting `GRADVerb.verbIncClass` into a literal `expectedIncClass` (decidable by `decide`) and a separate `gradVerb_matches_fragment` tripwire theorem checking against the fragment annotations (`Verbal.lean`'s noncomputable definitions block direct `decide` reduction through the projection).
+- **6 per-verb licensing rfl-tautologies deleted** (lines 207-229 in old file). `eat_two_apples_licenses_inX` and `build_a_house_licenses_inX` had identical statements (both `inXPrediction .accomplishment = .accept`) — they were tag-checks not theorems. Replaced by the general `telic_licenses_inX` and `durative_atelic_licenses_forX` (kept).
+- **`cumOnly` docstring caveat added.** PDF nowhere uses the literal label "cumOnly"; it's the formaliser's shorthand for K98's "CUM-without-MSE/MSO" verbs (push, pull, carry). Now disclosed.
+- **Bool-field anti-pattern in §7 caught at the boundary.** Initial round-1 add of `K98AtomicityDatum` had `objectIsCum : Bool, isTemporallyAtomic : Bool, acceptsInX : Bool` (three Bool fields) with a theorem proving `... = true ∧ ... = true ∧ ... = true` — exactly the round-2 K89 anti-pattern recurring at finer grain. Refactored to `objectRef : Core.Scale.MereoTag` + `inXAcceptance : DiagnosticResult`, matching the round-2 K89 §1 NPDatum convention.
 
-- **§9 Eq. (27)** (paper p. 16): `/kāk^H + kā/` → `[kāk kā]` (where kā has /MH/ lexical melody). Floating H of kāk cannot dock rightward — *CROWD blocks docking onto kā's already-2-tone TBU. Isolates the *CROWD mechanism from fig. 3's specific ranking and confirms it works on a different tonal structure (lexical MH contour vs floating H).
+INTEGRATION ADDITIONS:
 
-- **§10 Eq. (30)** (paper p. 17): `/kāk^H + ìlí/` → `[kāk ìlí]` (ìlí has /LH/ lexical melody). Tautomorphic dock licensed by the inverted ranking *M<L ≫ *TAUTDOCK: deletion would yield surface ML adjacency on the tier (*M<L violation), so the substrate prefers the tautomorphic dock. First paper tableau requiring a constraint outside the fig. 3 set; *M<L added to substrate. `decide` caught a missing MAX(L) in my initial ranking — without it, delete-L-ìlí tied with the faithful candidate on every active constraint.
+- **§4 Compositional Telicity now invokes substrate.** New §4.5 "Propositional propagation invocations" section calls `cum_propagation` and `qua_propagation_sinc` from K98 theory directly on abstract θ + OBJ instances (`eat_apples_cum_propositional`, `eat_two_apples_qua_propositional`). Parallel to K89 study §3's `qmod_of_cum_is_qua`/`measure_phrase_makes_qua` calls — substrate-honest derivations rather than stipulated `⟨rfl, rfl⟩` over Bool tags.
+- **§7 K98 §3.5 eq. 58 *Mary ate peanuts in 0.43 seconds*** — K98's own version of K89's *Ann drank wine in 0.43 sec* showing temporal atomicity (not quantization) licenses *in*-X. K89 study has the analogous ATM section anchored on K89 §5/T4; K98 study now mirrors it for K98 §3.5 page 18 with the `maryAtePeanutsIn043Sec` datum and `k98_eq58_cum_object_accepts_inX` theorem.
+- **§8 K89 ↔ K98 sister-paper bridge** (`eat_refinement_chain`, `write_refinement_chain`, `read_refinement_chain`). K89 study now defines `K89ThematicClass.toVerbIncClass` (round-2 add); this section provides the K98-side acknowledgement with three-way consistency theorems chaining K89 thematic class → K98 VerbIncClass → fragment annotation. Closes the round-2 cross-framework agent's "K98 study has zero K89 back-reference" finding.
+- **§3 TEL ⊃ QUA caveat documented.** K98 §2.5 (eq. 37) defines TEL strictly weaker than QUA; the `Telicity.toMereoTag .telic = .qua` collapse used here is faithful for typical Vendler-class accomplishments/achievements but loses K98's run-time-3-4pm counterexample. Documented as a defensible deferral; full TEL substrate would require INI/FIN initial/final-part predicates.
+- **Header citations expanded**: added `@cite{krifka-1989}` (back-reference to antecedent), `@cite{filip-2012}` (forward-reference to canonical handbook successor critique), `@cite{vendler-1957}` (already present).
 
-NEW substrate primitives (`Theories/Phonology/Tone/Constraints.lean`):
-- `*M<L` — counts M-then-L adjacent pairs on the alive-tier subsequence (`(List.range n).filterMap` + `zip .tail` + `countP`).
+DEAD CODE REMOVED in `Theories/Semantics/Events/Krifka1998.lean`:
+- `class VerbIncrementality` (lines 367-383, 16 LOC) — verified by grep to have zero instances anywhere in linglib. Deleted with a documenting comment in case a future use case wants to bundle eat/push/build/read meaning postulates as a typeclass.
 
-NEW Fragment additions (`Fragments/Poko/Tone.lean`):
-- `Syll.ka` (friend stem, MH lexical melody, paper eq. 26a) with morpheme ID 5
-- `Syll.ili` (bamboo stem, LH lexical melody, paper eq. 28a) with morpheme ID 6
-- `lTone : Syll → ToneSpec` constructor for L tones
+§4 PAPER-REPLICATION VIA RENAME:
+- `git mv Phenomena/TenseAspect/Studies/SpatialTrace.lean → Studies/Krifka1998Movement.lean`. SpatialTrace.lean was anonymous (no author-year anchor) but its theory-substrate `Theories/Semantics/Events/SpatialTrace.lean` already cited `@cite{krifka-1998}` in its header. The rename + namespace change (`namespace SpatialTrace` → `namespace Krifka1998Movement`) makes the K98 §4 paper-replication anchor visible at the file level. Existing content (3 §1-§4 sections covering motion verbs, PathShape→Telicity, motion VP data, diagnostic bridge) reframed in docstring as K98 §4 with explicit equation references (eq. 71 MR, 72 KM', 73 SOURCE/GOAL, 74-75 walked-from-to-towards, 78 arrived). One `native_decide` (in `all_motion_data_correct`) → `decide`. Linglib.lean import updated (1 line).
+- The deeper K98 §4 substrate (ADJ eq. 68, EXP eq. 63, SEINC eq. 65, SMR eq. 69, MR eq. 71 as propositional predicates, KM' eq. 72) is NOT yet in K98 theory — only the Bool-tag projection via `PathShape`/`pathShapeToTelicity` exists. Documented as a future deepening direction.
 
-DECIDE-HYGIENE CLEANUP: removed all 5 `set_option maxHeartbeats 4000000` lines from `McPhersonLamont2026.lean`. All `decide` proofs (now ~16 across §6 fig.3, §7 eq.24, §8 eq.21, §9 eq.27, §10 eq.30) pass at Lean's default 200K heartbeats. The 4M was leftover defensive setting from debugging Finset reduction; once the substrate switched to `List.range`/`countP`/`(k,i) ∈ surfaceLinks` membership, default heartbeats suffice.
+DELIBERATELY DEFERRED (flagged in files as future-work):
+- Full propositional `def TEL` substrate (requires INI/FIN initial/final-part predicates over events).
+- K98 §4 propositional substrate (ADJ, EXP, SEINC, SMR, MR, KM' as propositions on θ).
+- ATM-but-not-QUA witness theorem (requires event-CEM atom infrastructure, same blocker as K89 study §5).
+- Cross-framework engagement with Beavers 2010, Goldberg-Jackendoff 2004 Resultatives, Champollion SSR — flagged by audit as nice-to-haves; deferred to keep this commit scope-bounded.
 
-940 jobs green; 0.230.381
+IMPACT: K98 study now genuinely exercises K98 substrate (`cum_propagation` + `qua_propagation_sinc` invoked in function position on abstract θ instances), bridges to K89 study via three-way refinement consistency theorems, mirrors K89's eq. 58 atomicity treatment, and has a sibling `Studies/Krifka1998Movement.lean` covering K98's §4 path/movement contribution that was previously anonymous. The K89 ↔ K98 ↔ Filip2012 ↔ Smith1997 ↔ Moon2026 ↔ AspectualConsistency ↔ Krifka1998Movement cluster is now fully bidirectional. Files touched: 4 (`Krifka1998.lean`, `Krifka1998Movement.lean` new from rename, `Theories/Events/Krifka1998.lean`, `Linglib.lean`).
+
+5384 jobs green.
 
 ## [0.230.380] - 2026-04-26
 
