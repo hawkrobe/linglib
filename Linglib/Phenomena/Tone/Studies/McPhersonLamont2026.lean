@@ -467,6 +467,88 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
   intro h
   exact absurd (congrArg FloatingForm.deletedTones h) (by decide)
 
+-- ============================================================================
+-- § 6.6: Regular HS Counter-Example — Divergent Ties
+-- ============================================================================
+
+/-! Paper, eq. (62) p. 35. The third leg of the @cite{mcpherson-lamont-2026}
+    trifecta: parallel OT can't (ranking paradox §§1-5), weighted HG
+    can't (§5), and **regular HS** (serial GEN with non-directional
+    *FLOAT counting) can't either, because at step 1 from
+    `/kāk^H + rī^H + dō^H/` the three single-H-deletion candidates all
+    tie under count-based *FLOAT (each removes exactly one floating
+    tone). MAX(H) and lower constraints don't disambiguate either —
+    each candidate has identical violation profile. The optimum is a
+    3-element set, so HS produces a "divergent tie"
+    (@cite{pruitt-2009}): subsequent steps depend on which candidate
+    is picked, and only the leftmost-deletion path reaches the
+    attested form.
+
+    The substrate proves this directly by switching `evalMode` on the
+    fig.3 derivation from `.directional .leftToRight` to `.parallel`,
+    and showing the optimum has 3 elements. The full fig.3 ranking
+    (HAVETONE ≫ *FLOAT ≫ *CROWD ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫
+    DEP(link)/H ≫ MAX(M) ≫ MAX(link)/M) is preserved — only the EVAL
+    semantics changes — confirming the paper's claim that ranking
+    gymnastics alone cannot fix the divergence; only directional EVAL
+    can.
+
+    Beyond cardinality: the paper's broader claim is that ANY
+    non-directional tie-breaker fails to consistently pick the
+    leftmost-deletion path. Formalising "any tie-breaker" requires
+    quantifying over `pick : Finset C → Option C`. The cardinality
+    theorem here is the load-bearing fact (the optimum is genuinely
+    underdetermined); the broader claim is editorial. -/
+
+/-- Fig.3 ranking with `starFloatCount` substituted for `starFloat` —
+    the count-based *FLOAT used in regular (non-directional) HS.
+    Architectural note (per `starFloatCount` docstring): the substrate's
+    parallel-vs-directional distinction lives in the *constraint*
+    (count vs indicator), not the EVAL mode flag, so simply switching
+    `evalMode := .parallel` while keeping the indicator-emitting
+    `starFloat` would not change behaviour. The genuine "regular HS"
+    counterpart of `derivationLR` requires a count-emitting *FLOAT. -/
+def fig3RankingCount : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, Phonology.Tone.starFloatCount, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
+
+/-- The fig.3 derivation under regular HS (count-based *FLOAT, parallel
+    EVAL). Same GEN as `derivationLR`; differs in ranking (`starFloat`
+    → `starFloatCount`) and `evalMode`. -/
+def derivationParallel : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := fig3RankingCount
+  evalMode := .parallel
+
+/-- **The divergent tie**: under parallel *FLOAT, the three depth-1
+    deletion candidates each remove exactly one floating tone, scoring
+    identically on *FLOAT (count = 2). No higher-ranked or lower-ranked
+    constraint distinguishes them, so all three are optimal. -/
+theorem parallel_optimum_three_way_tie :
+    derivationParallel.stepOptimum fig3Input =
+      {fig3Input.deleteTone 1, fig3Input.deleteTone 3, fig3Input.deleteTone 5} := by
+  decide
+
+/-- Cardinality: the parallel optimum has exactly 3 elements. -/
+theorem parallel_optimum_card_three :
+    (derivationParallel.stepOptimum fig3Input).card = 3 := by decide
+
+/-- Cardinality: the directional-LR optimum has exactly 1 element
+    (recapping `fig3_LR_step1` at the cardinality level). -/
+theorem directional_LR_optimum_card_one :
+    (derivationLR.stepOptimum fig3Input).card = 1 := by decide
+
+/-- **Headline (counter-example)**: regular HS strictly underdetermines
+    the next step relative to directional HS. Combined with the
+    negative-half theorems (§§1-5: parallel OT and weighted HG cannot
+    model both `/nãn rī^H + nā/` and `/kāk^H + rī^H/`) and the
+    positive-half theorem (§6 fig.3: directional LR converges to the
+    attested form), this completes @cite{mcpherson-lamont-2026}'s
+    trifecta argument: only directional Harmonic Serialism succeeds. -/
+theorem only_directional_disambiguates_fig3 :
+    (derivationLR.stepOptimum fig3Input).card <
+      (derivationParallel.stepOptimum fig3Input).card := by decide
+
 end Fig3
 
 -- ============================================================================

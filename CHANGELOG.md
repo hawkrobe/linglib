@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.382] - 2026-04-26
+
+### McPhersonLamont2026 §6.6: regular-HS divergent-tie counter-example completes the trifecta
+
+The third leg of the @cite{mcpherson-lamont-2026} argument: parallel OT can't (§§1-5 ranking paradox), weighted HG can't (§5), **regular HS can't** (§6.6 — NEW), only directional HS can (§6 fig.3). At step 1 from `/kāk^H + rī^H + dō^H/` under count-based *FLOAT, the three single-H-deletion candidates all tie at *FLOAT = 2 (each removes exactly one floating tone) — and no later constraint distinguishes them. Optimum has cardinality 3; subsequent steps depend on which candidate is picked, and only the leftmost-deletion path reaches the attested form.
+
+`Theories/Phonology/Tone/Constraints.lean` — NEW `starFloatCount` (count-based variant of `starFloat`): emits `[floatIndicator.sum]` as a singleton vector instead of the position-aware indicator. Surfaces an important architectural fact about the substrate: `EvalMode.le .parallel` and `EvalMode.le (.directional .leftToRight)` *both* use `LexLE` on the violation vector, so simply switching `evalMode := .parallel` while keeping `starFloat` (which emits the directional indicator) doesn't change behaviour. **Directionality lives in the constraint's eval output (count vs indicator), not the EVAL mode flag.** The flag remains useful for documenting intent and for the right-to-left case (which uses `LexLE` on the *reversed* vector).
+
+`Phenomena/Tone/Studies/McPhersonLamont2026.lean` §6.6 (NEW, inside `Fig3` namespace alongside `derivationLR` / `derivationRL`):
+- `fig3RankingCount` — ranking with `starFloatCount` substituted for `starFloat`
+- `derivationParallel` — the regular-HS counterpart of `derivationLR`
+- `parallel_optimum_three_way_tie : derivationParallel.stepOptimum fig3Input = {fig3Input.deleteTone 1, fig3Input.deleteTone 3, fig3Input.deleteTone 5}`
+- `parallel_optimum_card_three : (derivationParallel.stepOptimum fig3Input).card = 3`
+- `directional_LR_optimum_card_one : (derivationLR.stepOptimum fig3Input).card = 1`
+- `only_directional_disambiguates_fig3 : (derivationLR.stepOptimum fig3Input).card < (derivationParallel.stepOptimum fig3Input).card`
+
+`decide` caught the architectural blindspot — my first attempt set `derivationParallel := { derivationLR with evalMode := .parallel }` (just flipping the mode flag) and decide proved the divergent-tie theorem FALSE, exposing that the indicator-vector `starFloat` overrides the EVAL mode. Mathlib-style fix: introduce the count-based constraint as a separate definition, name the difference, document the architectural implication.
+
+All theorems `decide`-checked at default 200K heartbeats; no `sorry`, no `native_decide`. The trifecta is now fully formalized as the deepest faithful version of the paper's central argument.
+
+940 jobs green; 0.230.382
+
 ## [0.230.381] - 2026-04-26
 
 ### McPhersonLamont2026 §§8-10: eq. (21), (27), (30) — three more tableaux + decide-hygiene cleanup
