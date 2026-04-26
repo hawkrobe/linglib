@@ -1,132 +1,193 @@
+import Mathlib.Tactic.FinCases
+
 /-!
-# German Verb-Particle Constructions
+# German Verbal Prefix and Particle Verbs
 @cite{ludeling-2001} @cite{dendikken-1995}
 
-Lexical entries for German separable-prefix verbs (*scheidbar
-zusammengesetzte Verben* / *Partikelverben*). Distinct from inseparable
-prefix verbs (*ver-, be-, ent-, zer-*), which are derivational morphology
-and never split.
+Lexical entries for German verbs with prefixes — both separable
+particle verbs (*scheidbar zusammengesetzte Verben*, e.g. *anrufen*)
+and inseparable prefix verbs (*ver-*, *be-*, *ent-*, *zer-*). The
+distinction is the major morphosyntactic split in the German verbal
+system: separable verbs split under V2 (*er ruft Maria an*) and
+trigger *ge-* insertion in the past participle (*angerufen*) and *zu*
+insertion in the *zu*-infinitive (*anzurufen*); inseparable prefix
+verbs never split, lack *ge-* in the participle (*verstanden*, not
+*\*geverstanden*), and place *zu* before the whole word in the
+*zu*-infinitive (*zu verstehen*).
 
-## Key empirical generalizations (textbook; @cite{ludeling-2001})
+@cite{dendikken-1995}'s SC analysis (book ch. 2) takes German
+particle verbs as one of the major Germanic test cases for the
+ergative-particle / SC-head proposal.
 
-1. **Separability under V2.** In V2 main clauses, the particle stays in
-   final position while the verb raises to C: *Er ruft Maria an*
-   ('he calls Mary up'). In embedded clauses with V-final order, the
-   particle is adjacent to the verb: *...dass er Maria anruft*.
+## Main definitions
 
-2. **Past participle `ge-` insertion.** The past participle prefix *ge-*
-   inserts BETWEEN the separable particle and the verb stem:
-   *anrufen* → *angerufen*, *aufmachen* → *aufgemacht*. Inseparable
-   prefix verbs lack *ge-* entirely (*verstehen* → *verstanden*, not
-   *\*geverstanden*) — a morphological diagnostic for separability.
+* `GermanAffixClass` — separable vs inseparable.
+* `GermanVerbalAffixEntry` — a single entry.
+* `inventory` — eight canonical entries (5 separable, 3 inseparable).
 
-3. **Infinitival *zu* placement.** In the *zu*-infinitive, *zu* inserts
-   between the particle and the verb: *anzurufen*, *aufzumachen*.
-   Inseparable prefix verbs have *zu* before the whole word: *zu
-   verstehen*.
+## Main results
 
-4. **The German verb cluster + V2 + particle interaction** is one of the
-   richest data sets in syntactic theory and a major target of
-   @cite{dendikken-1995}'s SC analysis (book ch. 2 + Norwegian/Dutch
-   parallels in §2.3.3.5).
-
-## Cross-references
-
-- `Fragments/Dutch/VerbParticles.lean` — closest Germanic sibling;
-  shares separability typology but lacks V2 in the same form.
-- `Fragments/Norwegian/VerbParticles.lean` — adds the
-  passive-incorporation parameter that German shares but in a
-  different morphological guise.
-- `Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995.lean` —
-  the SC analysis applied to English; den Dikken's primary
-  cross-linguistic anchor is Dutch (his native language), with German
-  and Norwegian as additional Germanic test cases.
+* `inventory_citation_concat` — every entry's `citationForm` is
+  `affix ++ stem` (holds for both classes).
+* `IsSeparable` predicate with decidable instance.
 
 -/
 
 namespace Fragments.German.VerbParticles
 
-/-- A German separable verb-particle entry.
-    Records the citation infinitive (particle + verb concatenated as in
-    the standard dictionary form) and the constituent verb stem and
-    particle separately for V2-split contexts and *ge-*-insertion. -/
-structure GermanVPCEntry where
-  /-- Citation infinitive (particle + verb concatenated), the dictionary
-      form. E.g. *anrufen*, *aufmachen*. -/
-  citationForm    : String
-  /-- Bare verb stem (without particle, without *ge-*). E.g. *rufen*. -/
-  verb            : String
-  /-- Separable particle. E.g. *an*, *auf*. -/
-  particle        : String
-  /-- Past participle (with *ge-* inserted between particle and verb).
-      E.g. *angerufen*, *aufgemacht*. -/
-  pastParticiple  : String
-  /-- *zu*-infinitive form (with *zu* inserted between particle and
-      verb). E.g. *anzurufen*, *aufzumachen*. -/
-  zuInfinitive    : String
+/-- German affix class: separable particles split under V2 and trigger
+    *ge-*/*-zu-* insertion; inseparable prefixes never split. -/
+inductive GermanAffixClass
+  | separable
+  | inseparable
+  deriving DecidableEq
+
+/-- A German prefixed-verb entry: separable particle verb or
+    inseparable prefix verb. Records both the past participle (with
+    or without *ge-* insertion) and the *zu*-infinitive (concatenated
+    or space-separated) for the morphological diagnostics. -/
+structure GermanVerbalAffixEntry where
+  /-- Citation infinitive (affix + stem concatenated). -/
+  citationForm   : String
+  /-- Bare verb stem. -/
+  stem           : String
+  /-- The affix (separable particle or inseparable prefix). -/
+  affix          : String
+  /-- Affix class. -/
+  affixClass     : GermanAffixClass
+  /-- Past participle. Separable: *ge-* between affix and stem
+      (*angerufen*). Inseparable: bare verb participle, no *ge-*
+      (*verstanden*). -/
+  pastParticiple : String
+  /-- *zu*-infinitive. Separable: *zu* concatenated between affix and
+      stem (*anzurufen*, one word). Inseparable: *zu* as separate word
+      before the citation form (*zu verstehen*). -/
+  zuInfinitive   : String
   /-- English gloss. -/
-  gloss           : String
-  deriving Repr, DecidableEq
+  gloss          : String
 
-abbrev anrufen : GermanVPCEntry where
-  citationForm := "anrufen"; verb := "rufen"; particle := "an"
-  pastParticiple := "angerufen"; zuInfinitive := "anzurufen"
-  gloss := "phone, call up"
+/-- An entry's affix is *separable*. -/
+def IsSeparable (e : GermanVerbalAffixEntry) : Prop :=
+  e.affixClass = .separable
 
-abbrev aufmachen : GermanVPCEntry where
-  citationForm := "aufmachen"; verb := "machen"; particle := "auf"
-  pastParticiple := "aufgemacht"; zuInfinitive := "aufzumachen"
-  gloss := "open"
+instance : DecidablePred IsSeparable :=
+  fun e => decEq e.affixClass .separable
 
-abbrev einschalten : GermanVPCEntry where
-  citationForm := "einschalten"; verb := "schalten"; particle := "ein"
-  pastParticiple := "eingeschaltet"; zuInfinitive := "einzuschalten"
-  gloss := "switch on, turn on"
+/-! ### Separable particle verbs -/
 
-abbrev abfahren : GermanVPCEntry where
-  citationForm := "abfahren"; verb := "fahren"; particle := "ab"
-  pastParticiple := "abgefahren"; zuInfinitive := "abzufahren"
-  gloss := "depart"
+/-- *anrufen* 'phone, call up'. Separable *an-*; pp *angerufen*;
+    zu-inf *anzurufen*. -/
+def anrufen : GermanVerbalAffixEntry where
+  citationForm   := "anrufen"
+  stem           := "rufen"
+  affix          := "an"
+  affixClass     := .separable
+  pastParticiple := "angerufen"
+  zuInfinitive   := "anzurufen"
+  gloss          := "phone, call up"
 
-abbrev mitkommen : GermanVPCEntry where
-  citationForm := "mitkommen"; verb := "kommen"; particle := "mit"
-  pastParticiple := "mitgekommen"; zuInfinitive := "mitzukommen"
-  gloss := "come along"
+/-- *aufmachen* 'open'. Separable *auf-*; pp *aufgemacht*;
+    zu-inf *aufzumachen*. -/
+def aufmachen : GermanVerbalAffixEntry where
+  citationForm   := "aufmachen"
+  stem           := "machen"
+  affix          := "auf"
+  affixClass     := .separable
+  pastParticiple := "aufgemacht"
+  zuInfinitive   := "aufzumachen"
+  gloss          := "open"
 
-def inventory : List GermanVPCEntry :=
-  [anrufen, aufmachen, einschalten, abfahren, mitkommen]
+/-- *einschalten* 'switch on'. Separable *ein-*; pp *eingeschaltet*;
+    zu-inf *einzuschalten*. -/
+def einschalten : GermanVerbalAffixEntry where
+  citationForm   := "einschalten"
+  stem           := "schalten"
+  affix          := "ein"
+  affixClass     := .separable
+  pastParticiple := "eingeschaltet"
+  zuInfinitive   := "einzuschalten"
+  gloss          := "switch on"
 
-/-! ## Per-entry verification
+/-- *abfahren* 'depart'. Separable *ab-*; pp *abgefahren*;
+    zu-inf *abzufahren*. -/
+def abfahren : GermanVerbalAffixEntry where
+  citationForm   := "abfahren"
+  stem           := "fahren"
+  affix          := "ab"
+  affixClass     := .separable
+  pastParticiple := "abgefahren"
+  zuInfinitive   := "abzufahren"
+  gloss          := "depart"
 
-Citation form = particle + verb (same as Dutch fragment). -/
+/-- *mitkommen* 'come along'. Separable *mit-*; pp *mitgekommen*;
+    zu-inf *mitzukommen*. -/
+def mitkommen : GermanVerbalAffixEntry where
+  citationForm   := "mitkommen"
+  stem           := "kommen"
+  affix          := "mit"
+  affixClass     := .separable
+  pastParticiple := "mitgekommen"
+  zuInfinitive   := "mitzukommen"
+  gloss          := "come along"
 
-theorem anrufen_citation     : anrufen.citationForm     = anrufen.particle     ++ anrufen.verb     := rfl
-theorem aufmachen_citation   : aufmachen.citationForm   = aufmachen.particle   ++ aufmachen.verb   := rfl
-theorem einschalten_citation : einschalten.citationForm = einschalten.particle ++ einschalten.verb := rfl
-theorem abfahren_citation    : abfahren.citationForm    = abfahren.particle    ++ abfahren.verb    := rfl
-theorem mitkommen_citation   : mitkommen.citationForm   = mitkommen.particle   ++ mitkommen.verb   := rfl
+/-! ### Inseparable prefix verbs -/
 
-/-! ## Structural notes (no theorem unpacking)
+/-- *verstehen* 'understand'. Inseparable *ver-*; pp *verstanden*
+    (no *ge-*); zu-inf *zu verstehen* (separated). -/
+def verstehen : GermanVerbalAffixEntry where
+  citationForm   := "verstehen"
+  stem           := "stehen"
+  affix          := "ver"
+  affixClass     := .inseparable
+  pastParticiple := "verstanden"
+  zuInfinitive   := "zu verstehen"
+  gloss          := "understand"
 
-The past participle of separable prefix verbs inserts *ge-* between the
-particle and the verb's own participle stem (*anrufen* → *an-ge-rufen*);
-the *zu*-infinitive inserts *zu* between particle and verb
-(*an-zu-rufen*). The diagnostic for separability is that the particle
-remains word-initial in both forms — inseparable prefix verbs (e.g.
-*verstehen*) lack *ge-* entirely and place *zu* before the whole word
-(*zu verstehen*).
+/-- *bezahlen* 'pay'. Inseparable *be-*; pp *bezahlt* (no *ge-*);
+    zu-inf *zu bezahlen* (separated). -/
+def bezahlen : GermanVerbalAffixEntry where
+  citationForm   := "bezahlen"
+  stem           := "zahlen"
+  affix          := "be"
+  affixClass     := .inseparable
+  pastParticiple := "bezahlt"
+  zuInfinitive   := "zu bezahlen"
+  gloss          := "pay"
 
-Each entry's `pastParticiple` and `zuInfinitive` fields record the
-forms directly. We do NOT add `rfl` theorems unpacking each abbrev —
-the surface forms are inspectable in the `abbrev` bodies above and
-re-asserting them as theorems adds no verification beyond what the
-struct literal already type-checks. (A genuine inventory-level
-prefix-property theorem via `String.isPrefixOf` was attempted but
-`decide` doesn't reduce on `String.isPrefixOf` over field projections;
-recovering it would need `native_decide`, which the project disprefers.) -/
+/-- *entkommen* 'escape'. Inseparable *ent-*; pp *entkommen*
+    (no *ge-*); zu-inf *zu entkommen* (separated). -/
+def entkommen : GermanVerbalAffixEntry where
+  citationForm   := "entkommen"
+  stem           := "kommen"
+  affix          := "ent"
+  affixClass     := .inseparable
+  pastParticiple := "entkommen"
+  zuInfinitive   := "zu entkommen"
+  gloss          := "escape"
 
-/-- Inventory entries are well-formed: non-empty verb and particle. -/
-theorem inventory_well_formed :
-    inventory.all (fun e => decide (e.verb ≠ "") && decide (e.particle ≠ "")) = true := by decide
+/-- The canonical inventory: 5 separable + 3 inseparable. -/
+def inventory : List GermanVerbalAffixEntry :=
+  [anrufen, aufmachen, einschalten, abfahren, mitkommen,
+   verstehen, bezahlen, entkommen]
+
+/-! ### Properties -/
+
+/-- An entry's `citationForm` is the literal concatenation of its
+    `affix` and `stem`. Holds for both separable and inseparable
+    classes; the morphological diagnostics live in the past participle
+    and *zu*-infinitive shapes (separable inserts *ge-*/*-zu-* between
+    affix and stem; inseparable does neither). -/
+def IsCitationConcat (e : GermanVerbalAffixEntry) : Prop :=
+  e.citationForm = e.affix ++ e.stem
+
+instance : DecidablePred IsCitationConcat :=
+  fun e => decEq e.citationForm (e.affix ++ e.stem)
+
+/-- Every inventory entry's citation form is the concatenation of its
+    affix and stem. -/
+theorem inventory_citation_concat
+    (e : GermanVerbalAffixEntry) (he : e ∈ inventory) :
+    IsCitationConcat e := by
+  fin_cases he <;> rfl
 
 end Fragments.German.VerbParticles

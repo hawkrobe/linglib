@@ -1,79 +1,166 @@
+import Mathlib.Tactic.FinCases
+
 /-!
-# Dutch Verb-Particle Constructions
+# Dutch Verbal Prefix and Particle Verbs
 @cite{dendikken-1995}
 
-Lexical entries for Dutch separable verb-particle constructions
-(*scheidbaar samengestelde werkwoorden*). Distinct from prefix verbs
-(*ver-, be-, ent-*), which are inseparable derivational morphology.
-@cite{dendikken-1995} chapter 3 uses Dutch dative-particle facts
-extensively in the analysis of triadic constructions.
+Lexical entries for Dutch verbs with prefixes (separable particles
+*scheidbaar samengestelde werkwoorden*; inseparable prefixes
+*onscheidbaar samengestelde werkwoorden*) — the distinction central
+to Germanic VPC syntax and cited extensively by @cite{dendikken-1995}
+in the SC analysis. The two classes share concatenated citation form
+but diverge on the diagnostic morphology: separable verbs show *ge-*
+insertion in the past participle (*opbellen* → *op-ge-beld*); inseparable
+verbs lack *ge-* entirely (*verstaan* → *verstaan*, not *\*ge-verstaan*).
 
-## Key empirical generalizations (textbook)
+## Main definitions
 
-1. Separable VPCs surface adjacent in non-finite contexts (`opbellen`,
-   `aankomen`) but split under V2 in main clauses
-   (`Hij belt Hsu op` vs `dat hij Hsu opbelt`).
-2. The particle is a head-final separable element; under V2 the verb
-   raises to C while the particle stays in situ.
-3. Inseparable prefix verbs (`verstaan`, `bezoeken`) never split — they
-   are derivational, not particle constructions.
+* `DutchAffixClass` — separable vs inseparable.
+* `DutchVerbalAffixEntry` — a single entry.
+* `inventory` — eight canonical entries (5 separable, 3 inseparable).
 
-## Cross-references
+## Main results
 
-- Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995.lean —
-  the SC analysis applied to the English cognate facts.
+* `inventory_citation_concat` — every entry's `citationForm` is the
+  concatenation `affix ++ stem`.
+* `IsSeparable` predicate with decidable instance.
 
 -/
 
 namespace Fragments.Dutch.VerbParticles
 
-/-- A Dutch separable verb-particle entry.
-    Records the citation form (P+V written together as in infinitive)
-    and the constituent V and particle separately for V2-split contexts. -/
-structure DutchVPCEntry where
-  /-- Citation infinitive form (particle + verb concatenated). -/
-  citationForm : String
+/-- Dutch affix class: separable particles (*op-*, *aan-*) split off the
+    verb under V2 and trigger *ge-* insertion in the past participle;
+    inseparable prefixes (*ver-*, *be-*, *ont-*) are derivational and
+    never split. -/
+inductive DutchAffixClass
+  | separable
+  | inseparable
+  deriving DecidableEq
+
+/-- A Dutch prefixed-verb entry: separable particle verb or inseparable
+    prefix verb. -/
+structure DutchVerbalAffixEntry where
+  /-- Citation infinitive (affix + stem concatenated). -/
+  citationForm   : String
   /-- Bare verb stem. -/
-  verb         : String
-  /-- Separable particle. -/
-  particle     : String
+  stem           : String
+  /-- The affix (separable particle or inseparable prefix). -/
+  affix          : String
+  /-- Affix class. -/
+  affixClass     : DutchAffixClass
+  /-- Past participle. Separable verbs show *ge-* insertion
+      (*opbellen* → *opgebeld*); inseparable verbs lack *ge-*
+      (*verstaan* → *verstaan*). -/
+  pastParticiple : String
   /-- English gloss. -/
-  gloss        : String
-  deriving Repr, DecidableEq
+  gloss          : String
 
-abbrev opbellen : DutchVPCEntry where
-  citationForm := "opbellen"; verb := "bellen"; particle := "op"
-  gloss := "phone, call up"
+/-- An entry's affix is *separable*. -/
+def IsSeparable (e : DutchVerbalAffixEntry) : Prop :=
+  e.affixClass = .separable
 
-abbrev aankomen : DutchVPCEntry where
-  citationForm := "aankomen"; verb := "komen"; particle := "aan"
-  gloss := "arrive"
+instance : DecidablePred IsSeparable :=
+  fun e => decEq e.affixClass .separable
 
-abbrev uitgaan : DutchVPCEntry where
-  citationForm := "uitgaan"; verb := "gaan"; particle := "uit"
-  gloss := "go out"
+/-! ### Separable particle verbs -/
 
-abbrev meedoen : DutchVPCEntry where
-  citationForm := "meedoen"; verb := "doen"; particle := "mee"
-  gloss := "participate"
+/-- *opbellen* 'phone, call up'. Separable *op-*; pp *opgebeld*. -/
+def opbellen : DutchVerbalAffixEntry where
+  citationForm   := "opbellen"
+  stem           := "bellen"
+  affix          := "op"
+  affixClass     := .separable
+  pastParticiple := "opgebeld"
+  gloss          := "phone, call up"
 
-abbrev doorwerken : DutchVPCEntry where
-  citationForm := "doorwerken"; verb := "werken"; particle := "door"
-  gloss := "work through"
+/-- *aankomen* 'arrive'. Separable *aan-*; pp *aangekomen*. -/
+def aankomen : DutchVerbalAffixEntry where
+  citationForm   := "aankomen"
+  stem           := "komen"
+  affix          := "aan"
+  affixClass     := .separable
+  pastParticiple := "aangekomen"
+  gloss          := "arrive"
 
-def inventory : List DutchVPCEntry :=
-  [opbellen, aankomen, uitgaan, meedoen, doorwerken]
+/-- *uitgaan* 'go out'. Separable *uit-*; pp *uitgegaan*. -/
+def uitgaan : DutchVerbalAffixEntry where
+  citationForm   := "uitgaan"
+  stem           := "gaan"
+  affix          := "uit"
+  affixClass     := .separable
+  pastParticiple := "uitgegaan"
+  gloss          := "go out"
 
-/-- Each entry's citation form is the concatenation of particle + verb
-    (verified per-entry to avoid List-membership unfolding). -/
-theorem opbellen_citation : opbellen.citationForm = opbellen.particle ++ opbellen.verb := rfl
-theorem aankomen_citation : aankomen.citationForm = aankomen.particle ++ aankomen.verb := rfl
-theorem uitgaan_citation : uitgaan.citationForm = uitgaan.particle ++ uitgaan.verb := rfl
-theorem meedoen_citation : meedoen.citationForm = meedoen.particle ++ meedoen.verb := rfl
-theorem doorwerken_citation : doorwerken.citationForm = doorwerken.particle ++ doorwerken.verb := rfl
+/-- *meedoen* 'participate, take part'. Separable *mee-*; pp *meegedaan*. -/
+def meedoen : DutchVerbalAffixEntry where
+  citationForm   := "meedoen"
+  stem           := "doen"
+  affix          := "mee"
+  affixClass     := .separable
+  pastParticiple := "meegedaan"
+  gloss          := "participate"
 
-/-- All inventory entries have non-empty verb and particle. -/
-theorem inventory_well_formed :
-    inventory.all (fun e => decide (e.verb ≠ "") && decide (e.particle ≠ "")) = true := by decide
+/-- *doorwerken* 'work through'. Separable *door-*; pp *doorgewerkt*. -/
+def doorwerken : DutchVerbalAffixEntry where
+  citationForm   := "doorwerken"
+  stem           := "werken"
+  affix          := "door"
+  affixClass     := .separable
+  pastParticiple := "doorgewerkt"
+  gloss          := "work through"
+
+/-! ### Inseparable prefix verbs -/
+
+/-- *verstaan* 'understand'. Inseparable *ver-*; pp *verstaan* (no *ge-*). -/
+def verstaan : DutchVerbalAffixEntry where
+  citationForm   := "verstaan"
+  stem           := "staan"
+  affix          := "ver"
+  affixClass     := .inseparable
+  pastParticiple := "verstaan"
+  gloss          := "understand"
+
+/-- *bezoeken* 'visit'. Inseparable *be-*; pp *bezocht* (no *ge-*). -/
+def bezoeken : DutchVerbalAffixEntry where
+  citationForm   := "bezoeken"
+  stem           := "zoeken"
+  affix          := "be"
+  affixClass     := .inseparable
+  pastParticiple := "bezocht"
+  gloss          := "visit"
+
+/-- *ontkomen* 'escape'. Inseparable *ont-*; pp *ontkomen* (no *ge-*). -/
+def ontkomen : DutchVerbalAffixEntry where
+  citationForm   := "ontkomen"
+  stem           := "komen"
+  affix          := "ont"
+  affixClass     := .inseparable
+  pastParticiple := "ontkomen"
+  gloss          := "escape"
+
+/-- The canonical inventory: 5 separable + 3 inseparable. -/
+def inventory : List DutchVerbalAffixEntry :=
+  [opbellen, aankomen, uitgaan, meedoen, doorwerken,
+   verstaan, bezoeken, ontkomen]
+
+/-! ### Properties -/
+
+/-- An entry's `citationForm` is the literal concatenation of its
+    `affix` and `stem`. Holds for both separable and inseparable
+    entries — the morphological split lives in the past participle,
+    not in the citation form. -/
+def IsCitationConcat (e : DutchVerbalAffixEntry) : Prop :=
+  e.citationForm = e.affix ++ e.stem
+
+instance : DecidablePred IsCitationConcat :=
+  fun e => decEq e.citationForm (e.affix ++ e.stem)
+
+/-- Every inventory entry's citation form is the literal concatenation
+    of its affix and stem. -/
+theorem inventory_citation_concat
+    (e : DutchVerbalAffixEntry) (he : e ∈ inventory) :
+    IsCitationConcat e := by
+  fin_cases he <;> rfl
 
 end Fragments.Dutch.VerbParticles
