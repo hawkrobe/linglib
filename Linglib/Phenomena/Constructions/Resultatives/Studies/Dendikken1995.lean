@@ -4,7 +4,9 @@ import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff20
 /-!
 # Resultative — Small Clause Bridge
 
-@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}@cite{dendikken-1995}: resultative constructions instantiate
+@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}
+
+@cite{dendikken-1995}: resultative constructions instantiate
 SC predication with an adjectival or prepositional predicate:
 
     "They hammered the metal flat" → V [SC DP AP]
@@ -36,7 +38,7 @@ onto SC predicate categories:
 
 -/
 
-namespace Dendikken1995
+namespace Phenomena.Constructions.Resultatives.Studies.Dendikken1995
 
 open Minimalism
 open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
@@ -145,4 +147,21 @@ theorem path_res_shares_cat_with_pvc :
     resToSCPred .noncausativePath = .P :=
   ⟨rfl, rfl⟩
 
-end Dendikken1995
+/-! ## §6. IsSmallClause companion-predicate witness
+
+`datumToSC` constructs the predicate via `mkLeafPhon (resToSCPred …).toCat`,
+so the well-formedness invariant `predicate.headCat = predCat.toCat`
+holds by `rfl`. -/
+
+/-- The well-formedness invariant for `datumToSC` holds by construction. -/
+theorem datumToSC_consistent (d : ResultativeDatum) (dpId predId : Nat) :
+    (datumToSC d dpId predId).predicate.headCat =
+      (datumToSC d dpId predId).predCat.toCat := rfl
+
+/-- Resultative SCs satisfy the `IsSmallClause` companion predicate
+    over raw `SyntacticObject`s. -/
+theorem datumToSC_isSmallClause (d : ResultativeDatum) (dpId predId : Nat) :
+    IsSmallClause (datumToSC d dpId predId).toSO :=
+  SmallClause.toSO_isSmallClause _ (datumToSC_consistent d dpId predId)
+
+end Phenomena.Constructions.Resultatives.Studies.Dendikken1995

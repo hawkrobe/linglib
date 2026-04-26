@@ -143,6 +143,66 @@ theorem complex_li_outer_projects (target mover : LIToken) :
   | nil => exact absurd htf target.item.nonempty
   | cons h t => simp
 
+/-! ## Overt vs LF (abstract) incorporation
+
+`formComplexLI` builds a complex head out of two LIs. The same operation
+serves two analytically distinct purposes in the literature:
+
+- **Overt head movement** — physical X⁰-to-Y⁰ raising in the syntax,
+  with an audible reflex (e.g., V-to-T-to-C in Germanic V2). The complex
+  head is visible at PF.
+- **LF abstract incorporation / cosuperscripting** — @cite{baker-1988}'s
+  Government Transparency Corollary mechanism. The two heads enter a
+  feature-sharing relation at LF; **no overt complex head is formed**
+  (no compound stress, no morphological reflex). Used by @cite{dendikken-1995}
+  for English particle reanalysis (book §2.4.3) and for the BE+P → HAVE
+  decomposition in DOC structures (book §3.10.1 fn. 17).
+
+Both kinds reduce to the same `LIToken` shape — what differs is the
+analytical commitment about *when* and *where* the relation obtains. We
+provide named aliases so consumer files can record their analytical
+intent:
+
+- `formOvertIncorporation` for overt head-to-head movement (V2,
+  N-incorporation in polysynthetic languages, Norwegian passive
+  particle prefixation).
+- `formAbstractIncorporation` for LF cosuperscripting / Baker GTC
+  (English HAVE = BE + P, Predicate Inversion + P-incorporation in
+  triadic DOC, abstract V-Prt reanalysis where the data argues against
+  overt incorporation).
+
+Theorems about the LI structure (`complex_li_outer_projects`, etc.)
+hold for either alias since they share the underlying definition. -/
+
+/-- Overt head-to-head incorporation: the complex head exists at PF,
+    with phonological consequences (compound stress, agglutinated
+    morphology, etc.). Use for analyses where the incorporation is
+    audible/visible. -/
+abbrev formOvertIncorporation : LIToken → LIToken → LIToken := formComplexLI
+
+/-- Abstract LF incorporation (@cite{baker-1988} GTC / cosuperscripting):
+    the two heads enter a feature-sharing relation at LF without a PF
+    reflex. Use for analyses where the data argues *against* an overt
+    complex head (e.g., @cite{dendikken-1995} English V-Prt reanalysis,
+    BE + P_∅ → HAVE). The structural representation (a single complex
+    LIToken) is the same as `formOvertIncorporation`; the distinction
+    is the analytical commitment recorded by the caller's choice of
+    name. **Single-consumer status (2026-04-26)**: the only current
+    consumer is `Phenomena/ArgumentStructure/Studies/Dendikken1995`
+    (BE+P → HAVE). Promote to a richer primitive (with a feature flag
+    distinguishing LF vs PF in the LI itself) when the second consumer
+    arrives — likely Norwegian passive prefixation, or a causative DOC
+    derivation analogous to triadic. -/
+abbrev formAbstractIncorporation : LIToken → LIToken → LIToken := formComplexLI
+
+/-- The two named aliases are definitionally equal — `formComplexLI`
+    is the underlying structural primitive; `formOvert*` and
+    `formAbstract*` differ only in analytical attribution. -/
+theorem formAbstractIncorporation_eq_formOvertIncorporation
+    (target mover : LIToken) :
+    formAbstractIncorporation target mover = formOvertIncorporation target mover :=
+  rfl
+
 -- ============================================================================
 -- Part 5: Distinguishing Properties
 -- ============================================================================

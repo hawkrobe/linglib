@@ -319,7 +319,7 @@ theorem af_only_intransitive :
 /-- @cite{dendikken-1995} PVC predicate category is P — matching
     the category of intransitive adpositions in the fragment. -/
 theorem pvc_predCat_is_P :
-    Dendikken1995.pvc_pred_is_P
+    Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995.pvc_pred_is_P
       Phenomena.Constructions.ParticleVerbs.pick_up 0 1 = rfl := rfl
 
 -- ════════════════════════════════════════════════════

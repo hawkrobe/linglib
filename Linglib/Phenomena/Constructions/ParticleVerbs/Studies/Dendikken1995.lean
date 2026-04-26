@@ -1,45 +1,68 @@
 import Linglib.Theories.Syntax.Minimalism.SmallClause
-import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!
-# PVC — Small Clause Bridge
+# Particle verb constructions — small-clause analysis
 
-@cite{dendikken-1995} @cite{baker-1988}Connects particle verb construction data to the SC predication analysis.
-@cite{dendikken-1995} analyzes particles as P heads of small
-clauses: `V [SC DP Prt]`. The particle predicates a result
-state/location of the DP subject.
+@cite{dendikken-1995} @cite{baker-1988}
 
-## Particle shift as head movement
+@cite{dendikken-1995} analyses verbal particles as **ergative** small-clause
+heads. The book's primary focus is *complex* particle constructions
+(`make John out a liar`, ch. 2), with applications to triadic constructions
+and Dative Shift (ch. 3-4) and to applicatives and transitive causatives
+(ch. 5). All four phenomena instantiate a SC-in-SC structural template
+`[VP V [SC1 Spec [XP Prt [SC2 NP {AP/NP/PP/VP}]]]]` (book p. 269).
 
-The two surface orders are derived from the same underlying SC:
+This file formalises only the simplex case (`John looked up the
+information`) of ch. 2.4, and only the surface SC after NP-movement
+to SpecSC. It does **not** capture:
 
-1. **Split** (V DP Prt): DP moves out of SC to Spec,VP for Case
-2. **Continuous** (V Prt DP): P incorporates into V (head-to-head
-   movement), forming a complex head `[V V+P]`
+- The SC-in-SC structure for complex PVCs (the book's main contribution).
+  Encoding nested small clauses cleanly is pending substrate work on
+  `SmallClause` itself; current `structure SmallClause` has no
+  recursion-friendly shape.
 
-The pronoun constraint follows: pronouns are obligatorily "light"
-and must move for Case, forcing split order. Heavy DPs resist
-movement, preferring continuous order (P incorporates instead).
+- Overt P-to-V head incorporation. @cite{dendikken-1995} (§2.4.3) argues
+  that English does **not** feature overt particle incorporation. Two
+  arguments (book p. 89, citing Emonds 1993:243, fn. 27): (i) V+Prt
+  sequences like `brush off` lack the English compound stress pattern
+  found on N `'brush off` and V `'baby sit`; (ii) inflection attaches to
+  V alone, e.g. `Are your friends pushin' the car?` (V `push` + `-in'`
+  participle), not to a putative [V+Prt] complex. Right-Hand Head Rule
+  also forbids right-adjoining the particle to V. What den Dikken calls
+  "verb-particle reanalysis" is an LF operation (cosuperscripting /
+  Government Transparency Corollary, @cite{baker-1988}), not formation
+  of an overt complex head. Encoding LF reanalysis requires substrate
+  distinct from `formComplexLI`.
 
-## Cross-references
+- A weight-based derivation rule (`pronoun → split` / `heavy → continuous`).
+  This is @cite{kayne-1985}'s account, which @cite{dendikken-1995} (§2.4.5)
+  explicitly refutes (citing Diesing & Jelinek 1993). den Dikken's own
+  account of the pronoun ban derives from LF reanalysis interacting with
+  pronominal cliticization, again pending the LF reanalysis substrate.
 
-- `HaddicanEtAl2026`: SC family
-  geometry and tree-shape isomorphism proofs
-- `Minimalism.Formal.HeadMovement.Basic`: head-to-head
-  movement type and `formComplexLI` for incorporation
+The empirical pattern (`pronoun_split = good`, `pronoun_continuous = bad`,
+`heavy_continuous = good`, `heavy_split = bad`) is recorded in
+`ParticleVerbs.Data` as theory-neutral data; explanations from any
+particular account (den Dikken, Kayne, Construction Grammar, processing)
+are property of the corresponding study file.
 
 -/
 
-namespace Dendikken1995
+namespace Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 
 open Minimalism
 open Phenomena.Constructions.ParticleVerbs
 
-/-! ## §1. Particles as P heads of small clauses -/
+/-! ## Simplex PVC: surface SC after NP-movement
 
-/-- A particle verb as a small clause: the particle (P) is the predicate,
-    the DP object is the subject. -/
+For a simplex PVC `John looked the information up` (the V-NP-Prt order),
+the surface structure has the DP raised to SpecSC and the particle as
+the SC head. Note this is the *output* of NP-movement — den Dikken's
+D-structure has the DP as the *complement* of the (ergative) particle,
+with SpecSC empty. The current `SmallClause` shape forces a subject
+field, so we record the post-movement form. -/
+
 def pvToSmallClause (pv : ParticleVerb) (dpId prtId : Nat) : SmallClause :=
   { subject := mkLeafPhon .D [] "DP" dpId
     predicate := mkLeafPhon .P [] pv.particle prtId
@@ -49,102 +72,33 @@ def pvToSmallClause (pv : ParticleVerb) (dpId prtId : Nat) : SmallClause :=
 theorem pvc_pred_is_P (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).predCat = .P := rfl
 
-/-- The particle's syntactic category matches SC predicate category P. -/
-theorem particle_cat_matches_pred : SCPredCategory.toCat .P = Cat.P := rfl
+/-! ## Connection to canonical SC shape
 
-/-! ## §2. Particle incorporation (P-to-V head movement)
+The two trivial unfolding theorems above are convenience aliases. The
+load-bearing structural fact about `pvToSmallClause` is its tree shape
+once converted to a `SyntacticObject` via `SmallClause.toSO` — a 2-leaf
+binary tree (subject + predicate). This is the shape consumed by any
+file that wants to compose PVC SCs into larger structures (e.g.
+`embedUnderV` for the full `[VP V [SC DP Prt]]` analysis, as used by
+`HaddicanEtAl2026.pvc_sc`). Stated as `rfl` over the canonical shape so
+that downstream files can rewrite without unfolding `pvToSmallClause`. -/
 
-@cite{dendikken-1995}: particle shift derived by P-to-V
-incorporation. The particle head moves to V, forming a complex
-head `[V lift+up]`. This uses `formComplexLI` from
-`HeadMovement.Basic`, connecting PVCs to the head movement typology. -/
+/-- Any PVC small clause is a 2-leaf binary tree (subject + predicate). -/
+theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
+    (pvToSmallClause pv dpId prtId).toSO.shape = .node .leaf .leaf := rfl
 
-def V_lift_tok : LIToken := ⟨LexicalItem.simple .V [.D] "lift", 0⟩
-def Prt_up_tok : LIToken := ⟨LexicalItem.simple .P [] "up", 1⟩
+/-- The `predCat` field of `pvToSmallClause` agrees with the
+    `predicate.headCat` reading — the well-formedness invariant
+    consumed by `SmallClause.toSO_isSmallClause`. -/
+theorem pvToSmallClause_consistent (pv : ParticleVerb) (dpId prtId : Nat) :
+    (pvToSmallClause pv dpId prtId).predicate.headCat =
+      (pvToSmallClause pv dpId prtId).predCat.toCat := rfl
 
-/-- P-to-V incorporation: particle head moves to V, forming `[V lift+up]`. -/
-def V_plus_Prt : LIToken := formComplexLI V_lift_tok Prt_up_tok
+/-- The PVC small clause satisfies `IsSmallClause` — the companion
+    predicate over raw `SyntacticObject`s. Discharges via the
+    well-formedness invariant + the SC-side round-trip lemma. -/
+theorem pvToSmallClause_isSmallClause (pv : ParticleVerb) (dpId prtId : Nat) :
+    IsSmallClause (pvToSmallClause pv dpId prtId).toSO :=
+  SmallClause.toSO_isSmallClause _ (pvToSmallClause_consistent pv dpId prtId)
 
-/-- The incorporated head is complex (result of head movement). -/
-theorem incorporation_yields_complex :
-    V_plus_Prt.item.isComplex = true := by native_decide
-
-/-- The outer category of the complex head is V (verb reprojects). -/
-theorem incorporation_outer_is_V :
-    V_plus_Prt.item.outerCat = .V := by native_decide
-
-/-- Incorporation preserves verb identity (target's id). -/
-theorem incorporation_preserves_id : V_plus_Prt.id = V_lift_tok.id := rfl
-
-/-! ## §3. Derivation of particle shift
-
-Two derivations from the same underlying SC `V [SC DP Prt]`:
-
-1. **DP movement**: DP moves out of SC to Spec,VP → V DP Prt (split)
-2. **P incorporation**: P incorporates into V → V+P DP (continuous)
-
-The pronoun constraint follows: pronouns must move for Case (light
-elements always raise), forcing split order. Heavy DPs resist
-movement, preferring continuous order (P incorporates instead). -/
-
-/-- Derivation type for particle shift. -/
-inductive PVCDerivation where
-  | dpMovement     -- DP moves out of SC → split order
-  | incorporation  -- P incorporates into V → continuous order
-  deriving DecidableEq, Repr
-
-/-- Map derivation type to surface order. -/
-def PVCDerivation.surfaceOrder : PVCDerivation → PVCOrder
-  | .dpMovement    => .split
-  | .incorporation => .continuous
-
-/-- Map DP weight to forced derivation (if any).
-    Pronouns: obligatory DP movement (must raise for Case).
-    Heavy DPs: preferred P incorporation (DP too heavy to move).
-    Light DPs: either derivation available. -/
-def weightToDerivation : DPWeight → Option PVCDerivation
-  | .pronoun => some .dpMovement
-  | .heavy   => some .incorporation
-  | .light   => none
-
-/-- Pronoun derivation forces split order. -/
-theorem pronoun_derivation_is_split :
-    (weightToDerivation .pronoun).map PVCDerivation.surfaceOrder
-      = some .split := rfl
-
-/-- Heavy DP derivation forces continuous order. -/
-theorem heavy_derivation_is_continuous :
-    (weightToDerivation .heavy).map PVCDerivation.surfaceOrder
-      = some .continuous := rfl
-
-/-- Light DPs have no forced derivation — both orders available. -/
-theorem light_no_forced_derivation :
-    weightToDerivation .light = none := rfl
-
-/-! ## §4. Bridge to empirical data
-
-Connecting derivation predictions to the attested judgments
-from `Phenomena.Constructions.ParticleVerbs.Data`. -/
-
-/-- Pronoun prediction matches data: split OK, continuous bad. -/
-theorem pronoun_prediction_matches_data :
-    pronoun_split.judgment = true ∧
-    pronoun_continuous.judgment = false ∧
-    (weightToDerivation .pronoun).map PVCDerivation.surfaceOrder = some .split :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Heavy NP prediction matches data: continuous OK, split bad. -/
-theorem heavy_prediction_matches_data :
-    heavy_continuous.judgment = true ∧
-    heavy_split.judgment = false ∧
-    (weightToDerivation .heavy).map PVCDerivation.surfaceOrder = some .continuous :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Light NPs allow both: no forced derivation, both judgments positive. -/
-theorem light_prediction_matches_data :
-    light_split.judgment = true ∧
-    light_continuous.judgment = true ∧
-    weightToDerivation .light = none :=
-  ⟨rfl, rfl, rfl⟩
-
-end Dendikken1995
+end Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995

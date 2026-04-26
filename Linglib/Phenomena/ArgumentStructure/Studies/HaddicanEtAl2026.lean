@@ -125,7 +125,7 @@ theorem experimental_pvcs_in_inventory :
       (· == Phenomena.Constructions.ParticleVerbs.lift_up)) = true ∧
     (Phenomena.Constructions.ParticleVerbs.inventory.any
       (· == Phenomena.Constructions.ParticleVerbs.put_down)) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- The ApplP analysis uses a LOW applicative. -/
 def doc_appl_type : ApplType := .lowRecipient
@@ -199,31 +199,31 @@ theorem causative_sc_shape :
 
 /-- SC-DOC and SC-PVC share tree shape. -/
 theorem sc_doc_pvc_isomorphic :
-    structurallyIsomorphic doc_sc pvc_sc = true := by native_decide
+    structurallyIsomorphic doc_sc pvc_sc = true := by decide
 
 /-- ApplP-DOC and ComplexPred-PVC have different shapes. -/
 theorem appl_complexPred_not_isomorphic :
-    structurallyIsomorphic doc_appl pvc_complexPred = false := by native_decide
+    structurallyIsomorphic doc_appl pvc_complexPred = false := by decide
 
 /-- SC-DOC differs from ApplP-DOC. -/
 theorem sc_appl_doc_not_isomorphic :
-    structurallyIsomorphic doc_sc doc_appl = false := by native_decide
+    structurallyIsomorphic doc_sc doc_appl = false := by decide
 
 /-- SC-DOC differs from PD. -/
 theorem sc_doc_pd_not_isomorphic :
-    structurallyIsomorphic doc_sc pd = false := by native_decide
+    structurallyIsomorphic doc_sc pd = false := by decide
 
 /-- SC-PVC differs from PD. -/
 theorem sc_pvc_pd_not_isomorphic :
-    structurallyIsomorphic pvc_sc pd = false := by native_decide
+    structurallyIsomorphic pvc_sc pd = false := by decide
 
 /-- The non-PVC transitive control has a different shape from SC-DOC. -/
 theorem control_doc_not_isomorphic :
-    structurallyIsomorphic transitive_control doc_sc = false := by native_decide
+    structurallyIsomorphic transitive_control doc_sc = false := by decide
 
 /-- The non-PVC control has the SAME shape as the complex predicate PVC. -/
 theorem control_matches_complexPred :
-    structurallyIsomorphic transitive_control pvc_complexPred = true := by native_decide
+    structurallyIsomorphic transitive_control pvc_complexPred = true := by decide
 
 /-- SC is the unique source of DOC/PVC tree-shape isomorphism. -/
 theorem sc_unique_among_haddican_analyses :
@@ -237,7 +237,7 @@ theorem sc_unique_among_haddican_analyses :
     structurallyIsomorphic pvc_sc pvc_complexPred = false ∧
     structurallyIsomorphic pvc_sc pd = false ∧
     structurallyIsomorphic pvc_complexPred pd = false := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## Den Dikken SC family isomorphism -/
 
@@ -256,14 +256,14 @@ theorem sc_family_all_isomorphic :
     structurallyIsomorphic pvc_sc resultative_sc = true ∧
     structurallyIsomorphic pvc_sc causative_sc = true ∧
     structurallyIsomorphic resultative_sc causative_sc = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- None of the SC family members are isomorphic with PD. -/
 theorem sc_family_all_differ_from_pd :
     structurallyIsomorphic pvc_sc pd = false ∧
     structurallyIsomorphic resultative_sc pd = false ∧
     structurallyIsomorphic causative_sc pd = false := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! ## SC family categorization -/
 
@@ -294,10 +294,10 @@ theorem doc_nested_shape :
     doc_nested.shape = .node .leaf (.node .leaf (.node .leaf .leaf)) := rfl
 
 theorem doc_nested_not_flat :
-    structurallyIsomorphic doc_nested doc_sc = false := by native_decide
+    structurallyIsomorphic doc_nested doc_sc = false := by decide
 
 theorem doc_nested_matches_appl :
-    structurallyIsomorphic doc_nested doc_appl = true := by native_decide
+    structurallyIsomorphic doc_nested doc_appl = true := by decide
 
 /-! ## @cite{bruening-2021}: process-level isomorphism -/
 
@@ -312,7 +312,7 @@ theorem doc_bruening_shape :
     doc_bruening.shape = .node .leaf (.node .leaf .leaf) := rfl
 
 theorem bruening_shapes_differ :
-    structurallyIsomorphic doc_bruening pvc_bruening = false := by native_decide
+    structurallyIsomorphic doc_bruening pvc_bruening = false := by decide
 
 theorem bruening_both_use_incorporation :
     (match doc_bruening with
@@ -321,10 +321,10 @@ theorem bruening_both_use_incorporation :
     (match pvc_bruening with
      | .node (.leaf tok) _ => tok.item.isComplex
      | _ => false) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 theorem bruening_doc_matches_sc_doc :
-    structurallyIsomorphic doc_bruening doc_sc = true := by native_decide
+    structurallyIsomorphic doc_bruening doc_sc = true := by decide
 
 /-! ## Bridge to experimental data -/
 
@@ -349,6 +349,40 @@ theorem sc_predicts_equal_magnitude :
 theorem complexPred_fails_at_control :
     pvc_primes_doc.significant = true ∧
     structurallyIsomorphic pvc_complexPred transitive_control = true := by
-  exact ⟨rfl, by native_decide⟩
+  exact ⟨rfl, by decide⟩
+
+/-! ## IsSmallClause companion-predicate witnesses
+
+The flat encodings (`pvc_sc`, `doc_sc`, `resultative_sc`,
+`causative_sc`) name the *whole* `[VP V SC]` constituent — the SC
+itself is the right child. We characterise the inner SCs against
+the `IsSmallClause` companion predicate (`SmallClause.lean`).
+
+Three of the four families satisfy the predicate; **DOC's flat
+DP–DP encoding does not**. This surfaces a real subtlety: Haddican
+et al. (2026) explicitly say (p.2) "we set aside details of the
+internal structure of the small clause", and the flat DP–DP shape
+is the deliberate simplification. The richer DOC encoding (with
+BE+P decomposition / Predicate Inversion) in
+`Phenomena/ArgumentStructure/Studies/Dendikken1995` does satisfy
+`IsSmallClause` at every nested SC layer. -/
+
+theorem pvc_sc_inner_isSmallClause :
+    IsSmallClause (merge DP_hsu Prt_up) := by decide
+
+theorem resultative_sc_inner_isSmallClause :
+    IsSmallClause (merge DP_metal AP_flat) := by decide
+
+theorem causative_sc_inner_isSmallClause :
+    IsSmallClause (merge DP_child VP_laugh) := by decide
+
+/-- Diagnostic: the flat DP–DP DOC encoding does NOT satisfy
+    `IsSmallClause` (the right child is a DP, head category D, not
+    in the SC predicate set {P,A,V,N}). The companion predicate
+    surfaces the simplification — the encoding is correct *for
+    the priming argument* but incomplete as a structural SC analysis;
+    den Dikken's BE+P decomposition supplies the missing predicate. -/
+theorem doc_sc_flat_inner_not_smallClause :
+    ¬ IsSmallClause (merge DP_hsu DP_book) := by decide
 
 end HaddicanEtAl2026

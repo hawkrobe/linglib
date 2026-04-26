@@ -3,7 +3,9 @@ import Linglib.Theories.Syntax.Minimalism.Applicative
 /-!
 # Small Clause Predication
 
-@cite{dendikken-1995} @cite{baker-1988}@cite{dendikken-1995}'s central thesis: all subject-predicate relationships
+@cite{dendikken-1995} @cite{baker-1988}
+
+@cite{dendikken-1995}'s central thesis: all subject-predicate relationships
 are incarnated as small clauses `[SC Subject Predicate]`. The predicate
 head's category determines the construction type:
 
@@ -49,6 +51,11 @@ def SCPredCategory.toCat : SCPredCategory → Cat
   | .V => .V
   | .N => .N
 
+@[simp] theorem SCPredCategory.toCat_P : SCPredCategory.toCat .P = Cat.P := rfl
+@[simp] theorem SCPredCategory.toCat_A : SCPredCategory.toCat .A = Cat.A := rfl
+@[simp] theorem SCPredCategory.toCat_V : SCPredCategory.toCat .V = Cat.V := rfl
+@[simp] theorem SCPredCategory.toCat_N : SCPredCategory.toCat .N = Cat.N := rfl
+
 /-- A small clause: subject-predicate pair where the predicate
     is categorially typed (@cite{dendikken-1995}:27, ex. 44).
 
@@ -80,6 +87,91 @@ def SCPredCategory.constructionName : SCPredCategory → String
   | .A => "resultative"
   | .V => "causative"
   | .N => "copular/ECM"
+
+-- ============================================================================
+-- IsSmallClause: companion predicate over `SyntacticObject`
+-- ============================================================================
+
+/-! ## Companion predicate
+
+The bundled `structure SmallClause` is the `Submonoid`-style API
+object: it carries data + the predicate-category discriminator. The
+companion predicate `IsSmallClause : SyntacticObject → Prop` lets us
+ask "is this raw SO an SC?" without constructing a `SmallClause`.
+Mathlib analogue: `Submonoid` (structure) + `IsSubmonoid` (predicate).
+
+Use this companion to characterize SC encodings written as raw
+`merge`-built `SyntacticObject`s (the prevailing style in study files
+like `HaddicanEtAl2026`, `Phenomena/ArgumentStructure/Studies/Dendikken1995`)
+without forcing them through the `SmallClause` constructor. -/
+
+/-- Head category of a syntactic object: the leftmost terminal's outer
+    category. By the Minimalist projection convention used in our
+    encodings, the head precedes its complement, so the LEFT child
+    of any non-leaf projects. -/
+def SyntacticObject.headCat : SyntacticObject → Cat
+  | .leaf tok => tok.item.outerCat
+  | .node l _ => l.headCat
+
+@[simp] theorem SyntacticObject.headCat_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).headCat = tok.item.outerCat := rfl
+
+@[simp] theorem SyntacticObject.headCat_node (l r : SyntacticObject) :
+    (SyntacticObject.node l r).headCat = l.headCat := rfl
+
+/-- A syntactic object qualifies as a small-clause predicate iff its
+    head category is one of @cite{dendikken-1995}'s four SC-licensed
+    lexical categories (P/A/V/N). -/
+def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
+  so.headCat = .P ∨ so.headCat = .A ∨ so.headCat = .V ∨ so.headCat = .N
+
+instance : DecidablePred IsSmallClausePredicate :=
+  fun so => by unfold IsSmallClausePredicate; exact inferInstance
+
+/-- A syntactic object IS a small clause when it is a binary node
+    (subject + predicate) whose right child satisfies
+    `IsSmallClausePredicate`. The right child encodes the predicate
+    because den Dikken's SC structure has the form `[SC Spec XP]`
+    with Spec on the left and the projecting predicate XP on the
+    right (book p. 132 ex. 52a).
+
+    Companion to `structure SmallClause`. -/
+def IsSmallClause : SyntacticObject → Prop
+  | .leaf _ => False
+  | .node _ pred => IsSmallClausePredicate pred
+
+instance : DecidablePred IsSmallClause
+  | .leaf _ => isFalse id
+  | .node _ pred => inferInstanceAs (Decidable (IsSmallClausePredicate pred))
+
+@[simp] theorem isSmallClause_leaf (tok : LIToken) :
+    ¬ IsSmallClause (SyntacticObject.leaf tok) := id
+
+@[simp] theorem isSmallClause_node (l r : SyntacticObject) :
+    IsSmallClause (SyntacticObject.node l r) ↔ IsSmallClausePredicate r :=
+  Iff.rfl
+
+/-- `merge`-form rewrite for `IsSmallClause` — useful since study
+    files build SCs with `merge` rather than `.node` patterns. -/
+@[simp] theorem isSmallClause_merge (l r : SyntacticObject) :
+    IsSmallClause (merge l r) ↔ IsSmallClausePredicate r :=
+  Iff.rfl
+
+/-- Round-trip: any `SmallClause` whose stored `predCat` agrees with
+    its `predicate`'s actual head category yields a `SyntacticObject`
+    satisfying `IsSmallClause`. The hypothesis is the well-formedness
+    invariant the free-form `SmallClause` constructor doesn't enforce
+    by type — for the standard PVC/Resultative/etc. constructors that
+    use `mkLeafPhon` matching `predCat.toCat`, the hypothesis discharges
+    by `rfl`. -/
+theorem SmallClause.toSO_isSmallClause (sc : SmallClause)
+    (h : sc.predicate.headCat = sc.predCat.toCat) :
+    IsSmallClause sc.toSO := by
+  unfold SmallClause.toSO
+  rw [isSmallClause_merge]
+  unfold IsSmallClausePredicate
+  rw [h]
+  cases sc.predCat <;> simp
 
 -- ============================================================================
 -- Applicative connection (@cite{dendikken-1995}, Ch. 5)
