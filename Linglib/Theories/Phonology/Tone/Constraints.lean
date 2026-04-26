@@ -193,6 +193,32 @@ def starFall : DirectionalConstraint (FloatingForm S) where
     [(List.range f.segs.length).countP (fun i => decide (HasFall (f.toneSequence i)))]
 
 -- ============================================================================
+-- § 5.5: *M<L (M-then-L adjacency on the tier)
+-- ============================================================================
+
+/-- `*M<L` (paper, eq. 29): one violation per M tone that immediately
+    precedes an L tone on the tonal tier. The "tier" is the sequence
+    of surviving (non-deleted) underlying tones in `ulTones` order;
+    deletions skip positions, so adjacency is measured over the alive
+    subsequence.
+
+    Motivates @cite{mcpherson-lamont-2026}'s account of why floating
+    H tones can dock leftward tautomorphically before L (eq. 30):
+    without `*M<L ≫ *TAUTDOCK`, an underlying /M H L/ sequence would
+    prefer H deletion, but that yields a surface ML adjacency which
+    *M<L penalises. Tautomorphic docking of H breaks the ML adjacency,
+    creating an MH contour rather than M-L. -/
+def starMlessL : DirectionalConstraint (FloatingForm S) where
+  name := "*M<L"
+  family := .markedness
+  eval := fun f =>
+    let aliveValues : List TRN :=
+      (List.range f.ulTones.length).filterMap fun k =>
+        if f.IsAlive k then (f.ulTones[k]?).map ToneSpec.tone else none
+    [aliveValues.zip aliveValues.tail
+      |>.countP fun p => decide (p.1 = TRN.M ∧ p.2 = TRN.L)]
+
+-- ============================================================================
 -- § 6: HAVETONE
 -- ============================================================================
 

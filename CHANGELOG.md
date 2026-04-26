@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.381] - 2026-04-26
+
+### McPhersonLamont2026 §§8-10: eq. (21), (27), (30) — three more tableaux + decide-hygiene cleanup
+
+Three additional paper tableaux beyond fig. 3 / eq. (24), each `decide`-checked:
+
+- **§8 Eq. (21)** (paper p. 13): `/nãn + rī^H/` → `[nãn rī]` — phrase-final floating-H deletion. Simplest substantive case in the paper, 1 HS step + fixed-point detection. Smoke test: works without depending on *CROWD, *FALL, or any fig. 3-specific ranking machinery.
+
+- **§9 Eq. (27)** (paper p. 16): `/kāk^H + kā/` → `[kāk kā]` (where kā has /MH/ lexical melody). Floating H of kāk cannot dock rightward — *CROWD blocks docking onto kā's already-2-tone TBU. Isolates the *CROWD mechanism from fig. 3's specific ranking and confirms it works on a different tonal structure (lexical MH contour vs floating H).
+
+- **§10 Eq. (30)** (paper p. 17): `/kāk^H + ìlí/` → `[kāk ìlí]` (ìlí has /LH/ lexical melody). Tautomorphic dock licensed by the inverted ranking *M<L ≫ *TAUTDOCK: deletion would yield surface ML adjacency on the tier (*M<L violation), so the substrate prefers the tautomorphic dock. First paper tableau requiring a constraint outside the fig. 3 set; *M<L added to substrate. `decide` caught a missing MAX(L) in my initial ranking — without it, delete-L-ìlí tied with the faithful candidate on every active constraint.
+
+NEW substrate primitives (`Theories/Phonology/Tone/Constraints.lean`):
+- `*M<L` — counts M-then-L adjacent pairs on the alive-tier subsequence (`(List.range n).filterMap` + `zip .tail` + `countP`).
+
+NEW Fragment additions (`Fragments/Poko/Tone.lean`):
+- `Syll.ka` (friend stem, MH lexical melody, paper eq. 26a) with morpheme ID 5
+- `Syll.ili` (bamboo stem, LH lexical melody, paper eq. 28a) with morpheme ID 6
+- `lTone : Syll → ToneSpec` constructor for L tones
+
+DECIDE-HYGIENE CLEANUP: removed all 5 `set_option maxHeartbeats 4000000` lines from `McPhersonLamont2026.lean`. All `decide` proofs (now ~16 across §6 fig.3, §7 eq.24, §8 eq.21, §9 eq.27, §10 eq.30) pass at Lean's default 200K heartbeats. The 4M was leftover defensive setting from debugging Finset reduction; once the substrate switched to `List.range`/`countP`/`(k,i) ∈ surfaceLinks` membership, default heartbeats suffice.
+
+940 jobs green; 0.230.381
+
 ## [0.230.380] - 2026-04-26
 
 ### McPhersonLamont2026 §7: eq. (24) — LR analogue of *FALL repair, validates substrate cross-direction

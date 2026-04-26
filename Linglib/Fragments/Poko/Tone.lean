@@ -54,15 +54,17 @@ open Phonology.Autosegmental.RegisterTier (TRN)
 -- ============================================================================
 
 /-- Poko syllables represented for the @cite{mcpherson-lamont-2026}
-    fig. 3 (`kak`, `ri`, `do`) and eq. (24) (`nan`, `ri`, `na`)
-    demonstrations. Promote to a fuller stem inventory when a second
-    Poko paper arrives. -/
+    tableaux: fig. 3 (`kak`, `ri`, `do`); eq. (24) (`nan`, `ri`, `na`);
+    eq. (27) (`kak`, `ka`); eq. (30) (`kak`, `ili`). Promote to a
+    fuller stem inventory when a second Poko paper arrives. -/
 inductive Syll
   | kak  -- 3sg.m possessive `kāk`
   | ri   -- pig stem `rī` (M^H lexical melody)
   | do   -- get verb `dō` (M^H lexical melody)
   | nan  -- 1sg subject pronoun `nãn`
   | na   -- eat verb `nã`
+  | ka   -- friend stem `kā` (MH lexical melody, paper eq. 26a)
+  | ili  -- bamboo stem `ìlí` (LH lexical melody, paper eq. 28a)
   deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
@@ -77,6 +79,8 @@ def Syll.morphemeId : Syll → MorphemeId
   | .do  => 2
   | .nan => 3
   | .na  => 4
+  | .ka  => 5
+  | .ili => 6
 
 -- ============================================================================
 -- § 3: Convenience Constructors for SegSpec / ToneSpec
@@ -95,5 +99,10 @@ def mTone (s : Syll) : ToneSpec :=
     H of an /M^H/ stem). -/
 def hTone (s : Syll) : ToneSpec :=
   { tone := TRN.H, morpheme := s.morphemeId }
+
+/-- An L tone belonging to the morpheme of syllable `s` (the L of an
+    /LH/ lexical stem like `ìlí`). -/
+def lTone (s : Syll) : ToneSpec :=
+  { tone := TRN.L, morpheme := s.morphemeId }
 
 end Fragments.Poko

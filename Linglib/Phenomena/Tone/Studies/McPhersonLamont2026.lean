@@ -377,7 +377,6 @@ def starredForm : PokoForm :=
     `Finset.filter`/`Finset.image`/`Finset.sort`/`Finset.card`
     pipelines that don't reduce structurally in the Lean kernel. -/
 
-set_option maxHeartbeats 4000000
 
 -- ----- LR step witnesses -----
 
@@ -536,7 +535,6 @@ def attestedForm : PokoForm :=
     |>.insertLink 2 2  -- step 1: dock H-rī rightward to nã
     |>.deleteTone 3    -- step 2: delete M-nã (repair HM contour)
 
-set_option maxHeartbeats 4000000
 
 /-- Eq. (24) step 1: H-rī docks rightward to nã. Tautomorphic dock
     blocked by *TAUTDOCK; no-crossing blocks leftward dock; deletion
@@ -557,5 +555,229 @@ theorem eq24_step2 :
 theorem eq24_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq24
+
+-- ============================================================================
+-- § 8: Eq. (21) — Phrase-final floating-H deletion (smoke test)
+-- ============================================================================
+
+/-! Paper, eq. (21) p. 13. Input `/nãn + rī^H/` ('my pig'), no following
+    stem. The floating H of rī cannot dock leftward (would cross the
+    M-nãn link, blocked by autosegmental no-crossing) or tautomorphically
+    (blocked by *TAUTDOCK). Only deletion remains. The simplest
+    substantive case in the paper — 1 HS step + 1 fixed-point detection.
+    Paper writes ranking as `*FLOAT, *TAUTDOCK ≫ MAX(H)` (eq. 20).
+
+    The same substrate as fig. 3 / eq. (24) handles this case without
+    modification. Tableau (21) candidates:
+    - (21a) faithful: H still floating — *FLOAT violation
+    - (21b) ☞ delete H — MAX(H) violation only; WINNER
+    - (21c) tautomorphic dock H to rī — *TAUTDOCK + DEP(link)/H
+    - (21d) the converged step from (21b) — fixed point
+
+    Smoke-test value: confirms the substrate's simplest derivation
+    works without depending on *CROWD, *FALL, or any of the
+    fig. 3-specific machinery. -/
+
+namespace Eq21
+
+open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone)
+open Fragments.Poko (Syll seg mTone hTone)
+
+abbrev PokoForm := FloatingForm Syll
+
+/-- Input form for eq. (21): `/nãn + rī^H/`. Tier order: `[M-nãn,
+    M-rī, H-rī]`; H-rī is the only floating tone. No following stem
+    (phrase-final), so the H has no rightward landing site. -/
+def eq21Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .nan, seg .ri])
+    (ulTones := [mTone .nan, mTone .ri, hTone .ri])
+    (ulLinks := {(0, 0), (1, 1)})
+
+/-- Same fig. 2 ranking as fig. 3 / eq. (24). Eq. (20)'s minimal
+    statement `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking of this. -/
+def eq21Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
+
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := eq21Ranking
+  evalMode := .directional .leftToRight
+
+/-- Attested surface form `[nãn rī]` — H deleted, both lexical Ms
+    intact and linked. -/
+def attestedForm : PokoForm := eq21Input.deleteTone 2
+
+
+/-- Eq. (21) step 1: H-rī (idx 2) deletes. Tautomorphic dock blocked
+    by *TAUTDOCK; leftward dock to nãn blocked by no-crossing (would
+    cross the M-rī to TBU-rī link); no rightward stem to dock onto.
+    Paper, candidate (21b). -/
+theorem eq21_step1 :
+    derivationLR.stepOptimum eq21Input = {eq21Input.deleteTone 2} := by decide
+
+/-- Eq. (21) convergence: from the post-deletion state, no GEN move
+    improves on any constraint. Paper, candidate (21d). -/
+theorem eq21_converged : derivationLR.Converged attestedForm := by decide
+
+end Eq21
+
+-- ============================================================================
+-- § 9: Eq. (27) — *CROWD blocks rightward dock onto MH-toned stem
+-- ============================================================================
+
+/-! Paper, eq. (27) p. 16. Input `/kāk^H + kā/` ('his friend'), where
+    the second stem `kā` has lexical /MH/ melody (M and H both linked
+    to its single TBU). The floating H of `kāk` cannot dock rightward
+    onto kā: docking would put a third tone on kā's TBU (own M, own H,
+    plus docked H from kāk), violating *CROWD. Tautomorphic dock to
+    kāk's own TBU is blocked by *TAUTDOCK. Only deletion remains.
+
+    Empirical-substrate value: this isolates the *CROWD mechanism that
+    makes fig. 3 work. In fig. 3 *CROWD blocks rightward docking
+    because each stem already has 2 tones (M + own floating H). Eq.
+    (27) shows the same blocking with a different tonal structure (MH
+    contour on the receiving stem) — confirming *CROWD's per-morpheme
+    counting handles both the floating-H case (fig. 3) and the
+    contour case (here) without modification. Paper, candidate (27b). -/
+
+namespace Eq27
+
+open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone)
+open Fragments.Poko (Syll seg mTone hTone)
+
+abbrev PokoForm := FloatingForm Syll
+
+/-- Input form for eq. (27): `/kāk^H + kā/`. Tier order: `[M-kāk,
+    H-kāk, M-kā, H-kā]`. M-kāk linked to TBU 0 (kāk); M-kā and H-kā
+    both linked to TBU 1 (kā), forming the lexical MH contour on kā.
+    H-kāk is the only floating tone. -/
+def eq27Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .kak, seg .ka])
+    (ulTones := [mTone .kak, hTone .kak, mTone .ka, hTone .ka])
+    (ulLinks := {(0, 0), (2, 1), (3, 1)})
+
+/-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
+    for eq. (27) are *FLOAT, *CROWD, *TAUTDOCK, MAX(H), DEP(link)/H. -/
+def eq27Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
+
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := eq27Ranking
+  evalMode := .directional .leftToRight
+
+/-- Attested surface form `[kāk kā]` — H-kāk deleted; kā retains its
+    lexical MH contour. -/
+def attestedForm : PokoForm := eq27Input.deleteTone 1
+
+
+/-- Eq. (27) step 1: H-kāk (idx 1) deletes. Tautomorphic dock to kāk
+    blocked by *TAUTDOCK; rightward dock to kā blocked by *CROWD
+    (would create 3 tones on kā's morpheme). Paper, candidate (27b). -/
+theorem eq27_step1 :
+    derivationLR.stepOptimum eq27Input = {eq27Input.deleteTone 1} := by decide
+
+/-- Eq. (27) convergence: from the post-deletion state, no GEN move
+    improves on any constraint. Paper, candidate (27e). -/
+theorem eq27_converged : derivationLR.Converged attestedForm := by decide
+
+end Eq27
+
+-- ============================================================================
+-- § 10: Eq. (30) — *M<L forces tautomorphic docking
+-- ============================================================================
+
+/-! Paper, eq. (30) p. 17. Input `/kāk^H + ìlí/` ('his bamboo'), where
+    `ìlí` has lexical /LH/ melody. Without *M<L, the floating H of kāk
+    would delete (it can't dock right onto ìlí without *CROWD violation
+    on the LH stem, and tautomorphic dock costs *TAUTDOCK). With *M<L,
+    the post-deletion form `M LH L%` has surface ML adjacency on the
+    tier (M-kāk followed by L-ìlí), violating *M<L. Tautomorphic dock
+    of H to kāk's TBU breaks the ML adjacency by creating an MH
+    contour on kāk; surface is `M HLH L%`. *M<L ≫ *TAUTDOCK is the
+    crucial ranking that makes this work.
+
+    Substrate-substantive value: this is the first tableau requiring a
+    constraint outside the fig. 3 ranking. *M<L (paper, eq. 29) was
+    added to `Theories/Phonology/Tone/Constraints.lean` for this case.
+    The *M<L analysis depends on the surviving-tier subsequence after
+    deletions — exercising the substrate's `IsAlive`-filtered tier
+    semantics (not just the surface link state). -/
+
+namespace Eq30
+
+open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone starMlessL)
+open Fragments.Poko (Syll seg mTone hTone lTone)
+
+abbrev PokoForm := FloatingForm Syll
+
+/-- Input form for eq. (30): `/kāk^H + ìlí/`. Tier order: `[M-kāk,
+    H-kāk, L-ìlí, H-ìlí]`. M-kāk linked to TBU 0, L-ìlí and H-ìlí
+    both linked to TBU 1 (forming the LH lexical contour on ìlí).
+    H-kāk is the only floating tone. We omit the L% boundary tone
+    since it sits at the right edge and doesn't affect the *M<L
+    M-then-L adjacency analysis here (L% comes after the existing L,
+    and only M-then-L pairs trigger *M<L). -/
+def eq30Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .kak, seg .ili])
+    (ulTones := [mTone .kak, hTone .kak, lTone .ili, hTone .ili])
+    (ulLinks := {(0, 0), (2, 1), (3, 1)})
+
+/-- Eq. (30) ranking: `*M<L ≫ *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫
+    MAX(H) ≫ DEP(link)/H ≫ *FALL`. Note *M<L on top, ABOVE *TAUTDOCK
+    — the inverted *TAUTDOCK position is what licences tautomorphic
+    docking in this context (paper text: "this constraint outranks
+    *TAUTDOCK, candidate (30c) with tautomorphic docking is selected
+    as the output"). -/
+def eq30Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starMlessL, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H,
+    maxTone TRN.M, maxTone TRN.L, maxLinkTone TRN.M ]
+
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := eq30Ranking
+  evalMode := .directional .leftToRight
+
+/-- Attested surface form `[kāk ìlí]` — H-kāk docked tautomorphically
+    onto kāk's TBU (creating an MH contour on kāk), ìlí unchanged. -/
+def attestedForm : PokoForm := eq30Input.insertLink 1 0
+
+
+/-- Eq. (30) step 1: H-kāk (idx 1) docks tautomorphically to kāk's
+    TBU. Deletion would leave M-kāk adjacent to L-ìlí on the tier,
+    violating high-ranked *M<L. Rightward dock to ìlí blocked by
+    *CROWD (would put 3 tones on ìlí: own L, own H, plus docked H).
+    The MH contour created on kāk doesn't violate *M<L (the new H
+    separates M from L). Paper, candidate (30c). -/
+theorem eq30_step1 :
+    derivationLR.stepOptimum eq30Input = {eq30Input.insertLink 1 0} := by decide
+
+/-- Eq. (30) convergence: from the post-docking state, no GEN move
+    improves on the active constraints. Note that the surface form
+    has a *TAUTDOCK violation (the inserted (1, 0) link is
+    tautomorphic), but eliminating it would require deleting H-kāk —
+    which would re-introduce the *M<L violation. Paper, candidate
+    (30e). -/
+theorem eq30_converged : derivationLR.Converged attestedForm := by decide
+
+end Eq30
 
 end Phenomena.Tone.Studies.McPhersonLamont2026
