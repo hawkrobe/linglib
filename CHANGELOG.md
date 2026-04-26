@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.384] - 2026-04-26
+
+### AkinboFwangwar2026 deep audit / refactor: native_decide → decide hygiene + constraint deduplication + autosegmental reanalysis with INTEGRITY
+
+Three layered improvements applied via the McPhersonLamont decide-hygiene recipe:
+
+**(A) native_decide → decide.** All 31 `native_decide` calls replaced with `decide`. Build green at default 200K heartbeats. The McPhersonLamont substrate hygiene insight (`(List.range n).countP` / List-membership instead of `Finset.filter |>.card` / `Finset.sort` for kernel reducibility) wasn't needed here — the `mkProfile`/`mkTableau` / `vpOfList` substrate was already decide-friendly; the `native_decide` was leftover defensive setting.
+
+**(B) Constraint deduplication.** Replaced 8 redundant constraint defs (`lAnch24` / `rAnch24` / `maxT24` / `lAnchM25` / `rAnchH25` / `rAnchM25` / `lAnchH25` / `maxT25` — where e.g., `lAnch24` ≡ `lAnchM25` character-for-character) with 3 polymorphic defs:
+- `lAnchSingle (t : TRN)` — tone-parameterized L-ANCHOR
+- `rAnchSingle (t : TRN)` — tone-parameterized R-ANCHOR
+- `maxTSingle (inputSize : Nat)` — input-size-parameterized MAX-Tone
+
+Use sites: `lAnch24` → `lAnchSingle .M`, `rAnchH25` → `rAnchSingle .H`, etc. Mathlib pattern: parameterize don't duplicate.
+
+**(C) §S17 Autosegmental Reanalysis with INTEGRITY-Mᵥ.** The `OutputTBU = {tone, source : lex | gram}` representation in §§S1-S16 collapses spreading and copying — both surface as `[⟨M, gram⟩, ⟨M, gram⟩]`. The paper's INTEGRITY-Mᵥ distinguishes them, and the existing analysis omits INTEGRITY + excludes (24f) by hand. The 2026 phonology mainstream (McCarthy & Prince Correspondence Theory + Goldsmith autosegmental rep + Rolle 2018 + present paper) treats spreading vs copying as fundamentally distinct autosegmental objects: ONE multi-linked autosegment vs MULTIPLE separate autosegments.
+
+NEW substrate primitive: `integrityTone (m : MorphemeId) (t : TRN) : DirectionalConstraint (FloatingForm S)` in `Theories/Phonology/Tone/Constraints.lean`. Counts `(alive ulTones with morpheme = m ∧ tone = t).card - 1` (if positive). Spreading: 1 alive → 0 violations. Copying: N alive → (N-1) violations.
+
+NEW §S17 reanalyses paper Tableau 24 (`/wùlàʃ + Mᵥ/`) over `FloatingForm Syl` with **all 6 candidates including (24f) the copying variant**:
+- (24a) M floating + L unchanged: profile [INTEG=0, L-ANCH=2, R-ANCH=2, MAX-T=0]
+- (24b) M deleted: [0, 2, 2, 1]
+- (24c) M on TBU 1 only: [0, 1, 0, 0]
+- (24d) M on TBU 0 only: [0, 0, 1, 0]
+- (24e) ☞ M multi-linked spreading + L deleted: [0, 0, 0, 1] — winner
+- (24f) M copied (TWO M autosegments) + L deleted: [1, 0, 0, 1] — INTEG fatal
+
+Per-candidate profile theorems all `decide`-checked against paper Tableau 24. Headline `t24'_optimal : t24'_tableau.optimal = {t24e'}` confirms spreading wins under `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`.
+
+Encoding choice: wùlàʃ root has ONE lexical L autosegment multi-linked to both TBUs (autosegmental convention; Goldsmith 1976) — different from §S3's per-TBU encoding. Per-autosegment MAX-T then matches paper p. 26 exactly: deleting the L = 1 violation. The §S3 per-TBU count gave 2.
+
+Also: §9 (Structural Lift to `Corr RedupRole OutputTBU`, the misnumbered tail section) renumbered to §18 to follow §17.
+
+Tableaux (25) and (26) reanalyses follow the same recipe but with 7-candidate enumerations + the M-H verbaliser; left for follow-up. The §S17 docstring documents this scope explicitly.
+
+940 jobs green; 0.230.384
+
 ## [0.230.383] - 2026-04-26
 
 ### McPhersonLamont2026 §§11-12: eq. (22) rightward dock onto toneless + scope/deferred docstring

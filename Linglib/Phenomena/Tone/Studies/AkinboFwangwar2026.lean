@@ -4,8 +4,11 @@ import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
+import Linglib.Theories.Phonology.Autosegmental.Floating
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
+import Linglib.Theories.Phonology.Tone.Constraints
+import Linglib.Core.Constraint.OT.HarmonicSerialism
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 
 /-!
@@ -158,57 +161,31 @@ def maxToneViolations (tbus : List OutputTBU) (inputSize : Nat) : Nat :=
 -- S 3: Named Constraints for Tableaux
 -- ============================================================================
 
--- Tableau (24): M-tone verbaliser — 3 constraints
+/-- Tone-parameterized L-ANCHOR for `SingleCand`: the violation count
+    is the position of the leftmost gram-`t` TBU in the output. -/
+def lAnchSingle (t : TRN) : NamedConstraint SingleCand :=
+  { name := s!"L-ANCH-{reprStr t}ᵥ"
+    family := .faithfulness
+    eval := λ c => lAnchorViolations t c.output }
+
+/-- Tone-parameterized R-ANCHOR for `SingleCand`. -/
+def rAnchSingle (t : TRN) : NamedConstraint SingleCand :=
+  { name := s!"R-ANCH-{reprStr t}ᵥ"
+    family := .faithfulness
+    eval := λ c => rAnchorViolations t c.output }
+
+/-- Input-size-parameterized MAX-Tone for `SingleCand`. -/
+def maxTSingle (inputSize : Nat) : NamedConstraint SingleCand :=
+  { name := "MAX-Tone"
+    family := .faithfulness
+    eval := λ c => maxToneViolations c.output inputSize }
+
 -- INTEGRITY-Mᵥ is omitted: it eliminates only (24f), where the verbaliser's
 -- M tone is split into multiple copies. Since our candidate representation
 -- cannot distinguish spreading (one-to-many association, no violation) from
 -- copying (multiple independent copies, violation), we exclude (24f) from
 -- the candidate set instead. The paper's key result is the L-ANCH >> R-ANCH
 -- >> MAX-T ranking.
-
--- All gram tones in tableau (24) are M, so the M-specific functions
--- are equivalent to a generic "any gram" check here.
-def lAnch24 : NamedConstraint SingleCand :=
-  { name := "L-ANCH-Mᵥ"
-    family := .faithfulness
-    eval := λ c => lAnchorViolations .M c.output }
-
-def rAnch24 : NamedConstraint SingleCand :=
-  { name := "R-ANCH-Mᵥ"
-    family := .faithfulness
-    eval := λ c => rAnchorViolations .M c.output }
-
-def maxT24 : NamedConstraint SingleCand :=
-  { name := "MAX-Tone"
-    family := .faithfulness
-    eval := λ c => maxToneViolations c.output 2 }
-
--- Tableau (25): M-H verbaliser — 5 constraints
-
-def lAnchM25 : NamedConstraint SingleCand :=
-  { name := "L-ANCH-Mᵥ"
-    family := .faithfulness
-    eval := λ c => lAnchorViolations .M c.output }
-
-def rAnchH25 : NamedConstraint SingleCand :=
-  { name := "R-ANCH-Hᵥ"
-    family := .faithfulness
-    eval := λ c => rAnchorViolations .H c.output }
-
-def rAnchM25 : NamedConstraint SingleCand :=
-  { name := "R-ANCH-Mᵥ"
-    family := .faithfulness
-    eval := λ c => rAnchorViolations .M c.output }
-
-def lAnchH25 : NamedConstraint SingleCand :=
-  { name := "L-ANCH-Hᵥ"
-    family := .faithfulness
-    eval := λ c => lAnchorViolations .H c.output }
-
-def maxT25 : NamedConstraint SingleCand :=
-  { name := "MAX-Tone"
-    family := .faithfulness
-    eval := λ c => maxToneViolations c.output 3 }
 
 -- ============================================================================
 -- S 4: Tableau (24) — M-tone verbaliser + wùlàʃ [L L]
@@ -257,26 +234,26 @@ def t24e : SingleCand := ⟨"(wūlāʃ)₂", [⟨.M, .gram⟩, ⟨.M, .gram⟩]�
 def t24_candidates : List SingleCand := [t24a, t24b, t24c, t24d, t24e]
 
 def t24_ranking : List (NamedConstraint SingleCand) :=
-  [lAnch24, rAnch24, maxT24]
+  [lAnchSingle .M, rAnchSingle .M, maxTSingle 2]
 
 -- Verify individual violation counts (L-ANCH, R-ANCH, MAX-T):
 -- (24a): no gram → L=2, R=2; no deletions → MAX-T=0
-theorem t24a_profile : mkProfile t24_ranking t24a = vpOfList [2, 2, 0] := by native_decide
+theorem t24a_profile : mkProfile t24_ranking t24a = vpOfList [2, 2, 0] := by decide
 -- (24b): same anchor profile as (a); per-TBU MAX-T=0 (paper: 1, per autosegment)
-theorem t24b_profile : mkProfile t24_ranking t24b = vpOfList [2, 2, 0] := by native_decide
+theorem t24b_profile : mkProfile t24_ranking t24b = vpOfList [2, 2, 0] := by decide
 -- (24c): gram on σ2 → L=1, R=0; 1 lex deleted → MAX-T=1
-theorem t24c_profile : mkProfile t24_ranking t24c = vpOfList [1, 0, 1] := by native_decide
+theorem t24c_profile : mkProfile t24_ranking t24c = vpOfList [1, 0, 1] := by decide
 -- (24d): gram on σ1 → L=0, R=1; 1 lex deleted → MAX-T=1
-theorem t24d_profile : mkProfile t24_ranking t24d = vpOfList [0, 1, 1] := by native_decide
+theorem t24d_profile : mkProfile t24_ranking t24d = vpOfList [0, 1, 1] := by decide
 -- (24e): gram on both → L=0, R=0; 2 lex deleted → MAX-T=2
 -- Paper: MAX-T=* (1, per autosegment). Does not affect optimality.
-theorem t24e_profile : mkProfile t24_ranking t24e = vpOfList [0, 0, 2] := by native_decide
+theorem t24e_profile : mkProfile t24_ranking t24e = vpOfList [0, 0, 2] := by decide
 
 /-- The M-on-every-TBU candidate (24e) is optimal under the proposed ranking.
     L-ANCH-Mᵥ >> R-ANCH-Mᵥ >> MAX-Tone -/
 theorem t24_optimal :
     (mkTableau t24_candidates t24_ranking).optimal = {t24e} := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 5: Tableau (25) — M-H verbaliser + háŋláyáp [H H H]
@@ -347,23 +324,23 @@ def t25_candidates : List SingleCand :=
   [t25a, t25b, t25c, t25d, t25e, t25f, t25g]
 
 def t25_ranking : List (NamedConstraint SingleCand) :=
-  [lAnchM25, rAnchH25, rAnchM25, lAnchH25, maxT25]
+  [lAnchSingle .M, rAnchSingle .H, rAnchSingle .M, lAnchSingle .H, maxTSingle 3]
 
 -- Verify violation profiles (L-ANCH-M, R-ANCH-H, R-ANCH-M, L-ANCH-H, MAX-T):
 -- MAX-T is per-TBU (paper counts per autosegment; see maxToneViolations).
-theorem t25a_profile : mkProfile t25_ranking t25a = vpOfList [3, 3, 3, 3, 0] := by native_decide
-theorem t25b_profile : mkProfile t25_ranking t25b = vpOfList [0, 3, 1, 3, 2] := by native_decide
-theorem t25c_profile : mkProfile t25_ranking t25c = vpOfList [3, 0, 3, 0, 3] := by native_decide
-theorem t25d_profile : mkProfile t25_ranking t25d = vpOfList [0, 3, 0, 3, 3] := by native_decide
-theorem t25e_profile : mkProfile t25_ranking t25e = vpOfList [0, 0, 1, 2, 3] := by native_decide
-theorem t25f_profile : mkProfile t25_ranking t25f = vpOfList [0, 0, 2, 1, 3] := by native_decide
-theorem t25g_profile : mkProfile t25_ranking t25g = vpOfList [0, 0, 2, 2, 2] := by native_decide
+theorem t25a_profile : mkProfile t25_ranking t25a = vpOfList [3, 3, 3, 3, 0] := by decide
+theorem t25b_profile : mkProfile t25_ranking t25b = vpOfList [0, 3, 1, 3, 2] := by decide
+theorem t25c_profile : mkProfile t25_ranking t25c = vpOfList [3, 0, 3, 0, 3] := by decide
+theorem t25d_profile : mkProfile t25_ranking t25d = vpOfList [0, 3, 0, 3, 3] := by decide
+theorem t25e_profile : mkProfile t25_ranking t25e = vpOfList [0, 0, 1, 2, 3] := by decide
+theorem t25f_profile : mkProfile t25_ranking t25f = vpOfList [0, 0, 2, 1, 3] := by decide
+theorem t25g_profile : mkProfile t25_ranking t25g = vpOfList [0, 0, 2, 2, 2] := by decide
 
 /-- The M-on-nonfinal, H-on-final candidate (25e) is optimal.
     L-ANCH-Mᵥ, R-ANCH-Hᵥ >> R-ANCH-Mᵥ >> L-ANCH-Hᵥ >> MAX-Tone -/
 theorem t25_optimal :
     (mkTableau t25_candidates t25_ranking).optimal = {t25e} := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 6: End-to-End Chain
@@ -374,14 +351,14 @@ theorem t25_optimal :
     proves the winner is `t25e`, we verify directly. -/
 theorem t25_winner_agrees_with_deriveVerb :
     t25e.output.map OutputTBU.tone = deriveVerb hanlayap := by
-  native_decide
+  decide
 
 /-- The OT winner for wùlàʃ produces the same output tones as
     `deriveVerb`. Since `t24_optimal` proves the winner is `t24e`,
     we verify directly. -/
 theorem t24_winner_agrees_with_deriveVerb :
     t24e.output.map OutputTBU.tone = deriveVerb wuulash := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 7: Pluractional Verbs — Reduplication + M-H
@@ -510,16 +487,16 @@ def t26_ranking : List (NamedConstraint PlurCand) :=
 
 -- Verify key profiles (L-ANCH-M on RED, R-ANCH-H on BASE, R-ANCH-M on RED, L-ANCH-H on BASE, MAX-T):
 -- (26a): no gram anywhere → all max violations per host (2 TBUs each)
-theorem t26a_profile : mkProfile t26_ranking t26a = vpOfList [2, 2, 2, 2, 0] := by native_decide
+theorem t26a_profile : mkProfile t26_ranking t26a = vpOfList [2, 2, 2, 2, 0] := by decide
 -- (26d): winner — M perfectly anchored on RED, H perfectly anchored on BASE
-theorem t26d_profile : mkProfile t26_ranking t26d = vpOfList [0, 0, 0, 0, 4] := by native_decide
+theorem t26d_profile : mkProfile t26_ranking t26d = vpOfList [0, 0, 0, 0, 4] := by decide
 -- (26e): both tones on RED, none on BASE → H-anchors on BASE penalize
-theorem t26e_profile : mkProfile t26_ranking t26e = vpOfList [0, 2, 1, 2, 2] := by native_decide
+theorem t26e_profile : mkProfile t26_ranking t26e = vpOfList [0, 2, 1, 2, 2] := by decide
 
 /-- The reduplicant-M, base-H candidate (26d) is optimal. -/
 theorem t26_optimal :
     (mkTableau t26_candidates t26_ranking).optimal = {t26d} := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 8: Iconic Phonological Disharmony
@@ -540,16 +517,16 @@ def iconicDisharmony (red base : List TRN) : Bool :=
 theorem t26_winner_iconic :
     iconicDisharmony
       (t26d.redOutput.map OutputTBU.tone)
-      (t26d.baseOutput.map OutputTBU.tone) = true := by native_decide
+      (t26d.baseOutput.map OutputTBU.tone) = true := by decide
 
 /-- The pluractional winner has uniform M on the reduplicant —
     matching `tonalOverwrite` with VBZ₁ (M melody, whole window). -/
 theorem t26_red_uniform_M :
-    t26d.redOutput.map OutputTBU.tone = [.M, .M] := by native_decide
+    t26d.redOutput.map OutputTBU.tone = [.M, .M] := by decide
 
 /-- The pluractional winner has uniform H on the base. -/
 theorem t26_base_uniform_H :
-    t26d.baseOutput.map OutputTBU.tone = [.H, .H] := by native_decide
+    t26d.baseOutput.map OutputTBU.tone = [.H, .H] := by decide
 
 /-- End-to-end: the pluractional reduplicant matches `tonalOverwrite`
     with the M melody (VBZ₁ applied to the reduplicant). -/
@@ -558,7 +535,7 @@ theorem t26_red_agrees_with_tonalOverwrite :
       (Phonology.Autosegmental.GrammaticalTone.tonalOverwrite
         (jalpat.tones.map λ t => mkTSyl jalpat.form t) verbM).map
         Phonology.Autosegmental.GrammaticalTone.TBU.tone := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 9: Expressiveness Preservation
@@ -690,7 +667,7 @@ def mToneFactorialSize : Nat :=
 /-- The M-tone tableau has a restricted factorial typology —
     fewer distinct optima than the number of possible rankings of
     3 constraints (3! = 6). -/
-theorem mTone_factorial_restricted : mToneFactorialSize ≤ 5 := by native_decide
+theorem mTone_factorial_restricted : mToneFactorialSize ≤ 5 := by decide
 
 -- ============================================================================
 -- S 13: Classification under Rolle 2018
@@ -795,10 +772,10 @@ open Phonology.Autosegmental.BasemapCorrespondence (basemapViolations)
 /-- Default ranking for the M-tone verbaliser context: MAX-Tone high,
     no anchor constraints. Without morpheme-specific effects, lexical
     tones are preserved (no overwriting). -/
-def defaultRanking24 : List (NamedConstraint SingleCand) := [maxT24]
+def defaultRanking24 : List (NamedConstraint SingleCand) := [maxTSingle 2]
 
 /-- Default ranking for the M-H verbaliser context (singular verbs). -/
-def defaultRanking25 : List (NamedConstraint SingleCand) := [maxT25]
+def defaultRanking25 : List (NamedConstraint SingleCand) := [maxTSingle 3]
 
 /-- Default ranking for the M-H pluractional context. -/
 def defaultRanking26 : List (NamedConstraint PlurCand) := [maxT26]
@@ -809,7 +786,7 @@ def defaultRanking26 : List (NamedConstraint PlurCand) := [maxT26]
 def verbM_CophVI : CophVocabItem Unit Unit SingleCand :=
   { exponent := ""
     contextMatch := λ _ => true
-    subranking := [lAnch24, rAnch24] }
+    subranking := [lAnchSingle .M, rAnchSingle .M] }
 
 /-- The M-H verbaliser (VBZ₂) as a cophonological VI for singular
     verbs: promotes L-ANCH-Mᵥ, R-ANCH-Hᵥ >> R-ANCH-Mᵥ >> L-ANCH-Hᵥ
@@ -817,7 +794,7 @@ def verbM_CophVI : CophVocabItem Unit Unit SingleCand :=
 def verbMH_CophVI : CophVocabItem Unit Unit SingleCand :=
   { exponent := ""
     contextMatch := λ _ => true
-    subranking := [lAnchM25, rAnchH25, rAnchM25, lAnchH25] }
+    subranking := [lAnchSingle .M, rAnchSingle .H, rAnchSingle .M, lAnchSingle .H] }
 
 /-- The M-H verbaliser for pluractional verbs: same anchor constraint
     logic but over `PlurCand` (two root morphemes with separate
@@ -837,7 +814,7 @@ theorem verbalizers_are_dominant_coph :
 theorem verbM_cophEval_optimal :
     cophonologicalEval defaultRanking24 verbM_CophVI.subranking
       t24_candidates = {t24e} := by
-  native_decide
+  decide
 
 /-- Cophonological evaluation with VBZ₂'s subranking selects the same
     winner as Tableau 25: (hāŋlā)₂(yáp)₃ with M-on-nonfinal,
@@ -845,14 +822,14 @@ theorem verbM_cophEval_optimal :
 theorem verbMH_cophEval_optimal :
     cophonologicalEval defaultRanking25 verbMH_CophVI.subranking
       t25_candidates = {t25e} := by
-  native_decide
+  decide
 
 /-- Cophonological evaluation with VBZ₂'s pluractional subranking
     selects the same winner as Tableau 26: (jālpāt)₃(jálpát)₄. -/
 theorem verbMH_plur_cophEval_optimal :
     cophonologicalEval defaultRanking26 verbMH_plur_CophVI.subranking
       t26_candidates = {t26d} := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 15: Basemap Faithfulness of Tableau Winners
@@ -873,13 +850,13 @@ coinage; @cite{benua-1997}'s own term for the analogous pull is
     for a whole-word M melody over a bisyllabic host. -/
 theorem t24_winner_basemap_faithful :
     basemapViolations (t24e.output.map OutputTBU.tone) [.M, .M] = 0 := by
-  native_decide
+  decide
 
 /-- The Tableau 25 winner's tones [M, M, H] match the basemap output
     for a nonfinal-M, final-H melody over a trisyllabic host. -/
 theorem t25_winner_basemap_faithful :
     basemapViolations (t25e.output.map OutputTBU.tone) [.M, .M, .H] = 0 := by
-  native_decide
+  decide
 
 /-- The Tableau 26 winner's tones [M, M, H, H] match the basemap
     output for M-on-reduplicant, H-on-base. -/
@@ -887,7 +864,7 @@ theorem t26_winner_basemap_faithful :
     basemapViolations
       (t26d.redOutput.map OutputTBU.tone ++ t26d.baseOutput.map OutputTBU.tone)
       [.M, .M, .H, .H] = 0 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- S 16: Generic ConstraintSystem Predictions
@@ -927,7 +904,211 @@ theorem t26System_predict_d : t26System.predict t26d = 1 :=
 end PredictAPI
 
 -- ============================================================================
--- S 9: Structural Lift to `Corr RedupRole OutputTBU`
+-- S 17: Autosegmental Reanalysis via FloatingForm — INTEGRITY restored
+-- ============================================================================
+
+/-! ### Why this section exists
+
+§§S1-S16 use a `OutputTBU = {tone, source : lex | gram}` candidate
+type that **conflates spreading and copying**: both surface as
+`[⟨M, gram⟩, ⟨M, gram⟩]` in `OutputTBU`. The paper's INTEGRITY-Mᵥ
+constraint distinguishes them — paper p. 26 spells out that the
+spreading candidate (24e) wins because the copying alternative (24f)
+fatally violates INTEGRITY. The §S3 representation can't see this
+distinction, so the existing analysis excludes (24f) by hand and omits
+INTEGRITY.
+
+The 2026 phonology mainstream — McCarthy & Prince Correspondence
+Theory, Goldsmith-style autosegmental representation, McPherson 2022,
+Rolle 2018, the present paper — treats spreading vs copying as
+fundamentally distinct autosegmental objects: ONE multi-linked
+autosegment vs MULTIPLE separate autosegments. The
+`Phonology.Autosegmental.FloatingForm` substrate (originally built for
+@cite{mcpherson-lamont-2026}) represents this natively via `ulTones`
+(one entry per autosegment) + `surfaceLinks` (associations).
+
+This section reanalyses tableau (24) over `FloatingForm Syl`, including
+**both** spreading (24e) and copying (24f) as distinct candidates with
+distinct `ulTones` lists. INTEGRITY-Mᵥ is implemented as
+`integrityTone vbzMorph .M` from `Theories/Phonology/Tone/Constraints.lean`,
+which counts `(alive ulTones with morpheme = vbz ∧ tone = M).card - 1`
+(if positive). Spreading: 1 alive vbz M → 0 violations. Copying: 2
+alive vbz Ms → 1 violation. Matches paper.
+
+### Encoding choices
+
+The wùlàʃ root has **one** lexical L autosegment multi-linked to both
+TBUs (autosegmental convention; Goldsmith 1976). This is the right
+autosegmental rep but differs from §S3's `OutputTBU` encoding (two
+separate L tones). Per-autosegment MAX-T then matches paper p. 26
+exactly: deleting the L = 1 violation; the §S3 per-TBU count gave 2.
+
+Tableaux (25) and (26) are not reanalysed here — same autosegmental
+treatment would apply but the candidate enumeration is larger; left
+for follow-up. -/
+
+namespace AutosegmentalReanalysis
+
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Core.Constraint.OT (DirectionalConstraint DirectionalTableau EvalMode)
+open Phonology.Tone (integrityTone)
+
+abbrev MwaghavulForm := FloatingForm Syl
+
+/-- Morpheme IDs: `0` = root (wùlàʃ); `1` = M-tone verbaliser. Distinct
+    Nats; the choice doesn't matter as long as they differ. -/
+def rootMorph : MorphemeId := 0
+def vbzMorph  : MorphemeId := 1
+
+def rootSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootMorph }
+def rootL : ToneSpec := { tone := TRN.L, morpheme := rootMorph }
+def vbzM  : ToneSpec := { tone := TRN.M, morpheme := vbzMorph }
+
+-- ----- Candidates (autosegmental encoding of paper Tableau 24) -----
+
+/-- The faithful input shape: ulTones = [L (root, multi-linked), M (vbz,
+    floating)]; ulLinks = {(0, 0), (0, 1)}. The L autosegment is one
+    entry, multi-linked to both TBUs. Used as the underlying form of
+    candidates (24a-e); (24f) shadows it with an extra M autosegment. -/
+def baseInput : MwaghavulForm :=
+  FloatingForm.mkInput
+    (segs := [rootSeg ⟨"wù"⟩, rootSeg ⟨"làʃ"⟩])
+    (ulTones := [rootL, vbzM])
+    (ulLinks := {(0, 0), (0, 1)})
+
+/-- (24a) Faithful: M still floating, L unchanged. -/
+def t24a' : MwaghavulForm := baseInput
+
+/-- (24b) M deleted: lexical L unchanged, verbaliser M gone. -/
+def t24b' : MwaghavulForm := baseInput.deleteTone 1
+
+/-- (24c) `(wù)₁(làʃ)₂`: L on TBU 0 only, M on TBU 1 only. Operations:
+    delink L from TBU 1, link M to TBU 1. -/
+def t24c' : MwaghavulForm := baseInput.deleteLink 0 1 |>.insertLink 1 1
+
+/-- (24d) `(wū)₂(làʃ)₁`: M on TBU 0 only, L on TBU 1 only. -/
+def t24d' : MwaghavulForm := baseInput.deleteLink 0 0 |>.insertLink 1 0
+
+/-- (24e) ☞ `(wūlāʃ)₂` SPREADING: M multi-linked to both TBUs, L
+    deleted. ONE M autosegment, two surface links. -/
+def t24e' : MwaghavulForm :=
+  baseInput.deleteTone 0 |>.insertLink 1 0 |>.insertLink 1 1
+
+/-- (24f) `(wū)₂(lāʃ)₂` COPYING: TWO M autosegments, each linked to
+    one TBU. L deleted. Different `ulTones` from (24a-e) — autosegmental
+    representation has an extra M autosegment. -/
+def t24f' : MwaghavulForm :=
+  { baseInput with
+    ulTones := [rootL, vbzM, vbzM]
+    deletedTones := {0}
+    surfaceLinks := {(1, 0), (2, 1)} }
+
+def t24'_candidates : Finset MwaghavulForm :=
+  {t24a', t24b', t24c', t24d', t24e', t24f'}
+
+theorem t24'_nonempty : t24'_candidates.Nonempty := by decide
+
+-- ----- Constraints over MwaghavulForm -----
+
+/-- A TBU `i` bears a grammatical M tone: some surface link targets `i`
+    from a vbz-morpheme M tone. -/
+def isGramMTbu (f : MwaghavulForm) (i : SegIdx) : Bool :=
+  (f.linksTo i).any fun k =>
+    (f.ulTones[k]?).any fun ts => decide (ts.tone = TRN.M ∧ ts.morpheme = vbzMorph)
+
+/-- L-ANCHOR-Mᵥ: number of segments before the leftmost gram-M TBU
+    (or `segs.length` if no gram-M TBU exists). -/
+def lAnchM (f : MwaghavulForm) : Nat :=
+  match (List.range f.segs.length).findIdx? (isGramMTbu f) with
+  | some i => i
+  | none   => f.segs.length
+
+/-- R-ANCHOR-Mᵥ. -/
+def rAnchM (f : MwaghavulForm) : Nat :=
+  match (List.range f.segs.length).reverse.findIdx? (isGramMTbu f) with
+  | some i => i
+  | none   => f.segs.length
+
+/-- MAX-Tone (per autosegment): count deleted ulTones. Matches paper
+    p. 26 per-autosegment counting; differs from §S2's per-TBU
+    counting. -/
+def maxToneAuto (f : MwaghavulForm) : Nat :=
+  (List.range f.ulTones.length).countP (fun k => decide (f.IsDeleted k))
+
+def integMv  : DirectionalConstraint MwaghavulForm := integrityTone vbzMorph TRN.M
+def lAnchMv  : DirectionalConstraint MwaghavulForm where
+  name := "L-ANCH-Mᵥ"
+  family := .faithfulness
+  eval := fun f => [lAnchM f]
+def rAnchMv  : DirectionalConstraint MwaghavulForm where
+  name := "R-ANCH-Mᵥ"
+  family := .faithfulness
+  eval := fun f => [rAnchM f]
+def maxTone' : DirectionalConstraint MwaghavulForm where
+  name := "MAX-Tone"
+  family := .faithfulness
+  eval := fun f => [maxToneAuto f]
+
+/-- Tableau 24 ranking from paper §4.3:
+    `INTEGRITY-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`. -/
+def t24'_ranking : List (DirectionalConstraint MwaghavulForm) :=
+  [integMv, lAnchMv, rAnchMv, maxTone']
+
+def t24'_tableau : DirectionalTableau MwaghavulForm where
+  candidates := t24'_candidates
+  ranking := t24'_ranking
+  evalMode := .parallel
+  nonempty := t24'_nonempty
+
+-- ----- Per-candidate violation profiles (matching paper Tableau 24) -----
+
+/-- (24a) profile [INTEG, L-ANCH, R-ANCH, MAX-T] = [0, 2, 2, 0]: M
+    floating, both anchors fail (no gram-M TBU), no deletions. -/
+theorem t24a'_profile :
+    t24'_ranking.map (fun c => c.eval t24a') = [[0], [2], [2], [0]] := by decide
+
+/-- (24b) profile [0, 2, 2, 1]: M deleted, anchors still fail, MAX-T
+    fires for the deleted M. -/
+theorem t24b'_profile :
+    t24'_ranking.map (fun c => c.eval t24b') = [[0], [2], [2], [1]] := by decide
+
+/-- (24c) profile [0, 1, 0, 0]: M docks to TBU 1 only — L-ANCH violation
+    (M not at left edge), R-ANCH satisfied, no deletions. -/
+theorem t24c'_profile :
+    t24'_ranking.map (fun c => c.eval t24c') = [[0], [1], [0], [0]] := by decide
+
+/-- (24d) profile [0, 0, 1, 0]: M docks to TBU 0 only — L-ANCH
+    satisfied, R-ANCH violation. -/
+theorem t24d'_profile :
+    t24'_ranking.map (fun c => c.eval t24d') = [[0], [0], [1], [0]] := by decide
+
+/-- (24e) ☞ profile [0, 0, 0, 1]: M multi-linked to both TBUs (one
+    autosegment, two links), L deleted. Anchors satisfied, INTEG
+    satisfied (1 alive vbz M), MAX-T violated for L. The winner. -/
+theorem t24e'_profile :
+    t24'_ranking.map (fun c => c.eval t24e') = [[0], [0], [0], [1]] := by decide
+
+/-- (24f) profile [1, 0, 0, 1]: TWO M autosegments, each linked to one
+    TBU. Anchors satisfied, but INTEG fires (2 alive vbz Ms - 1 = 1).
+    MAX-T = 1 for L deletion. INTEG is the fatal violation given
+    INTEG ≫ L-ANCH ≫ R-ANCH ≫ MAX-T. **Newly includable** under the
+    autosegmental encoding (was excluded in §S4). -/
+theorem t24f'_profile :
+    t24'_ranking.map (fun c => c.eval t24f') = [[1], [0], [0], [1]] := by decide
+
+/-- **Headline**: under the paper-faithful ranking and candidate set
+    (now including the copying variant (24f) excluded by §S4's
+    representation), the spreading candidate (24e) is the unique
+    optimum. INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone selects (24e)
+    over (24a-d) (which lose on anchors) and over (24f) (which loses
+    on INTEG). -/
+theorem t24'_optimal : t24'_tableau.optimal = {t24e'} := by decide
+
+end AutosegmentalReanalysis
+
+-- ============================================================================
+-- S 18: Structural Lift to `Corr RedupRole OutputTBU`
 -- ============================================================================
 
 /-! ### Surface the substrate connection

@@ -284,4 +284,24 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
   eval := fun f =>
     [(f.ulLinks.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card]
 
+/-- `INTEGRITY` (paper, @cite{mccarthy-prince-1995}; @cite{akinbo-fwangwar-2026}
+    eq. 22c): no input tone has multiple output correspondents. In our
+    autosegmental encoding, an "output correspondent of an input tone"
+    is an alive ulTones entry sharing the input tone's value AND
+    morpheme. SPREADING (one alive ulTones entry, multi-linked) → 0
+    violations. COPYING (multiple alive ulTones entries with same
+    value+morpheme) → `(count - 1)` violations.
+
+    Parameterised by the morpheme `m` and tone value `t` whose copies
+    are being counted (typically the verbaliser's M or H). The paper's
+    INTEGRITY-Mᵥ is `integrityTone vbzMorph .M`. -/
+def integrityTone (m : MorphemeId) (t : TRN) :
+    DirectionalConstraint (FloatingForm S) where
+  name := s!"INTEGRITY-{reprStr t}({m})"
+  family := .faithfulness
+  eval := fun f =>
+    let aliveCopies := (List.range f.ulTones.length).countP fun k =>
+      decide (f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t)
+    [if aliveCopies = 0 then 0 else aliveCopies - 1]
+
 end Phonology.Tone
