@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.383] - 2026-04-26
+
+### McPhersonLamont2026 §§11-12: eq. (22) rightward dock onto toneless + scope/deferred docstring
+
+§11 Eq. (22a) (paper p. 13): `/nãn + rī^H + ne/` → `[nãn rī né]` where `ne` is a toneless verb stem. The **only** case in this study file where rightward docking is the winning move (vs fig. 3 / eq. 24 / eq. 27 / eq. 30 where docking is blocked or contour-creating). The novel mechanism: HAVETONE penalises ne's toneless surface, so docking the floating H onto ne is preferred even over deletion. Confirms the substrate's HAVETONE drives docking when there's a toneless host available — distinct from the H-deletion cases where there isn't. 2 step witnesses + convergence theorem all `decide`-checked at default heartbeats.
+
+`Fragments/Poko/Tone.lean`: `Syll.ne` (toneless 'make.1sg' verb stem, paper eq. 22a) added as morpheme ID 7.
+
+§12 NEW substrate-scope docstring: documents what the file covers (negative-half §§1-5; positive-half §6 incl. fig.3 LR/RL + §6.6 regular-HS divergent-tie counter-example; additional tableaux §§7-11) and what's deferred (GEN op 6e shift; GEN op 6d insert+associate; boundary tone L%; other Hasse constraints `*LongTone`/`*L̃T̃<L`/`DEP(H)`/etc.; paper §3.3 LH-rising-tone tableaux; paper §3.4 toneless-stem tableaux). Closes the McPhersonLamont line of work — substrate hosts the deepest faithful version of the paper's central trifecta argument; remaining items are coverage extensions, not load-bearing for what makes the paper's case.
+
+940 jobs green; 0.230.383
+
 ## [0.230.382] - 2026-04-26
 
 ### McPhersonLamont2026 §6.6: regular-HS divergent-tie counter-example completes the trifecta

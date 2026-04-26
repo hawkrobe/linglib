@@ -862,4 +862,117 @@ theorem eq30_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq30
 
+-- ============================================================================
+-- § 11: Eq. (22) — rightward dock onto toneless stem (HAVETONE drives docking)
+-- ============================================================================
+
+/-! Paper, eq. (22a) p. 13. Input `/nãn rī^H + ne/` ('I made a pig'),
+    where `ne` is a toneless verb stem. The floating H of rī docks
+    rightward onto ne — unlike the cases in fig. 3 / eq. (24) / eq.
+    (27) where rightward docking is blocked, here `ne` is empty so
+    *CROWD doesn't fire and *FALL has no contour to penalise. The
+    novel mechanism: HAVETONE penalises ne's toneless surface, so
+    docking the floating H onto ne is preferred even over deletion
+    (which would leave ne tonal-empty).
+
+    Empirical-substrate value: the **only** case in this study file
+    where rightward docking is the winning move. Confirms the
+    substrate's HAVETONE constraint actively drives docking when
+    there's a toneless host available — distinct from the H-deletion
+    cases where there isn't. -/
+
+namespace Eq22
+
+open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone)
+open Fragments.Poko (Syll seg mTone hTone)
+
+abbrev PokoForm := FloatingForm Syll
+
+/-- Input form for eq. (22a): `/nãn + rī^H + ne/`. Tier order:
+    `[M-nãn, M-rī, H-rī]`. M-nãn linked to TBU 0, M-rī linked to
+    TBU 1; H-rī floating; TBU 2 (ne) starts toneless. -/
+def eq22Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .nan, seg .ri, seg .ne])
+    (ulTones := [mTone .nan, mTone .ri, hTone .ri])
+    (ulLinks := {(0, 0), (1, 1)})
+
+/-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
+    are HAVETONE (drives docking onto ne), *FLOAT, *TAUTDOCK, MAX(H). -/
+def eq22Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
+
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := eq22Ranking
+  evalMode := .directional .leftToRight
+
+/-- Attested surface form `[nãn rī né]` — H-rī docked rightward to TBU
+    2 (ne), giving ne its only tone (H). -/
+def attestedForm : PokoForm := eq22Input.insertLink 2 2
+
+/-- Eq. (22a) step 1: H-rī (idx 2) docks rightward to ne (TBU 2).
+    Tautomorphic dock to rī blocked by *TAUTDOCK; leftward dock to nãn
+    blocked by no-crossing (would cross M-rī to TBU-rī link); deletion
+    leaves ne toneless (HAVETONE violation). Rightward dock to ne
+    leaves no contour (ne was toneless), so *FALL doesn't fire and
+    HAVETONE is satisfied. -/
+theorem eq22_step1 :
+    derivationLR.stepOptimum eq22Input = {eq22Input.insertLink 2 2} := by decide
+
+/-- Eq. (22a) convergence: from the post-docking state, no GEN move
+    improves on any constraint. Each TBU has exactly one tone. -/
+theorem eq22_converged : derivationLR.Converged attestedForm := by decide
+
+end Eq22
+
+-- ============================================================================
+-- § 12: Substrate Scope — What This File Covers and What's Deferred
+-- ============================================================================
+
+/-! ### Coverage
+
+§§1–5: **negative half** — parallel OT inadequacy (ranking paradox eq.
+59), weighted HG inadequacy (page 32 inequality contradiction).
+
+§6: **positive half** — fig. 3 LR/RL asymmetry over the autosegmental
+substrate; LR converges to attested `[kāk rī dō]`, RL diverges to
+starred `*[kāk rī dó]`. Includes §6.6 regular-HS divergent-tie
+counter-example (`derivationParallel` with count-based `*FLOAT`).
+
+§§7–11: additional tableaux exercising the substrate across the paper:
+- §7 eq. 24: LR + *FALL repair (`/nãn rī^H + nã/` → `[nãn rī ná]`)
+- §8 eq. 21: phrase-final H deletion (smoke test)
+- §9 eq. 27: *CROWD blocks docking onto MH-toned host
+- §10 eq. 30: *M<L forces tautomorphic dock against *TAUTDOCK
+- §11 eq. 22: HAVETONE drives rightward dock onto toneless host
+
+### Deferred
+
+The substrate hosts the deepest faithful version of the paper's
+central trifecta argument. Coverage extensions not in this file:
+
+- **GEN op (6e) shift**: `shiftLink k i j` — moves an existing link's
+  target from TBU `i` to TBU `j`. Paper's eq. (24j) is a shift
+  candidate that loses; we don't currently generate it. ~20 LOC
+  substrate addition.
+- **GEN op (6d) insert+associate**: tone insertion (M-epenthesis used
+  in §3.4 toneless-stem analyses). Adds tones not in `ulTones`,
+  requires either a separate "epenthetic tones" list or relaxing the
+  immutable-`ulTones` invariant.
+- **Boundary tone L%**: currently omitted (sits at right edge after
+  existing L tones, doesn't affect the M-then-L adjacency analyses
+  here). Needed for paper §3.3 LH-rising-tone tableaux (eq. 33–50).
+- **Other Hasse constraints**: `*LongTone`, `*L̃T̃<L`, `DEP(H)`,
+  `DEP(M)`, `DEP(link)/L`, `DEP(link)/L%`. Marginal value for the
+  central argument; needed for some §3.3 / §3.4 tableaux.
+- **Paper §3.3 (rising tones)** and **§3.4 (toneless stems)**: full
+  empirical coverage of these subsections. Each section adds 5+
+  tableaux and several constraints. -/
+
 end Phenomena.Tone.Studies.McPhersonLamont2026

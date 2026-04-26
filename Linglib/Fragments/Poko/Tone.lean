@@ -65,6 +65,7 @@ inductive Syll
   | na   -- eat verb `nã`
   | ka   -- friend stem `kā` (MH lexical melody, paper eq. 26a)
   | ili  -- bamboo stem `ìlí` (LH lexical melody, paper eq. 28a)
+  | ne   -- 'make.1sg' verb stem `ne` (toneless, paper eq. 22a)
   deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
@@ -81,6 +82,7 @@ def Syll.morphemeId : Syll → MorphemeId
   | .na  => 4
   | .ka  => 5
   | .ili => 6
+  | .ne  => 7
 
 -- ============================================================================
 -- § 3: Convenience Constructors for SegSpec / ToneSpec
