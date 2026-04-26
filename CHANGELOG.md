@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.385] - 2026-04-26
+
+### AkinboFwangwar2026 complete rewrite to mathlib discipline — 1180 → 737 LOC
+
+Following the mathlib-reviewer audit's "obvious next move", the file is fully unified onto the `FloatingForm` autosegmental substrate. Eliminates the parallel `OutputTBU`/`SingleCand`/`PlurCand` machinery, replaces the per-tableau hand-rolled constraint defs with polymorphic combinators, and organises the file into a clean §1-§9 structure.
+
+DELETED (~600 LOC): the §§S1-S7 OutputTBU machinery + tableau encodings; §S14 cophonology demo; §S15 basemap demo; §S16 ConstraintSystem `predict` demo; §S18 PlurCorr structural lift. These were theory-internal demos with no external consumers — none of `Fragments/Mwaghavul/Basic.lean`, `Features/Prosody.lean`, `Theories/Phonology/{Tone/Constraints,Autosegmental/{GrammaticalTone,DominantCophAgreement}}.lean` import this file (they all only `@cite` it). Audit confirmed zero downstream impact.
+
+ADDED: full FloatingForm-based reanalysis covering all three paper tableaux:
+- §3 Tableau 24 (`(wùlàʃ)₁ + Mᵥ`): 6 candidates **including the previously-excluded copying variant (24f)**, decided by INTEGRITY-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone. Per-candidate profiles + headline `optimal` theorem all `decide`-checked.
+- §4 Tableau 25 (`(háŋláyáp)₁ + M₂H₃ᵥ`): 7 candidates, ranking `L-ANCH-Mᵥ ≫ R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. Per-candidate profiles + `optimal` decide-checked.
+- §5 Tableau 26 pluractional (`(jàlpàt)₁ + (jàlpàt)₂ + M₃H₄ᵥ`): two root morphemes (RED + BASE), per-root anchor scoping. Winner (26d) = M-spread on RED, H-spread on BASE = the iconic disharmony pattern.
+
+NEW substrate primitives in §2:
+- `lAnchToneC` / `rAnchToneC` / `maxToneC` — polymorphic anchor + MAX-Tone over `MwaghavulForm`
+- `lAnchToneCAcross` / `rAnchToneCAcross` — per-root summed anchors implementing paper p. 28's "no violation to other root morpheme" semantics for the pluractional
+- `integMv` — instantiates `Phonology.Tone.integrityTone` for the verbaliser
+
+KEPT (migrated where needed):
+- §6 Rolle 2018 classification (`verbM_GT` / `verbMH_GT` GTSpec instances + dominance/asymmetry theorems)
+- §7 Empirical generalisations (Mwaghavul ideophone-to-verb derivation patterns)
+- §8 DM categoriser connection
+- §9 Expressiveness preservation (now `example` not `theorem` per CLAUDE.md "encoding conclusions as definitions" discipline)
+
+DECIDE HYGIENE: all theorems pass at default 200K heartbeats, no `sorry`, no `native_decide`, no `set_option maxHeartbeats` overrides. The `Tableau24`/`Tableau25`/`Tableau26` sub-namespaces (mathlib pattern) keep candidate names unprimed (`candA`...`candG`) without clashing across tableaux.
+
+IMPORTS: dropped 4 transitive-only imports (`Linglib.Core.Constraint.System`, `BasemapCorrespondence`, `Correspondence`, `CophonologyTheory`) that the deleted sections had pulled in. 12 → 8 imports.
+
+ARCHITECTURAL TAKEAWAY: the file now demonstrates that the McPhersonLamont-built FloatingForm substrate is genuinely cross-paper across two distinct OT paradigms (HS-style derivation vs parallel anchor-based OT), and that INTEGRITY-Mᵥ — which the OutputTBU rep couldn't express — falls out naturally from the Goldsmith autosegmental representation (one ulTones entry = one autosegment, multi-link = spreading, multiple entries = copying). The 2026 phonology mainstream's autosegmental view is now the substrate's view.
+
+975 jobs green; 0.230.385
+
 ## [0.230.384] - 2026-04-26
 
 ### AkinboFwangwar2026 deep audit / refactor: native_decide → decide hygiene + constraint deduplication + autosegmental reanalysis with INTEGRITY
