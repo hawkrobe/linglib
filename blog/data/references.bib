@@ -1009,6 +1009,18 @@
   role      = {foundational},
   sources   = {Core/Agent/RationalAction.lean;Core/Agent/UtilityTheory.lean}
 }
+@book{ludeling-2001,
+  author    = {Lüdeling, Anke},
+  year      = {2001},
+  title     = {On Particle Verbs and Similar Constructions in German},
+  publisher = {CSLI Publications},
+  address   = {Stanford},
+  isbn      = {9781575863016},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/German/VerbParticles.lean}
+}
 @incollection{mcfadden-1974,
   author    = {McFadden, Daniel},
   year      = {1974},
@@ -3201,7 +3213,7 @@
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/Constructions/ParticleVerbs/Bridge/MinimalismParticleSC.lean;Theories/Syntax/Minimalism/Core/SmallClause.lean}
+  sources   = {Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995.lean;Theories/Syntax/Minimalism/SmallClause.lean}
 }% REF: Fillmore, C. J., Kay, P. & O'Connor, M. C. (1988). Regularity and Idiomaticity in Grammatical Constructions. Language 64
 @article{fillmore-kay-oconnor-1988,
   author    = {Fillmore, Charles J. and Kay, Paul and O'Connor, Mary Catherine},
@@ -12595,7 +12607,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean;Phenomena/Constructions/ParticleVerbs/Data.lean}
+  sources   = {Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995.lean;Phenomena/Constructions/Resultatives/Studies/Dendikken1995.lean;Phenomena/Constructions/ParticleVerbs/Data.lean;Phenomena/ArgumentStructure/Studies/HaddicanEtAl2026.lean}
 }
 @incollection{dendikken-2010,
   author    = {den Dikken, Marcel},
@@ -20778,6 +20790,69 @@
   sources   = {Core/Constraint/OT/EvalMode.lean}
 }
 
+% REF: Wolf (2007). For an autosegmental theory of mutation. UMass
+% Occasional Papers in Linguistics 32. Source of *TAUTDOCK constraint
+% used in McPherson and Lamont 2026.
+@article{wolf-2007,
+  author    = {Wolf, Matthew},
+  year      = {2007},
+  title     = {For an autosegmental theory of mutation},
+  journal   = {University of Massachusetts Occasional Papers in Linguistics},
+  volume    = {32},
+  pages     = {315--404},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Theories/Phonology/Autosegmental/Floating.lean;Theories/Phonology/Tone/Constraints.lean}
+}
+
+% REF: Cahill (2004). Tone polarity in Konni nouns. Studies in African
+% Linguistics 33. Source of *CROWD constraint discussed in McPherson
+% and Lamont 2026.
+@article{cahill-2004,
+  author    = {Cahill, Michael},
+  year      = {2004},
+  title     = {Tone polarity in {K}onni nouns},
+  journal   = {Studies in African Linguistics},
+  volume    = {33},
+  pages     = {1--33},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Theories/Phonology/Tone/Constraints.lean}
+}
+
+% REF: McPherson & Dryer (2021). The tone system of Poko-Rawo (Skou).
+% Phonological Data and Analysis 3, article 1. Primary descriptive
+% reference for Poko cited throughout McPherson and Lamont 2026.
+@article{mcpherson-dryer-2021,
+  author    = {McPherson, Laura and Dryer, Matthew S.},
+  year      = {2021},
+  title     = {The tone system of {P}oko-{R}awo ({S}kou)},
+  journal   = {Phonological Data and Analysis},
+  volume    = {3},
+  pages     = {article 1},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Fragments/Poko/Tone.lean}
+}
+
+% REF: McPherson (2022). Word tone is epiphenomenal: a case study from
+% Poko. In Kubozono, Ito and Mester (eds.) Prosody and prosodic
+% interfaces. Oxford University Press. Lexical-phonology Poko reference
+% cited throughout McPherson and Lamont 2026.
+@incollection{mcpherson-2022,
+  author    = {McPherson, Laura},
+  year      = {2022},
+  title     = {Word tone is epiphenomenal: a case study from {P}oko},
+  booktitle = {Prosody and prosodic interfaces},
+  editor    = {Kubozono, Haruo and It{\^o}, Junko and Mester, Armin},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {329--364},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Fragments/Poko/Tone.lean}
+}
+
 % REF: McCarthy (2000). Harmonic serialism and parallelism. Source of
 % the "durable ranking" formulation in HS, quoted in Pruitt 2023 page 508
 % (NELS 30 proceedings; URL verified against UMass ScholarWorks; no DOI).
@@ -22202,4 +22277,25 @@
   role      = {foundational},
   validated = {true},
   sources   = {Paradigms/SelfPacedReading.lean}
+}
+@book{green-swets-1966,
+  author    = {Green, David M. and Swets, John A.},
+  year      = {1966},
+  title     = {Signal Detection Theory and Psychophysics},
+  publisher = {Wiley},
+  address   = {New York},
+  subfield  = {psychophysics},
+  role      = {foundational},
+  sources   = {Core/Agent/SignalDetection.lean}
+}
+@book{macmillan-creelman-2005,
+  author    = {Macmillan, Neil A. and Creelman, C. Douglas},
+  year      = {2005},
+  title     = {Detection Theory: A User's Guide},
+  edition   = {2},
+  publisher = {Lawrence Erlbaum Associates},
+  address   = {Mahwah, NJ},
+  subfield  = {psychophysics},
+  role      = {foundational},
+  sources   = {Core/Agent/SignalDetection.lean}
 }
