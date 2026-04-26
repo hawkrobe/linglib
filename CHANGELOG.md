@@ -4,6 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.419] - 2026-04-26
+
+### Core/Scales/Extent.lean mathlib distillation: 256 → 127 LOC
+
+Audit-driven slimming of `Linglib/Core/Scales/Extent.lean` after a multi-agent review (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) followed by ground-truthing the substantive linguistics flags against the @cite{kennedy-1999} dissertation Ch. 3 (§3.1.5–§3.1.7).
+
+**Reduce, don't reinvent.** `posExt` and `negExt` are now `abbrev`s over `Set.Iic` and `Set.Ioi` respectively — definitionally equal, so all of mathlib's `Iic`/`Ioi` algebra (`Iic_subset_Iic`, `Iic_ssubset_Iic`, `Ioi_subset_Ioi_iff`, `Ioi_ssubset_Ioi_iff`, `compl_Iic`, `Iic_disjoint_Ioi`, `Iic_union_Ioi`) applies transparently. The 4 monotonicity lemmas (`posExt_subset_iff`, `posExt_ssubset_iff`, `negExt_subset_iff`, `negExt_ssubset_iff`) collapse from 8-line tactic blocks to one-line term-level assignments to the corresponding mathlib lemma. `posExt_subset_iff` and `posExt_ssubset_iff` typeclass relaxed `[LinearOrder D] → [Preorder D]` to match mathlib generality.
+
+**Drop dead theorems** (0 consumers per per-file grep): `extent_disjoint`, `extent_exhaustive`, `posExt_downward_closed`, `negExt_upward_closed`, `posExt_eq_Iic` (vacuous under `abbrev`), `posExt_orderEmbedding` (returned `Iff`, not `OrderEmbedding`), `negExt_orderReversing` (same misnomer), `antonymy_biconditional_weak` (subset variant), `galois_cross_incompatible` (duplicate of `crossExtent_always_false`).
+
+**Drop theatrical Galois section.** Removed `import Mathlib.Order.GaloisConnection.Basic` (was unused — no `GaloisConnection` term ever constructed). The remaining `extent_galois_antitone` (1 consumer at `Kennedy1999.lean:178`) is restated as a 2-line `rw` proof through the kept monotonicity lemmas. New `compl_posExt : (posExt μ x)ᶜ = negExt μ x` (one-liner via `Set.compl_Iic`) makes the lattice-complement story explicit without the Galois machinery façade.
+
+**Honest docstrings.** Three substantive corrections to scope claims, validated against the Kennedy dissertation:
+- The "key theorems hold under either convention" claim is materially wrong for `crossExtent_always_false` — that theorem is convention-SPECIFIC. Under @cite{kennedy-1999}'s own ≤/≤ overlap convention (eqs 30–31, 52–53), `posExt μ a ⊆ negExt μ b` holds whenever `μ b ≤ μ a`. Docstring now flags antonymy biconditional as convention-independent and `crossExtent_always_false` as convention-specific.
+- `crossExtent_always_false` is **NOT** Kennedy's cross-polar anomaly argument. Kennedy §3.1.7 uses a **sortal** argument: positive and negative extents are different sorts, and the comparative DEG operator is undefined on cross-sort arguments — an interpretation failure, not a set-inclusion non-fact. This file models both extents as `Set D` for the same `D`, losing the sortal structure. Docstring now explicitly flags the gap.
+- Heim 2006 LITTLE attribution restated: LITTLE operates on type ⟨d,t⟩, not the powerset lattice. The "Galois antitone IS LITTLE" identification was editorial; new docstring says LITTLE's algebraic shadow IS this antitone identity. The "three frameworks independently arrived at posExt" framework-comparison table is dropped — Heim's than-clause denotation is not formalized as `posExt` anywhere in linglib, and Schwarzschild's intervals are non-principal `[d₁, d₂]`, only the special case `d₁ = ⊥` collapses to posExt.
+
+**Backward compatibility.** All 7 actually-consumed names (`posExt`, `negExt`, `crossExtentInclusion`, `crossExtent_always_false`, `posExt_subset_iff`, `posExt_ssubset_iff`, `negExt_subset_iff`, `extent_galois_antitone`, `antonymy_biconditional`) keep their signatures. Zero consumer rewrites required across `Theories/Semantics/Degree/{Comparative,Equative,Intervals,ThanClause}.lean` and `Phenomena/Comparison/Studies/{Kennedy1999,Buring2007,Heim2001,Wellwood2015,VonStechow1984}.lean` — verified by `lake build` of the 902-job transitive closure.
+
+**Net effect.** The file's algebraic content is unchanged; the API surface that consumers actually use is unchanged; Lean has 129 fewer lines to elaborate; the docstring no longer overclaims faithfulness to Kennedy. The Kennedy verification was the load-bearing part of this refactor — it surfaced that the previous file's "key theorems hold under either convention" and "this IS Kennedy's cross-polar anomaly argument" claims were both materially false.
+
 ## [0.230.411] - 2026-04-26
 
 ### Pitman–Yor: AG type fix + Lemma A toward EPPF sum-to-1
