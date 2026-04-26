@@ -4,41 +4,166 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.424] - 2026-04-26
+
+### Pitman 2006 Theorem 3.2 fully proved (no sorries)
+
+`Core/Probability/PitmanYor.lean`: closed `sum_partitionProb_ord_eq_one` (the EPPF sum-to-1 over set partitions of `[n]`) end-to-end. The proof uses mathlib's `OrderedFinpartition.extendEquiv` (in `Mathlib/Analysis/Calculus/ContDiff/FaaDiBruno.lean`) for the seating-plan bijection — exactly the structure Pitman's (α, θ) seating plan needs. Mathlib's docstring calls `OrderedFinpartition` "tailor-made for Faà di Bruno", but the structure is general; it's the right type for any inductive set-partition argument indexed by element order.
+
+**Tightened `PitmanYor.concentration` constraint to strict `θ > -α`** (matching @cite{pitman-2006} eq 3.5 exactly). The previous non-strict `≥` admitted the degenerate `θ = -α` boundary where the formula's `0/0` ratios resolve to `0` (Lean's convention) but mathematically should give the all-singletons-or-all-together limit — making sum-to-1 false there. Strict ⇒ sum-to-1 holds. Lemma A's boundary-case proof correspondingly simplified.
+
+**Architecture**:
+1. `Nat.Partition.consOne` (add singleton) + `Nat.Partition.replaceMem m hm` (extend block of size `m` to `m+1`) — multiset-level extension operations.
+2. **Lemma A** `partitionProb_consOne_mul`: `(n + θ) · partitionProb q.consOne = (K · α + θ) · partitionProb q`. Proved via `stepPochhammer_succ` + `field_simp + ring`.
+3. **Lemma B** `partitionProb_replaceMem_mul`: `(n + θ) · partitionProb (q.replaceMem m hm) = (m - α) · partitionProb q`. Same shape, uses `Multiset.cons_erase` to extract the m-block factor.
+4. `OrderedFinpartition.toNatPartition` + `extendLeft_toNatPartition` + `extendMiddle_toNatPartition` — bridge mathlib's `OrderedFinpartition` to our `Nat.Partition` operations. The `extendMiddle` proof uses mathlib's `Multiset.map_erase_of_mem` (no injectivity needed) plus `cons_erase` for multiset arithmetic.
+5. `partitionProb_extend_sum`: addition-rule sum over `Option (Fin c.length)` recovers `partitionProb c.toNatPartition`. Uses Lemmas A+B + the arithmetic identity `(K · α + θ) + ∑_k (partSize k - α) = n + θ`.
+6. **Final theorem** `sum_partitionProb_ord_eq_one`: induction on `n` using `extendEquiv` to decompose the sum.
+
+**`AdaptorGrammar.TableAssignment` retyped to `OrderedFinpartition`** (was `Finpartition`). Both types host the same set partitions; `OrderedFinpartition` was chosen to inherit `extendEquiv` for the proof. `pypFactor` extracts block-size multiset via `OrderedFinpartition.toNatPartition`. `emptyTables` uses mathlib's `Unique (OrderedFinpartition 0)` directly (no aux empty constructor needed). `FragmentGrammar`, `FragmentLambda`, `ODonnell2015Derivational` compile transparently.
+
+**Mathlib usage**: `OrderedFinpartition.extendEquiv`, `Fintype.sum_sigma`, `Fintype.sum_option`, `Multiset.map_erase_of_mem`, `Multiset.cons_erase`, `Multiset.sum_erase`, `Fin.univ_succ`, `Fin.cons_succ`, `Equiv.sum_comp` — substantial reuse of existing combinatorial machinery.
+
+## [0.230.423] - 2026-04-26
+
+### Phase 1f: K&L 2008 study file §5 — first production `HasMeasureFunction` instances
+
+End-to-end validation of the Phase 1a-1e substrate (HasScalarResult / HasLatentScale / HasMeasureFunction + Beavers extends chain + auto-synthesis bridge). Appended §5 "Substrate-Level Demonstration" (~150 LOC) to existing `Phenomena/TenseAspect/Studies/KennedyLevin2008.lean` (293 LOC fragment-verb-level §1-4 untouched). The first concrete `[HasMeasureFunction]` instances in linglib — the auto-synthesis arrows from Phase 1e are no longer unused machinery.
+
+**Toy-domain construction (§5.1 closed-scale, §5.2 open-scale):**
+- `RodToy` + `straightMeasure : HasMeasureFunction RodToy ℚ SubstrateTime` — measure of straightness on [0,1], closed scale → quantized affectedness with lexically-named final degree `g_φ = 1` (max straightness).
+- `GapToy` + `wideMeasure : HasMeasureFunction GapToy ℚ SubstrateTime` — measure of width on [0,∞), open upper bound → non-quantized affectedness (some result state, no specific final degree).
+- Both verbs get `[HasLatentScale _ (Ev SubstrateTime)]` via `HasLatentScale.ofHasMeasureFunction (δ := ℚ)` companion def (typeclass synthesis can't infer δ in the conclusion type — documented Phase 1e substrate-shape fact).
+
+**Beavers extends-chain witnesses:**
+- `IsQuantizedAffected θ_straighten_toy` instance — provides `finalDegree = 1` (lexical commitment) + `Quantized` proof. Three `inferInstance` synthesis tests demonstrate the chain fires: `IsQuantizedAffected → IsNonQuantizedAffected → IsPotentialAffected` resolved automatically by typeclass search.
+- `IsNonQuantizedAffected θ_widen_toy` instance — non-quantized affectedness, no `finalDegree` field (not Type-valued). The structural distinction K&L 2008 §3-4 makes (telicity ↔ final-degree commitment) is now mechanically realized by Lean's typeclass system.
+
+**Capstone telicity theorem `widen_lt_straighten_at_affectedness_level`:** at the affectedness-degree level, `nonquantized < quantized` (`AffectednessDegree.strength` ordering). Closes the K&L → Beavers identification: telic degree achievements (closed scale, like *straighten*) sit STRICTLY above atelic degree achievements (open scale, like *widen*) on Beavers' affectedness hierarchy. The proof is `decide` over the strength projection — the substrate fully encodes K&L's empirical generalization.
+
+**Substrate validation outcome:**
+- The Phase 1a-1e substrate handles a real consumer cleanly. No additional smart constructors needed beyond `IsQuantizedAffected.mk'` / `IsNonQuantizedAffected.mk'` (Phase 1c) — the auto-synthesis instance from Phase 1e (`HasScalarResult.ofHasMeasureFunction`) is the load-bearing bridge.
+- `[HasLatentScale _ _]` provided as an explicit `let` binding rather than auto-synthesized (the documented δ-metavariable substrate-shape fact). For pure force-recipient verbs (no measure function), the per-instance route remains available; this is intentional, not a defect.
+- `decide` works at the affectedness-degree level (Nat-projection ordering), validating the manual `LE`/`Decidable` instances on `AffectednessDegree` were the right call (the LinearOrder.lift attempt in Phase 1c failed because mathlib's signature doesn't match).
+
+1787 jobs green (full subgraph including K&L 2008 + all dependencies; modulo a parallel-session pre-existing breakage in `Core/Scales/Scale.lean` that resolved itself by re-build, suggesting transient lake state).
+
+**Future work flagged:**
+- Champollion SMR vs Beavers Quantized refutation (substrate sufficient; file-placement decision pending per CLAUDE.md no-bridge-files rule).
+- DegreeAchievementScale type-parameterization refactor (multi-session — would let DA scale infrastructure participate in the typeclass chain directly).
+- HasObjectTheme typeclass for Bool-profile ↔ θ bridging (would make fragment verb-class profiles synthesise affectedness instances automatically).
+
+## [0.230.422] - 2026-04-26
+
+### Phase 1e: HasMeasureFunction typeclass + auto-synthesis to Beavers substrate
+
+Promoted K&L 2008's measure function from abbrev-only to typeclass `HasMeasureFunction α δ Time` alongside the existing `MeasureFunction` abbrev. Added auto-synthesis instance from `[HasMeasureFunction]` to Beavers' `HasScalarResult`. The mathlib pattern: a specific framework's typeclass automatically provides instances of the general framework's typeclass (cf. `[MetricSpace α] : TopologicalSpace α`).
+
+**Changes to `Theories/Semantics/Degree/MeasureFunction.lean`:**
+- ADD `class HasMeasureFunction (α δ Time : Type*) where measure : α → Time → δ`. Per-verb instance enables typeclass-resolution participation.
+- REMOVE `def MeasureFunction.toHasScalarResult m` (smart constructor).
+- ADD `instance HasScalarResult.ofHasMeasureFunction [HasMeasureFunction α δ Time] [LinearOrder Time] : HasScalarResult α δ (Ev Time)`. **Auto-synthesis** — any verb with `[HasMeasureFunction]` automatically participates in Beavers' affectedness chain. The K&L → Beavers bridge becomes structural rather than smart-constructor-mediated.
+- ADD parallel constructor `HasLatentScale.ofHasMeasureFunction` (NOT `instance`, since `δ` doesn't appear in the `HasLatentScale α (Ev Time)` conclusion — Lean's typeclass synthesiser can't infer which dimension. Documented as a substrate-shape fact rather than a defect: pure force-recipient verbs without a measure function provide their own `HasLatentScale` directly).
+
+**Mathlib decomposition consequence:** consumers (the deferred K&L 2008 study file) now declare ONE typeclass instance per verb (`instance : HasMeasureFunction Soup ℝ Time := ⟨fun s t => coolingMeasure s t⟩`) and get `[HasScalarResult Soup ℝ (Ev Time)]` for free via synthesis. The downstream `IsQuantizedAffected.mk'` / `IsNonQuantizedAffected.mk'` smart constructors find the typeclass without explicit naming. This is the "structural bridge" the user asked for in §"deeper into mathlib".
+
+**API parallel to mathlib's algebraic hierarchy:**
+- `MeasureFunction α δ Time` (abbrev) ↔ mathlib `Set α := α → Prop` (abbrev)
+- `HasMeasureFunction α δ Time` (typeclass) ↔ mathlib `MetricSpace α` (typeclass)
+- `HasScalarResult α δ (Ev Time)` (general substrate, auto-synthesised) ↔ mathlib `TopologicalSpace α` (general substrate)
+
+**Substrate gap remaining (deferred):** the K&L 2008 study file replicating *straighten*/*cool*/*widen* is the natural validation — it would provide the first production `HasMeasureFunction` instances and exercise the auto-synthesis chain. Without those instances, the auto-synthesis arrows are unused machinery (mathlib anti-pattern). Next session work.
+
+931 jobs green for the substrate subgraph (incl. K98 Incrementality, EntailmentProfile-side, AffectednessHierarchy).
+
+## [0.230.421] - 2026-04-26
+
+### Audit-driven cleanup of L&G 2017 stress test: 642 → 342 LOC, 7 promotions, cross-framework engagement
+
+4-agent audit of `LassiterGoodman2017PMF.lean` (mathlib-reviewer, semantics expert with PDF, integration auditor, cross-framework reconciler) converged on three findings: (1) the file overstated "deep migration" — most theorems are generic PMF results; (2) 5 of 14 theorems mischaracterised what L&G actually claim (singleton-vs-interval geometry; Frank-Goodman 2012 mechanism vs L&G's novel free-variable inference; "skyscraper" passage = prior shape transfer, not Bayes weighting on two worlds); (3) zero engagement with the Fine/TCS/Klein/Kennedy vagueness siblings already formalised in linglib. File was also unwired from `Linglib.lean`.
+
+**Stage 1 — promote generic theorems to `Core/Probability/PMFPosterior.lean`:**
+
+7 lemmas added (with full proofs):
+- `toOuterMeasure_apply_le_one` — fundamental missing bound, was `private` in study file.
+- `sum_finset_le_one` — Finset partial-sum analogue of `tsum_coe = 1`.
+- `toOuterMeasure_pos_of_exists_mem_support` — outer-measure positivity from support witness.
+- `toOuterMeasure_lt_one_of_exists_not_mem` — `< 1` upper bound from out-of-set support witness.
+- `toOuterMeasure_pos_and_lt_one` — combined intermediacy (the structural form of "borderline").
+- `posterior_eq_one_of_singleton_score_support` — deterministic limit of Bayesian update.
+- `posterior_lt_of_kernel_lt_of_prior_eq` — generalises both `pragmatic_strengthening_general` AND `threshold_posterior_informative`; one theorem unifies both.
+
+Each promoted lemma is L&G-agnostic and reusable for any PMF-based vagueness/RSA consumer.
+
+**Stage 2 — slim `LassiterGoodman2017PMF.lean` (642 → 342 LOC):**
+
+DELETED:
+- `pragmatic_strengthening` (uniform-prior special case, subsumed by `_general` after Stage 1 unification).
+- `threshold_posterior_informative` (mathematically identical to `_general`; promoted to Core).
+- `metalinguistic_prob_tall`, `sorites_premise_prob` (pure renames of `toOuterMeasure`; mathlib-style forbids alias-only defs).
+- `prior_dominates_implicature` — generic Bayes weighting, NOT L&G's §4.4 prior-shape-transfer claim. Replaced with honest §3' note pointing at substrate gap (joint posterior of Eqs. 28-29).
+- `pc_sorites_ratio_bounded` — trivial bound, not L&G's MC-vs-PC point.
+- `posterior_concentration_singleton`, `borderline_pos`, `borderline_lt_one` — promoted to Core; kept `borderline_intermediate` as L&G-anchored 1-line wrapper.
+- Unused `_h_kernel_lt` documentary hypothesis.
+
+NEW:
+- `sorites_premise_interval_sum_le_one` — interval-additive form **honestly faithful** to L&G Eq. 37 (which uses interval geometry, not singletons). Sorry'd pending sigma-additivity factoring; current `sorites_borderline_sum_le_one` retained as honestly-labelled "discretisation".
+- §3' explicit note that `prior_dominates_implicature` was a mischaracterisation.
+
+**Stage 3 — cross-framework engagement (NOT via Compare.lean):**
+
+Per `project_compare_dissolution.md` policy (multi-bridge `Compare.lean` files are dissolving into per-paper Studies/), the cross-framework empirical contrast is anchored in `LassiterGoodman2017PMF.lean` itself via the chronological-dependency rule (2017 paper can cite 2011 data):
+
+- §7 NEW theorem `lg_literal_borderline_bounded` (FULLY PROVED, 25 lines): the literal-meaning rule predicts `P_T(tall) · (1 - P_T(tall)) ≤ 1/4` for ANY threshold posterior. AM-GM bound proved by lifting to ℝ via `ENNReal.toReal` + `nlinarith [sq_nonneg (2q - 1)]`.
+- Empirical contrast docstring: @cite{alxatib-pelletier-2011} report 44.7% acceptance for "tall and not tall" on the median man — the literal-rule prediction (≤ 25%) is empirically refuted. Data already encoded in `Phenomena/Gradability/Vagueness.lean::alxatibPelletier2011Tall`. Makes the L&G/TCS empirical incompatibility visible at theorem level — the linglib-thesis condition.
+- Module docstring "Cross-framework positioning" section pointing at Fine1975, TCS, Klein1980, Kennedy2007Licensing.
+
+**Stage 4 — wire-in:**
+
+- `import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017PMF` added to `Linglib.lean` line 1193 (file was previously dead from consumer perspective per integration audit).
+- "Connection to bundled formalisation" docstring section: explicitly does NOT add a Lean bridge theorem — the bundled `defaultCfg.L1` is ℝ-valued (not PMF-shaped) and a fake bridge would be load-bearing of nothing. Documents the deliberate complementarity.
+
+**Net file-level changes:**
+
+| File | Before | After | Theorems |
+|------|--------|-------|----------|
+| `LassiterGoodman2017PMF.lean` | 642 LOC, 14 thm (12 proven) | 342 LOC, 5 proven thm + 2 sorry'd + 2 examples | honest L&G-anchored content |
+| `Core/Probability/PMFPosterior.lean` | ~530 LOC | ~610 LOC | +7 promoted Core lemmas |
+| `Linglib.lean` | unwired | wired | +1 import |
+
+**Architectural lesson** (per the audit thesis): "depth" of a study-file formalisation is measured by genuine paper engagement + cross-framework contact, not by theorem count. The 14-theorem stress-test version was thinner than the 5-theorem honest version once mischaracterisations were corrected and cross-framework silence was broken.
+
 ## [0.230.420] - 2026-04-26
 
 ### Core/Scales/Scale.lean §1 cluster: dead-code drop + docstring honesty (Tier A+B from audit)
 
-Audit-driven cleanup of the §1 Boundedness cluster in `Linglib/Core/Scales/Scale.lean` after a 4-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler), with substantive linguistics flags ground-truthed against `@cite{kennedy-2007}` Ch. 4 (eqs 59, 61, 66, 67) and `@cite{hay-kennedy-levin-1999}` (the SALT 9 paper anchoring the scale↔telicity arrow).
+(Entry committed in 031a03c2 — see git log for full details. The version-clashing entry below was drafted concurrently in another session and will need renumbering on its commit.)
 
-**Tier A — dead-code drops (8 exports, 0 consumers each per per-file grep):**
-- `ScaleRepresentation` structure (§1f) — `OrderHom S D` is mathlib's bundled monotone-function equivalent; the Krantz 1971 attribution didn't capture Krantz's actual representation theorem (which requires uniqueness up to admissible transformation).
-- `PositiveRegion` typeclass and its `Degree max → Threshold max` instance (§1e + line 1239) — 1-method typeclass that's just a function; its naming overlap with `StatesBasedEntry.inPositiveRegion` (a separate, heavily used method in `Theories/Semantics/Gradability/StatesBased.lean`) was a confusion-source.
-- `Boundedness.ofType` (`Bool × Bool → Boundedness` constructor) — no callers derive a tag from typeclass-instance Bools.
-- `AdditiveScale.IsRepresentable` — only docstring mentions of it remained.
-- `DirectedMeasure.degProp`, `DirectedMeasure.blocked`, `DirectedMeasure.licensing_from_boundedness` — all 0-consumer; the kept `DirectedMeasure.licensed` (2 consumers) gets the `boundedness.isLicensed` directly.
-- `Rat01.boundedness := .closed` constant — `Set.Icc 0 1` is closed by construction; redundant tag.
+## [0.230.420] - 2026-04-26
 
-Net: 1284 → 1254 LOC (drops compensated by added docstring nuance below).
+### Phase 1d: K&L 2008 MeasureFunction substrate
 
-**Tier B — docstring honesty (3 corrections validated against the source PDFs):**
+NEW `Theories/Semantics/Degree/MeasureFunction.lean` (~210 LOC) — direct formalisation of @cite{kennedy-levin-2008}'s "Measure of Change" analysis (chapter 7 of McNally & Kennedy eds., *Adjectives and Adverbs*, OUP). Read against the actual PDF; eq. 23 (difference function) and eq. 25 (measure of change) translate to one-line Lean defs.
 
-1. **§1 `Boundedness` enum docstring**: now cites `@cite{kennedy-mcnally-2005}` eq (1) and `@cite{kennedy-2007}` §4.2 eq (59) as the canonical sources for the 4-way scale-structure typology (independently discovered by `@cite{rotstein-winter-2004}`). Adds two notes that the audit surfaced as genuine gaps: (a) the **standard-type dimension** — Kennedy 2007 §4.3 eq (66) (Interpretive Economy) DERIVES standard type (relative / min-absolute / max-absolute) from scale structure for `open_`/`lowerBounded`/`upperBounded`, but `closed` scales are genuinely AMBIGUOUS (eq 67 *opaque/transparent*); fragment entries with `boundedness = .closed` may need a separate `standardType` slot; (b) the **open-bounded sub-distinction** — Kennedy 2007 fn 28 flags that open scales can be further split by whether they approach a value (e.g. cost approaching 0) or are completely unbounded; not captured here.
+**Substrate built:**
+- `MeasureFunction α δ Time := α → Time → δ` — time-indexed measure (K&L footnote 9). Plain function abbreviation; structural bundling deferred to consumers.
+- `differenceFunction m d` (K&L eq. 23) — `m` clamped at `d` as new minimum, encoded as `max d (m x t)`. Two characterising lemmas: `differenceFunction_ge_clamp` (always at least `d`); `differenceFunction_eq_measure` (equals `m x t` when `m x t ≥ d`).
+- `measureOfChange m x initT finT` (K&L eq. 25) — `m_Δ(x)(e) = m_{m(x)(init(e))}^↑(x)(fin(e))`. Three theorems: `measureOfChange_self` (no change at zero-duration), `measureOfChange_ge_init` (always ≥ initial), `measureOfChange_eq_final` (equals final degree under monotone increase).
+- `measureOfChangeOnEvent` — convenience specialisation to `Ev Time` events (extracts init/fin from runtime interval).
+- **Bridge constructor** `MeasureFunction.toHasScalarResult m : HasScalarResult α δ (Ev Time)` — load-bearing connection to Beavers' substrate (`Theories/Semantics/Events/ScalarResult.lean`). Any verb backed by a K&L 2008 measure function automatically participates in the affectedness typeclass chain. `resultAt x g e := m x e.runtime.finish = g`.
 
-2. **`Boundedness.isLicensed` docstring**: explicitly flagged as **NOT @cite{kennedy-2007}'s full licensing prediction**. Kennedy's actual prediction is the 4×2 modifier-class matrix in eq (61) (= K&M 2005 eq 15): maximizers (*completely, perfectly*) require an UPPER endpoint; minimizers (*slightly, partially*) require a LOWER endpoint; proportional modifiers (*half*) require BOTH. A single Bool can't encode this. The current Bool is sufficient for "any-endpoint-exists" callers (Interpretive Economy gating, Rouillard MIP); modifier-specific licensing must consult `hasMax`/`hasMin` directly. Naming kept (rename would touch 19 consumer files).
+**Mathlib decomposition (audited shape):**
+- File-level `set_option linter.dupNamespace false` per the `Semantics.Degree.MeasureFunction.MeasureFunction` namespace duplication (mathlib precedent: `Mathlib.Logic.Function.Function`, etc.).
+- `@[reducible]` on the `toHasScalarResult` constructor for typeclass-resolution transparency.
+- Constructor (not `instance`) since `m` is a parameter — consumers create per-verb instances at use sites.
 
-3. **§2 docstring contradiction resolved**: the previous "no wrapper classes needed" advice was wrong about lexical data (you can't store `[OrderTop α]` instances in record fields). Now states explicitly: mathlib typeclasses for theorems about concrete scales; `Boundedness` enum for lexical-data tagging in fragment entries. Both serve different roles; both are real.
+**Bridge to Beavers (documented in §5):**
+- Closed-scale DAs (*straighten, darken, fill, empty*) → `IsQuantizedAffected θ` at `g_φ = scale max` (per K&L §7.3.3, default telic via Interpretive Economy).
+- Open-scale DAs (*widen, deepen*) → `IsNonQuantizedAffected θ` only (no maximum, only "comparative" minimum-standard reading).
 
-4. **Kennedy/Rouillard cross-domain matrix tightened**: previous examples were "be sick" (state) and "wrote a paper" (accomplishment) — both **outside HKL 1999's scope**, which is restricted to degree achievements (verbs derived from gradable adjectives like *lengthen, cool, straighten*). Replaced with HKL-faithful examples and added an explicit caveat that the cross-column alignment only holds for DAs; states and accomplishments need separate justification (Krifka 1989/1998 on predicate quantization, etc.).
+**Deferred to next session:** the K&L 2008 paper-replication study file (`Phenomena/TenseAspect/Studies/KennedyLevin2008.lean`) instantiating *straighten*/*cool*/*widen* with concrete scales, demonstrating the typeclass synthesis fires end-to-end. The substrate is in place; the toy build is ~100-200 LOC of empirical formalisation work.
 
-5. `DirectedMeasure.licensed` docstring updated to point at the `Boundedness.isLicensed` caveat.
-
-**Bib additions:** `hay-kennedy-levin-1999` newly added (SALT 9, Mathews & Strolovitch eds., CLC Publications, pp. 127–144; no DOI — SALT 9 predates LSA's archival project). `kennedy-mcnally-2005` and `rotstein-winter-2004` already in bib; cite list at top of Scale.lean updated to include all three.
-
-**Verification provenance:** Kennedy 2007 typology verified at p.33 eq (59) — exactly matches the §1 4-way enum. Modifier-class matrix verified at p.34 eq (61). Interpretive Economy + totally-closed ambiguity verified at p.36 eq (66) and p.37 eq (67). HKL 1999 thesis verified at p.3 — restricted to degree achievements. Linguistics-expert flag #1 (two-dimensional typology) was REVISED: scale structure and standard type are NOT orthogonal; IE derives one from the other for non-totally-closed scales. Linguistics-expert flag #3 (HKL 1999 scope) confirmed.
-
-**Tier C deferred** (substantive integration work): `MereologicalStatus` (Wellwood 2015) silent divergence from `MereoTag`; Krifka 1989 `QUA P` predicate formalization; Extent.lean ↔ fragment-entry `scaleType` bridge — all flagged for follow-up.
-
-**Backward compatibility.** All consumer-facing exports (`Boundedness`, `Boundedness.{hasMax,hasMin,isLicensed}`, `Rat01`, `Rat01.{zero,one,half,exceeds}`, `MereoTag`, `MereoTag.toBoundedness`, `LicensingPipeline` + `.{isLicensed,universal}`, `ComparativeScale`, `AdditiveScale`, `ScalePolarity`, `DirectedMeasure`, `DirectedMeasure.licensed`) keep signatures. 5391-job full transitive build passes.
+864 jobs green (build only — small touch radius).
 
 ## [0.230.419] - 2026-04-26
 
@@ -60,6 +185,237 @@ Audit-driven slimming of `Linglib/Core/Scales/Extent.lean` after a multi-agent r
 **Backward compatibility.** All 7 actually-consumed names (`posExt`, `negExt`, `crossExtentInclusion`, `crossExtent_always_false`, `posExt_subset_iff`, `posExt_ssubset_iff`, `negExt_subset_iff`, `extent_galois_antitone`, `antonymy_biconditional`) keep their signatures. Zero consumer rewrites required across `Theories/Semantics/Degree/{Comparative,Equative,Intervals,ThanClause}.lean` and `Phenomena/Comparison/Studies/{Kennedy1999,Buring2007,Heim2001,Wellwood2015,VonStechow1984}.lean` — verified by `lake build` of the 902-job transitive closure.
 
 **Net effect.** The file's algebraic content is unchanged; the API surface that consumers actually use is unchanged; Lean has 129 fewer lines to elaborate; the docstring no longer overclaims faithfulness to Kennedy. The Kennedy verification was the load-bearing part of this refactor — it surfaced that the previous file's "key theorems hold under either convention" and "this IS Kennedy's cross-polar anomaly argument" claims were both materially false.
+
+## [0.230.418] - 2026-04-26
+
+### L&G 2017 deep migration: §3-§6 expanded — full RSA-architectural coverage
+
+Expanded `Phenomena/Gradability/Studies/LassiterGoodman2017PMF.lean` from 3 deep theorems (0.230.416) to **12 fully-proven theorems + 2 deferred-as-sorry verbose generic results** spanning all of L&G 2017's structural content. Stress-tests the hypothesis: pure mathlib-style structural theorems can carry the full philosophical depth of @cite{lassiter-goodman-2017}'s vagueness theory.
+
+**New theorems (§3b–§3e, §4, §6):**
+
+§3b — `pragmatic_strengthening_general` — extends §3 `pragmatic_strengthening` to **arbitrary (non-uniform) world priors**, using `posterior_lt_iff_score_lt` directly. Hypothesis `worldPrior w_strong = worldPrior w_only_weak` makes explicit that the strengthening direction is determined by the speaker model when the prior is "neutral" between worlds. Proof factors through `ENNReal.mul_lt_mul_iff_right` cancellation of the shared prior.
+
+§3c — `threshold_posterior_informative` — formalizes L&G §4.3 Fig. 5 central claim. When `S1 : Threshold → PMF Utterance` distinguishes thresholds at observation `u`, the **threshold posterior `L1_latent u` is non-uniform**. Formal content of "vague terms still transmit information": even though "tall" doesn't pin down a specific threshold, hearing it shifts the posterior in a determinate way.
+
+§3d — `prior_dominates_implicature` — formalizes L&G §4.4 "skyscraper" passage. When prior puts much more mass on `w_strong`, the posterior REVERSES the pragmatic ranking — even when speaker model favors `w_only_weak`. **Converse of pragmatic strengthening**: the implicature can be defeated by sufficiently strong priors. Formal content: posterior depends on the product `prior · score`, so any imbalance in either factor drives the result.
+
+§3e — `posterior_concentration_singleton` — formalizes the deterministic limit of L1 update. When only `w_unique` has `worldPrior · S1` mass at observation `u` (other worlds either zero-prior or zero-kernel), `posterior(u) w_unique = 1`. Proof via `tsum_eq_single` + `ENNReal.mul_inv_cancel`.
+
+§4 — `pc_sorites_ratio_bounded` (L&G eq. 40) — for nested sets `s ⊆ t`, the conditional ratio `μ(s)/μ(t) ≤ 1`. Proof via `ENNReal.div_le_of_le_mul'` + `OuterMeasure.mono`. Plus `metalinguistic_prob_tall` (eq. 32) and `sorites_premise_prob` (eq. 37) noncomputable defs as outer-measure restatements, and `sorites_premise_sum_bounded` (cumulative bound on sorites premises via `toOuterMeasure_apply_singleton` + `sorites_borderline_sum_le_one`).
+
+§6 — `iteration_strengthens` — corollary of `pragmatic_strengthening`: **L1 ≠ L0 at the strengthening worlds**. Formal content of "L1 is strictly more informative than L0 when alternatives create asymmetric inferences" — what makes L1 "pragmatic" rather than just "literal".
+
+**Deferred (sorry'd, generic):**
+
+- `sorites_pigeonhole` (§1) — average premise probability ≤ 1/n. Mechanical via lift-to-Real (ENNReal lacks `IsOrderedCancelAddMonoid`).
+- `adams_uncertainty_bound` (§5) — generic probability bound `μ(⋂ A_i) ≥ 1 - Σ(1 - μ(A_i))`. Verbose induction; not RSA-specific.
+
+**Architectural significance**: §3-§3e together form a **complete structural account of pragmatic strengthening** — uniform-prior, general-prior, prior-dominance, and concentration limits all use the same `posterior_lt_iff_score_lt` ↔ `posterior_uniform_lt_iff_kernel_lt` foundation. The L&G 2017 structural content fits in a single 600-LOC file leaning entirely on the PMF inequality decomposition library — vindicating mathlib-style structural theorems as the right abstraction for the philosophically deep RSA literature.
+
+## [0.230.417] - 2026-04-26
+
+### Phase 1c: Beavers substrate audit fixes + bridges + substrate-gap surfacing
+
+After 4-agent audit (mathlib + linguistics + integration + cross-framework) of the Phase 1a-1b substrate, executed all "block-merge" fixes plus substrate-sufficient bridges. Two bridges (J: DegreeAchievementScale instance; I: Champollion refutation) explicitly surfaced as **substrate gaps requiring further work** rather than papered over — exactly the stress-test outcome.
+
+**Substrate cleanup (audit fixes A-F):**
+
+`Theories/Semantics/Events/ScalarResult.lean` rewritten:
+- Renamed `HasResultState` → `HasScalarResult` (fix collision with existing `Template.HasResultState` in `EventStructure.lean`).
+- Dropped `Unspecified` Prop and `IsUnspecifiedAffected` typeclass — the audit identified them as `True` in disguise (`θ x e → θ x e` is a tautology). Hierarchy now bottoms at `Potential` / `IsPotentialAffected`. The `AffectednessDegree.unspecified` enum case stays as a level tag for "no class declared," parallel to mathlib's `T0/T1/T2` separation-axiom enums having more cases than typeclasses.
+- **Fixed vacuous `Potential` definition.** Old: `∃ g, holds x g e ∨ ¬ holds x g e` (excluded middle, equivalent to `Nonempty δ` via `Classical.em` — no real content). New: separate `HasLatentScale α β` typeclass providing the force-recipient primitive (Rappaport Hovav & Levin 2001). `Potential θ := ∀ x e, θ x e → HasLatentScale.latentScale x e` — actually carries content.
+- Dropped `Result.holds` abbrev (one-line re-export was noise).
+- Dropped `[LinearOrder δ]` propagation from typeclass parameters (audit: never used in any Quantized/NonQuantized definition).
+- Implication chain rewritten: `nonQuantized_of_quantized` direct; `potential_of_nonQuantized` requires explicit `forget` link (HasScalarResult → HasLatentScale) since the typeclasses are independent by design.
+
+`Theories/Semantics/Events/AffectednessHierarchy.lean` rewritten:
+- Dropped `IsUnspecifiedAffected`. Chain bottoms at `IsPotentialAffected`.
+- **Made `IsQuantizedAffected` Type-valued** (was Prop with `∃ g_φ, ...`). Now has `finalDegree : δ` field + `isQuantized : Quantized θ finalDegree` — preserves the lexical commitment Beavers (60a) makes (e.g., *break-into-shards* vs *break-into-dust* are distinguishable instances). Mathlib pattern: cf. `MetricSpace` Type-valued because `dist` is data.
+- Dropped `level_of_isX` projections (constant functions with unused instance args — code smell).
+- Smart constructors (`mk'`) updated to take the explicit `forget` link.
+- `LinearOrder AffectednessDegree` deferred (manual `LE`/`LT`/`Decidable` retained); `LinearOrder.lift'` API issues with current mathlib version, full `LinearOrder` added when a consumer needs it.
+
+**Bridges built (G, H):**
+
+G — `IsQuantizedAffected.ofIsSincVerb` smart constructor in `Incrementality.lean`. K98 SINC requires explicit `(g_φ, Quantized witness, forget)` to lift to Beavers Quantized — SINC's structural bijection does NOT entail a final-degree commitment, so the bridge is by smart constructor (not `instance`). Documents the K98/Beavers semantic difference at the type level.
+
+H — `IsQuantizedAffected.ofProfileAndWitness` joint-consistency constructor in `Verb/Affectedness.lean`. Takes both an `EntailmentProfile` projection witness AND a scalar `Quantized` witness; structurally enforces that a verb declared `.quantized` Bool-side and `Quantized θ g_φ` scalar-side are jointly consistent. **Substrate gap (documented):** linglib has no `HasObjectTheme V α β` typeclass connecting fragment verb tokens to their substrate θ relations; without that, a structurally-derived bridge isn't possible. Mathlib pattern when bridge requires content the substrate doesn't carry: explicit-witness smart constructor.
+
+**Substrate gaps surfaced (deferred bridges):**
+
+I (Champollion SMR vs Beavers Quantized refutation): substrate IS sufficient, but anchoring decision (where the file lives — Champollion2017 study? AffectednessHierarchy section? new bridge file?) is non-trivial per CLAUDE.md "no bridge files" discipline. Toy construction (`α = β = δ = Unit`, single-pulse θ, AlgClosure-empty SMR) deferred pending architectural decision.
+
+J (DegreeAchievementScale → HasScalarResult instance): `DegreeAchievementScale` currently stores `Boundedness × String × Option String` — a Bool tag, not a degree type. To bridge, the structure needs parameterising over a concrete degree type (`DegreeAchievementScale δ` with `δ` carrying the actual ordered degrees). Multi-session refactor; deferred.
+
+**Linguistic faithfulness (audit ratification):**
+- Cite-anchored: `@cite{rappaport-hovav-levin-2001}` added (force recipient origin).
+- "Quantized": exemplar list (*break, shatter, destroy, devour x*) verified verbatim against Beavers 2011 PDF p. 358.
+- "Non-quantized": (*widen, cool, lengthen, cut, slice x*) verified.
+- "Potential": (*wipe, scrub, rub, punch, hit, kick, slap x*) verified.
+- "Unspecified": (*see, laugh at, smell, follow, ponder, ogle x*) verified.
+
+1809 jobs green for the touched subgraph (Beavers + K98 study consumers + AgentivityLattice + Krifka1998 spot-check).
+
+## [0.230.416] - 2026-04-26
+
+### **🎉 L&G 2017 deep migration: structural theorems capture philosophical depth**
+
+Validation of the hypothesis that pure mathlib-style structural theorems can capture the deepest results of the RSA literature. NEW `Phenomena/Gradability/Studies/LassiterGoodman2017PMF.lean` (~225 LOC) formalizes @cite{lassiter-goodman-2017}'s philosophical core — sorites resolution + borderline cases — as theorems about ANY PMF over thresholds, independent of the specific L&G model construction.
+
+**Three deep theorems**:
+
+1. **`sorites_borderline_sum_le_one`** (FULLY PROVED, 4 lines):
+   ```
+   For any L1_latent : PMF Threshold and any Finset s of thresholds,
+     (∑ θ ∈ s, L1_latent θ) ≤ 1
+   ```
+   This is L&G §5's resolution of the sorites paradox: the discrete "borderline event" probabilities `P(x_m tall ∧ x_{m-1} not tall) = L1_latent(h_{m-1})` are PMF values at distinct thresholds. Their sum is bounded by the total PMF mass = 1. By Adams's thesis, the cumulative uncertainty bound on the conclusion is at most this sum — vacuous as the sorites chain grows. **The sorites is resolved arithmetically: the probability budget for chaining many high-probability premises is bounded.**
+
+2. **`borderline_intermediate`** (FULLY PROVED, ~10 lines):
+   ```
+   When some θ ∈ s AND some θ ∉ s are in the posterior support,
+     0 < L1_latent.toOuterMeasure s ∧ L1_latent.toOuterMeasure s < 1
+   ```
+   L&G §4.4's borderline-case theorem. The metalinguistic probability of "tall at h" is strictly intermediate when the threshold posterior straddles h. **The structural form of vagueness**: a borderline case is one where the posterior literally straddles the question being asked.
+
+3. **`sorites_pigeonhole`** (statement only): pigeonhole corollary stating that some premise has probability ≤ 1/n. Proof requires lift-to-Real bookkeeping (ENNReal lacks `IsOrderedCancelAddMonoid`); deferred as the central theorem captures the philosophical content.
+
+**Architectural significance**: NONE of these theorems requires:
+- The specific L&G model construction (height prior, threshold prior, L0LassiterGoodman, S1Belief)
+- Numeric arithmetic on partition functions
+- The bundled-API `rsa_predict` reflection
+- Any RSA-specific machinery
+
+They're statements about generic PMFs over generic threshold types. **The deepest philosophical claims of the RSA literature on vagueness are PMF-theoretic in nature, not RSA-specific.**
+
+**Validates the hypothesis** (continued from 0.230.414): pure mathlib-style structural theorems carry the philosophical depth of the RSA literature. The 30% of "findings" that need numeric reflection are empirical-fit reproductions (Figs. 5-10 simulations), not the philosophical claims (§5 sorites resolution + §4.4 borderline cases).
+
+**Implication**: the PMF inequality library is the right architectural primitive for the entire qualitative RSA literature, including the philosophically deep papers. The numeric-reflection layer (`rsa_predict`) is for parameter-sensitivity studies, not architectural insights.
+
+## [0.230.415] - 2026-04-26
+
+### Phase 1b: Beavers' affectedness hierarchy as mathlib `extends` chain
+
+NEW `Theories/Semantics/Events/AffectednessHierarchy.lean` (~250 LOC) — the discrete typeclass `extends` chain encoding @cite{beavers-2011} eq. (62) at substrate level. Mathlib pattern: cf. `T0Space → T1Space → T2Space → ...` (separation axioms), `Semigroup → Monoid → Group → CommGroup` (algebraic).
+
+**Structure:**
+- `AffectednessDegree` enum (4 cases) — moved from `Verb/Affectedness.lean` to substrate location. Constructor order matches strength (weakest first): `unspecified < potential < nonquantized < quantized`. Order via `strength : AffectednessDegree → Nat` projection (avoiding `LinearOrder.lift'` API issues).
+- 4 typeclass `extends` chain (Prop-valued):
+  - `IsUnspecifiedAffected θ` — bottom, vacuous marker (no `[HasResultState]` parameter)
+  - `IsPotentialAffected θ extends IsUnspecifiedAffected θ` — content: `Potential θ`
+  - `IsNonQuantizedAffected θ extends IsPotentialAffected θ` — content: `NonQuantized θ`
+  - `IsQuantizedAffected θ extends IsNonQuantizedAffected θ` — content: `∃ g_φ, Quantized θ g_φ` (existentially-bound final degree, Prop discipline)
+- `level_of_isX` projections — convert typeclass instance to discrete `AffectednessDegree`.
+- 3 `@[reducible]` smart constructors (`mk'`) that take only level-specific witnesses and derive inherited fields via the `ScalarResult` implication chain.
+
+**REFACTORED `Theories/Semantics/Verb/Affectedness.lean`:**
+- Old inline `AffectednessDegree` enum + `strength` + `LE` instance + `_entails_` sanity theorems deleted (moved to substrate).
+- Re-exports added for backward compatibility: `AffectednessDegree` type + 4 constructors (`unspecified, potential, nonquantized, quantized`) + `strength`.
+- File's role narrows to: project `EntailmentProfile → AffectednessDegree` via `profileToDegree` + verify on canonical profiles.
+
+**4 consumers continue to build unchanged:**
+- `Phenomena/ArgumentStructure/Studies/Beavers2010.lean`
+- `Phenomena/ArgumentStructure/Studies/BeaversUdayana2022.lean`
+- `Phenomena/ArgumentStructure/Studies/StapsRooryck2024.lean`
+- `Theories/Semantics/Verb/AgentivityLattice.lean`
+
+The re-export of constructors is the load-bearing trick: `export Foo.AffectednessDegree (unspecified potential ...)` makes `AffectednessDegree.potential` resolve through the alias chain when consumers `open Semantics.Verb.Affectedness`. Without explicit constructor re-export, dot-notation lookup fails.
+
+**Mathlib audit ratification:** This is exactly the "discrete properties on top of structure" pattern (cf. `T2Space` / `MetricSpace`): structure (`HasResultState`) is data-bearing typeclass at the substrate; discrete properties (`IsXAffected`) are Prop-valued typeclasses chained via `extends`, content referencing the substrate Props.
+
+**Deferred to next session:** Phase 1c — refactor `Theories/Semantics/Events/Incrementality.lean` so K98 verb classes (`IsCumThetaVerb`, `IsIncVerb`, `IsSincVerb`) extend the appropriate Beavers level (or stay as parallel hierarchy with bridge instances — design call). EntailmentProfile field collapse (3 Bools → `affectednessLevel`) per Beavers' implicational structure.
+
+1800 jobs green for the touched subgraph.
+
+## [0.230.414] - 2026-04-26
+
+### "What would mathlib do" — architectural insight: structural shell is mathlib's domain; numeric leaves are reflection's
+
+After 6 PMF migrations + multiple architectural audits, tested whether the "numeric leaf" problem (computing partition functions over derived Fintype enums) can be discharged in pure mathlib style.
+
+**Findings**:
+- `tsum_fintype` reduces `tsum` to `Finset.sum`, but `Finset.univ` for a `deriving Fintype` enum does NOT unfold via `simp`
+- ENNReal is not `Decidable`; `decide` fails
+- No mathlib idiom for "compute sum over a derived enum and verify ENNReal arithmetic"
+
+**The deeper architectural insight**: mathlib doesn't formalize **concrete numeric verification of probabilistic models**. Mathlib's domain is abstract structures (groups, measures, schemes). Our "numeric leaf" problem isn't a library gap — it's outside mathlib's scope.
+
+**Architectural conclusion**:
+1. **Structural shell** (~19 lemmas in `Core/Probability/PMFPosterior.lean`) IS mathlib-PR-ready ✅
+2. **Numeric leaf solver** IS reflection territory. The bundled-API `rsa_predict` (ℚ-based reflection on RSAConfig) is the canonical answer.
+3. **Don't build `pmf_score_compare` as a mathlib-style tactic** — it's not the right architectural choice. Reflection is. Either reuse `rsa_predict` via bridge theorems (PMFBridge was deleted, but the bridge pattern could be reintroduced) or accept that pure-PMF migration loses the bundled-API's reflection-based numeric closure.
+4. **Remaining sorry'd consumers** (Kennedy, FG12, Nouwen2024) — document each sorry'd leaf as "discharged by reflection in the bundled-API counterpart"; this is pure-PMF migration's architectural cost.
+
+**Task #47 (`build pmf_score_compare tactic`) closed as won't-fix.** It would be 1-2 days of work building a tactic that mathlib wouldn't accept and that duplicates `rsa_predict`'s job.
+
+**The migration story is then**:
+- Pure-PMF consumers benefit from the **structural shell** (1-line discharge of L1 → score level via `posterior_uniform_lt_iff_kernel_lt`)
+- Numeric leaves either get hand-discharge (vacuous-zero, partition-dominance pointwise) or stay sorry'd with pointers to the bundled-API counterpart
+
+This is the natural architectural split. The PMF library is mathlib-shaped; the numeric core is RSA-shaped.
+
+**Library state at architectural stopping point**:
+- 19 lemmas in PMFPosterior.lean covering 3 structural shapes (same-base cancellation, partition-monotonicity, cross-observation)
+- Full `<`/`≤` symmetry with mathlib naming
+- `Bool.toENN` helper in correct namespace
+- `@[gcongr]` tags on monotonicity, `@[simp]` discipline cleaned
+- Architecture audit issues addressed (PMFBridge deleted, namespace cleanup, iff form added)
+- 6 fully-closed PMF consumer files; 3 partial migrations with documented friction
+
+**This is the correct stopping point for the mathlib-architecture-shaped library**. Further consumer migrations or numeric leaf closures don't change the API.
+
+## [0.230.413] - 2026-04-26
+
+### **🎉 DongEtAl2026PMF fully closed (binary identification)** + same-base vacuous-zero pattern
+
+Sixth PMF migration this session. `Phenomena/Clarification/Studies/DongEtAl2026PMF.lean` (~140 LOC) ports the binary identification task and closes all 4 findings end-to-end. The task is intentionally degenerate (binary), so all findings are vacuous-zero — but the migration confirms the **same-base vacuous-zero pattern** discharges via `normalize_lt_iff_lt`, distinct from cross-base vacuous-zero.
+
+**Two distinct vacuous-zero patterns now characterized**:
+- **Same-base** (e.g., `S1_prefers_correct`: same world, different utterance) — discharge via `normalize_lt_iff_lt` + `pos_iff_ne_zero`
+- **Cross-base** (e.g., `S1_t2_lt_S1_t1_for_t1`: different world, same utterance) — discharge via `normalize_lt_of_apply_zero_pos`
+
+Both are 4-line proofs but use different lemmas. Worth documenting.
+
+**Status across PMF consumers (3 fully closed end-to-end with non-trivial findings)**:
+- FrankGoodman2012PMF: 2 sorries (non-dominating partitions)
+- ScontrasPearl2021PMF: **0 sorries** ✅
+- GoodmanStuhlmuller2013PMF: 11 sorries (Shape C bindOnSupport)
+- BylininaNouwen2020PMF: **0 sorries** ✅
+- Kennedy2015PMF: 4 sorries (partition arithmetic)
+- TesslerFranke2020PMF: stub (32-state latent)
+- Nouwen2024PMF: 1 sorry (multi-stage rpow)
+- DongEtAl2026PMF: **0 sorries** ✅ (newly closed)
+- KaoEtAl2014PMF, YoonEtAl2020PMF: 0 sorries (trivially)
+
+**Migration-driven discovery summary** (sessions to date):
+- 6 fully-closed PMF consumers
+- 3 partially-migrated consumers with documented friction
+- 19 lemmas in `Core/Probability/PMFPosterior.lean` (full `<`/`≤` symmetry, 3 structural shapes covered)
+- `Bool.toENN` helper in correct namespace
+- Architecture audit fixes landed (PMFBridge deleted, `@[gcongr]` tags, `@[simp]` discipline)
+
+The "small lemma per shape" approach has produced a coherent mathlib-PR-quality library through migration-driven discovery rather than upfront design. Two infrastructure gaps remain (partition computation helper, Shape C bindOnSupport solver) — both clearly characterized and well-defined.
+
+## [0.230.412] - 2026-04-26
+
+### Architecture audit fixes: Bool.toENN moved + cross-observation lemma full iff
+
+Mathlib-reviewer audit (post-cross-observation-lemma) flagged 4 block-merge issues. Two cheap ones addressed in this commit; two deferred (softmaxBelief split, RatioPMF abstraction — both larger refactors).
+
+**1. `Bool.toENN` namespace squatting fixed.** Auditor flagged: defining `Bool.toENN` inside `Theories/Pragmatics/RSA/LatentOperators.lean` squats on the `Bool` namespace from a downstream RSA file. Block-merge issue. **Moved** the entire `namespace Bool ... end Bool` block (def + 5 lemmas) to `Core/Probability/PMFPosterior.lean` right after the file's `set_option` block. Now `Bool.toENN` lives next to its arithmetic siblings (mathlib `Bool.toNat` precedent), accessible to any consumer that imports PMFPosterior.
+
+**2. `posterior_lt_of_score_cross_lt` directional asymmetry fixed.** Auditor flagged: every other comparison shape ships with `_lt`/`_le` parallel + iff form, but cross-observation only had forward `<`. Added **`posterior_cross_obs_lt_iff`** (full iff) and refactored `posterior_lt_of_score_cross_lt` as a 1-line corollary `(posterior_cross_obs_lt_iff ...).mpr h_cross`.
+
+The iff form is **shorter than the original forward-only proof** (~12 lines vs 27 lines), via cleaner equivalence-chain `rw` steps. The audit's instinct was right: forward-only had been a code smell, and the iff was straightforward via the same equivalence chain.
+
+**Deferred** (larger refactors):
+- `softmaxBelief` split out of `Operators.lean` (paper-specific, mixes with the L0/S1/L1 architecture)
+- `RatioPMF` abstraction unifying the 3 structural shapes (architectural insight; needs Phase 5 consumer count to justify)
+- `marginalizeKernel_apply @[simp]` consistency (debatable — it doesn't introduce inverses, just unfolds bind to tsum)
+- `tsum_apply_ne_zero` rename (cosmetic)
+
+**API state**: 19 lemmas in `Core/Probability/PMFPosterior.lean` (added the iff). Cross-observation now has both forward and iff forms with parallel naming. All 5 migrated consumers continue to build.
 
 ## [0.230.411] - 2026-04-26
 

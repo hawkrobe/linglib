@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Core.Probability.PitmanYor
+import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 
 /-!
 # Adaptor grammars (Maximum a posteriori variant: MAG)
@@ -37,9 +38,9 @@ derivations stored on each table". Tables in O'Donnell's PYP are
 subderivation, and different tables store different ones (line 91-92
 of the book). The natural mathematical object is therefore "for each
 NT-A use in the corpus, which table did it go to?", i.e. a customer-
-to-table assignment function. By the canonical "tables labeled by
-order of creation" convention, this is in 1-1 correspondence with
-**set partitions** of `[N^A]`.
+to-table assignment function. Each set partition of `[N^A]` corresponds
+to exactly one labeled assignment under any canonical labeling
+convention.
 
 The EPPF formula `[θ + α]_{K-1, α} · ∏ [1 - α]_{n_i - 1, 1} /
 [θ + 1]_{N - 1, 1}` (@cite{pitman-2006} Thm 3.2 / @cite{odonnell-2015}
@@ -48,9 +49,21 @@ partition. By the EPPF's symmetry it depends only on the multiset of
 block sizes — but the underlying random variable is the set partition
 itself.
 
-We model `TableAssignment` as `G.NT → Σ n, Finpartition (Finset.univ :
-Finset (Fin n))` accordingly, and `pypFactor` extracts the block-size
-multiset (via `Finpartition.toNatPartition`) to evaluate the EPPF.
+We model `TableAssignment` as `G.NT → Σ n, OrderedFinpartition n` using
+mathlib's `OrderedFinpartition n` (the structure mathlib uses for
+Faà di Bruno; it represents a set partition of `Fin n` with a canonical
+labeling by greatest element). The choice of `OrderedFinpartition` over
+`Finpartition` is for the proof of `sum_partitionProb_ord_eq_one`:
+mathlib's `OrderedFinpartition.extendEquiv` gives the seating-plan
+bijection
+`(c : OrderedFinpartition n) × Option (Fin c.length) ≃ OrderedFinpartition (n+1)`
+out of the box, exactly matching Pitman's (α, θ) seating-plan
+recursion. `Finpartition` lacks this bijection lemma. Either type
+admits the same number of objects (one per set partition of `[n]`)
+and `partitionProb` only depends on the block-size multiset, so the
+choice is purely about which lemmas come for free. `pypFactor`
+extracts the block-size multiset (via `OrderedFinpartition.toNatPartition`)
+to evaluate the EPPF.
 
 ## Why corpus probability is `(D, Y) → ℝ`, not `D → ℝ`
 
@@ -119,14 +132,17 @@ variable `Y` in @cite{odonnell-2015} eq from §3.1.7; see the module
 docstring for why a set partition (not a multiset of sizes) is the
 right type.
 
-Bundled as `Σ n, Finpartition (Finset.univ : Finset (Fin n))` per LHS
-so the total number of customers `n` is exposed but not constrained
-to match `corpusSumLHS` automatically — consistency between `Y` and
-the observed corpus `D` is the responsibility of the caller (or of a
-MAP-inference step we do not formalize).
+Bundled as `Σ n, OrderedFinpartition n` per LHS so the total number of
+customers `n` is exposed but not constrained to match `corpusSumLHS`
+automatically — consistency between `Y` and the observed corpus `D` is
+the responsibility of the caller (or of a MAP-inference step we do
+not formalize). `OrderedFinpartition` is mathlib's canonically-ordered
+set-partition type (parts ordered by greatest element); the ordering
+is irrelevant for `pypFactor` (which depends only on block-size
+multiset) but unlocks `extendEquiv` for the sum-to-1 proof.
 -/
 abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
-  G.NT → Σ n, Finpartition (Finset.univ : Finset (Fin n))
+  G.NT → Σ n, OrderedFinpartition n
 
 variable (M : AdaptorGrammar G)
 
@@ -167,24 +183,13 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
     ((M.pyp a).partitionProb_nonneg (Y a).snd.toNatPartition)
     -- ↑ `PitmanYor.partitionProb_nonneg` (different file from `PolyaUrn`)
 
-/-- The unique empty set partition of `Fin 0` (i.e., the partition
-    of `Finset.univ : Finset (Fin 0) = ∅` into no parts). Auxiliary
-    construction for `emptyTables`; mathlib has `Finpartition.empty α`
-    for the `⊥`-typed version, but we want it pre-coerced to
-    `Finpartition (Finset.univ : Finset (Fin 0))` for the
-    `TableAssignment` API. -/
-def emptyFinpartFin0 : Finpartition (Finset.univ : Finset (Fin 0)) where
-  parts := ∅
-  supIndep := Finset.supIndep_empty _
-  sup_parts := by simp
-  bot_notMem := Finset.notMem_empty _
-
 /-- The "empty" table assignment: every nonterminal gets the
-    unique empty set partition of `Fin 0`. The corresponding PYP
-    factor evaluates to 1, so this is the natural Y to use when
-    stating the empty-corpus probability. -/
+    unique `OrderedFinpartition 0` (the empty partition, supplied
+    by mathlib's `Unique` instance). The corresponding PYP factor
+    evaluates to 1, so this is the natural Y to use when stating the
+    empty-corpus probability. -/
 def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
-  fun _ => ⟨0, emptyFinpartFin0⟩
+  fun _ => ⟨0, default⟩
 
 /-- AG corpus probability is `1` on the empty corpus paired with
     the empty table assignment: each per-LHS factor is
@@ -202,12 +207,14 @@ theorem corpusProbGivenTables_empty :
     rw [DMPCFG.lhsCounts_zero]
     exact (M.toDMPCFG.lhsUrn a).seqProb_zero
   have h_py : M.pypFactor a (emptyTables G) = 1 := by
-    -- emptyTables a = ⟨0, emptyFinpartFin0⟩ with parts = ∅,
-    -- so toNatPartition is the unique Nat.Partition 0, and
-    -- partitionProb evaluates to 1 via empty step-Pochhammer products.
-    show (M.pyp a).partitionProb (Finpartition.toNatPartition emptyFinpartFin0) = 1
+    -- emptyTables a = ⟨0, default⟩ with default : OrderedFinpartition 0
+    -- has length 0, partSize empty, so toNatPartition is the unique
+    -- Nat.Partition 0, and partitionProb evaluates to 1.
+    show (M.pyp a).partitionProb
+        (OrderedFinpartition.toNatPartition (default : OrderedFinpartition 0)) = 1
     rw [Subsingleton.elim
-        (Finpartition.toNatPartition emptyFinpartFin0) (default : Nat.Partition 0)]
+        (OrderedFinpartition.toNatPartition (default : OrderedFinpartition 0))
+        (default : Nat.Partition 0)]
     simp [PitmanYor.partitionProb, default, Nat.Partition.indiscrete]
   rw [h_dm, h_py, mul_one]
 
