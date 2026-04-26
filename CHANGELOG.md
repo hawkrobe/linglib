@@ -4,6 +4,16 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.380] - 2026-04-26
+
+### McPhersonLamont2026 §7: eq. (24) — LR analogue of *FALL repair, validates substrate cross-direction
+
+Adds the paper's eq. (24) tableau (`/nãn + rī^H + nã/` → `[nãn rī ná]`, p. 14) as the LR-direction validation of the same substrate that fig. 3 used. Three-step LR derivation: dock H-rī rightward to nã (creating HM contour, *FALL violated; loses to docking on MAX(H) ≫ DEP(link)/H, paper candidate (24d)) → delete M-nã (the *FALL repair: MAX(H) ≫ MAX(M) selects M for deletion, paper candidate (24g)) → converged (haveTone blocks any further deletion). All 3 step witnesses + convergence theorem `decide`-checked, no `sorry`. Same constraint ranking as fig. 3; proves the substrate's *FALL machinery isn't tuned to one EVAL direction.
+
+`Fragments/Poko/Tone.lean` extended: `Syll` gains `nan` (1sg subject) and `na` (eat verb); `Syll.morphemeId` extended with IDs 3 and 4 to keep eq.(24) input morpheme-distinct from fig.3 input.
+
+940 jobs green; 0.230.380
+
 ## [0.230.378] - 2026-04-26
 
 ### McPherson & Lamont 2026 fig. 3 fully discharged via autosegmental substrate refactor

@@ -54,23 +54,29 @@ open Phonology.Autosegmental.RegisterTier (TRN)
 -- ============================================================================
 
 /-- Poko syllables represented for the @cite{mcpherson-lamont-2026}
-    fig. 3 demonstration. Promote to a fuller stem inventory when a
-    second Poko paper arrives. -/
+    fig. 3 (`kak`, `ri`, `do`) and eq. (24) (`nan`, `ri`, `na`)
+    demonstrations. Promote to a fuller stem inventory when a second
+    Poko paper arrives. -/
 inductive Syll
   | kak  -- 3sg.m possessive `kāk`
   | ri   -- pig stem `rī` (M^H lexical melody)
   | do   -- get verb `dō` (M^H lexical melody)
+  | nan  -- 1sg subject pronoun `nãn`
+  | na   -- eat verb `nã`
   deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Morpheme IDs
 -- ============================================================================
 
-/-- Stable morpheme ID for each stem in the fig. 3 input. -/
+/-- Stable morpheme ID per stem. IDs are assigned to keep inputs from
+    distinct paper examples non-overlapping. -/
 def Syll.morphemeId : Syll → MorphemeId
   | .kak => 0
   | .ri  => 1
   | .do  => 2
+  | .nan => 3
+  | .na  => 4
 
 -- ============================================================================
 -- § 3: Convenience Constructors for SegSpec / ToneSpec

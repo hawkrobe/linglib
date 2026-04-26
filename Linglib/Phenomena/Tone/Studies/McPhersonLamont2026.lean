@@ -470,4 +470,92 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
 
 end Fig3
 
+-- ============================================================================
+-- § 7: Eq. (24) — LR with *FALL repair (`/nãn rī^H + nã/`)
+-- ============================================================================
+
+/-! Paper, eq. (24) p. 14. Input `/nãn + rī^H + nã/` ('I ate a pig').
+    Three syllables, three morphemes; rī's floating H docks rightward
+    onto nã (creating an HM contour), then the substrate repairs the
+    contour by deleting M-nã (because MAX(H) ≫ MAX(M)). Three-step LR
+    derivation:
+
+    1. Step 1: dock H-rī to nã (idx 2 → TBU 2). Tautomorphic dock to rī
+       blocked by *TAUTDOCK; no-crossing blocks dock-to-nãn. Deletion
+       loses to docking on MAX(H) (paper analysis: "(24d) is optimal,
+       despite its falling contour tone").
+    2. Step 2: delete M-nã (idx 3) — **the *FALL repair step**. The
+       step-1 docking creates the tier-order pair [H, M] on TBU 2, a
+       falling HM contour penalised by *FALL. MAX(H) ≫ MAX(M) selects
+       M for deletion. Paper: "(24g) is optimal".
+    3. Step 3: converged. nã has H alone (linked from idx 2); no GEN
+       move improves on any constraint (haveTone blocks deletion of
+       any of the surviving linked tones).
+
+    This is the LR analogue of fig. 3's RL counter-example: same *FALL
+    repair pattern, but here it produces the *attested* form rather
+    than a starred one. Validates that the substrate's *FALL machinery
+    isn't tuned to just one direction. -/
+
+namespace Eq24
+
+open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone)
+open Fragments.Poko (Syll seg mTone hTone)
+
+abbrev PokoForm := FloatingForm Syll
+
+/-- Input form for eq. (24): `/nãn + rī^H + nã/`. Tier order
+    (`ulTones`): `[M-nãn, M-rī, H-rī, M-nã]`. The H of rī is the only
+    floating tone. -/
+def eq24Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .nan, seg .ri, seg .na])
+    (ulTones := [mTone .nan, mTone .ri, hTone .ri, mTone .na])
+    (ulLinks := {(0, 0), (1, 1), (3, 2)})
+
+/-- Same ranking as fig. 3 (paper, fig. 2 Hasse): `HAVETONE ≫
+    *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫ DEP(link)/H ≫
+    MAX(M) ≫ MAX(link)/M`. -/
+def eq24Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
+
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := eq24Ranking
+  evalMode := .directional .leftToRight
+
+/-- Attested surface form `[nãn rī ná]` — H of rī docked to nã, M of
+    nã deleted by *FALL repair. -/
+def attestedForm : PokoForm :=
+  eq24Input
+    |>.insertLink 2 2  -- step 1: dock H-rī rightward to nã
+    |>.deleteTone 3    -- step 2: delete M-nã (repair HM contour)
+
+set_option maxHeartbeats 4000000
+
+/-- Eq. (24) step 1: H-rī docks rightward to nã. Tautomorphic dock
+    blocked by *TAUTDOCK; no-crossing blocks leftward dock; deletion
+    loses to docking on MAX(H). Paper, candidate (24d). -/
+theorem eq24_step1 :
+    derivationLR.stepOptimum eq24Input = {eq24Input.insertLink 2 2} := by decide
+
+/-- Eq. (24) step 2: M-nã deletes to repair the HM contour created by
+    step 1. *FALL fires on TBU 2's [H, M] tier sequence; MAX(H) ≫
+    MAX(M) selects M for deletion. Paper, candidate (24g). -/
+theorem eq24_step2 :
+    derivationLR.stepOptimum (eq24Input.insertLink 2 2) =
+      {(eq24Input.insertLink 2 2).deleteTone 3} := by decide
+
+/-- Eq. (24) convergence: from the post-repair state, no GEN move
+    improves on any constraint — the only remaining moves are
+    deletions of surviving linked tones (each blocked by haveTone). -/
+theorem eq24_converged : derivationLR.Converged attestedForm := by decide
+
+end Eq24
+
 end Phenomena.Tone.Studies.McPhersonLamont2026
