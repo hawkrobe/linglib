@@ -4,6 +4,350 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.411] - 2026-04-26
+
+### Pitman–Yor: AG type fix + Lemma A toward EPPF sum-to-1
+
+`Core/Probability/PitmanYor.lean` + `Theories/Morphology/FragmentGrammars/AdaptorGrammar.lean` overhauled after multi-PDF audit (@cite{pitman-2006} CSP §2.1, §3.2 + @cite{odonnell-2015} §3.1.6, §3.1.7).
+
+**Correctness fix.** Pitman p. 39: the EPPF `p(n_1,…,n_k)` is the prob of a *specific set partition*, NOT a multiset. The previous `TableAssignment = G.NT → Σ n, Nat.Partition n` (multiset-typed) fed a multiset to `partitionProb` (which evaluates Pitman's set-partition EPPF) — this silently dropped the multiplicity factor. Numerical witness: `α=0, θ=1, n=3` ⇒ bare `∑_q partitionProb q = 2/3 ≠ 1`. The previous `sum_partitionProb_eq_one` claim was false.
+
+**Refactor (Option B from the audit).** AG's `TableAssignment` retyped to `G.NT → Σ n, Finpartition (Finset.univ : Finset (Fin n))` (set partitions of `[N^A]`), matching O'Donnell's "tables labeled" semantics + the canonical "tables in order of creation" bijection with set partitions. New `Finpartition.toNatPartition` bridge extracts block-size multisets for the EPPF formula. New `Nat.Partition.numSetPartitions` gives the multiplicity (verified against Bell numbers B₀…B₅ = 1,1,2,5,15,52). New `emptyFinpartFin0` aux for the `n=0` empty assignment (mathlib's `default` only fires for `⊥`-typed Finpartitions). All consumers (`FragmentGrammar`, `FragmentLambda`, `ODonnell2015Derivational`) compile transparently — refactor is API-preserving downstream.
+
+**Toward closing the sum-to-1.** Replaced the false `sum_partitionProb_eq_one` (over `Nat.Partition n`) with the correct **`sum_partitionProb_set_eq_one`** (over `Finpartition`, Pitman Thm 3.2 form, still `sorry`'d). Added `Nat.Partition.consOne` (extend by singleton block) and proved **Lemma A** `partitionProb_consOne_mul`: `(n + θ) · partitionProb q.consOne = (K · α + θ) · partitionProb q`. Stated multiplicatively to bypass division at `n + θ = 0`. Proof structure: `match` on `n` → degenerate `n = 0` (q empty, both sides equal θ); main `n = m + 1` case uses `stepPochhammer_succ` to expose ratio factors, then two-tier `by_cases` (denom-zero / θ-corner-zero / generic with `field_simp + ring`). The boundary case `1 + m + θ = 0` is forced by PYP constraints to `m = 0, α = 1, θ = -1, K = 0` where both sides reduce to `0`.
+
+Bib: new `pitman-2006` entry (LNM 1875, DOI verified via Crossref). Module docstring documents Pitman's three equivalent normalisations (set-partition / multiset+mult / composition+multinomial).
+
+
+
+### Phase 1a: ScalarResult substrate (B&KG 2020-faithful affectedness foundation)
+
+NEW `Theories/Semantics/Events/ScalarResult.lean` (~180 LOC) — minimum viable scalar substrate for Beavers eq. (60) affectedness levels. Built after multi-PDF audit of @cite{beavers-2011}, @cite{beavers-koontz-garboden-2020}, and @cite{beavers-2012}.
+
+**Mathlib decomposition (audited shape):**
+- `HasResultState (α δ β)` — data-bearing typeclass providing the `resultAt x g e` predicate ("patient x holds degree g of dimension δ at end of event e"). Mathlib pattern: cf. `MeasurableSpace`, `TopologicalSpace`, `Module R M`. Three type parameters (patient, dimension, event) — verb-specific dimension is the per-instance commitment.
+- `Result.holds` — namespaced alias.
+- 4 abstract Props (`Quantized g_φ`, `NonQuantized`, `Potential`, `Unspecified`) — Beavers eq. (60a-d) formal definitions on `θ : α → β → Prop`.
+- 4 implication theorems (Beavers eq. 62 hierarchy): `nonQuantized_of_quantized`, `potential_of_nonQuantized`, `unspecified_of_potential`, transitivity `unspecified_of_quantized`.
+
+**Why minimum viable:** `becomes` (B&KG 2020 eq. 33), abstract `MovementRelation`, full `FPR` (B&KG 2020 eq. 39 / Beavers 2012) are richer machinery for *theorems about* incremental change. The affectedness hierarchy itself only needs `result'`. Premature substrate is the same anti-pattern as premature abstraction; deferred to when consumers (degree achievements, motion verbs) need them.
+
+**What this enables (next sessions):** Phase 1b — discrete typeclass hierarchy `IsUnspecifiedAffected → IsPotentialAffected → IsNonQuantizedAffected → IsQuantizedAffected` in `Theories/Semantics/Verb/Affectedness.lean`, with scalar content per Beavers eq. (60) referencing this substrate. K98 verb classes (`IsSincVerb`, `IsIncVerb`, `IsCumThetaVerb`) refactored to extend the appropriate Beavers level. Phase 1c — EntailmentProfile collapses 3 Bool fields into single `affectednessLevel` with derived projections.
+
+**Existing infrastructure reused (audit findings):** `Core/Scales/Scale.lean` (1284 LOC, `ComparativeScale`, `Boundedness`, `MereoTag`, `LicensingPipeline`); `Core/Scales/MereoDim.lean` (573 LOC, σ-trace machinery); `Theories/Semantics/Events/MovementRelations.lean` (282 LOC, K98 §4 spatial movement substrate — the path-instantiation of the abstract substrate to be built later). No duplication.
+
+96 jobs green for the new file build.
+
+## [0.230.409] - 2026-04-26
+
+### `posterior_lt_of_score_cross_lt` — cross-observation Bayes factor lemma
+
+Cross-observation Bayes factor lemma added to `Core/Probability/PMFPosterior.lean`. Closes the structural-shell gap surfaced by Kennedy2015's `classB_competition_at_boundary` and `upper_classB_competition` findings (and any RSA cross-utterance comparison at a fixed world).
+
+**New lemma**:
+```lean
+theorem posterior_lt_of_score_cross_lt
+    (κ : α → PMF β) (μ : PMF α) (a : α) (b₁ b₂ : β)
+    (h₁ : marginal κ μ b₁ ≠ 0) (h₂ : marginal κ μ b₂ ≠ 0)
+    (hμ : μ a ≠ 0) (hμ_top : μ a ≠ ⊤)
+    (h_cross : κ a b₁ * marginal κ μ b₂ < κ a b₂ * marginal κ μ b₁) :
+    posterior κ μ b₁ h₁ a < posterior κ μ b₂ h₂ a
+```
+
+**Proof structure** (~25 lines, pure mathlib-style): use `marginal_mul_posterior_apply` to convert posterior to score, multiply both sides of the conclusion by `marginal b₁ * marginal b₂`, cancel `μ a` (positive finite), reduce via `ENNReal.mul_lt_mul_iff_right`. Forward direction only (the iff was significantly more involved; forward is what consumers need).
+
+This is the third structural-shell extension this session (after `normalize_lt_of_apply_eq_pos_and_sum_lt` and the cleanup work). Together with the existing API, the cross-observation comparison shape is now fully structurally decomposable down to the cross-multiplied numeric leaf.
+
+**Status of Kennedy2015 cross-observation findings**: structural shell complete, leaves remain pending partition function computation (same friction as `classB_strengthened_above_bare`).
+
+**API library state**:
+- 18 lemmas in `Core/Probability/PMFPosterior.lean` (foundation + RSA-shaped extensions)
+- Full `<`/`≤` symmetry; `@[gcongr]` tags on monotonicity; clean `@[simp]` discipline
+- Three structural shapes covered: same-base same-index (normalize/posterior cancellation), cross-base partition-monotonicity, cross-observation Bayes factor
+
+**Three migration sessions** have surfaced exactly **three small structural lemmas** + **two open infrastructure gaps** (partition computation + Shape C bindOnSupport solver). Pure mathlib-style "small lemma per shape" continues to dominate "build a tactic" — the structural shell is now broad enough that most consumers' headlines decompose to clearly-defined numeric leaves.
+
+## [0.230.408] - 2026-04-26
+
+### Kennedy2015 PMF migration: 3/7 findings proven via vacuous-zero pattern
+
+Fourth migration this session. `Phenomena/Numerals/Studies/Kennedy2015PMF.lean` (~215 LOC) ports 7 RSA L1 findings from the bundled version. Surfaces two new friction shapes that the existing API doesn't yet handle.
+
+**3 of 7 findings fully proven** (vacuous-zero pattern):
+- `classA_no_competition_at_boundary` — "moreThan3" inapplicable at .3
+- `bare_peaked_with_kennedy_alternatives` — "bare3" inapplicable at .4
+- `upper_classA_no_competition` — "fewerThan3" inapplicable at .3
+
+Each uses the canonical 4-line template + `normalize_lt_of_apply_zero_pos`.
+
+**4 sorry'd** with explicit friction characterization:
+
+**Partition-dominance non-pointwise** (2 leaves):
+- `classB_strengthened_above_bare`: numerators equal at .3 and .4 (both 1/3),
+  but partitions don't pointwise dominate. At .3 alternatives = {bare3, atLeast3, atMost3};
+  at .4 = {moreThan3, atLeast3}. Neither set ⊆ other → `tsum_lt_tsum` can't bridge.
+- `upper_classB_strengthened_below_bare`: same pattern, mirror direction.
+
+These need explicit partition function computation — same friction as FG12's
+`S1_blue_circle_lt_blue_square`. Confirms it's a recurring pattern (3 leaves
+across 2 consumers) that justifies a `pmf_partition_compute` helper.
+
+**Cross-observation** (2 leaves):
+- `classB_competition_at_boundary`: `L1 .bare3 .3 > L1 .atLeast3 .3` — same world,
+  *different observation*. Two different posteriors with two different marginals.
+- `upper_classB_competition`: same shape.
+
+The structural decomposition would be:
+```
+posterior κ μ b₁ h₁ a < posterior κ μ b₂ h₂ a ↔
+  κ a b₁ * marginal κ μ b₂ < κ a b₂ * marginal κ μ b₁
+```
+
+This is a "cross-observation Bayes factor" lemma that doesn't yet exist in
+`PMFPosterior.lean`. Would close cross-observation findings across all
+consumers. **New API gap surfaced — task for next round.**
+
+**Status across PMF consumers:**
+- ScontrasPearl2021PMF: **0 sorries** ✅
+- BylininaNouwen2020PMF: **0 sorries** ✅
+- FrankGoodman2012PMF: 2 sorries (non-dominating partitions)
+- Kennedy2015PMF: 4 sorries (2 non-dominating + 2 cross-observation)
+- GoodmanStuhlmuller2013PMF: 11 sorries (Shape C bindOnSupport)
+- Nouwen2024PMF: 1 sorry (multi-stage rpow)
+- TesslerFranke2020PMF: stub (32-state latent)
+
+**4 PMF consumer files migrated this session** (BylininaNouwen, TesslerFranke stub, Kennedy2015, plus the prior cleanup work). 2 fully closed end-to-end. Migration-driven discovery surfaced 3 distinct API gaps:
+1. **Partition computation helper** (FG12-style, Kennedy partition-dominance)
+2. **Cross-observation Bayes factor** lemma (Kennedy cross-utterance)
+3. **Shape B numeric leaf solver** (TesslerFranke's 32-state latent)
+
+The mathlib-style "small lemma per shape" approach continues to outperform "build a tactic." Each gap surfaced is a 5-15 line lemma, not a multi-day tactic project.
+
+## [0.230.407] - 2026-04-26
+
+### **🎉 BylininaNouwen2020PMF fully closed (3 → 0 sorries)** + `normalize_lt_of_apply_eq_pos_and_sum_lt` lemma
+
+**Discovery**: pure mathlib-style lemmas can fully discharge the partition-dominance subcase of numeric narrowing leaves — no `pmf_score_compare` tactic needed for that subcase. BylininaNouwen2020PMF goes from 2 sorries (numeric narrowing) to **0 sorries**.
+
+**New lemma** in `Core/Probability/PMFPosterior.lean`:
+- `PMF.normalize_lt_of_apply_eq_pos_and_sum_lt` — strict companion of `normalize_le_of_apply_eq_and_sum_ge`. When numerators agree (`f a = g a`), the shared numerator is positive (`g a ≠ 0`, `≠ ⊤`), and the LHS partition strictly dominates (`tsum g < tsum f`), then `normalize f a < normalize g a`. 4-line proof via `mul_lt_mul_iff_right` + `inv_lt_inv`. Pure mathlib-style.
+
+**Discharge pattern for partition-dominance leaves** (now used in BylininaNouwen2020PMF for `S1_c2_lt_S1_c1_for_one` and `S1_c3_lt_S1_c2_for_two`):
+
+```lean
+rw [S1_eq_normalize ..., S1_eq_normalize ...]
+apply PMF.normalize_lt_of_apply_eq_pos_and_sum_lt
+· -- L0_apply equality at the chosen utterance
+· -- L0 positivity
+· -- PMF.apply_ne_top
+· apply ENNReal.tsum_lt_tsum (PMF.tsum_apply_ne_top _ _) (i := <strict witness utterance>)
+  · intro u; cases u; <pointwise ≤ for each utterance>
+  · <strict witness>
+```
+
+This is ~25 lines per leaf — readable, mathlib-style, no custom tactic. **Could survive a mathlib PR review.**
+
+**Where this pattern fails**: when partition functions don't pointwise dominate (FG12's `.blue_circle` vs `.blue_square` — `.square` contributes 1/2 at one and 0 at the other; `.circle` does the opposite). For these, `tsum_lt_tsum` can't bridge — actual partition function computation is needed. Documented in FG12PMF as motivation for `pmf_partition_compute` helper or `pmf_score_compare` tactic.
+
+**Status update across PMF consumers**:
+- FrankGoodman2012PMF: 2 sorries (non-dominating partition functions)
+- ScontrasPearl2021PMF: **0 sorries** (closed 0.230.401)
+- GoodmanStuhlmuller2013PMF: 11 sorries (Shape C — bindOnSupport over obsKernel)
+- BylininaNouwen2020PMF: **0 sorries** (newly closed via partition-dominance)
+- TesslerFranke2020PMF: stub (full migration deferred pending tactic for 32-state latent)
+- KaoEtAl2014PMF: 0 sorries (no findings ported)
+- YoonEtAl2020PMF: 0 sorries
+- Nouwen2024PMF: 1 sorry (multi-stage rpow numeric core)
+
+**Two PMF consumer files now fully closed end-to-end** (ScontrasPearl + BylininaNouwen). The mathlib-style lemma library covers the discharge patterns of both — no custom tactic infrastructure required.
+
+## [0.230.406] - 2026-04-26
+
+### TesslerFranke2020 PMF stub (Shape B + cost factor surface)
+
+Second post-audit consumer migration. Recommended by the migration-survey audit as the first **cost-factor S1Score** test (`S1 ∝ rpow(L0, α) · exp(-cost)`). Stub-level migration: structural pieces defined (`costFactor : Utterance → ℝ≥0∞`, `Nonempty` instances, extension/meaning aliases) but full Shape B chain (per-latent S1g + marginalSpeaker over 32 latent states + L1) deferred pending `pmf_score_compare` tactic.
+
+**Friction surfaced**:
+- **Cost factor lift**: `exp(-cost)` lives in `ℝ`; need `ENNReal.ofReal` lift. Same pattern as Nouwen2024PMF's `evalCostFactor`. Confirms `RSA.S1Belief`'s `costFactor : U → ℝ≥0∞` argument is the right shape.
+- **32-state latent space**: `LatentState := HThreshold × HThreshold × NegLexicon` (4×4×2). Per-latent leaves would require 32-case case-bashes — well beyond hand-discharge. Validates that the `pmf_score_compare` tactic is the real unblocker for batch consumer migration of Shape B + cost models.
+- **Cross-observation Shape D**: `not_unhappy_more_positive_than_not_happy` compares `L1 .notUnhappy (deg 3) > L1 .notHappy (deg 3)` — same world, *different observation*. Not the same as same-observation Shape B; needs cross-observation API analysis (different from cross-utterance tsum Shape D).
+
+The structural pieces (cost factor + extensions + Nonempty instances) are in place and build cleanly. The full migration is unblocked once the per-latent leaves are tractable.
+
+## [0.230.405] - 2026-04-26
+
+### BylininaNouwen2020 PMF migration (Shape A warm-up) + `Bool.toENN` helper
+
+First post-audit consumer migration. Recommended by the migration-survey audit as Shape A warm-up to validate template stability. Surfaced two new patterns in addition to validating the canonical 4-line template.
+
+**New file**: `Phenomena/Numerals/Studies/BylininaNouwen2020PMF.lean` (~165 LOC).
+- 3 findings ported (`lb_rsa_strengthens_two`, `lb_rsa_strengthens_one`, `lb_three_peaked`).
+- All 3 headlines structurally discharged via the canonical template.
+- 1 of 3 leaves fully proven (`S1_c2_lt_S1_c3_for_three` via `PMF.normalize_lt_of_apply_zero_pos` — vacuous-zero, since `.three` doesn't apply at `.c2`).
+- 2 leaves remain `sorry` (genuine numeric narrowing — `3/11 < 3/5`, `2/5 < 1`). Same friction as FG12 numeric leaves; needs partition function arithmetic.
+
+**Friction surfaced** (informs API direction):
+- **Degenerate worlds**: `.c0` has NO applicable utterance (all numerals require ≥1). `PMF.normalize` is undefined there → required the conditional fallback pattern (`if h : tsum ≠ 0 then normalize else PMF.pure .one`) inherited from `Nouwen2024PMF`. Confirms this is the canonical "degenerate world" idiom for Shape A.
+- **`Nonempty` instances** needed for `PMF.uniformOfFintype` — derived enums need explicit `instance : Nonempty NCard := ⟨.c0⟩` declarations. Should be derivable via `Nonempty` inference but isn't always.
+
+**New API helper added** (in advance of refactoring): `Bool.toENN : Bool → ℝ≥0∞` in `Theories/Pragmatics/RSA/LatentOperators.lean`. Lifts `Bool` to `ℝ≥0∞` for use as multiplicative indicator (`true ↦ 1`, `false ↦ 0`). Saves the recurring `if b then (1 : ℝ≥0∞) else 0` boilerplate. Modeled on mathlib `Bool.toNat`. Marked `@[simp]` with reducibility lemmas for both branches. Existing API (`L0LassiterGoodman`) doesn't yet use it — opt-in for new consumers.
+
+**Three additional helper-style lemmas added inline** (`tsum_apply_ne_zero` was already there):
+- `tsum_L0_ne_zero_at` — at applicable worlds, the speaker's tsum is non-zero
+- `S1_ne_zero_at` — S1 puts non-zero mass on applicable utterances
+- `L0_apply_ne_zero` — L0 is non-zero at applicable worlds
+
+These three are file-local but pattern-stable; future Shape A migrations will likely want analogues. Worth promoting to a generic helper module if 3+ migrations need them.
+
+**Migration template (Shape A)** confirmed stable across 3 consumers (FG12, ScontrasPearl simple findings, BylininaNouwen):
+1. `unfold L1 worldPrior`
+2. `rw [gt_iff_lt, PMF.posterior_uniform_lt_iff_kernel_lt]`
+3. `exact <per-world S1 leaf>`
+
+The leaves split into:
+- **Vacuous-zero** (utterance inapplicable at one of the worlds) — fully discharged via `normalize_lt_of_apply_zero_pos` + conditional-fallback unfold
+- **Numeric narrowing** (both worlds positive but partition functions differ) — needs ENNReal arithmetic infrastructure
+
+## [0.230.404] - 2026-04-26
+
+### K98 substrate: 4-agent audit cleanup (items 1–5) + Strict/General Incrementality merged
+
+Multi-agent audit findings (mathlib-reviewer + linguistics-domain-expert + integration-auditor + cross-framework-reconciler) addressed across 5 cleanup items. Audit summary in commit message context.
+
+**Items 1–4 (small fixes):**
+- `Krifka1989.eatThreeKilosRice_qua_vp` migrated from explicit-witness `(hUP : UP θ) (hSinc : SINC θ)` to typeclass `[IsSincVerb θ]`. Missed in 0.230.402.
+- `MeasurePhrases.lean`: added typeclass-form `measure_phrase_makes_qua [IsSincVerb θ]`; explicit-witness form folded into the typeclass body via `qua_propagation`.
+- Linguistic exemplar fixes (verified against K98 PDF pages 13-19):
+  - `IsSincVerb` docstring: dropped *build (a house)* and *write (a letter)* (K98 §3.7 explicitly flags both as needing the necessary-preparatory-event extension); replaced with K98's own clean SINC examples *eat (the apples)* and *draw (the circle)* (page 13-14).
+  - `IsCumThetaVerb` docstring: dropped *love* (K98 doesn't classify experiencer states under CumTheta; statives like *see* are §3.2 page 13's "peculiar" UP-violators, separate problem class). Kept K98's actual exemplars *push, pull, carry* (page 12-13).
+  - `IsIncVerb` docstring: sharpened *read* characterization — K98 §3.6 says it fails UE + MSO (re-reading), §3.7 adds ME failure (book spine isn't read). "Allows backups" was correct but partial.
+  - Stale `Fragments/English/Predicates/EatToy.lean` reference in AspectualConsistency.lean updated to point to current location (`Krifka1998.lean §9`).
+- `IsCumThetaVerb` docstring: dropped the "when this is the *only* class" partition-membership gesture. The typeclass content is just `CumTheta`; partition membership is captured separately by `VerbIncClass`.
+
+**Item 5 (mathlib `extends` chain + file merge):**
+
+`StrictIncrementality.lean` + `GeneralIncrementality.lean` collapsed into a single `Incrementality.lean` (~280 LOC). The split was justified when each file owned its own typeclass (`IsSincVerb` / `IsIncVerb`); once mathlib's `extends` chain forced both classes into one file (cycle: `IsSincVerb extends IsIncVerb` requires `IsIncVerb` in scope, which requires `INC`, which uses `SINC`), the predicate split became structural noise. Mathlib precedent: `Algebra/Group/Defs.lean` houses Semigroup/Monoid/Group together.
+
+The verb-class typeclass hierarchy is now a proper `extends` chain:
+```
+IsCumThetaVerb (in ThematicRoleProperties.lean)
+    ↑
+IsIncVerb : Prop extends IsCumThetaVerb θ where inc : INC θ
+    ↑
+IsSincVerb : Prop extends IsIncVerb θ where sinc, up
+```
+
+Plus `@[reducible] def IsSincVerb.mk'` smart constructor that takes `(SINC θ) (UP θ) (CumTheta θ)` and derives the inherited `inc` field automatically via `inc_of_sinc`. Eliminates 3 hand-rolled upward instances (`instIsCumThetaVerbOfIsSincVerb`, `instIsIncVerbOfIsSincVerb`, `instIsCumThetaVerbOfIsIncVerb`).
+
+**Mark explicit-witness smart constructors `private`** (mathlib pattern: typeclass form is the only public entry):
+- `cum_propagation_of_cumTheta`, `qua_propagation_of_mso`, `qua_propagation_of_sinc` (CumulativityPropagation.lean)
+- `not_cum_vp_of_cumTheta_up`, `middle_ground_stable_of_postulates` (PropagationGap.lean)
+- `measure_phrase_makes_qua_of_sinc` deleted entirely; typeclass form `measure_phrase_makes_qua` directly invokes `qua_propagation` (cleaner — no helper layer).
+
+**Consumer updates:** Krifka1998 §9 toy `IsSincVerb eatThemeToy` instance now uses `IsSincVerb.mk' eatThemeToy_sinc eatThemeToy_up eatThemeToy_cumTheta` (with the three witness terms named as `private` defs). Two `inferInstance` synthesis tests (`IsIncVerb` and `IsCumThetaVerb` from `IsSincVerb`) confirm the `extends` chain fires correctly.
+
+13 files updated for the namespace migration (`Semantics.Events.{Strict,General}Incrementality` → `Semantics.Events.Incrementality`); manifest updated.
+
+1817 jobs green for the touched subgraph.
+
+**Items 6–7 deferred** (multi-session): item 6 (fragment-level `IsSincVerb` instances on the 16+ verbs in `Verbal.lean`, derived from `verbIncClass` Bool tag — closes the substrate↔fragment grounding gap) and item 7 (bridge theorems for sibling theories: Dowty `EntailmentProfile.incrementalTheme`, Champollion `VerbDistributivity`, Beavers `AffectednessDegree`).
+
+## [0.230.403] - 2026-04-26
+
+### PMF API audit follow-through: PMFBridge deleted, `@[gcongr]` tags, `@[simp]` discipline, Shape D lemmas
+
+Multi-front cleanup based on the post-ScontrasPearl-closure audit (mathlib-reviewer + linglib-integration-auditor agents converged on the same priorities).
+
+**1. `PMFBridge.lean` deleted** Both audits independently confirmed zero external callers — the only file mentioning it (`Nouwen2024PMF.lean`) does so to *disclaim* using it ("no `PMFBridge`, no parallel ℝ-valued operators"). It was conceived as transitional scaffolding but every PMF consumer skipped it. Removed file + import line in `Linglib.lean:2297`.
+
+**2. `@[gcongr]` tags added to monotonicity lemmas.** `marginal_le_marginal` and `marginal_lt_marginal` are now `@[gcongr]`-tagged; mathlib's `gcongr` tactic can now chain them automatically in monotonicity reasoning. `bind_le_bind`/`bind_lt_bind` were *not* taggable (gcongr requires varying args to be free variables, but the bind form `(μ.bind f) b` has the application after — consumers can convert via `bind_apply` to access marginal-shape).
+
+**3. `@[simp]` discipline cleanup.** Five `_apply` lemmas had `@[simp]` despite introducing `(∑' x, ...)⁻¹` in their RHS — exactly the form `simp` should *not* leave on a goal. Removed `@[simp]` from `reweight_apply`, `productOfExperts_apply` (PMFPosterior.lean), `L0OfMeaning_apply`, `S1Belief_apply`, `L1_apply` (Operators.lean), `L0LassiterGoodman_apply` (LatentOperators.lean). Each now has a `-- Not @[simp]: introduces inverse; use explicitly via rw` comment. `marginalizeKernel_apply` retained `@[simp]` (just unfolds `bind_apply` to a tsum, no inverse).
+
+**4. Cross-utterance tsum-monotonicity lemmas added (Shape D).** Three new lemmas in `Core/Probability/PMFPosterior.lean` to support `Σ s, L1 u (s, a₁) > Σ s, L1 u (s, a₂)` shapes (the audit's Shape D — used in `LassiterGoodman2017`, `Nouwen2024`):
+- `tsum_posterior_eq_tsum_score_div` — pulls `(marginal)⁻¹` out of a sum of posteriors (factor doesn't depend on the summation index)
+- `tsum_posterior_lt_iff_tsum_score_lt` — strict comparison cancels the marginal denominator across the tsum
+- `tsum_posterior_le_iff_tsum_score_le` — `≤` companion via `not_iff_not`
+
+Sanity-checked on a toy 2-world example.
+
+**Deferred** (scoped larger than one session):
+- `pmf_score_compare` glue tactic — full GS2013-style numeric leaf solver requires multi-day tactic engineering. The Shape-A/B leaves are now closed by the structural-discharge trio (vacuous-zero / equality / partition-monotonicity); only the Shape-C bindOnSupport+softmax leaves remain, which need either tactic or per-model arithmetic.
+- Shape-B pilot on KaoEtAl2014 — KaoEtAl2014PMF already has L1 defined with 0 sorries, but no findings ported. The bundled findings use `L1_marginal` (Shape D shape via predicate marginalization) — porting requires a new PMF-side `L1_marginal` definition.
+
+**Cumulative API state**: 14 lemmas in PMFPosterior.lean (foundation), 4 in Operators.lean (RSA), 5 in LatentOperators.lean (latent). Symmetric `<`/`≤` coverage, mathlib-style naming, `@[gcongr]` where applicable, clean `@[simp]` discipline.
+
+**What still blocks full RSAConfig deletion** (per audit):
+1. ~47 bundled-RSAConfig consumers awaiting migration (mostly Shape A and Shape B — straightforward template, ~30 min/file)
+2. `pmf_score_compare` tactic for systematic numeric leaf discharge
+3. `rsa_predict` either rewritten for PMF or replaced with structural-shell + ℚ glue tactic
+
+## [0.230.402] - 2026-04-26
+
+### Drop `_class` suffix; typeclass form is now canonical (mathlib discipline)
+
+Mathlib's pattern is the inverse of what 0.230.397–399 left in place: the typeclass form is the canonical name (`add_assoc [Semigroup α]`, not `add_assoc_class`), and explicit-witness variants are smart constructors with `_of_*` suffixes when exposed at all. The `_class` suffix on typeclass theorems was an anti-mathlib transition convention.
+
+**Substrate renames** (`Theories/Semantics/Events/`):
+
+`CumulativityPropagation.lean`:
+- `cum_propagation` → `cum_propagation_of_cumTheta` (explicit-witness smart constructor)
+- `cum_propagation_class` → `cum_propagation` (canonical typeclass form, `[IsCumThetaVerb θ]`)
+- `qua_propagation` → `qua_propagation_of_mso` (explicit-witness, takes UP + MSO directly)
+- `qua_propagation_sinc` → `qua_propagation_of_sinc` (explicit-witness, takes UP + SINC)
+- `qua_propagation_class` → `qua_propagation` (canonical typeclass form, `[IsSincVerb θ]`)
+
+`PropagationGap.lean`:
+- `not_cum_vp_of_witnesses` → `not_cum_vp_of_cumTheta_up` (explicit-witness)
+- `not_cum_vp_of_witnesses_class` → `not_cum_vp_of_witnesses` (canonical typeclass)
+- `middle_ground_stable` → `middle_ground_stable_of_postulates` (explicit-witness)
+- `middle_ground_stable_class` → `middle_ground_stable` (canonical typeclass)
+
+**Filip2012.lean: deleted redundant wrappers.** `not_cum_lifts_to_vp` and `propagation_gap_lifts` were pure section-variable delegations to substrate that added no linguistic content beyond the prose docstring. Filip 2012's distinctive contribution is `three_way_exhaustive` (the logical observation that CUM ∨ QUA ∨ middle-ground is exhaustive); the propagation theorems live in substrate where they belong, and consumers (`Moon2026.mixedDrink_VP_propagation_gap`) call them directly without going through this file as an intermediary.
+
+**Consumer migrations** (parametric theorems → typeclass parameters):
+- `Wellwood2015.lean`: 3 theorems (`cum_vp_measurable`, `qua_vp_not_measurable`, `grammar_shifts_via_krifka`) rewritten from `(hCumTheta : CumTheta θ) (hUP : UP θ) (hSinc : SINC θ)` section-variables to `[IsCumThetaVerb θ]` / `[IsSincVerb θ]` instance parameters; bodies become 1-line typeclass calls.
+- `Krifka1998.lean` §4.5: `eat_apples_cum_propositional` and `eat_two_apples_qua_propositional` rewritten to typeclass-parametric form.
+- `Krifka1998.lean` §9 toy: `eat_two_apples_toy_qua` and `eat_some_apples_toy_cum` now `qua_propagation twoApples_qua` / `cum_propagation someApples_cum` (no `_class` suffix).
+- `Moon2026.lean`, `AspectualConsistency.lean`: rename only (already on typeclass forms).
+- `MeasurePhrases.lean`: `qua_propagation_sinc` → `qua_propagation_of_sinc` in one call site.
+
+Net effect: typeclass form is the canonical public API throughout; explicit-witness forms are smart constructors with mathlib-style `_of_*` suffixes; Filip 2012 reduced from 3 theorems to 1 (its distinctive observation); Wellwood 2015's 3 bridge theorems halve in size.
+
+1817 jobs green for the touched subgraph; parallel-session failures elsewhere unrelated to this work.
+
+## [0.230.401] - 2026-04-26
+
+### **🎉 ScontrasPearl2021PMF fully closed (5 → 0 sorries)** + 3 new structural API lemmas
+
+First fully-closed PMF consumer migration with non-trivial findings. `Phenomena/Quantification/Studies/ScontrasPearl2021PMF.lean` had 5 sorries (2 headlines + 3 helpers); now **0 sorries**, all 11 findings completely proven end-to-end.
+
+**Three new API lemmas in `Core/Probability/PMFPosterior.lean`** (driven by the migration):
+- **`PMF.normalize_lt_of_apply_zero_pos`** — vacuous-zero cross-base. When LHS normalize base vanishes at `a` and RHS doesn't, LHS = 0 < RHS. 1-line discharge for unique-reference / inapplicable-utterance findings.
+- **`PMF.normalize_eq_of_apply_eq_and_sum_eq`** — when bases agree at `a` AND have equal sum, normalize values are equal. Discharges symmetric-QUD findings.
+- **`PMF.normalize_le_of_apply_eq_and_sum_ge`** — when numerators equal but partition sums differ (LHS ≥ RHS), the LHS normalize value ≤ RHS. Discharges partition-monotonicity findings (rpow base monotonicity).
+
+**ScontrasPearl per-latent breakdown** (3 distinct discharge shapes):
+
+| Latent | Pattern | Discharge |
+|--------|---------|-----------|
+| surfHowMany | vacuous-zero | `S1g_surfHowMany_strict.le` |
+| surfAll | symmetric QUD `.all_` | `normalize_eq_of_apply_eq_and_sum_eq` + `rfl` |
+| surfNone | vacuous-zero | `S1g_surfNone_strict.le` |
+| invHowMany | symmetric L0 | `normalize_eq_of_apply_eq_and_sum_eq` + per-utt L0 equality |
+| invAll | symmetric QUD `.all_` | `normalize_eq_of_apply_eq_and_sum_eq` + `rfl` |
+| invNone | partition-monotonicity (rpow) | `normalize_le_of_apply_eq_and_sum_ge` + `tsum_le_tsum` |
+
+**Refactoring of existing leaves**: `S1_blue_square_lt_green_square_for_green` (FG12), `S1g_surfHowMany_strict` (ScontrasPearl), `S1g_surfNone_strict` (ScontrasPearl) all refactored to use `normalize_lt_of_apply_zero_pos` — proofs went from ~25 lines to ~10 lines.
+
+**Status across PMF files**:
+- FrankGoodman2012PMF: 2 sorries (numeric narrowing leaves; need partition function arithmetic)
+- ScontrasPearl2021PMF: **0 sorries — fully closed**
+- GoodmanStuhlmuller2013PMF: 11 sorries (per-world bindOnSupport leaves)
+- Nouwen2024PMF: 1 sorry (multi-stage rpow numeric core)
+
+The "vacuous-zero" + "symmetric-QUD equality" + "partition-monotonicity" trio of lemmas covers ALL structural patterns in ScontrasPearl. The numeric leaves remaining in FG12/GS2013 are different shapes (genuine partition function arithmetic, bindOnSupport over obsKernel) requiring additional API.
+
 ## [0.230.400] - 2026-04-25
 
 ### Slavic Fragments cluster — `Fragments/Slavic/{Lang}/` consolidation

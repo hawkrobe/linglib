@@ -24,9 +24,33 @@ ag(X, Y; A) = ∏_{A ∈ V} [DMPCFG-factor for A on X^A]
 ```
 
 where `X^A` is the rule-count vector for LHS `A` (the same data
-DMPCFG consumes) and `Y^A` is the table-occupancy partition for
-`A`'s restaurant — i.e. the multiset of "how many customers sat at
-each table" once the corpus is fully decomposed.
+DMPCFG consumes) and `Y^A` is the table-occupancy assignment for
+`A`'s restaurant — formally a *set partition* of `[N^A]` (the `N^A`
+uses of NT `A` in the corpus, partitioned by which table each use
+sat at).
+
+## Why a set partition (not a multiset)?
+
+@cite{odonnell-2015} writes `Y^A = ȳ^A` as a "count vector of reused
+derivations stored on each table". Tables in O'Donnell's PYP are
+*labeled* (table 1, 2, ...) — each table stores a specific
+subderivation, and different tables store different ones (line 91-92
+of the book). The natural mathematical object is therefore "for each
+NT-A use in the corpus, which table did it go to?", i.e. a customer-
+to-table assignment function. By the canonical "tables labeled by
+order of creation" convention, this is in 1-1 correspondence with
+**set partitions** of `[N^A]`.
+
+The EPPF formula `[θ + α]_{K-1, α} · ∏ [1 - α]_{n_i - 1, 1} /
+[θ + 1]_{N - 1, 1}` (@cite{pitman-2006} Thm 3.2 / @cite{odonnell-2015}
+eq from §3.1.7) is precisely the probability of one such specific set
+partition. By the EPPF's symmetry it depends only on the multiset of
+block sizes — but the underlying random variable is the set partition
+itself.
+
+We model `TableAssignment` as `G.NT → Σ n, Finpartition (Finset.univ :
+Finset (Fin n))` accordingly, and `pypFactor` extracts the block-size
+multiset (via `Finpartition.toNatPartition`) to evaluate the EPPF.
 
 ## Why corpus probability is `(D, Y) → ℝ`, not `D → ℝ`
 
@@ -54,15 +78,16 @@ factor.
 
 - `AdaptorGrammar G` — extends `DMPCFG G` with per-LHS Pitman–Yor.
 - `AdaptorGrammar.TableAssignment` — abbrev for the latent table
-  data: per LHS, a partition (multiset of positive table sizes).
+  data: per LHS, a set partition of `[N^A]`.
 - `AdaptorGrammar.pypFactor` — per-LHS Pitman–Yor partition
-  probability.
+  probability (EPPF evaluated on the block-size multiset).
 - `AdaptorGrammar.corpusProbGivenTables` — eq from §3.1.7, conditional
   on a table assignment.
 
 ## References
 
 - @cite{odonnell-2015} §2.4.2, §3.1.7.
+- @cite{pitman-2006} §3.2 (EPPF and the (α, θ) seating plan).
 -/
 
 namespace Morphology.FragmentGrammars
@@ -87,29 +112,33 @@ namespace AdaptorGrammar
 variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
 /--
-A *table assignment* gives, for each nonterminal `A`, the
-multiset-of-positive-counts of customer occupancies at the tables
-of `A`'s Pitman–Yor restaurant. This is the latent variable `Y` in
-@cite{odonnell-2015} eq from §3.1.7.
+A *table assignment* gives, for each nonterminal `A`, a set partition
+of `[N^A]` (the uses of `A` in the corpus) into tables. Two uses are
+in the same block iff they sat at the same table. This is the latent
+variable `Y` in @cite{odonnell-2015} eq from §3.1.7; see the module
+docstring for why a set partition (not a multiset of sizes) is the
+right type.
 
-Bundled as `Σ n, Nat.Partition n` per LHS so the total number of
-customers `n` (sum of table sizes) is exposed but not constrained
+Bundled as `Σ n, Finpartition (Finset.univ : Finset (Fin n))` per LHS
+so the total number of customers `n` is exposed but not constrained
 to match `corpusSumLHS` automatically — consistency between `Y` and
 the observed corpus `D` is the responsibility of the caller (or of a
 MAP-inference step we do not formalize).
 -/
 abbrev TableAssignment (G : ContextFreeGrammar T) : Type :=
-  G.NT → Σ n, Nat.Partition n
+  G.NT → Σ n, Finpartition (Finset.univ : Finset (Fin n))
 
 variable (M : AdaptorGrammar G)
 
 /--
 Per-LHS Pitman–Yor factor for the eq from §3.1.7 product: the
-Pitman–Yor partition probability of the table-occupancy partition
-under `M.pyp a`.
+Pitman–Yor EPPF evaluated on the block-size multiset of the table
+assignment under `M.pyp a`. Pitman's EPPF gives the prob of one
+specific set partition with these block sizes
+(@cite{pitman-2006} Thm 3.2).
 -/
 noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
-  (M.pyp a).partitionProb (Y a).snd
+  (M.pyp a).partitionProb (Y a).snd.toNatPartition
 
 /--
 AG corpus probability conditional on a table assignment `Y`. Per
@@ -135,17 +164,27 @@ theorem corpusProbGivenTables_nonneg (D : Multiset (CFGTree T G.NT))
   apply Finset.prod_nonneg
   intro a ha
   exact mul_nonneg (M.toDMPCFG.lhsFactor_pos ha D).le
-    ((M.pyp a).partitionProb_nonneg (Y a).snd)
+    ((M.pyp a).partitionProb_nonneg (Y a).snd.toNatPartition)
     -- ↑ `PitmanYor.partitionProb_nonneg` (different file from `PolyaUrn`)
 
+/-- The unique empty set partition of `Fin 0` (i.e., the partition
+    of `Finset.univ : Finset (Fin 0) = ∅` into no parts). Auxiliary
+    construction for `emptyTables`; mathlib has `Finpartition.empty α`
+    for the `⊥`-typed version, but we want it pre-coerced to
+    `Finpartition (Finset.univ : Finset (Fin 0))` for the
+    `TableAssignment` API. -/
+def emptyFinpartFin0 : Finpartition (Finset.univ : Finset (Fin 0)) where
+  parts := ∅
+  supIndep := Finset.supIndep_empty _
+  sup_parts := by simp
+  bot_notMem := Finset.notMem_empty _
+
 /-- The "empty" table assignment: every nonterminal gets the
-    `Nat.Partition 0` consisting of no tables. The corresponding
-    PYP factor evaluates to 1, so this is the natural Y to use
-    when stating the empty-corpus probability. -/
+    unique empty set partition of `Fin 0`. The corresponding PYP
+    factor evaluates to 1, so this is the natural Y to use when
+    stating the empty-corpus probability. -/
 def emptyTables (G : ContextFreeGrammar T) : TableAssignment G :=
-  fun _ => ⟨0, { parts := 0,
-                  parts_pos := fun {i} h => absurd h (Multiset.notMem_zero i),
-                  parts_sum := rfl }⟩
+  fun _ => ⟨0, emptyFinpartFin0⟩
 
 /-- AG corpus probability is `1` on the empty corpus paired with
     the empty table assignment: each per-LHS factor is
@@ -163,10 +202,13 @@ theorem corpusProbGivenTables_empty :
     rw [DMPCFG.lhsCounts_zero]
     exact (M.toDMPCFG.lhsUrn a).seqProb_zero
   have h_py : M.pypFactor a (emptyTables G) = 1 := by
-    unfold pypFactor emptyTables
-    -- The empty Nat.Partition 0 has parts.card = 0 and total = 0,
-    -- so all stepPochhammer m-values are 0, products are empty = 1
-    simp [PitmanYor.partitionProb]
+    -- emptyTables a = ⟨0, emptyFinpartFin0⟩ with parts = ∅,
+    -- so toNatPartition is the unique Nat.Partition 0, and
+    -- partitionProb evaluates to 1 via empty step-Pochhammer products.
+    show (M.pyp a).partitionProb (Finpartition.toNatPartition emptyFinpartFin0) = 1
+    rw [Subsingleton.elim
+        (Finpartition.toNatPartition emptyFinpartFin0) (default : Nat.Partition 0)]
+    simp [PitmanYor.partitionProb, default, Nat.Partition.indiscrete]
   rw [h_dm, h_py, mul_one]
 
 end AdaptorGrammar
