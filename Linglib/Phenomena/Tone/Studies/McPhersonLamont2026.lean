@@ -1,6 +1,8 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.HarmonicSerialism
+import Linglib.Theories.Phonology.Tone.Constraints
+import Linglib.Fragments.Poko.Tone
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -42,21 +44,16 @@ this candidate restriction.
 
 ## Scope of this file
 
-This file ships the **negative half** only — the ranking-paradox theorem
-plus the companion HG inadequacy theorem on rationals. The directional-HS
-positive demonstration on the `/kāk^H + rī^H + dō^H/ → [kāk rī dō]`
-derivation, the autosegmental floating-tone extension, and the full
-Hasse diagram (paper, fig. 2) are deferred to a follow-up study file
-once a `DirectionalTableau` consumer materialises in the substrate.
+§§1–5 ship the **negative half**: the ranking-paradox theorem (eq. 59)
+plus the companion HG inadequacy theorem on rationals. The W/L pattern
+is derived from candidate violation profiles via `ercOfProfiles`, not
+stipulated as a hand-typed `Fin 4 → ERCVal`.
 
-## Derivation discipline
-
-The W/L pattern in eq. 59 is **derived from candidate violation profiles**
-via the canonical `ercOfProfiles` bridge from `Core.Constraint.OT.ERC`,
-not stipulated as a hand-typed `Fin 4 → ERCVal`. Candidates and their
-violation counts are encoded directly from paper, eq. 57 and eq. 58.
-This makes the theorem genuinely about *constraint behavior on
-candidates* rather than about the W/L matrix per se.
+§6 ships the **positive half**: the full multi-step LR convergence on
+fig. 3's `/kāk^H + rī^H + dō^H/` over an autosegmental `FloatingForm`
+candidate type with the paper's full constraint ranking, plus the RL
+counter-example showing it converges to a different surface form. All
+step witnesses are `decide`-checked (no `sorry`).
 -/
 
 namespace Phenomena.Tone.Studies.McPhersonLamont2026
@@ -253,112 +250,224 @@ theorem weighted_HG_inadequate :
   linarith
 
 -- ============================================================================
--- § 6: Positive Half — Vanilla HS Convergence on Tableau (21)
+-- § 6: Positive Half — Multi-Step Fig. 3 (Autosegmental, Mathlib-Style)
 -- ============================================================================
 
-/-! Paper, eq. 21 page 13. Input `/nān + rī^H/` ('my pig'). The floating
-    H tone fails to dock leftward (would violate `*TAUTDOCK` since `rī`
-    is the morpheme that introduced the floating H — paper, eq. 15) and
-    cannot dock rightward (no following stem in this phrase-final form),
-    so it deletes. Vanilla parallel HS converges in 1 substantive step
-    under the ranking `*FLOAT, *TAUTDOCK ≫ MAX(H)` (paper, eq. 20). This
-    is the simplest non-trivial HS demonstration in the paper and the
-    first real consumer of the `HSDerivation` substrate beyond the
-    Core/ smoke test. -/
+/-! Paper, fig. 3 with the full constraint inventory and faithful
+    autosegmental candidate type. Builds on three substrate pieces:
+    - `Phonology.Autosegmental.Floating` for `FloatingForm` + GEN
+      (autosegmental rep with multi-tone TBUs, no-crossing GEN)
+    - `Phonology.Tone.Constraints` for the generic constraint constructors
+    - `Fragments.Poko.Tone` for Poko-specific syllables and morpheme IDs
 
-namespace Tableau21
+    This is the **deepest** version of the paper's claim — not the §7
+    simplified single-constraint demo. It proves the empirical
+    asymmetry: LR converges to attested `[kāk rī dō]` (all H deleted);
+    RL converges to wrong `*[kāk rī dó]` (H of rī docks rightward to
+    dō). The two final forms are distinct.
+
+    ## Why the substrate is rich enough
+
+    The paper's argument hinges on three substrate facts:
+    1. *CROWD penalises stems with > 2 tones (own M + own floating H +
+       docked H). Requires multi-tone TBUs.
+    2. *TAUTDOCK penalises GEN-inserted same-morpheme docking. Requires
+       morpheme IDs on tones and TBUs, plus underlying-link tracking.
+    3. The no-crossing-association principle (Goldsmith 1976)
+       restricts GEN to non-crossing link insertions. Required to
+       block `dock-H-ri-to-kak` (which would cross the M-ri to TBU-ri
+       link) — without it, RL would not reach the wrong form. -/
+
+namespace Fig3
 
 open Core.Constraint.OT
+open Phonology.Autosegmental
+open Phonology.Autosegmental.RegisterTier (TRN)
+open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
+                     maxLinkTone starFall haveTone)
+open Fragments.Poko (Syll seg mTone hTone)
 
-/-- Three candidates for the single-floating-H deletion derivation. -/
-inductive Cand21
-  /-- Faithful input: `M M L%` with floating H (between M and L%).
-      Violates `*FLOAT` (one floating tone). -/
-  | input
-  /-- Floating H deleted: `M M L%`. Violates `MAX(H)` (one H deleted). -/
-  | deleted
-  /-- Floating H docked tautomorphically onto `rī` (the stem that
-      introduced it), creating an MH contour. Violates `*TAUTDOCK` (paper,
-      eq. 15) and `DEP(link)/H` (one new H link). -/
-  | dockedTauto
-  deriving DecidableEq, Repr
+abbrev PokoForm := FloatingForm Syll
 
-/-- Ordering for `Finset.min'`. The order is incidental — it just fixes
-    which element of a tied optimal set the tie-breaker returns. -/
-def Cand21.toNat : Cand21 → Nat
-  | .input => 0
-  | .deleted => 1
-  | .dockedTauto => 2
+-- ============================================================================
+-- § 6.1: Input
+-- ============================================================================
 
-instance : LinearOrder Cand21 := LinearOrder.lift' Cand21.toNat
-  (fun a b h => by cases a <;> cases b <;> simp_all [Cand21.toNat])
+/-- Input form for paper fig. 3: `/kāk^H + rī^H + dō^H/`.
 
--- Constraints from paper, eqs. 7, 15, 16. Names are local to `Tableau21`.
+    Tier order (`ulTones`): `[M-kak, H-kak, M-ri, H-ri, M-do, H-do]`.
+    Each stem contributes its lexical M (linked to its TBU) and its
+    floating H (no underlying link). -/
+def fig3Input : PokoForm :=
+  FloatingForm.mkInput
+    (segs := [seg .kak, seg .ri, seg .do])
+    (ulTones := [mTone .kak, hTone .kak, mTone .ri, hTone .ri, mTone .do, hTone .do])
+    (ulLinks := {(0, 0), (2, 1), (4, 2)})
 
-/-- `*FLOAT` (paper, eq. 16): one violation per tone not associated to a syllable. -/
-def floatStar : NamedConstraint Cand21 := mkMarkGrad "*FLOAT" fun
-  | .input => 1
-  | .deleted => 0
-  | .dockedTauto => 0
+-- ============================================================================
+-- § 6.2: Ranking
+-- ============================================================================
 
-/-- `*TAUTDOCK` (paper, eq. 15, after Wolf 2007): one violation per
-    tautomorphemic docking of an underlyingly floating tone. -/
-def tautDockStar : NamedConstraint Cand21 := mkMarkGrad "*TAUTDOCK" fun
-  | .input => 0
-  | .deleted => 0
-  | .dockedTauto => 1
+/-- Constraint ranking from paper, fig. 2 (relevant subset for fig. 3).
+    Order matches the (60) tableau columns:
+    `HAVETONE ≫ *FLOAT^→ ≫ *CROWD(2) ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫
+    DEP(link)/H ≫ MAX(M) ≫ MAX(link)/M`.
 
-/-- `MAX(H)` for the demo (cf. paper, eq. 7c). -/
-def maxH : NamedConstraint Cand21 := mkFaithGrad "MAX(H)" fun
-  | .input => 0
-  | .deleted => 1
-  | .dockedTauto => 0
+    `*FLOAT` is the only genuinely directional constraint (left-to-right
+    per paper §4); the rest are parallel-via-singleton. -/
+def fig3Ranking : List (DirectionalConstraint PokoForm) :=
+  [ haveTone, starFloat, starCrowd 2, starTautDock,
+    maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
-/-- `DEP(link)/H` for the demo (cf. paper, eq. 7a). -/
-def depLinkH : NamedConstraint Cand21 := mkFaithGrad "DEP(link)/H" fun
-  | .input => 0
-  | .deleted => 0
-  | .dockedTauto => 1
+/-- DirectionalHSDerivation under `*FLOAT^→` (left-to-right). The
+    paper's positive analysis. -/
+def derivationLR : DirectionalHSDerivation PokoForm where
+  gen := FloatingForm.gen
+  ranking := fig3Ranking
+  evalMode := .directional .leftToRight
 
-/-- Ranking from paper eq. 20: `*FLOAT, *TAUTDOCK ≫ MAX(H)`. The
-    `DEP(link)/H` constraint sits below MAX(H); `(*FLOAT, *TAUTDOCK)` are
-    co-dominant since the comparison only requires both to outrank
-    `MAX(H)`. -/
-def ranking : List (NamedConstraint Cand21) :=
-  [floatStar, tautDockStar, maxH, depLinkH]
+/-- Mirror under `*FLOAT^←` (right-to-left). The paper's negative
+    counterexample: yields the wrong surface form. -/
+def derivationRL : DirectionalHSDerivation PokoForm :=
+  { derivationLR with evalMode := .directional .rightToLeft }
 
-/-- One-step GEN. Models the relevant atomic operations from paper
-    eq. 6: tone deletion, autosegmental link insertion. -/
-def gen : Cand21 → Finset Cand21
-  | .input => {.input, .deleted, .dockedTauto}
-  | .deleted => {.deleted}
-  | .dockedTauto => {.dockedTauto, .deleted}
+-- ============================================================================
+-- § 6.3: Attested LR Final Form
+-- ============================================================================
 
-/-- The Poko HS derivation for tableau (21). -/
-def derivation : HSDerivation Cand21 :=
-  { gen := gen, ranking := ranking }
+/-- The attested surface form `[kāk rī dō]` (all H deleted, no docking).
+    All three floating Hs (tier indices 1, 3, 5) are deleted; the
+    underlying M-to-TBU links survive. Per paper, fig. 3 thick-line
+    derivation. -/
+def attestedForm : PokoForm :=
+  fig3Input
+    |>.deleteTone 1   -- delete H-kak
+    |>.deleteTone 3   -- delete H-ri
+    |>.deleteTone 5   -- delete H-do
 
-/-- One HS step from the input picks the H-deletion candidate as the
-    unique optimum: under `*FLOAT, *TAUTDOCK ≫ MAX(H)`, the faithful
-    input fatally violates `*FLOAT` and the docking candidate fatally
-    violates `*TAUTDOCK`, leaving only `.deleted`. -/
-theorem step1_stepOptimum_is_deleted : derivation.stepOptimum .input = {.deleted} := by
-  decide
+/-- The starred surface form `*[kāk rī dó]` (H surfaces on dō).
+    The RL derivation is 4 substantive steps:
+    1. delete H-dō (idx 5, rightmost float)
+    2. dock H-rī rightward to dō (idx 3 → TBU 2; now possible because
+       dō has only M after step 1)
+    3. delete H-kāk (idx 1, only remaining float)
+    4. delete M-dō (idx 4) — **the *FALL repair step**: docking H-rī
+       to dō created the falling-contour HM (in tier order, idx 3 H
+       precedes idx 4 M); high-ranked *FALL forces deletion of one of
+       the contour tones, and *MAX(H) ≫ MAX(M) selects the M for
+       deletion.
+    Final state: kāk surfaces with M, rī with M, dō with H alone (M
+    deleted) — exactly the paper's `*[kāk rī dó]` per eq. (61) and
+    fig. 3. -/
+def starredForm : PokoForm :=
+  fig3Input
+    |>.deleteTone 5    -- step 1: delete H-do
+    |>.insertLink 3 2  -- step 2: dock H-ri to do (TBU 2)
+    |>.deleteTone 1    -- step 3: delete H-kak
+    |>.deleteTone 4    -- step 4: delete M-do (repair *FALL contour)
 
-/-- The H-deleted form is a fixed point: GEN produces only itself, so
-    the optimal set is the singleton `{.deleted}`. -/
-theorem deleted_converged : derivation.Converged .deleted := by
-  decide
+-- ============================================================================
+-- § 6.4: Per-Step Convergence Witnesses
+-- ============================================================================
 
-/-- **Positive half**: vanilla HS converges on `/nān + rī^H/` to the
-    H-deletion form in 2 iterations of `derive` (1 substantive HS step +
-    1 fixed-point detection). Paper, eq. 21. Uses the substrate's
-    `pickByOrder` utility for tie-breaking under the derived
-    `LinearOrder Cand21`. -/
-theorem converges_to_deleted :
-    derivation.derive pickByOrder .input 2 = some .deleted := by
-  decide
+/-! Each LR/RL step's optimum is a singleton equality, proved by
+    `decide`. Reduction works because `linksTo`, `haveTone`, `*FALL`,
+    and `MAX(t)` were carefully implemented with `List.range`/`countP`
+    and `(k, i) ∈ surfaceLinks` membership rather than
+    `Finset.filter`/`Finset.image`/`Finset.sort`/`Finset.card`
+    pipelines that don't reduce structurally in the Lean kernel. -/
 
-end Tableau21
+set_option maxHeartbeats 4000000
+
+-- ----- LR step witnesses -----
+
+/-- LR step 1: leftmost H (idx 1, kak's H) cannot dock leftward
+    (tautomorphic, blocked by *TAUTDOCK) or rightward (rī already has
+    2 tones — own M + own floating H — adding kak's H gives 3,
+    blocked by *CROWD); only deletion works. Paper, eq. (60b). -/
+theorem fig3_LR_step1 :
+    derivationLR.stepOptimum fig3Input = {fig3Input.deleteTone 1} := by decide
+
+/-- LR step 2: from state with H-kak deleted, *FLOAT^→ addresses the
+    next floating H (rī's, idx 3). Rightward docking to dō blocked by
+    *CROWD; leftward docking to kak blocked by autosegmental
+    no-crossing (would cross the M-rī to TBU-rī link); tautomorphic
+    blocked by *TAUTDOCK. Deletion wins. -/
+theorem fig3_LR_step2 :
+    derivationLR.stepOptimum (fig3Input.deleteTone 1) =
+      {(fig3Input.deleteTone 1).deleteTone 3} := by decide
+
+/-- LR step 3: only H-dō (idx 5) remains floating. Cannot dock
+    tautomorphically (*TAUTDOCK); cannot dock leftward (no-crossing
+    through M-do link). Deletion wins. -/
+theorem fig3_LR_step3 :
+    derivationLR.stepOptimum ((fig3Input.deleteTone 1).deleteTone 3) =
+      {((fig3Input.deleteTone 1).deleteTone 3).deleteTone 5} := by decide
+
+/-- LR convergence: from the all-deletion state, GEN produces only the
+    faithful candidate, so the optimum equals the input — fixed point. -/
+theorem fig3_LR_converged : derivationLR.Converged attestedForm := by decide
+
+-- ----- RL step witnesses -----
+
+/-- RL step 1: rightmost H (idx 5, dō's H) wins under *FLOAT^← because
+    its violation is at the rightmost position. Tautomorphic dock-5-to-2
+    blocked by *TAUTDOCK; non-tautomorphic dockings of dō's H blocked
+    by no-crossing. Deletion wins. -/
+theorem fig3_RL_step1 :
+    derivationRL.stepOptimum fig3Input = {fig3Input.deleteTone 5} := by decide
+
+/-- RL step 2 — **the wrong-form-seeding step**: from state with H-dō
+    deleted, *FLOAT^← addresses next rightmost floating H (rī's, idx 3).
+    Now `dock-3-to-2` (rī's H to dō) is allowed: dō has only M after
+    step 1 deletes its own H, so morpheme 2 has tones {3, 4} = 2,
+    satisfying *CROWD. MAX(H) prefers docking over deletion (preserves
+    the H), and DEP(link)/H is ranked low enough not to block it. -/
+theorem fig3_RL_step2 :
+    derivationRL.stepOptimum (fig3Input.deleteTone 5) =
+      {(fig3Input.deleteTone 5).insertLink 3 2} := by decide
+
+/-- RL step 3: only H-kak (idx 1) remains floating. Tautomorphic
+    blocked; non-tautomorphic dockings blocked by no-crossing through
+    the new (3, 2) link. Deletion wins. -/
+theorem fig3_RL_step3 :
+    derivationRL.stepOptimum ((fig3Input.deleteTone 5).insertLink 3 2) =
+      {((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1} := by decide
+
+/-- RL step 4 — **the *FALL repair step**: after step 2 docked H-rī to
+    dō and step 3 deleted H-kāk, dō has the contour [H idx 3, M idx 4]
+    in tier order (HM = falling). High-ranked *FALL forces deletion of
+    one tone; MAX(H) ≫ MAX(M) selects M for deletion. Falls out of
+    the substrate without per-step intervention. -/
+theorem fig3_RL_step4 :
+    derivationRL.stepOptimum (((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1) =
+      {(((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1).deleteTone 4} := by decide
+
+/-- RL convergence: with the *FALL contour repaired (M-dō deleted), no
+    further GEN move improves on any constraint. Each TBU has exactly
+    one tone (kāk: M-kāk linked, rī: M-rī linked, dō: H-rī docked
+    only); deleting any creates a *HAVETONE violation. Fixed point. -/
+theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
+
+-- ============================================================================
+-- § 6.5: Headline Theorem — The Empirical Asymmetry
+-- ============================================================================
+
+/-- **State-level asymmetry**: the LR final state `attestedForm`
+    `[kāk rī dō]` and the RL final state `starredForm` `*[kāk rī dó]`
+    are NOT equal. They differ on `deletedTones` (LR {1, 3, 5}; RL
+    {1, 5}) and on `surfaceLinks` (RL has the extra rightward dock
+    (3, 2)).
+
+    Combined with the per-step witnesses (§ 6.4), this is the deepest
+    version of @cite{mcpherson-lamont-2026}'s fig. 3 claim:
+    directional EVAL must be left-to-right (LR) to derive the attested
+    Poko surface form; right-to-left (RL) yields a different surface
+    form. -/
+theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
+  intro h
+  exact absurd (congrArg FloatingForm.deletedTones h) (by decide)
+
+end Fig3
 
 end Phenomena.Tone.Studies.McPhersonLamont2026

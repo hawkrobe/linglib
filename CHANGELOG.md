@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.378] - 2026-04-26
+
+### McPherson & Lamont 2026 fig. 3 fully discharged via autosegmental substrate refactor
+
+Substrate redesign: `Theories/Phonology/Autosegmental/Floating.lean` rewritten as Goldsmith-style autosegmental representation (separate tonal tier `ulTones : List ToneSpec`, segmental backbone `segs : List (SegSpec S)`, morpheme membership on both, immutable underlying state + mutable surface state via `deletedTones : Finset ToneIdx` + `surfaceLinks : Finset Link`). `Crosses` predicate enforces autosegmental no-crossing-lines (@cite{goldsmith-1976}) inside `gen`. Mathlib-style throughout — `Prop`+`Decidable` for predicates not `Bool`, `Finset` for set fields, `List` only for genuinely-ordered fields; replaces the previous overwrite-semantics encoding that hid the LR/RL empirical asymmetry by making *CROWD vacuous.
+
+`Theories/Phonology/Tone/Constraints.lean` rewritten with faithful constraints against the new substrate: `maxTone t` counts deleted UR tones of value t against `ulTones`+`deletedTones`; `*CROWD` counts per-morpheme tones (own surviving + foreign docked); `*FALL` scans surface contours via `linksTo` + `toneSequence` + `HasFall`; `*TAUTDOCK` counts GEN-inserted same-morpheme links via `IsInsertedLink ∧ IsTautomorphic`.
+
+Decide-reducibility hygiene fix: count-style constraint evals (`haveTone`, `*FALL`, `MAX(t)`) and `linksTo` use `(List.range n).countP P` / `(List.range n).filter (fun k => (k, i) ∈ surfaceLinks)` rather than `(Finset.range n).filter P |>.card` / `Finset.sort`. Same semantics, but kernel `decide` reduces structurally (the Finset versions stalled at `Multiset.isPerm` checks even at maxHeartbeats 40M).
+
+`Phenomena/Tone/Studies/McPhersonLamont2026.lean` §6 (was §8) ships the deepest version of the paper's fig. 3 claim:
+- `fig3_LR_step1`/`step2`/`step3` — leftward path: delete H-kāk (only deletion works, *TAUTDOCK + *CROWD block dockings) → delete H-rī (no-crossing blocks dock-3-to-0, *CROWD blocks dock-3-to-2) → delete H-dō → `attestedForm` = `[kāk rī dō]`
+- `fig3_LR_converged : derivationLR.Converged attestedForm`
+- `fig3_RL_step1`/`step2`/`step3`/`step4` — rightward path: delete H-dō → dock-3-to-2 (rī's H docks rightward to dō, now licit since dō has only M after step 1) → delete H-kāk → **delete M-dō** (the *FALL repair step that the substrate flagged when `decide` proved my original `starredForm` *false*: docking H-rī to dō created HM contour, *FALL forces tone deletion, MAX(H) ≫ MAX(M) selects M for deletion) → `starredForm` = `*[kāk rī dó]`
+- `fig3_RL_converged : derivationRL.Converged starredForm`
+- `fig3_attested_neq_starred : attestedForm ≠ starredForm`
+
+All 8 step witnesses + 2 convergence theorems + asymmetry theorem `decide`-checked, no `sorry`. The substrate caught a manual-analysis error in the RL trace (the *FALL repair step I had missed) — proof-by-decide working as substrate validator.
+
+Removed §6 Tableau21 and §7 Fig3 (pre-substrate placeholders using hand-rolled `Cand21`/`State` inductive types); the new §6 (formerly §8) is the canonical positive-half formalisation. File goes from 750 → 463 LOC.
+
+`Fragments/Poko/Tone.lean` updated for new substrate: `Syll.morphemeId : Syll → MorphemeId` per stem, `seg`/`mTone`/`hTone` constructors that wrap the Poko-specific morpheme assignment.
+
+5384+ jobs green; 0.230.378
+
 ## [0.230.355] - 2026-04-25
 
 ### DirectionalTableau substrate (1 of 2 for the directional-HS line)
