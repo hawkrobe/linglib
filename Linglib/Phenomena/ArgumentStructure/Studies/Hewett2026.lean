@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.Checking
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Theories.Morphology.Core.MirrorPrinciple
+import Linglib.Phenomena.Morphology.Studies.Baker1985
 
 /-!
 # Verbal Templates Can Influence L-Selection in Semitic
@@ -33,7 +33,7 @@ head strips the second.
 Templates are realized by nonconcatenative morphology (vocalic melodies
 applied to consonantal roots). The Mirror Principle
 (@cite{baker-1985}) explicitly scopes out nonconcatenative morphology
-(see `Morphology.MirrorPrinciple.MorphDomain.inScope`).
+(see `Morphology.MirrorPrinciple.MorphDomain.InScope`).
 Template-dependent l-selection is therefore a phenomenon that falls
 outside the domain where morphological and syntactic orderings are
 required to mirror each other.
@@ -115,7 +115,7 @@ def SemiticTemplate.isPassiveLike : SemiticTemplate → Bool
 /-- Templates are nonconcatenative morphology — outside the scope of
     the Mirror Principle (@cite{baker-1985} S5). -/
 theorem templates_outside_mirror_scope :
-    MorphDomain.inScope .nonconcatenative = false := rfl
+    ¬ MorphDomain.InScope .nonconcatenative := by decide
 
 -- ============================================================================
 -- S2: Roots and Prepositions
@@ -399,7 +399,7 @@ theorem homophony_argument_krh :
     root determination, not c-selection. -/
 theorem cSelection_vs_lSelection :
     -- Arity is root-invariant (from Categorizer.lean)
-    (∀ (r : Root) (c1 c2 : Categorizer),
+    (∀ (r : RootClassification) (c1 c2 : Categorizer),
       (CategorizedRoot.mk r c1).root.arity =
       (CategorizedRoot.mk r c2).root.arity) ∧
     -- But l-selection is NOT root-invariant
@@ -935,7 +935,7 @@ theorem joint_selection :
     His root-level account of L-SELECTION is not. The two types of
     selection factor differently in the grammar. -/
 theorem selection_factors :
-    (∀ (r : Root) (c1 c2 : Categorizer),
+    (∀ (r : RootClassification) (c1 c2 : Categorizer),
       (CategorizedRoot.mk r c1).root.arity =
       (CategorizedRoot.mk r c2).root.arity) ∧
     (∃ r : RootLabel, ¬ templateInvariant r) :=
