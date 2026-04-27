@@ -135,6 +135,52 @@ theorem alt_polar_of_nontrivial {p : Set W}
       · exact (hpcp (hqr.trans hrp)).elim
       · exact Set.Subset.antisymm hqr hrpc
 
+/-! ### Polar degenerate-case identities -/
+
+/-- `declarative univ = ⊤`: the principal ideal of `univ` is the
+    whole `LowerSet`. -/
+theorem declarative_univ : (declarative (Set.univ : Set W)) = ⊤ := by
+  ext q
+  show q ⊆ Set.univ ↔ True
+  simp [Set.subset_univ]
+
+/-- `polar ∅ = ⊤`: a polar question with vacuous proposition collapses
+    to the trivial issue. -/
+theorem polar_empty : (polar (∅ : Set W)) = ⊤ := by
+  rw [polar_eq_sup, Set.compl_empty, declarative_univ, sup_top_eq]
+
+/-- `polar univ = ⊤`: dual of `polar_empty`. -/
+theorem polar_univ : (polar (Set.univ : Set W)) = ⊤ := by
+  rw [polar_eq_sup, declarative_univ, top_sup_eq]
+
+/-! ### `alt`-characterization of `polar` (full) -/
+
+/-- **Membership in a polar question's alternatives** — full
+    characterization covering both the inquisitive case (`p` non-trivial)
+    and the degenerate cases (`p = ∅` or `p = univ`, which collapse the
+    polar question to `⊤`). -/
+theorem alt_polar_iff (p : Set W) (q : Set W) :
+    q ∈ alt (polar p) ↔
+      ((p = ∅ ∨ p = Set.univ) ∧ q = Set.univ) ∨
+      (p ≠ ∅ ∧ p ≠ Set.univ ∧ (q = p ∨ q = pᶜ)) := by
+  by_cases he : p = ∅
+  · subst he
+    rw [polar_empty, alt_top]
+    simp
+  · by_cases hu : p = Set.univ
+    · subst hu
+      rw [polar_univ, alt_top]
+      simp
+    · rw [alt_polar_of_nontrivial he hu]
+      simp [he, hu]
+
+/-- Membership in `alt (polar p)` under the standard non-degenerate
+    assumption — the convenient form for empirical study files. -/
+theorem mem_alt_polar_of_nontrivial {p : Set W}
+    (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (q : Set W) :
+    q ∈ alt (polar p) ↔ q = p ∨ q = pᶜ := by
+  rw [alt_polar_of_nontrivial hne hnu]; simp
+
 /-! ### Wh-question content via Hamblin alternatives
 
 A wh-question `Which x ∈ D satisfies P x?` (Hamblin) has one alternative
@@ -173,6 +219,49 @@ theorem mem_which {E : Type v} {D : Set E} {P : E → Set W} {q : Set W} :
     refine ⟨P e, ?_, hwe⟩
     rw [show (P e ∈ (which D P).props) = (P e ∈ which D P) from rfl, mem_which]
     exact Or.inr ⟨e, heD, Set.Subset.refl _⟩
+
+/-! ### `alt`-characterization of `which` -/
+
+/-- A `Q`-alternative of `which D P` is necessarily either the empty
+    set (in the degenerate "no inhabited witness" case) or some
+    maximal `P e` for `e ∈ D` — i.e., a `P e` not properly contained
+    in any other `P e'`. -/
+theorem alt_which_iff_left {E : Type v} {D : Set E} {P : E → Set W} {q : Set W} :
+    q ∈ alt (which D P) →
+      (q = ∅ ∨
+       ∃ e ∈ D, q = P e ∧ ∀ e' ∈ D, P e ⊆ P e' → P e' = P e) := by
+  rintro ⟨hq, hmax⟩
+  -- q ∈ which D P, so q = ∅ or q ⊆ P e for some e ∈ D.
+  rcases mem_which.mp hq with hempty | ⟨e, heD, hqe⟩
+  · exact Or.inl hempty
+  · -- q ⊆ P e. Maximality: P e ∈ which D P, so q = P e.
+    have hPe_mem : P e ∈ which D P := mem_which.mpr (Or.inr ⟨e, heD, Set.Subset.refl _⟩)
+    have hqPe : q = P e := hmax (P e) hPe_mem hqe
+    refine Or.inr ⟨e, heD, hqPe, ?_⟩
+    intro e' he'D hsub
+    have hPe'_mem : P e' ∈ which D P :=
+      mem_which.mpr (Or.inr ⟨e', he'D, Set.Subset.refl _⟩)
+    -- From q = P e and q ⊆ P e' (by hsub), maximality of q gives q = P e'.
+    have : q = P e' := hmax (P e') hPe'_mem (hqPe ▸ hsub)
+    rw [← hqPe, ← this]
+
+/-- The convenient direction: a maximal `P e` (in the antichain sense
+    over `D`) that is nonempty is in `alt (which D P)`. -/
+theorem mem_alt_which_of_maximal {E : Type v} {D : Set E} {P : E → Set W}
+    (e : E) (heD : e ∈ D) (hne : (P e).Nonempty)
+    (hmax : ∀ e' ∈ D, P e ⊆ P e' → P e' = P e) :
+    P e ∈ alt (which D P) := by
+  refine ⟨mem_which.mpr (Or.inr ⟨e, heD, Set.Subset.refl _⟩), ?_⟩
+  intro r hr hPer
+  rcases mem_which.mp hr with hrempty | ⟨e', he'D, hre'⟩
+  · -- r = ∅, but P e ⊆ r = ∅ contradicts hne.
+    obtain ⟨w, hw⟩ := hne
+    exact absurd (hPer hw) (hrempty ▸ Set.notMem_empty w)
+  · -- r ⊆ P e'. So P e ⊆ r ⊆ P e'. By maximality of P e among D, P e' = P e.
+    have hPePe' : P e ⊆ P e' := hPer.trans hre'
+    have : P e' = P e := hmax e' he'D hPePe'
+    -- Now r ⊆ P e' = P e ⊆ r, so r = P e.
+    exact Set.Subset.antisymm hPer (this ▸ hre')
 
 /-! ### Hamblin construction from a finite alternative list
 

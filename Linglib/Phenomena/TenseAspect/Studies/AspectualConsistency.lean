@@ -1,9 +1,10 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.SpatialTrace
+import Linglib.Theories.Semantics.Events.CumulativityPropagation
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
-import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
-import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
+import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
+import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
 
 /-!
@@ -32,7 +33,7 @@ namespace AspectualConsistency
 
 open Core.Verbs
 open Fragments.English.Predicates.Verbal
-open Semantics.Events.Krifka1998 (VerbIncClass)
+open Semantics.Events.Incrementality (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
@@ -503,5 +504,93 @@ def daVendlerConsistent (v : VerbEntry) : Bool :=
     the derived value. -/
 theorem all_verbs_da_vendler_consistent :
     allVerbs.all daVendlerConsistent = true := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 7. K89 Table 14 ↔ K98 VerbIncClass ↔ Fragment
+-- ════════════════════════════════════════════════════
+
+/-! K89's table-14 thematic classes (gradualEffectedPatient /
+    gradualConsumedPatient / gradualPatient / affectedPatient /
+    stimulus) refine to K98's `VerbIncClass` (sinc / inc / cumOnly)
+    via `Krifka1989.K89ThematicClass.toVerbIncClass`. The fragment
+    annotations in `Verbal.lean` should be consistent with both: e.g.,
+    `eat`'s K98 verbIncClass = sinc must match K89's eat-an-apple class
+    (gradualConsumedPatient → toVerbIncClass = sinc). This section
+    makes the three-layer K89 ↔ K98 ↔ Fragment chain explicit. -/
+
+/-- *eat an apple* (K89 §4 gradual-consumed-patient) refines to K98 sinc,
+    which matches `eat`'s fragment annotation. -/
+theorem k89_eat_refines_k98_matches_fragment :
+    Krifka1989.eatAnApple.thematicClass.toVerbIncClass = .sinc ∧
+    eat.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl⟩
+
+/-- *write a letter* (K89 §4 gradual-effected-patient) refines to K98 sinc,
+    which matches `write`'s fragment annotation. -/
+theorem k89_write_refines_k98_matches_fragment :
+    Krifka1989.writeALetter.thematicClass.toVerbIncClass = .sinc ∧
+    write.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl⟩
+
+/-- *read a letter* (K89 §4 gradual-patient, lacks UNI-E) refines to
+    K98 inc, which matches `read`'s fragment annotation (allows
+    re-reading). -/
+theorem k89_read_refines_k98_matches_fragment :
+    Krifka1989.readALetter.thematicClass.toVerbIncClass = .inc ∧
+    read.toVerbCore.verbIncClass = some .inc := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 8. Propositional Propagation Tests (Typeclass Form)
+-- ════════════════════════════════════════════════════
+
+/-! Sections 1–7 verify the Bool-tag pipeline (VendlerClass → Telicity
+    → MereoTag → Boundedness → for/in licensing). This section
+    verifies the **propositional** propagation chain at the typeclass
+    level: given `[IsSincVerb θ]` (which bundles SINC + UP + CumTheta;
+    declared in `Theories/Semantics/Events/StrictIncrementality.lean`),
+    QUA and CUM propagate through the verb's incremental theme to the
+    VP via substrate's typeclass-form `qua_propagation` and
+    `cum_propagation` (`Theories/Semantics/Events/CumulativityPropagation.lean`).
+
+    These are propositional cousins of §3's full-pipeline tests — same
+    K89 → K98 chain, but at the substrate level rather than the
+    Bool-tag level. They fire on any `[IsSincVerb θ]` instance; the
+    concrete `eatThemeToy` instance in
+    `Phenomena/TenseAspect/Studies/Krifka1998.lean` §9 proves the
+    typeclass admits real witnesses. -/
+
+section PropositionalConsistency
+
+open Semantics.Events.ThematicRoleProperties (UP CumTheta IsCumThetaVerb)
+open Semantics.Events.Incrementality (SINC IsSincVerb)
+open Semantics.Events.CumulativityPropagation
+  (VP cum_propagation qua_propagation)
+open Mereology (CUM QUA)
+
+variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+
+/-- For any sinc verb θ and any QUA object, the VP is QUA (telic).
+    Verifies the K89 → K98 propositional chain at the typeclass level:
+    given `[IsSincVerb θ]` (bundling SINC + UP + CumTheta), QUA
+    propagates through the verb's incremental theme to the VP. Direct
+    invocation of substrate's typeclass-form `qua_propagation`. -/
+theorem sinc_verb_qua_object_yields_qua_vp
+    (θ : α → β → Prop) [IsSincVerb θ]
+    {OBJ : α → Prop} (hQua : QUA OBJ) :
+    QUA (VP θ OBJ) :=
+  qua_propagation hQua
+
+/-- For any verb θ with CumTheta — including cumOnly classes
+    (*push*, *carry*) and the strictly stronger SINC/INC classes
+    (which auto-derive `[IsCumThetaVerb θ]` via the upward instances
+    in `StrictIncrementality.lean` / `GeneralIncrementality.lean`) —
+    a CUM object yields a CUM VP. K98 §3.3 cum-propagation at maximal
+    typeclass generality; subsumes the SINC-only case. Direct
+    invocation of substrate's typeclass-form `cum_propagation`. -/
+theorem cum_theta_verb_cum_object_yields_cum_vp
+    (θ : α → β → Prop) [IsCumThetaVerb θ]
+    {OBJ : α → Prop} (hCum : CUM OBJ) :
+    CUM (VP θ OBJ) :=
+  cum_propagation hCum
+
+end PropositionalConsistency
 
 end AspectualConsistency

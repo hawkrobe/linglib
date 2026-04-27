@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
-import Linglib.Core.Question.Answerhood
+import Linglib.Core.Question.Relevance
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
@@ -83,25 +83,19 @@ inductive W where
 -- §2  Propositions
 -- ═══════════════════════════════════════════════════════════════════════
 
-def wentBerlin : W → Bool
-  | .jBerlin | .jBoth => true | _ => false
+def wentBerlin : Set W := {.jBerlin, .jBoth}
 
-def wentParis : W → Bool
-  | .jParis | .jBoth => true | _ => false
+def wentParis : Set W := {.jParis, .jBoth}
 
-def hadBeer : W → Bool
-  | .jBeer | .jBeerMartini => true | _ => false
+def hadBeer : Set W := {.jBeer, .jBeerMartini}
 
-def hadMartini : W → Bool
-  | .jMartini | .jBeerMartini => true | _ => false
+def hadMartini : Set W := {.jMartini, .jBeerMartini}
 
 /-- "had a drink" — subsumes both beer and martini. -/
-def hadDrink : W → Bool
-  | .jBeer | .jMartini | .jBeerMartini => true | _ => false
+def hadDrink : Set W := {.jBeer, .jMartini, .jBeerMartini}
 
 /-- "went somewhere" — common integrator for Berlin/Paris. -/
-def wentSomewhere : W → Bool
-  | .jBerlin | .jParis | .jBoth => true | _ => false
+def wentSomewhere : Set W := {.jBerlin, .jParis, .jBoth}
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3  Alternative Set Well-Formedness (@cite{umbach-2004} §2.2)
@@ -120,9 +114,13 @@ This explains coordination acceptability judgments. -/
     (witness: `W.jBeer`), and vice versa (witness: `W.jMartini`). -/
 theorem beer_martini_independent :
     semanticallyIndependent hadBeer hadMartini := by
-  constructor
-  · intro h; exact absurd (h .jBeer rfl) (by decide)
-  · intro h; exact absurd (h .jMartini rfl) (by decide)
+  refine ⟨?_, ?_⟩
+  · intro h
+    have : W.jBeer ∈ hadMartini := h (Or.inl rfl)
+    simp [hadMartini] at this
+  · intro h
+    have : W.jMartini ∈ hadBeer := h (Or.inl rfl)
+    simp [hadBeer] at this
 
 /-- "drink" is a common integrator for {beer, martini}: every world
     where beer or martini is true is also a world where drink is true. -/
@@ -130,7 +128,7 @@ theorem drink_integrates_beer_martini :
     commonIntegrator [hadBeer, hadMartini] hadDrink := by
   intro a ha w hw
   simp [List.mem_cons] at ha
-  rcases ha with rfl | rfl <;> cases w <;> simp_all [hadBeer, hadMartini, hadDrink]
+  rcases ha with rfl | rfl <;> · simp [hadBeer, hadMartini, hadDrink] at hw ⊢; tauto
 
 /-- {beer, martini} is a well-formed alternative set under "drink". -/
 theorem beer_martini_wellformed :
@@ -148,13 +146,14 @@ theorem beer_martini_wellformed :
 -- §3b  Ill-formed: {drink, martini} — subsumption violates independence
 -- ─────────────────────────────────────────────────────────────────────
 
-/-- "drink" subsumes "martini": hadMartini w → hadDrink w.
+/-- "drink" subsumes "martini": hadMartini ⊆ hadDrink.
     This violates semantic independence, explaining why
     *#John had a drink and Mary had a martini* is odd
     (@cite{umbach-2004} §2.2, ex. 9a). -/
-theorem drink_subsumes_martini :
-    ∀ w : W, hadMartini w = true → hadDrink w = true := by
-  intro w; cases w <;> simp [hadMartini, hadDrink]
+theorem drink_subsumes_martini : hadMartini ⊆ hadDrink := by
+  intro w hw
+  simp [hadMartini] at hw
+  rcases hw with rfl | rfl <;> simp [hadDrink]
 
 theorem drink_martini_not_independent :
     ¬ semanticallyIndependent hadDrink hadMartini := by
@@ -162,11 +161,13 @@ theorem drink_martini_not_independent :
 
 /-- {drink, martini} is NOT a well-formed alternative set
     (under any integrator). -/
-theorem drink_martini_not_wellformed (integ : W → Bool) :
+theorem drink_martini_not_wellformed (integ : Set W) :
     ¬ wellFormedAlts [hadDrink, hadMartini] integ := by
   intro ⟨_, hInd⟩
   have hne : hadDrink ≠ hadMartini := by
-    intro h; exact absurd (congrFun h .jBeer) (by decide)
+    intro h
+    have : W.jBeer ∈ hadMartini := h ▸ (show W.jBeer ∈ hadDrink by simp [hadDrink])
+    simp [hadMartini] at this
   have h1 : hadDrink ∈ [hadDrink, hadMartini] := by simp
   have h2 : hadMartini ∈ [hadDrink, hadMartini] := by simp
   exact drink_martini_not_independent (hInd hadDrink h1 hadMartini h2 hne)
@@ -177,16 +178,19 @@ theorem drink_martini_not_wellformed (integ : W → Bool) :
 
 theorem berlin_paris_independent :
     semanticallyIndependent wentBerlin wentParis := by
-  constructor
-  · intro h; exact absurd (h .jBerlin rfl) (by decide)
-  · intro h; exact absurd (h .jParis rfl) (by decide)
+  refine ⟨?_, ?_⟩
+  · intro h
+    have : W.jBerlin ∈ wentParis := h (Or.inl rfl)
+    simp [wentParis] at this
+  · intro h
+    have : W.jParis ∈ wentBerlin := h (Or.inl rfl)
+    simp [wentBerlin] at this
 
 theorem somewhere_integrates :
     commonIntegrator [wentBerlin, wentParis] wentSomewhere := by
   intro a ha w hw
   simp [List.mem_cons] at ha
-  rcases ha with rfl | rfl <;>
-    cases w <;> simp_all [wentBerlin, wentParis, wentSomewhere]
+  rcases ha with rfl | rfl <;> · simp [wentBerlin, wentParis, wentSomewhere] at hw ⊢; tauto
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3d  Connection to @cite{rooth-1992} Focus Interpretation Principle
@@ -209,14 +213,14 @@ integrator (similarity). This is strictly more constraining than FIP alone. -/
     (Γ ⊆ ⟦α⟧f), and the alternatives are well-formed in Umbach's sense,
     then FIP is satisfied. Umbach's conditions refine, not replace, Rooth. -/
 theorem wellformed_implies_fip_compatible {W : Type}
-    (alts : List (W → Bool)) (integ : W → Bool)
+    (alts : List (Set W)) (integ : Set W)
     (focusValue : Semantics.FocusInterpretation.PropFocusValue W)
     (_hwf : wellFormedAlts alts integ)
-    (gamma : (W → Bool) → Bool)
-    (hgamma : ∀ a ∈ alts, gamma a)
+    (gamma : Set (Set W))
+    (hgamma : ∀ a ∈ alts, a ∈ gamma)
     (hfip : Semantics.FocusInterpretation.fip gamma focusValue) :
-    ∀ a ∈ alts, focusValue a :=
-  fun a ha => hfip a (hgamma a ha)
+    ∀ a ∈ alts, a ∈ focusValue :=
+  fun a ha => hfip (hgamma a ha)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §4  Exclusion Varieties (@cite{umbach-2004} §2.3)
@@ -274,11 +278,11 @@ requires one conjunct to confirm and one to deny. -/
 /-- The confirm+deny condition on a *but*-sentence.
     Given two sub-questions q₁, q₂ (derived from focus in the conjuncts),
     the first conjunct confirms q₁ and the second denies q₂. -/
-def confirmDeny {W : Type} (q₁ q₂ : W → Bool) (c₁ c₂ : W → Bool) : Prop :=
+def confirmDeny {W : Type} (q₁ q₂ c₁ c₂ : Set W) : Prop :=
   -- c₁ confirms q₁: c₁ entails q₁
-  (∀ w : W, c₁ w = true → q₁ w = true) ∧
+  c₁ ⊆ q₁ ∧
   -- c₂ denies q₂: c₂ entails ¬q₂
-  (∀ w : W, c₂ w = true → q₂ w = false)
+  c₂ ⊆ q₂ᶜ
 
 /-- A 4-world model for the confirm+deny examples. -/
 inductive CDWorld where
@@ -288,31 +292,33 @@ inductive CDWorld where
   | neither      -- John did neither
   deriving DecidableEq, Repr
 
-def cleanedRoom : CDWorld → Bool
-  | .roomOnly | .both => true | _ => false
+def cleanedRoom : Set CDWorld := {.roomOnly, .both}
 
-def washedDishes : CDWorld → Bool
-  | .dishesOnly | .both => true | _ => false
+def washedDishes : Set CDWorld := {.dishesOnly, .both}
 
-def didntWashDishes : CDWorld → Bool
-  | .roomOnly | .neither => true | _ => false
+def didntWashDishes : Set CDWorld := {.roomOnly, .neither}
 
 /-- "John cleaned up his room, but he didn't wash the dishes"
     (§3.1, ex. 17e) satisfies confirm+deny: the first conjunct
     confirms the room question, the second denies the dishes question. -/
 theorem ex17e_confirm_deny :
     confirmDeny cleanedRoom washedDishes cleanedRoom didntWashDishes := by
-  constructor
-  · intro w; exact id
-  · intro w; cases w <;> simp [didntWashDishes, washedDishes]
+  refine ⟨subset_rfl, ?_⟩
+  intro w hw
+  simp [didntWashDishes] at hw
+  rcases hw with rfl | rfl <;> simp [washedDishes]
 
 /-- Semantic independence of the sub-questions: cleaning the room
     does not entail washing the dishes, and vice versa. -/
 theorem room_dishes_independent :
     semanticallyIndependent cleanedRoom washedDishes := by
-  constructor
-  · intro h; exact absurd (h .roomOnly rfl) (by decide)
-  · intro h; exact absurd (h .dishesOnly rfl) (by decide)
+  refine ⟨?_, ?_⟩
+  · intro h
+    have : CDWorld.roomOnly ∈ washedDishes := h (Or.inl rfl)
+    simp [washedDishes] at this
+  · intro h
+    have : CDWorld.dishesOnly ∈ cleanedRoom := h (Or.inl rfl)
+    simp [cleanedRoom] at this
 
 -- ─────────────────────────────────────────────────────────────────────
 -- §5b  QUD formulation of confirm+deny
@@ -329,7 +335,7 @@ the implicit conjunctive question is the partition by joint
     The four cells of this partition are the four combinations of yes/no
     answers to the conjunctive question. -/
 def roomDishesEquiv : Setoid CDWorld :=
-  Setoid.ker (fun w => (cleanedRoom w, washedDishes w))
+  Setoid.ker (fun w => (w ∈ cleanedRoom, w ∈ washedDishes))
 
 /-- The implicit conjunctive question behind a *but*-sentence:
     "Did John clean his room? And did he wash the dishes?"
@@ -342,8 +348,14 @@ def roomDishesQUD : Core.Question CDWorld :=
 theorem roomDishes_inquisitive : roomDishesQUD.isInquisitive :=
   Core.Question.isInquisitive_fromSetoid_of_two_classes roomDishesEquiv
     .roomOnly .dishesOnly (fun h => by
-      have : (true, false) = (false, true) := h
-      exact absurd this (by decide))
+      -- h : (roomOnly ∈ cleanedRoom, roomOnly ∈ washedDishes)
+      --   = (dishesOnly ∈ cleanedRoom, dishesOnly ∈ washedDishes)
+      have hpair := Prod.mk.injEq .. |>.mp h
+      have hclean : (CDWorld.roomOnly ∈ cleanedRoom)
+                  = (CDWorld.dishesOnly ∈ cleanedRoom) := hpair.1
+      have hLHS : CDWorld.roomOnly ∈ cleanedRoom := Or.inl rfl
+      have hRHS : CDWorld.dishesOnly ∉ cleanedRoom := by simp [cleanedRoom]
+      exact hRHS (hclean ▸ hLHS))
 
 /-- The "room yes, dishes no" cell — the equivalence class of `.roomOnly`
     under `roomDishesEquiv`. -/
@@ -353,7 +365,7 @@ def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
     the confirm+deny pattern corresponds to one cell of the implicit
     conjunctive question. -/
 theorem confirm_deny_is_partial_answer :
-    Core.Question.isPartialAnswer roomDishesQUD roomYesDishesNo :=
+    Core.Question.partiallyAnswers roomDishesQUD roomYesDishesNo :=
   ⟨roomYesDishesNo,
    Core.Question.class_mem_alt_fromSetoid roomDishesEquiv
      (Setoid.mem_classes roomDishesEquiv .roomOnly),
@@ -378,7 +390,7 @@ is presented as a simple confirmation. -/
 /-- Single contrast: confirm+deny — one conjunct confirms, one denies.
     "John cleaned his room, but he didn't wash the dishes."
     Lexicalized by English "but", German *aber*. -/
-abbrev singleContrast {W : Type} (q₁ q₂ c₁ c₂ : W → Bool) : Prop :=
+abbrev singleContrast {W : Type} (q₁ q₂ c₁ c₂ : Set W) : Prop :=
   confirmDeny q₁ q₂ c₁ c₂
 
 /-- Contrast multiplicity: single vs double.
@@ -416,25 +428,28 @@ German lexicalizes: *aber* (contrast) vs *sondern* (correction). -/
 /-- CONTRAST responds to a conjunctive implicit question:
     "Did X do A, and did X also do B?" Answer: "yes A, but no B."
     Both alternatives could in principle be true. -/
-def contrastImplicitQ {W : Type} (q₁ q₂ : W → Bool) : W → Bool :=
-  fun w => q₁ w && q₂ w
+def contrastImplicitQ {W : Type} (q₁ q₂ : Set W) : Set W :=
+  q₁ ∩ q₂
 
 /-- CORRECTION responds to a simple question about the denied item:
     "Did X do A?" Answer: "No A, but B instead."
     The alternatives are mutually exclusive. -/
-def correctionImplicitQ {W : Type} (q₁ : W → Bool) : W → Bool :=
+def correctionImplicitQ {W : Type} (q₁ : Set W) : Set W :=
   q₁
 
 /-- In the contrastive case (ex. 24a), the counterfactual allows
     both alternatives to be true. -/
 theorem contrast_allows_both :
-    contrastImplicitQ wentBerlin wentParis .jBoth = true := rfl
+    W.jBoth ∈ contrastImplicitQ wentBerlin wentParis := by
+  refine ⟨?_, ?_⟩ <;> simp [wentBerlin, wentParis]
 
 /-- In the corrective case (ex. 25a), the assertion is that Berlin
     is false and Paris holds *instead*. -/
 theorem correction_excludes_first :
-    wentBerlin .jParis = false ∧ wentParis .jParis = true :=
-  ⟨rfl, rfl⟩
+    W.jParis ∉ wentBerlin ∧ W.jParis ∈ wentParis := by
+  refine ⟨?_, ?_⟩
+  · simp [wentBerlin]
+  · simp [wentParis]
 
 /-- The polarity-switch bridge: contrast and correction map to
     their corresponding coherence relations. -/

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Degree.DegreeAbstraction
+import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Comparison.Delineation
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Degree.Comparative
@@ -41,7 +41,7 @@ namespace Phenomena.Comparison.Compare
     `comparativeSem` at positive direction. -/
 theorem heim_agrees {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) :
-    Semantics.Degree.DegreeAbstraction.heimComparativeWithMeasure μ a b ↔
+    Semantics.Degree.Abstraction.heimComparativeWithMeasure μ a b ↔
     Semantics.Degree.Comparative.comparativeSem μ a b .positive := by
   exact Iff.rfl
 
@@ -67,7 +67,7 @@ theorem schwarzschild_agrees {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
 theorem heim_extensional_scope_free {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     Semantics.Degree.Comparative.comparativeSem μ a b .positive =
-    Semantics.Degree.DegreeAbstraction.heimComparativeWithMeasure μ a b :=
+    Semantics.Degree.Abstraction.heimComparativeWithMeasure μ a b :=
   rfl
 
 -- ════════════════════════════════════════════════════

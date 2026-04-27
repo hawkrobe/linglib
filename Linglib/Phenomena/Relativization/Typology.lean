@@ -5,7 +5,7 @@ import Linglib.Datasets.WALS.Features.F123A
 import Linglib.Fragments.English.Typology
 import Linglib.Fragments.German.Typology
 import Linglib.Fragments.French.Typology
-import Linglib.Fragments.Russian.Typology
+import Linglib.Fragments.Slavic.Russian.Typology
 import Linglib.Fragments.Arabic.Typology
 import Linglib.Fragments.Hebrew.Typology
 import Linglib.Fragments.Japanese.Typology
@@ -118,7 +118,7 @@ def allLanguages : List Core.Typology.LanguageProfile :=
   [ Fragments.English.typology
   , Fragments.German.typology
   , Fragments.French.typology
-  , Fragments.Russian.typology
+  , Fragments.Slavic.Russian.typology
   , Fragments.Arabic.typology
   , Fragments.Hebrew.typology
   , Fragments.Japanese.typology
@@ -155,7 +155,7 @@ private def relOf (p : Core.Typology.LanguageProfile) : RelativizationProfile :=
 abbrev english   := relOf Fragments.English.typology
 abbrev german    := relOf Fragments.German.typology
 abbrev french    := relOf Fragments.French.typology
-abbrev russian   := relOf Fragments.Russian.typology
+abbrev russian   := relOf Fragments.Slavic.Russian.typology
 abbrev arabic    := relOf Fragments.Arabic.typology
 abbrev hebrew    := relOf Fragments.Hebrew.typology
 abbrev japanese  := relOf Fragments.Japanese.typology
@@ -219,7 +219,7 @@ list below.
 
 Languages excluded from grounding:
 
-* **English, Arabic, Yoruba** (subject) — Fragment uses `.mixed`, which
+* **English, Arabic** (subject) — Fragment uses `.mixed`, which
   WALS has no category for.
 * **English, Hindi-Urdu, Bambara, Swahili** (oblique) — Fragment and
   WALS disagree on the strategy, recorded in the per-language `notes`.
@@ -232,7 +232,7 @@ Languages excluded from grounding:
 def groundedSubjLanguages : List Core.Typology.LanguageProfile :=
   [ Fragments.German.typology
   , Fragments.French.typology
-  , Fragments.Russian.typology
+  , Fragments.Slavic.Russian.typology
   , Fragments.Hebrew.typology
   , Fragments.Japanese.typology
   , Fragments.Korean.typology
@@ -241,13 +241,14 @@ def groundedSubjLanguages : List Core.Typology.LanguageProfile :=
   , Fragments.Bambara.typology
   , Fragments.Swahili.typology
   , Fragments.Tagalog.typology
-  , Fragments.Finnish.typology ]
+  , Fragments.Finnish.typology
+  , Fragments.Yoruba.typology ]
 
 /-- Languages whose Fragment oblique strategy can be grounded against WALS Ch 123. -/
 def groundedOblLanguages : List Core.Typology.LanguageProfile :=
   [ Fragments.German.typology
   , Fragments.French.typology
-  , Fragments.Russian.typology
+  , Fragments.Slavic.Russian.typology
   , Fragments.Hebrew.typology
   , Fragments.Japanese.typology
   , Fragments.Korean.typology

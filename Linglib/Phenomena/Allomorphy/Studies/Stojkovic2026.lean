@@ -176,28 +176,28 @@ def fissionCandidates : List VBLZCandidate := [.ov, .ev, .uv, .iv]
 
 /-- NOHIATUS: assign * for adjacent vowels. -/
 def noHiatus : NamedConstraint VBLZCandidate :=
-  mkMark "NOHIATUS" fun | .uHiatus => true | _ => false
+  mkMark "NOHIATUS" fun c => c = .uHiatus
 
 /-- SPECIFY(•→[F]): assign * for unspecified base node.
     Only violated by the fully faithful candidate (not in our candidate set),
     so this constraint is vacuously satisfied. Included for completeness. -/
 def specify : NamedConstraint VBLZCandidate :=
-  mkMark "SPECIFY" fun _ => false
+  mkMark "SPECIFY" fun _ => False
 
 /-- *SHARE[−back]: don't copy [−back] from an adjacent palatal.
     Violated by [ev] (shares [−back] for [e]) and [iv] (shares [−back] for [i]). -/
 def noShareBack : NamedConstraint VBLZCandidate :=
-  mkMark "*SHARE[−back]" fun | .ev | .iv => true | _ => false
+  mkMark "*SHARE[−back]" fun c => c = .ev ∨ c = .iv
 
 /-- DEP[+back]: don't epenthesise [+back] on the unspecified slot.
     Violated by [ov] and [uv] (both epenthesise [+back] to get a back vowel). -/
 def depBack : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[+back]" fun | .ov | .uv => true | _ => false
+  mkDep "DEP[+back]" fun c => c = .ov ∨ c = .uv
 
 /-- DEP[−high]: don't epenthesise [−high] on the unspecified slot.
     Violated by [ov] and [ev] (both epenthesise [−high] to get a mid vowel). -/
 def depLowHigh : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[−high]" fun | .ov | .ev => true | _ => false
+  mkDep "DEP[−high]" fun c => c = .ov ∨ c = .ev
 
 /-- DEP[+high]: don't epenthesise [+high] on the unspecified slot.
     Violated by [uv] and [iv] (both epenthesise [+high] to get a high vowel).
@@ -209,7 +209,7 @@ def depLowHigh : NamedConstraint VBLZCandidate :=
     [−high] is cross-linguistically more likely to be unmarked compared
     to [+high]." -/
 def depHigh : NamedConstraint VBLZCandidate :=
-  mkDep "DEP[+high]" fun | .uv | .iv => true | _ => false
+  mkDep "DEP[+high]" fun c => c = .uv ∨ c = .iv
 
 /-- The four variable constraints (excluding the undominated NOHIATUS
     and vacuous SPECIFY). These are permuted in the factorial typology. -/

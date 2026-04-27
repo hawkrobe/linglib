@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 import Linglib.Core.Discourse.Accessibility
 import Linglib.Fragments.English.Pronouns
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026

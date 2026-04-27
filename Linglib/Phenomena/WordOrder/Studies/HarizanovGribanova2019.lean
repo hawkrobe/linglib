@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
-import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
+import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Bulgarian
+import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
+import Linglib.Theories.Syntax.Minimalism.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Fragments.German.V2
 

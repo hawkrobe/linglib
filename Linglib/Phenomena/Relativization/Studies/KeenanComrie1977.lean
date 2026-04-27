@@ -7,6 +7,7 @@ import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Malagasy.Relativization
+import Linglib.Fragments.Yoruba.Relativization
 
 /-!
 # Keenan & Comrie (1977) @cite{keenan-comrie-1977}
@@ -16,6 +17,15 @@ Noun Phrase Accessibility and Universal Grammar. Linguistic Inquiry 8(1): 63–9
 Formalizes the three **Hierarchy Constraints** (HCs) and the derived
 **Primary Relativization Constraint** (PRC) from @cite{keenan-comrie-1977},
 verified against a subset of the paper's Table 1 data.
+
+The per-language `KCProfile` entries below derive their data from
+`Fragments/{Lang}/Relativization.lean`, which encode the markers documented
+in @cite{keenan-comrie-1979} (the per-language exemplification appendix
+originally intended for publication with K&C 1977 — Language 55(2): 333–351).
+K&C 1977 Table 1 (pp. 76–79) codes ~50 languages with ±case/RC-position
+labels and per-AH-position ±coverage; K&C 1979 provides sentence-level
+examples for each Table 1 row. Inline @cite{keenan-comrie-1979} citations
+live in the Fragment files where the descriptive markers are encoded.
 
 ## Hierarchy Constraints
 
@@ -52,7 +62,8 @@ pronouns, verbal suffixes) is converted to `StrategyEntry` records.
 This ensures the study file stays consistent with the fragment layer
 by construction. We cover the key patterns: gap-to-resumptive split
 (Welsh, Hebrew, Arabic, Toba Batak), multi-strategy with prenominal
-RCs (Korean, Finnish), and single-strategy (Malagasy).
+RCs (Korean, Finnish), single-strategy (Malagasy), and per-position
+strategy split with serial-verb-mediated obliques (Yoruba).
 -/
 
 namespace Phenomena.Relativization.Studies.KeenanComrie1977
@@ -173,6 +184,8 @@ def mkProfile (name : String) (markers : List RelClauseMarker)
 -- which encode actual linguistic markers (particles, pronouns, suffixes).
 -- The conversion `RelClauseMarker.toStrategyEntry` maps each marker to
 -- its Table 1 representation. Languages discussed in §1.3 are noted.
+-- The Fragment files cite @cite{keenan-comrie-1979} inline where its
+-- exemplifications back the descriptive marker data.
 
 /-- English: two strategies derived from `Fragments.English.relMarkers`.
     -case: complementizer *that*/∅, gap, covers SU/DO.
@@ -236,9 +249,31 @@ def malagasy : KCProfile :=
     ("Only pivot (subject) relativizable; voice alternation " ++
      "for non-SU; Austronesian extraction restriction")
 
-/-- All Table 1 profiles in our sample. -/
-def allProfiles : List KCProfile :=
+/-- Yoruba (Kwa, Nigeria): four Fragment markers derived from
+    `Fragments.Yoruba.relMarkers`. K&C 1977 Table 1 p. 79 codes Yoruba as
+    two strategies (postnom -case for SU+DO; postnom +case for GEN);
+    IO/OBL/OComp coded as `*` per K&C's serial-verb-recasting analysis.
+    Our Fragment encodes per-position (4 markers), more granular than K&C's
+    ±case-grouped Table 1; the underlying typological information is the same.
+    SU is -case (consistent with K&C's verb-agreement analysis of `ó`). -/
+def yoruba : KCProfile :=
+  mkProfile "Yoruba" Fragments.Yoruba.relMarkers
+    ("-case gap for DO (Awobuluyi §6.20) and IO/OBL (§6.21–22; K&C 1979 " ++
+     "serial-verb recasting); -case resumptive for SU (ó, §6.19; K&C 1979 " ++
+     "analyzes ó as agreement); +case resumptive for GEN (rẹ̀/wọn, §6.23). " ++
+     "K&C 1977 Table 1 p. 79.")
+
+/-- The original 8-language sub-sample, prior to Yoruba registration. Theorems
+    referencing this list document empirical generalizations that held for
+    the pre-Yoruba sample but may not generalize. Yoruba was added subsequently
+    based on @cite{awobuluyi-1978} + @cite{keenan-comrie-1979}, and refutes
+    two such generalizations (see `yoruba_refutes_*` theorems below). -/
+def originalSample : List KCProfile :=
   [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy]
+
+/-- All Table 1 profiles in our sample (originalSample + Yoruba). -/
+def allProfiles : List KCProfile :=
+  originalSample ++ [yoruba]
 
 -- ============================================================================
 -- § 4: Hierarchy Constraint Verification
@@ -290,12 +325,26 @@ theorem every_language_has_primary :
 -- § 6: Cross-Linguistic Patterns
 -- ============================================================================
 
-/-- In our sample, every -case strategy covers subjects. The -case
-    (gap/deletion) strategy is always primary when present. -/
-theorem minus_case_covers_subjects :
-    allProfiles.all (λ p =>
+/-- In the original 8-language sub-sample (pre-Yoruba), every -case strategy
+    covers subjects. The -case (gap/deletion) strategy is always primary
+    when present in those languages. **REFUTED by Yoruba** — see
+    `yoruba_refutes_minus_case_covers_subjects` below: Yoruba has gap
+    strategies for DO and OBL that do not cover SU, because subject
+    relativization independently uses pronoun retention (`ó`). -/
+theorem minus_case_covers_subjects_in_original_sample :
+    originalSample.all (λ p =>
       p.strategies.all (λ s =>
         if !s.plusCase then s.su else true)) = true := by
+  decide
+
+/-- @cite{keenan-comrie-1979} effectively documents Yoruba as a refutation
+    of the gap-implies-subject correlation. Yoruba's IO/OBL relativization
+    is mediated by serial-verb DO recasting (K&C 1979 p. 349), producing
+    -case strategies that do not cover SU. SU relativization independently
+    uses pronoun retention (`ó`, K&C 1979 p. 350 analyzes as verb agreement;
+    descriptive surface form per @cite{awobuluyi-1978} §6.19). -/
+theorem yoruba_refutes_minus_case_covers_subjects :
+    yoruba.strategies.any (λ s => !s.plusCase && !s.su) = true := by
   decide
 
 /-- Multi-strategy languages: most languages in our sample use more
@@ -306,18 +355,22 @@ theorem most_have_multiple_strategies :
 
 /-- +case strategies that are non-primary (don't cover SU) never cover
     SU in our sample. This reflects the typological generalization that
-    pronoun retention is used for lower, not higher, AH positions. -/
+    pronoun retention is used for lower, not higher, AH positions.
+    Holds across all 9 languages including Yoruba. -/
 theorem plus_case_secondary_excludes_su :
     allProfiles.all (λ p =>
       p.strategies.all (λ s =>
         if s.plusCase && !s.isPrimary then !s.su else true)) = true := by
   decide
 
-/-- The gap-to-resumptive split: -case strategies always cover subjects,
-    while +case secondary strategies never do. This means -case always
-    occupies a strictly higher segment of the AH than non-primary +case. -/
-theorem gap_covers_higher_than_resumptive :
-    allProfiles.all (λ p =>
+/-- The gap-to-resumptive split in the original 8-language sub-sample:
+    -case strategies always cover subjects, while +case secondary strategies
+    never do. **PARTIALLY REFUTED by Yoruba**: -case strategies do not always
+    cover SU (Yoruba's DO/OBL gap strategies don't include SU). The
+    +case-secondary-excludes-SU half of the conjunction still holds for
+    Yoruba (see `plus_case_secondary_excludes_su` above). -/
+theorem gap_covers_higher_than_resumptive_in_original_sample :
+    originalSample.all (λ p =>
       p.strategies.all (λ s =>
         -- Every -case strategy covers SU
         (if !s.plusCase then s.su else true) &&
@@ -386,6 +439,16 @@ theorem finnish_plus_case_is_primary :
     (s.map (·.plusCase))  = [true, false] ∧
     (s.map (·.isPrimary)) = [true, true] := by decide
 
+/-- Yoruba: four per-position markers; SU and GEN use resumption (relTiSubject
+    is -case per K&C's verb-agreement analysis; relTiGenitive is +case);
+    DO and OBL use gap (-case). All four strategies are individually
+    contiguous on the AH, so HC₂ is satisfied. -/
+theorem yoruba_strategy_breakdown :
+    let s := yoruba.strategies
+    s.length = 4 ∧
+    (s.map (·.plusCase))  = [false, false, false, true] ∧
+    (s.map (·.isPrimary)) = [true, false, false, false] := by decide
+
 -- ============================================================================
 -- § 9: Connection to WALS Profiles
 -- ============================================================================
@@ -399,8 +462,8 @@ theorem welsh_covers_ocomp_via_plus_case :
     (welsh.strategies.filter (·.plusCase)).any (·.ocomp) = true := by
   decide
 
-/-- Sample size: 8 languages from Table 1. -/
-theorem sample_size : allProfiles.length = 8 := by decide
+/-- Sample size: 9 languages (8 originalSample + Yoruba). -/
+theorem sample_size : allProfiles.length = 9 := by decide
 
 -- ============================================================================
 -- § 10: Cross-System Connection (KCProfile ↔ RelativizationProfile)
@@ -467,6 +530,16 @@ theorem arabic_kc_covers_deeper_than_wals :
     arabic.lowestCovered = .objComparison ∧
     Typology.arabic.lowestRelativizable = .oblique := by decide
 
+/-- Yoruba: both systems agree at GEN. K&C 1977 Table 1's `*` codes for
+    IO/OBL/OComp reflect serial-verb-mediated recasting (an analytical move),
+    not a directly-described data point — so the Fragment's
+    `lowestRelativizable := .genitive` (per Awobuluyi §6.23) and
+    KCProfile's `lowestCovered = .genitive` (per the directly-described
+    relTiGenitive marker) coincide. -/
+theorem yoruba_kc_matches_wals :
+    yoruba.lowestCovered = .genitive ∧
+    Typology.yoruba.lowestRelativizable = .genitive := by decide
+
 /-- **Systematic coverage agreement**: for every language in our sample
     that also appears in the WALS typology, the KCProfile covers at
     least as much as the WALS profile indicates. The WALS profile never
@@ -486,7 +559,9 @@ theorem kc_at_least_as_detailed_as_wals :
     -- Hebrew
     hebrew.lowestCovered.rank ≤ Typology.hebrew.lowestRelativizable.rank ∧
     -- Arabic
-    arabic.lowestCovered.rank ≤ Typology.arabic.lowestRelativizable.rank := by
+    arabic.lowestCovered.rank ≤ Typology.arabic.lowestRelativizable.rank ∧
+    -- Yoruba
+    yoruba.lowestCovered.rank ≤ Typology.yoruba.lowestRelativizable.rank := by
   decide
 
 end Phenomena.Relativization.Studies.KeenanComrie1977

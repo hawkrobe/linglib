@@ -69,21 +69,32 @@ private def matchesPat (s : Segment) (p : Segment) : Bool :=
 def c1_star_son_dors : WeightedConstraint Onset :=
   mkMarkGradW "*[+son,+dors]" (fun onset => onset.countP (matchesPat · son_dors_pat)) (564/100)
 
+/-- Bool helper for `c4_star_blank_cont`. -/
+private def c4_violated : Onset → Bool
+  | _ :: c₂ :: _ => matchesPat c₂ continuant_pat
+  | _ => false
+
 /-- Constraint #4 from Table (4): *[ ][+continuant]. Weight 5.17. -/
 def c4_star_blank_cont : WeightedConstraint Onset :=
-  mkMarkW "*[ ][+cont]" (fun onset => match onset with
-    | _ :: c₂ :: _ => matchesPat c₂ continuant_pat | _ => false) (517/100)
+  mkMarkW "*[ ][+cont]" (fun o => c4_violated o = true) (517/100)
+
+/-- Bool helper for `c5_star_blank_voice`. -/
+private def c5_violated : Onset → Bool
+  | _ :: c₂ :: _ => matchesPat c₂ voice_pat && !matchesPat c₂ sonorant_pat
+  | _ => false
 
 /-- Constraint #5 from Table (4): *[ ][+voice, −sonorant]. Weight 5.37. -/
 def c5_star_blank_voice : WeightedConstraint Onset :=
-  mkMarkW "*[ ][+voice]" (fun onset => match onset with
-    | _ :: c₂ :: _ => matchesPat c₂ voice_pat && !matchesPat c₂ sonorant_pat
-    | _ => false) (537/100)
+  mkMarkW "*[ ][+voice]" (fun o => c5_violated o = true) (537/100)
+
+/-- Bool helper for `c6_star_son_blank`. -/
+private def c6_violated : Onset → Bool
+  | c₁ :: _ :: _ => matchesPat c₁ sonorant_pat
+  | _ => false
 
 /-- Constraint #6 from Table (4): *[+sonorant][ ]. Weight 6.66. -/
 def c6_star_son_blank : WeightedConstraint Onset :=
-  mkMarkW "*[+son][ ]" (fun onset => match onset with
-    | c₁ :: _ :: _ => matchesPat c₁ sonorant_pat | _ => false) (666/100)
+  mkMarkW "*[+son][ ]" (fun o => c6_violated o = true) (666/100)
 
 /-- The subset grammar: 4 constraints from Table (4). -/
 def onsetGrammar : List (WeightedConstraint Onset) :=

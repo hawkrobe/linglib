@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Interpretation
-import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
+import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
 # @cite{cruse-1973} Agentivity Decomposition

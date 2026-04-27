@@ -1,6 +1,7 @@
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.Thurstone
 import Linglib.Core.Agent.GumbelLuce
+import Linglib.Core.Agent.Psychophysics
 
 /-!
 # Gaussian Choice Bridge @cite{luce-1959}
@@ -32,9 +33,7 @@ namespace Core
 
 open Real BigOperators Finset
 
--- ============================================================================
--- §1. Two-Alternative Forced Choice (2AFC) as Thurstone
--- ============================================================================
+/-! ## Two-Alternative Forced Choice (2AFC) as Thurstone -/
 
 /-- Two-alternative forced choice (2AFC) correct-response probability.
 
@@ -46,13 +45,15 @@ open Real BigOperators Finset
 
     since X_signal - X_noise ~ N(d', 2), so (X_signal - X_noise)/√2 ~ N(d'/√2, 1). -/
 noncomputable def SDTModel.twoAFC (m : SDTModel) : ℝ :=
-  normalCDF (m.d_prime / Real.sqrt 2)
+  normalCDF (m.dPrime / Real.sqrt 2)
 
-/-- 2AFC probability is at least 1/2 when d' ≥ 0: the observer performs
-    at or above chance. -/
-theorem SDTModel.twoAFC_ge_half (m : SDTModel) : 1 / 2 ≤ m.twoAFC := by
+/-- 2AFC probability is at least 1/2 when `d' ≥ 0`: the observer performs
+    at or above chance. The `0 ≤ m.dPrime` hypothesis is explicit (not a
+    structure invariant); see the docstring on `SDTModel`. -/
+theorem SDTModel.twoAFC_ge_half (m : SDTModel) (h_nonneg : 0 ≤ m.dPrime) :
+    1 / 2 ≤ m.twoAFC := by
   simp only [twoAFC]
-  rcases eq_or_lt_of_le m.d_prime_nonneg with h | h
+  rcases eq_or_lt_of_le h_nonneg with h | h
   · rw [← h, zero_div]; exact le_of_eq normalCDF_zero.symm
   · exact le_of_lt (normalCDF_pos_gt_half (div_pos h
       (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))))
@@ -63,7 +64,7 @@ theorem SDTModel.twoAFC_ge_half (m : SDTModel) : 1 / 2 ≤ m.twoAFC := by
     and `-d'/2`, both with unit discriminal dispersion (`σ = 1`).
     Fin 2: `0` = signal, `1` = noise. -/
 noncomputable def SDTModel.asThurstone2AFC (m : SDTModel) : ThurstoneCaseV (Fin 2) where
-  scale i := if i = 0 then m.d_prime / 2 else -(m.d_prime / 2)
+  scale i := if i = 0 then m.dPrime / 2 else -(m.dPrime / 2)
   sigma := 1
   sigma_pos := one_pos
 
@@ -81,9 +82,7 @@ theorem SDTModel.twoAFC_eq_thurstone (m : SDTModel) :
   congr 1
   ring_nf
 
--- ============================================================================
--- §2. Yes/No SDT as Thurstone
--- ============================================================================
+/-! ## Yes/No SDT as Thurstone -/
 
 /-- Construct a Thurstone Case V model for the yes/no SDT task.
 
@@ -92,8 +91,8 @@ theorem SDTModel.twoAFC_eq_thurstone (m : SDTModel) :
     - `scale(signal) = d'/2 - c` (effective signal advantage)
     - `scale(noise) = 0`
     Fin 2: `0` = signal, `1` = noise. -/
-noncomputable def SDTModel.asThurstonYesNo (m : SDTModel) : ThurstoneCaseV (Fin 2) where
-  scale i := if i = 0 then m.d_prime / 2 - m.criterion else 0
+noncomputable def SDTModel.asThurstoneYesNo (m : SDTModel) : ThurstoneCaseV (Fin 2) where
+  scale i := if i = 0 then m.dPrime / 2 - m.criterion else 0
   sigma := 1 / Real.sqrt 2
   sigma_pos := div_pos one_pos (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
 
@@ -106,8 +105,9 @@ noncomputable def SDTModel.asThurstonYesNo (m : SDTModel) : ThurstoneCaseV (Fin 
     The key identity is `(1/√2) · √2 = 1`, so the Thurstone denominator
     is 1 and the two expressions coincide. -/
 theorem SDTModel.hitRate_eq_thurstone (m : SDTModel) :
-    m.hitRate = m.asThurstonYesNo.choiceProb 0 1 := by
-  simp only [SDTModel.hitRate, asThurstonYesNo, ThurstoneCaseV.choiceProb]
+    m.hitRate = m.asThurstoneYesNo.choiceProb 0 1 := by
+  simp only [SDTModel.hitRate, SDTModel.tailProb, asThurstoneYesNo,
+             ThurstoneCaseV.choiceProb]
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
   simp only [h01, ↓reduceIte, sub_zero]
   -- Goal: 1 - normalCDF (c - d'/2) = normalCDF ((d'/2 - c) / ((1/√2) * √2))
@@ -118,14 +118,12 @@ theorem SDTModel.hitRate_eq_thurstone (m : SDTModel) :
     rw [one_div, inv_mul_cancel₀ h_sqrt2_ne]
   rw [h_denom, div_one]
   -- Step 2: 1 - Φ(c - d'/2) = Φ(d'/2 - c) by normalCDF symmetry
-  rw [show m.criterion - m.d_prime / 2 = -(m.d_prime / 2 - m.criterion) from by ring,
+  rw [show m.criterion - m.dPrime / 2 = -(m.dPrime / 2 - m.criterion) from by ring,
       normalCDF_neg]
   -- Goal: 1 - (1 - normalCDF (d'/2 - c)) = normalCDF (d'/2 - c)
   linarith
 
--- ============================================================================
--- §3. Logistic Approximation Constants
--- ============================================================================
+/-! ## Logistic Approximation Constants -/
 
 /-- The SDT logistic approximation constant `π/√3` equals Thurstone's
     `thurstoneLuceK` when `σ = 1/√2`.
@@ -153,28 +151,32 @@ theorem logisticApproxConst_eq_thurstoneLuceK :
   intro h
   exact absurd h (ne_of_gt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
 
--- ============================================================================
--- §4. Shared Softmax Embedding
--- ============================================================================
+/-! ## Shared Softmax Embedding -/
 
-/-- 2AFC models with different d' can be compared via the Thurstone ordering.
+/-- 2AFC models with different `d'` can be compared via the Thurstone ordering.
 
     Since `twoAFC = Thurstone.choiceProb`, and Thurstone satisfies strong
-    stochastic transitivity, higher d' implies higher 2AFC P(correct).
+    stochastic transitivity, higher `d'` implies higher 2AFC `P(correct)`.
 
-    Proof: d₁' > d₂' implies `scale(signal) - scale(noise) = d'` is larger,
-    so the Thurstone argument `d'/√2` is larger, and Φ is strictly monotone. -/
+    Proof: `d₁' > d₂'` implies `scale(signal) - scale(noise) = d'` is larger,
+    so the Thurstone argument `d'/√2` is larger, and `Φ` is strictly monotone.
+
+    *Connection to AUC*: under the equal-variance Gaussian SDT model, the
+    area under the ROC curve equals `Φ(d'/√2)` (@cite{green-swets-1966};
+    @cite{macmillan-creelman-2005}, ch. 3). This theorem therefore proves
+    that AUC is strictly monotone in `d'`. The AUC integral identity itself
+    — `∫₀¹ rocCurve d' f df = Φ(d'/√2)` — is correct but unproved here;
+    integrating `rocCurve` requires additional measure-theoretic
+    infrastructure not currently developed. -/
 theorem SDTModel.twoAFC_mono (m₁ m₂ : SDTModel)
-    (h : m₁.d_prime < m₂.d_prime) :
+    (h : m₁.dPrime < m₂.dPrime) :
     m₁.twoAFC < m₂.twoAFC := by
   simp only [twoAFC]
   exact normalCDF_strictMono (by
     exact div_lt_div_of_pos_right h
       (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
 
--- ============================================================================
--- §5. Random Utility Model Unification
--- ============================================================================
+/-! ## Random Utility Model Unification -/
 
 /-!
 ## RUM Unification
@@ -217,5 +219,107 @@ theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (hβ : 0 < β) :
   have h1 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
   simp only [h1, ↓reduceIte]
   ring
+
+/-! ## Stevens → Thurstone → SDT chain
+
+The two `Core/Agent/` psychophysics primitives — `StevensScale` (Stevens'
+power law `ψ(s) = k · sⁿ`, the deterministic intensity-to-percept mapping) and
+`SDTModel` (signal detection, the noisy discrimination operator) — sit in
+*different regimes*:
+
+- **Stevens** (`Psychophysics.lean`, @cite{luce-1959} §2.B): supra-threshold
+  magnitude estimation. Maps physical intensity to perceived intensity
+  deterministically.
+- **Thurstone** (`Thurstone.lean`, @cite{thurstone-1927}; `luce-1959` §2.D):
+  paired comparison via Gaussian discriminal processes. Adds noise on top
+  of a scale value.
+- **SDT** (`SignalDetection.lean`, @cite{green-swets-1966}): near-threshold
+  binary discrimination. The yes/no specialization of Thurstone Case V.
+
+This section composes the three: **Stevens scale + Gaussian noise = Thurstone
+discriminal process; Thurstone for binary detection = SDT.** Concretely, an
+observer with Stevens-scaled perception of intensity and Gaussian noise of
+SD `σ` discriminating two stimuli `s_signal` vs `s_noise` is an SDT observer
+with `d' = (ψ(s_signal) - ψ(s_noise)) / σ`.
+
+This is the standard psychophysics chain; cf. @cite{macmillan-creelman-2005}
+ch. 1 for the d′-vs-Stevens-Δψ relationship. -/
+
+/-- **Stevens → Thurstone constructor**: Stevens' power-law perception with
+    Gaussian discriminal dispersion `σ` is a Thurstone Case V model whose
+    scale value at stimulus `s` is `ψ(s) = k · sⁿ`. -/
+noncomputable def StevensScale.toThurstone (sc : StevensScale) (sigma : ℝ)
+    (h_pos : 0 < sigma) : ThurstoneCaseV ℝ where
+  scale s := sc.psi s
+  sigma := sigma
+  sigma_pos := h_pos
+
+/-- The choice probability under Stevens-derived Thurstone is
+    `Φ((ψ(s₁) - ψ(s₂)) / (σ · √2))` — the standard Thurstone Case V
+    formula applied to the Stevens-transformed stimuli. -/
+@[simp]
+theorem StevensScale.toThurstone_choiceProb (sc : StevensScale) (sigma : ℝ)
+    (h_pos : 0 < sigma) (s₁ s₂ : ℝ) :
+    (sc.toThurstone sigma h_pos).choiceProb s₁ s₂ =
+    normalCDF ((sc.psi s₁ - sc.psi s₂) / (sigma * Real.sqrt 2)) := by
+  rfl
+
+/-- **Stevens-derived d′**: the SDT sensitivity for discriminating two
+    stimuli `s_signal` vs `s_noise` under Stevens scaling and Gaussian noise
+    of SD `σ`. Equals `(ψ(s_signal) - ψ(s_noise)) / σ`.
+
+    This is the standard psychophysics formula: noise-normalized difference
+    of perceived intensities, exactly as `d'` is defined in SDT (mean
+    difference in σ units). -/
+noncomputable def StevensScale.dPrime (sc : StevensScale) (sigma : ℝ)
+    (s_signal s_noise : ℝ) : ℝ :=
+  (sc.psi s_signal - sc.psi s_noise) / sigma
+
+/-- **Stevens → SDT 2AFC constructor**: Stevens-scaled perception of two
+    stimuli `s_signal`, `s_noise` with Gaussian noise σ produces a
+    zero-criterion (unbiased) SDT observer with `d'` from `StevensScale.dPrime`.
+
+    The observer has zero criterion bias because 2AFC has no criterion
+    parameter — both alternatives are presented and the observer picks
+    the one with the larger discriminal sample. -/
+noncomputable def StevensScale.toSDT (sc : StevensScale) (sigma : ℝ)
+    (s_signal s_noise : ℝ) : SDTModel where
+  dPrime := sc.dPrime sigma s_signal s_noise
+  criterion := 0
+
+/-- The Stevens-derived SDT observer is unbiased (zero criterion). -/
+theorem StevensScale.toSDT_isUnbiased (sc : StevensScale) (sigma : ℝ)
+    (s_signal s_noise : ℝ) : (sc.toSDT sigma s_signal s_noise).IsUnbiased :=
+  rfl
+
+/-- **Stevens-Thurstone-SDT chain coherence**: the 2AFC `P(correct)` predicted
+    by the Stevens-derived SDT observer equals the Thurstone choice probability
+    obtained by composing Stevens scaling with Gaussian noise.
+
+    Both reduce to `Φ((ψ(s_signal) - ψ(s_noise)) / (σ · √2))`. The Stevens
+    side computes via `SDTModel.twoAFC = Φ(d'/√2)` with `d' = Δψ/σ`; the
+    Thurstone side computes via `(sc.toThurstone σ).choiceProb`. The two paths
+    agree, validating the substrate composition. -/
+theorem StevensScale.twoAFC_eq_thurstone (sc : StevensScale) (sigma : ℝ)
+    (h_pos : 0 < sigma) (s_signal s_noise : ℝ) :
+    (sc.toSDT sigma s_signal s_noise).twoAFC =
+    (sc.toThurstone sigma h_pos).choiceProb s_signal s_noise := by
+  simp only [SDTModel.twoAFC, StevensScale.toSDT, StevensScale.dPrime,
+             StevensScale.toThurstone_choiceProb]
+  congr 1
+  rw [div_div, mul_comm sigma]
+
+/-- Stevens-derived d′ is non-negative when `s_signal ≥ s_noise` and `σ > 0`,
+    using `psi`'s monotonicity (Stevens' power law is monotone in stimulus
+    intensity for positive stimuli with positive exponent). -/
+theorem StevensScale.dPrime_nonneg (sc : StevensScale) (sigma : ℝ)
+    (h_pos : 0 < sigma) {s_signal s_noise : ℝ}
+    (h_noise : 0 < s_noise) (h_le : s_noise ≤ s_signal) :
+    0 ≤ sc.dPrime sigma s_signal s_noise := by
+  simp only [StevensScale.dPrime, StevensScale.psi]
+  apply div_nonneg _ h_pos.le
+  have : s_noise ^ sc.n ≤ s_signal ^ sc.n :=
+    Real.rpow_le_rpow h_noise.le h_le sc.hn_pos.le
+  nlinarith [sc.hk_pos]
 
 end Core

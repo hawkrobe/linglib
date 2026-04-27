@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
-import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
+import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Core.Dependency.Basic
 
 /-!
@@ -30,7 +30,6 @@ namespace TheoryComparison
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
 open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
-open Minimalism
 open DepGrammar
 
 /-! ## §1. Three theories of argument licensing -/
@@ -51,6 +50,16 @@ abbrev ArgFrame := List ArgRole
 
 In Minimalism, theta roles drive External Merge. Each theta role must be
 assigned to exactly one argument (Theta Criterion). -/
+
+/-- What triggers Merge? In Minimalism, uninterpretable features drive
+    operations. Used here as a descriptive enum for the comparison
+    study; not part of the M-C-B substrate (M-C-B's Merge action is
+    feature-driven via the coproduct, not via discrete triggers). -/
+inductive MergeTrigger where
+  | selection : Minimalism.Cat → MergeTrigger  -- selectional [uF]
+  | epp : MergeTrigger                          -- EPP triggers specifier
+  | theta : MergeTrigger                        -- theta-role assignment
+  deriving Repr, DecidableEq
 
 /-- Minimalist licensing: each theta role in the frame triggers External Merge
     via `MergeTrigger.theta`. -/

@@ -74,7 +74,7 @@ resolved before the conversation can return to a stable state.
 For polar questions, `alternatives` is [p, ¬p].
 For wh-questions, `alternatives` is the set of possible answers.
 -/
-structure Question (W : Type*) where
+structure RaisedIssue (W : Type*) where
   /-- The form of the sentence that raised this issue -/
   form : SentenceForm
   /-- The proposition(s) at issue -/
@@ -101,7 +101,7 @@ structure DiscourseState (W : Type*) where
   /-- Common ground (joint commitments) -/
   cg : List (Set W)
   /-- The table: stack of issues under discussion -/
-  table : List (Question W)
+  table : List (RaisedIssue W)
 
 namespace DiscourseState
 
@@ -185,7 +185,7 @@ Push an issue onto the table.
 This models raising a question or making an assertion (which implicitly
 raises the issue of whether the content should be accepted).
 -/
-def pushIssue (ds : DiscourseState W) (issue : Question W) : DiscourseState W :=
+def pushIssue (ds : DiscourseState W) (issue : RaisedIssue W) : DiscourseState W :=
   { ds with table := issue :: ds.table }
 
 /--
@@ -208,7 +208,7 @@ The listener can then respond by:
 - Neither (leaving p "on the table")
 -/
 def assertDeclarative (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
-  let issue : Question W := { form := .declarative, alternatives := [p], source := .speaker }
+  let issue : RaisedIssue W := { form := .declarative, alternatives := [p], source := .speaker }
   ds.addToDcS p |>.pushIssue issue
 
 /--
@@ -220,7 +220,7 @@ Following F&B: a polar question about p:
 -/
 def askPolarQuestion (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
   let negP : Set W := pᶜ
-  let issue : Question W := { form := .interrogative, alternatives := [p, negP], source := .speaker }
+  let issue : RaisedIssue W := { form := .interrogative, alternatives := [p, negP], source := .speaker }
   ds.pushIssue issue
 
 /--

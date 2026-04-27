@@ -6,11 +6,15 @@ Principle (FIP) and the ~ operator to connect focus semantic values with context
 
 ## Insight: Type Identity
 
-Rooth's focus semantic value ⟦α⟧f has the same TYPE as Hamblin question denotations:
-- `⟦α⟧f : (W → Bool) → Bool` (set of propositions)
-- `QuestionDen W = (W → Bool) → Bool` (Hamblin question)
+Rooth's focus semantic value ⟦α⟧f is a **set of propositions**, of the
+same type as Hamblin-style question denotations. In the substrate's
+Set-based representation, this is `Set (Set W)`. This grounds Q-A
+congruence: the focus value of an answer equals the question denotation.
 
-This grounds Q-A congruence: the focus value of an answer equals the question denotation.
+The substrate's inquisitive question type `Core.Question W` carries
+strictly more structure (downward-closed family of states); a focus
+value `Set (Set W)` corresponds to its `alt`-image — flat sets of
+propositions matching Rooth's intuition.
 
 ## The ~ Operator
 
@@ -28,7 +32,7 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 -/
 
 import Linglib.Features.InformationStructure
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Mathlib.Data.Set.Basic
 
 open Features.InformationStructure
 
@@ -37,8 +41,8 @@ namespace Semantics.FocusInterpretation
 -- Focus Semantic Values (@cite{rooth-1985}, 1992)
 
 /-- Propositional focus value: set of propositions.
-    Type: <<s,t>,t> - same as Hamblin questions! -/
-abbrev PropFocusValue (W : Type*) := (W → Bool) → Bool
+    Type: ⟨⟨s,t⟩,t⟩ in Montague notation, modelled as `Set (Set W)`. -/
+abbrev PropFocusValue (W : Type*) := Set (Set W)
 
 -- The ~ Operator (Squiggle)
 
@@ -50,24 +54,14 @@ abbrev PropFocusValue (W : Type*) := (W → Bool) → Bool
     - FIP requires: Γ ⊆ ⟦α⟧f -/
 structure Squiggle (W : Type*) where
   /-- The contrasting set Γ (anaphor to context) -/
-  contrastSet : (W → Bool) → Bool
+  contrastSet : Set (Set W)
 
 /-- Focus Interpretation Principle (FIP):
     The contextual contrast set Γ must be a subset of the focus semantic value.
 
     @cite{rooth-1992} §2: "Γ ⊆ ⟦α⟧f" -/
-def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) → Bool) : Prop :=
-  ∀ p, gamma p → focusValue p
-
--- Grounding: Hamblin Questions = Focus Semantic Values
-
-/-- Grounding theorem: Hamblin question denotations have the same type as
-    propositional focus semantic values.
-
-    This is the foundation of Q-A congruence: the focus value of an answer
-    should equal (or be a superset) the question denotation. -/
-theorem hamblin_is_focus_type (W : Type*) :
-    Semantics.Questions.Hamblin.QuestionDen W = ((W → Bool) → Bool) := rfl
+def fip {W : Type*} (gamma : Set (Set W)) (focusValue : Set (Set W)) : Prop :=
+  gamma ⊆ focusValue
 
 -- Question-Answer Congruence
 
@@ -77,18 +71,18 @@ theorem hamblin_is_focus_type (W : Type*) :
     @cite{rooth-1992} §4: Focus on the answer must match the wh-position in the question.
 
     Example:
-    - Q: "Who ate the beans?" = {λw. ate(x, beans, w) | x ∈ D}
-    - A: "FRED ate the beans" has ⟦A⟧f = {λw. ate(x, beans, w) | x ∈ D}
+    - Q: "Who ate the beans?" = {fredAteBeans, maryAteBeans}
+    - A: "FRED ate the beans" has ⟦A⟧f = {fredAteBeans, maryAteBeans}
     - Congruent iff ⟦A⟧f = ⟦Q⟧ -/
 def qaCongruent {W : Type*} (answerFocus : PropFocusValue W)
-    (question : Semantics.Questions.Hamblin.QuestionDen W) : Prop :=
+    (question : PropFocusValue W) : Prop :=
   answerFocus = question
 
 /-- Weaker Q-A congruence: question alternatives are a subset of answer focus.
     This handles cases where the answer may introduce additional alternatives. -/
 def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
-    (question : Semantics.Questions.Hamblin.QuestionDen W) : Prop :=
-  ∀ p, question p → answerFocus p
+    (question : PropFocusValue W) : Prop :=
+  question ⊆ answerFocus
 
 -- FIP Applications (Rooth §2)
 -- FIPApplication is defined in Features.InformationStructure (opened above)
@@ -127,17 +121,17 @@ See `Focus/Sensitivity.lean` for the downstream derivation.
     1. C ⊆ ⟦α⟧f (FIP — comparison class bounded by focus alternatives)
     2. ⟦α⟧o ∈ C (ordinary value is in the comparison class)
 
-    The comparison class is extensional (`List (W → Bool)`) for compatibility
-    with `Attitudes.Preferential.QuestionDen`. -/
+    The comparison class is `Set (Set W)`, the substrate-aligned shape
+    matching the rest of the focus theory. -/
 structure FocusResolution (W : Type*) where
   /-- ⟦α⟧o — the ordinary semantic value of the focused constituent -/
-  ordinary : W → Bool
+  ordinary : Set W
   /-- ⟦α⟧f — the focus semantic value (set of alternative propositions) -/
   focusValue : PropFocusValue W
   /-- C — the comparison class, resolved from context -/
-  comparisonClass : List (W → Bool)
+  comparisonClass : Set (Set W)
   /-- FIP: C ⊆ ⟦α⟧f — every proposition in C is a focus alternative -/
-  fip_subset : ∀ p ∈ comparisonClass, focusValue p
+  fip_subset : comparisonClass ⊆ focusValue
   /-- ⟦α⟧o ∈ C — the ordinary value is in the comparison class -/
   ordinary_in_C : ordinary ∈ comparisonClass
 
@@ -147,14 +141,14 @@ structure FocusResolution (W : Type*) where
 
 /-- A clause-embedding predicate with explicit access to focus alternatives.
 
-    Takes: agent, ordinary proposition, focus alternatives, world → truth value.
+    Takes: agent, ordinary proposition, focus alternatives, world → Prop.
 
     Non-focus-sensitive predicates (believe, know) ignore the focus alternatives.
     Focus-sensitive predicates (want, be glad, be surprised) use them to
     determine the comparison class for degree semantics.
 
     @cite{ozyildiz-etal-2025} def 2/58. -/
-abbrev ClauseEmbedPred (W E : Type*) := E → (W → Bool) → PropFocusValue W → W → Bool
+abbrev ClauseEmbedPred (W E : Type*) := E → Set W → PropFocusValue W → Set W
 
 /-- A clause-embedding predicate V is **focus-sensitive** iff its truth value
     can depend on the focus alternatives, not just the ordinary proposition.
@@ -163,32 +157,33 @@ abbrev ClauseEmbedPred (W E : Type*) := E → (W → Bool) → PropFocusValue W 
     and two different focus-alternative sets such that V yields different truth
     values. -/
 def IsFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
-  ∃ (x : E) (p : W → Bool) (f₁ f₂ : PropFocusValue W) (w : W),
-    V x p f₁ w ≠ V x p f₂ w
+  ∃ (x : E) (p : Set W) (f₁ f₂ : PropFocusValue W) (w : W),
+    (w ∈ V x p f₁) ≠ (w ∈ V x p f₂)
 
 /-- A predicate is **not** focus-sensitive iff it ignores focus alternatives
     entirely. -/
 def IsNotFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
-  ∀ (x : E) (p : W → Bool) (f₁ f₂ : PropFocusValue W) (w : W),
-    V x p f₁ w = V x p f₂ w
+  ∀ (x : E) (p : Set W) (f₁ f₂ : PropFocusValue W),
+    V x p f₁ = V x p f₂
 
 theorem not_fs_iff_ignores_focus {W E : Type*} (V : ClauseEmbedPred W E) :
     IsNotFocusSensitive V ↔ ¬ IsFocusSensitive V := by
   constructor
-  · intro h ⟨x, p, f₁, f₂, w, hne⟩; exact hne (h x p f₁ f₂ w)
-  · intro h x p f₁ f₂ w
+  · intro h ⟨x, p, f₁, f₂, w, hne⟩; exact hne (by rw [h x p f₁ f₂])
+  · intro h x p f₁ f₂
+    ext w
     by_contra hne
-    exact h ⟨x, p, f₁, f₂, w, hne⟩
+    exact h ⟨x, p, f₁, f₂, w, by tauto⟩
 
 /-- Lift a non-focus-sensitive predicate to the `ClauseEmbedPred` type
     by ignoring focus alternatives. -/
-def liftNonFS {W E : Type*} (V : E → (W → Bool) → W → Bool) : ClauseEmbedPred W E :=
-  λ x p _f w => V x p w
+def liftNonFS {W E : Type*} (V : E → Set W → Set W) : ClauseEmbedPred W E :=
+  λ x p _f => V x p
 
 /-- Any lifted non-focus-sensitive predicate is indeed not focus-sensitive. -/
-theorem liftNonFS_not_fs {W E : Type*} (V : E → (W → Bool) → W → Bool) :
+theorem liftNonFS_not_fs {W E : Type*} (V : E → Set W → Set W) :
     IsNotFocusSensitive (liftNonFS V) := by
-  intro _ _ _ _ _; rfl
+  intro _ _ _ _; rfl
 
 -- Connection to Additive Particles
 

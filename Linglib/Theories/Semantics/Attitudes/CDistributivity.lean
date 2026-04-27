@@ -40,13 +40,13 @@ namespace Semantics.Attitudes.CDistributivity
 -- Basic Types
 
 /-- A Hamblin question denotation: set of possible answers -/
-abbrev QuestionDen (W : Type*) := List ((W → Bool))
+abbrev AlternativeList (W : Type*) := List ((W → Bool))
 
 /-- Preference/attitude degree function -/
 abbrev DegreeFn (W E : Type*) := E → (W → Bool) → ℚ
 
 /-- Contextual threshold function -/
-abbrev ThresholdFn (W : Type*) := QuestionDen W → ℚ
+abbrev ThresholdFn (W : Type*) := AlternativeList W → ℚ
 
 -- C-Distributivity Definition
 
@@ -61,9 +61,9 @@ Where V_p is the propositional semantics and V_Q is the question semantics.
 -/
 def IsCDistributive {W E : Type*}
     (V_prop : E → (W → Bool) → W → Bool)           -- Propositional semantics
-    (V_question : E → QuestionDen W → W → Bool)  -- Question semantics
+    (V_question : E → AlternativeList W → W → Bool)  -- Question semantics
     : Prop :=
-  ∀ (x : E) (Q : QuestionDen W) (w : W),
+  ∀ (x : E) (Q : AlternativeList W) (w : W),
     V_question x Q w = true ↔ ∃ p ∈ Q, V_prop x p w = true
 
 -- Pattern 1: Degree-Comparison Semantics (C-Distributive)
@@ -77,7 +77,7 @@ This is the pattern for hope, fear, expect, wish, etc.
 The degree μ(x, p) measures how strongly x prefers/fears p.
 -/
 def degreeComparisonProp {W E : Type*} (μ : DegreeFn W E) (θ : ThresholdFn W)
-    (C : QuestionDen W) (x : E) (p : (W → Bool)) (_w : W) : Bool :=
+    (C : AlternativeList W) (x : E) (p : (W → Bool)) (_w : W) : Bool :=
   decide (μ x p > θ C)
 
 /--
@@ -89,7 +89,7 @@ This is the standard Hamblin-style composition: pointwise application
 with existential closure.
 -/
 def degreeComparisonQuestion {W E : Type*} (μ : DegreeFn W E) (θ : ThresholdFn W)
-    (C : QuestionDen W) (x : E) (Q : QuestionDen W) (_w : W) : Bool :=
+    (C : AlternativeList W) (x : E) (Q : AlternativeList W) (_w : W) : Bool :=
   Q.any λ p => decide (μ x p > θ C)
 
 /--
@@ -99,7 +99,7 @@ This follows directly from the definition: the question semantics
 IS the existential over the propositional semantics.
 -/
 theorem degreeComparison_isCDistributive {W E : Type*}
-    (μ : DegreeFn W E) (θ : ThresholdFn W) (C : QuestionDen W) :
+    (μ : DegreeFn W E) (θ : ThresholdFn W) (C : AlternativeList W) :
     IsCDistributive
       (degreeComparisonProp μ θ C)
       (degreeComparisonQuestion μ θ C) := by
@@ -154,7 +154,7 @@ even when V_prop holds for some answer.
 -/
 theorem exists_nonCDistributive_worry :
     ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
-                   (V_question : E → QuestionDen W → W → Bool),
+                   (V_question : E → AlternativeList W → W → Bool),
     ¬IsCDistributive V_prop V_question := by
   -- Use Bool as a 2-element world/entity type
   refine ⟨Bool, Unit, fun _ _ _ => true, fun _ _ _ => false, ?_⟩
@@ -171,7 +171,7 @@ to existential quantification over propositional semantics.
 -/
 theorem exists_nonCDistributive_care :
     ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
-                   (V_question : E → QuestionDen W → W → Bool),
+                   (V_question : E → AlternativeList W → W → Bool),
     ¬IsCDistributive V_prop V_question := by
   exact exists_nonCDistributive_worry
 
@@ -214,7 +214,7 @@ is defined as existential quantification over propositional semantics.
 -/
 def isDegreeComparisonLike {W E : Type*}
     (V_prop : E → (W → Bool) → W → Bool)
-    (V_question : E → QuestionDen W → W → Bool) : Prop :=
+    (V_question : E → AlternativeList W → W → Bool) : Prop :=
   ∀ x Q w, V_question x Q w = Q.any (λ p => V_prop x p w)
 
 /--
@@ -222,7 +222,7 @@ Degree-comparison-like predicates are automatically C-distributive.
 -/
 theorem degreeComparisonLike_implies_cDistributive {W E : Type*}
     (V_prop : E → (W → Bool) → W → Bool)
-    (V_question : E → QuestionDen W → W → Bool)
+    (V_question : E → AlternativeList W → W → Bool)
     (h : isDegreeComparisonLike V_prop V_question) :
     IsCDistributive V_prop V_question := by
   intro x Q w

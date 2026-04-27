@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.RationalAction
-import Linglib.Core.Agent.NormalCDF
+import Linglib.Core.Probability.Gaussian
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 /-!

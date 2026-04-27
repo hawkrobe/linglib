@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Ellipsis.NPEllipsis
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.Nominal
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
 
 /-!
 # Minimalist Nominal Spine → NP-Ellipsis @cite{saab-2026}

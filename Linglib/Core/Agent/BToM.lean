@@ -78,7 +78,7 @@ The model is designed for domain-specific extension without modification:
 
 -/
 
-namespace Core.BToM
+namespace Core
 
 -- ============================================================================
 -- §1. Latent Variable Ontology
@@ -319,4 +319,4 @@ A `BToMModel` can be instantiated with `ContentIndividual W` as the Belief
 type, making the observer's posterior a distribution over content individuals.
 -/
 
-end Core.BToM
+end Core

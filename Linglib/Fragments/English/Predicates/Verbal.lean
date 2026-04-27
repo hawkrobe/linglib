@@ -26,7 +26,7 @@ open Core.Verbs
 open Core.Verbs
 open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
-open Semantics.Events.Krifka1998 (VerbIncClass)
+open Semantics.Events.Incrementality (VerbIncClass)
 open Semantics.Verb.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════

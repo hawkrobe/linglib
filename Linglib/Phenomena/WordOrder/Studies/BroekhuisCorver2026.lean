@@ -1,5 +1,5 @@
 import Linglib.Fragments.Dutch.Adpositions
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
 import Linglib.Datasets.WALS.Features.F85A
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection

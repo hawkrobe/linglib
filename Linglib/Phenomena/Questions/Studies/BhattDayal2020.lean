@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
+import Linglib.Features.QParticleLayer
 import Linglib.Core.Question.Singleton
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Japanese.Particles
@@ -29,7 +29,7 @@ the fragments themselves carry only theory-neutral distributional fields.
 
 namespace Phenomena.Questions.TypologyBridge
 
-open Semantics.Questions (QParticleLayer)
+open Features (QParticleLayer)
 open Core.Question (IsSingleton SingletonQuestion declarative polar
   isSingleton_declarative not_isSingleton_polar_of_nontrivial)
 open Fragments.HindiUrdu.Particles (kya)

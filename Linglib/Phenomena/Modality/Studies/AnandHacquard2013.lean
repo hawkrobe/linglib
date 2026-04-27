@@ -359,7 +359,7 @@ This unification means:
   for retrospective emotions
 -/
 
-open Core.Agent.Emotion
+open Core
 
 /-- Hope holds from uncertainty + positive preference over resolutions. -/
 theorem hope_from_uncertainty_and_preference

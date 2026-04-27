@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.AnsweringSystems
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Linglib.Features.AnsweringSystem
+import Linglib.Core.Question.Hamblin
 import Linglib.Theories.Syntax.Minimalism.Polarity
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Questions.PolarAnswerStructure
@@ -27,7 +27,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
 
 ## Connection to Existing Infrastructure
 
-- `Hamblin.polar` (semantic question denotation)
+- `Core.Question.polar` (substrate-level inquisitive polar question)
 - `Minimalism.Polarity.PolFeature` (syntactic [±Pol] feature)
 - `AnsweringSystem` (typological parameter)
 - `NegationHeight` → `predictedSystem` (negation height derives answering system)
@@ -39,38 +39,31 @@ parameter is the **answering system**: truth-based vs polarity-based.
 
 namespace Holmberg2016
 
-open Semantics.Questions.Hamblin
-open Semantics.Questions (AnsweringSystem PolarAnswerProfile)
+open Core.Question
+open Features (AnsweringSystem PolarAnswerProfile)
 open Minimalism.Polarity
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Bridge: Hamblin polar ↔ [±Pol] variable
 -- ════════════════════════════════════════════════════════════════
 
-/-! A Hamblin polar question `{p, ¬p}` corresponds to an unvalued [±Pol]
-    feature. Each answer cell values the feature:
-    - p → [+Pol] (affirmative)
-    - ¬p → [-Pol] (negative)
+/-! A polar question `?p = {p, pᶜ}` (substrate `Core.Question.polar`)
+    corresponds to an unvalued [±Pol] feature. Each alternative cell
+    values the feature:
+    - `p` → [+Pol] (affirmative)
+    - `pᶜ` → [-Pol] (negative)
 
-    The two answer propositions are the "positive cell" and "negative cell"
+    The two alternatives are the "positive cell" and "negative cell"
     of the partition induced by the question. -/
 
-/-- The positive answer to a polar question: the proposition p itself. -/
-def positiveAnswer {W : Type*} (p : W → Bool) : W → Bool := p
-
-/-- The negative answer: ¬p. -/
-def negativeAnswer {W : Type*} (p : W → Bool) : W → Bool := fun w => !p w
-
-/-- Both answers are in the Hamblin denotation of `polar p`. -/
-theorem both_answers_in_polar {W : Type*} [BEq W]
-    (p : W → Bool) (worlds : List W) (_hw : worlds ≠ []) :
-    polar p worlds (positiveAnswer p) = true ∧
-    polar p worlds (negativeAnswer p) = true := by
-  constructor
-  · simp only [polar, positiveAnswer, Bool.or_eq_true]
-    left; exact List.all_eq_true.mpr (fun w _ => by simp [BEq.beq])
-  · simp only [polar, negativeAnswer, Bool.or_eq_true]
-    right; exact List.all_eq_true.mpr (fun w _ => by simp [BEq.beq])
+/-- Both alternatives `p` and `pᶜ` lie in `alt (polar p)` (under
+    nontriviality). Substrate identification of the two-cell answer
+    partition. -/
+theorem both_alternatives_in_polar {W : Type*}
+    {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    p ∈ alt (polar p) ∧ pᶜ ∈ alt (polar p) :=
+  ⟨(mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl),
+   (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl)⟩
 
 /-- The positive answer maps to [+Pol] (valued positive). -/
 def positiveToPolFeature : PolFeature := .valued .positive
@@ -130,7 +123,7 @@ theorem system_strategy_orthogonal :
 -- § 4. Negation height → answering system derivation
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Questions (NegationHeight)
+open Features (NegationHeight)
 
 /-- Japanese has low negation → truth-based predicted, matches actual profile. -/
 theorem japanese_negation_height_predicts :

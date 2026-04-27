@@ -420,7 +420,7 @@ When the scene is common ground (@cite{clark-1996} on joint attention),
 speaker and hearer derive the same DDRP. Different perceptual access yields
 different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 
-open Core.BToM
+open Core
 open Core.CommonGround
 
 /-- The RSA-BToM bridge applies to the domain restriction RSA config. -/

@@ -74,7 +74,7 @@ abbrev AustinianDGB (S R : Type) := DGB String (BCheckableAustinian S) (TTRQuest
 abbrev AustinianTIS (S R : Type) := TIS String (BCheckableAustinian S) (TTRQuestionB R)
 
 -- ════════════════════════════════════════════════════
--- § 3. Answerhood: Austinian Facts Resolve TTR Questions
+-- § 3. Support: Austinian Facts Resolve TTR Questions
 -- ════════════════════════════════════════════════════
 
 /-- A `BCheckableAustinian S` resolves a `TTRQuestionB S` when the
@@ -86,9 +86,10 @@ FACTS in dgb contextually entail an answer to q."
 For a fact `⟨s, T⟩` and question `Q`: the fact resolves Q when T(s) is true
 AND Q.body(s) is true — the situation that makes the fact true also answers
 the question. -/
-instance austinianAnswerhood (S : Type) :
-    Answerhood (BCheckableAustinian S) (TTRQuestionB S) where
-  resolves fact question := fact.isTrue && question.body fact.sit
+instance austinianSupport (S : Type) :
+    Core.Question.DecidableSupport (BCheckableAustinian S) (TTRQuestionB S) where
+  supports fact question := fact.isTrue = true ∧ question.body fact.sit = true
+  decSupports fact question := inferInstanceAs (Decidable (_ ∧ _))
 
 -- ════════════════════════════════════════════════════
 -- § 3. TIS ↔ InfoState Genealogy
@@ -155,7 +156,9 @@ def isItRaining : TTRQuestionB Weather where
 /-- The fact "it is raining" resolves the question "is it raining?":
 the situation (rainy) makes both the fact true and the question body true. -/
 theorem raining_resolves :
-    (austinianAnswerhood Weather).resolves itIsRaining isItRaining = true := rfl
+    Core.Question.Support.supports
+      (self := (austinianSupport Weather).toSupport)
+      itIsRaining isItRaining := ⟨rfl, rfl⟩
 
 /-- "It is sunny" — an Austinian proposition that does NOT resolve "is it raining?". -/
 def itIsSunny : BCheckableAustinian Weather where
@@ -164,7 +167,10 @@ def itIsSunny : BCheckableAustinian Weather where
 
 /-- A true fact about a different situation does not resolve the raining question. -/
 theorem sunny_does_not_resolve_raining :
-    (austinianAnswerhood Weather).resolves itIsSunny isItRaining = false := rfl
+    ¬ Core.Question.Support.supports
+      (self := (austinianSupport Weather).toSupport)
+      itIsSunny isItRaining := by
+  rintro ⟨_, h⟩; cases h
 
 /-- An empty Austinian DGB. -/
 private def adgb₀ : AustinianDGB Weather Weather := DGB.initial
@@ -177,12 +183,13 @@ theorem atis_ask_qud : atis₁.dgb.qud = [isItRaining] := rfl
 
 /-- After asserting "it is raining", the fact resolves the question and QUD empties. -/
 private def atis₂ : AustinianTIS Weather Weather :=
-  @TIS.assertRule _ _ _ (austinianAnswerhood Weather) atis₁ itIsRaining
+  @TIS.assertRule _ _ _ (austinianSupport Weather) atis₁ itIsRaining
 
 theorem atis_assert_resolves : atis₂.dgb.qud = [] := by
   simp [atis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud,
-    DGB.recordMove, Answerhood.resolves, austinianAnswerhood, BCheckableAustinian.isTrue,
-    itIsRaining, isItRaining, atis₁, adgb₀, DGB.initial, DGB.pushQud]
+    DGB.recordMove, Core.Question.Support.supports, austinianSupport,
+    BCheckableAustinian.isTrue, itIsRaining, isItRaining, atis₁, adgb₀,
+    DGB.initial, DGB.pushQud]
 
 /-- The fact is in FACTS after assertion. -/
 theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by

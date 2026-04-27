@@ -2,7 +2,7 @@ import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Differential
 import Linglib.Theories.Semantics.Degree.Equative
-import Linglib.Theories.Semantics.Degree.DegreeAbstraction
+import Linglib.Theories.Semantics.Degree.Abstraction
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -38,7 +38,7 @@ namespace Semantics.Degree.Intensional
 open Semantics.Degree.Comparative (comparativeSem ScaleDirection)
 open Semantics.Degree.Differential (differentialComparative factorEquative)
 open Semantics.Degree.Equative (equativeLiteral)
-open Semantics.Degree.DegreeAbstraction (IsMaxDeg)
+open Semantics.Degree.Abstraction (IsMaxDeg)
 
 -- ════════════════════════════════════════════════════
 -- § 1. ACTUALLY Operator for Degrees

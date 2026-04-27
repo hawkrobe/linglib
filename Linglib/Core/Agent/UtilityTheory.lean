@@ -51,35 +51,38 @@ structure Gamble (Outcome : Type*) where
   /-- Outcome if event does not occur -/
   lose : Outcome
 
+instance {Outcome : Type*} [DecidableEq Outcome] : DecidableEq (Gamble Outcome) :=
+  fun g₁ g₂ =>
+    if h : g₁.win = g₂.win ∧ g₁.event = g₂.event ∧ g₁.lose = g₂.lose then
+      isTrue (by
+        cases g₁; cases g₂
+        obtain ⟨h1, h2, h3⟩ := h
+        subst h1; subst h2; subst h3; rfl)
+    else
+      isFalse fun heq => h ⟨by rw [heq], by rw [heq], by rw [heq]⟩
+
 variable {Outcome : Type*} [DecidableEq Outcome]
 
-/-- A gamble choice function assigns choice probabilities to pairs of gambles.
-    `P(g₁, g₂)` is the probability of choosing gamble `g₁` over `g₂`.
-    (@cite{luce-1959}, §3.A) -/
-structure GambleChoiceFn (Outcome : Type*) where
-  /-- Binary choice probability: P(g₁ preferred over g₂) -/
-  prob : Gamble Outcome → Gamble Outcome → ℝ
-  /-- Probabilities are in [0,1] -/
-  prob_nonneg : ∀ g₁ g₂, 0 ≤ prob g₁ g₂
-  prob_le_one : ∀ g₁ g₂, prob g₁ g₂ ≤ 1
-  /-- Binary complement: P(g₁, g₂) + P(g₂, g₁) = 1 -/
-  prob_complement : ∀ g₁ g₂, prob g₁ g₂ + prob g₂ g₁ = 1
+/-! ## Choice functions for Luce Chapter 3
 
-/-- A simple outcome choice function: P(a, b) = probability of choosing a over b.
-    Used for the outcome-only component of decomposition. -/
-structure OutcomeChoiceFn (Outcome : Type*) where
-  prob : Outcome → Outcome → ℝ
-  prob_nonneg : ∀ a b, 0 ≤ prob a b
-  prob_le_one : ∀ a b, prob a b ≤ 1
-  prob_complement : ∀ a b, prob a b + prob b a = 1
+Following the deeper unification: there is ONE canonical `ChoiceFn`
+(in `RationalAction.lean`), with a binary view `cf.binary x y := cf.prob {x, y} x`.
+Luce Chapter 3's gamble/outcome/event choice functions are all
+`ChoiceFn`-typed; the type-specific names below are abbrevs as semantic
+markers. Binary-style theorems use `cf.binary x y` notation. -/
 
-/-- An event choice function: Q(ρ, σ) = probability of preferring event ρ over σ.
-    (Extracted when outcomes are held fixed.) -/
-structure EventChoiceFn where
-  prob : Event → Event → ℝ
-  prob_nonneg : ∀ ρ σ, 0 ≤ prob ρ σ
-  prob_le_one : ∀ ρ σ, prob ρ σ ≤ 1
-  prob_complement : ∀ ρ σ, prob ρ σ + prob σ ρ = 1
+/-- A gamble choice function: `cf.binary g₁ g₂ = cf.prob {g₁, g₂} g₁` is
+    the probability of choosing gamble `g₁` over `g₂` (@cite{luce-1959}, §3.A). -/
+abbrev GambleChoiceFn (Outcome : Type*) [DecidableEq Outcome] :=
+  ChoiceFn (Gamble Outcome)
+
+/-- An outcome choice function: `cf.binary a b` is the probability of choosing
+    outcome `a` over `b`. Used for the outcome-only component of decomposition. -/
+abbrev OutcomeChoiceFn (Outcome : Type*) [DecidableEq Outcome] := ChoiceFn Outcome
+
+/-- An event choice function: `Q.binary ρ σ` is the probability of preferring
+    event `ρ` over `σ` (extracted when outcomes are held fixed). -/
+abbrev EventChoiceFn := ChoiceFn Event
 
 -- ============================================================================
 -- §2. Luce's Axioms for Gamble Choice
@@ -95,7 +98,7 @@ structure DecompositionAxiom (P : GambleChoiceFn Outcome) where
   eventChoice : EventChoiceFn
   /-- Fixed outcomes ⟹ choice depends only on events -/
   decomp : ∀ (a b : Outcome) (ρ σ : Event),
-    P.prob ⟨a, ρ, b⟩ ⟨a, σ, b⟩ = eventChoice.prob ρ σ
+    P.binary ⟨a, ρ, b⟩ ⟨a, σ, b⟩ = eventChoice.binary ρ σ
 
 /-- **Monotonicity Axiom** (@cite{luce-1959}, Axiom 3):
     If outcome `a` is preferred to `b` (P(a,b) ≥ ½) and event `ρ` is preferred
@@ -107,9 +110,9 @@ structure MonotonicityAxiom (P : GambleChoiceFn Outcome)
     (outcomeChoice : OutcomeChoiceFn Outcome)
     (eventChoice : EventChoiceFn) where
   mono : ∀ (a b : Outcome) (ρ σ : Event),
-    outcomeChoice.prob a b ≥ 1/2 →
-    eventChoice.prob ρ σ ≥ 1/2 →
-    P.prob ⟨a, ρ, b⟩ ⟨b, σ, a⟩ ≥ 1/2
+    outcomeChoice.binary a b ≥ 1/2 →
+    eventChoice.binary ρ σ ≥ 1/2 →
+    P.binary ⟨a, ρ, b⟩ ⟨b, σ, a⟩ ≥ 1/2
 
 -- ============================================================================
 -- §2a. Luce Ratio Scales for Choice Functions
@@ -121,7 +124,7 @@ structure MonotonicityAxiom (P : GambleChoiceFn Outcome)
 structure EventLuceScale (Q : EventChoiceFn) where
   v : Event → ℝ
   v_pos : ∀ ρ, 0 < v ρ
-  luce_rule : ∀ ρ σ, Q.prob ρ σ = v ρ / (v ρ + v σ)
+  luce_rule : ∀ ρ σ, Q.binary ρ σ = v ρ / (v ρ + v σ)
 
 /-- A Luce ratio scale for a gamble choice function: P(g₁,g₂) = v(g₁)/(v(g₁)+v(g₂))
     for some positive scoring function v. This is the gamble-level Luce choice axiom
@@ -129,7 +132,7 @@ structure EventLuceScale (Q : EventChoiceFn) where
 structure GambleLuceScale (P : GambleChoiceFn Outcome) where
   v : Gamble Outcome → ℝ
   v_pos : ∀ g, 0 < v g
-  luce_rule : ∀ g₁ g₂, P.prob g₁ g₂ = v g₁ / (v g₁ + v g₂)
+  luce_rule : ∀ g₁ g₂, P.binary g₁ g₂ = v g₁ / (v g₁ + v g₂)
 
 -- ============================================================================
 -- §3. Event Equivalence Classes (Theorem 12)
@@ -147,42 +150,42 @@ inductive EventClass where
 /-- Classify an event based on its choice probability against a reference event.
     (@cite{luce-1959}, §3.C) -/
 noncomputable def classifyEvent (Q : EventChoiceFn) (ref : Event) (ρ : Event) : EventClass :=
-  if Q.prob ρ ref > 1/2 then .favorable
-  else if Q.prob ρ ref < 1/2 then .unfavorable
+  if Q.binary ρ ref > 1/2 then .favorable
+  else if Q.binary ρ ref < 1/2 then .unfavorable
   else .neutral
 
-/-- Extract Q.prob ρ ref = 1/2 from neutral classification. -/
+/-- Extract Q.binary ρ ref = 1/2 from neutral classification. -/
 private lemma neutral_imp_prob_eq_half (Q : EventChoiceFn) (ref ρ : Event)
-    (h : classifyEvent Q ref ρ = .neutral) : Q.prob ρ ref = 1/2 := by
-  have h1 : ¬(Q.prob ρ ref > 1/2) := by
+    (h : classifyEvent Q ref ρ = .neutral) : Q.binary ρ ref = 1/2 := by
+  have h1 : ¬(Q.binary ρ ref > 1/2) := by
     intro hgt; unfold classifyEvent at h; rw [if_pos hgt] at h; exact absurd h (by decide)
-  have h2 : ¬(Q.prob ρ ref < 1/2) := by
+  have h2 : ¬(Q.binary ρ ref < 1/2) := by
     intro hlt; unfold classifyEvent at h; rw [if_neg h1, if_pos hlt] at h
     exact absurd h (by decide)
   linarith [not_lt.mp h1, not_lt.mp h2]
 
 set_option linter.unusedTactic false in
 set_option linter.unreachableTactic false in
-/-- Extract Q.prob ρ ref > 1/2 from favorable classification. -/
+/-- Extract Q.binary ρ ref > 1/2 from favorable classification. -/
 private lemma favorable_imp_gt_half (Q : EventChoiceFn) (ref ρ : Event)
-    (h : classifyEvent Q ref ρ = .favorable) : Q.prob ρ ref > 1/2 := by
+    (h : classifyEvent Q ref ρ = .favorable) : Q.binary ρ ref > 1/2 := by
   unfold classifyEvent at h
   split_ifs at h with h1
   · exact h1
   all_goals exact absurd h (by decide)
 
-/-- Extract Q.prob ρ ref < 1/2 from unfavorable classification. -/
+/-- Extract Q.binary ρ ref < 1/2 from unfavorable classification. -/
 private lemma unfavorable_imp_lt_half (Q : EventChoiceFn) (ref ρ : Event)
-    (h : classifyEvent Q ref ρ = .unfavorable) : Q.prob ρ ref < 1/2 := by
+    (h : classifyEvent Q ref ρ = .unfavorable) : Q.binary ρ ref < 1/2 := by
   by_contra h2; push_neg at h2
-  by_cases h1 : Q.prob ρ ref > 1/2
+  by_cases h1 : Q.binary ρ ref > 1/2
   · unfold classifyEvent at h; rw [if_pos h1] at h; exact absurd h (by decide)
   · unfold classifyEvent at h; rw [if_neg h1, if_neg (not_lt_of_ge h2)] at h
     exact absurd h (by decide)
 
 /-- Under a Luce scale, Q(ρ,σ) = 1/2 iff v(ρ) = v(σ). -/
 private lemma luce_eq_half_iff {Q : EventChoiceFn} (hScale : EventLuceScale Q)
-    (ρ σ : Event) : Q.prob ρ σ = 1/2 ↔ hScale.v ρ = hScale.v σ := by
+    (ρ σ : Event) : Q.binary ρ σ = 1/2 ↔ hScale.v ρ = hScale.v σ := by
   rw [hScale.luce_rule]
   constructor
   · intro h
@@ -209,7 +212,7 @@ theorem threeClasses (Q : EventChoiceFn) (hScale : EventLuceScale Q)
     (ref : Event) (ρ σ : Event)
     (hρ : classifyEvent Q ref ρ = .neutral)
     (hσ : classifyEvent Q ref σ = .neutral) :
-    Q.prob ρ σ = 1/2 := by
+    Q.binary ρ σ = 1/2 := by
   have hv_ρ := (luce_eq_half_iff hScale ρ ref).mp (neutral_imp_prob_eq_half Q ref ρ hρ)
   have hv_σ := (luce_eq_half_iff hScale σ ref).mp (neutral_imp_prob_eq_half Q ref σ hσ)
   exact (luce_eq_half_iff hScale ρ σ).mpr (by linarith)
@@ -221,7 +224,7 @@ theorem favorable_over_unfavorable (Q : EventChoiceFn) (hScale : EventLuceScale 
     (ref : Event) (ρ σ : Event)
     (hρ : classifyEvent Q ref ρ = .favorable)
     (hσ : classifyEvent Q ref σ = .unfavorable) :
-    Q.prob ρ σ > 1/2 := by
+    Q.binary ρ σ > 1/2 := by
   suffices h : hScale.v σ < hScale.v ρ by
     rw [hScale.luce_rule, gt_iff_lt,
         lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v σ from
@@ -246,7 +249,7 @@ theorem favorable_over_neutral (Q : EventChoiceFn) (hScale : EventLuceScale Q)
     (ref : Event) (ρ σ : Event)
     (hρ : classifyEvent Q ref ρ = .favorable)
     (hσ : classifyEvent Q ref σ = .neutral) :
-    Q.prob ρ σ > 1/2 := by
+    Q.binary ρ σ > 1/2 := by
   suffices h : hScale.v σ < hScale.v ρ by
     rw [hScale.luce_rule, gt_iff_lt,
         lt_div_iff₀ (show (0 : ℝ) < hScale.v ρ + hScale.v σ from
@@ -299,7 +302,6 @@ private lemma ratio_eq_of_frac_eq {x₁ y₁ x₂ y₂ : ℝ}
   rw [div_eq_div_iff (ne_of_gt hy₁) (ne_of_gt hy₂)]
   nlinarith
 
-omit [DecidableEq Outcome] in
 /-- The ratio v(a₁,ρ,b₁)/v(a₁,σ,b₁) is independent of outcomes (a₁,b₁).
     Both ratios equal Q(ρ,σ)/Q(σ,ρ) via the decomposition axiom + Luce scale. -/
 private lemma ratio_independent (P : GambleChoiceFn Outcome) (hLuce : GambleLuceScale P)
@@ -310,7 +312,6 @@ private lemma ratio_independent (P : GambleChoiceFn Outcome) (hLuce : GambleLuce
   apply ratio_eq_of_frac_eq (hLuce.v_pos _) (hLuce.v_pos _) (hLuce.v_pos _) (hLuce.v_pos _)
   rw [← hLuce.luce_rule, ← hLuce.luce_rule, hDecomp.decomp, hDecomp.decomp]
 
-omit [DecidableEq Outcome] in
 /-- The Luce scale value factors multiplicatively:
     v(g) = v(g.win, ρ₀, g.lose) · v(a₀, g.event, b₀) / v(a₀, ρ₀, b₀).
     This is the core step of the decomposition: the ratio v(g)/v(g.win,ρ₀,g.lose)
@@ -327,7 +328,6 @@ private lemma v_eq_product (P : GambleChoiceFn Outcome) (hLuce : GambleLuceScale
   field_simp at hratio ⊢
   nlinarith
 
-omit [DecidableEq Outcome] in
 /-- **Scale decomposition theorem** (@cite{luce-1959}, §3.D):
     Under the Luce choice axiom and the decomposition axiom, the choice
     probability for gambles can be represented as a Luce choice rule with
@@ -346,7 +346,7 @@ theorem scaleDecomposition (P : GambleChoiceFn Outcome)
     ∃ sd : ScaleDecomposition Outcome,
       ∀ g₁ g₂ : Gamble Outcome,
         sd.gambleValue g₁ + sd.gambleValue g₂ > 0 →
-        P.prob g₁ g₂ = sd.gambleValue g₁ / (sd.gambleValue g₁ + sd.gambleValue g₂) := by
+        P.binary g₁ g₂ = sd.gambleValue g₁ / (sd.gambleValue g₁ + sd.gambleValue g₂) := by
   refine ⟨{
     outcomeValue := λ a b => hLuce.v ⟨a, ρ₀, b⟩,
     eventWeight := λ ρ => hLuce.v ⟨a₀, ρ, b₀⟩ / hLuce.v ⟨a₀, ρ₀, b₀⟩,

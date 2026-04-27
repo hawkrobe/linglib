@@ -19,7 +19,9 @@ provide background knowledge that constrains interpretation:
 P(concept | scenario) = topic-word distribution (LDA-style)
 ```
 
-Combined with selectional preferences via Product of Experts:
+Combined with selectional preferences via product of experts (use
+`Mathlib.Probability.ProbabilityMassFunction.productOfExperts` for the
+canonical mathlib mechanism):
 ```
 P(concept | context) ∝ P_selectional(concept) × P_scenario(concept)
 ```
@@ -34,7 +36,6 @@ Scenarios can be modeled in RSA as:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Agent.ProductOfExperts
 
 namespace Semantics.Probabilistic.Scenarios
 
@@ -179,31 +180,16 @@ P(concept | role, context) ∝ P_sel(concept | role) × P_scen(concept | context
 ```
 -/
 
-open Core.ProductOfExperts
+/-!
+## SDS disambiguation via Product of Experts
 
-/--
-Full SDS disambiguation combining selectional and scenario constraints.
+For combining selectional and scenario constraints, use mathlib's
+`PMF.productOfExperts` (`Core/Probability/PMFPosterior.lean`) on PMFs
+constructed from each constraint via `PMF.normalize`. The illustrative
+ℚ-valued helpers that previously lived here (`sdsDisambiguate`,
+`sdsDisambiguateWithUncertainty`) were removed in favor of the canonical
+PMF API.
 -/
-def sdsDisambiguate {Concept : Type}
-    (selectional : Concept → ℚ)
-    (scenario : Concept → ℚ)
-    (concepts : List Concept) : Concept → ℚ :=
-  poe2 selectional scenario concepts
-
-/--
-With scenario uncertainty: marginalize over scenarios first.
--/
-def sdsDisambiguateWithUncertainty {Concept Scenario : Type}
-    (selectional : Concept → ℚ)
-    (scenarioConceptDist : Scenario → (Concept → ℚ))
-    (scenarioPosterior : Scenario → ℚ)
-    (concepts : List Concept)
-    (scenarios : List Scenario) : Concept → ℚ :=
-  -- First, compute marginal scenario constraint
-  let marginalScenario c := scenarios.foldl
-    (λ acc s => acc + scenarioPosterior s * scenarioConceptDist s c) 0
-  -- Then combine with selectional via PoE
-  poe2 selectional marginalScenario concepts
 
 
 /-!

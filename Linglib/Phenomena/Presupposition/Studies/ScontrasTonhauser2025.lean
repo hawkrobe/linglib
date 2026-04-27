@@ -636,11 +636,11 @@ def directionCorrect : Hypothesis → Bool
 -- §10. BToM Bridge
 -- ============================================================================
 
-open Core.BToM in
+open Core in
 /-- Classification of BeliefState in BToM terms. -/
 def beliefStateCategory : LatentCategory := .mental
 
-open Core.BToM in
+open Core in
 /-- Classification of QUD in BToM terms. -/
 def qudCategory : LatentCategory := .shared
 

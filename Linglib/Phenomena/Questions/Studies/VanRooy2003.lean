@@ -1,513 +1,167 @@
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Hamblin
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Core.Agent.PartitionDT
-import Linglib.Theories.Semantics.Questions.Denotation.Partition
-import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
-import Linglib.Theories.Semantics.Questions.Utility.Relevance
+import Linglib.Theories.Semantics.Questions.DecisionTheoretic
 
 /-!
-# Van Rooy (2003): Questioning to Resolve Decision Problems
-@cite{van-rooy-2003}
+# @cite{van-rooy-2003}: Questioning to Resolve Decision Problems
+@cite{groenendijk-stokhof-1984} @cite{karttunen-1977} @cite{ginzburg-1995} @cite{merin-1999}
 
-Robert van Rooy. Questioning to Resolve Decision Problems.
-Linguistics and Philosophy 26(6): 727–763.
+Single-paper formalisation of @cite{van-rooy-2003}, "Questioning to
+Resolve Decision Problems", *Linguistics and Philosophy* 26.6:
+727–763. The paper grounds question semantics in Bayesian decision
+theory: questions are evaluated by how their answers affect the
+optimal action in the questioner's decision problem.
 
-## Key Contributions
+## Substrate identification
 
-Van Rooy proposes that question interpretation is driven by the questioner's
-**decision problem**: the question is asked to help the questioner decide
-what to do. This yields:
+The decision-theoretic machinery — `EU`, `UV`, `VSI`, `DecisionProblem`
+— is already in `Core/Agent/DecisionTheory.lean`. Van Rooy's notation
+maps to the substrate as:
 
-1. **Op(P)(w)**: The relevance-maximal groups of P-satisfiers in world w
-2. **⟦?xPx⟧^R**: An underspecified question denotation that unifies
-   mention-all and mention-some readings
-3. **>_Q ordering on answers**: Relevance-based answer preference
-4. **Q > Q' ordering on questions**: When one question is better than another
-5. **Domain selection**: The wh-domain contains exactly decision-relevant
-   individuals
-6. **Scalar questions**: Preference-based orderings not reducible to
-   entailment
+| @cite{van-rooy-2003}                             | substrate                                  |
+|--------------------------------------------------|--------------------------------------------|
+| `EU(a) = ∑_w P(w) · U(a, w)`                     | `Core.DecisionTheory.expectedUtility`      |
+| `UV(Choose now) = max_a EU(a)`                   | `Core.DecisionTheory.dpValue`              |
+| `EU(a, C) = ∑_w P_C(w) · U(a, w)`                | `Core.DecisionTheory.conditionalEU`        |
+| `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.valueAfterLearning`   |
+| `UV(C) = UV(L C, c later) − UV(C now)`           | `Core.DecisionTheory.utilityValue`         |
+| `UV*(C) = VSI(C)` ≥ 0                            | `Core.DecisionTheory.valueSampleInfo`      |
+| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt)            | `Core.Question.questionEntails`            |
+| `C resolves DP`                                  | `Core.DecisionTheory.IsResolved`           |
 
-## Connection to G&S
+## What this file proves
 
-Van Rooy's theory extends Groenendijk & Stokhof's partition semantics.
-G&S's exhaustive partition is the limiting case when the questioner's
-decision problem requires complete information. Van Rooy shows that
-when partial information suffices, the question denotation naturally
-produces mention-some readings.
+* **§3.1 Action-induced partition `A*`** (p. 736-737):
+  `optimalityCell dp acts a` and `actionPartition`.
+* **§3.1 *C* resolves DP** (p. 736): the substrate's
+  `Core.DecisionTheory.IsResolved dp acts C` — some action weakly
+  dominates every other on every world in C.
+* **§4.1 Blackwell-style ordering** (p. 741): the "Q is more
+  informative than Q'" notion is `Core.Question.questionEntails Q Q'`
+  (no paper-specific alias needed).
+* **§4.1 Decision-relevance preservation**: under the *strong*
+  Blackwell condition (`CoversAltsOf` from substrate), preservation
+  holds. The substrate's `CoversAltsOf.preserves_decisionRelevant`
+  IS the @cite{van-rooy-2003} theorem.
 
-## Connection to Existing Infrastructure
+## What this file does NOT replicate
 
-- `Core.Agent.DecisionTheory`: Decision problems, EUV, VSI, question utility
-- `Theories.Semantics.Questions.Partition`: G&S partition semantics
-- `Theories.Semantics.Questions.MentionSome`: G&S mention-some (§5)
-- `Theories.Semantics.Questions.GSVanRooyBridge`: Blackwell's theorem
+* The *identification-question* discussion (§2 (1)–(8)) requires
+  named-individual / referential machinery beyond plain `Set W`;
+  deferred.
+* The *underspecified meaning* proposal (§5) requires a typed
+  ambiguity-resolution layer beyond `Question W`; deferred.
+* The Italian-newspaper mention-some example (§3.2 (12)) is the
+  natural target for the next refinement, when the
+  `Phenomena.Questions.MentionSome` data file is wired up.
 -/
 
-namespace VanRooy2003
-
-open Core.DecisionTheory
-open Semantics.Questions
-open Semantics.Questions.MentionSome
-open Semantics.Questions.Relevance
-
-
-/-! ## Examples
-
-### Italian Newspaper Example
-
-@cite{van-rooy-2003}, p. 739, 753–754: "Where can I buy an Italian newspaper?"
-
-The questioner wants to buy an Italian newspaper. Any shop that sells
-one suffices. Op(P)(w) = {{s} : sells-Italian(s)(w)}, making each shop
-a separate answer. The question gets a mention-some reading. -/
-
-/-- Worlds for the Italian newspaper scenario: which shops sell Italian papers. -/
-inductive NewspaperWorld
-  | shopA_only      -- only shop A sells Italian newspapers
-  | shopB_only      -- only shop B
-  | both            -- both A and B sell
-  deriving DecidableEq, Repr
-
-instance : LawfulBEq NewspaperWorld where
-  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
-  rfl := by intro a; cases a <;> decide
-
-instance : Fintype NewspaperWorld :=
-  ⟨{.shopA_only, .shopB_only, .both}, by intro x; cases x <;> simp⟩
-
-/-- Shops in the domain. -/
-inductive Shop
-  | A | B
-  deriving DecidableEq, Repr
-
-/-- "x sells Italian newspapers" in world w. -/
-def sellsItalian : NewspaperWorld → Shop → Bool
-  | .shopA_only, .A => true
-  | .shopA_only, .B => false
-  | .shopB_only, .A => false
-  | .shopB_only, .B => true
-  | .both,       .A => true
-  | .both,       .B => true
-
-/-- Mention-some relevance for the newspaper scenario. -/
-def newspaperRelevance : RelevanceFunction NewspaperWorld Shop :=
-  mentionSomeRelevance sellsItalian [.A, .B]
-
-/-- The underspecified denotation produces mention-some answers:
-"Shop A sells Italian papers" and "Shop B sells Italian papers."
-In the both-world, both answers are true. -/
-def newspaperQuestion : Question NewspaperWorld :=
-  underspecifiedDenotation newspaperRelevance [.shopA_only, .shopB_only, .both]
-
-/-- The newspaper question has exactly 2 cells (one per shop). -/
-theorem newspaper_has_two_cells :
-    newspaperQuestion.length = 2 := by native_decide
-
-/-- In the shopA_only world, only the "Shop A" answer is true. -/
-theorem newspaper_shopA_only_resolved :
-    (newspaperQuestion.filter (· .shopA_only)).length = 1 := by native_decide
-
-/-- In the both world, both answers are true — either suffices. -/
-theorem newspaper_both_world_two_true :
-    (newspaperQuestion.filter (· .both)).length = 2 := by native_decide
-
-/-- The newspaper scenario decision problem: go to shop A or shop B.
-Utility 1 if you go to a shop that sells Italian papers, 0 otherwise. -/
-def newspaperDP : DecisionProblem NewspaperWorld Shop where
-  utility w a := if sellsItalian w a then 1 else 0
-  prior _ := 1/3
-
-/-- The newspaper DP has mention-some structure: both cells resolve it. -/
-theorem newspaper_mentionSome :
-    isMentionSome newspaperDP
-      {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B}
-      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w .A),
-       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w .B)] = true := by
-  native_decide
-
-
-/-! ### "Where do you live?" Example
-
-@cite{van-rooy-2003}, p. 754–755: "Where do you live?"
-
-The granularity of the answer depends on the decision problem:
-- Taxi driver: needs exact address
-- Census worker: needs city/state
-- Casual conversation: city suffices
-
-This is modeled by different decision problems inducing different
-optimal partitions. -/
-
-/-- Granularity levels for the "where do you live" example. -/
-inductive Granularity
-  | city     -- e.g., "Amsterdam"
-  | district -- e.g., "Amsterdam Centrum"
-  | address  -- e.g., "123 Keizersgracht"
-  deriving DecidableEq, Repr
-
-/-- Different decision problems require different granularity.
-The required granularity determines the question interpretation. -/
-structure GranularityDatum where
-  /-- Who is asking? -/
-  asker : String
-  /-- What decision problem do they face? -/
-  decisionProblem : String
-  /-- What granularity is needed? -/
-  requiredGranularity : Granularity
-  /-- Natural language form of the question -/
-  question : String := "Where do you live?"
-  deriving Repr
-
-def taxiDriver : GranularityDatum :=
-  { asker := "Taxi driver"
-  , decisionProblem := "Navigate to the destination"
-  , requiredGranularity := .address }
-
-def censusWorker : GranularityDatum :=
-  { asker := "Census worker"
-  , decisionProblem := "Record residential district"
-  , requiredGranularity := .district }
-
-def casualConversation : GranularityDatum :=
-  { asker := "Acquaintance at a party"
-  , decisionProblem := "Make conversation / establish common ground"
-  , requiredGranularity := .city }
-
-def granularityExamples : List GranularityDatum :=
-  [taxiDriver, censusWorker, casualConversation]
-
-/-- Different askers need different granularity. -/
-theorem granularity_varies :
-    (taxiDriver.requiredGranularity != censusWorker.requiredGranularity) ∧
-    (censusWorker.requiredGranularity != casualConversation.requiredGranularity) := by
-  exact ⟨by native_decide, by native_decide⟩
-
-
-/-! ### The Beatle Hierarchy: Scalar Questions
-
-@cite{van-rooy-2003}, p. 759–760: "Which Beatle records do you have?"
-
-Consider a collector who values Beatles records differently:
-  John > Paul > George > Ringo
-
-The questioner (a record shop owner) wants to sell records. The
-ordering on answers is preference-based, not entailment-based:
-knowing the collector has John records is more useful than knowing
-they have Ringo records (because John records are more valuable to sell).
-
-This shows that Van Rooy's relevance ordering goes beyond standard
-partition refinement: it can produce scale-like orderings that don't
-reduce to set-containment/entailment. -/
-
-/-- Beatles for the collector example. -/
-inductive Beatle
-  | john | paul | george | ringo
-  deriving DecidableEq, Repr
-
-/-- Preference ranking over Beatles records (higher = more valuable). -/
-def beatleValue : Beatle → ℚ
-  | .john   => 4
-  | .paul   => 3
-  | .george => 2
-  | .ringo  => 1
-
-/-- Worlds: which Beatle's records the collector has.
-Simplified to single-record worlds. -/
-inductive BeatleWorld
-  | hasJohn | hasPaul | hasGeorge | hasRingo
-  deriving DecidableEq, Repr
-
-instance : Fintype BeatleWorld :=
-  ⟨{.hasJohn, .hasPaul, .hasGeorge, .hasRingo}, by intro x; cases x <;> simp⟩
-
-/-- Which Beatle the collector has in each world. -/
-def collectorHas : BeatleWorld → Beatle
-  | .hasJohn   => .john
-  | .hasPaul   => .paul
-  | .hasGeorge => .george
-  | .hasRingo  => .ringo
-
-/-- The record shop DP: utility of selling Beatle b's records to the collector.
-Utility equals the value of the Beatle if the collector actually has that Beatle's
-records (and thus would want related merchandise). -/
-def recordShopDP : DecisionProblem BeatleWorld Beatle where
-  utility w a := if collectorHas w == a then beatleValue a else 0
-  prior _ := 1/4
-
-/-- Learning "has John" is more useful than "has Ringo" for the record shop.
-
-This is the scalar ordering: UV({hasJohn}) > UV({hasRingo}). -/
-theorem john_more_useful_than_ringo :
-    utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
-      (Finset.univ.filter (· == BeatleWorld.hasJohn)) >
-    utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
-      (Finset.univ.filter (· == BeatleWorld.hasRingo)) := by
-  native_decide
-
-/-- The full scalar ordering: John > Paul > George > Ringo in utility value. -/
-theorem beatle_utility_ordering :
-    let uv := λ w : BeatleWorld =>
-      utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
-        (Finset.univ.filter (· == w))
-    uv .hasJohn > uv .hasPaul ∧
-    uv .hasPaul > uv .hasGeorge ∧
-    uv .hasGeorge > uv .hasRingo := by
-  native_decide
-
-
-/-! ## Domain Selection
-
-@cite{van-rooy-2003}, §4.2 (p. 745–746): The wh-domain of a question
-contains exactly those individuals that are decision-relevant. An
-individual d is decision-relevant if knowing whether P(d) holds has
-positive expected utility value.
-
-This explains why "Where can I buy an Italian newspaper?" doesn't
-range over non-shops (e.g., hospitals, parks): those locations have
-zero utility value for the buy-newspaper decision problem. -/
-
-/-- In the newspaper example, both shops are decision-relevant. -/
-theorem newspaper_shops_relevant :
-    decisionRelevantDomain newspaperDP {Shop.A, .B}
-      sellsItalian [Shop.A, Shop.B] = {Shop.A, .B} := by
-  native_decide
-
-
-/-! ## Summary Theorems
-
-Structural properties connecting the examples back to the core theory. -/
-
-/-- Mention-some reading arises when the decision problem is goal-directed:
-any satisfier achieves the goal. This connects Van Rooy's Op(P) analysis
-to the `isMentionSome` predicate from `Core.Agent.DecisionTheory`.
-
-We use the newspaper DP directly (not `mentionSomeDP` which takes a unary
-predicate). The newspaper DP has utility 1 for going to a shop that sells
-Italian papers, so each shop-cell resolves it. -/
-theorem mentionSome_from_goal_dp :
-    let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
-    let q : List (Finset NewspaperWorld) :=
-      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
-       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]
-    isMentionSome newspaperDP worlds {Shop.A, .B} q = true := by
-  native_decide
-
-/-- Mention-all reading arises when the decision problem requires
-complete information (e.g., the complete information DP). -/
-theorem mentionAll_from_complete_dp :
-    let dp := completeInformationDP (W := NewspaperWorld)
-    let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
-    let q : List (Finset NewspaperWorld) :=
-      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
-       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]
-    isMentionAll dp worlds {NewspaperWorld.shopA_only, .shopB_only, .both} q = true := by
-  native_decide
-
-/-- The newspaper question utility is positive: asking is worthwhile. -/
-theorem newspaper_question_has_value :
-    questionUtility newspaperDP {Shop.A, .B}
-      (questionToFinset
-        [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
-         (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]) > 0 := by
-  native_decide
-
-
-/-! ## Resolution–Value Saturation
-
-The deepest mathematical connection between @cite{van-rooy-2003} and
-@cite{groenendijk-stokhof-1984}: **resolution of a question by a decision
-problem implies value saturation** — the question extracts all
-decision-relevant information, and coarsening from the G&S partition to
-Van Rooy's underspecified denotation is decision-theoretically free.
-
-### The algebraic heart
-
-Blackwell's theorem (proved in `Core.Partition`) uses sub-additivity of max:
-
-    max_a [Σ_w f(w,a)] ≤ Σ_w [max_a f(w,a)]
-
-This gives: finer partitions have higher `partitionValue`. But the
-inequality can be **tight**: if cell C has a dominant action a_dom
-(∀b, ∀w∈C: U(w,a_dom) ≥ U(w,b)), then a_dom achieves the pointwise
-maximum at every world, so max-of-sums = sum-of-maxes:
-
-    max_a [Σ_{w∈C} π(w)·U(w,a)]
-      ≥ Σ_{w∈C} π(w)·U(w,a_dom)          — choosing a = a_dom
-      = Σ_{w∈C} π(w)·max_b U(w,b)         — a_dom achieves max at each w
-      = Σ_{w∈C} [max_a π(w)·U(w,a)]       — when π ≥ 0
-      ≥ max_a [Σ_{w∈C} π(w)·U(w,a)]       — sub-additivity (Blackwell)
-
-The squeeze gives equality. Summing over cells:
-
-    partitionValue(Q) = partitionValue(Q_exact)
-
-**Resolution is exactly when Blackwell's sub-additivity inequality is
-tight at every cell.** This characterizes the "plateau" in the Blackwell
-ordering: all resolving partitions achieve the same maximal value.
-
-### Connection to Van Rooy's underspecified denotation
-
-Van Rooy's ⟦?xPx⟧^R with mention-some relevance produces cells that
-each resolve the questioner's DP. So the coarsening from G&S's three-cell
-partition (only-A, only-B, both) to Van Rooy's two-cell denotation
-(A-sells, B-sells) is decision-theoretically free: no information of
-value to the questioner is lost.
-
-This is the formal sense in which "Where can I buy an Italian newspaper?"
-need only mention one shop. -/
-
-
-/-! ### The G&S partition for the newspaper scenario -/
-
-/-- The G&S partition for "where can I buy an Italian newspaper?":
-two worlds are equivalent iff they have the same extension for
-"sells Italian newspapers." This gives three cells:
-{shopA_only}, {shopB_only}, {both}. -/
-def newspaperGS : QUD NewspaperWorld :=
-  QUD.ofProject (λ w => (sellsItalian w Shop.A, sellsItalian w Shop.B))
-
-/-- The mention-some partition: two worlds are equivalent iff they give
-the same answer to "does SOME shop sell Italian newspapers?"
-This gives two cells: {shopA_only, shopB_only, both} vs ∅ (but all our
-worlds have a satisfier, so there's just one cell — trivial partition).
-
-For a non-trivial mention-some partition, we use a coarser grouping:
-worlds are equivalent iff they agree on whether shop A sells.
-This gives two cells: {shopA_only, both} and {shopB_only}. -/
-def newspaperMS_A : QUD NewspaperWorld :=
-  QUD.ofProject (λ w => sellsItalian w Shop.A)
-
-/-- The mention-some partition based on shop B. -/
-def newspaperMS_B : QUD NewspaperWorld :=
-  QUD.ofProject (λ w => sellsItalian w Shop.B)
-
-
-/-! ### Value saturation: concrete verification -/
-
-/-- The G&S partition (3 cells) and the mention-some-A partition (2 cells)
-achieve the **same** partitionValue for the newspaper DP.
-
-This is the concrete instance of value saturation: coarsening from the
-exhaustive partition to the mention-some partition loses nothing,
-because both resolve the DP. -/
-theorem newspaper_value_saturation_A :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} := by
-  native_decide
-
-/-- Same for the shop-B mention-some partition. -/
-theorem newspaper_value_saturation_B :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
-    QUD.partitionValue newspaperDP newspaperMS_B Finset.univ {Shop.A, .B} := by
-  native_decide
-
-/-- Both mention-some partitions achieve the same value as the exact
-(identity) partition. This is the full value saturation: even the
-coarsest resolving partition extracts all decision-relevant information. -/
-theorem newspaper_value_saturation_exact :
-    QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
-      Finset.univ {Shop.A, .B} =
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} := by
-  native_decide
-
-/-- Verification: the G&S partition also equals the exact partition's value.
-(Follows from the previous two, but verified independently.) -/
-theorem newspaper_GS_eq_exact :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
-    QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
-      Finset.univ {Shop.A, .B} := by
-  native_decide
-
-
-/-! ### Value saturation FAILS for the complete-information DP -/
-
-/-- For the complete-information DP (where knowing the exact world matters),
-the mention-some partition achieves STRICTLY LESS value than the G&S
-partition. Coarsening is no longer free — information is lost. -/
-theorem complete_info_value_NOT_saturated :
-    QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
-      newspaperMS_A Finset.univ {NewspaperWorld.shopA_only, .shopB_only, .both} <
-    QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
-      newspaperGS Finset.univ {NewspaperWorld.shopA_only, .shopB_only, .both} := by
-  native_decide
-
-
-/-! ### The underspecified denotation achieves value saturation -/
-
-/-- The cells of the underspecified denotation for the newspaper scenario. -/
-def newspaperUnderspecCells :=
-  underspecifiedDenotation
-    (mentionSomeRelevance sellsItalian [Shop.A, Shop.B])
-    [NewspaperWorld.shopA_only, .shopB_only, .both]
-
-/-- Every cell of the underspecified denotation (mention-some relevance)
-resolves the newspaper DP: after learning any answer, the questioner
-can act optimally.
-
-This is the bridge from Van Rooy's Op(P) construction to value saturation:
-Op(P) produces cells → cells resolve → value is saturated. -/
-theorem underspecified_all_cells_resolve :
-    (newspaperUnderspecCells.map fun c =>
-        (Finset.univ : Finset NewspaperWorld).filter (fun w => c w = true)).all
-      (resolves newspaperDP
-        {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B})
-      = true := by
-  native_decide
-
-
-/-! ### The General Theorem
-
-The concrete verifications above are instances of a general principle.
-We state it here; the proof combines Blackwell (one direction) with
-the resolution lower bound (the other direction). -/
-
-/-- **Resolution–Value Saturation Theorem** (general form).
-
-For a decision problem D with non-negative priors and utilities, and a
-partition Q where every cell resolves D:
-
-    partitionValue(Q, D) = partitionValue(Q_exact, D)
-
-Resolution marks the **plateau** in the Blackwell ordering: all resolving
-partitions achieve the maximal value, regardless of their granularity.
-
-**Proof sketch** (both directions):
-
-**(≤)** Blackwell: Q_exact refines Q, so partitionValue(Q_exact) ≥ partitionValue(Q).
-
-**(≥)** For each cell C of Q with dominant action a_dom:
-  - `max_a [Σ_{w∈C} π(w)·U(w,a)] ≥ Σ_{w∈C} π(w)·U(w,a_dom)` (choosing a_dom)
-  - `= Σ_{w∈C} π(w)·max_b U(w,b)` (a_dom achieves max at every w)
-  - `= Σ_{w∈C} max_a [π(w)·U(w,a)]` (when π ≥ 0, U ≥ 0)
-  - Summing over cells: partitionValue(Q) ≥ partitionValue(Q_exact)
-
-Combined: equality.
-
-Delegates to `QUD.resolution_value_eq_exact` (proved in `Core.Partition`). -/
-theorem resolution_value_saturation
-    {W : Type*} [Fintype W] [DecidableEq W]
-    {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (q : QUD W) (actions : Finset A)
-    (hResolves : ∀ cell ∈ q.toCellsFinset Finset.univ,
-      ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ cell,
-        dp.utility w a ≥ dp.utility w b)
-    (hPrior : ∀ w, dp.prior w ≥ 0) :
-    QUD.partitionValue dp q Finset.univ actions =
-    QUD.partitionValue dp QUD.exact Finset.univ actions :=
-  QUD.resolution_value_eq_exact dp q actions hResolves hPrior
-
-/-- **Corollary**: For a mention-some DP, the underspecified denotation
-(coarsened to a partition) achieves the same value as the full G&S
-partition. The mention-some question is decision-theoretically
-equivalent to the mention-all question.
-
-This is the mathematical core of Van Rooy's theory: the partition
-structure of a question should match the decision problem's resolution
-structure, and coarser-than-necessary partitions that still resolve
-lose nothing. -/
-theorem mentionSome_value_eq_mentionAll :
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} =
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} :=
-  newspaper_value_saturation_A.symm
-
-end VanRooy2003
+namespace Phenomena.Questions.Studies.VanRooy2003
+
+open Core Core.DecisionTheory Core.Question
+open Semantics.Questions.DecisionTheoretic
+
+variable {W A : Type*}
+
+/-! ### §3.1 Action-induced partition `A*` (p. 736-737)
+
+@cite{van-rooy-2003} p. 736: "Notice that not only a question, but
+also the set of alternative actions, A, gives rise to a set of
+propositions. We can relate each action a ∈ A to the set of worlds
+in which there is no other action b in A that is strictly better.
+We will denote the proposition corresponding with a by a*". -/
+
+/-- The **optimality cell** of action `a` (van Rooy's `a*`): the set
+    of worlds where `a` strictly dominates every other action in
+    `acts`. @cite{van-rooy-2003} p. 736. -/
+def optimalityCell (dp : DecisionProblem W A) (acts : Set A) (a : A) : Set W :=
+  {w | ∀ b ∈ acts, b ≠ a → dp.utility w a > dp.utility w b}
+
+/-- The **action-induced partition** `A*`: the set of optimality
+    cells. @cite{van-rooy-2003} p. 736-737. -/
+def actionPartition (dp : DecisionProblem W A) (acts : Set A) : Set (Set W) :=
+  optimalityCell dp acts '' acts
+
+/-- The optimality cells are pairwise disjoint: each world lies in at
+    most one cell. (Page 737: "the set of propositions A* does in
+    general not partition the state space, but it does when for each
+    world `w` there is always exactly one action a ∈ A such that
+    ∀b ∈ A−{a} : U(a,w) > U(b,w)".) -/
+theorem optimalityCell_pairwise_disjoint
+    (dp : DecisionProblem W A) (acts : Set A)
+    {a a' : A} (haa' : a ≠ a')
+    (w : W) (hwa : w ∈ optimalityCell dp acts a) (hwa' : w ∈ optimalityCell dp acts a')
+    (ha_acts : a ∈ acts) (ha'_acts : a' ∈ acts) :
+    False := by
+  have h1 : dp.utility w a > dp.utility w a' := hwa a' ha'_acts (Ne.symm haa')
+  have h2 : dp.utility w a' > dp.utility w a := hwa' a ha_acts haa'
+  exact absurd h1 (not_lt_of_gt h2)
+
+/-! ### §3.1 *C* resolves DP (p. 736)
+
+> "We should say that information `C` resolves a decision problem if
+> after learning `C`, one of the actions in `A` dominates all other
+> actions, i.e., if in each resulting world no action has a higher
+> utility than this one."
+
+This is exactly `Core.DecisionTheory.IsResolved dp acts C`. We do not
+introduce a paper-vocabulary alias — consumers should use the
+substrate predicate directly. -/
+
+/-! ### §4.1 Question ordering (p. 741)
+
+@cite{van-rooy-2003} p. 741: "Q is a *better* question than Q' [...]
+in terms of @cite{groenendijk-stokhof-1984} partition semantics this
+comes down to the natural requirement that for every element of Q
+there must be an element of Q' such that the former entails the
+latter, i.e., `Q ⊑ Q'`:
+
+    Q ⊑ Q' iff ∀q ∈ Q : ∃q' ∈ Q' : q ⊆ q'."
+
+This is exactly `Core.Question.questionEntails Q Q'`. We do not
+introduce a paper-vocabulary alias — consumers should write
+`questionEntails Q Q'` (or use `≤` on `Question W`'s lattice
+instance) directly. The relation is reflexive (`questionEntails_refl`)
+and transitive (`questionEntails_trans`). -/
+
+/-! ### §4.1 Decision-relevance preservation
+
+@cite{van-rooy-2003} §4.1 asserts that a finer (more informative)
+question is at least as decision-useful as a coarser one. The
+substrate-level claim: under the strong Blackwell condition
+`CoversAltsOf` (every nonempty Q'-alt is covered by a nonempty
+Q-alt), the inquisitive `IsDecisionRelevant Q' dp acts` lifts to
+`Q`. The bare `questionEntails` (P-alts ⊆ Q-alts) gives only one
+half of the correspondence; for the inquisitive substrate the dual
+must be supplied separately.
+
+For *partition* questions (where every alternative is non-empty and
+the alternatives jointly cover the state space), `questionEntails`
+and `CoversAltsOf` coincide, recovering @cite{van-rooy-2003}'s
+partition-based theorem. -/
+
+/-- @cite{van-rooy-2003} §4.1 **decision-relevance preservation
+    under the strong Blackwell condition**: when `Q` covers `Q'`'s
+    alternatives, decision-relevance lifts. Direct re-export of the
+    substrate's `CoversAltsOf.preserves_decisionRelevant`. -/
+theorem decisionRelevance_preserved_under_cover
+    {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
+    {dp : DecisionProblem W A} {acts : Set A}
+    (hQ' : IsDecisionRelevant Q' dp acts) :
+    IsDecisionRelevant Q dp acts :=
+  hCover.preserves_decisionRelevant hQ'
+
+/-! ### Substrate gap note
+
+The bare @cite{van-rooy-2003} `Q ⊑ Q'` ordering does **not** suffice
+for decision-relevance preservation on the inquisitive substrate:
+`questionEntails` says only that `Q`-alts ⊆ `Q'`-alts, not the dual
+"every `Q'`-alt is covered by a `Q`-alt". On a partition `Question W`
+the two directions coincide and @cite{van-rooy-2003}'s informal
+argument goes through; on a general inquisitive `Question W` they
+split. The substrate exposes the dual as `CoversAltsOf` and proves
+preservation against that direction. See the docstring of
+`Semantics.Questions.DecisionTheoretic.CoversAltsOf`. -/
+
+end Phenomena.Questions.Studies.VanRooy2003

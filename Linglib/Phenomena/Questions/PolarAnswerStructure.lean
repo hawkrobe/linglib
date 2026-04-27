@@ -1,5 +1,5 @@
 import Linglib.Features.Polarity
-import Linglib.Theories.Semantics.Questions.AnsweringSystems
+import Linglib.Features.AnsweringSystem
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Fragments.Swedish.AnswerParticles
 
@@ -39,12 +39,12 @@ The key diagnostic is what "yes" means in response to "Doesn't he drink?":
   The particle assigns [+Pol] to the answer clause.
 
 This variation is captured by `AnsweringSystem` (see
-`Theories/Semantics/Questions/AnsweringSystems.lean`).
+`Features/AnsweringSystem.lean`).
 -/
 
 namespace Phenomena.Questions.PolarAnswerStructure
 
-open Semantics.Questions (AnsweringSystem AnswerStrategy PolarAnswerProfile)
+open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- A polar answer datum with answering-system annotation.
 

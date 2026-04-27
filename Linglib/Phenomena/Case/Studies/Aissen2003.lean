@@ -79,19 +79,19 @@ def scale2Cands : List Scale2Cand :=
 
 /-- *Ø/High: penalize unmarked High objects. -/
 def starZeroHigh : NamedConstraint Scale2Cand :=
-  mkMark "*Ø/High" fun c => !c.high
+  mkMark "*Ø/High" fun c => c.high = false
 
 /-- *Ø/Low: penalize unmarked Low objects. -/
 def starZeroLow : NamedConstraint Scale2Cand :=
-  mkMark "*Ø/Low" fun c => !c.low
+  mkMark "*Ø/Low" fun c => c.low = false
 
 /-- *!/Low: penalize marked Low objects (economy). -/
 def starBangLow : NamedConstraint Scale2Cand :=
-  mkDep "*!/Low" fun c => c.low
+  mkDep "*!/Low" fun c => c.low = true
 
 /-- *!/High: penalize marked High objects (economy). -/
 def starBangHigh : NamedConstraint Scale2Cand :=
-  mkDep "*!/High" fun c => c.high
+  mkDep "*!/High" fun c => c.high = true
 
 /-- Iconicity family (fixed: *Ø/High >> *Ø/Low). -/
 def iconicity2 : List (NamedConstraint Scale2Cand) := [starZeroHigh, starZeroLow]
@@ -143,23 +143,23 @@ def animCands : List AnimCand :=
 
 /-- Iconicity: *Ø/Hu >> *Ø/An >> *Ø/In. -/
 def starZeroHu : NamedConstraint AnimCand :=
-  mkMark "*Ø/Hu" fun c => !c.hu
+  mkMark "*Ø/Hu" fun c => c.hu = false
 
 def starZeroAn : NamedConstraint AnimCand :=
-  mkMark "*Ø/An" fun c => !c.an
+  mkMark "*Ø/An" fun c => c.an = false
 
 def starZeroIn : NamedConstraint AnimCand :=
-  mkMark "*Ø/In" fun c => !c.inan
+  mkMark "*Ø/In" fun c => c.inan = false
 
 /-- Economy: *!/In >> *!/An >> *!/Hu. -/
 def starBangIn : NamedConstraint AnimCand :=
-  mkDep "*!/In" fun c => c.inan
+  mkDep "*!/In" fun c => c.inan = true
 
 def starBangAn : NamedConstraint AnimCand :=
-  mkDep "*!/An" fun c => c.an
+  mkDep "*!/An" fun c => c.an = true
 
 def starBangHu : NamedConstraint AnimCand :=
-  mkDep "*!/Hu" fun c => c.hu
+  mkDep "*!/Hu" fun c => c.hu = true
 
 /-- Iconicity family (fixed: *Ø/Hu >> *Ø/An >> *Ø/In). -/
 def animIconicity : List (NamedConstraint AnimCand) :=

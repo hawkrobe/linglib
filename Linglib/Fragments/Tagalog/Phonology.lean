@@ -19,12 +19,30 @@ the latter (@cite{zuraw-2010}):
 
 ## Data organization
 
-- **§ 1: Stem consonants** — the six stem-initial obstruents from
-  @cite{zuraw-2010}'s factorial typology
-- **§ 2: Dictionary rates** — text-verified substitution rates from the
-  Tagalog dictionary study
-- **§ 3–7: 2×2 square** — @cite{magri-2025}'s arrangement of four
-  underlying concatenations for probabilistic analysis
+This Fragment houses **two distinct formal setups** for the same empirical
+phenomenon, addressing different theoretical questions:
+
+- **§ 1–2: @cite{zuraw-2010} setup** — `StemC` (six stem-initial obstruents:
+  p, t, k, b, d, g) × `SubSt` (yes/no substitution). Used by
+  `Phenomena/Phonology/Studies/Zuraw2010.lean` for the factorial typology
+  analysis (720 rankings → 10 distinct patterns + per-consonant percentages).
+- **§ 3–7: @cite{magri-2025} 2×2 square setup** — `NasalSubInput` (four
+  underlying concatenations: maŋ/paŋ × b/k) × `NasalSubOutput`. Used by
+  `Phenomena/Phonology/Studies/Magri2025.lean` for the MaxEnt-on-square
+  analysis (Hayes-Zuraw shifted-sigmoids generalization).
+
+The two setups are **complementary, not redundant**. They share data
+(both encode Zuraw's empirical claims about Tagalog) but differ in formal
+structure: the Zuraw setup is wider (6 stems, no prefix dimension), the
+Magri setup is narrower (only b, k stems) but adds the maŋ/paŋ prefix
+dimension needed for the 2×2 square. The constraint sets also differ —
+Zuraw's analysis uses the stringent *\[N hierarchy + *ASSOC; Magri's
+analysis uses prefix-specific UNIFORMITY constraints. Neither is wrong
+relative to Zuraw 2010; they're picking out different sub-phenomena.
+
+Cross-reference theorem `magri_input_corresponds_to_stem` (§7) makes the
+overlap explicit at the data level: each `NasalSubInput` projects to the
+corresponding `StemC` (b or k) in Zuraw's encoding.
 -/
 
 open Core.Constraint
@@ -118,15 +136,22 @@ def nasalSubSquare : Square NasalSubInput where
 -- § 5: Constraint Violation Profiles
 -- ============================================================================
 
-/-- C₁ = \*NC: one violation for every nasal–obstruent sequence.
-    Violated by NO (place assimilation preserves the NC sequence). -/
-def starNC : NasalSubCandidate → ℕ
+/-- C₁ = DEP-C: one violation per surface segment without an input
+    correspondent. Violated by NO (the faithful candidate keeps the
+    cluster — the YES candidate's coalesced nasal has no input pair).
+    Per @cite{zuraw-2010} (16): "DEP-C is violated by non-substitution".
+    NB: previously labeled \*NC in earlier commits; renamed for fidelity
+    to the paper, where \*NC is reserved for the voiceless-only constraint
+    (see `starNC` below). -/
+def depC : NasalSubCandidate → ℕ
   | (_, .no) => 1
   | (_, .yes) => 0
 
-/-- C₂ = \*NC̥: one violation for nasal followed by voiceless obstruent.
-    Violated by NO only for voiceless stems (k). -/
-def starNCvoiceless : NasalSubCandidate → ℕ
+/-- C₂ = \*NC: one violation for nasal followed by voiceless obstruent.
+    Violated by NO only for voiceless stems (k). Per @cite{zuraw-2010}
+    (17): "*NC: A [+nasal] segment must not be immediately followed by
+    a [-voice, -sonorant] segment". -/
+def starNC : NasalSubCandidate → ℕ
   | (.mang_k, .no) | (.pang_k, .no) => 1
   | _ => 0
 
@@ -157,8 +182,8 @@ def unifPang : NasalSubCandidate → ℕ
 
 /-- The six constraints as a `Fin 6`-indexed family. -/
 def constraints : Fin 6 → NasalSubCandidate → ℕ
-  | ⟨0, _⟩ => starNC
-  | ⟨1, _⟩ => starNCvoiceless
+  | ⟨0, _⟩ => depC
+  | ⟨1, _⟩ => starNC
   | ⟨2, _⟩ => starStemVelar
   | ⟨3, _⟩ => starStemVelarCoronal
   | ⟨4, _⟩ => unifMang
@@ -227,5 +252,27 @@ theorem violDiff_independence :
   intro k
   simp only [deltaR, violDiffProfile, nasalSubSquare]
   fin_cases k <;> simp
+
+-- ============================================================================
+-- § 9: Cross-reference — Magri's `NasalSubInput` ↔ Zuraw's `StemC`
+-- ============================================================================
+
+/-- Project a Magri 2025 input (maŋ/paŋ × b/k) to its Zuraw 2010 stem
+    consonant. The prefix dimension is collapsed; the stem dimension is
+    preserved. -/
+def NasalSubInput.toStemC : NasalSubInput → StemC
+  | .mang_b => .b
+  | .pang_b => .b
+  | .mang_k => .k
+  | .pang_k => .k
+
+/-- The four Magri inputs project onto exactly the two Zuraw stems
+    relevant to the 2×2 square: `b` and `k`. The Magri analysis is a
+    **prefix-aware narrowing** of the Zuraw factorial typology to the
+    voicing-contrast subset {b, k}. -/
+theorem magri_input_corresponds_to_stem :
+    (Finset.univ : Finset NasalSubInput).image NasalSubInput.toStemC =
+    ({StemC.b, StemC.k} : Finset StemC) := by
+  decide
 
 end Fragments.Tagalog.Phonology

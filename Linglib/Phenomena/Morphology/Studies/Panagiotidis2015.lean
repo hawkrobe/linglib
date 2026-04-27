@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Morphology.CategoryChanging
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
 
 /-!
 # Categorial Features ↔ Category-Changing Morphology

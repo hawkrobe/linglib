@@ -1,5 +1,7 @@
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Information-Theoretic Primitives
@@ -15,17 +17,26 @@ families are real-valued and route through mathlib's `Real.negMulLog`
 expressed in **nats** (natural log) — the mathlib convention. To convert
 to bits, multiply by `1 / Real.log 2` (or use `Real.logb 2` directly).
 
-For the abstract `(ι → ℝ)`-indexed counterpart with proven non-negativity,
-max-entropy bounds, and Gibbs VP, see `Core.shannonEntropy` in
-`Linglib/Core/Agent/RationalAction.lean` (§4). Both definitions agree
-pointwise via `Real.negMulLog`.
+## Mathlib-canonical form
+
+Following mathlib's `Finset.sum` discipline, all entropy-family functions
+take a `Finset α` (the support) plus a probability function `α → ℝ`. This
+matches mathlib's pattern (cf. `Finset.sum`, `MeasureTheory.integral`):
+ONE canonical type-indexed form, not parallel implementations.
+
+For the function-indexed version over a `Fintype` use
+`entropy Finset.univ p`. For ad-hoc list-of-pairs distributions
+common in study files, `Finset.image Prod.fst dist.toFinset` extracts the
+support and `fun a => (dist.find? (·.1 = a)).map Prod.snd |>.getD 0`
+extracts the function (or just refactor the upstream definition to
+return `(Finset α, α → ℝ)` directly).
 
 ## Main definitions
 
-- `entropy`: Shannon entropy H(X) over a `List (α × ℝ)` of (outcome, prob) pairs
-- `conditionalEntropy`: H(Y|X) = H(X,Y) - H(X)
+- `entropy s p`: Shannon entropy `H(p) = ∑ a ∈ s, negMulLog (p a)`
+- `conditionalEntropy s sj joint marginalX`: H(Y|X) = H(X,Y) - H(X)
 - `mutualInformation`: I(X;Y) = H(X) + H(Y) - H(X,Y)
-- `jsdOf`: Jensen-Shannon divergence over an explicit inventory
+- `jsdOf s p q`: Jensen-Shannon divergence
 - `deltaP`: ΔP directional association measure (ℚ-valued, no log)
 - `deltaPCounts`: ΔP from a 2×2 contingency table (ℚ-valued, no log)
 -/
@@ -34,52 +45,77 @@ namespace Core.InformationTheory
 
 open Real
 
-/-- Shannon entropy of a distribution (in nats).
+/-! ## Shannon entropy — Finset-and-function form
 
-H(X) = -Σ_x P(x) log P(x) = Σ_x negMulLog(P(x))
+Mathlib-canonical shape: `(Finset α, α → ℝ) → ℝ` via `∑ a ∈ s, negMulLog (p a)`.
+The mathlib convention `0 · log 0 = 0` is built into `Real.negMulLog`. -/
 
-The convention `0 · log 0 = 0` is built into `Real.negMulLog` (which
-returns `0` at `x = 0` because `Real.log 0 = 0` in mathlib).
+/-- Shannon entropy of a probability function over a finite support (in nats):
 
-This is a list-indexed counterpart of `Core.shannonEntropy` in
-`RationalAction.lean`; the latter is the function-indexed version with
-proven properties (`shannonEntropy_nonneg`, `shannonEntropy_le_log_card`,
-Gibbs VP). Use the function-indexed version for proofs over a `Fintype`
-domain; use this list-indexed version when the support is given as an
-explicit list. -/
-noncomputable def entropy {α : Type} (dist : List (α × ℝ)) : ℝ :=
-  (dist.map fun (_, p) => Real.negMulLog p).sum
+    `H(p) = -Σ_{a ∈ s} p(a) log p(a) = Σ_{a ∈ s} negMulLog(p(a))`.
 
-/-- Mutual information I(X;Y) = H(X) + H(Y) - H(X,Y).
+    Mathlib-canonical form: take the support as a `Finset` and the probability
+    as a function. For `[Fintype α]`, use `Finset.univ` for the support. -/
+noncomputable def entropy {α : Type*} (s : Finset α) (p : α → ℝ) : ℝ :=
+  ∑ a ∈ s, Real.negMulLog (p a)
 
-Alternative form: I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X). In nats. -/
-noncomputable def mutualInformation {α β : Type}
-    (joint : List ((α × β) × ℝ))
-    (marginalX : List (α × ℝ))
-    (marginalY : List (β × ℝ)) : ℝ :=
-  entropy marginalX + entropy marginalY - entropy joint
+/-- Entropy is non-negative for probability distributions on the support. -/
+theorem entropy_nonneg {α : Type*} (s : Finset α) (p : α → ℝ)
+    (hp_nonneg : ∀ a ∈ s, 0 ≤ p a) (hp_sum : ∑ a ∈ s, p a = 1) :
+    0 ≤ entropy s p :=
+  Finset.sum_nonneg fun a ha =>
+    Real.negMulLog_nonneg (hp_nonneg a ha)
+      (le_trans (Finset.single_le_sum (f := p)
+        (fun b hb => hp_nonneg b hb) ha) hp_sum.le)
 
-/-- Conditional entropy H(Y|X) = H(X,Y) - H(X), in nats.
+/-- Entropy of the uniform distribution `p ≡ 1/|s|` over a non-empty `s`. -/
+theorem entropy_uniform {α : Type*} (s : Finset α) (h : s.Nonempty) :
+    entropy s (fun _ => 1 / s.card) = log s.card := by
+  simp only [entropy, Real.negMulLog]
+  have hcard_pos : (0 : ℝ) < s.card := Nat.cast_pos.mpr (Finset.card_pos.mpr h)
+  have hne : (s.card : ℝ) ≠ 0 := ne_of_gt hcard_pos
+  rw [Finset.sum_const, nsmul_eq_mul,
+      log_div one_ne_zero hne, log_one, zero_sub]
+  field_simp
 
-Used by MemorySurprisal for computing average surprisal S_M = H(W_t | M_t),
-and by LCEC for paradigm cell conditional entropy H(Cᵢ|Cⱼ). -/
-noncomputable def conditionalEntropy {α β : Type}
-    (joint : List ((α × β) × ℝ))
-    (marginalX : List (α × ℝ)) : ℝ :=
-  entropy joint - entropy marginalX
+/-! ## Mutual information, conditional entropy, JSD
 
-/-- Jensen-Shannon divergence over an explicit inventory.
+All take the supports as `Finset` and the joint/marginal distributions as
+functions, mirroring `entropy`'s shape. -/
 
-JSD(p, q) = H(m) - (H(p) + H(q)) / 2 where m(x) = (p(x) + q(x)) / 2.
-Symmetric, bounded, and a metric (after sqrt). In nats.
+/-- Mutual information `I(X;Y) = H(X) + H(Y) - H(X,Y)` (in nats).
 
-Used for grammar distance, register comparison, and anywhere
-KL divergence's asymmetry is undesirable. -/
-noncomputable def jsdOf {α : Type} (xs : List α) (p q : α → ℝ) : ℝ :=
-  let distP := xs.map fun x => (x, p x)
-  let distQ := xs.map fun x => (x, q x)
-  let distM := xs.map fun x => (x, (p x + q x) / 2)
-  entropy distM - (entropy distP + entropy distQ) / 2
+    Take the support of joint as `sJoint : Finset (α × β)`, supports of
+    marginals as `sX : Finset α` and `sY : Finset β`, and the corresponding
+    probability functions. Alternative form: `I(X;Y) = H(X) - H(X|Y)`. -/
+noncomputable def mutualInformation {α β : Type*}
+    (sJoint : Finset (α × β)) (joint : α × β → ℝ)
+    (sX : Finset α) (marginalX : α → ℝ)
+    (sY : Finset β) (marginalY : β → ℝ) : ℝ :=
+  entropy sX marginalX + entropy sY marginalY -
+    entropy sJoint joint
+
+/-- Conditional entropy `H(Y|X) = H(X,Y) - H(X)` (in nats).
+
+    Used by MemorySurprisal for `S_M = H(W_t | M_t)` and by LCEC for
+    `H(Cᵢ|Cⱼ)`. -/
+noncomputable def conditionalEntropy {α β : Type*}
+    (sJoint : Finset (α × β)) (joint : α × β → ℝ)
+    (sX : Finset α) (marginalX : α → ℝ) : ℝ :=
+  entropy sJoint joint - entropy sX marginalX
+
+/-- Jensen-Shannon divergence over a finite support:
+
+    `JSD(p, q) = H(m) - (H(p) + H(q)) / 2` where `m(a) = (p(a) + q(a)) / 2`.
+
+    Symmetric, bounded, and a metric (after sqrt). In nats. Used for
+    grammar distance, register comparison, and anywhere KL divergence's
+    asymmetry is undesirable. -/
+noncomputable def jsdOf {α : Type*} (s : Finset α) (p q : α → ℝ) : ℝ :=
+  entropy s (fun a => (p a + q a) / 2) -
+    (entropy s p + entropy s q) / 2
+
+/-! ## ΔP (directional association, no log) -/
 
 /-- ΔP: directional association measure (@cite{ellis-2006}, Table 1;
 via @cite{cheng-holyoak-1995} Probabilistic Contrast Model).

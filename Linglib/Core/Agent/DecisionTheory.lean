@@ -119,44 +119,28 @@ def maximinUtilityValue {W A : Type*} [DecidableEq W]
     (c : Finset W) : ℚ :=
   maximinAfterLearning dp worlds actions c - maximinValue dp worlds actions
 
-/-! ### Mention-Some / Mention-All -/
+/-! ### Resolution
 
-/-- Convert a list of cells to a `Finset (Finset W)` of cells. -/
-def questionToFinset {W : Type*} [DecidableEq W]
-    (q : List (Finset W)) : Finset (Finset W) :=
-  q.toFinset
+@cite{van-rooy-2003} p. 736 resolution definition: information `c`
+**resolves** decision problem `(dp, acts)` iff some action in `acts`
+weakly dominates every other action on every world in `c`. -/
 
-/-- C resolves decision problem if some action dominates after learning C.
+/-- `c` **resolves** decision problem `(dp, acts)`: some action in `acts`
+    weakly dominates every other action on every world in `c`.
+    @cite{van-rooy-2003} p. 736. -/
+def IsResolved {W A : Type*} (dp : DecisionProblem W A)
+    (acts : Set A) (c : Set W) : Prop :=
+  ∃ a ∈ acts, ∀ b ∈ acts, ∀ w ∈ c, dp.utility w a ≥ dp.utility w b
 
-Per @cite{van-rooy-2003}: C resolves DP iff after learning C, there exists
-an action a ∈ A that weakly dominates all other actions on every world in C. -/
-def resolves {W A : Type*} [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c : Finset W) : Bool :=
-  decide (¬actions.Nonempty ∨ ∃ a ∈ actions, ∀ b ∈ actions,
-    ∀ w ∈ worlds ∩ c, dp.utility w a >= dp.utility w b)
-
-/-- Set of answers that resolve the decision problem -/
-def resolvingAnswers {W A : Type*} [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : List (Finset W)) : List (Finset W) :=
-  q.filter λ cell => resolves dp worlds actions cell
-
-/-- A question has mention-some reading if multiple non-disjoint cells resolve the DP. -/
-def isMentionSome {W A : Type*} [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : List (Finset W)) : Bool :=
-  let resolving := resolvingAnswers dp worlds actions q
-  resolving.length > 1 &&
-    resolving.any λ c1 =>
-      resolving.any λ c2 =>
-        decide ((worlds ∩ c1 ∩ c2).Nonempty)
-
-/-- Mention-all reading: need the complete partition to resolve DP -/
-def isMentionAll {W A : Type*} [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : List (Finset W)) : Bool :=
-  !isMentionSome dp worlds actions q
+/-- Decidability of `IsResolved` under finite, decidable carriers. The
+    consumer-side prerequisite for `decide`-based evaluation (e.g.,
+    `List.filter` over candidate cells in worked study examples). -/
+instance IsResolved.instDecidable {W A : Type*}
+    (dp : DecisionProblem W A) (acts : Set A) (c : Set W)
+    [Fintype A] [DecidablePred (· ∈ acts)]
+    [Fintype W] [DecidablePred (· ∈ c)] :
+    Decidable (IsResolved dp acts c) := by
+  unfold IsResolved; infer_instance
 
 /-! ### Question Utility -/
 

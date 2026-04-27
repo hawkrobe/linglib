@@ -125,6 +125,16 @@
   validated = {true},
   role      = {formalized},
   sources   = {Phenomena/Reference/Studies/SikosEtAl2021.lean;Phenomena/Reference/Studies/SikosEtAl2021Bridge.lean}
+}% REF: George, B. R. (2011). Question Embedding and the Semantics of Answers. UCLA PhD dissertation.
+@phdthesis{george-2011,
+  author    = {George, Benjamin Ross},
+  year      = {2011},
+  title     = {Question Embedding and the Semantics of Answers},
+  school    = {University of California, Los Angeles},
+  type      = {Ph.D. Dissertation},
+  subfield  = {semantics/compositional},
+  role      = {formalized},
+  sources   = {Phenomena/Questions/Studies/George2011.lean}
 }% REF: Gong, Z. M. (2022). Case in Wholesale Late Merger: Evidence from Mongolian Scrambling.
 @article{gong-2022,
   author    = {Gong, Zhiyu Mia},
@@ -533,8 +543,7 @@
   doi       = {10.3389/fcomm.2021.662027},
   subfield  = {pragmatics/rsa},
   validated = {true},
-  role      = {formalized},
-  sources   = {Phenomena/Persuasion/Studies/CumminsFranke2021.lean}
+  role      = {cited}
 }
 @article{degen-etal-2020,
   author    = {Degen, Judith and Hawkins, Robert D. and Graf, Caroline and Kreiss, Elisa and Goodman, Noah D.},
@@ -3682,6 +3691,50 @@
   role      = {formalized},
   validated = {true},
   sources   = {Linglib/Fragments/Washo/Modals.lean}
+}% REF: van Rooij, R. (2011). Implicit versus Explicit Comparatives. In: Égré & Klinedinst (eds) Vagueness and Language Use. Palgrave Studies in Pragmatics, Language and Cognition. Palgrave Macmillan, London.
+@incollection{van-rooij-2011a,
+  author    = {van Rooij, Robert},
+  year      = {2011},
+  title     = {Implicit versus Explicit Comparatives},
+  booktitle = {Vagueness and Language Use},
+  editor    = {{\'E}gr{\'e}, Paul and Klinedinst, Nathan},
+  series    = {Palgrave Studies in Pragmatics, Language and Cognition},
+  publisher = {Palgrave Macmillan},
+  address   = {London},
+  doi       = {10.1057/9780230299313_3},
+  subfield  = {semantics/gradability},
+  role      = {cited},
+  validated = {true},
+  sources   = {Linglib/Theories/Semantics/Comparison/Delineation.lean;Linglib/Phenomena/Gradability/Studies/Bochnak2015.lean}
+}% REF: Kennedy, C. (2011). Vagueness and Comparison. In: Égré & Klinedinst (eds) Vagueness and Language Use. Palgrave Studies in Pragmatics, Language and Cognition. Palgrave Macmillan, London.
+@incollection{kennedy-2011,
+  author    = {Kennedy, Christopher},
+  year      = {2011},
+  title     = {Vagueness and Comparison},
+  booktitle = {Vagueness and Language Use},
+  editor    = {{\'E}gr{\'e}, Paul and Klinedinst, Nathan},
+  series    = {Palgrave Studies in Pragmatics, Language and Cognition},
+  publisher = {Palgrave Macmillan},
+  address   = {London},
+  doi       = {10.1057/9780230299313_4},
+  subfield  = {semantics/gradability},
+  role      = {cited},
+  validated = {true},
+  sources   = {Linglib/Theories/Semantics/Comparison/Delineation.lean;Linglib/Phenomena/Gradability/Studies/Bochnak2015.lean}
+}% REF: Bochnak, M. R. (2015). The Degree Semantics Parameter and cross-linguistic variation. Semantics & Pragmatics 8(6): 1-48.
+@article{bochnak-2015,
+  author    = {Bochnak, M Ryan},
+  year      = {2015},
+  title     = {The {Degree Semantics Parameter} and cross-linguistic variation},
+  journal   = {Semantics and Pragmatics},
+  volume    = {8},
+  number    = {6},
+  pages     = {1--48},
+  doi       = {10.3765/sp.8.6},
+  subfield  = {semantics/gradability},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Linglib/Phenomena/Gradability/Studies/Bochnak2015.lean}
 }% REF: Močnik, M. & Abramovitz, R. (2019). A variable-force variable-flavor attitude verb in Koryak.
 @inproceedings{mocnik-abramovitz-2019,
   author    = {Mo{\v{c}}nik, Ma{\v{s}}a and Abramovitz, Rafael},
@@ -6943,11 +6996,13 @@
   publisher = {John Benjamins},
   address   = {Amsterdam},
   pages     = {227--254},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
   doi       = {10.1075/la.249.08gar},
   subfield  = {semantics/focus},
   validated = {true},
-  role      = {cited},
-  sources   = {Fragments/Italian/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+  role      = {formalized},
+  sources   = {Phenomena/Polarity/Studies/GarassinoJacob2018.lean;Fragments/Italian/PolarityMarking.lean}
 }
 @article{wilder-2013,
   author    = {Wilder, Chris},
@@ -6960,7 +7015,7 @@
   subfield  = {semantics/focus},
   validated = {true},
   role      = {cited},
-  sources   = {Fragments/English/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+  sources   = {Fragments/English/PolarityMarking.lean}
 }
 @article{batllori-hernanz-2013,
   author    = {Batllori, Montserrat and Hernanz, M. Llu{\"\i}sa},
@@ -6973,7 +7028,7 @@
   subfield  = {semantics/focus},
   validated = {true},
   role      = {cited},
-  sources   = {Fragments/Spanish/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+  sources   = {Fragments/Spanish/PolarityMarking.lean;Fragments/Italian/PolarityMarking.lean;Phenomena/Polarity/Studies/GarassinoJacob2018.lean}
 }
 @article{turco-braun-dimroth-2014,
   author    = {Turco, Giuseppina and Braun, Bettina and Dimroth, Christine},
@@ -6986,7 +7041,161 @@
   subfield  = {semantics/focus},
   validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean;Theories/Semantics/Focus/PolarityLevel.lean;Phenomena/Polarity/MarkingTypology.lean}
+  sources   = {Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean;Theories/Semantics/Focus/PolarityLevel.lean}
+}
+@book{dimroth-sudhoff-2018,
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  year      = {2018},
+  title     = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited},
+  sources   = {Features/InformationStructure.lean;Phenomena/Polarity/Studies/GarassinoJacob2018.lean;Phenomena/Polarity/Studies/MaticNikolaeva2018.lean}
+}
+@incollection{matic-nikolaeva-2018,
+  author    = {Mati{\'c}, Dejan and Nikolaeva, Irina},
+  year      = {2018},
+  title     = {From polarity focus to salient polarity: From things to processes},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {9--53},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.01mat},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Phenomena/Polarity/Studies/MaticNikolaeva2018.lean;Features/InformationStructure.lean}
+}
+@incollection{lohnstein-2018,
+  author    = {Lohnstein, Horst},
+  year      = {2018},
+  title     = {Verum focus, sentence mood, and contrast},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {55--88},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.02loh},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{bacskai-atkari-2018,
+  author    = {Bacskai-Atkari, Julia},
+  year      = {2018},
+  title     = {Complementizers and negative polarity in {G}erman hypothetical comparatives},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {89--108},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.03bac},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{ohl-2018,
+  author    = {{\"O}hl, Peter},
+  year      = {2018},
+  title     = {Veridicality and sets of alternative worlds: On embedded interrogatives and the complementizers \emph{that} and \emph{if}},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {109--127},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.04ohl},
+  subfield  = {semantics/questions},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{gyuris-2018,
+  author    = {Gyuris, Be{\'a}ta},
+  year      = {2018},
+  title     = {On two types of polar interrogatives in {H}ungarian and their interaction with inside and outside negation},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {173--202},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.06gyu},
+  subfield  = {semantics/questions},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{mueller-reichau-2018,
+  author    = {Mueller-Reichau, Olav},
+  year      = {2018},
+  title     = {Two kinds of {VERUM} distinguished by aspect choice in {R}ussian},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {203--225},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.07mue},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{andorno-crocco-2018,
+  author    = {Andorno, Cecilia and Crocco, Claudia},
+  year      = {2018},
+  title     = {In search for polarity contrast marking in {I}talian: A contribution from echo replies},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {255--288},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.09and},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{bernini-1995,
+  author    = {Bernini, Giuliano},
+  year      = {1995},
+  title     = {Le profrasi},
+  booktitle = {Grande grammatica italiana di consultazione, Vol.~III},
+  editor    = {Renzi, Lorenzo and Salv{\`\i}, Giampaolo and Cardinaletti, Anna},
+  publisher = {il Mulino},
+  address   = {Bologna},
+  pages     = {175--222},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Italian/PolarityMarking.lean;Phenomena/Polarity/Studies/GarassinoJacob2018.lean}
+}
+@article{poletto-zanuttini-2013,
+  author    = {Poletto, Cecilia and Zanuttini, Raffaella},
+  year      = {2013},
+  title     = {Emphasis as reduplication: Evidence from \emph{s{\`\i} che} / \emph{no che} sentences},
+  journal   = {Lingua},
+  volume    = {128},
+  pages     = {124--141},
+  doi       = {10.1016/j.lingua.2012.10.016},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Italian/PolarityMarking.lean;Phenomena/Polarity/Studies/GarassinoJacob2018.lean}
 }
 @inproceedings{knick-sharf-2026,
   author    = {Knick, Emily and Sharf, Eli},
@@ -16883,13 +17092,20 @@
   role      = {cited},
   sources   = {crossref}
 }
-@phdthesis{anttila-1997,
+@incollection{anttila-1997,
   author    = {Anttila, Arto},
   title     = {Deriving Variation from Grammar},
   year      = {1997},
-  school    = {Stanford University},
+  booktitle = {Variation, Change, and Phonological Theory},
+  editor    = {Hinskens, Frans and van Hout, Roeland and Wetzels, W. Leo},
+  series    = {Current Issues in Linguistic Theory},
+  volume    = {146},
+  pages     = {35--68},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
   subfield  = {phonology},
-  role      = {cited},
+  role      = {formalized},
+  sources   = {Phenomena/Phonology/Studies/Anttila1997.lean}
 }
 @article{kiparsky-1993b,
   author    = {Kiparsky, Paul},
@@ -22399,4 +22615,46 @@
   subfield  = {semantics/event-structure},
   role      = {cited},
   sources   = {Core/Scales/Scale.lean}
+}
+
+@book{awobuluyi-1978,
+  author    = {Awobuluyi, Oladele},
+  year      = {1978},
+  title     = {Essentials of Yoruba Grammar},
+  publisher = {Oxford University Press Nigeria},
+  address   = {Ibadan},
+  isbn      = {9780195753004},
+  subfield  = {syntax},
+  role      = {primary},
+  validated = {true},
+  sources   = {Fragments/Yoruba/Typology.lean;Fragments/Yoruba/Relativization.lean}
+}
+
+@phdthesis{ajiboye-2005,
+  author    = {Ajiboye, Oladiipo Jacob},
+  year      = {2005},
+  title     = {Topics on Yor\`{u}b\'{a} Nominal Expressions},
+  school    = {University of British Columbia},
+  type      = {Ph.D. Dissertation},
+  address   = {Vancouver, BC},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Fragments/Yoruba/Typology.lean;Fragments/Yoruba/Relativization.lean}
+}
+
+@article{keenan-comrie-1979,
+  author    = {Keenan, Edward L. and Comrie, Bernard},
+  year      = {1979},
+  title     = {Data on the Noun Phrase Accessibility Hierarchy},
+  journal   = {Language},
+  volume    = {55},
+  number    = {2},
+  pages     = {333--351},
+  publisher = {Linguistic Society of America},
+  url       = {https://www.jstor.org/stable/412588},
+  subfield  = {syntax/typology},
+  role      = {primary},
+  validated = {true},
+  sources   = {Fragments/Yoruba/Relativization.lean;Phenomena/Relativization/Studies/KeenanComrie1977.lean}
 }

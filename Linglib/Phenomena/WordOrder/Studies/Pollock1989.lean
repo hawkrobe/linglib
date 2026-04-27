@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
+import Linglib.Theories.Syntax.Minimalism.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!

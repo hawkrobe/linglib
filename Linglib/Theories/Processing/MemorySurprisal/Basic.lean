@@ -104,19 +104,19 @@ Lower memory → less information about the past → higher surprisal.
 When memory is unlimited, S_M = S_∞ (the entropy rate of the language).
 
 Uses `conditionalEntropy` from `Core.InformationTheory`. -/
-noncomputable def averageSurprisal {W Mem : Type}
-    (joint : List ((Mem × W) × ℝ))
-    (marginalMem : List (Mem × ℝ)) : ℝ :=
-  RSA.InformationTheory.conditionalEntropy joint marginalMem
+noncomputable def averageSurprisal {W Mem : Type*}
+    (sJoint : Finset (Mem × W)) (joint : Mem × W → ℝ)
+    (sMem : Finset Mem) (marginalMem : Mem → ℝ) : ℝ :=
+  RSA.InformationTheory.conditionalEntropy sJoint joint sMem marginalMem
 
 /-- Memory entropy: the entropy of the memory state distribution (in nats).
 
 H_M = H(M_t), measuring how much information the processor uses.
 
 Uses `entropy` from `Core.InformationTheory`. -/
-noncomputable def memoryEntropy {Mem : Type}
-    (memDist : List (Mem × ℝ)) : ℝ :=
-  RSA.InformationTheory.entropy memDist
+noncomputable def memoryEntropy {Mem : Type*}
+    (sMem : Finset Mem) (memDist : Mem → ℝ) : ℝ :=
+  RSA.InformationTheory.entropy sMem memDist
 
 -- ============================================================================
 -- §2: Mutual Information Profile

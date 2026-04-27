@@ -20,7 +20,6 @@ import Linglib.Core.Question.Basic
 import Linglib.Core.Question.Granularity
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
-import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 import Linglib.Theories.Semantics.Degree.Granularity
 
 namespace DeoThomas2025
@@ -246,7 +245,16 @@ the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
 This replaces a 100-line Bool/List proof that managed indices into
 `worlds : List W` and case-split on `properlyContains`. -/
 
-open Semantics.Questions.Inquisitive (toIssue)
+/-- A `QUD` partitions a meaning space via an equivalence relation; via
+    `QUD.toSetoid` and `Core.Question.fromSetoid`, every QUD induces an
+    inquisitive content whose alternatives are exactly the QUD's
+    equivalence classes. The bridge is one-way: not every `Core.Question`
+    arises from a `QUD` (mention-some, intermediate-exhaustive, and
+    conditional-question alternatives are non-disjoint or non-exhaustive
+    and so are not representable as the cells of any equivalence
+    relation — @cite{theiler-etal-2018}). -/
+def toIssue {W : Type*} (q : QUD W) : Core.Question W :=
+  Core.Question.fromSetoid q.toSetoid
 
 /-- Strict partition refinement implies issue width.
 

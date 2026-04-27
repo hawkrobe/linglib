@@ -252,6 +252,35 @@ def linearize : SyntacticObject → List LIToken
   | .leaf tok => [tok]
   | .node l r => linearize l ++ linearize r
 
+/-- The leftmost leaf along the left spine of a `SyntacticObject`. For SOs
+    built via `Step.emR` complement Merge or direct `merge` with the
+    projecting head on the left, this leaf IS the projecting head. For
+    arbitrary `FreeMagma LIToken` values, it is a heuristic recovery of
+    the head — see `outerCat` and `HeadFunction.lean` for the M-C-B
+    formalism. -/
+def SyntacticObject.leftmostLeaf : SyntacticObject → LIToken
+  | .leaf tok => tok
+  | .node l _ => l.leftmostLeaf
+
+/-- The outer (projecting) categorial feature of an SO, recovered from the
+    leftmost leaf along the left spine. For trees built by left-headed
+    construction (`Step.emR` complement Merge or `merge` with the projecting
+    head on the left), this returns the head's interpretable [F] feature in
+    the sense of @cite{adger-2003} eq. 110.
+
+    **M-C-B alignment** (@cite{marcolli-chomsky-berwick-2025} §1.13.3,
+    §1.15): in NEW Minimalism, head functions are *external* and *partial*
+    — defined only on `Dom(h) ⊂ SO`. This accessor is the partial extension
+    to all `FreeMagma LIToken` values via the leftmost-leaf heuristic, valid
+    only for left-headed trees. For derivation-based code, prefer
+    `Derivation.outerCat?` (in `Selection.lean`), which is **total** on
+    leaf-initial derivations because head info is tracked through the
+    derivation history rather than recovered from the tree. The full
+    formalism (head function + Labeling Algorithm) lives in
+    `Theories/Syntax/Minimalism/HeadFunction.lean`. -/
+def SyntacticObject.outerCat (so : SyntacticObject) : Cat :=
+  so.leftmostLeaf.item.outerCat
+
 /-- Extract the phonological form from an LIToken. -/
 def LIToken.phonForm (tok : LIToken) : String :=
   tok.item.features.head?.map (·.phonForm) |>.getD ""

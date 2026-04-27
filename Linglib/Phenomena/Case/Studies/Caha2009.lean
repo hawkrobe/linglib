@@ -1,5 +1,5 @@
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-import Linglib.Fragments.Czech.Case
+import Linglib.Fragments.Slavic.Czech.Case
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.German.Case
@@ -11,15 +11,15 @@ import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Mongolian.Case
-import Linglib.Fragments.Polish.Case
-import Linglib.Fragments.Russian.Case
-import Linglib.Fragments.Serbian.Case
-import Linglib.Fragments.Slovenian.Case
+import Linglib.Fragments.Slavic.Polish.Case
+import Linglib.Fragments.Slavic.Russian.Case
+import Linglib.Fragments.Slavic.Serbian.Case
+import Linglib.Fragments.Slavic.Slovenian.Case
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Turkish.Case
-import Linglib.Fragments.Ukrainian.Case
+import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Yakut.Case
 
 /-!
@@ -73,7 +73,7 @@ open Interfaces.Morphosyntax.CaseContainment
 -- ============================================================================
 
 theorem czech :
-    RespectsCahaContainment Fragments.Czech.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Czech.Case.caseInventory := by decide
 
 theorem german :
     RespectsCahaContainment Fragments.German.Case.caseInventory := by decide
@@ -103,16 +103,16 @@ theorem mongolian :
     RespectsCahaContainment Fragments.Mongolian.Case.caseInventory := by decide
 
 theorem polish :
-    RespectsCahaContainment Fragments.Polish.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Polish.Case.caseInventory := by decide
 
 theorem russian :
-    RespectsCahaContainment Fragments.Russian.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Russian.Case.caseInventory := by decide
 
 theorem serbian :
-    RespectsCahaContainment Fragments.Serbian.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Serbian.Case.caseInventory := by decide
 
 theorem slovenian :
-    RespectsCahaContainment Fragments.Slovenian.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Slovenian.Case.caseInventory := by decide
 
 theorem swissgerman :
     RespectsCahaContainment Fragments.SwissGerman.Case.caseInventory := by decide
@@ -127,7 +127,7 @@ theorem turkish :
     RespectsCahaContainment Fragments.Turkish.Case.caseInventory := by decide
 
 theorem ukrainian :
-    RespectsCahaContainment Fragments.Ukrainian.Case.caseInventory := by decide
+    RespectsCahaContainment Fragments.Slavic.Ukrainian.Case.caseInventory := by decide
 
 theorem yakut :
     RespectsCahaContainment Fragments.Yakut.Case.caseInventory := by decide

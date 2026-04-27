@@ -32,7 +32,7 @@ Principle C under Principle B).
 namespace Chomsky1981
 
 open Paradigms.AcceptabilityJudgment
-open Minimalism.Phenomena.Coreference
+open Minimalism.Coreference
 open Phenomena.Anaphora.Coreference
 
 /-- Coverage of a `PhenomenonData` set under Minimalist binding theory.

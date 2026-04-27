@@ -31,7 +31,7 @@ asymmetric c-command in a `SyntacticObject` tree. Bridge files in
 import Linglib.Features.ScopeTypes
 import Linglib.Theories.Syntax.Minimalism.Phase
 
-namespace Minimalism.Phenomena.Scope
+namespace Minimalism.Scope
 
 open ScopeTheory
 
@@ -156,4 +156,4 @@ theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
 
 end PhaseBridge
 
-end Minimalism.Phenomena.Scope
+end Minimalism.Scope

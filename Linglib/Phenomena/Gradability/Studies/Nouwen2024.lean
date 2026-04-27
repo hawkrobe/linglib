@@ -993,13 +993,32 @@ theorem adjS1Score_nonneg :
   · exact le_refl 0
   · exact le_of_lt (exp_pos _)
 
-/-- RSAConfig for the adjective step with an evaluative posterior as worldPrior.
+/-- RSAConfig for the adjective step with the evaluative posterior as
+    L0 prior AND L1 worldPrior.
 
-    The worldPrior is the L1 posterior from the evaluative step: the listener
-    has already processed the evaluative adverb and now hears "warm".
-    This implements the sequential composition:
+    Implements @cite{nouwen-2024} eq (73): the second update applies
+    L&G's pragmatic listener (eq 71) with prior `Π = (evalCfg evalMu).L1
+    .eval_pos`. Per L&G, that prior enters in TWO places —
+    inside the literal listener's normalization (via `meaning`) AND
+    in the pragmatic listener's Bayesian inversion (via `worldPrior`).
+    Both copies are intentional and faithful to the paper, NOT
+    double-counting. The expanded formula is:
 
-      P₂(h | "warm") ∝ P_S1("warm" | h, θ) · L1_eval(h | eval_pos) · P(θ) -/
+      P₂(h | "warm") ∝ Π(h) · Σ_θ P(θ) · S1("warm" | h, θ, Π)
+
+    where S1 has Π baked in via the literal listener π in its
+    log-utility `ln π(h | "warm", θ, Π) - cost`. The "P_S1 · L1_eval · P(θ)"
+    shorthand from the prose section above is true at the L1 layer but
+    elides the L1_eval that also lives inside `P_S1`'s own
+    L&G-style L0 normalization.
+
+    **Future direction**: when the in-flight RSA → mathlib-PMF migration
+    (`project_rsa_pmf_migration.md`, Phase 3-5) reaches Phase 5 consumer
+    migration, this file's `evalCfg` and `seqAdjCfg` will be expressed as
+    `PMF.posterior` chained via `PMF.bind` (the listener-side L1 → next
+    prior pattern). Until then the L&G two-prior structure is encoded
+    inline by writing `evalCfg.L1` in both fields, which the rsa_predict
+    tactic handles correctly. -/
 @[reducible]
 noncomputable def seqAdjCfg (evalMu : Height → ℕ) : RSA.RSAConfig AdjUtterance Height where
   Latent := Threshold

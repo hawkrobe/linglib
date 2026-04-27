@@ -1,5 +1,5 @@
 import Linglib.Fragments.Italian.DiscourseParticles
-import Linglib.Fragments.Russian.DiscourseParticles
+import Linglib.Fragments.Slavic.Russian.DiscourseParticles
 import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Mandarin.DiscourseParticles
 
@@ -43,7 +43,7 @@ Mandarin *zhǐshì* allows all types except exclamatives.
 namespace Phenomena.Focus.DiscourseOnly
 
 open Fragments.Italian.DiscourseParticles (soloChe)
-open Fragments.Russian.DiscourseParticles (tolko)
+open Fragments.Slavic.Russian.DiscourseParticles (tolko)
 open Fragments.Hungarian.DiscourseParticles (csak)
 open Fragments.Mandarin.DiscourseParticles (zhishi)
 

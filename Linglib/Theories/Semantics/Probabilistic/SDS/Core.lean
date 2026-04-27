@@ -10,9 +10,9 @@ share a common structure:
 3. A **scenario factor**: context-dependent constraint
 4. **Combination** via Product of Experts (multiplicative)
 
-## Connection to Core.ProductOfExperts
+## Connection to Core
 
-This module is conceptually related to `Core.ProductOfExperts.FactoredDist`,
+This module is conceptually related to `Core.FactoredDist`,
 but provides a typeclass-based interface for more flexible instantiation.
 The underlying math is the same: Product of Experts combination.
 
@@ -294,30 +294,18 @@ Check if all scenario factors are trivial (constant 1).
 def hasUniformScenario {α Θ : Type*} [SDSConstraintSystem α Θ] (sys : α) : Bool :=
   (SDSConstraintSystem.paramSupport sys).all (trivialScenario sys)
 
--- Connection to ProductOfExperts.FactoredDist
-
 /-!
-## Relationship to Core.ProductOfExperts
+## Relationship to PMF.productOfExperts
 
-The `SDSConstraintSystem` typeclass is conceptually equivalent to
-`Core.ProductOfExperts.FactoredDist`, but with key differences:
-
-1. **Typeclass vs Structure**: SDS uses a typeclass for instance inference,
-   allowing automatic derivation of operations for any type that provides
-   the selectional/scenario factors.
-
-2. **Universe Polymorphism**: SDS is fully universe-polymorphic (`Type*`),
-   while FactoredDist uses `Type`.
-
-3. **Instance Pattern**: SDS supports instantiation at different entity types
-   (e.g., `SDSConstraintSystem (AdjWithEntity E) ℚ` for any `E`).
-
-For types where both apply, the underlying computation is identical:
-- `unnormalizedPosterior = FactoredDist.unnormScores`
-- `normalizedPosterior = FactoredDist.combine`
-- `hasConflict` uses the same argmax-based detection
-
-See `Core.ProductOfExperts` for the standalone PoE combinators.
+The `SDSConstraintSystem` typeclass implements the SDS-specific
+selectional × scenario product factorization, with `unnormalizedPosterior`
+giving the multiplicative joint score and `normalizedPosterior` doing
+the explicit ℚ-valued normalization. For the canonical mathlib mechanism
+(PMF-typed, ENNReal-valued, with measure-theoretic foundation), see
+`Mathlib.Probability.ProbabilityMassFunction.Constructions` (`PMF.normalize`)
+and `Core/Probability/PMFPosterior.lean` (`PMF.productOfExperts`,
+`PMF.posterior`). The SDS typeclass favors decidable ℚ computation for
+study-file replications; PMF is canonical for general probability work.
 -/
 
 -- Summary

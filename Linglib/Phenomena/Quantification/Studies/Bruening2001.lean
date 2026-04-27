@@ -479,7 +479,7 @@ end ScopeWordOrder
 section MinimalistAnalysis
 
 open ScopeTheory
-open Minimalism.Phenomena.Scope
+open Minimalism.Scope
 
 /-! Connects Minimalist QR / Scope Economy theory to the empirical
 scope-freezing data above. The central claim is Bruening's "QR obeys

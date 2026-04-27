@@ -93,4 +93,35 @@ theorem source_path_licensed :
 theorem unbounded_path_blocked :
     PathShape.unbounded.toBoundedness.isLicensed = false := rfl
 
+-- ════════════════════════════════════════════════════
+-- § 4. Path Adjacency
+-- ════════════════════════════════════════════════════
+
+set_option linter.dupNamespace false in
+/-- Two paths are spatially adjacent (`∞_H` in @cite{krifka-1998}'s
+    notation) if they share an endpoint: one's goal is the other's
+    source. The general adjacency primitive (@cite{krifka-1998} §2.3
+    eq. 14) is axiomatized abstractly on a part structure; for the
+    concrete `Path Loc` the share-an-endpoint definition is the
+    intended instance. Used by movement-relation definitions
+    (`Theories/Semantics/Events/MovementRelations.lean`) to relate
+    spatial adjacency on paths to temporal adjacency on events. -/
+def Path.adjacent {Loc : Type*} (p1 p2 : Path Loc) : Prop :=
+  p1.goal = p2.source ∨ p2.goal = p1.source
+
+set_option linter.dupNamespace false in
+/-- Path adjacency is symmetric. -/
+theorem Path.adjacent_symm {Loc : Type*} (p1 p2 : Path Loc) :
+    p1.adjacent p2 ↔ p2.adjacent p1 := by
+  unfold Path.adjacent
+  exact ⟨Or.symm, Or.symm⟩
+
+set_option linter.dupNamespace false in
+/-- A path is adjacent to itself when its source equals its goal
+    (degenerate single-point path). Trivial corner case used in the
+    K98 §4.5 SOURCE/GOAL definitions. -/
+theorem Path.adjacent_trivial {Loc : Type*} (p : Path Loc)
+    (h : p.source = p.goal) : p.adjacent p :=
+  Or.inl h.symm
+
 end Semantics.Spatial.Path

@@ -135,8 +135,31 @@ class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
   theme_hom : @IsSumHom _ _ cem.evSemilatticeSup _ themeOf
 
 -- ════════════════════════════════════════════════════
--- § 4. τ Homomorphism
+-- § 4. Trace Functions: τ, σ, θ as IsSumHom (@cite{champollion-2017} §2.5)
 -- ════════════════════════════════════════════════════
+
+/-! ### Trace functions = sum-homomorphisms on `Ev T`
+
+@cite{champollion-2017} §2.5 calls τ, σ, and the thematic-role extractors
+"trace functions" — functions that trace each event into a different
+domain (time, space, entities). The structural property they share is
+**sum-homomorphism**: the trace of a sum equals the sum of the traces.
+Linglib uses `Mereology.IsSumHom` as the unifying abstraction; any function
+`f : Ev Time → β` that admits an `IsSumHom` instance qualifies as a trace
+function for substrate purposes.
+
+The concrete trace functions in linglib are:
+- **τ** (runtime): instance below, derived from `EventCEM.τ_hom`.
+- **σ** (spatial extent): `instIsSumHomσ` in `SpatialTrace.lean`,
+  derived from `SpatialTrace.σ_map_sup`.
+- **agentOf / patientOf / themeOf**: instances below, derived from
+  `RoleHom.agent_hom / patient_hom / theme_hom`.
+
+This unification means SR theorems (`StratifiedReference.lean`) can be
+stated dimension-polymorphically as
+`(d : Ev T → β) [IsSumHom d] → ...` and instantiate uniformly across all
+five trace functions, rather than per-trace.
+-/
 
 /-- τ is a sum homomorphism: follows directly from EventCEM.τ_hom.
     τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
@@ -156,6 +179,26 @@ noncomputable instance instIsSumHomRuntime (Time : Type*) [LinearOrder Time]
       (fun e => e.runtime) :=
   @IsSumHom.mk _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
     (fun e => e.runtime) (fun e₁ e₂ => cem.τ_hom e₁ e₂)
+
+/-- agentOf as an `IsSumHom` instance, derived from `RoleHom.agent_hom`.
+    Parallels `instIsSumHomRuntime` for τ — same mathlib pattern of
+    promoting a structure field to a resolvable typeclass instance. -/
+instance instIsSumHomAgent (Entity Time : Type*) [LinearOrder Time]
+    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
+    @IsSumHom _ _ cem.evSemilatticeSup _ rh.agentOf :=
+  rh.agent_hom
+
+/-- patientOf as an `IsSumHom` instance, derived from `RoleHom.patient_hom`. -/
+instance instIsSumHomPatient (Entity Time : Type*) [LinearOrder Time]
+    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
+    @IsSumHom _ _ cem.evSemilatticeSup _ rh.patientOf :=
+  rh.patient_hom
+
+/-- themeOf as an `IsSumHom` instance, derived from `RoleHom.theme_hom`. -/
+instance instIsSumHomTheme (Entity Time : Type*) [LinearOrder Time]
+    [cem : EventCEM Time] [SemilatticeSup Entity] [rh : RoleHom Entity Time] :
+    @IsSumHom _ _ cem.evSemilatticeSup _ rh.themeOf :=
+  rh.theme_hom
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridges to Existing Types

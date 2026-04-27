@@ -120,9 +120,13 @@ def jointCellDistribution {n : Nat} (ps : ParadigmSystem n)
 def eComplexity {n : Nat} (ps : ParadigmSystem n) : Nat :=
   ps.entries.length
 
-/-- Cast a ℚ-valued distribution to ℝ for entropy computation. -/
-private def toReal {α : Type} (dist : List (α × ℚ)) : List (α × ℝ) :=
-  dist.map fun (a, q) => (a, ((q : ℚ) : ℝ))
+/-- List-of-pairs adapter: extract the support `Finset` and the
+    probability function from a unique-key list (such as the output of
+    `groupBySum`). -/
+private noncomputable def listToFinsetFn {α : Type*} [DecidableEq α]
+    (dist : List (α × ℚ)) : Finset α × (α → ℝ) :=
+  ((dist.map Prod.fst).toFinset,
+   fun a => (((dist.find? (·.1 == a)).map Prod.snd).getD 0 : ℚ))
 
 /-- H(Cᵢ): Shannon entropy of a single paradigm cell (in nats).
 
@@ -130,7 +134,8 @@ private def toReal {α : Type} (dist : List (α × ℚ)) : List (α × ℝ) :=
     know nothing about the lexeme. High entropy = many equiprobable
     realizations; low entropy = one dominant form. -/
 noncomputable def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℝ :=
-  entropy (toReal (cellDistribution ps c))
+  let (support, prob) := listToFinsetFn (cellDistribution ps c)
+  entropy support prob
 
 /-- H(Cᵢ | Cⱼ): conditional entropy of cell `ci` given cell `cj` (in nats).
 
@@ -142,8 +147,9 @@ noncomputable def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : �
     implicative relation. -/
 noncomputable def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
     (ci cj : Fin n) : ℝ :=
-  conditionalEntropy (toReal (jointCellDistribution ps ci cj))
-    (toReal (cellDistribution ps cj))
+  let (sJoint, joint) := listToFinsetFn (jointCellDistribution ps ci cj)
+  let (sMargX, margX) := listToFinsetFn (cellDistribution ps cj)
+  conditionalEntropy sJoint joint sMargX margX
 
 /-- I-complexity: average conditional entropy across all directed cell pairs (in nats).
 

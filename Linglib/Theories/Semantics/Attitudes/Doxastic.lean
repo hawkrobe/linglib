@@ -44,7 +44,6 @@ import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Lexical.VerbClass
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
 

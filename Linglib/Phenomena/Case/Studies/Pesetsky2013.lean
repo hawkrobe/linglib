@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
+import Linglib.Fragments.Slavic.Russian.Case
+import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-import Linglib.Fragments.Russian.Case
-import Linglib.Fragments.Russian.Gender
 
 /-!
 # @cite{pesetsky-2013} — Russian Case Morphology and the Syntactic Categories
@@ -10,60 +10,78 @@ Pesetsky's central thesis: **morphological case is the realization of a
 syntactic part-of-speech category**. The four major cases line up with
 the four traditional lexical categories:
 
-| Case        | POS category | Assigner                       |
-|-------------|--------------|--------------------------------|
-| Genitive    | N            | every noun (universal default) |
-| Nominative  | D            | the D head of a DP             |
-| Accusative  | V            | a transitive V (under VACC)    |
-| Oblique     | P            | a P head                       |
+| Case          | POS category | Assigner                              |
+|---------------|--------------|---------------------------------------|
+| Genitive      | N            | every noun (Primeval Genitive, p. 9)  |
+| Nominative    | D            | the D head of a DP                    |
+| Accusative    | V            | a transitive V (under VACC)           |
+| Obliques      | P            | a P head; DAT is the canonical exemplar |
+
+Pesetsky writes (p. 7) that "only the distinctions among these oblique
+cases in Russian will fail to correspond to a traditional part-of-speech
+distinction"; P_OBL is the canonical P category and P_DAT is one
+exemplar with additional features. In this formalization `POSCat.cases`
+returns the full oblique series for `.P`, and `POSCat.canonicalExemplar`
+picks DAT as Pesetsky's exemplar.
 
 Two corollaries reshape standard Case theory:
 
-1. **Every noun is "born genitive."** A bare N projects an N-stratum
-   case shell, hidden in surface morphology by the One-Suffix Rule but
-   visible in case-stacking languages (Lardil — @cite{richards-2013},
-   on whose analysis the proposal directly builds).
+1. **The Primeval Genitive Conjecture** (eq. (6), p. 9): the genitive
+   morpheme `NGEN` categorizes a Russian root as a noun in the lexicon.
+   This is a categorizing-head property in the spirit of
+   @cite{marantz-1997}, not a syntactic stack initialization. Lardil
+   morphology — surveyed by @cite{richards-2013} — supplies the
+   morphological precedent for treating Russian as having an underlying
+   case stack visible only when language-particular spell-out preserves
+   it.
 
-2. **The Case Filter dissolves.** There is no separate `uCase` feature
-   needing valuation; case morphology *is* the realization of categorial
-   structure. The Schütze-style default-nominative residue covers
-   apparent "caseless" DPs (@cite{schuetze-2001}).
+2. **The Case Filter is recast, not invoked.** Case morphology *is* the
+   realization of categorial structure; there is no separate `[uCase]`
+   feature needing valuation. The default-nominative residue for
+   apparent "caseless" DPs is left to the language-particular spell-out
+   rules of Ch 2–3.
 
 ## Architecture in the formalization
 
-We model FA (Feature Assignment) as a recursive `assignDown` over a
-node-and-stack tree: when an assigner of POS-category α merges with
-β, α is pushed onto the case stack of every leaf β dominates. The
-**One-Suffix Rule** is then a single-line filter (`head?`); Lardil is
-the same grammar minus the filter.
-
-The empirical core — Russian paucal (*dva*, *tri*, *četyre*) selecting
-an N-stratum complement and surfacing as GEN.SG — falls out as a
-kernel-checkable computation: `numeralCaseAssignment .paucal = .N`.
+FA (Feature Assignment) is a recursive `assignDown` over a node-and-stack
+tree: when an assigner of POS-category α merges with β, α is pushed onto
+the case stack of every leaf β dominates. The **One-Suffix Rule** is
+then a single-line filter (`head?`); Lardil-style spell-out is the
+identity.
 
 Connections:
 
 - `Core.Case` (Blake) gives the cross-linguistic case inventory; we
-  bridge `POSCat → Core.Case` so Pesetsky's primitives plug into the
-  existing typology.
-- `Theories/Morphology/CaseContainment.lean` (Caha) formalizes the
-  containment hierarchy `[[[[[NOM]ACC]GEN]DAT]P]`. Caha's bottom-up
-  containment in the *morphological* domain mirrors Pesetsky's
-  bottom-up case stacking in the *derivational* domain (with the
-  important inversion that for Pesetsky the bottom is N=GEN, not NOM).
-- `Fragments/Russian/Gender.lean` already supplies declension classes
-  and the hybrid noun *vrač*; Pesetsky's feminizing Ж analysis is
-  noted but not re-formalized here.
-- `Fragments/Russian/Case.lean` lists the Russian 6-case inventory.
+  bridge `POSCat → Finset Core.Case` (`POSCat.cases`) so Pesetsky's
+  primitives plug into the existing typology with the multi-case
+  oblique class made explicit.
+- `Theories/Interfaces/Morphosyntax/CaseContainment.lean` (Caha) provides
+  the morphological containment ranks. Whether Caha-style containment
+  and Pesetsky-style derivational stack-order are actually inversely
+  related is a separate question taken up by neither author and is not
+  formalized here; we only reuse the rank function for NOM/ACC/GEN
+  inspection.
+- `Fragments/Slavic/Russian/Gender.lean` supplies declension classes and
+  the hybrid noun *vrač*; Pesetsky's feminizing Ж analysis (Ch 5) is
+  noted but not re-formalized.
+- `Fragments/Slavic/Russian/Case.lean` lists the Russian 6-case
+  inventory.
 
 ## Out of scope (deferred for separate study files)
 
-- The full FA rule's six developmental versions (Ch. 2–8). We model the
-  endpoint version: feature copy on Merge, percolation to all dominated
-  leaves.
+- The full FA rule's developmental versions (Ch 2–8). The endpoint
+  version is modeled: feature copy on Merge, percolation to all
+  dominated leaves.
 - The complete VACC restriction with referent-feature interaction.
-- The D-headed PP analysis of POBL↔VACC spatial alternations (Ch. 7).
-- Spell-Out / phase locality on adnominal case (Ch. 8).
+- The D-headed PP analysis of POBL↔VACC spatial alternations (Ch 7).
+- The locality restrictions on adnominal case (Ch 8 §8.2–8.3) and the
+  loose-end *Prepositions That Appear to Assign NGEN* (§8.5).
+- The Number Mismatch puzzle for paucals (Ch 4) — *dva stola* showing
+  SG on the noun but PL on demonstratives/adjectives — and the
+  Lebanese Arabic # parallel (Ch 5.3). The structural derivation that
+  blocks D-NOM in numeral phrases (Quant-to-D with NBR pied-piping,
+  eq. (61) p. 54) is the actual content of Ch 4–6 and is left to a
+  follow-on study.
 -/
 
 namespace Phenomena.Case.Studies.Pesetsky2013
@@ -74,34 +92,46 @@ namespace Phenomena.Case.Studies.Pesetsky2013
 
 /-- The four part-of-speech categories that double as case strata in
     Pesetsky's framework. Each category, when it serves as an assigner,
-    realizes morphologically as the case shown in the table at the top
+    realizes morphologically as the case(s) shown in the table at the top
     of this file. -/
 inductive POSCat where
-  | N    -- Genitive — the universal noun stratum
-  | D    -- Nominative — assigned by D
-  | V    -- Accusative — assigned by transitive V (subject to VACC)
-  | P    -- Dative — assigned by P (covers PDAT/POBL)
-  deriving DecidableEq, Repr, Inhabited
+  /-- Genitive — the universal noun stratum (Primeval Genitive). -/
+  | N
+  /-- Nominative — assigned by D. -/
+  | D
+  /-- Accusative — assigned by transitive V, subject to VACC. -/
+  | V
+  /-- Obliques (DAT/INS/LOC/ABL/…) — assigned by P. Pesetsky writes the
+      category as P_OBL with P_DAT as one exemplar (p. 7); the file does
+      not refine the oblique class by POS, mirroring the paper. -/
+  | P
+  deriving DecidableEq, Repr
 
-/-- Bridge from Pesetsky's POS-as-case primitives to @cite{blake-1994}'s
-    cross-linguistic inventory in `Core.Case`. P maps to dat as the
-    most-general oblique target. -/
-def POSCat.toCase : POSCat → Core.Case
+/-- The cases each POS category realizes as in `Core.Case`. N/D/V each
+    map to a singleton; P maps to the oblique series since
+    @cite{pesetsky-2013} (p. 7) explicitly does *not* refine the obliques
+    by POS. The set listed for `.P` covers Russian's productive obliques —
+    DAT, INS, LOC — plus ABL as a cross-linguistic placeholder. -/
+def POSCat.cases : POSCat → Finset Core.Case
+  | .N => {.gen}
+  | .D => {.nom}
+  | .V => {.acc}
+  | .P => {.dat, .inst, .loc, .abl}
+
+/-- The canonical exemplar case Pesetsky uses when naming each POS
+    category. For P, the exemplar is DAT (p. 7); see `POSCat.cases` for
+    the full oblique series. -/
+def POSCat.canonicalExemplar : POSCat → Core.Case
   | .N => .gen
   | .D => .nom
   | .V => .acc
   | .P => .dat
 
-/-- Each POS category appears as the source of a unique case in
-    `Core.Case`. -/
-theorem POSCat.toCase_injective :
-    POSCat.toCase .N ≠ POSCat.toCase .D ∧
-    POSCat.toCase .N ≠ POSCat.toCase .V ∧
-    POSCat.toCase .N ≠ POSCat.toCase .P ∧
-    POSCat.toCase .D ≠ POSCat.toCase .V ∧
-    POSCat.toCase .D ≠ POSCat.toCase .P ∧
-    POSCat.toCase .V ≠ POSCat.toCase .P := by
-  decide
+/-- The canonical-exemplar projection is injective: each POS category has
+    a distinct exemplar case in `Core.Case`. -/
+theorem POSCat.canonicalExemplar_injective :
+    Function.Injective POSCat.canonicalExemplar := by
+  intro a b h; cases a <;> cases b <;> first | rfl | cases h
 
 -- ============================================================================
 -- § 2: Trees with Case Stacks (FA Rule input/output)
@@ -116,15 +146,19 @@ inductive PesTree where
   | node : POSCat → List PesTree → PesTree
   deriving Repr
 
+/-! `assignDown` and its helper are written as a `mutual` block because
+    `PesTree` recurses through `List` and the leaf-case `rfl` proofs in
+    §4–§6 require `assignDown` to reduce definitionally on `.leaf` —
+    which the `kids.attach.map` form (compiled via well-founded
+    recursion) does not provide. -/
 mutual
-  /-- The Feature Assignment rule (final form, Ch. 8): on Merge, the
-      assigner's category is copied as a case feature onto every leaf
-      in its sister's domain.
-
-      We model this as a recursive descent that prepends `assigner`
-      to every leaf's stack. Real FA only targets the sister, but for
-      a single Merge step the result is the same as a full descent
-      because the assigner doesn't yet dominate anything else. -/
+  /-- The Feature Assignment rule (final form, Ch 8): on Merge, the
+      assigner's category is copied as a case feature onto every leaf in
+      its sister's domain. Modeled as a recursive descent that prepends
+      `assigner` to every leaf's stack. Real FA only targets the
+      sister, but for a single Merge step the result is the same as a
+      full descent because the assigner doesn't yet dominate anything
+      else. -/
   def assignDown (assigner : POSCat) : PesTree → PesTree
     | .leaf w stack => .leaf w (assigner :: stack)
     | .node c kids  => .node c (assignDownList assigner kids)
@@ -150,18 +184,20 @@ theorem assignDown_prepends (a : POSCat) (w : String) (s : List POSCat) :
 -- § 3: The One-Suffix Rule (Russian) vs. Stacking (Lardil)
 -- ============================================================================
 
-/-- The **One-Suffix Rule** (@cite{pesetsky-2013} Ch. 3). Russian
+/-- The **One-Suffix Rule** (@cite{pesetsky-2013} Ch 3). Russian
     pronounces only the *outermost* case stratum on each noun, deleting
-    inner strata. This is why the universal "born-genitive" stratum
-    (the bottom of the stack) is invisible in Russian morphology. -/
+    inner strata. This is why the universal primeval-N stratum (the
+    bottom of the stack) is invisible in Russian morphology. -/
 def oneSuffix : List POSCat → Option POSCat
   | s :: _ => some s
   | []     => none
 
-/-- Lardil (@cite{richards-2013}, the empirical anchor for the
-    proposal) realizes the *entire* case stack overtly. The "rule"
-    here is the identity — Lardil is what Russian would look like
-    without the One-Suffix filter. -/
+/-- Lardil (@cite{richards-2013}, the morphological precedent that
+    motivates the case-stacking analysis — Pesetsky cites it as the
+    inspiration for treating Russian's underlying stack analogously)
+    realizes the *entire* case stack overtly. The "rule" here is the
+    identity — Lardil is what Russian would look like without the
+    One-Suffix filter. -/
 def lardilSpellOut : List POSCat → List POSCat := id
 
 /-- One-Suffix on an empty stack yields nothing (no overt case marker). -/
@@ -171,200 +207,216 @@ theorem oneSuffix_empty : oneSuffix [] = none := rfl
 theorem oneSuffix_outermost (a : POSCat) (rest : List POSCat) :
     oneSuffix (a :: rest) = some a := rfl
 
-/-- Lardil and Russian agree only when the stack has at most one element.
-    With ≥ 2 strata, they diverge: Russian shows only the outer, Lardil
-    shows both. This is the core morphological signature of the
-    proposal. -/
+/-- Lardil and Russian diverge whenever the stack has ≥ 2 strata: Russian
+    shows only the outer, Lardil shows both. This is the core
+    morphological signature of the proposal. -/
 theorem lardil_russian_divergence (a b : POSCat) (rest : List POSCat) :
     lardilSpellOut (a :: b :: rest) ≠ (oneSuffix (a :: b :: rest)).toList := by
-  simp [lardilSpellOut, oneSuffix, Option.toList]
+  simp only [lardilSpellOut, oneSuffix, Option.toList, id, ne_eq,
+    List.cons.injEq, not_and]
+  intro _; exact List.cons_ne_nil _ _
 
 -- ============================================================================
--- § 4: Every Noun is "Born Genitive"
+-- § 4: The Primeval Genitive
 -- ============================================================================
 
-/-- A bare noun, before any FA application, projects an N-stratum
-    (Pesetsky's "every noun is born genitive"). We model this by
-    saying: the canonical leaf for a noun starts with `[.N]`, not `[]`.
+/-- The **Primeval Genitive Conjecture** (@cite{pesetsky-2013} eq. (6),
+    p. 9): "NGEN categorizes a Russian root as a noun (in the lexicon)."
+    A bare noun, before any further FA application, projects an N-stratum
+    case feature.
 
-    This is the formalization of the universal default. -/
-def bornGenitive (w : String) : PesTree :=
+    This is a categorizing-head property in the spirit of
+    @cite{marantz-1997}'s root + categorizer architecture, not a
+    syntactic stack initialization at the leaf. We approximate it here
+    by giving the canonical leaf for a noun an initial `[.N]` stack;
+    deriving this from a `Root → CategorizedNoun` morphism is left to a
+    future refinement. -/
+def primevalGenitive (w : String) : PesTree :=
   .leaf w [.N]
 
 /-- Russian *kniga* 'book': bare, surface case is GEN (the N stratum)
     when no further FA applies — i.e. the noun is on its own and only
     its inherent N-stratum is realized. -/
-theorem bare_noun_surface_gen (w : String) :
-    oneSuffix (bornGenitive w).stack = some .N := rfl
+theorem primeval_noun_surface_gen (w : String) :
+    oneSuffix (primevalGenitive w).stack = some .N := rfl
 
-/-- When a transitive V then assigns its V-stratum, the Russian surface
-    shows only V (the outer); the N stratum is *masked* by One-Suffix
-    but still derivationally present. -/
+/-- When a transitive V assigns its V-stratum, the Russian surface shows
+    only V (the outer); the N stratum is *masked* by One-Suffix but
+    still derivationally present. -/
 theorem v_assignment_masks_n (w : String) :
-    let stacked := assignDown .V (bornGenitive w)
+    let stacked := assignDown .V (primevalGenitive w)
     oneSuffix stacked.stack = some .V := rfl
 
-/-- The same derivation in a Lardil-style grammar shows BOTH strata
+/-- The same derivation in a Lardil-style grammar shows both strata
     overtly: GEN (inner) plus ACC (outer). This is Pesetsky's
     cross-linguistic argument: Russian and Lardil have the *same*
     derivation; they differ only in whether the One-Suffix filter
     applies. -/
 theorem lardil_shows_both_strata (w : String) :
-    let stacked := assignDown .V (bornGenitive w)
+    let stacked := assignDown .V (primevalGenitive w)
     lardilSpellOut stacked.stack = [.V, .N] := rfl
 
 -- ============================================================================
--- § 5: Russian Paucals (dva, tri, četyre)
+-- § 5: Russian Numerals — Structural Roles, Not Case Assigners
 -- ============================================================================
 
-/-- Three numeral classes in Russian (@cite{pesetsky-2013} Ch. 4–6):
+/-- Three numeral classes in Russian (@cite{pesetsky-2013} Ch 4–6). The
+    classes differ in *where they merge* and *whether they raise to D*,
+    not in case-assignment behavior — none of them is itself an FA case
+    assigner in Pesetsky's framework:
 
-    - **paucal** (`dva`, `tri`, `četyre`): NBR head merged low; the
-      "GEN.SG" appearance on the noun is FA-assigned N from the
-      paucal head.
-    - **higher** (`pjat'`, `šest'`, ...): assign GEN.PL.
-    - **quant** (`mnogo`, `nemnogo`, `skol'ko`): the QUANT category;
-      QUANT-to-D movement with NBR pied-piping. Also assigns GEN.PL. -/
+    - **paucal** (`dva`, `tri`, `četyre`): an instance of NBR, base-merged
+      directly with a numberless N inside NP (eq. (61), p. 54). The GEN
+      morphology on the head noun is the *primeval* NGEN, not an
+      assignment from the paucal.
+    - **higher** (`pjat'`, `šest'`, …): an instance of QUANT, base-merged
+      higher within NP and pied-piping NBR to D.
+    - **quant** (`mnogo`, `nemnogo`, `skol'ko`): also QUANT, with the
+      raising option absent for the indefinite-quantity exponents.
+
+    Across all three the noun's surface case is GEN, but for a
+    *structural* reason: the derivation blocks D from probing the noun
+    (Quant-to-D with NBR pied-piping), so the primeval N stratum is the
+    only one One-Suffix has to project. The full Quant-to-D derivation
+    is the empirical core of Ch 4–6 and is **out of scope** for this
+    file; this section only carries the lexical inventory and a
+    sanity-check theorem on the surface prediction. -/
 inductive RusNumClass where
   | paucal
   | higher
   | quant
   deriving DecidableEq, Repr
 
-/-- A Russian numeral lexical entry. Minimal — just form and class. -/
+/-- A Russian numeral lexical entry. Minimal — just form and class.
+    TODO: when a `Fragments/Slavic/Russian/Numerals.lean` exists, these
+    entries should move there as theory-neutral lexical data. -/
 structure RusNumeral where
   form : String
   cls  : RusNumClass
-  deriving Repr
+  deriving DecidableEq, Repr
 
-def dva    : RusNumeral := ⟨"dva", .paucal⟩
-def tri    : RusNumeral := ⟨"tri", .paucal⟩
-def četyre : RusNumeral := ⟨"četyre", .paucal⟩
-def pjat'  : RusNumeral := ⟨"pjat'", .higher⟩
-def šest'  : RusNumeral := ⟨"šest'", .higher⟩
-def mnogo  : RusNumeral := ⟨"mnogo", .quant⟩
+def dva     : RusNumeral := ⟨"dva", .paucal⟩
+def tri     : RusNumeral := ⟨"tri", .paucal⟩
+def četyre  : RusNumeral := ⟨"četyre", .paucal⟩
+def pjat'   : RusNumeral := ⟨"pjat'", .higher⟩
+def šest'   : RusNumeral := ⟨"šest'", .higher⟩
+def mnogo   : RusNumeral := ⟨"mnogo", .quant⟩
 def skol'ko : RusNumeral := ⟨"skol'ko", .quant⟩
 
-/-- All three numeral classes assign the N stratum (= genitive) to
-    their complement noun. This is the unifying empirical claim:
-    paucal vs. higher vs. quant all force "of-genitive" morphology
-    on what they combine with — the differences are in *which*
-    genitive (SG vs. PL) and in the syntactic position of the
-    numeral itself. -/
-def numeralCaseAssignment : RusNumClass → POSCat
-  | .paucal => .N
-  | .higher => .N
-  | .quant  => .N
+/-- The structural role of each numeral class within the extended NP. -/
+inductive NumeralRole where
+  /-- NBR head, base-merged inside NP with a numberless N. -/
+  | nbrHead
+  /-- QUANT head, base-merged above NP, may raise to D. -/
+  | quantHead
+  deriving DecidableEq, Repr
 
-/-- All three numeral classes assign N. The unification is the
-    centerpiece of @cite{pesetsky-2013} Ch. 4–6. -/
-theorem numerals_all_assign_N :
-    numeralCaseAssignment .paucal = .N ∧
-    numeralCaseAssignment .higher = .N ∧
-    numeralCaseAssignment .quant  = .N := ⟨rfl, rfl, rfl⟩
+def RusNumClass.role : RusNumClass → NumeralRole
+  | .paucal => .nbrHead
+  | .higher => .quantHead
+  | .quant  => .quantHead
 
-/-- Apply a numeral to a (born-genitive) noun. The numeral's FA pushes
-    its assigned stratum onto the noun's stack. -/
-def applyNumeral (num : RusNumeral) (n : String) : PesTree :=
-  assignDown (numeralCaseAssignment num.cls) (bornGenitive n)
+/-- Paucals are NBR heads; higher and quant are QUANT heads. -/
+theorem role_partitions_classes :
+    RusNumClass.paucal.role = .nbrHead ∧
+    RusNumClass.higher.role = .quantHead ∧
+    RusNumClass.quant.role  = .quantHead := ⟨rfl, rfl, rfl⟩
 
-/-- *dva stola* 'two tables' — the noun's stack is `[.N, .N]` after
-    the paucal applies; surface is GEN under One-Suffix. -/
-theorem dva_stola_surface_gen :
-    oneSuffix (applyNumeral dva "stol").stack = some .N := rfl
-
-/-- *pjat' stolov* 'five tables' — same surface case (GEN). The fact
-    that this is GEN.PL while *dva stola* is GEN.SG is a feature of
-    NBR/SG marking, not of which case is assigned. -/
-theorem pjat'_stolov_surface_gen :
-    oneSuffix (applyNumeral pjat' "stol").stack = some .N := rfl
-
-/-- *mnogo studentov* 'many students' — QUANT also assigns N. -/
-theorem mnogo_studentov_surface_gen :
-    oneSuffix (applyNumeral mnogo "student").stack = some .N := rfl
-
-/-- The N-stratum from FA is *additional* to the universal "born-genitive"
-    N stratum already on the noun. So the stack ends with `[.N, .N]`. -/
-theorem paucal_stack_double_N :
-    (applyNumeral dva "stol").stack = [.N, .N] := rfl
-
-/-- In a Lardil-style grammar, the double N stratum would be visible
-    overtly. (Lardil itself doesn't have paucals — this is a thought
-    experiment about what Pesetsky's analysis predicts under different
-    spell-out parameters.) -/
-theorem paucal_lardil_shows_double :
-    lardilSpellOut (applyNumeral dva "stol").stack = [.N, .N] := rfl
+/-! Surface prediction shared by *dva stola*, *pjat' stolov*, *mnogo
+    studentov*: GEN morphology on the head noun. In this file's
+    simplified model — where numerals do not themselves invoke FA — the
+    noun retains its primeval `[.N]` stack and One-Suffix selects N.
+    The witness is `primeval_noun_surface_gen` from §4; no separate
+    numeral-indexed theorem is needed because the file's apparatus has
+    no way for the numeral to influence the head noun's stack. The
+    *structural* mechanism that prevents later FA from D (Quant-to-D,
+    eq. (61) p. 54) is the actual content of Pesetsky Ch 4–6 and is
+    out of scope. -/
 
 -- ============================================================================
 -- § 6: Nominative as D-Assignment, Accusative as V-Assignment
 -- ============================================================================
 
 /-- A subject DP receives nominative because D assigns it. The
-    derivation: bare noun (born GEN) → numeral may apply (still GEN
-    under One-Suffix) → D applies (now NOM under One-Suffix). -/
+    derivation: bare noun with primeval N stratum → D applies (now NOM
+    under One-Suffix). -/
 theorem subject_surface_nom (n : String) :
-    let dp := assignDown .D (bornGenitive n)
+    let dp := assignDown .D (primevalGenitive n)
     oneSuffix dp.stack = some .D := rfl
 
 /-- An object DP receives accusative because V assigns it. Same
     derivation but with V instead of D. -/
 theorem object_surface_acc (n : String) :
-    let dp := assignDown .V (bornGenitive n)
+    let dp := assignDown .V (primevalGenitive n)
     oneSuffix dp.stack = some .V := rfl
 
-/-- Subject vs. object differ only in the *outermost* assigner.
-    The N stratum underneath is identical. -/
+/-- Subject vs. object derivations differ only in the *outermost*
+    assigner; the primeval-N stratum underneath is identical. -/
 theorem subject_object_same_inner (n : String) :
-    let subj := assignDown .D (bornGenitive n)
-    let obj  := assignDown .V (bornGenitive n)
+    let subj := assignDown .D (primevalGenitive n)
+    let obj  := assignDown .V (primevalGenitive n)
     subj.stack.tail = obj.stack.tail := rfl
 
 -- ============================================================================
 -- § 7: Bridges to existing infrastructure
 -- ============================================================================
 
-/-- The Russian 4-case spine NOM/ACC/GEN/OBL is precisely
-    the image of `POSCat` in `Core.Case`. -/
-theorem pos_image_in_core :
-    POSCat.toCase .N = .gen ∧
-    POSCat.toCase .D = .nom ∧
-    POSCat.toCase .V = .acc ∧
-    POSCat.toCase .P = .dat := ⟨rfl, rfl, rfl, rfl⟩
+/-- The cases realized by Pesetsky's four POS categories — the union of
+    `POSCat.cases` over the four categories. Stated as an explicit
+    literal so membership reduces under `decide` without unfolding
+    `Finset.biUnion` through `Quot.lift`; equivalence to the biUnion
+    form is recorded by `pesetskyCore_eq_image` below. -/
+def pesetskyCore : Finset Core.Case :=
+  {.gen, .nom, .acc, .dat, .inst, .loc, .abl}
 
-/-- The four POS-as-case primitives, lifted into `Core.Case` —
-    Pesetsky's reduction yields exactly NOM, ACC, GEN, DAT, the core
-    four of the Russian inventory. INST and LOC remain outside the
-    image. -/
-def pesetskyCore : List Core.Case :=
-  [POSCat.D, POSCat.V, POSCat.N, POSCat.P].map POSCat.toCase
+/-- `pesetskyCore` agrees with the union of `POSCat.cases` over all four
+    POS categories. -/
+theorem pesetskyCore_eq_image :
+    pesetskyCore =
+      POSCat.cases .N ∪ POSCat.cases .D ∪ POSCat.cases .V ∪ POSCat.cases .P :=
+  rfl
 
-theorem pesetskyCore_subset_russian_inventory :
-    ∀ c ∈ pesetskyCore, c ∈ Fragments.Russian.Case.caseInventory := by decide
+/-- Every case in the canonical-exemplar image lies in `pesetskyCore`. -/
+theorem canonicalExemplar_mem_pesetskyCore (p : POSCat) :
+    p.canonicalExemplar ∈ pesetskyCore := by
+  cases p <;> decide
 
-theorem inst_loc_outside_pesetsky :
-    .inst ∉ pesetskyCore ∧ .loc ∉ pesetskyCore := by
-  refine ⟨?_, ?_⟩ <;> decide
+/-- The Russian 4-case canonical spine — the image of `POSCat` under
+    `canonicalExemplar` — sits inside the Russian inventory. -/
+theorem canonicalExemplar_image_in_russian_inventory (p : POSCat) :
+    p.canonicalExemplar ∈ Fragments.Slavic.Russian.Case.caseInventory := by
+  cases p <;> decide
 
-/-- Caha's containment rank for the three core cases that POSCat covers
-    (NOM/ACC/GEN). Nominative is innermost (rank 0), accusative
-    contains it (rank 1), genitive contains both (rank 2). This is
-    the *morphological* containment order; Pesetsky's *derivational*
-    order is the inverse for nouns (N is the innermost stratum,
-    added first; D may be added later). The two views are
-    consistent under the inversion. -/
-theorem caha_containment_inverts_pesetsky :
+/-- The three productive Russian obliques are all in `pesetskyCore`,
+    contributed by the P category. The file's earlier formulation —
+    that INS and LOC were "outside" the image — relied on `toCase`
+    projecting `.P` to `.dat` alone, which the expanded `cases` map
+    corrects in line with @cite{pesetsky-2013} p. 7. -/
+theorem russian_obliques_in_pesetsky_core :
+    (.dat : Core.Case) ∈ pesetskyCore ∧
+    (.inst : Core.Case) ∈ pesetskyCore ∧
+    (.loc : Core.Case) ∈ pesetskyCore := by decide
+
+/-- `containmentRank` (@cite{caha-2009}) for the three cases covered by
+    the `POSCat`-canonical-exemplar image other than DAT. The bare ranks
+    are recorded here for inspection by callers; whether Caha's
+    morphological containment and Pesetsky's derivational stack-order
+    are systematically inversely related is a question taken up by
+    neither author and is *not* claimed by this file. -/
+theorem caha_ranks_for_pesetsky_core_n_d_v :
     Core.Case.containmentRank .nom = some 0 ∧
     Core.Case.containmentRank .acc = some 1 ∧
     Core.Case.containmentRank .gen = some 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> rfl
 
-/-- Pesetsky's feminizing analysis of *vrač* 'doctor' (Ch. 5) interacts
-    with the existing hybrid-noun analysis in `Fragments.Russian.Gender`.
-    Pesetsky posits a null Ж morpheme above `vrač` when the referent
-    is female; that morpheme licenses feminine agreement. The hybrid
-    declension class assignment in `vrač.declClass = some .I` from the
-    fragment is preserved. -/
+/-- Pesetsky's feminizing analysis of *vrač* 'doctor' (Ch 5) interacts
+    with the existing hybrid-noun analysis in
+    `Fragments.Slavic.Russian.Gender`. Pesetsky posits a null Ж morpheme
+    above `vrač` when the referent is female; that morpheme licenses
+    feminine agreement. The hybrid declension class assignment
+    `vrač.declClass = some .I` from the fragment is preserved. -/
 theorem vrač_morphological_class_unchanged :
-    Fragments.Russian.Gender.vrač.declClass = some Fragments.Russian.Gender.DeclClass.I := rfl
+    Fragments.Slavic.Russian.Gender.vrač.declClass =
+      some Fragments.Slavic.Russian.Gender.DeclClass.I := rfl
 
 end Phenomena.Case.Studies.Pesetsky2013

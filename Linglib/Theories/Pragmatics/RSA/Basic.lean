@@ -52,7 +52,7 @@ proves that L1's score equals the BToM world marginal. See
 
 namespace RSA
 
-open BigOperators Core Core.BToM
+open BigOperators Core
 
 variable {U W : Type*} [Fintype U] [Fintype W]
 

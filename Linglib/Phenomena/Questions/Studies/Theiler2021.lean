@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
+import Linglib.Features.QParticleLayer
 import Linglib.Fragments.German.QuestionParticles
 import Linglib.Fragments.Mandarin.QuestionParticles
 
@@ -24,7 +24,7 @@ to polar questions.
 
 namespace Phenomena.Questions.Studies.Theiler2021
 
-open Semantics.Questions (QParticleLayer)
+open Features (QParticleLayer)
 
 /-- Theiler's layer assignment for *denn*. The `_` argument is unused
     because the layer is a theoretical overlay, not a computed property

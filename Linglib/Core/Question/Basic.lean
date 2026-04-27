@@ -36,9 +36,9 @@ derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
 LEM-fails witness.
 
 For Hamblin constructions (`polar`, `which`), see
-`Core/Question/Hamblin.lean`. For mention-some / mention-all
-answerhood predicates, see `Core/Question/Answerhood.lean`. For the
-`Setoid → Question` embedding (used by `POSWQ`), see
+`Core/Question/Hamblin.lean`. For partial-answerhood and Roberts
+QUD-relevance predicates, see `Core/Question/Relevance.lean`. For
+the `Setoid → Question` embedding (used by `POSWQ`), see
 `Core/Mood/PartitionAsInquiry.lean`.
 
 ## Mathlib alignment
@@ -505,6 +505,52 @@ theorem mem_alt_inf_iff {P Q : Question W} {q : Set W} :
     q ∈ alt (P ⊓ Q) ↔ Maximal (fun p => p ∈ P.props ∧ p ∈ Q.props) q := by
   rw [mem_alt_iff_maximal]
   rfl
+
+/-- **Membership in `alt (P ⊔ Q)`**: the alternatives of the
+    inquisitive disjunction are exactly the maximal elements of
+    `P.props ∪ Q.props`. Direct corollary of `mem_alt_iff_maximal` and
+    the pointwise definition of `⊔` on `props`. The asymmetry with
+    `inf`: `inf`'s alts are sub-states satisfying both, `sup`'s alts
+    are super-states maximal across either. -/
+theorem mem_alt_sup_iff {P Q : Question W} {q : Set W} :
+    q ∈ alt (P ⊔ Q) ↔ Maximal (fun p => p ∈ P.props ∨ p ∈ Q.props) q := by
+  rw [mem_alt_iff_maximal]
+  rfl
+
+/-- An alt of `P` that is not contained in any *strictly larger* alt of
+    `Q` survives in `alt (P ⊔ Q)`. The convenient direction for
+    constructing alts of an inquisitive disjunction. -/
+theorem mem_alt_sup_of_alt_left {P Q : Question W} {p : Set W}
+    (hP : p ∈ alt P) (hQ : ∀ q ∈ Q.props, p ⊆ q → p = q) :
+    p ∈ alt (P ⊔ Q) := by
+  refine ⟨Or.inl hP.1, ?_⟩
+  intro r hr hpr
+  rcases hr with hrP | hrQ
+  · exact hP.2 r hrP hpr
+  · exact hQ r hrQ hpr
+
+/-- An alt of `Q` that is not contained in any *strictly larger* alt of
+    `P` survives in `alt (P ⊔ Q)`. Mirror of `mem_alt_sup_of_alt_left`. -/
+theorem mem_alt_sup_of_alt_right {P Q : Question W} {q : Set W}
+    (hQ : q ∈ alt Q) (hP : ∀ p ∈ P.props, q ⊆ p → q = p) :
+    q ∈ alt (P ⊔ Q) := by
+  refine ⟨Or.inr hQ.1, ?_⟩
+  intro r hr hqr
+  rcases hr with hrP | hrQ
+  · exact hP r hrP hqr
+  · exact hQ.2 r hrQ hqr
+
+/-- An alt of `P ⊔ Q` is necessarily an alt of one of the summands —
+    when restricted to that summand's `props`. -/
+theorem alt_sup_subset_union (P Q : Question W) :
+    alt (P ⊔ Q) ⊆ alt P ∪ alt Q := by
+  intro q hq
+  obtain ⟨hqPQ, hmax⟩ := hq
+  rcases hqPQ with hqP | hqQ
+  · left
+    exact ⟨hqP, fun r hrP hqr => hmax r (Or.inl hrP) hqr⟩
+  · right
+    exact ⟨hqQ, fun r hrQ hqr => hmax r (Or.inr hrQ) hqr⟩
 
 /-- A `declarative p` content has exactly one alternative — `p`
     itself, the unique maximal subset of `p`. -/

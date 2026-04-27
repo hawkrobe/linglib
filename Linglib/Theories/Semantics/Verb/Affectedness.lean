@@ -1,13 +1,26 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Events.AffectednessHierarchy
+import Linglib.Theories.Semantics.Events.ScalarResult
 
 /-!
-# Affectedness Hierarchy
+# Affectedness Hierarchy: EntailmentProfile Projection
 
-@cite{beavers-2010} @cite{dowty-1991}
+@cite{beavers-2010} @cite{dowty-1991} @cite{beavers-2011}
+@cite{beavers-koontz-garboden-2020}
 
 The **affectedness hierarchy** is a projection of @cite{dowty-1991}'s P-Patient
 entailments onto a four-level total order measuring the strength of truth
 conditions about change in the affected argument.
+
+The `AffectednessDegree` enum and the typeclass `extends` chain
+(`IsUnspecifiedAffected → IsPotentialAffected → IsNonQuantizedAffected →
+IsQuantizedAffected`) live in
+`Theories/Semantics/Events/AffectednessHierarchy.lean` (substrate-level,
+referenceable by K98 verb-class typeclasses). This file's role: project
+Dowty's `EntailmentProfile` to `AffectednessDegree` and verify the
+projection on canonical verb profiles. **The enum, `strength`, and `LE`
+instance are re-exported here for backward compatibility with existing
+consumers.**
 
 ## As a projection of EntailmentProfile
 
@@ -61,60 +74,19 @@ namespace Semantics.Verb.Affectedness
 open Semantics.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
--- § 1. AffectednessDegree (@cite{beavers-2010} §3.1)
+-- § 1. Re-exports from Events/AffectednessHierarchy
 -- ════════════════════════════════════════════════════
 
-/-- Four degrees of affectedness, defined by increasingly weaker truth
-    conditions about what change — if any — occurs in the event.
-
-    Each degree is an existential generalization over the `result'` relation:
-    - `quantized`:    φ → [result'(x, s, g_φ, e)]     (specific result state)
-    - `nonquantized`: φ → ∃g[result'(x, s, g, e)]     (some change occurred)
-    - `potential`:    φ → ◇∃g[result'(x, s, g, e)]    (change is possible)
-    - `unspecified`:  φ → ∃θ[θ(x, e)]                 (x merely participates)
-
-    The hierarchy forms a total order by truth-conditional entailment:
-    quantized ≥ nonquantized ≥ potential ≥ unspecified. -/
-inductive AffectednessDegree where
-  | quantized     -- Specific result state entailed (telic, holistic effect)
-  | nonquantized  -- Some change entailed, but not to a specific degree
-  | potential     -- Change is possible but not entailed
-  | unspecified   -- No change entailment at all (e.g. perception verbs)
-  deriving DecidableEq, Repr
+/-! The 4-level Beavers affectedness enum, declared in
+    `Theories/Semantics/Events/AffectednessHierarchy.lean` and
+    re-exported here for backward compatibility with consumers
+    (`Beavers2010`, `BeaversUdayana2022`, `StapsRooryck2024`,
+    `AgentivityLattice`). -/
+export Semantics.Events.AffectednessHierarchy (AffectednessDegree)
 
 namespace AffectednessDegree
-
-/-- Numeric strength: higher = stronger truth conditions. -/
-def strength : AffectednessDegree → Nat
-  | .quantized    => 3
-  | .nonquantized => 2
-  | .potential    => 1
-  | .unspecified  => 0
-
-instance : LE AffectednessDegree where
-  le a b := b.strength ≥ a.strength
-
-instance (a b : AffectednessDegree) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (b.strength ≥ a.strength))
-
-/-- Each degree entails all weaker degrees (implicational hierarchy). -/
-theorem quantized_entails_nonquantized :
-    AffectednessDegree.nonquantized ≤ .quantized := by decide
-
-theorem nonquantized_entails_potential :
-    AffectednessDegree.potential ≤ .nonquantized := by decide
-
-theorem potential_entails_unspecified :
-    AffectednessDegree.unspecified ≤ .potential := by decide
-
-/-- Transitivity: quantized entails potential. -/
-theorem quantized_entails_potential :
-    AffectednessDegree.potential ≤ .quantized := by decide
-
-/-- Transitivity: quantized entails unspecified. -/
-theorem quantized_entails_unspecified :
-    AffectednessDegree.unspecified ≤ .quantized := by decide
-
+export Semantics.Events.AffectednessHierarchy.AffectednessDegree
+  (unspecified potential nonquantized quantized strength)
 end AffectednessDegree
 
 -- ════════════════════════════════════════════════════
@@ -223,5 +195,55 @@ theorem see_unspecified :
     undergoes change but not incrementally). -/
 theorem die_nonquantized :
     profileToDegree dieSubjectProfile = .nonquantized := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 5. Bridge: EntailmentProfile ↔ Typeclass Hierarchy
+-- ════════════════════════════════════════════════════
+
+/-! The Bool-side `profileToDegree p = .quantized` and the typeclass-side
+    `IsQuantizedAffected θ` say the same thing about Beavers level —
+    *modulo* the missing primitive that connects a verb's Dowty profile
+    to its substrate-level θ relation.
+
+    **Substrate gap (acknowledged):** linglib has no `HasObjectTheme V α β`
+    typeclass providing the canonical θ for a fragment verb. EntailmentProfile
+    is per-(verb, argument) Bool data; θ is the abstract semantic relation. A
+    structural bridge between them requires per-verb instances binding the
+    two — fragment-level work that is not yet built.
+
+    **Available now:** an explicit-witness smart constructor for the
+    `(profile, θ, scalar witnesses)` triple. The user provides BOTH the Bool
+    declaration (the profile projects to .quantized) AND the scalar witness
+    (`Quantized θ g_φ`); the smart constructor packages them into a
+    typeclass instance, ensuring the two declarations are jointly consistent.
+
+    Mathlib pattern: when a structural bridge requires content the substrate
+    doesn't carry, expose an explicit-witness smart constructor (cf. mathlib's
+    `MetricSpace.ofDistTopology` and similar). -/
+
+open Semantics.Events.AffectednessHierarchy
+open Semantics.Events.ScalarResult
+
+/-- Joint consistency smart constructor: given a profile that projects to
+    `.quantized` AND a scalar witness for some θ on a dimension δ,
+    produce an `IsQuantizedAffected θ` instance.
+
+    The two arguments encode parallel commitments — the Bool side
+    (`p.profileToDegree = .quantized`) and the scalar side
+    (`Quantized θ g_φ`). The smart constructor makes joint consistency
+    structural: a consumer cannot construct an instance with a profile
+    that projects to `.nonquantized` while declaring `Quantized` on the
+    scalar side. -/
+@[reducible]
+def IsQuantizedAffected.ofProfileAndWitness {α β δ : Type*}
+    [HasScalarResult α δ β] [HasLatentScale α β]
+    (θ : α → β → Prop) (p : EntailmentProfile)
+    (_h_profile : profileToDegree p = .quantized)
+    (forget : ∀ (x : α) (e : β),
+              (∃ g : δ, HasScalarResult.resultAt x g e) →
+              HasLatentScale.latentScale x e)
+    (g_φ : δ) (h_quantized : Quantized θ g_φ) :
+    IsQuantizedAffected (δ := δ) θ :=
+  IsQuantizedAffected.mk' forget g_φ h_quantized
 
 end Semantics.Verb.Affectedness

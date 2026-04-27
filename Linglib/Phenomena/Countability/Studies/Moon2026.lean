@@ -1,6 +1,8 @@
 import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
+import Linglib.Theories.Semantics.Events.Incrementality
+import Linglib.Theories.Semantics.Events.PropagationGap
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -8,13 +10,30 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Moon 2026: Countability and Measured Parts in Mixed Drink Nouns
-@cite{moon-2026}
+@cite{moon-2026} @cite{filip-2012}
 
 Mixed drink nouns (*martini*, *cappuccino*) are count despite denoting
 liquids. Moon proposes that their countability derives from a MEASURED
 PART — an ingredient part (the shot of liquor/espresso) that provides
 a unit for individuation. This contrasts with standard mass drink nouns
 (*wine*, *coffee*) which lack such a part.
+
+## Connection to Filip 2012's three-way classification
+
+Mixed drink predicates instantiate the ¬CUM ∧ ¬QUA middle ground that
+@cite{filip-2012} identifies as a third class beyond CUM (atelic) and
+QUA (telic). The topological non-cumulativity proved here
+(`not_cum_of_disconnected`) plus the algebraic non-quantization
+(`mixedDrink_not_qua`) jointly witness Filip's middle ground at the
+NP level. The propositional substrate for the gap propagating to VPs
+under SINC + UP + CumTheta verbs lives in
+`Theories/Semantics/Events/PropagationGap.lean` as the typeclass-form
+public API `not_cum_vp_of_witnesses` and `middle_ground_stable`
+(both `[IsSincVerb θ]`-parametric per mathlib discipline); the bridge
+in §12 below invokes them directly. Moon's mixed-drink case is the
+*concrete topological witness* that Filip's *algebraic propagation*
+machinery is designed to consume; cf. `Filip2012.lean`'s docstring
+which names mixed drinks as the canonical instance of the gap.
 
 ## Core Proposal (formula 28)
 
@@ -602,5 +621,66 @@ theorem mixedDrink_middle_ground {n : ℕ}
   connectivity_middle_ground
     (mixedDrinkDen_selfConnected recipe μ phase)
     ha hb hDisc hx hy hlt
+
+-- ════════════════════════════════════════════════════
+-- § 12. Bridge to Filip 2012's VP-level Gap (Typeclass)
+-- ════════════════════════════════════════════════════
+
+/-! ### From NP-level gap to VP-level gap
+
+Sections 4 and 10–11 establish that mixed-drink predicates occupy the
+NP-level ¬CUM ∧ ¬QUA middle ground that @cite{filip-2012} identifies.
+@cite{krifka-1998} §10 (formalised in
+`Theories/Semantics/Events/PropagationGap.lean`'s
+`middle_ground_stable`) shows the gap propagates to VPs under
+SINC + UP + CumTheta verbs.
+
+The bridge below directly invokes substrate's typeclass-form
+`middle_ground_stable` on mixed-drink denotations. The ¬CUM and ¬QUA
+witnesses on `OBJ` are exactly what `not_cum_of_disconnected` and
+`mixedDrink_not_qua` produce in this file — Moon's empirical
+contribution feeds Filip's algebraic machinery in a single Lean term,
+with `Filip2012.lean` providing the linguistic framing in prose. -/
+
+open Semantics.Events.Incrementality (IsSincVerb)
+open Semantics.Events.CumulativityPropagation (VP)
+open Semantics.Events.PropagationGap (middle_ground_stable)
+
+section MoonFilipBridge
+
+variable {β : Type*} [SemilatticeSup β]
+
+/-- Mixed-drink denotations (Moon 2026) instantiate the ¬CUM ∧ ¬QUA
+    middle ground that @cite{filip-2012} identifies. When a SINC
+    drinking verb (typeclass `IsSincVerb`) takes a mixed-drink object,
+    the resulting drinking-mixed-drink VP inherits the gap.
+
+    The `α`-side witnesses (`ha, hb, hSum, hx, hy, hlt`) are produced by
+    `not_cum_of_disconnected` and `mixedDrink_not_qua` together with
+    Moon's recipe semantics. The `β`-side hypotheses (`hθ_a, hθ_b,
+    hθ_x`) are existential closures of the verb's incremental theme
+    over concrete drinking events.
+
+    Direct invocation of substrate's typeclass-form
+    `middle_ground_stable`. -/
+theorem mixedDrink_VP_propagation_gap
+    {n : ℕ} (recipe : Recipe α n) (μ : α → ℚ) (phase : α → Phase)
+    (drinkTheme : α → β → Prop) [IsSincVerb drinkTheme]
+    -- ¬CUM witnesses on OBJ (from `not_cum_of_disconnected`)
+    {a b : α} {e_a e_b : β}
+    (ha : mixedDrinkDen recipe μ phase a)
+    (hb : mixedDrinkDen recipe μ phase b)
+    (hθ_a : drinkTheme a e_a) (hθ_b : drinkTheme b e_b)
+    (hSum : ¬ mixedDrinkDen recipe μ phase (a ⊔ b))
+    -- ¬QUA witnesses on OBJ (from `mixedDrink_not_qua`)
+    {x y : α} {e_x : β}
+    (hx : mixedDrinkDen recipe μ phase x)
+    (hy : mixedDrinkDen recipe μ phase y) (hlt : y < x)
+    (hθ_x : drinkTheme x e_x) :
+    ¬ CUM (VP drinkTheme (mixedDrinkDen recipe μ phase)) ∧
+    ¬ QUA (VP drinkTheme (mixedDrinkDen recipe μ phase)) :=
+  middle_ground_stable ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
+
+end MoonFilipBridge
 
 end Moon2026

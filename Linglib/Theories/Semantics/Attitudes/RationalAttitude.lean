@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Rational Attitude Semantics @cite{fusco-sgrizzi-2026}

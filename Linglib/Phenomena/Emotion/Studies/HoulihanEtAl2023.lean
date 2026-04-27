@@ -51,7 +51,7 @@ set_option autoImplicit false
 
 namespace HoulihanEtAl2023
 
-open Core.Agent.Emotion Pragmatics.GameTheory Core.Agent.SocialUtility
+open Core Pragmatics.GameTheory Core
      Core.DecisionTheory
 
 -- ════════════════════════════════════════════════════════════════
@@ -65,7 +65,7 @@ and social equity/DIA (E) base domains, plus reputational (R).
 
 Convention: `.positive` = β > 0, `.negative` = β < 0, `.irrelevant` = β ≈ 0.
 
-These refine the qualitative profiles in `Core.Agent.Emotion` by
+These refine the qualitative profiles in `Core` by
 decomposing the collapsed `base` sign into three domain-specific signs. -/
 
 /-- Helper: all-irrelevant domain weights. -/
@@ -251,7 +251,7 @@ theorem refined_profiles_distinguishable :
     (allRefinedEmotions.map (·.weights)).Pairwise (· ≠ ·) := by native_decide
 
 /-- All 20 refined profiles collapse to the corresponding qualitative
-profiles in `Core.Agent.Emotion`. This is the single source of truth:
+profiles in `Core`. This is the single source of truth:
 the qualitative profiles ARE the refined profiles with domain information
 collapsed via `DomainWeights.collapse`. -/
 theorem all_refined_collapse :
@@ -405,7 +405,7 @@ end Pragmatics.GameTheory.SymmetricGame
 
 namespace HoulihanEtAl2023
 
-open Core.Agent.Emotion Pragmatics.GameTheory Core.Agent.SocialUtility
+open Core Pragmatics.GameTheory Core
      Core.DecisionTheory
 
 /-- The social decision problem uses SocialValueProfile.evaluate as
@@ -424,7 +424,7 @@ of `RSA.CombinedUtility.combined3` with negative social weights:
 
     U_FS = 1·vSelf + (−α)·DI + (−β)·AI
 
-This connects the social cognition infrastructure (`Core.Agent.SocialUtility`)
+This connects the social cognition infrastructure (`Core`)
 to the RSA combined utility framework (`Pragmatics.RSA.Core`). -/
 theorem fehrSchmidt_eq_combined3 (vSelf vOther α β : ℚ) :
     fehrSchmidt vSelf vOther α β =

@@ -1,5 +1,4 @@
 import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Answerhood
 import Mathlib.Data.Fintype.Powerset
 
 /-!
@@ -42,10 +41,9 @@ variable {W : Type u}
 
 /-- `σ` partially answers `P`: settles at least one alternative either
     positively (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`).
-    @cite{roberts-2012} Def. 3a. Synonym for
-    `Core.Question.isPartialAnswer` from `Core/Question/Answerhood.lean`. -/
+    @cite{roberts-2012} Def. 3a. -/
 def partiallyAnswers (P : Question W) (σ : Set W) : Prop :=
-  isPartialAnswer P σ
+  ∃ p ∈ alt P, σ ⊆ p ∨ σ ⊆ pᶜ
 
 /-- Question entailment: every alternative of `P` entails some alternative
     of `Q`. @cite{roberts-2012} Def. 8 (after
@@ -66,6 +64,20 @@ def isSubquestion (q parent : Question W) : Prop :=
 def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
   ∃ a ∈ alt den,
     partiallyAnswers qud a ∨ ∃ q ∈ subquestions, partiallyAnswers q a
+
+/-- The dual of `questionEntails`: every **nonempty** alternative of
+    `Q` is *covered* by a nonempty alternative of `P`.
+
+    On partition questions this is equivalent to `questionEntails P Q`;
+    for general inquisitive `Question W`, the two directions are
+    independent. The decision-relevance preservation theorem in
+    `Theories.Semantics.Questions.DecisionTheoretic` requires this
+    dual form, not `questionEntails`. The nonempty clause matches
+    `IsDecisionRelevant`'s requirement that witnessing alternatives
+    be substantive — without it, `⊥`-style questions trivially
+    "cover" anything via the empty set. -/
+def CoversAltsOf (P Q : Question W) : Prop :=
+  ∀ q ∈ alt Q, q.Nonempty → ∃ p ∈ alt P, p.Nonempty ∧ p ⊆ q
 
 /-! ### Reflexivity / transitivity -/
 
@@ -252,7 +264,7 @@ then `decide` (the residual `Set` subset checks fire from
 theorem partiallyAnswers_polar_iff {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     partiallyAnswers (Question.polar p) σ ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
-  unfold partiallyAnswers isPartialAnswer
+  unfold partiallyAnswers
   rw [alt_polar_of_nontrivial hne hnu]
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
   refine ⟨?_, ?_⟩

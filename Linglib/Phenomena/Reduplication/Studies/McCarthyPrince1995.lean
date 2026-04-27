@@ -66,7 +66,7 @@ inductive JavaneseCand where
 /-- IDENT-BR: penalizes featural mismatch between base and reduplicant.
     Only the normal candidate has B ≠ R (B retains h, R lacks it). -/
 def javIdentBR : NamedConstraint JavaneseCand :=
-  mkIdent "IDENT-BR" (· == .normal)
+  mkIdent "IDENT-BR" (· = .normal)
 
 /-- *VhV: markedness constraint against intervocalic *h*.
     Violated by `under` (h in both B and R) and `normal` (h in B). -/
@@ -81,7 +81,7 @@ def javStarVhV : NamedConstraint JavaneseCand :=
 /-- MAX-IO: I-O faithfulness — penalizes deletion from the input.
     Only the `over` candidate deletes h from the input stem. -/
 def javMaxIO : NamedConstraint JavaneseCand :=
-  mkMax "MAX-IO" (· == .over)
+  mkMax "MAX-IO" (· = .over)
 
 /-- Skeletal ranking for overapplication (ex. 7):
     IDENT-BR, *VhV >> MAX-IO -/
@@ -169,7 +169,7 @@ def toCorr : JavaneseCand → Corr RedupRole Seg
 
 /-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
     violation count equals the original stipulated `javMaxIO.eval`.
-    The deletion-based stipulation (`mkMax "MAX-IO" (· == .over)`) now
+    The deletion-based stipulation (`mkMax "MAX-IO" (· = .over)`) now
     follows from the structural fact that `over`'s base lacks an
     input correspondent. -/
 theorem javMaxIO_eq_corr (c : JavaneseCand) :
@@ -177,7 +177,7 @@ theorem javMaxIO_eq_corr (c : JavaneseCand) :
   cases c <;> decide
 
 /-- **Structural derivation of "IDENT-BR"**: the original constraint
-    (`mkIdent "IDENT-BR" (· == .normal)`) is empirically MAX-BR — it
+    (`mkIdent "IDENT-BR" (· = .normal)`) is empirically MAX-BR — it
     penalizes the `normal` candidate's base-only `h` (which has no R
     correspondent). The structural count from `Corr.maxViol .base .reduplicant`
     matches the stipulation. -/

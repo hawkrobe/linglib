@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.ProductOfExperts
 import Mathlib.Probability.Distributions.Uniform
 
 /-!

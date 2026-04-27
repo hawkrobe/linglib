@@ -4,11 +4,10 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Linglib.Core.Question.Hamblin
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
-import Linglib.Theories.Semantics.Questions.Utility.Polarity
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
+import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
 # @cite{kay-fillmore-1999}: *What's X Doing Y?* — Empirical Data
@@ -467,36 +466,39 @@ theorem wxdy_ci_independent {W : Type*}
   exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 -- ============================================================================
--- F. Hamblin question semantics bridge (Semantics.Questions/Hamblin.lean)
+-- F. Hamblin question semantics bridge (Core/Question/Hamblin.lean substrate)
 -- ============================================================================
 
-open Semantics.Questions.Hamblin
+open Core.Question
 
 /-- Literal reading: standard wh-question "which activity is X engaged in?"
-Delegates to `Hamblin.which` over a domain of activities. -/
-def wxdyLiteralQ {W E : Type*} [BEq W]
-    (activities : List E) (pred : E → W → Bool) (worlds : List W) : QuestionDen W :=
-  which activities pred worlds
+Delegates to substrate `Core.Question.which` over a domain of activities. -/
+def wxdyLiteralQ {W E : Type*}
+    (activities : Set E) (pred : E → Set W) : Core.Question W :=
+  which activities pred
 
 /-- Incredulity reading: degenerate question with only the presupposed
 proposition as an answer. The "question" is not information-seeking;
-the speaker already knows the answer. -/
-def wxdyIncredulityQ {W : Type*} [BEq W]
-    (presupposedProp : W → Bool) (worlds : List W) : QuestionDen W :=
-  λ ans => worlds.all λ w => ans w == presupposedProp w
+the speaker already knows the answer.
 
-/-- The incredulity reading has exactly one answer: the presupposed proposition.
-The proposition itself is trivially recognized as an answer. -/
-theorem incredulity_single_answer {W : Type*} [BEq W] [LawfulBEq W]
-    (presupposedProp : W → Bool) (worlds : List W) :
-    wxdyIncredulityQ presupposedProp worlds presupposedProp = true := by
-  simp [wxdyIncredulityQ, List.all_eq_true]
+In the substrate, this is the declarative principal ideal of the
+presupposed proposition — a single-alternative question. -/
+def wxdyIncredulityQ {W : Type*} (presupposedProp : Set W) : Core.Question W :=
+  declarative presupposedProp
+
+/-- The incredulity reading has exactly one alternative: the presupposed
+proposition. The proposition itself is the unique alternative. -/
+theorem incredulity_single_answer {W : Type*}
+    (presupposedProp : Set W) :
+    alt (wxdyIncredulityQ presupposedProp) = {presupposedProp} :=
+  alt_declarative presupposedProp
 
 /-- The literal reading is a genuine (non-degenerate) question: it delegates
-to standard `Hamblin.which`, which partitions the answer space by activity. -/
-theorem literal_is_genuine_question {W E : Type*} [BEq W]
-    (activities : List E) (pred : E → W → Bool) (worlds : List W) :
-    wxdyLiteralQ activities pred worlds = which activities pred worlds := rfl
+to substrate `Core.Question.which`, which yields a Hamblin-style alternative
+set indexed by the activity domain. -/
+theorem literal_is_genuine_question {W E : Type*}
+    (activities : Set E) (pred : E → Set W) :
+    wxdyLiteralQ activities pred = which activities pred := rfl
 
 -- ============================================================================
 -- G. Left Periphery bridge (Interfaces.SyntaxSemantics/LeftPeriphery.lean) — DEEPEST BRIDGE
@@ -580,28 +582,6 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
     progressivePrediction c = .accept ↔
     (c.duration = .durative ∧ c.dynamicity = .dynamic) :=
   progressive_accepts_durative_dynamic c
-
--- ============================================================================
--- J. Polarity / rhetorical question bridge (Semantics.Questions/Polarity.lean)
--- ============================================================================
-
-open Semantics.Questions.Polarity
-
-/-- WXDY on the incredulity reading is a rhetorical question:
-- The speaker presupposes the positive answer (the situation obtains)
-- Belief strength is maximal (speaker SEES the situation)
-- Question form is used for pragmatic effect, not information seeking -/
-def wxdyAsRhetoricalQ {W : Type*} (prop : W → Bool) : RhetoricalQuestion W :=
-  { prop := prop
-  , presupposedPositive := true
-  , beliefStrength := 1 }
-
-/-- Rhetorical questions require polar form — they cannot be alternative
-questions. WXDY on the incredulity reading has this property: you can't
-say *"What's this fly doing in my soup or not?" -/
-theorem wxdy_rhetorical_requires_polar {W : Type*} (prop : W → Bool) :
-    expectedTypeForUse .rhetorical ≠ .alternative :=
-  rhetorical_requires_polar (wxdyAsRhetoricalQ prop)
 
 -- ============================================================================
 -- L. Per-datum verification

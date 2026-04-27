@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Clause Spine: Fine-Grained Clause Size

@@ -51,34 +51,41 @@ open Core.Constraint.OT
 -- ============================================================================
 
 /-- Build a MAX constraint (penalizes deletion).
-    `violated c` returns `true` when candidate `c` exhibits deletion. -/
-def mkMax {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
+
+    `P c` holds (as a proposition) when candidate `c` exhibits deletion.
+    Decidable for the constraint to be evaluable. -/
+def mkMax {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := fun c => if violated c then 1 else 0 }
+    eval := fun c => if P c then 1 else 0 }
 
 /-- Build a contextual MAX constraint.
     Violated only when both deletion occurs AND the context holds.
     Models positional faithfulness (@cite{coetzee-pater-2011} §3.2). -/
 def mkMaxCtx {C : Type} (name : String)
-    (deleted : C → Bool) (context : C → Bool) : NamedConstraint C :=
+    (Deleted : C → Prop) [DecidablePred Deleted]
+    (Context : C → Prop) [DecidablePred Context] :
+    NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := fun c => if deleted c && context c then 1 else 0 }
+    eval := fun c => if Deleted c ∧ Context c then 1 else 0 }
 
 /-- Build a DEP constraint (penalizes epenthesis).
-    `violated c` returns `true` when candidate `c` exhibits insertion. -/
-def mkDep {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
+    `P c` holds when candidate `c` exhibits insertion. -/
+def mkDep {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := fun c => if violated c then 1 else 0 }
+    eval := fun c => if P c then 1 else 0 }
 
 /-- Build an IDENT constraint (penalizes featural change).
-    `violated c` returns `true` when the feature value has changed. -/
-def mkIdent {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
+    `P c` holds when the feature value has changed. -/
+def mkIdent {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := fun c => if violated c then 1 else 0 }
+    eval := fun c => if P c then 1 else 0 }
 
 -- ============================================================================
 -- § 1b: Morpheme-Specific Constraint Constructors (@cite{finley-2009})
@@ -86,45 +93,48 @@ def mkIdent {C : Type} (name : String) (violated : C → Bool) : NamedConstraint
 
 /-- Build a LEFT-ANCHOR constraint: the morpheme's tonal specification must
     be in correspondence with the left edge of the host.
-    `violated c` returns `true` when the left anchor is not satisfied.
+    `P c` holds when the left anchor is not satisfied.
 
     Following @cite{finley-2009}: morpheme-specific versions of
     @cite{mccarthy-prince-1995}'s ANCHOR constraints. -/
-def mkAnchorLeft {C : Type} (name : String) (violated : C → Bool) :
+def mkAnchorLeft {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := λ c => if violated c then 1 else 0 }
+    eval := λ c => if P c then 1 else 0 }
 
 /-- Build a RIGHT-ANCHOR constraint: the morpheme's tonal specification must
     be in correspondence with the right edge of the host. -/
-def mkAnchorRight {C : Type} (name : String) (violated : C → Bool) :
+def mkAnchorRight {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := λ c => if violated c then 1 else 0 }
+    eval := λ c => if P c then 1 else 0 }
 
 /-- Build an INTEGRITY constraint: the morpheme's tone must not have
     multiple correspondents in the output.
     Penalizes splitting of a single input tone across multiple output TBUs
     when the one-to-one mapping is violated. -/
-def mkIntegrity {C : Type} (name : String) (violated : C → Bool) :
+def mkIntegrity {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     NamedConstraint C :=
   { name := name
     family := .faithfulness
-    eval := λ c => if violated c then 1 else 0 }
+    eval := λ c => if P c then 1 else 0 }
 
 /-- Anchor-left constraints are faithfulness constraints. -/
-theorem mkAnchorLeft_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
-    (mkAnchorLeft name p).family = .faithfulness := rfl
+theorem mkAnchorLeft_is_faithfulness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkAnchorLeft name P).family = .faithfulness := rfl
 
 /-- Anchor-right constraints are faithfulness constraints. -/
-theorem mkAnchorRight_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
-    (mkAnchorRight name p).family = .faithfulness := rfl
+theorem mkAnchorRight_is_faithfulness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkAnchorRight name P).family = .faithfulness := rfl
 
 /-- Integrity constraints are faithfulness constraints. -/
-theorem mkIntegrity_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
-    (mkIntegrity name p).family = .faithfulness := rfl
+theorem mkIntegrity_is_faithfulness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkIntegrity name P).family = .faithfulness := rfl
 
 -- ============================================================================
 -- § 2: Markedness Constraint Constructors (re-exported from Core.Constraint.OT)
@@ -239,17 +249,18 @@ def mkAgreeOnTier {C α β : Type} [DecidableEq β]
 /-- Build a binary ALIGN constraint (markedness): violated when the candidate's
     edge configuration is wrong. The Generalized Alignment schema
     `Align(Cat₁, Edge₁, Cat₂, Edge₂)` (@cite{mccarthy-prince-1993}) is given
-    here in its predicate-based form: the user supplies the predicate
-    `violated c` that fires when the edge configuration is misaligned.
+    here in its predicate-based form: the user supplies the predicate `P c`
+    that holds when the edge configuration is misaligned.
 
     Specific alignment instances include left/right edge alignment of
     morphological constituents to prosodic constituents and the
     \*Misalignment principle of @cite{faust-2026} (root nonfinal element
     must not be template-final). -/
-def mkAlign {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
+def mkAlign {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
   { name := name
     family := .markedness
-    eval := fun c => if violated c then 1 else 0 }
+    eval := fun c => if P c then 1 else 0 }
 
 /-- Gradient ALIGN: counts edge-mismatch violations (@cite{mccarthy-prince-1993}). -/
 def mkAlignGrad {C : Type} (name : String) (violations : C → Nat) :
@@ -263,21 +274,25 @@ def mkAlignGrad {C : Type} (name : String) (violations : C → Nat) :
 -- ============================================================================
 
 /-- MAX constraints are faithfulness constraints. -/
-theorem mkMax_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
-    (mkMax name p).family = .faithfulness := rfl
+theorem mkMax_is_faithfulness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkMax name P).family = .faithfulness := rfl
 
 /-- DEP constraints are faithfulness constraints. -/
-theorem mkDep_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
-    (mkDep name p).family = .faithfulness := rfl
+theorem mkDep_is_faithfulness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkDep name P).family = .faithfulness := rfl
 
 /-- Markedness constraints are markedness constraints. -/
-theorem mkMark_is_markedness {C : Type} (name : String) (p : C → Bool) :
-    (mkMark name p).family = .markedness := rfl
+theorem mkMark_is_markedness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkMark name P).family = .markedness := rfl
 
 /-- Contextual MAX constraints are faithfulness constraints. -/
 theorem mkMaxCtx_is_faithfulness {C : Type} (name : String)
-    (d : C → Bool) (ctx : C → Bool) :
-    (mkMaxCtx name d ctx).family = .faithfulness := rfl
+    (D : C → Prop) [DecidablePred D]
+    (Ctx : C → Prop) [DecidablePred Ctx] :
+    (mkMaxCtx name D Ctx).family = .faithfulness := rfl
 
 /-- Forbidden-pair constraints are markedness constraints. -/
 theorem mkForbidPairsOnTier_is_markedness {C α β : Type} (name : String)
@@ -308,27 +323,31 @@ theorem mkOCPOnTier_is_markedness {C α β : Type} [DecidableEq β] (name : Stri
 
 /-- ALIGN constraints are markedness constraints
     (@cite{mccarthy-prince-1993}). -/
-theorem mkAlign_is_markedness {C : Type} (name : String) (p : C → Bool) :
-    (mkAlign name p).family = .markedness := rfl
+theorem mkAlign_is_markedness {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] :
+    (mkAlign name P).family = .markedness := rfl
 
 -- ============================================================================
 -- § 4: Violation Bounds
 -- ============================================================================
 
 /-- Binary constraints have violations bounded by 1. -/
-theorem mkMax_bounded {C : Type} (name : String) (p : C → Bool) (c : C) :
-    (mkMax name p).eval c ≤ 1 := by
+theorem mkMax_bounded {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] (c : C) :
+    (mkMax name P).eval c ≤ 1 := by
   simp only [mkMax]; split <;> omega
 
 /-- Binary markedness constraints have violations bounded by 1. -/
-theorem mkMark_bounded {C : Type} (name : String) (p : C → Bool) (c : C) :
-    (mkMark name p).eval c ≤ 1 := by
+theorem mkMark_bounded {C : Type} (name : String)
+    (P : C → Prop) [DecidablePred P] (c : C) :
+    (mkMark name P).eval c ≤ 1 := by
   simp only [mkMark]; split <;> omega
 
 /-- Contextual MAX constraints have violations bounded by 1. -/
 theorem mkMaxCtx_bounded {C : Type} (name : String)
-    (d : C → Bool) (ctx : C → Bool) (c : C) :
-    (mkMaxCtx name d ctx).eval c ≤ 1 := by
+    (D : C → Prop) [DecidablePred D]
+    (Ctx : C → Prop) [DecidablePred Ctx] (c : C) :
+    (mkMaxCtx name D Ctx).eval c ≤ 1 := by
   simp only [mkMaxCtx]; split <;> omega
 
 -- ============================================================================
@@ -338,30 +357,31 @@ theorem mkMaxCtx_bounded {C : Type} (name : String)
 open Core.Constraint
 
 /-- Build a weighted MAX constraint with a given weight. -/
-def mkMaxW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :
+def mkMaxW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
     WeightedConstraint C :=
-  { toNamedConstraint := mkMax name violated, weight := w }
+  { toNamedConstraint := mkMax name P, weight := w }
 
 /-- Build a weighted contextual MAX constraint. -/
 def mkMaxCtxW {C : Type} (name : String)
-    (deleted : C → Bool) (context : C → Bool) (w : ℚ) :
+    (D : C → Prop) [DecidablePred D]
+    (Ctx : C → Prop) [DecidablePred Ctx] (w : ℚ) :
     WeightedConstraint C :=
-  { toNamedConstraint := mkMaxCtx name deleted context, weight := w }
+  { toNamedConstraint := mkMaxCtx name D Ctx, weight := w }
 
 /-- Build a weighted DEP constraint. -/
-def mkDepW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :
+def mkDepW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
     WeightedConstraint C :=
-  { toNamedConstraint := mkDep name violated, weight := w }
+  { toNamedConstraint := mkDep name P, weight := w }
 
 /-- Build a weighted IDENT constraint. -/
-def mkIdentW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :
+def mkIdentW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
     WeightedConstraint C :=
-  { toNamedConstraint := mkIdent name violated, weight := w }
+  { toNamedConstraint := mkIdent name P, weight := w }
 
 /-- Build a weighted binary markedness constraint. -/
-def mkMarkW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :
+def mkMarkW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :
     WeightedConstraint C :=
-  { toNamedConstraint := mkMark name violated, weight := w }
+  { toNamedConstraint := mkMark name P, weight := w }
 
 /-- Build a weighted gradient markedness constraint. -/
 def mkMarkGradW {C : Type} (name : String) (violations : C → Nat) (w : ℚ) :

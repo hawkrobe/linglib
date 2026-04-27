@@ -38,7 +38,7 @@ An individual's grammar is a frequency-weighted profile over constructions —
 not a binary set (in/out) but a weighting reflecting how often each
 construction is used. Note: this does not enforce normalization (Σ freq = 1);
 the weights are relative frequencies, not probabilities. -/
-structure GrammarDist (C : Type) where
+structure GrammarDist (C : Type*) where
   freq : C → ℚ
   freq_nonneg : ∀ c, 0 ≤ freq c
 
@@ -56,21 +56,21 @@ structure Grammar (C W : Type) extends GrammarDist C where
 -- ============================================================================
 
 section EntropyAndSimilarity
-variable {C : Type}
+variable {C : Type*}
 
 /-- Constructional diversity: Shannon entropy of the frequency profile (in nats).
 
 Higher entropy = more diverse construction usage. @cite{dunn-2025} uses
 grammar entropy to compare registers, dialects, and individual variation
 within L1 populations. -/
-noncomputable def GrammarDist.entropyOver (g : GrammarDist C) (inventory : List C) : ℝ :=
-  entropy (inventory.map fun c => (c, ((g.freq c : ℚ) : ℝ)))
+noncomputable def GrammarDist.entropyOver (g : GrammarDist C) (inventory : Finset C) : ℝ :=
+  entropy inventory (fun c => ((g.freq c : ℚ) : ℝ))
 
 /-- Jensen-Shannon divergence between two grammars over a shared inventory (in nats).
 
 Symmetric, bounded, and a metric (after sqrt). Used by @cite{dunn-2025} to
 measure register distance, dialect boundaries, and L1-L2 differences. -/
-noncomputable def GrammarDist.jsd (p q : GrammarDist C) (inventory : List C) : ℝ :=
+noncomputable def GrammarDist.jsd (p q : GrammarDist C) (inventory : Finset C) : ℝ :=
   jsdOf inventory (fun c => ((p.freq c : ℚ) : ℝ)) (fun c => ((q.freq c : ℚ) : ℝ))
 
 end EntropyAndSimilarity

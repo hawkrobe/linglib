@@ -38,20 +38,20 @@ is the prerequisite for any type of contrast. -/
     @cite{umbach-2004} §2.2: required for alternatives in focus, coordination,
     and discourse relations. Violation explains the oddness of
     *#John had a drink and Mary had a martini*. -/
-def semanticallyIndependent {W : Type} (a b : W → Bool) : Prop :=
-  ¬(∀ w : W, a w = true → b w = true) ∧ ¬(∀ w : W, b w = true → a w = true)
+def semanticallyIndependent {W : Type} (a b : Set W) : Prop :=
+  ¬ a ⊆ b ∧ ¬ b ⊆ a
 
 /-- A common integrator subsumes all alternatives.
     @cite{umbach-2004} §2.2, following @cite{lang-1984}: coordinated elements
     and focus alternatives must share a common superordinate concept.
     For example, in "beer and martini", "drink" is the common integrator. -/
-def commonIntegrator {W : Type} (alts : List (W → Bool)) (integ : W → Bool) : Prop :=
-  ∀ a ∈ alts, ∀ w : W, a w = true → integ w = true
+def commonIntegrator {W : Type} (alts : List (Set W)) (integ : Set W) : Prop :=
+  ∀ a ∈ alts, a ⊆ integ
 
 /-- A well-formed alternative set satisfies both constraints.
     @cite{umbach-2004} §2.2: alternatives must be comparable, i.e.,
     similar (common integrator) and dissimilar (pairwise independent). -/
-def wellFormedAlts {W : Type} (alts : List (W → Bool)) (integ : W → Bool) : Prop :=
+def wellFormedAlts {W : Type} (alts : List (Set W)) (integ : Set W) : Prop :=
   commonIntegrator alts integ ∧
   ∀ a ∈ alts, ∀ b ∈ alts, a ≠ b → semanticallyIndependent a b
 

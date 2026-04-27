@@ -67,7 +67,7 @@ namespace RuytenbeekEtAl2017
 open Core.Modality (ModalFlavor ModalForce)
 open Core.Discourse (PreparatoryCondition)
 open Semantics.Modality.Assert (primaryFlavor SpeechActType)
-open Minimalism.Phenomena.SpeechActs (SAPMood)
+open Minimalism.SpeechActs (SAPMood)
 
 /-! ## §1. Sentence types and modal projections -/
 

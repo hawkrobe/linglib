@@ -25,6 +25,53 @@ namespace QUD
 
 variable {M : Type*}
 
+/-! ### Cell-membership operator (G&S Ch I)
+
+`ans Q i` returns the characteristic function of the cell of `Q`'s
+partition containing `i` — `(@cite{groenendijk-stokhof-1984}, p. 14-15)`.
+This is substrate; paper-specific theorems about answerhood (Karttunen
+completeness, Belnap distributivity, mention-some, exhaustivity ladder)
+live in the topical files under `Theories/Semantics/Questions/`. -/
+
+/-- `ans Q i` = the cell of `Q`'s partition containing `i`. -/
+def ans (q : QUD M) (i : M) : M → Bool :=
+  fun w => q.sameAnswer i w
+
+/-- `ans` is true at the index of evaluation. -/
+theorem ans_true_at_index (q : QUD M) (i : M) :
+    ans q i i = true :=
+  q.refl i
+
+/-- Worlds in the same cell get the same `ans` extension. -/
+theorem ans_constant_on_cells (q : QUD M) (w v : M)
+    (hEquiv : q.r w v) :
+    ∀ u, ans q w u = ans q v u := by
+  intro u
+  simp only [ans]
+  cases hu : q.sameAnswer w u with
+  | false =>
+    cases hvu : q.sameAnswer v u with
+    | false => rfl
+    | true =>
+      have hwu := q.iseqv.trans hEquiv (QUD.r_of_sameAnswer hvu)
+      rw [QUD.sameAnswer_of_r hwu] at hu
+      exact absurd hu (by simp)
+  | true =>
+    have hvw : q.r v u :=
+      q.iseqv.trans (q.iseqv.symm hEquiv) (QUD.r_of_sameAnswer hu)
+    exact (QUD.sameAnswer_of_r hvw).symm
+
+/-- `ans` propositions from different cells are disjoint. -/
+theorem ans_disjoint (q : QUD M) (w v u : M)
+    (hNotEquiv : ¬ q.r w v) :
+    ¬ (ans q w u = true ∧ ans q v u = true) := by
+  intro ⟨hwu, hvu⟩
+  simp only [ans] at hwu hvu
+  have hwv : q.r w v :=
+    q.iseqv.trans (QUD.r_of_sameAnswer hwu)
+      (q.iseqv.symm (QUD.r_of_sameAnswer hvu))
+  exact hNotEquiv hwv
+
 /-! ### Finite Partition Cells -/
 
 /-- Compute partition cells as Finsets over a finite domain.

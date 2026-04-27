@@ -1,33 +1,25 @@
 /-
 Selectional preferences: semantic constraints on argument slots.
-Integrates with @cite{erk-herbelot-2024} Product of Experts for disambiguation.
 
 - Resnik, P. (1996). Selectional constraints: An information-theoretic model.
 - Erk, K. (2007). A simple, similarity-based model for selectional preferences.
 - Erk, K. & Herbelot, A. (2024). How to Marry a Star. Journal of Semantics.
 
-## Substrate-promotion forward-pointer
+## Substrate
 
-This file uses ℚ-valued selectional preferences (`Concept → ℚ`) and
-the legacy `poe2` from `Core/Agent/ProductOfExperts.lean`. The newer
-SDS substrate (`Theories/Semantics/Probabilistic/SDS/ConceptNode.lean`,
-post-Phase-1 audit) uses `Role → PMF Concept` (ℝ≥0∞-valued, paper-faithful)
-and `PMF.productOfExperts` from `Core/Probability/PMFPosterior.lean`.
-
-The two substrates are parallel: a `RoleWithConstraint Concept` here
-(ℚ) corresponds to a `SelectionalDist Role Concept` there (PMF). The
-unification — promoting this file's definitions to ℝ≥0∞ + PMF and
-deleting `Core/Agent/ProductOfExperts.lean` — is its own project, since
-this file has 15+ definitions and several downstream consumers. Until
-that lands, prefer the SDS substrate for new work.
+This file provides ℚ-valued selectional preferences (`Concept → ℚ`)
+suitable for decidable computation in Fragment definitions. For
+probabilistic disambiguation combining selectional and scenario
+constraints, use mathlib's `PMF.productOfExperts`
+(`Core/Probability/PMFPosterior.lean`) on PMFs constructed via
+`PMF.normalize` from the score functions defined here. The newer SDS
+substrate (`Theories/Semantics/Probabilistic/SDS/ConceptNode.lean`)
+provides the PMF-typed `Role → PMF Concept` form for paper replications.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Agent.ProductOfExperts
 
 namespace Semantics.Verb.SelectionalPreferences
-
-open Core.ProductOfExperts
 
 
 section Classes
@@ -198,64 +190,14 @@ def drawWeaponFrame : Frame SemClass :=
 
 end Frames
 
-section Disambiguation
+/-! ## Disambiguation
 
-/-- An ambiguous concept: multiple possible denotations. -/
-structure AmbiguousConcept (Denotation : Type) where
-  form : String
-  senses : List (String × Denotation)  -- (sense-name, denotation)
-
-/-- Disambiguation result: distribution over senses. -/
-structure Disambiguation where
-  senseDist : String → ℚ
-
-/-- Disambiguate a concept given a selectional preference over semantic classes. -/
-def disambiguateBySelection
-    (senseToClass : String → SemClass)
-    (selPref : SemClass → ℚ)
-    (senses : List String) : String → ℚ :=
-  let unnorm s := selPref (senseToClass s)
-  let Z := senses.foldl (λ acc s => acc + unnorm s) 0
-  λ s => if Z = 0 then 0 else unnorm s / Z
-
-
-/-- Combined disambiguation using selectional + scenario constraints (SDS-style PoE). -/
-def sdsDisambiguate
-    (senseToClass : String → SemClass)
-    (selPref : SemClass → ℚ)
-    (scenarioPref : SemClass → ℚ)
-    (senses : List String) : String → ℚ :=
-  let selExpert s := selPref (senseToClass s)
-  let scenExpert s := scenarioPref (senseToClass s)
-  poe2 selExpert scenExpert senses
-
-
-inductive BladeSense where
-  | weapon  -- sword, knife
-  | grass   -- blade of grass
-  | propeller  -- propeller blade
-  deriving Repr, DecidableEq
-
-def bladeSenseToClass : BladeSense → SemClass
-  | .weapon => .artifact
-  | .grass => .plant
-  | .propeller => .artifact
-
-def bladeSelectional : BladeSense → ℚ :=
-  λ sense => drawWeaponPatientPref (bladeSenseToClass sense)
-
-example : bladeSelectional .weapon = bladeSelectional .propeller := rfl
-
-def combatScenario : BladeSense → ℚ
-  | .weapon => 95/100
-  | .grass => 1/100
-  | .propeller => 4/100
-
-def bladeDisambiguated : BladeSense → ℚ :=
-  poe2 bladeSelectional combatScenario [.weapon, .grass, .propeller]
-
-
-end Disambiguation
+For sense disambiguation combining selectional + scenario constraints,
+use `PMF.productOfExperts` (`Core/Probability/PMFPosterior.lean`) on
+PMFs constructed via `PMF.normalize` from the score functions in this
+file. The illustrative ℚ-valued helpers that previously lived here
+(`disambiguateBySelection`, `sdsDisambiguate`, `bladeDisambiguated`)
+were removed in favor of the canonical PMF API. -/
 
 section SoftConstraints
 

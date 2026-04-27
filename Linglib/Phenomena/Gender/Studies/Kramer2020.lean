@@ -2,7 +2,7 @@ import Linglib.Features.Gender
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
-import Linglib.Fragments.Russian.Gender
+import Linglib.Fragments.Slavic.Russian.Gender
 
 /-!
 # Kramer 2020: Grammatical Gender — A Close Look at Gender Assignment
@@ -805,15 +805,15 @@ theorem licensing_bridge_arbitraryMasc :
 
 /-- Russian fragment nouns match their root classes. -/
 theorem russian_licensing_otec :
-    Fragments.Russian.Gender.otec.nHead = RootClass.maleReferent.licensedNHead := rfl
+    Fragments.Slavic.Russian.Gender.otec.nHead = RootClass.maleReferent.licensedNHead := rfl
 theorem russian_licensing_mat' :
-    Fragments.Russian.Gender.mat'.nHead = RootClass.femaleReferent.licensedNHead := rfl
+    Fragments.Slavic.Russian.Gender.mat'.nHead = RootClass.femaleReferent.licensedNHead := rfl
 theorem russian_licensing_zakon :
-    Fragments.Russian.Gender.zakon.nHead = RootClass.arbitraryMasc.licensedNHead := rfl
+    Fragments.Slavic.Russian.Gender.zakon.nHead = RootClass.arbitraryMasc.licensedNHead := rfl
 theorem russian_licensing_škola :
-    Fragments.Russian.Gender.škola.nHead = RootClass.arbitraryFem.licensedNHead := rfl
+    Fragments.Slavic.Russian.Gender.škola.nHead = RootClass.arbitraryFem.licensedNHead := rfl
 theorem russian_licensing_vino :
-    Fragments.Russian.Gender.vino.nHead = RootClass.default.licensedNHead := rfl
+    Fragments.Slavic.Russian.Gender.vino.nHead = RootClass.default.licensedNHead := rfl
 
 /-- *persona* is human-denoting but has u[+FEM] (arbitrary feminine), not
     i[+FEM] (natural feminine). This is the key exception to the pattern
@@ -981,7 +981,7 @@ theorem russian_assignment_consistent :
 
 /-- Fragment-derived: *vrač* has morphological masculine (u[−FEM]). -/
 theorem vrač_morph_masculine :
-    Fragments.Russian.Gender.vrač.nHead.phi.gender =
+    Fragments.Slavic.Russian.Gender.vrač.nHead.phi.gender =
       some ⟨.u, ⟨.fem, .neg⟩⟩ := rfl
 
 /-- *vrač* is a hybrid noun: its morphological gender (u[−FEM] = masculine)
@@ -989,27 +989,27 @@ theorem vrač_morph_masculine :
     This matches the `russianVrac` definition from §7. -/
 theorem vrač_matches_hybrid :
     russianVrac.morphGender = ⟨.fem, .neg⟩ ∧
-    Fragments.Russian.Gender.vrač.nHead.phi.gender =
+    Fragments.Slavic.Russian.Gender.vrač.nHead.phi.gender =
       some ⟨.u, russianVrac.morphGender⟩ := ⟨rfl, rfl⟩
 
 /-- Fragment-derived: *zakon* (Class I) surfaces as masculine. -/
 theorem zakon_fragment_masculine :
-    Fragments.Russian.Gender.surfaceGender
-      Fragments.Russian.Gender.zakon.nHead = .masculine := rfl
+    Fragments.Slavic.Russian.Gender.surfaceGender
+      Fragments.Slavic.Russian.Gender.zakon.nHead = .masculine := rfl
 
 /-- Fragment-derived: *vino* (default) surfaces as neuter. -/
 theorem vino_fragment_neuter :
-    Fragments.Russian.Gender.surfaceGender
-      Fragments.Russian.Gender.vino.nHead = .neuter := rfl
+    Fragments.Slavic.Russian.Gender.surfaceGender
+      Fragments.Slavic.Russian.Gender.vino.nHead = .neuter := rfl
 
 /-- Fragment-derived: Russian has all 5 n-types in its lexicon. -/
 theorem russian_fragment_covers_inventory :
-    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
-    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
-    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
-    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uNegFem) = true ∧
-    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_plain) = true :=
-  Fragments.Russian.Gender.five_n_types_covered
+    Fragments.Slavic.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
+    Fragments.Slavic.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
+    Fragments.Slavic.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
+    Fragments.Slavic.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uNegFem) = true ∧
+    Fragments.Slavic.Russian.Gender.allNouns.any (·.nHead == CatHead.n_plain) = true :=
+  Fragments.Slavic.Russian.Gender.five_n_types_covered
 
 -- ============================================================================
 -- § 14: VI-Derived Surface Gender Count

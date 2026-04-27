@@ -24,8 +24,7 @@ which matches `ProbabilityTheory.cond`'s convention.
 
 A handful of lemmas (positivity, monotonicity, partition, complement,
 finite normalization) are provided for the patterns that recur in
-`Theories/Semantics/Questions/Answerhood/`,
-`Theories/Pragmatics/Particles/Additive.lean`, and the corresponding
+`Theories/Semantics/Questions/Probabilistic.lean` and the corresponding
 `Phenomena/.../Studies/` files. ENNReal arithmetic at consumer sites
 goes through `ennreal_arith` (see `Linglib.Tactics.ENNRealArith`).
 -/

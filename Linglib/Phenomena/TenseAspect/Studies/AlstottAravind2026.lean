@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
-import Linglib.Fragments.Serbian.TemporalConnectives
+import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Paradigms.SelfPacedReading
 
@@ -399,10 +399,10 @@ theorem tagalog_overt_coercion :
     perfective → before-finish (COMPLET);
     imperfective → before-start (no coercion). -/
 theorem serbian_overt_coercion :
-    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
-    Fragments.Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
-    Fragments.Serbian.TemporalConnectives.pre_impf.culminating = false ∧
-    Fragments.Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_impf.culminating = false ∧
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Triple convergence: English processing data (Exp 2), Tagalog morphology,
@@ -411,7 +411,7 @@ theorem complet_triple_convergence :
     exp2_rt.significant = true ∧
     exp2_rt.coercionType = .completive ∧
     Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
-    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -446,7 +446,7 @@ theorem data_supports_rett :
 theorem coercion_has_crosslinguistic_reflexes :
     rettProfile.positsCoercion = true ∧
     Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
-    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
+    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl⟩
 
 end AlstottAravind2026

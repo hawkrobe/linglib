@@ -37,7 +37,7 @@ namespace VonStechow1984
 
 open Semantics.Degree.Intensional
 open Semantics.Degree.Comparative (comparativeSem)
-open Semantics.Degree.DegreeAbstraction (IsMaxDeg)
+open Semantics.Degree.Abstraction (IsMaxDeg)
 open Semantics.Degree.Differential (differentialComparative factorEquative)
 
 -- ════════════════════════════════════════════════════

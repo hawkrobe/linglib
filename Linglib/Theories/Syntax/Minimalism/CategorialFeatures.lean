@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Categorial Feature Theories: @cite{chomsky-1970} vs. @cite{panagiotidis-2015}

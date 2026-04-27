@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
-import Linglib.Theories.Semantics.Questions.QParticleLayer
+import Linglib.Features.QParticleLayer
 import Linglib.Core.Question.Singleton
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
@@ -241,7 +241,7 @@ theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ :
 -- §3 — Left-Peripheral Layer Assignments (@cite{dayal-2025} cartography)
 -- ════════════════════════════════════════════════════════════════════════════
 
-open Semantics.Questions (QParticleLayer)
+open Features (QParticleLayer)
 open Fragments.Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
 
 /-- Zheng's layer assignments for the three Mandarin Q-particles in the

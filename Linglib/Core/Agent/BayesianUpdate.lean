@@ -1,13 +1,36 @@
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Topology.Algebra.InfiniteSum.Real
+import Linglib.Core.Probability.PMFPosterior
 
 /-!
 # Bayesian Observation Models and Posterior Update
 
-General-purpose infrastructure for Bayesian reasoning with stochastic
-observations. An `ObservationModel` specifies how experiments generate
-observations in different worlds; `posterior` computes the Bayesian update.
+The ergonomic `ℝ`-typed interface for finite Bayesian inference with
+explicit experiment indexing. Provides the same algorithm as mathlib's
+canonical `PMF.posterior` (`Core/Probability/PMFPosterior.lean`):
+`P(w|o,e) = prior(w) · P(o|w,e) / Σ_w' prior(w') · P(o|w',e)`.
+
+## Relationship to `PMF.posterior`
+
+`PMF.posterior` is the canonical mathlib probability-theoretic primitive
+(`κ : α → PMF β`, `μ : PMF α`, observation `b`, returns `PMF α`). This
+module's `posterior` is mathematically the same Bayes' rule formula but
+with three ergonomic differences:
+
+1. **`ℝ` instead of `ℝ≥0∞`** — keeps arithmetic in the reals so consumers
+   can use signed value functions (`(W → ℝ) → ℝ` for utility / entropy
+   theorems) without `ENNReal` coercions.
+2. **Experiment indexing `E`** — `ObservationModel W E O` carries an
+   explicit experiment-index parameter that PMF kernels lack. For each
+   fixed `e : E`, an `ObservationModel` IS a kernel `W → PMF O` (see
+   `ObservationModel.toPMFKernel`).
+3. **Permissive prior** — accepts any `prior : W → ℝ` rather than
+   requiring a `PMF W` (the formula gives 0 when the marginal is 0).
+
+Use `PMF.posterior` for general probability work; use this module for
+finite Bayesian inference where experiment indexing or `(W → ℝ)`-typed
+value functions are needed (e.g., `ExperimentDesign.eig`).
 
 ## Key Results
 
@@ -16,6 +39,8 @@ observations in different worlds; `posterior` computes the Bayesian update.
 - `posterior_marginalizes_to_prior`: the law of total probability —
   marginalized posteriors reconstruct the prior:
   `∑ o, P(o|e) · P(w|o,e) = prior(w)`
+- `ObservationModel.toPMFKernel`: PMF-typed view of the likelihood at
+  fixed experiment, enabling interop with `PMF.posterior`.
 
 ## Usage
 
@@ -23,7 +48,7 @@ This module is imported by `ExperimentDesign.lean` (for EIG computation)
 and can be imported independently wherever Bayesian updating is needed.
 -/
 
-namespace Core.BayesianUpdate
+namespace Core
 
 open BigOperators Finset
 
@@ -140,4 +165,23 @@ def deterministicObs [DecidableEq O] (classify : W → O) :
       congr 1; ext o; simp [eq_comm]
     rw [this, Finset.sum_ite_eq']; simp
 
-end Core.BayesianUpdate
+/-! ## PMF interop
+
+Convert an `ObservationModel` at a fixed experiment to a mathlib
+`PMF`-typed kernel `W → PMF O`. Bridges to `PMF.posterior` for any
+downstream use that requires the canonical mathlib type. -/
+
+/-- The PMF view of an `ObservationModel` at a fixed experiment `e`.
+    For each world `w`, returns the `PMF O` whose mass at `o` is
+    `om.likelihood w e o`. Bridges this module's ℝ-typed Bayesian
+    machinery to mathlib's canonical `PMF.posterior`. -/
+noncomputable def ObservationModel.toPMFKernel
+    (om : ObservationModel W E O) (e : E) : W → PMF O := fun w =>
+  PMF.ofFintype (fun o => ENNReal.ofReal (om.likelihood w e o)) (by
+    rw [show (∑ o : O, ENNReal.ofReal (om.likelihood w e o)) =
+         ENNReal.ofReal (∑ o : O, om.likelihood w e o) from
+      (ENNReal.ofReal_sum_of_nonneg
+        (fun o _ => om.likelihood_nonneg w e o)).symm]
+    rw [om.likelihood_sum w e, ENNReal.ofReal_one])
+
+end Core

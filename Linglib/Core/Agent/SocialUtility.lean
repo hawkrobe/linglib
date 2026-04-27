@@ -31,9 +31,7 @@ behavioral signature. This decomposition predicts which emotions arise:
 DIA-weighted appraisals drive *envy*; AIA-weighted appraisals drive *guilt*.
 -/
 
-set_option autoImplicit false
-
-namespace Core.Agent.SocialUtility
+namespace Core
 
 /-! ### Core Utility Function -/
 
@@ -128,4 +126,4 @@ def fehrSchmidtV (ν : ℚ → ℚ) (vSelf vOther : ℚ) (α β : ℚ) : ℚ :=
 theorem fehrSchmidtV_id (vSelf vOther α β : ℚ) :
     fehrSchmidtV id vSelf vOther α β = fehrSchmidt vSelf vOther α β := rfl
 
-end Core.Agent.SocialUtility
+end Core

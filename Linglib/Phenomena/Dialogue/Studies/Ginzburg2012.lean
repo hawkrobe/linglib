@@ -122,8 +122,9 @@ We verify that:
 
 section InquiryCycle
 
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : Core.Question.DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 /-- A asks "Is Bo here?" -/
 private def cycle₀ : TIS String String String := TIS.initial
@@ -171,8 +172,9 @@ assertion and mutual acceptance. -/
 
 section GroundingAsymmetry
 
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : Core.Question.DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 /-- Speaker's DGB after asserting "It's raining". -/
 private def speakerDGB : TIS String String String :=
@@ -545,8 +547,9 @@ section EndToEndChain
 
 open Pragmatics.Dialogue.KOS.Grammar
 
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : Core.Question.DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 -- Step 1: DialogueSign for the sentence "Did Jo leave?"
 -- "Jo" contributes DGB-PARAMS; "left" is a plain verb.

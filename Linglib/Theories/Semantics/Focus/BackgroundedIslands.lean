@@ -328,7 +328,7 @@ theorem extraction_filler_varies
     ¬ (extractionQUD (Manner := Manner) (Content := Content)).r
       ⟨m, c₁⟩ ⟨m, c₂⟩ := hne
 
-open Semantics.FocusInterpretation Semantics.Questions.Hamblin in
+open Semantics.FocusInterpretation in
 omit [DecidableEq Manner] [DecidableEq Content] in
 /-- **Q-A congruence applied to extraction** (@cite{rooth-1992} (26d)):
 if Q-A congruence holds between the extraction question and the answer's
@@ -345,17 +345,17 @@ cells → non-trivial Hamblin alternatives), this derives that extraction
 foregrounds the filler. -/
 theorem extraction_filler_is_focus_alternative
     {W : Type*}
-    (den : CommEvent Manner Content → W → Bool)
+    (den : CommEvent Manner Content → Set W)
     (m : Manner)
     (answerFocus : PropFocusValue W)
-    (extractionQ : QuestionDen W)
+    (extractionQ : PropFocusValue W)
     -- The extraction question includes all filler propositions
-    (hq : ∀ c : Content, extractionQ (den ⟨m, c⟩) = true)
+    (hq : ∀ c : Content, den ⟨m, c⟩ ∈ extractionQ)
     -- Q-A congruence holds (Rooth 1992, (26d))
     (hqa : qaCongruentWeak answerFocus extractionQ) :
     -- Then: every filler value produces a focus alternative
-    ∀ c : Content, answerFocus (den ⟨m, c⟩) = true :=
-  fun c => hqa _ (hq c)
+    ∀ c : Content, den ⟨m, c⟩ ∈ answerFocus :=
+  fun c => hqa (hq c)
 
 /-- The discourse status of the extracted filler: **focused**.
 

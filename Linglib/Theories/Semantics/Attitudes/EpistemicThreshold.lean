@@ -83,7 +83,7 @@ the agent is syntactically projected or λ-abstracted:
 
 ## BToM Grounding
 
-Pr(A, φ) is computed via BToM inference (`Core.BToM`). Given an observed
+Pr(A, φ) is computed via BToM inference (`Core`). Given an observed
 action `a`, the observer estimates agent credence by marginalizing:
 
     Pr_obs(Agent, φ | a) = Σ_b P(b | a) · ⟦φ⟧_b
@@ -466,12 +466,12 @@ problem: understanding "the player thinks the key might be in box 3"
 requires jointly inferring the player's belief state via inverse planning,
 then evaluating the ELoT formula against the inferred credences.
 
-See `BToMModel.beliefExpectation` in `Core.BToM` for the generic
+See `BToMModel.beliefExpectation` in `Core` for the generic
 belief-weighted sum, and `L1_eq_btom_worldMarginal` in
 `RSA.Core.Config` for the RSA-BToM identity.
 -/
 
-open Core.BToM in
+open Core in
 /-- Agent credence derived from BToM belief-marginal inference.
 
     Given a BToM model with belief type `B` and an evaluation function
@@ -500,7 +500,7 @@ noncomputable def btomCredence
   model.beliefExpectation (λ b => eval b φ) a
 
 section IdentityPerception
-open Core.BToM
+open Core
 
 variable {F : Type*} [CommSemiring F] [DecidableEq W]
 variable {A D S M : Type*}

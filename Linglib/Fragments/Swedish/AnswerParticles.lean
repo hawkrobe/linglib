@@ -1,6 +1,6 @@
 import Linglib.Features.Polarity
 import Linglib.Features.InformationStructure
-import Linglib.Theories.Semantics.Questions.AnsweringSystems
+import Linglib.Features.AnsweringSystem
 
 /-!
 # Swedish Answer Particles
@@ -24,7 +24,7 @@ namespace Fragments.Swedish.AnswerParticles
 
 open Features.Polarity
 open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
-open Semantics.Questions (AnsweringSystem AnswerStrategy PolarAnswerProfile)
+open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- A Swedish answer particle entry. -/
 structure AnswerParticle where

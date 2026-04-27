@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Danish V2 Profile

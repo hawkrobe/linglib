@@ -31,9 +31,10 @@ pairs (record types with `pre` and `effects` fields).
 
 ## Answerhood
 
-The `Answerhood` typeclass abstracts the resolves-relation between facts
-and questions — connecting to partition-based `QUD W` from `Core/Discourse/QUD.lean`
-and to inquisitive `Question W`.
+KOS's "fact resolves question" relation is the `Core.Question.Support`
+typeclass (Prop-valued, mathlib-shaped). Concrete instances connect to
+partition-based `QUD W` from `Core/Discourse/QUD.lean` and to
+inquisitive `Question W`.
 
 ## Genre (@cite{ginzburg-2012} §4.6)
 
@@ -44,35 +45,16 @@ which initiating moves are felicitous.
 
 namespace Pragmatics.Dialogue.KOS
 
+open Core.Question
+
 -- ════════════════════════════════════════════════════
--- § 1. Answerhood
+-- § 1. Answerhood (= Core.Question.Support)
 -- ════════════════════════════════════════════════════
 
-/-- Whether a fact resolves a question.
-
-This abstracts the answerhood relation between accumulated facts
-and QUD entries. Concrete instances connect to:
-- Partition-based answerhood (`QUD M`): a fact determines a unique cell
-- String-based answerhood: pattern matching on content strings
-- Propositional answerhood (`Prop' W`): a fact entails a question's answer
-
-Ch. 4: "q is resolved relative to a DGB dgb iff
-the FACTS in dgb contextually entail an answer to q." -/
-class Answerhood (Fact QContent : Type) where
-  resolves : Fact → QContent → Bool
-
-/-- Whether all questions in a QUD stack are resolved by the current facts. -/
-def allResolved {Fact QContent : Type} [Answerhood Fact QContent]
-    (facts : List Fact) (qud : List QContent) : Bool :=
-  qud.all fun q => facts.any fun f => Answerhood.resolves f q
-
-/-- Bridge: every Bool-valued KOS `Answerhood` instance induces a Prop-valued
-`Core.Question.Support` instance. Lets downstream files written against the
-mathlib-shaped `Support` interface consume KOS facts/questions without the
-KOS framework having to migrate first. -/
-instance instSupportOfAnswerhood {Fact QContent : Type} [Answerhood Fact QContent] :
-    Core.Question.Support Fact QContent where
-  supports f q := Answerhood.resolves f q = true
+/-! KOS's "fact resolves question" relation is `Core.Question.Support`
+(see `Core/Question/Support.lean`). Bool-valued aggregates are derived
+from the bundled `Decidable` field via `decide`. The list-based KOS
+`allResolved` is exactly `Support.allResolvedList`. -/
 
 -- ════════════════════════════════════════════════════
 -- § 2. DGB Update Operations
@@ -90,10 +72,10 @@ def DGB.pushQud {P Fact QContent : Type}
 
 Ch. 4: QUD-downdate removes a question q
 from QUD when FACTS contextually entail an answer to q. -/
-def DGB.downdateQud {P Fact QContent : Type} [Answerhood Fact QContent]
+def DGB.downdateQud {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) : DGB P Fact QContent :=
   { dgb with
-    qud := dgb.qud.filter fun q => !dgb.facts.any fun f => Answerhood.resolves f q }
+    qud := dgb.qud.filter fun q => !dgb.facts.any fun f => decide (f ⊨ q) }
 
 /-- Add a fact to the DGB's FACTS. -/
 def DGB.addFact {P Fact QContent : Type}
@@ -110,7 +92,7 @@ def DGB.recordMove {P Fact QContent : Type}
 
 Ch. 4 (p. 95, ex. 66): assertion adds content to
 FACTS, pushes About(p,?) onto QUD, and any resolved question is removed. -/
-def DGB.assertFact {P Fact QContent : Type} [Answerhood Fact QContent]
+def DGB.assertFact {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) (p : Fact) : DGB P Fact QContent :=
   (dgb.addFact p).downdateQud
 
@@ -132,7 +114,7 @@ def TIS.ask {P Fact QContent : Type}
 This version does not push About(p) onto QUD. For the full
 Assert protocol with QUD-incrementation,
 use `TIS.assertWithQUD`. -/
-def TIS.assertRule {P Fact QContent : Type} [Answerhood Fact QContent]
+def TIS.assertRule {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) :
     TIS P Fact QContent :=
   { tis with
@@ -147,7 +129,7 @@ Ch. 4 (p. 95, ex. 66): when A asserts p:
 
 The `aboutP` parameter converts the asserted fact to its corresponding
 question, since this conversion is domain-specific. -/
-def TIS.assertWithQUD {P Fact QContent : Type} [Answerhood Fact QContent]
+def TIS.assertWithQUD {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
     TIS P Fact QContent :=
   { tis with
@@ -192,7 +174,7 @@ Ch. 4 (p. 95, ex. 68 step 2).
 
 **Known simplification**: the book's Confirm rule (ex. 43) swaps spkr/addr,
 as with Accept. See `TIS.accept` for details. -/
-def TIS.confirm {P Fact QContent : Type} [Answerhood Fact QContent]
+def TIS.confirm {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with
     dgb := (tis.dgb.assertFact p).recordMove (.confirm p) }
@@ -215,7 +197,7 @@ def TIS.qcoord {P Fact QContent : Type}
 
 Ch. 4, ex. 85 (p. 103): when Accept occurs,
 FACTS is updated and resolved questions are downdated from QUD. -/
-def TIS.factUpdateQudDowndate {P Fact QContent : Type} [Answerhood Fact QContent]
+def TIS.factUpdateQudDowndate {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with dgb := (tis.dgb.addFact p).downdateQud }
 
@@ -246,13 +228,13 @@ theorem ask_records_move {P Fact QContent : Type}
     (tis.ask q).dgb.moves = tis.dgb.moves ++ [.ask q] := rfl
 
 /-- Assert adds the fact to FACTS. -/
-theorem assert_adds_fact {P Fact QContent : Type} [Answerhood Fact QContent]
+theorem assert_adds_fact {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) :
     p ∈ (tis.assertRule p).dgb.facts := by
   simp [TIS.assertRule, DGB.assertFact, DGB.downdateQud, DGB.addFact, DGB.recordMove]
 
 /-- assertWithQUD adds the fact to FACTS. -/
-theorem assertWithQUD_adds_fact {P Fact QContent : Type} [Answerhood Fact QContent]
+theorem assertWithQUD_adds_fact {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
     p ∈ (tis.assertWithQUD p aboutP).dgb.facts := by
   simp [TIS.assertWithQUD, DGB.downdateQud, DGB.pushQud, DGB.addFact, DGB.recordMove]
@@ -288,22 +270,22 @@ theorem greet_precond_empty_moves {P Fact QContent : Type}
 -- ════════════════════════════════════════════════════
 
 /-- Downdate never increases QUD size. -/
-theorem downdateQud_length_le {P Fact QContent : Type} [Answerhood Fact QContent]
+theorem downdateQud_length_le {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) :
     dgb.downdateQud.qud.length ≤ dgb.qud.length := by
   simp only [DGB.downdateQud]
   exact List.length_filter_le _ _
 
 /-- If a fact resolves the only question on QUD, downdate removes it. -/
-theorem downdateQud_removes_resolved {P Fact QContent : Type} [Answerhood Fact QContent]
+theorem downdateQud_removes_resolved {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) (q : QContent) (f : Fact)
-    (hq : dgb.qud = [q]) (hf : f ∈ dgb.facts) (hr : Answerhood.resolves f q = true) :
+    (hq : dgb.qud = [q]) (hf : f ∈ dgb.facts) (hr : f ⊨ q) :
     dgb.downdateQud.qud = [] := by
   unfold DGB.downdateQud
   rw [hq]
   simp only [List.filter_cons, List.filter_nil]
-  have : dgb.facts.any (fun f => Answerhood.resolves f q) = true :=
-    List.any_eq_true.mpr ⟨f, hf, hr⟩
+  have : dgb.facts.any (fun f => decide (f ⊨ q)) = true :=
+    List.any_eq_true.mpr ⟨f, hf, decide_eq_true hr⟩
   simp [this]
 
 -- ════════════════════════════════════════════════════
@@ -360,8 +342,9 @@ def genreRelevant {P Fact QContent : Type}
 section InquiryExample
 
 /-- String-based answerhood: a fact resolves a question if they match. -/
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 /-- Start: empty TIS. -/
 private def tis₀ : TIS String String String := TIS.initial
@@ -415,8 +398,9 @@ end InquiryExample
 
 section CheckExample
 
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 /-- A(1): Bo is in Essen. (Assert) -/
 private def checkTIS₀ : TIS String String String := TIS.initial
@@ -440,36 +424,41 @@ theorem confirm_resolves : checkTIS₃.dgb.qud = [] := by native_decide
 end CheckExample
 
 -- ════════════════════════════════════════════════════
--- § 10. Bridge: Answerhood ↔ QUD Partitions
+-- § 10. Bridge: Support ↔ QUD Partitions
 -- ════════════════════════════════════════════════════
 
-/-! ## Partition-Based Answerhood
+/-! ## Partition-Based Support
 
 Ch. 4 defines QUD-downdate in terms of FACTS
-resolving questions. The `Answerhood` typeclass above abstracts this.
-Here we connect it to the partition-based `QUD W` from
+resolving questions. The `Support` typeclass abstracts this. Here
+we connect it to the partition-based `QUD W` from
 `Core/Discourse/QUD.lean` (@cite{groenendijk-stokhof-1984}):
 
-A `Prop' W` fact resolves a `QUD W` question when the fact determines
+A `Prop' W` fact supports a `QUD W` question when the fact determines
 a unique cell — all worlds where the fact holds are in the same
 partition cell. -/
 
-/-- A `Prop' W` resolves a `QUD W` if all fact-worlds are in the same
-partition cell. -/
-def propResolvesQUD {W : Type} [BEq W] (worlds : List W)
-    (fact : Set W) [DecidablePred fact] (q : QUD W) : Bool :=
-  let factWorlds := worlds.filter (fun w => decide (fact w))
-  factWorlds.all fun w₁ =>
-    factWorlds.all fun w₂ =>
-      q.sameAnswer w₁ w₂
+/-- A `Set W` resolves a `QUD W` if all fact-worlds are in the same
+partition cell. Prop-valued; `Decidable` via the bundled per-pair
+predicate decidability. -/
+def PropResolvesQUD {W : Type} (worlds : List W)
+    (fact : Set W) [DecidablePred fact] (q : QUD W) : Prop :=
+  ∀ w₁ ∈ worlds.filter (fun w => decide (fact w)),
+    ∀ w₂ ∈ worlds.filter (fun w => decide (fact w)),
+      q.sameAnswer w₁ w₂ = true
 
-/-- Answerhood instance: `Prop' W` resolves `QUD W` over a fixed world list.
-Decidability of each fact is obtained classically. -/
-@[reducible] noncomputable def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
-    Answerhood (Set W) (QUD W) where
-  resolves fact q :=
-    have : DecidablePred fact := Classical.decPred fact
-    propResolvesQUD worlds fact q
+instance {W : Type} (worlds : List W) (fact : Set W) [DecidablePred fact]
+    (q : QUD W) : Decidable (PropResolvesQUD worlds fact q) := by
+  unfold PropResolvesQUD; infer_instance
+
+/-! Worked partition consumers below construct their own
+`DecidableSupport` instances at the concrete fact-type (e.g.
+`rainSupport` uses `RainProp.toProp`, where `DecidablePred` is
+automatic). A generic `Set W → DecidableSupport` factory would have
+to choose `Classical.decPred fact` and the resulting kernel
+unfolding doesn't align cleanly between the `supports` and
+`decSupports` fields; consumers requiring it can construct the
+instance locally. -/
 
 -- ════════════════════════════════════════════════════
 -- § 11. Partition Answerhood Example
@@ -516,21 +505,22 @@ private def rainWorlds : List RainWorld := [.sunny, .rainy, .cloudy]
 
 /-- "It is raining" resolves "Is it raining?" -/
 theorem raining_resolves_raining :
-    propResolvesQUD rainWorlds itIsRaining isRainingQ = true := by
-  unfold propResolvesQUD itIsRaining
+    PropResolvesQUD rainWorlds itIsRaining isRainingQ := by
+  unfold PropResolvesQUD itIsRaining
   decide
 
 /-- "It is sunny" also resolves "Is it raining?" -/
 theorem sunny_resolves_raining :
-    propResolvesQUD rainWorlds itIsSunny isRainingQ = true := by
-  unfold propResolvesQUD itIsSunny
+    PropResolvesQUD rainWorlds itIsSunny isRainingQ := by
+  unfold PropResolvesQUD itIsSunny
   decide
 
-/-- Full inquiry cycle with partition-based answerhood (via `RainProp` tags). -/
+/-- Full inquiry cycle with partition-based support (via `RainProp` tags). -/
 private def rainTIS₀ : TIS String RainProp (QUD RainWorld) := TIS.initial
 
-instance rainAnswerhood : Answerhood RainProp (QUD RainWorld) where
-  resolves rp q := propResolvesQUD rainWorlds rp.toProp q
+instance rainSupport : DecidableSupport RainProp (QUD RainWorld) where
+  supports rp q := PropResolvesQUD rainWorlds rp.toProp q
+  decSupports rp q := inferInstanceAs (Decidable (PropResolvesQUD _ _ _))
 
 private def rainTIS₁ : TIS String RainProp (QUD RainWorld) :=
   rainTIS₀.ask isRainingQ
@@ -556,8 +546,9 @@ end PartitionExample
 
 section AssertWithQUDExample
 
-instance : Answerhood String String where
-  resolves fact question := fact == question
+instance : DecidableSupport String String where
+  supports fact question := fact = question
+  decSupports a b := decEq a b
 
 /-- Full inquiry cycle using the Ginzburg 2012 Assert protocol.
 
@@ -676,12 +667,12 @@ on QUD — they should be downdated. -/
 
 /-- The non-resolve-cond: no question on QUD is resolved by FACTS.
 @cite{ginzburg-2012} ex. 100 (p. 111). -/
-def DGB.nonResolveCond {P Fact QContent : Type} [Answerhood Fact QContent]
+def DGB.nonResolveCond {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) : Bool :=
-  dgb.qud.all fun q => !(dgb.facts.any fun f => Answerhood.resolves f q)
+  dgb.qud.all fun q => !(dgb.facts.any fun f => decide (f ⊨ q))
 
 /-- An empty DGB trivially satisfies non-resolve-cond. -/
-theorem DGB.initial_nonResolveCond {P Fact QContent : Type} [Answerhood Fact QContent] :
+theorem DGB.initial_nonResolveCond {P Fact QContent : Type} [DecidableSupport Fact QContent] :
     (DGB.initial : DGB P Fact QContent).nonResolveCond = true := rfl
 
 /-- Filtering by p then checking all satisfy p is trivially true. -/
@@ -698,7 +689,7 @@ private theorem all_filter_self {α : Type} (l : List α) (p : α → Bool) :
 /-- After QUD-downdate, non-resolve-cond holds: all remaining questions
 are unresolved by FACTS. -/
 theorem downdateQud_restores_nonResolveCond
-    {P Fact QContent : Type} [Answerhood Fact QContent]
+    {P Fact QContent : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent) :
     dgb.downdateQud.nonResolveCond = true := by
   simp only [DGB.nonResolveCond, DGB.downdateQud]

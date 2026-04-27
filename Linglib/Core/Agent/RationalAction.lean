@@ -5,6 +5,7 @@ import Mathlib.InformationTheory.KullbackLeibler.KLFun
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Analysis.Convex.Mul
+import Linglib.Core.InformationTheory
 
 /-!
 # Rational Action @cite{luce-1959}
@@ -1141,41 +1142,22 @@ end SoftmaxLimit
 
 section Entropy
 
+/-! ## Entropy + softmax interactions
+
+The canonical Shannon entropy lives in `Core/InformationTheory.lean` as
+`Core.InformationTheory.entropy : Finset α → (α → ℝ) → ℝ`. This section
+adds softmax/KL-dependent theorems that need both entropy and softmax in
+scope; they specialize to `entropy Finset.univ p` for `[Fintype ι]`. -/
+
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
-/-- Shannon entropy: H(p) = -Σᵢ pᵢ log pᵢ.
-
-For a ℚ-valued counterpart suitable for decidable computation, see
-`Core.InformationTheory.entropy` in `Linglib/Core/InformationTheory.lean`. -/
-noncomputable def shannonEntropy (p : ι → ℝ) : ℝ :=
-  -∑ i : ι, if p i = 0 then 0 else p i * log (p i)
-
-omit [Nonempty ι] in
-/-- Entropy is non-negative for probability distributions. -/
-theorem shannonEntropy_nonneg (p : ι → ℝ)
-    (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
-    0 ≤ shannonEntropy p := by
-  simp only [shannonEntropy]
-  rw [neg_nonneg]
-  apply Finset.sum_nonpos
-  intro i _
-  by_cases hi : p i = 0
-  · simp [hi]
-  · simp only [hi, ↓reduceIte]
-    have hp_pos : 0 < p i := (hp_nonneg i).lt_of_ne' hi
-    have hp_le : p i ≤ 1 := by
-      calc p i ≤ ∑ j : ι, p j := Finset.single_le_sum (λ j _ => hp_nonneg j) (Finset.mem_univ i)
-        _ = 1 := hp_sum
-    have hlog : log (p i) ≤ 0 := log_nonpos (le_of_lt hp_pos) hp_le
-    exact mul_nonpos_of_nonneg_of_nonpos (le_of_lt hp_pos) hlog
-
+open Core.InformationTheory in
 /-- Maximum entropy is achieved by uniform distribution.
 
 Proof: KL(p ‖ uniform) ≥ 0, and KL(p ‖ uniform) = log n - H(p). -/
-theorem shannonEntropy_le_log_card (p : ι → ℝ)
+theorem entropy_le_log_card (p : ι → ℝ)
     (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
-    shannonEntropy p ≤ log (Fintype.card ι) := by
-  -- Use KL(p ‖ uniform) ≥ 0
+    entropy Finset.univ p ≤ log (Fintype.card ι) := by
   set n := (Fintype.card ι : ℝ) with hn_def
   have hn_pos : 0 < n := Nat.cast_pos.mpr Fintype.card_pos
   have hn_ne : n ≠ 0 := ne_of_gt hn_pos
@@ -1185,53 +1167,44 @@ theorem shannonEntropy_le_log_card (p : ι → ℝ)
     simp only [hq_def, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hn_def]
     field_simp
   have hkl := kl_nonneg' hp_nonneg hq_pos hp_sum hq_sum
-  -- KL(p ‖ q) = -H(p) - Σ pᵢ log(1/n) = -H(p) + log n
-  suffices h : klFinite p q = -shannonEntropy p + log n by linarith
-  simp only [klFinite, shannonEntropy]
-  -- Each term: if p=0 then 0 else p*log(p/q) = (if p=0 then 0 else p*log p) + p*log n
+  -- KL(p ‖ q) = log n - H(p): rearrange to H(p) ≤ log n
+  suffices h : klFinite p q = -entropy Finset.univ p + log n by linarith
+  simp only [klFinite, entropy, Real.negMulLog]
+  -- Each term: if p=0 then 0 else p*log(p/q) = -(-(p)*log(p)) + p*log n
   have hterm : ∀ i, (if p i = 0 then (0 : ℝ) else p i * log (p i / q i)) =
-      (if p i = 0 then (0 : ℝ) else p i * log (p i)) + p i * log n := by
+      -(-(p i) * log (p i)) + p i * log n := by
     intro i
     by_cases hp0 : p i = 0
     · simp [hp0]
     · simp only [hp0, ↓reduceIte]
       have hq_ne : q i ≠ 0 := ne_of_gt (hq_pos i)
       rw [log_div hp0 hq_ne]
-      have : log (q i) = -log n := by
+      have hlogq : log (q i) = -log n := by
         simp only [hq_def, log_div one_ne_zero hn_ne, log_one, zero_sub]
-      rw [this]; ring
+      rw [hlogq]; ring
   simp_rw [hterm]
-  rw [Finset.sum_add_distrib, ← Finset.sum_mul, hp_sum, one_mul, neg_neg]
+  rw [Finset.sum_add_distrib, ← Finset.sum_mul, hp_sum, one_mul,
+      Finset.sum_neg_distrib]
 
-/-- Entropy of uniform distribution. -/
-theorem shannonEntropy_uniform :
-    shannonEntropy (λ _ : ι => 1 / Fintype.card ι) = log (Fintype.card ι) := by
-  simp only [shannonEntropy]
-  have hcard : (0 : ℝ) < Fintype.card ι := Nat.cast_pos.mpr Fintype.card_pos
-  have hne : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt hcard
-  have hunif_pos : (0 : ℝ) < 1 / Fintype.card ι := by positivity
-  have hunif_ne : (1 : ℝ) / Fintype.card ι ≠ 0 := ne_of_gt hunif_pos
-  simp only [hunif_ne, ↓reduceIte, log_div one_ne_zero hne, log_one, zero_sub]
-  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  field_simp
-
+open Core.InformationTheory in
 /-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
-theorem shannonEntropy_softmax (s : ι → ℝ) (α : ℝ) :
-    shannonEntropy (softmax s α) =
+theorem entropy_softmax (s : ι → ℝ) (α : ℝ) :
+    entropy Finset.univ (softmax s α) =
     log (partitionFn s α) - α * ∑ i : ι, softmax s α i * s i := by
-  simp only [shannonEntropy, softmax, partitionFn]
+  simp only [entropy, softmax, partitionFn, Real.negMulLog]
   have hZ : 0 < ∑ j : ι, exp (α * s j) := partitionFn_pos s α
   have hne : (∑ j : ι, exp (α * s j)) ≠ 0 := ne_of_gt hZ
-  have hsm_pos : ∀ i, exp (α * s i) / ∑ j : ι, exp (α * s j) ≠ 0 := by
-    intro i; exact ne_of_gt (div_pos (exp_pos _) hZ)
-  simp only [hsm_pos, ↓reduceIte]
   have hlog : ∀ i, log (exp (α * s i) / ∑ j : ι, exp (α * s j)) =
                    α * s i - log (∑ j : ι, exp (α * s j)) := by
     intro i; rw [log_div (ne_of_gt (exp_pos _)) hne, log_exp]
   simp_rw [hlog]
   have hsum1 : ∑ i : ι, exp (α * s i) / ∑ j : ι, exp (α * s j) = 1 := by
     rw [← Finset.sum_div, div_self hne]
-  calc -∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i - log (∑ j : ι, exp (α * s j)))
+  -- Move negation outside: ∑ -(x · y) = -∑ x · y
+  simp_rw [neg_mul]
+  rw [Finset.sum_neg_distrib]
+  calc -∑ i : ι, (exp (α * s i) / ∑ j : ι, exp (α * s j)) *
+        (α * s i - log (∑ j : ι, exp (α * s j)))
       = -∑ i : ι, ((exp (α * s i) / ∑ j : ι, exp (α * s j)) * (α * s i) -
                    (exp (α * s i) / ∑ j : ι, exp (α * s j)) * log (∑ j : ι, exp (α * s j))) := by
         congr 1; apply Finset.sum_congr rfl; intros; ring
@@ -1251,28 +1224,15 @@ theorem shannonEntropy_softmax (s : ι → ℝ) (α : ℝ) :
 
 /-- Entropy-regularized objective: G_α(p, s) = ⟨s, p⟩ + (1/α) H(p). -/
 noncomputable def entropyRegObjective (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
-  ∑ i : ι, p i * s i + (1 / α) * shannonEntropy p
+  ∑ i : ι, p i * s i + (1 / α) * Core.InformationTheory.entropy Finset.univ p
 
 /-- The maximum value of the entropy-regularized objective. -/
 theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
     entropyRegObjective s α (softmax s α) = (1 / α) * log (partitionFn s α) := by
-  simp only [entropyRegObjective, shannonEntropy_softmax]
+  simp only [entropyRegObjective, entropy_softmax]
   have hne : α ≠ 0 := ne_of_gt hα
   field_simp
   ring
-
-omit [Nonempty ι] in
-/-- Shannon entropy equals sum of negMulLog for distributions. -/
-private theorem shannonEntropy_eq_negMulLog (p : ι → ℝ)
-    (_hp_nonneg : ∀ i, 0 ≤ p i) :
-    shannonEntropy p = ∑ i, Real.negMulLog (p i) := by
-  simp only [shannonEntropy, Real.negMulLog]
-  rw [← Finset.sum_neg_distrib]
-  apply Finset.sum_congr rfl
-  intro i _
-  by_cases hp0 : p i = 0
-  · simp [hp0]
-  · simp only [hp0, ↓reduceIte, neg_mul]
 
 /-- Fact 5: Softmax maximizes the entropy-regularized objective.
 
@@ -1281,20 +1241,13 @@ dividing by `α > 0` yields the result. -/
 theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     entropyRegObjective s α p ≤ entropyRegObjective s α (softmax s α) := by
-  simp only [entropyRegObjective]
+  -- entropyRegObjective unfolds to ∑ pᵢsᵢ + (1/α) · entropy Finset.univ p
+  -- and entropy Finset.univ p = ∑ negMulLog (p i), exactly what gibbs_variational uses
+  simp only [entropyRegObjective, Core.InformationTheory.entropy]
   have hgibbs := gibbs_variational s α p hp_nonneg hp_sum
-  -- Rewrite Shannon entropy as sum of negMulLog
-  rw [shannonEntropy_eq_negMulLog p hp_nonneg,
-      shannonEntropy_eq_negMulLog (softmax s α) (fun i => softmax_nonneg s α i)]
-  -- gibbs_variational: Σ negMulLog(pᵢ) + α Σ pᵢsᵢ ≤ Σ negMulLog(qᵢ) + α Σ qᵢsᵢ
-  -- We need: Σ pᵢsᵢ + (1/α)(Σ negMulLog(pᵢ)) ≤ Σ qᵢsᵢ + (1/α)(Σ negMulLog(qᵢ))
-  -- This follows from dividing by α > 0
   have hα_ne : α ≠ 0 := ne_of_gt hα
-  -- gibbs_variational: H(p)+α⟨p,s⟩ ≤ H(q)+α⟨q,s⟩, divide by α > 0
   have h := div_le_div_of_nonneg_right hgibbs (le_of_lt hα)
   simp only [add_div, mul_div_cancel_left₀ _ hα_ne] at h
-  -- h : Σ negMulLog(pᵢ) / α + Σ pᵢsᵢ ≤ Σ negMulLog(qᵢ) / α + Σ qᵢsᵢ
-  -- Convert div to 1/α * to match entropyRegObjective
   simp only [div_eq_inv_mul] at h
   rw [show (α⁻¹ : ℝ) = 1 / α from by ring] at h
   linarith
@@ -1358,8 +1311,8 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
         entropyRegObjective s α r = (1 / α) * speakerObj s α r := by
       intro r hr_nn
       simp only [entropyRegObjective, speakerObj]
-      rw [shannonEntropy_eq_negMulLog r hr_nn, Finset.mul_sum, ← Finset.sum_add_distrib,
-          Finset.mul_sum]
+      simp only [Core.InformationTheory.entropy]
+      rw [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i _
       field_simp
@@ -1375,7 +1328,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
 
 /-- Free energy (from statistical mechanics). -/
 noncomputable def freeEnergy (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
-  -∑ i : ι, p i * s i - (1 / α) * shannonEntropy p
+  -∑ i : ι, p i * s i - (1 / α) * Core.InformationTheory.entropy Finset.univ p
 
 /-- Softmax is the Boltzmann distribution: minimizes free energy. -/
 theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
@@ -1595,8 +1548,9 @@ theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
     (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax s α i * s i = c) :
-    shannonEntropy (softmax s α) = log (partitionFn s α) - α * c := by
-  rw [shannonEntropy_softmax, h_constraint]
+    Core.InformationTheory.entropy Finset.univ (softmax s α) =
+    log (partitionFn s α) - α * c := by
+  rw [entropy_softmax, h_constraint]
 
 end Entropy
 
@@ -1735,8 +1689,22 @@ section Appendix1
 
 variable {A : Type*} [DecidableEq A]
 
-/-- A general choice function on finite subsets: the minimal structure for
-    stating Axiom 1 equivalences without assuming a ratio scale a priori. -/
+/-- A choice function on finite subsets — the canonical Luce 1959 form
+    (Definition 1, p. 5: "P(a, T) … is a probability distribution on T").
+
+    For each non-empty subset `T ⊆ A`, `prob T : A → ℝ` is a probability
+    distribution: non-negative, vanishes outside `T`, sums to 1 inside.
+    Specializes to:
+
+    - **Binary choice** via `cf.binary x y := cf.prob {x, y} x` (see
+      `ChoiceFn.binary`). Complementarity follows from `prob_sum_eq_one`
+      (see `binary_complement`); no separate `BinaryChoiceFn` structure needed.
+    - **Mathlib `PMF`** when restricted to a fixed support: `prob T : A → ℝ`
+      is a probability distribution conditioned on choice from `T`.
+
+    The Luce axioms (`hasRatioScale`, `hasProductRule`, `hasPairwiseIIA`)
+    are stated as properties below, asserting structural facts about which
+    choice functions admit ratio-scale representations. -/
 structure ChoiceFn (A : Type*) [DecidableEq A] where
   /-- P(a, T): probability of choosing `a` from set `T` -/
   prob : Finset A → A → ℝ
@@ -1744,6 +1712,54 @@ structure ChoiceFn (A : Type*) [DecidableEq A] where
   prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
   /-- Zero probability outside the choice set -/
   prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
+  /-- Probabilities sum to 1 within the choice set (Luce 1959 Def 1) -/
+  prob_sum_eq_one : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, prob T a = 1
+
+namespace ChoiceFn
+
+variable {A : Type*} [DecidableEq A]
+
+/-- **Binary choice view**: `binary cf x y` is the probability of choosing
+    `x` over `y` in the binary forced choice between them.
+
+    Defined via `cf.prob {x, y} x`. Replaces the legacy `BinaryChoiceFn`
+    structure in `UtilityTheory.lean` (see `binary_complement` for
+    complementarity). -/
+def binary (cf : ChoiceFn A) (x y : A) : ℝ := cf.prob {x, y} x
+
+/-- Binary choice probabilities are non-negative. -/
+theorem binary_nonneg (cf : ChoiceFn A) (x y : A) : 0 ≤ cf.binary x y :=
+  cf.prob_nonneg _ _
+
+/-- Binary choice probabilities are at most 1. -/
+theorem binary_le_one (cf : ChoiceFn A) (x y : A) : cf.binary x y ≤ 1 := by
+  -- prob {x,y} x ≤ ∑ a ∈ {x,y}, prob {x,y} a = 1 (by sum_eq_one)
+  have hxy : x ∈ ({x, y} : Finset A) := Finset.mem_insert_self x _
+  have hpos : ∀ a ∈ ({x, y} : Finset A), 0 ≤ cf.prob {x, y} a :=
+    fun a _ => cf.prob_nonneg _ _
+  have hsum := cf.prob_sum_eq_one {x, y} ⟨x, hxy⟩
+  calc cf.binary x y = cf.prob {x, y} x := rfl
+    _ ≤ ∑ a ∈ ({x, y} : Finset A), cf.prob {x, y} a :=
+        Finset.single_le_sum hpos hxy
+    _ = 1 := hsum
+
+/-- **Binary complementarity**: `cf.binary x y + cf.binary y x = 1`
+    when `x ≠ y`. Derived from `prob_sum_eq_one` over `{x, y}`. -/
+theorem binary_complement (cf : ChoiceFn A) {x y : A} (hxy : x ≠ y) :
+    cf.binary x y + cf.binary y x = 1 := by
+  -- {y, x} = {x, y} by pair commutativity
+  have hcomm : ({y, x} : Finset A) = ({x, y} : Finset A) := Finset.pair_comm y x
+  show cf.prob {x, y} x + cf.prob {y, x} y = 1
+  rw [hcomm]
+  -- Now sums-to-1 over {x, y}
+  have hxset : x ∈ ({x, y} : Finset A) := Finset.mem_insert_self x _
+  have hsum := cf.prob_sum_eq_one {x, y} ⟨x, hxset⟩
+  rw [show ({x, y} : Finset A) = insert x {y} from rfl,
+      Finset.sum_insert (by simp; exact hxy),
+      Finset.sum_singleton] at hsum
+  exact hsum
+
+end ChoiceFn
 
 /-- **Axiom 1, Form (a)**: ratio scale representation.
     There exists `v > 0` such that `P(x, T) = v(x) / Σ v(y)`. -/
@@ -1795,13 +1811,14 @@ theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
 
 /-- (c) → (a): Pairwise IIA implies ratio form (Appendix 1).
     The ratio scale is constructed by fixing a reference element x₀ and
-    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). Requires normalization
-    (probabilities sum to 1) and strict positivity for elements in the choice set. -/
+    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). Requires strict positivity
+    for elements in the choice set; normalization (probabilities sum to 1)
+    is now structural (via `prob_sum_eq_one`). -/
 theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
     (hIIA : cf.hasPairwiseIIA)
-    (hsum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
     cf.hasRatioScale := by
+  have hsum := cf.prob_sum_eq_one
   set x₀ := (default : A)
   set v := fun a => cf.prob {a, x₀} a / cf.prob {a, x₀} x₀ with hv_def
   have hv_pos : ∀ a, 0 < v a := fun a =>
@@ -1854,12 +1871,12 @@ theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
     _ = v a := mul_one _
 
 /-- **Axiom 1 equivalence** (Appendix 1):
-    Ratio form ↔ pairwise IIA (under normalization and positivity). -/
+    Ratio form ↔ pairwise IIA (under strict positivity; normalization is
+    now structural via `prob_sum_eq_one`). -/
 theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
-    (hsum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
     cf.hasRatioScale ↔ cf.hasPairwiseIIA :=
-  ⟨ratio_implies_pairwiseIIA cf, fun h => pairwiseIIA_implies_ratio cf h hsum hpos⟩
+  ⟨ratio_implies_pairwiseIIA cf, fun h => pairwiseIIA_implies_ratio cf h hpos⟩
 
 end Appendix1
 

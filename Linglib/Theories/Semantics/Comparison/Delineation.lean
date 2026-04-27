@@ -520,4 +520,127 @@ theorem fairly_excludes_very {Entity : Type*}
   le_refl _ := fun _ h => h
   le_trans _ _ _ hab hbc := fun C hc => hab C (hbc C hc)
 
+-- ════════════════════════════════════════════════════
+-- § 13. Faithfulness Predicates (Soundness + Completeness)
+-- ════════════════════════════════════════════════════
+
+/-! Two typeclasses recording how a delineation `del` relates to an
+    abstract scalar relation `R : Entity → Entity → Prop`. Both are
+    substrate notions used across paper-anchor files:
+    - **Soundness** = @cite{bochnak-2015} eq. (28b) **Consistency
+      Constraint b** (cf. @cite{klein-1980}, @cite{kennedy-2011},
+      @cite{van-rooij-2011a}; @cite{bochnak-2015} adopts CC-b as the
+      formal engine converting per-context conjoined-comparison content
+      into the height-comparison entailment).
+    - **Completeness** = the converse direction (NOT in
+      @cite{bochnak-2015}; closer to @cite{burnett-2017}'s *Plenitude*
+      / *Granularity* axioms and @cite{klein-1980} coverage
+      assumptions).
+
+    Promoted here so that Kamp/Klein/Fine/Kennedy/Hierarchy and any
+    DSP-negative-language study (Bochnak's Washo, Beck-Krasikova-et-al's
+    Motu, Wellwood's *much* analyses) can import and instantiate
+    uniformly without going through any paper-specific anchor file.
+
+    @cite{bochnak-2015} eq. (28a) **Consistency Constraint a** is exactly
+    `IsMonotoneDelineation _ Set.univ` (§4 above) — no separate
+    typeclass needed.
+
+    ## Cross-framework engagement
+
+    - **`Hierarchy.lean`**: the measure-induced instance theorems below
+      factor through `ordering_implies_degree` and
+      `degree_implies_ordering` from `Hierarchy.lean`'s established
+      bridge content. `comparativeSem_iff_of_sound_and_complete`
+      instantiated at `measureDelineation μ` is the `Set.univ`
+      restriction of `ordering_iff_degree μ Set.univ`.
+    - **@cite{kamp-1975}**: `IsCompleteDelineation`'s "R-distinguished
+      pairs admit a discriminating context" is the existential dual of
+      Kamp's preorder universal `∀ C, del C v → del C u`. For monotone
+      delineations, the equivalence fires via `comparativeSem ↔
+      kleinPreorder.lt` (§12 above).
+    - **@cite{fine-1975}**: `monotone_comparative_superTrue` (§5 above)
+      shows monotonicity carries `comparativeSem` into Fine's super-true
+      entailment. CC-b is the delineation-side statement of the same
+      supervaluationist content under the Klein↔Fine duality.
+    - **Tension with @cite{cobreros-etal-2012}**: CC-b
+      is a strict-classical condition (`¬ del C y` absolutely). Under
+      tolerant semantics for vague predicates, similar pairs would
+      satisfy `tolerantAtom M P x ∧ tolerantAtom M P y` jointly, so
+      strict separation `del C x ∧ ¬ del C y` would over-generate.
+      CC-b implicitly rules out tolerant classifications. -/
+
+/-- A delineation `del` is **sound** w.r.t. an abstract scalar relation
+    `R` iff per-context separation entails `R`: whenever `del C x ∧
+    ¬ del C y` for some context `C`, `R x y` holds. The "scalar concept
+    encoded by G" is left abstract — `R : Entity → Entity → Prop` is
+    not constrained to be a strict order or scale-induced.
+
+    Generalises @cite{bochnak-2015} eq. (28b) from the measure-induced
+    case to arbitrary relations. The Bochnak citation tag is preserved
+    in `ConsistencyConstraints.lean`. -/
+class IsSoundDelineation {Entity : Type*}
+    (del : ComparisonClass Entity → Entity → Prop)
+    (R : Entity → Entity → Prop) : Prop where
+  /-- Per-context conjunction implies the scalar relation. -/
+  sound : ∀ C x y, del C x → ¬ del C y → R x y
+
+/-- A delineation `del` is **complete** w.r.t. an abstract scalar relation
+    `R` iff every R-distinguished pair admits a discriminating context:
+    whenever `R x y`, there is some context `C` with `del C x ∧ ¬ del C y`.
+
+    NOT in @cite{bochnak-2015} (whose footnote 11 explicitly notes the
+    one-directional character of the comparison entailment); related to
+    @cite{burnett-2017}'s *Plenitude* and *Granularity* axioms and to
+    @cite{klein-1980} coverage assumptions. Required for the bidirectional
+    `comparativeSem ↔ R` equivalence below; without it the right-to-left
+    direction fails. -/
+class IsCompleteDelineation {Entity : Type*}
+    (del : ComparisonClass Entity → Entity → Prop)
+    (R : Entity → Entity → Prop) : Prop where
+  /-- R-distinguished pairs admit a discriminating context. -/
+  complete : ∀ x y, R x y → ∃ C, del C x ∧ ¬ del C y
+
+/-- The substrate-level bidirectional equivalence: `comparativeSem`
+    coincides with the abstract scalar relation `R` whenever `del` is
+    both sound and complete w.r.t. `R`.
+
+    Generalises the measure-based equivalence
+    (`ordering_iff_degree`) to any abstract scalar concept — the
+    comparison entailment is derivable WITHOUT a measure function in
+    the lexical entry. -/
+theorem comparativeSem_iff_of_sound_and_complete {Entity : Type*}
+    {del : ComparisonClass Entity → Entity → Prop}
+    {R : Entity → Entity → Prop}
+    [hSound : IsSoundDelineation del R]
+    [hComplete : IsCompleteDelineation del R]
+    {x y : Entity} : comparativeSem del x y ↔ R x y :=
+  ⟨fun ⟨C, hpos, hneg⟩ => hSound.sound C x y hpos hneg,
+   hComplete.complete x y⟩
+
+/-- Measure-induced delineations are sound w.r.t. their underlying
+    measure-comparison relation. Derived from `ordering_implies_degree`
+    + `comparativeSem_eq_ordering_univ` rather than re-proven from
+    scratch, so the substrate connects through `Hierarchy.lean`-style
+    bridge content cleanly. -/
+instance instSoundMeasureDelineation {E D : Type*} [LinearOrder D]
+    (μ : E → D) :
+    IsSoundDelineation (measureDelineation μ) (fun a b => μ b < μ a) where
+  sound C x y hpos hneg :=
+    ordering_implies_degree μ Set.univ x y
+      ⟨C, Set.subset_univ _, hpos, hneg⟩
+
+/-- Measure-induced delineations are complete w.r.t. their underlying
+    measure-comparison relation. Derived from `degree_implies_ordering`
+    (which uses the `{a, b}` two-element comparison class — the
+    Klein/Kennedy/Fara minimum, not a degenerate singleton). -/
+instance instCompleteMeasureDelineation {E D : Type*} [LinearOrder D]
+    (μ : E → D) :
+    IsCompleteDelineation (measureDelineation μ) (fun a b => μ b < μ a) where
+  complete x y hR := by
+    obtain ⟨C, _, hpos, hneg⟩ :=
+      degree_implies_ordering μ Set.univ x y
+        (Set.mem_univ _) (Set.mem_univ _) hR
+    exact ⟨C, hpos, hneg⟩
+
 end Semantics.Comparison.Delineation

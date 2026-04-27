@@ -9,8 +9,8 @@ import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.English.Negation
-import Linglib.Fragments.Russian.Negation
-import Linglib.Fragments.Czech.Negation
+import Linglib.Fragments.Slavic.Russian.Negation
+import Linglib.Fragments.Slavic.Czech.Negation
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Quechua.Negation
@@ -256,7 +256,7 @@ def english : MiestamoDatum :=
       "Independent: particle type does not predict do-support." }
 
 /-- Russian: symmetric. Particle *не* (*ne*), no structural change.
-    Form derived from `Fragments.Russian.Negation.ne.form`. -/
+    Form derived from `Fragments.Slavic.Russian.Negation.ne.form`. -/
 def russian : MiestamoDatum :=
   { language := "Russian"
   , morphemeType := .particle
@@ -264,13 +264,13 @@ def russian : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.Russian.Negation.ne.form]
+  , negMarkers := [Fragments.Slavic.Russian.Negation.ne.form]
   , asymmetryDescription := "Symmetric: не adds negation without " ++
       "structural or paradigmatic change. " ++
       "Obligatory negative concord (Slavic pattern)." }
 
 /-- Czech: symmetric. Prefix *ne-*, no structural change.
-    Form derived from `Fragments.Czech.Negation.negPrefix`. -/
+    Form derived from `Fragments.Slavic.Czech.Negation.negPrefix`. -/
 def czech : MiestamoDatum :=
   { language := "Czech"
   , morphemeType := .affix
@@ -278,7 +278,7 @@ def czech : MiestamoDatum :=
   , asymmetrySubtype := .nonAssignable
   , asymmetryDimensions := []
   , asymmetrySource := none
-  , negMarkers := [Fragments.Czech.Negation.negPrefix]
+  , negMarkers := [Fragments.Slavic.Czech.Negation.negPrefix]
   , asymmetryDescription := "Symmetric: ne- prefix adds negation without " ++
       "structural or paradigmatic change. " ++
       "Obligatory negative concord (Slavic pattern)." }
@@ -593,7 +593,7 @@ theorem english_marker_is_not :
 
 /-- Russian negation marker derives from Fragment. -/
 theorem russian_marker_from_fragment :
-    russian.negMarkers = [Fragments.Russian.Negation.ne.form] := rfl
+    russian.negMarkers = [Fragments.Slavic.Russian.Negation.ne.form] := rfl
 
 /-- Russian marker is *не*. -/
 theorem russian_marker_is_ne :
@@ -601,7 +601,7 @@ theorem russian_marker_is_ne :
 
 /-- Czech negation marker derives from Fragment. -/
 theorem czech_marker_from_fragment :
-    czech.negMarkers = [Fragments.Czech.Negation.negPrefix] := rfl
+    czech.negMarkers = [Fragments.Slavic.Czech.Negation.negPrefix] := rfl
 
 /-- Czech marker is *ne-*. -/
 theorem czech_marker_is_ne :
@@ -774,26 +774,26 @@ theorem english_dosupport_is_asymmetry :
 /-- Russian Fragment confirms symmetric: all constructions available,
     *не* adds negation without structural change. -/
 theorem russian_fragment_confirms_symmetric :
-    Fragments.Russian.Negation.allExamples.length = 4 ∧
+    Fragments.Slavic.Russian.Negation.allExamples.length = 4 ∧
     russian.asymmetryDimensions.isEmpty := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Russian negative concord: all n-words co-occur with *не*. -/
 theorem russian_concord_confirms_cooccur :
-    Fragments.Russian.Negation.allConcordExamples.all
+    Fragments.Slavic.Russian.Negation.allConcordExamples.all
       (fun e => (e.sentence.splitOn "не").length > 1) = true := by
   native_decide
 
 /-- Czech Fragment confirms symmetric: all constructions available,
     prefix *ne-* adds negation without structural change. -/
 theorem czech_fragment_confirms_symmetric :
-    Fragments.Czech.Negation.allExamples.length = 4 ∧
+    Fragments.Slavic.Czech.Negation.allExamples.length = 4 ∧
     czech.asymmetryDimensions.isEmpty := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Czech negative concord: all n-words co-occur with *ne-* prefix. -/
 theorem czech_concord_confirms_cooccur :
-    Fragments.Czech.Negation.allConcordExamples.all
+    Fragments.Slavic.Czech.Negation.allConcordExamples.all
       (fun e => (e.sentence.splitOn "ne").length > 1) = true := by
   native_decide
 

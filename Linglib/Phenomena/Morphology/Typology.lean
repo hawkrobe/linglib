@@ -5,7 +5,7 @@ import Linglib.Fragments.Mandarin.Morph
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Turkish.Morph
 import Linglib.Fragments.Finnish.Morph
-import Linglib.Fragments.Russian.Morph
+import Linglib.Fragments.Slavic.Russian.Morph
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Arabic.Morph
 import Linglib.Fragments.Hindi.Morph
@@ -661,7 +661,7 @@ private abbrev mandarinMorph := Fragments.Mandarin.morphProfile
 private abbrev japaneseMorph := Fragments.Japanese.morphProfile
 private abbrev turkishMorph := Fragments.Turkish.morphProfile
 private abbrev finnishMorph := Fragments.Finnish.morphProfile
-private abbrev russianMorph := Fragments.Russian.morphProfile
+private abbrev russianMorph := Fragments.Slavic.Russian.morphProfile
 private abbrev swahiliMorph := Fragments.Swahili.morphProfile
 private abbrev arabicMorph := Fragments.Arabic.morphProfile
 private abbrev hindiMorph := Fragments.Hindi.morphProfile

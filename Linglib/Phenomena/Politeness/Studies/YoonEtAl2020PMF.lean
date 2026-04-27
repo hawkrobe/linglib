@@ -247,7 +247,7 @@ theorem s1Score_coverUtterance_ne_zero (φ : Phi) (w : HeartState) :
     s1Score φ w (coverUtterance w) ≠ 0 := by
   unfold s1Score
   rw [if_neg]
-  · simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
+  · simp only [ENNReal.ofReal_ne_zero_iff]
     exact Real.exp_pos _
   · push_neg
     intro h
@@ -273,7 +273,7 @@ theorem s1Score_witness_ne_zero (φ : Phi) (u : Utterance) :
     s1Score φ (witnessState u) u ≠ 0 := by
   unfold s1Score
   rw [if_neg]
-  · simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
+  · simp only [ENNReal.ofReal_ne_zero_iff]
     exact Real.exp_pos _
   · push_neg
     intro h

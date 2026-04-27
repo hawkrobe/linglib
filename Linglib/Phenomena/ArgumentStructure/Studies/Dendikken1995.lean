@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.SmallClause
-import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
+import Linglib.Theories.Syntax.Minimalism.HeadMovement.Basic
 
 /-!
 # Triadic constructions and Dative Shift — den Dikken's SC-in-SC analysis

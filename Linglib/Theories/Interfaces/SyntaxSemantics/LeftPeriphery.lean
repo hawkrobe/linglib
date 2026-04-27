@@ -16,9 +16,9 @@ This is DERIVED, not stipulated.
 
 -/
 
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
-import Linglib.Theories.Semantics.Questions.Answerhood.ANS
-import Linglib.Theories.Semantics.Questions.Answerhood.Exhaustivity
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Partition.Cells
+import Linglib.Core.Question.Partition.Constructors
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -248,35 +248,36 @@ theorem derived_class_matches_manual :
 
 PerspP introduces a not-at-issue presupposition: the perspectival center
 *possibly doesn't know* the answer to the question. We formalize this using
-`diaAt` (existential modal, ◇) from `Doxastic.lean` and `ans` from
-`Answerhood.lean`.
+`diaAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
+`Core/Question/Partition/Cells.lean`.
 -/
 
 open Semantics.Attitudes.Doxastic
-open Semantics.Questions.Answerhood
+open Semantics.Questions
 
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
 
     This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
-    Uses `diaAt` from Doxastic.lean and `ans` from Answerhood.lean. -/
+    Uses `diaAt` from Doxastic.lean and `QUD.ans` from
+    Core/Question/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W) : Prop :=
-  diaAt R center w worlds (fun w' => ans Q w w' = false)
+  diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)
 
 /-- PerspP as a presuppositional question denotation.
     At-issue: the question Q itself.
     Not-at-issue presupposition: ◇¬know(center, Ans(Q)). -/
 structure PerspPResult (W : Type*) where
   /-- The at-issue question content (unchanged by PerspP) -/
-  question : Hamblin.QuestionDen W
+  question : Core.Question W
   /-- Whether the possible-ignorance presupposition is satisfied -/
   presupSatisfied : Prop
 
 /-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
 def applyPerspP {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hamblinQ : Hamblin.QuestionDen W) : PerspPResult W :=
+    (hamblinQ : Core.Question W) : PerspPResult W :=
   { question := hamblinQ
   , presupSatisfied := possibleIgnorance R center Q w worlds }
 
@@ -309,10 +310,10 @@ theorem box_excludes_dia_neg {W E : Type*}
 theorem veridical_question_entails_box_ans {W E : Type*}
     (V : DoxasticPredicate W E) (_hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hHolds : boxAt V.access agent w worlds (fun w' => ans Q w w' = true)) :
-    ¬ diaAt V.access agent w worlds (fun w' => ans Q w w' = false) := by
+    (hHolds : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
+    ¬ diaAt V.access agent w worlds (fun w' => QUD.ans Q w w' = false) := by
   rintro ⟨w', hw', hR, hFalse⟩
-  have hTrue : ans Q w w' = true := hHolds w' hw' hR
+  have hTrue : QUD.ans Q w w' = true := hHolds w' hw' hR
   rw [hFalse] at hTrue
   exact Bool.false_ne_true hTrue
 
@@ -325,7 +326,7 @@ theorem veridical_question_entails_box_ans {W E : Type*}
 theorem veridical_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hBox : boxAt V.access agent w worlds (fun w' => ans Q w w' = true)) :
+    (hBox : boxAt V.access agent w worlds (fun w' => QUD.ans Q w w' = true)) :
     ¬ possibleIgnorance V.access agent Q w worlds := by
   simp only [possibleIgnorance]
   exact veridical_question_entails_box_ans V hV agent Q w worlds hBox
@@ -478,10 +479,10 @@ structure EpistemicModel (W : Type*) where
 
 /-- PerspP presupposition (compositional version):
     the agent does NOT know the complete answer to Q at w.
-    Uses `ans` from Answerhood.lean. -/
+    Uses `QUD.ans` from Cells.lean. -/
 def perspPPresupComp {W : Type*} (ep : EpistemicModel W)
     (q : GSQuestion W) (w : W) : Bool :=
-  !(ep.knows (Answerhood.ans q w))
+  !(ep.knows (QUD.ans q w))
 
 /-! ## J2. Canonical epistemic models -/
 
@@ -502,11 +503,11 @@ These prove the Boolean layer (`perspPConsistent`) is faithful to the
 compositional semantics. -/
 
 /-- A veridical knower's PerspP presupposition is false: they know Ans(Q,w),
-    so possible ignorance fails. Uses `ans_true_at_index` from Answerhood.lean. -/
+    so possible ignorance fails. Uses `QUD.ans_true_at_index` from Cells.lean. -/
 theorem responsive_contradicts_perspP_comp {W : Type*}
     (q : GSQuestion W) (w : W) :
     perspPPresupComp (veridicalModel w) q w = false := by
-  simp [perspPPresupComp, veridicalModel, Answerhood.ans_true_at_index]
+  simp [perspPPresupComp, veridicalModel, QUD.ans_true_at_index]
 
 /-- An ignorant agent's PerspP presupposition is true: they don't know anything. -/
 theorem rogative_allows_perspP_comp {W : Type*}
@@ -547,7 +548,7 @@ theorem veridical_model_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
     (_hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hHolds : V.holdsAt agent (fun w' => Answerhood.ans Q w w' = true) w worlds) :
+    (hHolds : V.holdsAt agent (fun w' => QUD.ans Q w w' = true) w worlds) :
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
 
@@ -560,30 +561,13 @@ theorem veridical_model_blocks_perspP {W E : Type*}
 The `Ans(Q)` referenced throughout this module — in PerspP's
 `◇¬know(x, Ans(Q))` and SAP's obligation to assert `Ans(Q)` — corresponds to
 @cite{dayal-1996}'s strongest true answer when the question's Exhaustivity
-Presupposition (EP) is satisfied. See `Exhaustivity.dayalAns` for the formal
-operator and `Exhaustivity.dayalAnsProposition` for the extracted proposition.
+Presupposition (EP) is satisfied. See
+`Theories/Semantics/Questions/Exhaustivity.lean` for the topical Prop/Set
+operators (`dayalAns`, `IsExhaustivelyResolvable`, `relExh`).
 
 When EP fails (e.g., ability-*can* questions under first-order scope), there
-is no unique strongest answer, and the question licenses mention-some readings.
-In such cases, `Ans(Q)` is not well-defined in Dayal's sense, though
-@cite{xiang-2022}'s Relativized Exhaustivity (`Exhaustivity.relExh`) may still
-hold. -/
-
-/-- For a question where @cite{dayal-1996}'s EP holds, there exists a definite
-proposition serving as Ans(Q) in the left-peripheral semantics. Responsive
-predicates' knowledge entailment (`entailsKnowledge`) targets this proposition;
-PerspP's ignorance presupposition (`◇¬know(x, Ans(Q))`) presupposes it exists.
-
-When EP fails, there is no definite Ans(Q), and the structural conflict between
-responsive predicates and PerspP is weakened. -/
-theorem ep_gives_definite_ans {W P : Type _}
-    (qden : (W → List W) → P → W → Bool)
-    (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
-    (α : P) (hα : Semantics.Questions.Exhaustivity.dayalAns
-      qden mb answers worlds w = some α) :
-    (Semantics.Questions.Exhaustivity.dayalAnsProposition
-      qden mb answers worlds w).isSome = true := by
-  simp only [Semantics.Questions.Exhaustivity.dayalAnsProposition, hα]
-  rfl
+is no unique strongest answer, and the question licenses mention-some
+readings; in such cases `Ans(Q)` is not well-defined in Dayal's sense,
+though @cite{xiang-2022}'s Relativized Exhaustivity may still hold. -/
 
 end Interfaces.SyntaxSemantics.LeftPeriphery

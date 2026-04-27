@@ -358,7 +358,26 @@ namespace Findings
 Only `some_full_implicature` (full access `.a3`) instantiates cleanly via
 `qCover_a3`. The minimal/partial findings carry the cover hypothesis as a
 parameter — see `qMeaning_no_witness_at_o0a1` for the defect that blocks
-`.a1` and `.a2`. -/
+`.a1` and `.a2`.
+
+**Structural discharge** for positive findings (post-0.230.391 template):
+1. `unfold L1 worldPrior` — expose primitives
+2. `rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]` — cancel L1 marginal AND uniform world prior in one move
+3. Per-world leaf: `marginalSpeaker .a3 w₁ ... u < marginalSpeaker .a3 w₂ ... u`
+
+The leaf is a `bindOnSupport` comparison where BOTH the obs kernel AND the
+inner speaker function depend on the world being compared. No further generic
+`_lt_iff` lemma helps — this is the per-model numeric core. Bundled here as
+a sorry'd helper per finding. -/
+
+/-- Per-world leaf for `some_full_implicature`. The marginal speaker assigns
+more `.some_` mass at `.s2` (where "some" is most informative) than at `.s3`
+(where "all" would be more informative). -/
+theorem marginalSpeaker_qSome_s2_gt_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a3 w).support, ∃ u : QUtt, qualityOk qMeaning obs u) :
+    marginalSpeaker qMeaning 1 .a3 .s3 (hCov .s3) .some_ <
+    marginalSpeaker qMeaning 1 .a3 .s2 (hCov .s2) .some_ := by
+  sorry  -- per-model numeric leaf: bindOnSupport over obsKernel + softmaxBelief comparison
 
 /-- Finding 1: at full access, `some` favors `s2 > s3` (scalar implicature). -/
 theorem some_full_implicature
@@ -366,40 +385,81 @@ theorem some_full_implicature
                 worldPrior .some_ ≠ 0) :
     (L1 qMeaning 1 .a3 qCover_a3 .some_ hMarg) .s2 >
       (L1 qMeaning 1 .a3 qCover_a3 .some_ hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact marginalSpeaker_qSome_s2_gt_s3 qCover_a3
 
-/-- Finding 2: at minimal access, `some` does *not* favor `s2 > s3` (canceled).
-Cover hypothesis is a parameter — `qMeaning` has no full cover at `.a1`. -/
+/-! ### Negative-finding template
+
+Negative findings have the shape `¬ L1 a₁ > L1 a₂`. Via `not_lt + gt_iff_lt`,
+this reduces to `L1 a₂ ≤ L1 a₁`. The `posterior_le_iff_kernel_le_of_uniform`
+companion lemma cancels the marginal AND uniform prior in one step, leaving
+a per-world `marginalSpeaker` ≤ leaf. -/
+
+/-- Per-world ≤ leaf: at minimal access `.a1`, `some` does not strictly prefer
+`s2` over `s3` — the marginal speaker assigns no more `.some_` mass at `.s2`
+than at `.s3`. -/
+theorem marginalSpeaker_qSome_a1_s2_le_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a1 w).support, ∃ u : QUtt, qualityOk qMeaning obs u) :
+    marginalSpeaker qMeaning 1 .a1 .s2 (hCov .s2) .some_ ≤
+    marginalSpeaker qMeaning 1 .a1 .s3 (hCov .s3) .some_ := by
+  sorry  -- per-model numeric leaf
+
+/-- Finding 2: at minimal access, `some` does *not* favor `s2 > s3` (canceled). -/
 theorem some_minimal_canceled
     (hCov : ∀ w, ∀ obs ∈ (obsKernel .a1 w).support, ∃ u : QUtt, qualityOk qMeaning obs u)
     (hMarg : PMF.marginal (fun w => marginalSpeaker qMeaning 1 .a1 w (hCov w))
                 worldPrior .some_ ≠ 0) :
     ¬ (L1 qMeaning 1 .a1 hCov .some_ hMarg) .s2 >
         (L1 qMeaning 1 .a1 hCov .some_ hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_qSome_a1_s2_le_s3 hCov
 
-/-- Finding 3: at partial access, `some` does *not* favor `s2 > s3` (canceled).
-Cover hypothesis is a parameter — `qMeaning` has no full cover at `.a2`. -/
+/-- Per-world ≤ leaf for `some_partial_canceled`. -/
+theorem marginalSpeaker_qSome_a2_s2_le_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a2 w).support, ∃ u : QUtt, qualityOk qMeaning obs u) :
+    marginalSpeaker qMeaning 1 .a2 .s2 (hCov .s2) .some_ ≤
+    marginalSpeaker qMeaning 1 .a2 .s3 (hCov .s3) .some_ := by
+  sorry  -- per-model numeric leaf
+
+/-- Finding 3: at partial access, `some` does *not* favor `s2 > s3` (canceled). -/
 theorem some_partial_canceled
     (hCov : ∀ w, ∀ obs ∈ (obsKernel .a2 w).support, ∃ u : QUtt, qualityOk qMeaning obs u)
     (hMarg : PMF.marginal (fun w => marginalSpeaker qMeaning 1 .a2 w (hCov w))
                 worldPrior .some_ ≠ 0) :
     ¬ (L1 qMeaning 1 .a2 hCov .some_ hMarg) .s2 >
         (L1 qMeaning 1 .a2 hCov .some_ hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_qSome_a2_s2_le_s3 hCov
 
 /-! ### Lower-bound numeral findings (lbMeaning, cover hypothesis as input) -/
 
-/-- Finding 4: at full access, `two` favors `s2 > s3` (upper-bounded reading).
+/-- Per-world leaf: `two` is more compatible with `s2` than with `s3` under `.a3`. -/
+theorem marginalSpeaker_lbTwo_s2_gt_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a3 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a3 .s3 (hCov .s3) .two <
+    marginalSpeaker lbMeaning 1 .a3 .s2 (hCov .s2) .two := by
+  sorry  -- per-model numeric leaf
 
-Cover hypothesis is a parameter — see file header comment on the `s0` defect. -/
+/-- Finding 4: at full access, `two` favors `s2 > s3` (upper-bounded reading). -/
 theorem two_full_upper_bounded
     (hCov : ∀ w, ∀ obs ∈ (obsKernel .a3 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u)
     (hMarg : PMF.marginal (fun w => marginalSpeaker lbMeaning 1 .a3 w (hCov w))
                 worldPrior .two ≠ 0) :
     (L1 lbMeaning 1 .a3 hCov .two hMarg) .s2 >
       (L1 lbMeaning 1 .a3 hCov .two hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact marginalSpeaker_lbTwo_s2_gt_s3 hCov
+
+/-- Per-world ≤ leaf for `two_partial_weakened`. -/
+theorem marginalSpeaker_lbTwo_a2_s2_le_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a2 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a2 .s2 (hCov .s2) .two ≤
+    marginalSpeaker lbMeaning 1 .a2 .s3 (hCov .s3) .two := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 5: at partial access, `two` does *not* favor `s2 > s3` (weakened). -/
 theorem two_partial_weakened
@@ -408,7 +468,16 @@ theorem two_partial_weakened
                 worldPrior .two ≠ 0) :
     ¬ (L1 lbMeaning 1 .a2 hCov .two hMarg) .s2 >
         (L1 lbMeaning 1 .a2 hCov .two hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_lbTwo_a2_s2_le_s3 hCov
+
+/-- Per-world leaf: `one` is more compatible with `s1` than with `s2` under `.a3`. -/
+theorem marginalSpeaker_lbOne_s1_gt_s2
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a3 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a3 .s2 (hCov .s2) .one <
+    marginalSpeaker lbMeaning 1 .a3 .s1 (hCov .s1) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 6: at full access, `one` favors `s1 > s2`. -/
 theorem one_full_1v2
@@ -417,7 +486,16 @@ theorem one_full_1v2
                 worldPrior .one ≠ 0) :
     (L1 lbMeaning 1 .a3 hCov .one hMarg) .s1 >
       (L1 lbMeaning 1 .a3 hCov .one hMarg) .s2 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact marginalSpeaker_lbOne_s1_gt_s2 hCov
+
+/-- Per-world leaf: `one` is more compatible with `s1` than with `s3` under `.a3`. -/
+theorem marginalSpeaker_lbOne_s1_gt_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a3 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a3 .s3 (hCov .s3) .one <
+    marginalSpeaker lbMeaning 1 .a3 .s1 (hCov .s1) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 7: at full access, `one` favors `s1 > s3`. -/
 theorem one_full_1v3
@@ -426,7 +504,16 @@ theorem one_full_1v3
                 worldPrior .one ≠ 0) :
     (L1 lbMeaning 1 .a3 hCov .one hMarg) .s1 >
       (L1 lbMeaning 1 .a3 hCov .one hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact marginalSpeaker_lbOne_s1_gt_s3 hCov
+
+/-- Per-world ≤ leaf for `one_minimal_1v2_canceled`. -/
+theorem marginalSpeaker_lbOne_a1_s1_le_s2
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a1 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a1 .s1 (hCov .s1) .one ≤
+    marginalSpeaker lbMeaning 1 .a1 .s2 (hCov .s2) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 8: at minimal access, `one` does *not* favor `s1 > s2` (canceled). -/
 theorem one_minimal_1v2_canceled
@@ -435,7 +522,16 @@ theorem one_minimal_1v2_canceled
                 worldPrior .one ≠ 0) :
     ¬ (L1 lbMeaning 1 .a1 hCov .one hMarg) .s1 >
         (L1 lbMeaning 1 .a1 hCov .one hMarg) .s2 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_lbOne_a1_s1_le_s2 hCov
+
+/-- Per-world ≤ leaf for `one_minimal_1v3_canceled`. -/
+theorem marginalSpeaker_lbOne_a1_s1_le_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a1 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a1 .s1 (hCov .s1) .one ≤
+    marginalSpeaker lbMeaning 1 .a1 .s3 (hCov .s3) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 9: at minimal access, `one` does *not* favor `s1 > s3` (canceled). -/
 theorem one_minimal_1v3_canceled
@@ -444,7 +540,16 @@ theorem one_minimal_1v3_canceled
                 worldPrior .one ≠ 0) :
     ¬ (L1 lbMeaning 1 .a1 hCov .one hMarg) .s1 >
         (L1 lbMeaning 1 .a1 hCov .one hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_lbOne_a1_s1_le_s3 hCov
+
+/-- Per-world leaf: at partial access `.a2`, `one` is more compatible with `s1` than `s3`. -/
+theorem marginalSpeaker_lbOne_a2_s1_gt_s3
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a2 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a2 .s3 (hCov .s3) .one <
+    marginalSpeaker lbMeaning 1 .a2 .s1 (hCov .s1) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 10: at partial access, `one` favors `s1 > s3` (partial implicature). -/
 theorem one_partial_1v3
@@ -453,7 +558,16 @@ theorem one_partial_1v3
                 worldPrior .one ≠ 0) :
     (L1 lbMeaning 1 .a2 hCov .one hMarg) .s1 >
       (L1 lbMeaning 1 .a2 hCov .one hMarg) .s3 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  exact marginalSpeaker_lbOne_a2_s1_gt_s3 hCov
+
+/-- Per-world ≤ leaf for `one_partial_1v2_canceled`. -/
+theorem marginalSpeaker_lbOne_a2_s1_le_s2
+    (hCov : ∀ w, ∀ obs ∈ (obsKernel .a2 w).support, ∃ u : NumUtt, qualityOk lbMeaning obs u) :
+    marginalSpeaker lbMeaning 1 .a2 .s1 (hCov .s1) .one ≤
+    marginalSpeaker lbMeaning 1 .a2 .s2 (hCov .s2) .one := by
+  sorry  -- per-model numeric leaf
 
 /-- Finding 11: at partial access, `one` does *not* favor `s1 > s2` (still canceled). -/
 theorem one_partial_1v2_canceled
@@ -462,7 +576,9 @@ theorem one_partial_1v2_canceled
                 worldPrior .one ≠ 0) :
     ¬ (L1 lbMeaning 1 .a2 hCov .one hMarg) .s1 >
         (L1 lbMeaning 1 .a2 hCov .one hMarg) .s2 := by
-  sorry
+  unfold L1 worldPrior
+  rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
+  exact marginalSpeaker_lbOne_a2_s1_le_s2 hCov
 
 end Findings
 

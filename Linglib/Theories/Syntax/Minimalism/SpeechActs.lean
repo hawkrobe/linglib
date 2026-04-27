@@ -26,7 +26,7 @@ c-commands content.
 
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.Phase
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Mood.ClauseType
@@ -35,7 +35,7 @@ import Linglib.Core.Discourse.Commitment
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
 
-namespace Minimalism.Phenomena.SpeechActs
+namespace Minimalism.SpeechActs
 
 open Minimalism
 open Core.Context (KContext)
@@ -361,4 +361,4 @@ theorem sentience_domain_bridges_to_epistemicity :
     -- EvalP specifier for interrogative = hearer = allocutive authority
     evalPSpecifier .interrogative = .hearer := ⟨rfl, rfl⟩
 
-end Minimalism.Phenomena.SpeechActs
+end Minimalism.SpeechActs

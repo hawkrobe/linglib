@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.DimensionCoherence
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
+import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
 # Dimension Coherence Bridge

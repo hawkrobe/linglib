@@ -332,7 +332,7 @@ theorem dread_has_dual_inference {W E : Type*}
 theorem worry_has_dual_inference {W E : Type*}
     (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
     (θ : Semantics.Attitudes.Preferential.ThresholdFunction W)
-    (isUncertain : E → Semantics.Attitudes.Preferential.QuestionDen W → Bool) :
+    (isUncertain : E → Semantics.Attitudes.Preferential.AlternativeList W → Bool) :
     negativeValenceEntailsDual (worry μ θ isUncertain).valence = true := rfl
 
 /-- Hope has positive valence → does NOT satisfy the dual-inference

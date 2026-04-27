@@ -15,7 +15,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Features.CoreferenceStatus
 
-namespace Minimalism.Phenomena.Coreference
+namespace Minimalism.Coreference
 
 /-- Types of nominal expressions for coreference -/
 inductive NominalType where
@@ -354,4 +354,4 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     | _ => .possible
   else
     .unspecified
-end Minimalism.Phenomena.Coreference
+end Minimalism.Coreference

@@ -3,7 +3,7 @@ import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Fragments.Russian.PolarityItems
+import Linglib.Fragments.Slavic.Russian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Korean.PolarityItems
@@ -1206,7 +1206,7 @@ theorem italian_nessuno_covers_negation :
 -- Russian: Fragment nikto (NPI) licensed under negation, matching
 -- Typology "никто" series covering directNeg
 theorem russian_nikto_covers_negation :
-    Fragments.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
+    Fragments.Slavic.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
   decide
 
 -- German: Fragment irgendein is NPI/FCI, matching Typology "irgendwer"

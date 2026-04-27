@@ -398,12 +398,17 @@ theorem strategy_level_partition :
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
               siQue, siChe, strategyLevel]
 
-/-- **Generalization 2 — Reversal particles are correction-only.**
-    Every polarity-reversal entry has `.contrast` absent and
-    `.correction` present in `environments`. -/
-theorem all_reversal_correction_only :
+/-- **Generalization 2 — Reversal particles license correction.**
+    Every polarity-reversal entry has `.correction` present in
+    `environments`. The earlier "correction-only" version of this
+    generalization (also asserting `.contrast ∉ e.environments`) was
+    falsified by Italian *sì che* and Spanish *sí que* per
+    @cite{garassino-jacob-2018} ex. 17 + @cite{batllori-hernanz-2013}
+    ex. 4-5 (both license non-contradictory contrast contexts). The
+    surviving cross-linguistic generalization is the correction
+    direction only. -/
+theorem all_reversal_license_correction :
     ∀ e ∈ allEntries, e.strategy = .polarityReversal →
-      PolarityMarkingEnv.contrast ∉ e.environments ∧
       PolarityMarkingEnv.correction ∈ e.environments := by
   intro e he hs
   simp [allEntries] at he
@@ -440,11 +445,5 @@ theorem sentence_internality_by_strategy :
     refine ⟨?_, ?_⟩ <;> intro h <;>
     simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
               siQue, siChe] <;> decide
-
-/-- Italian *sì che* and Spanish *sí que* are cognates with identical
-    formal properties (strategy, environments). -/
-theorem italian_spanish_cognates :
-    siChe.strategy = siQue.strategy ∧
-    siChe.environments = siQue.environments := ⟨rfl, rfl⟩
 
 end TurcoBraunDimroth2014

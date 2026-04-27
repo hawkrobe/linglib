@@ -30,14 +30,14 @@ expected-utility maximization over those weighted base features.
 Signaling games (@cite{franke-2011}, @cite{lewis-1969}) extend this to
 games where actions = utterances and payoffs depend on communicated
 information. The current module covers non-communicative games; signaling
-games are in `Theories/Semantics/Questions/SignalingGames.lean`.
+games are in `Theories/Pragmatics/SignalingGames.lean`.
 -/
 
 set_option autoImplicit false
 
 namespace Pragmatics.GameTheory
 
-open Core.Agent.SocialUtility
+open Core
 
 -- ============================================================================
 -- §1. Binary Actions

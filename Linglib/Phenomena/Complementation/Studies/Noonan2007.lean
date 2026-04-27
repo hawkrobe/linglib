@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Theories.Semantics.Mood.Basic
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-! # Complementation Bridge Theorems
 

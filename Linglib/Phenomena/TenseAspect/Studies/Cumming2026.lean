@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.Korean.Evidentials
-import Linglib.Fragments.Bulgarian.Evidentials
+import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
 /-!
 # @cite{cumming-2026} Verification Theorems
@@ -27,7 +27,7 @@ namespace Cumming2026
 open Semantics.Tense.Evidential
 open Fragments.English.Tense
 open Fragments.Korean.Evidentials
-open Fragments.Bulgarian.Evidentials
+open Fragments.Slavic.Bulgarian.Evidentials
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic Collection
@@ -37,7 +37,7 @@ open Fragments.Bulgarian.Evidentials
 def allParadigms : List TAMEEntry :=
   Fragments.English.Tense.allEntries ++
   Fragments.Korean.Evidentials.allEntries ++
-  Fragments.Bulgarian.Evidentials.allEntries
+  Fragments.Slavic.Bulgarian.Evidentials.allEntries
 
 /-- Nonfuture paradigm entries (across all languages). -/
 def nonfutureParadigms : List TAMEEntry :=

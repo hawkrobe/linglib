@@ -1,7 +1,7 @@
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
 import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Features.InformationStructure
 import Linglib.Fragments.Norwegian.V2

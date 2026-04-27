@@ -5,7 +5,7 @@ import Linglib.Core.Discourse.Strategy
 import Linglib.Features.FelicityTypes
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
-import Linglib.Theories.Semantics.Questions.Denotation.Partition
+import Linglib.Core.Question.Partition.Constructors
 
 /-!
 # Economy of Structure and Information

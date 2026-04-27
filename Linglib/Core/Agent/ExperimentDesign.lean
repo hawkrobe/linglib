@@ -51,15 +51,9 @@ live in `Core.Agent.BayesianUpdate` and are re-exported here.
 
 -/
 
-namespace Core.ExperimentDesign
+namespace Core
 
-open Core.BayesianUpdate
 open Real BigOperators Finset
-
--- Re-export BayesianUpdate types and definitions for backward compatibility
-export Core.BayesianUpdate (ObservationModel marginalObs posterior
-  marginalObs_nonneg posterior_nonneg posterior_sum_one
-  posterior_marginalizes_to_prior deterministicObs)
 
 variable {W E O : Type*} [Fintype W] [Fintype O]
 
@@ -202,4 +196,4 @@ theorem eig_nonneg_of_convex (om : ObservationModel W E O) (prior : W → ℝ)
   simp only [smul_eq_mul] at hJ
   exact hJ
 
-end Core.ExperimentDesign
+end Core

@@ -46,7 +46,6 @@ import Mathlib.Data.Set.Basic
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Preferential
 
@@ -58,7 +57,7 @@ open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDi
 -- Re-export types under more descriptive names for downstream use
 
 /-- Question denotation: set of possible answers. Re-exported from `CDistributivity`. -/
-abbrev QuestionDen (W : Type*) := Semantics.Attitudes.CDistributivity.QuestionDen W
+abbrev AlternativeList (W : Type*) := Semantics.Attitudes.CDistributivity.AlternativeList W
 
 /-- Preference function: μ(agent, prop) → degree. Alias for `DegreeFn`. -/
 abbrev PreferenceFunction (W E : Type*) := DegreeFn W E
@@ -66,14 +65,17 @@ abbrev PreferenceFunction (W E : Type*) := DegreeFn W E
 /-- Threshold function: θ(comparison_class) → degree. Alias for `ThresholdFn`. -/
 abbrev ThresholdFunction (W : Type*) := ThresholdFn W
 
--- Connection to Hamblin Question Semantics
+-- Connection to Question Semantics
 
 /-!
-## Grounding in Hamblin Semantics
+## Grounding in Question Semantics
 @cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{rooth-1992} @cite{qing-uegaki-2025}
 
-Questions are **alternative sets**. Our `QuestionDen W` is the
-extensional representation of `Semantics.Questions.Hamblin.QuestionDen W`.
+Questions are **alternative sets**. Our `AlternativeList W` is the
+extensional, list-based representation of question denotations used by
+the C-distributivity machinery (still Bool-shaped pending a follow-up
+migration of `Semantics.Attitudes.CDistributivity` to substrate-aligned
+Set propositions).
 
 ### Why This Matters for TSP
 
@@ -88,7 +90,7 @@ predicate with alternatives triggers significance presuppositions.
 ### The Derivation Chain
 
 ```
-Hamblin question Q = {p₁, p₂,...} [@cite{hamblin-1973b}]
+Hamblin alternative set Q = {p₁, p₂,...} [@cite{hamblin-1973b}]
         ↓
 Alternatives trigger focus semantics [@cite{rooth-1992}]
         ↓
@@ -111,70 +113,6 @@ The compositional chain from focus marking to TSP is now explicit:
 -/
 
 /--
-Convert our extensional question representation to Hamblin's intensional one.
-
-`toHamblin [p₁, p₂, p₃]` = `λ p. p ∈ {p₁, p₂, p₃}`
-
-Note: Equality of propositions is checked extensionally over a finite world list.
--/
-def toHamblin {W : Type*} [BEq W] (Q : QuestionDen W) (worlds : List W) :
-    Semantics.Questions.Hamblin.QuestionDen W :=
-  λ p => Q.any λ q => worlds.all λ w => p w == q w
-
-/--
-Convert Hamblin's intensional representation to our extensional one.
-
-Given a Hamblin question and a list of candidate propositions, returns
-those propositions that are answers to the question.
--/
-def fromHamblin {W : Type*} (hamblinQ : Semantics.Questions.Hamblin.QuestionDen W)
-    (candidates : List ((W → Bool))) : QuestionDen W :=
-  candidates.filter hamblinQ
-
--- List ↔ Hamblin Equivalence (for finite worlds)
-
-/-!
-## Representation Equivalence
-
-For finite world sets, our `List ((W → Bool))` representation is equivalent to
-Hamblin's `(W → Bool) → Bool`. This theorem documents the isomorphism,
-enabling future extension to full intensional semantics if needed.
-
-### The Equivalence
-
-Given a finite set of worlds W and a finite set of propositions P:
-- Any `List ((W → Bool))` can be converted to `Hamblin.QuestionDen W` via `toHamblin`
-- Any `Hamblin.QuestionDen W` can be converted back via `fromHamblin`
-- The round-trip preserves answerhood for propositions in P
-
-### Why List is Sufficient for NVPs
-
-For NVP semantics, we only need:
-1. Existential quantification over answers: `∃p ∈ Q. φ(p)`
-2. Subset relations: `Q ⊆ C`
-3. TSP satisfaction: `∃p ∈ C. μ(x,p) > θ`
-
-All of these work identically on List and Hamblin representations for finite cases.
--/
-
-/--
-Answerhood is preserved by round-trip conversion (List → Hamblin → List).
-
-For any proposition p in the original list Q, if we convert Q to Hamblin
-and back (using Q as candidates), p remains an answer.
-
-This shows the List representation loses no information for finite questions.
--/
-theorem roundtrip_preserves_membership {W : Type*} [BEq W] [DecidableEq (W → Bool)]
-    (Q : QuestionDen W) (worlds : List W) (p : (W → Bool)) (hp : p ∈ Q) :
-    p ∈ fromHamblin (toHamblin Q worlds) Q := by
-  unfold fromHamblin toHamblin
-  simp only [List.mem_filter, List.any_eq_true]
-  constructor
-  · exact hp
-  · exact ⟨p, hp, by simp only [List.all_eq_true, beq_self_eq_true, implies_true]⟩
-
-/--
 Key semantic operations are equivalent across representations.
 
 The existential quantification `∃p ∈ Q. φ(p)` that appears in:
@@ -184,7 +122,7 @@ The existential quantification `∃p ∈ Q. φ(p)` that appears in:
 works identically on List (via `List.any`) and Hamblin (via function application
 to the characteristic function of answers satisfying φ).
 -/
-theorem exists_equiv_any {W : Type*} (Q : QuestionDen W) (φ : (W → Bool) → Bool) :
+theorem exists_equiv_any {W : Type*} (Q : AlternativeList W) (φ : (W → Bool) → Bool) :
     (∃ p ∈ Q, φ p = true) ↔ (Q.any φ = true) := by
   simp only [List.any_eq_true]
 
@@ -194,7 +132,7 @@ Subset relations are preserved.
 `Q ⊆ C` (all answers to Q are in comparison class C) is the same whether
 we use List containment or Hamblin entailment.
 -/
-def questionSubset {W : Type*} (Q C : QuestionDen W) : Prop :=
+def questionSubset {W : Type*} (Q C : AlternativeList W) : Prop :=
   ∀ p ∈ Q, p ∈ C
 
 /--
@@ -202,7 +140,7 @@ The triviality condition uses subset + existential, both of which are
 representation-independent for finite cases.
 -/
 theorem triviality_representation_independent {W : Type*}
-    (Q C : QuestionDen W) (φ : (W → Bool) → Bool)
+    (Q C : AlternativeList W) (φ : (W → Bool) → Bool)
     (h_subset : questionSubset Q C)
     (h_exists_Q : Q.any φ = true) :
     C.any φ = true := by
@@ -321,7 +259,7 @@ theorem negative_lacks_TSP : hasTSP .negative = false := rfl
 /-- Check if TSP is satisfied for given parameters -/
 def tspSatisfied {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (agent : E) (C : QuestionDen W) : Bool :=
+    (agent : E) (C : AlternativeList W) : Bool :=
   C.any λ p => μ agent p > θ C
 
 /--
@@ -333,7 +271,7 @@ For negative valence, this is the weaker threat-identification condition.
 def significancePresupSatisfied {W E : Type*}
     (valence : AttitudeValence)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (agent : E) (C : QuestionDen W) : Bool :=
+    (agent : E) (C : AlternativeList W) : Bool :=
   match significanceFromValence valence with
   | .desiredExists => tspSatisfied μ θ agent C  -- ∃p. μ(x,p) > θ
   | .threatIdentified => true  -- Weaker: just requires threat context
@@ -361,9 +299,9 @@ structure PreferentialPredicate (W E : Type*) where
   /-- Threshold function θ -/
   θ : ThresholdFunction W
   /-- Propositional semantics: ⟦x V p⟧(C) -/
-  propSemantics : E → (W → Bool) → QuestionDen W → Bool
+  propSemantics : E → (W → Bool) → AlternativeList W → Bool
   /-- Question semantics: ⟦x V Q⟧(C) -/
-  questionSemantics : E → QuestionDen W → QuestionDen W → Bool
+  questionSemantics : E → AlternativeList W → AlternativeList W → Bool
 
 /-- Does the predicate have TSP? Derived from valence. -/
 def PreferentialPredicate.hasTSP {W E : Type*}
@@ -382,13 +320,13 @@ This must be PROVED for each predicate from its semantic definition.
 -/
 def PreferentialPredicate.isCDistributive {W E : Type*}
     (V : PreferentialPredicate W E) : Prop :=
-  ∀ (x : E) (Q C : QuestionDen W) (_w : W),
+  ∀ (x : E) (Q C : AlternativeList W) (_w : W),
     V.questionSemantics x Q C = true ↔
     ∃ p ∈ Q, V.propSemantics x p C = true
 
 /-- Boolean version for computation -/
 def PreferentialPredicate.cDistributive {W E : Type*}
-    (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) : Bool :=
+    (V : PreferentialPredicate W E) (x : E) (Q C : AlternativeList W) : Bool :=
   V.questionSemantics x Q C == Q.any (λ p => V.propSemantics x p C)
 
 -- Degree-Comparison Predicates (hope, fear, expect, wish)
@@ -518,7 +456,7 @@ not just whether some answer satisfies the predicate.
 -/
 def worry {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (isUncertain : E → QuestionDen W → Bool)  -- Epistemic uncertainty
+    (isUncertain : E → AlternativeList W → Bool)  -- Epistemic uncertainty
     : PreferentialPredicate W E :=
   { name := "worry"
   , veridical := false
@@ -540,8 +478,8 @@ reducible to existential quantification over propositional semantics.
 -/
 theorem worry_not_cDistributive {W E : Type*} [Inhabited W]
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (isUncertain : E → QuestionDen W → Bool)
-    (x : E) (Q C : QuestionDen W)
+    (isUncertain : E → AlternativeList W → Bool)
+    (x : E) (Q C : AlternativeList W)
     (h_uncertain_false : isUncertain x Q = false)
     (h_exists : ∃ p ∈ Q, decide (μ x p > θ C) = true) :
     ¬(worry μ θ isUncertain).isCDistributive := by
@@ -568,7 +506,7 @@ over individual propositions.
 -/
 def qidai {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (anticipatesResolution : E → QuestionDen W → Bool)
+    (anticipatesResolution : E → AlternativeList W → Bool)
     : PreferentialPredicate W E :=
   { name := "qidai"
   , veridical := false
@@ -624,7 +562,7 @@ that assertion implies presupposition when Q ⊆ C.
 theorem degreeComparison_triviality {W E : Type*}
     (name : String) (valence : AttitudeValence)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W)
+    (x : E) (Q C : AlternativeList W)
     (h_subset : ∀ p, p ∈ Q → p ∈ C)
     (h_assert : (mkDegreeComparisonPredicate name valence μ θ).questionSemantics x Q C = true) :
     tspSatisfied μ θ x C = true := by
@@ -637,7 +575,7 @@ theorem degreeComparison_triviality {W E : Type*}
 /-- Hope + question yields trivial meaning when Q ⊆ C -/
 theorem hope_triviality {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W)
+    (x : E) (Q C : AlternativeList W)
     (h_subset : ∀ p, p ∈ Q → p ∈ C)
     (h_assert : (hope μ θ).questionSemantics x Q C = true) :
     tspSatisfied μ θ x C = true :=
@@ -652,7 +590,7 @@ so the assertion ∃p ∈ Q. μ(x,p) > θ(C) holds too.
 -/
 theorem hope_triviality_reverse {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W)
+    (x : E) (Q C : AlternativeList W)
     (h_subset : ∀ p, p ∈ C → p ∈ Q)
     (h_tsp : tspSatisfied μ θ x C = true) :
     (hope μ θ).questionSemantics x Q C = true := by
@@ -675,7 +613,7 @@ as the trigger for unacceptability.
 -/
 theorem hope_triviality_identity {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q : QuestionDen W) :
+    (x : E) (Q : AlternativeList W) :
     (hope μ θ).questionSemantics x Q Q = tspSatisfied μ θ x Q := by
   simp only [hope, mkDegreeComparisonPredicate, tspSatisfied]
 
@@ -780,7 +718,7 @@ World-sensitive propositional semantics for veridical predicates.
 The truth requirement p(w) is what distinguishes veridical from non-veridical.
 -/
 def PreferentialPredicate.propSemanticsAt {W E : Type*}
-    (V : PreferentialPredicate W E) (x : E) (p : (W → Bool)) (C : QuestionDen W) (w : W) : Bool :=
+    (V : PreferentialPredicate W E) (x : E) (p : (W → Bool)) (C : AlternativeList W) (w : W) : Bool :=
   if V.veridical then
     p w && V.propSemantics x p C
   else
@@ -794,7 +732,7 @@ World-sensitive question semantics for veridical predicates.
 For veridical predicates, the assertion requires some TRUE answer to be preferred.
 -/
 def PreferentialPredicate.questionSemanticsAt {W E : Type*}
-    (V : PreferentialPredicate W E) (x : E) (Q C : QuestionDen W) (w : W) : Bool :=
+    (V : PreferentialPredicate W E) (x : E) (Q C : AlternativeList W) (w : W) : Bool :=
   if V.veridical then
     Q.any λ p => p w && V.propSemantics x p C
   else
@@ -810,7 +748,7 @@ because the world variable doesn't appear.
 theorem nonveridical_worldIndependent {W E : Type*}
     (name : String) (valence : AttitudeValence)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) (w₁ w₂ : W) :
+    (x : E) (Q C : AlternativeList W) (w₁ w₂ : W) :
     (mkDegreeComparisonPredicate name valence μ θ).questionSemanticsAt x Q C w₁ =
     (mkDegreeComparisonPredicate name valence μ θ).questionSemanticsAt x Q C w₂ := by
   simp [PreferentialPredicate.questionSemanticsAt, mkDegreeComparisonPredicate]
@@ -869,7 +807,7 @@ for veridical predicates — the triviality derivation fails!
 theorem veridical_breaks_triviality {W E : Type*}
     (name : String) (valence : AttitudeValence)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) (w : W)
+    (x : E) (Q C : AlternativeList W) (w : W)
     (_h_subset : ∀ p, p ∈ Q → p ∈ C)
     (_h_tsp : tspSatisfied μ θ x C = true)
     (h_no_true_preferred : ∀ p ∈ Q, p w = true → decide (μ x p > θ C) = false) :
@@ -897,7 +835,7 @@ Combined with `veridical_breaks_triviality`, this shows the asymmetry:
 -/
 theorem nonveridical_is_trivial {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W)
+    (x : E) (Q C : AlternativeList W)
     (h_subset : ∀ p, p ∈ Q → p ∈ C)
     (h_assert : (hope μ θ).questionSemantics x Q C = true) :
     tspSatisfied μ θ x C = true :=
@@ -917,7 +855,7 @@ which is the relevant notion for veridical predicates.
 theorem veridicalPreferential_isCDistributiveAt {W E : Type*}
     (name : String) (valence : AttitudeValence)
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) (w : W) :
+    (x : E) (Q C : AlternativeList W) (w : W) :
     (mkVeridicalPreferential name valence μ θ).questionSemanticsAt x Q C w = true ↔
     ∃ p ∈ Q, (mkVeridicalPreferential name valence μ θ).propSemanticsAt x p C w = true := by
   simp only [PreferentialPredicate.questionSemanticsAt, PreferentialPredicate.propSemanticsAt,
@@ -926,7 +864,7 @@ theorem veridicalPreferential_isCDistributiveAt {W E : Type*}
 /-- beHappy is C-distributive (at a given world) -/
 theorem beHappy_isCDistributiveAt {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) (w : W) :
+    (x : E) (Q C : AlternativeList W) (w : W) :
     (beHappy μ θ).questionSemanticsAt x Q C w = true ↔
     ∃ p ∈ Q, (beHappy μ θ).propSemanticsAt x p C w = true :=
   veridicalPreferential_isCDistributiveAt "be happy" .positive μ θ x Q C w
@@ -934,7 +872,7 @@ theorem beHappy_isCDistributiveAt {W E : Type*}
 /-- beSurprised is C-distributive (at a given world) -/
 theorem beSurprised_isCDistributiveAt {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) (w : W) :
+    (x : E) (Q C : AlternativeList W) (w : W) :
     (beSurprised μ θ).questionSemanticsAt x Q C w = true ↔
     ∃ p ∈ Q, (beSurprised μ θ).propSemanticsAt x p C w = true :=
   veridicalPreferential_isCDistributiveAt "be surprised" .positive μ θ x Q C w
@@ -1068,8 +1006,8 @@ Highlighted propositions of a clause (@cite{pruitt-roelofsen-2011}).
 The key asymmetry: polar and declarative both yield singletons,
 while constituent interrogatives yield the full question.
 -/
-def highlightedValue {W : Type*} (ct : HighlightingClauseType) (Q : QuestionDen W) :
-    QuestionDen W :=
+def highlightedValue {W : Type*} (ct : HighlightingClauseType) (Q : AlternativeList W) :
+    AlternativeList W :=
   match ct with
   | .declarative => Q.take 1
   | .polarInterrogative => Q.take 1
@@ -1088,7 +1026,7 @@ of the ordinary semantic value.
 -/
 def hopeHighlightSemantics {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (ct : HighlightingClauseType) (x : E) (Q C : QuestionDen W) : Bool :=
+    (ct : HighlightingClauseType) (x : E) (Q C : AlternativeList W) : Bool :=
   let highlighted := highlightedValue ct Q
   highlighted.any fun p => decide (μ x p > θ C)
 
@@ -1099,7 +1037,7 @@ whether μ(x, p) > θ(C). Same as standard hope.
 -/
 theorem hope_highlight_declarative_equiv {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (p : (W → Bool)) (C : QuestionDen W) :
+    (x : E) (p : (W → Bool)) (C : AlternativeList W) :
     hopeHighlightSemantics μ θ .declarative x [p] C =
     decide (μ x p > θ C) := by
   simp [hopeHighlightSemantics, highlightedValue]
@@ -1110,7 +1048,7 @@ singleton {p}. So "hope whether p" ≈ "hope that p" — NOT trivial.
 -/
 theorem hope_highlight_polar_equiv {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (p : (W → Bool)) (neg_p : (W → Bool)) (C : QuestionDen W) :
+    (x : E) (p : (W → Bool)) (neg_p : (W → Bool)) (C : AlternativeList W) :
     hopeHighlightSemantics μ θ .polarInterrogative x [p, neg_p] C =
     decide (μ x p > θ C) := by
   simp [hopeHighlightSemantics, highlightedValue]
@@ -1122,7 +1060,7 @@ still trivial when combined with TSP and Q ⊆ C.
 -/
 theorem hope_highlight_constituent_equiv {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W) :
+    (x : E) (Q C : AlternativeList W) :
     hopeHighlightSemantics μ θ .constituentInterrog x Q C =
     Q.any (fun p => decide (μ x p > θ C)) := by
   simp [hopeHighlightSemantics, highlightedValue]
@@ -1133,7 +1071,7 @@ This preserves the anti-rogativity prediction for "*hope who left".
 -/
 theorem hope_highlight_constituent_trivial {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (Q C : QuestionDen W)
+    (x : E) (Q C : AlternativeList W)
     (h_subset : ∀ p, p ∈ Q → p ∈ C)
     (h_assert : hopeHighlightSemantics μ θ .constituentInterrog x Q C = true) :
     tspSatisfied μ θ x C = true := by
@@ -1242,7 +1180,7 @@ For positive valence (hope): μ(x, p) > θ(C) — the agent prefers p.
 For negative valence (fear): μ(x, p) > θ(C) — where μ measures dispreference. -/
 def EmotiveDoxasticPredicate.preferenceAssertion {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop) [DecidablePred p]
-    (C : QuestionDen W) : Prop :=
+    (C : AlternativeList W) : Prop :=
   V.μ agent (fun w => decide (p w)) > V.θ C
 
 /-- Full semantics for an emotive doxastic: all three components must hold.
@@ -1260,7 +1198,7 @@ because it is the component responsible for epistemic licensing — it
 provides the information state that embedded epistemics are anaphoric to. -/
 def EmotiveDoxasticPredicate.holdsAt {W E : Type*}
     (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop) [DecidablePred p]
-    (w : W) (worlds : List W) (C : QuestionDen W) : Prop :=
+    (w : W) (worlds : List W) (C : AlternativeList W) : Prop :=
   V.uncertaintyCondition agent p w worlds ∧
   V.doxasticAssertion agent p w worlds ∧
   V.preferenceAssertion agent p C

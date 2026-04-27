@@ -38,6 +38,22 @@ by a bridge theorem proved after the fact. Theorems about `PMF.posterior`
 (support characterisation, marginal-times-posterior identity) lift to `L1`
 as one-liners.
 
+## Inequality decomposition (for consumer migrations)
+
+Each operator has parallel `_lt_iff_score_lt` and `_le_iff_score_le` lemmas
+that strip off the normalisation factor — the workhorses for migrating
+"L1/S1 prefers a₂ over a₁" claims through the structural shell:
+
+* `S1Belief_apply_lt_iff_score_lt` / `S1Belief_apply_le_iff_score_le` —
+  same-world utterance comparison reduces to `(L0 u w)^α · cost u`
+* `L1_lt_iff_score_lt` / `L1_le_iff_score_le` — same-observation world
+  comparison reduces to `prior(w) · κ(w, u)`
+
+For the common case where the world prior is uniform, see
+`PMF.posterior_lt_iff_kernel_lt_of_uniform` / `_le_iff_kernel_le` in
+`Core/Probability/PMFPosterior.lean` — those cancel both the marginal
+denominator AND the uniform prior in one move.
+
 ## Relationship to `RSAConfig`
 
 Phase 1 of the RSA → mathlib-PMF migration: this file is a pure addition.
@@ -68,7 +84,8 @@ noncomputable def L0OfMeaning (meaning : U → W → ℝ≥0∞) (u : U)
     (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) : PMF W :=
   PMF.normalize (meaning u) h0 hTop
 
-@[simp] theorem L0OfMeaning_apply (meaning : U → W → ℝ≥0∞) (u : U)
+-- Not `@[simp]`: introduces `(∑' w', ...)⁻¹`; use explicitly via `rw`.
+theorem L0OfMeaning_apply (meaning : U → W → ℝ≥0∞) (u : U)
     (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) (w : W) :
     L0OfMeaning meaning u h0 hTop w = meaning u w * (∑' w', meaning u w')⁻¹ :=
   PMF.normalize_apply _ _ w
@@ -125,12 +142,54 @@ noncomputable def S1Belief (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (�
     (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) : PMF U :=
   PMF.normalize (fun u => (L0 u w : ℝ≥0∞) ^ α * costFactor u) h0 hTop
 
-@[simp] theorem S1Belief_apply (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (α : ℝ) (w : W)
+-- Not `@[simp]`: introduces `(∑' u', ...)⁻¹`; use explicitly via `rw`.
+theorem S1Belief_apply (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (α : ℝ) (w : W)
     (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
     (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u : U) :
     S1Belief L0 costFactor α w h0 hTop u =
       (L0 u w : ℝ≥0∞) ^ α * costFactor u * (∑' u', (L0 u' w : ℝ≥0∞) ^ α * costFactor u')⁻¹ :=
   PMF.normalize_apply _ _ u
+
+/-- The S1Belief PMF assigns positive probability to `u` iff the L0 score at
+`u` and the cost factor at `u` are both non-zero (rpow of a positive finite
+base is positive). Convenience for discharging "speaker assigns probability
+to this utterance" obligations downstream. -/
+theorem S1Belief_apply_ne_zero_of_pos (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
+    (α : ℝ) (w : W)
+    (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) {u : U}
+    (hL0 : L0 u w ≠ 0) (hcost : costFactor u ≠ 0) :
+    S1Belief L0 costFactor α w h0 hTop u ≠ 0 := by
+  rw [← PMF.mem_support_iff, S1Belief, PMF.mem_support_normalize_iff]
+  apply mul_ne_zero _ hcost
+  have hntop : L0 u w ≠ ⊤ := PMF.apply_ne_top _ _
+  exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0) hntop).ne'
+
+/-- **Inequality decomposition for `S1Belief`**: at a fixed world, comparing
+two utterances' speaker probabilities reduces to comparing their unnormalised
+scores `(L0 u w)^α · cost u`. The partition function depends on `w` but not
+on `u`, so it cancels.
+
+Direct lift from `PMF.normalize_lt_iff_lt`. The workhorse decomposition
+lemma for "speaker prefers `u₂` over `u₁` at world `w`" proofs. -/
+theorem S1Belief_apply_lt_iff_score_lt (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
+    (α : ℝ) (w : W)
+    (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u₁ u₂ : U) :
+    S1Belief L0 costFactor α w h0 hTop u₁ < S1Belief L0 costFactor α w h0 hTop u₂ ↔
+      (L0 u₁ w : ℝ≥0∞) ^ α * costFactor u₁ <
+        (L0 u₂ w : ℝ≥0∞) ^ α * costFactor u₂ :=
+  PMF.normalize_lt_iff_lt _ _ _ _ _
+
+/-- The `≤` companion of `S1Belief_apply_lt_iff_score_lt`. -/
+theorem S1Belief_apply_le_iff_score_le (L0 : U → PMF W) (costFactor : U → ℝ≥0∞)
+    (α : ℝ) (w : W)
+    (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u₁ u₂ : U) :
+    S1Belief L0 costFactor α w h0 hTop u₁ ≤ S1Belief L0 costFactor α w h0 hTop u₂ ↔
+      (L0 u₁ w : ℝ≥0∞) ^ α * costFactor u₁ ≤
+        (L0 u₂ w : ℝ≥0∞) ^ α * costFactor u₂ :=
+  PMF.normalize_le_iff_le _ _ _ _ _
 
 /-! ## S1: Pragmatic Speaker (softmax-of-expected-log form) -/
 
@@ -202,7 +261,8 @@ theorem L1_eq_posterior (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
     (h : PMF.marginal speaker worldPrior u ≠ 0) :
     L1 speaker worldPrior u h = PMF.posterior speaker worldPrior u h := rfl
 
-@[simp] theorem L1_apply (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
+-- Not `@[simp]`: introduces `(PMF.marginal ...)⁻¹`; use explicitly via `rw`.
+theorem L1_apply (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
     (h : PMF.marginal speaker worldPrior u ≠ 0) (w : W) :
     L1 speaker worldPrior u h w =
       worldPrior w * speaker w u * (PMF.marginal speaker worldPrior u)⁻¹ :=
@@ -223,5 +283,24 @@ theorem marginal_mul_L1_apply (speaker : W → PMF U) (worldPrior : PMF W) (u : 
     PMF.marginal speaker worldPrior u * L1 speaker worldPrior u h w =
       worldPrior w * speaker w u :=
   PMF.marginal_mul_posterior_apply _ _ _ _ _
+
+/-- **Inequality decomposition for L1**: posterior comparison at the pragmatic-
+listener layer reduces to score comparison. Direct lift from
+`PMF.posterior_lt_iff_score_lt` — the shared marginal denominator cancels.
+
+This is the workhorse decomposition lemma for "world `w₁` has higher
+posterior probability than world `w₂` after observing `u`" claims. -/
+theorem L1_lt_iff_score_lt (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
+    (h : PMF.marginal speaker worldPrior u ≠ 0) (w₁ w₂ : W) :
+    L1 speaker worldPrior u h w₁ < L1 speaker worldPrior u h w₂ ↔
+      worldPrior w₁ * speaker w₁ u < worldPrior w₂ * speaker w₂ u :=
+  PMF.posterior_lt_iff_score_lt _ _ _ _ _ _
+
+/-- The `≤` companion of `L1_lt_iff_score_lt`. -/
+theorem L1_le_iff_score_le (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
+    (h : PMF.marginal speaker worldPrior u ≠ 0) (w₁ w₂ : W) :
+    L1 speaker worldPrior u h w₁ ≤ L1 speaker worldPrior u h w₂ ↔
+      worldPrior w₁ * speaker w₁ u ≤ worldPrior w₂ * speaker w₂ u :=
+  PMF.posterior_le_iff_score_le _ _ _ _ _ _
 
 end RSA

@@ -1,7 +1,6 @@
 import Linglib.Features.InformationStructure
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Focus.Interpretation
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -23,12 +22,12 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
                                                     interp
                                                         │
                                                         ▼
-                              propositions (QAWorld → Bool)
+                              propositions (Set QAWorld)
                                                         │
-                                                   fromAlternatives
+                                                   set literals
                                                         │
                                                         ▼
-                                              QuestionDen / PropFocusValue
+                                              PropFocusValue = Set (Set QAWorld)
                                                         │
                                                    FIP / qaCongruent
                                                         │
@@ -60,8 +59,7 @@ namespace Phenomena.Focus.Rooth1992Bridge
 
 open Features.InformationStructure
 open Semantics.Alternatives
-open Semantics.FocusInterpretation (fip)
-open Semantics.Questions.Hamblin
+open Semantics.FocusInterpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Q-A Congruence World Model
@@ -76,20 +74,18 @@ inductive QAWorld where
 
 open QAWorld
 
-def qaWorlds : List QAWorld := [fredBeans, fredRice, maryBeans, maryRice]
-
 -- ═══════════════════════════════════════════════════════════════════════
 -- §2  Propositions
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- "Fred ate the beans" -/
-def fredAteBeans : QAWorld → Bool | .fredBeans => true | _ => false
+/-- "Fred ate the beans" — true exactly at the world `fredBeans`. -/
+def fredAteBeans : Set QAWorld := {fredBeans}
 
-/-- "Mary ate the beans" -/
-def maryAteBeans : QAWorld → Bool | .maryBeans => true | _ => false
+/-- "Mary ate the beans" — true exactly at the world `maryBeans`. -/
+def maryAteBeans : Set QAWorld := {maryBeans}
 
-/-- "Fred ate the rice" -/
-def fredAteRice  : QAWorld → Bool | .fredRice  => true | _ => false
+/-- "Fred ate the rice" — true exactly at the world `fredRice`. -/
+def fredAteRice  : Set QAWorld := {fredRice}
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3  AltMeaning: Focused vs. Unfeatured
@@ -210,18 +206,18 @@ theorem infoStructure_extracts_background :
 
 /-- "Who ate the beans?" — Hamblin question with subject alternatives.
     ⟦Q⟧° = {fredAteBeans, maryAteBeans} (Rooth §2.4, ex. 24). -/
-def q_whoAteBeans : QuestionDen QAWorld :=
-  fromAlternatives [fredAteBeans, maryAteBeans] qaWorlds
+def q_whoAteBeans : PropFocusValue QAWorld :=
+  {fredAteBeans, maryAteBeans}
 
 /-- Focus value of "[FRED]_F ate the beans" — same subject alternatives.
     ⟦A⟧f = {fredAteBeans, maryAteBeans} (Rooth §2.4, ex. 25a). -/
-def fv_subjectFocus : QuestionDen QAWorld :=
-  fromAlternatives [fredAteBeans, maryAteBeans] qaWorlds
+def fv_subjectFocus : PropFocusValue QAWorld :=
+  {fredAteBeans, maryAteBeans}
 
 /-- Focus value of "Fred ate the [BEANS]_F" — object alternatives.
     ⟦A⟧f = {fredAteBeans, fredAteRice} (varies object, not subject). -/
-def fv_objectFocus : QuestionDen QAWorld :=
-  fromAlternatives [fredAteBeans, fredAteRice] qaWorlds
+def fv_objectFocus : PropFocusValue QAWorld :=
+  {fredAteBeans, fredAteRice}
 
 -- ───────────────────────────────────────────────────────────────────
 -- §6a  Congruent Case
@@ -230,8 +226,7 @@ def fv_objectFocus : QuestionDen QAWorld :=
 /-- Q-A congruence: subject focus value = question denotation.
     ⟦[FRED]_F ate the beans⟧f = ⟦Who ate the beans?⟧ (Rooth §2.4). -/
 theorem qa_subject_focus_congruent :
-    Semantics.FocusInterpretation.qaCongruent
-      fv_subjectFocus q_whoAteBeans := rfl
+    qaCongruent fv_subjectFocus q_whoAteBeans := rfl
 
 /-- FIP (27) holds: question alternatives ⊆ focus value.
     Trivially satisfied when the sets are equal. -/
@@ -243,22 +238,32 @@ theorem fip_congruent :
 -- §6b  Incongruent Case
 -- ───────────────────────────────────────────────────────────────────
 
-/-- FIP fails for object focus: "maryAteBeans" is in the question
-    alternatives but not in the object-focus alternatives.
-    This is why "#Fred ate the BEANS" is not a congruent answer
-    to "Who ate the beans?" -/
-theorem fip_fails_object_focus :
-    ¬ fip q_whoAteBeans fv_objectFocus := by
-  intro h
-  exact absurd (h maryAteBeans (by native_decide)) (by native_decide)
+/-- "maryAteBeans" is in the question alternatives... -/
+theorem maryAteBeans_in_question :
+    maryAteBeans ∈ q_whoAteBeans := by
+  right; rfl
 
-/-- Witness: "Mary ate the beans" is an answer to the question... -/
-theorem maryAteBeans_answers_question :
-    isAnswer q_whoAteBeans maryAteBeans = true := by native_decide
-
-/--...but is NOT in the object-focus alternative set. -/
+/-- ...but it is NOT in the object-focus alternative set... -/
 theorem maryAteBeans_not_in_objectFocus :
-    isAnswer fv_objectFocus maryAteBeans = false := by native_decide
+    maryAteBeans ∉ fv_objectFocus := by
+  intro h
+  -- maryAteBeans = {maryBeans}; the alts in fv_objectFocus are {fredBeans}, {fredRice}.
+  -- Set equality forces maryBeans to be equal to fredBeans or fredRice (contradictions).
+  have key : maryBeans ∈ maryAteBeans := rfl
+  rcases h with h | h
+  · rw [h] at key
+    -- key : maryBeans ∈ fredAteBeans = {fredBeans}, so maryBeans = fredBeans
+    have : maryBeans = fredBeans := key
+    exact absurd this (by decide)
+  · rw [h] at key
+    have : maryBeans = fredRice := key
+    exact absurd this (by decide)
+
+/-- ...so FIP fails for object focus, explaining why "#Fred ate the BEANS"
+    is not a congruent answer to "Who ate the beans?" -/
+theorem fip_fails_object_focus :
+    ¬ fip q_whoAteBeans fv_objectFocus :=
+  fun h => maryAteBeans_not_in_objectFocus (h maryAteBeans_in_question)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  "Only" Association (@cite{rooth-1992} §2.1)
@@ -381,11 +386,8 @@ theorem bridge_qa_congruent :
 /-- Bridge: incongruent judgment explained by FIP failure. -/
 theorem bridge_qa_incongruent :
     Basic.qaIncongruent.application = .qaCongruence ∧
-    ¬ fip q_whoAteBeans fv_objectFocus := by
-  constructor
-  · rfl
-  · intro h
-    exact absurd (h maryAteBeans (by native_decide)) (by native_decide)
+    ¬ fip q_whoAteBeans fv_objectFocus :=
+  ⟨rfl, fip_fails_object_focus⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §10  Montague Model and Compositional Lexicon

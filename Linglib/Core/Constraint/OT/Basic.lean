@@ -47,13 +47,24 @@ structure NamedConstraint (C : Type*) where
 -- § 1b: Constraint Constructors
 -- ============================================================================
 
-/-- Build a binary markedness constraint (violated → 1, otherwise 0). -/
-def mkMark {C : Type*} (name : String) (violated : C → Bool) : NamedConstraint C :=
-  { name, family := .markedness, eval := fun c => if violated c then 1 else 0 }
+/-- Build a binary markedness constraint (violated → 1, otherwise 0).
 
-/-- Build a binary faithfulness constraint (violated → 1, otherwise 0). -/
-def mkFaith {C : Type*} (name : String) (violated : C → Bool) : NamedConstraint C :=
-  { name, family := .faithfulness, eval := fun c => if violated c then 1 else 0 }
+    Takes a `Prop`-valued predicate with `[DecidablePred]` so that callers
+    can use propositional equality (`=`) and other Prop predicates rather
+    than `Bool`-valued operators (`==`). Decidability is required to evaluate
+    the constraint on a candidate. -/
+def mkMark {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
+  { name, family := .markedness, eval := fun c => if P c then 1 else 0 }
+
+/-- Build a binary faithfulness constraint (violated → 1, otherwise 0).
+
+    Takes a `Prop`-valued predicate with `[DecidablePred]` so that callers
+    can use propositional equality (`=`) and other Prop predicates rather
+    than `Bool`-valued operators (`==`). -/
+def mkFaith {C : Type*} (name : String) (P : C → Prop) [DecidablePred P] :
+    NamedConstraint C :=
+  { name, family := .faithfulness, eval := fun c => if P c then 1 else 0 }
 
 /-- Build a gradient markedness constraint with a Nat-valued violation count. -/
 def mkMarkGrad {C : Type*} (name : String) (violations : C → Nat) : NamedConstraint C :=

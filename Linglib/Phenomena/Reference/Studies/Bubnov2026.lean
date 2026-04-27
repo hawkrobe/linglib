@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Quantification.DependenceLogic
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Phenomena.Reference.Studies.Dekier2021
-import Linglib.Fragments.Russian.Indefinites
+import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.German.ModalIndefinites
@@ -69,7 +69,7 @@ open Semantics.Quantification.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021
 open Features.IndefiniteType
-open Fragments.Russian.Indefinites
+open Fragments.Slavic.Russian.Indefinites
 open Fragments.English.Indefinites
 open Fragments.German.Indefinites
 open Fragments.German.ModalIndefinites

@@ -332,10 +332,10 @@ theorem intrusionLicensed_with_intruder (m : RootTemplateMatch α)
 
 /-- The \*Misalignment constraint of @cite{faust-2026} (2): a markedness
     constraint that fires on `RootTemplateMatch` candidates whose
-    `isMisaligned` predicate is true. Built via the generic `mkAlign`
+    `isMisaligned` predicate holds. Built via the generic `mkAlign`
     constructor from `Phonology.Constraints`. -/
 def starMisalign {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  mkAlign "*Misalign" RootTemplateMatch.isMisaligned
+  mkAlign "*Misalign" fun m => RootTemplateMatch.isMisaligned m = true
 
 /-- \*Misalignment is classified as markedness, not faithfulness. -/
 theorem starMisalign_is_markedness {α : Type} :
@@ -349,7 +349,7 @@ theorem starMisalign_is_markedness {α : Type} :
     candidate. -/
 def fill {α : Type} : NamedConstraint (RootTemplateMatch α) :=
   Phonology.Constraints.mkMark "FILL"
-    (fun m => !RootTemplateMatch.allCSlotsFilled m)
+    (fun m => RootTemplateMatch.allCSlotsFilled m = false)
 
 /-- FILL is classified as markedness. -/
 theorem fill_is_markedness {α : Type} :
@@ -358,7 +358,8 @@ theorem fill_is_markedness {α : Type} :
 /-- NoCross (@cite{goldsmith-1976}): a markedness constraint penalizing
     candidates whose intruder associations cross root associations. -/
 def noCross {α : Type} : NamedConstraint (RootTemplateMatch α) :=
-  Phonology.Constraints.mkMark "NoCross" RootTemplateMatch.violatesNCC
+  Phonology.Constraints.mkMark "NoCross"
+    (fun m => RootTemplateMatch.violatesNCC m = true)
 
 /-- NoCross is classified as markedness. -/
 theorem noCross_is_markedness {α : Type} :

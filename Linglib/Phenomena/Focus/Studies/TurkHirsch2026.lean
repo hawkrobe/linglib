@@ -3,7 +3,7 @@ import Linglib.Core.IntensionalLogic.Premise
 import Linglib.Core.Lexical.UD
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Polarity.Operator
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers
 import Mathlib.Data.Set.Basic
@@ -41,7 +41,7 @@ namespace Phenomena.Focus.Studies.TurkHirsch2026
 
 open Features.InformationStructure
 open Semantics.Alternatives
-open Semantics.Questions.Hamblin
+open Semantics.FocusInterpretation (PropFocusValue)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World type and propositions
@@ -60,16 +60,11 @@ open PolarWorld
 def allWorlds : List PolarWorld :=
   [sleeps_must, sleeps_free, nosleep_must, nosleep_free]
 
-/-- p = "Ali sleeps": true when Ali sleeps regardless of modality. -/
-def p : PolarWorld → Bool
-  | sleeps_must  => true
-  | sleeps_free  => true
-  | nosleep_must => false
-  | nosleep_free => false
+/-- p = "Ali sleeps": holds at the worlds where Ali sleeps. -/
+def p : Set PolarWorld := {sleeps_must, sleeps_free}
 
-/-- ¬p = "Ali doesn't sleep". Pointwise Bool negation of `p`. -/
-def notP : PolarWorld → Bool :=
-  fun w => !p w
+/-- ¬p = "Ali doesn't sleep". Set complement of `p`. -/
+def notP : Set PolarWorld := pᶜ
 
 /-! Deontic must, grounded in @cite{kratzer-1977}'s premise-set semantics.
 
@@ -80,8 +75,8 @@ def notP : PolarWorld → Bool :=
     no longer a stipulated 4-row table. -/
 
 /-- Prop view of `p` for use with the polymorphic Kratzer machinery
-    (which lives at type `Index → Prop`). -/
-def pProp : PolarWorld → Prop := fun w => p w = true
+    (which lives at type `Index → Prop`). Just set membership. -/
+def pProp : PolarWorld → Prop := fun w => w ∈ p
 
 /-- The deontic premise set: in must-worlds the obligation `pProp` is
     in force; in free-worlds the premise set is empty. -/
@@ -96,19 +91,15 @@ def deonticBase : PolarWorld → List (PolarWorld → Prop)
 def mustGrounded (w : PolarWorld) : Prop :=
   Core.IntensionalLogic.Premise.mustInView deonticBase pProp w
 
-/-- □p = "Ali must sleep" (deontic necessity). The Bool reflection of
+/-- □p = "Ali must sleep" (deontic necessity). The Set reflection of
     `mustGrounded`; equivalence proved by `mustP_iff_mustGrounded`. -/
-def mustP : PolarWorld → Bool
-  | sleeps_must  => true
-  | sleeps_free  => false
-  | nosleep_must => true
-  | nosleep_free => false
+def mustP : Set PolarWorld := {sleeps_must, nosleep_must}
 
 /-- The stipulated table matches the Kratzer-grounded derivation. The
     over-generation argument below is therefore about a genuine modal
     proposition, not a hand-tuned function. -/
 theorem mustP_iff_mustGrounded (w : PolarWorld) :
-    mustP w = true ↔ mustGrounded w := by
+    w ∈ mustP ↔ mustGrounded w := by
   unfold mustGrounded Core.IntensionalLogic.Premise.mustInView
          Core.IntensionalLogic.Premise.followsFrom
          Core.IntensionalLogic.Premise.propIntersection
@@ -148,7 +139,7 @@ structure TaggedDen (α : Type) where
 /-- The lexicon of propositional operators at type ⟨⟨s,t⟩,t⟩.
     Polarity heads (Σ, NEG) are tagged `PART`; the deontic modal is `AUX`.
     This UPOS distinction is what category match exploits. -/
-def opLexicon : List (TaggedDen (PolarWorld → Bool)) :=
+def opLexicon : List (TaggedDen (Set PolarWorld)) :=
   [⟨.PART, p⟩, ⟨.PART, notP⟩, ⟨.AUX, mustP⟩]
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -157,12 +148,12 @@ def opLexicon : List (TaggedDen (PolarWorld → Bool)) :=
 
 /-- Type-theoretic alternatives (@cite{rooth-1985} D_τ): all operators
     regardless of UPOS → {p, ¬p, □p}. Over-generates. -/
-def typeTheoAlternatives : List (PolarWorld → Bool) :=
+def typeTheoAlternatives : List (Set PolarWorld) :=
   opLexicon.map (·.den)
 
 /-- Category-match alternatives: only `PART`-tagged
     operators → {p, ¬p}. Correct. -/
-def catMatchAlternatives : List (PolarWorld → Bool) :=
+def catMatchAlternatives : List (Set PolarWorld) :=
   (opLexicon.filter (·.cat == .PART)).map (·.den)
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -170,50 +161,60 @@ def catMatchAlternatives : List (PolarWorld → Bool) :=
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Type-theoretic question: {p, ¬p, □p} — over-generated. -/
-def typeTheoQ : QuestionDen PolarWorld :=
-  fromAlternatives typeTheoAlternatives allWorlds
+def typeTheoQ : PropFocusValue PolarWorld :=
+  { q | q ∈ typeTheoAlternatives }
 
 /-- Category-match question: {p, ¬p} — correct. -/
-def catMatchQ : QuestionDen PolarWorld :=
-  fromAlternatives catMatchAlternatives allWorlds
+def catMatchQ : PropFocusValue PolarWorld :=
+  { q | q ∈ catMatchAlternatives }
 
 /-- The expected polar question: {p, ¬p}. -/
-def polarQ : QuestionDen PolarWorld :=
-  polar p allWorlds
+def polarQ : PropFocusValue PolarWorld := {p, notP}
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5  Core theorems
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Category-matched question = standard polar question.
-    @cite{fox-katzir-2011}'s category match yields the correct {p, ¬p} partition. -/
-theorem catMatch_eq_polar :
-    (catMatchQ mustP = polarQ mustP) ∧
-    (catMatchQ p = polarQ p) ∧
-    (catMatchQ notP = polarQ notP) := by decide
-
-/-- Type-theoretic question ≠ polar question.
-    The D_τ computation admits □p as an answer, which the polar
-    question rejects. -/
-theorem typeTheo_ne_polar :
-    typeTheoQ mustP ≠ polarQ mustP := by decide
+    @cite{fox-katzir-2011}'s category match yields the correct {p, ¬p} partition.
+    `catMatchAlternatives` filters opLexicon to `[p, notP]`, and the
+    resulting set-of-alternatives equals the polar `{p, notP}` literal. -/
+theorem catMatch_eq_polar : catMatchQ = polarQ := by
+  ext q
+  simp [catMatchQ, polarQ, catMatchAlternatives, opLexicon]
 
 /-- The spurious prediction: □p is an answer to the type-theoretic question.
     Under @cite{rooth-1992}-style D_τ, "Ali must sleep" is predicted to be a
     felicitous answer to "Does Ali sleep?" — which is empirically wrong. -/
-theorem typeTheo_admits_modal :
-    isAnswer typeTheoQ mustP = true := by decide
+theorem typeTheo_admits_modal : mustP ∈ typeTheoQ := by
+  simp [typeTheoQ, typeTheoAlternatives, opLexicon]
 
 /-- The correct prediction: □p is NOT an answer to the polar question.
     "Ali must sleep" is not a felicitous answer to a yes/no question
     about whether Ali sleeps. -/
-theorem polar_rejects_modal :
-    isAnswer polarQ mustP = false := by decide
+theorem polar_rejects_modal : mustP ∉ polarQ := by
+  intro h
+  rcases h with h | h
+  · -- mustP = p contradiction (different singletons membership)
+    have : sleeps_free ∈ mustP := by
+      rw [h]; simp [p]
+    simp [mustP] at this
+  · -- mustP = notP contradiction
+    have : sleeps_must ∈ mustP := by simp [mustP]
+    rw [h] at this
+    simp [notP, p] at this
 
 /-- Category match fixes the over-generation: □p is NOT an answer
     to the category-matched question. -/
-theorem catMatch_rejects_modal :
-    isAnswer catMatchQ mustP = false := by decide
+theorem catMatch_rejects_modal : mustP ∉ catMatchQ := by
+  rw [catMatch_eq_polar]
+  exact polar_rejects_modal
+
+/-- Type-theoretic question ≠ polar question. The D_τ computation
+    admits □p, which the polar question rejects. -/
+theorem typeTheo_ne_polar : typeTheoQ ≠ polarQ := by
+  intro h
+  exact polar_rejects_modal (h ▸ typeTheo_admits_modal)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §6  Bridge: data ↔ theory
@@ -231,12 +232,12 @@ theorem data_modal_infelicitous :
     turkishPolar_must.felicitous = false := rfl
 
 /-- The theory predicts it: □p is not an answer under category match. -/
-theorem theory_modal_excluded :
-    isAnswer catMatchQ mustP = false := by decide
+theorem theory_modal_excluded : mustP ∉ catMatchQ :=
+  catMatch_rejects_modal
 
 /-- The theory would wrongly predict felicity without category match. -/
-theorem theory_overgen_without_catmatch :
-    isAnswer typeTheoQ mustP = true := by decide
+theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
+  typeTheo_admits_modal
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  Bridge: A-value computation
@@ -252,20 +253,35 @@ theorem theory_overgen_without_catmatch :
     is Σ_F. -/
 
 /-- Applying [FoC] with type-theoretic A-value yields the over-generating set. -/
-def applyFoC_typeTheo : AltMeaning (PolarWorld → Bool) :=
+def applyFoC_typeTheo : AltMeaning (Set PolarWorld) :=
   { oValue := p, aValue := typeTheoAlternatives }
 
 /-- The type-theoretic A-value produces the wrong question denotation. -/
-theorem applyFoC_is_typeTheo :
-    fromAlternatives applyFoC_typeTheo.aValue allWorlds mustP = true := by decide
+theorem applyFoC_is_typeTheo : mustP ∈ ({q | q ∈ applyFoC_typeTheo.aValue} : Set _) := by
+  simp [applyFoC_typeTheo, typeTheoAlternatives, opLexicon]
 
 /-- Restricting the A-value by category match corrects the prediction. -/
-def applyFoC_catMatch : AltMeaning (PolarWorld → Bool) :=
+def applyFoC_catMatch : AltMeaning (Set PolarWorld) :=
   { oValue := p, aValue := catMatchAlternatives }
 
 /-- The category-matched A-value produces the correct question denotation. -/
 theorem categoryMatch_fixes_applyFoC :
-    fromAlternatives applyFoC_catMatch.aValue allWorlds mustP = false := by decide
+    mustP ∉ ({q | q ∈ applyFoC_catMatch.aValue} : Set _) := by
+  simp only [applyFoC_catMatch, Set.mem_setOf_eq]
+  show mustP ∉ catMatchAlternatives
+  -- catMatchAlternatives = [p, notP]; mustP is neither.
+  have hcm : catMatchAlternatives = [p, notP] := by
+    simp [catMatchAlternatives, opLexicon]
+  rw [hcm]
+  simp only [List.mem_cons, List.not_mem_nil, or_false]
+  rintro (h | h)
+  · -- mustP = p contradiction
+    have : sleeps_free ∈ mustP := h ▸ (by simp [p])
+    simp [mustP] at this
+  · -- mustP = notP contradiction
+    have : sleeps_must ∈ mustP := by simp [mustP]
+    rw [h] at this
+    simp [notP, p] at this
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §8  Turkish fragment connection

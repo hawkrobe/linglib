@@ -287,6 +287,30 @@ def emWorkspace (T₁ T₂ : SyntacticObject) (F : List SyntacticObject) : List 
 def imWorkspace (T β : SyntacticObject) (F : List SyntacticObject) : List SyntacticObject :=
   merge β T :: F.filter (· != T)
 
+/-- merge(T₁, T₂) = node T₁ T₂ is strictly larger than T₂ -/
+private theorem merge_ne_right (T₁ T₂ : SyntacticObject) : merge T₁ T₂ ≠ T₂ := by
+  intro heq
+  have h : (merge T₁ T₂).nodeCount = T₂.nodeCount := by rw [heq]
+  have hexpand : (merge T₁ T₂).nodeCount = 1 + T₁.nodeCount + T₂.nodeCount := rfl
+  omega
+
+/-- External Merge on workspaces produces a workspace containing merge(T₁, T₂).
+    Migrated from legacy `Hopf.Coproduct.lean` to live with the
+    `emWorkspace` definition. -/
+theorem em_contains_merge (T₁ T₂ : SyntacticObject)
+    (F : List SyntacticObject) :
+    merge T₁ T₂ ∈ emWorkspace T₁ T₂ F := by
+  simp only [emWorkspace]
+  rw [List.filter_cons, if_pos (by simp [bne_iff_ne, merge_ne_right])]
+  exact List.Mem.head _
+
+/-- Internal Merge on workspaces produces a workspace containing merge(β, T).
+    Migrated from legacy `Hopf.Coproduct.lean`. -/
+theorem im_contains_merge (T β : SyntacticObject)
+    (F : List SyntacticObject) :
+    merge β T ∈ imWorkspace T β F := by
+  simp [imWorkspace]
+
 /-- Filtering out x preserves the count of y when x ≠ y. -/
 private theorem count_filter_bne_of_ne {α : Type*} [DecidableEq α]
     (L : List α) (x y : α) (hne : x ≠ y) :

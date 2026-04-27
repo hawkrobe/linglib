@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.Composition
-import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
+import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Typology
 
 /-!
@@ -25,7 +25,7 @@ aspectual meaning = situation type × viewpoint aspect, independently combined.
 - Situation type classification (VendlerClass): `LexicalAspect.lean`
 - Viewpoint operators (IMPF, PRFV, INIT_OVERLAP): `Core.lean`
 - VP-level composition rules: `Composition.lean`
-- Aspectual diagnostics: `Rothstein2004.lean`
+- Aspectual diagnostics: `Diagnostics.lean`
 
 -/
 
@@ -473,7 +473,7 @@ theorem completion_iff_telic (c : VendlerClass) :
 /-- Progressive requires internal stages (durative + dynamic).
     This is derived from the feature decomposition, not stipulated
     per class — connecting to `progressive_from_features` in
-    Rothstein2004.lean. -/
+    Diagnostics.lean. -/
 theorem progressive_requires_stages (c : VendlerClass) :
     Diagnostics.progressivePrediction c = .accept ↔
     hasInternalStages c = true := by
@@ -515,5 +515,23 @@ theorem semelfactive_coercion_three_ways :
     semelfactiveProfile.duratize.toVendlerClass = .activity ∧
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity ∧
     Diagnostics.forXPrediction .semelfactive = .coerced := ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § Bridge to @cite{krifka-1989}'s mereological telicity
+-- ════════════════════════════════════════════════════
+
+/-- Smith's `hasNaturalEndpoint` is extensionally equivalent to K89's
+    QUA-via-MereoTag. Both formalisms derive telicity from incomparable
+    primitives — Smith from Vendler-class feature decomposition
+    (telicity ∈ {telic, atelic}), K89 from algebraic mereology
+    (`MereoTag.qua`/`.cum`) — but agree on the four-way Vendler
+    partition. This one-line bridge makes the cross-framework agreement
+    visible at the type level (round-2 cross-framework audit found that
+    `Phenomena/TenseAspect/Studies/Krifka1989.lean` was running on a
+    parallel track without an explicit Smith ↔ K89 connection). -/
+theorem hasNaturalEndpoint_iff_telic_to_qua (c : VendlerClass) :
+    hasNaturalEndpoint c = true ↔
+    c.telicity.toMereoTag = Core.Scale.MereoTag.qua := by
+  cases c <;> decide
 
 end Smith1997

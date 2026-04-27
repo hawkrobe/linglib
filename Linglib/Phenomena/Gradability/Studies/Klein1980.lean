@@ -45,6 +45,9 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 - **Fine (1975)**: `Studies/Fine1975.lean` (supervaluation ↔ delineation duality)
 - **Kennedy (2007)**: `Studies/Kennedy2007Licensing.lean` (degree-based alternative)
 - **Hierarchy**: `Theories/Semantics/Comparison/Hierarchy.lean` (Klein ← Kennedy ← Measurement)
+- **Bochnak (2015)**: `Studies/Bochnak2015.lean` — typological attestation that
+  the Klein-style degree-free type ⟨e, t⟩ is realized by a natural language
+  (Washo, Hokan), not just a notational alternative for English-style data.
 -/
 
 namespace Klein1980

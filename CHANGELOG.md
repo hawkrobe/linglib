@@ -4,99 +4,518 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.447] - 2026-04-27
+
+### M-C-B Hopf substrate: legacy deletion + mathlib-shape complete (Sessions 5+6+7)
+
+Continuation of the multi-session sprint to rebuild the Connes-Kreimer-style bialgebra of binary nonplanar rooted decorated forests per @cite{marcolli-chomsky-berwick-2025} §1.2. This batch executes the user-approved mathlib-shape-first ordering (7 → 8 → 1 → 2 → 3 → 4 → 5+6) and lands the full legacy cleanup.
+
+**(7) Sub-namespace rename `Minimalism → Minimalism.Hopf`.** Resolves name conflict between new substrate (was `Minimalism.Hc`, `Minimalism.Forest`) and legacy (also `Minimalism.Hc`, `Minimalism.Forest` — different types, same name, only build-clean by accident). New substrate now in `Minimalism.Hopf` namespace; legacy in `Minimalism` (until deleted in 5+6).
+
+**(8) Generic parameterization for upstream PR.** `SyntacticObjectH` (LIToken-monomorphic) → `DecoratedTree (α : Type)` parameterized over leaf type. `Forest`/`Hc` parameterized over coefficient ring R AND leaf type α: `Forest α := Multiset (DecoratedTree α)`, `Hc R α := AddMonoidAlgebra R (Forest α)`. CutShape, cutForest, remainder, remainderDeletion, comulTree, comulForest, comulAlgHom, counit, comulTreeDel, comulForestDel, comulDelAlgHom — all parameterized. Linglib-specific aliases: `SyntacticObjectH := DecoratedTree LIToken`. This is the mathlib-PR shape — abstract types live in `Minimalism.Hopf` for now and would migrate to `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.DecoratedForest` on upstream PR. **Universe polymorphism deferred** (kept as `Type`, not `Type*`) due to indexed-inductive universe-inference fights; mathlib upstream will need it but doesn't block the structural goal.
+
+**(1) Δ^d (deletion coproduct).** Implemented per M-C-B Def 1.2.5 + 1.2.8(ω=d). New `remainderDeletion : CutShape T → Option (DecoratedTree α)` in AdmissibleCut.lean — Option because cutting both children of a node makes the parent collapse (root component disappears, hence None). Edge contraction handled in the recursive case: `bothRecurse cl cr` → if one branch collapses to None, the other becomes the result; if both collapse, parent collapses. Faithful to M-C-B Def 1.2.5's "unique maximal binary rooted tree obtainable via contraction." New `comulTreeDel`, `comulForestDel`, `comulDelMonoidHom`, `comulDelAlgHom` in Comul.lean. `comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α` is the algebra hom for Δ^d (multiplicative on forests; strict coassoc fails per Lemma 1.2.12 — but algebra-hom-ness is preserved).
+
+**(2) δ_{S,S'} matching + B grafting + Merge operator.** New file `Hopf/Merge.lean`. Per M-C-B Def 1.3.1 + 1.3.2 + 1.3.4: `gammaMatch S S' : Hc R α →ₗ[R] Hc R α` projects onto the {S, S'} basis element via `Finsupp.lsingle ∘ Finsupp.lapply`. `deltaMatch S S' = TensorProduct.map (gammaMatch S S') LinearMap.id` lifts to the left tensor channel. `graftBinaryAt S S'` replaces {S, S'} basis with .node S S' (Lemma 1.3.3 for binary Merge). `mergeOp S S' = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d` — the linguistic Merge operator as a linear endomorphism of `Hc R α`. Multiplication-on-tensor lifted via `Algebra.TensorProduct.lmul'` from `Mathlib.RingTheory.TensorProduct.Maps`.
+
+**(3) MergeAction.lean rewrite.** Replaced legacy 335-LOC version (Workspace=List, MonoidAlgebra=FreeMonoid SO substrate) with a clean 130-LOC version on the new substrate. Bridge theorems `mergeOp_emR_matches_Step`, `mergeOp_emL_matches_Step` connecting `mergeOp` (Hopf-side, linear endomorphism of `Hc ℤ LIToken`) to `Step.apply` (linguistic-side, concrete tree manipulation in `Theories/Syntax/Minimalism/Derivation.lean`). **Bridge proofs are sorry'd** with detailed proof-strategy docstrings (substantial linear-algebra-on-Finsupp work; deferred to a focused future session). The `mergeOp` definition is fully complete and usable; only the bridge-to-`Step.apply` proofs are pending. No external consumers of bridge theorems, so safe to ship as stub.
+
+**(4) NoComplexityLoss.lean migration; Quotient.lean extraction.** Eliminated NoComplexityLoss.lean's dependency on legacy Hopf/Coproduct.lean. Extracted single-cut `quotientTree` + `quotientLeafToken` + `quotientTree_leafCount` machinery (~200 LOC of definitions and proofs) from legacy Coproduct.lean to new file `Linglib/Theories/Syntax/Minimalism/Quotient.lean`. Migrated `em_contains_merge` + `im_contains_merge` workspace theorems from legacy Coproduct.lean to `Counting.lean` (where `emWorkspace`/`imWorkspace` are defined). NoComplexityLoss.lean now imports Counting + Quotient; no Hopf dependency.
+
+**(5)+(6) Linglib.lean cleanup + `git rm` legacy.** Removed legacy `Hopf/Coproduct.lean` (532 LOC) and `Hopf/HopfAlgebra.lean` (864 LOC) imports from Linglib.lean; added new `Hopf/Merge.lean` import. Deleted both legacy files. Full project build passes 5394 jobs.
+
+**Final Hopf area shape (5 files, all clean substrate):**
+- `Hopf/Defs.lean` — `DecoratedTree α` + `Forest α` + `Hc R α` + `Mul`/`recOnMul`/`DecidableEq`/`Repr` instances + linglib alias `SyntacticObjectH := DecoratedTree LIToken` + `SyntacticObject.toH` bridge
+- `Hopf/AdmissibleCut.lean` — `CutShape T` (5-constructor enum) + `cutForest` + `remainder` (with-trace) + `remainderDeletion` (with-rebinarization) + `Fintype` instance
+- `Hopf/Comul.lean` — Δ^c (`comulAlgHom`) + Δ^d (`comulDelAlgHom`) + `counit`, all as algebra homs `Hc R α →ₐ[R] _`
+- `Hopf/Merge.lean` — `gammaMatch` + `deltaMatch` + `graftBinaryAt` + `mergeOp` per M-C-B Def 1.3.4
+- `Hopf/MergeAction.lean` — bridge theorem statements (sorry'd) connecting `mergeOp` to `Step.apply`
+
+**What remains for the full mathlib-PR readiness:** universe polymorphism (Type → Type*); `Bialgebra Hc` typeclass instance (needs coassoc proof for Δ^c — Lemma 1.2.10, multi-week); Hopf algebra structure via the (1−α) quotient + antipode; promote `multiset_add_eq_zero_iff` upstream. None of these block the current state from being usable; they're the next sprint's targets.
+
+## [0.230.446] - 2026-04-27
+
+### Pesetsky 2013 study file: empirical correctness + façade cleanup (4-agent audit Tier A+B+C)
+
+Four-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) of `Phenomena/Case/Studies/Pesetsky2013.lean` (370 LOC) against the Pesetsky 2013 PDF (LI Monograph 66) found two empirical errors and one façade. The integration-auditor confirmed clean layer discipline, intentional `POSCat` paper-localization (CHANGELOG:13932), and correct `containmentRank` import; the mathlib-reviewer flagged `mutual` block, `toCase_injective` naming, missing `DecidableEq`, and a battery of `rfl`-restatement theorems; the cross-framework-reconciler catalogued silent divergences with sibling Case study files (Marantz 1991, Baker & Vinokurova 2010) and `Theories/Syntax/Case/{CaseFilter,Dependent,Licensing}.lean` (deferred Tier D).
+
+**Tier A — empirical errors (the file said X, Pesetsky says ¬X).** (1) `numeralCaseAssignment .paucal = .N` mis-located the source of GEN morphology on *dva stola*. Pesetsky Ch 6 eq. (61) p. 54-55: paucals are NBR base-merged inside NP with a numberless N; they **do not assign anything** — the noun's GEN is the *primeval* NGEN already present. The `paucal_stack_double_N` theorem `[.N, .N]` was an artifact of the file's model, not a Pesetsky prediction. Fix: drop `numeralCaseAssignment` + `applyNumeral` + the four false surface theorems entirely; replace with `RusNumClass.role : RusNumClass → NumeralRole` (paucal=`nbrHead`, higher/quant=`quantHead`) faithful to Pesetsky's structural-position story; preserve numeral lexical entries with TODO note for promotion to a future `Fragments/Slavic/Russian/Numerals.lean`; surface-GEN prediction recorded in §5 docstring pointing back to `primeval_noun_surface_gen` from §4 (no separate numeral-indexed theorem needed because the file's apparatus has no way for the numeral to influence the head noun's stack). (2) `POSCat.P → .dat` collapsed Pesetsky's most carefully-hedged distinction (p. 7: "only the distinctions among these oblique cases in Russian will fail to correspond to a traditional part-of-speech distinction" — P_OBL canonical, P_DAT one exemplar). Fix: add `POSCat.cases : POSCat → Finset Core.Case` returning the full P-OBL series `{.dat, .inst, .loc, .abl}` for `.P`; preserve `POSCat.canonicalExemplar` (renamed from `toCase`) for the canonical-exemplar single-case projection.
+
+**Tier B — façades and docstring honesty.** (1) `caha_containment_inverts_pesetsky` flagged independently by all three substantive agents: the proof was three `rfl`s on `containmentRank` constants with the "consistent under inversion" claim recorded in the docstring as editorial synthesis. Linguistics-domain-expert verified Pesetsky 2013 does **not** cite Caha 2009; per CLAUDE.md "no bridges" rule, this is original synthesis under cover of formalization. Fix: rename `caha_ranks_for_pesetsky_core_n_d_v` and drop the inversion claim from the docstring (the bare ranks remain available for inspection, with explicit disclaimer that the inversion question is taken up by neither author). (2) Wrong chapter attribution in "Out of scope": "Spell-Out / phase locality on adnominal case (Ch 8)" — adnominals are Ch 8 but the locality restrictions are §8.2-8.3, and §8.5 has the Loose-End "Prepositions That Appear to Assign NGEN" section that makes the dative-only collapse worse. Fix: tighten descriptive prose, add the §8.5 reference. (3) Missing citations: `marantz-1997` added (root + categorizer is the basis for "primeval genitive"). Pre-existing `@cite{schuetze-2001}` removed (no entry in `references.bib`; the Case Filter dissolution claim it supported was editorial per linguistics-domain-expert). Skipped `vergnaud-2006`, `emonds-1987`, `richards-2007` to avoid hallucinated bib entries (per CLAUDE.md anti-hallucination rule). (4) "Born genitive" → "Primeval Genitive" terminology fix per Pesetsky eq. (6) p. 9: `bornGenitive → primevalGenitive`, theorem `bare_noun_surface_gen → primeval_noun_surface_gen`. The docstring now cites @cite{marantz-1997} for the categorizing-head architecture and notes the file's leaf-stack approximation (deriving from a real `Root → CategorizedNoun` morphism flagged for future refinement).
+
+**Tier C — code-quality (mathlib-reviewer).** (1) `POSCat.toCase_injective` was a 6-clause conjunction proved by `decide`; misnamed. Replaced with `POSCat.canonicalExemplar_injective : Function.Injective POSCat.canonicalExemplar` proved structurally (`intro a b h; cases a <;> cases b <;> first | rfl | cases h`). (2) Added `DecidableEq` derivation to `RusNumeral`. (3) Dropped unused `Inhabited POSCat` derivation. (4) Imports reordered alphabetically (Core < Fragments < Theories). (5) `lardil_russian_divergence` converted from bare `simp` to `simp only` with explicit lemma list per CLAUDE.md proof-style discipline. (6) `pesetskyCore` redefined as explicit `Finset` literal `{.gen, .nom, .acc, .dat, .inst, .loc, .abl}` (was `[POSCat.D, .V, .N, .P].map POSCat.toCase`) — Multiset reduction via `Quot.lift` blocked `decide` on `biUnion`-based formulation; new `pesetskyCore_eq_image` theorem proves `rfl`-equivalence to the union form (`POSCat.cases .N ∪ ... ∪ POSCat.cases .P`). (7) `inst_loc_outside_pesetsky` flipped to `russian_obliques_in_pesetsky_core` (the previous claim was wrong once the P-OBL series became the actual image).
+
+**Mutual block decision (revised against mathlib-reviewer recommendation).** Mathlib-reviewer suggested replacing `mutual` with `kids.attach.map`. Tried; broke 12 `rfl` proofs in §4-§6 because `attach.map` compiles to well-founded recursion that doesn't reduce definitionally on `.leaf`. Reverted to `mutual` with a `/-! ... -/` block-docstring explaining the necessity (`PesTree` recurses through `List`; `rfl` proofs require `assignDown` to reduce on the leaf branch). Mathlib uses `mutual` for exactly this nested-list-recursion pattern when definitional reduction matters.
+
+**`POSCat` localization tension (per cross-framework-reconciler).** Reconciler argued `POSCat` duplicates `Core/Lexical/UD.lean::UPOS` (which has NOUN/DET/VERB/ADP) and proposed promoting to `def UPOS.toPesetskyCase : UPOS → Option Core.Case`. Integration-auditor cited CHANGELOG:13932 documenting an intentional prior decision to keep `POSCat` paper-local. Read: paper-locality preserved on the grounds that Pesetsky's POSCat is a *restricted* taxonomy with case-bearing semantics (4 categories that double as case strata, not a 17-tag universal POS inventory). Conflating loses the restriction; the docstring on `POSCat` and `POSCat.cases` is now explicit about the paper-local scope and the multi-case oblique class.
+
+**Deferred to Tier D (separate sessions).** (1) Refutation theorems against `Phenomena/Case/Studies/Marantz1991.lean` (configurational ACC) and `BakerVinokurova2010.lean` (GEN-by-D-Agree) and `Theories/Syntax/Case/CaseFilter.lean` — concrete cross-framework disagreements that the file gestures at in prose. (2) `PesTree` → `Core.Tree POSCat (String × List POSCat)` refactor per layered-grounding discipline. (3) `Theories/Morphology/CaseStacking.lean` substrate (`assigner : C → ...` + `spellOut : List C → List C`, with Russian = `head?.toList`, Lardil = `id`) — currently `lardilSpellOut := id` is a placeholder waiting on a missing `Phenomena/Case/Studies/Richards2013.lean` to consume it. (4) Ch 4-5 Number Mismatch puzzle (the original motivation of the monograph: *dva* triggers SG on noun but PL on demonstratives/adjectives) and the Lebanese Arabic # parallel (Ch 5.3) — separate study file to do justice to the structural derivation.
+
+**Build.** Pesetsky2013.lean's 932-job transitive closure passes; full `lake build` (5396 jobs) passes — file is a leaf with no downstream consumers (`grep -rln "Phenomena.Case.Studies.Pesetsky2013"` returns only the file itself + the `Linglib.lean` import). Bibliography validator confirms all four `@cite{...}` keys (`pesetsky-2013`, `marantz-1997`, `caha-2009`, `richards-2013`) resolve.
+
+## [0.230.445] - 2026-04-26
+
+### Delete `Phenomena/Persuasion/Studies/CumminsFranke2021.lean`
+
+Four-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) of the C&F 2021 study file (305 LOC) found a coherent set of issues whose root is a **Layered Grounding violation**: the file imported `moreThanMeaning` from `Theories/Semantics/Numerals/Basic` and proved three theorems linking it to `atLeastMeaning`, then never consumed either — §2-3 stipulated raw ℚ probability literals (`p_mt100_givenG := 1`, `p_mt110_givenNotG := 1/12`, ...) whose derivations lived only in docstring prose. Module-docstring page citations were wrong (Eq. 17 is on p. 6, not p. 7; the paper has no §4/§5 numbering). Two REF data rows had factual errors against the paper: KCL recorded `actualRank=7` with `rankingMeasure="Power"` but @cite{cummins-franke-2021} p. 12 says KCL is 6th on power and 7th on quality; Essex's measure annotation conflated raw intensity rank (22) with the strategic "top 20 universities" interpretation (20). The §"Enrichment Width" function invented a `roundnessGrade → Nat` mapping (20/15/10/4) that appears nowhere in C&F, while parallel infrastructure (`Theories/Semantics/Numerals/Precision.haloWidth`) already exists in linglib and is consumed by the same author's `Phenomena/Numerals/Studies/Cummins2015.round_wider_halo`. The paper's third hypothesis (H3 — "Avoid Argumentatively Unhelpful Statements"), the *disconfirmed* one that drives the General Discussion (p. 14-15), was entirely absent. Ten `native_decide` invocations should have been `decide` per CLAUDE.md.
+
+**Why delete rather than overhaul.** A planned full rewrite (substrate `condProbUniform`/`bayesFactorUniform` + Finset-based derivation of the eight stipulated probabilities + H3 addition + data corrections) ran into a kernel-arithmetic wall: ℚ multiplication / division through `Rat.mul`/`Rat.inv` doesn't reduce structurally via `decide` even after `unfold`, forcing either `native_decide` (the very thing being eliminated) or `mkRat`-on-both-sides bookkeeping that becomes a wall of arithmetic over a 200-element discrete-uniform measure space — recomputing what C&F derives in two lines of prose. The paper has no theorem-shaped content beyond its definitions (Eq. 17, 25, 27, 28); the worked examples and REF case study are paper replication, not mathematical depth. With `grep -rln "CumminsFranke2021"` showing zero downstream consumers (only the file itself + its `Linglib.lean` import), and the substrate (`Theories/Pragmatics/RSA/ArgumentativeStrength.lean`) already standing on its own with consumers in `MacuchSilvaEtAl2024.lean`, `BarnettEtAl2022.lean`, `RSA/Speaker/CombinedUtility.lean`, and `RSA/Speaker/Noncooperative.lean`, the C&F study file added no load-bearing content — only a paper-replication marker that was wrong in three places and dead in five more.
+
+**The natural substantive follow-up** is `Warstadt, Agha, Franke 2026` "Quantifying Epistemic Relevance" (Open Mind 10:502-546, DOI 10.1162/OPMI.a.332), which explicitly cites @cite{cummins-franke-2021} in its Bayes-factor lineage (p. 507) and runs a horse-race between five families of relevance measures — finding that **Bayes factor utility wins** as a predictor of human relevance judgments. WAF 2026 is the file that would justify substrate work on argStr (real comparative-measure theorems, second-order belief structures via beta distributions). The C&F file was ad-hoc replication; WAF 2026 is the validation that makes the framework load-bearing. Reserving substrate effort for that target.
+
+**Three changes** in this commit: (1) `git rm Linglib/Phenomena/Persuasion/Studies/CumminsFranke2021.lean` (305 LOC removed); (2) `Linglib.lean` line 2334 import removed; (3) `references.bib` entry for `@cite{cummins-franke-2021}` updated `role = {formalized}` → `role = {cited}`, `sources` field dropped (paper still cited from 4 substrate files + 2 sibling Persuasion studies; bib entry resolves cleanly). Bibliography regenerated (1774 entries, 7470 @cite refs scanned). Full `lake build Linglib` passes — substrate and consumer files were independent of the deleted file.
+
+## [0.230.444] - 2026-04-26
+
+### Polarity-marking refactor part 2: post-audit Tier A–D fixes
+
+Second 4-agent audit of the `0.230.443` work (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) flagged 4 tiers of follow-up: Tier A concrete bugs, Tier B façade-theorem cleanup, Tier C architectural improvements, Tier D sibling-framework engagement. All four tiers landed in this commit with build-clean verification at each step.
+
+**Tier A — concrete bugs.** (1) `Fragments.Italian.PolarityMarking.siChe.environments` was `{.correction}`, falsified by @cite{garassino-jacob-2018} ex. 17 ("È poi arrivato Gianni? — Sì che è arrivato" — a positive answer to a yes/no question, not a correction); now `{.correction, .contrast}` with cited justification. (2) Same bug in `Fragments.Spanish.PolarityMarking.siQue` per @cite{batllori-hernanz-2013} ex. 4-5 + G&J ex. 19; cognacy theorem `siChe.environments = siQue.environments := ⟨rfl, rfl⟩` preserved by symmetric fix. (3) `GarassinoJacob2018.lean::algoDatum.availability` was `(false, false, true)` — over-claimed Italian non-availability of non-focal fronting, contradicted by G&J p. 232 prose ("typical of Spanish, but is also (more rarely) attested in Italian and Catalan"); now `(true, false, true)` with marginal-status documented; `syntactic_strategies_split_asymmetrically` theorem updated. (4) `TurcoBraunDimroth2014.lean::all_reversal_correction_only` was a universal claim that `.contrast ∉ e.environments` for every polarity-reversal entry — falsified by the siChe/siQue fix; renamed `all_reversal_license_correction` and weakened to drop the contrast-exclusion clause (preserves the surviving Germanic-and-French-si generalization that polarity-reversal entries license correction). (5) `Linglib.lean` re-wiring: moved `TurcoBraunDimroth2014`, `GarassinoJacob2018`, `MaticNikolaeva2018` from the stranded l.2031-2033 Focus/Studies block into the alphabetical Polarity/Studies block at l.1359-1368. (6) Bib hygiene: dropped stale `Phenomena/Polarity/MarkingTypology.lean` from 3 entries' `sources` fields (the file doesn't exist; was a forward-looking reference); added `sources` field to `batllori-hernanz-2013` (now cited from 2 new locations).
+
+**Tier B — façade-theorem cleanup.** (1) Deleted `gj_2018_endorses_mn_2018_salient_polarity : True := trivial` from G&J §4 — the docstring already records the alignment; `True := trivial` polluted the environment without adding greppable signal. (2) Deleted `french_si_dialogical_only` from G&J §5 — duplicated `french_lacks_siQueClass` per mathlib-audit redundancy flag. (3) Deleted `siChe_zero_occurrences_italian_europarl : ... := rfl` from G&J §2 — `rfl` on `some 0 = some 0`, the parent `italian_spanish_complementary_distribution` theorem already includes it as a conjunct. (4) Converted `mn_attested_structure_list_is_open : True := trivial` from a façade theorem to a substantive claim via new `mnOpenEndedWitnesses : List String := ["on the contrary", "just the opposite", "complement clauses with *it is true that p*"]` (the three M&N p. 15 explicitly-cited witnesses) + `mn_attested_list_strictly_grows : mnOpenEndedWitnesses ≠ [] := by decide` — the operational sense in which M&N's open-endedness claim holds against any closure attempt.
+
+**Tier C — architectural.** (1) `MaticNikolaeva2018.lean::substrateBestEffort` now returns `Option PolarityMarkingStrategy` instead of `PolarityMarkingStrategy`. The 10 M&N structures that previously mapped to `.other` now map to `none`, exposing the dumping-ground claim *structurally* at the type level rather than via a `decide` count. The 3 non-isomorphism theorems updated correspondingly: `substrate_cannot_encode_germanEmphaticTun_and_englishVPFronting`, `fragment_data_lumps_emphaticDo_with_verumFocus`, `substrate_cannot_encode_at_least_ten`. (2) NEW `MNAttestedStructure.fromFragment : Option PolarityMarkingEntry` routes 4 M&N structures to actual existing Fragment entries (`englishEmphaticDo` → `Fragments.English.PolarityMarking.emphaticDo`; `germanAccentOnAuxiliary` + `germanAccentOnLexicalVerb` → `Fragments.German.PolarityMarking.verumFocus`; `germanAccentedDiscourseParticles` → `Fragments.German.PolarityMarking.dochPreUtterance`); proven consistent with `substrateBestEffort` via `substrateBestEffort_agrees_with_fragments`. The non-isomorphism theorem `fragment_data_lumps_emphaticDo_with_verumFocus : emphaticDo.strategy = verumFocus.strategy := rfl` is now a claim about *real Fragment data* (English `emphaticDo` and German `verumFocus` collapse to the same substrate strategy), not an editorial fiction. (3) `Features/InformationStructure.lean::PolarityMarkingStrategy` docstring extended to include @cite{gutzmann-2015} as a third sibling framework in tension with the form-class encoding (alongside Höhle 1992 and Romero-Han 2004), with absolute-path cross-references to `Theories/Semantics/Mood/Gutzmann.lean` + `Phenomena/SentenceMood/Studies/Gutzmann2015.lean`.
+
+**Tier D — sibling verum frameworks.** New §6 of `MaticNikolaeva2018.lean` (~80 LOC) extends the M&N argument from the substrate enum to two sibling frameworks already in linglib. (1) Romero-Han: new `inductive RHAnalysis | epistemicVerum` + `def romeroHanBestEffort : MNAttestedStructure → Option RHAnalysis` mapping 7 prosodic-on-finite-verb structures (German + English + Serbian accent on auxiliary/finite verb + English emphatic *do*) to `some .epistemicVerum` and the other 11 to `none`; `theorem romeroHan_cannot_encode_at_least_eleven := by decide`. (2) Gutzmann 2015: new `inductive GutzmannDimension | deontic | epistemic | hearerKnowledge` + `def gutzmannBestEffort := fun _ => none` (constant-`none` because Gutzmann 2015's framework scope is sentence-mood-operator composition over clause types, not polarity-marking devices; the verum-specific Gutzmann work M&N actually cite — Gutzmann & Castroviejo Miró 2011 — is not formalized in linglib); `theorem gutzmann_2015_framework_does_not_apply : ∀ s, gutzmannBestEffort s = none := by intro _; rfl`. (3) Capstone theorem `mn_argument_extends_across_frameworks` proves the M&N coverage failures across all three formalized frameworks via a single `decide` (substrate ≥ 10 unencoded; R&H ≥ 11 unencoded; Gutzmann 2015 = 18 unencoded). The shared "Option-valued framework-fit mapping" pattern is acknowledged as a candidate typeclass (`FrameworkFit α := MNAttestedStructure → Option α`); kept as separate `def`s for now so each framework's coverage profile stays visible at the def-site.
+
+**Verification.** All 9 affected files (5 modified + 2 created from `0.230.443` + 2 cross-referenced sibling framework files) compile clean (980-job transitive closure). Bibliography validator: zero warnings on any of the 12 polarity-related cite keys (matic-nikolaeva-2018, garassino-jacob-2018, bernini-1995, poletto-zanuttini-2013, dimroth-sudhoff-2018, batllori-hernanz-2013, gutzmann-2015, romero-han-2004, hohle-1992, turco-braun-dimroth-2014, lohnstein-2018, seeliger-repp-2018); 7014 valid cites total (up from 7011), 457 unknowns all pre-existing/unrelated. bibliography.md regenerated. Two unrelated pre-existing full-build failures (`Core/Constraint/PermSubsetCombinatorics.lean` untracked, `Theories/Syntax/Minimalism/Hopf/AdmissibleCut.lean` untracked) confirmed via grep to have no import-edge to polarity work.
+
+**LOC.** `MaticNikolaeva2018.lean` 221 → 362 (+141 for §2b Fragment routing + §6 sibling-framework engagement + §4 substantive openness claim); `GarassinoJacob2018.lean` 306 → 301 (-5 net: dropped 3 façade theorems + 1 algoDatum hedge + various docstring tightening); `Italian/PolarityMarking.lean` 81 → 99 (+18 for siChe environments fix + extended docstring); `Spanish/PolarityMarking.lean` 53 → 63 (+10 for siQue environments fix + docstring); `Features/InformationStructure.lean` +~10 (Gutzmann sibling-framework note in `PolarityMarkingStrategy` docstring); `TurcoBraunDimroth2014.lean` net unchanged (renamed theorem, dropped one conjunct); `Linglib.lean` net unchanged (3 imports moved); `references.bib` 3 stale sources dropped + 1 sources field added.
+
+**Deferred.** (a) Promote `FrameworkFit α := MNAttestedStructure → Option α` to a Lean typeclass with the 3 instances as `instance`s and the coverage theorem as a generic statement parameterized over `(f : FrameworkFit α)` — clean refactor visible from the §6 pattern, but earns its place only when a 4th instance arrives. (b) Refactor `Bool × Bool × Bool` projections in `GarassinoJacob2018.lean` to a named `RomanceAvailability` struct — flagged by mathlib reviewer; cosmetic only, deferred. (c) Rename `GJStrategy` / `MNAttestedStructure` etc. to drop the AuthorYear prefix (redundant with namespace) — also cosmetic, deferred. (d) Phase 5: study files for the remaining 6 Dimroth-Sudhoff 2018 chapters (bib entries already pre-added in `0.230.443`).
+
+## [0.230.443] - 2026-04-26
+
+### Polarity-marking refactor: Dimroth & Sudhoff (2018) volume engagement
+
+One-layer-up refactor anchored on @cite{dimroth-sudhoff-2018}, *The Grammatical Realization of Polarity Contrast* (Linguistik Aktuell 249, DOI 10.1075/la.249), prompted by a 4-agent audit of `Fragments/Italian/PolarityMarking.lean` (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) that found the file pattern-conformant but flagged systemic issues at the substrate (`Features/InformationStructure.lean`'s `PolarityMarkingStrategy` enum) and at the missing-study-file level. The refactor addresses citation hygiene, framework-commitment surfacing, and adds two study files for chapters of the source volume.
+
+**Phase 0 — bib hygiene + Italian Fragment cleanup.** Added 10 new `references.bib` entries (umbrella @cite{dimroth-sudhoff-2018} + 7 chapter entries @cite{matic-nikolaeva-2018}/@cite{lohnstein-2018}/@cite{bacskai-atkari-2018}/@cite{ohl-2018}/@cite{gyuris-2018}/@cite{mueller-reichau-2018}/@cite{andorno-crocco-2018} + @cite{bernini-1995} + @cite{poletto-zanuttini-2013}); all chapter DOIs follow the verified `10.1075/la.249.NN[author-tag]` pattern (00-09 with intro=00); Bernini metadata transcribed from G&J's reference list (PDF p. 251); Poletto-Zanuttini DOI 10.1016/j.lingua.2012.10.016 confirmed via Elsevier landing page. Italian Fragment's bare-citation violations (`(Bernini 1995; Poletto & Zanuttini 2013)` not `@cite{}`-wrapped) fixed; the misleading "Table 1: 0 *sì che* vs 61 Spanish *sí que*" corpus claim replaced with the **full** Table 1 data verified from PDF p. 239 (Italian: 6 polar LDs / 0 *sì che*; French: 4 LDs / NA; Spanish: 0 LDs / 61 *sí que*) — the actual paper finding is the **complementary distribution** between LDs and *sí que*, not the 0/61 sliver. Hedged the "same class as French *si*" claim per @cite{garassino-jacob-2018} fn 11 (French *si* is dialogically restricted, not a clause-initial construction comparable to *sì che*); hedged the "cleft-like construction" assertion to record both Bernini's cleft analysis and Poletto-Zanuttini's reduplication analysis as competing.
+
+**Phase 1 — substrate framework-commitment flag.** Updated docstrings on `Features/InformationStructure.lean::PolarityMarkingStrategy` and `PolarityMarkingEntry` (no signature changes — type unchanged, 8 cross-language consumers unaffected) to flag that the form-class encoding aligns with the @cite{bluhdorn-lohnstein-2012}/@cite{sudhoff-2012}/@cite{turco-braun-dimroth-2014} tradition and is **explicitly rejected** by @cite{matic-nikolaeva-2018}, who argue PF is not encoded by forms but pragmatically conveyed in context (with @cite{garassino-jacob-2018} fn 13 endorsing the M&N view). Per CLAUDE.md "linglib's thesis is making theoretical incompatibilities visible", the substrate flag surfaces the commitment without resolving it; the formal contradiction-witness is anchored in the M&N study file (no bridge file).
+
+**Phase 2 — `Phenomena/Polarity/Studies/GarassinoJacob2018.lean` (NEW, 226 LOC).** §1 records G&J's 8-strategy taxonomy (`inductive GJStrategy` — lexical adverb / affirmative particle / embedded-clause / elliptic embedding / non-focal fronting / faire-cleft / clitic dislocation / *sì che* class) — deliberately distinct from the substrate's 5-class enum, since G&J's carving cuts on syntactic structure rather than discourse function. §2 records Table 1 (p. 239) as `gjTable1 : List GJCorpusDatum` with `italian_spanish_complementary_distribution` theorem proving the 6/0/0/61 cross-cell pattern via `decide`. §3 hosts the **relocated** `siChe_siQue_cognates_at_encoding_level` theorem (moved from `TBD2014:446` since the cognacy claim chronologically anchors on Bernini 1995 / Batllori-Hernanz 2013 / G&J 2018, not TBD 2014). §4 records G&J fn 13's verbatim endorsement of M&N's salient-polarity view as documented provenance. §5 records G&J fn 11's distinction of French *si* (dialogically restricted) from *sì che* (clause-initial). Two cross-linguistic theorems via `decide`: `lexical_means_pan_romance` (4 lexical strategies available in all 3 languages) + `syntactic_strategies_split_asymmetrically` (each language licenses a different subset of syntactic strategies).
+
+**Phase 3 — `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean` (NEW, 161 LOC).** Encodes M&N's anti-denotational argument **without** stipulating salient polarity as a Prop (which would be the very form-meaning encoding M&N reject). §1 records 18 attested salient-polarity-conveying structures from M&N examples (2)–(4) covering German (7), English (7), and Serbian (4) — explicitly flagged as a finite proxy for an open-ended list. §2 defines `substrateBestEffort : MNAttestedStructure → PolarityMarkingStrategy` showing the charitable mapping any denotational account must use. §3 proves three non-isomorphism theorems via `rfl`/`decide`: `substrate_encoding_not_injective` (German emphatic *tun* + English VP fronting collapse to `.other`), `verumFocus_collects_multiple_structures` (German auxiliary accent + English emphatic *do* both go to `.verumFocus`), `other_is_a_dumping_ground` (≥9 of 18 M&N structures land in `.other`). §4 records the load-bearing open-endedness claim — the inductive type CAN'T faithfully express M&N's "the list seems to be open" point, so the theorem statement records the rejection of closure assumption rather than attempting to close the list. §5 records the G&J fn 13 cross-volume alignment.
+
+**Cleanup.** Removed `italian_spanish_cognates` from `TurcoBraunDimroth2014.lean` (relocated, zero external consumers per grep). Wired both new study files into `Linglib.lean` after `TurcoBraunDimroth2014`. Updated existing `garassino-jacob-2018` bib entry: `role` cited → formalized, sources updated to point at the new study file (and dropped the stale `Phenomena/Polarity/MarkingTypology.lean` path that pointed to a never-created file).
+
+**Verification provenance.** Volume PDF (Linguistik Aktuell 249) read on 2026-04-26 to verify (a) chapter title + author + page range + DOI for all 9 chapter entries; (b) Bernini 1995 metadata transcribed from G&J references list p. 251; (c) Poletto-Zanuttini 2013 DOI confirmed via Elsevier landing page (200 OK); (d) G&J Table 1 corpus counts (PDF p. 239); (e) G&J fn 11 verbatim ("French *si*, unlike the corresponding forms in Spanish and Italian, is limited to dialogical contexts"); (f) G&J fn 13 verbatim endorsement of M&N (PDF p. 236); (g) M&N central thesis on denotational vs interpretational (PDF pp. 11-12) and 18-structure attested-list (M&N examples 2-4, PDF pp. 13-14).
+
+**Build.** All 5 modified/created files compile (947-job transitive closure); bibliography validator reports zero warnings on any of the 10 new keys (7011 valid / 456 unknown — all unknowns pre-existing). Two unrelated full-build failures (`CoetzeePater2011.lean` modified concurrently in another session; `Hopf/AdmissibleCut.lean` untracked) have no import-edge to anything touched here.
+
+**Deferred (audit-suggested, separable).** (a) Phase 4: promote `TurcoBraunDimroth2014::allEntries` + 4 generalization theorems to a top-level `Phenomena/Polarity/PolarityMarkingTypology.lean` per integration-auditor recommendation — the existing G&J bib entry's `Phenomena/Polarity/MarkingTypology.lean` source field anticipates this file (currently a dangling reference). (b) Phase 5: study files for the remaining 6 chapters of the volume (Lohnstein, Bacskai-Atkari, Öhl, Seeliger-Repp already in bib, Gyuris, Mueller-Reichau, Andorno-Crocco) — bib entries pre-added, Hungarian/Russian Fragment data not yet present. (c) Phase 6: schema enhancement to distinguish syntactic position (clause-initial construction vs response particle vs sentence-medial discourse marker) — touches all 7 Fragment consumers.
+
+## [0.230.442] - 2026-04-26
+
+### M-C-B Hopf substrate Sessions 3-4: Defs.lean + AdmissibleCut.lean rework + new Comul.lean
+
+Continuing the multi-session sprint to rebuild the Connes-Kreimer-style **bialgebra** (NOT Hopf yet — needs the (1−α) quotient per M-C-B Lemma 1.2.10) of binary nonplanar rooted syntactic forests, per @cite{marcolli-chomsky-berwick-2025} §1.2.
+
+**`Defs.lean` rework** — source-verified against M-C-B 2025 §1.1.3.1 (p. 25): "These are genuinely multisets that *do not have* an equivalent description as sets." Switched `Forest := FreeMonoid SyntacticObjectH` (= `List`, planar/ordered, wrong) to `Forest := Multiset SyntacticObjectH` (unordered, faithful). Switched `Hc := MonoidAlgebra ℤ Forest` to `Hc := AddMonoidAlgebra ℤ Forest` (Multiset is `AddCancelCommMonoid`; convolution-on-AddMonoidAlgebra gives disjoint-union as algebra multiplication). Kept `def Hc` (not `abbrev`) to block mathlib's auto-derived trivial coalgebra (`CommSemiring.toCoalgebra` + `AddMonoidAlgebra.instCoalgebra` would give `Δr = 1⊗r`, clashing with Connes-Kreimer). Forwarded `CommSemiring`/`CommRing`/`Algebra ℤ`/`FunLike` instances explicitly.
+
+**`AdmissibleCut.lean` rework** — replaced sorry-laden `Finset SyntacticObjectH` representation (3 sorries: `decContains`, `remainder`, `Fintype`) with a structurally-recursive **4-way enum** `CutShape T`: `atLeaf | bothCut | onlyLeftCut cr | onlyRightCut cl | bothRecurse cl cr`. Antichain condition (no two cut edges on same root-leaf path, M-C-B Def 1.2.6) baked in by construction. `cutForest`/`remainder`/`DecidableEq`/`Fintype` defined sorry-free as structural recursions. Verified against M-C-B p. 46 worked example (eaten/the/apple): leaves ARE accessible terms because Def 1.2.2's "internal" means non-root (NOT non-leaf).
+
+**`Comul.lean` (NEW)** — implements Δ^c per M-C-B Def 1.2.8: `comulTree T = T ⊗ 1 + Σ_{c : CutShape T} (cutForest c) ⊗ (remainder c)`. Forest extension `comulForest = Multiset.prod (F.map comulTree)` per M-C-B's `Δ^ω(F) = ⊔_a Δ(T_a)`. Lifted to **algebra hom** `comulAlgHom : Hc →ₐ[ℤ] Hc ⊗[ℤ] Hc` via `AddMonoidAlgebra.lift` (algebra-hom property needed for bialgebra structure per Lemma 1.2.10). Counit similarly as alg hom via the `if F = 0 then 1 else 0` monoid hom. Mathlib infra leveraged: `AddMonoidAlgebra.lift`, `Mathlib.RingTheory.TensorProduct.Basic`, `Multiset.prod`. **Naming note**: `comulAlgHom` rather than `comul` to leave the short name available for the future Coalgebra typeclass field. **Limitation flagged**: `traceLeaf` placeholder fallback is unsound for iterated Δ (coassoc proofs); fix is mutual-induction `LeafToken : SyntacticObjectH`, deferred until Lemma 1.2.10 work.
+
+3-agent post-Session-4 audit: docstrings downgraded "Hopf algebra" → "bialgebra" per Lemma 1.2.10 (Hopf needs (1−α) quotient); `traceLeaf` fallback marked `-- UNSOUND for iterated Δ`; `Linglib.lean` import added; redundant `soToHc` dropped; bare `simp` in `comulForest_zero` tightened to `simp only [...]`. Deferred for upstream PR: universe polymorphism, generic parameterization `ConnesKreimer.BinaryForest R α`, `deriving DecidableEq` for CutShape, `namespace Minimalism.Hopf` rename. 1263 jobs green.
+
+## [0.230.441] - 2026-04-26
+
+### Bochnak 2015 §2.2 — 4-agent deep audit + substrate dissolution
+
+4-agent deep audit (mathlib-reviewer + linguistics-domain-expert + integration-auditor + cross-framework-reconciler) of the just-shipped 0.230.436 `ConsistencyConstraints.lean` returned convergent verdicts: the substrate primitives belong in `Delineation.lean` alongside `IsMonotoneDelineation`; what remained in `ConsistencyConstraints.lean` after promoting the substrate was paper-anchor noise that earned no rent. Refactor:
+
+**Substrate promoted into `Theories/Semantics/Comparison/Delineation.lean §13` "Faithfulness Predicates":**
+- `IsSoundDelineation del R` (CC-b shape, generalising @cite{bochnak-2015} eq. 28b to abstract scalar relations) — now a `class` rather than `structure`, firing by typeclass synthesis. Mathlib pattern: same shape as `OrderHomClass` / `IsLeftCancelMul`.
+- `IsCompleteDelineation del R` (the converse direction; NOT in Bochnak — closer to @cite{burnett-2017}'s *Plenitude* / *Granularity* axioms and @cite{klein-1980} coverage assumptions). Split out from the original `FaithfulDelineation` structure per linguistics-audit recommendation that the backward direction shouldn't be packaged with Bochnak's name.
+- `comparativeSem_iff_of_sound_and_complete` — the bidirectional bridge.
+- `instSoundMeasureDelineation` and `instCompleteMeasureDelineation` — measure-induced instance witnesses, now derived from `Hierarchy.lean`'s existing `ordering_implies_degree` and `degree_implies_ordering` (the integration auditor's convergent dedup recommendation). Eliminates duplicated structural reasoning. The complete-direction proof uses the `{a, b}` two-element comparison class from `degree_implies_ordering` rather than the linguistically-degenerate singleton `{y}` from the original draft (linguistics audit: Klein/Kennedy/Fara would object to singleton CCs).
+- Cross-framework engagement docstring: `### Relation to Hierarchy.lean` (no duplication, factor through `ordering_iff_degree`), `### Relation to Kamp 1975` (existential dual of preorder universal), `### Relation to Fine 1975` (Klein↔Fine duality via `monotone_comparative_superTrue`), `### Tension with Cobreros et al 2012` (CC-b is strict-classical, would over-generate under tolerant semantics on similar pairs). Per cross-framework auditor: linglib's interconnection-density thesis demands explicit engagement.
+
+**`ConsistencyConstraints.lean` DELETED.** After the substrate promotion, what remained was: the `IsConsistencyConstraintB := IsSoundDelineation` cite-tag wrapper (mathlib-reviewer flagged as the "encoding conclusions as definitions" anti-pattern; replaced with a docstring comment in `Delineation.lean §13`), the `perContext_implies_R` one-line wrapper (subsumed by `IsSoundDelineation.sound`), and the footnote-11 counterexample (paper-anchored — moved to `Bochnak2015.lean §6`). Manifest entry removed; bib `sources` fields for `kennedy-2011`, `van-rooij-2011a`, `bochnak-2015` repointed to `Delineation.lean`.
+
+**`Bochnak2015.lean` updates:**
+- §3 `comparativeSem_measureDelineation_iff_degree` now a one-line corollary firing typeclass synthesis: `comparativeSem_iff_of_sound_and_complete (R := fun a b => height b < height a)`.
+- NEW §6 `cc_b_requires_shared_class` — the load-bearing **footnote-11** counterexample (single-shared-CC requirement). Concrete 2-CC, 2-entity model: `Entity := Bool`, `del C x := x = true ∧ true ∈ C`, `R a b := a = true ∧ b = false`. Soundness holds; the SPLIT-CC weakening admits `(true, true)` via `C₁ := {true}`, `C₂ := {false}`, while `R true true = false`. Paper-anchored here because the footnote is Bochnak-specific.
+- Module docstring updated: §2.2 section now points at `Delineation.lean §13` substrate.
+
+**Bib additions (PDF-verified DOIs):**
+- `kennedy-2011`: Vagueness and Comparison, in @cite{kennedy-2011} *Vagueness and Language Use* (Égré & Klinedinst eds., Palgrave 2011), DOI 10.1057/9780230299313_4.
+- `van-rooij-2011a`: Implicit versus Explicit Comparatives, same volume, DOI 10.1057/9780230299313_3.
+- Both required for the linguistics-audit-corrected attribution of CC-a/b: Bochnak's PDF p. 6:16 cites "(Klein 1980, 1991, Kennedy 2011, van Rooij 2011a)" for eq. 28, NOT Klein + Fara as the original 0.230.436 docstring had it. Fara 2000 is the right anchor for the **Similarity Constraint** (eq. 20), not for (28).
+
+**Cite-key fixes from validator:**
+- `@cite{burnett-2014}` → `@cite{burnett-2017}` (the L&P 2014 paper's content is in the 2017 OUP book; only the book is in bib).
+- `@cite{cobreros-egre-ripley-vanrooij-2012}` → `@cite{cobreros-etal-2012}` (actual key in bib).
+
+861 jobs in subgraph green. Ready for full build verify.
+
+## [0.230.440] - 2026-04-26
+
+### Bool dissolution: Question + Focus + Comparability layers (post-deep-audit)
+
+After 4-agent deep audit (linguistics + mathlib-reviewer + integration-auditor + cross-framework-reconciler) flagged three parallel question substrates as the highest-leverage architectural issue, dissolved the legacy Bool-functional substrate `Core/Question/Predicate.lean::QuestionDen := (W → Bool) → Bool` together with `Theories/Semantics/Focus/Interpretation.lean::PropFocusValue` (same `(W → Bool) → Bool` shape) — both migrated to substrate-aligned `Set`-based representations across ~12 consumer files.
+
+**Substrate migrations**:
+- `PropFocusValue := (W → Bool) → Bool` → `Set (Set W)` in `Theories/Semantics/Focus/Interpretation.lean`. `Squiggle.contrastSet`, `fip` (from `∀ p, gamma p → focusValue p` to `gamma ⊆ focusValue`), `qaCongruentWeak` (subset), `FocusResolution.{ordinary, comparisonClass, fip_subset, ordinary_in_C}`, `ClauseEmbedPred`, `IsFocusSensitive`, `IsNotFocusSensitive`, `liftNonFS`, `liftNonFS_not_fs` all migrated. Removed dead `hamblin_is_focus_type` theorem (vacuous after Bool removal).
+- `Theories/Semantics/Focus/Comparability.lean::semanticallyIndependent`/`commonIntegrator`/`wellFormedAlts` migrated from `(W → Bool)`/`List (W → Bool)` to `Set W`/`List (Set W)`. Predicates rewritten using set inclusion.
+
+**Consumer migrations** (12 files):
+- `Phenomena/Questions/Studies/Holmberg2016.lean`: `polar p worlds` Bool theorem replaced with substrate `both_alternatives_in_polar` over `Core.Question.polar`.
+- `Phenomena/Focus/Studies/Roberts2012.lean`: type-identity theorem updated to `PropFocusValue D0World = Set (Set D0World)`.
+- `Phenomena/Focus/Studies/Rooth1992.lean`: §2 propositions migrated `QAWorld → Bool` → `Set QAWorld`; §6 questions migrated `QuestionDen` → `PropFocusValue` with set-literal `{p₁, p₂, ...}` notation; FIP proofs restructured around `Set.subset`.
+- `Phenomena/Focus/Studies/Umbach2004.lean` (entire 544-LOC file): 6 propositions in §2, well-formedness proofs in §3, CDWorld propositions and `confirmDeny` in §5, `roomDishesEquiv` (now Prop-pair Setoid kernel), `singleContrast`, `contrastImplicitQ`, `correctionImplicitQ` in §6 — all Bool→Set.
+- `Phenomena/Focus/Studies/TurkHirsch2026.lean`: `PolarWorld → Bool` propositions (`p`, `notP`, `mustP`) → `Set PolarWorld`; `QuestionDen` → `PropFocusValue`; alt-set theorems restructured.
+- `Phenomena/Constructions/Studies/KayFillmore1999.lean`: `wxdyLiteralQ`/`wxdyIncredulityQ` migrated from Bool `Hamblin.which` API to substrate `Core.Question.{which, declarative}`.
+- `Theories/Semantics/Focus/BackgroundedIslands.lean`: `extractionQ : QuestionDen` → `PropFocusValue`; proof of `extraction_filler_is_focus_alternative` rewritten around set membership.
+- `Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean`: `Hamblin.QuestionDen W` field type → `Core.Question W` (substrate, not focus alias).
+- `Theories/Semantics/Composition/Applicative.lean`: docstring update only (one comment reference).
+- `Theories/Semantics/Attitudes/Preferential.lean`: 105 LOC of `toHamblin`/`fromHamblin`/`roundtrip_preserves_membership` bridges deleted (their entire purpose was bridging to the now-deleted `QuestionDen`); dead `Predicate.lean` import removed.
+- `Theories/Semantics/Attitudes/Doxastic.lean`: dead `Predicate.lean` import removed.
+- **DELETED `Linglib/Core/Question/Predicate.lean`** (122 LOC of legacy Bool-Hamblin substrate).
+
+**Architectural impact**: Closes the "three-substrate" problem flagged by all four audit agents. The remaining Bool surface in linglib's question/focus area is now confined to `Theories/Semantics/Attitudes/CDistributivity.lean::AlternativeList := List (W → Bool)` and its downstream uses — flagged for follow-up session. The `Core/Question/Predicate.lean` deletion is the headline architectural change: **no more parallel `QuestionDen` substrate** alongside the canonical `Core.Question`.
+
+All 1857 jobs in the question + focus + attitudes layer build green.
+
 ## [0.230.439] - 2026-04-26
 
-### Tier C #3 (REAL): Kennedy 2007 eq (61) modifier-class matrix supersedes 0.230.436's audit-flagged decorative bridge
+### Yoruba registered in KeenanComrie1977.lean's KCProfile + K&C 1979 bib added + relTiGenitive +case correction
 
-The 0.230.436 "extent-level bridge" (`closedScale_satEntity_posExt_univ` / `_negExt_empty` in `Theories/Semantics/Gradability/Theory.lean`) was unanimously audit-flagged as a façade by all 4 audit agents (mathlib-reviewer, integration-auditor, linguistics-domain-expert, cross-framework-reconciler): the `_hClosed` hypothesis was unused; the proofs reduced to `Set.Iic_top`/`Set.Ioi_top` mathlib rewrites; the "documentation-gate" precedent claim was fabricated (KennedyLevin2008.lean uses `:= rfl` with NO underscore-hypothesis pattern); zero consumer integration on the named primary consumer (`Kennedy2007Licensing.lean` never imported `Extent.lean`); the methodological-pair claim with HKL 1999 §2 was false (HKL is entry-DEPENDENT via fragment projections, the decorative bridge was entry-INDEPENDENT). The consensus alternative all 4 agents converged on: **land the @cite{kennedy-2007} eq (61) modifier-class matrix that has 4 sitting consumer fields in `Kennedy2007Licensing.lean:289-348` waiting for theorems**.
+Continues the Yoruba-Fragment-build-out line of work (0.230.434, 0.230.435 established the Fragment from Awobuluyi 1978). The user supplied verified PDFs of K&C 1977 (theory paper, Linguistic Inquiry 8(1): 63-99) and K&C 1979 (per-language data appendix, Language 55(2): 333-351), which together let us register Yoruba in the K&C 1977 study file with cross-confirmed data and surface a real typological finding.
 
-This commit lands that matrix and removes the decorative bridge.
+**New bib entry** (verified from K&C 1979 PDF JSTOR cover page): `keenan-comrie-1979` — "Data on the Noun Phrase Accessibility Hierarchy", Language 55(2): 333-351, JSTOR https://www.jstor.org/stable/412588.
 
-**THREE FILES TOUCHED:**
+**Yoruba registered as the 9th `KCProfile`** in `Phenomena/Relativization/Studies/KeenanComrie1977.lean`. Derived from `Fragments.Yoruba.relMarkers` via the existing `RelClauseMarker.toStrategyEntry` pipeline. K&C 1977 Table 1 p. 79 codes Yoruba as 2 strategies (postnom -case for SU+DO; postnom +case for GEN); our Fragment is more granular (4 markers, one per AH position); the underlying typological information is the same. The new `def yoruba` includes inline citations to Awobuluyi 1978 §6.19-6.23 + K&C 1979 ex. 125-128 + K&C 1977 Table 1 p. 79.
 
-**1. `Theories/Semantics/Gradability/Theory.lean` (-54 LOC):** removed the `closedScale_satEntity_posExt_univ` / `_negExt_empty` decorative theorems and the `import Linglib.Core.Scales.Extent` (no longer needed). Per CLAUDE.md "Avoid backwards-compatibility hacks like ... // removed comments for removed code" — the deleted section is not flagged in-file; the audit's findings + this CHANGELOG entry carry the provenance.
+**Triangulation across 5 sources confirms strategy classification**: WALS F122A + Awobuluyi 1978 §6.19 + K&C 1979 p. 350 + K&C 1977 Table 1 p. 79 + our Fragment all agree on Yoruba's SU = pronoun retention. Same convergence on DO=gap, OBL=gap, GEN=resumption across Awobuluyi + K&C 1979 + Fragment. The analytical disagreement (K&C: `ó` is verb agreement; Awobuluyi: descriptive "ó replaces subject") doesn't affect the strategy field.
 
-**2. `Phenomena/Gradability/Studies/Kennedy2007Licensing.lean` (substantive +106):**
+**`relTiGenitive.bearsCaseMarking` corrected from `false` to `true`** per K&C 1977 Table 1 p. 79's +case coding for Yoruba's GEN strategy. The genitive-form pronouns `rẹ̀`/`wọn` are morphologically distinct from subject `ó` and object `i`/`un`/`ó` (per Awobuluyi §2.21's polymorphic-noun classification), so they encode case role lexically — consistent with K&C's +case framework. `relTiSubject.bearsCaseMarking` stays `false` (K&C 1979 analyzes `ó` as verb agreement, not a +case resumptive).
 
-- **Refactored `AdjectiveTypologyDatum`**: replaced the `(hasMaxEndpoint : Bool, hasMinEndpoint : Bool)` Bool-pair with a single `scaleType : Core.Scale.Boundedness` field. Same redundancy-with-Boundedness pattern that 0.230.420 dropped from `Boundedness.ofType` (Bool×Bool→Boundedness constructor) — lexical data should use the canonical enum, not Bool pairs that re-encode it. All 5 instances (tall, full, wet, straight, bent) updated to fragment-aligned scaleType (`.open_`, `.closed`, `.lowerBounded`, `.closed`, `.lowerBounded` respectively, matching the `Adjectival.lean` fragment annotations).
+**Two empirical-pattern theorems refactored**: Yoruba refutes the original 8-language sub-sample's "every -case strategy covers SU" generalization (Yoruba's gap strategies for DO and OBL don't cover SU because SU uses pronoun retention independently). Introduced `def originalSample` capturing the 8 pre-Yoruba languages; restricted `minus_case_covers_subjects_in_original_sample` and `gap_covers_higher_than_resumptive_in_original_sample` to that sub-list; added explicit `theorem yoruba_refutes_minus_case_covers_subjects` documenting the refutation per K&C 1979 p. 349's serial-verb-recasting analysis. This is substantive linguistic content, not a workaround: K&C 1977's HCs (HC1/HC2/PRC) hold for Yoruba (Yoruba is the 9th confirming data point), but the empirical-pattern correlations across the original sample don't generalize.
 
-- **`def licenses : DegreeModifierType → Boundedness → Bool`** — the canonical Kennedy 2007 eq (61) matrix function: `proportional ↔ b.hasMax`, `diminisher ↔ b.hasMin`, `intensifier`/`measurePhrase` universal. `hasMax`/`hasMin` are existing `Boundedness` projections, so the matrix function is structurally licit (no Bool-pair re-encoding).
+**New theorem `yoruba_strategy_breakdown`** verifies the 4-marker structure (SU resumptive primary, DO gap, OBL gap, GEN resumptive secondary).
 
-- **`theorem k2007_matrix_agrees_with_typology`** (`decide`): proves the matrix function predicts the existing per-adjective `naturalWithSlightly`/`naturalWithCompletely` Bool fields across all 5 adjectives × 2 modifier types — the matrix is consistent with the data on the 10-cell grid.
+**New `theorem yoruba_kc_matches_wals`** confirms `KCProfile.lowestCovered = .genitive` matches `Typology.yoruba.lowestRelativizable = .genitive`. Extended `kc_at_least_as_detailed_as_wals` to include Yoruba.
 
-- **`theorem k2007_modifier_data_agrees`** (`decide`): proves the matrix function predicts the existing per-modifier `worksWithRGA`/`worksWithAGAMax`/`worksWithAGAMin` Bool fields across all 4 modifiers × 3 scale-class instantiations.
+**Updated `sample_size`** from `allProfiles.length = 8` to `= 9`.
 
-- **`theorem closurePuzzle_via_matrix`**: derives the original `closurePuzzle` (full vs tall, completely modifier) as a one-step corollary of the matrix.
+**Provenance discipline (option (a) refined)**: K&C 1977 stays as the study file's primary anchor (it's the theory paper). K&C 1979 is added as supplementary citation in the module docstring. Inline 1979 citations live in the *Fragment* `Relativization.lean` files (where the descriptive markers actually live), not in the study file's per-language `def`s. Hebrew/Arabic/Welsh/etc. Fragment files cite-extension to K&C 1979 deferred as a follow-up pass.
 
-**3. `Phenomena/Comparison/Studies/Kennedy2007Typology.lean` (36 line changes):** updated the §2 endpoint-consistency theorems to use the new `scaleType : Boundedness` field. Where the prior theorems projected through `.hasMax` only (`tallTypology.hasMaxEndpoint = tall.scaleType.hasMax := rfl` for 3 adjectives), the new theorems state full Boundedness equality (`tallTypology.scaleType = tall.scaleType := rfl`) for all 5 adjectives — including straight and bent which previously had no consistency theorem (and which would have failed under the prior asymmetric data: bent had `hasMaxEndpoint=true` from the `(true, true)` Bool pair but the fragment has `bent.scaleType = .lowerBounded`; the refactored data resolves this, matching the fragment + Kennedy 2007 §3.2's lower-closed classification of *bent*).
+**Yoruba Fragment notes extended** with K&C 1979 ex. 125-128 cross-confirmation tags on each of the 4 markers. Module docstring updated to dual-anchor on Awobuluyi 1978 + K&C 1979.
 
-**Verification provenance:** Kennedy 2007 PDF page 34 eq (61) is the canonical source for the modifier-class licensing matrix (verified earlier in this session at 0.230.420). Hay-Kennedy-Levin 1999 §3.1 (verified at 0.230.433) anchors the measure-phrase universality. The fragment scaleType annotations on the 5 adjectives (tall/full/wet/straight/bent) were directly inspected to ensure typology data matches.
+**Build verification**: 691-job transitive build passes. `decide`-by-construction theorems include `hc1_verified`/`hc2_verified`/`prc_verified` (Yoruba is 9th confirming data point), `subj_strategy_consistent_with_WALS` (continues to pass with Yoruba in `groundedSubjLanguages`, established in 0.230.434), and the new `yoruba_*` theorems.
 
-**What this fixes from the audit:**
-- ✓ Theorems are consumer-real (consumed via `closurePuzzle_via_matrix` + the 2 `decide`-able matrix theorems on data already in the file).
-- ✓ The `licenses` function is content-bearing: dispatches on `Boundedness` cases, uses `b.hasMax`/`hasMin` projections, predicts modifier behavior.
-- ✓ Data refactor eliminates the audit-flagged Bool-pair-instead-of-Boundedness pattern (consistent with 0.230.420's `Boundedness.ofType` removal).
-- ✓ Min-standard half is included (lower-bounded entries *wet, bent* in the typology).
-- ✓ Faithful to Kennedy 2007 eq (61) rather than just one-level-down algebra of `Set.Iic_top`.
+**Lean gotcha caught**: original draft of the module docstring had `+/-` in the K&C 1977 Table 1 description; Lean 4 sees the `/-` substring as opening a nested block comment within `/-! ... -/`, which then swallowed the rest of the file ("unterminated comment at line 568:0"). Fixed by replacing with `±` (and worth remembering as a recurring trap for future docstrings citing typological tables).
 
-**Remaining Tier-D:** Wellwood 2015's `telicityToStatus`/`vendlerToStatus`/`numberToStatus` refactor (compose through MereoTag); sortal Kennedy formalization (typed `PosExt D` / `NegExt D` with partial DEG); fine-grained completely-vs-half distinction (the matrix lumps proportional modifiers; "half" requires both endpoints, "completely" only requires upper).
+**Bib regen**: bibliography.md now has 1764 entries (+3 across this session: awobuluyi-1978, ajiboye-2005, keenan-comrie-1979). All three resolve correctly with reverse-index links to the Yoruba Fragment files + KeenanComrie1977 study file. 0.230.439
 
-**Build:** Kennedy2007Licensing.lean's 864-job transitive closure passes; Kennedy2007Typology.lean's 865-job closure passes; Theory.lean's 863-job closure passes. The 2 unrelated full-build failures (`Linglib.Theories.Syntax.Minimalism.Hopf.Defs`, `Linglib.Theories.Semantics.Comparison.ConsistencyConstraints`) are untracked files from concurrent sessions, no import-edge to my touched files.
+## [0.230.438] - 2026-04-26
+
+### PMF migration discipline: 12-site refactor to mathlib's `ofReal_ne_zero_iff` + ScontrasPearl audit cleanups + "check mathlib first" memory
+
+After the question "is this revealing pain points before scaling to other RSA migrations?" surfaced 14 recurring patterns across L&G, Nouwen, ScontrasPearl audits, and the user picked "build the Core toolkit", the planning step revealed a more important lesson: **the helpers already exist in mathlib**.
+
+**Pivot from "build Core helpers" to "use mathlib's existing API":**
+
+The integration auditor recommended promoting `ENNReal.ofReal_pos_of_pos` to `Core/Probability/PMFFin.lean` based on 12 occurrences of `rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]` boilerplate. **Mathlib has `ENNReal.ofReal_ne_zero_iff` in `Mathlib/Data/ENNReal/Real.lean:189`** — just unused by linglib consumers. Pure usage issue, not missing helper.
+
+Similar discoveries for two other recently-recommended helpers:
+- `chainPosterior` (Nouwen audit): mathlib has `posterior_comp` theorem; we built `PMF.posterior_chained_lt_iff_score_lt` as a theorem, not a new combinator. Saved 2 sessions.
+- `PMF.normalize_continuous` + posterior continuity (ScontrasPearl strategic plan): mathlib has ZERO PMF topology; uses per-point Tendsto pattern (`binomial_tendsto_poissonPMFReal_atTop`). Eliminated Phase 3 substrate gap.
+
+This is the THIRD instance of the same lesson in 3 weeks of PMF migration work.
+
+**Refactor (this session):**
+
+12 sites across 5 PMF files — `rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]` → `rw [ENNReal.ofReal_ne_zero_iff]` (1:1 drop-in via `perl -i -pe`). Files touched:
+- `TesslerFranke2020PMF.lean` (1 site, also got the `exact ENNReal.ofReal_ne_zero_iff.mpr` form refactor)
+- `KaoEtAl2014PMF.lean` (1 site)
+- `Nouwen2024PMF.lean` (5 sites)
+- `YoonEtAl2020PMF.lean` (1 site)
+- `ScontrasPearl2021PMF.lean` (4 sites — Phase 1 substrate)
+
+All 5 files build clean; zero new warnings introduced.
+
+**ScontrasPearl audit cleanups (6 audit-flagged items):**
+
+1. Dropped dead `_h_hi` hypotheses on `qudPriorAt`, `scopePriorAt`, `latentPriorAt` — `0 < p` suffices for the witness positivity; `p < 1` was unused.
+2. Promoted `extension_null_eq_univ` from `private` to public (reusable across PMF consumers).
+3. Fixed `(paper §3.3, §5.1)` → `(paper §3.2 last paragraph; restated §5.1)` citation per semantics audit's PDF verification.
+4. Replaced `D4_..._DEFERRED : True := trivial` with a `/-! ... -/` doc block including a fully-formed example signature for when `rsa_predict_pmf` lands or a closure helper is built.
+5. Encoded D3 reframing as Lean lemma `worldPriorAt_one_pre_norm_eq_at_b_01_b_09` — direct refutation that `worldPriorENN b_suc .one` is monotone in `b_suc` (b=0.1 and b=0.9 both yield 0.18). The strategic-plan correction is now machine-checkable.
+6. Module docstring already noted the L1 marginal-vs-joint distinction (Phase 1 work); audit's wording-fix recommendation tracked but not load-bearing.
+
+**Memory note** (`project_pmf_check_mathlib_first.md`): captures the pattern with all three instances. New discipline: before any "promote pattern X" implementation, grep mathlib's relevant directory for the canonical form. The mathlib answer is almost always more idiomatic than what local-recurrence evidence proposes.
+
+**Build verification**: all 5 refactored files build clean; ScontrasPearl2021PMF builds with all 6 audit cleanups; zero new warnings.
+
+**Net file-level changes:**
+
+| File | Before | After |
+|------|--------|-------|
+| 5 PMF consumer files | `rw [ne_eq, ofReal_eq_zero, not_le]` × 12 | `rw [ENNReal.ofReal_ne_zero_iff]` × 12 |
+| `ScontrasPearl2021PMF.lean` | 1154 LOC, 6 audit-flagged items | 1186 LOC, items addressed |
+| Memory | (no prior entry) | `project_pmf_check_mathlib_first.md` + index |
+
+**Architectural lesson** (most important takeaway from this session): the value of an audit isn't always "build the recommended Core helper" — sometimes it's "discover that mathlib already has it and refactor consumers to use it". Three consecutive instances of this in PMF migration work suggests the pattern is general: integration-audit recommendations need mathlib-pattern verification BEFORE Core promotion.
+
+Carries forward to the remaining ~40 PMF migrations: each new audit finding should run through the "check mathlib first" filter. Saves Core surface bloat and aligns with mathlib idiom.
+
+## [0.230.437] - 2026-04-26
+
+### PermSubsetCombinatorics trim + Anttila 1997 — substrate scope-correction
+
+**The trim**: `Core/Constraint/PermSubsetCombinatorics.lean` was reduced **944 LOC → 342 LOC** (-64%). The previous version implemented the full orbit-stabilizer factoring theorem `perm_filter_card_dDetermined` (for ANY D-determined predicate) via `canonicalPerm`/`listMapPerm`/`fiberDecomposition`/`fixingPermSubgroup` machinery. Web-search-confirmed investigation across the OT-variation literature (Anttila, Zuraw, Coetzee-Pater POC, Riggle r-volume, Aissen DOM, Boersma-Hayes stochastic OT, Stratal OT, Coetzee 2006 ROE) found that **every published consumer reduces to head-in-Y at the candidate-pair level**. The general theorem had no consumer beyond "correctness of the underlying invariant" — speculative scaffolding for hypothetical future use cases.
+
+**What's gone**: `IsValidDOrdering`, `IsDDetermined`, `permOfList`, `canonicalList`, `canonicalPerm`, `listMapPerm`, `fixingPermSubgroup` setup + Equiv.Perm extension hom, `fiberDecomposition`, `perm_dList_fiber_card_mul_factorial`, the general `perm_filter_card_dDetermined`, `validDOrderings`, `liftedPred`, `card_validDOrderings_filter_head_eq`, `card_validDOrderings_filter_head_in`. ~600 LOC of orbit-stabilizer machinery.
+
+**What's kept**: `permToList`, `permDList` + `@[simp]` lemmas, `permDList_mul_of_preserves_D`, swap-based proof of `perm_filter_head_in_card`. Six sections. The substrate's docstring documents the trim history so future readers (or future-us) don't re-attempt the literature search.
+
+**Zuraw 2010 migration**: `Phenomena/Phonology/Studies/Zuraw2010.lean` (312 LOC, 11 native_decide) → (443 LOC, 0 native_decide). All 6 factorial-percentage theorems (`subCount_p` through `subCount_g`) derived in closed form from `perm_filter_head_in_card` — no 720-perm enumeration. Implicational universals (voicing effect, place effect — 7 theorems total) proved per-ranking structurally via two helper lemmas (`subWinsP_extends_smaller_D` for voicing, `subWinsP_extends_larger_D` for place), each closing via decide on small Finset-inclusion facts. `factorialPatterns`/`patternOf` enumeration removed (not the substrate's natural domain — would need separate structural argument for `length = 10`).
+
+**Anttila 1997 added**: NEW `Phenomena/Phonology/Studies/Anttila1997.lean` (242 LOC). Formalizes the variation predictions for Finnish genitive plurals (table 53 motifs 3ab/4ab/5ab — 1/3-2/3, 1/2-1/2, 1/5-4/5 ratios). Each derived from a single `perm_filter_head_in_card` application against the relevant constraint stratum (Set 3 = 3 constraints; Set 4 = 6 constraints). Demonstrates substrate reusability across two phonological domains (Tagalog segmental + Finnish prosodic). The categorical motifs (1ab/2ab/6ab → 100%/0%) are not formalized — they require higher-stratum constraint reasoning, separate from the within-stratum head-in-Y pattern. Documented in module docstring.
+
+**Lessons learned (recorded in Anttila docstring)**: Don't wrap the substrate-targeted filter in a named `def count_*` that other declarations reference. Doing so triggers Lean's typeclass-cache to walk the Decidable instance during theorem-statement elaboration, which collides with subsequent `rw`s — symptom is "maximum recursion depth reached" on what should be cheap rewrites. State theorems directly about `(Finset.univ.filter <explicit-predicate>).card`. Verified via isolated reproducer in scratch/.
+
+5395+ jobs in subgraph green; 0 sorry / 0 native_decide / 0 noncomputable / 0 file-level set_option / 0 maxRecDepth across substrate + both consumers. Pre-existing `TurkHirsch2026` and `Kennedy2007Licensing` failures from concurrent sessions are unrelated to this work.
 
 ## [0.230.436] - 2026-04-26
 
-### Tier C #3 (FINAL audit item): Extent ↔ fragment-entry `scaleType` bridge in Gradability/Theory.lean
+### Bochnak 2015 §2.2 Consistency Constraints — substrate primitive (eq. 28a/b)
 
-The last deferred Tier C item from the §1 Boundedness audit (0.230.420). Adds a new section to `Theories/Semantics/Gradability/Theory.lean` connecting `GradableAdjEntry.scaleType : Boundedness` to the posExt/negExt extent algebra in `Core/Scales/Extent.lean` — closing the architectural loop between this session's first two commits (Extent.lean distillation + Scale.lean §1 cleanup) and putting the same fragment-bridge pattern just used in HayKennedyLevin1999.lean §2 (verb-side) on the gradability/adjective side.
+NEW `Theories/Semantics/Comparison/ConsistencyConstraints.lean` (~140 LOC) formalising @cite{bochnak-2015} §2.2's Consistency Constraints — the paper's "strongest formal result" per the 0.230.434 linguistics audit. Closes the load-bearing audit-flagged hole in `Phenomena/Gradability/Studies/Bochnak2015.lean`: the comparison-entailment theorem now factors through the substrate primitive without smuggling a measure into the Washo lexical entry.
 
-**~25-LOC addition** (1 import + 2 theorems + section docstring):
+**Substrate primitives added:**
+- `ConsistencyConstraintB del R : Prop` (eq. 28b) — abstract: per-context conjunction `del C x ∧ ¬ del C y` implies the abstract scalar relation `R x y`. The "scalar concept encoded by G" is parameterized as a generic `R : Entity → Entity → Prop`, not derived from a measure (faithful to Bochnak's text on p. 6:4 and p. 6:16).
+- `ConsistencyConstraintA del : Prop` (eq. 28a) — re-export of @cite{klein-1980} monotonicity, since CC-a IS exactly `IsMonotoneDelineation _ Set.univ` (already in linglib). Provides the cite-traceable name without duplicating substrate.
+- `comparativeSem_implies_R` — existential closure of CC-b: @cite{klein-1980}'s `comparativeSem` inherits the comparison entailment.
+- `FaithfulDelineation del R` — bundles CC-b (forward) with the converse direction (R-distinguished pairs admit a discriminating context). Used to factor the bidirectional `comparativeSem ↔ R` equivalence cleanly. The backward direction is implicit in @cite{bochnak-2015}'s claim that conjoined comparison "means" *more G than* but not stated explicitly; documented as such.
+- `comparativeSem_iff_R` — the substrate-level bidirectional equivalence, parametrised by `FaithfulDelineation`. Generalises the measure-based equivalence to arbitrary scalar concepts.
+- `measureDelineation_satisfies_CCb` and `measureDelineation_faithful` — the bridge from the abstract substrate primitive to the measure-induced specialisation. Shows that `measureDelineation μ` is faithful to `(fun a b => μ b < μ a)`, instantiating the abstract substrate.
 
-- New import: `Linglib.Core.Scales.Extent` (was missing).
-- `closedScale_satEntity_posExt_univ` — for a closed-scale entry, an entity saturating the scale (`μ w = ⊤`) has `posExt μ w = Set.univ`. Proof: `show Set.Iic (μ w) = Set.univ; rw [hSat, Set.Iic_top]`. The `posExt` `abbrev` over `Set.Iic` (from 0.230.419 Extent.lean refactor) lets the proof reduce to a one-line mathlib rewrite.
-- `closedScale_satEntity_negExt_empty` — analog for `negExt μ w = ∅`. Proof: `show Set.Ioi (μ w) = ∅; rw [hSat, Set.Ioi_top]`.
+**Refactor of `Phenomena/Gradability/Studies/Bochnak2015.lean`:**
+- `comparativeSem_measureDelineation_iff_degree` was previously proven by direct manipulation of `measureDelineation` (the audit-flagged smuggled-measure derivation). Now it's a one-line corollary: `comparativeSem_iff_R (measureDelineation_faithful height)`. The lexical entry no longer needs to expose `height` for the comparison entailment to go through — `height` participates only via the `measureDelineation_faithful` instance witness, separating substrate (abstract `R`) from instance (measure-specific bridge).
+- Module docstring's "Future work flagged by audit" section: the §2.2 item is now closed and replaced with a pointer to the new substrate file. The §3-§4 van Rooij parsimony argument and §4.3 Wellwood + Washo *t'e:k'e'* counterevidence remain as future work.
 
-**Documentation-gate convention** for the `_hClosed : entry.scaleType = .closed` hypothesis: the equality is structurally provable for any entry that admits a `μ w = ⊤` witness (the proof doesn't actually use `_hClosed`), but only closed-scale entries supply such witnesses in their lexical semantics. Open-scale entries (*tall, long*) have a structural `⊤` in `Degree max` but no entity in the intended interpretation reaches it. Gating on `_hClosed` makes the linguistic interpretation explicit at the type level — same convention K&L 2008's `KennedyLevin2008.lean` uses for its scale-driven theorems.
+**Why this is the right substrate move:**
+- The smuggled-measure workaround was a TYPE-LEVEL faithfulness flaw (Bochnak p. 6:4: "no measure function, and no degree variable at all"). The fix decouples `R` from any specific measure structure.
+- The substrate primitive is REUSABLE: any future Klein-style study file (DSP-negative languages, vague-predicate analyses) can quote the same `comparativeSem_iff_R` theorem with its own `R` and `FaithfulDelineation` instance.
+- CC-a / CC-b naming matches @cite{bochnak-2015}'s eq. (28a/b) verbatim — citation traceability per CLAUDE.md.
 
-**Why this closes the architectural loop:**
+862 jobs in subgraph green; pending deep multi-agent audit (mathlib + linguistics + integration + cross-framework) before declaring the substrate stable.
 
-- `closedAdj_licensed` and `openAdj_blocked` (already in Theory.lean) capture the bridge at the `licensed`-Bool level via `DirectedMeasure`. The new theorems sharpen this to the **extent-set** level: the formal underpinning of @cite{kennedy-2007}'s "completely full" max-standard reading is `posExt μ w = Set.univ` when `μ w = ⊤`.
-- The HKL 1999 study file (0.230.433) §2 uses the same fragment-bridge pattern on the verb side: `verb.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) = some Boundedness.X ∧ verb.toVerbCore.vendlerClass = some Y := ⟨rfl, rfl⟩`. The two patterns now form a **methodological pair**: verb-entry `degreeAchievementScale` ↔ DA telicity, and adjective-entry `scaleType` ↔ posExt extent algebra.
+## [0.230.435] - 2026-04-26
 
-**Verification status of the audit's Tier C:**
+### ScontrasPearl 2021 PMF — D7-application + 4-agent audit + D6-L0 (TwoNot exact-vs-at-least)
 
-- Tier C #1 (MereologicalStatus → MereoTag) — landed 0.230.425.
-- Tier C #2 (Krifka 1989 D 14 attribution + §7 counterexamples in Krifka1989.lean) — landed 0.230.428 + 0.230.429.
-- Tier C #3 (Extent ↔ fragment scaleType) — landed here, 0.230.436.
+Three things this session: (a) D7-application in 1 line; (b) 4-agent audit of Phases 1+2 with 4 substantive findings; (c) Phase 4 D6-L0 — paper's strongest theoretical contribution to numeral-semantics literature.
 
-The §1 Boundedness audit's full Tier C is now closed, alongside Tier A (dead-code drops) and Tier B (docstring honesty) which landed in 0.230.420. The remaining Tier-D items (Wellwood2015's parallel-mappings refactor; Kennedy 2007 modifier-class matrix; sortal Kennedy formalization) are flagged for future sessions.
+**D7-application** (1-line proof via `← S1g_all_qud_scope_invariant + ← add_mul`):
 
-**Build:** Theory.lean's 863-job transitive closure passes; direct consumers (`Adjectival.lean` fragment, `Rett2015.lean`, `Sassoon2013.lean`, `Kennedy2007Licensing.lean`) compile cleanly.
+```lean
+theorem marginalSpeaker_surfAll_invAll_combine ... :
+    latentPrior .surfAll * S1g hα .surfAll w u + latentPrior .invAll * S1g hα .invAll w u =
+      (latentPrior .surfAll + latentPrior .invAll) * S1g hα .surfAll w u := by
+  rw [← S1g_all_qud_scope_invariant hα w, ← add_mul]
+```
 
-## [0.230.433] - 2026-04-26
+The .surfAll and .invAll contributions to marginalSpeaker combine into a single sum-weighted term — their individual prior weights don't matter, only the total. Direct corollary of D7-S1.
 
-### NEW Phenomena/TenseAspect/Studies/HayKennedyLevin1999.lean — closes Krifka↔Kennedy↔HKL cross-framework triangle
+**4-agent audit findings** (mathlib + semantics-with-PDF + integration + cross-framework):
 
-New 280-LOC study file replicating @cite{hay-kennedy-levin-1999}'s "Scalar Structure Underlies Telicity in Degree Achievements" (SALT 9, pp. 127-144), the missing Lean file for the bridge that 0.230.429's `Krifka1989.lean` §7 explicitly cited as the source of the *defeasible closed-scale → telic-verb* mapping for degree achievements specifically.
+Block-merge:
+- `D4_..._DEFERRED : True := trivial` is unanimously rejected — worse than sorry (no warning, no statement).
+- `_h_hi` underscore-prefix dead hypotheses on parameterized priors.
+- §1-§7 should die (mathlib's recommendation): coexistence with §8 is a half-migration. Mathlib precedent: `Poisson` has no `uniformPoisson` sibling.
 
-**File structure (5 sections):**
+Structural improvements:
+- `extension_null_eq_univ` should be public (reusable across PMF consumers).
+- §11 D3 reframing should be a Lean lemma `worldPriorAt_one_not_monotone`, not docstring-only.
 
-§1 — HKL's `INCREASE` operator (eq 16): `def INCREASE φ x d startT finT : Prop := φ x startT + d = φ x finT` — the Prop-valued central operator. Two structural theorems: `increase_self` (zero-duration → zero difference) and `increase_unique_end` (given d, end-degree is uniquely determined → structural source of telic interpretations). Bridge note connecting to K&L 2008's `measureOfChange` in `Theories/Semantics/Degree/MeasureFunction.lean` (the measure-valued successor with explicit clamping at the initial degree per K&L eq 23 + 25).
+Citation accuracy (PDF-verified):
+- `(paper §3.3, §5.1)` is wrong — D7 mechanism is at §3.2 last paragraph, restated §5.1.
+- Missing bib entries: degen-goodman-2014, jasbi-etal-2019, musolino-lidz-2003, gualmini-2008, song-etal-2021.
 
-§2 — HKL §3.2 central matrix prediction verified on fragment data: `straighten` (closed scale → accomplishment, HKL eq 26) vs `lengthen`/`widen`/`cool`/`warm` (open scale → activity, HKL eq 27 + §3.1 defaults). Five `theorem`s of the form `verb.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) = some Boundedness.X ∧ verb.toVerbCore.vendlerClass = some Y := ⟨rfl, rfl⟩` — the matrix is provable by reflexivity on the existing fragment annotations, demonstrating linglib's fragment data already encodes HKL's predictions exactly.
+The bombshells:
+- **HIDDEN AGREEMENT** (cross-framework): D7 makes structurally identical predictions to Minimalist Scope Economy (`Theories/Syntax/Minimalism/Scope.lean::economyBlocksQR` — "QR is blocked when interpretations are equivalent"). Same observable space, completely different mechanisms, ZERO cross-reference. Exactly the linglib-thesis pattern that should be visible.
+- **`ScopeReading` re-stipulation**: SP defines its own instead of importing `ScopeTheory.ScopeReading` from `Features/ScopeTypes.lean` (which CCG, Minimalism, TTR all use — third version of the same enum).
+- **D6 (exact-vs-at-least semantics)** was unanimously recommended as the next priority over D1's full headline — paper's strongest contribution to numeral semantics literature (Geurts 2006, Breheny 2008), structurally orthogonal to the real-arithmetic wall.
 
-§3 — HKL §3.1 modifier-class data: 6 `HKLModifierDatum` entries spanning the three classes (measure phrases — *widened the road 5m* / *lake cooled 4 degrees*; `completely` — *straightened completely* / *dried completely*; `significantly` vs `slightly` — *broadened significantly* (telic) vs *broadened slightly* (atelic)). `modifierLicensesTelic : String → Bool` projection + `hklSection3_1Data_consistent` matrix theorem proving all 6 data points agree with the modifier-class licensing prediction (`decide`).
+**D6-L0 Phase 4 (this session)** — formalized the paper's §4.2.2 + p.27 Figure 7 structural mechanism:
 
-§4 — HKL §3.3 context-dependent telicity data: 4 `HKLContextDatum` entries showing the *pants/blinds* (conventional max → telic, cancellable per eq 32) vs *commute/heat* (no conventional bound → atelic) contrast. `hklSection3_3Data_matrix` theorem proving the bound ⟺ telic ⟺ cancellable identification on the data.
+NEW §12 `ScontrasPearl2021.TwoNot.PMF` namespace (~150 LOC):
+- `extension4 nr s u` — extension under numeral reading
+- `extension4_exact_surface_twoNot = {.w2}` (singleton — exact "exactly 2 didn't jump" pinpoints w=2)
+- `extension4_atLeast_surface_twoNot = {.w0, .w1, .w2}` (3-element — at-least dilutes across multiple worlds)
+- `extension4_nonempty` (case-split: w2 witness for `(.exact, .surface, .twoNot)`, w0 for the others)
+- `L0_4 nr s u` parameterized on numeral reading; `L0_4_apply_of_true/false` companions
+- `D6_L0_exact_gt_atLeast_at_w2` (FULLY PROVED) — at world w2, surface-scope `twoNot` L0 mass is **strictly higher under EXACT** (1) than under AT-LEAST (1/3). The structural foundation of the exact-semantics-necessity claim. Proof: extension cardinality 1 vs 3; uniform-on-extension gives 1/1 = 1 vs 1/3.
+- `D6_L0_exact_zero_atLeast_pos_at_w0` (FULLY PROVED) — at world w0, surface-scope `twoNot` L0 is ZERO under exact (vacuous-zero) but POSITIVE under at-least (= 1/3). The "dilution" mechanism: at-least's broader extension means L0 mass spreads to "wrong" worlds.
 
-§5 — HKL §4.1 beyond-DAs data: 4 `HKLBeyondDADatum` entries showing the analysis extends to consumption (*ate the sandwich in 5 min*), motion (*ran a mile*, *plane descended in 20 min*), and creation. `hklSection4Data_bounded_iff_telic` matrix theorem on the data. The §4.2 incremental-theme-as-difference-value argument is recorded in docstring prose with cross-reference to `Krifka1989.lean` §1-§4 as the substrate for those cases (via Krifka's QUA/CUM apparatus).
+These two L0 facts together capture the paper's structural argument: the L0 mass concentration under exact is what makes utterances informative; the L0 mass dilution under at-least is what makes them uninformative. The full D6 endorsement-rate inequality (Figure 7) follows by propagating these L0 facts through S1, L1, S2 — same numeric arithmetic wall as L&G/Nouwen headlines, but the **STRUCTURAL MECHANISM IS NOW VISIBLE**.
 
-**Anchoring discipline:** the file consumes existing substrate (`MeasureFunction.lean`, `DegreeAchievement.lean`, fragment `degreeAchievementScale` annotations) without re-deriving anything; HKL's specific contributions (the original INCREASE function name + §3 data + closed/open-range vocabulary that K&M 2005 later canonicalized) are what's distinctively HKL. K&L 2008's `KennedyLevin2008.lean` is cross-referenced as the canonical successor that proves per-verb derivation of `vendlerClass` from `scaleBoundedness` structurally.
+**Net file-level change**: 962 → 1154 LOC. Phase 1+2+4 substrate complete. Audit-flagged block-merge fixes (`True := trivial`, dead hypotheses, `extension_null_eq_univ` privacy) deferred to follow-up cleanup session.
 
-**Verification provenance** (HKL 1999 PDF, Hay/Kennedy/Levin 1999, SALT IX): eq 16 INCREASE definition verified at p. 132; §3.1 measure-phrase + completely + significantly/slightly data verified at pp. 133-135; §3.2 closed-range/open-range vocabulary (with example *straight, dry, full, empty* vs *long, wide, short*) verified at pp. 135-136; §3.3 context-dependent + cancellability data verified at pp. 136-137 (eqs 28-33); §4.1 beyond-DA generalization verified at pp. 139-141.
+**Architectural lessons:**
 
-**Closes the cross-framework triangle:** this session has now formalized the triangle Krifka 1989 ↔ Kennedy 2007 ↔ HKL 1999 that earlier commits (0.230.420, 0.230.428, 0.230.429) kept gesturing at without a Lean witness. HKL 1999 is the bridge: its measure-of-change INCREASE operator predicts DA telicity from base-adjective scale structure, while Krifka 1989's QUA/CUM operates one level down (predicate-level) and Kennedy 2007's scale-typology operates one level up (typological).
+1. **The Hidden Agreement** (cross-framework audit) is the most consequential finding from this session. D7 — the structural mechanism behind D1 — IS Minimalist Scope Economy under a different name. Both predict no observable difference under QUD = all? + Scope Economy applies. This is exactly the pattern linglib's "make incompatibilities visible" thesis should surface; the silent monopoly on the RSA framework hides theoretical convergence with the syntactic framework.
 
-**Build:** 1773-job transitive closure passes. Linglib.lean wired alphabetically with sibling `KennedyLevin2008` entry.
+2. **D6 picked over D1 for next session** (semantics audit's #1). D1 is the headline but requires Phase 3 sensitivity infrastructure; D6 is structurally orthogonal and provable via existing vacuous-zero machinery. Higher theoretical-payoff per session of work. Paper's actual claim about numeral semantics (Geurts, Breheny) — formalizing it makes the file relevant to a wider literature than just RSA.
+
+**Phase status**: Phase 1 ✓, Phase 2 (D7) ✓, Phase 4 (D6-L0) ✓ structural foundation. Deferred: Phase 3 (D1 + D2 + revised D3) sensitivity claims; D6's full endorsement-rate inequality (numeric core); cross-framework D7↔Scope-Economy bridge; audit-flagged hygiene fixes.
+
+## [0.230.434] - 2026-04-26
+
+### Bochnak 2015 study file: Washo as DSP-negative (post-3-agent audit refactor)
+
+NEW `Phenomena/Gradability/Studies/Bochnak2015.lean` formalizing @cite{bochnak-2015} *The Degree Semantics Parameter and cross-linguistic variation* (S&P 8.6, doi:10.3765/sp.8.6) — the empirical-frontier paper where the standard substrate's commitment to degree types comes apart from typological reality. Washo (Hokan isolate, California/Nevada) systematically lacks degree morphology; Bochnak argues its gradable predicates have type ⟨e, t⟩ (Klein-style delineation) rather than ⟨d, ⟨e, t⟩⟩. Linglib's Klein/Kennedy hierarchy (`Theories/Semantics/Comparison/Hierarchy.lean`) already provides the substrate; this is its first cross-linguistic-typology consumer.
+
+**3-agent audit before commit (mathlib-reviewer + linguistics-domain-expert + integration-auditor)** caught a faithfulness fatal flaw and ~10 cleanup items. Refactor:
+
+**Faithfulness fix (load-bearing):** initial draft had `tallWasho := measureDelineation height`, exposing `height : E → ℕ` as an explicit parameter to the Washo lexical entry. Bochnak (p. 6:4) explicitly: *"The semantics in (5) contains no measure function, and no degree variable at all."* The `height` parameter smuggled degree content back in via Lean's type discipline, putting the formalization closer to van Rooij's measurement-theoretic vague-predicate analysis (Bochnak §4.1, which Bochnak ARGUES AGAINST) than to Bochnak's own DSP-negative analysis. Refactor: dropped `tallWasho` as a function entirely; §2 now describes the type-level English/Washo contrast in prose, theorems quantify over arbitrary `del : ComparisonClass E → E → Prop`. The truth-conditional-equivalence theorem (`comparativeSem_measureDelineation_iff_degree`) is now stated directly about `measureDelineation height`, with a docstring caveat that Bochnak §2.2's Consistency-Constraints derivation (which would close this theorem WITHOUT the measure assumption) is flagged as future work.
+
+**Hierarchy.lean overclaim fix:** §6 prose initially conflated `nlDel_not_degree_representable` (about non-monotone *clever*-style delineations) with Bochnak's Washo data (monotone single-criterion). Editorial bridge that violated CLAUDE.md no-bridges rule. Refactor: dropped the `Hierarchy` import (was dead — only mentioned in prose); rewrote module docstring to anchor on `degree_characterization` (degree semantics ↔ monotone delineations), which is the theorem Bochnak's Washo data actually bears on. The empirical interest is that truth-conditional equivalence does NOT entail a particular LEXICAL TYPE — a separate point from strict-generality.
+
+**Eq. 24 sub-cases:** original draft proved only eq. (24a) (bent/straight); paper has 24a/b/c. Now all three proven (`eq24a_bent_straight_fails`, `eq24b_bent_notbent_fails`, `eq24c_straight_notstraight_fails`).
+
+**Code-quality cleanups (per mathlib-reviewer):**
+- `DegreeSemanticsParameter` was a phantom-`Lang` Bool wrapper — collapsed to `def DegreeSemanticsParameter := Bool`. Phantom parameter did nothing.
+- Dropped `_C : ComparisonClass E` unused parameters from `bentPred`/`straightPred` — they're not delineations, they're absolute predicates with a fixed scale-endpoint standard.
+- Deleted `bent_straight_conjoined_iff` (was `Iff.rfl`, no work).
+- Tightened `comparativeSem_measureDelineation_iff_degree` proof using `rfl`-destructuring + `lt_irrefl`.
+- Renamed `english_more_bent_succeeds_when_both_bent` → `english_more_bent_succeeds` (dropped vestigial premises that the proof didn't use).
+
+**Cross-references:** added Motu as a one-liner DSP-negative example (per @cite{beck-2009}); appended back-reference in `Klein1980.lean`'s Connections docstring noting Bochnak2015 is the typological attestation that the Klein-style ⟨e, t⟩ type is empirically realized.
+
+**Modeling-choice transparency:** §5 docstring now flags that the granularity threshold `ε ≥ 2` in `crisp_judgment_blocks_conjoined` is linglib's parameterization — Bochnak gives no numerical `ε`. The Lean theorem captures the SHAPE of the Similarity Constraint, not the paper's quantitative content.
+
+**Future work flagged in module docstring (linguistics audit identified):**
+- §2.2 norm-relatedness diagnostic + Consistency Constraints (eq. 28a/b) — Bochnak's strongest formal result, not yet formalized. A future phase would derive the comparison entailment from per-context conjunction WITHOUT a measure assumption.
+- §3-§4 van Rooij-style degree-free alternative analysis. Bochnak rejects on parsimony grounds; faithful formalization should engage and prove the parsimony argument.
+- §4.3 Wellwood (2014) *much*-based middle-ground + Washo *t'e:k'e'* counterevidence (eqs. 64-68) — Bochnak's most original cross-linguistic argument.
+
+**Bib entry:** added `bochnak-2015` (S&P 8.6, doi:10.3765/sp.8.6, verified against PDF) — distinct from the existing `bochnak-2015a`/`b` Washo modality entries.
+
+861 jobs in subgraph; ~5395 total expected green on full build.
+
+## [0.230.432] - 2026-04-26
+
+### ScontrasPearl 2021 PMF Phase 2 — D7 structural scope-collapse + D3 reframing
+
+Phase 2 of the 4-phase rebuild plan. Adds D7 (the paper's structural mechanism behind D1's pragmatic-dominance headline) as fully-proven theorems; documents D4 (discrete QUD ordering) as numeric-core sorry stub; corrects the strategic plan's D3 framing.
+
+**D7 — structural scope-collapse under QUD = `all?` (FULLY PROVED, ~50 LOC):**
+
+NEW §9 in `Phenomena/Quantification/Studies/ScontrasPearl2021PMF.lean`:
+
+- `extension_null_eq_univ` (helper) — `extension X .null = Finset.univ` for both scope readings (null is true everywhere).
+- `qudProjectE_all_scope_invariant` — **D7-L0**: under QUD = `all?`, the projected L0 mass is the same for surface and inverse scope readings of any utterance, at every world. Two-case proof:
+  - For `u = .null`: L0 distributions are pointwise equal (both uniform on `Finset.univ` since `extension X .null = univ`).
+  - For `u = .everyNot`: L0 distributions DIFFER pointwise (surface puts all mass on `.zero`; inverse splits between `.zero` and `.one`). But QUD `.all_` partitions worlds as `{.zero, .one}` vs `{.two}`, summing surface's `(1, 0) → 1` and inverse's `(1/2, 1/2) → 1` in the first cell. Equal projected behavior despite different raw L0. Uses `ENNReal.inv_two_add_inv_two` for the `1/2 + 1/2 = 1` step.
+- `S1g_all_qud_scope_invariant` — **D7-S1**: corollary at speaker layer. `S1g hα .surfAll w = S1g hα .invAll w` as PMFs, via `PMF.normalize_eq_of_apply_eq_and_sum_eq` lifted from D7-L0.
+
+**D7-application** (DEFERRED, documented in §9'): the headline structural consequence (`P(inverse)` doesn't affect `marginalSpeaker` when QUD = `all?` is favored) requires composing D7-S1 through `PMF.bind`; sketch given in docstring as future theorem signature. Not load-bearing for D1 (which lives at S2 layer); D1's eventual proof composes D7-S1 + binomial worldPrior calculations.
+
+**D4 — discrete QUD ordering (sorry'd numeric core):**
+
+NEW §10 documents the paper's Figure 2 center claim: at default `b_suc = 0.5`, uniform scope, `S2(.amb | .one)` is HIGHER under QUD-prior favoring `all?` (`p_all = 0.9`) than under uniform QUD prior (`p_all = 1/3`). Stated as `D4_all_favored_gt_uniform_NUMERIC_CORE_DEFERRED` placeholder; proof requires concrete ENNReal arithmetic on the chained Bayesian update (same wall as L&G/Nouwen headlines).
+
+**D3 — REFRAMED (strategic plan correction):**
+
+NEW §11 documents the most important strategic-plan correction from this session. The original strategic planner proposed:
+
+> "D3 monotonicity lemma (1 session) — `worldPrior_monotone_in_b_suc {b₁ b₂} (h : b₁ < b₂) : worldPrior b₁ .one ≤ worldPrior b₂ .one`. Discharge inline via `ENNReal.ofReal` monotonicity."
+
+**This is incorrect.** `worldPrior b_suc .one = 2·b_suc·(1-b_suc)` is NOT monotone in `b_suc` — it peaks at `b_suc = 0.5` (value 0.5) and is symmetric. At `b_suc = 0.1` and `b_suc = 0.9`, both give worldPrior(.one) = 0.18. The paper's claim (Figure 2 left, p.16) is that S2 ENDORSEMENT at world `.one` is monotone in `b_suc` (0.29 at b_suc=0.1, 0.50 at b_suc=0.5, 0.80 at b_suc=0.9). This is an **EMERGENT** property of the full chain (worldPrior → marginalSpeaker → L1 → S2), not a consequence of monotonicity in one factor.
+
+Intuition for the emergent monotonicity: as `b_suc → 1`, the prior shifts mass toward `.two`; `everyNot` at world `.one` becomes more INFORMATIVE because it rules out the high-prior `.two`; informative utterances are endorsed more by the rational speaker.
+
+**D3 is therefore Phase 3 sensitivity territory**, not Phase 2 inequality-library territory. Defer. The pointwise-Tendsto pattern from `binomial_tendsto_poissonPMFReal_atTop` (mathlib infra audit) is the right approach.
+
+**Net file-level change:** 813 → 962 LOC, +5 declarations (1 helper + D7-L0 + D7-S1 + D4 stub + D3 docstring), still 0 actual sorries.
+
+**Architectural lesson** (this session): the strategic plan was wrong on a load-bearing assumption (worldPrior monotonicity). Catching this BEFORE committing 2 sessions to a misframed proof is the value of running Phase 2's structural work first. D7's by-construction proofs grounded the whole layer; D3's reframing emerged naturally from analyzing what worldPrior actually does.
+
+**Phase 2 status:** D7 ✓ (the paper's structural mechanism, recommended #1 by semantics audit). D4 stated + sorry'd numeric core. D3 reframed to Phase 3.
+
+**Next phases:**
+- **Phase 3 (D1 + D2 + revised D3)**: pointwise Tendsto per `binomial_tendsto_poissonPMFReal_atTop`. D1 (pragmatic dominance) and D3 (S2 monotonicity in b_suc as emergent property) are now both Phase 3 sensitivity claims. D2 (Lipschitz) remains. ~3-4 sessions.
+- **Phase 4 (D6 + D5)**: TwoNot substrate; D6 (exact-semantics necessity) is the §4.2.2 novel claim. ~2 sessions.
+
+## [0.230.431] - 2026-04-26
+
+### Question-substrate completion + CGR 2018 audit study file
+
+Three substrate fills (G2 / N3 / Fox 2018 promotion) plus a substrate-anchor study file for the inquisitive-semantics canon.
+
+**G2 — `alt` characterizations for lattice operations** (`Linglib/Core/Question/Basic.lean`):
+- `mem_alt_sup_iff` — Maximal-rewrite for inquisitive ⊔, parallel to existing `mem_alt_inf_iff`
+- `mem_alt_sup_of_alt_left` / `mem_alt_sup_of_alt_right` — constructive direction (an alt of one summand survives in `alt (P ⊔ Q)` if not properly subsumed by an alt of the other)
+- `alt_sup_subset_union` — necessary direction (an alt of `P ⊔ Q` is an alt of one of the summands when restricted to that summand's `props`)
+
+**N3 — `Decidable` instances for substrate predicates on polar questions**:
+- `Resolution.lean::Resolves.decidable_polar` and `MentionAll.decidable_polar` (under `[Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)]` and nontriviality witnesses)
+- `Exhaustivity.lean::IsExhaustivelyResolvable.decidable_polar` (always `isTrue` for nontrivial polars — substrate fact behind @cite{dayal-1996}'s observation that polar EP is unproblematic)
+
+**Fox 2018 substrate promotion** (`Linglib/Theories/Semantics/Questions/Exhaustivity.lean`):
+- `exhCell Q p := {w | IsStrongestTrueAnswer Q w p}` (eq 11)
+- `exhaustifiedPartition Q := Set.range (strongAnswer Q)` (eq 3)
+- Partition properties: `exhaustifiedPartition_nonempty`, `exhaustifiedPartition_eq_or_disjoint`, `sUnion_exhaustifiedPartition`
+- `Phenomena/Questions/Studies/Fox2018.lean` refactored to `abbrev`s of the substrate primitives (-26 LOC; `Exh = exhCell`, `LogicalPartition = exhaustifiedPartition`)
+
+**`IsDecisionRelevant → HasMultipleSubstantiveAlternatives` bridge** (`Linglib/Theories/Semantics/Questions/DecisionTheoretic.lean`):
+- `IsDecisionRelevant.imp_HasMultipleSubstantiveAlternatives` — substrate-level: decision-relevance entails @cite{chierchia-2013}'s prerequisite for NPI licensing
+
+**NEW `Phenomena/Questions/Studies/CiardelliGroenendijkRoelofsen2018.lean`** (~250 LOC) — substrate-audit study file (unique among `Studies/`: not a paper *replication* but a paper *audit*, since the substrate IS this paper's formalisation). Exhaustive identification table from CGR Chapter-2/3/5 definitions to substrate identifiers (Def 2.3 Issue → `Question`; Def 2.7 Alternatives → `alt`; Def 2.20 Entailment → substrate `≤`; Def 2.35 Update → `⊓`; Fact 3.5 P* characterization → `compl_eq`; Fact 3.14 Division → `proj_inf_nonInfo`; §5.1 Polar → `polar`; §5.4.2 Wh → `which`; etc.). Plus 11 substrate-validation theorems re-proving CGR Facts 2.14, 2.18, 2.19, 2.36, 3.1, 3.2, 3.5, 3.14, 3.15 on substrate primitives. Closes the question-semantics canon by making the substrate's faithfulness to its primary citation auditable.
+
+All builds clean (1007 jobs in the question-semantics layer including new file).
+
+## [0.230.430] - 2026-04-26
+
+### ScontrasPearl 2021 PMF Phase 1 substrate — paper-faithful parameterization + S2 layer
+
+After 3-agent strategic audit (semantics with PDF + mathlib infra + general-purpose planner), plus user-led mathlib-pattern verification (`PMF.binomial` + `binomial_tendsto_poissonPMFReal_atTop` confirmed mathlib's discipline of "no PMF topology — use pointwise Tendsto"), executed Phase 1 of the 4-phase rebuild plan.
+
+**Audit findings (3 agents converged):**
+
+1. **Three documented fidelity gaps** between §1-§7 and the paper:
+   - `worldPrior` (§1) is `PMF.uniformOfFintype` — paper p.15-16 uses **binomial(2, b_suc)**. At b_suc=0.5: binomial gives (1/4, 1/2, 1/4), NOT uniform (1/3, 1/3, 1/3). Paper-fidelity bug.
+   - `L1` (§6) returns `PMF JumpOutcome` — the world marginal of the paper's joint L1 over `(w, i, q)`. Operationally fine; mischaracterized.
+   - **S2 layer absent** from §1-§7. Paper p.15: S2 is the layer that maps to truth-value judgments. The §7 docstring's "5 sorry'd L1 inequalities pending rsa_predict" was OUTDATED text — proofs landed; the actual gap is missing S2 architecture.
+
+2. **Paper's "deep results" priority order**: D7 (either-scope-serves-listener structural) → D1 (pragmatic dominance) → D2 (Lipschitz) → D3 (monotonicity) → D4 (QUD ordering) → D6 (NEW: exact-vs-at-least semantics necessity for §4.2.2 Two-not).
+
+3. **Mathlib infrastructure verified** (user explicitly checked): mathlib has ZERO `Continuous`/`Tendsto`/`Lipschitz` lemmas on PMF. Only ONE Tendsto-on-PMF hit across mathlib: `binomial_tendsto_poissonPMFReal_atTop` in `PoissonLimitThm.lean:94`. Mathlib's pattern: **pointwise `Tendsto` at a fixed application point**. Eliminates the strategic planner's "Phase 3 Core substrate gap (2 sessions for `PMF.normalize_continuous`)"; that work would invent infrastructure mathlib chose not to build. Same lesson as the earlier `chainPosterior` question.
+
+**Phase 1 substrate (this session, ~213 LOC added):**
+
+NEW §8 in `Phenomena/Quantification/Studies/ScontrasPearl2021PMF.lean`:
+- §8.1 `worldPriorENN` + `worldPriorAt b_suc h_lo h_hi` — binomial(2, b_suc), paper-faithful
+- §8.2 `qudPriorENN` + `qudPriorAt p_all` — favored-QUD weight on `all?`
+- §8.3 `scopePriorENN` + `scopePriorAt p_inv` — favored-scope weight on `inverse`
+- §8.4 `latentPriorENN` + `latentPriorAt p_inv p_all` — independent product
+- §8.5 `L1At hα worldPrior latentPrior u h` — paper-faithful posterior parameterized on both priors
+- §8.6 `S2Score` + `S2 hα worldPrior latentPrior w h_score_pos` — production speaker per paper p.15
+
+All construction uses `PMF.normalizeOfFintype` (Core helper from earlier promotion). Real-valued parameters with explicit `0 < · < 1` hypotheses (mathlib pattern, cf. `PMF.binomial`'s `unitInterval`).
+
+**Honest module docstring rewrite** documents the three fidelity gaps; lists D1-D7 priority; cites mathlib infra audit's pointwise-Tendsto pattern as verified path for D1; notes Phase 1 substrate addition.
+
+**Co-existence design (not replacement):** §1-§7 retains the uniform-prior simplification (proofs use `posterior_lt_iff_kernel_lt_of_uniform` which assumes uniform). §8 adds paper-faithful versions in parallel. Future phases can deprecate §1-§7 once consumers migrate.
+
+**Net file-level change:** 600 → 813 LOC, +12 declarations, still 0 sorries.
+
+**Architectural lesson** (mathlib-faithful pattern, ratified): before adding domain-specific abstractions, check what mathlib actually does. Mathlib's `binomial_tendsto_poissonPMFReal_atTop` is the canonical precedent: real-parameterized PMF families with **per-point Tendsto** for limit statements. No PMF topology needed; D1's eventual proof is ENNReal arithmetic plumbing on the closed-form expansion per world.
+
+**Next phases:**
+- Phase 2 (D7 + D3 + D4): D7 first (structural, by-construction); existing PMF inequality library suffices. ~2-3 sessions.
+- Phase 3 (D1 + D2): pointwise Tendsto per `binomial_tendsto_poissonPMFReal_atTop`, NOT PMF continuity infra. ~2-3 sessions (down from 5-6 once PMF topology dropped).
+- Phase 4 (D6 + D5): TwoNot substrate; D6 is §4.2.2 novel claim (exact-semantics necessity), not just replication. ~2 sessions.
+
+Revised total: ~7-10 sessions (down from 12-15 once mathlib pattern verified — Phase 3 substrate gap evaporates).
 
 ## [0.230.429] - 2026-04-26
 
@@ -170,7 +589,7 @@ Adds the `Theories/Semantics/Measurement.lean:MereologicalStatus` ↔ `Core.Scal
 
 **What's NOT in this commit (deferred to Tier-D-ish follow-up):** the existing `telicityToStatus`/`vendlerToStatus`/`numberToStatus`/`gradableToStatus`/`nonGradableToStatus` definitions (§3 of Measurement.lean) still re-derive mappings parallel to `DimensionBridge.lean` rather than composing through `MereoTag`. Refactoring those to compose-through-MereoTag is a consumer-touching change (Wellwood2015.lean uses `telicityToStatus` directly) and is left for a separate session that can audit per-consumer impact.
 
-**Build:** Measurement.lean's 935-job transitive closure passes; downstream consumers (`Theories/Semantics/Gradability/StatesBased.lean`, `Phenomena/Comparison/Studies/Wellwood2015.lean`) compile cleanly. The 3 unrelated full-build failures (`Phenomena/Questions/Studies/{Heim1994,George2011}.lean` and `Core/Constraint/PermSubsetCombinatorics.lean`) are untracked files from concurrent sessions, not in HEAD, no import-edge to Measurement.lean.
+**Build:** Measurement.lean's 935-job transitive closure passes; downstream consumers (`Theories/Semantics/Gradability/StatesBased.lean`, `Phenomena/Comparison/Studies/Wellwood2015.lean`) compile cleanly. The 3 unrelated full-build failures (`Phenomena/Questions/Studies/{Heim1994,George2011}.lean` and `Core/Constraint/PermSubsetCombinatorics.lean`) are untracked files from concurrent sessions, not in HEAD, no import-edge to Measurement.lean. (PermSubsetCombinatorics has since landed in 0.230.437 — see entry above.)
 
 ## [0.230.424] - 2026-04-26
 

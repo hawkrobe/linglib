@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Modification
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Fragments.Greek.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
-import Linglib.Fragments.Russian.AdjAgreement
+import Linglib.Fragments.Slavic.Russian.AdjAgreement
 import Linglib.Fragments.Italian.AdjAgreement
 
 /-!
@@ -414,12 +414,12 @@ theorem german_profile_consistent_pred :
 
 /-- Russian: fragment confirms pred = attr (long forms identical). -/
 theorem russian_fragment_sameAgreement :
-    Fragments.Russian.AdjAgreement.entry.sameAgreement = true := by native_decide
+    Fragments.Slavic.Russian.AdjAgreement.entry.sameAgreement = true := by native_decide
 
 /-- Russian profile is consistent with fragment. -/
 theorem russian_profile_consistent_pred :
     russian.predAttrSameAgreement =
-    Fragments.Russian.AdjAgreement.entry.sameAgreement := by native_decide
+    Fragments.Slavic.Russian.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Italian: fragment confirms pred = attr (both carry φ). -/
 theorem italian_fragment_sameAgreement :

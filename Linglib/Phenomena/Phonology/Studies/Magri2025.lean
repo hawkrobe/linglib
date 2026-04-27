@@ -46,17 +46,18 @@ open Fragments.Tagalog.Phonology
 -- *differences* Δₖ). For the independence check, we verify that each
 -- raw constraint is insensitive to at least one dimension.
 
-/-- C₁ = *NC is insensitive to the prefix (row dimension):
-    the violation is 1 for NO and 0 for YES regardless of prefix. -/
+/-- C₁ = DEP-C is insensitive to the prefix (row dimension):
+    the violation is 1 for NO and 0 for YES regardless of prefix.
+    Per @cite{zuraw-2010} (16). -/
+theorem depC_insensitive_to_row (o : NasalSubOutput) :
+    depC (.mang_b, o) = depC (.pang_b, o) ∧
+    depC (.mang_k, o) = depC (.pang_k, o) := by
+  cases o <;> decide
+
+/-- C₂ = \*NC is insensitive to the prefix. Per @cite{zuraw-2010} (17). -/
 theorem starNC_insensitive_to_row (o : NasalSubOutput) :
     starNC (.mang_b, o) = starNC (.pang_b, o) ∧
     starNC (.mang_k, o) = starNC (.pang_k, o) := by
-  cases o <;> decide
-
-/-- C₂ = \*NC̥ is insensitive to the prefix. -/
-theorem starNCvoiceless_insensitive_to_row (o : NasalSubOutput) :
-    starNCvoiceless (.mang_b, o) = starNCvoiceless (.pang_b, o) ∧
-    starNCvoiceless (.mang_k, o) = starNCvoiceless (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₃ = \*\[stem\] is insensitive to the prefix. -/
@@ -92,7 +93,7 @@ theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
 theorem constraint_independence (o : NasalSubOutput) :
     ConstraintIndependence (fun k x => constraints k (x, o)) nasalSubSquare := by
   intro k; fin_cases k <;> cases o <;>
-    simp only [constraints, starNC, starNCvoiceless, starStemVelar,
+    simp only [constraints, depC, starNC, starStemVelar,
       starStemVelarCoronal, unifMang, unifPang, nasalSubSquare,
       InsensitiveToRow, InsensitiveToCol] <;>
     decide
@@ -264,7 +265,7 @@ theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
   intro k
   simp only [SeparableHarmony.rescale, meSeparable, Real.log_exp, nasalSubSquare]
   fin_cases k <;>
-    simp only [constraints, starNC, starNCvoiceless, starStemVelar,
+    simp only [constraints, depC, starNC, starStemVelar,
       starStemVelarCoronal, unifMang, unifPang] <;>
     simp
 

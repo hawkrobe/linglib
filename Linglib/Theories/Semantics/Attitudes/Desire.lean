@@ -4,7 +4,6 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Answerhood
 import Linglib.Core.Question.Partition.Basic
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Basic
@@ -850,8 +849,8 @@ predicate corresponds to a property of the underlying
 `Core.Question W`:
 
 * `wantQuestionBased` "every undominated answer entails p" relates to
-  `Core.Question.isMentionAllAnswer` restricted to the undominated
-  subset of `alt Q`.
+  the partition property "every undominated cell of `Q` entails `p`"
+  — i.e., `∀ q ∈ alt Q, q ∈ undominated → q ⊆ p`.
 
 * `isConsidered` corresponds to `partial-answerhood for the polar
   question of p`: every cell of Q is either a confirming or refuting

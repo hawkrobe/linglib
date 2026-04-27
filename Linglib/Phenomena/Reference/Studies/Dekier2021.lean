@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Features.IndefiniteType
-import Linglib.Fragments.Russian.Indefinites
+import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Yakut.Indefinites
@@ -58,7 +58,7 @@ namespace Dekier2021
 
 open Morphology.Nanosyntax
 open Features.IndefiniteType
-open Fragments.Russian.Indefinites
+open Fragments.Slavic.Russian.Indefinites
 open Fragments.English.Indefinites
 open Fragments.Latin.Indefinites
 open Fragments.Yakut.Indefinites

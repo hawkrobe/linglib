@@ -36,7 +36,7 @@ of inference the listener is performing.
 
 -/
 
-open Core.BToM BigOperators
+open Core BigOperators
 
 -- ============================================================================
 -- §1. Latent Classification

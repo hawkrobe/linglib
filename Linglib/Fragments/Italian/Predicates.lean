@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Italian Verb Entries @cite{fusco-sgrizzi-2026}

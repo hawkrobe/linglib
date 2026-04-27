@@ -280,12 +280,12 @@ inductive DoublingParse where
     *parse* of a doubled form as phonological identity vs. morphological
     reduplication. -/
 def ocpXX : NamedConstraint DoublingParse :=
-  mkMark "OCP-XX" (· == .identity)
+  mkMark "OCP-XX" (· = .identity)
 
 /-- *RED: general markedness against reduplication.
     Violated by the reduplicative parse (morphological cost of RED). -/
 def starRED : NamedConstraint DoublingParse :=
-  mkMark "*RED" (· == .reduplication)
+  mkMark "*RED" (· = .reduplication)
 
 /-- REALIZE-MORPH: faithfulness to the morphological specification.
     When the input specifies a morphological operation (e.g., plurality
@@ -296,7 +296,7 @@ def starRED : NamedConstraint DoublingParse :=
     makes the reduplication interpretation available for the relevant
     morphological function (see `realizeMorphAvailable`). -/
 def realizeMorph : NamedConstraint DoublingParse :=
-  mkMax "REALIZE-MORPH" (· == .nonidentical)
+  mkMax "REALIZE-MORPH" (· = .nonidentical)
 
 -- ============================================================================
 -- § 5: Rankings and Candidate Sets

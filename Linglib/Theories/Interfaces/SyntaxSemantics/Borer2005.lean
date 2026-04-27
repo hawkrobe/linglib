@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 import Linglib.Core.Lexical.NounCategorization
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
 
 /-!
 # Nominal Syntax-Semantics Mapping

@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
-import Linglib.Theories.Semantics.Degree.DegreeAbstraction
+import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Theories.Semantics.Degree.Differential
@@ -43,7 +43,7 @@ scope configurations are empirically available.
 
 namespace Heim2001
 
-open Semantics.Degree.DegreeAbstraction
+open Semantics.Degree.Abstraction
 open Semantics.Degree.Comparative (comparativeSem)
 
 -- ════════════════════════════════════════════════════

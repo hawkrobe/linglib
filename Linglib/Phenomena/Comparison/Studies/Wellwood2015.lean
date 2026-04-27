@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.Measurement
 import Linglib.Theories.Semantics.Events.ThematicRoles
-import Linglib.Theories.Semantics.Events.Krifka1998
+import Linglib.Theories.Semantics.Events.ThematicRoleProperties
+import Linglib.Theories.Semantics.Events.Incrementality
+import Linglib.Theories.Semantics.Events.CumulativityPropagation
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 
@@ -804,7 +806,9 @@ The bridge theorems below connect Krifka's formal CUM/QUA predicates
 and `statusPredictsFelicitous`.
 -/
 
-open Semantics.Events.Krifka1998
+open Semantics.Events.ThematicRoleProperties (IsCumThetaVerb)
+open Semantics.Events.Incrementality (IsSincVerb)
+open Semantics.Events.CumulativityPropagation (VP cum_propagation qua_propagation)
 
 /-- CUM(VP) → VP is measurable by `much` (cumulative status).
 
@@ -813,11 +817,11 @@ open Semantics.Events.Krifka1998
     `much` and availability of multiple measurement dimensions
     (DURATION, DISTANCE, etc.). -/
 theorem cum_vp_measurable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    {θ : α → β → Prop} {OBJ : α → Prop}
-    (hCum : CumTheta θ) (hObj : Mereology.CUM OBJ) :
+    (θ : α → β → Prop) [IsCumThetaVerb θ] {OBJ : α → Prop}
+    (hObj : Mereology.CUM OBJ) :
     statusPredictsFelicitous (telicityToStatus .atelic) = true ∧
     Mereology.CUM (VP θ OBJ) :=
-  ⟨rfl, cum_propagation hCum hObj⟩
+  ⟨rfl, cum_propagation hObj⟩
 
 /-- QUA(VP) → VP is NOT measurable by `much` (quantized status).
 
@@ -826,11 +830,11 @@ theorem cum_vp_measurable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β
     `much`. Only NUMBER remains as a measurement dimension. -/
 theorem qua_vp_not_measurable {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
-    {θ : α → β → Prop} {OBJ : α → Prop}
-    (hUP : UP θ) (hSinc : SINC θ) (hQua : Mereology.QUA OBJ) :
+    (θ : α → β → Prop) [IsSincVerb θ] {OBJ : α → Prop}
+    (hQua : Mereology.QUA OBJ) :
     statusPredictsFelicitous (telicityToStatus .telic) = false ∧
     Mereology.QUA (VP θ OBJ) :=
-  ⟨rfl, qua_propagation_sinc hUP hSinc hQua⟩
+  ⟨rfl, qua_propagation hQua⟩
 
 /-- Grammar shifts measurement (§5): telicization of a CUM VP yields a QUA VP.
 
@@ -846,11 +850,10 @@ theorem qua_vp_not_measurable {α β : Type*}
     object), the measurement status shifts from cumulative to quantized. -/
 theorem grammar_shifts_via_krifka {α β : Type*}
     [SemilatticeSup α] [SemilatticeSup β]
-    {θ : α → β → Prop} {OBJ_cum OBJ_qua : α → Prop}
-    (hCumTheta : CumTheta θ) (hCumObj : Mereology.CUM OBJ_cum)
-    (hUP : UP θ) (hSinc : SINC θ) (hQuaObj : Mereology.QUA OBJ_qua) :
+    (θ : α → β → Prop) [IsSincVerb θ] {OBJ_cum OBJ_qua : α → Prop}
+    (hCumObj : Mereology.CUM OBJ_cum) (hQuaObj : Mereology.QUA OBJ_qua) :
     Mereology.CUM (VP θ OBJ_cum) ∧ Mereology.QUA (VP θ OBJ_qua) :=
-  ⟨cum_propagation hCumTheta hCumObj, qua_propagation_sinc hUP hSinc hQuaObj⟩
+  ⟨cum_propagation hCumObj, qua_propagation hQuaObj⟩
 
 -- ════════════════════════════════════════════════════
 -- § 17. Cross-Categorial Construction Data

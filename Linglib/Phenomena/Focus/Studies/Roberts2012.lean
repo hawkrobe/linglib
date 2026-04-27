@@ -3,7 +3,6 @@ import Linglib.Core.Question.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Focus.Interpretation
-import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod
 
@@ -631,11 +630,14 @@ theorem hannahBeans_relevant_to_strategy :
 -- § Q-A Congruence / Focus Type Identity
 -- ════════════════════════════════════════════════════
 
-/-- The Rooth–Hamblin type identity grounds Q-A congruence:
-    propositional focus values and Hamblin question denotations are the
-    same type. @cite{rooth-1992}, @cite{roberts-2012} Def. 25. -/
-theorem focus_question_type_identity :
+/-- Q-A congruence in Rooth's framework rests on the type identity
+    `PropFocusValue W = Set (Set W)`: focus values and question
+    denotations are both flat sets of propositions over `W`. The
+    substrate-level bridge to `Core.Question W` (inquisitive,
+    downward-closed) lives in the focus-as-issue lift; see
+    Focus/Interpretation.lean. -/
+theorem focus_value_is_propositional_set :
     Semantics.FocusInterpretation.PropFocusValue D0World =
-    Semantics.Questions.Hamblin.QuestionDen D0World := rfl
+    Set (Set D0World) := rfl
 
 end Roberts2012

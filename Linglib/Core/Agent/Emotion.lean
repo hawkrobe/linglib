@@ -53,7 +53,7 @@ see `RefinedAppraisalWeights` (§6) and the full instantiation in
 
 -/
 
-namespace Core.Agent.Emotion
+namespace Core
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Core Types
@@ -170,7 +170,7 @@ structure RefinedAppraisalWeights where
 -- ════════════════════════════════════════════════════════════════
 
 section AppraisalComputation
-open Core.BToM
+open Core
 
 variable {F : Type*} [CommSemiring F]
 variable {A P B D S M W : Type*}
@@ -234,7 +234,7 @@ end AppraisalComputation
 -- ════════════════════════════════════════════════════════════════
 
 section WeightedCounterfactual
-open Core.BToM
+open Core
 
 variable {F : Type*} [Ring F]
 variable {A P B D S M W : Type*}
@@ -263,7 +263,7 @@ end WeightedCounterfactual
 -- ════════════════════════════════════════════════════════════════
 
 section ReputationalAppraisal
-open Core.BToM
+open Core
 
 variable {F : Type*} [CommSemiring F]
 variable {A P B D S M W : Type*}
@@ -655,7 +655,7 @@ def prospectiveDread : ProspectiveEmotionProfile :=
 -- ════════════════════════════════════════════════════════════════
 
 section ProspectiveBToM
-open Core.BToM
+open Core
 
 variable {F : Type*} [CommSemiring F] [LinearOrder F]
 variable {A P B D S M W : Type*}
@@ -715,4 +715,4 @@ theorem prospectiveUtility_eq_desire_weighted_sum
 
 end ProspectiveBToM
 
-end Core.Agent.Emotion
+end Core

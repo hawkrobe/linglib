@@ -76,7 +76,7 @@ every world's own category gives positive meaning at that world. -/
 /-- Every entry of `featurePrior` is strictly positive. Verified per cell. -/
 theorem featurePriorE_pos (c : Cat) (a b d : Bool) : featurePriorE c a b d ≠ 0 := by
   unfold featurePriorE
-  simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
+  simp only [ENNReal.ofReal_ne_zero_iff]
   cases c <;> cases a <;> cases b <;> cases d <;>
     (unfold featurePrior; norm_num)
 

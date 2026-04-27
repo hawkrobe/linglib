@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Fragments.Bulgarian.Evidentials
+import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
 /-!
 # @cite{koev-2017} Empirical Data @cite{koev-2017}
@@ -163,7 +163,7 @@ open Core.Presupposition
 open Semantics.Events
 open Semantics.Events.SpatiotemporalDistance
 open Semantics.Tense.Evidential
-open Fragments.Bulgarian.Evidentials
+open Fragments.Slavic.Bulgarian.Evidentials
 
 -- ════════════════════════════════════════════════════
 -- § 1. Learning Scenarios (@cite{koev-2017}, §4)

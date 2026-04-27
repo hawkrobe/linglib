@@ -6,7 +6,7 @@ import Mathlib.Tactic.Basic
 
 General-purpose continuation monad, following @cite{barker-shan-2014}.
 The type `Cont R A := (A → R) → R` underlies lifted question types
-(LiftedTypes.lean), higher-order dynamic GQs, and
+(Lifted.lean), higher-order dynamic GQs, and
 scope-taking expressions generally.
 
 ## Key definitions

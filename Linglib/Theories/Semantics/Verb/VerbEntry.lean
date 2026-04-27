@@ -12,7 +12,7 @@ import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
-import Linglib.Theories.Semantics.Events.Krifka1998
+import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure
@@ -53,7 +53,7 @@ open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
 open Semantics.Verb.EntailmentProfile (EntailmentProfile)
 open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Events.Krifka1998 (VerbIncClass)
+open Semantics.Events.Incrementality (VerbIncClass)
 open Semantics.Verb.LevinClassProfiles
 
 /-- Framework-neutral voice type for deriving argument structure properties.

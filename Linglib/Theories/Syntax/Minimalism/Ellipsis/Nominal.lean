@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
 
 /-!
 # Nominal Ellipsis Licensing

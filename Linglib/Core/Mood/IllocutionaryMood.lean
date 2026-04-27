@@ -9,7 +9,7 @@ interrogative, imperative, promissive, exclamative. This is the F in F(p).
 
 Distinct from:
 - `Core.Mood.GramMood` (indicative/subjunctive morphology — see `Basic.lean`)
-- `Minimalism.Phenomena.SpeechActs.SAPMood` (Speas & Tenny's 2×2 configuration)
+- `Minimalism.SpeechActs.SAPMood` (Speas & Tenny's 2×2 configuration)
 
 The pair `(IllocutionaryMood, GramMood)` is `Core.Mood.ClauseType`.
 

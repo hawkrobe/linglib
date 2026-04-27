@@ -21,8 +21,9 @@ structure is **closed under composition**.
 1. Reader satisfies the four applicative functor laws (§3.3)
 2. Composed applicatives F ∘ G are applicative (§3.3, all 4 laws)
 3. Variable-free semantics (@cite{jacobson-1999}) = Reader Entity (§6)
-4. Set applicative satisfies all 4 laws; Hamblin `QuestionDen W` =
-   `Cont Bool W` definitionally (both `(W → Bool) → Bool`)
+4. Set applicative satisfies all 4 laws; the Hamblin functional
+   `(W → Bool) → Bool` (Rooth focus values, Karttunen-style answers)
+   = `Cont Bool W` definitionally
 5. Cont applicative operations = `Cont.pure`/`Cont.bind`+`Cont.map` (§3.3)
 6. Typed assignment family `Gᵣ` for intensional variables (§5)
 -/

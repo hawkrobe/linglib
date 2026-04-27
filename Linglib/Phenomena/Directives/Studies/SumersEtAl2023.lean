@@ -616,7 +616,7 @@ def trueIrrelevantUtterance : Utterance := ⟨.green, .pos2⟩
 /-!
 ## Key Theoretical Results
 
-These connect to Comparisons/RelevanceTheories.lean for the deep theorems.
+These connect to Phenomena/Questions/Studies/SumersEtAl2023.lean for the deep theorems.
 -/
 
 /-- Combined model reduces to truthfulness when lambda = 0.
@@ -731,7 +731,7 @@ Sumers et al. bridges several research traditions:
 4. **QUD models** (Roberts): Question under discussion.
    QUDs can be derived from decision problems (Theorem 2).
 
-See Comparisons/RelevanceTheories.lean for the formal connections:
+See Phenomena/Questions/Studies/SumersEtAl2023.lean for the formal connections:
 - Identity DP equiv epistemic utility (Theorem 1)
 - Any QUD is some DP (Theorem 2)
 - DT strictly more expressive than QUD (Theorem 3)

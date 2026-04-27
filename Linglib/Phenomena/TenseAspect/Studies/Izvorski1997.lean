@@ -2,7 +2,7 @@ import Linglib.Features.Evidentiality
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Fragments.Bulgarian.Evidentials
+import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fin.Basic
 
@@ -166,7 +166,7 @@ open Semantics.Modality.Kratzer
 open Core.Presupposition
 open Features.Evidentiality
 open Semantics.Tense.Evidential
-open Fragments.Bulgarian.Evidentials
+open Fragments.Slavic.Bulgarian.Evidentials
 
 abbrev World := Fin 4
 
