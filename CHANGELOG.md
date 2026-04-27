@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.429] - 2026-04-26
+
+### Phenomena/TenseAspect/Studies/Krifka1989.lean: full §3-§7 rewrite + §7 predicate-vs-scale gap counterexamples
+
+Bundles two changes that landed together: (1) a previously-drafted full rewrite of `Phenomena/TenseAspect/Studies/Krifka1989.lean` (227 → 670 LOC) that aligns the file's section structure with @cite{krifka-1989}'s actual paper sections (§3 nominal reference, §4 thematic-relation features, §5 atomicity ≠ quantization, §6 quantification §7), replacing the older composition-focused `NomRef`/`composedRef` framing with `NPDatum`/`K89ThematicDatum`/`K89QuantDatum` structures that record K89's central exemplars and call substrate theorems (`barePlural_cum`, `qmod_of_cum_is_qua`, `measure_phrase_makes_qua`); and (2) a new §7 "Scope: predicate-level QUA/CUM ≠ carrier-level boundedness" that adds the predicate-vs-scale-gap counterexamples emerged from the Krifka 1989 PDF verification in 0.230.428.
+
+**§7 content (~50 LOC, anchored on K89 framework scope):**
+
+The §7 narrative establishes that @cite{krifka-1989} defines QUA and CUM (D 14, D 12, p. 78) as properties of *predicates* over a structured carrier — a complete join semilattice with a part relation — and makes no claim that these predicate-level properties entail bounds on the *carrier* itself (e.g. that the carrier has Mathlib `OrderTop` / `OrderBot` instances). This matters because downstream linglib code uses `Core.Scale.MereoTag.qua = .closed` as a lexical-classification tag that conflates the two levels. The conflation is convenient for cross-framework gluing across @cite{krifka-1989}, @cite{kennedy-2007}, @cite{rouillard-2026} (see `Core/Scales/MereoDim.lean` for the structural bridges that DO hold — `singleton_qua_closed`, `qua_kennedy_licensed`), but it does not follow from K89's definitions.
+
+**Two examples make the gap concrete:**
+
+1. **Forward gap** (QUA without carrier boundedness): `Mereology.QUA (α := ℕ) (· = 5)` proved by `omega`, alongside `NoMaxOrder ℕ := inferInstance`. The singleton predicate `(· = 5)` on ℕ is QUA (no proper part of 5 in ℕ also equals 5), but ℕ has no maximum element.
+
+2. **Reverse gap** (carrier boundedness without QUA): `¬ Mereology.QUA (α := Fin 3) (fun k => k.val ≤ 1)` proved by `decide`-witness on `0 < 1` with both elements satisfying the predicate, alongside `OrderTop (Fin 3) := inferInstance` and `OrderBot (Fin 3) := inferInstance`. `Fin 3` has both endpoints, but the predicate "value at most 1" admits both `0` and `1` with `0 < 1` — QUA's no-proper-part-overlap condition fails.
+
+**Anchoring discipline:** §7 sits in `Phenomena/TenseAspect/Studies/Krifka1989.lean` rather than `Core/Scales/MereoDim.lean` (the Mereology↔Scale bridge) or `Core/Mereology.lean` (the QUA def-site) because the gap is a *meta-claim about K89's framework scope* — what K89's definitions do and don't entail. The K89 study file is the natural home for K89-framework-scope content, and §7 is self-contained (only depends on `Mereology.QUA` + mathlib typeclasses).
+
+**Defeasible-bridge note:** §7 explicitly cites @cite{hay-kennedy-levin-1999} as the source of the *closed-scale → telic-verb* bridge for **degree achievements specifically** (lengthen, cool, straighten); it is not K89's claim, and even HKL restrict it to verbs derived from gradable adjectives (verified against the HKL 1999 SALT 9 PDF in 0.230.420).
+
+**Build:** Mereology.lean's 935-job transitive closure passes (Krifka1989.lean and all downstream consumers compile cleanly).
+
 ## [0.230.428] - 2026-04-26
 
 ### Tier C #2 (revised): Mereology.lean Krifka 1989 attribution on QUA/CUM
