@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.433] - 2026-04-26
+
+### NEW Phenomena/TenseAspect/Studies/HayKennedyLevin1999.lean — closes Krifka↔Kennedy↔HKL cross-framework triangle
+
+New 280-LOC study file replicating @cite{hay-kennedy-levin-1999}'s "Scalar Structure Underlies Telicity in Degree Achievements" (SALT 9, pp. 127-144), the missing Lean file for the bridge that 0.230.429's `Krifka1989.lean` §7 explicitly cited as the source of the *defeasible closed-scale → telic-verb* mapping for degree achievements specifically.
+
+**File structure (5 sections):**
+
+§1 — HKL's `INCREASE` operator (eq 16): `def INCREASE φ x d startT finT : Prop := φ x startT + d = φ x finT` — the Prop-valued central operator. Two structural theorems: `increase_self` (zero-duration → zero difference) and `increase_unique_end` (given d, end-degree is uniquely determined → structural source of telic interpretations). Bridge note connecting to K&L 2008's `measureOfChange` in `Theories/Semantics/Degree/MeasureFunction.lean` (the measure-valued successor with explicit clamping at the initial degree per K&L eq 23 + 25).
+
+§2 — HKL §3.2 central matrix prediction verified on fragment data: `straighten` (closed scale → accomplishment, HKL eq 26) vs `lengthen`/`widen`/`cool`/`warm` (open scale → activity, HKL eq 27 + §3.1 defaults). Five `theorem`s of the form `verb.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) = some Boundedness.X ∧ verb.toVerbCore.vendlerClass = some Y := ⟨rfl, rfl⟩` — the matrix is provable by reflexivity on the existing fragment annotations, demonstrating linglib's fragment data already encodes HKL's predictions exactly.
+
+§3 — HKL §3.1 modifier-class data: 6 `HKLModifierDatum` entries spanning the three classes (measure phrases — *widened the road 5m* / *lake cooled 4 degrees*; `completely` — *straightened completely* / *dried completely*; `significantly` vs `slightly` — *broadened significantly* (telic) vs *broadened slightly* (atelic)). `modifierLicensesTelic : String → Bool` projection + `hklSection3_1Data_consistent` matrix theorem proving all 6 data points agree with the modifier-class licensing prediction (`decide`).
+
+§4 — HKL §3.3 context-dependent telicity data: 4 `HKLContextDatum` entries showing the *pants/blinds* (conventional max → telic, cancellable per eq 32) vs *commute/heat* (no conventional bound → atelic) contrast. `hklSection3_3Data_matrix` theorem proving the bound ⟺ telic ⟺ cancellable identification on the data.
+
+§5 — HKL §4.1 beyond-DAs data: 4 `HKLBeyondDADatum` entries showing the analysis extends to consumption (*ate the sandwich in 5 min*), motion (*ran a mile*, *plane descended in 20 min*), and creation. `hklSection4Data_bounded_iff_telic` matrix theorem on the data. The §4.2 incremental-theme-as-difference-value argument is recorded in docstring prose with cross-reference to `Krifka1989.lean` §1-§4 as the substrate for those cases (via Krifka's QUA/CUM apparatus).
+
+**Anchoring discipline:** the file consumes existing substrate (`MeasureFunction.lean`, `DegreeAchievement.lean`, fragment `degreeAchievementScale` annotations) without re-deriving anything; HKL's specific contributions (the original INCREASE function name + §3 data + closed/open-range vocabulary that K&M 2005 later canonicalized) are what's distinctively HKL. K&L 2008's `KennedyLevin2008.lean` is cross-referenced as the canonical successor that proves per-verb derivation of `vendlerClass` from `scaleBoundedness` structurally.
+
+**Verification provenance** (HKL 1999 PDF, Hay/Kennedy/Levin 1999, SALT IX): eq 16 INCREASE definition verified at p. 132; §3.1 measure-phrase + completely + significantly/slightly data verified at pp. 133-135; §3.2 closed-range/open-range vocabulary (with example *straight, dry, full, empty* vs *long, wide, short*) verified at pp. 135-136; §3.3 context-dependent + cancellability data verified at pp. 136-137 (eqs 28-33); §4.1 beyond-DA generalization verified at pp. 139-141.
+
+**Closes the cross-framework triangle:** this session has now formalized the triangle Krifka 1989 ↔ Kennedy 2007 ↔ HKL 1999 that earlier commits (0.230.420, 0.230.428, 0.230.429) kept gesturing at without a Lean witness. HKL 1999 is the bridge: its measure-of-change INCREASE operator predicts DA telicity from base-adjective scale structure, while Krifka 1989's QUA/CUM operates one level down (predicate-level) and Kennedy 2007's scale-typology operates one level up (typological).
+
+**Build:** 1773-job transitive closure passes. Linglib.lean wired alphabetically with sibling `KennedyLevin2008` entry.
+
 ## [0.230.429] - 2026-04-26
 
 ### Phenomena/TenseAspect/Studies/Krifka1989.lean: full §3-§7 rewrite + §7 predicate-vs-scale gap counterexamples

@@ -1521,6 +1521,7 @@ import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.DimensionCoherence
 import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
+import Linglib.Phenomena.TenseAspect.Studies.HayKennedyLevin1999
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003
