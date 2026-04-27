@@ -4,6 +4,35 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.436] - 2026-04-26
+
+### Tier C #3 (FINAL audit item): Extent ↔ fragment-entry `scaleType` bridge in Gradability/Theory.lean
+
+The last deferred Tier C item from the §1 Boundedness audit (0.230.420). Adds a new section to `Theories/Semantics/Gradability/Theory.lean` connecting `GradableAdjEntry.scaleType : Boundedness` to the posExt/negExt extent algebra in `Core/Scales/Extent.lean` — closing the architectural loop between this session's first two commits (Extent.lean distillation + Scale.lean §1 cleanup) and putting the same fragment-bridge pattern just used in HayKennedyLevin1999.lean §2 (verb-side) on the gradability/adjective side.
+
+**~25-LOC addition** (1 import + 2 theorems + section docstring):
+
+- New import: `Linglib.Core.Scales.Extent` (was missing).
+- `closedScale_satEntity_posExt_univ` — for a closed-scale entry, an entity saturating the scale (`μ w = ⊤`) has `posExt μ w = Set.univ`. Proof: `show Set.Iic (μ w) = Set.univ; rw [hSat, Set.Iic_top]`. The `posExt` `abbrev` over `Set.Iic` (from 0.230.419 Extent.lean refactor) lets the proof reduce to a one-line mathlib rewrite.
+- `closedScale_satEntity_negExt_empty` — analog for `negExt μ w = ∅`. Proof: `show Set.Ioi (μ w) = ∅; rw [hSat, Set.Ioi_top]`.
+
+**Documentation-gate convention** for the `_hClosed : entry.scaleType = .closed` hypothesis: the equality is structurally provable for any entry that admits a `μ w = ⊤` witness (the proof doesn't actually use `_hClosed`), but only closed-scale entries supply such witnesses in their lexical semantics. Open-scale entries (*tall, long*) have a structural `⊤` in `Degree max` but no entity in the intended interpretation reaches it. Gating on `_hClosed` makes the linguistic interpretation explicit at the type level — same convention K&L 2008's `KennedyLevin2008.lean` uses for its scale-driven theorems.
+
+**Why this closes the architectural loop:**
+
+- `closedAdj_licensed` and `openAdj_blocked` (already in Theory.lean) capture the bridge at the `licensed`-Bool level via `DirectedMeasure`. The new theorems sharpen this to the **extent-set** level: the formal underpinning of @cite{kennedy-2007}'s "completely full" max-standard reading is `posExt μ w = Set.univ` when `μ w = ⊤`.
+- The HKL 1999 study file (0.230.433) §2 uses the same fragment-bridge pattern on the verb side: `verb.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) = some Boundedness.X ∧ verb.toVerbCore.vendlerClass = some Y := ⟨rfl, rfl⟩`. The two patterns now form a **methodological pair**: verb-entry `degreeAchievementScale` ↔ DA telicity, and adjective-entry `scaleType` ↔ posExt extent algebra.
+
+**Verification status of the audit's Tier C:**
+
+- Tier C #1 (MereologicalStatus → MereoTag) — landed 0.230.425.
+- Tier C #2 (Krifka 1989 D 14 attribution + §7 counterexamples in Krifka1989.lean) — landed 0.230.428 + 0.230.429.
+- Tier C #3 (Extent ↔ fragment scaleType) — landed here, 0.230.436.
+
+The §1 Boundedness audit's full Tier C is now closed, alongside Tier A (dead-code drops) and Tier B (docstring honesty) which landed in 0.230.420. The remaining Tier-D items (Wellwood2015's parallel-mappings refactor; Kennedy 2007 modifier-class matrix; sortal Kennedy formalization) are flagged for future sessions.
+
+**Build:** Theory.lean's 863-job transitive closure passes; direct consumers (`Adjectival.lean` fragment, `Rett2015.lean`, `Sassoon2013.lean`, `Kennedy2007Licensing.lean`) compile cleanly.
+
 ## [0.230.433] - 2026-04-26
 
 ### NEW Phenomena/TenseAspect/Studies/HayKennedyLevin1999.lean — closes Krifka↔Kennedy↔HKL cross-framework triangle
