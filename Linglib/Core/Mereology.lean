@@ -55,8 +55,8 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 -- ════════════════════════════════════════════════════
 
 /-- Cumulative reference (CUM): P is closed under join.
-    @cite{link-1983} (T.11); @cite{champollion-2017} §2.3.2:
-    CUM(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ⊕ y).
+    @cite{link-1983} (T.11); @cite{krifka-1989} D 12; @cite{champollion-2017} §2.3.2:
+    `CUMₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ∪ₛ y)`.
     Activities and states are canonically cumulative. -/
 def CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → P y → P (x ⊔ y)
@@ -69,7 +69,12 @@ def DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y ≤ x → P y
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
-    @cite{champollion-2017} §2.3.5: QUA(P) ⇔ ∀x,y. P(x) ∧ y < x → ¬P(y).
+
+    @cite{krifka-1989} D 14: `QUAₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → ¬ y ⊂ₛ x`.
+    @cite{champollion-2017} §2.3.5 reformulates as `∀x,y. P(x) ∧ y < x → ¬P(y)`,
+    which is propositionally equivalent (`(A → B → ¬C) ↔ (A → C → ¬B)`).
+    Linglib uses Champollion's form because its introduction pattern fits
+    intro-style proofs more cleanly (assume `P x` and `y < x`, derive `¬ P y`).
     Telic predicates are canonically quantized. -/
 def QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ¬ P y

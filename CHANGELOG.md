@@ -4,6 +4,34 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.428] - 2026-04-26
+
+### Tier C #2 (revised): Mereology.lean Krifka 1989 attribution on QUA/CUM
+
+The §1 Boundedness audit's cross-framework reconciler flagged that "the qua/closed identification is asserted in three docstrings but never proved on Krifka's actual definition" (Tier C #2). On reading @cite{krifka-1989} *Nominal Reference, Temporal Constitution and Quantification in Event Semantics* (Bartsch, van Benthem & van Emde Boas eds.), the audit's premise turned out to be over-stated:
+
+- `Linglib/Core/Mereology.lean` already defines `QUA` and `CUM` in Krifka's exact spirit (Champollion-2017-reformulated).
+- `Linglib/Core/Scales/MereoDim.lean` already provides the structural bridges: `singleton_qua_closed`, `qua_kennedy_licensed`, `cum_kennedy_blocked`, `qua_direction_invariant`.
+- The actual gap was attribution: per-def docstrings cited only @cite{champollion-2017} despite the file's module-header citing @cite{krifka-1989}, and the propositional form-equivalence between Krifka D 14 (`P x ∧ P y → ¬ y ⊂ x`) and Champollion's reformulation (`P x ∧ y < x → ¬ P y`) was implicit.
+
+**Two docstring-only edits to `Mereology.lean` (3 inserts, 8 deletes net):**
+
+1. **`CUM` docstring** — added @cite{krifka-1989} D 12 attribution alongside Link 1983 (T.11) and Champollion 2017 §2.3.2. Updated the inline form to use Krifka's `∪ₛ` lattice-join notation matching the paper.
+
+2. **`QUA` docstring** — added @cite{krifka-1989} D 14 as the primary attribution (`∀x y, P x ∧ P y → ¬ y ⊂ₛ x`). Documented Champollion 2017 §2.3.5's reformulation (`∀x y, P x ∧ y < x → ¬ P y`) and noted the propositional equivalence `(A → B → ¬C) ↔ (A → C → ¬B)`. Explained why Linglib uses Champollion's form (intro-pattern ergonomics for proofs).
+
+**No theorem added** — an earlier draft included `QUA_iff_krifka_D14 : QUA P ↔ ∀ x y, P x → P y → ¬ y < x` provable by `tauto`, but the equivalence is purely propositional rearrangement with no mathematical content. Mathlib style argues against canonizing such trivialities. The docstring attribution carries the verification provenance without theorem fluff.
+
+**Source verification (Krifka 1989 PDF):**
+- D 12 (p. 78): `∀P[CUMₛ(P) ↔ ∀x∀y[P(x) ∧ P(y) → P(x∪ₛy)]]` — verbatim closure under join. Linglib's CUM matches exactly.
+- D 14 (p. 78): `∀P[QUAₛ(P) ↔ ∀x∀y[P(x) ∧ P(y) → ¬y⊂ₛx]]` — no proper-part overlap. Linglib's QUA is the propositional rearrangement.
+- D 5/D 7 (p. 77): Krifka's `⊆ₛ` and `⊂ₛ` are the part and proper-part relations on his complete join semilattice (≡ Mathlib's `≤` and `<` on `SemilatticeSup` / `PartialOrder`). Type alignment confirmed.
+
+**What this commit does NOT do (Tier-D-ish, deferred):**
+- The audit also asked whether `QUA P ↔ ∃d, scale_of_P.boundedness = .closed` should be a theorem. Verification showed this CANNOT be a general biconditional: counterexample-forward (P = "is exactly 5cm tall" is QUA but height scale is open); counterexample-reverse (Q = "is between 0% and 50% full" lives on a closed scale but is not QUA). The collapse asserted by `MereoTag` is at the LEXICAL CLASSIFICATION level (which framework labels the entry as quantized), not the PREDICATE-PROPERTY level (which would require additional structure — measure functions, max-existence assumptions, etc.). Surfacing this gap as a clarifying docstring on `MereoTag` is left for the Tier-D follow-up.
+
+**Build:** Mereology.lean's 694-job transitive closure passes (docstring-only change, no consumer impact possible).
+
 ## [0.230.425] - 2026-04-26
 
 ### Tier C #1: MereologicalStatus (Wellwood 2015) ↔ MereoTag bridge — closes silent divergence
