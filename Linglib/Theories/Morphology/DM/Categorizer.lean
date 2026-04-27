@@ -595,7 +595,7 @@ def ImpoverishmentRule.apply (rule : ImpoverishmentRule)
     syntactically projectable unit (@cite{harley-2014} §2). -/
 structure CategorizedRoot where
   /-- The acategorial root (arity, change-type, etc.) -/
-  root : Root
+  root : RootClassification
   /-- The categorizing head that gives it syntactic category -/
   categorizer : Categorizer
   deriving BEq, Repr
@@ -612,7 +612,7 @@ def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
     This is the formal content of the claim that √HAMMER can surface as
     either a noun (hammer) or a verb (to hammer) — same root, different
     category, determined entirely by the categorizer (@cite{harley-2014} §2). -/
-theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
+theorem same_root_different_category (r : RootClassification) (c1 c2 : Categorizer)
     (h : c1 ≠ c2) :
     (CategorizedRoot.mk r c1).category ≠ (CategorizedRoot.mk r c2).category := by
   simp only [CategorizedRoot.category, Categorizer.toCategory]
@@ -639,12 +639,12 @@ theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
     3. Hiaki suppletive verbs: suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
        between root and argument below the categorizer. -/
-theorem complement_selection_at_root_level (r : Root) (c1 c2 : Categorizer) :
+theorem complement_selection_at_root_level (r : RootClassification) (c1 c2 : Categorizer) :
     (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity := rfl
 
 /-- A theme-selecting root maintains its complement requirement regardless
     of whether it surfaces as a noun, verb, or adjective (@cite{harley-2014} §3). -/
-theorem theme_selecting_root_always_selects (r : Root) (c : Categorizer)
+theorem theme_selecting_root_always_selects (r : RootClassification) (c : Categorizer)
     (h : r.arity = .selectsTheme) :
     (CategorizedRoot.mk r c).root.arity.hasInternalArg = true := by
   simp [h, RootArity.hasInternalArg]
@@ -714,7 +714,7 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
     V directly; √HAMMER + n + v also gives V but via layered derivation.
     This structural ambiguity is invisible at the category level
     (@cite{harley-2014} §2). -/
-theorem denominal_yields_verbal (r : Root) :
+theorem denominal_yields_verbal (r : RootClassification) :
     ∃ cr, (CategorizedRoot.mk r .n).recategorize .denominal = some cr ∧
           cr.category = Cat.V :=
   ⟨⟨r, .v⟩, rfl, rfl⟩

@@ -27,7 +27,7 @@ linglib already formalizes several cases of allosemy without naming them:
   (relational/sortal/alienator), selected by `selectsD` and context
 - `Minimalist.VoiceFlavor`: Voice has six flavors (agentive/causer/
   nonThematic/expletive/impersonal/passive), each with different semantics
-- `RootType` / `Root.changeType`: roots vary in whether
+- `RootType` / `RootClassification.changeType`: roots vary in whether
   they entail change, conditioning the semantics of the v that embeds them
 
 This module provides the general abstraction: `AllosemicEntry` and

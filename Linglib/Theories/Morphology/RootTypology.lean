@@ -44,7 +44,7 @@ between functional head and root.
 
 ## Unified Root (§§15–17)
 
-Extends the file with the `Root` structure (§16) bundling @cite{coon-2019}'s arity
+Extends the file with the `RootClassification` structure (§16) bundling @cite{coon-2019}'s arity
 dimension (does the root select an internal argument?) with Beavers et al.'s
 change-entailment dimension. The two axes cross-classify orthogonally
 (`arity_changeType_orthogonal`): knowing whether a root selects a theme tells
@@ -153,7 +153,7 @@ def RootDenotationType.hasIndivArg : RootDenotationType → Bool
     recovered as (arity × denotationType) pairs:
     √TV = selectsTheme + indivStatePred, √ITV = noTheme + indivStatePred,
     √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
-structure Root where
+structure RootClassification where
   /-- Does this root select an internal argument? -/
   arity : RootArity
   /-- Does this root lexically entail prior change? -/
@@ -168,7 +168,7 @@ structure Root where
   deriving BEq, Repr
 
 /-- Does this root lexically entail prior change? -/
-def Root.entailsChange (r : Root) : Bool := r.changeType.entailsChange
+def RootClassification.entailsChange (r : RootClassification) : Bool := r.changeType.entailsChange
 
 /-- Property concept root subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5).
 
@@ -1316,11 +1316,11 @@ theorem grand_unification (rt : RootType) :
 -- ════════════════════════════════════════════════════
 
 /-- Predicted verbal markedness from change entailment. -/
-def Root.verbalMarkedness (r : Root) : Markedness :=
+def RootClassification.verbalMarkedness (r : RootClassification) : Markedness :=
   _root_.verbalMarkedness r.changeType
 
 /-- Predicted stative markedness from change entailment. -/
-def Root.stativeMarkedness (r : Root) : Markedness :=
+def RootClassification.stativeMarkedness (r : RootClassification) : Markedness :=
   _root_.stativeMarkedness r.changeType
 
 -- ════════════════════════════════════════════════════
@@ -1332,7 +1332,7 @@ def Root.stativeMarkedness (r : Root) : Markedness :=
 /-- √BREAK: selects theme + entails change (result root, Levin 45.1).
     "Break X" — the root obligatorily takes a patient that undergoes
     breaking, and the root lexically entails a prior change event. -/
-def Root.break_ : Root :=
+def RootClassification.break_ : RootClassification :=
   { arity := .selectsTheme, changeType := .result,
     denotationType := some .indivStatePred, levinClass := some .break_ }
 
@@ -1341,7 +1341,7 @@ def Root.break_ : Root :=
     that the patient undergoes a change of state (@cite{levin-1993} pp. 5–8).
     `.propertyConcept` is used broadly here: the formal content
     (`entailsChange = false`) is what matters, not the label. -/
-def Root.hit : Root :=
+def RootClassification.hit : RootClassification :=
   { arity := .selectsTheme, changeType := .propertyConcept,
     denotationType := some .indivStatePred, levinClass := some .hit }
 
@@ -1349,14 +1349,14 @@ def Root.hit : Root :=
     "Die" — intransitive; the dying entity is introduced by functional
     structure (unaccusative vGO/vBE), not selected by the root. Dying
     lexically entails a prior change event (becoming dead). -/
-def Root.die : Root :=
+def RootClassification.die : RootClassification :=
   { arity := .noTheme, changeType := .result,
     denotationType := some .indivStatePred }
 
 /-- √SIT: no theme + does not entail change (positional root).
     "Sit" — Coon's √POS class: denotes a spatial configuration state.
     No internal argument, no entailed change. -/
-def Root.sit : Root :=
+def RootClassification.sit : RootClassification :=
   { arity := .noTheme, changeType := .propertyConcept,
     denotationType := some .measureFn, levinClass := some .assumePosition }
 
@@ -1367,10 +1367,10 @@ def Root.sit : Root :=
     knowing that a root selects a theme tells you nothing about
     whether it entails change, and vice versa. -/
 theorem arity_changeType_orthogonal :
-    (∃ r : Root, r.arity = .selectsTheme ∧ r.changeType = .result) ∧
-    (∃ r : Root, r.arity = .selectsTheme ∧ r.changeType = .propertyConcept) ∧
-    (∃ r : Root, r.arity = .noTheme ∧ r.changeType = .result) ∧
-    (∃ r : Root, r.arity = .noTheme ∧ r.changeType = .propertyConcept) :=
+    (∃ r : RootClassification, r.arity = .selectsTheme ∧ r.changeType = .result) ∧
+    (∃ r : RootClassification, r.arity = .selectsTheme ∧ r.changeType = .propertyConcept) ∧
+    (∃ r : RootClassification, r.arity = .noTheme ∧ r.changeType = .result) ∧
+    (∃ r : RootClassification, r.arity = .noTheme ∧ r.changeType = .propertyConcept) :=
   ⟨⟨.break_, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
 
 /-- **Change entailment does not determine arity** (and vice versa).
@@ -1382,10 +1382,10 @@ theorem arity_changeType_orthogonal :
     dimension of prediction: whether the root will surface with an
     internal argument across voice alternations. -/
 theorem change_does_not_determine_arity :
-    (∃ r : Root, r.entailsChange = true ∧ r.arity = .selectsTheme) ∧
-    (∃ r : Root, r.entailsChange = true ∧ r.arity = .noTheme) ∧
-    (∃ r : Root, r.entailsChange = false ∧ r.arity = .selectsTheme) ∧
-    (∃ r : Root, r.entailsChange = false ∧ r.arity = .noTheme) :=
+    (∃ r : RootClassification, r.entailsChange = true ∧ r.arity = .selectsTheme) ∧
+    (∃ r : RootClassification, r.entailsChange = true ∧ r.arity = .noTheme) ∧
+    (∃ r : RootClassification, r.entailsChange = false ∧ r.arity = .selectsTheme) ∧
+    (∃ r : RootClassification, r.entailsChange = false ∧ r.arity = .noTheme) :=
   ⟨⟨.break_, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
 
 /-- **Theme persistence** (@cite{coon-2019} main empirical claim).
@@ -1395,28 +1395,28 @@ theorem change_does_not_determine_arity :
     with an internal argument in transitive (Ø), passive (-ch, -j),
     and antipassive (-w) constructions alike.
 
-    This is expressed by design: `arity` is a field of `Root`, not of
+    This is expressed by design: `arity` is a field of `RootClassification`, not of
     the derived verb. No functional head modifies it. -/
-theorem theme_persistence (r : Root) (h : r.arity = .selectsTheme) :
+theorem theme_persistence (r : RootClassification) (h : r.arity = .selectsTheme) :
     r.arity.hasInternalArg = true := by
   simp [h, RootArity.hasInternalArg]
 
 /-- Change entailment determines markedness in the unified Root. -/
-theorem root_markedness_from_change (r : Root) :
+theorem root_markedness_from_change (r : RootClassification) :
     r.verbalMarkedness = .unmarked ↔ r.entailsChange = true := by
   cases r with | mk arity changeType _ _ _ =>
-  cases changeType <;> simp [Root.verbalMarkedness, Root.entailsChange,
+  cases changeType <;> simp [RootClassification.verbalMarkedness, RootClassification.entailsChange,
     verbalMarkedness, RootType.entailsChange]
 
 /-- Roots with the same change type have identical morphosyntactic
     behavior regardless of arity — markedness, stative forms, and
     again readings are orthogonal to internal argument selection. -/
-theorem same_change_same_morphosyntax (r₁ r₂ : Root)
+theorem same_change_same_morphosyntax (r₁ r₂ : RootClassification)
     (h : r₁.changeType = r₂.changeType) :
     r₁.verbalMarkedness = r₂.verbalMarkedness ∧
     r₁.stativeMarkedness = r₂.stativeMarkedness ∧
     r₁.entailsChange = r₂.entailsChange := by
-  simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
+  simp [RootClassification.verbalMarkedness, RootClassification.stativeMarkedness, RootClassification.entailsChange, h]
 
 -- ════════════════════════════════════════════════════
 -- § 17. Root Position in Event Structure (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)

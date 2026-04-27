@@ -33,7 +33,7 @@ Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
 
 ### Chuj fragment bridge (§§10–15)
 
-1. **Root class ↔ Root arity**: `CRootClass` maps to `Root` values.
+1. **Root class ↔ Root arity**: `CRootClass` maps to `RootClassification` values.
    √TV = selectsTheme, others = noTheme.
 2. **Voice suffix ↔ VoiceHead**: theta assignment, D feature, phase head.
 3. **Paradigm predictions**: `isGrammatical` matches data attestation.
@@ -62,7 +62,7 @@ to empirical data in `Phenomena/Causation/Studies/BeaversEtAl2021.lean`.
    verbs are unmarked; the statistical comparison confirms PC median (56.01%)
    exceeds result median (15.20%).
 
-5. **Fragment grounding**: The Chuj fragment's `Root` values instantiate the
+5. **Fragment grounding**: The Chuj fragment's `RootClassification` values instantiate the
    theory's predictions — e.g., `rootTV_res.entailsChange = true` matches the
    theory's `RootType.entailsChange.result = true`.
 
@@ -362,13 +362,13 @@ theorem chuj_causative_alternation_result :
 -- § 10. Chuj Fragment Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- Map the phenomena's root class to the fragment's Root.
+/-- Map the phenomena's root class to the fragment's RootClassification.
     This connects theory-neutral distributional classes to the
-    theoretically analyzed Root structure.
+    theoretically analyzed RootClassification structure.
     √TV maps to `rootTV_res` as a representative — the choice between
     `rootTV_res` and `rootTV_pc` is arbitrary for arity (both are
     `selectsTheme`); only changeType differs. -/
-def toFragmentRoot : CRootClass → Root
+def toFragmentRoot : CRootClass → RootClassification
   | .tv  => rootTV_res
   | .itv => rootITV
   | .pos => rootPOS

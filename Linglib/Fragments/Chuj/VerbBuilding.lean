@@ -12,7 +12,7 @@ Consequences for the nature of roots."
 
 ## Contents
 
-1. **Root classes** (§§1–3): four abstract `Root` types (√TV, √ITV, √POS, √NOM)
+1. **Root classes** (§§1–3): four abstract `RootClassification` types (√TV, √ITV, √POS, √NOM)
    with distributional `CRootClass` enum and bridge function.
 2. **Voice suffixes** (§§4–5): `ChujVoiceSuffix` (Ø, -ch, -j, -w) with
    external argument status, thematic properties, and morphological forms.
@@ -50,14 +50,14 @@ namespace Fragments.Chuj
 /-- √TV root (PC): selects theme, no entailed change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
     Examples: mak' "hit", tek' "kick". -/
-def rootTV_pc : Root :=
+def rootTV_pc : RootClassification :=
   { arity := .selectsTheme, changeType := .propertyConcept,
     denotationType := some .indivStatePred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
-def rootTV_res : Root :=
+def rootTV_res : RootClassification :=
   { arity := .selectsTheme, changeType := .result,
     denotationType := some .indivStatePred }
 
@@ -66,21 +66,21 @@ def rootTV_res : Root :=
     subject. The class is morphologically defined: roots that appear
     with null v/Voice⁰ in intransitive stems (p. 40).
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go". -/
-def rootITV : Root :=
+def rootITV : RootClassification :=
   { arity := .noTheme, changeType := .propertyConcept,
     denotationType := some .indivStatePred }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
     measure function, not a truth-value predicate.
     Examples: chot "sit", kot "on all fours", watz "lie face down". -/
-def rootPOS : Root :=
+def rootPOS : RootClassification :=
   { arity := .noTheme, changeType := .propertyConcept,
     denotationType := some .measureFn }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
     with no event argument (@cite{coon-2019}, (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
-def rootNOM : Root :=
+def rootNOM : RootClassification :=
   { arity := .noTheme, changeType := .propertyConcept,
     denotationType := some .entityPred }
 
@@ -125,9 +125,9 @@ inductive CRootClass where
   | nom  -- nominal roots: require -w for verbalization
   deriving DecidableEq, Repr
 
-/-- Map an abstract Root to the distributional CRootClass.
+/-- Map an abstract RootClassification to the distributional CRootClass.
     The bridge is determined by (arity × denotationType). -/
-def rootToClass (r : Root) : CRootClass :=
+def rootToClass (r : RootClassification) : CRootClass :=
   match r.arity, r.denotationType with
   | .selectsTheme, _               => .tv
   | .noTheme,      some .indivStatePred  => .itv
@@ -321,7 +321,7 @@ structure ChujRoot where
   /-- English gloss -/
   gloss : String
   /-- Abstract root class -/
-  root : Root
+  root : RootClassification
   deriving Repr, BEq
 
 -- √TV roots (Table (5), p. 39)
