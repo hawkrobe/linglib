@@ -16,7 +16,7 @@ For each adjective with both a `Data.lean` typology entry and a Fragment
 entry, we verify:
 
 1. **Form match**: `tallTypology.adjective = tall.form`
-2. **Endpoint consistency**: `tallTypology.hasMaxEndpoint = tall.scaleType.hasMax`
+2. **Scale-type consistency**: `tallTypology.scaleType = tall.scaleType`
 3. **Licensing agreement**: `LicensingPipeline.isLicensed tall.scaleType`
    matches the degree modifier compatibility from Data.lean
 
@@ -42,20 +42,34 @@ theorem full_form_match : fullTypology.adjective = full.form := rfl
 theorem wet_form_match : wetTypology.adjective = wet.form := rfl
 
 -- ════════════════════════════════════════════════════
--- § 2. Endpoint Consistency
+-- § 2. Scale-type Consistency (full Boundedness equality)
 -- ════════════════════════════════════════════════════
 
-/-- "tall" (open): Data says no max endpoint, Fragment scaleType.hasMax agrees. -/
-theorem tall_endpoint_consistency :
-    tallTypology.hasMaxEndpoint = tall.scaleType.hasMax := rfl
+/-! With `AdjectiveTypologyDatum.scaleType : Boundedness` (refactored
+    from the prior Bool-pair encoding in 0.230.437), the consistency
+    theorems can now state full `Boundedness` equality between the
+    typology data and the Fragment annotation, rather than just
+    projecting both onto `.hasMax`. -/
 
-/-- "full" (closed): Data says max endpoint, Fragment scaleType.hasMax agrees. -/
-theorem full_endpoint_consistency :
-    fullTypology.hasMaxEndpoint = full.scaleType.hasMax := rfl
+/-- "tall" (open): Data scaleType matches Fragment scaleType. -/
+theorem tall_scaleType_consistency :
+    tallTypology.scaleType = tall.scaleType := rfl
 
-/-- "wet" (lowerBounded): Data says no max endpoint, Fragment scaleType.hasMax agrees. -/
-theorem wet_endpoint_consistency :
-    wetTypology.hasMaxEndpoint = wet.scaleType.hasMax := rfl
+/-- "full" (closed): Data scaleType matches Fragment scaleType. -/
+theorem full_scaleType_consistency :
+    fullTypology.scaleType = full.scaleType := rfl
+
+/-- "wet" (lower-bounded): Data scaleType matches Fragment scaleType. -/
+theorem wet_scaleType_consistency :
+    wetTypology.scaleType = wet.scaleType := rfl
+
+/-- "straight" (closed): Data scaleType matches Fragment scaleType. -/
+theorem straight_scaleType_consistency :
+    straightTypology.scaleType = straight.scaleType := rfl
+
+/-- "bent" (lower-bounded): Data scaleType matches Fragment scaleType. -/
+theorem bent_scaleType_consistency :
+    bentTypology.scaleType = bent.scaleType := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Licensing ↔ Degree Modifier Agreement

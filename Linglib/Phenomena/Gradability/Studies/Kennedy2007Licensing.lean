@@ -163,12 +163,14 @@ structure AdjectiveTypologyDatum where
   adjective : String
   /-- Its classification -/
   classification : Semantics.Degree.AdjectiveClass
-  /-- The underlying scale -/
+  /-- The underlying scale name (e.g., "height", "fullness") -/
   scale : String
-  /-- Does it have a maximum endpoint? -/
-  hasMaxEndpoint : Bool
-  /-- Does it have a minimum endpoint? -/
-  hasMinEndpoint : Bool
+  /-- Scale structure (Kennedy 2007's 4-way typology). Replaces the
+      former (`hasMaxEndpoint : Bool`, `hasMinEndpoint : Bool`) pair —
+      the same redundancy `Boundedness.ofType` was dropped for in
+      0.230.420 (audit-flagged: lexical data should use the canonical
+      `Boundedness` enum, not Bool pairs that re-encode it). -/
+  scaleType : Core.Scale.Boundedness
   /-- Natural with "slightly X"? -/
   naturalWithSlightly : Bool
   /-- Natural with "completely X"? -/
@@ -177,61 +179,56 @@ structure AdjectiveTypologyDatum where
   thresholdShifts : Bool
   deriving Repr
 
-/-- "Tall" - prototypical relative gradable adjective. -/
+/-- "Tall" — prototypical relative gradable adjective; open scale. -/
 def tallTypology : AdjectiveTypologyDatum :=
   { adjective := "tall"
   , classification := .relativeGradable
   , scale := "height"
-  , hasMaxEndpoint := false
-  , hasMinEndpoint := true  -- zero height, but not linguistically relevant
+  , scaleType := .open_  -- matches `Adjectival.tall.scaleType`
   , naturalWithSlightly := false  -- "??slightly tall"
   , naturalWithCompletely := false  -- "??completely tall"
   , thresholdShifts := true
   }
 
-/-- "Full" - absolute maximum standard adjective. -/
+/-- "Full" — absolute maximum standard adjective; totally closed scale. -/
 def fullTypology : AdjectiveTypologyDatum :=
   { adjective := "full"
   , classification := .absoluteMaximum
   , scale := "fullness"
-  , hasMaxEndpoint := true
-  , hasMinEndpoint := true  -- empty
+  , scaleType := .closed  -- matches `Adjectival.full.scaleType`
   , naturalWithSlightly := true   -- "slightly full" (= almost full)
   , naturalWithCompletely := true -- "completely full"
   , thresholdShifts := false
   }
 
-/-- "Wet" - absolute minimum standard adjective. -/
+/-- "Wet" — absolute minimum standard adjective; lower-bounded scale. -/
 def wetTypology : AdjectiveTypologyDatum :=
   { adjective := "wet"
   , classification := .absoluteMinimum
   , scale := "wetness"
-  , hasMaxEndpoint := false  -- no clear maximum
-  , hasMinEndpoint := true   -- zero wetness
+  , scaleType := .lowerBounded  -- matches `Adjectival.wet.scaleType`
   , naturalWithSlightly := true  -- "slightly wet"
   , naturalWithCompletely := false  -- "??completely wet"
   , thresholdShifts := false
   }
 
-/-- "Straight" - absolute maximum standard adjective. -/
+/-- "Straight" — absolute maximum standard adjective; totally closed scale. -/
 def straightTypology : AdjectiveTypologyDatum :=
   { adjective := "straight"
   , classification := .absoluteMaximum
   , scale := "straightness"
-  , hasMaxEndpoint := true
-  , hasMinEndpoint := true
+  , scaleType := .closed  -- matches `Adjectival.straight.scaleType`
   , naturalWithSlightly := true
   , naturalWithCompletely := true
   , thresholdShifts := false
   }
 
-/-- "Bent" - absolute minimum standard adjective. -/
+/-- "Bent" — absolute minimum standard adjective; lower-bounded scale. -/
 def bentTypology : AdjectiveTypologyDatum :=
   { adjective := "bent"
   , classification := .absoluteMinimum
   , scale := "bentness"
-  , hasMaxEndpoint := true  -- maximally bent
-  , hasMinEndpoint := true  -- straight (zero bentness)
+  , scaleType := .lowerBounded  -- matches `Adjectival.bent.scaleType`
   , naturalWithSlightly := true   -- "slightly bent"
   , naturalWithCompletely := false -- "??completely bent" (odd)
   , thresholdShifts := false
@@ -375,6 +372,34 @@ def closurePuzzle : ScaleClosurePuzzle :=
   , worksWithClosed := true
   , worksWithOpen := false
   }
+
+/-! ### Kennedy 2007 eq (61) modifier-class licensing matrix
+
+@cite{kennedy-2007} eq (61) (= @cite{kennedy-mcnally-2005} eq 15) is
+the central typological prediction: which scale-structure types license
+which modifier classes. The matrix is the load-bearing connection
+between the data fields above
+(`completelyModifier`/`slightlyModifier`/`halfModifier`/`veryModifier`)
+and the `Boundedness` scale-structure substrate.
+
+Per the matrix:
+- **Maximizers / proportional** (*completely, perfectly, absolutely, half*)
+  require an UPPER endpoint → license iff `Boundedness.hasMax = true`.
+- **Minimizers / diminishers** (*slightly, partially, somewhat*) require
+  a LOWER endpoint → license iff `Boundedness.hasMin = true`.
+- **Intensifiers** (*very, extremely*) work on all scales (modulo
+  pragmatic considerations).
+- **Measure phrases** (*6 feet tall*) work on all dimensional scales
+  (@cite{hay-kennedy-levin-1999} §3.1).
+
+This is the genuine Tier C #3 bridge from the §1 Boundedness audit
+(0.230.420) — supersedes the decorative `closedScale_satEntity_*`
+theorems landed and unanimously audit-flagged in 0.230.436. -/
+def licenses : DegreeModifierType → Core.Scale.Boundedness → Bool
+  | .proportional, b => b.hasMax
+  | .diminisher, b => b.hasMin
+  | .intensifier, _ => true
+  | .measurePhrase, _ => true
 
 end Phenomena.Gradability.Kennedy2007
 
@@ -549,5 +574,46 @@ theorem mpa_ie_exception :
     (interpretiveEconomy decent.scaleType).requiresComparisonClass = false ∧
     -- But MPAs ARE context-sensitive (purpose-relative)
     decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 4. Modifier-class matrix consistency (Kennedy 2007 eq 61)
+-- ════════════════════════════════════════════════════
+
+/-- The `licenses` matrix function agrees with the per-adjective typology
+    data in `adjectiveTypologyExamples`: for each of the 5 adjectives
+    spanning the 4-way `Boundedness` typology (*tall* (open), *full*
+    (closed), *wet* (lower-bounded), *straight* (closed), *bent*
+    (lower-bounded)), the matrix predicts `naturalWithSlightly` from
+    `licenses .diminisher` and `naturalWithCompletely` from
+    `licenses .proportional`. Provable by `decide` over the 5×2 grid. -/
+theorem k2007_matrix_agrees_with_typology :
+    adjectiveTypologyExamples.all (fun d =>
+      licenses .diminisher d.scaleType == d.naturalWithSlightly &&
+      licenses .proportional d.scaleType == d.naturalWithCompletely) = true := by
+  decide
+
+/-- Per-modifier consistency: each `DegreeModifierDatum`'s
+    `worksWithRGA` / `worksWithAGAMax` / `worksWithAGAMin` fields agree
+    with `licenses` on the corresponding `Boundedness` cases. AGAMax
+    cases under the existing data are interpreted at the canonical
+    totally-closed scale (`.closed`, e.g. *full*) since the data's
+    `worksWithAGAMax = true` for *slightly* requires `b.hasMin = true`
+    — only `.closed` and `.lowerBounded` satisfy that, of which `.closed`
+    is the natural reading for the *full*-class data. -/
+theorem k2007_modifier_data_agrees :
+    degreeModifierExamples.all (fun d =>
+      licenses d.modifierType .closed == d.worksWithAGAMax &&
+      licenses d.modifierType .lowerBounded == d.worksWithAGAMin &&
+      licenses d.modifierType .open_ == d.worksWithRGA) = true := by
+  decide
+
+/-- The audit's `closurePuzzle` (full vs tall, completely modifier) is a
+    direct corollary of the matrix: `licenses .proportional .closed = true`
+    matches `worksWithClosed`, and `licenses .proportional .open_ = false`
+    matches `worksWithOpen`. -/
+theorem closurePuzzle_via_matrix :
+    licenses .proportional .closed = closurePuzzle.worksWithClosed ∧
+    licenses .proportional .open_ = closurePuzzle.worksWithOpen :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Gradability.KennedyLicensingBridge

@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.439] - 2026-04-26
+
+### Tier C #3 (REAL): Kennedy 2007 eq (61) modifier-class matrix supersedes 0.230.436's audit-flagged decorative bridge
+
+The 0.230.436 "extent-level bridge" (`closedScale_satEntity_posExt_univ` / `_negExt_empty` in `Theories/Semantics/Gradability/Theory.lean`) was unanimously audit-flagged as a façade by all 4 audit agents (mathlib-reviewer, integration-auditor, linguistics-domain-expert, cross-framework-reconciler): the `_hClosed` hypothesis was unused; the proofs reduced to `Set.Iic_top`/`Set.Ioi_top` mathlib rewrites; the "documentation-gate" precedent claim was fabricated (KennedyLevin2008.lean uses `:= rfl` with NO underscore-hypothesis pattern); zero consumer integration on the named primary consumer (`Kennedy2007Licensing.lean` never imported `Extent.lean`); the methodological-pair claim with HKL 1999 §2 was false (HKL is entry-DEPENDENT via fragment projections, the decorative bridge was entry-INDEPENDENT). The consensus alternative all 4 agents converged on: **land the @cite{kennedy-2007} eq (61) modifier-class matrix that has 4 sitting consumer fields in `Kennedy2007Licensing.lean:289-348` waiting for theorems**.
+
+This commit lands that matrix and removes the decorative bridge.
+
+**THREE FILES TOUCHED:**
+
+**1. `Theories/Semantics/Gradability/Theory.lean` (-54 LOC):** removed the `closedScale_satEntity_posExt_univ` / `_negExt_empty` decorative theorems and the `import Linglib.Core.Scales.Extent` (no longer needed). Per CLAUDE.md "Avoid backwards-compatibility hacks like ... // removed comments for removed code" — the deleted section is not flagged in-file; the audit's findings + this CHANGELOG entry carry the provenance.
+
+**2. `Phenomena/Gradability/Studies/Kennedy2007Licensing.lean` (substantive +106):**
+
+- **Refactored `AdjectiveTypologyDatum`**: replaced the `(hasMaxEndpoint : Bool, hasMinEndpoint : Bool)` Bool-pair with a single `scaleType : Core.Scale.Boundedness` field. Same redundancy-with-Boundedness pattern that 0.230.420 dropped from `Boundedness.ofType` (Bool×Bool→Boundedness constructor) — lexical data should use the canonical enum, not Bool pairs that re-encode it. All 5 instances (tall, full, wet, straight, bent) updated to fragment-aligned scaleType (`.open_`, `.closed`, `.lowerBounded`, `.closed`, `.lowerBounded` respectively, matching the `Adjectival.lean` fragment annotations).
+
+- **`def licenses : DegreeModifierType → Boundedness → Bool`** — the canonical Kennedy 2007 eq (61) matrix function: `proportional ↔ b.hasMax`, `diminisher ↔ b.hasMin`, `intensifier`/`measurePhrase` universal. `hasMax`/`hasMin` are existing `Boundedness` projections, so the matrix function is structurally licit (no Bool-pair re-encoding).
+
+- **`theorem k2007_matrix_agrees_with_typology`** (`decide`): proves the matrix function predicts the existing per-adjective `naturalWithSlightly`/`naturalWithCompletely` Bool fields across all 5 adjectives × 2 modifier types — the matrix is consistent with the data on the 10-cell grid.
+
+- **`theorem k2007_modifier_data_agrees`** (`decide`): proves the matrix function predicts the existing per-modifier `worksWithRGA`/`worksWithAGAMax`/`worksWithAGAMin` Bool fields across all 4 modifiers × 3 scale-class instantiations.
+
+- **`theorem closurePuzzle_via_matrix`**: derives the original `closurePuzzle` (full vs tall, completely modifier) as a one-step corollary of the matrix.
+
+**3. `Phenomena/Comparison/Studies/Kennedy2007Typology.lean` (36 line changes):** updated the §2 endpoint-consistency theorems to use the new `scaleType : Boundedness` field. Where the prior theorems projected through `.hasMax` only (`tallTypology.hasMaxEndpoint = tall.scaleType.hasMax := rfl` for 3 adjectives), the new theorems state full Boundedness equality (`tallTypology.scaleType = tall.scaleType := rfl`) for all 5 adjectives — including straight and bent which previously had no consistency theorem (and which would have failed under the prior asymmetric data: bent had `hasMaxEndpoint=true` from the `(true, true)` Bool pair but the fragment has `bent.scaleType = .lowerBounded`; the refactored data resolves this, matching the fragment + Kennedy 2007 §3.2's lower-closed classification of *bent*).
+
+**Verification provenance:** Kennedy 2007 PDF page 34 eq (61) is the canonical source for the modifier-class licensing matrix (verified earlier in this session at 0.230.420). Hay-Kennedy-Levin 1999 §3.1 (verified at 0.230.433) anchors the measure-phrase universality. The fragment scaleType annotations on the 5 adjectives (tall/full/wet/straight/bent) were directly inspected to ensure typology data matches.
+
+**What this fixes from the audit:**
+- ✓ Theorems are consumer-real (consumed via `closurePuzzle_via_matrix` + the 2 `decide`-able matrix theorems on data already in the file).
+- ✓ The `licenses` function is content-bearing: dispatches on `Boundedness` cases, uses `b.hasMax`/`hasMin` projections, predicts modifier behavior.
+- ✓ Data refactor eliminates the audit-flagged Bool-pair-instead-of-Boundedness pattern (consistent with 0.230.420's `Boundedness.ofType` removal).
+- ✓ Min-standard half is included (lower-bounded entries *wet, bent* in the typology).
+- ✓ Faithful to Kennedy 2007 eq (61) rather than just one-level-down algebra of `Set.Iic_top`.
+
+**Remaining Tier-D:** Wellwood 2015's `telicityToStatus`/`vendlerToStatus`/`numberToStatus` refactor (compose through MereoTag); sortal Kennedy formalization (typed `PosExt D` / `NegExt D` with partial DEG); fine-grained completely-vs-half distinction (the matrix lumps proportional modifiers; "half" requires both endpoints, "completely" only requires upper).
+
+**Build:** Kennedy2007Licensing.lean's 864-job transitive closure passes; Kennedy2007Typology.lean's 865-job closure passes; Theory.lean's 863-job closure passes. The 2 unrelated full-build failures (`Linglib.Theories.Syntax.Minimalism.Hopf.Defs`, `Linglib.Theories.Semantics.Comparison.ConsistencyConstraints`) are untracked files from concurrent sessions, no import-edge to my touched files.
+
 ## [0.230.436] - 2026-04-26
 
 ### Tier C #3 (FINAL audit item): Extent ↔ fragment-entry `scaleType` bridge in Gradability/Theory.lean

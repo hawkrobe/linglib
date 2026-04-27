@@ -23,7 +23,6 @@ extensional), see `Classification.lean`.
 -/
 
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Scales.Extent
 import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
@@ -288,59 +287,6 @@ theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     (adjMeasure μ entry).licensed = false := by
   simp [adjMeasure, DirectedMeasure.kennedyAdjective,
         DirectedMeasure.licensed, Boundedness.isLicensed, h]
-
--- ════════════════════════════════════════════════════
--- § Extent-level bridge: entry.scaleType ↔ posExt/negExt structure
--- ════════════════════════════════════════════════════
-
-/-! Tier C #3 from the §1 Boundedness audit (0.230.420): connect the
-    lexical `scaleType : Boundedness` annotation on `GradableAdjEntry` to
-    the posExt/negExt extent algebra in `Core/Scales/Extent.lean`. The
-    audit's recommendation: add a posExt-derived theorem that depends
-    on `entry.scaleType`, completing the architectural bridge between the
-    fragment classification (Boundedness data tag) and the carrier-level
-    structure (`Set.Iic`/`Set.Ioi` extents).
-
-    `closedAdj_licensed` and `openAdj_blocked` (above) capture the bridge
-    at the `licensed`-Bool level via `DirectedMeasure`. The two theorems
-    below sharpen this to the **extent-set** level: when an entry has
-    `scaleType = .closed` (or any `scaleType.hasMax = true`), an entity
-    saturating the scale (`μ w = ⊤`) has universal positive extent and
-    empty negative extent — the formal underpinning of @cite{kennedy-2007}'s
-    "completely full" max-standard reading. For `scaleType = .open_`, the
-    `⊤` of `Degree max` exists structurally but is unused as a threshold
-    (the lexical entry doesn't anchor on it, so no entity in the
-    intended interpretation has `μ w = ⊤`).
-
-    This is the same fragment-bridge pattern just established in §2 of
-    `Phenomena/TenseAspect/Studies/HayKennedyLevin1999.lean` (0.230.433),
-    applied to `GradableAdjEntry` rather than `VerbEntry`. -/
-
-/-- A scale-saturating entity (`μ w = ⊤`) on a closed-scale adjective
-    entry has universal positive extent — it "has" every degree on the
-    scale, the formal content of *completely φ* readings.
-
-    The hypothesis `entry.scaleType = .closed` is used as a documentation
-    gate marking that this is the closed-scale interpretation pattern;
-    the equality is structurally provable for any entry that admits a
-    `μ w = ⊤` witness, but only closed-scale entries supply such witnesses
-    in their lexical semantics. -/
-theorem closedScale_satEntity_posExt_univ {W : Type*} {max : Nat}
-    (entry : GradableAdjEntry) (_hClosed : entry.scaleType = .closed)
-    (μ : W → Degree max) (w : W) (hSat : μ w = ⊤) :
-    Core.Scale.posExt μ w = Set.univ := by
-  show Set.Iic (μ w) = Set.univ
-  rw [hSat, Set.Iic_top]
-
-/-- The negExt analog: a scale-saturating entity has empty negative extent
-    — it "lacks" no degrees on the scale. Same documentation-gate
-    convention as `closedScale_satEntity_posExt_univ`. -/
-theorem closedScale_satEntity_negExt_empty {W : Type*} {max : Nat}
-    (entry : GradableAdjEntry) (_hClosed : entry.scaleType = .closed)
-    (μ : W → Degree max) (w : W) (hSat : μ w = ⊤) :
-    Core.Scale.negExt μ w = ∅ := by
-  show Set.Ioi (μ w) = ∅
-  rw [hSat, Set.Ioi_top]
 
 theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
     ∃ x : Degree max, x ≠ ⊤ := by
