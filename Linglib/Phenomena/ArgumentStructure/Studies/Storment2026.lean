@@ -1,10 +1,10 @@
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
-import Linglib.Theories.Syntax.Minimalism.Movement.InverseVoice
-import Linglib.Theories.Syntax.Minimalism.Probing.DefectiveCircumvention
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Theories.Syntax.Minimalist.Movement.InverseVoice
+import Linglib.Theories.Syntax.Minimalist.Probing.DefectiveCircumvention
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 
 /-!
@@ -51,7 +51,7 @@ open Core.Verbs
 open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
-open Minimalism (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
+open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data
 
@@ -201,7 +201,7 @@ theorem qi_data_matches_derivedQI :
 Storment §6: QI and LI share the smuggling mechanism but differ in
 their inputs (quote vs. locative PP) and distribution. Both are subject
 to the transitivity constraint (§5). The shared inverse-voice family
-membership is captured by `Minimalism.qiCanonical` and `liCanonical` in
+membership is captured by `Minimalist.qiCanonical` and `liCanonical` in
 `Theories/Syntax/Minimalism/Movement/InverseVoice.lean`. -/
 
 /-- whisper passes QI but is only marginal in LI — same mechanism
@@ -339,12 +339,12 @@ canonical instance lives in `Theories/Syntax/Minimalism/Movement/
 InverseVoice.lean`; here we just affirm membership. -/
 
 theorem qi_is_inverse_voice :
-    Minimalism.qiCanonical.kind = .quotativeInversion ∧
-    Minimalism.qiCanonical.licensed = true :=
+    Minimalist.qiCanonical.kind = .quotativeInversion ∧
+    Minimalist.qiCanonical.licensed = true :=
   ⟨rfl, rfl⟩
 
 theorem qi_li_share_voice :
-    Minimalism.qiCanonical.voice = Minimalism.liCanonical.voice :=
+    Minimalist.qiCanonical.voice = Minimalist.liCanonical.voice :=
   rfl
 
 /-! ## §14. Defective circumvention derives the agreement contrast
@@ -361,8 +361,8 @@ The theorems abstract over the precise feature bundles and feature-
 compatibility predicate — Storment's substantive claim is that the
 *operation* is the same and only the `allowReprobe` parameter varies. -/
 
-open Minimalism.Probing
-open Minimalism (FeatureBundle)
+open Minimalist.Probing
+open Minimalist (FeatureBundle)
 
 /-- The same defective-probing situation produces Setswana's
     obligatory default agreement (no re-probe) and English's optional

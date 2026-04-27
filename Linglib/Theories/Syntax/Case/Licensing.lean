@@ -104,7 +104,7 @@ namespace Syntax.Case.Licensing
 
 -- We qualify `Core.Case` everywhere because `Core/Lexical/Word.lean`
 -- aliases a *different* `Case` (UD.Case) at root scope.
-open Minimalism (DPFeatures satisfiesCaseFilter)
+open Minimalist (DPFeatures satisfiesCaseFilter)
 
 -- ============================================================================
 -- § 1: Primary vs. Secondary Licensers
@@ -463,7 +463,7 @@ Filter; only `.unlicensed` violates it. Kalin's framework thus
 licensing — not a separate stipulation. -/
 
 /-- Translate a licensing outcome into the DP feature bundle that
-    `Minimalism.satisfiesCaseFilter` consumes. Any valued outcome
+    `Minimalist.satisfiesCaseFilter` consumes. Any valued outcome
     becomes a DP with valued [Case]; `.unlicensed` becomes a DP with
     unvalued [Case]. -/
 def LicensingOutcome.toDPFeatures : LicensingOutcome → DPFeatures
@@ -485,14 +485,14 @@ theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
     induced DP satisfies the Case Filter. -/
 theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
     results.all (·.outcome.isLicensed) =
-      Minimalism.caseFilterHolds (results.map λ r => r.outcome.toDPFeatures) := by
+      Minimalist.caseFilterHolds (results.map λ r => r.outcome.toDPFeatures) := by
   induction results with
   | nil => rfl
   | cons r rest ih =>
-    simp only [List.all_cons, List.map_cons, Minimalism.caseFilterHolds,
+    simp only [List.all_cons, List.map_cons, Minimalist.caseFilterHolds,
                List.all_cons]
     rw [isLicensed_iff_satisfiesCaseFilter]
-    unfold Minimalism.caseFilterHolds at ih
+    unfold Minimalist.caseFilterHolds at ih
     rw [ih]
 
 -- ============================================================================

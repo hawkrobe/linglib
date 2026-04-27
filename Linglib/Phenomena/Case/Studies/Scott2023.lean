@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Mayan.Mam.Agreement
 
 /-!
@@ -61,7 +61,7 @@ behavior of the dependent case algorithm.
 
 namespace Phenomena.Case.Studies.Scott2023
 
-open Minimalism
+open Minimalist
 open Syntax.Case
 
 -- ============================================================================

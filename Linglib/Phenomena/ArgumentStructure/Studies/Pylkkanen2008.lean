@@ -1,8 +1,8 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.Applicative
-import Linglib.Theories.Syntax.Minimalism.ApplicativeDiagnostics
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.VoiceProjection
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.VoiceProjection
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Phenomena.Causation.Typology
 import Linglib.Phenomena.ArgumentStructure.Typology
@@ -65,7 +65,7 @@ in `Theories/Syntax/Minimalism/ApplicativeDiagnostics.lean`.
 
 namespace Pylkkanen2008
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Lexical Items
@@ -185,13 +185,13 @@ theorem benefactive_uses_high :
 /-! @cite{pylkkanen-2008} tests the high/low distinction in six languages
 using three diagnostics (Table 2.1, p. 33). The diagnostics cluster
 into two groups, confirming the typological split. The classifier
-`Minimalism.classifyByDiagnostics` derives the high/low classification
+`Minimalist.classifyByDiagnostics` derives the high/low classification
 from the diagnostic results; we verify that for each language, the
 classifier output matches Pylkkänen's annotated classification. -/
 
 /-- A language's diagnostic profile and Pylkkänen's annotated
     classification. The diagnostic results live in
-    `Minimalism.ApplDiagnosticBundle`; `classification` records
+    `Minimalist.ApplDiagnosticBundle`; `classification` records
     Pylkkänen's analytical conclusion. -/
 structure LangApplProfile where
   language : String
@@ -383,7 +383,7 @@ orthogonal — see `VoiceProjection.lean` for the substantive contrast. -/
     satisfies `IsExternalArgIntroducer` (it does the job Pylkkänen
     attributes to Voice). -/
 theorem voice_introduces_external_arg_pylkkanen :
-    Minimalism.IsExternalArgIntroducer Minimalism.voiceAgent := by decide
+    Minimalist.IsExternalArgIntroducer Minimalist.voiceAgent := by decide
 
 /-! ## §8. Voice-bundling for the English zero-causative
     (@cite{pylkkanen-2008} Ch. 3 §3.3; -- UNVERIFIED: eq. number)
@@ -619,16 +619,16 @@ taxonomy in `Theories/Syntax/Minimalism/Voice.lean`: which Voice flavors
     Voice taxonomy but lacks a canonical `voiceAntipassive` constant
     in `Voice.lean`.) -/
 theorem pylkkanen_view_partitions_voice_flavors :
-    Minimalism.IsExternalArgIntroducer Minimalism.voiceAgent ∧
-    Minimalism.IsExternalArgIntroducer Minimalism.voiceCauser ∧
-    Minimalism.IsExternalArgIntroducer Minimalism.voiceReflexive ∧
-    Minimalism.IsExternalArgIntroducer Minimalism.voiceExperiencer ∧
-    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceMiddle ∧
-    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceImpersonal ∧
-    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voiceAnticausative ∧
-    ¬ Minimalism.IsExternalArgIntroducer Minimalism.voicePassive := by
+    Minimalist.IsExternalArgIntroducer Minimalist.voiceAgent ∧
+    Minimalist.IsExternalArgIntroducer Minimalist.voiceCauser ∧
+    Minimalist.IsExternalArgIntroducer Minimalist.voiceReflexive ∧
+    Minimalist.IsExternalArgIntroducer Minimalist.voiceExperiencer ∧
+    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceMiddle ∧
+    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceImpersonal ∧
+    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceAnticausative ∧
+    ¬ Minimalist.IsExternalArgIntroducer Minimalist.voicePassive := by
   refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;>
-    (unfold Minimalism.IsExternalArgIntroducer; decide)
+    (unfold Minimalist.IsExternalArgIntroducer; decide)
 
 /-! ## §15. Transitivity restriction grounded in EntailmentProfile
     (@cite{pylkkanen-2008} Diagnostic 1; semantic argument at eq. 103 /
@@ -762,14 +762,14 @@ Appl typology in a single matrix. -/
     and so don't license high Appl. -/
 theorem voice_appl_licensing_matrix :
     -- High Appl licensed with event-bearing Voice flavors:
-    Minimalism.applHigh.licensedWith Minimalism.voiceAgent = true ∧
-    Minimalism.applHigh.licensedWith Minimalism.voiceCauser = true ∧
+    Minimalist.applHigh.licensedWith Minimalist.voiceAgent = true ∧
+    Minimalist.applHigh.licensedWith Minimalist.voiceCauser = true ∧
     -- Low Appl is always licensed (independent of Voice semantics):
-    Minimalism.applLowRecipient.licensedWith Minimalism.voiceAgent = true ∧
-    Minimalism.applLowRecipient.licensedWith Minimalism.voicePassive = true ∧
-    Minimalism.applLowSource.licensedWith Minimalism.voiceAnticausative = true := by
+    Minimalist.applLowRecipient.licensedWith Minimalist.voiceAgent = true ∧
+    Minimalist.applLowRecipient.licensedWith Minimalist.voicePassive = true ∧
+    Minimalist.applLowSource.licensedWith Minimalist.voiceAnticausative = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-    (unfold Minimalism.ApplHead.licensedWith; decide)
+    (unfold Minimalist.ApplHead.licensedWith; decide)
 
 /-! ## §17. WALS-vs-Pylkkänen divergence on English/Japanese applicatives
 

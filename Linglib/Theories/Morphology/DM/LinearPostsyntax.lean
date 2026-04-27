@@ -31,7 +31,7 @@ divergence theorem available for empirical witnesses.
 
 namespace Morphology.DM.LinearPostsyntax
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Phrases and Phrase Foci

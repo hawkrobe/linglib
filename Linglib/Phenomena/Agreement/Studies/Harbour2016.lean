@@ -1,7 +1,7 @@
 import Linglib.Features.Person
 import Linglib.Features.Number
-import Linglib.Theories.Syntax.Minimalism.CyclicAgree
-import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
+import Linglib.Theories.Syntax.Minimalist.CyclicAgree
+import Linglib.Theories.Syntax.Minimalist.Agreement.FeatureRecursion
 import Linglib.Phenomena.Agreement.Studies.Corbett2000
 
 /-!
@@ -329,7 +329,7 @@ theorem number_hierarchy_is_spec_ordering :
 -- § 10: Bridge to Cyclic Agree
 -- ============================================================================
 
-open Minimalism.CyclicAgree (personSpec)
+open Minimalist.CyclicAgree (personSpec)
 open Features.Prominence (PersonLevel)
 
 /-- The person hierarchy from `PrivativePair.specLevel` agrees with the
@@ -363,7 +363,7 @@ theorem specLevel_agrees_with_segments (p : PersonLevel) :
     categories its feature geometry makes available (syncretism, facultative
     marking). What matters is that every attested category IS generated. -/
 
-open Minimalism.Agreement.FeatureRecursion (HarbourConfig)
+open Minimalist.Agreement.FeatureRecursion (HarbourConfig)
 open Corbett2000
 
 /-- Every attested number system's values are a subset of what some

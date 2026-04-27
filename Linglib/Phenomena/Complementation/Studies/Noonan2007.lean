@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Theories.Semantics.Mood.Basic
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-! # Complementation Bridge Theorems
 
@@ -460,7 +460,7 @@ clause-size infrastructure.
 These are **default** sizes — individual languages may override
 (e.g., in Hungarian, *hogy* forces CP regardless of CTP class). -/
 
-open Minimalism (ComplementSize)
+open Minimalist (ComplementSize)
 
 /-- Default complement size for a CTP class.
 

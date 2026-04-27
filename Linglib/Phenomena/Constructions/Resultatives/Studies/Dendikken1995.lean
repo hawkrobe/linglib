@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.SmallClause
+import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 
 /-!
@@ -40,7 +40,7 @@ onto SC predicate categories:
 
 namespace Phenomena.Constructions.Resultatives.Studies.Dendikken1995
 
-open Minimalism
+open Minimalist
 open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 
 /-! ## §1. Resultative types → SC predicate categories

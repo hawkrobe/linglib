@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.FromFragments
-import Linglib.Theories.Syntax.Minimalism.Derivation
+import Linglib.Theories.Syntax.Minimalist.FromFragments
+import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Phenomena.WordOrder.Basic
 
 /-!
@@ -15,7 +15,7 @@ English-derivation lexicon now lives).
 
 namespace Chomsky1995
 
-open Minimalism Minimalism.FromFragments
+open Minimalist Minimalist.FromFragments
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/

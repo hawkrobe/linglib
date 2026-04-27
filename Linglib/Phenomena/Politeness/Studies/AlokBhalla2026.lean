@@ -26,7 +26,7 @@ head (Fin or SA) and a null addressee DP.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Agree
+import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
@@ -38,9 +38,9 @@ import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
 
-namespace Minimalism.Phenomena.Allocutivity
+namespace Minimalist.Phenomena.Allocutivity
 
-open Minimalism
+open Minimalist
 open Phenomena.Politeness.Honorifics
 
 -- ============================================================================
@@ -275,4 +275,4 @@ theorem neutral_h : levelToHonLevel .neutral = .h := rfl
 /-- Register bridge: formal maps to high-honorific. -/
 theorem formal_hh : levelToHonLevel .formal = .hh := rfl
 
-end Minimalism.Phenomena.Allocutivity
+end Minimalist.Phenomena.Allocutivity

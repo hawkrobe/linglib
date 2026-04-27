@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
-import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
+import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
+import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
@@ -57,9 +57,9 @@ infinitival classification.
 
 namespace Ostrove2026
 
-open Syntax.Minimalism.MinimalPronoun
+open Minimalist.MinimalPronoun
 open Landau2015
-open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
+open Minimalist.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (EmbeddedClauseType clauseProperties)
 open Phenomena.NullSubject (ProDropProfile)
 

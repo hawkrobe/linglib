@@ -1,8 +1,8 @@
 import Linglib.Features.Gender
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.Features
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Categorizing Heads (Distributed Morphology) @cite{harley-2014}
@@ -57,7 +57,7 @@ in `VocabularyInsertion.lean`.
 
 namespace Morphology.DM
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Categorizer Type

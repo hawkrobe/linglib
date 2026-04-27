@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Datasets.WALS.Features.F87A
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Fragments.Greek.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
@@ -41,7 +41,7 @@ connect to WALS F87A and Minimalist feature infrastructure.
 namespace AlexeyenkoZeijlstra2025
 
 open Datasets.WALS.F87A
-open Minimalism.Modification (AttrStatus AdjPosition AdjMorphProfile
+open Minimalist.Modification (AttrStatus AdjPosition AdjMorphProfile
   ModificationRoute MAGFeatureType AdjAgreementEntry
   modificationRoute morphStatusToAttrStatus)
 open Morphology.ICP (icpBlocksIntervention)

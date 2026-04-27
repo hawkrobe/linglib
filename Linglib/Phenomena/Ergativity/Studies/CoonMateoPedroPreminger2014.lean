@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Ergativity.Basic
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Phase
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -49,7 +49,7 @@ supporting its role as a case-assigner.
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalism
+open Minimalist
 open Phenomena.Ergativity
 open Fragments.Mayan (ABSPosition CaseLocus toCaseLocus)
 

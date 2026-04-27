@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.ClauseSpine
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.ClauseSpine
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
@@ -42,7 +42,7 @@ namespace Fragments.Mayan.Mam
     Ā-moved constituent. When an oblique DP moves through Spec,VoiceP,
     Agree values [uOblique] as [+oblique], which is then spelled out
     as =(y)a' at PF. -/
-def mamVoice : Minimalism.VoiceHead :=
+def mamVoice : Minimalist.VoiceHead :=
   { flavor := .agentive
   , hasD := true
   , phaseHead := true
@@ -54,16 +54,16 @@ def mamVoice : Minimalism.VoiceHead :=
 
 /-- Mam transitive clause spine: full CP with Voice.
     Projects V, Appl, v, Voice, T, C. =(y)a' possible. -/
-def mamTransitiveSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.cP
+def mamTransitiveSpine : Minimalist.ClauseSpine := Minimalist.ClauseSpine.cP
 
 /-- Mam aspectless complement spine: VoiceP-sized.
     Projects V, Appl, v, Voice. Still has Voice → =(y)a' possible. -/
-def mamAspectlessSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.voiceP
+def mamAspectlessSpine : Minimalist.ClauseSpine := Minimalist.ClauseSpine.voiceP
 
 /-- Mam infinitival complement spine: VP-sized.
     Projects only V — no Voice, no Appl, no v. =(y)a' impossible because
     there is no Voice⁰ to bear [uOblique]. -/
-def mamInfinitivalSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.bareVP
+def mamInfinitivalSpine : Minimalist.ClauseSpine := Minimalist.ClauseSpine.bareVP
 
 -- ============================================================================
 -- § 3: Directional Auxiliary
@@ -92,7 +92,7 @@ structure MamDirHead where
   deriving DecidableEq, Repr
 
 /-- Dir⁰'s probe features when it carries [uOblique]. -/
-def MamDirHead.features (d : MamDirHead) : Minimalism.FeatureBundle :=
+def MamDirHead.features (d : MamDirHead) : Minimalist.FeatureBundle :=
   if d.hasUOblique then [.unvalued (.oblique false)] else []
 
 /-- Cislocative directional with [uOblique]: movement toward deictic center.
@@ -136,7 +136,7 @@ theorem mamInfinitival_lacks_voice :
 
 /-- Mam Voice head carries [uOblique]. -/
 theorem mamVoice_has_uOblique :
-    Minimalism.hasUnvaluedFeature mamVoice.features (.oblique false) = true := by
+    Minimalist.hasUnvaluedFeature mamVoice.features (.oblique false) = true := by
   native_decide
 
 /-- Mam Voice is a phase head. -/
@@ -151,13 +151,13 @@ theorem mamVoice_assigns_theta : mamVoice.assignsTheta = true := rfl
 
 /-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to the exponent
     "=(y)a'". This is the Vocabulary Insertion rule in DM terms. -/
-def eqYaVocab : Minimalism.VocabEntry :=
+def eqYaVocab : Minimalist.VocabEntry :=
   { features := [.valued (.oblique true)]
   , exponent := "=(y)a'"
   , context := some .Voice }
 
 /-- The Mam Voice vocabulary: just the =(y)a' entry. -/
-def mamVoiceVocab : Minimalism.Vocabulary := [eqYaVocab]
+def mamVoiceVocab : Minimalist.Vocabulary := [eqYaVocab]
 
 -- ============================================================================
 -- § 7: Passive Voice (Co-occurrence with =(y)a')
@@ -167,7 +167,7 @@ def mamVoiceVocab : Minimalism.Vocabulary := [eqYaVocab]
     The oblique probe is independent of Voice flavor — changing flavor
     from agentive to non-thematic does not remove [uOblique]. This is
     why =(y)a' co-occurs with passive *-njtz* (Elkins et al. §7.2). -/
-def mamPassiveVoice : Minimalism.VoiceHead :=
+def mamPassiveVoice : Minimalist.VoiceHead :=
   { flavor := .nonThematic
   , hasD := false
   , phaseHead := false
@@ -198,7 +198,7 @@ theorem passive_voice_same_features :
 
     In agent focus / ergative extraction contexts, the antipassive
     co-occurs with the suffix -ta (@cite{scott-2023}, §2.7.1.3). -/
-def mamAntipassiveVoice : Minimalism.VoiceHead :=
+def mamAntipassiveVoice : Minimalist.VoiceHead :=
   { flavor := .antipassive
   , hasD := true
   , phaseHead := false

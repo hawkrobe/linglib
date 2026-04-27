@@ -31,12 +31,12 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.HMC
-import Linglib.Theories.Syntax.Minimalism.Derivation
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.HMC
+import Linglib.Theories.Syntax.Minimalist.Derivation
 
 namespace HarizanovGribanova2019.Bulgarian
 
-open Minimalism
+open Minimalist
 
 /-! ## Part 1: The Lexicon
 

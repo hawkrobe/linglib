@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
@@ -161,7 +161,7 @@ theorem marking_restriction :
 -- § 6: Bridge — Spanish Fission Instantiation
 -- ============================================================================
 
-open Minimalism
+open Minimalist
 open Morphology.DM.Fission
 open Fragments.Spanish.PersonFeatures
 open Fragments.Spanish.Predicates
@@ -301,7 +301,7 @@ theorem syncretism_aligns_with_fission :
     SE is purely a PF marker — its presence or absence is phonological,
     not semantic. -/
 theorem voice_semantically_vacuous :
-    Minimalism.voiceAnticausative.hasSemantics = false := rfl
+    Minimalist.voiceAnticausative.hasSemantics = false := rfl
 
 /-- The empirical three-way synonymy follows: since Voice has no
     semantics, adding or removing SE doesn't change meaning. -/
@@ -311,7 +311,7 @@ theorem three_way_synonymy_from_vacuity :
     romper_me_le.acceptability = .grammatical ∧
     romper_se_me_le.acceptability = .grammatical ∧
     -- Non-thematic Voice is semantically vacuous (theory)
-    Minimalism.voiceAnticausative.hasSemantics = false :=
+    Minimalist.voiceAnticausative.hasSemantics = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

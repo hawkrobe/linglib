@@ -32,11 +32,11 @@ In any partial order (P, ≤), x **covers** y (written x ⋖ y) iff:
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.HMC
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.HMC
 
 namespace HarizanovGribanova2019.Amalgamation
 
-open Minimalism
+open Minimalist
 
 -- Part 1: The Covering Relation (Lattice-Theoretic Foundation)
 

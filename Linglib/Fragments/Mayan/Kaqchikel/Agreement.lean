@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Agree
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
-import Linglib.Theories.Syntax.Minimalism.PersonGeometry
+import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Theories.Syntax.Minimalist.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
@@ -70,7 +70,7 @@ the probe finds no suitable goal, no agreement obtains and a default
 
 namespace Fragments.Mayan.Kaqchikel
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Person-Number Inventory

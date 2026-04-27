@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 
 /-!
 # German Adjective Agreement
@@ -17,7 +17,7 @@ spellout of Attr), so the ICP forces adjacency.
 
 namespace Fragments.German.AdjAgreement
 
-open Minimalism.Modification
+open Minimalist.Modification
 
 /-- German predicative adjectives carry NO agreement features (bare). -/
 def predFeatures : List MAGFeatureType := []

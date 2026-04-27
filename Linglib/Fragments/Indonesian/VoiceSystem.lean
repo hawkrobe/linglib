@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Indonesian Voice System
@@ -48,7 +48,7 @@ agent is the surface subject) and expletive-like behavior
 namespace Fragments.Indonesian.VoiceSystem
 
 open Interfaces (VoiceEntry PivotTarget VoiceSystemProfile VoiceSystemSymmetry)
-open Minimalism (VoiceParams ExternalArgSemantics VoiceFlavor)
+open Minimalist (VoiceParams ExternalArgSemantics VoiceFlavor)
 
 -- ============================================================================
 -- § 1: Voice Entries (descriptive, theory-neutral)

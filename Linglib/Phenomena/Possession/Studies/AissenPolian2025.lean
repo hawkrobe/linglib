@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Syntax.Minimalism.Agree
+import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.InformationStructure
 
@@ -189,9 +189,9 @@ theorem subextraction_impossible (size : NominalSize) :
       with horizon C — the same profile as `keineAProbe`.
     - `whProbe` (Ā-movement, on D°/C°) maps to an Ā-probe on C°
       with no horizon — the same profile as `keineĀProbe`. -/
-def ProbeType.toProfile : ProbeType → Minimalism.ProbeProfile
-  | .dProbe  => Minimalism.keineAProbe
-  | .whProbe => Minimalism.keineĀProbe
+def ProbeType.toProfile : ProbeType → Minimalist.ProbeProfile
+  | .dProbe  => Minimalist.keineAProbe
+  | .whProbe => Minimalist.keineĀProbe
 
 /-- D-probes are A-probes in Keine's classification. -/
 theorem dProbe_is_A : ProbeType.dProbe.toProfile.isAProbe = true := by decide
@@ -742,7 +742,7 @@ theorem tseltalan_case_locus :
 
 section AttractClosest
 
-open Minimalism
+open Minimalist
 
 /-! ### Attract Closest on Concrete Trees
 
@@ -751,7 +751,7 @@ The boolean functions `dLayerShields`, `hasIntervener`, and
 **stipulate** them directly. Here we **derive** them from Attract
 Closest applied to concrete `SyntacticObject` trees
 (@cite{aissen-polian-2025} (9a-c)), using `closestGoalB` from
-`Minimalism.Agree`.
+`Minimalist.Agree`.
 
 **Key derivation**: T°'s [EPP:D] probe searches its c-command domain
 for the closest D-bearing element. The result depends only on tree

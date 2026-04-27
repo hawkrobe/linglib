@@ -1,8 +1,8 @@
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Core.Relativization.Extraction
-import Linglib.Theories.Syntax.Minimalism.Position
-import Linglib.Theories.Syntax.Minimalism.Derivation
+import Linglib.Theories.Syntax.Minimalist.Position
+import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 
 /-!
@@ -73,7 +73,7 @@ namespace Phenomena.FillerGap.Studies.Erlewine2018
 
 open Fragments.TobaBatak
 open ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Empirical Data Verification

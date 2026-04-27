@@ -1,5 +1,5 @@
 import Linglib.Fragments.Dutch.Adpositions
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Datasets.WALS.Features.F85A
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
@@ -36,7 +36,7 @@ not whether F is overt. See `MovedConstituent`.
 ## Cross-references
 
 - `Fragments.Dutch.Adpositions`: lexical inventory
-- `Minimalism.Formal.ExtendedProjection`: Place/Path in EP
+- `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
 - `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
 - `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
@@ -47,7 +47,7 @@ not whether F is overt. See `MovedConstituent`.
 namespace BroekhuisCorver2026
 
 open Fragments.Dutch.Adpositions
-open Minimalism
+open Minimalist
 open Semantics.Spatial.Path (PathShape)
 
 -- ════════════════════════════════════════════════════

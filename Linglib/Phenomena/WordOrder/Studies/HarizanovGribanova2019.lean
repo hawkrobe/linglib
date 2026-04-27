@@ -1,6 +1,6 @@
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Bulgarian
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.VerbMovement
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Fragments.German.V2
 
@@ -65,7 +65,7 @@ namespace HarizanovGribanova2019
 -- ============================================================================
 
 open Westergaard2009
-open Minimalism (ForceHead V2Profile)
+open Minimalist (ForceHead V2Profile)
 
 /-- German root declaratives are V2 — consistent with V-to-C head movement. -/
 theorem models_root_v2 :
@@ -100,7 +100,7 @@ theorem westergaard_german_plus_fin :
 -- Refutation: H&G vs. Westergaard on German V-to-I
 -- ============================================================================
 
-open Minimalism (VMovementParam)
+open Minimalist (VMovementParam)
 
 /-- Project @cite{westergaard-2009}'s V2 micro-parameter profile into
     @cite{pollock-1989}'s V-movement parameter: the +Fin°

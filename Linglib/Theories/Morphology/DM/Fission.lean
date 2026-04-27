@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
 
 /-!
 # Fission (Distributed Morphology)
@@ -17,7 +17,7 @@ The key parameters of any Fission rule:
 
 namespace Morphology.DM.Fission
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Fission Output

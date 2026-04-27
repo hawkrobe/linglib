@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Morphology.Core.Circumfix
 
 /-!
@@ -31,7 +31,7 @@ spell-outs of distinct heads in a cartographic left periphery.
 
 namespace Fragments.Tigrinya.ClausePrefixes
 
-open Minimalism
+open Minimalist
 open Morphology.Circumfix
 
 -- ============================================================================

@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Phase
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Negation.Defs
@@ -49,10 +49,10 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 ## Connections
 
 - `Core.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
-- `Minimalism.NegScope` — merge position, scope, classification chain (defined below)
+- `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
 - `Fragments.Italian.ExpletiveNegation` — Italian Table 1 data
 - `Phenomena.Negation.Typology.NegationProfile.negIsHead` — head status
-- `Minimalism.fValue` / `isCPArea` — f-value classification
+- `Minimalist.fValue` / `isCPArea` — f-value classification
 
 ## Neg-Merge-Position Apparatus (relocated from `Minimalism/NegScope.lean`)
 
@@ -60,14 +60,14 @@ The `NegMergePosition` type and its bridges to `ENType`, `ENStrength`,
 and `PolarityLicensing` are paper-specific to @cite{greco-2020} (with
 @cite{rett-2026}'s high/low EN distinction and @cite{stankova-2025}'s
 Czech three-way coarsening). Not consumed elsewhere in the library, so
-they live here under `namespace Minimalism.NegScope` for symmetry with
+they live here under `namespace Minimalist.NegScope` for symmetry with
 other Minimalist apparatus and to support qualified lookup if a future
 paper picks them up.
 -/
 
-namespace Minimalism.NegScope
+namespace Minimalist.NegScope
 
-open Minimalism (Cat fValue isCPArea)
+open Minimalist (Cat fValue isCPArea)
 open Phenomena.Negation.ExpletiveNegation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 
@@ -326,12 +326,12 @@ theorem toNegMergePosition_monotone :
     simp only [NegPosition.toNegMergePosition, NegMergePosition.toNat,
                NegPosition.toNat] at * <;> omega
 
-end Minimalism.NegScope
+end Minimalist.NegScope
 
 namespace Greco2020
 
-open Minimalism (Cat fValue isPhaseHead isCPArea)
-open Minimalism.NegScope (NegMergePosition)
+open Minimalist (Cat fValue isPhaseHead isCPArea)
+open Minimalist.NegScope (NegMergePosition)
 open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 open Fragments.Italian.ExpletiveNegation (ENEnvironment)

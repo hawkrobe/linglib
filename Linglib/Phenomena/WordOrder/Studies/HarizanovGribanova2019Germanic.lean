@@ -33,11 +33,11 @@ From Harizanov (Section 5.1.2, p.35-36):
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.HMC
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.HMC
 
 namespace HarizanovGribanova2019.Germanic
 
-open Minimalism
+open Minimalist
 
 /-! ## Part 1: The Lexicon
 

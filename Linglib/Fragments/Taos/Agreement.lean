@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!
 # Taos Verbal Agreement Fragment
@@ -37,7 +37,7 @@ A&N's `[−singular]` for direct compatibility with @cite{harbour-2014}.)
 
 namespace Fragments.Taos.Agreement
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Argument Position

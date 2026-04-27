@@ -2,7 +2,7 @@ import Linglib.Core.Relativization.Basic
 import Linglib.Core.Tree
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!
 # Scott 2021: Two Types of Resumptive Pronouns in Swahili
@@ -47,7 +47,7 @@ categories (D, Num, n, Pers).
 
 ## Vocabulary Insertion (FeatureBundle-Based)
 
-Uses `Minimalism.FeatureBundle` and `Morphology.DM.VI.vocabularyInsertSimple`
+Uses `Minimalist.FeatureBundle` and `Morphology.DM.VI.vocabularyInsertSimple`
 from the DM theory module. The Elsewhere Condition is structural: person-
 specified rules (specificity 3) beat personless defaults (specificity 2).
 Chain reduction removes person features from the bundle, so only the
@@ -57,7 +57,7 @@ default matches.
 namespace Phenomena.Relativization.Studies.Scott2021
 
 open Core Fragments.Swahili Fragments.Swahili.Relativization
-open Minimalism (FeatureBundle FeatureVal PhiFeature)
+open Minimalist (FeatureBundle FeatureVal PhiFeature)
 open Features.Prominence (PersonLevel)
 
 -- ============================================================================

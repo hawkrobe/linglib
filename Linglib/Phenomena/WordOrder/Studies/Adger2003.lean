@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Inversion
+import Linglib.Theories.Syntax.Minimalist.Inversion
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -40,28 +40,28 @@ T-to-C movement and blocks the latter because [+Q] on C requires T in C. -/
 /-- ex01 "What can John eat?" — grammatical per Data, licensed per Minimalism -/
 theorem bridge_ex01 :
     ex01.acceptability == .grammatical ∧
-    Minimalism.licenses [what, can, john, eat] .matrixQuestion :=
-  ⟨rfl, Minimalism.licenses_matrix_t_first _ rfl⟩
+    Minimalist.licenses [what, can, john, eat] .matrixQuestion :=
+  ⟨rfl, Minimalist.licenses_matrix_t_first _ rfl⟩
 
 /-- ex02 "*What John can eat?" — ungrammatical per Data, not licensed per Minimalism -/
 theorem bridge_ex02 :
     ex02.acceptability == .ungrammatical ∧
-    ¬ Minimalism.licenses [what, john, can, eat] .matrixQuestion :=
-  ⟨rfl, Minimalism.not_licenses_matrix_subject_first _ rfl⟩
+    ¬ Minimalist.licenses [what, john, can, eat] .matrixQuestion :=
+  ⟨rfl, Minimalist.not_licenses_matrix_subject_first _ rfl⟩
 
 /-! ### Embedded questions -/
 
 /-- ex07 "I wonder what John can eat" — grammatical per Data, licensed per Minimalism -/
 theorem bridge_ex07 :
     ex07.acceptability == .grammatical ∧
-    Minimalism.licenses [john, can, eat] .embeddedQuestion :=
-  ⟨rfl, Minimalism.licenses_embedded_subject_first _ rfl⟩
+    Minimalist.licenses [john, can, eat] .embeddedQuestion :=
+  ⟨rfl, Minimalist.licenses_embedded_subject_first _ rfl⟩
 
 /-- ex08 "*I wonder what can John eat" — ungrammatical per Data, not licensed per Minimalism -/
 theorem bridge_ex08 :
     ex08.acceptability == .ungrammatical ∧
-    ¬ Minimalism.licenses [can, john, eat] .embeddedQuestion :=
-  ⟨rfl, Minimalism.not_licenses_embedded_t_first _ rfl⟩
+    ¬ Minimalist.licenses [can, john, eat] .embeddedQuestion :=
+  ⟨rfl, Minimalist.not_licenses_embedded_t_first _ rfl⟩
 
 /-! ### Summary
 

@@ -39,7 +39,7 @@ Formalizes the core empirical and theoretical contributions:
 
 namespace Toosarvandani2023
 
-open Minimalism.PhiSemantics
+open Minimalist.PhiSemantics
 open Fragments.Zapotec
 
 -- ============================================================================
@@ -184,7 +184,7 @@ def PronType.features : PronType → Finset DFeature
     higher than B, iff A has all of the features of B."
 
     Instantiates the parameterized `featureContainmentLicit` from
-    `Minimalism.PhiSemantics` with the Zapotec feature mapping. -/
+    `Minimalist.PhiSemantics` with the Zapotec feature mapping. -/
 def pccLicit (subj obj : PronType) : Bool :=
   featureContainmentLicit PronType.features subj obj
 

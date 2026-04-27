@@ -23,7 +23,7 @@ These types are framework-agnostic: they classify EN constructions by
 their empirical properties without committing to a syntactic analysis.
 The syntactic derivation (from merge position in the extended projection)
 lives in `Phenomena.Negation.Studies.Greco2020` under
-`namespace Minimalism.NegScope`.
+`namespace Minimalist.NegScope`.
 -/
 
 namespace Phenomena.Negation.ExpletiveNegation

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Core.Lexical.ExpressiveModifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment
@@ -84,7 +84,7 @@ the paper's specific data (six conditions, two DD scores) and the
 bridge theorems connecting theory to data.
 -/
 
-namespace Minimalism.ANDL
+namespace Minimalist.ANDL
 
 /-! ## Minimalist POV-feature analysis (formerly `Core/ANDL.lean`)
 
@@ -146,7 +146,7 @@ abbrev LicensedMinimalist (m : ExpressiveWhModifier)
     (whHostReachesMatrixSpecCP : Prop) : Prop :=
   Licensed m whHostReachesMatrixSpecCP
 
-end Minimalism.ANDL
+end Minimalist.ANDL
 
 namespace ChanShen2026
 
@@ -157,7 +157,7 @@ open Phenomena.Questions.Typology (WhInterpMechanism)
 -- IslandSource is declared at top level in Phenomena/Islands/Studies/Ross1967.lean
 open Core.Lexical.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
-open Minimalism.ANDL
+open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
 open Paradigms.AcceptabilityJudgment
   (FactorialCondition DDResult AccountPredictions)

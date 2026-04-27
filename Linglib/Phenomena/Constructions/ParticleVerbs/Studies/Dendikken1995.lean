@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.SmallClause
+import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!
@@ -51,7 +51,7 @@ are property of the corresponding study file.
 
 namespace Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 
-open Minimalism
+open Minimalist
 open Phenomena.Constructions.ParticleVerbs
 
 /-! ## Simplex PVC: surface SC after NP-movement

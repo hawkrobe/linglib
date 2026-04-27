@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 
 /-!
 # Russian Adjective Agreement
@@ -17,7 +17,7 @@ the HFF: A–XP–N is attested (24).
 
 namespace Fragments.Slavic.Russian.AdjAgreement
 
-open Minimalism.Modification
+open Minimalist.Modification
 
 /-- Russian long-form features: φ (number, gender) + κ (6-case). -/
 def longFormFeatures : List MAGFeatureType :=

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # German V2 Profile
@@ -22,7 +22,7 @@ for the formal contrast.
 
 namespace Fragments.German
 
-open Minimalism (ForceHead V2Profile)
+open Minimalist (ForceHead V2Profile)
 
 /-- German: V-to-C in root declaratives, matrix wh-questions, and
     yes/no-questions; +Fin° for V-to-I in embedded clauses (contested). -/

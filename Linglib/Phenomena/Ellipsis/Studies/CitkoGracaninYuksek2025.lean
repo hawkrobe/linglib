@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Economy
-import Linglib.Theories.Syntax.Minimalism.Phase
+import Linglib.Theories.Syntax.Minimalist.Economy
+import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Phenomena.Ellipsis.Sluicing
 /-!
 # Economy in PF Reduction
@@ -52,11 +52,11 @@ multidominance as the PF reduction mechanism.
 The PF-reduction primitives below are paper-specific to @cite{citko-2014}
 and @cite{citko-gracanin-yuksek-2025} and are not consumed elsewhere in
 the library, so they live with the study that uses them. They remain
-under `namespace Minimalism` for symmetry with other Minimalist apparatus
+under `namespace Minimalist` for symmetry with other Minimalist apparatus
 and to support qualified lookup if a future paper picks them up.
 -/
 
-namespace Minimalism
+namespace Minimalist
 
 /-- The two mechanisms of PF reduction.
 
@@ -179,11 +179,11 @@ theorem zero_wh_no_violation (param : MWFParameter) :
     mwfViolation param 0 = false := by
   simp [mwfViolation]
 
-end Minimalism
+end Minimalist
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Construction Types and Empirical Data

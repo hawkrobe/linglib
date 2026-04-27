@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!
 # The Case Filter
@@ -20,7 +20,7 @@ see `Voice.lean` and `Fragments.Mayan.Mam.Agreement`.
 
 -/
 
-namespace Minimalism
+namespace Minimalist
 
 open Features.Prominence
 
@@ -114,4 +114,4 @@ theorem case_filter_at_interfaces (dps : List DPFeatures)
     | head => exact h1
     | tail _ hmem => exact ih h2 hmem
 
-end Minimalism
+end Minimalist

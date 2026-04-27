@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
-import Linglib.Theories.Syntax.Minimalism.Copula
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
+import Linglib.Theories.Syntax.Minimalist.Copula
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Sluicing
 
@@ -39,8 +39,8 @@ syntactic isomorphism in sluicing applies only to the **argument domain**
 
 namespace AnandHardtMcCloskey2025
 
-open Minimalism
-open Minimalism.Ellipsis.FormalMatching
+open Minimalist
+open Minimalist.Ellipsis.FormalMatching
 open Phenomena.Ellipsis.Sluicing
 
 -- ============================================================================

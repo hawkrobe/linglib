@@ -37,7 +37,7 @@ impossibility of sideward/downward movement.
 
 - `MereologicalSyntax.SynObj`: tree-based, cannot express multiparthood.
   Embeds into `SynGraph` by construction.
-- `Minimalism.SyntacticObject`: binary tree. Embeds as a `SynGraph`
+- `Minimalist.SyntacticObject`: binary tree. Embeds as a `SynGraph`
   satisfying `isTree`.
 - `Core.Tree C W`: n-ary tree for compositional interpretation, not a
   syntactic structure type.
@@ -232,7 +232,7 @@ def SynGraph.maxInDegree1 (g : SynGraph L) : Bool :=
     if h : i < g.numNodes then g.parentCount ⟨i, h⟩ ≤ 1 else true
 
 /-- The graph is a tree: acyclic with in-degree ≤ 1 everywhere.
-    `Minimalism.SyntacticObject` and `MereologicalSyntax.SynObj` both
+    `Minimalist.SyntacticObject` and `MereologicalSyntax.SynObj` both
     satisfy this. Mereological structures with multiparthood do NOT. -/
 def SynGraph.isTree (g : SynGraph L) : Bool :=
   g.acyclic && g.maxInDegree1

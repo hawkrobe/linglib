@@ -1,7 +1,7 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Applicative
-import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.VoiceTheta
 import Linglib.Fragments.Icelandic.Predicates
 
 /-!
@@ -40,9 +40,9 @@ configurations, not a single "reflexive" or "anticausative" morpheme.
 
 namespace Wood2015
 
-open Minimalism
+open Minimalist
 open Fragments.Icelandic.Predicates
-open Minimalism.VoiceTheta
+open Minimalist.VoiceTheta
 
 -- ============================================================================
 -- § 1: Voice–CAUSE Independence (Ch. 3)

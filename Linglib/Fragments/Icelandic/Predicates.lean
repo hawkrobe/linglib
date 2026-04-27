@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Applicative
-import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
 
 /-!
 # Icelandic Verb Fragment: -st Constructions
@@ -37,7 +37,7 @@ itself; `voiceToSuffix` is a simplification for the fragment.
 
 namespace Fragments.Icelandic.Predicates
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: -st Construction Types

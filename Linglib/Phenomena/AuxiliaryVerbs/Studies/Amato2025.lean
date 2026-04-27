@@ -1,6 +1,6 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
-import Linglib.Theories.Syntax.Minimalism.NestedAgree
+import Linglib.Theories.Syntax.Minimalist.NestedAgree
 
 /-!
 # @cite{amato-2025} mechanism applied to Italian restructuring AS
@@ -65,8 +65,8 @@ namespace Phenomena.AuxiliaryVerbs.Studies.Amato2025
 
 open Phenomena.AuxiliaryVerbs.Selection
 open Phenomena.AuxiliaryVerbs.Studies.Olivier2026
-open Minimalism
-open Minimalism.NestedAgree
+open Minimalist
+open Minimalist.NestedAgree
 
 /-! ## Probe stack (Nested Agree on Perf) -/
 

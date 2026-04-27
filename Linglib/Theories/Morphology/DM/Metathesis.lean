@@ -26,7 +26,7 @@ against the Taos data in
 
 namespace Morphology.DM.Metathesis
 
-open Minimalism Morphology.DM.Impoverishment
+open Minimalist Morphology.DM.Impoverishment
 
 -- ============================================================================
 -- § 1: Metathesis Rule

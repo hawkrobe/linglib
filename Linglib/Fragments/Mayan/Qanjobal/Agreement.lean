@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -21,7 +21,7 @@ for a vP lacking an external argument.
 
 namespace Fragments.Mayan.Qanjobal
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Argument Positions

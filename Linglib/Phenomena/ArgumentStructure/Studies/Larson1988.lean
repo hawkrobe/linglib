@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.Derivation
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!
@@ -46,7 +46,7 @@ on the positions of DP arguments, not the position of V.
 
 ## Cross-references
 
-- `Minimalism.Derivation`: `Step.im` = Internal Merge
+- `Minimalist.Derivation`: `Step.im` = Internal Merge
 - `Studies/Pylkkanen2008.lean`: Modern Voice/Appl decomposition with
   tree-based c-command verification; bridge theorem proving convergence
 - `ColeHermon2008`: English passive derivation
@@ -55,7 +55,7 @@ on the positions of DP arguments, not the position of V.
 
 namespace Larson1988
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Lexical Items

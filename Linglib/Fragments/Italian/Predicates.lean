@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Italian Verb Entries @cite{fusco-sgrizzi-2026}
@@ -26,7 +26,7 @@ which determines the rational attitude reading.
 namespace Fragments.Italian.Predicates
 
 open Core.Verbs
-open Minimalism (ComplementSize)
+open Minimalist (ComplementSize)
 open Semantics.Attitudes.RationalAttitude (Reading readingFromSize)
 
 -- ════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.GenHM
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.GenHM
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -29,7 +29,7 @@ outcome because spell-out depends only on WHETHER the chain is split.
 namespace ArregiPietraszko2021
 
 open Phenomena.WordOrder.SubjectAuxInversion
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1  English Terminal Strength Assignment

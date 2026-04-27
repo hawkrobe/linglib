@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Semantics.Verb.ArgDerivation
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # @cite{krejci-2012} — Lexical Reflexivity and the Ingestive/Middle Class
@@ -349,11 +349,11 @@ theorem anticausative_blocks_bySelf :
 
 /-- Anticausative Voice does not assign a θ-role (no external argument). -/
 theorem anticausative_no_theta :
-    Minimalism.voiceAnticausative.assignsTheta = false := rfl
+    Minimalist.voiceAnticausative.assignsTheta = false := rfl
 
 /-- Middle Voice does not assign a θ-role. -/
 theorem middle_no_theta :
-    Minimalism.voiceMiddle.assignsTheta = false := rfl
+    Minimalist.voiceMiddle.assignsTheta = false := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Linguistic Causativizability

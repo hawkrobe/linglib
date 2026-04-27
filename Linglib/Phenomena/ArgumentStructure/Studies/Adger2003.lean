@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Selection
-import Linglib.Theories.Syntax.Minimalism.FromFragments
+import Linglib.Theories.Syntax.Minimalist.Selection
+import Linglib.Theories.Syntax.Minimalist.FromFragments
 
 /-!
 # Adger 2003: C-Selection and Subcategorization @cite{adger-2003}
@@ -58,7 +58,7 @@ the SelStack from `VerbEntry.complementType`:
 
 namespace Adger2003
 
-open Minimalism Minimalism.FromFragments
+open Minimalist Minimalist.FromFragments
 
 /-! ## §0: Lexicon — Fragment-grounded SO building blocks
 

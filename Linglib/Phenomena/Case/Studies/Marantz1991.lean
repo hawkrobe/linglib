@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Georgian.Agreement
 
 /-!
@@ -67,7 +67,7 @@ together), abstract ABS → morphological NOM (unmarked surface form).
 
 The case realization hierarchy (lexical > dependent > unmarked) parallels
 the Moravcsik agreement accessibility hierarchy (formalized below as
-`Minimalism.CaseAccessibility` from @cite{preminger-2014}). Both rank
+`Minimalist.CaseAccessibility` from @cite{preminger-2014}). Both rank
 case types identically; the former determines case *assignment* priority,
 the latter determines agreement *visibility*. The bridge
 `sourceToAccessibility` connects the two.
@@ -78,10 +78,10 @@ The Moravcsik-hierarchy primitives below come from @cite{preminger-2014}
 (with @cite{bobaljik-2008}, @cite{scott-2023}). They are paper-specific
 to the case-discrimination tradition that this study is in conversation
 with, and are not consumed elsewhere in the library, so they live here
-under `namespace Minimalism` for symmetry with other Minimalist apparatus.
+under `namespace Minimalist` for symmetry with other Minimalist apparatus.
 -/
 
-namespace Minimalism
+namespace Minimalist
 
 /-- Case accessibility for agreement.
 
@@ -280,11 +280,11 @@ theorem kaq_abs_agreement :
 theorem kaq_erg_agreement_threshold :
     (agreementFromThreshold kaqCaseAlignment .dependent).aAgrees = true := rfl
 
-end Minimalism
+end Minimalist
 
 namespace Marantz1991
 
-open Minimalism
+open Minimalist
 open Syntax.Case
 open Fragments.Georgian.Agreement
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Cascade
+import Linglib.Theories.Syntax.Minimalist.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.PsychLink
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
@@ -51,7 +51,7 @@ verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
 
 namespace Kim2024_UPH
 
-open Minimalism
+open Minimalist
 open Semantics.Causation.Psych
 open Semantics.Causation.PsychLink
 open Core.Time (Interval)

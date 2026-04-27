@@ -1,6 +1,6 @@
 import Linglib.Features.AnsweringSystem
 import Linglib.Core.Question.Hamblin
-import Linglib.Theories.Syntax.Minimalism.Polarity
+import Linglib.Theories.Syntax.Minimalist.Polarity
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Questions.PolarAnswerStructure
 
@@ -28,7 +28,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
 ## Connection to Existing Infrastructure
 
 - `Core.Question.polar` (substrate-level inquisitive polar question)
-- `Minimalism.Polarity.PolFeature` (syntactic [±Pol] feature)
+- `Minimalist.Polarity.PolFeature` (syntactic [±Pol] feature)
 - `AnsweringSystem` (typological parameter)
 - `NegationHeight` → `predictedSystem` (negation height derives answering system)
 - `PolarAnswerProfile` (per-language classification)
@@ -41,7 +41,7 @@ namespace Holmberg2016
 
 open Core.Question
 open Features (AnsweringSystem PolarAnswerProfile)
-open Minimalism.Polarity
+open Minimalist.Polarity
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Bridge: Hamblin polar ↔ [±Pol] variable

@@ -1,8 +1,8 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Agree
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
-import Linglib.Theories.Syntax.Minimalism.ObligatoryOperations
+import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Theories.Morphology.DM.Impoverishment
 
 /-!
@@ -57,7 +57,7 @@ both paths.
 
 namespace Scott2023
 
-open Minimalism Fragments.Mayan.Mam
+open Minimalist Fragments.Mayan.Mam
 
 -- ============================================================================
 -- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Copula
+import Linglib.Theories.Syntax.Minimalist.Copula
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
@@ -23,7 +23,7 @@ predictions and cross-linguistic data from @cite{myler-2016}.
 
 namespace Myler2016
 
-open Minimalism
+open Minimalist
 
 -- ════════════════════════════════════════════════════
 -- § 1. Icelandic: Two HAVEs (§4.3)

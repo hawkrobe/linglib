@@ -4,8 +4,8 @@ import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Phenomena.Gender.Studies.Kramer2020
-import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
-import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+import Linglib.Theories.Syntax.Minimalist.Agreement.GenderResolution
+import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
 
 /-!
@@ -53,8 +53,8 @@ predictions against @cite{carstens-2026}'s empirical data.
 namespace Carstens2026
 
 open Fragments.Bantu
-open Minimalism.Agreement.GenderResolution
-open _root_.Minimalism (Interpretability)
+open Minimalist.Agreement.GenderResolution
+open _root_.Minimalist (Interpretability)
 
 -- ============================================================================
 -- Preamble: Fragment → Theory Bridge
@@ -680,7 +680,7 @@ theorem two_grammars_differ_diviner :
 -- § 14: Bridge to Unified Coordinate Resolution
 -- ============================================================================
 
-open Minimalism.Agreement.CoordinateResolution
+open Minimalist.Agreement.CoordinateResolution
 
 /-! ### Bantu–CoordinateResolution bridge
 

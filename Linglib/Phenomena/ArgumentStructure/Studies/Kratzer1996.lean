@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Linking Theory Predictions → Hand-Annotated θ-Roles
@@ -49,7 +49,7 @@ predictions are verified in `Core/Voice.lean` via `buildDecomposition`. -/
 
 section TreeDerivations
 
-open Minimalism
+open Minimalist
 
 -- Leaf tokens
 

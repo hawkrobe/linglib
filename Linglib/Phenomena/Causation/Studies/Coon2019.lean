@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
@@ -21,7 +21,7 @@ Glossed Chuj sentences with root, voice suffix, and grammaticality.
 
 ## Minimalist analysis (§§3–9)
 
-Voice heads as `Minimalism.VoiceHead` instances, event decomposition via
+Voice heads as `Minimalist.VoiceHead` instances, event decomposition via
 `buildDecomposition`, existential closure (-aj), and division of labor /
 causative alternation proved from the Voice–root split.
 
@@ -169,7 +169,7 @@ theorem examples_grammaticality :
 -- § 3. Minimalist Voice Analysis (@cite{coon-2019}, ex. (78))
 -- ════════════════════════════════════════════════════
 
-open Minimalism
+open Minimalist
 
 /-- Active transitive v/Voice⁰ (Ø): introduces overt agent in Spec,VoiceP,
     assigns ergative case, phase head (v*). -/

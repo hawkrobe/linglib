@@ -323,7 +323,7 @@ event variable is bound by the speech act event (e₀), not by Asp's
 ∃e₂. Voice heads without [D] have no specifier — the highest DP is
 the internal argument (below AspP), accessible to both e₀ and e₂. -/
 
-open Minimalism (VoiceHead) in
+open Minimalist (VoiceHead) in
 
 /-- Derive argument position from Voice head: [+D] → external (above
 AspP), [-D] → internal (below AspP). This is the structural claim
@@ -331,7 +331,7 @@ that replaces the stipulated position mapping. -/
 def argPositionOf (vh : VoiceHead) : ChujArgPosition :=
   if vh.hasD then .external else .internal
 
-open Minimalism (VoiceHead) in
+open Minimalist (VoiceHead) in
 
 /-- End-to-end: Voice head determines MI flavor availability.
 Given a Voice head and verb volitionality, predict the MI flavors

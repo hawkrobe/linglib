@@ -1,6 +1,6 @@
 import Linglib.Core.Time.Tense
 import Linglib.Core.Time.Reichenbach
-import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
+import Linglib.Theories.Syntax.Minimalist.Tense.AgreeSOT
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic
@@ -219,8 +219,8 @@ theorem all_tp_simultaneous :
 -- § Bridge: Size-Sensitive SOT → Zeijlstra + PIC
 -- ════════════════════════════════════════════════════════════════
 
-open Minimalism (ComplementSize fValue Cat)
-open Minimalism.Tense.AgreeSOT
+open Minimalist (ComplementSize fValue Cat)
+open Minimalist.Tense.AgreeSOT
 open Semantics.Tense (EmbeddedTenseReading)
 open Fragments.Hungarian.Predicates
 open Fragments.Hungarian.FunctionWords

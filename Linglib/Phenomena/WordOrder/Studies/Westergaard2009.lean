@@ -1,6 +1,6 @@
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
 import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Features.InformationStructure
@@ -74,7 +74,7 @@ NOT @cite{laka-1990}'s ΣP
 
 namespace Westergaard2009
 
-open Minimalism (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
+open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
 open Features.InformationStructure (DiscourseStatus)
 
 -- Fragment data (theory-neutral)

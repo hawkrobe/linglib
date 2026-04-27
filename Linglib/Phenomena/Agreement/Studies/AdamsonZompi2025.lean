@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.PersonGeometry
-import Linglib.Theories.Syntax.Minimalism.PConstraint
-import Linglib.Theories.Syntax.Minimalism.Agree
+import Linglib.Theories.Syntax.Minimalist.PersonGeometry
+import Linglib.Theories.Syntax.Minimalist.PConstraint
+import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
@@ -54,8 +54,8 @@ not addressee reference per se.
 namespace AdamsonZompi2025
 
 open Features.Prominence (PersonLevel)
-open Minimalism (DecomposedPerson decomposePerson)
-open Minimalism.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
+open Minimalist (DecomposedPerson decomposePerson)
+open Minimalist.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
   IsInherentlyProximate)
 
 -- ============================================================================
@@ -464,19 +464,19 @@ theorem pconstraint_allows_imposter :
 
 /-- A feature bundle for a 3rd person DP (LEI's agreement features).
     The probe sees [Person:3rd]. -/
-private def lei_agreement_bundle : Minimalism.FeatureBundle :=
+private def lei_agreement_bundle : Minimalist.FeatureBundle :=
   [.valued (.phi (.person .third))]
 
 /-- A feature bundle for a 2nd person DP (LEI's interpretable features).
     The probe sees [Person:2nd]. -/
-private def lei_interpretable_bundle : Minimalism.FeatureBundle :=
+private def lei_interpretable_bundle : Minimalist.FeatureBundle :=
   [.valued (.phi (.person .second))]
 
 /-- A probe seeking person features finds them on both bundles — the
     probe can Agree with either. The issue is WHICH person value it sees. -/
 theorem probe_finds_person_on_both :
-    Minimalism.hasValuedFeature lei_agreement_bundle (.phi (.person .third)) = true ∧
-    Minimalism.hasValuedFeature lei_interpretable_bundle (.phi (.person .second)) = true :=
+    Minimalist.hasValuedFeature lei_agreement_bundle (.phi (.person .third)) = true ∧
+    Minimalist.hasValuedFeature lei_interpretable_bundle (.phi (.person .second)) = true :=
   ⟨rfl, rfl⟩
 
 /-- Under morphosyntactic accounts, the probe sees LEI's agreement bundle

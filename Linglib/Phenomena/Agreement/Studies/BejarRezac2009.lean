@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.CyclicAgree
+import Linglib.Theories.Syntax.Minimalist.CyclicAgree
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 
@@ -40,7 +40,7 @@ second-cycle information: *m-* appears when valued on cycle I (IA=1P),
 namespace BejarRezac2009
 
 open Features.Prominence (PersonLevel)
-open Minimalism.CyclicAgree
+open Minimalist.CyclicAgree
 
 -- ============================================================================
 -- § 1: PersonNumber → PersonLevel Bridge

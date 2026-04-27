@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Probe
-import Linglib.Theories.Syntax.Minimalism.ClauseSpine
+import Linglib.Theories.Syntax.Minimalist.Probe
+import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 
 /-!
 # Probes and Their Horizons @cite{keine-2020}
@@ -79,7 +79,7 @@ bilateral labels). It verifies the book's predictions as theorems.
 
 namespace Keine2020
 
-open Minimalism (ProbeProfile LanguageProbeConfig ClauseSpine Cat fValue english_extr
+open Minimalist (ProbeProfile LanguageProbeConfig ClauseSpine Cat fValue english_extr
   lubukusuAProbe)
 
 -- ============================================================================
@@ -608,7 +608,7 @@ English's is transparent to Lubukusu's. -/
 /-- The three A-movement settings verified against clause types. -/
 theorem crosslinguistic_a_movement :
     -- Lubukusu (⊣ ∅): CP transparent
-    Minimalism.lubukusuAProbe.transparentToLabel cPLabel = true ∧
+    Minimalist.lubukusuAProbe.transparentToLabel cPLabel = true ∧
     -- English (⊣ C): CP opaque, TP transparent
     englishCfg.aMove.transparentToLabel cPLabel = false ∧
     englishCfg.aMove.transparentToLabel tPLabel = true ∧

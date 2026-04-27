@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
-import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
 import Linglib.Core.AgreementTarget
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
@@ -702,7 +702,7 @@ theorem compositional_plural_is_inclusive :
 -- §12: Bridge to Unified Coordinate Resolution
 -- ============================================================================
 
-open Minimalism.Agreement.CoordinateResolution
+open Minimalist.Agreement.CoordinateResolution
 
 /-- Corbett's `semanticResolveIn` agrees with the lattice-grounded
     `numberResolveIn` for any system containing `.plural`.

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # Verb ↔ Smuggling Interface
@@ -28,7 +28,7 @@ than the surface `unaccusative : Bool` annotation.
 
 namespace Core.Verbs
 
-open Minimalism
+open Minimalist
 
 /-- A verb has a syntactic complement iff its `complementType` is anything
     other than `.none`. Used by smuggling derivations to check that there

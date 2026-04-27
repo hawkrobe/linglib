@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 
 /-!
 # Italian Adjective Agreement
@@ -17,7 +17,7 @@ analysis is given in (72).
 
 namespace Fragments.Italian.AdjAgreement
 
-open Minimalism.Modification
+open Minimalist.Modification
 
 /-- Italian adjective φ-features: number and gender only. -/
 def phiFeatures : List MAGFeatureType :=

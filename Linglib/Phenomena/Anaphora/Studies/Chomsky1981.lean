@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Coreference
+import Linglib.Theories.Syntax.Minimalist.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
@@ -32,7 +32,7 @@ Principle C under Principle B).
 namespace Chomsky1981
 
 open Paradigms.AcceptabilityJudgment
-open Minimalism.Coreference
+open Minimalist.Coreference
 open Phenomena.Anaphora.Coreference
 
 /-- Coverage of a `PhenomenonData` set under Minimalist binding theory.

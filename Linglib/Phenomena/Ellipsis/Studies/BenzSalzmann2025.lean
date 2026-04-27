@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain
 
 /-!
 # Benz & Salzmann (2025): Evidence from German for N-stranding NP-ellipsis
@@ -62,7 +62,7 @@ the German empirical data and verifies it against those predictions.
 
 namespace BenzSalzmann2025
 
-open Minimalism.Ellipsis
+open Minimalist.Ellipsis
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: German NP-Ellipsis Data

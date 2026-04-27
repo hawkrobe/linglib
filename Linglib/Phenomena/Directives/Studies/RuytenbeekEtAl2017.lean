@@ -1,6 +1,6 @@
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Theories.Semantics.Modality.Assert
-import Linglib.Theories.Syntax.Minimalism.SpeechActs
+import Linglib.Theories.Syntax.Minimalist.SpeechActs
 import Linglib.Fragments.French.Modals
 
 /-!
@@ -67,7 +67,7 @@ namespace RuytenbeekEtAl2017
 open Core.Modality (ModalFlavor ModalForce)
 open Core.Discourse (PreparatoryCondition)
 open Semantics.Modality.Assert (primaryFlavor SpeechActType)
-open Minimalism.SpeechActs (SAPMood)
+open Minimalist.SpeechActs (SAPMood)
 
 /-! ## §1. Sentence types and modal projections -/
 

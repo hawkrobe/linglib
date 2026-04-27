@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Semantics.Causation.Implicative
 
@@ -27,7 +27,7 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
 namespace Fragments.Finnish.Predicates
 
-open Minimalism (VoiceFlavor VoiceHead voiceAgent voiceImpersonal)
+open Minimalist (VoiceFlavor VoiceHead voiceAgent voiceImpersonal)
 
 -- ============================================================================
 -- § 1: Verb Entry Type
@@ -122,7 +122,7 @@ theorem passive_not_phase : finnishPassive.phaseHead = false := rfl
     agent, but impersonal Voice has semantics while nonThematic does not. -/
 theorem impersonal_vs_anticausative :
     finnishPassive.hasSemantics = true ∧
-    (Minimalism.voiceAnticausative).hasSemantics = false := ⟨rfl, rfl⟩
+    (Minimalist.voiceAnticausative).hasSemantics = false := ⟨rfl, rfl⟩
 
 /-- All impersonal forms end in *-aan* or *-ään* (back or front harmony on
     the passive marker). -/

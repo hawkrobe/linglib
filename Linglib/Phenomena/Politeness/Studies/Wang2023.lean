@@ -2,7 +2,7 @@ import Linglib.Features.PrivativePair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Phenomena.Politeness.Honorifics
 
 /-!
@@ -376,7 +376,7 @@ theorem no_unattested_ternary_pattern :
 ## §5: [iHON] is Redundant
 
 @cite{alok-bhalla-2026} posits a dedicated [iHON] feature in the syntax
-(formalized in `Minimalism.Features.HonLevel`). @cite{wang-r-2023}
+(formalized in `Minimalist.Features.HonLevel`). @cite{wang-r-2023}
 argues this is unnecessary: the honorific recruitment pattern falls out
 from `phiPresup` + ToD, without any feature beyond standard phi-features.
 
@@ -610,7 +610,7 @@ candidates.
 
 section HonLevelBridge
 
-open Minimalism (HonLevel)
+open Minimalist (HonLevel)
 
 instance : PhiFeatures HonLevel where
   toPair

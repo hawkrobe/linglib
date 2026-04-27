@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Fragments.Greek.Case
 
 /-!
@@ -17,7 +17,7 @@ and agreement covers all φ/κ-features in the DP.
 
 namespace Fragments.Greek.AdjAgreement
 
-open Minimalism.Modification
+open Minimalist.Modification
 
 /-- φ-features realized on Greek adjectives: number and gender. -/
 private def phiFeatures : List MAGFeatureType :=

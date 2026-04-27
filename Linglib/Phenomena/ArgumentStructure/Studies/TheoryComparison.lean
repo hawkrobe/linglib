@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
-import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Core.Dependency.Basic
 
 /-!
@@ -56,7 +56,7 @@ assigned to exactly one argument (Theta Criterion). -/
     study; not part of the M-C-B substrate (M-C-B's Merge action is
     feature-driven via the coproduct, not via discrete triggers). -/
 inductive MergeTrigger where
-  | selection : Minimalism.Cat → MergeTrigger  -- selectional [uF]
+  | selection : Minimalist.Cat → MergeTrigger  -- selectional [uF]
   | epp : MergeTrigger                          -- EPP triggers specifier
   | theta : MergeTrigger                        -- theta-role assignment
   deriving Repr, DecidableEq

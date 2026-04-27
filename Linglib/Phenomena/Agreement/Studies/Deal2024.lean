@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.PConstraint
-import Linglib.Theories.Syntax.Minimalism.CyclicAgree
+import Linglib.Theories.Syntax.Minimalist.PConstraint
+import Linglib.Theories.Syntax.Minimalist.CyclicAgree
 
 /-!
 # Interaction, Satisfaction, and the PCC @cite{deal-2024}
@@ -45,10 +45,10 @@ This study file connects @cite{deal-2024}'s framework to both:
 namespace Deal2024
 
 open Features.Prominence (PersonLevel)
-open Minimalism (decomposePerson)
-open Minimalism.PConstraint (IsLicit strongGrammar ultraStrongGrammar
+open Minimalist (decomposePerson)
+open Minimalist.PConstraint (IsLicit strongGrammar ultraStrongGrammar
   weakGrammar meFirstGrammar)
-open Minimalism.CyclicAgree (activeResidue personSpec partialProbe)
+open Minimalist.CyclicAgree (activeResidue personSpec partialProbe)
 
 -- ============================================================================
 -- § 1: Person Features

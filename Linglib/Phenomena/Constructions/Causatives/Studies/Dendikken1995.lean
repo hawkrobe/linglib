@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.SmallClause
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.ArgumentStructure.Studies.Dendikken1995
 
 /-!
@@ -110,7 +110,7 @@ NOT formalised (each pending substrate work):
 
 namespace Phenomena.Constructions.Causatives.Studies.Dendikken1995
 
-open Minimalism
+open Minimalist
 
 /-! ## §1. Lexical items for the causative template -/
 

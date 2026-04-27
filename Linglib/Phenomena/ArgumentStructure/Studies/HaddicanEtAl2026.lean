@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.SmallClause
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!
@@ -101,7 +101,7 @@ theorem pvc_doc_equivalence :
 -- Part II: Minimalist Small Clause Analysis
 -- ============================================================================
 
-open Minimalism
+open Minimalist
 
 /-! ## Lexical items -/
 

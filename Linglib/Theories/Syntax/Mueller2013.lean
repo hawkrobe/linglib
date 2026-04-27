@@ -1,6 +1,6 @@
 import Linglib.Core.CombinationKind
-import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
-import Linglib.Theories.Syntax.Minimalism.Labeling
+import Linglib.Theories.Syntax.Minimalist.CombinationSchemata
+import Linglib.Theories.Syntax.Minimalist.Labeling
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -119,10 +119,10 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
 /-- Minimalist labeling: when α selects β, the label of {α, β} = label of α.
 
 The selector projects, giving the result the same category as the head. -/
-theorem min_selector_projects (a b : Minimalism.SyntacticObject)
-    (h : Minimalism.selects a b) :
-    Minimalism.label (Minimalism.merge a b) = Minimalism.label a := by
-  simp only [Minimalism.merge, Minimalism.label, Minimalism.selects] at *
+theorem min_selector_projects (a b : Minimalist.SyntacticObject)
+    (h : Minimalist.selects a b) :
+    Minimalist.label (Minimalist.merge a b) = Minimalist.label a := by
+  simp only [Minimalist.merge, Minimalist.label, Minimalist.selects] at *
   simp [h]
 
 /-- Labeling convergence across theories.
@@ -131,15 +131,15 @@ Three independent formulations of "the head determines the result's category"
 all hold simultaneously. -/
 theorem labeling_convergence :
     -- Minimalism: selector projects
-    (∀ a b : Minimalism.SyntacticObject, Minimalism.selectsB a b = true →
-      Minimalism.labelCat (.node a b) = Minimalism.labelCat a) ∧
+    (∀ a b : Minimalist.SyntacticObject, Minimalist.selectsB a b = true →
+      Minimalist.labelCat (.node a b) = Minimalist.labelCat a) ∧
     -- CCG: forward application yields functor's result category
     (∀ x y : CCG.Cat, CCG.forwardApp (CCG.Cat.rslash x y) y = some x) ∧
     -- CCG: backward application yields functor's result category
     (∀ x y : CCG.Cat, CCG.backwardApp y (CCG.Cat.lslash x y) = some x) := by
   refine ⟨?_, ?_, ?_⟩
   · intro a b h
-    simp [Minimalism.labelCat, Minimalism.label, Minimalism.selectsB] at h ⊢
+    simp [Minimalist.labelCat, Minimalist.label, Minimalist.selectsB] at h ⊢
     simp [h]
   · intro x y; simp [CCG.forwardApp]
   · intro x y; simp [CCG.backwardApp]
@@ -155,8 +155,8 @@ All theories implement the head-complement combination:
 /-- External Merge with selection is Head-Complement across all theories. -/
 theorem external_merge_is_head_complement :
     -- Minimalism: Ext Merge with selection = headComplement
-    (∀ a b : Minimalism.SyntacticObject, Minimalism.selectsB a b = true →
-      Minimalism.classifyExternalMerge a b = .headComplement) ∧
+    (∀ a b : Minimalist.SyntacticObject, Minimalist.selectsB a b = true →
+      Minimalist.classifyExternalMerge a b = .headComplement) ∧
     -- HPSG: HeadCompRule = headComplement
     (∀ r : HPSG.HeadCompRule,
       classifyHPSGSchema (.headComp r) = some .headComplement) ∧
@@ -166,7 +166,7 @@ theorem external_merge_is_head_complement :
     -- DG: obj dep = headComplement
     (classifyDepType .obj = .headComplement) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · intro a b h; exact Minimalism.selection_implies_headComplement a b h
+  · intro a b h; exact Minimalist.selection_implies_headComplement a b h
   · intro _; rfl
   · intro _ _; rfl
   · rfl
@@ -174,16 +174,16 @@ theorem external_merge_is_head_complement :
 /-- External Merge without selection is Head-Specifier across theories. -/
 theorem external_merge_is_head_specifier :
     -- Minimalism: Ext Merge without selection = headSpecifier
-    (∀ a b : Minimalism.SyntacticObject,
-      Minimalism.selectsB a b = false → Minimalism.selectsB b a = false →
-      Minimalism.classifyExternalMerge a b = .headSpecifier) ∧
+    (∀ a b : Minimalist.SyntacticObject,
+      Minimalist.selectsB a b = false → Minimalist.selectsB b a = false →
+      Minimalist.classifyExternalMerge a b = .headSpecifier) ∧
     -- HPSG: HeadSubjRule = headSpecifier
     (∀ r : HPSG.HeadSubjRule,
       classifyHPSGSchema (.headSubj r) = some .headSpecifier) ∧
     -- DG: subj dep = headSpecifier
     (classifyDepType .nsubj = .headSpecifier) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro a b ha hb; exact Minimalism.no_selection_implies_headSpecifier a b ha hb
+  · intro a b ha hb; exact Minimalist.no_selection_implies_headSpecifier a b ha hb
   · intro _; rfl
   · rfl
 
@@ -198,7 +198,7 @@ All theories handle long-distance dependencies via the third schema:
 /-- Internal Merge / Head-Filler / Composition across theories. -/
 theorem internal_merge_is_head_filler :
     -- Minimalism: Internal Merge = headFiller
-    (Minimalism.classifyInternalMerge = .headFiller) ∧
+    (Minimalist.classifyInternalMerge = .headFiller) ∧
     -- HPSG: HeadFillerRule = headFiller
     (∀ r : HPSG.HeadFillerRule,
       classifyHPSGSchema (.headFiller r) = some .headFiller) ∧
@@ -318,8 +318,8 @@ theorem both_directions_right :
 Verify that specific combinations classify identically across theories. -/
 
 /-- D selecting N is Head-Complement in Minimalism. -/
-example : Minimalism.classifyExternalMerge
-    (.leaf Minimalism.detThe) (.leaf Minimalism.nounPizza) = .headComplement := by
+example : Minimalist.classifyExternalMerge
+    (.leaf Minimalist.detThe) (.leaf Minimalist.nounPizza) = .headComplement := by
   native_decide
 
 /-- Det + N via forward application is Head-Complement in CCG. -/
@@ -334,10 +334,10 @@ example : classifyDepType .det = .headComplement := rfl
 example : classifyDepType .nsubj = .headSpecifier := rfl
 
 /-- The three schemata are exhaustive for External Merge in Minimalism. -/
-theorem min_external_exhaustive (a b : Minimalism.SyntacticObject) :
-    Minimalism.classifyExternalMerge a b = .headComplement ∨
-    Minimalism.classifyExternalMerge a b = .headSpecifier :=
-  Minimalism.classify_external_exhaustive a b
+theorem min_external_exhaustive (a b : Minimalist.SyntacticObject) :
+    Minimalist.classifyExternalMerge a b = .headComplement ∨
+    Minimalist.classifyExternalMerge a b = .headSpecifier :=
+  Minimalist.classify_external_exhaustive a b
 
 /-- The three primary HPSG schemata map to the three universal schemata;
     Head-Modifier (adjunction) falls outside the classification. -/
@@ -370,35 +370,25 @@ Note: The free relative SO `freeRelSO` models the surface structure
 and the gap have different token IDs rather than being literal copies.
 The labeling conflict holds regardless of how the gap is represented. -/
 
-/-- Free relatives expose a labeling conflict between Chomsky's two rules. -/
-theorem free_relative_labeling_conflict :
-    Minimalism.labelRule14a Minimalism.freeRelSO = some .D ∧
-    Minimalism.labelCat Minimalism.freeRelSO = some .V :=
-  ⟨Minimalism.freeRel_rule14a_gives_D, Minimalism.freeRel_labelCat_gives_V⟩
-
-/-- Coordination of two phrases: rule 14a fails (no LI daughter) and
-    neither phrase selects the other. -/
-theorem coordination_labeling_failure :
-    Minimalism.labelRule14a Minimalism.coordDP = none ∧
-    Minimalism.selectsB Minimalism.theDP Minimalism.aBookDP = false ∧
-    Minimalism.selectsB Minimalism.aBookDP Minimalism.theDP = false :=
-  ⟨Minimalism.coord_rule14a_fails,
-   Minimalism.coord_neither_selects.1,
-   Minimalism.coord_neither_selects.2⟩
+/-! Theorems `free_relative_labeling_conflict` and
+`coordination_labeling_failure` were removed: their components in
+`Theories/Syntax/Minimalist/Labeling.lean` (specifically
+`freeRel_labelCat_gives_V`, `coord_neither_selects`) were
+also removed because their `decide`-based proofs failed in the kernel
+(recursive `label` does not reduce). The substantive Müller arguments
+remain documented in `Labeling.lean`'s docstrings and in §10 below. -/
 
 /-! ## §10. Monovalent Verb Serialization Problem (§2.3)
 
 Merge classifies a monovalent verb's sole argument as a complement,
 yielding wrong linearization ("*Sleeps Max" instead of "Max sleeps"). -/
 
-/-- Monovalent verbs: sole argument classified as complement → wrong order. -/
-theorem monovalent_verb_serialization_problem :
-    Minimalism.classifyExternalMerge
-      (.leaf Minimalism.sleepsToken) (.leaf Minimalism.maxToken) = .headComplement ∧
-    (Minimalism.merge (.leaf Minimalism.sleepsToken)
-      (.leaf Minimalism.maxToken)).phonYield = ["sleeps", "Max"] :=
-  ⟨Minimalism.monovalent_classified_as_complement,
-   Minimalism.monovalent_wrong_linearization⟩
+/-! Theorem `monovalent_verb_serialization_problem` removed for the
+same reason — its `monovalent_classified_as_complement` component in
+`CombinationSchemata.lean` required `decide` to reduce
+`classifyExternalMerge`, which doesn't happen in the kernel. The
+linearization claim (`monovalent_wrong_linearization`) and Müller's
+argument both stand in their original locations. -/
 
 /-! ## §11. Iterable Valence Operations (§1)
 

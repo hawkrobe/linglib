@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Core.Discourse.Accessibility
 import Linglib.Fragments.English.Pronouns
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
@@ -421,7 +421,7 @@ theorem plain_n_singular_yields_they :
 -- § 9b: DP Structure (K&C §4, (14))
 -- ============================================================================
 
-open Minimalism (fValue allCategoryConsistent allFMonotone catFamily)
+open Minimalist (fValue allCategoryConsistent allFMonotone catFamily)
 
 /-- K&C's (14): the nominal structure relevant to pronoun feature projection.
 
@@ -512,14 +512,14 @@ theorem quantifier_bound_spellout :
 /-- K&C's (14) spine [n, Num, D] is a well-formed nominal extended projection:
     all heads share [-V, +N] features (category consistency). -/
 theorem kc14_spine_consistent :
-    allCategoryConsistent [Minimalism.Cat.n, .Num, .D] = true := by decide
+    allCategoryConsistent [Minimalist.Cat.n, .Num, .D] = true := by decide
 
 /-- K&C's (14) spine [n, Num, D] has monotonically increasing F-values:
     n (F1) ≤ Num (F3) ≤ D (F4). The gap between n (F1) and Num (F3)
     reflects K&C's omission of the Q (classifier) layer, which sits
     at F2 in @cite{borer-2005}'s full nominal spine. -/
 theorem kc14_spine_monotone :
-    allFMonotone [Minimalism.Cat.n, .Num, .D] = true := by decide
+    allFMonotone [Minimalist.Cat.n, .Num, .D] = true := by decide
 
 /-- The F-values of K&C's (14) are strictly increasing:
     n (F1 = 1) < Num (F3 = 3) < D (F4 = 4). -/

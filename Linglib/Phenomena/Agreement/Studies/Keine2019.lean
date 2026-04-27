@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Agree
-import Linglib.Theories.Syntax.Minimalism.ClauseSpine
+import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 
 /-!
 # Selective Opacity @cite{keine-2019}
@@ -64,7 +64,7 @@ as concrete theorems using the simplified fValue model.
 
 namespace Keine2019
 
-open Minimalism (ProbeProfile keinePhiProbe keineAProbe keineWhLicensing
+open Minimalist (ProbeProfile keinePhiProbe keineAProbe keineWhLicensing
   keineĀProbe fValue ClauseSpine Cat)
 
 -- ============================================================================

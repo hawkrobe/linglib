@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Syntax.Minimalism.Agree
+import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Fragments.Tigrinya.ClausePrefixes
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # @cite{cacchioli-2025} — Empirical Data @cite{cacchioli-2025}
@@ -121,7 +121,7 @@ def agreementData : List AgreementDatum := [
 -- § Selection Bridge: CTPClass → FeatureVal
 -- ============================================================================
 
-open Minimalism
+open Minimalist
 open Phenomena.Complementation.Typology
 
 /-- Map CTP reality status to [±finite] selection.

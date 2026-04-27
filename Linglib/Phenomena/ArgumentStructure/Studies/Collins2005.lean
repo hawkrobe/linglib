@@ -1,15 +1,15 @@
 import Linglib.Phenomena.ArgumentStructure.Passive
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
-import Linglib.Theories.Syntax.Minimalism.Movement.InverseVoice
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Theories.Syntax.Minimalist.Movement.InverseVoice
 
 /-!
 # A Smuggling Approach to the Passive in English
 @cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003} @cite{rizzi-1990}
 
 Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
-to the smuggling theory in `Theories.Syntax.Minimalism.Movement.Smuggling`
-and the Voice/phase infrastructure in `Theories.Syntax.Minimalism.Voice`.
+to the smuggling theory in `Theories.Syntax.Minimalist.Movement.Smuggling`
+and the Voice/phase infrastructure in `Theories.Syntax.Minimalist.Voice`.
 
 ## Collins's central claims
 
@@ -43,7 +43,7 @@ passive, satisfying UTAH).
 
 namespace Collins2005
 
-open Minimalism
+open Minimalist
 
 /-! ## §1. Voice properties Collins defends
 
@@ -191,14 +191,14 @@ theorem by_dp_coordination_requires_voiceP :
 The smuggling derivation Collins develops for the passive is the same
 mechanism @cite{storment-2026} extends to QI and LI. The shared
 structural invariant — non-phase Voice permits VP/PartP smuggling —
-is captured by `Minimalism.InverseVoiceConstruction` in the Theories
-layer. Collins's passive instance is `Minimalism.passiveCanonical`. -/
+is captured by `Minimalist.InverseVoiceConstruction` in the Theories
+layer. Collins's passive instance is `Minimalist.passiveCanonical`. -/
 
 /-- The passive is one canonical instance of the inverse-voice family. -/
 theorem passive_is_inverse_voice :
-    Minimalism.passiveCanonical.kind = .passive ∧
-    Minimalism.passiveCanonical.licensed = true ∧
-    Minimalism.passiveCanonical.voice = voicePassive :=
+    Minimalist.passiveCanonical.kind = .passive ∧
+    Minimalist.passiveCanonical.licensed = true ∧
+    Minimalist.passiveCanonical.voice = voicePassive :=
   ⟨rfl, rfl, rfl⟩
 
 end Collins2005

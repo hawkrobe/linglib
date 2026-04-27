@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.PConstraint
+import Linglib.Theories.Syntax.Minimalist.PConstraint
 import Linglib.Features.Logophoricity
 import Linglib.Features.Person
 import Linglib.Fragments.Italian.Pronouns
@@ -48,8 +48,8 @@ namespace Phenomena.Agreement.Studies.PanchevaZubizarreta2018
 
 open Features.Prominence (PersonLevel)
 open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
-open Minimalism (DecomposedPerson decomposePerson)
-open Minimalism.PConstraint
+open Minimalist (DecomposedPerson decomposePerson)
+open Minimalist.PConstraint
 
 -- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
 -- defined here in the study file rather than baked into PConstraint.

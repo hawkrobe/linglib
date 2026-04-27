@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Morphology.CategoryChanging
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
 # Categorial Features ↔ Category-Changing Morphology
@@ -40,7 +40,7 @@ Phenomena/Morphology/CategoryChanging.lean (RootFamily, LexCat)
 
 namespace Panagiotidis2015
 
-open Minimalism
+open Minimalist
 open Phenomena.Morphology.CategoryChanging
 
 -- ════════════════════════════════════════════════════════════════

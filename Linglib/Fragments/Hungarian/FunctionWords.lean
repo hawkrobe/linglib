@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Hungarian Function Words Fragment
@@ -21,7 +21,7 @@ style.
 
 namespace Fragments.Hungarian.FunctionWords
 
-open Minimalism (ComplementSize Cat)
+open Minimalist (ComplementSize Cat)
 
 /-- Hungarian complementizer entry. -/
 structure HungarianCompEntry where

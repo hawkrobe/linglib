@@ -61,7 +61,7 @@ open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
 open Semantics.Verb.EventStructure
 open Morphology.Core.Monotonicity
-open Minimalism (VerbHead)
+open Minimalist (VerbHead)
 open Syntax.ArgumentStructure.Alternation
 
 -- ════════════════════════════════════════════════════

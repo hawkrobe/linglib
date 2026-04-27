@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Case.Typology
-import Linglib.Theories.Syntax.Minimalism.PersonGeometry
+import Linglib.Theories.Syntax.Minimalist.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
@@ -34,7 +34,7 @@ namespace Aissen2003
 open Features.Prominence
 open Phenomena.Agreement.DifferentialIndexing
 open Phenomena.Case.Typology
-open Minimalism
+open Minimalist
 open Fragments.Mayan.Kaqchikel
 
 -- ============================================================================

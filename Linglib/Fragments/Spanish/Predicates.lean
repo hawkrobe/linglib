@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalist.Applicative
 
 /-!
 # Spanish Verb Entries for the Causative Alternation
@@ -28,7 +28,7 @@ whether a verb can anticausativize:
 
 namespace Fragments.Spanish.Predicates
 
-open Minimalism
+open Minimalist
 open Core.Verbs
 
 -- ============================================================================

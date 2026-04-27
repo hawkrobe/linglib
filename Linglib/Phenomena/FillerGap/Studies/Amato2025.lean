@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.NestedAgree
+import Linglib.Theories.Syntax.Minimalist.NestedAgree
 
 /-!
 # @cite{amato-2025} — Filler-gap case studies via Nested Agree
@@ -53,8 +53,8 @@ is future work.
 
 namespace Phenomena.FillerGap.Studies.Amato2025
 
-open Minimalism
-open Minimalism.NestedAgree
+open Minimalist
+open Minimalist.NestedAgree
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Part A: §4.2.3 — Bulgarian multiple wh-fronting

@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
@@ -48,8 +48,8 @@ vVPE's deletion domain, mismatches in Voice are tolerated.
 namespace Kalyakin2026
 
 open Core.Verbs
-open Minimalism
-open Minimalism.Ellipsis
+open Minimalist
+open Minimalist.Ellipsis
 
 -- ════════════════════════════════════════════════════
 -- § 1. Mismatch Predictions from DeletionDomain.lean

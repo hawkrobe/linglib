@@ -35,7 +35,7 @@ Taos witnesses are in
 
 namespace Morphology.DM.PostsyntacticDerivation
 
-open Minimalism Morphology.DM.Impoverishment Morphology.DM.Metathesis
+open Minimalist Morphology.DM.Impoverishment Morphology.DM.Metathesis
 
 -- ============================================================================
 -- § 1: Arregi & Nevins's Strict Pipeline

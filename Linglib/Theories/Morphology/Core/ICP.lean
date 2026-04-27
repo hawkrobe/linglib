@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Modification
+import Linglib.Theories.Syntax.Minimalist.Modification
 
 /-!
 # Input Correspondence Principle
@@ -28,7 +28,7 @@ to adjacency requirements.
 
 namespace Morphology.ICP
 
-open Minimalism.Modification
+open Minimalist.Modification
 
 -- ============================================================================
 -- § 1: The ICP as an Adjacency Predicate

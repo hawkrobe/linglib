@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
+import Linglib.Theories.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Features.Gender
 
@@ -57,9 +57,9 @@ prediction is a verified theorem.
 
 namespace AdamsonAnagnostopoulou2025
 
-open _root_.Minimalism (Interpretability)
+open _root_.Minimalist (Interpretability)
 
-open Minimalism.Agreement.GenderResolution
+open Minimalist.Agreement.GenderResolution
 
 -- ============================================================================
 -- § 1: Gender Feature Nodes

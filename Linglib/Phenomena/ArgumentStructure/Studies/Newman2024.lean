@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Features
-import Linglib.Theories.Syntax.Minimalism.ObligatoryOperations
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
 
 /-!
 # Newman (2024) — When Arguments Merge @cite{newman-2024}
@@ -40,11 +40,11 @@ passive accessibility, and anti-redundancy for agreement.
 The Categorial Merge Hypothesis primitives below are paper-specific to
 @cite{newman-2024} (with @cite{paille-2020} for Generalized Tucking In)
 and not consumed elsewhere in the library, so they live here under
-`namespace Minimalism.CMH` for symmetry with other Minimalist apparatus
+`namespace Minimalist.CMH` for symmetry with other Minimalist apparatus
 and to support qualified lookup if a future paper picks them up.
 -/
 
-namespace Minimalism.CMH
+namespace Minimalist.CMH
 
 -- ============================================================================
 -- § 1: Merge Features
@@ -407,11 +407,11 @@ def applyAntiRedundancy (copies : List AgreeCopy) : List AgreeCopy :=
   let redundant := redundantCopies copies
   copies.filter λ c => !redundant.contains c
 
-end Minimalism.CMH
+end Minimalist.CMH
 
 namespace Newman2024
 
-open Minimalism Minimalism.CMH
+open Minimalist Minimalist.CMH
 
 -- ============================================================================
 -- § 1: The Space of Possible vPs

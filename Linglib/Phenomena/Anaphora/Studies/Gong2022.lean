@@ -49,7 +49,7 @@ position is available in the matrix clause.
 
 namespace Gong2022
 
-open Minimalism
+open Minimalist
 open Syntax.Case
 open Fragments.Mongolian.Case
 

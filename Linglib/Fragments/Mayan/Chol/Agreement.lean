@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Phenomena.FillerGap.ExtractionMorphology
 import Linglib.Fragments.Mayan.Params
 
@@ -34,7 +34,7 @@ O = ABS (from Voice).
 
 namespace Fragments.Mayan.Chol
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Argument Positions

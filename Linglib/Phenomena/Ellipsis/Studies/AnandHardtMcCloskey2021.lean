@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain
 
 /-!
 # @cite{anand-hardt-mccloskey-2021} — Corpus Data
@@ -200,10 +200,10 @@ theorem attested_iff_nonzero (d : MismatchDimension) :
 -- `Phenomena.Ellipsis.Sluicing` and the corpus findings from
 -- @cite{anand-hardt-mccloskey-2021} — to the Syntactic Isomorphism Condition
 -- (SIC) formalized in
--- `Minimalism.Ellipsis.FormalMatching`.
+-- `Minimalist.Ellipsis.FormalMatching`.
 
-open Minimalism
-open Minimalism.Ellipsis.FormalMatching
+open Minimalist
+open Minimalist.Ellipsis.FormalMatching
 open Phenomena.Ellipsis.Sluicing
 
 -- ============================================================================
@@ -397,13 +397,13 @@ theorem why_dominates :
     that voice and argument structure mismatches are blocked in sluicing. -/
 theorem merchant_deletion_domain_matches_corpus :
     -- Merchant predicts: voice mismatches blocked under sluicing
-    Minimalism.Ellipsis.canMismatch Minimalism.Ellipsis.sluicing
-      Minimalism.Ellipsis.voiceMismatch = false ∧
+    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+      Minimalist.Ellipsis.voiceMismatch = false ∧
     -- Corpus confirms: 0 voice mismatches
     MismatchDimension.corpusCount .voice = 0 ∧
     -- Merchant predicts: transitivity mismatches blocked under sluicing
-    Minimalism.Ellipsis.canMismatch Minimalism.Ellipsis.sluicing
-      Minimalism.Ellipsis.transitivityMismatch = false ∧
+    Minimalist.Ellipsis.canMismatch Minimalist.Ellipsis.sluicing
+      Minimalist.Ellipsis.transitivityMismatch = false ∧
     -- Corpus confirms: 0 argument structure mismatches
     MismatchDimension.corpusCount .argumentStructure = 0 :=
   ⟨rfl, rfl, rfl, rfl⟩

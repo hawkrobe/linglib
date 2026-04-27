@@ -6,8 +6,8 @@ import Linglib.Theories.Semantics.Tense.ZeroTense
 import Linglib.Theories.Semantics.Tense.ModalTense
 import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Theories.Semantics.Tense.SimultaneousTense
-import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
-import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
+import Linglib.Theories.Syntax.Minimalist.Tense.AgreeSOT
+import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Fragments.English.Tense
@@ -466,7 +466,7 @@ theorem deal_derives_counterfactualFrame :
 -- § Per-Theory Derivations: Zeijlstra
 -- ════════════════════════════════════════════════════════════════
 
-open Minimalism.Tense.AgreeSOT
+open Minimalist.Tense.AgreeSOT
 
 /-- Zeijlstra derives the simultaneous data frame:
     embedded T has [uPAST] (semantically vacuous via Agree),
@@ -487,7 +487,7 @@ theorem zeijlstra_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Wurmbrand
 -- ════════════════════════════════════════════════════════════════
 
-open Minimalism.Tense.InfinitivalTense
+open Minimalist.Tense.InfinitivalTense
 
 /-- Wurmbrand classifies "wanted to leave" as future irrealis:
     the complement is tenseless + woll → future-oriented. -/

@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.PhiSemantics
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.PhiSemantics
 
 /-!
 # Santiago Laxopa Zapotec (Otomanguean) — Pronoun Fragment
@@ -6,13 +6,13 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.PhiSemantics
 
 Six-individual domain modeling the 4-way animacy system of Santiago Laxopa
 Zapotec: elder / non-elder human / animal / inanimate. This instantiates
-`Minimalism.PhiSemantics.PhiDomain` and derives the full pronoun inventory from
+`Minimalist.PhiSemantics.PhiDomain` and derives the full pronoun inventory from
 Table 1 of @cite{toosarvandani-2023}.
 -/
 
 namespace Fragments.Zapotec
 
-open Minimalism.PhiSemantics
+open Minimalist.PhiSemantics
 
 -- ============================================================================
 -- § 1: Individual Domain

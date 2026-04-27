@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
-import Linglib.Theories.Syntax.Minimalism.ClauseSpine
+import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 
 /-!
 # Oblique Extraction in Mayan
@@ -124,7 +124,7 @@ theorem different_mechanisms :
 -- Part II: Minimalist Analysis
 -- ============================================================================
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 4: Spellout Theorems

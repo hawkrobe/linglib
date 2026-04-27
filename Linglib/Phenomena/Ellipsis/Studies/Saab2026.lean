@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Ellipsis.NPEllipsis
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.Nominal
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Properties
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.Nominal
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
 # Minimalist Nominal Spine → NP-Ellipsis @cite{saab-2026}
@@ -22,8 +22,8 @@ to the NP-ellipsis data in Spanish binominals.
 
 namespace Saab2026
 
-open Minimalism
-open Minimalism.Ellipsis.Nominal
+open Minimalist
+open Minimalist.Ellipsis.Nominal
 open Core.Lexical.Binominal
 open Phenomena.Ellipsis.NPEllipsis
 

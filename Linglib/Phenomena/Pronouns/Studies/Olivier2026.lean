@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.PersonGeometry
-import Linglib.Theories.Syntax.Minimalism.Phase
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.PersonGeometry
+import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
 
 /-!
@@ -21,7 +21,7 @@ clitic is bound by the External Argument via Voice* (the strong,
 agentive phase head — @cite{wurmbrand-shimamura-2017},
 @cite{wood-2015}'s [+θ, +D] reflexive Voice). Under the SHARE
 mode of φ-feature transfer (@cite{ouali-2008}, formalised in
-`Minimalism.TransferStyle`), Voice* shares the now-EA-identical
+`Minimalist.TransferStyle`), Voice* shares the now-EA-identical
 clitic features with vMOD; vAux inherits these via head-splitting;
 T probes EA and ends up with matching person/ID values, yielding
 BE-insertion. Other clitic types do not enter the EA-binding chain,
@@ -41,7 +41,7 @@ configuration. The AS prediction is then *derived* from the
 sibling file's `AuxiliarySwitchOccurs` predicate — not stipulated
 per case.
 
-The `Minimalism.TransferStyle` (KEEP/SHARE/DONATE) and `VoiceHead`
+The `Minimalist.TransferStyle` (KEEP/SHARE/DONATE) and `VoiceHead`
 infrastructure are imported but not parametrised at the
 phenomenon level — language-level KEEP-vs-SHARE variation lives
 in the AuxVerbs sibling's diachronic-French / Sardinian

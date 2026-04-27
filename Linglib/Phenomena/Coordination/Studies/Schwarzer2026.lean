@@ -5,7 +5,7 @@ import Linglib.Fragments.German.Typology
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # @cite{schwarzer-2026} — Selection-Violating Coordination in German
@@ -78,7 +78,7 @@ The competing analyses make different predictions for the preverbal
 (= OV) condition. All agree on the postverbal (= VO) condition.
 -/
 
-open Minimalism (ForceHead)
+open Minimalist (ForceHead)
 open Fragments.German (german)
 
 /-- German has V2 in root declaratives: the finite verb moves to C°,

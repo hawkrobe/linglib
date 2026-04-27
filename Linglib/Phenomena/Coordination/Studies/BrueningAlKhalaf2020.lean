@@ -1,7 +1,7 @@
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Features.Coordination
 import Linglib.Core.Tree
-import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalist.Basic
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -459,12 +459,12 @@ theorem structural_requires_asymmetric :
     if coordination is External Merge, then the first conjunct is
     always structurally distinguished from the second. -/
 theorem merge_distinguishes_children
-    (x y : Minimalism.SyntacticObject) (h : x ≠ y) :
-    Minimalism.merge x y ≠ Minimalism.merge y x := by
+    (x y : Minimalist.SyntacticObject) (h : x ≠ y) :
+    Minimalist.merge x y ≠ Minimalist.merge y x := by
   intro heq
   apply h
   show x = y
-  unfold Minimalism.merge at heq
+  unfold Minimalist.merge at heq
   injection heq
 
 /-- Merge's asymmetry satisfies structural percolation's presupposition. -/

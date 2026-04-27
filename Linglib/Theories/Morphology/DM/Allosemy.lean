@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Allosemy: Contextual Meaning Variation of Functional Heads
@@ -25,7 +25,7 @@ linglib already formalizes several cases of allosemy without naming them:
 
 - `CategorizerSemantics.NSemanticType`: n has three allosemes
   (relational/sortal/alienator), selected by `selectsD` and context
-- `Minimalism.VoiceFlavor`: Voice has six flavors (agentive/causer/
+- `Minimalist.VoiceFlavor`: Voice has six flavors (agentive/causer/
   nonThematic/expletive/impersonal/passive), each with different semantics
 - `RootType` / `Root.changeType`: roots vary in whether
   they entail change, conditioning the semantics of the v that embeds them
@@ -42,7 +42,7 @@ namespace Morphology.DM.Allosemy
 
 open Morphology.DM (Categorizer CatHead)
 open Morphology.DM.CategorizerSemantics (NSemanticType)
-open Minimalism (VoiceFlavor VoiceHead)
+open Minimalist (VoiceFlavor VoiceHead)
 
 -- ════════════════════════════════════════════════════
 -- § 1. General Allosemy Framework

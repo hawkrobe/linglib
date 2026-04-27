@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
-import Linglib.Theories.Syntax.Minimalism.LongDistanceAgree
+import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
+import Linglib.Theories.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
@@ -60,8 +60,8 @@ formalize the V-to-T claim here.
 
 namespace Allotey2021
 
-open Syntax.Minimalism.MinimalPronoun
-open Syntax.Minimalism.LongDistanceAgree
+open Minimalist.MinimalPronoun
+open Minimalist.LongDistanceAgree
 open Landau2015
 open Phenomena.NullSubject (ProDropProfile)
 open Fragments.Ga (EmbeddedClauseType clauseProperties clauseComplementizer

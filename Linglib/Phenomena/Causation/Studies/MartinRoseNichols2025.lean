@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.ProductionDependence
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.Applicative
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.EventStructureBridge
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Core.Lexical.DiathesisAlternation
 
@@ -262,8 +262,8 @@ end Phenomena.Causation.ThickThin
 
 namespace Phenomena.Causation.Compare
 
-open Minimalism
-open Minimalism.Bridge
+open Minimalist
+open Minimalist.Bridge
 open Semantics.Verb.EventStructure
 open Semantics.Causation.ProductionDependence
 open Phenomena.Causation.ThickThin

@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.SmallClause
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.Basic
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.SmallClause
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.Basic
 
 /-!
 # Triadic constructions and Dative Shift — den Dikken's SC-in-SC analysis
@@ -95,7 +95,7 @@ architectural target memo).
 
 namespace Phenomena.ArgumentStructure.Studies.Dendikken1995
 
-open Minimalism
+open Minimalist
 
 /-! ## §1. Lexical items -/
 

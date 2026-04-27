@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # English V2 Profiles
@@ -9,7 +9,7 @@ V2 micro-parameter profiles for English varieties (Table 3.1).
 
 namespace Fragments.English
 
-open Minimalism (ForceHead V2Profile)
+open Minimalist (ForceHead V2Profile)
 
 /-- Standard English: V-to-C only in matrix wh-questions and
     yes/no-questions (subject-auxiliary inversion). -/

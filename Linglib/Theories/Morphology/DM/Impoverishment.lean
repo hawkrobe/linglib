@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!
 # Impoverishment (Distributed Morphology)
@@ -33,7 +33,7 @@ rule is paradigmatic — see `Phenomena/Agreement/Studies/Scott2023.lean`.
 
 namespace Morphology.DM.Impoverishment
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Neighborhoods

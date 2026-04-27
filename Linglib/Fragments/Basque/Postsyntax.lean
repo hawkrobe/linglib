@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Features
+import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!
 # Basque Auxiliary Postsyntactic Inventory @cite{arregi-nevins-2012} @cite{middleton-2026}
@@ -28,17 +28,17 @@ live in `Phenomena/Allomorphy/Studies/Middleton2026.lean`.
 ## Encoding choices
 
 * Clitics carry a `[CL]` marker via the `.case .erg`/`.case .abs`
-  constructor (already in `Minimalism.FeatureVal`); together with
+  constructor (already in `Minimalist.FeatureVal`); together with
   the `[+participant]`/`[+author]` Harbour features this is enough
   to distinguish the four configurations the rules care about.
-* T is marked with `[+tense]`, present in `Minimalism.FeatureVal`.
+* T is marked with `[+tense]`, present in `Minimalist.FeatureVal`.
 * The complementizer is dropped from the witness phrase: it is not
   referenced by either rule, and including it would add noise.
 -/
 
 namespace Fragments.Basque.Postsyntax
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Terminal Constructors

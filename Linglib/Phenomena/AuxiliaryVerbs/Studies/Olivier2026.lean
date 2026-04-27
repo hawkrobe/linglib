@@ -1,6 +1,6 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Syntax.Minimalism.PersonGeometry
-import Linglib.Theories.Syntax.Minimalism.Phase
+import Linglib.Theories.Syntax.Minimalist.PersonGeometry
+import Linglib.Theories.Syntax.Minimalist.Phase
 
 /-!
 # @cite{olivier-2026} — Auxiliary Switch in Romance restructuring
@@ -50,7 +50,7 @@ representative subset below — not the full corpus.
 ## Connection to `TransferStyle`
 
 The KEEP / SHARE / DONATE distinction in
-`Minimalism.FeatureInheritance.style` parametrizes whether a
+`Minimalist.FeatureInheritance.style` parametrizes whether a
 language permits AS. Modern French has lost the `.share` option on
 the relevant Voice* → vMOD edge (giving KEEP); Italian permits it
 optionally; Sardinian-style varieties realise it obligatorily. We

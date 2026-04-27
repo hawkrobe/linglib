@@ -60,7 +60,7 @@ namespace Adamson2024
 
 open Morphology.DM
 open Morphology.DM.VI
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: GLH + CatHead Bridge

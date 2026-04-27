@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.NestedAgree
+import Linglib.Theories.Syntax.Minimalist.NestedAgree
 import Linglib.Phenomena.Case.Studies.Marantz1991
 
 /-!
@@ -46,8 +46,8 @@ analysis to Amato's feature-ordering analysis are future work.
 
 namespace Phenomena.Agreement.Studies.Amato2025
 
-open Minimalism
-open Minimalism.NestedAgree
+open Minimalist
+open Minimalist.NestedAgree
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Part A: §4.1.2 — Icelandic DAT-NOM intervention

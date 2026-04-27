@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.French.Predicates
 import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Staps & Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
@@ -61,7 +61,7 @@ open Semantics.Verb.EntailmentProfile
 open Semantics.Verb.Affectedness
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1. Polymorphic Preposition Types

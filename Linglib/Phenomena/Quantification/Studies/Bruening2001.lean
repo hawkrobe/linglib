@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Scope
+import Linglib.Theories.Syntax.Minimalist.Scope
 import Linglib.Features.ScopeTypes
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
@@ -479,7 +479,7 @@ end ScopeWordOrder
 section MinimalistAnalysis
 
 open ScopeTheory
-open Minimalism.Scope
+open Minimalist.Scope
 
 /-! Connects Minimalist QR / Scope Economy theory to the empirical
 scope-freezing data above. The central claim is Bruening's "QR obeys
@@ -515,7 +515,7 @@ structure MinimalistScopeConfig where
   freezingContext : FreezingContext := .none
   /-- The tree in which q1 and q2 are positioned. When provided,
       superiority is derived from c-command rather than stipulated. -/
-  tree : Option Minimalism.SyntacticObject := none
+  tree : Option Minimalist.SyntacticObject := none
   deriving Repr
 
 /-- Check if superiority blocks QR in this configuration.

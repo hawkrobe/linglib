@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Danish V2 Profile
@@ -9,7 +9,7 @@ V2 micro-parameter profile for Danish (Table 3.1).
 
 namespace Fragments.Danish
 
-open Minimalism (ForceHead V2Profile)
+open Minimalist (ForceHead V2Profile)
 
 /-- Danish: like Standard Norwegian plus V-to-C in exclamatives. -/
 abbrev danish : V2Profile :=

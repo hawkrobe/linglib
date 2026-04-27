@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.VerbMovement
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -29,7 +29,7 @@ when do-support is used and ungrammatical without it.
 namespace Pollock1989
 
 open Phenomena.WordOrder.SubjectAuxInversion
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1  Pollock Diagnostic Bridge Theorems

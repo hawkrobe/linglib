@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Theories.Syntax.Minimalism.Cascade
+import Linglib.Theories.Syntax.Minimalist.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -187,7 +187,7 @@ end Phenomena.PsychVerbs
 
 namespace Pesetsky1995
 
-open Minimalism
+open Minimalist
 open Semantics.Causation.Psych
 open Phenomena.PsychVerbs
 open Fragments.English.Predicates.Verbal

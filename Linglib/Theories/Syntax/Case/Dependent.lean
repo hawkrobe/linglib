@@ -575,7 +575,7 @@ Each NP carries a `basePhase` (where it was merged) and a
 PIC: NPs that stayed inside VP are not visible on the CP cycle. -/
 
 /-- Cycle in the @cite{baker-vinokurova-2010} two-phase model.
-    Distinct from the more articulated `Minimalism.Phase` structure
+    Distinct from the more articulated `Minimalist.Phase` structure
     in `Phase.lean`; this is just the binary VP-vs-CP distinction
     that the case algorithm cycles over. -/
 inductive CasePhase where

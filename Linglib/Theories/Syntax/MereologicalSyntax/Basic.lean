@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 set_option autoImplicit false
 
@@ -34,7 +34,7 @@ entity with a label; no projection or labeling algorithm is needed.
 
 Label sequences along the 1-part chain correspond to @cite{grimshaw-2005}'s
 Extended Projection. `MLabel.toCat?` maps mereological labels to
-`Minimalism.Cat` where possible, and the EP bridge theorems (§ 8) verify
+`Minimalist.Cat` where possible, and the EP bridge theorems (§ 8) verify
 that standard 1-part chains are category-consistent and F-monotone.
 
 ## Limitations
@@ -53,7 +53,7 @@ namespace MereologicalSyntax
 
 /-- Category labels for syntactic objects in mereological syntax.
 
-    Labels that overlap with `Minimalism.Cat` (N, V, D, Q, etc.) are
+    Labels that overlap with `Minimalist.Cat` (N, V, D, Q, etc.) are
     bridged via `MLabel.toCat?`. Labels specific to @cite{adger-2025}'s
     analysis (Cl, Deg, Adv, O, Pred) have no `Cat` equivalent. -/
 inductive MLabel where
@@ -76,11 +76,11 @@ inductive MLabel where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 1b. Bridge to Minimalism.Cat
+-- § 1b. Bridge to Minimalist.Cat
 -- ════════════════════════════════════════════════════
 
-open Minimalism in
-/-- Map mereological labels to `Minimalism.Cat` where possible.
+open Minimalist in
+/-- Map mereological labels to `Minimalist.Cat` where possible.
 
     Labels shared with the Minimalist framework map to their `Cat`
     equivalent. Labels specific to mereological syntax return `none`. -/
@@ -237,7 +237,7 @@ def angularLocalityOK (l : MLabel) (target : SynObj) : Bool :=
 -- § 8. Extended Projection Bridge
 -- ════════════════════════════════════════════════════
 
-open Minimalism in
+open Minimalist in
 /-- The nominal 1-part chain [N, Q, D] (leaf-to-root order), after
     mapping through `toCat?`, is a valid Extended Projection: all
     categories share [-V, +N] features (category-consistent) and
@@ -251,7 +251,7 @@ theorem nominal_ep_valid :
     allCategoryConsistent cats = true ∧
     allFMonotone cats = true := by decide
 
-open Minimalism in
+open Minimalist in
 /-- The verbal 1-part chain [V, v, T, C] is a valid Extended Projection:
     all categories share [+V, -N] features and F-values increase
     (V=0 ≤ v=1 ≤ T=2 ≤ C=6). -/
@@ -260,7 +260,7 @@ theorem verbal_ep_valid :
     allCategoryConsistent cats = true ∧
     allFMonotone cats = true := by decide
 
-open Minimalism in
+open Minimalist in
 /-- All MLabel-to-Cat mappings preserve EP family: nominal labels map to
     the nominal family, verbal labels to the verbal family. -/
 theorem toCat_preserves_family :
@@ -273,7 +273,7 @@ theorem toCat_preserves_family :
     (MLabel.T.toCat?.map catFamily = some .verbal) ∧
     (MLabel.C.toCat?.map catFamily = some .verbal) := by decide
 
-open Minimalism in
+open Minimalist in
 /-- Nominal and verbal labels map to different EP families — confirming
     that cross-EP 1-part chains would fail category consistency. -/
 theorem nominal_verbal_disjoint :

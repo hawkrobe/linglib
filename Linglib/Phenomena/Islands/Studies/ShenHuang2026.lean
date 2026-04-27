@@ -3,8 +3,8 @@ import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Definiteness
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
-import Linglib.Theories.Syntax.Minimalism.Phase
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Phase
 
 set_option autoImplicit false
 
@@ -674,7 +674,7 @@ This section bridges the two layers, showing that the Phase Theory's
 `incorporation_deactivates` theorem formally grounds the violation model's
 classification of `.syntactic` as VOC-neutralizable. -/
 
-open Minimalism in
+open Minimalist in
 /-- **VOC incorporation deactivates the PIC barrier.**
 When a VOC verb incorporates the object's D head, the DP is no
 longer an active phase — regardless of whether it was originally
@@ -686,7 +686,7 @@ theorem voc_removes_pic_barrier (s : DPPhaseStatus)
     s.isActivePhase = false := by
   simp [DPPhaseStatus.isActivePhase, h_inc]
 
-open Minimalism in
+open Minimalist in
 /-- **Non-VOC verbs leave the PIC barrier intact.**
 Without incorporation, a definite DP remains an active phase,
 and the PIC applies — the syntactic source is violated. -/
@@ -695,7 +695,7 @@ theorem nonvoc_preserves_pic_barrier (dHead : SyntacticObject)
     (DPPhaseStatus.mk dHead (isDPhaseHead dHead) false).isActivePhase = true := by
   simp [DPPhaseStatus.isActivePhase, h_phase]
 
-open Minimalism in
+open Minimalist in
 /-- **End-to-end: incorporation status determines whether the syntactic
 source is active.**
 - `incorporated = true` → PIC deactivated → syntactic source neutralized

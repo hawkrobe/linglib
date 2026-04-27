@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Phenomena.FillerGap.ExtractionMorphology
 
 /-!
@@ -52,7 +52,7 @@ Infl⁰ is absent.
 
 namespace Fragments.Mayan.Qanjobal
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Person Morphology

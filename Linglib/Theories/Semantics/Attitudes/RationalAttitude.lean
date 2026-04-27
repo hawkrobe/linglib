@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Rational Attitude Semantics @cite{fusco-sgrizzi-2026}
@@ -38,7 +38,7 @@ The parameter P is determined by complement size:
 namespace Semantics.Attitudes.RationalAttitude
 
 open Semantics.Events (Ev EvPredW existsClosureW EventSort)
-open Minimalism (ComplementSize fValue)
+open Minimalist (ComplementSize fValue)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Rational Attitude Reading

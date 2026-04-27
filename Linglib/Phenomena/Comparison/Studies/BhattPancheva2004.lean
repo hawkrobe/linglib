@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.DegreeMovement
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Core.Lexical.PolarityItem
 
@@ -67,8 +67,8 @@ namespace BhattPancheva2004
 open Hoeksema1983
 open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
 open Heim2001 (IntensionalVerbDatum intensionalVerbData)
-open Minimalism (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
-open Minimalism.Semantics.DegreeMovement
+open Minimalist (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
+open Minimalist.Semantics.DegreeMovement
   (DegreeChainPosition degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP

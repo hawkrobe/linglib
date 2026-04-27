@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Norwegian V2 Profiles
@@ -9,7 +9,7 @@ V2 micro-parameter profiles for Norwegian varieties (Table 3.1).
 
 namespace Fragments.Norwegian
 
-open Minimalism (ForceHead V2Profile)
+open Minimalist (ForceHead V2Profile)
 
 /-- Standard Norwegian: V-to-C in declaratives, wh-questions, and
     yes/no-questions. -/

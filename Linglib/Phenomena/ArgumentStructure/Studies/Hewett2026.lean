@@ -1,8 +1,8 @@
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Syntax.Minimalism.Applicative
-import Linglib.Theories.Syntax.Minimalism.Checking
-import Linglib.Theories.Syntax.Minimalism.Voice
-import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Theories.Syntax.Minimalist.Checking
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Theories.Morphology.Core.MirrorPrinciple
 
 /-!
@@ -41,7 +41,7 @@ required to mirror each other.
 
 namespace Hewett2026
 
-open Minimalism (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
+open Minimalist (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
   ActivationIndex ApplType ApplHead applHigh applLowRecipient applLowSource
   buildDecomposition voiceAgent voiceCauser voiceAnticausative
   voiceMiddle voicePassive voiceReflexive voiceExperiencer isCausative)

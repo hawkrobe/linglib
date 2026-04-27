@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
 
@@ -272,7 +272,7 @@ theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
 -- § Bridge: Dependent Case × Minimalist Syntax
 -- ============================================================================
 
-open Minimalism
+open Minimalist
 open Syntax.Case
 open Fragments.Japanese.Predicates
 

@@ -1,7 +1,7 @@
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
-import Linglib.Theories.Syntax.Minimalism.HeadMovement.Basic
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalism.Economy
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.TopologicalMapping
+import Linglib.Theories.Syntax.Minimalist.HeadMovement.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.Economy
 import Linglib.Phenomena.Reference.Studies.Longobardi2001
 
 /-!
@@ -30,7 +30,7 @@ derived theorems, and noun taxonomy. This study file:
 
 namespace Longobardi2005
 
-open Minimalism.TopologicalMapping
+open Minimalist.TopologicalMapping
 open Longobardi2001 (DPParameter ArgumentType
   romance english greek pnRequiresOvertD bnCanBeReferential)
 

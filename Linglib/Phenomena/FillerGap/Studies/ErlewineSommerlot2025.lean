@@ -1,6 +1,6 @@
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
 import Linglib.Fragments.Malayic.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # Voice and Extraction in Malayic
@@ -342,7 +342,7 @@ to each Spell-out domain in `CyclicLinearization.lean`, but operates on
 /-- Map Malayic v-flavor to Core VoiceFlavor.
     v_ACT introduces the external argument → agentive.
     v_PASS licenses EA without θ → passive. -/
-def vFlavorToCore : LittleVFlavor → Minimalism.VoiceFlavor
+def vFlavorToCore : LittleVFlavor → Minimalist.VoiceFlavor
   | .act  => .agentive
   | .pass => .passive
 
@@ -350,7 +350,7 @@ def vFlavorToCore : LittleVFlavor → Minimalism.VoiceFlavor
     phaseHead is always true, following E&S's claim that VoiceP is
     universally a phase. This DIVERGES from Core where passive
     Voice is not a phase head (@cite{chomsky-2001}, @cite{collins-2005}). -/
-def clauseToVoiceHead : VoiceConstruction → Minimalism.VoiceHead
+def clauseToVoiceHead : VoiceConstruction → Minimalist.VoiceHead
   | .active          => { flavor := .agentive, hasD := true, phaseHead := true }
   | .diPassive       => { flavor := .passive,  hasD := true, phaseHead := true }
   | .barePassive     => { flavor := .passive,  hasD := true, phaseHead := true }
@@ -369,12 +369,12 @@ theorem voice_always_phase (ct : VoiceConstruction) :
     passive Voice (following @cite{collins-2005}) is not. -/
 theorem malayic_passive_phase_diverges :
     (clauseToVoiceHead .diPassive).phaseHead = true ∧
-    Minimalism.voicePassive.phaseHead = false := ⟨rfl, rfl⟩
+    Minimalist.voicePassive.phaseHead = false := ⟨rfl, rfl⟩
 
 /-- Active clause type maps to Core's agentive Voice, which IS a phase
     head — consistent across both analyses. -/
 theorem active_consistent_with_core :
     (clauseToVoiceHead .active).flavor = .agentive ∧
-    (clauseToVoiceHead .active).phaseHead = Minimalism.voiceAgent.phaseHead := ⟨rfl, rfl⟩
+    (clauseToVoiceHead .active).phaseHead = Minimalist.voiceAgent.phaseHead := ⟨rfl, rfl⟩
 
 end Phenomena.FillerGap.Studies.ErlewineSommerlot2025

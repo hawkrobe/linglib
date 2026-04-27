@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Basic
-import Linglib.Theories.Syntax.Minimalism.Derivation
-import Linglib.Theories.Syntax.Minimalism.Position
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.Derivation
+import Linglib.Theories.Syntax.Minimalist.Position
 import Linglib.Fragments.TobaBatak.Basic
 
 /-!
@@ -38,7 +38,7 @@ and binding predictions are formalized separately using the paper's
 empirical generalizations.
 -/
 
-namespace Minimalism
+namespace Minimalist
 
 /-! ## EPP Parameter (formerly `Core/EPP.lean`)
 
@@ -72,11 +72,11 @@ def english_wo : WordOrderParameter :=
 def tobaBatak_wo : WordOrderParameter :=
   { language := "Toba Batak", eppStrategy := .vpRaising, predictedOrder := "VOS" }
 
-end Minimalism
+end Minimalist
 
 namespace ColeHermon2008
 
-open Minimalism
+open Minimalist
 
 -- ============================================================================
 -- § 1: Toba Batak Lexical Items
@@ -458,7 +458,7 @@ to Spec,FP (a higher functional projection), past the fronted VP.
 This analysis connects to the claim in §6 that linear order within Merge
 is irrelevant — only c-command matters. This is precisely the content of
 the Linear Correspondence Axiom (LCA) formalized in
-`Theories.Interfaces.SyntaxPhonology.Minimalism.LCA`.
+`Theories.Interfaces.SyntaxPhonology.Minimalist.LCA`.
 -/
 
 /-- F head (higher functional projection above TP). -/

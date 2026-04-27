@@ -67,7 +67,7 @@ What is **not** modeled:
 
 namespace Middleton2026
 
-open Minimalism Morphology.DM.Impoverishment Morphology.DM.Metathesis
+open Minimalist Morphology.DM.Impoverishment Morphology.DM.Metathesis
      Morphology.DM.PostsyntacticDerivation Morphology.DM.VI
      Morphology.DM.LinearPostsyntax
      Fragments.Taos.Agreement Fragments.Basque.Postsyntax

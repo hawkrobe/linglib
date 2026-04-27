@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
-import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
 # @cite{merchant-2013} — Voice and Ellipsis
@@ -32,8 +32,8 @@ the English paradigm.
 
 namespace Merchant2013
 
-open Minimalism
-open Minimalism.Ellipsis
+open Minimalist
+open Minimalist.Ellipsis
 
 -- ════════════════════════════════════════════════════
 -- § 1. Ellipsis Types Beyond VPE and Sluicing

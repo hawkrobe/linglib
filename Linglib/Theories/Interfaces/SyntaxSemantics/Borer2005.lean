@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 import Linglib.Core.Lexical.NounCategorization
-import Linglib.Theories.Syntax.Minimalism.ExtendedProjection.Basic
+import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Nominal Syntax-Semantics Mapping
@@ -145,16 +145,16 @@ def countIndividuated (P : α → Prop) (μ : α → ℚ) (n : ℚ) : α → Pro
     The Q head (Borer's CL#/Div, F2 in the EP hierarchy) is
     the locus of the mass/count distinction. Its presence in the
     spine determines count; its absence determines mass. -/
-def spineHasQ (spine : List Minimalism.Cat) : Bool :=
-  spine.any (· == Minimalism.Cat.Q)
+def spineHasQ (spine : List Minimalist.Cat) : Bool :=
+  spine.any (· == Minimalist.Cat.Q)
 
 /-- Whether an EP spine projects number (Num head present).
 
     The Num head (F3) hosts numeral/quantifier syntax. It is
     typically projected only when Q is also present, since
     counting presupposes individuation (see `num_presupposes_q`). -/
-def spineHasNum (spine : List Minimalism.Cat) : Bool :=
-  spine.any (· == Minimalism.Cat.Num)
+def spineHasNum (spine : List Minimalist.Cat) : Bool :=
+  spine.any (· == Minimalist.Cat.Num)
 
 /-- The full count spine includes both Q and Num. -/
 theorem full_nominal_has_q :
@@ -178,7 +178,7 @@ theorem mass_spine_no_q :
     This is a definitional schema — instances for specific nouns
     appear in bridge files where fragment entries are paired with
     specific EP spines. -/
-def countableFromSpine (spine : List Minimalism.Cat) : Bool :=
+def countableFromSpine (spine : List Minimalist.Cat) : Bool :=
   spineHasQ spine
 
 /-- Count spine → countable = true. -/
@@ -224,7 +224,7 @@ structure ClassifierAsQ where
   /-- The classifier morpheme (from Aikhenvald's typology) -/
   classifier : Core.NounCategorization.ClassifierEntry
   /-- The syntactic position is Q (F2 in the nominal EP) -/
-  position : Minimalism.Cat := .Q
+  position : Minimalist.Cat := .Q
 
 -- ════════════════════════════════════════════════════
 -- § 5. Parametric Individuation (DivCL)
@@ -326,7 +326,7 @@ inductive MereoStatus where
     is well-defined (QMOD on a quantized predicate gives a
     quantized subpredicate). But Num on CUM input — counting
     mass — has no canonical semantics. -/
-def headEffect : Minimalism.Cat → Option (MereoStatus × MereoStatus)
+def headEffect : Minimalist.Cat → Option (MereoStatus × MereoStatus)
   | .Q   => some (.cum, .qua)        -- individuation: CUM → QUA
   | .Num => some (.qua, .measured)    -- counting: QUA → measured
   | .n   => some (.cum, .cum)         -- categorization preserves CUM
@@ -337,7 +337,7 @@ def headEffect : Minimalism.Cat → Option (MereoStatus × MereoStatus)
 
     This is the compositional coherence condition: the semantic
     pipeline must be type-correct at every step. -/
-def selectionallyWellTyped : List (Minimalism.Cat × MereoStatus) → Bool
+def selectionallyWellTyped : List (Minimalist.Cat × MereoStatus) → Bool
   | [] => true
   | [_] => true
   | (_, s₁) :: rest@((c₂, _) :: _) =>
@@ -410,7 +410,7 @@ theorem counting_depends_on_div (P : α → Prop) (μ : α → ℚ) (n : ℚ) :
     Num (F3), so Q's output is available as Num's input in bottom-up
     composition. -/
 theorem fvalue_reflects_dependency :
-    Minimalism.fValue .Q < Minimalism.fValue .Num := by decide
+    Minimalist.fValue .Q < Minimalist.fValue .Num := by decide
 
 /-! ### The truncation coherence argument
 
@@ -430,7 +430,7 @@ capture this via the truncation coherence check below. -/
 
 /-- The mereological status after projecting a spine prefix.
     Returns `none` if the pipeline is ill-typed at any step. -/
-def spinePrefixStatus : List Minimalism.Cat → Option MereoStatus
+def spinePrefixStatus : List Minimalist.Cat → Option MereoStatus
   | [] => some .cum
   | c :: rest =>
     match spinePrefixStatus rest with
