@@ -99,6 +99,34 @@ theorem toBoundedness_coherent :
     MereologicalStatus.cumulative.toBoundedness = cumBoundedness ∧
     MereologicalStatus.quantized.toBoundedness = quaBoundedness := ⟨rfl, rfl⟩
 
+/-- Direct conversion from @cite{wellwood-2015}'s `MereologicalStatus` to
+    the cross-framework `Core.Scale.MereoTag` substrate. Wellwood's
+    framework uses "monotonic" / "structure-preserving" terminology
+    (see module docstring "Interpretive Note"); we lift to @cite{krifka-1989}'s
+    `cum`/`qua` labels for cross-framework dialogue. -/
+def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag
+  | .cumulative => .cum
+  | .quantized  => .qua
+
+/-- The `MereologicalStatus → Boundedness` mapping agrees with the
+    `MereoTag → Boundedness` mapping via `toMereoTag`. Closes the
+    silent divergence between @cite{wellwood-2015}'s labels and the
+    cross-framework `MereoTag` substrate noted by the Scale.lean §1b
+    "shared abstraction underlying all four licensing frameworks" claim. -/
+theorem toBoundedness_matches_mereoTag :
+    MereologicalStatus.cumulative.toBoundedness = Core.Scale.MereoTag.cum.toBoundedness ∧
+    MereologicalStatus.quantized.toBoundedness = Core.Scale.MereoTag.qua.toBoundedness :=
+  ⟨rfl, rfl⟩
+
+/-- `MereologicalStatus` joins `Boundedness` and `MereoTag` as a
+    `LicensingPipeline` instance, putting @cite{wellwood-2015} in literal
+    dialogue with @cite{krifka-1989}/@cite{kennedy-2007}/@cite{rouillard-2026}
+    via `Core.Scale.LicensingPipeline.universal` (which now derives
+    cross-framework licensing agreement automatically when the underlying
+    boundedness coincides). -/
+instance : Core.Scale.LicensingPipeline MereologicalStatus where
+  toBoundedness := MereologicalStatus.toBoundedness
+
 -- ════════════════════════════════════════════════════
 -- § 2. `much` as Structure-Preserving Map
 -- ════════════════════════════════════════════════════

@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.425] - 2026-04-26
+
+### Tier C #1: MereologicalStatus (Wellwood 2015) ↔ MereoTag bridge — closes silent divergence
+
+Adds the `Theories/Semantics/Measurement.lean:MereologicalStatus` ↔ `Core.Scale.MereoTag` bridge that the cross-framework reconciler ranked as the single highest-value follow-up from the §1 Boundedness audit (Tier C #1).
+
+**The silent divergence the audit surfaced:** `MereologicalStatus` (cumulative/quantized) and `MereoTag` (cum/qua) are structurally identical 2-way mereological classifications, both with `toBoundedness` mappings, both used as inputs to licensing predictions across @cite{wellwood-2015}, @cite{krifka-1989}, @cite{kennedy-2007}, @cite{rouillard-2026}. But Wellwood's `MereologicalStatus` had its own parallel `toBoundedness`/`telicityToStatus`/`vendlerToStatus`/`numberToStatus` mappings AND was never registered as a `Core.Scale.LicensingPipeline` instance, despite §1b of `Scale.lean` claiming `LicensingPipeline` is "the shared abstraction underlying all four licensing frameworks." That made the unification editorial rather than structural.
+
+**Three additions to `Theories/Semantics/Measurement.lean` §1 (Mereological Status), ~28 LOC:**
+
+1. `def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag` — direct conversion with `cumulative ↦ cum`, `quantized ↦ qua`. Documents the Wellwood-vocabulary ↔ Krifka-vocabulary correspondence (per the existing module-docstring "Interpretive Note" at lines 47-53 acknowledging Wellwood doesn't use Krifka's terminology directly).
+
+2. `theorem toBoundedness_matches_mereoTag` — constructor-pair theorem proving `MereologicalStatus.cumulative.toBoundedness = MereoTag.cum.toBoundedness ∧ MereologicalStatus.quantized.toBoundedness = MereoTag.qua.toBoundedness` by `⟨rfl, rfl⟩`. Same style as the existing `toBoundedness_coherent` (which proves agreement with `cumBoundedness`/`quaBoundedness` from `Core/MereoDim.lean`).
+
+3. `instance : Core.Scale.LicensingPipeline MereologicalStatus` — registers Wellwood's classification as the third public `LicensingPipeline` instance (alongside `Boundedness` and `MereoTag`). Critically, this means `Core.Scale.LicensingPipeline.universal` (the cross-framework licensing-agreement theorem at `Scale.lean:217-223`) now derives Wellwood ↔ Krifka/Kennedy/Rouillard agreement automatically: `LicensingPipeline.universal s m h : LicensingPipeline.isLicensed s = LicensingPipeline.isLicensed m` whenever `s.toBoundedness = m.toBoundedness`.
+
+**Source verification (Wellwood 2015 PDF):** Wellwood's central concept is *much* as a "structure-preserving map from entities, events, or states to their measures along various dimensions" (abstract, eq 7). Her terminology is **monotonicity** / **structure-preservation** — the cumulative/quantized labels in `MereologicalStatus` are Krifka 1989 vocabulary applied to Wellwood's framework, as the existing module-docstring "Interpretive Note" already acknowledges. Wellwood's three-way unification (mass/count + atelic/telic + gradable/non-gradable, abstract + §3) maps cleanly to the cumulative/quantized binary, which in turn maps cleanly to MereoTag. The bridge is structurally licit and the verification confirms the audit's premise.
+
+**What this UNBLOCKS:** any future Wellwood-2015-anchored work (e.g., the `Theories/Semantics/Degree/MeasureFunction.lean` substrate from the concurrent K&L 2008 session) can now compose Wellwood's classification through `LicensingPipeline.universal` to derive licensing predictions in Kennedy/Rouillard/Krifka terms without re-deriving them. Audits that previously had to flag `MereologicalStatus` as "isomorphic in parallel" can now confirm structural agreement.
+
+**What's NOT in this commit (deferred to Tier-D-ish follow-up):** the existing `telicityToStatus`/`vendlerToStatus`/`numberToStatus`/`gradableToStatus`/`nonGradableToStatus` definitions (§3 of Measurement.lean) still re-derive mappings parallel to `DimensionBridge.lean` rather than composing through `MereoTag`. Refactoring those to compose-through-MereoTag is a consumer-touching change (Wellwood2015.lean uses `telicityToStatus` directly) and is left for a separate session that can audit per-consumer impact.
+
+**Build:** Measurement.lean's 935-job transitive closure passes; downstream consumers (`Theories/Semantics/Gradability/StatesBased.lean`, `Phenomena/Comparison/Studies/Wellwood2015.lean`) compile cleanly. The 3 unrelated full-build failures (`Phenomena/Questions/Studies/{Heim1994,George2011}.lean` and `Core/Constraint/PermSubsetCombinatorics.lean`) are untracked files from concurrent sessions, not in HEAD, no import-edge to Measurement.lean.
+
 ## [0.230.424] - 2026-04-26
 
 ### Pitman 2006 Theorem 3.2 fully proved (no sorries)
