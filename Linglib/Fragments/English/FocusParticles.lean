@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Core.Semantics.ContentLayer
+import Linglib.Core.Discourse.Coherence
 import Linglib.Features.InformationStructure
 
 /-!
@@ -14,7 +15,8 @@ namespace Fragments.English.FocusParticles
 
 open Semantics.FocusParticles (EvenThreshold)
 open Core.Semantics.ContentLayer (ContentLayer)
-open Features.InformationStructure (FIPApplication ExclusionVariety)
+open Features.InformationStructure (FIPApplication)
+open Core.Discourse.Coherence (CoherenceRelation)
 
 /-- A focus-sensitive particle lexical entry. -/
 structure Entry where
@@ -28,11 +30,14 @@ structure Entry where
   threshold : Option EvenThreshold
   /-- FIP application type -/
   application : FIPApplication
-  /-- Exclusion variety (@cite{umbach-2004} §2.3): *only* excludes
-      additional alternatives ("no one *in addition to* X"), while
-      contrastive focus excludes by substitution ("no one *instead of* X").
-      `none` for non-exclusive particles like *even* and *also*. -/
-  exclusionVariety : Option ExclusionVariety := none
+  /-- Discourse-relation flavor of exclusion (@cite{umbach-2004}): *only*
+      excludes additional alternatives → `.contrast`; contrastive focus
+      excludes by substitution → `.correction`. Encoded directly as
+      `Core.Discourse.Coherence.CoherenceRelation` (the IS-vocabulary
+      "additional vs substitution" is recoverable from CONTRAST/CORRECTION
+      per Umbach 2004's own decomposition). `none` for non-exclusive
+      particles like *even* and *also*. -/
+  exclusionVariety : Option CoherenceRelation := none
   deriving Repr, BEq
 
 /-- "even" — scalar focus particle.
@@ -58,7 +63,7 @@ def only_ : Entry :=
   , contributionLayer := .atIssue
   , threshold := none
   , application := .focusingAdverb
-  , exclusionVariety := some .additional }
+  , exclusionVariety := some .contrast }
 
 /-- "also"/"too" — additive focus particle.
     Presupposes existence of a true alternative. -/
@@ -140,10 +145,11 @@ theorem only_is_truth_functional :
 theorem even_only_differ_on_truth :
     even_.truthFunctional ≠ only_.truthFunctional := by decide
 
-/-- "only" is an exclusive particle (additional exclusion variety).
-    @cite{umbach-2004} §2.3: excludes alternatives *in addition to* X. -/
+/-- "only" is an exclusive particle: contrast (= "additional"-flavor) exclusion.
+    @cite{umbach-2004} §2.3 (UNVERIFIED): excludes alternatives *in addition to* X,
+    mapping to the CONTRAST discourse relation. -/
 theorem only_excludes_additional :
-    only_.exclusionVariety = some .additional := rfl
+    only_.exclusionVariety = some .contrast := rfl
 
 /-- "also" is additive, not exclusive — no exclusion variety. -/
 theorem also_not_exclusive :

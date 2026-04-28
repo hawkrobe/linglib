@@ -1,5 +1,4 @@
 import Linglib.Core.Discourse.AtIssueness
-import Linglib.Core.Discourse.Coherence
 import Linglib.Typology.Profile
 import Mathlib.Tactic.DeriveFintype
 
@@ -149,40 +148,6 @@ def DiscourseStatus.ofAtIssueness (d : Core.Discourse.AtIssueness.AtIssuenessDeg
       Core.Discourse.AtIssueness.defaultThreshold) : DiscourseStatus :=
   if Core.Discourse.AtIssueness.isAtIssue d θ then .new else .given
 
--- Polarity-Switch Contexts
-
-/-! @cite{turco-braun-dimroth-2014} distinguish two discourse contexts for
-    polarity switches (negation → affirmation). The distinction is
-    theory-neutral: it characterizes the discourse relation between the
-    antecedent and the target utterance, independent of how languages mark
-    the switch.
-
-    - @cite{klein-2008}: contrast = different topic situations, compatible claims
-    - @cite{umbach-2004}: correction = same topic situation, mutually exclusive claims -/
-
-/-- The discourse context in which a polarity switch (neg → affirm) occurs.
-
-    Crosslinguistically relevant: Dutch and German mark both contexts but
-    with different strategies. The information-structural reflex of the
-    discourse-structural distinction between `CoherenceRelation.contrast`
-    and `CoherenceRelation.correction` (@cite{umbach-2004} §3). -/
-inductive PolaritySwitchContext where
-  /-- Different topic situations, compatible claims -/
-  | contrast
-  /-- Same topic situation, mutually exclusive claims -/
-  | correction
-  deriving DecidableEq, Repr
-
-open Core.Discourse.Coherence in
-/-- Bridge from polarity-switch contexts to discourse coherence relations.
-
-    @cite{umbach-2004} §3: the contrast/correction distinction in
-    information structure corresponds directly to two distinct resemblance
-    relations at the discourse level. -/
-def PolaritySwitchContext.toCoherenceRelation : PolaritySwitchContext → CoherenceRelation
-  | .contrast   => .contrast
-  | .correction => .correction
-
 /-- How a language marks polarity switches (neg → affirm).
 
     **Framework alignment.** This taxonomy treats polarity-marking strategies
@@ -282,42 +247,6 @@ structure PolarityMarkingEntry where
   environments : Typology.Profile PolarityMarkingEnv
   /-- The polarity-marking strategy category -/
   strategy : PolarityMarkingStrategy
-
--- Exclusion Variety
-
-/-! @cite{umbach-2004} §2.3, §3.2 distinguishes two varieties of exclusion
-    that cross-cut information structure and discourse structure:
-
-    - **Additional**: the excluded alternative would hold *in addition to*
-      the asserted item. Instantiated by *only*-phrases and the discourse
-      relation CONTRAST.
-    - **Substitution**: the excluded alternative would hold *instead of*
-      the asserted item. Instantiated by contrastive focus and the
-      discourse relation CORRECTION (German *sondern*).
-
-    This distinction explains why contrastive focus and *only*-phrases have
-    different presuppositions, and why CONTRAST and CORRECTION respond to
-    different implicit questions. -/
-
-/-- Two varieties of exclusion that distinguish *only*-phrases from
-    contrastive focus, and CONTRAST from CORRECTION (@cite{umbach-2004}). -/
-inductive ExclusionVariety where
-  /-- Excludes additional alternatives: the excluded item would hold
-      *in addition to* the asserted one. *Only*-phrases / CONTRAST. -/
-  | additional
-  /-- Excludes by substitution: the excluded item would hold
-      *instead of* the asserted one. Contrastive focus / CORRECTION. -/
-  | substitution
-  deriving DecidableEq, Repr
-
-open Core.Discourse.Coherence in
-/-- Bridge from exclusion variety to discourse coherence relation.
-
-    @cite{umbach-2004} §3.2: the information-structural exclusion type
-    determines which discourse relation holds. -/
-def ExclusionVariety.toCoherenceRelation : ExclusionVariety → CoherenceRelation
-  | .additional    => .contrast
-  | .substitution  => .correction
 
 -- Focus Interpretation Principle (Rooth 1992)
 

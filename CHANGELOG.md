@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.488] - 2026-04-27
+
+### InformationStructure cleanup commit 1/3: PolaritySwitchContext + ExclusionVariety dissolved into CoherenceRelation
+
+First of three sequenced cleanups from the multi-agent audit on `Features/InformationStructure.lean` (370 LOC, 9 unrelated taxonomies, dump-bag pattern unchanged from the 4-day-old triage memory's "Tier 1 DISSOLVE" classification despite the prior Core→Features relocation).
+
+**Two near-identity bridges to `Core.Discourse.Coherence.CoherenceRelation` deleted as duplicate enums** (CLAUDE.md "encoding conclusions as definitions" anti-pattern flagged by all 4 audit agents):
+
+- `PolaritySwitchContext : contrast | correction` + `PolaritySwitchContext.toCoherenceRelation` (literally identity-on-name: `.contrast → .contrast`, `.correction → .correction`) — DELETED.
+- `ExclusionVariety : additional | substitution` + `ExclusionVariety.toCoherenceRelation` (`.additional → .contrast`, `.substitution → .correction`) — DELETED.
+
+`Core.Discourse.Coherence.CoherenceRelation` already has `.contrast` and `.correction` constructors with `contrast_ne_correction := by decide` and `contrast_correction_same_class := rfl` proven; the two IS-side enums were 2-case projections that no consumer ever used at the projection level (every consumer touched `.toCoherenceRelation` immediately).
+
+**Consumer migrations** (4 files):
+- `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean`: 4× `context : PolaritySwitchContext` → `context : CoherenceRelation`. Data sites (`context := .contrast` / `.correction`) work unchanged via dot-notation.
+- `Theories/Semantics/Focus/PolarityLevel.lean`: open updated; vacuous theorem `both_levels_context_general` deleted (was `∀ ctx : PolaritySwitchContext, _ → ctx = .contrast ∨ ctx = .correction` — true by case-exhaustion over the 2-case enum, doesn't use the `PolarityMarkingLevel` argument; over 7-case `CoherenceRelation` it would be false; substantive level-orthogonality claim deferred to a real bridge theorem when a consumer needs it).
+- `Fragments/English/FocusParticles.lean`: field `exclusionVariety : Option ExclusionVariety` → `Option CoherenceRelation`; `only_` data: `some .additional` → `some .contrast`; `only_excludes_additional` theorem updated.
+- `Phenomena/Focus/Studies/Umbach2004.lean`: 4 stipulation-unpacking theorems deleted (`only_maps_to_contrast`, `contrastive_focus_maps_to_correction`, `polarity_switch_bridge`, `exclusion_parallel`); `only_fragment_exclusion` updated; `contrast_levels` simplified from 5 conjuncts to 3 (deleting the `ExclusionVariety.{additional,substitution}.toCoherenceRelation = ...` conjuncts that just unpacked the bridge); §4 docstring + §8 summary docstring rewritten.
+- `Theories/Semantics/Focus/Comparability.lean`: docstring updated to remove references to deleted enums.
+
+**Side cleanups**:
+- `Features/InformationStructure.lean` no longer needs `import Linglib.Core.Discourse.Coherence` — removed.
+- All `§3.2.2` / `§3.4` / `§2.3` citations in deleted/migrated docstrings carried forward as `(UNVERIFIED)` per CLAUDE.md "never cite section numbers from memory".
+
+**LOC**: `Features/InformationStructure.lean` 370 → ~330 (40 LOC removed); ~30 LOC removed from Umbach2004 (4 theorems + simplified `contrast_levels`); net consumer-side migration is type-level only (no semantic change since the bridges were identity).
+
+**Build**: 1043-job affected dependency cone (the 6 changed files + transitive closures) green.
+
+**Sequenced follow-ups (commits 2/3)**:
+- Commit 2: extract `HasInfoStructure` + IS-partition cluster (Theme/Rheme/Focus/Background/InfoStructure) to `Theories/Interfaces/SyntaxPhonology/InfoStructureInterface.lean` (cluster A: 2 consumers).
+- Commit 3: move PolarityMarking* cluster to `Typology/PolarityMarking.lean` (cluster B: 10 consumers).
+
 ## [0.230.487] - 2026-04-27
 
 ### Williams 2026 *forget* arc: citation-key fix + study-file relocation

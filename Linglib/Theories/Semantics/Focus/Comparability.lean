@@ -10,9 +10,13 @@ Theory predicates over the substance taxonomies in
 well-formedness (similarity + dissimilarity) and the Erteschik-Shir /
 Abeillé extraction-IS clash constraint.
 
-The substance enums (`DiscourseStatus`, `ExclusionVariety`,
-`PolaritySwitchContext`, …) live in `Features/InformationStructure.lean`;
-this file provides the *theory* layered on top of them.
+The substance enums (`DiscourseStatus`, …) live in
+`Features/InformationStructure.lean`; this file provides the *theory*
+layered on top of them. (`ExclusionVariety` and `PolaritySwitchContext`
+were collapsed into `Core.Discourse.Coherence.CoherenceRelation` in
+the 0.230.488 cleanup — the IS-vocabulary "additional vs substitution"
+and "polarity contrast vs correction" pairs are now populated directly
+with `CoherenceRelation.contrast` and `CoherenceRelation.correction`.)
 -/
 
 namespace Semantics.Focus.Comparability

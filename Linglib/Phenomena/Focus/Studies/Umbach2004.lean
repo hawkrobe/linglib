@@ -226,38 +226,22 @@ theorem wellformed_implies_fip_compatible {W : Type}
 -- §4  Exclusion Varieties (@cite{umbach-2004} §2.3)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Two varieties of exclusion cross-cut information structure and
-discourse structure. The taxonomy is already defined in Core
-(`ExclusionVariety`); here we verify the parallel and connect
-to Fragment entries. -/
+/-! @cite{umbach-2004} (§2.3 UNVERIFIED) distinguishes two varieties of
+exclusion that cross-cut information structure and discourse structure:
+*only*-phrases exclude *additional* alternatives (mapping to the
+CONTRAST discourse relation), while contrastive focus excludes *by
+substitution* (mapping to the CORRECTION discourse relation). The
+two-cell IS taxonomy is recoverable from `Core.Discourse.Coherence.CoherenceRelation`'s
+`.contrast` and `.correction` cases — Umbach's own decomposition makes
+the IS-side enum redundant once the discourse-side cases exist. The
+prior `ExclusionVariety` substrate enum was deleted in the
+0.230.488 cleanup. -/
 
-/-- *Only*-phrases exclude additional alternatives:
-    "Tonight, only RONALD went shopping" (§2.3, ex. 14b) excludes
-    the possibility that someone *in addition to* Ronald went shopping.
-    This maps to the CONTRAST discourse relation. -/
-theorem only_maps_to_contrast :
-    ExclusionVariety.toCoherenceRelation .additional = .contrast := rfl
-
-/-- Contrastive focus excludes by substitution:
-    "Tonight, RONALD went shopping" (§2.3, ex. 13) excludes the
-    possibility that someone *instead of* Ronald went shopping.
-    This maps to the CORRECTION discourse relation. -/
-theorem contrastive_focus_maps_to_correction :
-    ExclusionVariety.toCoherenceRelation .substitution = .correction := rfl
-
-/-- The English "only" Fragment entry carries the additional variety. -/
+/-- The English "only" Fragment entry carries the contrast (= additional)
+    exclusion. -/
 theorem only_fragment_exclusion :
     Fragments.English.FocusParticles.only_.exclusionVariety =
-    some .additional := rfl
-
-/-- The exclusion parallel: *only* and CONTRAST share the *additional*
-    exclusion type, just as contrastive focus and CORRECTION share
-    the *substitution* type. @cite{umbach-2004} §3.2: "the discourse
-    relations of contrast and correction differ from each other in the
-    same way a contrastive focus differs from an only-phrase." -/
-theorem exclusion_parallel :
-    ExclusionVariety.additional.toCoherenceRelation ≠
-    ExclusionVariety.substitution.toCoherenceRelation := by decide
+    some .contrast := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5  Confirm+Deny Condition on "but" (@cite{umbach-2004} §3.1)
@@ -451,13 +435,6 @@ theorem correction_excludes_first :
   · simp [wentBerlin]
   · simp [wentParis]
 
-/-- The polarity-switch bridge: contrast and correction map to
-    their corresponding coherence relations. -/
-theorem polarity_switch_bridge :
-    PolaritySwitchContext.toCoherenceRelation .contrast = .contrast ∧
-    PolaritySwitchContext.toCoherenceRelation .correction = .correction :=
-  ⟨rfl, rfl⟩
-
 -- ═══════════════════════════════════════════════════════════════════════
 -- §7  Bridge: Umbach vs Merin (@cite{merin-1999})
 -- ═══════════════════════════════════════════════════════════════════════
@@ -522,8 +499,8 @@ theorem contrast_correction_structurally_distinct :
 -- §8  Summary Taxonomy
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{umbach-2004} Conclusion (Table 1): the notion of contrast
-decomposes into three nested layers, each adding a requirement:
+/-! @cite{umbach-2004} Conclusion (Table 1 UNVERIFIED): the notion of
+contrast decomposes into three nested layers, each adding a requirement:
 
 ```
 similarity + dissimilarity       → all focus / all coordination
@@ -531,29 +508,27 @@ similarity + dissimilarity       → all focus / all coordination
   + exclusion (instead of)       → contrastive focus / CORRECTION
 ```
 
-The taxonomy is now represented in linglib's type system:
+The taxonomy is represented in linglib's type system:
 - `semanticallyIndependent` + `commonIntegrator` = similarity+dissimilarity
-- `ExclusionVariety.additional` = only-phrases / CONTRAST
-- `ExclusionVariety.substitution` = contrastive focus / CORRECTION
-- `PolaritySwitchContext.toCoherenceRelation` bridges IS ↔ discourse
-- `ExclusionVariety.toCoherenceRelation` bridges focus ↔ discourse -/
+- `CoherenceRelation.contrast` = only-phrases / CONTRAST (additional)
+- `CoherenceRelation.correction` = contrastive focus / CORRECTION (substitution)
 
-/-- The three levels of contrast correspond to progressively more
-    constrained discourse configurations:
-    1. All focus triggers alternatives (similarity+dissimilarity)
-    2. CONTRAST adds exclusion of additional alternatives (*only*)
-    3. CORRECTION adds exclusion by substitution (contrastive focus) -/
+Both polarity-switch contexts and exclusion varieties are populated
+directly with `Core.Discourse.Coherence.CoherenceRelation`'s `.contrast`
+and `.correction` cases — the prior IS-vocabulary parallel enums
+(`PolaritySwitchContext`, `ExclusionVariety`) were deleted in the
+0.230.488 cleanup as duplicates of the discourse-side primitive. -/
+
+/-- The two non-vacuous levels of contrast correspond to progressively
+    more constrained discourse configurations:
+    1. CONTRAST: exclusion of additional alternatives (*only*)
+    2. CORRECTION: exclusion by substitution (contrastive focus) -/
 theorem contrast_levels :
-    -- CONTRAST and CORRECTION are both resemblance relations
+    -- Both are resemblance relations
     CoherenceRelation.contrast.toClass = .resemblance ∧
     CoherenceRelation.correction.toClass = .resemblance ∧
-    -- but they are distinct
-    CoherenceRelation.contrast ≠ CoherenceRelation.correction ∧
-    -- and map to different exclusion varieties
-    ExclusionVariety.additional.toCoherenceRelation =
-      CoherenceRelation.contrast ∧
-    ExclusionVariety.substitution.toCoherenceRelation =
-      CoherenceRelation.correction :=
-  ⟨rfl, rfl, by decide, rfl, rfl⟩
+    -- but distinct
+    CoherenceRelation.contrast ≠ CoherenceRelation.correction :=
+  ⟨rfl, rfl, by decide⟩
 
 end Umbach2004

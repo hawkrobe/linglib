@@ -1,3 +1,4 @@
+import Linglib.Core.Discourse.Coherence
 import Linglib.Features.InformationStructure
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
@@ -52,7 +53,8 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Features.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
+open Features.InformationStructure (PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
+open Core.Discourse.Coherence (CoherenceRelation)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 open Fragments.French.PolarityMarking (si)
@@ -75,13 +77,13 @@ inductive Language where
     strategy constructor forces updating every datum. -/
 structure ProductionDatum where
   language : Language
-  context : PolaritySwitchContext
+  context : CoherenceRelation
   /-- Percentage of trials per strategy (approximate, from bar charts) -/
   pctByStrategy : PolarityMarkingStrategy → Rat
 
 /-- A prosodic prominence datum (pitch range in semitones). -/
 structure ProminenceDatum where
-  context : PolaritySwitchContext
+  context : CoherenceRelation
   /-- Pitch range in semitones -/
   pitchRangeST : Rat
   /-- Regression coefficient (contrast relative to correction baseline) -/
@@ -94,7 +96,7 @@ structure ProminenceDatum where
 
 /-- An accent-rate datum for Dutch *wel* (Fig. 3). -/
 structure AccentRateDatum where
-  context : PolaritySwitchContext
+  context : CoherenceRelation
   /-- Percentage of *wel* tokens that were accented -/
   pctAccented : Rat
   deriving Repr, BEq
@@ -102,7 +104,7 @@ structure AccentRateDatum where
 /-- Accent type distribution on Dutch *wel* (Fig. 5).
     ToDI annotation: !H*L L% (downstepped fall) vs H*L L% (fall). -/
 structure AccentTypeDatum where
-  context : PolaritySwitchContext
+  context : CoherenceRelation
   /-- Percentage realized as downstepped fall (!H*L L%) -/
   pctDownsteppedFall : Rat
   /-- Percentage realized as plain fall (H*L L%) -/

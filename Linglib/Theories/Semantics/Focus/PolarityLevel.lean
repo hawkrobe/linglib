@@ -1,4 +1,5 @@
 import Linglib.Features.Polarity
+import Linglib.Core.Discourse.Coherence
 import Linglib.Features.InformationStructure
 
 /-!
@@ -51,7 +52,8 @@ is the polarity-neutral propositional content.
 namespace Semantics.Focus.PolarityLevel
 
 open Features (Polarity)
-open Features.InformationStructure (PolarityMarkingStrategy PolaritySwitchContext)
+open Features.InformationStructure (PolarityMarkingStrategy)
+open Core.Discourse.Coherence (CoherenceRelation)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Polarity-marking levels
@@ -184,14 +186,15 @@ theorem functional_equivalence_positive (radical : W → Bool) :
     let prt : SentenceStructure W := ⟨radical, .positive, some .polarity⟩
     vf.eval = prt.eval := rfl
 
-/-- Both strategies are available in both discourse contexts
-    (contrast and correction). The level distinction is orthogonal
-    to the context distinction. -/
-theorem both_levels_context_general :
-    ∀ ctx : PolaritySwitchContext,
-    ∀ _ : PolarityMarkingLevel,
-    (ctx = .contrast ∨ ctx = .correction) := by
-  intro ctx _; cases ctx <;> simp
+-- Note: a `both_levels_context_general` theorem was deleted in the
+-- PolaritySwitchContext → CoherenceRelation migration. Over the old
+-- 2-case enum it was structurally vacuous (`ctx = .contrast ∨ ctx =
+-- .correction` is true by case-exhaustion, doesn't use the
+-- `PolarityMarkingLevel` argument); over the 7-case `CoherenceRelation`
+-- it would be false. The substantive claim ("level distinction is
+-- orthogonal to context distinction") would need a real bridge
+-- theorem connecting `strategyLevel` to a `CoherenceRelation`
+-- predicate; deferred until a consumer needs it.
 
 -- ════════════════════════════════════════════════════
 -- § 5. Strategy-level bridge
