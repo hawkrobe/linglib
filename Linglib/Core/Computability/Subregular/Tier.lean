@@ -12,7 +12,7 @@ import Linglib.Core.StringHom
 A **tier-based strictly `k`-local** (TSL_k) language is one whose
 membership is determined by SL_k membership of its **projection** onto a
 *tier* — a designated decidable subset of the alphabet
-@cite{heinz-rawal-tabor-2011} @cite{lambert-2022}. Symbols outside the
+@cite{heinz-rawal-tanner-2011} @cite{lambert-2022}. Symbols outside the
 tier are erased before the SL test; this captures long-distance
 phonological dependencies (consonant harmony, vowel harmony with
 transparent vowels) where tier-adjacent substrings are constrained but

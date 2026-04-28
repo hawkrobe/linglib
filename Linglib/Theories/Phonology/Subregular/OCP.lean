@@ -28,6 +28,21 @@ forbidden-pair infrastructure to `R := (· = ·)`. The OCP-specific names
 (`ocpForbidden`, `OCPCleanPair`, `TSLGrammar.ocp`,
 `mkOCPOnTier_zero_iff_in_ocp_lang`) are kept as the canonical entry
 points downstream consumers reference.
+
+## OCP-as-prohibition vs OCP-as-merger
+
+This file formalizes the **prohibition** reading of the OCP — strings
+containing adjacent identical (tier-projected) autosegments are *rejected*
+by `TSLGrammar.ocp p`. The classical autosegmental tradition
+(@cite{goldsmith-1976}) instead reads the OCP as a *merger
+transformation*: adjacent identical autosegments are *collapsed* into a
+single multiply-linked autosegment. The merger reading is formalized by
+`Phonology.Autosegmental.RegisterTier.mergeTRN` (and the underlying
+`FeatureBundle.merge`) — a repair operation on representations, not a
+language predicate. The two readings are operationally distinct, both
+trace to the same body of literature, and coexist in linglib without a
+master bridge — the prohibition reading classifies a stringset; the
+merger reading fixes a representation.
 -/
 
 namespace Phonology.Subregular

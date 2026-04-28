@@ -44,7 +44,7 @@ This study formalizes:
   (`latinDissimRule_tolerated_on_examples`) showing the 1-of-6 exception
   count on this corpus is well under Yang's threshold;
 - a Subregular bridge (`consTier_apply_eq_tierProject`) grounding the
-  consonant tier in the @cite{lambert-2022}/@cite{heinz-rawal-tabor-2011}
+  consonant tier in the @cite{lambert-2022}/@cite{heinz-rawal-tanner-2011}
   TSL formalism;
 - an OCP-on-tier OT constraint (`latinOCP`, via
   `Phonology.Constraints.mkOCPOnTier`) and an OT tableau bridge: each
@@ -285,7 +285,7 @@ theorem latinDissimRule_tolerated_on_examples :
   exact tolerates_six_one
 
 -- ============================================================================
--- § 8: Subregular Bridge (@cite{lambert-2022}, @cite{heinz-rawal-tabor-2011})
+-- § 8: Subregular Bridge (@cite{lambert-2022}, @cite{heinz-rawal-tanner-2011})
 -- ============================================================================
 
 /-- The consonant tier projection equals the canonical

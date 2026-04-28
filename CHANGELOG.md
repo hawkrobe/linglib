@@ -4,6 +4,53 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.508] - 2026-04-28
+
+### `Core/Computability/Subregular/ForbiddenPairs.lean` 4-agent audit: counterexample fix, IsChain helper promotion, SP_2 vs TSL_2 cross-framework theorem, OCP-as-merger/prohibition cross-references, OT-substrate `countAdjacent` promotion, bib cluster cleanup
+
+Random-pick 4-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert phonology + cross-framework-reconciler) on `Linglib/Core/Computability/Subregular/ForbiddenPairs.lean` (274 LOC, substrate file formalising tier-based strictly 2-local grammars via forbidden-pair relations).
+
+#### `ForbiddenPairs.lean` in-file fixes
+
+(1) **Wrong counterexample fixed.** Design-boundary section's reverse-direction witness was `xs := [s, s, t]` — but with `R := (· = ·)`, `p = {s}`, `p' = {s, t}` this fails *both* directions (filter under both rejects `s, s` adjacency). Replaced with `xs := [s, t, s]`: filter under `p` gives `[s, s]` (rejected), under `p'` gives `[s, t, s]` (chain — accepted). (2) **Dead cross-reference removed.** Module docstring referenced nonexistent `Subregular/ForbiddenSingletons.lean` for an SL_1 helper; redirected to actual locations: `mkForbidSingletonOnTier` in OT/Constraints.lean for the OT-side helper, `Subregular/StrictlyLocal.lean` (k=1 case) for the language-side substrate. (3) **Bare-`simp` violations swept.** Four `simp [kFactors] at hf` / `simp` calls (lines 85, 91, 196, 208) replaced with explicit `simp only [...]` sets; required adding `kFactors_two_nil` and `kFactors_two_singleton` `@[simp]` rfl-lemmas to `Subregular/Basic.lean` so the empty/singleton kFactor cases reduce structurally. (4) **Design-boundary claims promoted from prose to Lean theorems.** Added `lang_p_not_monotone` and `lang_p_not_antitone` with concrete `TwoSym` two-element alphabet witnesses (private to file; `s, t` symbols, `R := (· = ·)`, the two `p ≤ p'` → string-witnesses); both proved by `decide`. (5) **`@[simp]` asymmetry documented.** `lang_p_top` not marked `@[simp]` (RHS not simpler than LHS) — added one-line comment to prevent future "fix". (6) **`mem_lang_R_sup_iff` ↔ `lang_R_sup_eq_inf` pair tightened.** Lattice-form proof switched from `ext w; exact ...` to `Set.ext fun w => ...` (one-line corollary). (7) **Heinz-Rawal-Tanner 2011 citation added** to module docstring (file is the TSL_2 substrate; previously uncited).
+
+#### `Subregular/Basic.lean` substrate additions
+
+(1) **`kFactors_two_nil` + `kFactors_two_singleton` `@[simp]` lemmas** added (rfl-lemmas; service the `simp only` cleanup in `ForbiddenPairs.lean`). (2) **`List.isChain_top` and `List.IsChain.and` promoted** from `ForbiddenPairs.lean` private helpers (`_isChain_true` and `_isChain_and`) to the file's terminal `namespace List`/`List.IsChain` blocks — alphabet-generic, mathlib-shape, no Subregular content. The natural home is `Mathlib.Data.List.Chain` once consumers pay for them; flagged in module docstring. `mem_lang_R_sup_iff` proof in `ForbiddenPairs.lean` now uses `h1.and h2` (dot-method) instead of the local `_isChain_and h1 h2`.
+
+#### `countAdjacent` substrate promotion (OT → Core)
+
+(1) **`countAdjacent R xs` moved** from `Theories/Phonology/OptimalityTheory/Constraints.lean` to `Core/Computability/Subregular/ForbiddenPairs.lean`; alphabet-generic list combinatorics with no OT content. Re-exported from OT/Constraints under the conventional `Phonology.Constraints.countAdjacent` name via `export Core.Computability.Subregular (countAdjacent)`. (2) **`countAdjacent_eq_zero_iff_isChain` moved** from `Theories/Phonology/Subregular/ForbidPairs.lean` to the same Core file (alongside `countAdjacent`). The OT-side bridge `mkForbidPairsOnTier_zero_iff_isChain` in `Theories/Phonology/Subregular/ForbidPairs.lean` now consumes the Core version; `Theories/Phonology/OptimalityTheory/Constraints.lean` adds `import Linglib.Core.Computability.Subregular.ForbiddenPairs` for the export.
+
+#### `mkOCPOnTier` refactored to mirror `mkAgreeOnTier`
+
+Asymmetry pre-audit: `mkAgreeOnTier` factored through `mkForbidPairsOnTier (· ≠ ·)`, while `mkOCPOnTier` went via `mkOCP` (a separate constructor on the no-projection case). Refactored: `mkOCPOnTier name T extract := mkForbidPairsOnTier name (· = ·) T extract`, parallel to AGREE. The standalone `mkOCP` and `adjacentIdentical` are retained for callers (Berent2026, Amharic ConsonantalRoots, Faust2026 reference) that want the no-projection case.
+
+#### OCP-as-merger vs OCP-as-prohibition cross-references
+
+The autosegmental tradition (`Theories/Phonology/Autosegmental/RegisterTier.lean::mergeTRN`, after Goldsmith 1976) treats the OCP as a *transformation* — adjacent identical autosegments are *merged*. The subregular tradition (`Theories/Phonology/Subregular/OCP.lean`, after McCarthy 1986) treats it as a *prohibition* — strings with adjacent identical tier-projected autosegments are *rejected*. Pre-audit, both formalisations existed in linglib without any Lean object connecting or contrasting them. Added bidirectional docstring cross-references: `mergeTRN` now cites `goldsmith-1976` and `mccarthy-1986`, names the prohibition reading and points at `TSLGrammar.ocp`; `Subregular/OCP.lean` module docstring adds an OCP-as-prohibition vs OCP-as-merger section pointing at `mergeTRN` + `FeatureBundle.merge`. The two readings remain operationally distinct (transformation on representation vs. predicate on stringset); the cross-references make the heterogeneity visible without forcing a master bridge.
+
+#### SP_2 vs TSL_2 Navajo sibilant harmony cross-framework theorem
+
+Audit's #1 silent divergence: `Subregular/Piecewise.lean` analysed Navajo sibilant harmony as SP_2 (forbidden length-2 *subsequence* `[antSib, postSib]`); `Hansson2010.lean` analysed it as TSL_2 (forbidden tier-adjacent disagreeing pair). McMullin 2016 is the canonical reference for TSL ⊃ SP for consonant harmony. Pre-audit, no Lean object connected the two readings on the same data point. Added §6 to `Phenomena/Phonology/Studies/Hansson2010.lean`:
+
+(a) **`navajoSibilantHarmonySP : SPGrammar 2 NSeg`** instance with permitted length-2 subsequences = everything except `[antSib, postSib]` and `[postSib, antSib]`. (b) **`SPGrammar.mem_lang_iff_forall_sublists` + `SPGrammar.decidableMemLang` instance** added to `Subregular/Piecewise.lean` — required for `decide`-friendly SP membership; takes `[DecidablePred (· ∈ G.permitted)]`. Pulled in `Mathlib.Data.List.Sublists` for `List.mem_sublists`. (c) **Structural agreement lemma `sp_lang_of_one_sibilant_class_absent`** — any input lacking either anterior or posterior sibilants is in `navajoSibilantHarmonySP.lang` (since both forbidden subsequences require both classes). The four canonical Navajo theorems (`postShiDze_legal_SP`, `controlOnlyAnterior_legal_SP`, `controlNoSibilants_legal_SP`) become one-line corollaries; `preSiDze_violates_SP` exhibits the explicit `[antSib, postSib]` sublist witness via `List.Sublist.cons₂`/`.cons` constructors. (d) **`NSegB` extended alphabet with explicit `blocker`** — used only in §6.3 to witness the TSL/SP divergence. (e) **`opaqueHarmonyTSL`** uses `TSLGrammar.agree NSegB.onTierWithBlocker` (blocker on tier); **`opaqueHarmonySP`** unchanged from the §6.1 SP forbidden subsequences. (f) **Cross-framework divergence theorem** `TSL_SP_divergence_on_blocker`: on input `[antSib, blocker, antSib]`, TSL rejects (filter is identity, tier-adjacent `(antSib, blocker)` disagrees, breaks `IsChain (· = ·)`); SP accepts (no `postSib` present, structural helper applies). The two analyses make different predictions exactly when blocker-style opacity is admitted — McMullin's typological force is now a Lean theorem rather than a docstring assertion. Structural proofs throughout (the `decide` calls remain only for finite list-membership / filter-equality on small concrete lists, CLAUDE.md tactic-ladder #4).
+
+#### Bibliography cluster cleanup (4 entries, 1 typo fix)
+
+Pre-audit, the `Subregular/` cluster cited four keys that did not exist in `references.bib`: `heinz-rawal-tabor-2011` (typo for Tanner), `lambert-2022`, `heinz-rogers-2010`, `rogers-pullum-2011`. All four added with verified bibliographic data:
+
+- **`heinz-rawal-tanner-2011`** (Heinz, Jeffrey and Rawal, Chetan and Tanner, Herbert G., 2011, "Tier-based Strictly Local Constraints for Phonology", Proc. 49th ACL: HLT, pp. 58-64, ACL Anthology P11-2011) — verified via aclanthology.org/P11-2011/. Replaces the typoed `heinz-rawal-tabor-2011` in `Tier.lean` and `Belth2026.lean`.
+- **`heinz-rogers-2010`** (Heinz, Jeffrey and Rogers, James, 2010, "Estimating Strictly Piecewise Distributions", Proc. 48th ACL, pp. 886-896, ACL Anthology P10-1091) — verified via aclanthology.org/P10-1091/.
+- **`rogers-pullum-2011`** (Rogers, James and Pullum, Geoffrey K., 2011, "Aural Pattern Recognition Experiments and the Subregular Hierarchy", JoLLI 20(3):329-342, DOI 10.1007/s10849-011-9140-2) — DOI verified.
+- **`lambert-2022`** (Lambert, Dakotah Jay, 2022, "Unifying Classification Schemes for Languages and Processes with Attention to Locality and Relativizations Thereof", PhD dissertation, SUNY Stony Brook, ProQuest 29166919) — title and ProQuest ID confirmed by user.
+
+Bibliography regenerated (1842 entries, was 1838).
+
+#### Build verification
+
+5552-job + my touched-files build (1937 jobs in isolation) green. Concurrent uncommitted work in `Phenomena/WordOrder/` (other-session Dryer1992 → Gibson2025 rename in progress) left untouched per CLAUDE.md "never blanket-revert directories" rule.
+
 ## [0.230.507] - 2026-04-28
 
 ### Yagi 2025 (presupposition projection in disjunction): two rounds of multi-agent audit + substrate Bool→Prop migration

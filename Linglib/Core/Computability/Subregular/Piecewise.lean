@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Basic
+import Mathlib.Data.List.Sublists
 
 /-!
 # Strictly Piecewise Languages (SP_k)
@@ -80,5 +81,19 @@ def IsStrictlyPiecewise (k : ℕ) (L : Language α) : Prop :=
 lemma SPGrammar.isStrictlyPiecewise_lang {k : ℕ} (G : SPGrammar k α) :
     IsStrictlyPiecewise k G.lang :=
   ⟨G, rfl⟩
+
+/-- SP membership reduces to a check against `List.sublists`. Used by the
+decidable-membership instance below and by cross-framework comparisons
+that need a `decide`-friendly characterisation. -/
+lemma SPGrammar.mem_lang_iff_forall_sublists {k : ℕ} (G : SPGrammar k α)
+    (w : List α) :
+    w ∈ G.lang ↔ ∀ s ∈ w.sublists, s.length = k → s ∈ G.permitted := by
+  refine ⟨fun h s hs hlen => h s hlen (List.mem_sublists.mp hs),
+          fun h s hlen hs => h s (List.mem_sublists.mpr hs) hlen⟩
+
+instance SPGrammar.decidableMemLang {k : ℕ} (G : SPGrammar k α)
+    [DecidablePred (· ∈ G.permitted)] (w : List α) :
+    Decidable (w ∈ G.lang) :=
+  decidable_of_iff _ (G.mem_lang_iff_forall_sublists w).symm
 
 end Core.Computability.Subregular

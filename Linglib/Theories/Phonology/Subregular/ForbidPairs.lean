@@ -29,23 +29,9 @@ open Core Core.Computability.Subregular
 
 variable {α : Type}
 
-/-- `countAdjacent R xs = 0` iff no two consecutive elements of `xs` are
-related by `R`. The chain-form characterization of zero-violation
-forbidden-pair candidates. -/
-lemma countAdjacent_eq_zero_iff_isChain (R : α → α → Prop) [DecidableRel R]
-    (xs : List α) :
-    countAdjacent R xs = 0 ↔ xs.IsChain (fun a b => ¬ R a b) := by
-  induction xs with
-  | nil => exact ⟨fun _ => List.isChain_nil, fun _ => rfl⟩
-  | cons a rest ih =>
-    cases rest with
-    | nil => exact ⟨fun _ => List.isChain_singleton _, fun _ => rfl⟩
-    | cons b rest' =>
-      show (if R a b then 1 else 0) + countAdjacent R (b :: rest') = 0 ↔ _
-      rw [List.isChain_cons_cons]
-      by_cases hRab : R a b
-      · simp [hRab]
-      · simp [hRab, ih]
+-- `countAdjacent_eq_zero_iff_isChain` lives in
+-- `Core.Computability.Subregular.ForbiddenPairs` (alongside `countAdjacent`
+-- itself) since it is alphabet-generic.
 
 /-- **Bridge** (relational form): a candidate's forbidden-pair score is zero
 iff its raw string projects (under `Tier.byClass p`) to a list with no

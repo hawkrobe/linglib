@@ -8,21 +8,28 @@ import Linglib.Core.Computability.Subregular.Tier
 /-!
 # Forbidden-Pair TSL_2 Grammars
 
-A reusable schema for tier-based strictly 2-local languages defined by a
-*forbidden-pair* relation `R : α → α → Prop`. The TSL_2 grammar
-`TSLGrammar.ofForbiddenPairs R p` rules out any string whose tier projection
-contains an adjacent pair `(a, b)` with `R a b`.
+A reusable schema @cite{heinz-rawal-tanner-2011} for tier-based strictly
+2-local languages defined by a *forbidden-pair* relation
+`R : α → α → Prop`. The TSL_2 grammar `TSLGrammar.ofForbiddenPairs R p`
+rules out any string whose tier projection contains an adjacent pair
+`(a, b)` with `R a b`.
 
 The canonical instance is `R := (· = ·)`: no two adjacent identicals on
-the tier projection. This is the OCP (`Phonology.Subregular.OCP`).
+the tier projection. This is the OCP @cite{mccarthy-1986}
+(`Phonology.Subregular.OCP`). The schema is general enough to capture
+OCP-Feature variants (`R := share-feature-X`) and any single-tier
+2-factor markedness constraint over a fixed subset projection.
 Long-distance harmony patterns over a single segmental tier instantiate
 other choices of `R` (e.g. `R := disagree-on-feature-X`).
 
 Note that stress-rhythm constraints (\*Lapse, \*Clash) and the syllable
 phonotactic \*Coda ban are *not* TSL_2 instances over the segmental
 alphabet: \*Lapse and \*Clash are SL_2 over a *syllable*-level alphabet
-(carrying stress weight), and \*Coda is SL_1. See
-`Subregular/ForbiddenSingletons.lean` for the SL_1 helper.
+(carrying stress weight), and \*Coda is SL_1 over an alphabet that
+encodes syllable structure (e.g. CV templates with marked coda symbols).
+The OT-side helper for the SL_1 case is `mkForbidSingletonOnTier` in
+`Theories/Phonology/OptimalityTheory/Constraints.lean`; the language-side
+SL_1 substrate is in `Subregular/StrictlyLocal.lean` (the `k = 1` case).
 
 The single bridge theorem `mem_ofForbiddenPairs_lang_iff_filter_isChain`
 characterizes language membership as an `IsChain` check on the projected
@@ -82,13 +89,13 @@ lemma forall_kFactors_two_not_forbiddenPairsSet_iff_isChain
   | nil =>
     refine ⟨fun _ => List.isChain_nil, ?_⟩
     intro _ f hf
-    simp [kFactors] at hf
+    simp only [kFactors_two_nil, List.not_mem_nil] at hf
   | cons a rest ih =>
     cases rest with
     | nil =>
       refine ⟨fun _ => List.isChain_singleton _, ?_⟩
       intro _ f hf
-      simp [kFactors] at hf
+      simp only [kFactors_two_singleton, List.not_mem_nil] at hf
     | cons b rest' =>
       rw [kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons,
           ih]
@@ -137,6 +144,41 @@ lemma mem_ofForbiddenPairs_lang_iff_filter_isChain (R : α → α → Prop)
       tierProject_eq_filter, List.isChain_map]
   rfl
 
+/-! ### Adjacent-pair counting
+
+Promoted from `Theories/Phonology/OptimalityTheory/Constraints.lean`:
+`countAdjacent R xs` counts the adjacent `(a, b)` pairs in `xs` with
+`R a b`. Alphabet-generic; nothing OT-specific. The OT-side
+`mkForbidPairsOnTier` constructor consumes this directly, and the
+chain-bridge `countAdjacent_eq_zero_iff_isChain` connects it to the
+language-level `IsChain` characterization above. -/
+
+/-- Count adjacent pairs `(a, b)` in a list satisfying a binary relation
+`R`. The shared engine behind any "forbidden adjacent pair" markedness
+or violation count: OCP (`R := (· = ·)`), agreement (`R := (· ≠ ·)`),
+and asymmetric harmony all pass through. -/
+def countAdjacent (R : α → α → Prop) [DecidableRel R] : List α → Nat
+  | [] | [_] => 0
+  | a :: b :: rest => (if R a b then 1 else 0) + countAdjacent R (b :: rest)
+
+/-- `countAdjacent R xs = 0` iff no two consecutive elements of `xs` are
+related by `R`. The chain-form characterisation of zero-violation
+forbidden-pair candidates. -/
+lemma countAdjacent_eq_zero_iff_isChain (R : α → α → Prop) [DecidableRel R]
+    (xs : List α) :
+    countAdjacent R xs = 0 ↔ xs.IsChain (fun a b => ¬ R a b) := by
+  induction xs with
+  | nil => exact ⟨fun _ => List.isChain_nil, fun _ => rfl⟩
+  | cons a rest ih =>
+    cases rest with
+    | nil => exact ⟨fun _ => List.isChain_singleton _, fun _ => rfl⟩
+    | cons b rest' =>
+      show (if R a b then 1 else 0) + countAdjacent R (b :: rest') = 0 ↔ _
+      rw [List.isChain_cons_cons]
+      by_cases hRab : R a b
+      · simp [hRab]
+      · simp [hRab, ih]
+
 /-! ### API around `ofForbiddenPairs` -/
 
 /-- Membership in `(ofForbiddenPairs R p).lang` is decidable, derived from
@@ -164,16 +206,6 @@ lemma lang_antitone_R {R R' : α → α → Prop} [DecidableRel R] [DecidableRel
     ((mem_ofForbiddenPairs_lang_iff_filter_isChain R' p w).mp hw).imp
       fun _ _ hR' hR => hR' (h _ _ hR)
 
-/-- Any list is a chain for the always-true relation. Used as the trivial
-witness for `lang_R_bot`. -/
-private lemma _isChain_true : ∀ (l : List α),
-    l.IsChain (fun _ _ : α => True)
-  | [] => List.isChain_nil
-  | [_] => List.isChain_singleton _
-  | _ :: _ :: _ => by
-      rw [List.isChain_cons_cons]
-      exact ⟨trivial, _isChain_true _⟩
-
 /-- **Boundary case** (`R = ⊥`): if no pair is forbidden, the language is
 universal. -/
 @[simp] lemma lang_R_bot (p : α → Prop) [DecidablePred p] :
@@ -181,7 +213,7 @@ universal. -/
   ext w
   rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
   exact ⟨fun _ => Set.mem_univ _, fun _ =>
-    (_isChain_true _).imp (fun _ _ _ h => h.elim)⟩
+    (List.isChain_top _).imp (fun _ _ _ h => h.elim)⟩
 
 /-- **Boundary case** (`p = ⊥`): if no symbol is on the tier, the projection is
 empty and the language is universal. -/
@@ -190,33 +222,24 @@ empty and the language is universal. -/
   ext w
   rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
   refine ⟨fun _ => Set.mem_univ _, fun _ => ?_⟩
-  rw [show w.filter (fun x => decide ((fun _ : α => False) x)) = [] by
-        induction w with
-        | nil => rfl
-        | cons _ _ ih => simp]
+  rw [show w.filter (fun x => decide ((fun _ : α => False) x)) = [] from
+        List.filter_eq_nil_iff.mpr (fun _ _ h => by
+          simp only [decide_false, Bool.false_eq_true] at h)]
   exact List.isChain_nil
 
 /-- **Boundary case** (`p = ⊤`): with no tier filtering the language reduces
 to the SL_2 case — no two adjacent symbols of the raw string may be
-`R`-related. -/
+`R`-related. Not marked `@[simp]`: the RHS is not a simpler normal form
+than the LHS (compare `lang_R_bot`/`lang_p_bot` which simplify to
+`Set.univ`). -/
 lemma lang_p_top (R : α → α → Prop) [DecidableRel R] :
     (TSLGrammar.ofForbiddenPairs R (fun _ : α => True)).lang =
       { w | w.IsChain (fun a b => ¬ R a b) } := by
   ext w
   rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
   have hfilter : w.filter (fun x => decide ((fun _ : α => True) x)) = w := by
-    rw [List.filter_eq_self]; intros; simp
+    rw [List.filter_eq_self]; intros; simp only [decide_true]
   rw [hfilter]; rfl
-
-/-- Two `IsChain` witnesses on the same list combine into a chain for the
-conjunction relation. Used as a helper for `lang_R_sup_eq_inter`. -/
-private lemma _isChain_and {S T : α → α → Prop} : ∀ {l : List α},
-    l.IsChain S → l.IsChain T → l.IsChain (fun a b => S a b ∧ T a b)
-  | [], _, _ => List.isChain_nil
-  | [_], _, _ => List.isChain_singleton _
-  | _ :: _ :: _, hS, hT => by
-    rw [List.isChain_cons_cons] at hS hT ⊢
-    exact ⟨⟨hS.1, hT.1⟩, _isChain_and hS.2 hT.2⟩
 
 /-- **Same-tier composition** (membership form): forbidding the disjunction of
 two relations on a single tier coincides with conjunctive membership in the
@@ -233,7 +256,7 @@ lemma mem_lang_R_sup_iff (R₁ R₂ : α → α → Prop) [DecidableRel R₁]
   refine ⟨fun h => ⟨h.imp (fun _ _ hne h1 => hne (Or.inl h1)),
                     h.imp (fun _ _ hne h2 => hne (Or.inr h2))⟩, ?_⟩
   rintro ⟨h1, h2⟩
-  exact (_isChain_and h1 h2).imp (fun _ _ ⟨hne1, hne2⟩ => fun
+  exact (h1.and h2).imp (fun _ _ ⟨hne1, hne2⟩ => fun
     | Or.inl hR1 => hne1 hR1
     | Or.inr hR2 => hne2 hR2)
 
@@ -244,27 +267,72 @@ lemma lang_R_sup_eq_inf (R₁ R₂ : α → α → Prop) [DecidableRel R₁]
     [DecidableRel R₂] (p : α → Prop) [DecidablePred p] :
     (TSLGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).lang =
       (TSLGrammar.ofForbiddenPairs R₁ p).lang ⊓
-        (TSLGrammar.ofForbiddenPairs R₂ p).lang := by
-  ext w; exact mem_lang_R_sup_iff R₁ R₂ p w
+        (TSLGrammar.ofForbiddenPairs R₂ p).lang :=
+  Set.ext fun w => mem_lang_R_sup_iff R₁ R₂ p w
 
-/-! ### Design boundary
+/-! ### Design boundary (mathematical)
 
 The language `(ofForbiddenPairs R p).lang` is **neither monotone nor
-antitone** in the tier predicate `p`. Counterexample: take
-`R := (· = ·)`, `p := { s }`, `p' := { s, t }` with `p ≤ p'`, and
-`xs := [s, t, t]`. Then `xs.filter p = [s]` is a chain (singleton), so
-`xs ∈ lang p`, but `xs.filter p' = [s, t, t]` is not a chain (`t = t` is
-adjacent), so `xs ∉ lang p'`. The reverse direction also fails — see
-`xs := [s, s, t]`. This is the formal counterpart of the linguistic
-intuition that *which segments project to the tier* is not just a
-monotone refinement but a substantive theoretical commitment, and it is
-why TSL_2 over different tiers gives genuinely incomparable theories.
+antitone** in the tier predicate `p`. Both failure directions are
+witnessed by the theorems `lang_p_not_monotone` and `lang_p_not_antitone`
+below. This is the formal counterpart of the linguistic intuition that
+*which segments project to the tier* is not just a monotone refinement
+but a substantive theoretical commitment, and it is why TSL_2 over
+different tiers gives genuinely incomparable theories. -/
 
-The substantive empirical force of this boundary is the gradient
-similarity-based OCP of @cite{frisch-pierrehumbert-broe-2004}: Arabic
-co-occurrence restrictions decay with featural distance rather than
-following a clean tier cut, so the same `R` paired with different `p`
-yields incomparable predictions about which root pairs are licit.
+/-- Two-element alphabet used as a witness for the design-boundary
+non-monotonicity theorems. Local to this section. -/
+private inductive TwoSym | s | t deriving DecidableEq
+
+private def Pₛ : TwoSym → Prop | .s => True | .t => False
+private def Pₛₜ : TwoSym → Prop | _ => True
+
+private instance : DecidablePred Pₛ
+  | .s => isTrue trivial
+  | .t => isFalse not_false
+private instance : DecidablePred Pₛₜ := fun _ => isTrue trivial
+
+/-- **Non-monotonicity** of `(ofForbiddenPairs R p).lang` in the tier
+predicate `p` (forward direction): there exist `p ≤ p'` and a string `xs`
+such that `xs ∈ lang p` but `xs ∉ lang p'`. Witness: `R := (· = ·)`,
+`p := {s}`, `p' := {s, t}`, `xs := [s, t, t]`; `filter` under `p` gives
+`[s]` (chain), but under `p'` gives `[s, t, t]` (the adjacent `t, t`
+violates the OCP). -/
+theorem lang_p_not_monotone :
+    ∃ (R : TwoSym → TwoSym → Prop) (_ : DecidableRel R)
+      (p p' : TwoSym → Prop) (_ : DecidablePred p) (_ : DecidablePred p')
+      (xs : List TwoSym),
+      (∀ a, p a → p' a) ∧
+        xs ∈ (TSLGrammar.ofForbiddenPairs R p).lang ∧
+        xs ∉ (TSLGrammar.ofForbiddenPairs R p').lang :=
+  ⟨(· = ·), inferInstance, Pₛ, Pₛₜ, inferInstance, inferInstance,
+    [.s, .t, .t], by intro a _; cases a <;> trivial,
+    by decide, by decide⟩
+
+/-- **Non-antitonicity** of `(ofForbiddenPairs R p).lang` in the tier
+predicate `p` (reverse direction): there exist `p ≤ p'` and a string `xs`
+such that `xs ∉ lang p` but `xs ∈ lang p'`. Witness: `R := (· = ·)`,
+`p := {s}`, `p' := {s, t}`, `xs := [s, t, s]`; `filter` under `p` gives
+`[s, s]` (the adjacent `s, s` violates the OCP), but under `p'` gives
+`[s, t, s]` (chain — interleaving `t` separates the `s`s). -/
+theorem lang_p_not_antitone :
+    ∃ (R : TwoSym → TwoSym → Prop) (_ : DecidableRel R)
+      (p p' : TwoSym → Prop) (_ : DecidablePred p) (_ : DecidablePred p')
+      (xs : List TwoSym),
+      (∀ a, p a → p' a) ∧
+        xs ∉ (TSLGrammar.ofForbiddenPairs R p).lang ∧
+        xs ∈ (TSLGrammar.ofForbiddenPairs R p').lang :=
+  ⟨(· = ·), inferInstance, Pₛ, Pₛₜ, inferInstance, inferInstance,
+    [.s, .t, .s], by intro a _; cases a <;> trivial,
+    by decide, by decide⟩
+
+/-! ### Design boundary (empirical)
+
+The substantive empirical force of the non-monotonicity result is the
+gradient similarity-based OCP of @cite{frisch-pierrehumbert-broe-2004}:
+Arabic co-occurrence restrictions decay with featural distance rather
+than following a clean tier cut, so the same `R` paired with different
+`p` yields incomparable predictions about which root pairs are licit.
 Dependencies on multiple tiers — e.g. simultaneous consonantal and
 vocalic harmony — likewise fall outside this single-tier constructor.
 The natural way to combine constraints across tiers is the multi-tier

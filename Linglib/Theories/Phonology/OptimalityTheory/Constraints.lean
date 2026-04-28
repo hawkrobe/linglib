@@ -1,6 +1,7 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Weighted
 import Linglib.Core.StringHom
+import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
 /-!
 # Shared Phonological Constraint Library
@@ -148,16 +149,11 @@ export Core.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 -- § 2b: Forbidden-Pair Markedness (OCP, sibilant-harmony, …)
 -- ============================================================================
 
-/-- Count adjacent pairs `(a, b)` in a list satisfying a binary relation `R`.
-    The shared engine behind any "forbidden adjacent pair" markedness
-    constraint over a single segmental tier: OCP (`R := (· = ·)`), agreement
-    constraints (`R := disagree-on-feature-X`), and the like. Stress-based
-    rhythm constraints (\*Lapse, \*Clash) require a syllable-level alphabet,
-    not a segment-level one, and so live in their own constructors. -/
-def countAdjacent {α : Type} (R : α → α → Prop) [DecidableRel R] :
-    List α → Nat
-  | [] | [_] => 0
-  | a :: b :: rest => (if R a b then 1 else 0) + countAdjacent R (b :: rest)
+-- `countAdjacent` lives at the substrate layer in
+-- `Core.Computability.Subregular.ForbiddenPairs` since it is alphabet-generic
+-- list combinatorics with nothing OT-specific. Re-exported here so consumers
+-- of `Phonology.Constraints` see it under the conventional name.
+export Core.Computability.Subregular (countAdjacent)
 
 /-- Build a markedness constraint penalizing tier-adjacent forbidden pairs.
     The candidate's raw symbol list is extracted by `extract`, the tier `T`
@@ -221,11 +217,15 @@ def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List �
     autosegmental tonal-tier OCP, sibilant-harmony OCP, and learned-tier
     OCP (à la @cite{belth-2026}) all factor through this constructor.
 
+    Defined as the `R := (· = ·)` specialization of `mkForbidPairsOnTier`,
+    mirroring `mkAgreeOnTier`'s `R := (· ≠ ·)` specialization. The two
+    sit in the same constraint algebra and the equivalence is `rfl`.
+
     @cite{goldsmith-1976} @cite{berent-2026} -/
 def mkOCPOnTier {C α β : Type} [DecidableEq β]
     (name : String) (T : Core.Tier α β) (extract : C → List α) :
     NamedConstraint C :=
-  mkOCP name (fun c => Core.Tier.apply T (extract c))
+  mkForbidPairsOnTier name (· = ·) T extract
 
 -- ---- AGREE as the inequality-relation instance ----------------------------
 

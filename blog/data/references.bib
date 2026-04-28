@@ -23507,3 +23507,80 @@
   validated = {true},
   sources   = {Phenomena/Case/Studies/SadakaneKoizumi1995.lean}
 }
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  phonology/subregular — foundational substrate references
+%
+%  These four entries support the Linglib/Core/Computability/Subregular/
+%  cluster (Basic, StrictlyLocal, Piecewise, LocallyTestable, Definite, Tier,
+%  Hierarchy, ForbiddenPairs) plus the Belth2026 study consumer.
+% ══════════════════════════════════════════════════════════════════════════════
+
+% REF: Heinz, Rawal & Tanner (2011). Tier-based Strictly Local Constraints
+% for Phonology. Proc. 49th ACL: HLT, pp. 58-64. ACL Anthology P11-2011.
+@inproceedings{heinz-rawal-tanner-2011,
+  author    = {Heinz, Jeffrey and Rawal, Chetan and Tanner, Herbert G.},
+  year      = {2011},
+  title     = {Tier-based Strictly Local Constraints for Phonology},
+  booktitle = {Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies},
+  pages     = {58--64},
+  publisher = {Association for Computational Linguistics},
+  address   = {Portland, Oregon},
+  url       = {https://aclanthology.org/P11-2011/},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/ForbiddenPairs.lean;Core/Computability/Subregular/Tier.lean;Phenomena/Phonology/Studies/Belth2026.lean}
+}
+
+% REF: Heinz & Rogers (2010). Estimating Strictly Piecewise Distributions.
+% Proc. 48th ACL, pp. 886-896. ACL Anthology P10-1091.
+@inproceedings{heinz-rogers-2010,
+  author    = {Heinz, Jeffrey and Rogers, James},
+  year      = {2010},
+  title     = {Estimating Strictly Piecewise Distributions},
+  booktitle = {Proceedings of the 48th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {886--896},
+  publisher = {Association for Computational Linguistics},
+  address   = {Uppsala, Sweden},
+  url       = {https://aclanthology.org/P10-1091/},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Basic.lean;Core/Computability/Subregular/Piecewise.lean}
+}
+
+% REF: Rogers & Pullum (2011). Aural Pattern Recognition Experiments and
+% the Subregular Hierarchy. Journal of Logic, Language and Information
+% 20:329-342. DOI 10.1007/s10849-011-9140-2.
+@article{rogers-pullum-2011,
+  author    = {Rogers, James and Pullum, Geoffrey K.},
+  year      = {2011},
+  title     = {Aural Pattern Recognition Experiments and the Subregular Hierarchy},
+  journal   = {Journal of Logic, Language and Information},
+  volume    = {20},
+  number    = {3},
+  pages     = {329--342},
+  doi       = {10.1007/s10849-011-9140-2},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Basic.lean;Core/Computability/Subregular/Definite.lean;Core/Computability/Subregular/LocallyTestable.lean;Core/Computability/Subregular/Piecewise.lean;Core/Computability/Subregular/StrictlyLocal.lean}
+}
+
+% REF: Lambert (2022). Unifying Classification Schemes for Languages and
+% Processes with Attention to Locality and Relativizations Thereof. PhD
+% dissertation, State University of New York at Stony Brook.
+% ProQuest 29166919.
+@phdthesis{lambert-2022,
+  author    = {Lambert, Dakotah Jay},
+  year      = {2022},
+  title     = {Unifying Classification Schemes for Languages and Processes with Attention to Locality and Relativizations Thereof},
+  school    = {State University of New York at Stony Brook},
+  type      = {PhD dissertation},
+  note      = {ProQuest 29166919},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Basic.lean;Core/Computability/Subregular/Definite.lean;Core/Computability/Subregular/Hierarchy.lean;Core/Computability/Subregular/LocallyTestable.lean;Core/Computability/Subregular/Piecewise.lean;Core/Computability/Subregular/StrictlyLocal.lean;Core/Computability/Subregular/Tier.lean;Phenomena/Phonology/Studies/Belth2026.lean}
+}

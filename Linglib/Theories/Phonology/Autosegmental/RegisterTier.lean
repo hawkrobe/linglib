@@ -464,7 +464,24 @@ def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
     feature values into a single multiply-linked TRN
     (@cite{lionnet-2022} ex. 53–54). The Bundle-level merger
     (`FeatureBundle.merge`) takes the value from the left TRN where it
-    is specified, falling back to the right. -/
+    is specified, falling back to the right.
+
+    **Two readings of the OCP — note on theoretical heterogeneity.** The
+    autosegmental tradition (@cite{goldsmith-1976}) treats the OCP as a
+    *transformation* — adjacent identical autosegments at the melodic
+    level are merged into a single multiply-linked autosegment. That is
+    the reading `mergeTRN` implements: a *repair* operation. The
+    subregular tradition (@cite{mccarthy-1986}) treats the OCP as a
+    *prohibition* — a constraint on output well-formedness that
+    *rejects* strings containing adjacent identical autosegments. The
+    prohibition reading is formalized by `Phonology.Subregular.OCP`'s
+    `TSLGrammar.ocp` (Core/Computability/Subregular/ForbiddenPairs.lean
+    plus Theories/Phonology/Subregular/OCP.lean) and the OT-side
+    `mkOCPOnTier` constraint. The two readings are operationally
+    distinct (transformation vs. language-membership predicate) and
+    coexist in linglib without a master bridge — the autosegmental
+    formalization fixes a representation, the subregular formalization
+    classifies a stringset. -/
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
 

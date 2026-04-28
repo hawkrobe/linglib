@@ -88,6 +88,12 @@ lemma kFactors_two_cons_cons (a b : β) (rest : List β) :
     kFactors 2 (a :: b :: rest) = [a, b] :: kFactors 2 (b :: rest) := by
   simp [kFactors, List.tails, List.filter, List.take]
 
+/-- An empty list has no 2-factors. -/
+@[simp] lemma kFactors_two_nil : kFactors 2 ([] : List β) = [] := rfl
+
+/-- A singleton list has no 2-factors. -/
+@[simp] lemma kFactors_two_singleton (a : β) : kFactors 2 [a] = [] := rfl
+
 /-- A relation on `Option α` is **boundary-vacuous** when the boundary marker
 `none` satisfies it on either side: `R none u` and `R u none` always hold.
 Equivalently, only `(some a, some b)` pairs can witness a violation.
@@ -137,3 +143,43 @@ lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
 end IsBoundaryVacuous
 
 end Core.Computability.Subregular
+
+/-! ## Generic `List.IsChain` helpers
+
+Promoted from `Subregular/ForbiddenPairs.lean` for reuse across the
+subregular substrate. These are alphabet-generic facts about
+`List.IsChain` that mathlib does not currently expose; the natural
+home is `Mathlib.Data.List.Chain` once they pay for themselves
+across more consumers (a future MTSL formalisation will combine
+per-tier `IsChain` witnesses via `List.IsChain.and`).
+-/
+
+namespace List
+
+variable {α : Type*}
+
+/-- Any list is a chain for the universal-true relation. The trivial
+case of `IsChain` for a relation that places no constraint on adjacent
+elements. -/
+lemma isChain_top : ∀ (l : List α), l.IsChain (fun _ _ : α => True)
+  | [] => List.isChain_nil
+  | [_] => List.isChain_singleton _
+  | _ :: _ :: _ => by
+      rw [List.isChain_cons_cons]
+      exact ⟨trivial, isChain_top _⟩
+
+namespace IsChain
+
+/-- Two `IsChain` witnesses on the same list combine into a chain for the
+conjunction relation. The companion of mathlib's `List.IsChain.imp`. -/
+lemma and {S T : α → α → Prop} : ∀ {l : List α},
+    l.IsChain S → l.IsChain T → l.IsChain (fun a b => S a b ∧ T a b)
+  | [], _, _ => List.isChain_nil
+  | [_], _, _ => List.isChain_singleton _
+  | _ :: _ :: _, hS, hT => by
+    rw [List.isChain_cons_cons] at hS hT ⊢
+    exact ⟨⟨hS.1, hT.1⟩, hS.2.and hT.2⟩
+
+end IsChain
+
+end List
