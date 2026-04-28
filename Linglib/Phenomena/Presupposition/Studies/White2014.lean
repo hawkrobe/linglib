@@ -1,151 +1,115 @@
-import Linglib.Phenomena.Presupposition.ForgetPresuppositions
+import Linglib.Phenomena.Presupposition.Studies.Williams2026
 import Linglib.Theories.Semantics.Attitudes.PreExistence
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Pre-Existence Theory vs. Empirical Data
+# White 2014: The Modalized Complement Analysis of *forget*
 @cite{white-2014}
 
-Connects the pre-existence theory (from `PreExistence.lean`) to
-empirical data about *forget*'s presuppositions (from
-`ForgetPresuppositions.lean`) and to the English verb Fragment.
+White 2014 maintains a uniformly factive denotation for *forget* by
+positing a covert root modal in non-finite complements (the Modalized
+Complement Analysis, MCA). The MCA captures Williams' (1)/(4) and (2)/(5)
+data straightforwardly but was later shown to overgenerate: PRO-ing
+gerunds get a non-modal presupposition (cf. @cite{williams-2026}, §3.1.1)
+that the MCA cannot predict.
 
-## What This File Tests
+This file (a) verifies the MCA's coverage of finite-CP and plain-infinitive
+data, (b) records the gerund overprediction as a check against the
+empirical record in `Studies/Williams2026.lean`, and (c) confirms
+Fragment-level consistency: the English Fragment's split of *forget* into
+`forget` (negative implicative, infinitival) and `forget_rog` (factive,
+finite) aligns with the typology MCA + pre-existence together predict.
 
-1. **Pre-existence predictions match data** — `needsModalInsertion`
-   correctly predicts which frames get modal vs. non-modal presuppositions
-
-2. **MCA overprediction** — the Modalized Complement Analysis
-   wrongly predicts a modal presupposition for the gerund case
-
-3. **Fragment consistency** — the two Fragment entries for *forget*
-   (implicative and factive/rogative) align with the theory
+The pre-existence apparatus in `Theories/Semantics/Attitudes/PreExistence.lean`
+is post-2014 (Bondarenko 2019/2020, taken up by @cite{williams-2026});
+where this file uses `needsModalInsertion`, treat that as the project-canonical
+upgrade of White's structural prediction, with the gerund case flagged as
+a known overprediction of the original MCA.
 
 -/
 
-namespace White2014
+namespace Phenomena.Presupposition.Studies.White2014
 
 open Core.Verbs (ComplementType)
-open Phenomena.Presupposition.ForgetPresuppositions
+open Phenomena.Presupposition.Studies.Williams2026
 open Semantics.Attitudes.PreExistence
 open Fragments.English.Predicates.Verbal
 
--- ============================================================================
--- §1. Pre-Existence Predictions Match Data
--- ============================================================================
+/-! ## §1. MCA coverage of the canonical contrast
 
-/-! The pre-existence theory predicts: modal presupposition iff the
-    complement type does NOT satisfy pre-existence. We verify this
-    against each judgment from @cite{ippolito-kiss-williams-2025}. -/
+White 2014 was designed to capture the finite-CP / plain-infinitive
+asymmetry uniformly. The MCA succeeds on these two cases.
+-/
 
-/-- Finite CP: pre-existence satisfied → non-modal presupposition.
-    Matches: "forgot that she stopped" presupposes she stopped. -/
-theorem preEx_correct_finiteCP :
-    needsModalInsertion forget_finiteCP.frame = false ∧
-    forget_finiteCP.content = .nonModal :=
-  ⟨rfl, rfl⟩
+/-- Finite CP: MCA correctly predicts no modal insertion. -/
+theorem mca_correct_finiteCP :
+    mcaPrediction forget_finiteCP.frame = false := rfl
 
-/-- Gerund: pre-existence satisfied → non-modal presupposition.
-    Matches: "forgot stopping by" presupposes stopped.
-    This is the case that refutes the MCA's overprediction. -/
-theorem preEx_correct_gerund :
-    needsModalInsertion forget_gerund.frame = false ∧
-    forget_gerund.content = .nonModal :=
-  ⟨rfl, rfl⟩
+/-- Plain infinitive: MCA correctly predicts modal insertion. -/
+theorem mca_correct_infinitival :
+    mcaPrediction forget_infinitival.frame = true := rfl
 
-/-- Plain infinitive: pre-existence NOT satisfied → modal presupposition.
-    Matches: "forgot to stop by" presupposes was supposed to stop. -/
-theorem preEx_correct_infinitival :
-    needsModalInsertion forget_infinitival.frame = true ∧
-    forget_infinitival.content = .modal :=
-  ⟨rfl, rfl⟩
+/-! ## §2. The gerund overprediction
 
-/-- Aggregate: the pre-existence theory matches all data points.
-    Modal content arises iff modal insertion is needed. -/
-theorem preEx_matches_all_data :
-    allForgetJudgments.all (λ j =>
-      (j.content == .modal) == needsModalInsertion j.frame) = true := by
-  native_decide
+The PRO-ing gerund is non-finite but its presupposition is non-modal
+(Williams §3.1.1). The MCA's `mcaPrediction` is `!isFinite`, so it
+predicts modal insertion for the gerund — wrong.
+-/
 
--- ============================================================================
--- §2. MCA Overprediction
--- ============================================================================
-
-/-! The Modalized Complement Analysis predicts modal
-    presuppositions for ALL non-finite complements. This overgenerates
-    for gerunds: "forgot stopping by" has a non-modal presupposition. -/
-
-/-- MCA wrongly predicts a modal presupposition for the gerund case. -/
-theorem mca_wrong_on_gerund :
+/-- The MCA predicts a modal presupposition for the gerund, but the
+    Williams 2026 datum is non-modal. -/
+theorem mca_overpredicts_gerund :
     mcaPrediction forget_gerund.frame = true ∧
     forget_gerund.content = .nonModal :=
   ⟨rfl, rfl⟩
 
-/-- MCA correctly handles the finite case. -/
-theorem mca_correct_finiteCP :
-    mcaPrediction forget_finiteCP.frame = false := rfl
+/-! ## §3. Pre-existence as the post-2014 fix
 
-/-- MCA correctly handles the infinitival case. -/
-theorem mca_correct_infinitival :
-    mcaPrediction forget_infinitival.frame = true := rfl
+The pre-existence-based `needsModalInsertion` correctly predicts
+non-modal for the gerund. This is post-2014 territory; the theorems
+here document the contrast between White's MCA and its successor.
+-/
 
-/-- MCA matches only 2 of 3 data points; pre-existence matches all 3. -/
+/-- Pre-existence and MCA agree on finite CP and plain infinitive,
+    but diverge on gerunds. -/
+theorem mca_vs_preExistence_gerund :
+    mcaPrediction .gerund ≠ needsModalInsertion .gerund := by decide
+
+/-- Pre-existence prediction matches all three data points. -/
+theorem preEx_matches_all_data :
+    allForgetJudgments.all
+      (fun j => (decide (j.content = .modal)) == needsModalInsertion j.frame) = true := by
+  decide
+
+/-- MCA matches two of three data points (loses on the gerund). -/
 theorem mca_score :
-    (allForgetJudgments.filter (λ j =>
-      (j.content == .modal) == mcaPrediction j.frame)).length = 2 := by
-  native_decide
+    (allForgetJudgments.filter
+      (fun j => (decide (j.content = .modal)) == mcaPrediction j.frame)).length = 2 := by
+  decide
 
-theorem preEx_score :
-    (allForgetJudgments.filter (λ j =>
-      (j.content == .modal) == needsModalInsertion j.frame)).length = 3 := by
-  native_decide
+/-! ## §4. Fragment consistency
 
--- ============================================================================
--- §3. Fragment Consistency
--- ============================================================================
+The English Fragment splits *forget* into two `VerbEntry` records, one
+for the implicative use and one for the factive/rogative use. The split
+is a practical separation of entailment patterns, not a claim of lexical
+ambiguity (which Williams 2026 explicitly rejects). These theorems
+document that the Fragment's complement-type and factivity assignments
+align with the MCA's predictions, restricted to the cases MCA gets right.
+-/
 
-/-! The English Fragment has two entries for *forget*:
-    - `forget` (implicative, infinitival complement): "forgot to VP"
-    - `forget_rog` (factive/rogative, finite complement): "forgot that p"
-
-    Un@cite{ippolito-kiss-williams-2025}, these are NOT two distinct lexical items but
-    one verb with uniform factivity. The Fragment's split is a practical
-    choice: it separates the implicative entailment pattern (forgot to VP
-    → didn't VP) from the rogative/factive pattern (forgot that p / forgot
-    whether p). Williams's pre-existence analysis explains why these two
-    uses surface differently without positing lexical ambiguity. -/
-
-/-- The factive entry (forget_rog) has factivePresup = true. -/
-theorem forget_rog_is_factive :
-    forget_rog.factivePresup = true := by native_decide
-
-/-- The implicative entry takes infinitival complements. -/
 theorem forget_takes_infinitival :
-    forget.complementType = .infinitival := by native_decide
+    forget.complementType = .infinitival := by decide
 
-/-- The factive entry takes finite complements. -/
 theorem forget_rog_takes_finite :
-    forget_rog.complementType = .finiteClause := by native_decide
+    forget_rog.complementType = .finiteClause := by decide
 
-/-- The factive entry's primary complement satisfies pre-existence. -/
+theorem forget_rog_is_factive :
+    forget_rog.factivePresup = true := by decide
+
 theorem forget_rog_satisfies_preExistence :
-    satisfiesPreExistence forget_rog.complementType = true := by native_decide
+    satisfiesPreExistence forget_rog.complementType = true := by decide
 
-/-- The implicative entry's complement does NOT satisfy pre-existence.
-    This is why the modal is inserted, yielding the obligation reading. -/
 theorem forget_inf_violates_preExistence :
-    satisfiesPreExistence forget.complementType = false := by native_decide
+    satisfiesPreExistence forget.complementType = false := by decide
 
--- ============================================================================
--- §4. isFinite Infrastructure Verification
--- ============================================================================
-
-/-! Basic verification that ComplementType.isFinite classifies correctly.
-    These hold independently of any theory of factivity. -/
-
-theorem finiteClause_isFinite : ComplementType.isFinite .finiteClause = true := rfl
-theorem question_isFinite : ComplementType.isFinite .question = true := rfl
-theorem infinitival_not_finite : ComplementType.isFinite .infinitival = false := rfl
-theorem gerund_not_finite : ComplementType.isFinite .gerund = false := rfl
-
-end White2014
+end Phenomena.Presupposition.Studies.White2014

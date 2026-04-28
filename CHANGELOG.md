@@ -4,6 +4,61 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.487] - 2026-04-27
+
+### Williams 2026 *forget* arc: citation-key fix + study-file relocation
+
+Multi-agent audit of `Phenomena/Presupposition/ForgetPresuppositions.lean` (random-pick deep audit) surfaced six categories of issue, all addressed in this commit.
+
+**Citation hygiene**: `@cite{ippolito-kiss-williams-2026}` (×6 in ForgetPresuppositions, ×6 in `Theories/Semantics/Attitudes/PreExistence.lean`) was a hallucinated key — the bib has `williams-2026` (single-author SALT 35 paper on *forget*) and `ippolito-kiss-williams-2025` (a *different* paper, on *discourse only*). Replaced with `williams-2026` throughout. Deleted bare `@misc{white-2014}` BibTeX-syntax-in-docstring (×2). Fixed corrupted `Un@cite{...}` token (×3) — sed-replace had eaten the word "Under". `Studies/White2014.lean` had its own copy of the IKW2025 misattribution (line 39, 111); also fixed.
+
+**Example/section number corrections** (verified against the actual paper PDF, lingbuzz/009797): the paper uses *John* throughout §1–§3.1 (not Ana). The infinitival example is (2)/(5a), not (3). The English gerund is (7)/(9), not (12) — (12) is the *Spanish* `Juan olvidó pasar`. SMINC is in §3.1.3, not p. 8. Replaced sentences and example references accordingly.
+
+**Architectural relocation**: `git mv Phenomena/Presupposition/ForgetPresuppositions.lean Phenomena/Presupposition/Studies/Williams2026.lean` — the file is paper-anchored on a single source (Williams 2026), failing the top-level Phenomena placement test (CLAUDE.md: top-level files earn placement only as WALS-style cross-paper references or genuinely theory-neutral facts). Filename also fit the `DowtyDivergence.lean`-class anti-pattern of freezing one paper's analytical conclusion. Namespace renamed `Phenomena.Presupposition.ForgetPresuppositions` → `Phenomena.Presupposition.Studies.Williams2026`. Top-level import in `Linglib.lean` updated; bib `sources` field updated.
+
+**Karttunen-tradition acknowledgment**: added `implicativeNegative : Bool` field to `ForgetJudgment` recording the Karttunen-1971 negative-implicative entailment (*forgot to V* → ¬V) that Williams (fn 1) brackets but does not refute. New theorem `modal_iff_implicative` documents that the modal-presupposition split co-varies with the implicative entailment in the English data. Cross-references existing `Phenomena/Complementation/Studies/Karttunen1971.lean` and `Theories/Semantics/Causation/Implicative.lean`.
+
+**Lean code quality**: `native_decide` ×4 in ForgetPresuppositions and ×6 in White2014.lean replaced with `decide` (CLAUDE.md tactic hierarchy: kernel-verifying procedures only). `deriving Repr, BEq` → `deriving DecidableEq, Repr` on `ForgetJudgment` (mathlib convention; gives `BEq` for free). Trimmed §4 of tautological list-length / count theorems that were unpacking the literal contents of `allForgetJudgments` (the "encoding conclusions as definitions" anti-pattern) — replaced with one substantive cross-paper coherence theorem.
+
+**White2014.lean cleanup**: rewrote with chronological-violation acknowledgment in the docstring (file uses post-2014 `needsModalInsertion` from the Bondarenko/Williams pre-existence apparatus; flagged as a project-canonical upgrade rather than silently borrowing future apparatus). Theorems consolidated to (a) MCA's coverage of finite-CP + plain-inf, (b) gerund overprediction documented via Williams 2026 data, (c) pre-existence agreement on all three frames, (d) Fragment consistency for `forget`/`forget_rog`.
+
+Build: 1773 jobs green; only pre-existing unrelated warnings (Mereology, V2 Verbal).
+
+## [0.230.486] - 2026-04-27
+
+### Tier 2 batch 1: 5 bespoke `XProfile` types promoted to `Typology/` substrate
+
+Mass migration applying the Possession (Tier 2a) template to 5 more phenomena. Each: bespoke `XProfile` struct + per-domain enum types + utility predicates moved out of `Phenomena/{X}/Typology.lean` into the canonical substrate at `Typology/X.lean`; `LanguageProfile` extended with corresponding optional field + `withX` builder; per-language `def english/...` defs in the Phenomena file retype against the substrate (1-line change per def, resolved via `open _root_.Typology`).
+
+**Files moved/created (substrate side):**
+
+- **`Typology/Plurals.lean`** (new): `PluralCoding`, `PluralOccurrence`, `PronounPlurality`, `AssociativePlural` enums + `PluralityProfile` struct + 3 utility predicates (`hasMorphologicalPlural`, `hasObligatoryPlural`, `pronounsDistinguishNumber`). 16 per-language defs in `Phenomena/Plurals/Typology.lean` retyped.
+- **`Typology/Pronouns.lean`** (new): 7 enums (`InclusiveExclusive`, `InclusiveExclusiveVerbal`, `GenderInPronouns`, `PolitenessDistinction`, `IndefinitePronounType`, `IntensifierReflexive`, `PersonMarkingOnAdpositions`) + `InclusiveExclusivePamaNyungan` (Pama-Nyungan areal sub-feature) + `PronounProfile` struct (added `deriving DecidableEq` for LanguageProfile compatibility). 15 per-language defs in `Phenomena/Pronouns/Typology.lean` retyped.
+- **`Typology/Numerals.lean`** (new): 6 enums (`OrdinalFormation`, `DistributiveNumeral`, `ConjunctionQuantifier`, `Region`, `PluralMarking`, `NumeralBase`) + `NumeralProfile` struct + 6 utility predicates (`hasObligatoryClassifiers`, `hasClassifiers`, `hasObligatoryPlural`, `hasFirstSuppletion`, `hasDistributive`, `isEastSoutheastAsian`). 19 per-language defs in `Phenomena/Numerals/Typology.lean` retyped. Also moved `ClassifierStatus` (WALS Ch 55, 3-cell enum) from `Phenomena/Classifiers/Typology.lean` to `Typology/ClassifierSystem.lean` so `NumeralProfile.classifier : ClassifierStatus` resolves at substrate layer (without this Numerals couldn't promote, since its profile depended on a cross-Phenomena type).
+- **`Typology/Question.lean`** (extended): added `QParticlePosition`, `PolarQuestionStrategy` enums + `QuestionProfile` struct (alongside the existing `WhMovementStrategy`/`WhInterpMechanism` from Tier 0b). 7 per-language defs in `Phenomena/Questions/Typology.lean` retyped.
+- **`Typology/ClauseChaining.lean`** (new — wholesale move): the entire `Phenomena/ClauseChaining/Typology.lean` file (477 LOC) moved verbatim — it was *all* substrate (no per-language data, just enums + structs + theorems). Namespace renamed `Phenomena.ClauseChaining.Typology` → `Typology.ClauseChaining`. Sole consumer `Phenomena/ClauseChaining/Studies/SarvasyAikhenvald2025.lean` updated: `open Typology` → `open _root_.Typology.ClauseChaining` (disambiguates from the file's own `Phenomena.ClauseChaining` namespace).
+
+**`LanguageProfile` extended with 5 new optional fields**: `plurality`, `pronouns`, `numerals`, `questions`, `clauseChaining` (the last skipped — ClauseChaining has no per-language data so no need for an aggregator field). Each gets a `withX` builder. `LanguageProfile.deriving DecidableEq` continues to work because every new profile struct also derives `DecidableEq`.
+
+**`Phenomena/{X}/Typology.lean` post-migration state**: each retains the WALS distribution-count structs (`PluralCodingDistribution`, `OrdinalDistribution`, etc. — paper-anchored aggregate counts that aren't per-language profiles), the WALS converter functions (`fromWALSXX`), and the cross-linguistic theorems on the per-language sample. The bespoke `XProfile` struct + per-domain enums + utility predicates are now imports from `Typology/X.lean`.
+
+**Naming convention reminders applied**:
+- `_root_.Typology` disambiguates when the consumer file's own namespace shadows the root `Typology` (`Phenomena.{Plurals,Pronouns,Numerals,Questions,Classifiers}.Typology` all needed this).
+- `Typology/{Domain}.lean` (flat) when single-file substrate; subdirectory only when warranted (none of these 5 needed it).
+- `XProfile` enum-bundling structs go in the substrate file alongside their constituent enums (mathlib pattern: `MetricSpace` lives with its components, not in a separate aggregator file).
+
+**Bug caught mid-migration**: 1 orphan-docstring issue in `Phenomena/Numerals/Typology.lean` — when I replaced `inductive X` blocks with `/-! X lives in Typology/Numerals.lean -/` comments, the preceding `/-- ... -/` docstrings (originally attached to the inductive) became orphaned and Lean tried to attach them to the next declaration, causing "unexpected token '/-!'; expected 'lemma'" errors. Fixed by deleting the orphan docstrings (the substrate file carries the docstrings now).
+
+**Build state**: my 12 touched files all build clean (971-job transitive closure). One unrelated breakage from concurrent session: `Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean` was deleted by a parallel session but `Linglib.lean` and `Phenomena/Presupposition/Studies/{White2014,Williams2026}.lean` still reference it. Removed the dangling `Linglib.lean` import; the Studies-file references are concurrent-session damage to flag but not in scope for this PR.
+
+**After this batch — Tier 2 progress**:
+
+- ✅ Possession (Tier 2a, 0.230.480)
+- ✅ Plurals, Pronouns, Numerals, Questions, ClauseChaining (this PR)
+- ❌ Remaining 14 bespoke `XProfile` files: Anaphora, Phonology, Modality, Gender, Directives, Comparison, LexicalTypology, Reference, Copulas, Coordination, Alignment, Case, TenseAspect, ArgumentStructure, Negation, Complementation. Anaphora has a cross-Phenomena dep (`Phenomena.Reference.DirectReference`) that will need similar handling to Numerals' Classifier dep. Negation (2029 LOC) and Complementation (2345 LOC) are the size outliers and warrant focused individual sessions.
+
+Pattern is now well-rehearsed (~30 min per phenomenon for the standard case); next batch could plausibly do 4-5 more in one session.
+
 ## [0.230.485] - 2026-04-27
 
 ### Features/{AssertionTypes, ImplicatureTypes, CoreferenceStatus} cleanup (continuation of 0.230.484)

@@ -203,6 +203,7 @@ import Linglib.Typology.Indefinite
 import Linglib.Typology.LanguageProfile
 import Linglib.Typology.Profile
 import Linglib.Typology.Universal
+import Linglib.Typology.Numerals
 import Linglib.Typology.Plurals
 import Linglib.Typology.Possession
 import Linglib.Typology.Pronouns
@@ -1418,7 +1419,7 @@ import Linglib.Phenomena.Presupposition.Studies.TowerDerivation
 import Linglib.Phenomena.Presupposition.Studies.WangDavidson2026
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
 import Linglib.Phenomena.Presupposition.Studies.JereticEtAl2025
-import Linglib.Phenomena.Presupposition.ForgetPresuppositions
+import Linglib.Phenomena.Presupposition.Studies.Williams2026
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Presupposition.Studies.Grove2022
