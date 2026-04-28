@@ -1,23 +1,25 @@
 import Linglib.Theories.Discourse.Centering.Transition
+import Linglib.Theories.Discourse.Centering.Rule1
 
 /-!
-# Centering Theory — Rules 1 and 2
+# Centering Theory — Rule 2 (Transition Preference)
 @cite{grosz-joshi-weinstein-1995} §3
 
-The two normative rules of Centering Theory:
-
-* **Rule 1** (pronominalization constraint): if any element of `Cf(U_n)`
-  is realized by a pronoun in `U_{n+1}`, then `Cb(U_{n+1})` is realized
-  by a pronoun also.
+Rule 2 of Centering Theory:
 
 * **Rule 2** (transition preference): a *pair* of transitions is
   preferred over another when its constituent transitions have higher
   rank. The paper specifies the canonical case (CONT-CONT > RET-RET >
   SHIFT-SHIFT); the general pair preference uses sum-of-ranks.
 
-Rule 1 takes the current utterance as a generic `[Realizes U E]
-[Pronominalizes U E]` so it works on either `Utterance E R` or a
-`DRSExpr` (via the DRT bridge).
+Rule 1 (and its variants per @cite{poesio-stevenson-eugenio-hitzeman-2004}
+§2.3.2) lives in the sibling file `Rule1.lean`. This file imports it
+as a courtesy re-export so the historical `import Rules.lean` keeps
+both available; future code should `import Centering.Rule1` and
+`import Centering.Rule2` directly.
+
+Rule 2 variants per PSDH §2.3.3 (BFP 87 single-transition; Strube 1998
+cheap/expensive) will land in `Rule2.lean` (next commit).
 -/
 
 set_option autoImplicit false
@@ -27,34 +29,7 @@ namespace Discourse.Centering
 variable {E R : Type}
 
 -- ════════════════════════════════════════════════════
--- § 1. Rule 1
--- ════════════════════════════════════════════════════
-
-/-- @cite{grosz-joshi-weinstein-1995} **Rule 1**: if any element of
-    `Cf(U_n)` is realized by a pronoun in `U_{n+1}`, then `Cb(U_{n+1})`
-    is realized by a pronoun also.
-
-    Vacuously satisfied when no Cb exists. The constraint is
-    *one-directional*: it says nothing about whether the Cb *must* be
-    pronominalized when no other entity is — Rule 1 only constrains
-    what happens when pronominalization is used at all. -/
-def Rule1Holds [DecidableEq E] [CfRankerOf E R] {U : Type}
-    [Realizes U E] [Pronominalizes U E]
-    (prev : Utterance E R) (cur : U) : Prop :=
-  match cb prev cur with
-  | none => True
-  | some curCb =>
-    (∃ e ∈ prev.cf, pronominalizes cur e) → pronominalizes cur curCb
-
-instance [DecidableEq E] [CfRankerOf E R] {U : Type}
-    [Realizes U E] [Pronominalizes U E]
-    (prev : Utterance E R) (cur : U) :
-    Decidable (Rule1Holds prev cur) := by
-  unfold Rule1Holds
-  cases cb prev cur <;> infer_instance
-
--- ════════════════════════════════════════════════════
--- § 2. Rule 2 (pair preference)
+-- § 1. Rule 2 (pair preference)
 -- ════════════════════════════════════════════════════
 
 /-- @cite{grosz-joshi-weinstein-1995} **Rule 2** is stated at the

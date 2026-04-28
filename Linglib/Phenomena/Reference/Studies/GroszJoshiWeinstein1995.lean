@@ -182,13 +182,13 @@ theorem d15_b_to_c_cb : cb D15.b D15.c = some "John" := by decide
 /-- **Rule 1 violation**: in (15c), Mike is pronominalized but the Cb
     John is realized as a proper name. The paper's diagnosis. -/
 theorem discourse15_violates_rule1 :
-    ¬ Rule1Holds D15.b D15.c := by decide
+    ¬ Rule1GJW95 D15.b D15.c := by decide
 
 /-- The (a→b) pair of the same discourse satisfies Rule 1 (the only
     Cf element from (a) is John, who is pronominalized in (b) — the Cb
     is also pronominalized). The violation is local to the (b→c) step. -/
 theorem d15_a_to_b_satisfies_rule1 :
-    Rule1Holds D15.a D15.b := by decide
+    Rule1GJW95 D15.a D15.b := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Discourses 7-10: Cf ranking + Rule 1 interaction
@@ -257,30 +257,30 @@ theorem d7_to_10_share_cb :
 
 /-- Variant 7 satisfies Rule 1 (Susan as Cb pronominalized). -/
 theorem d7_satisfies_rule1 :
-    Rule1Holds D7_10.b D7_10.c7 := by decide
+    Rule1GJW95 D7_10.b D7_10.c7 := by decide
 
 /-- Variant 8 satisfies Rule 1 (Susan as Cb pronominalized via "her"). -/
 theorem d8_satisfies_rule1 :
-    Rule1Holds D7_10.b D7_10.c8 := by decide
+    Rule1GJW95 D7_10.b D7_10.c8 := by decide
 
 /-- **Variant 9 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. -/
 theorem d9_violates_rule1 :
-    ¬ Rule1Holds D7_10.b D7_10.c9 := by decide
+    ¬ Rule1GJW95 D7_10.b D7_10.c9 := by decide
 
 /-- **Variant 10 violates Rule 1**: Betsy is pronominalized but Cb
     (Susan) is realized as a proper name. The paper calls this case
     "completely unacceptable". -/
 theorem d10_violates_rule1 :
-    ¬ Rule1Holds D7_10.b D7_10.c10 := by decide
+    ¬ Rule1GJW95 D7_10.b D7_10.c10 := by decide
 
 /-- The Rule-1 split (`d7,8 OK` vs `d9,10 violate`) tracks the paper's
     acceptability ordering: variants 7 and 8 are acceptable, 9 and 10
     are degraded. The framework predicts this directly from Rule 1
     plus the subject>object Cf ranking. -/
 theorem rule1_distinguishes_variants_7_8_from_9_10 :
-    (Rule1Holds D7_10.b D7_10.c7 ∧ Rule1Holds D7_10.b D7_10.c8) ∧
-    (¬ Rule1Holds D7_10.b D7_10.c9 ∧ ¬ Rule1Holds D7_10.b D7_10.c10) := by
+    (Rule1GJW95 D7_10.b D7_10.c7 ∧ Rule1GJW95 D7_10.b D7_10.c8) ∧
+    (¬ Rule1GJW95 D7_10.b D7_10.c9 ∧ ¬ Rule1GJW95 D7_10.b D7_10.c10) := by
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
 -- ════════════════════════════════════════════════════
@@ -321,10 +321,10 @@ theorem discourse20_d_to_e_shifting :
     classifyTransitionExtended D20.d D20.e D20.e.cp (cb D20.c D20.d) = .shifting := by decide
 
 /-- Rule 1 holds throughout Discourse 20 (the paper's claim). -/
-theorem discourse20_rule1_a_b : Rule1Holds D20.a D20.b := by decide
-theorem discourse20_rule1_b_c : Rule1Holds D20.b D20.c := by decide
-theorem discourse20_rule1_c_d : Rule1Holds D20.c D20.d := by decide
-theorem discourse20_rule1_d_e : Rule1Holds D20.d D20.e := by decide
+theorem discourse20_rule1_a_b : Rule1GJW95 D20.a D20.b := by decide
+theorem discourse20_rule1_b_c : Rule1GJW95 D20.b D20.c := by decide
+theorem discourse20_rule1_c_d : Rule1GJW95 D20.c D20.d := by decide
+theorem discourse20_rule1_d_e : Rule1GJW95 D20.d D20.e := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge to @cite{kehler-rohde-2013} (Topichood)
@@ -386,7 +386,7 @@ theorem korean_cb_is_prior_subject :
 /-- Step 2: realizing the Cb pronominally satisfies Rule 1
     (the null subject in Korean counts as pronominal). -/
 theorem korean_null_realization_satisfies_rule1 :
-    Rule1Holds KoreanContinuation.utt_a KoreanContinuation.utt_b_null := by
+    Rule1GJW95 KoreanContinuation.utt_a KoreanContinuation.utt_b_null := by
   decide
 
 /-- Step 3: among Korean's three referential forms, the null pronoun is
