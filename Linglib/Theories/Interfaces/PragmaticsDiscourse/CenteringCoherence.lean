@@ -1,5 +1,6 @@
 import Linglib.Theories.Discourse.Centering.Coherence
-import Linglib.Theories.Discourse.Centering.Rules
+import Linglib.Theories.Discourse.Centering.Rule1
+import Linglib.Theories.Discourse.Centering.Rule2
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 
 /-!

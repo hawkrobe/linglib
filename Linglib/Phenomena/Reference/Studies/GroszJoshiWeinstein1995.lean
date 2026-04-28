@@ -1,6 +1,7 @@
 import Linglib.Theories.Discourse.Centering.Basic
 import Linglib.Theories.Discourse.Centering.Transition
-import Linglib.Theories.Discourse.Centering.Rules
+import Linglib.Theories.Discourse.Centering.Rule1
+import Linglib.Theories.Discourse.Centering.Rule2
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Core.Discourse.Accessibility
 import Linglib.Phenomena.Reference.Studies.Sidner1983
@@ -34,12 +35,12 @@ same propositional content, different transition pattern, different
 perceived coherence. The framework predicts the difference.
 
 This file consumes the substrate types and operators from
-`Theories/Discourse/Centering/{Defs,Basic,Transition,Rules}.lean`
+`Theories/Discourse/Centering/{Defs,Basic,Transition,Rule1,Rule2}.lean`
 plus the `GrammaticalRole` Cf-ranker instance from
 `Instances/GrammaticalRole.lean`. Per linglib's import-don't-restipulate
 discipline, no Centering primitives are redefined here — the file's
 contribution is the empirical-example anchor for the substrate plus
-the §10 comparison with @cite{sidner-1983}.
+the §8 comparison with @cite{sidner-1983}.
 -/
 
 set_option autoImplicit false
