@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Questions.Resolution
 
 /-!
 # Probabilistic Question Semantics
-@cite{thomas-2026} @cite{ippolito-kiss-williams-2025} @cite{westera-brasoveanu-2014} @cite{onea-2019}
+@cite{thomas-2026} @cite{westera-brasoveanu-2014} @cite{onea-2019}
 
 Bayesian inquisitive answerhood. The probabilistic refinement of the
 set-theoretic resolution relation in `Resolution.lean`: a state σ
@@ -33,6 +33,14 @@ conjunction of alternatives, in the inquisitive sense of
 
 - `evidencesResolutionMore μ 𝒜 R R'` — resolution-level analogue of
   `evidencesMore`. @cite{thomas-2026} Def 63.
+
+## Note on relocated apparatus
+
+The doxastic `Supports` / `Agree` / `Disagree` predicates previously
+lived here; they have been moved to
+`Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` (the paper
+that introduced them) since their only consumer is the IKW 2025
+discourse-*only* study file.
 -/
 
 namespace Semantics.Questions.Probabilistic
@@ -72,8 +80,9 @@ instance : Trans (evidencesMore μ A) (evidencesMore μ A) (evidencesMore μ A) 
 The atomic Bayesian-evidence relation: conditioning on `R` raises the
 probability of `A`. The pointwise version of `IsResolutionEvidencedBy`'s
 `raises_prob` field, factored out so consumers
-(@cite{thomas-2026} §1.2, @cite{ippolito-kiss-williams-2025} Def. 13)
-can refer to it directly. -/
+(@cite{thomas-2026} §1.2, the IKW 2022 `Supports` predicate in
+`Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean`) can refer to
+it directly. -/
 
 /-- `R` provides **positive evidence** for `A`: conditioning on `R`
     raises the probability of `A`. -/
@@ -211,75 +220,6 @@ def IsRelevantPropOf (R : Set W) (Q : Question W) (μ : PMF W) : Prop :=
     IsRelevantPropOf R Q μ ↔
       ∃ A' ∈ alt Q, μ.condProbSet R A' ≠ μ.probOfSet A' :=
   Iff.rfl
-
-/-! ### Doxastic support (@cite{ippolito-kiss-williams-2025} Def. 13)
-
-A sentence `S` "supports" a target proposition `r` from doxastic state
-`dox` under prior `μ` if some alternative `q ∈ alt S` is *believed* by
-the speaker (`dox ⊆ q`) and *positively evidences* `r`. The doxastic
-anchor is what distinguishes `Supports` from raw Bayesian evidence: a
-speaker who doesn't believe any alternative of `S` cannot use `S` to
-support anything. This is what derives the
-@cite{ippolito-kiss-williams-2025} §5.2 interrogative-left-argument
-restriction from architecture rather than stipulation. -/
-
-/-- `S` **supports** `r` from doxastic state `dox` under prior `μ`:
-    some alternative `q ∈ alt S` is doxastically grounded (`dox ⊆ q`)
-    and provides positive evidence for `r`.
-    @cite{ippolito-kiss-williams-2025} Def. 13. -/
-def Supports (dox : Set W) (S : Question W) (r : Set W) (μ : PMF W) : Prop :=
-  ∃ q ∈ alt S, dox ⊆ q ∧ IsPositiveEvidence q r μ
-
-/-- An info-seeking speaker — one who doesn't believe any alternative of
-    `S` — cannot use `S` to support anything. The architectural
-    derivation of @cite{ippolito-kiss-williams-2025} §5.2's
-    interrogative-left-argument restriction: the failure isn't a
-    clause-type filter but a doxastic consequence of `Supports`. -/
-theorem Supports.of_no_belief_fails {dox : Set W} {S : Question W}
-    {r : Set W} {μ : PMF W}
-    (h : ∀ q ∈ alt S, ¬ (dox ⊆ q)) :
-    ¬ Supports dox S r μ := by
-  rintro ⟨q, hq, hdox, _⟩
-  exact h q hq hdox
-
-/-- `Supports dox S r μ` exposes a doxastically-grounded alternative
-    of `S` containing `dox`. The bridge from probabilistic support to
-    pure inquisitive `Resolves`-style witnesses. -/
-theorem Supports.exists_dox_alt {dox : Set W} {S : Question W}
-    {r : Set W} {μ : PMF W}
-    (h : Supports dox S r μ) :
-    ∃ p ∈ alt S, dox ⊆ p := by
-  obtain ⟨p, hp, hdox, _⟩ := h
-  exact ⟨p, hp, hdox⟩
-
-/-! ### Agreement and disagreement (@cite{ippolito-kiss-williams-2025} Def. 14) -/
-
-/-- Two sentences `S` and `S'` **agree** on QUD `Q` from doxastic state
-    `dox` iff some alternative `α ∈ alt Q` is supported by both.
-    @cite{ippolito-kiss-williams-2025} Def. 14a. -/
-def Agree (dox : Set W) (S S' Q : Question W) (μ : PMF W) : Prop :=
-  ∃ α ∈ alt Q, Supports dox S α μ ∧ Supports dox S' α μ
-
-/-- Two sentences `S` and `S'` **disagree** on QUD `Q` from doxastic
-    state `dox` iff each supports some answer but no shared alternative
-    witnesses agreement.
-    @cite{ippolito-kiss-williams-2025} Def. 14b. -/
-def Disagree (dox : Set W) (S S' Q : Question W) (μ : PMF W) : Prop :=
-  (∃ α ∈ alt Q, Supports dox S α μ) ∧
-  (∃ α ∈ alt Q, Supports dox S' α μ) ∧
-  ¬ Agree dox S S' Q μ
-
-/-- `Agree` is symmetric in its `S`/`S'` arguments. -/
-theorem Agree.symm {dox : Set W} {S S' Q : Question W} {μ : PMF W}
-    (h : Agree dox S S' Q μ) : Agree dox S' S Q μ := by
-  obtain ⟨α, hMem, hS, hS'⟩ := h
-  exact ⟨α, hMem, hS', hS⟩
-
-/-- `Disagree` is symmetric in its `S`/`S'` arguments. -/
-theorem Disagree.symm {dox : Set W} {S S' Q : Question W} {μ : PMF W}
-    (h : Disagree dox S S' Q μ) : Disagree dox S' S Q μ := by
-  obtain ⟨hS, hS', hNotAgree⟩ := h
-  exact ⟨hS', hS, fun hAgree => hNotAgree hAgree.symm⟩
 
 /-! ### Bridge claim: `Answers` ⇒ `IsRelevantPropOf`
 

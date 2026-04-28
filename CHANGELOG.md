@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.492] - 2026-04-27
+
+### IKW Discourse *only* arc: correctness fixes + IKW 2022 attribution + DiscourseOnly relocation
+
+Multi-agent audit of `Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean` constellation (~1700 LOC across 7 files), verified against the actual paper PDF (lingref/wccfl/41/paper3750.pdf). Four classes of fix landed in this commit.
+
+**Correctness — CI clause (i) restored.** Lean's `Sentence.ciContent` quantified over all `partialAnswers` without the paper's `p ∉ QUD` exclusion (paper ex. (16) clause i: *"every true partial answer p s.t. p ∉ QUD, p supports α"*). Added the `p ∉ alt ctx.qud` antecedent. Existing proofs (`disagree_imp_ciContent_of_empty_partials`, `interrogative_s'_ci_satisfied`) carry through because the empty-`partialAnswers` discharge precedes the new antecedent. Documented the "p supports α" gloss as raw `IsPositiveEvidence` (presuming established partial answers are common-ground), with a note that a doxastic-gated variant is straightforward but deferred.
+
+**Attribution — IKW 2022 SuB 26 added; SUPPORT/AGREE/DISAGREE rehomed.** Paper §4 (p. 225) explicitly says *"Following Ippolito et al. (2022) we define the notion of AGREEMENT (and DISAGREEMENT) and the notion of SUPPORT, on which the former notion is based."* The doxastic-evidential apparatus (`Supports`, `Agree`, `Disagree`, `Supports.of_no_belief_fails`, the symmetry lemmas) was sitting in `Theories/Semantics/Questions/Probabilistic.lean` substrate with attribution to IKW 2025; moved into the new `Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` study file with attribution to the SuB 26 predecessor (where this apparatus was introduced). Probabilistic.lean now hosts only Thomas-2026 / general Bayesian primitives. `Studies/IppolitoKissWilliams2025.lean` imports from IKW2022. The auditor-flagged "0 consumers outside IKW2025" pattern that justified the move is now an IKW 2022→2025 in-Studies dependency.
+
+**Citation hygiene.** Added `ippolito-kiss-williams-2022` bib entry (SuB 26, pp. 465-482, DOI 10.18148/sub/2022.v26i0.1012). Fixed broken `ippolito-kiss-williams-2025` `sources` field (listed 2 nonexistent files; missed 9 actual citing files). Globally replaced `Def. 13/14a/14b/16` → `ex. (13)/(14a)/(14b)/(16)` (~13 sites): the paper labels these as numbered examples, not definitions. Fixed `p. 227` → `§5.2` for the weak-non-agreement attribution (page 227 is §5.2 "Only + interrogative", not the weak-non-agreement passage). The Roberts 2012 "Def. 8-9" attribution in `Core/Question/Relevance.lean` rewritten as a content description (paper just says "Roberts 2012, Büring 2003 among others" with no specific def numbers).
+
+**Architecture.** `git mv Phenomena/Focus/DiscourseOnly.lean → Phenomena/Focus/Studies/IppolitoKissWilliams2025/Data.lean` (subdirectory pattern, namespace `…Studies.IppolitoKissWilliams2025.Data`). The data file is paper-specific (every datum sourced "IKW 2025 §7 ex. 29a") and fails the top-level Phenomena placement test, mirroring the just-completed *forget* arc (Phenomena/Presupposition/ForgetPresuppositions → Studies/Williams2026). Linglib.lean updated; bib `sources` updated.
+
+**Part II "Merin DTS bridge" rewritten.** Merin 1999 is **not** cited in IKW 2025's reference list (paper p. 231 verified); the bridge is the formaliser's editorial overlay. Rewrote the section docstring to flag this explicitly as a project-internal Bayesian-to-DTS connection rather than paper-engagement. Renamed `but_sufficient_for_only` → `but_negrel_implies_no_probsupport` and rewrote its docstring: the original "every *but* context licenses discourse *only*" claim contradicts the paper's (27)/(28) data showing contexts where *but* is felicitous and *only* is `#`; the actual Lean theorem only shows the contrapositive Bayesian fact (negative relevance ⇒ no positive support), which is sound. Added `TODO:` lines to the file's six `sorry`s with proof-approach hints.
+
+**Code quality.** `fun w/_ =>` → `λ w/_ =>` in 4 sites per CLAUDE.md convention; trimmed unused `Mathlib.Data.Set.Basic` and `Mathlib.Data.Fintype.Basic` imports (transitively pulled). Build: 5404 jobs green; only pre-existing unrelated warnings.
+
 ## [0.230.491] - 2026-04-28
 
 ### InformationStructure cleanup commit 2/3: HasInfoStructure typeclass deleted (no dispatch consumers)

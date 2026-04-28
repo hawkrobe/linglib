@@ -58,9 +58,10 @@ def isSubquestion (q parent : Question W) : Prop :=
   questionEntails parent q
 
 /-- A discourse move `den` is **relevant** to the QUD if some alternative
-    partially answers the QUD or any of the subquestions.
-    @cite{roberts-2012} Def. 15 / @cite{ippolito-kiss-williams-2025}
-    assumption iii. -/
+    partially answers the QUD or any of the subquestions. The
+    QUD-relevance idea traces to @cite{roberts-2012}; the present
+    formulation is the one @cite{ippolito-kiss-williams-2025} ex. (16)
+    assumption iii uses for discourse *only*'s definedness condition. -/
 def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
   ∃ a ∈ alt den,
     partiallyAnswers qud a ∨ ∃ q ∈ subquestions, partiallyAnswers q a

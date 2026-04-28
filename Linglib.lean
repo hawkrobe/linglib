@@ -1124,7 +1124,8 @@ import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.Studies.Roberts2012
 import Linglib.Phenomena.Focus.Studies.Rooth1992
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
-import Linglib.Phenomena.Focus.DiscourseOnly
+import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2022
+import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Ahn2015

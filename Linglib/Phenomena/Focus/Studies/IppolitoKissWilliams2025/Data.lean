@@ -4,43 +4,45 @@ import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Mandarin.DiscourseParticles
 
 /-!
-# Discourse *only*: Cross-Linguistic Data @cite{ippolito-kiss-williams-2025}
+# Discourse *only*: Cross-Linguistic Data
+@cite{ippolito-kiss-williams-2025}
 
-Theory-neutral empirical data on discourse *only* — a clausal connective
-that conjoins two propositions while signaling that the second undermines
-the evidential direction of the first.
+Empirical data from @cite{ippolito-kiss-williams-2025} on discourse
+*only* — a clausal connective that conjoins two propositions while
+signaling that the second undermines the evidential direction of the
+first. Anchored on a single paper; lives in the Studies subdirectory
+per the top-level Phenomena placement test.
 
 ## Cross-linguistic forms
 
-| Language  | Form       | Example              |
-|-----------|------------|----------------------|
-| Italian   | *solo che* | §7 ex. 29a, 33      |
-| Russian   | *tol'ko*   | §7 ex. 29b, 30      |
-| Hungarian | *csak*     | §7 ex. 29c, 31      |
-| Mandarin  | *zhǐshì*  | §7 ex. 29d, 32      |
-| English   | *only*     | §1 ex. 2             |
+| Language  | Form       | Source            |
+|-----------|------------|-------------------|
+| Italian   | *solo che* | §7 ex. (29a), (33) |
+| Russian   | *tol'ko*   | §7 ex. (29b), (30) |
+| Hungarian | *csak*     | §7 ex. (29c), (31) |
+| Mandarin  | *zhǐshì*   | §7 ex. (29d), (32) |
+| English   | *only*     | §1 ex. (2)         |
 
 ## Key Distributional Generalizations
 
 1. The left argument S cannot be a canonical info-seeking interrogative
    (§5.2); declaratives, imperatives, exclamatives, and biased/rhetorical
-   questions are all attested as S
+   questions are all attested as S.
 2. The prejacent S' varies cross-linguistically: Russian and Hungarian
    allow all types; Mandarin blocks exclamatives; Italian restricts S' to
-   declaratives only (§7)
-3. S and S' must be relevant to the same QUD
-4. S must support some answer α that S' fails to support
+   declaratives only (§7).
+3. S and S' must be relevant to the same QUD.
+4. S must support some answer α that S' fails to support.
 
-## §7 Clause-Type Matrix (Table equivalent)
+## §7 Clause-Type Matrix (paper's Table 1 equivalent)
 
-The paper's main typological result: clause-type restrictions on S' vary
-cross-linguistically. Italian *solo che* restricts S' to declaratives only.
-Russian *tol'ko* and Hungarian *csak* allow all clause types as S'.
-Mandarin *zhǐshì* allows all types except exclamatives.
+Italian *solo che* restricts S' to declaratives only. Russian *tol'ko*
+and Hungarian *csak* allow all clause types as S'. Mandarin *zhǐshì*
+allows all types except exclamatives.
 
 -/
 
-namespace Phenomena.Focus.DiscourseOnly
+namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
 
 open Fragments.Italian.DiscourseParticles (soloChe)
 open Fragments.Slavic.Russian.DiscourseParticles (tolko)
@@ -668,4 +670,4 @@ theorem core_count : coreExamples.length = 5 := rfl
 theorem clauseType_count : clauseTypeData.length = 23 := rfl
 theorem total_count : allDiscourseOnlyData.length = 28 := rfl
 
-end Phenomena.Focus.DiscourseOnly
+end Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
