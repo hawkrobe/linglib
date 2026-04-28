@@ -24,4 +24,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .identical
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- Mandarin pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
+    no /m/ in 1SG (*wo*); no N-M; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Mandarin"
+  , iso := "cmn"
+  , mtPronouns := some .absent
+  , mIn1sg := some .absent
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.Mandarin

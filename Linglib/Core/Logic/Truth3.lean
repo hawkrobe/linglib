@@ -280,6 +280,15 @@ def metaAssert : Truth3 → Truth3
   | .false => .false
   | .indet => .false
 
+-- ════════════════════════════════════════════════════════════════
+-- @[simp] truth table for `metaAssert` (Strong Kleene `join` is the
+-- lattice `⊔`, already covered by `sup_true`/`true_sup` above).
+-- ════════════════════════════════════════════════════════════════
+
+@[simp] theorem metaAssert_true : metaAssert .true = .true := rfl
+@[simp] theorem metaAssert_false : metaAssert .false = .false := rfl
+@[simp] theorem metaAssert_indet : metaAssert .indet = .false := rfl
+
 theorem joinWeak_comm (a b : Truth3) : joinWeak a b = joinWeak b a := by
   cases a <;> cases b <;> rfl
 
@@ -714,6 +723,24 @@ def orMiddle (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinMiddle (p w) (q w)
 /-- Pointwise Strong Kleene exclusive disjunction.
     @cite{wang-davidson-2026} -/
 def xor (p q : Prop3 W) : Prop3 W := λ w => Truth3.xor (p w) (q w)
+
+-- ════════════════════════════════════════════════════════════════
+-- @[simp] beta-reduction lemmas: peel the lambda layer so concrete-world
+-- evaluations reduce to Truth3 truth-table form (for which `Truth3.join`
+-- and `Truth3.metaAssert` `@[simp]` lemmas above close the goal).
+-- ════════════════════════════════════════════════════════════════
+
+@[simp] theorem or_apply (p q : Prop3 W) (w : W) :
+    Prop3.or p q w = Truth3.join (p w) (q w) := rfl
+
+@[simp] theorem and_apply (p q : Prop3 W) (w : W) :
+    Prop3.and p q w = Truth3.meet (p w) (q w) := rfl
+
+@[simp] theorem neg_apply (p : Prop3 W) (w : W) :
+    Prop3.neg p w = Truth3.neg (p w) := rfl
+
+@[simp] theorem metaAssert_apply (p : Prop3 W) (w : W) :
+    Prop3.metaAssert p w = Truth3.metaAssert (p w) := rfl
 
 end Prop3
 

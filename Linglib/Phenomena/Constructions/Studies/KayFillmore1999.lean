@@ -408,15 +408,15 @@ open Core.Presupposition
 
 "What's this fly doing in my soup?" presupposes: there is a fly in the soup.
 The at-issue assertion is trivial — the point is to express the CI. -/
-def wxdyPresup {W : Type*} (embeddedProp : W → Bool) : PrProp W :=
-  PrProp.ofBool embeddedProp (λ _ => true)
+def wxdyPresup {W : Type*} (embeddedProp : W → Prop) : PrProp W where
+  presup := embeddedProp
+  assertion _ := True
 
 /-- Presupposition projects through negation: "It's not the case that
 [what's this fly doing in my soup]" still presupposes the fly is there. -/
-theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Bool) :
+theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Prop) :
     ∀ w, (PrProp.neg (wxdyPresup embeddedProp)).presup w ↔
-         (embeddedProp w = true) := by
-  intro w; simp [wxdyPresup, PrProp.neg, PrProp.ofBool]
+         embeddedProp w := fun _ => Iff.rfl
 
 -- ============================================================================
 -- E. Two-dimensional semantics bridge (Expressives/Basic.lean)
@@ -559,7 +559,7 @@ open Core.CommonGround
 For "What's this fly doing in my soup?", the CG must already entail
 that there is a fly in the soup (the speaker sees it). -/
 theorem wxdy_presup_requires_cg {W : Type*}
-    (c : ContextSet W) (embeddedProp : W → Bool)
+    (c : ContextSet W) (embeddedProp : W → Prop)
     (h : c ⊧ (wxdyPresup embeddedProp).presup) (w : W) (hw : c w) :
     (wxdyPresup embeddedProp).presup w :=
   h hw

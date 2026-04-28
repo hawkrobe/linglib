@@ -233,18 +233,16 @@ theorem andFilter_presup_eq_impFilter_presup (p q : PrProp W) :
     (PrProp.andFilter p q).presup = (PrProp.impFilter p q).presup :=
   (PrProp.impFilter_presup_eq_andFilter_presup p q).symm
 
-/-- K1973 rule (24b), p. 181, in its asymmetric form: "A or B" carries no
-    residual presupposition from B when ¬A entails it. The Core
-    `disjFilterLeft` takes the antecedent as a plain proposition and the
-    second disjunct as a `PrProp`; under K's hypothesis ⌜~A⌝ ⊨ C, the
-    result is presuppositionless. -/
+/-- K1973 rule (24b), p. 181 — paper-anchored alias for the substrate
+    `PrProp.disjFilterLeft_eliminates_presup_when_neg_entails`. Karttunen's
+    asymmetric form: "A or B" carries no residual presupposition from B
+    when ¬A entails it. The substrate carries the proof; Karttunen 1973
+    is the paper that motivated it. -/
 theorem disjFilterLeft_eliminates_presup_when_neg_entails
     (A : W → Prop) (q : PrProp W)
     (h : ∀ w, ¬A w → q.presup w) :
-    (PrProp.disjFilterLeft A q).presup = fun _ => True := by
-  funext w
-  simp only [PrProp.disjFilterLeft, eq_iff_iff, iff_true]
-  exact h w
+    (PrProp.disjFilterLeft A q).presup = fun _ => True :=
+  PrProp.disjFilterLeft_eliminates_presup_when_neg_entails A q h
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Cumulativity (K1973 §§5–7, Langendoen & Savin 1971)

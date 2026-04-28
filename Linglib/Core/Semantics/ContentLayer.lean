@@ -89,7 +89,7 @@ structure LayeredProp (W : Type*) where
   atIssue : W → Bool
   /-- Implicature content (enrichment beyond truth conditions). Trivially
       true by default: most utterances carry no relevant implicature, just
-      as `PrProp.ofBProp` sets presupposition to `λ _ => true`. -/
+      as `PrProp.ofProp'` sets presupposition to `λ _ => True`. -/
   implicature : W → Bool := λ _ => true
 
 /-- Access a layer's content by its tag. -/

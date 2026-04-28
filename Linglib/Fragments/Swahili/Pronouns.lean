@@ -24,4 +24,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .differentiated
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- Swahili pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
+    1SG has /m/ in *mimi*; no N-M; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Swahili"
+  , iso := "swh"
+  , mtPronouns := some .absent
+  , mIn1sg := some .present
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.Swahili

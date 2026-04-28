@@ -4,6 +4,34 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.507] - 2026-04-28
+
+### Yagi 2025 (presupposition projection in disjunction): two rounds of multi-agent audit + substrate Bool→Prop migration
+
+Random-pick 4-agent audit (mathlib-reviewer + integration-auditor + linguistics-domain-expert + cross-framework-reconciler) on `Phenomena/Presupposition/Studies/Yagi2025.lean`, then second round on the rewrite, then a substrate cleanup forced by the rewrite.
+
+#### First round: comprehensive Yagi2025 rewrite (528 → 689 LOC, 26 → 62 declarations)
+
+Substrate: `Core/Semantics/Presupposition.lean` `genuineness` strengthened per Yagi Def 8 — split into `liveness` (singleton-survival) and `genuineness (p q s disj)` (parameterized on disjunction connective), with `liveness_implies_genuineness_orFlex` reduction lemma. Promoted `disjFilterLeft_eliminates_presup_when_neg_entails` from `Studies/Karttunen1973.lean` to substrate (`PrProp.disjFilterLeft_eliminates_presup_when_neg_entails`); K1973 keeps a paper-anchored alias.
+
+Bib: added `landman-1986` (CLS 22), `hausser-1976` (DOI 10.1515/thli.1976.3.1-3.245), `rothschild-2011` (DOI 10.3765/sp.4.3), `katzir-singh-2012` (UCLA WP 17).
+
+Yagi2025 file: dropped editorial overlay framing ("closes architectural gap" → "formalises divergence Yagi diagnoses"); 5th world `noHeadOfState` added so `flex_correct_presup_iff_expected` is non-trivial; 11 Unicode-banner sections converted to `/-! ## X -/`; rewrote K&P symmetric vs asymmetric polarity comments; `flex_is_belnap` reframed as `flexDisj_eq_orBelnap` with explicit "NOT a Yagi claim" disclaimer; §2.4 Schlenker now invokes substrate `exhaustivity_implies_uninformative` via `truthset_uninformative_geurts_route`; added Yagi (8) Karttunen 1974 baldness/Bill's-children section showing eq. (7) too weak; added (18) "unprincipledness" section with Karttunen1973 cross-reference (`ex18_asymmetric_K1973_principled`).
+
+#### Second round audit: 4 vacuous theorems flagged, all fixed
+
+Audit caught the first round's `flex_too_weak_for_ex8`, `neg_flex_static_genuineness_unproblematic`, `schlenker_uninformative_in_truth_set`, `ex18_orFlex_no_projection_unprincipled` as `naCanBridge := true := rfl` anti-pattern instances — claim only in prose, theorem trivially true. Fixed: `eq7_too_weak_for_ex8` now proves `ex8FlexDisj.presup ≠ ex8ExpectedPresup` with witness world `noChild`; vacuous neg theorem deleted (content moved to `/-! -/` block); Schlenker theorem renamed `truthset_uninformative_geurts_route` with honest "captures consequence not derivation" framing; `ex18_orFlex_no_projection_via_vacuous_left` + `ex18_unprincipled_in_right_presup_failure` formalize the structural contrast (right disjunct's presup fails; success rides on left being presupless).
+
+#### Substrate Bool → Prop migration (mathlib-shape API cleanup)
+
+`PrProp.ofBool` and `PrProp.ofBProp` deleted from `Core/Semantics/Presupposition.lean` — they were Bool→Prop bridging conveniences with 5 consumers, exactly the kind of incidental complexity that should not exist in a clean mathlib API. Migrated all 5 consumers (Yagi2025, Sharvit2025, KayFillmore1999, StapsRooryck2024, Belnap1970) to direct `PrProp` field syntax with Prop-valued predicates. `Theories/Semantics/Dynamic/UpdateSemantics/Basic.lean` `Update.prop` and `PUpdate.{presup,neg,disj,disjPresup,disjFlex}` migrated from `W → Bool` to `W → Prop` arguments; `presup_disj_uninformative_when_supported` proof updated; `might_order_matters` now uses Prop predicates with `[DecidableEq W]` + `[Nontrivial W]`. `Linglib/Phenomena/Presupposition/Compare.lean` and `Linglib/Theories/Semantics/PIP/Bridges.lean` (PIPExpr-PrProp bridge) also migrated. `Core/Logic/Truth3.lean`: added `@[simp]` `metaAssert_true/_false/_indet` truth tables and `Prop3.{or,and,neg,metaAssert}_apply` lambda-peel `@[simp]` lemmas (Pi.apply pattern). `Linglib/Phenomena/Conditionals/Studies/Belnap1970.lean` `atomic` abbrev now aliases `PrProp.ofProp'` (the Prop equivalent).
+
+#### Other-session-cascade fixes (RegularProp + HollidayMandelkern2024)
+
+The Bool → Prop substrate ripple unblocked the build, but uncovered other-session breakage in the Orthologic stack (concurrent rename of `PossibilitySemantics/` → `Modality/Orthologic/`). Fixed: `Theories/Semantics/Modality/Orthologic/RegularProp.lean` migrated `Inf`/`Sup` typeclass instances to `Min`/`Max` (mathlib renamed `Sup`/`Inf` standalone classes to use `Max`/`Min` for the binary `⊓`/`⊔` operations) and `HasCompl` to `Compl` (deprecated 2026-01-04); `SetLike.instPartialOrder` replaced with `PartialOrder.ofSetLike`. Added apply-form `Decidable` instances (`orthoNeg_apply_decidable`, `disj_apply_decidable`, `conj_apply_decidable`, `box_apply_decidable`, `diamond_apply_decidable`, `isRegular_apply_decidable`) so `decide` finds `Decidable (orthoNeg F A x)` (function application) from user `[DecidablePred A]` instances directly — without these, every consumer would need explicit `[DecidablePred (· ∈ A)]` instances. `HollidayMandelkern2024.lean` consumer instances retyped from `Poss5 → Prop` to `Set Poss5` for cleaner unification; `epistemicScale.toCompatFrame.compat` Decidable instance added.
+
+Build: 5552 jobs green.
+
 ## [0.230.506] - 2026-04-28
 
 ### `Core/Assignment.lean` aggressive trim — 4-agent audit findings

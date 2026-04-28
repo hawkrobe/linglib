@@ -25,4 +25,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .differentiated
   , personMarkingAdpositions := some .noAdpositions }
 
+/-- Tagalog pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/
+    in 1SG (*ako*); no N-M; /m/ present in 2SG (*mo*). -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Tagalog"
+  , iso := "tgl"
+  , mtPronouns := some .absent
+  , mIn1sg := some .absent
+  , nmPronouns := some .absent
+  , mIn2sg := some .present }
+
 end Fragments.Tagalog

@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.Accessibility
-import Linglib.Phenomena.Anaphora.Typology
+import Linglib.Features.PronounStrength
 
 /-!
 # @cite{ariel-2001}
@@ -205,7 +205,7 @@ theorem coarsening_not_monotone :
 -- § 4. PronounStrength Bridge
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Anaphora.Typology (PronounStrength)
+open Features (PronounStrength)
 
 /-- @cite{cardinaletti-starke-1999}'s three-way pronoun strength maps to
     positions on the accessibility scale.

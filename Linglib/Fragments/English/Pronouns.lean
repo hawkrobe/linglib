@@ -265,4 +265,15 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .identical
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- English pronoun phonological shape (WALS Chs 136–137,
+    @cite{nichols-peterson-2013}): no M-T pattern (1SG *I*/*me*, 2SG *you*),
+    but 1SG has /m/ in *me*/*my*; no N-M pattern; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "English"
+  , iso := "eng"
+  , mtPronouns := some .absent
+  , mIn1sg := some .present
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.English

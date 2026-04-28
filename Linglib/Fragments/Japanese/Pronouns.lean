@@ -169,4 +169,15 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .identical
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- Japanese pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
+    no /m/ in 1SG (*watashi*/*boku*/*ore*); no N-M; /m/ present in 2SG
+    (*omae*). -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Japanese"
+  , iso := "jpn"
+  , mtPronouns := some .absent
+  , mIn1sg := some .absent
+  , nmPronouns := some .absent
+  , mIn2sg := some .present }
+
 end Fragments.Japanese

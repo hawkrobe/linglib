@@ -13,7 +13,7 @@ The selection covers all four salience profiles that @cite{lucy-1994}
 identifies in Yukatek (agent-salient, agent-patient salient,
 patient-salient, positional). The roots feed into the operator
 inventory in `Operators.lean` and the orbit-derivation in
-`Phenomena/LexicalTypology/Studies/Lucy1994.lean`.
+`Phenomena/ArgumentStructure/Studies/Lucy1994.lean`.
 
 | Source          | Root      | gloss              | profile              | Lucy class            |
 |-----------------|-----------|--------------------|----------------------|------------------------|

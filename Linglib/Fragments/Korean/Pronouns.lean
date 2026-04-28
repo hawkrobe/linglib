@@ -226,4 +226,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .identical
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- Korean pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/ in
+    1SG (*na*/*jeo*); no N-M; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Korean"
+  , iso := "kor"
+  , mtPronouns := some .absent
+  , mIn1sg := some .absent
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.Korean

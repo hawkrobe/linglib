@@ -503,39 +503,40 @@ proto-agentivity. Formalized using `PrProp W` from
     Bundled so the denotation is parametric over the event/entity model. -/
 structure AgentivePrepParams (Entity Event : Type) (W : Type) where
   /-- The at-issue relation: Initiator(x, e). -/
-  initiator : Entity → Event → W → Bool
+  initiator : Entity → Event → W → Prop
   /-- Proto-agentivity predicate over entities (in context). -/
-  highProtoAgentivity : Entity → W → Bool
+  highProtoAgentivity : Entity → W → Prop
 
 variable {Entity Event W : Type}
 
 /-- ⟦par⟧_agentive (35a): λx.λe. Initiator(x,e);
     presup: HIGH proto-agentivity(x). -/
 def parAgentiveDenot (params : AgentivePrepParams Entity Event W)
-    (x : Entity) (e : Event) : PrProp W :=
-  .ofBool (params.highProtoAgentivity x) (params.initiator x e)
+    (x : Entity) (e : Event) : PrProp W where
+  presup := params.highProtoAgentivity x
+  assertion := params.initiator x e
 
 /-- ⟦de⟧_agentive (35b): λx.λe. Initiator(x,e);
     presup: LOW proto-agentivity(x). -/
 def deAgentiveDenot (params : AgentivePrepParams Entity Event W)
-    (x : Entity) (e : Event) : PrProp W :=
-  .ofBool (λ w => !params.highProtoAgentivity x w) (params.initiator x e)
+    (x : Entity) (e : Event) : PrProp W where
+  presup w := ¬params.highProtoAgentivity x w
+  assertion := params.initiator x e
 
 /-- Par and de share at-issue content — same assertion (Initiator(x,e)).
-    This is structural: both constructors pass `params.initiator x e`
-    to `PrProp.ofBool`'s second argument. -/
+    This is structural: both pass `params.initiator x e` as the assertion. -/
 theorem par_de_same_assertion (params : AgentivePrepParams Entity Event W)
     (x : Entity) (e : Event) :
     (parAgentiveDenot params x e).assertion =
     (deAgentiveDenot params x e).assertion := rfl
 
 /-- Par and de presuppositions are complementary: exactly one is
-    satisfied at every world. -/
+    satisfied at every world (classical). -/
 theorem par_de_presup_complementary (params : AgentivePrepParams Entity Event W)
+    [∀ x w, Decidable (params.highProtoAgentivity x w)]
     (x : Entity) (w : W) :
-    params.highProtoAgentivity x w = true ↔
-    ¬((!params.highProtoAgentivity x w) = true) := by
-  cases params.highProtoAgentivity x w <;> simp
+    params.highProtoAgentivity x w ↔ ¬¬params.highProtoAgentivity x w :=
+  Decidable.not_not.symm
 
 /-! ### Grounding: presuppositions derive from `hasActiveAgentEntailment`
 
@@ -549,20 +550,20 @@ construction, not by bridge theorem. -/
     `hasActiveAgentEntailment`, connecting the formal denotation to
     the existing per-profile predictions. -/
 def lexicalAgentivityParams (subjectProfile : Entity → EntailmentProfile)
-    (initiator : Entity → Event → W → Bool) : AgentivePrepParams Entity Event W where
+    (initiator : Entity → Event → W → Prop) : AgentivePrepParams Entity Event W where
   initiator := initiator
-  highProtoAgentivity := λ x _ => hasActiveAgentEntailment (subjectProfile x)
+  highProtoAgentivity := λ x _ => hasActiveAgentEntailment (subjectProfile x) = true
 
 /-- The presupposition of ⟦par⟧_agentive agrees with `predictsParRequired`.
     This closes the loop: the formal denotation's presupposition IS the
     existing prediction, not a separate claim that happens to match. -/
 theorem presup_agrees_with_prediction
     (subjectProfile : Entity → EntailmentProfile)
-    (initiator : Entity → Event → W → Bool)
+    (initiator : Entity → Event → W → Prop)
     (x : Entity) (e : Event) (w : W) :
     (parAgentiveDenot (lexicalAgentivityParams subjectProfile initiator) x e).presup w ↔
     predictsParRequired (subjectProfile x) = true := by
-  simp [parAgentiveDenot, PrProp.ofBool, lexicalAgentivityParams, predictsParRequired]
+  simp [parAgentiveDenot, lexicalAgentivityParams, predictsParRequired]
 
 /-! ### Causal denotations (14b/15b)
 

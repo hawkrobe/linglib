@@ -2,6 +2,8 @@ import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
+import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
+import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
 
 /-!
 # @cite{wood-2023} — Icelandic Nominalizations and Allosemy
@@ -348,5 +350,124 @@ theorem different_suffix_same_reading :
     opnun.suffix ≠ pvottur.suffix ∧
     opnun.availableReadings.contains .complexEvent = true ∧
     pvottur.availableReadings.contains .complexEvent = true := by decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7: Cross-framework divergence with Panagiotidis 2015 + McNally-deSwart 2011
+-- ════════════════════════════════════════════════════════════════
+
+/-! ## Wood vs Panagiotidis on the n head
+
+@cite{wood-2023} Ch. 1 §1.2.3 + Ch. 5: nominalisations are systematically
+ambiguous (CEN/SEN/RN/SimpleState/SimpleEntity). All readings stem from
+ONE structure; the *interpretive* variation comes from `n` (and `v`)
+having multiple **allosemes** — `n` can be `zero / sortal / relational /
+alienator / content / simpleEvent / result / state / entity` (9 cases per
+`Theories/Morphology/DM/Allosemy.lean`).
+
+@cite{panagiotidis-2015} treats `n` as a uniform categoriser bearing the
+interpretable feature [N]. There is no alloseme machinery in
+Panagiotidis: interpretation of an `n`-headed projection follows from
+[N] (sortal perspective) plus what the complement contributes. Per p. 95,
+"categorizers are not functional" and per Ch. 4 "categorial features [N]
+and [V] are LF-interpretable" — features, not allosemes, do the
+interpretive work.
+
+The two frameworks are **incommensurable on `n`'s interpretive
+contribution**: Wood says context-determined alloseme choice; Panagiotidis
+says uniform [N] feature. Applied to @cite{mcnally-deswart-2011}'s
+`InflectedAnalysis` rivals (which all involve some `n` head), they
+diverge on what additional commitment is required.
+
+This is the cross-framework divergence the @cite{mcnally-deswart-2011}
+bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
+*open* — addressed here. -/
+
+namespace MdSPanaDivergence
+
+open Phenomena.Morphology.Studies.McNallyDeSwart2011
+open Morphology.DM.Allosemy
+
+/-- Wood's framework requires every `n`-headed nominalisation to commit
+    to an `NAlloseme` (one of the 9 cases). Panagiotidis's framework
+    requires no such commitment — `n` is uniformly [N].
+
+    For the @cite{mcnally-deswart-2011} `hetAsCap` analysis (where M&deS
+    posit a *trope* interpretation, an entity correlate of a property
+    uniquely instantiated in one bearer per @cite{moltmann-2004}), Wood's
+    framework would need to specify which alloseme `het` selects. None
+    of the 9 NAlloseme cases is "trope":
+
+    * `relational, sortal, alienator, content` — semantically wrong type
+      (relational arguments / kind sortation / possessor closure /
+      CP-complement-selection)
+    * `zero` — identity function, would inherit the AP's adjectival
+      meaning verbatim, missing the trope-reification
+    * `simpleEvent, result, state` — event-nominalisation allosemes,
+      conceptually for V→N transitions
+    * `entity` — closest fit, but M&deS distinguish tropes from
+      ordinary entities (§3.4 + cite of @cite{moltmann-2004} ontology)
+
+    So Wood's framework would require **extending NAlloseme** to model
+    M&deS's trope analysis. Panagiotidis's framework would not. -/
+def woodAllosemeForRival : InflectedAnalysis → Option NAlloseme
+  | .nominalisation => some .entity   -- closest fit; not exact
+  | .ellipsis       => none           -- no n at surface; elided
+  | .hetAsCap       => none           -- no NAlloseme is "trope"; gap
+
+instance : DecidableEq (Option NAlloseme) := inferInstance
+
+/-- The Panagiotidis-side prediction: for any rival, what does
+    Panagiotidis say `n` does interpretively? Answer (from
+    `referential_predicative_asymmetry`): bears [N], makes the
+    projection referential. No alloseme choice required. -/
+def panagiotidisRequiresAllosemeChoice : InflectedAnalysis → Bool
+  | _ => false
+
+/-- The Wood-side requirement: each rival must specify an alloseme,
+    *or* the framework must be extended to cover it. -/
+def woodRequiresAllosemeChoice : InflectedAnalysis → Bool
+  | _ => true
+
+/-- **The substantive divergence.** Wood's framework requires an
+    alloseme commitment for every rival; Panagiotidis's framework
+    requires none. The two frameworks make incommensurable demands on
+    a theory of `het rode van X` (and of nominalisations in general). -/
+theorem wood_panagiotidis_alloseme_divergence (a : InflectedAnalysis) :
+    woodRequiresAllosemeChoice a ≠ panagiotidisRequiresAllosemeChoice a := by
+  cases a <;> decide
+
+/-- **The substantive gap on `hetAsCap`.** Wood's NAlloseme inventory
+    has no case obviously fitting M&deS's trope analysis. Wood's
+    framework would need extension; Panagiotidis's framework would not.
+    Concrete: `woodAllosemeForRival .hetAsCap = none`, recording the
+    gap. -/
+theorem wood_no_trope_alloseme_for_hetAsCap :
+    woodAllosemeForRival .hetAsCap = none := rfl
+
+/-- The 9 NAllosemes are exactly: relational, sortal, alienator, content,
+    zero, simpleEvent, result, state, entity. None of these is "trope".
+    The bridge documents this as a substantive limitation of Wood's
+    inventory when applied to M&deS's adjectival nominalisation data. -/
+theorem nAlloseme_cases_count : nAllosemic.allosemeCount = 9 := rfl
+
+/-! ## Three-way framework dialogue
+
+The Mendia2020 substrate now anchors a three-way cross-framework
+dialogue on Dutch nominalisation morphology:
+
+* `McNallyDeSwart2011`: provides the data (`het rode van X`, modifier
+  distribution) and the trope analysis (Moltmann 2004).
+* `Panagiotidis2015`: applies §6.7.1 modifier-distribution diagnostic
+  geometrically; agrees with M&deS on each rival's predictions
+  (shared Ackema & Neeleman 2004 lineage).
+* `Wood2023`: requires alloseme commitment per rival; identifies a
+  framework gap (no "trope" NAlloseme), making the divergence with
+  Panagiotidis (uniform [N], no allosemes) substantive.
+
+Each framework's distinctive theoretical primitives generate distinct
+empirical commitments on the same Dutch data — exactly the kind of
+cross-framework incompatibility linglib is designed to surface. -/
+
+end MdSPanaDivergence
 
 end Wood2023

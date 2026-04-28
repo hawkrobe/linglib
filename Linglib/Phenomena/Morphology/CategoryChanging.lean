@@ -15,6 +15,15 @@ Many English roots can appear as nouns, verbs, and adjectives. The
 category of the resulting word is determined by the morphological
 environment (suffixation, zero-derivation, syntactic context), not
 by inherent properties of the root itself.
+
+## Downstream consumers
+
+* `Phenomena/Morphology/Studies/Panagiotidis2015.lean` — categoriser
+  theory consuming `RootFamily` + `LexCat`. Includes a bridge to
+  `McNallyDeSwart2011.InflectedAnalysis` (`namespace MdSBridge`) using
+  the §6.7.1 modifier-distribution diagnostic.
+* `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean` — provides an
+  `AdjEntry → RootFamily` adapter for Dutch adjective entries.
 -/
 
 namespace Phenomena.Morphology.CategoryChanging

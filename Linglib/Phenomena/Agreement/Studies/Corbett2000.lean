@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Plurals.Typology
-import Linglib.Phenomena.Agreement.Typology
+import Linglib.Fragments.English.Plurals
+import Linglib.Fragments.Japanese.Plurals
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
 import Linglib.Core.AgreementTarget
@@ -572,7 +572,7 @@ theorem sg_du_resolves_tri_with_trial :
   native_decide
 
 -- ============================================================================
--- §8: Bridges to AnimacyRank, Plurals.Typology
+-- §8: Bridges to AnimacyRank, Fragment plurality profiles
 -- ============================================================================
 
 /-- Bridge: AnimacyRank monotonicity constraint is consistent with the
@@ -582,25 +582,25 @@ theorem animacy_rank_ordering_consistent :
     AnimacyRank.speaker.toNat > AnimacyRank.human.toNat ∧
     AnimacyRank.human.toNat > AnimacyRank.higherAnimal.toNat ∧
     AnimacyRank.higherAnimal.toNat > AnimacyRank.discreteInanimate.toNat := by
-  native_decide
+  decide
 
-/-- Bridge: English NumberSystem matches the PluralityProfile in
-    `Plurals.Typology` — both record a 2-value obligatory system. -/
+/-- Bridge: English `NumberSystem` matches the English plurality profile in
+    `Fragments.English.Plurals` — both record a 2-value obligatory system. -/
 theorem english_matches_plurals_typology :
     englishNS.size = 2 ∧
     englishNS.hasGeneral = false ∧
-    Phenomena.Plurals.Typology.english.occurrence =
+    Fragments.English.pluralityProfile.occurrence =
       .allNounsAlwaysObligatory := by
-  native_decide
+  decide
 
-/-- Bridge: Japanese general number in Corbett's analysis corresponds to
-    the noNominalPlural/noPlural profile in `Plurals.Typology`. WALS and
-    Corbett describe the same facts differently: WALS says "no nominal plural,"
+/-- Bridge: Japanese general number in Corbett's analysis corresponds to the
+    `noPlural` coding in `Fragments.Japanese.Plurals`. WALS and Corbett
+    describe the same facts differently: WALS says "no nominal plural,"
     Corbett says "general number exists (form outside the system)." -/
 theorem japanese_general_vs_wals :
     japaneseNS.hasGeneral = true ∧
-    Phenomena.Plurals.Typology.japanese.coding = .noPlural := by
-  native_decide
+    Fragments.Japanese.pluralityProfile.coding = .noPlural := by
+  decide
 
 /-- Bridge: Bayso's general number explains its "no nominal plural"
     appearance — it's not that number is absent, but that the general form
@@ -611,10 +611,10 @@ theorem bayso_general_with_system :
   native_decide
 
 -- ============================================================================
--- §9: Bridge to Cysouw NumberStage (Agreement.Typology)
+-- §9: Bridge to Cysouw NumberStage (Features.Number)
 -- ============================================================================
 
-open Phenomena.Agreement.Typology (NumberStage)
+open Features.Number (NumberStage)
 
 /-- Map a Corbett NumberSystem to Cysouw's NumberStage hierarchy by
     counting the number of non-general values in the system.

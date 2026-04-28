@@ -6,6 +6,10 @@ import Linglib.Datasets.WALS.Features.F45A
 import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Datasets.WALS.Features.F47A
 import Linglib.Datasets.WALS.Features.F48A
+import Linglib.Datasets.WALS.Features.F136A
+import Linglib.Datasets.WALS.Features.F136B
+import Linglib.Datasets.WALS.Features.F137A
+import Linglib.Datasets.WALS.Features.F137B
 
 /-!
 # Pronoun typology — substrate types
@@ -257,3 +261,104 @@ theorem noPoliteness_is_majority_ch45 :
     (ch45.filter (·.value == .pronounsAvoidedForPoliteness)).length := by decide
 
 end Typology
+
+-- ============================================================================
+-- Pronoun phonological shape — WALS Chs 136, 137 @cite{nichols-peterson-2013}
+-- ============================================================================
+
+namespace Typology
+
+/-- M-T pronoun pattern (WALS Ch 136A, @cite{nichols-peterson-2013}):
+    whether 1SG has /m/ and 2SG has /t/, a widespread cross-linguistic
+    pattern hypothesized to reflect deep genealogical signal. -/
+inductive MTPronounPattern where
+  /-- No M-T pattern in the pronoun paradigm. -/
+  | absent
+  /-- M-T pattern is paradigmatic (systematic across forms). -/
+  | paradigmatic
+  /-- M-T pattern is non-paradigmatic (sporadic). -/
+  | nonParadigmatic
+  deriving DecidableEq, Repr
+
+/-- Whether 1SG has an m-initial or m-containing form (WALS Ch 136B). -/
+inductive MIn1SG where
+  | absent
+  | present
+  deriving DecidableEq, Repr
+
+/-- N-M pronoun pattern (WALS Ch 137A, @cite{nichols-peterson-2013}):
+    whether 1SG has /n/ and 2SG has /m/. -/
+inductive NMPronounPattern where
+  | absent
+  | paradigmatic
+  | nonParadigmatic
+  deriving DecidableEq, Repr
+
+/-- Whether 2SG has an m-initial or m-containing form (WALS Ch 137B). -/
+inductive MIn2SG where
+  | absent
+  | present
+  deriving DecidableEq, Repr
+
+/-- A language's pronoun-shape profile across @cite{wals-2013} Chs 136–137.
+    Sister to `PronounProfile` (Chs 39–48). Kept as a separate struct to
+    avoid contaminating the feature-system bundle with phonological-shape
+    fields. -/
+structure PronounShapeProfile where
+  language : String
+  iso : String := ""
+  /-- Ch 136A: M-T pronoun pattern. -/
+  mtPronouns : Option MTPronounPattern := none
+  /-- Ch 136B: M in 1SG. -/
+  mIn1sg : Option MIn1SG := none
+  /-- Ch 137A: N-M pronoun pattern. -/
+  nmPronouns : Option NMPronounPattern := none
+  /-- Ch 137B: M in 2SG. -/
+  mIn2sg : Option MIn2SG := none
+  deriving Repr
+
+-- WALS converters for the four shape features.
+
+def fromWALS136A : Datasets.WALS.F136A.MTPronouns → MTPronounPattern
+  | .noMTPronouns              => .absent
+  | .mTPronounsParadigmatic    => .paradigmatic
+  | .mTPronounsNonParadigmatic => .nonParadigmatic
+
+def fromWALS136B : Datasets.WALS.F136B.MInFirstPersonSingular → MIn1SG
+  | .noMInFirstPersonSingular => .absent
+  | .mInFirstPersonSingular   => .present
+
+def fromWALS137A : Datasets.WALS.F137A.NMPronouns → NMPronounPattern
+  | .noNMPronouns              => .absent
+  | .nMPronounsParadigmatic    => .paradigmatic
+  | .nMPronounsNonParadigmatic => .nonParadigmatic
+
+def fromWALS137B : Datasets.WALS.F137B.MInSecondPersonSingular → MIn2SG
+  | .noMInSecondPersonSingular => .absent
+  | .mInSecondPersonSingular   => .present
+
+/-- WALS Ch 136A distribution: M-T pronoun patterns
+    (@cite{nichols-peterson-2013}, n = 230). -/
+structure MTCounts where
+  absent : Nat
+  paradigmatic : Nat
+  nonParadigmatic : Nat
+  deriving Repr
+
+def MTCounts.total (c : MTCounts) : Nat :=
+  c.absent + c.paradigmatic + c.nonParadigmatic
+
+/-- WALS Ch 136A counts (230 languages). -/
+def walsMT : MTCounts :=
+  { absent := 200
+  , paradigmatic := 27
+  , nonParadigmatic := 3 }
+
+/-- The M-T pronoun pattern is a clear minority cross-linguistically: only
+    30/230 languages (~13%) show any form of it; 200/230 lack it entirely.
+    Despite its visibility in Indo-European, it is not a typological default. -/
+theorem mt_pronouns_minority :
+    walsMT.absent > walsMT.paradigmatic + walsMT.nonParadigmatic := by decide
+
+end Typology
+

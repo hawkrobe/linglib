@@ -1,16 +1,22 @@
 import Linglib.Typology.ClassifierSystem
+import Linglib.Datasets.WALS.Features.F53A
+import Linglib.Datasets.WALS.Features.F54A
+import Linglib.Datasets.WALS.Features.F131A
 
 /-!
-# Numeral typology — substrate types
-@cite{wals-2013} (Chs 53, 54, 55, 56, 131)
+# Numeral typology — substrate types and WALS data
+@cite{wals-2013} (Chs 53, 54, 55, 56, 131) @cite{aikhenvald-2000}
+@cite{greenberg-1978} @cite{stolz-veselinova-2013}
 
 Type-level enums + per-language profile struct for numeral systems
 across @cite{wals-2013} chapters 53–56 (Gil, Comrie) and 131:
 ordinal formation, distributive numerals, numeral classifiers,
-conjunction-quantifier identity, numeral base.
+conjunction-quantifier identity, numeral base. Plus WALS distribution
+data, the principal cross-linguistic generalizations, and the Greenberg
+suppletion hierarchy for ordinal formation.
 
-`ClassifierStatus` (WALS Ch 55) lives in `Typology/ClassifierSystem.lean`
-and is re-imported here for `NumeralProfile.classifier`.
+`ClassifierStatus` (WALS Ch 55) and `fromWALS55A` live in
+`Typology/ClassifierSystem.lean` and are re-imported here.
 
 ## Schema
 
@@ -21,6 +27,8 @@ and is re-imported here for `NumeralProfile.classifier`.
 - `PluralMarking`: nominal plural status (Sanches-Slobin)
 - `NumeralBase` (Ch 131): decimal/vigesimal/etc.
 - `NumeralProfile`: per-language bundle
+
+Per-language data lives in `Fragments/{Lang}/Numerals.lean`.
 -/
 
 set_option autoImplicit false
@@ -149,5 +157,216 @@ def NumeralProfile.hasDistributive (p : NumeralProfile) : Bool :=
 /-- Is a language in the East/Southeast Asian region? -/
 def NumeralProfile.isEastSoutheastAsian (p : NumeralProfile) : Bool :=
   p.region == .eastAsia || p.region == .southeastAsia
+
+-- ============================================================================
+-- WALS converters
+-- ============================================================================
+
+/-- Convert WALS 53A ordinal numeral values to the substrate enum.
+    WALS distinguishes eight subtypes; we collapse them into five categories.
+    "First, two-th, three-th" and "First, two, three" both map to
+    `firstSuppletion` (only "first" suppletive). "One, two, three" and
+    "First/one-th, …" map to `various`. -/
+def fromWALS53A : Datasets.WALS.F53A.OrdinalNumerals → OrdinalFormation
+  | .none => .noOrdinals
+  | .oneTwoThree => .various
+  | .firstTwoThree => .firstSuppletion
+  | .oneThTwoThThreeTh => .allFromCardinals
+  | .firstOneThTwoThThreeTh => .various
+  | .firstTwoThThreeTh => .firstSuppletion
+  | .firstSecondThreeTh => .firstSecondSuppletion
+  | .various => .various
+
+/-- Convert WALS 54A distributive numeral values to the substrate enum.
+    Word-level and mixed strategies collapse into `markedByOtherMeans`. -/
+def fromWALS54A : Datasets.WALS.F54A.DistributiveNumerals → DistributiveNumeral
+  | .noDistributiveNumerals => .noDistributive
+  | .markedByReduplication => .markedByReduplication
+  | .markedByPrefix => .markedByPrefix
+  | .markedBySuffix => .markedBySuffix
+  | .markedByPrecedingWord => .markedByOtherMeans
+  | .markedByFollowingWord => .markedByOtherMeans
+  | .markedByMixedOrOtherStrategies => .markedByOtherMeans
+
+/-- Convert WALS 131A numeral base values to the substrate enum (one-to-one). -/
+def fromWALS131A : Datasets.WALS.F131A.NumeralBases → NumeralBase
+  | .decimal => .decimal
+  | .pureVigesimal => .vigesimal
+  | .hybridVigesimalDecimal => .hybridVigesimalDecimal
+  | .otherBase => .otherBase
+  | .extendedBodyPartSystem => .bodyPartSystem
+  | .restricted => .restricted
+
+-- ============================================================================
+-- WALS distribution data (Ch 53, 54, 56)
+-- ============================================================================
+
+/-- WALS Chapter 53 distribution: language counts per ordinal formation type.
+    Total: 321 languages. -/
+structure OrdinalDistribution where
+  firstSuppletion : Nat
+  firstSecondSuppletion : Nat
+  allFromCardinals : Nat
+  various : Nat
+  noOrdinals : Nat
+  deriving Repr
+
+def OrdinalDistribution.total (d : OrdinalDistribution) : Nat :=
+  d.firstSuppletion + d.firstSecondSuppletion + d.allFromCardinals +
+  d.various + d.noOrdinals
+
+/-- WALS Ch 53 counts (321 languages). -/
+def ch53Distribution : OrdinalDistribution :=
+  { firstSuppletion := 99
+  , firstSecondSuppletion := 45
+  , allFromCardinals := 28
+  , various := 83
+  , noOrdinals := 66 }
+
+/-- WALS Chapter 54 distribution: language counts per distributive type.
+    Total: 251 languages. -/
+structure DistributiveDistribution where
+  noDistributive : Nat
+  reduplication : Nat
+  suffixCount : Nat
+  prefixCount : Nat
+  otherMeans : Nat
+  deriving Repr
+
+def DistributiveDistribution.total (d : DistributiveDistribution) : Nat :=
+  d.noDistributive + d.reduplication + d.suffixCount + d.prefixCount + d.otherMeans
+
+/-- WALS Ch 54 counts (251 languages). -/
+def ch54Distribution : DistributiveDistribution :=
+  { noDistributive := 63
+  , reduplication := 85
+  , suffixCount := 34
+  , prefixCount := 19
+  , otherMeans := 50 }
+
+/-- WALS Chapter 56 distribution: language counts per conjunction-quantifier
+    type. Total: 220 languages. -/
+structure ConjQuantDistribution where
+  identity : Nat
+  differentiation : Nat
+  deriving Repr
+
+def ConjQuantDistribution.total (d : ConjQuantDistribution) : Nat :=
+  d.identity + d.differentiation
+
+/-- WALS Ch 56 counts (220 languages). -/
+def ch56Distribution : ConjQuantDistribution :=
+  { identity := 43
+  , differentiation := 177 }
+
+-- ============================================================================
+-- Cross-linguistic generalizations: ordinals (Ch 53)
+-- ============================================================================
+
+/-- Suppletive "first" is the dominant ordinal formation strategy (WALS Ch 53).
+    Languages with suppletive "first" (alone or with suppletive "second")
+    outnumber languages where all ordinals derive regularly from cardinals. -/
+theorem suppletive_first_dominant :
+    ch53Distribution.firstSuppletion + ch53Distribution.firstSecondSuppletion >
+    ch53Distribution.allFromCardinals := by decide
+
+/-- "First" suppletion alone is the single most common ordinal pattern. -/
+theorem first_suppletion_most_common :
+    ch53Distribution.firstSuppletion > ch53Distribution.firstSecondSuppletion ∧
+    ch53Distribution.firstSuppletion > ch53Distribution.allFromCardinals ∧
+    ch53Distribution.firstSuppletion > ch53Distribution.noOrdinals := by decide
+
+/-- Languages with some form of ordinal formation (regular or suppletive)
+    outnumber languages lacking ordinals entirely. -/
+theorem most_languages_have_ordinals :
+    ch53Distribution.firstSuppletion + ch53Distribution.firstSecondSuppletion +
+    ch53Distribution.allFromCardinals + ch53Distribution.various >
+    ch53Distribution.noOrdinals * 3 := by decide
+
+-- ============================================================================
+-- Cross-linguistic generalizations: distributives (Ch 54)
+-- ============================================================================
+
+/-- Languages with dedicated distributive numeral forms outnumber those
+    without, but neither is a negligible minority. -/
+theorem distributive_majority_has_marking :
+    ch54Distribution.reduplication + ch54Distribution.suffixCount +
+    ch54Distribution.prefixCount + ch54Distribution.otherMeans >
+    ch54Distribution.noDistributive := by decide
+
+/-- Reduplication is the single most common distributive strategy,
+    outnumbering any other individual morphological means. -/
+theorem reduplication_most_common_distributive :
+    ch54Distribution.reduplication > ch54Distribution.suffixCount ∧
+    ch54Distribution.reduplication > ch54Distribution.prefixCount ∧
+    ch54Distribution.reduplication > ch54Distribution.otherMeans ∧
+    ch54Distribution.reduplication > ch54Distribution.noDistributive := by decide
+
+-- ============================================================================
+-- Cross-linguistic generalizations: conjunctions and quantifiers (Ch 56)
+-- ============================================================================
+
+/-- Differentiation between 'and' and 'all' is the dominant pattern (WALS Ch 56). -/
+theorem differentiation_dominant :
+    ch56Distribution.differentiation > ch56Distribution.identity := by decide
+
+/-- Differentiation accounts for more than three-quarters of the sample. -/
+theorem differentiation_supermajority :
+    ch56Distribution.differentiation * 4 > ch56Distribution.total * 3 := by decide
+
+/-- Identity between 'and' and 'all' is a non-negligible minority pattern,
+    attested in roughly a fifth of languages (43 out of 220). -/
+theorem identity_nonnegligible :
+    ch56Distribution.identity * 6 ≥ ch56Distribution.total := by decide
+
+-- ============================================================================
+-- Greenberg's suppletion hierarchy for ordinals
+-- ============================================================================
+
+/-- @cite{greenberg-1978}'s implicational universal for ordinal suppletion:
+    if a language has a suppletive ordinal for numeral N, then it has
+    suppletive ordinals for all numerals less than N. Equivalently:
+    suppletion cuts off at some point in the sequence 1st, 2nd, 3rd,…
+    and all ordinals above the cutoff are regular.
+
+    The WALS data captures the coarsest version: suppletion is most likely
+    for "first", less likely for "second", and rare beyond that. -/
+inductive SuppletionCutoff where
+  /-- No suppletive ordinals (all regular from cardinals). -/
+  | none
+  /-- Only "first" is suppletive. -/
+  | first
+  /-- "first" and "second" are suppletive. -/
+  | firstAndSecond
+  deriving DecidableEq, Repr
+
+/-- Numeric rank for the suppletion cutoff (higher = more suppletion). -/
+def SuppletionCutoff.rank : SuppletionCutoff → Nat
+  | .none => 0
+  | .first => 1
+  | .firstAndSecond => 2
+
+/-- Map ordinal formation type to suppletion cutoff. Languages with 'various'
+    or 'no ordinals' patterns are excluded from the hierarchy. -/
+def OrdinalFormation.suppletionCutoff : OrdinalFormation → Option SuppletionCutoff
+  | .allFromCardinals => some .none
+  | .firstSuppletion => some .first
+  | .firstSecondSuppletion => some .firstAndSecond
+  | .various => Option.none
+  | .noOrdinals => Option.none
+
+/-- The hierarchy is consistent: rank of each cutoff increases monotonically. -/
+theorem suppletion_hierarchy_ordering :
+    SuppletionCutoff.none.rank < SuppletionCutoff.first.rank ∧
+    SuppletionCutoff.first.rank < SuppletionCutoff.firstAndSecond.rank := by decide
+
+/-- WALS aggregate confirms the hierarchy: languages with "first"-only
+    suppletion outnumber those with "first+second" suppletion, which in turn
+    outnumber those with no suppletion at all. This reflects the implicational
+    scale: suppletion at higher numerals is rarer. -/
+theorem suppletion_frequency_matches_hierarchy :
+    ch53Distribution.firstSuppletion > ch53Distribution.firstSecondSuppletion ∧
+    ch53Distribution.firstSecondSuppletion > ch53Distribution.allFromCardinals := by
+  decide
 
 end Typology

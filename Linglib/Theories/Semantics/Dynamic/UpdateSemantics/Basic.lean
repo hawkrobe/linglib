@@ -35,7 +35,7 @@ Propositional update: eliminate worlds where φ fails.
 
 ⟦φ⟧(s) = { w ∈ s | φ(w) }
 -/
-def Update.prop {W : Type*} (φ : W → Bool) : Update W :=
+def Update.prop {W : Type*} (φ : W → Prop) : Update W :=
   λ s => { w ∈ s | φ w }
 
 /--
@@ -96,32 +96,24 @@ the might test passes on the initial state, then learning eliminates ¬rain worl
 
 Requires `Nontrivial W`: for empty or singleton W, no state has both
 p-worlds and ¬p-worlds, making the second conjunct unsatisfiable. -/
-theorem might_order_matters {W : Type*} [Nontrivial W] :
-    ∃ (p : W → Bool) (s : State W),
-      Update.conj (Update.prop p) (Update.might (Update.prop λ w => !p w)) s = ∅ ∧
-      (Update.conj (Update.might (Update.prop λ w => !p w)) (Update.prop p) s).Nonempty := by
+theorem might_order_matters {W : Type*} [DecidableEq W] [Nontrivial W] :
+    ∃ (p : W → Prop) (_ : DecidablePred p) (s : State W),
+      Update.conj (Update.prop p) (Update.might (Update.prop fun w => ¬p w)) s = ∅ ∧
+      (Update.conj (Update.might (Update.prop fun w => ¬p w)) (Update.prop p) s).Nonempty := by
   obtain ⟨w₁, w₂, hne⟩ := exists_pair_ne W
-  let p : W → Bool := fun w => decide (w = w₁)
-  use p, {w₁, w₂}
-  have hp_w₁ : p w₁ = true := by simp [p]
-  have hp_w₂ : p w₂ = false := by simp [p, hne.symm]
-  have hnp_w₁ : (!p w₁) = false := by simp [hp_w₁]
-  have hnp_w₂ : (!p w₂) = true := by simp [hp_w₂]
-  constructor
-  · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ = false
+  refine ⟨fun w => w = w₁, inferInstance, {w₁, w₂}, ?_, ?_⟩
+  · -- "p and might(not p)" fails: after learning p, only w₁ remains, and ¬p w₁ is false
     simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
-    have h_not_nonempty : ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | p w = true} |
-        (!p w) = true}).Nonempty := by
-      intro ⟨w, hw_mem, hw_np⟩
-      have hw_p : p w = true := hw_mem.2
-      simp [hw_p] at hw_np
+    have h_not_nonempty :
+        ¬({w ∈ {w ∈ ({w₁, w₂} : Set W) | w = w₁} | ¬w = w₁}).Nonempty := by
+      rintro ⟨w, ⟨_, hw_p⟩, hw_np⟩; exact hw_np hw_p
     simp only [h_not_nonempty, ↓reduceIte]
   · -- "might(not p) and p" succeeds: might test passes on {w₁, w₂}, then p keeps w₁
     simp only [Update.conj, Core.CCP.seq, Update.prop, Update.might, Core.CCP.might]
-    have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | (!p w) = true}).Nonempty := by
-      exact ⟨w₂, Or.inr rfl, hnp_w₂⟩
+    have h_nonempty : ({w ∈ ({w₁, w₂} : Set W) | ¬w = w₁}).Nonempty :=
+      ⟨w₂, Or.inr rfl, hne.symm⟩
     simp only [h_nonempty, ↓reduceIte]
-    exact ⟨w₁, ⟨Or.inl rfl, hp_w₁⟩⟩
+    exact ⟨w₁, ⟨Or.inl rfl, rfl⟩⟩
 
 /--
 State s supports φ iff updating with φ doesn't change s.
@@ -200,7 +192,7 @@ abbrev PState (W : Type*) := Option (State W)
              = s[φ]  otherwise
 
     @cite{heim-1982} @cite{beaver-2001} @cite{veltman-1996} -/
-noncomputable def PUpdate.presup {W : Type*} (p φ : W → Bool) : PState W → PState W
+noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → PState W
   | none => none
   | some s =>
     if Update.prop p s = s then
@@ -211,7 +203,7 @@ noncomputable def PUpdate.presup {W : Type*} (p φ : W → Bool) : PState W → 
 /-- Negation extended to PState: s[¬φ] = s/s[φ].
 
     @cite{yagi-2025} Definition 4: s[¬φ] = s \ s[φ]. -/
-noncomputable def PUpdate.neg {W : Type*} (φ : W → Bool) : PState W → PState W
+noncomputable def PUpdate.neg {W : Type*} (φ : W → Prop) : PState W → PState W
   | none => none
   | some s => some (s \ Update.prop φ s)
 
@@ -219,7 +211,7 @@ noncomputable def PUpdate.neg {W : Type*} (φ : W → Bool) : PState W → PStat
 
     @cite{yagi-2025} Definition 4, @cite{heim-1982}.
     Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
-noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Bool) :
+noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Prop) :
     PState W → PState W
   | none => none
   | some s =>
@@ -236,7 +228,7 @@ noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Bool) :
 
     Both presuppositional updates must be defined for the result to be
     defined: s[φ_p] requires s ⊨ p, and s[¬φ_p][ψ_q] requires s[¬φ_p] ⊨ q. -/
-noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Bool) :
+noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Prop) :
     PState W → PState W
   | none => none
   | some s =>
@@ -264,7 +256,7 @@ noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Bool) :
     violates genuineness (@cite{zimmermann-2000}), the split becomes
     non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
 noncomputable def PUpdate.disjFlex {W : Type*}
-    (χ φ_presup φ ω ψ_presup ψ : W → Bool)
+    (χ φ_presup φ ω ψ_presup ψ : W → Prop)
     (_h_split : ∀ s : State W, Update.prop χ s ∪ Update.prop ω s = s) :
     PState W → PState W
   | none => none
@@ -291,25 +283,22 @@ noncomputable def PUpdate.disjFlex {W : Type*}
     `update_yields_undefined` in the Yagi2025 study, which shows the
     update is undefined (∗) rather than uninformative. -/
 theorem presup_disj_uninformative_when_supported {W : Type*}
-    (p φ q ψ : W → Bool) (s : State W)
+    (p φ q ψ : W → Prop) (s : State W)
     (hp : Update.prop p s = s) (hq : Update.prop q s = s)
-    (h_or : ∀ w, w ∈ s → (φ w = true ∨ ψ w = true)) :
+    (h_or : ∀ w, w ∈ s → (φ w ∨ ψ w)) :
     PUpdate.disjPresup p φ q ψ (some s) = some s := by
-  -- Unfold the definition and reduce step by step
   unfold PUpdate.disjPresup PUpdate.presup
-  -- Eliminate the presupposition check for the left disjunct
   -- Helper: q holds at every world in s (from hq)
-  have hq_at : ∀ w, w ∈ s → q w = true := by
+  have hq_at : ∀ w, w ∈ s → q w := by
     intro w hw
     have : w ∈ Update.prop q s := hq.symm ▸ hw
     exact this.2
   -- Helper: q is supported on any subset of s
   have hq_sub : ∀ t : State W, t ⊆ s → Update.prop q t = t := by
-    intro t ht; ext w; constructor
-    · exact fun ⟨hw, _⟩ => hw
-    · intro hw; exact ⟨hw, hq_at w (ht hw)⟩
+    intro t ht; ext w
+    exact ⟨fun h => h.1, fun hw => ⟨hw, hq_at w (ht hw)⟩⟩
   -- Helper: ψ holds everywhere in s \ Update.prop φ s (by h_or + φ failure)
-  have hψ_sub : ∀ w, w ∈ s \ Update.prop φ s → ψ w = true := by
+  have hψ_sub : ∀ w, w ∈ s \ Update.prop φ s → ψ w := by
     intro w ⟨hw, hnφ⟩
     cases h_or w hw with
     | inl h => exact absurd (show w ∈ Update.prop φ s from ⟨hw, h⟩) hnφ
@@ -321,14 +310,12 @@ theorem presup_disj_uninformative_when_supported {W : Type*}
   suffices h : Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s by
     exact congrArg some h
   apply Set.Subset.antisymm
-  · -- ⊆: both sides are subsets of s
-    intro w hw
+  · intro w hw
     cases hw with
     | inl h => exact h.1
     | inr h => exact h.1.1
-  · -- ⊇: every w ∈ s is in one side or the other
-    intro w hw
-    by_cases hφ : φ w = true
+  · intro w hw
+    by_cases hφ : φ w
     · exact Set.mem_union_left _ ⟨hw, hφ⟩
     · exact Set.mem_union_right _ ⟨⟨hw, fun h => hφ h.2⟩, hψ_sub w ⟨hw, fun h => hφ h.2⟩⟩
 

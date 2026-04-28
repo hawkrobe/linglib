@@ -11,8 +11,8 @@ points.
 **`PrProp W`**: `presup : W → Prop`, `assertion : W → Prop`. The canonical type
 for partial propositions. Following the Mathlib convention, fields are
 Prop-valued; use `open Classical` + `by_cases` for case splits. For
-computational evaluation with concrete Bool values, use `PrProp.ofBool` to
-construct and `PrProp.eval` to evaluate.
+finite worlds with `DecidableEq`, the predicates are auto-decidable and
+`PrProp.eval` reduces via `if_pos`/`if_neg`.
 
 **`PrValue W α`** (Bool-based presupposition, polymorphic value): a separate
 type for presupposed non-boolean values (degrees, entities, etc.).
@@ -76,8 +76,9 @@ end PrValue
 
 /-- A presuppositional proposition: assertion + presupposition.
 
-    Fields are `Prop`-valued following the Mathlib convention. For
-    Bool-valued construction, use `PrProp.ofBool`. -/
+    Fields are `Prop`-valued following the Mathlib convention. Construct
+    directly with `{ presup := ..., assertion := ... }`; for finite worlds
+    with `DecidableEq`, the predicates are auto-decidable. -/
 @[ext]
 structure PrProp (W : Type*) where
   /-- The presupposition (must hold for definedness). -/
@@ -94,18 +95,6 @@ variable {W : Type*}
 -- ════════════════════════════════════════════════════════════════
 -- Constructors
 -- ════════════════════════════════════════════════════════════════
-
-/-- Convenience constructor from Bool-valued functions.
-    Wraps both fields with `= true`, preserving decidability for
-    `native_decide` proofs. -/
-def ofBool (presup assertion : W → Bool) : PrProp W where
-  presup := fun w => presup w = true
-  assertion := fun w => assertion w = true
-
-/-- Create a presuppositionless proposition from a `W → Bool`. -/
-def ofBProp (p : (W → Bool)) : PrProp W where
-  presup := fun _ => True
-  assertion := fun w => p w = true
 
 /-- Create a presuppositionless proposition from a `W → Prop`. -/
 def ofProp' (p : W → Prop) : PrProp W where
@@ -391,19 +380,55 @@ def strawsonEquiv (p q : PrProp W) : Prop :=
   strawsonEntails p q ∧ strawsonEntails q p
 
 -- ════════════════════════════════════════════════════════════════
--- Genuineness
+-- Genuineness / Liveness
 -- @cite{zimmermann-2000} @cite{geurts-2005} @cite{katzir-singh-2012}
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Genuineness** for disjunction: both disjuncts are "live possibilities"
-    in a state. Each disjunct must be satisfied (presupposition and assertion
-    hold) at some world in the state.
+/-- **Liveness** for disjunction: each disjunct is satisfied (presupposition
+    AND assertion hold) at some world of the state.
 
-    @cite{zimmermann-2000}: disjunction requires that each disjunct be a
-    "live possibility." @cite{yagi-2025} Definition 8. -/
-def genuineness (p q : PrProp W) (s : Finset W) : Prop :=
+    This is the singleton-survival side of @cite{yagi-2025} Definition 8:
+    `{w}[φ] = {w}` for some `w ∈ s`. The disjunction-update side
+    (`w ∈ s[φ ∨ ψ]`) is the additional constraint expressed by
+    `genuineness` below. -/
+def liveness (p q : PrProp W) (s : Finset W) : Prop :=
   (∃ w ∈ s, p.holds w) ∧
   (∃ w ∈ s, q.holds w)
+
+/-- **Genuineness** for disjunction (@cite{yagi-2025} Definition 8, after
+    @cite{zimmermann-2000}). A disjunction `p ∨ q`, with disjunction-update
+    realised by the connective `disj`, follows genuineness in a state `s` iff
+    there are worlds `w, w' ∈ s` such that:
+
+    - `{w}[p] = {w}` AND `w ∈ s[p ∨ q]` — the left disjunct's witness survives
+      both its own update (= `p.holds w`) and the disjunction's update
+      (= `disj.holds w`).
+    - `{w'}[q] = {w'}` AND `w' ∈ s[p ∨ q]` — analogously for the right disjunct.
+
+    The disjunction-update side rules out witnesses that survive the local
+    presupposition+assertion update but are eliminated by the joint update —
+    a vacuous addition under `orFlex`/`orBelnap` (`liveness_implies_genuineness_orFlex`),
+    but the substantive constraint @cite{yagi-2025} §3.2 invokes for dynamic
+    negation: genuineness must hold even within the scope of negation, where
+    "we end up negating both disjuncts".
+
+    The `disj` argument is parametric so the substrate stays
+    framework-neutral; consumers supply the disjunction connective whose
+    update they wish to test against (orFlex / orBelnap / classical or /
+    Geurts modal split). -/
+def genuineness (p q : PrProp W) (s : Finset W) (disj : PrProp W) : Prop :=
+  (∃ w ∈ s, p.holds w ∧ disj.holds w) ∧
+  (∃ w ∈ s, q.holds w ∧ disj.holds w)
+
+/-- Under `orFlex`, `liveness` implies `genuineness`: each witness for
+    `p.holds`/`q.holds` automatically survives the disjunction's update,
+    because `(orFlex p q).holds w` reduces to `p.holds w ∨ q.holds w`. -/
+theorem liveness_implies_genuineness_orFlex (p q : PrProp W) (s : Finset W)
+    (h : liveness p q s) : genuineness p q s (orFlex p q) := by
+  obtain ⟨⟨w, hw, hp⟩, ⟨w', hw', hq⟩⟩ := h
+  refine ⟨⟨w, hw, hp, ?_⟩, ⟨w', hw', hq, ?_⟩⟩
+  · exact ⟨Or.inl hp.1, Or.inl hp⟩
+  · exact ⟨Or.inr hq.1, Or.inr hq⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- Projections
@@ -497,17 +522,6 @@ theorem impFilter_trivializes_presup (p q : PrProp W)
     `p.presup ∧ (p.assertion → q.presup)`. -/
 theorem impFilter_presup_eq_andFilter_presup (p q : PrProp W) :
     (impFilter p q).presup = (andFilter p q).presup := rfl
-
--- ════════════════════════════════════════════════════════════════
--- ofBProp Theorems
--- ════════════════════════════════════════════════════════════════
-
-/-- ofBProp creates presuppositionless propositions. -/
-theorem ofBProp_no_presup (p : (W → Bool)) (w : W) : (ofBProp p).presup w := trivial
-
-/-- ofBProp preserves assertion (modulo Bool→Prop wrapping). -/
-theorem ofBProp_assertion (p : (W → Bool)) (w : W) :
-    (ofBProp p).assertion w ↔ (p w = true) := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- Evaluation Theorems
@@ -805,9 +819,15 @@ theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
 -- Genuineness
 -- ════════════════════════════════════════════════════════════════
 
-/-- Genuineness is symmetric. -/
-theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
-    genuineness p q s ↔ genuineness q p s := by
+/-- Liveness is symmetric. -/
+theorem liveness_comm (p q : PrProp W) (s : Finset W) :
+    liveness p q s ↔ liveness q p s := by
+  simp only [liveness, and_comm]
+
+/-- Genuineness is symmetric whenever the supplied disjunction connective is
+    symmetric in its operands. -/
+theorem genuineness_comm (p q : PrProp W) (s : Finset W) (disj : PrProp W) :
+    genuineness p q s disj ↔ genuineness q p s disj := by
   simp only [genuineness, and_comm]
 
 -- ════════════════════════════════════════════════════════════════
@@ -853,6 +873,19 @@ theorem disjFilterLeft_recovers (firstDisjunct : W → Prop) (sp : PrProp W)
     sp.holds w := by
   obtain ⟨hPresup, hAssert⟩ := hFiltered
   exact ⟨hPresup hFirst, hAssert.resolve_left hFirst⟩
+
+/-- When `¬A` entails `q`'s presupposition pointwise, `disjFilterLeft A q`
+    is presuppositionless (the filtering condition is satisfied at every
+    world). The substrate-side fact behind @cite{karttunen-1973}'s
+    asymmetric disjunction filtering rule (24b), p. 181: "A or B" carries
+    no residual presupposition from B when ¬A entails it. -/
+theorem disjFilterLeft_eliminates_presup_when_neg_entails
+    (A : W → Prop) (q : PrProp W)
+    (h : ∀ w, ¬A w → q.presup w) :
+    (disjFilterLeft A q).presup = fun _ => True := by
+  funext w
+  simp only [disjFilterLeft, eq_iff_iff, iff_true]
+  exact h w
 
 /-- Presupposition of `negFactive` is full satisfaction of the complement. -/
 theorem negFactive_presup_eq (complement : PrProp W)

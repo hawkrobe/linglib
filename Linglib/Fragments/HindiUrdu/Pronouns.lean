@@ -25,4 +25,15 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .identical
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- Hindi-Urdu pronoun phonological shape (WALS Chs 136–137): paradigmatic
+    M-T (*main*/*tum* show m/t); 1SG has /m/ in *main*; no N-M;
+    no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "Hindi-Urdu"
+  , iso := "hin"
+  , mtPronouns := some .paradigmatic
+  , mIn1sg := some .present
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.HindiUrdu

@@ -625,4 +625,27 @@ theorem ps3_dual_triple_excluded :
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 7 = false := by
   decide
 
+-- ============================================================================
+-- § 4: Number Opposition Stages (@cite{cysouw-2009}, Fig 10.8)
+-- ============================================================================
+
+/-- Number opposition stages (@cite{cysouw-2009}, Fig 10.8).
+    A coarsening over the eight @cite{corbett-2000} number values into a
+    four-step hierarchy of typological "richness", from no number marking
+    (N₁) to full number marking with restricted groups (N₃/N₄).
+
+    Used by both @cite{cysouw-2009} (paradigmatic person-marking) and
+    @cite{corbett-2000} (`NumberSystem.toNumberStage` bridge in
+    `Phenomena/Agreement/Studies/Corbett2000.lean`). -/
+inductive NumberStage where
+  /-- Undifferentiated number marking (singular = group unmarked). -/
+  | N1
+  /-- Singular vs group (basic number opposition). -/
+  | N2
+  /-- Restricted group (dual/trial) distinguished from unrestricted. -/
+  | N3
+  /-- Small group (paucal) additionally distinguished. -/
+  | N4
+  deriving DecidableEq, Repr
+
 end Features.Number

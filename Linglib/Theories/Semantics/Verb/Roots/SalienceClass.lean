@@ -16,7 +16,7 @@ study so that other Fragment / Theory modules can refer to it
 (e.g., the Yukatek 5-way verb stem classification, which refines
 this 4-way cut). The full @cite{lucy-1994} analysis — operator
 orbits, motion-roots-non-class theorem, per-root verifications —
-lives in `Phenomena/LexicalTypology/Studies/Lucy1994.lean`.
+lives in `Phenomena/ArgumentStructure/Studies/Lucy1994.lean`.
 -/
 
 namespace Semantics.Verb.Roots

@@ -72,10 +72,10 @@ theorem pip_felicity_agrees_with_andFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
     (Core.Presupposition.PrProp.andFilter
-      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)
-      (Core.Presupposition.PrProp.ofBool ψ.felicitous ψ.truth)).presup w := by
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
   simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.andFilter,
-    Core.Presupposition.PrProp.ofBool, Bool.and_eq_true, Bool.or_eq_true]
+    Bool.and_eq_true, Bool.or_eq_true]
   constructor
   · intro ⟨h1, h2⟩
     exact ⟨h1, fun ht => by
@@ -96,9 +96,8 @@ theorem pip_felicity_agrees_with_neg {W : Type*}
     (φ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
     (Core.Presupposition.PrProp.neg
-      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg,
-    Core.Presupposition.PrProp.ofBool]
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg]
 
 /--
 PIP's implication felicity agrees with `PrProp.impFilter`.
@@ -112,10 +111,10 @@ theorem pip_felicity_agrees_with_impFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.impl φ ψ).felicitous w = true) ↔
     (Core.Presupposition.PrProp.impFilter
-      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)
-      (Core.Presupposition.PrProp.ofBool ψ.felicitous ψ.truth)).presup w := by
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
   simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.impFilter,
-    Core.Presupposition.PrProp.ofBool, Bool.and_eq_true, Bool.or_eq_true]
+    Bool.and_eq_true, Bool.or_eq_true]
   constructor
   · intro ⟨h1, h2⟩
     exact ⟨h1, fun ht => by

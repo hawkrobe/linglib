@@ -23,4 +23,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .differentiated
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- French pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
+    (*moi*/*toi*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "French"
+  , iso := "fra"
+  , mtPronouns := some .paradigmatic
+  , mIn1sg := some .present
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.French

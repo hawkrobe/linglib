@@ -124,4 +124,14 @@ def pronounProfile : Typology.PronounProfile :=
   , intensifierReflexive := some .differentiated
   , personMarkingAdpositions := some .noPersonMarking }
 
+/-- German pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
+    (*mich*/*dich*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
+def pronounShapeProfile : Typology.PronounShapeProfile :=
+  { language := "German"
+  , iso := "deu"
+  , mtPronouns := some .paradigmatic
+  , mIn1sg := some .present
+  , nmPronouns := some .absent
+  , mIn2sg := some .absent }
+
 end Fragments.German

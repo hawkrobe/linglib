@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Morphology.CategoryChanging
+import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 
@@ -187,5 +188,198 @@ theorem all_families_match_all_categorizers :
     allFamilies.all (fun rf =>
       rf.hasCategory .verb && rf.hasCategory .noun && rf.hasCategory .adjective) = true := by
   native_decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6: Cross-framework bridge to @cite{mcnally-deswart-2011}
+-- ════════════════════════════════════════════════════════════════
+
+/-! ## Bridge: §6.7.1 modifier-distribution diagnostic ↔ M&deS §2.3 (13)
+
+@cite{panagiotidis-2015} §6.7.1 (35)–(36) deploys a *modifier-distribution*
+diagnostic for SWITCH placement in mixed projections, with Dutch examples
+adapted from Ackema & Neeleman (2004:173):
+
+* (35) `dat [stiekem succesvolle liedjes jatten]` — adverb `stiekem`
+  sits BELOW the SWITCH (in the verbal/adjectival subtree)
+* (36) `dat stiekeme [succesvolle liedjes jatten]` — adjective `stiekeme`
+  sits ABOVE the SWITCH (in the nominal subtree)
+
+Per Panagiotidis p. 146, the SWITCH's complement is *recategorised* by
+its [N] feature. So a constituent dominated by a SWITCH projects
+nominally and takes adjectival modifiers; a constituent below the
+SWITCH retains its verbal/adjectival categorial identity and takes
+adverbial modifiers. The diagnostic gives SWITCH placement: where the
+modifier-category transition occurs is where the SWITCH sits.
+
+@cite{mcnally-deswart-2011} §2.3 (13) makes a *similar* modifier-
+distribution observation about the inflected adjective in `het rode
+van X`: M&deS observe `het intens/*intense rode` (adverbial-only) and
+conclude that `rode` remains adjectival, with `het` carrying the
+type-shift.
+
+**Methodological lineage, not independent rediscovery.** Both M&deS and
+Panagiotidis cite Ackema & Neeleman 2004 (Beyond Morphology) as the
+source of the modifier-as-domain diagnostic. The convergence below is a
+shared-source consequence, not two independent frameworks landing on the
+same test. The bridge formalises *that* the two frameworks make
+predictions of the same shape on the same data.
+
+**Caveat.** Panagiotidis nowhere specifically analyses Dutch *het* as a
+SWITCH; §6.6 covers V→N SWITCHes only (Korean *-um*, Basque *-te/tze*,
+Turkish *-dIk* and *-AcAk*) and §6.9 covers Dutch nominalised infinitives.
+Mapping `het` to a Panagiotidis-style SWITCH on the inflected adjective
+is the formaliser's extrapolation. The bridge below identifies the
+M&deS rivals with SWITCH-position commitments (low/high) and reads off
+predictions geometrically; it does not claim Panagiotidis himself
+analyses M&deS's data. -/
+
+namespace MdSBridge
+
+open Phenomena.Morphology.Studies.McNallyDeSwart2011
+
+/-- The structural commitment each `InflectedAnalysis` rival makes about
+    SWITCH placement, modelling Panagiotidis §6.7.1's geometric reasoning
+    over the rivals' defining proposals. This is the substantive content
+    each rival commits to: *where* in the structure of `het rode van X`
+    is the categorising head sitting? -/
+inductive SwitchPosition where
+  /-- SWITCH is at the inflected-form level (the `-e` morpheme is the
+      SWITCH; the inflected `rode` is the categorised constituent). -/
+  | low
+  /-- No SWITCH; regular adjectival projection (e.g., normal AP modifying
+      a noun, where the noun is elided). -/
+  | none
+  /-- SWITCH is at the DP edge (`het` is the SWITCH; the AP `rode` is
+      the SWITCH's complement). -/
+  | high
+  deriving DecidableEq, Repr
+
+/-- Each rival's defining commitment about SWITCH placement.
+
+    * `nominalisation`: -e itself is the SWITCH/categoriser. SWITCH = low.
+    * `ellipsis`: regular AP-modifying-N structure with elided N; *no*
+      SWITCH/categoriser intervenes between modifier and `rode` (the
+      adjectival projection is intact pre-ellipsis). SWITCH = none.
+    * `hetAsCap`: het carries the categorising operation. SWITCH = high. -/
+def switchPosition : InflectedAnalysis → SwitchPosition
+  | .nominalisation => .low
+  | .ellipsis       => .none
+  | .hetAsCap       => .high
+
+/-- Per @cite{panagiotidis-2015} p. 146 + §6.7.1: the SWITCH's complement
+    is recategorised by [N], so a constituent dominated by a SWITCH
+    projects nominally (takes adjectival modifiers) while a constituent
+    below the SWITCH retains its adjectival identity (takes adverbial
+    modifiers). For the inflected form `rode`, the diagnostic is read
+    by asking *where is `rode` relative to the SWITCH*:
+
+    * SWITCH = low (`-e` IS the SWITCH): `rode` IS the SWITCH-headed
+      constituent → projects nominally → predicts ADJECTIVAL
+      modification of `rode`.
+    * SWITCH = high (`het` is the SWITCH, `rode` is its AP-complement):
+      `rode` is BELOW the SWITCH → retains adjectival identity → predicts
+      ADVERBIAL modification of `rode`.
+
+    For `ellipsis` (no SWITCH), the surface AP is intact, so adverbial
+    modification of `rode` is licensed just as any adjective licenses it.
+
+    `panagiotidisPredictsAdverbialMod a` is now *derived* from
+    `switchPosition a`: the geometric prediction is "no low SWITCH
+    dominating `rode`", i.e. the modifier-attachment site is below or
+    independent of any SWITCH. -/
+def panagiotidisPredictsAdverbialMod (a : InflectedAnalysis) : Prop :=
+  switchPosition a ≠ .low
+
+instance : DecidablePred panagiotidisPredictsAdverbialMod :=
+  fun a => by unfold panagiotidisPredictsAdverbialMod; exact inferInstance
+
+/-- The Panagiotidis prediction matches the @cite{mcnally-deswart-2011}
+    prediction on every rival. Both predicates encode the same modifier-
+    distribution diagnostic (which they both inherit from Ackema &
+    Neeleman 2004); the agreement is shared-methodology consequence, not
+    independent rediscovery. The substance of the bridge: *the geometric
+    SWITCH-placement reasoning derives the same predictions as M&deS's
+    case-by-case `PredictsAdverbialModOnly`*. -/
+theorem mcnally_panagiotidis_diagnostics_agree :
+    ∀ a : InflectedAnalysis,
+      a.PredictsAdverbialModOnly ↔ panagiotidisPredictsAdverbialMod a := by
+  intro a
+  cases a <;>
+    (unfold InflectedAnalysis.PredictsAdverbialModOnly
+            panagiotidisPredictsAdverbialMod switchPosition
+     decide)
+
+/-- The `nominalisation` rival fails the joint prediction:
+    Panagiotidis's geometric diagnostic over its low-SWITCH commitment
+    predicts the inflected form should admit adjectival modification
+    (because `rode` would be SWITCH-dominated and project nominally);
+    @cite{mcnally-deswart-2011} (13) shows the inflected form REJECTS
+    adjectival modification. The combined refutation routes through
+    `switchPosition .nominalisation = .low → ¬panagiotidisPredictsAdverbialMod`
+    and the M&deS data point. -/
+theorem panagiotidis_refutes_nominalisation :
+    switchPosition .nominalisation = .low
+    ∧ ¬ panagiotidisPredictsAdverbialMod .nominalisation
+    ∧ ¬ Form.inflected.AdmitsAdjectivalModification := by
+  refine ⟨rfl, ?_, id⟩
+  unfold panagiotidisPredictsAdverbialMod switchPosition; decide
+
+/-- Conversely, the `hetAsCap` rival passes: high-SWITCH commitment +
+    `rode` below SWITCH → adverbial modification predicted, matching
+    M&deS data. -/
+theorem hetAsCap_panagiotidis_compatible :
+    switchPosition .hetAsCap = .high
+    ∧ panagiotidisPredictsAdverbialMod .hetAsCap
+    ∧ ¬ Form.inflected.AdmitsAdjectivalModification := by
+  refine ⟨rfl, ?_, id⟩
+  unfold panagiotidisPredictsAdverbialMod switchPosition; decide
+
+/-- The `ellipsis` rival also passes: no-SWITCH commitment means
+    surface AP is intact and adverbial modification is licensed in the
+    standard way. -/
+theorem ellipsis_panagiotidis_compatible :
+    switchPosition .ellipsis = .none
+    ∧ panagiotidisPredictsAdverbialMod .ellipsis := by
+  refine ⟨rfl, ?_⟩
+  unfold panagiotidisPredictsAdverbialMod switchPosition; decide
+
+/-- Categoriser identification at the *surface* head level. Under each
+    rival, what is the lexical category of the inflected form `rode` as
+    it is projected at the surface?
+
+    * `nominalisation`: `-e` categorises `rode` as a noun → `Cat.n`.
+    * `ellipsis`: surface `rode` is an adjective; the n is the elided
+      null noun, structurally elsewhere → `Cat.a` (the visible head).
+    * `hetAsCap`: `rode` remains adjectival; `het` is the SWITCH
+      → `Cat.a` at the surface head.
+
+    The frameworks-divergence is captured: only `nominalisation`
+    promotes the surface category to nominal. The other two leave the
+    surface adjectival. -/
+def surfaceCategorizer : InflectedAnalysis → Cat
+  | .nominalisation => Cat.n   -- -e changes A → N
+  | .ellipsis       => Cat.a   -- visible A; n is elided elsewhere
+  | .hetAsCap       => Cat.a   -- het carries SWITCH; rode stays A
+
+/-- The surface categoriser distinguishes nominalisation from the other
+    two rivals — exactly the M&deS §2.3 distinction of "is the inflected
+    form a noun?". This is a real per-rival commitment, not a constant. -/
+theorem nominalisation_uniquely_promotes_to_n :
+    surfaceCategorizer .nominalisation = Cat.n ∧
+    surfaceCategorizer .ellipsis       = Cat.a ∧
+    surfaceCategorizer .hetAsCap       = Cat.a := ⟨rfl, rfl, rfl⟩
+
+/-- The Panagiotidis-side referential prediction follows the surface
+    categoriser: `nominalisation` predicts the inflected form is
+    referential (per `noun_referential_not_predicative` above);
+    `ellipsis` and `hetAsCap` predict it remains predicative-bearing
+    (per `adjective_both`). -/
+theorem nominalisation_predicts_referential :
+    producesReferential (surfaceCategorizer .nominalisation) = true ∧
+    producesReferential (surfaceCategorizer .ellipsis)       = true ∧
+    producesReferential (surfaceCategorizer .hetAsCap)       = true := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+end MdSBridge
 
 end Panagiotidis2015

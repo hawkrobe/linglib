@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Noun.Kind.Mendia2020
 import Linglib.Phenomena.Numerals.Studies.Spector2013
+import Linglib.Fragments.Dutch.Adjectives
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -42,7 +43,27 @@ The diagram from §5 (76a-j):
 * `Theories/Semantics/Noun/Kind/Mendia2020.lean` — substrate: kind formation
   by salient equivalence relation (= mathlib's `Setoid`); Carlson's
   Disjointness Condition. Snyder's account of why TWO has disjoint subkinds
-  `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (§4.3, §5) instantiates the Mendia framework.
+  `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (§4.3, §5) instantiates the Mendia framework via
+  the local `kfTWO : Setoid TwoToken` partition (defined below).
+* This file additionally implements Snyder's §6-§7 colour-word extension
+  via a second local Mendia partition `kfRed : Setoid ColorToken`,
+  consuming the Dutch adjective Fragment for colour roots.
+* `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean` is a sibling
+  Mendia consumer, with `kfShade : Setoid Shade` partitioning Dutch
+  colour and taste shades by adjective root. Together with the two
+  partitions in this file, the Mendia substrate now has *three*
+  consumers (numerals + Snyder colours + M&deS colours/tastes), genuinely
+  cross-domain. All four partitions follow the project-wide
+  `kf{Carrier}` naming convention.
+
+The two colour analyses (Snyder §6 here vs M&deS over there) are
+*competing* — they consume the same Mendia substrate (`subkindOf`) and
+agree on iota for definites, but disagree on lexical-projection
+architecture (Snyder: unitary `λxα. red(x)` over relativized atoms;
+M&deS: distinct `rood_N` vs `rood_A` projected from a shared root) and
+on nominalisation operator (Snyder: Partee NOM as typed shifter; M&deS:
+Chierchia ∩ carried by *het*). Having both formalised makes the
+divergence load-bearing instead of docstring-only.
 
 This file:
 
@@ -627,5 +648,152 @@ agreement is documented here; making it a `rfl` theorem would require
 co-locating the Lean denotations of CARD and Kennedy's shift in a shared
 type, currently blocked by the Frame-vs-Set boundary in TypeShifting.
 -/
+
+/-! ## §6-§7: Polymorphic Contextualism for colour terms
+
+@cite{snyder-2026} §6-§7 conjectures that colour words admit the same
+Polymorphic-Contextualism analysis as numerals. The lexical entry (97):
+
+    [[red]] = λxα. red(x)
+
+is a context-sensitive atomic predicate (parallel to `[[two]] = λxα. two(x)`
+in §5 (73)). The kind RED has subkinds CRIMSON, MAROON, ... (cf. paint-
+swatch examples (94a-c)), so colour names like `red` and close appositives
+like `the color red` can refer to subkinds, the kind RED itself, or
+concrete colour tokens — exactly the polymorphism (76e/g/i/j/f) the
+numeral analysis predicts.
+
+§6 cites @cite{mcnally-2011} and @cite{mcnally-deswart-2011} for the
+colours-as-kinds claim. This file implements Snyder's *own* Polymorphic
+Contextualism extension; for the @cite{mcnally-deswart-2011} *competing*
+analysis (lexical category-projected, Chierchia ∩-via-*het* nominalisation),
+see `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean`. Both analyses
+consume the same Mendia substrate (`subkindOf` on a `Setoid` partition by
+adjective root); they disagree on lexical-projection architecture and on
+whether nominalisation is Partee NOM (Snyder) or Chierchia ∩ (M&deS).
+
+The substrate generalises across domains: this is the *third* consumer of
+`Mendia2020.subkindOf`, after Snyder numerals (above) and McNally-deSwart
+colours/tastes. The `kf{Carrier}` naming convention (`kfTWO`, `kfRed`,
+`kfShade`) is project-wide.
+-/
+
+/-- A colour token: a colour-domain Dutch adjective entry from
+    `Fragments/Dutch/Adjectives.lean` plus a distinguishing index for
+    multiple shade-tokens of the same colour. Parallel to `TwoToken`
+    above; the Mendia partition is exercised non-trivially when a single
+    colour root has multiple tokens (e.g., several physical instances
+    of `rood` on a paint swatch per @cite{snyder-2026} (94)). -/
+structure ColorToken where
+  /-- The Dutch colour-adjective entry (`Fragments.Dutch.Adjectives.rood`,
+      `wit`, `groen`, ...). The colour-domain restriction is documentary;
+      the type itself is `AdjEntry`. -/
+  root : Fragments.Dutch.Adjectives.AdjEntry
+  /-- Distinguishing index for multiple tokens of the same colour root. -/
+  idx : Nat
+  deriving DecidableEq, Repr
+
+/-- The Mendia kind-formation for colours: tokens partitioned by their
+    adjective-entry root. The equivalence class of any token is the
+    subkind of RED (or BLUE, or GREEN, ...) that token instantiates.
+    Parallel to `kfTWO`, attesting that Mendia's framework generalises
+    across domains. Carlson's Disjointness Condition follows. -/
+def kfRed : Setoid ColorToken where
+  r t₁ t₂ := t₁.root = t₂.root
+  iseqv := ⟨fun _ => rfl, Eq.symm, Eq.trans⟩
+
+/-- @cite{snyder-2026} (97): `[[red]] = λxα. red(x)`. The lexical extension
+    of `red` under Polymorphic Contextualism — the universal predicate
+    over relativized atoms, indicating that `red` may apply to subkinds
+    (CRIMSON, MAROON), to the kind RED itself, or to concrete tokens.
+    Parallel to `two : Set TwoToken := Set.univ` above. -/
+def red : Set ColorToken := Set.univ
+
+/-- A canonical witness colour token for each colour-adjective root. -/
+def canonicalColor (a : Fragments.Dutch.Adjectives.AdjEntry) : ColorToken :=
+  ⟨a, 0⟩
+
+/-- A canonical 6-token domain with one witness per Dutch alternating
+    colour root (per @cite{mcnally-deswart-2011} §1, the inflection-
+    alternating colour sub-paradigm). -/
+def canonicalColorDomain : List ColorToken :=
+  [canonicalColor Fragments.Dutch.Adjectives.rood,
+   canonicalColor Fragments.Dutch.Adjectives.wit,
+   canonicalColor Fragments.Dutch.Adjectives.groen,
+   canonicalColor Fragments.Dutch.Adjectives.geel,
+   canonicalColor Fragments.Dutch.Adjectives.blauw,
+   canonicalColor Fragments.Dutch.Adjectives.zwart]
+
+theorem canonicalColorDomain_nodup : canonicalColorDomain.Nodup := by decide
+
+/-! ### §6 colour-Polymorphic-Contextualism theorems
+
+Mirroring the numeral case, distinct colour-kinds are disjoint as
+Mendia subkinds, so close-appositive descriptions like `the color red`
+and `the color green` denote distinct subkinds — supporting Snyder's
+claim that colour names refer polymorphically to subkinds. -/
+
+/-- Distinct colour roots project to distinct Mendia subkinds — the
+    colour analog of `subkinds_distinct` for numerals. -/
+theorem color_subkinds_distinct
+    {a₁ a₂ : Fragments.Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
+    subkindOf kfRed ⟨a₁, 0⟩ ≠ subkindOf kfRed ⟨a₂, 0⟩ :=
+  subkindOf_ne kfRed h
+
+/-- Indicator predicate: token `t` belongs to the colour-`a` subkind. -/
+def inColorSubkind (a : Fragments.Dutch.Adjectives.AdjEntry)
+    (t : ColorToken) : Bool := decide (t.root = a)
+
+/-- The colour close-appositive `the color [a]` over the canonical 6-token
+    domain returns precisely the canonical witness of colour root `a`,
+    when `a` is in the canonical-colour-list. -/
+theorem closeAppositive_canonical_color
+    (a : Fragments.Dutch.Adjectives.AdjEntry)
+    (h : a ∈ [Fragments.Dutch.Adjectives.rood, Fragments.Dutch.Adjectives.wit,
+             Fragments.Dutch.Adjectives.groen, Fragments.Dutch.Adjectives.geel,
+             Fragments.Dutch.Adjectives.blauw, Fragments.Dutch.Adjectives.zwart]) :
+    closeAppositive canonicalColorDomain (inColorSubkind a) (fun _ => true)
+      = some (canonicalColor a) := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
+
+/-- Colour analog of `identification_problem_resolved`: distinct colour
+    close appositives `the color [a₁]` and `the color [a₂]` denote
+    distinct canonical witness tokens, supporting the polymorphic-kind
+    analysis of @cite{snyder-2026} §6 (94)-(98). -/
+theorem distinct_colors_distinct_close_appositives
+    {a₁ a₂ : Fragments.Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
+    canonicalColor a₁ ≠ canonicalColor a₂ :=
+  fun hEq => h (congrArg ColorToken.root hEq)
+
+/-! ### §6 empirical examples (94)-(98) -/
+
+/-- @cite{snyder-2026} §6 colour-polysemy examples (94)-(98). Each is
+    classified by the same `SemanticFunction` enum as the numeral cases,
+    confirming the polymorphism extends to colours. -/
+def colorExamples : List Example :=
+  [ ⟨"94a", "That (kind of) red is used to paint barns",  .taxonomic, true⟩
+  , ⟨"94b", "Red comes in several varieties: crimson, maroon, ...",
+                                                          .kindRef,   true⟩
+  , ⟨"94c", "One kind of red, namely crimson, is used to paint barns",
+                                                          .taxonomic, true⟩
+  , ⟨"98",  "(The color) red is next to (the color) green on the swatch",
+                                                          .tokenRef,  true⟩ ]
+
+theorem color_examples_acceptable :
+    colorExamples.all (·.acceptable) = true := rfl
+
+/-- The colour-polysemy examples exhibit three of the §1 numeral-polysemy
+    semantic functions (taxonomic, kindRef, tokenRef) — exactly the three
+    that Substantivalism and Adjectivalism *fail* to derive (per
+    `substantivalism_misses_taxonomic_kind_token` and friends). The
+    colour port confirms Snyder's §6 claim that Polymorphic Contextualism
+    handles them uniformly. -/
+theorem color_examples_use_extended_functions :
+    ∀ ex ∈ colorExamples,
+      ex.function ∈ [SemanticFunction.taxonomic, .kindRef, .tokenRef] := by
+  intro ex h
+  simp only [colorExamples, List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with rfl | rfl | rfl | rfl <;> decide
 
 end Phenomena.Numerals.Snyder2026
