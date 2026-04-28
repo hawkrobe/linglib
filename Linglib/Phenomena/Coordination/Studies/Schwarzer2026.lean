@@ -2,6 +2,7 @@ import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.Typology
+import Linglib.Fragments.German.WordOrder
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
@@ -440,7 +441,7 @@ theorem selecting_nonselecting_disjoint :
     clause type: root V2 → postverbal, embedded verb-final → preverbal
     (§ 1). -/
 theorem german_wals_vs_clausetype :
-    Fragments.German.typology.wordOrder.ovOrder = .noDominant ∧
+    Fragments.German.wordOrder.ovOrder = .noDominant ∧
     germanRootComplementPosition = .postverbal ∧
     germanEmbeddedComplementPosition = .preverbal :=
   ⟨rfl, rfl, rfl⟩

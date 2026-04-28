@@ -4,6 +4,36 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.497] - 2026-04-28
+
+### WordOrder typology dissolves `LanguageProfile` aggregator (Phase 1)
+
+`Phenomena/WordOrder/Typology.lean`'s `fragmentSample` no longer carries `Typology.LanguageProfile` values. Audit motivation: of the ~8 actual consumers of `LanguageProfile`, exactly one (`Phenomena/WordOrder/Typology.lean` itself) projected 2+ fields jointly (Greenberg U3/U4: word order × adposition); the remaining 7 each touched a single domain. The aggregator's append-only-fields schema + 26 `Fragments/{Lang}/Typology.lean` builder files paid for one pair of theorems.
+
+This commit replaces the aggregator path for the joint Greenberg consumer with a small local `SampleEntry` (iso, name, wordOrder, adposition) sourced from per-phenomenon Fragment files. Per-language word-order/adposition data now lives in `Fragments/{Lang}/{WordOrder,Adposition}.lean`, even when the file is a 3-line `WordOrderProfile.ofWALS "iso"` pass-through. The architectural commitment "Fragment is the front door for per-language data" is now an invariant rather than a soft tendency — Phenomena/WordOrder/Typology no longer names WALS lookups directly.
+
+**Why per-phenomenon Fragment files even when content-free**: option (a) of the WALS-vs-Fragment debate. The alternative (`SampleEntry.ofWALS iso` reaching past Fragment for languages with no overrides) made "Fragment is the source of truth" a lie for those languages. Five existing-but-empty Fragment dirs would also have been needed (Welsh/Irish/Tzotzil/Hixkaryana/Indonesian) to host any data at all — creating the trivial files is the same architectural cost as creating empty dirs, with the upside that the door is consistent across all sample languages.
+
+**Files**:
+- **`Linglib/Phenomena/WordOrder/Typology.lean`** (substantive): new local `SampleEntry` struct (iso, name, wordOrder, adposition); `fragmentSample : Finset SampleEntry` constructed from `Fragments.X.{wordOrder,adposition}` for 15 languages; `isVSO`/`isSOV`/`isPrepositional`/`isPostpositional` predicates retyped on `SampleEntry`; `greenberg_universal_3`/`_4` + 6 cross-chapter consistency theorems all still prove via `decide`. Imports re-routed: drop `Linglib.Typology.LanguageProfile` + 5 `Fragments/{Lang}/Typology` aggregators; add 30 per-phenomenon Fragment imports + Indonesian.
+- **30 new `Fragments/{Lang}/{WordOrder,Adposition}.lean` files** (~3 LOC each): English, Japanese, Mandarin, Korean, Arabic, Welsh, Irish, Turkish, HindiUrdu, Basque, Slavic/Russian, Swahili, Indonesian, Tzotzil, Hixkaryana. Each defines `def wordOrder : WordOrderProfile := WordOrderProfile.ofWALS "iso"` (or the adposition analog).
+- **1 new Fragment dir**: `Fragments/Tzotzil/` (previously absent — Tzotzil was in the sample only via inline `LanguageProfile.ofWALS "tzo"`).
+- **1 extra Fragment**: `Fragments/German/WordOrder.lean` (German wasn't in the Greenberg sample but Schwarzer2026 + Westergaard2009 project German word order; got the same treatment).
+- **3 single-field consumers retyped**:
+  - `Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean`: `Fragments.English.typology.wordOrder.ovOrder` → `Fragments.English.wordOrder.ovOrder` (× 2 sites); imports gain `Fragments.English.WordOrder`.
+  - `Phenomena/Coordination/Studies/Schwarzer2026.lean`: `Fragments.German.typology.wordOrder.ovOrder` → `Fragments.German.wordOrder.ovOrder`; imports gain `Fragments.German.WordOrder`.
+  - `Phenomena/WordOrder/Studies/Westergaard2009.lean`: `Fragments.{German,English}.typology.wordOrder.basicOrder` → `Fragments.{German,English}.wordOrder.basicOrder`; imports gain both Fragment files.
+
+**What's still in flight (Phase 2-3 deferred)**:
+- 5 remaining single-field LanguageProfile consumers (`Phenomena/Relativization/Typology.lean`, `Phenomena/Classifiers/Typology.lean`, `Phenomena/Indefinites/Typology.lean`, `Phenomena/Plurals/Studies/BaleKhanjian2014.lean`, `Phenomena/Classifiers/Studies/Sudo2016.lean`) still go through `LanguageProfile.X` projection. Same per-phenomenon-Fragment-file treatment will dissolve them; their Fragment dirs largely already exist.
+- `Linglib/Typology/LanguageProfile.lean` (the aggregator + 12 `withX` builders + `ofWALS`) and the 26 `Fragments/{Lang}/Typology.lean` builder files remain; their deletion is Phase 3 (after the remaining consumers are migrated).
+
+### Numerals substrate extraction (earlier this session, pre-WordOrder)
+
+Prior session work also lands here: `Linglib/Typology/Numerals.lean` (new substrate file: `OrdinalFormation`/`DistributiveNumeral`/`ConjunctionQuantifier`/`Region`/`PluralMarking`/`NumeralBase` enums + `NumeralProfile` struct + 6 utility predicates, sourced from WALS Chs 53–56, 131); `Phenomena/Numerals/Typology.lean` retypes via `open _root_.Typology` and deletes the in-file substrate copies; `Linglib/Typology/LanguageProfile.lean` gains an `Option NumeralProfile` field + `withNumerals` builder.
+
+**Build**: 5436 jobs green. One pre-existing failure in `Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean` is concurrent uncommitted work from another session — unrelated to this refactor; left in working tree for that session to finish.
+
 ## [0.230.496] - 2026-04-28
 
 ### Typology.PolarityMarking noun-prefix rename (mathlib idiom)

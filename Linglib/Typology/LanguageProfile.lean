@@ -2,6 +2,7 @@ import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.Indefinite
+import Linglib.Typology.Numerals
 import Linglib.Typology.Plurals
 import Linglib.Typology.Possession
 import Linglib.Typology.Pronouns
@@ -106,6 +107,9 @@ structure LanguageProfile where
   /-- Question-formation profile (@cite{wals-2013} Chs 92A, 93A, 116A);
       `none` until a Fragment populates it. -/
   questions : Option Typology.Question.QuestionProfile := none
+  /-- Numeral typology profile (@cite{wals-2013} Chs 53-56, 131);
+      `none` until a Fragment populates it. -/
+  numerals : Option Typology.NumeralProfile := none
   /-- Free-text commentary, including `@cite{...}` keys for hand-coded
       values that override or supplement WALS. -/
   notes : String := ""
@@ -184,6 +188,12 @@ def withPronouns (p : LanguageProfile)
 def withQuestions (p : LanguageProfile)
     (qp : Typology.Question.QuestionProfile) : LanguageProfile :=
   { p with questions := some qp }
+
+/-- Populate `numerals` with a hand-supplied `NumeralProfile`
+    (@cite{wals-2013} Chs 53-56, 131). -/
+def withNumerals (p : LanguageProfile)
+    (np : Typology.NumeralProfile) : LanguageProfile :=
+  { p with numerals := some np }
 
 /-- Attach free-text notes (including `@cite{...}` keys). -/
 def withNotes (p : LanguageProfile) (n : String) : LanguageProfile :=

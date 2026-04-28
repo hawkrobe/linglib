@@ -3,6 +3,7 @@ import Linglib.Datasets.WALS.Features.F53A
 import Linglib.Datasets.WALS.Features.F54A
 import Linglib.Datasets.WALS.Features.F131A
 import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Typology.Numerals
 
 /-!
 # Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56, 131)
@@ -40,7 +41,8 @@ and the relationship between conjunctions and universal quantification.
 
 namespace Phenomena.Numerals.Typology
 
-open Phenomena.Classifiers.Typology (ClassifierStatus ClassifierDistribution
+open _root_.Typology
+open Phenomena.Classifiers.Typology (ClassifierDistribution
   ch55Distribution fromWALS55A)
 
 -- ============================================================================
@@ -61,19 +63,7 @@ theorem ch131_total : ch131.length = 196 := by native_decide
 -- Chapter 53: Ordinal Numerals (Stolz & Veselinova)
 -- ============================================================================
 
-/-- How a language forms ordinal numerals from cardinal ones (WALS Ch 53).
-
-    The key typological variable is whether "first" is suppletive (not derived
-    from "one") and how many of the lowest ordinals show suppletion or
-    irregularity. The pattern "first" suppletive + higher ordinals regular is
-    overwhelmingly dominant. -/
-inductive OrdinalFormation where
-  | firstSuppletion      -- "first" is suppletive, "second" onward regular from cardinals
-  | firstSecondSuppletion -- "first" and "second" suppletive, "third" onward regular
-  | allFromCardinals     -- all ordinals derived regularly from cardinals (incl. "one-th")
-  | various              -- mixed strategies, no single dominant pattern
-  | noOrdinals           -- no productive ordinal formation reported
-  deriving DecidableEq, Repr
+/-! `OrdinalFormation` (WALS Ch 53) lives in `Typology/Numerals.lean`. -/
 
 /-- WALS Chapter 53 distribution: language counts per ordinal formation type.
     Total: 321 languages. -/
@@ -101,19 +91,7 @@ def ch53Distribution : OrdinalDistribution :=
 -- Chapter 54: Distributive Numerals (Gil)
 -- ============================================================================
 
-/-- Whether and how a language marks distributive numerals (WALS Ch 54).
-
-    Distributive numerals express "N each" or "N apiece" meanings. Languages
-    vary in whether they have a dedicated morphological strategy and, if so,
-    what kind. Reduplication of the cardinal numeral is the most widespread
-    dedicated strategy (e.g., Japanese hito-ri hito-ri, Hungarian két-két). -/
-inductive DistributiveNumeral where
-  | noDistributive       -- no dedicated distributive numeral form
-  | markedByReduplication -- cardinal is reduplicated (e.g., Turkish iki-şer, Tagalog dalawa-dalawa)
-  | markedBySuffix       -- a suffix creates distributive (e.g., Georgian -agan)
-  | markedByPrefix       -- a prefix creates distributive
-  | markedByOtherMeans   -- other strategies (particles, circumfix, etc.)
-  deriving DecidableEq, Repr
+/-! `DistributiveNumeral` (WALS Ch 54) lives in `Typology/Numerals.lean`. -/
 
 /-- WALS Chapter 54 distribution: language counts per distributive type.
     Total: 251 languages. -/
@@ -140,17 +118,7 @@ def ch54Distribution : DistributiveDistribution :=
 -- Chapter 56: Conjunctions and Universal Quantifiers (Gil)
 -- ============================================================================
 
-/-- The relationship between 'and' and 'all/every' in a language (WALS Ch 56).
-
-    Gil distinguishes languages where the conjunction marker and the universal
-    quantifier share the same form (identity) from those where they are
-    morphologically distinct (differentiation). Identity between 'and' and
-    'all' reflects a deep connection between conjunction (exhaustive pairing)
-    and universal quantification (exhaustive predication). -/
-inductive ConjunctionQuantifier where
-  | identity             -- same morpheme for 'and' and 'all' (e.g., Mandarin dou, Tagalog lahat)
-  | differentiation      -- different morphemes (e.g., English and/all, Japanese to/subete)
-  deriving DecidableEq, Repr
+/-! `ConjunctionQuantifier` (WALS Ch 56) lives in `Typology/Numerals.lean`. -/
 
 /-- WALS Chapter 56 distribution: language counts per conjunction-quantifier type.
     Total: 220 languages. -/
@@ -184,43 +152,9 @@ example : ch56Distribution.total = 220 := by native_decide
 -- Language Profiles
 -- ============================================================================
 
-/-- Areal region, used for areal generalizations about classifier distribution. -/
-inductive Region where
-  | europe
-  | eastAsia
-  | southeastAsia
-  | southAsia
-  | centralAsia
-  | westAsia
-  | africa
-  | northAmerica
-  | mesoamerica
-  | southAmerica
-  | oceania
-  deriving DecidableEq, Repr
+/-! `Region` and `PluralMarking` live in `Typology/Numerals.lean`. -/
 
-/-- Whether a language has obligatory grammatical plural marking on common nouns.
-    Used for the Sanches-Slobin generalization relating classifiers and plural. -/
-inductive PluralMarking where
-  | obligatory           -- plural marking required (e.g., English, Spanish)
-  | optional             -- plural marking available but not required (e.g., Korean)
-  | none                 -- no grammatical plural on nouns (e.g., Mandarin, Japanese)
-  deriving DecidableEq, Repr
-
-/-- The base of a language's numeral system (WALS Ch 131, Comrie).
-
-    Most languages worldwide use a decimal (base-10) system. Vigesimal (base-20)
-    systems are the most common alternative, concentrated in Mesoamerica, West
-    Africa, and the Caucasus. Many "vigesimal" systems are actually hybrid,
-    using base-20 for higher numerals and base-10 within each score. -/
-inductive NumeralBase where
-  | decimal              -- base 10 (e.g., English, Mandarin, Swahili)
-  | vigesimal            -- pure base 20 (e.g., Ainu, Chukchi)
-  | hybridVigesimalDecimal -- mixed base-20/base-10 (e.g., French, Basque, Georgian)
-  | otherBase            -- base 5, 6, or other (rare)
-  | bodyPartSystem       -- extended body-part counting system (e.g., Eipo)
-  | restricted           -- restricted numeral system (few numerals, no productive base)
-  deriving DecidableEq, Repr
+/-! `NumeralBase` (WALS Ch 131) lives in `Typology/Numerals.lean`. -/
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -268,26 +202,7 @@ private def fromWALS131A : Datasets.WALS.F131A.NumeralBases → NumeralBase
   | .extendedBodyPartSystem => .bodyPartSystem
   | .restricted => .restricted
 
-/-- A language's numeral typology profile across all four WALS dimensions. -/
-structure NumeralProfile where
-  language : String
-  /-- ISO 639-3 code -/
-  iso : String
-  /-- Ch 53: Ordinal numeral formation -/
-  ordinal : OrdinalFormation
-  /-- Ch 54: Distributive numeral marking -/
-  distributive : DistributiveNumeral
-  /-- Ch 55: Numeral classifier status -/
-  classifier : ClassifierStatus
-  /-- Ch 56: Conjunction-quantifier relationship -/
-  conjQuant : ConjunctionQuantifier
-  /-- Areal region (for areal generalizations) -/
-  region : Region
-  /-- Plural marking on common nouns (for Sanches-Slobin) -/
-  pluralMarking : PluralMarking
-  /-- Ch 131: Numeral base (optional; not all languages surveyed). -/
-  numeralBase : Option NumeralBase := Option.none
-  deriving Repr, DecidableEq
+/-! `NumeralProfile` lives in `Typology/Numerals.lean`. -/
 
 -- ============================================================================
 -- Language Instances
@@ -683,29 +598,10 @@ theorem identity_nonnegligible :
 -- Cross-Dimensional Generalizations
 -- ============================================================================
 
-/-- Does a language have obligatory numeral classifiers? -/
-def NumeralProfile.hasObligatoryClassifiers (p : NumeralProfile) : Bool :=
-  p.classifier == .obligatory
-
-/-- Does a language have any numeral classifiers (obligatory or optional)? -/
-def NumeralProfile.hasClassifiers (p : NumeralProfile) : Bool :=
-  p.classifier != .absent
-
-/-- Does a language have obligatory plural marking on common nouns? -/
-def NumeralProfile.hasObligatoryPlural (p : NumeralProfile) : Bool :=
-  p.pluralMarking == .obligatory
-
-/-- Does a language form "first" by suppletion? -/
-def NumeralProfile.hasFirstSuppletion (p : NumeralProfile) : Bool :=
-  p.ordinal == .firstSuppletion || p.ordinal == .firstSecondSuppletion
-
-/-- Does a language have a morphological distributive numeral form? -/
-def NumeralProfile.hasDistributive (p : NumeralProfile) : Bool :=
-  p.distributive != .noDistributive
-
-/-- Is a language in the East/Southeast Asian region? -/
-def NumeralProfile.isEastSoutheastAsian (p : NumeralProfile) : Bool :=
-  p.region == .eastAsia || p.region == .southeastAsia
+/-! `NumeralProfile` utility predicates (`hasObligatoryClassifiers`,
+    `hasClassifiers`, `hasObligatoryPlural`, `hasFirstSuppletion`,
+    `hasDistributive`, `isEastSoutheastAsian`) live in
+    `Typology/Numerals.lean`. -/
 
 /-- **Sanches-Slobin generalization**: Classifier
     languages tend to lack obligatory plural marking on nouns. In our sample,

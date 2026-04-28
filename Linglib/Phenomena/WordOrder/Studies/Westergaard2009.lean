@@ -7,8 +7,10 @@ import Linglib.Features.InformationStructure
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.Typology
+import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.Typology
+import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Danish.V2
 
 /-!
@@ -601,7 +603,7 @@ open Phenomena.WordOrder.Typology in
     with a profile that has BOTH +Decl° (V2 in roots → surface SVO) AND
     +Fin° (V-to-I in embedded → surface SOV). -/
 theorem german_noDominant_explained :
-    Fragments.German.typology.wordOrder.basicOrder = .noDominant ∧
+    Fragments.German.wordOrder.basicOrder = .noDominant ∧
     ForceHead.Decl ∈ german ∧
     ForceHead.Fin  ∈ german := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
@@ -611,7 +613,7 @@ open Phenomena.WordOrder.Typology in
     (no verb movement in declaratives → surface SVO with SVO base)
     and −Fin° (no V-to-I in embedded → embedded order also SVO). -/
 theorem english_svo_explained :
-    Fragments.English.typology.wordOrder.basicOrder = .svo ∧
+    Fragments.English.wordOrder.basicOrder = .svo ∧
     ForceHead.Decl ∉ stdEnglish ∧
     ForceHead.Fin  ∉ stdEnglish := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide

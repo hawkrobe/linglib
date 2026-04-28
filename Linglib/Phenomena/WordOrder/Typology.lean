@@ -1,13 +1,37 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
-import Linglib.Typology.LanguageProfile
 import Linglib.Typology.Universal
-import Linglib.Fragments.English.Typology
-import Linglib.Fragments.Japanese.Typology
-import Linglib.Fragments.Mandarin.Typology
-import Linglib.Fragments.Korean.Typology
-import Linglib.Fragments.Arabic.Typology
+import Linglib.Fragments.English.WordOrder
+import Linglib.Fragments.English.Adposition
+import Linglib.Fragments.Japanese.WordOrder
+import Linglib.Fragments.Japanese.Adposition
+import Linglib.Fragments.Mandarin.WordOrder
+import Linglib.Fragments.Mandarin.Adposition
+import Linglib.Fragments.Korean.WordOrder
+import Linglib.Fragments.Korean.Adposition
+import Linglib.Fragments.Arabic.WordOrder
+import Linglib.Fragments.Arabic.Adposition
+import Linglib.Fragments.Welsh.WordOrder
+import Linglib.Fragments.Welsh.Adposition
+import Linglib.Fragments.Irish.WordOrder
+import Linglib.Fragments.Irish.Adposition
+import Linglib.Fragments.Turkish.WordOrder
+import Linglib.Fragments.Turkish.Adposition
+import Linglib.Fragments.HindiUrdu.WordOrder
+import Linglib.Fragments.HindiUrdu.Adposition
+import Linglib.Fragments.Basque.WordOrder
+import Linglib.Fragments.Basque.Adposition
+import Linglib.Fragments.Slavic.Russian.WordOrder
+import Linglib.Fragments.Slavic.Russian.Adposition
+import Linglib.Fragments.Swahili.WordOrder
+import Linglib.Fragments.Swahili.Adposition
+import Linglib.Fragments.Indonesian.WordOrder
+import Linglib.Fragments.Indonesian.Adposition
+import Linglib.Fragments.Tzotzil.WordOrder
+import Linglib.Fragments.Tzotzil.Adposition
+import Linglib.Fragments.Hixkaryana.WordOrder
+import Linglib.Fragments.Hixkaryana.Adposition
 import Linglib.Datasets.WALS.Features.F81A
 import Linglib.Datasets.WALS.Features.F82A
 import Linglib.Datasets.WALS.Features.F83A
@@ -50,22 +74,18 @@ adjective-noun, demonstrative-noun, intensifier-adjective, negator-verb.
 @cite{gibson-2025} argues these are cases where the dependent is a single word
 (no recursive subtree), so head direction is irrelevant to DLM.
 
-## Per-language profiles
+## Per-language sample
 
-Per-language records live in `Fragments/{Lang}/Typology.lean` (when they carry
-overrides) or are inlined as `Typology.LanguageProfile.ofWALS` directly
-in `fragmentSample` (when pure WALS suffices). The legacy `BasicOrderProfile`
-struct and its 21 hand-curated language defs have been retired in favour of
-that source-of-truth chain.
+`fragmentSample : Finset SampleEntry` is the curated 15-language sample used
+to state cross-linguistic implicational universals. Each entry bundles an
+ISO code, a `WordOrderProfile` (WALS Ch 81/82/83 by ISO lookup) and an
+`Option AdpositionOrder` (WALS Ch 85). The bundle has no other domains —
+samples for other phenomena live with their own typology files.
 
-## Greenbergian universals
-
-`fragmentSample : Finset LanguageProfile` is the curated 15-language sample
-used to state cross-linguistic implicational universals (@cite{greenberg-1963}
-U3 and U4 are stated and proved here as `greenberg_universal_3`/`_4`). Cross-
-chapter consistency theorems (`sov_implies_sv_and_ov`, ...) verify that WALS
-Ch 81/82/83 agree per language for sampled languages.
-
+@cite{greenberg-1963} U3 and U4 are stated and proved here as
+`greenberg_universal_3`/`_4`. Cross-chapter consistency theorems
+(`sov_implies_sv_and_ov`, ...) verify that WALS Ch 81/82/83 agree per
+language for sampled languages.
 -/
 
 namespace Phenomena.WordOrder.Typology
@@ -430,52 +450,48 @@ theorem ch61_withoutMarking_majority :
     ch61.length / 2 := by decide
 
 -- ============================================================================
--- Fragment sample: per-language `LanguageProfile`s for cross-linguistic claims
+-- Sample: per-language data sourced from Fragment files
 -- ============================================================================
--- Per the Fragments-as-typology-endpoint architecture: samples are built from
--- per-language `LanguageProfile` values rather than constructed inline. The
--- source-of-truth chain:
---   WALS → Typology.{WordOrder,Adposition} ISO lookups
---        → LanguageProfile.{ofWALS, withWordOrderFromWALS, withAdpositionFromWALS}
---        → Fragments.{Lang}.typology  (when overrides/morphology exist)
---        → Phenomena.WordOrder.Typology.fragmentSample.
---
--- Languages with hand-coded `morphProfile` overrides live in `Fragments/`; pure-
--- WALS languages are inlined as `Typology.LanguageProfile.ofWALS` directly.
+-- Each entry bundles a Fragment-sourced `WordOrderProfile` (Ch 81/82/83) and
+-- an `Option AdpositionOrder` (Ch 85). Per-language data lives in the
+-- corresponding `Fragments/{Lang}/{WordOrder,Adposition}.lean` files; entries
+-- here just bundle them with an ISO code and human-readable name. Fragment
+-- files for languages without overrides are pure `*.ofWALS iso` pass-throughs,
+-- but consumers go through the Fragment door rather than naming WALS directly.
 
-open _root_.Typology (LanguageProfile) in
-/-- Hand-verified sample of `LanguageProfile`s spanning the four major basic-
-    order classes (SOV, SVO, VSO, plus a couple non-SVO order entries) with
-    adposition data attested in WALS. Used for stating cross-linguistic
-    Greenbergian universals; `Typology.ImplicationalUniversal` is the
-    corresponding API.
+/-- A sample-language entry for the Greenberg / cross-chapter theorems:
+    Fragment-sourced word-order profile plus optional adposition order. -/
+structure SampleEntry where
+  iso : String
+  name : String
+  wordOrder : _root_.Typology.WordOrder.WordOrderProfile
+  adposition : Option _root_.Typology.Adposition.AdpositionOrder
+  deriving Repr, DecidableEq
 
-    Each entry's domain values come from WALS via ISO 639-3 lookup — see
-    `LanguageProfile.ofWALS` and the per-domain `withXFromWALS` helpers. The
-    five languages with Fragment files (English, Japanese, Mandarin, Korean,
-    Arabic) bring along their hand-coded `morphProfile`; the remaining nine
-    are inlined here because they carry no overrides. -/
-def fragmentSample : Finset LanguageProfile :=
-  -- Fragment-sourced (carry morphProfile overrides):
-  { Fragments.English.typology     -- eng, SVO, prepositional
-  , Fragments.Japanese.typology    -- jpn, SOV, postpositional
-  , Fragments.Mandarin.typology    -- cmn, SVO, mixed adpositions
-  , Fragments.Korean.typology      -- kor, SOV, postpositional
-  , Fragments.Arabic.typology      -- arb, VSO, prepositional
+/-- Hand-verified 15-language sample spanning the four major basic-order
+    classes (SOV, SVO, VSO, plus a couple non-SVO entries) with adposition
+    data attested in WALS. Used for stating cross-linguistic Greenbergian
+    universals via `Typology.ImplicationalUniversal`. -/
+def fragmentSample : Finset SampleEntry :=
+  { ⟨ "eng", "English",    Fragments.English.wordOrder,         Fragments.English.adposition ⟩
+  , ⟨ "jpn", "Japanese",   Fragments.Japanese.wordOrder,        Fragments.Japanese.adposition ⟩
+  , ⟨ "cmn", "Mandarin",   Fragments.Mandarin.wordOrder,        Fragments.Mandarin.adposition ⟩
+  , ⟨ "kor", "Korean",     Fragments.Korean.wordOrder,          Fragments.Korean.adposition ⟩
+  , ⟨ "arb", "Arabic",     Fragments.Arabic.wordOrder,          Fragments.Arabic.adposition ⟩
   -- VSO + prepositional (Celtic):
-  , LanguageProfile.ofWALS "cym" "Welsh"
-  , LanguageProfile.ofWALS "gle" "Irish"
+  , ⟨ "cym", "Welsh",      Fragments.Welsh.wordOrder,           Fragments.Welsh.adposition ⟩
+  , ⟨ "gle", "Irish",      Fragments.Irish.wordOrder,           Fragments.Irish.adposition ⟩
   -- Additional SOV + postpositional:
-  , LanguageProfile.ofWALS "tur" "Turkish"
-  , LanguageProfile.ofWALS "hin" "Hindi"
-  , LanguageProfile.ofWALS "eus" "Basque"
+  , ⟨ "tur", "Turkish",    Fragments.Turkish.wordOrder,         Fragments.Turkish.adposition ⟩
+  , ⟨ "hin", "Hindi",      Fragments.HindiUrdu.wordOrder,       Fragments.HindiUrdu.adposition ⟩
+  , ⟨ "eus", "Basque",     Fragments.Basque.wordOrder,          Fragments.Basque.adposition ⟩
   -- Additional SVO + prepositional:
-  , LanguageProfile.ofWALS "rus" "Russian"
-  , LanguageProfile.ofWALS "swh" "Swahili"
-  , LanguageProfile.ofWALS "ind" "Indonesian"
+  , ⟨ "rus", "Russian",    Fragments.Slavic.Russian.wordOrder,  Fragments.Slavic.Russian.adposition ⟩
+  , ⟨ "swh", "Swahili",    Fragments.Swahili.wordOrder,         Fragments.Swahili.adposition ⟩
+  , ⟨ "ind", "Indonesian", Fragments.Indonesian.wordOrder,      Fragments.Indonesian.adposition ⟩
   -- Object-initial / verb-final-object orders for shape diversity:
-  , LanguageProfile.ofWALS "tzo" "Tzotzil"   -- VOS, prepositional
-  , LanguageProfile.ofWALS "hix" "Hixkaryana" -- OVS, postpositional
+  , ⟨ "tzo", "Tzotzil",    Fragments.Tzotzil.wordOrder,         Fragments.Tzotzil.adposition ⟩    -- VOS
+  , ⟨ "hix", "Hixkaryana", Fragments.Hixkaryana.wordOrder,      Fragments.Hixkaryana.adposition ⟩ -- OVS
   }
 
 -- ============================================================================
@@ -485,30 +501,31 @@ def fragmentSample : Finset LanguageProfile :=
 -- Two of the most cited concern adposition order:
 --
 --   U3: VSO languages are prepositional.
---   U4: SOV languages are postpositional (with overwhelming greater than chance frequency).
+--   U4: SOV languages are postpositional (with overwhelmingly greater than
+--       chance frequency).
 --
--- Below: predicates over `LanguageProfile`, then the universal claims as
+-- Below: predicates over `SampleEntry`, then the universal claims as
 -- `Typology.ImplicationalUniversal` instances over `fragmentSample`. The
 -- proofs decide a quotient over a 15-element `Finset` literal — bumping
 -- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
 -- sites (see `Typology/Universal.lean` for the discussion).
 
-open _root_.Typology (LanguageProfile ImplicationalUniversal)
+open _root_.Typology (ImplicationalUniversal)
 
 /-- Language has WALS basic order VSO. -/
-def isVSO (p : LanguageProfile) : Prop :=
+def isVSO (p : SampleEntry) : Prop :=
   p.wordOrder.basicOrder = .vso
 
 /-- Language has WALS basic order SOV. -/
-def isSOV (p : LanguageProfile) : Prop :=
+def isSOV (p : SampleEntry) : Prop :=
   p.wordOrder.basicOrder = .sov
 
 /-- Language is classified as prepositional in WALS Ch 85. -/
-def isPrepositional (p : LanguageProfile) : Prop :=
+def isPrepositional (p : SampleEntry) : Prop :=
   p.adposition = some .prepositional
 
 /-- Language is classified as postpositional in WALS Ch 85. -/
-def isPostpositional (p : LanguageProfile) : Prop :=
+def isPostpositional (p : SampleEntry) : Prop :=
   p.adposition = some .postpositional
 
 instance : DecidablePred isVSO := fun p => by unfold isVSO; infer_instance
@@ -536,7 +553,7 @@ theorem greenberg_universal_4 :
 -- ============================================================================
 -- Cross-chapter WALS consistency over `fragmentSample`
 -- ============================================================================
--- Each `LanguageProfile` in `fragmentSample` derives its `basicOrder` (Ch 81),
+-- Each `SampleEntry` in `fragmentSample` derives its `basicOrder` (Ch 81),
 -- `svOrder` (Ch 82), and `ovOrder` (Ch 83) by independent ISO 639-3 lookups
 -- against WALS. The theorems below verify that those independent lookups agree
 -- per language: e.g. WALS-Ch81-SOV implies WALS-Ch82-SV and WALS-Ch83-OV. They
