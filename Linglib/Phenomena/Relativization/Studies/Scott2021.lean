@@ -56,7 +56,7 @@ default matches.
 
 namespace Phenomena.Relativization.Studies.Scott2021
 
-open Core Fragments.Swahili Fragments.Swahili.Relativization
+open Core Fragments.Swahili
 open Minimalist (FeatureBundle FeatureVal PhiFeature)
 open Features.Prominence (PersonLevel)
 

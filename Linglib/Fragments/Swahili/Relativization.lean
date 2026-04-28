@@ -45,11 +45,21 @@ The 3rd person forms *-ye* and *-o* are also the noun class 1/2
 (animate) resumptive pronouns (Table 3). The theoretical analysis of
 why 1st/2nd person forms carry person features while 3rd person forms
 do not is in `Phenomena/Relativization/Studies/Scott2021.lean`.
+
+## Naming convention
+
+Auxiliary types specific to the relativization paradigm carry the
+`Rel` prefix (`RelPerson`, `RelGramNum`, `RelMonosyllabicWord`,
+`RelNonTriggeringWord`) so they can live at top-level
+`Fragments.Swahili` without colliding with morphology-side `Person` or
+number features defined in sibling Swahili Fragment files. This follows
+the mathlib convention of prefix-disambiguating small support types
+rather than nesting them under a sub-namespace.
 -/
 
-namespace Fragments.Swahili.Relativization
+namespace Fragments.Swahili
 
-open Core Fragments.Swahili
+open Core
 
 -- ============================================================================
 -- § 1: Amba-RC Markers
@@ -93,19 +103,32 @@ def ambaMovement : RelClauseMarker :=
 /-- All Swahili relative clause markers. -/
 def relMarkers : List RelClauseMarker := [ambaGap, ambaBound, ambaMovement]
 
+/-- Swahili relativization profile (typological summary). -/
+def relativization : Typology.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .pronounRetention
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap on subjects (with amba-); resumptive on obliques; "
+          ++ "relative marker agrees in noun class" }
+
 -- ============================================================================
 -- § 2: Personal Pronoun Paradigm
 -- ============================================================================
 
-/-- Full form personal pronouns (@cite{scott-2021} Table 1). -/
-inductive Person where | first | second | third
+/-- Person feature in the Swahili relativization paradigm
+    (@cite{scott-2021} Table 1). Prefixed `Rel` so it can live at
+    top-level `Fragments.Swahili` without colliding with morphology-side
+    person features. -/
+inductive RelPerson where | first | second | third
   deriving DecidableEq, Repr
 
-inductive GramNum where | sg | pl
+/-- Number feature in the Swahili relativization paradigm. -/
+inductive RelGramNum where | sg | pl
   deriving DecidableEq, Repr
 
 /-- Full pronoun form. -/
-def fullPronoun : Person → GramNum → String
+def fullPronoun : RelPerson → RelGramNum → String
   | .first,  .sg => "mimi"
   | .first,  .pl => "sisi"
   | .second, .sg => "wewe"
@@ -120,7 +143,7 @@ def fullPronoun : Person → GramNum → String
 /-- Resumptive (suffixal) pronoun forms (@cite{scott-2021} Table 2).
     Person-matching forms: 1st/2nd person specify [PERS].
     Personless defaults: 3rd person = noun class agreement (no [PERS]). -/
-def resumptivePronoun : Person → GramNum → String
+def resumptivePronoun : RelPerson → RelGramNum → String
   | .first,  .sg => "-mi"
   | .first,  .pl => "-si"
   | .second, .sg => "-we"
@@ -156,7 +179,7 @@ def resumptiveByClass : NounClass → String
 
 /-- Whether a resumptive pronoun form is person-matching (bound) or
     personless (movement copy). Theory-neutral observable. -/
-def resumptivePronounIsPersonMatching : Person → GramNum → Bool
+def resumptivePronounIsPersonMatching : RelPerson → RelGramNum → Bool
   | .first,  _ => true
   | .second, _ => true
   | .third,  _ => false
@@ -170,7 +193,7 @@ def resumptivePronounIsPersonMatching : Person → GramNum → Bool
     etc.) would otherwise be stranded, violating the bimoraic Minimality
     requirement. These include true prepositions and connectives (the
     form *na* functions as both). -/
-inductive MonosyllabicWord where
+inductive RelMonosyllabicWord where
   | na    -- preposition/connective: 'with', 'to', 'by'
   | ya    -- connective: 'of' (associative -a + class prefix)
   | mwa   -- connective: 'in' (-a + class 18 prefix mu-)
@@ -182,32 +205,16 @@ inductive MonosyllabicWord where
     *kando* 'beside') must be followed by a monosyllabic connective,
     so it is the connective (not the noun-like word) that determines
     resumption. @cite{scott-2021} (22)–(23). -/
-inductive NonTriggeringWord where
+inductive RelNonTriggeringWord where
   | katika    -- 'on', 'in' (trisyllabic; dropped under relativization)
   deriving DecidableEq, Repr
 
 /-- Monosyllabic words always trigger resumption. -/
-def MonosyllabicWord.triggersResumption : MonosyllabicWord → Bool
+def RelMonosyllabicWord.triggersResumption : RelMonosyllabicWord → Bool
   | _ => true
 
 /-- Trisyllabic words never trigger resumption. -/
-def NonTriggeringWord.triggersResumption : NonTriggeringWord → Bool
+def RelNonTriggeringWord.triggersResumption : RelNonTriggeringWord → Bool
   | _ => false
-
-end Fragments.Swahili.Relativization
-
-namespace Fragments.Swahili
-
-/-- Swahili relativization profile (typological summary). Surfaced at the
-    `Fragments.Swahili` namespace level (not nested under `.Relativization`)
-    for consistency with the per-language `Fragments.X.relativization`
-    convention used in `Phenomena/Relativization/Typology.lean`. -/
-def relativization : Typology.Relativization.RelativizationProfile :=
-  { subjStrategy := .gap
-  , oblStrategy := .pronounRetention
-  , rcPosition := .postNominal
-  , lowestRelativizable := .oblique
-  , notes := "Gap on subjects (with amba-); resumptive on obliques; "
-          ++ "relative marker agrees in noun class" }
 
 end Fragments.Swahili

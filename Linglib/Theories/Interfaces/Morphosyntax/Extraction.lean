@@ -68,9 +68,9 @@ inductive ExtractionMarkingStrategy where
 /-- The grammatical position from which extraction occurs.
 
     This intersects with the @cite{keenan-comrie-1977} Accessibility Hierarchy
-    (see `Phenomena/Relativization/Typology.lean`), but is defined
-    independently because extraction morphology may make finer distinctions
-    than relativization. -/
+    (see `Core/Relativization/Hierarchy.lean`), but is defined independently
+    because extraction morphology may make finer distinctions than
+    relativization. -/
 inductive ExtractionTarget where
   /-- Subject (ergative/nominative) extraction -/
   | subject
@@ -130,7 +130,7 @@ inductive Extractee where
     between different extracted positions.
 
     Follows the `RelativizationProfile` pattern from
-    `Phenomena/Relativization/Typology.lean`. -/
+    `Typology/Relativization/Defs.lean`. -/
 structure ExtractionProfile where
   /-- Language name -/
   language : String

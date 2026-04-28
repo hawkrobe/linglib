@@ -1,5 +1,4 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Hierarchy
 import Linglib.Datasets.WALS.Features.F90D
 import Linglib.Datasets.WALS.Features.F122A
 import Linglib.Datasets.WALS.Features.F123A

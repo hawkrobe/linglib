@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.504] - 2026-04-28
+
+### Relativization architecture cleanup (post-audit)
+
+5-agent integration audit on the Relativization stack (Core/Typology/Fragments/Phenomena across 4 layers and ~25 files) flagged three load-bearing issues + three trivials, all addressed here:
+
+**Issue #1 — `Hierarchy.lean` was framework-agnostic substrate + paper content mashed together.** Lines 1-74 (`AHPosition.rank`, `.atLeastAsAccessible`, `.moreAccessible`, `.all`, `contiguousOnAH`, `RelClauseMarker.isContinuous`) are genuine substrate that mirrors `Core/Case/Hierarchy.lean`'s `validInventory` pattern; lines 99-230 (`full_ah_contiguous`/`singleton_contiguous`/`su_do_contiguous`/`io_obl_gen_contiguous`/`su_do_obl_not_contiguous` examples + `prc_from_hc2` general proof + `prc_all_primary_segments` segment-witness theorem) are paper-anchored claims explicitly stated as "HC₂ of @cite{keenan-comrie-1977}" and "the paper's core derivation."
+
+Per CLAUDE.md anchoring rules, paper content goes to `Phenomena/Relativization/Studies/AuthorYear.lean`. Verified against the K&C 1977 PDF (pp. 67-68): HCs as stated; PRC₂ "follows directly from HC₂ and the definition of primary"; Toba Batak example (p. 68-69) used as canonical "DO-gap-with-resumptive-elsewhere" datapoint. Move:
+
+- `Core/Relativization/Hierarchy.lean` (-136 LOC): kept §1 Rank, §2 Contiguity Predicate, §3 Ordering Theorems (substrate); removed §4 Contiguity Examples + §5 PRC General Proof. `hasAHRank` private → public so the moved code can reference it.
+- `Phenomena/Relativization/Studies/KeenanComrie1977.lean` (+145 LOC): gained the 5 contiguity examples + 4 PRC support lemmas (`ah_beq_iff`, `nat_beq_to_eq`, `hasAHRank_implies_any`, `contiguous_intermediate`) + the 2 PRC theorems (`prc_from_hc2` general + `prc_all_primary_segments` segment-witnesses). Added `import Linglib.Core.Relativization.Hierarchy`.
+
+**Issue #2 — Swahili namespace anomaly.** The Swahili Fragment had asymmetric namespacing: marker section under `Fragments.Swahili.Relativization`, profile def lifted to `Fragments.Swahili` so cross-language consumers see `Fragments.Swahili.relativization` consistently with the other 19 Fragment files. The marker-section nesting existed only to avoid `Person`/`GramNum`/`MonosyllabicWord`/`NonTriggeringWord` colliding with sibling Fragment files.
+
+Cleaner mathlib idiom: prefix-disambiguate small support types instead of namespace-nest. Lift everything to `namespace Fragments.Swahili` with `Person → RelPerson`, `GramNum → RelGramNum`, `MonosyllabicWord → RelMonosyllabicWord`, `NonTriggeringWord → RelNonTriggeringWord`. Single namespace block end-to-end. Scott2021's `open Core Fragments.Swahili Fragments.Swahili.Relativization` collapses to `open Core Fragments.Swahili`.
+
+**Trivials**:
+
+- `Typology/Relativization/Defs.lean`: dropped unused `import Linglib.Core.Relativization.Hierarchy` (Defs only references AHPosition, defined in Basic.lean).
+- 4 stale docstring references to deleted `Phenomena/Relativization/Typology.lean` updated: `Fragments/Swahili/Relativization.lean` (cross-language consumer convention rephrasing), `Fragments/Arabic/Relativization.lean` (`Typology/Relativization/Defs.lean::fromWALS122A` is the right cross-ref), `Theories/Interfaces/Morphosyntax/Extraction.lean` × 2 (one points at `Core/Relativization/Hierarchy.lean` for the AH; other points at `Typology/Relativization/Defs.lean` for the `RelativizationProfile` pattern).
+- `Fragments/TobaBatak/Relativization.lean`: added `def relativization : RelativizationProfile` (3-line typological summary). K&C's canonical "DO-gap-with-resumptive-elsewhere" datapoint per p. 68; the file previously had only `relMarkers` data and no typological summary.
+
+**Audit findings deferred** (not in this commit):
+
+- **Bool→Prop migration**: substantive Bool surface remains across the layer (`StrategyEntry.{su, do_, io, obl, gen, ocomp, plusCase} : Bool`, `RelClauseMarker.{covers, isContinuous, bearsCaseMarking} : Bool`, `contiguousOnAH/hasAHRank : Bool`, `KCProfile.satisfies{HC1, HC2, PRC} : Bool`). Project convention per CLAUDE.md prefers `Prop` + `Decidable` instances. The `decide` tactic is already fighting the Bool encoding in places (`(allProfiles.all (·.satisfiesHC2)) = true` doesn't reduce structurally). Separate scoped commit.
+- **K&C study refactor onto Fragment data**: `KeenanComrie1977.lean` re-implements `StrategyEntry.isContinuous` as a parallel to substrate `RelClauseMarker.isContinuous`, and the bespoke `KCProfile`/`StrategyEntry` schema is largely a re-encoding of `RelClauseMarker` lists. Closing the "Theory-hub denotation as study-file constraint" loop would let Scott2021 + SagWasowBender2003 share a Fragment-derived substrate. Separate scoped commit.
+- **`Theories/Interfaces/Morphosyntax/Extraction.lean::ExtractionProfile`** parallel structure: keep parallel to `RelativizationProfile` (extraction-marking ≠ relativization-typology is a real cross-cutting distinction in the literature, e.g., Tagalog voice morphology vs. Tagalog AH cutoff). One stale docstring fixed; structure left as-is.
+
+**Audit confirmed kept**: `namespace Core` flat convention (44 Core/ files use it; `Core/Case/{Basic,Hierarchy}.lean` is direct sibling precedent). `Hierarchy.lean`'s remaining substrate (`rank`, `atLeastAsAccessible`, `moreAccessible`, `all`, `contiguousOnAH`, `RelClauseMarker.isContinuous`, `ah_rank_injective`/`ah_rank_bounded`/`ah_reflexive`/`ah_transitive`) is genuinely framework-agnostic and stays.
+
+**Build**: 1755-job transitive verification on the touched files passes (`Phenomena/Case/Studies/Comrie1989.lean` + `Theories/Interfaces/Morphosyntax/Extraction.lean` are the only files outside the Relativization layer that import `Core/Relativization/Hierarchy.lean`; both build clean).
+
 ## [0.230.503] - 2026-04-27
 
 ### IKW2025 Part II dissolved: editorial bridge removed, Bayesian theorems migrated to DTS Core

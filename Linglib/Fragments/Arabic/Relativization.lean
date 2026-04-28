@@ -46,8 +46,8 @@ def relMarkers : List RelClauseMarker := [relAlladhi, relResumptive]
 
 /-- Arabic relativization profile (typological summary). Subject strategy
     `.mixed` reflects the gap-on-SU + resumptive-on-DO split: WALS Ch 122
-    has no `.mixed` category, so this entry is excluded from
-    `Phenomena/Relativization/Typology.lean`'s WALS-grounding sample. -/
+    has no `.mixed` category, so this entry cannot be grounded against the
+    Ch 122 converter (`Typology/Relativization/Defs.lean::fromWALS122A`). -/
 def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .mixed
   , oblStrategy := .pronounRetention

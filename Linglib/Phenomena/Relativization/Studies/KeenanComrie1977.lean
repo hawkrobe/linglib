@@ -1,3 +1,4 @@
+import Linglib.Core.Relativization.Hierarchy
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Arabic.Relativization
@@ -560,6 +561,150 @@ theorem kc_at_least_as_detailed_as_wals :
     arabic.lowestCovered.rank ≤ Fragments.Arabic.relativization.lowestRelativizable.rank ∧
     -- Yoruba
     yoruba.lowestCovered.rank ≤ Fragments.Yoruba.relativization.lowestRelativizable.rank := by
+  decide
+
+-- ============================================================================
+-- § ?: Contiguity Examples (HC₂ instances)
+-- ============================================================================
+
+/-! HC₂ ("any RC-forming strategy must apply to a continuous segment of the
+AH") is a paper-anchored claim. The contiguity machinery (`contiguousOnAH`,
+`AHPosition.rank`) lives in `Core/Relativization/Hierarchy.lean` because it
+mirrors `Core/Case/Hierarchy.lean::validInventory` and is genuinely
+framework-agnostic. The specific contiguous-segment witnesses below
+exemplify HC₂ on the AH and are part of @cite{keenan-comrie-1977}'s core
+argumentation. -/
+
+/-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
+theorem full_ah_contiguous :
+    contiguousOnAH AHPosition.all = true := rfl
+
+/-- A single position is trivially contiguous. -/
+theorem singleton_contiguous :
+    contiguousOnAH [AHPosition.subject] = true := rfl
+
+/-- [SU, DO] is contiguous. -/
+theorem su_do_contiguous :
+    contiguousOnAH [AHPosition.subject, .directObject] = true := rfl
+
+/-- [IO, OBL, GEN] is contiguous (a non-primary segment). -/
+theorem io_obl_gen_contiguous :
+    contiguousOnAH [AHPosition.indirectObject, .oblique, .genitive] = true := rfl
+
+/-- [SU, DO, OBL] is NOT contiguous (skips IO at rank 4). -/
+theorem su_do_obl_not_contiguous :
+    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := rfl
+
+-- ============================================================================
+-- § ?: Primary Relativization Constraint (General Proof)
+-- ============================================================================
+
+/-! The PRC is the paper's main derivation: it follows from HC₁ + HC₂ rather
+than being an independent stipulation. The general proof lives here (paper
+content), not in `Core/Relativization/Hierarchy.lean` (substrate). -/
+
+/-- BEq agrees with propositional equality for AH positions. -/
+private theorem ah_beq_iff (a b : AHPosition) :
+    (a == b) = true ↔ a = b := by
+  cases a <;> cases b <;> decide
+
+/-- Nat BEq equality implies propositional equality. -/
+private theorem nat_beq_to_eq {n m : Nat} (h : (n == m) = true) : n = m := by
+  cases n <;> cases m <;> simp_all [BEq.beq]
+
+/-- If `hasAHRank` finds a position at rank `a.rank`, that position is `a`
+    (since rank is injective). -/
+private theorem hasAHRank_implies_any
+    (positions : List AHPosition) (a : AHPosition)
+    (h : hasAHRank positions a.rank = true) :
+    positions.any (· == a) = true := by
+  unfold hasAHRank at h
+  rw [List.any_eq_true] at h ⊢
+  obtain ⟨b, hb_mem, hb_rank⟩ := h
+  have hrank : b.rank = a.rank := nat_beq_to_eq hb_rank
+  have heq : b = a := ah_rank_injective b a hrank
+  exact ⟨a, heq ▸ hb_mem, by rw [ah_beq_iff]⟩
+
+/-- If `contiguousOnAH positions = true` and `p1`, `p2` are both in the list
+    with `p1.rank < p2.rank`, then every intermediate rank `r` with
+    `p1.rank < r < p2.rank` is represented in the list. -/
+private theorem contiguous_intermediate
+    (positions : List AHPosition)
+    (h_contig : contiguousOnAH positions = true)
+    (p1 p2 : AHPosition)
+    (hp1 : positions.any (· == p1) = true)
+    (hp2 : positions.any (· == p2) = true)
+    (hlt : p1.rank < p2.rank)
+    (r : Nat) (hlo : p1.rank < r) (hhi : r < p2.rank) :
+    hasAHRank positions r = true := by
+  -- Convert List.any to membership
+  rw [List.any_eq_true] at hp1 hp2
+  obtain ⟨a1, ha1_mem, ha1_eq⟩ := hp1
+  obtain ⟨a2, ha2_mem, ha2_eq⟩ := hp2
+  rw [ah_beq_iff] at ha1_eq ha2_eq
+  -- ha1_eq : a1 = p1, ha2_eq : a2 = p2
+  have hp1_mem : p1 ∈ positions := ha1_eq ▸ ha1_mem
+  have hp2_mem : p2 ∈ positions := ha2_eq ▸ ha2_mem
+  -- Unpack contiguousOnAH
+  unfold contiguousOnAH at h_contig
+  rw [List.all_eq_true] at h_contig
+  have h1 := h_contig p1 hp1_mem
+  rw [List.all_eq_true] at h1
+  have h2 := h1 p2 hp2_mem
+  -- p2.rank > p1.rank is true, so the if-branch fires
+  simp only [hlt, ↓reduceIte] at h2
+  -- Extract the specific rank r from the range
+  rw [List.all_eq_true] at h2
+  have h3 := h2 r (List.mem_range.mpr hhi)
+  simp only [hlo, hhi, Bool.and_self] at h3
+  exact h3
+
+/-- **Primary Relativization Constraint (general proof).**
+
+    If a list of AH positions is contiguous (HC₂) and contains `.subject`
+    (i.e., the strategy is primary), then the list is upward-closed:
+    for any covered position `p`, all positions above `p` on the AH
+    are also covered.
+
+    This proves that the PRC is a logical consequence of HC₂ + being primary,
+    not an independent constraint — the paper's core derivation. -/
+theorem prc_from_hc2 (positions : List AHPosition)
+    (h_contig : contiguousOnAH positions = true)
+    (h_su : positions.any (· == AHPosition.subject) = true)
+    (p above : AHPosition)
+    (hp : positions.any (· == p) = true)
+    (habove : above.rank > p.rank) :
+    positions.any (· == above) = true := by
+  by_cases h_eq : above = AHPosition.subject
+  · -- above = .subject → trivially from h_su
+    subst h_eq; exact h_su
+  · -- above ≠ .subject → above.rank < 6
+    have h_above_lt : above.rank < 6 := by
+      cases above <;> simp [AHPosition.rank] at h_eq ⊢
+    -- p.rank < above.rank < 6 = subject.rank
+    have h_su_rank : AHPosition.subject.rank = 6 := rfl
+    have h_p_lt_su : p.rank < AHPosition.subject.rank := by
+      rw [h_su_rank]; omega
+    -- above.rank is intermediate between p.rank and subject.rank
+    have h_inter := contiguous_intermediate positions h_contig p .subject hp h_su
+      h_p_lt_su above.rank habove (by rw [h_su_rank]; omega)
+    exact hasAHRank_implies_any positions above h_inter
+
+/-- All 6 canonical primary strategy segments are upward-closed.
+    These are the only possible contiguous segments containing `.subject`. -/
+theorem prc_all_primary_segments :
+    let segs := [
+      [AHPosition.subject],
+      [.subject, .directObject],
+      [.subject, .directObject, .indirectObject],
+      [.subject, .directObject, .indirectObject, .oblique],
+      [.subject, .directObject, .indirectObject, .oblique, .genitive],
+      [.subject, .directObject, .indirectObject, .oblique, .genitive, .objComparison] ]
+    segs.all (λ seg =>
+      contiguousOnAH seg &&
+      seg.any (· == .subject) &&
+      seg.all (λ p => AHPosition.all.all (λ above =>
+        if above.rank > p.rank then seg.any (· == above) else true))) = true := by
   decide
 
 end Phenomena.Relativization.Studies.KeenanComrie1977
