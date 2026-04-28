@@ -286,13 +286,51 @@ theorem cb_eq_none_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E
 def cbAll [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) : List E :=
   let realized := prev.realizations.filter (fun r => Realizes.decide cur r.entity)
-  match realized.argmax (fun r => CfRankerOf.rank r) with
-  | none => []
-  | some top =>
-    let topRank := CfRankerOf.rank top
+  match realized with
+  | [] => []
+  | _ :: _ =>
+    let topRank := match realized.argmax (fun r => CfRankerOf.rank r) with
+                   | none => 0
+                   | some top => CfRankerOf.rank top
     ((realized.filter (fun r => CfRankerOf.rank r = topRank)).map (·.entity)).dedup
 
 @[simp] theorem cbAll_empty_prev [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (cur : U) : cbAll (Utterance.mk [] : Utterance E R) cur = [] := rfl
+
+/-- Every entity in `cbAll prev cur` corresponds to some realization in
+    `prev` whose entity is realized in `cur`. The substantive
+    characterization of `cbAll` (modulo argmax-rank reasoning, which
+    a future commit can expose via `mem_cbAll_iff`). -/
+theorem mem_cbAll_exists_realization [DecidableEq E] [CfRankerOf E R]
+    {U : Type} [Realizes U E]
+    {prev : Utterance E R} {cur : U} {e : E} (h : e ∈ cbAll prev cur) :
+    ∃ r ∈ prev.realizations, r.entity = e ∧ Realizes.decide cur r.entity = true := by
+  unfold cbAll at h
+  cases hf : prev.realizations.filter (fun r => Realizes.decide cur r.entity) with
+  | nil => simp [hf] at h
+  | cons head tail =>
+    simp only [hf, List.mem_dedup, List.mem_map, List.mem_filter] at h
+    obtain ⟨r, ⟨hr_in_filtered, _⟩, hr_eq⟩ := h
+    have : r ∈ prev.realizations.filter (fun r => Realizes.decide cur r.entity) := by
+      rw [hf]; exact hr_in_filtered
+    rw [List.mem_filter] at this
+    exact ⟨r, this.1, hr_eq, hr_eq ▸ this.2⟩
+
+/-- Every entity in `cbAll prev cur` is realized in `cur`. -/
+theorem mem_cbAll_realized [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    {prev : Utterance E R} {cur : U} {e : E} (h : e ∈ cbAll prev cur) :
+    Realizes.decide cur e = true := by
+  obtain ⟨r, _, hr_eq, hr_real⟩ := mem_cbAll_exists_realization h
+  exact hr_eq ▸ hr_real
+
+/-- Every entity in `cbAll prev cur` is in `prev.cf` — the multi-CB
+    set is a subset of the previous utterance's forward-looking
+    centers, mirroring `cb_mem_prev_cf` for the single-CB case. -/
+theorem mem_cbAll_mem_prev_cf [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    {prev : Utterance E R} {cur : U} {e : E} (h : e ∈ cbAll prev cur) :
+    e ∈ prev.cf := by
+  obtain ⟨r, hr_in, hr_eq, _⟩ := mem_cbAll_exists_realization h
+  rw [Utterance.mem_cf_iff]
+  exact ⟨r, hr_in, hr_eq⟩
 
 end Discourse.Centering

@@ -1500,6 +1500,7 @@ import Linglib.Phenomena.Reference.Studies.Schlenker2003
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.Reference.Studies.Sidner1983
 import Linglib.Phenomena.Reference.Studies.GroszJoshiWeinstein1995
+import Linglib.Phenomena.Reference.Studies.PoesioEtAl2004
 import Linglib.Phenomena.Reference.Studies.WesterbeekKoolenMaes2015
 import Linglib.Phenomena.Reference.Studies.Krifka2026
 import Linglib.Phenomena.ScalarImplicatures.Basic
