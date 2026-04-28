@@ -246,7 +246,7 @@ theorem all_derivations_monotonic :
     isMonotonic MorphClass.class1.operators MorphClass.class2.operators = true ∧
     isMonotonic MorphClass.class1.operators MorphClass.class3.operators = true ∧
     isMonotonic MorphClass.class2.operators MorphClass.class3.operators = true :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Against Universalist Root Meaning
@@ -361,13 +361,13 @@ def sampleRoots : List WasiwPCRoot := [
     category (@cite{hanink-koontz-garboden-2025} §7, Appendix). -/
 theorem color_roots_are_class3 :
     (sampleRoots.filter (·.dixonCat == .color)).all
-      (·.morphClass == .class3) = true := by native_decide
+      (·.morphClass == .class3) = true := by decide
 
 /-- Distribution across the sample. -/
 theorem class_distribution :
     (sampleRoots.filter (·.morphClass == .class1)).length = 13 ∧
     (sampleRoots.filter (·.morphClass == .class2)).length = 11 ∧
-    (sampleRoots.filter (·.morphClass == .class3)).length = 11 := by native_decide
+    (sampleRoots.filter (·.morphClass == .class3)).length = 11 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge Theorems

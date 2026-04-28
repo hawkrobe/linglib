@@ -226,33 +226,33 @@ theorem only_vØ_is_phase :
 
 /-- √TV result + Ø → causative [vDO, vGO, vBE] (active transitive). -/
 theorem tv_res_active :
-    isCausative (buildDecomposition vØ resultLower) = true := by native_decide
+    isCausative (buildDecomposition vØ resultLower) = true := by decide
 
 /-- √TV result + -ch → causative [vDO, vGO, vBE] (passive with implicit agent).
     Event structure is still causative — the agent is semantically present. -/
 theorem tv_res_passive_ch :
-    isCausative (buildDecomposition v_ch resultLower) = true := by native_decide
+    isCausative (buildDecomposition v_ch resultLower) = true := by decide
 
 /-- √TV result + -j → inchoative [vGO, vBE] (agentless passive / anticausative).
     No agent at all — the event is a pure change-of-state (p. 70). -/
 theorem tv_res_agentless :
-    isInchoative (buildDecomposition v_j resultLower) = true := by native_decide
+    isInchoative (buildDecomposition v_j resultLower) = true := by decide
 
 /-- √ITV + v/Voice⁰ → activity [vDO] (intransitive).
     Uses v_w, which shares formal properties with the null intransitive
     v/Voice⁰ for √ITV (both are agentive, non-ERG-assigning; p. 40). -/
 theorem itv_intransitive :
-    isActivity (buildDecomposition v_w activityLower) = true := by native_decide
+    isActivity (buildDecomposition v_w activityLower) = true := by decide
 
 /-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative).
     (p. 48, (23)): chot-w-i "The frog hopped." -/
 theorem pos_agentive :
-    buildDecomposition v_w positionalLower = [.vDO, .vBE] := by native_decide
+    buildDecomposition v_w positionalLower = [.vDO, .vBE] := by decide
 
 /-- √NOM + -w → activity [vDO] (denominal agentive intransitive).
     (p. 45, (16b)): chanhal-w-i "I danced." -/
 theorem nom_agentive :
-    isActivity (buildDecomposition v_w activityLower) = true := by native_decide
+    isActivity (buildDecomposition v_w activityLower) = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Existential Closure (-aj)
@@ -273,30 +273,30 @@ def triggersAj (v : VoiceHead) (implicitInternal : Bool) : Bool :=
   hasImplicitExternal v || implicitInternal
 
 /-- -ch always triggers -aj (implicit external agent; p. 69). -/
-theorem ch_triggers_aj : hasImplicitExternal v_ch = true := by native_decide
+theorem ch_triggers_aj : hasImplicitExternal v_ch = true := by decide
 
 /-- Ø never has an implicit external (agent is overt ERG DP). -/
-theorem vØ_no_implicit : hasImplicitExternal vØ = false := by native_decide
+theorem vØ_no_implicit : hasImplicitExternal vØ = false := by decide
 
 /-- -w never has an implicit external (agent is overt ABS DP; p. 54). -/
-theorem v_w_no_implicit : hasImplicitExternal v_w = false := by native_decide
+theorem v_w_no_implicit : hasImplicitExternal v_w = false := by decide
 
 /-- -j has no implicit external (there is no agent at all, not even
     implicit; p. 70: "no thematic agent, implicit or otherwise"). -/
-theorem v_j_no_implicit : hasImplicitExternal v_j = false := by native_decide
+theorem v_j_no_implicit : hasImplicitExternal v_j = false := by decide
 
 /-- -ch-aj: passive of √TV with implicit agent (ex. (58), p. 66). -/
 theorem ch_aj_passive :
-    triggersAj v_ch false = true := by native_decide
+    triggersAj v_ch false = true := by decide
 
 /-- -w-aj: absolutive antipassive (√TV theme is implicit; ex. (58), p. 66). -/
 theorem w_aj_antipassive :
-    triggersAj v_w true = true := by native_decide
+    triggersAj v_w true = true := by decide
 
 /-- -w incorporation antipassive: theme is overt bare NP → no -aj
     (ex. (58), p. 66; cf. (26b), p. 50). -/
 theorem w_incorporation_no_aj :
-    triggersAj v_w false = false := by native_decide
+    triggersAj v_w false = false := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. -w Cross-Class Generalization
@@ -313,7 +313,7 @@ theorem w_cross_class :
     buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
     -- √NOM (denominal verbalization): activity
     isActivity (buildDecomposition v_w activityLower) = true := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 9. Minimalist Division of Labor
@@ -329,7 +329,7 @@ theorem minimalist_division_of_labor :
     isInchoative (buildDecomposition v_j resultLower) = true ∧
     -- √TV has theme, √ITV does not — root determines internal arg
     rootTV_res.arity.hasInternalArg = true ∧
-    rootITV.arity.hasInternalArg = false := ⟨by native_decide, by native_decide, rfl, rfl⟩
+    rootITV.arity.hasInternalArg = false := ⟨by decide, by decide, rfl, rfl⟩
 
 /-- The causative alternation in Chuj is determined by Voice, not by the root
     (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
@@ -339,7 +339,7 @@ theorem chuj_causative_alternation_result :
     isCausative (buildDecomposition v_w resultLower) = v_w.assignsTheta ∧
     isCausative (buildDecomposition v_ch resultLower) = v_ch.assignsTheta ∧
     isCausative (buildDecomposition v_j resultLower) = v_j.assignsTheta :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. Chuj Fragment Bridge Theorems
@@ -439,7 +439,7 @@ theorem passive_contrast :
     -aj appears when there is an implicit (but not absent) external argument. -/
 theorem aj_passive_matches_implicit (vs : ChujVoiceSuffix) :
     ajOnPassive vs = hasImplicitExternal (toVoiceHead vs) := by
-  cases vs <;> native_decide
+  cases vs <;> decide
 
 /-- The fragment's `triggersAj` predicts the data's full -aj distribution:
     - -ch (implicit ext) → -aj
@@ -459,8 +459,8 @@ theorem aj_full_distribution :
     -- Antipassive -w (incorporation): overt internal → no -aj
     triggersAj v_w false = false ∧
     ajOnAntipassive .incorporation = false :=
-  ⟨by native_decide, rfl, by native_decide, rfl,
-   by native_decide, rfl, by native_decide, rfl⟩
+  ⟨by decide, rfl, by decide, rfl,
+   by decide, rfl, by decide, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 14. Verb Building Predictions
@@ -482,7 +482,7 @@ theorem event_decomposition_matches_data :
     isCausative (buildDecomposition v_ch resultLower) = true ∧
     -- ex7a: √ITV + v_w → activity
     isActivity (buildDecomposition v_w activityLower) = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 15. Division of Labor
@@ -556,6 +556,6 @@ theorem w_verbalization_cross_class :
     buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
     -- √NOM + -w → activity [vDO] (fragment)
     isActivity (buildDecomposition v_w activityLower) = true :=
-  ⟨rfl, rfl, by native_decide, by native_decide⟩
+  ⟨rfl, rfl, by decide, by decide⟩
 
 end Coon2019

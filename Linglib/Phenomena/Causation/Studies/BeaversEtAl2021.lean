@@ -119,15 +119,15 @@ structure RootMeaning where
   nVerbalLanguages : Nat
   deriving Repr
 
-/-- Percentage of languages with simple stative. -/
-def RootMeaning.pctSimpleStative (r : RootMeaning) : Float :=
-  if r.nLanguages = 0 then 0.0
-  else r.nSimpleStative.toFloat / r.nLanguages.toFloat * 100.0
+/-- Percentage of languages with simple stative (exact ℚ — kernel-decidable). -/
+def RootMeaning.pctSimpleStative (r : RootMeaning) : ℚ :=
+  if r.nLanguages = 0 then 0
+  else (r.nSimpleStative : ℚ) * 100 / r.nLanguages
 
-/-- Percentage of languages with marked verbal paradigm. -/
-def RootMeaning.pctMarkedVerbal (r : RootMeaning) : Float :=
-  if r.nVerbalLanguages = 0 then 0.0
-  else r.nMarkedVerbal.toFloat / r.nVerbalLanguages.toFloat * 100.0
+/-- Percentage of languages with marked verbal paradigm (exact ℚ). -/
+def RootMeaning.pctMarkedVerbal (r : RootMeaning) : ℚ :=
+  if r.nVerbalLanguages = 0 then 0
+  else (r.nMarkedVerbal : ℚ) * 100 / r.nVerbalLanguages
 
 -- PC roots (Table A1/A2 data)
 
@@ -182,31 +182,35 @@ def resultRoots : List RootMeaning :=
 -- § 4. Statistical Summary (§6, §7)
 -- ════════════════════════════════════════════════════
 
-/-- Summary of a crosslinguistic comparison between PC and result roots. -/
+/-- Summary of a crosslinguistic comparison between PC and result roots.
+    Numeric fields are exact ℚ (mathlib idiom for kernel-decidable arithmetic;
+    @cite{beavers-etal-2021} reports values to 2 decimal places). -/
 structure TypologicalComparison where
   /-- What is being measured -/
   measure : String
   /-- PC root median percentage -/
-  pcMedian : Float
+  pcMedian : ℚ
   /-- Result root median percentage -/
-  resultMedian : Float
+  resultMedian : ℚ
   /-- Mann-Whitney U statistic -/
-  uStatistic : Float
+  uStatistic : ℚ
   /-- One-tailed p-value threshold -/
-  pThreshold : Float
+  pThreshold : ℚ
   /-- Sample sizes (PC roots, result roots) -/
   nPC : Nat
   nResult : Nat
   deriving Repr
 
-/-- Simple stative form comparison (§6, Fig. 1). -/
+/-- Simple stative form comparison (§6, Fig. 1).
+    Medians: 95.67% and 1.59% encoded as exact rationals via OfScientific. -/
 def simpleStativeComparison : TypologicalComparison :=
   { measure := "% languages with simple stative",
     pcMedian := 95.67, resultMedian := 1.59,
     uStatistic := 1266.5, pThreshold := 0.001,
     nPC := 36, nResult := 36 }
 
-/-- Verbal markedness comparison (§7, Fig. 5). -/
+/-- Verbal markedness comparison (§7, Fig. 5).
+    Medians: 56.01% and 15.20% encoded as exact rationals via OfScientific. -/
 def verbalMarkednessComparison : TypologicalComparison :=
   { measure := "% languages with marked verbal paradigm",
     pcMedian := 56.01, resultMedian := 15.20,
@@ -217,7 +221,8 @@ def verbalMarkednessComparison : TypologicalComparison :=
 theorem both_comparisons_significant :
     simpleStativeComparison.pcMedian > simpleStativeComparison.resultMedian ∧
     verbalMarkednessComparison.pcMedian > verbalMarkednessComparison.resultMedian := by
-  native_decide
+  unfold simpleStativeComparison verbalMarkednessComparison
+  refine ⟨?_, ?_⟩ <;> norm_num
 
 -- ════════════════════════════════════════════════════
 -- § 5. Semantic Diagnostics (§§3.3–3.4, theory-neutral)
@@ -262,10 +267,10 @@ structure LanguageProfile where
   nPCParadigms : Nat
   /-- Number of result root verbal paradigms with data -/
   nResultParadigms : Nat
-  /-- % of PC paradigms that are marked -/
-  pctPCMarked : Float
-  /-- % of result paradigms that are marked -/
-  pctResultMarked : Float
+  /-- % of PC paradigms that are marked (exact ℚ) -/
+  pctPCMarked : ℚ
+  /-- % of result paradigms that are marked (exact ℚ) -/
+  pctResultMarked : ℚ
   deriving Repr
 
 /-- The six in-depth case study languages (§4). -/
@@ -299,7 +304,7 @@ def LanguageType.allAttested : List LanguageType :=
 
 /-- Three and only three types are attested. -/
 theorem three_attested_types :
-    LanguageType.allAttested.length = 3 := by native_decide
+    LanguageType.allAttested.length = 3 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Verification: Per-Root Data Consistency
@@ -307,22 +312,22 @@ theorem three_attested_types :
 
 /-- All entries in our PC root sample are classified as PC. -/
 theorem pcRoots_all_pc :
-    pcRoots.all (·.rootClass == .propertyConcept) = true := by native_decide
+    pcRoots.all (·.rootClass == .propertyConcept) = true := by decide
 
 /-- All entries in our result root sample are classified as result. -/
 theorem resultRoots_all_result :
-    resultRoots.all (·.rootClass == .result) = true := by native_decide
+    resultRoots.all (·.rootClass == .result) = true := by decide
 
 /-- Most PC roots in the sample have ≥ 50% simple stative attestation. -/
 theorem most_pc_roots_have_statives :
     (pcRoots.filter (λ r => r.nSimpleStative * 2 ≥ r.nLanguages)).length ≥
     pcRoots.length - 1 := by  -- all but 'old' (age is an exception)
-  native_decide
+  decide
 
 /-- No result root in the sample exceeds 10% simple stative attestation. -/
 theorem result_roots_rare_statives :
     resultRoots.all (λ r => r.nSimpleStative * 10 ≤ r.nLanguages) = true := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Theory ↔ Empirical Bridge: RootType ↔ CoSRootClass
@@ -403,7 +408,7 @@ theorem pc_stative_prediction_matches_data :
     -- Empirical confirmation (all but one PC root)
     (pcRoots.filter (λ r => r.nSimpleStative * 2 ≥ r.nLanguages)).length ≥
     pcRoots.length - 1 := by
-  exact ⟨rfl, by native_decide⟩
+  exact ⟨rfl, by decide⟩
 
 /-- **Theory predicts**: result roots LACK simple statives.
     **Data confirms**: all 10 result sample roots have ≤ 10% attestation. -/
@@ -412,7 +417,7 @@ theorem result_no_stative_prediction_matches_data :
     RootType.hasSimpleStative .result = false ∧
     -- Empirical confirmation (ALL result roots)
     resultRoots.all (λ r => r.nSimpleStative * 10 ≤ r.nLanguages) = true := by
-  exact ⟨rfl, by native_decide⟩
+  exact ⟨rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Markedness Prediction ↔ Statistical Comparison
@@ -429,7 +434,9 @@ theorem markedness_prediction_matches_statistics :
     -- Data: PC marked rate exceeds result marked rate
     simpleStativeComparison.pcMedian > simpleStativeComparison.resultMedian ∧
     verbalMarkednessComparison.pcMedian > verbalMarkednessComparison.resultMedian := by
-  refine ⟨rfl, rfl, ?_, ?_⟩ <;> native_decide
+  refine ⟨rfl, rfl, ?_, ?_⟩
+  · exact both_comparisons_significant.1
+  · exact both_comparisons_significant.2
 
 -- ════════════════════════════════════════════════════
 -- § 12. Unattested Language Type
@@ -446,7 +453,7 @@ theorem unattested_type_matches_complementarity :
     LanguageType.allAttested.length = 3 ∧
     -- Theory: verbal and stative markedness always differ
     (∀ rt : RootType, verbalMarkedness rt ≠ stativeMarkedness rt) := by
-  refine ⟨by native_decide, ?_⟩
+  refine ⟨by decide, ?_⟩
   intro rt; cases rt <;> simp [verbalMarkedness, stativeMarkedness,
     RootType.entailsChange]
 
@@ -511,7 +518,7 @@ theorem pc_roots_classified_and_predicted :
     pcRoots.all (·.rootClass == .propertyConcept) = true ∧
     -- Theory: PC has simple stative
     RootType.hasSimpleStative .propertyConcept = true := by
-  exact ⟨by native_decide, rfl⟩
+  exact ⟨by decide, rfl⟩
 
 /-- Every result root in the empirical sample is classified as result, and the
     theory predicts result roots lack simple statives — they do. -/
@@ -520,7 +527,7 @@ theorem result_roots_classified_and_predicted :
     resultRoots.all (·.rootClass == .result) = true ∧
     -- Theory: result lacks simple stative
     RootType.hasSimpleStative .result = false := by
-  exact ⟨by native_decide, rfl⟩
+  exact ⟨by decide, rfl⟩
 
 /-- The subclass taxonomies are aligned: B&KG's `PCSubclass` has 6
     categories (matching their Table 2); the theory's `PCClass` has 7
