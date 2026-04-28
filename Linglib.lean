@@ -1501,6 +1501,7 @@ import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 import Linglib.Phenomena.Reference.Studies.Schlenker2003
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.Reference.Studies.Sidner1983
+import Linglib.Phenomena.Reference.Studies.Beaver2004
 import Linglib.Phenomena.Reference.Studies.GroszJoshiWeinstein1995
 import Linglib.Phenomena.Reference.Studies.PoesioEtAl2004
 import Linglib.Phenomena.Reference.Studies.WesterbeekKoolenMaes2015

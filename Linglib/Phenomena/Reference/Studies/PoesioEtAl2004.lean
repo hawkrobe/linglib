@@ -7,7 +7,6 @@ import Linglib.Theories.Discourse.Centering.Coherence
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
 import Linglib.Phenomena.Reference.Studies.Sidner1983
-import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # @cite{poesio-stevenson-eugenio-hitzeman-2004}: Centering as a Parametric Theory
@@ -409,77 +408,32 @@ theorem is_ranker_picks_hearerOld_as_cp :
     is_example_utt.cp = some "old_object" := by decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Partial Beaver 2004 OT-bridge witness
+-- § 5. Beaver 2004 OT bridge → see Beaver2004.lean
 -- ════════════════════════════════════════════════════
 
 /-! @cite{poesio-stevenson-eugenio-hitzeman-2004} §3.1 fn 12 cite
-    Beaver 2004 ("The Optimization of Discourse Anaphora,"
-    *Linguistics and Philosophy* 27(1)) approvingly as the
-    optimality-theoretic reformulation of Centering. The structural
-    identity Beaver argues — "Centering's CB-selection IS
-    single-constraint OT optimization, with `cbAll` = `Tableau.optimal`
-    on appropriate inputs" — should ideally land as a substrate-level
-    bridge theorem; per mathlib's `PMF` vs `Measure` precedent,
-    that bridge belongs in `Phenomena/Reference/Studies/Beaver2004.lean`
-    (queued).
+    @cite{beaver-2004} ("The Optimization of Discourse Anaphora,"
+    *Linguistics and Philosophy* 27(1):3-56) as the canonical
+    optimality-theoretic reformulation of Centering. The full bridge
+    formalization — six ranked OT constraints (AGREE > DISJOINT >
+    PRO-TOP > FAM-DEF > COHERE > ALIGN), Beaver Theorem (20)
+    BFP-equivalence witnesses on his examples (12) and (2), and the
+    PRO-TOP demotion (Beaver §4.1) that fixes the BFP Rule-1
+    overprediction PSDH §3.1 fn 12 explicitly cite — lives in
+    `Phenomena/Reference/Studies/Beaver2004.lean`.
 
-    Below: a **partial witness** on the PSDH (10) example, showing
-    that the violation profile of a single constraint named
-    `InvRank` (penalizing low-rank realizations) ties the two CB
-    candidates `corner_cupboard` and `Branicki` while the
-    grammatically-higher `the_drawing` strictly outranks them.
-    This is the OT-side mechanism producing the multi-CB
-    phenomenon: under the InvRank constraint, both PSDH (10)
-    candidates are tied at maximum violation count, so OT's
-    "select all candidates with minimum violation profile" rule
-    returns both. -/
+    Three of Beaver's six constraints are LITERAL RESTATEMENTS of
+    existing Centering primitives (PRO-TOP via `Rule1GJW95`,
+    COHERE via `cb`, ALIGN via `cb`+`cp`); see Beaver2004.lean §2.
+    The deep-reuse design makes Theorem (20) partly structural — the
+    OT-vs-BFP equivalence on those 3 clauses follows by definition.
 
-/-- The Beaver-style single OT constraint: penalize low-rank
-    realizations (low rank = many violations, corresponding to
-    "less salient" in Centering). Sign-flip from Centering's
-    "max rank wins" to OT's "min violations wins." Bound chosen
-    high enough that all GrammaticalRole values produce non-negative
-    violations (ranks are 0/1/2 so 10 is safe). -/
-def beaverInverseRank :
-    Core.Constraint.OT.NamedConstraint (Realization String GrammaticalRole) :=
-  Core.Constraint.OT.mkMarkGrad "InvRank"
-    (fun r => 10 - CfRankerOf.rank r)
-
-/-- **Beaver bridge witness (1/3)**: the two PSDH §4.1.1 (10) tied-CB
-    candidates `corner_cupboard` and `Branicki` get *identical*
-    InvRank violations (10 each, from rank 0 = .other). This is
-    the OT-side mechanism producing the multi-CB phenomenon. -/
-theorem beaver_ties_psdh_candidates :
-    beaverInverseRank.eval ⟨"corner_cupboard", .other, false⟩ =
-    beaverInverseRank.eval ⟨"Branicki", .other, false⟩ := rfl
-
-/-- **Beaver bridge witness (2/3)**: `the_drawing` (matrix subject,
-    .subject) has STRICTLY FEWER violations than the two CB
-    candidates (8 vs 10). Under OT's lex-min, `the_drawing` would
-    win unconditionally — but `cbAll` filters candidates to
-    "realized in cur" first, and `the_drawing` isn't realized in
-    u229. The interaction of OT's optimization with Centering's
-    realized-in-cur filter is what produces the multi-CB result. -/
-theorem beaver_the_drawing_strictly_outranks_in_OT :
-    beaverInverseRank.eval ⟨"the_drawing", .subject, false⟩ <
-    beaverInverseRank.eval ⟨"corner_cupboard", .other, false⟩ := by decide
-
-/-- **Beaver bridge witness (3/3)**: the structural identity holds
-    on PSDH (10) — `cbAll u227 u229` returns exactly the realizations
-    in u227 that (a) are realized in u229 AND (b) have the maximum
-    InvRank violation among such (i.e., are tied at the OT-optimum).
-    This establishes the Beaver 2004 reformulation on the worked
-    example without requiring the full `Tableau` construction.
-    The general substrate theorem `cbAll = (centeringAsTableau).optimal`
-    will live in `Phenomena/Reference/Studies/Beaver2004.lean`
-    (queued). -/
-theorem beaver_witness_psdh_10 :
-    (cbAll u227 u229).length = 2 ∧
-    beaverInverseRank.eval ⟨"corner_cupboard", .other, false⟩ =
-    beaverInverseRank.eval ⟨"Branicki", .other, false⟩ ∧
-    beaverInverseRank.eval ⟨"the_drawing", .subject, false⟩ <
-    beaverInverseRank.eval ⟨"corner_cupboard", .other, false⟩ :=
-  ⟨by decide, rfl, by decide⟩
+    A previous version of this section landed a partial witness on
+    PSDH (10) using a single sign-flipped InvRank constraint; that
+    formulation is superseded by Beaver2004.lean's 6-constraint
+    version with the full ranking. The PSDH (10) two-CB result
+    remains the empirical anchor; its OT analysis now lives in the
+    paper-specific Beaver study file. -/
 
 -- ════════════════════════════════════════════════════
 -- § 6. Future work / deferred items
@@ -513,14 +467,14 @@ theorem beaver_witness_psdh_10 :
       with PSDH-table citations — defensible for paper replication
       but adds significant code without deriving content. Deferred.
 
-    - **Full Beaver 2004 OT-Centering bridge**: §5 above lands a
-      *partial* witness on PSDH (10) (the InvRank constraint ties the
-      two candidates; the_drawing strictly outranks both). The
+    - **Full Beaver 2004 substrate-level OT-Centering bridge**: a
       *general* substrate theorem `cbAll prev cur = (centeringAsTableau prev cur).optimal.image (·.entity)`
       requires constructing the full `Tableau` (Finset candidates +
-      Nonempty proof + ViolationProfile mapping), which is queued for
-      `Phenomena/Reference/Studies/Beaver2004.lean` per mathlib's
-      PMF/Measure precedent.
+      Nonempty proof + ViolationProfile mapping). `Beaver2004.lean`
+      lands the per-example witnesses (with the full 6-constraint
+      ranking and Theorem (20) verification on Beaver's own (12) and
+      (2) examples); the general substrate-level theorem is still
+      queued.
 
     - **Structural `centeringToSidner` translation**: the §2 Sidner
       bridge (`psdh_two_cb_witnesses_sidner_two_foci`) is currently a
