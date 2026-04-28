@@ -1106,6 +1106,7 @@ import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.Relativization.Basic
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.Studies.Roberts2012
 import Linglib.Phenomena.Focus.Studies.Rooth1992
@@ -1687,6 +1688,18 @@ import Linglib.Phenomena.WordOrder.Studies.PullumGazdar1982
 import Linglib.Phenomena.WordOrder.Studies.ArregiPietraszko2021
 import Linglib.Phenomena.WordOrder.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
+-- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
+import Linglib.Theories.Discourse.Centering.Defs
+import Linglib.Theories.Discourse.Centering.Basic
+import Linglib.Theories.Discourse.Centering.Coherence
+import Linglib.Theories.Discourse.Centering.Constraints
+import Linglib.Theories.Discourse.Centering.Rule1
+import Linglib.Theories.Discourse.Centering.Rule2
+import Linglib.Theories.Discourse.Centering.Transition
+import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
+-- Theories: Interfaces — Centering ↔ DRT bridge
+import Linglib.Theories.Interfaces.SemanticsDiscourse.CenteringDRSExpr
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Theories.Semantics.Dynamic.Connectives.Assignment

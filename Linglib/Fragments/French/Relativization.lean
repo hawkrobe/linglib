@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # French relativization profile
@@ -10,7 +10,7 @@ namespace Fragments.French
 
 /-- French relativization: relative pronoun system *qui* (SU), *que* (DO),
     *dont* (GEN), *lequel* (OBL); covers all AH positions; postnominal RC. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .relativePronoun
   , oblStrategy := .relativePronoun
   , rcPosition := .postNominal

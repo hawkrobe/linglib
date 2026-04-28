@@ -1,4 +1,4 @@
-import Linglib.Fragments.Tagalog.Phonology
+import Linglib.Phenomena.Phonology.Studies.ZurawHayes2017
 
 /-!
 # @cite{magri-2025}: Constraint Interaction in Probabilistic Phonology
@@ -22,39 +22,43 @@ is complete.
 ## Formalization
 
 This study file instantiates @cite{magri-2025}'s theory with the Tagalog
-nasal substitution case study from the paper's §2–3, verifying:
+nasal substitution case study from the paper, verifying:
 
-1. The six constraints satisfy `ConstraintIndependence` (§2.3, Figure 3)
+1. The six constraints satisfy `ConstraintIndependence`
 2. The violation differences inherit independence (`ViolDiffIndependence`)
-3. ME predicts HZ's constant logit-rate difference identity (§3.6, eq. 22)
+3. ME predicts HZ's constant logit-rate difference identity
 4. The identity holds for *any* weight assignment (not just specific values)
 
-The constraint data comes from `Fragments.Tagalog.Phonology`.
+The 2×2 square data and constraint inventory come from
+`Phenomena/Phonology/Studies/ZurawHayes2017.lean` (Magri 2025 inherits
+the sub-square setup from Z&H 2017).
 -/
 
 namespace Magri2025
 
 open Core.Constraint
-open Fragments.Tagalog.Phonology
+open ZurawHayes2017
 
--- ============================================================================
--- § 1: Constraint Independence (§2.3, Figure 3)
--- ============================================================================
+/-! ## § 1: Constraint Independence
 
--- The constraint violation profiles viewed as functions on underlying
--- forms (ignoring the candidate dimension, since we work with violation
--- *differences* Δₖ). For the independence check, we verify that each
--- raw constraint is insensitive to at least one dimension.
+The constraint violation profiles viewed as functions on underlying
+forms (ignoring the candidate dimension, since we work with violation
+*differences* Δₖ). For the independence check, we verify that each
+raw constraint is insensitive to at least one dimension.
+-/
 
 /-- C₁ = DEP-C is insensitive to the prefix (row dimension):
     the violation is 1 for NO and 0 for YES regardless of prefix.
-    Per @cite{zuraw-2010} (16). -/
+    DEP-C as the constraint violated by non-substitution follows
+    @cite{zuraw-2010}'s discussion in §4.2. -/
 theorem depC_insensitive_to_row (o : NasalSubOutput) :
     depC (.mang_b, o) = depC (.pang_b, o) ∧
     depC (.mang_k, o) = depC (.pang_k, o) := by
   cases o <;> decide
 
-/-- C₂ = \*NC is insensitive to the prefix. Per @cite{zuraw-2010} (17). -/
+/-- C₂ = \*NC is insensitive to the prefix. Per @cite{zuraw-2010} ex. (17):
+    "\*NC: A [+nasal] segment must not be immediately followed by a
+    [-voice, -sonorant] segment". -/
 theorem starNC_insensitive_to_row (o : NasalSubOutput) :
     starNC (.mang_b, o) = starNC (.pang_b, o) ∧
     starNC (.mang_k, o) = starNC (.pang_k, o) := by
@@ -84,7 +88,7 @@ theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
     unifPang (.pang_b, o) = unifPang (.pang_k, o) := by
   cases o <;> decide
 
-/-- **Constraint independence** (§2.3): for each fixed output, the six
+/-- **Constraint independence**: for each fixed output, the six
     constraints satisfy `ConstraintIndependence` on the nasal substitution
     square.
 
@@ -98,9 +102,7 @@ theorem constraint_independence (o : NasalSubOutput) :
       InsensitiveToRow, InsensitiveToCol] <;>
     decide
 
--- ============================================================================
--- § 2: Violation Difference Consistency
--- ============================================================================
+/-! ## § 2: Violation Difference Consistency -/
 
 /-- The violation differences are consistent with the raw constraint
     profiles: `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)`. -/
@@ -109,18 +111,9 @@ theorem violDiff_consistent (k : Fin 6) (x : NasalSubInput) :
     (constraints k (x, .no) : ℤ) - (constraints k (x, .yes) : ℤ) := by
   fin_cases k <;> cases x <;> decide
 
--- ============================================================================
--- § 3: Violation Difference Independence
--- ============================================================================
+/-! ## § 3: ME Predicts HZ -/
 
--- `deltaR` and `violDiff_independence` are data-level properties of the
--- Tagalog constraint profiles, now defined in `Fragments.Tagalog.Phonology`.
-
--- ============================================================================
--- § 4: ME Predicts HZ (§3.6, eq. 22)
--- ============================================================================
-
-/-- **ME predicts HZ for Tagalog nasal substitution** (§3.6):
+/-- **ME predicts HZ for Tagalog nasal substitution**:
     for *any* weight assignment `w : Fin 6 → ℝ`, the MaxEnt logit rates
     of nasal substitution satisfy the constant-difference identity.
 
@@ -134,12 +127,11 @@ theorem me_predicts_hz_tagalog (w : Fin 6 → ℝ) :
       nasalSubSquare :=
   me_predicts_hz w deltaR nasalSubSquare violDiff_independence
 
--- ============================================================================
--- § 5: Concrete Logit-Rate Computations
--- ============================================================================
+/-! ## § 4: Concrete Logit-Rate Computations
 
--- The logit rate is `LR(x) = Σₖ wₖ · Δₖ(x)`. We verify the
--- symbolic expressions from §3.4.
+The logit rate is `LR(x) = Σₖ wₖ · Δₖ(x)`. We verify the
+symbolic expressions for each cell.
+-/
 
 /-- `LR(maŋb) = w₁ − w₅` -/
 theorem logitRate_mang_b (w : Fin 6 → ℚ) :
@@ -167,7 +159,11 @@ theorem logitRate_pang_k (w : Fin 6 → ℚ) :
 
 /-- The constant logit-rate difference equals `−w₂ + w₃ + w₄`
     for both rows, regardless of weights. This follows from the
-    insensitivity structure of the six constraints (§2.3). -/
+    insensitivity structure of the six constraints (§ 1).
+
+    Note that `w 2` and `w 3` are not separately identifiable from the
+    b-vs-k square data — only the sum `w 2 + w 3` matters here, since
+    `*[stemŋ]` and `*[stemŋ]/n` coincide on the b/k restriction. -/
 theorem hz_constant_value (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .mang_b : ℚ) -
     (∑ k : Fin 6, w k * violDiffProfile k .mang_k : ℚ) =
@@ -188,13 +184,12 @@ theorem hz_identity_concrete (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .pang_k : ℚ) := by
   rw [hz_constant_value, hz_constant_value']
 
--- ============================================================================
--- § 6: Empirical Rate Verification
--- ============================================================================
+/-! ## § 5: Empirical Rate Verification
 
--- The empirical rates satisfy HZ's identity to good approximation.
--- The exact identity is `logit(R(tl)) − logit(R(tr)) = logit(R(bl)) − logit(R(br))`.
--- We verify the approximate version on the rational rates.
+The empirical rates satisfy HZ's identity to good approximation.
+The exact identity is `logit(R(tl)) − logit(R(tr)) = logit(R(bl)) − logit(R(br))`.
+We verify the approximate version on the rational rates.
+-/
 
 /-- Rates are in (0, 1). -/
 theorem rate_pos (x : NasalSubInput) : 0 < nasalSubRate x := by
@@ -242,9 +237,7 @@ theorem odds_ratios_close :
     39494 * 83412 = 3294273528 := by
   constructor <;> norm_num
 
--- ============================================================================
--- § 7: Separable Forward Direction (§5.4)
--- ============================================================================
+/-! ## § 6: Separable Forward Direction -/
 
 /-- **ME predicts HZ at the probability level**: the log-probability-ratio
     `log(P(YES|x)/P(NO|x))` under ME satisfies HZ's constant-difference

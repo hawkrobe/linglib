@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Welsh Relativization Fragment
@@ -44,7 +44,7 @@ def relParticleY : RelClauseMarker :=
 def relMarkers : List RelClauseMarker := [relParticleA, relParticleY]
 
 /-- Welsh relativization profile (typological summary). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Mandarin relativization profile
@@ -10,7 +10,7 @@ namespace Fragments.Mandarin
 
 /-- Mandarin relativization: gap + relativizer *de*; pre-nominal RC
     (SVO main clause but RC-N order). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .preNominal

@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Malagasy Relativization Fragment
@@ -35,7 +35,7 @@ def relGap : RelClauseMarker :=
 def relMarkers : List RelClauseMarker := [relGap]
 
 /-- Malagasy relativization profile (typological summary). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .notRelativizable
   , rcPosition := .postNominal

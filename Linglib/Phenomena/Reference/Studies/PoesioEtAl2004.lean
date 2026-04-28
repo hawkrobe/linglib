@@ -7,6 +7,7 @@ import Linglib.Theories.Discourse.Centering.Coherence
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
 import Linglib.Phenomena.Reference.Studies.Sidner1983
+import Linglib.Phenomena.Reference.Studies.Beaver2004
 
 /-!
 # @cite{poesio-stevenson-eugenio-hitzeman-2004}: Centering as a Parametric Theory
@@ -426,14 +427,126 @@ theorem is_ranker_picks_hearerOld_as_cp :
     existing Centering primitives (PRO-TOP via `Rule1GJW95`,
     COHERE via `cb`, ALIGN via `cb`+`cp`); see Beaver2004.lean §2.
     The deep-reuse design makes Theorem (20) partly structural — the
-    OT-vs-BFP equivalence on those 3 clauses follows by definition.
+    OT-vs-BFP equivalence on those 3 clauses follows by definition. -/
 
-    A previous version of this section landed a partial witness on
-    PSDH (10) using a single sign-flipped InvRank constraint; that
-    formulation is superseded by Beaver2004.lean's 6-constraint
-    version with the full ranking. The PSDH (10) two-CB result
-    remains the empirical anchor; its OT analysis now lives in the
-    paper-specific Beaver study file. -/
+/-! ## §5.1 Beaver's COT, applied to PSDH (10): the substrate divergence
+
+    The cross-framework theorem flagged by audit as the highest-leverage
+    next claim. PSDH §3.1 fn 12 endorse Beaver's OT reformulation, but
+    do PSDH's two-CB cases (this file's `u227`/`u229`) survive Beaver's
+    machinery? Mechanical application reveals a **substrate divergence**:
+
+    Beaver's framework operates over `cb : Option E` (single-CB
+    semantics) — his COHERE constraint is "current topic = prior topic"
+    where "topic" means `cb prev cur`, an `Option E`. PSDH's two-CB
+    finding (this file's `u227_to_u229_cbAll`) lives in `cbAll`, which
+    Beaver's substrate doesn't reference.
+
+    The consequence: Beaver's lex-min applied to PSDH (10) selects a
+    UNIQUE topic from the tied candidates (whichever `cb` returns by
+    sort order — `Branicki`), and the COT constraints proceed
+    relative to that one. The framework is structurally blind to the
+    `corner_cupboard` alternative as a CB candidate, even though
+    `cbAll u227 u229` exposes both.
+
+    **This refutes neither Beaver nor PSDH.** It exposes that the two
+    papers operate at incommensurate levels: Beaver's machinery is a
+    *resolution-selection* OT (which interpretation of an utterance
+    wins?), while PSDH's `cbAll` analysis is *parametric-Centering
+    diagnostics* (how many candidate CBs does the partial-GR ranker
+    admit?). Per CLAUDE.md's "interconnection density" discipline,
+    this incommensurability is itself the formalizable finding —
+    it's what makes PSDH §3.1 fn 12's casual endorsement of Beaver
+    too quick. -/
+
+open Beaver2004 (cohere align)
+
+/-- Wrap u229 as a Beaver COT candidate. Since u229 contains no
+    pronouns whose resolution is in question (both `corner_cupboard`
+    and `Branicki` are realized by definite NPs in PSDH (10)),
+    the substrate-gap flags are irrelevant — set them all `true`
+    so that the only constraints that can fire are the ones built
+    on Centering primitives (COHERE, ALIGN, PRO-TOP). -/
+def cand_u229 : Beaver2004.Candidate String GrammaticalRole :=
+  ⟨u229, true, true, true⟩
+
+/-- Beaver's `cb`, applied to PSDH (10), returns ONE entity (Branicki),
+    chosen by `find?`-on-sort-order — not a set. The `Option E` typing
+    of `cb` discards the tie information `cbAll` exposes. -/
+theorem beaver_cb_picks_branicki_on_psdh10 :
+    Discourse.Centering.cb u227 u229 = some "Branicki" := by decide
+
+/-- **The substrate divergence**: on PSDH (10), `cbAll` reports a
+    two-element tie, but Beaver's `cb` reports only the first — by sort
+    order, `Branicki`. Beaver's machinery is structurally incapable of
+    representing both candidates simultaneously: any constraint built
+    over `cb` (COHERE, ALIGN) consults this single witness. -/
+theorem beaver_cb_silent_on_psdh10_tie :
+    Discourse.Centering.cb u227 u229 = some "Branicki" ∧
+    "corner_cupboard" ∈ Discourse.Centering.cbAll u227 u229 ∧
+    Discourse.Centering.cb u227 u229 ≠ some "corner_cupboard" :=
+  ⟨by decide, by decide, by decide⟩
+
+/-- **COHERE depends on the choice of priorTopic**, which PSDH (10)
+    leaves underdetermined. If we feed Beaver's COHERE the
+    `Branicki`-side of the PSDH tie as priorTopic, COHERE is satisfied
+    (eval = 0) — Beaver's machinery treats Branicki as the sole topic
+    of u227. If we feed it the `corner_cupboard`-side, COHERE FIRES
+    (eval = 1) — Beaver concludes a topic shift occurred, exactly the
+    information PSDH's `cbAll` reports as a TIE rather than a shift.
+
+    The cross-framework finding: **Beaver's COT lex-min, applied to
+    PSDH (10), is sensitive to a parameter (priorTopic) that PSDH's
+    multi-CB analysis says is underdetermined**. The two formalizations
+    encode different commitments about what discourse-level information
+    survives the previous utterance: a single resolved CB (Beaver) vs
+    a tie-set (PSDH). -/
+theorem beaver_cohere_sensitive_to_psdh10_tie_choice :
+    (cohere u227 (some "Branicki")).eval cand_u229 = 0 ∧
+    (cohere u227 (some "corner_cupboard")).eval cand_u229 = 1 := by
+  refine ⟨?_, ?_⟩ <;> decide
+
+/-- **ALIGN fires regardless** of which tie-member is fed in: u229's
+    Cp is `Dubois` (the new SUBJ), and `cb u227 u229 = some Branicki`
+    is in OBJ position, not subject. So under Beaver's machinery,
+    PSDH (10) shows a CB-not-in-subject-position pattern — typical
+    RETAIN/SHIFT territory. The structural-divergence point holds
+    regardless of which COHERE outcome we get: ALIGN's evaluation is
+    constant across the priorTopic ambiguity. -/
+theorem beaver_align_fires_on_psdh10 :
+    (align u227).eval cand_u229 = 1 := by decide
+
+/-- **`beaver_lex_min_on_psdh_10`** — the cross-framework headline.
+    Mechanically applied to PSDH (10) `u227`/`u229`, Beaver's COT
+    machinery either:
+
+    - Treats `Branicki` as the topic of u227 (priorTopic = some
+      "Branicki"): COHERE satisfied, ALIGN violated. Total profile
+      reflects only ALIGN's violation.
+
+    - Treats `corner_cupboard` as the topic of u227 (priorTopic = some
+      "corner_cupboard"): COHERE violated, ALIGN violated. Total
+      profile reflects two violations.
+
+    The ranking COHERE > ALIGN means the second interpretation is
+    strictly worse than the first under lex-min. **Beaver's lex-min,
+    forced to choose, picks the `Branicki`-as-prior-topic
+    interpretation as optimal**. PSDH's two-CB observation cannot be
+    represented as a lex-min outcome — it is a property of the
+    underlying `cbAll`, not of Beaver's resolution-selection. -/
+theorem beaver_lex_min_on_psdh_10 :
+    -- Branicki-as-prior interpretation: only ALIGN fires
+    (cohere u227 (some "Branicki")).eval cand_u229 +
+      (align u227).eval cand_u229 = 1 ∧
+    -- corner_cupboard-as-prior interpretation: COHERE + ALIGN both fire
+    (cohere u227 (some "corner_cupboard")).eval cand_u229 +
+      (align u227).eval cand_u229 = 2 ∧
+    -- Branicki-prior strictly dominates corner_cupboard-prior (lex-min picks Branicki)
+    ((cohere u227 (some "Branicki")).eval cand_u229 +
+      (align u227).eval cand_u229) <
+    ((cohere u227 (some "corner_cupboard")).eval cand_u229 +
+      (align u227).eval cand_u229) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Future work / deferred items

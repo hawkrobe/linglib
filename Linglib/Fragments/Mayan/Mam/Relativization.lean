@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Mam relativization profile
@@ -11,7 +11,7 @@ namespace Fragments.Mayan.Mam
 
 /-- Mam relativization: gap on subjects (with Agent Focus morphology);
     *=(y)a'* clitic marks oblique extraction; postnominal RC; Mayan. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .postNominal

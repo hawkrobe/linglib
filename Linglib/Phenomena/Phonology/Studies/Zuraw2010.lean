@@ -1,6 +1,5 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
-import Linglib.Fragments.Tagalog.Phonology
 
 /-!
 # @cite{zuraw-2010}: Factorial Typology of Nasal Substitution
@@ -48,32 +47,61 @@ class) follow from the set-theoretic relationships between `D_c` and
 
 ## Dictionary data
 
-@cite{zuraw-2010}'s Tagalog dictionary counts confirm the voicing effect:
-voiceless stems show higher substitution rates than voiced stems at the
-labial place (p: 253/263 vs b: 177/277).
+@cite{zuraw-2010}'s Tagalog dictionary counts confirm the voicing
+effect: voiceless stems show higher substitution rates than voiced
+stems at the labial place (p: 253/263 vs b: 177/277).
 
-## Relation to Magri 2025's 2×2 square
+## Relation to other Tagalog NS analyses
 
-`Phenomena/Phonology/Studies/Magri2025.lean` analyzes the same Tagalog
-phenomenon using a different formal setup — a 2×2 square (maŋ/paŋ
-prefixes × b/k stems) for a MaxEnt analysis of the Hayes-Zuraw
-shifted-sigmoids generalization. That setup uses the narrower
-`NasalSubInput`/`NasalSubOutput` types from `Fragments.Tagalog.Phonology`
-§3-9, with prefix-specific UNIFORMITY constraints. Cross-reference:
-`Fragments.Tagalog.Phonology.magri_input_corresponds_to_stem` proves
-that Magri's 4 inputs project onto exactly the {b, k} subset of Zuraw's
-6 stems.
-
-The two analyses are **complementary, not equivalent**: they pick
-different sub-phenomena (full factorial typology vs. probabilistic
-2×2 square) with different constraint inventories.
+The closely-related study files
+`Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
+`Phenomena/Phonology/Studies/Magri2025.lean` analyze a 2×2 sub-square
+of this same phenomenon (maŋ-other / paŋ-res prefixes × /b/ /k/ stems)
+under a different constraint inventory (DEP-C / \*NC / \*[stemŋ] /
+\*[stemŋ]/n / prefix-indexed UNIFORMITY) for a MaxEnt analysis of the
+Hayes-Zuraw shifted-sigmoids generalization. The constraint sets and
+the data slices differ; the two strands are complementary readings of
+@cite{zuraw-2010}'s underlying phenomenon.
 -/
 
 namespace Zuraw2010
 
 open Core.Constraint.OT Phonology.Constraints
 open Core.Constraint.PermSubsetCombinatorics
-open Fragments.Tagalog.Phonology (StemC SubSt NSCand dictRate_p dictRate_b dict_voicing_labial)
+
+/-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
+
+/-- The six stem-initial obstruents in @cite{zuraw-2010}'s nasal
+    substitution typology. Coalescence maps each to its homorganic
+    nasal: p,b → m; t,d → n; k,g → ŋ. -/
+inductive StemC where
+  | p | t | k   -- voiceless
+  | b | d | g   -- voiced
+  deriving DecidableEq, Repr
+
+/-- Whether nasal substitution applies. -/
+inductive SubSt where
+  | yes  -- coalescence: nasal + obstruent → nasal
+  | no   -- faithful: nasal cluster preserved
+  deriving DecidableEq, Repr
+
+/-- A candidate is a stem consonant paired with a substitution decision. -/
+abbrev NSCand := StemC × SubSt
+
+/-- Dictionary substitution rate for voiceless labial p (253/263 ≈ 96.2%).
+    Counts as reported in @cite{zuraw-2010} from a Tagalog dictionary
+    corpus study. -/
+def dictRate_p : ℚ := 253 / 263
+
+/-- Dictionary substitution rate for voiced labial b (177/277 ≈ 63.9%).
+    Counts as reported in @cite{zuraw-2010} from a Tagalog dictionary
+    corpus study. -/
+def dictRate_b : ℚ := 177 / 277
+
+/-- **Voicing effect in dictionary data** (labial place): voiceless p
+    has a higher substitution rate than voiced b. -/
+theorem dict_voicing_labial : dictRate_p > dictRate_b := by
+  norm_num [dictRate_p, dictRate_b]
 
 -- ============================================================================
 -- § 1: Constraints
@@ -82,7 +110,8 @@ open Fragments.Tagalog.Phonology (StemC SubSt NSCand dictRate_p dictRate_b dict_
 /-- DEP-C: penalizes the faithful candidate for every input C without a
     surface correspondent. Violated by NO for every stem (the YES candidate
     deletes the stem-initial C; NO retains it).
-    Per @cite{zuraw-2010} (16): "DEP-C is violated by non-substitution".
+    DEP-C as the constraint violated by non-substitution follows
+    @cite{zuraw-2010}'s discussion in §4.2.
     NB: in earlier commits this constraint was labeled \*NC; renamed for
     fidelity to the paper's notation, where \*NC is reserved for the
     voiceless-only constraint (see `starNC` below). -/
@@ -90,7 +119,7 @@ def depC : NamedConstraint NSCand :=
   mkMark "DEP-C" fun c => c.2 = SubSt.no
 
 /-- \*NC: penalizes nasal + voiceless-obstruent sequences. Violated by NO
-    for voiceless stems only. Per @cite{zuraw-2010} (17):
+    for voiceless stems only. Per @cite{zuraw-2010} ex. (17):
     "\*NC: A [+nasal] segment must not be immediately followed by a
     [-voice, -sonorant] segment". -/
 def starNC : NamedConstraint NSCand :=
@@ -448,15 +477,13 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : subWinsP σ .g) :
 -- § 8: Connection to Tagalog
 -- ============================================================================
 
--- Dictionary data (dictRate_p, dictRate_b, dict_voicing_labial) lives in
--- `Fragments.Tagalog.Phonology` and is re-exported via the `open` above.
-
 /-- Tagalog exhibits nasal substitution for all six consonants. The
     grammar realizing this corresponds to DEP-C (and \*NC, where
     voicelessness applies) ranked above every YES-disfavoring constraint.
-    The Tagalog fragment in `Fragments.Tagalog.Phonology` models the
-    probabilistic version of this pattern using @cite{magri-2025}'s
-    MaxEnt analysis.
+    The probabilistic 2×2-square version of this pattern under a
+    different constraint inventory is treated in
+    `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
+    `Phenomena/Phonology/Studies/Magri2025.lean`.
 
     Witness for full substitution: any ranking with DEP-C at position 0.
     Then for every consonant c, head of permDList σ (relevant c) = 0,

@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # German relativization profile
@@ -11,7 +11,7 @@ namespace Fragments.German
 /-- German relativization: relative pronoun *der/die/das* on both
     subjects and obliques; postnominal RC; all AH positions
     relativizable. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .relativePronoun
   , oblStrategy := .relativePronoun
   , rcPosition := .postNominal

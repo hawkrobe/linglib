@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # English Relativization Fragment
@@ -44,7 +44,7 @@ def relWhom : RelClauseMarker :=
 def relMarkers : List RelClauseMarker := [relThat, relWhom]
 
 /-- English relativization profile (typological summary). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .mixed
   , oblStrategy := .mixed
   , rcPosition := .postNominal

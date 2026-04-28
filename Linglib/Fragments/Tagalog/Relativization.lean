@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Tagalog relativization profile
@@ -11,7 +11,7 @@ namespace Fragments.Tagalog
 /-- Tagalog relativization: gap on subjects (*ang*-phrase only); voice
     alternation required for non-subject relativization; linker *na/ng*;
     obliques not directly relativizable. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .notRelativizable
   , rcPosition := .postNominal

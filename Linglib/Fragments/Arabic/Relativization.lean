@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Arabic (Classical) Relativization Fragment
@@ -48,7 +48,7 @@ def relMarkers : List RelClauseMarker := [relAlladhi, relResumptive]
     `.mixed` reflects the gap-on-SU + resumptive-on-DO split: WALS Ch 122
     has no `.mixed` category, so this entry is excluded from
     `Phenomena/Relativization/Typology.lean`'s WALS-grounding sample. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .mixed
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

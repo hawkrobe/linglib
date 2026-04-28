@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Russian relativization profile
@@ -10,7 +10,7 @@ namespace Fragments.Slavic.Russian
 
 /-- Russian relativization: declining relative pronoun *kotoryj*; all
     AH positions; postnominal RC. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .relativePronoun
   , oblStrategy := .relativePronoun
   , rcPosition := .postNominal

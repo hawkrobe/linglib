@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Japanese relativization profile
@@ -10,7 +10,7 @@ namespace Fragments.Japanese
 
 /-- Japanese relativization: gap throughout; pre-nominal RC; no relative
     pronoun; genitive position relativizable but rare. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .preNominal

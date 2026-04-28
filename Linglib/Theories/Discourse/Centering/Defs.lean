@@ -32,7 +32,7 @@ The shape of Centering as a framework:
 * `[Realizes U E]` is the plug-in semantics of "u realizes e". The
   `outParam` on `E` lets Lean infer the entity type from the utterance.
   An instance for `Utterance E R` is provided in `Basic.lean`; the
-  DRT bridge in `Theories/Interfaces/SemanticsDiscourse/CenteringDRT.lean`
+  DRT bridge in `Theories/Interfaces/SemanticsDiscourse/CenteringDRSExpr.lean`
   provides an instance for `DRSExpr`, so Cb computation works on either
   representation.
 
@@ -98,7 +98,7 @@ structure Realization (E : Type) (R : Type) where
   entity : E
   role : R
   isPronoun : Bool
-  deriving Repr
+  deriving Repr, DecidableEq
 
 /-- An utterance, abstractly: a list of NP realizations. The order
     of the list is the surface (textual) order; the Cf order is
@@ -114,7 +114,7 @@ structure Realization (E : Type) (R : Type) where
     a clear pretty-print that distinguishes utterances from raw lists. -/
 structure Utterance (E : Type) (R : Type) where
   realizations : List (Realization E R)
-  deriving Repr
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 3. Generalized Cf Ranking (per-realization)

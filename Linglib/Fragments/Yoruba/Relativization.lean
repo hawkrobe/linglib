@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Yoruba Relativization Fragment
@@ -121,7 +121,7 @@ def relMarkers : List RelClauseMarker :=
   [relTiSubject, relTiObject, relTiOblique, relTiGenitive]
 
 /-- Yoruba relativization profile (typological summary). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .pronounRetention
   , oblStrategy := .gap
   , rcPosition := .postNominal

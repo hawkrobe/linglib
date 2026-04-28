@@ -89,12 +89,15 @@ def Constraint1Strong [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) : Prop :=
   (cbAll prev cur).length = 1
 
-/-- **Weak Constraint 1**: only CB Uniqueness; @cite{poesio-stevenson-eugenio-hitzeman-2004}
-    §5.3.2 cite Walker, Joshi & Prince 1998 footnote 2 page 3 as the
-    source for separating this from Strong C1. -/
-def Constraint1Weak [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
-    (prev : Utterance E R) (cur : U) : Prop :=
-  CBUniqueness prev cur
+/-! **Note on "Weak Constraint 1"**: PSDH §5.3.2 cite Walker, Joshi
+    & Prince 1998 fn 2 p. 3 for the convention that "Weak C1" =
+    just CB Uniqueness (vs. Strong C1 = Uniqueness ∧ Continuity).
+    A previous version of this file declared `Constraint1Weak prev
+    cur := CBUniqueness prev cur` plus `weakC1_eq_uniqueness :
+    Constraint1Weak ↔ CBUniqueness := Iff.rfl` — the canonical
+    `naCanBridge = true := rfl` anti-pattern (mathlib-reviewer
+    audit-flagged). Use `CBUniqueness` directly when the "Weak C1"
+    terminology is needed. -/
 
 -- ════════════════════════════════════════════════════
 -- § 2. Decidability
@@ -137,17 +140,12 @@ theorem strongC1_iff_uniqueness_and_continuity
   unfold Constraint1Strong CBUniqueness EntityContinuity
   omega
 
-/-- Weak Constraint 1 is exactly CB Uniqueness — by definition. -/
-theorem weakC1_eq_uniqueness [DecidableEq E] [CfRankerOf E R] {U : Type}
-    [Realizes U E] (prev : Utterance E R) (cur : U) :
-    Constraint1Weak prev cur ↔ CBUniqueness prev cur := Iff.rfl
-
 /-- Strong implies Weak: a unique CB implies at most one CB. -/
-theorem strong_implies_weak [DecidableEq E] [CfRankerOf E R] {U : Type}
+theorem strong_implies_uniqueness [DecidableEq E] [CfRankerOf E R] {U : Type}
     [Realizes U E] {prev : Utterance E R} {cur : U}
-    (h : Constraint1Strong prev cur) : Constraint1Weak prev cur := by
+    (h : Constraint1Strong prev cur) : CBUniqueness prev cur := by
   unfold Constraint1Strong at h
-  unfold Constraint1Weak CBUniqueness
+  unfold CBUniqueness
   omega
 
 end Discourse.Centering

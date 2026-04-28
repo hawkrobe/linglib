@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Turkish relativization profile
@@ -10,7 +10,7 @@ namespace Fragments.Turkish
 
 /-- Turkish relativization: gap throughout; participial suffixes *-en*
     (SU) and *-dik* (non-SU); pre-nominal RC. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .preNominal

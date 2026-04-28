@@ -1,5 +1,7 @@
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.Lexical.UD
+import Linglib.Theories.Discourse.Centering.Rule1
+import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 
 /-!
 # @cite{kehler-rohde-2013}
@@ -126,7 +128,7 @@ def sourceInterp_imperfective : Nat := 80
 
 /-- Imperfective yields more Source interpretations than perfective. -/
 theorem imperfective_more_source :
-    sourceInterp_imperfective > sourceInterp_perfective := by native_decide
+    sourceInterp_imperfective > sourceInterp_perfective := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Coherence Relation Analysis (Table 2)
@@ -150,14 +152,14 @@ def cr_result       : CRDatum := ⟨.result,          6,  8⟩
 /-- Occasion and Result are Goal-biased (Source < 50%). -/
 theorem goal_biased_crs :
     cr_occasion.sourceGivenCR < 50 ∧ cr_result.sourceGivenCR < 50 := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Elaboration, Explanation, and Violated Expectation are Source-biased. -/
 theorem source_biased_crs :
     cr_elaboration.sourceGivenCR > 50 ∧
     cr_explanation.sourceGivenCR > 50 ∧
     cr_violatedExp.sourceGivenCR > 50 := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
 /-- The overall ~57/43 Source/Goal split masks strong CR-conditioned
     biases. Occasion is most common (.38) and Goal-biased (.18 Source);
@@ -165,7 +167,7 @@ theorem source_biased_crs :
 theorem biases_masked_by_mixture :
     cr_occasion.sourceGivenCR < 50 ∧ cr_elaboration.sourceGivenCR > 50 ∧
     cr_occasion.freqPct > cr_elaboration.freqPct := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
 /-- Instantiate the perfective-condition next-mention model with
     Table 2 data. Downstream study files can reference these CR biases. -/
@@ -202,7 +204,7 @@ def why_explanation_pct      : Nat := 91
 theorem instructions_shift_pCR :
     whatNext_occasion_pct > why_occasion_pct ∧
     why_explanation_pct > whatNext_explanation_pct := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Table 5: Source interpretation by instruction condition (perfective).
     Shifting P(CR) shifts P(referent), as predicted by eq. (9). -/
@@ -210,12 +212,12 @@ def whatNext_sourcePct : Nat := 34
 def why_sourcePct      : Nat := 82
 
 theorem instructions_shift_interpretation :
-    why_sourcePct > whatNext_sourcePct := by native_decide
+    why_sourcePct > whatNext_sourcePct := by decide
 
 /-- The instruction effect is 48 pp on identical stimuli.
     No morphosyntactic heuristic can account for this. -/
 theorem instruction_effect_magnitude :
-    why_sourcePct - whatNext_sourcePct > 40 := by native_decide
+    why_sourcePct - whatNext_sourcePct > 40 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Bias Stability: P(ref|CR) Invariance (Table 4)
@@ -244,10 +246,10 @@ theorem bias_direction_stable :
     (stab_explanation.originalPct > 50 ∧ stab_explanation.instructionPct > 50) ∧
     (stab_occasion.originalPct < 50 ∧ stab_occasion.instructionPct < 50) ∧
     (stab_result.originalPct < 50 ∧ stab_result.instructionPct < 50) := by
-  refine ⟨⟨by native_decide, by native_decide⟩,
-          ⟨by native_decide, by native_decide⟩,
-          ⟨by native_decide, by native_decide⟩,
-          ⟨by native_decide, by native_decide⟩⟩
+  refine ⟨⟨by decide, by decide⟩,
+          ⟨by decide, by decide⟩,
+          ⟨by decide, by decide⟩,
+          ⟨by decide, by decide⟩⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bidirectionality: Pronoun → Coherence (Table 6)
@@ -281,13 +283,13 @@ def pp_violatedExp  : PromptCRDatum := ⟨.pronoun, .contrast,    14⟩
 theorem pronoun_boosts_source_CRs :
     pp_elaboration.freqPct > np_elaboration.freqPct ∧
     pp_explanation.freqPct > np_explanation.freqPct := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Pronoun prompt decreases Goal-biased CRs. -/
 theorem pronoun_reduces_goal_CRs :
     pp_occasion.freqPct < np_occasion.freqPct ∧
     pp_result.freqPct < np_result.freqPct := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. Voice Manipulation: IC Verbs (Tables 7–10)
@@ -307,13 +309,13 @@ def nm_passive_noPron  : Nat := 76
     passive (.42). Passivization moves the causally-implicated referent
     out of subject position — same proposition, different bias. -/
 theorem voice_affects_nextMention :
-    nm_active_pron > nm_passive_pron := by native_decide
+    nm_active_pron > nm_passive_pron := by decide
 
 /-- In the no-pronoun condition the pattern reverses: passive (.76) >
     active (.59). By-phrases are optional in English, so their inclusion
     signals the referent will be re-mentioned. -/
 theorem noPronoun_pattern_reverses :
-    nm_passive_noPron > nm_active_noPron := by native_decide
+    nm_passive_noPron > nm_active_noPron := by decide
 
 -- Table 8: Proportion of Explanation relations
 def expl_active_pron     : Nat := 75
@@ -326,7 +328,7 @@ def expl_passive_noPron  : Nat := 72
     mediated by the shift in pronominal reference — demonstrating
     bidirectional coherence–coreference dependency. -/
 theorem voice_affects_coherence :
-    expl_active_pron > expl_passive_pron := by native_decide
+    expl_active_pron > expl_passive_pron := by decide
 
 -- Table 9: Pronominalization rates by voice × surface position
 def pron_active_subj     : Nat := 62
@@ -343,7 +345,7 @@ def pron_passive_nonSubj : Nat := 23
     stronger indicator of topic status. This is the key evidence that
     P(pronoun | referent) tracks TOPICHOOD, not subjecthood. -/
 theorem passive_subj_more_pronominalized :
-    pron_passive_subj > pron_active_subj := by native_decide
+    pron_passive_subj > pron_active_subj := by decide
 
 /-- Non-subject pronominalization is invariant across voice (24% vs 23%).
     At the same topichood level (low), the voice manipulation — which
@@ -351,14 +353,14 @@ theorem passive_subj_more_pronominalized :
     pronominalization rate. This is the Independence Hypothesis in action:
     P(pronoun | referent) does not depend on coherence-driven factors. -/
 theorem nonSubj_pron_invariant :
-    pron_active_nonSubj - pron_passive_nonSubj ≤ 1 := by native_decide
+    pron_active_nonSubj - pron_passive_nonSubj ≤ 1 := by decide
 
 /-- Subjects are pronominalized more than non-subjects in both voices.
     This subject advantage is the centering-derived component. -/
 theorem subject_advantage_both_voices :
     pron_active_subj > pron_active_nonSubj ∧
     pron_passive_subj > pron_passive_nonSubj := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Topichood monotonically predicts pronominalization:
     strong (passive subject, 87%) > default (active subject, 62%)
@@ -366,7 +368,7 @@ theorem subject_advantage_both_voices :
 theorem topichood_monotone :
     pron_passive_subj > pron_active_subj ∧
     pron_active_subj > pron_active_nonSubj := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- Table 10: Predicted vs actual interpretation biases.
 -- The Bayesian model estimates P(referent) from no-pronoun data and
@@ -383,11 +385,11 @@ def actual_passive_subj    : Nat := 60
 theorem bayesian_directionally_correct :
     predicted_active_subj > predicted_passive_subj ∧
     actual_active_subj > actual_passive_subj := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- The passive prediction is highly accurate (59% vs 60%). -/
 theorem passive_prediction_accurate :
-    actual_passive_subj - predicted_passive_subj ≤ 1 := by native_decide
+    actual_passive_subj - predicted_passive_subj ≤ 1 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Eq. (9): Mixture Derivation
@@ -451,7 +453,7 @@ theorem instruction_models_share_bias :
     (Source-biased at 82%) dominating the Why mixture at 91%. -/
 theorem eq9_why_exceeds_whatNext :
     why_model.sourceBasisPts > whatNext_model.sourceBasisPts := by
-  native_decide
+  decide
 
 /-- The computed mixtures are consistent with Table 5: Why → ~84%
     Source, What-next → ~36% Source (vs observed 82% and 34%). The
@@ -460,7 +462,7 @@ theorem eq9_why_exceeds_whatNext :
 theorem eq9_mixtures_approximate_table5 :
     why_model.sourceBasisPts / 100 > 80 ∧
     whatNext_model.sourceBasisPts / 100 < 40 := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Eq. (13): Bayesian Inversion
@@ -483,7 +485,7 @@ def bayesianPrediction (pSubj pPronSubj pPronNonSubj : Nat) : Nat :=
     The paper reports 81% (from unrounded data); the direction matches. -/
 theorem eq13_active_prediction :
     bayesianPrediction nm_active_noPron pron_active_subj pron_active_nonSubj
-    > 50 := by native_decide
+    > 50 := by decide
 
 /-- **Eq. (13) derivation**: passive voice. From:
     - P(Subject) = 100 - 76 = 24% (Table 7: 76% mention causal ref,
@@ -493,7 +495,7 @@ theorem eq13_active_prediction :
     Bayes' rule yields: 87×24 / (87×24 + 23×76) = 2088/3836 ≈ 54%. -/
 theorem eq13_passive_prediction :
     bayesianPrediction (100 - nm_passive_noPron) pron_passive_subj
-      pron_passive_nonSubj > 50 := by native_decide
+      pron_passive_nonSubj > 50 := by decide
 
 /-- **Central Bayesian prediction**: Bayes' rule correctly derives that
     active > passive for P(Subject | pronoun), even though passive
@@ -505,7 +507,7 @@ theorem eq13_active_exceeds_passive :
     bayesianPrediction nm_active_noPron pron_active_subj pron_active_nonSubj >
     bayesianPrediction (100 - nm_passive_noPron) pron_passive_subj
       pron_passive_nonSubj := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. Coherence–Referent Bridge
@@ -519,14 +521,14 @@ theorem goal_biased_crs_are_endpoint_focused :
     cr_result.cr.toClass = .causeEffect ∧
     cr_occasion.sourceGivenCR < 50 ∧
     cr_result.sourceGivenCR < 50 := by
-  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+  exact ⟨rfl, rfl, by decide, by decide⟩
 
 /-- Explanation is Source-biased and selects for causes (backward causal).
     For transfer verbs, the Source/initiator is the cause. For IC verbs,
     the stimulus is the cause — this is the bridge to IC bias studies. -/
 theorem explanation_source_and_backward :
     cr_explanation.cr.selectsCause = true ∧
-    cr_explanation.sourceGivenCR > 50 := ⟨rfl, by native_decide⟩
+    cr_explanation.sourceGivenCR > 50 := ⟨rfl, by decide⟩
 
 /-- Key insight: the contiguity class does NOT uniformly predict bias.
     Occasion (18% Source) and Elaboration (98% Source) are both contiguity
@@ -537,6 +539,131 @@ theorem contiguity_class_splits :
     cr_occasion.cr.toClass = cr_elaboration.cr.toClass ∧
     cr_occasion.sourceGivenCR < 50 ∧
     cr_elaboration.sourceGivenCR > 50 := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 12. Centering Substrate Connection
+-- ════════════════════════════════════════════════════
+
+/-! ## Centering's CB and KR2013's topichood are not the same signal.
+
+    K&R 2013 IS the Bayesian-Centering reconciliation paper. To make
+    that explicit at the type level, this section grounds the file's
+    `topichood`/`bayesianPrediction` apparatus in the
+    `Theories/Discourse/Centering/` substrate (`cb`, `cp`, `Rule1Gordon`),
+    showing precisely *what Centering does and does not capture* from
+    KR2013's empirical landscape.
+
+    The key dissociation (KR2013 §8, Table 9): under the standard
+    grammatical-role Cf ranking (`SUBJECT > OBJECT > OTHER`,
+    @cite{kameyama-1986}), the CB is **invariant under voice
+    manipulation** — both `(Amanda, SUBJ) (Brittany, OBJ)` and
+    `(Amanda, SUBJ) (Brittany, OTHER-by-phrase)` make Amanda the
+    most-preferred Cf. But KR2013's `topichood` distinguishes the
+    two cases: passive subject is `.strong`, active subject is
+    `.default_`. This is the formal content of "P(pronoun | referent)
+    tracks topichood, not subjecthood" (§8 p. 25).
+
+    The cross-paper claim landed here: **Centering's CB selection is a
+    necessary input to KR2013's production model but is not sufficient
+    to predict pronominalization rate**. The voice-induced gradient
+    that KR2013 measure (87% vs 62%) lives in the topichood signal,
+    not in the CB signal. -/
+
+section CenteringBridge
+
+open Discourse.Centering
+
+/-- Two referents in our toy KR2013 example: Amanda (subject across
+    voice manipulations) and Brittany (object/by-phrase). -/
+def amanda : Nat := 1
+def brittany : Nat := 2
+
+/-- Prior utterance "Amanda V'd Brittany": Amanda is SUBJ, Brittany is
+    OBJ. Forward-looking centers under Kameyama's role ranking are
+    `[Amanda, Brittany]` with Amanda as Cp. -/
+def prev_AmandaActive : Utterance Nat GrammaticalRole :=
+  { realizations := [⟨amanda, .subject, false⟩, ⟨brittany, .object, false⟩] }
+
+/-- Active continuation "She V'd her" — Amanda still SUBJ, both pronouns. -/
+def cur_active : Utterance Nat GrammaticalRole :=
+  { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .object, true⟩] }
+
+/-- Passive continuation "Amanda was V'd by Brittany" — Amanda promoted to
+    SUBJ via the marked passive construction; Brittany now in by-phrase
+    (`OTHER`). The proposition is identical; only the construction differs. -/
+def cur_passive : Utterance Nat GrammaticalRole :=
+  { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .other, false⟩] }
+
+/-- Cp of the prior utterance is Amanda (SUBJ outranks OBJ). -/
+theorem cp_prev_is_amanda :
+    prev_AmandaActive.cp = some amanda := by decide
+
+/-- **CB is invariant under voice manipulation.** Both the active and
+    passive continuations have CB = Amanda, because Amanda is in
+    `prev.cf` and is realized in both. The grammatical-role ranker
+    cannot see voice — both subjects rank equally as `.subject`. -/
+theorem cb_invariant_under_voice :
+    cb prev_AmandaActive cur_active = cb prev_AmandaActive cur_passive := by
+  decide
+
+/-- Both voice variants have CB = Amanda specifically. -/
+theorem cb_is_amanda_in_both_voices :
+    cb prev_AmandaActive cur_active = some amanda ∧
+    cb prev_AmandaActive cur_passive = some amanda := by
+  exact ⟨by decide, by decide⟩
+
+/-- **KR2013's topichood IS voice-sensitive.** The same subject-position
+    Amanda gets `.strong` topichood under passive marking but only
+    `.default_` under active. This is the gradient that drives the
+    87% vs 62% pronominalization rate difference (Table 9). -/
+theorem topichood_distinguishes_voice :
+    topichood .Pass true ≠ topichood .Act true := by decide
+
+/-- **The dissociation theorem**: Centering's CB and KR2013's topichood
+    diverge on the voice manipulation. CB is the same in both cases
+    (Amanda); topichood differs (`.strong` vs `.default_`). The 25-pp
+    pronominalization gap KR2013 measure (Table 9) lives in the
+    topichood signal, not the CB signal — exactly KR2013 §8's
+    "P(pronoun | referent) tracks topichood, not subjecthood." -/
+theorem cb_topichood_dissociation_under_voice :
+    cb prev_AmandaActive cur_active = cb prev_AmandaActive cur_passive ∧
+    topichood .Pass true ≠ topichood .Act true := by
+  exact ⟨by decide, by decide⟩
+
+/-- **Rule 1 (Gordon) is satisfied in both voice variants** because both
+    Amanda-realizations are pronominal. The substrate-level Rule 1
+    constraint is voice-insensitive too — it only fires on whether the
+    CB *is* a pronoun, not on what construction realized it.
+
+    KR2013's contribution is precisely to expose the gradient that
+    Rule 1's Bool-valued check averages over: among the utterances
+    that satisfy Rule 1 (Gordon), passive-subject ones use a pronoun
+    87% of the time while active-subject ones do so only 62% of the
+    time (Table 9). Rule 1 captures the qualitative pattern; the
+    Bayesian likelihood `P(pronoun | referent)` captures the
+    voice-conditioned production rate. -/
+theorem rule1_gordon_satisfied_both_voices :
+    Rule1Gordon prev_AmandaActive cur_active ∧
+    Rule1Gordon prev_AmandaActive cur_passive := by
+  exact ⟨by decide, by decide⟩
+
+/-- **Centering as the qualitative skeleton of KR2013's likelihood.**
+    Where Centering's `Rule1Gordon` says "the CB should be
+    pronominalized" (Bool), KR2013's likelihood `P(pronoun | referent)`
+    says "the CB is pronominalized at a rate proportional to its
+    topichood" (gradient). The Centering substrate provides the
+    *which referent is the topic* part; KR2013 provide the *how
+    strongly* part.
+
+    Numerically: the 87% / 62% / ~24% pronominalization rates from
+    Table 9 monotonically track the `.strong` / `.default_` / `.low`
+    levels assigned by `topichood`. -/
+theorem topichood_rates_monotone_in_table9 :
+    pron_passive_subj > pron_active_subj ∧       -- .strong > .default_ : 87 > 62
+    pron_active_subj > pron_active_nonSubj := by  -- .default_ > .low   : 62 > 24
+  exact ⟨by decide, by decide⟩
+
+end CenteringBridge
 
 end KehlerRohde2013

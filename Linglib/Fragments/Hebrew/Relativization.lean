@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 
 /-!
 # Hebrew Relativization Fragment
@@ -93,7 +93,7 @@ def relMarkersSichel : List RelClauseMarker :=
   [relSheGap, relSheBoundResumptive, relSheMovementResumptive]
 
 /-- Hebrew relativization profile (typological summary). -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

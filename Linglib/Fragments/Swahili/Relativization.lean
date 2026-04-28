@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Core.Relativization.Profile
+import Linglib.Typology.Relativization.Defs
 import Linglib.Fragments.Swahili.Basic
 
 /-!
@@ -202,7 +202,7 @@ namespace Fragments.Swahili
     `Fragments.Swahili` namespace level (not nested under `.Relativization`)
     for consistency with the per-language `Fragments.X.relativization`
     convention used in `Phenomena/Relativization/Typology.lean`. -/
-def relativization : Core.Relativization.RelativizationProfile :=
+def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

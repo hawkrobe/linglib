@@ -4,6 +4,50 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.502] - 2026-04-28
+
+### Bundled checkpoint: Tagalog Phonology overhaul + Relativization `Defs`/`Basic` split + Centering `Constraint1Weak` deletion + PoesioEtAl2004 §5.1 cross-framework theorem
+
+Multi-thread commit. Four independent strands of work that landed in the same working tree, all sharing a 5430-job green build.
+
+#### Tagalog Phonology Fragment overhaul — match the SPE segments + PhonRule pattern
+
+Random-pick multi-agent audit of `Linglib/Fragments/Tagalog/Phonology.lean` found three convergent issues: (1) **Fragment placement test failed** — the file housed paper-specific apparatus (a 2×2 square, six OT constraint definitions, corpus rates from one study) and was effectively a private appendix to two consumer studies, in violation of CLAUDE.md's "consensus-only Fragment, paper-specific data in Studies"; (2) **real cite misattribution** — the `(16) of @cite{zuraw-2010}` citation on the DEP-C constraint, propagated across three files, was wrong (verified against the PDF: example (16) is a variability tableau, not the DEP-C definition; the quoted phrase appears in §4.2); (3) **pattern divergence** — sibling phonology Fragments (`English/Phonology.lean`, `Korean/Phonology.lean`, `Akan/Phonology.lean`) all expose SPE-feature segments + theory-neutral `PhonRule`s anchored on @cite{hayes-2009}, while Tagalog had none of that.
+
+Overhaul (Option A — full alignment with the established phonology Fragment pattern). **Fragment** now exposes 9 segments (six stem-initial obstruents `p, t, k, b, d, g` + three homorganic nasals `m, n, ŋ`) defined via `Segment.ofSpecs` with SPE features + a `nasalSubstitution : PhonRule` (post-nasal obstruent deletion approximation; the `PhonRule` formalism's lack of α-spreading is documented in the docstring) + 5 verification theorems using `decide` (not `native_decide`). The Fragment's docstring describes the consensus NS process and points to the three downstream studies for theory-specific analyses.
+
+**`Phenomena/Phonology/Studies/Zuraw2010.lean`** absorbed `StemC` (six-stem enum), `SubSt`, `NSCand`, `dictRate_p`/`dictRate_b`/`dict_voicing_labial`. `dict_voicing_labial` proof switched from `native_decide` to `norm_num` per CLAUDE.md style. Cite for DEP-C corrected from `(16)` to `§4.2`; cite for *NC kept as `ex. (17)` (verified correct).
+
+**`Phenomena/Phonology/Studies/ZurawHayes2017.lean`** absorbed the entire 2×2 apparatus: `NasalSubInput`/`NasalSubOutput` (with `deriving Fintype` replacing hand-rolled instances), `nasalSubSquare`, the six OT constraints (DEP-C, *NC, *[stemŋ], *[stemŋ]/n, UNIF(maŋ-other), UNIF(paŋ-res)), `constraints`, `violDiffProfile`, `deltaR`, `nasalSubRate`, `violDiff_independence`. The §6 `violDiffProfile` comment labels were stale post the earlier `starNC → depC` rename — fixed to match the current indexing (`C₁ = DEP-C`, `C₂ = *NC`). Constructor cell identities now documented as maŋ-other × paŋ-res (extreme cells of Z&H's 6×6 grid). 2-way UNIFORMITY split documented as restriction of Z&H's 6-way prefix-indexed set. Bottom-row rates flagged `UNVERIFIED`. Section banners converted to `/-! ## X -/`.
+
+**`Phenomena/Phonology/Studies/Magri2025.lean`** switched `open Fragments.Tagalog.Phonology` → `open ZurawHayes2017` (chronologically valid: 2025 importing 2017). DEP-C `(16)` cite corrected. Section banners converted. Stale "now defined in `Fragments.Tagalog.Phonology`" comment removed. `hz_constant_value` docstring extended to note that `w 2` and `w 3` are not separately identifiable from b-vs-k square data.
+
+**Deletions** (zero importing consumers): `NasalSubInput.toStemC`, `magri_input_corresponds_to_stem` — per CLAUDE.md "no bridge files". Stale Fragment dependencies dropped from `Zuraw2010.lean`, `ZurawHayes2017.lean`, `Magri2025.lean` (none of the three needs the Fragment any more under the new cut).
+
+Deferred: `english-1986` bib entry for the dictionary corpus source (couldn't verify publication details from memory; prose mentions of "English's 1986" removed from `Zuraw2010.lean` to stay conservative). `magri-2025` → `magri-2026` rename (DOI 10.1162/LING.a.66 may be 2026 LI publication date; existing `note = "Early Access Corrected Proof"` covers the gap).
+
+#### `Typology/Relativization/` Defs/Basic split — finalize 0.230.500 Phase 2-large
+
+Completes the substrate-subdir refactor flagged in 0.230.500 ("subdir leaves room for later moving `Core/Relativization/Profile.lean` here as a sibling"). The single `Typology/Relativization/Defs.lean` file from 0.230.500 split into the mathlib-style `Defs.lean` (struct + WALS converters + strategy enums) + `Basic.lean` (cross-linguistic findings on top). `Core/Relativization/Profile.lean` (~159 LOC) deleted: its `RelativizationProfile` struct moved into `Typology/Relativization/Defs.lean` and the 22 `Fragments/{Lang}/Relativization.lean` consumers retyped from `Core.Relativization.RelativizationProfile` to `Typology.Relativization.RelativizationProfile`. `Linglib.lean` adds the `Typology.Relativization.Basic` import alongside the existing `Defs` import.
+
+#### Centering `Constraint1Weak` elimination — `naCanBridge = true := rfl` anti-pattern cleanup
+
+`Theories/Discourse/Centering/Constraints.lean` had a `Constraint1Weak prev cur := CBUniqueness prev cur` definition plus a `weakC1_eq_uniqueness : Constraint1Weak ↔ CBUniqueness := Iff.rfl` theorem — the canonical CLAUDE.md "encoding conclusions as definitions" anti-pattern (mathlib-reviewer audit-flagged). Deleted both. `strong_implies_weak` renamed to `strong_implies_uniqueness` and retyped to take/return `CBUniqueness` directly. Replacement guidance left as a `/-! ... -/` doc-comment block at the deletion site so that future readers searching for "Weak C1" find the explanation.
+
+`Theories/Discourse/Centering/Defs.lean`: `Realization` and `Utterance` structs gain `DecidableEq` (needed by downstream Centering instances). DRT-bridge filename docstring backreference updated from `CenteringDRT.lean` → `CenteringDRSExpr.lean` (the actual file location). `Theories/Interfaces/SemanticsDiscourse/CenteringDRSExpr.lean`: small follow-on doc/import sync.
+
+`Linglib.lean` adds 9 import lines for the full Centering Theory + DRT-bridge module set (Defs/Basic/Coherence/Constraints/Rule1/Rule2/Transition/Instances.GrammaticalRole/Instances.InformationStatus + the CenteringDRSExpr interface).
+
+#### PoesioEtAl2004 §5.1 + KehlerRohde2013 expansion — Beaver-OT-meets-PSDH cross-framework theorem
+
+`Phenomena/Reference/Studies/PoesioEtAl2004.lean` adds §5.1 ("Beaver's COT, applied to PSDH (10): the substrate divergence") — the highest-leverage cross-framework theorem flagged by an earlier audit. Mechanically applying Beaver's `cb : Option E` (single-CB) machinery to PSDH's `cbAll`-based two-CB finding (the file's `u227_to_u229_cbAll`) reveals incommensurate substrates: Beaver's lex-min selects a unique topic from the tied candidates and proceeds, structurally blind to the alternative as a CB candidate. Frames this as substrate-level divergence rather than empirical refutation: Beaver's machinery is resolution-selection OT (which interpretation wins?), PSDH's `cbAll` is parametric Centering (which CB best models the data?). Imports `Phenomena/Reference/Studies/Beaver2004.lean` for the COT constraint set.
+
+`Phenomena/Reference/Studies/KehlerRohde2013.lean` +187 lines: substantial expansion (substrate consumption from the new Centering modules + cross-paper bridges).
+
+#### Build
+
+5430 jobs green. Bibliography regenerated for the Tagalog-thread @cite changes.
+
 ## [0.230.501] - 2026-04-27
 
 ### DTS audit + Phase 1 PMF unification (`pxor`/`margProb` deleted, `priorAsPMF` bridge added)
