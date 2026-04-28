@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.PostSyntacticOps
-import Linglib.Theories.Morphology.Core.MirrorPrinciple
+import Linglib.Phenomena.Morphology.Studies.Baker1985
 
 /-!
 # @cite{halle-marantz-1993}: Distributed Morphology and the Pieces of Inflection
@@ -450,7 +450,7 @@ def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
     converge — connecting @cite{baker-1985}, @cite{bybee-1985},
     and @cite{halle-marantz-1993}. -/
 theorem tnsAgr_outside_gfRules (f : EngInflFeature) (r : GFRuleType) :
-    r.toMorphCategory.relevanceRank < f.toMorphCategory.relevanceRank := by
+    r.toMorphCategory.peripherality < f.toMorphCategory.peripherality := by
   cases f <;> cases r <;> native_decide
 
 /-- English verb inflection is concatenative: affixes are linearly
@@ -459,7 +459,7 @@ theorem tnsAgr_outside_gfRules (f : EngInflFeature) (r : GFRuleType) :
     the principle to concatenative morphology, excluding clitics and
     nonconcatenative processes). -/
 theorem english_inflection_in_scope :
-    MorphDomain.concatenative.inScope = true := rfl
+    MorphDomain.concatenative.InScope := rfl
 
 end BakerBridge
 

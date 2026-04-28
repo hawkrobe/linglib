@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Western Armenian typological profile
@@ -32,7 +32,7 @@ docstring.
 
 namespace Fragments.Armenian
 
-open Core.Typology in
+open Typology in
 /-- Western Armenian: SOV→SVO transitional. Classifier system marked
     non-obligatory per @cite{bale-khanjian-2014}'s data (numerals combine
     with bare nouns), not per any WALS entry. -/

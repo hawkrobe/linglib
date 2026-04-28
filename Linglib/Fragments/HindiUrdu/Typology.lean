@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Hindi-Urdu typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Hindi-Urdu (ISO 639-3 `hin`).
 
 namespace Fragments.HindiUrdu
 
-open Core.Typology in
+open Typology in
 /-- Hindi-Urdu: SOV, postpositional; correlative RC strategy. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "hin" "Hindi-Urdu"

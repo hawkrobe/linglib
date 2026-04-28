@@ -1,189 +1,146 @@
-import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Theories.Semantics.Tense.DeRe.Defs
 
 /-!
-# Tense: ContextTower
-@cite{abusch-1997} @cite{schlenker-2003} @cite{von-stechow-2009}
+# @cite{abusch-1997}: Sequence of Tense and Temporal de re
+@cite{abusch-1997} @cite{sharvit-2003} @cite{heim-1994-comments}
 
-End-to-end derivation chain connecting the ContextTower infrastructure
-to concrete tense phenomena. The core insight: embedded tense is modeled
-as a `temporalShift` on the tower, and the embedded clause's perspective
-time is read from the shifted (innermost) context.
+@cite{abusch-1997}'s theory: tense morphemes are temporal pronouns
+(variables with presupposed constraints and binding modes). The key
+innovation is **temporal de re**: tense can take wide scope over
+attitude operators via res movement, just as DPs can scope out of
+attitude complements.
 
-## Derivation Chain
+The substrate machinery (`TemporalDeRe` structure + `isFelicitous`)
+lives in `Theories/Semantics/Tense/DeRe/Defs.lean`. This Studies file
+collects the @cite{abusch-1997}-anchored derivation theorems.
 
-```
-Core.Context.Tower (ContextTower, push, innermost, origin)
-    ↓
-Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
-    ↓
-This file: tower operations produce the Reichenbach frames in HeimKratzer1998Data.lean
-    ↓
-Phenomena.TenseAspect (matrixSaid, embeddedSickSimultaneous, etc.; data lives in Studies/HeimKratzer1998Data.lean)
-```
+## Core Mechanisms
 
-## Key Results
+1. **Tense as pronoun**: `TensePronoun` (in `Core.Time.Tense`) with
+   variable index, constraint, and binding mode.
+2. **Upper Limit Constraint (ULC)**: stated by @cite{abusch-1997} §7
+   ("the now of an epistemic alternative is an upper limit for the
+   denotation of tenses"); presuppositional construal due to
+   @cite{heim-1994-comments}, endorsed by Abusch 1997 fn 20. Lives in
+   `Theories/Semantics/Tense/Basic.lean` as `upperLimitConstraint`,
+   formalized at the value level as `embeddedR ≤ matrixE`. **Note:**
+   this value-level reduction strips the modal-alternative
+   quantification the original formulation carries; making the modal
+   layer explicit (over `WorldHistory W Time` à la @cite{klecha-2016})
+   is deferred.
+3. **Temporal de re**: tense variable in the res position of an
+   attitude. The `TemporalDeRe` structure captures the *output* of
+   res-movement (a back-shifted frame with a constraint tag); the LF
+   rewrite mechanism + time-concept (acquaintance relation) machinery
+   is not formalized here.
+4. **Eval-time shift via attitude embedding**: the substrate primitives
+   are `Core.Time.Tense.evalTime_shifts_under_embedding` and
+   `updateTemporal`. Abusch's "relation transmission" (feature passing
+   of relation variables PAST/PRES across embedding) is *not* what this
+   file currently captures — we only model the value-level eval-time
+   update.
 
-1. **Root clause = root tower**: `contextAt 0 = origin`, so P = S (speech time)
-2. **SOT embedding = temporal shift**: `temporalShift(matrixEventTime)` produces
-   the embedded perspective time P' = E_matrix
-3. **Double access = origin reading**: present-under-past reads time from `.origin`
-   (speech time), not `.local` (matrix event time)
-4. **Tower depth = embedding depth**: one attitude verb = depth 1; nested
-   attitudes = depth 2+
+## Derivation Theorems
+
+- Shifted reading: free past variable with presupposition against eval time
+- Simultaneous reading: bound variable receives matrix event time
+- Double-access: indexical present + attitude binding (placeholder; the
+  full Abusch derivation involves doxastic alternatives + acquaintance
+  relations + the rigid-present presupposition, not formalized here)
+- Temporal de re: res movement for wide-scope tense
+
+## Limitations
+
+- Relative clause tense: @cite{sharvit-2003}'s challenge (the mechanism
+  doesn't extend straightforwardly to relative clauses where the tense
+  takes the perspective of a participant)
+- Modal-tense interaction: not addressed in @cite{abusch-1997}'s
+  framework (see @cite{klecha-2016} for a successor)
+- Counterfactual tense: not addressed
+- Counterpart-relation isomorphism @cite{abusch-1997} §12 invokes for
+  the double-access reading derivation (the constraint that actual
+  and belief worlds be temporally isomorphic, eliminating most of the
+  4 cells in the DAR diagram on p. 43): not formalized
+- Modal-layer ULC formulation: see Core Mechanism 2 above
 
 -/
 
-namespace Abusch1997
+namespace Phenomena.TenseAspect.Studies.Abusch1997
 
-open Core.Context
-open Phenomena.TenseAspect
+open Core.Time.Tense
+open Core.Time.Reichenbach
+open Core.Time
+open Semantics.Tense
+open Semantics.Tense.DeRe (TemporalDeRe)
 
--- ============================================================================
--- § Tower-Based Tense Model
--- ============================================================================
 
-/-- A minimal tense context: world, agent, position, and time (as ℤ). -/
-abbrev TenseCtx := KContext Unit Unit Unit ℤ
+-- ════════════════════════════════════════════════════════════════
+-- § Derivation Theorems
+-- ════════════════════════════════════════════════════════════════
 
-/-- The speech-act context: time = 0 (speech time). -/
-def speechCtx : TenseCtx :=
-  { world := (), agent := (), addressee := (), time := 0, position := () }
+/-- @cite{abusch-1997} derives the shifted reading: a free past
+    variable with presupposition checked against the (shifted) eval
+    time. The past constraint gives R < evalTime = matrixE.
 
--- ============================================================================
--- § Root Clause = Root Tower
--- ============================================================================
+    Note: the proof closes via `embeddedFrame.isPast`'s definition,
+    which only requires `tp.resolve g < matrixFrame.eventTime`. The
+    `tp.constraint = .past` condition is what *Abusch's theory* says
+    licenses this reading, but it isn't load-bearing in this proof —
+    the conclusion follows for any tense pronoun whose resolution is
+    below the matrix event time. A full Abusch derivation would
+    project through `tp.constraint.constrains` from the binding mode. -/
+theorem abusch_derives_shifted {Time : Type*} [LinearOrder Time]
+    (tp : TensePronoun) (g : TemporalAssignment Time)
+    (matrixFrame : ReichenbachFrame Time)
+    (hPresup : tp.resolve g < matrixFrame.eventTime) :
+    (embeddedFrame matrixFrame (tp.resolve g) (tp.resolve g)).isPast := by
+  simp only [embeddedFrame, ReichenbachFrame.isPast]
+  exact hPresup
 
-/-- A root clause is a tower with no shifts: depth 0. -/
-def rootTower : ContextTower TenseCtx := ContextTower.root speechCtx
+/-- @cite{abusch-1997} derives the simultaneous reading: a bound
+    variable receives the matrix event time via lambda abstraction. -/
+theorem abusch_derives_simultaneous {Time : Type*}
+    (tp : TensePronoun) (g : TemporalAssignment Time)
+    (matrixFrame : ReichenbachFrame Time)
+    (hBind : tp.resolve g = matrixFrame.eventTime) :
+    (embeddedFrame matrixFrame (tp.resolve g) (tp.resolve g)).isPresent := by
+  simp only [embeddedFrame, ReichenbachFrame.isPresent, hBind]
 
-/-- In a root tower, the innermost context IS the origin.
-    Therefore P = S (perspective time = speech time), which is the
-    defining property of root clauses in the Reichenbach framework. -/
-theorem root_perspective_eq_speech :
-    rootTower.innermost.time = rootTower.origin.time := rfl
+/-- @cite{abusch-1997} derives the simultaneous reading via the bound
+    variable mechanism: updating the temporal assignment so the tense
+    variable receives matrix E. -/
+theorem abusch_derives_simultaneous_via_binding {Time : Type*}
+    (tp : TensePronoun) (g : TemporalAssignment Time)
+    (matrixFrame : ReichenbachFrame Time) :
+    tp.resolve (updateTemporal g tp.varIndex matrixFrame.eventTime) =
+    matrixFrame.eventTime :=
+  tp.bound_resolve_eq_binder g matrixFrame.eventTime
 
-/-- Root tower has depth 0. -/
-theorem root_depth_zero : rootTower.depth = 0 := rfl
+/-- @cite{abusch-1997}'s double-access *placeholder*: indexical present
+    requires truth at BOTH speech time (indexical rigidity) AND matrix
+    event time (attitude accessibility). The full Abusch derivation
+    involves doxastic alternatives + acquaintance relations + the
+    rigid-present presupposition; this theorem only states the surface
+    conjunction. -/
+theorem abusch_derives_double_access {Time : Type*}
+    (p : Time → Prop) (speechTime matrixEventTime : Time)
+    (h_speech : p speechTime) (h_matrix : p matrixEventTime) :
+    doubleAccess p speechTime matrixEventTime :=
+  ⟨h_speech, h_matrix⟩
 
--- ============================================================================
--- § SOT Embedding = Temporal Shift
--- ============================================================================
+/-- @cite{abusch-1997} derives temporal de re: the tense variable in
+    res position is evaluated in the matrix context, giving wide-scope
+    temporal reference. When the res referent satisfies the past
+    constraint against the matrix eval time, the de re reading is
+    felicitous. -/
+theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
+    (dr : TemporalDeRe Time)
+    (hPast : dr.constraint = .past)
+    (hBefore : dr.referent < dr.evalTime) :
+    dr.isFelicitous := by
+  simp only [TemporalDeRe.isFelicitous, GramTense.constrains, hPast]
+  exact hBefore
 
-/-- "John said..." pushes a temporal shift: the matrix event time (-2)
-    becomes the embedded clause's perspective time.
 
-    This models @cite{von-stechow-2009}: the attitude verb transmits its event
-    time to the embedded clause. -/
-def sotTower : ContextTower TenseCtx :=
-  rootTower.push (temporalShift (-2))
-
-/-- After the temporal shift, the embedded perspective time is the matrix
-    event time (-2), not the speech time (0). This is the SOT mechanism:
-    embedded tense is evaluated relative to the matrix event time. -/
-theorem sot_perspective_shifted :
-    sotTower.innermost.time = -2 := rfl
-
-/-- The temporal shift doesn't change the origin — speech time is still 0.
-    This is Kaplan's thesis: the speech-act context is invariant under
-    embedding. -/
-theorem sot_origin_preserved :
-    sotTower.origin.time = 0 := rfl
-
-/-- SOT tower has depth 1 (one embedding). -/
-theorem sot_depth_one : sotTower.depth = 1 := rfl
-
-/-- The embedded perspective time (-2) equals the matrix event time in
-    `matrixSaid`. This is the end-to-end bridge: tower operation →
-    Reichenbach frame. -/
-theorem sot_perspective_matches_matrix_event :
-    sotTower.innermost.time = matrixSaid.eventTime := rfl
-
-/-- The simultaneous reading: embedded R' = embedded P = matrix E = -2.
-    This matches `embeddedSickSimultaneous.perspectiveTime`. -/
-theorem simultaneous_perspective_match :
-    sotTower.innermost.time = embeddedSickSimultaneous.perspectiveTime := rfl
-
--- ============================================================================
--- § Double Access = Origin Reading
--- ============================================================================
-
-/-- "John said Mary IS sick" (present-under-past): the present tense in the
-    embedded clause reads from the ORIGIN (speech time), not from the shifted
-    context. This is the double-access reading: the embedded present anchors
-    to speech time despite being under a past matrix verb.
-
-    Tower model: the embedded present uses `DepthSpec.origin` for its
-    temporal coordinate, reading time = 0 from the origin. -/
-def presentAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .origin, project := KContext.time }
-
-/-- Present-under-past reads speech time (0), not matrix event time (-2). -/
-theorem double_access_reads_speech_time :
-    presentAccess.resolve sotTower = 0 := rfl
-
-/-- The embedded present's time (0) matches the speech time in
-    `embeddedSickPresent`. End-to-end: tower origin access → Reichenbach
-    frame perspective time. -/
-theorem double_access_matches_data :
-    presentAccess.resolve sotTower = embeddedSickPresent.speechTime := rfl
-
--- ============================================================================
--- § Shifted Reading = Local Reading
--- ============================================================================
-
-/-- The shifted reading ("Mary WAS sick before John said so") reads from
-    the LOCAL (innermost) context. The embedded past tense evaluates its
-    reference time relative to the shifted perspective time. -/
-def shiftedAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .local, project := KContext.time }
-
-/-- Shifted reading reads matrix event time (-2) from the innermost context. -/
-theorem shifted_reads_matrix_time :
-    shiftedAccess.resolve sotTower = -2 := rfl
-
-/-- The shifted reading's perspective time matches the embedded frame. -/
-theorem shifted_matches_data :
-    shiftedAccess.resolve sotTower = embeddedSickShifted.perspectiveTime := rfl
-
--- ============================================================================
--- § Kaplan's Thesis: Origin Stability
--- ============================================================================
-
-/-- Kaplan's thesis formalized: an origin-accessing expression yields the
-    same value regardless of how many shifts are pushed. The speech time
-    is invariant under SOT embedding. -/
-theorem kaplan_thesis_for_tense :
-    presentAccess.resolve sotTower = presentAccess.resolve rootTower := by
-  exact presentAccess.origin_stable rfl rootTower (temporalShift (-2))
-
--- ============================================================================
--- § Nested Embedding = Multiple Shifts
--- ============================================================================
-
-/-- "John said that Mary believed that Bill was sick" — double embedding.
-    Two temporal shifts: first to John's saying time (-2), then to Mary's
-    believing time (-4). -/
-def nestedTower : ContextTower TenseCtx :=
-  sotTower.push (temporalShift (-4))
-
-/-- Double embedding has depth 2. -/
-theorem nested_depth_two : nestedTower.depth = 2 := rfl
-
-/-- The innermost context in a doubly-embedded clause reads the most deeply
-    shifted time (-4). -/
-theorem nested_innermost :
-    nestedTower.innermost.time = -4 := rfl
-
-/-- Even under double embedding, the origin (speech time) is preserved. -/
-theorem nested_origin_preserved :
-    nestedTower.origin.time = 0 := rfl
-
-/-- Double access still works at depth 2: present-under-past-under-past
-    reads from the origin. -/
-theorem nested_double_access :
-    presentAccess.resolve nestedTower = 0 := by
-  exact presentAccess.origin_stable rfl sotTower (temporalShift (-4))
-
-end Abusch1997
+end Phenomena.TenseAspect.Studies.Abusch1997

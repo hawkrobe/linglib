@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
@@ -26,7 +26,7 @@ use is no longer interpreted as locative by speakers.
 
 namespace Fragments.Finnish.Possession
 
-open Phenomena.Possession.Typology
+open Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy

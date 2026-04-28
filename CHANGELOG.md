@@ -4,32 +4,222 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.472] - 2026-04-27
+## [0.230.479] - 2026-04-27
 
-### PSDH 2004 prep — bibliography hygiene (5 missing entries)
+### Phase β: Mayan-family naming convention sweep
 
-First commit of a 6-commit arc formalizing @cite{poesio-stevenson-eugenio-hitzeman-2004}'s "Centering: A Parametric Theory and Its Instantiations" (CL 30:3, 309-363). Multi-agent audit of the planned scope flagged that several papers cited or about to be cited had no `references.bib` entry — and that PSDH itself, despite being cited at `Theories/Discourse/Centering/Coherence.lean:24` and `Theories/Interfaces/PragmaticsDiscourse/CenteringCoherence.lean:14` since 0.229.x, was unresolved (`gen_bibliography.py --check` was warning on it). Five entries added:
+After Phase α closed the substrate gap, the only remaining inconsistencies across the 5 Mayan fragments were cosmetic — type-name prefixes (`KaqArgPosition` vs unprefixed `ArgPosition`) and projection-name split (`ergCase` vs `case`). This commit applies uniform mathlib-style naming.
 
-- `poesio-stevenson-eugenio-hitzeman-2004` (NEW) — Computational Linguistics 30(3): 309-363. Verified from PDF (J04-3003.pdf): authors (Poesio, Stevenson, Di Eugenio, Hitzeman), title, journal/volume/number, abstract, ©2004 ACL line. URL `https://aclanthology.org/J04-3003/`. The chronologically-canonical empirical-evaluation paper for parametric centering — formalizes the 8-axis parameter space (CBdef, uttdef, previous-utterance, realization, CF-filter, rank, prodef, segmentation per §3.4 p. 326) and corpus-evaluates ~40 instantiations on the GNOME corpus.
+**Type rename** (drop language prefix; namespace is the disambiguator):
+- `KaqArgPosition` → `ArgPosition` (Kaqchikel, in `Fragments.Mayan.Kaqchikel`)
+- `MamArgPosition` → `ArgPosition` (Mam, in `Fragments.Mayan.Mam`)
+- `KicheArgPosition` → `ArgPosition` (K'iche', in `Fragments.Mayan.Kiche`)
+- Chol/Q'anjob'al unchanged (already used unprefixed `ArgPosition`)
 
-- `brennan-friedman-pollard-1987` (NEW) — Proceedings of the 25th ACL: 155-162. The original "centering algorithm" paper that introduced (a) the four-way Smooth Shift / Rough Shift refinement of Grosz et al.'s three-way SHIFT (CB(U_n) = CP(U_n) splits SHIFT smooth from rough); and (b) the single-transition Rule 2 ranking CON > RET > SSH > RSH used by PSDH §2.3.3 (p. 315). URL `https://aclanthology.org/P87-1022/`. Will be cited from `Centering/Rule2.lean` and `Centering/Transition.lean`.
+All 5 Mayan fragments now use `Fragments.Mayan.{Lang}.ArgPosition` — fully-qualified calls retain the disambiguating namespace; references inside a single-fragment-importing file collapse to bare `ArgPosition`. Mathlib precedent: `Mathlib.Data.Finset.Basic.image`, not `Mathlib.Data.FinsetImage`.
 
-- `strube-hahn-1999` (NEW) — Computational Linguistics 25(3): 309-344. The information-status-based ranking (HEARER-OLD ≺ MEDIATED ≺ HEARER-NEW with linear-order tiebreak) tested by PSDH as the third major rank parameter alternative to grammatical function. URL `https://aclanthology.org/J99-3001/`. Per the linguistics-domain-expert audit's correction, the cheap-vs-expensive Rule 2 distinction is **Strube 1998** (solo) — Strube & Hahn 1999 contributes the information-status ranking.
+**Projection rename** (uniform `case` for the canonical/perfective case):
+- `Chol.ArgPosition.ergCase` → `Chol.ArgPosition.case`
+- `Qanjobal.ArgPosition.ergCase` → `Qanjobal.ArgPosition.case`
+- Kaqchikel/Mam/K'iche' already used `case`; substrate-level `ergCaseChol`/`ergCaseQanjobalan`/`ergCaseKaqchikel`/`ergCaseKiche`/`ergCaseMam` unchanged (these are the perfective/aspect-named primary projections in the substrate, kept consistent across the family).
 
-- `strube-1998` (NEW) — COLING-ACL '98: 1251-1257. "Never Look Back: An Alternative to Centering" — introduces the cheap-vs-expensive transition distinction (cheap iff CB(U_n) = CP(U_{n-1})). PSDH §2.3.3 p. 316 attributes Rule 2 (cheap-pair preference) to this paper. URL `https://aclanthology.org/P98-2204/`. Will be cited from `Centering/Rule2.lean`.
+**Files touched** (perl-bulk):
+- 5 fragment files: `Fragments/Mayan/{Chol,Qanjobal,Kaqchikel,Mam,Kiche}/Agreement.lean`
+- 6 consumer files: `Phenomena/Ergativity/Studies/{Imanishi2014,Imanishi2020,CoonMateoPedroPreminger2014}.lean`, `Phenomena/Agreement/Studies/{Aissen2003,Scott2023,Preminger2014}.lean`, `Phenomena/Case/Studies/{Baker2015,Scott2023}.lean`, `Phenomena/FillerGap/Studies/Erlewine2016.lean`
 
-- `rambow-1993` (NEW) — Workshop on Centering Theory in Naturally-Occurring Discourse, IRCS Philadelphia, May 1993. Linear-order ranking proposal motivated by German scrambling data; PSDH §2.4.3 cite this for the surface-position alternative to grammatical-function ranking. Workshop paper without standard ACL anthology URL (URL omitted per CLAUDE.md unverified-URL policy). Will be cited from `Centering/Instances/LinearOrder.lean`.
+**Build**: 14-file Mayan-family + consumer rebuild green (1835 jobs).
 
-**Build / validation**: `gen_bibliography.py --check` returns zero new unknown citations; `bibliography.md` regenerated to 1806 entries (was 1801). The PSDH cite warnings emitted from `Coherence.lean:24` and `CenteringCoherence.lean:14` since 0.229.x are now resolved.
+**Mayan-family discipline checkpoint** (now uniform across all 5):
+- All five fragments: `ArgPosition` (no language prefix; namespace disambiguates).
+- All five fragments: `.case` for the canonical/perfective case projection (no `ergCase` consumer name).
+- All five fragments: `.accCase` for the non-perfective case projection (where present — Kaqchikel for inverted-ergative, Chol/Q'anjob'al for extended-ergative; K'iche'/Mam don't have a split).
+- All five fragments: substrate-anchored via `abbrev := Fragments.Mayan.{erg,acc}Case{Lang}`.
+- Substrate (`Theories/Syntax/Case/Alignment.lean`): five alignments (ergative, nominativeAccusative, extendedErgative, invertedErgative, tripartite) — exhaustively covering the cross-linguistic typology surveyed.
 
-**Next 5 commits in this arc** (mathlib-organized per audit recommendation):
-1. **C2** — Substrate generalization: `CfRankerOf E R` typeclass over `Realization` (not just role); `cbAll : prev → cur → List E` returning all top-tier-realized entities.
-2. **C3** — `Constraints.lean`: CB Uniqueness + Entity Continuity decomposition as list-length predicates over `cbAll`.
-3. **C4** — `Rule1.lean`: extract from `Rules.lean`; rename `Rule1Holds` → `Rule1GJW95`; add Rule1GJW83 + Rule1Gordon as separate Props with implication theorems (no `Rule1Variant` enum — mathlib uses separate Props per `Convex`/`StrictConvex` precedent).
-4. **C5** — `Rule2.lean`: extract; add `Rule2BFP87Single` + `Rule2Strube1998Cheap`.
-5. **C6** — `Instances/{LinearOrder,InformationStatus}.lean` + `Phenomena/Reference/Studies/PoesioEtAl2004.lean` with PSDH (10) corner-cupboard partial-GF two-CB example, Sidner1983 ↔ partial-GF bridge theorem, and PSDH §5.2.2 refutation against the existing `Coherence.lean` 1-to-1 mapping.
+**Remaining asymmetries** (real linguistic differences, not discipline gaps):
+- Cell-type API: Kaqchikel `PersonNumber`, Mam `MamPersonNumber`, K'iche' `PhiFeatures` struct, Chol/Q'anjob'al none — Phase γ scope, defer until third paradigm-using study file lands.
+- K'iche'-specific `Formality` (postverbal *la*/*alaq* formal pronouns).
+- Mam-specific `mamSetBSpecificCells` (Set B has 4 specific cells + Elsewhere; Kaqchikel's Set B has 6 specific).
 
-## [0.230.471] - 2026-04-27
+## [0.230.478] - 2026-04-27
+
+### Phase α: Mam substrate gap closed — `Alignment.tripartite` + `caseMam` + Bool→Prop
+
+The post-Mayan-cleanup audit identified Mam as the architectural outlier: `inductive MamArgPosition` (not `abbrev := ArgumentRole`), `MamArgPosition.case` stipulated directly (not substrate-anchored), and Bool predicates on `isPhiAgreed`/`canBeReduced`. The reason it stayed: `Theories/Syntax/Case/Alignment.lean` had no constructor for the tripartite pattern (ERG/ACC/ABS as three distinct cases). This commit fixes that, then closes the Mam gap.
+
+**Substrate addition** (`Theories/Syntax/Case/Alignment.lean`):
+- New `Alignment.tripartite : ArgumentRole → Core.Case` returning `A → ERG, P → ACC, S → ABS, R/T → ACC`. Anchored to @cite{scott-2023} ch. 3 for SJA Mam and @cite{dixon-1994} §2.1.5 for Australian languages (Pitta-Pitta, Wangkumara). R/T default to ACC (consistent with P) since the analyzed corpus doesn't document Mam ditransitives.
+- New universal-properties theorem `tripartite_distinguishes_all`: A ≠ P ∧ A ≠ S ∧ P ≠ S, decidable. The distinguishing property of tripartite alignment vs the other four (which all collapse at least one pair).
+- New `tripartite_differs_from_ergative_on_P` theorem: tripartite gives P → ACC, canonical ergative gives P → ABS — the load-bearing distinction.
+- Renamed legacy `alignments_pairwise_distinct_on_A` → `alignments_distinct_on_A` (now covers all 5 alignments including tripartite).
+
+**Substrate addition** (`Fragments/Mayan/Params.lean`):
+- New `caseMam : UD.Aspect → ArgumentRole → Core.Case` returning `Alignment.tripartite.assignCase` uniformly across aspects (per @cite{scott-2023} ch. 3, SJA Mam shows no aspect-conditioned alignment split). Aspect parameter retained for shape-uniformity with `caseChol`/`caseQanjobalan`/`caseKaqchikel`/`caseKiche`. Docstring acknowledges dialect-specificity to SJA Mam (Ixtahuacán Mam per England 1983b / @cite{zavala-maldonado-2017} §4–5 is ergative, not tripartite).
+- New `ergCaseMam` projection (= `caseMam .Perf` = `Alignment.tripartite.assignCase`).
+
+**Mam fragment overhaul** (`Fragments/Mayan/Mam/Agreement.lean`):
+- `inductive MamArgPosition { agent | patient | intranS }` → `abbrev MamArgPosition := Features.Prominence.ArgumentRole` (matches Chol/Q'anjob'al/Kaqchikel/K'iche').
+- `def MamArgPosition.case` (stipulated `.erg/.acc/.abs`) → `abbrev MamArgPosition.case := Fragments.Mayan.ergCaseMam` (substrate-anchored). The "tripartite alignment" theorem `tripartite_alignment` now follows from `Alignment.tripartite_distinguishes_all` rather than three by-decide proofs.
+- `MamArgPosition.isPhiAgreed : Bool` → `IsPhiAgreed : Prop` with `[DecidablePred]` instance. Same for `canBeReduced` → `CanBeReduced` (defined as `pos.IsPhiAgreed`, with the Decidable instance derived).
+- `mamArgPositions := [.A, .P, .S]` (canonical SAP constructors).
+- All `derivePronounForm` theorems renamed (`first_agent_reduced` → `first_A_reduced`, etc.) — uses canonical constructors.
+- `reduction_eligible_iff_phi_agreed` is now an Iff theorem closing by `Iff.rfl` — no `native_decide` over the list anymore (the equivalence holds definitionally because `CanBeReduced := IsPhiAgreed`).
+
+**Consumer updates**:
+- `Phenomena/Agreement/Studies/Scott2023.lean`: 6 references migrated. `agreeProbe` def updated to use `.A/.P/.S` patterns + R/T fall-through. Pronoun-pipeline theorem and tripartite-agreement theorem updated to Prop form. `satisfaction_matches_fragment` rewritten as Iff between Bool `copiedFeatures` and Prop `IsPhiAgreed`.
+- `Phenomena/Case/Studies/Scott2023.lean`: 5 references migrated. `voice_based_tripartite` now derives from `Alignment.tripartite_distinguishes_all` (the substrate theorem) rather than three by-decide proofs. Added `import Linglib.Theories.Syntax.Case.Alignment`.
+
+**Mathlib discipline checkpoint** (now uniform across ALL 5 Mayan fragments):
+- All five fragments: `XArgPosition` is `abbrev := Features.Prominence.ArgumentRole`.
+- All five fragments: case projection is `abbrev := Mayan.{erg,acc}CaseX` (substrate-anchored).
+- All five fragments: zero `@[deprecated]` constructor aliases.
+- All five fragments: zero Bool predicates on argument-position properties.
+- Substrate `Alignment` has 5 alignment constructors (ergative, nominativeAccusative, extendedErgative, invertedErgative, tripartite) — matching the actual cross-linguistic typology surveyed.
+
+**Build**: 14-file Mayan-family + substrate + 2-consumer rebuild green (1827 jobs).
+
+**Asymmetries that remain (real linguistic differences, not discipline gaps)**:
+- Naming `XArgPosition` (Mam/Kaqchikel/K'iche') vs `ArgPosition` (Chol/Q'anjob'al) — Phase β bikeshedding scope, not landed.
+- Projection `case`/`accCase` (Kaqchikel/K'iche'/Mam) vs `ergCase`/`accCase` (Chol/Q'anjob'al) — also Phase β.
+- Cell-type API still asymmetric: Kaqchikel `PersonNumber`, Mam `MamPersonNumber`, K'iche' `PhiFeatures` struct, Chol/Q'anjob'al none — Phase γ scope, defer until third paradigm-using study file lands.
+
+## [0.230.477] - 2026-04-27
+
+### K'iche' fragment finishes the Mayan family substrate-anchored cleanup
+
+Closes the Mayan-family discipline gap. With this commit, all 5 Mayan fragments (Chol, Q'anjob'al, Kaqchikel, Mam, K'iche') share a uniform substrate-anchored, alias-free, Bool-free shape.
+
+**Substrate addition** (`Fragments/Mayan/Params.lean`):
+- New `caseKiche : UD.Aspect → ArgumentRole → Core.Case` returning `Alignment.ergative.assignCase` uniformly across all aspects (per @cite{mondloch-2017}: K'iche' has no documented aspect-conditioned split, unlike its sister Kaqchikel which has the inverted PROG `ajin` pattern). The aspect parameter is retained for shape-uniformity with `caseChol`/`caseQanjobalan`/`caseKaqchikel`.
+- New `ergCaseKiche` projection.
+
+**`Fragments/Mayan/Kiche/Agreement.lean` overhaul**:
+- Dropped local `inductive Person { first | second | third }` — refactored `PhiFeatures` to use canonical `Features.Prominence.PersonLevel`. Cross-Mayan / cross-framework code now shares one Person inventory.
+- Dropped local `inductive KicheArgPosition { agent | patient | intranS }` — `abbrev KicheArgPosition := Features.Prominence.ArgumentRole` matches the Chol/Q'anjob'al/Kaqchikel/Mam pattern. Constructor aliases (`agent := .A` etc.) NOT added per "no backward compatibility" policy; the previous local-inductive form had zero external consumers, so no migration cost.
+- Replaced local `def KicheArgPosition.case` (returning `.erg/.abs/.abs` directly) with `abbrev := Fragments.Mayan.ergCaseKiche` — case assignment now derives from the substrate `Alignment.ergative.assignCase` rather than being stipulated per-fragment.
+- `agreementSet` extended to handle ditransitive R/T (defaulted to `.none`, with `AgreementSet` extended by a `.none` constructor since K'iche' doesn't agree with R/T in this fragment).
+- `setBIsPrefix : PhiFeatures → Bool` → `SetBIsPrefix : PhiFeatures → Prop` with `[Decidable]` instance; same for `SetAIsPrefix`. Per-cell theorems restated in Prop form (`SetBIsPrefix φ` instead of `setBIsPrefix φ = true`; `¬ SetBIsPrefix` instead of `= false`).
+- Number constructors renamed: now uses `.Sing`/`.Plur` (canonical UD.Number constructors from `Core.Lexical.Word`) — the previous file used `.sg`/`.pl` from a local Number type that no longer exists.
+- Kept K'iche'-specific `Formality { informal | formal }` (the postverbal *la*/*alaq* second-person formal pronouns are unique to K'iche' in the Mayan family covered here).
+
+**`Fragments/Mayan/Kiche/VoiceSystem.lean` Bool→Prop sweep**:
+- `KicheVoice.realizesAgent / realizesPatient / conjugatesIntransitively : Bool` → Prop-valued `RealizesAgent` / `RealizesPatient` / `ConjugatesIntransitively` with `[DecidablePred]` instances (using `cases v <;> unfold ... <;> infer_instance` pattern). Zero external consumers — verified by grep — so no migration needed.
+
+**Build**: 15-file Mayan-family + downstream-consumer rebuild green (1829 jobs); ElkinsTorrenceBrown2026.lean (the only external consumer of any K'iche' fragment file) compiles unchanged.
+
+**Mayan family discipline checkpoint** (now uniform across Chol, Q'anjob'al, Kaqchikel, Mam, K'iche'):
+- `ArgPosition` / `MamArgPosition` / `KaqArgPosition` / `KicheArgPosition` all are `abbrev := Features.Prominence.ArgumentRole` (no local inductives).
+- `case` / `accCase` projections all are `abbrev := Mayan.{erg,acc}Case{X}` (substrate-anchored).
+- No `@[deprecated]` constructor aliases anywhere.
+- No Bool predicates left on argument-position properties (`IsPhiAgreed` is Prop, K'iche' `SetBIsPrefix`/`SetAIsPrefix` are Prop).
+- Two Mayan study files share `Minimalist.makePersonVocab` for DM Vocabulary construction (Scott2023 for Mam, Preminger2014 for Kaqchikel).
+
+**Asymmetries that remain** (these are real linguistic differences, not discipline gaps):
+- Only Kaqchikel has `accCaseKaqchikel` (the Imanishi 2014 inverted-ergative); K'iche' doesn't.
+- Mam has tripartite alignment (ERG/ACC/ABS); the others are ergative-absolutive (ERG/ABS) or extended-ergative (ERG/ABS with split).
+- K'iche' has the postverbal formal *la*/*alaq* pronouns; the others don't (or the pattern is different).
+
+## [0.230.476] - 2026-04-27
+
+### NEW top-level `Typology/` directory + Fragment→Phenomena layer-violation fixes + Polarity/Indefinites duplication resolved
+
+Establishes a new top-level `Linglib/Typology/` directory housing per-language typological substrate types (Fragment-importable, no Fragment imports), fixing 7 pre-existing layer violations and dissolving the parallel formalizations of indefinite-pronoun typology that 0.230.465 left in place between `Phenomena/Indefinites/Typology.lean` (6 langs) and `Phenomena/Polarity/Typology.lean` (17 langs, bespoke types).
+
+**Tier 0a — Possession enums extracted** (fixes 5 layer violations): new `Typology/Possession.lean` houses `ObligatoryPossession`, `PossessiveClassification`, `PredicativePossession`, `AdnominalPossession`, `PossessiveAffixPosition`, `NumberOfPossessiveNouns`, `PossessiveNotion` (+ `.abstractness` ordering), `InalienabilityRank` (+ `.toNat`), `PossessionSource`, and `predicativeSource` projection — all extracted from `Phenomena/Possession/Typology.lean`. Updated 5 Fragments (`Finnish`, `Turkish`, `Swahili`, `Slavic/Russian`, `Jarawara` Possession) and `Heine1997.lean` to import from `Typology/Possession.lean` — closing all Fragment→Phenomena Possession imports.
+
+**Tier 0b — Question enums extracted** (fixes 2 layer violations): new `Typology/Question.lean` houses `WhMovementStrategy`, `WhInterpMechanism` (+ utility methods `ReachesSpecCP`, `IslandSensitive`, `HasCovertStep`, `reachesSpecCP_iff_islandSensitive` theorem). Updated `Fragments/{Mandarin,Singlish}/Questions.lean`, `Phenomena/Questions/Typology.lean`, and `Phenomena/Questions/Studies/ChanShen2026.lean`. Singlish's local `WhInterpMechanism.toDependencyType` extension method renamespaced to canonical `Typology.Question.WhInterpMechanism`.
+
+**Tier 1a — Indefinite substrate moved**: `Linglib/Core/Typology/Indefinite.lean` → `Linglib/Typology/Indefinite.lean`. Namespace `Core.Typology.Indefinite` → `Typology.Indefinite`. Updated 6 Fragment Indefinites + `DeganoAloni2025`, `Bubnov2026`, `Dekier2021`, and `Core.Typology.LanguageProfile` (which still imports the substrate). Substrate also extended with cross-linguistic infrastructure previously bespoke in `Phenomena/Polarity/Typology.lean`: `HaspelmathFunction.all` (9-fn list in map order), `.adjacent` (implicational-map adjacency), `.isDE` / `.isFC` (Bool predicates), `.bfsReachable` (BFS algorithm), `.isContiguous` (contiguity check), plus `IndefiniteParadigm.{wals46A, formCount, allFunctions, AllContiguous, CoversAllFunctions, FormsDisjoint}` (paradigm-level helpers — `Prop`-valued with `Decidable` instances per mathlib idiom; the `= true`-tail `Bool` form was an early-iteration mistake corrected mid-PR), and `IndefiniteEntry.{functionList, coverage}`.
+
+**Tier 1b reverted**: an interim `Typology/Indefinite/Cross.lean` (cross-linguistic theorems using Fragments) was created and then *moved back* to `Phenomena/Indefinites/Typology.lean` after audit-driven realization that putting Fragment-importing files inside `Typology/` violates the substrate-layer discipline (Fragments import Typology, so Typology can't import Fragments). The corrected pattern: `Typology/{Domain}.lean` is purely substrate; `Phenomena/{X}/Typology.lean` is the home for Fragment-importing cross-linguistic theorems. CLAUDE.md updated to document this discipline.
+
+**Tier 1c — Polarity reconciliation** (the substantial migration): `Phenomena/Polarity/Typology.lean` (~1295 LOC) rewritten end-to-end. The bespoke `IndefiniteFunction` enum (9 cases) dropped — same as `HaspelmathFunction` modulo naming (the `irrealisNonspecific`/`indirectNegation`/`directNegation` quirk renamed to Polarity's shorter `irrealis`/`indirectNeg`/`directNeg` across all 6 Indefinite Fragments + DeganoAloni2025 + Bubnov2026 + Dekier2021 + Indefinite.Cross via bulk `perl`, since Polarity's shorter names are more idiomatic). Bespoke `IndefinitePronounSeries` and `IndefinitePronounProfile` dropped — replaced by canonical `IndefiniteEntry` + `IndefiniteParadigm`. All 17 per-language paradigm defs (English, Russian, German, Japanese, Mandarin, Turkish, Hindi, Italian, Finnish, Korean, Hungarian, Georgian, Quechua, Yoruba, Thai, Tagalog, Swahili) rewritten as `IndefiniteParadigm` instances with full `basis : MorphologicalBasis` annotations cross-checked against WALS F46A (which catches the `qvi` Imbabura Quechua entry that *is* in WALS under WALS code `qim` — initially mis-stated as absent and caught by `decide` proving the negation). Polarity-specific theorems (sample partition, NPI clusters, neg-concord patterns, Haspelmath-map non-contiguous-sets-impossible, NPI/FC region structure, summary statistics, Fragment PolarityItems consistency) preserved and rewritten against the new substrate. `Phenomena/Polarity/Studies/Chierchia2006.lean` (sole consumer of the old Polarity types) bulk-renamed to use `HaspelmathFunction`/`IndefiniteParadigm`/`IndefiniteEntry`; the local `seriesFunctions` projector switched from `Finset.toList` (noncomputable) to `IndefiniteEntry.functionList` (computable via `HaspelmathFunction.all.filter`). Polarity-side `IsContiguous` / `CoversAllFunctions` / `FormsDisjoint` / `AllContiguous` are now `Prop`-valued with `Decidable` instances inferred from `List.decidableBAll`; theorems lose the `= true` tail per mathlib idiom.
+
+**Substrate-flat-file naming**: also promoted `Typology/{Possession,Question}/Defs.lean` → `Typology/{Possession,Question}.lean` (single-file substrates don't warrant the subdirectory). Subdirectory naming reserved for future cases where the substrate genuinely warrants subdivision (mathlib-style: `Mathlib/Order/Lattice.lean` + `Mathlib/Order/Lattice/Fold.lean` only when the second file adds non-trivial sibling content).
+
+**`HaspelmathFunction.isDE` / `.isFC` corrected**: the original Polarity convention has `comparative` in `isFC` (with `freeChoice`); the initial Tier 1a port mis-coded it into `isDE`. Caught by `decide` failing on `italian_qualcuno_matches` in Chierchia2006 — the test forced the right partition.
+
+**Mathlib-style `Prop` over `Bool`**: at user prompt mid-PR, the substrate helpers were refactored from `Bool`-returning to `Prop`-valued with `Decidable` instances (per mathlib idiom). Theorems lose the ceremonial `= true` tails. `Bool` helpers retained where used in `List.filter` contexts (e.g., `IndefiniteEntry.covers`, `HaspelmathFunction.isDE/isFC`).
+
+**`Decide`-friendly avoidance of `Finset.toList`**: `Finset.toList` is noncomputable (uses Quotient.choice), so anything using it can't reduce in `decide`. The substrate helpers compute over `Finset` via `HaspelmathFunction.all.filter (e.covers ·)` (computable list extraction with Decidable membership) instead — added as `IndefiniteEntry.functionList`. All 30+ `decide`-checked theorems pass with this approach.
+
+**CLAUDE.md updates**:
+- Architecture diagram extended with `Typology/{Domain}/` substrate layer + `Phenomena/X/Typology.lean` analysis layer
+- Directory Structure block adds `Typology/` listing
+- New §"Typology/ — Per-Language Substrate Layer" documenting the substrate-only discipline, the layer-split with `Phenomena/X/Typology`, the naming convention, and the `Core/Typology/` → `Typology/` migration note
+- "Dependency Discipline" header updated: "Theories → Fragments → Phenomena" → "Theories + Typology → Fragments → Phenomena"
+
+**Build**: full `lake build` clean except for two pre-existing failures from concurrent in-flight sessions on Mayan ergativity (`CoonMateoPedroPreminger2014`, `Baker2015` — `Fragments.Mayan.{Chol,Qanjobal}.ArgPosition.agent.ergCase` migration in flight, untouched by this PR).
+
+**Stat (this PR's files only)**: ~17 files migrated/created/deleted, ~2200 LOC churned. Dep-hierarchy violations reduced by 7 (5 Possession + 2 Question Fragment files no longer import Phenomena). Bespoke per-language profile types collapsed: `IndefinitePronounProfile` → `IndefiniteParadigm`, `IndefiniteFunction` → `HaspelmathFunction`, `IndefinitePronounSeries` → `IndefiniteEntry`. The remaining 4 bespoke `XProfile` patterns in `Phenomena/{Alignment,ArgumentStructure,Coordination}/Typology.lean` (`AlignmentProfile`, `ValenceProfile`, `CoordinationProfile`, etc.) deferred for future PRs along the same template.
+
+## [0.230.475] - 2026-04-27
+
+### Mayan cleanup follow-ups: drop Chol/Q'anjob'al deprecated aliases + Scott2023 helper-refactor
+
+Two follow-up tasks closing loops opened by the prior Kaqchikel cleanup (0.230.470).
+
+**(a) Sweep Chol/Q'anjob'al deprecated alias tags**:
+- `Fragments/Mayan/Chol/Agreement.lean` and `Fragments/Mayan/Qanjobal/Agreement.lean`: dropped `ArgPosition.{agent, patient, intranS}` `@[deprecated]` constructor abbrevs (added in earlier sessions for backward compat). Per the user-policy "no backward compatibility scaffolding", these should not survive once consumers can be migrated.
+- Consumer migrations: `Imanishi2020.lean` (10 references) and `CoonMateoPedroPreminger2014.lean` (4 references) updated from `ArgPosition.agent.ergCase` / `.accCase` patterns to `ArgPosition.ergCase .A` / `.accCase .A` function-application form. Removes ~14 deprecation warnings emitted on every build.
+- 5-file targeted rebuild green; theorems hold by definitional equality through the `abbrev ergCase := Mayan.ergCaseChol/Qanjobalan` substrate chain unchanged.
+
+**(c) Scott2023 helper-refactor with `makePersonVocab + Elsewhere`**:
+- `Fragments/Mayan/Mam/Agreement.lean`: added `MamPersonNumber` cell type (6 cells, mirroring Kaqchikel's `PersonNumber` shape), with `.person` / `.isPlural` projections. New `mamPersonNumbers` list, `mamSetAExponent` / `mamSetBExponent : MamPersonNumber → String` per-cell projections (verified against @cite{scott-2023} Tables 2.8 + 3.5). Added `mamSetBSpecificCells := [.p1sg, .p1pl, .p2pl, .p3pl]` — the 4 Set B cells that have specific Vocabulary entries per Scott's DM analysis (2sg/3sg fall through to Elsewhere). Verification theorems rewritten as `rfl` proofs on the per-cell projections.
+- Removed legacy triple-form scaffolding (`setAMarkers`/`setBMarkers : List (PersonLevel × Bool × String)`, `lookupMarker` helper) — zero external consumers, was the only Bool-as-singular-flag use site in the file. Replaces "lookup by triple-list scan" with "direct per-cell projection" — strictly more decide-friendly and Bool-free.
+- `Phenomena/Agreement/Studies/Scott2023.lean`: refactored `setAVocab`/`setBVocab` to use the shared `Minimalist.makePersonVocab` helper from `Theories/Interfaces/SyntaxPhonology/Minimalist/Spellout.lean`. setAVocab is now a single one-line call; setBVocab is `makePersonVocab + [elsewhere entry]` append (the documented "Elsewhere entries appended separately" pattern from the helper docstring). Added `mamToPhiFeatures : MamPersonNumber → List PhiFeature` per-cell projection. All 30+ existing spellout theorems hold by definitional equality through the helper.
+- This realizes the `makePersonVocab` extraction's payoff: 2 consumers (Preminger2014 + Scott2023) now share the helper; the helper's `Type*`-polymorphic + `Option Cat`-shaped signature was designed precisely to accommodate Scott2023's Elsewhere-entry pattern via append.
+
+**Files touched**: `Fragments/Mayan/{Chol,Qanjobal,Mam}/Agreement.lean`, `Phenomena/Agreement/Studies/Scott2023.lean`, `Phenomena/Ergativity/Studies/{Imanishi2020,CoonMateoPedroPreminger2014}.lean`. 11-file Mayan-related rebuild green (1824 jobs).
+
+**Mathlib discipline checkpoint**: with this commit, all 5 Mayan fragments (Chol, Q'anjob'al, Kaqchikel, Mam, K'iche') are typology-neutral with substrate-anchored case projections; no `@[deprecated]` aliases remain in the Mayan family; the Mayan/Minimalist study files share the `makePersonVocab` helper rather than each constructing parallel Vocabulary lists.
+
+**Out-of-scope deferrals (consistent with prior CHANGELOG flagging)**:
+- K'iche' fragment (`Fragments/Mayan/Kiche/Agreement.lean`) still uses `inductive KicheArgPosition { agent | patient | intranS }` — has not been migrated to the substrate at all (different scope from the alias-sweep). Could be a future Phase to bring K'iche' into the Chol/Q'anjob'al/Kaqchikel pattern.
+- Strong-pronoun fragment extension + faithful Ch 7 arg 4 theorem (Preminger 2014).
+- Zulu fragment + Ch 7 arg 5 theorem (Halpert 2012 augmentless data).
+
+## [0.230.474] - 2026-04-27
+
+### Japanese Case Fragment: Item C — cross-file integration (Nouns + Ozaki2026 dissolution + Sadakane-Koizumi rival surfacing)
+
+Following the deep multi-agent audit (mathlib-reviewer + linguistics-domain-expert + integration-auditor + cross-framework-reconciler) of 0.230.471, "item C" is the cross-file integration tier — three substantive cleanups that turn `Fragments/Japanese/Case.lean` from a stranded Japanese-only artifact into a properly-connected node of linglib. Per user direction, item C in this commit covers C2 (Nouns dissolution), C3 (Ozaki2026 dissolution), and C4-alt (Sadakane-Koizumi 1995 bib + scope paragraph). Item C1 (lift `CaseMarker` to `Core/Case/Marker.lean`) is deferred — Japanese is the only Fragment with rich marker structure, so the lift would be N=1; reconsider when Korean/Mongolian/Turkish catch up. Item C4-original (Tsujimura ⊥ Marantz orthogonality theorem) is replaced by C4-alt — the cross-cut hinges on stative-experiencer -ni which is not formalized in linglib, making a partial agreement theorem on -kara misleading.
+
+**C2: Dissolve `Fragments/Japanese/Nouns.lean`'s `CaseParticle` enum.**
+- Pre-state: `inductive CaseParticle | ga | wo | ni | de | no | wa` (lines 32-34) with three flaws: (i) duplicate of `Fragments.Japanese.Case`'s authoritative marker registry; (ii) incorrect Hepburn romaji `.wo` instead of `.o`; (iii) incorrect `.wa` (topic marker, not case marker per Tsujimura).
+- External-consumer audit (grep): zero consumers across `Linglib/`. Cross-file uses of `Fragments.Japanese.Nouns` reference only `japaneseMapping`, `japaneseBlocking`, `bareNPLicensed`. The `CaseParticle` enum and the `gaNP`/`woNP`/`waNP` constructor functions were unused outside Nouns.lean itself.
+- Action: deleted (a) `inductive CaseParticle`; (b) `NP.caseParticle : Option CaseParticle` field; (c) `gaNP`, `woNP`, `waNP` constructor functions; (d) `inuGa`, `inuWo` example NPs and the `inuGa.caseParticle = some .ga` test assertion. Replaced with an `NP` docstring noting that case marking on NPs is not represented at this layer — downstream consumers that need NP-with-case should pair `NP` with a `Fragments.Japanese.Case.CaseMarker` explicitly. Per CLAUDE.md "don't add features beyond what the task requires" — no consumer needed `caseParticle`, so deleting beats rewiring to a new field that nothing consumes. Build green: Chierchia1998, Downing1996, Classifiers/Typology all still pass.
+
+**C3: Dissolve `Phenomena/Case/Studies/Ozaki2026.lean`'s `CaseMarking` enum.**
+- Pre-state: `inductive CaseMarking | accusative | ablative | nominative | dative` (lines 42-47) re-stipulated four particles already present in `Fragments.Japanese.Case`. Ozaki2026 didn't even import the Fragment despite using its data — the headline integration smell.
+- Action: (a) added `import Linglib.Fragments.Japanese.Case` and `open Fragments.Japanese.Case (CaseMarker o kara ga ni)`; (b) deleted `inductive CaseMarking`; (c) refactored `AlternationDatum.sourceCase : CaseMarking` → `sourceMarker : CaseMarker` (and same for `ArgumenthoodDatum.sourceCase` — `replace_all` mass-edit); (d) updated 8 data instances (`hanareru_acc`/`hanareru_abl`/`deru_acc`/`deru_abl` for AlternationDatum + 4 corresponding ArgumenthoodDatum instances) — `sourceCase := .accusative` → `sourceMarker := o`, `.ablative` → `kara`; (e) dropped vestigial `deriving DecidableEq, Repr` from `AlternationDatum` and `ArgumenthoodDatum` (the `Finset Core.Case` field on `CaseMarker` lacks auto-Repr, and no theorem in the file uses `==` or `repr` on these structures).
+- Five new substantive theorems document the rewire and surface the Tsujimura/Marantz convergence:
+  - `hanareru_acc_uses_o : hanareru_acc.sourceMarker = o := rfl`
+  - `hanareru_abl_uses_kara : hanareru_abl.sourceMarker = kara := rfl`
+  - `deru_acc_uses_o : deru_acc.sourceMarker = o := rfl`
+  - `deru_abl_uses_kara : deru_abl.sourceMarker = kara := rfl`
+  - `alternation_crosses_tsujimura_split : o.omissibleInCasual = true ∧ kara.omissibleInCasual = false := by decide` — the substantive observation that the ACC/ABL alternation isn't just a flat case alternation but ALSO crosses Tsujimura's morphosyntactic case-particle/postposition split, making the alternation a richer phenomenon than either framework alone would surface.
+- All 33 existing Ozaki theorems still pass unchanged: `acc_derivation_correct`, `abl_source_from_lexical_p`, `accusative_unaccusative_paradox`, `direct_passive_blocked`, etc. all reference `Core.Case.acc`/`.abl` and `CaseSource.dependent`/`.lexical` (NOT the dissolved `CaseMarking` enum), so the dissolution is data-layer-only.
+
+**C4-alt: Sadakane-Koizumi 1995 bibliography + scope paragraph.**
+- Original C4 (Tsujimura ⊥ Marantz orthogonality theorem) requires data on stative-experiencer -ni in dative-subject contexts (the actual cross-cut between Tsujimura's case-particle and Marantz's lexical case classifications). That data isn't in linglib — Ozaki2026 covers departure-verb -kara/-o alternations only, where Tsujimura and Marantz happen to AGREE rather than disagree. Adding a partial agreement theorem on -kara would mislead about what's formalized.
+- Replaced with documentation-level engagement: bib entry for the systematic-ambiguity rival to Tsujimura's clean partition + scope paragraph in `Case.lean` naming the contested commitment.
+- Bib entry `sadakane-koizumi-1995` added to `blog/data/references.bib` with metadata verified directly against the De Gruyter publisher page (URL: degruyterbrill.com, redirect from degruyter.com): authors Kumi Sadakane and Masatoshi Koizumi, year 1995, title "On the nature of the 'dative' particle ni in Japanese", journal *Linguistics*, vol. 33, issue 1, pages 5–34 (NOT 5–33 as the audit's recall suggested — the WebFetch corrected this), DOI 10.1515/ling.1995.33.1.5. All fields verified before writing per CLAUDE.md anti-hallucination discipline.
+- New "Theoretical commitments" docstring section in `Fragments/Japanese/Case.lean` (between the module overview and the Scope section) names the Sadakane-Koizumi systematic-ambiguity proposal, summarises their key diagnostic (passivisation of NP-*ni* — case-particle *-ni* licenses it, postposition *-ni* doesn't), explains why the Fragment picks Tsujimura's clean partition (decidability + disjoint schema), and points at the natural future home for the rival formalisation: `Phenomena/Case/Studies/SadakaneKoizumi1995.lean` defining a `SKCategory : CaseMarker → Set MarkerStatus` permitting dual classification. Surfacing the contested commitment matches linglib's "theoretical incompatibilities should be visible" thesis.
+- `python3 blog/scripts/gen_bibliography.py` regenerated `blog/content/bibliography.md`. Bib check: 7578 references, 7251 valid, 327 unknown — neither `tsujimura-2014` nor `sadakane-koizumi-1995` in the unknown list (both resolve cleanly).
+
+**Deletion test (post-commit)**: if `Fragments/Japanese/Case.lean` were removed, what new things break vs. before this audit campaign? Before audit (0.230.466 baseline): 2 sites (`Caha2009::japanese`, `Alignment::japanese_fragment_bridge`). After this commit: 3 sites (the 2 baseline + Ozaki2026's new import + 5 substantive theorems). Plus the bib reverse-index entry. The integration depth is now 50% deeper; the Ozaki2026 connection in particular makes the Fragment's polysemy and omissibility data load-bearing for the dependent-case study.
+
+**Build**: 1881-job dependency cone (Case + Nouns + Ozaki2026 + 5 downstream consumers) green. Two pre-existing failures from a parallel session's Mayan `ArgPosition.ergCase` restructure (`Phenomena/Case/Studies/Baker2015.lean`, `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` referencing missing `Fragments.Mayan.{Qanjobal,Chol}.ArgPosition.agent.ergCase`) are NOT in this commit's dependency cone (verified via grep: neither file imports any Japanese fragment or Ozaki2026).
+
+**Deferred to future commits**:
+- Item C1 (lift `CaseMarker` to `Core/Case/Marker.lean`) — when a second customer (Korean catch-up) makes the abstraction earn its keep.
+- Item C4-original (Tsujimura ⊥ Marantz orthogonality theorem) — when a `Phenomena/Case/Studies/StativeExperiencer.lean` formalizes dative-subject -ni in linglib.
+- Korean Case.lean upgrade to Pattern B (rich marker structure) — natural next ticket in the same vein.
+- `Fragments/Japanese/Comparison.lean:28`'s bare `"yori"` string — single occurrence, low priority, can be `Fragments.Japanese.Case.yori.romaji` in a follow-up.
+- `Phenomena/Case/Studies/SadakaneKoizumi1995.lean` formalising the rival diagnostics — substantial new study file; the bib entry + scope paragraph is the prep work that lets such a file exist.
+
+## [0.230.473] - 2026-04-27
 
 ### Centering audit — code-quality fixes (β scope) on the 0.230.470 refactor
 
@@ -47,9 +237,90 @@ Multi-agent audit on 0.230.470's Sidner1983 / GJW1995 refactor flagged several b
 
 **CHANGELOG metadata fix.** 0.230.470 entry's claim "File shrinks 647 → 525 LOC; net dedup ~120 LOC" corrected to actual values (646 → 530 LOC; ~116 LOC) per audit verification.
 
-**Build**: 893-job Centering dependency cone green (every transitive consumer of `Theories/Discourse/Centering/` rebuilt clean).
+**Build**: 889-job dependency cone green (every transitive consumer of `Theories/Discourse/Centering/` rebuilt clean).
 
 **Deferred to (γ)**: encoding of (34b)'s embedded subject as `.theme` of "thinks" is the formaliser's flattening, not Sidner's algorithm-correct route (the embedded clause should be processed separately); the verb-complement DEF exception is dropped; the multi-pronoun "He thinks he studies too much" case GJW concede their incompleteness on is missing entirely. These are substantive scope items, not code-quality fixes, and warrant their own commit anchored on the relevant Sidner sections.
+
+## [0.230.472] - 2026-04-27
+
+### Kaqchikel cleanup Phases C–G + drop Bool/aliases per user policy
+
+Closes the original 7-phase Kaqchikel-cleanup scope. With this commit, `Fragments/Mayan/Kaqchikel/Agreement.lean` + `AgentFocus.lean` are theory-neutral (no Theory imports, no theory-laden defs); the apparatus has been redistributed to per-paper Phenomena/Studies files, and the fragment connects to the Mayan substrate via abbrev aliases.
+
+**Phase C — extracting OT/Voice from `Fragments/Mayan/Kaqchikel/AgentFocus.lean`**:
+- `Phenomena/FillerGap/Studies/Erlewine2016.lean` (heavy expansion ~226 LOC) — receives the OT competing-derivations apparatus: `AFCandidate` inductive, `AFCandidate.violatesAntiLocality/.violatesXRef/.verbForm`, `ssalConstraint`, `xrefConstraint`, `afRanking`, `afCandidates`, plus 5 source theorems (`af_is_optimal`, `satisfaction_ordering_incomparable`, `candidates_differ`, `transitive_crashes`, `af_survives`). Now imports `Core.Constraint.OT.Basic`, `Theories.Syntax.Minimalist.Position`. Module docstring rewritten to acknowledge SSAL traces to @cite{abels-2003}'s anti-locality theory; @cite{erlewine-2016}'s contribution is the specific Kichean AF as OT-competing-candidate analysis.
+- `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` — gains §17 with `kaqClauseSpine` (ClauseSpine.cP) and `kaqVoice` (agentive VoiceHead with phaseHead := true), plus `kaq_has_voice` and `kaq_voice_is_agentive` theorems. Imports `Theories.Syntax.Minimalist.ClauseSpine` (added). §18 cross-language theorems updated to use the local `kaqVoice` (no longer `Fragments.Mayan.Kaqchikel.kaqVoice`).
+- `Fragments/Mayan/Kaqchikel/AgentFocus.lean` — drops 3 imports (`Theories.Syntax.Minimalist.Voice`, `Theories.Syntax.Minimalist.ClauseSpine`, `Core.Constraint.OT.Basic`); deletes 8 theory-laden defs + 5 OT theorems + 2 Voice theorems + the redundant `af_locality_sensitive` theorem. Keeps typology-neutral `VerbForm`, `ExtractionDatum` (4 instances), `MayanAFType`/`kaqAFType`, `kaqExtractionProfile`, `kaqVoiceSystem` (the typological-profile schema, 4 theorems).
+
+**Phase E — connecting `KaqArgPosition` to `Mayan.caseKaqchikel` substrate**:
+- `KaqArgPosition` is now `abbrev := Features.Prominence.ArgumentRole` (was `inductive { agent | patient | intranS }`).
+- `KaqArgPosition.case` is `abbrev := Fragments.Mayan.ergCaseKaqchikel`; `.accCase` is `abbrev := Fragments.Mayan.accCaseKaqchikel`. Substrate already encodes the Imanishi 2014/2020 inverted-ergative pattern via `Alignment.invertedErgative.assignCase` for `.Prog`, `Alignment.ergative.assignCase` for canonical aspects.
+- `kaqArgPositions` lists `[.A, .P, .S]` directly (canonical SAP constructors).
+- `KaqArgPosition.IsPhiAgreed` is `Prop`-valued + decidable instance (was `Bool`).
+
+**Phase F — `Phenomena/Ergativity/Studies/Imanishi2014.lean` (NEW, ~150 LOC)**:
+- Anchors @cite{imanishi-2014}'s analysis on the Mayan substrate. §1 encodes the **Unaccusative Requirement on Nominalization** (URN, eq. (90), p. 123) as a 2-constructor inductive with per-language values (`kaqchikelURN := .required`, `cholURN := .optional`, `qanjobalURN := .optional`).
+- §2 substrate bridge theorems: verifies `accCaseKaqchikel/Chol/Qanjobalan` match Imanishi's tables (87)/(88) by `⟨rfl, rfl, rfl⟩` (definitional-equality via the abbrev chain).
+- §3 the cross-language inversion (`kaqchikel_inverts_chol_on_AP`): A and P swap their case roles between Kaqchikel-type and Chol-type.
+- §4 construction-specificity: only PROG triggers inversion; perfective/imperfective/habitual stay canonical-ergative.
+- §5 URN-driven prediction function (`imanishiPredictedAccA/AccP : URN → Core.Case`) + `substrate_matches_URN_predictions` theorem unifying Kaqchikel/Chol/Q'anjob'al under one parameterized prediction.
+
+**Phase G — bib entry for `imanishi-2014`**:
+- New `@phdthesis{imanishi-2014}` (Default Ergative, MIT 2014, sup. David Pesetsky). Verified from PDF cover page; URL omitted per CLAUDE.md unverified-URL policy (MIT DSpace handle would need separate verification). `note` field flags it as predecessor of @cite{imanishi-2020}.
+
+**User-policy enforcement (no Bool predicates / no backward-compat aliases)**:
+- Dropped `KaqArgPosition.{agent,patient,intranS}` constructor abbrevs that were briefly added in Phase E. Consumers (Imanishi2020.lean, Aissen2003.lean) updated to call `.case .A` / `.case .P` / `.case .S` directly (function-application form, no dot-notation method on aliases).
+- `KaqArgPosition.isPhiAgreed : KaqArgPosition → Bool` → `IsPhiAgreed : KaqArgPosition → Prop` with `[DecidablePred]` instance.
+- `Phenomena.Agreement.Studies.Preminger2014` Bool predicates switched to Prop+Decidable: `isParticipant`/`isAuthor`/`personRestrictionOk` → `IsParticipant`/`IsAuthor`/`PersonRestrictionOk` with explicit `Decidable` instances. `feature_decomposition_correct` and `person_restriction_symmetric` theorems restated in Prop form.
+
+**Build**: 8-file targeted rebuild green; pre-existing build failures in unrelated files (`Theories/Discourse/Centering/Instances/GrammaticalRole.lean`, `Phenomena/Questions/Studies/ChanShen2026.lean`) are concurrent-session work, no overlap. Bib check returns zero new unknown citations.
+
+**Remaining out-of-scope work (flagged in earlier reviews, deferred):**
+- `Scott2023.lean` `setAVocab`/`setBVocab` refactor with `makePersonVocab + Elsewhere`-entry append (CLAUDE.md "extract on second consumer" met but Mam fragment lacks a `PersonNumber` cell type).
+- Pre-existing Chol/Q'anjob'al `@[deprecated]` constructor aliases (`ArgPosition.{agent,patient,intranS}`) — out of scope for this PR; they're emitting warnings on every consumer site but the user-policy "no backward compat" applies to *new* code; sweeping them out is a separate cleanup.
+- Strong-pronoun fragment extension + faithful Ch 7 arg 4 theorem (eq. 149 relation in Preminger 2014).
+- Zulu fragment + Ch 7 arg 5 theorem (Halpert 2012 augmentless data, the cross-linguistic argument).
+
+## [0.230.471] - 2026-04-27
+
+### Japanese Case Fragment: deep multi-agent audit corrections (hallucinated section numbers + derive-don't-stipulate refactor + substantive theorems)
+
+A second-round 4-agent audit (mathlib-reviewer + linguistics-domain-expert + integration-auditor + cross-framework-reconciler), with each agent reading the Tsujimura PDF directly to verify primary-source claims, surfaced three categories of issue in the post-0.230.468 file. This commit addresses items A (hallucinations) and B (architectural debt); items C (cross-file integration: dissolving `Nouns.lean`'s parallel `CaseParticle` enum, dissolving `Ozaki2026.lean`'s parallel `CaseMarking` enum, lifting `MarkerCategory`/`CaseMarker` to `Core/Case/Marker.lean`) are deferred as a separate commit.
+
+**A. Hallucinated section numbers fixed** (linguistics-domain-expert verified against PDF):
+- "§5.5.1" for *Ni*-causatives → corrected to "ch. 5 §5.1" (joint title with *O*-Causatives — Tsujimura uses chapter-internal numbering, not §[chapter].x).
+- "§5.6.1" for *Ga/No* conversion → corrected to "ch. 5 §6.1".
+- "§6.4.2.1" for *Wa* vs. *Ga* → corrected to "ch. 6 §4.2.1".
+- The `§[chapter].x.y` notation pattern was a hallucinated convention; Tsujimura's TOC uses chapter-internal section numbers throughout. (The `address = {Chichester}` in the `tsujimura-2014` bib entry was correctly verified against the copyright page; the filename's "Hoboken" is misleading metadata not derived from the book.)
+
+**A. Coverage gap fixed**: ***-ni* now carries `.Tem`** (UD temporal). Direct evidence in Tsujimura PDF p. 129 ex. 8a (*maiasa goji-ni oki-te* 'every morning at 5 o'clock') and p. 286 ex. 164 (*2008-nen-ni toosen-sita* 'elected in 2008'). Real omission. Inventory unchanged in cardinality (`.Tem` was already present via *-made*); -ni's polysemy now spans 4 cases: DAT/LOC/ALL/TEM.
+
+**A. Hedged claim**: -ni's `.loc` (locative-of-existence, *Tōkyō-ni iru* 'be in Tokyo') is now flagged as standard descriptive consensus rather than directly Tsujimura-grounded — the linguistics agent verified that `.dat` (p. 134), `.all` (p. 374 ex. 209a, *Satoko-ga kooen-ni aruita* 'walked to the park'), and `.Tem` (p. 129) have direct Tsujimura page anchors, but the locative-of-existence use is not foregrounded in the §1.6 case-particle section. The docstring now distinguishes the three Tsujimura-grounded uses from the standard-descriptive `.loc` claim.
+
+**B. Refactor: derive don't stipulate** (mathlib-reviewer flagged the `category` field as the `naCanBridge := true` anti-pattern):
+- Dropped `inductive MarkerCategory` (was redundant with list membership). Tsujimura's diagnostic IS omissibility (p. 136, ex. 28–29), not a separate type-level binary tag.
+- `CaseMarker` now carries `omissibleInCasual : Bool` as a primitive field (the empirical fact). The case-particle/postposition classification is realized as membership in two enumerated lists.
+- **List orientation flipped**: `caseParticles : List CaseMarker := [ga, o, no_, ni]` and `postpositions : List CaseMarker := [de, e, to_, kara, made, yori]` are now the primary enumerated lists (matching Tsujimura's textual presentation in ex. 22 and ex. 20). `caseMarkers := caseParticles ++ postpositions` is the derived union (replacing the previous order in which the union was primary and the two sub-lists were `filter`-derived). Length theorems (`caseParticles_length = 4`, `postpositions_length = 6`) become `rfl`-trivial and were dropped as content-free.
+- **Consistency theorems** force the enumerated-list classification and the per-marker `omissibleInCasual` field to agree: `caseParticles_all_omissible : ∀ m ∈ caseParticles, m.omissibleInCasual = true := by decide`; `postpositions_none_omissible : ∀ m ∈ postpositions, m.omissibleInCasual = false := by decide`. These two theorems jointly express Tsujimura's diagnostic claim.
+
+**B. Substantive theorems replace the `caseInventory_eq` re-export of stipulated data**:
+- `caseInventory_eq` (which just unpacked `caseMarkers` into the same Finset literal) is replaced by `caseInventory_realizes_all_blake_ranks : ∀ r : Fin 7, ∃ c ∈ caseInventory, c.hierarchyRank = r := by decide`. This is strictly stronger than `IsValidInventory` (rules out missing ranks, not just interior gaps); Japanese is the maximally Blake-realizing inventory among the languages currently in `Fragments/`.
+- `caseInventory_isValid : Core.Case.IsValidInventory caseInventory` is now a **named theorem** rather than an anonymous `example`, so consumers (e.g. `Phenomena/Case/Studies/Caha2009.lean::japanese`) can `exact` it.
+
+**B. Polysemy claims now stated as theorems** (not just docstring prose; the audit-promised "polysemy as auditable Lean data"):
+- `ni_de_share_loc : .loc ∈ ni.cases ∧ .loc ∈ de.cases := by decide` — Tsujimura's morphosyntactic case-particle/postposition split does NOT align with the semantic case split.
+- `ni_e_share_all : .all ∈ ni.cases ∧ .all ∈ e.cases := by decide` — same observation, different case.
+- `kara_yori_share_abl : .abl ∈ kara.cases ∧ .abl ∈ yori.cases := by decide` — both postpositions co-extensional on the case-marking dimension.
+
+**Module docstring**: Double-*o* Constraint (Harada 1973, Tsujimura ch. 5 §5.2, pp. 274–278) added to scope notes as a natural future `Phenomena/Case/Studies/Harada1973.lean` study target. The architectural paragraph rewritten to describe the new `omissibleInCasual` + enumerated-list architecture and the consistency-theorem pattern that connects them.
+
+**Build**: full transitive closure (757 jobs) green; both downstream consumers (`Phenomena/Alignment/Typology.lean::japanese_fragment_bridge`, `Phenomena/Case/Studies/Caha2009.lean::japanese`) still discharge `decide` — Caha containment respects the addition of `.Tem` to *-ni*'s polysemy.
+
+**Deferred to next commit (item C, integration depth)**:
+- Lift `CaseMarker` + `omissibleInCasual` to `Core/Case/Marker.lean` (also subsuming `Core/Case/Grammaticalization.lean::CaseGramStage`'s `adposition`/`caseAffix` distinction — the integration agent identified this as the same dimension as Tsujimura's split, viewed through the morphologically-bound vs. -free lens).
+- Dissolve `Fragments/Japanese/Nouns.lean:32-34`'s parallel `CaseParticle` enum (which incorrectly includes `.wa`); rewire to derive from this Fragment.
+- Dissolve `Phenomena/Case/Studies/Ozaki2026.lean:42-47`'s parallel `CaseMarking` enum (re-stipulates `accusative | ablative | nominative | dative` for the four Japanese particles already in this Fragment); rewire to consume `Case.{o, kara, ga, ni}`.
+- Add `tsujimura_marantz_orthogonal` theorem to `Ozaki2026.lean` per chronological-dependency rule — makes the cross-cut between Tsujimura's case-particle/postposition split and Marantz's lexical/dependent/agree split visible (both classifications disagree on -kara: postposition + lexical; -ni: case particle + plausibly lexical when assigning quirky DAT subject).
 
 ## [0.230.470] - 2026-04-27
 

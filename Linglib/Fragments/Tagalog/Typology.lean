@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Tagalog typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Tagalog (ISO 639-3 `tgl`).
 
 namespace Fragments.Tagalog
 
-open Core.Typology in
+open Typology in
 /-- Tagalog: predicate-initial, voice-marking; subject-only relativization. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "tgl" "Tagalog"

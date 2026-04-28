@@ -199,11 +199,11 @@ def allNoms : List IcelandicNom :=
 /-- -un is the most common suffix in the fragment. -/
 theorem un_most_common :
     (allNoms.filter (fun n => n.suffix == .un)).length ≥
-    (allNoms.filter (fun n => n.suffix != .un)).length := by native_decide
+    (allNoms.filter (fun n => n.suffix != .un)).length := by decide
 
 /-- All nominalizations have at least one available reading. -/
 theorem all_have_readings :
-    allNoms.all (fun n => !n.availableReadings.isEmpty) = true := by native_decide
+    allNoms.all (fun n => !n.availableReadings.isEmpty) = true := by decide
 
 /-- *opnun* connects to the -st verb *opnast*. -/
 theorem opnun_from_opnast :
@@ -216,7 +216,7 @@ theorem opnun_opnast_same_base :
 /-- P-prefixed nominalizations have a prefixed preposition. -/
 theorem pprefixed_have_p :
     (allNoms.filter (·.hasPPrefix)).all
-      (fun n => n.prefixedP.isSome) = true := by native_decide
+      (fun n => n.prefixedP.isSome) = true := by decide
 
 /-- *þvottur* has all three basic readings (CEN, SEN, RN). -/
 theorem pvottur_three_readings :

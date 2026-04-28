@@ -69,55 +69,38 @@ open Minimalist Fragments.Mayan.Mam
     person × number → string tables; here they are parameterized by
     `FeatureBundle` and `Cat` for use with `spellout`. -/
 
+/-- PhiFeature list per Mam person-number cell. -/
+def mamToPhiFeatures : MamPersonNumber → List PhiFeature
+  | .p1sg => [.person .first, .number .sg]
+  | .p2sg => [.person .second, .number .sg]
+  | .p3sg => [.person .third, .number .sg]
+  | .p1pl => [.person .first, .number .pl]
+  | .p2pl => [.person .second, .number .pl]
+  | .p3pl => [.person .third, .number .pl]
+
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
-    yield the morphological exponent (@cite{scott-2023}, Table 2.8). -/
+    yield the morphological exponent (@cite{scott-2023} Table 2.8).
+    All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
-  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
-    , exponent := "n-/w-"
-    , context := some .v }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .sg))]
-    , exponent := "t-"
-    , context := some .v }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .sg))]
-    , exponent := "t-"
-    , context := some .v }
-  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
-    , exponent := "q-"
-    , context := some .v }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
-    , exponent := "ky-"
-    , context := some .v }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
-    , exponent := "ky-"
-    , context := some .v } ]
+  makePersonVocab mamPersonNumbers mamToPhiFeatures mamSetAExponent (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
-    yield the morphological exponent (@cite{scott-2023}, Table 3.5).
-    The Elsewhere entry (no features, tz'=) surfaces when no more
-    specific entry matches. -/
+    yield the morphological exponent (@cite{scott-2023} Table 3.5).
+    Per Scott's DM analysis, only 1SG/1PL/2PL/3PL have specific
+    entries; 2SG and 3SG fall through to the Elsewhere entry
+    (no features, tz'=) which surfaces when no specific entry
+    matches — also catching the blocked-Infl-probe case in transitives. -/
 def setBVocab : Vocabulary :=
-  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
-    , exponent := "chin"
-    , context := some .T }
-  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
-    , exponent := "qo"
-    , context := some .T }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
-    , exponent := "chi"
-    , context := some .T }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
-    , exponent := "chi"
-    , context := some .T }
-  -- Elsewhere: default 2/3SG (tz'=)
-  , { features := []
-    , exponent := "tz'="
-    , context := some .T } ]
+  makePersonVocab mamSetBSpecificCells mamToPhiFeatures mamSetBExponent (some .T) ++
+    [{ features := [], exponent := defaultSetB, context := some .T }]
 
-/-- Which Minimalist head φ-Agrees with each argument position. -/
-def agreeProbe : MamArgPosition → Option Cat
-  | .agent   => some .v   -- Voice probes, agent in Spec,VoiceP
-  | .patient => none      -- Infl probe blocked by Voice_TR
-  | .intranS => some .T   -- Infl probes, S in its domain
+/-- Which Minimalist head φ-Agrees with each argument position.
+    Ditransitive R/T default to none (not modeled). -/
+def agreeProbe : ArgPosition → Option Cat
+  | .A => some .v   -- Voice probes, A in Spec,VoiceP
+  | .P => none      -- Infl probe blocked by Voice_TR
+  | .S => some .T   -- Infl probes, S in its domain
+  | .R | .T => none
 
 -- ============================================================================
 -- § 1: Probe Feature Bundles
@@ -313,14 +296,18 @@ theorem full_pipeline_3sg_transitive :
     -- Step 3-4: Infl probe blocked → default Set B
     spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
     -- Step 5: patient is not eligible for reduction → overt pronoun
-    MamArgPosition.patient.canBeReduced = false := by
-  exact ⟨by native_decide, by native_decide, by native_decide, rfl⟩
+    ¬ ArgPosition.CanBeReduced .P := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · native_decide
+  · native_decide
+  · native_decide
+  · decide
 
-/-- The pipeline generalizes: for every argument position, the predicted
-    pronoun reduction matches the observed pattern. -/
-theorem all_positions_match :
-    mamArgPositions.all (λ pos => pos.canBeReduced == pos.isPhiAgreed) = true := by
-  native_decide
+/-- The pipeline generalizes: for every argument position, reduction
+    eligibility ≡ φ-agreement (definitionally — `CanBeReduced := IsPhiAgreed`). -/
+theorem all_positions_match (pos : ArgPosition) :
+    pos.CanBeReduced ↔ pos.IsPhiAgreed :=
+  Iff.rfl
 
 -- ============================================================================
 -- § 9: Cross-Paradigm Spellout
@@ -360,22 +347,23 @@ theorem setB_wrong_context :
     These three cases each have distinct underlying syntactic case values,
     assigned by different heads (Voice for ERG/ACC, Infl for ABS). -/
 theorem agreement_is_tripartite :
-    -- Agreed-with positions: agent (ERG, by Voice) and S (ABS, by Infl)
-    MamArgPosition.agent.isPhiAgreed = true ∧
-    MamArgPosition.agent.case = .erg ∧
-    MamArgPosition.intranS.isPhiAgreed = true ∧
-    MamArgPosition.intranS.case = .abs ∧
-    -- Not agreed-with: patient (ACC, from Voice but no φ-Agree)
-    MamArgPosition.patient.isPhiAgreed = false ∧
-    MamArgPosition.patient.case = .acc := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    -- Agreed-with positions: A (ERG, by Voice) and S (ABS, by Infl)
+    ArgPosition.IsPhiAgreed .A ∧
+    ArgPosition.case .A = .erg ∧
+    ArgPosition.IsPhiAgreed .S ∧
+    ArgPosition.case .S = .abs ∧
+    -- Not agreed-with: P (ACC, from Voice but no φ-Agree)
+    ¬ ArgPosition.IsPhiAgreed .P ∧
+    ArgPosition.case .P = .acc :=
+  ⟨trivial, rfl, trivial, rfl, by decide, rfl⟩
 
 /-- Agreement probes are on different heads: Voice for Set A, Infl for
     Set B. The patient's lack of agreement is NOT because both heads
     target the agent — it's because Infl's probe is blocked by VoiceP. -/
 theorem different_probe_heads :
-    agreeProbe .agent = some .v ∧
-    agreeProbe .intranS = some .T ∧
-    agreeProbe .patient = none := ⟨rfl, rfl, rfl⟩
+    agreeProbe .A = some .v ∧
+    agreeProbe .S = some .T ∧
+    agreeProbe .P = none := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 11: Connecting to Obligatory Operations (@cite{preminger-2014}, Ch. 5)
@@ -421,31 +409,36 @@ theorem probe_failure_converges_with_elsewhere :
 
 /-- In a transitive clause, `mamInflSatisfaction` is satisfied by Voice_TR
     (head encounter .v) and copies no features — matching the Fragment's
-    `patient.isPhiAgreed = false`. -/
+    `¬ IsPhiAgreed .P`. -/
 theorem satisfaction_derives_patient_no_agree :
     mamInflSatisfaction.isSatisfied [] (some .v) = true ∧
     mamInflSatisfaction.copiedFeatures [] (some .v) = false ∧
-    MamArgPosition.patient.isPhiAgreed = false := ⟨by native_decide, by native_decide, rfl⟩
+    ¬ ArgPosition.IsPhiAgreed .P :=
+  ⟨by native_decide, by native_decide, by decide⟩
 
 /-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
-    φ-features and DOES copy them — matching `intranS.isPhiAgreed = true`. -/
+    φ-features and DOES copy them — matching `IsPhiAgreed .S`. -/
 theorem satisfaction_derives_intranS_agree :
     let dp1sg := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
     mamInflSatisfaction.isSatisfied dp1sg none = true ∧
     mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
-    MamArgPosition.intranS.isPhiAgreed = true := ⟨by native_decide, by native_decide, rfl⟩
+    ArgPosition.IsPhiAgreed .S :=
+  ⟨by native_decide, by native_decide, trivial⟩
 
-/-- The satisfaction condition's `copiedFeatures` result aligns exactly with
-    the Fragment's `isPhiAgreed` for both Infl-probed positions:
-    - patient (transitive): copiedFeatures = false = isPhiAgreed
-    - intranS (intransitive): copiedFeatures = true = isPhiAgreed -/
+/-- The satisfaction condition's `copiedFeatures` Bool aligns with
+    the Fragment's `IsPhiAgreed` Prop for both Infl-probed positions:
+    - patient (transitive): copiedFeatures = false ↔ ¬ IsPhiAgreed .P
+    - intranS (intransitive): copiedFeatures = true ↔ IsPhiAgreed .S -/
 theorem satisfaction_matches_fragment :
-    mamInflSatisfaction.copiedFeatures [] (some .v) =
-      MamArgPosition.patient.isPhiAgreed ∧
-    mamInflSatisfaction.copiedFeatures
+    (mamInflSatisfaction.copiedFeatures [] (some .v) = true ↔
+      ArgPosition.IsPhiAgreed .P) ∧
+    (mamInflSatisfaction.copiedFeatures
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
-      none =
-      MamArgPosition.intranS.isPhiAgreed := ⟨by native_decide, by native_decide⟩
+      none = true ↔
+      ArgPosition.IsPhiAgreed .S) := by
+  refine ⟨?_, ?_⟩
+  · constructor <;> intro h <;> first | (native_decide) | trivial
+  · exact ⟨fun _ => trivial, fun _ => by native_decide⟩
 
 -- ============================================================================
 -- § 13: Unified Agree — Ā-agreement and φ-agreement as One Operation

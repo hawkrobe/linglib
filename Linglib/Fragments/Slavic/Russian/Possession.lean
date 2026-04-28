@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
@@ -28,7 +28,7 @@ using `imet'` 'to have' (< `*em-` 'take'), where the possessor is subject.
 
 namespace Fragments.Slavic.Russian.Possession
 
-open Phenomena.Possession.Typology
+open Typology.Possession
 
 -- ============================================================================
 -- §1. Primary: Location Schema

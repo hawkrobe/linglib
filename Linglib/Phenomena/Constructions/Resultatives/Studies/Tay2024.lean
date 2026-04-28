@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Resultatives
-import Linglib.Theories.Morphology.Core.WordStructure
+import Linglib.Core.Morphology.MorphWord
 import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
 

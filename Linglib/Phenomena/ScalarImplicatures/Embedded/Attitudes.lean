@@ -1,4 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Phenomena.ScalarImplicatures.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -38,20 +39,15 @@ With attitude verbs:
 
 namespace Phenomena.ScalarImplicatures.Embedded.Attitudes
 
+open Phenomena.ScalarImplicatures (SomeAllWorld)
+
 -- World Structure for Belief Contexts
 
-/--
-Student outcomes in the actual world and John's beliefs.
-
-For "John believes some students passed", we need to track:
-1. How many students ACTUALLY passed
-2. How many students JOHN BELIEVES passed
--/
-inductive StudentOutcome where
-  | noneO     -- no students passed
-  | someO     -- some but not all passed
-  | allO      -- all students passed
-  deriving DecidableEq, Repr, Inhabited
+/-- Student outcomes in the actual world and John's beliefs use the
+canonical `SomeAllWorld` from `Phenomena.ScalarImplicatures.Basic`:
+`.none` (no students passed), `.someNotAll` (some-but-not-all passed),
+`.all` (all students passed). -/
+abbrev StudentOutcome := SomeAllWorld
 
 /--
 World state tracking both reality and John's beliefs.
@@ -68,16 +64,16 @@ structure BeliefWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- The actual world determines what's true at the matrix level -/
-def BeliefWorld.actuallyNone (w : BeliefWorld) : Bool := w.actual == .noneO
-def BeliefWorld.actuallySome (w : BeliefWorld) : Bool := w.actual == .someO || w.actual == .allO
-def BeliefWorld.actuallyAll (w : BeliefWorld) : Bool := w.actual == .allO
+def BeliefWorld.actuallyNone (w : BeliefWorld) : Bool := w.actual == .none
+def BeliefWorld.actuallySome (w : BeliefWorld) : Bool := w.actual == .someNotAll || w.actual == .all
+def BeliefWorld.actuallyAll (w : BeliefWorld) : Bool := w.actual == .all
 
 /-- John's beliefs determine what's true in embedded contexts -/
-def BeliefWorld.johnBelievesNone (w : BeliefWorld) : Bool := w.johnBelieves == .noneO
+def BeliefWorld.johnBelievesNone (w : BeliefWorld) : Bool := w.johnBelieves == .none
 def BeliefWorld.johnBelievesSome (w : BeliefWorld) : Bool :=
-  w.johnBelieves == .someO || w.johnBelieves == .allO
-def BeliefWorld.johnBelievesAll (w : BeliefWorld) : Bool := w.johnBelieves == .allO
-def BeliefWorld.johnBelievesSomeNotAll (w : BeliefWorld) : Bool := w.johnBelieves == .someO
+  w.johnBelieves == .someNotAll || w.johnBelieves == .all
+def BeliefWorld.johnBelievesAll (w : BeliefWorld) : Bool := w.johnBelieves == .all
+def BeliefWorld.johnBelievesSomeNotAll (w : BeliefWorld) : Bool := w.johnBelieves == .someNotAll
 
 -- Interpretations of Embedded Scalars
 
@@ -133,22 +129,20 @@ We focus on cases where John has a definite belief about the students.
 -/
 def attitudeWorlds : List BeliefWorld := [
   -- John correctly believes none
-  ⟨.noneO, .noneO⟩,
+  ⟨.none, .none⟩,
   -- John correctly believes some-not-all
-  ⟨.someO, .someO⟩,
+  ⟨.someNotAll, .someNotAll⟩,
   -- John correctly believes all
-  ⟨.allO, .allO⟩,
+  ⟨.all, .all⟩,
   -- John believes some when all (underestimate)
-  ⟨.allO, .someO⟩,
+  ⟨.all, .someNotAll⟩,
   -- John believes all when some (overestimate)
-  ⟨.someO, .allO⟩,
+  ⟨.someNotAll, .all⟩,
   -- John believes some when none (false positive)
-  ⟨.noneO, .someO⟩
+  ⟨.none, .someNotAll⟩
 ]
 
-instance : Fintype StudentOutcome where
-  elems := ⟨[StudentOutcome.noneO, StudentOutcome.someO, StudentOutcome.allO], by decide⟩
-  complete := λ x => by cases x <;> decide
+-- `Fintype StudentOutcome` is provided via the `SomeAllWorld` alias.
 
 instance : Fintype BeliefWorld :=
   Fintype.ofEquiv (StudentOutcome × StudentOutcome)
@@ -183,25 +177,25 @@ def utteranceMeaning (u : AttitudeUtterance) (interp : AttitudeInterpretation)
 /--
 Under **global** interpretation:
 - "John believes some" is true in worlds where John believes ≥1 passed
-- This includes both johnBelieves =.someO AND johnBelieves =.allO
+- This includes both johnBelieves =.someNotAll AND johnBelieves =.all
 -/
 theorem global_includes_all_belief :
-    believesSomeMeaning .global ⟨.allO, .allO⟩ = true := rfl
+    believesSomeMeaning .global ⟨.all, .all⟩ = true := rfl
 
 /--
 Under **local** interpretation:
 - "John believes some" is true only when John believes some-but-not-all
-- johnBelieves =.allO makes it FALSE
+- johnBelieves =.all makes it FALSE
 -/
 theorem local_excludes_all_belief :
-    believesSomeMeaning .local_ ⟨.allO, .allO⟩ = false := rfl
+    believesSomeMeaning .local_ ⟨.all, .all⟩ = false := rfl
 
 /--
 The key difference: global and local differ when John believes all.
 -/
 theorem global_local_differ_at_all_belief :
-    believesSomeMeaning .global ⟨.allO, .allO⟩ ≠
-    believesSomeMeaning .local_ ⟨.allO, .allO⟩ := by decide
+    believesSomeMeaning .global ⟨.all, .all⟩ ≠
+    believesSomeMeaning .local_ ⟨.all, .all⟩ := by decide
 
 /--
 Local entails global for attitude embedding (unlike DE contexts).
@@ -219,7 +213,7 @@ But global does NOT entail local.
 theorem global_not_entails_local :
     ∃ w : BeliefWorld, believesSomeMeaning .global w = true ∧
       believesSomeMeaning .local_ w = false := by
-  use ⟨.allO, .allO⟩
+  use ⟨.all, .all⟩
   decide
 
 -- Semantic Grounding
@@ -229,24 +223,24 @@ Semantic grounding for "some students passed" as a proposition.
 
 At a world, "some students passed" is true iff ≥1 student passed.
 We model this with StudentOutcome:
-- `.noneO` → false
-- `.someO` → true (some but not all)
-- `.allO` → true (all, which entails some)
+- `.none` → false
+- `.someNotAll` → true (some but not all)
+- `.all` → true (all, which entails some)
 -/
 def somePassedProp (outcome : StudentOutcome) : Bool :=
-  outcome == .someO || outcome == .allO
+  outcome == .someNotAll || outcome == .all
 
 /--
 Semantic grounding for "some-but-not-all students passed".
 -/
 def someNotAllPassedProp (outcome : StudentOutcome) : Bool :=
-  outcome == .someO
+  outcome == .someNotAll
 
 /--
 Semantic grounding for "all students passed".
 -/
 def allPassedProp (outcome : StudentOutcome) : Bool :=
-  outcome == .allO
+  outcome == .all
 
 /--
 **Grounding Theorem 1**: The global meaning corresponds to Montague semantics.

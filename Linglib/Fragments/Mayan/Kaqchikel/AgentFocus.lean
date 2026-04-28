@@ -1,16 +1,19 @@
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.ClauseSpine
-import Linglib.Core.Constraint.OT.Basic
-import Linglib.Phenomena.FillerGap.ExtractionMorphology
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
 # Kaqchikel Agent Focus Fragment @cite{erlewine-2016}
 
-Empirical data and Minimalist infrastructure for Agent Focus (AF) in
-Kaqchikel, a K'ichean (Mayan) language. When the transitive agent is
-Ā-extracted clause-locally, the verb obligatorily appears in a special
-AF form: Set A (ergative) agreement is lost and the suffix *-Vn* appears.
+Theory-neutral typological data for Agent Focus (AF) in Kaqchikel
+(K'ichean, Mayan): verb-form types, the empirical extraction
+profile, and the typological AF/extraction-gap classification.
+
+The theory-laden apparatus that interprets this data lives in study
+files per the project Fragment-discipline rule (CLAUDE.md):
+- OT competing-derivations + SSAL/XRef constraints + ranking →
+  `Phenomena/FillerGap/Studies/Erlewine2016.lean`
+- Minimalist Voice/ClauseSpine for Kaqchikel →
+  `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean`
 
 ## The Paradigm
 
@@ -23,33 +26,13 @@ AF form: Set A (ergative) agreement is lost and the suffix *-Vn* appears.
 
 AF is obligatory for clause-local agent extraction and ungrammatical
 for patient extraction or long-distance agent extraction — it is not a
-free alternation but a locality-sensitive, structurally conditioned repair.
-
-## Clause Structures
-
-Both derivations share the same clausal spine (CP > TP > vP > VP). The
-difference is in the v head and the agent's movement path:
-
-1. **Normal transitive**: Transitive v introduces agent in Spec,vP.
-   A-probe on T attracts agent to Spec,TP, establishing Set A (ergative)
-   agreement. For Ā-extraction, agent must then move from Spec,TP to
-   Spec,CP — but this violates SSAL because CP immediately dominates TP.
-
-2. **AF structure**: Intransitive-like v does NOT introduce agent in
-   Spec,vP. Agent extracts directly to Spec,CP without passing through
-   Spec,TP. This satisfies SSAL (no too-local step), but skipping
-   Spec,TP means no A-agreement — hence no Set A, and AF morphology
-   (*-Vn*) surfaces.
-
-The grammar selects AF as optimal via OT competition (§5):
-SSAL >> XRef means avoiding the too-local movement outranks maintaining
-cross-referencing agreement.
+free alternation but a locality-sensitive, structurally conditioned
+repair. The structural analysis (SSAL ≫ XRef OT competition) lives in
+the Erlewine2016 study file.
 
 -/
 
 namespace Fragments.Mayan.Kaqchikel
-
-open Minimalist Core.Constraint.OT Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Morphological Forms
@@ -112,7 +95,7 @@ def patientExtractionTrans : ExtractionDatum :=
     Spec,TP → Spec,CP step within the embedded clause is avoided.
 
     This is the key evidence that AF is triggered by *locality of
-    movement*, not simply by agent extraction (@cite{erlewine-2016}, §2.3,
+    movement*, not simply by agent extraction (@cite{erlewine-2016} §2.3,
     examples 21–22). -/
 def longDistanceAgentExtraction : ExtractionDatum :=
   { extracted := .agent
@@ -120,97 +103,7 @@ def longDistanceAgentExtraction : ExtractionDatum :=
   , judgment := .none }
 
 -- ============================================================================
--- § 3: Clause Structure — Competing Derivations
--- ============================================================================
-
-/-- A candidate derivation for clause-local transitive agent extraction.
-
-    The OT competition evaluates these: which structure best satisfies
-    the ranked constraints? Both candidates share the same clausal spine
-    (CP > TP > vP > VP); they differ in the v head and the agent's
-    movement path. -/
-inductive AFCandidate where
-  /-- Normal transitive derivation: transitive v introduces agent in
-      Spec,vP. A-probe on T attracts agent to Spec,TP (triggering Set A
-      agreement). Subsequent Ā-extraction from Spec,TP to Spec,CP
-      violates SSAL because CP immediately dominates TP. -/
-  | transitiveExtraction
-  /-- Agent Focus derivation: intransitive-like v, agent NOT in Spec,vP.
-      Agent extracts directly to Spec,CP without passing through Spec,TP.
-      No SSAL violation, but cross-referencing is incomplete: no Set A
-      (ergative) agreement because the agent never enters Spec,TP. -/
-  | agentFocusExtraction
-  deriving DecidableEq, Repr
-
-/-- The verb form that surfaces for each candidate. -/
-def AFCandidate.verbForm : AFCandidate → VerbForm
-  | .transitiveExtraction => .transitive
-  | .agentFocusExtraction => .agentFocus
-
-/-- Does this candidate violate Spec-to-Spec Anti-Locality (SSAL)?
-    The transitive derivation does: the step Spec,TP → Spec,CP crosses
-    no intervening maximal projection (CP immediately dominates TP). -/
-def AFCandidate.violatesAntiLocality : AFCandidate → Bool
-  | .transitiveExtraction => true
-  | .agentFocusExtraction => false
-
-/-- Does this candidate violate the XRef (cross-referencing) constraint?
-    AF loses Set A agreement because the agent never enters Spec,TP
-    where the A-probe resides. The transitive candidate maintains full
-    cross-referencing (Set A + Set B). -/
-def AFCandidate.violatesXRef : AFCandidate → Bool
-  | .transitiveExtraction => false
-  | .agentFocusExtraction => true
-
--- ============================================================================
--- § 4: OT Constraint Ranking
--- ============================================================================
-
-/-- Constraints for Kaqchikel AF, ranked from highest to lowest:
-
-    1. **SSAL** (highest): Spec-to-Spec Anti-Locality. Movement from
-       Spec,XP to Spec,YP is banned when YP immediately dominates XP.
-    2. **XRef** (lower): Cross-referencing agreement. Every argument
-       DP must be cross-referenced by a pronominal morpheme on the verb
-       (Set A for ergative, Set B for absolutive).
-
-    SSAL dominates XRef: it is better to lose agreement (AF) than to
-    violate anti-locality (crash). -/
-def ssalConstraint : NamedConstraint AFCandidate :=
-  { name := "SSAL"
-    family := .markedness
-    eval := fun c => if c.violatesAntiLocality then 1 else 0 }
-
-def xrefConstraint : NamedConstraint AFCandidate :=
-  { name := "XRef"
-    family := .faithfulness
-    eval := fun c => if c.violatesXRef then 1 else 0 }
-
-/-- The ranked constraint list for Kaqchikel AF: SSAL >> XRef. -/
-def afRanking : List (NamedConstraint AFCandidate) :=
-  [ssalConstraint, xrefConstraint]
-
-def afCandidates : List AFCandidate :=
-  [.transitiveExtraction, .agentFocusExtraction]
-
--- ============================================================================
--- § 5: Clause Spine and Voice
--- ============================================================================
-
-/-- Both the transitive and AF derivations project the same clausal spine
-    (CP > TP > vP > VP). The difference is in the v head: transitive v
-    introduces the agent in Spec,vP; AF v does not. -/
-def kaqClauseSpine : ClauseSpine := ClauseSpine.cP
-
-/-- Kaqchikel agentive Voice/v head (parallel to Mam's Voice). Present
-    in the transitive derivation; absent or altered in AF. -/
-def kaqVoice : VoiceHead :=
-  { flavor := .agentive
-  , hasD := true
-  , phaseHead := true }
-
--- ============================================================================
--- § 6: Extraction Profile
+-- § 3: Extraction Profile
 -- ============================================================================
 
 /-- Kaqchikel's extraction morphology profile: agent focus alternation. -/
@@ -222,7 +115,7 @@ def kaqExtractionProfile : Interfaces.ExtractionProfile :=
   , notes := "AF (*-Vn*) obligatory for clause-local agent extraction; Erlewine 2016" }
 
 -- ============================================================================
--- § 7: Mayan AF Typology (@cite{erlewine-2016}, §6.1)
+-- § 4: Mayan AF Typology (@cite{erlewine-2016} §6.1)
 -- ============================================================================
 
 /-- Mayan languages vary in whether AF is available, depending on the
@@ -247,7 +140,7 @@ inductive MayanAFType where
 def kaqAFType : MayanAFType := .afLanguage
 
 -- ============================================================================
--- § 8: Verification Theorems
+-- § 5: Verb Form Verification
 -- ============================================================================
 
 /-- AF does not bear Set A (ergative) agreement. -/
@@ -259,62 +152,8 @@ theorem trans_has_set_a : VerbForm.transitive.hasSetA = true := rfl
 /-- AF bears the *-Vn* suffix. -/
 theorem af_has_suffix : VerbForm.agentFocus.hasAFSuffix = true := rfl
 
-/-- The two candidates have different violation profiles: they disagree
-    on at least one constraint. -/
-theorem candidates_differ :
-    ssalConstraint.eval .transitiveExtraction ≠
-      ssalConstraint.eval .agentFocusExtraction ∨
-    xrefConstraint.eval .transitiveExtraction ≠
-      xrefConstraint.eval .agentFocusExtraction := by decide
-
-/-- The transitive derivation violates SSAL. -/
-theorem trans_violates_antilocality :
-    AFCandidate.transitiveExtraction.violatesAntiLocality = true := rfl
-
-/-- The AF derivation does NOT violate SSAL. -/
-theorem af_obeys_antilocality :
-    AFCandidate.agentFocusExtraction.violatesAntiLocality = false := rfl
-
-/-- AF is lexicographically optimal: it satisfies the higher-ranked
-    constraint (SSAL) at the cost of the lower-ranked one (XRef).
-    This is the central result of @cite{erlewine-2016}. -/
-theorem af_is_optimal :
-    (mkTableau afCandidates afRanking).optimal =
-      {AFCandidate.agentFocusExtraction} := by
-  native_decide
-
-/-- Under componentwise ≤ (satisfaction ordering), neither candidate
-    dominates the other — each satisfies a constraint the other violates.
-    OT's strict lexicographic ranking is what breaks the tie in favor
-    of AF. -/
-theorem satisfaction_ordering_incomparable :
-    ¬(ssalConstraint.eval .transitiveExtraction ≤
-        ssalConstraint.eval .agentFocusExtraction ∧
-      xrefConstraint.eval .transitiveExtraction ≤
-        xrefConstraint.eval .agentFocusExtraction) ∧
-    ¬(ssalConstraint.eval .agentFocusExtraction ≤
-        ssalConstraint.eval .transitiveExtraction ∧
-      xrefConstraint.eval .agentFocusExtraction ≤
-        xrefConstraint.eval .transitiveExtraction) := by
-  decide
-
-/-- Kaqchikel clause projects Voice. -/
-theorem kaq_has_voice :
-    kaqClauseSpine.projects .Voice = true := by native_decide
-
-/-- Kaqchikel Voice is agentive and a phase head. -/
-theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
-
-/-- AF is locality-sensitive: clause-local agent extraction triggers AF,
-    but long-distance agent extraction does NOT.
-    The paper's deepest empirical claim: AF is about the *locality of
-    movement*, not about agent extraction per se. -/
-theorem af_locality_sensitive :
-    agentExtractionAF.verbForm = .agentFocus ∧
-    longDistanceAgentExtraction.verbForm = .transitive := ⟨rfl, rfl⟩
-
 -- ============================================================================
--- § 9: Voice System Profile
+-- § 6: Voice System Profile
 -- ============================================================================
 
 /-- Kaqchikel voice system: two-way asymmetrical (transitive/AF).

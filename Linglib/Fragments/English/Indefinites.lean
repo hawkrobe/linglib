@@ -1,39 +1,51 @@
-import Linglib.Features.IndefiniteType
+import Linglib.Typology.Indefinite
 
 /-!
 # English Indefinite Pronouns
-@cite{haspelmath-1997}
+@cite{haspelmath-1997} @cite{wals-2013}
 
-English *some-* is the prototypical unmarked indefinite (type i): it
-can appear in all three specificity contexts (specific known, specific
-unknown, non-specific). This yields the AAA syncretism pattern.
+English forms its indefinite pronouns by prefixing `some-` to the
+generic-noun stems `-one`, `-body`, `-thing`, `-where` — yielding
+*someone*, *somebody*, *something*, *somewhere* (and parallel `any-`,
+`no-`, `every-` series). Per @cite{wals-2013} F46A, English is classified
+`.genericNounBased` on this basis.
 
-This file follows the same shape as the other `Fragments/{Lang}/Indefinites.lean`
-siblings (Russian, German, Yakut, Latin, Kannada): per-form entries +
-a `paradigm` aggregator + a single `paradigm_consistent` claim.
+The single `some-` series covers all three SK/SU/NS functions on
+@cite{haspelmath-1997}'s map, yielding the AAA syncretism (D&A type i
+unmarked).
 -/
 
 set_option autoImplicit false
 
 namespace Fragments.English.Indefinites
 
-open Features.IndefiniteType
+open Typology.Indefinite
 
-/-- English *some-*: unmarked (type i), all three functions (AAA).
-    @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/
+/-- English `some-` series (*someone*, *somebody*, *something*, …):
+    AAA syncretism, D&A type i unmarked. The form is generic-noun-based
+    (the host stems `-one`, `-body`, `-thing` are nouns), per WALS F46A. -/
 def someEntry : IndefiniteEntry where
   language := "English"
-  form := "some-"
-  gloss := "some"
-  specType := .unmarked
-  allowsSK := true
-  allowsSU := true
-  allowsNS := true
-  source := "Haspelmath 1997"
+  form := "someone/-body/-thing"
+  gloss := "some(one/body/thing)"
+  basis := .genericNoun
+  functions := {.specificKnown, .specificUnknown, .irrealis}
 
-/-- The full English indefinite paradigm. -/
-def paradigm : List IndefiniteEntry := [someEntry]
+/-- The English indefinite paradigm (one series, parallel to *any-*/*no-*
+    not yet formalized). -/
+def paradigm : IndefiniteParadigm where
+  language := "English"
+  isoCode := "eng"
+  forms := [someEntry]
 
-theorem paradigm_consistent : paradigm.all (·.distributionConsistent) := by decide
+/-- English `some-` covers all three SK/SU/NS functions: AAA syncretism. -/
+theorem english_paradigm_is_AAA : paradigm.syncretism = some .AAA := rfl
+
+/-- English's WALS F46A classification: derived from the paradigm's
+    morphological-basis distribution (single basis `.genericNoun` →
+    F46A `.genericNounBased`). Cross-check vs `F46A.allData` lives in
+    `Phenomena/Indefinites/Typology.lean`. -/
+theorem english_paradigm_is_genericNounBased :
+    paradigm.toWALS46A = some .genericNounBased := rfl
 
 end Fragments.English.Indefinites

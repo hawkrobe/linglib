@@ -1,5 +1,7 @@
 import Linglib.Theories.Discourse.Centering.Defs
 import Mathlib.Data.List.Perm.Basic
+import Mathlib.Data.List.MinMax
+import Mathlib.Data.List.Dedup
 
 /-!
 # Centering Theory — Cb, Cf, Cp
@@ -88,17 +90,22 @@ theorem pronominalizes_iff (u : Utterance E R) (e : E) :
 -- § 2. Cf, Cp via insertion sort on rank
 -- ════════════════════════════════════════════════════
 
-/-- Insert `r` into a Cf list (ordered by `CfRanker.rank` descending),
+/-- Insert `r` into a Cf list (ordered by `CfRankerOf.rank` descending),
     placing `r` after any equally-ranked elements so the original
     surface order acts as a stable tiebreaker.
 
     Concretely: walk the list, insert `r` at the first position where
-    the existing element has *strictly smaller* rank. -/
-def cfInsert [CfRanker R]
+    the existing element has *strictly smaller* rank.
+
+    Uses the generalized `CfRankerOf E R` (per-realization) typeclass
+    rather than `CfRanker R` (per-role); when only the role matters,
+    the default instance `cfRankerOf_of_role` (in `Defs.lean`) lifts
+    automatically. -/
+def cfInsert [CfRankerOf E R]
     (r : Realization E R) : List (Realization E R) → List (Realization E R)
   | []      => [r]
   | x :: xs =>
-    if CfRanker.rank x.role < CfRanker.rank r.role then
+    if CfRankerOf.rank x < CfRankerOf.rank r then
       r :: x :: xs
     else
       x :: cfInsert r xs
@@ -107,11 +114,11 @@ def cfInsert [CfRanker R]
     surface order as tiebreaker. Implemented by `foldr cfInsert []` —
     insertion sort — so that `decide` reduces it in the kernel for
     the paper's worked examples. -/
-def cf [CfRanker R] (u : Utterance E R) : List E :=
+def cf [CfRankerOf E R] (u : Utterance E R) : List E :=
   (u.realizations.foldr cfInsert []).map (·.entity)
 
 /-- The top-ranked Cf element ("preferred center", Cp). -/
-def cp [CfRanker R] (u : Utterance E R) : Option E := u.cf.head?
+def cp [CfRankerOf E R] (u : Utterance E R) : Option E := u.cf.head?
 
 end Utterance
 

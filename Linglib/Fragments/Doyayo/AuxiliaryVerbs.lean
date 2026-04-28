@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Doyayo Auxiliary Verb Fragment

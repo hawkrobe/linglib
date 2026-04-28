@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.ModalBaseKind
-import Linglib.Core.Time.Tense
+import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Core.Modality.ModalTypes
 
@@ -7,107 +7,40 @@ import Linglib.Core.Modality.ModalTypes
 # Modal Base Temporal Constraints
 @cite{klecha-2016}
 
-History predicates, temporal constraints on embedded reference time, and
+Klecha-namespace dispatch on `ModalBaseKind` for the temporal constraints
+that fall out of @cite{klecha-2016}'s modal-base-pronoun architecture, plus
 bridges from `Attitude` / `ModalFlavor` to `ModalBaseKind`.
 
-Klecha's key insight: the temporal orientation of a modal is determined by
-the temporal structure of its accessible histories, which is encoded in the
-modal base pronoun:
+The framework-neutral interval predicates (`isActualHistory`,
+`isFutureHistory`, etc.) and the situation-base derivation theorems live
+in `Core.Modality.HistoricalAlternatives`. This file's role is the
+Klecha-specific projection: dispatch on `ModalBaseKind` to select between
+the actual-history (RT ≤ EvalT) and future-history (RT > EvalT)
+constraints.
 
-- **DOX** (doxastic): returns *actual histories* ending at the eval time.
-  Time component: `(-∞, t]`. → RT ≤ EvalT (Upper Limit Constraint).
-- **CIR** (circumstantial): returns *future histories* departing from the
-  eval time. Time component: `(t, ∞)`. → RT > EvalT (future orientation).
+Klecha's key insight: the temporal orientation of a modal is determined
+by the temporal structure of its accessible histories, which is encoded
+in the modal base pronoun:
 
-The Upper Limit Constraint is DERIVED from DOX's temporal character, not
-stipulated as a separate principle.
+- **DOX** (doxastic): returns *actual histories* ending at the eval
+  time. → RT ≤ EvalT (Upper Limit Constraint).
+- **CIR** (circumstantial): returns *future histories* departing from
+  the eval time. → RT > EvalT (future orientation).
+
+The ULC is **derived** by `.2` projection from `actualHistoryBase`
+membership (see `actualHistoryBase_derives_ulc` in
+`Core.Modality.HistoricalAlternatives`); the dispatch theorem
+`attitudeTemporalConstraint_derived_doxastic` below makes the
+Klecha-namespace face of that derivation kernel-checked.
 -/
 
 namespace Semantics.Modality.TemporalConstraint
 
 open Core.Modality (ModalBaseKind)
-
-/-! ## Partial History Taxonomy
-
-@cite{klecha-2016} Definition 3 defines five kinds of partial history,
-distinguished by the temporal component of the world-time pair relative
-to a reference time `t`. We formalize all five as predicates on time
-pairs. Only actual and future are used in the core DOX/CIR mechanism,
-but the full taxonomy is needed for extensions (e.g., prospective = the
-basis of `BranchingTime.historicalBase`). -/
-
-/-- Maximal history: unrestricted temporal extent.
-    @cite{klecha-2016} Definition 3(v): Ω_t = all histories. -/
-def isMaximalHistory {Time : Type*} (_evalTime _historyTime : Time) : Prop :=
-  True
-
-/-- Actual history: temporal component ends at or before `t`.
-    @cite{klecha-2016} Definition 3(vi): 𝒜_t = {i : τ(i) = (-∞, t]}. -/
-def isActualHistory {Time : Type*} [LE Time]
-    (evalTime historyTime : Time) : Prop :=
-  historyTime ≤ evalTime
-
-/-- Past history: temporal component ends strictly before `t`.
-    @cite{klecha-2016} Definition 3(viii): 𝒫_t = {i : τ(i) = (-∞, t)}.
-    Distinct from actual: past excludes `t` itself. -/
-def isPastHistory {Time : Type*} [LT Time]
-    (evalTime historyTime : Time) : Prop :=
-  historyTime < evalTime
-
-/-- Future history: temporal component starts strictly after `t`.
-    @cite{klecha-2016} Definition 3(vii): ℱ_t = {j : τ(j) = (t, ∞)}. -/
-def isFutureHistory {Time : Type*} [LT Time]
-    (evalTime historyTime : Time) : Prop :=
-  historyTime > evalTime
-
-/-- Prospective history: temporal component starts at or after `t`.
-    @cite{klecha-2016} Definition 3(ix): ℙ_t = {j : τ(j) = [t, ∞)}.
-    This is exactly the temporal component of `BranchingTime.historicalBase`:
-    `s'.time ≥ s.time`. -/
-def isProspectiveHistory {Time : Type*} [LE Time]
-    (evalTime historyTime : Time) : Prop :=
-  historyTime ≥ evalTime
-
-/-- Actual and future histories are complementary: every time is
-    either ≤ t (actual) or > t (future). -/
-theorem actual_future_complementary {Time : Type*} [LinearOrder Time]
-    (evalTime historyTime : Time) :
-    isActualHistory evalTime historyTime ∨ isFutureHistory evalTime historyTime :=
-  (lt_or_ge evalTime historyTime).elim Or.inr Or.inl
-
-/-- Past and prospective histories are complementary: every time is
-    either < t (past) or ≥ t (prospective). -/
-theorem past_prospective_complementary {Time : Type*} [LinearOrder Time]
-    (evalTime historyTime : Time) :
-    isPastHistory evalTime historyTime ∨ isProspectiveHistory evalTime historyTime :=
-  (lt_or_ge historyTime evalTime).elim Or.inl Or.inr
-
-/-- Past ⊂ actual: strict past implies actual. -/
-theorem past_implies_actual {Time : Type*} [Preorder Time]
-    (evalTime historyTime : Time) (h : isPastHistory evalTime historyTime) :
-    isActualHistory evalTime historyTime :=
-  le_of_lt h
-
-/-- Future ⊂ prospective: strict future implies prospective. -/
-theorem future_implies_prospective {Time : Type*} [Preorder Time]
-    (evalTime historyTime : Time) (h : isFutureHistory evalTime historyTime) :
-    isProspectiveHistory evalTime historyTime :=
-  le_of_lt h
-
-/-- Actual ∩ prospective = simultaneous: a time that is both actual
-    and prospective is exactly the evaluation time. -/
-theorem actual_and_prospective_iff_simultaneous {Time : Type*} [PartialOrder Time]
-    (evalTime historyTime : Time) :
-    isActualHistory evalTime historyTime ∧ isProspectiveHistory evalTime historyTime ↔
-    historyTime = evalTime :=
-  ⟨λ ⟨hle, hge⟩ => le_antisymm hle hge, λ h => ⟨le_of_eq h, ge_of_eq h⟩⟩
-
-/-- Past and future are disjoint: no time is both < t and > t. -/
-theorem past_future_disjoint {Time : Type*} [Preorder Time]
-    (evalTime historyTime : Time) :
-    ¬(isPastHistory evalTime historyTime ∧ isFutureHistory evalTime historyTime) := by
-  intro ⟨h1, h2⟩
-  exact lt_asymm h1 h2
+open Core.Modality.HistoricalAlternatives
+  (isActualHistory isFutureHistory actualHistoryBase futureHistoryBase
+   actualHistoryBase_time_actual futureHistoryBase_time_future
+   WorldHistory)
 
 
 /-! ## Temporal Constraints on Embedded RT -/
@@ -178,6 +111,44 @@ theorem cir_compatible_with_future {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) (hFut : refTime > evalTime) :
     attitudeTemporalConstraint .circumstantial evalTime refTime :=
   hFut
+
+
+/-! ## Klecha 2016: constraint as derivation, not stipulation
+
+The two theorems below make @cite{klecha-2016}'s central architectural
+claim kernel-checked: `attitudeTemporalConstraint` is *derived* from
+membership in the corresponding situation-base (`actualHistoryBase` for
+DOX, `futureHistoryBase` for CIR), not stipulated.
+
+This is the formal contrast with @cite{abusch-1997}'s ULC, which is
+stipulated as a presupposition on T-nodes; here, ULC follows by `.2`
+projection through the situation-base definition. The substrate
+derivation lives in `Core.Modality.HistoricalAlternatives` as
+`actualHistoryBase_time_actual` / `futureHistoryBase_time_future`;
+these theorems re-express it in the Klecha-namespace
+`attitudeTemporalConstraint` form. -/
+
+/-- @cite{klecha-2016} eq (35a): DOX returns the actual history base.
+    Membership in `actualHistoryBase` derives the doxastic temporal
+    constraint (Upper Limit Constraint) by `.2` projection. -/
+theorem attitudeTemporalConstraint_derived_doxastic
+    {W Time : Type*} [LinearOrder Time]
+    (history : WorldHistory W Time)
+    (s s' : Core.WorldTimeIndex W Time)
+    (h : s' ∈ actualHistoryBase history s) :
+    attitudeTemporalConstraint .doxastic s.time s'.time :=
+  actualHistoryBase_time_actual history s s' h
+
+/-- @cite{klecha-2016} eq (35b): CIR returns the future history base.
+    Membership in `futureHistoryBase` derives the circumstantial
+    temporal constraint (future orientation) by `.2` projection. -/
+theorem attitudeTemporalConstraint_derived_circumstantial
+    {W Time : Type*} [LinearOrder Time]
+    (history : WorldHistory W Time)
+    (s s' : Core.WorldTimeIndex W Time)
+    (h : s' ∈ futureHistoryBase history s) :
+    attitudeTemporalConstraint .circumstantial s.time s'.time :=
+  futureHistoryBase_time_future history s s' h
 
 
 /-! ## Attitude → ModalBaseKind bridge -/

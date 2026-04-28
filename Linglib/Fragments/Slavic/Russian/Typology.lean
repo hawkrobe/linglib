@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Russian typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Russian (ISO 639-3 `rus`).
 
 namespace Fragments.Slavic.Russian
 
-open Core.Typology in
+open Typology in
 /-- Russian: SVO, prepositional, declined relative pronoun *kotoryj*. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "rus" "Russian"

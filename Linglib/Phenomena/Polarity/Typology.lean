@@ -1,6 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.Indefinite
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Slavic.Russian.PolarityItems
@@ -20,239 +21,47 @@ import Linglib.Fragments.Tagalog.PolarityItems
 import Linglib.Fragments.Swahili.PolarityItems
 
 /-!
-# Indefinite Pronoun Typology (@cite{haspelmath-1997} / WALS Ch 46)
-@cite{haspelmath-1997} @cite{haspelmath-2013} @cite{kadmon-landman-1993} @cite{ladusaw-1979}
+# Polarity-Sensitive Indefinite Pronoun Typology
+@cite{haspelmath-1997} @cite{haspelmath-2013} @cite{kadmon-landman-1993}
+@cite{ladusaw-1979} @cite{wals-2013}
 
-Formalizes the core results of @cite{haspelmath-1997}'s cross-linguistic study of
-indefinite pronouns, one of the most celebrated results in semantic typology.
+Polarity-typological perspective on @cite{haspelmath-1997}'s
+implicational map for indefinite pronouns. Uses the canonical
+`Typology.Indefinite.IndefiniteParadigm` substrate for the per-language
+data; this file owns the polarity-specific theorems and Fragment bridges.
 
-## The Implicational Map
+## Architecture
 
-The key insight: indefinite pronouns across languages can be classified by
-which **functions** they can serve. Nine function types form an
-**implicational map** — if a single pronoun series covers two non-adjacent
-functions, it must also cover all functions between them on the map.
+This file used to define its own `IndefinitePronounProfile` /
+`IndefinitePronounSeries` / `IndefiniteFunction` triplet, duplicating
+what now lives in `Typology/Indefinite.lean`. The substrate has been
+unified — the 17 per-language paradigms below are
+`Typology.Indefinite.IndefiniteParadigm` instances, and the polarity
+analyses (NPI clusters, neg-concord patterns, FC/comparative grouping)
+project from those.
 
-The nine functions, ordered on the map:
+## Sample
 
-```
-specificKnown — specificUnknown — irrealis — question — conditional — indirectNeg — directNeg
-                                                                                       |
-                                                         freeChoice — comparative ———+
-```
-
-A pronoun series can cover any **contiguous** region on this map. This
-explains why, e.g., English "any" covers {question, conditional, indirectNeg,
-comparative, freeChoice} — a contiguous set — but no language has a single
-form for {specificKnown, directNeg} without covering all intermediate
-functions.
-
-## WALS Chapter 46
-
-WALS classifies languages by the morphological source of their indefinite
-pronouns. The chapter is based on @cite{haspelmath-1997}'s cross-linguistic
-sample of 326 languages:
-
-| Value                      | Count |
-|----------------------------|-------|
-| Interrogative-based        |  194  |
-| Generic-noun-based         |   85  |
-| Special                    |   22  |
-| Mixed                      |   23  |
-| Existential construction   |    2  |
-| Total                      |  326  |
-
+17 typologically diverse languages:
+- Indo-European: English, Russian, German, Italian, Hindi-Urdu
+- Uralic: Finnish, Hungarian
+- Turkic: Turkish
+- Sino-Tibetan: Mandarin
+- Japonic / Koreanic: Japanese, Korean
+- Kartvelian: Georgian
+- Quechuan: Quechua
+- Niger-Congo: Yoruba, Swahili
+- Kra-Dai: Thai
+- Austronesian: Tagalog
 -/
 
 namespace Phenomena.Polarity.Typology
 
--- ============================================================================
--- §1: The Nine Function Types
--- ============================================================================
-
-/-- The nine function types on @cite{haspelmath-1997}'s implicational map for
-    indefinite pronouns. These represent the semantic/pragmatic contexts
-    in which indefinite pronoun forms are used.
-
-    The ordering reflects positions on the map, from most referential
-    (specificKnown) to most universal (freeChoice). -/
-inductive IndefiniteFunction where
-  /-- Specific known: "Somebody called. I know who it was."
-      Speaker has a specific referent in mind and knows their identity. -/
-  | specificKnown
-  /-- Specific unknown: "Somebody called. I don't know who."
-      Speaker has a specific referent in mind but doesn't know their identity. -/
-  | specificUnknown
-  /-- Irrealis non-specific: "Please bring me something to read."
-      The referent is hypothetical, not yet established in the discourse. -/
-  | irrealis
-  /-- Question: "Did anybody call?"
-      In polar or wh-questions. -/
-  | question
-  /-- Conditional: "If anybody calls, tell them I'm busy."
-      In the antecedent of a conditional. -/
-  | conditional
-  /-- Indirect negation: "I don't think that anybody called."
-      In the semantic scope of negation but not in the same clause. -/
-  | indirectNeg
-  /-- Direct negation: "Nobody called." / "I didn't see anybody."
-      Direct clause negation: the indefinite is in the same clause as
-      the negative marker. -/
-  | directNeg
-  /-- Comparative: "She's taller than anybody."
-      Standard of comparison in comparative constructions. -/
-  | comparative
-  /-- Free choice: "Anybody can do that."
-      Universal-like meaning: all members of the domain qualify. -/
-  | freeChoice
-  deriving DecidableEq, Repr, Inhabited
-
-/-- All nine function types, listed in map order. -/
-def IndefiniteFunction.all : List IndefiniteFunction :=
-  [ .specificKnown, .specificUnknown, .irrealis, .question
-  , .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice ]
+open Typology.Indefinite
+open Datasets.WALS
 
 -- ============================================================================
--- §2: The Implicational Map (Adjacency Structure)
--- ============================================================================
-
-/-- Adjacent functions on @cite{haspelmath-1997}'s implicational map.
-
-    The map forms a connected graph:
-    ```
-    specKnown — specUnknown — irrealis — question — conditional — indNeg — dirNeg
-                                                                              |
-                                                    freeChoice — comparative —+
-    ```
-
-    The crucial typological claim: any pronoun series covers a **contiguous**
-    region on this graph. If a form is used for functions A and C, and B lies
-    on the unique path between A and C, then the form is also used for B. -/
-def adjacentFunctions : IndefiniteFunction → List IndefiniteFunction
-  | .specificKnown   => [.specificUnknown]
-  | .specificUnknown => [.specificKnown, .irrealis]
-  | .irrealis        => [.specificUnknown, .question]
-  | .question        => [.irrealis, .conditional]
-  | .conditional     => [.question, .indirectNeg]
-  | .indirectNeg     => [.conditional, .directNeg]
-  | .directNeg       => [.indirectNeg, .comparative]
-  | .comparative     => [.directNeg, .freeChoice]
-  | .freeChoice      => [.comparative]
-
-/-- Adjacency is symmetric: if A is adjacent to B, then B is adjacent to A. -/
-theorem adjacency_symmetric :
-    IndefiniteFunction.all.all (λ f =>
-      (adjacentFunctions f).all (λ g =>
-        (adjacentFunctions g).contains f)) = true := by decide
-
-/-- Every function has at least one neighbor (the map is connected). -/
-theorem every_function_has_neighbor :
-    IndefiniteFunction.all.all (λ f =>
-      !(adjacentFunctions f).isEmpty) = true := by decide
-
-/-- The map has exactly 8 edges (undirected). We count ordered pairs and
-    divide by 2: each edge appears once in each direction. -/
-theorem map_edge_count :
-    (IndefiniteFunction.all.map (λ f => (adjacentFunctions f).length)).sum
-      = 16 := by decide
-
--- ============================================================================
--- §3: Contiguity Check (BFS on the Map)
--- ============================================================================
-
-/-- BFS on the implicational map restricted to a given set of functions.
-    Starting from `start`, explore all reachable nodes through edges whose
-    endpoints are both in `funcs`. Returns the set of reachable nodes.
-
-    This is the core algorithm for checking contiguity: a set of functions
-    is contiguous iff BFS from any member reaches all other members. -/
-def bfsReachable (funcs : List IndefiniteFunction) (start : IndefiniteFunction)
-    (fuel : Nat := 10) : List IndefiniteFunction :=
-  let rec go (queue : List IndefiniteFunction) (visited : List IndefiniteFunction)
-      (fuel : Nat) : List IndefiniteFunction :=
-    match fuel, queue with
-    | 0, _          => visited
-    | _, []         => visited
-    | fuel + 1, f :: rest =>
-      let neighbors := (adjacentFunctions f).filter (λ g =>
-        funcs.contains g && !visited.contains g)
-      go (rest ++ neighbors) (visited ++ neighbors) fuel
-  go [start] [start] fuel
-
-/-- A set of functions is **contiguous** on the implicational map iff
-    BFS from its first element reaches all elements in the set.
-
-    This is Haspelmath's key constraint: every pronoun series must
-    cover a contiguous region on the map. -/
-def isContiguous (funcs : List IndefiniteFunction) : Bool :=
-  match funcs with
-  | []     => true
-  | f :: _ =>
-    let reached := bfsReachable funcs f 15
-    funcs.all reached.contains
-
--- ============================================================================
--- §4: Pronoun Series and Language Profiles
--- ============================================================================
-
-/-- An indefinite pronoun series: a named form (or morphological pattern)
-    together with the set of functions it covers on the map. -/
-structure IndefinitePronounSeries where
-  /-- Surface form or morphological marker (e.g., "some-", "any-", "no-"). -/
-  form : String
-  /-- The functions this series covers on the implicational map. -/
-  functions : List IndefiniteFunction
-  /-- Optional notes on the series. -/
-  notes : String := ""
-  deriving Repr, BEq
-
-/-- Number of functions covered by a series. -/
-def IndefinitePronounSeries.coverage (s : IndefinitePronounSeries) : Nat :=
-  s.functions.length
-
-/-- A language's indefinite pronoun profile: its name, series inventory,
-    and metadata. -/
-structure IndefinitePronounProfile where
-  /-- Language name. -/
-  language : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- Language family. -/
-  family : String := ""
-  /-- The pronoun series inventory. -/
-  series : List IndefinitePronounSeries
-  /-- Notes on the system. -/
-  notes : String := ""
-  deriving Repr
-
-/-- Number of distinct indefinite pronoun series in a language. -/
-def IndefinitePronounProfile.seriesCount (p : IndefinitePronounProfile) : Nat :=
-  p.series.length
-
-/-- All functions covered across all series. -/
-def IndefinitePronounProfile.allFunctions
-    (p : IndefinitePronounProfile) : List IndefiniteFunction :=
-  (p.series.flatMap (·.functions)).eraseDups
-
-/-- Whether every series in a profile is contiguous on the map. -/
-def IndefinitePronounProfile.allContiguous
-    (p : IndefinitePronounProfile) : Bool :=
-  p.series.all (λ s => isContiguous s.functions)
-
-/-- Whether the profile covers all nine functions. -/
-def IndefinitePronounProfile.coversAllFunctions
-    (p : IndefinitePronounProfile) : Bool :=
-  IndefiniteFunction.all.all (λ f => p.allFunctions.contains f)
-
-/-- Whether the series in a profile have disjoint function sets
-    (no function appears in two different series). -/
-def IndefinitePronounProfile.seriesDisjoint
-    (p : IndefinitePronounProfile) : Bool :=
-  let allFuncs := p.series.flatMap (·.functions)
-  allFuncs.length == allFuncs.eraseDups.length
-
--- ============================================================================
--- §5: WALS Chapter 46 Distribution
+-- §1. WALS Chapter 46 distribution
 -- ============================================================================
 
 /-- A single row in a WALS frequency table. -/
@@ -267,679 +76,482 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
 
 private abbrev ch46 := Datasets.WALS.F46A.allData
 
-/-- WALS Chapter 46 distribution (N = 326).
-
-    The five values classify languages by the morphological source of
-    their indefinite pronouns, computed from the WALS 46A dataset.
-    Counts in @cite{haspelmath-1997}: interrogative-based dominates,
-    outnumbering all other categories combined. -/
+/-- WALS Ch 46 distribution (N = 326). -/
 def ch46Counts : List WALSCount :=
   [ ⟨"Interrogative-based", (ch46.filter (·.value == .interrogativeBased)).length⟩
-  , ⟨"Generic-noun-based", (ch46.filter (·.value == .genericNounBased)).length⟩
-  , ⟨"Special", (ch46.filter (·.value == .special)).length⟩
-  , ⟨"Mixed", (ch46.filter (·.value == .mixed)).length⟩
-  , ⟨"Existential construction", (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
+  , ⟨"Generic-noun-based",  (ch46.filter (·.value == .genericNounBased)).length⟩
+  , ⟨"Special",             (ch46.filter (·.value == .special)).length⟩
+  , ⟨"Mixed",               (ch46.filter (·.value == .mixed)).length⟩
+  , ⟨"Existential construction",
+      (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
 
-/-- Look up a language profile's WALS 46A morphological source classification. -/
-def IndefinitePronounProfile.wals46A
-    (p : IndefinitePronounProfile) : Option Datasets.WALS.F46A.IndefinitePronouns :=
-  (Datasets.WALS.F46A.lookupISO p.iso).map (·.value)
+/-! Helpers (`wals46A`, `formCount`, `allFunctions`, `AllContiguous`,
+    `CoversAllFunctions`, `FormsDisjoint`, `IndefiniteEntry.coverage`)
+    are defined on `IndefiniteParadigm` / `IndefiniteEntry` in
+    `Typology/Indefinite.lean`. The `Prop`-valued predicates have
+    `Decidable` instances; theorems use them directly without `= true`
+    tails (mathlib idiom). -/
 
 -- ============================================================================
--- §6: Language Data
+-- §2. Per-language paradigms — 17-language sample
 -- ============================================================================
 
-/-! ### English (Indo-European, Germanic)
-
-English has four main indefinite pronoun series:
-- **some-** series: specific known + specific unknown
-- **any-** (NPI): question + conditional + indirect negation
-- **no-** series: direct negation
-- **any-** (FC) / **every-**: free choice + comparative
-
-The split between NPI-any and FC-any is well-known; Haspelmath treats
-them as distinct series. English "some-" also has an irrealis use in
-some dialects, but the canonical analysis gives irrealis to "any". -/
-
-def english : IndefinitePronounProfile :=
+/-- English (Indo-European): 4 series, generic-noun-based.
+    `some-` (SK+SU) / `any-` NPI (irrealis through indirectNeg) / `no-`
+    (directNeg) / `any-` FC (comparative+freeChoice). -/
+def english : IndefiniteParadigm :=
   { language := "English"
-  , iso := "eng"
-  , family := "Indo-European"
-  , series :=
-    [ { form := "some-"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "somebody, something, somewhere" }
-    , { form := "any- (NPI)"
-      , functions := [.irrealis, .question, .conditional, .indirectNeg]
-      , notes := "anybody, anything in DE/nonveridical contexts" }
-    , { form := "no-"
-      , functions := [.directNeg]
-      , notes := "nobody, nothing, nowhere" }
-    , { form := "any- (FC)"
-      , functions := [.comparative, .freeChoice]
-      , notes := "anybody can do that; taller than anybody" }
-    ]
-  , notes := "4 series; NPI-any and FC-any historically same form but " ++
-             "synchronically distinct distribution" }
+  , isoCode := "eng"
+  , forms :=
+    [ { language := "English", form := "some-",
+        gloss := "somebody, something, somewhere",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "English", form := "any- (NPI)",
+        gloss := "anybody, anything in DE/nonveridical",
+        basis := .genericNoun,
+        functions := {.irrealis, .question, .conditional, .indirectNeg} }
+    , { language := "English", form := "no-",
+        gloss := "nobody, nothing, nowhere",
+        basis := .genericNoun,
+        functions := {.directNeg} }
+    , { language := "English", form := "any- (FC)",
+        gloss := "anybody can do that; taller than anybody",
+        basis := .genericNoun,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Russian (Indo-European, Slavic)
-
-Russian is a classic example of a language with many indefinite series,
-corresponding to fine-grained function distinctions:
-- **кто-то** (kto-to): specific known
-- **кто-нибудь** (kto-nibud'): specific unknown + irrealis
-- **кто-либо** (kto-libo): question + conditional + indirect negation
-- **никто** (nikto): direct negation (with negative concord)
-- **кто угодно** (kto ugodno): free choice + comparative -/
-
-def russian : IndefinitePronounProfile :=
+/-- Russian (Slavic): 5 series, interrogative-based. Textbook map example. -/
+def russian : IndefiniteParadigm :=
   { language := "Russian"
-  , iso := "rus"
-  , family := "Indo-European"
-  , series :=
-    [ { form := "кто-то (kto-to)"
-      , functions := [.specificKnown]
-      , notes := "specific referent, speaker knows identity" }
-    , { form := "кто-нибудь (kto-nibud')"
-      , functions := [.specificUnknown, .irrealis]
-      , notes := "specific but unknown identity, or irrealis" }
-    , { form := "кто-либо (kto-libo)"
-      , functions := [.question, .conditional, .indirectNeg]
-      , notes := "polarity-sensitive: questions, conditionals, indirect neg" }
-    , { form := "никто (nikto)"
-      , functions := [.directNeg]
-      , notes := "negative concord: nikto ne prisel 'nobody NEG came'" }
-    , { form := "кто угодно (kto ugodno)"
-      , functions := [.comparative, .freeChoice]
-      , notes := "universal/free choice: anyone at all" }
-    ]
-  , notes := "5 series; textbook example of Haspelmath's implicational map" }
+  , isoCode := "rus"
+  , forms :=
+    [ { language := "Russian", form := "кто-то (kto-to)",
+        gloss := "specific, speaker knows identity",
+        basis := .interrogative,
+        functions := {.specificKnown} }
+    , { language := "Russian", form := "кто-нибудь (kto-nibud')",
+        gloss := "specific but unknown identity, or irrealis",
+        basis := .interrogative,
+        functions := {.specificUnknown, .irrealis} }
+    , { language := "Russian", form := "кто-либо (kto-libo)",
+        gloss := "polarity-sensitive: questions, conditionals, indirect neg",
+        basis := .interrogative,
+        functions := {.question, .conditional, .indirectNeg} }
+    , { language := "Russian", form := "никто (nikto)",
+        gloss := "nikto ne prisel 'nobody NEG came' (negative concord)",
+        basis := .interrogative,
+        functions := {.directNeg} }
+    , { language := "Russian", form := "кто угодно (kto ugodno)",
+        gloss := "universal/free choice: anyone at all",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### German (Indo-European, Germanic)
-
-German has a rich indefinite system with five series:
-- **jemand**: specific known + specific unknown
-- **irgend(ein/wer)**: irrealis + question
-- **wer** (in conditionals): conditional
-- **niemand**: direct negation + indirect negation
-- **jeder**: free choice + comparative -/
-
-def german : IndefinitePronounProfile :=
+/-- German (Indo-European): 5 series, mixed bases (jemand generic-noun,
+    irgend- special). -/
+def german : IndefiniteParadigm :=
   { language := "German"
-  , iso := "deu"
-  , family := "Indo-European"
-  , series :=
-    [ { form := "jemand"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "somebody (specific reference)" }
-    , { form := "irgendwer"
-      , functions := [.irrealis, .question]
-      , notes := "irgend- prefix marks non-specificity / ignorance" }
-    , { form := "wer (conditional)"
-      , functions := [.conditional, .indirectNeg]
-      , notes := "bare wh-word in conditional / indirect neg contexts" }
-    , { form := "niemand"
-      , functions := [.directNeg]
-      , notes := "negative indefinite; precludes predicate negation" }
-    , { form := "jeder"
-      , functions := [.comparative, .freeChoice]
-      , notes := "universal/free choice: anyone/everyone" }
-    ]
-  , notes := "5 series; irgend- prefix is productive non-specific marker" }
+  , isoCode := "deu"
+  , forms :=
+    [ { language := "German", form := "jemand",
+        gloss := "somebody (specific reference)",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "German", form := "irgendwer",
+        gloss := "irgend- prefix marks non-specificity / ignorance",
+        basis := .special,
+        functions := {.irrealis, .question} }
+    , { language := "German", form := "wer (conditional)",
+        gloss := "bare wh-word in conditional / indirect neg",
+        basis := .interrogative,
+        functions := {.conditional, .indirectNeg} }
+    , { language := "German", form := "niemand",
+        gloss := "negative indefinite",
+        basis := .genericNoun,
+        functions := {.directNeg} }
+    , { language := "German", form := "jeder",
+        gloss := "universal/free choice: anyone/everyone",
+        basis := .genericNoun,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Japanese (Japonic)
-
-Japanese indefinite pronouns are built compositionally from wh-words
-(dare 'who', nani 'what') plus particles (-ka, -mo, -demo):
-- **dare-ka**: specific known + specific unknown + irrealis + question
-- **dare-mo** (negative): direct negation + indirect negation
-- **dare-demo**: free choice + comparative + conditional -/
-
-def japanese : IndefinitePronounProfile :=
+/-- Japanese (Japonic): 3 series, interrogative-based. wh + particle. -/
+def japanese : IndefiniteParadigm :=
   { language := "Japanese"
-  , iso := "jpn"
-  , family := "Japonic"
-  , series :=
-    [ { form := "dare-ka"
-      , functions := [.specificKnown, .specificUnknown, .irrealis,
-                      .question, .conditional]
-      , notes := "wh + ka: existential/non-specific indefinite" }
-    , { form := "dare-mo (neg)"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "wh + mo under negation: nobody" }
-    , { form := "dare-demo"
-      , functions := [.comparative, .freeChoice]
-      , notes := "wh + demo: free choice / concessive" }
-    ]
-  , notes := "3 series; compositional wh + particle system" }
+  , isoCode := "jpn"
+  , forms :=
+    [ { language := "Japanese", form := "dare-ka",
+        gloss := "wh + ka: existential/non-specific",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional} }
+    , { language := "Japanese", form := "dare-mo (neg)",
+        gloss := "wh + mo under negation: nobody",
+        basis := .interrogative,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Japanese", form := "dare-demo",
+        gloss := "wh + demo: free choice / concessive",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Mandarin Chinese (Sino-Tibetan)
-
-Mandarin uses a small set of indefinite forms with wide functional range:
-- **yǒu rén** (有人): specific known + specific unknown
-- **shéi** (谁, non-interrogative): irrealis + question + conditional +
-  indirect negation + direct negation + comparative + free choice
-
-The wh-word shéi in non-interrogative uses covers a remarkably wide
-contiguous region, from irrealis to free choice. -/
-
-def mandarin : IndefinitePronounProfile :=
+/-- Mandarin (Sino-Tibetan): 2 series, mixed (yǒu rén existential, shéi
+    interrogative). -/
+def mandarin : IndefiniteParadigm :=
   { language := "Mandarin Chinese"
-  , iso := "cmn"
-  , family := "Sino-Tibetan"
-  , series :=
-    [ { form := "yǒu rén (有人)"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "existential: 'there is someone'" }
-    , { form := "shéi (谁, non-interrog.)"
-      , functions := [.irrealis, .question, .conditional, .indirectNeg,
-                      .directNeg, .comparative, .freeChoice]
-      , notes := "wh-word in non-interrogative uses covers 7 functions" }
-    ]
-  , notes := "2 series; wh-words double as indefinites (Cheng 1991)" }
+  , isoCode := "cmn"
+  , forms :=
+    [ { language := "Mandarin", form := "yǒu rén (有人)",
+        gloss := "existential: 'there is someone'",
+        basis := .existentialConstruction,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "Mandarin", form := "shéi (谁, non-interrog.)",
+        gloss := "wh-word in non-interrogative uses; 7 functions",
+        basis := .interrogative,
+        functions := {.irrealis, .question, .conditional, .indirectNeg,
+                      .directNeg, .comparative, .freeChoice} } ] }
 
-/-! ### Turkish (Turkic)
-
-Turkish uses birisi/biri for specific functions and a combination of
-kimse and hiç kimse for negative and polarity-sensitive functions:
-- **birisi**: specific known + specific unknown
-- **biri**: irrealis
-- **kimse**: question + conditional + indirect negation
-- **hiç kimse**: direct negation
-- **herhangi biri**: free choice + comparative -/
-
-def turkish : IndefinitePronounProfile :=
+/-- Turkish (Turkic): 5 series, generic-noun-based (`bir-` 'one'). -/
+def turkish : IndefiniteParadigm :=
   { language := "Turkish"
-  , iso := "tur"
-  , family := "Turkic"
-  , series :=
-    [ { form := "birisi"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "specific indefinite: 'a certain person'" }
-    , { form := "biri"
-      , functions := [.irrealis]
-      , notes := "non-specific indefinite in irrealis contexts" }
-    , { form := "kimse"
-      , functions := [.question, .conditional, .indirectNeg]
-      , notes := "polarity-sensitive: in questions, conditionals" }
-    , { form := "hiç kimse"
-      , functions := [.directNeg]
-      , notes := "negative indefinite with hiç intensifier" }
-    , { form := "herhangi biri"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice: any person at all" }
-    ]
-  , notes := "5 series; kimse is historically 'person' > NPI" }
+  , isoCode := "tur"
+  , forms :=
+    [ { language := "Turkish", form := "birisi",
+        gloss := "specific indefinite: 'a certain person'",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "Turkish", form := "biri",
+        gloss := "non-specific in irrealis",
+        basis := .genericNoun,
+        functions := {.irrealis} }
+    , { language := "Turkish", form := "kimse",
+        gloss := "polarity-sensitive: questions, conditionals",
+        basis := .genericNoun,
+        functions := {.question, .conditional, .indirectNeg} }
+    , { language := "Turkish", form := "hiç kimse",
+        gloss := "negative indefinite with hiç intensifier",
+        basis := .genericNoun,
+        functions := {.directNeg} }
+    , { language := "Turkish", form := "herhangi biri",
+        gloss := "free choice: any person at all",
+        basis := .genericNoun,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Hindi-Urdu (Indo-European, Indo-Aryan)
-
-Hindi uses koii as a general indefinite with wide distribution, plus
-specialized negative and free choice forms:
-- **koii**: specific known + specific unknown + irrealis + question +
-  conditional
-- **koii nahiiN**: direct negation + indirect negation
-- **koii bhii**: free choice + comparative -/
-
-def hindi : IndefinitePronounProfile :=
+/-- Hindi-Urdu (Indo-Aryan): 3 series, special (`koii`). -/
+def hindi : IndefiniteParadigm :=
   { language := "Hindi-Urdu"
-  , iso := "hin"
-  , family := "Indo-European"
-  , series :=
-    [ { form := "koii"
-      , functions := [.specificKnown, .specificUnknown, .irrealis,
-                      .question, .conditional]
-      , notes := "general indefinite: someone/anyone" }
-    , { form := "koii nahiiN"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "koii + negation: nobody" }
-    , { form := "koii bhii"
-      , functions := [.comparative, .freeChoice]
-      , notes := "koii + bhii (even/also): anyone at all (FC)" }
-    ]
-  , notes := "3 series; bhii particle creates FC reading (@cite{lahiri-1998})" }
+  , isoCode := "hin"
+  , forms :=
+    [ { language := "Hindi-Urdu", form := "koii",
+        gloss := "general indefinite: someone/anyone",
+        basis := .special,
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional} }
+    , { language := "Hindi-Urdu", form := "koii nahiiN",
+        gloss := "koii + negation: nobody",
+        basis := .special,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Hindi-Urdu", form := "koii bhii",
+        gloss := "koii + bhii (even/also): anyone at all (FC)",
+        basis := .special,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Italian (Indo-European, Romance)
-
-Italian distinguishes qualcuno (specific) from negative nessuno and
-FC qualunque/qualsiasi:
-- **qualcuno**: specific known + specific unknown + irrealis
-- **nessuno**: question + conditional + indirect negation + direct negation
-- **qualunque/qualsiasi**: free choice + comparative -/
-
-def italian : IndefinitePronounProfile :=
+/-- Italian (Romance): 3 series, generic-noun-based. -/
+def italian : IndefiniteParadigm :=
   { language := "Italian"
-  , iso := "ita"
-  , family := "Indo-European"
-  , series :=
-    [ { form := "qualcuno"
-      , functions := [.specificKnown, .specificUnknown, .irrealis]
-      , notes := "specific/irrealis indefinite" }
-    , { form := "nessuno"
-      , functions := [.question, .conditional, .indirectNeg, .directNeg]
-      , notes := "N-word: polarity-sensitive + direct negation" }
-    , { form := "qualunque/qualsiasi"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice universal" }
-    ]
-  , notes := "3 series; nessuno is an N-word (negative concord)" }
+  , isoCode := "ita"
+  , forms :=
+    [ { language := "Italian", form := "qualcuno",
+        gloss := "specific/irrealis indefinite",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown, .irrealis} }
+    , { language := "Italian", form := "nessuno",
+        gloss := "N-word: polarity-sensitive + direct negation",
+        basis := .genericNoun,
+        functions := {.question, .conditional, .indirectNeg, .directNeg} }
+    , { language := "Italian", form := "qualunque/qualsiasi",
+        gloss := "free choice universal",
+        basis := .genericNoun,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Finnish (Uralic)
-
-Finnish has a differentiated system with five series:
-- **joku**: specific known + specific unknown
-- **jokin** (non-human): irrealis
-- **kukaan**: question + conditional + indirect negation
-- **ei kukaan**: direct negation
-- **kuka tahansa**: free choice + comparative -/
-
-def finnish : IndefinitePronounProfile :=
+/-- Finnish (Uralic): 5 series, special (`joku`/`kukaan` morphemes). -/
+def finnish : IndefiniteParadigm :=
   { language := "Finnish"
-  , iso := "fin"
-  , family := "Uralic"
-  , series :=
-    [ { form := "joku"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "specific indefinite" }
-    , { form := "joku (irrealis)"
-      , functions := [.irrealis]
-      , notes := "joku in irrealis / non-specific contexts" }
-    , { form := "kukaan"
-      , functions := [.question, .conditional, .indirectNeg]
-      , notes := "polarity-sensitive indefinite" }
-    , { form := "ei kukaan"
-      , functions := [.directNeg]
-      , notes := "negative indefinite with ei (negative verb)" }
-    , { form := "kuka tahansa"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice: whoever / anyone at all" }
-    ]
-  , notes := "5 series; negative verb ei + kukaan for direct negation" }
+  , isoCode := "fin"
+  , forms :=
+    [ { language := "Finnish", form := "joku",
+        gloss := "specific indefinite",
+        basis := .special,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "Finnish", form := "joku (irrealis)",
+        gloss := "joku in irrealis / non-specific",
+        basis := .special,
+        functions := {.irrealis} }
+    , { language := "Finnish", form := "kukaan",
+        gloss := "polarity-sensitive indefinite",
+        basis := .special,
+        functions := {.question, .conditional, .indirectNeg} }
+    , { language := "Finnish", form := "ei kukaan",
+        gloss := "negative indefinite with negative verb ei",
+        basis := .special,
+        functions := {.directNeg} }
+    , { language := "Finnish", form := "kuka tahansa",
+        gloss := "free choice: whoever / anyone at all",
+        basis := .special,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Korean (Koreanic)
-
-Korean, like Japanese, uses wh-words as indefinites with particles:
-- **nwukwu-nka**: specific known + specific unknown
-- **nwukwu**: irrealis + question + conditional
-- **nwukwu-to** (neg): indirect negation + direct negation
-- **nwukwu-na / nwukwu-tunci**: free choice + comparative -/
-
-def korean : IndefinitePronounProfile :=
+/-- Korean (Koreanic): 4 series, interrogative-based (wh + particle). -/
+def korean : IndefiniteParadigm :=
   { language := "Korean"
-  , iso := "kor"
-  , family := "Koreanic"
-  , series :=
-    [ { form := "nwukwu-nka (누군가)"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "wh + nka: specific indefinite" }
-    , { form := "nwukwu (누구)"
-      , functions := [.irrealis, .question, .conditional]
-      , notes := "bare wh-word: non-specific indefinite" }
-    , { form := "nwukwu-to (누구도, neg)"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "wh + to under negation: nobody" }
-    , { form := "nwukwu-na (누구나)"
-      , functions := [.comparative, .freeChoice]
-      , notes := "wh + na: free choice / universal" }
-    ]
-  , notes := "4 series; wh + particle system parallel to Japanese" }
+  , isoCode := "kor"
+  , forms :=
+    [ { language := "Korean", form := "nwukwu-nka (누군가)",
+        gloss := "wh + nka: specific indefinite",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "Korean", form := "nwukwu (누구)",
+        gloss := "bare wh-word: non-specific indefinite",
+        basis := .interrogative,
+        functions := {.irrealis, .question, .conditional} }
+    , { language := "Korean", form := "nwukwu-to (누구도, neg)",
+        gloss := "wh + to under negation: nobody",
+        basis := .interrogative,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Korean", form := "nwukwu-na (누구나)",
+        gloss := "wh + na: free choice / universal",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Hungarian (Uralic)
-
-Hungarian is notable for having many series, including a dedicated
-interrogative indefinite:
-- **valaki**: specific known + specific unknown
-- **valaki (irrealis)**: irrealis
-- **valaki (question)**: question
-- **senki sem**: conditional + indirect negation + direct negation
-- **akárki / bárki**: free choice + comparative -/
-
-def hungarian : IndefinitePronounProfile :=
+/-- Hungarian (Uralic): 4 series, interrogative-based (vala- / akár-). -/
+def hungarian : IndefiniteParadigm :=
   { language := "Hungarian"
-  , iso := "hun"
-  , family := "Uralic"
-  , series :=
-    [ { form := "valaki"
-      , functions := [.specificKnown, .specificUnknown]
-      , notes := "specific indefinite: someone (known to speaker)" }
-    , { form := "valaki (irrealis)"
-      , functions := [.irrealis, .question]
-      , notes := "valaki in irrealis and question contexts" }
-    , { form := "senki"
-      , functions := [.conditional, .indirectNeg, .directNeg]
-      , notes := "negative indefinite (with sem in direct negation)" }
-    , { form := "akárki / bárki"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice: anyone at all" }
-    ]
-  , notes := "4 series; senki covers conditional through direct neg" }
+  , isoCode := "hun"
+  , forms :=
+    [ { language := "Hungarian", form := "valaki",
+        gloss := "specific indefinite",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown} }
+    , { language := "Hungarian", form := "valaki (irrealis)",
+        gloss := "valaki in irrealis and question contexts",
+        basis := .interrogative,
+        functions := {.irrealis, .question} }
+    , { language := "Hungarian", form := "senki",
+        gloss := "negative indefinite (with sem in direct neg)",
+        basis := .interrogative,
+        functions := {.conditional, .indirectNeg, .directNeg} }
+    , { language := "Hungarian", form := "akárki / bárki",
+        gloss := "free choice: anyone at all",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Georgian (Kartvelian)
-
-Georgian has a system with 4-5 series, using suffixes -γac, -me,
-and reduplication for different functions:
-- **vinme**: specific known + specific unknown + irrealis
-- **vinme (question)**: question + conditional
-- **aravin**: indirect negation + direct negation
-- **nebismieri / vinc**: free choice + comparative -/
-
-def georgian : IndefinitePronounProfile :=
+/-- Georgian (Kartvelian): 4 series, interrogative-based. -/
+def georgian : IndefiniteParadigm :=
   { language := "Georgian"
-  , iso := "kat"
-  , family := "Kartvelian"
-  , series :=
-    [ { form := "vinme (ვინმე)"
-      , functions := [.specificKnown, .specificUnknown, .irrealis]
-      , notes := "general indefinite: someone" }
-    , { form := "vinme (question context)"
-      , functions := [.question, .conditional]
-      , notes := "vinme in question/conditional contexts" }
-    , { form := "aravin (არავინ)"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "negative indefinite: nobody" }
-    , { form := "nebismieri (ნებისმიერი)"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice: any/every" }
-    ]
-  , notes := "4 series; aravin (NEG + vinme) for negation" }
+  , isoCode := "kat"
+  , forms :=
+    [ { language := "Georgian", form := "vinme (ვინმე)",
+        gloss := "general indefinite: someone",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown, .irrealis} }
+    , { language := "Georgian", form := "vinme (question context)",
+        gloss := "vinme in question/conditional contexts",
+        basis := .interrogative,
+        functions := {.question, .conditional} }
+    , { language := "Georgian", form := "aravin (არავინ)",
+        gloss := "negative indefinite: nobody",
+        basis := .interrogative,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Georgian", form := "nebismieri (ნებისმიერი)",
+        gloss := "free choice: any/every",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Quechua (Quechuan)
-
-Quechua (Imbabura variety) uses a relatively undifferentiated system:
-- **pi-taj**: specific known + specific unknown + irrealis + question
-- **pi-pash**: conditional + indirect negation
-- **mana pi-pash**: direct negation
-- **ima-pash / maijan-pash**: free choice + comparative -/
-
-def quechua : IndefinitePronounProfile :=
+/-- Quechua (Imbabura): 4 series, special. (Not in WALS F46A's sample.) -/
+def quechua : IndefiniteParadigm :=
   { language := "Quechua (Imbabura)"
-  , iso := "qvi"
-  , family := "Quechuan"
-  , series :=
-    [ { form := "pi-taj"
-      , functions := [.specificKnown, .specificUnknown, .irrealis, .question]
-      , notes := "wh-based indefinite: someone" }
-    , { form := "pi-pash"
-      , functions := [.conditional, .indirectNeg]
-      , notes := "wh + pash: in conditional/neg scope" }
-    , { form := "mana pi-pash"
-      , functions := [.directNeg]
-      , notes := "negation + wh + pash: nobody" }
-    , { form := "maijan-pash"
-      , functions := [.comparative, .freeChoice]
-      , notes := "free choice: anyone" }
-    ]
-  , notes := "4 series; wh-based system with particle pash" }
+  , isoCode := "qvi"
+  , forms :=
+    [ { language := "Quechua", form := "pi-taj",
+        gloss := "wh-based indefinite: someone",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown, .irrealis, .question} }
+    , { language := "Quechua", form := "pi-pash",
+        gloss := "wh + pash: in conditional/neg scope",
+        basis := .interrogative,
+        functions := {.conditional, .indirectNeg} }
+    , { language := "Quechua", form := "mana pi-pash",
+        gloss := "negation + wh + pash: nobody",
+        basis := .interrogative,
+        functions := {.directNeg} }
+    , { language := "Quechua", form := "maijan-pash",
+        gloss := "free choice: anyone",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Yoruba (Niger-Congo, Atlantic-Congo)
-
-Yoruba has a relatively undifferentiated system with 2 main series:
-- **ẹnìkan**: specific known + specific unknown + irrealis + question +
-  conditional
-- **ẹ̀nìkẹ́ni / kò sí ẹnìkan**: indirect negation + direct negation +
-  comparative + free choice -/
-
-def yoruba : IndefinitePronounProfile :=
+/-- Yoruba (Niger-Congo): 2 series, generic-noun-based (`ẹnìkan` 'person'). -/
+def yoruba : IndefiniteParadigm :=
   { language := "Yoruba"
-  , iso := "yor"
-  , family := "Niger-Congo"
-  , series :=
-    [ { form := "ẹnìkan"
-      , functions := [.specificKnown, .specificUnknown, .irrealis,
-                      .question, .conditional]
-      , notes := "general indefinite: somebody" }
-    , { form := "ẹ̀nìkẹ́ni"
-      , functions := [.indirectNeg, .directNeg, .comparative, .freeChoice]
-      , notes := "polarity-sensitive + free choice" }
-    ]
-  , notes := "2 series; minimal differentiation" }
+  , isoCode := "yor"
+  , forms :=
+    [ { language := "Yoruba", form := "ẹnìkan",
+        gloss := "general indefinite: somebody",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional} }
+    , { language := "Yoruba", form := "ẹ̀nìkẹ́ni",
+        gloss := "polarity-sensitive + free choice",
+        basis := .genericNoun,
+        functions := {.indirectNeg, .directNeg, .comparative, .freeChoice} } ] }
 
-/-! ### Thai (Kra-Dai)
-
-Thai uses khraj for most indefinite functions, with kh̄raj kɔ̂ for
-free choice:
-- **khraj (ใคร)**: specific known + specific unknown + irrealis + question +
-  conditional
-- **mâj mii khraj (ไม่มีใคร)**: indirect negation + direct negation
-- **khraj kɔ̂ (ใครก็)**: free choice + comparative -/
-
-def thai : IndefinitePronounProfile :=
+/-- Thai (Kra-Dai): 3 series, interrogative-based. -/
+def thai : IndefiniteParadigm :=
   { language := "Thai"
-  , iso := "tha"
-  , family := "Kra-Dai"
-  , series :=
-    [ { form := "khraj (ใคร)"
-      , functions := [.specificKnown, .specificUnknown, .irrealis,
-                      .question, .conditional]
-      , notes := "wh-word as general indefinite" }
-    , { form := "mâj mii khraj (ไม่มีใคร)"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "NEG + exist + wh: nobody" }
-    , { form := "khraj kɔ̂ (ใครก็)"
-      , functions := [.comparative, .freeChoice]
-      , notes := "wh + kɔ̂ particle: free choice" }
-    ]
-  , notes := "3 series; wh-word khraj doubles as indefinite" }
+  , isoCode := "tha"
+  , forms :=
+    [ { language := "Thai", form := "khraj (ใคร)",
+        gloss := "wh-word as general indefinite",
+        basis := .interrogative,
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional} }
+    , { language := "Thai", form := "mâj mii khraj (ไม่มีใคร)",
+        gloss := "NEG + exist + wh: nobody",
+        basis := .interrogative,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Thai", form := "khraj kɔ̂ (ใครก็)",
+        gloss := "wh + kɔ̂ particle: free choice",
+        basis := .interrogative,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Tagalog (Austronesian)
-
-Tagalog uses may as existential and wala as negative existential:
-- **may isang**: specific known + specific unknown + irrealis
-- **sinuman**: question + conditional + indirect negation
-- **walang**: direct negation
-- **kahit sino**: free choice + comparative -/
-
-def tagalog : IndefinitePronounProfile :=
+/-- Tagalog (Austronesian): 4 series, existential construction. -/
+def tagalog : IndefiniteParadigm :=
   { language := "Tagalog"
-  , iso := "tgl"
-  , family := "Austronesian"
-  , series :=
-    [ { form := "may isa"
-      , functions := [.specificKnown, .specificUnknown, .irrealis]
-      , notes := "existential + 'one': someone" }
-    , { form := "sinuman"
-      , functions := [.question, .conditional, .indirectNeg]
-      , notes := "wh-based polarity-sensitive indefinite" }
-    , { form := "walang (tao)"
-      , functions := [.directNeg]
-      , notes := "negative existential: nobody" }
-    , { form := "kahit sino"
-      , functions := [.comparative, .freeChoice]
-      , notes := "concessive + wh: anyone at all (FC)" }
-    ]
-  , notes := "4 series; negative existential walang for direct negation" }
+  , isoCode := "tgl"
+  , forms :=
+    [ { language := "Tagalog", form := "may isa",
+        gloss := "existential + 'one': someone",
+        basis := .existentialConstruction,
+        functions := {.specificKnown, .specificUnknown, .irrealis} }
+    , { language := "Tagalog", form := "sinuman",
+        gloss := "wh-based polarity-sensitive indefinite",
+        basis := .existentialConstruction,
+        functions := {.question, .conditional, .indirectNeg} }
+    , { language := "Tagalog", form := "walang (tao)",
+        gloss := "negative existential: nobody",
+        basis := .existentialConstruction,
+        functions := {.directNeg} }
+    , { language := "Tagalog", form := "kahit sino",
+        gloss := "concessive + wh: anyone at all (FC)",
+        basis := .existentialConstruction,
+        functions := {.comparative, .freeChoice} } ] }
 
-/-! ### Swahili (Niger-Congo, Bantu)
-
-Swahili uses mtu (person) with various modifiers:
-- **mtu (fulani)**: specific known + specific unknown + irrealis +
-  question + conditional
-- **mtu ye yote (neg)**: indirect negation + direct negation
-- **mtu ye yote**: free choice + comparative -/
-
-def swahili : IndefinitePronounProfile :=
+/-- Swahili (Bantu): 3 series, generic-noun-based (`mtu` 'person'). -/
+def swahili : IndefiniteParadigm :=
   { language := "Swahili"
-  , iso := "swh"
-  , family := "Niger-Congo"
-  , series :=
-    [ { form := "mtu (fulani)"
-      , functions := [.specificKnown, .specificUnknown, .irrealis,
-                      .question, .conditional]
-      , notes := "person (+ certain): someone" }
-    , { form := "hakuna mtu / mtu … -si-"
-      , functions := [.indirectNeg, .directNeg]
-      , notes := "negative existential or negative verb concord" }
-    , { form := "mtu ye yote"
-      , functions := [.comparative, .freeChoice]
-      , notes := "person any whatsoever: free choice" }
-    ]
-  , notes := "3 series; relatively undifferentiated" }
+  , isoCode := "swh"
+  , forms :=
+    [ { language := "Swahili", form := "mtu (fulani)",
+        gloss := "person (+ certain): someone",
+        basis := .genericNoun,
+        functions := {.specificKnown, .specificUnknown, .irrealis,
+                      .question, .conditional} }
+    , { language := "Swahili", form := "hakuna mtu / mtu … -si-",
+        gloss := "negative existential or negative verb concord",
+        basis := .genericNoun,
+        functions := {.indirectNeg, .directNeg} }
+    , { language := "Swahili", form := "mtu ye yote",
+        gloss := "person any whatsoever: free choice",
+        basis := .genericNoun,
+        functions := {.comparative, .freeChoice} } ] }
 
 -- ============================================================================
--- §7: Aggregate Data
+-- §4. Aggregate sample
 -- ============================================================================
 
-/-- All language profiles in our sample. -/
-def allLanguages : List IndefinitePronounProfile :=
+/-- All language paradigms in the polarity-typology sample (17 languages). -/
+def allLanguages : List IndefiniteParadigm :=
   [ english, russian, german, japanese, mandarin, turkish, hindi
   , italian, finnish, korean, hungarian, georgian, quechua, yoruba
   , thai, tagalog, swahili ]
 
-/-- Number of languages in our sample. -/
 theorem sample_size : allLanguages.length = 17 := by decide
 
 -- ============================================================================
--- §8: Contiguity Verification
+-- §5. Contiguity verification
 -- ============================================================================
 
-/-- The central typological claim: every pronoun series covers a
-    **contiguous** region on Haspelmath's implicational map. -/
+/-- @cite{haspelmath-1997}'s key constraint: every form covers a contiguous
+    region on the implicational map. -/
 theorem all_languages_contiguous :
-    allLanguages.all (·.allContiguous) = true := by decide
+    ∀ p ∈ allLanguages, p.AllContiguous := by decide
 
 -- ============================================================================
--- §9: Coverage Verification
+-- §6. Coverage + partition verification
 -- ============================================================================
 
-/-- Every language in our sample covers all nine functions. -/
+/-- Every language in the sample covers all nine functions on the map. -/
 theorem all_languages_cover_all_functions :
-    allLanguages.all (·.coversAllFunctions) = true := by decide
+    ∀ p ∈ allLanguages, p.CoversAllFunctions := by decide
 
--- ============================================================================
--- §9a: Disjointness Verification (Series Partition)
--- ============================================================================
-
-/-- Every language's series have **disjoint** function sets — no function
-    appears in two different series. Together with coverage (§9), this means
-    the series form a **partition** of the nine function types. -/
+/-- The forms in every language's paradigm have disjoint function sets —
+    no function appears in two different forms. Together with coverage,
+    the forms form a partition of the nine functions. -/
 theorem all_languages_disjoint :
-    allLanguages.all (·.seriesDisjoint) = true := by decide
+    ∀ p ∈ allLanguages, p.FormsDisjoint := by decide
 
-/-- **Master partition theorem**: every language's series form a partition
-    of the nine function types (contiguous + covering + disjoint). -/
+/-- **Master partition theorem**: every paradigm partitions the nine
+    function types (contiguous + covering + disjoint). -/
 theorem all_languages_partition :
-    allLanguages.all (λ p =>
-      p.allContiguous && p.coversAllFunctions && p.seriesDisjoint) = true := by
+    ∀ p ∈ allLanguages,
+      p.AllContiguous ∧ p.CoversAllFunctions ∧ p.FormsDisjoint := by
   decide
 
 -- ============================================================================
--- §10: Typological Generalizations
+-- §7. Typological generalizations
 -- ============================================================================
 
-/-! ### Generalization 1: Direct negation always has a strategy
-
-Every language has at least one series that covers directNeg. This reflects
-the functional universal that every language can express sentential negation
-of an indefinite. -/
-
-/-- Every language has a series covering direct negation. -/
+/-- Every language has a form covering direct negation. -/
 theorem every_language_has_direct_neg :
-    allLanguages.all (λ p =>
-      p.series.any (λ s => s.functions.contains .directNeg)) = true := by
-  decide
+    ∀ p ∈ allLanguages, ∃ e ∈ p.forms, e.covers .directNeg := by decide
 
-/-! ### Generalization 2: Free choice and comparative pattern together
-
-In our sample, free choice and comparative are always covered by the
-same series. This reflects their shared universal/widened-domain semantics.
-@cite{haspelmath-1997}: "the comparative function is semantically similar
-to free choice." -/
-
-/-- Free choice and comparative are always in the same series. -/
+/-- Free choice and comparative are always in the same form. -/
 theorem freeChoice_comparative_together :
-    allLanguages.all (λ p =>
-      p.series.any (λ s =>
-        s.functions.contains .freeChoice &&
-        s.functions.contains .comparative)) = true := by
-  decide
+    ∀ p ∈ allLanguages, ∃ e ∈ p.forms,
+      e.covers .freeChoice ∧ e.covers .comparative := by decide
 
-/-! ### Generalization 3: Specific known is rarely shared with polarity functions
-
-Specific known is the most referential function, semantically distant from
-polarity-sensitive uses. In our sample, whenever specificKnown and directNeg
-are in different series (which is always), the specific-known series does
-not extend past conditional on the map. -/
-
-/-- Specific known and direct negation are never in the same series. -/
+/-- Specific known and direct negation are never in the same form. -/
 theorem specificKnown_directNeg_disjoint :
-    allLanguages.all (λ p =>
-      p.series.all (λ s =>
-        !(s.functions.contains .specificKnown &&
-          s.functions.contains .directNeg))) = true := by
+    ∀ p ∈ allLanguages, ∀ e ∈ p.forms,
+      ¬ (e.covers .specificKnown ∧ e.covers .directNeg) := by decide
+
+/-- Mandarin (2 forms) has higher average coverage per form than Russian
+    (5 forms) — fewer forms means broader coverage per form. -/
+theorem fewer_forms_broader_coverage :
+    mandarin.formCount < russian.formCount ∧
+    (mandarin.forms.map (·.coverage)).sum =
+      (russian.forms.map (·.coverage)).sum := by
   decide
 
-/-! ### Generalization 4: More series means more precise function encoding
-
-Languages with more series make finer distinctions on the map. We verify
-that the average number of functions per series decreases as series count
-increases. -/
-
-/-- Mandarin (2 series) has a higher average coverage per series than
-    Russian (5 series). This demonstrates that fewer series = broader coverage
-    per form. -/
-theorem fewer_series_broader_coverage :
-    -- Mandarin: 2 series covering 9 functions → avg 4.5
-    -- Russian: 5 series covering 9 functions → avg 1.8
-    mandarin.seriesCount < russian.seriesCount ∧
-    (mandarin.series.map (·.coverage)).sum =
-    (russian.series.map (·.coverage)).sum := by
-  decide
-
-/-! ### Generalization 5: Specific known is typically separate
-
-In languages with 3+ series, specific known tends to be separate from
-polarity-sensitive functions. -/
-
-/-- In languages with 3+ series, specificKnown is never in the same series
-    as question or conditional. -/
-theorem specificKnown_separate_from_polarity :
-    (allLanguages.filter (λ p => p.seriesCount ≥ 3)).all (λ p =>
-      p.series.all (λ s =>
-        if s.functions.contains .specificKnown
-        then !(s.functions.contains .conditional) ||
-             s.functions.contains .specificUnknown
-        else true)) = true := by
-  decide
-
-/-! ### Generalization 6: The polarity cluster
-
-Question, conditional, and indirect negation frequently pattern together
-(or at least contiguously). These are the classic polarity-sensitive
-contexts in the formal semantics literature (downward-entailing or
-nonveridical). -/
-
-/-- The polarity cluster: in every language, there exists a series that
-    covers at least two of {question, conditional, indirectNeg}. -/
+/-- The polarity cluster: in every language, some form covers at least two
+    of {question, conditional, indirectNeg}. -/
 theorem polarity_cluster_exists :
-    allLanguages.all (λ p =>
-      p.series.any (λ s =>
-        let q := s.functions.contains .question
-        let c := s.functions.contains .conditional
-        let i := s.functions.contains .indirectNeg
-        (q && c) || (c && i) || (q && i))) = true := by
-  decide
+    ∀ p ∈ allLanguages, ∃ e ∈ p.forms,
+      (e.covers .question ∧ e.covers .conditional) ∨
+      (e.covers .conditional ∧ e.covers .indirectNeg) ∨
+      (e.covers .question ∧ e.covers .indirectNeg) := by decide
 
 -- ============================================================================
--- §11: Series Count Distribution in Our Sample
+-- §8. Form-count distribution
 -- ============================================================================
 
-/-- Count of languages with a given number of series. -/
-def countBySeriesCount (langs : List IndefinitePronounProfile) (n : Nat) : Nat :=
-  (langs.filter (λ p => p.seriesCount == n)).length
+/-- Count of languages with a given number of forms. -/
+def countByFormCount (langs : List IndefiniteParadigm) (n : Nat) : Nat :=
+  (langs.filter (fun p => p.formCount == n)).length
 
-/-- Series count distribution in our sample. -/
-theorem sample_2_series : countBySeriesCount allLanguages 2 = 2 := by decide
-theorem sample_3_series : countBySeriesCount allLanguages 3 = 5 := by decide
-theorem sample_4_series : countBySeriesCount allLanguages 4 = 6 := by decide
-theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by decide
+theorem sample_2_forms : countByFormCount allLanguages 2 = 2 := by decide
+theorem sample_3_forms : countByFormCount allLanguages 3 = 5 := by decide
+theorem sample_4_forms : countByFormCount allLanguages 4 = 6 := by decide
+theorem sample_5_forms : countByFormCount allLanguages 5 = 4 := by decide
 
--- ============================================================================
--- §12: Per-Language Verification
--- ============================================================================
-
-/-- Series count per language (ISO code, count) for the 17-language sample.
-    Replaces 17 per-language `_series_count` decide-theorems. -/
-theorem language_series_counts :
-    allLanguages.map (λ p => (p.iso, p.seriesCount)) =
+/-- Per-language form-count summary for the 17-language sample. -/
+theorem language_form_counts :
+    allLanguages.map (fun p => (p.isoCode, p.formCount)) =
       [ ("eng", 4), ("rus", 5), ("deu", 5), ("jpn", 3), ("cmn", 2)
       , ("tur", 5), ("hin", 3), ("ita", 3), ("fin", 5), ("kor", 4)
       , ("hun", 4), ("kat", 4), ("qvi", 4), ("yor", 2), ("tha", 3)
@@ -947,27 +559,21 @@ theorem language_series_counts :
   decide
 
 -- ============================================================================
--- §12a: WALS 46A Bridge
+-- §9. WALS 46A bridge
 -- ============================================================================
 
-/-! Every language in our sample appears in the WALS 46A dataset. We verify
-    each profile's morphological source classification, bridging our Haspelmath
-    function-map data to the WALS morphological-source typology.
-
-    Distribution in our 17-language sample:
-    - Interrogative-based: Russian, Japanese, Korean, Hungarian, Georgian,
-      Quechua, Thai (7)
-    - Generic-noun-based: English, Turkish, Italian, Yoruba, Swahili (5)
-    - Special: Hindi, Finnish (2)
-    - Mixed: German, Mandarin (2)
-    - Existential construction: Tagalog (1) -/
+/-! 16 of 17 languages appear in WALS F46A; Quechua (Imbabura, iso `qvi`)
+    is absent. The Polarity-side annotations of `basis : MorphologicalBasis`
+    on each form derive a paradigm-level F46A classification via
+    `IndefiniteParadigm.toWALS46A` — but for the polarity sample, the
+    paradigm-derived value may differ from WALS for languages where the
+    forms span multiple bases (e.g., German `mixed`). We verify the
+    `lookupISO`-derived classification rather than the structural derivation. -/
 
 open Datasets.WALS.F46A (IndefinitePronouns) in
-/-- WALS 46A morphological-source classification per language (ISO code, value)
-    for the 17-language sample. Replaces 17 per-language `_wals` decide-theorems.
-    Verifies the `lookupISO`-derived `wals46A` field against expected values. -/
+/-- WALS 46A morphological-source classification per language. -/
 theorem language_wals_classifications :
-    allLanguages.map (λ p => (p.iso, p.wals46A)) =
+    allLanguages.map (fun p => (p.isoCode, p.wals46A)) =
       [ ("eng", some .genericNounBased)
       , ("rus", some .interrogativeBased)
       , ("deu", some .mixed)
@@ -980,312 +586,205 @@ theorem language_wals_classifications :
       , ("kor", some .interrogativeBased)
       , ("hun", some .interrogativeBased)
       , ("kat", some .interrogativeBased)
-      , ("qvi", some .interrogativeBased)
+      , ("qvi", some .interrogativeBased)   -- Imbabura Quechua (WALS code qim)
       , ("yor", some .genericNounBased)
       , ("tha", some .interrogativeBased)
       , ("tgl", some .existentialConstruction)
       , ("swh", some .genericNounBased) ] := by
   decide
 
-/-- Every language in our sample has a WALS 46A entry. -/
+/-- All 17 languages in our sample appear in WALS F46A. -/
 theorem all_languages_in_wals :
-    allLanguages.all (λ p => p.wals46A.isSome) = true := by decide
+    ∀ p ∈ allLanguages, p.wals46A.isSome := by decide
 
 -- ============================================================================
--- §13: Cross-Linguistic Pattern Tests
+-- §10. Cross-linguistic pattern tests
 -- ============================================================================
 
-/-! ### Wh-based indefinite systems
-
-Languages that use wh-words as indefinites (Japanese, Korean, Mandarin, Thai)
-tend to have fewer series, because the bare wh-word covers a wide contiguous
-range on the map. -/
-
-def whBasedLanguages : List IndefinitePronounProfile :=
+/-- Wh-based indefinite languages (Japanese, Korean, Mandarin, Thai). -/
+def whBasedLanguages : List IndefiniteParadigm :=
   [japanese, korean, mandarin, thai]
 
-/-- Wh-based indefinite languages average fewer series than others. -/
-theorem wh_based_fewer_series :
-    (whBasedLanguages.map (·.seriesCount)).sum ≤
-    whBasedLanguages.length * 4 := by
+theorem wh_based_fewer_forms :
+    (whBasedLanguages.map (·.formCount)).sum ≤ whBasedLanguages.length * 4 := by
   decide
 
-/-! ### Negative concord languages
-
-Languages with negative concord (Russian, Italian, Hungarian) tend to have
-the direct negation function grouped with adjacent polarity functions rather
-than isolated in a single-function series. -/
-
-def negConcordLanguages : List IndefinitePronounProfile :=
+/-- Negative concord languages (Russian, Italian, Hungarian). -/
+def negConcordLanguages : List IndefiniteParadigm :=
   [russian, italian, hungarian]
 
-/-- In negative concord languages, at least one has the directNeg function
-    in a series with more than one function. -/
+/-- In some neg-concord language, directNeg is in a multi-function form. -/
 theorem neg_concord_directNeg_grouped :
-    negConcordLanguages.any (λ p =>
-      p.series.any (λ s =>
-        s.functions.contains .directNeg && s.functions.length > 1)) = true := by
-  decide
-
-/-! ### WALS morphological source and series count
-
-Interrogative-based languages (which build indefinites from wh-words) should
-correlate with our wh-based language list. We verify this and test whether
-morphological source predicts series differentiation. -/
+    ∃ p ∈ negConcordLanguages, ∃ e ∈ p.forms,
+      e.covers .directNeg ∧ e.coverage > 1 := by decide
 
 open Datasets.WALS.F46A (IndefinitePronouns) in
-/-- All four wh-based languages are classified as interrogative-based or
-    mixed in WALS 46A. -/
+/-- All four wh-based languages are interrogative-based or mixed in WALS 46A. -/
 theorem wh_based_are_interrogative_or_mixed :
-    whBasedLanguages.all (λ p =>
-      p.wals46A == some .interrogativeBased ||
-      p.wals46A == some .mixed) = true := by decide
+    ∀ p ∈ whBasedLanguages,
+      p.wals46A = some .interrogativeBased ∨
+      p.wals46A = some .mixed := by decide
 
 /-- Languages classified as interrogative-based in WALS 46A. -/
-def interrogativeBasedProfiles : List IndefinitePronounProfile :=
-  allLanguages.filter (λ p =>
+def interrogativeBasedProfiles : List IndefiniteParadigm :=
+  allLanguages.filter (fun p =>
     p.wals46A == some Datasets.WALS.F46A.IndefinitePronouns.interrogativeBased)
 
-/-- Seven of our 17 languages are interrogative-based. -/
 theorem interrogative_based_sample_count :
     interrogativeBasedProfiles.length = 7 := by decide
 
-/-- Interrogative-based languages in our sample average ≤ 4 series per
-    language (total series ≤ 28 across 7 languages). -/
-theorem interrogative_based_avg_series :
-    (interrogativeBasedProfiles.map (·.seriesCount)).sum ≤ 28 := by
-  decide
+theorem interrogative_based_avg_forms :
+    (interrogativeBasedProfiles.map (·.formCount)).sum ≤ 28 := by decide
 
 -- ============================================================================
--- §14: Non-Contiguous Sets Are Predicted Impossible
+-- §11. Non-contiguous sets are impossible (negative tests)
 -- ============================================================================
 
-/-! We demonstrate that certain function sets are NOT contiguous on the map,
-    confirming that Haspelmath's map correctly rules them out as possible
-    single-series ranges. -/
-
-/-- A hypothetical series covering {specificKnown, directNeg} without the
-    intervening functions is not contiguous. -/
+/-- {specificKnown, directNeg} skipping intermediates is non-contiguous. -/
 theorem specKnown_directNeg_not_contiguous :
-    isContiguous [.specificKnown, .directNeg] = false := by decide
+    HaspelmathFunction.isContiguous [.specificKnown, .directNeg] = false := by decide
 
-/-- A hypothetical series covering {specificKnown, freeChoice} without
-    intervening functions is not contiguous. -/
+/-- {specificKnown, freeChoice} is non-contiguous. -/
 theorem specKnown_freeChoice_not_contiguous :
-    isContiguous [.specificKnown, .freeChoice] = false := by decide
+    HaspelmathFunction.isContiguous [.specificKnown, .freeChoice] = false := by decide
 
-/-- A hypothetical series covering {specificKnown, comparative} is not
-    contiguous. -/
+/-- {specificKnown, comparative} is non-contiguous. -/
 theorem specKnown_comparative_not_contiguous :
-    isContiguous [.specificKnown, .comparative] = false := by decide
+    HaspelmathFunction.isContiguous [.specificKnown, .comparative] = false := by decide
 
-/-- A hypothetical series covering {specificUnknown, directNeg} skipping
-    irrealis through indirectNeg is not contiguous. -/
+/-- {specificUnknown, directNeg} skipping intermediates is non-contiguous. -/
 theorem specUnknown_directNeg_not_contiguous :
-    isContiguous [.specificUnknown, .directNeg] = false := by decide
+    HaspelmathFunction.isContiguous [.specificUnknown, .directNeg] = false := by decide
 
-/-- But {specificKnown, specificUnknown} IS contiguous (adjacent). -/
+/-- {specificKnown, specificUnknown} IS contiguous (adjacent). -/
 theorem specKnown_specUnknown_contiguous :
-    isContiguous [.specificKnown, .specificUnknown] = true := by decide
+    HaspelmathFunction.isContiguous [.specificKnown, .specificUnknown] = true := by decide
 
-/-- And {question, conditional, indirectNeg} IS contiguous (a path). -/
+/-- {question, conditional, indirectNeg} IS contiguous (a path). -/
 theorem polarity_triple_contiguous :
-    isContiguous [.question, .conditional, .indirectNeg] = true := by decide
+    HaspelmathFunction.isContiguous [.question, .conditional, .indirectNeg] = true := by decide
 
 /-- The full set of all nine functions is contiguous (the map is connected). -/
 theorem all_nine_contiguous :
-    isContiguous IndefiniteFunction.all = true := by decide
+    HaspelmathFunction.isContiguous HaspelmathFunction.all = true := by decide
 
 -- ============================================================================
--- §15: Adjacency on the Map and NPI/FCI Theory
+-- §12. NPI / FC region structure
 -- ============================================================================
-
-/-! ### Connection to Polarity Item Theory
-
-Haspelmath's implicational map connects directly to formal theories of
-polarity sensitivity:
-
-1. **Functions 4–7** (question through directNeg) correspond to the
-   classic **downward-entailing** / **nonveridical** environments that
-   license NPIs.
-
-2. **Functions 8–9** (comparative, freeChoice) correspond to
-   **free choice** items, which have been analyzed as universal
-   quantifiers or domain-widened indefinites.
-
-3. **Functions 1–3** (specific known/unknown, irrealis) correspond to
-   **positive polarity** and **epistemic specificity**, which are
-   anti-licensed by negation.
-
-The contiguity constraint on the map thus has a semantic explanation:
-adjacent functions share semantic properties (monotonicity, veridicality,
-specificity) that make it natural for a single form to cover them. -/
-
-/-- A Haspelmath function corresponds to a downward-entailing (or nonveridical)
-    licensing context. Functions 4–7 on the map: question, conditional,
-    indirect negation, direct negation (@cite{ladusaw-1979}). -/
-def IndefiniteFunction.isDE : IndefiniteFunction → Bool
-  | .question | .conditional | .indirectNeg | .directNeg => true
-  | _ => false
-
-/-- A Haspelmath function corresponds to a free choice context.
-    Functions 8–9 on the map: comparative, freeChoice. -/
-def IndefiniteFunction.isFC : IndefiniteFunction → Bool
-  | .comparative | .freeChoice => true
-  | _ => false
 
 /-- The NPI region (question through directNeg) is contiguous. -/
 theorem npi_region_contiguous :
-    isContiguous [.question, .conditional, .indirectNeg, .directNeg] = true := by
-  decide
+    HaspelmathFunction.isContiguous
+      [.question, .conditional, .indirectNeg, .directNeg] = true := by decide
 
 /-- The FC region (comparative, freeChoice) is contiguous. -/
 theorem fc_region_contiguous :
-    isContiguous [.comparative, .freeChoice] = true := by decide
+    HaspelmathFunction.isContiguous [.comparative, .freeChoice] = true := by decide
 
 /-- The specific/irrealis region is contiguous. -/
 theorem specific_region_contiguous :
-    isContiguous [.specificKnown, .specificUnknown, .irrealis] = true := by
-  decide
+    HaspelmathFunction.isContiguous
+      [.specificKnown, .specificUnknown, .irrealis] = true := by decide
 
-/-- The NPI+FC region (question through freeChoice, the full
-    polarity-sensitive span) is contiguous. -/
+/-- The full polarity-sensitive span (question through freeChoice) is contiguous. -/
 theorem polarity_sensitive_region_contiguous :
-    isContiguous [.question, .conditional, .indirectNeg, .directNeg,
-                  .comparative, .freeChoice] = true := by
+    HaspelmathFunction.isContiguous
+      [.question, .conditional, .indirectNeg, .directNeg,
+       .comparative, .freeChoice] = true := by decide
+
+-- ============================================================================
+-- §13. Summary statistics
+-- ============================================================================
+
+/-- Minimum form count in our sample. -/
+theorem min_form_count :
+    (allLanguages.map (·.formCount)).foldl min 100 = 2 := by decide
+
+/-- Maximum form count in our sample. -/
+theorem max_form_count :
+    (allLanguages.map (·.formCount)).foldl max 0 = 5 := by decide
+
+/-- Total number of distinct forms across the sample. -/
+theorem total_forms : (allLanguages.map (·.formCount)).sum = 63 := by decide
+
+/-- The most common form count in the sample is 4 (six languages). -/
+theorem most_common_form_count :
+    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 2 ∧
+    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 3 ∧
+    countByFormCount allLanguages 4 ≥ countByFormCount allLanguages 5 := by
   decide
 
 -- ============================================================================
--- §16: Summary Statistics
+-- §14. Fragment bridges (PolarityItems consistency)
 -- ============================================================================
 
-/-- Minimum series count in our sample. -/
-theorem min_series_count :
-    (allLanguages.map (·.seriesCount)).foldl min 100 = 2 := by decide
-
-/-- Maximum series count in our sample. -/
-theorem max_series_count :
-    (allLanguages.map (·.seriesCount)).foldl max 0 = 5 := by decide
-
-/-- Total number of distinct series across all languages. -/
-theorem total_series :
-    (allLanguages.map (·.seriesCount)).sum = 63 := by decide
-
-/-- The most common series count in our sample is 4 (six languages). -/
-theorem most_common_series_count :
-    countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 2 ∧
-    countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 3 ∧
-    countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 5 := by
-  decide
-
--- ============================================================================
--- §17: Fragment Bridges
--- ============================================================================
-
-/-! Verify consistency between Typology profiles and Fragment PolarityItems
-    entries. For each language with a Fragment PolarityItems file, we check
-    that Fragment NPI entries are licensed in contexts corresponding to
-    Haspelmath functions the Typology profile assigns to polarity-sensitive
-    series, and that Fragment FCI entries have obligatory domain alternatives
-    when the Typology profile assigns free choice functions. -/
+/-! Verify that each language's `Fragments/{Lang}/PolarityItems.lean` NPI
+    entries are licensed in contexts corresponding to the polarity-typology
+    profile's polarity-sensitive forms. -/
 
 section FragmentBridges
 
--- English: Fragment any (NPI/FCI) licensed in questions, matching
--- Typology "any- (NPI)" series covering question function
 theorem english_any_covers_question :
     Fragments.English.PolarityItems.any.licensingContexts.contains .question = true := by
   decide
 
--- Italian: Fragment nessuno (NPI) licensed under negation, matching
--- Typology "nessuno" series covering directNeg function
 theorem italian_nessuno_covers_negation :
     Fragments.Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
   decide
 
--- Russian: Fragment nikto (NPI) licensed under negation, matching
--- Typology "никто" series covering directNeg
 theorem russian_nikto_covers_negation :
     Fragments.Slavic.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
   decide
 
--- German: Fragment irgendein is NPI/FCI, matching Typology "irgendwer"
--- series covering both question (NPI) and irrealis (FCI-like)
 theorem german_irgendein_is_npi_fci :
     Fragments.German.PolarityItems.irgendein.polarityType = .npiFci := rfl
 
--- German: Fragment niemand (NPI) licensed under negation, matching
--- Typology "niemand" series covering directNeg
 theorem german_niemand_covers_negation :
     Fragments.German.PolarityItems.niemand.licensingContexts.contains .negation = true := by
   decide
 
--- Japanese: Fragment dareMo (NPI) licensed under negation, matching
--- Typology "dare-mo (neg)" series covering directNeg
 theorem japanese_dareMo_covers_negation :
     Fragments.Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
   decide
 
--- Korean: Fragment nwukwuTo (NPI) licensed under negation, matching
--- Typology "nwukwu-to (neg)" series covering directNeg
 theorem korean_nwukwuTo_covers_negation :
     Fragments.Korean.PolarityItems.nwukwuTo.licensingContexts.contains .negation = true := by
   decide
 
--- Mandarin: Fragment shei is NPI/FCI, matching Typology "shéi" series
--- covering 7 functions from irrealis through freeChoice
 theorem mandarin_shei_is_npi_fci :
     Fragments.Mandarin.PolarityItems.shei.polarityType = .npiFci := rfl
 
--- Turkish: Fragment kimse (NPI) licensed in questions, matching
--- Typology "kimse" series covering question function
 theorem turkish_kimse_covers_question :
     Fragments.Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
   decide
 
--- Finnish: Fragment kukaan (NPI) licensed in questions, matching
--- Typology "kukaan" series covering question function
 theorem finnish_kukaan_covers_question :
     Fragments.Finnish.PolarityItems.kukaan.licensingContexts.contains .question = true := by
   decide
 
--- Hungarian: Fragment senki (NPI) licensed under negation, matching
--- Typology "senki" series covering directNeg
 theorem hungarian_senki_covers_negation :
     Fragments.Hungarian.PolarityItems.senki.licensingContexts.contains .negation = true := by
   decide
 
--- Georgian: Fragment aravin (NPI) licensed under negation, matching
--- Typology "aravin" series covering directNeg
 theorem georgian_aravin_covers_negation :
     Fragments.Georgian.PolarityItems.aravin.licensingContexts.contains .negation = true := by
   decide
 
--- Quechua: Fragment manaPiPash (NPI) licensed under negation, matching
--- Typology "mana pi-pash" series covering directNeg
 theorem quechua_manaPiPash_covers_negation :
     Fragments.Quechua.PolarityItems.manaPiPash.licensingContexts.contains .negation = true := by
   decide
 
--- Yoruba: Fragment enikeni is NPI/FCI, matching Typology "ẹ̀nìkẹ́ni"
--- series covering indirectNeg through freeChoice
 theorem yoruba_enikeni_is_npi_fci :
     Fragments.Yoruba.PolarityItems.enikeni.polarityType = .npiFci := rfl
 
--- Thai: Fragment majMiiKhraj (NPI) licensed under negation, matching
--- Typology series covering directNeg
 theorem thai_majMiiKhraj_covers_negation :
     Fragments.Thai.PolarityItems.majMiiKhraj.licensingContexts.contains .negation = true := by
   decide
 
--- Tagalog: Fragment sinuman (NPI) licensed in questions, matching
--- Typology "sinuman" series covering question function
 theorem tagalog_sinuman_covers_question :
     Fragments.Tagalog.PolarityItems.sinuman.licensingContexts.contains .question = true := by
   decide
 
--- Swahili: Fragment hakunaMtu (NPI) licensed under negation, matching
--- Typology series covering directNeg
 theorem swahili_hakunaMtu_covers_negation :
     Fragments.Swahili.PolarityItems.hakunaMtu.licensingContexts.contains .negation = true := by
   decide

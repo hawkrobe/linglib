@@ -6,6 +6,16 @@ import Mathlib.Data.Rat.Defs
 @cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{gotzner-romoli-2018}
 @cite{chierchia-2004} @cite{chierchia-fox-spector-2012} @cite{bergen-levy-goodman-2016}
 @cite{potts-levy-2015} @cite{sauerland-2004} @cite{geurts-pouscoulous-2009}
+@cite{chemla-spector-2011}
+
+The graded-rating sliding-scale paradigm Ronai 2024 adopts (via
+@cite{gotzner-romoli-2018}) descends from @cite{chemla-spector-2011}'s
+methodological innovation of measuring embedded-SI rates on a
+continuous cursor scale rather than via binary inference judgments.
+CS11 established that graded TVJ detects local readings that GP09's
+binary task missed; Ronai extends the paradigm to test whether the
+embedded-SI rate variation across @cite{van-tiel-geurts-2016}'s 42
+scales mirrors the global SI variation that VT-G first documented.
 
 Theory-neutral empirical data from @cite{ronai-2024}.
 

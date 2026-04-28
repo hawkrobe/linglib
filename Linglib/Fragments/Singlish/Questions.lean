@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Typology.Question
 import Linglib.Phenomena.Islands.Studies.ShenHuang2026
 import Linglib.Core.Lexical.ExpressiveModifier
 
@@ -40,7 +40,7 @@ crosses the island boundary).
 
 namespace Fragments.Singlish.Questions
 
-open Phenomena.Questions.Typology (WhInterpMechanism WhMovementStrategy)
+open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open ShenHuang2026 (WhDependencyType)
 open Core.Lexical.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
@@ -136,8 +136,8 @@ end Fragments.Singlish.Questions
 /-- Map a `WhInterpMechanism` to @cite{shen-huang-2026}'s coarser
     `WhDependencyType`. Overt, covert, and partial movement all map to
     `.movement`; unselective binding maps to `.binding`. -/
-def Phenomena.Questions.Typology.WhInterpMechanism.toDependencyType :
-    Phenomena.Questions.Typology.WhInterpMechanism →
+def Typology.Question.WhInterpMechanism.toDependencyType :
+    Typology.Question.WhInterpMechanism →
     ShenHuang2026.WhDependencyType
   | .overtMovement      => .movement
   | .covertMovement     => .movement

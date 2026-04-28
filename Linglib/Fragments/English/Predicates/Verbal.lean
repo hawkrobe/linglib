@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -3511,7 +3511,7 @@ theorem forget_entails_not_complement_derived :
 
     All verb inflection is semantically vacuous at the word level:
     tense/aspect semantics is compositional, handled by
-    `Semantics.Intensional`. The `isVacuous := true` flags make
+    `Semantics.Intensional`. The `delegatedSemantics := true` flags make
     this explicit. -/
 def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
   { lemma_ := v.form
@@ -3524,24 +3524,24 @@ def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
       , featureRule := λ f => { f with number := some .Sing
                                      , person := some .third
                                      , vform := some .finite }
-      , semEffect := id, isVacuous := true }
+      , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "past"
       , formRule := λ _ => v.formPast
       , featureRule := λ f => { f with vform := some .finite }
-      , semEffect := id, isVacuous := true }
+      , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "pastpart"
       , formRule := λ _ => v.formPastPart
       , featureRule := λ f => { f with vform := some .pastParticiple }
-      , semEffect := id, isVacuous := true }
+      , semEffect := id, delegatedSemantics := true }
     , { category := .aspect, value := "prespart"
       , formRule := λ _ => v.formPresPart
       , featureRule := λ f => { f with vform := some .presParticiple }
-      , semEffect := id, isVacuous := true }
+      , semEffect := id, delegatedSemantics := true }
     ] }
 
 /-- All verb inflectional rules are semantically vacuous. -/
 theorem VerbEntry.toStem_allVacuous {σ : Type} (v : VerbEntry) :
-    (v.toStem (σ := σ)).paradigm.all (·.isVacuous) = true := rfl
+    (v.toStem (σ := σ)).paradigm.all (·.delegatedSemantics) = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § V2 Causative Grounding Theorems (Phase D-D)

@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Context.Basic
-import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Core.Morphology.Exponence
 
 /-!
 # Tense and Participant Perspective

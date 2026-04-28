@@ -56,6 +56,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 namespace Chierchia2006
 
 open Phenomena.Polarity.Typology
+open Typology.Indefinite
 open AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 
 -- ============================================================================
@@ -174,11 +175,11 @@ The derivation:
 /-- The Haspelmath functions predicted by a PSI class.
 
     Derived from PSI parameters via the monotonicity classification of
-    Haspelmath functions (`IndefiniteFunction.isDE`, `IndefiniteFunction.isFC`).
-    Each branch filters `IndefiniteFunction.all` by the semantic property
+    Haspelmath functions (`HaspelmathFunction.isDE`, `HaspelmathFunction.isFC`).
+    Each branch filters `HaspelmathFunction.all` by the semantic property
     that the PSI class's enrichment mechanism targets. -/
-def PSIProfile.predictedFunctions (p : PSIProfile) : List IndefiniteFunction :=
-  IndefiniteFunction.all.filter (λ f =>
+def PSIProfile.predictedFunctions (p : PSIProfile) : List HaspelmathFunction :=
+  HaspelmathFunction.all.filter (λ f =>
     if !p.obligatoryDomainAlts then
       -- Plain indefinites: no polarity sensitivity, no FC
       !f.isDE && !f.isFC
@@ -208,29 +209,29 @@ contiguous subsets of their class's region.
 
 /-- Pure NPI region {question..directNeg} is contiguous. -/
 theorem pureNPI_contiguous :
-    isContiguous pureNPI.predictedFunctions = true := by decide
+    HaspelmathFunction.isContiguous pureNPI.predictedFunctions = true := by decide
 
 /-- NPI/FCI region {irrealis..freeChoice} is contiguous. -/
 theorem npiFCI_contiguous :
-    isContiguous npiFCI.predictedFunctions = true := by decide
+    HaspelmathFunction.isContiguous npiFCI.predictedFunctions = true := by decide
 
 /-- Pure FCI region {comparative, freeChoice} is contiguous. -/
 theorem pureFCI_contiguous :
-    isContiguous pureFCI.predictedFunctions = true := by decide
+    HaspelmathFunction.isContiguous pureFCI.predictedFunctions = true := by decide
 
 /-- EFCI NPI/FCI has same eligible region as NPI/FCI (scalar alts don't
     change distributional range, only add uniqueness readings). -/
 theorem efciNpiFci_contiguous :
-    isContiguous efciNpiFci.predictedFunctions = true := by decide
+    HaspelmathFunction.isContiguous efciNpiFci.predictedFunctions = true := by decide
 
 /-- EFCI pure FCI has same eligible region as pure FCI. -/
 theorem efciPureFci_contiguous :
-    isContiguous efciPureFci.predictedFunctions = true := by decide
+    HaspelmathFunction.isContiguous efciPureFci.predictedFunctions = true := by decide
 
 /-- All five PSI classes have contiguous predicted function ranges. -/
 theorem all_psi_classes_contiguous :
     [pureNPI, npiFCI, pureFCI, efciNpiFci, efciPureFci].all
-      (λ p => isContiguous p.predictedFunctions) = true := by decide
+      (λ p => HaspelmathFunction.isContiguous p.predictedFunctions) = true := by decide
 
 /-- D-MAX + presuppositional is unattested: the combination of requiring
     DE contexts (D-MAX) and proper strengthening (σ̃) is contradictory,
@@ -256,14 +257,16 @@ hardcoded — so changes to the typological data will break exactly the
 theorems they should.
 -/
 
-private def functionsSubset (actual predicted : List IndefiniteFunction) : Bool :=
+private def functionsSubset (actual predicted : List HaspelmathFunction) : Bool :=
   actual.all (λ f => predicted.contains f)
 
-/-- Extract Haspelmath functions for a named series from a language profile. -/
-private def seriesFunctions (profile : IndefinitePronounProfile) (form : String)
-    : List IndefiniteFunction :=
-  match profile.series.find? (λ s => s.form == form) with
-  | some s => s.functions
+/-- Extract Haspelmath functions for a named form from a language paradigm.
+    Uses `e.functionList` (the computable list extraction) rather than
+    `Finset.toList` (noncomputable). -/
+private def seriesFunctions (profile : IndefiniteParadigm) (form : String)
+    : List HaspelmathFunction :=
+  match profile.forms.find? (·.form == form) with
+  | some e => e.functionList
   | none => []
 
 -- Italian: nessuno = pure NPI
@@ -335,31 +338,31 @@ parameter blocking DE eligibility.
 /-- Every DE Haspelmath function is in the NPI/FCI eligible region.
     D-MIN + weak σ: exhaustification is vacuous in DE (NPI reading). -/
 theorem npiFCI_eligible_in_all_de :
-    (IndefiniteFunction.all.filter (·.isDE)).all
+    (HaspelmathFunction.all.filter (·.isDE)).all
       (npiFCI.predictedFunctions.contains ·) = true := by decide
 
 /-- No DE Haspelmath function is in the pure FCI eligible region.
     D-MIN + σ̃: proper strengthening fails in DE (`sigma_bold_fails_in_de`). -/
 theorem pureFCI_not_eligible_in_any_de :
-    (IndefiniteFunction.all.filter (·.isDE)).all
+    (HaspelmathFunction.all.filter (·.isDE)).all
       (λ f => !pureFCI.predictedFunctions.contains f) = true := by decide
 
 /-- Every DE function is in the pure NPI eligible region.
     D-MAX + weak σ: even-like enrichment is informative in DE. -/
 theorem pureNPI_eligible_in_all_de :
-    (IndefiniteFunction.all.filter (·.isDE)).all
+    (HaspelmathFunction.all.filter (·.isDE)).all
       (pureNPI.predictedFunctions.contains ·) = true := by decide
 
 /-- No FC function is in the pure NPI eligible region.
     D-MAX items lack antiexhaustive enrichment. -/
 theorem pureNPI_not_eligible_in_fc :
-    (IndefiniteFunction.all.filter (·.isFC)).all
+    (HaspelmathFunction.all.filter (·.isFC)).all
       (λ f => !pureNPI.predictedFunctions.contains f) = true := by decide
 
 /-- The *qualsiasi*/*any* contrast: among D-MIN items, every DE function
     is included by weak σ (*any*) and excluded by σ̃ (*qualsiasi*). -/
 theorem dMin_sigma_determines_de :
-    (IndefiniteFunction.all.filter (·.isDE)).all
+    (HaspelmathFunction.all.filter (·.isDE)).all
       (λ f => npiFCI.predictedFunctions.contains f &&
               !pureFCI.predictedFunctions.contains f) = true := by decide
 

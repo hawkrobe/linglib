@@ -49,7 +49,7 @@ open Morphology.Nanosyntax
 open Morphology.DM.VI
 open Fragments.Xhosa
 open Fragments.Bantu
-open Core.Typology.NounCategorizationSystem (isNounClassType isClassifierType)
+open Typology.NounCategorizationSystem (isNounClassType isClassifierType)
 
 -- ============================================================================
 -- §1: Feature inventory

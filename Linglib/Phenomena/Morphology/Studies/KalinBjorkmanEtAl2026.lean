@@ -1,8 +1,206 @@
 import Linglib.Theories.Morphology.TheorySpace
-import Linglib.Theories.Morphology.Core.WordhoodBridge
+import Linglib.Core.Morphology.Wordhood
+import Linglib.Core.Morphology.MorphRule
+import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
+import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Core.Morphology.FormMeaningMapping
 import Linglib.Theories.Morphology.Nanosyntax.Core
-import Linglib.Theories.Morphology.PFM.Core
+
+-- ============================================================================
+-- § 0b: PFM Substrate (was Theories/Morphology/PFM/Core.lean,
+--      relocated 0.230.455 — sole consumer is this study file; PFM dir dissolves)
+-- ============================================================================
+
+/-! Paradigm Function Morphology (@cite{stump-2001}) — a lexicalist,
+parallel, process-based, realizational theory used by K-B 2026 §2.2 as
+one of the four positions in the theory space. -/
+
+namespace Morphology.PFM
+
+structure MorphPropertySet (Feature : Type) where
+  features : List Feature
+  deriving DecidableEq, Repr, BEq
+
+structure Lexeme where
+  name : String
+  category : String
+  stem : String
+  deriving DecidableEq, Repr
+
+structure RealizationRule (Feature : Type) where
+  context : List Feature
+  category : String
+  realize : String → String
+  specificity : Nat := 0
+
+def RealizationRule.matches {Feature : Type} [BEq Feature]
+    (rr : RealizationRule Feature)
+    (σ : MorphPropertySet Feature)
+    (lex : Lexeme) : Bool :=
+  lex.category == rr.category &&
+  rr.context.all (σ.features.contains ·)
+
+structure RuleBlock (Feature : Type) where
+  label : String
+  rules : List (RealizationRule Feature)
+
+def RuleBlock.apply {Feature : Type} [BEq Feature]
+    (block : RuleBlock Feature)
+    (σ : MorphPropertySet Feature)
+    (lex : Lexeme)
+    (stem : String) : Option String :=
+  let matching := block.rules.filter (·.matches σ lex)
+  let best := matching.foldl (init := none) fun acc rr =>
+    match acc with
+    | none => some rr
+    | some prev =>
+      if rr.specificity > prev.specificity then some rr
+      else some prev
+  best.map (·.realize stem)
+
+structure ParadigmFunction (Feature : Type) where
+  blocks : List (RuleBlock Feature)
+
+def ParadigmFunction.apply {Feature : Type} [BEq Feature]
+    (pf : ParadigmFunction Feature)
+    (σ : MorphPropertySet Feature)
+    (lex : Lexeme) : String :=
+  pf.blocks.foldl (init := lex.stem) fun stem block =>
+    (block.apply σ lex stem).getD stem
+
+structure RuleOfReferral (Feature : Type) where
+  source : MorphPropertySet Feature
+  target : MorphPropertySet Feature
+
+def RuleOfReferral.apply {Feature : Type} [BEq Feature]
+    (ref : RuleOfReferral Feature)
+    (pf : ParadigmFunction Feature)
+    (σ : MorphPropertySet Feature)
+    (lex : Lexeme) : Option String :=
+  if σ == ref.source then
+    some (pf.apply ref.target lex)
+  else
+    none
+
+def derive {Feature : Type} [BEq Feature]
+    (pf : ParadigmFunction Feature)
+    (referrals : List (RuleOfReferral Feature))
+    (σ : MorphPropertySet Feature)
+    (lex : Lexeme) : String :=
+  match referrals.findSome? (·.apply pf σ lex) with
+  | some form => form
+  | none => pf.apply σ lex
+
+end Morphology.PFM
+
+-- ============================================================================
+-- § 0: Wordhood ↔ Clitic/Affix Diagnostic Bridge
+--     (was Theories/Morphology/Core/WordhoodBridge.lean — Bridge anti-pattern;
+--     relocated 0.230.455 to its sole consumer per CLAUDE.md "no Bridges")
+-- ============================================================================
+
+/-! Connects two independent formalizations:
+- **Wordhood typology** (`Core.Morphology.Wordhood`): K-B 2026 §3.2 two-
+  dimensional classification (ms-boundedness × p-boundedness → 4 wordhood
+  classes).
+- **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): @cite{zwicky-pullum-1983}'s
+  six criteria for affix-vs-clitic.
+
+The bridge: ZP's criteria diagnose **ms-boundedness**. The p-boundedness
+dimension is orthogonal (determined by prosodic diagnostics). -/
+
+namespace Morphology.WordhoodBridge
+
+open Core.Morphology.Wordhood
+open Core.Morphology (MorphStatus)
+open Morphology.Diagnostics (CliticAffixProfile)
+
+/-- Map a morpheme's morphological status to its ms-boundedness. -/
+def morphStatusToMSBound : MorphStatus → MSBoundedness
+  | .freeWord      => .free
+  | .simpleClitic  => .free
+  | .specialClitic => .free
+  | .inflAffix     => .bound
+  | .derivAffix    => .bound
+
+theorem freeWord_is_ms_free :
+    morphStatusToMSBound .freeWord = .free := rfl
+theorem simpleClitic_is_ms_free :
+    morphStatusToMSBound .simpleClitic = .free := rfl
+theorem inflAffix_is_ms_bound :
+    morphStatusToMSBound .inflAffix = .bound := rfl
+theorem derivAffix_is_ms_bound :
+    morphStatusToMSBound .derivAffix = .bound := rfl
+
+theorem zpAffix_implies_ms_bound (p : CliticAffixProfile)
+    (h : p.classify = .inflAffix) :
+    morphStatusToMSBound p.classify = .bound := by
+  simp [h, morphStatusToMSBound]
+
+theorem zpClitic_implies_ms_free (p : CliticAffixProfile)
+    (h : p.classify = .simpleClitic) :
+    morphStatusToMSBound p.classify = .free := by
+  simp [h, morphStatusToMSBound]
+
+/-- Construct a wordhood profile from MorphStatus + prosodic boundedness. -/
+def wordhoodProfile (status : MorphStatus) (prosody : PBoundedness) :
+    WordhoodProfile :=
+  ⟨morphStatusToMSBound status, prosody⟩
+
+theorem simpleClitic_p_bound_is_simpleClitic :
+    (wordhoodProfile .simpleClitic .bound).classify = .simpleClitic := rfl
+theorem inflAffix_p_bound_is_canonicalAffix :
+    (wordhoodProfile .inflAffix .bound).classify = .canonicalAffix := rfl
+theorem inflAffix_p_free_is_nonCoheringAffix :
+    (wordhoodProfile .inflAffix .free).classify = .nonCoheringAffix := rfl
+theorem freeWord_p_free_is_canonicalWord :
+    (wordhoodProfile .freeWord .free).classify = .canonicalWord := rfl
+
+theorem morphStatus_exhaustive (s : MorphStatus) :
+    morphStatusToMSBound s = .free ∨ morphStatusToMSBound s = .bound := by
+  cases s <;> simp [morphStatusToMSBound]
+
+theorem affix_iff_ms_bound (s : MorphStatus) :
+    s.IsAffix ↔ morphStatusToMSBound s = .bound := by
+  cases s <;> simp [MorphStatus.IsAffix, morphStatusToMSBound]
+
+theorem clitic_implies_ms_free (s : MorphStatus) (h : s.IsClitic) :
+    morphStatusToMSBound s = .free := by
+  cases s <;> simp_all [MorphStatus.IsClitic, morphStatusToMSBound]
+
+/-- Map PrWd membership to p-boundedness. -/
+def prWdMembershipToPBound (isPrWdInternal : Bool) : PBoundedness :=
+  if isPrWdInternal then .bound else .free
+
+open Phonology.ProsodicWord in
+theorem inflectional_is_p_bound :
+    prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal = .bound := rfl
+
+open Phonology.ProsodicWord in
+theorem agreement_is_p_bound :
+    prWdMembershipToPBound MorphStatus.agreement.isPrWdInternal = .bound := rfl
+
+open Phonology.ProsodicWord in
+theorem derivational_is_p_bound :
+    prWdMembershipToPBound MorphStatus.derivational.isPrWdInternal = .bound := rfl
+
+open Phonology.ProsodicWord in
+theorem postposition_is_p_free :
+    prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal = .free := rfl
+
+open Phonology.ProsodicWord in
+theorem inflAffix_prWdInternal_is_canonicalAffix :
+    (wordhoodProfile .inflAffix
+      (prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal)
+    ).classify = .canonicalAffix := rfl
+
+open Phonology.ProsodicWord in
+theorem postposition_prWdExternal_is_canonicalWord :
+    (wordhoodProfile .freeWord
+      (prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal)
+    ).classify = .canonicalWord := rfl
+
+end Morphology.WordhoodBridge
 
 /-!
 # @cite{kalin-bjorkman-etal-2026}: The Morphology/Syntax Interface

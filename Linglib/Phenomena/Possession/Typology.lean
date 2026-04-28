@@ -3,6 +3,7 @@ import Linglib.Datasets.WALS.Features.F57A
 import Linglib.Datasets.WALS.Features.F58A
 import Linglib.Datasets.WALS.Features.F58B
 import Linglib.Datasets.WALS.Features.F59A
+import Linglib.Typology.Possession
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 57--59)
@@ -78,161 +79,12 @@ These strategies correlate with broader head-vs-dependent marking typology.
 
 namespace Phenomena.Possession.Typology
 
--- ============================================================================
--- Chapter 58: Obligatory Possessive Inflection
--- ============================================================================
+open Typology.Possession
 
-/-- WALS Ch 58: Whether certain nouns obligatorily take possessive inflection.
-
-    In languages with obligatory possession, relational nouns (kinship terms,
-    body-part nouns) must be inflected for a possessor. An "unpossessed" or
-    "absolute" form either does not exist or requires special morphology.
-
-    For example, in Mohawk, body-part nouns cannot appear without a possessive
-    prefix: `o-hsir-a` 'one's leg' requires the prefix `o-`. The absolute form
-    `a-hsir-a` uses a special neuter prefix. -/
-inductive ObligatoryPossession where
-  /-- Obligatory possessive inflection exists: some nouns (typically kinship,
-      body parts) must take possessive marking. Unpossessed forms are either
-      ungrammatical or require special "absolute" morphology.
-      (e.g., Mohawk, Turkish, Hungarian, Navajo) -/
-  | exists_
-  /-- No obligatory possessive inflection: all nouns can appear without
-      possessive marking. The possessive construction is always optional.
-      (e.g., English, Mandarin, Russian, Finnish) -/
-  | noObligatory
-  /-- Possessive inflection exists but is never obligatory; data insufficient
-      to determine if any nouns require it. -/
-  | unclear
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Chapter 59: Possessive Classification
--- ============================================================================
-
-/-- WALS Ch 59: Whether the language morphosyntactically distinguishes
-    different classes of possession.
-
-    The prototypical case is the alienable/inalienable distinction, where
-    inalienably possessed nouns (body parts, kinship terms) use a different
-    possessive construction from alienably possessed nouns (acquired property).
-    Some languages make finer-grained distinctions (e.g., kinship vs body
-    parts vs edible items vs general property). -/
-inductive PossessiveClassification where
-  /-- No possessive classification: all nouns use the same possessive
-      construction regardless of semantic class.
-      (e.g., English, Russian, Turkish, Japanese) -/
-  | noClassification
-  /-- Two-way classification: typically alienable vs inalienable.
-      (e.g., Fijian, Hawaiian, many Oceanic and Amazonian languages) -/
-  | twoWay
-  /-- Three or more classes of possession distinguished.
-      (e.g., some Papuan and Austronesian languages distinguish kinship,
-      body parts, edible items, and general property) -/
-  | threeOrMore
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Predicative Possession Strategies (@cite{stassen-2009})
--- ============================================================================
-
-/-- How a language expresses predicative (clausal) possession: "I have X".
-
-    The four major strategies identified by @cite{stassen-2009} correspond to
-    different syntactic analyses of the possessor:
-    - Have-verb: possessor is syntactic subject of a transitive verb
-    - Locational: possessor is a locative/oblique argument of an existential
-    - Genitive/Dative: possessor is a genitive/dative argument of a copula
-    - Topic: possessor is a topic with an existential comment clause -/
-inductive PredicativePossession where
-  /-- Have-verb strategy: a dedicated transitive verb 'have' takes the
-      possessor as subject and the possessum as object.
-      (e.g., English `I have a book`, Mandarin `wo you yi-ben shu`,
-       Turkish `bir kitab-im var` -- though Turkish is borderline) -/
-  | haveVerb
-  /-- Locational/Existential strategy: possession encoded via an existential
-      construction with the possessor in a locative, adessive, or oblique
-      case. The possessum is the grammatical subject.
-      (e.g., Russian `u menja est' kniga` 'at me exists book',
-       Finnish `minulla on kirja` 'at-me is book') -/
-  | locational
-  /-- Genitive/Dative predicate: possessor appears in genitive or dative
-      case with a copular predicate. The possessum is typically the
-      grammatical subject.
-      (e.g., Hindi `mere paas kitaab hai` 'my near book is',
-       Irish `ta leabhar agam` 'is book at-me',
-       Arabic `indi kitaab` 'at-me book') -/
-  | genitiveDative
-  /-- Topic-comment strategy: the possessor is topicalized and the possessum
-      is asserted to exist in the comment clause.
-      (e.g., Japanese `watashi-ni-wa hon-ga aru` 'I-DAT-TOP book-NOM exists',
-       some Oceanic languages) -/
-  | topic
-  /-- Conjunctional/Comitative strategy: possession expressed via a
-      conjunction or comitative construction ("I am with a book").
-      (e.g., some Bantu languages: Swahili `nina kitabu` 'I-with book') -/
-  | comitative
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Adnominal Possession Marking (@cite{nichols-1986})
--- ============================================================================
-
-/-- How the possessive relationship is marked within a noun phrase
-    ("my book", "John's house").
-
-    @cite{nichols-1986} classifies languages by where the possessive morphology
-    appears: on the possessed noun (head-marking), on the possessor
-    (dependent-marking), on both (double-marking), or on neither
-    (juxtaposition). -/
-inductive AdnominalPossession where
-  /-- Head-marking: possessive marker appears on the possessed noun (head).
-      (e.g., Hungarian `Janos kalap-ja` 'John hat-POSS.3SG',
-       Swahili `kitabu ch-ake` 'book CL-POSS.3SG',
-       Mohawk possessive prefixes) -/
-  | headMarking
-  /-- Dependent-marking: possessive marker appears on the possessor (dependent).
-      (e.g., English `John's book`,
-       Japanese `Tanaka-no hon` 'Tanaka-GEN book',
-       Turkish `Ali-nin kitab-i` -- though Turkish also marks the head) -/
-  | dependentMarking
-  /-- Double-marking: both possessor and possessed noun are marked.
-      (e.g., Turkish `Ali-nin kitab-i` 'Ali-GEN book-POSS.3SG',
-       Georgian `kac-is saxl-i` 'man-GEN house-NOM',
-       Quechua `Hwan-pa wasi-n` 'John-GEN house-POSS.3') -/
-  | doubleMarking
-  /-- Juxtaposition: no overt possessive marker; possessor and possessum
-      are simply juxtaposed, relying on word order.
-      (e.g., Vietnamese `nha toi` 'house I' = 'my house',
-       Mandarin construct-state juxtaposition in some cases) -/
-  | juxtaposition
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Position of Pronominal Possessive Affixes (WALS Ch 57)
--- ============================================================================
-
-/-- WALS Ch 57: Position of pronominal possessive affixes on the noun.
-
-    Whether a language uses prefixes, suffixes, both, or no affixes to mark
-    pronominal possession on the possessed noun. This feature cross-cuts the
-    head-marking vs dependent-marking distinction: a language can use
-    possessive affixes on the head (head-marking) while also having
-    a genitive case on the dependent (double-marking). -/
-inductive PossessiveAffixPosition where
-  /-- Possessive prefixes on the possessed noun.
-      (e.g., Swahili class-agreement prefixes, many Bantu and Papuan languages) -/
-  | prefixes
-  /-- Possessive suffixes on the possessed noun.
-      (e.g., Turkish -im, -in, -i; Hungarian -m, -d, -ja; Finnish -ni, -si) -/
-  | suffixes
-  /-- Both prefixes and suffixes used for possessive marking.
-      (e.g., some languages use prefixes for one person and suffixes for another) -/
-  | both
-  /-- No possessive affixes: possession marked by independent words or clitics.
-      (e.g., English my, your; Japanese no; Mandarin de) -/
-  | none
-  deriving DecidableEq, Repr
+/-! Type enums (`ObligatoryPossession`, `PossessiveClassification`,
+    `PredicativePossession`, `AdnominalPossession`, `PossessiveAffixPosition`,
+    `NumberOfPossessiveNouns`) live in `Typology/Possession/Defs.lean`
+    so Fragments can import them without violating layer discipline. -/
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -258,24 +110,8 @@ private def fromWALS58A : Datasets.WALS.F58A.ObligatoryPossessiveInflection →
   | .exists => .exists_
   | .absent => .noObligatory
 
-/-- WALS Ch 58B: Number of possessive nouns.
-
-    How many nouns in the language function as possessive markers
-    (i.e., nouns whose primary grammatical function is to express possession,
-    such as English "property" used as a possessive classifier).
-    Most languages have none; a small number have one or more. -/
-inductive NumberOfPossessiveNouns where
-  /-- No possessive nouns reported. -/
-  | noneReported
-  /-- Exactly one possessive noun. -/
-  | one
-  /-- Two to four possessive nouns. -/
-  | twoToFour
-  /-- Five or more possessive nouns. -/
-  | fiveOrMore
-  deriving DecidableEq, Repr
-
-/-- Convert WALS 58B enum to our NumberOfPossessiveNouns. -/
+/-- Convert WALS 58B enum to our NumberOfPossessiveNouns
+    (defined in `Typology/Possession/Defs.lean`). -/
 private def fromWALS58B : Datasets.WALS.F58B.NumberOfPossessiveNouns →
     NumberOfPossessiveNouns
   | .noneReported => .noneReported
@@ -433,30 +269,8 @@ theorem ch59_no_classification_plurality_wals :
 -- Language Profile Structure
 -- ============================================================================
 
-/-- A language's possession profile across WALS Chapters 58--59 and the
-    additional typological dimensions of predicative and adnominal possession. -/
-structure PossessionProfile where
-  /-- Language name. -/
-  language : String
-  /-- Language family. -/
-  family : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- Ch 58: Whether obligatory possessive inflection exists. -/
-  obligatoryPossession : ObligatoryPossession
-  /-- Ch 59: Whether the language classifies possessive constructions. -/
-  possessiveClassification : PossessiveClassification
-  /-- Primary strategy for predicative possession ("I have X"). -/
-  predicativeStrategy : PredicativePossession
-  /-- Primary strategy for adnominal possession ("my book"). -/
-  adnominalStrategy : AdnominalPossession
-  /-- Ch 57: Position of pronominal possessive affixes, if attested. -/
-  affixPosition : Option PossessiveAffixPosition := .none
-  /-- Illustrative possessive forms or constructions. -/
-  examples : List String := []
-  /-- Notes on the possession system. -/
-  notes : String := ""
-  deriving Repr
+/-! `PossessionProfile` lives in `Typology/Possession.lean` (substrate
+    layer), accessible via the `open Typology.Possession` above. -/
 
 -- ============================================================================
 -- Language Data
@@ -899,29 +713,9 @@ def allLanguages : List PossessionProfile :=
 -- Helper Predicates
 -- ============================================================================
 
-/-- Does a language have obligatory possessive inflection? -/
-def PossessionProfile.hasObligatoryPossession (p : PossessionProfile) : Bool :=
-  p.obligatoryPossession == .exists_
-
-/-- Does a language have any possessive classification? -/
-def PossessionProfile.hasClassification (p : PossessionProfile) : Bool :=
-  p.possessiveClassification != .noClassification
-
-/-- Does a language use a have-verb strategy? -/
-def PossessionProfile.usesHaveVerb (p : PossessionProfile) : Bool :=
-  p.predicativeStrategy == .haveVerb
-
-/-- Does a language use a locational/existential strategy? -/
-def PossessionProfile.usesLocational (p : PossessionProfile) : Bool :=
-  p.predicativeStrategy == .locational
-
-/-- Does a language use head-marking for adnominal possession? -/
-def PossessionProfile.isHeadMarking (p : PossessionProfile) : Bool :=
-  p.adnominalStrategy == .headMarking
-
-/-- Does a language use dependent-marking for adnominal possession? -/
-def PossessionProfile.isDependentMarking (p : PossessionProfile) : Bool :=
-  p.adnominalStrategy == .dependentMarking
+/-! `PossessionProfile` utility predicates (`hasObligatoryPossession`,
+    `hasClassification`, `usesHaveVerb`, `usesLocational`, `isHeadMarking`,
+    `isDependentMarking`) live in `Typology/Possession.lean`. -/
 
 /-- Count of languages in the sample with a given predicative strategy. -/
 def countByPredicative (langs : List PossessionProfile)
@@ -1404,87 +1198,8 @@ theorem all_adnominal_strategies_attested :
 -- Possessive Notions (@cite{heine-1997} §2.3)
 -- ============================================================================
 
-/-- The semantic *targets* of possessive constructions: what kind of possessive
-    relationship is expressed. Distinct from `PossessionSource`, which encodes
-    the *cognitive source* (how the construction arose diachronically).
-
-    @cite{heine-1997} §2.3 identifies seven notions ordered by increasing
-    abstractness:
-
-      physical < temporary < permanent < inalienable < abstract
-
-    with two additional notions for inanimate possessors (inanimate inalienable,
-    inanimate alienable). These notions form the target meanings that
-    source schemas grammaticalize into. -/
-inductive PossessiveNotion where
-  /-- Physical possession: possessor has physical control over possessee.
-      (e.g., "I have a pen (in my hand)") -/
-  | physical
-  /-- Temporary possession: possessor controls possessee for a limited time.
-      (e.g., "I have a rental car") -/
-  | temporary
-  /-- Permanent possession: possessor owns possessee.
-      (e.g., "I have a house") -/
-  | permanent
-  /-- Inalienable possession: possessee is inherently associated with possessor.
-      (e.g., "I have two sisters", "I have blue eyes") -/
-  | inalienable
-  /-- Abstract possession: possessee is non-concrete.
-      (e.g., "I have a headache", "I have an idea") -/
-  | abstract
-  /-- Inanimate inalienable: inanimate possessor, inherent relation.
-      (e.g., "The tree has branches", "The table has four legs") -/
-  | inanimateInalienable
-  /-- Inanimate alienable: inanimate possessor, non-inherent relation.
-      (e.g., "The room has a window" -- contingent, not body-part-like) -/
-  | inanimateAlienable
-  deriving DecidableEq, Repr
-
-/-- Abstractness ordering: higher = more abstract possessive notion.
-    Physical possession is the most concrete; abstract the most abstract.
-    Inanimate notions are ranked by extending the animacy dimension. -/
-def PossessiveNotion.abstractness : PossessiveNotion → Nat
-  | .physical             => 0
-  | .temporary             => 1
-  | .permanent             => 2
-  | .inalienable           => 3
-  | .abstract              => 4
-  | .inanimateInalienable  => 5
-  | .inanimateAlienable    => 6
-
--- ============================================================================
--- The Inalienability Hierarchy
--- ============================================================================
-
-/-- The inalienability hierarchy.
-
-    If a language marks a distinction between alienable and inalienable
-    possession, the inalienable class is drawn from the top of this hierarchy:
-
-      body parts > kinship terms > spatial relations > part-whole >
-      culturally important items > general property
-
-    A language may draw the alienable/inalienable boundary at any point on
-    the hierarchy, but if a category is inalienable, all categories above it
-    are also inalienable. Body parts and kinship terms are always the first
-    candidates for inalienable treatment. -/
-inductive InalienabilityRank where
-  | bodyPart
-  | kinship
-  | spatialRelation
-  | partWhole
-  | culturalItem
-  | generalProperty
-  deriving DecidableEq, Repr
-
-/-- Numeric rank for comparison (higher = more likely to be inalienable). -/
-def InalienabilityRank.toNat : InalienabilityRank -> Nat
-  | .bodyPart => 5
-  | .kinship => 4
-  | .spatialRelation => 3
-  | .partWhole => 2
-  | .culturalItem => 1
-  | .generalProperty => 0
+/-! `PossessiveNotion` and `InalienabilityRank` (with their utility functions)
+    live in `Typology/Possession/Defs.lean`. -/
 
 /-- The hierarchy is consistent: body parts outrank kinship, which outranks
     spatial relations, and so forth. -/
@@ -1500,48 +1215,8 @@ theorem inalienability_ordering :
 -- Grammaticalization Pathways
 -- ============================================================================
 
-/-- Diachronic sources of predicative possession constructions.
-
-    @cite{heine-1997} Table 2.1 identifies eight event schemas from which
-    predicative possession constructions arise via grammaticalization.
-    The same schemas appear in @cite{heine-2009} Table 29.5 for possessive
-    case grammaticalization; see also `Core.Case.Extends` for the broader
-    case extension paths from @cite{heine-2009} Table 29.6. -/
-inductive PossessionSource where
-  /-- Action schema: "X takes Y" → 'X has Y'.
-      (e.g., English `have` < OE `habban` 'to hold/seize') -/
-  | action
-  /-- Location schema: "Y is located at X" → 'X has Y'.
-      (e.g., Finnish adessive, Russian `u` + GEN) -/
-  | location
-  /-- Companion schema: "X is with Y" → 'X has Y'.
-      (e.g., Swahili `-na` < copula `-wa` + comitative `na` 'with',
-       Venda `na` 'with') -/
-  | companion
-  /-- Genitive schema: "X's Y exists" → 'X has Y'.
-      (e.g., Turkish `Hasan-ın inek-i var` 'Hasan-GEN cow-POSS exists') -/
-  | genitive
-  /-- Goal schema: "Y exists for/to X" → 'X has Y'.
-      (e.g., Hindi `mere paas kitaab hai`, Irish `tá leabhar agam`) -/
-  | goal
-  /-- Source schema: "Y exists from X" → 'X has Y'.
-      (e.g., some West African languages with ablative possessors) -/
-  | source
-  /-- Topic schema: "As for X, Y exists" → 'X has Y'.
-      (e.g., Japanese `watashi-ni-wa hon-ga aru` 'I-DAT-TOP book-NOM exists') -/
-  | topic
-  /-- Equation schema: "Y is X's (property)" → 'X has Y'.
-      (e.g., Scots Gaelic `is leam an leabhar` 'is mine the book') -/
-  | equation
-  deriving DecidableEq, Repr
-
-/-- Map predicative strategies to their likely grammaticalization source. -/
-def predicativeSource : PredicativePossession -> PossessionSource
-  | .haveVerb => .action
-  | .locational => .location
-  | .genitiveDative => .goal
-  | .topic => .topic
-  | .comitative => .companion
+/-! `PossessionSource` and the `predicativeSource` projection live in
+    `Typology/Possession/Defs.lean`. -/
 
 /-- In our sample, the two most common grammaticalization sources for
     predicative possession are location and action. -/

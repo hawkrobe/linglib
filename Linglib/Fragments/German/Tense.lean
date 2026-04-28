@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Decomposition
+import Linglib.Theories.Semantics.Tense.SOT.Decomposition
 
 /-!
 # German Tense Fragment
@@ -27,7 +27,7 @@ has a PRESENT tense head (indexical-compatible).
 namespace Fragments.German.Tense
 
 open Core.Time.Tense
-open Semantics.Tense.Decomposition
+open Semantics.Tense.SOT.Decomposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Kratzer Decomposition Entries

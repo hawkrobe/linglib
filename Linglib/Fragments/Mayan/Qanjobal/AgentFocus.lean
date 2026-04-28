@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Phenomena.FillerGap.ExtractionMorphology
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment

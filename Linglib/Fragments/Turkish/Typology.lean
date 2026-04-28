@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Turkish typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Turkish (ISO 639-3 `tur`).
 
 namespace Fragments.Turkish
 
-open Core.Typology in
+open Typology in
 /-- Turkish: SOV, postpositional, agglutinative; participial RC. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "tur" "Turkish"

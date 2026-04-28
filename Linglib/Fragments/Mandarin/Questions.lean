@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Questions.Typology
+import Linglib.Typology.Question
 import Linglib.Core.Lexical.ExpressiveModifier
 
 /-!
@@ -33,7 +33,7 @@ the lexical entries with their typological parameters.
 
 namespace Fragments.Mandarin.Questions
 
-open Phenomena.Questions.Typology (WhInterpMechanism WhMovementStrategy)
+open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open Core.Lexical.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 

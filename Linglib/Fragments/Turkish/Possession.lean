@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
@@ -24,7 +24,7 @@ existential `var`, and the Equation Schema for belong-constructions.
 
 namespace Fragments.Turkish.Possession
 
-open Phenomena.Possession.Typology
+open Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy

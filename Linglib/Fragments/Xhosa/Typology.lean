@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Xhosa typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Xhosa (ISO 639-3 `xho`).
 
 namespace Fragments.Xhosa
 
-open Core.Typology in
+open Typology in
 /-- Xhosa: Bantu, 11-class noun-class system, agreement-rich. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "xho" "Xhosa"

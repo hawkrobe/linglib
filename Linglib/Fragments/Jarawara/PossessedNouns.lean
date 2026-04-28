@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Core.Lexical.Word
 import Linglib.Features.Gender
 
@@ -29,7 +29,7 @@ cross-linguistic inalienability hierarchy from `Possession.Typology`.
 
 namespace Fragments.Jarawara
 
-open Phenomena.Possession.Typology
+open Typology.Possession
 
 -- ============================================================================
 -- § 1: Semantic Classes of iPossessable Nouns (Table 3)

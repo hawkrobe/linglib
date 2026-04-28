@@ -56,7 +56,7 @@ theorem embeddedPast_means_before_matrix {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time) :
     applyTense .past (embeddedFrame matrixFrame embeddedR embeddedE) ↔
     embeddedR < matrixFrame.eventTime := by
-  simp [applyTense, embeddedFrame]
+  simp only [applyTense, embeddedFrame]
 
 /-- Applying embedded PRESENT to the embedded frame means R' = E_matrix.
 
@@ -66,7 +66,7 @@ theorem embeddedPresent_means_at_matrix {Time : Type*} [LinearOrder Time]
     (matrixFrame : ReichenbachFrame Time) (embeddedR embeddedE : Time) :
     applyTense .present (embeddedFrame matrixFrame embeddedR embeddedE) ↔
     embeddedR = matrixFrame.eventTime := by
-  simp [applyTense, embeddedFrame]
+  simp only [applyTense, embeddedFrame]
 
 
 -- ════════════════════════════════════════════════════════════════

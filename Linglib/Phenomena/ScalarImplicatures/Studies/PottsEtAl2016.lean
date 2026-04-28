@@ -5,10 +5,22 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # @cite{potts-etal-2016}: Embedded Implicatures as Pragmatic Inferences
-@cite{potts-etal-2016}
+@cite{potts-etal-2016} @cite{chemla-spector-2011}
 
 "Embedded Implicatures as Pragmatic Inferences under Compositional Lexical
 Uncertainty." Journal of Semantics 33(4): 755–802.
+
+## Empirical anchor: @cite{chemla-spector-2011}
+
+The 3-players × 3-outcomes architecture is structurally the same as
+CS11's *every/exactly one/no* × *some/all* design (CS11 uses 6 letters
+× 3 cell-states for Exp 1, 3 letters for Exp 2). The LU model's
+predictions — DE prefers weak lexicon (NNN reading), UE prefers strong
+(SSS embedded SI) — match CS11's qualitative findings: STRONG > WEAK
+in universal contexts (Exp 1) and LOCAL > FALSE in non-monotonic
+(Exp 2). The LU model is *silent* on the attitude-verb gradient that
+CS11 doesn't test (think > want > all > must, from
+@cite{geurts-pouscoulous-2009}).
 
 ## The Puzzle
 

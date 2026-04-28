@@ -18,7 +18,7 @@ cannot be assigned to a single canonical owner; this file is named
 after `HeimKratzer1998` because the file's bridge theorems consume
 HK's compositional-tense framework
 (`Studies/HeimKratzer1998.lean`). Other consumers
-(e.g., `Studies/Abusch1997.lean`) import from here.
+(e.g., `Studies/Schlenker2004.lean`) import from here.
 
 Coverage: 10+ temporal phenomena that distinguish tense theories,
 absorbing the former `Phenomena/SequenceOfTense/Data.lean`.

@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # French typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for French (ISO 639-3 `fra`).
 
 namespace Fragments.French
 
-open Core.Typology in
+open Typology in
 /-- French: SVO, prepositional, declined relative pronoun system. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "fra" "French"

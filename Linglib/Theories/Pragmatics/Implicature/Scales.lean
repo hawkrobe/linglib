@@ -22,9 +22,9 @@ Generic scalar-implicature computation built on `HornScale` (from
 
 ## Scope
 
-Generic infrastructure only — no paper-specific worked examples. Examples
-live in the `Phenomena/ScalarImplicatures/Studies/*.lean` files that
-exercise this API (e.g., `GeurtsPouscoulous2009.lean`).
+Generic infrastructure only — no paper-specific worked examples. Worked
+examples live in the `Phenomena/ScalarImplicatures/Studies/*.lean`
+files that exercise this API.
 
 Scale semantics (`SemanticScale`, `HurfordSemantic`, `SinghSemantic`) and
 exhaustification predictions live in `Alternatives/Lexical.lean` and

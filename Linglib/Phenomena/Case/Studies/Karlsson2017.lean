@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Finnish Case System @cite{karlsson-2017}
@@ -145,7 +145,7 @@ theorem partitive_has_licensor :
 -- Part II: Suffix Order vs. Bybee's Relevance Hierarchy
 -- ============================================================================
 
-open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
+open Core.Morphology (MorphCategory RespectsRelevanceHierarchy)
 
 -- ============================================================================
 -- § 5: Finnish Nominal Suffix Slots
@@ -198,7 +198,7 @@ theorem bybee_slots_are :
 /-- The Bybee-mappable nominal slots respect the relevance hierarchy:
     stem (0) < number (3) < agreement (8). -/
 theorem nominal_respects_bybee :
-    respectsRelevanceHierarchy bybeeSlots = true := by native_decide
+    RespectsRelevanceHierarchy bybeeSlots := by native_decide
 
 /-- Case has no Bybee category — this is the gap that Finnish nominal
     morphology reveals in Bybee's verb-centric hierarchy. -/
@@ -212,7 +212,7 @@ theorem clitic_no_bybee_category :
 /-- Number (rank 3) is more stem-relevant than possessive agreement (rank 8),
     consistent with number appearing closer to the stem in Finnish. -/
 theorem number_closer_than_agreement :
-    MorphCategory.relevanceRank .number <
-    MorphCategory.relevanceRank .agreement := by decide
+    MorphCategory.peripherality .number <
+    MorphCategory.peripherality .agreement := by decide
 
 end Karlsson2017

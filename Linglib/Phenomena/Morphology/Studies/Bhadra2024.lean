@@ -1,4 +1,6 @@
-import Linglib.Theories.Morphology.ReversalRestitution
+import Linglib.Theories.Morphology.RootTypology
+import Linglib.Theories.Semantics.Verb.Affectedness
+import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -27,11 +29,292 @@ The cardinality of this set determines affix compatibility:
 2. `BoundaryStates` formalizes `res`/`pre` operators for state equivalence (§5.2)
 3. `LevinClass.forceTransmissionClass` bridges Levin classes to outcome classes
 4. Per-verb *un-* and *re-* predictions verified against empirical data from (12), (45)
+
+## Substrate (was Theories/Morphology/ReversalRestitution.lean, relocated 0.230.455)
+
+The §§1-14 substrate below was previously a separate top-level theory file;
+Bhadra 2024 is the originating paper, so the substrate now anchors here per
+CLAUDE.md "every file is anchored". The deferred follow-up is to extract the
+theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
+`Set.multiMembered`) into `Theories/Semantics/Verb/Affectedness.lean` once
+a second consumer materialises.
 -/
+
+open Core.Verbs
+open Semantics.Verb.EventStructure
+open Semantics.Verb.EntailmentProfile
+open Semantics.Verb.Affectedness
+
+-- ════════════════════════════════════════════════════
+-- § 1. Outcome Set Cardinality (eq. 62)
+-- ════════════════════════════════════════════════════
+
+/-- Cardinality of a verb root's outcome set. -/
+inductive OutcomeCardinality where
+  | multi
+  | singleton
+  | empty
+  deriving DecidableEq, Repr
+
+-- ════════════════════════════════════════════════════
+-- § 2. Force Transmission Classification (Table 1)
+-- ════════════════════════════════════════════════════
+
+inductive ForceTransmissionClass where
+  | potentialForChange
+  | impingementEffecting
+  | integralChange
+  | noForceTransmission
+  deriving DecidableEq, Repr
+
+def ForceTransmissionClass.outcomeCardinality : ForceTransmissionClass → OutcomeCardinality
+  | .potentialForChange => .multi
+  | .impingementEffecting => .singleton
+  | .integralChange => .singleton
+  | .noForceTransmission => .empty
+
+-- ════════════════════════════════════════════════════
+-- § 3. Boundary State Operators (eqs. 64–65)
+-- ════════════════════════════════════════════════════
+
+structure BoundaryStates (S : Type) where
+  pre : S
+  res : S
+
+instance {S : Type} [BEq S] : BEq (BoundaryStates S) where
+  beq a b := a.pre == b.pre && a.res == b.res
+
+-- ════════════════════════════════════════════════════
+-- § 4. Reversal and Restitution Conditions (eqs. 49–50)
+-- ════════════════════════════════════════════════════
+
+def reversible {S : Type} [BEq S] (base affixed : BoundaryStates S) : Bool :=
+  base.res == affixed.pre && affixed.res == base.pre
+
+def restitutive {S : Type} [BEq S] (base affixed : BoundaryStates S) : Bool :=
+  affixed.res == base.res
+
+-- ════════════════════════════════════════════════════
+-- § 5. un- and re- Compatibility (eqs. 66–68, Fig. 5)
+-- ════════════════════════════════════════════════════
+
+def ForceTransmissionClass.unCompatible : ForceTransmissionClass → Bool
+  | .potentialForChange => true
+  | _ => false
+
+def ForceTransmissionClass.reCompatible : ForceTransmissionClass → Bool
+  | .potentialForChange => true
+  | .integralChange => true
+  | _ => false
+
+-- ════════════════════════════════════════════════════
+-- § 6. LevinClass → ForceTransmissionClass Bridge
+-- ════════════════════════════════════════════════════
+
+def LevinClass.forceTransmissionClass : LevinClass → ForceTransmissionClass
+  | .coil => .potentialForChange
+  | .bend => .potentialForChange
+  | .hit => .impingementEffecting
+  | .swat => .impingementEffecting
+  | .wipe => .impingementEffecting
+  | .touch => .impingementEffecting
+  | .break_ => .integralChange
+  | .destroy => .integralChange
+  | .cooking => .integralChange
+  | .otherCoS => .integralChange
+  | .entitySpecificCoS => .integralChange
+  | .calibratableCoS => .integralChange
+  | .color => .integralChange
+  | .imageCreation => .integralChange
+  | .build => .integralChange
+  | .create => .integralChange
+  | .grow => .integralChange
+  | .knead => .integralChange
+  | .turn => .integralChange
+  | .cut => .integralChange
+  | .carve => .integralChange
+  | .eat => .integralChange
+  | .devour => .integralChange
+  | .murder => .integralChange
+  | .poison => .integralChange
+  | .mix => .integralChange
+  | .amalgamate => .integralChange
+  | .separate => .integralChange
+  | .split => .integralChange
+  | .conceal => .integralChange
+  | .clear => .integralChange
+  | .dress => .integralChange
+  | _ => .noForceTransmission
+
+def LevinClass.reCompatible : LevinClass → Bool
+  | .coil | .bend => true
+  | .break_ | .color | .imageCreation | .build | .create | .grow
+  | .knead | .otherCoS | .cooking | .calibratableCoS | .clear
+  | .entitySpecificCoS | .conceal | .dress | .separate
+  | .mix | .amalgamate => true
+  | .destroy | .eat | .devour | .murder | .poison | .turn
+  | .cut | .carve | .split => false
+  | .hit | .swat | .wipe | .touch => false
+  | _ => false
+
+-- ════════════════════════════════════════════════════
+-- § 7. Key Structural Theorems
+-- ════════════════════════════════════════════════════
+
+theorem un_requires_multi (ftc : ForceTransmissionClass) :
+    ftc.unCompatible = true → ftc.outcomeCardinality = .multi := by
+  cases ftc <;> simp [ForceTransmissionClass.unCompatible,
+    ForceTransmissionClass.outcomeCardinality]
+
+theorem pfc_unique_overlap :
+    ForceTransmissionClass.unCompatible .potentialForChange = true ∧
+    ForceTransmissionClass.reCompatible .potentialForChange = true := ⟨rfl, rfl⟩
+
+theorem ie_disallows_both :
+    ForceTransmissionClass.unCompatible .impingementEffecting = false ∧
+    ForceTransmissionClass.reCompatible .impingementEffecting = false := ⟨rfl, rfl⟩
+
+theorem cos_un_blocked_re_available :
+    ForceTransmissionClass.unCompatible .integralChange = false ∧
+    ForceTransmissionClass.reCompatible .integralChange = true := ⟨rfl, rfl⟩
+
+theorem noforce_disallows_both :
+    ForceTransmissionClass.unCompatible .noForceTransmission = false ∧
+    ForceTransmissionClass.reCompatible .noForceTransmission = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 8. Bridge to EventStructure
+-- ════════════════════════════════════════════════════
+
+theorem pfc_orthogonal_to_hasResultState :
+    (LevinClass.eventTemplate .bend).HasResultState ∧
+    ¬ (LevinClass.eventTemplate .coil).HasResultState ∧
+    LevinClass.forceTransmissionClass .bend = .potentialForChange ∧
+    LevinClass.forceTransmissionClass .coil = .potentialForChange := by
+  refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
+
+theorem bend_cos_per_levin_pfc_per_bhadra :
+    (LevinClass.meaningComponents .bend).changeOfState = true ∧
+    LevinClass.forceTransmissionClass .bend = .potentialForChange := ⟨rfl, rfl⟩
+
+theorem ie_templates :
+    LevinClass.eventTemplate .wipe = .motionContact ∧
+    LevinClass.eventTemplate .hit = .activity := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 9. Bridge to Affectedness Hierarchy
+-- ════════════════════════════════════════════════════
+
+theorem affectedness_bridge_pfc :
+    profileToDegree ⟨false, false, false, false, false,
+                     false, false, true, true, false⟩ = .potential := rfl
+
+theorem affectedness_bridge_ie_kick :
+    profileToDegree kickObjectProfile = .nonquantized := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 10. Bridge to RootTypology
+-- ════════════════════════════════════════════════════
+
+theorem result_roots_singleton_outcomes :
+    RootType.entailsChange .result = true ∧
+    RootType.allowsRestitutiveAgain .result = false := ⟨rfl, rfl⟩
+
+theorem pc_roots_allow_restitutive_again :
+    RootType.allowsRestitutiveAgain .propertyConcept = true ∧
+    RootType.entailsChange .propertyConcept = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 11. Compositional VRO Framework (eqs. 53, 59, 60)
+-- ════════════════════════════════════════════════════
+
+section CompositionalVRO
+
+open Semantics.Events
+open Core.Time
+
+variable {Entity State Time : Type*} [LinearOrder Time]
+
+abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
+
+abbrev Applies (Entity Time : Type*) [LinearOrder Time] := Entity → Ev Time → Prop
+
+structure VerbRootVRO (Entity State Time : Type*) [LinearOrder Time] where
+  verb : Entity → Ev Time → Prop
+  applies : Entity → Ev Time → Prop
+  outcomes : Set State
+  thresholds : Set State
+
+def resState (stateAt : StateFunction Entity State Time)
+    (e : Ev Time) (x : Entity) : State :=
+  stateAt (Ev.τ e).finish x
+
+def preState (stateAt : StateFunction Entity State Time)
+    (e : Ev Time) (x : Entity) : State :=
+  stateAt (Ev.τ e).start x
+
+def Set.multiMembered (s : Set State) : Prop :=
+  ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
+
+def unSem (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  ∃ e' : Ev Time,
+    vro.verb x e' ∧
+    vro.applies x e' ∧
+    (Ev.τ e').precedes (Ev.τ e) ∧
+    resState stateAt e' x = preState stateAt e x ∧
+    vro.outcomes.multiMembered ∧
+    resState stateAt e x = preState stateAt e' x
+
+def rePresupposition (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  ∃ e' : Ev Time,
+    vro.verb x e' ∧
+    vro.applies x e' ∧
+    (Ev.τ e').precedes (Ev.τ e) ∧
+    resState stateAt e x = resState stateAt e' x
+
+def reSem (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  rePresupposition stateAt vro x e ∧
+  vro.applies x e ∧
+  vro.verb x e
+
+theorem singleton_blocks_un
+    (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (h_single : ∃ s, vro.outcomes = {s})
+    (x : Entity) (e : Ev Time) :
+    ¬ unSem stateAt vro x e := by
+  intro ⟨e', _, _, _, _, h_multi, _⟩
+  obtain ⟨s, hs⟩ := h_single
+  obtain ⟨s₁, s₂, h1, h2, hne⟩ := h_multi
+  rw [hs] at h1 h2
+  simp [Set.mem_singleton_iff] at h1 h2
+  exact hne (h1.trans h2.symm)
+
+theorem empty_blocks_un
+    (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (h_empty : vro.outcomes = ∅)
+    (x : Entity) (e : Ev Time) :
+    ¬ unSem stateAt vro x e := by
+  intro ⟨e', _, _, _, _, h_multi, _⟩
+  obtain ⟨s₁, _, h1, _, _⟩ := h_multi
+  rw [h_empty] at h1
+  exact h1
+
+end CompositionalVRO
+
+-- ════════════════════════════════════════════════════
+-- (Original Bhadra2024.lean continues below — per-verb verification)
+-- ════════════════════════════════════════════════════
 
 namespace Bhadra2024
 
-open Core.Verbs
 open ForceTransmissionClass OutcomeCardinality
 
 -- ════════════════════════════════════════════════════

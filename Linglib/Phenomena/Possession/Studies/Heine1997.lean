@@ -44,6 +44,7 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 -/
 
 open Phenomena.Possession.Typology
+open Typology.Possession
 open Diachronic.Grammaticalization
 open Semantics.Noun.Relational.Barker2011 (Pred1 Pred2 SemType)
 

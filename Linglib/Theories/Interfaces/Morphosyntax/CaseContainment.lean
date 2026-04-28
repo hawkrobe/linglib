@@ -2,7 +2,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Order
-import Linglib.Theories.Morphology.Containment
+import Linglib.Theories.Interfaces.Morphosyntax.StarABA
 import Mathlib.Order.BoundedOrder.Basic
 
 /-!

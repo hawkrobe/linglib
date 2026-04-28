@@ -1,5 +1,5 @@
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
@@ -33,7 +33,7 @@ Schema belong-construction using the associative `-a`.
 
 namespace Fragments.Swahili.Possession
 
-open Phenomena.Possession.Typology
+open Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy

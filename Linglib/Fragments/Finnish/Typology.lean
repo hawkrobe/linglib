@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Finnish typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Finnish (ISO 639-3 `fin`).
 
 namespace Fragments.Finnish
 
-open Core.Typology in
+open Typology in
 /-- Finnish: SVO, postpositional, agglutinative; declined relative pronoun. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "fin" "Finnish"

@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Hemba Auxiliary Verb Fragment

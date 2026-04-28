@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.AT
+import Linglib.Theories.Semantics.Tense.Modal.AtOperator
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Fragments.English.Auxiliaries
 
@@ -38,7 +38,7 @@ namespace Condoravdi2002
 open Core.Time
 open Core.Verbs (Dynamicity)
 open Semantics.Tense.Aspect.Core
-open Semantics.Tense.AT
+open Semantics.Tense.Modal.AtOperator
 open Core.Modality.HistoricalAlternatives
 
 /-! ## Operators -/

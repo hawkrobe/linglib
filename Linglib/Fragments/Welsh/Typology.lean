@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Welsh typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Welsh (ISO 639-3 `cym`).
 
 namespace Fragments.Welsh
 
-open Core.Typology in
+open Typology in
 /-- Welsh: VSO, prepositional; particle-marked RC. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "cym" "Welsh"

@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
 
@@ -38,14 +39,11 @@ namespace Phenomena.Case.Ozaki2026.Data
 -- § 1: Data Types
 -- ============================================================================
 
-/-- Case marking on the source argument of alternation verbs. -/
-inductive CaseMarking where
-  | accusative   -- *-o*
-  | ablative     -- *kara*
-  | nominative   -- *-ga*
-  | dative       -- *-ni*
-  deriving DecidableEq, Repr
+/-! Case marking on the source argument of alternation verbs is recorded
+as a `Fragments.Japanese.Case.CaseMarker` (the authoritative case-marker
+registry per @cite{tsujimura-2014}), not as a parallel local enum. -/
 
+open Fragments.Japanese.Case (CaseMarker o kara ga ni)
 open Fragments.Japanese.Passive (PassiveType)
 
 /-- Diagnostics for argumenthood (vs. adjuncthood). -/
@@ -68,11 +66,10 @@ inductive UnaccusativityDiagnostic where
     in a particular case, plus grammaticality. -/
 structure AlternationDatum where
   verb : String
-  sourceCase : CaseMarking
+  sourceMarker : CaseMarker
   grammatical : Bool
   sentence : String
   exampleNum : String
-  deriving DecidableEq, Repr
 
 /-- An unaccusativity diagnostic datum. -/
 structure UnaccusativityDatum where
@@ -87,12 +84,11 @@ structure UnaccusativityDatum where
 /-- An argumenthood diagnostic datum. -/
 structure ArgumenthoodDatum where
   verb : String
-  sourceCase : CaseMarking
+  sourceMarker : CaseMarker
   diagnostic : ArgumenthoodDiagnostic
   grammatical : Bool
   sentence : String
   exampleNum : String
-  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Alternation Data
@@ -104,14 +100,14 @@ structure ArgumenthoodDatum where
 
 def hanareru_acc : AlternationDatum where
   verb := "hanareru"
-  sourceCase := .accusative
+  sourceMarker := o
   grammatical := true
   sentence := "Taro-ga mura-o hanare-ta"
   exampleNum := "1"
 
 def hanareru_abl : AlternationDatum where
   verb := "hanareru"
-  sourceCase := .ablative
+  sourceMarker := kara
   grammatical := true
   sentence := "Taro-ga mura-kara hanare-ta"
   exampleNum := "1"
@@ -123,14 +119,14 @@ The paper uses *deru* with "eki" (station) in the ellipsis diagnostic
 
 def deru_acc : AlternationDatum where
   verb := "deru"
-  sourceCase := .accusative
+  sourceMarker := o
   grammatical := true
   sentence := "Taro-ga eki-o deta"
   exampleNum := "9"
 
 def deru_abl : AlternationDatum where
   verb := "deru"
-  sourceCase := .ablative
+  sourceMarker := kara
   grammatical := true
   sentence := "Taro-ga eki-kara deta"
   exampleNum := "9"
@@ -152,7 +148,7 @@ is available. -/
 
 def deru_ellipsis_acc : ArgumenthoodDatum where
   verb := "deru"
-  sourceCase := .accusative
+  sourceMarker := o
   diagnostic := .ellipsis
   grammatical := true
   sentence := "Taro-wa suguni eki-o deta ga, Hanako-wa suguni denakatta"
@@ -160,7 +156,7 @@ def deru_ellipsis_acc : ArgumenthoodDatum where
 
 def deru_ellipsis_abl : ArgumenthoodDatum where
   verb := "deru"
-  sourceCase := .ablative
+  sourceMarker := kara
   diagnostic := .ellipsis
   grammatical := true
   sentence := "Taro-wa suguni eki-kara deta ga, Hanako-wa suguni denakatta"
@@ -174,7 +170,7 @@ confirming argumenthood regardless of case marking. -/
 
 def hanareru_scrambling_acc : ArgumenthoodDatum where
   verb := "hanareru"
-  sourceCase := .accusative
+  sourceMarker := o
   diagnostic := .longDistanceScrambling
   grammatical := true
   sentence := "Mura-o Taro-wa [Hanako-ga __ hanareta to] itta"
@@ -182,7 +178,7 @@ def hanareru_scrambling_acc : ArgumenthoodDatum where
 
 def hanareru_scrambling_abl : ArgumenthoodDatum where
   verb := "hanareru"
-  sourceCase := .ablative
+  sourceMarker := kara
   diagnostic := .longDistanceScrambling
   grammatical := true
   sentence := "Mura-kara Taro-wa [Hanako-ga __ hanareta to] itta"
@@ -267,6 +263,30 @@ theorem argumenthood_count : argumenthoodData.length = 4 := rfl
 
 /-- Three unaccusativity data points total. -/
 theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
+
+/-! ### Provenance: source markers come from the Fragment
+
+These four `rfl` theorems tie each alternation datum's `sourceMarker` to
+the corresponding `Fragments.Japanese.Case` entry — the dissolution of
+this file's prior local `CaseMarking` enum (which re-stipulated four
+particles already present in `Fragments.Japanese.Case`) is now mechanically
+auditable: editing the Fragment's `o` or `kara` definitions will cascade
+through these provenance theorems.
+-/
+
+theorem hanareru_acc_uses_o : hanareru_acc.sourceMarker = o := rfl
+theorem hanareru_abl_uses_kara : hanareru_abl.sourceMarker = kara := rfl
+theorem deru_acc_uses_o : deru_acc.sourceMarker = o := rfl
+theorem deru_abl_uses_kara : deru_abl.sourceMarker = kara := rfl
+
+/-- The case-marker pair on each alternation datum is exactly Tsujimura's
+    case-particle / postposition contrast: -o is omissible (case particle),
+    -kara is not (postposition). The alternation thus crosses Tsujimura's
+    morphosyntactic split — a Marantz/Baker dependent-case pivot
+    (`.dependent` for ACC vs. `.lexical` for ABL, proved in §Bridge below)
+    coincides with a Tsujimura case-particle / postposition pivot. -/
+theorem alternation_crosses_tsujimura_split :
+    o.omissibleInCasual = true ∧ kara.omissibleInCasual = false := by decide
 
 -- ============================================================================
 -- § Bridge: Dependent Case × Minimalist Syntax

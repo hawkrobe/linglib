@@ -1,6 +1,6 @@
 import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
@@ -49,7 +49,7 @@ SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 namespace HahnDegenFutrell2021
 
 open Processing.MemorySurprisal
-open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
+open Core.Morphology (MorphCategory RespectsRelevanceHierarchy)
 
 -- ============================================================================
 -- §2: Japanese Suffix Template (SI §4.1)
@@ -89,7 +89,7 @@ matches the relevance hierarchy. Negation and tense come after mood,
 which is also consistent. -/
 theorem japanese_partial_bybee :
     let slots := [MorphCategory.derivation, .valence, .voice, .mood]
-    respectsRelevanceHierarchy slots = true := by native_decide
+    RespectsRelevanceHierarchy slots := by native_decide
 
 -- ============================================================================
 -- §3: Sesotho Verb Template (SI §4.2)
@@ -143,7 +143,7 @@ def sesothoPrefixSlots : List MorphCategory :=
 /-- Sesotho suffixes respect the relevance hierarchy:
 valence < voice < tense < mood < nonfinite. -/
 theorem sesotho_suffixes_respect_bybee :
-    respectsRelevanceHierarchy sesothoSuffixSlots = true := by native_decide
+    RespectsRelevanceHierarchy sesothoSuffixSlots := by native_decide
 
 -- ============================================================================
 -- §4: Memory-Surprisal Efficiency (SI Figures 6, 8)
@@ -253,7 +253,7 @@ that the relevance hierarchy captures the right notion of locality. -/
 theorem relevance_hierarchy_implies_locality :
     -- Languages whose morpheme orders respect Bybee's hierarchy
     -- are also efficient in memory-surprisal terms
-    respectsRelevanceHierarchy sesothoSuffixSlots = true ∧
+    RespectsRelevanceHierarchy sesothoSuffixSlots ∧
     sesothoRealAUC100 < sesothoRandomAUC100 :=
   ⟨by native_decide, by native_decide⟩
 

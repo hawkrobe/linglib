@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.NounCategorization
-import Linglib.Core.Typology.ClassifierSystem
+import Linglib.Typology.ClassifierSystem
 import Linglib.Datasets.WALS.Features.F55A
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Typology
@@ -24,8 +24,8 @@ Cross-linguistic typology of noun categorization systems following
 ## Architecture
 
 The schema (`NounCategorizationSystem`) lives in
-`Core.Typology.ClassifierSystem`, parallel to
-`Core.Typology.WordOrder`/`Adposition`. Per-language data lives in each
+`Typology.ClassifierSystem`, parallel to
+`Typology.WordOrder`/`Adposition`. Per-language data lives in each
 language's `Fragments/{Lang}/Typology.lean`, accessed through
 `LanguageProfile.classifierSystem`.
 
@@ -54,7 +54,7 @@ through `decide`.)
 namespace Phenomena.Classifiers.Typology
 
 open Core.NounCategorization
-open Core.Typology
+open Typology
 
 -- ============================================================================
 -- §1: Per-language convenience extractors
@@ -64,7 +64,7 @@ open Core.Typology
     `classifierSystem` field. The fallback uses sentinel values that
     don't match any realistic Fragment, so dropped fields surface as
     failed `decide` proofs in the per-language theorems below. -/
-private def csOf (p : Core.Typology.LanguageProfile) : NounCategorizationSystem :=
+private def csOf (p : Typology.LanguageProfile) : NounCategorizationSystem :=
   p.classifierSystem.getD
     { family := "<missing>", classifierType := .nounClassifier
     , scopes := [], assignment := .semantic, realizations := []
@@ -227,7 +227,7 @@ theorem french_scope_agreement :
 /-- @cite{aikhenvald-2000} Table 10.17 records that noun classes interact
     with more grammatical categories than numeral classifiers. Verified
     here against the framework-agnostic `interacts` table in
-    `Core.Typology.NounCategorization`. -/
+    `Typology.NounCategorization`. -/
 theorem noun_class_more_interactions :
     let cats := [GrammaticalCategory.definiteness, .number, .case_, .tenseAspect, .possession]
     let ncInteractions := cats.filter (interacts .nounClass)

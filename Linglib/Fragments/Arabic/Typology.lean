@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 import Linglib.Fragments.Arabic.Morph
 
 /-!
@@ -9,7 +9,7 @@ Aggregate WALS-style typological profile for MSA (ISO 639-3 `arb`).
 
 namespace Fragments.Arabic
 
-open Core.Typology in
+open Typology in
 /-- MSA: VSO, prepositional. -/
 def typology : LanguageProfile :=
   LanguageProfile.empty "arb" "Arabic (MSA)"

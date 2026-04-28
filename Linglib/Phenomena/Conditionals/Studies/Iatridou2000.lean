@@ -396,7 +396,7 @@ theorem pastCF_has_more_layers :
 -- § Bridge: ExclF, Classification, Deal
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.CounterfactualTense
+open Semantics.Tense.Counterfactual
 
 /-- English FLV: 1 past layer = 1 ExclF (FLV). -/
 theorem english_flv_layers :

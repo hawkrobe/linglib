@@ -1,29 +1,37 @@
 import Linglib.Features.Person
 
 /-!
-# Person Feature Geometry @cite{preminger-2014}
-@cite{bejar-rezac-2009} @cite{pancheva-zubizarreta-2018}
+# Person Feature Geometry @cite{harley-ritter-2002} @cite{bejar-rezac-2003}
+@cite{bejar-rezac-2009} @cite{preminger-2014} @cite{pancheva-zubizarreta-2018}
 
-@cite{preminger-2014} decomposes phi-features into a
-hierarchical geometry where person sub-features are organized in a
-containment hierarchy:
+The privative-feature geometry @cite{harley-ritter-2002} decomposes
+person into a containment hierarchy where each sub-feature
+implies the next:
 
     [φ] → [PERSON] → [participant] → [author]
     [φ] → [NUMBER] → [plural]
 
-This decomposition drives **relativized probing**: a probe seeking
-[participant] skips DPs that lack it (3rd person), targeting only
-1st/2nd person DPs. A separate probe seeking [plural] skips DPs
-that lack it (singulars), targeting only plurals.
+This decomposition drives **relativized probing**
+(@cite{bejar-rezac-2003}): a probe seeking [participant] skips DPs
+that lack it (3rd person), targeting only 1st/2nd person DPs. A
+separate probe seeking [plural] skips DPs that lack it (singulars),
+targeting only plurals.
 
-The two-probe system derives the **omnivorous agreement hierarchy**
-in Kaqchikel Agent Focus:
-
-    [+participant] (π⁰) > [+plural] (#⁰) > default (3SG)
-
-π⁰ outranks #⁰ because person probing takes priority over number
-probing. If π⁰ succeeds, its target determines the marker; if it
-fails, #⁰ provides the result; if both fail, the default surfaces.
+@cite{bejar-rezac-2003} apply this two-probe mechanism to derive
+the Person Case Constraint; @cite{bejar-rezac-2009} formalize it as
+Cyclic Agree. @cite{preminger-2014} §4.4 applies the same B&R 2003
+mechanism to Kichean Agent Focus — explicitly reframing earlier
+"omnivorous hierarchy" accounts in terms of two independently
+relativized probes π⁰ ([participant]) and #⁰ ([plural]). @cite{preminger-2014} Ch. 7 then argues against
+direct hierarchy/scale primitives like
+`[+participant] > [+plural] > default`, on four grounds:
+restrictedness of "salience" effects to AF, K'ichee' formal
+addressee *la* (a 2nd-person form patterning as 3rd-person under
+AF), the AF person restriction (1+2 blocked but 3pl+3pl licit),
+and the morphophonological 1st/2nd vs 3rd asymmetry (clitic
+doubling vs direct exponence, @cite{preminger-2014} §3.4 and
+§4.4). The relativized-probing mechanism derives the same surface
+patterns without committing to a salience scale.
 
 ## Extended Geometry: [±proximate]
 
@@ -36,7 +44,7 @@ fails, #⁰ provides the result; if both fail, the default surfaces.
 [-proximate] by default but can be contextually marked [+proximate]
 (when co-occurring with another 3P). The [±proximate] distinction
 also captures the 3P proximate/obviative split in direct/inverse
-alignment systems (@cite{pancheva-zubizarreta-2018}, §2.1 (11)).
+alignment systems (@cite{pancheva-zubizarreta-2018} §2.1 (11)).
 
 ## Relationship to Core PersonFeatures
 
@@ -53,6 +61,18 @@ specific to @cite{pancheva-zubizarreta-2018}'s P-Constraint.
 library — rather than a raw `Nat`. This eliminates meaningless
 person values and grounds the decomposition in the same type used
 by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
+
+## Note on `probeResolutionRank`
+
+The `probeResolutionRank` function below assigns rank 2 to
+[+participant] DPs, rank 1 to [+plural, −participant] DPs, and
+rank 0 elsewhere. This is a CONVENIENCE encoding of the
+*surface effect* of the two-probe (π⁰ ≫ #⁰) system on a single DP
+— useful for downstream computations that need a totally ordered
+target — but it should not be read as endorsing the salience-scale
+analysis @cite{preminger-2014} Ch. 7 argues against. The actual
+derivation goes via two independently relativized probes; the rank
+is a derived quantity, not a primitive.
 
 -/
 
@@ -145,18 +165,22 @@ def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool)
 -- § 4: Probe Resolution Rank
 -- ============================================================================
 
-/-- Omnivorous probe resolution rank for a DP.
+/-- Probe resolution rank for a DP under the two-probe (π⁰ ≫ #⁰) system.
 
-    Determines which DP an omnivorous probe targets when multiple DPs
-    are in its domain. Higher rank = more likely to be targeted.
+    A surface-effect summary of which probe targets a given DP:
 
-    - Rank 2: visible to π⁰ ([+participant]) — highest priority
+    - Rank 2: visible to π⁰ ([+participant])
     - Rank 1: visible to #⁰ but not π⁰ ([+plural, −participant])
     - Rank 0: invisible to both probes (3SG default)
 
-    This rank is derived from the probing mechanism, not stipulated:
-    π⁰ outranks #⁰, and each probe targets any DP bearing the sought
-    feature. The rank captures the combined effect. -/
+    Derived from the probing mechanism (@cite{bejar-rezac-2003}),
+    not stipulated as a salience scale: π⁰ takes priority over #⁰
+    by virtue of being structurally higher and earlier in the
+    derivation, and each probe targets any DP bearing the sought
+    feature. The rank captures the combined effect on a single DP.
+    See module docstring for why this is a convenience encoding,
+    not an endorsement of the salience-scale analyses
+    @cite{preminger-2014} Ch. 7 argues against. -/
 def probeResolutionRank (person : PersonLevel) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
   else if isPlural then 1

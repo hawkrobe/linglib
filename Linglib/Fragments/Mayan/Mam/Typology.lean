@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Mam (SJO) typological profile
@@ -9,7 +9,7 @@ Aggregate WALS-style typological profile for Mam (ISO 639-3 `mam`).
 
 namespace Fragments.Mayan.Mam
 
-open Core.Typology in
+open Typology in
 /-- Mam (SJO): VOS Mayan; ergative-absolutive; Agent-Focus extraction. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "mam" "Mam (SJO)"

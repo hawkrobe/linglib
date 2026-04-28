@@ -7,9 +7,31 @@ import Linglib.Fragments.Mayan.Params
 # Mam Agreement Fragment @cite{scott-2023}
 @cite{deal-2024} @cite{woolford-1997} @cite{blake-1994}
 
-Agreement morphology and pronoun realization data for San Juan Atitán (SJA)
-Mam, a Mayan language with morphologically tripartite agreement alignment: S, A, and O each trigger distinct marking patterns
-on the verb.
+Agreement morphology and pronoun realization data for **San Juan Atitán
+Mam (SJA Mam)**, the dialect analyzed in @cite{scott-2023}. Per Scott's
+Chapter 3 (titled "Object licensing and agreement: SJA Mam is a
+**tripartite high-abs language**"), SJA Mam exhibits morphologically
+tripartite agreement alignment: S, A, and O each trigger distinct
+marking patterns on the verb.
+
+## Dialect-specificity and the analytical contrast
+
+This fragment encodes Scott's analysis of SJA Mam specifically. Other
+Mam dialects (notably Ixtahuacán Mam, the variety described in England
+1983b and used by @cite{zavala-maldonado-2017} §4-5) have been
+characterized as **ergative with a neutral pattern in aspectless
+dependent clauses** — NOT tripartite. Per Zavala 2017 §4 (p. 237),
+"Ch'orti' is the only Mayan language that exhibits three sets of
+pronominal markers" — making Ch'orti' the canonical tripartite Mayan
+language under that framing.
+
+Scott's tripartite analysis of SJA Mam is an **analytical contribution**
+that uses a high-abs / Voice Licensing / Ergative Extraction Constraint
+framework (her ch. 3 §3.4) to argue for tripartite case (ERG, ACC, ABS)
+even though Mam lacks independent DP case morphology. Per Scott §1.2.4
+(Mam dialect variation, p. 11) and Table 1.2 (Mam dialect groups,
+citing Simon 2019), Mam dialects vary substantially; the SJA Mam
+analysis may not extend directly to Ixtahuacán Mam.
 
 ## The System
 
@@ -25,7 +47,7 @@ by either set — they co-occur with default Set B (tz'=) and require
 full overt pronouns. However, some speakers accept agreeing Set B
 for objects as a more formal variant (@cite{scott-2023}, ch. 3, ex. 156).
 
-## Case Licensing
+## Case Licensing (per Scott's analysis)
 
 Case is NOT assigned via dependent case. Instead:
 - **ERG**: inherent case from Voice
@@ -34,7 +56,11 @@ Case is NOT assigned via dependent case. Instead:
 
 This gives a tripartite underlying Case system (ERG, ACC, ABS) despite
 Mam having no independent case morphology on DPs — case is visible only
-through agreement patterns.
+through agreement patterns. This tripartite analysis is dialect-specific
+to SJA Mam per Scott; alternative analyses (for other Mam dialects or
+under different theoretical frameworks) characterize Mam as ergative
+with neutral patterns in dependent clauses (England 1983b;
+@cite{zavala-maldonado-2017} §4-5).
 
 ## Argument Positions
 
@@ -49,73 +75,113 @@ through agreement patterns.
 namespace Fragments.Mayan.Mam
 
 -- ============================================================================
--- § 1: Agreement Marker Paradigms (theory-neutral)
+-- § 1: Person-Number Inventory (theory-neutral cells)
 -- ============================================================================
 
-/-- Set A (ERG) markers: prefixes/proclitics on the verb that
-    cross-reference the transitive agent (@cite{scott-2023}, Table 2.8). -/
-def setAMarkers : List (Features.Prominence.PersonLevel × Bool × String) :=
-  [ (.first,  true,  "n-/w-")
-  , (.second, true,  "t-")
-  , (.third,  true,  "t-")
-  , (.first,  false, "q-")
-  , (.second, false, "ky-")
-  , (.third,  false, "ky-") ]
+/-- Person-number combinations for Mam agreement paradigms.
+    Six cells: three persons × two numbers. Mirrors the Kaqchikel
+    `PersonNumber` structure for cross-Mayan helper compatibility. -/
+inductive MamPersonNumber where
+  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
+  deriving DecidableEq, Repr
 
-/-- Set B (ABS) markers: preverbal markers on Infl that cross-reference
-    the absolutive argument (@cite{scott-2023}, Table 3.5).
+/-- All six person-number values. -/
+def mamPersonNumbers : List MamPersonNumber :=
+  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
+
+/-- Person value as `PersonLevel`. -/
+def MamPersonNumber.person : MamPersonNumber → Features.Prominence.PersonLevel
+  | .p1sg | .p1pl => .first
+  | .p2sg | .p2pl => .second
+  | .p3sg | .p3pl => .third
+
+/-- Is this person-number [+plural]? -/
+def MamPersonNumber.isPlural : MamPersonNumber → Bool
+  | .p1pl | .p2pl | .p3pl => true
+  | .p1sg | .p2sg | .p3sg => false
+
+-- ============================================================================
+-- § 2: Agreement Marker Paradigms (theory-neutral)
+-- ============================================================================
+
+/-- Set A (ERG) markers per cell: prefixes/proclitics on the verb that
+    cross-reference the transitive agent (@cite{scott-2023}, Table 2.8).
+    All six cells have distinct exponents (with t- syncretism for 2sg/3sg
+    and ky- syncretism for 2pl/3pl). -/
+def mamSetAExponent : MamPersonNumber → String
+  | .p1sg => "n-/w-"
+  | .p2sg => "t-"
+  | .p3sg => "t-"
+  | .p1pl => "q-"
+  | .p2pl => "ky-"
+  | .p3pl => "ky-"
+
+/-- Set B (ABS) markers per cell (@cite{scott-2023}, Table 3.5).
     The 2/3SG form tz'= is the **default** — it appears both for real
     agreement with a 2/3SG intransitive S and for default Set B in
     transitives when Infl's probe is blocked by VoiceP.
-    1SG = chin, 2SG = tz'=, 3SG = tz'=, 1PL = qo, 2PL = chi, 3PL = chi. -/
-def setBMarkers : List (Features.Prominence.PersonLevel × Bool × String) :=
-  [ (.first,  true,  "chin")
-  , (.second, true,  "tz'=")
-  , (.third,  true,  "tz'=")
-  , (.first,  false, "qo")
-  , (.second, false, "chi")
-  , (.third,  false, "chi") ]
+
+    Per Scott's DM analysis, 2sg and 3sg are NOT specific entries; they
+    surface via the Elsewhere fallback. The total function below
+    returns "tz'=" for both, but downstream Vocabulary construction
+    should treat them as derived from the Elsewhere entry. See
+    `mamSetBSpecificCells` for the cells that have actual specific
+    Vocabulary Items in the DM analysis. -/
+def mamSetBExponent : MamPersonNumber → String
+  | .p1sg => "chin"
+  | .p2sg => "tz'="
+  | .p3sg => "tz'="
+  | .p1pl => "qo"
+  | .p2pl => "chi"
+  | .p3pl => "chi"
+
+/-- The four Set B cells that have specific Vocabulary Items (per
+    Scott's DM analysis). 2sg and 3sg are NOT included — they fall
+    through to the Elsewhere entry. -/
+def mamSetBSpecificCells : List MamPersonNumber :=
+  [.p1sg, .p1pl, .p2pl, .p3pl]
 
 /-- The default (Elsewhere) Set B marker. Surfaces in transitives when
     Infl's probe is blocked, and also for 2/3SG intransitive S. -/
 def defaultSetB : String := "tz'="
 
-/-- Look up a marker by person and number (true = singular). -/
-def lookupMarker (markers : List (Features.Prominence.PersonLevel × Bool × String))
-    (person : Features.Prominence.PersonLevel) (sg : Bool) : Option String :=
-  markers.find? (λ ⟨p, n, _⟩ => p == person && n == sg) |>.map (·.2.2)
-
 -- ============================================================================
--- § 2: Argument Positions and Agreement Status
+-- § 2: Argument Positions and Agreement Status (substrate-anchored)
 -- ============================================================================
 
-/-- Argument positions in a Mam clause (@cite{scott-2023}, ch. 3). -/
-inductive MamArgPosition where
-  | agent    -- A: transitive agent (external argument, Spec,VoiceP)
-  | patient  -- P: transitive patient (internal argument, complement of V)
-  | intranS  -- S: intransitive subject (sole argument, moves to Spec,TP)
-  deriving DecidableEq, Repr
+/-- Argument positions in a Mam clause (@cite{scott-2023} ch. 3).
+    Aliased to the canonical `Features.Prominence.ArgumentRole`
+    (S/A/P/R/T) so cross-Mayan and cross-framework code shares one
+    inventory. Use the canonical constructor names `.A` / `.P` / `.S`
+    directly. -/
+abbrev ArgPosition := Features.Prominence.ArgumentRole
 
-/-- The case each argument position receives.
-    A gets ERG (inherent, from Voice), P gets ACC (structural, from Voice),
-    S gets ABS (structural, from Infl). Three distinct underlying cases. -/
-def MamArgPosition.case : MamArgPosition → Core.Case
-  | .agent   => .erg
-  | .patient => .acc
-  | .intranS => .abs
+/-- The case each argument position receives. Definitionally equal to
+    `Fragments.Mayan.ergCaseMam`, which derives from
+    `Alignment.tripartite.assignCase` in
+    `Theories/Syntax/Case/Alignment.lean`: A → ERG (inherent from Voice),
+    P → ACC (structural from Voice), S → ABS (structural from Infl).
+    The three distinct cases are tripartite alignment per Scott's
+    analysis (ch. 3 §3.4). -/
+abbrev ArgPosition.case : ArgPosition → Core.Case :=
+  Fragments.Mayan.ergCaseMam
 
-/-- Is this argument position φ-Agreed-with by some probe?
+/-- Does this argument position participate in φ-Agree?
 
     Agent: Voice probes for φ, finds agent in Spec,VoiceP → Set A
     Intransitive S: Infl probes for φ, finds S → Set B
     Patient: Infl's φ-probe has a disjunctive satisfaction condition
     [SAT: φ or Voice_TR]. In transitives, the
     probe encounters transitive Voice and stops — no φ-features are
-    copied, and default Set B (the Elsewhere form) surfaces. -/
-def MamArgPosition.isPhiAgreed : MamArgPosition → Bool
-  | .agent   => true   -- φ-Agreed by Voice → Set A
-  | .patient => false  -- NOT φ-Agreed: Infl probe blocked by Voice_TR
-  | .intranS => true   -- φ-Agreed by Infl → Set B
+    copied, and default Set B (the Elsewhere form) surfaces.
+    Ditransitive R/T default to participating (not modeled). -/
+def ArgPosition.IsPhiAgreed : ArgPosition → Prop
+  | .A => True   -- φ-Agreed by Voice → Set A
+  | .P => False  -- NOT φ-Agreed: Infl probe blocked by Voice_TR
+  | .S | .R | .T => True   -- S φ-Agreed by Infl → Set B; R/T default
+
+instance : DecidablePred ArgPosition.IsPhiAgreed := fun p => by
+  cases p <;> unfold ArgPosition.IsPhiAgreed <;> infer_instance
 
 -- ============================================================================
 -- § 3: Pronoun Realization
@@ -134,40 +200,43 @@ def MamArgPosition.isPhiAgreed : MamArgPosition → Bool
     are identical to their independent forms (Table 4.25, p. 200).
     Whether actual reduction occurs depends on person (see
     `derivePronounForm`), but only agreed-with positions are eligible. -/
-def MamArgPosition.canBeReduced (pos : MamArgPosition) : Bool :=
-  pos.isPhiAgreed
+def ArgPosition.CanBeReduced (pos : ArgPosition) : Prop :=
+  pos.IsPhiAgreed
 
-/-- The three argument positions. -/
-def mamArgPositions : List MamArgPosition :=
-  [.agent, .patient, .intranS]
+instance : DecidablePred ArgPosition.CanBeReduced := fun pos => by
+  unfold ArgPosition.CanBeReduced; exact inferInstance
+
+/-- The three monotransitive argument positions. -/
+def mamArgPositions : List ArgPosition := [.A, .P, .S]
 
 -- ============================================================================
 -- § 4: Per-Position Verification
 -- ============================================================================
 
 /-- Agent gets ERG (inherent, from Voice). -/
-theorem agent_case : MamArgPosition.agent.case = .erg := rfl
+theorem A_case : ArgPosition.case .A = .erg := rfl
 
 /-- Patient gets ACC (structural, from Voice). -/
-theorem patient_case : MamArgPosition.patient.case = .acc := rfl
+theorem P_case : ArgPosition.case .P = .acc := rfl
 
 /-- Intransitive S gets ABS (structural, from Infl). -/
-theorem intranS_case : MamArgPosition.intranS.case = .abs := rfl
+theorem S_case : ArgPosition.case .S = .abs := rfl
 
-/-- Three distinct underlying cases — morphologically tripartite. -/
-theorem tripartite :
-    MamArgPosition.agent.case ≠ MamArgPosition.patient.case ∧
-    MamArgPosition.agent.case ≠ MamArgPosition.intranS.case ∧
-    MamArgPosition.patient.case ≠ MamArgPosition.intranS.case := by
-  exact ⟨by decide, by decide, by decide⟩
+/-- Three distinct underlying cases — morphologically tripartite.
+    Inherits from `Alignment.tripartite_distinguishes_all` via the
+    substrate connection. -/
+theorem tripartite_alignment :
+    ArgPosition.case .A ≠ ArgPosition.case .P ∧
+    ArgPosition.case .A ≠ ArgPosition.case .S ∧
+    ArgPosition.case .P ≠ ArgPosition.case .S :=
+  Alignment.tripartite_distinguishes_all
 
-/-- Reduction eligibility correlates with φ-agreement: an argument
-    position is eligible for pronoun reduction iff it triggers agreement
-    on the verb. (Actual reduction further requires [+author]; see
-    `derivePronounForm`.) -/
-theorem reduction_eligible_iff_phi_agreed :
-    mamArgPositions.all (λ pos => pos.canBeReduced == pos.isPhiAgreed) = true := by
-  native_decide
+/-- Reduction eligibility ≡ φ-agreement: an argument position is
+    eligible for pronoun reduction iff it triggers agreement on the
+    verb. By `CanBeReduced := IsPhiAgreed`, this is reflexivity. -/
+theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
+    pos.CanBeReduced ↔ pos.IsPhiAgreed :=
+  Iff.rfl
 
 -- ============================================================================
 -- § 5: Case Inventory Validation (@cite{blake-1994})
@@ -275,55 +344,55 @@ instance : DecidablePred isFirstPerson := fun p => by
     so their subj/poss forms equal their independent forms (Table 4.25).
     For unagreed-with positions (objects), there is no F diacritic,
     so impoverishment does not apply regardless of person. -/
-def derivePronounForm (pos : MamArgPosition) (person : Features.Prominence.PersonLevel) :
+def derivePronounForm (pos : ArgPosition) (person : Features.Prominence.PersonLevel) :
     PronounForm :=
-  if pos.isPhiAgreed then
+  if pos.IsPhiAgreed then
     if isFirstPerson person then .reduced
     else .full  -- 2nd/3rd: subj/poss = independent form (no reduction)
   else .full
 
 /-- 1st person agent: reduced (base deleted, only =i remains). -/
-theorem first_agent_reduced :
-    derivePronounForm .agent .first = .reduced := rfl
+theorem first_A_reduced :
+    derivePronounForm .A .first = .reduced := rfl
 
 /-- 3rd person agent: full independent form (impoverishment does not
     apply to [-author]). -/
-theorem third_agent_full :
-    derivePronounForm .agent .third = .full := rfl
+theorem third_A_full :
+    derivePronounForm .A .third = .full := rfl
 
 /-- 2nd person agent: full independent form (=i IS the independent
     2SG pronoun, not a reduction). -/
-theorem second_agent_full :
-    derivePronounForm .agent .second = .full := rfl
+theorem second_A_full :
+    derivePronounForm .A .second = .full := rfl
 
 /-- 1st person patient: full pronoun (no agreement → no F diacritic). -/
-theorem first_patient_full :
-    derivePronounForm .patient .first = .full := rfl
+theorem first_P_full :
+    derivePronounForm .P .first = .full := rfl
 
 /-- 3rd person patient: full pronoun (no agreement → no F diacritic). -/
-theorem third_patient_full :
-    derivePronounForm .patient .third = .full := rfl
+theorem third_P_full :
+    derivePronounForm .P .third = .full := rfl
 
 /-- 1st person intransitive S: reduced (Set B agreement triggers
     impoverishment, deleting base). -/
-theorem first_intranS_reduced :
-    derivePronounForm .intranS .first = .reduced := rfl
+theorem first_S_reduced :
+    derivePronounForm .S .first = .reduced := rfl
 
 /-- 3rd person intransitive S: full independent form. -/
-theorem third_intranS_full :
-    derivePronounForm .intranS .third = .full := rfl
+theorem third_S_full :
+    derivePronounForm .S .third = .full := rfl
 
 /-- Key asymmetry: for agreed-with positions, 1st person is reduced
     while 2nd/3rd retain full independent forms. This follows from the
     impoverishment rule targeting [+author] only. -/
 theorem first_vs_nonfirst_asymmetry :
-    (derivePronounForm .agent .first ≠ derivePronounForm .agent .third) ∧
-    (derivePronounForm .intranS .first ≠ derivePronounForm .intranS .third) := by
+    (derivePronounForm .A .first ≠ derivePronounForm .A .third) ∧
+    (derivePronounForm .S .first ≠ derivePronounForm .S .third) := by
   exact ⟨by decide, by decide⟩
 
 /-- For unagreed-with positions, person is irrelevant: all get full pronouns. -/
 theorem patient_person_irrelevant :
-    derivePronounForm .patient .first = derivePronounForm .patient .third := rfl
+    derivePronounForm .P .first = derivePronounForm .P .third := rfl
 
 -- ============================================================================
 -- § 7: Mayan Absolutive Parameter
@@ -340,19 +409,19 @@ theorem mam_case_locus :
     Fragments.Mayan.toCaseLocus absPosition = .absNom := rfl
 
 -- ============================================================================
--- § 8: Theory-Neutral Marker Lookup Verification
+-- § 8: Theory-Neutral Marker Verification
 -- ============================================================================
 
 /-- Set A 1SG marker. -/
-theorem setA_1sg : lookupMarker setAMarkers .first true = some "n-/w-" := by native_decide
+theorem setA_1sg : mamSetAExponent .p1sg = "n-/w-" := rfl
 
-/-- Set A 3SG marker is "t-" (the default). -/
-theorem setA_3sg : lookupMarker setAMarkers .third true = some "t-" := by native_decide
+/-- Set A 3SG marker is "t-" (the default singular Set A — syncretic with 2SG). -/
+theorem setA_3sg : mamSetAExponent .p3sg = "t-" := rfl
 
 /-- Set B 1SG marker is "chin". -/
-theorem setB_1sg : lookupMarker setBMarkers .first true = some "chin" := by native_decide
+theorem setB_1sg : mamSetBExponent .p1sg = "chin" := rfl
 
 /-- Set B 3SG marker is the default "tz'=". -/
-theorem setB_3sg : lookupMarker setBMarkers .third true = some defaultSetB := by native_decide
+theorem setB_3sg : mamSetBExponent .p3sg = defaultSetB := rfl
 
 end Fragments.Mayan.Mam

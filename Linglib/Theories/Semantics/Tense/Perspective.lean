@@ -87,7 +87,7 @@ theorem opPi_eq_embeddedFrame {Time : Type*}
            eventTime := embeddedE }
          matrixFrame.eventTime =
     embeddedFrame matrixFrame embeddedR embeddedE := by
-  simp [opPi, embeddedFrame]
+  simp only [opPi, embeddedFrame]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -188,7 +188,7 @@ def presAsPrProp {Time : Type*} [DecidableEq Time]
 theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
     (f : ReichenbachFrame Time) :
     (presAsPrProp f).presup () = true ↔ f.referenceTime = f.perspectiveTime := by
-  simp [presAsPrProp, decide_eq_true_eq]
+  simp [presAsPrProp]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -261,7 +261,7 @@ theorem InterpParams.perspective_context_diverge {W E P T : Type*}
     (hDistinct : newPi ≠ ip.context.time) :
     (ip.shiftPerspective newPi).perspective ≠
     (ip.shiftPerspective newPi).context.time := by
-  simp [InterpParams.shiftPerspective]
+  simp only [InterpParams.shiftPerspective]
   exact hDistinct
 
 /-- OP_π on `InterpParams` corresponds to `opPi` on `ReichenbachFrame`. -/
@@ -269,7 +269,7 @@ theorem InterpParams.shiftPerspective_matches_opPi {W E P T : Type*}
     (ip : InterpParams W E P T) (f : ReichenbachFrame T) (newPi : T)
     (_hSync : f.perspectiveTime = ip.perspective) :
     (opPi f newPi).perspectiveTime = (ip.shiftPerspective newPi).perspective := by
-  simp [opPi, InterpParams.shiftPerspective]
+  simp only [opPi, InterpParams.shiftPerspective]
 
 
 -- ════════════════════════════════════════════════════════════════

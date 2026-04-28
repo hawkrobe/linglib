@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Derivation.Operator
+import Linglib.Theories.Semantics.Verb.Roots.Operators
 import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 

@@ -1,9 +1,11 @@
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.Defs.LinearOrder
 import Linglib.Core.WorldTimeIndex
-import Linglib.Theories.Semantics.Modality.TemporalConstraint
 
 /-!
 # Historical Alternatives
 @cite{condoravdi-2002} @cite{thomason-1984} @cite{cariani-santorio-2018}
+@cite{klecha-2016} @cite{abusch-1997}
 
 Framework-agnostic relational structure on worlds: the **historical
 alternatives** of a world at a time are the worlds that perfectly match
@@ -14,14 +16,21 @@ modality.
 
 ## Key Concepts
 
-1. **World history function** — the relation between a ⟨world, time⟩
+1. **Partial history time predicates** — `isActualHistory`,
+   `isFutureHistory`, etc. The framework-neutral interval predicates
+   over `LE Time` / `LT Time` that index the situation-base slices.
+   Named for @cite{klecha-2016} Definition 3.
+2. **World history function** — the relation between a ⟨world, time⟩
    point and the worlds that share its history up to that time.
-2. **Historical/actual/future bases** — the three temporal slices of
-   the historical modal base, indexed by time predicates from
-   `Theories/Semantics/Modality/TemporalConstraint`.
-3. **Historical equivalence** — the equivalence relation `≃_t` of
+3. **Historical/actual/future bases** — the three temporal slices of
+   the historical modal base, defined as situations whose time
+   component satisfies one of the partial-history predicates.
+4. **Klecha 2016 ULC derivation** — the Upper Limit Constraint
+   (@cite{abusch-1997}) is *derived* from `actualHistoryBase` membership
+   by `.2` projection, rather than stipulated.
+5. **Historical equivalence** — the equivalence relation `≃_t` of
    @cite{condoravdi-2002} §4.1.
-4. **Metaphysical modal base** — the equivalence class of the
+6. **Metaphysical modal base** — the equivalence class of the
    evaluation world under `≃_t`.
 
 ## What's not here
@@ -36,7 +45,94 @@ alternatives" can use. The selectional semantics for *will*
 
 namespace Core.Modality.HistoricalAlternatives
 
-open _root_.Core.Time
+/-! ## Partial History Taxonomy
+
+@cite{klecha-2016} Definition 3 defines five kinds of partial history,
+distinguished by the temporal component of the world-time pair relative
+to a reference time `t`. We formalize all five as predicates on time
+pairs. Only actual and future are used in the core DOX/CIR mechanism,
+but the full taxonomy is needed for extensions (e.g., prospective is
+the temporal component of `historicalBase` below).
+
+These are framework-neutral interval predicates over `LE Time` / `LT Time`;
+the @cite{klecha-2016} citation is for the terminology, not the
+mathematical content (which is just `≤`, `<`, `>`, `≥`). -/
+
+/-- Maximal history: unrestricted temporal extent.
+    @cite{klecha-2016} Definition 3(v): Ω_t = all histories. -/
+def isMaximalHistory {Time : Type*} (_evalTime _historyTime : Time) : Prop :=
+  True
+
+/-- Actual history: temporal component ends at or before `t`.
+    @cite{klecha-2016} Definition 3(vi): 𝒜_t = {i : τ(i) = (-∞, t]}. -/
+def isActualHistory {Time : Type*} [LE Time]
+    (evalTime historyTime : Time) : Prop :=
+  historyTime ≤ evalTime
+
+/-- Past history: temporal component ends strictly before `t`.
+    @cite{klecha-2016} Definition 3(viii): 𝒫_t = {i : τ(i) = (-∞, t)}.
+    Distinct from actual: past excludes `t` itself. -/
+def isPastHistory {Time : Type*} [LT Time]
+    (evalTime historyTime : Time) : Prop :=
+  historyTime < evalTime
+
+/-- Future history: temporal component starts strictly after `t`.
+    @cite{klecha-2016} Definition 3(vii): ℱ_t = {j : τ(j) = (t, ∞)}. -/
+def isFutureHistory {Time : Type*} [LT Time]
+    (evalTime historyTime : Time) : Prop :=
+  historyTime > evalTime
+
+/-- Prospective history: temporal component starts at or after `t`.
+    @cite{klecha-2016} Definition 3(ix): ℙ_t = {j : τ(j) = [t, ∞)}.
+    This is exactly the temporal component of `historicalBase` below:
+    `s'.time ≥ s.time`. -/
+def isProspectiveHistory {Time : Type*} [LE Time]
+    (evalTime historyTime : Time) : Prop :=
+  historyTime ≥ evalTime
+
+/-- Actual and future histories are complementary: every time is
+    either ≤ t (actual) or > t (future). -/
+theorem actual_future_complementary {Time : Type*} [LinearOrder Time]
+    (evalTime historyTime : Time) :
+    isActualHistory evalTime historyTime ∨ isFutureHistory evalTime historyTime :=
+  (lt_or_ge evalTime historyTime).elim Or.inr Or.inl
+
+/-- Past and prospective histories are complementary: every time is
+    either < t (past) or ≥ t (prospective). -/
+theorem past_prospective_complementary {Time : Type*} [LinearOrder Time]
+    (evalTime historyTime : Time) :
+    isPastHistory evalTime historyTime ∨ isProspectiveHistory evalTime historyTime :=
+  (lt_or_ge historyTime evalTime).elim Or.inl Or.inr
+
+/-- Past ⊂ actual: strict past implies actual. -/
+theorem past_implies_actual {Time : Type*} [Preorder Time]
+    (evalTime historyTime : Time) (h : isPastHistory evalTime historyTime) :
+    isActualHistory evalTime historyTime :=
+  le_of_lt h
+
+/-- Future ⊂ prospective: strict future implies prospective. -/
+theorem future_implies_prospective {Time : Type*} [Preorder Time]
+    (evalTime historyTime : Time) (h : isFutureHistory evalTime historyTime) :
+    isProspectiveHistory evalTime historyTime :=
+  le_of_lt h
+
+/-- Actual ∩ prospective = simultaneous: a time that is both actual
+    and prospective is exactly the evaluation time. -/
+theorem actual_and_prospective_iff_simultaneous {Time : Type*} [PartialOrder Time]
+    (evalTime historyTime : Time) :
+    isActualHistory evalTime historyTime ∧ isProspectiveHistory evalTime historyTime ↔
+    historyTime = evalTime :=
+  ⟨λ ⟨hle, hge⟩ => le_antisymm hle hge, λ h => ⟨le_of_eq h, ge_of_eq h⟩⟩
+
+/-- Past and future are disjoint: no time is both < t and > t. -/
+theorem past_future_disjoint {Time : Type*} [Preorder Time]
+    (evalTime historyTime : Time) :
+    ¬(isPastHistory evalTime historyTime ∧ isFutureHistory evalTime historyTime) := by
+  intro ⟨h1, h2⟩
+  exact lt_asymm h1 h2
+
+
+/-! ## World History Functions and Situation Bases -/
 
 /--
 World history function: given a world and time, returns worlds that
@@ -64,7 +160,7 @@ hist(s) = {s' : w_{s'} ∈ H(wₛ, τ(s)) ∧ τ(s') ≥ τ(s)}
 def historicalBase {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
-  { s' | s'.world ∈ history s ∧ s'.time ≥ s.time }
+  { s' | s'.world ∈ history s ∧ isProspectiveHistory s.time s'.time }
 
 /--
 Actual history base (@cite{klecha-2016} DOX): situations whose worlds
@@ -77,7 +173,7 @@ component ends at the evaluation time: 𝒜_t = {i : τ(i) = (-∞, t]}.
 def actualHistoryBase {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
-  { s' | s'.world ∈ history s ∧ s'.time ≤ s.time }
+  { s' | s'.world ∈ history s ∧ isActualHistory s.time s'.time }
 
 /--
 Future history base (@cite{klecha-2016} CIR): situations whose worlds
@@ -89,7 +185,7 @@ component departs from the evaluation time: ℱ_t = {j : τ(j) = (t, ∞)}.
 def futureHistoryBase {W Time : Type*} [LT Time]
     (history : WorldHistory W Time)
     (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
-  { s' | s'.world ∈ history s ∧ s'.time > s.time }
+  { s' | s'.world ∈ history s ∧ isFutureHistory s.time s'.time }
 
 /--
 A world history is reflexive if every world agrees with itself.
@@ -168,16 +264,32 @@ def holdsAt {W Time : Type*} (p : TProp W Time) (w : W) (t : Time) : Prop :=
   p ⟨w, t⟩
 
 
-/-! ## Bridge: BranchingTime ↔ TemporalConstraint
+/-! ## Klecha 2016: ULC derived from history structure
 
-`TemporalConstraint` defines abstract time predicates (actual: ≤, future: >,
-prospective: ≥) on bare time values. `BranchingTime` defines concrete sets of
-*situations* (world-time pairs) using the same inequalities on the time
-component. The theorems below make the connection structural: membership in a
-history base implies (and is implied by) the corresponding time predicate,
-modulo the world-agreement condition. -/
+The Upper Limit Constraint — embedded RT under a doxastic attitude
+must be ≤ matrix EvalT — was stated by @cite{abusch-1997} §7 ("the
+now of an epistemic alternative is an upper limit for the denotation
+of tenses"), with the presuppositional construal due to
+@cite{heim-1994-comments} and endorsed by Abusch 1997 fn 20.
+@cite{klecha-2016} §4.2 *derives* the same constraint from the
+temporal character of the doxastic modal base: DOX returns actual
+histories 𝒜_t (Klecha eq 35a); membership in 𝒜_t entails RT ≤ t by
+`.2` projection through the situation-base definition. Symmetrically,
+CIR returns ℱ_t and membership entails RT > t. The theorems below
+make the projection kernel-checked.
 
-open Semantics.Modality.TemporalConstraint
+This is what distinguishes @cite{klecha-2016}'s account from
+@cite{abusch-1997}'s ("identical in spirit, if not in implementation"
+per Klecha §4.2): both rely on the branching-futures motivation, but
+Klecha derives ULC from history structure while Abusch
+states it as a constraint on tense-node denotation. The
+Klecha-namespace dispatch on `ModalBaseKind` lives in
+`Theories/Semantics/Modality/TemporalConstraint.lean`.
+
+**Note:** the modal-alternative quantification in Abusch's formulation
+("the now of an *epistemic alternative*") is captured here at the
+substrate level by `WorldHistory` membership; the value-level
+projection `s'.time ≤ s.time` recovers Abusch's bare-`≤` form. -/
 
 /-- A situation in `historicalBase` has prospective time:
     `s' ∈ historicalBase h s → isProspectiveHistory s.time s'.time`. -/
@@ -193,6 +305,37 @@ theorem actualHistoryBase_time_actual {W Time : Type*} [LE Time]
     (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (h : s' ∈ actualHistoryBase history s) :
     isActualHistory s.time s'.time :=
+  h.2
+
+/-- Modal-layer Upper Limit Constraint (@cite{abusch-1997}'s
+    formulation that quantifies over doxastic alternatives, NOT just
+    times). An embedded situation `s'` satisfies the modal-layer ULC
+    relative to a matrix situation `s` and a doxastic accessibility
+    `history` iff `s'` is a member of `s`'s actual-history base
+    (i.e., `s'` agrees with `s` on world history up to `s.time`, and
+    `s'.time ≤ s.time`).
+
+    The value-level `Theories/Semantics/Tense/Basic.lean.upperLimitConstraint`
+    is the `.2`-projection of this modal-layer formulation; the
+    `world` component of the conjunction is what carries the
+    doxastic-alternative quantification Abusch's original prose
+    statement requires. -/
+def upperLimitConstraintModal {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (matrixSituation embeddedSituation : WorldTimeIndex W Time) : Prop :=
+  embeddedSituation ∈ actualHistoryBase history matrixSituation
+
+/-- The modal-layer Upper Limit Constraint implies the value-level
+    one (`embeddedSituation.time ≤ matrixSituation.time`). The proof
+    is `.2` projection through the `actualHistoryBase` definition.
+    This is the structural soundness lemma justifying the value-level
+    `Theories/Semantics/Tense/Basic.lean.upperLimitConstraint` as a
+    faithful reduction of @cite{abusch-1997}'s modal formulation. -/
+theorem upperLimitConstraintModal_implies_value {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (s s' : WorldTimeIndex W Time)
+    (h : upperLimitConstraintModal history s s') :
+    s'.time ≤ s.time :=
   h.2
 
 /-- A situation in `futureHistoryBase` has future time:

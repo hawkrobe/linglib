@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Core.MirrorPrinciple
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # @cite{baker-1985}: The Mirror Principle and Morphosyntactic Explanation
@@ -10,6 +10,9 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
 
 ## Structure
 
+- **§0**: Mirror-Principle substrate (was `Theories/Morphology/Core/
+  MirrorPrinciple.lean`; relocated 0.230.455 — Baker is the founding
+  paper, anchor lives here per CLAUDE.md "every file is anchored").
 - **§1**: Chamorro — passive, causative, and number agreement
   interactions (§§1, 3.1 of the paper)
 - **§2**: Quechua — causative-reciprocal ordering determines
@@ -18,6 +21,142 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
 - **§4**: Cross-linguistic verification of the Agreement
   Restriction (§3.2)
 -/
+
+-- ============================================================================
+-- §0: Mirror Principle Substrate (Baker 1985)
+-- ============================================================================
+
+/-! "Morphological derivations must directly reflect syntactic derivations
+(and vice versa)." (@cite{baker-1985} (4)) Each grammatical function
+changing rule (GF-rule) — passive, causative, applicative, reflexive/
+reciprocal — simultaneously adds an affix to the verb and changes the
+grammatical functions of arguments. The Mirror Principle requires the
+morphological ordering (affix layering) to match the syntactic ordering
+(rule application sequence).
+
+@cite{baker-1985} §6 argues the Mirror Principle should not be a
+stipulation but follow from the architecture: in a framework where
+GF-rules are a single process with both effects, mirroring is by
+construction. Formalized below via `DerivationStep`. -/
+
+namespace Morphology.MirrorPrinciple
+
+open Core.Morphology (MorphCategory)
+
+/-- Grammatical function changing rules (GF-rules). @cite{baker-1985} §§2-4. -/
+inductive GFRuleType where
+  | passive
+  | causative
+  | applicative
+  | reflexReciprocal
+  deriving DecidableEq, Repr, BEq
+
+/-- Map GF-rules to @cite{bybee-1985}'s morphological categories. -/
+def GFRuleType.toMorphCategory : GFRuleType → MorphCategory
+  | .passive => .voice
+  | .causative => .valence
+  | .applicative => .valence
+  | .reflexReciprocal => .valence
+
+/-- A single step bundling morphological + syntactic effects. By
+    bundling, the Mirror Principle holds by construction. -/
+structure DerivationStep where
+  rule : GFRuleType
+  affix : String
+  isPrefix : Bool := false
+  deriving DecidableEq, Repr, BEq
+
+/-- Steps ordered first-applied (innermost) to last-applied (outermost). -/
+abbrev Derivation := List DerivationStep
+
+def ruleOrder (d : Derivation) : List GFRuleType := d.map (·.rule)
+def affixOrder (d : Derivation) : List String := d.map (·.affix)
+
+/-- The orderings are isomorphic by construction — the Mirror Principle. -/
+theorem mirror_by_construction (d : Derivation) :
+    (ruleOrder d).length = (affixOrder d).length := by
+  simp [ruleOrder, affixOrder]
+
+inductive AgreementPosition where
+  | inner | outer
+  deriving DecidableEq, Repr, BEq
+
+inductive GFReference where
+  | semantic | surface
+  deriving DecidableEq, Repr, BEq
+
+structure AgreementPattern where
+  position : AgreementPosition
+  reference : GFReference
+  deriving DecidableEq, Repr, BEq
+
+/-- Inner position → pre-rule (semantic) GFs; outer → post-rule (surface). -/
+def deriveReference : AgreementPosition → GFReference
+  | .inner => .semantic
+  | .outer => .surface
+
+def AgreementPattern.isAttested (p : AgreementPattern) : Bool :=
+  p.reference == deriveReference p.position
+
+theorem inner_semantic_attested :
+    (AgreementPattern.mk .inner .semantic).isAttested = true := rfl
+theorem outer_surface_attested :
+    (AgreementPattern.mk .outer .surface).isAttested = true := rfl
+theorem outer_semantic_unattested :
+    (AgreementPattern.mk .outer .semantic).isAttested = false := rfl
+theorem inner_surface_unattested :
+    (AgreementPattern.mk .inner .surface).isAttested = false := rfl
+
+/-- Exactly two of four patterns are attested (Baker (27)). -/
+theorem agreement_restriction_count :
+    (([⟨.inner, .semantic⟩, ⟨.outer, .semantic⟩,
+       ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
+       List AgreementPattern).filter (·.isAttested)).length
+    = 2 := by
+  decide
+
+theorem attested_are_27a_and_27d :
+    ([⟨.inner, .semantic⟩, ⟨.outer, .semantic⟩,
+      ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
+      List AgreementPattern).filter (·.isAttested)
+    = [⟨.inner, .semantic⟩, ⟨.outer, .surface⟩] := by
+  decide
+
+theorem derived_reference_attested (pos : AgreementPosition) :
+    (AgreementPattern.mk pos (deriveReference pos)).isAttested = true := by
+  cases pos <;> rfl
+
+/-- Applicative feeds passive: appl creates the DO that passive promotes. -/
+def GFRuleType.Feeds (r1 r2 : GFRuleType) : Prop :=
+  r1 = .applicative ∧ r2 = .passive
+
+instance : DecidableRel GFRuleType.Feeds := fun _ _ => by
+  unfold GFRuleType.Feeds; exact inferInstance
+
+def feedingOrder (feeder fed : GFRuleType) : List GFRuleType := [feeder, fed]
+
+theorem appl_feeds_passive :
+    GFRuleType.Feeds .applicative .passive := ⟨rfl, rfl⟩
+
+theorem appl_pass_predicted :
+    feedingOrder .applicative .passive = [.applicative, .passive] := rfl
+
+/-- The morphological domain of the Mirror Principle. @cite{baker-1985} §5. -/
+inductive MorphDomain where
+  | concatenative | cliticization | nonconcatenative
+  deriving DecidableEq, Repr
+
+def MorphDomain.InScope (d : MorphDomain) : Prop := d = .concatenative
+
+instance : DecidablePred MorphDomain.InScope := fun d => by
+  unfold MorphDomain.InScope; exact inferInstance
+
+/-- GF-rule morphemes are inside agreement per Bybee's hierarchy. -/
+theorem gfRule_inside_agreement (r : GFRuleType) :
+    r.toMorphCategory.peripherality < MorphCategory.agreement.peripherality := by
+  cases r <;> decide
+
+end Morphology.MirrorPrinciple
 
 namespace Baker1985
 
@@ -217,11 +356,11 @@ theorem all_appl_before_pass :
     relationship: applicative feeds passive, so applicative is
     universally inner. -/
 theorem all_match_feeding_prediction :
-    GFRuleType.feeds .applicative .passive = true ∧
+    GFRuleType.Feeds .applicative .passive ∧
     ruleOrder chiMwini = [.applicative, .passive] ∧
     ruleOrder kinyarwanda = [.applicative, .passive] ∧
     ruleOrder huichol = [.applicative, .passive] :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨⟨rfl, rfl⟩, rfl, rfl, rfl⟩
 
 /-- Bemba (Bantu) causative-reciprocal: *Naa-mon-eshy-ana*
     'I made Mwape and Mutumba see each other.'

@@ -1,7 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Datasets.WALS.Features.F87A
 import Linglib.Theories.Syntax.Minimalist.Modification
-import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Fragments.Greek.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.AdjAgreement
@@ -37,6 +36,56 @@ trees (44)/(45), encode 24 languages from Table 3, and verify that the MAG
 correctly predicts all of them while the HFF fails for 11. Bridge theorems
 connect to WALS F87A and Minimalist feature infrastructure.
 -/
+
+-- ============================================================================
+-- § 0: Input Correspondence Principle (Ackema-Neeleman 2004)
+-- ============================================================================
+
+/-! @cite{ackema-neeleman-2004}'s ICP — used by AZ 2025 §5.2 as the
+morphophonological factor of the MAG. Was previously in `Theories/Morphology/
+Core/ICP.lean`; relocated 0.230.455 (sole consumer is this study file).
+
+The ICP constrains the phonological realization of affixes: an affix must
+take as its phonological host the head of the phrase it selects. Affixes
+are always linearly adjacent to their syntactic selectee.
+
+When the attributivizer (Attr) is realized as an affix, the ICP forces it
+to be adjacent to the adjective head A — dependents of A (PPs, CPs, AdvPs)
+cannot linearly intervene between A and N. When Attr is a clitic or free
+word, the ICP does not apply. For null affixes, the Affix Continuity
+Constraint (Ackema-Neeleman §70) extends the ICP. -/
+
+namespace Morphology.ICP
+
+open Minimalist.Modification (AttrStatus)
+
+/-- Does the morphophonological status of Attr impose adjacency between
+    Attr and the adjective head? The ICP applies to affixes (overt and
+    null); clitics and free words are not constrained. -/
+def imposesAdjacency : AttrStatus → Bool
+  | .affix    => true
+  | .null     => true   -- null affixes: Affix Continuity Constraint (70)
+  | .clitic   => false
+  | .freeWord => false
+
+/-- When adjacency is imposed, dependents of A cannot intervene between
+    A and the modified N. This is the morphophonological factor of the MAG. -/
+def icpBlocksIntervention (status : AttrStatus) : Bool :=
+  imposesAdjacency status
+
+theorem affix_blocks : icpBlocksIntervention .affix = true := rfl
+theorem null_blocks : icpBlocksIntervention .null = true := rfl
+theorem clitic_permits : icpBlocksIntervention .clitic = false := rfl
+theorem freeWord_permits : icpBlocksIntervention .freeWord = false := rfl
+
+/-- MAG condition (b) is exactly the negation of ICP adjacency. -/
+theorem magCondB_is_not_icp (status : AttrStatus) :
+    (match status with
+     | .clitic | .freeWord => true
+     | .affix  | .null     => false) = !icpBlocksIntervention status := by
+  cases status <;> rfl
+
+end Morphology.ICP
 
 namespace AlexeyenkoZeijlstra2025
 

@@ -1,333 +1,156 @@
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Applicative
-import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
-
 /-!
-# Icelandic Verb Fragment: -st Constructions
-@cite{wood-2015} @cite{schaefer-2008}
+# Icelandic Verbs (Predicates fragment)
+@cite{wood-2015}
 
-Icelandic -st (historically *sik* → *-sk* → *-st*) is the
-morphological reflex of non-agentive Voice. @cite{wood-2015} shows
-that -st spells out Voice across at least six descriptive categories:
+Consensus lexical data for Icelandic verbs participating in the
+*-st* / *-na* alternations made famous by @cite{wood-2015}. Each
+entry carries only the surface forms and a Boolean for whether an
+active variant exists — every other piece of information about each
+verb (the *-st* classification, the anticausative-marking morpheme,
+the @cite{cuervo-2003}-style root decomposition, the
+possessive-dative diagnostic) is paper-specific apparatus and lives
+in `Phenomena.ArgumentStructure.Studies.Wood2015`, where it can
+participate in further analysis without polluting the Fragment
+schema.
 
-1. **Anticausative** -st: Voice_{D} + Ø semantics (e.g., *opnast* 'open')
-2. **Middle** -st: Voice_{D} + Ø semantics (e.g., *seljast* 'sell')
-3. **Reflexive** -st: Voice_{D} + AGENT semantics + binding (*baðast* 'bathe')
-4. **Inherent** -st: lexicalized (*nálgast* 'approach')
-5. **Subject-experiencer** -st: Voice_{D} + experiencer (*leiðast* 'be.bored')
-6. **Reciprocal** -st: Voice_{D} + AGENT + reciprocal binding
+This is the same discipline applied to other Fragment lexicons in
+linglib: textbook-consensus lexical data on this side; competing
+analyses on the Studies side.
 
-The key argument: -st is NOT a single morpheme with a single
-meaning. It is a clitic that merges in the specifier of Voice_{D}
-(or SpecpP for figure reflexives) across multiple configurations.
-The shared PF realization obscures the underlying syntactic diversity.
-
-Note: @cite{wood-2015}'s Voice parameterization uses Voice_{D}
-(has D-feature, projects specifier) vs Voice_{} (specifierless).
-The ±θ/±D labels used in the `VoiceFlavor.toParams` function follow
-@cite{schaefer-2008}'s notation.
-
-## Morphological Spell-Out
-
-`voiceToSuffix` models the observation that all non-agentive Voice
-configurations spell out as -st in Icelandic. In @cite{wood-2015}'s
-analysis, -st is a clitic in SpecVoiceP, not a suffix on Voice
-itself; `voiceToSuffix` is a simplification for the fragment.
+Note on classification: the morphological reflex *-st* (historically
+*sik* → *-sk* → *-st*) realizes Voice across at least six descriptive
+categories that @cite{wood-2015} identifies — anticausative, middle,
+reflexive, inherent, subject-experiencer, reciprocal — plus *-na*-marked
+anticausatives like *brotna*. The *-st* / *-na* contrast and the
+parameters that distinguish these categories are formalized in the
+Wood2015 study file, not here.
 -/
 
 namespace Fragments.Icelandic.Predicates
 
-open Minimalist
-
 -- ============================================================================
--- § 1: -st Construction Types
+-- § 1: Verb Entry
 -- ============================================================================
 
-/-- Classification of Icelandic -st constructions (@cite{wood-2015}).
-    Each type maps to a distinct Voice configuration. -/
-inductive StType where
-  | anticausative    -- Voice[−θ, +D]: *opnast*, *brotna-st*
-  | middle           -- Voice[−θ, −D]: *seljast*, *lesast*
-  | reflexive        -- Voice[+θ, +D] + binding: *baðast*, *klæddist*
-  | inherent         -- Lexicalized: *nálgast*, *minnast*
-  | subjectExp       -- Voice_EXP: *leiðast*, *langaðist*
-  | reciprocal       -- Voice[+θ, +D] + reciprocal: *kyssast*
-  deriving DecidableEq, Repr
-
-/-- Map each -st type to its Voice flavor. -/
-def StType.voiceFlavor : StType → VoiceFlavor
-  | .anticausative => .nonThematic
-  | .middle        => .expletive
-  | .reflexive     => .reflexive
-  | .inherent      => .nonThematic  -- lexicalized, but syntactically non-thematic
-  | .subjectExp    => .experiencer
-  | .reciprocal    => .reflexive    -- same Voice as reflexive, different binding
-
--- ============================================================================
--- § 1b: Anticausative Marking (@cite{wood-2015} Ch. 3, §3.3)
--- ============================================================================
-
-/-- How the anticausative is morphologically marked.
-
-    @cite{wood-2015} Ch. 3 derives three key generalizations:
-    - **-st** merges in SpecVoice_{D} (Voice with D-feature)
-    - **-na** spells out Voice_{} (specifierless Voice)
-    - **-st and -na never co-occur** (different Voice types)
-    - **-ka** is a spell-out of v (not Voice); -na and -ka never co-occur
-      because -na requires v to be null/pruned -/
-inductive AnticausativeMarking where
-  | st      -- -st: clitic in SpecVoice_{D}
-  | na      -- -na: exponent of specifierless Voice_{}
-  | unmarked -- no overt marking (zero alternation)
-  | ka      -- -ka: exponent of v (adjectival roots)
-  deriving DecidableEq, Repr
-
-/-- -st and -na are complementary: they spell out different Voice types. -/
-def AnticausativeMarking.voiceType : AnticausativeMarking → String
-  | .st       => "Voice_{D}"
-  | .na       => "Voice_{}"
-  | .unmarked => "Voice_{D} or Voice_{}"
-  | .ka       => "v (not Voice)"
-
--- ============================================================================
--- § 2: Morphological Spell-Out
--- ============================================================================
-
-/-- PF realization of Voice in Icelandic.
-
-    The key insight: -st does NOT correspond to a single Voice flavor.
-    It is the elsewhere exponent for Voice — it appears whenever Voice
-    is not agentive (active). -/
-def voiceToSuffix : VoiceFlavor → Option String
-  | .agentive    => none        -- active: no suffix
-  | .causer      => none        -- causative: no suffix
-  | .antipassive => none        -- not productive in Icelandic
-  | _            => some "-st"  -- all other Voice flavors spell out as -st
-
--- ============================================================================
--- § 3: Icelandic Verb Entries
--- ============================================================================
-
-/-- An Icelandic verb entry in the -st / -na fragment. -/
+/-- A lexical entry for an Icelandic verb participating in the
+    *-st* / *-na* alternation. Carries only consensus surface data. -/
 structure IcelandicStVerb where
-  /-- Active/bare form (if one exists) -/
+  /-- Active / bare form, if one exists. `none` for inherent *-st*
+      verbs (*nálgast*, *minnast*) and the subject-experiencer
+      *leiðast*. -/
   activeForm : Option String
-  /-- The intransitive form (-st, -na, or same as active) -/
+  /-- The intransitive form: typically suffixed with *-st*, with
+      *-na* on `brotna` and friends, or identical to the active when
+      the alternation is unmarked. -/
   stForm : String
-  /-- English gloss -/
+  /-- English gloss for human readers. -/
   gloss : String
-  /-- Which -st construction type -/
-  stType : StType
-  /-- Root event structure (@cite{cuervo-2003} notation) -/
-  rootStructure : List VerbHead
-  /-- Can this verb also appear without -st or -na? -/
+  /-- Whether an active variant exists (must agree with
+      `activeForm.isSome`; the redundancy is a sanity check used by
+      the consistency theorem below). -/
   hasActiveVariant : Bool
-  /-- How the anticausative is morphologically marked -/
-  marking : AnticausativeMarking := .st
-  /-- Does this verb license possessive datives? -/
-  licensesPossessiveDative : Bool := false
-  deriving Repr, BEq
+  deriving Repr, BEq, DecidableEq
 
 -- ============================================================================
--- § 4: Verb Data (@cite{wood-2015})
+-- § 2: Verb Data
 -- ============================================================================
 
-/-- *opna/opnast* 'open' — anticausative -st (@cite{wood-2015}).
-    Active: *Jón opnaði dyrnar* 'John opened the door'
-    -st: *Dyrnar opnuðust* 'The door opened' -/
+/-- *opna* / *opnast* 'open'. -/
 def opnast : IcelandicStVerb :=
   { activeForm := some "opna"
     stForm := "opnast"
     gloss := "open"
-    stType := .anticausative
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    hasActiveVariant := true
-    licensesPossessiveDative := true }
+    hasActiveVariant := true }
 
-/-- *splundra/splundrast* 'shatter' — anticausative -st (@cite{wood-2015}).
-    Active: *Ásta splundraði rúðunni* 'Ásta shattered the window'
-    -st: *Rúðan splundraðist* 'The window shattered'
-    Central example in @cite{wood-2015} Ch. 3, §3.5. -/
+/-- *splundra* / *splundrast* 'shatter'. -/
 def splundrast : IcelandicStVerb :=
   { activeForm := some "splundra"
     stForm := "splundrast"
     gloss := "shatter"
-    stType := .anticausative
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    hasActiveVariant := true
-    licensesPossessiveDative := true }
+    hasActiveVariant := true }
 
-/-- *brjóta/brotna* 'break' — anticausative with *-na* (NOT *-st*).
-    Included as comparison: -na marks specifierless Voice_{} whereas
-    -st merges in SpecVoice_{D} (@cite{wood-2015} Ch. 3, §3.3.2). -/
+/-- *brjóta* / *brotna* 'break' — the canonical *-na*-marked
+    anticausative (cf. *opnast* / *splundrast* with *-st*). -/
 def brotna : IcelandicStVerb :=
   { activeForm := some "brjóta"
     stForm := "brotna"
     gloss := "break"
-    stType := .anticausative
-    rootStructure := [.vCAUSE, .vGO, .vBE]
-    hasActiveVariant := true
-    marking := .na }
+    hasActiveVariant := true }
 
-/-- *selja/seljast* 'sell' — middle -st (@cite{wood-2015}).
-    *Þessi bók seldist vel* 'This book sold well' -/
+/-- *selja* / *seljast* 'sell'. -/
 def seljast : IcelandicStVerb :=
   { activeForm := some "selja"
     stForm := "seljast"
     gloss := "sell"
-    stType := .middle
-    rootStructure := [.vCAUSE, .vGO, .vBE]
     hasActiveVariant := true }
 
-/-- *lesa/lesast* 'read' — middle -st (@cite{wood-2015}).
-    *Þessi bók lesist vel* 'This book reads well' -/
+/-- *lesa* / *lesast* 'read'. -/
 def lesast : IcelandicStVerb :=
   { activeForm := some "lesa"
     stForm := "lesast"
     gloss := "read"
-    stType := .middle
-    rootStructure := [.vCAUSE, .vGO, .vBE]
     hasActiveVariant := true }
 
-/-- *baða/baðast* 'bathe' — reflexive -st (@cite{wood-2015}).
-    *Hún baðaðist* 'She bathed (herself)' -/
+/-- *baða* / *baðast* 'bathe'. -/
 def badast : IcelandicStVerb :=
   { activeForm := some "baða"
     stForm := "baðast"
     gloss := "bathe"
-    stType := .reflexive
-    rootStructure := [.vCAUSE, .vGO, .vBE]
     hasActiveVariant := true }
 
-/-- *klæða/klæðast* 'dress' — reflexive -st (@cite{wood-2015}).
-    *Hann klæddist* 'He dressed (himself)' -/
+/-- *klæða* / *klæðast* 'dress'. -/
 def klaedast : IcelandicStVerb :=
   { activeForm := some "klæða"
     stForm := "klæðast"
     gloss := "dress"
-    stType := .reflexive
-    rootStructure := [.vCAUSE, .vGO, .vBE]
     hasActiveVariant := true }
 
-/-- *nálgast* 'approach' — inherent -st (@cite{wood-2015}).
-    No active variant; -st is lexicalized. -/
+/-- *nálgast* 'approach' — no active variant; *-st* is lexicalized. -/
 def nalgast : IcelandicStVerb :=
   { activeForm := none
     stForm := "nálgast"
     gloss := "approach"
-    stType := .inherent
-    rootStructure := [.vGO]
     hasActiveVariant := false }
 
-/-- *minnast* 'remember' — inherent -st (@cite{wood-2015}).
-    No active variant. -/
+/-- *minnast* 'remember' — no active variant. -/
 def minnast : IcelandicStVerb :=
   { activeForm := none
     stForm := "minnast"
     gloss := "remember"
-    stType := .inherent
-    rootStructure := [.vBE]
     hasActiveVariant := false }
 
-/-- *leiðast* 'be bored' — subject-experiencer -st (@cite{wood-2015}).
-    *Mér leiðist í skólanum* 'I am bored in school' -/
+/-- *leiðast* 'be bored' — subject-experiencer; no active variant.
+    *Mér leiðist í skólanum* 'I am bored in school'. -/
 def leidast : IcelandicStVerb :=
   { activeForm := none
     stForm := "leiðast"
     gloss := "be bored"
-    stType := .subjectExp
-    rootStructure := [.vBE]
     hasActiveVariant := false }
 
-/-- *kyssa/kyssast* 'kiss' — reciprocal -st (@cite{wood-2015}).
-    *Þau kyssast* 'They kissed (each other)' -/
+/-- *kyssa* / *kyssast* 'kiss' — used in reciprocal contexts:
+    *Þau kyssast* 'They kissed (each other)'. -/
 def kyssast : IcelandicStVerb :=
   { activeForm := some "kyssa"
     stForm := "kyssast"
     gloss := "kiss"
-    stType := .reciprocal
-    rootStructure := [.vCAUSE, .vGO, .vBE]
     hasActiveVariant := true }
 
-/-- All -st verb entries (excludes -na verbs like *brotna*). -/
+/-- All *-st*-marked verb entries (excludes *-na*-marked verbs like
+    *brotna*). The Wood2015 study file projects analytical data
+    (stType, marking, root structure) over the same ten verbs in the
+    same order. -/
 def allStVerbs : List IcelandicStVerb :=
   [opnast, splundrast, seljast, lesast, badast, klaedast,
    nalgast, minnast, leidast, kyssast]
 
 -- ============================================================================
--- § 5: Verification Theorems
+-- § 3: Self-Consistency
 -- ============================================================================
 
-/-- Anticausative -st maps to non-thematic Voice. -/
-theorem anticausative_st_is_nonthematic :
-    StType.voiceFlavor .anticausative = .nonThematic := rfl
-
-/-- Middle -st maps to expletive Voice. -/
-theorem middle_st_is_expletive :
-    StType.voiceFlavor .middle = .expletive := rfl
-
-/-- Reflexive -st maps to reflexive Voice. -/
-theorem reflexive_st_is_reflexive :
-    StType.voiceFlavor .reflexive = .reflexive := rfl
-
-/-- Subject-experiencer -st maps to experiencer Voice. -/
-theorem subjectexp_st_is_experiencer :
-    StType.voiceFlavor .subjectExp = .experiencer := rfl
-
-/-- All alternating verbs have active variants. -/
+/-- Sanity check: every verb whose `hasActiveVariant` is true also
+    has `activeForm.isSome`. Catches schema drift in either field. -/
 theorem alternating_have_active :
     (allStVerbs.filter (·.hasActiveVariant)).all
-      (fun v => v.activeForm.isSome) = true := by native_decide
-
-/-- Inherent -st verbs lack active variants. -/
-theorem inherent_no_active :
-    (allStVerbs.filter (fun v => v.stType == .inherent)).all
-      (fun v => !v.hasActiveVariant) = true := by native_decide
-
-/-- Subject-experiencer -st verbs lack active variants. -/
-theorem subjectexp_no_active :
-    (allStVerbs.filter (fun v => v.stType == .subjectExp)).all
-      (fun v => !v.hasActiveVariant) = true := by native_decide
-
-/-- All anticausative -st verbs have inchoative root structure. -/
-theorem anticausative_is_inchoative :
-    (allStVerbs.filter (fun v => v.stType == .anticausative)).all
-      (fun v => isInchoative v.rootStructure) = true := by native_decide
-
-/-- -st spells out all non-agentive Voice flavors. -/
-theorem st_spells_out_nonagentive :
-    voiceToSuffix .nonThematic = some "-st" ∧
-    voiceToSuffix .expletive = some "-st" ∧
-    voiceToSuffix .reflexive = some "-st" ∧
-    voiceToSuffix .experiencer = some "-st" := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Active Voice gets no suffix. -/
-theorem active_no_suffix :
-    voiceToSuffix .agentive = none := rfl
-
--- ============================================================================
--- § 6: -st/-na Complementary Distribution (@cite{wood-2015} Ch. 3)
--- ============================================================================
-
-/-- -st and -na spell out different Voice types (@cite{wood-2015} Ch. 3).
-    -st merges in SpecVoice_{D}; -na spells out Voice_{}.
-    They can never co-occur on the same verb form. -/
-theorem st_na_different_voice_types :
-    AnticausativeMarking.voiceType .st ≠
-    AnticausativeMarking.voiceType .na := by decide
-
-/-- *brotna* is -na marked, not -st marked. -/
-theorem brotna_is_na : brotna.marking = .na := rfl
-
-/-- All verbs in allStVerbs are -st marked (default). -/
-theorem all_st_verbs_are_st_marked :
-    allStVerbs.all (fun v => v.marking == .st) = true := by native_decide
-
-/-- Different anticausative roots select different Voice types:
-    *opna* takes -st (Voice_{D}), *brjóta* takes -na (Voice_{}).
-    The marking choice is lexically determined per root. -/
-theorem anticausative_marking_varies :
-    opnast.marking = .st ∧
-    brotna.marking = .na := ⟨rfl, rfl⟩
+      (fun v => v.activeForm.isSome) = true := by decide
 
 end Fragments.Icelandic.Predicates

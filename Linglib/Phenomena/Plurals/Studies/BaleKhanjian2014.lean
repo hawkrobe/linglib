@@ -351,7 +351,7 @@ theorem definiteness_asymmetry :
     combine directly with bare nouns (eq. 10a), so there is no overt
     classifier morpheme that the silent ∪-operator would be blocked
     by. The general predicate `hasObligatoryClassifierSystem`
-    (`Core/Typology/LanguageProfile.lean`) captures the input-shape
+    (`Typology/LanguageProfile.lean`) captures the input-shape
     requirement that obligatory-CL frameworks like @cite{chierchia-1998}
     and @cite{sudo-2016} presuppose; Western Armenian fails it
     structurally.

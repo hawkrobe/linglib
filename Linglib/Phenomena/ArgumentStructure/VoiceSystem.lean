@@ -1,4 +1,4 @@
-import Linglib.Phenomena.FillerGap.ExtractionMorphology
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # Voice System

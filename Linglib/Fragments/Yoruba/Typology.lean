@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Yoruba typological profile
@@ -15,7 +15,7 @@ relatives in genitive DPs) and head-initial Yorùbá DP structure (§1.2.3.2).
 
 namespace Fragments.Yoruba
 
-open Core.Typology in
+open Typology in
 /-- Yoruba: SVO, prepositional. Relativization uses the introducer `tí`
     (high tone), with strategy varying by Accessibility-Hierarchy position. -/
 def typology : LanguageProfile :=

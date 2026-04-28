@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Profile
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 import Linglib.Datasets.WALS.Features.F122A
 import Linglib.Datasets.WALS.Features.F123A
 import Linglib.Fragments.English.Typology
@@ -32,7 +32,7 @@ chapters by @cite{comrie-2013}, supplemented with the
 @cite{keenan-comrie-1977} Accessibility Hierarchy.
 
 The `RelativizationProfile` struct lives in `Core/Relativization/Profile.lean`
-and is one of the optional fields on `Core.Typology.LanguageProfile`.
+and is one of the optional fields on `Typology.LanguageProfile`.
 Per-language profiles are defined inside each `Fragments/{Lang}/Typology.lean`
 file. This file aggregates 20 of those Fragment profiles into a sample for
 cross-linguistic generalizations.
@@ -114,7 +114,7 @@ private abbrev ch123 := Datasets.WALS.F123A.allData
     Every language in this list must have its `relativization` field
     populated; the convenience accessors below use `Option.get!`, which
     panics at `decide`-time if the field is missing. -/
-def allLanguages : List Core.Typology.LanguageProfile :=
+def allLanguages : List Typology.LanguageProfile :=
   [ Fragments.English.typology
   , Fragments.German.typology
   , Fragments.French.typology
@@ -147,7 +147,7 @@ lookup can produce, so every per-language WALS-grounding theorem below
 fails loudly if a Fragment ever drops its `relativization` field
 (`Option.get!` was tried first but doesn't reduce through `decide`). -/
 
-private def relOf (p : Core.Typology.LanguageProfile) : RelativizationProfile :=
+private def relOf (p : Typology.LanguageProfile) : RelativizationProfile :=
   p.relativization.getD
     { subjStrategy := .mixed, oblStrategy := .mixed,
       rcPosition := .postNominal, lowestRelativizable := .subject }
@@ -229,7 +229,7 @@ Languages excluded from grounding:
   matching WALS row to ground against. -/
 
 /-- Languages whose Fragment subject strategy can be grounded against WALS Ch 122. -/
-def groundedSubjLanguages : List Core.Typology.LanguageProfile :=
+def groundedSubjLanguages : List Typology.LanguageProfile :=
   [ Fragments.German.typology
   , Fragments.French.typology
   , Fragments.Slavic.Russian.typology
@@ -245,7 +245,7 @@ def groundedSubjLanguages : List Core.Typology.LanguageProfile :=
   , Fragments.Yoruba.typology ]
 
 /-- Languages whose Fragment oblique strategy can be grounded against WALS Ch 123. -/
-def groundedOblLanguages : List Core.Typology.LanguageProfile :=
+def groundedOblLanguages : List Typology.LanguageProfile :=
   [ Fragments.German.typology
   , Fragments.French.typology
   , Fragments.Slavic.Russian.typology

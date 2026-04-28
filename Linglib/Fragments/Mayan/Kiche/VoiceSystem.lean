@@ -187,29 +187,38 @@ structure AntipassiveVerbForm where
     agreement-bearing argument? In Active and Agent Focus, yes. In
     passives and Absolutive Antipassive, A is either demoted (oblique)
     or absent. -/
-def KicheVoice.realizesAgent : KicheVoice → Bool
-  | .active      => true
-  | .agentFocus  => true   -- A is focused, realized as separated pronoun
-  | _            => false
+def KicheVoice.RealizesAgent : KicheVoice → Prop
+  | .active      => True
+  | .agentFocus  => True   -- A is focused, realized as separated pronoun
+  | _            => False
+
+instance : DecidablePred KicheVoice.RealizesAgent := fun v => by
+  cases v <;> unfold KicheVoice.RealizesAgent <;> infer_instance
 
 /-- Does this voice realize P (the transitive patient) as a full
     agreement-bearing argument? In Active and passives, yes. In
     antipassives, P is suppressed or demoted. -/
-def KicheVoice.realizesPatient : KicheVoice → Bool
-  | .active          => true
-  | .simplePassive   => true   -- P is promoted to subject
-  | .completedPassive => true
-  | _                => false
+def KicheVoice.RealizesPatient : KicheVoice → Prop
+  | .active          => True
+  | .simplePassive   => True   -- P is promoted to subject
+  | .completedPassive => True
+  | _                => False
+
+instance : DecidablePred KicheVoice.RealizesPatient := fun v => by
+  cases v <;> unfold KicheVoice.RealizesPatient <;> infer_instance
 
 /-- Is the verb in this voice conjugated like an intransitive
     (only Set B agreement, no Set A)?
     Passives and antipassives both conjugate intransitively.
-   : Lesson 19 (passive = "like intransitive"),
+    @cite{mondloch-2017} Lesson 19 (passive = "like intransitive"),
     Lesson 21 (antipassive = "exactly as Simple Intransitive Verbs"). -/
-def KicheVoice.conjugatesIntransitively : KicheVoice → Bool
-  | .active     => false  -- Set A + Set B
-  | .agentFocus => false  -- separated pronoun + Set B
-  | _           => true   -- passives, antipassive: Set B only
+def KicheVoice.ConjugatesIntransitively : KicheVoice → Prop
+  | .active     => False  -- Set A + Set B
+  | .agentFocus => False  -- separated pronoun + Set B
+  | _           => True   -- passives, antipassive: Set B only
+
+instance : DecidablePred KicheVoice.ConjugatesIntransitively := fun v => by
+  cases v <;> unfold KicheVoice.ConjugatesIntransitively <;> infer_instance
 
 -- ============================================================================
 -- § 7: Agent Focus and Subject Extraction

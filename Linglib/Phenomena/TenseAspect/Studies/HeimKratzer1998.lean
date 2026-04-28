@@ -1,15 +1,11 @@
 import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
-import Linglib.Theories.Semantics.Tense.TemporalDeRe
-import Linglib.Theories.Semantics.Tense.FeatureChecking
-import Linglib.Theories.Semantics.Tense.Decomposition
-import Linglib.Theories.Semantics.Tense.ZeroTense
-import Linglib.Theories.Semantics.Tense.ModalTense
-import Linglib.Theories.Semantics.Tense.CounterfactualTense
-import Linglib.Theories.Semantics.Tense.SimultaneousTense
+import Linglib.Theories.Semantics.Tense.SOT.Decomposition
+import Linglib.Theories.Semantics.Tense.Modal.Matrix
+import Linglib.Theories.Semantics.Tense.Counterfactual.Defs
 import Linglib.Theories.Syntax.Minimalist.Tense.AgreeSOT
 import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
-import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Core.Morphology.Exponence
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 
@@ -39,7 +35,6 @@ namespace Phenomena.TenseAspect.Bridge
 open Core.Time.Reichenbach
 open Core.Time.Tense
 open Phenomena.TenseAspect
-open Semantics.Tense (satisfiesTense SOTParameter)
 open Semantics.Tense
 
 
@@ -129,9 +124,9 @@ theorem all_tense_category :
 /-- All synthetic tense rules are semantically vacuous —
     temporal semantics comes from the Theory layer, not morphology. -/
 theorem all_tense_vacuous :
-    (pastRule Unit).isVacuous = true ∧
-    (presentRule Unit).isVacuous = true ∧
-    (futureRule Unit).isVacuous = true :=
+    (pastRule Unit).delegatedSemantics = true ∧
+    (presentRule Unit).delegatedSemantics = true ∧
+    (futureRule Unit).delegatedSemantics = true :=
   ⟨rfl, rfl, rfl⟩
 
 end Morphology
@@ -370,14 +365,24 @@ theorem perfective_implies_aspect_assumption
 -- § Per-Theory Derivations: Abusch
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.TemporalDeRe
+/-! Per @cite{abusch-1997}'s analysis (formalized in
+`Theories/Semantics/Tense/TemporalDeRe.lean`), the simultaneous reading
+of "John said Mary was sick" is derived by a bound tense variable that
+receives the matrix event time, and the shifted reading by a free past
+variable below the matrix event time. The two theorems below verify
+the *data-frame projections* (the simultaneous frame is `isPresent`,
+the shifted frame is `isPast`) — they do not invoke the TemporalDeRe
+substrate, since the data file defines `embeddedSickSimultaneous` and
+`embeddedSickShifted` as standalone `ReichenbachFrame ℤ` instances
+rather than as `embeddedFrame matrixSaid …` applications. Wiring
+through the substrate would require reshaping the data file. -/
 
-/-- Abusch derives the simultaneous data frame via binding. -/
+/-- Per Abusch: the simultaneous data frame is `isPresent`. -/
 theorem abusch_derives_embeddedSickSimultaneous :
     embeddedSickSimultaneous.isPresent :=
   rfl
 
-/-- Abusch derives the shifted data frame via free past variable. -/
+/-- Per Abusch: the shifted data frame is `isPast`. -/
 theorem abusch_derives_embeddedSickShifted :
     embeddedSickShifted.isPast := by
   simp only [ReichenbachFrame.isPast, embeddedSickShifted]; omega
@@ -387,24 +392,27 @@ theorem abusch_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Von Stechow
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.FeatureChecking
+/-! Per @cite{von-stechow-2009}: feature checking against the
+shifted local eval time. The "perspective shift" operation IS
+`embeddedFrame` from `Theories/Semantics/Tense/Basic.lean` (no
+separate von-Stechow-namespace primitive needed). -/
 
 /-- Von Stechow derives the simultaneous frame via [PRES] feature. -/
 theorem vonStechow_derives_embeddedSickSimultaneous :
-    (vonStechowShift matrixSaid matrixSaid.eventTime matrixSaid.eventTime).isPresent :=
+    (embeddedFrame matrixSaid matrixSaid.eventTime matrixSaid.eventTime).isPresent :=
   rfl
 
 /-- Von Stechow derives the shifted frame via [PAST] feature. -/
 theorem vonStechow_derives_embeddedSickShifted :
-    (vonStechowShift matrixSaid (-5) (-5)).isPast := by
-  simp only [vonStechowShift, embeddedFrame, ReichenbachFrame.isPast, matrixSaid]; omega
+    (embeddedFrame matrixSaid (-5) (-5)).isPast := by
+  simp only [embeddedFrame, ReichenbachFrame.isPast, matrixSaid]; omega
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Kratzer
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Decomposition
+open Semantics.Tense.SOT.Decomposition
 
 /-- Kratzer derives the simultaneous frame via SOT deletion. -/
 theorem kratzer_derives_embeddedSickSimultaneous :
@@ -421,21 +429,28 @@ theorem kratzer_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Ogihara
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.ZeroTense
+/-! Per @cite{ogihara-1996} (formalized in
+`Phenomena/TenseAspect/Studies/Ogihara1996.lean`), the simultaneous
+reading derives from the zero-tense reading of past: the bound variable
+receives `E_matrix` via `zeroTense_receives_binder_time`. The theorem
+below verifies the data-frame projection (HK1998Data's
+`embeddedSickSimultaneous`-style `embeddedFrame matrixSaid …` is
+`isPresent`). -/
 
-/-- Ogihara derives the simultaneous frame via zero tense. -/
+/-- Ogihara derives the simultaneous frame via zero tense. The zero-tense
+    receives matrix E by `zeroTense_receives_binder_time` (substrate);
+    the resulting frame is `isPresent`. -/
 theorem ogihara_derives_embeddedSickSimultaneous
     (g : TemporalAssignment ℤ) (n : ℕ) :
-    let embeddedR := zeroTenseSemantics g n matrixSaid.eventTime
+    let embeddedR := interpTense n (updateTemporal g n matrixSaid.eventTime)
     (embeddedFrame matrixSaid embeddedR embeddedR).isPresent := by
-  simp [zeroTenseSemantics, embeddedFrame, ReichenbachFrame.isPresent]
+  simp only [zeroTense_receives_binder_time, embeddedFrame,
+    ReichenbachFrame.isPresent]
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Klecha
 -- ════════════════════════════════════════════════════════════════
-
-open Semantics.Tense.ModalTense
 
 /-- Klecha derives the modal-past data: past tense checked against
     modal eval time. -/
@@ -448,7 +463,7 @@ theorem klecha_derives_modalPast :
 -- § Per-Theory Derivations: Deal
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.CounterfactualTense
+open Semantics.Tense.Counterfactual
 
 /-- Deal derives the counterfactual frame: past morphology with
     present reference, via modal distance rather than temporal
@@ -511,8 +526,6 @@ theorem wurmbrand_classifies_triedToLeave :
 -- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Sharvit
 -- ════════════════════════════════════════════════════════════════
-
-open Semantics.Tense.SimultaneousTense
 
 /-- Sharvit derives the indirect question simultaneous reading:
     the simultaneous tense in "John asked who was sick" locates
@@ -694,7 +707,7 @@ section KratzerChain
 
 open Fragments.English.Tense (kratzerSimplePast kratzerPresentPerfect)
 open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
-open Semantics.Tense.Decomposition
+open Semantics.Tense.SOT.Decomposition
 open Core.Time.Tense (Overtness)
 
 /-- **English full chain**: Fragment entry → Theory → Composed semantics → Data.

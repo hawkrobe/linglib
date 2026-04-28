@@ -419,19 +419,15 @@ theorem only_tsilia_has_presuppositional_tense :
     Wurmbrand.hasPresuppositionalTense = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- All ten theories are distinct. -/
+/-- All ten theories have pairwise-distinct names — proven via `List.Nodup`
+    on the names list, which is the genuine "all distinct" claim.
+    The previous chained `≠` formulation only proved adjacent-pair
+    distinctness in a fixed ordering, not all-pairs distinctness. -/
 theorem all_ten_theories_distinct :
-    Abusch.name ≠ VonStechow.name ∧
-    VonStechow.name ≠ KratzerTense.name ∧
-    KratzerTense.name ≠ Ogihara.name ∧
-    Ogihara.name ≠ Klecha.name ∧
-    Klecha.name ≠ Deal.name ∧
-    Deal.name ≠ Sharvit.name ∧
-    Sharvit.name ≠ TsiliaZhao2026.name ∧
-    TsiliaZhao2026.name ≠ Zeijlstra.name ∧
-    Zeijlstra.name ≠ Wurmbrand.name := by
-  simp [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
-        Sharvit, TsiliaZhao2026, Zeijlstra, Wurmbrand]
+    [Abusch.name, VonStechow.name, KratzerTense.name, Ogihara.name,
+     Klecha.name, Deal.name, Sharvit.name, TsiliaZhao2026.name,
+     Zeijlstra.name, Wurmbrand.name].Nodup := by
+  decide
 
 
 -- ════════════════════════════════════════════════════════════════

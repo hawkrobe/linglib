@@ -1,7 +1,91 @@
-import Linglib.Theories.Morphology.Core.CliticVsAffix
+import Linglib.Core.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Mathlib.Data.Fin.Basic
+
+-- ============================================================================
+-- §0: Six-Criteria Diagnostic Substrate
+--     (was Theories/Morphology/Core/CliticVsAffix.lean, relocated 0.230.455 —
+--     ZP 1983 is the originating paper, anchor lives here)
+-- ============================================================================
+
+/-! Six criteria for distinguishing clitics from inflectional affixes,
+formalized as a diagnostic profile. The classification (clitic vs. affix)
+is *derived* from the profile, not stipulated. ZP's surprising result:
+English *-n't* scores affix-like on all six.
+
+| Criterion | Clitic-like | Affix-like |
+|-----------|-------------|------------|
+| A. Selection | low (any category) | high (specific stems) |
+| B. Paradigm gaps | none | present |
+| C. Morphophonological idiosyncrasies | none | present |
+| D. Semantic idiosyncrasies | none | present |
+| E. Syntactic rules affect combination | no | yes |
+| F. Attaches to cliticized material | yes | no | -/
+
+namespace Morphology.Diagnostics
+
+open Core.Morphology (MorphStatus SelectionDegree)
+
+structure CliticAffixProfile where
+  morpheme : String
+  selection : SelectionDegree
+  hasArbitraryGaps : Bool
+  hasMorphophonIdiosyncrasies : Bool
+  hasSemanticIdiosyncrasies : Bool
+  syntacticRulesApply : Bool
+  attachesToCliticizedMaterial : Bool
+  deriving Repr, BEq
+
+def CliticAffixProfile.affixLikeSelection (p : CliticAffixProfile) : Bool :=
+  decide p.selection.IsHighSelection
+
+def CliticAffixProfile.affixScore (p : CliticAffixProfile) : Nat :=
+  let scores : List Bool := [
+    p.affixLikeSelection,
+    p.hasArbitraryGaps,
+    p.hasMorphophonIdiosyncrasies,
+    p.hasSemanticIdiosyncrasies,
+    p.syntacticRulesApply,
+    !p.attachesToCliticizedMaterial
+  ]
+  scores.filter id |>.length
+
+def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
+  6 - p.affixScore
+
+def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
+  if p.affixScore == 6 then .inflAffix
+  else if p.cliticScore == 6 then .simpleClitic
+  else .specialClitic
+
+def CliticAffixProfile.isUnambiguousAffix (p : CliticAffixProfile) : Bool :=
+  p.affixScore == 6
+
+def CliticAffixProfile.isUnambiguousClitic (p : CliticAffixProfile) : Bool :=
+  p.cliticScore == 6
+
+theorem classify_all_affix (p : CliticAffixProfile)
+    (h : p.affixScore = 6) :
+    p.classify = .inflAffix := by
+  simp [CliticAffixProfile.classify, h]
+
+theorem classify_all_clitic (p : CliticAffixProfile)
+    (h : p.affixScore = 0) :
+    p.classify = .simpleClitic := by
+  simp [CliticAffixProfile.classify, h, CliticAffixProfile.cliticScore]
+
+theorem classify_total (p : CliticAffixProfile) :
+    p.classify = .inflAffix ∨ p.classify = .simpleClitic
+    ∨ p.classify = .specialClitic := by
+  unfold CliticAffixProfile.classify
+  split
+  · left; rfl
+  · split
+    · right; left; rfl
+    · right; right; rfl
+
+end Morphology.Diagnostics
 
 /-!
 # @cite{zwicky-pullum-1983}: Cliticization vs. Inflection

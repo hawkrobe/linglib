@@ -1,6 +1,6 @@
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
-import Linglib.Core.Relativization.Extraction
+import Linglib.Theories.Interfaces.Morphosyntax.Relativization
 import Linglib.Theories.Syntax.Minimalist.Position
 import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
@@ -196,7 +196,7 @@ theorem profile_matches_data :
     position that is covered by some Toba Batak relativization marker. -/
 theorem extractable_positions_are_relativizable :
     tbExtractionProfile.markedPositions.all (λ et =>
-      let ahPos := Core.extractionTargetToAH et
+      let ahPos := Interfaces.extractionTargetToAH et
       relMarkers.any (·.covers ahPos)) = true := by
   decide
 
@@ -211,7 +211,7 @@ theorem extraction_profile_relativization_chain :
     (tbExtractionProfile.marks .subject) ∧
     -- Link 3: every marked position is relativizable via AH
     (tbExtractionProfile.markedPositions.all (λ et =>
-      let ahPos := Core.extractionTargetToAH et
+      let ahPos := Interfaces.extractionTargetToAH et
       relMarkers.any (·.covers ahPos))) := by
   decide
 

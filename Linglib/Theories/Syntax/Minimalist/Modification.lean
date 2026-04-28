@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Features
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Syntactic Modification via Feature Composition

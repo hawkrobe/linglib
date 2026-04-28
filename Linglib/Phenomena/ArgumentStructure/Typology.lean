@@ -10,7 +10,7 @@ import Linglib.Datasets.WALS.Features.F105A
 import Linglib.Datasets.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 105--111)

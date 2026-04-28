@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 import Linglib.Fragments.Mandarin.Morph
 import Linglib.Fragments.Mandarin.Classifiers
 
@@ -10,7 +10,7 @@ Aggregate WALS-style typological profile for Mandarin (ISO 639-3 `cmn`).
 
 namespace Fragments.Mandarin
 
-open Core.Typology in
+open Typology in
 open Core.NounCategorization (collectSemantics) in
 /-- Mandarin: SVO, mixed adpositions, mixed headedness. -/
 def typology : LanguageProfile :=

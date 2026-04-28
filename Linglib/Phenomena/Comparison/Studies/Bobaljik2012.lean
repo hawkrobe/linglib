@@ -1,5 +1,6 @@
 import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
-import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Core.Morphology.Exponence
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives
@@ -43,6 +44,55 @@ Adjectives.lean`) and the Latin adjective fragment (`Fragments/Latin/
 Adjectives.lean`), using the `suppletion` field on each entry to
 encode empirically observed root-class patterns.
 -/
+
+-- ============================================================================
+-- § 0: Scale-Generation Substrate (was Theories/Morphology/Core/ScaleFromParadigm.lean)
+-- ============================================================================
+
+/-! Connects morphological infrastructure (`Core.Morphology`) to scalar-
+alternative infrastructure (`Theories/Semantics/Alternatives/HornScale.lean`),
+enabling automatic generation of the alternatives needed for scalar
+implicature computation. Was previously in `Theories/Morphology/Core/
+ScaleFromParadigm.lean`; relocated 0.230.455 (sole consumer is this study
+file). @cite{horn-1972} @cite{kennedy-2007} -/
+
+namespace Core.Morphology.ScaleFromParadigm
+
+open Core.Morphology
+open Alternatives (HornScale)
+
+/-- A morphologically-derived Horn scale. -/
+structure MorphScale where
+  positive : String
+  comparative : String
+  superlative : String
+  deriving Repr, BEq
+
+/-- Convert a `MorphScale` to a `HornScale String`, weakest-to-strongest. -/
+def MorphScale.toHornScale (ms : MorphScale) : HornScale String :=
+  ⟨[ms.positive, ms.comparative, ms.superlative]⟩
+
+/-- Extract a degree scale from a stem's paradigm. -/
+def adjectiveScale {σ : Type} (stem : Stem σ) : Option MorphScale :=
+  let compRule := stem.paradigm.find? (λ r => r.category == .degree && r.value == "comp")
+  let superRule := stem.paradigm.find? (λ r => r.category == .degree && r.value == "super")
+  match compRule, superRule with
+  | some comp, some super_ =>
+    some { positive := stem.lemma_
+         , comparative := comp.formRule stem.lemma_
+         , superlative := super_.formRule stem.lemma_ }
+  | _, _ => none
+
+/-- Paradigm-mates as scalar alternatives, scale order preserved. -/
+def morphologicalAlternatives {σ : Type} (stem : Stem σ) (form : String) :
+    List String :=
+  match adjectiveScale stem with
+  | none => []
+  | some ms =>
+    let scale := ms.toHornScale
+    scale.members.filter (· != form)
+
+end Core.Morphology.ScaleFromParadigm
 
 namespace Bobaljik2012
 
@@ -176,22 +226,7 @@ theorem good_abb_from_forms :
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Morphological Vacuity (DM Connection)
--- ============================================================================
-
-/-- @cite{bobaljik-2012}'s containment analysis treats CMPR and SPRL
-    as structural heads that trigger VI, not as semantic operators.
-    Consistent with this, both degree rules in our morphology are
-    semantically vacuous — compositional degree semantics is handled
-    in `Semantics/Degree/`. -/
-theorem comp_rule_vacuous (σ : Type) (irr : Option String) :
-    (Core.Morphology.Degree.comparativeRule σ irr).isVacuous = true := rfl
-
-theorem super_rule_vacuous (σ : Type) (irr : Option String) :
-    (Core.Morphology.Degree.superlativeRule σ irr).isVacuous = true := rfl
-
--- ============================================================================
--- § 9: Cross-Linguistic Pattern Inventory
+-- § 8: Cross-Linguistic Pattern Inventory
 -- ============================================================================
 
 /-- The three attested degree-suppletive patterns. -/
@@ -245,5 +280,65 @@ theorem english_generic_contiguity :
       Morphology.Containment.isContiguous
         [e.suppletion.pos, e.suppletion.cmpr, e.suppletion.sprl]) = true := by
   native_decide
+
+-- ============================================================================
+-- § 12: Scale Generation from Degree Paradigms
+-- ============================================================================
+
+/-! `Theories/Morphology/Core/ScaleFromParadigm.lean` derives Horn scales
+from degree paradigms: a stem with comparative + superlative rules
+yields a 3-point scale `[positive, comparative, superlative]`. The tests
+below verify the extractor on the English adjective fragment. -/
+
+open Core.Morphology.ScaleFromParadigm
+
+private def tallStem := tall.toStem Unit
+private def goodStem := good.toStem Unit
+private def expensiveStem := expensive.toStem Unit
+private def deadStem := dead.toStem Unit
+private def pregnantStem := pregnant.toStem Unit
+
+/-- Gradable adjectives produce a scale; non-gradables do not. -/
+theorem tall_scale_exists : (adjectiveScale tallStem).isSome = true := rfl
+
+theorem dead_no_scale : (adjectiveScale deadStem).isNone = true := rfl
+
+theorem pregnant_no_scale : (adjectiveScale pregnantStem).isNone = true := rfl
+
+/-- Regular paradigm yields the expected 3-point scale. -/
+theorem tall_scale_members :
+    (adjectiveScale tallStem).map (·.toHornScale.members)
+    = some ["tall", "taller", "tallest"] := rfl
+
+/-- Suppletive paradigm yields the irregular forms in scale position. -/
+theorem good_scale_members :
+    (adjectiveScale goodStem).map (·.toHornScale.members)
+    = some ["good", "better", "best"] := rfl
+
+/-- Periphrastic paradigm yields multi-word scale members. -/
+theorem expensive_scale_members :
+    (adjectiveScale expensiveStem).map (·.toHornScale.members)
+    = some ["expensive", "more expensive", "most expensive"] := rfl
+
+-- ============================================================================
+-- § 13: Morphological Alternatives
+-- ============================================================================
+
+/-! `morphologicalAlternatives stem form` returns paradigm-mates of `form`
+preserving scale order — the input shape scalar-implicature reasoning
+expects. Tests confirm filter-by-equality semantics across the three
+scale positions, plus the empty-list result for non-gradable stems. -/
+
+theorem tall_alternatives :
+    morphologicalAlternatives tallStem "tall" = ["taller", "tallest"] := rfl
+
+theorem taller_alternatives :
+    morphologicalAlternatives tallStem "taller" = ["tall", "tallest"] := rfl
+
+theorem tallest_alternatives :
+    morphologicalAlternatives tallStem "tallest" = ["tall", "taller"] := rfl
+
+theorem dead_no_alternatives :
+    morphologicalAlternatives deadStem "dead" = [] := rfl
 
 end Bobaljik2012

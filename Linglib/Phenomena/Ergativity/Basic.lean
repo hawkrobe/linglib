@@ -1,9 +1,10 @@
 import Linglib.Core.Case.Basic
 import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Chol.Agreement
 
 /-!
 # The Mayan Alignment Puzzle
-@cite{imanishi-2020} @cite{coon-2013a} @cite{dixon-1994}
+@cite{imanishi-2020} @cite{coon-2013} @cite{dixon-1994}
 
 Theory-neutral observations about the accusative side of Mayan split
 ergativity. In perfective aspect, Mayan languages uniformly show ergative
@@ -118,7 +119,7 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Lakantun",    .low,  false⟩
   , ⟨"Mopan",       .low,  false⟩
   , ⟨"Itzaj",       .low,  false⟩
-  , ⟨"Chol",        .low,  false⟩
+  , ⟨"Chol",        Fragments.Mayan.Chol.absPosition,  false⟩  -- derived from Chol fragment, not duplicated
   , ⟨"Chontal",     .low,  false⟩
   , ⟨"Tseltal",     .low,  false⟩
   , ⟨"Tsotsil",     .low,  false⟩

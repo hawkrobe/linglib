@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Quantification.DependenceLogic
+import Linglib.Theories.Semantics.Quantification.DeganoAloni2025
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Phenomena.Reference.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
@@ -15,50 +16,43 @@ import Linglib.Fragments.Kannada.Indefinites
 
 Limiting Nanosyntax. *Glossa* 11(1), 1–15.
 
-This paper argues against the universal applicability of nanosyntactic
-feature decomposition to coexpression phenomena, using indefinite
-pronouns as a test case. The key claims:
+Argues against the universal applicability of nanosyntactic feature
+decomposition to coexpression phenomena, using indefinite pronouns as a
+test case. Key claims:
 
-1. @cite{dekier-2021}'s nanosyntactic analysis of indefinites (a
-   containment hierarchy F₁ ⊂ F₂ ⊂ F₃) fails empirically: no
-   morphological containment is attested in indefinite paradigms.
+1. @cite{dekier-2021}'s nanosyntactic analysis of indefinites (a containment
+   hierarchy F₁ ⊂ F₂ ⊂ F₃) fails empirically: no morphological containment
+   is attested in indefinite paradigms.
 
-2. The semantic account of @cite{degano-aloni-2025}, based on
-   **variation** and **constancy** from team semantics
-   (@cite{hodges-1997}, @cite{vaananen-2007}), provides a better
-   typology: 7 indefinite types derived from Boolean combinations
-   of `var` and `dep` predicates.
+2. The semantic account of @cite{degano-aloni-2025}, based on **variation**
+   and **constancy** from team semantics (@cite{hodges-1997},
+   @cite{vaananen-2007}), provides a better typology: 7 indefinite types
+   from Boolean combinations of `var(y,x)` and `dep(y,x)`.
 
 3. The semantic account correctly predicts:
    - Which indefinite type is unattested (type vi: SK+NS)
-   - Bidirectional diachronic change (semantic weakening in both
-     directions), unlike nanosyntax which predicts only
-     unidirectional change
-   - The relative frequency of indefinite types (conjunctive
-     requirements = rarer)
+   - Bidirectional diachronic change, unlike nanosyntax which predicts
+     only unidirectional change
+   - The relative frequency of indefinite types (conjunctive requirements
+     = rarer)
 
 4. The broader implication: some coexpression patterns arise from
-   **semantic underspecification** at LF, not from structural
-   containment at PF.
+   **semantic underspecification** at LF, not structural containment at PF.
 
 ## Connection to linglib
 
-This study connects six modules:
-
-- `DependenceLogic`: `variation` and `constancy` predicates formalize
-  Degano & Aloni's `var(y,x)` and `dep(y,x)`.
-  `type_vi_contradictory` derives the gap from these predicates.
-- `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the
-  negative result — nanosyntax predicts containment patterns that
-  indefinites lack
-- `Features.IndefiniteType`: `IndefiniteSpecType` with derived semantic
-  profiles (`profileSK/SU/NS`) and `classifyTriple` for computing
-  syncretism patterns from forms
+- `DependenceLogic`: `variation` and `constancy` predicates formalize D&A's
+  `var(y,x)` and `dep(y,x)`. `type_vi_contradictory` derives the gap.
+- `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the negative
+  result — nanosyntax predicts containment that indefinites lack.
+- `Typology.Indefinite`: `IndefiniteEntry` (consensus function-coverage
+  + morphological-basis data) and `classifyTriple` for syncretism patterns.
+- `Theories.Semantics.Quantification.DeganoAloni2025`: `DAType` and
+  `surfaceDAType` / `consistentWith` projections from entries to D&A types.
 - `Fragments.{Russian,English,German,Latin,Yakut,Kannada}.Indefinites`:
-  per-language indefinite entries witnessing the typology
-- `Fragments.German.ModalIndefinites`: bridge connecting the Degano
-  & Aloni typology to the Alonso-Ovalle & Royer modal indefinite
-  classification for *irgendEntry-*
+  per-language indefinite paradigms witnessing the typology.
+- `Fragments.German.ModalIndefinites`: bridge connecting D&A's typology to
+  Alonso-Ovalle & Royer's modal-indefinite typology for *irgend-*.
 -/
 
 set_option autoImplicit false
@@ -66,9 +60,10 @@ set_option autoImplicit false
 namespace Bubnov2026
 
 open Semantics.Quantification.DependenceLogic
+open Semantics.Quantification.DeganoAloni2025
 open Morphology.Nanosyntax
 open Dekier2021
-open Features.IndefiniteType
+open Typology.Indefinite
 open Fragments.Slavic.Russian.Indefinites
 open Fragments.English.Indefinites
 open Fragments.German.Indefinites
@@ -85,35 +80,28 @@ private def listContainsSub : List Char → List Char → Bool
 
 /-- Conservative substring proxy for morphological containment. If two forms
     don't share substrings, they certainly don't share morphemes — sufficient
-    for @cite{bubnov-2026}'s negative result that Russian indefinite forms
-    share no morphological material. Operates on `String.toList` so kernel
-    `decide` can reduce it (unlike `String.splitOn`).
-
-    For the full Haspelmath implicational map with adjacency structure and
-    contiguity checking, see `Phenomena.Polarity.Typology.IndefiniteFunction`. -/
+    for @cite{bubnov-2026}'s negative result. Operates on `String.toList` so
+    kernel `decide` can reduce it. -/
 private def morphContains (s sub : String) : Bool :=
   listContainsSub s.toList sub.toList
 
 -- ============================================================================
--- §1. Morphological Containment: Present in Case, Absent in Indefinites
+-- §1. Morphological containment: present in case, absent in indefinites
 -- ============================================================================
 
-/-! The nanosyntactic hierarchy, ranks, lexicons, and syncretism
-    pattern theorems are defined in `Dekier2021.lean` and imported here.
-    Bubnov's critique takes Dekier's analysis as given and argues that
-    it fails on morphological containment and diachronic change. -/
-
-/-- @cite{bubnov-2026}'s key objection: nanosyntax predicts the ABC
-    pattern should show morphological containment. This is NEVER
-    attested for indefinites. -/
+/-- @cite{bubnov-2026}'s key objection: nanosyntax predicts the ABC pattern
+    should show morphological containment. This is NEVER attested for
+    indefinites. The Russian forms are surface-level prefixed/suffixed to
+    interrogative bases (`kto-nibud'`, `kto-to`, `koe-kto`); the indefinite
+    morphemes themselves (`-nibud'`, `-to`, `koe-`) share no material. -/
 theorem russian_no_containment :
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false ∧
     morphContains "koe-" "-nibud'" = false := by decide
 
-/-- In case morphology, containment IS attested. In indefinites, it
-    is NOT. This asymmetry supports @cite{bubnov-2026}'s claim that
-    nanosyntax is the right tool for case but not for indefinites. -/
+/-- In case morphology, containment IS attested. In indefinites, NOT.
+    This asymmetry supports @cite{bubnov-2026}'s claim that nanosyntax
+    is the right tool for case but not for indefinites. -/
 theorem case_has_containment_indefinites_dont :
     (.nom : Core.Case) ≤ .acc ∧
     (.acc : Core.Case) ≤ .gen ∧
@@ -122,27 +110,14 @@ theorem case_has_containment_indefinites_dont :
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
--- §2. Type (vi) is Contradictory — Derived from Team Semantics
+-- §2. Type (vi) is contradictory — derived from team semantics
 -- ============================================================================
 
--- Type (vi) requires dep(∅,x) (constancy across all worlds) AND
--- var(v,x) (variation within some world). This is unsatisfiable:
---
--- 1. var(v,x) holds → by `variation_monotone`, var(∅,x) holds
---    (since ∅ is trivially agreed on, v determines ∅)
--- 2. dep(∅,x) = constancy(t, ∅, x)
--- 3. var(∅,x) = variation(t, ∅, x)
--- 4. By `constancy_excludes_variation`: contradiction.
-
 /-- Type (vi) (SK+NS) is predicted unattested because its semantic
-    requirements are contradictory. dep(∅,x) requires x to be constant
-    across all assignments (since all assignments trivially agree on
-    ∅). var(v,x) requires x to vary among some v-agreeing assignments.
-    By `variation_monotone`, this lifts to var(∅,x), contradicting
-    dep(∅,x) via `constancy_excludes_variation`.
-
-    This theorem connects the profile-level prediction (type vi has no
-    examples) to the deeper team-semantic infrastructure. -/
+    requirements are contradictory. `dep(∅,x)` requires x constant across
+    all assignments; `var(v,x)` requires x to vary among v-agreeing
+    assignments. By `variation_monotone`, this lifts to `var(∅,x)`,
+    contradicting `dep(∅,x)` via `constancy_excludes_variation`. -/
 theorem type_vi_contradictory
     {V E : Type} [DecidableEq V] [DecidableEq E]
     (t : AssignmentTeam V E) (v null x : V)
@@ -153,101 +128,72 @@ theorem type_vi_contradictory
     (variation_monotone t v null x h_var
       (fun a₁ a₂ _ => h_null_trivial a₁ a₂))
 
-/-- Profile-level verification: type (vi) skips SU. -/
+/-- Profile-level verification: type (vi)'s D&A profile is the
+    non-contiguous `{SK, NS}` — the contradiction surfaces structurally
+    as a non-Haspelmath-adjacent function set. -/
 theorem type_vi_profile :
-    IndefiniteSpecType.profileSK .skPlusNS = true ∧
-    IndefiniteSpecType.profileSU .skPlusNS = false ∧
-    IndefiniteSpecType.profileNS .skPlusNS = true := ⟨rfl, rfl, rfl⟩
+    DAType.skPlusNS.profile =
+      ({.specificKnown, .irrealis} : Finset _) := rfl
 
 -- ============================================================================
--- §3. Semantic Profiles — Derived from IndefiniteSpecType
+-- §3. D&A profiles — verified at the substrate
 -- ============================================================================
 
-/-- Type (i) unmarked: no restriction → all three functions available. -/
+/-- Type (i) unmarked: no restriction → all three SK/SU/NS functions. -/
 theorem unmarked_profile :
-    IndefiniteSpecType.profileSK .unmarked = true ∧
-    IndefiniteSpecType.profileSU .unmarked = true ∧
-    IndefiniteSpecType.profileNS .unmarked = true := ⟨rfl, rfl, rfl⟩
+    DAType.unmarked.profile =
+      ({.specificKnown, .specificUnknown, .irrealis} : Finset _) := rfl
 
-/-- Type (iii) non-specific: var(v,x) → only NS available. -/
+/-- Type (iii) non-specific: `var(v,x)` → only NS. -/
 theorem nonSpecific_profile :
-    IndefiniteSpecType.profileSK .nonSpecific = false ∧
-    IndefiniteSpecType.profileSU .nonSpecific = false ∧
-    IndefiniteSpecType.profileNS .nonSpecific = true := ⟨rfl, rfl, rfl⟩
+    DAType.nonSpecific.profile = ({.irrealis} : Finset _) := rfl
 
-/-- Type (iv) epistemic: var(∅,x) → SU and NS available, not SK. -/
+/-- Type (iv) epistemic: `var(∅,x)` → SU + NS. -/
 theorem epistemic_profile :
-    IndefiniteSpecType.profileSK .epistemic = false ∧
-    IndefiniteSpecType.profileSU .epistemic = true ∧
-    IndefiniteSpecType.profileNS .epistemic = true := ⟨rfl, rfl, rfl⟩
+    DAType.epistemic.profile =
+      ({.specificUnknown, .irrealis} : Finset _) := rfl
 
-/-- Type (v) specific known: dep(∅,x) → only SK available. -/
+/-- Type (v) specific known: `dep(∅,x)` → only SK. -/
 theorem specificKnown_profile :
-    IndefiniteSpecType.profileSK .specificKnown = true ∧
-    IndefiniteSpecType.profileSU .specificKnown = false ∧
-    IndefiniteSpecType.profileNS .specificKnown = false := ⟨rfl, rfl, rfl⟩
+    DAType.specificKnown.profile = ({.specificKnown} : Finset _) := rfl
 
-/-- Type (vii) specific unknown: dep(v,x) ∧ var(∅,x) → only SU.
-    Rare: conjunctive requirement. Kannada *-ooEntry* is canonical. -/
+/-- Type (vii) specific unknown: `dep(v,x) ∧ var(∅,x)` → only SU.
+    Rare conjunctive type; Kannada *yāru-oo* is canonical. -/
 theorem specificUnknown_profile :
-    IndefiniteSpecType.profileSK .specificUnknown = false ∧
-    IndefiniteSpecType.profileSU .specificUnknown = true ∧
-    IndefiniteSpecType.profileNS .specificUnknown = false := ⟨rfl, rfl, rfl⟩
+    DAType.specificUnknown.profile = ({.specificUnknown} : Finset _) := rfl
 
 -- ============================================================================
--- §4. Diachronic Predictions — Semantic Weakening
+-- §4. Diachronic predictions — semantic weakening
 -- ============================================================================
-
--- Semantic weakening: dropping a restriction makes an indefinite usable
--- in MORE contexts. The semantic account predicts diachronic change
--- follows weakening paths (@cite{bubnov-2026} §6).
---
--- Path 1 (extension from NS to the left, Figure 3):
---   var(v,x) → var(∅,x) → no restriction
---   (iii) non-specific → (iv) epistemic → (i) unmarked
---   Attested: German *irgendEntry-* (@cite{aloni-port-2015}),
---             French *quelque*
---
--- Path 2 (constancy weakening):
---   dep(∅,x) → dep(v,x) → no restriction
---   (v) specific known → (ii) specific → (i) unmarked
---
--- Path 3 (extension from SU to the right, Figure 2):
---   dep(v,x) ∧ var(∅,x) → var(∅,x)
---   (vii) specific unknown → (iv) epistemic
---   Attested: Lithuanian *kaž-*, Albanian *di-*
 
 /-- Weakening from non-specific (iii) to epistemic (iv): dropping the
-    within-world parameter makes variation global. Gains SU context. -/
+    within-world parameter makes variation global. The epistemic profile
+    properly contains the non-specific profile, so the form gains SU
+    while keeping NS. -/
 theorem ns_weakens_to_epistemic :
-    IndefiniteSpecType.profileNS .nonSpecific = true ∧
-    IndefiniteSpecType.profileNS .epistemic = true ∧
-    IndefiniteSpecType.profileSU .epistemic = true ∧
-    IndefiniteSpecType.profileSU .nonSpecific = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    DAType.nonSpecific.profile ⊆ DAType.epistemic.profile ∧
+    .specificUnknown ∈ DAType.epistemic.profile ∧
+    .specificUnknown ∉ DAType.nonSpecific.profile := by decide
 
-/-- Weakening from epistemic (iv) to unmarked (i): dropping the
-    variation restriction entirely. Gains SK context. -/
+/-- Weakening from epistemic (iv) to unmarked (i): dropping the variation
+    restriction. Unmarked profile properly contains epistemic. -/
 theorem epistemic_weakens_to_unmarked :
-    IndefiniteSpecType.profileSU .epistemic = true ∧
-    IndefiniteSpecType.profileNS .epistemic = true ∧
-    IndefiniteSpecType.profileSK .unmarked = true ∧
-    IndefiniteSpecType.profileSK .epistemic = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    DAType.epistemic.profile ⊆ DAType.unmarked.profile ∧
+    .specificKnown ∈ DAType.unmarked.profile ∧
+    .specificKnown ∉ DAType.epistemic.profile := by decide
 
-/-- Weakening from specific known (v) to specific (ii): broadening
-    from cross-world constancy to within-world constancy. Gains SU. -/
+/-- Weakening from specific known (v) to specific (ii): broadening from
+    cross-world constancy to within-world constancy. Specific profile
+    properly contains specific-known. -/
 theorem sk_weakens_to_specific :
-    IndefiniteSpecType.profileSK .specificKnown = true ∧
-    IndefiniteSpecType.profileSK .specific = true ∧
-    IndefiniteSpecType.profileSU .specific = true ∧
-    IndefiniteSpecType.profileSU .specificKnown = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    DAType.specificKnown.profile ⊆ DAType.specific.profile ∧
+    .specificUnknown ∈ DAType.specific.profile ∧
+    .specificUnknown ∉ DAType.specificKnown.profile := by decide
 
 /-- The fundamental monotonicity underlying diachronic weakening:
-    variation with respect to a finer parameter (within-world v) implies
-    variation with respect to a coarser parameter (across-worlds ∅).
-    This is `variation_monotone` from `TeamSemantics`. -/
+    variation w.r.t. a finer parameter (within-world v) implies variation
+    w.r.t. a coarser parameter (across-worlds ∅). This is
+    `variation_monotone` from team semantics. -/
 theorem diachronic_weakening_grounded
     {V E : Type} [DecidableEq V] [DecidableEq E]
     (t : AssignmentTeam V E) (v null x : V)
@@ -258,7 +204,7 @@ theorem diachronic_weakening_grounded
     (fun a₁ a₂ _ => h_null_trivial a₁ a₂)
 
 -- ============================================================================
--- §5. Nanosyntax Diachronic Predictions
+-- §5. Nanosyntax diachronic predictions
 -- ============================================================================
 
 /-- Nanosyntax + Dekier: losing entry A (rank 0, NS-only) makes entry B
@@ -279,105 +225,84 @@ theorem dekier_after_loss_bb :
     spellout dekierAfterLoss suRank = some "B" := by decide
 
 -- ============================================================================
--- §6. Bridge to Fragment Data
+-- §6. Bridge to Fragment data
 -- ============================================================================
 
-/-- *-nibudEntry'* distribution matches the non-specific semantic profile. -/
+/-- *kto-nibud'* surface-classifies as type iii non-specific (actual = profile). -/
 theorem nibud_matches_nonSpecific :
-    nibudEntry.specType = .nonSpecific ∧
-    nibudEntry.allowsSK = nibudEntry.specType.profileSK ∧
-    nibudEntry.allowsSU = nibudEntry.specType.profileSU ∧
-    nibudEntry.allowsNS = nibudEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    nibudEntry.surfaceDAType = some .nonSpecific := by decide
 
-/-- *-to* is typed as epistemic (var(∅,x)) per @cite{bubnov-2026} §7.
-    Its actual distribution (SU only) is narrower than the epistemic
-    profile (SU + NS) because *-nibudEntry'* blocks it for NS. -/
-theorem to_is_epistemic :
-    toEntry.specType = .epistemic ∧
-    toEntry.allowsSU = true ∧
-    toEntry.allowsNS = false ∧
-    toEntry.specType.profileNS = true := ⟨rfl, rfl, rfl, rfl⟩
+/-- *kto-to* is classified as epistemic (`var(∅,x)`) per @cite{bubnov-2026} §7,
+    BUT its actual distribution (SU only) is narrower than the epistemic
+    profile (SU + NS) because *-nibud'* (type iii) blocks it for NS.
 
-/-- *koeEntry-* distribution matches the specific-known semantic profile. -/
+    Surface classifier returns type vii (specificUnknown) — the type whose
+    profile exactly matches `{SU}`. Bubnov's manual type-iv classification
+    is the `consistentWith` claim: actual ⊊ profile. The two layers
+    are simultaneously asserted here. -/
+theorem to_is_epistemic_with_competition :
+    toEntry.surfaceDAType = some .specificUnknown ∧
+    toEntry.consistentWith .epistemic = true ∧
+    toEntry.functions ≠ DAType.epistemic.profile := by
+  refine ⟨by decide, by decide, ?_⟩
+  intro h
+  exact absurd h (by decide)
+
+/-- *koe-kto* surface-classifies as type v specific-known. -/
 theorem koe_matches_specificKnown :
-    koeEntry.specType = .specificKnown ∧
-    koeEntry.allowsSK = koeEntry.specType.profileSK ∧
-    koeEntry.allowsSU = koeEntry.specType.profileSU ∧
-    koeEntry.allowsNS = koeEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    koeEntry.surfaceDAType = some .specificKnown := by decide
 
-/-- Latin *aliEntry-* distribution matches the epistemic semantic profile.
-    Unlike Russian *-to*, there is no competition: *-damEntry* only covers
-    SK, so *aliEntry-* fills both SU and NS unblocked. -/
+/-- Latin *aliquis* surface-classifies as type iv epistemic. Unlike Russian
+    *-to*, no competition: *quidam* only covers SK, so *aliquis* fills both
+    SU + NS unblocked, matching the epistemic profile exactly. -/
 theorem ali_matches_epistemic :
-    aliEntry.specType = .epistemic ∧
-    aliEntry.allowsSK = aliEntry.specType.profileSK ∧
-    aliEntry.allowsSU = aliEntry.specType.profileSU ∧
-    aliEntry.allowsNS = aliEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    aliEntry.surfaceDAType = some .epistemic := by decide
 
-/-- Yakut *-ereEntry* distribution matches the specific profile. -/
+/-- Yakut *kim ere* surface-classifies as type ii specific (SK + SU). -/
 theorem ere_matches_specific :
-    ereEntry.specType = .specific ∧
-    ereEntry.allowsSK = ereEntry.specType.profileSK ∧
-    ereEntry.allowsSU = ereEntry.specType.profileSU ∧
-    ereEntry.allowsNS = ereEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    ereEntry.surfaceDAType = some .specific := by decide
 
-/-- Kannada *-ooEntry* is the canonical type (vii) specific unknown:
-    dep(v,x) ∧ var(∅,x). Rare conjunctive type. -/
+/-- Kannada *yāru-oo* is the canonical type vii specific unknown:
+    `dep(v,x) ∧ var(∅,x)`, profile {SU}. -/
 theorem oo_matches_specificUnknown :
-    ooEntry.specType = .specificUnknown ∧
-    ooEntry.allowsSK = ooEntry.specType.profileSK ∧
-    ooEntry.allowsSU = ooEntry.specType.profileSU ∧
-    ooEntry.allowsNS = ooEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    ooEntry.surfaceDAType = some .specificUnknown := by decide
 
-/-- English *some-* distribution matches the unmarked profile (type i). -/
+/-- English *some-* surface-classifies as type i unmarked (all 3 functions). -/
 theorem some_matches_unmarked :
-    someEntry.specType = .unmarked ∧
-    someEntry.allowsSK = someEntry.specType.profileSK ∧
-    someEntry.allowsSU = someEntry.specType.profileSU ∧
-    someEntry.allowsNS = someEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    someEntry.surfaceDAType = some .unmarked := by decide
 
-/-- Yakut *-emeEntry* distribution matches the non-specific profile (type iii). -/
+/-- Yakut *kim eme* surface-classifies as type iii non-specific. -/
 theorem eme_matches_nonSpecific :
-    emeEntry.specType = .nonSpecific ∧
-    emeEntry.allowsSK = emeEntry.specType.profileSK ∧
-    emeEntry.allowsSU = emeEntry.specType.profileSU ∧
-    emeEntry.allowsNS = emeEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    emeEntry.surfaceDAType = some .nonSpecific := by decide
 
-/-- Latin *-damEntry* distribution matches the specific-known profile (type v). -/
+/-- Latin *quidam* surface-classifies as type v specific-known. -/
 theorem dam_matches_specificKnown :
-    damEntry.specType = .specificKnown ∧
-    damEntry.allowsSK = damEntry.specType.profileSK ∧
-    damEntry.allowsSU = damEntry.specType.profileSU ∧
-    damEntry.allowsNS = damEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    damEntry.surfaceDAType = some .specificKnown := by decide
 
-/-- Kannada *-aadaruuEntry* distribution matches the non-specific profile. -/
+/-- Kannada *yāru-aadaruu* surface-classifies as type iii non-specific. -/
 theorem aadaruu_matches_nonSpecific :
-    aadaruuEntry.specType = .nonSpecific ∧
-    aadaruuEntry.allowsSK = aadaruuEntry.specType.profileSK ∧
-    aadaruuEntry.allowsSU = aadaruuEntry.specType.profileSU ∧
-    aadaruuEntry.allowsNS = aadaruuEntry.specType.profileNS := ⟨rfl, rfl, rfl, rfl⟩
+    aadaruuEntry.surfaceDAType = some .nonSpecific := by decide
 
 -- ============================================================================
--- §7. Bridge to German Modal Indefinites
+-- §7. Bridge to German modal indefinites
 -- ============================================================================
 
-/-- German *irgendEntry-* is classified as type (iv) epistemic in the Degano
-    & Aloni typology, and as not-at-issue epistemic in the Alonso-Ovalle
-    & Royer modal indefinite typology. These are compatible perspectives:
-    the modal analysis describes WHAT *irgendEntry-* does (domain widening);
-    the team-semantic analysis describes its DISTRIBUTIONAL restriction
-    (varying across epistemic alternatives).
+/-- German *irgend-* is classified as type iv epistemic in D&A's typology
+    AND as not-at-issue epistemic in Alonso-Ovalle & Royer's modal-indefinite
+    typology. Compatible perspectives: the modal analysis describes WHAT
+    *irgend-* does (domain widening); the team-semantic analysis describes
+    its DISTRIBUTIONAL restriction (varying across epistemic alternatives).
 
-    @cite{bubnov-2026} §6: German *irgendEntry-* instantiates the diachronic
-    path (iii) non-specific → (iv) epistemic (@cite{aloni-port-2015}). -/
+    @cite{bubnov-2026} §6: German *irgend-* instantiates the diachronic
+    path (iii) → (iv) (@cite{aloni-port-2015}). -/
 theorem irgend_compatible_classifications :
-    irgendEntry.specType = .epistemic ∧
+    irgendEntry.surfaceDAType = some DAType.epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasFlavor .epistemic := by
-  exact ⟨rfl, rfl, by decide⟩
+    irgendeinEntry.hasFlavor Core.Modality.ModalFlavor.epistemic := by
+  exact ⟨by decide, rfl, by decide⟩
 
 -- ============================================================================
--- §8. The Broader Claim: Coexpression ≠ Syncretism
+-- §8. The broader claim: coexpression ≠ syncretism
 -- ============================================================================
 
 -- @cite{bubnov-2026}'s central theoretical claim: not all coexpression
@@ -391,9 +316,8 @@ theorem irgend_compatible_classifications :
 --
 -- Formalized here: the Russian ABC pattern is consistent with the
 -- nanosyntax spellout algorithm BUT the absence of morphological
--- containment is unexpected if the hierarchy is real. The semantic
--- profiles computed from `IndefiniteSpecType` correctly predict the
--- typology, and `type_vi_contradictory` derives the gap from the
--- fundamental incompatibility of constancy and variation.
+-- containment is unexpected if the hierarchy is real. The D&A profiles
+-- correctly predict the typology, and `type_vi_contradictory` derives
+-- the gap from the fundamental incompatibility of constancy and variation.
 
 end Bubnov2026

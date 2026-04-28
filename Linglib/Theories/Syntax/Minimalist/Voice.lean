@@ -39,8 +39,12 @@ Note: @cite{wood-2015} uses a SINGLE v head whose interpretation
 introduces CAUSE, rather than @cite{cuervo-2003}'s multi-headed
 decomposition. The VerbHead decomposition used here is a linglib
 modeling choice that captures the same Voice–CAUSE independence
-using @cite{cuervo-2003}'s notation. See `Fragments.Icelandic.Predicates`
-for the Icelandic fragment.
+using @cite{cuervo-2003}'s notation. See
+`Phenomena.ArgumentStructure.Studies.Wood2015` for the Icelandic -st
+apparatus (the Wood-2015 -st classification, root-structure
+projections, and ±D/±λx grid analysis); the lexical fragment
+`Fragments.Icelandic.Predicates` carries only the consensus verb
+forms.
 
 -/
 
@@ -472,5 +476,43 @@ theorem underspecified_compatible_with_all (f : VoiceFlavor) :
     let ber : VoiceParams := { selectsSpecifier := none, extArgSemantics := none }
     ber.isCompatibleWith f.toParams = true := by
   cases f <;> rfl
+
+-- ============================================================================
+-- § 11: Voice Projection Locus
+-- ============================================================================
+
+/-- Where a non-active morphological exponent realizes its host head, in
+    Voice/v space.
+
+    Non-active morphology (Romance *se*, Icelandic *-st* and *-na*,
+    Hebrew *hit-*, etc.) can spell out distinct functional positions:
+    Voice with a [D] feature, specifierless Voice, or v itself. The
+    Voice_{D} vs Voice_{∅} distinction is from
+    @cite{alexiadou-schaefer-2015} and
+    @cite{wood-marantz-2017}; the v-vs-Voice distinction, in the
+    @cite{wood-2015} treatment of Icelandic *-ka*, locates *-ka* on v
+    rather than on Voice.
+
+    `voiceDOrBare` represents underspecification — a marking morpheme
+    compatible with either Voice projection, with the actual setting
+    determined by independent factors.
+
+    This enum is the projection-side complement of `VoiceParams`: where
+    `VoiceParams` parameterizes a Voice head's own ±D/±λx settings,
+    `VoiceProjectionLocus` classifies the projection an exponent picks
+    out. -/
+inductive VoiceProjectionLocus where
+  /-- Voice carrying a [D] feature; projects a specifier
+      (@cite{wood-2015} Voice_{D}). -/
+  | voiceD
+  /-- Specifierless Voice; no [D] feature
+      (@cite{wood-2015} Voice_{∅}). -/
+  | voiceBare
+  /-- Underspecified: compatible with either `voiceD` or `voiceBare`. -/
+  | voiceDOrBare
+  /-- Exponent of v, not Voice (e.g., Icelandic *-ka*
+      per @cite{wood-2015} Ch. 3, §3.3). -/
+  | vHead
+  deriving DecidableEq, Repr
 
 end Minimalist

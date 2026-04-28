@@ -8,7 +8,7 @@ import Linglib.Datasets.WALS.Features.F123A
 # `RelativizationProfile`: per-language relativization typology
 
 A WALS-style summary of a language's relativization system, suitable for
-inclusion as one field of `Core.Typology.LanguageProfile`. Captures the
+inclusion as one field of `Typology.LanguageProfile`. Captures the
 two strategy dimensions (Chs 122/123), the relative-clause position with
 respect to the head noun, and the lowest position on the
 @cite{keenan-comrie-1977} Accessibility Hierarchy that can be

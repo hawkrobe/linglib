@@ -2,7 +2,7 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Theories.Semantics.Tense.CounterfactualTense
+import Linglib.Theories.Semantics.Tense.Counterfactual.Defs
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan
 import Linglib.Theories.Semantics.Tense.ConditionalShift
@@ -59,7 +59,7 @@ namespace Semantics.Modality.Exclusion
 
 open Core.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding temporalShift)
-open Semantics.Tense.CounterfactualTense (PastMorphologyUse CounterfactualDistance)
+open Semantics.Tense.Counterfactual (PastMorphologyUse CounterfactualDistance)
 open Core.Modality.HistoricalAlternatives (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)

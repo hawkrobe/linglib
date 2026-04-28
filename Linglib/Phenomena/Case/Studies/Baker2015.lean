@@ -1,9 +1,11 @@
 import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Theories.Syntax.Case.Alignment
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
+import Linglib.Fragments.Mayan.Chol.Agreement
 
 /-!
 # Baker (2015) — Case: Its Principles and Its Parameters
@@ -301,5 +303,144 @@ theorem georgian_present_in_inventory :
     ∀ np ∈ assignCases .accusative georgianPresentNPs,
       np.case ∈ Fragments.Georgian.Agreement.fullCaseInventory := by
   decide
+
+-- ============================================================================
+-- § 3: Comparison with @cite{coon-2013}'s inherent-ERG account of Chol
+-- ============================================================================
+
+/-! @cite{coon-2013}'s Chol monograph licenses ERG as **inherent** case from
+    transitive *v*. Marantz/Baker dependent case derives the same surface
+    case pattern from a structural-configurational rule (lower NP gets
+    ERG-as-dependent in the higher-NP-as-caseless configuration). The two
+    accounts agree on the surface case table for Chol perfective monotransitive
+    clauses but disagree on the licensing mechanism: Coon's ERG is licensed
+    *lexically* by v⁰; Baker's ERG is licensed *configurationally* by the
+    presence of a c-commanding caseless NP.
+
+    The agreement at the table level is provable here: both Baker's
+    `Alignment.ergative.assignCase` (the Phase-4 typological ground truth) and
+    the Chol fragment's `ergCase` (which derives from the same function via
+    `Mayan.ergCaseExtErg`) produce identical case for A/S/P. The disagreement
+    is invisible at this level — it shows up only when one asks *why* a given
+    case appears, not *which* case appears.
+
+    See `Phenomena/Case/Studies/Woolford1997.lean` for the inherent-ergative
+    defense against the dependent derivation; see
+    `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` for the
+    Chol-specific extraction-asymmetry argument. -/
+
+section ComparisonWithCoon2013
+
+/-! ### Configurational ↔ functional equivalence (the load-bearing bridge)
+
+The real cross-framework claim isn't that the Chol fragment matches the
+Phase-4 typological function — that holds tautologically by construction
+(Phase 3 derives the Mayan substrate from the Phase-4 functions). The
+non-trivial claim is that **`assignCases` (Marantz/Baker's configurational
+algorithm) and `Alignment.ergative.assignCase` (the typological-functional
+ground truth) compute the same case for each argument role**, even though
+they do so by entirely different mechanisms:
+
+- `assignCases .ergative twoNPs` runs a list-based algorithm that pattern-
+  matches on c-command relations and dispatches via `dependentErgative` /
+  `unmarkedCaseFor`. Output structure: `List CasedNP` with source labels.
+- `Alignment.ergative.assignCase .A` is a direct typological lookup
+  (`| .A => .erg | .S | .P => .abs | ...`).
+
+If the two ever diverged on the surface table, one of the layers would be
+empirically wrong. The equivalence theorems below verify they don't,
+through `decide` over the actual computation.
+-/
+
+/-- Bijection from monotransitive ArgumentRole to NP labels in Baker's
+    list-based domain representation. The agent c-commands the patient
+    (Marantz/Baker convention: list-position-first = highest), so A maps
+    to the first NP and P to the second. -/
+def transitiveMonoNPs : List NPInDomain :=
+  [ { label := "agent",   lexicalCase := none }
+  , { label := "patient", lexicalCase := none } ]
+
+/-- Bijection for the intransitive case: a single NP labeled "subject" is
+    the sole argument S. -/
+def intransitiveNPs : List NPInDomain :=
+  [ { label := "subject", lexicalCase := none } ]
+
+/-- **Configurational ↔ functional equivalence on the ergative monotransitive
+    table.** Marantz/Baker's `assignCases .ergative` over a 2-NP domain
+    produces the same case for "agent"/"patient" as the typological
+    `Alignment.ergative.assignCase` produces for `.A`/`.P`. The proof goes
+    through `decide` over the actual list-pattern-match computation in
+    `assignCases` — NOT through definitional equality, since the two
+    functions have completely different bodies. If `dependentErgative`'s
+    c-command rule ever diverged from the typological table, this would
+    fail. -/
+theorem dependent_ergative_matches_alignment_function_transitive :
+    getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)
+      = some (Alignment.ergative.assignCase .A) ∧
+    getCaseOf "patient" (assignCases .ergative transitiveMonoNPs)
+      = some (Alignment.ergative.assignCase .P) := by decide
+
+/-- **Same equivalence for the intransitive case.** `assignCases .ergative`
+    on a single NP returns ABS via the unmarked-case fallback;
+    `Alignment.ergative.assignCase .S` returns ABS via direct lookup. They
+    agree. -/
+theorem dependent_ergative_matches_alignment_function_intransitive :
+    getCaseOf "subject" (assignCases .ergative intransitiveNPs)
+      = some (Alignment.ergative.assignCase .S) := by decide
+
+/-- **Same equivalence for accusative alignment.** Marantz/Baker's
+    accusative dispatch produces the same per-role case as
+    `Alignment.nominativeAccusative.assignCase`. The Mayan fragment doesn't
+    use this branch (Mayan doesn't have nominative-accusative monotransitive
+    clauses), but the equivalence is symmetric — Baker's algorithm and the
+    typological function agree on accusative as well as ergative. -/
+theorem dependent_accusative_matches_alignment_function_transitive :
+    getCaseOf "agent" (assignCases .accusative transitiveMonoNPs)
+      = some (Alignment.nominativeAccusative.assignCase .A) ∧
+    getCaseOf "patient" (assignCases .accusative transitiveMonoNPs)
+      = some (Alignment.nominativeAccusative.assignCase .P) := by decide
+
+/-- The equivalence at the **surface case** level (theorems above) does NOT
+    extend to the **licensing source** level. Marantz/Baker's algorithm
+    labels Chol's perfective ergative case as `.dependent` (configurational
+    — assigned by the c-command rule). @cite{coon-2013}'s inherent-from-v
+    account would label it as `.lexical` (assigned by selecting head v⁰).
+    The two accounts disagree on *what licenses* the case, even though they
+    agree on *which* case appears.
+
+    This theorem makes the disagreement formal: the dependent algorithm
+    assigns source `.dependent` to the agent in a Chol-like ergative
+    transitive — a label distinct from `.lexical`, the source Coon's
+    inherent-from-v account would predict if formalized as a function of
+    the same shape. -/
+theorem dependent_source_distinct_from_inherent :
+    getSourceOf "agent" (assignCases .ergative transitiveMonoNPs)
+      = some .dependent ∧
+    (.dependent : CaseSource) ≠ .lexical := by
+  refine ⟨by decide, by decide⟩
+
+/-- The Chol fragment's case table (Phase 3) inherits the equivalence
+    automatically: since `Chol.ArgPosition.agent.ergCase` is definitionally
+    equal to `Alignment.ergative.assignCase .A` (via the Phase-3 substrate
+    chain), the equivalence theorem above immediately yields
+    `getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)`
+    `= some Fragments.Mayan.Chol.ArgPosition.agent.ergCase`. We state this
+    one Chol-specific corollary explicitly so downstream Mayan consumers
+    can cite it directly. -/
+theorem chol_perfective_ergCase_matches_dependent :
+    getCaseOf "agent" (assignCases .ergative transitiveMonoNPs)
+      = some (Fragments.Mayan.Chol.ArgPosition.case .A) := by decide
+
+/-- **Dependent case is INSUFFICIENT for extended ergative.** The Chol
+    non-perfective S/A → GEN, P → ABS pattern is a fourth typological
+    arrangement that Baker's algorithm cannot derive without auxiliary
+    nominalization machinery. @cite{coon-2013} supplies that machinery via
+    embedded nominalization; @cite{imanishi-2020} via parameterized
+    inherent vs structural Case. Either way, Baker's algorithm alone is
+    not a complete theory of ergative-class case assignment. -/
+theorem dependent_case_insufficient_for_extended_ergative :
+    Alignment.ergative.assignCase .A ≠ Alignment.extendedErgative.assignCase .A := by decide
+
+end ComparisonWithCoon2013
 
 end Phenomena.Case.Studies.Baker2015

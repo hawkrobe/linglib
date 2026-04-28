@@ -91,14 +91,15 @@ theorem personLevel_rank_matches_probe_rank :
 
 /-- Kaqchikel indexes all three argument positions (agent, patient, intranS).
     This makes it non-differential: no prominence condition gates indexing. -/
-theorem kaqchikel_indexes_all :
-    kaqArgPositions.all (λ p => p.isPhiAgreed) = true := by native_decide
+theorem kaqchikel_indexes_all (p : ArgPosition) (h : p ∈ kaqArgPositions) :
+    ArgPosition.IsPhiAgreed p :=
+  Fragments.Mayan.Kaqchikel.all_positions_agreed p h
 
 /-- Both A (agent) and P (patient) are indexed in Kaqchikel:
     agent via Set A on Voice/v, patient via Set B on Infl/T. -/
 theorem kaqchikel_A_and_P_indexed :
-    KaqArgPosition.agent.isPhiAgreed = true ∧
-    KaqArgPosition.patient.isPhiAgreed = true := ⟨rfl, rfl⟩
+    ArgPosition.IsPhiAgreed .A ∧
+    ArgPosition.IsPhiAgreed .P := ⟨trivial, trivial⟩
 
 /-- The A marker paradigm (Set A) and P marker paradigm (Set B) are
     distinct: every person-number combination gets a unique marker in
@@ -111,30 +112,41 @@ theorem kaqchikel_dual_paradigms :
 -- § 4: Kaqchikel Argument Roles ↔ Just's ArgumentRole
 -- ============================================================================
 
-/-- Map Kaqchikel argument positions to Just's A/P roles. -/
-def kaqArgToRole : KaqArgPosition → ArgumentRole
-  | .agent   => .A
-  | .patient => .P
-  | .intranS => .P   -- S patterns with P (absolutive alignment)
+/-- Map Kaqchikel argument positions to Just's A/P roles. The
+    absolutive collapse: S patterns with P, A stays distinct;
+    ditransitive R/T default to P (consistent with absolutive
+    grouping). -/
+def kaqArgToRole : ArgPosition → ArgumentRole
+  | .A => .A
+  | .S | .P | .R | .T => .P  -- S patterns with P (absolutive alignment)
 
-/-- Agent maps to A, patient maps to P. -/
+/-- Identity on A and P; the load-bearing structure is the S → P
+    collapse encoded in `kaqArgToRole`. -/
 theorem kaqArg_role_mapping :
-    kaqArgToRole .agent = .A ∧
-    kaqArgToRole .patient = .P := ⟨rfl, rfl⟩
+    kaqArgToRole .A = .A ∧
+    kaqArgToRole .P = .P ∧
+    kaqArgToRole .S = .P := ⟨rfl, rfl, rfl⟩
 
 /-- Ergative-absolutive alignment: A is distinguished (ERG) while P and S
     pattern together (ABS). This parallels Just's A/P split. -/
 theorem erg_abs_matches_AP :
-    KaqArgPosition.agent.case ≠ KaqArgPosition.patient.case ∧
-    KaqArgPosition.patient.case = KaqArgPosition.intranS.case := ⟨by decide, rfl⟩
+    ArgPosition.case .A ≠ ArgPosition.case .P ∧
+    ArgPosition.case .P = ArgPosition.case .S := ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- § 5: Cross-Framework — Person Dominance
 -- ============================================================================
 
 /-! Person is the dominant conditioning factor for both P indexing and
-    A indexing. This connects to @cite{preminger-2014}'s observation that person features are structurally more prominent
-    in the φ-geometry ([participant] outranks [plural]). -/
+    A indexing. The structural correlate is that the [participant]
+    probe (π⁰) takes priority over the [plural] probe (#⁰) under the
+    two-probe relativized-probing system @cite{bejar-rezac-2003} —
+    NOT a salience hierarchy. @cite{preminger-2014} Ch. 7 explicitly
+    argues against direct salience-scale primitives; the rank
+    ordering below is a surface effect of probe priority, not a
+    hierarchy-as-grammatical-primitive. See
+    `Phenomena/Agreement/Studies/Preminger2014.lean` for the
+    anti-hierarchy theorems. -/
 
 /-- Person dominates for both P and A indexing (derived from fragments). -/
 theorem person_dominates_both :
@@ -146,10 +158,12 @@ theorem person_dominates_both :
       (aIndexingLanguages.filter (·.definitenessConditioned)).length := by
   native_decide
 
-/-- Preminger's participant > plural hierarchy mirrors the person > animacy >
-    definiteness frequency hierarchy: person features are both
-    structurally and typologically dominant. -/
-theorem preminger_participant_outranks :
+/-- Two-probe surface ranking @cite{bejar-rezac-2003}: [+participant]
+    cells outrank [+plural,−participant] cells, which outrank 3SG. The
+    typological frequency hierarchy (person > animacy > definiteness)
+    parallels this — person features are both structurally privileged
+    at the probe level and typologically dominant in indexing systems. -/
+theorem two_probe_surface_ranking :
     probeResolutionRank .first false > probeResolutionRank .third true ∧
     probeResolutionRank .third true > probeResolutionRank .third false := by decide
 

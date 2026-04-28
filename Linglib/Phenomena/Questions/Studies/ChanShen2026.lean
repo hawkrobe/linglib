@@ -153,7 +153,7 @@ namespace ChanShen2026
 open Fragments.Singlish.Questions (WhStrategy fullMovement partialMovement
   whInSitu theHell)
 open Fragments.Mandarin.Questions (daodi)
-open Phenomena.Questions.Typology (WhInterpMechanism)
+open Typology.Question (WhInterpMechanism)
 -- IslandSource is declared at top level in Phenomena/Islands/Studies/Ross1967.lean
 open Core.Lexical.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)

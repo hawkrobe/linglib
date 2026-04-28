@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Core.Morphology.Exponence
 import Linglib.Fragments.English.Tense
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 

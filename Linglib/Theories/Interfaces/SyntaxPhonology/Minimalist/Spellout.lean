@@ -98,4 +98,24 @@ theorem empty_features_matches_any (entry : VocabEntry)
     entry.matchesFeatures target = true := by
   simp only [VocabEntry.matchesFeatures, h, List.all_nil]
 
+-- ============================================================================
+-- § 4: Vocabulary Builders
+-- ============================================================================
+
+/-- Build a Vocabulary from a paradigm cell type. For each cell `pn`, emits
+    one VocabEntry whose features are `toPhi pn` lifted into valued
+    `FeatureValue`s, whose exponent is `exponentOf pn`, and whose context
+    is `ctx`. Used to deduplicate the per-cell paradigm-to-vocabulary
+    construction shared across study files (e.g., Kaqchikel Set A on
+    Voice/v, Kaqchikel Set B on Infl/T). Elsewhere entries (no features)
+    are appended separately by the caller — this helper covers only the
+    regular cells. The `ctx` argument matches `VocabEntry.context`'s
+    `Option Cat` shape; default `none` admits unrestricted contexts. -/
+def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeature)
+    (exponentOf : PN → String) (ctx : Option Cat := none) : Vocabulary :=
+  cells.map fun pn =>
+    { features := (toPhi pn).map (fun p => .valued (.phi p))
+    , exponent := exponentOf pn
+    , context := ctx }
+
 end Minimalist

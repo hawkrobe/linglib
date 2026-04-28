@@ -64,8 +64,8 @@ open Phenomena.Classifiers
 namespace LittleMoroneyRoyer2022
 
 open Core.NounCategorization
-open Core.Typology
-open Core.Typology.NounCategorizationSystem
+open Typology
+open Typology.NounCategorizationSystem
 open Phenomena.Classifiers.Typology
 
 -- ============================================================================

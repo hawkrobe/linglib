@@ -28,16 +28,17 @@ structure NounEntry where
   proper : Bool := false
   deriving Repr, BEq
 
-/-- Japanese case particles. -/
-inductive CaseParticle where
-  | ga | wo | ni | de | no | wa
-  deriving DecidableEq, Repr
+/-- Japanese NP structure (no articles).
 
-/-- Japanese NP structure (no articles, but has case particles). -/
+Case marking on the NP is not represented at this layer — the authoritative
+case-marker registry lives in `Fragments.Japanese.Case` (`CaseMarker` with
+fields `romaji`, `kana`, `cases : Finset Core.Case`, `omissibleInCasual`).
+A case-marked NP type is intentionally not introduced here; downstream
+consumers that need NP-with-case should pair `NP` with a `CaseMarker`
+explicitly rather than embedding a case slot of unknown semantics. -/
 structure NP where
   noun : NounEntry
   isBare : Bool
-  caseParticle : Option CaseParticle := none
   demonstrative : Option String := none
   numeral : Option Nat := none
   usePlural : Bool := false
@@ -54,15 +55,6 @@ def japaneseMapping : NominalMapping := .argOnly
 
 def bareNP (n : NounEntry) : NP :=
   { noun := n, isBare := true }
-
-def gaNP (n : NounEntry) : NP :=
-  { noun := n, isBare := true, caseParticle := some .ga }
-
-def woNP (n : NounEntry) : NP :=
-  { noun := n, isBare := true, caseParticle := some .wo }
-
-def waNP (n : NounEntry) : NP :=
-  { noun := n, isBare := true, caseParticle := some .wa }
 
 def konoNP (n : NounEntry) : NP :=
   { noun := n, isBare := false, demonstrative := some "この" }
@@ -150,12 +142,9 @@ theorem mass_nouns_no_classifier :
 -- ============================================================================
 
 def inuNP : NP := bareNP inu
-def inuGa : NP := gaNP inu
-def inuWo : NP := woNP inu
 def konoInu : NP := konoNP inu
 
 example : inuNP.isBare = true := rfl
-example : inuGa.caseParticle = some .ga := rfl
 example : konoInu.isBare = false := rfl
 
 end Fragments.Japanese.Nouns

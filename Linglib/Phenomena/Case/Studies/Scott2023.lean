@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Theories.Syntax.Case.Alignment
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Mayan.Mam.Agreement
 
@@ -69,26 +70,27 @@ open Syntax.Case
 -- ============================================================================
 
 /-- Scott 2023's central case-theoretic claim: Voice (and Infl) assign
-    case directly based on argument position. Agent → ERG, patient → ACC,
-    intransitive subject → ABS — three distinct cases from three different
-    heads, with the assignment fixed by θ-position rather than by Agree or
-    by NP configuration. -/
+    case directly based on argument position. A → ERG, P → ACC,
+    S → ABS — three distinct cases from three different heads, with
+    the assignment fixed by θ-position rather than by Agree or by NP
+    configuration. -/
 theorem voice_assigns_case_by_position :
-    Fragments.Mayan.Mam.MamArgPosition.agent.case = .erg ∧
-    Fragments.Mayan.Mam.MamArgPosition.patient.case = .acc ∧
-    Fragments.Mayan.Mam.MamArgPosition.intranS.case = .abs := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Mam.ArgPosition.case .A = .erg ∧
+    Fragments.Mayan.Mam.ArgPosition.case .P = .acc ∧
+    Fragments.Mayan.Mam.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- The three argument positions receive three distinct cases — a
     tripartite underlying system (ERG ≠ ACC ≠ ABS) at the case-assignment
-    layer, prior to any morphological syncretism. -/
+    layer, prior to any morphological syncretism. Inherits from
+    `Alignment.tripartite_distinguishes_all` via the substrate connection. -/
 theorem voice_based_tripartite :
-    Fragments.Mayan.Mam.MamArgPosition.agent.case ≠
-      Fragments.Mayan.Mam.MamArgPosition.patient.case ∧
-    Fragments.Mayan.Mam.MamArgPosition.agent.case ≠
-      Fragments.Mayan.Mam.MamArgPosition.intranS.case ∧
-    Fragments.Mayan.Mam.MamArgPosition.patient.case ≠
-      Fragments.Mayan.Mam.MamArgPosition.intranS.case := by
-  exact ⟨by decide, by decide, by decide⟩
+    Fragments.Mayan.Mam.ArgPosition.case .A ≠
+      Fragments.Mayan.Mam.ArgPosition.case .P ∧
+    Fragments.Mayan.Mam.ArgPosition.case .A ≠
+      Fragments.Mayan.Mam.ArgPosition.case .S ∧
+    Fragments.Mayan.Mam.ArgPosition.case .P ≠
+      Fragments.Mayan.Mam.ArgPosition.case .S :=
+  Alignment.tripartite_distinguishes_all
 
 -- ============================================================================
 -- § 2: Contrast with Agree-Based Case

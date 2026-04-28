@@ -1,7 +1,11 @@
-/-
-# Scalar Implicatures: Empirical Data
+import Mathlib.Tactic.DeriveFintype
 
-Theory-neutral empirical patterns for scalar implicatures.
+/-!
+# Scalar Implicatures: Empirical Data + canonical *some*/*all* model
+
+Theory-neutral empirical patterns for scalar implicatures, plus the
+canonical 3-world `SomeAllWorld` model used by every study file in the
+directory that evaluates *some*/*all* sentence meanings.
 
 ## Phenomena Covered
 
@@ -10,6 +14,16 @@ Theory-neutral empirical patterns for scalar implicatures.
 3. **Horn Scales**: Scale examples with implicatures
 4. **Hurford's Constraint**: Entailing disjunctions and rescue by exhaustification
 5. **Singh's Asymmetry**: Order effects in scalar disjunctions
+
+## Canonical world model
+
+`SomeAllWorld` is the minimal scenario type for evaluating the
+*some*/*all* scalar contrast: three worlds covering "no entity has the
+property" / "at least one but not all do" / "all do". The three
+predicates `atLeastOne`/`universal`/`notUniversal` give the literal
+*some*/*all*/SI meanings. Used by `Hurford.lean`, `Embedded/Basic.lean`,
+`Embedded/Attitudes.lean` (as a component of `BeliefWorld`), and the
+`GeurtsPouscoulous2009` study file.
 
 ## Key References
 
@@ -22,6 +36,61 @@ Theory-neutral empirical patterns for scalar implicatures.
 -/
 
 namespace Phenomena.ScalarImplicatures
+
+/-!
+## Canonical *some*/*all* world model
+-/
+
+/-- The minimal scenario type for evaluating the *some*/*all* scalar
+contrast. Three worlds, parameterized by an implicit entity-set whose
+property-holders are being counted: zero (`none`), at least one but not
+all (`someNotAll`), or all (`all`). -/
+inductive SomeAllWorld where
+  | none
+  | someNotAll
+  | all
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+namespace SomeAllWorld
+
+/-- Literal *some* meaning: at least one entity has the property. -/
+def atLeastOne : SomeAllWorld → Prop
+  | .none => False
+  | _ => True
+
+/-- Literal *all* meaning: every entity has the property. -/
+def universal : SomeAllWorld → Prop
+  | .all => True
+  | _ => False
+
+/-- The canonical scalar implicature of *some*: not all. Defined as the
+negation of `universal`. -/
+def notUniversal (w : SomeAllWorld) : Prop := ¬ universal w
+
+instance : DecidablePred atLeastOne
+  | .none => isFalse not_false
+  | .someNotAll => isTrue trivial
+  | .all => isTrue trivial
+
+instance : DecidablePred universal
+  | .none => isFalse not_false
+  | .someNotAll => isFalse not_false
+  | .all => isTrue trivial
+
+instance (w : SomeAllWorld) : Decidable (notUniversal w) :=
+  inferInstanceAs (Decidable (¬ universal w))
+
+/-- *all* asymmetrically entails *some*: this is the structural source of
+the *some*/*all* scalar contrast. -/
+theorem universal_imp_atLeastOne {w : SomeAllWorld} (h : universal w) :
+    atLeastOne w := by
+  cases w <;> simp_all [universal, atLeastOne]
+
+/-- The SI of *some* is exactly the complement of *all*. -/
+theorem notUniversal_iff_not_universal {w : SomeAllWorld} :
+    notUniversal w ↔ ¬ universal w := Iff.rfl
+
+end SomeAllWorld
 
 
 /--

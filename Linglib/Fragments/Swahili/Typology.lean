@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Swahili typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Swahili (ISO 639-3 `swh`).
 
 namespace Fragments.Swahili
 
-open Core.Typology in
+open Typology in
 /-- Swahili: SVO, prepositional; noun-class agreement on relative marker. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "swh" "Swahili"

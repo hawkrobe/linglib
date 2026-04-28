@@ -9,6 +9,18 @@ import Linglib.Theories.Semantics.Exhaustification.Innocent
 Fox, D. & Spector, B. (2018). Economy and embedded exhaustification.
 Natural Language Semantics, 26(1), 1–50.
 
+## Empirical support: @cite{chemla-spector-2011}
+
+The economy-condition framework predicts that embedded `exh` is
+licensed precisely when its insertion is non-vacuous. CS11's §4.4.5
+distributivity finding (page 20) is direct empirical support: for the
+'or' item under STRONG condition, sub-cases STRONG[≠] (where
+distributivity inferences are non-vacuous) are rated significantly
+higher than STRONG[=] (where they are vacuous), 99.5% vs 73%, W = 78,
+p < .005. See `Phenomena/ScalarImplicatures/Studies/ChemlaSpector2011.lean`
+`distributivity_strong_neq_gt_strong_eq` for the captured empirical
+inequality.
+
 ## Core Argument
 
 Where can `exh` be inserted in the parse tree? Fox & Spector propose

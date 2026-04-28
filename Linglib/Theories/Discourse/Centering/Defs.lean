@@ -112,7 +112,43 @@ structure Utterance (E : Type) (R : Type) where
   deriving Repr
 
 -- ════════════════════════════════════════════════════
--- § 3. Realizes / Pronominalizes Plug-Ins
+-- § 3. Generalized Cf Ranking (per-realization)
+-- ════════════════════════════════════════════════════
+
+/-- Rank a full `Realization E R`, not just its role.
+
+    `CfRanker R` (§ 1) ranks roles only — sufficient for grammatical
+    function (Kameyama 1986: SUBJ > OBJ > OTHER) where rank depends on
+    `r.role` alone. But several rankers in the centering literature
+    depend on the **full realization**, not just its role:
+
+    * **Linear-order ranking** (@cite{rambow-1993}, motivated by German
+      scrambling): rank by surface position within the utterance.
+    * **Information-status ranking** (@cite{strube-hahn-1999} for
+      German): HEARER-OLD ≺ MEDIATED ≺ HEARER-NEW with linear-order
+      tiebreak — needs both info-status (a per-entity property) and
+      surface position (a per-realization property).
+
+    `CfRankerOf E R` is the canonical typeclass; `CfRanker R` is sugar
+    for "rank depends only on the role" (low-priority default instance
+    `cfRankerOf_of_role` lifts every `CfRanker R` to a `CfRankerOf E R`
+    by projecting through `.role`). Mathlib analogue: `Module R M` is
+    the canonical typeclass; specializations like `Algebra R A` extend
+    it. The single canonical typeclass over the more general thing,
+    not parallel typeclasses with explicit conversion. -/
+class CfRankerOf (E : Type) (R : Type) where
+  rank : Realization E R → Nat
+
+/-- Default instance: any `CfRanker R` (rank-by-role-only) lifts to
+    a `CfRankerOf E R` (rank-by-realization) by projecting through the
+    realization's `role` field. Low priority so explicit per-realization
+    instances win. -/
+instance (priority := low) cfRankerOf_of_role {E R : Type} [r : CfRanker R] :
+    CfRankerOf E R where
+  rank rl := r.rank rl.role
+
+-- ════════════════════════════════════════════════════
+-- § 4. Realizes / Pronominalizes Plug-Ins
 -- ════════════════════════════════════════════════════
 
 /-- "u realizes e": the entity `e` is among the referents contributed

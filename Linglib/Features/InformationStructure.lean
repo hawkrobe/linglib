@@ -1,6 +1,6 @@
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.Typology.Profile
+import Linglib.Typology.Profile
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -279,7 +279,7 @@ structure PolarityMarkingEntry where
   /-- What bears prosodic prominence, if the strategy is prosodic -/
   prosodicTarget : Option String := none
   /-- Set of positions/contexts in which this marker is available. -/
-  environments : Core.Typology.Profile PolarityMarkingEnv
+  environments : Typology.Profile PolarityMarkingEnv
   /-- The polarity-marking strategy category -/
   strategy : PolarityMarkingStrategy
 

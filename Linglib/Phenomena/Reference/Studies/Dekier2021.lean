@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.Nanosyntax.Core
-import Linglib.Features.IndefiniteType
+import Linglib.Typology.Indefinite
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.Latin.Indefinites
@@ -57,7 +57,7 @@ set_option autoImplicit false
 namespace Dekier2021
 
 open Morphology.Nanosyntax
-open Features.IndefiniteType
+open Typology.Indefinite
 open Fragments.Slavic.Russian.Indefinites
 open Fragments.English.Indefinites
 open Fragments.Latin.Indefinites
@@ -400,52 +400,63 @@ theorem hierarchy_ordering : nsRank < suRank ∧ suRank < skRank :=
 -- ============================================================================
 
 /-! Connect the nanosyntactic spellout results to the typed indefinite
-    entries in the fragment files. The fragment entries use the Degano
-    & Aloni typology (`IndefiniteSpecType`), which is the semantic
-    counterpart to Dekier's syntactic hierarchy. -/
+    entries in the fragment files. The fragment entries use the
+    @cite{haspelmath-1997} function-coverage substrate; the D&A typology
+    is a projection living in `Theories/Semantics/Quantification/DeganoAloni2025.lean`.
+    Dekier's syntactic hierarchy is the candidate counterpart on the
+    morphological side; the bridge here pairs each Fragment entry's
+    function coverage with the lexicon's spellout result. -/
 
 /-- English *some-* fills all three functions — consistent with a
     single nanosyntactic entry at rank 2 (F₃P). -/
 theorem english_bridge :
-    someEntry.allowsNS = true ∧ someEntry.allowsSU = true ∧
-    someEntry.allowsSK = true ∧
+    someEntry.covers .irrealis = true ∧
+    someEntry.covers .specificUnknown = true ∧
+    someEntry.covers .specificKnown = true ∧
     spellout englishLex nsRank = some "some-" ∧
     spellout englishLex suRank = some "some-" ∧
-    spellout englishLex skRank = some "some-" := ⟨rfl, rfl, rfl,
-  by decide, by decide, by decide⟩
+    spellout englishLex skRank = some "some-" :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Russian paradigm: three fragments match three spellout results. -/
 theorem russian_bridge :
-    nibudEntry.allowsNS = true ∧ toEntry.allowsSU = true ∧ koeEntry.allowsSK = true ∧
+    nibudEntry.covers .irrealis = true ∧
+    toEntry.covers .specificUnknown = true ∧
+    koeEntry.covers .specificKnown = true ∧
     spellout russianLex nsRank = some "-nibud'" ∧
     spellout russianLex suRank = some "-to" ∧
-    spellout russianLex skRank = some "koe-" := ⟨rfl, rfl, rfl,
-  by decide, by decide, by decide⟩
+    spellout russianLex skRank = some "koe-" :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Yakut paradigm: two fragments match two spellout results. -/
 theorem yakut_bridge :
-    emeEntry.allowsNS = true ∧ ereEntry.allowsSK = true ∧ ereEntry.allowsSU = true ∧
+    emeEntry.covers .irrealis = true ∧
+    ereEntry.covers .specificKnown = true ∧
+    ereEntry.covers .specificUnknown = true ∧
     spellout yakutLex nsRank = some "-eme" ∧
     spellout yakutLex suRank = some "-ere" ∧
-    spellout yakutLex skRank = some "-ere" := ⟨rfl, rfl, rfl,
-  by decide, by decide, by decide⟩
+    spellout yakutLex skRank = some "-ere" :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Latin paradigm: two fragments match two spellout results. -/
 theorem latin_bridge :
-    aliEntry.allowsNS = true ∧ aliEntry.allowsSU = true ∧ damEntry.allowsSK = true ∧
+    aliEntry.covers .irrealis = true ∧
+    aliEntry.covers .specificUnknown = true ∧
+    damEntry.covers .specificKnown = true ∧
     spellout latinLex nsRank = some "ali-" ∧
     spellout latinLex suRank = some "ali-" ∧
-    spellout latinLex skRank = some "-dam" := ⟨rfl, rfl, rfl,
-  by decide, by decide, by decide⟩
+    spellout latinLex skRank = some "-dam" :=
+  ⟨by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Kannada: the SK gap in the nanosyntactic model aligns with the
     absence of a SK-covering form in the fragment data. -/
 theorem kannada_bridge :
-    aadaruuEntry.allowsNS = true ∧ ooEntry.allowsSU = true ∧
+    aadaruuEntry.covers .irrealis = true ∧
+    ooEntry.covers .specificUnknown = true ∧
     spellout kannadaLex nsRank = some "-aadaruu" ∧
     spellout kannadaLex suRank = some "-oo" ∧
-    spellout kannadaLex skRank = none := ⟨rfl, rfl,
-  by decide, by decide, by decide⟩
+    spellout kannadaLex skRank = none :=
+  ⟨by decide, by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- §10. ParadigmEntry ↔ Spellout Consistency

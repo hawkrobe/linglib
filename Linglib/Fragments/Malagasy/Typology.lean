@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Malagasy typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Malagasy (ISO 639-3 `mlg`).
 
 namespace Fragments.Malagasy
 
-open Core.Typology in
+open Typology in
 /-- Malagasy: VOS, prepositional; subject-only relativization. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "mlg" "Malagasy"

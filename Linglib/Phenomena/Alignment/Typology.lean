@@ -3,6 +3,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
 import Linglib.Features.Prominence
+import Linglib.Theories.Syntax.Case.Alignment
 import Linglib.Datasets.WALS.Features.F98A
 import Linglib.Datasets.WALS.Features.F99A
 import Linglib.Datasets.WALS.Features.F100A
@@ -1234,5 +1235,50 @@ theorem hindi_split_bridge :
       = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
 
 end FragmentBridges
+
+-- ============================================================================
+-- § Bridges to Theories/Syntax/Case/Alignment.lean
+-- ============================================================================
+
+/-! The typology classifier `AlignmentType` (this file) and the case-assignment
+    functions `_root_.Alignment.X.assignCase` (`Theories/Syntax/Case/Alignment.lean`)
+    are two views of the same alignment dimension. The bridge theorems below
+    confirm that the typology's `marksAgent`/`marksPatient` Bool projections
+    agree pointwise with what the case-assignment functions actually do on
+    the canonical S/A/P inputs. If the two ever diverged, one of the layers
+    would be wrong. -/
+
+section BridgesToTheoriesAlignment
+
+open Features.Prominence (ArgumentRole)
+
+theorem ergative_function_marks_A :
+    (_root_.Alignment.ergative.assignCase .A != _root_.Alignment.ergative.assignCase .S) =
+      AlignmentType.ergative.marksAgent := by decide
+
+theorem ergative_function_does_not_mark_P :
+    (_root_.Alignment.ergative.assignCase .P != _root_.Alignment.ergative.assignCase .S) =
+      AlignmentType.ergative.marksPatient := by decide
+
+theorem accusative_function_marks_P :
+    (_root_.Alignment.nominativeAccusative.assignCase .P
+        != _root_.Alignment.nominativeAccusative.assignCase .S) =
+      AlignmentType.accusative.marksPatient := by decide
+
+theorem accusative_function_does_not_mark_A :
+    (_root_.Alignment.nominativeAccusative.assignCase .A
+        != _root_.Alignment.nominativeAccusative.assignCase .S) =
+      AlignmentType.accusative.marksAgent := by decide
+
+/-- Extended ergative is non-canonical (no `AlignmentType` constructor): it
+    groups S with A like accusative does, but marks them with GEN rather than
+    NOM. The Cholan non-perfective pattern is captured by the function only. -/
+theorem extendedErgative_groups_S_with_A_like_accusative :
+    (_root_.Alignment.extendedErgative.assignCase .S
+        = _root_.Alignment.extendedErgative.assignCase .A) ∧
+    _root_.Alignment.extendedErgative.assignCase .A ≠
+      _root_.Alignment.nominativeAccusative.assignCase .A := ⟨rfl, by decide⟩
+
+end BridgesToTheoriesAlignment
 
 end Phenomena.Alignment.Typology

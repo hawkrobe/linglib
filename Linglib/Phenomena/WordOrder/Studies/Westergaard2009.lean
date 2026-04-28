@@ -389,7 +389,7 @@ def de_emb : V2Datum :=
     Captures the classic observation that English lost V2 in
     declaratives but retained it in questions. -/
 theorem no_en_differ_only_on_decl :
-    Core.Typology.Profile.DiffersExactlyOn stdNorwegian stdEnglish .Decl := by
+    Typology.Profile.DiffersExactlyOn stdNorwegian stdEnglish .Decl := by
   refine ⟨?_, ?_⟩
   · simp only [Set.mem_symmDiff]; decide
   · intro fh hne; cases fh <;> first | (exact absurd rfl hne) | (constructor <;> decide)
@@ -402,7 +402,7 @@ theorem nordmore_en_mirror_decl_int :
 
 /-- Danish differs from Standard Norwegian only on Excl°. -/
 theorem danish_no_differ_only_on_excl :
-    Core.Typology.Profile.DiffersExactlyOn danish stdNorwegian .Excl := by
+    Typology.Profile.DiffersExactlyOn danish stdNorwegian .Excl := by
   refine ⟨?_, ?_⟩
   · simp only [Set.mem_symmDiff]; decide
   · intro fh hne; cases fh <;> first | (exact absurd rfl hne) | (constructor <;> decide)
@@ -672,7 +672,7 @@ theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
     The corollary below: languages with fewer active micro-parameters
     require less structure to be built. Our own derivation, not a claim
     directly stated in the book. `Profile.activeCount` instances the
-    polymorphic counter from `Core/Typology/Profile.lean`. -/
+    polymorphic counter from `Typology/Profile.lean`. -/
 
 /-- English activates fewer micro-parameters than Standard Norwegian. -/
 theorem english_fewer_active :

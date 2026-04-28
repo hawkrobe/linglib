@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Morphology.Core.Circumfix
+import Linglib.Core.Morphology.Circumfix
 
 /-!
 # Tigrinya Clausal Prefixes @cite{cacchioli-2025}

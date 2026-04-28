@@ -1,4 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # RSA Embedded Scalar Implicatures: Simplified Model (For Analysis)
@@ -22,19 +23,13 @@ predictions, motivating the richer structure in the full model.
 
 namespace Phenomena.ScalarImplicatures.Embedded.Simplified
 
+open Phenomena.ScalarImplicatures (SomeAllWorld)
 
-/--
-World states for embedded scalar scenarios.
-
-- **none**: Nobody solved any problems
-- **someNotAll**: Someone solved some-but-not-all problems
-- **someAll**: Someone solved all problems
--/
-inductive EmbeddedWorld where
-  | none        -- Nobody solved any problems
-  | someNotAll  -- Someone solved some-but-not-all problems
-  | someAll     -- Someone solved all problems
-  deriving DecidableEq, Repr, Inhabited
+/-- World states for embedded scalar scenarios use the canonical
+`SomeAllWorld` from `Phenomena.ScalarImplicatures.Basic`:
+`.none` (nobody solved any problems), `.someNotAll` (someone solved
+some-but-not-all), `.all` (someone solved all). -/
+abbrev EmbeddedWorld := SomeAllWorld
 
 
 /--
@@ -69,10 +64,10 @@ Base lexicon meaning: "some" = at-least-one
 def lexBaseMeaning : DEUtterance → EmbeddedWorld → Bool
   | .noSome, .none => true
   | .noSome, .someNotAll => false
-  | .noSome, .someAll => false
+  | .noSome, .all => false
   | .noAll, .none => true
   | .noAll, .someNotAll => true
-  | .noAll, .someAll => false
+  | .noAll, .all => false
   | .null, _ => true
 
 /--
@@ -85,10 +80,10 @@ Refined lexicon meaning: "some" = some-but-not-all
 def lexRefinedMeaning : DEUtterance → EmbeddedWorld → Bool
   | .noSome, .none => true
   | .noSome, .someNotAll => false
-  | .noSome, .someAll => true     -- TRUE! Solver solved ALL
+  | .noSome, .all => true     -- TRUE! Solver solved ALL
   | .noAll, .none => true
   | .noAll, .someNotAll => true
-  | .noAll, .someAll => false
+  | .noAll, .all => false
   | .null, _ => true
 
 
@@ -103,20 +98,20 @@ inductive UEUtterance where
 def lexBaseUEMeaning : UEUtterance → EmbeddedWorld → Bool
   | .someSome, .none => false
   | .someSome, .someNotAll => true
-  | .someSome, .someAll => true     -- True: someone solved ≥1
+  | .someSome, .all => true     -- True: someone solved ≥1
   | .someAll, .none => false
   | .someAll, .someNotAll => false
-  | .someAll, .someAll => true
+  | .someAll, .all => true
   | .null, _ => true
 
 /-- Refined lexicon meaning for UE: "some" = some-but-not-all -/
 def lexRefinedUEMeaning : UEUtterance → EmbeddedWorld → Bool
   | .someSome, .none => false
   | .someSome, .someNotAll => true
-  | .someSome, .someAll => false    -- FALSE! Solved all, not "some-but-not-all"
+  | .someSome, .all => false    -- FALSE! Solved all, not "some-but-not-all"
   | .someAll, .none => false
   | .someAll, .someNotAll => false
-  | .someAll, .someAll => true
+  | .someAll, .all => true
   | .null, _ => true
 
 

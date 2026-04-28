@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -307,21 +308,21 @@ theorem chol_no_syntactic_ergativity :
 /-- Q'anjob'al's ergative alignment matches the standard pattern:
     transitive agent = ERG, transitive object = ABS. -/
 theorem qanjobal_erg_alignment :
-    Fragments.Mayan.Qanjobal.ArgPosition.agent.ergCase = .erg ∧
-    Fragments.Mayan.Qanjobal.ArgPosition.patient.ergCase = .abs := ⟨rfl, rfl⟩
+    Fragments.Mayan.Qanjobal.ArgPosition.case .A = .erg ∧
+    Fragments.Mayan.Qanjobal.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
 
 /-- Chol's ergative alignment matches the same standard pattern. -/
 theorem chol_erg_alignment :
-    Fragments.Mayan.Chol.ArgPosition.agent.ergCase = .erg ∧
-    Fragments.Mayan.Chol.ArgPosition.patient.ergCase = .abs := ⟨rfl, rfl⟩
+    Fragments.Mayan.Chol.ArgPosition.case .A = .erg ∧
+    Fragments.Mayan.Chol.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
 
 /-- Despite sharing ergative morphology, Q'anjob'al and Chol differ in
     whether agent extraction is banned. The difference traces to their
     distinct case loci, not to properties of the ergative NP. -/
 theorem shared_morphology_different_syntax :
     -- Same ergative case on agent
-    Fragments.Mayan.Qanjobal.ArgPosition.agent.ergCase =
-      Fragments.Mayan.Chol.ArgPosition.agent.ergCase ∧
+    Fragments.Mayan.Qanjobal.ArgPosition.case .A =
+      Fragments.Mayan.Chol.ArgPosition.case .A ∧
     -- But different syntactic ergativity predictions
     hasSyntacticErgativity .absNom ≠ hasSyntacticErgativity .absDef :=
   ⟨rfl, by decide⟩
@@ -649,11 +650,48 @@ theorem coreCase_bridge_subject (locus : CaseLocus) :
     (subjectAbstractCase locus).toCoreCase = .erg := rfl
 
 -- ============================================================================
--- § 17: Cross-Language AF Bridge (Q'anjob'al vs Kaqchikel)
+-- § 17: Kaqchikel Voice / ClauseSpine
+-- ============================================================================
+
+/-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, formerly in
+    `Fragments/Mayan/Kaqchikel/AgentFocus.lean`. Lives here because this
+    is the file that uses it (§18 cross-language bridge), and because
+    Voice-flavor analysis is the @cite{coon-mateo-pedro-preminger-2014}
+    side of the same author cluster's Mayan work
+    (@cite{preminger-2014}'s Ch 4 covers the agreement side; CMP 2014
+    covers the case/Voice side). The fragment data
+    (`VerbForm.agentFocus.hasSetA`, `kaqAFType`, etc.) stays
+    typology-neutral. -/
+
+/-- Both the transitive and AF derivations project the same clausal spine
+    (CP > TP > vP > VP). The difference is in the v head: transitive v
+    introduces the agent in Spec,vP; AF v does not. -/
+def kaqClauseSpine : ClauseSpine := ClauseSpine.cP
+
+/-- Kaqchikel agentive Voice/v head (parallel to Mam's Voice). Present
+    in the transitive derivation; absent or altered in AF.
+    `phaseHead := true` is the load-bearing property for §18's
+    cross-language bridge: agentive Voice is a phase head, creating the
+    locality boundary that traps the subject in HIGH-ABS Mayan languages
+    (CMP 2014 §4–§5). -/
+def kaqVoice : VoiceHead :=
+  { flavor := .agentive
+  , hasD := true
+  , phaseHead := true }
+
+/-- Kaqchikel clause projects Voice. -/
+theorem kaq_has_voice : kaqClauseSpine.projects .Voice = true := by
+  native_decide
+
+/-- Kaqchikel Voice is agentive. -/
+theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
+
+-- ============================================================================
+-- § 18: Cross-Language AF Bridge (Q'anjob'al vs Kaqchikel)
 -- ============================================================================
 
 /-! Different Mayan languages circumvent syntactic ergativity through
-different mechanisms (@cite{coon-mateo-pedro-preminger-2014}, §4.2, §5).
+different mechanisms (@cite{coon-mateo-pedro-preminger-2014} §4.2, §5).
 Q'anjob'al uses case assignment: Voice_AF assigns case to the object,
 freeing the escape hatch. Kaqchikel uses an anti-locality repair: AF
 structure avoids the too-local Spec,TP → Spec,CP movement step (SSAL),
@@ -664,13 +702,13 @@ at the cost of losing Set A agreement (@cite{erlewine-2016}). -/
     case-assigning repair, while Kaqchikel's AF is a locality repair. -/
 theorem af_mechanism_contrast :
     voiceAF.checksCase = true ∧
-    Fragments.Mayan.Kaqchikel.kaqVoice.checksCase = false := ⟨rfl, rfl⟩
+    kaqVoice.checksCase = false := ⟨rfl, rfl⟩
 
 /-- Both languages share the underlying problem: agentive Voice is a
     phase head, creating a locality boundary that traps the subject. -/
 theorem shared_phase_problem :
     voiceAgent.phaseHead = true ∧
-    Fragments.Mayan.Kaqchikel.kaqVoice.phaseHead = true := ⟨rfl, rfl⟩
+    kaqVoice.phaseHead = true := ⟨rfl, rfl⟩
 
 /-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages with extraction
     asymmetries: agent extraction is blocked without AF in both. -/

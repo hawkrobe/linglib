@@ -415,17 +415,33 @@ theorem nonSOT_no_simultaneous :
 /-!
 ### @cite{abusch-1997}'s Upper Limit Constraint
 
-In intensional contexts, tense reference cannot exceed the local
-evaluation time. From branching futures: at the attitude event time,
-future branches diverge, so no time beyond the attitude time is
-accessible across all doxastic alternatives.
+The Upper Limit Constraint is stated by @cite{abusch-1997} §7
+(p. 25): "the now of an epistemic alternative is an upper limit for
+the denotation of tenses". The motivation is branching futures: at
+the now of an intensional context, future branches diverge across
+epistemic alternatives, so forward reference past the now is
+unsupported. The presuppositional construal — ULC as a constraint on
+definedness of semantic values, projecting via Karttunen-Heim — is
+due to @cite{heim-1994-comments}; @cite{abusch-1997} fn 20 endorses
+this construal.
 
 ULC: embedded R' ≤ matrix E (= embedded P).
+
+**Note on faithfulness:** the value-level reduction `embeddedR ≤ matrixE`
+strips the modal-alternative quantification Abusch's formulation
+carries (the "now of an epistemic alternative" quantifies over
+doxastic alternatives). A modal-layer formulation (over `WorldHistory
+W Time`, à la @cite{klecha-2016}'s `actualHistoryBase`) would be more
+faithful to the original; deferred future work.
 -/
 
-/-- @cite{abusch-1997}'s Upper Limit Constraint.
-    In intensional contexts, the tense reference cannot exceed the
-    local evaluation time. -/
+/-- The Upper Limit Constraint.
+
+    Stated by @cite{abusch-1997} §7 ("the now of an epistemic
+    alternative is an upper limit for the denotation of tenses");
+    presuppositional construal due to @cite{heim-1994-comments},
+    endorsed by Abusch 1997 fn 20. The current value-level reduction is
+    `embeddedR ≤ matrixE` against bare `[LE Time]`. -/
 abbrev upperLimitConstraint {Time : Type*} [LE Time]
     (embeddedR : Time) (matrixE : Time) : Prop :=
   embeddedR ≤ matrixE

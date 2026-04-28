@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Navajo typological profile
@@ -10,7 +10,7 @@ This is the only Navajo fragment in linglib at present.
 
 namespace Fragments.Navajo
 
-open Core.Typology in
+open Typology in
 /-- Navajo: SOV, Athabaskan; pre-nominal RC; gap on SU/DO with limited
     relativization on lower AH positions. -/
 def typology : LanguageProfile :=

@@ -1,3 +1,5 @@
+import Linglib.Phenomena.ScalarImplicatures.Basic
+
 /-!
 # RSA Analysis of Hurford's Constraint
 @cite{hurford-1974} @cite{singh-2008} @cite{potts-levy-2015}
@@ -30,20 +32,13 @@ RSA computations (L1, S1) need to be re-implemented using the new RSAConfig fram
 
 namespace Phenomena.ScalarImplicatures.Hurford
 
+open Phenomena.ScalarImplicatures (SomeAllWorld)
 
-/--
-World states for Hurford scenarios.
-
-We use a coarse 3-world model:
-- `none`: Nothing of interest happened
-- `someNotAll`: Some but not all (the "middle" reading)
-- `all_`: All (the strong reading)
--/
-inductive HWorld where
-  | none       -- Nobody read any books
-  | someNotAll -- Someone read some-but-not-all books
-  | all_       -- Someone read all books
-  deriving DecidableEq, Repr, Inhabited
+/-- World states for Hurford scenarios use the canonical
+`SomeAllWorld` from `Phenomena.ScalarImplicatures.Basic`:
+`.none` (nothing read), `.someNotAll` (some-but-not-all read), `.all`
+(all read). -/
+abbrev HWorld := SomeAllWorld
 
 
 /--
@@ -76,12 +71,12 @@ This makes "some or all" redundant -- a Hurford violation.
 def lexBaseMeaning : HUtterance → HWorld → Bool
   | .some_, .none => false
   | .some_, .someNotAll => true
-  | .some_, .all_ => true  -- "at least one" includes all
-  | .all_, .all_ => true
+  | .some_, .all => true  -- "at least one" includes all
+  | .all_, .all => true
   | .all_, _ => false
   | .someOrAll, .none => false
   | .someOrAll, .someNotAll => true
-  | .someOrAll, .all_ => true
+  | .someOrAll, .all => true
   | .null, _ => true
 
 /--
@@ -97,23 +92,23 @@ This rescues the Hurford violation -- the disjunction is no longer redundant.
 def lexRefinedMeaning : HUtterance → HWorld → Bool
   | .some_, .none => false
   | .some_, .someNotAll => true
-  | .some_, .all_ => false  -- exh(some) excludes "all"
-  | .all_, .all_ => true
+  | .some_, .all => false  -- exh(some) excludes "all"
+  | .all_, .all => true
   | .all_, _ => false
   | .someOrAll, .none => false
   | .someOrAll, .someNotAll => true  -- exh(some) covers this
-  | .someOrAll, .all_ => true        -- "all" covers this
+  | .someOrAll, .all => true        -- "all" covers this
   | .null, _ => true
 
 -- Semantic redundancy characterization
 
 /-- Worlds where "some or all" is true under base lexicon -/
 def someOrAllTrueWorlds_base : List HWorld :=
-  [HWorld.none, HWorld.someNotAll, HWorld.all_].filter (λ w => lexBaseMeaning .someOrAll w)
+  [SomeAllWorld.none, SomeAllWorld.someNotAll, SomeAllWorld.all].filter (λ w => lexBaseMeaning .someOrAll w)
 
 /-- Worlds where "some" is true under base lexicon -/
 def someTrueWorlds_base : List HWorld :=
-  [HWorld.none, HWorld.someNotAll, HWorld.all_].filter (λ w => lexBaseMeaning .some_ w)
+  [SomeAllWorld.none, SomeAllWorld.someNotAll, SomeAllWorld.all].filter (λ w => lexBaseMeaning .some_ w)
 
 /--
 Under base lexicon, "some or all" and "some" have the same extension.
@@ -125,11 +120,11 @@ theorem base_redundancy :
 
 /-- Worlds where "some or all" is true under refined lexicon -/
 def someOrAllTrueWorlds_refined : List HWorld :=
-  [HWorld.none, HWorld.someNotAll, HWorld.all_].filter (λ w => lexRefinedMeaning .someOrAll w)
+  [SomeAllWorld.none, SomeAllWorld.someNotAll, SomeAllWorld.all].filter (λ w => lexRefinedMeaning .someOrAll w)
 
 /-- Worlds where "some" is true under refined lexicon -/
 def someTrueWorlds_refined : List HWorld :=
-  [HWorld.none, HWorld.someNotAll, HWorld.all_].filter (λ w => lexRefinedMeaning .some_ w)
+  [SomeAllWorld.none, SomeAllWorld.someNotAll, SomeAllWorld.all].filter (λ w => lexRefinedMeaning .some_ w)
 
 /--
 Under refined lexicon, "some or all" covers more worlds than "some" alone.

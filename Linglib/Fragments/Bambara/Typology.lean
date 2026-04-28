@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Bambara typological profile
@@ -12,7 +12,7 @@ example of an internally-headed RC language.
 
 namespace Fragments.Bambara
 
-open Core.Typology in
+open Typology in
 /-- Bambara: SOV, postpositional, Mande; internally-headed relative clauses
     via the non-reduction strategy (the head noun appears inside the RC). -/
 def typology : LanguageProfile :=

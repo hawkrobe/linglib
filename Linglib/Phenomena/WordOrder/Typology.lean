@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Typology.WordOrder
-import Linglib.Core.Typology.Adposition
-import Linglib.Core.Typology.LanguageProfile
-import Linglib.Core.Typology.Universal
+import Linglib.Typology.WordOrder
+import Linglib.Typology.Adposition
+import Linglib.Typology.LanguageProfile
+import Linglib.Typology.Universal
 import Linglib.Fragments.English.Typology
 import Linglib.Fragments.Japanese.Typology
 import Linglib.Fragments.Mandarin.Typology
@@ -53,7 +53,7 @@ adjective-noun, demonstrative-noun, intensifier-adjective, negator-verb.
 ## Per-language profiles
 
 Per-language records live in `Fragments/{Lang}/Typology.lean` (when they carry
-overrides) or are inlined as `Core.Typology.LanguageProfile.ofWALS` directly
+overrides) or are inlined as `Typology.LanguageProfile.ofWALS` directly
 in `fragmentSample` (when pure WALS suffices). The legacy `BasicOrderProfile`
 struct and its 21 hand-curated language defs have been retired in favour of
 that source-of-truth chain.
@@ -242,15 +242,15 @@ theorem all_exceptions_single_word :
 -- Aggregate counts are derived from the generated data by filtering.
 
 -- ============================================================================
--- Word-order types (re-exported from Core.Typology.WordOrder)
+-- Word-order types (re-exported from Typology.WordOrder)
 -- ============================================================================
 -- The order enums (`BasicOrder`, `SVOrder`, `OVOrder`) and the WALS
--- conversion helpers live in `Core/Typology/WordOrder.lean` so that both
+-- conversion helpers live in `Typology/WordOrder.lean` so that both
 -- this file and per-language Fragments can import them without violating
 -- the layered dependency hierarchy. They are re-exported here for the
 -- convenience of consumers that already `open Phenomena.WordOrder.Typology`.
 
-export Core.Typology.WordOrder
+export Typology.WordOrder
   ( BasicOrder SVOrder OVOrder WordOrderProfile
     fromWALS81A fromWALS82A fromWALS83A
     basicOrderOfWALS svOrderOfWALS ovOrderOfWALS )
@@ -435,19 +435,19 @@ theorem ch61_withoutMarking_majority :
 -- Per the Fragments-as-typology-endpoint architecture: samples are built from
 -- per-language `LanguageProfile` values rather than constructed inline. The
 -- source-of-truth chain:
---   WALS → Core.Typology.{WordOrder,Adposition} ISO lookups
+--   WALS → Typology.{WordOrder,Adposition} ISO lookups
 --        → LanguageProfile.{ofWALS, withWordOrderFromWALS, withAdpositionFromWALS}
 --        → Fragments.{Lang}.typology  (when overrides/morphology exist)
 --        → Phenomena.WordOrder.Typology.fragmentSample.
 --
 -- Languages with hand-coded `morphProfile` overrides live in `Fragments/`; pure-
--- WALS languages are inlined as `Core.Typology.LanguageProfile.ofWALS` directly.
+-- WALS languages are inlined as `Typology.LanguageProfile.ofWALS` directly.
 
-open Core.Typology (LanguageProfile) in
+open Typology (LanguageProfile) in
 /-- Hand-verified sample of `LanguageProfile`s spanning the four major basic-
     order classes (SOV, SVO, VSO, plus a couple non-SVO order entries) with
     adposition data attested in WALS. Used for stating cross-linguistic
-    Greenbergian universals; `Core.Typology.ImplicationalUniversal` is the
+    Greenbergian universals; `Typology.ImplicationalUniversal` is the
     corresponding API.
 
     Each entry's domain values come from WALS via ISO 639-3 lookup — see
@@ -488,12 +488,12 @@ def fragmentSample : Finset LanguageProfile :=
 --   U4: SOV languages are postpositional (with overwhelming greater than chance frequency).
 --
 -- Below: predicates over `LanguageProfile`, then the universal claims as
--- `Core.Typology.ImplicationalUniversal` instances over `fragmentSample`. The
+-- `Typology.ImplicationalUniversal` instances over `fragmentSample`. The
 -- proofs decide a quotient over a 15-element `Finset` literal — bumping
 -- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
--- sites (see `Core/Typology/Universal.lean` for the discussion).
+-- sites (see `Typology/Universal.lean` for the discussion).
 
-open Core.Typology (LanguageProfile ImplicationalUniversal)
+open Typology (LanguageProfile ImplicationalUniversal)
 
 /-- Language has WALS basic order VSO. -/
 def isVSO (p : LanguageProfile) : Prop :=

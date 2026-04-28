@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Japanese.Classifier
 
@@ -10,7 +10,7 @@ Aggregate WALS-style typological profile for Japanese (ISO 639-3 `jpn`).
 
 namespace Fragments.Japanese
 
-open Core.Typology in
+open Typology in
 /-- Japanese: SOV, postpositional, canonical head-final. -/
 def typology : LanguageProfile :=
   LanguageProfile.empty "jpn" "Japanese"

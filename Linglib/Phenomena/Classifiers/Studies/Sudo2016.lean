@@ -330,7 +330,7 @@ theorem sudo_disagrees_with_chierchia_on_japanese :
 Sudo's blocking-principle account (eqs. 10/15/16) presupposes that the
 target language has *obligatory overt classifiers in the lexicon* —
 that is what blocks the silent ∪-operator. The general predicate
-`Core.Typology.LanguageProfile.hasObligatoryClassifierSystem` is the
+`Typology.LanguageProfile.hasObligatoryClassifierSystem` is the
 input-shape requirement; Sudo's framework applies iff a language
 satisfies it. Languages where numerals combine with bare nouns
 (no obligatory CL) do not provide the right input.
@@ -344,7 +344,7 @@ chronology rule (study files cannot import newer study files). -/
     ∪-operator gets blocked by. Defined as a local alias for
     `LanguageProfile.hasObligatoryClassifierSystem` so the connection
     to Sudo's framework is greppable. -/
-abbrev frameworkApplies (p : Core.Typology.LanguageProfile) : Prop :=
+abbrev frameworkApplies (p : Typology.LanguageProfile) : Prop :=
   p.hasObligatoryClassifierSystem
 
 end Sudo2016

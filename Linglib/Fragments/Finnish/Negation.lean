@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Morphology.MorphRule
 import Linglib.Core.Lexical.NegMarker
 
 /-!
@@ -95,7 +95,7 @@ def connegativeRule : MorphRule Bool :=
   , formRule := id  -- connegative = bare stem (tense suffix removed)
   , featureRule := fun f => { f with tense := none }
   , semEffect := not  -- negation flips truth value
-  , isVacuous := false }
+  , delegatedSemantics := false }
 
 /-- The negative auxiliary's agreement rule: semantically vacuous,
     carries person/number agreement that would otherwise be on the main verb. -/
@@ -110,7 +110,7 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
   , featureRule := fun f => { f with person := some (if person == 1 then .first
       else if person == 2 then .second else .third) }
   , semEffect := id
-  , isVacuous := true }
+  , delegatedSemantics := true }
 
 -- ============================================================================
 -- § 3: Inflection Distribution
@@ -143,19 +143,13 @@ theorem shared_stem :
     negParadigm.all (fun f => f.form.get ⟨0⟩ == 'e') = true := by
   native_decide
 
-/-- The connegative rule is NOT semantically vacuous — it carries negation. -/
-theorem connegative_not_vacuous : connegativeRule.isVacuous = false := rfl
-
 /-- The connegative rule's semantic effect is Boolean negation. -/
 theorem connegative_negates : connegativeRule.semEffect true = false := rfl
-
-/-- Agreement on the neg aux IS semantically vacuous. -/
-theorem neg_agreement_vacuous : (negAgreementRule 1 "sg").isVacuous = true := rfl
 
 /-- Negation (rank 7) hosts agreement (rank 8) on the negative auxiliary —
     respecting Bybee's hierarchy within the neg aux word. -/
 theorem neg_aux_respects_bybee :
-    MorphCategory.relevanceRank .negation <
-    MorphCategory.relevanceRank .agreement := by decide
+    MorphCategory.peripherality .negation <
+    MorphCategory.peripherality .agreement := by decide
 
 end Fragments.Finnish.Negation

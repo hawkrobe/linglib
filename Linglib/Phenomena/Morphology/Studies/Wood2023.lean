@@ -1,6 +1,7 @@
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
+import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
 
 /-!
 # @cite{wood-2023} — Icelandic Nominalizations and Allosemy
@@ -60,6 +61,7 @@ namespace Wood2023
 open Morphology.DM.Allosemy
 open Fragments.Icelandic.Nominalizations
 open Fragments.Icelandic.Predicates
+open Wood2015 (opnast_info)
 
 -- ============================================================================
 -- § 1: Reading Derivation from Allosemes (Ch. 5)
@@ -245,7 +247,7 @@ def borersGeneralization (nom : IcelandicNom) : Prop :=
     (Borer's Generalization holds). -/
 theorem borers_generalization_holds :
     (allNoms.filter (fun n => n.availableReadings.contains .complexEvent)).all
-      (fun n => n.baseVerb != "") = true := by native_decide
+      (fun n => n.baseVerb != "") = true := by decide
 
 -- ============================================================================
 -- § 6: -vaeða Compositionality (Ch. 6 §6.5)
@@ -295,10 +297,12 @@ theorem vaeda_all_restrictions :
 /-- *opnun* 'opening' connects to *opnast* 'open-ST' (anticausative).
     The nominalization is built on the same root as the -st verb;
     the -st voice morphology does not appear in the nominal
-    (nominalizations lack Voice). -/
+    (nominalizations lack Voice). The Wood-2015 stType for *opnast*
+    is sourced from `opnast_info` in the Wood2015 study file (the
+    Fragment carries only consensus lexical data). -/
 theorem opnun_connects_to_st_verb :
     opnun.stVerb = some opnast ∧
-    opnast.stType = .anticausative := ⟨rfl, rfl⟩
+    opnast_info.stType = Wood2015.StType.anticausative := ⟨rfl, rfl⟩
 
 /-- Anticausative -st verbs can be nominalized: the nominalization
     lacks Voice (hence no -st), but retains the root's meaning.
@@ -310,11 +314,12 @@ theorem st_verb_nominalization_drops_voice :
     nomHasVoice = false := ⟨rfl, rfl⟩
 
 /-- The Voice flavor of the -st verb is irrelevant for the nominal:
-    nominalizations derive readings from v/n allosemy, not from Voice. -/
+    nominalizations derive readings from v/n allosemy, not from Voice.
+    The voice flavor is read from `Wood2015.opnast_info`. -/
 theorem voice_irrelevant_for_nom_reading :
-    opnast.stType.voiceFlavor = .nonThematic ∧
+    opnast_info.stType.voiceFlavor = .nonThematic ∧
     opnun.availableReadings.contains .complexEvent = true ∧
-    opnun.availableReadings.contains .simpleEntity = true := by native_decide
+    opnun.availableReadings.contains .simpleEntity = true := by decide
 
 -- ============================================================================
 -- § 8: Suffix Uniformity (@cite{wood-2023} Ch. 2–3)
@@ -342,6 +347,6 @@ theorem same_suffix_different_readings :
 theorem different_suffix_same_reading :
     opnun.suffix ≠ pvottur.suffix ∧
     opnun.availableReadings.contains .complexEvent = true ∧
-    pvottur.availableReadings.contains .complexEvent = true := by native_decide
+    pvottur.availableReadings.contains .complexEvent = true := by decide
 
 end Wood2023

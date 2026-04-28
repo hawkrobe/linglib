@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Hebrew (Modern) typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Hebrew (ISO 639-3 `heb`).
 
 namespace Fragments.Hebrew
 
-open Core.Typology in
+open Typology in
 /-- Modern Hebrew: SVO, prepositional, complementizer-introduced RC. -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "heb" "Hebrew"

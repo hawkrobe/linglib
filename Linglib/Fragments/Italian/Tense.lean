@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
-import Linglib.Theories.Semantics.Tense.Decomposition
+import Linglib.Theories.Semantics.Tense.SOT.Decomposition
 
 /-! # Italian Tense Fragment
 
@@ -34,7 +34,7 @@ PERF head morphologically transparent.
 namespace Fragments.Italian.Tense
 
 open Semantics.Tense.Evidential
-open Semantics.Tense.Decomposition
+open Semantics.Tense.SOT.Decomposition
 open Semantics.Tense
 open Core.Time.Tense
 open Core.Morphology.Tense

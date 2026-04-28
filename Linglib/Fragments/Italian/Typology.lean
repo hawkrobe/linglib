@@ -1,4 +1,4 @@
-import Linglib.Core.Typology.LanguageProfile
+import Linglib.Typology.LanguageProfile
 
 /-!
 # Italian typological profile
@@ -8,7 +8,7 @@ Aggregate WALS-style typological profile for Italian (ISO 639-3 `ita`).
 
 namespace Fragments.Italian
 
-open Core.Typology in
+open Typology in
 /-- Italian: SVO, prepositional, 2-class gender system (masc/fem). -/
 def typology : LanguageProfile :=
   LanguageProfile.ofWALS "ita" "Italian"
