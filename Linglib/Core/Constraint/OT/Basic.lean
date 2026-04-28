@@ -74,6 +74,24 @@ def mkMarkGrad {C : Type*} (name : String) (violations : C → Nat) : NamedConst
 def mkFaithGrad {C : Type*} (name : String) (violations : C → Nat) : NamedConstraint C :=
   { name, family := .faithfulness, eval := violations }
 
+/-- Pull a `NamedConstraint D` back along a candidate map `f : C → D`. The
+    name and family are inherited; the new `eval` composes the original
+    with the projection. Lets paper-specific carrier types reuse a
+    constraint defined on a more general carrier. -/
+def NamedConstraint.comap {C D : Type*} (f : C → D) (c : NamedConstraint D) :
+    NamedConstraint C :=
+  { name := c.name, family := c.family, eval := c.eval ∘ f }
+
+@[simp] theorem NamedConstraint.comap_eval {C D : Type*} (f : C → D)
+    (c : NamedConstraint D) (x : C) :
+    (c.comap f).eval x = c.eval (f x) := rfl
+
+@[simp] theorem NamedConstraint.comap_name {C D : Type*} (f : C → D)
+    (c : NamedConstraint D) : (c.comap f).name = c.name := rfl
+
+@[simp] theorem NamedConstraint.comap_family {C D : Type*} (f : C → D)
+    (c : NamedConstraint D) : (c.comap f).family = c.family := rfl
+
 -- ============================================================================
 -- § 2: Tableau Construction
 -- ============================================================================

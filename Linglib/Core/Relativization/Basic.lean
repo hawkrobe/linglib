@@ -135,8 +135,21 @@ structure RelClauseMarker where
   deriving BEq, Repr
 
 /-- Does this marker cover a given AH position? -/
+def RelClauseMarker.Covers (m : RelClauseMarker) (p : AHPosition) : Prop :=
+  p ∈ m.positions
+
+instance (m : RelClauseMarker) (p : AHPosition) : Decidable (m.Covers p) := by
+  unfold RelClauseMarker.Covers; infer_instance
+
+/-- Bool version of `RelClauseMarker.Covers`, retained as a transitional
+    shim while the K&C study still consumes Bool-shaped per-position
+    coverage in `StrategyEntry`. The `Decidable` instance above is the
+    canonical truth-value witness; `m.covers p = m.Covers p |> decide`. -/
 def RelClauseMarker.covers (m : RelClauseMarker) (p : AHPosition) : Bool :=
-  m.positions.any (· == p)
+  decide (m.Covers p)
+
+@[simp] theorem RelClauseMarker.covers_eq_decide (m : RelClauseMarker) (p : AHPosition) :
+    m.covers p = decide (m.Covers p) := rfl
 
 /-- Whether a resumptive pronoun type is a movement copy, a bound
     pronoun, or unspecified. For languages where the two types coexist

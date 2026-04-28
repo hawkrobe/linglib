@@ -429,35 +429,46 @@ theorem is_ranker_picks_hearerOld_as_cp :
     The deep-reuse design makes Theorem (20) partly structural — the
     OT-vs-BFP equivalence on those 3 clauses follows by definition. -/
 
-/-! ## §5.1 Beaver's COT, applied to PSDH (10): the substrate divergence
+/-! ## §5.1 Two totalizers for PSDH (10): Strube-Hahn vs Beaver
 
-    The cross-framework theorem flagged by audit as the highest-leverage
-    next claim. PSDH §3.1 fn 12 endorse Beaver's OT reformulation, but
-    do PSDH's two-CB cases (this file's `u227`/`u229`) survive Beaver's
-    machinery? Mechanical application reveals a **substrate divergence**:
+    PSDH at p. 329 (§4.1.1, fn 21) raise the multi-CB problem on
+    `u227`/`u229` and explicitly endorse one fix: **adding a
+    disambiguation factor such as linear order, as done by Strube and
+    Hahn**. They return to the issue at §5.3.4, considering whether
+    to keep CB uniqueness (via a totalizer like Strube-Hahn's) or
+    abandon it (Givón 1983, Gundel 1998). The §3.1 fn 12 endorsement
+    of @cite{beaver-2004} is for a *different* problem — Beaver's COT
+    fixes BFP 87's hard-vs-soft confusion of Rule 1, not the
+    partial-ranking → multi-CB tie. So PSDH effectively pose two
+    totalizers in different sections of the same paper:
 
-    Beaver's framework operates over `cb : Option E` (single-CB
-    semantics) — his COHERE constraint is "current topic = prior topic"
-    where "topic" means `cb prev cur`, an `Option E`. PSDH's two-CB
-    finding (this file's `u227_to_u229_cbAll`) lives in `cbAll`, which
-    Beaver's substrate doesn't reference.
+    1. **Strube-Hahn linear-order** (PSDH p. 329 fn 21): break ties by
+       surface position. Resolves `u227`'s ne547 ↔ ne551 tie
+       parametrically only in the surface-string of `u227`.
 
-    The consequence: Beaver's lex-min applied to PSDH (10) selects a
-    UNIQUE topic from the tied candidates (whichever `cb` returns by
-    sort order — `Branicki`), and the COT constraints proceed
-    relative to that one. The framework is structurally blind to the
-    `corner_cupboard` alternative as a CB candidate, even though
-    `cbAll u227 u229` exposes both.
+    2. **Beaver's COT lex-min** (PSDH §5.3.3, mentioning Beaver-style
+       constraint stacking; Beaver §3.2's COHERE/ALIGN over `cb`):
+       break ties by lex-min over a constraint hierarchy that
+       references `priorTopic`. Resolves the tie parametrically in
+       `priorTopic` — itself a slot the previous utterance underdetermines
+       on this example.
 
-    **This refutes neither Beaver nor PSDH.** It exposes that the two
-    papers operate at incommensurate levels: Beaver's machinery is a
-    *resolution-selection* OT (which interpretation of an utterance
-    wins?), while PSDH's `cbAll` analysis is *parametric-Centering
-    diagnostics* (how many candidate CBs does the partial-GR ranker
-    admit?). Per CLAUDE.md's "interconnection density" discipline,
-    this incommensurability is itself the formalizable finding —
-    it's what makes PSDH §3.1 fn 12's casual endorsement of Beaver
-    too quick. -/
+    Mechanically applied to PSDH (10), Beaver's totalizer is
+    **sensitive to the priorTopic parameter** in a way Strube-Hahn's is
+    not. Different choices of "the prior topic" produce different
+    optima under Beaver's lex-min; under Strube-Hahn linear-order, the
+    surface-position fact alone fixes the answer. The cross-framework
+    finding is not "Beaver can't see PSDH's tie" (true of any single-`cb`
+    framework — banal) but **"Beaver's totalizer propagates PSDH's
+    underdetermination via priorTopic, while Strube-Hahn's positional
+    totalizer resolves it"** — a structural-faithfulness comparison
+    PSDH's two endorsements implicitly invite.
+
+    The Strube-Hahn side is partly formalized at §4 of this file
+    (`StrubeHahnInfoStatus` ranker); the linear-order positional
+    primitive Strube-Hahn use as a tiebreaker is not yet substrate
+    (`Realization` lacks a `position : Nat` field — see §6 deferred
+    items). The Beaver side is concrete here. -/
 
 open Beaver2004 (cohere align)
 
@@ -476,31 +487,32 @@ def cand_u229 : Beaver2004.Candidate String GrammaticalRole :=
 theorem beaver_cb_picks_branicki_on_psdh10 :
     Discourse.Centering.cb u227 u229 = some "Branicki" := by decide
 
-/-- **The substrate divergence**: on PSDH (10), `cbAll` reports a
-    two-element tie, but Beaver's `cb` reports only the first — by sort
-    order, `Branicki`. Beaver's machinery is structurally incapable of
-    representing both candidates simultaneously: any constraint built
-    over `cb` (COHERE, ALIGN) consults this single witness. -/
+/-- **The substrate gap**: on PSDH (10), `cbAll` reports a two-element
+    tie containing both candidates, but Beaver's `cb` reports only
+    Branicki (first by sort order). Composes from the named cb-witness
+    + the cbAll fact. The third conjunct from the previous version
+    (`cb ≠ some "corner_cupboard"`) followed from the first by
+    `Option.some.injEq` — dropped per audit. -/
 theorem beaver_cb_silent_on_psdh10_tie :
     Discourse.Centering.cb u227 u229 = some "Branicki" ∧
-    "corner_cupboard" ∈ Discourse.Centering.cbAll u227 u229 ∧
-    Discourse.Centering.cb u227 u229 ≠ some "corner_cupboard" :=
-  ⟨by decide, by decide, by decide⟩
+    "corner_cupboard" ∈ Discourse.Centering.cbAll u227 u229 :=
+  ⟨beaver_cb_picks_branicki_on_psdh10, by decide⟩
 
-/-- **COHERE depends on the choice of priorTopic**, which PSDH (10)
-    leaves underdetermined. If we feed Beaver's COHERE the
-    `Branicki`-side of the PSDH tie as priorTopic, COHERE is satisfied
-    (eval = 0) — Beaver's machinery treats Branicki as the sole topic
-    of u227. If we feed it the `corner_cupboard`-side, COHERE FIRES
-    (eval = 1) — Beaver concludes a topic shift occurred, exactly the
-    information PSDH's `cbAll` reports as a TIE rather than a shift.
+/-- **COHERE depends on the choice of priorTopic** — Beaver's totalizer
+    propagates PSDH (10)'s tie. If we feed Beaver's COHERE the
+    `Branicki`-side as priorTopic, COHERE is satisfied (eval = 0). If
+    we feed it the `corner_cupboard`-side, COHERE fires (eval = 1).
+    Beaver's lex-min on the same `cand_u229` produces opposite
+    verdicts depending on which member of the PSDH tie the previous
+    utterance "really" had as topic — a slot PSDH's parametric
+    analysis says is underdetermined.
 
-    The cross-framework finding: **Beaver's COT lex-min, applied to
-    PSDH (10), is sensitive to a parameter (priorTopic) that PSDH's
-    multi-CB analysis says is underdetermined**. The two formalizations
-    encode different commitments about what discourse-level information
-    survives the previous utterance: a single resolved CB (Beaver) vs
-    a tie-set (PSDH). -/
+    By contrast, a **Strube-Hahn linear-order totalizer** would resolve
+    the tie purely from `u227`'s surface-position ordering of ne547
+    (corner_cupboard, before) vs ne551 (Branicki's, after) — that
+    answer is a fact about `u227` alone and doesn't depend on a
+    further priorTopic parameter. The two totalizers don't agree on
+    which of `Branicki`/`corner_cupboard` is "the" CB of u227. -/
 theorem beaver_cohere_sensitive_to_psdh10_tie_choice :
     (cohere u227 (some "Branicki")).eval cand_u229 = 0 ∧
     (cohere u227 (some "corner_cupboard")).eval cand_u229 = 1 := by
@@ -510,30 +522,35 @@ theorem beaver_cohere_sensitive_to_psdh10_tie_choice :
     Cp is `Dubois` (the new SUBJ), and `cb u227 u229 = some Branicki`
     is in OBJ position, not subject. So under Beaver's machinery,
     PSDH (10) shows a CB-not-in-subject-position pattern — typical
-    RETAIN/SHIFT territory. The structural-divergence point holds
-    regardless of which COHERE outcome we get: ALIGN's evaluation is
-    constant across the priorTopic ambiguity. -/
+    RETAIN/SHIFT territory. The Strube-Hahn-vs-Beaver totalizer
+    contrast lives entirely in COHERE's sensitivity to priorTopic;
+    ALIGN is constant across the choice. -/
 theorem beaver_align_fires_on_psdh10 :
     (align u227).eval cand_u229 = 1 := by decide
 
 /-- **`beaver_lex_min_on_psdh_10`** — the cross-framework headline.
-    Mechanically applied to PSDH (10) `u227`/`u229`, Beaver's COT
-    machinery either:
+    Beaver's COT lex-min, applied to PSDH (10), produces strictly
+    different total-violation counts depending on which member of
+    PSDH's tie is supplied as `priorTopic`:
 
-    - Treats `Branicki` as the topic of u227 (priorTopic = some
-      "Branicki"): COHERE satisfied, ALIGN violated. Total profile
-      reflects only ALIGN's violation.
+    - **Branicki-as-prior** (matches Beaver's own `cb u227`): COHERE
+      satisfied, ALIGN violated. Total = 1 violation.
+    - **corner_cupboard-as-prior** (the alternative `cbAll` member):
+      COHERE violated, ALIGN violated. Total = 2 violations.
 
-    - Treats `corner_cupboard` as the topic of u227 (priorTopic = some
-      "corner_cupboard"): COHERE violated, ALIGN violated. Total
-      profile reflects two violations.
+    Under the COHERE > ALIGN ranking, the Branicki-prior interpretation
+    strictly dominates. So Beaver's lex-min "picks" Branicki — but only
+    by silently agreeing with the choice `cb u227 u229` already made by
+    sort order. The lex-min mechanism contributes no new information
+    about which member of PSDH's tie deserves to be the unique CB; it
+    inherits and amplifies the sort-order decision.
 
-    The ranking COHERE > ALIGN means the second interpretation is
-    strictly worse than the first under lex-min. **Beaver's lex-min,
-    forced to choose, picks the `Branicki`-as-prior-topic
-    interpretation as optimal**. PSDH's two-CB observation cannot be
-    represented as a lex-min outcome — it is a property of the
-    underlying `cbAll`, not of Beaver's resolution-selection. -/
+    By contrast, Strube-Hahn's linear-order totalizer would pick the
+    *earlier-in-surface-order* member of the tie — `corner_cupboard`
+    (ne547, before Branicki's ne551 in u227). The two totalizers
+    therefore *disagree* on which entity of PSDH's tie is the unique
+    CB. PSDH p. 329 endorse Strube-Hahn's choice; Beaver's totalizer
+    inverts it. -/
 theorem beaver_lex_min_on_psdh_10 :
     -- Branicki-as-prior interpretation: only ALIGN fires
     (cohere u227 (some "Branicki")).eval cand_u229 +
@@ -547,6 +564,52 @@ theorem beaver_lex_min_on_psdh_10 :
     ((cohere u227 (some "corner_cupboard")).eval cand_u229 +
       (align u227).eval cand_u229) := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-! ## §5.1.1 The structural underpinning
+
+    The four `decide`-checked theorems above verify Beaver's COT on
+    PSDH (10) at the level of literal Nat comparisons. They are
+    corollaries of the substrate-level structural-faithfulness
+    theorems landed in `Beaver2004.lean §2a`:
+
+    - `Beaver2004.cohere_factors_through_cb`: COHERE's evaluation is
+      determined by `cb prev c.utt` and `priorTopic` only.
+    - `Beaver2004.align_factors_through_cb_and_cp`: ALIGN's evaluation
+      is determined by `cb prev c.utt` and `c.utt.cp` only.
+
+    The cross-framework story therefore decomposes into:
+
+    1. **Cb-blindness on the candidate side** (proved structurally in
+       Beaver2004): for a fixed (prev, priorTopic), Beaver's COHERE
+       is invariant across cb-equivalent candidates. PSDH (10)'s
+       multi-CB tie cannot enter through the candidate slot.
+    2. **PriorTopic-sensitivity on the parameter side** (proved on the
+       worked example here, via `decide`): COHERE's verdict varies
+       across the two members of PSDH's tie when fed as priorTopic.
+       The tie enters through the parameter slot, not the candidate
+       slot.
+    3. **The lex-min picks the cb-internal choice**
+       (`beaver_lex_min_on_psdh_10`): under COHERE > ALIGN, Beaver's
+       optimum agrees with `cb`'s sort-order choice (Branicki),
+       inverting Strube-Hahn's positional choice (corner_cupboard,
+       earlier in surface order).
+
+    The structural theorems make explicit that (1) is a property of
+    Beaver's substrate, not of PSDH (10) specifically; the
+    per-example facts (2)+(3) are the kernel-checked instances. -/
+
+/-- **Substrate-corollary form**: any candidate `c` whose `cb` agrees
+    with `cand_u229`'s on `u227` gets the SAME COHERE evaluation as
+    `cand_u229`, for any priorTopic. This is the abstract version of
+    "Beaver cannot recover the discarded tie member from candidate-side
+    information"; the per-example `beaver_cohere_sensitive_to_psdh10_tie_choice`
+    above is the witness that priorTopic-side variation is the only
+    route by which the PSDH tie can enter Beaver's verdict. -/
+theorem beaver_cohere_invariant_under_cb_equiv_candidates
+    (priorTopic : Option String) (c : Beaver2004.Candidate String GrammaticalRole)
+    (h : Discourse.Centering.cb u227 c.utt = Discourse.Centering.cb u227 u229) :
+    (cohere u227 priorTopic).eval c = (cohere u227 priorTopic).eval cand_u229 :=
+  Beaver2004.cohere_factors_through_cb u227 priorTopic c cand_u229 h
 
 -- ════════════════════════════════════════════════════
 -- § 6. Future work / deferred items

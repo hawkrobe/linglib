@@ -36,7 +36,7 @@ the sub-square setup from Z&H 2017).
 
 namespace Magri2025
 
-open Core.Constraint
+open Core.Constraint Core.Constraint.OT
 open ZurawHayes2017
 
 /-! ## § 1: Constraint Independence
@@ -47,47 +47,48 @@ forms (ignoring the candidate dimension, since we work with violation
 raw constraint is insensitive to at least one dimension.
 -/
 
-/-- C₁ = DEP-C is insensitive to the prefix (row dimension):
+/-- C₁ = NasSub is insensitive to the prefix (row dimension):
     the violation is 1 for NO and 0 for YES regardless of prefix.
-    DEP-C as the constraint violated by non-substitution follows
-    @cite{zuraw-2010}'s discussion in §4.2. -/
-theorem depC_insensitive_to_row (o : NasalSubOutput) :
-    depC (.mang_b, o) = depC (.pang_b, o) ∧
-    depC (.mang_k, o) = depC (.pang_k, o) := by
+    Per @cite{zuraw-hayes-2017} ex. (3) (NasSub is the markedness driver
+    against nasal+obstruent sequences). -/
+theorem nasSub_insensitive_to_row (o : NasalSubOutput) :
+    nasSub.eval (.mang_b, o) = nasSub.eval (.pang_b, o) ∧
+    nasSub.eval (.mang_k, o) = nasSub.eval (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₂ = \*NC is insensitive to the prefix. Per @cite{zuraw-2010} ex. (17):
     "\*NC: A [+nasal] segment must not be immediately followed by a
     [-voice, -sonorant] segment". -/
 theorem starNC_insensitive_to_row (o : NasalSubOutput) :
-    starNC (.mang_b, o) = starNC (.pang_b, o) ∧
-    starNC (.mang_k, o) = starNC (.pang_k, o) := by
+    starNC.eval (.mang_b, o) = starNC.eval (.pang_b, o) ∧
+    starNC.eval (.mang_k, o) = starNC.eval (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₃ = \*\[stem\] is insensitive to the prefix. -/
 theorem starStemVelar_insensitive_to_row (o : NasalSubOutput) :
-    starStemVelar (.mang_b, o) = starStemVelar (.pang_b, o) ∧
-    starStemVelar (.mang_k, o) = starStemVelar (.pang_k, o) := by
+    starStemVelar.eval (.mang_b, o) = starStemVelar.eval (.pang_b, o) ∧
+    starStemVelar.eval (.mang_k, o) = starStemVelar.eval (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₄ = \*\[stem\]/n is insensitive to the prefix. -/
 theorem starStemVelarCoronal_insensitive_to_row (o : NasalSubOutput) :
-    starStemVelarCoronal (.mang_b, o) = starStemVelarCoronal (.pang_b, o) ∧
-    starStemVelarCoronal (.mang_k, o) = starStemVelarCoronal (.pang_k, o) := by
+    starStemVelarCoronal.eval (.mang_b, o) = starStemVelarCoronal.eval (.pang_b, o) ∧
+    starStemVelarCoronal.eval (.mang_k, o) = starStemVelarCoronal.eval (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₅ = UNIF(maŋ) is insensitive to the stem-initial obstruent (column). -/
 theorem unifMang_insensitive_to_col (o : NasalSubOutput) :
-    unifMang (.mang_b, o) = unifMang (.mang_k, o) ∧
-    unifMang (.pang_b, o) = unifMang (.pang_k, o) := by
+    unifMang.eval (.mang_b, o) = unifMang.eval (.mang_k, o) ∧
+    unifMang.eval (.pang_b, o) = unifMang.eval (.pang_k, o) := by
   cases o <;> decide
 
 /-- C₆ = UNIF(paŋ) is insensitive to the stem-initial obstruent. -/
 theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
-    unifPang (.mang_b, o) = unifPang (.mang_k, o) ∧
-    unifPang (.pang_b, o) = unifPang (.pang_k, o) := by
+    unifPang.eval (.mang_b, o) = unifPang.eval (.mang_k, o) ∧
+    unifPang.eval (.pang_b, o) = unifPang.eval (.pang_k, o) := by
   cases o <;> decide
 
+set_option linter.unusedSimpArgs false in
 /-- **Constraint independence**: for each fixed output, the six
     constraints satisfy `ConstraintIndependence` on the nasal substitution
     square.
@@ -95,11 +96,15 @@ theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
     C₁–C₄ (markedness) are insensitive to row (prefix);
     C₅–C₆ (faithfulness) are insensitive to column (stem obstruent). -/
 theorem constraint_independence (o : NasalSubOutput) :
-    ConstraintIndependence (fun k x => constraints k (x, o)) nasalSubSquare := by
+    ConstraintIndependence (fun k x => (constraints k).eval (x, o)) nasalSubSquare := by
   intro k; fin_cases k <;> cases o <;>
-    simp only [constraints, depC, starNC, starStemVelar,
-      starStemVelarCoronal, unifMang, unifPang, nasalSubSquare,
-      InsensitiveToRow, InsensitiveToCol] <;>
+    simp only [constraints, nasSub, starNC, starStemVelar,
+      starStemVelarCoronal, unifMang, unifPang,
+      NamedConstraint.comap_eval, mkFaithGrad, mkMark,
+      Zuraw2010.nasSub, Zuraw2010.starNC, Zuraw2010.starInitVelar,
+      Zuraw2010.starInitCorVel, NasalSubCandidate.project,
+      NasalSubInput.toStemC, NasalSubOutput.toSubSt,
+      nasalSubSquare, InsensitiveToRow, InsensitiveToCol] <;>
     decide
 
 /-! ## § 2: Violation Difference Consistency -/
@@ -108,7 +113,7 @@ theorem constraint_independence (o : NasalSubOutput) :
     profiles: `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)`. -/
 theorem violDiff_consistent (k : Fin 6) (x : NasalSubInput) :
     violDiffProfile k x =
-    (constraints k (x, .no) : ℤ) - (constraints k (x, .yes) : ℤ) := by
+    ((constraints k).eval (x, .no) : ℤ) - ((constraints k).eval (x, .yes) : ℤ) := by
   fin_cases k <;> cases x <;> decide
 
 /-! ## § 3: ME Predicts HZ -/
@@ -239,6 +244,7 @@ theorem odds_ratios_close :
 
 /-! ## § 6: Separable Forward Direction -/
 
+set_option linter.unusedSimpArgs false in
 /-- **ME predicts HZ at the probability level**: the log-probability-ratio
     `log(P(YES|x)/P(NO|x))` under ME satisfies HZ's constant-difference
     identity for Tagalog nasal substitution, for *any* weight assignment.
@@ -251,15 +257,18 @@ theorem odds_ratios_close :
 theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
     ConstantLogitDiff
       (fun x => Real.log (
-        (meSeparable 6 w).eval (fun k => constraints k (x, .yes)) /
-        (meSeparable 6 w).eval (fun k => constraints k (x, .no))))
+        (meSeparable 6 w).eval (fun k => (constraints k).eval (x, .yes)) /
+        (meSeparable 6 w).eval (fun k => (constraints k).eval (x, .no))))
       nasalSubSquare := by
   apply separable_predicts_hz
   intro k
   simp only [SeparableHarmony.rescale, meSeparable, Real.log_exp, nasalSubSquare]
   fin_cases k <;>
-    simp only [constraints, depC, starNC, starStemVelar,
-      starStemVelarCoronal, unifMang, unifPang] <;>
+    simp only [constraints, nasSub, starNC, starStemVelar, starStemVelarCoronal,
+      unifMang, unifPang, NamedConstraint.comap_eval, mkFaithGrad, mkMark,
+      Zuraw2010.nasSub, Zuraw2010.starNC, Zuraw2010.starInitVelar,
+      Zuraw2010.starInitCorVel, NasalSubCandidate.project,
+      NasalSubInput.toStemC, NasalSubOutput.toSubSt] <;>
     simp
 
 end Magri2025

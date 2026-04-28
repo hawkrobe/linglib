@@ -98,7 +98,7 @@ structure NextMentionModel where
     Passive subjects signal stronger topichood than active subjects:
     using a marked construction to place an entity in subject position
     is a stronger indicator that the speaker treats it as the sentence
-    topic (Davison 1984). This is the centering-driven "bottom-up"
+    topic (@cite{davison-1984}). This is the centering-driven "bottom-up"
     component of the model.
 
     The P(pronoun | referent) term in eq. (13) tracks this level, not
@@ -568,7 +568,19 @@ theorem contiguity_class_splits :
     necessary input to KR2013's production model but is not sufficient
     to predict pronominalization rate**. The voice-induced gradient
     that KR2013 measure (87% vs 62%) lives in the topichood signal,
-    not in the CB signal. -/
+    not in the CB signal.
+
+    **Empirical complement** (post-2013 follow-up): the substrate-level
+    dissociation theorem `cb_topichood_dissociation_under_voice` below
+    is the structural reason why
+    `RosaArnold2017.independence_violated_bridges_to_KR`
+    (`Phenomena/Reference/Studies/RosaArnold2017.lean`) finds K&R's
+    Independence Hypothesis empirically *violatable*: because
+    `cb` cannot detect the voice manipulation, any pronominalization
+    asymmetry between active and passive subjects must be carried by a
+    signal external to Centering's `cb`/`cp` — Rosa & Arnold's
+    experiment provides one such asymmetry as a corpus measurement,
+    while §12 here exhibits the substrate-level mechanism. -/
 
 section CenteringBridge
 
@@ -628,8 +640,8 @@ theorem topichood_distinguishes_voice :
     "P(pronoun | referent) tracks topichood, not subjecthood." -/
 theorem cb_topichood_dissociation_under_voice :
     cb prev_AmandaActive cur_active = cb prev_AmandaActive cur_passive ∧
-    topichood .Pass true ≠ topichood .Act true := by
-  exact ⟨by decide, by decide⟩
+    topichood .Pass true ≠ topichood .Act true :=
+  ⟨cb_invariant_under_voice, topichood_distinguishes_voice⟩
 
 /-- **Rule 1 (Gordon) is satisfied in both voice variants** because both
     Amanda-realizations are pronominal. The substrate-level Rule 1

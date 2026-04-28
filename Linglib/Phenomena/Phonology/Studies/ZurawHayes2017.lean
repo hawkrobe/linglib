@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Separability
+import Linglib.Phenomena.Phonology.Studies.Zuraw2010
 
 /-!
 # @cite{zuraw-hayes-2017}: Intersecting Constraint Families
@@ -57,7 +58,7 @@ sub-grid.
 
 namespace ZurawHayes2017
 
-open Core.Constraint
+open Core.Constraint Core.Constraint.OT Phonology.Constraints
 
 /-! ## § 1: 2×2 Square — Underlying Forms -/
 
@@ -90,69 +91,102 @@ def nasalSubSquare : Square NasalSubInput where
   bl := .pang_b
   br := .pang_k
 
-/-! ## § 2: Constraint Violation Profiles -/
+/-! ## § 2: Projection to Zuraw 2010's six-stem candidate space
 
-/-- C₁ = DEP-C: one violation per surface segment without an input
-    correspondent. Violated by NO (the faithful candidate keeps the
-    cluster — the YES candidate's coalesced nasal has no input pair).
-    Following @cite{zuraw-2010}'s discussion of DEP-C as the constraint
-    violated by non-substitution. -/
-def depC : NasalSubCandidate → ℕ
-  | (_, .no) => 1
-  | (_, .yes) => 0
+Z&H §2.4 explicitly says their constraint set is "adapted from Zuraw 2010".
+The 4 of 6 constraints they share with Zuraw (NasSub, \*NC, \*[stemŋ], and
+the *[stemŋ]/n stringent step) are not redefined here — they're lifted
+from `Zuraw2010` via projection. The 2 prefix-indexed UNIFORMITY constraints
+are Z&H's substitute for Zuraw's \*ASSOC and are defined locally.
 
-/-- C₂ = \*NC: one violation for nasal followed by voiceless obstruent.
-    Violated by NO only for voiceless stems (k). Per @cite{zuraw-2010}
-    (17): "\*NC: A [+nasal] segment must not be immediately followed by
-    a [-voice, -sonorant] segment". -/
-def starNC : NasalSubCandidate → ℕ
-  | (.mang_k, .no) | (.pang_k, .no) => 1
-  | _ => 0
+The projection maps the 4-cell sub-square onto the corresponding cells of
+Zuraw 2010's 6-stem × 2-decision space:
+- maŋ-other + b, paŋ-res + b → (b, _)
+- maŋ-other + k, paŋ-res + k → (k, _)
 
-/-- C₃ = \*[stemŋ]: one violation when stem starts with a velar nasal.
-    Violated by YES for k-initial stems (coalesced ŋ is velar). -/
-def starStemVelar : NasalSubCandidate → ℕ
-  | (.mang_k, .yes) | (.pang_k, .yes) => 1
-  | _ => 0
+The prefix dimension is collapsed; the stem and yes/no dimensions are
+preserved. -/
 
-/-- C₄ = \*[stemŋ]/n: one violation when stem starts with a velar or
-    coronal nasal. In the b vs k square, this coincides with C₃
-    (bilabial m is neither velar nor coronal). -/
-def starStemVelarCoronal : NasalSubCandidate → ℕ
-  | (.mang_k, .yes) | (.pang_k, .yes) => 1
-  | _ => 0
+/-- Project a 2×2 input onto Zuraw 2010's stem consonant. -/
+def NasalSubInput.toStemC : NasalSubInput → Zuraw2010.StemC
+  | .mang_b | .pang_b => .b
+  | .mang_k | .pang_k => .k
 
-/-- C₅ = UNIFORMITY(maŋ-other): one violation when the maŋ-other prefix
-    coalesces with the stem-initial obstruent. Restriction of Z&H's
-    6-way prefix-indexed UNIFORMITY constraint set to the maŋ-other
-    cell. -/
-def unifMang : NasalSubCandidate → ℕ
-  | (.mang_b, .yes) | (.mang_k, .yes) => 1
-  | _ => 0
+/-- Project a 2-cell output onto Zuraw 2010's substitution decision. -/
+def NasalSubOutput.toSubSt : NasalSubOutput → Zuraw2010.SubSt
+  | .yes => .yes
+  | .no  => .no
 
-/-- C₆ = UNIFORMITY(paŋ-res): one violation when the paŋ-res prefix
-    coalesces with the stem-initial obstruent. Restriction of Z&H's
-    6-way prefix-indexed UNIFORMITY constraint set to the paŋ-res
-    cell. -/
-def unifPang : NasalSubCandidate → ℕ
-  | (.pang_b, .yes) | (.pang_k, .yes) => 1
-  | _ => 0
+/-- Project a Z&H candidate onto a Zuraw 2010 candidate. -/
+def NasalSubCandidate.project (c : NasalSubCandidate) : Zuraw2010.NSCand :=
+  (c.1.toStemC, c.2.toSubSt)
+
+/-! ## § 3: Constraint Inventory
+
+The 4 shared constraints come from Zuraw 2010 via `comap` along the
+projection. The 2 prefix-indexed UNIFORMITY constraints are local. -/
+
+/-- C₁ = NasSub (markedness): per @cite{zuraw-hayes-2017} ex. (3),
+    "Assess one violation for any nasal + obstruent sequence, where + is
+    a morpheme boundary within a word." Lifted from `Zuraw2010.nasSub`. -/
+def nasSub : NamedConstraint NasalSubCandidate :=
+  Zuraw2010.nasSub.comap NasalSubCandidate.project
+
+/-- C₂ = \*NC: per @cite{zuraw-2010} ex. (17), "A [+nasal] segment must
+    not be immediately followed by a [-voice, -sonorant] segment". Lifted
+    from `Zuraw2010.starNC`. Violated by NO only for voiceless stems (k). -/
+def starNC : NamedConstraint NasalSubCandidate :=
+  Zuraw2010.starNC.comap NasalSubCandidate.project
+
+/-- C₃ = \*[stemŋ]: penalizes stem-initial velar nasal. Lifted from
+    `Zuraw2010.starInitVelar`. Violated by YES for k-initial stems
+    (coalesced ŋ is velar). Z&H ex. (6c). -/
+def starStemVelar : NamedConstraint NasalSubCandidate :=
+  Zuraw2010.starInitVelar.comap NasalSubCandidate.project
+
+/-- C₄ = \*[stemŋ]/n: penalizes stem-initial velar or coronal nasal.
+    Lifted from `Zuraw2010.starInitCorVel`. In the b vs k square, this
+    coincides with C₃ (bilabial m is neither velar nor coronal), so on
+    the restricted domain `(c.eval ∘ project)` is identical for C₃ and C₄.
+    Z&H ex. (6b). -/
+def starStemVelarCoronal : NamedConstraint NasalSubCandidate :=
+  Zuraw2010.starInitCorVel.comap NasalSubCandidate.project
+
+/-- C₅ = Unif-maŋ-other (faithfulness): one violation when the maŋ-other
+    prefix coalesces with the stem-initial obstruent. Per Z&H ex. (5a),
+    "One segment from input maŋ-other and a distinct input segment must
+    not correspond to the same output segment." Restriction of Z&H's
+    6-way prefix-indexed UNIFORMITY family to the maŋ-other cell.
+    Z&H-local; replaces Zuraw 2010's \*ASSOC. -/
+def unifMang : NamedConstraint NasalSubCandidate :=
+  mkFaithGrad "Unif-maŋ-other" fun
+    | (.mang_b, .yes) | (.mang_k, .yes) => 1
+    | _ => 0
+
+/-- C₆ = Unif-paŋ-res (faithfulness): one violation when the paŋ-res
+    prefix coalesces with the stem-initial obstruent. Per Z&H ex. (5f),
+    similar to Unif-maŋ-other but for paŋ-res. Restriction of Z&H's
+    6-way prefix-indexed UNIFORMITY family to the paŋ-res cell. -/
+def unifPang : NamedConstraint NasalSubCandidate :=
+  mkFaithGrad "Unif-paŋ-res" fun
+    | (.pang_b, .yes) | (.pang_k, .yes) => 1
+    | _ => 0
 
 /-- The six constraints as a `Fin 6`-indexed family. -/
-def constraints : Fin 6 → NasalSubCandidate → ℕ
-  | ⟨0, _⟩ => depC
+def constraints : Fin 6 → NamedConstraint NasalSubCandidate
+  | ⟨0, _⟩ => nasSub
   | ⟨1, _⟩ => starNC
   | ⟨2, _⟩ => starStemVelar
   | ⟨3, _⟩ => starStemVelarCoronal
   | ⟨4, _⟩ => unifMang
   | ⟨5, _⟩ => unifPang
 
-/-! ## § 3: Violation Differences (Δₖ) -/
+/-! ## § 4: Violation Differences (Δₖ) -/
 
 /-- Violation difference `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)` for each
     underlying form x and constraint k. Positive Δ favors YES. -/
 def violDiffProfile : Fin 6 → NasalSubInput → ℤ
-  -- C₁ = DEP-C: Δ₁ = 1 for all forms (NO always violates DEP-C)
+  -- C₁ = NasSub: Δ₁ = 1 for all forms (NO always has a nasal+obstruent sequence)
   | ⟨0, _⟩, _ => 1
   -- C₂ = *NC: Δ₂ = 1 for /k/ forms, 0 for /b/ forms
   | ⟨1, _⟩, .mang_k | ⟨1, _⟩, .pang_k => 1
@@ -191,7 +225,7 @@ theorem violDiff_independence :
   simp only [deltaR, violDiffProfile, nasalSubSquare]
   fin_cases k <;> simp
 
-/-! ## § 4: Empirical Rates (2×2 square) -/
+/-! ## § 5: Empirical Rates (2×2 square) -/
 
 /-- Empirical rates of nasal substitution from @cite{zuraw-2010}'s
     Tagalog dictionary type frequencies, arranged per the
@@ -209,7 +243,7 @@ def nasalSubRate : NasalSubInput → ℚ
   | .pang_b => 434 / 1000  -- 0.434
   | .pang_k => 909 / 1000  -- 0.909
 
-/-! ## § 5: Across-the-Board Consistency -/
+/-! ## § 6: Across-the-Board Consistency -/
 
 /-- **Across-the-board consistency**: one dimension's effect has the same
     sign regardless of the other dimension's value. Formally: the product
@@ -229,7 +263,7 @@ theorem tagalog_consistent_ordering :
     := by
   simp only [ConsistentOrdering, nasalSubRate]; norm_num
 
-/-! ## § 6: Decision-Tree Models Fail -/
+/-! ## § 7: Decision-Tree Models Fail -/
 
 /-- **Decision-tree models predict monotonic differentiation**:
     In a multiplicative model `P(x,y) = g(x) · h(y)`, the difference
@@ -274,7 +308,7 @@ theorem decision_tree_product_bound (g h : ℚ)
     g * h ≤ g ∧ g * h ≤ h :=
   ⟨mul_le_of_le_one_right hg hh1, mul_le_of_le_one_left hh hg1⟩
 
-/-! ## § 7: Model Comparison (Table 7, Table 17) -/
+/-! ## § 8: Model Comparison (Table 7, Table 17) -/
 
 -- Log likelihoods from Z&H Table 7 (Tagalog) and Table 17 (French).
 -- Closer to 0 is better. The paper's central empirical argument is
@@ -311,7 +345,7 @@ theorem french_hg_beats_ranking :
     (-19880 : ℚ) / 100 > -41064 / 100     -- NHG > Stratified OT
     := by constructor <;> norm_num
 
-/-! ## § 8: MaxEnt Predicts the Sigmoid Family Pattern -/
+/-! ## § 9: MaxEnt Predicts the Sigmoid Family Pattern -/
 
 /-- **MaxEnt predicts HZ's generalization for Tagalog nasal substitution**:
     for *any* weight assignment `w : Fin 6 → ℝ`, the MaxEnt logit rates
@@ -327,7 +361,7 @@ theorem maxent_predicts_hz_tagalog (w : Fin 6 → ℝ) :
       nasalSubSquare :=
   me_predicts_hz w deltaR nasalSubSquare violDiff_independence
 
-/-! ## § 9: Closed-Form Logit-Rate Difference -/
+/-! ## § 10: Closed-Form Logit-Rate Difference -/
 
 /-- The constant logit-rate difference equals `−w₂ + w₃ + w₄`
     for both rows, regardless of weights. This follows from the
@@ -356,7 +390,7 @@ theorem hz_identity_concrete (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .pang_k : ℚ) := by
   rw [hz_constant_value_tagalog, hz_constant_value_tagalog']
 
-/-! ## § 10: NHG Produces Consistent Ordering -/
+/-! ## § 11: NHG Produces Consistent Ordering -/
 
 /-- **NHG produces consistent ordering** (@cite{zuraw-hayes-2017}):
     when the harmony scores satisfy `ConstantLogitDiff`, NHG
@@ -395,5 +429,51 @@ theorem nhg_tagalog_consistent (w : Fin 6 → ℝ) (σ : ℝ) (hσ : 0 < σ)
      Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_k) / σ)) > 0 :=
   nhg_consistent_ordering (fun x => ∑ k : Fin 6, w k * deltaR k x)
     σ hσ nasalSubSquare (maxent_predicts_hz_tagalog w) hne
+
+/-! ## § 12: Cross-Reference to Zuraw 2010
+
+Z&H §2.4 says their constraint set is "adapted from Zuraw 2010". The
+projection-based defs in § 3 make that adaptation precise: 4 of 6
+constraints are literally `comap`'d from Zuraw, so equality with
+Zuraw's constraints under projection holds by definition. The 2 prefix-
+indexed UNIFORMITY constraints replace Zuraw's single \*ASSOC — but they
+turn out to be a *decomposition* of \*ASSOC on this restricted square,
+not a substitution by something incompatible.
+-/
+
+/-- C₁ = NasSub agrees with Zuraw 2010 under the candidate projection.
+    Holds by definition (`comap` is `eval ∘ project` and `nasSub` is
+    defined as `Zuraw2010.nasSub.comap NasalSubCandidate.project`). -/
+theorem nasSub_eq_zuraw_under_projection :
+    nasSub.eval = Zuraw2010.nasSub.eval ∘ NasalSubCandidate.project := rfl
+
+/-- C₂ = \*NC agrees with Zuraw 2010 under the projection. -/
+theorem starNC_eq_zuraw_under_projection :
+    starNC.eval = Zuraw2010.starNC.eval ∘ NasalSubCandidate.project := rfl
+
+/-- C₃ = \*[stemŋ] agrees with Zuraw's `starInitVelar` under the projection. -/
+theorem starStemVelar_eq_zuraw_under_projection :
+    starStemVelar.eval = Zuraw2010.starInitVelar.eval ∘ NasalSubCandidate.project := rfl
+
+/-- C₄ = \*[stemŋ]/n agrees with Zuraw's `starInitCorVel` under the projection. -/
+theorem starStemVelarCoronal_eq_zuraw_under_projection :
+    starStemVelarCoronal.eval = Zuraw2010.starInitCorVel.eval ∘ NasalSubCandidate.project := rfl
+
+/-- **Cross-paper structural insight**: Z&H's prefix-indexed UNIFORMITY pair
+    (`unifMang + unifPang`) is an additive *decomposition* of Zuraw 2010's
+    single \*ASSOC constraint on this 2×2 sub-square.
+
+    Zuraw's \*ASSOC fires on every YES candidate (penalty 1) regardless of
+    prefix. Z&H's `unifMang` fires on YES only for maŋ-other inputs;
+    `unifPang` fires on YES only for paŋ-res inputs. On the 2×2 square,
+    every YES cell is hit by exactly one of them, so their sum equals
+    Zuraw's \*ASSOC under the candidate projection. Under any HG/ME
+    analysis, the sum of the two prefix-UNIF weights `w₅ + w₆` plays the
+    role Zuraw's single \*ASSOC weight plays in her grammar. -/
+theorem unif_sum_eq_assoc (c : NasalSubCandidate) :
+    unifMang.eval c + unifPang.eval c =
+    Zuraw2010.starAssoc.eval (NasalSubCandidate.project c) := by
+  rcases c with ⟨i, o⟩
+  cases i <;> cases o <;> decide
 
 end ZurawHayes2017

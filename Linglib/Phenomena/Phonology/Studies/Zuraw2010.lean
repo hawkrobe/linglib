@@ -31,8 +31,10 @@ with no 6! = 720 enumeration.
 
 Six constraints drive the typology:
 
-- **DEP-C** (faithfulness): penalizes deletion of the stem-initial C —
-  i.e. violated by NO (the faithful retention) for every stem
+- **NasSub** (markedness; Zuraw 2010 §4.2 names this DEP-C): penalizes
+  nasal+obstruent sequences across morpheme boundaries — violated by
+  NO (the faithful cluster) for every stem. Project-canonical name is
+  NasSub for consistency with @cite{zuraw-hayes-2017} ex. (3).
 - **\*NC** (markedness): penalizes nasal + voiceless-obstruent clusters
 - **\*ASSOC** (markedness): penalizes multiple association (coalescence)
 - **\*\[ŋ, \*\[n, \*\[m** (markedness, stringent hierarchy): penalizes
@@ -57,7 +59,7 @@ The closely-related study files
 `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
 `Phenomena/Phonology/Studies/Magri2025.lean` analyze a 2×2 sub-square
 of this same phenomenon (maŋ-other / paŋ-res prefixes × /b/ /k/ stems)
-under a different constraint inventory (DEP-C / \*NC / \*[stemŋ] /
+under a different constraint inventory (NasSub / \*NC / \*[stemŋ] /
 \*[stemŋ]/n / prefix-indexed UNIFORMITY) for a MaxEnt analysis of the
 Hayes-Zuraw shifted-sigmoids generalization. The constraint sets and
 the data slices differ; the two strands are complementary readings of
@@ -107,16 +109,22 @@ theorem dict_voicing_labial : dictRate_p > dictRate_b := by
 -- § 1: Constraints
 -- ============================================================================
 
-/-- DEP-C: penalizes the faithful candidate for every input C without a
-    surface correspondent. Violated by NO for every stem (the YES candidate
-    deletes the stem-initial C; NO retains it).
-    DEP-C as the constraint violated by non-substitution follows
-    @cite{zuraw-2010}'s discussion in §4.2.
+/-- NasSub: penalizes nasal+obstruent sequences across morpheme
+    boundaries. Violated by NO for every stem (the faithful cluster
+    contains the offending nasal+obstruent sequence; YES coalesces and
+    has no such sequence).
+
+    @cite{zuraw-2010} §4.2 calls this constraint "DEP-C" and frames it
+    via faithfulness; @cite{zuraw-hayes-2017} ex. (3) calls it "NasSub"
+    and frames it via markedness. Same numeric constraint under the two
+    framings — project-canonical name is NasSub for consistency with the
+    Magri 2025 / Z&H 2017 literature.
+
     NB: in earlier commits this constraint was labeled \*NC; renamed for
     fidelity to the paper's notation, where \*NC is reserved for the
     voiceless-only constraint (see `starNC` below). -/
-def depC : NamedConstraint NSCand :=
-  mkMark "DEP-C" fun c => c.2 = SubSt.no
+def nasSub : NamedConstraint NSCand :=
+  mkMark "NasSub" fun c => c.2 = SubSt.no
 
 /-- \*NC: penalizes nasal + voiceless-obstruent sequences. Violated by NO
     for voiceless stems only. Per @cite{zuraw-2010} ex. (17):
@@ -144,9 +152,9 @@ def starInitAll : NamedConstraint NSCand :=
 
 /-- The six constraints, indexed for substrate consumption.
     Order matches @cite{zuraw-2010}'s six freely-ranked constraints:
-    DEP-C, \*NC, \*ASSOCIATE, \*[ŋ, \*[n, \*[m. -/
+    NasSub, \*NC, \*ASSOCIATE, \*[ŋ, \*[n, \*[m. -/
 def constraint : Fin 6 → NamedConstraint NSCand
-  | 0 => depC
+  | 0 => nasSub
   | 1 => starNC
   | 2 => starAssoc
   | 3 => starInitVelar
@@ -155,7 +163,7 @@ def constraint : Fin 6 → NamedConstraint NSCand
 
 /-- Legacy list form, retained for callers that want a `List`. -/
 def allConstraints : List (NamedConstraint NSCand) :=
-  [depC, starNC, starAssoc, starInitVelar, starInitCorVel, starInitAll]
+  [nasSub, starNC, starAssoc, starInitVelar, starInitCorVel, starInitAll]
 
 -- ============================================================================
 -- § 2: Constraint Violation Profiles
@@ -478,14 +486,14 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : subWinsP σ .g) :
 -- ============================================================================
 
 /-- Tagalog exhibits nasal substitution for all six consonants. The
-    grammar realizing this corresponds to DEP-C (and \*NC, where
+    grammar realizing this corresponds to NasSub (and \*NC, where
     voicelessness applies) ranked above every YES-disfavoring constraint.
     The probabilistic 2×2-square version of this pattern under a
     different constraint inventory is treated in
     `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
     `Phenomena/Phonology/Studies/Magri2025.lean`.
 
-    Witness for full substitution: any ranking with DEP-C at position 0.
+    Witness for full substitution: any ranking with NasSub at position 0.
     Then for every consonant c, head of permDList σ (relevant c) = 0,
     which is in yesFav c. Concretely, the identity permutation suffices. -/
 theorem tagalog_full_substitution :

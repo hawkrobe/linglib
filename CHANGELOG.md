@@ -4,6 +4,50 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.505] - 2026-04-28
+
+### Bundled checkpoint: Tagalog cross-paper deduplication + Relativization `IsContinuous`/`IsPrimary` Prop layer + KeenanComrie1977 derive-from-Fragments rewrite + Beaver2004 cb/cp-factoring substrate
+
+Multi-thread commit. Four independent strands.
+
+#### Tagalog NS cross-paper deduplication: `nasSub` rename + `comap`-based projection bridges
+
+PDF reading of Z&H 2017 (Project MUSE 669545) §2.4 surfaced that the constraint our files were calling **DEP-C** is actually **NasSub** in Z&H's own terminology — and is a *markedness* constraint ("Assess one violation for any nasal + obstruent sequence, where + is a morpheme boundary within a word", Z&H ex. (3)), not a faithfulness constraint. Same numeric profile (1 on NO, 0 on YES) but opposite theoretical motivation. Zuraw 2010 §4.2 calls it "DEP-C" via a non-standard faithfulness framing. **Project-canonical name is now `nasSub`** for consistency with Z&H and the Pater 1999 foundational source; Zuraw 2010 file's docstring documents the rename.
+
+Substrate addition: **`NamedConstraint.comap`** in `Core/Constraint/OT/Basic.lean` (~17 LOC including 3 `@[simp]` lemmas). Pulls a `NamedConstraint D` back along a candidate map `f : C → D`. Lets paper-specific carrier types reuse a constraint defined on a more general carrier without re-stipulation. The mathlib analog is `Mathlib.Order.Basic`-style functoriality — define once, use across files.
+
+`ZurawHayes2017.lean` now imports `Zuraw2010.lean` (chronologically valid: 2017 → 2010, with the comparison in the later paper per CLAUDE.md). The 4 of 6 constraints Z&H §2.4 says are "adapted from Zuraw 2010" (NasSub, *NC, *[stemŋ], *[stemŋ]/n) are no longer redefined as bare `NasalSubCandidate → ℕ` functions — they're **lifted via `comap` from their canonical Zuraw definitions** through a typed projection `NasalSubCandidate.project : NasalSubCandidate → Zuraw2010.NSCand`. The 2 prefix-indexed UNIFORMITY constraints (Unif-maŋ-other, Unif-paŋ-res) are Z&H's substitute for Zuraw's *ASSOC and remain ZH-local, defined via `mkFaithGrad` (pattern-match form, avoids the Classical-Decidable issue that `mkFaith`'s if-then-else hits transitively from mathlib opens). `constraints : Fin 6 → NamedConstraint NasalSubCandidate` (was `Fin 6 → NasalSubCandidate → ℕ`).
+
+`Magri2025.lean`: switched `open ZurawHayes2017` to add `Core.Constraint.OT` for `mkFaithGrad`/`mkMark`/`comap_eval`. All `nasSub (i, o)` style direct-application calls updated to `nasSub.eval (i, o)`. The `constraint_independence` and `me_separable_predicts_hz_tagalog` proofs adapted to unfold through the new comap chain (`simp only [..., NamedConstraint.comap_eval, mkFaithGrad, mkMark, Zuraw2010.{nasSub,starNC,starInitVelar,starInitCorVel}, NasalSubCandidate.project, NasalSubInput.toStemC, NasalSubOutput.toSubSt]`); `set_option linter.unusedSimpArgs false in` on the two long-unfold theorems because some args aren't used in every fin_cases branch.
+
+New §12 in `ZurawHayes2017.lean` makes the cross-paper structural relationships explicit as Lean theorems:
+- `nasSub_eq_zuraw_under_projection`, `starNC_eq_zuraw_under_projection`, `starStemVelar_eq_zuraw_under_projection`, `starStemVelarCoronal_eq_zuraw_under_projection` — 4 agreement theorems, all proved by `rfl` (true by definition since the constraints are `comap`'d).
+- **`unif_sum_eq_assoc`** — the substantive cross-paper insight: `unifMang.eval c + unifPang.eval c = Zuraw2010.starAssoc.eval (NasalSubCandidate.project c)` for every candidate. Z&H's prefix-indexed UNIFORMITY pair is an additive *decomposition* of Zuraw 2010's single \*ASSOC on the 2×2 sub-square — they're not divergent constraint inventories, they're nested ones. Under any HG/ME analysis, the sum of the prefix-UNIF weights `w₅ + w₆` plays the role Zuraw's \*ASSOC weight plays.
+
+Section banner numbering in `ZurawHayes2017.lean` corrected (had two §3's after the projection section was inserted; now §1 through §12 contiguous).
+
+Build: 5430 jobs green.
+
+Files touched: `Core/Constraint/OT/Basic.lean` (+17 substrate), `Phenomena/Phonology/Studies/Zuraw2010.lean` (rename + 5 docstring updates), `Phenomena/Phonology/Studies/ZurawHayes2017.lean` (+~80 LOC for projection defs + comap-based constraints + §12 cross-reference), `Phenomena/Phonology/Studies/Magri2025.lean` (~25 call-site updates). One TODO: `magri_input_corresponds_to_stem`-style theorems were deleted in 0.230.502 as dead bridges; `NasalSubInput.toStemC` is now resurrected with a real consumer (the projection chain) — this is the right side of the same CLAUDE.md rule (definitions live where their consumers are, bridges-as-files don't).
+
+#### Relativization `IsContinuous`/`IsPrimary` Prop layer (`Core/Relativization/Hierarchy.lean`)
+
+Closes the audit-deferred Bool→Prop migration flagged in 0.230.504. `Core/Relativization/Hierarchy.lean` adds `ContiguousOnAH : List AHPosition → Prop` (Prop wrapper around the structural `Bool` definition that's load-bearing for the PRC general-proof case-analysis), plus `RelClauseMarker.IsContinuous` and `RelClauseMarker.IsPrimary` Prop predicates with `Decidable` instances. Bool versions retained as transitional shims for `StrategyEntry` consumers. Small docstring tweak ("for every pair of positions … all intermediate ranks" → "every intermediate rank"). `Core/Relativization/Basic.lean` companion edits.
+
+#### KeenanComrie1977 derive-from-Fragments rewrite
+
+`Phenomena/Relativization/Studies/KeenanComrie1977.lean` major restructuring (-657 → +many; net cleanup). Drops the intermediate `KCProfile`/`StrategyEntry` schema and derives K&C's typological theorems directly from `Fragments.{Lang}.relMarkers : List RelClauseMarker` (the per-language data layer encoding actual linguistic markers). This closes the auditor's "K&C study refactor onto Fragment data" deferred item and instantiates the Theory-hub denotation as study-file constraint pattern from CLAUDE.md.
+
+#### Beaver2004 cb/cp-factoring substrate (`Phenomena/Reference/Studies/Beaver2004.lean §2a`)
+
+Adds two substrate-level structural theorems backing the §5.1 cross-framework finding from 0.230.502 (PSDH ↔ Beaver substrate divergence): COHERE factors through `cb`, ALIGN factors through `cb × cp`. Per-example facts in PSDH §5.1 (the `decide`-checked Nat comparisons on u227/u229) now follow as corollaries from the structural theorems instead of standing as opaque per-paper computations. `Phenomena/Reference/Studies/PoesioEtAl2004.lean` consumer-side restructure (+~200 LOC of cleanup + factoring through the new structural theorems). `KehlerRohde2013.lean` and `RosaArnold2017.lean` minor companion edits.
+
+Bib: `davison-1984` added (Language 60(4): 797-846, "Syntactic Markedness and the Definition of Sentence Topic"; verified DOI 10.2307/413799). Cited from the Reference Studies thread.
+
+#### Build
+
+5430 jobs green.
+
 ## [0.230.504] - 2026-04-28
 
 ### Relativization architecture cleanup (post-audit)

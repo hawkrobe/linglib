@@ -51,8 +51,8 @@ def hasAHRank (positions : List AHPosition) (r : Nat) : Bool :=
   positions.any fun p => p.rank == r
 
 /-- A set of AH positions forms a contiguous segment on the hierarchy:
-    for every pair of positions in the set, all intermediate ranks
-    are also represented.
+    for every pair of positions in the set, every intermediate rank
+    is also represented.
 
     Mirrors `Core.validInventory` for the case hierarchy (@cite{blake-1994}).
 
@@ -69,9 +69,45 @@ def contiguousOnAH (positions : List AHPosition) : Bool :=
           else true
       else true
 
+/-- Prop wrapper around `contiguousOnAH`. The `Bool`-shaped definition
+    is structural and load-bearing for the PRC general-proof case-analysis
+    in `Phenomena/Relativization/Studies/KeenanComrie1977.lean`; this
+    Prop version is the canonical user-facing predicate. -/
+def ContiguousOnAH (positions : List AHPosition) : Prop :=
+  contiguousOnAH positions = true
+
+instance (positions : List AHPosition) : Decidable (ContiguousOnAH positions) :=
+  inferInstanceAs (Decidable (_ = _))
+
 /-- A marker's positions form a contiguous segment of the AH. -/
+def RelClauseMarker.IsContinuous (m : RelClauseMarker) : Prop :=
+  ContiguousOnAH m.positions
+
+instance (m : RelClauseMarker) : Decidable m.IsContinuous :=
+  inferInstanceAs (Decidable (ContiguousOnAH _))
+
+/-- A marker is **primary** (in K&C 1977's sense, p. 67-68) if it can be
+    used to relativize subjects. HC₁ requires every language to have at
+    least one primary marker. -/
+def RelClauseMarker.IsPrimary (m : RelClauseMarker) : Prop :=
+  m.Covers .subject
+
+instance (m : RelClauseMarker) : Decidable m.IsPrimary :=
+  inferInstanceAs (Decidable (m.Covers .subject))
+
+/-- Bool version of `IsPrimary`, retained as a transitional shim for
+    Bool-list equality theorems (`(markers.map (·.isPrimary)) = [true, ...]`). -/
+def RelClauseMarker.isPrimary (m : RelClauseMarker) : Bool :=
+  m.covers .subject
+
+/-- Bool version of `RelClauseMarker.IsContinuous`, retained as a
+    transitional shim while `StrategyEntry` (slated for deletion in the
+    K&C study refactor) still consumes Bool-shaped contiguity. -/
 def RelClauseMarker.isContinuous (m : RelClauseMarker) : Bool :=
   contiguousOnAH m.positions
+
+@[simp] theorem RelClauseMarker.isContinuous_eq (m : RelClauseMarker) :
+    m.isContinuous = contiguousOnAH m.positions := rfl
 
 -- ============================================================================
 -- § 3: Ordering Theorems

@@ -398,7 +398,16 @@ open KehlerRohde2013
     P(pronoun | referent) DOES vary with topichood (passive subject
     87% vs active subject 62%). Rosa & Arnold extend this: thematic
     roles also contribute to topichood/predictability, not just
-    syntactic construction. -/
+    syntactic construction.
+
+    **Substrate-level explanation**:
+    `KehlerRohde2013.cb_topichood_dissociation_under_voice` (§12 of
+    `Phenomena/Reference/Studies/KehlerRohde2013.lean`) exhibits the
+    structural reason: under Kameyama's GR ranker, Centering's `cb` is
+    voice-blind, so any pronominalization gradient between active and
+    passive subjects must be carried by a signal external to `cb` —
+    exactly the gap Rosa & Arnold's experiment measures, and exactly
+    the opening in K&R's Independence Hypothesis their data exploits. -/
 theorem independence_violated_bridges_to_KR :
     -- K&R: passive subjects get more pronouns than active subjects
     pron_passive_subj > pron_active_subj ∧

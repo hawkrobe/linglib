@@ -229,6 +229,68 @@ def cotRanking [DecidableEq E] [CfRankerOf E R]
   [agree, disjoint, proTop prev, famDef, cohere prev priorTopic, align prev]
 
 -- ════════════════════════════════════════════════════
+-- § 2a. Structural faithfulness: COHERE/ALIGN factor through cb (and cp)
+-- ════════════════════════════════════════════════════
+
+/-! These two theorems are the substrate-level structural backing for
+    the cross-framework finding worked out in
+    `Phenomena/Reference/Studies/PoesioEtAl2004.lean §5.1`: Beaver's
+    COT cannot distinguish two candidates whose `cb` agrees, and ALIGN
+    additionally consults `cp`. Per-example facts in §5.1 (the
+    `decide`-checked Nat comparisons on `u227`/`u229`) follow as
+    corollaries: the cb-and-cp values for `cand_u229` reduce, and the
+    structural theorems say the constraint evaluations are determined
+    by those reductions.
+
+    Mathlib analogue: a function `f` "factors through `g`" when
+    `g x = g y → f x = f y`. Here `g = cb prev` (or `g = cb prev × cp`)
+    and `f = (cohere prev priorTopic).eval` (or `(align prev).eval`).
+    The theorems are the formal statement of `Beaver.cohere ∘ Candidate
+    = ψ ∘ cb prev` for some `ψ`, surfacing the cb-only dependence
+    Beaver's substrate makes invisible. -/
+
+/-- **COHERE factors through `cb`**. For fixed `prev` and `priorTopic`,
+    Beaver's COHERE constraint cannot distinguish two candidates whose
+    `cb prev c.utt` values agree. Pure `unfold + rw` proof: COHERE's
+    predicate references `cb prev c.utt` only; mkMark turns the
+    predicate into an if-then-else; equal cb's give equal evaluations.
+
+    The cross-framework consequence (worked out in
+    `PoesioEtAl2004.lean §5.1`): on PSDH (10), `cb u227 u229` returns
+    a single member of the `cbAll` tie set; COHERE's verdict on any
+    candidate `c` with `cb u227 c.utt = cb u227 u229` is therefore
+    fully determined by `cb u227 u229` and `priorTopic` — Beaver's
+    COT cannot recover the discarded tie member from candidate-side
+    information. -/
+theorem cohere_factors_through_cb [DecidableEq E] [CfRankerOf E R]
+    (prev : Utterance E R) (priorTopic : Option E)
+    (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
+    (cohere prev priorTopic).eval c1 = (cohere prev priorTopic).eval c2 := by
+  unfold cohere mkMark
+  simp only [h]
+
+/-- **ALIGN factors through `cb` AND `cp`**. ALIGN's predicate
+    references both `cb prev c.utt` and `c.utt.cp`; equal cb's AND
+    equal cp's give equal evaluations.
+
+    The cross-framework consequence: ALIGN inherits the cb-blindness
+    structurally (via `h_cb`), but additionally requires cp-equality
+    (via `h_cp`). Two candidates that agree on cb but disagree on cp
+    can produce different ALIGN verdicts; this is the formal opening
+    by which a positional totalizer (Strube-Hahn linear order) could
+    differ from Beaver's lex-min — Strube-Hahn changes which
+    realization wins the cf-sort tiebreaker, hence which is `cp`,
+    hence ALIGN's verdict on candidates that share `cb`. -/
+theorem align_factors_through_cb_and_cp [DecidableEq E] [CfRankerOf E R]
+    (prev : Utterance E R)
+    (c1 c2 : Candidate E R)
+    (h_cb : cb prev c1.utt = cb prev c2.utt)
+    (h_cp : c1.utt.cp = c2.utt.cp) :
+    (align prev).eval c1 = (align prev).eval c2 := by
+  unfold align mkMark
+  simp only [h_cb, h_cp]
+
+-- ════════════════════════════════════════════════════
 -- § 3. Application: Beaver example (12) — RETAIN
 -- ════════════════════════════════════════════════════
 
