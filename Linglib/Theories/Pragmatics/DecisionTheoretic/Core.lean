@@ -662,6 +662,96 @@ theorem conjunction_dominates_disjunction (ctx : DTSContext W) (a b : Set W)
   · rw [hbfOr, hpor_h, hpor_nh]
     exact harith.2
 
+/-- Probabilistic support implies DTS positive relevance for binary
+    issues. The Bayes-theorem bridge: `P(H|E) > P(E)` ⟹ `BF_H(E) > 1`.
+
+    Discharged via the DTS-side partition law (`probSum_partition`) plus
+    the normalization `P(H) + P(¬H) = 1` (`probSum_compl` + `hNorm`).
+    Edge case `P(E ∩ ¬H) = 0` is handled separately: the if-branches in
+    `bayesFactor`'s definition return `1000` when `P(E|¬H) = 0` and
+    `P(E|H) > 0`, both established from the partition.
+
+    Promoted from the IKW2025 Part II "Bayesian-to-DTS bridge" in
+    0.230.502 — pure DTS-internal content (no IKW dependency), belongs
+    in DTS Core. -/
+theorem probSupports_implies_posRelevant_binary
+    (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
+    (evidence : Set W) [DecidablePred (· ∈ evidence)]
+    (hH_pos : probSum prior topic > 0)
+    (hNH_pos : probSum prior (topicᶜ) > 0)
+    (_hS_pos : probSum prior evidence > 0)
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probSum prior (Set.univ : Set W) = 1)
+    (hSupp : condProb prior evidence topic > probSum prior evidence) :
+    posRelevant ⟨topic, inferInstance, prior⟩ evidence := by
+  set pH := probSum prior topic with hpH_def
+  set pNH := probSum prior (topicᶜ) with hpNH_def
+  set pEH := probSum prior (evidence ∩ topic) with hpEH_def
+  set pENH := probSum prior (evidence ∩ topicᶜ) with hpENH_def
+  have hpart : probSum prior evidence = pEH + pENH := by
+    show probSum prior evidence = _
+    exact probSum_partition prior evidence topic
+  have hsum1 : pH + pNH = 1 := by
+    have h := probSum_compl prior topic
+    rw [hNorm] at h; exact h
+  have hpEH_ge : pEH ≥ 0 := probSum_nonneg prior hNonneg _
+  have hpENH_ge : pENH ≥ 0 := probSum_nonneg prior hNonneg _
+  have hcondE_eq : condProb prior evidence topic = pEH / pH := by
+    unfold condProb; rw [if_neg (ne_of_gt hH_pos)]
+  have hcondNotE_eq : condProb prior evidence (topicᶜ) = pENH / pNH := by
+    unfold condProb; rw [if_neg (ne_of_gt hNH_pos)]
+  rw [hcondE_eq, hpart] at hSupp
+  rw [gt_iff_lt, lt_div_iff₀ hH_pos] at hSupp
+  show bayesFactor ⟨topic, inferInstance, prior⟩ evidence > 1
+  unfold bayesFactor
+  show (if condProb prior evidence (topicᶜ) = 0 then _ else _) > 1
+  rw [hcondNotE_eq]
+  by_cases hENH_zero : pENH = 0
+  · rw [hENH_zero, zero_div, if_pos rfl]
+    show (if condProb prior evidence topic > 0 then _ else _) > 1
+    rw [hcondE_eq]
+    have hpEH_pos : pEH > 0 := by
+      rw [hENH_zero, add_zero] at hSupp
+      nlinarith [hpEH_ge, hH_pos]
+    rw [if_pos (div_pos hpEH_pos hH_pos)]
+    norm_num
+  · have hpENH_pos : pENH > 0 := lt_of_le_of_ne hpENH_ge (Ne.symm hENH_zero)
+    have hENH_div_ne : pENH / pNH ≠ 0 := by
+      intro hzero
+      rcases (div_eq_zero_iff.mp hzero) with h | h
+      · exact hENH_zero h
+      · exact absurd h (ne_of_gt hNH_pos)
+    rw [if_neg hENH_div_ne]
+    show condProb prior evidence topic / (pENH / pNH) > 1
+    rw [hcondE_eq]
+    have hH_ne : pH ≠ 0 := ne_of_gt hH_pos
+    have hNH_ne : pNH ≠ 0 := ne_of_gt hNH_pos
+    have hENH_ne : pENH ≠ 0 := ne_of_gt hpENH_pos
+    have hPH_pENH_pos : pH * pENH > 0 := mul_pos hH_pos hpENH_pos
+    rw [show pEH / pH / (pENH / pNH) = pEH * pNH / (pH * pENH) by field_simp]
+    rw [gt_iff_lt, lt_div_iff₀ hPH_pENH_pos, one_mul]
+    nlinarith [hSupp, hsum1]
+
+/-- Negative relevance (DTS) implies non-support (probabilistic).
+
+    Contrapositive of `probSupports_implies_posRelevant_binary`.
+    Promoted from IKW2025 Part II in 0.230.502. -/
+theorem negRelevant_implies_not_probSupports
+    (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
+    (evidence : Set W) [DecidablePred (· ∈ evidence)]
+    (hH_pos : probSum prior topic > 0)
+    (hNH_pos : probSum prior (topicᶜ) > 0)
+    (hS_pos : probSum prior evidence > 0)
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probSum prior (Set.univ : Set W) = 1)
+    (hNeg : negRelevant ⟨topic, inferInstance, prior⟩ evidence) :
+    ¬ (condProb prior evidence topic > probSum prior evidence) := by
+  intro hSupp
+  have hPos := probSupports_implies_posRelevant_binary prior topic evidence
+    hH_pos hNH_pos hS_pos hNonneg hNorm hSupp
+  simp only [posRelevant, negRelevant] at hPos hNeg
+  linarith
+
 /-- **Theorem 6b**: XOR of two positively relevant propositions is not
 necessarily positively relevant.
 

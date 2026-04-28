@@ -1,7 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Probabilistic
 import Linglib.Core.Question.Relevance
-import Linglib.Theories.Pragmatics.DecisionTheoretic.But
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2022
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
 import Linglib.Core.Probability.PMFFin
@@ -9,7 +7,7 @@ import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # @cite{ippolito-kiss-williams-2025}: Discourse *only*
-@cite{ippolito-kiss-williams-2022} @cite{potts-2005} @cite{roberts-2012} @cite{thomas-2026} @cite{merin-1999}
+@cite{ippolito-kiss-williams-2022} @cite{potts-2005} @cite{roberts-2012} @cite{thomas-2026}
 
 Formalisation of @cite{ippolito-kiss-williams-2025} "Discourse only"
 (WCCFL 41 proceedings, pp. 222–231). Discourse *only* is a clausal
@@ -24,9 +22,17 @@ Ippolito et al. (2022) we define…"); it lives in
 `Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` and is imported
 here. This file owns the paper-specific bundling — `Sentence`,
 `Context`, the felicity conditions of ex. (16), the architectural
-derivations of §5.2, the worked house-buying example of §7, and a
-project-internal bridge to @cite{merin-1999}'s DTS for the §6
-*only*-vs-*but* discussion.
+derivations of §5.2, and the worked house-buying example of §7.
+
+A previous "Part II: Bayesian-to-DTS bridge" was removed in 0.230.502:
+@cite{merin-1999} is not cited in the paper's reference list, and
+the §6 *only*-vs-*but* discussion grounds itself in
+@cite{anscombre-ducrot-1977} and IKW 2022's notion of semantic equality
+of *but*'s arguments — not in decision-theoretic semantics. The bridge
+was the formaliser's editorial overlay; the substrate-internal Bayesian
+theorems it contained (`probSupports_implies_posRelevant_binary`,
+`negRelevant_implies_not_probSupports`) moved to
+`Theories/Pragmatics/DecisionTheoretic/Core.lean` where they belong.
 
 ## The puzzle
 
@@ -79,15 +85,6 @@ deferred.
   scenario (§7), instantiating the substrate on a concrete 8-world
   model and connecting the predictions to the cross-linguistic data
   in the sibling `Data.lean`.
-* **Part II** *(project-internal bridge, not paper-engagement)*: a
-  Bayesian-to-DTS connection. @cite{merin-1999} is **not** cited in
-  the paper's reference list; this section is the formaliser's overlay
-  relating linglib's Merin-DTS apparatus to discourse *only*'s CI when
-  the binary-QUD configuration *also* meets the stronger *but*
-  condition of negative relevance. The asymmetry with *but* asserted
-  in the paper's §6 is **not** "every *but* context licenses *only*"
-  (the paper's (27)/(28) data show otherwise) and no theorem to that
-  effect is asserted here.
 -/
 
 namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025
@@ -919,221 +916,5 @@ theorem interrogative_s'_ci_satisfied {W' : Type*}
     rw [hPartial] at hp
     simp at hp
   · exact Supports.of_no_belief_fails hNoBelief
-
-/-! ## Part II: project-internal Bayesian-to-DTS bridge
-
-@cite{merin-1999}'s Decision-Theoretic Semantics is **not** cited in
-@cite{ippolito-kiss-williams-2025}'s reference list. The §6 *but*/*only*
-discussion in the paper grounds itself in @cite{anscombre-ducrot-1977}
-and the IKW 2022 SuB 26 *but* analysis, not in DTS. The connection
-formalized in this section is therefore the formaliser's overlay,
-relating linglib's pre-existing Merin-DTS apparatus
-(`Theories/Pragmatics/DecisionTheoretic/`) to discourse *only*'s CI
-under one specific configuration: a binary QUD where the right argument
-*also* meets the stronger Merin negative-relevance condition.
-
-### What is and is not claimed
-
-* `probSupports_implies_posRelevant_binary` and
-  `negRelevant_implies_not_probSupports` are Bayesian facts about the
-  binary-QUD setting that make the bridge well-defined.
-* `discOnly_implies_unexpectedness_under_but` derives Merin
-  unexpectedness *for those discourse-only contexts that happen to
-  meet the stronger negative-relevance condition*.
-* No theorem claims that *every* *but* context licenses discourse
-  *only* — the paper's (27)/(28) data show the opposite (contexts
-  exist where *but* is felicitous and discourse *only* is `#`).
--/
-
-open DTS DTS.But
-
-/-! ### § 9: Witness structure -/
-
-/-- A witness for the discourse *only* → DTS unexpectedness connection.
-
-Bundles a DTS context together with two clausal arguments `s` and
-`s'` (as `Set W`) and the evidence that `s` is positively relevant to
-the topic H. Unlike the *but* witness, this does NOT require `s'` to
-be negatively relevant — discourse *only* only requires `s'` to fail
-to support, which is strictly weaker than negative relevance. -/
-structure DTSDiscourseOnlyWitness (W : Type*) [Fintype W] where
-  /-- The DTS context (dichotomic issue H + prior). -/
-  dtsCtx : DTSContext W
-  /-- Left clausal argument S. -/
-  s : Set W
-  /-- Decidability of `s` (lifted to a typeclass instance below). -/
-  sDec : DecidablePred (· ∈ s)
-  /-- Right clausal argument S'. -/
-  s' : Set W
-  /-- Decidability of `s'` (lifted to a typeclass instance below). -/
-  s'Dec : DecidablePred (· ∈ s')
-  /-- S is positively relevant to H. -/
-  sPosRelevant : posRelevant dtsCtx s
-
-attribute [instance] DTSDiscourseOnlyWitness.sDec DTSDiscourseOnlyWitness.s'Dec
-
-/-! ### § 10: Bridge theorems -/
-
-/-- Probabilistic support implies DTS positive relevance for binary
-    issues. The Bayes-theorem bridge: `P(H|E) > P(E)` ⟹ `BF_H(E) > 1`.
-
-    Discharged via the DTS-side partition law (`probSum_partition`) plus
-    the normalization `P(H) + P(¬H) = 1` (`probSum_compl` + `hNorm`).
-    Edge case `P(E ∩ ¬H) = 0` is handled separately: the if-branches in
-    `bayesFactor`'s definition return `1000` when `P(E|¬H) = 0` and
-    `P(E|H) > 0`, both established from the partition. -/
-theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
-    (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
-    (evidence : Set W) [DecidablePred (· ∈ evidence)]
-    (hH_pos : probSum prior topic > 0)
-    (hNH_pos : probSum prior (topicᶜ) > 0)
-    (_hS_pos : probSum prior evidence > 0)
-    (hNonneg : ∀ w, prior w ≥ 0)
-    (hNorm : probSum prior (Set.univ : Set W) = 1)
-    (hSupp : condProb prior evidence topic > probSum prior evidence) :
-    posRelevant ⟨topic, inferInstance, prior⟩ evidence := by
-  -- Abbreviations
-  set pH := probSum prior topic with hpH_def
-  set pNH := probSum prior (topicᶜ) with hpNH_def
-  set pEH := probSum prior (evidence ∩ topic) with hpEH_def
-  set pENH := probSum prior (evidence ∩ topicᶜ) with hpENH_def
-  -- Partition: probSum prior e = pEH + pENH
-  have hpart : probSum prior evidence = pEH + pENH := by
-    show probSum prior evidence = _
-    exact probSum_partition prior evidence topic
-  -- Normalization: pH + pNH = 1
-  have hsum1 : pH + pNH = 1 := by
-    have h := probSum_compl prior topic
-    rw [hNorm] at h; exact h
-  -- Nonnegativity
-  have hpEH_ge : pEH ≥ 0 := probSum_nonneg prior hNonneg _
-  have hpENH_ge : pENH ≥ 0 := probSum_nonneg prior hNonneg _
-  -- Unfold condProb in hSupp
-  have hcondE_eq : condProb prior evidence topic = pEH / pH := by
-    unfold condProb; rw [if_neg (ne_of_gt hH_pos)]
-  have hcondNotE_eq : condProb prior evidence (topicᶜ) = pENH / pNH := by
-    unfold condProb; rw [if_neg (ne_of_gt hNH_pos)]
-  rw [hcondE_eq, hpart] at hSupp
-  -- hSupp : pEH/pH > pEH + pENH
-  rw [gt_iff_lt, lt_div_iff₀ hH_pos] at hSupp
-  -- hSupp : (pEH + pENH) * pH < pEH
-  -- Goal: bayesFactor ⟨topic, _, prior⟩ evidence > 1
-  show bayesFactor ⟨topic, inferInstance, prior⟩ evidence > 1
-  unfold bayesFactor
-  show (if condProb prior evidence (topicᶜ) = 0 then _ else _) > 1
-  rw [hcondNotE_eq]
-  by_cases hENH_zero : pENH = 0
-  · -- Edge case: pENH = 0 ⇒ pENH/pNH = 0 ⇒ bayesFactor = 1000 if pEH/pH > 0
-    rw [hENH_zero, zero_div, if_pos rfl]
-    show (if condProb prior evidence topic > 0 then _ else _) > 1
-    rw [hcondE_eq]
-    -- Need: (if pEH/pH > 0 then 1000 else 1) > 1
-    have hpEH_pos : pEH > 0 := by
-      rw [hENH_zero, add_zero] at hSupp
-      -- hSupp : pEH * pH < pEH (after rewriting (pEH + 0) → pEH)
-      nlinarith [hpEH_ge, hH_pos]
-    rw [if_pos (div_pos hpEH_pos hH_pos)]
-    norm_num
-  · -- Main case: pENH > 0
-    have hpENH_pos : pENH > 0 := lt_of_le_of_ne hpENH_ge (Ne.symm hENH_zero)
-    have hENH_div_ne : pENH / pNH ≠ 0 := by
-      intro hzero
-      rcases (div_eq_zero_iff.mp hzero) with h | h
-      · exact hENH_zero h
-      · exact absurd h (ne_of_gt hNH_pos)
-    rw [if_neg hENH_div_ne]
-    show condProb prior evidence topic / (pENH / pNH) > 1
-    rw [hcondE_eq]
-    -- Goal: pEH/pH / (pENH/pNH) > 1
-    have hH_ne : pH ≠ 0 := ne_of_gt hH_pos
-    have hNH_ne : pNH ≠ 0 := ne_of_gt hNH_pos
-    have hENH_ne : pENH ≠ 0 := ne_of_gt hpENH_pos
-    have hPH_pENH_pos : pH * pENH > 0 := mul_pos hH_pos hpENH_pos
-    rw [show pEH / pH / (pENH / pNH) = pEH * pNH / (pH * pENH) by field_simp]
-    rw [gt_iff_lt, lt_div_iff₀ hPH_pENH_pos, one_mul]
-    -- Goal: pH * pENH < pEH * pNH
-    -- From hSupp : (pEH + pENH) * pH < pEH ; pNH = 1 - pH from hsum1
-    nlinarith [hSupp, hsum1]
-
-/-- Negative relevance (DTS) implies non-support (probabilistic).
-
-    If `S'` is negatively relevant to H (BF < 1, i.e., `P(S'|H) <
-    P(S'|¬H)`), then `S'` does not probabilistically support H — i.e.,
-    `P(H|S') ≤ P(H)`. This is the formal content of IKW's observation
-    that *but*'s condition on the second clause is strictly stronger
-    than discourse *only*'s.
-
-    By contrapositive: if `S'` did probabilistically support H, the
-    previous theorem would give `posRelevant` (BF > 1), contradicting
-    `negRelevant` (BF < 1). -/
-theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
-    (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
-    (evidence : Set W) [DecidablePred (· ∈ evidence)]
-    (hH_pos : probSum prior topic > 0)
-    (hNH_pos : probSum prior (topicᶜ) > 0)
-    (hS_pos : probSum prior evidence > 0)
-    (hNonneg : ∀ w, prior w ≥ 0)
-    (hNorm : probSum prior (Set.univ : Set W) = 1)
-    (hNeg : negRelevant ⟨topic, inferInstance, prior⟩ evidence) :
-    ¬ (condProb prior evidence topic > probSum prior evidence) := by
-  intro hSupp
-  have hPos := probSupports_implies_posRelevant_binary prior topic evidence
-    hH_pos hNH_pos hS_pos hNonneg hNorm hSupp
-  simp only [posRelevant, negRelevant] at hPos hNeg
-  linarith
-
-/-- When the right argument is `negRelevant` (Merin's *but*
-    condition), it fails to probabilistically support the topic (the
-    discourse-*only* CI clause (ii) in our binary-QUD setting). This
-    is the contrapositive of `probSupports_implies_posRelevant_binary`
-    instantiated on `s'`.
-
-    Note: this lemma does NOT establish that every Merin-*but* context
-    licenses discourse *only*. The paper's (27)/(28) data show contexts
-    where *but* is felicitous and *only* is `#`; the felicity asymmetry
-    has further requirements (e.g., on the QUD direction and the
-    speaker's commitments) that this purely Bayesian fact does not
-    capture. -/
-theorem but_negrel_implies_no_probsupport {W : Type*} [Fintype W]
-    (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
-    (s s' : Set W) [DecidablePred (· ∈ s)] [DecidablePred (· ∈ s')]
-    (hH_pos : probSum prior topic > 0)
-    (hNH_pos : probSum prior (topicᶜ) > 0)
-    (_hS_pos : probSum prior s > 0)
-    (hS'_pos : probSum prior s' > 0)
-    (_hSpos : posRelevant ⟨topic, inferInstance, prior⟩ s)
-    (hS'neg : negRelevant ⟨topic, inferInstance, prior⟩ s')
-    (hNonneg : ∀ w, prior w ≥ 0)
-    (hNorm : probSum prior (Set.univ : Set W) = 1) :
-    ¬ (condProb prior s' topic > probSum prior s') :=
-  negRelevant_implies_not_probSupports prior topic s' hH_pos hNH_pos hS'_pos
-    hNonneg hNorm hS'neg
-
-/-- Discourse *only*'s CI implies unexpectedness when the QUD is
-    binary, S' is negatively relevant, and CIP holds.
-
-    When S is `posRelevant` and S' is `negRelevant` (the stronger *but*
-    condition), Merin's Theorem 8 gives `P(S'|S) < P(S')`: S' is
-    unexpected given S.
-
-    Note: this theorem uses the stronger *but* condition
-    (`negRelevant`) rather than the weaker discourse *only* condition
-    (`¬probSupports`). Unexpectedness in Merin's sense requires active
-    counter-relevance, not just failure to support. So unexpectedness
-    is a consequence when discourse *only* sentences happen to meet
-    the stronger *but* threshold. -/
-theorem discOnly_implies_unexpectedness_under_but {W : Type*} [Fintype W]
-    (w : DTSDiscourseOnlyWitness W)
-    (hS'neg : negRelevant w.dtsCtx w.s')
-    (hPrior : ∀ x, w.dtsCtx.prior x ≥ 0)
-    (hNorm : probSum w.dtsCtx.prior (Set.univ : Set W) = 1)
-    (hS_pos : 0 < probSum w.dtsCtx.prior w.s)
-    (hH_pos : 0 < probSum w.dtsCtx.prior w.dtsCtx.topic)
-    (hNH_pos : 0 < probSum w.dtsCtx.prior (w.dtsCtx.topicᶜ))
-    (hCIP : CIP w.dtsCtx w.s w.s') :
-    condProb w.dtsCtx.prior w.s' w.s <
-    probSum w.dtsCtx.prior w.s' :=
-  cip_contrariness_implies_unexpectedness w.dtsCtx w.s w.s'
-    hPrior hNorm hCIP (.inl ⟨w.sPosRelevant, hS'neg⟩) hS_pos hH_pos hNH_pos
 
 end Phenomena.Focus.Studies.IppolitoKissWilliams2025

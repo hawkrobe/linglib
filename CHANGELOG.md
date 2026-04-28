@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.503] - 2026-04-27
+
+### IKW2025 Part II dissolved: editorial bridge removed, Bayesian theorems migrated to DTS Core
+
+User audit-checked the premise via the actual paper PDF (lingref/wccfl/41/paper3750.pdf, §6 "Only vs. *but*", pp. 228–229) before approving deletion. Confirmed: the paper's *but*/*only* asymmetry analysis cites only Anscombre & Ducrot 1977 ("weight" / "maxim of manner") and IKW 2022 (semantic equality of *but*'s arguments) — invokes no Bayes factor, no decision theory, no Merin. Reference list (p. 231) does not include Merin 1999. The Lean file's "Part II: Bayesian-to-DTS bridge" was therefore the formaliser's editorial overlay, exactly the pattern CLAUDE.md prohibits ("editorial decisions don't fit the taxonomy. Mathlib has no Mathlib/Bridges/ directory").
+
+**Changes**:
+- **2 substrate-internal Bayesian theorems migrated** from `Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean` Part II to `Theories/Pragmatics/DecisionTheoretic/Core.lean`:
+  - `probSupports_implies_posRelevant_binary` (Bayes-bridge: `P(H|E) > P(E)` ⟹ `BF_H(E) > 1`, with the `bayesFactor` 1000-magic-number edge case)
+  - `negRelevant_implies_not_probSupports` (contrapositive of above)
+  - These are pure DTS-internal — no IKW dependency, no editorial framing. They belong in DTS substrate.
+- **3 editorial-overlay items deleted** from IKW2025:
+  - `DTSDiscourseOnlyWitness` structure (Part II infrastructure only; bundled DTSContext + s/s'/posRelevant evidence with the unstated framing "discourse *only* contexts that *also* meet the *but* condition")
+  - `but_negrel_implies_no_probsupport` (was a wrapper around `negRelevant_implies_not_probSupports` with two unused hypotheses `_hS_pos` and `_hSpos` whose only purpose was to make the framing match Part II's *but*/*only* discussion)
+  - `discOnly_implies_unexpectedness_under_but` (was a wrapper around DTS Core's `cip_contrariness_implies_unexpectedness` via the editorial witness struct)
+- **2 DTS imports removed** from IKW2025: `Theories.Pragmatics.DecisionTheoretic.But`, `Theories.Pragmatics.DecisionTheoretic.Core`
+- **`open DTS DTS.But` removed** from IKW2025
+- **Module docstring updated**: removed all references to Merin DTS bridge; added a note explaining the Part II removal and where the migrated theorems live; removed `@cite{merin-1999}` from the citation header
+- **File shrinks** from 1139 to 923 lines (-216 LOC, ~19% smaller)
+
+**IKW2025 is now pure-PMF** — the only file in the codebase that previously bridged DTS and PMF stacks no longer does so. The audit's stated goal ("removing the parallel Q layer") is achieved at the cross-stack-import level: zero files import both stacks now.
+
+The 4 substrate-internal Bayesian-bridge theorems (post-migration: 2 in DTS Core) remain as DTS-internal API. Future consumers wanting the Bayes-bridge can import DTS Core directly. `merin-1999` retains 3 genuine consumer files (`Core/Agent/PartitionDT.lean`, `Core/Question/Partition/{Cells,Negativity}.lean`) — those are real Merin-DTS substrate uses.
+
+Build: 5430 jobs green; only pre-existing unrelated sorries (DTS Core xor counterexample, DecisionTheoretic/But:439).
+
 ## [0.230.502] - 2026-04-28
 
 ### Bundled checkpoint: Tagalog Phonology overhaul + Relativization `Defs`/`Basic` split + Centering `Constraint1Weak` deletion + PoesioEtAl2004 §5.1 cross-framework theorem
