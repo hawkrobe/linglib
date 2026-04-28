@@ -26,7 +26,9 @@ namespace Features.InformationStructure
 
     The theme:
     - Presupposes a QUD (set of alternatives)
-    - Is often prosodically marked (L+H* LH% in English)
+    - Is often prosodically marked (L+H* LH% in English per
+      @cite{pierrehumbert-hirschberg-1990}; attributed by
+      @cite{steedman-2000} to the Theme tune)
     - Corresponds to the λ-abstract in structured meanings
 
     Example: in "FRED ate the beans" (answering "Who ate the beans?"),
@@ -41,7 +43,8 @@ structure Theme (P : Type) where
 
     The rheme:
     - Restricts the QUD alternatives to one
-    - Is often prosodically marked (H* LL% in English)
+    - Is often prosodically marked (H* LL% in English per
+      @cite{pierrehumbert-hirschberg-1990})
     - Provides the "answer" to the implicit question
 
     Example: in "FRED ate the beans", the rheme is "Fred". -/
@@ -56,7 +59,9 @@ structure Rheme (P : Type) where
 /-- Focus: the contrasted element(s) within theme or rheme.
 
     Focus is marked by pitch accent and:
-    - Evokes alternatives (Rooth)
+    - Evokes alternatives (@cite{rooth-1992} alternative semantics — note
+      that Schwarzschild 1999, Wagner 2012 contest the alt-set primitive;
+      the field `alternatives : List α` here commits to the Roothian view)
     - Associates with focus-sensitive particles (only, even)
     - Determines the "question" being answered
 
@@ -83,7 +88,13 @@ structure Background (α : Type) where
 
     Partitions the utterance into:
     - Theme vs. Rheme (what's talked about vs. what's said)
-    - Focus vs. Background (within each) -/
+    - Focus vs. Background (within each)
+
+    Note: `foci : List P` and `background : List P` are flat lists of
+    `P`-values, not `List (Focus P)` / `List (Background P)`. The
+    `Focus`/`Background` structs are reusable pieces for theories that
+    want to bundle alternatives explicitly, but `InfoStructure`'s own
+    fields use the underlying `P` type. -/
 structure InfoStructure (P : Type) where
   /-- The theme (topic, λ-abstract, presupposed QUD) -/
   theme : Theme P
@@ -94,20 +105,14 @@ structure InfoStructure (P : Type) where
   /-- Background elements (given) -/
   background : List P := []
 
--- Information Structure Interface (typeclass)
-
-/-- Typeclass for theories that provide Information Structure.
-
-    Implementations:
-    - CCG/Intonation: prosodic realization
-    - (Future) Syntactic approaches, discourse models
-
-    The key insight: different surface forms (derivations, prosody) can
-    map to the same propositional content but different Information
-    Structures. -/
-class HasInfoStructure (D : Type) (P : Type) where
-  /-- Extract Information Structure from a derivation/form -/
-  infoStructure : D → InfoStructure P
+-- Note: a `class HasInfoStructure (D P : Type) where infoStructure : D
+-- → InfoStructure P` typeclass was deleted in the 0.230.489 cleanup.
+-- It had 2 instances (Rooth1992 + CCG/Intonation) and 0 polymorphic
+-- consumers (no `[HasInfoStructure D P]`-parameterized declarations
+-- anywhere); both call sites were inside Rooth1992.lean testing its
+-- own instance. Per mathlib discipline (single-method classes with
+-- no laws are anti-pattern when no caller dispatches on them) the
+-- typeclass was replaced with regular `def`s exposed by each consumer.
 
 -- Discourse Status
 

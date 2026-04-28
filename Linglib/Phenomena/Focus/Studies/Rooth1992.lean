@@ -47,7 +47,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 - `AltMeaning`, `AltMeaning.unfeatured` — O/A-value computation (§3)
 - `Focus`, `Background` — focus/background partition (§4)
 - `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
-- `HasInfoStructure` — typeclass instance (§5b)
+- `FocusedSentence.infoStructure` — IS extractor (§5b; previously a `HasInfoStructure` instance)
 - `FIPApplication` — FIP application classification (§8)
 - `Tree`, `interp` — compositional derivation (§10–§11)
 - `Derivation` — derivation bundles (§13)
@@ -163,36 +163,38 @@ theorem qa_background_match :
     qaInfo.background = qaBackground.elements := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5b  HasInfoStructure Instance
+-- §5b  FocusedSentence → InfoStructure
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- Minimal derivation type for exercising HasInfoStructure.
+/-- Minimal derivation type for exercising the IS partition.
     Pairs a focused constituent with background material. -/
 structure FocusedSentence where
   focusedWord : String
   backgroundWords : List String
   deriving Repr
 
-/-- Exercises the HasInfoStructure typeclass:
-    a FocusedSentence determines an InfoStructure. -/
-instance : HasInfoStructure FocusedSentence String where
-  infoStructure s :=
-    { theme := { content := "background", marked := false }
-    , rheme := { content := s.focusedWord, marked := true }
-    , foci := [s.focusedWord]
-    , background := s.backgroundWords }
+/-- A FocusedSentence determines an InfoStructure.
+
+    (Previously a `HasInfoStructure FocusedSentence String` instance —
+    the typeclass shape was deleted in the 0.230.489 cleanup since no
+    caller dispatched on it.) -/
+def FocusedSentence.infoStructure (s : FocusedSentence) : InfoStructure String :=
+  { theme := { content := "background", marked := false }
+  , rheme := { content := s.focusedWord, marked := true }
+  , foci := [s.focusedWord]
+  , background := s.backgroundWords }
 
 def fredSentence : FocusedSentence :=
   { focusedWord := "Fred"
   , backgroundWords := ["ate", "the", "beans"] }
 
-/-- The typeclass correctly extracts focus. -/
+/-- The extractor correctly puts the focused word in `foci`. -/
 theorem infoStructure_extracts_focus :
-    (HasInfoStructure.infoStructure fredSentence).foci = ["Fred"] := rfl
+    fredSentence.infoStructure.foci = ["Fred"] := rfl
 
-/-- The typeclass correctly extracts background. -/
+/-- The extractor correctly puts background words in `background`. -/
 theorem infoStructure_extracts_background :
-    (HasInfoStructure.infoStructure fredSentence).background =
+    fredSentence.infoStructure.background =
       ["ate", "the", "beans"] := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════

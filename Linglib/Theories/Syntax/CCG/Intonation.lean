@@ -263,19 +263,26 @@ def extractInfoStructure (phrases : List ProsodicPhrase)
     }
   | _, _ => none  -- ambiguous or ill-formed
 
--- Instance: CCG Intonation provides Information Structure
+-- Total IS extractor for CCG prosodic derivations
 
 /--
-Prosodic CCG derivations have Information Structure.
+Prosodic CCG derivations have Information Structure. Wraps
+`extractInfoStructure` (`Option`-typed because not every list of
+prosodic phrases yields a coherent Theme/Rheme partition) with a
+default-everything-rheme fallback.
+
+(The previous `instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv`
+typeclass shape was deleted in the 0.230.489 cleanup since no caller
+dispatched on the typeclass — see Features/InformationStructure.lean
+for the rationale. Direct calls suffice.)
 -/
-instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv where
-  infoStructure phrases :=
-    match extractInfoStructure phrases with
-    | some info => info
-    | none => {  -- default: everything is rheme
-        theme := ⟨.lex ⟨"", S, .null⟩, false⟩
-        rheme := ⟨.lex ⟨"", S, .null⟩, false⟩
-      }
+def infoStructureTotal (phrases : List ProsodicPhrase) : InfoStructure ProsodicDeriv :=
+  match extractInfoStructure phrases with
+  | some info => info
+  | none => {  -- default: everything is rheme
+      theme := ⟨.lex ⟨"", S, .null⟩, false⟩
+      rheme := ⟨.lex ⟨"", S, .null⟩, false⟩
+    }
 
 -- Example: "FRED ate the BEANS"
 

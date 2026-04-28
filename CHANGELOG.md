@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.491] - 2026-04-28
+
+### InformationStructure cleanup commit 2/3: HasInfoStructure typeclass deleted (no dispatch consumers)
+
+Second of three sequenced cleanups from the multi-agent audit on `Features/InformationStructure.lean`. Originally planned as "extract `HasInfoStructure` + IS-partition cluster to `Theories/Interfaces/SyntaxPhonology/InfoStructureInterface.lean`" — that recommendation rested on `HasInfoStructure` being a productive typeclass interface contract. Verification (user's prompt: "are we actually using this kind of 'interface contract' anywhere?") showed it isn't:
+
+- **Zero `[HasInfoStructure D P]`-parameterized declarations** anywhere in the codebase. No polymorphic dispatch.
+- The 2 instances (`Rooth1992.lean` `FocusedSentence` + `CCG/Intonation.lean` `List ProsodicPhrase`) had only 2 call sites of `HasInfoStructure.infoStructure`, both inside `Rooth1992.lean` testing its OWN instance.
+- Per mathlib discipline (single-method classes with no laws are anti-pattern when no caller dispatches on them), the typeclass earns nothing.
+
+**Revised plan executed**: delete `HasInfoStructure` typeclass; rewrite the 2 instances as regular `def`s; rewrite the 2 call sites as direct method calls. Keep `Theme`/`Rheme`/`Focus`/`Background`/`InfoStructure` structs in `Features/InformationStructure.lean` — they ARE substance taxonomies (theme/rheme is a linguistic-feature partition) consumed as data types by both files.
+
+**Files touched**:
+- `Linglib/Features/InformationStructure.lean`: `class HasInfoStructure` definition deleted (replaced with explanatory comment); IS-partition structs (`Theme`/`Rheme`/`Focus`/`Background`/`InfoStructure`) kept in place with docstring updates noting Pierrehumbert-Hirschberg 1990 attribution for the prosodic claims (previously credited solely to Steedman 2000) + Schwarzschild/Wagner contestation note on `Focus.alternatives`.
+- `Linglib/Theories/Syntax/CCG/Intonation.lean`: `instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv where ...` → `def infoStructureTotal (phrases : List ProsodicPhrase) : InfoStructure ProsodicDeriv := ...` (wraps the existing `extractInfoStructure : ... → Option (InfoStructure ProsodicDeriv)` with a default-everything-rheme fallback).
+- `Linglib/Phenomena/Focus/Studies/Rooth1992.lean`: `instance : HasInfoStructure FocusedSentence String where ...` → `def FocusedSentence.infoStructure (s : FocusedSentence) : InfoStructure String := ...`; 2 theorem call sites `(HasInfoStructure.infoStructure fredSentence).foci/.background` → `fredSentence.infoStructure.foci/.background`; module docstring `HasInfoStructure — typeclass instance` → `FocusedSentence.infoStructure — IS extractor`.
+
+No new file created; the previously-created stub `Linglib/Theories/Interfaces/SyntaxPhonology/InfoStructureInterface.lean` (from the now-revised plan) was deleted before the commit.
+
+**Build**: 1802-job affected dependency cone green (Features/InformationStructure + Phenomena/Focus/Basic + Semantics/Focus/Interpretation + CCG/Intonation + Rooth1992 + transitive closures).
+
+**Remaining**: commit 3/3 — move PolarityMarking* cluster (3 enums + 1 struct) to `Typology/PolarityMarking.lean`, update 7 Fragments + 3 Polarity studies' imports.
+
 ## [0.230.489] - 2026-04-28
 
 ### PSDH 2004 arc C6 — InformationStatus ranker + PoesioEtAl2004 study + audit-driven fixes + partial Beaver bridge
