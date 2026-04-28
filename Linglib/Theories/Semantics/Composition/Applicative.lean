@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Composition.Continuation
+import Linglib.Core.Assignment
 
 /-!
 # Applicative Functors in Natural Language Semantics
@@ -283,9 +284,10 @@ section TypedAssignments
 
 variable {E : Type}
 
-/-- Type-homogeneous assignment: maps indices to values of type `r`.
-    Specializes to `Core.Assignment E` when `r = E`. -/
-abbrev TypedAssignment (r : Type) := Nat → r
+/-- Type-homogeneous assignment over carrier `r`. Equal to `Core.Assignment r`;
+    aliased here to read naturally in the Charlow paycheck composition where
+    `r` ranges over both entity and intension carriers within one derivation. -/
+abbrev TypedAssignment (r : Type) := Core.Assignment r
 
 /-- Self-contained paycheck derivation via composed `Gₑ ∘ G_{gₑ→e}`.
 

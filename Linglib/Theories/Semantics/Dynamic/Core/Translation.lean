@@ -6,10 +6,10 @@ Unifies PLA (@cite{dekker-2012}) and Core (Muskens-style) infrastructures.
 ## The Problem
 
 PLA uses:
-  `Poss E = (VarIdx → E) × (PronIdx → E)` (no worlds, explicit pronouns)
+  `Poss E = Assignment E × Assignment E` (no worlds, explicit pronouns)
 
 Core uses:
-  `Possibility W E = { world : W, assignment : Nat → E }` (worlds, no pronouns)
+  `Possibility W E = { world : W, assignment : Assignment E }` (worlds, no pronouns)
 
 ## The Solution
 
@@ -19,14 +19,18 @@ Core uses:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Core.Assignment
 
 namespace Semantics.Dynamic.Core
 
+open _root_.Core (Assignment)
 
-/-- PLA-style possibility: assignment + witness sequence (no world) -/
+/-- PLA-style possibility: assignment + witness sequence (no world).
+    Both fields are `Core.Assignment E` — variables and pronouns each
+    get their own ℕ-indexed Tarski-style assignment. -/
 structure PLAPoss (E : Type*) where
-  assignment : Nat → E
-  witnesses : Nat → E
+  assignment : Assignment E
+  witnesses : Assignment E
 
 /-- PLA-style information state -/
 def PLAInfoState (E : Type*) := Set (PLAPoss E)

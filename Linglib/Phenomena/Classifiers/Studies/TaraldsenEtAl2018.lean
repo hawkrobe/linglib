@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Phenomena.Agreement.Studies.Carstens2026
 import Linglib.Theories.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
@@ -49,6 +49,7 @@ open Morphology.Nanosyntax
 open Morphology.DM.VI
 open Fragments.Xhosa
 open Fragments.Bantu
+open Aikhenvald2000 (xhosa)
 open Typology.NounCategorizationSystem (isNounClassType isClassifierType)
 
 -- ============================================================================
@@ -530,12 +531,12 @@ theorem agreement_resolve_iff_core (s : GenderStatus) :
 
 end AgreementBridge
 
-open Phenomena.Classifiers.Typology in
+open Aikhenvald2000 in
 /-- Xhosa sits at the noun-class pole of the @cite{aikhenvald-2000}
     classifier-to-noun-class continuum. -/
 theorem xhosa_on_classifier_continuum :
     isNounClassType xhosa.classifierType = true ∧
-    xhosa.hasAgreement = true := ⟨rfl, rfl⟩
+    xhosa.HasAgreement := by decide
 
 -- ============================================================================
 -- §10: NPStack derivation from stacking analysis

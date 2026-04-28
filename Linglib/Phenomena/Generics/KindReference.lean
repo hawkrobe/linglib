@@ -7,6 +7,14 @@ Theory-neutral data on kind reference, bare nominals, cross-linguistic patterns,
 
 `BareNominalType`, `CrossLingDatum`, `BareSingularDatum`, `ScopeDatum`, `ScramblingPosition`, `ScramblingScopeDatum`, `PredLevel`, `PredicateDatum`, `SingularKindDatum`, `TaxonomicDatum`, `PredicateClass`, `BPInterpDatum`
 
+## Related substrate
+
+For *ad hoc* kind formation — kinds picked out by a salient equivalence
+relation, as in `that kind of dog` constructions — see
+`Theories/Semantics/Noun/Kind/Mendia2020.lean` (@cite{mendia-2020}).
+The taxonomic and singular-kind data here are candidate consumers of
+the Mendia framework.
+
 -/
 
 namespace Phenomena.Generics.KindReference

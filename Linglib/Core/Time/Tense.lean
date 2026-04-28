@@ -39,8 +39,7 @@ namespace Core.Time.Tense
 open Core.Time
 open Core.Time.Reichenbach
 open Core.ReferentialMode (ReferentialMode)
-open Core.VarAssignment (VarAssignment updateVar lookupVar varLambdaAbs
-  update_lookup_same)
+open Core (Assignment)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -133,28 +132,24 @@ abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
 -- ════════════════════════════════════════════════════════════════
 
 /-! Temporal assignment functions are the temporal instantiation of
-`Core.VarAssignment` (`VarAssignment Time = ℕ → Time`). All algebraic
-properties (update_lookup_same, update_lookup_other, update_update_same,
-update_self) are inherited from the generic infrastructure. -/
+`Core.Assignment` (`Assignment Time = ℕ → Time`). All algebraic properties
+(`Assignment.update_at`, `update_ne`, `update_overwrite`, `update_self`) are
+inherited from the generic infrastructure. -/
 
 /-- Temporal assignment function: maps variable indices to times.
-    The temporal analogue of H&K's `Assignment` (`ℕ → Entity`).
-    Defined as `VarAssignment Time` from `Core.VarAssignment`. -/
-abbrev TemporalAssignment (Time : Type*) := VarAssignment Time
+    The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
+abbrev TemporalAssignment (Time : Type*) := Assignment Time
 
-/-- Modified temporal assignment g[n ↦ t].
-    Specializes `Core.VarAssignment.updateVar`. -/
+/-- Modified temporal assignment `g[n ↦ t]`. Specializes `Assignment.update`. -/
 abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
     (n : ℕ) (t : Time) : TemporalAssignment Time :=
-  updateVar g n t
+  g.update n t
 
-/-- Temporal variable denotation: ⟦tₙ⟧^g = g(n).
-    Specializes `Core.VarAssignment.lookupVar`. -/
+/-- Temporal variable denotation: ⟦tₙ⟧^g = g(n). -/
 abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time :=
-  lookupVar n g
+  g n
 
 /-- Temporal lambda abstraction: bind a time variable.
-    Specializes `Core.VarAssignment.varLambdaAbs`.
 
     Partee's bound tense: "Whenever Mary phones, Sam *is* asleep" —
     present tense bound by "whenever", just as "Every farmer beats
@@ -162,7 +157,7 @@ abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time
 abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     (body : TemporalAssignment Time → α) :
     TemporalAssignment Time → Time → α :=
-  varLambdaAbs n body
+  λ g t => body (g.update n t)
 
 /-- Project a situation assignment to a temporal assignment.
     This is the formal bridge between situation semantics and tense semantics:
@@ -184,7 +179,7 @@ theorem situation_temporal_commutes {W Time : Type*}
 theorem zeroTense_receives_binder_time {Time : Type*}
     (g : TemporalAssignment Time) (n : ℕ) (binderTime : Time) :
     interpTense n (updateTemporal g n binderTime) = binderTime :=
-  update_lookup_same g n binderTime
+  Assignment.update_at g n binderTime
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -290,7 +285,7 @@ theorem evalTime_root_is_speech {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time) (speechTime : Time)
     (hEval : tp.evalTimeIndex = 0) (hRoot : g 0 = speechTime) :
     tp.evalTime g = speechTime := by
-  simp [TensePronoun.evalTime, interpTense, lookupVar, hEval, hRoot]
+  simp [TensePronoun.evalTime, interpTense, hEval, hRoot]
 
 /-- Updating the eval time index gives Von Stechow's perspective shift:
     the embedded tense is now checked against a different time (the matrix
@@ -298,7 +293,7 @@ theorem evalTime_root_is_speech {Time : Type*}
 theorem evalTime_shifts_under_embedding {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time) (matrixEventTime : Time) :
     tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
-  update_lookup_same g tp.evalTimeIndex matrixEventTime
+  Assignment.update_at g tp.evalTimeIndex matrixEventTime
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}
@@ -438,7 +433,7 @@ theorem tense_tower_bridge
     (t : ContextTower (KContext W E P T))
     (hFaithful : towerFaithful (W := W) (E := E) (P := P) g t) :
     tp.evalTime g = (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve t := by
-  simp only [TensePronoun.evalTime, interpTense, Core.VarAssignment.lookupVar,
+  simp only [TensePronoun.evalTime, interpTense,
              tensePronounAccessPattern, AccessPattern.resolve,
              DepthSpec.relative_resolve]
   exact hFaithful tp.evalTimeIndex
@@ -456,7 +451,7 @@ theorem tense_root_bridge
     tp.evalTime g = c.time := by
   have h1 := hFaithful 0
   simp only [ContextTower.root_contextAt] at h1
-  simp only [TensePronoun.evalTime, interpTense, Core.VarAssignment.lookupVar, hEval]
+  simp only [TensePronoun.evalTime, interpTense, hEval]
   exact h1
 
 /-- The access pattern for a root-clause tense pronoun (evalTimeIndex = 0)
@@ -478,7 +473,7 @@ theorem von_stechow_tower
     (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
     (newTime : T) :
     updateTemporal g t.depth newTime t.depth = newTime :=
-  Core.VarAssignment.update_lookup_same g t.depth newTime
+  Assignment.update_at g t.depth newTime
 
 /-- Under faithful encoding, layers below the push point are preserved. -/
 theorem von_stechow_tower_preserves
@@ -487,7 +482,7 @@ theorem von_stechow_tower_preserves
     (hFaithful : towerFaithful g t)
     (k : ℕ) (hk : k < t.depth) :
     updateTemporal g t.depth newTime k = (t.contextAt k).time := by
-  simp only [updateTemporal, Core.VarAssignment.updateVar]
+  simp only [updateTemporal, Assignment.update]
   rw [if_neg (Nat.ne_of_lt hk)]
   exact hFaithful k
 

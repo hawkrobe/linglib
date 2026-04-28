@@ -24,7 +24,7 @@ bind which variable.
 
 ## Situation Assignment Infrastructure
 
-Situation assignments specialize `Core.VarAssignment` from `D = Time`
+Situation assignments specialize `Core.Assignment` from `D = Time`
 (Partee's temporal variables) to `D = WorldTimeIndex W Time` (Percus's
 situation variables).
 
@@ -46,9 +46,7 @@ Fragments/English/Predicates/Verbal.lean
 
 namespace Percus2000
 
-open Core (WorldTimeIndex)
-open Core.VarAssignment (VarAssignment updateVar lookupVar varLambdaAbs
-  update_lookup_same update_lookup_other)
+open Core (WorldTimeIndex Assignment)
 open Core.Context
 open Core.Verbs (Attitude)
 
@@ -58,23 +56,23 @@ open Core.Verbs (Attitude)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Situation assignment function: maps variable indices to situations. -/
-abbrev SituationAssignment (W Time : Type*) := VarAssignment (WorldTimeIndex W Time)
+abbrev SituationAssignment (W Time : Type*) := Assignment (WorldTimeIndex W Time)
 
 /-- Situation variable denotation: s_n^g = g(n). -/
 abbrev interpSitVar {W Time : Type*} (n : ℕ) (g : SituationAssignment W Time) :
     WorldTimeIndex W Time :=
-  lookupVar n g
+  g n
 
 /-- Modified situation assignment g[n -> s]. -/
 abbrev updateSitVar {W Time : Type*} (g : SituationAssignment W Time)
     (n : ℕ) (s : WorldTimeIndex W Time) : SituationAssignment W Time :=
-  updateVar g n s
+  g.update n s
 
 /-- Situation lambda abstraction: bind a situation variable. -/
 abbrev sitLambdaAbs {W Time α : Type*} (n : ℕ)
     (body : SituationAssignment W Time → α) :
     SituationAssignment W Time → WorldTimeIndex W Time → α :=
-  varLambdaAbs n body
+  λ g s => body (g.update n s)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -163,13 +161,13 @@ instance {W Time : Type*}
 theorem sitVar_receives_binder_value {W Time : Type*}
     (g : SituationAssignment W Time) (n : ℕ) (s : WorldTimeIndex W Time) :
     interpSitVar n (updateSitVar g n s) = s :=
-  update_lookup_same g n s
+  Assignment.update_at g n s
 
 theorem sitVar_other_unaffected {W Time : Type*}
     (g : SituationAssignment W Time) (n i : ℕ) (s : WorldTimeIndex W Time)
     (h : i ≠ n) :
     interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
-  update_lookup_other g n i s h
+  Assignment.update_ne g s h
 
 
 -- ════════════════════════════════════════════════════════════════

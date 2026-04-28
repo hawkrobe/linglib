@@ -40,6 +40,7 @@ much of the linguistics literature) appear in docstrings only.
 -/
 
 import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.Korean.Pronouns
 
@@ -204,3 +205,25 @@ theorem gyae_gender_neutral :
     geunyeo.gender = some .feminine := ⟨rfl, rfl, rfl⟩
 
 end Fragments.Korean.Pronouns
+
+namespace Fragments.Korean
+
+/-- Korean (Koreanic) WALS pronoun typology profile. No incl/excl; no
+    person marking on verbs; gender in 3rd sg only (geu/geunyeo);
+    pronouns avoided for politeness (elaborate honorific system uses
+    titles/names instead); interrogative-based indefinites (nuguinka
+    from nugu 'who'); intensifier and reflexive identical (caki); no
+    person marking on adpositions. -/
+def pronounProfile : Typology.PronounProfile :=
+  { language := "Korean"
+  , family := "Koreanic"
+  , iso := "kor"
+  , inclusiveExclusive := some .noDistinction
+  , inclusiveExclusiveVerbal := some .noPersonMarking
+  , genderInPronouns := some .in3rdPersonSgOnly
+  , politeness := some .pronounsAvoided
+  , indefiniteType := some .interrogativeBased
+  , intensifierReflexive := some .identical
+  , personMarkingAdpositions := some .noPersonMarking }
+
+end Fragments.Korean

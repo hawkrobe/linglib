@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # Spanish Pronoun Fragment
@@ -106,3 +107,24 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
 end Fragments.Spanish.Pronouns
+
+namespace Fragments.Spanish
+
+/-- Spanish (Indo-European, Romance) WALS pronoun typology profile.
+    No incl/excl; gender in 3rd AND 1st/2nd person (nosotros/nosotras
+    etc.); binary politeness (tú/usted); special indefinite forms
+    (alguien, algo); intensifier (mismo) differentiated from reflexive
+    (se); no person marking on adpositions. -/
+def pronounProfile : Typology.PronounProfile :=
+  { language := "Spanish"
+  , family := "Indo-European"
+  , iso := "spa"
+  , inclusiveExclusive := some .noDistinction
+  , inclusiveExclusiveVerbal := some .noDistinction
+  , genderInPronouns := some .in3rdAndOtherPersons
+  , politeness := some .binary
+  , indefiniteType := some .special
+  , intensifierReflexive := some .differentiated
+  , personMarkingAdpositions := some .noPersonMarking }
+
+end Fragments.Spanish

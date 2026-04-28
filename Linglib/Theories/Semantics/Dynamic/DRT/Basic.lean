@@ -67,7 +67,12 @@ A model M for vocabulary V is a triple ⟨U_M, Name_M, Pred_M⟩:
 In our formalization, names and predicates are both identified by `Nat`
 indices (matching `DRSExpr`'s `atom` constructor). -/
 structure KRModel (E : Type*) where
-  /-- Name interpretation: maps name indices to their bearers. -/
+  /-- Name interpretation: maps name indices (from `DRSExpr.atom` constructors)
+      to their bearers in `U_M`. This is K&R's `Name_M`, a model-theoretic
+      *constant interpretation function* — NOT a Tarski-style variable
+      assignment, despite the shared `Nat → E` shape. (The variable-assignment
+      role is played by embedding functions `g : Assignment E` in `trueIn`
+      below.) Therefore deliberately not typed as `Core.Assignment E`. -/
   names : Nat → E
   /-- Predicate interpretation: maps relation indices to truth on entity lists.
       This is exactly a `RelInterp E` from `Core.Accessibility`. -/

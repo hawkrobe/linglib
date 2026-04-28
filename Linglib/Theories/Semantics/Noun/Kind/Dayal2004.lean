@@ -30,6 +30,16 @@ Number morphology (sg/pl) constrains the instantiation set, not the
 denotation type. Singular morphology requires that instances are
 "conceptualized as a single entity."
 
+## Related substrate
+
+Singular kinds with one salient instance correspond to the discrete
+Mendia kind-formation (each instance is its own equivalence class). For
+the general framework — kinds formed by partitioning a domain via a
+salient equivalence relation — see
+`Theories/Semantics/Noun/Kind/Mendia2020.lean` (@cite{mendia-2020}).
+Carlson's Disjointness Condition (subkinds of a context-relative
+partition are disjoint) is derived there.
+
 -/
 
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998

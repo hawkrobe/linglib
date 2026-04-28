@@ -421,42 +421,29 @@ end Paderewski
 
 /-! ## § 4.6 Unbound pronouns -/
 
-/-- Variable assignment: maps natural-number indices to individuals. -/
-def Assgnmnt (E : Type) := Nat → Option E
+/-- Variable assignment: maps natural-number indices to individuals.
+    Equal to `Core.PartialAssign E`; the alias name is retained because
+    Bekki/Asher's TYS prose uses 𝔰/𝔩/𝔯/𝔴/𝔤 as named "assignments" rather
+    than as partial functions, and the inheritance carries the
+    `valued`/`valued_update_at` simp set into this file's consumers. -/
+abbrev Assgnmnt (E : Type) := Core.PartialAssign E
 
-/-- An assignment with at least n bindings (all indices < n defined). -/
+/-- An assignment with at least n bindings (all indices < n defined).
+    Novel relative to `Core.PartialAssign`; not promoted (single consumer). -/
 def Assgnmnt.hasBindings {E : Type} (g : Assgnmnt E) (n : Nat) : Prop :=
   ∀ i, i < n → (g i).isSome = true
 
-/-- Empty assignment: no bindings. -/
-def Assgnmnt.empty {E : Type} : Assgnmnt E := λ _ => none
-
-/-- Update assignment at index i. -/
-def Assgnmnt.update {E : Type} (g : Assgnmnt E) (i : Nat) (val : E) : Assgnmnt E :=
-  λ j => if j = i then some val else g j
-
-/-- Merge two assignments (left-biased). -/
+/-- Merge two assignments (left-biased). Novel relative to `Core.PartialAssign`;
+    `Core.PartialAssign.empty`, `Core.PartialAssign.update`, and the
+    update-lookup lemmas are inherited via the `Assgnmnt := PartialAssign`
+    abbrev and used directly by consumers. -/
 def Assgnmnt.merge {E : Type} (g₁ g₂ : Assgnmnt E) : Assgnmnt E :=
   λ i => (g₁ i).orElse (λ _ => g₂ i)
 
-/-- Updating then looking up the same index returns the value. -/
-theorem Assgnmnt.update_same {E : Type} (g : Assgnmnt E) (i : Nat) (val : E) :
-    (g.update i val) i = some val := by
-  simp [Assgnmnt.update]
-
-/-- Updating then looking up a different index returns the original. -/
-theorem Assgnmnt.update_other {E : Type} (g : Assgnmnt E) (i j : Nat) (val : E)
-    (h : j ≠ i) : (g.update i val) j = g j := by
-  simp [Assgnmnt.update, h]
-
-/-- Empty assignment has no bindings at any index. -/
-theorem Assgnmnt.empty_none {E : Type} (i : Nat) :
-    (Assgnmnt.empty : Assgnmnt E) i = none := rfl
-
 /-- Merge with empty on the left returns the right assignment. -/
 theorem Assgnmnt.merge_empty_left {E : Type} (g : Assgnmnt E) :
-    Assgnmnt.merge Assgnmnt.empty g = g := by
-  funext i; simp [Assgnmnt.merge, Assgnmnt.empty, Option.orElse]
+    Assgnmnt.merge Core.PartialAssign.empty g = g := by
+  funext i; simp [Assgnmnt.merge, Core.PartialAssign.empty, Option.orElse]
 
 /-- Propositional context. -/
 abbrev PropCntxt := Type

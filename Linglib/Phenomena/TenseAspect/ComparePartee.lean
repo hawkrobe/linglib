@@ -40,14 +40,14 @@ don't quantify.
 
 The definitions here are the temporal counterparts of @cite{heim-kratzer-1998} entity
 variable infrastructure in `Semantics.Montague.Variables`. Both are
-instantiations of the generic `Core.VarAssignment` infrastructure:
+instantiations of the generic `Core.Assignment` infrastructure:
 
-| Generic (Core.VarAssignment)     | Entity (Variables.lean)    | Temporal (this file)      |
+| Generic (Core.Assignment)        | Entity (Variables.lean)    | Temporal (this file)      |
 |----------------------------------|---------------------------|---------------------------|
-| `VarAssignment D` (ℕ → D)       | `Assignment m` (ℕ → Ent)  | `TemporalAssignment Time` |
-| `lookupVar n g = g(n)`           | `interpPronoun n g`       | `interpTense n g`         |
-| `updateVar g n d`                | `Assignment.update g n x` | `updateTemporal g n t`    |
-| `varLambdaAbs n body`            | `lambdaAbsG n body`       | `temporalLambdaAbs n body`|
+| `Assignment D` (ℕ → D)           | `Assignment m` (ℕ → Ent)  | `TemporalAssignment Time` |
+| `g n`                            | `interpPronoun n g`       | `interpTense n g`         |
+| `Assignment.update g n d`        | `Assignment.update g n x` | `updateTemporal g n t`    |
+| `λ g d => body (g.update n d)`   | `lambdaAbsG n body`       | `temporalLambdaAbs n body`|
 
 The algebraic structure is identical: Partee's insight is that the SAME
 referential mechanism operates over different domains.

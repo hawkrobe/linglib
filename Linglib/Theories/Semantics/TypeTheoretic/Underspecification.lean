@@ -904,11 +904,11 @@ structure Cntxt₈ (E : Type) where
 
 def Cntxt₈.initial : Cntxt₈ E where
   q := QStore.empty
-  𝔰 := Assgnmnt.empty
-  𝔩 := Assgnmnt.empty
-  𝔯 := Assgnmnt.empty
-  𝔴 := Assgnmnt.empty
-  𝔤 := Assgnmnt.empty
+  𝔰 := Core.PartialAssign.empty
+  𝔩 := Core.PartialAssign.empty
+  𝔯 := Core.PartialAssign.empty
+  𝔴 := Core.PartialAssign.empty
+  𝔤 := Core.PartialAssign.empty
   𝔠 := PUnit
 
 /-- Eq 10 context: 𝔩 and 𝔯 both empty. -/
@@ -934,14 +934,14 @@ variable {E : Type}
 
 /-- B(α): boundary operation, eq (77). Resets l-field at clause boundaries. -/
 def boundary₈ (P : Cntxt₈ E → Type) : Cntxt₈ E → Type :=
-  λ c => P { c with 𝔩 := Assgnmnt.empty }
+  λ c => P { c with 𝔩 := Core.PartialAssign.empty }
 
 /-- @_{i,j} with locality check, eq (76). Identifies 𝔰.xⱼ with 𝔰.xᵢ
     only when 𝔰.xᵢ is in the l-field. -/
 def anaphoricCombine₈ [Inhabited E] (i j : Nat) (P : Cntxt₈ E → Type)
     (Q : Cntxt₈ E → Type) : Cntxt₈ E → Type :=
   λ c => propT ((c.𝔩 i).isSome = true) ×
-    P c × Q { c with 𝔰 := Assgnmnt.update c.𝔰 j ((c.𝔰 i).getD default) }
+    P c × Q { c with 𝔰 := Core.PartialAssign.update c.𝔰 j ((c.𝔰 i).getD default) }
 
 /-- S → NP VP | B(NP'(@VP')), eq (81). -/
 def sentenceRule₈ (np : Cntxt₈ E → Type) (vp : Cntxt₈ E → Type)
@@ -949,7 +949,7 @@ def sentenceRule₈ (np : Cntxt₈ E → Type) (vp : Cntxt₈ E → Type)
   boundary₈ (λ c => np c × vp c)
 
 theorem boundary₈_clears_locality (c : Cntxt₈ E) (i : Nat) :
-    ({ c with 𝔩 := Assgnmnt.empty } : Cntxt₈ E).𝔩 i = none := rfl
+    ({ c with 𝔩 := Core.PartialAssign.empty } : Cntxt₈ E).𝔩 i = none := rfl
 
 /-! #### "Sam thinks she is lucky" — B enables non-local pronoun binding. -/
 
@@ -960,17 +960,17 @@ inductive NLPInd where | sam | she_ref
 
 def localCtx₈ : Cntxt₈ NLPInd where
   q := QStore.empty
-  𝔰 := Assgnmnt.update Assgnmnt.empty 0 .she_ref
-  𝔩 := Assgnmnt.update Assgnmnt.empty 0 .she_ref
-  𝔯 := Assgnmnt.empty
-  𝔴 := Assgnmnt.empty
-  𝔤 := Assgnmnt.empty
+  𝔰 := Core.PartialAssign.update Core.PartialAssign.empty 0 .she_ref
+  𝔩 := Core.PartialAssign.update Core.PartialAssign.empty 0 .she_ref
+  𝔯 := Core.PartialAssign.empty
+  𝔴 := Core.PartialAssign.empty
+  𝔤 := Core.PartialAssign.empty
   𝔠 := PUnit
 
 theorem local_pronoun_ok : (localCtx₈.𝔩 0).isSome = true := by decide
 
 theorem boundary_clears_for_nonlocal :
-    ({ localCtx₈ with 𝔩 := Assgnmnt.empty } : Cntxt₈ NLPInd).𝔩 0 = none := rfl
+    ({ localCtx₈ with 𝔩 := Core.PartialAssign.empty } : Cntxt₈ NLPInd).𝔩 0 = none := rfl
 
 end NonLocalPronoun
 
@@ -990,7 +990,7 @@ def anaphorFree₈ (P : Cntxt₈ E → Type) : Cntxt₈ E → Type :=
 
 /-- ℜ₈(P): full reflexivization, eq (84). Clears r-field and sets 𝔰(i) = x. -/
 def reflexivize₈ (i : Nat) (P : Cntxt₈ E → E → Type) : Cntxt₈ E → E → Type :=
-  λ c x => P { c with 𝔯 := Assgnmnt.empty, 𝔰 := Assgnmnt.update c.𝔰 i x } x
+  λ c x => P { c with 𝔯 := Core.PartialAssign.empty, 𝔰 := Core.PartialAssign.update c.𝔰 i x } x
 
 /-- VP → V NP | 𝔄(V'(@NP')), eq (88). -/
 def vpRule₈ (verb : Cntxt₈ E → E → E → Type) (np : Cntxt₈ E → E → Type)

@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 import Linglib.Datasets.WALS.Features.F53A
 import Linglib.Datasets.WALS.Features.F54A
 import Linglib.Datasets.WALS.Features.F131A
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.Numerals
 
 /-!
@@ -27,9 +27,10 @@ and the relationship between conjunctions and universal quantification.
    dalawa 'two-two'). Many languages lack a dedicated form entirely.
 
 3. **Numeral Classifiers** (Ch 55, Gil): Core types and distribution data
-   live in `Phenomena.Classifiers.Typology`. This file imports `ClassifierStatus`
-   from there and uses it in `NumeralProfile` for cross-dimensional
-   generalizations (Sanches-Slobin, areal concentration).
+   live in `Typology/ClassifierSystem.lean` (substrate-level WALS converters).
+   This file imports `ClassifierStatus` and `fromWALS55A` from there and
+   uses them in `NumeralProfile` for cross-dimensional generalizations
+   (Sanches-Slobin, areal concentration).
 
 4. **Conjunctions and Universal Quantifiers** (Ch 56, Gil): Whether a language
    uses the same morpheme for 'and' (conjunction) and 'all' / 'every' (universal
@@ -41,9 +42,9 @@ and the relationship between conjunctions and universal quantification.
 
 namespace Phenomena.Numerals.Typology
 
-open _root_.Typology
-open Phenomena.Classifiers.Typology (ClassifierDistribution
+open _root_.Typology (ClassifierDistribution
   ch55Distribution fromWALS55A)
+open _root_.Typology
 
 -- ============================================================================
 -- WALS Data Abbreviations

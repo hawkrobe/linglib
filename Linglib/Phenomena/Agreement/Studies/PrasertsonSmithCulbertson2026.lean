@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Features.Prominence
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 
 /-!
 # Prasertsom, Smith & Culbertson (2026)
@@ -60,7 +60,7 @@ open Core.NounCategorization
 /-- Whether a semantic parameter is attested in any system in our typology.
     Derived from `allSystems` data rather than stipulated. -/
 def isAttestedInTypology (p : SemanticParameter) : Bool :=
-  Phenomena.Classifiers.Typology.allSystems.any (λ sys =>
+  Aikhenvald2000.allSystems.any (λ sys =>
     sys.preferredSemantics.any (· == p))
 
 /-- Animacy is attested in the typological data. -/

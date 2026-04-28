@@ -1,4 +1,11 @@
-import Linglib.Phenomena.AuxiliaryVerbs.Typology
+import Linglib.Typology.AuxiliaryVerbs
+import Linglib.Fragments.English.Auxiliaries
+import Linglib.Fragments.Finnish.Negation
+import Linglib.Fragments.Doyayo.AuxiliaryVerbs
+import Linglib.Fragments.Gorum.AuxiliaryVerbs
+import Linglib.Fragments.Hemba.AuxiliaryVerbs
+import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
+import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Theories.Diachronic.Grammaticalization
@@ -31,11 +38,167 @@ Hemba (split/doubled). All five patterns attested.
 
 namespace Anderson2006
 
-open Phenomena.AuxiliaryVerbs.Typology
+open Typology.AuxiliaryVerbs
 open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
 open Phenomena.AuxiliaryVerbs.Selection
 open Core.Morphology (InflDistribution MorphCategory)
 open Diachronic.Grammaticalization (GramStage AVCSource)
+
+/-! ## Per-Language AVC Data
+
+The 7 sample languages (8 datums) covering all 5 of Anderson's
+inflectional patterns. Per-datum verification theorems below ensure
+each datum's `inflPattern` and `form`/`distribution` derive from the
+Fragment files (changing a Fragment entry breaks exactly one theorem). -/
+
+/-- English *will go* — aux-headed (AUX carries tense, LV is bare infinitive). -/
+def english : AVCDatum :=
+  { language := "English"
+  , form := "will go"
+  , inflPattern := .auxHeaded
+  , gloss := "FUT go.INF" }
+
+/-- Doyayo — split (AUX hosts subject/benefactive/object; LV hosts tense).
+    Form derived from `Fragments.Doyayo.AuxiliaryVerbs`. -/
+def doyayo : AVCDatum :=
+  { language := "Doyayo"
+  , form := Fragments.Doyayo.AuxiliaryVerbs.form
+  , inflPattern := .split
+  , distribution := some Fragments.Doyayo.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Doyayo.AuxiliaryVerbs.gloss }
+
+/-- Gorum — doubled (subject + TAM marked on both AUX and LV).
+    Form derived from `Fragments.Gorum.AuxiliaryVerbs`. -/
+def gorum : AVCDatum :=
+  { language := "Gorum"
+  , form := Fragments.Gorum.AuxiliaryVerbs.form
+  , inflPattern := .doubled
+  , distribution := some Fragments.Gorum.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Gorum.AuxiliaryVerbs.gloss }
+
+/-- Jakaltek — split (absolutive on AUX, ergative on LV).
+    Form derived from `Fragments.Jakaltek.AuxiliaryVerbs`. -/
+def jakaltek : AVCDatum :=
+  { language := "Jakaltek"
+  , form := Fragments.Jakaltek.AuxiliaryVerbs.form
+  , inflPattern := .split
+  , distribution := some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Jakaltek.AuxiliaryVerbs.gloss }
+
+/-- Pipil — split (auxiliaries mark tense; subject/object on LV).
+    Form derived from `Fragments.Pipil.AuxiliaryVerbs`.
+    Note: Pipil also has lex-headed AVCs (see `pipilLexHeaded`). -/
+def pipil : AVCDatum :=
+  { language := "Pipil"
+  , form := Fragments.Pipil.AuxiliaryVerbs.form
+  , inflPattern := .split
+  , distribution := some Fragments.Pipil.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Pipil.AuxiliaryVerbs.gloss }
+
+/-- Finnish negative auxiliary *ei* — split (person/number on aux, TAM on main verb).
+    The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
+    the negative auxiliary hosts negation, tense, and agreement, while the lexical verb
+    retains only the stem and aspect (connegative form). @cite{karlsson-2017}.
+
+    The neg aux form derives from `Fragments.Finnish.Negation.negParadigm` (1sg). -/
+def finnish : AVCDatum :=
+  { language := "Finnish"
+  , form := match Fragments.Finnish.Negation.negParadigm.find?
+      (fun f => f.person == 1 && f.number == "sg") with
+    | some f => f.form ++ " lue"
+    | none => "en lue"
+  , inflPattern := .split
+  , distribution := some Fragments.Finnish.Negation.finnishNegDistribution
+  , gloss := "NEG-1SG read.CONNEG" }
+
+/-- Pipil — lex-headed (AUX *weli* is uninflected; LV carries all agreement).
+    This is Pipil's second AVC pattern, illustrating that a single language can
+    exhibit multiple AVC types. Form derived from `Fragments.Pipil.AuxiliaryVerbs`. -/
+def pipilLexHeaded : AVCDatum :=
+  { language := "Pipil"
+  , form := Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm
+  , inflPattern := .lexHeaded
+  , distribution := some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution
+  , gloss := Fragments.Pipil.AuxiliaryVerbs.lexHeadedGloss }
+
+/-- Hemba — split/doubled (subject doubled on both AUX and LV; tense on AUX
+    only, mood on LV only). Form derived from `Fragments.Hemba.AuxiliaryVerbs`. -/
+def hemba : AVCDatum :=
+  { language := "Hemba"
+  , form := Fragments.Hemba.AuxiliaryVerbs.form
+  , inflPattern := .splitDoubled
+  , distribution := some Fragments.Hemba.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Hemba.AuxiliaryVerbs.gloss }
+
+/-- All 8 AVC datums (covering all 5 of Anderson's patterns). -/
+def allData : List AVCDatum :=
+  [english, doyayo, gorum, jakaltek, pipil, pipilLexHeaded, finnish, hemba]
+
+/-! ## Per-datum InflPattern verification
+
+Changing a Fragment entry's underlying analysis breaks exactly one theorem
+in each block below. -/
+
+theorem english_is_auxHeaded : english.inflPattern = .auxHeaded := rfl
+theorem doyayo_is_split : doyayo.inflPattern = .split := rfl
+theorem gorum_is_doubled : gorum.inflPattern = .doubled := rfl
+theorem jakaltek_is_split : jakaltek.inflPattern = .split := rfl
+theorem pipil_is_split : pipil.inflPattern = .split := rfl
+theorem finnish_is_split : finnish.inflPattern = .split := rfl
+theorem pipilLexHeaded_is_lexHeaded : pipilLexHeaded.inflPattern = .lexHeaded := rfl
+theorem hemba_is_splitDoubled : hemba.inflPattern = .splitDoubled := rfl
+
+/-! ## Per-datum form verification (Fragment grounding) -/
+
+theorem doyayo_form_from_fragment :
+    doyayo.form = Fragments.Doyayo.AuxiliaryVerbs.form := rfl
+theorem gorum_form_from_fragment :
+    gorum.form = Fragments.Gorum.AuxiliaryVerbs.form := rfl
+theorem jakaltek_form_from_fragment :
+    jakaltek.form = Fragments.Jakaltek.AuxiliaryVerbs.form := rfl
+theorem pipil_form_from_fragment :
+    pipil.form = Fragments.Pipil.AuxiliaryVerbs.form := rfl
+theorem finnish_form_from_fragment :
+    finnish.form = "en lue" := rfl
+theorem pipilLexHeaded_form_from_fragment :
+    pipilLexHeaded.form = Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
+theorem hemba_form_from_fragment :
+    hemba.form = Fragments.Hemba.AuxiliaryVerbs.form := rfl
+
+/-! ## Per-datum distribution verification (Fragment grounding) -/
+
+theorem doyayo_dist_from_fragment :
+    doyayo.distribution = some Fragments.Doyayo.AuxiliaryVerbs.inflDistribution := rfl
+theorem gorum_dist_from_fragment :
+    gorum.distribution = some Fragments.Gorum.AuxiliaryVerbs.inflDistribution := rfl
+theorem jakaltek_dist_from_fragment :
+    jakaltek.distribution = some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution := rfl
+theorem pipil_dist_from_fragment :
+    pipil.distribution = some Fragments.Pipil.AuxiliaryVerbs.inflDistribution := rfl
+theorem finnish_dist_from_fragment :
+    finnish.distribution = some Fragments.Finnish.Negation.finnishNegDistribution := rfl
+theorem pipilLexHeaded_dist_from_fragment :
+    pipilLexHeaded.distribution =
+      some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
+theorem hemba_dist_from_fragment :
+    hemba.distribution = some Fragments.Hemba.AuxiliaryVerbs.inflDistribution := rfl
+
+/-! ## Bridge to FunctionWords (English modals) -/
+
+open Fragments.English.Auxiliaries in
+/-- English modals are aux-headed: they take AuxType.modal and the LV is bare. -/
+theorem english_modals_are_aux_type :
+    Fragments.English.Auxiliaries.can.auxType = AuxType.modal := rfl
+
+/-! ## Bridge to Finnish Fragment -/
+
+/-- The Finnish negative auxiliary construction is a split AVC: the auxiliary
+    hosts some inflectional categories and the lexical verb hosts others, with
+    neither element hosting all categories. Derived from Fragment distribution. -/
+theorem finnish_split_from_fragment :
+    let dist := Fragments.Finnish.Negation.finnishNegDistribution
+    dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
+  exact ⟨by decide, by decide⟩
 
 /-! ## Grammaticalization Cline
 

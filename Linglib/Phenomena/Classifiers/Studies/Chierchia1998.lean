@@ -1,12 +1,16 @@
-import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
+import Linglib.Fragments.French.Nouns
+import Linglib.Fragments.Mandarin.Nouns
+import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Italian.Nouns
 
 /-!
 Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 @cite{chierchia-1998}
 
 Connects the cross-linguistic noun categorization typology in
-`Phenomena.Classifiers.Typology` to the Nominal Mapping
+`Aikhenvald2000` to the Nominal Mapping
 Parameter from `Theories.Semantics.Noun.Kind.Chierchia1998`.
 
 ## Predictions verified
@@ -41,7 +45,7 @@ namespace Chierchia1998
 
 open Core.NounCategorization
 open Semantics.Noun.Kind.Chierchia1998 (NominalMapping)
-open Phenomena.Classifiers.Typology
+open Aikhenvald2000 (mandarin japanese french italian)
 
 /-- Map NominalMapping to the expected classifier type.
     [+arg, -pred] languages have numeral classifiers.
@@ -129,5 +133,40 @@ def mandarinStrategy : Core.NounCategorization.ClassifierStrategy := .forNoun
     [+arg, -pred] classifier languages. -/
 theorem chierchia_assignments_uniform :
     japaneseStrategy = .forNoun ∧ mandarinStrategy = .forNoun := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- §?: Bare-NP / Type-Shift Blocking Predictions
+-- ============================================================================
+
+/-! Empirical predictions of @cite{chierchia-1998}'s Nominal Mapping
+Parameter, verified against Fragment data. -/
+
+/-- Bare NPs are licensed in [+arg] languages, not in [-arg] languages
+    (Chierchia's central typological prediction). -/
+theorem bare_np_tracks_arg :
+    Fragments.Mandarin.Nouns.bareNPLicensed = true ∧
+    Fragments.Japanese.Nouns.bareNPLicensed = true ∧
+    Fragments.French.Nouns.barePluralLicensed = false := ⟨rfl, rfl, rfl⟩
+
+/-- Chierchia's blocking principle: [+arg, -pred] languages have no
+    articles to block covert type shifts. [-arg, +pred] languages
+    block ι and ∃. -/
+theorem blocking_tracks_mapping :
+    Fragments.Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
+    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    Fragments.French.Nouns.frenchBlocking.iotaBlocked = true := ⟨rfl, rfl, rfl⟩
+
+/-- No type-shift blocking in Mandarin (`[+arg, -pred]`: ι, ∃, ∩ all
+    available). -/
+theorem mandarin_no_blocking :
+    Fragments.Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
+    Fragments.Mandarin.Nouns.mandarinBlocking.existsBlocked = false ∧
+    Fragments.Mandarin.Nouns.mandarinBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
+
+/-- No type-shift blocking in Japanese. -/
+theorem japanese_no_blocking :
+    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
+    Fragments.Japanese.Nouns.japaneseBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
 
 end Chierchia1998

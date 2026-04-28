@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.NounCategorization
+import Linglib.Datasets.WALS.Features.F55A
 
 /-!
 # Noun categorization typology: per-language system schema
@@ -52,28 +53,63 @@ structure NounCategorizationSystem where
   assignment : AssignmentPrinciple
   /-- Morphological realization types used (D). -/
   realizations : List SurfaceRealization
-  /-- Does the system involve agreement? (E) — definitional for noun classes. -/
+  /-- Does the system involve agreement? (E) — definitional for noun classes.
+      Stored as `Bool` so the struct stays decidable as a whole; the
+      user-facing predicate is `HasAgreement : Prop`. -/
   hasAgreement : Bool
   /-- Inventory size (number of classes or classifiers). -/
   inventorySize : Nat
-  /-- Is realization obligatory or optional? (G) -/
+  /-- Is realization obligatory or optional? (G). User-facing predicate:
+      `IsObligatory : Prop`. -/
   isObligatory : Bool
-  /-- Is there a formally/functionally unmarked default? (F) -/
+  /-- Is there a formally/functionally unmarked default? (F). User-facing
+      predicate: `HasUnmarkedDefault : Prop`. -/
   hasUnmarkedDefault : Bool := false
   /-- Preferred semantic parameters (§11.2, Table 11.13). -/
   preferredSemantics : List SemanticParameter := []
-  /-- Does the language have obligatory grammatical number marking? -/
+  /-- Does the language have obligatory grammatical number marking?
+      User-facing predicate: `HasObligatoryNumber : Prop`. -/
   hasObligatoryNumber : Bool := false
   /-- Can classifiers and plural marking co-occur? Predicted by CLF-for-NUM
       (@cite{little-moroney-royer-2022} §3.4: CLF and PL are in different
       projections) but not by CLF-for-N (same projection, complementary
-      distribution per @cite{borer-2005}). -/
+      distribution per @cite{borer-2005}). User-facing predicate:
+      `PluralClfCooccur : Prop`. -/
   pluralClfCooccur : Bool := false
   /-- Citation backing the hand-coded values. -/
   source : String := ""
   deriving Repr, DecidableEq
 
 namespace NounCategorizationSystem
+
+/-! ## Prop API for the boolean property fields
+
+The struct's `hasAgreement`/`isObligatory`/`hasUnmarkedDefault`/
+`hasObligatoryNumber`/`pluralClfCooccur` fields are stored as `Bool` so
+the struct itself stays decidably equal. The user-facing predicates are
+the `Prop` versions defined here, each with a `Decidable` instance via
+the underlying `Bool`. Theorem statements should prefer the `Prop` form
+(`s.HasAgreement` rather than `s.hasAgreement = true`); `decide` works
+for either since the Bool projection reduces structurally for concrete
+fragment values. -/
+
+/-- The system involves agreement (E). -/
+abbrev HasAgreement (s : NounCategorizationSystem) : Prop := s.hasAgreement = true
+
+/-- Realization is obligatory (G). -/
+abbrev IsObligatory (s : NounCategorizationSystem) : Prop := s.isObligatory = true
+
+/-- The system has a formally/functionally unmarked default (F). -/
+abbrev HasUnmarkedDefault (s : NounCategorizationSystem) : Prop :=
+  s.hasUnmarkedDefault = true
+
+/-- The language has obligatory grammatical number marking. -/
+abbrev HasObligatoryNumber (s : NounCategorizationSystem) : Prop :=
+  s.hasObligatoryNumber = true
+
+/-- Classifiers and plural marking can co-occur. -/
+abbrev PluralClfCooccur (s : NounCategorizationSystem) : Prop :=
+  s.pluralClfCooccur = true
 
 /-- @cite{dixon-1982}'s noun-class vs. classifier divide (Table 1.2).
     Noun classes: small, closed, grammaticalized, agreement.
@@ -121,5 +157,36 @@ inductive ClassifierStatus where
   /-- Classifiers required (e.g., Mandarin, Japanese, Thai). -/
   | obligatory
   deriving DecidableEq, Repr
+
+end Typology
+
+-- ============================================================================
+-- WALS Chapter 55 — Numeral Classifiers (Gil)
+-- ============================================================================
+
+namespace Typology
+
+/-- Convert WALS 55A numeral classifier values to the local `ClassifierStatus`. -/
+def fromWALS55A : Datasets.WALS.F55A.NumeralClassifiers → ClassifierStatus
+  | .absent => .absent
+  | .optional => .optional
+  | .obligatory => .obligatory
+
+/-- WALS Chapter 55 distribution: language counts per classifier status.
+    Total: 400 languages. -/
+structure ClassifierDistribution where
+  absent : Nat
+  optional : Nat
+  obligatory : Nat
+  deriving Repr
+
+def ClassifierDistribution.total (d : ClassifierDistribution) : Nat :=
+  d.absent + d.optional + d.obligatory
+
+/-- Actual WALS Ch 55 counts (260 absent + 62 optional + 78 obligatory = 400). -/
+def ch55Distribution : ClassifierDistribution :=
+  { absent := 260
+  , optional := 62
+  , obligatory := 78 }
 
 end Typology

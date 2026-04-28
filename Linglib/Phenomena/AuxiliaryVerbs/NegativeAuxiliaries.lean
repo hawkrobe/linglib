@@ -1,4 +1,4 @@
-import Linglib.Phenomena.AuxiliaryVerbs.Typology
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Phenomena.Negation.Typology
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
@@ -27,7 +27,7 @@ inflectional head.
 
 namespace Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 
-open Phenomena.AuxiliaryVerbs.Typology (InflPattern)
+open Typology.AuxiliaryVerbs (InflPattern)
 
 /-! ## Types -/
 

@@ -42,9 +42,13 @@ namespace Semantics.Dynamic.CDRT
 /--
 CDRT state: a register/assignment function.
 
-Registers are indexed by natural numbers and store entity values.
+Muskens names them "registers" but the type is `Core.Assignment E`;
+this alias preserves Muskens's vocabulary while sharing the simp set
+(`Assignment.update_at`, `update_ne`, `update_overwrite`, `update_self`)
+with H&K composition, DPL, Charlow continuations, and Spector's plural
+substrate.
 -/
-abbrev Register (E : Type*) := Nat → E
+abbrev Register (E : Type*) := Core.Assignment E
 
 /--
 Dynamic proposition: relates input and output states.

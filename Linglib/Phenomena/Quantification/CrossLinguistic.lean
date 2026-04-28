@@ -4,12 +4,20 @@ import Linglib.Fragments.Japanese.Determiners
 import Linglib.Phenomena.Quantification.Inventory
 
 /-!
-# Cross-Linguistic Quantifier Typology
+# Cross-Linguistic Quantifier Inventories
 @cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{shimoyama-2006} @cite{nakanishi-2007} @cite{kuo-yu-2012} @cite{tsai-2015}
 
-Empirical quantifier inventories from three languages (three families) mapped to
-a common `QuantifierInventory` structure, following the pattern established in
-`Phenomena.Modality.Typology` for modal inventories.
+Empirical quantifier inventories from three languages (three families) mapped
+to a common schema. Anchored as a documented cross-paper empirical pattern:
+per-language quantifier inventories surveyed against shared force /
+monotonicity / strength dimensions.
+
+The substrate types (`QForce`, `Monotonicity`, `Strength`, the lexical-entry
+`QuantifierEntry`) live in `Theories/Semantics/Quantification/Lexicon.lean`
+— theory-level shared substrate, used by Fragment lexical entries and by
+this cross-linguistic survey alike. The local `QuantifierInventory` wrapper
+here is analysis-layer (per-language packaging for cross-linguistic
+comparison), not substrate.
 
 ## Mapping conventions
 
@@ -25,7 +33,7 @@ a common `QuantifierInventory` structure, following the pattern established in
 
 -/
 
-namespace Phenomena.Quantification.Typology
+namespace Phenomena.Quantification.CrossLinguistic
 
 open Fragments.English.Determiners (QForce Monotonicity Strength)
 open Phenomena.Quantification.Inventory (QuantityWord)
@@ -153,4 +161,4 @@ theorem no_articles_east_asian :
    TODO: State with real type once cross-linguistic GQ denotations are formalized. -/
 
 
-end Phenomena.Quantification.Typology
+end Phenomena.Quantification.CrossLinguistic

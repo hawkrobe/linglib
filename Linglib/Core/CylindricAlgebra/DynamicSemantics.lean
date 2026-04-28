@@ -84,9 +84,9 @@ section CDRT
 open Semantics.Dynamic.CDRT
 open Semantics.Dynamic.Core
 
-/-- CDRT registers ARE assignments. -/
-theorem cdrt_register_eq_assignment {E : Type*} :
-    Register E = Assignment E := rfl
+-- (`Register E = Assignment E` is now true by abbrev unfolding —
+-- the previous bridge theorem `cdrt_register_eq_assignment : … := rfl`
+-- was retired when `Register` became `abbrev := Core.Assignment E`.)
 
 /-- Discourse referent introduction under closure = cylindrification.
 

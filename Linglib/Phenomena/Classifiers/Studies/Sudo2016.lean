@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Classifier.Defs
 import Linglib.Theories.Semantics.Classifier.TypeN
 import Linglib.Theories.Semantics.Classifier.Composition
 import Linglib.Fragments.Japanese.Classifier
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 
 /-!
@@ -329,16 +329,15 @@ theorem sudo_disagrees_with_chierchia_on_japanese :
 
 Sudo's blocking-principle account (eqs. 10/15/16) presupposes that the
 target language has *obligatory overt classifiers in the lexicon* —
-that is what blocks the silent ∪-operator. A language's
-`NounCategorizationSystem.isObligatory` field is the input-shape
-requirement; Sudo's framework applies iff that field is `true`.
-Languages where numerals combine with bare nouns (no obligatory CL)
-do not provide the right input. -/
+that is what blocks the silent ∪-operator.
+`NounCategorizationSystem.IsObligatory` is the input-shape requirement;
+Sudo's framework applies iff it holds. Languages where numerals combine
+with bare nouns (no obligatory CL) do not provide the right input. -/
 
 /-- Sudo's framework applies to a language with classifier system `cs`
-    iff `cs.isObligatory` — the lexical input that Sudo's silent
+    iff `cs.IsObligatory` — the lexical input that Sudo's silent
     ∪-operator gets blocked by. -/
 abbrev frameworkApplies (cs : Typology.NounCategorizationSystem) : Prop :=
-  cs.isObligatory = true
+  cs.IsObligatory
 
 end Sudo2016

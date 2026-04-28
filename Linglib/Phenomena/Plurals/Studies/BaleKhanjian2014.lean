@@ -358,6 +358,6 @@ theorem definiteness_asymmetry :
     rather than BK 2014 → Sudo 2016 (which would violate the chronology
     rule — study files may reference older papers, not newer ones). -/
 theorem western_armenian_lacks_obligatory_classifier_input :
-    Fragments.Armenian.classifierSystem.isObligatory = false := by decide
+    ¬ Fragments.Armenian.classifierSystem.IsObligatory := by decide
 
 end BaleKhanjian2014

@@ -30,8 +30,6 @@ The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
 
 | Framework | Operation | = Cylindric | Bridge |
 |---|---|---|---|
-| VarAssignment | `∃ d, p (updateVar g n d)` | `cylindrify n p g` | `VarAssignment.lean` |
-| VarAssignment | `lookupVar n g = lookupVar m g` | `diagonal n m g` | `VarAssignment.lean` |
 | CDRT (@cite{muskens-1996}) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `DynamicSemantics.lean` |
 | CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `DynamicSemantics.lean` |
 | Charlow (@cite{charlow-2019}) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
@@ -42,10 +40,9 @@ The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
 
 ### Unproved connections (same algebra, bridges not yet formalized)
 
-These frameworks use `Assignment.update` or `VarAssignment.updateVar`
-internally, so their quantificational operations are instances of
-cylindrification by the same argument — the bridge theorems just haven't
-been written yet.
+These frameworks use `Assignment.update` internally, so their
+quantificational operations are instances of cylindrification by the
+same argument — the bridge theorems just haven't been written yet.
 
 | Framework | Its existential | Cylindric reading |
 |---|---|---|
@@ -60,7 +57,7 @@ been written yet.
 
 ### Same algebra, different base type
 
-These frameworks instantiate `VarAssignment D` at a non-entity domain.
+These frameworks instantiate `Assignment D` at a non-entity domain.
 The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
 
 | Framework | Domain `D` | Its binder | Cylindric reading |
@@ -68,7 +65,7 @@ The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
 | @cite{partee-1973} tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
 | @cite{percus-2000} situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
 | @cite{heim-kratzer-1998} | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
-| @cite{abusch-1997} tense | `Time` | temporal `updateVar` | `cylindrify n φ` over temporal assignments |
+| @cite{abusch-1997} tense | `Time` | temporal `Assignment.update` | `cylindrify n φ` over temporal assignments |
 
 ### Structural parallels (not assignment-based)
 

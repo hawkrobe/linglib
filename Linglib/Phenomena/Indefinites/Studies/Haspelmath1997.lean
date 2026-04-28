@@ -8,15 +8,24 @@ import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Slavic.Russian.Indefinites
 
 /-!
-# Indefinite-Pronoun Typology
+# Haspelmath (1997): Indefinite Pronoun Typology
 @cite{haspelmath-1997} @cite{wals-2013}
 
-Cross-linguistic indefinite-pronoun aggregator. Pulls together a
-six-language sample of `IndefiniteParadigm`s (each anchored to its
-Fragment file's per-form data) and proves cross-cutting universals plus
-WALS bridge theorems verifying that each Fragment's encoded
-morphological-basis distribution matches the @cite{wals-2013} F46A
-classification of the same language by ISO 639-3 join.
+Haspelmath, Martin (1997). *Indefinite Pronouns*. Oxford Studies in
+Typology and Linguistic Theory. Oxford University Press.
+
+Cross-linguistic indefinite-pronoun survey following @cite{haspelmath-1997}'s
+9-function semantic map (specificKnown / specificUnknown / irrealis / question
+/ conditional / comparative / indirectNeg / directNeg / freeChoice). Pulls
+together a six-language sample of `IndefiniteParadigm`s (each anchored to its
+Fragment file's per-form data) and proves cross-cutting universals plus WALS
+bridge theorems verifying that each Fragment's encoded morphological-basis
+distribution matches the @cite{wals-2013} F46A classification of the same
+language by ISO 639-3 join.
+
+The substrate (`HaspelmathFunction` enum + `IndefiniteEntry`/`IndefiniteParadigm`
+structs + `MorphologicalBasis` + WALS converters) lives in
+`Typology/Indefinite.lean`.
 
 ## Sample
 
@@ -45,7 +54,7 @@ for cross-linguistic comparison anyway.
    paradigm whose SK/SU/NS region is fully populated.
 -/
 
-namespace Phenomena.Indefinites.Typology
+namespace Phenomena.Indefinites.Studies.Haspelmath1997
 
 open _root_.Typology
 open _root_.Typology.Indefinite
@@ -130,4 +139,4 @@ theorem latin_paradigm_AAB :
 theorem russian_paradigm_ABC :
     Fragments.Slavic.Russian.Indefinites.paradigm.syncretism = some .ABC := rfl
 
-end Phenomena.Indefinites.Typology
+end Phenomena.Indefinites.Studies.Haspelmath1997

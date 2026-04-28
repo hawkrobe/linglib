@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.Nouns
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
@@ -196,7 +196,7 @@ theorem one_absent_from_anaphoric :
     Witnessed by: Japanese is [+arg, -pred] AND has numeral classifiers. -/
 theorem argOnly_has_classifiers :
     Fragments.Japanese.Nouns.japaneseMapping = .argOnly ∧
-    Phenomena.Classifiers.Typology.japanese.classifierType = .numeralClassifier := by
+    Aikhenvald2000.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl⟩
 
 /-- In @cite{chierchia-1998}'s framework, [+arg, -pred] languages have no
@@ -205,7 +205,7 @@ theorem argOnly_has_classifiers :
 theorem no_blocking_needs_classifiers :
     Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
     Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
-    Phenomena.Classifiers.Typology.japanese.classifierType = .numeralClassifier := by
+    Aikhenvald2000.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Non-default classifiers encode at least one semantic parameter,

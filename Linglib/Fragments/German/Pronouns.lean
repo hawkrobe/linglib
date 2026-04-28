@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # German Pronoun Fragment
@@ -103,3 +104,24 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
 end Fragments.German.Pronouns
+
+namespace Fragments.German
+
+/-- German (Indo-European, Germanic) WALS pronoun typology profile.
+    No incl/excl; gender in 3rd sg only (er/sie/es); binary politeness
+    (du/Sie); mixed indefinite strategy (jemand special, irgendwer
+    interrogative-based); intensifier (selbst) differentiated from
+    reflexive (sich); no person marking on adpositions. -/
+def pronounProfile : Typology.PronounProfile :=
+  { language := "German"
+  , family := "Indo-European"
+  , iso := "deu"
+  , inclusiveExclusive := some .noDistinction
+  , inclusiveExclusiveVerbal := some .noDistinction
+  , genderInPronouns := some .in3rdPersonSgOnly
+  , politeness := some .binary
+  , indefiniteType := some .mixed
+  , intensifierReflexive := some .differentiated
+  , personMarkingAdpositions := some .noPersonMarking }
+
+end Fragments.German

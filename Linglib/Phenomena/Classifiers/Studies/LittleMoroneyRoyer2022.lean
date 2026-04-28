@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Fragments.Mayan.Chol.Classifiers
@@ -59,14 +59,12 @@ The extensional equivalence (`derivations_extensionally_equal`) bridges the
 two via `Finset.card_eq_two`.
 -/
 
-open Phenomena.Classifiers
-
 namespace LittleMoroneyRoyer2022
 
 open Core.NounCategorization
 open Typology
 open Typology.NounCategorizationSystem
-open Phenomena.Classifiers.Typology
+open Aikhenvald2000
 
 -- ============================================================================
 -- § 1: Language Profiles
@@ -329,10 +327,9 @@ def shanData : List ClfDatum :=
     Shan (CLF-for-N): *mǎa sǎam tǒ khǎw 'three CLF dogs PL' (unattested) -/
 theorem greenberg_refined_by_strategy :
     -- CLF-for-NUM: plural CAN co-occur with CLF
-    cholStrategy = .forNumeral ∧ chol.pluralClfCooccur = true ∧
+    cholStrategy = .forNumeral ∧ chol.PluralClfCooccur ∧
     -- CLF-for-N: plural CANNOT co-occur with CLF
-    shanStrategy = .forNoun ∧ shan.pluralClfCooccur = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    shanStrategy = .forNoun ∧ ¬ shan.PluralClfCooccur := by decide
 
 -- ============================================================================
 -- § 6: Scope Diagnostics
@@ -513,7 +510,7 @@ end SemanticDerivation
 
 /-- Extended system list including Ch'ol and Shan. -/
 def allSystemsWithCholShan : List NounCategorizationSystem :=
-  Typology.allSystems ++ [chol, shan]
+  Aikhenvald2000.allSystems ++ [chol, shan]
 
 /-- Ch'ol and Shan are both numeral classifier systems in Aikhenvald's
     typology, but have different classifier strategies.
@@ -528,8 +525,8 @@ theorem same_aikhenvald_different_strategy :
 /-- Sample-restricted: in the 7-language Aikhenvald sample plus Ch'ol
     and Shan, every classifier-type language lacks agreement. -/
 theorem sample_no_agreement_with_chol_shan :
-    (allSystemsWithCholShan.filter (isClassifierType ·.classifierType)).all
-      (!·.hasAgreement) = true := by decide
+    ∀ s ∈ allSystemsWithCholShan, isClassifierType s.classifierType = true →
+      ¬ s.HasAgreement := by native_decide
 
 /-- @cite{chierchia-1998}'s NMP predicts CLF-for-N for [+arg, -pred] languages
     (Mandarin, Japanese). Shan is also CLF-for-N per @cite{little-moroney-royer-2022},

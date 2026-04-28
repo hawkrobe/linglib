@@ -11,6 +11,7 @@ traditional Japanese relies heavily on null reference.
 -/
 
 import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.Japanese.Pronouns
 
@@ -147,3 +148,25 @@ theorem verb_register_span :
     iku.register = .informal ∧ ikimasu.register = .formal := ⟨rfl, rfl⟩
 
 end Fragments.Japanese.Pronouns
+
+namespace Fragments.Japanese
+
+/-- Japanese (Japonic) WALS pronoun typology profile. No incl/excl in
+    pronouns; no person marking on verbs; gender in 3rd person only
+    including non-singular (kare/kanojo); pronouns avoided for
+    politeness; interrogative-based indefinites (dare-ka 'who-Q' =
+    'someone'); intensifier and reflexive identical (jibun); no person
+    marking on adpositions. -/
+def pronounProfile : Typology.PronounProfile :=
+  { language := "Japanese"
+  , family := "Japonic"
+  , iso := "jpn"
+  , inclusiveExclusive := some .noDistinction
+  , inclusiveExclusiveVerbal := some .noPersonMarking
+  , genderInPronouns := some .in3rdPersonIncludingNonSg
+  , politeness := some .pronounsAvoided
+  , indefiniteType := some .interrogativeBased
+  , intensifierReflexive := some .identical
+  , personMarkingAdpositions := some .noPersonMarking }
+
+end Fragments.Japanese

@@ -4,6 +4,58 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.506] - 2026-04-28
+
+### `Core/Assignment.lean` aggressive trim — 4-agent audit findings
+
+Random-pick multi-agent audit (mathlib-reviewer + integration-auditor + linguistics-domain-expert + cross-framework-reconciler) on `Core/Assignment.lean` (239 LOC, foundational substrate for variable assignments). All four agents converged: file is correct substrate but bloated and undercommitted-to. Trim landed in one commit.
+
+#### `VarAssignment` namespace + bridge file deleted
+
+`Core.VarAssignment` namespace (lines 197-239 of the original `Core/Assignment.lean`) and the entire `Core/CylindricAlgebra/VarAssignment.lean` bridge file (~85 LOC) deleted per CLAUDE.md "no `Mathlib/Bridges/`" rule. The file's own docstring conceded `VarAssignment D` was "the same type as `Core.Assignment D`. The alias exists for historical reasons; prefer `Core.Assignment` in new code." Five consumers migrated: `Core/Time/Tense.lean` (TemporalAssignment alias now `Assignment Time` directly; `updateVar`/`lookupVar`/`varLambdaAbs` calls inlined to `Assignment.update`/direct application/`λ g d => body (g.update n d)`); `Phenomena/Reference/Studies/Percus2000.lean` (SituationAssignment alias migrated identically); `Phenomena/TenseAspect/ComparePartee.lean` (docstring table updated); `Core/CylindricAlgebra.lean` (docstring table dropped the VarAssignment row); `Linglib.lean` (import line removed).
+
+#### `PluralAssign` demoted from `Core/` to `Phenomena/Anaphora/Studies/Spector2025.lean`
+
+Single consumer (Spector 2025); `Core/` placement was premature per project's "promote when ≥2 consumers" rule. The full block — `PluralAssign` struct + `restrict` + `defined` + `singular` + `singularAt` + `null` + `ofPred` + bespoke `Membership` instance — moved into Spector2025.lean as `namespace Core.PluralAssign` (declared at root by temporarily exiting the `namespace Spector2025` block). Cleanup applied during the move: `isAtomic := singular` zero-content alias deleted; `singular` now defined as `∃ d, singularAt G x d` definitionally instead of equivalently; `singularAt` docstring flags the partial-row-definedness edge case the audit identified (current semantics allows undefined rows to coexist with defined ones agreeing on `d` — the all-defined reading would be stronger but isn't what Spector's static reuse needs).
+
+#### Local cleanups in `Core/Assignment.lean`
+
+`@[simp]` added to `update_overwrite` and `update_self` for `Assignment` (mirrors mathlib's `Function.update_idem`/`update_eq_self` discipline). `valued`/`isValued` zero-content alias collapsed (deleted `isValued`). Module docstring's "every variable-binding framework" overclaim narrowed; out-of-scope section added explicitly listing DRT (named drefs), FCS (file cards), proof-relevant context (Bekki DTS, Asher TYS), and `PluralAssign` as paper-local. Bib citation key fixed: `van-der-berg-1996` → `van-den-berg-1996` (the surname misspelling the linguistics agent flagged — the author is Martin van den Berg, not "van der Berg").
+
+#### Parallel re-stipulations swept
+
+Five files were re-stipulating type-equal aliases of `Core.Assignment` / `Core.PartialAssign` per the integration auditor:
+
+- `Theories/Semantics/Dynamic/CDRT/Basic.lean:47` — `abbrev Register (E : Type*) := Nat → E` → `:= Core.Assignment E`. Muskens's "register" vocabulary preserved; simp set now shared.
+- `Theories/Semantics/Composition/Applicative.lean:286` — `abbrev TypedAssignment (r : Type) := Nat → r` → `:= Core.Assignment r`.
+- `Theories/Semantics/Noun/Kind/Anaphora.lean:98` — `abbrev HAssign (W E : Type*) := Nat → DRefVal W E` → `:= Core.Assignment (DRefVal W E)`.
+- `Theories/Semantics/TypeTheoretic/Discourse.lean:425` — `def Assgnmnt (E : Type) := Nat → Option E` → `abbrev Assgnmnt (E : Type) := Core.PartialAssign E`. The 5 redundant lemmas (`update_same`/`update_other`/`empty_none`) and the `Assgnmnt.merge`/`hasBindings` operations stayed in place — `Underspecification.lean` consumes `Assgnmnt.empty` directly. Net result: `g : Assgnmnt E` now resolves dot-notation through the `PartialAssign` namespace, getting the canonical simp set for free.
+- `Theories/Semantics/Dynamic/Connectives/CCP.lean` — already clean (uses `Core.Assignment` via `open Core`).
+
+#### Bib additions
+
+Three keys cited in `Core/Assignment.lean` but missing from `references.bib` (would have failed `gen_bibliography.py --check`): `brasoveanu-2008` (Donkey pluralities, *L&P* 31(2): 129-209, DOI 10.1007/s10988-008-9035-0 — verified via Crossref API); `nouwen-2003` (Plural Pronominal Anaphora in Context, Utrecht PhD, LOT 84, URL https://dspace.library.uu.nl/handle/1874/630); `van-den-berg-1996` (Some Aspects of the Internal Structure of Discourse, ILLC DS-1996-03, URL https://eprints.illc.uva.nl/id/eprint/1996/ — verified via the ILLC eprint server). All three with `validated = true`.
+
+#### Post-audit fixes (second-pass review surfaced 3 must-fixes the first-pass cleanup missed)
+
+- **PluralAssign namespace was a layer violation.** First-pass declared `Core.PluralAssign` from inside a `Phenomena/` study file via `end Spector2025 ; namespace Core ; … ; end Core ; namespace Spector2025` gymnastics. Second-pass moved the type into `namespace Spector2025` directly so it's `Spector2025.PluralAssign` — paper-locality now visible at the namespace level, matching the file location. Eliminates the gymnastics block; consumers in the file (which already used unqualified `PluralAssign`) unaffected.
+- **`PluralAssign.Nonempty` shadowed `_root_.Nonempty`.** Renamed to `IsNonempty`; three callers in `forallPlural`/`existsPlural` migrated.
+- **`cdrt_register_eq_assignment : Register E = Assignment E := rfl` is now tautological.** With `Register := Core.Assignment E` as an abbrev, the equation is true by elaboration. Theorem deleted; replaced with a 3-line comment.
+- **`Assgnmnt`-with-fresh-API anti-pattern.** First-pass made `Assgnmnt := Core.PartialAssign E` an abbrev but left `Assgnmnt.empty`/`update`/`update_same`/`update_other`/`empty_none` as fresh definitions, so the docstring's "simp-set inheritance" claim was false (the local definitions did not unfold to `PartialAssign.{empty, update}`). Second-pass deleted the 5 redundant defs/lemmas; migrated the 18 callsites in `Underspecification.lean` (15× `Assgnmnt.empty` → `Core.PartialAssign.empty`, 3× `Assgnmnt.update` → `Core.PartialAssign.update`); kept `Assgnmnt.{merge, merge_empty_left, hasBindings}` (genuinely novel, single-consumer). The abbrev now actually delivers what the docstring claims.
+- **Out-of-scope continuation bullet contradicted `TypedAssignment` in `Composition/Applicative.lean`.** Reworded: continuation *state* (FCS-style file cards, sequence-of-binders update) is out of scope; continuation *environments* (Charlow paycheck Reader pattern) DO use `Assignment` and are in scope.
+
+#### Convention added: `Assignment E` for variable assignments only
+
+Two struct-field re-stipulations of `Nat → E` flagged in the audit deserved different treatment:
+
+- `PLAPoss.{assignment, witnesses}` in `Theories/Semantics/Dynamic/Core/Translation.lean` — both genuinely Tarski-style variable assignments (variables and pronouns each get their own ℕ-indexed register file). Renamed to `Assignment E`. Added `import Linglib.Core.Assignment` and `open _root_.Core (Assignment)`. Field access syntax preserved; `PLA/Semantics.lean` consumers unaffected.
+- `KRModel.names : Nat → E` in `Theories/Semantics/Dynamic/DRT/Basic.lean` — *not* a variable assignment but K&R's `Name_M`, the model-theoretic *constant interpretation function* (Def 1.2.1). Same shape `Nat → E`, distinct semantic role. Renaming would conflate two K&R primitives. Docstring expanded to flag the deliberate non-renaming so future audits don't catch it again.
+- `Core/Assignment.lean` module docstring grew a "When to use `Assignment E` vs raw `Nat → E`" section codifying the test: use `Assignment E` exactly when the field's role is variable-binding state (gets `update`d by binders, looked up by free variables); leave `Nat → E` when the shape happens for unrelated reasons (lookup tables, name interpretations, arity-indexed model components).
+
+#### Net effect
+
+`Core/Assignment.lean` shrinks 239 → 124 LOC (-115 LOC, -48%). `Core/CylindricAlgebra/VarAssignment.lean` deleted (-85 LOC). Discourse.lean's parallel-API surface trimmed (-26 LOC). Eight consumers no longer maintain parallel update/update_at/update_ne lemma surface — they inherit it through the abbrev chain. `Spector2025.PluralAssign` is paper-local at both file and namespace level, no longer pretending to be substrate. Build: 5429 jobs all green.
+
 ## [0.230.505] - 2026-04-28
 
 ### Bundled checkpoint: Tagalog cross-paper deduplication + Relativization `IsContinuous`/`IsPrimary` Prop layer + KeenanComrie1977 derive-from-Fragments rewrite + Beaver2004 cb/cp-factoring substrate

@@ -271,7 +271,6 @@ import Linglib.Theories.Semantics.Spatial.Path
 import Linglib.Core.Assignment
 import Linglib.Theories.Semantics.Composition.Continuation
 import Linglib.Core.CylindricAlgebra
-import Linglib.Core.CylindricAlgebra.VarAssignment
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
 import Linglib.Features.Person
@@ -1017,7 +1016,7 @@ import Linglib.Phenomena.AuxiliaryVerbs.Studies.Amato2025
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Anderson2006
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Sorace2000
-import Linglib.Phenomena.AuxiliaryVerbs.Typology
+import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
 import Linglib.Phenomena.TenseAspect.Studies.Cumming2026
@@ -1290,7 +1289,7 @@ import Linglib.Phenomena.Modality.Studies.AnandHacquard2013
 import Linglib.Phenomena.Modality.Studies.Condoravdi2002
 import Linglib.Phenomena.Modality.Studies.Fox2007
 import Linglib.Phenomena.Modality.EpistemicContradictions
-import Linglib.Phenomena.Indefinites.Typology
+import Linglib.Phenomena.Indefinites.Studies.Haspelmath1997
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
@@ -1374,7 +1373,7 @@ import Linglib.Phenomena.Possession.Studies.Heine1997
 import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Possession.Studies.Myler2016
 import Linglib.Phenomena.Possession.Studies.AissenPolian2025
-import Linglib.Phenomena.Pronouns.Typology
+import Linglib.Phenomena.Pronouns.CrossLinguistic
 import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
@@ -1416,7 +1415,7 @@ import Linglib.Phenomena.Presupposition.Studies.Blutner2000
 import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
 import Linglib.Phenomena.Presupposition.Studies.Glass2025
 import Linglib.Phenomena.Modality.OutlookMarkers
-import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Downing1996
 import Linglib.Phenomena.Classifiers.Studies.WangSun2026
@@ -1427,7 +1426,7 @@ import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Studies.Bruening2001
 import Linglib.Phenomena.Quantification.Inventory
-import Linglib.Phenomena.Quantification.Typology
+import Linglib.Phenomena.Quantification.CrossLinguistic
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021PMF
@@ -1958,10 +1957,9 @@ import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Theories.Semantics.Quantification.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Quantification.DeganoAloni2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
-import Linglib.Theories.Semantics.Numerals.Polysemy
-import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Semantics.Numerals.Degree
+import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Quantification.DependenceLogic
 import Linglib.Theories.Semantics.Quantification.DomainRestriction
@@ -2008,6 +2006,7 @@ import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Noun.Kind.GenericsDynamic
 import Linglib.Theories.Semantics.Noun.Kind.Krifka2004
+import Linglib.Theories.Semantics.Noun.Kind.Mendia2020
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 import Linglib.Theories.Semantics.Plurality.Cover
 import Linglib.Theories.Semantics.Plurality.Cumulativity
@@ -2219,7 +2218,7 @@ import Linglib.Theories.Semantics.Tense.Modal.Matrix
 import Linglib.Theories.Semantics.Tense.Counterfactual.Defs
 import Linglib.Phenomena.TenseAspect.Studies.Sharvit2014
 import Linglib.Phenomena.TemporalConnectives.Studies.Giannakidou2002
-import Linglib.Phenomena.TemporalConnectives.Typology
+import Linglib.Typology.TemporalConnectives
 import Linglib.Theories.Syntax.Minimalist.Tense.AgreeSOT
 import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
 -- Theories: Semantics.Questions

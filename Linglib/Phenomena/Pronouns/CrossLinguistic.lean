@@ -9,14 +9,19 @@ import Linglib.Datasets.WALS.Features.F48A
 import Linglib.Typology.Pronouns
 
 /-!
-# Cross-Linguistic Typology of Pronouns (WALS Chapters 39--40, 44--48)
-@cite{dryer-haspelmath-2013} @cite{dryer-haspelmath-2013}
+# Cross-Linguistic Survey of Pronoun Systems (WALS Chapters 39--40, 44--48)
+@cite{dryer-haspelmath-2013}
 
-Typological data on pronoun systems across languages, drawn from seven
-chapters of the World Atlas of Language Structures. These chapters cover the
-major dimensions along which pronoun systems vary cross-linguistically:
-clusivity, gender, politeness, indefiniteness strategy, the intensifier--
-reflexive connection, and person marking on adpositions.
+Typological survey of pronoun systems across languages, drawn from seven
+chapters of the World Atlas of Language Structures. Anchored as a
+documented cross-paper empirical pattern (multi-chapter WALS survey, no
+single paper anchor). The substrate types (`PronounProfile` etc.) live in
+`Typology/Pronouns.lean`.
+
+The chapters cover the major dimensions along which pronoun systems vary
+cross-linguistically: clusivity, gender, politeness, indefiniteness
+strategy, the intensifier--reflexive connection, and person marking on
+adpositions.
 
 ## Ch 39: Inclusive/Exclusive in Independent Pronouns (200 languages)
 
@@ -73,7 +78,7 @@ adpositions (e.g. Hebrew 'in-me', 'in-you'). 63 languages (16.7%) lack
 adpositions entirely.
 -/
 
-namespace Phenomena.Pronouns.Typology
+namespace Phenomena.Pronouns.CrossLinguistic
 
 open _root_.Typology
 
@@ -967,4 +972,4 @@ theorem intensifier_reflexive_near_even :
     (ch47.filter (·.value == .identical)).length := by
   native_decide
 
-end Phenomena.Pronouns.Typology
+end Phenomena.Pronouns.CrossLinguistic

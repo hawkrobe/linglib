@@ -1,3 +1,12 @@
+import Linglib.Datasets.WALS.Features.F39A
+import Linglib.Datasets.WALS.Features.F39B
+import Linglib.Datasets.WALS.Features.F40A
+import Linglib.Datasets.WALS.Features.F44A
+import Linglib.Datasets.WALS.Features.F45A
+import Linglib.Datasets.WALS.Features.F46A
+import Linglib.Datasets.WALS.Features.F47A
+import Linglib.Datasets.WALS.Features.F48A
+
 /-!
 # Pronoun typology — substrate types
 @cite{wals-2013} (Chs 39, 39B, 40, 44–48)
@@ -148,5 +157,103 @@ structure PronounProfile where
   /-- Ch 48: person marking on adpositions. -/
   personMarkingAdpositions : Option PersonMarkingOnAdpositions := .none
   deriving Repr, DecidableEq
+
+end Typology
+
+-- ============================================================================
+-- WALS converters (Chs 39, 39B, 40, 44–48)
+-- ============================================================================
+
+namespace Typology
+
+def fromWALS39A : Datasets.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns →
+    InclusiveExclusive
+  | .noWe => .noWe
+  | .weTheSameAsI => .weEqualsI
+  | .noInclusiveExclusive => .noDistinction
+  | .onlyInclusive => .onlyInclusive
+  | .inclusiveExclusive => .inclusiveExclusive
+
+def fromWALS39B : Datasets.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
+    InclusiveExclusivePamaNyungan
+  | .noInclusiveExclusiveOpposition => .noOpposition
+  | .inclusiveAndExclusiveDifferentiated => .differentiated
+
+def fromWALS40A : Datasets.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection →
+    InclusiveExclusiveVerbal
+  | .noPersonMarking => .noPersonMarking
+  | .weTheSameAsI => .weEqualsI
+  | .noInclusiveExclusive => .noDistinction
+  | .onlyInclusive => .onlyInclusive
+  | .inclusiveExclusive => .inclusiveExclusive
+
+def fromWALS44A : Datasets.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns →
+    GenderInPronouns
+  | .in3rdPerson1stAndOr2ndPerson => .in3rdAndOtherPersons
+  | .v3rdPersonOnlyButAlsoNonSingular => .in3rdPersonIncludingNonSg
+  | .v3rdPersonSingularOnly => .in3rdPersonSgOnly
+  | .v1stOr2ndPersonButNot3rd => .in1stOr2ndOnly
+  | .v3rdPersonNonSingularOnly => .in3rdPersonNonSgOnly
+  | .noGenderDistinctions => .noGenderDistinctions
+
+def fromWALS45A : Datasets.WALS.F45A.PolitenessDistinctionsInPronouns →
+    PolitenessDistinction
+  | .noPolitenessDistinction => .none
+  | .binaryPolitenessDistinction => .binary
+  | .multiplePolitenessDistinctions => .multiple
+  | .pronounsAvoidedForPoliteness => .pronounsAvoided
+
+def fromWALS46A : Datasets.WALS.F46A.IndefinitePronouns → IndefinitePronounType
+  | .interrogativeBased => .interrogativeBased
+  | .genericNounBased => .genericNounBased
+  | .special => .special
+  | .mixed => .mixed
+  | .existentialConstruction => .existentialConstruction
+
+def fromWALS47A : Datasets.WALS.F47A.IntensifierReflexive → IntensifierReflexive
+  | .identical => .identical
+  | .differentiated => .differentiated
+
+def fromWALS48A : Datasets.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnAdpositions
+  | .noAdpositions => .noAdpositions
+  | .noPersonMarking => .noPersonMarking
+  | .pronounsOnly => .pronounsOnly
+  | .pronounsAndNouns => .pronounsAndNouns
+
+-- ============================================================================
+-- WALS chapter abbrevs + size theorems + distribution + generalizations
+-- ============================================================================
+
+private abbrev ch39 := Datasets.WALS.F39A.allData
+private abbrev ch39b := Datasets.WALS.F39B.allData
+private abbrev ch40 := Datasets.WALS.F40A.allData
+private abbrev ch44 := Datasets.WALS.F44A.allData
+private abbrev ch45 := Datasets.WALS.F45A.allData
+private abbrev ch46 := Datasets.WALS.F46A.allData
+private abbrev ch47 := Datasets.WALS.F47A.allData
+private abbrev ch48 := Datasets.WALS.F48A.allData
+
+set_option maxRecDepth 8192 in
+/-- Majority of languages (120/200) make no inclusive/exclusive
+    distinction in independent pronouns. -/
+theorem noDistinction_is_majority_ch39 :
+    (ch39.filter (·.value == .noInclusiveExclusive)).length >
+    (ch39.filter (·.value == .inclusiveExclusive)).length := by decide
+
+set_option maxRecDepth 8192 in
+/-- No gender distinctions in pronouns is the majority pattern (254/378 = 67.2%). -/
+theorem noGender_is_majority_ch44 :
+    (ch44.filter (·.value == .noGenderDistinctions)).length >
+    (ch44.filter (·.value == .v3rdPersonSingularOnly)).length +
+    (ch44.filter (·.value == .v3rdPersonOnlyButAlsoNonSingular)).length +
+    (ch44.filter (·.value == .in3rdPerson1stAndOr2ndPerson)).length := by decide
+
+set_option maxRecDepth 8192 in
+/-- Most languages lack politeness distinctions in pronouns (136/207 = 65.7%). -/
+theorem noPoliteness_is_majority_ch45 :
+    (ch45.filter (·.value == .noPolitenessDistinction)).length >
+    (ch45.filter (·.value == .binaryPolitenessDistinction)).length +
+    (ch45.filter (·.value == .multiplePolitenessDistinctions)).length +
+    (ch45.filter (·.value == .pronounsAvoidedForPoliteness)).length := by decide
 
 end Typology

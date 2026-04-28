@@ -94,8 +94,9 @@ variable {W E : Type*}
     Following @cite{krifka-2026} §4: assignments are partial functions
     from ℕ to a heterogeneous universe including entities, concepts
     (properties with mass/count features), and world-time indices. Partiality
-    is modeled by `DRefVal.undef`. -/
-abbrev HAssign (W E : Type*) := Nat → DRefVal W E
+    is modeled by `DRefVal.undef`, so this is `Core.Assignment (DRefVal W E)`
+    rather than `Core.PartialAssign (DRefVal W E)`. -/
+abbrev HAssign (W E : Type*) := Core.Assignment (DRefVal W E)
 
 /-- Dynamic sentence meaning: relation between input and output assignments.
 

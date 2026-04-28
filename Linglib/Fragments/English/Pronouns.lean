@@ -6,6 +6,7 @@ Lexical entries for English pronouns (personal, reflexive, wh-).
 
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.English.Pronouns
 
@@ -244,3 +245,24 @@ theorem sg_pl_same_gender :
     they_sg.genderParadigm = they.genderParadigm := rfl
 
 end Fragments.English.Pronouns
+
+namespace Fragments.English
+
+/-- English (Indo-European, Germanic) WALS pronoun typology profile.
+    No incl/excl; gender in 3rd sg only (he/she/it); no politeness;
+    generic-noun-based indefinites (somebody, something); intensifier
+    and reflexive identical (himself); no person marking on
+    adpositions. (WALS Chs 39, 40, 44–48.) -/
+def pronounProfile : Typology.PronounProfile :=
+  { language := "English"
+  , family := "Indo-European"
+  , iso := "eng"
+  , inclusiveExclusive := some .noDistinction
+  , inclusiveExclusiveVerbal := some .weEqualsI
+  , genderInPronouns := some .in3rdPersonSgOnly
+  , politeness := some .none
+  , indefiniteType := some .genericNounBased
+  , intensifierReflexive := some .identical
+  , personMarkingAdpositions := some .noPersonMarking }
+
+end Fragments.English

@@ -188,7 +188,6 @@ theorem tensePronoun_present_root :
     let frame := tp.toFrame g 0 0 0
     frame.isPresent := by
   simp only [TensePronoun.toFrame, TensePronoun.resolve, ReichenbachFrame.isPresent]
-  change (0 : ℤ) = 0; rfl
 
 /-- An indexical future tense pronoun at root level produces
     a frame satisfying `isFuture` (P < R). -/

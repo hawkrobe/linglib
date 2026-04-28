@@ -571,6 +571,80 @@ Key changes from the simplified system:
   recorded in `G`
 -/
 
+-- ════════════════════════════════════════════════════════════════
+-- §6.0: PluralAssign substrate (paper-local; only consumer)
+-- @cite{van-den-berg-1996} @cite{nouwen-2003} @cite{brasoveanu-2008}
+-- ════════════════════════════════════════════════════════════════
+
+/-! Plural assignments (sets of partial assignments) originate in plural
+    dynamic semantics. Spector's §6 reuses them in a static (non-dynamic)
+    setting. Declared here under `namespace Spector2025` rather than under
+    `Core` because this is the only consumer in the library; promoting it
+    to the substrate would overcommit `Core` to one paper's reading. -/
+
+/-- Plural assignment: a set of atomic (partial) assignments.
+
+    Spector §6.2: "contexts are viewed as pairs `(w, G)`, where `G` is a
+    set of assignments, a plural assignment." Plural assignments track
+    inter-variable dependencies (e.g., which book each student read) that
+    individual assignments cannot express.
+
+    Originates in plural dynamic semantics (@cite{van-den-berg-1996},
+    @cite{nouwen-2003}, @cite{brasoveanu-2008}). Spector's innovation is
+    using them in a static setting.
+
+    Wrapped in a structure so the bespoke `Membership` instance below
+    is found by typeclass search instead of mathlib's `Set` instances. -/
+@[ext] structure PluralAssign (D : Type*) where
+  /-- The membership predicate on atomic assignments. -/
+  pred : PartialAssign D → Prop
+
+namespace PluralAssign
+
+variable {D : Type*}
+
+instance : Membership (PartialAssign D) (PluralAssign D) where
+  mem G g := G.pred g
+
+/-- Whether `G` contains at least one atomic assignment.
+    (Named `IsNonempty` rather than `Nonempty` to avoid shadowing
+    `_root_.Nonempty`.) -/
+def IsNonempty (G : PluralAssign D) : Prop := ∃ g, g ∈ G
+
+/-- Restrict a plural assignment to atomic assignments mapping `x` to `a`.
+    Spector §6.2: `G_{x=a}` is the subset of `G` where `g(x) = a`. -/
+def restrict (G : PluralAssign D) (x : Nat) (a : D) : PluralAssign D :=
+  ⟨λ g => g ∈ G ∧ g x = some a⟩
+
+/-- Whether any atomic assignment in `G` is defined for `x`. -/
+def defined (G : PluralAssign D) (x : Nat) : Prop :=
+  ∃ g, g ∈ G ∧ (g x).isSome
+
+/-- The universal plural assignment: contains every partial assignment.
+    Spector §6: the starting context contains all pairs. -/
+def null : PluralAssign D := ⟨λ _ => True⟩
+
+/-- Build a plural assignment from a predicate. -/
+def ofPred (p : PartialAssign D → Prop) : PluralAssign D := ⟨p⟩
+
+/-- Witness-level singularity: `G` assigns `x` uniquely to `d`.
+    Spector §6.2: at least one atomic assignment maps `x` to `d`,
+    and all assignments in `G` that define `x` agree on `d`.
+
+    NOTE: this allows assignments where `x` is undefined to coexist
+    with assignments where `x = d` (only the *defined* rows are required
+    to agree). The all-defined reading would be stronger; the present
+    reading is the one Spector's static reuse of plural states needs. -/
+def singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
+  (∃ g, g ∈ G ∧ g x = some d) ∧ (∀ g, g ∈ G → (g x).isSome → g x = some d)
+
+/-- `singular G x` ↔ there is some `d` such that `G` assigns `x` uniquely to it.
+    Spector's `atomic(x)` predicate; replaces `U(x)` from the simplified system. -/
+def singular (G : PluralAssign D) (x : Nat) : Prop :=
+  ∃ d, G.singularAt x d
+
+end PluralAssign
+
 section PluralSemantics
 
 variable {D : Type*} {W : Type*}
@@ -619,7 +693,7 @@ theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
 noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
     (w : W) (G : PluralAssign D) : Truth3 :=
   if φ w G = .true then .true
-  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+  else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
           (∀ a ∈ dom, φ w (G.restrict x a) = .false) then .false
   else .indet
 
@@ -630,9 +704,9 @@ noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
     - `#` otherwise -/
 noncomputable def forallPlural (x : Nat) (φ : PSent W D) (dom : Set D)
     (w : W) (G : PluralAssign D) : Truth3 :=
-  if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+  if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
      (∀ a ∈ dom, φ w (G.restrict x a) = .true) then .true
-  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+  else if (∀ a ∈ dom, (G.restrict x a).IsNonempty) ∧
           (∃ a ∈ dom, φ w (G.restrict x a) = .false) then .false
   else .indet
 
