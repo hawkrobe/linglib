@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.Coherence
-import Linglib.Features.InformationStructure
+import Linglib.Typology.PolarityMarking
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.French.PolarityMarking
@@ -53,7 +53,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Features.InformationStructure (PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
+open Typology.PolarityMarking (PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
 open Core.Discourse.Coherence (CoherenceRelation)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)

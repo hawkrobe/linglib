@@ -1,4 +1,4 @@
-import Linglib.Features.InformationStructure
+import Linglib.Typology.PolarityMarking
 
 /-!
 # French Polarity-Marking Strategies
@@ -33,7 +33,7 @@ affirmative particles like Dutch *wel* and from Verum focus.
 
 namespace Fragments.French.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- *si* — French polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative assertion or question.

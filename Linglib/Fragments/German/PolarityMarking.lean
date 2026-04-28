@@ -1,4 +1,4 @@
-import Linglib.Features.InformationStructure
+import Linglib.Typology.PolarityMarking
 
 /-!
 # German Polarity-Marking Strategies
@@ -25,7 +25,7 @@ German's strategy is non-particulate.
 
 namespace Fragments.German.PolarityMarking
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- Verum focus — pitch accent on the finite verb.
     Dominant strategy in German for neg→affirm switches in both contexts.

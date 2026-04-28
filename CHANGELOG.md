@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.493] - 2026-04-28
+
+### InformationStructure cleanup commit 3/3: PolarityMarking* cluster moved to Typology/
+
+Final commit of the three-part `Features/InformationStructure.lean` dissolution from the multi-agent audit. The PolarityMarking cluster (`PolarityMarkingStrategy` 5-way enum + `PolarityMarkingEnv` 3-way enum + `PolarityMarkingEntry` struct + the load-bearing framework-commitment docstring) was identified by the integration auditor as belonging in `Typology/`, not `Features/` — its 12-file consumer base (7 Fragments + 4 Studies + 1 Theory) plays the per-language-typological-substrate role that `Typology/Indefinite.lean`, `Typology/Possession.lean`, `Typology/Possession.lean`, etc. play, not the linguistic-feature-taxonomy role `Features/` is for.
+
+**New file**: `Linglib/Typology/PolarityMarking.lean` (~120 LOC) under `namespace Typology.PolarityMarking`. Module docstring carries the framework-commitment note (TBD2014 form-class encoding contested by Matić & Nikolaeva 2018, Garassino & Jacob 2018; non-equivalence formalized in `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`). Names preserved (`PolarityMarkingStrategy` etc., not `Strategy`) to minimize consumer churn — the noun-prefix-redundancy mathlib-reviewer flag is deferred to a future rename pass.
+
+**Consumer migrations (12 files)**: import + open updates only, no name changes:
+- 7 Fragments: `Fragments/{Dutch/Particles, German/PolarityMarking, Italian/PolarityMarking, English/PolarityMarking, French/PolarityMarking, Swedish/AnswerParticles, Spanish/PolarityMarking}.lean`
+- 4 Studies: `Phenomena/Polarity/Studies/{TurcoBraunDimroth2014, MaticNikolaeva2018, GarassinoJacob2018}.lean` + `Phenomena/Questions/Studies/SeeligerRepp2018.lean`
+- 1 Theory: `Theories/Semantics/Focus/PolarityLevel.lean`
+
+Each switched `import Linglib.Features.InformationStructure` → `import Linglib.Typology.PolarityMarking` and `open Features.InformationStructure (PolarityMarking...)` → `open Typology.PolarityMarking (PolarityMarking...)`. PolarityLevel.lean retains its `import Linglib.Features.InformationStructure` since other parts of the file may still need it (no longer the case — could be a follow-up cleanup).
+
+**Source file cleanup**: `Features/InformationStructure.lean` removes the PolarityMarking section (3 types + the long framework-commitment docstring); `import Linglib.Typology.Profile` and `import Mathlib.Tactic.DeriveFintype` removed (no longer needed).
+
+**Linglib.lean**: `import Linglib.Typology.PolarityMarking` added in alphabetical position.
+
+**Build**: 990-job affected dependency cone (PolarityMarking + 12 consumers + transitive closures) green.
+
+**End state of `Features/InformationStructure.lean`** after all 3 commits: ~190 LOC of substance taxonomies — `Theme`/`Rheme`/`Focus`/`Background`/`InfoStructure` IS-partition structs (with prosodic-marking/contestation docstrings), `DiscourseStatus` 3-way + `rank` + `ofAtIssueness` projection, `FIPApplication` Rooth1992 4-way, `JudgmentType` Kuroda 2-way + `HasψSubject : Prop`. From the original 9 unrelated taxonomies the 4-day-old triage flagged, the file now houses 5 cohesive substance enums plus the IS-partition record cluster — no more "dump bag", no theory-output interface contracts, no near-identity bridges to other Core types. The audit's three convergent recommendations (delete duplicates, drop unearned typeclass, relocate per-language substrate) all landed.
+
 ## [0.230.492] - 2026-04-27
 
 ### IKW Discourse *only* arc: correctness fixes + IKW 2022 attribution + DiscourseOnly relocation

@@ -1,4 +1,4 @@
-import Linglib.Features.InformationStructure
+import Linglib.Typology.PolarityMarking
 
 /-!
 # Dutch Polarity Particles
@@ -15,7 +15,7 @@ finite verb.
 
 namespace Fragments.Dutch.Particles
 
-open Features.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
 
 /-- *wel* — Dutch affirmative polarity particle.
     Sentence-internal, accented, available in both contrast and correction.

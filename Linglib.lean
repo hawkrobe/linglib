@@ -205,6 +205,7 @@ import Linglib.Typology.Profile
 import Linglib.Typology.Universal
 import Linglib.Typology.Numerals
 import Linglib.Typology.Plurals
+import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Possession
 import Linglib.Typology.Pronouns
 import Linglib.Typology.Question

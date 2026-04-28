@@ -1,5 +1,6 @@
 import Linglib.Features.Polarity
 import Linglib.Core.Discourse.Coherence
+import Linglib.Typology.PolarityMarking
 import Linglib.Features.InformationStructure
 
 /-!
@@ -52,7 +53,7 @@ is the polarity-neutral propositional content.
 namespace Semantics.Focus.PolarityLevel
 
 open Features (Polarity)
-open Features.InformationStructure (PolarityMarkingStrategy)
+open Typology.PolarityMarking (PolarityMarkingStrategy)
 open Core.Discourse.Coherence (CoherenceRelation)
 
 -- ════════════════════════════════════════════════════
