@@ -5,7 +5,7 @@
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.29.1-blueviolet)](https://github.com/leanprover-community/mathlib4)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
-A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing — covering ~76 phenomenon categories and ~100 languages, with multiple competing frameworks formalized for the same phenomenon.
+A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing.
 
 > ⚠️ This is an experiment in "AI for Linguistics" using recent advances in proof assistants. Please let us know if you identify any inaccuracies. 
 
