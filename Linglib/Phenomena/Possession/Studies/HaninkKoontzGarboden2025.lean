@@ -269,28 +269,31 @@ theorem within_language_variation :
 
 /-- A Wá·šiw property concept root entry.
 
-    Each root carries a `RootClassification` from `RootTypology`, ensuring properties
-    are derived from the theory layer. All PC roots share
-    `RootEntailments.propertyConcept` (+S −M −R −C) but differ in
-    `RootDenotationType` (the H&K-G contribution). -/
+    The theory-layer `RootClassification` is exposed as a *derived projection*
+    `toRootClassification` rather than a stored field — all PC roots share
+    `arity := .noTheme`, `changeType := .propertyConcept`, and have
+    `denotationType` determined by `morphClass.denotationType`. Storing it
+    redundantly would invite the encoding-conclusions-as-definitions
+    anti-pattern (CLAUDE.md). -/
 structure WasiwPCRoot where
   stem : String
   gloss : String
   morphClass : MorphClass
   dixonCat : PCClass
-  /-- The theory-layer root: all PC roots are +S −M −R −C, no theme. -/
-  root : RootClassification
   deriving Repr
 
-/-- Construct a Wá·šiw PC root with the correct theory-layer `RootClassification`.
-    All PC roots are `propertyConcept` (+S −M −R −C), `noTheme`, and
-    their `denotationType` is determined by `MorphClass.denotationType`. -/
+/-- The theory-layer `RootClassification` derived from a Wáshiw PC root.
+    All PC roots are `propertyConcept` (+S −M −R −C) and `noTheme`; their
+    `denotationType` is determined by `MorphClass.denotationType`. -/
+def WasiwPCRoot.toRootClassification (w : WasiwPCRoot) : RootClassification :=
+  { arity := .noTheme,
+    changeType := .propertyConcept,
+    denotationType := some w.morphClass.denotationType }
+
+/-- Convenience constructor — kept stable for `sampleRoots` literals. -/
 def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PCClass) :
     WasiwPCRoot :=
-  { stem, gloss, morphClass := mc, dixonCat := cat,
-    root := { arity := .noTheme,
-              changeType := .propertyConcept,
-              denotationType := some mc.denotationType } }
+  { stem, gloss, morphClass := mc, dixonCat := cat }
 
 /-- Sample of Wá·šiw PC roots from Table A1 (representative subset). -/
 def sampleRoots : List WasiwPCRoot := [
@@ -345,24 +348,14 @@ def sampleRoots : List WasiwPCRoot := [
 ]
 
 -- ════════════════════════════════════════════════════
--- § 9. Per-Root Verification Theorems
+-- § 9. Per-Root Sample Properties
 -- ════════════════════════════════════════════════════
 
-/-- All roots in the sample are PC roots (+S −M −R −C). -/
-theorem all_roots_are_pc :
-    sampleRoots.all (·.root.changeType == .propertyConcept) = true := by
-  native_decide
-
-/-- All roots have the denotation type matching their morphological class. -/
-theorem denotation_types_match_class :
-    sampleRoots.all (λ r =>
-      r.root.denotationType == some r.morphClass.denotationType) = true := by
-  native_decide
-
-/-- No root in the sample entails change. -/
-theorem no_root_entails_change :
-    sampleRoots.all (λ r => !r.root.entailsChange) = true := by
-  native_decide
+/-! All Wáshiw PC roots are property-concept (`changeType = .propertyConcept`),
+    `noTheme` arity, and have a denotation type determined by their morph class
+    — these invariants are *true by construction* of `WasiwPCRoot.toRootClassification`,
+    so no separate theorems are needed. The theorems below test substantive
+    claims about the sample's *composition*, not its constructor's consistency. -/
 
 /-- All color roots are Class 3 — the only fully predictable Dixon
     category (@cite{hanink-koontz-garboden-2025} §7, Appendix). -/
