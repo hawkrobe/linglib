@@ -4,6 +4,292 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.489] - 2026-04-28
+
+### PSDH 2004 arc C6 — InformationStatus ranker + PoesioEtAl2004 study + audit-driven fixes + partial Beaver bridge
+
+Final commit of the PSDH parametric-centering arc. Lands the second `CfRanker` instance (StrubeHahn IS), the PSDH paper-anchor study file, and addresses 8 block-merge findings from the multi-agent audit (linguistics-domain-expert + mathlib-reviewer + integration-auditor + cross-framework-reconciler, each reading the PSDH PDF).
+
+**New `Centering/Instances/InformationStatus.lean`** (~85 LOC). Per linguistics-expert audit's correction to my prior `focused -> 0` mapping (which inverted the empirical reality — focused entities are more salient, not less), introduces a fresh `StrubeHahnInfoStatus` enum (`hearerOld | mediated | hearerNew`) with rank 2/1/0 matching PSDH §2.4.3 p. 319's `HEARER-OLD < MEDIATED < HEARER-NEW` ordering. The MEDIATED tier (Prince 1981's inferable / containing-inferable / anchored-brand-new) has no clean source in `Features.InformationStructure.DiscourseStatus` — collapsing IS into the existing focused/given/new enum misrepresents Strube-Hahn (focus is orthogonal to old/new). A lossy projection `StrubeHahnInfoStatus.ofDiscourseStatus` maps given to hearerOld, new to hearerNew, focused to hearerOld (per audit, focused entities are marked salient, not least salient). The integration-auditor's "reuse DiscourseStatus" recommendation was right in principle but wrong on the empirical labels — addressed by providing both: distinct enum + bridge projection.
+
+**New `Phenomena/Reference/Studies/PoesioEtAl2004.lean`** (~440 LOC) with 6 sections:
+
+1. **PSDH §4.1.1 (10) corner-cupboard partial-GF two-CB example**: u227/u229 utterances, theorems showing `cb` returns one entity but `cbAll` returns both tied candidates. Establishes Constraint 1 violation under partial GR ranking. Citation fix per audit: previously cited as `(1.1%) Table 2 p. 328`; corrected to `§4.1.1 (p. 329 prose)` — the inline statistic, not Table 2.
+
+2. **Sidner1983 partial-GF witness**: theorem `psdh_two_cb_witnesses_sidner_two_foci` (renamed per audit from `psdh_two_cb_iff_sidner_two_foci` — the original name claimed biconditional / "headline bridge" status which was overstated; PSDH §5.3.4 p. 358 say only "reminiscent of" Sidner's two-foci motivating examples). Docstring softened to flag this is a witness on independently constructed inputs, not a structural identity; the structural `centeringToSidner : Utterance -> Sidner1983.Sentence` translation function that would derive the bridge is queued in §6 future-work.
+
+3. **PSDH §5.2.2 entity-coherence dissociability** — REWRITTEN per linguistics-expert audit. Previous attempt encoded "John won the lottery / The Ferrari was already on order" with a `centering_vs_kehler_bridge_diverge` theorem that was true but didn't engage what PSDH actually argue. PSDH §5.2.2 is NOT "centering vs Kehler-bridge predict different transitions" — it's "entity coherence is dissociable from local coherence: discourse can be coherent while every transition is NULL." Now uses **PSDH (23)** (the Product A pharmaceutical leaflet, p. 354): u1 introduces leaflet/summary/info/product_A; u2 introduces reader_you/questions/treatment (disjoint); u3 introduces reader_you/doctor/pharmacist. Theorem `psdh_5_2_2_entity_coherence_dissociable_on_23` witnesses `cb u1 u2 = none` — the entity-side absence; relational coherence (instructional connectives) is in prose since `Coherence.lean`'s Kehler bridge doesn't model conditionals.
+
+4. **IS-ranker example**: subject is HEARER-NEW + object is HEARER-OLD; Strube-Hahn IS ranker picks the object as Cp where GR would pick the subject. The minimal demonstration of ranker divergence.
+
+5. **Partial Beaver 2004 OT bridge witness** (deepening D from audit). PSDH §3.1 fn 12 cite Beaver 2004's OT reformulation of Centering. Three theorems on PSDH (10): `beaver_ties_psdh_candidates`, `beaver_the_drawing_strictly_outranks_in_OT`, `beaver_witness_psdh_10`. The `beaverInverseRank : NamedConstraint (Realization String GrammaticalRole)` consumes `Core.Constraint.OT.Basic`'s `mkMarkGrad`, sign-flipping rank to OT's "min violations wins" convention. Full substrate-level theorem `cbAll = (centeringAsTableau).optimal.map (.entity)` queued for `Phenomena/Reference/Studies/Beaver2004.lean`.
+
+6. **Future work / deferred items**: 5 items including the structural `centeringToSidner` translation, the `[HasDiscourseStatus E]`-typed IS ranker (decoupling IS ranking from role type — a real deepening flagged by integration-auditor), the full Beaver substrate bridge, Realization position field for Rambow ranker, PSDH GNOME corpus statistics encoding.
+
+**Substrate addition: `mem_cbAll_*` characterization theorems** (`Centering/Basic.lean`). Per mathlib-reviewer block-merge: every other operator in Basic.lean has a characterization theorem (`mem_cf_iff`, `cb_eq_some_iff`, `cb_eq_none_iff`); `cbAll` shipped only `cbAll_empty_prev`. Now adds `mem_cbAll_exists_realization` (the substantive characterization), with `mem_cbAll_realized` and `mem_cbAll_mem_prev_cf` as one-line corollaries. Required restructuring `cbAll`'s definition to split via `match realized with | [] | _ :: _` (explicit empty/cons case-split rather than via argmax Option-match) so the proofs go through cleanly. Functionally equivalent.
+
+**Linglib.lean wiring**: added `import Linglib.Phenomena.Reference.Studies.PoesioEtAl2004` (alphabetical position after GroszJoshiWeinstein1995, before WesterbeekKoolenMaes2015).
+
+**Build**: 955-job dependency cone green.
+
+**Audit-driven items deferred** (per scope decision Q: block-merge fixes + Beaver D in C6, deepening A/B/C in follow-up commits):
+- Deepening A — structural `centeringToSidner` translation (replaces stipulated witness with derived bridge)
+- Deepening B — `[HasDiscourseStatus E]`-typed IS ranker (decouples IS ranking from role type)
+- Deepening C — Sidner1983's `expectedDiscourseFocus`/`expectedActorFocus` reformulated as `cbAll.take 2` (substrate-identity collapse)
+- `Beaver2004.lean` study file — full OT-Centering substrate bridge
+- `Constraint1Strong` `ExistsUnique`/`Subsingleton` form (mathlib-reviewer borderline-acceptable; current length-form left as-is)
+- BFP1987 study file — natural second consumer for the deferred 4-way `BFPTransition`
+- Cross-linguistic IS-ranker anchors — German Strube-Hahn study, Japanese Walker-Iida-Cote study
+
+These are queued as concrete commit-sized followups documented in PoesioEtAl2004.lean §6.
+
+### CHANGELOG repair note
+
+The previous commit (also labeled 0.230.489) was created with a broken Python-heredoc that lost ~243 lines of CHANGELOG content (parallel-session entries 0.230.480-488 plus my own intended 0.230.489 entry). This commit restores the full CHANGELOG content and inserts the proper 0.230.489 entry above. Apologies for the noise.
+
+## [0.230.488] - 2026-04-27
+
+### InformationStructure cleanup commit 1/3: PolaritySwitchContext + ExclusionVariety dissolved into CoherenceRelation
+
+First of three sequenced cleanups from the multi-agent audit on `Features/InformationStructure.lean` (370 LOC, 9 unrelated taxonomies, dump-bag pattern unchanged from the 4-day-old triage memory's "Tier 1 DISSOLVE" classification despite the prior Core→Features relocation).
+
+**Two near-identity bridges to `Core.Discourse.Coherence.CoherenceRelation` deleted as duplicate enums** (CLAUDE.md "encoding conclusions as definitions" anti-pattern flagged by all 4 audit agents):
+
+- `PolaritySwitchContext : contrast | correction` + `PolaritySwitchContext.toCoherenceRelation` (literally identity-on-name: `.contrast → .contrast`, `.correction → .correction`) — DELETED.
+- `ExclusionVariety : additional | substitution` + `ExclusionVariety.toCoherenceRelation` (`.additional → .contrast`, `.substitution → .correction`) — DELETED.
+
+`Core.Discourse.Coherence.CoherenceRelation` already has `.contrast` and `.correction` constructors with `contrast_ne_correction := by decide` and `contrast_correction_same_class := rfl` proven; the two IS-side enums were 2-case projections that no consumer ever used at the projection level (every consumer touched `.toCoherenceRelation` immediately).
+
+**Consumer migrations** (4 files):
+- `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean`: 4× `context : PolaritySwitchContext` → `context : CoherenceRelation`. Data sites (`context := .contrast` / `.correction`) work unchanged via dot-notation.
+- `Theories/Semantics/Focus/PolarityLevel.lean`: open updated; vacuous theorem `both_levels_context_general` deleted (was `∀ ctx : PolaritySwitchContext, _ → ctx = .contrast ∨ ctx = .correction` — true by case-exhaustion over the 2-case enum, doesn't use the `PolarityMarkingLevel` argument; over 7-case `CoherenceRelation` it would be false; substantive level-orthogonality claim deferred to a real bridge theorem when a consumer needs it).
+- `Fragments/English/FocusParticles.lean`: field `exclusionVariety : Option ExclusionVariety` → `Option CoherenceRelation`; `only_` data: `some .additional` → `some .contrast`; `only_excludes_additional` theorem updated.
+- `Phenomena/Focus/Studies/Umbach2004.lean`: 4 stipulation-unpacking theorems deleted (`only_maps_to_contrast`, `contrastive_focus_maps_to_correction`, `polarity_switch_bridge`, `exclusion_parallel`); `only_fragment_exclusion` updated; `contrast_levels` simplified from 5 conjuncts to 3 (deleting the `ExclusionVariety.{additional,substitution}.toCoherenceRelation = ...` conjuncts that just unpacked the bridge); §4 docstring + §8 summary docstring rewritten.
+- `Theories/Semantics/Focus/Comparability.lean`: docstring updated to remove references to deleted enums.
+
+**Side cleanups**:
+- `Features/InformationStructure.lean` no longer needs `import Linglib.Core.Discourse.Coherence` — removed.
+- All `§3.2.2` / `§3.4` / `§2.3` citations in deleted/migrated docstrings carried forward as `(UNVERIFIED)` per CLAUDE.md "never cite section numbers from memory".
+
+**LOC**: `Features/InformationStructure.lean` 370 → ~330 (40 LOC removed); ~30 LOC removed from Umbach2004 (4 theorems + simplified `contrast_levels`); net consumer-side migration is type-level only (no semantic change since the bridges were identity).
+
+**Build**: 1043-job affected dependency cone (the 6 changed files + transitive closures) green.
+
+**Sequenced follow-ups (commits 2/3)**:
+- Commit 2: extract `HasInfoStructure` + IS-partition cluster (Theme/Rheme/Focus/Background/InfoStructure) to `Theories/Interfaces/SyntaxPhonology/InfoStructureInterface.lean` (cluster A: 2 consumers).
+- Commit 3: move PolarityMarking* cluster to `Typology/PolarityMarking.lean` (cluster B: 10 consumers).
+
+## [0.230.487] - 2026-04-27
+
+### Williams 2026 *forget* arc: citation-key fix + study-file relocation
+
+Multi-agent audit of `Phenomena/Presupposition/ForgetPresuppositions.lean` (random-pick deep audit) surfaced six categories of issue, all addressed in this commit.
+
+**Citation hygiene**: `@cite{ippolito-kiss-williams-2026}` (×6 in ForgetPresuppositions, ×6 in `Theories/Semantics/Attitudes/PreExistence.lean`) was a hallucinated key — the bib has `williams-2026` (single-author SALT 35 paper on *forget*) and `ippolito-kiss-williams-2025` (a *different* paper, on *discourse only*). Replaced with `williams-2026` throughout. Deleted bare `@misc{white-2014}` BibTeX-syntax-in-docstring (×2). Fixed corrupted `Un@cite{...}` token (×3) — sed-replace had eaten the word "Under". `Studies/White2014.lean` had its own copy of the IKW2025 misattribution (line 39, 111); also fixed.
+
+**Example/section number corrections** (verified against the actual paper PDF, lingbuzz/009797): the paper uses *John* throughout §1–§3.1 (not Ana). The infinitival example is (2)/(5a), not (3). The English gerund is (7)/(9), not (12) — (12) is the *Spanish* `Juan olvidó pasar`. SMINC is in §3.1.3, not p. 8. Replaced sentences and example references accordingly.
+
+**Architectural relocation**: `git mv Phenomena/Presupposition/ForgetPresuppositions.lean Phenomena/Presupposition/Studies/Williams2026.lean` — the file is paper-anchored on a single source (Williams 2026), failing the top-level Phenomena placement test (CLAUDE.md: top-level files earn placement only as WALS-style cross-paper references or genuinely theory-neutral facts). Filename also fit the `DowtyDivergence.lean`-class anti-pattern of freezing one paper's analytical conclusion. Namespace renamed `Phenomena.Presupposition.ForgetPresuppositions` → `Phenomena.Presupposition.Studies.Williams2026`. Top-level import in `Linglib.lean` updated; bib `sources` field updated.
+
+**Karttunen-tradition acknowledgment**: added `implicativeNegative : Bool` field to `ForgetJudgment` recording the Karttunen-1971 negative-implicative entailment (*forgot to V* → ¬V) that Williams (fn 1) brackets but does not refute. New theorem `modal_iff_implicative` documents that the modal-presupposition split co-varies with the implicative entailment in the English data. Cross-references existing `Phenomena/Complementation/Studies/Karttunen1971.lean` and `Theories/Semantics/Causation/Implicative.lean`.
+
+**Lean code quality**: `native_decide` ×4 in ForgetPresuppositions and ×6 in White2014.lean replaced with `decide` (CLAUDE.md tactic hierarchy: kernel-verifying procedures only). `deriving Repr, BEq` → `deriving DecidableEq, Repr` on `ForgetJudgment` (mathlib convention; gives `BEq` for free). Trimmed §4 of tautological list-length / count theorems that were unpacking the literal contents of `allForgetJudgments` (the "encoding conclusions as definitions" anti-pattern) — replaced with one substantive cross-paper coherence theorem.
+
+**White2014.lean cleanup**: rewrote with chronological-violation acknowledgment in the docstring (file uses post-2014 `needsModalInsertion` from the Bondarenko/Williams pre-existence apparatus; flagged as a project-canonical upgrade rather than silently borrowing future apparatus). Theorems consolidated to (a) MCA's coverage of finite-CP + plain-inf, (b) gerund overprediction documented via Williams 2026 data, (c) pre-existence agreement on all three frames, (d) Fragment consistency for `forget`/`forget_rog`.
+
+Build: 1773 jobs green; only pre-existing unrelated warnings (Mereology, V2 Verbal).
+
+## [0.230.486] - 2026-04-27
+
+### Tier 2 batch 1: 5 bespoke `XProfile` types promoted to `Typology/` substrate
+
+Mass migration applying the Possession (Tier 2a) template to 5 more phenomena. Each: bespoke `XProfile` struct + per-domain enum types + utility predicates moved out of `Phenomena/{X}/Typology.lean` into the canonical substrate at `Typology/X.lean`; `LanguageProfile` extended with corresponding optional field + `withX` builder; per-language `def english/...` defs in the Phenomena file retype against the substrate (1-line change per def, resolved via `open _root_.Typology`).
+
+**Files moved/created (substrate side):**
+
+- **`Typology/Plurals.lean`** (new): `PluralCoding`, `PluralOccurrence`, `PronounPlurality`, `AssociativePlural` enums + `PluralityProfile` struct + 3 utility predicates (`hasMorphologicalPlural`, `hasObligatoryPlural`, `pronounsDistinguishNumber`). 16 per-language defs in `Phenomena/Plurals/Typology.lean` retyped.
+- **`Typology/Pronouns.lean`** (new): 7 enums (`InclusiveExclusive`, `InclusiveExclusiveVerbal`, `GenderInPronouns`, `PolitenessDistinction`, `IndefinitePronounType`, `IntensifierReflexive`, `PersonMarkingOnAdpositions`) + `InclusiveExclusivePamaNyungan` (Pama-Nyungan areal sub-feature) + `PronounProfile` struct (added `deriving DecidableEq` for LanguageProfile compatibility). 15 per-language defs in `Phenomena/Pronouns/Typology.lean` retyped.
+- **`Typology/Numerals.lean`** (new): 6 enums (`OrdinalFormation`, `DistributiveNumeral`, `ConjunctionQuantifier`, `Region`, `PluralMarking`, `NumeralBase`) + `NumeralProfile` struct + 6 utility predicates (`hasObligatoryClassifiers`, `hasClassifiers`, `hasObligatoryPlural`, `hasFirstSuppletion`, `hasDistributive`, `isEastSoutheastAsian`). 19 per-language defs in `Phenomena/Numerals/Typology.lean` retyped. Also moved `ClassifierStatus` (WALS Ch 55, 3-cell enum) from `Phenomena/Classifiers/Typology.lean` to `Typology/ClassifierSystem.lean` so `NumeralProfile.classifier : ClassifierStatus` resolves at substrate layer (without this Numerals couldn't promote, since its profile depended on a cross-Phenomena type).
+- **`Typology/Question.lean`** (extended): added `QParticlePosition`, `PolarQuestionStrategy` enums + `QuestionProfile` struct (alongside the existing `WhMovementStrategy`/`WhInterpMechanism` from Tier 0b). 7 per-language defs in `Phenomena/Questions/Typology.lean` retyped.
+- **`Typology/ClauseChaining.lean`** (new — wholesale move): the entire `Phenomena/ClauseChaining/Typology.lean` file (477 LOC) moved verbatim — it was *all* substrate (no per-language data, just enums + structs + theorems). Namespace renamed `Phenomena.ClauseChaining.Typology` → `Typology.ClauseChaining`. Sole consumer `Phenomena/ClauseChaining/Studies/SarvasyAikhenvald2025.lean` updated: `open Typology` → `open _root_.Typology.ClauseChaining` (disambiguates from the file's own `Phenomena.ClauseChaining` namespace).
+
+**`LanguageProfile` extended with 5 new optional fields**: `plurality`, `pronouns`, `numerals`, `questions`, `clauseChaining` (the last skipped — ClauseChaining has no per-language data so no need for an aggregator field). Each gets a `withX` builder. `LanguageProfile.deriving DecidableEq` continues to work because every new profile struct also derives `DecidableEq`.
+
+**`Phenomena/{X}/Typology.lean` post-migration state**: each retains the WALS distribution-count structs (`PluralCodingDistribution`, `OrdinalDistribution`, etc. — paper-anchored aggregate counts that aren't per-language profiles), the WALS converter functions (`fromWALSXX`), and the cross-linguistic theorems on the per-language sample. The bespoke `XProfile` struct + per-domain enums + utility predicates are now imports from `Typology/X.lean`.
+
+**Naming convention reminders applied**:
+- `_root_.Typology` disambiguates when the consumer file's own namespace shadows the root `Typology` (`Phenomena.{Plurals,Pronouns,Numerals,Questions,Classifiers}.Typology` all needed this).
+- `Typology/{Domain}.lean` (flat) when single-file substrate; subdirectory only when warranted (none of these 5 needed it).
+- `XProfile` enum-bundling structs go in the substrate file alongside their constituent enums (mathlib pattern: `MetricSpace` lives with its components, not in a separate aggregator file).
+
+**Bug caught mid-migration**: 1 orphan-docstring issue in `Phenomena/Numerals/Typology.lean` — when I replaced `inductive X` blocks with `/-! X lives in Typology/Numerals.lean -/` comments, the preceding `/-- ... -/` docstrings (originally attached to the inductive) became orphaned and Lean tried to attach them to the next declaration, causing "unexpected token '/-!'; expected 'lemma'" errors. Fixed by deleting the orphan docstrings (the substrate file carries the docstrings now).
+
+**Build state**: my 12 touched files all build clean (971-job transitive closure). One unrelated breakage from concurrent session: `Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean` was deleted by a parallel session but `Linglib.lean` and `Phenomena/Presupposition/Studies/{White2014,Williams2026}.lean` still reference it. Removed the dangling `Linglib.lean` import; the Studies-file references are concurrent-session damage to flag but not in scope for this PR.
+
+**After this batch — Tier 2 progress**:
+
+- ✅ Possession (Tier 2a, 0.230.480)
+- ✅ Plurals, Pronouns, Numerals, Questions, ClauseChaining (this PR)
+- ❌ Remaining 14 bespoke `XProfile` files: Anaphora, Phonology, Modality, Gender, Directives, Comparison, LexicalTypology, Reference, Copulas, Coordination, Alignment, Case, TenseAspect, ArgumentStructure, Negation, Complementation. Anaphora has a cross-Phenomena dep (`Phenomena.Reference.DirectReference`) that will need similar handling to Numerals' Classifier dep. Negation (2029 LOC) and Complementation (2345 LOC) are the size outliers and warrant focused individual sessions.
+
+Pattern is now well-rehearsed (~30 min per phenomenon for the standard case); next batch could plausibly do 4-5 more in one session.
+
+## [0.230.485] - 2026-04-27
+
+### Features/{AssertionTypes, ImplicatureTypes, CoreferenceStatus} cleanup (continuation of 0.230.484)
+
+The same `namespace Interfaces`-under-`Features/` cluster flagged by the 0.230.482 multi-agent audit as deferred follow-up. Three sibling files, three different verdicts based on consumer counts:
+
+**`Linglib/Features/AssertionTypes.lean` — DELETED** (44 LOC; `AssertionOutcome` 4-way + `AssertionPhenomenon` 7-way enums under `namespace Interfaces`). Zero external consumers. The docstring claimed Stalnaker / Farkas-Bruce / Krifka theories use these types — but no Stalnaker/Farkas-Bruce/Krifka file in the codebase imports them. Pure aspirational substrate that was never wired up. When an actual Stalnakerian/Farkas-Bruce/Krifka assertion-theory file lands and needs an outcome enum, it can introduce one anchored on its own paper rather than inherit pre-stipulated cases that no consumer asked for.
+
+**`Linglib/Features/ImplicatureTypes.lean` — DELETED** (140 LOC; `ImplicatureStatus` + `CoverageStatus` + `PragmaticPhenomenon` enums + `PhenomenonCoverage` / `TheoryCoverage` / `CoverageSummary` / `DEBlockingTestCase` / `TaskEffectTestCase` / `DEBlockingResult` / `TaskEffectResult` structures + `rateMatchesData` helper, all under `namespace Interfaces`). Zero external consumers. The largest of the three files but also the most clearly aspirational — a coverage-tracking framework for "which pragmatic theory covers which empirical phenomenon" that no theory has ever been wired through. Per CLAUDE.md "don't add features beyond what the task requires" + "if no consumers exist, this is dead substrate". When a comparative-coverage paper lands, it can introduce its own ontology anchored on its own framework.
+
+**`Linglib/Features/CoreferenceStatus.lean` — KEPT, namespace fixed** (`Interfaces` → `Features`). Four cross-framework consumers — `Theories/Syntax/HPSG/Coreference.lean`, `DependencyGrammar/Coreference.lean`, `DependencyGrammar/CRDC.lean`, `Minimalist/Coreference.lean` — each provides a `computeCoreferenceStatus : Clause → Nat → Nat → CoreferenceStatus` function with the same return type. This is exactly the cross-framework engagement linglib's interconnection thesis wants (four syntactic frameworks producing comparable verdicts on the same Binding-Theory configurations). Module docstring updated to describe this role explicitly. The four consumers' `Interfaces.CoreferenceStatus` references rewritten to `Features.CoreferenceStatus`; no `open Interfaces` cleanup needed (all four sites used the fully-qualified name).
+
+**Files touched**:
+- DELETED: `Linglib/Features/AssertionTypes.lean`, `Linglib/Features/ImplicatureTypes.lean`
+- MODIFIED: `Linglib/Features/CoreferenceStatus.lean` (`namespace Interfaces` → `Features`; expanded module docstring)
+- MODIFIED: `Linglib/Theories/Syntax/HPSG/Coreference.lean`, `Linglib/Theories/Syntax/DependencyGrammar/Coreference.lean`, `Linglib/Theories/Syntax/DependencyGrammar/CRDC.lean`, `Linglib/Theories/Syntax/Minimalist/Coreference.lean` (each: 1+ `Interfaces.CoreferenceStatus` → `Features.CoreferenceStatus`)
+- MODIFIED: `Linglib.lean` (lines 111-112 imports removed)
+
+**Build**: 1824-job affected dependency cone (CoreferenceStatus + 4 consumers + transitive closure) green. Pre-existing unrelated failure in `Phenomena/Plurals/Typology.lean` from a parallel session's in-flight `Linglib/Typology/Plurals.lean` refactor remains, outside this dependency cone.
+
+## [0.230.484] - 2026-04-27
+
+### Features/FelicityTypes.lean dissolved (multi-agent audit)
+
+> **Version note**: parallel session's commit `f8017094` was labeled `0.230.483` (PSDH C5 Rule2.lean) and ride-along-deleted `Features/{AssertionTypes,FelicityTypes,ImplicatureTypes}.lean` without writing CHANGELOG entries for them — those staged deletions came along because both sessions were active in `Features/` simultaneously. The 0.230.484 / 0.230.485 entries here document the substantive dissolution work and migration that motivated the deletions; the actual file removals already landed in 0.230.483.
+
+
+`Linglib/Features/FelicityTypes.lean` (44 LOC; `FelicityStatus`, `OddnessSource`, `FelicityResult` under `namespace Interfaces`) deleted. Four-agent audit (cross-framework-reconciler, linglib-integration-auditor, linguistics-domain-expert, mathlib-reviewer) converged on dissolution rather than rework.
+
+**Multi-agent findings:**
+- **Duplication**: `Features/Acceptability.lean` already provides the canonical 6-way diacritic enum (`ok | marginal | degraded | unacceptable | anomalous | variable`); `FelicityStatus`'s 3-way `felicitous | borderline | odd` is a coarsening.
+- **Dead consumer**: 0.230.x CHANGELOG (line 22084) records `Magri2009.lean` previously *removed* its `import Linglib.Core.FelicityTypes` as unused. The schema's two Magri-flavored cases (`blindMismatch`, `blindPresupMismatch`) had no Magri-flavored consumer.
+- **One-and-a-half consumers**: only `Wang2025.lean` actually used the types; `KatzirSingh2015.lean` imported but never referenced anything (despite owning the K&S `questionCondition`/`answerCondition` terminology the schema named cases after — K&S's own file defines `def isOdd : Bool := badQuestion ∨ needlesslyInferior` inline and proves ~30 theorems against that, ignoring the schema).
+- **Pretends-neutral-but-tilts**: docstring claims "theory-neutral data types" anchored on Fox & Hackl 2006, Katzir & Singh 2015, Magri 2009, Spector 2014, but `OddnessSource` cases are exclusively K&S (`questionCondition`/`answerCondition`/`both`) + Magri (`blindMismatch`/`blindPresupMismatch`). Fox & Hackl 2006 is *Universal Density of Measurement* — about scale-density oddness, not QC/AC felicity (category error to put in `@cite{}` header for a schema with no density case). Spector 2014 explicitly *rejects* strict Magri blindness — the K&S↔Spector disagreement at `KatzirSingh2015.lean:712-727` is encoded as prose rather than as a `¬ (ks ↔ spector)` cross-framework refutation theorem.
+- **Namespace mismatch**: lives in `Features/` but uses `namespace Interfaces`. 25/28 sibling files in `Features/` use `Features` or `Features.X`; `Interfaces` is the namespace root for `Theories/Interfaces/` files. Three other stragglers (`AssertionTypes.lean`, `ImplicatureTypes.lean`, `CoreferenceStatus.lean`) share the bug — flagged for follow-up sweep.
+- **Two ways to say "unspecified"**: `OddnessSource.unspecified` and `source = none` are isomorphic; distinct `FelicityResult` values can mean the same thing.
+- **CLAUDE.md violations**: docstring cites `@cite{magri-2009} §3.2.2` and `§3.4` from memory (per CLAUDE.md "never cite section numbers from memory"). Same defect in `Magri2009.lean` itself — flagged for follow-up.
+- **`borderline` is not a theoretical primitive** in any cited paper. All four are binary; `borderline` smuggles a methodological/aggregation choice (mid-Likert binning) into what claims to be theory-neutral substrate.
+
+**Migration**: `Wang2025.lean` switched to `Features.Acceptability` directly. Mapping is `.felicitous → .ok` (fully acceptable), `.borderline → .marginal` (`?` degraded but not out — fits `you_partial`'s 4.9/7 mid-Likert), `.odd → .anomalous` (the standard `#` diacritic for syntactically-fine pragmatic deviance — exact fit for felicity contexts). `wangCheck`'s return collapses `FelicityResult` → `Acceptability` since the `source` field was write-only (constructed but never read). Theorem `IC_violation_always_blocks` updated from `(wangCheck input).status = .odd` to `wangCheck input = .anomalous`.
+
+**Noise import removed**: `KatzirSingh2015.lean` imported `Features.FelicityTypes` but never referenced anything from it.
+
+**Files touched**:
+- DELETED: `Linglib/Features/FelicityTypes.lean`
+- MODIFIED: `Linglib/Phenomena/Presupposition/Studies/Wang2025.lean` (import + open + `Exp1Datum.felicity` field type + 12 `Exp1Datum` literals + 5 theorem RHS literals + `wangCheck` signature + body + `IC_violation_always_blocks` statement)
+- MODIFIED: `Linglib/Phenomena/ScalarImplicatures/Studies/KatzirSingh2015.lean` (noise import removed)
+- MODIFIED: `Linglib.lean` (line 113 import removed)
+
+**Deferred follow-ups** (same dead-substrate cluster):
+- `Features/AssertionTypes.lean`, `Features/ImplicatureTypes.lean`, `Features/CoreferenceStatus.lean` — all share the wrong-namespace bug (`namespace Interfaces` under `Features/`); zero external consumers per integration audit. Same dissolution pattern available.
+- `Phenomena/ScalarImplicatures/Studies/Magri2009.lean` — `§3.2.2`/`§3.4` references in docstring need PDF verification or replacement with content descriptions.
+
+## [0.230.481] - 2026-04-27
+
+### SadakaneKoizumi1995 Studies file: full multi-agent audit cycle (write → audit → fix)
+
+New file `Phenomena/Case/Studies/SadakaneKoizumi1995.lean` (536 LOC) formalising @cite{sadakane-koizumi-1995} *On the nature of the "dative" particle ni in Japanese* (Linguistics 33(1):5–33). The user provided the PDF mid-session; substance was extracted, formalised, audited by 4 agents reading the same PDF, and refactored per audit findings — all in a single iteration of the established methodology.
+
+**Pre-work fixes** (correctness debt the audit caught in adjacent files):
+- `blog/data/references.bib`: `sadakane-koizumi-1995` page range corrected `5--34` → `5--33` (the De Gruyter online metadata is wrong; PDF cover page is authoritative). `role` upgraded `cited` → `formalized` since the new Studies file actively consumes it.
+- `blog/data/references.bib`: new `martin-1975` entry — Samuel E. Martin, *A Reference Grammar of Japanese*, Yale UP — the source of the 31 letter-coded categories S&K's appendix uses.
+- `Fragments/Japanese/Case.lean` docstring: previous Sadakane-Koizumi paragraph (added in 0.230.474) was MISREPRESENTING the paper — claimed S&K argue for "systematic ambiguity"; the actual claim is the OPPOSITE (homophony supporting Miyagawa/Kuroda's binary dichotomy). Replaced with accurate prose noting the disagreement is about *granularity* (single `ni` lexeme vs. four homophones), not *partition* (both files agree on the binary case-particle/postposition split).
+
+**Initial implementation** (350 LOC):
+- 4-way `Classification` (`dativeCaseMarker | postposition | niInsertion | copula`) + ambiguous-as-`Option`-`none` for D, N1, N2.
+- 31-constructor `MartinCategory` enum (A through V) per @cite{martin-1975}.
+- `predictedSignature : Classification → OperationalTest → Acceptability` encoding tables 14, 29, 32.
+- Cardinality theorems via `(filter ...).length = N`.
+- `Classification.toMarantz` partial map to `Syntax.Case.CaseSource`.
+- `SyntacticPosition` + `affectednessRank : → Nat`.
+- Conflation theorem `refutes_tsujimura_unitary_ni` (∃-form, weak).
+- Acquisition prediction (∃-form, weak).
+- Fragment.lean docstring updated to point at new file.
+
+**Audit-driven refactor** (4 agents read the PDF in parallel; convergent findings):
+
+*Correctness errors fixed* (linguistics agent verified each of 31 categories against the appendix):
+- `Classification.toMarantz .niInsertion`: `.agree` → `.unmarked`. Takezawa 1987's *ni*-insertion is last-resort default-case salvage onto caseless arguments (Marantz/Schütze 2001), NOT T/D-driven Agree (Chomsky 2000+). The choice is theoretically substantive and silently picking `.agree` would have created divergence with `Theories/Syntax/Case/Dependent.lean`'s API. New theorem `niInsertion_alignment_underdetermined` records the choice + flags the Chomsky-style alternative as a downstream parameter.
+- `Classification.signature .copula .floatingNQ`: `.anomalous` → `.unacceptable`. S&K fn 10 (PDF p. 30) clarifies that `*/N.A.` is genuinely `*` for two reasons (non-referentiality blocks the test; copula projects VP blocking c-command); both yield ungrammaticality. `.anomalous` mis-conflated "test inapplicable" with the syntactic blocking.
+- `MartinCategory.fragmentCases .F` (dependent-on, *GB riron-ni motozuiteiru*): mapped to `∅` rather than `{.loc}`. F's *ni* is a lexical PP complement of the verb *motozuk*, not Tsujimura's locative-of-existence. The audit-corrected `InFragmentNi` now correctly excludes F.
+
+*Mathlib hygiene fixes* (mathlib-reviewer):
+- `MartinCategory` and `Classification` now `deriving Fintype`; cardinality theorems rewritten via `Finset.univ.filter (...).card = N` (matches `Pesetsky2013.POSCat` precedent at line 177).
+- `MartinCategory.all : List` and `all_length` deleted (manual enumeration was hallucination risk; `Finset.univ` replaces it).
+- `MartinCategory.label` (31-case `String` lookup) and `Classification.label` (4-case) deleted as dead code (never consumed; mathlib doesn't carry per-constructor labels for taxonomic enums). −38 LOC net.
+- `cards_sum_to_31 : 2 + 18 + 3 + 3 + 5 = 31` (pure arithmetic) deleted; replaced by `card_decomposition : (Finset.univ : Finset MartinCategory).card = 31`.
+- `Dialect` enum + `encodedDialect` constant deleted (never referenced; the dialect parameter is documented in module docstring and earns its keep when a future `Phenomena/Case/Studies/Shibatani1977.lean` lands).
+- `Classification.toMarantz` → `Classification.marantz` (mathlib idiom: drop `to` prefix for primary projections, c.f. `Quotient.mk`, `Subtype.val`).
+- `predictedSignature` → `Classification.signature` (moved into namespace, dropped editorialising "predicted").
+- All `def`s on `MartinCategory`, `Classification`, `SyntacticPosition` now live inside their respective `namespace`/`end` blocks.
+
+*Derive-don't-stipulate fix* (mathlib + integration agents converged):
+- `MartinCategory.inFragmentNi : → Bool` (stipulated 7-case lookup) replaced by `InFragmentNi : MartinCategory → Prop := (c.fragmentCases ∩ Fragments.Japanese.Case.ni.cases).Nonempty`. New `def fragmentCases : MartinCategory → Finset Core.Case` provides the per-category footprint; `InFragmentNi` is true iff the intersection with the Fragment's `ni.cases = {.dat, .loc, .all, .Tem}` is non-empty. The conflation theorems become real claims about set intersection rather than tautologies over a stipulated lookup table. `DecidablePred` instance via `infer_instance`.
+
+*Substantive theorem additions* (cross-framework + linguistics agents):
+- `fragment_ni_predicts_inconsistent_signatures` — strengthens the refutation by consuming `Classification.signature` (which was previously dead). Witnesses A (case marker, `.ok` on `floatingNQ`) and L1 (postposition, `.unacceptable` on `floatingNQ`); the inconsistency in predicted grammaticality verdicts proves the Fragment's unitary `ni` is empirically inadequate.
+- `Classification.gramStage : → Option Core.CaseGramStage` (NEW) — connects S&K to `Core/Case/Grammaticalization.lean`'s Heine cline. Currently no other `Phenomena/Case/Studies/*` file imports `Grammaticalization.lean`; SK1995 is the first. Theorem `case_ni_lexemes_all_adposition` documents that the cline's intra-`.adposition` gradience limit is what prevents formalising the diachronic prediction (case-marker *ni* should be closer to `.caseAffix` than postposition *ni*).
+- `AffectedKind` enum (NEW) + `SyntacticPosition.kindOf` projection + `lowerAcc_unique_structural` theorem — formalises the second dimension of figure 45 (phenomenally vs. structurally affected, per ex. 42–43 contrast *Tom-o korosita* "killed Tom" structurally affecting Tom vs. *Bill-o hometa* "praised Bill" only psychologically affecting Bill).
+- `case_marker_acquired_before_postposition` strengthened from ∃-form to ∀-form (∀ a b, acquisitionOrder of dativeCaseMarker = some a → acquisitionOrder of postposition = some b → a < b). Universally quantified statement of Morii 1993's empirical finding.
+
+**Layered grounding to linglib**:
+- Imports: `Mathlib.Data.Finset.Basic`, `Linglib.Features.Acceptability` (project canon for graded acceptability — NOT a local `Grammaticality` enum), `Linglib.Fragments.Japanese.Case`, `Linglib.Theories.Syntax.Case.Dependent`, `Linglib.Core.Case.Grammaticalization`. Five imports, all consumed.
+- Per chronological-dependency rule: SK1995 (1995) does NOT import Woolford1997 (1997) or Ozaki2026 (2026) or Pesetsky2013 (2013); the Woolford/Ozaki/Pesetsky-side bridge theorems will live in those LATER files in future commits.
+- Wired into `Linglib.lean` (line 939, between Ozaki2026 and Baker2015 in the Case Studies block).
+
+**Build**: full project (5398 jobs) green. Pre-existing `sorry` warning in `Theories/Syntax/Minimalist/Properties/BinaryOptimality.lean:271` is from a parallel session, not in this commit's cone. `python3 blog/scripts/gen_bibliography.py` regenerated `bibliography.md`; both `tsujimura-2014` (already present, page-range corrected) and `martin-1975` and `sadakane-koizumi-1995` (refreshed sources field) resolve cleanly with no new unknown-citation warnings.
+
+**Deferred** (per-commit hygiene):
+- Bridge theorems in chronologically-later files (Woolford1997 + Ozaki2026 + Pesetsky2013) citing SK1995 — separate commit per file.
+- `Phenomena/Case/Studies/Shibatani1977.lean` — would formalise the conservative-dialect divergent judgments and earn `Dialect` enum's keep.
+- `class CaseTaxonomy T` typeclass abstraction — defer until 4th instance (currently 3: `Woolford1997.WCase.toCore`, `Pesetsky2013.POSCat.toCat`, `SadakaneKoizumi1995.Classification.marantz`).
+- Korean catch-up to Pattern B — would unblock formalisation of Sells 1995's parallel for Korean *-i*/*-eseo*.
+
+## [0.230.480] - 2026-04-27
+
+### Tier 2a + `Core/Typology/` dissolution → unified `Typology/` substrate directory
+
+Two complementary refactors landed atomically:
+
+**Tier 2a — `PossessionProfile` promoted to `Typology/Possession.lean`**: the bespoke `PossessionProfile` struct (per-language possession profile) + 6 utility predicates (`hasObligatoryPossession`, `hasClassification`, `usesHaveVerb`, `usesLocational`, `isHeadMarking`, `isDependentMarking`) moved out of `Phenomena/Possession/Typology.lean` into the canonical substrate at `Typology/Possession.lean`. `LanguageProfile.possession : Option PossessionProfile` field added with `withPossession` builder. Validates the bespoke-`XProfile`-to-substrate template on a non-paradigm shape (single profile per language, vs `IndefiniteParadigm`'s list-of-forms). 23 per-language `def english/russian/...` defs in `Phenomena/Possession/Typology.lean` unchanged — they now resolve `PossessionProfile` via the substrate import. `PossessionProfile` gets `deriving Repr, DecidableEq` so `LanguageProfile.deriving DecidableEq` continues to work after the new field lands.
+
+**`Core/Typology/` → `Typology/` dissolution**: the 6 files in `Core/Typology/` (`Adposition.lean`, `ClassifierSystem.lean`, `LanguageProfile.lean`, `Profile.lean`, `Universal.lean`, `WordOrder.lean`) moved en masse to `Linglib/Typology/`. Namespace rename `Core.Typology.X → Typology.X` applied across 43 import sites + qualified references via single perl substitution. `Linglib/Core/Typology/` deleted (empty). Result: `Linglib/Typology/` is the single canonical home for typological substrate — 9 flat files (per-domain types + LanguageProfile aggregator + Universal API + Profile abbreviation), mathlib-style (compare `Mathlib/Order/`'s 50+ flat files for order theory).
+
+**Namespace-ambiguity fix** (a real subtlety from this rename): 6 `Phenomena/{X}/Typology.lean` files with `namespace Phenomena.X.Typology` and bare `open Typology` had the open ambiguously resolve to the local namespace instead of the new root `Typology`. Disambiguated with `open _root_.Typology` (mathlib idiom for explicit-root references). Files affected: `Indefinites`, `WordOrder`, `Possession`, `Polarity`, `Classifiers`, `Questions`. CLAUDE.md updated to document this gotcha for future Phenomena/X/Typology.lean files.
+
+**Architecture state after this PR**:
+
+```
+Linglib/Typology/
+  LanguageProfile.lean        — per-language aggregator (struct + builders)
+  Universal.lean              — ImplicationalUniversal API (decidable cross-linguistic universals)
+  Profile.lean                — micro-parameter Set abbreviation
+  Adposition.lean             — substrate (AdpositionOrder + WALS Ch 85 converter)
+  ClassifierSystem.lean       — substrate (NounCategorizationSystem, Aikhenvald 7-property)
+  Indefinite.lean             — substrate (HaspelmathFunction, IndefiniteParadigm)
+  Possession.lean             — substrate (PossessionProfile + 6 predicates + 6 enums)
+  Question.lean               — substrate (WhMovementStrategy, WhInterpMechanism + 4 helpers)
+  WordOrder.lean              — substrate (BasicOrder/SVOrder/OVOrder, WordOrderProfile)
+```
+
+Strict layer constraint enforced: no file in `Typology/` imports Fragments. Cross-linguistic theorems that *use* Fragment data live in `Phenomena/X/Typology.lean` (the post-Fragment layer).
+
+**LanguageProfile cross-tree imports trimmed**: `LanguageProfile` previously imported across `Core/Typology/`, `Core/Morphology/`, `Core/Relativization/`, `Typology/`. After this PR: imports across `Typology/`, `Core/Morphology/`, `Core/Relativization/`. Phase-2 follow-up (deferred): also move `Core/Morphology/MorphProfile.lean` and `Core/Relativization/Profile.lean` to `Typology/` for full consolidation.
+
+**CLAUDE.md updates**:
+- Architecture diagram retains the `Typology/{Domain}/` substrate layer entry
+- Directory Structure block lists all 9 `Typology/*.lean` files
+- §"Typology/ — Per-Language Substrate Layer" updated: removed the "Relationship to `Core/Typology/`" note (no longer needed), added the `_root_.Typology` disambiguation guidance for `Phenomena/{X}/Typology.lean` files
+
+**Build**: full `lake build` clean (5398 jobs). Only one pre-existing `sorry` warning in `Theories/Syntax/Minimalist/Properties/BinaryOptimality.lean` — load-bearing per CLAUDE.md (Jordan curve theorem blocker noted earlier).
+
+**Stat**: ~6 files moved + ~50 import-line updates + 6 `_root_.Typology` disambiguations. Single perl substitution did the bulk; the disambiguation fixes were the only manual work.
+
+**Next tier candidates** (for future PRs): `AlignmentProfile`, `ValenceProfile`, `CoordinationProfile` follow the same template — promote to `Typology/{Domain}.lean`, add `LanguageProfile.X` field. Phase 2 of this dissolution: `MorphProfile` and `Relativization.Profile` → `Typology/`.
+
 ## [0.230.479] - 2026-04-27
 
 ### Phase β: Mayan-family naming convention sweep
