@@ -6,6 +6,7 @@ import Linglib.Datasets.WALS.Features.F45A
 import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Datasets.WALS.Features.F47A
 import Linglib.Datasets.WALS.Features.F48A
+import Linglib.Typology.Pronouns
 
 /-!
 # Cross-Linguistic Typology of Pronouns (WALS Chapters 39--40, 44--48)
@@ -74,137 +75,12 @@ adpositions entirely.
 
 namespace Phenomena.Pronouns.Typology
 
--- ============================================================================
--- Types: WALS Ch 39 -- Inclusive/Exclusive in Independent Pronouns
--- ============================================================================
+open _root_.Typology
 
-/-- WALS Ch 39: Inclusive/exclusive distinction in independent pronouns. -/
-inductive InclusiveExclusive where
-  /-- No first-person plural pronoun at all. -/
-  | noWe
-  /-- 'We' is the same form as 'I' (no number distinction in 1st person). -/
-  | weEqualsI
-  /-- First-person plural exists but does not distinguish
-      inclusive from exclusive. -/
-  | noDistinction
-  /-- Only an inclusive form; no dedicated exclusive pronoun. -/
-  | onlyInclusive
-  /-- Full inclusive/exclusive distinction in 1st-person plural. -/
-  | inclusiveExclusive
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 40 -- Inclusive/Exclusive in Verbal Inflection
--- ============================================================================
-
-/-- WALS Ch 40: Inclusive/exclusive distinction in verbal inflection. -/
-inductive InclusiveExclusiveVerbal where
-  /-- No person marking on verbs at all. -/
-  | noPersonMarking
-  /-- 'We' verbal form is the same as 'I' form. -/
-  | weEqualsI
-  /-- Person marking exists but no inclusive/exclusive distinction. -/
-  | noDistinction
-  /-- Only inclusive marking in verbal inflection. -/
-  | onlyInclusive
-  /-- Full inclusive/exclusive distinction in verbal inflection. -/
-  | inclusiveExclusive
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 44 -- Gender Distinctions in Independent Personal Pronouns
--- ============================================================================
-
-/-- WALS Ch 44: Where gender distinctions appear in the pronoun paradigm. -/
-inductive GenderInPronouns where
-  /-- Gender in 3rd person AND in 1st and/or 2nd person
-      (e.g. Arabic, Hebrew). -/
-  | in3rdAndOtherPersons
-  /-- Gender in 3rd person only, including non-singular forms
-      (e.g. Polish, Albanian). -/
-  | in3rdPersonIncludingNonSg
-  /-- Gender in 3rd person singular only (e.g. English he/she/it). -/
-  | in3rdPersonSgOnly
-  /-- Gender in 1st or 2nd person but not 3rd (rare; e.g. Iraqw). -/
-  | in1stOr2ndOnly
-  /-- Gender in 3rd person non-singular only (extremely rare). -/
-  | in3rdPersonNonSgOnly
-  /-- No gender distinctions in pronouns at all (e.g. Finnish,
-      Turkish, Japanese). -/
-  | noGenderDistinctions
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 45 -- Politeness Distinctions in Pronouns
--- ============================================================================
-
-/-- WALS Ch 45: Politeness (honorific/formality) distinctions in pronouns. -/
-inductive PolitenessDistinction where
-  /-- No politeness distinction in pronouns (e.g. English). -/
-  | none
-  /-- Binary T/V distinction (e.g. French tu/vous, German du/Sie). -/
-  | binary
-  /-- Multiple levels of politeness (e.g. Japanese, Hindi, Tagalog). -/
-  | multiple
-  /-- Pronouns avoided entirely for politeness; titles or kin terms
-      used instead (e.g. Korean, Thai). -/
-  | pronounsAvoided
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 46 -- Indefinite Pronouns
--- ============================================================================
-
-/-- WALS Ch 46: Morphological source of indefinite pronouns
-    ('someone', 'something'). -/
-inductive IndefinitePronounType where
-  /-- Based on interrogative forms (e.g. Japanese dare-ka 'who-Q' =
-      'someone'). -/
-  | interrogativeBased
-  /-- Based on generic nouns (e.g. English 'somebody' from 'some' + 'body'). -/
-  | genericNounBased
-  /-- Special, dedicated indefinite forms unrelated to interrogatives
-      or generic nouns. -/
-  | special
-  /-- Mixed: some indefinites are interrogative-based, others
-      generic-noun-based. -/
-  | mixed
-  /-- Existential construction used instead of indefinite pronouns. -/
-  | existentialConstruction
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 47 -- Intensifiers and Reflexive Pronouns
--- ============================================================================
-
-/-- WALS Ch 47: Relationship between intensifiers and reflexive pronouns. -/
-inductive IntensifierReflexive where
-  /-- Identical forms for intensifier ('she herself did it') and
-      reflexive ('she saw herself'). -/
-  | identical
-  /-- Different, morphologically unrelated forms for intensifier
-      and reflexive. -/
-  | differentiated
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Types: WALS Ch 48 -- Person Marking on Adpositions
--- ============================================================================
-
-/-- WALS Ch 48: Whether adpositions bear person-marking morphology. -/
-inductive PersonMarkingOnAdpositions where
-  /-- Language has no adpositions at all (typically head-marking or
-      caseless languages). -/
-  | noAdpositions
-  /-- Adpositions exist but do not bear person marking. -/
-  | noPersonMarking
-  /-- Only pronominal complements trigger person marking on
-      adpositions (e.g. Hebrew be-xa 'in-you'). -/
-  | pronounsOnly
-  /-- Both pronominal and nominal complements trigger person marking
-      on adpositions. -/
-  | pronounsAndNouns
-  deriving DecidableEq, Repr
+/-! Type enums (`InclusiveExclusive`, `InclusiveExclusiveVerbal`,
+    `GenderInPronouns`, `PolitenessDistinction`, `IndefinitePronounType`,
+    `IntensifierReflexive`, `PersonMarkingOnAdpositions`) and
+    `PronounProfile` live in `Typology/Pronouns.lean`. -/
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -226,17 +102,7 @@ private def fromWALS39A : Datasets.WALS.F39A.InclusiveExclusiveDistinctionInInde
   | .onlyInclusive => .onlyInclusive
   | .inclusiveExclusive => .inclusiveExclusive
 
-/-- WALS Ch 39B: Inclusive/exclusive forms in Pama-Nyungan languages.
-
-    An areal sub-feature restricted to the Pama-Nyungan family of Australian
-    languages. Of 71 languages sampled, 40 (56%) differentiate inclusive and
-    exclusive first-person plural, while 31 (44%) do not. -/
-inductive InclusiveExclusivePamaNyungan where
-  /-- No inclusive/exclusive opposition in first-person plural. -/
-  | noOpposition
-  /-- Inclusive and exclusive forms are differentiated. -/
-  | differentiated
-  deriving DecidableEq, Repr
+/-! `InclusiveExclusivePamaNyungan` lives in `Typology/Pronouns.lean`. -/
 
 private def fromWALS39B : Datasets.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
     InclusiveExclusivePamaNyungan
@@ -285,34 +151,7 @@ private def fromWALS48A : Datasets.WALS.F48A.PersonMarkingOnAdpositions → Pers
 -- Language Profile Structure
 -- ============================================================================
 
-/--
-A language's pronoun system profile across WALS Chapters 39--40, 44--48.
-
-Not all chapters have data for every language (WALS samples vary by chapter),
-so each field is optional.
--/
-structure PronounProfile where
-  /-- Language name. -/
-  language : String
-  /-- Language family. -/
-  family : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- Ch 39: Inclusive/exclusive distinction in independent pronouns. -/
-  inclusiveExclusive : Option InclusiveExclusive := .none
-  /-- Ch 40: Inclusive/exclusive distinction in verbal inflection. -/
-  inclusiveExclusiveVerbal : Option InclusiveExclusiveVerbal := .none
-  /-- Ch 44: Gender distinctions in independent personal pronouns. -/
-  genderInPronouns : Option GenderInPronouns := .none
-  /-- Ch 45: Politeness distinctions in pronouns. -/
-  politeness : Option PolitenessDistinction := .none
-  /-- Ch 46: Indefinite pronoun strategy. -/
-  indefiniteType : Option IndefinitePronounType := .none
-  /-- Ch 47: Intensifier--reflexive relationship. -/
-  intensifierReflexive : Option IntensifierReflexive := .none
-  /-- Ch 48: Person marking on adpositions. -/
-  personMarkingAdpositions : Option PersonMarkingOnAdpositions := .none
-  deriving Repr
+/-! `PronounProfile` lives in `Typology/Pronouns.lean`. -/
 
 -- ============================================================================
 -- Language Data: 15 Language Profiles

@@ -89,4 +89,54 @@ theorem reachesSpecCP_iff_islandSensitive (m : WhInterpMechanism) :
     m.ReachesSpecCP ↔ m.IslandSensitive := by
   cases m <;> exact Iff.rfl
 
+/-- WALS Ch 92A: position of polar question particles. -/
+inductive QParticlePosition where
+  /-- Particle precedes the clause. -/
+  | initial
+  /-- Particle follows the clause. -/
+  | final
+  /-- Particle in second (Wackernagel) position. -/
+  | secondPosition
+  /-- Other position. -/
+  | otherPosition
+  /-- In either of two positions. -/
+  | eitherOfTwo
+  /-- No question particle in the language. -/
+  | noParticle
+  deriving DecidableEq, Repr
+
+/-- WALS Ch 116A: how polar questions are formed. -/
+inductive PolarQuestionStrategy where
+  /-- Dedicated question particle. -/
+  | particle
+  /-- Interrogative verb morphology. -/
+  | verbMorphology
+  /-- Mixture of particle and verb morphology. -/
+  | particleOrMorphology
+  /-- Interrogative word order (e.g., subject-aux inversion). -/
+  | wordOrder
+  /-- Absence of declarative morphemes. -/
+  | absenceOfDeclarative
+  /-- Interrogative intonation only. -/
+  | intonationOnly
+  /-- No interrogative-declarative distinction. -/
+  | noDistinction
+  deriving DecidableEq, Repr
+
+/-- A language's question-formation profile across @cite{wals-2013}
+    Chs 92A, 93A, 116A. Each field is `Option` since WALS samples vary
+    by chapter. -/
+structure QuestionProfile where
+  /-- Language name. -/
+  language : String
+  /-- WALS language code. -/
+  walsCode : String
+  /-- Ch 92A: position of polar question particles. -/
+  qParticlePos : Option QParticlePosition := none
+  /-- Ch 93A: wh-phrase position in content questions. -/
+  whMovement : Option WhMovementStrategy := none
+  /-- Ch 116A: strategy for forming polar questions. -/
+  polarStrategy : Option PolarQuestionStrategy := none
+  deriving Repr, DecidableEq
+
 end Typology.Question

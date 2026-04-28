@@ -383,7 +383,7 @@ theorem reflexive_pairs_captured :
     Applies both binding principles uniformly:
     - Principle A: [MODE ana] at j outranked by coindexed i → obligatory
     - Principle B: [MODE ref] at j outranked by coindexed i → blocked -/
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
+def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.CoreferenceStatus :=
   if i == 0 && j == 2 then
     -- Subject outranks object on ARG-ST
     match clause.object with

@@ -79,7 +79,7 @@ These strategies correlate with broader head-vs-dependent marking typology.
 
 namespace Phenomena.Possession.Typology
 
-open Typology.Possession
+open _root_.Typology.Possession
 
 /-! Type enums (`ObligatoryPossession`, `PossessiveClassification`,
     `PredicativePossession`, `AdnominalPossession`, `PossessiveAffixPosition`,
@@ -270,7 +270,7 @@ theorem ch59_no_classification_plurality_wals :
 -- ============================================================================
 
 /-! `PossessionProfile` lives in `Typology/Possession.lean` (substrate
-    layer), accessible via the `open Typology.Possession` above. -/
+    layer), accessible via the `open _root_.Typology.Possession` above. -/
 
 -- ============================================================================
 -- Language Data

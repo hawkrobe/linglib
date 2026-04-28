@@ -3,7 +3,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Features.FelicityTypes
+import Linglib.Features.Acceptability
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Presupposition.TriggerTypology
@@ -67,7 +67,7 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 
 namespace Phenomena.Presupposition.Studies.Wang2025
 
-open Interfaces (FelicityStatus)
+open Features (Acceptability)
 open Fragments.Mandarin.Particles (MandarinTrigger)
 
 /-- Context condition for presupposition support. -/
@@ -83,49 +83,51 @@ structure Exp1Datum where
   context : ContextCondition
   /-- Mean naturalness rating (1-7 Likert scale, ×10 for rational representation) -/
   meanRating : ℚ
-  /-- Observed felicity judgment -/
-  felicity : FelicityStatus
+  /-- Observed felicity judgment, encoded as a standard acceptability diacritic
+      (`Features.Acceptability`): `.ok` = felicitous, `.marginal` = borderline `?`,
+      `.anomalous` = pragmatically odd `#`. -/
+  felicity : Acceptability
   deriving Repr
 
 /-- Experiment 1 key finding: ye/also is felicitous under full and partial CG. -/
 def ye_full : Exp1Datum :=
-  { trigger := .ye, context := .full, meanRating := 62/10, felicity := .felicitous }
+  { trigger := .ye, context := .full, meanRating := 62/10, felicity := .ok }
 
 def ye_partial : Exp1Datum :=
-  { trigger := .ye, context := .partialSupport, meanRating := 51/10, felicity := .felicitous }
+  { trigger := .ye, context := .partialSupport, meanRating := 51/10, felicity := .ok }
 
 def ye_none : Exp1Datum :=
-  { trigger := .ye, context := .noSupport, meanRating := 28/10, felicity := .odd }
+  { trigger := .ye, context := .noSupport, meanRating := 28/10, felicity := .anomalous }
 
 /-- Experiment 1 key finding: you/again is felicitous under full and partial CG. -/
 def you_full : Exp1Datum :=
-  { trigger := .you, context := .full, meanRating := 6, felicity := .felicitous }
+  { trigger := .you, context := .full, meanRating := 6, felicity := .ok }
 
 def you_partial : Exp1Datum :=
-  { trigger := .you, context := .partialSupport, meanRating := 49/10, felicity := .borderline }
+  { trigger := .you, context := .partialSupport, meanRating := 49/10, felicity := .marginal }
 
 def you_none : Exp1Datum :=
-  { trigger := .you, context := .noSupport, meanRating := 25/10, felicity := .odd }
+  { trigger := .you, context := .noSupport, meanRating := 25/10, felicity := .anomalous }
 
 /-- Experiment 1 key finding: jiu/only is blocked under partial CG. -/
 def jiu_full : Exp1Datum :=
-  { trigger := .jiu, context := .full, meanRating := 58/10, felicity := .felicitous }
+  { trigger := .jiu, context := .full, meanRating := 58/10, felicity := .ok }
 
 def jiu_partial : Exp1Datum :=
-  { trigger := .jiu, context := .partialSupport, meanRating := 3, felicity := .odd }
+  { trigger := .jiu, context := .partialSupport, meanRating := 3, felicity := .anomalous }
 
 def jiu_none : Exp1Datum :=
-  { trigger := .jiu, context := .noSupport, meanRating := 22/10, felicity := .odd }
+  { trigger := .jiu, context := .noSupport, meanRating := 22/10, felicity := .anomalous }
 
 /-- Experiment 1 key finding: zhidao/know is blocked under partial CG. -/
 def zhidao_full : Exp1Datum :=
-  { trigger := .zhidao, context := .full, meanRating := 59/10, felicity := .felicitous }
+  { trigger := .zhidao, context := .full, meanRating := 59/10, felicity := .ok }
 
 def zhidao_partial : Exp1Datum :=
-  { trigger := .zhidao, context := .partialSupport, meanRating := 32/10, felicity := .odd }
+  { trigger := .zhidao, context := .partialSupport, meanRating := 32/10, felicity := .anomalous }
 
 def zhidao_none : Exp1Datum :=
-  { trigger := .zhidao, context := .noSupport, meanRating := 2, felicity := .odd }
+  { trigger := .zhidao, context := .noSupport, meanRating := 2, felicity := .anomalous }
 
 /-- Key contrast: ye and jiu diverge under partial CG support. -/
 theorem ye_jiu_partial_diverge :
@@ -133,16 +135,16 @@ theorem ye_jiu_partial_diverge :
 
 /-- Obligatory triggers are felicitous under both full and partial CG. -/
 theorem obligatory_trigger_pattern :
-    ye_full.felicity = .felicitous ∧
-    ye_partial.felicity = .felicitous ∧
-    ye_none.felicity = .odd := by
+    ye_full.felicity = .ok ∧
+    ye_partial.felicity = .ok ∧
+    ye_none.felicity = .anomalous := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Blocked triggers are only felicitous under full CG. -/
 theorem blocked_trigger_pattern :
-    jiu_full.felicity = .felicitous ∧
-    jiu_partial.felicity = .odd ∧
-    jiu_none.felicity = .odd := by
+    jiu_full.felicity = .ok ∧
+    jiu_partial.felicity = .anomalous ∧
+    jiu_none.felicity = .anomalous := by
   exact ⟨rfl, rfl, rfl⟩
 
 
@@ -190,7 +192,6 @@ of the speaker-K operator. The Prop-valued canonical version lives in
 `Core.IntensionalLogic.AccessRel`; lift via
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
-open Interfaces (FelicityResult)
 open Semantics.Presupposition.TriggerTypology (AltStructure Obligatoriness)
 open Pragmatics.Expressives (ciLift)
 
@@ -386,14 +387,14 @@ structure WangInput (W : Type*) where
 IC violation → odd (non-violable). Otherwise, obligatoriness prediction
 from alternative structure and CG support determines the status.
 -/
-def wangCheck (input : WangInput W) : FelicityResult :=
+def wangCheck (input : WangInput W) : Acceptability :=
   if !input.ic then
-    { status := .odd, source := some .unspecified }
+    .anomalous
   else
     match predictObligatoriness input.altStructure input.cgFull input.cgPartial with
-    | .obligatory => { status := .felicitous }
-    | .optional => { status := .borderline }
-    | .blocked => { status := .odd, source := some .unspecified }
+    | .obligatory => .ok
+    | .optional => .marginal
+    | .blocked => .anomalous
 
 /--
 IC violation always yields oddness, regardless of CG support and alternative structure.
@@ -403,7 +404,7 @@ presupposition contradicts its assertion is always infelicitous, no matter
 what the CG says or what alternatives exist.
 -/
 theorem IC_violation_always_blocks (input : WangInput W) (hIC : input.ic = false) :
-    (wangCheck input).status = .odd := by
+    wangCheck input = .anomalous := by
   simp [wangCheck, hIC]
 
 

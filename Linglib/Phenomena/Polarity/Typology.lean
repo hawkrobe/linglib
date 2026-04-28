@@ -57,7 +57,7 @@ project from those.
 
 namespace Phenomena.Polarity.Typology
 
-open Typology.Indefinite
+open _root_.Typology.Indefinite
 open Datasets.WALS
 
 -- ============================================================================

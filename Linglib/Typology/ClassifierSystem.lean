@@ -113,4 +113,14 @@ def interacts : ClassifierType → GrammaticalCategory → Bool
   | .possessedClassifier, .possession => true
   | _, _ => false
 
+/-- Whether a language uses numeral classifiers (@cite{wals-2013} Ch 55). -/
+inductive ClassifierStatus where
+  /-- No numeral classifiers (e.g., English, Spanish, Arabic). -/
+  | absent
+  /-- Classifiers available but not required (e.g., Turkish, Bengali). -/
+  | optional
+  /-- Classifiers required (e.g., Mandarin, Japanese, Thai). -/
+  | obligatory
+  deriving DecidableEq, Repr
+
 end Typology

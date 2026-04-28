@@ -2,7 +2,10 @@ import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.Indefinite
+import Linglib.Typology.Plurals
 import Linglib.Typology.Possession
+import Linglib.Typology.Pronouns
+import Linglib.Typology.Question
 import Linglib.Core.Morphology.MorphProfile
 import Linglib.Core.Relativization.Profile
 
@@ -94,6 +97,15 @@ structure LanguageProfile where
       predicative + @cite{nichols-1986} adnominal); `none` until a Fragment
       populates it. -/
   possession : Option Typology.Possession.PossessionProfile := none
+  /-- Plurality profile (@cite{wals-2013} Chs 33-36); `none` until a
+      Fragment populates it. -/
+  plurality : Option Typology.PluralityProfile := none
+  /-- Pronoun-system profile (@cite{wals-2013} Chs 39-40, 44-48);
+      `none` until a Fragment populates it. -/
+  pronouns : Option Typology.PronounProfile := none
+  /-- Question-formation profile (@cite{wals-2013} Chs 92A, 93A, 116A);
+      `none` until a Fragment populates it. -/
+  questions : Option Typology.Question.QuestionProfile := none
   /-- Free-text commentary, including `@cite{...}` keys for hand-coded
       values that override or supplement WALS. -/
   notes : String := ""
@@ -154,6 +166,24 @@ def withIndefinites (p : LanguageProfile)
 def withPossession (p : LanguageProfile)
     (pp : Typology.Possession.PossessionProfile) : LanguageProfile :=
   { p with possession := some pp }
+
+/-- Populate `plurality` with a hand-supplied `PluralityProfile`
+    (@cite{wals-2013} Chs 33-36). -/
+def withPlurality (p : LanguageProfile)
+    (pp : Typology.PluralityProfile) : LanguageProfile :=
+  { p with plurality := some pp }
+
+/-- Populate `pronouns` with a hand-supplied `PronounProfile`
+    (@cite{wals-2013} Chs 39-40, 44-48). -/
+def withPronouns (p : LanguageProfile)
+    (pp : Typology.PronounProfile) : LanguageProfile :=
+  { p with pronouns := some pp }
+
+/-- Populate `questions` with a hand-supplied `QuestionProfile`
+    (@cite{wals-2013} Chs 92A, 93A, 116A). -/
+def withQuestions (p : LanguageProfile)
+    (qp : Typology.Question.QuestionProfile) : LanguageProfile :=
+  { p with questions := some qp }
 
 /-- Attach free-text notes (including `@cite{...}` keys). -/
 def withNotes (p : LanguageProfile) (n : String) : LanguageProfile :=

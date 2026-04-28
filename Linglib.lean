@@ -108,9 +108,6 @@ import Linglib.Core.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 import Linglib.Core.CombinationKind
-import Linglib.Features.AssertionTypes
-import Linglib.Features.ImplicatureTypes
-import Linglib.Features.FelicityTypes
 import Linglib.Features.ScopeTypes
 import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
@@ -206,7 +203,9 @@ import Linglib.Typology.Indefinite
 import Linglib.Typology.LanguageProfile
 import Linglib.Typology.Profile
 import Linglib.Typology.Universal
+import Linglib.Typology.Plurals
 import Linglib.Typology.Possession
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Question
 import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
@@ -949,7 +948,7 @@ import Linglib.Phenomena.Case.Studies.Marantz1991
 import Linglib.Phenomena.Case.Studies.Pesetsky2013
 import Linglib.Phenomena.Case.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Case.Studies.Comrie1989
-import Linglib.Phenomena.ClauseChaining.Typology
+import Linglib.Typology.ClauseChaining
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987

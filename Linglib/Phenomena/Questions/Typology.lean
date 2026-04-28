@@ -27,7 +27,7 @@ Theories/) lives in `Questions.TypologyBridge`.
 
 namespace Phenomena.Questions.Typology
 
-open Typology.Question
+open _root_.Typology.Question
 
 -- ============================================================================
 -- B. Clause-typing variation (@cite{dayal-2025}: §4.4)
@@ -206,15 +206,7 @@ private abbrev ch116 := Datasets.WALS.F116A.allData
 -- WALS Local Types
 -- ============================================================================
 
-/-- WALS Ch 92A: Position of polar question particles. -/
-inductive QParticlePosition where
-  | initial         -- Particle precedes clause
-  | final           -- Particle follows clause
-  | secondPosition  -- Particle in second (Wackernagel) position
-  | otherPosition   -- Other position
-  | eitherOfTwo     -- In either of two positions
-  | noParticle      -- No question particle
-  deriving DecidableEq, Repr
+/-! `QParticlePosition` lives in `Typology/Question.lean`. -/
 
 /-! `WhMovementStrategy`, `WhInterpMechanism`, and the methods
     `ReachesSpecCP` / `IslandSensitive` / `HasCovertStep` (with the
@@ -222,16 +214,7 @@ inductive QParticlePosition where
     `Typology/Question/Defs.lean` so that Fragments can import them
     without violating layer discipline. -/
 
-/-- WALS Ch 116A: How polar questions are formed. -/
-inductive PolarQuestionStrategy where
-  | particle                  -- Question particle
-  | verbMorphology            -- Interrogative verb morphology
-  | particleOrMorphology      -- Mixture of particle and verb morphology
-  | wordOrder                 -- Interrogative word order (e.g., subject-aux inversion)
-  | absenceOfDeclarative      -- Absence of declarative morphemes
-  | intonationOnly            -- Interrogative intonation only
-  | noDistinction             -- No interrogative-declarative distinction
-  deriving DecidableEq, Repr
+/-! `PolarQuestionStrategy` lives in `Typology/Question.lean`. -/
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -271,19 +254,7 @@ theorem ch116_total : ch116.length = 955 := by native_decide
 -- WALS Question Profile
 -- ============================================================================
 
-/-- A language's question-formation profile across WALS Chapters 92A, 93A, 116A. -/
-structure QuestionProfile where
-  /-- Language name. -/
-  language : String
-  /-- WALS language code. -/
-  walsCode : String
-  /-- Ch 92A: Position of polar question particles. -/
-  qParticlePos : Option QParticlePosition := none
-  /-- Ch 93A: Wh-phrase position in content questions. -/
-  whMovement : Option WhMovementStrategy := none
-  /-- Ch 116A: Strategy for forming polar questions. -/
-  polarStrategy : Option PolarQuestionStrategy := none
-  deriving Repr
+/-! `QuestionProfile` lives in `Typology/Question.lean`. -/
 
 def english_qProfile : QuestionProfile :=
   { language := "English", walsCode := "eng"

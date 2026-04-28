@@ -443,7 +443,7 @@ theorem ch61_withoutMarking_majority :
 -- Languages with hand-coded `morphProfile` overrides live in `Fragments/`; pure-
 -- WALS languages are inlined as `Typology.LanguageProfile.ofWALS` directly.
 
-open Typology (LanguageProfile) in
+open _root_.Typology (LanguageProfile) in
 /-- Hand-verified sample of `LanguageProfile`s spanning the four major basic-
     order classes (SOV, SVO, VSO, plus a couple non-SVO order entries) with
     adposition data attested in WALS. Used for stating cross-linguistic
@@ -493,7 +493,7 @@ def fragmentSample : Finset LanguageProfile :=
 -- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
 -- sites (see `Typology/Universal.lean` for the discussion).
 
-open Typology (LanguageProfile ImplicationalUniversal)
+open _root_.Typology (LanguageProfile ImplicationalUniversal)
 
 /-- Language has WALS basic order VSO. -/
 def isVSO (p : LanguageProfile) : Prop :=

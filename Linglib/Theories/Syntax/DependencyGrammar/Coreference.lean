@@ -243,7 +243,7 @@ The predictions are the same for simple cases because:
 -- ============================================================================
 
 /-- Compute coreference status using d-command (dependency paths) -/
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
+def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.CoreferenceStatus :=
   if i == 0 && j == 2 then
     -- Subject-object: subject d-commands object (both depend on verb)
     match clause.object with

@@ -2,7 +2,6 @@ import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Features.FelicityTypes
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 import Linglib.Core.Question.Partition.Constructors

@@ -4,6 +4,7 @@ import Linglib.Datasets.WALS.Features.F33A
 import Linglib.Datasets.WALS.Features.F34A
 import Linglib.Datasets.WALS.Features.F35A
 import Linglib.Datasets.WALS.Features.F36A
+import Linglib.Typology.Plurals
 
 /-!
 # Cross-Linguistic Typology of Nominal Plurality (WALS Chapters 33--36)
@@ -39,26 +40,10 @@ dimensions of plural morphology and syntax:
 
 namespace Phenomena.Plurals.Typology
 
--- ============================================================================
--- Chapter 33: Coding of Nominal Plurality (Dryer)
--- ============================================================================
+open _root_.Typology
 
-/-- How a language morphologically codes plurality on nouns (WALS Ch 33).
-
-    The nine categories distinguish morphological strategies (prefix, suffix,
-    stem change, tone, reduplication, mixed) from phrasal strategies (plural
-    word, clitic) and from the absence of any plural marking. -/
-inductive PluralCoding where
-  | prefix           -- plural prefix (e.g. Swahili wa-toto 'children')
-  | suffix           -- plural suffix (e.g. English dog-s)
-  | stemChange       -- stem-internal vowel change (e.g. Maricopa humar/humaar)
-  | tone             -- tonal change (e.g. Ngiti kamà/kámá 'chief/chiefs')
-  | reduplication     -- complete reduplication (e.g. Indonesian rumah-rumah)
-  | mixedMorphological -- two or more methods, none primary (e.g. Arabic)
-  | pluralWord       -- separate word in NP (e.g. Hawaiian mau, Mandarin 些)
-  | pluralClitic     -- NP-level clitic (e.g. Cayuvava me=)
-  | noPlural         -- no indication of plurality
-  deriving DecidableEq, Repr
+/-! Type enums (`PluralCoding`, `PluralOccurrence`, `PronounPlurality`,
+    `AssociativePlural`) and `PluralityProfile` live in `Typology/Plurals.lean`. -/
 
 /-- WALS Chapter 33 distribution: language counts per plural coding strategy.
     Total: 957 languages. -/
@@ -94,19 +79,7 @@ def ch33Distribution : PluralCodingDistribution :=
 -- Chapter 34: Occurrence of Nominal Plurality (Haspelmath)
 -- ============================================================================
 
-/-- When plural marking occurs on full nouns (WALS Ch 34).
-
-    The six values cross two dimensions: animacy scope (none / human-only / all)
-    and obligatoriness (optional / obligatory). An implicational hierarchy holds:
-    if inanimate nouns are marked, human nouns are too (never the reverse). -/
-inductive PluralOccurrence where
-  | noNominalPlural            -- no nominal plural at all
-  | humanOnlyOptional          -- plural only on human nouns, optional
-  | humanOnlyObligatory        -- plural only on human nouns, obligatory
-  | allNounsAlwaysOptional     -- plural on all nouns, always optional
-  | allNounsOptionalInanimates -- plural on all nouns, obligatory for human, optional for inanimate
-  | allNounsAlwaysObligatory   -- plural on all nouns, always obligatory
-  deriving DecidableEq, Repr
+/-! `PluralOccurrence` lives in `Typology/Plurals.lean`. -/
 
 /-- WALS Chapter 34 distribution: language counts per occurrence type.
     Total: 290 languages. -/
@@ -136,20 +109,7 @@ def ch34Distribution : PluralOccurrenceDistribution :=
 -- Chapter 35: Plurality in Independent Personal Pronouns (Daniel)
 -- ============================================================================
 
-/-- How independent personal pronouns encode number (WALS Ch 35).
-
-    The key typological variable is whether number is expressed in the stem,
-    an affix, or both, and whether the affix is shared with nouns. -/
-inductive PronounPlurality where
-  | noIndependentPronouns       -- no independent subject pronouns (e.g. Acoma)
-  | numberIndifferent           -- same form for sg and pl (e.g. Piraha ti 'I/we')
-  | personNumberAffixes         -- both person and number are affixal
-  | personNumberStem            -- person+number fused in stem (e.g. Dogon mi/emme)
-  | pnStemPronominalAffix       -- person-number stem + pronominal plural affix
-  | pnStemNominalAffix          -- person-number stem + nominal plural affix (e.g. Russian)
-  | personStemPronominalAffix   -- person stem + pronominal plural affix (e.g. Chuvash)
-  | personStemNominalAffix      -- person stem + nominal plural affix (e.g. Mandarin -men)
-  deriving DecidableEq, Repr
+/-! `PronounPlurality` lives in `Typology/Plurals.lean`. -/
 
 /-- WALS Chapter 35 distribution: language counts per pronoun plurality type.
     Total: 260 languages. -/
@@ -184,18 +144,7 @@ def ch35Distribution : PronounPluralityDistribution :=
 -- Chapter 36: The Associative Plural (Daniel & Moravcsik)
 -- ============================================================================
 
-/-- Type of associative plural marking (WALS Ch 36).
-
-    Associative plurals are "X and associates" constructions (e.g. Japanese
-    Tanaka-tachi 'Tanaka and his group'). The typological split is between
-    languages where the associative marker overlaps with the additive (ordinary)
-    plural marker vs. languages with a dedicated associative form. -/
-inductive AssociativePlural where
-  | sameAsAdditive      -- marker also used for additive plural (e.g. Zulu, Turkish)
-  | uniqueAffixal       -- dedicated affix (e.g. Hungarian -ek)
-  | uniquePeriphrastic  -- dedicated free/clitic marker (e.g. Tagalog, Japanese -tachi)
-  | absent              -- no productive associative plural (e.g. Russian, English)
-  deriving DecidableEq, Repr
+/-! `AssociativePlural` lives in `Typology/Plurals.lean`. -/
 
 /-- WALS Chapter 36 distribution: language counts per associative plural type.
     Total: 237 languages. -/
@@ -236,20 +185,7 @@ example : ch36Distribution.total = 237 := by native_decide
 -- Language Profiles
 -- ============================================================================
 
-/-- A language's plurality profile across all four WALS dimensions. -/
-structure PluralityProfile where
-  language : String
-  /-- ISO 639-3 code -/
-  iso : String
-  /-- Ch 33: How plurality is coded on nouns -/
-  coding : PluralCoding
-  /-- Ch 34: When plural marking occurs -/
-  occurrence : PluralOccurrence
-  /-- Ch 35: Pronoun plurality type -/
-  pronounPlurality : PronounPlurality
-  /-- Ch 36: Associative plural -/
-  associativePlural : AssociativePlural
-  deriving Repr, DecidableEq
+/-! `PluralityProfile` lives in `Typology/Plurals.lean`. -/
 
 -- ============================================================================
 -- Language Instances
@@ -556,19 +492,9 @@ theorem associative_often_overlaps_additive :
 -- Cross-Dimensional Generalizations
 -- ============================================================================
 
-/-- Does a language have morphological plural marking on nouns? -/
-def PluralityProfile.hasMorphologicalPlural (p : PluralityProfile) : Bool :=
-  p.coding != .noPlural && p.coding != .pluralWord && p.coding != .pluralClitic
-
-/-- Does a language have obligatory plural marking on all nouns? -/
-def PluralityProfile.hasObligatoryPlural (p : PluralityProfile) : Bool :=
-  p.occurrence == .allNounsAlwaysObligatory ||
-  p.occurrence == .allNounsOptionalInanimates
-
-/-- Does a language distinguish number in pronouns? -/
-def PluralityProfile.pronounsDistinguishNumber (p : PluralityProfile) : Bool :=
-  p.pronounPlurality != .noIndependentPronouns &&
-  p.pronounPlurality != .numberIndifferent
+/-! `PluralityProfile` utility predicates (`hasMorphologicalPlural`,
+    `hasObligatoryPlural`, `pronounsDistinguishNumber`) live in
+    `Typology/Plurals.lean`. -/
 
 /-- In our sample: every language that lacks nominal plural marking still
     distinguishes number in its pronouns.

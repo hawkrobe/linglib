@@ -363,7 +363,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 -- ============================================================================
 
 /-- Compute coreference status using CRDC -/
-def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
+def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Features.CoreferenceStatus :=
   if i == 0 && j == 2 then
     -- Subject-object: check CRDC
     match clause.object with

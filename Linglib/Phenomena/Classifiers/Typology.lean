@@ -54,7 +54,7 @@ through `decide`.)
 namespace Phenomena.Classifiers.Typology
 
 open Core.NounCategorization
-open Typology
+open _root_.Typology
 
 -- ============================================================================
 -- §1: Per-language convenience extractors
@@ -337,12 +337,7 @@ theorem westernArmenian_not_obligatory :
 -- §11: WALS Chapter 55 — Numeral Classifiers (Gil)
 -- ============================================================================
 
-/-- Whether a language uses numeral classifiers (WALS Ch 55). -/
-inductive ClassifierStatus where
-  | absent      -- no numeral classifiers (English, Spanish, Arabic)
-  | optional    -- classifiers available but not required (Turkish, Bengali)
-  | obligatory  -- classifiers required (Mandarin, Japanese, Thai)
-  deriving DecidableEq, Repr
+/-! `ClassifierStatus` lives in `Typology/ClassifierSystem.lean`. -/
 
 /-- Convert WALS 55A numeral classifier values to the local `ClassifierStatus`. -/
 def fromWALS55A : Datasets.WALS.F55A.NumeralClassifiers → ClassifierStatus

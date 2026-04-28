@@ -48,8 +48,8 @@ for cross-linguistic comparison anyway.
 
 namespace Phenomena.Indefinites.Typology
 
-open Typology
-open Typology.Indefinite
+open _root_.Typology
+open _root_.Typology.Indefinite
 open Datasets.WALS
 
 -- ============================================================================

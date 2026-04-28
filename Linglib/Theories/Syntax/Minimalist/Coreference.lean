@@ -309,7 +309,7 @@ structure MinimalistCoreferenceGrammar where
 
 def defaultGrammar : MinimalistCoreferenceGrammar := {}
 
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
+def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.CoreferenceStatus :=
   if i = 0 ∧ j = 2 then
     match clause.object with
     | none => .unspecified

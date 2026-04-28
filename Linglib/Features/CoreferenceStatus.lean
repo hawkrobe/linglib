@@ -1,10 +1,14 @@
 /-!
-# Coreference Status
+# Features.CoreferenceStatus
 
-Theory-neutral coreference relationship types.
+Cross-framework coreference verdict enum. The four syntactic frameworks
+(HPSG, Dependency Grammar, CRDC, Minimalism) each provide a
+`computeCoreferenceStatus : ... → CoreferenceStatus` function — the shared
+return type is what makes their predictions comparable rather than each
+framework's verdict living in a private namespace.
 -/
 
-namespace Interfaces
+namespace Features
 
 /-- The possible coreference relationships between two positions. -/
 inductive CoreferenceStatus where
@@ -18,4 +22,4 @@ inductive CoreferenceStatus where
   | unspecified
   deriving Repr, DecidableEq
 
-end Interfaces
+end Features
