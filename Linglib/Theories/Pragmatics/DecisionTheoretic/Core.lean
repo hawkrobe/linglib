@@ -1,5 +1,7 @@
 import Linglib.Core.Question.Hamblin
+import Linglib.Core.Probability.PMFFin
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.SymmDiff
 import Mathlib.Order.SetNotation
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.Linarith
@@ -35,7 +37,7 @@ Predicates over worlds are `Set W`; arithmetic operations carry
 - `posRelevant` / `negRelevant` / `irrelevant` — ordinal relevance predicates
 - `hContrary` — A and B have opposite relevance signs
 - `CIP` — Conditional Independence Presumption
-- `pxor` — exclusive disjunction for `Set W`
+- (`pxor` and `margProb` removed in 0.230.500: use mathlib `symmDiff` and `probSum` directly.)
 
 ## Main Results
 
@@ -127,10 +129,8 @@ def condProb {W : Type*} [Fintype W] (prior : W → ℚ)
   if pH = 0 then 0
   else probSum prior (e ∩ h) / pH
 
-/-- Marginal (unconditional) probability P(E) = P(E|⊤). -/
-def margProb {W : Type*} [Fintype W] (prior : W → ℚ) (e : Set W)
-    [DecidablePred (· ∈ e)] : ℚ :=
-  probSum prior e
+-- `margProb` removed in 0.230.500 audit: it was `probSum` under another
+-- name. Use `probSum prior e` directly for marginal probability.
 
 -- ============================================================
 -- Section 3: Bayes Factor and Relevance
@@ -205,13 +205,16 @@ def CIP {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : Set W)
 -- Section 5: Exclusive Disjunction
 -- ============================================================
 
-/-- Exclusive disjunction (XOR) of two sets: symmetric difference. -/
-def pxor {W : Type*} (a b : Set W) : Set W :=
-  {w | (w ∈ a ∨ w ∈ b) ∧ ¬ (w ∈ a ∧ w ∈ b)}
+/-- Decidability of membership in a symmetric difference, given
+    decidability of membership in each component. Not in mathlib for
+    `Set α`; added here so `posRelevant ctx (a ∆ b)` resolves. -/
+instance Set.symmDiff.decidablePred {α : Type*} (a b : Set α)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)] :
+    DecidablePred (· ∈ symmDiff a b) := fun w =>
+  decidable_of_iff _ Set.mem_symmDiff.symm
 
-instance {W : Type*} (a b : Set W) [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)] :
-    DecidablePred (· ∈ pxor a b) := fun w =>
-  inferInstanceAs (Decidable ((w ∈ a ∨ w ∈ b) ∧ ¬ (w ∈ a ∧ w ∈ b)))
+-- `pxor` removed in 0.230.500 audit: replaced by mathlib's `symmDiff`
+-- (notation `∆` from `open scoped symmDiff`).
 
 -- ============================================================
 -- Section 6: Helper Lemmas
@@ -320,6 +323,51 @@ theorem probSum_compl (prior : W → ℚ) (h : Set W) [DecidablePred (· ∈ h)]
   have := probSum_partition prior Set.univ h
   simp [Set.univ_inter] at this
   linarith
+
+/-- Lift a non-negative ℚ-valued prior summing to 1 over a finite type
+    to a mathlib `PMF`. Per `0.230.500` audit, this is the bridge
+    constructor for incremental DTS→PMF migration: any DTS theorem can
+    opt into mathlib's `PMF.probOfSet`/`PMF.condProbSet` lemmas via
+    `priorAsPMF` without forcing all sibling theorems to migrate. -/
+noncomputable def priorAsPMF (prior : W → ℚ)
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hSum : ∑ w : W, prior w = 1) : PMF W :=
+  PMF.ofFintype (fun w => ENNReal.ofReal (prior w : ℝ)) (by
+    have hreal_nonneg : ∀ w ∈ (Finset.univ : Finset W), (0 : ℝ) ≤ (prior w : ℝ) := by
+      intro w _; exact_mod_cast hNonneg w
+    rw [← ENNReal.ofReal_sum_of_nonneg hreal_nonneg]
+    have hcast : (∑ w : W, ((prior w : ℝ))) = ((∑ w : W, prior w : ℚ) : ℝ) := by
+      push_cast; rfl
+    rw [hcast, hSum, Rat.cast_one, ENNReal.ofReal_one])
+
+/-- Bridge lemma: each individual mass under `priorAsPMF` is the
+    ENNReal coercion of the original ℚ prior. -/
+@[simp] theorem priorAsPMF_apply (prior : W → ℚ)
+    (hNonneg : ∀ w, prior w ≥ 0) (hSum : ∑ w : W, prior w = 1) (w : W) :
+    priorAsPMF prior hNonneg hSum w = ENNReal.ofReal (prior w : ℝ) := rfl
+
+/-- Bridge lemma: `probSum` (ℚ) and `PMF.probOfSet` (ENNReal) agree
+    after coercion through `ℝ`/`ENNReal`. The toReal direction is the
+    practical one — most consumers want ℚ-valued probabilities. -/
+theorem probSum_toReal_eq_probOfSet (prior : W → ℚ)
+    (hNonneg : ∀ w, prior w ≥ 0) (hSum : ∑ w : W, prior w = 1)
+    (s : Set W) [DecidablePred (· ∈ s)] :
+    ((probSum prior s : ℚ) : ℝ) =
+      ((priorAsPMF prior hNonneg hSum).probOfSet s).toReal := by
+  rw [PMF.probOfSet_apply]
+  unfold probSum
+  push_cast
+  rw [show (∑ w : W, (if w ∈ s then ((priorAsPMF prior hNonneg hSum) w) else 0)).toReal
+        = ∑ w : W, ((if w ∈ s then ((priorAsPMF prior hNonneg hSum) w) else 0).toReal) from
+        ENNReal.toReal_sum (fun w _ => by
+          by_cases hw : w ∈ s
+          · simp [hw, priorAsPMF_apply, ENNReal.ofReal_ne_top]
+          · simp [hw])]
+  refine Finset.sum_congr rfl (fun w _ => ?_)
+  by_cases hw : w ∈ s
+  · have hge : (0 : ℝ) ≤ (prior w : ℝ) := by exact_mod_cast hNonneg w
+    simp [hw, priorAsPMF_apply, ENNReal.toReal_ofReal hge]
+  · simp [hw]
 
 /-- condProb is non-negative when prior is non-negative and conditioning event
 has positive probability. -/
@@ -628,7 +676,7 @@ theorem xor_not_necessarily_positive :
     ∃ (ctx : DTSContext World4) (a b : Set World4)
       (_ : DecidablePred (· ∈ a)) (_ : DecidablePred (· ∈ b)),
       posRelevant ctx a ∧ posRelevant ctx b ∧
-      ¬ posRelevant ctx (pxor a b) := by
+      ¬ posRelevant ctx (symmDiff a b) := by
   sorry
 
 end Theorems

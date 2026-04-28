@@ -58,7 +58,7 @@ correlated across instances (knowing one dog is friendly makes it more
 likely another is). -/
 def NNIR {W : Type*} [Fintype W] (E : Type*)
     (prior : W → ℚ) (Q : E → Set W) [∀ e, DecidablePred (· ∈ Q e)] : Prop :=
-  ∀ (a b : E), condProb prior (Q b) (Q a) ≥ margProb prior (Q b)
+  ∀ (a b : E), condProb prior (Q b) (Q a) ≥ probSum prior (Q b)
 
 -- ============================================================
 -- Section 3: Default But (H = B)
@@ -317,7 +317,7 @@ theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
     (hA_pos : 0 < probSum ctx.prior a)
     (hH_pos : 0 < probSum ctx.prior ctx.topic)
     (hNH_pos : 0 < probSum ctx.prior (ctx.topicᶜ)) :
-    condProb ctx.prior b a < margProb ctx.prior b := by
+    condProb ctx.prior b a < probSum ctx.prior b := by
   set prior := ctx.prior
   set H := ctx.topic
   set nH := Hᶜ
@@ -386,11 +386,10 @@ theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
       have := mul_le_mul_of_nonneg_right hle (le_of_lt hProd_pos)
       ring_nf at this ⊢; linarith
     linarith [hIneq]
-  -- condProb(B|A) = P(B∧A)/P(A) < P(B) = margProb(B)
+  -- condProb(B|A) = P(B∧A)/P(A) < P(B) = probSum prior B
   have hA_ne : probSum prior a ≠ 0 := ne_of_gt hA_pos
-  show condProb prior b a < margProb prior b
+  show condProb prior b a < probSum prior b
   unfold condProb; dsimp only; rw [if_neg hA_ne]
-  unfold margProb
   rw [probSum_pand_comm prior b a]
   exact (div_lt_iff₀ hA_pos).mpr (by nlinarith [hKey])
 
@@ -431,7 +430,7 @@ The proof uses Bayes' reciprocity: negative relevance gives
 P(A|B)/P(A|¬B) < 1, so P(A∧B)·P(¬B) < P(A∧¬B)·P(B).
 By total probability P(A) = P(A∧B) + P(A∧¬B) and normalization
 P(B) + P(¬B) = 1, this yields P(A∧B) < P(A)·P(B),
-hence P(B|A) = P(A∧B)/P(A) < P(B) = margProb(B).
+hence P(B|A) = P(A∧B)/P(A) < P(B) = probSum prior B.
 
 TODO: This proof currently times out during elaboration of the
 `bayesFactor` unfolding step due to `defaultButCtx` field projections
@@ -445,7 +444,7 @@ theorem default_but_properties (prior : W → ℚ) (a b : Set W)
     (hB_pos : 0 < probSum prior b)
     (hNotB_pos : 0 < probSum prior (bᶜ))
     (hAnB_pos : 0 < probSum prior (a ∩ (bᶜ))) :
-    condProb prior b a < margProb prior b := by
+    condProb prior b a < probSum prior b := by
   -- TODO: This proof times out during elaboration of the `bayesFactor` unfolding
   -- step due to `defaultButCtx` field projections (`.prior`, `.topic`) not
   -- reducing through `simp only`. Restructure to expose the underlying

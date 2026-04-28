@@ -130,8 +130,8 @@ Accommodable propositions are those that can be "taken for granted"
 without affecting the ongoing argumentation. -/
 def properlyAccommodable {W : Type*} [Fintype W]
     (ctx : DTSContext W) (φ : Set W) [DecidablePred (· ∈ φ)] : Prop :=
-  0 < margProb ctx.prior φ ∧
-  margProb ctx.prior φ < 1 ∧
+  0 < probSum ctx.prior φ ∧
+  probSum ctx.prior φ < 1 ∧
   irrelevant ctx φ
 
 -- ============================================================

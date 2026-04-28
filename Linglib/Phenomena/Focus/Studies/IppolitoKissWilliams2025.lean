@@ -990,15 +990,15 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (_hS_pos : probSum prior evidence > 0)
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probSum prior (Set.univ : Set W) = 1)
-    (hSupp : condProb prior evidence topic > margProb prior evidence) :
+    (hSupp : condProb prior evidence topic > probSum prior evidence) :
     posRelevant ⟨topic, inferInstance, prior⟩ evidence := by
   -- Abbreviations
   set pH := probSum prior topic with hpH_def
   set pNH := probSum prior (topicᶜ) with hpNH_def
   set pEH := probSum prior (evidence ∩ topic) with hpEH_def
   set pENH := probSum prior (evidence ∩ topicᶜ) with hpENH_def
-  -- Partition: margProb prior e = pEH + pENH
-  have hpart : margProb prior evidence = pEH + pENH := by
+  -- Partition: probSum prior e = pEH + pENH
+  have hpart : probSum prior evidence = pEH + pENH := by
     show probSum prior evidence = _
     exact probSum_partition prior evidence topic
   -- Normalization: pH + pNH = 1
@@ -1075,7 +1075,7 @@ theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probSum prior (Set.univ : Set W) = 1)
     (hNeg : negRelevant ⟨topic, inferInstance, prior⟩ evidence) :
-    ¬ (condProb prior evidence topic > margProb prior evidence) := by
+    ¬ (condProb prior evidence topic > probSum prior evidence) := by
   intro hSupp
   have hPos := probSupports_implies_posRelevant_binary prior topic evidence
     hH_pos hNH_pos hS_pos hNonneg hNorm hSupp
@@ -1105,7 +1105,7 @@ theorem but_negrel_implies_no_probsupport {W : Type*} [Fintype W]
     (hS'neg : negRelevant ⟨topic, inferInstance, prior⟩ s')
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probSum prior (Set.univ : Set W) = 1) :
-    ¬ (condProb prior s' topic > margProb prior s') :=
+    ¬ (condProb prior s' topic > probSum prior s') :=
   negRelevant_implies_not_probSupports prior topic s' hH_pos hNH_pos hS'_pos
     hNonneg hNorm hS'neg
 
@@ -1132,7 +1132,7 @@ theorem discOnly_implies_unexpectedness_under_but {W : Type*} [Fintype W]
     (hNH_pos : 0 < probSum w.dtsCtx.prior (w.dtsCtx.topicᶜ))
     (hCIP : CIP w.dtsCtx w.s w.s') :
     condProb w.dtsCtx.prior w.s' w.s <
-    margProb w.dtsCtx.prior w.s' :=
+    probSum w.dtsCtx.prior w.s' :=
   cip_contrariness_implies_unexpectedness w.dtsCtx w.s w.s'
     hPrior hNorm hCIP (.inl ⟨w.sPosRelevant, hS'neg⟩) hS_pos hH_pos hNH_pos
 

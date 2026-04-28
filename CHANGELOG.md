@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.501] - 2026-04-27
+
+### DTS audit + Phase 1 PMF unification (`pxor`/`margProb` deleted, `priorAsPMF` bridge added)
+
+Two-agent audit (Explore + mathlib-reviewer) of `Theories/Pragmatics/DecisionTheoretic/` (~2280 LOC across 7 files) classified the surface into three tiers:
+
+- **A — pure arithmetic** (~30%, ~150 LOC of Core.lean): `probSum`, `condProb`, `margProb`, `probSum_partition/compl/nonneg/mono`, `pxor` — all have direct mathlib equivalents
+- **B — Merin-distinctive** (~70%, ~1800 LOC): `bayesFactor` (with 1000-magic-number convention), `posRelevant`/`negRelevant`/`irrelevant`, `hContrary`, `CIP`, plus all of `Also.lean`/`But.lean`/`Even.lean`/`MerinBridge.lean`/`PartitionAdjunction.lean`/`ScalarImplicature.lean` — no mathlib analogue
+- **C — derived theorems** (~20%): `sign_reversal`, `bayes_factor_multiplicative_under_cip`, `conjunction_dominates_*`, `max_div_gt_or_div` — proved cleanly in ℚ via `field_simp`/`nlinarith`
+
+**Critical finding**: ENNReal would *degrade* the C-tier theorems. `field_simp`/`nlinarith` don't work over ENNReal because of `≠ ⊤` side conditions; `decide` over ENNReal isn't generally available. The original "migrate everything to PMF" plan saved in memory was wrong — only the A-tier is safe to unify.
+
+**Phase 1 changes** (the safe unification):
+- **`pxor` deleted** from `Theories/Pragmatics/DecisionTheoretic/Core.lean`. Replaced by mathlib's `symmDiff` (notation `∆` from `open scoped symmDiff`). One consumer site (`xor_not_necessarily_positive` theorem statement, currently `sorry`) updated. Added `Set.symmDiff.decidablePred` instance because mathlib doesn't provide it for `Set α` (mathlib has `Decidable (a ∈ s ∆ t)` via `mem_symmDiff` but not as a `DecidablePred` instance).
+- **`margProb` deleted**. It was a literal alias `def margProb := probSum`. ~14 consumer sites in `But.lean`, `Also.lean`, `IppolitoKissWilliams2025.lean` updated to use `probSum prior X` directly. The semantic-readability win of having "marginal" as a separate name was real but small; the audit flagged it for removal and the user confirmed full migration over half-measures.
+- **`priorAsPMF` bridge constructor** added to DTS Core: `(prior : W → ℚ) → (∀ w, prior w ≥ 0) → (∑ w, prior w = 1) → PMF W`. Lifts a non-negative ℚ prior summing to 1 to a mathlib `PMF` via `PMF.ofFintype` + `ENNReal.ofReal_sum_of_nonneg`. Lets future DTS theorems opt into mathlib `PMF` lemmas without forcing a substrate-wide migration.
+- **`probSum_toReal_eq_probOfSet` bridge lemma** added: `((probSum prior s : ℚ) : ℝ) = ((priorAsPMF prior _ _).probOfSet s).toReal`. The practical bridge — most DTS consumers want ℚ values, so the toReal direction is what they need.
+- **`priorAsPMF_apply` simp lemma**: `(priorAsPMF prior _ _) w = ENNReal.ofReal (prior w : ℝ)` by `rfl`. Standard `@[simp]`-marked unfolder.
+
+**Phase 2 explicitly anti-recommended** (was originally in memory plan, now revised). Reasons documented in `memory/project_dts_to_pmf_migration.md`: (a) ENNReal degrades the load-bearing C-tier theorems, (b) `bayesFactor`'s 1000-magic convention has 57 consumer hits and converting to ENNReal `⊤` would touch all of them without semantic gain, (c) the linguistic-content B-tier has no mathlib analogue. Phase 2 triggers documented (mathlib evolves Bayes-factor primitive, or new study genuinely needs both stacks in same proof).
+
+Memory entry rewritten to reflect the revised understanding (the lesson: `project_pmf_check_mathlib_first.md` discipline applies in reverse — verify what would *degrade* before migrating). Build: 5430 jobs green; only pre-existing unrelated sorries (DecisionTheoretic/Core:639 xor counterexample, DecisionTheoretic/But:440, ScalarImplicature:110).
+
 ## [0.230.500] - 2026-04-28
 
 ### `LanguageProfile` aggregator deletion + `Phenomena/Relativization/Typology.lean` dissolution (Phase 2-3)
