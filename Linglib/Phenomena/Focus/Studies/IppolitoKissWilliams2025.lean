@@ -371,27 +371,362 @@ def polarQSentence : Sentence World where
   sDen := sBeautiful
   s'Den := s'RenovatedQ
 
-/-! ### § 6: Core Derivation: Declarative S + Declarative S' -/
+/-! ### § 6: Core Derivation: Declarative S + Declarative S'
+
+The five sorries discharged in §6 and §7 establish the §7 cross-linguistic
+predictions on a concrete 8-world model with uniform prior. The PMF
+arithmetic reduces to four base probabilities (`beautiful`, `expensive`,
+their intersections with `buy`/`buyᶜ`) computed via
+`PMF.probOfSet_apply` + `Fin.sum_univ_eight`. The doxastic `⊆` checks
+and the `moveRelevant` reductions (via `moveRelevant_polar_iff`) are
+pure Set arithmetic discharged by `decide`.
+-/
 
 section CoreDerivation
 
-/-- The presupposition is satisfied: S' is relevant and S supports an
-    answer.
+open scoped ENNReal
 
-    TODO: structured proof constructing witnesses for each conjunct
-    from `coreCtx.subquestions` membership and `Supports` from doxBE
-    ⊆ beautiful. The Set/Prop API replaces the legacy `native_decide`
-    over `Bool isDefined`. -/
-theorem core_isDefined : declSentence.isDefined coreCtx := by sorry
+/-- Each world has prior mass `1/8` under the uniform 8-world prior. -/
+private lemma prior_apply (a : World) : prior a = (1 : ℝ≥0∞) / 8 := rfl
+
+/-- Reduces `prior.probOfSet S` on a decidable subset to an explicit
+    8-fold conditional sum. The lifting through `PMF.probOfSet_apply` +
+    `Fin.sum_univ_eight` happens once; specialised lemmas then unfold
+    the set predicate and apply `ennreal_arith` on the residual. -/
+private lemma prior_probOfSet_expand (S : Set World) [DecidablePred (· ∈ S)] :
+    prior.probOfSet S =
+      (if (⟨0, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨1, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨2, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨3, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨4, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨5, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨6, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) +
+      (if (⟨7, by decide⟩ : Fin 8) ∈ S then (1 : ℝ≥0∞)/8 else 0) := by
+  rw [PMF.probOfSet_apply, Fin.sum_univ_eight]; rfl
+
+/-- The 8 base probabilities the §6/§7 derivations need. Each follows the
+    same pattern: expand via `prior_probOfSet_expand`, unfold the set
+    predicate, reduce each `(⟨i, _⟩ : Fin 8).val` to a numeric literal,
+    then discharge the residual ENNReal arithmetic with `ennreal_arith`. -/
+private lemma prior_beautiful : prior.probOfSet beautiful = (1 : ℝ≥0∞) / 2 := by
+  rw [prior_probOfSet_expand]
+  simp only [beautiful, Set.mem_setOf_eq,
+             show ((⟨0, by decide⟩ : Fin 8).val < 4) by decide,
+             show ((⟨1, by decide⟩ : Fin 8).val < 4) by decide,
+             show ((⟨2, by decide⟩ : Fin 8).val < 4) by decide,
+             show ((⟨3, by decide⟩ : Fin 8).val < 4) by decide,
+             show ¬ ((⟨4, by decide⟩ : Fin 8).val < 4) by decide,
+             show ¬ ((⟨5, by decide⟩ : Fin 8).val < 4) by decide,
+             show ¬ ((⟨6, by decide⟩ : Fin 8).val < 4) by decide,
+             show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+private lemma prior_expensive : prior.probOfSet expensive = (1 : ℝ≥0∞) / 2 := by
+  rw [prior_probOfSet_expand]
+  simp only [expensive, Set.mem_setOf_eq,
+             show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show (((⟨3, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show ¬ (((⟨4, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show ¬ (((⟨5, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show (((⟨6, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             show (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+private lemma prior_buy : prior.probOfSet buy = (1 : ℝ≥0∞) / 8 := by
+  rw [prior_probOfSet_expand]
+  simp only [buy, Set.mem_setOf_eq,
+             show ((⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+private lemma prior_buy_compl : prior.probOfSet (buyᶜ) = (7 : ℝ≥0∞) / 8 := by
+  rw [prior_probOfSet_expand]
+  simp only [buy, Set.mem_compl_iff, Set.mem_setOf_eq,
+             show ((⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             not_true, not_false_eq_true, if_true, if_false]
+  ennreal_arith
+
+private lemma prior_beautiful_inter_buy :
+    prior.probOfSet (beautiful ∩ buy) = (1 : ℝ≥0∞) / 8 := by
+  rw [prior_probOfSet_expand]
+  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_setOf_eq,
+             show ((⟨0, by decide⟩ : Fin 8).val < 4 ∧
+                   (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨1, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨2, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨3, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨4, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨5, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨6, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
+                     (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+private lemma prior_beautiful_inter_buy_compl :
+    prior.probOfSet (beautiful ∩ buyᶜ) = (3 : ℝ≥0∞) / 8 := by
+  rw [prior_probOfSet_expand]
+  simp only [beautiful, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
+             show ¬ ((⟨0, by decide⟩ : Fin 8).val < 4 ∧
+                     ¬ (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ((⟨1, by decide⟩ : Fin 8).val < 4 ∧
+                   ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show ((⟨2, by decide⟩ : Fin 8).val < 4 ∧
+                   ¬ (⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show ((⟨3, by decide⟩ : Fin 8).val < 4 ∧
+                   ¬ (⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨4, by decide⟩ : Fin 8).val < 4 ∧
+                     ¬ (⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨5, by decide⟩ : Fin 8).val < 4 ∧
+                     ¬ (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨6, by decide⟩ : Fin 8).val < 4 ∧
+                     ¬ (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4 ∧
+                     ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+private lemma prior_expensive_inter_buy :
+    prior.probOfSet (expensive ∩ buy) = 0 := by
+  rw [prior_probOfSet_expand]
+  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_setOf_eq,
+             show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨3, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨4, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨5, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨6, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             if_false]
+  ennreal_arith
+
+private lemma prior_expensive_inter_buy_compl :
+    prior.probOfSet (expensive ∩ buyᶜ) = (1 : ℝ≥0∞) / 2 := by
+  rw [prior_probOfSet_expand]
+  simp only [expensive, buy, Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_setOf_eq,
+             show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     ¬ (⟨0, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨1, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     ¬ (⟨1, by decide⟩ : Fin 8).val = 0) by decide,
+             show (((⟨2, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                   ¬ (⟨2, by decide⟩ : Fin 8).val = 0) by decide,
+             show (((⟨3, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                   ¬ (⟨3, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨4, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     ¬ (⟨4, by decide⟩ : Fin 8).val = 0) by decide,
+             show ¬ (((⟨5, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                     ¬ (⟨5, by decide⟩ : Fin 8).val = 0) by decide,
+             show (((⟨6, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                   ¬ (⟨6, by decide⟩ : Fin 8).val = 0) by decide,
+             show (((⟨7, by decide⟩ : Fin 8).val / 2) % 2 = 1 ∧
+                   ¬ (⟨7, by decide⟩ : Fin 8).val = 0) by decide,
+             if_true, if_false]
+  ennreal_arith
+
+/-! #### Bayesian-evidence facts and `Supports` witnesses -/
+
+/-- `beautiful` is positive evidence for `buy`: P(buy | beautiful) = 1/4 > 1/8 = P(buy). -/
+private lemma beautiful_pos_evidence_buy :
+    IsPositiveEvidence beautiful buy prior := by
+  show prior.condProbSet beautiful buy > prior.probOfSet buy
+  rw [PMF.condProbSet_eq_div, prior_beautiful_inter_buy, prior_beautiful, prior_buy]
+  ennreal_arith
+
+/-- `expensive` is positive evidence for `buyᶜ`: P(¬buy | expensive) = 1 > 7/8. -/
+private lemma expensive_pos_evidence_buy_compl :
+    IsPositiveEvidence expensive buyᶜ prior := by
+  show prior.condProbSet expensive buyᶜ > prior.probOfSet buyᶜ
+  rw [PMF.condProbSet_eq_div, prior_expensive_inter_buy_compl, prior_expensive, prior_buy_compl]
+  ennreal_arith
+
+/-- `expensive` is NOT positive evidence for `buy`: P(buy | expensive) = 0, fails to
+    exceed 1/8 = P(buy). -/
+private lemma expensive_not_pos_evidence_buy :
+    ¬ IsPositiveEvidence expensive buy prior := by
+  show ¬ prior.condProbSet expensive buy > prior.probOfSet buy
+  rw [PMF.condProbSet_eq_div, prior_expensive_inter_buy, prior_expensive, prior_buy]
+  ennreal_arith
+
+/-- `beautiful` is NOT positive evidence for `buyᶜ`: P(¬buy | beautiful) = 3/4 = 6/8,
+    fails to exceed 7/8 = P(¬buy). -/
+private lemma beautiful_not_pos_evidence_buy_compl :
+    ¬ IsPositiveEvidence beautiful buyᶜ prior := by
+  show ¬ prior.condProbSet beautiful buyᶜ > prior.probOfSet buyᶜ
+  rw [PMF.condProbSet_eq_div, prior_beautiful_inter_buy_compl, prior_beautiful, prior_buy_compl]
+  ennreal_arith
+
+/-- `buy` and `buyᶜ` are nontrivial in this 8-world model. -/
+private lemma buy_ne_empty : (buy : Set World) ≠ ∅ := by
+  intro h; have : (⟨0, by decide⟩ : World) ∈ (∅ : Set World) := h ▸ rfl; exact this
+
+private lemma buy_ne_univ : (buy : Set World) ≠ Set.univ := by
+  intro h; have : (⟨1, by decide⟩ : World) ∈ buy := h ▸ Set.mem_univ _
+  exact absurd this (by show ¬ ((⟨1, by decide⟩ : Fin 8).val = 0); decide)
+
+private lemma beautiful_ne_empty : (beautiful : Set World) ≠ ∅ := by
+  intro h; have : (⟨0, by decide⟩ : World) ∈ (∅ : Set World) := h ▸ (by decide); exact this
+
+private lemma beautiful_ne_univ : (beautiful : Set World) ≠ Set.univ := by
+  intro h; have : (⟨7, by decide⟩ : World) ∈ beautiful := h ▸ Set.mem_univ _
+  exact absurd this (by show ¬ ((⟨7, by decide⟩ : Fin 8).val < 4); decide)
+
+private lemma expensive_ne_empty : (expensive : Set World) ≠ ∅ := by
+  intro h; have : (⟨2, by decide⟩ : World) ∈ (∅ : Set World) := h ▸ (by decide); exact this
+
+private lemma expensive_ne_univ : (expensive : Set World) ≠ Set.univ := by
+  intro h; have : (⟨0, by decide⟩ : World) ∈ expensive := h ▸ Set.mem_univ _
+  exact absurd this (by show ¬ (((⟨0, by decide⟩ : Fin 8).val / 2) % 2 = 1); decide)
+
+private lemma renovated_ne_empty : (renovated : Set World) ≠ ∅ := by
+  intro h; have : (⟨0, by decide⟩ : World) ∈ (∅ : Set World) := h ▸ (by decide); exact this
+
+private lemma renovated_ne_univ : (renovated : Set World) ≠ Set.univ := by
+  intro h; have : (⟨1, by decide⟩ : World) ∈ renovated := h ▸ Set.mem_univ _
+  exact absurd this (by show ¬ ((⟨1, by decide⟩ : Fin 8).val % 2 = 0); decide)
+
+/-- `doxBE = beautiful ∩ expensive` is a subset of `beautiful`. -/
+private lemma doxBE_subset_beautiful : doxBE ⊆ beautiful :=
+  Set.inter_subset_left
+
+/-- `doxBE = beautiful ∩ expensive` is a subset of `expensive`. -/
+private lemma doxBE_subset_expensive : doxBE ⊆ expensive :=
+  Set.inter_subset_right
+
+/-- `doxBE` is NOT a subset of `expensiveᶜ`: world `2 ∈ doxBE ∩ expensive`. -/
+private lemma doxBE_not_subset_expensive_compl : ¬ doxBE ⊆ expensiveᶜ := by
+  intro h
+  have h2 : (⟨2, by decide⟩ : World) ∈ doxBE := by
+    show _ ∈ beautiful ∩ expensive
+    refine ⟨?_, ?_⟩ <;> (show _ ; decide)
+  have h2c : (⟨2, by decide⟩ : World) ∈ expensiveᶜ := h h2
+  exact absurd h2c (by show ¬ ¬ _; rw [not_not]; show _ ; decide)
+
+/-- `doxBE` is NOT a subset of `beautifulᶜ`: world `2 ∈ doxBE ∩ beautiful`. -/
+private lemma doxBE_not_subset_beautiful_compl : ¬ doxBE ⊆ beautifulᶜ := by
+  intro h
+  have h2 : (⟨2, by decide⟩ : World) ∈ doxBE := by
+    show _ ∈ beautiful ∩ expensive
+    refine ⟨?_, ?_⟩ <;> (show _ ; decide)
+  have h2c : (⟨2, by decide⟩ : World) ∈ beautifulᶜ := h h2
+  exact absurd h2c (by show ¬ ¬ _; rw [not_not]; show _ ; decide)
+
+/-- `S = sBeautiful` supports `buy` under `doxBE`: witness `q = beautiful`. -/
+private lemma sBeautiful_supports_buy_doxBE :
+    Supports doxBE sBeautiful buy prior := by
+  refine ⟨beautiful, ?_, doxBE_subset_beautiful, beautiful_pos_evidence_buy⟩
+  rw [show sBeautiful = Question.polar beautiful from rfl,
+      alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ]
+  exact Set.mem_insert _ _
+
+/-- `S' = s'Expensive` supports `buyᶜ` under `doxBE`: witness `q = expensive`. -/
+private lemma sExpensive_supports_buy_compl_doxBE :
+    Supports doxBE s'Expensive buyᶜ prior := by
+  refine ⟨expensive, ?_, doxBE_subset_expensive, expensive_pos_evidence_buy_compl⟩
+  rw [show s'Expensive = Question.polar expensive from rfl,
+      alt_polar_of_nontrivial expensive_ne_empty expensive_ne_univ]
+  exact Set.mem_insert _ _
+
+/-- `S' = s'Expensive` does NOT support `buy` under `doxBE`. Both alternatives
+    of `s'Expensive` fail: `expensive` provides zero evidence for `buy`,
+    `expensiveᶜ` fails the doxastic condition. -/
+private lemma sExpensive_not_supports_buy_doxBE :
+    ¬ Supports doxBE s'Expensive buy prior := by
+  rintro ⟨q, hq, hdox, hpos⟩
+  rw [show s'Expensive = Question.polar expensive from rfl,
+      alt_polar_of_nontrivial expensive_ne_empty expensive_ne_univ] at hq
+  rcases hq with hq | hq
+  · subst hq; exact expensive_not_pos_evidence_buy hpos
+  · rw [Set.mem_singleton_iff] at hq; subst hq
+    exact doxBE_not_subset_expensive_compl hdox
+
+/-- `S = sBeautiful` does NOT support `buyᶜ` under `doxBE`. `beautiful` fails
+    the positive-evidence test for `buyᶜ`; `beautifulᶜ` fails the doxastic check. -/
+private lemma sBeautiful_not_supports_buy_compl_doxBE :
+    ¬ Supports doxBE sBeautiful buyᶜ prior := by
+  rintro ⟨q, hq, hdox, hpos⟩
+  rw [show sBeautiful = Question.polar beautiful from rfl,
+      alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ] at hq
+  rcases hq with hq | hq
+  · subst hq; exact beautiful_not_pos_evidence_buy_compl hpos
+  · rw [Set.mem_singleton_iff] at hq; subst hq
+    exact doxBE_not_subset_beautiful_compl hdox
+
+/-! #### Discharged theorems -/
+
+/-- The presupposition is satisfied: both arguments are relevant via the
+    explicit subquestion list, and `S` supports `buy` from `doxBE`. -/
+theorem core_isDefined : declSentence.isDefined coreCtx := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- moveRelevant sBeautiful coreCtx.qud coreCtx.subquestions
+    -- via the `polar beautiful` subquestion in coreCtx.subquestions
+    rw [show declSentence.sDen = Question.polar beautiful from rfl,
+        moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+    refine Or.inl (Or.inr ?_)
+    refine ⟨Question.polar beautiful, ?_, ?_⟩
+    · show Question.polar beautiful ∈ coreCtx.subquestions
+      simp [coreCtx]
+    · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
+      exact Or.inl Set.Subset.rfl
+  · -- moveRelevant s'Expensive coreCtx.qud coreCtx.subquestions
+    rw [show declSentence.s'Den = Question.polar expensive from rfl,
+        moveRelevant_polar_iff expensive_ne_empty expensive_ne_univ]
+    refine Or.inl (Or.inr ?_)
+    refine ⟨Question.polar expensive, ?_, ?_⟩
+    · show Question.polar expensive ∈ coreCtx.subquestions
+      simp [coreCtx]
+    · rw [partiallyAnswers_polar_iff expensive_ne_empty expensive_ne_univ]
+      exact Or.inl Set.Subset.rfl
+  · -- ∃ α ∈ alt qud, Supports doxBE sBeautiful α prior
+    refine ⟨buy, ?_, sBeautiful_supports_buy_doxBE⟩
+    show buy ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert _ _
 
 /-- The CI holds: ∃α (= buy) s.t. all partial answers are positive
     evidence for α (vacuous, since `coreCtx.partialAnswers = []`),
-    S supports α, and S' does not.
-
-    TODO: discharge witnesses (α := buy + the doxBE ⊆ beautiful witness
-    for clause (ii); the empty-partials witness for clause (i); a
-    no-belief witness for clause (iii)). -/
-theorem core_ciContent : declSentence.ciContent coreCtx := by sorry
+    S supports α, and S' does not. -/
+theorem core_ciContent : declSentence.ciContent coreCtx := by
+  refine ⟨buy, ?_, ?_, sBeautiful_supports_buy_doxBE, sExpensive_not_supports_buy_doxBE⟩
+  · show buy ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert _ _
+  · -- ∀ p ∈ partialAnswers (= []), ...
+    intro p hp _
+    exact absurd hp (by simp [coreCtx])
 
 /-- The at-issue content is non-trivial: there exist worlds where both
     S and S' hold (e.g., w₂: beautiful ∧ expensive). -/
@@ -400,14 +735,31 @@ theorem core_atIssue_nonempty :
   unfold Sentence.atIssueContent declSentence sBeautiful s'Expensive
   simp [Question.info_polar]
 
-/-- S and S' disagree w.r.t. the QUD: S supports "buy" but S' supports
-    "don't buy", and they don't agree on any single answer.
-
-    TODO: instantiate Disagree.intro with the buy/¬buy witnesses for
-    sDen and s'Den respectively, then refute Agree by case-analysing
-    which α witnesses both supports — neither doxBE ⊆ buy nor
-    doxBE ⊆ ¬buy can be derived once and consumed twice. -/
-theorem core_disagree : declSentence.disagree coreCtx := by sorry
+/-- S and S' disagree w.r.t. the QUD: S supports "buy", S' supports
+    "don't buy", no shared answer is supported by both. -/
+theorem core_disagree : declSentence.disagree coreCtx := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- S supports something
+    refine ⟨buy, ?_, sBeautiful_supports_buy_doxBE⟩
+    show buy ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert _ _
+  · -- S' supports something
+    refine ⟨buyᶜ, ?_, sExpensive_supports_buy_compl_doxBE⟩
+    show buyᶜ ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert_of_mem _ rfl
+  · -- ¬ Agree: refute shared support
+    rintro ⟨α, hα, hSα, hS'α⟩
+    rw [show declSentence.s'Den = Question.polar expensive from rfl] at hS'α
+    rw [show declSentence.sDen = Question.polar beautiful from rfl] at hSα
+    rw [show coreCtx.qud = Question.polar buy from rfl,
+        alt_polar_of_nontrivial buy_ne_empty buy_ne_univ] at hα
+    rcases hα with hα | hα
+    · subst hα
+      exact sExpensive_not_supports_buy_doxBE hS'α
+    · rw [Set.mem_singleton_iff] at hα; subst hα
+      exact sBeautiful_not_supports_buy_compl_doxBE hSα
 
 /-- Per-datum: predicts felicitous for the core declarative-declarative
     examples (Italian 29a, Russian 29b, Hungarian 29c, Mandarin 29d,
@@ -443,24 +795,85 @@ end CoreDerivation
 
 section PolarQDerivation
 
-/-- The presupposition is satisfied even with interrogative S': the
-    polar Q "has it been renovated?" has alternatives [renovated,
-    ¬renovated], and knowing whether the house is renovated is
-    relevant to buying.
+/-! #### `doxB`-specific helpers (for the polar-Q derivation) -/
 
-    TODO: dispatch the relevance witnesses through `moveRelevant`
-    against `clauseTypeCtx.subquestions` (renovation is in there). -/
-theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by sorry
+/-- Under `doxB = beautiful`, `S = sBeautiful` supports `buy`. -/
+private lemma sBeautiful_supports_buy_doxB :
+    Supports doxB sBeautiful buy prior := by
+  refine ⟨beautiful, ?_, ?_, beautiful_pos_evidence_buy⟩
+  · rw [show sBeautiful = Question.polar beautiful from rfl,
+        alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ]
+    exact Set.mem_insert _ _
+  · -- doxB = beautiful ⊆ beautiful
+    show beautiful ⊆ beautiful
+    exact Set.Subset.rfl
 
-/-- The CI holds: the speaker believes the house is beautiful, so S
-    supports "buy". But the speaker doesn't know the answer to "has
-    it been renovated?", so the doxastic condition of `Supports`
-    fails for S' on every QUD answer. S' trivially fails to support
-    the buying direction.
+/-- `doxB = beautiful` is NOT a subset of `renovated`: world `1 ∈ doxB`
+    but `1 ∉ renovated` (1 is odd, so `1 % 2 = 1 ≠ 0`). -/
+private lemma doxB_not_subset_renovated : ¬ doxB ⊆ renovated := by
+  intro h
+  have h1 : (⟨1, by decide⟩ : World) ∈ doxB := by
+    show (⟨1, by decide⟩ : Fin 8).val < 4; decide
+  exact absurd (h h1) (by show ¬ ((⟨1, by decide⟩ : Fin 8).val % 2 = 0); decide)
 
-    TODO: clause (iii) reduces to `Supports.of_no_belief_fails` applied
-    to `s'RenovatedQ` under doxB; clauses (i)/(ii) parallel `core_ciContent`. -/
-theorem polarQ_ciContent : polarQSentence.ciContent clauseTypeCtx := by sorry
+/-- `doxB = beautiful` is NOT a subset of `renovatedᶜ`: world `0 ∈ doxB`
+    but `0 ∈ renovated`, so `0 ∉ renovatedᶜ`. -/
+private lemma doxB_not_subset_renovated_compl : ¬ doxB ⊆ renovatedᶜ := by
+  intro h
+  have h0 : (⟨0, by decide⟩ : World) ∈ doxB := by
+    show (⟨0, by decide⟩ : Fin 8).val < 4; decide
+  have h0c : (⟨0, by decide⟩ : World) ∈ renovatedᶜ := h h0
+  exact absurd h0c (by
+    show ¬ ¬ _; rw [not_not]; show (⟨0, by decide⟩ : Fin 8).val % 2 = 0; decide)
+
+/-- The presupposition is satisfied even with interrogative S'. The
+    `polar renovated` subquestion in `clauseTypeCtx.subquestions` discharges
+    the relevance of `s'RenovatedQ`. -/
+theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- moveRelevant sBeautiful via polar beautiful subquestion
+    rw [show polarQSentence.sDen = Question.polar beautiful from rfl,
+        moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
+    refine Or.inl (Or.inr ?_)
+    refine ⟨Question.polar beautiful, ?_, ?_⟩
+    · show Question.polar beautiful ∈ clauseTypeCtx.subquestions
+      simp [clauseTypeCtx]
+    · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
+      exact Or.inl Set.Subset.rfl
+  · -- moveRelevant s'RenovatedQ via polar renovated subquestion
+    rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
+        moveRelevant_polar_iff renovated_ne_empty renovated_ne_univ]
+    refine Or.inl (Or.inr ?_)
+    refine ⟨Question.polar renovated, ?_, ?_⟩
+    · show Question.polar renovated ∈ clauseTypeCtx.subquestions
+      simp [clauseTypeCtx]
+    · rw [partiallyAnswers_polar_iff renovated_ne_empty renovated_ne_univ]
+      exact Or.inl Set.Subset.rfl
+  · refine ⟨buy, ?_, sBeautiful_supports_buy_doxB⟩
+    show buy ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert _ _
+
+/-- The CI holds: clause (ii) by `sBeautiful_supports_buy_doxB`; clause
+    (iii) reduces to `Supports.of_no_belief_fails` since the speaker
+    (who knows the house is beautiful but not whether renovated) doesn't
+    believe any answer to "has it been renovated?". -/
+theorem polarQ_ciContent : polarQSentence.ciContent clauseTypeCtx := by
+  refine ⟨buy, ?_, ?_, sBeautiful_supports_buy_doxB, ?_⟩
+  · show buy ∈ alt (Question.polar buy)
+    rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
+    exact Set.mem_insert _ _
+  · intro p hp _
+    exact absurd hp (by simp [clauseTypeCtx])
+  · -- ¬ Supports doxB s'RenovatedQ buy prior — speaker doesn't believe any answer
+    apply Supports.of_no_belief_fails
+    intro q hq
+    rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
+        alt_polar_of_nontrivial renovated_ne_empty renovated_ne_univ] at hq
+    rcases hq with hq | hq
+    · subst hq; exact doxB_not_subset_renovated
+    · rw [Set.mem_singleton_iff] at hq; subst hq
+      exact doxB_not_subset_renovated_compl
 
 /-- Per-datum: predicts felicitous for the polar-Q-as-S' examples
     (Russian 30a, Hungarian 31a, Mandarin 32a). -/

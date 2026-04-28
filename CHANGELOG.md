@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.498] - 2026-04-27
+
+### IKW Discourse *only* arc: 5 per-datum sorries discharged with pure PMF proofs
+
+`Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean` had 5 `sorry`s in the §6/§7 derivation chain (`core_isDefined`, `core_ciContent`, `core_disagree`, `polarQ_isDefined`, `polarQ_ciContent`) plus a 6th in the Part II Bayesian bridge. The 5 per-datum sorries are now discharged with structured proofs against the mathlib `PMF` API. Only the Part II `probSupports_implies_posRelevant_binary` sorry (general partition lemmas for `probSum` over `Set.inter`/`Set.compl`) remains, deliberately deferred per CLAUDE.md "encoding-conclusions / deferred-bridge" discipline.
+
+**Approach.** The 8-world model with uniform `1/8` prior makes every probability claim reducible to `PMF.probOfSet_apply` + `Fin.sum_univ_eight` + decidable membership tests + `ennreal_arith` on the residual. A single `prior_probOfSet_expand` helper packages the universal expansion to an 8-fold conditional sum; eight specialised lemmas (`prior_beautiful`, `prior_expensive`, `prior_buy`, `prior_buy_compl`, `prior_beautiful_inter_buy`, `prior_beautiful_inter_buy_compl`, `prior_expensive_inter_buy`, `prior_expensive_inter_buy_compl`) compute the base probabilities. Four `IsPositiveEvidence` claims (`beautiful_pos_evidence_buy`, `expensive_pos_evidence_buy_compl`, `expensive_not_pos_evidence_buy`, `beautiful_not_pos_evidence_buy_compl`) ride on top of these via `PMF.condProbSet_eq_div`. Six nontriviality lemmas (`X_ne_empty`/`X_ne_univ` for `buy`/`beautiful`/`expensive`/`renovated`) discharge the `alt_polar_of_nontrivial` side conditions. Two doxastic-subset facts (`doxBE_subset_beautiful` etc.) and two doxastic-non-subset facts (`doxBE_not_subset_beautiful_compl`, `doxBE_not_subset_expensive_compl`) feed the `Supports` constructor and refutations. The doxB-specific helpers (`doxB_not_subset_renovated`, `doxB_not_subset_renovated_compl`) feed the polar-Q `Supports.of_no_belief_fails` derivation per IKW §5.2 architectural claim.
+
+**Numerical content** (verified against paper §5.1):
+- P(buy | beautiful) = (1/8) / (4/8) = 1/4 > 1/8 = P(buy) ⇒ `beautiful` supports `buy` ✓
+- P(¬buy | expensive) = (4/8) / (4/8) = 1 > 7/8 = P(¬buy) ⇒ `expensive` supports `¬buy` ✓
+- P(buy | expensive) = 0 / (4/8) = 0 ≤ 1/8 ⇒ `expensive` does NOT support `buy` ✓
+- P(¬buy | beautiful) = (3/8) / (4/8) = 3/4 = 6/8 ≤ 7/8 ⇒ `beautiful` does NOT support `¬buy` ✓
+
+These four inequalities + the doxastic ⊆ checks fully discharge the §7 cross-linguistic derivation chain. The five per-datum theorems (`russian_house_predicted` etc.) that combined `core_isDefined` + `core_ciContent` + the Data.lean `felicitous` field are now content-bearing — the cross-linguistic data predictions are formally derived from the substrate primitives, not just stipulated.
+
+**Style.** No `native_decide`, no bare `simp`, no `sorry` on per-datum theorems. Proofs use the mathlib tactic hierarchy (`exact`, structured `refine`, `decide` on Set membership, `simp only [...]` with explicit lemma sets, `ennreal_arith` only for the ENNReal residual). Each helper is `private` to scope it to the file; the `prior_probOfSet_expand` could be promoted to PMFFin if a second uniform-Fin-8 study file appears. Added `open scoped ENNReal` to make `ℝ≥0∞` notation available in scope. Build: 1719 jobs green for the touched constellation; one pre-existing Beaver2004 build failure from concurrent untracked work is outside this commit's scope.
+
 ## [0.230.497] - 2026-04-28
 
 ### WordOrder typology dissolves `LanguageProfile` aggregator (Phase 1)
