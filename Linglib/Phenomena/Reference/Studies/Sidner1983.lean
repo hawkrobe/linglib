@@ -1,3 +1,5 @@
+import Mathlib.Data.List.MinMax
+
 /-!
 # @cite{sidner-1983}: Focusing in the Comprehension of Definite Anaphora
 @cite{sidner-1979}
@@ -167,19 +169,32 @@ end FocusState
 
     * For an *is-a* or *there*-insertion sentence: the subject (modeled
       as the agent-position phrase).
-    * Otherwise: the first phrase in DEF preference order
-      (`theme > other-non-agent > agent > verbPhrase`). -/
+    * Otherwise: the phrase with minimal DEF rank
+      (`theme > other-non-agent > agent > verbPhrase`). Implemented
+      via `List.argmin` from mathlib. -/
 def expectedDiscourseFocus {E : Type} (s : Sentence E) : Option E :=
   match s.form with
   | .isaOrThereInsertion =>
     (s.phrases.find? (fun p => p.position = .agent)).map (·.entity)
   | .normal =>
-    -- pick the phrase whose `thematic.defRank` is minimal
-    let withRank := s.phrases.map (fun p => (p.thematic.defRank, p))
-    (withRank.foldl (init := none) (fun acc pair =>
-      match acc with
-      | none => some pair
-      | some best => if pair.1 < best.1 then some pair else some best)).map (·.2.entity)
+    (s.phrases.argmin (·.thematic.defRank)).map (·.entity)
+
+/-- Characterization of `expectedDiscourseFocus` on a normal sentence:
+    when it returns `some e`, there exists a phrase `p` in the sentence
+    realizing `e`, and `p`'s thematic rank is at most every other
+    phrase's. (The "at most" — vs. "less than" — is `argmin`'s
+    tie-breaking convention: ties are resolved by surface order.) -/
+theorem expectedDiscourseFocus_normal_le {E : Type}
+    {s : Sentence E} {e : E} (hform : s.form = .normal)
+    (h : expectedDiscourseFocus s = some e) :
+    ∃ p ∈ s.phrases, p.entity = e ∧
+      ∀ p' ∈ s.phrases, p.thematic.defRank ≤ p'.thematic.defRank := by
+  unfold expectedDiscourseFocus at h
+  rw [hform] at h
+  rw [Option.map_eq_some_iff] at h
+  obtain ⟨p, hpArg, hpEnt⟩ := h
+  refine ⟨p, List.argmin_mem hpArg, hpEnt, fun p' hp' => ?_⟩
+  exact List.le_of_mem_argmin (f := fun q : Phrase E => q.thematic.defRank) hp' hpArg
 
 /-- The expected actor focus, by the analogous algorithm to the
     discourse-focus one but selecting the agent (@cite{sidner-1983}
@@ -215,10 +230,12 @@ def updateState {E : Type} (state : FocusState E) (s : Sentence E) :
 
     Distilled to the essential rule: an agent-position pronoun
     co-specifies the actor focus; a non-agent pronoun co-specifies the
-    discourse focus. -/
-def resolvePronoun {E : Type} (state : FocusState E) (p : Phrase E) :
+    discourse focus. The function takes a `Position` directly (the
+    pronoun's syntactic slot) rather than a full `Phrase`, since the
+    pronoun's putative entity is exactly the answer being computed. -/
+def resolvePronounAt {E : Type} (state : FocusState E) (pos : Position) :
     Option E :=
-  match p.position with
+  match pos with
   | .agent => state.actorFocus
   | .nonAgent => state.discourseFocus
 
@@ -275,16 +292,14 @@ def stateAfterB : FocusState String :=
 theorem state_after_b :
     stateAfterB = ⟨some "Jeff", some "Carl"⟩ := by decide
 
-/-- The "he" in (34c) is in subject (agent) syntactic position. Per
-    §5.2.6 step 3, it co-specifies the actor focus = Carl. -/
-def heInC : Phrase String :=
-  ⟨"_he_", .agent, .agent, true⟩
+/-- **Sidner's prediction** for "he" in (34c). The pronoun is in
+    agent (subject) position, so by §5.2.6 step 3 it co-specifies the
+    actor focus. Returns `Option String`: `none` would mean the focus
+    state has no actor focus to resolve to. -/
+def sidnerPredictedHe : Option String :=
+  resolvePronounAt stateAfterB .agent
 
-/-- **Sidner's prediction** for "he" in (34c): Carl. -/
-def sidnerPredictedHe : String :=
-  (resolvePronoun stateAfterB heInC).getD "_unresolved_"
-
-theorem sidner_predicts_carl : sidnerPredictedHe = "Carl" := by decide
+theorem sidner_predicts_carl : sidnerPredictedHe = some "Carl" := by decide
 
 end D34
 

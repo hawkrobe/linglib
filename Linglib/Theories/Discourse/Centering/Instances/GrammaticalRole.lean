@@ -26,7 +26,7 @@ inductive GrammaticalRole where
   | subject
   | object
   | other
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def GrammaticalRole.rank : GrammaticalRole → Nat
   | .subject => 2
@@ -37,8 +37,6 @@ def GrammaticalRole.rank : GrammaticalRole → Nat
 instance : CfRanker GrammaticalRole where
   rank := GrammaticalRole.rank
 
-instance : LinearOrder GrammaticalRole :=
-  CfRanker.toLinearOrder GrammaticalRole
-    (fun a b h => by cases a <;> cases b <;> first | rfl | (exact absurd h (by decide)))
+instance : LinearOrder GrammaticalRole := CfRanker.toLinearOrder _
 
 end Discourse.Centering

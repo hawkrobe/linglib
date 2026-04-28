@@ -1,5 +1,7 @@
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Centering Theory — Core Definitions
@@ -61,19 +63,20 @@ class CfRanker (R : Type) where
   rank : R → Nat
 
 /-- Lift a `CfRanker` instance to a `LinearOrder` whose `<` agrees with
-    rank-ascending order on the underlying `Nat`. The user supplies an
-    injectivity proof; for a finite enum role type with `DecidableEq`,
-    `by decide` discharges it.
+    rank-ascending order on the underlying `Nat`. For a finite enum
+    role type with `[DecidableEq R] [Fintype R]`, the injectivity
+    obligation is decidable and the default `by decide` discharges it.
 
     This packages the `LinearOrder.lift'` boilerplate that every
     `CfRanker` instance previously restated. Usage:
     ```
-    instance : LinearOrder GrammaticalRole :=
-      CfRanker.toLinearOrder (by decide)
+    instance : LinearOrder GrammaticalRole := CfRanker.toLinearOrder _
     ```
     -/
-@[reducible] def CfRanker.toLinearOrder (R : Type) [CfRanker R]
-    (h : Function.Injective (CfRanker.rank : R → Nat)) : LinearOrder R :=
+abbrev CfRanker.toLinearOrder (R : Type) [CfRanker R]
+    [DecidableEq R] [Fintype R]
+    (h : ∀ a b : R, CfRanker.rank a = CfRanker.rank b → a = b := by decide) :
+    LinearOrder R :=
   LinearOrder.lift' CfRanker.rank h
 
 -- ════════════════════════════════════════════════════

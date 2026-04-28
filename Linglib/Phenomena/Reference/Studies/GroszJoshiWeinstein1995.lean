@@ -497,34 +497,46 @@ theorem d34_carl_shift :
     classifyTransitionExtended D34.b D34.c_he_is_carl D34.c_he_is_carl.cp
       (cb D34.a D34.b) = .shifting := by decide
 
-/-- **GJW prediction for (34c)**: by Rule 2 (continuations outrank
-    shifts), the Jeff-resolution is preferred. The mechanized
-    predicate `gjwPrefersHeIsJeff` returns the resolution with the
-    higher Rule-2 transition rank. -/
-def gjwPredictedHe : String :=
+/-- **GJW prediction for (34c)**: by Rule 2 (RETAIN outranks SHIFT
+    here), the Jeff-resolution is preferred. Returns `Option String`:
+    `none` if the candidate Rule-2 ranks coincide and the framework
+    cannot adjudicate; otherwise `some "Jeff"` or `some "Carl"`.
+
+    **Caveat about overclaim.** GJW themselves do not commit to a
+    unique referent in §9 p. 222 — they only say "Jeff is the C_b at
+    (34b) and there is no problem." Rule 2 in their paper is a
+    constraint over *speaker production*, not an *interpreter
+    resolution algorithm*. This function operationalizes "GJW's
+    prediction" as "the resolution Rule 2 would prefer if a speaker
+    had to choose between the two transitions"; it is closer to the
+    Brennan-Friedman-Pollard 1987 resolution algorithm than to GJW
+    1995 as published. The headline disagreement theorem is honest
+    about this gap — see its docstring. -/
+def gjwPredictedHe : Option String :=
   let jeffTrans := classifyTransitionExtended D34.b D34.c_he_is_jeff
                      D34.c_he_is_jeff.cp (cb D34.a D34.b)
   let carlTrans := classifyTransitionExtended D34.b D34.c_he_is_carl
                      D34.c_he_is_carl.cp (cb D34.a D34.b)
-  if jeffTrans.rank ≥ carlTrans.rank then "Jeff" else "Carl"
+  if jeffTrans.rank > carlTrans.rank then some "Jeff"
+  else if carlTrans.rank > jeffTrans.rank then some "Carl"
+  else none
 
-theorem gjw_predicts_jeff : gjwPredictedHe = "Jeff" := by decide
+theorem gjw_prefers_jeff : gjwPredictedHe = some "Jeff" := by decide
 
-/-- **The disagreement** (mechanized).
+/-- **The disagreement on what "he" in (34c) refers to.**
 
-    Sidner's prediction comes from the focus state after (34b): actor
-    focus = Carl, discourse focus = Jeff. The pronoun "he" in (34c)
-    occupies syntactic agent position, so by Sidner 1983 §5.2.6 step
-    3 it co-specifies the actor focus = Carl.
+    Sidner's prediction (§5.2.6 step 3): agent-position pronoun →
+    actor focus = Carl.
 
-    GJW's prediction comes from Rule 2 over the two candidate
-    resolutions: the Jeff-resolution continues the Cb, the
-    Carl-resolution shifts it; continuations are preferred.
+    GJW's Rule-2 preference (with the caveat above that GJW themselves
+    don't claim uniqueness): RETAIN > SHIFT under Rule 2 ⇒ Jeff.
 
-    The two theories commit to *different referents* for the same
-    pronoun in the same discourse — the disagreement linglib's
-    interconnection-density discipline aims to make visible. -/
+    Stated constructively (mathlib idiom): each side commits to a
+    *named* prediction; the inequality follows by transparent
+    `decide` from the witnesses. -/
 theorem sidner_gjw_disagree_on_d34c :
-    Sidner1983.D34.sidnerPredictedHe ≠ gjwPredictedHe := by decide
+    Sidner1983.D34.sidnerPredictedHe ≠ gjwPredictedHe := by
+  rw [Sidner1983.D34.sidner_predicts_carl, gjw_prefers_jeff]
+  decide
 
 end GroszJoshiWeinstein1995
