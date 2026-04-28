@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.472] - 2026-04-27
+
+### PSDH 2004 prep — bibliography hygiene (5 missing entries)
+
+First commit of a 6-commit arc formalizing @cite{poesio-stevenson-eugenio-hitzeman-2004}'s "Centering: A Parametric Theory and Its Instantiations" (CL 30:3, 309-363). Multi-agent audit of the planned scope flagged that several papers cited or about to be cited had no `references.bib` entry — and that PSDH itself, despite being cited at `Theories/Discourse/Centering/Coherence.lean:24` and `Theories/Interfaces/PragmaticsDiscourse/CenteringCoherence.lean:14` since 0.229.x, was unresolved (`gen_bibliography.py --check` was warning on it). Five entries added:
+
+- `poesio-stevenson-eugenio-hitzeman-2004` (NEW) — Computational Linguistics 30(3): 309-363. Verified from PDF (J04-3003.pdf): authors (Poesio, Stevenson, Di Eugenio, Hitzeman), title, journal/volume/number, abstract, ©2004 ACL line. URL `https://aclanthology.org/J04-3003/`. The chronologically-canonical empirical-evaluation paper for parametric centering — formalizes the 8-axis parameter space (CBdef, uttdef, previous-utterance, realization, CF-filter, rank, prodef, segmentation per §3.4 p. 326) and corpus-evaluates ~40 instantiations on the GNOME corpus.
+
+- `brennan-friedman-pollard-1987` (NEW) — Proceedings of the 25th ACL: 155-162. The original "centering algorithm" paper that introduced (a) the four-way Smooth Shift / Rough Shift refinement of Grosz et al.'s three-way SHIFT (CB(U_n) = CP(U_n) splits SHIFT smooth from rough); and (b) the single-transition Rule 2 ranking CON > RET > SSH > RSH used by PSDH §2.3.3 (p. 315). URL `https://aclanthology.org/P87-1022/`. Will be cited from `Centering/Rule2.lean` and `Centering/Transition.lean`.
+
+- `strube-hahn-1999` (NEW) — Computational Linguistics 25(3): 309-344. The information-status-based ranking (HEARER-OLD ≺ MEDIATED ≺ HEARER-NEW with linear-order tiebreak) tested by PSDH as the third major rank parameter alternative to grammatical function. URL `https://aclanthology.org/J99-3001/`. Per the linguistics-domain-expert audit's correction, the cheap-vs-expensive Rule 2 distinction is **Strube 1998** (solo) — Strube & Hahn 1999 contributes the information-status ranking.
+
+- `strube-1998` (NEW) — COLING-ACL '98: 1251-1257. "Never Look Back: An Alternative to Centering" — introduces the cheap-vs-expensive transition distinction (cheap iff CB(U_n) = CP(U_{n-1})). PSDH §2.3.3 p. 316 attributes Rule 2 (cheap-pair preference) to this paper. URL `https://aclanthology.org/P98-2204/`. Will be cited from `Centering/Rule2.lean`.
+
+- `rambow-1993` (NEW) — Workshop on Centering Theory in Naturally-Occurring Discourse, IRCS Philadelphia, May 1993. Linear-order ranking proposal motivated by German scrambling data; PSDH §2.4.3 cite this for the surface-position alternative to grammatical-function ranking. Workshop paper without standard ACL anthology URL (URL omitted per CLAUDE.md unverified-URL policy). Will be cited from `Centering/Instances/LinearOrder.lean`.
+
+**Build / validation**: `gen_bibliography.py --check` returns zero new unknown citations; `bibliography.md` regenerated to 1806 entries (was 1801). The PSDH cite warnings emitted from `Coherence.lean:24` and `CenteringCoherence.lean:14` since 0.229.x are now resolved.
+
+**Next 5 commits in this arc** (mathlib-organized per audit recommendation):
+1. **C2** — Substrate generalization: `CfRankerOf E R` typeclass over `Realization` (not just role); `cbAll : prev → cur → List E` returning all top-tier-realized entities.
+2. **C3** — `Constraints.lean`: CB Uniqueness + Entity Continuity decomposition as list-length predicates over `cbAll`.
+3. **C4** — `Rule1.lean`: extract from `Rules.lean`; rename `Rule1Holds` → `Rule1GJW95`; add Rule1GJW83 + Rule1Gordon as separate Props with implication theorems (no `Rule1Variant` enum — mathlib uses separate Props per `Convex`/`StrictConvex` precedent).
+4. **C5** — `Rule2.lean`: extract; add `Rule2BFP87Single` + `Rule2Strube1998Cheap`.
+5. **C6** — `Instances/{LinearOrder,InformationStatus}.lean` + `Phenomena/Reference/Studies/PoesioEtAl2004.lean` with PSDH (10) corner-cupboard partial-GF two-CB example, Sidner1983 ↔ partial-GF bridge theorem, and PSDH §5.2.2 refutation against the existing `Coherence.lean` 1-to-1 mapping.
+
 ## [0.230.471] - 2026-04-27
 
 ### Centering audit — code-quality fixes (β scope) on the 0.230.470 refactor
