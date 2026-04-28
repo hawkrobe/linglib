@@ -4,43 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.499] - 2026-04-28
+## [0.230.499] - 2026-04-27
 
-### Beaver 2004 study file: COT (OT-Centering reformulation) with deep reuse of Centering primitives
+### IKW Discourse *only* arc: 6th sorry (Bayes-bridge) discharged + DTS Core helpers promoted
 
-Lands the cross-framework formalization PSDH 2004 sec3.1 fn 12 endorses and that I left as deepening D in PoesioEtAl2004.lean sec5 (only a partial witness with a single inverted-rank constraint). Beaver 2004 ("The Optimization of Discourse Anaphora," Linguistics and Philosophy 27(1):3-56) reformulates Grosz-Joshi-Weinstein 1995 / Brennan-Friedman-Pollard 1987 Centering as an Optimality Theory system over six ranked constraints.
+The remaining sorry in `Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean` Part II (`probSupports_implies_posRelevant_binary` — the Bayes-theorem direction P(H|E)>P(E) ⟹ BF>1 needed by the formaliser's project-internal Bayesian-to-DTS bridge) is now discharged. The IKW2025 file is fully sorry-free.
 
-**New file `Phenomena/Reference/Studies/Beaver2004.lean`** (~315 LOC). Beaver's six COT constraints in the canonical ranking AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE > ALIGN (per his sec3.2 p. 14):
+**DTS Core substrate additions** (`Theories/Pragmatics/DecisionTheoretic/Core.lean`):
+- New `theorem probSum_partition` (public): `P(e) = P(e ∩ h) + P(e ∩ hᶜ)` — the DTS-side mirror of `PMF.probOfSet_partition`. ~6 LOC via `Finset.sum_add_distrib`.
+- New `theorem probSum_compl` (public): `P(h) + P(hᶜ) = P(univ)` — composes with `hNorm` to give `P(hᶜ) = 1 − P(h)`. ~3 LOC from `probSum_partition`.
+- Promoted `probSum_nonneg` from `private lemma` to public `theorem` (was needed downstream in IKW2025 and is genuinely general).
 
-- **AGREE** (binding-theoretic): pronoun-antecedent number/gender match. Substrate gap (Realization E R lacks features) -- implemented via candidate-supplied `agreementOK : Bool` flag.
-- **DISJOINT** (Principle B): co-arguments of a predicate refer to distinct entities. Substrate gap (Utterance E R lacks predicate-argument structure) -- candidate-supplied flag.
-- **PRO-TOP**: the topic is pronominalized. **REUSED** from existing `Centering/Rule1.lean::Rule1GJW95`. Beaver p. 15: "PRO-TOP has essentially the effect of Centering's Rule 1." Definitionally: `proTop prev cand` violates iff `Rule1GJW95 prev cand.utt` is false. Theorem `proTop_iff_rule1GJW95_fails`.
-- **FAM-DEF** (Heim 1982): every definite NP is familiar. Substrate gap (Realization E R lacks definiteness) -- candidate-supplied flag.
-- **COHERE**: topic of current sentence = topic of previous. **REUSED** from `Centering/Basic.lean::cb`. Beaver p. 17: "COHERE and ALIGN are just the conditions used in BFP to specify transition types." Definitionally: `cohere prev priorTopic cand` violates iff `cb prev cand.utt != priorTopic`. Theorem `cohere_iff_cb_diverges`.
-- **ALIGN**: topic in subject position. **REUSED** from `cb` + `cp`. For canonical English, equivalent to "topic = preferred center." Theorem `align_iff_cb_neq_cp`.
+**Sorry discharge** (`Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean`):
+- ~50 LOC structured proof: set up notation for `pH`/`pNH`/`pEH`/`pENH`, apply `probSum_partition` to get `pE = pEH + pENH`, apply `probSum_compl` + `hNorm` to get `pH + pNH = 1`, unfold `condProb` (with `pH > 0` so the zero-guard fires negatively), unfold `bayesFactor` (with case split on `pENH = 0`).
+- Edge case (`pENH = 0`): `bayesFactor` returns `1000` (its magic-number convention) when `P(E|¬H) = 0` ∧ `P(E|H) > 0`. Discharged by `nlinarith` showing `pEH > 0`.
+- Main case (`pENH > 0`): clear denominators with `field_simp` to convert `(pEH/pH) / (pENH/pNH) > 1` to `pH * pENH < pEH * pNH`, then `nlinarith [hSupp, hsum1]` finishes via the algebraic identity `pNH = 1 − pH`.
 
-The deep-reuse design (3 constraints via Centering primitives, 3 fresh) was the audit's mathlib-style recommendation. Per the PMF/Measure precedent, where Beaver explicitly equates his constraints with Centering primitives we DEFINE them via those primitives (literal restatement); where Beaver introduces independent content (AGREE, DISJOINT, FAM-DEF) we keep them independent. This makes Beaver's headline Theorem (20) BFP-equivalence partly STRUCTURAL on the 3 reused clauses (true by construction) rather than coincidental.
+**Knock-on effects.** `negRelevant_implies_not_probSupports` (just below the discharged sorry, depended on it via contrapositive) and `but_negrel_implies_no_probsupport` (Part II's main bridge claim) are now fully concrete — the entire IKW2025 file is `sorry`-free.
 
-**Worked examples mechanizing Beaver Theorem (20)**:
+**Mathlib-discipline audit finding (saved to memory, deferred).** The Bayes-bridge sorry's existence is symptomatic of a deeper architectural issue: `Theories/Pragmatics/DecisionTheoretic/Core.lean` (~620 LOC) is a parallel probability stack to mathlib `PMF` — `probSum`/`condProb`/`margProb`/`bayesFactor` mirror `probOfSet`/`condProbSet`/`impactRatio` doing the same arithmetic on `W → ℚ` instead of `PMF W`. The `hNorm : probSum prior (Set.univ : Set W) = 1` hypothesis carried by every DTS theorem is the smoking gun — it's `PMF`'s defining invariant, restated as a hypothesis because the carrier doesn't enforce it. Migration plan saved to `memory/project_dts_to_pmf_migration.md` (~600 LOC, 4 phases, 2-3 sessions, with explicit triggers and don't-yet conditions). Not done now: 0.230.499 already relieved the immediate pressure by discharging the bridge sorry; the architectural cleanup can wait for the next bridge-need or PMF-API-want from a sibling file.
 
-- **Beaver (12)** (his p. 23): "Jane is happy. She was congratulated by Freda. Mary gave her a present." BFP classifies (12c) as RETAIN; COT predicts the same (l=i, "her"=Jane). Tableau (13) re-derived: l=i wins because COHERE distinguishes the candidates -- l=i has cb stable as Jane (matching prior topic from (12b)); l=j has cb shift to Freda (COHERE violated). Theorems `d12_l_eq_i_violations`, `d12_l_eq_j_violations`, `beaver_witness_d12_l_eq_i_wins` decide-checked on per-constraint violations.
-
-- **Beaver (2)** (his pp. 10, 26): "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary." BFP overpredicts (Rule 1 forces a "two-Marys" reading because the topic Mary is realized as a full name in (2c) despite "He" being a pronoun). Beaver sec4.1 (p. 26) FIXES this by demoting PRO-TOP below FAM-DEF -- under the demoted ranking AGREE > DISJOINT > FAM-DEF > PRO-TOP > COHERE > ALIGN, the bound reading wins because FAM-DEF eliminates the spurious "second Mary" candidate. Theorems `d2_canonical_ranking_picks_two_marys` (BFP-equivalent prediction under canonical ranking) + `beaver_demoted_ranking_picks_bound_reading` (Beaver's fix). The PSDH sec3.1 fn 12 critique mechanized: Beaver's reformulation FIXES BFP's "Rule 1 used as hard constraint" overprediction by making Rule 1 defeasible.
-
-**Promote PoesioEtAl2004.lean sec5 partial bridge** to a stub. The previous version landed a single `beaverInverseRank` constraint with 3 theorems on PSDH (10) candidates -- toy formulation superseded by Beaver2004.lean's full 6-constraint version. PoesioEtAl2004.lean sec5 collapses to a 26-line redirect docstring pointing at Beaver2004.lean for the substantive formalization. The PSDH (10) two-CB result remains the empirical anchor; its full OT analysis now lives in the paper-anchored Beaver study file. The `Core.Constraint.OT.Basic` import is removed from PoesioEtAl2004 (dependency moved to Beaver2004).
-
-**New bib entry `beaver-2004`** -- Linguistics and Philosophy 27(1):3-56, copyright 2004 Kluwer, DOI 10.1023/B:LING.0000010796.76522.7a (verified from PDF title page). Bibliography regenerated.
-
-**Linglib.lean wiring** -- `Beaver2004` import added (alphabetical, between `AnandNevins2004` and `GroszJoshiWeinstein1995`).
-
-**Build**: 955-job dependency cone green.
-
-**Out of scope (deferred)**:
-- Beaver sec5 extensions (production / bidirectional grammar / multi-sentence text optimization (24)/(25) / accented pronouns sec6).
-- Beaver Appendix A's full general proof of Theorem (20) -- our formalization mechanizes per-example witnesses (Beaver (12), (2)) plus the structural identities for the 3 reused constraints; the schematic proof connecting OT lex-min to BFP's filter-classify-select sequence requires substrate work (a `centeringAsTableau : prev -> cur -> Tableau (Realization E R) 6` constructor with optimal-candidate theorem).
-- Substrate filling of the 3 gaps (number/gender features for AGREE; predicate-argument structure for DISJOINT; definiteness marking for FAM-DEF) -- candidate-supplied flags are honest about the gaps.
-
-This commit closes the Beaver bridge that the PSDH 2004 arc deferred. The 3-paper sequence Sidner 1983 (0.230.470) -> GJW 1995 (existing) -> PSDH 2004 (0.230.489) -> Beaver 2004 (this) now forms a coherent multi-framework formalization of pronoun resolution / discourse coherence, with cross-framework theorems making the agreements and divergences visible.
+Build: 5455 jobs green; only pre-existing unrelated sorries (`Theories/Pragmatics/DecisionTheoretic/Core.lean:627` xor counterexample, `DecisionTheoretic/But.lean:440`) and unused-simp-arg warnings remain.
 
 ## [0.230.498] - 2026-04-27
 

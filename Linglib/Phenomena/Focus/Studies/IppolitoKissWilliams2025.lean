@@ -975,28 +975,85 @@ attribute [instance] DTSDiscourseOnlyWitness.sDec DTSDiscourseOnlyWitness.s'Dec
 /-! ### § 10: Bridge theorems -/
 
 /-- Probabilistic support implies DTS positive relevance for binary
-    issues.
+    issues. The Bayes-theorem bridge: `P(H|E) > P(E)` ⟹ `BF_H(E) > 1`.
 
-    If `P(H|S) > P(H)` then `BF_H(S) > 1`. Both formalize the
-    intuition that S provides evidence for H; this theorem
-    establishes the direction needed for the bridge below.
-
-    TODO: the bridge is Bayes' theorem (`P(H|S) > P(H) ↔ … ↔ BF > 1`).
-    The full proof requires partition / total-mass lemmas for `probSum`
-    over `Set.inter` / `Set.compl`. The legacy Bool-version proof used
-    the parallel `probOfProp` API; on the Prop side those bridge
-    lemmas need to be re-proved against `DTS.probSum`. -/
+    Discharged via the DTS-side partition law (`probSum_partition`) plus
+    the normalization `P(H) + P(¬H) = 1` (`probSum_compl` + `hNorm`).
+    Edge case `P(E ∩ ¬H) = 0` is handled separately: the if-branches in
+    `bayesFactor`'s definition return `1000` when `P(E|¬H) = 0` and
+    `P(E|H) > 0`, both established from the partition. -/
 theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (prior : W → ℚ) (topic : Set W) [DecidablePred (· ∈ topic)]
     (evidence : Set W) [DecidablePred (· ∈ evidence)]
-    (_hH_pos : probSum prior topic > 0)
-    (_hNH_pos : probSum prior (topicᶜ) > 0)
+    (hH_pos : probSum prior topic > 0)
+    (hNH_pos : probSum prior (topicᶜ) > 0)
     (_hS_pos : probSum prior evidence > 0)
-    (_hNonneg : ∀ w, prior w ≥ 0)
-    (_hNorm : probSum prior (Set.univ : Set W) = 1)
-    (_hSupp : condProb prior evidence topic > margProb prior evidence) :
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probSum prior (Set.univ : Set W) = 1)
+    (hSupp : condProb prior evidence topic > margProb prior evidence) :
     posRelevant ⟨topic, inferInstance, prior⟩ evidence := by
-  sorry
+  -- Abbreviations
+  set pH := probSum prior topic with hpH_def
+  set pNH := probSum prior (topicᶜ) with hpNH_def
+  set pEH := probSum prior (evidence ∩ topic) with hpEH_def
+  set pENH := probSum prior (evidence ∩ topicᶜ) with hpENH_def
+  -- Partition: margProb prior e = pEH + pENH
+  have hpart : margProb prior evidence = pEH + pENH := by
+    show probSum prior evidence = _
+    exact probSum_partition prior evidence topic
+  -- Normalization: pH + pNH = 1
+  have hsum1 : pH + pNH = 1 := by
+    have h := probSum_compl prior topic
+    rw [hNorm] at h; exact h
+  -- Nonnegativity
+  have hpEH_ge : pEH ≥ 0 := probSum_nonneg prior hNonneg _
+  have hpENH_ge : pENH ≥ 0 := probSum_nonneg prior hNonneg _
+  -- Unfold condProb in hSupp
+  have hcondE_eq : condProb prior evidence topic = pEH / pH := by
+    unfold condProb; rw [if_neg (ne_of_gt hH_pos)]
+  have hcondNotE_eq : condProb prior evidence (topicᶜ) = pENH / pNH := by
+    unfold condProb; rw [if_neg (ne_of_gt hNH_pos)]
+  rw [hcondE_eq, hpart] at hSupp
+  -- hSupp : pEH/pH > pEH + pENH
+  rw [gt_iff_lt, lt_div_iff₀ hH_pos] at hSupp
+  -- hSupp : (pEH + pENH) * pH < pEH
+  -- Goal: bayesFactor ⟨topic, _, prior⟩ evidence > 1
+  show bayesFactor ⟨topic, inferInstance, prior⟩ evidence > 1
+  unfold bayesFactor
+  show (if condProb prior evidence (topicᶜ) = 0 then _ else _) > 1
+  rw [hcondNotE_eq]
+  by_cases hENH_zero : pENH = 0
+  · -- Edge case: pENH = 0 ⇒ pENH/pNH = 0 ⇒ bayesFactor = 1000 if pEH/pH > 0
+    rw [hENH_zero, zero_div, if_pos rfl]
+    show (if condProb prior evidence topic > 0 then _ else _) > 1
+    rw [hcondE_eq]
+    -- Need: (if pEH/pH > 0 then 1000 else 1) > 1
+    have hpEH_pos : pEH > 0 := by
+      rw [hENH_zero, add_zero] at hSupp
+      -- hSupp : pEH * pH < pEH (after rewriting (pEH + 0) → pEH)
+      nlinarith [hpEH_ge, hH_pos]
+    rw [if_pos (div_pos hpEH_pos hH_pos)]
+    norm_num
+  · -- Main case: pENH > 0
+    have hpENH_pos : pENH > 0 := lt_of_le_of_ne hpENH_ge (Ne.symm hENH_zero)
+    have hENH_div_ne : pENH / pNH ≠ 0 := by
+      intro hzero
+      rcases (div_eq_zero_iff.mp hzero) with h | h
+      · exact hENH_zero h
+      · exact absurd h (ne_of_gt hNH_pos)
+    rw [if_neg hENH_div_ne]
+    show condProb prior evidence topic / (pENH / pNH) > 1
+    rw [hcondE_eq]
+    -- Goal: pEH/pH / (pENH/pNH) > 1
+    have hH_ne : pH ≠ 0 := ne_of_gt hH_pos
+    have hNH_ne : pNH ≠ 0 := ne_of_gt hNH_pos
+    have hENH_ne : pENH ≠ 0 := ne_of_gt hpENH_pos
+    have hPH_pENH_pos : pH * pENH > 0 := mul_pos hH_pos hpENH_pos
+    rw [show pEH / pH / (pENH / pNH) = pEH * pNH / (pH * pENH) by field_simp]
+    rw [gt_iff_lt, lt_div_iff₀ hPH_pENH_pos, one_mul]
+    -- Goal: pH * pENH < pEH * pNH
+    -- From hSupp : (pEH + pENH) * pH < pEH ; pNH = 1 - pH from hsum1
+    nlinarith [hSupp, hsum1]
 
 /-- Negative relevance (DTS) implies non-support (probabilistic).
 

@@ -277,7 +277,7 @@ private lemma condProb_por_add (prior : W → ℚ) (a b h : Set W)
   linarith [probSum_pand_por_eq prior a b h]
 
 /-- probSum is non-negative when prior is non-negative. -/
-private lemma probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
+theorem probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
     (p : Set W) [DecidablePred (· ∈ p)] :
     probSum prior p ≥ 0 := by
   unfold probSum
@@ -300,6 +300,26 @@ private lemma probSum_mono (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
     split
     · exact hP w
     · exact le_refl 0
+
+/-- Partition: `P(e) = P(e ∩ h) + P(e ∩ hᶜ)` for any decidable conditioning
+    set `h`. The DTS-side mirror of `PMF.probOfSet_partition`. -/
+theorem probSum_partition (prior : W → ℚ) (e h : Set W)
+    [DecidablePred (· ∈ e)] [DecidablePred (· ∈ h)] :
+    probSum prior e = probSum prior (e ∩ h) + probSum prior (e ∩ hᶜ) := by
+  unfold probSum
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl (fun w _ => ?_)
+  by_cases he : w ∈ e <;> by_cases hh : w ∈ h <;>
+    simp [Set.mem_inter_iff, Set.mem_compl_iff, he, hh]
+
+/-- Total mass: `P(h) + P(hᶜ) = P(univ)`. With normalization `P(univ) = 1`,
+    yields `P(hᶜ) = 1 − P(h)`. The DTS-side mirror of
+    `PMF.probOfSet_compl_add`. -/
+theorem probSum_compl (prior : W → ℚ) (h : Set W) [DecidablePred (· ∈ h)] :
+    probSum prior h + probSum prior hᶜ = probSum prior (Set.univ : Set W) := by
+  have := probSum_partition prior Set.univ h
+  simp [Set.univ_inter] at this
+  linarith
 
 /-- condProb is non-negative when prior is non-negative and conditioning event
 has positive probability. -/
