@@ -4,6 +4,46 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.509] - 2026-04-28
+
+### Frisch–Pierrehumbert–Broe 2004 study file (closes audit divergence #4)
+
+The 4-agent audit on `ForbiddenPairs.lean` (committed `0.230.508`) flagged FPB 2004 as one of four "silent divergences" — a paper used as a substrate file's docstring example without itself being anchored to a study file (per CLAUDE.md's anchoring discipline: every Lean file is anchored to a paper, an empirical pattern, or a named theoretical framework; FPB was floating). This entry closes that finding.
+
+#### `Linglib/Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean` (new, ~330 LOC)
+
+Anchors @cite{frisch-pierrehumbert-broe-2004} "Similarity Avoidance and the OCP" (NLLT 22:179–228, DOI 10.1023/B:NALA.0000005557.78535.3c) to its primary phenomenon (Phonology) with a Lean-formal divergence theorem:
+
+(1) **§1 Arabic consonant inventory** — 28-segment `inductive Arabic` matching FPB's feature matrix (8) p. 201; `Arabic.isLabial` predicate with `DecidablePred` instance for the labial sub-inventory `{b, f, m, w}` used by the worked examples.
+
+(2) **§2 Per-pair labial natural-class enumerations** — `labialClasses_fm` (9 classes: 2 shared + 7 non-shared) and `labialClasses_bf` (8 classes: 3 shared + 5 non-shared) faithfully reproducing FPB's two enumerations on p. 199. The two lists are not identical: `labialClasses_fm` includes `{f}` (the voiceless labial continuants singleton), `labialClasses_bf` does not. Whether this reflects per-pair-relativised natural-class derivation or a subtle paper-internal inconsistency is unclear from FPB's text; we reproduce the enumerations verbatim so worked-example similarities match the paper's exact 2/9 and 3/8. Unifying into a single lattice would require Broe (1993) specification-theory substrate (deferred).
+
+(3) **§3 Similarity metric (eq. 7)** — `sharedClasses` and `totalRelevantClasses` Nat-valued count helpers + `similarity : List (Finset Arabic) → Arabic → Arabic → ℚ` with the eq. 7 formula `shared / (shared + nonShared)`. `similarity` returns 0 by convention when total = 0 (avoids 0/0 for non-homorganic pairs queried with a labial class list).
+
+(4) **§3 worked examples** — `similarity_f_m : similarity labialClasses_fm Arabic.f Arabic.m = 2/9` and `similarity_b_f : similarity labialClasses_bf Arabic.b Arabic.f = 3/8`, matching FPB p. 199 exactly. Proofs are Nat-decide on the count helpers + `norm_num` on the rational division (the count helpers are Nat-valued so `decide` reduces; the ratio assembly uses `unfold + rw + norm_num` to avoid the well-known ℚ-decide reduction-stuck issue).
+
+(5) **§4 empirical Table IV** — `def empiricalTableIV : List (ℚ × ℚ)` with the 9 (similarity-bin, O/E) pairs from FPB p. 203 (adjacent pairs column): (0, 1.22), (0.05, 1.05), (0.15, 0.83), (0.25, 0.59), (0.35, 0.32), (0.45, 0.03), (0.55, 0.06), (0.8, 0), (1, 0.01). Documented as data; not used in load-bearing membership claims (`decide` on ℚ list-membership reduces poorly).
+
+(6) **§5 cross-framework divergence theorem `categorical_fails_three_test_points`** — the load-bearing theorem. For ANY threshold `t : ℚ` and any pair of predicted O/E values `c1, c2 : ℚ`, the categorical-at-threshold model `if sim < t then c1 else c2` cannot match all three of (sim=0 → 1.22), (sim=0.25 → 0.59), (sim=0.55 → 0.06). Proof by 4-way case split on `t ∈ {≤0, (0, 0.25], (0.25, 0.55], > 0.55}` with `linarith` discharging numerical contradictions in each branch. Significance: any TSL_2 grammar over Arabic with `R := λ a b => similarity la b ≥ t` instantiates the categorical model and is therefore formally incapable of reproducing FPB's gradient OCP-Place pattern. This is the load-bearing instance of the design-boundary claim in `Core/Computability/Subregular/ForbiddenPairs.lean` (previously docstring-only).
+
+(7) **Module docstring** (~120 LOC) — paper metadata, scope (what is/isn't formalised), connection-to-substrate sections explicitly cross-referencing `ForbiddenPairs.lean`'s design boundary and `Hansson2010.lean`'s similarity-graded-transparency discussion at line 76. Out-of-scope sections summarise §4.1 (Frisch–Zawaydeh nonce-verb judgments — experimental data, not formalisable from paper text), §4.2 (Maltese borrowings from Italian + cross-linguistic Tigrinya/Russian/English/Thai attestations), §4.3 (Berg/Boersma/Frisch processing-difficulty argument; Berg & Abd-El-Jawad 1996 speech-error data), and the corpus-dependent §3.4 R² model fits (Frequency 0.57, Categorical 0.70, Soft 0.73, Feature 0.71, Natural Classes **0.75**) plus the stochastic constraint model (Frisch–Broe–Pierrehumbert 1997 logistic fit, K = -2.46, S = 9.79).
+
+#### Companion updates
+
+- `Linglib/Core/Computability/Subregular/ForbiddenPairs.lean` design-boundary section (empirical) now cross-references the new study file as the load-bearing instance.
+- `Linglib.lean` adds the new import alphabetically (between `Flemming2021` and `GoldwaterJohnson2003`).
+- `blog/data/references.bib` `frisch-pierrehumbert-broe-2004` `sources` field expanded (now includes `Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean` and `Phenomena/Phonology/Studies/Hansson2010.lean` alongside the existing `Core/Computability/Subregular/ForbiddenPairs.lean`); `role` upgraded from `cited` to `primary` (the file now formalises FPB's own equation 7).
+
+#### Out of scope (deferred)
+
+- **Broe 1993 specification-theory substrate** — would let natural classes be derived from a feature matrix rather than hard-coded. Required for generalising similarity beyond the labial subset and for unifying the two per-pair labial-class lists.
+- **Stochastic constraint model (FPB §3.4)** — 2-parameter logistic fit with the 2,674-root corpus from @cite{cowan-1979}.
+- **Full O/E table predictions** — require the corpus.
+- **§4.1 nonce-verb-judgment experiment** — experimental data not in the paper text.
+- **MTSL substrate** — separately tracked.
+
+Build: 910 jobs green for the new file in isolation.
+
 ## [0.230.508] - 2026-04-28
 
 ### `Core/Computability/Subregular/ForbiddenPairs.lean` 4-agent audit: counterexample fix, IsChain helper promotion, SP_2 vs TSL_2 cross-framework theorem, OCP-as-merger/prohibition cross-references, OT-substrate `countAdjacent` promotion, bib cluster cleanup

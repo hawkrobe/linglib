@@ -1190,7 +1190,6 @@ import Linglib.Phenomena.Constructions.Resultatives.Studies.Levin2026
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Tay2024
 import Linglib.Phenomena.Constructions.Causatives.Studies.Dendikken1995
 import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
-import Linglib.Phenomena.Causation.Typology
 import Linglib.Phenomena.Causation.Studies.MartinRoseNichols2025
 import Linglib.Phenomena.Causation.Studies.MartinSchaeferKastner2025
 import Linglib.Phenomena.Causation.Studies.NadathurLauer2020
@@ -1476,7 +1475,7 @@ import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
 import Linglib.Phenomena.Polarity.Studies.VonFintel1993
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
-import Linglib.Phenomena.Polarity.Typology
+import Linglib.Phenomena.Polarity.Studies.Haspelmath1997
 import Linglib.Phenomena.Emotion.Studies.HoulihanEtAl2023
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.FrancikClark1985
@@ -1649,7 +1648,8 @@ import Linglib.Phenomena.TenseAspect.Studies.GokselKerslake2005
 import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Phenomena.WordOrder.Typology
+import Linglib.Phenomena.WordOrder.Studies.Greenberg1963
+import Linglib.Phenomena.WordOrder.Studies.DryerHaspelmath2013
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.Studies.Rouillard2026
@@ -1674,6 +1674,7 @@ import Linglib.Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
 import Linglib.Phenomena.Phonology.Studies.Clements1985
 import Linglib.Phenomena.Phonology.Studies.CoetzeePater2011
 import Linglib.Phenomena.Phonology.Studies.Flemming2021
+import Linglib.Phenomena.Phonology.Studies.FrischPierrehumbertBroe2004
 import Linglib.Phenomena.Phonology.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.Phonology.Studies.Hansson2010
 import Linglib.Phenomena.Phonology.Studies.Jaeger2007
@@ -1784,7 +1785,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
-import Linglib.Phenomena.WordOrder.Studies.Dryer1992
+import Linglib.Phenomena.WordOrder.Studies.Gibson2025
 import Linglib.Phenomena.WordOrder.Studies.KuhlmannNivre2006
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019
 import Linglib.Phenomena.WordOrder.Studies.Steedman2000
