@@ -1,3 +1,6 @@
+import Mathlib.Order.Basic
+import Mathlib.Order.Nat
+
 /-!
 # Centering Theory — Core Definitions
 @cite{grosz-joshi-weinstein-1995} @cite{kameyama-1986} @cite{sidner-1979}
@@ -11,8 +14,10 @@ The shape of Centering as a framework:
 
 * An `Utterance E R` carries a list of `Realization E R` — entity, role,
   pronoun-flag triples. The role type `R` is a parameter, instantiated
-  by `GrammaticalRole` (Kameyama 1985) or `ThematicRole` (Sidner 1979)
-  in the `Instances/` modules.
+  by `GrammaticalRole` (@cite{kameyama-1986}) in the `Instances/`
+  module. @cite{sidner-1979}'s focus-based account does not fit a
+  ranker shape and is formalized as its own architecture in
+  `Phenomena/Reference/Studies/Sidner1983.lean`.
 
 * `[CfRanker R]` provides the per-role rank used to order Cf.
   Higher rank = more prominent.
@@ -44,11 +49,32 @@ namespace Discourse.Centering
 /-- Numeric rank over a role type used to order forward-looking centers.
     Higher rank ⇒ more prominent in Cf. The choice of role type and
     its ranking is a theoretical commitment, supplied by an instance.
-    See `Instances/GrammaticalRole.lean` (Kameyama 1985, the standard
-    English assumption) and `Instances/ThematicRole.lean` (Sidner 1979,
-    the original proposal). -/
+    See `Instances/GrammaticalRole.lean` for the
+    @cite{kameyama-1986} / @cite{grosz-joshi-weinstein-1995} default
+    `SUBJECT > OBJECT > OTHER` ranking standard for English.
+
+    Earlier work (@cite{sidner-1979}, @cite{sidner-1983}) used a
+    different focus architecture that does not fit a single ranking
+    scheme — see `Phenomena/Reference/Studies/Sidner1983.lean` for
+    that formalization. -/
 class CfRanker (R : Type) where
   rank : R → Nat
+
+/-- Lift a `CfRanker` instance to a `LinearOrder` whose `<` agrees with
+    rank-ascending order on the underlying `Nat`. The user supplies an
+    injectivity proof; for a finite enum role type with `DecidableEq`,
+    `by decide` discharges it.
+
+    This packages the `LinearOrder.lift'` boilerplate that every
+    `CfRanker` instance previously restated. Usage:
+    ```
+    instance : LinearOrder GrammaticalRole :=
+      CfRanker.toLinearOrder (by decide)
+    ```
+    -/
+@[reducible] def CfRanker.toLinearOrder (R : Type) [CfRanker R]
+    (h : Function.Injective (CfRanker.rank : R → Nat)) : LinearOrder R :=
+  LinearOrder.lift' CfRanker.rank h
 
 -- ════════════════════════════════════════════════════
 -- § 2. Realization and Utterance

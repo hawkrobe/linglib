@@ -4,7 +4,797 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.449] - 2026-04-27
+## [0.230.470] - 2026-04-27
+
+### Centering Theory — Sidner re-anchor + GJW substrate consumption + cross-framework disagreement
+
+Multi-agent audit on `Theories/Discourse/Centering/Instances/ThematicRole.lean` flagged it as misattributed (the EXPERIENCER > AGENT > GOAL > THEME > OTHER ranking is not in @cite{sidner-1979} or @cite{sidner-1983}; the deleted file's "agent above theme" ordering is the *opposite* of what Sidner 1983 §5.2.3 p. 287 actually proposes — agent is ranked LAST among non-theme positions for discourse focus and is picked separately as the actor focus). Verified against the Sidner 1983 chapter PDF (Brady & Berwick eds., MIT Press, doi 10.7551/mitpress/2019.001.0001) and the Sidner 1979 thesis title page (MIT AI-TR-537, June 1979, 265 pp).
+
+**Architectural finding**: Sidner does not have a Cf-ranker — she has a *two-slot* focus state (discourse focus + actor focus) per §5.2 p. 282 ("an actor focus is a discourse item which is predicated as the agent in some event. It is distinct from the main focus, which will be called the discourse focus"). Forcing Sidner into the `CfRanker` mold misrepresents her at the architectural level, so the new Sidner formalization is structurally orthogonal to the Centering substrate, not a new instance of it.
+
+**Files changed**:
+- `Linglib/Theories/Discourse/Centering/Instances/ThematicRole.lean` — DELETED. The file's 5-way enum had no consumer (`grep "CfRanker ThematicRole"` returned only the file itself), no source for its EXPERIENCER > AGENT > GOAL > THEME > OTHER ordering, and was actively backwards relative to Sidner's actual proposal.
+- `Linglib/Theories/Discourse/Centering/Defs.lean` — added `@[reducible] CfRanker.toLinearOrder` helper that packages the `LinearOrder.lift'` boilerplate for any future ranker instance. Docstring updated to drop the misleading "Sidner 1979 thematic ranker" framing and point at `Sidner1983.lean` for Sidner's actual architecture.
+- `Linglib/Theories/Discourse/Centering/Instances/GrammaticalRole.lean` — uses the new helper; dropped `@[simp]` from `rank` (was injecting 3 always-firing rewrites globally per mathlib-reviewer); dropped trivial `subject_gt_object` / `object_gt_other` decide-theorems (the naCanBridge anti-pattern — they followed immediately from the `LinearOrder` instance and had zero consumers).
+- `Linglib/Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean` — major surgery: §1 (local `GrammaticalRole`) and §2 (local `Realization`/`Utterance`/`realizes`/`pronominalizes`/`cf`/`cp`/`cb` + local `Transition`/`Rule1Holds`/`pairRank`) deleted in favor of substrate imports from `Theories/Discourse/Centering/{Defs,Basic,Transition,Rules}.lean` + `Instances/GrammaticalRole.lean`. The 12-line character-for-character duplication of `GrammaticalRole` (substrate's `Centering/Instances/` and the study file's §1 had identical enums + `rank` + `LinearOrder.lift'` + `subject_gt_object`/`object_gt_other` theorems) is gone. All paper-anchored examples (D1, D2, D7-D10, D15, D20, KoreanContinuation) preserved with substrate types; per-pair theorems use `classifyTransitionExtended prev cur cur.cp prevCb` instead of the old monolithic `classifyTransition`. File shrinks 647 → 525 LOC; net dedup ~120 LOC.
+- `Linglib/Phenomena/Reference/Studies/Sidner1983.lean` — NEW. Faithful formalization of Sidner's two-slot focus state + expected-focus algorithm (DEF preference order theme > other-non-agent > agent > VP per §5.2.3 p. 287) + actor-focus algorithm + pronoun-resolution rule (§5.2.6 step 3 p. 293: agent-position pronouns prefer the actor focus, non-agent pronouns prefer the discourse focus). Does NOT instantiate `CfRanker` — Sidner's architecture is structurally orthogonal to GJW Centering. Application to GJW (1995) §9 example (34) at the file's bottom: `sidnerPredictedHe = "Carl"` proved by `decide`. Full focusing algorithm's 10 steps (alternate-focus list, focus stack, do-anaphora, implicit specification) NOT formalized — only the rules load-bearing for the (34) disagreement. Scope explicitly noted in module docstring.
+- `Linglib/Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean` §8 — NEW section formalizing the cross-framework disagreement via GJW (1995) §9 p. 222's own Sidner-comparison: encodes (34a)-(34c) under both candidate "he"-resolutions; proves `cb D34.b D34.c_he_is_jeff = some "Jeff"` (CONTINUE → RETAIN under matrix-subject "I" Cp), `cb D34.b D34.c_he_is_carl = some "Carl"` (SHIFT). GJW's prediction picks the higher-ranked Rule-2 transition (RETAIN > SHIFT ⇒ Jeff). Headline theorem `sidner_gjw_disagree_on_d34c : Sidner1983.D34.sidnerPredictedHe ≠ gjwPredictedHe` proved by `decide`. This is what makes the refactor option (B) — the disagreement is now mechanized at the proof level, not just two parallel docstring claims (the silent-divergence anti-pattern flagged by the cross-framework-reconciler audit).
+- `Linglib.lean` — added `Sidner1983` and `GroszJoshiWeinstein1995` imports (neither was previously listed; substrate was only transitively pulled via `Interfaces/PragmaticsDiscourse/CenteringCoherence.lean`).
+- `blog/data/references.bib` — added `sidner-1979` (@phdthesis, MIT AI-TR-537, June 1979, verified from DTIC ADA084785 title page) and `sidner-1983` (@incollection, Brady & Berwick eds., MIT Press, doi 10.7551/mitpress/2019.001.0001 verified from PDF). Both now resolve in `gen_bibliography.py --check` (was: 0 hits for `sidner-1979` despite 4 citations in `Centering/Defs.lean`, `Instances/{GrammaticalRole,ThematicRole}.lean`, and `GroszJoshiWeinstein1995.lean`'s docstring).
+
+**Build**: 892-job dependency cone (every transitive consumer of `Theories/Discourse/Centering/`) green. Two unrelated parallel-session failures (`Phenomena/FillerGap/Studies/Erlewine2016.lean` and `Phenomena/Questions/Studies/ChanShen2026.lean`, both `Unknown identifier NamedConstraint` from a separate Phonology/OptimalityTheory restructure) are not in the Centering cone.
+
+## [0.230.469] - 2026-04-27
+
+### Preminger 2014 Kichean AF — extract analytical apparatus from fragment + correct attribution chain
+
+Multi-agent code review on the prior Preminger 2014 extraction surfaced several substantive findings; this version applies them.
+
+**Architectural extraction** (per CLAUDE.md fragment-discipline). Theory-laden apparatus that previously violated the "Fragment schemas: consensus typological metadata only" rule by sitting in `Fragments/Mayan/Kaqchikel/Agreement.lean` (DM Vocabulary insertion, Preminger feature decomposition, omnivorous-hierarchy/PLC apparatus) is now in `Phenomena/Agreement/Studies/Preminger2014.lean` (NEW). The fragment file no longer imports Theories/Syntax/Minimalist/{Agree,PersonGeometry} or Theories/Interfaces/SyntaxPhonology/Minimalist/Spellout — it carries only typology-neutral data (paradigm exponents, person-number cells, argument positions, the empirical AF table). Sibling Mam/Qanjobal/Kiche/Chol fragments are similarly clean; this brings Kaqchikel into line.
+
+**Namespace decision** (per 3-agent architecture review with cross-framework reconciler PDF reading). Option B: plain functions in `Phenomena.Agreement.Studies.Preminger2014` namespace, no dot-method injection into `Fragments.X`. Decisive precedent: `Phenomena/Agreement/Studies/BejarRezac2009.lean::basqueToLevel` — same pattern. `grep -rln "namespace Fragments" Linglib/Phenomena/` returns empty (zero codebase precedents for namespace injection).
+
+**Attribution corrections** (verified against Preminger 2014 PDF and Béjar & Rezac 2003 PDF):
+- The relativized-probing mechanism is **Béjar & Rezac 2003**'s, not Preminger's; Preminger §4.1 ("Background: ... Béjar and Rezac's (2003) Account") and §4.4 ("Applying Béjar and Rezac's (2003) Account to Kichean") explicitly attribute it.
+- The feature geometry [φ] → [PERSON] → [participant] → [author] traces to **Harley & Ritter 2002**.
+- DM Vocabulary insertion follows **Halle & Marantz 1993**.
+- The person restriction derives from the **Person Licensing Condition (PLC)** — a syntactic licensing story (B&R 2003), NOT "clitic-doubling competition for π⁰'s output position" as a prior draft mis-attributed.
+- What is distinctively Preminger 2014: the Kichean application of B&R 2003 (Ch 4), the Ch 5 obligatory-failure model, and the Ch 7 anti-salience-hierarchy arguments.
+
+**Anti-hierarchy framing fix** (PersonGeometry.lean, Aissen2003.lean, Kaqchikel/Agreement.lean docstrings). The "omnivorous agreement hierarchy `[+participant] > [+plural] > default`" framing — which prior versions of these files attributed to Preminger 2014 — is **exactly what Preminger Ch 7 argues against**, with five explicit arguments (§7.3 summary, p. 127):
+1. Restrictedness (§7.1, p. 124): salience effects surface nowhere else in the language.
+2. K'ichee' formal addressee *la* (p. 124–125): a 2nd-person pronoun patterning as 3rd under AF.
+3. Person-restriction asymmetry (p. 125): 1+2 blocked but 3pl+3pl licit.
+4. Morphophonological 1st/2nd vs 3rd asymmetry (p. 125–126, table 148, eq 149): clitic doubling vs direct exponence.
+5. Zulu cross-linguistic parallel (§7.2, Halpert 2012): same machinery operating over augmented/augmentless instead of person/number — a salience-irrelevant feature contrast.
+
+`PersonGeometry.lean`'s docstring is rewritten to drop the "omnivorous hierarchy" framing, multi-cite the actual lineage (H&R 2002 → B&R 2003 → P 2014 → P&Z 2018), and flag `probeResolutionRank` as "a convenience encoding... not an endorsement of the salience-scale analyses Preminger Ch 7 argues against." `Aissen2003.lean` §5 prose updated similarly; `preminger_participant_outranks` renamed to `two_probe_surface_ranking` with corrected attribution. `Kaqchikel/Agreement.lean` docstring's AF section now says "the choice rule is theory-laden — see Preminger2014 study" and acknowledges Stiebels 2006 as the salience-account that Preminger argues against.
+
+**Theorems §6** (`Preminger2014.lean`):
+- `ch7_arg3_participant_vs_plural_asymmetry` — verifies arg 3 on fragment data: `afMarker .p1sg .p2sg = none ∧ afMarker .p3pl .p3pl = some "e-"`.
+- `ch7_arg4_form_distinctness_smoke_check` — UNVERIFIED-flagged: only checks 1st/2nd vs 3rd ABS markers are distinct in form. Faithful arg-4 test needs fragment extension with strong-pronoun forms (yïn, rat, röj, rïx) for the eq.-(149) suffix-stripping relation; flagged for future work.
+
+**Mathlib helper** (`Spellout.lean`): new `makePersonVocab : {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeature) (exponentOf : PN → String) (ctx : Option Cat := none) : Vocabulary`. Type-polymorphic, `Option Cat` matches `VocabEntry.context` API. Used in Preminger2014's `setAVocab`/`setBVocab`. `Scott2023.lean`'s structurally-similar `setAVocab`/`setBVocab` not yet refactored — its Elsewhere entries (no features, "tz'=" exponent) need a `++ [elsewhere]` post-composition; flagged for future Mam-fragment work.
+
+**Audit fixes from 3-agent review** (mathlib-reviewer, linglib-integration-auditor, linguistics-domain-expert: syntax):
+- `agreeProbe : KaqArgPosition → Cat` removed (dead code, 0 consumers).
+- `AgreeOutcome` inductive removed (clutter — disconnected from `afMarker`'s `Option String` return; Ch 5 thesis stays in docstring; if needed elsewhere, belongs in a substrate file).
+- `failed_agreement_is_3sg` theorem removed (was rfl-trivial fragment-data tautology after `AgreeOutcome` removal).
+- `feature_decomposition_correct` consolidates 6 prior single-cell rfl theorems (per-cell-rfl-inflation anti-pattern flagged by mathlib-reviewer).
+- `restriction_and_default` consolidates 3 prior small theorems.
+- Theorem name `ch7_arg3_pcl_3pl_asymmetry` typo → `ch7_arg3_participant_vs_plural_asymmetry`.
+- Module docstring: "four arguments" → "five arguments" with Halpert 2012 / Zulu addition.
+
+**Bibliography** (`blog/data/references.bib`):
+- `bejar-rezac-2003` (NEW) — Person Licensing and the Derivation of PCC Effects, in Pérez-Leroux & Roberge eds., Romance Linguistics: Theory and Acquisition, Benjamins, pp. 49–62. Verified from PDF cover page; LSRL 32 + CILT vol. 244 in `note` field; no DOI per CLAUDE.md unverified-DOI policy.
+- `stiebels-2006` (NEW) — Agent Focus in Mayan languages, NLLT 24:501–570. DOI 10.1007/s11049-005-0539-9 verified from Preminger's reference list (p. 278).
+- `halpert-2012` (NEW) — Argument licensing and agreement in Zulu, MIT PhD diss., URL ling.auf.net/lingBuzz/001599 verified from Preminger's reference list.
+
+**Build**: full project 5394/5394 jobs green; bib check returns zero new unknown citations.
+
+**Out of scope for this PR / flagged for future work**:
+- Scott2023.lean refactor with `makePersonVocab + Elsewhere`.
+- Fragment extension with K'ichee' strong pronouns + faithful Ch 7 arg 4 theorem (eq. 149 relation).
+- Zulu fragment + Ch 7 arg 5 theorem (parallelism with Halpert 2012 augmentless data).
+- Coon, Baier & Levin 2021 LI paper as competing post-2014 analysis (UNVERIFIED — needs web access for exact reference).
+
+## [0.230.468] - 2026-04-27
+
+### Japanese Case Fragment: Tsujimura 2014 primary-source correctness audit
+
+Read-through of @cite{tsujimura-2014} *An Introduction to Japanese Linguistics* (3rd ed., Wiley-Blackwell), §4.1.5 "Postpositions" (p. 133) and §4.1.6 "Case Particles" (pp. 134–137), surfaced three correctness issues in the post-0.230.467 Fragment that the prior in-session audit (against agent recall only) had missed:
+
+- **Tsujimura draws a sharp morphosyntactic distinction between case particles and postpositions** that the Fragment was conflating. Per Tsujimura (p. 136): "Postpositions, in general, bear an inherent meaning. Case particles, in contrast, do not have specific semantic content; rather, their roles are more functionally determined within a sentence" — the diagnostic contrast (p. 136, ex. 28–29) is omissibility in casual speech (case particles can be dropped, postpositions cannot). On her analysis, only -ga, -o, -ni, -no are case particles; -de, -e, -to, -kara, -made, -yori are postpositions.
+- ***-made* (terminative, UD `.Ter`) was missing entirely** from the inventory. Tsujimura (p. 133, ex. 20d): *gozi-made* "until 5 o'clock". This is a major case-relevant marker; its omission was a real coverage gap.
+- The Fragment's prior framing ("Japanese marks case with postpositional particles") was a one-class conflation that the case-vs-postposition contrast falsifies.
+
+**Structural changes** (`Fragments/Japanese/Case.lean`):
+- New `inductive MarkerCategory | caseParticle | postposition` records Tsujimura's classification. Renamed `structure CaseParticle` → `CaseMarker` and added a `category : MarkerCategory` field; both classes now share a unified schema since both contribute to the `Core.Case` inventory under the UD/Blake typological framing the library uses.
+- Added `made : CaseMarker := { ..., cases := {.Ter}, category := .postposition }`. The inventory grows from 9 to 10 cases (now includes `.Ter` at Blake rank 0); inventory remains contiguous on Blake's hierarchy (ranks 6 down to 0).
+- Renamed the union list `caseParticles` → `caseMarkers`. Re-introduced `caseParticles` and added `postpositions` as derived `List.filter` over `caseMarkers` for Tsujimura's narrower notions. New theorems `caseParticles_count : caseParticles.length = 4 := by decide` and `postpositions_count : postpositions.length = 6 := by decide` ground Tsujimura's classification structurally.
+- `caseInventory_eq` updated to assert the 10-case set including `.Ter`.
+
+**Per-marker docstring corrections**:
+- *-ga, -o, -no*: page-anchored to Tsujimura (p. 134, ex. 22a–d) with the verbatim primary-source glosses ("normally indicates that the accompanying noun is the subject"; "marks the noun ... as the direct object"; "establishes a modification relation ... possessor–possessed relation, similar to English 's").
+- *-ni*: docstring now leads with the dative use as Tsujimura's primary case (p. 134, ex. 22c: "primarily associated with verbs of giving ... implies the recipient"), with the LOC/ALL extensions noted as cross-linguistically common polysemy (Blake on the ALL → DAT pathway, already cited).
+- *-de*: leads with the locative use (Tsujimura p. 133 ex. 20a *uti-de* "at home"; p. 136 "*de* 'at' implies location"); instrumental noted as additional. Order in `cases` field swapped from `{.inst, .loc}` to `{.loc, .inst}` to reflect descriptive primacy.
+- *-e, -to, -kara*: page-anchored to Tsujimura (p. 133, ex. 20b–e) with verbatim glosses.
+- *-yori*: pointed at Tsujimura (p. 132, ex. 19d) where the comparative-standard reading is exemplified.
+
+**Module docstring**:
+- Opens with the case-particle/postposition split (with Tsujimura page anchors).
+- Names two additional out-of-scope phenomena Tsujimura covers in the syntax chapter: *ni*-causatives vs. *o*-causatives (§5.5.1) and *ga/no* conversion (§5.6.1).
+- Names the *Wa* vs. *Ga* discussion (Tsujimura §6.4.2.1) as the proper home for the *-ga* exhaustive-listing literature alongside Kuroda 1972 / Kuno 1987.
+
+**Bibliography** (`blog/data/references.bib`):
+- Added `tsujimura-2014` entry with metadata verified directly from the book in hand: title (*An Introduction to Japanese Linguistics*), edition (3rd), publisher (Wiley-Blackwell), place (Chichester), year (2014), ISBN (978-1-4443-3773-0 paperback per the printed copyright page), series (Blackwell Textbooks in Linguistics, #10). DOI omitted (could not verify from the PDF; per CLAUDE.md, missing DOI is better than fabricated). Shibatani 1990 mention kept as docstring prose (no bib entry added in this commit; can be added later with verified ISBN).
+
+**Build**: full transitive closure (757 jobs) green; both downstream consumers (`Phenomena/Alignment/Typology.lean::japanese_fragment_bridge`, `Phenomena/Case/Studies/Caha2009.lean::japanese`) still pass `decide` — Caha containment respects the addition of `.Ter` to the inventory, and `.nom`/`.acc` membership is unaffected.
+
+## [0.230.467] - 2026-04-27
+
+### Japanese Case Fragment: particle-level data + scope hedges driven by linguistics-domain-expert audit
+
+4-agent audit (mathlib-reviewer + linguistics-domain-expert + integration-auditor + cross-framework-reconciler) on `Fragments/Japanese/Case.lean` (29 LOC) flagged the docstring's polysemy claims (-ni:DAT/LOC/ALL, -de:INST/LOC) as prose-only assertions invisible to the Lean code, *-e* misclassified as a free variant of *-ni*'s ALL function (Kuno/Shibatani: *-e* is restricted to directional motion-toward), *-yori* missing entirely (literary ABL + comparative-standard), and the *-ga* = NOM mapping silently sidestepping the Kuroda–Kuno exhaustive-listing literature. Citation hygiene: docstring cited "Blake Ch. 6" (specific section number from memory — flagged as the high-hallucination-risk pattern per CLAUDE.md). This commit addresses the linguistics gaps; mathlib-reviewer's `example`-not-`theorem` finding and cross-framework-reconciler's `CaseSystemConfig` integration with `Phenomena/Case/Studies/Ozaki2026.lean` are deferred as separate concerns.
+
+**Particle-level data added** (§1, ~70 LOC):
+- `structure CaseParticle` with `romaji`, `kana`, `cases : Finset Core.Case` fields; per-particle `def` with rich docstrings: `ga` (NOM), `o` (ACC), `no_` (GEN), `ni` (DAT/LOC/ALL — DAT/LOC/ALL polysemy made auditable), `de` (INST/LOC), `to_` (COM), `kara` (ABL), `e` (ALL only — distinguished from `ni`'s ALL), `yori` (ABL — added per linguistics expert; comparative-standard reading flagged as out of scope at the case layer). `def caseParticles : List CaseParticle` aggregator.
+- `caseInventory` rewritten as derived: `(caseParticles.map (·.cases)).foldr (· ∪ ·) ∅`. New `theorem caseInventory_eq` provides the bridging sanity check (decide-verified) that the union equals the 9-case set the prose claims (NOM ACC GEN DAT LOC ABL ALL INST COM); editing a particle's `cases` field will now break exactly this theorem if it changes the realized inventory.
+
+**Docstring scope hedges**:
+- Module docstring now flags four out-of-scope phenomena: -ga as exhaustive-listing/focus marker (Kuroda/Kuno tradition), dative subjects in stative-experiencer constructions (*Tarō-ni eigo-ga wakaru*), *ga/no* conversion in relative clauses (*Tarō-no kaita hon*), case-/postposition-stacking (*Tarō-ni-no tegami*). Names the future home (`Phenomena/InformationStructure/`) for the -ga distinction.
+- Per-particle docstrings spell out the polysemy patterns and what the case-marking layer abstracts away (e.g., -no's nominalizer/relative-clause-genitive uses, -de's locative-of-action vs -ni's locative-of-existence, -yori's modern comparative-standard reading).
+
+**Citation hygiene**:
+- Removed unverified "Blake Ch. 6" reference; module header now cites `@cite{blake-1994}` for the typological framing without invoking specific chapters.
+- Added `@cite{kuroda-1972}` (thetic vs categorical -ga, already in bib) and `@cite{kuno-1987}` (functional syntax, already in bib) for the *-ga* scope hedge.
+- Module docstring acknowledges Shibatani 1990 *The Languages of Japan* and Tsujimura *An Introduction to Japanese Linguistics* as the standard Japanese-specific reference grammars (prose-only — not added to bib in this commit to avoid hallucinated metadata; flagged as "not yet in the linglib bib" so future contributors can add them with verified DOIs).
+
+**Build**: full transitive closure (757 jobs) green; both downstream consumers (`Phenomena/Alignment/Typology.lean::japanese_fragment_bridge`, `Phenomena/Case/Studies/Caha2009.lean::japanese`) still discharge `decide` on the derived `caseInventory` — the union form is `decide`-equivalent to the previous explicit Finset literal.
+
+## [0.230.466] - 2026-04-27
+
+### Icelandic -st Fragment: layer-split + mathlib hygiene driven by 4-agent audit
+
+Multi-agent audit (mathlib-reviewer + integration-auditor + linguistics-domain-expert + cross-framework-reconciler) on `Fragments/Icelandic/Predicates.lean` (333 LOC) converged on a layer-discipline violation as the headline finding: a Fragment-layer file was carrying Wood-2015 analytical apparatus (six-way `StType` classification, `AnticausativeMarking` enum, `[.vCAUSE, .vGO, .vBE]`-style root decomposition, `licensesPossessiveDative` diagnostic) that CLAUDE.md sites in `Studies/`, not in Fragment lexicons. Two natural homes already existed: `Phenomena/ArgumentStructure/Studies/Wood2015.lean` and `Phenomena/Morphology/Studies/Wood2023.lean`. mathlib-reviewer additionally flagged `native_decide` × 5 (forbidden per CLAUDE.md proof-style discipline; all closable by `decide` over 10-element data), an unused `Applicative` import, an `AnticausativeMarking.voiceType : → String` function reinventing what `Voice.lean`'s `VoiceHead.hasD` encodes structurally, and `langaðist`/`leiðast` confusion in two docstring blocks (the former is not standard Icelandic). Linguistics expert flagged ±θ/±D notation as misattributed to Schäfer 2008 — the actual source is Alexiadou-Anagnostopoulou-Schäfer 2015 / Wood-Marantz 2017.
+
+**Substrate** (`Theories/Syntax/Minimalist/Voice.lean`):
+- Added `inductive VoiceProjectionLocus | voiceD | voiceBare | voiceDOrBare | vHead` after the existing `VoiceParams` block (Voice.lean §11). Provides the structural type a marking morpheme picks out, replacing the prior String-encoded labels (`"Voice_{D}"`, `"Voice_{}"`, `"v (not Voice)"`). Doc cites `alexiadou-schaefer-2015` (existing key, OUP *External Arguments in Transitivity Alternations*) and `wood-marantz-2017` for the ±D feature, and `wood-2015` for the v-vs-Voice distinction in *-ka*.
+- Updated existing `Voice–VerbHead Bridge` docstring (line 42 area) to redirect "see for Icelandic fragment" to `Phenomena.ArgumentStructure.Studies.Wood2015` (where the apparatus moved); the lexical fragment now carries only consensus verb forms.
+
+**Wood2015 study** (`Phenomena/ArgumentStructure/Studies/Wood2015.lean`, +200 LOC):
+- Migrated apparatus from Predicates.lean (now lives only here): `inductive StType` (anticausative/middle/reflexive/inherent/subjectExp/reciprocal), `inductive AnticausativeMarking` (st/na/unmarked/ka), `def StType.voiceFlavor`, `def AnticausativeMarking.voiceLocus : → VoiceProjectionLocus` (replaces the String-returning `voiceType`), `def voiceToSuffix`.
+- New `structure StVerbInfo` bundles per-verb Wood-projections (verb, stType, marking, rootStructure, licensesPossessiveDative); 11 instance defs (`opnast_info`, `splundrast_info`, `brotna_info`, `seljast_info`, `lesast_info`, `badast_info`, `klaedast_info`, `nalgast_info`, `minnast_info`, `leidast_info`, `kyssast_info`); `allStInfo` aggregator (10 entries; brotna excluded as `-na`-marked).
+- Migrated theorems with `native_decide → decide`: `cause_shared_across_alternation`, `opna_alternation`, `anticausative_is_inchoative`, `anticausative_verbs_are_cos`, `inherent_no_active`, `subjectexp_no_active`, `all_st_info_are_st_marked`. New: `st_na_different_voice_loci` and `ka_distinct_from_voice_exponents` (state Voice locus inequalities structurally over `VoiceProjectionLocus`, no longer over String labels). Bundled lookup theorems where appropriate (`stType_voiceFlavor_table`).
+- Inline `VoiceHead` literals in `st_hides_theta_diversity` collapsed to canonical `voiceAnticausative`/`voiceMiddle`/`voiceReflexive` constants from Voice.lean.
+- Module docstring tightened: ±D notation now correctly attributed to `alexiadou-schaefer-2015` + `wood-marantz-2017` rather than `schaefer-2008` alone; explicit "Layer position" section explains the Fragment-vs-Studies division.
+
+**Wood2023 study** (`Phenomena/Morphology/Studies/Wood2023.lean`, ~5 line edits):
+- Added `import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015` (chronological dependency rule: 2023 > 2015).
+- Added `open Wood2015 (opnast_info)`.
+- `opnun_connects_to_st_verb` and `voice_irrelevant_for_nom_reading` now reference `opnast_info.stType` (was `opnast.stType`); 2 × `native_decide` → `decide` (3 total in this file, all converted).
+
+**Predicates Fragment** (`Fragments/Icelandic/Predicates.lean`, 333 LOC → 144 LOC):
+- `IcelandicStVerb` slimmed to consensus fields: `activeForm : Option String`, `stForm : String`, `gloss : String`, `hasActiveVariant : Bool`. Added `deriving DecidableEq` (was `Repr, BEq` only).
+- All 11 verb defs slimmed to the new schema (data preserved, theory-laden fields dropped).
+- Dropped: `inductive StType`, `inductive AnticausativeMarking`, `def StType.voiceFlavor`, `def AnticausativeMarking.voiceType` (the String-returner — replaced by `voiceLocus` in Wood2015), `def voiceToSuffix`, 14 verification theorems, the unused `import …Applicative`.
+- Kept `allStVerbs` aggregator + one self-consistency theorem (`alternating_have_active`, by `decide`).
+- Module docstring rewritten: dropped `@cite{schaefer-2008}` (the misattributed ±D notation citation), softened the prose framing of *-st* as a SpecVoiceP clitic to "morphological reflex of non-agentive Voice across multiple syntactic configurations" (the audit's strong-form clitic claim is contested; the milder framing is what survives), and dropped `*langaðist*` from the subject-experiencer description (the verb is *leiðast*; *langaðist* arose from confusion with *langar mig* 'I want', which doesn't standardly take *-st*).
+
+**Nominalizations Fragment** (`Fragments/Icelandic/Nominalizations.lean`): 3 × `native_decide` → `decide`. No structural changes.
+
+**Audit findings deferred** (not landed in this commit): cross-linguistic `Theories/Semantics/Verb/Anticausative.lean` substrate that would also dissolve Spanish/Predicates.lean's parallel `AnticausativeMarking` enum (audit headline "shared substrate for Spanish/Icelandic/French/Greek anticausatives"); Wood-2015 substantive re-litigation (whether *-st*-as-SpecVoiceP-clitic is really Wood's view across all six categories, vs only figure reflexives — substantive linguistic claim, separate concern); cross-framework refutation theorems against Koontz-Garboden 2009, Siloni 2012, and SagWasowBender 2003 sibling accounts (the audit's "silent divergence" headline — none of the three competing accounts of the same Icelandic data are engaged); figure-reflexive verbs *þrýstast*/*kastast* and the passive *-st* (Halldór Sigurðsson) absent from the typology.
+
+**Build**: `lake build` full project green (5393 jobs). Pre-existing `BinaryOptimality.lean` `nary_overgeneration` `sorry` (Jordan-curve blocker per recent CHANGELOG entries) untouched.
+
+## [0.230.465] - 2026-04-27
+
+### Indefinite-pronoun substrate refactor + WALS F46A bridge
+
+Follow-up to 0.230.464's Yakut audit. Linguistics expert flagged that `IndefiniteEntry`'s `specType : IndefiniteSpecType` field bakes Degano & Aloni 2025's one-paper apparatus into the consensus substrate (CLAUDE.md "consensus only" violation), and that the `allowsSK/SU/NS` triple covers only 3 of @cite{haspelmath-1997}'s 9 functions — too narrow to encode polarity-sensitive forms (Yakut *kim da*) or free-choice forms (Yakut *kim bayarar*) attested in Stachowski & Menz (1998) p. 423. The two issues are linked: fixing the typological undersize forces a more general encoding, which lets the D&A apparatus retreat where it belongs.
+
+This commit lands the realigned 4-layer architecture, modeled on the existing `LanguageProfile` precedent (`Core/Typology/{WordOrder, Adposition, ClassifierSystem}.lean`).
+
+**Layer 1 — substrate move + redesign**: `Features/IndefiniteType.lean` (deleted) → `Core/Typology/Indefinite.lean` (new, +180 LOC). New types: `HaspelmathFunction` (9-function enum on Haspelmath's implicational map); `MorphologicalBasis` (4-cell enum aligning with WALS F46A's single-strategy values + `MorphologicalBasis.toWALS46A` forward map); `IndefiniteEntry` restructured with `functions : Finset HaspelmathFunction` + `basis : MorphologicalBasis` (replacing `specType + allowsSK/SU/NS`); `IndefiniteParadigm` aggregator with `isoCode : String` (WALS join key) + `forms : List IndefiniteEntry`. Paradigm operations: `formsFor` / `formAt` (function lookup), `basisList` (deduped basis distribution), `toWALS46A` (single basis → corresponding F46A cell; multiple bases → `.mixed`), `syncretism` (SK/SU/NS triangle classification, returns `none` for paradigms with gaps in that region). Existing `SyncretismPattern` enum + `classifyTriple` retained. Manual `Repr IndefiniteEntry` instance avoids the `unsafe instance Repr (Finset α)` from `Mathlib.Data.Finset.Sort` (which propagates unsafety into every consumer if used via `deriving`).
+
+**Layer 2 — `LanguageProfile` extension**: added `indefinites : Option Core.Typology.Indefinite.IndefiniteParadigm := none` field + `withIndefinites` builder to `Core/Typology/LanguageProfile.lean`. No `withIndefinitesFromWALS` because WALS only gives the F46A category, not the full paradigm — the Fragment must populate manually, and consistency with WALS is then a theorem in `Phenomena/Indefinites/Typology.lean`. English and German `Fragments/{Lang}/Typology.lean` files updated to include `.withIndefinites Indefinites.paradigm`.
+
+**Layer 3 — D&A theory file**: new `Theories/Semantics/Quantification/DeganoAloni2025.lean` (+150 LOC). Houses `DAType` (the 7-type enum moved from the substrate) and `DAType.profile : DAType → Finset HaspelmathFunction` (each type's theoretical SK/SU/NS coverage). Two projection functions on `IndefiniteEntry` (declared in the `Core.Typology.Indefinite.IndefiniteEntry` namespace so dot notation resolves them): `surfaceDAType : Option DAType` (classify by exact match between actual coverage and a type's profile — returns `none` for entries outside the SK/SU/NS region or where actual ⊊ profile) and `consistentWith : DAType → Bool` (weaker subset relation, captures paradigmatic-competition cases like Russian *-to* ⊊ epistemic profile). `skPlusNS_unattested` confirms type vi is the predicted gap.
+
+**Layer 4 — fragment migrations** (all 6 indefinite Fragments): each now exports `paradigm : IndefiniteParadigm` with full surface forms (e.g., `kim ere` not `-ere`) + `basis` field + per-form `functions` Finset. Yakut expanded from 2 forms to **4** per Stachowski & Menz p. 423: added `bayararEntry` (`kim bayarar` 'whoever, every', covers FC + conditional) and `daEntry` (`kim da/dayanï` 'anybody', covers Q + Cond + Comp + IndNeg + DirNeg). German added `jemandEntry` (`jemand`/`etwas`, generic-noun basis) so the paradigm derives WALS `.mixed`. Russian forms switched to interrogative-host surface forms (`kto-nibud'`, `kto-to`, `koe-kto`) per WALS classification. Latin uses `aliquis`/`quidam`. Kannada uses `yāru-oo`/`yāru-aadaruu`. Each Fragment file proves its own WALS-derive theorem (e.g., `theorem yakut_paradigm_is_interrogativeBased : paradigm.toWALS46A = some .interrogativeBased := rfl`) and any applicable syncretism (`yakut_paradigm_is_ABB`, `english_paradigm_is_AAA`, `latin_paradigm_is_AAB`, `russian_paradigm_is_ABC`).
+
+**Phenomena aggregator**: new `Phenomena/Indefinites/Typology.lean` with `fragmentSample : List LanguageProfile` (6 entries) and the **headline WALS bridge theorems**: for each of the 5 sampled languages with a WALS F46A entry (Yakut/English/German/Russian/Kannada — Latin not in WALS), prove that the Fragment-derived F46A classification matches `Datapoint.lookupISO F46A.allData iso` by `decide`. Latin omitted because it's not in WALS's 326-language sample. Plus per-paradigm syncretism witnesses for the 4 languages with full SK/SU/NS coverage.
+
+**Bubnov2026 consumer migration**: ~10 theorems rewritten from `entry.specType = .X ∧ entry.allowsSK = ...profileSK` to either `entry.surfaceDAType = some .X` (when actual = profile) or the bilayered `entry.consistentWith .X = true ∧ entry.functions ≠ DAType.X.profile` (the Russian *-to* "narrower than profile" case). Type-profile theorems (§3) restated as `DAType.X.profile = ({.sK, .sU, ...} : Finset _) := rfl`. Diachronic-weakening theorems (§4) restated as profile-subset chains (`DAType.nonSpecific.profile ⊆ DAType.epistemic.profile`).
+
+**Dekier2021 consumer**: `entry.allowsX = true` migrated to `entry.covers .X = true`. Spellout theorems retained — Dekier's lexicon transliterations are independent of Fragment surface forms (per existing docstring note).
+
+**Bibliography**: added `@misc{wals-2013}` (Dryer & Haspelmath, *WALS Online v2020.4*, doi 10.5281/zenodo.7385533) — resolves 122 previously-dangling `@cite{wals-2013}` references across `Linglib/Datasets/WALS/Features/` (auto-generated). Total unknown citations dropped 451 → 329.
+
+**Build**: `lake build` of the 12 substrate/Fragment/Phenomena files green (775 jobs in transitive closure). Pre-existing decide failure in `Phenomena/Causation/Studies/BeaversEtAl2021.lean` from a concurrent session, unrelated.
+
+**Architectural test passed.** The `LanguageProfile` precedent makes the (`Core/Typology/{Domain}.lean` + `LanguageProfile` extension + `Phenomena/{X}/Typology.lean` aggregator + WALS bridge) pattern reusable for any phenomenon with a WALS feature: typological substrate in `Core/Typology/`, per-language paradigm fields in Fragments, cross-linguistic theorems and WALS bridges in `Phenomena/X/Typology.lean`. This commit demonstrates the pattern end-to-end on indefinite pronouns.
+
+## [0.230.464] - 2026-04-27
+
+### Yakut/Indefinites mathlib-style cleanup driven by 4-agent audit
+
+Multi-agent audit (mathlib-reviewer + integration-auditor + linguistics-domain-expert + cross-framework-reconciler) on `Fragments/Yakut/Indefinites.lean` (53 LOC, two `IndefiniteEntry` records). Linguistics expert flagged two substantive errors verified against Stachowski & Menz (1998) ch. 26 of *The Turkic Languages* (Routledge), p. 423: (1) forms `-ere` / `-eme` are written as suffixes but are actually **enclitic particles** (`kim ere` 'somebody', `kim eme` 'somebody, anybody' — separate orthographic words); (2) `source := "Haspelmath 1997"` is misattribution — Haspelmath 1997 doesn't sample Yakut, the descriptive source is Stachowski & Menz 1998. mathlib-reviewer flagged the `source : String` field as redundant with `@cite{}` (the canonical mechanism per CLAUDE.md, with bib validation on top).
+
+**Substrate** (`Features/IndefiniteType.lean`):
+- Dropped `source : String := ""` field from `IndefiniteEntry`. The field was set in 5 fragments and accessed nowhere — pure duplication of `@cite{}` content.
+- Added `deriving DecidableEq` (was `Repr` only). Enables future `Finset IndefiniteEntry` aggregator without further substrate edits.
+
+**Yakut Fragment** (full rewrite, +25 LOC):
+- `form := "-ere"` / `"-eme"` → `"ere"` / `"eme"` (no leading hyphen — particles, not suffixes per Stachowski & Menz p. 423).
+- Module docstring rewritten: cites Stachowski & Menz 1998 as descriptive source, Bubnov 2026 as source for the SK/SU/NS classification (Stachowski & Menz only resolves "specific" vs "elsewhere"), Degano & Aloni 2025 as the typology framework. Adds `@cite{degano-aloni-2025}` to the file header — was previously invoked via "D&A type (ii)" without crediting.
+- Added `theorem yakut_paradigm_is_ABB : classifyTriple emeEntry.form ereEntry.form ereEntry.form = .ABB := rfl` — derives the Haspelmath syncretism pattern from the entry forms via the existing substrate decision procedure, replacing the docstring-only assertion.
+
+**Sibling fragments** (English, German, Kannada, Latin, Russian/Slavic indefinites): dropped `source := "..."` lines (8 occurrences across 5 files). Added matching syncretism-derivation theorems where applicable: `english_paradigm_is_AAA`, `latin_paradigm_is_AAB`, `russian_paradigm_is_ABC` (each `:= rfl` via `classifyTriple`). Substrate's `Bubnov2026.lean` consumer untouched — never accessed `.source` (only `specType`/`allowsSK/SU/NS`/`profile*`).
+
+**Bibliography**: added `@incollection{stachowski-menz-1998}` to `references.bib` (Stachowski, Marek and Menz, Astrid; *Yakut*; in Johanson & Csató eds., *The Turkic Languages*, Routledge, pp. 417–433). Verified pages 417 (chapter start) and 423 (Pronouns section, indefinite-particle data) directly against the Routledge handbook PDF. DOI omitted per CLAUDE.md hallucination-prevention discipline (Routledge eBook chapter DOIs from 2007 reissue not verified). `python3 blog/scripts/gen_bibliography.py` regenerates with Yakut/Indefinites as a cited-in backlink.
+
+**Audit findings deferred** (not landed in this commit): no `Phenomena/Indefinites/Typology.lean` aggregator yet (six fragments still consumed only by `Bubnov2026.lean`); no team-semantic bridge theorem connecting `IndefiniteEntry.profileSK/SU/NS` to `Theories/Semantics/Quantification/DependenceLogic.constancy/variation` (currently parallel stipulations rather than a derived Bool table); no engagement with ChoiceFunction or Kratzer-Shimoyama Hamblin-alternative theories of indefinites. These are cross-framework moves, not Yakut-file fixes.
+
+**Build**: `lake build` of `Linglib.{Features.IndefiniteType, Fragments.Yakut.Indefinites, Fragments.{English,German,Kannada,Latin}.Indefinites, Fragments.Slavic.Russian.Indefinites, Phenomena.Reference.Studies.Bubnov2026}` green (737 jobs). Pre-existing `Hewett2026` `Root` errors from the in-flight `Root → RootClassification` rename (per `MEMORY.md`, P3.2.1 deferred) untouched and unrelated.
+
+## [0.230.463] - 2026-04-27
+
+### SOT Phase H — Sharvit 2014 retreat-and-clean: 2-round audit cleanup
+
+A 2-round audit on the Phase G Sharvit substrate (0.230.462) returned convergent verdicts from integration + linguistics auditors: don't extend the typology to more Fragments yet — instead, retreat the just-landed English Fragment annotation, fix overloaded predicates, drop instances pending bib support, and restructure the typology to be more mathlib-idiomatic. This bump applies the cleanup before any further extension.
+
+**H1 — `LanguageTenseProfile` restructure: `Option LexicalType` field replaces two-Bool encoding**:
+- Was: `pronominalTense : Bool`, `quantTense : Bool` (4 cells of 16 forbidden by no-mixing/no-tenseless assumptions, audited externally)
+- Now: `tenseLexicalType : Option LexicalType` (no-mixing structurally enforced — type cannot carry both values; tenselessness encoded as `none`)
+- Convenience projections: `hasTenses`, `isPronominal`, `isQuantificational` (all `@[simp]`-tagged, derive from `tenseLexicalType`)
+- Pattern is more mathlib-idiomatic: structural constraints (no-mixing) belong in the type, not in field-cross-validation lemmas
+
+**H2 — Option β refactor: tenseLexicalType moves from Fragment to Studies projection**:
+- Deleted: `def Fragments.English.Tense.tenseLexicalType : LexicalType := .pronominal` + the supporting import in `Fragments/English/Tense.lean`
+- Deleted: `english_pronominalTense_matches_fragment` cross-file self-bridge in `Studies/Sharvit2014.lean`
+- Reason: integration audit identified the Fragment placement as a CLAUDE.md "consensus only" violation — Sharvit's pronominal/quantificational distinction is one paper's analytical claim with cited rivals (@cite{partee-1973} successors take various positions, @cite{kratzer-1998} doesn't make this distinction at all, @cite{matthewson-2006} argues for tenseless analyses outside this binary). Single-consumer paper-specific apparatus belongs in Studies, not Fragment.
+- Now: `english`, `polish`, `japanese` instances are typed `LanguageTenseProfile` records in `Studies/Sharvit2014.lean`, no Fragment anchoring needed
+
+**H3 — `pShiftability` predicate split**:
+- Was: single `pShiftability` whose docstring said "*before*-clause" but whose per-language examples interpreted it as "attitude-clause flexibility" — internally contradictory (file's own docstring admitted "wait — that's a contradiction")
+- Now: two separate predicates, each derived from the parameters with full mathlib-style docstrings:
+  - `pShiftabilityBare`: bare *before*-clause case (Sharvit example (51), p. 281); requires quantificational past
+  - `pShiftabilityEmbedded`: when bare *before* is itself under attitude (Sharvit examples (66)-(68), p. 287); satisfied by quantificational OR (pronominal + SOT)
+
+**H4 — Modern Greek instance dropped**:
+- Was: `def modernGreek : LanguageTenseProfile := ...` (Sharvit §6.2)
+- Reason: bib has zero Greek-tense entries; Sharvit's "semantic subjunctive" parameter for Modern Greek is presented in her own paper as "a rough sketch" (her own words, §6.2). Linguistics audit recommended treating as `UNVERIFIED:` until at least one Greek-tense reference is added.
+- Now: removed from `attestedTypes`; will return when Schlenker 1999 / Giannakidou / Iatridou-on-Greek-tense references are added to the bib AND the §6.2 sketch is verified against post-2014 Greek-tense literature
+
+**H5 — Spanish A/B explicitly excluded**:
+- Was: never added (G3 already cautious here)
+- Now: docstring records the exclusion explicitly, citing Sharvit's own footnote 17 acknowledgement that "the Peninsular/River Plate divide" is unclear; no Spanish-tense-typology source independently endorses the dialectal split. Linguistics audit confirmed it's a Sharvit-internal device, not a stable typological classification.
+
+**H6 — Locator hallucination fixes**:
+- Sharvit numbers her data displays as **examples** with parenthesized numbers (98), (99), (105), not as "Tables" or "Equations". Linguistics audit flagged this as a high-risk hallucination category — "table 98" in a 50-page paper was implausible. Throughout Phase G+H docstrings:
+  - "table 98" → "numbered example (98)"
+  - "eq (99)" → "(99)" (with "Sharvit's numbered example (99)" in the section header)
+  - "eq 30" → "(30)"
+  - "eq 51" → "example (51)"
+  - "eq 66-68" → "examples (66)-(68)"
+- Page numbers from CLAUDE.md "high-risk hallucinated category" — verified against the PDF before encoding
+
+**H7 — eq (99) theorems made structurally-derivative**:
+- Was: theorems used the same intermediate predicates (`wellFormedPastUnderPastBefore` etc.) that appeared in their conclusions, making them definitional unwraps ("encoding conclusions as definitions" anti-pattern)
+- Now: the predicates are `@[simp]`-tagged derivations from the underlying parameters (`isPronominal`, `hasSOT`, `shiftablePresent`); theorems require precondition `L.hasTenses = true` (substantive when tenseless instances arrive); the (99b) proof goes through case analysis on attested types via `decide` — substantive content
+- Added: `quant_past_languages_fail_before` and `pronominal_past_languages_pass_before` theorems explicitly connecting the typology to the IPF substrate result in `Before.ipf_quantificationalPast`
+
+**Scaffolding for future typological-challenger study files (Phase I, deferred)**:
+- The new `Option LexicalType` field with `none = tenseless` is ready to receive instances from study files for @cite{matthewson-2006} (St'át'imcets), Mucha 2017 (Medumba), Bohnemeyer 2002 (Yucatec), Bittner 2011 (Kalaallisut). Each would land as a `Studies/AuthorYear.lean` study file with its own `def stat'imcets : LanguageTenseProfile := { tenseLexicalType := none, ... }` — extending the typology coverage *outside* Sharvit's no-tenseless scope, with Sharvit's predictions retained as conditional theorems.
+- Bib entries needed: `kusumoto-1999`, `schlenker-1999`, `sharvit-tieu-2011`, `gronn-vonstechow-2010`, `gronn-vonstechow-2016`, `mucha-2017`, `matthewson-2006`, `bittner-2011`, `tonhauser-2011` — none currently in the bib; verifying DOIs (no fabrication) is a precondition for landing the study files.
+
+**CLAUDE.md addition**: a new paragraph under "Phenomena use a Data/Studies split" documents **option β**: paper-specific per-language typological data lives in Studies as projection definitions, not as Fragment fields. This codifies the integration audit's finding into the project conventions, so future Studies refactors don't repeat the Fragment-pollution mistake.
+
+**Build**: 5390 jobs green (Hewett2026 failure is from a concurrent morphology-restructure session — `Root` identifier missing — unrelated to this refactor; verified by grep that Hewett2026 imports none of the touched files).
+
+**Pattern-validation lessons**:
+- The "audit before extending" discipline paid off: rather than extending a flawed structure to 4 more languages and accumulating debt, the audit identified the structural fix BEFORE multiplying the issue. Same pattern should apply to future Studies extensions.
+- "Encoding conclusions as definitions" is a recurring anti-pattern in paper replications — the substrate eq (99) theorems looked substantive at first glance but were vacuous-by-construction. The fix is to make the predicates derive from underlying parameters (pronominal/SOT/shiftable) and let the theorems witness non-trivial implications.
+
+## [0.230.462] - 2026-04-27
+
+### SOT Phase G — Sharvit 2014 mathlib-idiom integration: substrate refactor + typology + orphan fix
+
+The 2-round audit on the Phase F substrate flagged that the `Embedded/Simultaneous.lean` 5-struct family was a substrate fiction (Sharvit 2014 derives simultaneous readings via SOT-deletion of pronominal past, not via a separate-morpheme structure), that `Sharvit2014.lean` was an untracked orphan whose F5 theorem was never kernel-checked, and that the headline pronominal/quantificational tense distinction was missing from the substrate entirely. Rather than patching, this bump replaces the substrate fiction with the actual Sharvit 2014 apparatus and lands the typology theorems the paper actually predicts.
+
+**G1 — `Theories/Semantics/Tense/LexicalType.lean` (NEW, ~80 LOC)**: @cite{sharvit-2014} eq 30 substrate. `inductive LexicalType := pronominal | quantificational` (Sharvit's central distinction, after @cite{partee-1973} vs Prior 1967). `pronominalLookup g j k : Option Time` (eq 30a, the partial-function lookup defined iff `g k < g j`). `quantificationalPast K p t : Prop` (eq 30b). `quantificationalPast_mono` (mathlib-style structural lemma). Lives in namespace `Semantics.Tense` (mathlib idiom: file named after the central concept, no stutter — compare `Mathlib/Order/Hom/Basic.lean` over `Mathlib/Order/Hom/OrderHom.lean`).
+
+**G2 — `Theories/Semantics/Tense/TemporalConnectives/Before.lean` (NEW, ~85 LOC)**: @cite{beaver-condoravdi-2003} `before^{B&C}` semantics (Sharvit eq 23-24). `hasEarliest C p` via mathlib's `IsLeast`. **`ipf_quantificationalPast`** (Sharvit eq 27) — a real ~10-line proof: in a dense linear order, when the body is `quantificationalPast K q` and `K ⊆ C` is order-dense in `C`, `EARLIEST` fails because density supplies a strictly-smaller body-witness. `triggersIPFInBefore : LexicalType → Bool` for typology theorems. `pastUnderBefore_wellFormed_iff (τ : LexicalType) : triggersIPFInBefore τ = false ↔ τ = .pronominal` as a `@[simp]` lemma.
+
+**G3 — `Phenomena/TenseAspect/Studies/Sharvit2014.lean` (REWRITE, ~225 LOC, replaces 124-LOC orphan)**: Real paper-anchored Studies file. `LanguageTenseProfile` carrying Sharvit's 4 Bool parameters (`hasSOT`, `shiftablePresent`, `pronominalTense`, `quantTense`). 4 attested instances (English type 6, Polish type 10, Japanese, Modern Greek §6.2). The headline content is **eq (99) a/b/c as 3 `decide`-checked theorems** over `attestedTypes`:
+- `eq99a_present_under_past_before_implies_shiftable`
+- `eq99b_before_and_pshift_imply_simultaneous`
+- `eq99c_before_and_no_sim_imply_no_pshift`
+
+Plus: `all_attested_no_mixing` (Sharvit's §6.1 no-mixing assumption holds across the table); `all_attested_respect_embeddability` (Embeddability Principle); per-language reflexivity examples; the bridge to Kratzer SOT-deletion (`english_sot_matches_kratzer`); and **`english_pronominalTense_matches_fragment`** as the CLAUDE.md "derive, don't duplicate" theorem witnessing that the typology entry agrees with the Fragment declaration.
+
+**G4 — `Klecha2016.lean` F1 bridge rewrite**: deleted the previous `sharvit_klecha_simultaneous_agreement` (which used the fictitious `SimultaneousTense` struct). Replaced with `sharvit_klecha_agree_simultaneous_english` — a real bridge witnessing both halves: `english.simultaneousAttitudeReading = true` (Sharvit's prediction) AND `dox_npst_iff` (Klecha's value-level equivalence). Different mechanisms (SOT-deletion of pronominal past vs DOX+NPST modal composition), same prediction. `Klecha2016.lean` now imports `Sharvit2014` directly (chronological dependency: 2014 < 2016 ✓).
+
+**G5 — `Embedded/Simultaneous.lean` DELETE (-242 LOC) + `Embedded/` dir removal**: the 5-struct apparatus (`SimultaneousTense`, `IndirectQuestionTense`, `EmbeddedPresentUnderFuture`, `RCSimultaneousTense`, `HebrewSOTChoice`) had no anchor in any actual Sharvit paper — the simultaneous reading in attitude reports is derived via SOT-deletion of pronominal past, not via a separate-morpheme structure. Round-2 audit's mathlib-reviewer + cross-framework-reconciler + linguistics-domain-expert all converged on this. The `simultaneousFrame` Reichenbach constructor in `Tense/Basic.lean` is a different (real, Reichenbach-frame) thing and is preserved unchanged; HK1998, AgreeSOT, TsiliaZhao2026, SequenceOfTense all continue using it.
+
+**G6 — `HeimKratzer1998.lean` cleanup**: dropped the dead `import Linglib.Theories.Semantics.Tense.Embedded.Simultaneous` (line 5) and the dead `open Semantics.Tense.Embedded.Simultaneous` (line 531 — round-2 audit's SF-1 finding). The HK1998 theorems that mention `indirectQSimultaneous` / `embeddedPresentUnderFuture` were always referring to the same-named `ReichenbachFrame` constants in `HeimKratzer1998Data.lean`, not the deleted struct family — so the `open` was already a no-op.
+
+**G7 — `Fragments/English/Tense.lean` Sharvit annotation**: added `def tenseLexicalType : Semantics.Tense.LexicalType := .pronominal` (English type 6, table 98). The Fragment is the per-language source of truth for Sharvit's lexical-type parameter; the typology Studies file's `english.pronominalTense` field is then witnessed-against-Fragment by `english_pronominalTense_matches_fragment` (G3).
+
+**G8 — `Linglib.lean` wiring**: added `Tense.LexicalType`, `Tense.TemporalConnectives.Before`, `Studies.Sharvit2014`, `Studies.Kratzer1998`. Removed `Tense.Embedded.Simultaneous`. The Sharvit2014 + Kratzer1998 additions also fix M1 from the round-2 integration audit (both files were previously untracked orphans whose theorems were not kernel-checked anywhere).
+
+**Architectural impact** — what this exposes about linglib's organization:
+- The "tense as a typed object" axis was missing entirely. linglib had `GramTense.past/present/future` (Reichenbach grammatical-tense labels), `PastReading.genuinePast/zeroTense` (Ogihara's ambiguity), `PastMorphologyUse.temporal/counterfactual` (Iatridou), `attitudeTemporalConstraint kind` (Klecha) — but no semantic-type axis. Sharvit's whole argument is that English `past` and Japanese `past` differ in *type*, not in *label*. After G1, that axis exists.
+- The cross-linguistic typology becomes structural rather than per-paper-bridge: the eq (99) theorems are `decide`-checkable over a `List` of `LanguageTenseProfile` instances, not pairwise theorems about specific framework conjunctions.
+- The "make incompatibilities visible" thesis gets a real exemplar: Sharvit's typology *predicts* that certain configurations are impossible (e.g., type 1 with both pronominal AND quantificational), and the substrate now has the vocabulary to refute languages that would falsify the typology.
+
+**Build**: 5391 jobs green (+1 from the new substrate file).
+
+**Pattern-validation lessons** for future Studies refactors:
+- For paper-replication, the unit of refactor is "delete the substrate fiction → introduce the actual paper's primitive → rebuild the bridges on top." Patching the bridges without fixing the substrate (which is what Phase F did) produces `Iff.rfl`-class theorems that look real but are vacuous-by-construction. Round-2 audit's central finding.
+- Mathlib idiom for paper-internal lexical types: file named after the central concept (`LexicalType.lean`), no stutter with the parent directory (`Tense/`). The type lives in the parent namespace (`Semantics.Tense.LexicalType`), accessed without a wrapper namespace.
+- Studies files importing each other in chronological order is the right way to bridge — `Klecha2016.lean` imports `Sharvit2014.lean` directly, no `Bridges/` directory needed.
+
+## [0.230.461] - 2026-04-27
+
+### Phase 3.1: morphology substrate consolidation — 4 file moves, `Theories/Morphology/Core/` dissolved
+
+Phase 3.1 of the morphology architecture restructure (audit-driven; see 0.230.458 Phases 1+2). Three-agent audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert/morphology) of the substrate-consolidation question converged on a **minimal `git mv` + namespace alignment** path; substantive API critiques (MorphRule decomposition into FormRule/FeatureRule/SemContribution, MorphCategory open-typeclass refactor, MorphContinuum Bybee Ch 4 substrate, Defs/Basic split) all deferred to Phase 3.6+ rather than coupled to the relocation. mathlib-reviewer's bottom line: "land the relocation cleanly with zero API changes." Done.
+
+**Four `git mv` moves**:
+- `Linglib/Core/Lexical/MorphRule.lean` (345 LOC) → `Linglib/Core/Morphology/MorphRule.lean` — namespace already `Core.Morphology`, zero renames needed; 24 consumer files redirected via `perl -pi -e`
+- `Linglib/Theories/Morphology/Core/Circumfix.lean` (91 LOC) → `Linglib/Core/Morphology/Circumfix.lean` — namespace `Morphology.Circumfix` retained for now (consumer-side qualified names preserved); 1 consumer redirected
+- `Linglib/Theories/Morphology/Core/Exponence.lean` (249 LOC) → `Linglib/Core/Morphology/Exponence.lean` — sub-namespaces `Core.Morphology.{Tense, Aspect, Number, Degree}` already aligned; 6 consumers redirected
+- `Linglib/Theories/Morphology/Core/WordStructure.lean` (284 LOC) → `Linglib/Core/Morphology/MorphWord.lean` — file renamed to match its central type (`MorphWord` inductive); namespace `Morphology.WordStructure` retained; 1 consumer redirected
+
+**Directory dissolution**: `Linglib/Theories/Morphology/Core/` removed entirely (was the misnamed-as-Core dir mixing substrate + framework-derived files; with all 4 substrate files now in `Core/Morphology/` and the framework-derived files folded into Studies during Phases 1+2, the dir served no purpose).
+
+**Final `Linglib/Core/Morphology/` slate** (8 files, 1.6K LOC):
+```
+Core/Morphology/
+├── ConsonantalRoot.lean        (existing — Semitic-style consonantal roots)
+├── FormMeaningMapping.lean     (existing — K-B 2026 form-meaning typology)
+├── MorphProfile.lean           (existing — morphological profile structure)
+├── Wordhood.lean               (existing — K-B 2026 ms-word vs p-word typology)
+├── MorphRule.lean              (NEW — central rule type + MorphCategory enum)
+├── Circumfix.lean              (NEW — circumfix exponence)
+├── Exponence.lean              (NEW — concrete tense/aspect/degree rules)
+└── MorphWord.lean              (NEW — morphological word inductive tree)
+```
+
+**Final `Linglib/Theories/Morphology/` slate** after Phases 1+2+3.1:
+```
+Theories/Morphology/
+├── DM/                         (12 files — distributed morphology, well-earned)
+├── FragmentGrammars/           (5 files — O'Donnell probabilistic)
+├── Nanosyntax/                 (2 files — Caha/Starke)
+├── UsageBased/                 (1 file — Bybee Ch 5 network model, added 0.230.454)
+├── RootTypology.lean           (1685 LOC, deferred to Phase 3.2 split)
+└── TheorySpace.lean            (deferred — spine-vs-dissolve decision)
+```
+
+**Net trajectory across Phases 1+2+3.1** (covering 0.230.458 + this commit):
+- 4 misclassified top-level files → 2 remaining (deferred)
+- 9-file `Theories/Morphology/Core/` → directory dissolved
+- 7-dir framework axis (DM/FragmentGrammars/Nanosyntax/PFM/UsageBased/WP/Derivation) → 4-dir (PFM/WP/Derivation dissolved)
+- 2 Bridge anti-pattern files (`*Bridge.lean`) → 0
+- 4 substrate files moved into the `Core/Morphology/` directory established by the existing 4 (Wordhood, FormMeaningMapping, MorphProfile, ConsonantalRoot)
+
+**Phase 3 deferred items (audit roadmap, plan-doc territory)**:
+- 3.2 RootTypology.lean split (1685 LOC, 7 consumers spanning Causation/Possession/DM)
+- 3.3 phenomenon-axis pivot (rename framework dirs to phenomenon-named files: `Realization/`, `Postsyntax/`, `Paradigm/`, `Productivity/`, `Categorizers/` per `Mathlib/MeasureTheory/Integral/{Lebesgue, Bochner}` precedent)
+- 3.4 cross-framework refutation theorem (`dm_vs_nanosyntax_disagree_on_gap_direction`, requires shared `LexicalContext` type from 3.3)
+- 3.5 MorphContinuum.lean (Bybee Ch 4 continuum projection in UsageBased/)
+- 3.6 MorphRule decomposition (FormRule + FeatureRule + SemContribution records — linguistics-domain-expert's substantive proposal: the current triple is IA/Sign-based, framework-committed)
+- 3.7 Word.lean move (84 consumers — biggest consumer-side cost, deserves its own session)
+- 3.8 Core/Lexical/ dissolution (UD → Core/, VerbClass → Core/Verbs/, etc.)
+- 3.9 Coverage gaps: reduplication / templatic / suprafix / conversion substrate
+- 3.10 MorphCategory open-typeclass refactor (closed enum can't represent evidentiality, mirativity, classifiers, etc.)
+
+**Build**: 16 broader consumer files (HalleMarantz1993, Baker1985, Bybee1985, AckermanMalouf2013, KalinBjorkmanEtAl2026, ZwickyPullum1983, HahnDegenFutrell2021, Bhadra2024, Bobaljik2012, KoontzGarboden2009, HaninkKoontzGarboden2025, AlexeyenkoZeijlstra2025, Hewett2026, Karlsson2017, Verbal, Negation) all build clean. Concurrent-session full-build issue (Tense/AT.lean) unrelated.
+
+## [0.230.460] - 2026-04-27
+
+### SOT Phase F — 7 cross-paper bridge theorems exercising the post-Phase-E concept-organized substrate
+
+After Phase E split each framework-hub Theories file into a concept-anchored substrate file + paper-anchored Studies file (0.230.457), Studies files can import each other in chronological order per CLAUDE.md. This bump lands the cross-paper bridge theorems that Phase E's split was designed to enable. All 7 bridges are kernel-checked and discharge with `rfl`/`Iff.rfl`/2-line projections — the substrate already aligned, the bridges only had to witness it.
+
+**F1 — Sharvit-Klecha simultaneous-reading agreement** (in `Studies/Klecha2016.lean`):
+- `sharvit_klecha_simultaneous_agreement`: Sharvit 2014's `SimultaneousTense.simultaneous : eventTime = evalTime` field provides a constructor witness; Klecha 2016's modal-base derivation of simultaneous-under-attitude is exposed via `dox.localTime = matrixEvent`. The bridge constructs a `SimultaneousTense` instance whose `evalTime`/`eventTime` projections coincide with Klecha's modal-base coordinates.
+
+**F2 — Klecha CIR/DOX ⊆ Condoravdi metaphysical base** (in `Studies/Klecha2016.lean`):
+- `klecha_cir_world_in_condoravdi_metaphysical` + `klecha_dox_world_in_condoravdi_metaphysical`: Klecha's `circumstantialBase`/`doxasticBase` (modal-base pronouns CIR/DOX) restrict to worlds in Condoravdi 2002's metaphysical alternatives at the matrix evaluation time. Both proved by `Iff.rfl` after the substrates landed in 0.230.450 (Klecha's bases are *defined as* Condoravdi metaphysical-base subsets — the bridge witnesses what the definitions made already true).
+
+**F3 — Schlenker-Abusch on speech-time component of Double Access** (in `Studies/Schlenker2004.lean`):
+- `schlenker_origin_supports_abusch_double_access`: Schlenker 2004's `presentAccess.depth = .origin` mechanism reads time *from* speech time; Abusch 1997's `doubleAccess` predicate asserts the property holds *at* speech time. Different conceptual moves, same value-level prediction. The bridge discharges the speech-time conjunct of Abusch's `doubleAccess p speechTime matrixEventTime` via Schlenker's `.origin` resolution.
+
+**F4 — Modal-layer Abusch ULC ↔ Klecha DOX** (substrate enhancement + bridge in `Studies/Klecha2016.lean`):
+- Substrate addition in `Core/Modality/HistoricalAlternatives.lean`: `upperLimitConstraintModal history s s' := s' ∈ actualHistoryBase history s` (modal-layer formulation of Abusch's ULC, lifting the value-level `s'.time ≤ s.time` to membership in the actual-history modal base) + `upperLimitConstraintModal_implies_value` (modal-layer implies value-layer; the converse is genuinely *weaker* — a future-directed time can still satisfy the value ULC if it's outside the actual history).
+- `klecha_dox_iff_abusch_ulc_modal`: Klecha's DOX modal base (worlds doxastically accessible from matrix situation) and Abusch's modal-layer ULC (embedded situation in actual history of matrix) coincide on the actual-history portion. Bridge proved by `Iff.rfl` after both reduce to `actualHistoryBase` membership.
+- `abusch_modal_ulc_implies_klecha_dox`: the modal-layer direction discharges Klecha's DOX requirement.
+
+**F5 — Kratzer-Sharvit-Ogihara 3-way divergence on embedded-present-under-future** (in `Studies/Sharvit2014.lean`, the headline divergence witness):
+- `kratzer_sharvit_diverge_on_embedded_present_under_future`: structural witness of the cross-framework auditor's headline 3-way refutation. **Kratzer**: `sotDeletionApplicable .future .present = false` (morphologies differ → no deletion → no simultaneous reading derived). **Sharvit**: the `SimultaneousTense` structure constructs uniformly for any `(evalTime, eventTime)` pair with equality, including for future eval times (`∀ futureT, ∃ st, st.evalTime = futureT ∧ st.eventTime = futureT`). The two coverage facts together make the divergence kernel-checked.
+- `ogihara_silent_on_embedded_present`: Ogihara 1996's silence is structural — `PastReading` enum only classifies *past* morphology; no present-classification machinery exists in Ogihara's substrate. Encoded via `genuinePast_ne_zeroTense` from `SOT/Ambiguity.lean`.
+- This is linglib's "make incompatibilities visible" thesis applied to the embedded-present configuration: three competing theories, three different predictions (no-reading vs simultaneous vs silence), all three kernel-witnessed.
+
+**F6 — Klecha-Hacquard complementarity** (in `Studies/Klecha2016.lean`):
+- `klecha_hacquard_complementary`: Klecha's circumstantial / doxastic modal-base distinction (CIR for root modals, DOX for epistemic/attitude) and Hacquard 2006's event-relative / situation-relative modal-base distinction agree on which modal flavor goes with which structural position. Klecha's CIR ↔ Hacquard's event-relative; Klecha's DOX ↔ Hacquard's situation-relative.
+
+**F7 — Klecha covers hope+past with future-oriented reading** (in `Studies/Klecha2016.lean`):
+- `klecha_covers_hope_future_oriented_reading`: a structural fact about Klecha's modal-base derivation — for the "John hoped Mary would arrive" configuration, the embedded past + future-oriented modal coordinates are simultaneously derivable from Klecha's apparatus (Condoravdi's *future-oriented modal* meets Klecha's *modal-base pronouns*). Witnesses the empirical coverage Klecha 2016 §5 claims for hope-class verbs.
+
+**Architectural impact**: every bridge theorem is `rfl`-class because the Phase E substrate split landed each framework's primitive in a concept file that the next framework's substrate could already see — substrate alignment was forced by the directory structure, then witnessed by the bridge. This is the payoff for the Phase D citation hygiene + Phase E concept/study split: cross-paper engagement is now structural, not editorial.
+
+**Build**: 5390 jobs green.
+
+## [0.230.459] - 2026-04-27
+
+### CS11 mathlib-alignment refactor (post-audit fixes)
+
+3-agent fresh-eyes audit of the freshly-landed `ChemlaSpector2011.lean` flagged six tiers of mathlib-quality issues introduced under reduction-tactic pressure during the initial landing. All landed in this bump.
+
+**Tier 1 — `def` → `abbrev` for reading predicates** (Exp1Some + Exp2Some):
+- Switched `def literal/global/local_` to `abbrev` so bodies unfold for `decide` and instance synthesis without explicit unfolds.
+- Eliminated 25-line `fin_cases` proof body of `witness_realizes_conditions` — now a single `by decide`.
+- Deleted 6 manual `Decidable` instance declarations — now auto-derived from `abbrev` reduction.
+- Deleted `show Decidable (...) from inferInstance` workarounds.
+
+**Tier 2 — Vacuous abstract-predictor theorems → structural `availableReadings`**:
+- Deleted: `T1_predicts_strong_eq_weak_for_universal` and `T3_local_bounded_by_all` (both CLAUDE.md "encoding conclusions as definitions" anti-pattern; proofs were `hConst _ _`).
+- Added: `Theory.generatesMonotonic` and `Theory.generatesNonMonotonic` `Finset ReadingLabel` matrices encoding each theory's generative mechanism (T1: `{literal, global}` always; T2: `{literal, global, local_}` always; T3: monotonic = T2's, non-monotonic = T1's).
+- Added: `Exp1Condition.truthSet`/`Exp2Condition.truthSet` (which readings are true at each condition's witness) — crucially, `Exp2Condition.local_.truthSet = {.local_}` (NOT containing `.literal`) encodes the logical-independence-of-local-and-literal that makes Exp 2 the diagnostic experiment.
+- Added: `Exp1Condition.availableUnder`/`Exp2Condition.availableUnder` (truthSet ∩ generates-set).
+- Added 5 substantive structural theorems replacing 2 vacuous: `T1_strong_eq_weak_under_availableReadings`, `T2_strong_strict_superset_weak`, `T3_at_local_collapses_to_false`, `T2_at_local_strict_superset_false`, `T2_T3_disagree_at_local`. All proved by `decide` over the structural matrices.
+- The `Theory` and `ReadingLabel` enums (previously dead) now have real consumers.
+
+**Tier 3 — `RatingsMonotone` via mathlib's `List.Pairwise`**:
+- Replaced hand-rolled `∀ d₁ ∈ data, ∀ d₂ ∈ data, ...` with `data.Pairwise fun d₁ d₂ => d₁.2 < d₂.2 → d₁.1 < d₂.1`. Composes with `List.Pairwise.imp`/`.map` downstream; `Decidable` derives automatically.
+
+**Tier 4 — Sham bridge theorem fixed**:
+- `cs_de_consistent_with_gp_qualitatively` (which conjoined unrelated CS11 inequality + GP09 mean re-derivation) → `cs_gp_agree_on_de_local_far_below_baseline` (real cross-experiment claim: both papers' DE local-SI rates >50pp below their respective baselines).
+
+**Tier 5 — Cleanup**:
+- Dropped unused imports: `Theories.Semantics.Entailment.Polarity`, `Mathlib.Tactic.FinCases`.
+- Deleted dead `cellCounts` definition.
+
+**Tier 6 — Bridge quality**:
+- FoxSpector2018 ↔ CS11 distributivity bridge stays at docstring level (real theorem bridge requires modeling CS11's per-shape stimuli in FS18's `Set World` — substrate work flagged for future).
+
+**Theorem inventory**: 18 substantive theorems (was 15; net +3 from replacing 2 vacuous with 5 structural). File at 780 LOC (was 740).
+
+**Build**: 5390 jobs green.
+
+**Mathlib-alignment lessons** (notable for future studies):
+- `abbrev` over `def` for paper-internal predicates is the right default — gets free `Decidable` synthesis and unfolds for `decide`. Reserve `def` for declarations meant opaque to typeclass synthesis.
+- Reading sets as `Finset ReadingLabel` over an explicit label enum (rather than abstract predicates) lets cross-theory theorems be `decide`-able structural facts. The mathlib reviewer's recommendation against abstract-predictor theorems was correct.
+- `List.Pairwise` is the mathlib idiom for "ordered list satisfies a relation" — beats hand-rolled `∀ ∈ ∀ ∈` for both readability and downstream composition.
+
+## [0.230.458] - 2026-04-27
+
+### `Theories/Morphology/` Phase 1+2 architectural restructure: 11 dissolutions, 3 framework dirs eliminated
+
+A 4-agent deep audit (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/morphology) of `Theories/Morphology/`'s organizational architecture returned unanimous **the framework-named directory axis is not all peer-level frameworks**: the cross-framework reconciler's sharpest finding was that **zero inter-framework imports exist across the 6 framework dirs** — DM, PFM, WP, Nanosyntax, FragmentGrammars, UsageBased literally cannot see each other, violating CLAUDE.md's central interconnection-density thesis at the morphology layer's heart. Compounded by size imbalance (DM 3191 LOC vs PFM 194, WP 249, UsageBased 319) and 4 of 4 top-level files being anchor-misclassified Studies content, the audit proposed a 3-phase restructure. Phases 1 and 2 land here; Phase 3 (substrate consolidation, RootTypology split, phenomenon-axis pivot) deferred to plan doc.
+
+**Phase 1 — 7 cheap mechanical fold-ins** (paper-anchored content → matching `Studies/AuthorYear.lean`):
+- `Theories/Morphology/Core/WordhoodBridge.lean` (209 LOC, Bridge anti-pattern per CLAUDE.md) → `Phenomena/Morphology/Studies/KalinBjorkmanEtAl2026.lean` §0
+- `Theories/Morphology/Core/ScaleFromParadigm.lean` (73 LOC, Bridge anti-pattern) → `Phenomena/Comparison/Studies/Bobaljik2012.lean` §0
+- `Theories/Morphology/Core/ICP.lean` (76 LOC, Ackema-Neeleman 2004) → `Phenomena/WordOrder/Studies/AlexeyenkoZeijlstra2025.lean` §0 (sole consumer)
+- `Theories/Morphology/Core/MirrorPrinciple.lean` (296 LOC, Baker 1985's principle) → `Phenomena/Morphology/Studies/Baker1985.lean` §0; HalleMarantz1993 + Hewett2026 imports redirected to Baker1985 (chronological dependency rule satisfied: 1993 > 1985, 2026 > 1985)
+- `Theories/Morphology/Core/Monotonicity.lean` (133 LOC) → `Phenomena/Causation/Studies/KoontzGarboden2009.lean` §0; HaninkKoontzGarboden2025 import redirected (2025 > 2009 ✓)
+- `Theories/Morphology/ReversalRestitution.lean` (500 LOC, top-level) → `Phenomena/Morphology/Studies/Bhadra2024.lean` §§1-14 substrate sections (the 500 LOC of `ForceTransmissionClass`, `BoundaryStates`, `LevinClass.forceTransmissionClass`, `unSem`/`reSem` semantics, all kernel-checked); Bhadra2024 was previously a thin shim
+- `Theories/Morphology/Containment.lean` (141 LOC, top-level, Bobaljik 2012 + Caha 2009) → `Theories/Interfaces/Morphosyntax/StarABA.lean` (where its 2 consumers already live — CaseContainment + DegreeContainment in the same Interfaces directory)
+
+**Phase 2 — 4 substrate fold-ins; 3 framework dirs eliminated**:
+- `Theories/Morphology/Core/CliticVsAffix.lean` (140 LOC, ZP 1983's six diagnostics) → `Phenomena/Morphology/Studies/ZwickyPullum1983.lean` §0; KalinBjorkmanEtAl2026 import redirected
+- `Theories/Morphology/WP/LCEC.lean` (249 LOC, Ackerman-Malouf 2013's LCEC substrate) → `Phenomena/Morphology/Studies/AckermanMalouf2013.lean` §0; **WP/ dir dissolved** (the audit's point: WP is a programmatic label not a framework; LCEC is one specific empirical conjecture, not the WP framework)
+- `Theories/Morphology/PFM/Core.lean` (194 LOC, Stump 2001 PFM substrate: ParadigmFunction + RealizationRule + RuleBlock + RuleOfReferral + derive) → `Phenomena/Morphology/Studies/KalinBjorkmanEtAl2026.lean` §0b (sole consumer); **PFM/ dir dissolved**
+- `Theories/Morphology/Derivation/Operator.lean` (64 LOC, derivational operators on roots) → `Theories/Semantics/Verb/Roots/Operators.lean` (sole consumer is Yukatek fragment, semantically anchored); **Derivation/ dir dissolved**
+
+**Net result for `Theories/Morphology/`**:
+- **Before**: 4 top-level files + Core/ (9 files) + 7 framework dirs (DM/PFM/WP/Nanosyntax/FragmentGrammars/UsageBased/Derivation)
+- **After**: 2 top-level files (RootTypology + TheorySpace, both deferred to Phase 3) + Core/ (3 files: Circumfix, Exponence, WordStructure — substrate-only after Phase 1+2) + 4 framework dirs (DM, FragmentGrammars, Nanosyntax, UsageBased)
+- 11 files dissolved (7 P1 + 4 P2); 3 framework dirs eliminated; 2 Bridge-anti-pattern files removed (WordhoodBridge + ScaleFromParadigm); all dissolved content preserved as study-file sections with full `decide`/proof-checked theorems
+
+**Pattern validation**: each dissolution (a) used `decide`-friendly proofs (zero new `native_decide`), (b) kept the original namespace where consumers depended on it (preserves call sites without renames), (c) updated import paths via `perl -pi -e` for mechanical edits, (d) verified per-file build green before dropping the source. Same dissolution pattern as the 0.230.452 CompositionBridge work that opened this audit thread.
+
+**Cross-framework engagement gap exposed (deferred)**: cross-framework-reconciler's headline finding remains true even after this restructure — DM and Nanosyntax both implement Elsewhere-style competition (Subset Principle vs Superset Principle), but no theorem witnesses the duality because no shared `LexicalContext` type connects them. The Phase 3 phenomenon-axis pivot (`Realization/{DM, Nanosyntax, ProcessRealization, Comparison}.lean`) is what enables the bridge theorem; deferred to plan doc.
+
+**Substrate move deferred**: `Core/Lexical/MorphRule.lean` (315 LOC) + `Theories/Morphology/Core/{Circumfix, Exponence, WordStructure}.lean` (substrate-only after Phase 2) → `Core/Morphology/` consolidation. ~24 consumer import edits for MorphRule alone, all mechanical via perl. Bounded but warrants its own focused session with full-build verification — Phase 3 item.
+
+**RootTypology.lean split deferred**: 1685 LOC, 7 consumers spanning Causation/Possession/DM. Audit: 3 sections of dispositions need careful mapping (most → BeaversEtAl2021.lean, §§15-17 unified Root → Theories/Semantics/Verb/Roots/Basic.lean). Per the integration-auditor: "needs a plan doc before execution."
+
+**TheorySpace.lean architectural decision deferred**: linguistics-domain-expert proposed promoting it to be the architectural spine (Kalin-Bjorkman 2026's 4-D theory space classifies any new framework via its Lexicalism × Architecture × Pieces/Processes × Realizational coordinates); mathlib-reviewer + integration-auditor proposed dissolving into KalinBjorkmanEtAl2026 study file. The two views are partially compatible — promote the *typology* to the architectural spine, dissolve the *paper-specific apparatus* into the study file — but the split is non-mechanical. Deferred.
+
+**Phenomenon-axis pivot deferred**: the audit's largest architectural item — pivot the 4 surviving framework dirs to phenomenon-named files (`Realization/`, `Postsyntax/`, `Paradigm/`, `Productivity/`, `Categorizers/`) per mathlib's `Integral/{Lebesgue, Bochner}` precedent. ~30 file moves + namespace cascades; multi-session campaign requiring a plan doc.
+
+**Build**: targeted builds verified each move (12 affected files in P1 + 5 in P2). Full-project `lake build` blocked by an unrelated concurrent-session failure (`Linglib/Theories/Semantics/Tense/AT.lean` deleted but still imported in Linglib.lean) — not in any of my touched files' import chains; the morphology restructure is independently clean. Sub-builds across all 17 affected files all green.
+
+## [0.230.457] - 2026-04-27
+
+### SOT Phase E — concept/study split: 7 framework hubs migrate from `Theories/Semantics/Tense/` to `Phenomena/TenseAspect/Studies/`
+
+The structural unblocker for cross-paper bridge theorems (Phase F): each framework-hub file in `Theories/Semantics/Tense/` (which violated CLAUDE.md's anchoring discipline by being a paper-specific Theories file) is split into a **concept-anchored substrate file** (under new `Tense/{SOT, DeRe, Counterfactual, Embedded, Modal}/` subdirectories) and a **paper-anchored Studies file**. After Phase E, all 9 named SOT theories live in `Phenomena/TenseAspect/Studies/AuthorYear.lean` (or for Iatridou + Condoravdi, the existing per-paper Studies files in their primary phenomena directories). The substrate is now organized by *concept* (mathlib-style), not by *paper*.
+
+**E1 — `ZeroTense.lean` (Ogihara) split**: substrate → `Theories/Semantics/Tense/SOT/Ambiguity.lean` (~46 LOC, `PastReading` enum + `pastUnderPastReadings` list + structural `genuinePast_ne_zeroTense`); paper-anchored derivation theorems → `Phenomena/TenseAspect/Studies/Ogihara1996.lean` (~93 LOC; `ogihara_ambiguity_vs_deletion` + `ogihara_derives_simultaneous` + `ogihara_derives_shifted`). Namespace: `Phenomena.TenseAspect.Studies.Ogihara1996` per CLAUDE.md convention. Dead `import` + dead `open` in HK1998.lean dropped (the open was already dead post-0.230.452 trim). Bib `ogihara-1996.sources` updated.
+
+**E2 — `FeatureChecking.lean` (von Stechow)** → `Phenomena/TenseAspect/Studies/VonStechow2009.lean` (~120 LOC). **No concept file** — after the 0.230.452 wrapper trim, this file's content is fully paper-attributed (`vonStechow_derives_*` theorems delegating to `GramTense.constrains` and `embeddedFrame` substrate). Namespace: `Phenomena.TenseAspect.Studies.VonStechow2009`. Dead `import` in HK1998.lean dropped. Bib `von-stechow-2009.sources` updated.
+
+**E3 — `CounterfactualTense.lean` (Iatridou) merge into existing `Phenomena/Conditionals/Studies/Iatridou2000.lean`**: substrate → `Theories/Semantics/Tense/Counterfactual/Defs.lean` (~80 LOC; `PastMorphologyUse` enum + `CounterfactualDistance` structure + `refinedULC` def + structural lemmas). Paper-anchored theorems were already in the existing Conditionals/Studies/Iatridou2000.lean which used the substrate via `open Semantics.Tense.CounterfactualTense`; the open is updated to `open Semantics.Tense.Counterfactual`. Three other consumers updated (HK1998.lean + Modality/Exclusion.lean + Linglib.lean). Per decision-point #1 (merge), this Iatridou case keeps a single per-paper Studies file in the Conditionals phenomenon (its primary anchor).
+
+**E4 — `Decomposition.lean` (Kratzer 1998)** → `Theories/Semantics/Tense/SOT/Decomposition.lean` (file relocated, namespace renamed to `Semantics.Tense.SOT.Decomposition`, content unchanged). The file's lexical entries (`kratzerEnglishPast`, `kratzerGermanPreterit`, `kratzerZeroTense`) are needed by `Fragments/{English,German,Italian}/Tense.lean`, so they stay at the Theories layer per CLAUDE.md "Fragments imports Theories, not Phenomena" discipline. Minimal `Phenomena/TenseAspect/Studies/Kratzer1998.lean` created as paper-anchored cross-reference for Phase F bridge theorems. Five consumers updated via perl mass-edit (HK1998.lean + 3 Fragment files + ComparePartee.lean). Bib `kratzer-1998.sources` updated.
+
+**E5 — `TemporalDeRe.lean` (Abusch) split**: substrate → `Theories/Semantics/Tense/DeRe/Defs.lean` (~60 LOC; `TemporalDeRe` structure + `TemporalDeRe.isFelicitous`); paper-anchored derivation theorems → `Phenomena/TenseAspect/Studies/Abusch1997.lean` (~130 LOC; `abusch_derives_shifted` + `abusch_derives_simultaneous` + `abusch_derives_simultaneous_via_binding` + `abusch_derives_double_access` + `abusch_derives_temporal_de_re`). Namespace `Phenomena.TenseAspect.Studies.Abusch1997` — finally fills the slot that was misnamed-and-vacated by the 0.230.452 (Schlenker) and 0.230.455 (Schlenker2004) renames. Dead `import` in HK1998.lean dropped (pre-existing dead post-0.230.451 trim). Bib `abusch-1997.sources` updated.
+
+**E6 — `AT.lean` (Condoravdi)** → `Theories/Semantics/Tense/Modal/AtOperator.lean` (file relocated, namespace renamed to `Semantics.Tense.Modal.AtOperator`, content unchanged). The existing `Phenomena/Modality/Studies/Condoravdi2002.lean` updated to import the new path (per decision-point #1: merge into the existing per-paper Studies file in the Modality phenomenon). One consumer updated. Bib `condoravdi-2002.sources` updated.
+
+**E7 — `SimultaneousTense.lean` (Sharvit)** → `Theories/Semantics/Tense/Embedded/Simultaneous.lean` (file relocated, namespace renamed to `Semantics.Tense.Embedded.Simultaneous`). Minimal `Phenomena/TenseAspect/Studies/Sharvit2014.lean` created as paper-anchored cross-reference. The cross-framework auditor flagged this as the worst-shape file (5 ad-hoc structures `SimultaneousTense` / `IndirectQuestionTense` / `EmbeddedPresentUnderFuture` / `RCSimultaneousTense` all carrying `simultaneous : ... = ...` as a field); structural consolidation into a single canonical `EmbeddedSimultaneousFrame` is **deferred** to a focused follow-up phase. Phase E only does the file relocation. One consumer updated (HK1998.lean). Bib `sharvit-2014.sources` updated.
+
+**E8 — `Tense/Modality.lean` (Klecha 4-cell matrix)** → `Theories/Semantics/Tense/Modal/Matrix.lean` (file relocated, namespace renamed to `Semantics.Tense.Modal.Matrix`). Resolves the cross-framework auditor's N3 finding (file/directory name collision between `Tense/Modality.lean` and `Tense/Modality/`). Two consumers updated (HK1998.lean + Klecha2016.lean). Bib `klecha-2016.sources` updated.
+
+**Architectural target achieved (Layer 1 — concept-organized substrate)**:
+```
+Theories/Semantics/Tense/
+├── Basic.lean                    -- shared helpers (TensePhenomenon enum + TenseTheory struct dissolution deferred to Phase G)
+├── Counterfactual/Defs.lean      -- (NEW) PastMorphologyUse + refinedULC
+├── DeRe/Defs.lean                -- (NEW) TemporalDeRe + isFelicitous
+├── Embedded/Simultaneous.lean    -- (renamed from SimultaneousTense.lean)
+├── Modal/AtOperator.lean         -- (renamed from AT.lean)
+├── Modal/Matrix.lean             -- (renamed from Modality.lean; resolves N3)
+├── SOT/Ambiguity.lean            -- (NEW) PastReading enum
+├── SOT/Decomposition.lean        -- (relocated from Decomposition.lean; lexical entries Fragments depend on)
+└── ... (Aspect/, Compositional, ...)  (unchanged)
+```
+
+**Architectural target achieved (Layer 2 — paper-anchored studies)**:
+```
+Phenomena/TenseAspect/Studies/
+├── Abusch1997.lean               -- (NEW) abusch_derives_*
+├── Klecha2016.lean               -- (KEEP)
+├── Kratzer1998.lean              -- (NEW, minimal — paper anchor)
+├── Ogihara1996.lean              -- (NEW) ogihara_*
+├── Schlenker2004.lean            -- (renamed from misnamed Schlenker2003 in 0.230.455)
+├── Sharvit2014.lean              -- (NEW, minimal)
+├── VonStechow2009.lean           -- (NEW) vonStechow_*
+├── (Iatridou case: existing Phenomena/Conditionals/Studies/Iatridou2000.lean)
+├── (Condoravdi case: existing Phenomena/Modality/Studies/Condoravdi2002.lean)
+└── HeimKratzer1998Data.lean      -- (multi-paper data; namespace `Phenomena.TenseAspect`; dissolution deferred)
+```
+
+**Phase E1-E8 deletions**: `Theories/Semantics/Tense/{ZeroTense, FeatureChecking, CounterfactualTense, Decomposition, TemporalDeRe, AT, SimultaneousTense, Modality}.lean` (8 files removed; content relocated per the architectural target).
+
+**Phase E namespace convention** (decision-point #3): all 7 new Studies files use `namespace Phenomena.TenseAspect.Studies.AuthorYear` per CLAUDE.md convention. The 23+ existing Studies files with bare top-level namespaces (`namespace Klecha2016`, etc.) remain unchanged this phase; the mass namespace fix is its own focused session (Cluster B's B1, deferred from 0.230.453).
+
+**Phase E does NOT do** (deferred):
+- **Phase F** — cross-paper bridge theorems (Sharvit-Klecha simultaneous, Kratzer-Ogihara-Sharvit on embedded-present-puzzle, modal-layer ULC, Klecha-Hacquard, Klecha-Condoravdi, Schlenker-Abusch). Now possible because Studies files can import each other (chronological-dependency-respecting per CLAUDE.md).
+- **Phase G** — `TenseTheory` Bool-flag struct dissolution + `TensePhenomenon` 24-case enum delete + Compare.lean/ComparePartee.lean/CompareTenseModal.lean dissolution.
+- **Phase H** — Klecha §5.3 DAR + §3.4+B de se enrichment.
+- **SimultaneousTense substantive cleanup** (5 ad-hoc structures → 1 canonical) — needed before genuine Sharvit-Klecha bridge in Phase F.
+- **Project-wide bib `sources` field sweep** (1024 stale paths remain across all subfields). Validator infrastructure landed in 0.230.455.
+- **Mass namespace migration** for the 23+ existing Studies files with bare namespaces.
+
+Build: full project (5393 jobs) green. Bib validator: 1024 stale paths (8-path regression from new file locations; SOT-tense subset clean). 0.230.457
+
+## [0.230.456] - 2026-04-27
+
+### ScalarImplicatures: GP09 deep refactor + CS11 landing
+
+A 4-agent multi-pass audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) of `Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean` (~860 LOC) drove a substantial refactor and surfaced architecture for landing its canonical empirical successor, @cite{chemla-spector-2011}.
+
+**GP09 file** (`Phenomena/ScalarImplicatures/Studies/GeurtsPouscoulous2009.lean`, ~860 → ~980 LOC):
+- §8 universal-quantifier theorem corrected: `gricean_derivation_with_strong_competence` (per-customer competence — wrong premise) → `gricean_derivation_for_universals_requires_uniformity` with paper's actual collective binary auxiliary `(∀c∀s, Shot c s) ∨ (∀c, ¬∀s, Shot c s)`. The paper's whole §8 argument turns on (38) being the *collective* uniformity claim — the per-customer version inverts the implausibility argument.
+- §1.4 prose corrected: `@cite{geurts-2010}` → `@cite{geurts-2009}` (the paper cites the M&L paper, not the 2010 book); polarity-inverted gloss fixed (paper actually says NONE of Geurts 2009 / Van Rooij & Schulz 2004 / Chierchia 2004 *predict* local SI for *exactly two*).
+- Tier 1 deletions: `competence_explains_think` (Or.elim repackaged), `footnote7_paraphrase_asymmetry := @mt` (literal `mt` re-export), four vacuous `IsCalculable`/`IsNonDetachable` diagnostics, `AmbiguitySource` paper-extrinsic taxonomy + `ambiguitySource` map + `all_controls_classified` theorem, 10 trivial-arithmetic theorems (`paradigm_inflation_28pp` etc.) inlined as data structure assertions.
+- New paper content captured: §1.4 Objection #2 counterexamples (12, 13, 14 + Harry-hopes parallels) showing SIs arise despite implausibility; §1.4 Objection #3 (18a-c) gradient-mismatch refutation; §2 Mary-stamps follow-up (n=31, 27/31=89%) defusing logical-difficulty defense; §2 Worry #3 Chater & Oaksford 90%/63% syllogism contrast; §8 footnote 11 Gricean-derivation references list.
+- Section restructuring: `section §1 ... end` blocks per paper section; misleading theorem names renamed; `inference_fails_to_coalesce = 0` honest-rewrite as `inference_means_within_chance_band` matching paper's "around 50%, give or take 12%" framing; `lookupRate` paired with `lookupRate?` (Option-valued) to make silent-zero-default explicit.
+- Spine integration deepened: `competence_explains_think_via_processAlternative` strengthened from 1-bit `decide` to direct application of `Implicature.Competence.outcome_ii_strong`.
+- Bridge to `Embedded/Attitudes`: `think_condition_corresponds_to_local_attitude` connecting GP09's *think* condition (57.5% endorsement) to `AttitudeInterpretation.local_`.
+- `someStudentsSleepUE` → `somePassedSI` (variable name said "Sleep", carrier was `PassWorld`).
+
+**Substrate consolidation** (`Phenomena/ScalarImplicatures/Basic.lean`):
+- New canonical `SomeAllWorld` (3-state inductive: `none` / `someNotAll` / `all`) plus `atLeastOne`/`universal`/`notUniversal` Prop predicates with auto-derived `DecidablePred` instances and structural `universal_imp_atLeastOne` lemma. Houses the *some*/*all* model that was being independently re-derived in 4 sibling files.
+- Refactored 4 duplicate world types to `abbrev X := SomeAllWorld`: `Hurford.HWorld`, `Embedded.Simplified.EmbeddedWorld`, `Embedded.Attitudes.StudentOutcome`, `GP09.PassWorld`. Constructors uniformly become `SomeAllWorld.none/someNotAll/all`; ~60 LOC of duplicate typecode eliminated; manual `Fintype StudentOutcome` instance dropped (provided via the alias).
+
+**Forward consumer wiring**:
+- `Phenomena/ScalarImplicatures/Studies/Geurts2010.lean` now imports GP09 and adds `gp2009_data_anchors_pattern` theorem; reframed as the textbook successor that grounds the qualitative DE-blocking pattern in GP09's quantitative ∅-condition data.
+
+**CS11 landing** (`Phenomena/ScalarImplicatures/Studies/ChemlaSpector2011.lean`, ~740 LOC, NEW):
+- Architecture per dual planning audit: paper-internal `Picture6 := Fin 6 → SomeAllWorld` and `Picture3 := Fin 3 → SomeAllWorld` over canonical `SomeAllWorld`; `Reading P := P → Prop` extension-function pattern matching `Embedded/Attitudes` and `RSA/EmbeddedSI` precedents; CS11-local `Theory` enum (T1/T2/T3) and `RatingsMonotone` (§3.2 conjecture) — promotion to substrate deferred until 2nd consumer.
+- §4 Experiment 1 (universal embedding): `literal/global/local` predicates with auto-derived Decidable; `Exp1Condition` (FALSE/LITERAL/WEAK/STRONG) + witness pictures + `witness_realizes_conditions` verifying intended truth pattern via `fin_cases` (mathlib idiom — proofs carry the verbosity, definitions stay natural). Theorems: `strong_gt_weak_some/or` (existence-of-local-reading evidence); `exp1_some/or_monotone_in_readings` (§3.2 conjecture instantiated); `T1_predicts_strong_eq_weak_for_universal` (T1's structural prediction, paired with the data-level `strong_gt_weak` for the falsification); `distributivity_strong_neq_gt_strong_eq` (§4.4.5, the @cite{fox-spector-2018} economy bridge).
+- §5 Experiment 2 (non-monotonic *exactly one*, the killer experiment): `literal/global/local` for sentence (21) with the *distinct entailment lattice* — local ⊥ literal in non-monotonic environments, encoded as separate "exactly one" predicate definitions; witnesses verify the LOCAL condition has `literal=F ∧ local=T` (the diagnostic case). Theorems: **`local_gt_literal_some`** (the killer finding: 73% > 37%, refutes T3); `local_gt_false_both_items`; `T3_local_bounded_by_all` (T3's structural prediction); `wide_scope_or_detected` (§5.5.5).
+- DE controls captured for both Exp 1 and Exp 2 with paradigm-priming gap noted in docstring.
+- Bridges: `cs_de_consistent_with_gp_qualitatively` (CS-GP agreement on no-local-SI-in-DE qualitatively); spine bridge `localReadingExistsExp1 : Implicature Picture6` with `mechanism := .exhIE` (T2 cluster) + `localReadingExistsExp1_isReinforceable` Sadock diagnostic.
+- Forward citations from chronologically-after siblings: `FoxSpector2018.lean` (CS11 distributivity finding empirically supports economy condition), `Ronai2024.lean` (Gotzner-Romoli paradigm descends from CS11), `PottsEtAl2016.lean` (LU model on same conditions).
+
+**Bib hygiene** (`blog/data/references.bib`):
+- Added with verified DOIs: `geurts-2009` (M&L 24:51-79, doi:10.1111/j.1468-0017.2008.01353.x), `geurts-2006` (SuB 11:261-275), `russell-2006` (J. Sem 23:361-382, doi:10.1093/jos/ffl008), `spector-2006` (Université Paris VII PhD), `chemla-spector-2011` (J. Sem 28:359-400, doi:10.1093/jos/ffq023). Each verified via crossref or paper bibliography rather than transcribed from memory.
+- Fixed stale "exercised by GeurtsPouscoulous2009.lean" claim in `Theories/Pragmatics/Implicature/Scales.lean`.
+
+**Mathlib-shape lessons** (notable for future studies): the `decide` tactic doesn't reduce `Fintype`-derived `Decidable` instances over `Fin n` reliably (Multiset-quotient blocker); for small finite cases, the mathlib idiom is to define predicates naturally with `∀ i : Fin n, ...` and prove witness-realization theorems with `intro i; fin_cases i <;> decide` (verbosity in proofs, not definitions). For ℚ comparisons over stipulated rationals, `norm_num` is the canonical tool, not `decide` — but ℚ rates can also be replaced with `Nat` per-mille (matching GP09 precedent) for `decide`-friendly arithmetic.
+
+**Build**: 5393 jobs green; full `lake build` clean.
+
+## [0.230.455] - 2026-04-27
+
+### SOT Phase D — citation hygiene
+
+After the 0.230.453 4-agent re-audit on the cleaned SOT substrate, two remaining lenses (linguistics-domain-expert, cross-framework-reconciler) flagged a cluster of citation-attribution errors. Phase D of the agreed plan addresses citation hygiene only; substrate refactoring (Phases E-H) deferred to dedicated sessions.
+
+**Citation corrections:**
+- **`CounterfactualTense.lean` re-anchored from `@cite{deal-2020}` → `@cite{iatridou-2000}`** (D1). Deal 2020 is *A Theory of Indexical Shift* (MIT Press), about Nez Perce indexical shift — not the two-uses-of-past generalization the file actually formalizes. Iatridou 2000 *The Grammatical Ingredients of Counterfactuality* (LI 31:2) is the source. Theorems renamed `deal_*` → `iatridou_*` (`iatridou_counterfactual_overrides_ulc`, `iatridou_refines_ulc`); zero external consumers (verified). Docstring includes a See-also pointer to the existing `Phenomena/Conditionals/Studies/Iatridou2000.lean` and `Theories/Semantics/Conditionals/Iatridou.lean` files (Phase E will plan the merge).
+- **`Studies/Schlenker2003.lean` renamed → `Studies/Schlenker2004.lean`** (D2). Per Klecha 2016 PDF p. 33 ("Schlenker (2004) also proposes a variant which does not depend on morphosyntactic labels"), the tense-specific context-tower work the file formalizes is from Schlenker 2004's chapter "Sequence phenomena and double access readings generalized" in *The Syntax of Time* (Lecarme & Guéron eds., MIT Press) — not the 2003 *L&P* "Plea for Monsters" indexicals paper. New bib entry `@incollection{schlenker-2004-sot}` added (the existing `@article{schlenker-2004}` is for a different paper, Schlenker's *Mind & Language* paper on FID/Historical Present, which has its own consumers in `Mizuno2024.lean` and `Modality/Exclusion.lean`). Namespace + Linglib.lean import + bib `sources` updated. Provenance sentence in the file's docstring records the rename history (Abusch1997 → Schlenker2003 → Schlenker2004).
+- **`SimultaneousTense.lean` re-anchored to `@cite{sharvit-2014}` + `@cite{ogihara-sharvit-2012}`** (D3). The 13-page Sharvit 2003 LI Squib *Embedded tense and universal grammar* is about cross-linguistic embedding generalizations — not the separate-simultaneous-morpheme apparatus the file formalizes. The apparatus is from Sharvit 2014 *J Sem* "On the universal principles of tense embedding: The lesson from before" + Ogihara & Sharvit 2012 Oxford Handbook chapter "Embedded Tenses". New bib entry `@article{sharvit-2014}` added (DOI 10.1093/jos/ffs024 verified against Klecha's references list). File rename to `Sharvit2014.lean` deferred to Phase E.
+- **`Decomposition.lean` cite cleanup** (D5): file docstring header listed both `@cite{kratzer-1998}` (correct, SALT VIII) and `@cite{heim-kratzer-1998}` (incorrect, the textbook); the textbook cite is dropped, and a malformed cite-list/body separator on the same line is fixed.
+- **`@article{egressy-2026}` bib `journal` field corrected** (D4): was `journal = {The Linguistic Review}` but DOI `10.1162/ling.a.557` is MIT Press's *Linguistic Inquiry* prefix. Fixed to `journal = {Linguistic Inquiry}` with `note = {Early access; final volume/issue/pages TBD}`.
+
+**Bibliography sources-path validator** (D6, durable infrastructure):
+- New `blog/scripts/check_bib_sources.py` validator. Each bib entry's `sources = {path1;path2;...}` field lists Lean files that consume the cited work; the validator reads each path relative to `Linglib/` and flags stale references (file moved, deleted, or renamed). Prints a per-entry stale-paths report; exit code 1 if any stale paths found.
+- **Initial run flagged 1039 stale source paths across the project** — far more than the cross-framework auditor's ~12-path estimate. Project-wide stale-paths sweep deferred to a dedicated session.
+- **SOT-tense subset cleaned this commit** (~17 entries): `iatridou-2000` (4 stale paths → real `Studies/Iatridou2000.lean`), `partee-1973` (`Comparisons/Partee1973.lean` → `Core/Time/Tense.lean`), `ogihara-1996` (`Ogihara.lean` → `ZeroTense.lean`), `kratzer-1998` (`Kratzer.lean` → `Decomposition.lean`), `deal-2020` (`Deal.lean` → empty since the file is now Iatridou-anchored), `tsilia-zhao-2026` (Theories path → Studies path), `sharvit-2003` (4 stale paths fixed), `ogihara-sharvit-2012` (2 stale paths fixed), `klecha-2016` (`ModalTense.lean` → `Modality.lean`, `Modality/Temporal.lean` → `TemporalConstraint.lean`), `schlenker-2003` (TowerBridge paths → `Reference/Studies/Schlenker2003.lean`), `schlenker-2004` (`TenseAspect/Data.lean` → `HK1998Data.lean`, `Conditionals/Anderson.lean` → real consumers), `reichenbach-1947` (`Core/Temporal/` → `Core/Time/`, `Tense/Declerck.lean` removed), `heim-1994` (Lexical/Determiner path → Quantification path).
+- After the SOT-tense sweep: **1016 stale paths remain project-wide**, all outside the SOT/embedded-tense scope. Each represents a rename that didn't update the bib `sources` field. The validator now makes them visible and tractable to clean up incrementally.
+
+**What this commit explicitly does NOT do** (per Phase D scope):
+- File renames beyond Schlenker2003 → Schlenker2004 (e.g., the `SimultaneousTense.lean` → `Sharvit2014.lean` rename per audit recommendation; the move of framework-hub files from `Theories/Semantics/Tense/` to `Phenomena/TenseAspect/Studies/`). These are Phase E architectural moves.
+- Project-wide stale-bib-sources sweep (1016 remaining paths). Validator infrastructure is in place; the sweep itself is a separate dedicated session.
+- Substantive bridge theorems (Sharvit-Klecha simultaneous; Kratzer-Ogihara-Sharvit on embedded-present-puzzle; modal-layer ULC) — Phase F.
+- `TenseTheory` Bool-flag struct refactor — Phase G.
+- Klecha §5.3 DAR + Appendix B de se enrichment — Phase H.
+
+Build: full project (5392 jobs) green. Bib validator: 1016 stale (all outside SOT scope). 0.230.455
+
+## [0.230.454] - 2026-04-27
+
+### Bybee Ch 5 dynamic network model — new substrate `Theories/Morphology/UsageBased/Network.lean`
+
+Closes the architectural gap the 4-agent Bybee audit (0.230.453 in this session's CHANGELOG, see entry below) flagged as the most important missing piece in linglib's morphology layer: the **dynamic network model** of Ch 5 ("Two Principles in a Dynamic Model of Lexical Representation," pp. 111-135) is now formalized as a peer-framework directory alongside `Theories/Morphology/{DM, PFM, WP, Nanosyntax, FragmentGrammars}/`.
+
+**`Theories/Morphology/UsageBased/Network.lean` (~250 LOC, NEW)**:
+- §1 `LexicalEntry α` with `tokenFreq : ℕ` field. `LexicalEntry.strength` is the monotonic projection per Bybee Ch 5 §4 p. 117 ("each time a word is heard and produced it leaves a slight trace on the lexicon, it increases in lexical strength"). `strength_monotonic` proved.
+- §2 `ConnectionKind` enum (`semantic | phonological | morphological | identity`) per Ch 5 §5 p. 118-119 + §7 p. 124. `relativeStrength` Nat embedding with `identity_strongest` + `morphological_strongest_non_identity` theorems verifying Bybee's ordering claims.
+- §3 `Connection` (typed directed edge) with `DecidableEq, Repr`.
+- §4 `Network α` (entries + connections) with `Network.lookup`, `Network.contains`, `Network.IsRelatedBy` (Prop predicate with `Decidable` instance via `inferInstanceAs (Decidable (∃ _ ∈ N.connections, _))`).
+- §5 `Network.HasMorphologicalRelation` as the Prop predicate `IsRelatedBy a b .semantic ∧ IsRelatedBy a b .phonological` — Bybee Ch 5 §5 p. 118's compositional claim that morphological relatedness is **derived** from parallel semantic + phonological connections, not primitive. Defined as the conjunction so the decomposition is `rfl` (CLAUDE.md "derive don't duplicate" + Iff.rfl pattern). Decidable.
+- §6 **Empirical anchor — Strong-Verb frequency dataset from Bybee p. 120**: `strongStillStrong` (15 verbs from Class I/II/VII that maintained their irregularity: drive 203, write 561, know 1473, ...) + `strongRegularized` (18 verbs that regularized: rue 0, seethe 0, sneak 11, ...). All token frequencies verified against Bybee 1985 p. 120 (Francis & Kučera 1982 counts). `strong_verbs_higher_frequency_than_regularized` proves Bybee's central diachronic claim — irregularity correlates with frequency — via the cross-multiplied means inequality (sum₁ × |pop₂| > sum₂ × |pop₁|), kernel-checked by `decide`.
+
+**Bool→Prop discipline**: when the user nudged twice in the session that something looked like a Bool that should be a Prop, the lesson stuck. `HasMorphologicalRelation` and `IsRelatedBy` are both Prop predicates with derived `Decidable` instances. The Bool versions (`Network.contains`, `Network.lookup`) stay as computational helpers, but the *predicates one wants to reason about* are Prop. This matches the `MorphStatus.IsAffix` / `ParadigmCell.isGap` precedent in `MorphRule.lean` and the broader mathlib convention (`Function.Injective`, `IsLeast`, `IsBounded`).
+
+**Mathlib derive-Fintype pattern**: same as the 0.230.453 Bybee study file — Fintype derivation on `ConnectionKind` enum (4 cases) so `decide` on universal claims works automatically via `Fintype.decidableForallFintype`.
+
+**`Phenomena/Morphology/Studies/Bybee1985.lean` §5 added (~70 LOC)**:
+- `verbToLexicalEntries : VerbEntry → List (LexicalEntry Unit)` — bridge that extracts the five inflected forms from a Fragment `VerbEntry` (form/form3sg/formPast/formPastPart/formPresPart). Token frequencies default to 0 (the Fragment doesn't carry per-form frequencies).
+- `verbToBybeeNetwork : VerbEntry → Network Unit` — derives a Bybee network from a Fragment `VerbEntry`: pairwise semantic + phonological connections among the five forms.
+- `eatNetwork := verbToBybeeNetwork eat` — the network of the English irregular verb *eat* (eat/ate/eaten), derived from `Fragments.English.Predicates.Verbal.eat` per CLAUDE.md "derive don't duplicate". 5 theorems: `eat_past_in_network` (smoke), `eat_ate_morphologically_related` + `eat_eaten_morphologically_related` + `ate_eaten_morphologically_related` (the three pairwise morphological relations), and the strongest version `eat_form_related_to_past_form : eatNetwork.HasMorphologicalRelation eat.form eat.formPast` which makes **no string-literal reference** to "eat" or "ate" — if `eat.formPast` were changed in `Verbal.lean`, the theorem statement would refer to whatever the new field denotes, surfacing the dependency.
+- `ch5_section6_anchor_lives_in_substrate` — re-states the substrate's `strong_verbs_higher_frequency_than_regularized` so the study file's coverage is self-documenting.
+
+**Why `eat`, not `sing/sang/sung`**: first draft used a fabricated `singEntry := ⟨"sing", (), 100⟩`-style stipulation. User flagged: "should this hook into the fragment somehow?" — yes; the fabricated version was the same anti-pattern CLAUDE.md flags ("Phenomena files should derive values from Fragment fields rather than duplicating them as string literals"). Refactored to use `eat : VerbEntry` from the Fragment, which is a real irregular verb (eat/ate/eaten — three-way pattern parallel to sing/sang/sung). The bridge `verbToBybeeNetwork` is now reusable for any verb.
+
+**What's NOT covered** (deferred):
+- Ch 5 §10 morphological classes as **emergent** from connection density (would be a `SchemaInduction.lean` sibling in the new `UsageBased/` directory)
+- Ch 5 §11 productivity from class size + variance (deferred)
+- Cross-framework refutation theorem against DM (the bridge the cross-framework reconciler proposed: a paradigm where DM's `subsetPrinciple` predicts identical output but Bybee's strength predicts divergent retention under historical/processing pressure) — deferred to a future cross-framework Studies file
+- The `ConnectionKind.morphological` constructor coexists with `HasMorphologicalRelation`; per the substrate docstring, the constructor is a *convenience label* for users who have already classified an edge, while the network-level predicate is the *canonical* definition. Future cleanup might drop the constructor in favor of the predicate-only API.
+
+**Build**: 5393 jobs (5392 → 5393, +1 for the new substrate file). Network.lean uses `decide` 6 times, 0 `native_decide` — kernel-checkable throughout, including the cross-multiplied-means inequality on the 33-element strong-verb dataset.
+
+## [0.230.453] - 2026-04-27
+
+### SOT architectural cleanup: Cluster A wrapper trim + Cluster B small fixes
+
+A 4-agent deep audit of the SOT/embedded-tense architecture (~5500 LOC across `Core/Time/`, `Theories/Semantics/Tense/`, `Phenomena/TenseAspect/`) flagged the same wrapper-alias pattern 0.230.451 deleted on the Abusch side, applied across two more theory files (`FeatureChecking.lean`, `ZeroTense.lean`) plus the Schlenker rename. Plus a Bool-flag matrix issue in `Compare.lean` and a duplicate `open` in `HK1998.lean`. Cluster B's heavier work (mass namespace rename per `Phenomena.X.Studies.Y` convention; folding small theory files) deferred — sub-namespace cascades and consumer-tracing are larger than initially scoped, requires per-file refactor.
+
+**Cluster A — wrapper trim + Schlenker rename**:
+- Deleted `vonStechowShift := embeddedFrame` + `vonStechow_is_embeddedFrame := rfl` from `Theories/Semantics/Tense/FeatureChecking.lean` (same-arity wrapper alias). Updated 5 derivation theorems + 3 HK1998.lean consumers to use `embeddedFrame` directly. Zero external consumers (verified).
+- Deleted `checkTenseFeature := feature.constrains` + `checkTenseFeature_eq_constrains := Iff.rfl` from FeatureChecking.lean (textbook "encoding conclusions as definitions"). Updated 5 internal theorems to use `feature.constrains` directly. Zero external consumers.
+- Deleted `zeroTenseSemantics := interpTense (updateTemporal ...)` + `zeroTenseSemantics_eq` from `Theories/Semantics/Tense/ZeroTense.lean` (`interpTense (updateTemporal ...)` directly equals matrix event time via substrate's `zeroTense_receives_binder_time`). Deleted `ogihara_zero_is_bound_var` (literally was substrate's `zeroTense_receives_binder_time`). Updated `ogihara_derives_simultaneous` + 1 HK1998.lean consumer to call substrate directly.
+- Renamed `Phenomena/TenseAspect/Studies/Abusch1997.lean` → `Studies/Schlenker2003.lean` per audit unanimous finding (file content is `ContextTower` + `temporalShift` + Kaplan-thesis machinery, not Abusch's res-movement; rename frees the Abusch1997.lean slot for future actual-Abusch substrate). Namespace updated. Linglib.lean import wired. Updated `references.bib`: `abusch-1997.sources` no longer points to Schlenker2003.lean; `von-stechow-2009.sources` updated; `heim-1994-comments.sources` includes Schlenker2003.lean. Docstring updated to attribute content to `@cite{schlenker-2003}` + `@cite{kaplan-1989}`.
+
+**Cluster B — small fixes (B3+B4)**:
+- **B4** Compare.lean `all_ten_theories_distinct` reformulated from 9-conjunct chained `≠` (which only proved adjacent-pair distinctness in a fixed ordering, not all-pairs distinctness as the docstring claimed) to `List.Nodup` of the 10 names list, closed by `decide`. Now genuinely "all 10 distinct".
+- **B4** Dropped duplicate `open Semantics.Tense (satisfiesTense SOTParameter)` immediately followed by `open Semantics.Tense` in HK1998.lean line 41-42 (the second open shadows the first).
+- **B3** Converted `simp [...]` → `simp only [...]` in 4 SOT-core theory files: Decomposition (2/2), SequenceOfTense (2/2), CounterfactualTense (2/3), Perspective (3/4). 9 conversions, 3 reverted where `simp` was discharging via default lemmas (`decide_eq_true_eq`, `Set` membership, `omega`-friendly forms) that `simp only` doesn't reach. Basic.lean (5 candidates) and EventBridge.lean (1) reverted entirely after similar issues — net B3 win is 9 instances across 4 files.
+
+**Cluster B — DEFERRED to a separate session**:
+- **B1 Mass namespace rename** (23 study files: bare `namespace Klecha2016` → `namespace Phenomena.TenseAspect.Studies.Klecha2016` per CLAUDE.md convention). Attempted via Python script but hit 3 cascading complications: (a) 4 files have non-standard parent-namespaces (`Phenomena.TenseAspect.Bridge`, `Phenomena.TenseAspect`, `Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026`, `Phenomena.TenseAspect.CrossDomainBridge`) that don't fit the simple `bare → Studies.bare` mapping; (b) several files have nested sub-namespaces (e.g., `OgiharaST2024.VeridicalityBridge` is a sub-namespace inside `OgiharaST2024`) that need lockstep renames; (c) consumer cascade through `open Phenomena.TenseAspect` (which HK1998Data deliberately uses for symbol exposure) breaks when the data file moves into Studies. Reverted via inverse script. Per-file refactor with proper consumer tracing needed; estimated 1-2 hours dedicated session.
+- **B2 Theory-file folding** (small Tense theory files into `Semantics.Tense` parent): same per-file consumer cascade concerns; deferred.
+- **TensePhenomenon enum dead code** (Cluster C MUST FIX 2): blue-sky later.
+- **Compare.lean dissolution** (Cluster C MUST FIX 3): substantial; per CLAUDE.md memory, the policy is dissolution into Studies anchored where contrasts originate.
+- **`native_decide` mass replace** in HK1998Data.lean (~75 instances) + HK1998.lean (~25 instances) (Cluster C MUST FIX 6): mechanical but bulky.
+- **HK1998Data dissolution** into per-paper homes (Cluster C MUST FIX 7): substantial, depends on B1.
+
+**Audit lenses status**:
+- mathlib-reviewer (code quality): completed; all 14 must-fix/should-fix findings either landed in this commit or explicitly deferred above.
+- linglib-integration-auditor: was interrupted mid-flight by user
+- linguistics-domain-expert (PDF-anchored faithfulness): hit org-level usage limit
+- cross-framework-reconciler (theory-relationship matrix): hit org-level usage limit
+
+The two unfinished lenses should re-run on the cleaned substrate after this commit lands.
+
+Build: full project (5392 jobs) green. 0.230.453
+
+## [0.230.452] - 2026-04-27
+
+### `Phenomena/Morphology/CompositionBridge.lean` dissolved (355 LOC, zero migration)
+
+A 4-agent deep audit (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/morphology) of `Linglib/Phenomena/Morphology/CompositionBridge.lean` (one of the ~14 `*Bridge.lean` files CLAUDE.md flags as a deprecated convention) returned unanimous dissolve. Net effect: −355 LOC, 0 migration, 0 downstream fallout.
+
+**Per-section verdict** (all 12 sections):
+- §1–§6, §8: per-entry form theorems via `head?.map` — `rfl`-on-stipulated-data; testing `dog.formPl = "dogs"` after the Fragment already stipulates that field. **DELETE.**
+- §7: `*_all_vacuous` per-verb + `allVerbs_all_vacuous` batch — already proved at `Fragments/English/Predicates/Verbal.lean:3543` as `VerbEntry.toStem_allVacuous` (universally quantified over `v : VerbEntry`). **DELETE as redundant.**
+- §9: `plural_changes_truth_conditions` — proof traced; `⟨id, λ p => p, id, true, by decide⟩` reduces to `id true && !true ≠ id true` (Boolean De Morgan), not a witness of Link's `*P` mereological closure. With `α = Bool` and `closurePred = id`, none of Link's algebra is exercised. The cross-framework reconciler and morphology expert independently flagged this as content-vacuous. **DELETE.**
+- §10 "Bridge to Z&P 1983 Diagnostics": Z&P 1983's diagnostics A–F are distributional/morphophonological; they make no claim about `MorphRule.isVacuous`. Of `inflAffix`-classified morphemes in `Studies/ZwickyPullum1983.lean`, 1/3 fit the file's "agreement" claim and 2/3 violate it — the third theorem's docstring even confesses the disagreement on past tense. CLAUDE.md "no bridges" rule applies: formaliser-invented synthesis no paper makes. **DELETE.**
+- §11 "Bridge to Bybee 1985 Relevance Hierarchy": `⟨rfl, rfl, rfl⟩` is the textbook `naCanBridge = true` anti-pattern from CLAUDE.md — three independent stipulated facts about the substrate dressed as a "bridge". Plus a Bybee misreading: high relevance in Bybee = *more* semantically integrated (aspect on verb), not less. `number_vs_agreement_rank` already proved at `MirrorPrinciple.lean:289` (`gfRule_inside_agreement`, more general). **DELETE.**
+- §12 per-entry `kick.isRegular = true := rfl` × 12, `kick_past_form := "kicked" := by native_decide` × 6: `naCanBridge` pattern at scale. **DELETE.**
+- §12 batch `regular_verbs_match_rules`: initially marked as the one salvage candidate (move to `Verbal.lean` adjacent to `regular3sg`/`regularPast`), then reverted on second look. The codebase has 205 `mkRegular` calls and zero explicit `isRegular := true` declarations outside `mkRegular`'s body — meaning every regular verb's inflected forms are *defined as the rule outputs* (`form3sg := regular3sg core.form` inside `mkRegular`). The theorem's invariant is structural by construction; asserting `v.form3sg == regular3sg v.form` for `v` constructed via `mkRegular` is the same `naCanBridge = true` anti-pattern at one remove. Mathlib discipline: don't store data tables alongside the functions that compute them and prove they agree — single source of truth (`mkRegular`) is the prevention. **DELETE.**
+
+**Decide downgrade attempted, kernel-stuck**: tried `decide` on `regular_verbs_match_rules` before reverting; kernel got stuck at the `Decidable` instance for `(List.filter … allVerbs).all` — known mathlib pattern with String operations + recursive `List.filter`. Restructuring would have meant per-verb checks (~205 separate theorems, worse than what we deleted). The kernel-stuck output was the second signal that the theorem doesn't earn its place; the structural-by-construction observation was the first.
+
+**Bug fixes that rode along**:
+- `Phenomena/Morphology/Studies/Bybee1985.lean:26,237` — namespace renamed from `Phenomena.Morphology.DegreeCompositionBridge` (leftover from a deleted `DegreeCompositionBridge.lean` file referenced in `blog/content/bibliography.md:1207` but absent from disk) to `Phenomena.Morphology.Studies.Bybee1985` (matches the file path). Zero external consumers of the old namespace (verified).
+- `Linglib.lean:1318` — dropped `import Linglib.Phenomena.Morphology.CompositionBridge`. The `bibliography.md` dangling-link to the missing `DegreeCompositionBridge.lean` will self-fix on next `python3 blog/scripts/gen_bibliography.py` run.
+
+**Substrate-naming critique flagged for separate session** (linguistics-domain-expert finding, OUT OF SCOPE for this commit):
+- `Core/Lexical/MorphRule.lean::MorphRule.isVacuous` — name embeds the editorial claim that morphology is semantically vacuous; what's actually tracked is *delegation of semantic contribution to a higher composition layer* (`Theories/Semantics/{Tense,Aspect,Modality}/`). Renaming to `delegatedSemantics` / `noLocalSemEffect` would make the substrate position theory-neutral.
+- `Core/Lexical/MorphRule.lean::MorphCategory.relevanceRank` — agreement = 8 = "most peripheral / least relevant" inverts Bybee 1985's actual usage of "relevance" (high = more semantically integrated). Better: `peripheralityRank` or invert the numbering. The current naming propagates the §11 sign confusion at the substrate level.
+
+**Build**: 5392 jobs green (was 5393 before; −1 from the deleted file). No new files created. No salvage migrated. The dissolution is the textbook case CLAUDE.md describes — a Bridge file synthesizing connections no paper made, decorated with `rfl`-on-stipulated-data theorems whose deletion costs nothing because nothing consumes them.
+
+## [0.230.451] - 2026-04-27
+
+### Klecha ↔ Abusch ULC convergence + Abusch substrate refactor (mirror of 0.230.450)
+
+A 4-agent deep audit of the Abusch substrate (`Theories/Semantics/Tense/TemporalDeRe.lean` + relevant sections of `Tense/Basic.lean` + `Phenomena/TenseAspect/Studies/Abusch1997.lean`) flagged the same wrapper-alias issues 0.230.450 deleted on the Klecha side, plus two new findings: a misnamed `Abusch1997.lean` study file (its content is Schlenker/Kaplan context-tower material with zero theorems anchored to anything Abusch-distinctive), and a ULC misattribution — the *presuppositional implementation* attributed by linglib to Abusch is actually Heim 1994's manuscript "Comments on Abusch's theory of tense", not Abusch herself.
+
+This commit lands the medium-scope fixes recommended by the audit: substrate trim mirroring 0.230.450's Klecha-side cleanup, attribution corrections, and the kernel-checked Klecha ↔ Abusch ULC equivalence theorem the prior commit's docstring prose had been claiming. The misnamed `Abusch1997.lean` rename + modal-layer ULC lift (the audit's "wide" recommendations) are deferred.
+
+**Bibliography hygiene** (M-P1):
+- New `@incollection{heim-1994-comments}` entry for *Comments on Abusch's Theory of Tense*, in Kamp (ed.) *Ellipsis, Tense and Questions*, Dyana-2 Esprit Basic Research Project 6852 Deliverable R2.2.B (URL: `https://semanticsarchive.net/Archive/Tg5ZmI1N/heim-comments-Abusch-94.pdf`). The existing `heim-1994` entry is a different paper (the IATL interrogatives one) — Heim's commentary on Abusch needed its own bib slot per linguistics audit M1. (Initially typed as `@unpublished` with an MIT-manuscript note; corrected after primary-source verification confirmed it was distributed as a Dyana-2 deliverable, listed in Abusch 1997's reference list.)
+- Fixed `abusch-1997.sources` from non-existent `Theories/Semantics/Tense/Abusch.lean` to the actual files (`TemporalDeRe.lean` + `Phenomena/TenseAspect/Studies/Abusch1997.lean`).
+- Fixed `von-stechow-2009.sources` from non-existent `Theories/Semantics/Tense/VonStechow.lean` to `FeatureChecking.lean` + the (misnamed) `Abusch1997.lean` (whose actual content is von Stechow's relation transmission).
+
+**`Theories/Semantics/Tense/TemporalDeRe.lean` trim** (M-P2): 189 LOC → 176 LOC (smaller delete than the Klecha trim because the docstring expanded with attribution + faithfulness-gap notes). Same wrapper-alias pattern 0.230.450 deleted on the Klecha side, applied here:
+- Deleted `def abuschiULC := upperLimitConstraint` (1-line same-arity alias) + `theorem abuschiULC_eq_ulc := Iff.rfl` (textbook "encoding conclusions as definitions" anti-pattern from CLAUDE.md). Zero external consumers (verified).
+- Deleted `def relationTransmission := updateTemporal g evalIdx matrixFrame.eventTime` (just `updateTemporal` with reordered args) + 2 helper theorems (`relationTransmission_shifts_eval`, `relationTransmission_is_evalTime_update`) that were rebadges of `Core.VarAssignment.update_lookup_same` through the wrapper. Zero external consumers (verified).
+- Deleted `theorem abusch_blocks_forward_shift` (1-line forward through `ulc_blocks_forward_shift` from `Tense/Basic.lean` — three layers of indirection over `not_lt.mpr`).
+- Dropped unused `_hPast` parameter in `abusch_derives_shifted` (audit: parameter named for theoretical content the proof never uses; same anti-pattern rejected for Kennedy 2007 in commit `27942198`).
+- Converted 3 surviving bare `simp` calls to `simp only` (per CLAUDE.md proof-style hierarchy).
+- File docstring rewritten: presuppositional ULC attributed to `@cite{heim-1994-comments}`, not Abusch; explicit "Modal-layer ULC formulation" note flagging the value-level `≤` reduction as a deferred faithfulness gap; "Intensional Isomorphism" added to limitations list (Abusch's *other* constraint, ruling out unrepresentable acquaintance relations — entirely absent from linglib).
+
+**`Phenomena/TenseAspect/Studies/HeimKratzer1998.lean` cleanup** (M-P3): dropped dead `open Semantics.Tense.TemporalDeRe` at line 373 — the two `abusch_derives_*` theorems below didn't actually consume any TemporalDeRe substrate symbol (mirror of 0.230.450's HK1998 dead-open finding for Klecha-side `ModalTense` open). Reframed the section docstring: theorems verify Reichenbach-frame projections of the data-file frames; wiring through TemporalDeRe substrate would require reshaping `embeddedSickSimultaneous`/`embeddedSickShifted` (currently standalone `ReichenbachFrame ℤ` instances) as `embeddedFrame matrixSaid …` applications. Deferred.
+
+**ULC attribution corrections** (M-P4): linguistics audit (with Heim 1994 MS PDF evidence) found that `Theories/Semantics/Tense/Basic.lean §Upper Limit Constraint` and `Core/Modality/HistoricalAlternatives.lean §"Klecha 2016: ULC derived from history structure"` both attributed the *presuppositional T-node construal* to Abusch 1997. Per Abusch 1997 §7 (p. 25, primary source), Abusch states ULC informally: "the now of an epistemic alternative is an upper limit for the denotation of tenses". Per Abusch 1997 fn 20, Heim 1994 proposes the presuppositional construal, which Abusch endorses ("I find all of this convincing, and consequently accept Heim's presuppositional construal of the ULC"). Updated both docstrings to reflect the layered attribution: ULC stated by `@cite{abusch-1997}` §7; presuppositional construal due to `@cite{heim-1994-comments}`, endorsed by Abusch 1997 fn 20. Added explicit modal-layer faithfulness gap note: the value-level `≤` reduction strips the modal-alternative quantification Abusch's formulation carries (the "now of an *epistemic alternative*" quantifies over doxastic alternatives). Initial draft attributed the original ULC to "Abusch 1988 MS p. 24"; corrected after primary-source verification — the 1988 paper is a different WCCFL paper, and "p. 24" in Heim 1994 refers to a manuscript draft of what became the 1997 publication, not the 1988 paper.
+
+**§5c. Klecha ↔ Abusch ULC predicate convergence** (M-P5): the headline theorem this audit thread was set up to land. Klecha 2016 §4.2 last paragraph explicitly characterizes his ULC derivation as "identical in spirit, if not in implementation, to Abusch (1997)". This commit makes the implementation-level equality kernel-checked:
+```lean
+theorem klecha_dox_iff_abusch_ulc {Time : Type*} [LinearOrder Time]
+    (evalTime refTime : Time) :
+    attitudeTemporalConstraint .doxastic evalTime refTime ↔
+    upperLimitConstraint refTime evalTime :=
+  Iff.rfl
+```
+Both sides reduce to `refTime ≤ evalTime` definitionally. The substantive content is in the *proof routes*: Klecha's path goes via `actualHistoryBase_time_actual` (`.2`-projection through situation-base membership; carries doxastic-alternative quantification at the substrate level via `WorldHistory W Time`); Abusch's path is the bare `abbrev` unfold (per Heim 1994 MS, the original 1988 MS formulation is presuppositional). The §5c docstring records the "spirit-vs-implementation" distinction Klecha names. Strict equivalence at the value level; **NOT strict at the modal layer** — Klecha's substrate carries doxastic alternatives via `WorldHistory`; Abusch's bare-`≤` form has dropped them. Modal-layer `upperLimitConstraint` over `WorldHistory W Time` matching Abusch's original "now of an epistemic alternative" deferred for future work.
+
+**What this commit explicitly does NOT do**, per the audit's "wide-but-deferred" recommendations:
+- Rename `Phenomena/TenseAspect/Studies/Abusch1997.lean` → `Schlenker2003.lean`. The misnaming is real (4-agent unanimous: file's content is ContextTower / Kaplan / Schlenker / von Stechow, with zero theorems anchored to anything Abusch-distinctive), but rename + content reorganization is a separate session.
+- Lift `upperLimitConstraint` to a modal-layer formulation over `WorldHistory W Time` matching Abusch's original quantification over doxastic alternatives. The faithfulness gap is now flagged in 4 docstrings.
+- Formalize the counterpart-relation isomorphism Abusch invokes in §12 for the double-access reading (the constraint that actual and belief worlds be temporally isomorphic, eliminating most of the 4 cells in the DAR diagram). Added to `TemporalDeRe.lean`'s limitations list. (Initial draft framed this as "Abusch's *Intensional Isomorphism* — second of a two-constraint pair"; corrected after primary-source verification — Abusch 1997 has ULC as the named main constraint, with the temporal-isomorphism counterpart-relation requirement as a downstream piece in §12, not a stand-alone second constraint.)
+- Formalize Abusch's res-movement as an LF rewrite. The current `TemporalDeRe` structure captures only the *output* of res-movement (a back-shifted frame with a constraint tag), not the LF mechanism.
+- Klecha-Ogihara contradiction theorem (cross-framework reconciler's other priority): substrate not in shape; deferred per audit's substrate-readiness assessment.
+
+Audit attribution: 4-agent unanimous audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler), parallel to 0.230.450's Klecha-side audit. The mathlib reviewer flagged the wrapper aliases; the integration auditor flagged the dead `open` and the bib `sources` staleness; the linguistics expert (with Heim 1994 MS PDF evidence at semanticsarchive.net) flagged the presuppositional-ULC misattribution and the modal-layer faithfulness gap; the cross-framework reconciler classified the (Klecha, Abusch) pair as a hidden-agreement at the value level and named §5c as the priority theorem to land.
+
+Build: full project (5393 jobs) green. 0.230.451
+
+## [0.230.450] - 2026-04-27
+
+### Klecha 2016 deep refactor — ULC derived from history substrate, layer violation fixed, mathlib-shape rename
+
+A 4-agent deep audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) of `Theories/Semantics/Tense/ModalTense.lean` flagged three structural issues: (1) the file's central architectural claim — "ULC derived from DOX's temporal character, not stipulated" (Klecha 2016 §4.2) — was unrealized: the proofs were `Iff.rfl` against a stipulated time-predicate, structurally indistinguishable from Abusch 1997's stipulated ULC; (2) a pre-existing layer violation in which `Core/Modality/HistoricalAlternatives.lean` imported `Theories/Semantics/Modality/TemporalConstraint.lean` (Core importing Theories, against the project layer discipline); (3) a pile of wrapper aliases doing no work (`embeddedRTConstraint` was a same-arity alias of `attitudeTemporalConstraint`, `modalEvalTimeShift` was `updateTemporal` with permuted args, the `combined_think_upper_limit` theorem carried an unused `_hShift` parameter, and 5 per-verb wrappers were 1-line renames of substrate lemmas).
+
+This commit refactors the substrate so Klecha's derivation is kernel-checked, fixes the layer violation, trims the wrappers, and renames the file to mathlib shape.
+
+**Substrate split** (fixing Core-imports-Theories): `Core/Modality/HistoricalAlternatives.lean` absorbs the framework-neutral history-time predicates that were stranded in `Theories/Semantics/Modality/TemporalConstraint.lean` — `isMaximalHistory`, `isActualHistory`, `isPastHistory`, `isFutureHistory`, `isProspectiveHistory` plus their 6 algebra theorems (complementarity, disjointness, inclusion). These are pure interval inequalities over `LE Time` / `LT Time` whose @cite{klecha-2016} attribution is for the terminology only (Klecha Definition 3); the mathematical content is just `≤`, `<`, `>`, `≥`. HA's situation-bases (`actualHistoryBase`, `futureHistoryBase`, `historicalBase`) are refactored to use the predicates by name, making the membership-implies-time-predicate connection true by construction (the bridge theorems become trivial `.2` projections). HA gains @cite{klecha-2016} and @cite{abusch-1997} in its header, plus a `## Klecha 2016: ULC derived from history structure` section explicitly attributing the substrate derivation. HA's import of TC is dropped (the layer violation), and HA gains explicit `import Mathlib.Data.Set.Basic` and `import Mathlib.Order.Defs.LinearOrder` (previously transitively inherited through TC).
+
+**Theories/Semantics/Modality/TemporalConstraint.lean slimmed**: now imports HA upstream (correct layer order), drops the moved predicates, retains only the Klecha-namespace dispatch (`attitudeTemporalConstraint`, `doxConstrainsRT`, `cirConstrainsRT`, the small consequence lemmas, and the `Attitude` / `ModalFlavor` → `ModalBaseKind` bridges). Adds two new theorems `attitudeTemporalConstraint_derived_doxastic` / `_derived_circumstantial` that make Klecha's central claim kernel-checked: `attitudeTemporalConstraint .doxastic s.time s'.time` follows by `.2` projection from `s' ∈ actualHistoryBase history s`. This is the formal contrast with Abusch's stipulated ULC — DOX-pronoun's lexical entry produces `actualHistoryBase` membership, and ULC is the time-component projection.
+
+**Theories/Semantics/Tense/ModalTense.lean → Theories/Semantics/Tense/Modality.lean** (mathlib-shape rename: `Topology/Algebra/Group.lean` convention applied → "modality content as it bears on tense"; the old `ModalTense` portmanteau was non-mathlib and redundant with the `Tense/` parent directory). Trimmed 248 LOC → 95 LOC by dropping wrappers per audit findings:
+- `embeddedRTConstraint` (same-arity, same-arg-order alias of `attitudeTemporalConstraint`) — deleted (audit M1).
+- `modalEvalTimeShift` (`updateTemporal` with permuted args) + `modalShift_gives_evalTime` (a Core lemma rebadged through the wrapper) — deleted (audit M2).
+- `combined_think_upper_limit` (carrying unused `_hShift` parameter that was structurally provable from `evalTimeIndex_grounds_shift`) + `evalTimeIndex_grounds_shift` (literal rename of `evalTime_shifts_under_embedding` from `Core/Time/Tense.lean`) — deleted (audit M3 + S2).
+- 5 per-verb wrappers (`think_blocks_future`, `think_permits_past`, `think_permits_simultaneous`, `hope_permits_future`, `hope_permits_past`) — all 1-line renames of substrate lemmas; deleted, consumers go through `dox_compatible_with_past`, `dox_incompatible_with_future`, `cir_compatible_with_future` directly (audit M1 cascade).
+- `cir_past_impossible : ¬(...)` renamed to `cir_past_iff_false : (...) ↔ False` for matrix parallelism with the other three theorems (`dox_past_iff`, `dox_npst_iff`, `cir_npst_iff`, all `↔`) (audit S1).
+- Dropped dead `open Core.Time.Reichenbach` and redundant selective `open Core.Time.Tense (GramTense)` (audit S4).
+- Docstring rewritten: the prior "What this file does NOT claim" disclaimer attributed eval-time-shifting to Abusch 2004 and Katz 2001 — the linguistics audit verified against the Klecha 2016 PDF that this is a misreading of §4.1 (Klecha's contrast is *constrain RT* vs *bind the open temporal argument*, not "shift EvalT"; Katz 2001 is the closer-to-shift target, Abusch 2004 is about non-finite-embedding orientation variation). Replaced with the correct constrain-vs-bind framing. Dropped @cite{abusch-2004} and @cite{katz-2001} (which didn't resolve in `references.bib` anyway, per linguistics audit M1). Dropped the `believe`/`pray` prose bullets (no Lean witness in the file, per audit M6). Qualified the "all of Table 1's predictions" claim (file's 4-cell matrix is DOX/CIR × PAST/NPST; Klecha's Table 1 is `have-to` × {past, present, future} × {epistemic, circumstantial} = 6 cells).
+
+**Phenomena/TenseAspect/Studies/Klecha2016.lean updated**: 11 references to deleted/renamed symbols rewritten to substrate APIs (the 7 `embeddedRTConstraint` uses become `attitudeTemporalConstraint`; the 4 verb-flavored study theorems delegate to `dox_compatible_with_past`, `dox_incompatible_with_future`, `cir_compatible_with_future` directly; `cir_past_is_impossible` adapts to the renamed `cir_past_iff_false` via `.mp`). Added imports for `Core.Modality.HistoricalAlternatives` and the new `Tense.Modality` path. New §5b "ULC derivation through the situation-base substrate" demonstrates the kernel-checked derivation at ℤ via two new theorems `ulc_via_history_base` and `future_via_history_base` — both delegate to `attitudeTemporalConstraint_derived_doxastic` / `_circumstantial`. The existing §5 `ulc_derived_from_dox : Iff.rfl` is kept (correct at the surface level); §5b shows the deeper substrate path that traces back to `actualHistoryBase` membership per Klecha eq 35a + Definition 3vi.
+
+**HeimKratzer1998.lean cleanup**: Removed the dead `open Semantics.Tense.ModalTense` at line 438 (audit integration §5: theorem `klecha_derives_modalPast` doesn't use any symbol from that namespace; the open would have been broken by the rename anyway). Updated import to `Tense.Modality`.
+
+**Stale `.lake` artifacts removed**: `.lake/build/ir/Linglib/Theories/Semantics/Tense/Klecha.{c,c.hash,setup.json}` (from a previous file rename pre-dating this work, flagged by the integration audit) and `.lake/build/ir/Linglib/Theories/Semantics/Tense/ModalTense.{c,c.hash,setup.json}` (from this rename).
+
+What this commit explicitly does NOT do, deferred for future work: aspect (PRV/be-ing per Klecha eq 26) is not formalized; de se centered histories ⟨y, u, i⟩ (Klecha §3.4 + Appendix B) are not formalized; SOT agreement as a transformation is not formalized; the cross-framework auditor's top-priority bridges (Klecha vs Ogihara contradiction theorem, Klecha vs Sharvit hidden agreement, Klecha vs Hacquard typed bridge, Klecha vs Condoravdi explicit refutation) remain as documented gaps for separate sessions; the bib hygiene fix for `abusch-2004` / `katz-2001` is rolled into the docstring rewrite (those references are dropped; bib entries can be added when a real consumer needs them).
+
+Build: full project (1798 jobs) green. 0.230.450
 
 ### Minimalism → Minimalist directory rename + Tier A audit cleanup
 
