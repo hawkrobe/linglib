@@ -121,8 +121,7 @@ theorem class2_cannot_be_final :
     quality-type roots (those lacking an individual argument) are excluded. -/
 theorem bipartite_gap_iff_no_indiv_arg (mc : MorphClass) :
     mc.canBeResultFinal = false ↔ mc = .class2 := by
-  cases mc <;> simp [MorphClass.canBeResultFinal, MorphClass.denotationType,
-    RootDenotationType.hasIndivArg]
+  cases mc <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Possessive Verbalizer -iʔ (v_have)
@@ -197,10 +196,10 @@ def MorphClass.requiresNabla : MorphClass → Bool
 
 /-- Class 1 roots are the only class that can be zero-categorized
     as verbs — they predicate directly without v_have
-    (@cite{hanink-koontz-garboden-2025} §5.3, Table 2). -/
+    (@cite{hanink-koontz-garboden-2025} §4.3 / Table 1; reaffirmed §7 Table 2). -/
 theorem only_class1_zero_categorizes (mc : MorphClass) :
     mc.requiresVHave = false ↔ mc = .class1 := by
-  cases mc <;> simp [MorphClass.requiresVHave]
+  cases mc <;> decide
 
 /-- Quality-type roots (those without an individual argument) always
     require possessive morphology. This is the paper's central claim:
@@ -214,7 +213,7 @@ theorem no_indiv_arg_forces_vhave :
     the root to quality-type, which then needs v_have. -/
 theorem nabla_implies_vhave (mc : MorphClass) :
     mc.requiresNabla = true → mc.requiresVHave = true := by
-  cases mc <;> simp [MorphClass.requiresNabla, MorphClass.requiresVHave]
+  cases mc <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Monotonicity Hypothesis Consistency
@@ -295,7 +294,12 @@ def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PCClass) :
     WasiwPCRoot :=
   { stem, gloss, morphClass := mc, dixonCat := cat }
 
-/-- Sample of Wá·šiw PC roots from Table A1 (representative subset). -/
+/-- Selected sample of Wá·šiw PC roots from @cite{hanink-koontz-garboden-2025}'s
+    Table A1 (Appendix). The full table reports 30 Class 1, 15 Class 2, and 35
+    Class 3 roots; the 36-root sample below covers ~13/11/12 from each class
+    plus the 5 attested color roots (all Class 3 per §7), so proportions are
+    not preserved — Class 2 is overrepresented and Class 1 undersampled
+    relative to the corpus. -/
 def sampleRoots : List WasiwPCRoot := [
   -- Class 1: Physical property
   mkWasiwRoot "ihuk'" "dry" .class1 .physicalProperty,
@@ -332,10 +336,11 @@ def sampleRoots : List WasiwPCRoot := [
   -- Class 2: Age
   mkWasiwRoot "ešlut'" "young" .class2 .age,
   -- Class 3: Color (all color roots are Class 3)
-  mkWasiwRoot "leleg"    "red" .class3 .color,
-  mkWasiwRoot "p'ilp'il" "blue" .class3 .color,
-  mkWasiwRoot "popo"     "white" .class3 .color,
-  mkWasiwRoot "šošoŋ"    "brown" .class3 .color,
+  mkWasiwRoot "leleg"     "red" .class3 .color,
+  mkWasiwRoot "p'ilp'il"  "blue" .class3 .color,
+  mkWasiwRoot "popo"      "white" .class3 .color,
+  mkWasiwRoot "šošoŋ"     "brown" .class3 .color,
+  mkWasiwRoot "ʔyiŋʔyiŋ"  "varicolored" .class3 .color,
   -- Class 3: Physical property
   mkWasiwRoot "k'awk'aw" "closed" .class3 .physicalProperty,
   mkWasiwRoot "k'unk'un" "bent" .class3 .physicalProperty,
@@ -344,7 +349,7 @@ def sampleRoots : List WasiwPCRoot := [
   mkWasiwRoot "lotlot"   "soft" .class3 .physicalProperty,
   -- Class 3: Dimension
   mkWasiwRoot "hamham" "light (in weight)" .class3 .dimension,
-  mkWasiwRoot "šiššiš" "heavy" .class3 .dimension
+  mkWasiwRoot "šišiš"  "heavy" .class3 .dimension
 ]
 
 -- ════════════════════════════════════════════════════
@@ -363,11 +368,11 @@ theorem color_roots_are_class3 :
     (sampleRoots.filter (·.dixonCat == .color)).all
       (·.morphClass == .class3) = true := by decide
 
-/-- Distribution across the sample. -/
+/-- Distribution across the sample (13/11/12 for Class 1/2/3). -/
 theorem class_distribution :
     (sampleRoots.filter (·.morphClass == .class1)).length = 13 ∧
     (sampleRoots.filter (·.morphClass == .class2)).length = 11 ∧
-    (sampleRoots.filter (·.morphClass == .class3)).length = 11 := by decide
+    (sampleRoots.filter (·.morphClass == .class3)).length = 12 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge Theorems
@@ -377,7 +382,7 @@ theorem class_distribution :
     argument — it is the type that forces possessive morphology. -/
 theorem statePred_unique_no_indiv :
     ∀ dt : RootDenotationType, dt.hasIndivArg = false ↔ dt = .statePred := by
-  intro dt; cases dt <;> simp [RootDenotationType.hasIndivArg]
+  intro dt; cases dt <;> decide
 
 /-- Class 1 and Class 3 share denotation type (both `indivStatePred`). -/
 theorem class1_class3_same_denotation :
@@ -386,7 +391,7 @@ theorem class1_class3_same_denotation :
 /-- Class 2 is the only class with `statePred` denotation type. -/
 theorem class2_unique_statePred (mc : MorphClass) :
     mc.denotationType = .statePred ↔ mc = .class2 := by
-  cases mc <;> simp [MorphClass.denotationType]
+  cases mc <;> decide
 
 /-- The three key predictions form a single biconditional over
     morphological class, all derived from `hasIndivArg`:
@@ -399,7 +404,6 @@ theorem class2_unique_statePred (mc : MorphClass) :
 theorem class2_characterization (mc : MorphClass) :
     mc.denotationType = .statePred ↔
     (mc.canBeResultFinal = false ∧ mc = .class2) := by
-  cases mc <;> simp [MorphClass.denotationType, MorphClass.canBeResultFinal,
-    RootDenotationType.hasIndivArg]
+  cases mc <;> decide
 
 end HaninkKoontzGarboden2025

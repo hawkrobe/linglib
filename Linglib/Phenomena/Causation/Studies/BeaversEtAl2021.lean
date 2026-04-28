@@ -375,15 +375,14 @@ theorem roundtrip_right (rc : CoSRootClass) :
 theorem change_denial_matches_entailsChange (rc : CoSRootClass) :
     changeDenialTest rc = .positive ↔
     (fromCoSRootClass rc).entailsChange = false := by
-  cases rc <;> simp [changeDenialTest, fromCoSRootClass, RootType.entailsChange]
+  cases rc <;> decide
 
 /-- The empirical `restitutiveAgainTest` agrees with the theory's
     `allowsRestitutiveAgain`. -/
 theorem restitutive_again_matches (rc : CoSRootClass) :
     restitutiveAgainTest rc = .positive ↔
     (fromCoSRootClass rc).allowsRestitutiveAgain = true := by
-  cases rc <;> simp [restitutiveAgainTest, fromCoSRootClass,
-    RootType.allowsRestitutiveAgain]
+  cases rc <;> decide
 
 /-- Both diagnostics jointly align with the full semantic correlate package.
     The bridge form of `semantic_determines_morphosyntax`. -/
@@ -391,8 +390,7 @@ theorem diagnostics_align_with_theory (rc : CoSRootClass) :
     let rt := fromCoSRootClass rc
     (changeDenialTest rc = .negative ↔ rt.entailsChange = true) ∧
     (restitutiveAgainTest rc = .negative ↔ rt.allowsRestitutiveAgain = false) := by
-  cases rc <;> simp [changeDenialTest, restitutiveAgainTest, fromCoSRootClass,
-    RootType.entailsChange, RootType.allowsRestitutiveAgain]
+  cases rc <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Simple Stative Prediction ↔ Attestation
@@ -454,8 +452,7 @@ theorem unattested_type_matches_complementarity :
     -- Theory: verbal and stative markedness always differ
     (∀ rt : RootType, verbalMarkedness rt ≠ stativeMarkedness rt) := by
   refine ⟨by decide, ?_⟩
-  intro rt; cases rt <;> simp [verbalMarkedness, stativeMarkedness,
-    RootType.entailsChange]
+  intro rt; cases rt <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 13. Fragment Grounding: Chuj Roots Instantiate Theory (@cite{coon-2019})
