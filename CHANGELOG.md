@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.495] - 2026-04-28
+
+### Features/InformationStructure mathlib-discipline polish
+
+Audit-deferred mathlib-style cleanup of `Features/InformationStructure.lean` after the 3-commit dump-bag dissolution (0.230.488/491/493). All items flagged by the mathlib-reviewer audit pass:
+
+- **`Theme.marked` and `Rheme.marked` Bool fields DELETED** (per CLAUDE.md "don't add features beyond what the task requires"). The audit had recommended Bool→Prop+Decidable migration or upgrading to a `Marking` enum; verification showed both fields are write-only — set in 4 consumer construction sites (Rooth1992 lines 135, 139, 182, 183; CCG/Intonation lines 257-262, 283-284) but never read anywhere. Per mathlib hygiene, dead fields get deleted, not promoted. If a real consumer needs prosodic-marking metadata in the future, they can add it back richer (e.g., as `Option AccentType` or a structured `Marking` enum tied to ToBI categories), grounded in actual demand. Consumer construction sites updated: 4 `marked := ...` field assignments removed in Rooth1992; 6 anonymous-constructor positions (`⟨expr, true/false⟩`) reduced to single-position (`⟨expr⟩`) in CCG/Intonation. `Theme P` and `Rheme P` are now single-field `{ content : P }` wrappers — borderline-vacuous but kept distinct since they're named through `InfoStructure`.
+
+- **Section comments migrated to mathlib doc-comment style** (`-- Theme and Rheme` → `/-! ## Theme and Rheme -/`). 6 sections updated. The mathlib invariant: section headers visible to doc-gen use `/-! ## X -/`; `--` comments don't render. This was item #9 on the mathlib-reviewer's review.
+
+- **`§2 identifies four domains` removed from `FIPApplication` docstring per CLAUDE.md "never cite section/equation numbers from memory"**. Replaced with content description ("the four constructors below pick out the families of focus uses Rooth surveys") + UNVERIFIED disclaimer.
+
+- **`JudgmentType` end-of-line case comments converted to docstrings**. `categorical  -- subject-predicate; ψ-subject is Topic` → `/-- Subject-predicate; ψ-subject is Topic -/ | categorical`. Doc-gen visibility.
+
+- **`Decidable JudgmentType.HasψSubject` instance shape updated**. `instance : DecidablePred JudgmentType.HasψSubject := fun _ => inferInstanceAs (Decidable (_ = _))` → `instance (j : JudgmentType) : Decidable j.HasψSubject := inferInstanceAs (Decidable (j = .categorical))` — explicit binding of the predicate-argument and the equality target, less reliance on placeholder unification. (`fun _ => decide` was tried first but `decide` returns Bool, not Decidable — kept the `inferInstanceAs` shape.)
+
+- **Historical "deleted code" comments removed**. The two paragraph-length comments documenting the `HasInfoStructure` typeclass deletion (0.230.491) and PolarityMarking relocation (0.230.493) — which lived where the deleted code used to be — are removed per CLAUDE.md "Don't reference the current task, fix, or callers... those belong in the PR description and rot as the codebase evolves." The CHANGELOG entries already document the moves; carrying that prose in the source file violates the discipline.
+
+**Files**:
+- MODIFIED: `Linglib/Features/InformationStructure.lean` (~70 LOC removed: 2 Bool fields + 6 section-comment → doc-comment + 2 historical-code comments + UNVERIFIED §2 fix + Decidable shape).
+- MODIFIED: `Linglib/Phenomena/Focus/Studies/Rooth1992.lean` (4 `marked := ...` field-assignment sites updated).
+- MODIFIED: `Linglib/Theories/Syntax/CCG/Intonation.lean` (6 anonymous-constructor positions tightened from 2-arg to 1-arg).
+
+**Build**: 1821-job affected dependency cone (Features/InformationStructure + Rooth1992 + CCG/Intonation + DiscourseStatus consumers in BackgroundedIslands/CartnerEtAl2026/LuPanDegen2025 + JudgmentType consumer in AissenPolian2025 + transitive closures) green.
+
 ## [0.230.494] - 2026-04-27
 
 ### IKW Discourse *only* arc: careful-audit follow-up — fabricated examples + Mandarin pinyin typo + Hungarian 29c

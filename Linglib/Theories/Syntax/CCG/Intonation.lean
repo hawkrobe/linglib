@@ -254,12 +254,12 @@ def extractInfoStructure (phrases : List ProsodicPhrase)
   let rhemes := phrases.filter (·.tune.isRheme)
   match themes, rhemes with
   | [t], [r] => some {
-      theme := ⟨t.deriv, true⟩
-      rheme := ⟨r.deriv, true⟩
+      theme := ⟨t.deriv⟩
+      rheme := ⟨r.deriv⟩
     }
   | [], [r] => some {
-      theme := ⟨r.deriv, false⟩  -- unmarked theme
-      rheme := ⟨r.deriv, true⟩
+      theme := ⟨r.deriv⟩
+      rheme := ⟨r.deriv⟩
     }
   | _, _ => none  -- ambiguous or ill-formed
 
@@ -280,8 +280,8 @@ def infoStructureTotal (phrases : List ProsodicPhrase) : InfoStructure ProsodicD
   match extractInfoStructure phrases with
   | some info => info
   | none => {  -- default: everything is rheme
-      theme := ⟨.lex ⟨"", S, .null⟩, false⟩
-      rheme := ⟨.lex ⟨"", S, .null⟩, false⟩
+      theme := ⟨.lex ⟨"", S, .null⟩⟩
+      rheme := ⟨.lex ⟨"", S, .null⟩⟩
     }
 
 -- Example: "FRED ate the BEANS"

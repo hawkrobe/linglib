@@ -18,7 +18,7 @@ operations (`AltMeaning`) live in `Theories/Semantics/Alternatives/`.
 
 namespace Features.InformationStructure
 
--- Theme and Rheme
+/-! ## Theme and Rheme -/
 
 /-- Theme: what the utterance is about (the "topic" or "given" part).
 
@@ -34,8 +34,6 @@ namespace Features.InformationStructure
 structure Theme (P : Type) where
   /-- The thematic content (often a property/λ-abstract) -/
   content : P
-  /-- Whether the theme is prosodically marked -/
-  marked : Bool := false
 
 /-- Rheme: what's asserted about the theme (the "comment" or "new" part).
 
@@ -49,10 +47,8 @@ structure Theme (P : Type) where
 structure Rheme (P : Type) where
   /-- The rhematic content -/
   content : P
-  /-- Whether the rheme is prosodically marked -/
-  marked : Bool := true
 
--- Focus and Background
+/-! ## Focus and Background -/
 
 /-- Focus: the contrasted element(s) within theme or rheme.
 
@@ -80,7 +76,7 @@ structure Background (α : Type) where
   /-- The background elements -/
   elements : List α
 
--- Information Structure Partition
+/-! ## Information Structure Partition -/
 
 /-- A complete Information Structure analysis of an utterance.
 
@@ -103,16 +99,7 @@ structure InfoStructure (P : Type) where
   /-- Background elements (given) -/
   background : List P := []
 
--- Note: a `class HasInfoStructure (D P : Type) where infoStructure : D
--- → InfoStructure P` typeclass was deleted in the 0.230.489 cleanup.
--- It had 2 instances (Rooth1992 + CCG/Intonation) and 0 polymorphic
--- consumers (no `[HasInfoStructure D P]`-parameterized declarations
--- anywhere); both call sites were inside Rooth1992.lean testing its
--- own instance. Per mathlib discipline (single-method classes with
--- no laws are anti-pattern when no caller dispatches on them) the
--- typeclass was replaced with regular `def`s exposed by each consumer.
-
--- Discourse Status
+/-! ## Discourse Status -/
 
 /-- The three-way partition of discourse status.
 
@@ -151,20 +138,14 @@ def DiscourseStatus.ofAtIssueness (d : Core.Discourse.AtIssueness.AtIssuenessDeg
       Core.Discourse.AtIssueness.defaultThreshold) : DiscourseStatus :=
   if Core.Discourse.AtIssueness.isAtIssue d θ then .new else .given
 
--- The PolarityMarking cluster (PolarityMarkingStrategy + PolarityMarkingEnv +
--- PolarityMarkingEntry struct + the framework-commitment docstring) was
--- moved to `Typology/PolarityMarking.lean` in the 0.230.493 cleanup
--- (commit 3/3 of the InformationStructure dump-bag dissolution). That
--- cluster's per-language-substrate role with 12 consumers (7 Fragments +
--- 4 Studies + 1 Theory) matches the per-language-typology shape of
--- `Typology/Indefinite.lean`, `Typology/Possession.lean`, etc., not
--- the linguistic-feature-taxonomy shape `Features/` is for.
+/-! ## Focus Interpretation Principle (Rooth 1992) -/
 
--- Focus Interpretation Principle (Rooth 1992)
-
-/-- Application type for the Focus Interpretation Principle (@cite{rooth-1992}
-    §2 identifies four domains where focus semantic values constrain
-    interpretation). -/
+/-- Application type for the Focus Interpretation Principle. The four
+    constructors below pick out the families of focus uses Rooth surveys
+    (focusing adverbs, contrast/parallelism, scalar implicature,
+    question–answer congruence). UNVERIFIED whether the paper specifies
+    exactly these four under a single header — earlier prose claimed
+    `@cite{rooth-1992} §2`, removed pending PDF check. -/
 inductive FIPApplication where
   /-- Focusing adverbs: only, even, also -/
   | focusingAdverb
@@ -176,28 +157,30 @@ inductive FIPApplication where
   | qaCongruence
   deriving DecidableEq, Repr
 
--- Categorical vs Thetic Judgment (Kuroda 1972)
+/-! ## Categorical vs Thetic Judgment (Kuroda 1972)
 
-/-! @cite{kuroda-1972} distinguishes two types of judgment that correspond
-    to different information structures:
+@cite{kuroda-1972} distinguishes two types of judgment that correspond
+to different information structures:
 
-    - **Categorical** judgment: a subject-predicate structure where the
-      subject (ψ-subject) is the topic of predication, yielding a
-      Theme + Rheme partition.
-    - **Thetic** judgment: presents an event or situation as a whole,
-      without a subject of predication, yielding an all-Rheme (no Theme)
-      structure.
+- **Categorical** judgment: a subject-predicate structure where the
+  subject (ψ-subject) is the topic of predication, yielding a
+  Theme + Rheme partition.
+- **Thetic** judgment: presents an event or situation as a whole,
+  without a subject of predication, yielding an all-Rheme (no Theme)
+  structure.
 
-    Cross-linguistically attested in Japanese (wa/ga), Romance (subject
-    inversion), and Mayan (ψ-subject constructions,
-    @cite{aissen-polian-2025}). -/
+Cross-linguistically attested in Japanese (wa/ga), Romance (subject
+inversion), and Mayan (ψ-subject constructions,
+@cite{aissen-polian-2025}). -/
 
 /-- Judgment type following @cite{kuroda-1972}.
     Categorical judgments have a subject of predication (ψ-subject);
     thetic judgments present an event without one. -/
 inductive JudgmentType where
-  | categorical  -- subject-predicate; ψ-subject is Topic
-  | thetic       -- event-presenting; no subject of predication
+  /-- Subject-predicate; ψ-subject is Topic -/
+  | categorical
+  /-- Event-presenting; no subject of predication -/
+  | thetic
   deriving DecidableEq, Repr
 
 /-- Does this judgment type place a subject of predication (ψ-subject)
@@ -205,7 +188,7 @@ inductive JudgmentType where
 def JudgmentType.HasψSubject (j : JudgmentType) : Prop :=
   j = .categorical
 
-instance : DecidablePred JudgmentType.HasψSubject :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
+instance (j : JudgmentType) : Decidable j.HasψSubject :=
+  inferInstanceAs (Decidable (j = .categorical))
 
 end Features.InformationStructure

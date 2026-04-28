@@ -132,11 +132,11 @@ def qaBackground : Background String :=
     Rooth §2.4: in a Q-A pair, the theme corresponds to the
     question's content. -/
 def qaTheme : Theme String :=
-  { content := "λx. x ate the beans", marked := false }
+  { content := "λx. x ate the beans" }
 
 /-- Rheme: the answer "Fred". -/
 def qaRheme : Rheme String :=
-  { content := "Fred", marked := true }
+  { content := "Fred" }
 
 /-- Full information structure of "FRED ate the beans"
     in response to "Who ate the beans?" -/
@@ -179,8 +179,8 @@ structure FocusedSentence where
     the typeclass shape was deleted in the 0.230.489 cleanup since no
     caller dispatched on it.) -/
 def FocusedSentence.infoStructure (s : FocusedSentence) : InfoStructure String :=
-  { theme := { content := "background", marked := false }
-  , rheme := { content := s.focusedWord, marked := true }
+  { theme := { content := "background" }
+  , rheme := { content := s.focusedWord }
   , foci := [s.focusedWord]
   , background := s.backgroundWords }
 
