@@ -6,10 +6,8 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Features.InformationStructure
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
-import Linglib.Fragments.English.Typology
 import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.German.V2
-import Linglib.Fragments.German.Typology
 import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Danish.V2
 

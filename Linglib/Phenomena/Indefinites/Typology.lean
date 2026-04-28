@@ -1,8 +1,7 @@
-import Linglib.Typology.LanguageProfile
 import Linglib.Typology.Indefinite
 import Linglib.Datasets.WALS.Features.F46A
-import Linglib.Fragments.English.Typology
-import Linglib.Fragments.German.Typology
+import Linglib.Fragments.English.Indefinites
+import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.Yakut.Indefinites
 import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Kannada.Indefinites
@@ -100,22 +99,15 @@ theorem kannada_matches_wals_F46A :
 -- §2. Sample
 -- ============================================================================
 
-/-- Curated 6-language sample of `LanguageProfile`s with populated
-    indefinite paradigms. English and German pull additional WALS-derived
-    fields via their Fragment Typology files; the other four are inlined
-    as `LanguageProfile.empty` + `withIndefinites` since their Fragment
-    Typology files don't yet exist. -/
-def fragmentSample : List LanguageProfile :=
-  [ Fragments.English.typology
-  , Fragments.German.typology
-  , (LanguageProfile.empty "sah" "Yakut").withIndefinites
-      Fragments.Yakut.Indefinites.paradigm
-  , (LanguageProfile.empty "lat" "Latin").withIndefinites
-      Fragments.Latin.Indefinites.paradigm
-  , (LanguageProfile.empty "kan" "Kannada").withIndefinites
-      Fragments.Kannada.Indefinites.paradigm
-  , (LanguageProfile.empty "rus" "Russian").withIndefinites
-      Fragments.Slavic.Russian.Indefinites.paradigm
+/-- Curated 6-language sample of `IndefiniteParadigm`s for cross-paradigm
+    comparison. -/
+def fragmentSample : List IndefiniteParadigm :=
+  [ Fragments.English.Indefinites.paradigm
+  , Fragments.German.Indefinites.paradigm
+  , Fragments.Yakut.Indefinites.paradigm
+  , Fragments.Latin.Indefinites.paradigm
+  , Fragments.Kannada.Indefinites.paradigm
+  , Fragments.Slavic.Russian.Indefinites.paradigm
   ]
 
 -- ============================================================================

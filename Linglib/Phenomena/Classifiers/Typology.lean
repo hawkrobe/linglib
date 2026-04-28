@@ -2,17 +2,17 @@ import Linglib.Core.Lexical.NounCategorization
 import Linglib.Typology.ClassifierSystem
 import Linglib.Datasets.WALS.Features.F55A
 import Linglib.Fragments.French.Nouns
-import Linglib.Fragments.French.Typology
+import Linglib.Fragments.French.ClassifierSystem
 import Linglib.Fragments.Mandarin.Nouns
-import Linglib.Fragments.Mandarin.Typology
+import Linglib.Fragments.Mandarin.ClassifierSystem
 import Linglib.Fragments.Japanese.Nouns
-import Linglib.Fragments.Japanese.Typology
+import Linglib.Fragments.Japanese.ClassifierSystem
 import Linglib.Fragments.Italian.Nouns
-import Linglib.Fragments.Italian.Typology
-import Linglib.Fragments.Xhosa.Typology
-import Linglib.Fragments.Shona.Typology
-import Linglib.Fragments.Swahili.Typology
-import Linglib.Fragments.Armenian.Typology
+import Linglib.Fragments.Italian.ClassifierSystem
+import Linglib.Fragments.Xhosa.ClassifierSystem
+import Linglib.Fragments.Shona.ClassifierSystem
+import Linglib.Fragments.Swahili.ClassifierSystem
+import Linglib.Fragments.Armenian.ClassifierSystem
 
 /-!
 # Classifier Typology
@@ -26,8 +26,8 @@ Cross-linguistic typology of noun categorization systems following
 The schema (`NounCategorizationSystem`) lives in
 `Typology.ClassifierSystem`, parallel to
 `Typology.WordOrder`/`Adposition`. Per-language data lives in each
-language's `Fragments/{Lang}/Typology.lean`, accessed through
-`LanguageProfile.classifierSystem`.
+language's `Fragments/{Lang}/ClassifierSystem.lean` as a
+`def classifierSystem : NounCategorizationSystem`.
 
 This file is the cross-linguistic *aggregation* layer: it pulls system
 descriptions from the seven currently-formalized languages (French,
@@ -36,19 +36,7 @@ properties from @cite{aikhenvald-2000} and @cite{greenberg-1972} *over
 that sample*. None of the theorems below are universals over the
 abstract `NounCategorizationSystem` type — they are sample-restricted
 empirical claims, and adding a counterexample language to the sample is
-the right way to falsify them. (Earlier versions stipulated several
-`axiom` declarations that did make universal claims; those were
-soundness landmines and have been removed.)
-
-## Convenience extractors
-
-Per-language `def` extractors below use `csOf`, which wraps `Option.getD`
-with a sentinel default whose `family` is `"<missing>"` and whose other
-fields are intentionally weird. If a Fragment ever drops its
-`classifierSystem` field, every per-language theorem below will fail
-loudly: the `decide` proof can't unify the sentinel against the
-expected real values. (`Option.get!` was tried first but doesn't reduce
-through `decide`.)
+the right way to falsify them.
 -/
 
 namespace Phenomena.Classifiers.Typology
@@ -57,27 +45,17 @@ open Core.NounCategorization
 open _root_.Typology
 
 -- ============================================================================
--- §1: Per-language convenience extractors
+-- §1: Per-language convenience aliases
 -- ============================================================================
 
-/-- Extract a `NounCategorizationSystem` from a `LanguageProfile`'s
-    `classifierSystem` field. The fallback uses sentinel values that
-    don't match any realistic Fragment, so dropped fields surface as
-    failed `decide` proofs in the per-language theorems below. -/
-private def csOf (p : Typology.LanguageProfile) : NounCategorizationSystem :=
-  p.classifierSystem.getD
-    { family := "<missing>", classifierType := .nounClassifier
-    , scopes := [], assignment := .semantic, realizations := []
-    , hasAgreement := false, inventorySize := 0, isObligatory := false }
-
-abbrev french          := csOf Fragments.French.typology
-abbrev italian         := csOf Fragments.Italian.typology
-abbrev mandarin        := csOf Fragments.Mandarin.typology
-abbrev japanese        := csOf Fragments.Japanese.typology
-abbrev xhosa           := csOf Fragments.Xhosa.typology
-abbrev shona           := csOf Fragments.Shona.typology
-abbrev swahili         := csOf Fragments.Swahili.typology
-abbrev westernArmenian := csOf Fragments.Armenian.typology
+abbrev french          := Fragments.French.classifierSystem
+abbrev italian         := Fragments.Italian.classifierSystem
+abbrev mandarin        := Fragments.Mandarin.classifierSystem
+abbrev japanese        := Fragments.Japanese.classifierSystem
+abbrev xhosa           := Fragments.Xhosa.classifierSystem
+abbrev shona           := Fragments.Shona.classifierSystem
+abbrev swahili         := Fragments.Swahili.classifierSystem
+abbrev westernArmenian := Fragments.Armenian.classifierSystem
 
 -- ============================================================================
 -- §2: Per-language sanity checks
@@ -107,9 +85,7 @@ theorem classifier_systems_have_default :
 -- ============================================================================
 
 /-- The seven systems formalized so far (4 Indo-European + 2 East Asian + 3
-    Bantu). Built from per-language `LanguageProfile.classifierSystem`
-    fields via `filterMap`, so adding a language to the import list above
-    automatically extends the sample.
+    Bantu).
 
     Western Armenian is intentionally *excluded*: it is non-obligatory
     with no unmarked default, and the @cite{aikhenvald-2000}-style
@@ -117,10 +93,7 @@ theorem classifier_systems_have_default :
     are about the obligatory-classifier subspace. Armenian appears
     separately in `optionalClassifierSystems`. -/
 def allSystems : List NounCategorizationSystem :=
-  [Fragments.French.typology, Fragments.Italian.typology,
-   Fragments.Mandarin.typology, Fragments.Japanese.typology,
-   Fragments.Xhosa.typology, Fragments.Shona.typology,
-   Fragments.Swahili.typology].filterMap (·.classifierSystem)
+  [french, italian, mandarin, japanese, xhosa, shona, swahili]
 
 /-- Languages whose Fragment is in `allSystems` are all obligatory. -/
 theorem sample_all_obligatory :

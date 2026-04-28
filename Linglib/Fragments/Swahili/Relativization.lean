@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 import Linglib.Fragments.Swahili.Basic
 
 /-!
@@ -194,3 +195,19 @@ def NonTriggeringWord.triggersResumption : NonTriggeringWord → Bool
   | _ => false
 
 end Fragments.Swahili.Relativization
+
+namespace Fragments.Swahili
+
+/-- Swahili relativization profile (typological summary). Surfaced at the
+    `Fragments.Swahili` namespace level (not nested under `.Relativization`)
+    for consistency with the per-language `Fragments.X.relativization`
+    convention used in `Phenomena/Relativization/Typology.lean`. -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .pronounRetention
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap on subjects (with amba-); resumptive on obliques; "
+          ++ "relative marker agrees in noun class" }
+
+end Fragments.Swahili

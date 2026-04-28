@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Malagasy Relativization Fragment
@@ -32,5 +33,14 @@ def relGap : RelClauseMarker :=
 
 /-- All Malagasy relative clause markers. -/
 def relMarkers : List RelClauseMarker := [relGap]
+
+/-- Malagasy relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .notRelativizable
+  , rcPosition := .postNominal
+  , lowestRelativizable := .subject
+  , notes := "Gap on subject only; voice alternation needed for "
+          ++ "non-subject relativization; Austronesian pattern" }
 
 end Fragments.Malagasy

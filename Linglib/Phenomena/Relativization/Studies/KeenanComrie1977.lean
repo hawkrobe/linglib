@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Relativization.Typology
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Arabic.Relativization
@@ -68,7 +67,6 @@ strategy split with serial-verb-mediated obliques (Yoruba).
 
 namespace Phenomena.Relativization.Studies.KeenanComrie1977
 
-open Phenomena.Relativization.Typology
 open Core
 
 -- ============================================================================
@@ -489,46 +487,46 @@ def KCProfile.lowestCovered (p : KCProfile) : AHPosition :=
   else .subject
 
 /-- English: KCProfile covers all 6 positions (lowestCovered = OCOMP),
-    matching `Typology.english.lowestRelativizable = .objComparison`. -/
+    matching `Fragments.English.relativization.lowestRelativizable = .objComparison`. -/
 theorem english_kc_matches_wals :
     english.lowestCovered = .objComparison ∧
-    Typology.english.lowestRelativizable = .objComparison := by decide
+    Fragments.English.relativization.lowestRelativizable = .objComparison := by decide
 
 /-- Welsh: KCProfile covers down to OCOMP (via +case strategy),
     though WALS records `.oblique` (Ch 123 only asks about obliques). -/
 theorem welsh_kc_covers_deeper_than_wals :
     welsh.lowestCovered = .objComparison ∧
-    Typology.welsh.lowestRelativizable = .oblique ∧
+    Fragments.Welsh.relativization.lowestRelativizable = .oblique ∧
     AHPosition.moreAccessible .oblique .objComparison := by decide
 
 /-- Korean: KCProfile covers SU-OBL + GEN, lowest = GEN.
     WALS records `.oblique` (doesn't track GEN). -/
 theorem korean_kc_covers_deeper_than_wals :
     korean.lowestCovered = .genitive ∧
-    Typology.korean.lowestRelativizable = .oblique := by decide
+    Fragments.Korean.relativization.lowestRelativizable = .oblique := by decide
 
 /-- Malagasy: both systems agree — subjects only. -/
 theorem malagasy_kc_matches_wals :
     malagasy.lowestCovered = .subject ∧
-    Typology.malagasy.lowestRelativizable = .subject := by decide
+    Fragments.Malagasy.relativization.lowestRelativizable = .subject := by decide
 
 /-- Finnish: KCProfile covers SU-GEN (via joka), WALS records `.oblique`.
     Both agree that Finnish covers at least obliques. -/
 theorem finnish_kc_matches_wals :
     finnish.lowestCovered = .genitive ∧
-    Typology.finnish.lowestRelativizable = .oblique := by decide
+    Fragments.Finnish.relativization.lowestRelativizable = .oblique := by decide
 
 /-- Hebrew: KCProfile covers all positions via +case (DO-OCOMP).
     WALS records `.oblique`. -/
 theorem hebrew_kc_covers_deeper_than_wals :
     hebrew.lowestCovered = .objComparison ∧
-    Typology.hebrew.lowestRelativizable = .oblique := by decide
+    Fragments.Hebrew.relativization.lowestRelativizable = .oblique := by decide
 
 /-- Arabic: KCProfile covers all positions (SU via gap, DO-OCOMP via resumptive).
     WALS records `.oblique`. -/
 theorem arabic_kc_covers_deeper_than_wals :
     arabic.lowestCovered = .objComparison ∧
-    Typology.arabic.lowestRelativizable = .oblique := by decide
+    Fragments.Arabic.relativization.lowestRelativizable = .oblique := by decide
 
 /-- Yoruba: both systems agree at GEN. K&C 1977 Table 1's `*` codes for
     IO/OBL/OComp reflect serial-verb-mediated recasting (an analytical move),
@@ -538,7 +536,7 @@ theorem arabic_kc_covers_deeper_than_wals :
     relTiGenitive marker) coincide. -/
 theorem yoruba_kc_matches_wals :
     yoruba.lowestCovered = .genitive ∧
-    Typology.yoruba.lowestRelativizable = .genitive := by decide
+    Fragments.Yoruba.relativization.lowestRelativizable = .genitive := by decide
 
 /-- **Systematic coverage agreement**: for every language in our sample
     that also appears in the WALS typology, the KCProfile covers at
@@ -547,21 +545,21 @@ theorem yoruba_kc_matches_wals :
     cover — Table 1 is strictly more detailed. -/
 theorem kc_at_least_as_detailed_as_wals :
     -- English
-    english.lowestCovered.rank ≤ Typology.english.lowestRelativizable.rank ∧
+    english.lowestCovered.rank ≤ Fragments.English.relativization.lowestRelativizable.rank ∧
     -- Welsh
-    welsh.lowestCovered.rank ≤ Typology.welsh.lowestRelativizable.rank ∧
+    welsh.lowestCovered.rank ≤ Fragments.Welsh.relativization.lowestRelativizable.rank ∧
     -- Korean
-    korean.lowestCovered.rank ≤ Typology.korean.lowestRelativizable.rank ∧
+    korean.lowestCovered.rank ≤ Fragments.Korean.relativization.lowestRelativizable.rank ∧
     -- Malagasy
-    malagasy.lowestCovered.rank ≤ Typology.malagasy.lowestRelativizable.rank ∧
+    malagasy.lowestCovered.rank ≤ Fragments.Malagasy.relativization.lowestRelativizable.rank ∧
     -- Finnish
-    finnish.lowestCovered.rank ≤ Typology.finnish.lowestRelativizable.rank ∧
+    finnish.lowestCovered.rank ≤ Fragments.Finnish.relativization.lowestRelativizable.rank ∧
     -- Hebrew
-    hebrew.lowestCovered.rank ≤ Typology.hebrew.lowestRelativizable.rank ∧
+    hebrew.lowestCovered.rank ≤ Fragments.Hebrew.relativization.lowestRelativizable.rank ∧
     -- Arabic
-    arabic.lowestCovered.rank ≤ Typology.arabic.lowestRelativizable.rank ∧
+    arabic.lowestCovered.rank ≤ Fragments.Arabic.relativization.lowestRelativizable.rank ∧
     -- Yoruba
-    yoruba.lowestCovered.rank ≤ Typology.yoruba.lowestRelativizable.rank := by
+    yoruba.lowestCovered.rank ≤ Fragments.Yoruba.relativization.lowestRelativizable.rank := by
   decide
 
 end Phenomena.Relativization.Studies.KeenanComrie1977

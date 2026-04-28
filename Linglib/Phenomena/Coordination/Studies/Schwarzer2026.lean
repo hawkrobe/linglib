@@ -1,7 +1,6 @@
 import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
-import Linglib.Fragments.German.Typology
 import Linglib.Fragments.German.WordOrder
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Features.Coordination

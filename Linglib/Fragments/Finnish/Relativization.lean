@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Finnish Relativization Fragment
@@ -45,5 +46,13 @@ def relParticipial : RelClauseMarker :=
 
 /-- All Finnish relative clause markers. -/
 def relMarkers : List RelClauseMarker := [relJoka, relParticipial]
+
+/-- Finnish relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .relativePronoun
+  , oblStrategy := .relativePronoun
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Rel pronoun joka (declines for case); post-nominal RC" }
 
 end Fragments.Finnish

@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Welsh Relativization Fragment
@@ -41,5 +42,14 @@ def relParticleY : RelClauseMarker :=
 
 /-- All Welsh relative clause markers. -/
 def relMarkers : List RelClauseMarker := [relParticleA, relParticleY]
+
+/-- Welsh relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .pronounRetention
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap on subject (particle a); resumptive on obliques; "
+          ++ "VSO language with post-nominal RC" }
 
 end Fragments.Welsh

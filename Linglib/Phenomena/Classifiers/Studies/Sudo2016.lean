@@ -329,22 +329,16 @@ theorem sudo_disagrees_with_chierchia_on_japanese :
 
 Sudo's blocking-principle account (eqs. 10/15/16) presupposes that the
 target language has *obligatory overt classifiers in the lexicon* —
-that is what blocks the silent ∪-operator. The general predicate
-`Typology.LanguageProfile.hasObligatoryClassifierSystem` is the
-input-shape requirement; Sudo's framework applies iff a language
-satisfies it. Languages where numerals combine with bare nouns
-(no obligatory CL) do not provide the right input.
+that is what blocks the silent ∪-operator. A language's
+`NounCategorizationSystem.isObligatory` field is the input-shape
+requirement; Sudo's framework applies iff that field is `true`.
+Languages where numerals combine with bare nouns (no obligatory CL)
+do not provide the right input. -/
 
-Defined at the `LanguageProfile` level (not paper-specific) so older
-study files like `BaleKhanjian2014` can use it without violating the
-chronology rule (study files cannot import newer study files). -/
-
-/-- Sudo's framework applies to language `p` iff `p` has obligatory
-    classifier morphology — the lexical input that Sudo's silent
-    ∪-operator gets blocked by. Defined as a local alias for
-    `LanguageProfile.hasObligatoryClassifierSystem` so the connection
-    to Sudo's framework is greppable. -/
-abbrev frameworkApplies (p : Typology.LanguageProfile) : Prop :=
-  p.hasObligatoryClassifierSystem
+/-- Sudo's framework applies to a language with classifier system `cs`
+    iff `cs.isObligatory` — the lexical input that Sudo's silent
+    ∪-operator gets blocked by. -/
+abbrev frameworkApplies (cs : Typology.NounCategorizationSystem) : Prop :=
+  cs.isObligatory = true
 
 end Sudo2016

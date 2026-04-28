@@ -4,6 +4,44 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.500] - 2026-04-28
+
+### `LanguageProfile` aggregator deletion + `Phenomena/Relativization/Typology.lean` dissolution (Phase 2-3)
+
+Completes the typology-aggregator dissolution started in 0.230.497. Five remaining single-field consumers were migrated to source from per-phenomenon Fragment files; per-language classifier and relativization data was extracted from the `Fragments/{Lang}/Typology.lean` aggregators into per-phenomenon Fragment files; the aggregator infrastructure was deleted (24 aggregator files + `Typology/LanguageProfile.lean`, ~240 LOC); `Phenomena/Relativization/Typology.lean` was dissolved with its WALS-aggregate findings moving to `Typology/Relativization/Defs.lean` (new substrate subdir).
+
+**Phase 2-trivial** — drop `LanguageProfile` from 3 consumers without per-language data extraction:
+
+- `Phenomena/Indefinites/Typology.lean`: drop `LanguageProfile` import + 2 Fragment Typology aggregator imports; `fragmentSample` retyped from `List LanguageProfile` to `List IndefiniteParadigm` (sources `Fragments.X.Indefinites.paradigm` directly). The `LanguageProfile.empty.withIndefinites` wrapper had no readers.
+- `Phenomena/Plurals/Studies/BaleKhanjian2014.lean`: `Fragments.Armenian.typology.hasObligatoryClassifierSystem` → `Fragments.Armenian.classifierSystem.isObligatory = false`.
+- `Phenomena/Classifiers/Studies/Sudo2016.lean`: `frameworkApplies (p : LanguageProfile) := p.hasObligatoryClassifierSystem` → `frameworkApplies (cs : NounCategorizationSystem) := cs.isObligatory = true`. Zero downstream consumers, so retype is purely cosmetic.
+
+**Phase 2-medium** — extract `NounCategorizationSystem` per language + rewrite `Phenomena/Classifiers/Typology.lean`:
+
+- 8 new `Fragments/{Lang}/ClassifierSystem.lean` files (Armenian/French/Italian/Mandarin/Japanese/Xhosa/Shona/Swahili) each defining `def classifierSystem : NounCategorizationSystem` with the data verbatim from the (now-deleted) aggregator. Mandarin/Japanese transitively import their lexical inventories (`Classifiers.lean`/`Classifier.lean`) for `inventorySize` and `preferredSemantics`.
+- `Phenomena/Classifiers/Typology.lean`: 8 per-language `csOf Fragments.X.typology` aliases collapsed to direct `Fragments.X.classifierSystem` aliases; `csOf` plumbing + sentinel-fallback + `Option.getD` gone; `allSystems.filterMap (·.classifierSystem)` collapses to direct `[french, italian, mandarin, japanese, xhosa, shona, swahili]`.
+
+**Phase 2-large** — dissolve `Phenomena/Relativization/Typology.lean` entirely:
+
+- New substrate `Linglib/Typology/Relativization/Defs.lean` (subdir leaves room for later moving `Core/Relativization/Profile.lean` here as a sibling): houses the 3 WALS-aggregate theorems (`gap_most_common_for_subjects`, `retention_increases_for_obliques`, `obliques_sometimes_not_relativizable`) + the AH/Comrie 1989 module docstring. Imports only WALS data; no Fragment or Phenomena dependency.
+- 20 `Fragments/{Lang}/Relativization.lean` now expose `def relativization : RelativizationProfile`. 11 newly created (Bambara/French/German/HindiUrdu/Japanese/Mandarin/Mayan.Mam/Navajo/Slavic.Russian/Tagalog/Turkish); 9 existing files extended in place (English/Arabic/Hebrew/Korean/Swahili/Malagasy/Finnish/Welsh/Yoruba). Swahili's def lives in a sibling `namespace Fragments.Swahili` block (existing file uses `Fragments.Swahili.Relativization` namespace) so cross-language consumers reference `Fragments.Swahili.relativization` consistently with other languages.
+- `Phenomena/Relativization/Studies/KeenanComrie1977.lean`: 8 `Typology.{english,welsh,arabic,...}.lowestRelativizable` projections retyped to `Fragments.X.relativization.lowestRelativizable`. Dropped the `import` and `open` of the deleted Phenomena/Relativization/Typology.
+- WALS-grounding theorems (`subj_strategy_consistent_with_WALS`, `obl_strategy_consistent_with_WALS` + grounded-language sample lists) DROPPED — they were sanity-checks on the assumption that Fragments mirror WALS by construction, hence tautological in the new architecture; if Fragment data drifts, that's a Fragment-level bug, not a Phenomena-level theorem worth maintaining.
+- `Phenomena/Relativization/Typology.lean` DELETED.
+
+**Phase 3** — delete the aggregator infrastructure:
+
+- `Linglib/Typology/LanguageProfile.lean` DELETED (~240 LOC: struct + `empty`/`ofWALS` + 12 `withX` builders + `hasObligatoryClassifierSystem` predicate).
+- 24 `Linglib/Fragments/{Lang}/Typology.lean` aggregator files DELETED.
+- `Linglib.lean`: 15 dead imports stripped.
+- `Phenomena/Coordination/Studies/Schwarzer2026.lean`, `Phenomena/WordOrder/Studies/Westergaard2009.lean`: dead `import Linglib.Fragments.X.Typology` lines removed.
+- `Linglib/Typology/ClassifierSystem.lean`, `Linglib/Core/Relativization/Profile.lean`: docstring backreferences to LanguageProfile / Phenomena.Relativization.Typology updated.
+- `CLAUDE.md` Typology/ section rewritten: drops `LanguageProfile/Universal/Profile` flat-file claim; documents the per-Fragment-field pattern; notes the `Typology/{Domain}/` subdir convention.
+
+**Architectural endpoint reached**: per-language data lives in `Fragments/{Lang}/{Domain}.lean` (`def {domainCamelCase} : DomainProfile`) and consumers import the per-language Fragment files directly. There is no aggregator struct bundling all phenomena per language. The pattern set by WordOrder Phase 1 (0.230.497) — "Fragment is the front door for per-language data" — now holds across all migrated phenomena.
+
+**Build**: 1925-job transitive closure on the 10 most-touched consumer files passes. Pre-existing concurrent failure in `Theories/Pragmatics/DecisionTheoretic/Core.lean:639` (`pxor`/`SymmDiff` synthesis) is from another session's in-flight work (commit f68e2957 added `Mathlib.Data.Set.SymmDiff` import); unrelated to this refactor.
+
 ## [0.230.499] - 2026-04-27
 
 ### IKW Discourse *only* arc: 6th sorry (Bayes-bridge) discharged + DTS Core helpers promoted

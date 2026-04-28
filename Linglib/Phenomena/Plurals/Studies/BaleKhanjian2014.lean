@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Core.Tree
 import Linglib.Theories.Semantics.Alternatives.Structural
-import Linglib.Fragments.Armenian.Typology
+import Linglib.Fragments.Armenian.ClassifierSystem
 
 /-!
 # Bale & Khanjian (2014) — Singular-Plural Distinction in Western Armenian
@@ -349,17 +349,15 @@ theorem definiteness_asymmetry :
     Armenian as a counterexample. The @cite{bale-khanjian-2014} data
     show *why* the input shape is wrong: Western Armenian numerals
     combine directly with bare nouns (eq. 10a), so there is no overt
-    classifier morpheme that the silent ∪-operator would be blocked
-    by. The general predicate `hasObligatoryClassifierSystem`
-    (`Typology/LanguageProfile.lean`) captures the input-shape
-    requirement that obligatory-CL frameworks like @cite{chierchia-1998}
-    and @cite{sudo-2016} presuppose; Western Armenian fails it
-    structurally.
+    classifier morpheme that the silent ∪-operator would be blocked by.
+    Western Armenian's `classifierSystem` carries `isObligatory := false`,
+    structurally failing the input shape that obligatory-CL frameworks
+    like @cite{chierchia-1998} and @cite{sudo-2016} presuppose.
 
-    The dependency goes from BK 2014 → `Core/Typology` rather than
-    BK 2014 → Sudo 2016 (which would violate the chronology rule —
-    study files may reference older papers, not newer ones). -/
+    The dependency goes from BK 2014 → `Fragments/Armenian/ClassifierSystem.lean`
+    rather than BK 2014 → Sudo 2016 (which would violate the chronology
+    rule — study files may reference older papers, not newer ones). -/
 theorem western_armenian_lacks_obligatory_classifier_input :
-    ¬ Fragments.Armenian.typology.hasObligatoryClassifierSystem := by decide
+    Fragments.Armenian.classifierSystem.isObligatory = false := by decide
 
 end BaleKhanjian2014

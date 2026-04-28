@@ -4,11 +4,10 @@ import Linglib.Core.Lexical.NounCategorization
 # Noun categorization typology: per-language system schema
 @cite{aikhenvald-2000}
 
-Per-language schema for `Typology.LanguageProfile`'s
-`classifierSystem` field, parallel to `Typology.WordOrder` and
-`Typology.Adposition`. Captures @cite{aikhenvald-2000}'s 7
-definitional properties (A–G from §1.5) of a noun categorization
-system.
+Per-language schema for the `classifierSystem` def in each
+`Fragments/{Lang}/ClassifierSystem.lean`, parallel to `Typology.WordOrder`
+and `Typology.Adposition`. Captures @cite{aikhenvald-2000}'s 7 definitional
+properties (A–G from §1.5) of a noun categorization system.
 
 ## What lives here vs. `Core.Lexical.NounCategorization`
 

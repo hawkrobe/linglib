@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Yoruba Relativization Fragment
@@ -118,5 +119,18 @@ def relTiGenitive : RelClauseMarker :=
     introducer `tí` (high tone, §6.18). -/
 def relMarkers : List RelClauseMarker :=
   [relTiSubject, relTiObject, relTiOblique, relTiGenitive]
+
+/-- Yoruba relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .pronounRetention
+  , oblStrategy := .gap
+  , rcPosition := .postNominal
+  , lowestRelativizable := .genitive
+  , internallyHeaded := .absent
+  , notes := "Relativizer tí (high tone; distinct from preverbal/preposition ti). "
+          ++ "@cite{awobuluyi-1978} §6.19 SU resumption (ó); §6.20 DO gap; "
+          ++ "§6.21 OBL gap (fi/ti/bá/fún/sí); §6.22 OBL with ní triggers "
+          ++ "drop+repositioning (complexity not captured by oblStrategy field); "
+          ++ "§6.23 GEN resumption (rẹ̀/wọn). Matches WALS F122A pronounRetention." }
 
 end Fragments.Yoruba

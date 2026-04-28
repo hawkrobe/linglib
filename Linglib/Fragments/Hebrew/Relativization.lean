@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Hebrew Relativization Fragment
@@ -90,5 +91,14 @@ def relMarkers : List RelClauseMarker := [relSheGap, relSheResumptive]
 /-- Sichel-refined markers distinguishing bound vs. movement resumption. -/
 def relMarkersSichel : List RelClauseMarker :=
   [relSheGap, relSheBoundResumptive, relSheMovementResumptive]
+
+/-- Hebrew relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .pronounRetention
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap on subject, resumptive on obliques; "
+          ++ "complementizer she-; classic Semitic AH shift" }
 
 end Fragments.Hebrew

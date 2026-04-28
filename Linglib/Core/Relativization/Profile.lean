@@ -7,17 +7,15 @@ import Linglib.Datasets.WALS.Features.F123A
 /-!
 # `RelativizationProfile`: per-language relativization typology
 
-A WALS-style summary of a language's relativization system, suitable for
-inclusion as one field of `Typology.LanguageProfile`. Captures the
+A WALS-style summary of a language's relativization system. Captures the
 two strategy dimensions (Chs 122/123), the relative-clause position with
 respect to the head noun, and the lowest position on the
 @cite{keenan-comrie-1977} Accessibility Hierarchy that can be
 relativized.
 
-The Fragment for each language defines its `RelativizationProfile`
-inside `Fragments/{Lang}/Typology.lean`; the cross-linguistic sample in
-`Phenomena/Relativization/Typology.lean` aggregates Fragment values via
-`LanguageProfile.relativization`.
+Per-language values live in `Fragments/{Lang}/Relativization.lean` as
+`def relativization : RelativizationProfile`. WALS-aggregate findings
+live in `Typology/Relativization/Defs.lean`.
 -/
 
 namespace Core.Relativization

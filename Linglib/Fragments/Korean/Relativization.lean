@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Korean Relativization Fragment
@@ -45,5 +46,13 @@ def relGenitive : RelClauseMarker :=
 
 /-- All Korean relative clause markers. -/
 def relMarkers : List RelClauseMarker := [relAdnominal, relGenitive]
+
+/-- Korean relativization profile (typological summary). -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .gap
+  , oblStrategy := .gap
+  , rcPosition := .preNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap strategy; pre-nominal RC; parallel to Japanese" }
 
 end Fragments.Korean

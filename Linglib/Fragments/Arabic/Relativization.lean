@@ -1,4 +1,5 @@
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Arabic (Classical) Relativization Fragment
@@ -42,5 +43,17 @@ def relResumptive : RelClauseMarker :=
 
 /-- All Arabic (Classical) relative clause markers. -/
 def relMarkers : List RelClauseMarker := [relAlladhi, relResumptive]
+
+/-- Arabic relativization profile (typological summary). Subject strategy
+    `.mixed` reflects the gap-on-SU + resumptive-on-DO split: WALS Ch 122
+    has no `.mixed` category, so this entry is excluded from
+    `Phenomena/Relativization/Typology.lean`'s WALS-grounding sample. -/
+def relativization : Core.Relativization.RelativizationProfile :=
+  { subjStrategy := .mixed
+  , oblStrategy := .pronounRetention
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Gap on subject, resumptive on obliques; classic AH shift; "
+          ++ "complementizer alladhi/allati" }
 
 end Fragments.Arabic
