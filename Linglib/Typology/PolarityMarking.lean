@@ -18,13 +18,13 @@ Moved from `Features/InformationStructure.lean` in the 0.230.493 cleanup
 of the multi-agent audit). The B-cluster's 12-file consumer base —
 7 Fragments + 4 Studies + 1 Theory — matches the per-language-typology
 shape of `Typology/Indefinite.lean`, `Typology/Possession.lean`, etc.,
-not the feature-taxonomy shape `Features/` is for. Naming preserved
-(`PolarityMarkingStrategy` not `Strategy` etc.) to minimize churn at
-~12 consumer sites; the noun-prefix-redundancy mathlib-reviewer flag
-is deferred.
+not the feature-taxonomy shape `Features/` is for. Names tightened
+in the 0.230.496 follow-up (`PolarityMarkingStrategy/Env/Entry` →
+`Strategy/Env/Entry`) per mathlib idiom: short type name in deep
+namespace (`Polynomial.Monic` not `PolynomialMonic`).
 
-**Framework commitment** (from the original `PolarityMarkingStrategy`
-docstring; copied here as the substrate's load-bearing self-aware note):
+**Framework commitment** (from the original docstring; copied here as
+the substrate's load-bearing self-aware note):
 
 This taxonomy treats polarity-marking strategies as form-class properties
 (a particle either *is* or *is not* `polarityReversal`), aligned with the
@@ -68,7 +68,7 @@ namespace Typology.PolarityMarking
 
 /-- How a language marks polarity switches (neg → affirm). See module
     docstring for the framework-commitment note. -/
-inductive PolarityMarkingStrategy where
+inductive Strategy where
   /-- Sentence-internal affirmative particle (e.g., Dutch *wel*) -/
   | particle
   /-- Pitch accent on the finite verb (@cite{hohle-1992} Verum focus) -/
@@ -91,7 +91,7 @@ inductive PolarityMarkingStrategy where
     vs. pre-utterance) with the discourse-context dimensions (`contrast`,
     `correction`) so per-language entries record one set rather than
     three parallel Bools. -/
-inductive PolarityMarkingEnv where
+inductive Env where
   /-- Position: marker appears sentence-internally (vs. pre-utterance). -/
   | sentenceInternal
   /-- Discourse: marker is available in contrast contexts. -/
@@ -105,7 +105,7 @@ inductive PolarityMarkingEnv where
     Unified structure for all strategies — particles (Dutch *wel*),
     prosodic (German VF), or other. Language-specific Fragment files
     instantiate this with appropriate optional fields. The
-    `environments` field records the set of `PolarityMarkingEnv`
+    `environments` field records the set of `Env`
     positions/contexts the marker is available in.
 
     See module docstring for the framework-commitment note: this schema
@@ -117,7 +117,7 @@ inductive PolarityMarkingEnv where
     sentence-medial discourse marker) is *not* encoded;
     cross-linguistic entries grouped under the same `strategy`
     constructor may differ on this dimension. -/
-structure PolarityMarkingEntry where
+structure Entry where
   /-- Descriptive label (e.g., "wel", "Verum focus", "doch (pre-utterance)") -/
   label : String
   /-- Surface form, if the strategy is a particle -/
@@ -125,8 +125,8 @@ structure PolarityMarkingEntry where
   /-- What bears prosodic prominence, if the strategy is prosodic -/
   prosodicTarget : Option String := none
   /-- Set of positions/contexts in which this marker is available. -/
-  environments : Typology.Profile PolarityMarkingEnv
+  environments : Typology.Profile Env
   /-- The polarity-marking strategy category -/
-  strategy : PolarityMarkingStrategy
+  strategy : Strategy
 
 end Typology.PolarityMarking

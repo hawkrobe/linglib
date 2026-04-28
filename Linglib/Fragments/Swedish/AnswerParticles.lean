@@ -23,7 +23,7 @@ Swedish also allows verb-echo answers alongside particles (mixed strategy).
 namespace Fragments.Swedish.AnswerParticles
 
 open Features.Polarity
-open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (Entry Strategy Env)
 open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- A Swedish answer particle entry. -/
@@ -100,7 +100,7 @@ theorem ja_jo_complementary :
     Correction-only: requires a negative context to reverse.
     @cite{holmberg-2016}: paradigm example of polarity-reversing particle,
     same class as German *doch* and French *si*. -/
-abbrev joMarking : PolarityMarkingEntry where
+abbrev joMarking : Entry where
   label := "jo"
   form := some "jo"
   environments := {.correction}
@@ -108,12 +108,12 @@ abbrev joMarking : PolarityMarkingEntry where
 
 -- Per-entry verification theorems
 theorem joMarking_form : joMarking.form = some "jo" := rfl
-theorem joMarking_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ joMarking.environments := by decide
-theorem joMarking_not_contrastOk : PolarityMarkingEnv.contrast ∉ joMarking.environments := by decide
-theorem joMarking_correctionOk : PolarityMarkingEnv.correction ∈ joMarking.environments := by decide
+theorem joMarking_not_sentenceInternal : Env.sentenceInternal ∉ joMarking.environments := by decide
+theorem joMarking_not_contrastOk : Env.contrast ∉ joMarking.environments := by decide
+theorem joMarking_correctionOk : Env.correction ∈ joMarking.environments := by decide
 theorem joMarking_strategy : joMarking.strategy = .polarityReversal := rfl
 
-def allPolarityMarkings : List PolarityMarkingEntry := [joMarking]
+def allPolarityMarkings : List Entry := [joMarking]
 
 /-- Swedish polar answer profile: polarity-based, mixed strategy
     (particles + verb echo), with polarity reversal (*jo*). -/

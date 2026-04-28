@@ -20,7 +20,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 1. **A typology of PF-marking strategies** in Italian, French and Spanish
    that carves the inventory differently from the
-   `Features.InformationStructure.PolarityMarkingStrategy` enum: G&J split
+   `Features.InformationStructure.Strategy` enum: G&J split
    lexical means (adverbs, affirmative particles, embedded-clause
    structures) from syntactic means (non-focal fronting, cleft family,
    clitic dislocation, *sì che* / *sí que* clefts) — see §1 below for
@@ -34,7 +34,7 @@ as Romance polarity-focus (PF) realization strategies.
 
 3. **An explicit theoretical commitment to @cite{matic-nikolaeva-2018}'s
    "salient polarity" framework** (footnote 13, p. 236), against the form-
-   class encoding that the substrate's `PolarityMarkingStrategy` records.
+   class encoding that the substrate's `Strategy` records.
    See §4 below; the formal statement of the non-equivalence lives in
    `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`.
 
@@ -55,8 +55,8 @@ as Romance polarity-focus (PF) realization strategies.
 
 namespace Phenomena.Polarity.Studies.GarassinoJacob2018
 
-open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy
-  PolarityMarkingEnv)
+open Typology.PolarityMarking (Entry Strategy
+  Env)
 open Fragments.Italian.PolarityMarking (siChe)
 open Fragments.Spanish.PolarityMarking (siQue)
 open Fragments.French.PolarityMarking (si)
@@ -68,7 +68,7 @@ G&J carve the Romance inventory into 8 strategies, organized as
 embedding) vs *syntactic* (§2.2: fronting, clefts, dislocation) plus
 the *sì che* / *sí que* construction analyzed separately in §2.3.
 
-This is **not the same carving** as `PolarityMarkingStrategy`. The
+This is **not the same carving** as `Strategy`. The
 substrate enum collapses several of these into `.polarityReversal`,
 following the Blühdorn/TBD2014 form-class tradition. G&J's taxonomy
 is finer-grained and cuts on syntactic structure rather than discourse
@@ -274,11 +274,11 @@ form-class encoding of polarity focus. Footnote 13 reads, verbatim:
 > linguistic forms in a given language but can be pragmatically conveyed
 > by different structures under appropriate (contextual) conditions.
 
-This is in tension with the substrate's `PolarityMarkingStrategy` enum,
+This is in tension with the substrate's `Strategy` enum,
 which assigns each entry a single `.polarityReversal` / `.particle` /
 `.verumFocus` strategy class as if it were a fixed form-meaning property.
 The contradiction is recorded at the substrate's def-site
-(`Features/InformationStructure.lean::PolarityMarkingStrategy` docstring)
+(`Features/InformationStructure.lean::Strategy` docstring)
 and formalized in `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`. -/
 
 /-! ## §5 Surface-class lumping caveat (footnote 11, p. 234)
@@ -290,11 +290,11 @@ G&J fn 11 distinguishes French *si* from the *sì che* / *sí que* class:
 > corresponding forms in Spanish and Italian, is limited to dialogical
 > contexts, where it is used to answer a preceding opposite turn.
 
-So the cross-linguistic lumping under `PolarityMarkingStrategy.polarityReversal`
+So the cross-linguistic lumping under `Strategy.polarityReversal`
 of French *si*, Italian *sì*, and Spanish *sí* records a shared functional
 role only — the surface category differs (French = response particle,
 Italian + Spanish = clause-initial cleft-like construction). The substrate
-flag in `PolarityMarkingStrategy` docstring records this caveat. The
+flag in `Strategy` docstring records this caveat. The
 `french_lacks_siQueClass` theorem in §1 above proves the corresponding
 data-level claim. -/
 

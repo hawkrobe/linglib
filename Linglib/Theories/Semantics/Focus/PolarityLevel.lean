@@ -53,7 +53,7 @@ is the polarity-neutral propositional content.
 namespace Semantics.Focus.PolarityLevel
 
 open Features (Polarity)
-open Typology.PolarityMarking (PolarityMarkingStrategy)
+open Typology.PolarityMarking (Strategy)
 open Core.Discourse.Coherence (CoherenceRelation)
 
 -- ════════════════════════════════════════════════════
@@ -76,7 +76,7 @@ inductive PolarityMarkingLevel where
 
 /-- Map polarity-marking strategies to their semantic level.
     Returns `none` for strategies without a clear level assignment. -/
-def strategyLevel : PolarityMarkingStrategy → Option PolarityMarkingLevel
+def strategyLevel : Strategy → Option PolarityMarkingLevel
   | .particle        => some .polarity
   | .verumFocus      => some .assertion
   | .polarityReversal => some .polarity

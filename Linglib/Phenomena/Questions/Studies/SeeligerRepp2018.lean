@@ -482,7 +482,7 @@ theorem dq_epistemic_lacks_romero_counterpart :
 open Fragments.Swedish.QuestionParticles
 open Fragments.German.QuestionParticles
 open Fragments.German.PolarityMarking (dochPreUtterance)
-open Typology.PolarityMarking (PolarityMarkingEnv)
+open Typology.PolarityMarking (Env)
 
 /-- Swedish *väl* is question-inducing — declaratives with *väl* are
     questions, not assertions (@cite{seeliger-repp-2018} §5.2). -/
@@ -590,8 +590,8 @@ theorem dochWohl_is_question_marker :
 theorem doch_dual_role :
     -- The polarity *doch* is a correction particle (not sentence-internal)
     dochPreUtterance.strategy = .polarityReversal ∧
-    PolarityMarkingEnv.correction ∈ dochPreUtterance.environments ∧
-    PolarityMarkingEnv.sentenceInternal ∉ dochPreUtterance.environments ∧
+    Env.correction ∈ dochPreUtterance.environments ∧
+    Env.sentenceInternal ∉ dochPreUtterance.environments ∧
     -- The RQ *doch wohl* is a question marker (not usable in assertions)
     dochWohl.declOk = false := ⟨rfl, by decide, by decide, rfl⟩
 

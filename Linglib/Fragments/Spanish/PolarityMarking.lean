@@ -38,26 +38,26 @@ clause-initial and targets polarity directly via a dedicated particle.
 
 namespace Fragments.Spanish.PolarityMarking
 
-open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (Entry Strategy Env)
 
 /-- *sí (que)* — Spanish emphatic polarity affirmation particle.
     Clause-initial EPPA. @cite{batllori-hernanz-2013}: merges with
     ForceP; *que* is obligatory in embedded contexts. Licensed in
     both contrast and correction environments per Batllori & Hernanz
     ex. 4-5 + @cite{garassino-jacob-2018} ex. 19. Not sentence-internal. -/
-abbrev siQue : PolarityMarkingEntry where
+abbrev siQue : Entry where
   label := "sí (que)"
   form := some "sí (que)"
   environments := {.correction, .contrast}
   strategy := .polarityReversal
 
-def allPolarityMarkings : List PolarityMarkingEntry := [siQue]
+def allPolarityMarkings : List Entry := [siQue]
 
 -- Per-entry verification theorems
 theorem siQue_form : siQue.form = some "sí (que)" := rfl
-theorem siQue_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ siQue.environments := by decide
-theorem siQue_contrastOk : PolarityMarkingEnv.contrast ∈ siQue.environments := by decide
-theorem siQue_correctionOk : PolarityMarkingEnv.correction ∈ siQue.environments := by decide
+theorem siQue_not_sentenceInternal : Env.sentenceInternal ∉ siQue.environments := by decide
+theorem siQue_contrastOk : Env.contrast ∈ siQue.environments := by decide
+theorem siQue_correctionOk : Env.correction ∈ siQue.environments := by decide
 theorem siQue_strategy : siQue.strategy = .polarityReversal := rfl
 
 end Fragments.Spanish.PolarityMarking

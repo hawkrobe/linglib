@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.496] - 2026-04-28
+
+### Typology.PolarityMarking noun-prefix rename (mathlib idiom)
+
+Follow-up to 0.230.493's PolarityMarking cluster move into `Typology/PolarityMarking.lean`. The 0.230.493 commit deferred the noun-prefix-redundancy mathlib-reviewer flag (preserving `PolarityMarkingStrategy/Env/Entry` to minimize consumer churn). This commit lands the rename:
+
+- `PolarityMarkingStrategy` → `Strategy`
+- `PolarityMarkingEnv` → `Env`
+- `PolarityMarkingEntry` → `Entry`
+
+Mathlib idiom: short type name in deep namespace (`Polynomial.Monic`, `Module.Free`, `LinearMap.Bijective`), not noun-prefixed inside a same-named namespace. Consumers see `Strategy`/`Env`/`Entry` after `open Typology.PolarityMarking (Strategy Env Entry)`; the namespace path provides the disambiguation.
+
+**Files**: 1 source + 12 consumers, all with mechanical replace_all on the 3 prefix-bearing names (no semantic changes, names sufficiently unique that no false matches occurred):
+- `Linglib/Typology/PolarityMarking.lean`: 3 type renames, docstring updated to remove the deferral note.
+- 7 Fragments: `Dutch/Particles`, `German/PolarityMarking`, `Italian/PolarityMarking`, `English/PolarityMarking`, `French/PolarityMarking`, `Swedish/AnswerParticles`, `Spanish/PolarityMarking`.
+- 4 Studies: `Polarity/Studies/{TurcoBraunDimroth2014, MaticNikolaeva2018, GarassinoJacob2018}` + `Questions/Studies/SeeligerRepp2018`.
+- 1 Theory: `Theories/Semantics/Focus/PolarityLevel.lean`.
+
+**Build**: 990-job affected dependency cone green. Pre-existing TBD2014 line-449 `simp_all` argument warnings unchanged (untouched by this rename).
+
 ## [0.230.495] - 2026-04-28
 
 ### Features/InformationStructure mathlib-discipline polish

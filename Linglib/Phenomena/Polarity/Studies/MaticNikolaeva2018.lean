@@ -26,7 +26,7 @@ form-class encoding masquerading as theory-neutral. Instead, the file
 records (a) the cross-linguistically attested *list* of structures
 ascribed to salient polarity in the literature (M&N examples 2–4,
 abridged), (b) the cardinality mismatch between this list and the
-substrate's `PolarityMarkingStrategy` enum, and (c) the load-bearing
+substrate's `Strategy` enum, and (c) the load-bearing
 non-isomorphism claim that the substrate's encoding cannot capture
 M&N's interpretational notion.
 
@@ -37,12 +37,12 @@ paper (`@cite{matic-nikolaeva-2018}`); the cross-framework critique is
 M&N's own claim, not a synthesis the formaliser invented. It lives in
 `Studies/` exactly like every other `Studies/AuthorYear.lean`.
 The contradiction with the substrate is recorded at the substrate's
-def-site (`Features/InformationStructure.lean::PolarityMarkingStrategy`
+def-site (`Features/InformationStructure.lean::Strategy`
 docstring) with a back-pointer here.
 
 ## Cross-references
 
-- `Features/InformationStructure.lean::PolarityMarkingStrategy` — the
+- `Features/InformationStructure.lean::Strategy` — the
   form-class encoding M&N reject; docstring acknowledges the rejection.
 - `Phenomena/Polarity/Studies/GarassinoJacob2018.lean` — same volume;
   G&J explicitly endorse M&N (their fn 13).
@@ -55,7 +55,7 @@ docstring) with a back-pointer here.
 
 namespace Phenomena.Polarity.Studies.MaticNikolaeva2018
 
-open Typology.PolarityMarking (PolarityMarkingStrategy PolarityMarkingEntry)
+open Typology.PolarityMarking (Strategy Entry)
 open Fragments.English.PolarityMarking (emphaticDo)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 
@@ -121,7 +121,7 @@ def mnAllStructures : List MNAttestedStructure :=
 
 /-! ## §2 The substrate's denotational mapping (Option-valued)
 
-The substrate `PolarityMarkingStrategy` enum has 5 constructors. Any
+The substrate `Strategy` enum has 5 constructors. Any
 denotational encoding of salient polarity onto this enum must collapse
 M&N's 18+ attested structures into 5 buckets — necessarily many-to-one.
 
@@ -133,7 +133,7 @@ catch-all but using it would mask the failure; we want the *non-fit*
 to be visible at the type level. This realizes the mathlib-audit
 recommendation to expose the dumping-ground claim structurally rather
 than via a `decide` count.) -/
-def substrateBestEffort : MNAttestedStructure → Option PolarityMarkingStrategy
+def substrateBestEffort : MNAttestedStructure → Option Strategy
   | .germanAccentOnAuxiliary             => some .verumFocus
   | .germanAccentOnLexicalVerb           => some .verumFocus
   | .germanEmphaticTun                   => none
@@ -162,7 +162,7 @@ of M&N's hand-curated symbol list. The 14 unrouted structures (German
 *tun* periphrasis, Serbian particles, English *so*-inversion, etc.) have
 no Fragment entries; for those the M&N argument runs against the
 substrate enum directly, in §2 above. -/
-def fromFragment : MNAttestedStructure → Option PolarityMarkingEntry
+def fromFragment : MNAttestedStructure → Option Entry
   | .englishEmphaticDo                => some emphaticDo
   | .germanAccentOnAuxiliary          => some verumFocus
   | .germanAccentOnLexicalVerb        => some verumFocus
@@ -173,7 +173,7 @@ def fromFragment : MNAttestedStructure → Option PolarityMarkingEntry
     `strategy` field agrees with `substrateBestEffort`. This grounds the
     best-effort mapping in actual data: it isn't an editorial fiction. -/
 theorem substrateBestEffort_agrees_with_fragments :
-    ∀ s : MNAttestedStructure, ∀ e : PolarityMarkingEntry,
+    ∀ s : MNAttestedStructure, ∀ e : Entry,
       fromFragment s = some e → substrateBestEffort s = some e.strategy := by
   intro s e h
   cases s <;> simp [fromFragment] at h <;> (subst h; rfl)

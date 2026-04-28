@@ -53,7 +53,7 @@ Note: Production percentages are approximate (read from bar charts).
 
 namespace TurcoBraunDimroth2014
 
-open Typology.PolarityMarking (PolarityMarkingStrategy PolarityMarkingEntry PolarityMarkingEnv)
+open Typology.PolarityMarking (Strategy Entry Env)
 open Core.Discourse.Coherence (CoherenceRelation)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
@@ -73,13 +73,13 @@ inductive Language where
   deriving DecidableEq, Repr
 
 /-- A production-strategy distribution datum (percentages as rationals).
-    The distribution is keyed by `PolarityMarkingStrategy`, so adding a
+    The distribution is keyed by `Strategy`, so adding a
     strategy constructor forces updating every datum. -/
 structure ProductionDatum where
   language : Language
   context : CoherenceRelation
   /-- Percentage of trials per strategy (approximate, from bar charts) -/
-  pctByStrategy : PolarityMarkingStrategy → Rat
+  pctByStrategy : Strategy → Rat
 
 /-- A prosodic prominence datum (pitch range in semitones). -/
 structure ProminenceDatum where
@@ -225,25 +225,25 @@ def germanVFCorrection : ProminenceDatum where
 
 /-- Dutch dominant strategy is particles in contrast. -/
 theorem dutch_contrast_particle_dominant :
-    ∀ s, s ≠ PolarityMarkingStrategy.particle →
+    ∀ s, s ≠ Strategy.particle →
       dutchContrast.pctByStrategy .particle > dutchContrast.pctByStrategy s := by
   intro s hs; cases s <;> simp_all <;> decide
 
 /-- Dutch dominant strategy is particles in correction. -/
 theorem dutch_correction_particle_dominant :
-    ∀ s, s ≠ PolarityMarkingStrategy.particle →
+    ∀ s, s ≠ Strategy.particle →
       dutchCorrection.pctByStrategy .particle > dutchCorrection.pctByStrategy s := by
   intro s hs; cases s <;> simp_all <;> decide
 
 /-- German dominant strategy is Verum focus in contrast. -/
 theorem german_contrast_vf_dominant :
-    ∀ s, s ≠ PolarityMarkingStrategy.verumFocus →
+    ∀ s, s ≠ Strategy.verumFocus →
       germanContrast.pctByStrategy .verumFocus > germanContrast.pctByStrategy s := by
   intro s hs; cases s <;> simp_all <;> decide
 
 /-- German dominant strategy is Verum focus in correction. -/
 theorem german_correction_vf_dominant :
-    ∀ s, s ≠ PolarityMarkingStrategy.verumFocus →
+    ∀ s, s ≠ Strategy.verumFocus →
       germanCorrection.pctByStrategy .verumFocus > germanCorrection.pctByStrategy s := by
   intro s hs; cases s <;> simp_all <;> decide
 
@@ -275,7 +275,7 @@ theorem dutch_vf_correction_only :
 
 The "others" category in German is exclusively doch+VF combinations
 (p. 102). These appear only in correction, consistent with
-`PolarityMarkingEnv.contrast ∉ dochPreUtterance.environments` in the
+`Env.contrast ∉ dochPreUtterance.environments` in the
 Fragment. -/
 
 /-- German "others" (doch+VF) appears only in correction, never contrast. -/
@@ -286,7 +286,7 @@ theorem german_doch_vf_correction_only :
 
 /-- The production data matches the Fragment: doch is correction-only. -/
 theorem german_doch_production_matches_fragment :
-    PolarityMarkingEnv.contrast ∉ dochPreUtterance.environments ∧
+    Env.contrast ∉ dochPreUtterance.environments ∧
     germanContrast.pctByStrategy .other = 0 :=
   ⟨by decide, rfl⟩
 
@@ -321,8 +321,8 @@ theorem correction_prominence_significant :
 /-- Neither Dutch *wel* nor German VF maps to `.unmarked`:
     both languages have overt polarity-marking strategies. -/
 theorem dominant_strategies_both_marked :
-    wel.strategy ≠ PolarityMarkingStrategy.unmarked ∧
-    verumFocus.strategy ≠ PolarityMarkingStrategy.unmarked :=
+    wel.strategy ≠ Strategy.unmarked ∧
+    verumFocus.strategy ≠ Strategy.unmarked :=
   ⟨by decide, by decide⟩
 
 /-- Dutch *wel* and German VF instantiate different strategy types. -/
@@ -333,16 +333,16 @@ theorem strategies_differ :
     This captures the key typological contrast: Dutch has a sentence-internal
     particle for polarity switches, German does not. -/
 theorem dutch_particle_internal_german_doch_not :
-    PolarityMarkingEnv.sentenceInternal ∈ wel.environments ∧
-    PolarityMarkingEnv.sentenceInternal ∉ dochPreUtterance.environments :=
+    Env.sentenceInternal ∈ wel.environments ∧
+    Env.sentenceInternal ∉ dochPreUtterance.environments :=
   ⟨by decide, by decide⟩
 
 /-- Both Dutch *wel* and German VF are available in both contexts. -/
 theorem both_strategies_context_general :
-    (PolarityMarkingEnv.contrast ∈ wel.environments ∧
-     PolarityMarkingEnv.correction ∈ wel.environments) ∧
-    (PolarityMarkingEnv.contrast ∈ verumFocus.environments ∧
-     PolarityMarkingEnv.correction ∈ verumFocus.environments) :=
+    (Env.contrast ∈ wel.environments ∧
+     Env.correction ∈ wel.environments) ∧
+    (Env.contrast ∈ verumFocus.environments ∧
+     Env.correction ∈ verumFocus.environments) :=
   ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
 
 /-! ## Bridge Theorems — Polarity-Marking Levels
@@ -381,7 +381,7 @@ generalizations as quantified statements over the inventory rather
 than as individual per-entry `rfl`s. -/
 
 /-- All polarity-marking entries across the seven-language sample. -/
-def allEntries : List PolarityMarkingEntry :=
+def allEntries : List Entry :=
   [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking, siQue, siChe]
 
 /-- **Generalization 1 — Strategy/level mapping.** Every particle and
@@ -411,7 +411,7 @@ theorem strategy_level_partition :
     direction only. -/
 theorem all_reversal_license_correction :
     ∀ e ∈ allEntries, e.strategy = .polarityReversal →
-      PolarityMarkingEnv.correction ∈ e.environments := by
+      Env.correction ∈ e.environments := by
   intro e he hs
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
@@ -424,8 +424,8 @@ theorem all_reversal_license_correction :
 theorem all_nonreversal_context_general :
     ∀ e ∈ allEntries,
       e.strategy = .particle ∨ e.strategy = .verumFocus →
-      PolarityMarkingEnv.contrast ∈ e.environments ∧
-      PolarityMarkingEnv.correction ∈ e.environments := by
+      Env.contrast ∈ e.environments ∧
+      Env.correction ∈ e.environments := by
   intro e he hs
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
@@ -438,9 +438,9 @@ theorem all_nonreversal_context_general :
 theorem sentence_internality_by_strategy :
     ∀ e ∈ allEntries,
       (e.strategy = .polarityReversal →
-        PolarityMarkingEnv.sentenceInternal ∉ e.environments) ∧
+        Env.sentenceInternal ∉ e.environments) ∧
       (e.strategy = .particle ∨ e.strategy = .verumFocus →
-        PolarityMarkingEnv.sentenceInternal ∈ e.environments) := by
+        Env.sentenceInternal ∈ e.environments) := by
   intro e he
   simp [allEntries] at he
   rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>

@@ -67,7 +67,7 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 
 namespace Fragments.Italian.PolarityMarking
 
-open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy PolarityMarkingEnv)
+open Typology.PolarityMarking (Entry Strategy Env)
 
 /-- *sì che* — Italian polarity-reversing affirmative construction.
     Cleft-like or left-peripheral PolP structure (analyses contested):
@@ -81,19 +81,19 @@ open Typology.PolarityMarking (PolarityMarkingEntry PolarityMarkingStrategy Pola
     encoding was empirically too narrow.
     @cite{garassino-jacob-2018}: cognate of Spanish *sí que*;
     rare in spontaneous Italian corpora but grammatically available. -/
-abbrev siChe : PolarityMarkingEntry where
+abbrev siChe : Entry where
   label := "sì che"
   form := some "sì che"
   environments := {.correction, .contrast}
   strategy := .polarityReversal
 
-def allPolarityMarkings : List PolarityMarkingEntry := [siChe]
+def allPolarityMarkings : List Entry := [siChe]
 
 -- Per-entry verification theorems
 theorem siChe_form : siChe.form = some "sì che" := rfl
-theorem siChe_not_sentenceInternal : PolarityMarkingEnv.sentenceInternal ∉ siChe.environments := by decide
-theorem siChe_contrastOk : PolarityMarkingEnv.contrast ∈ siChe.environments := by decide
-theorem siChe_correctionOk : PolarityMarkingEnv.correction ∈ siChe.environments := by decide
+theorem siChe_not_sentenceInternal : Env.sentenceInternal ∉ siChe.environments := by decide
+theorem siChe_contrastOk : Env.contrast ∈ siChe.environments := by decide
+theorem siChe_correctionOk : Env.correction ∈ siChe.environments := by decide
 theorem siChe_strategy : siChe.strategy = .polarityReversal := rfl
 
 end Fragments.Italian.PolarityMarking
