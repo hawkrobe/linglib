@@ -8,7 +8,7 @@ import Mathlib.Data.List.Dedup
 @cite{grosz-joshi-weinstein-1995} §3
 
 The basic forward/backward-looking center operations, parameterized by
-the role type (via `[CfRanker R]`) and the realizes-semantics
+the role type (via `[CfRankerOf E R]`) and the realizes-semantics
 (via `[Realizes U E]`).
 
 * `Utterance.cf` — forward-looking centers, ordered by role rank
@@ -128,15 +128,15 @@ end Utterance
 
 namespace Utterance
 
-@[simp] theorem cf_mk_nil [CfRanker R] :
+@[simp] theorem cf_mk_nil [CfRankerOf E R] :
     (Utterance.mk [] : Utterance E R).cf = [] := rfl
 
-@[simp] theorem cp_mk_nil [CfRanker R] :
+@[simp] theorem cp_mk_nil [CfRankerOf E R] :
     (Utterance.mk [] : Utterance E R).cp = none := rfl
 
 /-- `cfInsert` preserves membership: every element of the result is either
     the inserted element or already in the list. -/
-theorem mem_cfInsert_iff [CfRanker R] (r : Realization E R)
+theorem mem_cfInsert_iff [CfRankerOf E R] (r : Realization E R)
     (xs : List (Realization E R)) (x : Realization E R) :
     x ∈ cfInsert r xs ↔ x = r ∨ x ∈ xs := by
   induction xs with
@@ -149,7 +149,7 @@ theorem mem_cfInsert_iff [CfRanker R] (r : Realization E R)
 
 /-- `cfInsert r xs` is a permutation of `r :: xs` — insertion sort
     rearranges but doesn't drop or duplicate. -/
-theorem cfInsert_perm [CfRanker R] (r : Realization E R)
+theorem cfInsert_perm [CfRankerOf E R] (r : Realization E R)
     (xs : List (Realization E R)) :
     (cfInsert r xs).Perm (r :: xs) := by
   induction xs with
@@ -162,7 +162,7 @@ theorem cfInsert_perm [CfRanker R] (r : Realization E R)
 
 /-- The internal sorted list (before mapping to entities) is a
     permutation of the surface realization list. -/
-theorem cfRealizations_perm [CfRanker R] (u : Utterance E R) :
+theorem cfRealizations_perm [CfRankerOf E R] (u : Utterance E R) :
     (u.realizations.foldr cfInsert []).Perm u.realizations := by
   induction u.realizations with
   | nil => exact .refl _
@@ -174,7 +174,7 @@ theorem cfRealizations_perm [CfRanker R] (u : Utterance E R) :
     centers iff some realization in the utterance refers to it. The
     insertion-sort implementation is a permutation, so membership is
     preserved. -/
-theorem mem_cf_iff [CfRanker R] (u : Utterance E R) (e : E) :
+theorem mem_cf_iff [CfRankerOf E R] (u : Utterance E R) (e : E) :
     e ∈ u.cf ↔ ∃ r ∈ u.realizations, r.entity = e := by
   unfold cf
   rw [List.mem_map]
@@ -196,7 +196,7 @@ end Utterance
 
     The current utterance `cur` can be anything with a `Realizes U E`
     instance — including a `DRSExpr` via the DRT bridge. -/
-def cb [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+def cb [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) : Option E :=
   prev.cf.find? (Realizes.decide cur)
 
@@ -205,14 +205,14 @@ def cb [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
     `prev.cf` — the backward-looking center is strictly local, drawn
     only from the previous utterance's forward-looking centers, never
     from `Cf(U_{n-2})` or earlier. -/
-theorem cb_mem_prev_cf [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+theorem cb_mem_prev_cf [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : cb prev cur = some e) :
     e ∈ prev.cf :=
   List.mem_of_find?_eq_some h
 
 /-- The Cb is realized in the current utterance: when `cb prev cur` is
     `some e`, the realizes-relation holds of `(cur, e)`. -/
-theorem decide_of_cb [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+theorem decide_of_cb [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : cb prev cur = some e) :
     Realizes.decide cur e = true :=
   List.find?_eq_some_iff_append.mp h |>.1
@@ -221,7 +221,7 @@ theorem decide_of_cb [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
     `prev.cf` realized in `cur`, and *no earlier* element of `prev.cf`
     (i.e., none more highly ranked) is realized in `cur`. This is the
     "first realized in cf-order" definition unfolded. -/
-theorem cb_eq_some_iff [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+theorem cb_eq_some_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} :
     cb prev cur = some e ↔
       ∃ l₁ l₂, prev.cf = l₁ ++ e :: l₂ ∧
@@ -241,7 +241,7 @@ theorem cb_eq_some_iff [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
     simp [hbefore e' he']
 
 /-- `cb` is `none` iff no element of `prev.cf` is realized in `cur`. -/
-theorem cb_eq_none_iff [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+theorem cb_eq_none_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} :
     cb prev cur = none ↔ ∀ e ∈ prev.cf, Realizes.decide cur e = false := by
   unfold cb
@@ -250,7 +250,49 @@ theorem cb_eq_none_iff [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
   · simpa using h e he
   · simp [h e he]
 
-@[simp] theorem cb_empty_prev [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+@[simp] theorem cb_empty_prev [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (cur : U) : cb (Utterance.mk [] : Utterance E R) cur = none := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. cbAll (multi-CB under partial ranking)
+-- ════════════════════════════════════════════════════
+
+/-- All entities tied at the highest rank-among-realized, deduplicated.
+
+    Under a **total** ranking, this list has length ≤ 1 (one CB or zero,
+    matching `cb`'s `Option E` typing). Under a **partial** ranking, two
+    realizations can tie at the maximum and both qualify as CBs — the
+    case that drives @cite{poesio-stevenson-eugenio-hitzeman-2004} §5.3.4
+    (their two-CB corner-cupboard / Branicki example, paper §4.1.1
+    example (10)). PSDH propose decomposing Constraint 1 into "CB
+    Uniqueness" (this list has length ≤ 1) and "Entity Continuity"
+    (this list has length ≥ 1) — the substrate decomposition theorem
+    lives in `Constraints.lean`.
+
+    **Structural identity with single-constraint OT** (cf.
+    `Core.Constraint.OT.Tableau.optimal`): the realizations realized in
+    `cur` form the candidate set; `CfRankerOf.rank` is a single (sign-
+    flipped) violation profile; `cbAll` returns the entity-projection
+    of the OT-optimal candidates. @cite{poesio-stevenson-eugenio-hitzeman-2004}
+    §3.1 fn 12 endorses this reformulation, citing Beaver 2004's
+    "The Optimization of Discourse Anaphora." Both substrates here use
+    `List.argmax` from `Mathlib.Data.List.MinMax` as the underlying
+    extremum-selection primitive; the bridge theorem connecting them
+    will live in `Phenomena/Reference/Studies/Beaver2004.lean` (a
+    future commit). The deliberate non-bridging follows mathlib's
+    `PMF` vs `Measure` precedent: each substrate keeps its own
+    vocabulary, with cross-framework identities anchored in the paper
+    that argues them. -/
+def cbAll [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    (prev : Utterance E R) (cur : U) : List E :=
+  let realized := prev.realizations.filter (fun r => Realizes.decide cur r.entity)
+  match realized.argmax (fun r => CfRankerOf.rank r) with
+  | none => []
+  | some top =>
+    let topRank := CfRankerOf.rank top
+    ((realized.filter (fun r => CfRankerOf.rank r = topRank)).map (·.entity)).dedup
+
+@[simp] theorem cbAll_empty_prev [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    (cur : U) : cbAll (Utterance.mk [] : Utterance E R) cur = [] := rfl
 
 end Discourse.Centering

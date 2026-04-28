@@ -101,7 +101,7 @@ def classifyTransitionInternal [DecidableEq E]
     when the paper's definition is silent (segment-initial case where
     the prior Cb is undefined but the current Cb exists). -/
 def classifyTransitionStrict
-    [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) : Option Transition :=
   match cb prev cur, prevCb with
@@ -119,7 +119,7 @@ def classifyTransitionStrict
     even though Definition 4 does not formally cover the segment-initial
     pair. -/
 def classifyTransitionExtended
-    [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) : Transition :=
   match cb prev cur with
@@ -133,7 +133,7 @@ def classifyTransitionExtended
     construction; only the `curCb = none` and segment-initial branches
     need handling. -/
 theorem extended_eq_strict_when_defined
-    [DecidableEq E] [CfRanker R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) (t : Transition)
     (h : classifyTransitionStrict prev cur curCp prevCb = some t) :

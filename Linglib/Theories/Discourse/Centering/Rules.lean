@@ -38,7 +38,7 @@ variable {E R : Type}
     *one-directional*: it says nothing about whether the Cb *must* be
     pronominalized when no other entity is — Rule 1 only constrains
     what happens when pronominalization is used at all. -/
-def Rule1Holds [DecidableEq E] [CfRanker R] {U : Type}
+def Rule1Holds [DecidableEq E] [CfRankerOf E R] {U : Type}
     [Realizes U E] [Pronominalizes U E]
     (prev : Utterance E R) (cur : U) : Prop :=
   match cb prev cur with
@@ -46,7 +46,7 @@ def Rule1Holds [DecidableEq E] [CfRanker R] {U : Type}
   | some curCb =>
     (∃ e ∈ prev.cf, pronominalizes cur e) → pronominalizes cur curCb
 
-instance [DecidableEq E] [CfRanker R] {U : Type}
+instance [DecidableEq E] [CfRankerOf E R] {U : Type}
     [Realizes U E] [Pronominalizes U E]
     (prev : Utterance E R) (cur : U) :
     Decidable (Rule1Holds prev cur) := by

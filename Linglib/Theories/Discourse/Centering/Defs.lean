@@ -21,8 +21,13 @@ The shape of Centering as a framework:
   ranker shape and is formalized as its own architecture in
   `Phenomena/Reference/Studies/Sidner1983.lean`.
 
-* `[CfRanker R]` provides the per-role rank used to order Cf.
-  Higher rank = more prominent.
+* `[CfRankerOf E R]` provides the per-realization rank used to order
+  Cf. Higher rank = more prominent. The simpler `[CfRanker R]` (rank
+  by role only) is sugar — every `CfRanker R` lifts automatically to
+  a `CfRankerOf E R` via the low-priority `cfRankerOf_of_role` default
+  instance, projecting through `.role`. Rankers that depend on the
+  full realization (linear order @cite{rambow-1993}, info-status
+  @cite{strube-hahn-1999}) provide `CfRankerOf` directly.
 
 * `[Realizes U E]` is the plug-in semantics of "u realizes e". The
   `outParam` on `E` lets Lean infer the entity type from the utterance.
