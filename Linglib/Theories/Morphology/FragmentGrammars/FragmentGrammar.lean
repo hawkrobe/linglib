@@ -63,6 +63,24 @@ the beta-binomial halt prior and the per-(rule, position) factor.
 - `FragmentGrammar.corpusProbGivenStorage` — eq from §3.1.8,
   conditional on table assignment `Y` and halt counts `Z`.
 
+## §2.3.7 vs §3.1.8 — sampler vs distribution
+
+This file is the **distribution** side: `corpusProbGivenStorage` is the
+density `fg(F; F)` of @cite{odonnell-2015} §3.1.8 (p. 94). The
+**sampler** that draws from this density is in the sibling file
+`FragmentLambda.lean`, scaffolding @cite{odonnell-2015} §2.3.7's
+Church macro `(fragment-lambda args body)` (Figure 2.21, p. 71). The
+two are linked by the soundness contract
+`fragmentLambdaDepth_marginalises_to_fg`, which equates the sampler's
+output marginal with the §3.1.8 density.
+
+Per @cite{odonnell-2015} §3.1.8 (p. 92) the substrate here implements
+the actual model used in the rest of the book — biased halt coin
+`BINOMIAL(ν)` with `ν` itself drawn from a Beta prior — not the
+fair-coin presentation of §2.3.6. The §2.3.7 fair-coin macro is
+recovered as the `haltPriorRecurse = haltPriorHalt = 1` special case
+(Beta(1,1) = Uniform).
+
 ## References
 
 - @cite{odonnell-2015} §2.4.4, §3.1.8.
