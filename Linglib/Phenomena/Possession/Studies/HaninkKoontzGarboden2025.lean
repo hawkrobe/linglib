@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Morphology.Core.Monotonicity
+import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 
@@ -63,7 +63,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 
 namespace HaninkKoontzGarboden2025
 
-open Morphology.Core.Monotonicity
+open KoontzGarboden2009.Monotonicity
 open Morphology.DM (Categorizer)
 open Semantics.Noun.Relational.Barker2011 (π Pred1 Pred2)
 
@@ -240,8 +240,8 @@ def MorphClass.operators : MorphClass → List PCOp
   | .class3 => [.root, .nabla, .redupMorph, .possess]
 
 /-- All three derivational relationships are monotonic — none remove
-    operators from the LSR. Uses `isMonotonic` from the theory layer
-    (`Theories/Morphology/Core/Monotonicity.lean`). -/
+    operators from the LSR. Uses `isMonotonic` from `KoontzGarboden2009.lean`
+    (the originating paper for the Monotonicity Hypothesis). -/
 theorem all_derivations_monotonic :
     isMonotonic MorphClass.class1.operators MorphClass.class2.operators = true ∧
     isMonotonic MorphClass.class1.operators MorphClass.class3.operators = true ∧
@@ -269,7 +269,7 @@ theorem within_language_variation :
 
 /-- A Wá·šiw property concept root entry.
 
-    Each root carries a `Root` from `RootTypology`, ensuring properties
+    Each root carries a `RootClassification` from `RootTypology`, ensuring properties
     are derived from the theory layer. All PC roots share
     `RootEntailments.propertyConcept` (+S −M −R −C) but differ in
     `RootDenotationType` (the H&K-G contribution). -/
@@ -279,10 +279,10 @@ structure WasiwPCRoot where
   morphClass : MorphClass
   dixonCat : PCClass
   /-- The theory-layer root: all PC roots are +S −M −R −C, no theme. -/
-  root : Root
+  root : RootClassification
   deriving Repr
 
-/-- Construct a Wá·šiw PC root with the correct theory-layer `Root`.
+/-- Construct a Wá·šiw PC root with the correct theory-layer `RootClassification`.
     All PC roots are `propertyConcept` (+S −M −R −C), `noTheme`, and
     their `denotationType` is determined by `MorphClass.denotationType`. -/
 def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PCClass) :
