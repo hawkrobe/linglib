@@ -32,12 +32,13 @@ project-internal bridge to @cite{merin-1999}'s DTS for the §6
 
 Cross-linguistically, some languages have a discourse particle glossed
 as "only" that conjoins two clauses while signalling that the second
-undermines the evidential trajectory of the first:
+undermines the evidential trajectory of the first. Paper (29a-d) all
+use a single house-buying frame:
 
 - Italian   *solo che*  ("La casa è bella, solo che è costosissima")
-- Russian   *tol'ko*    ("Квартира большая, только кухня маленькая")
-- Hungarian *csak*      ("A ház szép, csak drága")
-- Mandarin  *zhǐshì*    ("房子很好, 只是太贵了")
+- Russian   *tol'ko*    ("Dom krasivyj, tol'ko ochen' dorogoj")
+- Hungarian *csak*      ("Szép a ház, csak nagyon drága")
+- Mandarin  *zhǐshì*    ("Zhège fángzi hěn piàoliang, zhǐshì yǒudiǎr guì")
 
 ## Paper ex. (16) — the proposal
 

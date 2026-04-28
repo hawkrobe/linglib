@@ -138,11 +138,15 @@ def russian_house : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Hungarian (29c): "Szép ez a ház, csak nagyon drága" -/
+/-- Hungarian (29c): "Szép a ház, csak nagyon drága".
+
+    Note: paper (29c) is "Szép a ház" (no demonstrative); the
+    "Szép ez a ház" form with demonstrative appears in (31a-f) for
+    the clause-type variation paradigm but not in (29c) itself. -/
 def hungarian_house : DiscourseOnlyDatum :=
   { language := "Hungarian"
   , form := csak.form
-  , sClause := "Szép ez a ház"
+  , sClause := "Szép a ház"
   , sPrimeClause := "nagyon drága"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "it's very expensive"
@@ -153,11 +157,11 @@ def hungarian_house : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Mandarin (29d): "Zhège fángzì hěn piàoliang, zhǐshì yǒudiǎr guì" -/
+/-- Mandarin (29d): "Zhège fángzi hěn piàoliang, zhǐshì yǒudiǎr guì" -/
 def mandarin_house : DiscourseOnlyDatum :=
   { language := "Mandarin"
   , form := zhishi.form
-  , sClause := "Zhège fángzì hěn piàoliang"
+  , sClause := "Zhège fángzi hěn piàoliang"
   , sPrimeClause := "yǒudiǎr guì"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "it's a bit expensive"
@@ -379,11 +383,11 @@ def hungarian_s'_exclamative : DiscourseOnlyDatum :=
 -- exclamative S'.
 -- ============================================================================
 
-/-- Mandarin (32a): "Zhège fángzì hěn piàoliang, zhǐshì zhuāngxīu le ma?" -/
+/-- Mandarin (32a): "Zhège fángzi hěn piàoliang, zhǐshì zhuāngxīu le ma?" -/
 def mandarin_s'_polarQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
   , form := zhishi.form
-  , sClause := "Zhège fángzì hěn piàoliang"
+  , sClause := "Zhège fángzi hěn piàoliang"
   , sPrimeClause := "zhuāngxīu le ma?"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "has it been renovated?"
@@ -395,11 +399,11 @@ def mandarin_s'_polarQ : DiscourseOnlyDatum :=
   , notes := "Marked % (marginal) in the paper"
   }
 
-/-- Mandarin (32b): "Zhège fángzì hěn piàoliang, zhǐshì tā bú shì diànlì xìtǒng chū le wèntí ma?" -/
+/-- Mandarin (32b): "Zhège fángzi hěn piàoliang, zhǐshì tā bú shì diànlì xìtǒng chū le wèntí ma?" -/
 def mandarin_s'_highNegQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
   , form := zhishi.form
-  , sClause := "Zhège fángzì hěn piàoliang"
+  , sClause := "Zhège fángzi hěn piàoliang"
   , sPrimeClause := "tā bú shì diànlì xìtǒng chū le wèntí ma?"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "didn't it have a problem with the electric system?"
@@ -410,11 +414,11 @@ def mandarin_s'_highNegQ : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Mandarin (32c): "Zhège fángzì hěn piàoliang, zhǐshì tā shénme shíhou zhuāngxīu de?" -/
+/-- Mandarin (32c): "Zhège fángzi hěn piàoliang, zhǐshì tā shénme shíhou zhuāngxīu de?" -/
 def mandarin_s'_whQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
   , form := zhishi.form
-  , sClause := "Zhège fángzì hěn piàoliang"
+  , sClause := "Zhège fángzi hěn piàoliang"
   , sPrimeClause := "tā shénme shíhou zhuāngxīu de?"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "when has it been renovated?"
@@ -426,11 +430,11 @@ def mandarin_s'_whQ : DiscourseOnlyDatum :=
   , notes := "Paper has optional elements: tā (shì) shénme shíhou zhuāngxīu de (ne)?"
   }
 
-/-- Mandarin (32d): "Zhège fángzì hěn piàoliang, zhǐshì shéi huì fù liǎngbǎiwàn mǎi ne?" -/
+/-- Mandarin (32d): "Zhège fángzi hěn piàoliang, zhǐshì shéi huì fù liǎngbǎiwàn mǎi ne?" -/
 def mandarin_s'_negRhetWhQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
   , form := zhishi.form
-  , sClause := "Zhège fángzì hěn piàoliang"
+  , sClause := "Zhège fángzi hěn piàoliang"
   , sPrimeClause := "shéi huì fù liǎngbǎiwàn mǎi ne?"
   , sGloss := "The house is beautiful"
   , sPrimeGloss := "who would pay 2 millions for it?"

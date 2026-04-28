@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.494] - 2026-04-27
+
+### IKW Discourse *only* arc: careful-audit follow-up — fabricated examples + Mandarin pinyin typo + Hungarian 29c
+
+Direct paper-vs-Lean cross-reference pass uncovered four issues the multi-agent audit didn't catch.
+
+**1. Module docstring of `IppolitoKissWilliams2025.lean` had three fabricated example sentences.** The "puzzle" section listed Russian "Квартира большая, только кухня маленькая" / Hungarian "A ház szép, csak drága" / Mandarin "房子很好, 只是太贵了". None of these appear in the paper. Paper (29a-d) all use a single house-buying frame; replaced with the actual paper text: Russian "Dom krasivyj, tol'ko ochen' dorogoj", Hungarian "Szép a ház, csak nagyon drága", Mandarin "Zhège fángzi hěn piàoliang, zhǐshì yǒudiǎr guì".
+
+**2. `hungarian_house` (Data.lean) used "Szép ez a ház" — paper (29c) is "Szép a ház" (no demonstrative).** The "ez"-form belongs to the (31) clause-type-variation paradigm, not (29c). Fixed; docstring now notes the (29c)/(31) form distinction.
+
+**3. Mandarin pinyin typo throughout Data.lean: "fángzì" → "fángzi".** Eight occurrences corrected. Paper consistently uses "fángzi" (房子, neutral-tone "zi" suffix); the Lean had fourth-tone "zì" (字, "character") — wrong character implied.
+
+**4. Bib `sources` field for `ippolito-kiss-williams-2022` listed `Theories/Semantics/Questions/Probabilistic.lean`.** Yesterday's commit 0.230.492 removed all IKW citations from `Probabilistic.lean` when rehoming `Supports`/`Agree`/`Disagree`; the file is no longer a consumer. Removed from sources field.
+
+Verified during this pass: SUPPORT (paper ex. (13)), AGREEMENT/DISAGREEMENT (ex. (14)), the §5.2 weak-non-agreement attribution, the (16) CI clause (i) `p ∉ QUD` exclusion fix from 0.230.492, the §5.2 doxastic derivation, the §5.2 ex (20)/(21) biased-Q examples, Williams (5a) modal paraphrase — all align with the paper. Known nit not addressed: `discOnly_implies_unexpectedness_under_but` is named after discourse *only* but uses the strict *but* condition (negRelevant); the math is sound, the name is misleading. Build: 1719 jobs green for the touched constellation.
+
 ## [0.230.493] - 2026-04-28
 
 ### InformationStructure cleanup commit 3/3: PolarityMarking* cluster moved to Typology/
