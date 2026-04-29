@@ -1407,7 +1407,7 @@ import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Modality.Studies.AlonsoOvalleMoghiseh2025Generic
 import Linglib.Phenomena.Modality.Studies.Khoo2015
-import Linglib.Phenomena.Modality.Typology
+import Linglib.Phenomena.Modality.Studies.Aikhenvald2004
 import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2022
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2026
@@ -2128,13 +2128,12 @@ import Linglib.Theories.Semantics.Composition.PredicateTransfer
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Phenomena.Reference.Studies.AhnZhu2025
-import Linglib.Theories.Semantics.Quantification.Indefinites.TeamSemanticTypology
+import Linglib.Phenomena.Indefinites.Studies.DeganoAloni2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Semantics.Numerals.Degree
 import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Quantification.Indefinites.DependenceLogic
 import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993Apparatus
 import Linglib.Theories.Semantics.Quantification.Quantifier
@@ -2535,8 +2534,8 @@ import Linglib.Phenomena.Reference.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Phenomena.Reference.Studies.Longobardi2005
 import Linglib.Phenomena.Reference.Studies.Zimmermann2026
-import Linglib.Phenomena.Reference.Studies.Bubnov2026
-import Linglib.Phenomena.Reference.Studies.Dekier2021
+import Linglib.Phenomena.Indefinites.Studies.Bubnov2026
+import Linglib.Phenomena.Indefinites.Studies.Dekier2021
 import Linglib.Phenomena.Reference.Studies.AhnKocabDavidson2026
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.Assertion.Stalnaker

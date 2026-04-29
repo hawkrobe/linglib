@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.526] - 2026-04-28
+
+### `Phenomena/Indefinites/` consolidation + cross-framework divergence theorems (4-agent audit landed)
+
+Acts on the 2026-04-28 four-agent re-audit of the `Quantification/Indefinites/` subdir created in `0.230.524`. The audit found that subdir was wrong-shaped: `TeamSemanticTypology.lean` overclaimed framework-anchor for paper-anchored content; `DependenceLogic.lean`'s general-logic content had only two same-cluster consumers (no general-API justification per mathlib discipline); related Studies were scattered across `Reference/Studies/` instead of consolidating in the existing `Phenomena/Indefinites/`. Memory entry: `project_quantification_indefinites_audit.md` (forthcoming next session).
+
+**Items landed:**
+
+- **Move `TeamSemanticTypology.lean` → `Phenomena/Indefinites/Studies/DeganoAloni2025.lean`.** Reverts the in-session paper-anchor → framework-anchor rename from `0.230.524`; D&A's 7-type partition is paper content (no textbook consensus per memory `project_indefinite_substrate_contested.md`), so the substrate-vs-Studies distinction in CLAUDE.md ("paper-specific apparatus, with cited rivals") puts it in Studies. Fixed two docstring bugs flagged by the linguistics-domain agent: silent NS↔irrealis identification now explicit; `skPlusNS` description now distinguishes formal-impossibility from empirical-unattestation as independent failure modes.
+- **Inline `DependenceLogic.lean` as private prelude** in the relocated `DeganoAloni2025.lean` (sub-namespace `…DeganoAloni2025.DependenceLogic`). Two consumers (this file + Bubnov 2026), both same study cluster — promotion to `Core/Logic/` would create substrate without independent consumers, the anti-pattern flagged in memory `project_pmf_check_mathlib_first.md`. Replaced `native_decide` (CLAUDE.md prohibition) with `decide` in `constancy_excludes_variation_witness`.
+- **Delete `Quantification/Indefinites/` subdir.** Was a half-step in the wrong direction; the Charlow-style "paper-grouping subdir under Theory" smell.
+- **Move `Reference/Studies/{Bubnov2026, Dekier2021}.lean` → `Phenomena/Indefinites/Studies/`.** Both files' primary contribution is indefinite typology, not anaphora/reference — Dekier's title is "Morphosyntax of specific and non-specific indefinite markers"; Bubnov critiques D&A and Dekier on Russian indefinite paradigms. Per CLAUDE.md "place each study under its primary phenomenon."
+- **`ChoiceFunction.lean` stays in `Quantification/`.** 6 consumers (3 Fragments + 3 Phenomena) span beyond indefinites; framework substrate not paper-anchored.
+- **Polarity-side `Haspelmath1997.lean` stays in `Polarity/Studies/`.** Audit confirmed the two-Haspelmath-files split is intentional (different sample size, different theorem clusters, different Fragment-bridge classes per CLAUDE.md "split paper across phenomena" rule).
+
+**Cross-framework divergence + consilience theorems (the load-bearing step):**
+
+The audit's headline finding was that file moves alone are "hygiene-theatre" — the linglib thesis (make incompatibilities visible) requires actual divergence theorems on shared paradigm cells. Three theorems added inside the chronologically-latest paper that critiques the others (Bubnov 2026 §11), per CLAUDE.md "comparison goes in the later paper's study file" rule:
+
+- `fragment_polarity_disagree_on_kto_to` — Russian *kto-to*: Bubnov-Fragment encoding `{specificUnknown}` ≠ D&A-Polarity-Haspelmath encoding `{specificUnknown, irrealis}`. `decide`-checked.
+- `fragment_polarity_disagree_on_some` — English *some-*: D&A-Fragment encoding `{specificKnown, specificUnknown, irrealis}` ≠ Polarity-Haspelmath encoding `{specificKnown, specificUnknown}` (where *any-* owns the irrealis territory). `decide`-checked.
+- `irgend_irgendein_agree_on_epistemic` — German cross-framework consilience: indefinite-typology classifies `irgend-` as D&A type-iv epistemic; modal-indefinite (Aloni-BSML lineage) classifies `irgendein-` as having epistemic flavor. Same morphological root, same epistemic prediction, different theoretical apparatus. `decide`-checked.
+
+**Companion prose update at `Polarity/Studies/Haspelmath1997.lean`** (lines 100-112): the prose previously argued the disagreement was "value-level visible but not predictive enough to merit a theorem." Replaced with a pointer to the now-existing theorems in `Bubnov2026.lean §11`. Note: this file is in the user's parallel-session in-flight working tree (untracked at HEAD); included in this commit because the new theorems above import it.
+
+**Skipped:** the audit's recommendation to relocate `DependenceLogic.lean` to `Core/Logic/` was deferred (no independent consumer); recommendation to consolidate `Phenomena/ModalIndefinites/` into `Indefinites/` was deferred (separate audit needed).
+
+**Build:** all touched files (DeganoAloni2025, Bubnov2026, Dekier2021, Polarity/Haspelmath1997) green via targeted `lake build` (1817 jobs).
+
+## [0.230.525] - 2026-04-28
+
+(Reserved — collision with parallel-session FragmentLambda v2.8 numbering. The Quantification/ reorganization concrete edits previously listed under 0.230.524 commit `e1164f4f` should logically be 0.230.525; the 0.230.524 changelog entry below documents FragmentLambda v2.8.)
+
 ## [0.230.524] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.8 — `fragmentLambdaDepth_preserves_wellFormed` discharged; **only one sorry remains**

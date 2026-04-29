@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Quantification.Indefinites.DependenceLogic
-import Linglib.Theories.Semantics.Quantification.Indefinites.TeamSemanticTypology
+import Linglib.Phenomena.Indefinites.Studies.DeganoAloni2025
+import Linglib.Phenomena.Polarity.Studies.Haspelmath1997
 import Linglib.Theories.Morphology.Nanosyntax.Core
-import Linglib.Phenomena.Reference.Studies.Dekier2021
+import Linglib.Phenomena.Indefinites.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.German.Indefinites
@@ -47,7 +47,7 @@ test case. Key claims:
   result — nanosyntax predicts containment that indefinites lack.
 - `Typology.Indefinite`: `IndefiniteEntry` (consensus function-coverage
   + morphological-basis data) and `classifyTriple` for syncretism patterns.
-- `Theories.Semantics.Quantification.Indefinites.TeamSemanticTypology`: `DAType` and
+- `Phenomena.Indefinites.Studies.DeganoAloni2025`: `DAType` and
   `surfaceDAType` / `consistentWith` projections from entries to D&A types.
 - `Fragments.{Russian,English,German,Latin,Yakut,Kannada}.Indefinites`:
   per-language indefinite paradigms witnessing the typology.
@@ -57,10 +57,10 @@ test case. Key claims:
 
 set_option autoImplicit false
 
-namespace Bubnov2026
+namespace Phenomena.Indefinites.Studies.Bubnov2026
 
-open Semantics.Quantification.Indefinites.DependenceLogic
-open Semantics.Quantification.Indefinites.TeamSemanticTypology
+open Phenomena.Indefinites.Studies.DeganoAloni2025
+open Phenomena.Indefinites.Studies.DeganoAloni2025.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021
 open Typology.Indefinite
@@ -320,4 +320,66 @@ theorem irgend_compatible_classifications :
 -- correctly predict the typology, and `type_vi_contradictory` derives
 -- the gap from the fundamental incompatibility of constancy and variation.
 
-end Bubnov2026
+-- ============================================================================
+-- §11. Cross-framework divergence (and consilience) theorems
+-- ============================================================================
+-- Per CLAUDE.md ("the comparison goes in the chronologically-later paper's
+-- study file"), Bubnov 2026 is the natural home for theorems comparing
+-- Bubnov's analysis against the earlier published encodings (D&A 2025;
+-- Haspelmath 1997 polarity-side as represented in
+-- `Phenomena/Polarity/Studies/Haspelmath1997.lean`).
+--
+-- These theorems supersede the prose at lines 100-112 of
+-- `Phenomena/Polarity/Studies/Haspelmath1997.lean`, which had argued the
+-- disagreement was "value-level visible but not predictive enough to merit
+-- a theorem." It IS theorem-worthy: the encodings are extensionally distinct
+-- on shared paradigm cells, and the disagreement is decidable.
+
+open Phenomena.Polarity.Studies.Haspelmath1997 in
+/-- **Russian *kto-to* encoding divergence.** The Fragment encoding (this
+    paper, Bubnov 2026 §7: paradigmatic competition narrows *kto-to* to
+    SU only) and the Polarity-side encoding (D&A 2025 Table 2: *kto-to*
+    is type-iv epistemic, profile {SU, NS}) are extensionally distinct on
+    the SK/SU/NS triangle.
+
+    This is *not* a bug in either encoding — it's two published analyses
+    of the same paradigm cell. The disagreement source: D&A read the
+    profile theoretically (semantic permission); Bubnov reads it
+    distributionally (actual attested coverage net of competition). -/
+theorem fragment_polarity_disagree_on_kto_to :
+    russian.forms[1]?.map (·.functions) ≠
+    some Fragments.Slavic.Russian.Indefinites.toEntry.functions := by decide
+
+open Phenomena.Polarity.Studies.Haspelmath1997 in
+/-- **English *some-* encoding divergence.** The Fragment encoding (D&A
+    type-i unmarked: SK ∪ SU ∪ NS) and the Polarity-side encoding
+    (Haspelmath polarity-view: *some-* covers SK + SU only, with *any-*
+    owning the NPI/irrealis territory) disagree extensionally.
+
+    Same disagreement source as the Russian case: D&A's classification
+    treats *some-* as covering its full theoretical profile; the polarity-
+    side analysis cuts at the *some-*/*any-* boundary, where *any-* is
+    the elsewhere form. -/
+theorem fragment_polarity_disagree_on_some :
+    english.forms[0]?.map (·.functions) ≠
+    some Fragments.English.Indefinites.someEntry.functions := by decide
+
+/-- **German *irgend-* / *irgendein-* cross-framework consilience.**
+    The indefinite-typology classification of *irgend-* (D&A type-iv
+    epistemic, profile {SU, NS}) and the modal-indefinite framework's
+    classification of *irgendein-* (Aloni-BSML lineage: epistemic flavor
+    in `flavors`) agree: both frameworks attribute epistemic semantics
+    to the same morphological root, via different theoretical apparatus.
+
+    This is hidden agreement that the file moves alone do not surface.
+    Bubnov §6 discusses *irgend-* as a diachronic example; the cross-
+    framework consilience strengthens the case that the empirical content
+    is robust across formalisms. -/
+theorem irgend_irgendein_agree_on_epistemic :
+    Fragments.German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
+    Fragments.German.ModalIndefinites.irgendeinEntry.flavors.contains .epistemic = true := by
+  refine ⟨?_, ?_⟩
+  · decide
+  · decide
+
+end Phenomena.Indefinites.Studies.Bubnov2026
