@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
+import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 
 /-!
 # PVC–DOC Structural Priming
@@ -299,7 +300,15 @@ theorem doc_nested_not_flat :
 theorem doc_nested_matches_appl :
     structurallyIsomorphic doc_nested doc_appl = true := by decide
 
-/-! ## @cite{bruening-2021}: process-level isomorphism -/
+/-! ## @cite{bruening-2021}: process-level isomorphism
+
+`doc_bruening` below is a `SyntacticObject` witness of Bruening's V+P
+amalgam analysis. The lexical-fragment side of the same paper —
+Bruening's classification of implicit-argument behavior across
+~43 ditransitive verbs (Table 56) — is formalized in
+`Phenomena/ArgumentStructure/Studies/Bruening2021.lean`. The
+`bruening_give_field_consistent` theorem below ties this structural
+witness to that lexical-fragment side. -/
 
 def doc_bruening : SyntacticObject :=
   merge (.leaf ⟨(LexicalItem.simple .V [.D, .D] "give").combine
@@ -325,6 +334,26 @@ theorem bruening_both_use_incorporation :
 
 theorem bruening_doc_matches_sc_doc :
     structurallyIsomorphic doc_bruening doc_sc = true := by decide
+
+/-! ### Bridge to Bruening 2021 lexical fragment
+
+`doc_bruening` above is a `SyntacticObject` witness; this theorem ties
+it to the corresponding lexical-fragment entry in `Bruening2021.lean`,
+ensuring the verb we structurally treat as "give-in-DOC" is also the
+verb whose implicit-argument profile licenses Bruening's Table (56)
+classification. If `Verbal.lean` ever moves `give` to a different
+complement type or implicit-arg profile, this bridge fails — alerting
+both files. -/
+theorem bruening_give_field_consistent :
+    Fragments.English.Predicates.Verbal.give.complementType
+        = Semantics.Verb.ComplementType.np_np
+    ∧ Fragments.English.Predicates.Verbal.give.altComplementType
+        = some Semantics.Verb.ComplementType.np_pp
+    ∧ Fragments.English.Predicates.Verbal.give.implicitObj
+        = some Semantics.Verb.ImplicitInterp.indef
+    ∧ Fragments.English.Predicates.Verbal.give.implicitGoal
+        = some Semantics.Verb.ImplicitInterp.def := by
+  refine ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ## Bridge to experimental data -/
 

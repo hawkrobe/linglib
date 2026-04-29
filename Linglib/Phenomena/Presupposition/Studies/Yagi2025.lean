@@ -164,7 +164,7 @@ theorem can_be_false :
 
 /-- Strong Kleene disjunction of the two presuppositional propositions. -/
 noncomputable def skDisj : Prop3 W :=
-  Prop3.or kingOpensParl.eval presConductsCeremony.eval
+  kingOpensParl.eval ⊔ presConductsCeremony.eval
 
 /-- Strong Kleene never produces false for this disjunction. Because
 presuppositions conflict, at least one disjunct is always undefined, so
@@ -173,7 +173,7 @@ theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
   intro w
   cases w <;>
     (simp [skDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident]; decide)
+      hasKing, hasPresident] <;> try decide)
 
 
 /-! ## Failure 2: Two-dimensional semantics (@cite{yagi-2025} §2.2)
@@ -374,29 +374,28 @@ maps each disjunct to a bivalent value, Strong and Weak Kleene agree
 on the result, and Yagi's discussion uses Weak Kleene (Def 7) only as
 a notational matter. -/
 noncomputable def metaAssertDisj : Prop3 W :=
-  Prop3.or (Prop3.metaAssert kingOpensParl.eval) (Prop3.metaAssert presConductsCeremony.eval)
+  Prop3.metaAssert kingOpensParl.eval ⊔ Prop3.metaAssert presConductsCeremony.eval
 
 /-- Meta-assertion allows falsity (unlike Strong Kleene). Satisfies (2b). -/
 theorem metaAssert_allows_falsity :
     metaAssertDisj W.kingDoesnt = .false := by
   simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
     hasKing, hasPresident]
-  rfl
 
 /-- Meta-assertion loses the presupposition: `𝒜φ_p` has no presupposition
 (it maps `∗` to `0`), so the Strong Kleene disjunction `𝒜φ_p ∨_s ψ_q`
 only presupposes `¬𝒜ψ_q → p` per Yagi (11), not `p ∨ q`. -/
 theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined := by
   intro w; cases w <;>
-    (simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident, Truth3.isDefined]; trivial)
+    simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+      hasKing, hasPresident, Truth3.isDefined]
 
 /-- The meta-assertion disjunction is bivalent — no gap, no presupposition
 via the standard gap mechanism. -/
 theorem metaAssert_no_gap : ∀ w, metaAssertDisj w ≠ .indet := by
   intro w; cases w <;>
-    (simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident]; decide)
+    simp [metaAssertDisj, PrProp.eval, kingOpensParl, presConductsCeremony,
+      hasKing, hasPresident]
 
 
 /-! ## Reaction 2: Flexible accommodation (@cite{yagi-2025} §3.2,

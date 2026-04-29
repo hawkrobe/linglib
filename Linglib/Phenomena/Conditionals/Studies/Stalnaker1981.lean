@@ -121,7 +121,7 @@ theorem verdi_french_indeterminate :
 theorem bizet_verdi_cem :
     let φ := selectionalCounterfactual bvSim compatriots bizetItalian .actual
     let ψ := selectionalCounterfactual bvSim compatriots (¬ bizetItalian ·) .actual
-    Truth3.join φ ψ ≠ .false :=
+    φ ⊔ ψ ≠ .false :=
   cem_selectional bvSim compatriots bizetItalian .actual
 
 /-- **CEM fails under universal semantics.** Lewis's theory makes both

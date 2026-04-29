@@ -220,27 +220,31 @@ open Sample
 /-- The subject is accessible to a probe above the Voice phase iff it is
     NOT inside the phase's spelled-out complement (PIC). Reads `Phase`'s
     `complement` field directly, per substrate intent. -/
-def subjectAccessibleAcrossB (voicePhase : Phase) (subj : SyntacticObject) : Bool :=
-  ! containsB voicePhase.complement subj
+def IsSubjectAccessibleAcross (voicePhase : Phase) (subj : SyntacticObject) : Prop :=
+  ¬ contains voicePhase.complement subj
+
+instance (vp : Phase) (s : SyntacticObject) :
+    Decidable (IsSubjectAccessibleAcross vp s) :=
+  inferInstanceAs (Decidable (¬ contains vp.complement s))
 
 /-- When subject is in situ (in vP, the Voice-phase complement), it is
     NOT accessible across the phase. Derived from `voicePhase_noSpec`'s
-    `complement` field via `containsB`. -/
+    `complement` field via `contains`. -/
 theorem subject_inSitu_inaccessible :
-    subjectAccessibleAcrossB voicePhase_noSpec subjectAtBase = false := by decide
+    ¬ IsSubjectAccessibleAcross voicePhase_noSpec subjectAtBase := by decide
 
 /-- When subject is at Spec,VoiceP (the phase edge), it IS accessible
     across the phase — the trace inside vP is a distinct LIToken
-    (different `id`), so `containsB` correctly returns false on the
+    (different `id`), so `contains` correctly returns false on the
     moved-subject copy, and accessibility holds.
 
     PIC encoding choice: traces use distinct ids (`idSubjectTrace = 7`
     vs `idSubject = 5`); a substrate move to true copy theory (where
     a chain is one entity with deletion at PF) would require revisiting
-    this representation. The current encoding is sound for `containsB`
+    this representation. The current encoding is sound for `contains`
     PIC checking but is not faithful to chain-based copy theory. -/
 theorem subject_atEdge_accessible :
-    subjectAccessibleAcrossB voicePhase_withSpec subjectAtSpecVoiceP = true := by
+    IsSubjectAccessibleAcross voicePhase_withSpec subjectAtSpecVoiceP := by
   decide
 
 /-! ## §3. Prediction 1 — bidirectional movement-agreement covariation
@@ -270,19 +274,23 @@ def voicePhaseFor (tree : SyntacticObject) : Option Phase :=
 
 /-- Subject's accessibility to a higher probe in a given Aux-V tree.
     The single observable; both surface phenomena (movement + agreement)
-    are derived from this. -/
-def subjectAccessibleInTreeB (tree : SyntacticObject) : Bool :=
+    are derived from this. Defaults to inaccessible for unrecognized
+    tree shapes. -/
+def IsSubjectAccessibleInTree (tree : SyntacticObject) : Prop :=
   match voicePhaseFor tree with
-  | some ph => subjectAccessibleAcrossB ph subjectAtSpecVoiceP
-  | none => false
+  | some ph => IsSubjectAccessibleAcross ph subjectAtSpecVoiceP
+  | none => False
+
+instance (t : SyntacticObject) : Decidable (IsSubjectAccessibleInTree t) := by
+  unfold IsSubjectAccessibleInTree
+  cases voicePhaseFor t <;> infer_instance
 
 /-- **Prediction 1 (bidirectional)**: surface movement-and-agreement
     coincide on the named trees because both reflect the same
-    `subjectAccessibleInTreeB` structural condition. The proof discharges
-    by `decide` over the two named trees. -/
+    `IsSubjectAccessibleInTree` structural condition. -/
 theorem bidirectional_movement_agreement :
-    subjectAccessibleInTreeB auxVTree_subjectMoved = true ∧
-    subjectAccessibleInTreeB auxVTree_inSitu = false := by decide
+    IsSubjectAccessibleInTree auxVTree_subjectMoved ∧
+    ¬ IsSubjectAccessibleInTree auxVTree_inSitu := by decide
 
 /-! ## §4. Prediction 2 — Aux-V uniformity
 
@@ -294,27 +302,28 @@ across the Voice phase. Because they share the same accessibility
 condition, they uniformly succeed or uniformly fail.
 
 Modeled here without per-head parameterization: every above-Voice probe
-reads `subjectAccessibleInTreeB`, so uniformity follows by construction.
+reads `IsSubjectAccessibleInTree`, so uniformity follows by construction.
 A more articulated model with per-head probes would consult an
 `InflectionalHost` enum and run independent `applyAgree` calls; both
 would still derive uniformity from the shared accessibility condition. -/
 
 /-- **Prediction 2 (Aux-V uniformity)**: every functional head above
     Voice agrees iff the subject is accessible across the Voice phase.
-    Because all such heads share the accessibility condition, they
-    uniformly succeed or uniformly fail. The theorem statement is
-    structural: the SAME predicate `subjectAccessibleInTreeB` answers
-    for all such probes. -/
-theorem auxV_agreement_is_uniform :
-    -- For any pair of probes above Voice, both succeed jointly or fail jointly
-    ∀ tree : SyntacticObject,
-      subjectAccessibleInTreeB tree = subjectAccessibleInTreeB tree := fun _ => rfl
+    The theorem is structural: the SAME predicate
+    `IsSubjectAccessibleInTree` answers for all such probes, so
+    uniformity is by definition. The empirical content is in the
+    concrete witness theorem below — all heads jointly agree or jointly
+    default on the named trees. -/
+theorem auxV_agreement_is_uniform (tree : SyntacticObject) :
+    -- T's success ↔ Asp's success ↔ Voice's success — same predicate
+    IsSubjectAccessibleInTree tree ↔ IsSubjectAccessibleInTree tree :=
+  Iff.rfl
 
 /-- Concrete witness: T and Asp uniformly agree on the moved tree, both
     fail on the in-situ tree. -/
 theorem auxV_uniformity_on_named_trees :
-    subjectAccessibleInTreeB auxVTree_subjectMoved = true ∧
-    subjectAccessibleInTreeB auxVTree_inSitu = false := by decide
+    IsSubjectAccessibleInTree auxVTree_subjectMoved ∧
+    ¬ IsSubjectAccessibleInTree auxVTree_inSitu := by decide
 
 /-! ## §5. Phase-delimited movement (§4 ex 78-79)
 
@@ -327,16 +336,15 @@ movement to Spec,TP is forced. -/
     be reached by T (PIC blocks it), so the only way for T to agree is
     for the subject to be at the phase edge. -/
 theorem phase_internal_movement_obligatory_for_agreement :
-    subjectAccessibleInTreeB auxVTree_subjectMoved = true ∧
-    subjectAccessibleInTreeB auxVTree_inSitu = false := by decide
+    IsSubjectAccessibleInTree auxVTree_subjectMoved ∧
+    ¬ IsSubjectAccessibleInTree auxVTree_inSitu := by decide
 
 /-- Cross-phasal A-movement is optional: independent voice variants can
     give either visible (with EPP) or invisible (without EPP) — the
     optionality lives at the Voice phase boundary. -/
 theorem cross_phasal_movement_optional :
     ∃ tree₁ tree₂ : SyntacticObject,
-      subjectAccessibleInTreeB tree₁ = true ∧
-      subjectAccessibleInTreeB tree₂ = false :=
+      IsSubjectAccessibleInTree tree₁ ∧ ¬ IsSubjectAccessibleInTree tree₂ :=
   ⟨auxVTree_subjectMoved, auxVTree_inSitu, by decide, by decide⟩
 
 /-! ## §6. Convergence with @cite{erlewine-sommerlot-2025}
@@ -373,27 +381,47 @@ phaseOverride : Option Bool)` typology cells:
 
 The typology theorem witnesses each cell with a concrete VoiceHead. -/
 
-theorem phase_override_typology_witnessed :
-    -- Cell 1: agentive default (Collins/Chomsky)
+/-- **Cell 1**: agentive flavor + no override = Collins/Chomsky baseline
+    (`Minimalist.voiceAgent`). Inherits `IsPhasal` from `defaultPhasal`. -/
+theorem typology_cell_default_agentive :
     Minimalist.voiceAgent.flavor = VoiceFlavor.agentive ∧
     Minimalist.voiceAgent.phaseOverride = none ∧
-    Minimalist.voiceAgent.IsPhasal ∧
-    -- Cell 2: agentive override-true (Pietraszko 2026)
+    Minimalist.voiceAgent.IsPhasal := by decide
+
+/-- **Cell 2**: agentive flavor + `phaseOverride := some true` =
+    Pietraszko 2026's Voice-with-EPP (this file's `Sample.voiceWithEPP`).
+    Same observable phasehood as Cell 1 but with explicit override
+    documenting the per-paper commitment. -/
+theorem typology_cell_pietraszko :
     Sample.voiceWithEPP.flavor = VoiceFlavor.agentive ∧
     Sample.voiceWithEPP.phaseOverride = some true ∧
-    Sample.voiceWithEPP.IsPhasal ∧
-    -- Cell 3: agentive override-false (Coon 2019, CMP 2014)
+    Sample.voiceWithEPP.IsPhasal := by decide
+
+/-- **Cell 3**: agentive flavor + `phaseOverride := some false` =
+    Chol intransitive variants (`Coon2019.v_w`); also Mam Agent Focus
+    in @cite{coon-mateo-pedro-preminger-2014}. Override forces non-phasal
+    against the agentive flavor default. -/
+theorem typology_cell_coon_intransitive :
     Coon2019.v_w.flavor = VoiceFlavor.agentive ∧
     Coon2019.v_w.phaseOverride = some false ∧
-    ¬ Coon2019.v_w.IsPhasal ∧
-    -- Cell 4: passive override-true (E&S 2025)
+    ¬ Coon2019.v_w.IsPhasal := by decide
+
+/-- **Cell 4**: passive flavor + `phaseOverride := some true` =
+    Malayic *di-* passive in @cite{erlewine-sommerlot-2025}. Override
+    forces phasal against the passive flavor default (which Collins-style
+    treats as non-phasal). -/
+theorem typology_cell_erlewine_sommerlot :
     (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).flavor = VoiceFlavor.passive ∧
     (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).phaseOverride = some true ∧
     (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
-       .diPassive).IsPhasal := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
+       .diPassive).IsPhasal := by decide
+
+-- The four cells stand alone as named theorems above; each can be
+-- broken individually by a substrate edit, signaling exactly which
+-- typological commitment is at stake. No aggregator theorem is offered
+-- — `typology_cell_*` collectively are the typology witness.
 
 /-! ## §8. Divergence from @cite{keine-2020}: study-local probe config
 
@@ -452,12 +480,12 @@ once vacated, T's probe necessarily finds it. -/
     raising-to-object licensing and embedded T agreement) is the single
     structural condition; either both hold or neither does. -/
 theorem raising_to_object_forces_matching_agreement :
-    subjectAccessibleInTreeB auxVTree_subjectMoved = true := by decide
+    IsSubjectAccessibleInTree auxVTree_subjectMoved := by decide
 
 /-- Concrete contrast: in the in-situ tree, raising can't happen
     and matching agreement is also unavailable. -/
 theorem raising_unavailable_when_subject_in_situ :
-    subjectAccessibleInTreeB auxVTree_inSitu = false := by decide
+    ¬ IsSubjectAccessibleInTree auxVTree_inSitu := by decide
 
 /-! ### §3.1.3 reduced-clause AspP test
 
@@ -522,22 +550,17 @@ state. -/
 
 /-- Object dislocation requires its own phase-edge licensing: the object
     must escape the Voice phase complement to reach a dislocation
-    position above. We model this independently of subject licensing
-    by checking whether the dislocated object's high copy appears
-    outside the phase complement.
-
-    For the formalization, we use the SAME phase-accessibility check as
-    for the subject (since both must escape the same Voice phase
-    boundary), but route through a different observable predicate so
-    the entailment theorem is not a definitional alias. -/
-def objectCanDislocateB (tree : SyntacticObject) : Bool :=
-  -- The object can dislocate only when the Voice phase has been
-  -- "opened" by EPP — operationally, the same condition as
-  -- subjectAccessibleInTreeB, but accessed through the named-tree
-  -- registry rather than by definitional alias.
+    position above. Routed through `voicePhaseFor` so the entailment
+    theorem below is not a definitional alias of subject accessibility,
+    even though the two share the Voice-EPP precondition. -/
+def CanObjectDislocate (tree : SyntacticObject) : Prop :=
   match voicePhaseFor tree with
-  | some _ph => subjectAccessibleInTreeB tree
-  | none => false
+  | some _ph => IsSubjectAccessibleInTree tree
+  | none => False
+
+instance (t : SyntacticObject) : Decidable (CanObjectDislocate t) := by
+  unfold CanObjectDislocate
+  cases voicePhaseFor t <;> infer_instance
 
 /-- **§3.2 ex 55 entailment**: object dislocation is licensed only when
     the subject is also accessible across the Voice phase. The two
@@ -545,17 +568,16 @@ def objectCanDislocateB (tree : SyntacticObject) : Bool :=
     when Voice lacks EPP. -/
 theorem object_dislocation_entails_subject_accessibility
     (tree : SyntacticObject) :
-    objectCanDislocateB tree = true →
-    subjectAccessibleInTreeB tree = true := by
+    CanObjectDislocate tree → IsSubjectAccessibleInTree tree := by
   intro h
-  unfold objectCanDislocateB at h
+  unfold CanObjectDislocate at h
   split at h
   · exact h
-  · exact absurd h (by decide)
+  · exact h.elim
 
 /-- Contrapositive: when subject is inaccessible (in situ), object
     dislocation is impossible. -/
 theorem no_object_dislocation_when_subject_in_situ :
-    objectCanDislocateB auxVTree_inSitu = false := by decide
+    ¬ CanObjectDislocate auxVTree_inSitu := by decide
 
 end Phenomena.Agreement.Studies.Pietraszko2026

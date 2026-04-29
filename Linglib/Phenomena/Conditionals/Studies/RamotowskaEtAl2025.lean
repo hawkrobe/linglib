@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Core.Logic.NonBivalence
+import Linglib.Core.Logic.Duality
 import Linglib.Fragments.English.Determiners
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Theories.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
@@ -414,32 +414,26 @@ theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
 -- Architectural Explanation: Local vs Global Trivalence
 -- ════════════════════════════════════════════════════════════════
 
-open Core.NonBivalence (TrivalenceScope local_strength_irrelevant
-  global_mixed_pattern global_always_determinate)
-open Core.Duality (DualityType aggregate ProjectionType)
-open Semantics.Conditionals.Counterfactual (projToDuality projectTruthValues_eq_aggregate)
+open Core.Duality (aggregate ProjectionType
+  aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
+open Semantics.Conditionals.Counterfactual (projectTruthValues_eq_aggregate)
 
 /-!
-### Why Strength Matters: The Trivalence Scope Dichotomy
+### Why Strength Matters: Local vs Global Aggregation
 
 The paper's deepest insight (§2.2): whether gaps arise LOCALLY (before
 the quantifier) or GLOBALLY (after the quantifier) determines whether
-quantifier strength matters. This is formalized in `Core.NonBivalence`
-as the dichotomy between `TrivalenceScope.local` and `.global`.
+quantifier strength matters. The algebra is `Core.Duality.aggregate`
+applied to two different inputs:
 
 - **Homogeneity** uses local scope: each individual's counterfactual
-  is `.indet` (gap). `local_strength_irrelevant` proves both ∃ and
+  is `.indet` (gap). `aggregate_replicate_indet` proves both ∃ and
   ∀ aggregation return `.indet` — strength is invisible.
 - **Selectional** uses global scope: within each selected world,
-  individual outcomes are Bool. `global_mixed_pattern` proves mixed
-  Bools yield `.true` for ∃ and `.false` for ∀ — the strength effect.
+  individual outcomes are Bool. `aggregate_map_ofBool_mixed` proves
+  mixed Bools yield `.true` for ∃ and `.false` for ∀ — the strength
+  effect.
 -/
-
-/-- Map each theory to its trivalence scope architecture. -/
-def Theory.scope : Theory → TrivalenceScope
-  | .universal   => .global   -- Lewis/Kratzer: closest worlds give Bool
-  | .selectional => .global   -- Stalnaker: selection function gives Bool
-  | .homogeneity => .«local»  -- Gaps arise before quantifier
 
 /-- **Homogeneity architecture erases strength**: when gaps arise locally,
     both strong and weak quantifiers return `.indet`. The quantifier's
@@ -453,22 +447,22 @@ theorem homogeneity_erases_strength (n : Nat) (hn : n > 0) :
   intro proj
   unfold embeddedSelectional
   rw [projectTruthValues_eq_aggregate]
-  exact local_strength_irrelevant (projToDuality proj) n hn
+  exact aggregate_replicate_indet proj n hn
 
 /-- **Selectional architecture produces strength effect**: when the
     quantifier sees only Bools (global scope), mixed inputs yield
     `.true` for weak (∃/disjunctive) and `.false` for strong (∀/conjunctive).
 
     This connects the study's `embeddedSelectional` through the bridging
-    theorem to `NonBivalence.global_mixed_pattern`. -/
+    theorem to `Duality.aggregate_map_ofBool_mixed`. -/
 theorem selectional_strength_effect (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
     embeddedSelectional .weak (bs.map Truth3.ofBool) = .true ∧
     embeddedSelectional .strong (bs.map Truth3.ofBool) = .false := by
   unfold embeddedSelectional QStrength.toProjection
-  constructor <;> (rw [projectTruthValues_eq_aggregate]; simp only [projToDuality])
-  · exact (global_mixed_pattern bs h_some_true h_some_false).1
-  · exact (global_mixed_pattern bs h_some_true h_some_false).2
+  constructor <;> rw [projectTruthValues_eq_aggregate]
+  · exact (aggregate_map_ofBool_mixed bs h_some_true h_some_false).1
+  · exact (aggregate_map_ofBool_mixed bs h_some_true h_some_false).2
 
 /-- **Selectional counterfactuals are always determinate**: under global
     scope, aggregation over Bools never produces a gap.
@@ -480,7 +474,7 @@ theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) 
     embeddedSelectional proj (bs.map Truth3.ofBool) ≠ .indet := by
   unfold embeddedSelectional
   rw [projectTruthValues_eq_aggregate]
-  exact global_always_determinate (projToDuality proj) bs
+  exact aggregate_map_ofBool_ne_indet proj bs
 
 -- ════════════════════════════════════════════════════════════════
 -- The Plural Definite Dissociation
@@ -501,12 +495,12 @@ The NonBivalence dichotomy explains this dissociation:
 - **Plural definites use LOCAL trivalence**: each individual's predication
   is evaluated via supervaluation (pluralTruthValue / dist), producing
   `.indet` when some-but-not-all atoms satisfy the predicate. The
-  quantifier sees these gaps. By `local_strength_irrelevant`, ALL
+  quantifier sees these gaps. By `aggregate_replicate_indet`, ALL
   quantifier types return `.indet`.
 
 - **Counterfactuals use GLOBAL trivalence**: within each selected world,
   individual outcomes are Boolean. The quantifier sees Bools. By
-  `global_always_determinate`, the result is always definite.
+  `aggregate_map_ofBool_ne_indet`, the result is always definite.
 
 The consequence: when the semantic layer returns `.indet`, the only
 source of variation in judgments is pragmatic resolution — and pragmatic
@@ -522,15 +516,15 @@ gets a foothold.
 /-- **Plural definites are LOCAL**: in mixed scenarios, every quantifier
     returns `.indet`. Strength, polarity, and QUD are all invisible at
     the semantic level — the quantifier cannot see past the gap. -/
-theorem pd_all_quantifiers_gap (n : Nat) (hn : n > 0) (d : DualityType) :
+theorem pd_all_quantifiers_gap (n : Nat) (hn : n > 0) (d : ProjectionType) :
     aggregate d (List.replicate n Truth3.indet) = .indet :=
-  local_strength_irrelevant d n hn
+  aggregate_replicate_indet d n hn
 
 /-- **Counterfactuals are GLOBAL**: in mixed scenarios, every quantifier
     returns a determinate value. There is no gap for pragmatics to exploit. -/
-theorem cf_all_quantifiers_determinate (d : DualityType) (bs : List Bool) :
+theorem cf_all_quantifiers_determinate (d : ProjectionType) (bs : List Bool) :
     aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
-  global_always_determinate d bs
+  aggregate_map_ofBool_ne_indet d bs
 
 /-- **The dissociation**: for the same mixed input (n individuals, some
     satisfying the predicate, some not), PDs return `.indet` while CFs
@@ -538,18 +532,19 @@ theorem cf_all_quantifiers_determinate (d : DualityType) (bs : List Bool) :
     pragmatic resolution via `sufficientlyTrue` (@cite{kriz-2016}) depends
     on the QUD partition. CFs have no gap to resolve.
 
-    This is a direct corollary of NonBivalence's dichotomy: local scope
-    produces gaps that pass through quantifiers; global scope produces
-    Bools that quantifiers can distinguish. -/
+    This is a direct corollary of the local/global aggregation
+    decomposition in `Core.Duality`: local scope produces gaps that pass
+    through quantifiers; global scope produces Bools that quantifiers
+    can distinguish. -/
 theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
     (bs : List Bool) (hlen : bs.length = n)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·))
-    (d : DualityType) :
+    (d : ProjectionType) :
     -- PDs: gap (pragmatic resolution needed, QUD-sensitive)
     aggregate d (List.replicate n Truth3.indet) = .indet ∧
     -- CFs: determinate (no pragmatic resolution, QUD-insensitive)
     aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
-  ⟨local_strength_irrelevant d n hn, global_always_determinate d bs⟩
+  ⟨aggregate_replicate_indet d n hn, aggregate_map_ofBool_ne_indet d bs⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- Connections to Other Phenomena
@@ -558,9 +553,9 @@ theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
 /-!
 ## Related Phenomena
 
-1. **Local vs Global Trivalence** (`Core.NonBivalence`):
-   The paper's deepest architectural insight is formalized as the
-   dichotomy theorems. `homogeneity_erases_strength` derives that
+1. **Local vs Global Aggregation** (`Core.Duality.aggregate_*`):
+   The paper's deepest architectural insight is formalized as two
+   facts about `aggregate`. `homogeneity_erases_strength` derives that
    local gaps make strength invisible; `selectional_strength_effect`
    derives that global Bools produce the strength effect.
 

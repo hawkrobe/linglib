@@ -98,7 +98,7 @@ This uniformity is empirically too strong: "if p then q" presupposes
 /-- SK disjunction is symmetric for presupposition projection.
     @cite{beaver-2001} Ch. 2: the correct empirical prediction. -/
 theorem sk_disjunction_symmetric (a b : Truth3) :
-    Truth3.join a b = Truth3.join b a := by
+    a ⊔ b = b ⊔ a := by
   cases a <;> cases b <;> rfl
 
 /-- MK disjunction is NOT symmetric.
@@ -106,7 +106,7 @@ theorem sk_disjunction_symmetric (a b : Truth3) :
     but overpredicts asymmetry for disjunction. -/
 theorem mk_disjunction_asymmetric :
     ∃ a b : Truth3, Truth3.joinMiddle a b ≠ Truth3.joinMiddle b a :=
-  ⟨.true, .indet, by simp [Truth3.joinMiddle, Truth3.join]⟩
+  ⟨.true, .indet, by simp [Truth3.joinMiddle]⟩
 
 /-- Fact 2.1, negation: SK negation preserves presupposition.
     The presupposition of ¬φ is exactly π(φ). Re-export of

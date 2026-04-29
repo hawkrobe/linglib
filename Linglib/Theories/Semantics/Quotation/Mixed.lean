@@ -32,6 +32,42 @@ constructions.
 The `TwoDimProp` type from @cite{potts-2005} provides the at-issue ×
 peripheral carrier. `pureQuote` (added to `TwoDimProp`) blocks CI
 projection under quotation. The operators here compose over `TwoDimProp`.
+
+The quotative interpretation function ⟨*⟩ — implemented as `QuotInterp`
+below — is from @cite{shan-2010}. K-G writes (paper p.12, p.15):
+"Drawing on Shan, I implement this proposal about the at-issue
+contribution of mixed-quoted items using a purpose-built quotative
+interpretation function ⟨*⟩." `(∗)` is therefore Shan's; K-G's
+contribution is the covert apparatus 𝔐, ↓, †, 𝔄 layered on top.
+
+## Flat (`TwoDimProp`) vs. Layered (`MQProp`) Model
+
+Two carriers are exposed:
+
+- **Flat `TwoDimProp`** (at-issue × ci): Potts 2005's original
+  bi-dimensional architecture. `applyApprop` REPLACES the ci dimension
+  with appropriateness content — the original R-attribution from 𝔐
+  is overwritten when 𝔄 fires. Sufficient for at-issue truth-conditional
+  predictions; cannot record that the utterance attribution survives
+  embedding.
+
+- **Layered `MQProp`** (at-issue × R-content × appropContent): refines
+  the peripheral dimension into two distinct layers. `applyMQ` writes
+  to R; `applyApprop` writes to ◆; `shunt` moves ◆ to at-issue; `neg`
+  preserves both peripheral layers. Crown theorem
+  `full_chain_preserves_rContent`: R survives the full
+  𝔐 → 𝔄 → ↓ → ¬ chain.
+
+**When to use which.** Flat for at-issue-truth-conditional predictions
+where R is irrelevant (e.g. LoGuercio2025's CI work). Layered when the
+prediction is about R-survival or when both peripheral dimensions
+matter independently (K-G §3 metalinguistic negation, §1 strip-then-mix
+observation that 𝔐 introduces R-attribution while 𝔄 leaves it intact).
+
+Bridge: `MQProp.toFlat` projects the layered model down by discarding
+R-content and using ◆-content as the flat ci. `flat_agreement_atIssue`
+and `flat_loses_rContent` quantify the agreement and the information
+loss of the projection.
 -/
 
 set_option autoImplicit false
@@ -97,6 +133,16 @@ def MQContext.applyMQ {W Expr Speaker Utt : Type} (ctx : MQContext W Expr Speake
   { atIssue := ctx.interp q ctx.wc ctx.sx
   , ci := ctx.uttRel ctx.sx ctx.ux q }
 
+/-- Projection of `applyMQ` onto the at-issue dimension: ⟨*⟩(q)(wc)(sx). -/
+@[simp] theorem MQContext.applyMQ_atIssue {W Expr Speaker Utt : Type}
+    (ctx : MQContext W Expr Speaker Utt) (q : Expr) :
+    (ctx.applyMQ q).atIssue = ctx.interp q ctx.wc ctx.sx := rfl
+
+/-- Projection of `applyMQ` onto the peripheral dimension: R(sx, ux, q). -/
+@[simp] theorem MQContext.applyMQ_ci {W Expr Speaker Utt : Type}
+    (ctx : MQContext W Expr Speaker Utt) (q : Expr) :
+    (ctx.applyMQ q).ci = ctx.uttRel ctx.sx ctx.ux q := rfl
+
 -- ════════════════════════════════════════════════════
 -- § The Shunting Operator ↓
 -- ════════════════════════════════════════════════════
@@ -120,11 +166,11 @@ def shunt {W : Type} (p : TwoDimProp W) : TwoDimProp W :=
   , ci := λ _ => True }
 
 /-- Shunting conjoins both dimensions into at-issue. -/
-theorem shunt_atIssue {W : Type} (p : TwoDimProp W) (w : W) :
+@[simp] theorem shunt_atIssue {W : Type} (p : TwoDimProp W) (w : W) :
     (shunt p).atIssue w ↔ (p.atIssue w ∧ p.ci w) := Iff.rfl
 
 /-- Shunting trivializes peripheral content. -/
-theorem shunt_ci {W : Type} (p : TwoDimProp W) (w : W) :
+@[simp] theorem shunt_ci {W : Type} (p : TwoDimProp W) (w : W) :
     (shunt p).ci w := trivial
 
 /-- Shunting is idempotent on the at-issue dimension: once peripheral
@@ -155,10 +201,77 @@ def diagonalize {W Expr Speaker : Type}
   λ w => interp q w s w
 
 /-- Diagonalization collapses world of utterance and evaluation. -/
-theorem diag_collapses_worlds {W Expr Speaker : Type}
+@[simp] theorem diag_collapses_worlds {W Expr Speaker : Type}
     (interp : QuotInterp Expr Speaker W)
     (s : Speaker) (q : Expr) (w : W) :
     diagonalize interp s q w = interp q w s w := rfl
+
+/--
+**K-G's diagonalizer † with the ∃-over-speakers.**
+
+The bare `diagonalize` above is parameterized on a single speaker — it
+captures only the world-collapse half of K-G's footnote 22 definition
+(paper p.26):
+
+  † ⤳ λf. ∃s : f = λq. ⟨*⟩(q)(w_c)(s).f*
+
+The `∃s` quantifies over speakers/communities producing the variant
+function `f*` (the world-of-evaluation form `f*(s) := λq. ⟨*⟩(q)(w)(s)`).
+This existential is what makes c-monsters work: "Pluto could have been a
+planet" is true when there EXISTS a speaker whose use of 'planet'
+includes Pluto under the diagonalized reading — not just when the actual
+speaker's use does.
+
+The bare `diagonalize` is the per-speaker witness; `diagonalizeKG` adds
+the existential. Bridge: `diagonalizeKG_iff_exists_diagonalize`.
+-/
+def diagonalizeKG {W Expr Speaker : Type}
+    (interp : QuotInterp Expr Speaker W) (q : Expr) : W → Prop :=
+  λ w => ∃ s : Speaker, interp q w s w
+
+/-- `diagonalizeKG` is the existential closure of `diagonalize` over speakers. -/
+@[simp] theorem diagonalizeKG_iff_exists_diagonalize
+    {W Expr Speaker : Type} (interp : QuotInterp Expr Speaker W)
+    (q : Expr) (w : W) :
+    diagonalizeKG interp q w ↔ ∃ s : Speaker, diagonalize interp s q w := Iff.rfl
+
+/--
+**K-G's footnote 22 well-definedness condition.**
+
+For `f*` to be well-defined as a function (rather than a relation), no two
+speakers may agree on extensions of all expressions at the world of
+context `wc` while disagreeing on extensions at some other world.
+
+Paper p.26 footnote: "I assume here that there are no two speakers or
+linguistic communities which assign the same extensions to all expressions
+in `w_c` but assign different extensions to some expressions in other
+worlds."
+
+This is a global structural property of `interp` — it's about how speakers
+relate across worlds. Without it, the existential in `diagonalizeKG`
+overgenerates (any two speakers can act as witnesses for incompatible
+diagonal contents at the same world). K-G accepts this assumption to keep
+the semantics deterministic; it is independently violable.
+-/
+def QuotInterp.fn22Wellformed {W Expr Speaker : Type}
+    (interp : QuotInterp Expr Speaker W) (wc : W) : Prop :=
+  ∀ s s' : Speaker, (∀ q w, interp q wc s w ↔ interp q wc s' w) →
+    (∀ q w, interp q w s w ↔ interp q w s' w)
+
+/--
+Under fn22-wellformedness, speakers who agree on extensions at `wc`
+across the entire vocabulary agree on diagonal extensions everywhere.
+This is the substantive use of `fn22Wellformed`: it lifts wc-extensional
+agreement to global agreement, which is what makes the existential in
+`diagonalizeKG` deterministic.
+-/
+theorem diagonalizeKG_deterministic_under_fn22 {W Expr Speaker : Type}
+    (interp : QuotInterp Expr Speaker W) (wc : W)
+    (h : interp.fn22Wellformed wc) (s s' : Speaker)
+    (hAgree : ∀ q w, interp q wc s w ↔ interp q wc s' w) :
+    ∀ q w, diagonalize interp s q w ↔ diagonalize interp s' q w := by
+  intro q w
+  exact h s s' hAgree q w
 
 -- ════════════════════════════════════════════════════
 -- § The Appropriateness Operator 𝔄
@@ -190,10 +303,16 @@ def applyApprop {W Expr Speaker : Type}
   { atIssue := p.atIssue, ci := approp sx q }
 
 /-- 𝔄 preserves at-issue content: it only replaces the peripheral dimension. -/
-theorem approp_preserves_atIssue {W Expr Speaker : Type}
+@[simp] theorem approp_preserves_atIssue {W Expr Speaker : Type}
     (approp : AppropStandard Speaker Expr W)
     (sx : Speaker) (q : Expr) (p : TwoDimProp W) :
     (applyApprop approp sx q p).atIssue = p.atIssue := rfl
+
+/-- 𝔄 replaces the peripheral dimension with appropriateness content. -/
+@[simp] theorem applyApprop_ci {W Expr Speaker : Type}
+    (approp : AppropStandard Speaker Expr W)
+    (sx : Speaker) (q : Expr) (p : TwoDimProp W) :
+    (applyApprop approp sx q p).ci = approp sx q := rfl
 
 -- ════════════════════════════════════════════════════
 -- § Composition Theorems
@@ -336,26 +455,63 @@ variable {W Expr Speaker Utt : Type}
 -- ────────────────────────────────────────────────────
 
 /-- 𝔄 preserves R-content. -/
-theorem applyApprop_preserves_rContent (approp : AppropStandard Speaker Expr W)
+@[simp] theorem applyApprop_preserves_rContent (approp : AppropStandard Speaker Expr W)
     (sx : Speaker) (q : Expr) (p : MQProp W) :
     (p.applyApprop approp sx q).rContent = p.rContent := rfl
 
 /-- 𝔄 preserves at-issue content. -/
-theorem applyApprop_preserves_atIssue (approp : AppropStandard Speaker Expr W)
+@[simp] theorem applyApprop_preserves_atIssue (approp : AppropStandard Speaker Expr W)
     (sx : Speaker) (q : Expr) (p : MQProp W) :
     (p.applyApprop approp sx q).atIssue = p.atIssue := rfl
 
+/-- 𝔄 appends appropriateness to ◆-content (no replacement). -/
+@[simp] theorem applyApprop_appropContent (approp : AppropStandard Speaker Expr W)
+    (sx : Speaker) (q : Expr) (p : MQProp W) (w : W) :
+    (p.applyApprop approp sx q).appropContent w ↔ p.appropContent w ∧ approp sx q w :=
+  Iff.rfl
+
 /-- ↓ preserves R-content: shunting is selective. -/
-theorem shunt_preserves_rContent (p : MQProp W) :
+@[simp] theorem shunt_preserves_rContent (p : MQProp W) :
     p.shunt.rContent = p.rContent := rfl
 
+/-- ↓ conjoins ◆-content into at-issue. -/
+@[simp] theorem shunt_atIssue (p : MQProp W) (w : W) :
+    p.shunt.atIssue w ↔ p.atIssue w ∧ p.appropContent w := Iff.rfl
+
+/-- ↓ trivializes ◆-content (the layer is "drained"). -/
+@[simp] theorem shunt_appropContent (p : MQProp W) (w : W) :
+    p.shunt.appropContent w := trivial
+
 /-- ¬ preserves R-content. -/
-theorem neg_preserves_rContent (p : MQProp W) :
+@[simp] theorem neg_preserves_rContent (p : MQProp W) :
     p.neg.rContent = p.rContent := rfl
 
 /-- ¬ preserves ◆-content. -/
-theorem neg_preserves_appropContent (p : MQProp W) :
+@[simp] theorem neg_preserves_appropContent (p : MQProp W) :
     p.neg.appropContent = p.appropContent := rfl
+
+/-- ¬ preserves both peripheral dimensions (combined ergonomic lemma
+    bundling `neg_preserves_rContent` and `neg_preserves_appropContent`). -/
+theorem neg_preserves_both_peripherals (p : MQProp W) :
+    p.neg.rContent = p.rContent ∧ p.neg.appropContent = p.appropContent :=
+  ⟨rfl, rfl⟩
+
+/-- ¬ negates the at-issue dimension. -/
+@[simp] theorem neg_atIssue (p : MQProp W) (w : W) :
+    p.neg.atIssue w ↔ ¬ p.atIssue w := Iff.rfl
+
+/-- 𝔐 produces ⟨*⟩(q)(wc)(sx) on the at-issue dimension. -/
+@[simp] theorem applyMQ_atIssue (ctx : MQContext W Expr Speaker Utt) (q : Expr) :
+    (MQProp.applyMQ ctx q).atIssue = ctx.interp q ctx.wc ctx.sx := rfl
+
+/-- 𝔐 produces R(sx, ux, q) on the R-layer. -/
+@[simp] theorem applyMQ_rContent (ctx : MQContext W Expr Speaker Utt) (q : Expr) :
+    (MQProp.applyMQ ctx q).rContent = ctx.uttRel ctx.sx ctx.ux q := rfl
+
+/-- 𝔐 leaves the ◆-layer trivial — appropriateness has not been written yet. -/
+@[simp] theorem applyMQ_appropContent (ctx : MQContext W Expr Speaker Utt)
+    (q : Expr) (w : W) :
+    (MQProp.applyMQ ctx q).appropContent w := trivial
 
 /-- R-content persists through the full metalinguistic negation chain
     𝔐 → 𝔄 → ↓ → ¬. The utterance attribution is never lost. -/
@@ -364,6 +520,24 @@ theorem full_chain_preserves_rContent
     (approp : AppropStandard Speaker Expr W) (q : Expr) :
     ((MQProp.applyMQ ctx q).applyApprop approp ctx.sx q |>.shunt |>.neg).rContent
     = ctx.uttRel ctx.sx ctx.ux q := rfl
+
+/-- **Metalinguistic negation truth conditions in the layered model.**
+    The MQProp-side counterpart of the flat-model
+    `Semantics.Quotation.metalinguistic_neg_truth_conditions`
+    (line 219 above). At-issue content of the full chain is
+    `¬(at-issue ∧ appropriate)`, identical to the flat model — but
+    the layered model ALSO retains the R-attribution
+    (per `full_chain_preserves_rContent`), which the flat model
+    discards. -/
+theorem metalinguistic_neg_truth_conditions
+    (ctx : MQContext W Expr Speaker Utt)
+    (approp : AppropStandard Speaker Expr W) (q : Expr) (w : W) :
+    ((MQProp.applyMQ ctx q).applyApprop approp ctx.sx q |>.shunt |>.neg).atIssue w
+    ↔ ¬(ctx.interp q ctx.wc ctx.sx w ∧ approp ctx.sx q w) := by
+  -- The MQProp chain accumulates `True ∧ approp` in the ◆-layer;
+  -- after shunt and neg, this differs from the flat target by a
+  -- `True ∧ X ↔ X` simplification.
+  simp [MQProp.applyMQ, MQProp.applyApprop, MQProp.shunt, MQProp.neg]
 
 -- ────────────────────────────────────────────────────
 -- Shunting conservation
@@ -401,6 +575,12 @@ theorem shunt_conserves (p : MQProp W) (w : W) :
 def toFlat (p : MQProp W) : TwoDimProp W :=
   { atIssue := p.atIssue, ci := p.appropContent }
 
+/-- The flat projection preserves at-issue content. -/
+@[simp] theorem toFlat_atIssue (p : MQProp W) : p.toFlat.atIssue = p.atIssue := rfl
+
+/-- The flat projection uses ◆-content as the CI dimension (R-content discarded). -/
+@[simp] theorem toFlat_ci (p : MQProp W) : p.toFlat.ci = p.appropContent := rfl
+
 /-- The full chain on the two-layer model agrees with the flat model
     on at-issue content. The two models diverge only in what happens
     to R-content: the layered model preserves it, the flat model
@@ -412,9 +592,8 @@ theorem flat_agreement_atIssue
     ↔ (TwoDimProp.neg (Semantics.Quotation.shunt
         (Semantics.Quotation.applyApprop approp ctx.sx q
           (ctx.applyMQ q)))).atIssue w := by
-  simp [MQProp.applyMQ, MQProp.applyApprop, MQProp.shunt, MQProp.neg,
-        TwoDimProp.neg, Semantics.Quotation.shunt, Semantics.Quotation.applyApprop,
-        MQContext.applyMQ]
+  simp [TwoDimProp.neg, Semantics.Quotation.shunt,
+        Semantics.Quotation.applyApprop, MQContext.applyMQ]
 
 /-- What the flat model loses: R-content is present in the layered
     model but absent in the flat projection.

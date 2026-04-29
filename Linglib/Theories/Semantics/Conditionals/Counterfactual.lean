@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Logic.NonBivalence
+import Linglib.Core.Logic.Duality
 
 /-!
 # Counterfactual Conditionals: Three Theories
@@ -129,8 +129,8 @@ theorem cem_selectional {W : Type*} [DecidableEq W] [Fintype W]
     [DecidablePred A] [DecidablePred B] (w : W) :
     let φ := selectionalCounterfactual sim A B w
     let ψ := selectionalCounterfactual sim A (¬ B ·) w
-    Truth3.join φ ψ ≠ .false := by
-  simp only [selectionalCounterfactual, Truth3.join]
+    φ ⊔ ψ ≠ .false := by
+  simp only [selectionalCounterfactual]
   set cl := sim.closestWorlds w (Finset.univ.filter A)
   split_ifs <;> simp_all (config := { decide := true })
 
@@ -287,30 +287,31 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
     · rw [if_neg hF, if_neg (fun h => hF (h_false_iff.mpr h))]
 
 -- ════════════════════════════════════════════════════
--- Architectural Grounding via NonBivalence
+-- Architectural Grounding via Aggregation Pushforward
 -- ════════════════════════════════════════════════════
 
 /-!
-## Connection to NonBivalence
+## Connection to Aggregation Pushforward
 
-`projectTruthValues` now delegates directly to `Core.Duality.aggregate`,
-so `embeddedSelectional_determinate` and `strength_determines_pattern` are
-thin wrappers around `NonBivalence.global_always_determinate` and
-`NonBivalence.global_mixed_pattern` respectively.
+`projectTruthValues` delegates directly to `Core.Duality.aggregate`, so
+`embeddedSelectional_determinate` and `strength_determines_pattern` (in
+`QuantifierEmbedding.lean`) are thin wrappers around
+`Duality.aggregate_map_ofBool_ne_indet` and `Duality.aggregate_map_ofBool_mixed`
+respectively.
 
-The `local_strength_irrelevant` theorem from `NonBivalence.lean` captures
-the homogeneity theory's architecture: when all inputs are gaps, both
-existential and universal aggregation return gap — strength is invisible.
+The companion fact `aggregate_replicate_indet` (also in `Duality.lean`)
+captures the homogeneity theory's architecture: when all inputs are
+gaps, both existential and universal aggregation return gap — strength
+is invisible.
 -/
 
-/-- The selectional theory's determinacy is an instance of the global
-    architecture from NonBivalence: Bool inputs → determinate output. -/
+/-- The selectional theory's strength-effect prediction is an instance of
+    the global aggregation pattern: mixed Bool inputs split duality types. -/
 theorem selectional_is_global_architecture (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    -- NonBivalence: global mixed pattern
-    Core.Duality.aggregate .existential (bs.map Truth3.ofBool) = .true ∧
-    Core.Duality.aggregate .universal (bs.map Truth3.ofBool) = .false :=
-  Core.NonBivalence.dichotomy_global bs h_some_true h_some_false
+    Core.Duality.aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
+    Core.Duality.aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
+  Core.Duality.aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker

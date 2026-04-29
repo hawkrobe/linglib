@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Duality
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -146,6 +147,47 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace
     have hnf : ¬(∀ s ∈ S.admissible, eval s = false) :=
       fun h => by rw [h st hst] at hvt; cases hvt
     rw [if_neg hnt, if_neg hnf]
+
+/-- **`superTrue` is `Core.Duality.dist` on the admissible Finset.**
+
+    The bridge between Fine 1975 supervaluation (this file) and the
+    canonical trivalent classifier (`Core.Duality.dist` in
+    `Linglib/Core/Logic/Duality.lean`). Both are van Fraassen 1966's
+    supervaluation construction; `dist` is the more general form
+    parameterized over an arbitrary `Finset α + (α → Bool)`, while
+    `superTrue` adds the `SpecSpace` wrapper (admissible Finset +
+    nonemptiness witness) and Fine's specification-space ordering.
+
+    On the empty case the two agree definitionally (both give `.true`
+    vacuously), but `SpecSpace` rules out empty admissible sets by
+    construction so the empty case never arises here. -/
+theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
+    superTrue eval S = Core.Duality.dist S.admissible eval := by
+  unfold superTrue Core.Duality.dist
+  cases h_inf : S.admissible.inf eval
+  · -- inf = false: ¬(∀ s, eval s = true)
+    have h_not_all_true : ¬ ∀ s ∈ S.admissible, eval s = true := by
+      intro ht
+      have : S.admissible.inf eval = true :=
+        (Finset.inf_eq_top_iff (α := Bool) eval S.admissible).mpr ht
+      rw [h_inf] at this; cases this
+    rw [if_neg h_not_all_true]
+    cases h_sup : S.admissible.sup eval
+    · -- sup = false: ∀ s, eval s = false → both give .false
+      have h_all_false : ∀ s ∈ S.admissible, eval s = false :=
+        (Finset.sup_eq_bot_iff (α := Bool) eval S.admissible).mp h_sup
+      rw [if_pos h_all_false]; rfl
+    · -- sup = true: some eval s = true → both give .indet
+      have h_not_all_false : ¬ ∀ s ∈ S.admissible, eval s = false := by
+        intro hf
+        have : S.admissible.sup eval = false :=
+          (Finset.sup_eq_bot_iff (α := Bool) eval S.admissible).mpr hf
+        rw [h_sup] at this; cases this
+      rw [if_neg h_not_all_false]; rfl
+  · -- inf = true: ∀ s, eval s = true → both give .true
+    have h_all_true : ∀ s ∈ S.admissible, eval s = true :=
+      (Finset.inf_eq_top_iff (α := Bool) eval S.admissible).mp h_inf
+    rw [if_pos h_all_true]; rfl
 
 /-- D = super-truth projected to Bool. -/
 theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :

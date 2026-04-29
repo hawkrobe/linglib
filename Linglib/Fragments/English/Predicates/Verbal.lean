@@ -3028,7 +3028,8 @@ def spare : VerbEntry := .mkRegular {
   implicitObj := some .def
   vendlerClass := some .accomplishment }
 
-/-- "deny" — DOC-only. Implicit second obj indef, implicit goal def. -/
+/-- "deny" — DOC-only. Implicit goal def; second object obligatory
+    (@cite{bruening-2021} Table 56 row 3 col 1, ex. (32d) p. 1032). -/
 def deny : VerbEntry where
   form := "deny"
   form3sg := "denies"
@@ -3036,11 +3037,11 @@ def deny : VerbEntry where
   formPastPart := "denied"
   formPresPart := "denying"
   complementType := .np_np
-  implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
-/-- "permit" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
+/-- "permit" — DOC-only. Implicit goal def (addressee); second object
+    obligatory (@cite{bruening-2021} Table 56 row 3 col 1, ex. (32e) p. 1032). -/
 def permit : VerbEntry where
   form := "permit"
   form3sg := "permits"
@@ -3048,16 +3049,15 @@ def permit : VerbEntry where
   formPastPart := "permitted"
   formPresPart := "permitting"
   complementType := .np_np
-  implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
-/-- "assign" — DOC-only. Implicit second obj indef, implicit goal def. -/
+/-- "assign" — alternating (DOC + PP). Implicit goal def; second object
+    obligatory (Pesetsky 1995:157 ex. (3a-c); @cite{bruening-2021} Table 56 row 3). -/
 def assign : VerbEntry := .mkRegular {
   form := "assign"
   complementType := .np_np
   altComplementType := some .np_pp
-  implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 

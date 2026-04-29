@@ -278,7 +278,7 @@ theorem accomplishment_has_agentive_voice :
     -- Syntactic: maps to causative heads (vDO + vCAUSE + vGO + vBE)
     isCausative (templateToHeads .accomplishment) = true ∧
     -- Voice: agentive Voice assigns θ-role
-    voiceAgent.assignsTheta = true := ⟨by decide, by native_decide, rfl⟩
+    voiceAgent.AssignsTheta := ⟨by decide, by native_decide, by decide⟩
 
 /-- Achievement templates (no external cause) map to inchoative structure
     with non-thematic Voice. -/
@@ -288,7 +288,7 @@ theorem achievement_has_nonthematic_voice :
     -- Syntactic: maps to inchoative heads (vCAUSE + vGO + vBE)
     isInchoative (templateToHeads .achievement) = true ∧
     -- Voice: non-thematic Voice has no semantics
-    voiceAnticausative.hasSemantics = false := ⟨by decide, by native_decide, rfl⟩
+    ¬ voiceAnticausative.HasSemantics := ⟨by decide, by native_decide, by decide⟩
 
 -- § 2: Thick/Thin ↔ Causation Type ↔ Voice
 
@@ -306,8 +306,8 @@ theorem production_aligns_agentive :
     -- Production requires concrete causer
     productionConstraint ThickThinClass.thickManner = .production ∧
     -- Agentive Voice introduces external argument
-    voiceAgent.assignsTheta = true ∧
-    voiceAgent.hasD = true := ⟨rfl, rfl, rfl⟩
+    voiceAgent.AssignsTheta ∧
+    voiceAgent.HasD := by refine ⟨rfl, ?_, ?_⟩ <;> decide
 
 -- § 3: Alternation ↔ Voice Alternation
 
@@ -319,8 +319,8 @@ theorem alternation_is_voice_alternation :
     (templateToHeads .achievement).all
       ((templateToHeads .accomplishment).contains ·) = true ∧
     -- The difference is whether Voice introduces an external argument
-    voiceAgent.assignsTheta = true ∧
-    voiceAnticausative.assignsTheta = false := ⟨by native_decide, rfl, rfl⟩
+    voiceAgent.AssignsTheta ∧
+    ¬ voiceAnticausative.AssignsTheta := ⟨by native_decide, by decide, by decide⟩
 
 -- § 4: Empirical Bridge: ThickThin Data
 

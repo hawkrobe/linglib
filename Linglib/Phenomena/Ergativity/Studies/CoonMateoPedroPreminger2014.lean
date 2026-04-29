@@ -178,41 +178,47 @@ def voiceAF : VoiceHead :=
   , checksCase := true }         -- assigns case to object
 
 /-- AF Voice assigns case to the object. -/
-theorem af_assigns_case : voiceAF.checksCase = true := rfl
+theorem af_assigns_case : voiceAF.ChecksCase := by decide
 
 /-- AF Voice is NOT a phase head (intransitive v⁰). -/
-theorem af_not_phase : voiceAF.phaseHead = false := rfl
+theorem af_not_phase : ¬ voiceAF.IsPhasal := by decide
 
 /-- AF Voice still introduces an external argument (the agent). -/
-theorem af_introduces_agent : voiceAF.assignsTheta = true := rfl
+theorem af_introduces_agent : voiceAF.AssignsTheta := by decide
 
 /-- AF Voice circumvents the trapping mechanism because it assigns case to
     the object (so the object need not move to Spec,vP) AND because AF's v⁰
     is non-phasal (so vP is not a locality domain). Either property alone
     would free the subject, but both hold simultaneously for AF Voice. -/
-def afCircumventsTrapping : Bool :=
-  voiceAF.checksCase && !voiceAF.phaseHead
+def AfCircumventsTrapping : Prop :=
+  voiceAF.ChecksCase ∧ ¬ voiceAF.IsPhasal
 
-theorem af_frees_subject : afCircumventsTrapping = true := rfl
+instance : Decidable AfCircumventsTrapping := by
+  unfold AfCircumventsTrapping; infer_instance
+
+theorem af_frees_subject : AfCircumventsTrapping := by decide
 
 /-- The case-assignment property alone is what frees extraction: when
     Voice checks case, the object receives case inside vP and need not
     move to the escape hatch. This is the paper's primary explanation
     for why AF circumvents the extraction ban. -/
-def caseAloneFreesExtraction (v : VoiceHead) : Bool :=
-  v.checksCase
+def CaseAloneFreesExtraction (v : VoiceHead) : Prop :=
+  v.ChecksCase
 
-theorem af_case_frees : caseAloneFreesExtraction voiceAF = true := rfl
+instance (v : VoiceHead) : Decidable (CaseAloneFreesExtraction v) := by
+  unfold CaseAloneFreesExtraction; infer_instance
+
+theorem af_case_frees : CaseAloneFreesExtraction voiceAF := by decide
 
 /-- The non-phasal status explains AF's *morphology* (intransitive
     status suffix *-i*) rather than the extraction facts. Since AF's v⁰
     is intransitive, no ergative case is assigned to the subject. -/
 theorem af_morphology_from_phase :
-    voiceAF.phaseHead = false := rfl
+    ¬ voiceAF.IsPhasal := by decide
 
 /-- Contrast with regular transitive Voice: phasal, does NOT check case. -/
 theorem regular_voice_traps :
-    voiceAgent.phaseHead = true ∧ voiceAgent.checksCase = false := ⟨rfl, rfl⟩
+    voiceAgent.IsPhasal ∧ ¬ voiceAgent.ChecksCase := by decide
 
 -- ============================================================================
 -- § 6: Non-Finite Predictions
@@ -433,12 +439,12 @@ theorem factor3_necessary :
 
 /-- Agentive Voice is a phase head — this is factor I. -/
 theorem voice_phase_is_factor1 :
-    voiceAgent.phaseHead = true := rfl
+    voiceAgent.IsPhasal := by decide
 
 /-- AF removes factor I: AF Voice is not phasal. With a non-phasal vP,
     there is no locality boundary trapping the subject. -/
 theorem af_removes_factor1 :
-    voiceAF.phaseHead = false := rfl
+    ¬ voiceAF.IsPhasal := by decide
 
 -- ============================================================================
 -- § 11: Morphological × Syntactic Ergativity Typology
@@ -604,28 +610,31 @@ theorem fullDP_end_to_end :
     the PIC. AF Voice is NOT a phase head, so it does not create a phase
     boundary — the complement remains accessible.
 
-    This connects the Boolean `phaseHead` on `VoiceHead` to the Phase
-    module's `isPhaseHeadOf .C`/`isPhaseHeadOf .Voice` selectors. -/
+    This connects `IsPhasal` on `VoiceHead` to the Phase module's
+    `isPhaseHeadOf .C`/`isPhaseHeadOf .Voice` selectors. -/
 theorem voice_phase_bridge :
-    voiceAgent.phaseHead = true ∧ voiceAF.phaseHead = false ∧
-    voicePassive.phaseHead = false ∧ voiceAnticausative.phaseHead = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    voiceAgent.IsPhasal ∧ ¬ voiceAF.IsPhasal ∧
+    ¬ voicePassive.IsPhasal ∧ ¬ voiceAnticausative.IsPhasal := by decide
 
 /-- Phase headedness partitions Voice into {trapping, non-trapping}: a
     Voice head traps the subject iff it is a phase head AND does not
     itself check case (freeing Infl⁰ to do so). -/
-def voiceTrapsSubject (v : VoiceHead) (locus : CaseLocus) : Bool :=
-  v.phaseHead && !v.checksCase && objectMustExitVP locus
+def VoiceTrapsSubject (v : VoiceHead) (locus : CaseLocus) : Prop :=
+  v.IsPhasal ∧ ¬ v.ChecksCase ∧ objectMustExitVP locus = true
+
+instance (v : VoiceHead) (locus : CaseLocus) :
+    Decidable (VoiceTrapsSubject v locus) := by
+  unfold VoiceTrapsSubject; infer_instance
 
 theorem agent_voice_traps_absNom :
-    voiceTrapsSubject voiceAgent .absNom = true := rfl
+    VoiceTrapsSubject voiceAgent .absNom := by decide
 
 theorem agent_voice_free_absDef :
-    voiceTrapsSubject voiceAgent .absDef = false := rfl
+    ¬ VoiceTrapsSubject voiceAgent .absDef := by decide
 
 theorem af_voice_never_traps (locus : CaseLocus) :
-    voiceTrapsSubject voiceAF locus = false := by
-  cases locus <;> rfl
+    ¬ VoiceTrapsSubject voiceAF locus := by
+  cases locus <;> decide
 
 -- ============================================================================
 -- § 16: Core.Case Bridge
@@ -706,8 +715,7 @@ theorem af_mechanism_contrast :
 /-- Both languages share the underlying problem: agentive Voice is a
     phase head, creating a locality boundary that traps the subject. -/
 theorem shared_phase_problem :
-    voiceAgent.phaseHead = true ∧
-    kaqVoice.phaseHead = true := ⟨rfl, rfl⟩
+    voiceAgent.IsPhasal ∧ kaqVoice.IsPhasal := by decide
 
 /-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages with extraction
     asymmetries: agent extraction is blocked without AF in both. -/

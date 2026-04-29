@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.NonBivalence
+import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Theories.Semantics.Modality.Directive
@@ -94,7 +94,12 @@ def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
 /-- Weak necessity: trivalent plural predication over the modal domain.
     Returns tt if all worlds satisfy p, ff if none do, unk otherwise.
     `should_D := ⊕D` — the prejacent is predicated of the plurality
-    of worlds, yielding homogeneity. -/
+    of worlds, yielding homogeneity.
+
+    Body uses an explicit 4-way if-chain to support `split`-based proofs
+    in this file. The bridge theorem `shouldEval_eq_distList` (below)
+    formalizes the equivalence with `Core.Duality.distList` for nonempty
+    domains. -/
 def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
   if domain.isEmpty then Truth3.false
   else if domain.all p then Truth3.true
@@ -763,33 +768,25 @@ theorem all_properties_shared :
 theorem five_parallels : sharedProperties.length = 5 := rfl
 
 -- ============================================================================
--- §15. NonBivalence Dichotomy: should vs must Under Quantifier Embedding
+-- §15. should vs must Under Quantifier Embedding
 -- ============================================================================
 
-/-! ## The NonBivalence Connection
+/-! ## Local vs Global Aggregation
 
-The should/must contrast is an instance of the local/global trivalence
-dichotomy from `Core.NonBivalence`. When modal sentences are embedded
-under quantifiers ("Every student should/must pass"):
+The should/must contrast is an instance of the local/global aggregation
+distinction in `Core.Duality`. When modal sentences are embedded under
+quantifiers ("Every student should/must pass"):
 
 - **should** (local): each individual's modal domain is mixed → `.indet`.
-  The quantifier sees all gaps. By `local_strength_irrelevant`, both
+  The quantifier sees all gaps. By `aggregate_replicate_indet`, both
   ∃ and ∀ return `.indet` — quantifier strength is invisible.
 
 - **must** (global): each individual's domain gives `ofBool` (Bool).
-  The quantifier sees Bools. By `global_mixed_pattern`, mixed inputs
-  yield `.true` for ∃ and `.false` for ∀ — the strength effect. -/
+  The quantifier sees Bools. By `aggregate_map_ofBool_mixed`, mixed
+  inputs yield `.true` for ∃ and `.false` for ∀ — the strength effect. -/
 
-open Core.NonBivalence (TrivalenceScope local_strength_irrelevant
-  global_mixed_pattern global_always_determinate)
-open Core.Duality (DualityType aggregate)
-
-/-- Map modal force to trivalence scope.
-    `should` = local (gaps visible to embedding quantifier).
-    `must` = global (always Bool, no gaps). -/
-def modalScope : Bool → TrivalenceScope
-  | false => .«local»   -- should: weak necessity, homogeneous
-  | true  => .global     -- must: strong necessity, bivalent
+open Core.Duality (ProjectionType aggregate
+  aggregate_replicate_indet aggregate_map_ofBool_mixed aggregate_map_ofBool_ne_indet)
 
 /-- `shouldEval` for a mixed nonempty domain produces `.indet`. -/
 theorem shouldEval_indet (domain : List World) (p : World → Bool)
@@ -802,9 +799,9 @@ theorem shouldEval_indet (domain : List World) (p : World → Bool)
 /-- **should erases strength under embedding**: when n individuals each
     have mixed modal domains, all produce `.indet`. Any quantifier
     aggregating these gaps returns `.indet` — strength is invisible. -/
-theorem should_erases_strength (n : Nat) (hn : n > 0) (d : DualityType) :
+theorem should_erases_strength (n : Nat) (hn : n > 0) (d : ProjectionType) :
     aggregate d (List.replicate n Truth3.indet) = .indet :=
-  local_strength_irrelevant d n hn
+  aggregate_replicate_indet d n hn
 
 /-- **must produces the strength effect under embedding**: when n
     individuals each have their modal domain evaluated by `mustEval`
@@ -812,15 +809,15 @@ theorem should_erases_strength (n : Nat) (hn : n > 0) (d : DualityType) :
     weak quantifiers. -/
 theorem must_strength_effect (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
-    aggregate .existential (bs.map Truth3.ofBool) = .true ∧
-    aggregate .universal (bs.map Truth3.ofBool) = .false :=
-  global_mixed_pattern bs h_some_true h_some_false
+    aggregate .disjunctive (bs.map Truth3.ofBool) = .true ∧
+    aggregate .conjunctive (bs.map Truth3.ofBool) = .false :=
+  aggregate_map_ofBool_mixed bs h_some_true h_some_false
 
 /-- **must is always determinate under embedding**: aggregation over
     `ofBool` values never produces a gap, regardless of duality type. -/
-theorem must_always_determinate (d : DualityType) (bs : List Bool) :
+theorem must_always_determinate (d : ProjectionType) (bs : List Bool) :
     aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
-  global_always_determinate d bs
+  aggregate_map_ofBool_ne_indet d bs
 
 -- ============================================================================
 -- §16. shouldEval IS Plural Predication (DIST)
@@ -840,25 +837,13 @@ world in the domain.
 
 This is exactly what `shouldEval` computes, with `results = domain.map p`. -/
 
-open Core.Duality (dist)
-
-private theorem all_eq_map_all_id {α : Type*} :
-    ∀ (l : List α) (p : α → Bool), l.all p = (l.map p).all id
-  | [], _ => rfl
-  | x :: xs, p => by
-    simp only [List.map_cons, List.all_cons, id]
-    rw [all_eq_map_all_id xs p]
-
-private theorem all_neg_eq_map_all_neg {α : Type*} :
-    ∀ (l : List α) (p : α → Bool), l.all (fun x => !p x) = (l.map p).all (!·)
-  | [], _ => rfl
-  | x :: xs, p => by
-    simp only [List.map_cons, List.all_cons]
-    rw [all_neg_eq_map_all_neg xs p]
+open Core.Duality (distList)
 
 /-- **shouldEval = DIST over worlds.**
 
-    `shouldEval D p = dist (D.map p)` for nonempty D.
+    `shouldEval D p = distList D p` for nonempty D — the canonical
+    `Core.Duality.distList` (Fine super-truth specialized to a List
+    domain with a Boolean predicate) IS what weak necessity computes.
 
     This is the formal proof that weak necessity IS plural predication:
     the trivalent truth value of "should p" is determined by the DIST
@@ -867,15 +852,33 @@ private theorem all_neg_eq_map_all_neg {α : Type*} :
     to the pointwise evaluation of P across the individuals.
 
     The the/all : should/must parallel is not merely an analogy; it is
-    a mathematical identity at the level of truth-value computation. -/
-theorem shouldEval_eq_dist (domain : List World) (p : World → Bool)
+    a mathematical identity at the level of truth-value computation.
+
+    Hypothesis `hne` is required because `shouldEval [] p = .false`
+    (Agha & Jeretič's empty-domain convention) while `distList [] p
+    = .true` (vacuous super-truth, mathlib's empty-fold convention). -/
+theorem shouldEval_eq_distList (domain : List World) (p : World → Bool)
     (hne : domain ≠ []) :
-    shouldEval domain p = Core.Duality.dist (domain.map p) := by
-  unfold shouldEval Core.Duality.dist
-  rw [all_eq_map_all_id, all_neg_eq_map_all_neg]
-  cases domain with
-  | nil => exact absurd rfl hne
-  | cons _ _ => rfl
+    shouldEval domain p = distList domain p := by
+  have hne' : domain.isEmpty = false := by
+    cases domain with
+    | nil => exact absurd rfl hne
+    | cons _ _ => rfl
+  unfold shouldEval distList
+  rw [hne']
+  cases hap : domain.all p
+  · -- domain.all p = false; case-split on domain.any p
+    cases hany : domain.any p
+    · -- both false: shouldEval should give .false (via all (!p) = true)
+      have h_all_neg : domain.all (fun w => !p w) = true := by
+        rw [List.all_eq_not_any_not]; simp [hany]
+      simp [h_all_neg]
+    · -- all p false, any p true: shouldEval gives .indet
+      have h_all_neg : domain.all (fun w => !p w) = false := by
+        rw [List.all_eq_not_any_not]; simp [hany]
+      simp [h_all_neg]
+  · -- domain.all p = true: both .true
+    rfl
 
 /-- `mustEval` is `ofBool ∘ List.all`, confirming must stays bivalent. -/
 theorem mustEval_eq_ofBool (domain : List World) (p : World → Bool) :

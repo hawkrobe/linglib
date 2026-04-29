@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.SmallClause
+import Linglib.Theories.Syntax.Minimalist.Labeling
 
 /-!
 # Sluicing: Syntactic Isomorphism Condition
@@ -507,12 +508,12 @@ private def activeTree := activeFrame.tree 1 2 3
 private def passiveTree := passiveFrame.tree 1 2 3
 
 -- Tree labels match expected categories
-#guard getCategory activeTree == some .v
-#guard getCategory passiveTree == some .v
+example : getCategory activeTree = some .v := by decide
+example : getCategory passiveTree = some .v := by decide
 
 -- Selection holds: v selects VP, V selects DP
-#guard selectsB (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3))
-#guard selectsB (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)
+example : selects (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)) := by decide
+example : selects (mkLeaf .V [.D] 2) (mkLeaf .D [] 3) := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Nonargument PPs and Chung's Generalization
@@ -781,5 +782,119 @@ theorem domain_root_is_divergence_source :
       [⟨.N, .D, none, none, none⟩]
       [⟨.N, .D, none, none, none⟩] = true :=
   ⟨rudin_also_licenses_same_voice, by decide, structurallyIdentical_refl _⟩
+
+-- ═══════════════════════════════════════════════════════════════
+-- § 7: Bruening (2021) Maximal-Projection Identity
+-- ═══════════════════════════════════════════════════════════════
+--
+-- @cite{bruening-2021} §5.5 (pp. 1064–1067) proposes a maximal-projection-
+-- based identity condition for ellipsis (ex. 122–124), modifying
+-- @cite{rudin-2019}'s head-based condition (§ 6 above). Bruening's
+-- condition reads: ellipsis of E given antecedent A is licit iff every
+-- max-proj in E that is not a movement non-head has a structure-matching
+-- correlate in A, and conversely. Structure-matching is identity of the
+-- sequence of immediately dominating nodes (Bruening's gloss of Rudin
+-- 2019 ex. 9 with max-projs substituted for heads).
+--
+-- The condition derives Bruening's G1 (sluicing asymmetry) without
+-- further stipulation: implicit second-objects are licensed because the
+-- only added structure (the ∃ head) is not a max projection; implicit
+-- first objects are blocked because the antecedent's spec-ApplP DP has
+-- no correlate in the elided clause (filtered out as a movement non-head).
+--
+-- The G1 derivation proper is in
+-- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`.
+
+/-- Maximal projections within a SO `root`: subtrees `t` such that
+    `Labeling.isMaximalIn t root`. Per @cite{bruening-2021} §5.5 ex. 122,
+    the identity condition quantifies over these XPs (modulo movement
+    non-heads).
+
+    Uses the propositional `isMaximalIn` + Decidable instance per the
+    project's Bool→Prop migration (`feedback_bool_migration_scope`); the
+    Decidable instance internally bounds the unbounded existential via
+    `isMaximalIn_iff_bounded` (`Labeling.lean`). -/
+def maximalProjections (root : SyntacticObject) : List SyntacticObject :=
+  root.subtrees.filter (fun t => decide (isMaximalIn t root))
+
+/-- A SO is a "nonhead member of a movement chain" iff it is a trace
+    (lower copy left after movement). Per @cite{bruening-2021} §5.5 ex. 122
+    "not a nonhead member of a movement chain". For G1 only wh-traces in
+    elided IPs are relevant. Higher copies in head-movement chains are
+    not handled — flag for future ATB / remnant studies. -/
+def isNonHeadMemberOfChain (x : SyntacticObject) : Bool :=
+  (isTrace x).isSome
+
+/-- Structure matching for @cite{bruening-2021} §5.5: same tree shape AND
+    same projecting category (`outerCat`) at every node. Refines
+    `Basic.structurallyIsomorphic` (shape-only) with category identity. -/
+def bruening2021Identical : SyntacticObject → SyntacticObject → Bool
+  | .leaf t1, .leaf t2 =>
+      t1.item.outerCat == t2.item.outerCat
+  | .node a1 b1, .node a2 b2 =>
+      ((SyntacticObject.node a1 b1).outerCat
+            == (SyntacticObject.node a2 b2).outerCat)
+        && bruening2021Identical a1 a2
+        && bruening2021Identical b1 b2
+  -- Shape mismatch (.leaf vs .node) — never structurally identical.
+  | _, _ => false
+
+/-- 1-1 correspondence helper for max-proj matching (mirrors `matchHeadPairs`
+    at line 119 and `rudinMatchPairs` at line 610). -/
+def bruening2021MatchPairs :
+    List SyntacticObject → List SyntacticObject → Bool
+  | [], _ => true
+  | xp :: rest, candidates =>
+      match removeFirst (bruening2021Identical xp) candidates with
+      | some remaining => bruening2021MatchPairs rest remaining
+      | none => false
+
+/-- @cite{bruening-2021} §5.5 ex. 122 maximal-projection identity condition.
+    Ellipsis of `ellipsis` given `antecedent` is licit iff every max-proj
+    in `ellipsis` that is not a movement non-head has a structure-matching
+    correlate in `antecedent`, AND every max-proj in `antecedent` that is
+    not a movement non-head has a structure-matching correlate in
+    `ellipsis`. Mirrors the `rudinStructurallyIdentical` shape (line 618). -/
+def bruening2021StructurallyIdentical (antecedent ellipsis : SyntacticObject) : Bool :=
+  let aMaxProjs := (maximalProjections antecedent).filter
+                     (fun x => !isNonHeadMemberOfChain x)
+  let eMaxProjs := (maximalProjections ellipsis).filter
+                     (fun x => !isNonHeadMemberOfChain x)
+  bruening2021MatchPairs eMaxProjs aMaxProjs
+    && bruening2021MatchPairs aMaxProjs eMaxProjs
+
+/-- Structure-matching is reflexive on any SO. -/
+theorem bruening2021Identical_refl (so : SyntacticObject) :
+    bruening2021Identical so so = true := by
+  induction so with
+  | leaf _ => simp only [bruening2021Identical, beq_self_eq_true]
+  | node a b iha ihb =>
+      simp only [bruening2021Identical, beq_self_eq_true, iha, ihb, Bool.and_self]
+
+/-- Removing the first `bruening2021Identical`-match from a list headed by
+    that element succeeds and returns the tail. Mirror of `removeFirst_self`
+    at line 286. -/
+theorem removeFirst_self_bruening (so : SyntacticObject) (rest : List SyntacticObject) :
+    removeFirst (bruening2021Identical so) (so :: rest) = some rest := by
+  unfold removeFirst
+  simp only [bruening2021Identical_refl, ite_true]
+
+/-- Max-proj pair matching is reflexive: any list matches itself. Mirror of
+    `matchHeadPairs_refl` at line 292. -/
+theorem bruening2021MatchPairs_refl : (sos : List SyntacticObject) →
+    bruening2021MatchPairs sos sos = true
+  | [] => by unfold bruening2021MatchPairs; rfl
+  | so :: rest => by
+    unfold bruening2021MatchPairs
+    rw [removeFirst_self_bruening]
+    exact bruening2021MatchPairs_refl rest
+
+/-- The maximal-projection identity condition is reflexive: any SO is
+    structurally identical to itself. Mirror of `structurallyIdentical_refl`
+    at line 303. -/
+theorem bruening2021StructurallyIdentical_refl (so : SyntacticObject) :
+    bruening2021StructurallyIdentical so so = true := by
+  unfold bruening2021StructurallyIdentical
+  simp only [bruening2021MatchPairs_refl, Bool.and_self]
 
 end Minimalist.Ellipsis.FormalMatching

@@ -206,19 +206,14 @@ def positionalLower : List VerbHead := [.vBE]
 
 /-- All three agentive voices (Ø, -w, -ch) assign a θ-role. -/
 theorem agentive_voices_assign_theta :
-    vØ.assignsTheta = true ∧
-    v_w.assignsTheta = true ∧
-    v_ch.assignsTheta = true := ⟨rfl, rfl, rfl⟩
+    vØ.AssignsTheta ∧ v_w.AssignsTheta ∧ v_ch.AssignsTheta := by decide
 
 /-- -j does NOT assign a θ-role: agentless (p. 70). -/
-theorem v_j_no_theta : v_j.assignsTheta = false := rfl
+theorem v_j_no_theta : ¬ v_j.AssignsTheta := by decide
 
 /-- Only Ø is a phase head (assigns ergative case). -/
 theorem only_vØ_is_phase :
-    vØ.phaseHead = true ∧
-    v_w.phaseHead = false ∧
-    v_ch.phaseHead = false ∧
-    v_j.phaseHead = false := ⟨rfl, rfl, rfl, rfl⟩
+    vØ.IsPhasal ∧ ¬ v_w.IsPhasal ∧ ¬ v_ch.IsPhasal ∧ ¬ v_j.IsPhasal := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Verb Building (buildDecomposition)
@@ -261,7 +256,7 @@ theorem nom_agentive :
 /-- Does this Voice head have an implicit (existentially bound) external
     argument? True when Voice assigns θ but has no overt specifier. -/
 def hasImplicitExternal (v : VoiceHead) : Bool :=
-  v.assignsTheta && !v.hasD
+  decide v.AssignsTheta && !v.hasD
 
 /-- -aj (Existential Closure) surfaces when there is any implicit argument:
     implicit external (from Voice, as in -ch) or implicit internal (from
@@ -335,10 +330,10 @@ theorem minimalist_division_of_labor :
     (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
     For result roots, causativity tracks exactly with θ-assignment. -/
 theorem chuj_causative_alternation_result :
-    isCausative (buildDecomposition vØ resultLower) = vØ.assignsTheta ∧
-    isCausative (buildDecomposition v_w resultLower) = v_w.assignsTheta ∧
-    isCausative (buildDecomposition v_ch resultLower) = v_ch.assignsTheta ∧
-    isCausative (buildDecomposition v_j resultLower) = v_j.assignsTheta :=
+    (isCausative (buildDecomposition vØ resultLower) = true ↔ vØ.AssignsTheta) ∧
+    (isCausative (buildDecomposition v_w resultLower) = true ↔ v_w.AssignsTheta) ∧
+    (isCausative (buildDecomposition v_ch resultLower) = true ↔ v_ch.AssignsTheta) ∧
+    (isCausative (buildDecomposition v_j resultLower) = true ↔ v_j.AssignsTheta) :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
@@ -384,10 +379,10 @@ def toVoiceHead : ChujVoiceSuffix → VoiceHead
   | .w    => v_w
 
 /-- Theta assignment matches: the data's `hasAgent` agrees with the
-    fragment's `assignsTheta` for all four voice suffixes. -/
+    fragment's `AssignsTheta` for all four voice suffixes. -/
 theorem theta_alignment (vs : ChujVoiceSuffix) :
-    vs.hasAgent = (toVoiceHead vs).assignsTheta := by
-  cases vs <;> rfl
+    vs.hasAgent = true ↔ (toVoiceHead vs).AssignsTheta := by
+  cases vs <;> decide
 
 /-- External argument status matches D feature:
     overt external arg ↔ hasD = true. -/
@@ -403,10 +398,10 @@ theorem d_feature_alignment :
 
 /-- Only Ø is a phase head (assigns ERG case). -/
 theorem phase_head_alignment :
-    (toVoiceHead .null).phaseHead = true ∧
-    (toVoiceHead .ch).phaseHead = false ∧
-    (toVoiceHead .j).phaseHead = false ∧
-    (toVoiceHead .w).phaseHead = false := ⟨rfl, rfl, rfl, rfl⟩
+    (toVoiceHead .null).IsPhasal ∧
+    ¬ (toVoiceHead .ch).IsPhasal ∧
+    ¬ (toVoiceHead .j).IsPhasal ∧
+    ¬ (toVoiceHead .w).IsPhasal := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 12. Agent Diagnostic Alignment
@@ -415,21 +410,21 @@ theorem phase_head_alignment :
 /-- The data's agent adverb diagnostic matches the fragment's theta assignment.
     Agent-oriented adverbs require a theta-role-bearing Voice head. -/
 theorem agent_adverb_matches_theta (vs : ChujVoiceSuffix) :
-    agentAdverbOK vs = (toVoiceHead vs).assignsTheta := by
-  cases vs <;> rfl
+    agentAdverbOK vs = true ↔ (toVoiceHead vs).AssignsTheta := by
+  cases vs <;> decide
 
 /-- The -ch vs -j contrast is the critical test: both are passives (no overt
     external arg), but they differ in theta assignment. The agent diagnostic
     data confirms the fragment's distinction. -/
 theorem passive_contrast :
     -- -ch: assigns theta, agent adverbs OK, by-phrases OK
-    (toVoiceHead .ch).assignsTheta = true ∧
+    (toVoiceHead .ch).AssignsTheta ∧
     agentAdverbOK .ch = true ∧
     byPhraseOK .ch = true ∧
     -- -j: no theta, agent adverbs blocked, by-phrases blocked
-    (toVoiceHead .j).assignsTheta = false ∧
+    ¬ (toVoiceHead .j).AssignsTheta ∧
     agentAdverbOK .j = false ∧
-    byPhraseOK .j = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    byPhraseOK .j = false := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 13. -aj Distribution Alignment

@@ -367,18 +367,19 @@ theorem voice_flavor_consistent (ct : VoiceConstruction) :
 
 /-- All Malayic clause types treat VoiceP as a phase head. -/
 theorem voice_always_phase (ct : VoiceConstruction) :
-    (clauseToVoiceHead ct).phaseHead = true := by cases ct <;> rfl
+    (clauseToVoiceHead ct).IsPhasal := by cases ct <;> decide
 
 /-- Phase divergence: Malayic passives are phases, but Core's default
     passive Voice (following @cite{collins-2005}) is not. -/
 theorem malayic_passive_phase_diverges :
-    (clauseToVoiceHead .diPassive).phaseHead = true ∧
-    Minimalist.voicePassive.phaseHead = false := ⟨rfl, rfl⟩
+    (clauseToVoiceHead .diPassive).IsPhasal ∧
+    ¬ Minimalist.voicePassive.IsPhasal := by decide
 
 /-- Active clause type maps to Core's agentive Voice, which IS a phase
     head — consistent across both analyses. -/
 theorem active_consistent_with_core :
     (clauseToVoiceHead .active).flavor = .agentive ∧
-    (clauseToVoiceHead .active).phaseHead = Minimalist.voiceAgent.phaseHead := ⟨rfl, rfl⟩
+    ((clauseToVoiceHead .active).IsPhasal ↔ Minimalist.voiceAgent.IsPhasal) := by
+  refine ⟨rfl, ?_⟩; decide
 
 end Phenomena.FillerGap.Studies.ErlewineSommerlot2025

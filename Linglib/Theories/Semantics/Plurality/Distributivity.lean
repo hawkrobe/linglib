@@ -207,6 +207,25 @@ theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) 
   simp only [decide_eq_true_eq]
   split_ifs <;> simp_all
 
+/-- **`pluralTruthValue` is `Core.Duality.dist` on the plurality.**
+
+    Bridge from Križ-Spector trivalent plural predication to the canonical
+    trivalent classifier. Both are Fine super-truth (van Fraassen 1966
+    supervaluation) — `pluralTruthValue` parameterized over an atom-world
+    predicate, `dist` over an arbitrary `Finset α + (α → Bool)`. The
+    nonempty case routes through `superTrue_eq_dist`; the empty case
+    matches because both give `.true` (vacuous super-truth). -/
+theorem pluralTruthValue_eq_dist (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = Core.Duality.dist x (fun a => P a w) := by
+  unfold pluralTruthValue
+  by_cases h : x.Nonempty
+  · rw [dif_pos h]
+    exact Semantics.Supervaluation.superTrue_eq_dist (fun a => P a w) ⟨x, h⟩
+  · rw [dif_neg h]
+    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
+    subst hx
+    exact (Core.Duality.dist_empty _).symm
+
 /-- If all satisfy P, then none satisfy ¬P -/
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     allSatisfy P x w = true → noneSatisfy (λ a w => !P a w) x w = true := by

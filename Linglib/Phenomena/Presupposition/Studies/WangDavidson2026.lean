@@ -92,7 +92,7 @@ unconditionally, exhaustification eliminates filtering.
 
 /-- Inclusive disjunction allows filtering: a true first disjunct
     absorbs the second's presupposition failure. -/
-theorem sk_inclusive_filters : Truth3.join .true .indet = .true := rfl
+theorem sk_inclusive_filters : (Truth3.true ⊔ Truth3.indet) = .true := rfl
 
 /-- Exclusive disjunction does not filter: even when one disjunct
     is true, an undefined partner makes the result undefined. -/
@@ -105,7 +105,7 @@ theorem sk_exclusive_no_filter : Truth3.xor .true .indet = .indet := rfl
     projection" — filtering is equally (un)available in both
     directions. -/
 theorem sk_filtering_symmetric :
-    Truth3.join .indet .true = .true ∧ Truth3.xor .indet .true = .indet :=
+    (Truth3.indet ⊔ Truth3.true) = .true ∧ Truth3.xor .indet .true = .indet :=
   ⟨rfl, rfl⟩
 
 
@@ -284,7 +284,7 @@ def qT3 : BathWorld → Truth3
     at `pOnly`, p is true and q is undefined, but `join` returns true.
     The second disjunct's presupposition is "filtered". -/
 theorem inclusive_allows_filtering :
-    Truth3.join (pT3 .pOnly) (qT3 .pOnly) = .true := by rfl
+    pT3 .pOnly ⊔ qT3 .pOnly = .true := by rfl
 
 /-- Exclusive disjunction does NOT allow filtering:
     at `pOnly`, `xor` returns undefined because q's value is unknown. -/
@@ -292,7 +292,7 @@ theorem exclusive_no_filtering :
     Truth3.xor (pT3 .pOnly) (qT3 .pOnly) = .indet := by rfl
 
 /-- Inclusive disjunction as Prop3 (Strong Kleene). -/
-def inclDisj : BathWorld → Truth3 := fun w => Truth3.join (pT3 w) (qT3 w)
+def inclDisj : BathWorld → Truth3 := fun w => pT3 w ⊔ qT3 w
 
 /-- Exclusive disjunction as Prop3 (Strong Kleene). -/
 def exclDisj : BathWorld → Truth3 := fun w => Truth3.xor (pT3 w) (qT3 w)
@@ -308,7 +308,7 @@ theorem excl_undef_at_pOnly : exclDisj .pOnly = .indet := by rfl
     (by @cite{fox-2007}). -/
 def bathAlts : List (BathWorld → Truth3) :=
   [ inclDisj, pT3, qT3
-  , fun w => Truth3.meet (pT3 w) (qT3 w) ]
+  , fun w => pT3 w ⊓ qT3 w ]
 
 /-!
 ### EXH¹ vs EXH² on the bathroom disjunction

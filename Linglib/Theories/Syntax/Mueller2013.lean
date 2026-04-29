@@ -121,9 +121,8 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
 The selector projects, giving the result the same category as the head. -/
 theorem min_selector_projects (a b : Minimalist.SyntacticObject)
     (h : Minimalist.selects a b) :
-    Minimalist.label (Minimalist.merge a b) = Minimalist.label a := by
-  simp only [Minimalist.merge, Minimalist.label, Minimalist.selects] at *
-  simp [h]
+    Minimalist.label (Minimalist.merge a b) = Minimalist.label a :=
+  Minimalist.label_from_head a b h
 
 /-- Labeling convergence across theories.
 
@@ -131,7 +130,7 @@ Three independent formulations of "the head determines the result's category"
 all hold simultaneously. -/
 theorem labeling_convergence :
     -- Minimalism: selector projects
-    (∀ a b : Minimalist.SyntacticObject, Minimalist.selectsB a b = true →
+    (∀ a b : Minimalist.SyntacticObject, Minimalist.selects a b →
       Minimalist.labelCat (.node a b) = Minimalist.labelCat a) ∧
     -- CCG: forward application yields functor's result category
     (∀ x y : CCG.Cat, CCG.forwardApp (CCG.Cat.rslash x y) y = some x) ∧
@@ -139,8 +138,7 @@ theorem labeling_convergence :
     (∀ x y : CCG.Cat, CCG.backwardApp y (CCG.Cat.lslash x y) = some x) := by
   refine ⟨?_, ?_, ?_⟩
   · intro a b h
-    simp [Minimalist.labelCat, Minimalist.label, Minimalist.selectsB] at h ⊢
-    simp [h]
+    simp only [Minimalist.labelCat, Minimalist.label, if_pos h]
   · intro x y; simp [CCG.forwardApp]
   · intro x y; simp [CCG.backwardApp]
 
@@ -155,7 +153,7 @@ All theories implement the head-complement combination:
 /-- External Merge with selection is Head-Complement across all theories. -/
 theorem external_merge_is_head_complement :
     -- Minimalism: Ext Merge with selection = headComplement
-    (∀ a b : Minimalist.SyntacticObject, Minimalist.selectsB a b = true →
+    (∀ a b : Minimalist.SyntacticObject, Minimalist.selects a b →
       Minimalist.classifyExternalMerge a b = .headComplement) ∧
     -- HPSG: HeadCompRule = headComplement
     (∀ r : HPSG.HeadCompRule,
@@ -175,7 +173,7 @@ theorem external_merge_is_head_complement :
 theorem external_merge_is_head_specifier :
     -- Minimalism: Ext Merge without selection = headSpecifier
     (∀ a b : Minimalist.SyntacticObject,
-      Minimalist.selectsB a b = false → Minimalist.selectsB b a = false →
+      ¬ Minimalist.selects a b → ¬ Minimalist.selects b a →
       Minimalist.classifyExternalMerge a b = .headSpecifier) ∧
     -- HPSG: HeadSubjRule = headSpecifier
     (∀ r : HPSG.HeadSubjRule,

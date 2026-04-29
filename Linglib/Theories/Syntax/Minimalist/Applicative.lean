@@ -141,7 +141,7 @@ def applLowSource : ApplHead :=
     Low applicatives relate to the theme and are always licensed
     (@cite{pylkkanen-2008}). -/
 def ApplHead.licensedWith (appl : ApplHead) (voice : VoiceHead) : Bool :=
-  if appl.applType.RequiresEventSemantics then voice.hasSemantics
+  if appl.applType.RequiresEventSemantics then decide voice.HasSemantics
   else true
 
 -- ============================================================================

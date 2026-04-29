@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Logic.NonBivalence
+import Linglib.Core.Logic.Duality
 
 /-!
 # Quantified counterfactuals — projection-duality machinery
@@ -74,11 +74,6 @@ abbrev QStrength.weak : QStrength := .disjunctive
 /-- Identity: projection type is already itself. -/
 abbrev QStrength.toProjection (s : QStrength) : ProjectionType := s
 
-/-- Map projection type to duality type. -/
-def projToDuality : ProjectionType → Core.Duality.DualityType
-  | .conjunctive => .universal
-  | .disjunctive => .existential
-
 /-- The Projection Duality Theorem.
 
 For a list of three-valued results:
@@ -88,7 +83,7 @@ For a list of three-valued results:
 Implementation delegates to `Core.Duality.aggregate`, which computes
 the meet (⋀) or join (⋁) in the Truth3 lattice via foldl. -/
 def projectTruthValues (proj : ProjectionType) (results : List Truth3) : Truth3 :=
-  Core.Duality.aggregate (projToDuality proj) results
+  Core.Duality.aggregate proj results
 
 /-- Conjunctive projection is fragile: one false element yields false. -/
 theorem conjunctive_fragile (results : List Truth3)
@@ -105,7 +100,7 @@ theorem disjunctive_robust (results : List Truth3)
 
 /-- `projectTruthValues` and `aggregate` are the same operation. -/
 theorem projectTruthValues_eq_aggregate (proj : ProjectionType) (l : List Truth3) :
-    projectTruthValues proj l = Core.Duality.aggregate (projToDuality proj) l := rfl
+    projectTruthValues proj l = Core.Duality.aggregate proj l := rfl
 
 /-! ### The four embedded-quantifier operators -/
 
@@ -137,7 +132,7 @@ world, individual results are Bool (true/false), not Truth3. -/
     all determinate (Bool), the projected result is always determinate. -/
 theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
     embeddedSelectional s (bs.map Truth3.ofBool) ≠ .indet :=
-  Core.NonBivalence.global_always_determinate (projToDuality s) bs
+  Core.Duality.aggregate_map_ofBool_ne_indet s bs
 
 /-- **Strength determines pattern**: under selectional semantics with
     mixed Bool individual results (some true, some false):
@@ -148,7 +143,7 @@ theorem strength_determines_pattern (bs : List Bool)
     (h_some_false : bs.any (!·)) :
     embeddedSelectional .strong (bs.map Truth3.ofBool) = .false ∧
     embeddedSelectional .weak (bs.map Truth3.ofBool) = .true :=
-  let ⟨h_exist, h_univ⟩ := Core.NonBivalence.global_mixed_pattern bs h_some_true h_some_false
+  let ⟨h_exist, h_univ⟩ := Core.Duality.aggregate_map_ofBool_mixed bs h_some_true h_some_false
   ⟨h_univ, h_exist⟩
 
 private theorem map_neg_map_ofBool (bs : List Bool) :

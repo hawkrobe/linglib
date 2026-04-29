@@ -552,11 +552,11 @@ theorem eval_neg (p : PrProp W) (w : W) :
 /-- Classical conjunction evaluation (both defined). -/
 theorem eval_and (p q : PrProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
-    (and p q).eval w = Truth3.meet (p.eval w) (q.eval w) := by
+    (and p q).eval w = p.eval w ⊓ q.eval w := by
   have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
   simp only [eval, and, if_pos hp, if_pos hq, if_pos hpq]
   by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.meet]
+    simp [ha, hb]
 
 /-- Filtering implication when antecedent false: result is true. -/
 theorem eval_impFilter_antecedent_false (p q : PrProp W) (w : W)
@@ -676,12 +676,12 @@ theorem eval_orWeak (p q : PrProp W) (w : W) :
   simp only [eval, orWeak, Truth3.joinWeak]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Truth3.join, Truth3.ofBool]
+    simp [ha, hb, Truth3.ofBool]
 
 /-- Belnap conjunction evaluates to `Truth3.meetBelnap` pointwise. -/
 theorem eval_andBelnap (p q : PrProp W) (w : W) :
     (andBelnap p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, andBelnap, Truth3.meetBelnap, Truth3.meet]
+  simp only [eval, andBelnap, Truth3.meetBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb, Truth3.ofBool]
@@ -689,7 +689,7 @@ theorem eval_andBelnap (p q : PrProp W) (w : W) :
 /-- Belnap disjunction evaluates to `Truth3.joinBelnap` pointwise. -/
 theorem eval_orBelnap (p q : PrProp W) (w : W) :
     (orBelnap p q).eval w = Truth3.joinBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, orBelnap, Truth3.joinBelnap, Truth3.join]
+  simp only [eval, orBelnap, Truth3.joinBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb, Truth3.ofBool]

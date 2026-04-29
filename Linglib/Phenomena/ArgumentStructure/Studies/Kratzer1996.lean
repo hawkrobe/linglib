@@ -100,47 +100,46 @@ def middleTree : SyntacticObject :=
 
 /-- Agent c-commands theme in the transitive. -/
 theorem transitive_agent_ccommands_theme :
-    cCommandsIn transitiveTree DP_john_t DP_vase_t := by native_decide
+    cCommandsIn transitiveTree DP_john_t DP_vase_t := by decide
 
 /-- Theme does NOT c-command agent. -/
 theorem transitive_theme_not_ccommands_agent :
-    ¬ cCommandsIn transitiveTree DP_vase_t DP_john_t := by native_decide
+    ¬ cCommandsIn transitiveTree DP_vase_t DP_john_t := by decide
 
 /-- Anticausative contains theme but no agent DP. -/
 theorem anticausative_contains_theme :
-    containsB anticausativeTree DP_vase_t = true := by native_decide
+    contains anticausativeTree DP_vase_t := by decide
 
 /-- Unaccusative contains theme. -/
 theorem unaccusative_contains_theme :
-    containsB unaccusativeTree DP_ship_t = true := by native_decide
+    contains unaccusativeTree DP_ship_t := by decide
 
 /-- Middle contains theme. -/
 theorem middle_contains_theme :
-    containsB middleTree DP_door_t = true := by native_decide
+    contains middleTree DP_door_t := by decide
 
 -- Causative alternation
 
 /-- The transitive and anticausative share the VP core:
     both contain V("broke") and DP("the vase"). -/
 theorem causative_pair_shared_vp :
-    containsB transitiveTree V_broke_t = true ∧
-    containsB transitiveTree DP_vase_t = true ∧
-    containsB anticausativeTree V_broke_t = true ∧
-    containsB anticausativeTree DP_vase_t = true := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    contains transitiveTree V_broke_t ∧
+    contains transitiveTree DP_vase_t ∧
+    contains anticausativeTree V_broke_t ∧
+    contains anticausativeTree DP_vase_t := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- The transitive has an agent DP; the anticausative does not. -/
 theorem causative_pair_agent_contrast :
-    containsB transitiveTree DP_john_t = true ∧
-    containsB anticausativeTree DP_john_t = false := by
-  constructor <;> native_decide
+    contains transitiveTree DP_john_t ∧
+    ¬ contains anticausativeTree DP_john_t := by
+  constructor <;> decide
 
 /-- Voice determines the alternation: agentive assigns θ,
     non-thematic does not. This is @cite{kratzer-1996}'s severing
     verified structurally on the tree derivations. -/
 theorem causative_pair_voice_contrast :
-    voiceAgent.assignsTheta = true ∧
-    voiceAnticausative.assignsTheta = false := ⟨rfl, rfl⟩
+    voiceAgent.AssignsTheta ∧ ¬ voiceAnticausative.AssignsTheta := by decide
 
 end TreeDerivations
 

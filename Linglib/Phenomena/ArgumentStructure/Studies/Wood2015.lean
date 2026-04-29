@@ -292,9 +292,9 @@ theorem st_covers_all_types :
     Anticausative and middle Voice do NOT assign θ; reflexive does.
     Stated using the canonical Voice constants from `Voice.lean`. -/
 theorem st_hides_theta_diversity :
-    voiceAnticausative.assignsTheta = false ∧
-    voiceMiddle.assignsTheta = false ∧
-    voiceReflexive.assignsTheta = true := ⟨rfl, rfl, rfl⟩
+    ¬ voiceAnticausative.AssignsTheta ∧
+    ¬ voiceMiddle.AssignsTheta ∧
+    voiceReflexive.AssignsTheta := by decide
 
 /-- Lookup table for `StType.voiceFlavor` on the four
     typologically-distinct cells. Bundled into a single theorem so

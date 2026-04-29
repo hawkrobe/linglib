@@ -358,8 +358,7 @@ theorem par_de_different_causal_type :
     structural position for the preposition. The par/de choice is
     then determined by proto-agentivity. -/
 theorem passive_provides_case_position :
-    voicePassive.checksCase = true ∧ voicePassive.assignsTheta = false :=
-  ⟨rfl, rfl⟩
+    voicePassive.ChecksCase ∧ ¬ voicePassive.AssignsTheta := by decide
 
 -- ============================================================================
 -- § 8. Causal Chain Distances (§3.5)

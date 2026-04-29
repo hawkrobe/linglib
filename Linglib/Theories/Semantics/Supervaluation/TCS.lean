@@ -707,7 +707,7 @@ def toMV (M : TModel D Pred) : Pred → D → Truth3 :=
 def mvEvalTCS (v : Pred → D → Truth3) : TCSFormula Pred D → Truth3
   | .atom P a => v P a
   | .neg φ => Truth3.neg (mvEvalTCS v φ)
-  | .conj φ ψ => Truth3.meet (mvEvalTCS v φ) (mvEvalTCS v ψ)
+  | .conj φ ψ => mvEvalTCS v φ ⊓ mvEvalTCS v ψ
 
 omit [DecidableEq D] in
 /-- The three-valued interpretation correctly classifies atoms:

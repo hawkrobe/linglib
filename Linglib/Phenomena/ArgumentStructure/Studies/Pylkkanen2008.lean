@@ -152,11 +152,11 @@ theorem benefactive_theme_not_ccommands_benef :
 
 /-- Low applicative marks the ditransitive. -/
 theorem send_is_low_appl :
-    containsB ditransitiveTree appl_low_t = true := by decide
+    contains ditransitiveTree appl_low_t := by decide
 
 /-- High applicative marks the benefactive. -/
 theorem eat_is_high_appl :
-    containsB benefactiveTree appl_high_t = true := by decide
+    contains benefactiveTree appl_high_t := by decide
 
 -- ============================================================================
 -- § 4: ApplType Association
@@ -756,8 +756,7 @@ theorem pylkkanen_view_partitions_voice_flavors :
     ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceImpersonal ∧
     ¬ Minimalist.IsExternalArgIntroducer Minimalist.voiceAnticausative ∧
     ¬ Minimalist.IsExternalArgIntroducer Minimalist.voicePassive := by
-  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;>
-    (unfold Minimalist.IsExternalArgIntroducer; decide)
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §15. Transitivity restriction grounded in EntailmentProfile
     (@cite{pylkkanen-2008} Diagnostic 1; semantic argument at eq. 103 /

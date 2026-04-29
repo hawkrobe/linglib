@@ -350,11 +350,11 @@ theorem anticausative_blocks_bySelf :
 
 /-- Anticausative Voice does not assign a θ-role (no external argument). -/
 theorem anticausative_no_theta :
-    Minimalist.voiceAnticausative.assignsTheta = false := rfl
+    ¬ Minimalist.voiceAnticausative.AssignsTheta := by decide
 
 /-- Middle Voice does not assign a θ-role. -/
 theorem middle_no_theta :
-    Minimalist.voiceMiddle.assignsTheta = false := rfl
+    ¬ Minimalist.voiceMiddle.AssignsTheta := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Linguistic Causativizability

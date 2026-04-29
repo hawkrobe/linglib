@@ -301,7 +301,7 @@ theorem syncretism_aligns_with_fission :
     SE is purely a PF marker — its presence or absence is phonological,
     not semantic. -/
 theorem voice_semantically_vacuous :
-    Minimalist.voiceAnticausative.hasSemantics = false := rfl
+    ¬ Minimalist.voiceAnticausative.HasSemantics := by decide
 
 /-- The empirical three-way synonymy follows: since Voice has no
     semantics, adding or removing SE doesn't change meaning. -/
@@ -311,8 +311,8 @@ theorem three_way_synonymy_from_vacuity :
     romper_me_le.acceptability = .grammatical ∧
     romper_se_me_le.acceptability = .grammatical ∧
     -- Non-thematic Voice is semantically vacuous (theory)
-    Minimalist.voiceAnticausative.hasSemantics = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    ¬ Minimalist.voiceAnticausative.HasSemantics := by
+  refine ⟨rfl, rfl, rfl, ?_⟩; decide
 
 -- ============================================================================
 -- § 12: Bridge — Fission Verification

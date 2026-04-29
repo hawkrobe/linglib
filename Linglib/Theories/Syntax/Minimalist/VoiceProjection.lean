@@ -66,7 +66,7 @@ about what makes a Voice head "well-formed Voice." -/
     it introduces an external argument (assigns external θ).
     @cite{kratzer-1996}: Voice = the head bearing the θ-relation. -/
 def IsExternalArgIntroducer (v : VoiceHead) : Prop :=
-  v.assignsTheta = true
+  v.AssignsTheta
 
 instance (v : VoiceHead) : Decidable (IsExternalArgIntroducer v) := by
   unfold IsExternalArgIntroducer; infer_instance
@@ -93,11 +93,7 @@ neither — the four corners of the orthogonality square. -/
     (agentive Voice is a strong phase head; smuggling is blocked). -/
 theorem voiceAgent_pylkkanen_yes_collins_no :
     IsExternalArgIntroducer voiceAgent ∧ ¬ IsSmugglingProjection voiceAgent := by
-  refine ⟨rfl, ?_⟩
-  unfold IsSmugglingProjection
-  rw [agentive_blocks_smuggling]
-  intro h
-  cases h
+  decide
 
 /-- `voicePassive` satisfies the Collins view (it is the smuggling
     landing site) but **fails** the Pylkkänen view (it does not
@@ -123,11 +119,9 @@ theorem views_not_equivalent :
     ¬ (∀ v : VoiceHead, IsExternalArgIntroducer v ↔ IsSmugglingProjection v) := by
   intro h
   -- voiceAgent introduces external arg but blocks smuggling
-  have hExt : IsExternalArgIntroducer voiceAgent := rfl
+  have hExt : IsExternalArgIntroducer voiceAgent := by decide
   have hSmug : IsSmugglingProjection voiceAgent := (h voiceAgent).mp hExt
-  unfold IsSmugglingProjection at hSmug
-  rw [agentive_blocks_smuggling] at hSmug
-  cases hSmug
+  exact absurd hSmug (by decide)
 
 /-! ## §3. What the disagreement amounts to
 

@@ -104,11 +104,11 @@ theorem voice_based_tripartite :
 /-- Under Agree, anticausative Voice is not a phase head, so it cannot
     serve as an ACC assigner. -/
 theorem agree_anticausative_not_phase :
-    voiceAnticausative.phaseHead = false := rfl
+    ¬ voiceAnticausative.IsPhasal := by decide
 
 /-- Under Agree, agentive Voice (v*) is a phase head and can assign ACC. -/
 theorem agree_voice_is_phase_head :
-    voiceAgent.phaseHead = true := rfl
+    voiceAgent.IsPhasal := by decide
 
 -- ============================================================================
 -- § 3: Contrast with Dependent Case

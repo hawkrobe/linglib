@@ -83,6 +83,14 @@ Combine at-issue content with CI content.
 def withCI (p : W → Prop) (c : W → Prop) : TwoDimProp W :=
   { atIssue := p, ci := c }
 
+/-- `withCI` projects to its at-issue argument. -/
+@[simp] theorem withCI_atIssue (p c : W → Prop) :
+    (withCI p c).atIssue = p := rfl
+
+/-- `withCI` projects to its CI argument. -/
+@[simp] theorem withCI_ci (p c : W → Prop) :
+    (withCI p c).ci = c := rfl
+
 /--
 Pure quotation: strips CI content, preserving only at-issue content.
 
@@ -100,12 +108,79 @@ def pureQuote (p : TwoDimProp W) : TwoDimProp W :=
   { atIssue := p.atIssue, ci := λ _ => True }
 
 /-- Pure quotation neutralizes CI content. -/
-theorem pureQuote_strips_ci (p : TwoDimProp W) (w : W) :
+@[simp] theorem pureQuote_strips_ci (p : TwoDimProp W) (w : W) :
     (pureQuote p).ci w := trivial
 
 /-- Pure quotation preserves at-issue content. -/
-theorem pureQuote_preserves_atIssue (p : TwoDimProp W) :
+@[simp] theorem pureQuote_preserves_atIssue (p : TwoDimProp W) :
     (pureQuote p).atIssue = p.atIssue := rfl
+
+/--
+Pure quotation with strip witness.
+
+`pureQuote` is information-losing — once the CI is flattened to `λ _ => True`,
+the original CI cannot be recovered from the result alone. `PureQuoted` records
+both the stripped result AND the original, so downstream operators (in
+particular `MQContext.applyMQ` for the strip-then-mix pattern of
+@cite{kirk-giannini-2024} §3) can refer to what was discarded.
+
+This is the substrate K-G's CI-projection-failure theorems need: rather than
+proving `(pureQuote p).ci w := trivial` (which is vacuously true regardless
+of input), they can compare the stripped output against the recorded original.
+-/
+structure PureQuoted (W : Type*) where
+  /-- The stripped output: at-issue preserved, CI flattened. -/
+  result : TwoDimProp W
+  /-- The original input, retained for downstream comparison. -/
+  original : TwoDimProp W
+  /-- The result is the original with CI stripped via `pureQuote`. -/
+  is_strip : result = pureQuote original
+
+/--
+Build a `PureQuoted` witness from an input proposition.
+
+Bundles the existing `pureQuote p` with a record of the original `p` and a
+trivial proof of the strip relation.
+-/
+def pureQuoteRich (p : TwoDimProp W) : PureQuoted W :=
+  { result := pureQuote p, original := p, is_strip := rfl }
+
+@[simp] theorem pureQuoteRich_result (p : TwoDimProp W) :
+    (pureQuoteRich p).result = pureQuote p := rfl
+
+@[simp] theorem pureQuoteRich_original (p : TwoDimProp W) :
+    (pureQuoteRich p).original = p := rfl
+
+/-- The rich operator preserves at-issue between original and result. -/
+theorem pureQuoteRich_atIssue_preserved (p : TwoDimProp W) :
+    (pureQuoteRich p).result.atIssue = (pureQuoteRich p).original.atIssue := by
+  simp
+
+/-- The rich operator strips the original CI: result.ci is constantly True. -/
+theorem pureQuoteRich_ci_stripped (p : TwoDimProp W) (w : W) :
+    (pureQuoteRich p).result.ci w := by simp
+
+/--
+**Pure quotation is information-losing.**
+
+Two propositions with identical at-issue content but different CI dimensions
+produce identical results under `pureQuote`. This is the substantive
+non-trivial fact about the operator: the original CI is unrecoverable from the
+result. Constructive witness: `λ _ => True` and `λ _ => False` for the CI
+dimension, with at-issue trivial — `pureQuote` collapses both to the same
+`{ atIssue := True, ci := True }`.
+
+This theorem is what `quotation_blocks_ci_projection` should be, instead of
+the vacuous `:= trivial`. After `pureQuote`, no CI information remains; any
+downstream peripheral content must be re-introduced (by `applyMQ`'s `R`).
+-/
+theorem pureQuote_loses_ci_info :
+    ∃ (p₁ p₂ : TwoDimProp Unit), p₁.ci ≠ p₂.ci ∧ pureQuote p₁ = pureQuote p₂ := by
+  refine ⟨⟨λ _ => True, λ _ => True⟩, ⟨λ _ => True, λ _ => False⟩, ?_, rfl⟩
+  intro h
+  have : (fun (_ : Unit) => True) = (fun _ => False) := h
+  have : True = False := congrFun this ()
+  exact (this ▸ trivial : False)
 
 
 /--
@@ -121,6 +196,10 @@ def neg (p : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => ¬p.atIssue w
   , ci := p.ci }  -- CI projects through negation
 
+/-- Negation flips the at-issue dimension. -/
+@[simp] theorem neg_atIssue (p : TwoDimProp W) (w : W) :
+    (neg p).atIssue w ↔ ¬ p.atIssue w := Iff.rfl
+
 /--
 Conjunction: at-issue content conjoins; both CIs project.
 
@@ -131,6 +210,14 @@ Conjunction: at-issue content conjoins; both CIs project.
 def and (p q : TwoDimProp W) : TwoDimProp W :=
   { atIssue := λ w => p.atIssue w ∧ q.atIssue w
   , ci := λ w => p.ci w ∧ q.ci w }  -- Both CIs project
+
+/-- Conjunction's at-issue dimension. -/
+@[simp] theorem and_atIssue (p q : TwoDimProp W) (w : W) :
+    (and p q).atIssue w ↔ p.atIssue w ∧ q.atIssue w := Iff.rfl
+
+/-- Conjunction propagates both CIs. -/
+@[simp] theorem and_ci (p q : TwoDimProp W) (w : W) :
+    (and p q).ci w ↔ p.ci w ∧ q.ci w := Iff.rfl
 
 /--
 Disjunction: at-issue content disjoins; both CIs project.
@@ -158,7 +245,7 @@ CI projects through negation.
 
 Presuppositions can be filtered by antecedents; CIs cannot.
 -/
-theorem ci_projects_through_neg (p : TwoDimProp W) :
+@[simp] theorem ci_projects_through_neg (p : TwoDimProp W) :
     (neg p).ci = p.ci := rfl
 
 /--

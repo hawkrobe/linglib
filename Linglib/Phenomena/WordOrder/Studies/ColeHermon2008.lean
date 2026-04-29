@@ -245,7 +245,7 @@ These predictions match the Toba Batak extraction data formalized in
 
     This is verified computationally: `n_biangi` is contained in `vp`. -/
 theorem object_inside_fronted_vp :
-    containsB vp n_biangi = true := by native_decide
+    contains vp n_biangi := by decide
 
 /-- The subject is NOT contained within the fronted VP. It is stranded
     outside the moved constituent and remains accessible for extraction.
@@ -254,7 +254,7 @@ theorem object_inside_fronted_vp :
     only the subject (= pivot) survives VP-raising in a position where
     Ā-extraction is possible. -/
 theorem subject_outside_fronted_vp :
-    containsB vp n_dakdanakan = false := by native_decide
+    ¬ contains vp n_dakdanakan := by decide
 
 /-- Extraction prediction: the VP-raising analysis predicts exactly the
     extraction pattern found in Toba Batak.
@@ -267,12 +267,12 @@ theorem subject_outside_fronted_vp :
     and `Fragments.TobaBatak.avPatientExtraction` (ungrammatical). -/
 theorem extraction_matches_vp_containment :
     -- Agent is outside VP → extractable (matches AV agent = grammatical)
-    containsB vp n_dakdanakan = false ∧
+    ¬ contains vp n_dakdanakan ∧
     Fragments.TobaBatak.avAgentExtraction.judgment = .grammatical ∧
     -- Object is inside VP → frozen (matches AV patient = ungrammatical)
-    containsB vp n_biangi = true ∧
-    Fragments.TobaBatak.avPatientExtraction.judgment = .ungrammatical :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    contains vp n_biangi ∧
+    Fragments.TobaBatak.avPatientExtraction.judgment = .ungrammatical := by
+  refine ⟨?_, rfl, ?_, rfl⟩ <;> decide
 
 -- ============================================================================
 -- § 8: Binding Asymmetries (§3.4–§5 of the paper)
@@ -499,12 +499,13 @@ theorem svo_passes_through_vos :
     the DO is still inside the fronted VP, regardless of whether the
     subject subsequently raises past it. -/
 theorem svo_same_extraction_as_vos :
-    containsB vp n_biangi = true ∧
-    containsB vp n_dakdanakan = false := ⟨rfl, rfl⟩
+    contains vp n_biangi ∧
+    ¬ contains vp n_dakdanakan := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- SVO requires two movement steps (VP-raising + subject-raising). -/
 theorem svo_has_two_movements :
-    tobaBatakSVO.movedItems.length = 2 := by native_decide
+    tobaBatakSVO.movedItems.length = 2 := by decide
 
 -- ============================================================================
 -- § 12: English Passive Derivation (§7 of the paper)

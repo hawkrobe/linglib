@@ -473,7 +473,7 @@ theorem nonthematic_subject_with_acc :
 /-- Voice determines NP count: θ-assigning Voice adds an external argument.
     This bridges Voice theory to the configural case algorithm. -/
 def npCount (voice : VoiceHead) (internalArgs : Nat) : Nat :=
-  if voice.assignsTheta then 1 + internalArgs else internalArgs
+  if voice.AssignsTheta then 1 + internalArgs else internalArgs
 
 theorem agentive_two_nps : npCount voiceAgent 1 = 2 := rfl
 theorem anticausative_one_np : npCount voiceAnticausative 1 = 1 := rfl
@@ -648,7 +648,7 @@ theorem class2_unmarked_highest_accessibility :
 /-- Build NP list from Voice: if Voice assigns θ, include both subject
     and object; otherwise include only the theme. -/
 def npsFromVoice (voice : VoiceHead) : List NPInDomain :=
-  if voice.assignsTheta then [⟨"subj", none⟩, ⟨"obj", none⟩]
+  if voice.AssignsTheta then [⟨"subj", none⟩, ⟨"obj", none⟩]
   else [⟨"theme", none⟩]
 
 /-- End-to-end: agentive Voice → 2 NPs → object gets dependent ACC. -/

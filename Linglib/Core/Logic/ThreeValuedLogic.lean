@@ -77,17 +77,15 @@ theorem k3_neg_iff_not_lp (v : Truth3) :
 
 /-- LP-designation distributes over Strong Kleene conjunction. -/
 theorem lp_meet (v w : Truth3) :
-    isLPDesignated (Truth3.meet v w) ↔
+    isLPDesignated (v ⊓ w) ↔
     isLPDesignated v ∧ isLPDesignated w := by
-  cases v <;> cases w <;>
-    simp [isLPDesignated, Truth3.meet]
+  cases v <;> cases w <;> decide
 
 /-- K3-designation distributes over Strong Kleene conjunction. -/
 theorem k3_meet (v w : Truth3) :
-    isK3Designated (Truth3.meet v w) ↔
+    isK3Designated (v ⊓ w) ↔
     isK3Designated v ∧ isK3Designated w := by
-  cases v <;> cases w <;>
-    simp [isK3Designated, Truth3.meet]
+  cases v <;> cases w <;> decide
 
 /-- K3-designation implies LP-designation. -/
 theorem k3_implies_lp (v : Truth3) :
@@ -119,7 +117,7 @@ abbrev MVModel (Atom : Type*) := Atom → Truth3
 def mvEval {Atom : Type*} (M : MVModel Atom) : PropFormula Atom → Truth3
   | .atom a => M a
   | .neg φ => Truth3.neg (mvEval M φ)
-  | .conj φ ψ => Truth3.meet (mvEval M φ) (mvEval M ψ)
+  | .conj φ ψ => mvEval M φ ⊓ mvEval M ψ
 
 -- ════════════════════════════════════════════════════
 -- § 4. LP and K3 Satisfaction
@@ -190,7 +188,7 @@ theorem mvEval_allIndet {Atom : Type*}
   induction φ with
   | atom _ => rfl
   | neg ψ ih => simp [mvEval, ih, Truth3.neg]
-  | conj ψ χ ihψ ihχ => simp [mvEval, ihψ, ihχ, Truth3.meet]
+  | conj ψ χ ihψ ihχ => simp [mvEval, ihψ, ihχ]
 
 theorem k3_no_tautologies {Atom : Type*} [Nonempty Atom]
     (φ : PropFormula Atom) :
@@ -219,7 +217,7 @@ theorem lp_no_explosion :
   have := h (fun b => if b then Truth3.indet else Truth3.false)
     (fun γ hγ => by
       simp at hγ; subst hγ
-      simp [lpSat, isLPDesignated, mvEval, Truth3.meet, Truth3.neg])
+      simp [lpSat, isLPDesignated, mvEval, Truth3.neg])
   simp [lpSat, isLPDesignated, mvEval] at this
 
 end Core.Logic.ThreeValuedLogic

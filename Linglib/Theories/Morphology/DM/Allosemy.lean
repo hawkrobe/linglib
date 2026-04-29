@@ -324,9 +324,9 @@ def VoiceAlloseme.toFlavor : VoiceAlloseme → VoiceFlavor
 /-- All θ-assigning Voice allosemes map to θ-assigning syntactic flavors;
     the non-θ expletive maps to a non-θ flavor. -/
 theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
-    a.assignsTheta = (VoiceHead.assignsTheta
-      { flavor := a.toFlavor, hasD := true }) := by
-  cases a <;> rfl
+    a.assignsTheta = true ↔
+      VoiceHead.AssignsTheta { flavor := a.toFlavor, hasD := true } := by
+  cases a <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Nominalization Reading Derivation (Ch. 3)

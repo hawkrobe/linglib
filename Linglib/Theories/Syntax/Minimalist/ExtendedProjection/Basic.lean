@@ -280,8 +280,8 @@ partial def computeEPSpine (so : SyntacticObject) : List (SyntacticObject × Cat
   | .leaf tok => [(so, tok.item.outerCat)]
   | .node a b =>
     -- Find which daughter is the head (projects)
-    let headDaughter := if selectsB a b then a
-                        else if selectsB b a then b
+    let headDaughter := if selects a b then a
+                        else if selects b a then b
                         else a  -- default: left daughter
     let spineBelow := computeEPSpine headDaughter
     match getCategory so with

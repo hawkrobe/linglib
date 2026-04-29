@@ -742,7 +742,7 @@ theorem deadjectival_source_target :
       domain of idiosyncratic interpretation.
 
    Formal consequence: categorizers are never phase heads,
-   while `VoiceHead.phaseHead` can be `true`. -/
+   while `VoiceHead.IsPhasal` can be `true`. -/
 
 /-- Categorizers are never phase heads (@cite{harley-2014} §4). -/
 def Categorizer.isPhaseHead : Categorizer → Bool
@@ -754,21 +754,21 @@ theorem categorizer_never_phase (c : Categorizer) :
 
 /-- Agentive Voice IS a phase head — it demarcates the boundary above which
     interpretation must be compositional (@cite{harley-2014} §4). -/
-theorem agentive_voice_is_phase : voiceAgent.phaseHead = true := rfl
+theorem agentive_voice_is_phase : voiceAgent.IsPhasal := by decide
 
 /-- The phase-boundary asymmetry: Voice can be a phase head while
     categorizers never are. This is why idiosyncratic interpretation
     extends past categorizers but not past Voice (@cite{harley-2014} §4). -/
 theorem phase_boundary_at_voice_not_categorizer (c : Categorizer) :
-    c.isPhaseHead = false ∧ voiceAgent.phaseHead = true :=
-  ⟨by cases c <;> rfl, rfl⟩
+    c.isPhaseHead = false ∧ voiceAgent.IsPhasal :=
+  ⟨by cases c <;> rfl, by decide⟩
 
 /-- Voice introduces the external argument (@cite{harley-2014} §4, following
     @cite{kratzer-1996}). The categorizer does NOT introduce arguments —
     complement selection is a root property (§3). -/
 theorem voice_introduces_external_arg :
-    voiceAgent.hasD = true ∧ voiceAgent.assignsTheta = true :=
-  ⟨rfl, rfl⟩
+    voiceAgent.HasD ∧ voiceAgent.AssignsTheta := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 6: Surface Gender Bridge (@cite{kramer-2020} §3; @cite{kramer-2015} Chs 5-7)

@@ -62,9 +62,9 @@ For commonly-checked phase categories, call `isPhaseHeadOf` directly:
 **Voice/v* correspondence**: In the Kratzer/Schäfer framework,
 agentive Voice = v*. But `Cat.Voice` can be either a phase head
 (agentive) or not (anticausative). This flavor-level distinction
-is tracked by `VoiceHead.phaseHead` in
+is tracked by `VoiceHead.IsPhasal` in
 `Theories/Syntax/Minimalist/Voice.lean`, with the per-construction
-`phaseHead` semantics described in that file's "Voice/Phase Bridge"
+override semantics described in that file's "Voice/Phase Bridge"
 section. The two convergent recent clients of clause-internal Voice
 phasehood are @cite{erlewine-sommerlot-2025} (Malayic, A′-extraction)
 and @cite{pietraszko-2026} (Ndebele, A-movement & φ-agreement). -/
@@ -105,7 +105,7 @@ inductive PICStrength where
 
     Per-analysis discipline determines which heads count as phase heads
     — Keine 2020 (C-only), Chomsky 2000/2001 (C + v), Pietraszko 2026 +
-    Erlewine & Sommerlot 2025 (also Voice via `VoiceHead.phaseHead`),
+    Erlewine & Sommerlot 2025 (also Voice via `VoiceHead.IsPhasal`),
     Citko 2014 (also D). The struct is intentionally permissive about
     `head`'s category so all four can register `Phase` instances. -/
 structure Phase where

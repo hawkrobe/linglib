@@ -106,23 +106,23 @@ def finnishPassive : VoiceHead := voiceImpersonal
 -- ============================================================================
 
 /-- Active Finnish verbs project an agent. -/
-theorem active_has_agent : finnishActive.assignsTheta = true := rfl
+theorem active_has_agent : finnishActive.AssignsTheta := by decide
 
 /-- Finnish "passive" does NOT project an agent syntactically. -/
-theorem passive_no_agent : finnishPassive.assignsTheta = false := rfl
+theorem passive_no_agent : ¬ finnishPassive.AssignsTheta := by decide
 
 /-- Finnish "passive" HAS semantic content (existential closure over agent),
     unlike true anticausatives which are semantically vacuous. -/
-theorem passive_has_semantics : finnishPassive.hasSemantics = true := rfl
+theorem passive_has_semantics : finnishPassive.HasSemantics := by decide
 
 /-- Finnish "passive" is NOT a phase head. -/
-theorem passive_not_phase : finnishPassive.phaseHead = false := rfl
+theorem passive_not_phase : ¬ finnishPassive.IsPhasal := by decide
 
 /-- Finnish "passive" is distinct from anticausative — both lack a syntactic
     agent, but impersonal Voice has semantics while nonThematic does not. -/
 theorem impersonal_vs_anticausative :
-    finnishPassive.hasSemantics = true ∧
-    (Minimalist.voiceAnticausative).hasSemantics = false := ⟨rfl, rfl⟩
+    finnishPassive.HasSemantics ∧ ¬ Minimalist.voiceAnticausative.HasSemantics :=
+  by decide
 
 /-- All impersonal forms end in *-aan* or *-ään* (back or front harmony on
     the passive marker). -/

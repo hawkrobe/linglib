@@ -1,8 +1,5 @@
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Assignment
-import Linglib.Theories.Semantics.Presupposition.Transparency
-import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 
 /-!
 # Spector 2025: Trivalence and Transparency
@@ -57,7 +54,6 @@ namespace Spector2025
 
 open Core
 open Core.Duality
-open Semantics.Presupposition.Transparency
 
 universe u
 
@@ -126,6 +122,95 @@ def trueAtWorld (φ : W → PartialAssign D → Truth3) (w : W) : Prop :=
   ∃ g : PartialAssign D, φ w g = .true
 
 -- ════════════════════════════════════════════════════════════════
+-- §2.2: Contexts and the Transparency Principle
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Abstract Transparency
+
+Originally split out into `Theories/Semantics/Presupposition/Transparency.lean`,
+but Spector 2025 is the only consumer; per the project's N≥2 promotion
+discipline this co-locates the abstract API with its sole user until a
+second consumer (e.g., a future Mandelkern 2022 study file) lands.
+
+Schlenker (2007, 2008a) introduced the Transparency Principle in a
+dynamic-with-local-contexts setting; Spector reuses the *condition* in
+a static partial-assignment setting (§2.2). The definitions below stay
+parametric in the assignment carrier so that the §6 plural-assignment
+variants can reuse the same shape.
+-/
+
+/-- A context is a set of world-assignment pairs.
+    §2.2.1: "We view a context C as a set of world-assignment pairs (w,g)." -/
+abbrev Ctx (W : Type*) (D : Type u) := W → PartialAssign D → Prop
+
+/-- The null context: all world-assignment pairs.
+    §2.2.1: "the null context which contains all possible
+    world-assignment pairs." -/
+def nullCtx : Ctx W D := λ _ _ => True
+
+/-- Stalnakerian update: intersect context with sentence's truth set.
+    §2.2.1: "if a sentence S is accepted as true in context C, then the
+    resulting context is simply C intersected with the set of
+    world-assignment pairs where S is true." -/
+def stalnakerUpdate (C : Ctx W D) (S : W → PartialAssign D → Truth3) :
+    Ctx W D :=
+  λ w g => C w g ∧ S w g = .true
+
+/-- Two trivalent sentences agree throughout a context. -/
+def agreeIn (C : Ctx W D) (S1 S2 : W → PartialAssign D → Truth3) : Prop :=
+  ∀ w g, C w g → S1 w g = S2 w g
+
+/-- A trivalent sentence over world-assignment pairs. -/
+abbrev Sent (W : Type*) (D : Type u) := W → PartialAssign D → Truth3
+
+/-- A sentence frame: a sentence with a hole for a sub-sentence. -/
+abbrev Frame (W : Type*) (D : Type u) := Sent W D → Sent W D
+
+/-- The Transparency Principle (symmetric version).
+
+    §2.2.2 / §6.3: For a sentence S containing a free (underlined)
+    variable x, form S1 by replacing P(x̲) with `U(x) ∧ φ` and S2 by
+    replacing P(x̲) with `φ`. Transparency is satisfied in context C iff
+    S1 and S2 agree throughout C for every formula φ.
+
+    We formalize this as: given a sentence-with-hole `frame` and a
+    presupposition predicate `presup`, Transparency holds iff for every
+    `φ`, `frame (meetMiddle presup φ)` and `frame φ` agree in C.
+
+    The `frame` represents the sentence with a hole where the
+    presuppositional element occurs. The presupposition (e.g., `U(x)`)
+    is conjoined via Middle Kleene conjunction. -/
+def transparent (C : Ctx W D) (frame : Frame W D)
+    (presup : Sent W D) : Prop :=
+  ∀ φ : Sent W D,
+    agreeIn C (frame (λ w g => Truth3.meetMiddle (presup w g) (φ w g)))
+              (frame φ)
+
+/-- Transparency holds trivially when the presupposition is always true
+    in the context (since `meetMiddle true v = v`). -/
+theorem transparent_of_presup_true (C : Ctx W D) (frame : Frame W D)
+    (presup : Sent W D)
+    (hframe : ∀ (φ₁ φ₂ : Sent W D), (∀ w g, C w g → φ₁ w g = φ₂ w g) →
+              ∀ w g, C w g → frame φ₁ w g = frame φ₂ w g)
+    (hpresup : ∀ w g, C w g → presup w g = .true) :
+    transparent C frame presup := by
+  intro φ w g hC
+  exact hframe _ _
+    (λ w' g' hC' => by simp [Truth3.meetMiddle_true_left, hpresup w' g' hC']) w g hC
+
+/-- The Novelty Condition: an existential quantifier introducing
+    variable x can only occur once in a discourse.
+
+    §4 / @cite{heim-1982}: "If x is a variable, an occurrence of ∃x can
+    only occur once in a whole discourse." This prevents
+    ∃xP(x).∃xQ(x) from collapsing to ∃x(P(x) ∧ Q(x)).
+
+    Currently has no consumer in this file — see **Deferred work** at
+    the end of the file. -/
+def noveltyCondition (usedVars : List Nat) (newVar : Nat) : Prop :=
+  newVar ∉ usedVars
+
+-- ════════════════════════════════════════════════════════════════
 -- Parametric Transparency (assignment-type-agnostic)
 -- ════════════════════════════════════════════════════════════════
 
@@ -152,7 +237,7 @@ theorem conj_transparency_parametric : ∀ (E presup φ : Truth3),
     Truth3.meetMiddle E (Truth3.meetMiddle presup φ) =
     Truth3.meetMiddle E φ
   | .true, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left, Truth3.meetMiddle_true_left]
-  | .false, _, _, _ => by simp [Truth3.meetMiddle, Truth3.meet]
+  | .false, _, _, _ => by simp [Truth3.meetMiddle]
   | .indet, _, _, _ => rfl
 
 /-- Parametric bathroom Transparency: `joinMiddle negE (meetMiddle presup φ) =
@@ -161,7 +246,7 @@ theorem disj_transparency_parametric : ∀ (negE presup φ : Truth3),
     (negE = .false → presup = .true) →
     Truth3.joinMiddle negE (Truth3.meetMiddle presup φ) =
     Truth3.joinMiddle negE φ
-  | .true, _, _, _ => rfl
+  | .true, _, _, _ => by simp [Truth3.joinMiddle]
   | .indet, _, _, _ => rfl
   | .false, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left]
 
@@ -225,7 +310,7 @@ theorem reverse_conj_transparency_fails :
   -- RHS: meetMiddle # true = #
   refine ⟨Unit, Unit, λ _ _ => .true, λ _ _ => .false, λ _ _ => .indet,
           (), λ _ => none, ?_⟩
-  simp [Truth3.meetMiddle, Truth3.meet]
+  simp [Truth3.meetMiddle]
 
 end Conjunction
 
@@ -287,7 +372,7 @@ theorem reverse_bathroom_transparency_fails :
   -- RHS: joinMiddle # true = #
   refine ⟨Unit, Unit, λ _ _ => .true, λ _ _ => .false, λ _ _ => .indet,
           (), λ _ => none, ?_⟩
-  simp [Truth3.joinMiddle, Truth3.join, Truth3.meetMiddle, Truth3.meet]
+  simp [Truth3.joinMiddle, Truth3.meetMiddle]
 
 end Bathroom
 
@@ -375,14 +460,14 @@ theorem bathroom_classical_to_trivalent (B F : Interp W D) (dom : List D) (w : W
     have hne : ¬(evalPred B PartialAssign.empty 0 w = .true) := by
       simp only [evalPred, PartialAssign.empty]; decide
     rw [if_neg hne, if_pos hnoB]
-    simp only [Truth3.neg, Truth3.joinMiddle, Truth3.join]
+    simp [Truth3.neg, Truth3.joinMiddle]
   · -- Case 2: witness d with B(d) and F(d). Set g(0) = some d.
     refine ⟨λ _ => some d, ?_⟩
     simp only [bathroomSent]
     have heval : evalPred B (λ _ => some d) 0 w = .true := by
       simp only [evalPred, Truth3.ofBool, hBd]
     rw [if_pos heval]
-    simp only [evalPred, Truth3.ofBool, hFd, Truth3.neg, Truth3.joinMiddle, Truth3.join]
+    simp [evalPred, Truth3.ofBool, hFd, Truth3.neg, Truth3.joinMiddle]
 
 /-- **Direction 2**: If the trivalent bathroom sentence is true at `w`,
     then the classical disjunction holds.
@@ -441,7 +526,7 @@ theorem bathroom_trivalent_to_classical (B F : Interp W D) (dom : List D) (w : W
         simp only [evalPred, hg0, Truth3.ofBool, hBd]
       rw [if_pos heval] at hg
       -- existsB = .true, negExistsB = .false, joinMiddle .false fx = fx
-      simp only [Truth3.neg, Truth3.joinMiddle, Truth3.join] at hg
+      simp only [Truth3.neg, Truth3.joinMiddle] at hg
       -- hg says evalPred F g 0 w = .true
       simp only [evalPred, hg0, Truth3.ofBool] at hg
       cases hFd : F w d
@@ -484,71 +569,34 @@ theorem bare_pronoun_fails_null :
       ∧ Truth3.meetMiddle (presup w g) (φ w g) ≠ φ w g := by
   refine ⟨Unit, Unit, λ _ _ => .false, λ _ _ => .true,
           (), λ _ => none, trivial, ?_⟩
-  simp [Truth3.meetMiddle, Truth3.meet]
+  simp [Truth3.meetMiddle]
 
--- ════════════════════════════════════════════════════════════════
--- Bridge to Existing Phenomena Data
--- ════════════════════════════════════════════════════════════════
+/-! ### Empirical coverage from §3
 
-open Phenomena.Anaphora.DonkeyAnaphora in
-/-- The Geach donkey sentence reports a bound reading — forward conjunction
-    `∃xP(x) ∧ Q(x̲)` is exactly this pattern. Spector's system predicts it
-    is felicitous via `forward_conj_transparency`. -/
-theorem geach_has_bound_reading : geachDonkey.boundReading = true := rfl
+Spector's predictions cover the following items in adjacent files; the
+mapping is recorded here in prose so that future readers can find the
+relevant theorems without our duplicating the data file's stipulations
+in `rfl`-equality theorems.
 
-open Phenomena.Anaphora.DonkeyAnaphora in
-/-- Conditional donkey (`If a farmer owns a donkey, he beats it`) also
-    has a bound reading. In Spector's system, the conditional is
-    `¬∃xF(x) ∨ B(x̲)` — the bathroom sentence pattern. -/
-theorem conditional_donkey_has_bound_reading :
-    conditionalDonkey.boundReading = true := rfl
+`forward_conj_transparency` (above) handles forward intersentential
+anaphora across conjunction (`∃xT(x) ∧ P(x̲)`). It corresponds to
+`Phenomena.Anaphora.DonkeyAnaphora.geachDonkey.boundReading` and to the
+veridical-basic case of `Phenomena.Anaphora.Studies.Hofmann2025`.
 
-open Hofmann2025 in
-/-- The classic bathroom sentence is felicitous. Spector's system
-    predicts this via `bathroom_transparency`: the frame
-    `F(ψ) = joinMiddle (¬∃xB(x)) ψ` satisfies Transparency
-    because `¬∃xB(x) = false` implies `∃xB(x) = true` implies
-    `g` values `x`. @cite{roberts-1989} -/
-theorem classic_bathroom_felicitous :
-    bathroomDisjunction.felicitous = true := rfl
+`reverse_conj_transparency_fails` (above) corresponds to the cataphora
+side of the same data (Hofmann's `negatedBasic`).
 
-open Hofmann2025 in
-/-- Standard negation across sentence boundary is infelicitous —
-    consistent with Transparency failing for bare pronouns.
-    @cite{karttunen-1976} -/
-theorem standard_negation_infelicitous :
-    negationBlocks.felicitous = false := rfl
+`bathroom_transparency` (below) handles the bathroom-disjunction pattern
+(`¬∃xB(x) ∨ H(x̲)`, Roberts 1989; Hofmann's `bathroomDisjunction`).
+It also covers the conditional-donkey pattern
+(`¬∃xF(x) ∨ B(x̲)`, `geachDonkey` / `conditionalDonkey`).
 
-open Hofmann2025 in
-/-- Conjunction doesn't license bathroom-pattern anaphora (wrong
-    connective). Spector's system handles this: conjunction uses
-    `meetMiddle`, not `joinMiddle`, so the mechanism is different. -/
-theorem conjunction_version_infelicitous :
-    conjunctionBlocks.felicitous = false := rfl
-
-open Hofmann2025 in
-/-- Wrong-order bathroom sentence is infelicitous. This corresponds to
-    `reverse_bathroom_transparency_fails`: `H(x̲) ∨ ¬∃xB(x)` fails
-    Transparency because `H(x̲)` is in left position, and Middle Kleene
-    left-absorbs `#`. @cite{evans-1977} -/
-theorem wrong_order_bathroom_infelicitous :
-    wrongOrderBathroom.felicitous = false := rfl
-
-open Hofmann2025 in
-/-- Summary: Spector's Transparency predictions align with the
-    @cite{hofmann-2025} accessibility data. Felicitous examples have the
-    presupposition in the RIGHT disjunct (after the negated existential);
-    infelicitous examples violate this pattern. -/
-theorem bathroom_felicity_alignment :
-    -- Felicitous: negated existential LEFT, pronoun RIGHT
-    bathroomDisjunction.felicitous = true ∧
-    -- Infelicitous: conjunction (wrong connective for bathroom pattern)
-    conjunctionBlocks.felicitous = false ∧
-    -- Infelicitous: reversed disjunction order (pronoun LEFT)
-    wrongOrderBathroom.felicitous = false ∧
-    -- Infelicitous: separate sentences (no frame to establish Transparency)
-    negationBlocks.felicitous = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+`reverse_bathroom_transparency_fails` (below) accounts for the wrong-order
+bathroom (Hofmann's `wrongOrderBathroom`) and for separate-sentence
+configurations like `negationBlocks` and `conjunctionBlocks` where the
+mechanism is unavailable for distinct reasons (no joint frame; conjunction
+uses `meetMiddle` not `joinMiddle`).
+-/
 
 -- ════════════════════════════════════════════════════════════════
 -- §6: Plural Assignment Semantics (The Full System)
@@ -776,7 +824,7 @@ theorem universal_doesnt_license_anaphora :
   -- D = Bool, G has two assignments: one mapping x to true, one to false
   -- So |G(x)| = 2, atomic(x) = false
   refine ⟨Bool, λ _ => .false, λ _ => .true, ⟨λ _ => True⟩, ?_⟩
-  simp [Truth3.meetMiddle, Truth3.meet]
+  simp [Truth3.meetMiddle]
 
 end UniversalAnaphora
 
@@ -892,25 +940,20 @@ theorem strongTruth_implies_weakTruth (φ : PSent W D) (w : W)
     (h : strongTruthP φ w) : weakTruthP φ w :=
   h.1
 
-open Phenomena.Anaphora.DonkeyAnaphora in
-/-- Connection to donkey reading data: Spector's system predicts weak
-    readings by default (via Weak Truth). -/
-theorem spector_predicts_weak_donkey :
-    geachDonkey.weakReading = true := rfl
+/-! ### Reading preferences (§7) — empirical mapping
 
-open Phenomena.Anaphora.DonkeyAnaphora in
-/-- The system also allows strong readings via Strong Truth. -/
-theorem spector_allows_strong_donkey :
-    geachDonkey.strongReading = true := rfl
+Spector argues (§7) that `weakTruthP` generates *weak* (existential)
+readings by default and that `strongTruthP` generates *strong*
+(universal) readings. Kanazawa's (1994) generalization picks one or the
+other based on the monotonicity profile of the surrounding quantifier:
+upward-entailing contexts (`some`) prefer weak; downward-entailing
+contexts (`no`, the negated donkey) prefer strong.
 
-open Phenomena.Anaphora.DonkeyAnaphora in
-/-- @cite{kanazawa-1994}'s generalization: reading preference tracks
-    quantifier monotonicity. The negated donkey has only strong readings
-    (universal reading when the pronoun is in a DE context). -/
-theorem kanazawa_negated_donkey :
-    negatedDonkey.strongReading = true ∧
-    negatedDonkey.weakReading = false :=
-  ⟨rfl, rfl⟩
+End-to-end derivations of these readings on a concrete toy world
+(corresponding to `geachDonkey` and `negatedDonkey` in
+`Phenomena.Anaphora.DonkeyAnaphora`) are deferred — see §6.7 entry in
+the **Deferred work** docstring at the end of this file.
+-/
 
 end WeakStrongTruth
 
@@ -1008,22 +1051,65 @@ The systems agree on 3/4 cases. The disagreement on bathroom sentences
 is significant: standard DPL cannot handle them because negation is a
 test that doesn't export assignments (@cite{krahmer-muskens-1995}),
 while Spector's Transparency-based approach handles them naturally via
-Middle Kleene disjunction.
+Middle Kleene disjunction. The bathroom row is witnessed in Spector's
+favour by `bathroom_transparency` together with
+`reverse_bathroom_transparency_fails`; for an independent formalization
+of the `¬∃xB(x) ∨ F(x)` truth conditions, see `bathroom_truth_equiv`.
 -/
 
-open Hofmann2025 in
-/-- Spector handles bathroom sentences; standard DPL does not.
-    Middle Kleene disjunction + Transparency handles `¬∃xB(x) ∨ F(x̲)`
-    without any dynamic mechanism — the key empirical advantage.
-    @cite{roberts-1989} -/
-theorem spector_handles_bathroom :
-    bathroomDisjunction.felicitous = true := rfl
-
-open Hofmann2025 in
-/-- Both systems correctly block cataphora (reverse conjunction). -/
-theorem spector_dpl_agree_cataphora_blocked :
-    negatedBasic.felicitous = false := rfl
-
 end Comparison
+
+/-! ## Deferred work
+
+Items from Spector (2025) that this file does not yet formalize. Each is
+a real piece of the paper; collected here so future work has explicit
+grep-able anchors.
+
+- **§5 covariation failure proof.** `covariation_fails_individual` (above)
+  proves a different statement (a single `g` cannot witness `y` for all
+  `x`); the actual paper claim — that the simplified individual-assignment
+  semantics produces a constant-witness reading for `¬∃x¬∃yS(x,y)` — is
+  not yet derived.
+
+- **§6.7 donkey sentence end-to-end.** The classical donkey sentence
+  `∀x(¬(F(x) ∧ ∃y(D(y) ∧ O(x,y))) ∨ B(x,y))` and its weak existential
+  reading are summarized in prose but not proved on a concrete toy world.
+  Spector's Tables 4–5 use 7 individuals; a 4-individual `decide`-checked
+  variant would suffice.
+
+- **§7 Strong Truth examples (47), (54).** The operator `O` is defined
+  and proved equivalence-preserving (`strongTruthOp_preserves_equiv`,
+  `strongTruthOp_weakTruth_iff_strongTruth`); the central motivating
+  examples (`Either it's not the case that Sue has a credit card and bought
+  a cake with it…`, the donkey-disjunction `O` parse of (54-c)) are not.
+
+- **Appendix functional variables.** Spector's solution to
+  quantificational subordination over indefinites (`y_x(z)` functional
+  variables, paper (64)–(66)) is entirely deferred.
+
+- **Witness-condition substrate.** The Mandelkern (2022) witness
+  condition is currently inlined into `existsT3` / `existsPlural` here
+  (one-line stipulation each). A faithful Mandelkern 2022 study file
+  would let those derive from the witness primitive instead. Deferred
+  pending paper access; cite key `mandelkern-2022` exists in
+  `references.bib` with role `cited`, sources `crossref`. Per Spector
+  p. 10, Mandelkern's system is quadrivalent + uses local-context
+  bound clauses + uses individual (not plural) assignments — a
+  substantive stub, not a quick one.
+
+- **`noveltyCondition` enforcement.** The definition (in
+  `section AbstractTransparency` above) has no consumer; §4 examples
+  like (16) — `∃xP(x).∃xQ(x)` collapsing to `∃x(P(x) ∧ Q(x))` — are
+  not ruled out by any current theorem in this file.
+
+- **`PluralAssign` promotion to `Core`.** Currently paper-local under
+  `Spector2025.PluralAssign`. Per the project's N≥2 promotion
+  discipline, promotion needs a second consumer. Mandelkern (2022) is
+  NOT a candidate (Spector p. 10 confirms Mandelkern uses individual
+  assignments). Brasoveanu (2010) structured indices, Charlow plural
+  dynamic, and PIP/Keshet–Abney all use plural-assignment-flavored
+  state but with non-trivially different shapes; aligning shapes for a
+  shared Core type is a separate substrate-design task.
+-/
 
 end Spector2025

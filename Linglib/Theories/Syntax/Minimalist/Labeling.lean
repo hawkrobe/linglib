@@ -37,7 +37,7 @@ def selMatchesOpt (sel : SelStack) (oc : Option Cat) : Bool :=
 
 /-- Get the category of an SO by finding the projecting head
     This must match the logic in `label` -/
-partial def getCategory (so : SyntacticObject) : Option Cat :=
+def getCategory (so : SyntacticObject) : Option Cat :=
   match so with
   | .leaf tok => some tok.item.outerCat
   | .node a b =>
@@ -78,7 +78,7 @@ partial def getCategory (so : SyntacticObject) : Option Cat :=
         | none => getCategory a
 
 /-- Get the LI of an SO (the projecting head) -/
-partial def getProjectingLI (so : SyntacticObject) : Option LexicalItem :=
+def getProjectingLI (so : SyntacticObject) : Option LexicalItem :=
   match so with
   | .leaf tok => some tok.item
   | .node a b =>
@@ -107,31 +107,25 @@ partial def getProjectingLI (so : SyntacticObject) : Option LexicalItem :=
 
 -- Part 2: Selection (Decidable)
 
-/-- X selects Y iff X's selectional requirements include Y's category
+/-- The outermost selectional category required by an SO's projecting LI.
+    `none` if the SO has no projecting LI (e.g., empty phrase) or that LI's
+    selectional stack is empty (e.g., a saturated head). Used to define
+    `selects` propositionally without a Bool wrapper. -/
+def selectorOuterCat (so : SyntacticObject) : Option Cat :=
+  (getProjectingLI so).bind (fun li => li.outerSel.head?)
 
-    Selection is what triggers projection: the selector projects.
-    When V[D] merges with DP, V selects D, so V projects. -/
-def selectsB (selector selected : SyntacticObject) : Bool :=
-  match selector.getLIToken with
-  | some tok =>
-    match tok.item.outerSel, getCategory selected with
-    | c :: _, some selCat => c == selCat
-    | _, _ => false
-  | none =>
-    -- selector is a phrase - check its head's selection
-    match getProjectingLI selector with
-    | some li =>
-      match li.outerSel, getCategory selected with
-      | c :: _, some selCat => c == selCat
-      | _, _ => false
-    | none => false
+/-- X selects Y iff X's outermost selectional requirement matches Y's
+    category. Selection is what triggers projection: the selector projects.
+    When V[D] merges with DP, V selects D, so V projects.
 
-/-- Propositional version of selection -/
+    Stated as a Prop: both `selectorOuterCat X` and `getCategory Y` agree
+    and are non-`none`. Decidable via `Option.DecidableEq` on `Cat`. -/
 def selects (selector selected : SyntacticObject) : Prop :=
-  selectsB selector selected = true
+  selectorOuterCat selector = getCategory selected
+    ∧ selectorOuterCat selector ≠ none
 
 instance (x y : SyntacticObject) : Decidable (selects x y) :=
-  inferInstanceAs (Decidable (selectsB x y = true))
+  inferInstanceAs (Decidable (_ ∧ _))
 
 -- Part 3: Labels (Definition 16-17) - Selection-Based
 
@@ -145,8 +139,8 @@ def label : SyntacticObject → Option LexicalItem
   | .leaf tok => some tok.item
   | .node a b =>
     -- The selector projects
-    if selectsB a b then label a
-    else if selectsB b a then label b
+    if selects a b then label a
+    else if selects b a then label b
     else
       -- Neither selects directly. This happens in specifier-head structures.
       -- Try to find which one is the "head" (has selectional features remaining)
@@ -183,11 +177,6 @@ def labelCat (so : SyntacticObject) : Option Cat :=
 def sameLabel (x y : SyntacticObject) : Prop :=
   label x = label y ∧ label x ≠ none
 
-def sameLabelB (x y : SyntacticObject) : Bool :=
-  match label x, label y with
-  | some lx, some ly => lx.features == ly.features
-  | _, _ => false
-
 instance (x y : SyntacticObject) : Decidable (sameLabel x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -196,11 +185,6 @@ instance (x y : SyntacticObject) : Decidable (sameLabel x y) :=
 /-- X projects in Y iff X's label = Y's label and X is immediately contained in Y -/
 def projectsIn (x y : SyntacticObject) : Prop :=
   immediatelyContains y x ∧ sameLabel x y
-
-def projectsInB (x y : SyntacticObject) : Bool :=
-  match y with
-  | .leaf _ => false
-  | .node a b => (decide (x = a) || decide (x = b)) && sameLabelB x y
 
 instance (x y : SyntacticObject) : Decidable (projectsIn x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -230,6 +214,27 @@ def isMinimalIn (x y : SyntacticObject) : Prop :=
     From Harizanov: a phrase is +max, meaning it's a maximal projection -/
 def isMaximalIn (x y : SyntacticObject) : Prop :=
   isTermOf x y ∧ ¬∃ z, isTermOf z y ∧ projectsIn x z
+
+/-- Bounded reformulation of `isMaximalIn` over `y.subtrees`. The unbounded
+    existential `¬ ∃ z, isTermOf z y ∧ projectsIn x z` quantifies over all
+    SOs, but `isTermOf z y` forces `z ∈ y.subtrees` (`isTermOf_iff_mem_subtrees`),
+    so the existential is equivalent to the bounded form below. -/
+private theorem isMaximalIn_iff_bounded (x y : SyntacticObject) :
+    isMaximalIn x y ↔
+      isTermOf x y ∧ ∀ z ∈ y.subtrees, ¬ projectsIn x z := by
+  unfold isMaximalIn
+  refine and_congr_right (fun _ => ?_)
+  constructor
+  · intro h z hz hp
+    exact h ⟨z, (isTermOf_iff_mem_subtrees y z).mpr hz, hp⟩
+  · rintro h ⟨z, hz_term, hp⟩
+    exact h z ((isTermOf_iff_mem_subtrees y z).mp hz_term) hp
+
+/-- `isMaximalIn` is decidable: although the existential `∃ z` is unbounded
+    in the definition, any `z` with `isTermOf z y` must lie in `y.subtrees`
+    (`isTermOf_iff_mem_subtrees`), so we can search the bounded list instead. -/
+instance (x y : SyntacticObject) : Decidable (isMaximalIn x y) :=
+  decidable_of_iff _ (isMaximalIn_iff_bounded x y).symm
 
 -- Part 6: Heads and Phrases (Definition 22)
 
@@ -273,14 +278,14 @@ def detThe : LIToken := ⟨.simple .D [.N], 3⟩
 /-- Build: [D the] merges with [N pizza] → D projects (D selects N) -/
 def theDP : SyntacticObject := .node (.leaf detThe) (.leaf nounPizza)
 
-#guard selectsB (.leaf detThe) (.leaf nounPizza)     -- D selects N
-#guard labelCat theDP == some .D                      -- the determiner projects
+example : selects (.leaf detThe) (.leaf nounPizza) := by decide  -- D selects N
+example : labelCat theDP = some .D := by decide                   -- the determiner projects
 
 /-- Build: [V eat] merges with [DP the pizza] → V projects (V selects D) -/
 def eatPizzaVP : SyntacticObject := .node (.leaf verbEat) theDP
 
-#guard selectsB (.leaf verbEat) theDP               -- V selects D
-#guard labelCat eatPizzaVP == some .V                -- the verb projects
+example : selects (.leaf verbEat) theDP := by decide              -- V selects D
+example : labelCat eatPizzaVP = some .V := by decide              -- the verb projects
 
 -- Part 8: Understanding Min/Max with Examples
 
@@ -333,10 +338,10 @@ The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection
 -/
 
 -- Verify projection assignments
-#guard projectsInB (.leaf detThe) theDP             -- D projects in DP
-#guard !projectsInB (.leaf nounPizza) theDP         -- N doesn't project
-#guard projectsInB (.leaf verbEat) eatPizzaVP       -- V projects in VP
-#guard !projectsInB theDP eatPizzaVP                -- DP doesn't project in VP
+example : projectsIn (.leaf detThe) theDP := by decide       -- D projects in DP
+example : ¬ projectsIn (.leaf nounPizza) theDP := by decide  -- N doesn't project
+example : projectsIn (.leaf verbEat) eatPizzaVP := by decide -- V projects in VP
+example : ¬ projectsIn theDP eatPizzaVP := by decide         -- DP doesn't project in VP
 
 -- Part 9: Position-Indexed Maximality (@cite{collins-stabler-2016})
 

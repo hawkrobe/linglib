@@ -452,13 +452,13 @@ theorem arity_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
 theorem causer_template_assigns_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYYaZ,
                                 hasD := true }
-    voice.assignsTheta = true := rfl
+    voice.AssignsTheta := by decide
 
 /-- Basic active template maps to agentive Voice, also theta-assigning. -/
 theorem active_template_assigns_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYaZ,
                                 hasD := true }
-    voice.assignsTheta = true := rfl
+    voice.AssignsTheta := by decide
 
 /-- Passive templates do NOT assign theta — the external argument is
     demoted or absent. This is the structural basis for Hebrew
@@ -467,7 +467,7 @@ theorem active_template_assigns_theta :
 theorem passive_template_no_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .huXYaZ,
                                 hasD := true }
-    voice.assignsTheta = false := rfl
+    ¬ voice.AssignsTheta := by decide
 
 /-- XaYaZ and XaYYaZ differ in their Voice contribution: XaYaZ maps
     to agentive, XaYYaZ maps to causer. This Voice difference is what
@@ -511,11 +511,12 @@ def SemiticTemplate.isTheta : SemiticTemplate → Bool
   | .XaYaZ | .XaYYaZ | .hiXYiZ | .XiYeZ => true
   | .nXaYaZ | .tXaYYaZ | .huXYaZ | .XuYaZ => false
 
-/-- `isTheta` agrees with `VoiceHead.assignsTheta` for all templates. -/
+/-- `isTheta` agrees with `VoiceHead.AssignsTheta` for all templates. -/
 theorem isTheta_matches_assignsTheta (t : SemiticTemplate) :
     let voice : VoiceHead := { flavor := t.toVoiceFlavor, hasD := true }
-    voice.assignsTheta = t.isTheta := by
-  cases t <;> rfl
+    voice.AssignsTheta ↔ t.isTheta = true := by
+  cases t <;> simp [VoiceHead.AssignsTheta, SemiticTemplate.isTheta,
+    SemiticTemplate.toVoiceFlavor]
 
 /-- @cite{kratzer-1996}'s severing instantiated for Semitic:
     `VerbalizedRoot` factors argument structure into V (`CategorizedRoot`)
@@ -588,11 +589,11 @@ theorem templates_map_to_canonical_voices :
     In both, the causal relation is shared; only Voice varies. -/
 theorem causative_alternation_parallel :
     -- Kratzer: agentive assigns θ, anticausative does not
-    voiceAgent.assignsTheta = true ∧
-    voiceAnticausative.assignsTheta = false ∧
+    voiceAgent.AssignsTheta ∧
+    ¬ voiceAnticausative.AssignsTheta ∧
     -- Semitic: active templates assign θ, passive templates do not
     SemiticTemplate.isTheta .XaYaZ = true ∧
-    SemiticTemplate.isTheta .nXaYaZ = false := ⟨rfl, rfl, rfl, rfl⟩
+    SemiticTemplate.isTheta .nXaYaZ = false := by decide
 
 -- ============================================================================
 -- S7d: Template → Voice → Applicative Licensing
@@ -633,26 +634,24 @@ possessive datives. -/
     introduces an external argument also contributes semantic content.
     The converse fails (`hasSemantics_not_implies_theta`). -/
 theorem theta_implies_hasSemantics (v : VoiceHead) :
-    v.assignsTheta = true → v.hasSemantics = true := by
-  cases v with | mk flavor _ _ _ _ =>
-  cases flavor <;> simp [VoiceHead.assignsTheta, VoiceHead.hasSemantics]
+    v.AssignsTheta → v.HasSemantics := by
+  intro h
+  rcases h with h | h | h | h | h <;>
+    (unfold VoiceHead.HasSemantics; rw [h]; decide)
 
 /-- The converse fails: passive Voice has semantics (it contributes
     a *by*-phrase) but does not assign θ (the external argument is
     demoted). Impersonal Voice is another counterexample (existential
     closure without a projected specifier). -/
 theorem hasSemantics_not_implies_theta :
-    voicePassive.hasSemantics = true ∧ voicePassive.assignsTheta = false ∧
-    voiceMiddle.hasSemantics = false ∧ voiceMiddle.assignsTheta = false := ⟨rfl, rfl, rfl, rfl⟩
+    voicePassive.HasSemantics ∧ ¬ voicePassive.AssignsTheta ∧
+    ¬ voiceMiddle.HasSemantics ∧ ¬ voiceMiddle.AssignsTheta := by decide
 
 /-- Contrapositive: no event semantics entails no θ-assignment.
-    Derived from `theta_implies_hasSemantics`, not proved by cases. -/
+    Derived from `theta_implies_hasSemantics` by `mt`. -/
 theorem no_semantics_implies_no_theta (v : VoiceHead) :
-    v.hasSemantics = false → v.assignsTheta = false := by
-  intro h
-  cases hθ : v.assignsTheta with
-  | false => rfl
-  | true => simp [theta_implies_hasSemantics v hθ] at h
+    ¬ v.HasSemantics → ¬ v.AssignsTheta :=
+  mt (theta_implies_hasSemantics v)
 
 /-- Low applicatives are unconditionally licensed regardless of Voice.
     The `if` on `requiresEventSemantics` takes the `else` branch for
@@ -677,32 +676,34 @@ def SemiticTemplate.licensesAppl (t : SemiticTemplate) (appl : ApplHead) : Bool 
 
 -- ── Derived template-level theorems ──────────────────────────────────
 
-/-- Licensing factors through `hasSemantics` for high Appl. -/
+/-- Licensing factors through `HasSemantics` for high Appl. -/
 theorem high_appl_iff_hasSemantics (t : SemiticTemplate) :
-    t.licensesAppl applHigh = t.toVoiceHead.hasSemantics := by
-  cases t <;> rfl
+    t.licensesAppl applHigh = true ↔ t.toVoiceHead.HasSemantics := by
+  cases t <;> decide
 
 /-- If a template blocks high applicatives, it also fails to assign θ.
     Proved via the general implication `θ → hasSemantics`, not by
     enumerating templates. -/
 theorem high_appl_blocked_implies_no_theta (t : SemiticTemplate) :
     t.licensesAppl applHigh = false →
-    t.toVoiceHead.assignsTheta = false := by
-  intro h
-  rw [high_appl_iff_hasSemantics] at h
-  exact no_semantics_implies_no_theta _ h
+    ¬ t.toVoiceHead.AssignsTheta := by
+  intro h hθ
+  have : t.licensesAppl applHigh = true :=
+    (high_appl_iff_hasSemantics t).mpr (theta_implies_hasSemantics _ hθ)
+  rw [this] at h
+  exact Bool.noConfusion h
 
 /-- If a template assigns θ, it licenses ALL applicative types.
     Chain: θ → hasSemantics → high licensed; low always licensed.
     Proved via the general implication, quantified over `ApplHead`. -/
 theorem theta_licenses_all_appl (t : SemiticTemplate) (appl : ApplHead) :
-    t.toVoiceHead.assignsTheta = true →
+    t.toVoiceHead.AssignsTheta →
     t.licensesAppl appl = true := by
   intro hθ
   have hSem := theta_implies_hasSemantics _ hθ
   simp only [SemiticTemplate.licensesAppl, ApplHead.licensedWith]
   split
-  · exact hSem
+  · exact decide_eq_true hSem
   · rfl
 
 /-- The full implication chain on Voice predicates, instantiated for the
@@ -716,17 +717,16 @@ theorem theta_licenses_all_appl (t : SemiticTemplate) (appl : ApplHead) :
     The first inclusion is proved via the general `theta_implies_hasSemantics`,
     not by enumerating templates. -/
 theorem voice_predicate_chain :
-    (∀ t : SemiticTemplate, t.toVoiceHead.assignsTheta = true → t.licensesAppl applHigh = true) ∧
-    (∃ t : SemiticTemplate, t.licensesAppl applHigh = true ∧ t.toVoiceHead.assignsTheta = false) ∧
+    (∀ t : SemiticTemplate, t.toVoiceHead.AssignsTheta → t.licensesAppl applHigh = true) ∧
+    (∃ t : SemiticTemplate, t.licensesAppl applHigh = true ∧ ¬ t.toVoiceHead.AssignsTheta) ∧
     (∀ t : SemiticTemplate, t.licensesAppl applHigh = true → t.licensesAppl applLowRecipient = true) ∧
     (∃ t : SemiticTemplate, t.licensesAppl applHigh = false) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · -- θ → high licensed (via general theta_implies_hasSemantics)
     intro t hθ
-    rw [high_appl_iff_hasSemantics]
-    exact theta_implies_hasSemantics _ hθ
+    exact (high_appl_iff_hasSemantics t).mpr (theta_implies_hasSemantics _ hθ)
   · -- Proper: nXaYaZ (passive) licenses high but has no θ
-    exact ⟨.nXaYaZ, rfl, rfl⟩
+    exact ⟨.nXaYaZ, by decide, by decide⟩
   · -- High licensed → low licensed (via unconditional low licensing)
     intro t _; exact (low_appl_unconditional t.toVoiceHead).1
   · -- Proper: tXaYYaZ blocks high

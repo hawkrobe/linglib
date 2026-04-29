@@ -27,9 +27,11 @@ extraction. Agentive Voice (v*) is a phase head; its complement is frozen
 by PIC once the phase is complete. Non-thematic Voice (anticausative) is
 NOT a phase head, so its complement remains accessible.
 
-This connects to the existing `VoiceHead.phaseHead` field:
-- `voiceAgent.phaseHead = true` → vP is a phase → complement frozen → no smuggling
-- `voiceAnticausative.phaseHead = false` → vP is not a phase → complement extractab@cite{collins-2005} makes the same point: "neither the moved PartP nor
+This connects to `VoiceHead.IsPhasal`:
+- `voiceAgent.IsPhasal` → vP is a phase → complement frozen → no smuggling
+- `¬ voiceAnticausative.IsPhasal` → vP is not a phase → complement extractable.
+
+@cite{collins-2005} makes the same point: "neither the moved PartP nor
 an unaccusative vP are strong phases."
 
 -/
@@ -48,10 +50,10 @@ namespace Minimalist
     quotative inversion, passivization-via-smuggling, and related
     complement-fronting operations.
 
-    **Derived from `phaseHead`**: this is not a new primitive but a
+    **Derived from `IsPhasal`**: this is not a new primitive but a
     direct consequence of phase theory applied to Voice. -/
 def VoiceHead.permitsSmuggling (v : VoiceHead) : Bool :=
-  !v.phaseHead
+  ! decide v.IsPhasal
 
 -- ============================================================================
 -- § 2: Verification Theorems
@@ -83,20 +85,20 @@ theorem impersonal_permits_smuggling :
 
 /-- Smuggling availability is the exact complement of phasehood. -/
 theorem smuggling_iff_not_phase (v : VoiceHead) :
-    v.permitsSmuggling = !v.phaseHead := rfl
+    v.permitsSmuggling = ! decide v.IsPhasal := rfl
 
-/-- θ-assigning Voice blocks smuggling.
+/-- θ-assigning Voice that is also a phase head blocks smuggling.
     Agentive and causer Voice are both θ-assigners and phase heads,
     so they block complement extraction. -/
 theorem theta_blocks_smuggling (v : VoiceHead)
-    (_h : v.assignsTheta = true) (hp : v.phaseHead = true) :
+    (_h : v.AssignsTheta) (hp : v.IsPhasal) :
     v.permitsSmuggling = false := by
   simp [VoiceHead.permitsSmuggling, hp]
 
-/-- Non-θ Voice with `phaseHead = false` permits smuggling.
+/-- Non-θ Voice that is also non-phasal permits smuggling.
     This covers the canonical unaccusative case. -/
 theorem no_theta_permits_smuggling (v : VoiceHead)
-    (_h : v.assignsTheta = false) (hp : v.phaseHead = false) :
+    (_h : ¬ v.AssignsTheta) (hp : ¬ v.IsPhasal) :
     v.permitsSmuggling = true := by
   simp [VoiceHead.permitsSmuggling, hp]
 
@@ -192,15 +194,16 @@ theorem active_blocks_smuggling (p : Bool) :
     anticausative). -/
 theorem smuggling_shared_precondition :
     voicePassive.permitsSmuggling = true ∧
-    voiceAnticausative.permitsSmuggling = true := ⟨rfl, rfl⟩
+    voiceAnticausative.permitsSmuggling = true := by decide
 
 /-- Passive Voice checks Case but does not assign θ (feature
     dissociation). This is what makes passive v defective (non-phase):
     Case-checking is the property that distinguishes v* from v
     (@cite{chomsky-2001}, @cite{collins-2005} p. 96). -/
 theorem passive_dissociation_enables_smuggling :
-    voicePassive.checksCase = true ∧
-    voicePassive.phaseHead = false ∧
-    voicePassive.permitsSmuggling = true := ⟨rfl, rfl, rfl⟩
+    voicePassive.ChecksCase ∧
+    ¬ voicePassive.IsPhasal ∧
+    voicePassive.permitsSmuggling = true := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Minimalist

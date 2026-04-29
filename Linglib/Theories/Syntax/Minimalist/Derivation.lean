@@ -124,8 +124,8 @@ theorem wlm_at_root (restrictor target : SyntacticObject) :
     daughter of the new node). -/
 theorem wlm_preserves_target (restrictor target current : SyntacticObject) :
     let result := (Step.wlm restrictor target).apply current
-    containsB current target = true →
-    containsB result (.node target restrictor) = true := by
+    contains current target →
+    contains result (.node target restrictor) := by
   intro result h
   sorry -- structural induction on `current`; follows from `replace` behavior
 

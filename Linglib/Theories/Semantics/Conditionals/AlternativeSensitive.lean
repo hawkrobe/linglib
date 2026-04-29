@@ -57,7 +57,7 @@ Both are instances of the generic `dist` operator (`Core/Logic/Truth3.lean`).
 
 namespace Semantics.Conditionals.AlternativeSensitive
 
-open Core.Duality (Truth3 dist)
+open Core.Duality (Truth3 distList)
 open Core.Order (SimilarityOrdering)
 
 
@@ -93,7 +93,7 @@ def altConditionalResults {W : Type*} [DecidableEq W] [Fintype W]
 def homogeneityEval {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : Truth3 :=
-  dist (altConditionalResults sim alts C w)
+  distList (altConditionalResults sim alts C w) id
 
 /-- **SDA reading**: universal resolution of DIST_π (conjunction).
     "if A or B, C" is true iff BOTH (if A, C) and (if B, C). -/
@@ -122,12 +122,12 @@ def lewisDAC {W : Type*} [DecidableEq W] [Fintype W]
 -- SECTION 3: Structural Theorems
 -- ============================================================
 
-/-- DIST_π for conditionals = generic `dist` on per-alternative results. -/
-theorem homogeneityEval_eq_dist {W : Type*} [DecidableEq W] [Fintype W]
+/-- DIST_π for conditionals = generic `distList` on per-alternative results. -/
+theorem homogeneityEval_eq_distList {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) :
     homogeneityEval sim alts C w =
-    dist (altConditionalResults sim alts C w) := rfl
+    distList (altConditionalResults sim alts C w) id := rfl
 
 /-- SDA = homogeneity resolving to TRUE. The universal (SDA) reading
     is exactly the case where the truth-value gap does not arise. -/
@@ -136,9 +136,9 @@ theorem sda_is_universal_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
     (alts : List (W → Bool)) (C : W → Bool) (w : W) :
     sdaEval sim alts C w =
     (homogeneityEval sim alts C w == .true) := by
-  unfold sdaEval homogeneityEval Core.Duality.dist
+  unfold sdaEval homogeneityEval Core.Duality.distList
   generalize altConditionalResults sim alts C w = rs
-  cases rs.all id <;> cases rs.all (!·) <;> rfl
+  cases h1 : rs.all id <;> cases h2 : rs.any id <;> rfl
 
 /-- De Morgan for Bool lists: `any id` ↔ `¬ all not`. -/
 private theorem any_id_eq_not_all_not : ∀ (rs : List Bool),
@@ -164,24 +164,24 @@ theorem dcr_is_existential_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
     (h : alts ≠ []) :
     dcrEval sim alts C w =
     !(homogeneityEval sim alts C w == .false) := by
-  unfold dcrEval homogeneityEval Core.Duality.dist
-  rw [any_id_eq_not_all_not]
+  unfold dcrEval homogeneityEval Core.Duality.distList
   have hne : (altConditionalResults sim alts C w) ≠ [] := by
     unfold altConditionalResults
     cases alts with
     | nil => exact absurd rfl h
     | cons _ _ => exact List.cons_ne_nil _ _
   generalize altConditionalResults sim alts C w = rs at hne
-  cases hid : rs.all id
-  · cases rs.all (!·) <;> rfl
-  · -- all id = true → all (!·) = false for non-empty rs
-    have : rs.all (!·) = false := by
+  cases hall : rs.all id
+  · -- not all P → distList ∈ {.false, .indet} depending on any P
+    cases hany : rs.any id <;> simp [hall, hany]
+  · -- all P → any P (for nonempty rs) → distList = .true
+    have hany : rs.any id = true := by
       cases rs with
       | nil => exact absurd rfl hne
       | cons x xs =>
-        simp only [List.all_cons, id] at hid ⊢
-        cases x <;> simp_all
-    rw [this]; rfl
+        simp only [List.all_cons, List.any_cons, id, Bool.and_eq_true] at hall
+        simp [List.any_cons, id, hall.1]
+    simp [hall, hany]
 
 
 -- ============================================================

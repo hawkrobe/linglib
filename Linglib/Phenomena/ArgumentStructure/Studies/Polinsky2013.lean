@@ -577,13 +577,13 @@ theorem english_reciprocal_distinct_from_reflexive :
 /-- Finnish impersonal "passive" has semantic content (existential closure
     over agent) -- derived from the Fragment's voice head. -/
 theorem finnish_passive_has_semantics :
-    Fragments.Finnish.Predicates.finnishPassive.hasSemantics = true := rfl
+    Fragments.Finnish.Predicates.finnishPassive.HasSemantics := by decide
 
 /-- Finnish impersonal "passive" does NOT project a syntactic agent --
     derived from the Fragment's voice head. The Fragment-grounded discrepancy
     with WALS Ch 107 (which classifies Finnish as `.present`) is real:
     the Finnish "passive" has agent semantics without projecting syntax. -/
 theorem finnish_passive_no_agent :
-    Fragments.Finnish.Predicates.finnishPassive.assignsTheta = false := rfl
+    ¬ Fragments.Finnish.Predicates.finnishPassive.AssignsTheta := by decide
 
 end Phenomena.ArgumentStructure.Studies.Polinsky2013

@@ -55,18 +55,18 @@ per §5), and it has a D-feature (it is a Voice head, not an expletive). -/
 /-- @cite{collins-2005} §2: passive Voice does *not* assign external θ.
     The external θ-role stays on v in both active and passive. -/
 theorem passive_voice_does_not_assign_theta :
-    voicePassive.assignsTheta = false := rfl
+    ¬ voicePassive.AssignsTheta := by decide
 
 /-- @cite{collins-2005} §4: passive Voice checks accusative Case. The
     Case feature dissociates from v and projects on the Voice head
     (whose lexical realization is *by*). -/
 theorem passive_voice_checks_case :
-    voicePassive.checksCase = true := rfl
+    voicePassive.ChecksCase := by decide
 
 /-- @cite{collins-2005} §5: passive Voice is not a phase head, which is
     what permits PartP to smuggle past the external argument in Spec,vP. -/
 theorem passive_voice_not_phase :
-    voicePassive.phaseHead = false := rfl
+    ¬ voicePassive.IsPhasal := by decide
 
 /-- @cite{collins-2005} §5: passive Voice permits smuggling. -/
 theorem passive_permits_smuggling :
@@ -86,19 +86,17 @@ head. The two heads are then in complementary distribution on
     θ-assignment but distribute the Case-checking feature differently. -/
 theorem active_passive_dissociation :
     -- Active: v assigns θ AND checks Case (Voice does not check Case)
-    (voiceAgent.assignsTheta = true ∧ voiceAgent.checksCase = false) ∧
-    -- Passive: v assigns θ; Voice (by) checks Case
-    (voicePassive.assignsTheta = false ∧ voicePassive.checksCase = true) :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+    (voiceAgent.AssignsTheta ∧ ¬ voiceAgent.ChecksCase) ∧
+    -- Passive: v does NOT assign θ; Voice (by) checks Case
+    (¬ voicePassive.AssignsTheta ∧ voicePassive.ChecksCase) := by decide
 
 /-- The phase status correlates with where Case checking lives.
     Active v* is a strong phase (it checks Case); passive v is not
     (Case has dissociated to Voice). The non-phase status is what
     permits smuggling. -/
 theorem case_dissociation_explains_phase :
-    voiceAgent.checksCase = false ∧ voiceAgent.phaseHead = true ∧
-    voicePassive.checksCase = true ∧ voicePassive.phaseHead = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    ¬ voiceAgent.ChecksCase ∧ voiceAgent.IsPhasal ∧
+    voicePassive.ChecksCase ∧ ¬ voicePassive.IsPhasal := by decide
 
 /-! ## §3. PartP movement is XP-movement, not head movement
 
@@ -153,11 +151,12 @@ theorem short_and_long_passive_share_voice :
     -- Both are licensed by the same Voice + PartP configuration
     licensesPassiveSmuggling voicePassive true = true ∧
     -- Same Voice properties (no theta, checks Case, not phase)
-    voicePassive.assignsTheta = false ∧
-    voicePassive.checksCase = true ∧
-    voicePassive.phaseHead = false := by
-  refine ⟨?_, rfl, rfl, rfl⟩
-  exact particle_stranding_requires_xp_movement
+    ¬ voicePassive.AssignsTheta ∧
+    voicePassive.ChecksCase ∧
+    ¬ voicePassive.IsPhasal := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · exact particle_stranding_requires_xp_movement
+  all_goals decide
 
 /-! ## §6. *By-DP* as a VoiceP constituent (§8 of paper)
 
@@ -182,9 +181,9 @@ theorem by_dp_coordination_requires_voiceP :
     -- Both coordinated `by-DP` units project the same passive Voice
     voicePassive = voicePassive ∧
     -- Voice properties are stable across the conjuncts
-    voicePassive.checksCase = true ∧
-    voicePassive.assignsTheta = false :=
-  ⟨rfl, rfl, rfl⟩
+    voicePassive.ChecksCase ∧
+    ¬ voicePassive.AssignsTheta := by
+  refine ⟨rfl, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Inverse-voice family membership
 

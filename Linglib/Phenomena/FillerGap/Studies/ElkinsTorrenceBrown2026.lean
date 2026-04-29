@@ -2,6 +2,10 @@ import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Theories.Syntax.Minimalist.ClauseSpine
+import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Phenomena.Agreement.Studies.Scott2023
 
 /-!
 # Oblique Extraction in Mayan
@@ -125,6 +129,144 @@ theorem different_mechanisms :
 -- ============================================================================
 
 open Minimalist
+
+/-! ### Mam Voice substrate (Minimalist)
+
+This subsection houses the Minimalist `VoiceHead`, `ClauseSpine`, and
+`MamDirHead` definitions for Mam, formerly in
+`Linglib/Fragments/Mayan/Mam/VoiceSystem.lean`. Per CLAUDE.md
+"Per-language paper-specific apparatus lives in Studies, not
+Fragments," these belong with the paper that anchors them
+(@cite{elkins-torrence-brown-2026} for the =(y)a' analysis;
+@cite{scott-2023} for the antipassive). The Fragment file retains only
+the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
+
+`Phenomena/Agreement/Studies/Scott2023.lean` consumes `mamVoice` and
+`eqYaVocab` from this file via cross-Studies import. -/
+
+/-- Mam agentive Voice head with [uOblique] probe.
+
+    In Mam, Voice⁰ probes for an oblique feature on a passing
+    Ā-moved constituent. When an oblique DP moves through Spec,VoiceP,
+    Agree values [uOblique] as [+oblique], which is then spelled out
+    as =(y)a' at PF. -/
+def mamVoice : VoiceHead :=
+  { flavor := .agentive
+  , hasD := true
+  , features := [.unvalued (.oblique false)] }
+
+/-- Mam transitive clause spine: full CP with Voice. -/
+def mamTransitiveSpine : ClauseSpine := ClauseSpine.cP
+
+/-- Mam aspectless complement spine: VoiceP-sized.
+    Still has Voice → =(y)a' possible. -/
+def mamAspectlessSpine : ClauseSpine := ClauseSpine.voiceP
+
+/-- Mam infinitival complement spine: VP-sized.
+    No Voice → =(y)a' impossible. -/
+def mamInfinitivalSpine : ClauseSpine := ClauseSpine.bareVP
+
+/-- Mam directional auxiliary head (Dir⁰).
+
+    Dir is NOT a universal category — it is specific to Mayan languages.
+    Modeled as a language-specific type rather than added to `Cat`.
+    In Elkins et al.'s analysis, Dir⁰ occupies V1 position in the verbal
+    template (Voice > V1(Dir) > Appl > V2(root)). Like Voice⁰, Dir⁰
+    bears [uOblique] and can host =(y)a'. -/
+structure MamDirHead where
+  /-- Cislocative (toward speaker) vs translocative (away). -/
+  cislocative : Bool
+  /-- Whether this Dir head carries [uOblique]. -/
+  hasUOblique : Bool := false
+  deriving DecidableEq, Repr
+
+/-- Dir⁰'s probe features when it carries [uOblique]. -/
+def MamDirHead.features (d : MamDirHead) : FeatureBundle :=
+  if d.hasUOblique then [.unvalued (.oblique false)] else []
+
+/-- Cislocative directional with [uOblique]. -/
+def dirCis : MamDirHead := { cislocative := true, hasUOblique := true }
+
+/-- Translocative directional with [uOblique]. -/
+def dirTrans : MamDirHead := { cislocative := false, hasUOblique := true }
+
+/-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to "=(y)a'". -/
+def eqYaVocab : VocabEntry :=
+  { features := [.valued (.oblique true)]
+  , exponent := "=(y)a'"
+  , context := some .Voice }
+
+/-- The Mam Voice vocabulary: just the =(y)a' entry. -/
+def mamVoiceVocab : Vocabulary := [eqYaVocab]
+
+/-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
+    @cite{elkins-torrence-brown-2026} §7.2: =(y)a' co-occurs with
+    passive *-njtz*. -/
+def mamPassiveVoice : VoiceHead :=
+  { flavor := .nonThematic
+  , hasD := false
+  , features := [.unvalued (.oblique false)] }
+
+/-- Mam antipassive Voice head (@cite{scott-2023} §2.5.4.1).
+    Subject gets ABS not ERG; not a phase head. -/
+def mamAntipassiveVoice : VoiceHead :=
+  { flavor := .antipassive
+  , hasD := true
+  , features := [] }
+
+-- ── Substrate-level theorems ─────────────────────────────────────────
+
+/-- Mam Voice head carries [uOblique]. -/
+theorem mamVoice_has_uOblique :
+    hasUnvaluedFeature mamVoice.features (.oblique false) = true := by decide
+
+/-- Mam Voice is a phase head. -/
+theorem mamVoice_is_phase : mamVoice.IsPhasal := by decide
+
+/-- Mam Voice assigns a θ-role (agentive). -/
+theorem mamVoice_assigns_theta : mamVoice.AssignsTheta := by decide
+
+/-- Mam transitive spine projects Voice. -/
+theorem mamTransitive_has_voice :
+    mamTransitiveSpine.projects .Voice = true := by decide
+
+/-- Mam aspectless spine projects Voice. -/
+theorem mamAspectless_has_voice :
+    mamAspectlessSpine.projects .Voice = true := by decide
+
+/-- Mam infinitival spine does NOT project Voice. -/
+theorem mamInfinitival_lacks_voice :
+    mamInfinitivalSpine.projects .Voice = false := by decide
+
+/-- Cislocative Dir carries [uOblique]. -/
+theorem dirCis_has_uOblique : dirCis.hasUOblique = true := rfl
+
+/-- Translocative Dir carries [uOblique]. -/
+theorem dirTrans_has_uOblique : dirTrans.hasUOblique = true := rfl
+
+/-- Dir's probe features match Voice's. -/
+theorem dir_features_match_voice :
+    dirCis.features = mamVoice.features := by decide
+
+/-- Passive and agentive Voice differ in flavor but share the same
+    oblique probe features. -/
+theorem passive_voice_same_features :
+    mamPassiveVoice.features = mamVoice.features ∧
+    mamPassiveVoice.flavor ≠ mamVoice.flavor := ⟨rfl, by decide⟩
+
+/-- Antipassive Voice assigns a θ-role (the agent is present). -/
+theorem mamAntipassive_assigns_theta :
+    mamAntipassiveVoice.AssignsTheta := by decide
+
+/-- Antipassive Voice is NOT a phase head. -/
+theorem mamAntipassive_not_phase :
+    ¬ mamAntipassiveVoice.IsPhasal := by decide
+
+/-- Antipassive and agentive Voice differ in phase-head status but both
+    assign θ-roles. -/
+theorem antipassive_vs_agentive :
+    (mamAntipassiveVoice.AssignsTheta ↔ mamVoice.AssignsTheta) ∧
+    (mamAntipassiveVoice.IsPhasal ↔ ¬ mamVoice.IsPhasal) := by decide
 
 -- ============================================================================
 -- § 4: Spellout Theorems
@@ -340,5 +482,53 @@ theorem full_derivation_pipeline :
   decide
 
 end Derivation
+
+-- ============================================================================
+-- § 13: Unified Agree — Ā-agreement and φ-agreement as One Operation
+-- (back-reference to @cite{scott-2023}; this lives in ETB 2026 because
+--  the cross-paper bridge runs from later → earlier per CLAUDE.md
+--  chronological-dependency rule.)
+-- ============================================================================
+
+/-! Voice⁰ in Mam carries two independent probes:
+
+1. **φ-probe** [uPerson, uNumber] (analyzed by @cite{scott-2023}):
+   Agrees with agent in Spec,VoiceP, yielding Set A morphology.
+2. **Oblique probe** [uOblique] (analyzed by @cite{elkins-torrence-brown-2026},
+   this file): Agrees with a passing Ā-moved oblique, yielding =(y)a'
+   on Voice⁰.
+
+Both are instances of the same abstract Agree operation: probe searches
+c-command domain, finds closest matching goal, copies features, and the
+valued features are spelled out by Vocabulary Insertion. They differ only
+in which features they probe for and what vocabulary entries match. -/
+
+section UnifiedAgree
+open Scott2023
+
+/-- Voice's oblique probe features (paired with Scott 2023's φ-probe). -/
+private def voiceOblProbe : FeatureBundle := mamVoice.features
+
+/-- Both Voice probes are unvalued features. -/
+theorem both_probes_unvalued :
+    voiceProbe.all GramFeature.isUnvalued = true ∧
+    voiceOblProbe.all GramFeature.isUnvalued = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- φ-Agree (Scott 2023) and oblique-Agree (this paper) are parallel
+    instances of the same operation, differing only in which features
+    are probed and which vocabulary entries match. -/
+theorem phi_and_oblique_agree_parallel :
+    -- φ-Agree pipeline: value person, then number, then spellout
+    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
+      (λ fb => applyAgree fb dp3sg (.phi (.number .sg))) = some voiceFullyAgreed ∧
+    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
+    -- Oblique-Agree pipeline: value oblique, then spellout
+    applyAgree voiceOblProbe [.valued (.oblique true)] (.oblique false) =
+      some [.valued (.oblique true)] ∧
+    spellout [eqYaVocab] [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+end UnifiedAgree
 
 end Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026

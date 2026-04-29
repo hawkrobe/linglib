@@ -32,7 +32,7 @@ open Core
 
 /-- Classify an External Merge (known to have no containment). -/
 def classifyExternalMerge (a b : SyntacticObject) : CombinationKind :=
-  if selectsB a b || selectsB b a then
+  if selects a b ∨ selects b a then
     .headComplement
   else
     .headSpecifier
@@ -59,7 +59,7 @@ When one SO selects the other (first merge consuming a selectional feature),
 this is the Head-Complement schema: the selector is the head, the selectee
 is the complement. -/
 theorem selection_implies_headComplement (a b : SyntacticObject)
-    (h : selectsB a b = true) :
+    (h : selects a b) :
     classifyExternalMerge a b = .headComplement := by
   simp [classifyExternalMerge, h]
 
@@ -68,7 +68,7 @@ theorem selection_implies_headComplement (a b : SyntacticObject)
 When neither SO selects the other (e.g., subject merging with TP),
 this is the Head-Specifier schema. -/
 theorem no_selection_implies_headSpecifier (a b : SyntacticObject)
-    (ha : selectsB a b = false) (hb : selectsB b a = false) :
+    (ha : ¬ selects a b) (hb : ¬ selects b a) :
     classifyExternalMerge a b = .headSpecifier := by
   simp [classifyExternalMerge, ha, hb]
 
@@ -85,7 +85,7 @@ theorem classify_external_exhaustive (a b : SyntacticObject) :
     classifyExternalMerge a b = .headComplement ∨
     classifyExternalMerge a b = .headSpecifier := by
   unfold classifyExternalMerge
-  cases h : (selectsB a b || selectsB b a) <;> simp
+  by_cases h : selects a b ∨ selects b a <;> simp [h]
 
 /-- Label = Head Feature Principle: when α selects β, the label of {α, β} = label α.
 
@@ -93,8 +93,9 @@ This is the Minimalist analogue of the Head Feature Principle:
 the selector projects, so the result's label equals the selector's label. -/
 theorem label_from_head (a b : SyntacticObject) (h : selects a b) :
     label (merge a b) = label a := by
-  simp only [merge, label, selects] at *
-  simp [h]
+  show label (.node a b) = label a
+  rw [label]
+  exact if_pos h
 
 /-! Concrete sanity-check examples (D-N selects, V-DP selects, label
 projection) were removed: their `decide`-based proofs failed because

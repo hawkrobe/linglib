@@ -490,55 +490,35 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
   have hlt := contains_lt_nodeCount h
   exact Nat.lt_irrefl _ hlt
 
--- Part 3c: Boolean Containment (for decidability)
+-- Part 3c: Decidability of containment
 
-/-- Boolean containment check: does `x` (strictly) contain `y`? -/
-def containsB : SyntacticObject → SyntacticObject → Bool
-  | .leaf _, _ => false
-  | .node a b, y => decide (a = y) || decide (b = y) || containsB a y || containsB b y
-
-/-- `containsB` implies `contains`. -/
-theorem containsB_implies_contains {x y : SyntacticObject}
-    (h : containsB x y = true) : contains x y := by
-  induction x with
-  | leaf _ => simp [containsB] at h
-  | node a b iha ihb =>
-    simp only [containsB, Bool.or_eq_true, decide_eq_true_eq] at h
-    rcases h with ((rfl | rfl) | ha) | hb
-    · exact contains.imm _ _ (Or.inl rfl)
-    · exact contains.imm _ _ (Or.inr rfl)
-    · exact contains.trans _ _ a (Or.inl rfl) (iha ha)
-    · exact contains.trans _ _ b (Or.inr rfl) (ihb hb)
-
-/-- `contains` implies `containsB`. -/
-theorem contains_implies_containsB {x y : SyntacticObject}
-    (h : contains x y) : containsB x y = true := by
-  induction h with
-  | imm x y himm =>
-    match x, himm with
-    | .node a b, himm =>
-      simp only [containsB, Bool.or_eq_true, decide_eq_true_eq]
-      rcases himm with rfl | rfl
-      · exact Or.inl (Or.inl (Or.inl rfl))
-      · exact Or.inl (Or.inl (Or.inr rfl))
-    | .leaf _, himm => exact himm.elim
-  | trans x _ z himm _ ih =>
-    match x, himm with
-    | .node a b, himm =>
-      simp only [containsB, Bool.or_eq_true, decide_eq_true_eq]
-      rcases himm with rfl | rfl
-      · exact Or.inl (Or.inr ih)
-      · exact Or.inr ih
-    | .leaf _, himm => exact himm.elim
-
-/-- Boolean and propositional containment are equivalent. -/
-theorem containsB_iff {x y : SyntacticObject} :
-    containsB x y = true ↔ contains x y :=
-  ⟨containsB_implies_contains, contains_implies_containsB⟩
-
-/-- Containment is decidable (derived from the Boolean predicate). -/
-instance decContains (x y : SyntacticObject) : Decidable (contains x y) :=
-  decidable_of_iff (containsB x y = true) containsB_iff
+/-- Containment is decidable by structural recursion on the containing SO.
+    Leaves contain nothing (`leaf_contains_nothing`); for `.node a b`, `y`
+    is contained iff it is `a`, is `b`, or is contained in `a` or `b`. -/
+instance decContains : (x y : SyntacticObject) → Decidable (contains x y)
+  | .leaf tok, y => isFalse (leaf_contains_nothing tok y)
+  | .node a b, y =>
+    have _ha : Decidable (contains a y) := decContains a y
+    have _hb : Decidable (contains b y) := decContains b y
+    decidable_of_iff (a = y ∨ b = y ∨ contains a y ∨ contains b y) <| by
+      constructor
+      · rintro (rfl | rfl | hca | hcb)
+        · exact contains.imm _ _ (Or.inl rfl)
+        · exact contains.imm _ _ (Or.inr rfl)
+        · exact contains.trans _ _ _ (Or.inl rfl) hca
+        · exact contains.trans _ _ _ (Or.inr rfl) hcb
+      · intro h
+        cases h with
+        | imm _ _ himm =>
+            simp only [immediatelyContains] at himm
+            rcases himm with rfl | rfl
+            · exact Or.inl rfl
+            · exact Or.inr (Or.inl rfl)
+        | trans _ _ z himm hcz =>
+            simp only [immediatelyContains] at himm
+            rcases himm with rfl | rfl
+            · exact Or.inr (Or.inr (Or.inl hcz))
+            · exact Or.inr (Or.inr (Or.inr hcz))
 
 -- Part 4: Membership in Derivation
 
@@ -557,6 +537,9 @@ theorem self_is_term (x : SyntacticObject) : isTermOf x x :=
 /-- If Y contains X, then X is a term of Y -/
 theorem contained_is_term {x y : SyntacticObject} (h : contains y x) : isTermOf x y :=
   Or.inr h
+
+instance decIsTermOf (x y : SyntacticObject) : Decidable (isTermOf x y) := by
+  unfold isTermOf; infer_instance
 
 -- Part 5: Root and Reflexive Containment
 
@@ -603,6 +586,48 @@ theorem mem_subtrees_of_imm_contains {root w z : SyntacticObject}
       · exact Or.inr (Or.inl (self_mem_subtrees _))
       · exact Or.inr (Or.inr (self_mem_subtrees _))
   exact subtrees_subset_of_mem hw hz_in_w
+
+/-- Containment implies subtree-list membership: every contained SO appears
+    in `subtrees`. By induction on the `contains` derivation, using
+    `mem_subtrees_of_imm_contains` and `subtrees_subset_of_mem`. -/
+theorem mem_subtrees_of_contains {y z : SyntacticObject}
+    (h : contains y z) : z ∈ y.subtrees := by
+  induction h with
+  | imm y z himm => exact mem_subtrees_of_imm_contains (self_mem_subtrees y) himm
+  | trans y z w himm _ ih =>
+      exact subtrees_subset_of_mem
+        (mem_subtrees_of_imm_contains (self_mem_subtrees y) himm) ih
+
+/-- Subtree-list membership implies term-of relation: anything in `y.subtrees`
+    is either `y` itself or contained in `y`. By induction on `y`. -/
+theorem isTermOf_of_mem_subtrees {y z : SyntacticObject}
+    (h : z ∈ y.subtrees) : isTermOf z y := by
+  induction y with
+  | leaf _ =>
+      simp only [SyntacticObject.subtrees, List.mem_singleton] at h
+      exact Or.inl h
+  | node l r ihl ihr =>
+      simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append] at h
+      rcases h with rfl | hl | hr
+      · exact Or.inl rfl
+      · -- z ∈ l.subtrees → isTermOf z l → contains (node l r) z
+        rcases ihl hl with rfl | hcontains
+        · exact Or.inr (contains.imm _ _ (Or.inl rfl))
+        · exact Or.inr (contains.trans _ _ _ (Or.inl rfl) hcontains)
+      · rcases ihr hr with rfl | hcontains
+        · exact Or.inr (contains.imm _ _ (Or.inr rfl))
+        · exact Or.inr (contains.trans _ _ _ (Or.inr rfl) hcontains)
+
+/-- `isTermOf z y` iff `z` is in `y.subtrees`. The bridge between the
+    propositional term-of relation and the bounded subtree-list enumeration,
+    used to derive decidability for unbounded-existential predicates over
+    syntactic objects (see `Decidable (isMaximalIn ...)` in `Labeling.lean`). -/
+theorem isTermOf_iff_mem_subtrees (y z : SyntacticObject) :
+    isTermOf z y ↔ z ∈ y.subtrees := by
+  refine ⟨fun h => ?_, isTermOf_of_mem_subtrees⟩
+  rcases h with rfl | hcontains
+  · exact self_mem_subtrees _
+  · exact mem_subtrees_of_contains hcontains
 
 /-- X and Y are sisters IN tree `root`: they are distinct co-daughters of
     some node that is a subtree of `root`. -/

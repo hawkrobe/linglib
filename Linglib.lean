@@ -1547,9 +1547,14 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
 import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
+import Linglib.Phenomena.Expressives.Studies.HarrisPotts2009
 import Linglib.Phenomena.Expressives.Studies.LoGuercio2025
 import Linglib.Phenomena.Quotation.Studies.KirkGiannini2024
+import Linglib.Phenomena.Quotation.Studies.Maier2014
 import Linglib.Phenomena.Quotation.Studies.Rudin2025LI
+import Linglib.Phenomena.Negation.Studies.Horn1989
+import Linglib.Phenomena.Disagreement.Studies.PlunkettSundell2013
+import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
@@ -1628,11 +1633,11 @@ import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
 import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
-import Linglib.Phenomena.Reference.Studies.Ney2026
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012PMF
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+import Linglib.Phenomena.Reference.Studies.Ney2026
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.Reference.Studies.QingFranke2015
@@ -2150,7 +2155,7 @@ import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Theories.Semantics.Quantification.Cumulativity
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Pragmatics.Expressives.OutlookMarker
-import Linglib.Theories.Semantics.Quotation.MixedQuotation
+import Linglib.Theories.Semantics.Quotation.Mixed
 import Linglib.Theories.Semantics.Quotation.Demonstration
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
@@ -2214,7 +2219,6 @@ import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
-import Linglib.Theories.Semantics.Presupposition.Transparency
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
@@ -2371,11 +2375,6 @@ import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Reference.Metasemantics.Defs
-import Linglib.Theories.Semantics.Reference.Metasemantics.Reasonableness
-import Linglib.Theories.Semantics.Reference.Metasemantics.Coordination
-import Linglib.Theories.Semantics.Reference.Metasemantics.CGTransparency
-import Linglib.Theories.Semantics.Reference.Metasemantics.InsinuativeReference
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Dynamic
 import Linglib.Theories.Semantics.Tense.LexicalType
