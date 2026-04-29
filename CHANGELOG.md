@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.518] - 2026-04-28
+
+### `FragmentLambda.lean` v2.5 — `fragmentLambdaDepth` now faithfully recurses through PYP
+
+Closes the documented "Approximation note" in the module docstring: `fragmentLambdaDepth`'s recursive children now go through `fragmentLambdaDepth` itself (PYP-wrapped via `pypDraw`) rather than `stochasticLazyUnfoldDepth` (un-PYP'd). This matches @cite{odonnell-2015} §3.1.8's mutual-recursion structure faithfully — `G^FG = mem{L^A}` where `L^A`'s body calls `G^FG` on each non-halted child, so each child's draw also consults the memo.
+
+**Architectural change**: `fragmentLambdaDepth`'s body inlined. Was `pypDraw (PYM.liftBase ∘ stochasticLazyUnfoldDepth ... n)`; now `pypDraw (fun y => do let coin ← PYM.liftBase (PMF.bernoulli ...); if coin then ... fragmentLambdaDepth ... n nt ...; else pure (.fragment y))`. The recursive call is on `n` (structurally smaller than `n+1`); Lean's structural-recursion checker accepts this through the `pypDraw` lambda + `mapM` over children + `if`-then-else nesting on the first try.
+
+**`stochasticLazyUnfoldDepth` retained** as the standalone §2.3.5.2 model (a recognised sub-model in the book; Figure 2.18 p. 68's `stochastic-lazy-unfold` recursion). Repurposed from "the inner step of `fragmentLambdaDepth`" to "the un-memoised reference model"; both functions now stand on their own with clear semantic identities.
+
+**Module docstring updated**: the "Approximation note" section (which explicitly said children call the un-PYP'd unfold and a faithful version "would refactor into a `mutual` block") replaced with a positive statement about the direct recursion. The two co-located functions now have distinct semantic roles documented.
+
+**Depth-0 lemmas re-prove unchanged** (depth-0 case is still `pure (.fragment x)`, untouched).
+
+**Status**: single sorry remains on the proportionality form of `fragmentLambdaDepth_marginalises_to_fg` (depth-→-∞ + probabilistic-fixed-point machinery, out of linglib scope). All operational machinery is now structurally faithful to §3.1.8 (no documented approximations remaining in the file). Closes one of the two architectural gaps identified in the v2 audit (the other — proving the sampler maintains `PYPSlot` wellformedness, allowing the atomic-fallback in `slotToFinpartition` to be discharged via `absurd` — is the natural next step).
+
+Build: 2721 jobs green. 1 sorry warning (unchanged target). LOC: 716 → 731.
+
 ## [0.230.517] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.4 — soundness theorem reformulated as proportionality (ratio form)

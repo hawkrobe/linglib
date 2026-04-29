@@ -353,21 +353,19 @@ mem{L^A}  ~ PYP(a^A, b^A, L^A)                         -- Pitman-Yor memoization
 
 We split this into two co-located functions:
 
-- `stochasticLazyUnfoldDepth` — the un-memoised core (`L^A` in book notation,
-  but with children recursing back into the unfold itself rather than into
-  the PYP-wrapped version). This is exactly @cite{odonnell-2015} §2.3.5.2's
-  `stochastic-lazy-unfold` (Figure 2.18, p. 68) — a recognised sub-model.
-  Fully defined; no `sorry`.
-- `fragmentLambdaDepth` — the PYP-memoised wrapper (`G^FG = mem{L^A}`).
-  Uses `pypDraw` over `stochasticLazyUnfoldDepth` as base distribution.
-  Currently sorry-marked because `pypDraw`'s body is sorry-marked.
-
-**Approximation note.** Strictly per @cite{odonnell-2015} §3.1.8 the
-recursive children inside `L^A` should call `G^FG` (PYP-wrapped), not the
-plain unfold. Doing so requires mutual recursion `fragmentLambdaDepth ↔
-stochasticLazyUnfoldDepth-with-PYP-children`; we approximate by calling
-the un-PYP'd children. This means children's reuse-via-memo is not
-captured. A faithful version would refactor into a `mutual` block.
+- `stochasticLazyUnfoldDepth` — the un-memoised §2.3.5.2 model (`L^A` with
+  children recursing back into the unfold itself, no PYP). This is
+  @cite{odonnell-2015} §2.3.5.2's `stochastic-lazy-unfold` (Figure 2.18,
+  p. 68) — a recognised standalone sub-model in the book. Fully defined;
+  kept here as the reference for the un-memoised model and as a sub-step
+  for understanding the §3.1.8 architecture.
+- `fragmentLambdaDepth` — the **faithful §3.1.8 model** (`G^FG = mem{L^A}`).
+  Each call wraps with `pypDraw`; the inner body recurses on
+  `fragmentLambdaDepth` itself for non-terminal children — children's
+  draws also consult the memo, faithfully matching §3.1.8's mutual
+  recursion. Lean accepts this as structural recursion through the
+  `pypDraw` lambda + `mapM` + `if` (the recursive call is on `n`,
+  structurally smaller than `n+1`).
 -/
 
 variable {α β R : Type} [DecidableEq α]
@@ -405,19 +403,40 @@ noncomputable def stochasticLazyUnfoldDepth
       else
         PMF.pure (.fragment x)
 
-/-- Depth-bounded **PYP-memoised fragment-lambda**: the §3.1.8 model. Wraps
-`stochasticLazyUnfoldDepth` with `pypDraw` so that previously-sampled
-partial subtrees at the same non-terminal can be reused. Approximates
-@cite{odonnell-2015} §3.1.8's full mutual recursion (children inside the
-unfold call the un-PYP'd version, not `fragmentLambdaDepth`). -/
+/-- Depth-bounded **PYP-memoised fragment-lambda**: the §3.1.8 model.
+Wraps each non-terminal call with `pypDraw` so that previously-sampled
+partial subtrees at the same non-terminal can be reused; recursive
+children calls go back through `fragmentLambdaDepth` itself (PYP-wrapped),
+faithfully matching @cite{odonnell-2015} §3.1.8's mutual recursion
+`G^FG = mem{L^A}` ↔ `L^A`-body-calls-`G^FG`-on-children.
+
+The recursive structure: `pypDraw` consults the memo at `y`; if no hit,
+it samples from the inner body (the lambda passed to `pypDraw`), which
+flips the §3.1.8 biased halt-coin then either returns
+`LazyTree.fragment y` (halt) or samples a (rule, RHS), recurses on
+non-terminal children via `fragmentLambdaDepth ... n` (PYP-wrapped, so
+each child's draw also consults the memo), and assembles
+`LazyTree.branch rule y kids`.
+
+The recursive call inside the `pypDraw` lambda is on `n` (structurally
+smaller than `n+1`); Lean's structural-recursion checker accepts this
+through the lambda + `mapM` + `if` nesting. -/
 noncomputable def fragmentLambdaDepth [Inhabited β]
     (recurse : α → PMF (R × List (α ⊕ β)))
     (recurseProb : α → NNReal)
     (recurseProb_le : ∀ x, recurseProb x ≤ 1) :
     ℕ → α → PYM α (LazyTree α β R) (LazyTree α β R)
   | 0,     x => pure (.fragment x)
-  | n + 1, x => pypDraw (fun y => PYM.liftBase
-      (stochasticLazyUnfoldDepth recurse recurseProb recurseProb_le n y)) x
+  | n + 1, x => pypDraw (fun y => do
+      let coin ← PYM.liftBase (PMF.bernoulli (recurseProb y) (recurseProb_le y))
+      if coin then do
+        let ⟨rule, rhs⟩ ← PYM.liftBase (recurse y)
+        let kids ← rhs.mapM (fun
+          | .inl nt   => fragmentLambdaDepth recurse recurseProb recurseProb_le n nt
+          | .inr term => pure (.terminal term))
+        pure (.branch rule y kids)
+      else
+        pure (.fragment y)) x
 
 /-! ## Halt-count extraction from samples -/
 
