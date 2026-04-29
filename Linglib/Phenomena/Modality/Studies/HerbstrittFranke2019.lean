@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Distributions
-import Linglib.Theories.Pragmatics.RSA.Divergence
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
+import Linglib.Core.InformationTheory
 
 /-!
 # @cite{herbstritt-franke-2019}
@@ -25,7 +25,7 @@ to an urn scenario with 10 balls, where both the proportion of red balls
 manipulated. The key innovation over @cite{goodman-stuhlmuller-2013}:
 Hellinger distance replaces KL divergence as the speaker utility measure,
 because KL-divergence assigns infinite disutility to "true enough" messages
-(see `RSA.Divergence` for the theoretical analysis).
+(see `Core.InformationTheory` for the theoretical analysis).
 
 ## Model (Eq. 12–18)
 
@@ -58,7 +58,7 @@ set_option autoImplicit false
 
 namespace HerbstrittFranke2019
 
-open RSA.Distributions RSA.Divergence
+open RSA.Distributions Core.InformationTheory
 
 -- ============================================================================
 -- §1. Domain Types
@@ -344,11 +344,11 @@ open RSA Real in
     Eq. 18: P_PL(s, o, a|m) ∝ P_S · Hyp(o|a, s) · P(a) · P(s)  (pragmatic listener)
 
     The speaker utility uses **Hellinger distance** (not KL divergence),
-    imported from `RSA.Divergence.negHellingerDist`. This is necessary
-    because KL divergence assigns infinite disutility to "true enough"
-    messages — a speaker who is 95% sure of RED can never say "certainly"
-    under KL, but CAN under Hellinger (see `RSA.Divergence` §5 for the
-    theoretical comparison).
+    via `-Core.InformationTheory.hellingerDist`. This is necessary because KL
+    divergence assigns infinite disutility to "true enough" messages — a
+    speaker who is 95% sure of RED can never say "certainly" under KL, but
+    CAN under Hellinger (see `Core.InformationTheory.two_hellingerDistSq_le_klFinite`
+    for the comparison theorem).
 
     The model is parametric in `access` (number of balls the speaker draws).
     Each access level yields a separate RSAConfig, with L1 marginalizing
@@ -363,7 +363,7 @@ noncomputable def hfCfg (access : ℕ) : RSAConfig SimpleExpr UrnState where
   meaning_nonneg _ _ _ _ := by split <;> positivity
   -- Eq. 16–17: P_S(m|o,a) ∝ exp(λ · (−HD[bel, L0]))
   s1Score l0 α obs _w u :=
-    exp (α * negHellingerDist (speakerBeliefR access obs) (l0 u))
+    exp (α * -hellingerDist (speakerBeliefR access obs) (l0 u))
   s1Score_nonneg _ _ _ _ _ _ _ := le_of_lt (exp_pos _)
   -- λ ≈ 4.873 (posterior mean, Table 6 footnote 9)
   α := 4873/1000
@@ -483,7 +483,7 @@ architecture formalized in `ScalarImplicatures/Studies/GoodmanStuhlmuller2013.le
 | Utterances | quantifiers/numerals | probability expressions |
 | Meaning | Boolean (some, all) | threshold (probably, certainly) |
 | Utility | KL divergence | **Hellinger distance** |
-| RSAConfig.s1Score | `exp(α * Σ bel * log(l0))` | `exp(α * negHellingerDist bel l0)` |
+| RSAConfig.s1Score | `exp(α * Σ bel * log(l0))` | `exp(α * -hellingerDist bel l0)` |
 | `rsa_predict` | all 11 findings proved | too slow (3 nested Σ₁₁) |
 | Higher-order | access modulates implicature | access modulates expression choice |
 
@@ -506,7 +506,8 @@ theorem belief_uses_general_hypergeometric (access : ℕ) (s : UrnState)
 ### Hellinger vs KL: Why the Divergence Measure Matters
 
 The choice of divergence measure is not a free parameter — it determines
-which messages the speaker can consider. See `RSA.Divergence` §5 for the
+which messages the speaker can consider. See
+`Core.InformationTheory.two_hellingerDistSq_le_klFinite` for the
 full theoretical analysis.
 
 **Example**: Consider a speaker who observes 9/10 red balls (access=10).

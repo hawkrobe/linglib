@@ -846,16 +846,15 @@ theorem RationalAction.fromSoftmax_policy_eq [Nonempty A]
   have hne : ∑ j : A, exp (α * utility s j) ≠ 0 := ne_of_gt hpos
   simp only [hne, ↓reduceIte]
 
--- ============================================================================
--- §3. KL Divergence and Gibbs Variational Principle
--- ============================================================================
-
 /-!
-## KL Divergence and the Gibbs Variational Principle
+## Gibbs Variational Principle
 
 The softmax distribution uniquely maximizes entropy + expected score
 on the probability simplex. This is the mathematical foundation for
-RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1).
+RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1). The KL
+machinery used in the proof — `klFinite`, `kl_nonneg`, `kl_nonneg'`,
+`kl_eq_sum_klFun`, and the cross-entropy decomposition — lives in
+`Core.InformationTheory` and is opened below.
 
 ### Proof strategy
 
@@ -869,66 +868,7 @@ Combining: H(p) + α⟨p,s⟩ + KL = log Z = H(q) + α⟨q,s⟩, so KL ≥ 0 ⟹
 
 -/
 
-section KLDivergence
-
-variable {ι : Type*} [Fintype ι]
-
-/-- Finite KL divergence: KL(p ‖ q) = Σ pᵢ · log(pᵢ / qᵢ).
-    Convention: 0 · log(0/q) = 0. -/
-noncomputable def klFinite (p q : ι → ℝ) : ℝ :=
-  ∑ i, if p i = 0 then 0 else p i * Real.log (p i / q i)
-
-/-- When q > 0, each KL term can be written via klFun:
-    p · log(p/q) = q · klFun(p/q) + (p - q). -/
-private theorem kl_term_eq_klFun {p_i q_i : ℝ} (hq : 0 < q_i) (_hp : 0 ≤ p_i) :
-    (if p_i = 0 then (0 : ℝ) else p_i * log (p_i / q_i)) =
-    q_i * InformationTheory.klFun (p_i / q_i) + (p_i - q_i) := by
-  by_cases hp0 : p_i = 0
-  · simp only [hp0, ↓reduceIte, zero_div, InformationTheory.klFun_zero, mul_one, zero_sub,
-               add_neg_cancel]
-  · simp only [hp0, ↓reduceIte]
-    unfold InformationTheory.klFun
-    have hq_ne : q_i ≠ 0 := ne_of_gt hq
-    field_simp
-    ring
-
-/-- Finite KL divergence equals Σ qᵢ · klFun(pᵢ/qᵢ) when Σpᵢ = Σqᵢ. -/
-theorem kl_eq_sum_klFun (p q : ι → ℝ) (hq : ∀ i, 0 < q i) (hp : ∀ i, 0 ≤ p i)
-    (hsum : ∑ i, p i = ∑ i, q i) :
-    klFinite p q = ∑ i, q i * InformationTheory.klFun (p i / q i) := by
-  unfold klFinite
-  have hterm : ∀ i, (if p i = 0 then (0 : ℝ) else p i * log (p i / q i)) =
-      q i * InformationTheory.klFun (p i / q i) + (p i - q i) :=
-    λ i => kl_term_eq_klFun (hq i) (hp i)
-  simp_rw [hterm]
-  rw [Finset.sum_add_distrib]
-  have hcancel : ∑ i, (p i - q i) = 0 := by
-    rw [Finset.sum_sub_distrib, hsum, sub_self]
-  linarith
-
-/-- **Gibbs' inequality (finite form)**: KL(p ‖ q) ≥ 0.
-
-    For distributions p, q with qᵢ > 0, pᵢ ≥ 0, and Σpᵢ = Σqᵢ:
-      Σᵢ pᵢ · log(pᵢ/qᵢ) ≥ 0
-
-    Proof via Mathlib's `klFun_nonneg`: klFun(x) ≥ 0 for x ≥ 0. -/
-theorem kl_nonneg (p q : ι → ℝ) (hq : ∀ i, 0 < q i) (hp : ∀ i, 0 ≤ p i)
-    (hsum : ∑ i, p i = ∑ i, q i) :
-    0 ≤ klFinite p q := by
-  rw [kl_eq_sum_klFun p q hq hp hsum]
-  apply Finset.sum_nonneg
-  intro i _
-  apply mul_nonneg (le_of_lt (hq i))
-  exact InformationTheory.klFun_nonneg (div_nonneg (hp i) (le_of_lt (hq i)))
-
-/-- Alternative KL non-negativity with distribution hypotheses. -/
-theorem kl_nonneg' [Nonempty ι] {p q : ι → ℝ}
-    (hp_nonneg : ∀ i, 0 ≤ p i) (hq_pos : ∀ i, 0 < q i)
-    (hp_sum : ∑ i, p i = 1) (hq_sum : ∑ i, q i = 1) :
-    0 ≤ klFinite p q :=
-  kl_nonneg p q hq_pos hp_nonneg (by rw [hp_sum, hq_sum])
-
-end KLDivergence
+open Core.InformationTheory (klFinite kl_nonneg kl_nonneg' kl_eq_sum_klFun)
 
 -- ============================================================================
 -- §3a. Gibbs Variational Principle

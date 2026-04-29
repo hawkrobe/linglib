@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.537] - 2026-04-29
+
+### RSA/Divergence.lean dissolved into Core/InformationTheory.lean
+
+Follow-up to 0.230.536: the slimmed Hellinger-only `Theories/Pragmatics/RSA/Divergence.lean` had no RSA-specific content (Bhattacharyya, Hellinger, and the Bretagnolle–Huber sorry are info-theory primitives), and its `two_hellingerDistSq_le_klFinite` theorem references `Core.klFinite` — which forced `klFinite` itself to migrate too (RationalAction already imported InformationTheory, so going the other way would cycle).
+
+- **Moved KL machinery from `Core/Agent/RationalAction.lean` to `Core/InformationTheory.lean`.** `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg`, `kl_nonneg'`, `klFinite_eq_negEntropy_sub_crossEntropy`, `klFinite_pi_single_eq_neg_log`, `expected_log_eq_neg_klFinite_plus_negEntropy` all now live in `namespace Core.InformationTheory`. RationalAction's Gibbs-variational and entropy sections continue to use them via `open Core.InformationTheory (klFinite kl_nonneg kl_nonneg' kl_eq_sum_klFun)`.
+- **Moved Hellinger family from `Theories/Pragmatics/RSA/Divergence.lean` to `Core/InformationTheory.lean`.** `bhattacharyyaCoeff`, `hellingerDistSq`, `hellingerDist`, `hellingerDistSq_nonneg_of_bc_le_one`, `two_hellingerDistSq_le_klFinite` (Bretagnolle–Huber, sorry+TODO).
+- **Deleted `Theories/Pragmatics/RSA/Divergence.lean`** and its import line in `Linglib.lean`.
+- **Consumer renames.** TTG: `Core.klFinite` → `Core.InformationTheory.klFinite`. EgreEtAl: docstring ref. HerbstrittFranke2019: `import RSA.Divergence` → `import Core.InformationTheory`; `open RSA.Divergence` → `open Core.InformationTheory`.
+- **Architectural payoff.** Single home for finite-distribution divergences alongside entropy / MI / JSD / ΔP. RationalAction.lean is back to being about agents; KL is info theory. Linglib's `Core.InformationTheory` namespace now mirrors mathlib's `Mathlib.InformationTheory` shape (entropy + KL + Hellinger as siblings).
+- **Build.** 5629 jobs green (one less than before — Divergence.lean is gone). Only sorry: the Bretagnolle–Huber TODO.
+
+## [0.230.536] - 2026-04-29
+
+### RSA/Divergence.lean mathlib-shape refactor (4-agent audit driven)
+
+- **Consolidated triple KL stipulation.** Three independent finite-KL definitions existed: `RSA.Divergence.klDivergence` (no zero-guard), `Core.klFinite` (with `if p i = 0 then 0` guard, mathlib-routed via `klFun`), `ChannelCapacity.gibbs_inequality` (third KL spelling). Deleted the local `klDivergence`; the single canonical finite-KL is now `Core.klFinite` in `Core/Agent/RationalAction.lean`, which already bridges to mathlib's `InformationTheory.klFun`.
+- **Promoted three RSA-relevant theorems to `Core.klFinite`.** `klFinite_eq_negEntropy_sub_crossEntropy` (cross-entropy decomposition; relaxed hypothesis `∀ i, 0 < q i` → absolute continuity `∀ i, p i ≠ 0 → q i ≠ 0`), `klFinite_pi_single_eq_neg_log` (point-mass KL = negative log = surprisal), `expected_log_eq_neg_klFinite_plus_negEntropy` (Frank-Goodman ↔ Goodman-Stuhlmüller derivation, citing Scontras-Tessler-Franke ProbLang v2 App-02).
+- **`RSA/Divergence.lean` reduced to Hellinger-only (276 → 109 LOC).** Bhattacharyya, `hellingerDistSq`, `hellingerDist`, plus `hellingerDistSq_nonneg_of_bc_le_one` and the new `two_hellingerDistSq_le_klFinite` (Bretagnolle–Huber, **sorry+TODO** with proof sketch). The §5 prose claim "H² ≤ KL" is now a Lean theorem statement, making the Hellinger-speaker-permissiveness over the KL-speaker a proved corollary.
+- **Dropped low-value defs.** `negHellingerDist` (no algebraic content; inlined as `-hellingerDist` at HerbstrittFranke2019:366) and `pointMass` (uses `Pi.single` instead).
+- **Fixed historical attribution error.** Module table no longer lists Frank-Goodman 2012 as a KL user (F&G 2012 is a 1-page Science paper presenting only surprisal; the KL framing is retrospective).
+- **Bibliography.** Added missing `@cite{herbstritt-franke-2019}` (Cognition 186, DOI `10.1016/j.cognition.2018.11.014`).
+- **Consumer updates.** TesslerTenenbaumGoodman2022 + EgreEtAl2023 docstring references switched from `RSA.Divergence.klDivergence` / `kl_eq_neg_crossEntropy_plus_negEntropy` to `Core.klFinite` / `klFinite_eq_negEntropy_sub_crossEntropy`. HerbstrittFranke2019 switched to `-hellingerDist` inline. `lake build`: 5630 jobs green; only sorry added is the new §4 Bretagnolle–Huber TODO.
+
 ## [0.230.535] - 2026-04-29
 
 ### Phenomena/X/Typology.lean dissolution campaign + Complementation audit + substrate sweep

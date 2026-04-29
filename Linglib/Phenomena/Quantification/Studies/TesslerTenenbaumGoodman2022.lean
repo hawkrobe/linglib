@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Theories.Pragmatics.RSA.Divergence
+import Linglib.Core.InformationTheory
 import Linglib.Core.Logic.Opposition.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -48,8 +48,8 @@ in this paper, so the asymmetric stance is encoded honestly.
 ## RSA pipeline
 
 - Noisy semantics via `RSA.Noise.noiseChannel`
-- Belief Alignment utility via `RSA.Divergence.klDivergence`
-- SC ≡ BA equivalence via `RSA.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy`
+- Belief Alignment utility via `Core.InformationTheory.klFinite`
+- SC ≡ BA equivalence via `Core.InformationTheory.klFinite_eq_negEntropy_sub_crossEntropy`
 - "Nothing follows" as vacuous utterance (true in every state)
 
 ## See also
@@ -182,11 +182,11 @@ noncomputable def stateComScore
 
     `S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]`
 
-    Uses `RSA.Divergence.klDivergence` directly. -/
+    Uses `Core.InformationTheory.klFinite` directly. -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
-  Real.exp (α * (-RSA.Divergence.klDivergence premPost (naivePost c)))
+  Real.exp (α * (-Core.InformationTheory.klFinite premPost (naivePost c)))
 
 -- ============================================================================
 -- §5. State Communication ≡ Belief Alignment (per-syllogism)
@@ -201,7 +201,7 @@ noncomputable def beliefAlignmentScore
     under SC vs BA — explaining the paper's distinct fit statistics
     (r = .67 vs .82) without any difference in functional form.
 
-    Derivation via `kl_eq_neg_crossEntropy_plus_negEntropy`:
+    Derivation via `klFinite_eq_negEntropy_sub_crossEntropy`:
       KL(P ∥ Q) = Σ P·log P − Σ P·log Q
       −KL(P ∥ Q) = Σ P·log Q − Σ P·log P = [SC utility] + H(P)  -/
 theorem stateCom_eq_beliefAlignment
@@ -212,8 +212,8 @@ theorem stateCom_eq_beliefAlignment
     Real.exp (α * (-(∑ s : VennState, premPost s * Real.log (premPost s)))) *
     stateComScore premPost naivePost α c := by
   simp only [beliefAlignmentScore, stateComScore]
-  rw [RSA.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy premPost
-    (naivePost c) hQ]
+  rw [Core.InformationTheory.klFinite_eq_negEntropy_sub_crossEntropy premPost
+    (naivePost c) (fun s _ => ne_of_gt (hQ s))]
   rw [show α * -((_ : ℝ) - _) = α * -(∑ s, premPost s * Real.log (premPost s))
     + α * ∑ s, premPost s * Real.log (naivePost c s) from by ring]
   rw [Real.exp_add]
@@ -226,7 +226,7 @@ theorem stateCom_eq_beliefAlignment
 theorem beliefAlignment_nvc_uninformative
     (post prior : VennState → ℝ) (α : ℝ) :
     beliefAlignmentScore post (fun c => if c = .nvc then prior else fun _ => 0) α .nvc =
-    Real.exp (α * (-RSA.Divergence.klDivergence post prior)) := by
+    Real.exp (α * (-Core.InformationTheory.klFinite post prior)) := by
   simp [beliefAlignmentScore]
 
 -- ============================================================================
@@ -308,7 +308,7 @@ def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
 noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
   (figuralWeight β syl c : ℝ) *
-  Real.exp (α * (-RSA.Divergence.klDivergence
+  Real.exp (α * (-Core.InformationTheory.klFinite
     (fun s => (l0Post φ syl s : ℝ))
     (fun s => (naiveL0Post φ c s : ℝ))))
 

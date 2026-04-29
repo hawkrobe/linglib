@@ -21,7 +21,6 @@ import Linglib.Core.UD
 import Linglib.Core.Tree
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
-import Linglib.Core.Logic.NonBivalence
 import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.Quantification.Defs
 import Linglib.Core.Logic.Quantification.Generators
@@ -306,7 +305,6 @@ import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.Gaussian
-import Linglib.Theories.Pragmatics.RSA.Divergence
 import Linglib.Theories.Pragmatics.InformationTheory.Channel
 import Linglib.Theories.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Theories.Pragmatics.AsymmetricCommunication
