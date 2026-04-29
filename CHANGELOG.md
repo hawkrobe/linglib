@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.519] - 2026-04-28
+
+### `FragmentLambda.lean` v2.6 — `WellFormed` invariant scaffolding
+
+Adds the `WellFormed` invariant API for `PYPSlot` and `PYPState` plus statement-only preservation theorems for the sampler. Future work (the `seatCustomer_wellFormed` proof + PMF-support reasoning) discharges the sorries; once done, `slotToFinpartition`'s atomic-fallback branch can be eliminated by taking input-state wellformedness as a hypothesis and dispatching the unreachable case via `absurd`.
+
+**Added definitions and proved lemmas**:
+
+- `PYPSlot.WellFormed s := ∀ c ∈ s.customerCounts, 0 < c` — the structural invariant the sampler maintains
+- `PYPSlot.empty_wellFormed` (rfl-vacuous, `@[simp]`)
+- `PYPSlot.addTable_wellFormed` — appending `[1]` preserves all-positive (proven via `simp [addTable] + rcases`)
+- `PYPState.WellFormed st := ∀ x, (st.slots x).WellFormed` — pointwise lift
+- `PYPState.empty_wellFormed` (vacuous, follows from slot empty, `@[simp]`)
+- `PYPState.updateSlot_wellFormed` — updating preserves wellformedness if both old state and new slot are wellformed (proven via `by_cases`)
+
+**Sorry'd lemmas** (with detailed TODOs):
+
+- `PYPSlot.seatCustomer_wellFormed` — `List.modify n f l` unfolds in Lean 4 to `l.modifyTailIdx n (List.modifyHead f)` and mathlib lacks a direct `mem_modify` lemma. Two paths documented in the docstring: (1) prove a `List.mem_modify_iff` helper by induction on the `modifyTailIdx`/`modifyHead` chain, or (2) replace `seatCustomer`'s use of `List.modify` with `List.set` (more developed mathlib API via `List.mem_set_iff`).
+- `pypDraw_preserves_wellFormed` — every state in the support of `pypDraw`'s output PMF is wellformed, given a wellformed input and a wellformed-preserving base distribution. Proof requires (a) the slot lemma above, (b) PMF-support reasoning through `bind` and the if-then-else structure of `pypDraw`.
+- `fragmentLambdaDepth_preserves_wellFormed` — by induction on depth: depth 0 trivial (no state change), depth `n+1` via `pypDraw_preserves_wellFormed` + IH for non-terminal children's recursive calls.
+
+**`slotToFinpartition` docstring updated** to point at the new `WellFormed` predicate and preservation theorems as the path to discharging the atomic-fallback branch.
+
+**Why state without proof?** The preservation theorems are the *contract*: they make precise what "the sampler maintains the invariant" means. With the contract written down, the proof becomes a discrete next step (rather than vague future work). The slot-level sorry blocks the others; closing it (via either of the documented paths) unblocks the chain.
+
+Build: 2721 jobs green. 4 sorry warnings (was 1; +3 new wellformedness sorries). LOC: 731 → 825.
+
 ## [0.230.518] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.5 — `fragmentLambdaDepth` now faithfully recurses through PYP

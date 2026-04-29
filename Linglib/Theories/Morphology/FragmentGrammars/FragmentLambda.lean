@@ -134,6 +134,48 @@ def addTable (s : PYPSlot D) (v : D) : PYPSlot D :=
 @[simp] theorem dishes_addTable (s : PYPSlot D) (v : D) :
     (s.addTable v).dishes = s.dishes ++ [v] := rfl
 
+/-- A `PYPSlot` is **well-formed** when every customer count is positive.
+This invariant is *maintained by* (but not *enforced by*) the public API:
+`empty` has empty `customerCounts` (vacuous); `addTable` appends `[1]`;
+`seatCustomer` increments. Lifted to `PYPState` and used by the sampler
+to discharge the otherwise-unreachable atomic-fallback branch in
+`slotToFinpartition`. -/
+def WellFormed (s : PYPSlot D) : Prop :=
+  ∀ c ∈ s.customerCounts, 0 < c
+
+@[simp] theorem empty_wellFormed : (PYPSlot.empty : PYPSlot D).WellFormed := by
+  intro c hc
+  simp [empty] at hc
+
+theorem addTable_wellFormed {s : PYPSlot D} (h : s.WellFormed) (v : D) :
+    (s.addTable v).WellFormed := by
+  intro c hc
+  simp [addTable] at hc
+  rcases hc with hc | rfl
+  · exact h c hc
+  · exact Nat.one_pos
+
+/-- `seatCustomer` preserves wellformedness: incrementing one customer
+count by 1 keeps all counts positive — original counts unchanged or
+increased by 1, both positive given the input invariant.
+
+**Status: sorry**. The proof requires walking `List.modify`'s
+behavior. In Lean 4 mathlib, `List.modify n f l` unfolds to
+`l.modifyTailIdx n (List.modifyHead f)`, and there is no direct
+`mem_modify` membership lemma. A clean proof would either:
+
+1. Prove a helper `List.mem_modify_iff : c ∈ l.modify n f ↔
+   ((c ∈ l ∧ ∀ b, l[n]? = some b → f b ≠ c) ∨
+   (∃ b, l[n]? = some b ∧ c = f b))` by induction on the
+   `modifyTailIdx`/`modifyHead` chain, OR
+2. Replace `seatCustomer`'s use of `modify` with `List.set`, which
+   has a more developed mathlib API (`List.mem_set_iff`).
+
+Both paths are non-trivial. Deferred. -/
+theorem seatCustomer_wellFormed {s : PYPSlot D} (h : s.WellFormed) (i : ℕ) :
+    (s.seatCustomer i).WellFormed := by
+  sorry
+
 end PYPSlot
 
 /-- Pitman–Yor hyperparameters: discount `a ∈ [0, 1)` and concentration
@@ -178,6 +220,27 @@ def updateSlot [DecidableEq α] (st : PYPState α D) (x : α) (s : PYPSlot D) :
 /-- The empty PYP state's hyperparameters are exactly the input. -/
 @[simp] theorem empty_hyper (h : PYPHyper) :
     (PYPState.empty (α := α) (D := D) h).hyper = h := rfl
+
+/-- A `PYPState` is **well-formed** when every slot is well-formed. The
+sampler's invariant: `pypDraw` and downstream `fragmentLambdaDepth`
+preserve this — see `pypDraw_preserves_wellFormed` and
+`fragmentLambdaDepth_preserves_wellFormed`. -/
+def WellFormed (st : PYPState α D) : Prop :=
+  ∀ x, (st.slots x).WellFormed
+
+@[simp] theorem empty_wellFormed (h : PYPHyper) :
+    (PYPState.empty (α := α) (D := D) h).WellFormed := by
+  intro x
+  exact PYPSlot.empty_wellFormed
+
+theorem updateSlot_wellFormed [DecidableEq α] {st : PYPState α D}
+    (h_st : st.WellFormed) {x : α} {newSlot : PYPSlot D} (h_new : newSlot.WellFormed) :
+    (st.updateSlot x newSlot).WellFormed := by
+  intro y
+  show (if y = x then newSlot else st.slots y).WellFormed
+  by_cases hy : y = x
+  · simp [hy]; exact h_new
+  · simp [hy]; exact h_st y
 
 end PYPState
 
@@ -438,6 +501,58 @@ noncomputable def fragmentLambdaDepth [Inhabited β]
       else
         pure (.fragment y)) x
 
+/-! ## Wellformedness preservation -/
+
+/-- `pypDraw` preserves `PYPState.WellFormed`: every state in the support
+of the output PMF is wellformed, given a wellformed input state and a
+wellformed-preserving base distribution.
+
+The proof would observe that `pypDraw`'s two branches are:
+- existing-table: `seatCustomer i` (preserves wellformedness via
+  `PYPSlot.seatCustomer_wellFormed`)
+- new-table: `addTable dish` after sampling from `base` (preserves via
+  `PYPSlot.addTable_wellFormed` + base's preservation hypothesis)
+
+Combined with `PYPState.updateSlot_wellFormed`, both branches yield a
+wellformed state. The PMF support is contained in the union of these
+branches' images, so all output states are wellformed.
+
+**Status: sorry**. The proof requires (a) `seatCustomer_wellFormed`
+which is itself sorry-marked (List.modify membership), and
+(b) reasoning about PMF support through `bind` and the if-then-else
+structure of `pypDraw`. The statement is the contract; the proof
+requires the upstream slot lemma + PMF-support machinery. -/
+theorem pypDraw_preserves_wellFormed {α D : Type} [DecidableEq α] [Inhabited D]
+    (base : α → PYM α D D) (x : α) (init : PYPState α D)
+    (h_init : init.WellFormed)
+    (h_base : ∀ y init', init'.WellFormed → ∀ p ∈ (base y init').support, p.2.WellFormed)
+    : ∀ p ∈ (pypDraw base x init).support, p.2.WellFormed := by
+  sorry
+
+/-- `fragmentLambdaDepth` preserves `PYPState.WellFormed`: every state in
+the support of the output PMF is wellformed, given a wellformed input
+state. By induction on depth: depth 0 trivially preserves (no state
+change, just `pure (.fragment x)`); depth `n+1` via
+`pypDraw_preserves_wellFormed` with the inner body's preservation —
+which itself follows by IH for non-terminal children's
+`fragmentLambdaDepth ... n` calls.
+
+**Status: sorry**. Depends on `pypDraw_preserves_wellFormed` (and so
+transitively on `seatCustomer_wellFormed`). When discharged, this
+theorem lets `samplesToCorpusCounts` and the soundness theorem assume
+input-state wellformedness, which in turn lets `slotToFinpartition`
+discharge its atomic-fallback branch via `absurd` (the branch is
+unreachable for any state the sampler can produce). -/
+theorem fragmentLambdaDepth_preserves_wellFormed
+    {α β R : Type} [DecidableEq α] [Inhabited β]
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (n : ℕ) (start : α) (init : PYPState α (LazyTree α β R))
+    (h_init : init.WellFormed) :
+    ∀ p ∈ (fragmentLambdaDepth recurse recurseProb recurseProb_le n start init).support,
+      p.2.WellFormed := by
+  sorry
+
 /-! ## Halt-count extraction from samples -/
 
 namespace LazyTree
@@ -538,10 +653,15 @@ suitable for `AdaptorGrammar.TableAssignment`. Three branches:
 3. **Non-empty non-wellformed slot** (a `customerCount` is `0`): falls
    back to `OrderedFinpartition.atomic`. This branch is *unreachable*
    under the sampler's invariant (`pypDraw`'s `addTable` initialises
-   counts to `1`, `seatCustomer` increments) but Lean doesn't know that
-   without an explicit `PYPSlot.WellFormed` invariant or matching theorem.
-   Future work: prove the sampler maintains wellformedness, then the
-   atomic fallback can be replaced with `absurd` discharging.
+   counts to `1`, `seatCustomer` increments). The `WellFormed` predicate
+   on `PYPSlot` and `PYPState` (defined in this file) and the preservation
+   theorems `pypDraw_preserves_wellFormed` and
+   `fragmentLambdaDepth_preserves_wellFormed` (statement-only, with proofs
+   sorry'd pending `seatCustomer_wellFormed`'s `List.modify` membership
+   lemma and PMF-support reasoning) capture this invariant. When those
+   sorries are discharged, this branch can be eliminated by taking
+   `(_ : init.WellFormed)` as a hypothesis to `slotToFinpartition` and
+   discharging the unreachable case via `absurd`.
 
 The `numCustomers = 0` special case is load-bearing: without it, the
 `Composition`-built partition for an empty slot is *not* definitionally
