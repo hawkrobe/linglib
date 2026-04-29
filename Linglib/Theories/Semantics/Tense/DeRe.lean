@@ -1,4 +1,5 @@
 import Linglib.Core.Context.Basic
+import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Theories.Semantics.Reference.Acquaintance
 import Linglib.Theories.Semantics.Tense.Basic
 
@@ -38,16 +39,24 @@ live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
   shadow of *this* shadow; see the `isFelicitousWith_iff_…` theorem
   below for the bridge).
 
+## Two felicity predicates (value-level vs Abusch-faithful)
+
+- `isFelicitousWith` — local constraint check at the matrix context.
+  The value-level shadow of Abusch's reading. Equivalent to
+  `TensePronoun.fullPresupposition` (see shadow lemma).
+- `isAbuschFelicitous` — adds Abusch §3 modal rigidity: the time-concept
+  identifies the same time across every believer-actual-history
+  alternative (`Core.Modality.HistoricalAlternatives.actualHistoryBase`).
+  This is what distinguishes a wide-scope res-time from a de dicto
+  descriptive concept. Concept-rigidity (`Core.Intension.IsRigid`) is
+  sufficient — a constant-intension concept is automatically rigid
+  across alternatives.
+
 ## What's deferred
 
 - **LF res-movement as a `Tree C W` rewrite operator.** This file exposes
   the *output* of res-movement (a coherent ⟨concept, matrix⟩ bundle), not
   the syntactic operation that produces it.
-- **Modal-alternative quantification over `actualHistoryBase`.** The full
-  Abusch story requires that the time-concept be *rigid across the
-  believer's doxastic alternatives* (`Core.Modality.HistoricalAlternatives.actualHistoryBase`).
-  The substrate exposes the `KContext`-indexed concept; quantifying
-  rigidity over a `WorldHistory` is a follow-up.
 - **Schlenker 2004 ↔ Abusch 1997 contrastive theorem.** Both treat
   shifted temporal reference but with different mechanisms (centered-world
   acquaintance vs tower-temporalShift); the bridge theorem is a follow-up.
@@ -61,6 +70,7 @@ namespace Semantics.Tense.DeRe
 
 open Core (Intension)
 open Core.Context (KContext)
+open Core.Modality.HistoricalAlternatives (WorldHistory actualHistoryBase)
 open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
 
 
@@ -139,6 +149,62 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
     (hEval : tp.evalTime g = dr.matrixContext.time) :
     dr.isFelicitousWith tp.constraint ↔ tp.fullPresupposition g := by
   simp only [isFelicitousWith, TensePronoun.fullPresupposition, hRes, hEval]
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Modal-alternative quantification (Abusch §3)
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Modal rigidity** (@cite{abusch-1997} §3, p. 9): the time-concept
+    evaluates to the same time at every believer-actual-history
+    alternative (`Core.Modality.HistoricalAlternatives.actualHistoryBase`)
+    of the matrix context. This is *the* de re property — what
+    distinguishes a wide-scope res-time from a de dicto descriptive
+    concept.
+
+    The matrix context's world and time are projected to a `WorldTimeIndex`
+    via `KContext.toSituation`; alternatives are the `actualHistoryBase`
+    of that projection; for each alternative we replace the matrix
+    context's `world` and `time` and demand the concept evaluates to
+    `actualRes`. -/
+def IsRigidAcrossAlternatives [LE T] (dr : TemporalDeReReading W E P T)
+    (history : WorldHistory W T) : Prop :=
+  ∀ s' ∈ actualHistoryBase history dr.matrixContext.toSituation,
+    dr.concept { dr.matrixContext with world := s'.world, time := s'.time }
+      = dr.actualRes
+
+/-- **Full Abusch felicity** (@cite{abusch-1997} §3): value-level
+    constraint check (matrix-anchored res-time stands in the constraint's
+    relation to matrix time) AND modal rigidity across the believer's
+    actual-history alternatives. The value-level shadow `isFelicitousWith`
+    captures only the first conjunct; this predicate is what an
+    Abusch-faithful study should use. -/
+def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
+    (history : WorldHistory W T) (constraint : GramTense) : Prop :=
+  dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives history
+
+/-- A rigid time-concept (constant intension, `Core.Intension.IsRigid`)
+    is automatically rigid across any believer-actual-history alternatives.
+    This is why the rigid-concept derivations in `Studies/Abusch1997.lean`
+    can discharge `IsRigidAcrossAlternatives` "for free." -/
+theorem IsRigidAcrossAlternatives_of_concept_isRigid [LE T]
+    (dr : TemporalDeReReading W E P T)
+    (h : Intension.IsRigid dr.concept) (history : WorldHistory W T) :
+    dr.IsRigidAcrossAlternatives history := by
+  intro s' _
+  rw [h { dr.matrixContext with world := s'.world, time := s'.time }
+        dr.matrixContext]
+  rfl
+
+/-- **Abusch felicity ⇒ value-level felicity**: the modal-quantified
+    predicate strictly refines the value-level shadow. Old code that
+    only checks `isFelicitousWith` is conservative — anything proved
+    via `isAbuschFelicitous` projects through. -/
+theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
+    (dr : TemporalDeReReading W E P T) (history : WorldHistory W T)
+    (constraint : GramTense)
+    (h : dr.isAbuschFelicitous history constraint) :
+    dr.isFelicitousWith constraint := h.1
 
 
 -- ════════════════════════════════════════════════════════════════

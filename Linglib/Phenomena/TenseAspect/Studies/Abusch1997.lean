@@ -187,6 +187,33 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     Core.Intension.rigid, GramTense.constrains]
   exact hBefore
 
+/-- @cite{abusch-1997}'s temporal de re with **modal-alternative
+    quantification** (Abusch §3 p. 9): the time-concept identifies the
+    same time across the believer's actual-history alternatives
+    (`Core.Modality.HistoricalAlternatives.actualHistoryBase`). The full
+    `isAbuschFelicitous` predicate combines the value-level past
+    constraint with this modal rigidity.
+
+    A rigid time-concept (constant intension) discharges the modal
+    rigidity automatically — Abusch's de re reading is satisfied "for
+    free" when the res is identified by a name-like rigid concept. -/
+theorem abusch_derives_temporal_de_re_full
+    {W E P Time : Type*} [LinearOrder Time]
+    (matrixContext : Core.Context.KContext W E P Time)
+    (history : Core.Modality.HistoricalAlternatives.WorldHistory W Time)
+    (pastTime : Time)
+    (hBefore : pastTime < matrixContext.time) :
+    let dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time :=
+      ⟨Core.Intension.rigid pastTime, matrixContext⟩
+    dr.isAbuschFelicitous history .past := by
+  refine ⟨?_, ?_⟩
+  · simp only [Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith,
+      Semantics.Tense.DeRe.TemporalDeReReading.actualRes,
+      Core.Intension.rigid, GramTense.constrains]
+    exact hBefore
+  · exact Semantics.Tense.DeRe.TemporalDeReReading.IsRigidAcrossAlternatives_of_concept_isRigid
+      _ (Core.Intension.rigid_isRigid pastTime) history
+
 /-- **PLA ↔ Abusch substrate unification**: PLA's `isAcquaintedWith`
     (entity-side, individual de re) and the polymorphic
     `Reference.Acquaintance.isAcquaintedWith` are the same predicate at

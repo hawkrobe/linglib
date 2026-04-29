@@ -37,6 +37,28 @@ This is the file's first prediction-bearing theorem — `corpusProb_pos_for_empt
 
 The deferred-claims list in the file's docstring is updated to mark this discharged. The remaining 5 TODOs are still substrate-blocked (Baayen P-measure, FG MAP extraction, Hay relative-frequency, AlbrightHayes2003 shim, lexicalised storage for the -ability paradox).
 
+## [0.230.551] - 2026-04-29
+
+### Abusch 1997 modal-alternative quantification of de re felicity
+
+Follow-up to 0.230.550 closing the substrate-vs-shadow gap that landed there. The previous `TemporalDeReReading.isFelicitousWith` was extensionally identical to `TensePronoun.fullPresupposition` (the shadow lemma was `simp only [...]`); the new substrate had richer types but no richer semantics. This commit wires `Core.Modality.HistoricalAlternatives.actualHistoryBase` (Klecha 2016 DOX, the substrate the deleted `DeRe/Defs.lean` docstring originally cited as deferred) into the felicity predicate.
+
+**`Theories/Semantics/Tense/DeRe.lean`**:
+- New `IsRigidAcrossAlternatives [LE T] (dr) (history) : Prop` — the time-concept evaluates to the same time at every believer-actual-history alternative of the matrix context. Concretely: `∀ s' ∈ actualHistoryBase history dr.matrixContext.toSituation, dr.concept { dr.matrixContext with world := s'.world, time := s'.time } = dr.actualRes`. This is the de re property — what distinguishes a wide-scope res-time from a de dicto descriptive concept.
+- New `isAbuschFelicitous [LinearOrder T] (dr) (history) (constraint) : Prop := dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives history` — the Abusch §3 felicity, value-level constraint AND modal rigidity.
+- New `IsRigidAcrossAlternatives_of_concept_isRigid` — concept rigidity (`Core.Intension.IsRigid`, the constant-intension property) discharges modal rigidity automatically.
+- New `isFelicitousWith_of_isAbuschFelicitous` — the modal-quantified predicate strictly refines the value-level shadow; old code projects through.
+
+**`Phenomena/TenseAspect/Studies/Abusch1997.lean`**:
+- New `abusch_derives_temporal_de_re_full` — the `Intension.rigid pastTime`-witnessed derivation now discharges *both* conjuncts of `isAbuschFelicitous`: the past constraint (already had this from `_via_acquaintance`) and the modal rigidity (new, via the rigid-concept-implies-modal-rigid bridge).
+
+**Substrate-vs-shadow distinction now load-bearing**:
+- `isFelicitousWith` = local constraint check at the matrix context. The value-level shadow.
+- `isAbuschFelicitous` = constraint check + modal rigidity. The Abusch-faithful felicity.
+- The shadow lemma `isFelicitousWith_iff_tensePronoun_fullPresupposition` continues to bridge the value-level half to the existing `TensePronoun.fullPresupposition` machinery.
+
+**Why this matters for the Schlenker bridge** (next-step alignment): the contrastive theorem the cross-framework reconciler audit flagged ("Abusch-acquaintance vs Schlenker-monster as two formally distinct strategies for the SAME shifted-perspective phenomenon") needs a felicity quantified over alternatives — without it, "the two predict the same simultaneous SOT but diverge on double-access" is unstatable. The strengthened substrate is now ready to compare against `Phenomena/TenseAspect/Studies/Schlenker2004.lean` (which already builds against the same `KContext` substrate).
+
 ## [0.230.550] - 2026-04-29
 
 ### Abusch 1997 temporal de re: substrate cleanup + centered-world rebuild
