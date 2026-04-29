@@ -10,6 +10,7 @@ import Linglib.Core.Word
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
+import Linglib.Features.Clusivity
 import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Typology.Pronouns
 import Linglib.Core.Logic.Truth3

@@ -4,6 +4,73 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.542] - 2026-04-29
+
+### Tagalog Plurals deep audit → substrate trim, clusivity Features, Fragment build-out
+
+4-agent audit on a randomly-picked Fragment (`Linglib/Fragments/Tagalog/Plurals.lean`) escalated into a full audit of the `Typology/Plurals.lean` substrate, an Adelaar & Himmelmann 2005 PDF read for Austronesian content, follow-up reads of Kroeger 1991 (Stanford PhD) and Schachter & Otanes 1972 PDFs for the gaps Himmelmann defers to.
+
+**Substrate trim — `Typology/Plurals.lean` 366 → 126 LOC (-65%).**
+- Deleted 4 distribution-record structures (`PluralCodingDistribution`, etc.) + their hand-typed instance counts (Corbett-2000-vintage WALS 2005 numbers; ingested CSV at `Datasets/WALS/Features/F3{3..6}A.lean` already tracks current v2020.4 counts).
+- Deleted 8 cross-linguistic generalization theorems (`suffixing_dominant`, `affixing_is_majority`, `obligatory_all_most_common`, `human_only_plural_attested`, `person_number_stem_dominant`, `pronoun_number_near_universal`, `associative_plural_widespread`, `associative_often_overlaps_additive`) — WALS chapter prose restated as `decide`-tactics, zero downstream consumers, exactly the pattern campaigned out at 0.230.530-535. Per `feedback_no_aggregate_count_theorems.md`.
+- Deleted 3 unused predicates (`hasMorphologicalPlural`, `hasObligatoryPlural`, `pronounsDistinguishNumber`) and 4 unused WALS converters (`fromWALS3{3..6}A`); zero downstream callers.
+- Updated docstring to forward-point at `Features/Number.lean`, `Features/Person.lean`, and `Phenomena/Agreement/Studies/Corbett2000.lean` for the Corbett-native distinctions (general number, dual/trial/paucal, facultative number, Smith-Stark hierarchy, clusivity) the WALS-shaped substrate cannot express.
+
+**New `Features/Clusivity.lean` substrate** — Cysouw 2009 typology of inclusive/exclusive systems (`noClusivity` / `inclExcl` / `minimalAugmented` / `unitAugmented` / `numberIndifferent`); refines WALS Ch 39's binary cut. The minimal-augmented type is the typologically distinctive property of Tagalog, several Philippine languages, and many Australian languages. ~70 LOC. First consumer: `Fragments/Tagalog/Pronouns.lean`.
+
+**Tagalog Fragment build-out** — three PDFs read in sequence, each filling gaps the previous one defers to.
+- `Fragments/Tagalog/Plurals.lean`: rewrote docstring to disambiguate *mga* (additive plural; not associative) from *sina* (associative plural; not a `mga` variant); added `mga` distribution restrictions per @cite{schachter-otanes-1972} §3.9 (no co-occurrence with cardinals: *sampung anak* not \\**sampung mga anak*; no co-occurrence with personal-noun markers *si/ni/kay*; pluralization is non-obligatory throughout); corrected the *sina/nina/kina* analysis from "suppletive" (formaliser's prior claim) to "derived by suffixation of *-na*" per S&O p. 113; added the explicit *mga*/*sina* contrast quote (S&O p. 113: "*mga Santos* is 'the Santoses', while *sina Santos* is 'Santos and others'").
+- `Fragments/Tagalog/Pronouns.lean`: added Himmelmann Table 12.2 (p. 358) pronoun paradigm in docstring (8 categories × 3 cases, ANG/NG/SA forms); added new `clusivitySystem : Features.Clusivity.System := .minimalAugmented` field; flagged the *kitá*/*katá* terminological tangle (S&O Chart 7 p. 88 has 1du.in NOM = *kata*, with separate portmanteau *kita* p. 89 combining 1sg.GEN+2sg.NOM; Himmelmann conflates these as "*kitá / katá*"; modern Manila Tagalog has lost the dual entirely per S&O p. 89).
+
+**Bib entries (4 new, all PDF-verified)**:
+- `adelaar-himmelmann-2005` — *The Austronesian Languages of Asia and Madagascar*, Routledge, ISBN 0-7007-1286-0.
+- `himmelmann-2005-tagalog` — Himmelmann's Tagalog chapter (pp. 350–376) crossref'd to the volume above.
+- `kroeger-1991-thesis` — Kroeger's Stanford PhD dissertation (the 1993 CSLI book is its published form; references list lost in this PDF per front matter).
+- `schachter-otanes-1972` — Schachter & Otanes *Tagalog Reference Grammar*, UC Press, ISBN 978-0-520-01776-4 (original 1972 edition; 9780520321205 is the 2022 reissue ISBN per filename).
+
+**Findings deferred** (substrate-side, not for this commit): `PluralityProfile.coding` is a single-strategy enum that cannot record Tagalog's secondary adjective-pluralization-by-CV-reduplication (*magagandá*, S&O §4.11 p. 230); the WALS-shaped substrate has no slot for Corbett general number (bare-noun number-neutrality of *bata?*); `PluralOccurrence` collapses *mga*'s real distribution restrictions (cardinals, personal-name markers) to a single "always optional" value. These are structural limits of the WALS encoding, not bugs.
+
+## [0.230.541] - 2026-04-29
+
+### `Theories/.../Metasemantics/` dissolution → single `Studies/Ney2026.lean`
+
+4-agent audit (linglib-integration-auditor + mathlib-reviewer + linguistics-domain-expert + cross-framework-reconciler) of the 5-file `Theories/Semantics/Reference/Metasemantics/` directory. All four converged on dissolution: the directory housed Ney 2026's specific apparatus (King-as-Ney-reframes-him + Ney's revision + the `<ONE>`-`<FOUR>` argument + insinuative reference itself) under a theory-layer name promising more than it delivered. Zero external consumers; all named rivals (Lewis 2020, Stojnić 2024, Stojnić-Stone-Lepore 2017, Rostworowski-Kuś-Mackiewicz 2022) unbuilt; linguistics expert noted Rostworowski et al. is *anti-intentionalist* and cannot fit `Account` shape at all.
+
+- **Deleted** `Linglib/Theories/Semantics/Reference/Metasemantics/{Defs,Reasonableness,Coordination,CGTransparency,InsinuativeReference}.lean` and the directory itself.
+- **Wrote** consolidated single-file `Phenomena/Reference/Studies/Ney2026.lean` (547 LOC, down from 5+1 files / ~1320 LOC). Mathlib style throughout.
+  - **`shared₂`/`joint₂` and indexed `shared`/`joint` deleted** — replaced with mathlib's `Set` `⊓`/`⊔` directly. The 5 reproven lemmas (`shared₂_comm`, `joint₂_comm`, `shared₂_self`, `joint₂_self`, `shared₂_le_joint₂`) reduce to `Set.inter_comm`, `Set.union_comm`, etc.
+  - **`kingNeyReconstruction`/`neyRevision` named defs deleted** — replaced with inline `coordination (RS ⊓ RH)` / `coordination (RS ⊔ RH)`. Author attribution moved to docstrings (mathlib idiom: descriptive symbol names, attribution in docs).
+  - **`CGModalOperator` structure deleted** — replaced with `(inCG : Prop → Prop)` + the closure hypothesis `inCG_and_intro` as ordinary arguments. K-axiom hypothesis dropped (was never used in the proof). Bundled struct earned no keep when only one `empty` instance existed and it served only to witness vacuous non-transparency.
+  - **`LicensesAnaphora` abbrev deleted** — was literally `acc s cg := acc s cg`, doing nothing.
+  - **`@[simp]` removed from `implicatureOnly_apply`** — was rewriting `False ↔ False` essentially.
+  - **`implicatureOnly` → `noSemanticValueAccount`** — honest name (per linguistics expert: the stub doesn't model Camp, it models any always-failing account).
+  - **`gapWitness` → `extensionalGapWitness`** with honest docstring (per linguistics expert: the witness is formaliser-invented; Ney's actual sentences (1)-(4) all have RH covering — the empirical gap is at the CG-availability level, not the truth level).
+  - **`witnessIntention` (was duplicated in `CGTransparency.lean` + `InsinuativeReference.lean`) consolidated** into single private `boolWitness`.
+  - **Four canonical sentences refactored via `Scenario.mkBinary` helper**: 4× ~50 LOC scenario stanzas → 4× ~12 LOC. The helper compresses the genuinely-shared shape (both interlocutors agree on {unavowed, avowable}); per-sentence `inter_succeeds`/`union_succeeds` corollaries follow by `⟨Or.inl rfl, Or.inl rfl⟩` / `Or.inl (Or.inl rfl)`.
+  - **Aggregate theorems** (`all_four_examples_*`) now compose per-sentence `Sentence{N}.inter_succeeds`/`union_succeeds`, no scaffolding repetition.
+  - **Universe handling**: `universe u v w` declarations dropped, `Type*` everywhere.
+  - **Citation cleanup** (per linguistics expert): `rostworowski-kus-mackiewicz-2022` removed from "shares the abstract Account shape" claim (paper is anti-intentionalist; *negates* the framework). `asher-lascarides-2013` retained — their "strategic conversation" framing IS Ney's own context for insinuative reference. `buring-2005` kept (Ney himself cites Büring §3, verified in PDF).
+- **Updated** `Linglib.lean` (5 imports dropped).
+- Build verified: `Linglib.Phenomena.Reference.Studies.Ney2026` builds clean. (Three pre-existing unrelated build failures in `Typology/Plurals.lean`, `Anaphora/Studies/Spector2025.lean`, and untracked `Ellipsis/Studies/Bruening2021Sluicing.lean` are from concurrent-session work, not this migration — none import Metasemantics.)
+- **Tracked-but-deferred substrate work** (flagged in new file's docstring): (1) `CG.toAgentAccess : CG W → AgentAccessRel W E` bridge in `Core/Semantics/CommonGround.lean` would let Ney's resolution theorem be witnessed against a *realistic* CG operator instead of `inCG := fun _ => False`; (2) `Demonstrates : C → E → Prop` relational refactor of `TrueDemonstrative.demonstratum` (currently functional, blocks native multi-licensing); (3) RSA-BToM ↔ ConceptionOfReasonableness bridge — both formalize agent-belief-about-referential-intentions; (4) `IntendedReferent` shared field unifying `SpeakerIntention.intendedRef` with `Donnellan.DefiniteDescription.intendedRef`. None blocks the dissolution.
+- Plan + audit synthesis recorded in conversation; per "no bridge files" rule, no synthesis doc landed.
+
+## [0.230.540] - 2026-04-29
+
+### Spector 2025 cleanup: rfl-bridges out, Transparency.lean inlined
+
+Audit-driven cleanup of `Phenomena/Anaphora/Studies/Spector2025.lean` and the orphan-anchored `Theories/Semantics/Presupposition/Transparency.lean`.
+
+- **Stripped ~10 `rfl`-bridge anti-pattern theorems** (lines 493–551, 893–913, 1014–1027 in pre-refactor numbering): `geach_has_bound_reading`, `conditional_donkey_has_bound_reading`, `classic_bathroom_felicitous`, `standard_negation_infelicitous`, `conjunction_version_infelicitous`, `wrong_order_bathroom_infelicitous`, `bathroom_felicity_alignment`, `spector_predicts_weak_donkey`, `spector_allows_strong_donkey`, `kanazawa_negated_donkey`, `spector_handles_bathroom`, `spector_dpl_agree_cataphora_blocked`. Each `rfl`-checked that a stipulated `Bool` field on a `DonkeyDatum` / `AccessDatum` equalled its stipulated value — encoding-conclusions-as-definitions, the same anti-pattern caught 2026-04-29 (memory `feedback_no_per_lang_wals_grounding_in_studies`; 107 such theorems retroactively stripped from Possession/Questions/Negation). Replaced with brief docstring prose listing which Hofmann/DonkeyAnaphora data items each genuine Spector theorem covers.
+- **Dropped imports of `Phenomena.Anaphora.DonkeyAnaphora` and `Phenomena.Anaphora.Studies.Hofmann2025`** (only fed bridges).
+- **Stripped false `@cite{evans-1977}`** at line 533 — cite key not in `references.bib` (verified by gen_bibliography.py --check before/after).
+- **Inlined `Theories/Semantics/Presupposition/Transparency.lean` into Spector2025.lean** as `section AbstractTransparency`. The file was a covert bridge anti-pattern (CLAUDE.md: filenames adopting framework vocabulary as if neutral signal no anchor was found): cited `schlenker-2007`/`schlenker-2008a` in docstring but its `Ctx`/`Sent`/`Frame` types pre-committed to Spector's static partial-assignment substrate. With Spector2025 as sole consumer, N≥2 promotion discipline says co-locate. Definitions (Ctx, nullCtx, stalnakerUpdate, agreeIn, Sent, Frame, transparent, transparent_of_presup_true, noveltyCondition) all moved verbatim under `Spector2025` namespace. Linglib.lean import dropped. references.bib `spector-2025` sources field updated.
+- **Added "Deferred work" docstring section** at file bottom listing §5 covariation failure, §6.7 donkey end-to-end, §7 (47)/(54) Strong Truth examples, Appendix functional variables, witness-condition substrate (Mandelkern 2022 study file deferred pending paper access — verified Spector p. 10 says Mandelkern is quadrivalent + uses individual not plural assignments, so Mandelkern2022 would NOT be a second consumer for `PluralAssign` promotion), unused `noveltyCondition`, and `PluralAssign` Core promotion (deferred per N≥2).
+- **Pre-existing dangling cite resolved**: `@cite{champollion-bumford-henderson-2019}` in Spector2025 §7 docstring was missing from `references.bib` (was missing in HEAD too). User supplied PDF; added entry — *Donkeys under Discussion*, Champollion, Bumford & Henderson, *Semantics and Pragmatics* 12(1), 1–51, DOI `10.3765/sp.12.1` (all fields read directly from title page; marked `validated = true`).
+- **Bib correction (verified post-refactor)**: `references.bib` entry for `schlenker-2008a` previously pointed to the wrong paper — title "Presupposition Projection: The New Debate" / "Proceedings of SALT" 18 / DOI `10.3765/salt.v18i0.2503`. Spector p. 50 references list cites `2008a` for "'Be Articulate': a pragmatic theory of presupposition projection" / *Theoretical Linguistics* 34(3), 157–212. User supplied both PDFs for verification ("Be Articulate" target-article manuscript + the SALT 18 paper). Fixed by (a) rewriting `schlenker-2008a` to the Be Articulate entry — DOI `10.1515/THLI.2008.013` web-verified against De Gruyter's Theoretical Linguistics 34(3) page, marked `validated = true`; (b) preserving the prior SALT-18 entry under new key `schlenker-2008-newdebate` so its verification work isn't lost (no current consumers).
+- Net LOC: Spector2025.lean 1029 → 1115 (+86: ~−95 deletes, +~180 inlined Transparency content + Deferred-work section); Transparency.lean 119 → 0. Total −33 LOC across the two files. Plan file: `~/.claude/plans/mossy-kindling-gadget.md`.
+- Spector2025.lean builds clean; the unrelated `Theories/Semantics/Conditionals/AlternativeSensitive.lean` build failure observed during full-tree verification is pre-existing (no diff vs HEAD; no Spector/Transparency reference; failure traces to a `decide` on `homogeneityEval` from concurrent-session Truth3/Duality/NonBivalence migration work).
+
 ## [0.230.539] - 2026-04-29
 
 ### Bretagnolle–Huber sorry discharged (`two_hellingerDistSq_le_klFinite` now a real theorem)
