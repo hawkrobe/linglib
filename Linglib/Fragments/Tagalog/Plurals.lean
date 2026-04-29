@@ -71,4 +71,84 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .uniquePeriphrastic }
 
+-- ============================================================================
+-- Tagalog-specific extensions
+-- ============================================================================
+--
+-- Per-language structured data that the WALS-shaped `PluralityProfile`
+-- cannot represent. These are Tagalog-internal records (no substrate impact,
+-- no other Fragment forced to fill them); promote to substrate only when a
+-- second language attests the same structural pattern.
+
+/-- Distributional facts about the *mga* proclitic per
+    @cite{schachter-otanes-1972} §3.9 (pp. 111–112). -/
+structure MgaDistribution where
+  /-- *mga* may co-occur with cardinal numerals. False per S&O p. 112:
+      *sampung anak* 'ten children', not \\**sampung mga anak*; with
+      cardinals, *mga* yields the approximative reading instead (see
+      `approximativeWithCardinals`). -/
+  withCardinals : Bool
+  /-- *mga* may follow the personal-noun markers *si/ni/kay*. False per
+      S&O p. 112; the personal-name plural paradigm *sina/nina/kina*
+      occupies that slot (see `personalNameMarkers`). -/
+  withPersonalNameMarkers : Bool
+  /-- *mga* applies to mass nouns with either "several masses" reading
+      (*mga balita* 'news.PL') or implied count noun (*mga tubig* =
+      'glasses of water'). True per S&O p. 112. -/
+  withMassNouns : Bool
+  /-- *mga* applies in adjective phrases (S&O §4.11 p. 230). True. -/
+  withAdjectives : Bool
+  /-- With cardinal numerals *mga* yields an approximative ('about N')
+      reading rather than a plural one (S&O p. 111: *mga sampu* 'about
+      ten', *mga ala una* 'about one o'clock'). True. -/
+  approximativeWithCardinals : Bool
+  /-- Plural marking is non-obligatory throughout: "the pluralization of
+      a noun need not — and, in some cases in fact, cannot — be formally
+      signaled if the context makes the plural meaning clear" (S&O p. 111). -/
+  optional : Bool
+  deriving Repr
+
+/-- The Tagalog *mga* distribution per @cite{schachter-otanes-1972} pp. 111–112. -/
+def mgaDistribution : MgaDistribution :=
+  { withCardinals := false
+  , withPersonalNameMarkers := false
+  , withMassNouns := true
+  , withAdjectives := true
+  , approximativeWithCardinals := true
+  , optional := true }
+
+/-- The Tagalog personal-name marker paradigm per @cite{schachter-otanes-1972}
+    §3.9 (pp. 93, 113). Three cases × two numbers; the plurals are
+    derived by *-na* suffixation, with a vowel change for *kay → kina*. -/
+structure PersonalNameMarkers where
+  nomSg : String
+  nomPl : String
+  genSg : String
+  genPl : String
+  datSg : String
+  datPl : String
+  deriving Repr
+
+/-- Tagalog personal-name markers per @cite{schachter-otanes-1972} p. 113. -/
+def personalNameMarkers : PersonalNameMarkers :=
+  { nomSg := "si",  nomPl := "sina"
+  , genSg := "ni",  genPl := "nina"
+  , datSg := "kay", datPl := "kina" }
+
+/-- The NOM and GEN plural personal-name markers are formed by suffixing
+    *-na* to the singular, per @cite{schachter-otanes-1972} p. 113. -/
+theorem personalNameMarkers_na_suffixation_regular :
+    personalNameMarkers.nomPl = personalNameMarkers.nomSg ++ "na" ∧
+    personalNameMarkers.genPl = personalNameMarkers.genSg ++ "na" := by
+  decide
+
+/-- The DAT plural *kina* is NOT formed by simple *-na* suffixation:
+    *kay + na ≠ kina*. S&O p. 113 describes a vowel change /ay/ → /i/
+    accompanying the *-na* affix. The exceptional shape is what makes
+    the paradigm worth tabulating; the regular cases follow
+    `personalNameMarkers_na_suffixation_regular`. -/
+theorem personalNameMarkers_dat_irregular :
+    personalNameMarkers.datPl ≠ personalNameMarkers.datSg ++ "na" := by
+  decide
+
 end Fragments.Tagalog

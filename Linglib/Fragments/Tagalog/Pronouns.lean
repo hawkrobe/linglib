@@ -1,5 +1,6 @@
 import Linglib.Typology.Pronouns
 import Linglib.Features.Clusivity
+import Linglib.Features.Person
 
 /-!
 # Tagalog pronoun profile (WALS Chs 39, 40, 44–48)
@@ -88,5 +89,58 @@ def pronounShapeProfile : Typology.PronounShapeProfile :=
     colloquial usage. Refines the binary WALS Ch 39 value
     `pronounProfile.inclusiveExclusive = some .inclusiveExclusive`. -/
 def clusivitySystem : Features.Clusivity.System := .minimalAugmented
+
+-- ============================================================================
+-- Pronoun paradigm (structured)
+-- ============================================================================
+
+/-- A row of the Tagalog pronoun paradigm: a Cysouw 2009 person/number
+    category and its three case forms. -/
+structure PronounRow where
+  category : Features.Person.Category
+  /-- *ang*-form (SPEC / NOM). -/
+  angForm : String
+  /-- *ng*-form (POSS / GEN). -/
+  ngForm : String
+  /-- *sa*-form (LOC / DAT). -/
+  saForm : String
+  deriving Repr
+
+/-- The Tagalog independent-pronoun paradigm per @cite{schachter-otanes-1972}
+    Chart 7 (p. 88), mapped onto Cysouw 2009 categories.
+
+    The 1.DU.IN.NOM cell is *kata* per S&O Chart 7; the *kitá* form
+    @cite{himmelmann-2005-tagalog} Table 12.2 lists alongside *katá* is
+    in S&O p. 89 a separate portmanteau combining 1sg.GEN with 2sg.NOM
+    (in 'I [verb] you' clauses), not a 1du.in pronoun. -/
+def pronounParadigm : List PronounRow :=
+  [ { category := .s1,        angForm := "ako",   ngForm := "ko",     saForm := "akin"   }
+  , { category := .s2,        angForm := "ikaw",  ngForm := "mo",     saForm := "iyo"    }
+  , { category := .s3,        angForm := "siya",  ngForm := "niya",   saForm := "kaniya" }
+  , { category := .minIncl,   angForm := "kata",  ngForm := "nita",   saForm := "kanita" }
+  , { category := .augIncl,   angForm := "tayo",  ngForm := "natin",  saForm := "atin"   }
+  , { category := .excl,      angForm := "kami",  ngForm := "namin",  saForm := "amin"   }
+  , { category := .secondGrp, angForm := "kayo",  ngForm := "ninyo",  saForm := "inyo"   }
+  , { category := .thirdGrp,  angForm := "sila",  ngForm := "nila",   saForm := "kanila" }
+  ]
+
+/-- The paradigm has one row per Cysouw 2009 category (no gaps, no
+    duplicates). -/
+theorem pronounParadigm_complete :
+    pronounParadigm.length = Features.Person.Category.all.length := by decide
+
+/-- The categories enumerated by the paradigm match Cysouw's canonical
+    ordering (singulars first, then groups). -/
+theorem pronounParadigm_categories_match :
+    pronounParadigm.map (·.category) = Features.Person.Category.all := by decide
+
+/-- Cross-substrate consistency: the paradigm includes a minimal-inclusive
+    row iff the language commits to the minimal-augmented clusivity
+    system. The forward direction encodes the minimal-augmented type's
+    definition (a separate "we two" form for speaker + addressee only);
+    the converse here holds because Tagalog has both. -/
+theorem clusivity_system_consistent_with_paradigm :
+    (pronounParadigm.map (·.category)).contains .minIncl =
+      clusivitySystem.hasMinimalAugmented := by decide
 
 end Fragments.Tagalog

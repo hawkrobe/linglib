@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.543] - 2026-04-29
+
+### Tagalog Fragment structured-data extension + first cross-substrate bridge theorem
+
+Follow-up to 0.230.542. The Tagalog audit's deferred findings — *mga* distribution restrictions, the personal-name marker paradigm, and the full pronoun paradigm — are now structured Lean data under the `Fragments.Tagalog` namespace rather than docstring prose, with three decide-checked theorems exposing structural commitments.
+
+**`Fragments/Tagalog/Plurals.lean`** gains:
+- `MgaDistribution` record + `mgaDistribution : MgaDistribution` capturing the six S&O p. 111-112 facts (no co-occurrence with cardinals or *si/ni/kay*; mass-noun and adjective compatibility; approximative reading with cardinals; non-obligatoriness).
+- `PersonalNameMarkers` record + `personalNameMarkers : PersonalNameMarkers` for the six-cell paradigm *si/ni/kay/sina/nina/kina*.
+- `personalNameMarkers_na_suffixation_regular` (decide) — proves S&O's *-na* suffixation analysis on the NOM and GEN cells: `"sina" = "si" ++ "na"`, `"nina" = "ni" ++ "na"`.
+- `personalNameMarkers_dat_irregular` (decide) — proves the DAT cell breaks the regular pattern (*kay + na ≠ kina*), making the S&O p. 113 vowel-change /ay/ → /i/ visible as a structural fact.
+
+**`Fragments/Tagalog/Pronouns.lean`** gains:
+- `PronounRow` record + `pronounParadigm : List PronounRow` — the full S&O Chart 7 (p. 88) paradigm, 8 categories × 3 case forms, mapped onto `Features.Person.Category` (Cysouw 2009). Uses *kata* for 1.DU.IN.NOM (per S&O), not *kita* (which S&O p. 89 analyses as the 1sg.GEN+2sg.NOM portmanteau).
+- `pronounParadigm_complete` — paradigm has one row per Cysouw category.
+- `pronounParadigm_categories_match` — the encoded category sequence matches `Features.Person.Category.all`'s canonical ordering (singulars first, then groups).
+- `clusivity_system_consistent_with_paradigm` — **the first cross-substrate bridge theorem of this audit**: the structured paradigm includes a `.minIncl` row iff `clusivitySystem.hasMinimalAugmented = true`. Mechanically connects the per-referent Cysouw `Category` substrate (`Features/Person.lean`) to the system-level Cysouw `ClusivitySystem` substrate (`Features/Clusivity.lean`); future drift in either direction surfaces as a build break.
+
+These structures are deliberately Tagalog-internal (under `Fragments.Tagalog`); promotion to substrate awaits a second language attesting the same structural pattern.
+
 ## [0.230.542] - 2026-04-29
 
 ### Tagalog Plurals deep audit → substrate trim, clusivity Features, Fragment build-out
