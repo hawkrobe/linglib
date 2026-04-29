@@ -17,8 +17,8 @@ Similarity Avoidance and the OCP. *Natural Language & Linguistic Theory*
 constraint in Arabic verbal roots is a **gradient** constraint whose
 strength is a quantitative function of the **similarity** between
 homorganic consonants. The categorical OCP-Place analyses of
-@cite{mccarthy-1986}, Padgett (1995), and McCarthy (1994) all face
-the same trade-off: dividing consonants into co-occurrence classes
+@cite{mccarthy-1986}, @cite{padgett-1995}, and @cite{mccarthy-1994} all
+face the same trade-off: dividing consonants into co-occurrence classes
 either ignores robust within-class variation (broad classes — many
 exceptions) or fragments the data into ad-hoc sub-classes (narrow
 classes — many missing generalisations). FPB resolve the trade-off
@@ -50,20 +50,24 @@ guttural/dorsal OCPs.
 * **§4** — the empirical Table IV (p. 203) for adjacent pairs:
   9 (similarity-bin, O/E) data points whose monotonic decrease
   embodies FPB's gradient claim.
-* **§5** — the **cross-framework divergence theorem**:
-  `categorical_fails_three_test_points` shows that for ANY threshold
-  `t : ℚ` and ANY pair of predicted O/E values `c1, c2`, the
-  two-valued categorical model cannot reproduce three specific
-  Table IV bins with three distinct O/E values. This is the
-  load-bearing instance of the design-boundary claim in
-  `Core/Computability/Subregular/ForbiddenPairs.lean`: a TSL_2
-  grammar over Arabic with `R := λ a b => similarity la b ≥ t`
-  for any threshold `t` instantiates the categorical model and is
-  formally incapable of fitting the FPB Table IV pattern.
+* **§5** — the substrate connection (`thresholdedTSL` +
+  `thresholdedTSL_pair_iff`) showing that the TSL_2 grammar
+  `TSLGrammar.ofForbiddenPairs (similarity ≥ t) Arabic.isLabial`
+  makes a binary step-function decision on labial pairs (accept iff
+  similarity strictly below threshold), and the **cross-framework
+  divergence theorem** `categorical_fails_three_test_points` showing
+  that no two-valued model (and hence no similarity-threshold TSL_2
+  grammar) can match three specific Table IV bins with three
+  pairwise-distinct O/E values. This is the **necessary-consequence**
+  formalisation of the design-boundary claim in
+  `Core/Computability/Subregular/ForbiddenPairs.lean`. FPB's actual
+  argument is stronger — it compares R² fits across nine bins
+  (Categorical 0.70 vs Natural Classes 0.75 per Table V p. 207) — but
+  full R² formalisation requires the lexical corpus and is deferred.
 
 ## What this file does *not* formalise
 
-* The **2,674-root corpus** from Cowan (1979) (the *Hans Wehr*
+* The **2,674-root corpus** from @cite{cowan-1979} (the *Hans Wehr*
   Arabic-English dictionary) that anchors FPB's O/E computations is
   not in the paper text. We use the paper's reported O/E values
   (Table IV) as data, not a re-derived corpus.
@@ -71,33 +75,32 @@ guttural/dorsal OCPs.
   Soft 0.73, Feature 0.71, Natural Classes 0.75) require the corpus.
   Reproduction is deferred.
 * The **stochastic constraint model** of FPB §3.4 (logistic fit
-  with K, S parameters; Frisch, Broe & Pierrehumbert 1997, Rutgers
+  with K, S parameters; @cite{frisch-broe-pierrehumbert-1997}, Rutgers
   Optimality Archive) requires the corpus and is deferred.
-* **§4.1 Frisch–Zawaydeh nonce-verb judgments** (Arabic speakers rate
-  /baba**θ**a/ identical < /**θ**ab**a**ma/ similar adjacent
-  < /ba**ʃ**afa/ similar nonadjacent < /ba**ʔ**ada/ nonhomorganic in
-  OCP-violation severity; Frisch & Zawaydeh 2001 *Language* 77:91–106)
+* **§4.1 Frisch–Zawaydeh nonce-verb judgments**
+  (@cite{frisch-zawaydeh-2001}: Arabic speakers rate /baba**θ**a/
+  identical < /**θ**ab**a**ma/ similar adjacent < /ba**ʃ**afa/ similar
+  nonadjacent < /ba**ʔ**ada/ nonhomorganic in OCP-violation severity)
   — experimental data, summarised in docstring only.
 * **§4.2 Maltese borrowings from Italian** (FPB Table VI p. 213:
   identical 0.26, similar homorganic 0.45, coronal stop/fric 0.78
   — gradient OCP applied selectively to incorporated Italian forms;
-  Mifsud 1995 *Loan Verbs in Maltese*, Brill) — corpus-based,
-  summarised only.
+  @cite{mifsud-1995}) — corpus-based, summarised only.
 * **§4.2 cross-linguistic similarity-OCP attestations** (Tigrinya
-  Buckley 1997 PWPL 4(3):19–51, Russian Padgett 1995 CSLI, English
-  Berkley 1994 CLS 30, Thai Frisch 2000a Lab Phonology V) —
-  referenced in docstring.
-* **§4.3 phonetic / cognitive origin** (Berg 1998, Boersma 1998,
-  Frisch 1996 processing-difficulty argument; speech-error data of
-  Abd-El-Jawad & Abu-Salim 1987 *Language Sciences* 9:145–171:
+  @cite{buckley-1997}, Russian @cite{padgett-1995}, English
+  @cite{berkley-1994}, Thai @cite{frisch-2000a}) — referenced in
+  docstring.
+* **§4.3 phonetic / cognitive origin** (@cite{berg-1998},
+  @cite{boersma-1998}, @cite{frisch-1996} processing-difficulty
+  argument; speech-error data of @cite{abd-el-jawad-abu-salim-1987}:
   /takriib/ for /takbiir/ 'glorification', /maraaʕiʃ/ for /maʃaaʕir/
   'feelings') — diachronic-functional grounding, summarised only.
 * **Full natural-class derivation from a feature matrix** —
-  the paper sketches this (eq. 8 lays out the feature matrix; Broe
-  1993's specification theory provides the lattice machinery), but
-  a faithful Lean implementation requires a substrate effort the
-  audit explicitly flagged as a separate next step. This file
-  reproduces the paper's worked-example natural-class lists
+  the paper sketches this (eq. 8 lays out the feature matrix;
+  @cite{broe-1993}'s specification theory provides the lattice
+  machinery), but a faithful Lean implementation requires a substrate
+  effort the audit explicitly flagged as a separate next step. This
+  file reproduces the paper's worked-example natural-class lists
   (per-pair) rather than deriving them.
 
 ## Connection to `ForbiddenPairs.lean`'s design boundary
@@ -107,12 +110,15 @@ substrate file for tier-based strictly 2-local grammars defined by
 forbidden-pair relations) cites FPB in its design-boundary section as
 the empirical motivation for "single-tier TSL_2 cannot capture gradient
 similarity-based OCP." Pre-this-file, that citation lived only in
-docstring prose. The `categorical_fails_three_test_points` theorem
-below makes the claim Lean-formal: a TSL_2 grammar over Arabic with
-`R := λ a b => similarity la b ≥ t` for any threshold `t` is the
-"categorical-at-threshold" model of §5 (which collapses to a two-valued
-prediction `c1` below threshold and `c2` above), and any such model
-fails to fit three specific Table IV bins.
+docstring prose. Two declarations below make the claim Lean-formal:
+(1) `thresholdedTSL` instantiates the substrate's
+`TSLGrammar.ofForbiddenPairs` with `R := λ x y => similarity xs x y ≥ t`,
+giving a real (not metaphorical) TSL_2 grammar over Arabic; and
+(2) `thresholdedTSL_pair_iff` proves the grammar's accept/reject
+decision on labial pairs is exactly the binary step function
+`similarity < t`. The `categorical_fails_three_test_points` divergence
+theorem then witnesses that no such two-valued model can match three
+specific Table IV bins.
 
 ## Connection to `Hansson2010.lean`
 
@@ -139,9 +145,7 @@ the substrate citation.
 
 namespace Phonology.Studies.FrischPierrehumbertBroe2004
 
--- ============================================================================
--- § 1: The Arabic Consonant Inventory (FPB feature matrix (8), p. 201)
--- ============================================================================
+/-! ## § 1: The Arabic Consonant Inventory (FPB feature matrix (8), p. 201) -/
 
 /-- The 28-segment Arabic consonant inventory used by
 @cite{frisch-pierrehumbert-broe-2004} eq. 8 (p. 201). The labelling
@@ -212,7 +216,7 @@ inductive Arabic where
 
 /-- The labial sub-inventory `{b, f, m, w}`. Used by the worked examples
 and the divergence theorem. -/
-@[reducible] def Arabic.isLabial : Arabic → Prop
+def Arabic.isLabial : Arabic → Prop
   | .b | .f | .m | .w => True
   | _ => False
 
@@ -222,9 +226,7 @@ instance : DecidablePred Arabic.isLabial
   | .sEmph | .zEmph | .esh | .k | .g | .q | .chi | .gamma
   | .hbar | .ayin | .h | .glottal | .l | .r | .n | .j => isFalse not_false
 
--- ============================================================================
--- § 2: Labial Natural Classes — Per-Pair Enumerations from FPB p. 199
--- ============================================================================
+/-! ## § 2: Labial Natural Classes — Per-Pair Enumerations from FPB p. 199 -/
 
 /-! ### Per-pair enumerations vs unified lattice
 
@@ -237,14 +239,19 @@ natural classes relevant for two specific worked examples:
   does **not** include `{f}` even though `{f}` contains `f` and not
   `b` and would naturally appear in a unified lattice.
 
-Whether this difference reflects a per-pair-relativised
-natural-class derivation (e.g. classes definable using only the
-features that distinguish the pair), or a subtle enumeration
-inconsistency in the paper, is not entirely clear from FPB's text.
-We reproduce the paper's two enumerations faithfully so that the
-worked-example similarity values match the paper's exact numbers
-(2/9 and 3/8). A unified lattice would require Broe (1993)
-specification theory and is deferred.
+This difference is **most likely a paper enumeration error**, not a
+principled per-pair-relativised derivation: under @cite{broe-1993}'s
+specification-theory lattice the relevant labial natural classes are
+inventory-determined (closed under intersection of feature-class
+extensions), so once the lattice is fixed the set of classes containing
+`f` is fixed too. `{f}` would therefore appear in *both* enumerations
+under any consistent application of Broe's machinery, giving total = 9
+for /b, f/ and similarity 3/9 ≈ 0.33 (rather than the paper's 3/8 = 0.38).
+We reproduce the paper's two enumerations faithfully so the worked-
+example similarity values match the paper's *exact* numbers (2/9 and
+3/8); a unified-lattice derivation that would give the systematic 3/9
+result requires substrate work (Broe 1993 specification theory) and is
+deferred.
 -/
 
 /-- Labial natural classes relevant for the **/f, m/** similarity
@@ -281,20 +288,18 @@ def labialClasses_bf : List (Finset Arabic) :=
     {Arabic.b, Arabic.w},                      -- voiced non-nasal labials
     {Arabic.b}]                                -- (the labial "{b}" class)
 
--- ============================================================================
--- § 3: The Natural-Classes Similarity Metric (FPB eq. 7, p. 198)
--- ============================================================================
+/-! ## § 3: The Natural-Classes Similarity Metric (FPB eq. 7, p. 198) -/
 
 /-- The Nat-valued count of natural classes in `xs` containing both `a`
 and `b`. The numerator of FPB eq. 7. -/
 def sharedClasses (xs : List (Finset Arabic)) (x y : Arabic) : Nat :=
-  (xs.filter (fun s => decide (x ∈ s ∧ y ∈ s))).length
+  (xs.filter (λ s => decide (x ∈ s ∧ y ∈ s))).length
 
 /-- The Nat-valued count of natural classes in `xs` containing at least
 one of `a, b` — equivalently, shared + non-shared. The denominator of
 FPB eq. 7. -/
 def totalRelevantClasses (xs : List (Finset Arabic)) (x y : Arabic) : Nat :=
-  (xs.filter (fun s => decide (x ∈ s ∨ y ∈ s))).length
+  (xs.filter (λ s => decide (x ∈ s ∨ y ∈ s))).length
 
 /-- **FPB eq. 7**: the natural-classes similarity metric.
 
@@ -311,9 +316,7 @@ def similarity (xs : List (Finset Arabic)) (x y : Arabic) : ℚ :=
   let t := totalRelevantClasses xs x y
   if t = 0 then 0 else (sharedClasses xs x y : ℚ) / (t : ℚ)
 
--- ============================================================================
--- § 3 worked examples (FPB p. 199)
--- ============================================================================
+/-! ## § 3 worked examples (FPB p. 199) -/
 
 /-- /f, m/ share 2 labial natural classes (`{b, f, m, w}`, `{b, f, m}`)
 per FPB p. 199. -/
@@ -357,9 +360,7 @@ theorem similarity_b_f : similarity labialClasses_bf Arabic.b Arabic.f = 3/8 := 
   rw [bf_total, bf_shared]
   norm_num
 
--- ============================================================================
--- § 4: Empirical Table IV (FPB p. 203, adjacent pairs)
--- ============================================================================
+/-! ## § 4: Empirical Table IV (FPB p. 203, adjacent pairs) -/
 
 /-- FPB Table IV (p. 203, adjacent column): the gradient O/E pattern as
 a function of natural-classes similarity. Each entry is
@@ -378,9 +379,7 @@ def empiricalTableIV : List (ℚ × ℚ) :=
    (8/10,            0),
    (1,          1/100)]
 
--- ============================================================================
--- § 5: Cross-Framework Divergence — Categorical Cannot Fit Table IV
--- ============================================================================
+/-! ## § 5: Cross-Framework Divergence — Categorical Cannot Fit Table IV -/
 
 /-! ### The categorical-at-threshold model
 
@@ -409,21 +408,58 @@ theorem fpb_three_distinct_OE_levels :
     (122/100 : ℚ) ≠ 59/100 ∧ (122/100 : ℚ) ≠ 6/100 ∧ (59/100 : ℚ) ≠ 6/100 := by
   refine ⟨?_, ?_, ?_⟩ <;> norm_num
 
+/-- **The substrate connection**: a TSL_2 grammar over Arabic whose
+forbidden-pair relation is "similarity at or above threshold `t`",
+restricted to the labial tier. Instantiates
+`Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs` directly,
+making the connection from FPB's similarity metric to the substrate
+machinery true by construction (rather than docstring-only). -/
+def thresholdedTSL (xs : List (Finset Arabic)) (t : ℚ) : Core.Computability.Subregular.TSLGrammar 2 Arabic :=
+  Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs
+    (λ x y => similarity xs x y ≥ t) Arabic.isLabial
+
+/-- **The TSL_2 grammar makes a binary step-function decision on labial
+pairs.** For two labial segments `x, y`, the grammar
+`thresholdedTSL xs t` accepts the bigram `[x, y]` iff their similarity
+is strictly below `t`. This is the precise sense in which any
+similarity-threshold TSL_2 grammar collapses to the `categoricalAtThreshold`
+two-valued prediction: the accept/reject decision is a step function of
+similarity, not a graded response. -/
+theorem thresholdedTSL_pair_iff (xs : List (Finset Arabic)) (t : ℚ)
+    (x y : Arabic) (hx : Arabic.isLabial x) (hy : Arabic.isLabial y) :
+    [x, y] ∈ (thresholdedTSL xs t).lang ↔ similarity xs x y < t := by
+  unfold thresholdedTSL
+  rw [Core.Computability.Subregular.mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  have hfx : decide (Arabic.isLabial x) = true := decide_eq_true hx
+  have hfy : decide (Arabic.isLabial y) = true := decide_eq_true hy
+  simp only [List.filter_cons, hfx, hfy, ↓reduceIte, List.filter_nil,
+             List.isChain_cons_cons, List.isChain_singleton, and_true,
+             not_le]
+
 /-- **Cross-framework divergence theorem**: for ANY threshold `t : ℚ` and
 any pair of predicted O/E values `c1, c2 : ℚ`, the categorical-at-threshold
 model cannot match all three of FPB Table IV's data points
 (sim=0, O/E=1.22), (sim=0.25, O/E=0.59), (sim=0.55, O/E=0.06).
 
-**Significance**: this is the load-bearing instance of the design-boundary
-claim in `Core/Computability/Subregular/ForbiddenPairs.lean` — that
-single-tier TSL_2 grammars with a similarity-threshold relation
-(`R := λ a b => similarity la b ≥ t`) are formally incapable of
-reproducing FPB's gradient OCP-Place pattern in Arabic. Any such grammar
-makes a two-valued prediction, but Table IV exhibits three (in fact, more)
-distinct empirical O/E levels at the chosen similarity bins. The
-natural-classes similarity model of FPB (R² = 0.75 per Table V) is the
-gradient alternative; the categorical model (R² = 0.70 per Table V)
-trades expressivity for parsimony at a cost the data does not support.
+**Significance**: any similarity-threshold TSL_2 grammar (per
+`thresholdedTSL`, instantiating @cite{heinz-rawal-tanner-2011}'s
+substrate) makes a binary step-function decision on each pair (per
+`thresholdedTSL_pair_iff`), so its O/E prediction collapses to two
+values: one for permitted (similarity < t) pairs, one for forbidden
+(similarity ≥ t) pairs. This theorem proves no such two-valued model
+can reproduce three pairwise-distinct Table IV bins exactly. It is a
+**necessary consequence** of FPB's gradient claim, not a full R²
+comparison: FPB's actual argument is about aggregate fit quality across
+9 bins (Categorical R² = 0.70 vs Natural Classes R² = 0.75; FPB Table V
+p. 207) and requires the lexical corpus to formalise. The 3-bin
+separation captured here is the corpus-free Lean-formal version.
+
+The natural downstream extension of FPB's gradient observation is the
+weighted-constraint MaxEnt phonotactic learner of @cite{hayes-wilson-2008},
+which uses similarity-relevant features as primitives and reproduces
+gradient phonotactic patterns by fitting log-linear weights — a
+positive-fit complement to this file's negative-fit (categorical-fails)
+result.
 
 **Proof strategy**: case analysis on whether the threshold `t` lies
 in each of the four intervals partitioned by 0, 0.25, 0.55. In each
@@ -449,12 +485,12 @@ theorem categorical_fails_three_test_points :
         simp only [hLT0, hLT25, hLT55, if_false] at h1 h2 h3
         linarith
     · -- ¬ 0.25 < t: also ¬ 0.55 < t
-      have hLT55 : ¬ (55/100 : ℚ) < t := fun h => hLT25 (by linarith)
+      have hLT55 : ¬ (55/100 : ℚ) < t := λ h => hLT25 (by linarith)
       simp only [hLT0, hLT25, hLT55, if_false] at h1 h2 h3
       linarith
   · -- ¬ 0 < t: also ¬ 0.25 < t and ¬ 0.55 < t; all preds are c2
-    have hLT25 : ¬ (25/100 : ℚ) < t := fun h => hLT0 (by linarith)
-    have hLT55 : ¬ (55/100 : ℚ) < t := fun h => hLT0 (by linarith)
+    have hLT25 : ¬ (25/100 : ℚ) < t := λ h => hLT0 (by linarith)
+    have hLT55 : ¬ (55/100 : ℚ) < t := λ h => hLT0 (by linarith)
     simp only [hLT0, hLT25, hLT55, if_false] at h1 h2 h3
     linarith
 

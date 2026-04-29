@@ -4,6 +4,54 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.511] - 2026-04-28
+
+### FrischPierrehumbertBroe2004 audit fixes (closes 4-agent audit on `0.230.509`)
+
+The 4-agent audit on `Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean` (committed `0.230.509`, hash `a9c6441d`) returned 2 block-merge findings + several substantive linguistic / mathlib hygiene items. This entry closes all of them.
+
+#### Block-merge #1: `thresholdedTSL` + `thresholdedTSL_pair_iff` (real substrate connection)
+
+The audit (mathlib-reviewer #1, integration auditor #1, cross-framework reconciler silent-divergence #1, all converging) flagged that `import Linglib.Core.Computability.Subregular.ForbiddenPairs` was load-bearing-by-prose only — the `categorical_fails_three_test_points` theorem refuted a local `def categoricalAtThreshold` stipulation rather than the substrate's `TSLGrammar.ofForbiddenPairs`. The docstring claim "any TSL_2 grammar with R := similarity ≥ t is subject to this theorem" was a research note, not Lean.
+
+Added: `def thresholdedTSL (xs : List (Finset Arabic)) (t : ℚ) : TSLGrammar 2 Arabic := TSLGrammar.ofForbiddenPairs (λ x y => similarity xs x y ≥ t) Arabic.isLabial` instantiates the substrate directly. Added: `theorem thresholdedTSL_pair_iff` proves `[x, y] ∈ (thresholdedTSL xs t).lang ↔ similarity xs x y < t` (for two labial segments x, y) — the precise sense in which any similarity-threshold TSL_2 grammar collapses to the binary step function `categoricalAtThreshold`. Proof unfolds the substrate's `mem_ofForbiddenPairs_lang_iff_filter_isChain` bridge + `simp only` chain reduction.
+
+#### Block-merge #2: 14 new bib entries + `@cite{}` discipline
+
+The audit (mathlib-reviewer #10, integration auditor #11, linguistics expert all flagged) caught ~13 raw inline citations in the FPB.lean docstring (Padgett 1995, Cowan 1979, Mifsud 1995, Frisch & Zawaydeh 2001, Berg 1998, Boersma 1998, Frisch 1996, Abd-El-Jawad & Abu-Salim 1987, McCarthy 1994, Buckley 1997, Berkley 1994, Frisch 2000a, Broe 1993). CLAUDE.md is explicit: "Every academic citation in a `.lean` file must use `@cite{key}` — no raw inline citations." The `0.230.509` deferral-to-prose was not endorsed; this entry closes it.
+
+Added 14 new bib entries to `references.bib`, all transcribed from FPB's own references list (pp. 223-227): `broe-1993`, `cowan-1979`, `frisch-zawaydeh-2001`, `mifsud-1995`, `abd-el-jawad-abu-salim-1987`, `padgett-1995`, `mccarthy-1994`, `frisch-broe-pierrehumbert-1997`, `berg-1998`, `boersma-1998`, `frisch-1996`, `buckley-1997`, `berkley-1994`, `frisch-2000a`. DOIs deliberately omitted — sources are mostly unpublished dissertations, monographs, or older journal articles that predate routine DOI assignment; per CLAUDE.md anti-hallucination discipline, no DOIs are guessed. All 14 entries `validated = {true}` based on FPB's own reference list as the verified source.
+
+All `@cite{}` references in `FrischPierrehumbertBroe2004.lean` now resolve cleanly (zero warnings against the file in `gen_bibliography.py --check`).
+
+#### Linguistic-correctness rewordings (audit findings #3, #4)
+
+Strengthened the per-pair labial-class hedge (lines 228-247): the linguistics expert read the `{f}`-only-in-_fm discrepancy as **most likely a paper enumeration error** (under Broe 1993's lattice the relevant labial classes are inventory-determined; `{f}` should appear in both enumerations). Updated docstring: "most likely a paper enumeration error... Under any consistent application of Broe's machinery, total = 9 for /b, f/ giving similarity 3/9 ≈ 0.33 (rather than the paper's 3/8 = 0.38). We reproduce the paper's two enumerations faithfully so the worked-example similarity values match the paper's *exact* numbers."
+
+Reworded the divergence-theorem docstring (lines 412-432): the audit caught that `categorical_fails_three_test_points` formalises a **necessary consequence** of FPB's gradient claim (no two-valued model can match three pairwise-distinct bins), not the **full R² comparison** (Categorical 0.70 vs Natural Classes 0.75) which requires the lexical corpus. Updated docstring to clarify this scope and to cite `@cite{heinz-rawal-tanner-2011}` as the TSL_2 substrate the divergence theorem implicitly invokes plus `@cite{hayes-wilson-2008}` as the natural downstream MaxEnt-learner extension.
+
+#### Mathlib hygiene
+
+(a) Six `fun ... => ...` → `λ ... => ...` per CLAUDE.md "Prefer Unicode `λ` over `fun`" (lines 302, 308, 492, 496, 497).
+(b) Six `-- ===... § X: ... ===...` Unicode-banner sections converted to `/-! ## § X: ... -/` blocks per the `0.230.507` Yagi precedent.
+(c) Dropped unmotivated `@[reducible]` on `Arabic.isLabial` (line 215).
+
+#### Bidirectional Hansson cross-reference (cross-framework reconciler #B)
+
+`Hansson2010.lean:71-81` (the design-boundary section on similarity-graded transparency) previously cited `frisch-pierrehumbert-broe-2004` but only pointed at `ForbiddenPairs.lean`'s design boundary. Updated to ALSO point at the new FrischPierrehumbertBroe2004 study file as the load-bearing instance — mirrors the `0.230.508` OCP-as-merger ↔ OCP-as-prohibition bidirectional pattern.
+
+#### Build verification
+
+970 jobs green for the touched files in isolation. All `@cite{}` references in `FrischPierrehumbertBroe2004.lean` and `Hansson2010.lean` resolve. Pre-existing other-session WIP in working tree left untouched.
+
+#### Out of scope (deferred follow-ups from the audit)
+
+- **OT-side `NamedConstraint`** for FPB (audit #9, #10): all sibling phonology studies have one (Hansson `navajoAgree`, Belth `latinOCP`, Magri `nasSub`); FPB doesn't. Adding `arabicSimilarityOCP : NamedConstraint (List Arabic)` requires committing to a candidate type and is left for a separate session.
+- **Berent2026 ↔ FPB algebraic-vs-gradient cross-ref** (cross-framework #C): Berent's polymorphic `mkOCP` vs FPB's gradient `similarity` are orthogonal axes; a docstring cross-ref in both directions would surface the duality.
+- **Stochastic OT bridge** (cross-framework #3): FPB §5 critiques Anttila/Boersma; `Anttila1997.lean` is silent on FPB. A `anttila_stratified_predicts_step_function_at_threshold` lemma would formalise FPB's critique.
+- **Broe 1993 specification-theory substrate** for unified natural-class lattice — would let `labialClasses_fm/_bf` be derived rather than hard-coded; would also resolve the 3/8 vs 3/9 paper-vs-systematic discrepancy.
+- **Shared `similarity` substrate** at `Theories/Phonology/Featural/Similarity.lean` so Hansson, Berent, ABC, FPB share one notion of featural similarity (cross-framework reconciler shared-type opportunity).
+
 ## [0.230.510] - 2026-04-28
 
 ### `FragmentLambda.lean` v2 — operational scaffold (replaces v1 ceremony)

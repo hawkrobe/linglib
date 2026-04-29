@@ -73,8 +73,12 @@ Things this formalization is silent on, by design:
    differently depending on how similar they are to the harmonizing
    pair. Single-tier TSL with a fixed tier predicate cannot express
    this — see the design-boundary docstring on `tierProject`
-   non-monotonicity in `ForbiddenPairs.lean`, and the connection there
-   to gradient consonant harmony (@cite{frisch-pierrehumbert-broe-2004}).
+   non-monotonicity in `ForbiddenPairs.lean`, and the load-bearing
+   gradient-OCP instance in
+   `Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean`,
+   which formalises @cite{frisch-pierrehumbert-broe-2004}'s
+   natural-classes similarity metric (eq. 7) and proves no
+   similarity-threshold TSL_2 grammar can match three Table IV bins.
    Closely related: the autosegmental/feature-geometry tradition
    (@cite{sagey-1986}) treats the harmonizing feature itself as a
    tier-resident object; that representational layer is upstream of
