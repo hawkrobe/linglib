@@ -27,7 +27,7 @@ c-commands content.
 ## Connections
 
 - **Core/Context.lean**: KContext.agent = SPEAKER, KContext.addressee = HEARER
-- **Phase.lean**: `isSAPhaseHead` — SAP is highest phase
+- **Phase.lean**: `isPhaseHeadOf .SA` — SAP is highest phase
 - **Allocutivity.lean**: `sa_based_aa_root_only` — root-only from SAP phase
 - **LeftPeriphery.lean**: `rogativeSAP` — "ask" selects full SAP with P-roles
 - **ExtendedProjection/Basic.lean**: `fValue.SA = 7` > `fValue.C = 6`
@@ -208,8 +208,8 @@ theorem deriveMood_finite :
 --     (Proved in Allocutivity.lean: `sa_based_aa_root_only`)
 theorem sa_is_phase_head (so : SyntacticObject)
     (h : labelCat so = some .SA) :
-    isSAPhaseHead so = true := by
-  simp only [isSAPhaseHead, isPhaseHeadOf, h, beq_self_eq_true]
+    isPhaseHeadOf .SA so = true := by
+  simp only [isPhaseHeadOf, h, beq_self_eq_true]
 
 -- E8: Bridge to YoonEtAl2020 — the HEARER P-role (structural, S&T)
 --     corresponds to the addressee in social utility φ-weighting (pragmatic,
@@ -219,10 +219,10 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
     resolveRole ctx .hearer = ctx.addressee ∧
     resolveRole ctx .speaker = ctx.agent := ⟨rfl, rfl⟩
 
--- E9: Bridge to Phase.lean — `isSAPhaseHead` identifies SA as a phase.
+-- E9: Bridge to Phase.lean — `isPhaseHeadOf .SA` identifies SA as a phase.
 --     SAP is derivation-final (highest phase).
 theorem sa_phase_derivation_final :
-    isSAPhaseHead (mkLeaf .SA [] 0) = true := rfl
+    isPhaseHeadOf .SA (mkLeaf .SA [] 0) = true := rfl
 
 -- E10: fValue is injective on the canonical verbal EP spine (one head per
 --      F-level: V=0, v=1, T=2, Fin=3, Foc=4, Top=5, C=6, SA=7).

@@ -188,6 +188,38 @@ instance : DecidablePred DAType.IsAttested :=
 
 theorem skPlusNS_unattested : ¬ DAType.IsAttested .skPlusNS := by decide
 
+-- ----------------------------------------------------------------------------
+-- Projection-range characterization
+-- ----------------------------------------------------------------------------
+
+/-- The Haspelmath functions that D&A's `profile` projection ranges over:
+    the **specificity triangle** (specificKnown, specificUnknown, irrealis).
+    D&A's typology is built around the SK/SU/NS dimension; D&A's `irrealis`
+    slot identifies with Haspelmath's `irrealis` (see the module docstring's
+    "D&A ↔ Haspelmath" section). -/
+def specificityRegion : Finset HaspelmathFunction :=
+  {.specificKnown, .specificUnknown, .irrealis}
+
+/-- **Projection range, not framework scope.** Every D&A type's `profile` is
+    a subset of `specificityRegion`. This is a structural fact about the
+    *projection function* `DAType.profile`, not a claim about the empirical
+    reach of D&A 2025's framework: D&A's account empirically covers
+    polarity-sensitive uses of indefinites (e.g., German *irgendein* under
+    modals) through composition mechanisms that are not captured by the
+    direct `profile` projection. The theorem says only that the *range* of
+    `profile` lies in the specificity region; what each type *predicts in
+    composition* is a separate question.
+
+    See the audit notes in `0.230.529`'s CHANGELOG entry on why the
+    symmetric Chierchia-side scope theorem fails: Chierchia's
+    `PSIProfile.predictedFunctions` for plain indefinites
+    (`obligatoryDomainAlts := false`) ranges over `{SK, SU, irrealis}` too,
+    so the would-be "disjoint scope" picture collapses. The structural
+    pattern only survives on the D&A side. -/
+theorem DAType.profile_subset_specificityRegion (t : DAType) :
+    t.profile ⊆ specificityRegion := by
+  cases t <;> decide
+
 end Phenomena.Indefinites.Studies.DeganoAloni2025
 
 -- ============================================================================

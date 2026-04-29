@@ -105,7 +105,9 @@ def movedToSpecOf (events : List MergeEvent) (x y : SyntacticObject) : Prop :=
 /-- Complement-to-Spec anti-locality, restated positionally.
 
     If X is the complement of H, then X cannot move to Spec,HP.
-    This is the positional restatement of `Phase.antiLocality`. -/
+    This is the canonical formulation of @cite{abels-2012}'s anti-locality
+    constraint (Ch. 4): the complement of a phase head cannot raise to its
+    edge because no maximal projection intervenes. -/
 def compToSpecAntiLocality
     (events : List MergeEvent) (x h : SyntacticObject) : Prop :=
   isCompIn events x h → ¬movedToSpecOf events x h

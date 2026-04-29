@@ -74,6 +74,16 @@ inductive VoiceFlavor where
   | experiencer  -- [+θ, +D]: introduces experiencer external argument (@cite{wood-2015} subject-experiencer -st)
   deriving DecidableEq, Repr
 
+/-- The default phasehood for each Voice flavor under the
+    Collins-2005 / Chomsky-2001 baseline: agentive, causer, reflexive,
+    and experiencer Voice are phase heads (they assign a θ-role and
+    project a specifier); the other flavors are non-phasal by default.
+    Per-construction divergences from this baseline are encoded via
+    `VoiceHead.phaseOverride`. -/
+def VoiceFlavor.defaultPhasal : VoiceFlavor → Bool
+  | .agentive | .causer | .reflexive | .experiencer => true
+  | .nonThematic | .expletive | .impersonal | .passive | .antipassive => false
+
 -- ============================================================================
 -- § 2: Voice Head Structure
 -- ============================================================================
@@ -84,8 +94,14 @@ structure VoiceHead where
   flavor : VoiceFlavor
   /-- [D] subcategorization feature: requires a specifier at PF -/
   hasD : Bool
-  /-- Is this Voice head a phase head? (v* = agentive Voice) -/
-  phaseHead : Bool
+  /-- Per-construction override of the flavor-default phasehood. `none`
+      uses `flavor.defaultPhasal`; `some b` overrides to `b`. Use this to
+      express principled per-paper divergence from the Collins-2005 baseline:
+      e.g., @cite{erlewine-sommerlot-2025} sets `some true` on Malayic
+      passive Voice, @cite{coon-2019} sets `some false` on Chol intransitive
+      `v_w`/`v_ch` agentive variants, @cite{coon-mateo-pedro-preminger-2014}
+      sets `some false` on Mam Agent Focus Voice. -/
+  phaseOverride : Option Bool := none
   /-- Does this Voice head check Case? In active, v checks accusative;
       in passive, Voice/*by* checks it (@cite{collins-2005}, p. 96: feature
       dissociation). Default false — only passive Voice checks Case. -/
@@ -95,17 +111,67 @@ structure VoiceHead where
   features : FeatureBundle := []
   deriving DecidableEq, Repr
 
-/-- Does this Voice head introduce a θ-role? -/
+/-- The effective phasehood of this Voice head: the per-construction
+    override if present, else the flavor default. Bool-valued data layer;
+    use `IsPhasal` for mathlib-style Prop reasoning. -/
+def VoiceHead.phaseHead (v : VoiceHead) : Bool :=
+  v.phaseOverride.getD v.flavor.defaultPhasal
+
+/-- Does this Voice head introduce a θ-role?
+
+    Holds for `agentive`, `causer`, `antipassive`, `reflexive`, `experiencer`.
+    Bool-valued data layer; use `AssignsTheta` for mathlib-style Prop reasoning. -/
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
   match v.flavor with
   | .agentive | .causer | .antipassive | .reflexive | .experiencer => true
   | .nonThematic | .expletive | .impersonal | .passive => false
 
-/-- Does this Voice head have semantic content? -/
+/-- Does this Voice head have semantic content?
+
+    Holds for everything except `nonThematic` (purely PF, e.g. anticausative
+    SE) and `expletive` (middle voice, no semantic contribution).
+    Bool-valued data layer; use `HasSemantics` for mathlib-style Prop reasoning. -/
 def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
   match v.flavor with
   | .agentive | .causer | .impersonal | .passive | .antipassive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
+
+/-! ### Prop predicates (mathlib-style)
+
+The following Prop wrappers are the recommended API for new code.
+The underlying Bool functions above remain available for kernel reductions
+and `decide`-based proofs. New consumers should prefer the Prop forms;
+existing Bool consumers can migrate incrementally. -/
+
+/-- This Voice head is phasal (Prop-level wrapper over `phaseHead`). -/
+def VoiceHead.IsPhasal (v : VoiceHead) : Prop := v.phaseHead = true
+
+instance (v : VoiceHead) : Decidable v.IsPhasal := by
+  unfold VoiceHead.IsPhasal; infer_instance
+
+/-- This Voice head assigns a θ-role (Prop-level wrapper over `assignsTheta`). -/
+def VoiceHead.AssignsTheta (v : VoiceHead) : Prop := v.assignsTheta = true
+
+instance (v : VoiceHead) : Decidable v.AssignsTheta := by
+  unfold VoiceHead.AssignsTheta; infer_instance
+
+/-- This Voice head has semantic content (Prop-level wrapper over `hasSemantics`). -/
+def VoiceHead.HasSemantics (v : VoiceHead) : Prop := v.hasSemantics = true
+
+instance (v : VoiceHead) : Decidable v.HasSemantics := by
+  unfold VoiceHead.HasSemantics; infer_instance
+
+/-- This Voice head subcategorizes for a specifier (Prop-level wrapper over `hasD`). -/
+def VoiceHead.HasD (v : VoiceHead) : Prop := v.hasD = true
+
+instance (v : VoiceHead) : Decidable v.HasD := by
+  unfold VoiceHead.HasD; infer_instance
+
+/-- This Voice head checks Case (Prop-level wrapper over `checksCase`). -/
+def VoiceHead.ChecksCase (v : VoiceHead) : Prop := v.checksCase = true
+
+instance (v : VoiceHead) : Decidable v.ChecksCase := by
+  unfold VoiceHead.ChecksCase; infer_instance
 
 -- ============================================================================
 -- § 3: Canonical Voice Heads
@@ -113,25 +179,25 @@ def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
 
 /-- Agentive Voice (transitive/unergative): introduces agent, is a phase head. -/
 def voiceAgent : VoiceHead :=
-  { flavor := .agentive, hasD := true, phaseHead := true }
+  { flavor := .agentive, hasD := true }
 
 /-- Causer Voice: introduces causer, is a phase head. -/
 def voiceCauser : VoiceHead :=
-  { flavor := .causer, hasD := true, phaseHead := true }
+  { flavor := .causer, hasD := true }
 
 /-- Non-thematic Voice (anticausative): no θ-role, [D] for PF marking. -/
 def voiceAnticausative : VoiceHead :=
-  { flavor := .nonThematic, hasD := true, phaseHead := false }
+  { flavor := .nonThematic, hasD := true }
 
 /-- Expletive Voice (middle): no specifier, no semantics. -/
 def voiceMiddle : VoiceHead :=
-  { flavor := .expletive, hasD := false, phaseHead := false }
+  { flavor := .expletive, hasD := false }
 
 /-- Impersonal Voice (Finnish "passive"): demotes agent to an implicit
     generic human referent. Has semantics (existential closure over agent)
     but does not assign a θ-role to a syntactic specifier. -/
 def voiceImpersonal : VoiceHead :=
-  { flavor := .impersonal, hasD := false, phaseHead := false }
+  { flavor := .impersonal, hasD := false }
 
 /-- Passive Voice: headed by *by*, checks Case but does
     not assign a θ-role — v assigns the θ-role to the external argument
@@ -146,73 +212,73 @@ def voiceImpersonal : VoiceHead :=
     on reconstruction and parasitic gap data. The current formalization
     follows @cite{collins-2005} and @cite{chomsky-2001}. -/
 def voicePassive : VoiceHead :=
-  { flavor := .passive, hasD := true, phaseHead := false, checksCase := true }
+  { flavor := .passive, hasD := true, checksCase := true }
 
 /-- Reflexive Voice (@cite{wood-2015}): introduces agent that is coreferent
     with the internal argument. [+θ, +D], phase head (assigns θ).
     Icelandic -st spells out this Voice in reflexive constructions. -/
 def voiceReflexive : VoiceHead :=
-  { flavor := .reflexive, hasD := true, phaseHead := true }
+  { flavor := .reflexive, hasD := true }
 
 /-- Experiencer Voice (@cite{wood-2015}): introduces experiencer external
     argument. [+θ, +D], phase head. Icelandic subject-experiencer -st verbs
     (e.g., *leiðast* 'be bored'). -/
 def voiceExperiencer : VoiceHead :=
-  { flavor := .experiencer, hasD := true, phaseHead := true }
+  { flavor := .experiencer, hasD := true }
 
 -- ============================================================================
 -- § 4: Verification Theorems
 -- ============================================================================
 
 /-- Agentive Voice assigns a θ-role. -/
-theorem agentive_assigns_theta : voiceAgent.assignsTheta = true := rfl
+theorem agentive_assigns_theta : voiceAgent.AssignsTheta := by decide
 
 /-- Non-thematic Voice does NOT assign a θ-role (Muñoz Pérez's key claim). -/
-theorem nonThematic_no_theta : voiceAnticausative.assignsTheta = false := rfl
+theorem nonThematic_no_theta : ¬ voiceAnticausative.AssignsTheta := by decide
 
 /-- Non-thematic Voice has no semantic contribution.
     This is the core claim of Muñoz @cite{munoz-perez-2026}: SE is a PF phenomenon. -/
-theorem nonThematic_no_semantics : voiceAnticausative.hasSemantics = false := rfl
+theorem nonThematic_no_semantics : ¬ voiceAnticausative.HasSemantics := by decide
 
 /-- Agentive Voice is a phase head (v* = Voice_AG). -/
-theorem agentive_is_phase : voiceAgent.phaseHead = true := rfl
+theorem agentive_is_phase : voiceAgent.IsPhasal := by decide
 
 /-- Non-thematic Voice is NOT a phase head. -/
-theorem anticausative_not_phase : voiceAnticausative.phaseHead = false := rfl
+theorem anticausative_not_phase : ¬ voiceAnticausative.IsPhasal := by decide
 
 /-- Impersonal Voice does NOT assign a θ-role (agent is existentially closed,
     not projected to a syntactic specifier). -/
-theorem impersonal_no_theta : voiceImpersonal.assignsTheta = false := rfl
+theorem impersonal_no_theta : ¬ voiceImpersonal.AssignsTheta := by decide
 
 /-- Impersonal Voice HAS semantics: it contributes an existential closure
     over the agent variable, unlike non-thematic Voice which is vacuous. -/
-theorem impersonal_has_semantics : voiceImpersonal.hasSemantics = true := rfl
+theorem impersonal_has_semantics : voiceImpersonal.HasSemantics := by decide
 
 /-- Passive Voice does NOT assign a θ-role (v does). -/
-theorem passive_no_theta : voicePassive.assignsTheta = false := rfl
+theorem passive_no_theta : ¬ voicePassive.AssignsTheta := by decide
 
 /-- Passive Voice IS NOT a phase head. -/
-theorem passive_not_phase : voicePassive.phaseHead = false := rfl
+theorem passive_not_phase : ¬ voicePassive.IsPhasal := by decide
 
 /-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
-theorem passive_has_semantics : voicePassive.hasSemantics = true := rfl
+theorem passive_has_semantics : voicePassive.HasSemantics := by decide
 
 /-- Passive Voice checks Case (@cite{collins-2005}, p. 96: feature dissociation). -/
-theorem passive_checks_case : voicePassive.checksCase = true := rfl
+theorem passive_checks_case : voicePassive.ChecksCase := by decide
 
 /-- Reflexive Voice assigns a θ-role (@cite{wood-2015}). -/
-theorem reflexive_assigns_theta : voiceReflexive.assignsTheta = true := rfl
+theorem reflexive_assigns_theta : voiceReflexive.AssignsTheta := by decide
 
 /-- Experiencer Voice assigns a θ-role (@cite{wood-2015}). -/
-theorem experiencer_assigns_theta : voiceExperiencer.assignsTheta = true := rfl
+theorem experiencer_assigns_theta : voiceExperiencer.AssignsTheta := by decide
 
 /-- Only θ-assigning Voice flavors assign θ-roles. -/
 theorem theta_implies_active_flavor (v : VoiceHead) :
-    v.assignsTheta = true →
+    v.AssignsTheta →
     v.flavor = .agentive ∨ v.flavor = .causer ∨ v.flavor = .antipassive ∨
     v.flavor = .reflexive ∨ v.flavor = .experiencer := by
   cases v with | mk flavor _ _ _ _ =>
-  cases flavor <;> simp [VoiceHead.assignsTheta]
+  cases flavor <;> simp [VoiceHead.AssignsTheta, VoiceHead.assignsTheta]
 
 -- ============================================================================
 -- § 5: Voice–VerbHead Bridge (@cite{kratzer-1996} in @cite{cuervo-2003} terms)
@@ -341,13 +407,12 @@ theorem agentive_voice_is_phase_head :
 theorem nonthematic_voice_not_phase_head :
     voiceAnticausative.phaseHead = false ∧ voiceMiddle.phaseHead = false := ⟨rfl, rfl⟩
 
-/-- Phase-head-ness correlates with θ-role assignment:
-    Voice is a phase head iff it assigns a θ-role. -/
-theorem phase_iff_theta (v : VoiceHead)
-    (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle ∨
-         v = voiceReflexive ∨ v = voiceExperiencer) :
-    v.phaseHead = v.assignsTheta := by
-  rcases h with rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
+-- Voice phasehood does NOT track θ-role assignment in general.
+-- @cite{erlewine-sommerlot-2025} (Malayic) treats every Voice — including passive
+-- and bare passive — as a phase head; @cite{coon-2019} (Chol) treats certain
+-- agentive Voice heads (the intransitive `v_w` / `v_ch` variants) as non-phasal
+-- despite assigning a θ-role. The `phaseHead` field is the per-construction locus
+-- where such divergences from the flavor default are made explicit.
 
 -- ============================================================================
 -- § 9: Parametric Voice Decomposition (@cite{alexiadou-schaefer-2015}, @cite{schaefer-2017})

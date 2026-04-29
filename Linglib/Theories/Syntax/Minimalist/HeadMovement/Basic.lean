@@ -274,7 +274,7 @@ while Bulgarian LHM can be long-distance (head-to-spec).
 /-- A movement is local iff no phase head intervenes between
     target and mover (derived from Phase Impenetrability Condition). -/
 def isLocal (m : Movement) : Prop :=
-  ¬∃ ph : SyntacticObject, isPhaseHead ph = true ∧
+  ¬∃ ph : SyntacticObject, isPhaseHeadOf .C ph = true ∧
     contains m.target ph ∧ contains ph m.mover
 
 /-- Head-to-head movement must be phase-bounded.

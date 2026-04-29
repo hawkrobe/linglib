@@ -45,7 +45,6 @@ namespace Fragments.Mayan.Mam
 def mamVoice : Minimalist.VoiceHead :=
   { flavor := .agentive
   , hasD := true
-  , phaseHead := true
   , features := [.unvalued (.oblique false)] }
 
 -- ============================================================================
@@ -170,7 +169,6 @@ def mamVoiceVocab : Minimalist.Vocabulary := [eqYaVocab]
 def mamPassiveVoice : Minimalist.VoiceHead :=
   { flavor := .nonThematic
   , hasD := false
-  , phaseHead := false
   , features := [.unvalued (.oblique false)] }
 
 /-- Passive and agentive Voice differ in flavor but share the same
@@ -201,7 +199,6 @@ theorem passive_voice_same_features :
 def mamAntipassiveVoice : Minimalist.VoiceHead :=
   { flavor := .antipassive
   , hasD := true
-  , phaseHead := false
   , features := [] }
 
 /-- Antipassive Voice assigns a θ-role (the agent is present). -/

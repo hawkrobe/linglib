@@ -15,9 +15,10 @@ Formalization of derivational phases following @cite{chomsky-2000},
 
 ## Design
 
-`isPhaseHead` is DERIVED from `labelCat` (the formal labeling system),
-not stipulated. This grounds Phase Theory in the same projection machinery
-used by Containment → Labeling → Agree → Workspace.
+`isPhaseHeadOf c so` is DERIVED from `labelCat` (the formal labeling
+system) — `labelCat so == some c` — not stipulated. This grounds Phase
+Theory in the same projection machinery used by Containment → Labeling
+→ Agree → Workspace.
 
 -/
 
@@ -34,53 +35,39 @@ namespace Minimalist
 def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
   labelCat so == some c
 
-/-- Identify phase heads from the formal category system.
+/-! ### Phase-head selectors
 
-    Only C is a phase head by default. @cite{keine-2020} (ch. 5)
-    argues that vP is NOT a phase: φ-Agree and wh-licensing can
-    cross unboundedly many vPs but not CPs, selective opacity
-    creates intractable problems for vP phases, and previous
-    arguments for vP phases (reconstruction, Dinka successive
-    cyclicity, Indonesian meN-deletion) can be reanalyzed.
+Only C is a phase head by default. @cite{keine-2020} (ch. 5) argues that vP
+is NOT a phase: φ-Agree and wh-licensing can cross unboundedly many vPs but
+not CPs, selective opacity creates intractable problems for vP phases, and
+previous arguments for vP phases (reconstruction, Dinka successive cyclicity,
+Indonesian meN-deletion) can be reanalyzed.
 
-    `isPhaseHeadV` provides the traditional view where v is also
-    a phase head, for analyses that require it.
+For commonly-checked phase categories, call `isPhaseHeadOf` directly:
 
-    **Voice/v* correspondence**: In the Kratzer/Schäfer framework,
-    agentive Voice = v*. But `Cat.Voice` can be either a phase head
-    (agentive) or not (anticausative). This flavor-level distinction
-    is tracked by `VoiceHead.phaseHead` in `Core/Voice.lean`, with
-    bridge theorems in `Core/Voice.lean` § 8. -/
-def isPhaseHead (so : SyntacticObject) : Bool :=
-  isPhaseHeadOf .C so
+- C as phase head: `isPhaseHeadOf .C so` (linglib default per @cite{keine-2020}).
+  The classical Chomsky-2000/2001 extension to v as a phase head is
+  `isPhaseHeadOf .C so || isPhaseHeadOf .v so`.
 
-/-- Traditional phase identification where both C and v are phase heads.
-    Use this for analyses that assume vP phasehood (@cite{chomsky-2000},
-    @cite{chomsky-2001}). @cite{keine-2020} argues against vP phases. -/
-def isPhaseHeadV (so : SyntacticObject) : Bool :=
-  isPhaseHeadOf .C so || isPhaseHeadOf .v so
+- D as phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}):
+  `isPhaseHeadOf .D so`. Several analyses treat definite DPs as phases:
+  extraction barriers (@cite{chomsky-2000}, @cite{davies-dubinsky-2003},
+  @cite{shen-huang-2026} — definite island effect; VOCs neutralize via
+  N/D-incorporation), scope barriers (QR cannot escape DP), spell-out
+  domains (definite D triggers Transfer of its complement).
 
-/-- D as a phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}).
+- SA as phase head: `isPhaseHeadOf .SA so`. SAP is the highest phase —
+  since it cannot embed, allocutive agreement probing from SA is root-only.
 
-    Several analyses treat definite DPs as phases:
-    - **Extraction barriers**: @cite{chomsky-2000}, @cite{davies-dubinsky-2003},
-      @cite{shen-huang-2026} — definite DP phasehood blocks wh-subextraction
-      (definite island effect). VOCs can neutralize phasehood via
-      N/D-incorporation.
-    - **Scope barriers**: QR cannot escape DP.
-    - **Spell-out domains**: definite D triggers Transfer of its complement. -/
-def isDPhaseHead (so : SyntacticObject) : Bool :=
-  isPhaseHeadOf .D so
-
-/-- SA as a phase head.
-    SAP is the highest phase — since it cannot embed,
-    allocutive agreement probing from SA is root-only. -/
-def isSAPhaseHead (so : SyntacticObject) : Bool :=
-  isPhaseHeadOf .SA so
-
-/-- Extended phase head identification (C, v, optionally D) -/
-def isPhaseHeadExt (so : SyntacticObject) (dpIsPhase : Bool := false) : Bool :=
-  isPhaseHead so || (dpIsPhase && isDPhaseHead so)
+**Voice/v* correspondence**: In the Kratzer/Schäfer framework,
+agentive Voice = v*. But `Cat.Voice` can be either a phase head
+(agentive) or not (anticausative). This flavor-level distinction
+is tracked by `VoiceHead.phaseHead` in
+`Theories/Syntax/Minimalist/Voice.lean`, with the per-construction
+`phaseHead` semantics described in that file's "Voice/Phase Bridge"
+section. The two convergent recent clients of clause-internal Voice
+phasehood are @cite{erlewine-sommerlot-2025} (Malayic, A′-extraction)
+and @cite{pietraszko-2026} (Ndebele, A-movement & φ-agreement). -/
 
 -- ============================================================================
 -- Part 2: PIC Strength (@cite{citko-2014} §2.4)
@@ -119,7 +106,7 @@ structure Phase where
   /-- The phase head (C or v*) -/
   head : SyntacticObject
   /-- Proof that the head is indeed a phase head -/
-  isHead : isPhaseHead head = true
+  isHead : isPhaseHeadOf .C head = true
   /-- The complement domain (shipped to interfaces) -/
   complement : SyntacticObject
   /-- The edge (specifier, accessible for further operations) -/
@@ -143,40 +130,7 @@ def phaseImpenetrable (phase goal : SyntacticObject) : Prop :=
   | _ => False
 
 -- ============================================================================
--- Part 5: Anti-Locality (@cite{abels-2012}, Ch. 4)
--- ============================================================================
-
-/-- Anti-locality: the complement of a phase head H cannot move to Spec-H.
-
-    This is "too local" — movement must cross at least one maximal projection.
-    @cite{abels-2012} derives this from the independently motivated ban on
-    complement-to-specifier movement within a single phase.
-
-    This is a derivational constraint: a derivation that applies Internal Merge
-    to move the complement of H to Spec-H is illicit. We model this as a
-    predicate on derivations rather than on structures. -/
-def antiLocality (head complement mover : SyntacticObject) : Prop :=
-  immediatelyContains head complement →
-    -- If H immediately contains its complement, then the complement
-    -- cannot be the mover in Internal Merge targeting H
-    mover ≠ complement
-
--- ============================================================================
--- Part 6: Stranding Generalization
--- ============================================================================
-
--- Stranding Generalization: complements of phase heads cannot be stranded
--- by movement of the head. The derivation is Anti-locality + PIC:
--- Anti-locality blocks complement-to-Spec-HP movement, and PIC blocks
--- complement-out-of-HP movement, so the complement is immobile relative
--- to its phase head. We do not state this as a Lean theorem here: the
--- previous version derived `False` from a self-application of
--- `antiLocality ph.head ph.complement ph.complement`, where the conclusion
--- was already supplied by the hypothesis. A real stranding theorem needs
--- a derivation/movement model that's not yet in this file.
-
--- ============================================================================
--- Part 7: Transfer
+-- Part 5: Transfer
 -- ============================================================================
 
 /-- Transfer: ship a phase complement to the interfaces (PF and LF).
@@ -205,7 +159,7 @@ def Transfer.fromPhase (ph : Phase) : Transfer :=
     lf_is_complement := rfl }
 
 -- ============================================================================
--- Part 8: Feature Inheritance / Transfer (@cite{chomsky-2008}, @cite{ouali-2008},
+-- Part 6: Feature Inheritance / Transfer (@cite{chomsky-2008}, @cite{ouali-2008},
 --                                         @cite{olivier-2026})
 -- ============================================================================
 
@@ -273,7 +227,7 @@ structure FeatureInheritance where
   transferred : FeatureBundle := []
 
 -- ============================================================================
--- Part 9: Phase-Bounded Locality
+-- Part 7: Phase-Bounded Locality
 -- ============================================================================
 
 /-- A movement is phase-bounded iff the mover does not cross a phase boundary.
@@ -292,7 +246,7 @@ def isPhaseBounded (mover target : SyntacticObject)
 -- would just restate `phaseImpenetrable` as itself.
 
 -- ============================================================================
--- Part 10: N/D-Incorporation and Phase Deactivation
+-- Part 8: N/D-Incorporation and Phase Deactivation
 -- ============================================================================
 
 /-! ### N/D-Incorporation (@cite{davies-dubinsky-2003}, @cite{shen-huang-2026})
@@ -319,7 +273,7 @@ Three conditions for incorporation (@cite{davies-dubinsky-2003}:28–29):
 
 When `incorporated = true`, the D head has been absorbed into the
 verb via head movement. The DP is no longer a phase boundary —
-`isDPhaseHead` is irrelevant because the D head is no longer
+`isPhaseHeadOf .D` is irrelevant because the D head is no longer
 projecting independently.
 
 This models the effect described by @cite{davies-dubinsky-2003} and
@@ -328,7 +282,7 @@ structure DPPhaseStatus where
   /-- The D head (before incorporation) -/
   dHead : SyntacticObject
   /-- Whether D was originally a phase head -/
-  wasPhase : Bool := isDPhaseHead dHead
+  wasPhase : Bool := isPhaseHeadOf .D dHead
   /-- Whether incorporation has applied -/
   incorporated : Bool
   deriving Repr

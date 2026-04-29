@@ -177,7 +177,7 @@ theorem passive_smuggling_requires_both (v : VoiceHead) (p : Bool) :
     This is the canonical passive derivation from @cite{collins-2005}. -/
 theorem passive_voice_licenses_smuggling :
     licensesPassiveSmuggling voicePassive true = true := by
-  simp [licensesPassiveSmuggling, VoiceHead.permitsSmuggling, voicePassive]
+  decide
 
 /-- Agentive Voice blocks passive smuggling — v* is a phase head,
     so PartP is frozen by PIC. Active transitives do not undergo

@@ -174,8 +174,8 @@ theorem intransitive_subject_never_trapped (locus : CaseLocus) :
 def voiceAF : VoiceHead :=
   { flavor := .agentive
   , hasD := true
-  , phaseHead := false      -- intransitive v⁰: NOT phasal
-  , checksCase := true }    -- assigns case to object
+  , phaseOverride := some false  -- intransitive v⁰: NOT phasal (Mam AF)
+  , checksCase := true }         -- assigns case to object
 
 /-- AF Voice assigns case to the object. -/
 theorem af_assigns_case : voiceAF.checksCase = true := rfl
@@ -605,7 +605,7 @@ theorem fullDP_end_to_end :
     boundary — the complement remains accessible.
 
     This connects the Boolean `phaseHead` on `VoiceHead` to the Phase
-    module's `isPhaseHead`. -/
+    module's `isPhaseHeadOf .C`/`isPhaseHeadOf .Voice` selectors. -/
 theorem voice_phase_bridge :
     voiceAgent.phaseHead = true ∧ voiceAF.phaseHead = false ∧
     voicePassive.phaseHead = false ∧ voiceAnticausative.phaseHead = false :=
@@ -670,14 +670,13 @@ def kaqClauseSpine : ClauseSpine := ClauseSpine.cP
 
 /-- Kaqchikel agentive Voice/v head (parallel to Mam's Voice). Present
     in the transitive derivation; absent or altered in AF.
-    `phaseHead := true` is the load-bearing property for §18's
-    cross-language bridge: agentive Voice is a phase head, creating the
-    locality boundary that traps the subject in HIGH-ABS Mayan languages
+    Phasehood is the load-bearing property for §18's cross-language bridge:
+    agentive Voice is a phase head (flavor default), creating the locality
+    boundary that traps the subject in HIGH-ABS Mayan languages
     (CMP 2014 §4–§5). -/
 def kaqVoice : VoiceHead :=
   { flavor := .agentive
-  , hasD := true
-  , phaseHead := true }
+  , hasD := true }
 
 /-- Kaqchikel clause projects Voice. -/
 theorem kaq_has_voice : kaqClauseSpine.projects .Voice = true := by

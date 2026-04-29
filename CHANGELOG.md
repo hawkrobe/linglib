@@ -4,6 +4,167 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.531] - 2026-04-28
+
+### Phase + Voice substrate refactor: phaseOverride carrier + Prop API + dead-code excision
+
+Substrate cleanup as forcing function for upcoming @cite{pietraszko-2026} (Ndebele clause-internal phase, A-movement & φ-agreement) and to fix latent contradiction with already-formalized @cite{erlewine-sommerlot-2025} (Malayic VoiceP universally a phase, A′-extraction). Two recent papers from disjoint families (Bantu, Austronesian) on disjoint phenomena both load-bear clause-internal Voice phasehood. 4-agent audit (linglib-integration-auditor / cross-framework-reconciler / linguistics-domain-expert / mathlib-reviewer) + 2 Explore passes surfaced a latent substrate contradiction that Pietraszko 2026 would be the first paper to make empirically load-bearing.
+
+**Latent contradiction resolved.** `Voice.lean:88` had `VoiceHead.phaseHead : Bool` as a stipulated field; `Phase.lean:54` had `isPhaseHead so := isPhaseHeadOf .C so` — never consulted the field. So `voiceAgent.phaseHead = true` was provable but `Phase.isPhaseHead voiceAgentSO = false` for any Voice-headed object. Same substrate, two contradictory answers to "is this Voice a phase?". Zero current consumers exposed the bug; @cite{erlewine-sommerlot-2025}'s `malayic_passive_phase_diverges` theorem was the canary (it stipulated `passive.phaseHead := true` overriding `voicePassive.phaseHead := false` at the literal level).
+
+**P1 dead-code excision** (3 files, ~50 LOC removed):
+- `Phase.lean`: deleted `isPhaseHeadV` (0 consumers — defined for hypothetical Chomsky-2000 v-as-phase users), `isPhaseHeadExt` (0 consumers — D-phase-with-default-config wrapper), `antiLocality` (0 consumers — abandoned in favor of `Position.compToSpecAntiLocality`).
+- `Agree.lean:293` `agreeTriggersMoveement` (typo + 0 consumers; `hasEPP` is the consumed function).
+- `Voice.lean:346` `phase_iff_theta` — a 6-constructor disjunction tautology that excluded passive and impersonal and was empirically false in general per @cite{erlewine-sommerlot-2025} (Malayic passive IS a phase) and @cite{coon-2019} (Chol intransitive agentive `v_w`/`v_ch` are NOT phases despite assigning a θ-role). Replaced with a docstring noting per-paper disagreement is the expected pattern.
+- Phase.lean Part-numbering renumbered (5/6 deleted; 7→5, 8→6, 9→7, 10→8).
+
+**P2 hygiene**:
+- `Phase.lean:52` cross-reference path `Core/Voice.lean § 8` → `Theories/Syntax/Minimalist/Voice.lean § 8` (the file was never under Core/).
+- `Datasets/WALS/Languages.lean:1731` Ndebele entry: `name := "Ndebele"` → `"Northern Ndebele"`. WALS code `ndb` + ISO `nde` is Zimbabwean (Pietraszko 2026's variety, Guthrie S.44); Southern Ndebele is ISO `nbl` (Guthrie S.407, distinct language).
+
+**P3 selector collapse** (17 consumer files migrated):
+- Deleted `isPhaseHead`, `isDPhaseHead`, `isSAPhaseHead` named wrappers from `Phase.lean`. Mathlib-style: prefer the parametric primitive `isPhaseHeadOf .C/.D/.SA so` over named specializations encoding editorial commitments to particular framework defaults.
+- Migrated `HeadMovement.Basic` (`isLocal`), `Greco2020` (open-statement import), `ShenHuang2026` (4 sites: `nonvoc_preserves_pic_barrier`, `incorporation_determines_syntactic_source`, 2 docstrings), `Scope.lean` (`dp_phase_barrier_from_pic`), `SpeechActs.lean` (`sa_is_phase_head`, `sa_phase_derivation_final`, 2 docstrings), `AlokBhalla2026` (docstring), `CoonMateoPedroPreminger2014` (docstring).
+- Phase struct's `isHead : isPhaseHead head = true` invariant rewritten as `isPhaseHeadOf .C head = true`. Phase struct semantics unchanged (still C-only by construction); generalization to other phase-head categories is a future scope.
+
+**P4 phaseOverride carrier** (the architectural fix; 9 files, 5 genuine divergences):
+- Added `def VoiceFlavor.defaultPhasal : VoiceFlavor → Bool` matching the historical Voice.lean named-constructor table (agentive/causer/reflexive/experiencer = true; nonThematic/expletive/impersonal/passive/antipassive = false).
+- Replaced `VoiceHead.phaseHead : Bool` field with `phaseOverride : Option Bool := none` data field. Per-construction overrides are now grep-visible (`phaseOverride := some true/false`); cases that match the flavor default drop the field entirely.
+- Added `def VoiceHead.phaseHead (v : VoiceHead) : Bool := v.phaseOverride.getD v.flavor.defaultPhasal` as the effective accessor. Existing `v.phaseHead` reads keep working via the new method (54 reads across 14 files unaffected).
+- Migrated 19 ad-hoc literal sites across 8 files. **5 sites retained `phaseOverride := some _` as principled per-paper divergences**: `CoonMateoPedroPreminger2014:177` `voiceAF` (Mam Agent Focus, intransitive v⁰); `Coon2019:171` `v_w` and `:178` `v_ch` (Chol intransitive agentive variants); `ErlewineSommerlot2025:359/360` `diPassive`/`barePassive` (Malayic universal-VoiceP-phase claim diverging from the Collins/Chomsky default). The remaining ~14 sites became flavor-default and lost the explicit field. `Copula.lean` 2 destructuring sites updated for the field rename (used `_` for the now-deleted `phaseHead` field name).
+
+**Bool→Prop API extension** (mathlib idiom, non-breaking):
+- Added 5 Prop-valued predicates over the underlying Bool functions, each with a `Decidable` instance derived from Bool decidability: `VoiceHead.IsPhasal v := v.phaseHead = true`; `AssignsTheta v := v.assignsTheta = true`; `HasSemantics v := v.hasSemantics = true`; `HasD v := v.hasD = true`; `ChecksCase v := v.checksCase = true`.
+- Verification theorems (§4) migrated to use the Prop forms (e.g. `voiceAgent.IsPhasal := by decide`); old Bool-equality theorems removed in favor of these.
+- Existing 96 `assignsTheta` consumer reads + 18 `hasSemantics` reads + 26 `hasD` reads + 20 `checksCase` reads keep working via the Bool API. New code should prefer the Prop forms; per-consumer Bool→Prop migration is a separate progressive cleanup (joins the existing Imprecision/ Bool→Decidable backlog).
+- Cascading consumer fixes: `VoiceProjection.lean` 3 theorems simplified (`refine ⟨rfl, ?_⟩; rw [passive_no_theta]; intro h; cases h` → `decide`); `Movement/Smuggling.lean` `passive_voice_licenses_smuggling` proof switched to `decide`.
+
+**Verification**: `lake build` — 5631 jobs green. `grep -rn 'phaseOverride := some' Linglib/` enumerates the 5 genuine divergences. `grep -rn 'phaseHead := ' Linglib/` returns only `=` (read) comparisons in proof statements, no field-write literals. `grep -rn 'isPhaseHeadV\|isPhaseHeadExt\|antiLocality\|agreeTriggersMoveement\|phase_iff_theta\|isPhaseHead\b\|isDPhaseHead\|isSAPhaseHead' Linglib/` returns only the live `isPhaseHeadOf` parametric primitive plus a coincidentally-named `Categorizer.isPhaseHead` namespaced method. Two pre-existing failures unrelated to this work: `Phenomena/Indefinites/Studies/Bubnov2026.lean` (uncommitted file referencing a not-yet-created `Linglib/Theories/Semantics/Quantification/Indefinites/DependenceLogic.lean` from in-flight Indefinites refactor) and `Phenomena/Gender/Studies/Corbett1991.lean` (untracked file with an unterminated comment — separate session's WIP).
+
+**Net LOC**: 20 files changed, 227 insertions, 208 deletions (~19 LOC net). Plan: `~/.claude/plans/fuzzy-discovering-lobster.md`.
+
+**Documented deferrals** (next-session candidates): EPP-as-functional-feature on Voice (Pietraszko's own derivation of phasehood from EPP availability — requires a second EPP-conditional-phasehood paper as forcing function); `[PhaseTheory]` typeclass abstraction (requires a third concrete instance beyond Keine/Pietraszko); per-consumer Bool→Prop migration (96 assignsTheta + 18 hasSemantics + 26 hasD + 20 checksCase reads); `Transfer` thin-record refactor in Phase.lean (1 factory, 0 consumer pain); cyclic linearization (Fox & Pesetsky 2005, used by E&S 2025 §4 but not currently in linglib); `MovementChain`/`MovementStep` primitive (both Pietraszko 2026 and E&S 2025 use successive-cyclic A-movement, no first-class chain type); `phaseImpenetrable` PIC₁/PIC₂ operationalization (existing TODO at `Phase.lean:97-103`); ErlewineSommerlot2025.lean deepening (current formalization is thin — Local Dislocation, Antilocality (Erlewine 2016), mismatched derivations, `meN`-deletion would land as substantial extension).
+
+## [0.230.530] - 2026-04-28
+
+### Jenks2018.lean v2 — deep-audit cleanup pass + Cantonese fragment
+
+Acts on a 4-agent deep audit (mathlib-reviewer + linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler), all reading the Jenks 2018 PDF directly. Convergent verdict on v1 (0.230.528): "closer to a citation page than a study replication." This pass addresses the substantive accuracy errors, the architectural anti-patterns, and the missing key theorems.
+
+**Substantive accuracy fixes** (verified against PDF):
+- `Heim 1990` (not 1991) for Index!-as-MP citation per paper p. 524 (50). 3 occurrences.
+- Bare Pinyin `na`/`zhe` (not `nà`/`zhè`) per paper convention (fn. 8).
+- Table 2 `.markedAnaphoric` cell = "Mandarin, Akan, Wu" (not "Mandarin, Thai" — Thai is from Jenks 2015, not this paper).
+- "examples 9-11" attribution corrected: moon is ex. 10a, soup/dog are ex. 11a/b; ex. 9 is the donkey example with bare buffalo.
+
+**Architectural anti-patterns dissolved**:
+- `jenks_property_index_substrate_gap : True := trivial` deleted entirely (the canonical "encoding conclusions as definitions" anti-pattern). Substrate-gap note moved to docstring §5 prose.
+- `jenksAttestedStrategies` lifted from `Moroney2021.lean` §15 to `Jenks2018.lean` §1 (Jenks owns the prediction; Moroney imports + refutes). Chronological discipline preserved (Jenks 2018 < Moroney 2021).
+- `IndexCandidate.presupSatisfied` → `indexAvailable` (paper p. 523-524 explicitly distinguishes prior-mention/index-availability from presupposition-satisfaction; the original name conflated what Jenks separates).
+- `mandarin_*` prefix dropped from theorems inside the Mandarin-only `Jenks2018` namespace (was noisy double-qualification).
+
+**Cantonese fragment landed** (`Linglib/Fragments/Cantonese/Definiteness.lean`, ~50 LOC): `articleInventory := { hasUniqueArticle := True, hasAnaphoricArticle := True, uniqueAnaphoricSyncretism := True, ... }`. Dissolves Jenks2018.lean §8 prose-only deferral into a real `decide` theorem `mandarin_cantonese_distinct_cells` proving the cross-Sinitic typological contrast (paper §6, Table 2). `articleInventory_marking : ... = .generallyMarked := rfl`.
+
+**Bridges to existing substrate** (interconnection density):
+- `bare_unique_agreement` and `demonstrative_anaphoric_agreement` — Mandarin parallels of Moroney's Shan theorems via `Core.Nominal.interpret` (1-line `rfl`, makes the file connect to the interpretation API).
+- `iota_is_last_resort` — links Jenks's prose claim "ι is last-resort type-shift" (paper p. 514) to `Theories.Semantics.Noun.Kind.Dayal2004.selectShift` (Moroney2021 already consumes this substrate).
+- `clf_is_atomization` — Mandarin parallel to Moroney's `shan_clf_is_atomization` via `Theories.Semantics.Classifier.clfForNoun`.
+
+**Substantive missing theorems landed** (real claims, not `True := by sorry`):
+- §3 explicit donkey-environment distinction in docstring (bare conditionals vs ruguo/dou-conditionals per paper §3.3 + Cheng-Huang 1996).
+- §4 Blocking Principle documented (paper p. 514 eq. 23) as the substrate-level connection between article inventory and type-shift availability — already operationalized via `Dayal2004.iotaBlocked`.
+- §6 Index! as `mpConstraintOf` instance (now using `indexAvailable` field name).
+- §7 subject-position exception (paper §5.3): `TopicCandidate` carrier extends `IndexCandidate` with `isTopic` flag; `topicAwareIndexConstraint` defined; two real theorems prove the override behavior — `subject_topic_overrides_index` (Index! neutralized when bare candidate is topic-marked) and `non_topic_keeps_index_preference` (preference holds otherwise). Both `decide`-checked.
+- §8 covarying readings (paper §4.3): `demonstrative_strict_under_situation_variation` proves the strict-reading half — when restrictor `R` is invariant on the indexed entity across two situation assignments, the demonstrative returns the same referent. Proved structurally via `interpret_anaphoric` and `demonstrative_anaphoric_agreement`. The bare-N covariation half is documented as deferred pending the property-typed-index substrate work.
+
+**Bib entries added** (verified from PDF references list pp. 533–535):
+- `trinh-2011`: Trinh, Tue. 2011. "Nominal reference in two classifier languages." *Sinn und Bedeutung* 15:629–644.
+- `jiang-2012`: Jiang, Li Julie. 2012. *Nominal arguments and language variation*. Doctoral dissertation, Harvard University.
+- `schlenker-2012`: Schlenker, Philippe. 2012. "Maximize Presupposition and Gricean reasoning." *Natural Language Semantics* 20:391–429. doi:10.1007/s11050-012-9085-2.
+
+**Net file growth**: Jenks2018.lean 280 → ~440 LOC; 0 sorries (was 0; the §7 and §8 placeholders are now real `decide`-checked or structurally proved theorems). Sibling Studies file `Schwarz2009.lean` no longer orphan (transitively imported via Jenks2018 → Schwarz2009).
+
+**Build**: 997 jobs green for the 8-target focused build (Jenks2018 + Moroney2021 + Cantonese + 5 siblings). Three pre-existing build failures in unrelated user-WIP files (Smuggling, Allosemy, Hewett2026, EventStructure, LevinTheory) confirmed orthogonal — they fail with my changes stashed too.
+
+## [0.230.529] - 2026-04-28
+
+### Indefinites §11 docstring + framing corrections (walk back overstatements from 0.230.526)
+
+User-prompted critical reread of the three §11 theorems landed in 0.230.526 (`fragment_polarity_disagree_on_kto_to`, `fragment_polarity_disagree_on_some`, `irgend_irgendein_agree_on_epistemic`) revealed that 0.230.526's framing was overstated. The theorems work but they don't all do the same kind of work, and only one is genuinely cross-framework.
+
+**Walk-back:**
+
+- `fragment_polarity_disagree_on_kto_to` was framed as cross-framework (Bubnov vs Polarity-Haspelmath). Reality: both encodings *use D&A's typology*. The Polarity-side file (`Polarity/Studies/Haspelmath1997.lean:226`) explicitly glosses *kto-to* as "epistemic (D&A 2025 type iv): SU + NS." The disagreement is *interpretive within D&A* — apply the bare type-iv profile vs apply it net of paradigmatic competition. Real disagreement, but not cross-framework.
+- `fragment_polarity_disagree_on_some` is genuinely cross-framework. D&A's "one type per form, full coverage" methodology vs Haspelmath's "one form per function, paradigm-internal division" methodology. Strongest of the three.
+- `irgend_irgendein_agree_on_epistemic` is a cross-Fragment consistency check, not a substantive cross-framework agreement. Both Fragment authors knew irgend- is canonically epistemic and encoded accordingly. Real value: regression test catching drift between two Fragments. Not theoretical insight.
+
+So 0.230.526's headline ("first place in linglib where two published analyses are visibly inconsistent at theorem level") was true only of the *some-* theorem.
+
+**Concrete changes:**
+
+- `Phenomena/Indefinites/Studies/Bubnov2026.lean` §11 header rewrites the comment block (no longer claims "cross-framework divergence" generically; instead says "encoding-level disagreement theorems" and notes per-theorem what each actually does).
+- All three theorem docstrings rewritten to honestly describe what they prove. Theorem statements unchanged — they're still correct, just better-framed.
+- Memory file `project_indefinites_consolidation.md` updated to match.
+
+**Why this matters for the line of work:**
+
+Subsequent session attempted to extend the divergence-theorem pattern to D&A vs Chierchia 2006 (`PSIProfile.predictedFunctions` is structurally compatible with `DAType.profile`). The attempted theorem was a packaged conjunction of three independent facts including a circular "Fragment sides with D&A" conjunct. Build errors caught the worst of it; user's "is this a good theorem? what would mathlib do?" caught the rest. Backed out cleanly.
+
+User then asked for a more structural theorem ("using the types"). Proposal: a per-framework scope-theorem pair claiming D&A and Chierchia have disjoint scope on the Haspelmath substrate, overlapping at irrealis. **Three-agent re-audit caught a critical bug**: `PSIProfile.predictedFunctions` for plain indefinites (`obligatoryDomainAlts := false`) filters by `!f.isDE && !f.isFC` — which includes `specificKnown` and `specificUnknown`. So Chierchia's range is the *whole* substrate via the plain-indefinite branch; the disjoint-scope picture is false. Joint-tiling claim collapses too. (mathlib agent's verdict: "decide first, always, on finite types — would have caught the bug." Right rule.)
+
+**What survives** is one per-file structural theorem on the D&A side only, landed as `DAType.profile_subset_specificityRegion` in `DeganoAloni2025.lean`:
+
+```lean
+def specificityRegion : Finset HaspelmathFunction :=
+  {.specificKnown, .specificUnknown, .irrealis}
+
+theorem DAType.profile_subset_specificityRegion (t : DAType) :
+    t.profile ⊆ specificityRegion := by cases t <;> decide
+```
+
+Mathlib-shaped: subset form with named constant, naming follows `coe_image_subset_range` precedent. Docstring explicitly disclaims "framework scope" in favor of "projection range" (per linguistics agent's caution: D&A's framework empirically covers polarity-sensitive uses through composition mechanisms not in `profile`). No symmetric Chierchia analogue (false). No joint-tiling synthesis (false). No bridge file.
+
+**Deeper architectural finding (deferred):** the modal-indefinite frameworks (K&S 2002, Aloni-Royer 2024, AlonsoOvalle-MenendezBenito 2010) sit on a *different* substrate axis (`ModalFlavor` + `notAtIssue` + BSML team-state) and don't project to `HaspelmathFunction` at all. Bubnov2026.lean:298 already cross-substrate-bridges by hand-conjunction. Promoting `ModalFlavor ↔ HaspelmathFunction` to substrate would let those frameworks join the projection-pattern picture — the real next architectural opportunity for cross-framework comparison in the indefinite-typology space.
+
+Build: 759 jobs green for Bubnov2026 after docstring rewrite; 621 jobs green for DeganoAloni2025 after structural-theorem addition.
+
+## [0.230.528] - 2026-04-28
+
+### `Phenomena/Definiteness/Studies/Jenks2018.lean` lands; Moroney2021 §15 refutation
+
+Multi-agent audit (linguistics-domain-expert + cross-framework-reconciler + general-purpose feasibility) of @cite{jenks-2018} "Articulated Definiteness without Articles" (LI 49.3) found the substrate (`Core/Nominal/{Description,ArticleInventory}`, `Features/Definiteness` §7, `MaximizePresupposition.mpConstraintOf`, `Fragments/Mandarin/Definiteness`) was already built Jenks-shaped — `articleInventory_marking : ... = .markedAnaphoric := rfl` lives in the Mandarin Fragment with `@cite{jenks-2018}` in its docstring — but no Studies file existed alongside the sister Schwarz2009/Hanink2021/CoppockBeaver2015/Moroney2021 files.
+
+**`Phenomena/Definiteness/Studies/Jenks2018.lean`** (~280 LOC, 8 sections, 0 sorries):
+
+- §1 Mandarin's article inventory (re-states the existing Mandarin commitment with Jenks-anchored framing).
+- §2 Bare-N / Dem-Clf-N split — `mandarin_bare_licensed`, `mandarin_anaphoric_licensed`, `mandarin_demonstrative_licensed`.
+- §3 Jenks's four-cell typology — `jenks_attested_distinct`, `mandarin_in_attested_cells`.
+- §4 Type-discipline note — Jenks p. 513 takes ι^x's index as type ⟨e,t⟩, departure from Schwarz 2009/2013's type ⟨e⟩; substrate's `NominalKind.anaphoric R d : ... × Nat` matches Schwarz, not Jenks. Recorded as deferred substrate gap with placeholder theorem.
+- §5 Bridging split applied to Mandarin — re-uses `Schwarz2009.bridging_subtypes_realize_both_presup_types`.
+- §6 Donkey requires Dem-Clf-N — re-uses `Schwarz2009.donkey_use_is_familiarity`.
+- §7 Index! as MP instance — `IndexCandidate` 2-bit carrier, `indexStrength`, `indexConstraint := mpConstraintOf 1 indexStrength`, two `decide`-checked theorems showing Index! prefers indexed when presupposition satisfied + neutral otherwise.
+- §8 Cross-Sinitic typology sketch — prose only (no Cantonese fragment); `mandarin_cell_distinct_from_generallyMarked` as the typology-level witness.
+
+**`Phenomena/Definiteness/Studies/Moroney2021.lean` §15** — refutation theorems added per chronology rule (refutation lives where refuter is anchored, not in Jenks2018.lean):
+
+- `jenksAttestedStrategies` enumerates the three cells Jenks 2018 §7 predicted.
+- `shan_strategy_not_jenks_attested` — Shan's `.unmarked` is not in the Jenks-attested set.
+- `moroney_shan_refutes_jenks_typology` — formal statement of the prose claim that opens this study file's docstring.
+
+`Linglib.lean` imports the new file (also pulls in `Studies/Schwarz2009.lean` transitively, fixing its prior orphan status).
+
+Bib + Lean cross-reference: all 7 cited keys (`jenks-2018`, `schwarz-2009`, `schwarz-2013`, `cheng-sybesma-1999`, `chierchia-1998`, `coppock-beaver-2015`, `hanink-2021`) already in `references.bib`.
+
+Build: 992 jobs green.
+
+### `Linglib/Fragments/Mandarin/{ClassifierSystem,Classifiers}.lean` — L&T 1981 anchor
+
+Same audit campaign also fixed the citations in the Mandarin classifier Fragment (separate target):
+- Added `li-thompson-1981` bib entry (verified against the PDF: ISBN 9780520042865, UC Press, Berkeley).
+- ClassifierSystem.lean docstring + `source` field + per-field comments now cite L&T 1981 §4.2.1 pp. 104–112 as the per-language empirical anchor (Aikhenvald 2000 retained for the typological schema).
+- Recorded substrate gap: L&T explicitly note classifier-noun pairings have lexical residue ("must be memorized, though there is a slight amount of regularity") — substrate's `AssignmentPrinciple` enum has `.semantic` and `.mixed` (semantic + morphophonological overlay), neither perfectly fits Mandarin's semantic + lexical-conventional overlay. Kept `.semantic` with explanatory comment.
+- Removed the unverified `§4, §11.2.3` Aikhenvald page references from the prior `source` string.
+
 ## [0.230.527] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.9 — mathlib-discipline cleanup pass (mathlib-reviewer findings)

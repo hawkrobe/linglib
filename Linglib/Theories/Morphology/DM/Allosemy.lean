@@ -325,7 +325,7 @@ def VoiceAlloseme.toFlavor : VoiceAlloseme → VoiceFlavor
     the non-θ expletive maps to a non-θ flavor. -/
 theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
     a.assignsTheta = (VoiceHead.assignsTheta
-      { flavor := a.toFlavor, hasD := true, phaseHead := true }) := by
+      { flavor := a.toFlavor, hasD := true }) := by
   cases a <;> rfl
 
 -- ════════════════════════════════════════════════════

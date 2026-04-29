@@ -107,11 +107,7 @@ theorem voiceAgent_pylkkanen_yes_collins_no :
     assign. -/
 theorem voicePassive_collins_yes_pylkkanen_no :
     IsSmugglingProjection voicePassive ∧ ¬ IsExternalArgIntroducer voicePassive := by
-  refine ⟨rfl, ?_⟩
-  unfold IsExternalArgIntroducer
-  rw [passive_no_theta]
-  intro h
-  cases h
+  decide
 
 /-- `voiceAnticausative` similarly fits the Collins view (smuggling
     target for the unaccusative-like derivation Storment uses for QI
@@ -119,11 +115,7 @@ theorem voicePassive_collins_yes_pylkkanen_no :
 theorem voiceAnticausative_collins_yes_pylkkanen_no :
     IsSmugglingProjection voiceAnticausative ∧
     ¬ IsExternalArgIntroducer voiceAnticausative := by
-  refine ⟨rfl, ?_⟩
-  unfold IsExternalArgIntroducer
-  rw [nonThematic_no_theta]
-  intro h
-  cases h
+  decide
 
 /-- The two views are not equivalent: there exist Voice heads
     distinguishing them (in fact, the canonical instances above all do). -/
@@ -166,9 +158,6 @@ theorem views_jointly_unsatisfiable_for_canonical_voices :
     ¬ (IsExternalArgIntroducer voiceAgent ∧ IsSmugglingProjection voiceAgent) ∧
     ¬ (IsExternalArgIntroducer voicePassive ∧ IsSmugglingProjection voicePassive) ∧
     ¬ (IsExternalArgIntroducer voiceAnticausative ∧ IsSmugglingProjection voiceAnticausative) := by
-  refine ⟨?_, ?_, ?_⟩
-  · exact fun ⟨_, h⟩ => absurd h (by unfold IsSmugglingProjection; rw [agentive_blocks_smuggling]; decide)
-  · exact fun ⟨h, _⟩ => absurd h (by unfold IsExternalArgIntroducer; rw [passive_no_theta]; decide)
-  · exact fun ⟨h, _⟩ => absurd h (by unfold IsExternalArgIntroducer; rw [nonThematic_no_theta]; decide)
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Minimalist

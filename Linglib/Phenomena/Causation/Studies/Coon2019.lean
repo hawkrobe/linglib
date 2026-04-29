@@ -157,7 +157,7 @@ open Minimalist
 /-- Active transitive v/Voice⁰ (Ø): introduces overt agent in Spec,VoiceP,
     assigns ergative case, phase head (v*). -/
 def vØ : VoiceHead :=
-  { flavor := .agentive, hasD := true, phaseHead := true }
+  { flavor := .agentive, hasD := true }
 
 /-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
     Spec,VoiceP but assigns absolutive (not ergative) case (p. 54).
@@ -168,14 +168,14 @@ def vØ : VoiceHead :=
     both introduce an agent and assign absolutive, differing only in
     overt (-w) vs null morphological realization. -/
 def v_w : VoiceHead :=
-  { flavor := .agentive, hasD := true, phaseHead := false }
+  { flavor := .agentive, hasD := true, phaseOverride := some false }
 
 /-- Passive v/Voice⁰ (-ch): assigns θ-role to an implicit (existentially
     bound) external argument (p. 68–69). Agent-oriented adverbs and
     by-phrases are licensed, confirming semantic presence of agent.
     Only combines with √TV roots. -/
 def v_ch : VoiceHead :=
-  { flavor := .agentive, hasD := false, phaseHead := false }
+  { flavor := .agentive, hasD := false, phaseOverride := some false }
 
 /-- Agentless passive v/Voice⁰ (-j): verbalizes stem but introduces
     no external argument — neither overt nor implicit (p. 70:
@@ -184,7 +184,7 @@ def v_ch : VoiceHead :=
     Used with √TV (agentless passive) and non-transitive roots
     (inchoative/stative readings). -/
 def v_j : VoiceHead :=
-  { flavor := .nonThematic, hasD := false, phaseHead := false }
+  { flavor := .nonThematic, hasD := false }
 
 -- ════════════════════════════════════════════════════
 -- § 4. Event Decomposition

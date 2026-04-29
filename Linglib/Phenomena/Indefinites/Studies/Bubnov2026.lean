@@ -321,60 +321,67 @@ theorem irgend_compatible_classifications :
 -- the gap from the fundamental incompatibility of constancy and variation.
 
 -- ============================================================================
--- §11. Cross-framework divergence (and consilience) theorems
+-- §11. Encoding-level disagreement theorems (extensional Finset inequalities)
 -- ============================================================================
--- Per CLAUDE.md ("the comparison goes in the chronologically-later paper's
--- study file"), Bubnov 2026 is the natural home for theorems comparing
--- Bubnov's analysis against the earlier published encodings (D&A 2025;
--- Haspelmath 1997 polarity-side as represented in
--- `Phenomena/Polarity/Studies/Haspelmath1997.lean`).
+-- Three decide-checked theorems pinning published encoding disagreements at
+-- theorem level. Earlier framing of these as "cross-framework divergence"
+-- was overstated: the kto-to and irgend- theorems are within-D&A-framework
+-- consistency/interpretation checks; only the some- theorem genuinely
+-- contrasts two different theoretical approaches. They each do something
+-- real but the something differs per theorem; the docstrings below say what.
 --
--- These theorems supersede the prose at lines 100-112 of
--- `Phenomena/Polarity/Studies/Haspelmath1997.lean`, which had argued the
--- disagreement was "value-level visible but not predictive enough to merit
--- a theorem." It IS theorem-worthy: the encodings are extensionally distinct
--- on shared paradigm cells, and the disagreement is decidable.
+-- Per CLAUDE.md ("the comparison goes in the chronologically-later paper's
+-- study file"), Bubnov 2026 is the natural home for the kto-to and irgend-
+-- theorems (Bubnov critiques the prior D&A encoding for kto-to and discusses
+-- irgend- diachronically in §6). The some- theorem is here for co-location;
+-- it could equally live inside DeganoAloni2025.lean since neither paper
+-- explicitly cites the Haspelmath-side English some- encoding.
 
 open Phenomena.Polarity.Studies.Haspelmath1997 in
-/-- **Russian *kto-to* encoding divergence.** The Fragment encoding (this
-    paper, Bubnov 2026 §7: paradigmatic competition narrows *kto-to* to
-    SU only) and the Polarity-side encoding (D&A 2025 Table 2: *kto-to*
-    is type-iv epistemic, profile {SU, NS}) are extensionally distinct on
-    the SK/SU/NS triangle.
+/-- **Russian *kto-to*: within-D&A interpretive disagreement.** Both encodings
+    apply D&A 2025's classification, but reach different `functions` sets:
+    the Polarity-side file (`Polarity/Studies/Haspelmath1997.lean:226`)
+    encodes the bare D&A type-iv profile {SU, irrealis}; the Fragment
+    (`Fragments/Slavic/Russian/Indefinites.lean:54`) encodes Bubnov 2026
+    §7's narrowing argument {SU} only, since *-nibud'* paradigmatically
+    blocks *-to* from the irrealis function.
 
-    This is *not* a bug in either encoding — it's two published analyses
-    of the same paradigm cell. The disagreement source: D&A read the
-    profile theoretically (semantic permission); Bubnov reads it
-    distributionally (actual attested coverage net of competition). -/
+    The disagreement is not cross-framework but *interpretive within D&A*:
+    apply the bare type-iv profile, or apply it net of paradigmatic
+    competition. Both are defensible readings of D&A's framework. -/
 theorem fragment_polarity_disagree_on_kto_to :
     russian.forms[1]?.map (·.functions) ≠
     some Fragments.Slavic.Russian.Indefinites.toEntry.functions := by decide
 
 open Phenomena.Polarity.Studies.Haspelmath1997 in
-/-- **English *some-* encoding divergence.** The Fragment encoding (D&A
-    type-i unmarked: SK ∪ SU ∪ NS) and the Polarity-side encoding
-    (Haspelmath polarity-view: *some-* covers SK + SU only, with *any-*
-    owning the NPI/irrealis territory) disagree extensionally.
+/-- **English *some-*: genuine cross-framework disagreement.** The Fragment
+    (`Fragments/English/Indefinites.lean:27`) encodes *some-* as D&A type-i
+    unmarked, profile {SK, SU, irrealis} — *some-* covers everything D&A's
+    type-i permits. The Polarity-side file
+    (`Polarity/Studies/Haspelmath1997.lean:175`) encodes *some-* with
+    Haspelmath's competition-among-forms approach: *some-* covers {SK, SU}
+    only because *any-* takes the irrealis-through-indirectNeg territory.
 
-    Same disagreement source as the Russian case: D&A's classification
-    treats *some-* as covering its full theoretical profile; the polarity-
-    side analysis cuts at the *some-*/*any-* boundary, where *any-* is
-    the elsewhere form. -/
+    This is the strongest of the three §11 theorems: it contrasts D&A's
+    "one type per form, full coverage" methodology against Haspelmath's
+    "one form per function, paradigm-internal division" methodology.
+    The contrast is methodological, not just data-interpretation. -/
 theorem fragment_polarity_disagree_on_some :
     english.forms[0]?.map (·.functions) ≠
     some Fragments.English.Indefinites.someEntry.functions := by decide
 
-/-- **German *irgend-* / *irgendein-* cross-framework consilience.**
-    The indefinite-typology classification of *irgend-* (D&A type-iv
-    epistemic, profile {SU, NS}) and the modal-indefinite framework's
-    classification of *irgendein-* (Aloni-BSML lineage: epistemic flavor
-    in `flavors`) agree: both frameworks attribute epistemic semantics
-    to the same morphological root, via different theoretical apparatus.
+/-- **German *irgend-*/*irgendein-*: cross-framework consistency check.**
+    `Fragments/German/Indefinites.lean:33`'s `irgendEntry.functions` ({SU,
+    irrealis}, matching D&A type-iv epistemic) and `Fragments/German/
+    ModalIndefinites.lean:27`'s `irgendeinEntry.flavors` (which includes
+    `.epistemic`, matching Aloni-BSML's epistemic-modal classification) line
+    up: both attribute epistemic semantics to the same morphological root.
 
-    This is hidden agreement that the file moves alone do not surface.
-    Bubnov §6 discusses *irgend-* as a diachronic example; the cross-
-    framework consilience strengthens the case that the empirical content
-    is robust across formalisms. -/
+    This is a *consistency check across two formalizations*, not necessarily
+    a substantive cross-framework agreement: both Fragment authors knew
+    irgend- is canonically epistemic and encoded it accordingly. The theorem
+    is a regression test for that consistency — if either Fragment changes,
+    this breaks. Real value: catches drift between the two Fragments. -/
 theorem irgend_irgendein_agree_on_epistemic :
     Fragments.German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
     Fragments.German.ModalIndefinites.irgendeinEntry.flavors.contains .epistemic = true := by

@@ -330,7 +330,9 @@ Core's single `VoiceHead` type (@cite{kratzer-1996}, @cite{schaefer-2008}).
 - v_ACT (introduces agent) → agentive Voice flavor
 - v_PASS (no θ) → passive Voice flavor
 - VoiceP is ALWAYS a phase in E&S's system, diverging from Core's
-  `phase_iff_theta` (only θ-assigning Voice is a phase head)
+  flavor-default tabulation in which passive Voice is non-phasal
+  (@cite{collins-2005}, @cite{chomsky-2001}). This divergence is captured
+  by the `malayic_passive_phase_diverges` theorem below.
 
 The phase divergence is theoretically significant: E&S need VoiceP to be
 a phase in ALL clause types to trigger cyclic linearization at VoiceP
@@ -347,14 +349,16 @@ def vFlavorToCore : LittleVFlavor → Minimalist.VoiceFlavor
   | .pass => .passive
 
 /-- Map each Malayic clause type to its Core VoiceHead equivalent.
-    phaseHead is always true, following E&S's claim that VoiceP is
-    universally a phase. This DIVERGES from Core where passive
-    Voice is not a phase head (@cite{chomsky-2001}, @cite{collins-2005}). -/
+    Active and object-extraction Voice are agentive (flavor-default phasal).
+    `di-`passive and bare passive use `phaseOverride := some true` to express
+    E&S 2025's claim that VoiceP is universally a phase, diverging from the
+    Core default for passive Voice (@cite{chomsky-2001}, @cite{collins-2005},
+    encoded in `VoiceFlavor.defaultPhasal`). -/
 def clauseToVoiceHead : VoiceConstruction → Minimalist.VoiceHead
-  | .active          => { flavor := .agentive, hasD := true, phaseHead := true }
-  | .diPassive       => { flavor := .passive,  hasD := true, phaseHead := true }
-  | .barePassive     => { flavor := .passive,  hasD := true, phaseHead := true }
-  | .objectExtraction => { flavor := .agentive, hasD := true, phaseHead := true }
+  | .active          => { flavor := .agentive, hasD := true }
+  | .diPassive       => { flavor := .passive,  hasD := true, phaseOverride := some true }
+  | .barePassive     => { flavor := .passive,  hasD := true, phaseOverride := some true }
+  | .objectExtraction => { flavor := .agentive, hasD := true }
 
 /-- The VoiceFlavor component is consistent with the v-flavor mapping. -/
 theorem voice_flavor_consistent (ct : VoiceConstruction) :

@@ -1,7 +1,11 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Definiteness
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
 import Linglib.Theories.Syntax.Minimalist.Phase
@@ -47,7 +51,7 @@ equally regardless of verb class — hence no VOC effect.
 
 namespace ShenHuang2026
 
-open Core.Verbs
+open Semantics.Verb
 open Features.Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 
@@ -204,7 +208,7 @@ theorem combined_matches_results :
 /-- The sources of the definite nominal island constraint.
 
 Derived from two independent theoretical mechanisms:
-- `.syntactic`: definite DPs are phases (`isDPhaseHead` in Phase.lean),
+- `.syntactic`: definite DPs are phases (`isPhaseHeadOf .D` in Phase.lean),
   so the PIC applies to extraction across definite DP boundaries.
   Grounded by §13: `voc_removes_pic_barrier` / `nonvoc_preserves_pic_barrier`.
 - `.semantic`: definite DPs are specific (`blocked` in SpecificityCondition.lean),
@@ -428,7 +432,7 @@ theorem see_is_not_voc : LevinClass.isVerbOfCreation .see = false := rfl
 crosslinguistic pattern.
 
 This is not stipulated — it follows from the conjunction of Phase Theory
-(`isDPhaseHead` → syntactic source) and the Specificity Condition
+(`isPhaseHeadOf .D` → syntactic source) and the Specificity Condition
 (`blocked` → semantic source). See `definiteNominalSources`. -/
 theorem definite_nominal_is_composite :
     definiteNominalSources = [.syntactic, .semantic] := rfl
@@ -691,8 +695,8 @@ open Minimalist in
 Without incorporation, a definite DP remains an active phase,
 and the PIC applies — the syntactic source is violated. -/
 theorem nonvoc_preserves_pic_barrier (dHead : SyntacticObject)
-    (h_phase : isDPhaseHead dHead = true) :
-    (DPPhaseStatus.mk dHead (isDPhaseHead dHead) false).isActivePhase = true := by
+    (h_phase : isPhaseHeadOf .D dHead = true) :
+    (DPPhaseStatus.mk dHead (isPhaseHeadOf .D dHead) false).isActivePhase = true := by
   simp [DPPhaseStatus.isActivePhase, h_phase]
 
 open Minimalist in
@@ -703,8 +707,8 @@ source is active.**
 - `incorporated = false` → PIC active → syntactic source violated
   (matches VOC-absent condition in `activeSources .movement false`) -/
 theorem incorporation_determines_syntactic_source (dHead : SyntacticObject)
-    (h_phase : isDPhaseHead dHead = true) (inc : Bool) :
-    (DPPhaseStatus.mk dHead (isDPhaseHead dHead) inc).isActivePhase = !inc := by
+    (h_phase : isPhaseHeadOf .D dHead = true) (inc : Bool) :
+    (DPPhaseStatus.mk dHead (isPhaseHeadOf .D dHead) inc).isActivePhase = !inc := by
   cases inc <;> simp [DPPhaseStatus.isActivePhase, h_phase]
 
 end ShenHuang2026

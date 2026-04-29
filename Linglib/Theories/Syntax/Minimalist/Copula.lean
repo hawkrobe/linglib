@@ -97,8 +97,8 @@ open Morphology.DM.VI in
 theorem copulaVI_agrees_vocabItem (v : VoiceHead) :
     vocabularyInsertSimple copulaVIRules v =
     some (if copulaVI v = .have then "have" else "be") := by
-  cases v with | mk flavor hasD phaseHead checksCase features =>
-  cases flavor <;> cases hasD <;> cases phaseHead <;> cases checksCase <;>
+  cases v with | mk flavor hasD _ checksCase features =>
+  cases flavor <;> cases hasD <;> cases checksCase <;>
   simp [copulaVI, copulaVIRules, vocabularyInsertSimple, vocabularyInsert,
     VocabItem.matches, List.mergeSort, List.findSome?]
 
@@ -125,7 +125,7 @@ theorem vi_passive_be : copulaVI voicePassive = .be := rfl
 theorem vi_characterization (v : VoiceHead) :
     copulaVI v = .have ↔
     (v.hasD = true ∧ v.flavor ≠ .nonThematic ∧ v.flavor ≠ .passive) := by
-  cases v with | mk flavor hasD phaseHead checksCase features =>
+  cases v with | mk flavor hasD _ checksCase _ =>
   cases flavor <;> cases hasD <;> simp [copulaVI]
 
 -- ════════════════════════════════════════════════════

@@ -4,8 +4,11 @@ import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Negation.Defs
 import Linglib.Fragments.Italian.ExpletiveNegation
-import Linglib.Phenomena.Negation.Typology
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.Negation
+import Linglib.Fragments.Italian.Negation
+import Linglib.Fragments.Spanish.Negation
+import Linglib.Fragments.French.Negation
+import Linglib.Typology.PolarityItem
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -51,7 +54,7 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 - `Core.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
 - `Fragments.Italian.ExpletiveNegation` — Italian Table 1 data
-- `Phenomena.Negation.Typology.NegationProfile.negIsHead` — head status
+- `Typology.Negation.NegationProfile.negIsHead` — head status
 - `Minimalist.fValue` / `isCPArea` — f-value classification
 
 ## Neg-Merge-Position Apparatus (relocated from `Minimalism/NegScope.lean`)
@@ -330,12 +333,19 @@ end Minimalist.NegScope
 
 namespace Greco2020
 
-open Minimalist (Cat fValue isPhaseHead isCPArea)
+open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
 open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 open Fragments.Italian.ExpletiveNegation (ENEnvironment)
-open Phenomena.Negation.Typology (NegationProfile italian spanish french)
+open Typology.Negation (NegationProfile)
+
+/-- Italian negation profile (re-exported from Fragments for local use). -/
+private abbrev italian : NegationProfile := Fragments.Italian.Negation.negationProfile
+/-- Spanish negation profile (re-exported from Fragments for local use). -/
+private abbrev spanish : NegationProfile := Fragments.Spanish.Negation.negationProfile
+/-- French negation profile (re-exported from Fragments for local use). -/
+private abbrev french : NegationProfile := Fragments.French.Negation.negationProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Greco's four factors for surprise negation

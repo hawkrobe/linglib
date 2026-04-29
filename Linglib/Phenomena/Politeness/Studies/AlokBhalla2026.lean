@@ -17,9 +17,9 @@ head (Fin or SA) and a null addressee DP.
 ## Connections
 
 - **Agree.lean**: AA validity reduces to `validAgree`
-- **Phase.lean**: `isSAPhaseHead` — SAP as the highest phase
-- **Questions/Typology.lean**: `sap_particles_not_in_quasi_sub` — SAP
-  unembeddability parallels allocutive root-only restriction
+- **Phase.lean**: `isPhaseHeadOf .SA` — SAP as the highest phase
+- **Questions/Studies/BhattDayal2020.lean**: `sap_particles_not_in_quasi_sub`
+  — SAP unembeddability parallels allocutive root-only restriction
 - **RSA/YoonEtAl2020**: Social utility (φ weighting) is the pragmatic analogue
   of syntactic [iHON] — both encode social relations between discourse
   participants
@@ -190,9 +190,9 @@ theorem hon_agree_values (level : HonLevel) :
       = some [.valued (.hon level)] := by
   cases level <;> native_decide
 
-/-- Bridge to Phenomena/Questions/Typology: SAP unembeddability parallels
-    `sap_particles_not_in_quasi_sub`. Both follow from SAP being the
-    speech-act layer that does not embed.
+/-- Bridge to Phenomena/Questions/Studies/BhattDayal2020: SAP unembeddability
+    parallels `sap_particles_not_in_quasi_sub`. Both follow from SAP being
+    the speech-act layer that does not embed.
 
     Connection: SA-based allocutive markers (particles) pattern with
     SAP-layer question particles — neither appears in quasi-subordination.

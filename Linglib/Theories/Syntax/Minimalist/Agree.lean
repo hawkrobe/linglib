@@ -289,10 +289,6 @@ def hasEPP (fb : FeatureBundle) : Bool :=
     | .unvalued (.epp true) => true
     | _ => false
 
-/-- Movement is triggered when probe has EPP -/
-def agreeTriggersMoveement (probeFeats : FeatureBundle) : Bool :=
-  hasEPP probeFeats
-
 /-- T-to-C movement is triggered by [uQ] + [EPP] on C
 
     In matrix questions:

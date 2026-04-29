@@ -451,13 +451,13 @@ theorem arity_template_invariant (cr : CategorizedRoot) (rl : RootLabel)
     the functional structure above VP. -/
 theorem causer_template_assigns_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYYaZ,
-                                hasD := true, phaseHead := true }
+                                hasD := true }
     voice.assignsTheta = true := rfl
 
 /-- Basic active template maps to agentive Voice, also theta-assigning. -/
 theorem active_template_assigns_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .XaYaZ,
-                                hasD := true, phaseHead := true }
+                                hasD := true }
     voice.assignsTheta = true := rfl
 
 /-- Passive templates do NOT assign theta — the external argument is
@@ -466,7 +466,7 @@ theorem active_template_assigns_theta :
     verbalized root suppresses the l-selected P. -/
 theorem passive_template_no_theta :
     let voice : VoiceHead := { flavor := SemiticTemplate.toVoiceFlavor .huXYaZ,
-                                hasD := true, phaseHead := false }
+                                hasD := true }
     voice.assignsTheta = false := rfl
 
 /-- XaYaZ and XaYYaZ differ in their Voice contribution: XaYaZ maps
@@ -513,8 +513,7 @@ def SemiticTemplate.isTheta : SemiticTemplate → Bool
 
 /-- `isTheta` agrees with `VoiceHead.assignsTheta` for all templates. -/
 theorem isTheta_matches_assignsTheta (t : SemiticTemplate) :
-    let voice : VoiceHead := { flavor := t.toVoiceFlavor,
-                                hasD := true, phaseHead := t.isTheta }
+    let voice : VoiceHead := { flavor := t.toVoiceFlavor, hasD := true }
     voice.assignsTheta = t.isTheta := by
   cases t <;> rfl
 
@@ -664,12 +663,12 @@ theorem low_appl_unconditional (v : VoiceHead) :
 
 -- ── Template-level definitions ───────────────────────────────────────
 
-/-- Construct a canonical VoiceHead from a template. `hasD` and
-    `phaseHead` are set to match the template's θ properties;
-    only `flavor` matters for applicative licensing (via
-    `hasSemantics`). -/
+/-- Construct a canonical VoiceHead from a template. `hasD` is set to match
+    the template's θ properties; phasehood follows the flavor default
+    (which agrees with `t.isTheta` for all currently-defined templates).
+    Only `flavor` matters for applicative licensing (via `hasSemantics`). -/
 def SemiticTemplate.toVoiceHead (t : SemiticTemplate) : VoiceHead :=
-  { flavor := t.toVoiceFlavor, hasD := t.isTheta, phaseHead := t.isTheta }
+  { flavor := t.toVoiceFlavor, hasD := t.isTheta }
 
 /-- Does this template license a given applicative type?
     Composes `licensedWith ∘ toVoiceHead`. -/
