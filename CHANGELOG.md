@@ -4,6 +4,86 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.522] - 2026-04-28
+
+### `FragmentLambda.lean` v2.7 — `PYM.Preserves` combinator algebra; `pypDraw_preserves_wellFormed` discharged
+
+Adds an elegant mathlib-shaped algebra for proving state-property preservation through `PYM` (= `StateT _ PMF`) computations, then uses it to discharge `pypDraw_preserves_wellFormed` (was sorry-marked since `0.230.519`). `seatCustomer_wellFormed` also discharged via a `seatCustomer` refactor to use `List.set` (whose `mem_or_eq_of_mem_set` lemma exists in Lean core, vs `List.modify` whose membership lemma doesn't).
+
+**`seatCustomer` refactor**: was `⟨s.dishes, s.customerCounts.modify i (· + 1)⟩`; now `⟨s.dishes, s.customerCounts.set i ((s.customerCounts[i]?.getD 0) + 1)⟩`. Behavior preserved (in-bounds increments by 1; out-of-bounds is no-op since `List.set` is no-op out-of-bounds). `seatCustomer_wellFormed` now proves in 8 lines via `List.mem_or_eq_of_mem_set` + `omega` (the new value is `+1` so always positive; original elements positive by hypothesis).
+
+**`PYM.Preserves` combinator algebra** (~80 LOC): `PYM.Preserves P m := ∀ init, P init → ∀ p ∈ (m init).support, P p.2`. Seven closure lemmas, each ~5-10 LOC, each unfolds one StateT primitive once and applies one `PMF.support` lemma:
+
+- `_pure (a : γ) : Preserves P (pure a)` — state unchanged
+- `_bind (h_m : Preserves P m) (h_f : ∀ a, Preserves P (f a)) : Preserves P (m >>= f)` — composition
+- `_get : Preserves P get` — reads state, doesn't change
+- `_liftBase (q : PMF γ) : Preserves P (PYM.liftBase q)` — PMF doesn't touch state
+- `_modify (h_f : ∀ s, P s → P (f s)) : Preserves P (modify f)` — state transform that preserves P
+- `_dite` (dependent if) and `_ite` (non-dependent) — both branches preserve
+- `_mapM (h_f : ∀ a, Preserves P (f a)) (l : List γ) : Preserves P (l.mapM f)` — by induction using `List.mapM_nil`/`List.mapM_cons`
+
+Uses only mathlib's existing `PMF.support_pure`, `PMF.support_bind`, `PMF.mem_support_pure_iff`, `PMF.mem_support_bind_iff` plus StateT primitives' `rfl`-unfoldings. No new substrate definitions.
+
+**`pypDraw_preserves_wellFormed` discharged** via mechanical composition: `_bind _get` for the outer `let st ← get`; `_bind (_liftBase _)` for the `let choice ← liftBase normalize`; `_dite` for the `if hi : choice.val < K`; in each branch `_bind (_modify ...) (fun _ => _pure _)` with the modify's preservation discharged by `PYPState.updateSlot_wellFormed` + (`seatCustomer_wellFormed` or `addTable_wellFormed`); the new-table branch's first `bind` uses `h_base` directly (it IS `Preserves WellFormed (base x)` after currying). ~25 LOC of `refine ... ?_; intro ...` chain.
+
+**`fragmentLambdaDepth_preserves_wellFormed` STILL sorry'd** but with detailed sketch. Depth induction structure is clear (depth 0 via `_pure`; depth k+1 via `pypDraw_preserves` + IH for non-terminal children); the obstacle is Lean elaboration of the inline `do`-block in the recursive body — `show`/`change` against the structurally-recursive def's body has unification trouble. Two paths documented: (a) factor inner body as named auxiliary; (b) use `unfold`/`change` more aggressively to expose desugared bind chain. ~30-50 LOC of mechanical work given the algebra is in place.
+
+**`slotToFinpartition` docstring updated** to reflect that `pypDraw_preserves_wellFormed` is now proved.
+
+**Status**: 2 sorries remain (down from 4 at `0.230.519`). Next iteration target: `fragmentLambdaDepth_preserves_wellFormed`. The `fragmentLambdaDepth_marginalises_to_fg` general-soundness sorry remains as the documented out-of-scope target (depth-→-∞ + probabilistic-fixed-point machinery, mathlib-level work).
+
+Build: 2721 jobs green.
+
+## [0.230.521] - 2026-04-28
+
+### `Studies/Haslinger2025.lean` — non-Haslinger content moved out by attribution
+
+PDF audit of the dissertation against the consolidated file (0.230.520) revealed that ~430 LOC of the file's content was bundled by accident of the prior `Phenomena/Imprecision/` directory shape, not by anchor on Haslinger 2025. The non-Haslinger material is now relocated to its true anchor papers; the file's remaining ~770 LOC is genuine Haslinger Ch 3-4 + Ch 6-7 content.
+
+**New study files** (each Studies-pattern self-contained, with `EmbeddingOperator` enum copied where needed since the rest of the codebase doesn't yet have a canonical version):
+
+- `Phenomena/Plurals/Studies/KrizChemla2015.lean` — `ProjectionDatum` cluster (every/no/exactlyTwo trivalent-judgment projection patterns) + `EmbeddedTruthConditions` cluster, anchored on @cite{kriz-chemla-2015} Experiments C1-C3.
+- `Phenomena/Plurals/Studies/AugurzkyEtAl2023.lean` — `QUDManipulationDatum` cluster (every/no/notEvery × strict/lax QUD acceptance) + `NoNotEveryAsymmetryDatum`, anchored on @cite{augurzky-etal-2023} Experiments 1-2. The `noNotEveryAsymmetry.explanation` field was rewritten: the original gave Bar-Lev-2021 exhaustification logic as if it were Augurzky's or Haslinger's account; the new version states the empirical pattern only and cites both rival explanations (@cite{bar-lev-2021} exhaustification, @cite{haslinger-2025-diss} §3.6.2 Magri effects) as future-work targets.
+- `Phenomena/Imprecision/Studies/SoltWaldon2019.lean` — `NegationConstraintDatum` + `sheepNegation`, anchored on @cite{solt-waldon-2019} Glossa 4(1).
+
+**Append to existing**:
+
+- `Phenomena/Plurals/Studies/Kriz2016.lean` — `RestrictorScopeDatum` + `pluralInRestrictor`/`pluralInScope`, anchored on @cite{kriz-2016}.
+
+**Deleted from `Studies/Haslinger2025.lean`** (genuinely dead/redundant):
+
+- `GranularityDatum` + `granularityExample` — Krifka 2007 example trivially derivable from `Core/Scales/Roundness.lean` + `Theories/Semantics/Numerals/Precision.lean`.
+- `TimeExpressionDatum` + `arriveAt3`/`arriveAt258` — Haslinger attributes the time-expression observation to Solt 2023 manuscript; bib entry pending, content not load-bearing for any current consumer.
+- `MarkednessData` cluster (`pluralAllMarkedness`, `bareNumeralMarkedness`) — formaliser-imposed Horn-tradition framing; Haslinger uses **structural complexity**, not "markedness." The complexity correlation it recorded is already captured by `ComplexityPrecisionPair`.
+- `mannerPrediction1` ("no lexical item adds imprecision to precise base") — formaliser-invented universal not endorsed by Haslinger, who engages @cite{lasersohn-1999}'s slack regulators extensively (12+ cites in the dissertation) without prohibiting them.
+- Entire `Projection` sub-namespace (309 lines) — content moved to KrizChemla2015 / AugurzkyEtAl2023 / Kriz2016 per anchor.
+
+**File-level docstring updated** to reflect the three remaining sub-namespaces (`Numerals`, `FormMeaning`, `InferencePreservation`) and to list the OUT-moves with their new homes.
+
+**Linglib.lean** import block updated: 3 new imports, 0 removed.
+
+Net LOC change in Haslinger2025.lean: 1097 → 770 (-327 LOC, -30%). New files total ~310 LOC. The PDF-audit's substantive verification fixes (every-resolution as Q∀+ONE portmanteau per §3.4.1; fourDoors mechanism as numeral-indefinite alternative per §7.2.3 eq. 11-16; `truthConditionallyEquivalent` → `potentiallyPEquivalent` per def (68); `ninetyNineBlocked.inferenceRelation` softened from `.contradicts`) are partially landed in 0.230.520 docstring and partially still in flight; deferred until the OUT-moves stabilize.
+
+Build: 2772 jobs green for the touched files. (Pre-existing Charlow2021 build failure from another session's WIP is unrelated.)
+
+## [0.230.520] - 2026-04-28
+
+### `Phenomena/Imprecision/` consolidated into `Studies/Haslinger2025.lean`
+
+Four-agent audit on `Phenomena/Imprecision/FormMeaning.lean` (2026-04-28) found that all five top-level files in the directory (`Basic.lean`, `FormMeaning.lean`, `Numerals.lean`, `Projection.lean`, `InferencePreservation.lean`, ~1654 LOC) trace their entire empirical taxonomy and analytical vocabulary ("No Needless Manner Violations", "Inference Preservation") to a single source: Nina Haslinger's dissertation @cite{haslinger-2025-diss} (Göttingen 2025, doi:10.53846/goediss-11395). `Basic.lean` cited her openly; the four sibling files silently stripped attribution. Per the per-paper-anchoring convention in `CLAUDE.md`, the right home is one consolidated `Studies/AuthorYear.lean` file mirroring `Plurals/Studies/HaslingerEtAl2025.lean`.
+
+**This commit**: created `Phenomena/Imprecision/Studies/Haslinger2025.lean` (~1100 LOC, namespace `Phenomena.Imprecision.Studies.Haslinger2025` with four sub-namespaces `Numerals` / `FormMeaning` / `Projection` / `InferencePreservation` preserving original symbol paths). All data structures and instances kept verbatim. `git rm` on the five top-level files. `Linglib.lean` import block trimmed from 5 lines to 1. Two prose breadcrumbs (`Quantification/Basic.lean`, `Plurals/Studies/HaslingerEtAl2025.lean`) repointed to the new path. Dead `import Phenomena.Imprecision.Numerals` + `open` removed from `Studies/EgreEtAl2023.lean` (no symbol references).
+
+**Citation discipline fixes**: every `Source: dissertation (N)` replaced with `@cite{haslinger-2025-diss} -- UNVERIFIED: ex. (N)` per CLAUDE.md's flag-for-human-review convention on equation/example numbers. Misattributed `@cite{horn-1984}` removed from `MarkednessData` docstring (Horn's R/Q predicts marked = atypical, not marked = precise).
+
+**Dead code dropped**: `ComplexityRelation` and `PrecisionRelation` enums (never referenced anywhere); `FormMeaningGeneralizations` 5-Bool aggregator; `phenomenaSummary` re-stipulated counts; export blocks (no external symbol-level consumers exist).
+
+**Renames** (collision avoidance under one namespace): three former `mainGeneralizations` → `Numerals.generalizations` / `FormMeaning` (deleted) / `Projection.generalizations` / `InferencePreservation.generalizations`. Two former `predictions` → `FormMeaning.mannerPredictions` / `InferencePreservation.ipPredictions`. `prediction1/2/3/4` → `mannerPrediction*` / `ipPrediction*`.
+
+**Audit concerns documented as future work in module docstring**: TC-equivalence claims for "completely blue" disputed under degree semantics (Kennedy-McNally 2005, Burnett 2017); `noImprecisionAdders` universal challenged by Lasersohn 1999 slack regulators; "every covert complexity" hand-wave conflicts with same author's NLLT paper (`Theories/Semantics/Quantification/UnifiedUniversal.lean`); all `Bool := true` fields are stipulations awaiting a `Decidable`-predicate refactor over Fragment-typed forms; existing `Theories/Pragmatics/Implicature/Markedness.lean` + `GriceanMaxims.lean` + `Bidirectional.lean` + `Numerals/Precision.lean` infrastructure not yet consumed.
+
+Build: 5607 jobs green. Net LOC change ~ -1654 + 1100 = -554. Fragment-grounding pass and Bool-to-theorem refactor are downstream tasks.
+
 ## [0.230.519] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.6 — `WellFormed` invariant scaffolding

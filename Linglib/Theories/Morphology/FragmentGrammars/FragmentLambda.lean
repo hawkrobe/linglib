@@ -114,10 +114,16 @@ variable {D : Type}
 @[simp] def numTables (s : PYPSlot D) : ℕ := s.dishes.length
 
 /-- Seat one more customer at the existing table indexed by `i`.
-Out-of-range indices leave the slot unchanged (the public API never
-constructs them). -/
+Out-of-range indices leave the slot unchanged (`List.set` is a no-op
+for out-of-bounds indices, and `getD 0 + 1 = 1` falls back to seating
+a customer at a fresh single-element entry — but the `set` no-op means
+the new entry is dropped, leaving customerCounts unchanged).
+
+Implemented via `List.set` rather than `List.modify` because mathlib
+has a developed membership API for the former (`List.mem_or_eq_of_mem_set`)
+that lets us prove `seatCustomer_wellFormed` directly. -/
 def seatCustomer (s : PYPSlot D) (i : ℕ) : PYPSlot D :=
-  { s with customerCounts := s.customerCounts.modify i (· + 1) }
+  ⟨s.dishes, s.customerCounts.set i ((s.customerCounts[i]?.getD 0) + 1)⟩
 
 /-- Open a fresh table with dish `v` and one initial customer. -/
 def addTable (s : PYPSlot D) (v : D) : PYPSlot D :=
@@ -155,26 +161,21 @@ theorem addTable_wellFormed {s : PYPSlot D} (h : s.WellFormed) (v : D) :
   · exact h c hc
   · exact Nat.one_pos
 
-/-- `seatCustomer` preserves wellformedness: incrementing one customer
-count by 1 keeps all counts positive — original counts unchanged or
-increased by 1, both positive given the input invariant.
-
-**Status: sorry**. The proof requires walking `List.modify`'s
-behavior. In Lean 4 mathlib, `List.modify n f l` unfolds to
-`l.modifyTailIdx n (List.modifyHead f)`, and there is no direct
-`mem_modify` membership lemma. A clean proof would either:
-
-1. Prove a helper `List.mem_modify_iff : c ∈ l.modify n f ↔
-   ((c ∈ l ∧ ∀ b, l[n]? = some b → f b ≠ c) ∨
-   (∃ b, l[n]? = some b ∧ c = f b))` by induction on the
-   `modifyTailIdx`/`modifyHead` chain, OR
-2. Replace `seatCustomer`'s use of `modify` with `List.set`, which
-   has a more developed mathlib API (`List.mem_set_iff`).
-
-Both paths are non-trivial. Deferred. -/
+/-- `seatCustomer` preserves wellformedness: each element of the
+resulting `customerCounts` is either an unchanged original (positive
+by `h`) or the newly-set value `(s.customerCounts[i]?.getD 0) + 1`
+(at least 1 since `getD 0 ≥ 0`). -/
 theorem seatCustomer_wellFormed {s : PYPSlot D} (h : s.WellFormed) (i : ℕ) :
     (s.seatCustomer i).WellFormed := by
-  sorry
+  intro c hc
+  -- (s.seatCustomer i).customerCounts = s.customerCounts.set i (newValue)
+  -- where newValue = (s.customerCounts[i]?.getD 0) + 1
+  show 0 < c
+  rcases List.mem_or_eq_of_mem_set hc with h_orig | h_eq
+  · exact h c h_orig
+  · -- c = (s.customerCounts[i]?.getD 0) + 1 ≥ 0 + 1 = 1 > 0
+    rw [h_eq]
+    omega
 
 end PYPSlot
 
@@ -260,6 +261,104 @@ variable {α D γ : Type}
 /-- Lift a state-free PMF sample into PYM. -/
 noncomputable def liftBase (p : PMF γ) : PYM α D γ :=
   fun st => p.bind (fun v => PMF.pure (v, st))
+
+/-! ### `Preserves` algebra: state-property preservation through PYM combinators
+
+A small algebra for proving that a `PYM` computation preserves a state-level
+predicate `P : PYPState α D → Prop`. Closure laws under `pure`, `bind`,
+`get`, `liftBase`, `modify`, `dite`, `mapM` let arbitrary `PYM` computations
+built from these primitives discharge preservation mechanically.
+
+Used in `pypDraw_preserves_wellFormed` and
+`fragmentLambdaDepth_preserves_wellFormed` to discharge the WellFormed
+invariant chain. The algebra is general (not tied to WellFormed); promoted
+to `Linglib/Core/Probability/PYM.lean` once a second consumer needs it. -/
+
+/-- A PYM computation **preserves** a state-property `P` if every output
+state with positive probability satisfies `P`, given the input state does. -/
+def Preserves (P : PYPState α D → Prop) (m : PYM α D γ) : Prop :=
+  ∀ init, P init → ∀ p ∈ (m init).support, P p.2
+
+namespace Preserves
+
+variable {P : PYPState α D → Prop}
+
+/-- `pure a` doesn't change state, so trivially preserves. -/
+theorem _pure (a : γ) : Preserves P (pure a : PYM α D γ) := by
+  intro init h_init p hp
+  rw [show (pure a : PYM α D γ) init = PMF.pure (a, init) from rfl,
+      PMF.mem_support_pure_iff] at hp
+  rw [hp]
+  exact h_init
+
+/-- `bind` preserves if both halves do. -/
+theorem _bind {γ' : Type} {m : PYM α D γ} {f : γ → PYM α D γ'}
+    (h_m : Preserves P m) (h_f : ∀ a, Preserves P (f a)) :
+    Preserves P (m >>= f) := by
+  intro init h_init p hp
+  rw [show (m >>= f : PYM α D γ') init = (m init).bind (fun as => f as.1 as.2) from rfl,
+      PMF.mem_support_bind_iff] at hp
+  obtain ⟨⟨a, s⟩, hs, hp⟩ := hp
+  exact h_f a s (h_m init h_init (a, s) hs) p hp
+
+/-- `get` reads state without changing it; preserves trivially. -/
+theorem _get : Preserves P (get : PYM α D (PYPState α D)) := by
+  intro init h_init p hp
+  rw [show (get : PYM α D (PYPState α D)) init = PMF.pure (init, init) from rfl,
+      PMF.mem_support_pure_iff] at hp
+  rw [hp]
+  exact h_init
+
+/-- `liftBase` doesn't change state (the PMF runs over its own values, state
+threads through unchanged); preserves. -/
+theorem _liftBase (q : PMF γ) : Preserves P (PYM.liftBase q : PYM α D γ) := by
+  intro init h_init p hp
+  unfold liftBase at hp
+  rw [PMF.mem_support_bind_iff] at hp
+  obtain ⟨v, _, hv⟩ := hp
+  rw [PMF.mem_support_pure_iff] at hv
+  rw [hv]
+  exact h_init
+
+/-- `modify f` preserves `P` if `f` does. -/
+theorem _modify {f : PYPState α D → PYPState α D} (h_f : ∀ s, P s → P (f s)) :
+    Preserves P (modify f : PYM α D Unit) := by
+  intro init h_init p hp
+  rw [show (modify f : PYM α D Unit) init = PMF.pure ((), f init) from rfl,
+      PMF.mem_support_pure_iff] at hp
+  rw [hp]
+  exact h_f init h_init
+
+/-- Dependent `if-then-else` preserves if both branches do. -/
+theorem _dite {c : Prop} [Decidable c]
+    {m₁ : c → PYM α D γ} {m₂ : ¬c → PYM α D γ}
+    (h₁ : ∀ hc, Preserves P (m₁ hc)) (h₂ : ∀ hc, Preserves P (m₂ hc)) :
+    Preserves P (if hc : c then m₁ hc else m₂ hc) := by
+  intro init h_init p hp
+  by_cases hc : c
+  · simp [hc] at hp; exact h₁ hc init h_init p hp
+  · simp [hc] at hp; exact h₂ hc init h_init p hp
+
+/-- Non-dependent `if-then-else` preserves if both branches do. -/
+theorem _ite {c : Prop} [Decidable c] {m₁ m₂ : PYM α D γ}
+    (h₁ : Preserves P m₁) (h₂ : Preserves P m₂) :
+    Preserves P (if c then m₁ else m₂) := by
+  intro init h_init p hp
+  by_cases hc : c
+  · simp [hc] at hp; exact h₁ init h_init p hp
+  · simp [hc] at hp; exact h₂ init h_init p hp
+
+/-- `List.mapM` over a preserves-respecting body preserves `P`. -/
+theorem _mapM {γ' : Type} {f : γ → PYM α D γ'}
+    (h_f : ∀ a, Preserves P (f a)) (l : List γ) :
+    Preserves P (l.mapM f) := by
+  induction l with
+  | nil => rw [List.mapM_nil]; exact _pure _
+  | cons a l' ih =>
+    rw [List.mapM_cons]
+    exact _bind (h_f a) (fun b => _bind ih (fun _ => _pure _))
+
+end Preserves
 
 end PYM
 
@@ -517,17 +616,45 @@ Combined with `PYPState.updateSlot_wellFormed`, both branches yield a
 wellformed state. The PMF support is contained in the union of these
 branches' images, so all output states are wellformed.
 
-**Status: sorry**. The proof requires (a) `seatCustomer_wellFormed`
-which is itself sorry-marked (List.modify membership), and
-(b) reasoning about PMF support through `bind` and the if-then-else
-structure of `pypDraw`. The statement is the contract; the proof
-requires the upstream slot lemma + PMF-support machinery. -/
+**Status: sorry**. As of `0.230.519`'s seatCustomer-discharge iteration,
+the slot-level lemmas (`seatCustomer_wellFormed`, `addTable_wellFormed`)
+are real proofs. The remaining obstacle is PMF.support reasoning through
+the do-block: `pypDraw` is a chain of binds, and the support of a bind
+is `{b | ∃ a ∈ p.support, b ∈ (f a).support}` (`PMF.mem_support_bind_iff`).
+Proving the result via this chain is mechanical (~50-100 LOC) but
+requires patient manipulation of `PMF.support_pure`, `support_bind`,
+support of `PMF.normalizeOfFintype`, etc. -/
 theorem pypDraw_preserves_wellFormed {α D : Type} [DecidableEq α] [Inhabited D]
     (base : α → PYM α D D) (x : α) (init : PYPState α D)
     (h_init : init.WellFormed)
     (h_base : ∀ y init', init'.WellFormed → ∀ p ∈ (base y init').support, p.2.WellFormed)
     : ∀ p ∈ (pypDraw base x init).support, p.2.WellFormed := by
-  sorry
+  -- Compose the `PYM.Preserves` combinator algebra: get + liftBase don't
+  -- change state; the dite splits on `choice.val < K`; both branches end
+  -- with modify (preserving via slot lemmas) + pure.
+  have h_pre : PYM.Preserves PYPState.WellFormed (pypDraw base x) := by
+    unfold pypDraw
+    refine PYM.Preserves._bind PYM.Preserves._get ?_; intro st
+    refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro choice
+    refine PYM.Preserves._dite ?_ ?_
+    · -- existing-table branch
+      intro _
+      refine PYM.Preserves._bind (PYM.Preserves._modify ?_) (fun _ => PYM.Preserves._pure _)
+      intro s h_s
+      exact PYPState.updateSlot_wellFormed h_s
+        (PYPSlot.seatCustomer_wellFormed (h_s x) _)
+    · -- new-table branch
+      intro _
+      refine PYM.Preserves._bind ?_ ?_
+      · -- base x preserves wellformedness — `h_base` specialised at x
+        intro init' h_init' p' hp'
+        exact h_base x init' h_init' p' hp'
+      · intro dish
+        refine PYM.Preserves._bind (PYM.Preserves._modify ?_) (fun _ => PYM.Preserves._pure _)
+        intro s h_s
+        exact PYPState.updateSlot_wellFormed h_s
+          (PYPSlot.addTable_wellFormed (h_s x) _)
+  exact h_pre init h_init
 
 /-- `fragmentLambdaDepth` preserves `PYPState.WellFormed`: every state in
 the support of the output PMF is wellformed, given a wellformed input
@@ -551,6 +678,33 @@ theorem fragmentLambdaDepth_preserves_wellFormed
     (h_init : init.WellFormed) :
     ∀ p ∈ (fragmentLambdaDepth recurse recurseProb recurseProb_le n start init).support,
       p.2.WellFormed := by
+  -- Inductive proof structure (sketch):
+  --   suffices h_pre : ∀ k start',
+  --       PYM.Preserves PYPState.WellFormed
+  --         (fragmentLambdaDepth recurse recurseProb recurseProb_le k start')
+  --     from h_pre n start init h_init
+  --   induction k with
+  --   | zero => exact PYM.Preserves._pure _   -- depth 0 = pure (.fragment x)
+  --   | succ k ih =>
+  --     -- depth k+1 = pypDraw (inner_body)
+  --     -- Apply pypDraw_preserves_wellFormed with h_base = inner_body preservation:
+  --     --   PYM.Preserves._bind (PYM.Preserves._liftBase ...) (fun coin =>
+  --     --     PYM.Preserves._ite (then-branch combinators using ih) (PYM.Preserves._pure _))
+  --
+  -- Status: sorry. The combinator algebra (PYM.Preserves with _pure, _bind,
+  -- _get, _liftBase, _modify, _dite, _ite, _mapM) is fully proved and used
+  -- successfully to discharge `pypDraw_preserves_wellFormed`. Applying the
+  -- same algebra to fragmentLambdaDepth via depth induction runs into
+  -- Lean elaboration issues with the inline do-block in the recursive
+  -- body — the `show` statement's lambda doesn't readily elaborate against
+  -- the structurally-recursive def. Two paths to resolve:
+  -- (a) Factor the inner body of fragmentLambdaDepth out as a named
+  --     auxiliary `fragmentLambdaInnerBody`, then apply combinators to it
+  --     directly without the elaboration friction;
+  -- (b) Use `change`/`unfold` more aggressively to expose the do-block's
+  --     desugared bind chain, then peel off bindings without `show`.
+  -- Either path is ~30-50 LOC of mechanical work given the algebra is in
+  -- place. Deferred to next iteration.
   sorry
 
 /-! ## Halt-count extraction from samples -/
@@ -654,12 +808,11 @@ suitable for `AdaptorGrammar.TableAssignment`. Three branches:
    back to `OrderedFinpartition.atomic`. This branch is *unreachable*
    under the sampler's invariant (`pypDraw`'s `addTable` initialises
    counts to `1`, `seatCustomer` increments). The `WellFormed` predicate
-   on `PYPSlot` and `PYPState` (defined in this file) and the preservation
-   theorems `pypDraw_preserves_wellFormed` and
-   `fragmentLambdaDepth_preserves_wellFormed` (statement-only, with proofs
-   sorry'd pending `seatCustomer_wellFormed`'s `List.modify` membership
-   lemma and PMF-support reasoning) capture this invariant. When those
-   sorries are discharged, this branch can be eliminated by taking
+   on `PYPSlot` and `PYPState` and the preservation theorems
+   `pypDraw_preserves_wellFormed` (proved via `PYM.Preserves` combinator
+   algebra) and `fragmentLambdaDepth_preserves_wellFormed` (induction
+   sorry'd, sketch in docstring) capture this invariant. When the
+   depth-induction is discharged, this branch can be eliminated by taking
    `(_ : init.WellFormed)` as a hypothesis to `slotToFinpartition` and
    discharging the unreachable case via `absurd`.
 
