@@ -1,6 +1,7 @@
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
+import Mathlib.Combinatorics.Enumerative.Composition
 import Mathlib.Combinatorics.Enumerative.Partition.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Order.Partition.Finpartition
@@ -287,6 +288,81 @@ theorem extendMiddle_toNatPartition {n : ℕ} (c : OrderedFinpartition n)
       Multiset.map_erase_of_mem c.partSize _ hk_mem]
 
 end OrderedFinpartition
+
+namespace Composition
+
+/-- Convert a `Composition n` (mathlib's "list of positive integers summing to
+`n`" view) into the corresponding `OrderedFinpartition n` whose `i`-th block
+embeds to the consecutive interval `[c.sizeUpTo i, c.sizeUpTo (i + 1))` of
+`Fin n`.
+
+Bridges mathlib's two combinatorial views: `Composition n` carries clean
+list-of-sizes data (used wherever a per-input size profile arises); the
+`OrderedFinpartition` view exposes per-element membership embeddings (needed
+by `OrderedFinpartition.toNatPartition` to project to `Nat.Partition n`,
+which is what Pitman's EPPF formula consumes — see `partitionProb`).
+
+The realization uses mathlib's `Composition.embedding : Fin (c.blocksFun i)
+↪o Fin n` directly for the `emb` field. Disjointness and coverage follow
+from `mem_range_embedding_iff` plus the interval characterization
+`range (embedding i) = [sizeUpTo i, sizeUpTo (i+1))`. -/
+def toOrderedFinpartition {n : ℕ} (c : Composition n) : OrderedFinpartition n where
+  length := c.length
+  partSize := c.blocksFun
+  partSize_pos m := c.blocks_pos' m.val m.isLt
+  emb m := c.embedding m
+  emb_strictMono m := (c.embedding m).strictMono
+  parts_strictMono := by
+    -- m ↦ emb m ⟨partSize m - 1, _⟩ = sizeUpTo m + (blocksFun m - 1) = sizeUpTo (m+1) - 1
+    -- For m1 < m2: sizeUpTo (m1+1) ≤ sizeUpTo m2 < sizeUpTo (m2+1), so distinct
+    intro m1 m2 hm
+    have h1 : (c.embedding m1 ⟨c.blocksFun m1 - 1,
+                Nat.sub_one_lt_of_lt (c.blocks_pos' m1.val m1.isLt)⟩ : ℕ)
+              = c.sizeUpTo m1.val + (c.blocksFun m1 - 1) :=
+      c.coe_embedding m1 _
+    have h2 : (c.embedding m2 ⟨c.blocksFun m2 - 1,
+                Nat.sub_one_lt_of_lt (c.blocks_pos' m2.val m2.isLt)⟩ : ℕ)
+              = c.sizeUpTo m2.val + (c.blocksFun m2 - 1) :=
+      c.coe_embedding m2 _
+    rw [Fin.lt_iff_val_lt_val, h1, h2]
+    -- sizeUpTo m1 + (blocksFun m1 - 1) < sizeUpTo m2 + (blocksFun m2 - 1)
+    -- sizeUpTo m1 + blocksFun m1 = sizeUpTo (m1.val + 1)
+    have h3 : c.sizeUpTo m1.val + c.blocksFun m1 = c.sizeUpTo (m1.val + 1) :=
+      (c.sizeUpTo_succ m1.isLt).symm
+    -- sizeUpTo (m1.val + 1) ≤ sizeUpTo m2.val (mono since m1.val + 1 ≤ m2.val)
+    have h4 : c.sizeUpTo (m1.val + 1) ≤ c.sizeUpTo m2.val := by
+      apply List.monotone_sum_take c.blocks
+      omega
+    have h5 : 0 < c.blocksFun m1 := c.blocks_pos' m1.val m1.isLt
+    have h6 : 0 < c.blocksFun m2 := c.blocks_pos' m2.val m2.isLt
+    omega
+  disjoint := by
+    -- Different blocks have disjoint range in Fin n.
+    intro m1 _ m2 _ hm
+    show Disjoint (Set.range (c.embedding m1)) (Set.range (c.embedding m2))
+    rw [Set.disjoint_left]
+    intro j hj1 hj2
+    rw [c.mem_range_embedding_iff] at hj1 hj2
+    -- hj1 : sizeUpTo m1 ≤ j < sizeUpTo (m1+1)
+    -- hj2 : sizeUpTo m2 ≤ j < sizeUpTo (m2+1)
+    -- Sizes monotone with positive blocks: cannot both hold for m1 ≠ m2
+    obtain ⟨h1, h2⟩ := hj1
+    obtain ⟨h3, h4⟩ := hj2
+    -- WLOG m1 < m2 or m2 < m1. By trichotomy.
+    -- Normalise `.succ` ↔ `+ 1` so omega sees `sizeUpTo` applied to one form only.
+    simp only [Nat.succ_eq_add_one] at h2 h4
+    rcases lt_or_gt_of_ne hm with hlt | hlt
+    · have hmono : c.sizeUpTo (m1.val + 1) ≤ c.sizeUpTo m2.val :=
+        List.monotone_sum_take c.blocks (by omega)
+      omega
+    · have hmono : c.sizeUpTo (m2.val + 1) ≤ c.sizeUpTo m1.val :=
+        List.monotone_sum_take c.blocks (by omega)
+      omega
+  cover x := ⟨c.index x, by
+    rw [c.mem_range_embedding_iff]
+    exact ⟨c.sizeUpTo_index_le x, c.lt_sizeUpTo_index_succ x⟩⟩
+
+end Composition
 
 namespace ProbabilityTheory
 

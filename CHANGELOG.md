@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.514] - 2026-04-28
+
+### `Composition.toOrderedFinpartition` — bridges mathlib's two combinatorial views
+
+Lean substrate function added to `Linglib/Core/Probability/PitmanYor.lean`: converts a `Composition n` (mathlib's "list of positive integers summing to `n`" view) into the corresponding `OrderedFinpartition n` (mathlib's "ordered partition with `Fin n` embeddings" view, defined in `Mathlib/Analysis/Calculus/ContDiff/FaaDiBruno.lean`).
+
+**Verified absent from mathlib.** Searched `Composition`/`OrderedFinpartition` files in `Mathlib/Combinatorics/Enumerative/` and `Mathlib/Analysis/Calculus/`: mathlib has `Composition.toCompositionAsSet`/`CompositionAsSet.toComposition` round-tripping the two `Composition` views, and `OrderedFinpartition.atomic`/`extendLeft`/`extendMiddle` for incremental construction, but no direct bridge `Composition n → OrderedFinpartition n`. Likely mathlib-promotable later (the construction is grammar-agnostic and uses only existing mathlib API: `Composition.embedding`, `Composition.index`, `Composition.sizeUpTo_index_le`, `Composition.lt_sizeUpTo_index_succ`, `Composition.mem_range_embedding_iff`, `Composition.coe_embedding`).
+
+**Placement.** Co-located with the existing `OrderedFinpartition` extensions in `PitmanYor.lean` (`OrderedFinpartition.toNatPartition`, `extendLeft_toNatPartition`, `extendMiddle_toNatPartition` already there for PYP usage). `PitmanYor.lean` gains one new mathlib import (`Mathlib.Combinatorics.Enumerative.Composition`).
+
+**Proofs.** `partSize_pos` from `c.blocks_pos'`; `emb := c.embedding m` (mathlib's order-preserving embedding); `emb_strictMono` from `OrderEmbedding.strictMono`; `parts_strictMono` from `coe_embedding` + `sizeUpTo_succ` + `List.monotone_sum_take`; `disjoint` from `mem_range_embedding_iff` (intervals `[sizeUpTo i, sizeUpTo (i+1))` for distinct `i` are disjoint via monotonicity); `cover` from `c.index x` + `sizeUpTo_index_le` + `lt_sizeUpTo_index_succ`. Discovered `omega` doesn't unify `(↑m1).succ` with `m1.val + 1` syntactically; `simp only [Nat.succ_eq_add_one]` normalises both forms before omega.
+
+**Why this is the next step toward finishing `FragmentLambda.lean`**: the file's current `slotToFinpartition` uses `OrderedFinpartition.atomic n` (each customer = own table), losing the slot's actual table-grouping information that `pypFactor` depends on. The next iteration uses `Composition.toOrderedFinpartition` to give the faithful partition — but requires either adding a `customerCounts_pos : ∀ c ∈ customerCounts, 0 < c` invariant to `PYPSlot` (with maintenance proofs through `addTable`/`seatCustomer` — the latter via `List.modify` which lacks mathlib membership lemmas) or special-casing the empty slot to preserve the depth-0 lemma's `from rfl` proof (`empty.toOrderedFinpartition` is *not* definitionally equal to `default = atomic 0` despite being unique up to `OrderedFinpartition`'s `@[ext]` lemma in `OrderedFinpartition 0`'s subsingleton-of-one inhabitant). Both paths are real work; this commit lands the foundation so the next iteration can focus on the integration without also building the primitive.
+
+Build: 1959 jobs green for `lake build Linglib.Core.Probability.PitmanYor`; 2721 jobs green for `lake build Linglib.Theories.Morphology.FragmentGrammars.FragmentLambda` (downstream consumer unchanged, no breakage).
+
 ## [0.230.513] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.2 — discharge sweep on the operational scaffold
