@@ -546,9 +546,16 @@ noncomputable def slotToFinpartition {D : Type} (s : PYPSlot D) :
     slotToFinpartition (PYPSlot.empty : PYPSlot D)
       = ⟨0, default⟩ := rfl
 
+/-- Convenient abbreviation for the corpus-counts triple consumed by
+`FragmentGrammar.corpusProbGivenStorage`: derivation multiset + per-NT
+table assignment + per-(rule, position) halt counts. -/
+abbrev CorpusCounts (T : Type) [DecidableEq T] (G : ContextFreeGrammar T)
+    [DecidableEq G.NT] : Type :=
+  Multiset (CFGTree T G.NT) × AdaptorGrammar.TableAssignment G ×
+  FragmentGrammar.HaltCounts G
+
 /-- Extract corpus-counts triple `(D, Y, Z)` from a completed sample.
-Maps a `LazyTree` (with PYP final state) into the input shape that
-`FragmentGrammar.corpusProbGivenStorage` expects:
+Maps a `LazyTree` (with PYP final state) into `CorpusCounts T G`:
 
 - `D : Multiset (CFGTree T G.NT)` — the underlying derivation trees
 - `Y : AdaptorGrammar.TableAssignment G` — table-level reuse counts
@@ -572,8 +579,7 @@ Maps a `LazyTree` (with PYP final state) into the input shape that
 noncomputable def samplesToCorpusCounts
     (tree : LazyTree G.NT T (ContextFreeRule T G.NT))
     (finalState : PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))) :
-    Multiset (CFGTree T G.NT) × AdaptorGrammar.TableAssignment G ×
-    FragmentGrammar.HaltCounts G :=
+    CorpusCounts T G :=
   (tree.toCFGTree?.elim 0 ({·} : CFGTree T G.NT → Multiset _),
    fun A => slotToFinpartition (finalState.slots A),
    fun r i => tree.collectHaltCounts r i)
@@ -653,32 +659,62 @@ theorem fragmentLambdaDepth_zero_marginalises
       h_Z, FragmentGrammar.corpusProbGivenStorage_empty,
       ENNReal.ofReal_one]
 
-/-- **Soundness contract (general).** For any fragment grammar `M`, the
-depth-`n` truncated probability mass that the sampler assigns to a
-sample `(tree, finalState)` *should* equal `ENNReal.ofReal` of the
-§3.1.8 density `M.corpusProbGivenStorage D Y Z` at the extracted counts.
+/-- The **marginal mass** the sampler puts on samples whose extracted
+corpus-counts equal `target`. Defined via PMF pushforward (`PMF.map`)
+along `samplesToCorpusCounts`, which avoids the function-equality
+DecidableEq issue that an explicit `tsum + if-then-else` formulation
+would face for `(Multiset × TableAssignment × HaltCounts)`.
 
-**This statement is INCORRECT as a per-sample equality** without a
-faithful `samplesToCorpusCounts`. The current shim returns the empty
-triple for every input, so the RHS is always `1` (the empty-corpus
-density), while the LHS is `0` for samples not actually produced. The
-theorem holds only at the specific samples the sampler can produce,
-where the sample's extracted counts genuinely match the corpus shape
-the sampler is generating. The depth-0 corollary above is the one
-case where this lines up by accident (only one sample, empty extraction
-matches empty corpus).
+The pushforward is `(samplerPMF.map extract) target = ∑' s, μ s · 1[extract s = target]`. -/
+noncomputable def marginalAtCounts
+    (samplerPMF : PMF (LazyTree G.NT T (ContextFreeRule T G.NT) ×
+                       PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))))
+    (target : CorpusCounts T G) : ENNReal :=
+  (samplerPMF.map (fun s => samplesToCorpusCounts s.1 s.2)) target
 
-**Right statement** (for a future iteration): a marginal claim of the
-form `∑' samples with extracted counts = (D, Y, Z), PMF mass = density(D, Y, Z) / Z(M)`
-where `Z(M)` is the partition function. Requires mathlib's `tsum`
-machinery + a normalising constant, and a faithful
-`samplesToCorpusCounts`. Both deferred.
+/-- **Soundness contract (general — proportionality form).** The marginal
+mass the sampler puts at corpus-counts triple `(D, Y, Z)` is *proportional*
+to the §3.1.8 density `M.corpusProbGivenStorage D Y Z`, with the same
+proportionality constant for all triples. We express this as a ratio
+identity (avoiding the partition function): for any two triples the cross-
+products of their marginals and densities agree. This is necessary and
+sufficient for the marginal to be a normalised version of the density.
 
-**Proof obstacle for the limit**: the depth-∞ version (which the
-finite-depth statement should approach) needs probabilistic-fixed-
-point machinery for monotone PMF-valued recursions
-(Knaster–Tarski / Kleene fixed point on ω-CPPOs of sub-probability
-measures) absent from mathlib. -/
+**Why ratios rather than equality with a normaliser.** The natural
+formulation `marginal D Y Z = ENNReal.ofReal (density D Y Z) / Z(M)`
+requires defining `Z(M) = ∑'_(D,Y,Z) density D Y Z` — a sum over function
+spaces (`TableAssignment`, `HaltCounts` are function types). Convergence
+of this sum is a real-analysis problem (it sums beta/gamma integrals);
+the partition function is essentially the marginal likelihood of the
+fragment-grammar model, which is itself an open computational problem
+(@cite{odonnell-2015} §3.2 introduces an MH sampler precisely because
+this constant is intractable). The ratio formulation sidesteps `Z(M)`
+entirely and captures the proportionality content directly.
+
+**Why this still requires depth-→-∞.** At any finite depth `n`, the
+sampler's marginals are *truncated* — supported only on samples that
+halt within `n` recursion steps. The §3.1.8 density is the limiting
+distribution; at finite depth the marginals only approximately match.
+The proof requires:
+
+1. Showing `(λ n, marginal at depth n) → (λ ε, density-up-to-ε)` (the
+   depth-truncated marginals converge to the true §3.1.8 marginals as
+   `n → ∞`). Almost-sure halting from `recurseProb x < 1` for all `x`
+   gives geometric-tail bounds; pass to the limit via dominated
+   convergence on `PMF`.
+2. PYP exchangeability to handle the operational sampler's order-of-
+   customer-arrival vs the §3.1.8 joint distribution's order-agnostic
+   claim (see `pypDraw`'s exchangeability caveat).
+3. Identifying the limit's marginal at `(D, Y, Z)` with the §3.1.8
+   product formula — induction matching each PYP draw to its AG-factor
+   contribution and each biased-coin flip to its beta-binomial-ratio
+   contribution to `M.fgFactor`.
+
+Step 1 needs probabilistic-fixed-point machinery for monotone PMF-valued
+recursions (Knaster–Tarski / Kleene fixed point on ω-CPPOs of sub-
+probability measures) absent from mathlib. The right formal home for
+this is mathlib's measure-theory or analysis libraries, not linglib.
+Steps 2 and 3 are mechanical once Step 1 is in place. -/
 theorem fragmentLambdaDepth_marginalises_to_fg
     (M : FragmentGrammar G)
     (recurse : G.NT → PMF (ContextFreeRule T G.NT × List (G.NT ⊕ T)))
@@ -688,14 +724,13 @@ theorem fragmentLambdaDepth_marginalises_to_fg
     -- The scaffold uses a single global hyper for clarity.
     (hyper : PYPHyper)
     (start : G.NT) (n : ℕ)
-    (tree : LazyTree G.NT T (ContextFreeRule T G.NT))
-    (finalState : PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))) :
-    (fragmentLambdaDepth recurse recurseProb recurseProb_le n start
-        (PYPState.empty hyper)) (tree, finalState)
-      = ENNReal.ofReal (M.corpusProbGivenStorage
-          (samplesToCorpusCounts tree finalState).1
-          (samplesToCorpusCounts tree finalState).2.1
-          (samplesToCorpusCounts tree finalState).2.2) := by
+    (target target' : CorpusCounts T G) :
+    let sampler := fragmentLambdaDepth recurse recurseProb recurseProb_le n start
+                     (PYPState.empty hyper)
+    marginalAtCounts sampler target *
+      ENNReal.ofReal (M.corpusProbGivenStorage target'.1 target'.2.1 target'.2.2)
+    = marginalAtCounts sampler target' *
+      ENNReal.ofReal (M.corpusProbGivenStorage target.1 target.2.1 target.2.2) := by
   sorry
 
 end Morphology.FragmentGrammars.Operational

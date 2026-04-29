@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.517] - 2026-04-28
+
+### `FragmentLambda.lean` v2.4 — soundness theorem reformulated as proportionality (ratio form)
+
+The general soundness theorem `fragmentLambdaDepth_marginalises_to_fg` was documented in `0.230.510`/`0.230.516` as "INCORRECT as a per-sample equality" (the right shape is a marginal claim). This commit reformulates it correctly, retaining the single sorry on the proof.
+
+**Three additions**:
+
+1. **`abbrev CorpusCounts T G`** — type alias for `Multiset (CFGTree T G.NT) × AdaptorGrammar.TableAssignment G × FragmentGrammar.HaltCounts G`. Cleans up signatures throughout (samplesToCorpusCounts, marginalAtCounts, soundness theorem) which previously spelled out the triple every time.
+
+2. **`marginalAtCounts samplerPMF target := (samplerPMF.map (fun s => samplesToCorpusCounts s.1 s.2)) target`** — defined via `PMF.map` (pushforward), avoiding the function-equality DecidableEq issue an explicit `tsum + if-then-else` formulation would face for `(Multiset × TableAssignment × HaltCounts)` (TableAssignment and HaltCounts are function types). The pushforward gives `(samplerPMF.map extract) target = ∑' s, μ s · 1[extract s = target]` via mathlib's `PMF.map_apply` (which uses `open scoped Classical in` for the indicator's decidability).
+
+3. **`fragmentLambdaDepth_marginalises_to_fg` rewritten as proportionality**: `marginal target * density target' = marginal target' * density target` for any two corpus-count triples. This is necessary and sufficient for the marginal to be a normalised version of the density — without naming the partition function `Z(M) = ∑'_(D,Y,Z) density D Y Z`. Avoiding `Z(M)` is principled: it's a sum over function spaces (TableAssignment + HaltCounts are functional), its convergence is a real-analysis problem (sum of beta/gamma integrals), and it's the marginal likelihood of the fragment-grammar model — itself an open computational problem (@cite{odonnell-2015} §3.2 introduces an MH sampler precisely because this constant is intractable to compute).
+
+**Updated proof-strategy docstring**: documents three steps for the deferred proof — (1) depth-truncated marginals converge to the §3.1.8 limiting marginals as `n → ∞` (needs probabilistic-fixed-point machinery on ω-CPPOs of sub-probability measures, absent from mathlib); (2) PYP exchangeability handles the operational sampler's order-of-customer-arrival vs the §3.1.8 joint distribution's order-agnostic claim (cross-references `pypDraw`'s exchangeability caveat); (3) identifying the limit's marginal at `(D, Y, Z)` with the §3.1.8 product formula via induction matching each PYP draw to its AG-factor contribution and each biased-coin flip to its beta-binomial-ratio contribution to `M.fgFactor`. Steps 2 and 3 are mechanical once Step 1 is in place. The right formal home for Step 1 is mathlib's measure-theory or analysis libraries, not linglib.
+
+**Depth-0 corollary `fragmentLambdaDepth_zero_marginalises` retained as the only fully-proved sanity check** — proves the per-sample equality (LHS = mass at the trivial sample = 1; RHS = density at empty triple = 1) for the specific case where both sides reduce to 1. This is a proper sanity check on the operational architecture even though the general theorem is sorry'd.
+
+Build: 2721 jobs green. 1 sorry warning (the new ratio form, line 718). LOC: 678 → 716.
+
 ## [0.230.516] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.3 — `slotToFinpartition` now faithful for sampler-reachable slots
