@@ -1461,7 +1461,7 @@ import Linglib.Phenomena.Negation.Studies.Stakov2026
 import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Morphology.Studies.AlbrightHayes2003
-import Linglib.Phenomena.Morphology.Studies.ODonnell2015Derivational
+import Linglib.Phenomena.Morphology.Studies.ODonnell2015
 import Linglib.Phenomena.Morphology.Studies.Bybee1985
 import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 import Linglib.Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
@@ -2375,10 +2375,12 @@ import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Reference.Reciprocals
+import Linglib.Theories.Semantics.Reference.Acquaintance
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Dynamic
 import Linglib.Theories.Semantics.Tense.LexicalType
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Before
+import Linglib.Theories.Semantics.Tense.DeRe
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.VonStechow2009
 import Linglib.Theories.Semantics.Tense.SOT.Decomposition

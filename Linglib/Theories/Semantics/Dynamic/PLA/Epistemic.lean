@@ -23,6 +23,7 @@ For de re/de dicto distinctions:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
+import Linglib.Core.IntensionalLogic.Rigidity
 
 namespace Semantics.Dynamic.PLA
 
@@ -234,15 +235,19 @@ theorem might_iff_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
 /--
 A concept is a way of identifying entities across possibilities.
 
-In the simplest case, a concept is a function from (g, ê) pairs to entities.
+PLA-specific instance of `Core.Intension`: the index is an
+`(Assignment E × WitnessSeq E)` pair (a PLA possibility), and the value
+is an entity. This is the entity-side counterpart of Abusch 1997's
+`Intension (KContext W E P T) T` time-concept (`Theories/Semantics/Tense/DeRe.lean`).
 -/
-abbrev Concept (E : Type*) := (Assignment E × WitnessSeq E) → E
+abbrev Concept (E : Type*) := Core.Intension (Assignment E × WitnessSeq E) E
 
 /--
 A rigid concept identifies the same entity in all possibilities.
+Alias for `Core.Intension.IsRigid` at the PLA index.
 -/
-def Concept.isRigid (c : Concept E) : Prop :=
-  ∀ p q, c p = c q
+abbrev Concept.isRigid (c : Concept E) : Prop :=
+  Core.Intension.IsRigid c
 
 /--
 A descriptive concept may identify different entities.
@@ -252,11 +257,13 @@ def Concept.isDescriptive (c : Concept E) : Prop :=
 
 /--
 Constant concept: always refers to the same entity (proper names).
+Alias for `Core.Intension.rigid` at the PLA index.
 -/
-def Concept.const (e : E) : Concept E := λ _ => e
+abbrev Concept.const (e : E) : Concept E := Core.Intension.rigid e
 
 omit [Nonempty E] in
-theorem const_is_rigid (e : E) : (Concept.const e).isRigid := λ _ _ => rfl
+theorem const_is_rigid (e : E) : (Concept.const e).isRigid :=
+  Core.Intension.rigid_isRigid e
 
 /--
 Variable concept: looks up a variable in the assignment.

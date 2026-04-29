@@ -30,6 +30,7 @@ Covers formalize "ways of thinking about" entities.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.PLA.Epistemic
+import Linglib.Theories.Semantics.Reference.Acquaintance
 
 namespace Semantics.Dynamic.PLA
 
@@ -139,15 +140,20 @@ A Conceptual Cover is a set of concepts (ways of identifying entities).
 
 In Aloni's framework, a cover represents the "ways of thinking" available
 to an agent or in a context.
+
+This is the PLA-indexed instance of the polymorphic
+`Semantics.Reference.Acquaintance.Cover` substrate (`Acquaintance.Cover (Poss E) E`).
+The two are definitionally equal — `Cover E` is the PLA-side name.
 -/
 abbrev Cover (E : Type*) := Set (Concept E)
 
 /--
-A cover is exhaustive if every entity in the domain is picked out
-by some concept in the cover (at every possibility).
+A cover is exhaustive if every entity is picked out by some concept in
+the cover (at every possibility). PLA-specific universal-domain wrapper
+around `Acquaintance.Cover.isExhaustiveOn _ Set.univ`.
 -/
 def Cover.isExhaustive (C : Cover E) : Prop :=
-  ∀ (p : Poss E) (e : E), ∃ c ∈ C, c p = e
+  Semantics.Reference.Acquaintance.Cover.isExhaustiveOn C Set.univ
 
 /--
 The name cover: rigid concepts for each entity.
@@ -173,7 +179,7 @@ theorem nameCover_exhaustive (dom : Set E) (_hne : dom.Nonempty) :
   constructor
   · simp only [nameCover, Set.mem_setOf_eq]
     exact ⟨e, he, rfl⟩
-  · simp only [Concept.const]
+  · rfl
 
 /--
 All concepts in the name cover are rigid.
@@ -559,10 +565,13 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
 Acquaintance requirement (Russell): De re belief requires acquaintance.
 
 You can only have de re beliefs about entities you're "acquainted with"
-(entities in your conceptual cover).
+(entities in your conceptual cover). PLA-side wrapper around
+`Acquaintance.isAcquaintedWith` — the agent parameter is unused at the
+predicate level (the cover already encodes the agent's perspective) and
+preserved for backward compat with PLA-internal call sites.
 -/
 def isAcquaintedWith (_agent : E) (individual : E) (C : Cover E) (p : Poss E) : Prop :=
-  ∃ c ∈ C, c p = individual
+  Semantics.Reference.Acquaintance.isAcquaintedWith individual C p
 
 /--
 De re belief presupposes acquaintance (relative to a cover).

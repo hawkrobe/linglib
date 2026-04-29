@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.550] - 2026-04-29
+
+### Abusch 1997 temporal de re: substrate cleanup + centered-world rebuild
+
+Random-file audit landed on `Theories/Semantics/Tense/DeRe/Defs.lean` (63 lines). Four-agent audit (semantics expert, cross-framework reconciler, integration auditor, mathlib reviewer) converged: the `TemporalDeRe Time` structure (3 fields: `referent`, `evalTime`, `constraint : GramTense` + `isFelicitous`) was a verbatim re-stipulation of `Core.Time.Tense.TensePronoun.fullPresupposition` and erased everything Abusch 1997 actually argues for (acquaintance relation `R : eeiwt` from def. 13, centered worlds `⟨x_self, t_now, w⟩` from §3, base-world condition from p. 9).
+
+PDF read of @cite{abusch-1997} pages 1-15 confirmed: the substrate's "captures the *output* of res-movement" framing under-claimed the gap (the output IS the time-concept + base anchoring, not a back-shifted frame with a tense label).
+
+**Cleanup phase**:
+- Deleted `Theories/Semantics/Tense/DeRe/Defs.lean` and the `DeRe/` subdirectory entirely.
+- Rewrote the one consumer (`Phenomena/TenseAspect/Studies/Abusch1997.lean::abusch_derives_temporal_de_re`) against `TensePronoun.fullPresupposition`.
+- Fixed stale path comment in `Phenomena/TenseAspect/Studies/HeimKratzer1998.lean:368`.
+- Removed import from `Linglib.lean:2382`.
+
+**Substrate rebuild phase** (post pre-implementation reuse audit on the rebuild plan — three additional agents found the original plan was about to massively reinvent existing infrastructure; scope dropped from ~370 LOC new + 50 LOC refactor → ~130 LOC new + 30 LOC refactor):
+- **NEW** `Theories/Semantics/Reference/Acquaintance.lean` (74 LOC): polymorphic `Cover Idx Res := Set (Intension Idx Res)`, `Cover.isExhaustiveOn` (uses `Set.SurjOn`), `isAcquaintedWith` (uses `Set.image` membership), `nameCover` + `nameCover_rigid`/`nameCover_isExhaustiveOn`/`nameCover_isAcquaintedWith_of_mem` lemmas. Built entirely on `Core.Intension W τ` (`Core/IntensionalLogic/Rigidity.lean`) — no parallel `Concept` type. Anchored on @cite{lewis-1979} + @cite{cresswell-vonstechow-1982} + @cite{aloni-2001} + @cite{abusch-1997}.
+- **NEW** `Theories/Semantics/Tense/DeRe.lean` (159 LOC, flat — no subdir): `TimeConcept (W E P T) := Intension (KContext W E P T) T`, `EntityConcept` dual, `TemporalDeReReading` structure (concept + matrixContext, `actualRes` derived, `baseCoherent` true by construction), `isFelicitousWith` predicate, `isFelicitousWith_iff_tensePronoun_fullPresupposition` value-level shadow lemma bridging to the existing `TensePronoun` machinery, `TimeCover` + `isTemporallyAcquaintedWith` instantiating polymorphic `Acquaintance`. Anchored on the centered-world de re framework (Lewis 1979 + C&vS 1982 + Abusch 1997), not on Abusch alone.
+- **REFACTOR** `Theories/Semantics/Dynamic/PLA/Epistemic.lean`: `Concept E` becomes `abbrev` of `Core.Intension (Assignment E × WitnessSeq E) E`; `Concept.isRigid`/`Concept.const` become one-line `abbrev`s of `Intension.IsRigid`/`Intension.rigid`; `const_is_rigid` delegates to `Intension.rigid_isRigid`. Two-year-silent `Core.Intension` shadowing made visible.
+- **REFACTOR** `Theories/Semantics/Dynamic/PLA/Belief.lean`: `Cover.isExhaustive` body delegates to `Acquaintance.Cover.isExhaustiveOn _ Set.univ`; `isAcquaintedWith` body delegates to `Acquaintance.isAcquaintedWith` (the discarded `_agent` parameter retained for backward compat).
+- `Phenomena/TenseAspect/Studies/Abusch1997.lean` extended: added `abusch_derives_temporal_de_re_via_acquaintance` (centered-world derivation against `TemporalDeReReading`) and `pla_isAcquaintedWith_unifies_with_polymorphic` (provable by `Iff.rfl` — the structural unification is true by construction post-PLA migration). Module docstring updated to flag the two coexisting derivation styles (value-level shadow vs centered-world substrate) and the bridge lemma between them.
+
+**Bib**: added `cresswell-vonstechow-1982` (DOI `10.1007/BF00355585`, Linguistics and Philosophy 5.4:503-535).
+
+**Reuse hits the audits found** (would have been reinvented otherwise):
+- `Concept Idx Res` → `Core.Intension W τ` (already has `IsRigid`, `rigid`, Kripke necessity-of-identity)
+- `CenteredIndex W A T` (planned 3-field struct) → `Core.Context.KContext W E P T` (5-field Kaplanian, already cited by Tower.lean as the Abusch-unification anchor)
+- Custom `Cover.isExhaustive` predicate → mathlib's `Set.SurjOn`
+- Custom `isAcquaintedWith` ∃-form → mathlib's `Set.image` membership
+
+**Deferred follow-ups** (each a separately-scoped PR):
+- Modal-alternative quantification of time-concept rigidity over `Core.Modality.HistoricalAlternatives.actualHistoryBase` (Klecha 2016 substrate is in place; just needs wiring).
+- LF res-movement as a `Tree C W` rewrite operator.
+- Schlenker 2004 ↔ Abusch 1997 contrastive theorem (tower-temporalShift ↔ centered-world equivalence + double-access divergence).
+- FID sibling theorem (`FIDProfile` per-coordinate independence ↔ Abusch's individual/temporal de re parallel).
+- Stephenson 2007 PPT judge-parameter substrate (no sibling exists yet — substrate's `agent : A` field is the missing infrastructure).
+- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
+
 ### ODonnell2015.lean post-audit overhaul
 
 Four-agent audit on `Phenomena/Morphology/Studies/ODonnell2015Derivational.lean` (renamed → `ODonnell2015.lean`; YAGNI on the topic qualifier — escalate to subdirectory if/when an inflectional sibling lands). Linguistics-domain-expert verified citations against the actual O'Donnell 2015 PDF; mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler converged on the same hollow-theorem and integration-density complaints.

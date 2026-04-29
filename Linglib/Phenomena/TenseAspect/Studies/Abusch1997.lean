@@ -1,8 +1,11 @@
 import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Theories.Semantics.Tense.DeRe
+import Linglib.Theories.Semantics.Dynamic.PLA.Belief
 
 /-!
 # @cite{abusch-1997}: Sequence of Tense and Temporal de re
 @cite{abusch-1997} @cite{sharvit-2003} @cite{heim-1994-comments}
+@cite{lewis-1979} @cite{cresswell-vonstechow-1982}
 
 @cite{abusch-1997}'s theory: tense morphemes are temporal pronouns
 (variables with presupposed constraints and binding modes). The key
@@ -10,15 +13,24 @@ innovation is **temporal de re**: tense can take wide scope over
 attitude operators via res movement, just as DPs can scope out of
 attitude complements.
 
-The value-level shadow of the de re reading (resolved time, eval time,
-constraint, felicity check) is `Core.Time.Tense.TensePronoun` +
-`TensePronoun.fullPresupposition`. The full Abusch substrate — an
-acquaintance relation `R : eeiwt` (paper def. 13), centered worlds
-`⟨x_self, t_now, w⟩` (§3), and the LF rewrite that scopes the tense
-above the attitude — is *not* in this file. A polymorphic
-`Theories/Semantics/Reference/Acquaintance.lean` factored out of
-`Theories/Semantics/Dynamic/PLA/Belief.lean` would be the proper home
-for it; that abstraction is deferred.
+Two derivation styles coexist in this file:
+
+1. **Value-level shadow** (`abusch_derives_*` against `TensePronoun.fullPresupposition`):
+   tense pronoun + `GramTense.constrains` + temporal assignment.
+   Captures Abusch's predictions at the value level without committing
+   to the centered-world architecture. Cheap, presupposition-free.
+
+2. **Centered-world substrate** (`abusch_derives_*_via_acquaintance`
+   against `Semantics.Tense.DeRe.TemporalDeReReading`):
+   `Intension (KContext) Time` time-concept + matrix-context base anchor.
+   The Abusch §3 + def. 13 architecture, faithful to the
+   @cite{lewis-1979} / @cite{cresswell-vonstechow-1982} centered-world
+   reduction of de re. The two styles are bridged by
+   `Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
+
+The full Abusch story still has deferred pieces — see `Tense/DeRe.lean`
+docstring for the LF rewrite, modal-alternative quantification over
+`actualHistoryBase`, and contrastive theorems against Schlenker 2004.
 
 ## Core Mechanisms
 
@@ -150,6 +162,52 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
     tp.fullPresupposition g := by
   simp only [TensePronoun.fullPresupposition, GramTense.constrains, hPast]
   exact hBefore
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Centered-World Substrate Derivations
+-- ════════════════════════════════════════════════════════════════
+
+/-- @cite{abusch-1997}'s temporal de re via the centered-world substrate
+    (`Theories/Semantics/Tense/DeRe.lean`). The time-concept is the rigid
+    intension at the actual past time (`Intension.rigid pastTime`); the
+    base-world condition (Abusch §3 p. 9) is satisfied by construction
+    (the rigid concept evaluates to `pastTime` at the matrix context, so
+    the actual res-time is `pastTime` and the past constraint holds. -/
+theorem abusch_derives_temporal_de_re_via_acquaintance
+    {W E P Time : Type*} [LinearOrder Time]
+    (matrixContext : Core.Context.KContext W E P Time)
+    (pastTime : Time)
+    (hBefore : pastTime < matrixContext.time) :
+    let dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time :=
+      ⟨Core.Intension.rigid pastTime, matrixContext⟩
+    dr.isFelicitousWith .past := by
+  simp only [Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith,
+    Semantics.Tense.DeRe.TemporalDeReReading.actualRes,
+    Core.Intension.rigid, GramTense.constrains]
+  exact hBefore
+
+/-- **PLA ↔ Abusch substrate unification**: PLA's `isAcquaintedWith`
+    (entity-side, individual de re) and the polymorphic
+    `Reference.Acquaintance.isAcquaintedWith` are the same predicate at
+    the PLA index `Idx := Assignment E × WitnessSeq E`, modulo PLA's
+    discarded `agent` parameter.
+
+    Provable by `Iff.rfl` because the PLA wrapper delegates to the
+    polymorphic version. The *content* of the theorem is structural —
+    it shows the de re reading PLA proves about *individuals* and the
+    de re reading `TemporalDeReReading` exposes for *times* are
+    instantiations of the same acquaintance substrate, making true the
+    individual ↔ temporal de re parallel @cite{abusch-1997} asserts in
+    prose at p. 6 ("To apply the same machinery to de re belief, a
+    further constraint is required..."). -/
+theorem pla_isAcquaintedWith_unifies_with_polymorphic
+    {E : Type*} (a individual : E)
+    (C : Semantics.Dynamic.PLA.Cover E)
+    (p : Semantics.Dynamic.PLA.Poss E) :
+    Semantics.Dynamic.PLA.isAcquaintedWith a individual C p ↔
+    Semantics.Reference.Acquaintance.isAcquaintedWith individual C p :=
+  Iff.rfl
 
 
 end Phenomena.TenseAspect.Studies.Abusch1997
