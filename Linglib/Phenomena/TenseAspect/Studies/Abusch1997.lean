@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Belief
 /-!
 # @cite{abusch-1997}: Sequence of Tense and Temporal de re
 @cite{abusch-1997} @cite{sharvit-2003} @cite{heim-1994-comments}
-@cite{lewis-1979} @cite{cresswell-vonstechow-1982}
+@cite{lewis-1979-attitudes} @cite{cresswell-vonstechow-1982}
 
 @cite{abusch-1997}'s theory: tense morphemes are temporal pronouns
 (variables with presupposed constraints and binding modes). The key
@@ -24,7 +24,7 @@ Two derivation styles coexist in this file:
    against `Semantics.Tense.DeRe.TemporalDeReReading`):
    `Intension (KContext) Time` time-concept + matrix-context base anchor.
    The Abusch §3 + def. 13 architecture, faithful to the
-   @cite{lewis-1979} / @cite{cresswell-vonstechow-1982} centered-world
+   @cite{lewis-1979-attitudes} / @cite{cresswell-vonstechow-1982} centered-world
    reduction of de re. The two styles are bridged by
    `Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
 

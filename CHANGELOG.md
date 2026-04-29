@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.552] - 2026-04-29
+
+### Abusch substrate: PR-A — citation fix + Intension.IsRigidOn lift + KContext.shiftWorldTime extract
+
+Three-bug audit (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert, all four convergent on the load-bearing findings) of the substrate that landed in 0.230.550–0.230.551. PR-A discharges the substrate-cleanup half of the audit; PR-B (deferred) will fix the substantive doxastic-vs-metaphysical modal-base bug.
+
+**Bug 2 (citation): wrong Lewis 1979 paper.** The bib's `lewis-1979` is "Scorekeeping in a Language Game" (J Phil Logic 8:339-359). The centered-worlds + de re/de se framework Abusch builds on is "Attitudes De Dicto and De Se" (Phil Review 88(4):513-543, October 1979 — verified directly from the JSTOR cover page, DOI `10.2307/2184843`). Two different Lewis 1979 papers, same year. Every `@cite{lewis-1979}` in the centered-world neighborhood (9 sites across `Tense/DeRe.lean` ×3, `Reference/Acquaintance.lean` ×2, `Attitudes/SituationDependent.lean` ×2, `Studies/Abusch1997.lean` ×2) was mis-anchored. Added `lewis-1979-attitudes` bib entry; repointed all 9. (`HistoricalAlternatives.lean:13` actually wants Lewis 1979 *Counterfactual Dependence and Time's Arrow* — separate fix, deferred.)
+
+**Mathlib finding 1: `Intension.IsRigidOn` lift.** Both `Cover.isExhaustiveOn` and `IsRigidAcrossAlternatives` were specializations of "constant on a set"; the underlying primitive belonged in `Core/IntensionalLogic/Rigidity.lean` rather than reinvented at each consumer.
+- `Intension.IsRigidOn (f : Intension W τ) (S : Set W) : Prop := ∀ w₁ ∈ S, ∀ w₂ ∈ S, f w₁ = f w₂` added to `Rigidity.lean`. Fully polymorphic — agnostic about whether `S` is a doxastic, metaphysical, or shifted-context alternative set.
+- `IsRigid.isRigidOn` lemma (full rigidity ⇒ rigid on any set), `rigid_isRigidOn` (the constant intension is rigid on every set), and `isRigid_iff_isRigidOn_univ` round-trip lemma added.
+
+**Mathlib finding 2: `KContext.shiftWorldTime` extract.** `Tense/DeRe.lean` open-coded `{ matrix with world := s'.world, time := s'.time }` in two places — the natural "shift to alternative situation" operation hadn't been factored out.
+- `KContext.shiftWorldTime (c : KContext W E P T) (s : WorldTimeIndex W T) : KContext W E P T := { c with world := s.world, time := s.time }` added to `Core/Context/Basic.lean`.
+- Four `@[simp]` projection lemmas (`shiftWorldTime_world`, `shiftWorldTime_time`, `shiftWorldTime_agent`, `shiftWorldTime_toSituation`) — preserve agent / addressee / position; world+time match the situation argument; toSituation round-trip.
+
+**Refactor: `Tense/DeRe.lean::IsRigidAcrossAlternatives`** rewritten to use the new primitives:
+```
+def IsRigidAcrossAlternatives [LE T] (dr : TemporalDeReReading W E P T) (history : WorldHistory W T) : Prop :=
+  Intension.IsRigidOn (fun s => dr.concept (dr.matrixContext.shiftWorldTime s))
+    (actualHistoryBase history dr.matrixContext.toSituation)
+```
+The structural insight (temporal de re ≡ rigidity-on-an-alternative-set) is now visible as types, not buried in `∀ s' ∈ ..., ... = dr.actualRes` open-coding. `IsRigidAcrossAlternatives_of_concept_isRigid` proof shrinks to a one-liner (`fun s₁ _ s₂ _ => h _ _`).
+
+**What PR-A does NOT fix** (deferred to PR-B + downstream):
+- **Bug 1 (modal base)**: `actualHistoryBase` is metaphysical (Lewis-Cariani-Santorio shared-past), but Abusch §3 quantifies over the **believer's doxastic** alternatives (Hintikka-style). The `KContext.agent` field is never consulted — the predicate is agent-blind by construction. Fix: parameterize `IsRigidAcrossAlternatives` on the alternative-set itself (`Set (WorldTimeIndex W T)`), with doxastic / metaphysical / shifted-context cases as instantiations. PR-B.
+- **Bug 3 (speech time vs holder now)**: `dr.matrixContext.time` is matrix utterance time; Abusch's constraint is relative to the attitude-holder's centered "now" (paper p. 13: "in all of Mary's belief worlds the time of the raining is co-temporal with **her now**"). Add `holderNow : T` to `TemporalDeReReading` or take as parameter to `isFelicitousWith`. PR-B.
+- **Mathlib nits** (PLA `_agent` parameter, `Concept.const` alias, `let dr := ⟨...⟩` theorem-statement pattern, `isAbuschFelicitous` → `IsAbuschFelicitous` casing): PR-B drive-bys.
+- **Anand-Nevins entity-concept bridge** (the highest-leverage rent payoff per CFR audit): PR-C, after PR-B fixes the substrate.
+
+PR-A is pure infrastructure — no semantics change, all theorems unchanged, the substrate is now ready for the Bug 1 + Bug 3 fix without further refactoring.
+
 ### Ellipsis `FormalMatching` AHM/Rudin sections Bool→Prop migration
 
 Closes the Bool-in-semantic-positions backlog in `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean`. Bruening §7 was migrated to Prop in the previous session; the older AHM (§§1-5) and Rudin (§6) sections were still Bool-typed, violating the project's `feedback_bool_migration_scope` policy that propositional/semantic content should be `Prop`-valued.

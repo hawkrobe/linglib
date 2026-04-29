@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Centered-World Temporal De Re
-@cite{lewis-1979} (centered-worlds + de se reduction);
+@cite{lewis-1979-attitudes} (centered-worlds + de se reduction);
 @cite{cresswell-vonstechow-1982} (de re belief generalized);
 @cite{abusch-1997} (the temporal application).
 
@@ -68,7 +68,7 @@ live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
 
 namespace Semantics.Tense.DeRe
 
-open Core (Intension)
+open Core (Intension WorldTimeIndex)
 open Core.Context (KContext)
 open Core.Modality.HistoricalAlternatives (WorldHistory actualHistoryBase)
 open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
@@ -83,7 +83,7 @@ open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
     "way of identifying a time" Abusch's `R₁ : eeiwt` builds on. -/
 abbrev TimeConcept (W E P T : Type*) := Intension (KContext W E P T) T
 
-/-- An **entity-concept** (@cite{lewis-1979} centered-world de re,
+/-- An **entity-concept** (@cite{lewis-1979-attitudes} centered-world de re,
     @cite{cresswell-vonstechow-1982}): an intension from a centered
     Kaplanian context to an entity. The dual of `TimeConcept` —
     instantiating Abusch 1997's individual ↔ temporal de re parallel
@@ -162,16 +162,15 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
     distinguishes a wide-scope res-time from a de dicto descriptive
     concept.
 
-    The matrix context's world and time are projected to a `WorldTimeIndex`
-    via `KContext.toSituation`; alternatives are the `actualHistoryBase`
-    of that projection; for each alternative we replace the matrix
-    context's `world` and `time` and demand the concept evaluates to
-    `actualRes`. -/
+    Defined as `Intension.IsRigidOn (dr.concept ∘ dr.matrixContext.shiftWorldTime)`
+    on the historical-alternative slice — making the rigidity-on-a-set
+    pattern visible: temporal de re ≡ rigidity of the time-concept
+    relative to the alternative-situation set the believer ranges over. -/
 def IsRigidAcrossAlternatives [LE T] (dr : TemporalDeReReading W E P T)
     (history : WorldHistory W T) : Prop :=
-  ∀ s' ∈ actualHistoryBase history dr.matrixContext.toSituation,
-    dr.concept { dr.matrixContext with world := s'.world, time := s'.time }
-      = dr.actualRes
+  Intension.IsRigidOn (fun s : WorldTimeIndex W T =>
+    dr.concept (dr.matrixContext.shiftWorldTime s))
+    (actualHistoryBase history dr.matrixContext.toSituation)
 
 /-- **Full Abusch felicity** (@cite{abusch-1997} §3): value-level
     constraint check (matrix-anchored res-time stands in the constraint's
@@ -186,15 +185,16 @@ def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
 /-- A rigid time-concept (constant intension, `Core.Intension.IsRigid`)
     is automatically rigid across any believer-actual-history alternatives.
     This is why the rigid-concept derivations in `Studies/Abusch1997.lean`
-    can discharge `IsRigidAcrossAlternatives` "for free." -/
+    can discharge `IsRigidAcrossAlternatives` "for free." Composes
+    `Intension.IsRigid.isRigidOn` with the shift map — the full-rigidity
+    of the underlying concept implies rigidity of the shifted version on
+    any set. -/
 theorem IsRigidAcrossAlternatives_of_concept_isRigid [LE T]
     (dr : TemporalDeReReading W E P T)
     (h : Intension.IsRigid dr.concept) (history : WorldHistory W T) :
-    dr.IsRigidAcrossAlternatives history := by
-  intro s' _
-  rw [h { dr.matrixContext with world := s'.world, time := s'.time }
-        dr.matrixContext]
-  rfl
+    dr.IsRigidAcrossAlternatives history :=
+  fun s₁ _ s₂ _ => h (dr.matrixContext.shiftWorldTime s₁)
+                     (dr.matrixContext.shiftWorldTime s₂)
 
 /-- **Abusch felicity ⇒ value-level felicity**: the modal-quantified
     predicate strictly refines the value-level shadow. Old code that
@@ -219,7 +219,7 @@ abbrev TimeCover (W E P T : Type*) :=
 
 /-- A time `t` is **temporally-acquainted** at matrix context `c` (with
     respect to a time-cover `C`) when some concept in `C` picks out `t`
-    at `c`. The temporal analog of @cite{lewis-1979}'s acquaintance —
+    at `c`. The temporal analog of @cite{lewis-1979-attitudes}'s acquaintance —
     instantiating polymorphic `isAcquaintedWith` at `Idx := KContext`,
     `Res := T`. -/
 abbrev isTemporallyAcquaintedWith {W E P T : Type*}

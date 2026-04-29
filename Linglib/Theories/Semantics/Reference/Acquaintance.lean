@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Function
 
 /-!
 # Acquaintance and Conceptual Covers
-@cite{lewis-1979} (de se / de re reduction via centered worlds);
+@cite{lewis-1979-attitudes} (de se / de re reduction via centered worlds);
 @cite{cresswell-vonstechow-1982} (de re belief generalized);
 @cite{aloni-2001} (conceptual covers); @cite{abusch-1997} (the temporal
 analogue: a "way of identifying a time" is the temporal time-concept
@@ -49,7 +49,7 @@ def Cover.isExhaustiveOn {Idx Res : Type*} (C : Cover Idx Res)
     (dom : Set Res) : Prop :=
   ∀ p : Idx, Set.SurjOn (· p) C dom
 
-/-- @cite{lewis-1979}'s acquaintance relation, generalized: `r` is
+/-- @cite{lewis-1979-attitudes}'s acquaintance relation, generalized: `r` is
     acquainted-with at index `p` (relative to `C`) when some concept in
     `C` picks out `r` at `p`.
 

@@ -49,9 +49,33 @@ def evalAt {W τ : Type*} (f : Intension W τ) (w : W) : τ := f w
 /-- An intension is rigid iff it assigns the same extension at every world. -/
 def IsRigid {W τ : Type*} (f : Intension W τ) : Prop := ∀ w₁ w₂, f w₁ = f w₂
 
+/-- An intension is **rigid on a set** `S` iff it assigns the same extension at
+    every world in `S`. The set-relativized analog of `IsRigid` — used when
+    only constancy across some restricted alternative set is required (e.g.,
+    a believer's doxastic alternatives, or a metaphysical-history slice).
+
+    `IsRigid f` is the special case `S = Set.univ`. -/
+def IsRigidOn {W τ : Type*} (f : Intension W τ) (S : Set W) : Prop :=
+  ∀ w₁ ∈ S, ∀ w₂ ∈ S, f w₁ = f w₂
+
 /-- A rigid designator is rigid. -/
 theorem rigid_isRigid {W τ : Type*} (x : τ) : IsRigid (rigid (W := W) x) :=
   λ _ _ => rfl
+
+/-- A rigid intension is rigid on every set. -/
+theorem IsRigid.isRigidOn {W τ : Type*} {f : Intension W τ}
+    (h : IsRigid f) (S : Set W) : IsRigidOn f S :=
+  fun w₁ _ w₂ _ => h w₁ w₂
+
+/-- A rigid designator is rigid on every set. -/
+theorem rigid_isRigidOn {W τ : Type*} (x : τ) (S : Set W) :
+    IsRigidOn (rigid (W := W) x) S :=
+  (rigid_isRigid x).isRigidOn S
+
+/-- Full rigidity is rigidity on the universal set. -/
+theorem isRigid_iff_isRigidOn_univ {W τ : Type*} (f : Intension W τ) :
+    IsRigid f ↔ IsRigidOn f Set.univ :=
+  ⟨fun h _ _ _ _ => h _ _, fun h w₁ w₂ => h w₁ trivial w₂ trivial⟩
 
 /-- evalAt of rigid returns the original value. -/
 theorem evalAt_rigid {W τ : Type*} (x : τ) (w : W) : evalAt (rigid x) w = x := rfl

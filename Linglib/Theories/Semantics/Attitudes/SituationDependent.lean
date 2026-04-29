@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!
 # Situation-Dependent Attitude Semantics
-@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979} @cite{von-stechow-2009} @cite{ogihara-1989}
+@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979-attitudes} @cite{von-stechow-2009} @cite{ogihara-1989}
 
 Attitude operators with temporal parameters: `believe`'s complement type shifts
 from `st` (propositions = W → Bool) to `s(it)` (situation-dependent propositions =
@@ -17,7 +17,7 @@ Standard attitude semantics evaluates embedded clauses relative to worlds only:
 
 This blocks sequence-of-tense (SOT) analysis, where embedded tense receives
 a shifted interpretation relative to the matrix event time. @cite{von-stechow-2009}
-synthesizes @cite{lewis-1979}, @cite{heim-kratzer-1998}, and @cite{ogihara-1989}: `believe`'s
+synthesizes @cite{lewis-1979-attitudes}, @cite{heim-kratzer-1998}, and @cite{ogihara-1989}: `believe`'s
 complement type shifts to s(it), and doxastic alternatives become situation pairs.
 
 ## Design
