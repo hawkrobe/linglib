@@ -565,40 +565,54 @@ noncomputable def stochasticLazyUnfoldDepth
       else
         PMF.pure (.fragment x)
 
-/-- Depth-bounded **PYP-memoised fragment-lambda**: the §3.1.8 model.
+/-! ### `fragmentLambdaDepth` — the PYP-memoised §3.1.8 model
+
 Wraps each non-terminal call with `pypDraw` so that previously-sampled
 partial subtrees at the same non-terminal can be reused; recursive
 children calls go back through `fragmentLambdaDepth` itself (PYP-wrapped),
 faithfully matching @cite{odonnell-2015} §3.1.8's mutual recursion
 `G^FG = mem{L^A}` ↔ `L^A`-body-calls-`G^FG`-on-children.
 
-The recursive structure: `pypDraw` consults the memo at `y`; if no hit,
-it samples from the inner body (the lambda passed to `pypDraw`), which
-flips the §3.1.8 biased halt-coin then either returns
-`LazyTree.fragment y` (halt) or samples a (rule, RHS), recurses on
-non-terminal children via `fragmentLambdaDepth ... n` (PYP-wrapped, so
-each child's draw also consults the memo), and assembles
-`LazyTree.branch rule y kids`.
+The inner per-call body is factored as `fragmentLambdaStep` so the
+preservation proof can apply combinator lemmas to a function with a
+visible name and type; the two presentations are definitionally equal. -/
 
-The recursive call inside the `pypDraw` lambda is on `n` (structurally
-smaller than `n+1`); Lean's structural-recursion checker accepts this
-through the lambda + `mapM` + `if` nesting. -/
+/-- The inner per-call body of `fragmentLambdaDepth`, factored out and
+parameterised by the recursive callback `recur`. Captures the §3.1.8
+biased halt-or-recurse step: flip a `BINOMIAL(ν)` coin; if recurse,
+sample a (rule, RHS) and recurse on each non-terminal child via `recur`;
+if halt, return `LazyTree.fragment y`.
+
+Factoring this out as a named auxiliary makes
+`fragmentLambdaDepth_preserves_wellFormed`'s induction proof tractable —
+the elaborator can apply combinator lemmas to a function whose name and
+type are visible, where it struggles with the inline `do`-block in the
+original recursive def. The two presentations are definitionally equal. -/
+private noncomputable def fragmentLambdaStep [Inhabited β]
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal)
+    (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (recur : α → PYM α (LazyTree α β R) (LazyTree α β R)) :
+    α → PYM α (LazyTree α β R) (LazyTree α β R) := fun y => do
+  let coin ← PYM.liftBase (PMF.bernoulli (recurseProb y) (recurseProb_le y))
+  if coin then do
+    let ⟨rule, rhs⟩ ← PYM.liftBase (recurse y)
+    let kids ← rhs.mapM (fun
+      | .inl nt   => recur nt
+      | .inr term => pure (.terminal term))
+    pure (.branch rule y kids)
+  else
+    pure (.fragment y)
+
 noncomputable def fragmentLambdaDepth [Inhabited β]
     (recurse : α → PMF (R × List (α ⊕ β)))
     (recurseProb : α → NNReal)
     (recurseProb_le : ∀ x, recurseProb x ≤ 1) :
     ℕ → α → PYM α (LazyTree α β R) (LazyTree α β R)
   | 0,     x => pure (.fragment x)
-  | n + 1, x => pypDraw (fun y => do
-      let coin ← PYM.liftBase (PMF.bernoulli (recurseProb y) (recurseProb_le y))
-      if coin then do
-        let ⟨rule, rhs⟩ ← PYM.liftBase (recurse y)
-        let kids ← rhs.mapM (fun
-          | .inl nt   => fragmentLambdaDepth recurse recurseProb recurseProb_le n nt
-          | .inr term => pure (.terminal term))
-        pure (.branch rule y kids)
-      else
-        pure (.fragment y)) x
+  | n + 1, x =>
+      pypDraw (fragmentLambdaStep recurse recurseProb recurseProb_le
+                (fragmentLambdaDepth recurse recurseProb recurseProb_le n)) x
 
 /-! ## Wellformedness preservation -/
 
@@ -664,12 +678,10 @@ change, just `pure (.fragment x)`); depth `n+1` via
 which itself follows by IH for non-terminal children's
 `fragmentLambdaDepth ... n` calls.
 
-**Status: sorry**. Depends on `pypDraw_preserves_wellFormed` (and so
-transitively on `seatCustomer_wellFormed`). When discharged, this
-theorem lets `samplesToCorpusCounts` and the soundness theorem assume
-input-state wellformedness, which in turn lets `slotToFinpartition`
-discharge its atomic-fallback branch via `absurd` (the branch is
-unreachable for any state the sampler can produce). -/
+When discharged, this theorem lets `samplesToCorpusCounts` and the
+soundness theorem assume input-state wellformedness, which in turn lets
+`slotToFinpartition` discharge its atomic-fallback branch via `absurd`
+(the branch is unreachable for any state the sampler can produce). -/
 theorem fragmentLambdaDepth_preserves_wellFormed
     {α β R : Type} [DecidableEq α] [Inhabited β]
     (recurse : α → PMF (R × List (α ⊕ β)))
@@ -678,34 +690,43 @@ theorem fragmentLambdaDepth_preserves_wellFormed
     (h_init : init.WellFormed) :
     ∀ p ∈ (fragmentLambdaDepth recurse recurseProb recurseProb_le n start init).support,
       p.2.WellFormed := by
-  -- Inductive proof structure (sketch):
-  --   suffices h_pre : ∀ k start',
-  --       PYM.Preserves PYPState.WellFormed
-  --         (fragmentLambdaDepth recurse recurseProb recurseProb_le k start')
-  --     from h_pre n start init h_init
-  --   induction k with
-  --   | zero => exact PYM.Preserves._pure _   -- depth 0 = pure (.fragment x)
-  --   | succ k ih =>
-  --     -- depth k+1 = pypDraw (inner_body)
-  --     -- Apply pypDraw_preserves_wellFormed with h_base = inner_body preservation:
-  --     --   PYM.Preserves._bind (PYM.Preserves._liftBase ...) (fun coin =>
-  --     --     PYM.Preserves._ite (then-branch combinators using ih) (PYM.Preserves._pure _))
-  --
-  -- Status: sorry. The combinator algebra (PYM.Preserves with _pure, _bind,
-  -- _get, _liftBase, _modify, _dite, _ite, _mapM) is fully proved and used
-  -- successfully to discharge `pypDraw_preserves_wellFormed`. Applying the
-  -- same algebra to fragmentLambdaDepth via depth induction runs into
-  -- Lean elaboration issues with the inline do-block in the recursive
-  -- body — the `show` statement's lambda doesn't readily elaborate against
-  -- the structurally-recursive def. Two paths to resolve:
-  -- (a) Factor the inner body of fragmentLambdaDepth out as a named
-  --     auxiliary `fragmentLambdaInnerBody`, then apply combinators to it
-  --     directly without the elaboration friction;
-  -- (b) Use `change`/`unfold` more aggressively to expose the do-block's
-  --     desugared bind chain, then peel off bindings without `show`.
-  -- Either path is ~30-50 LOC of mechanical work given the algebra is in
-  -- place. Deferred to next iteration.
-  sorry
+  -- Strengthen: prove ∀ k start, Preserves WellFormed (fragmentLambdaDepth ... k start)
+  -- by induction on k, then specialise.
+  suffices h_pre : ∀ k start',
+      PYM.Preserves PYPState.WellFormed
+        (fragmentLambdaDepth recurse recurseProb recurseProb_le k start') from
+    h_pre n start init h_init
+  intro k
+  induction k with
+  | zero =>
+    -- depth 0: fragmentLambdaDepth ... 0 start' = pure (.fragment start')
+    intro start'; exact PYM.Preserves._pure _
+  | succ k ih =>
+    -- depth k+1: fragmentLambdaDepth ... (k+1) start'
+    --   = pypDraw (fragmentLambdaStep ... (fragmentLambdaDepth ... k)) start'
+    -- Apply pypDraw_preserves_wellFormed; the body is fragmentLambdaStep ... ih
+    intro start' init' h_init' p hp
+    apply pypDraw_preserves_wellFormed _ start' init' h_init' _ p hp
+    -- h_base argument: fragmentLambdaStep ... ih preserves wellformedness
+    intro y init'' h_init'' p'' hp''
+    -- Build via combinators on fragmentLambdaStep
+    have h_step : PYM.Preserves PYPState.WellFormed
+        (fragmentLambdaStep recurse recurseProb recurseProb_le
+           (fragmentLambdaDepth recurse recurseProb recurseProb_le k) y) := by
+      unfold fragmentLambdaStep
+      refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro coin
+      refine PYM.Preserves._ite ?_ ?_
+      · -- coin = true branch: liftBase recurse + mapM children + pure branch
+        refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro ⟨_, rhs⟩
+        refine PYM.Preserves._bind ?_ (fun _ => PYM.Preserves._pure _)
+        apply PYM.Preserves._mapM
+        intro c
+        match c with
+        | .inl nt => exact ih nt
+        | .inr _  => exact PYM.Preserves._pure _
+      · -- coin = false branch: pure (LazyTree.fragment y)
+        exact PYM.Preserves._pure _
+    exact h_step init'' h_init'' p'' hp''
 
 /-! ## Halt-count extraction from samples -/
 

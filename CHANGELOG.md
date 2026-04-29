@@ -4,6 +4,49 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.524] - 2026-04-28
+
+### `FragmentLambda.lean` v2.8 — `fragmentLambdaDepth_preserves_wellFormed` discharged; **only one sorry remains**
+
+Closes the wellformedness chain: `fragmentLambdaDepth_preserves_wellFormed` discharged via depth induction + the `PYM.Preserves` combinator algebra (landed `0.230.522`). The single remaining sorry is now `fragmentLambdaDepth_marginalises_to_fg`, honestly out of linglib scope (probabilistic fixed-point machinery on ω-CPPOs of sub-probability measures).
+
+**Refactor**: factored the inner per-call body of `fragmentLambdaDepth` as a private named auxiliary `fragmentLambdaStep recurse recurseProb recurseProb_le recur`. Definitionally equivalent to the previous inlined `do`-block; the rename gives the recursive body a visible name and type that combinator lemmas can apply to without the elaboration friction the inline version had.
+
+**Proof**: induction on depth `k`. Zero case via `_pure`. Succ case: apply `pypDraw_preserves_wellFormed` with `h_base` = `fragmentLambdaStep`'s preservation, proved via combinators `_bind (_liftBase _) ; _ite ; _bind (_liftBase _) ; _bind _mapM ; _pure` for the recurse branch (each non-terminal child handled by IH) and `_pure` for the halt branch. ~40 LOC.
+
+Sorries: 1 (was 2 at `0.230.522`, was 4 at `0.230.519`).
+
+**Optional next step**: refactor `slotToFinpartition` to take `init.WellFormed` as hypothesis and discharge the atomic-fallback branch via `absurd` (now possible since the preservation chain is proved).
+
+Build: 2721 jobs green.
+
+## [0.230.523] - 2026-04-28
+
+### `Theories/Semantics/Quantification/` directory reorganization (4-agent audit landed)
+
+Acts on the 2026-04-28 four-agent audit of `Theories/Semantics/Quantification/` (recorded in memory `project_quantification_dir_audit.md`). 22 files / 5400 LOC → 14 substrate files / fewer paper-anchored lines plus 5 Charlow files relocated to `Phenomena/Plurals/Studies/Charlow2021/`. Closes the directory's only layering violation, eliminates a duplicate ~200-LOC `P*` parallel API, and surfaces a previously silent cross-framework divergence on cumulative readings via a synthesis stub.
+
+**Items landed:**
+
+- **Item #1 (P\* API deletion).** `Quantifier.lean:59 PropGQ` was identical to `Core/Logic/Quantification/Defs.lean:39 GQ`. The entire `P*`-prefixed parallel API (PropGQ + 30 properties + 7 bridge lemmas, ~210 LOC) was a re-stipulation of Core. All five external consumers (`BarwiseCooper1981`, `LuckingGinzburg2022`, `PIP/Bridges`, `DomainRestriction`, `Polarity/Studies/Ladusaw1979`) migrated to `Core.Quantification` directly via `open Core.Quantification`. Bridge lemma `smooth_iff_outerNeg_coSmooth` differs in shape (Core is `Iff`, Quantifier was one-way) — fixed at one call site in `at_most_n_coSmooth` via `.mp`. The Quantifier-local `SatisfiesUniversals` def kept (Core has no analogue; convenience conjunction). Net: 1535 → 1347 LOC in Quantifier.lean.
+- **Item #2 (toyModel layer violation closed via single move).** `Linglib/Fragments/ToyDomain.lean` (73 LOC, generic 4-element domain + tiny lexicon — not per-language) was miscategorized as a Fragment. Moved to `Linglib/Theories/Semantics/Composition/ToyDomain.lean`. All 12 importers (`Phenomena/Anaphora/Studies/Charlow2018`, `Phenomena/Entailment/MontagueTruthConditions`, `Composition/{Glue,QuantifierComposition,Modification,TypeShifting,Effects}`, `Quantification/Quantifier`, `TypeTheoretic/CNsAsTypes`, `Reference/Binding`, `Interfaces/SyntaxSemantics/CCG/{Interface,Homomorphism}`) updated. The auditor's recommended path (extract examples into per-Theory ToyExamples files in Phenomena) was abandoned in favor of this simpler structural fix that resolves the violation everywhere with one `git mv`.
+- **Item #3 (Charlow 2021 Dynamic/* → Phenomena/Plurals/Studies/Charlow2021/).** All five `Dynamic/{Basic, HigherOrder, PostSuppositional, SubtypePolymorphism, UpdateTheoretic}.lean` files anchored solely on `@cite{charlow-2021}` (Dynamic/Basic.lean's docstring was itself a five-row comparison editorial across the paper's variants). Per anchoring discipline, paper coverage belongs in Studies. Moved as siblings into the existing `Charlow2021/` subdir alongside `CumulativeReadings.lean` + `Data.lean`. Namespaces renamed `Semantics.Quantification.Dynamic.X` → `Phenomena.Plurals.Studies.Charlow2021.X`. `Plurals/Compare.lean` (62 LOC, the 3-way comparison file) moved to `Charlow2021/Compare.lean` per Compare-dissolution policy.
+- **Item #4 (Demonstrative singleton-subdir).** `Quantification/Demonstrative/AhnZhu2025.lean` (462 LOC, zero consumers) was a paper file in a singleton subdirectory. Moved to `Phenomena/Reference/Studies/AhnZhu2025.lean`; `Demonstrative/` deleted.
+- **Item #6 (PolarizedIndividuals thin shim absorbed).** 123-LOC file with one external consumer (`Phenomena/Quantification/Studies/Elliott2025.lean`). Inlined the 11 theorems into Elliott2025 as §1-§4; original deleted. Elliott2025's namespace fixed to `Phenomena.Quantification.Studies.Elliott2025`.
+- **Item #7 (DomainVagueness → Polarity/Studies sibling).** 448-LOC file anchored solely on `@cite{kadmon-landman-1993}`. Moved to `Phenomena/Polarity/Studies/KadmonLandman1993Apparatus.lean` (sibling of the existing `KadmonLandman1993.lean`). Single 1500-LOC mega-merge avoided per Imprecision-pattern precedent. Namespace `Semantics.Quantification.DomainVagueness` → `Phenomena.Polarity.Studies.KadmonLandman1993.Apparatus`.
+- **Item #9 (Indefinites/ subdir created).** `DeganoAloni2025.lean` (4 downstream Fragment + Studies consumers, genuinely earns substrate placement) renamed framework-anchored: → `Indefinites/TeamSemanticTypology.lean`. `DependenceLogic.lean` co-located: → `Indefinites/DependenceLogic.lean`. Namespaces shifted to `Semantics.Quantification.Indefinites.{TeamSemanticTypology, DependenceLogic}`. All 5 consumers (Fragments/Yakut/Indefinites, Fragments/Slavic/Russian/Indefinites, Phenomena/Reference/Studies/{Bubnov2026, Dekier2021}, Typology/Indefinite) updated.
+- **Item #10 (Cumulativity synthesis stub).** New `Theories/Semantics/Quantification/Cumulativity.lean` imports the three rival accounts of cumulative readings — Charlow tower continuations (`Phenomena/Plurals/Studies/Charlow2021/HigherOrder`), Beck-Sauerland `**` (`Theories/Semantics/Plurality/Cumulativity`), Champollion `*` (`Theories/Semantics/Events/CumulativityPropagation`) — into one import graph. Bridge theorems (`tower_eq_BeckSauerland_on_scenario`, `BS_eq_Champollion_on_scenario`, divergence scenario for dependent indefinites) are TODOs in the module docstring; landing the stub is the precondition for stating them. The audit's loudest "silent divergence" is now at least visible.
+- **Item #11 (mirrazi-2024 bib DOI fix).** `blog/data/references.bib` entry had `number = {7}, doi = {10.3765/sp.17.7}` which resolves to Rudolph & Kocurek's "Metalinguistic gradability". Mirrazi 2024 is article 6: fix to `number = {6}, doi = {10.3765/sp.17.6}`. Verified by domain-expert agent against the publisher.
+
+**Items skipped on investigation (audit recommendation didn't survive consumer-graph check):**
+
+- Item #5 (consolidate ONEModifiers + UnifiedUniversal into Studies). Both files have Fragment consumers (Hausa/Determiners, Akan/Determiners) — moving to Studies/ would violate the Fragment-can't-import-Phenomena rule. Substrate placement justified.
+- Item #8 (CovertQuantifier → Modality/Generics/). The file is a generic schema for covert operators (GEN/HAB/DIST/DPP), not just GEN. The "covert quantification" framing is consistent with `Quantification/`. Defensible where it sits; specific GEN material is already in `Phenomena/Generics/Studies/`.
+
+**End state:** `Theories/Semantics/Quantification/` shrinks from 22 files to 14 (substrate: `Cumulativity, ChoiceFunction, CovertQuantifier, DomainRestriction, Exceptive, Lexicon, ONEModifiers, Possessive, Quantifier, UnifiedUniversal` plus `Indefinites/{TeamSemanticTypology, DependenceLogic}` plus `Syllogistic/{Defs, Forms, Square}`). The `Demonstrative/` and `Dynamic/` subdirs no longer exist. Layer violation closed. P\* duplicate API deleted. Cross-framework cumulativity divergence visible.
+
+**Build:** 5625 jobs green (was 5607 baseline; +18 from the Cumulativity import + new file plumbing). Memory `project_quantification_dir_audit.md` updated.
+
 ## [0.230.522] - 2026-04-28
 
 ### `FragmentLambda.lean` v2.7 — `PYM.Preserves` combinator algebra; `pypDraw_preserves_wellFormed` discharged
