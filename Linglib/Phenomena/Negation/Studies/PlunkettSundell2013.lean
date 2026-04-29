@@ -95,4 +95,28 @@ theorem metalinguistic_negotiation_consistent_contents
     d.consistentContents :=
   ⟨w, hA, hB⟩
 
+/-- **Structural property of `consistentContents`: extensional
+    difference is a precondition.** When `predA = predB`
+    (e.g. when a competing analysis commits to a SHARED standard for
+    both speakers), P&S's `consistentContents` necessarily fails. The
+    proof unfolds `assertionA`/`assertionB` to expose the underlying
+    `predA d.target w ∧ ¬ predB d.target w` shape, then derives a
+    contradiction from the predicate identity.
+
+    This lemma is the structural skeleton of any cross-framework
+    refutation of P&S: a competing analysis that commits to
+    `predA = predB` automatically produces a counterexample to
+    `consistentContents`. K-G's `applyApprop`-chain analysis (which
+    uses a single shared `AppropStandard`) is exactly such a competitor;
+    see `Phenomena.Quotation.Studies.KirkGiannini2024.kg_refutes_plunkett_sundell`. -/
+theorem MetalinguisticDispute.consistentContents_excludes_shared_standard
+    {Entity W : Type} (d : MetalinguisticDispute Entity W)
+    (hShared : d.predA = d.predB) :
+    ¬ d.consistentContents := by
+  intro ⟨w, hA, hB⟩
+  unfold MetalinguisticDispute.assertionA at hA
+  unfold MetalinguisticDispute.assertionB at hB
+  rw [hShared] at hA
+  exact hB hA
+
 end PlunkettSundell2013

@@ -825,19 +825,18 @@ def maximalProjections (root : SyntacticObject) : List SyntacticObject :=
 def isNonHeadMemberOfChain (x : SyntacticObject) : Bool :=
   (isTrace x).isSome
 
-/-- Structure matching for @cite{bruening-2021} §5.5: same tree shape AND
-    same projecting category (`outerCat`) at every node. Refines
-    `Basic.structurallyIsomorphic` (shape-only) with category identity. -/
-def bruening2021Identical : SyntacticObject → SyntacticObject → Bool
-  | .leaf t1, .leaf t2 =>
-      t1.item.outerCat == t2.item.outerCat
-  | .node a1 b1, .node a2 b2 =>
-      ((SyntacticObject.node a1 b1).outerCat
-            == (SyntacticObject.node a2 b2).outerCat)
-        && bruening2021Identical a1 a2
-        && bruening2021Identical b1 b2
-  -- Shape mismatch (.leaf vs .node) — never structurally identical.
-  | _, _ => false
+/-- Structure matching for @cite{bruening-2021} §5.5 (ex. 123, p. 1065):
+    two max-projs structure-match iff their projecting categories agree.
+
+    Bruening's criterion is identity of the *immediately dominating
+    sequence*, not internal subtree shape. For max-projs at corresponding
+    positions in two clauses, this reduces to outer-category equality —
+    e.g., the antecedent's VP `[V V[serve] ∃]` (V+∃ complex head) and the
+    elided's VP `[V[serve], t]` (V plus wh-trace) both have outerCat `.V`
+    and BOTH structure-match per Bruening's enumeration on p. 1065
+    ("All of these match, except the NP what"). -/
+def bruening2021Identical (x y : SyntacticObject) : Bool :=
+  SyntacticObject.outerCat x == SyntacticObject.outerCat y
 
 /-- 1-1 correspondence helper for max-proj matching (mirrors `matchHeadPairs`
     at line 119 and `rudinMatchPairs` at line 610). -/
@@ -866,10 +865,7 @@ def bruening2021StructurallyIdentical (antecedent ellipsis : SyntacticObject) : 
 /-- Structure-matching is reflexive on any SO. -/
 theorem bruening2021Identical_refl (so : SyntacticObject) :
     bruening2021Identical so so = true := by
-  induction so with
-  | leaf _ => simp only [bruening2021Identical, beq_self_eq_true]
-  | node a b iha ihb =>
-      simp only [bruening2021Identical, beq_self_eq_true, iha, ihb, Bool.and_self]
+  simp only [bruening2021Identical, beq_self_eq_true]
 
 /-- Removing the first `bruening2021Identical`-match from a list headed by
     that element succeeds and returns the tail. Mirror of `removeFirst_self`

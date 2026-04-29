@@ -99,7 +99,8 @@ def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
     Body uses an explicit 4-way if-chain to support `split`-based proofs
     in this file. The bridge theorem `shouldEval_eq_distList` (below)
     formalizes the equivalence with `Core.Duality.distList` for nonempty
-    domains. -/
+    domains. Refactoring the body to call `distList` directly requires
+    rewriting ~3 dense proof scripts; tracked as future work. -/
 def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
   if domain.isEmpty then Truth3.false
   else if domain.all p then Truth3.true

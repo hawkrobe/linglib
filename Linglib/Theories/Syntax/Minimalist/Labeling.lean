@@ -548,18 +548,13 @@ theorem coord_rule14a_fails :
     labelRule14a coordDP = none := by decide
 
 /-! **Coordination labeling failure (prose-only)**: in `coordDP`,
-neither `theDP` nor `aBookDP` selects the other (`selectsB` is false in
+neither `theDP` nor `aBookDP` selects the other (`selects` fails in
 both directions), so rule 14b's selection-based algorithm has no
 principled way to label `coordDP`. It falls through to a tie-breaking
 case that yields `labelCat coordDP = some .D` — but this is an artifact
 of the implementation, not a principled labeling derivation. Müller's
 point: Chomsky's appeal to "shared label" for coordination is an ad hoc
-fix that undermines the algorithm's generality.
-
-Theorems `coord_neither_selects` and `coord_labelCat_artifact` were
-removed for the same reason as the free-relative pair above (`decide`
-does not reduce the recursive `label`/`selectsB` evaluation in the
-kernel). The substantive Müller argument is preserved in the prose. -/
+fix that undermines the algorithm's generality. -/
 
 end CoordinationLabelingFailure
 

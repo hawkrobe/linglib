@@ -4,7 +4,7 @@ import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Quotation.Studies.Maier2014
 import Linglib.Phenomena.Expressives.Studies.HarrisPotts2009
 import Linglib.Phenomena.Negation.Studies.Horn1989
-import Linglib.Phenomena.Disagreement.Studies.PlunkettSundell2013
+import Linglib.Phenomena.Negation.Studies.PlunkettSundell2013
 import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
 
 /-!
@@ -719,41 +719,37 @@ theorem speakerB_denial_under_shared_standard
   exact h_neg h
 
 /--
-**K-G refutes Plunkett-Sundell's "consistent contents" diagnosis.**
-P&S (`Phenomena.Disagreement.Studies.PlunkettSundell2013`) claim A
-and B express jointly-satisfiable contents because they use DIFFERENT
-idiolectal extensions: P&S's `MetalinguisticDispute.consistentContents`
-holds when there is some world where A's predicate-as-A-uses-it and
-NOT-B's-predicate-as-B-uses-it both hold. The witness for joint
-satisfiability requires the two extensions to differ.
+**K-G refutes Plunkett-Sundell — structural cross-framework theorem.**
 
-K-G's analysis uses ONE shared standard: A and B are arguing about
-the verdict of the same `AppropStandard`. Substantive refutation:
-when we instantiate P&S's `MetalinguisticDispute` with the SHARED
-extension as both `predA` and `predB` (matching K-G's shared-standard
-analysis), the P&S `consistentContents` predicate FAILS to hold —
-joint satisfiability is impossible on a shared standard.
+K-G and P&S make incompatible commitments about the structure of a
+metalinguistic dispute:
 
-We construct the instantiation, invoke P&S's `consistentContents`
-definition, and prove its negation.
+- **P&S** (`Phenomena.Negation.Studies.PlunkettSundell2013`):
+  `consistentContents` requires `predA ≠ predB` extensionally —
+  speakers use DIFFERENT idiolectal extensions of the contested
+  predicate, and joint satisfiability witnesses their distinct
+  meanings. Paper p.18: "the connection between genuine disagreement
+  and sameness of meaning is broken."
+
+- **K-G** (paper §6, p.33-34): A and B operate on a SHARED standard;
+  the dispute is over the SAME proposition's truth value. Encoded in
+  P&S's `MetalinguisticDispute` schema, K-G's commitment is
+  `predA = predB`.
+
+The substrate lemma
+`MetalinguisticDispute.consistentContents_excludes_shared_standard`
+proves these commitments are jointly unsatisfiable: any dispute with
+`predA = predB` necessarily violates `consistentContents`. The K-G
+refutation is the schematic claim that K-G's commitment entails P&S's
+predicate failure — universally over disputes, with no hand-picked
+extensions.
 -/
 theorem kg_refutes_plunkett_sundell :
-    -- The P&S dispute object — but instantiated with K-G's SHARED
-    -- standard (predA = predB) rather than per-speaker extensions.
-    let kgDispute : PlunkettSundell2013.MetalinguisticDispute Unit AthWorld :=
-      { target := ()
-      , predA := λ _ w => athShared .speakerA .athlete w
-      , predB := λ _ w => athShared .speakerA .athlete w }
-    -- P&S's consistentContents requires ∃ w, A's content ∧ ¬ B's content.
-    -- With predA = predB this is logically impossible.
-    ¬ kgDispute.consistentContents := by
-  -- consistentContents := ∃ w, assertionA w ∧ assertionB w
-  -- assertionA := predA target w; assertionB := ¬ predB target w
-  -- With predA = predB (= athShared .speakerA .athlete), both reduce to
-  -- the same predicate; their conjunction is P ∧ ¬P, impossible.
-  simp [PlunkettSundell2013.MetalinguisticDispute.consistentContents,
-        PlunkettSundell2013.MetalinguisticDispute.assertionA,
-        PlunkettSundell2013.MetalinguisticDispute.assertionB]
+    ∀ d : PlunkettSundell2013.MetalinguisticDispute Unit AthWorld,
+      d.predA = d.predB → ¬ d.consistentContents :=
+  fun _ h =>
+    PlunkettSundell2013.MetalinguisticDispute.consistentContents_excludes_shared_standard
+      _ h
 
 end MetalinguisticNegotiation
 

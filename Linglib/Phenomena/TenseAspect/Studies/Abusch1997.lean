@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Semantics.Tense.DeRe.Defs
 
 /-!
 # @cite{abusch-1997}: Sequence of Tense and Temporal de re
@@ -11,9 +10,15 @@ innovation is **temporal de re**: tense can take wide scope over
 attitude operators via res movement, just as DPs can scope out of
 attitude complements.
 
-The substrate machinery (`TemporalDeRe` structure + `isFelicitous`)
-lives in `Theories/Semantics/Tense/DeRe/Defs.lean`. This Studies file
-collects the @cite{abusch-1997}-anchored derivation theorems.
+The value-level shadow of the de re reading (resolved time, eval time,
+constraint, felicity check) is `Core.Time.Tense.TensePronoun` +
+`TensePronoun.fullPresupposition`. The full Abusch substrate — an
+acquaintance relation `R : eeiwt` (paper def. 13), centered worlds
+`⟨x_self, t_now, w⟩` (§3), and the LF rewrite that scopes the tense
+above the attitude — is *not* in this file. A polymorphic
+`Theories/Semantics/Reference/Acquaintance.lean` factored out of
+`Theories/Semantics/Dynamic/PLA/Belief.lean` would be the proper home
+for it; that abstraction is deferred.
 
 ## Core Mechanisms
 
@@ -30,10 +35,10 @@ collects the @cite{abusch-1997}-anchored derivation theorems.
    layer explicit (over `WorldHistory W Time` à la @cite{klecha-2016})
    is deferred.
 3. **Temporal de re**: tense variable in the res position of an
-   attitude. The `TemporalDeRe` structure captures the *output* of
-   res-movement (a back-shifted frame with a constraint tag); the LF
-   rewrite mechanism + time-concept (acquaintance relation) machinery
-   is not formalized here.
+   attitude. The value-level shadow uses `TensePronoun.fullPresupposition`:
+   constraint applied to (resolved time, eval time). The LF rewrite +
+   acquaintance-relation machinery (Lewis 1979 / Cresswell-von Stechow
+   1982) is not formalized here.
 4. **Eval-time shift via attitude embedding**: the substrate primitives
    are `Core.Time.Tense.evalTime_shifts_under_embedding` and
    `updateTemporal`. Abusch's "relation transmission" (feature passing
@@ -72,7 +77,6 @@ open Core.Time.Tense
 open Core.Time.Reichenbach
 open Core.Time
 open Semantics.Tense
-open Semantics.Tense.DeRe (TemporalDeRe)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -131,15 +135,20 @@ theorem abusch_derives_double_access {Time : Type*}
 
 /-- @cite{abusch-1997} derives temporal de re: the tense variable in
     res position is evaluated in the matrix context, giving wide-scope
-    temporal reference. When the res referent satisfies the past
-    constraint against the matrix eval time, the de re reading is
-    felicitous. -/
+    temporal reference. When the resolved referent satisfies the past
+    constraint against the (matrix-shifted) eval time, the de re reading
+    is felicitous.
+
+    Value-level shadow: this theorem checks `TensePronoun.fullPresupposition`,
+    not Abusch's actual centered-proposition rule (paper def. 13). The
+    `g` here would, in the full account, be a temporal assignment shifted
+    by the attitude verb to put the matrix event time at `tp.evalTimeIndex`. -/
 theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
-    (dr : TemporalDeRe Time)
-    (hPast : dr.constraint = .past)
-    (hBefore : dr.referent < dr.evalTime) :
-    dr.isFelicitous := by
-  simp only [TemporalDeRe.isFelicitous, GramTense.constrains, hPast]
+    (tp : TensePronoun) (g : TemporalAssignment Time)
+    (hPast : tp.constraint = .past)
+    (hBefore : tp.resolve g < tp.evalTime g) :
+    tp.fullPresupposition g := by
+  simp only [TensePronoun.fullPresupposition, GramTense.constrains, hPast]
   exact hBefore
 
 

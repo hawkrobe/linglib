@@ -51,7 +51,7 @@ correctly with these as documentation-only items, per CLAUDE.md
 - @cite{odonnell-2015} Ch 6–7.
 -/
 
-namespace Phenomena.Morphology.Studies.ODonnell2015Derivational
+namespace Phenomena.Morphology.Studies.ODonnell2015
 
 open Morphology.FragmentGrammars Phenomena.Morphology.Productivity
 
@@ -204,4 +204,4 @@ cross-study). Listed here as documentation targets:
 - **`ability_paradox_discriminates_fg_from_mag`** — Ch 8.
 - **`cross_study_albright_hayes`** — productivity index alignment. -/
 
-end Phenomena.Morphology.Studies.ODonnell2015Derivational
+end Phenomena.Morphology.Studies.ODonnell2015

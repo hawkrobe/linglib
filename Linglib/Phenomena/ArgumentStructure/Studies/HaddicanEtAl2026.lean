@@ -344,15 +344,12 @@ verb whose implicit-argument profile licenses Bruening's Table (56)
 classification. If `Verbal.lean` ever moves `give` to a different
 complement type or implicit-arg profile, this bridge fails — alerting
 both files. -/
+open Fragments.English.Predicates.Verbal Semantics.Verb in
 theorem bruening_give_field_consistent :
-    Fragments.English.Predicates.Verbal.give.complementType
-        = Semantics.Verb.ComplementType.np_np
-    ∧ Fragments.English.Predicates.Verbal.give.altComplementType
-        = some Semantics.Verb.ComplementType.np_pp
-    ∧ Fragments.English.Predicates.Verbal.give.implicitObj
-        = some Semantics.Verb.ImplicitInterp.indef
-    ∧ Fragments.English.Predicates.Verbal.give.implicitGoal
-        = some Semantics.Verb.ImplicitInterp.def := by
+    give.complementType = ComplementType.np_np
+    ∧ give.altComplementType = some ComplementType.np_pp
+    ∧ give.implicitObj = some ImplicitInterp.indef
+    ∧ give.implicitGoal = some ImplicitInterp.def := by
   refine ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ## Bridge to experimental data -/

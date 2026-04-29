@@ -540,11 +540,15 @@ def Scenario.isInverse (s : Scenario) : Bool :=
 def Scenario.isNonlocal (s : Scenario) : Bool :=
   !s.aPerson.isSAP && !s.pPerson.isSAP
 
-/-- All 9 person-pair scenarios. -/
+/-- All 9 person-pair scenarios. Explicit literal so `decide` reduces;
+    the equivalent `(PersonLevel.all.map λ a => PersonLevel.all.map λ p => ⟨a, p⟩).flatten`
+    typechecks but defeats kernel-level `decide` over `Scenario.all.all (...)`. -/
 def Scenario.all : List Scenario :=
-  (PersonLevel.all.map λ a => PersonLevel.all.map λ p => ⟨a, p⟩).flatten
+  [⟨.first, .first⟩,  ⟨.first, .second⟩,  ⟨.first, .third⟩,
+   ⟨.second, .first⟩, ⟨.second, .second⟩, ⟨.second, .third⟩,
+   ⟨.third, .first⟩,  ⟨.third, .second⟩,  ⟨.third, .third⟩]
 
-theorem Scenario.all_length : Scenario.all.length = 9 := by native_decide
+theorem Scenario.all_length : Scenario.all.length = 9 := rfl
 
 -- ============================================================================
 -- § 12: Role-Reference Association (@cite{haspelmath-2021}, §2)

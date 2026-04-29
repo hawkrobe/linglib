@@ -1196,6 +1196,7 @@ import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
 import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
 import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018Lumping
 import Linglib.Phenomena.Conditionals.Studies.Kratzer2012Lumping
+import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1487,6 +1488,8 @@ import Linglib.Phenomena.Negation.Studies.Krifka2007
 import Linglib.Phenomena.Negation.Studies.Miestamo2005
 import Linglib.Phenomena.Negation.Studies.Dryer2013
 import Linglib.Phenomena.Negation.Studies.VanDerSandtMaier2003
+import Linglib.Phenomena.Negation.Studies.Horn1989
+import Linglib.Phenomena.Negation.Studies.PlunkettSundell2013
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -1552,9 +1555,6 @@ import Linglib.Phenomena.Expressives.Studies.LoGuercio2025
 import Linglib.Phenomena.Quotation.Studies.KirkGiannini2024
 import Linglib.Phenomena.Quotation.Studies.Maier2014
 import Linglib.Phenomena.Quotation.Studies.Rudin2025LI
-import Linglib.Phenomena.Negation.Studies.Horn1989
-import Linglib.Phenomena.Disagreement.Studies.PlunkettSundell2013
-import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
@@ -2379,7 +2379,6 @@ import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Dynamic
 import Linglib.Theories.Semantics.Tense.LexicalType
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Before
-import Linglib.Theories.Semantics.Tense.DeRe.Defs
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.VonStechow2009
 import Linglib.Theories.Semantics.Tense.SOT.Decomposition

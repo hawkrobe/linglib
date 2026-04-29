@@ -12,7 +12,7 @@ are the same operation. This file further classifies Merge by *combination kind*
 
 | Merge type | Precondition | Schema |
 |-----------|-------------|--------|
-| External (selection holds) | `selectsB a b` | Head-Complement |
+| External (selection holds) | `selects a b` | Head-Complement |
 | External (specifier) | neither selects, arg is maximal | Head-Specifier |
 | Internal | `contains target mover` | Head-Filler |
 

@@ -113,6 +113,53 @@ def selectionalCounterfactual {W : Type*} [DecidableEq W] [Fintype W]
     ¬ B w' then .false
   else .indet
 
+/-- **`selectionalCounterfactual` IS Fine super-truth** (`Core.Duality.dist`)
+    on the Finset of closest worlds with the consequent as Boolean predicate.
+
+    Bridge documenting the equivalence — keeps the bespoke 3-way if-chain
+    body for proof-script compatibility (cem_selectional and many Stalnaker1981
+    consumers case-split on the structure) while making the
+    canonical-classifier connection explicit. -/
+theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W) (A B : W → Prop)
+    [DecidablePred A] [DecidablePred B] (w : W) :
+    selectionalCounterfactual sim A B w =
+    Core.Duality.dist (sim.closestWorlds w (Finset.univ.filter A))
+      (fun w' => decide (B w')) := by
+  unfold selectionalCounterfactual Core.Duality.dist
+  set s := sim.closestWorlds w (Finset.univ.filter A)
+  by_cases h_all_true : ∀ w' ∈ s, B w'
+  · -- All true: both sides give .true
+    rw [if_pos h_all_true]
+    have h_inf : s.inf (fun w' => decide (B w')) = true := by
+      rw [show (true : Bool) = ⊤ from rfl, Finset.inf_eq_top_iff]
+      intro w' hw'; exact decide_eq_true (h_all_true w' hw')
+    simp [h_inf]
+  · rw [if_neg h_all_true]
+    have h_inf : s.inf (fun w' => decide (B w')) = false := by
+      cases h : s.inf (fun w' => decide (B w')) with
+      | true =>
+        exfalso; apply h_all_true
+        have := (Finset.inf_eq_top_iff (α := Bool) (fun w' => decide (B w')) s).mp h
+        intro w' hw'; exact of_decide_eq_true (this w' hw')
+      | false => rfl
+    simp [h_inf]
+    by_cases h_all_false : ∀ w' ∈ s, ¬ B w'
+    · rw [if_pos h_all_false]
+      have h_sup : s.sup (fun w' => decide (B w')) = false := by
+        rw [show (false : Bool) = ⊥ from rfl, Finset.sup_eq_bot_iff]
+        intro w' hw'; exact decide_eq_false (h_all_false w' hw')
+      simp [h_sup]
+    · rw [if_neg h_all_false]
+      have h_sup : s.sup (fun w' => decide (B w')) = true := by
+        cases h : s.sup (fun w' => decide (B w')) with
+        | false =>
+          exfalso; apply h_all_false
+          have := (Finset.sup_eq_bot_iff (α := Bool) (fun w' => decide (B w')) s).mp h
+          intro w' hw' hB; exact (Bool.eq_false_iff.mp (this w' hw')) (decide_eq_true hB)
+        | true => rfl
+      simp [h_sup]
+
 /--
 Conditional Excluded Middle (CEM) holds for selectional semantics.
 

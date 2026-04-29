@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.548] - 2026-04-29
+
+### KirkGiannini2024 multi-phase overhaul (Phases 0–5 + 4.5 + 4.6)
+
+Four-agent audit on `Phenomena/Quotation/Studies/KirkGiannini2024.lean` (then 446 LOC) found pervasive trivial-by-construction theorems, vacuous peripheral dimension (3 of 5 sections set `uttRel := λ _ _ _ _ => True`), missing K-G predictions (∃-over-speakers in †, three §5 syntactic predictions, ∃μ in §7), and the §6 `genuine_disagreement` defending Plunkett & Sundell rather than refuting them. The overhaul addresses these phase by phase, with two re-audits between phases driving cleanup work.
+
+**Phase 0 — bib + citation hygiene.** 7 new bib entries (verified DOIs from K-G's bibliography pp. 52–54): `shan-2010`, `maier-2014a`, `harris-potts-2009`, `horn-1985`, `burton-roberts-1989`, `plunkett-sundell-2013`, `kocurek-jerzak-rudolph-2020`. `Theories/Semantics/Quotation/MixedQuotation.lean` renamed → `Mixed.lean` (mathlib-style; parent dir already says "Quotation"). Substrate docstring credits `@cite{shan-2010}` for `(∗)` (paper p.12, p.15: "Drawing on Shan…"). K-G `kg_metalinguistic_chain_targets_appropriateness` editorial gloss softened (paper does not actually claim "structurally distinct from scalar implicature enrichment").
+
+**Phase 1 — substrate `@[simp]` projection lemmas.** 20 new projection lemmas across `Mixed.lean` and `Theories/Pragmatics/Expressives/Basic.lean` (`MQContext.applyMQ_atIssue`/`_ci`, `applyApprop_ci`, MQProp.* atIssue/rContent/appropContent for each operator, `pureQuote_strips_ci`, `withCI_atIssue`/`_ci`, `neg_atIssue`, `and_atIssue`/`_ci`, `toFlat_atIssue`/`_ci`); 11 existing preservation lemmas marked `@[simp]`. Skipped `@[irreducible]` annotations per audit risk. Cleanup removed 3 unused-simp-arg warnings at `Mixed.lean:422`.
+
+**Phase 2 — substrate enrichment.** New `PureQuoted` structure in `Basic.lean` records the original `TwoDimProp` alongside the stripped result, with `pureQuoteRich` builder + `pureQuote_loses_ci_info` substantive theorem (∃ p₁ p₂ with different CI but identical `pureQuote` outputs — proves the operator is genuinely information-losing). New `diagonalizeKG : QuotInterp Expr Speaker W → Expr → W → Prop := λ w => ∃ s, interp q w s w` adds the speaker existential from K-G fn 22 (paper p.26). `QuotInterp.fn22Wellformed` encodes the well-definedness condition; `diagonalizeKG_deterministic_under_fn22` proves speakers agreeing on extensions at `wc` agree on diagonal extensions everywhere. Both additions are siblings of existing `pureQuote`/`diagonalize` — preserves backward compat for LoGuercio2025 and Rudin2025LI.
+
+**Phase 3 — 5 competitor stubs.** Each stub anchors to its paper, encodes the defining commitment, and exposes 1–2 named consequences for K-G refutation theorems. Pattern modeled on Bubnov2026 §11.
+- `Phenomena/Quotation/Studies/Maier2014.lean` (~85 LOC) — single MQ operator, syntactic chameleonism (`mq_inherits_syntactic_type_directly`, `mq_ci_passes_daughter_ci_through`).
+- `Phenomena/Expressives/Studies/HarrisPotts2009.lean` (~95 LOC) — orientation-variable analysis (`non_speaker_oriented_via_orientation_var`).
+- `Phenomena/Negation/Studies/Horn1989.lean` (~135 LOC) — two-negation lexical ambiguity + 3 syntactic predictions (NPI, incorporation, DN-elim) following Horn 1989 / Burton-Roberts 1989. Bug fixed during execution: `def NegChain` → `abbrev NegChain` so `List` `Membership` instance resolves; `dneEliminates` rewritten in `Prop` (was mixing `Prop` and `Bool`).
+- `Phenomena/Negation/Studies/PlunkettSundell2013.lean` (~120 LOC) — consistent-contents diagnosis. Initially landed in new `Phenomena/Disagreement/` parent dir; relocated to `Negation/Studies/` in Phase 4.6 per CLAUDE.md "merge singletons" guidance.
+- `Phenomena/Conditionals/Studies/KocurekJerzakRudolph2020.lean` (~115 LOC) — c-monsters via world-convention pairs (`conventional_wisdom_fails`, `pluto_could_have_been_planet_via_convention_shift`).
+
+**Phase 4 — K-G full rewrite.** 446 → 736 LOC. Multi-constructor world types (`ProjWorld := actual | hypothetical`, `MNWorld := actual | hypothetical`, `VirWorld := actual | counterfactual`) replace the original single-constructor `actual`-only types. Non-trivial `gdOriginalCI`, `gdUttRel`, `mnInterp`, `mnUttRel`, `plutoInterp`, `virInterp`. §1 uses `MQProp` 3-layer model. §3 lifts the 3 syntactic predictions from `Horn1989`. §4 fixes the P&S-defending inversion (uses shared `athShared` standard). §5 quantifies over BOTH intensions μ AND speakers via `whichMu` Predicate Abstraction. 8 cross-framework refutation/bridge theorems landed.
+
+**Phase 4.5 — audit cleanup.** Re-audit found 5 of 8 cross-framework theorems were ceremonial or self-contained (not actually invoking competitor substrate). Rewrites:
+- `kg_refutes_potts_universal_projection` — now invokes `Pragmatics.Expressives.TwoDimProp.neg`, exhibits divergence at `.hypothetical`. `gdOriginalCI` redesigned to constant `True` (intentional content, not world-contingent) so the divergence has bite.
+- `kg_refutes_harris_potts_orientation` — now instantiates `HarrisPotts2009.CIItem` and compares `resolve` outcome.
+- `diagonalize_no_kaplan_monster` — now defines `kgEmbeddingShifts := [identityShift, identityShift, identityShift, identityShift]` (one per K-G covert operator); proof case-splits each.
+- `kg_refutes_kjr_convention_shift` — now instantiates KJR's `Convention` and `WC`, exhibits `kjrEval ∧ ¬ kgEval` (Pluto at `.post2006`).
+- New `kg_refutes_maier_chameleonism` — instantiates `Maier2014.mq` (resolves the orphan import).
+- Deleted: `CIClass`/`Embed` enums (dead code), `kg_consilience_with_horn` (just `And.intro`), `kg_metalinguistic_neg_not_implicature_denial` (vacuous wrapper) replaced with structural `kg_metalinguistic_chain_targets_appropriateness`.
+- Direct `import Linglib.Theories.Semantics.Reference.Monsters` (was transitive).
+- `whichMu` now actually used in `viruses_alive_in_a_sense`.
+
+**Phase 5 — MQProp completion.** New substrate `MQProp.metalinguistic_neg_truth_conditions` (counterpart of flat-model version). New `MQProp.neg_preserves_both_peripherals` ergonomic combined lemma. K-G §3 gains `mongeese_R_survives_metalinguistic_neg` (concrete witness that R-content survives the full chain in MQProp via `full_chain_preserves_rContent`) and `mongeese_R_value_at_actual` (non-trivial `mnUttRel` value at `.actual`). Substrate module docstring expanded with "Flat vs Layered Model" design section.
+
+**Phase 4.6 — final cleanup.** Re-audit found `kg_refutes_plunkett_sundell` (Phase 4.5 version) was logical sleight of hand: setting `predA = predB` trivially blocks P&S's `consistentContents`, but P&S explicitly require distinct extensions; the proof exploits a P&S precondition rather than engaging their commitment. Rewrite: structural-schematic version. New substrate lemma `MetalinguisticDispute.consistentContents_excludes_shared_standard` (Phenomena/Negation/Studies/PlunkettSundell2013) proves that any dispute where `predA = predB` necessarily violates `consistentContents`. K-G's refutation becomes a one-line schematic claim quantified over disputes — no hand-picked extensions. PlunkettSundell2013.lean relocated from `Phenomena/Disagreement/` to `Phenomena/Negation/` per CLAUDE.md singleton merge guidance; empty Disagreement/ dir deleted. `Linglib.lean` imports re-grouped: Horn1989 + PlunkettSundell2013 to Negation block (~line 1490), KocurekJerzakRudolph2020 to Conditionals block (~line 1199), HarrisPotts2009 + Maier2014 stay with the Quotation cluster.
+
+**Final K-G stats.** 869 LOC (up from 446). 24 theorems, 0 trailing `:= rfl/trivial/id` proofs (was 10). 8 cross-framework theorems, 4 of which now achieve Bubnov §11 quality (LHS/RHS computed values from incompatible substrates) — the first quotation/expressives study with multiple Bubnov §11–pattern cross-framework theorems. Plus 3 syntactic predictions lifted from Horn1989, plus 2 new K-G-internal architectural-benefit theorems (`mongeese_R_survives_metalinguistic_neg`, `mongeese_R_value_at_actual`). 1803 jobs build green across the full Quotation cluster.
+
+**Known follow-up work (deferred per audit scope).** §3 morpheme-incorporation theorem proves Horn's lexical premise rather than K-G's chain-blocking prediction. K-G file's `simp [reporterCtx, gdInterp]`-style calls bypass the new `@[simp]` projection lemmas in 10/11 cases. `kg_metalinguistic_chain_targets_appropriateness` claims inter-substrate distinction but doesn't compute against `Denial.classify`. `MQProp.metalinguistic_neg_truth_conditions` (Phase 5 substrate) has no K-G consumer. Mixed-content slur formalization (paper §3, Williamson 2009 / Camp 2018) deferred — `CIClass` was deleted as dead code rather than carried as decoration.
+
 ## [0.230.546] - 2026-04-29
 
 ### Tagalog audit verification → fixes + WALS↔Cysouw bridge

@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
-import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 
 /-! # Bruening 2021 §5.5 — Sluicing with implicit arguments
 @cite{bruening-2021}
@@ -14,7 +13,7 @@ DOC license sluicing, but implicit first objects do not.
 
 The identity condition is in
 `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean` (§ 7) as
-`bruening2021Identity`, alongside @cite{rudin-2019} (§ 6) and
+`bruening2021StructurallyIdentical`, alongside @cite{rudin-2019} (§ 6) and
 @cite{anand-hardt-mccloskey-2025} (§§ 1-5). This file consumes that
 substrate to prove G1 against concrete antecedent/elided
 SyntacticObjects modeling Bruening's ex. (121) and (124).
@@ -40,15 +39,30 @@ Each leaf has a unique `id`; traces use `mkTrace` (id ≥ 10000). -/
 
 def DP_she     : SyntacticObject := mkLeafPhon .D [] "she" 1
 def Voice_act  : SyntacticObject := mkLeafPhon .Voice [.V] "Voice[act]" 3
-def V_serve    : SyntacticObject := mkLeafPhon .V [.D] "serve" 4
 def DP_us      : SyntacticObject := mkLeafPhon .D [] "us" 5
 def Appl_h     : SyntacticObject := mkLeafPhon .Appl [.V] "∅" 6
-/-- The ∃ functional head Bruening adjoins to V to license indef-implicit
-    second objects (§4.2 ex. 96). Encoded as a `.V`-cat leaf with phon
-    "∃" — sufficient for §5.5 G1, where ∃'s only structural role is to
-    differ between antecedent (where it adjoins to V) and elided clause
-    (where wh-movement leaves a trace in object position instead). -/
-def ExistOp    : SyntacticObject := mkLeafPhon .V [] "∃" 7
+
+/-- LexicalItem for the simple V "serve" (selecting D). -/
+def serve_LI : LexicalItem := LexicalItem.simple .V [.D] "serve"
+
+/-- LexicalItem for the ∃ functional head Bruening adjoins to V to license
+    indef-implicit second objects (§4.2 ex. 96). After head-adjunction it
+    closes off V's selectional feature. Encoded with empty selectional
+    stack and `.V` outer category (it adjoins INTO V). -/
+def ExistOp_LI : LexicalItem := LexicalItem.simple .V [] "∃"
+
+/-- The complex head V+∃ formed by Bruening's head-adjunction (§5.2 ex. 108).
+    Encoded as a single leaf via `LexicalItem.combine` so that ∃ is NOT a
+    max projection in the resulting tree — exactly the structural condition
+    Bruening's identity argument relies on (p. 1065: "Crucially, ∃ can be
+    ignored because it is not a maximal projection"). -/
+def V_serve_exists : SyntacticObject :=
+  .leaf ⟨LexicalItem.combine serve_LI ExistOp_LI, 4⟩
+
+/-- The simple V "serve" leaf (without the ∃ head), for the elided clause
+    where the second object is a wh-trace, not bound by ∃. -/
+def V_serve : SyntacticObject := .leaf ⟨serve_LI, 4⟩
+
 def DP_they    : SyntacticObject := mkLeafPhon .D [] "they" 11
 def DP_someone : SyntacticObject := mkLeafPhon .D [] "someone" 12
 def V_charge   : SyntacticObject := mkLeafPhon .V [.D] "charge" 13
@@ -69,15 +83,20 @@ Elided clause for "but I don't know what" — wh-trace in object position;
 condition does not require a correlate. -/
 
 def serve_doc_antecedent : SyntacticObject :=
-  -- [VoiceP DP_she [Voice [ApplP DP_us [Appl' Appl [VP V_serve ∃]]]]]
+  -- [VoiceP DP_she [Voice [ApplP DP_us [Appl' Appl V+∃_complex]]]]
+  -- where V+∃_complex is one LEAF (head-adjunction product), so ∃ is
+  -- not a max-proj. Bruening §5.2 ex. (108) p. 1059.
   merge DP_she
     (merge Voice_act
       (merge DP_us
-        (merge Appl_h
-          (merge V_serve ExistOp))))
+        (merge Appl_h V_serve_exists)))
 
 def serve_doc_elided : SyntacticObject :=
-  -- Wh-movement of "what" leaves trace in object position; ∃ replaced by trace
+  -- [VoiceP DP_she [Voice [ApplP DP_us [Appl' Appl [VP V_serve t]]]]]
+  -- The VP node here MIRRORS the V+∃ leaf in the antecedent's structurally-
+  -- identical position; the wh-trace inside is filtered as a movement
+  -- non-head. Both the antecedent's V+∃ leaf and the elided's VP-node
+  -- have outerCat .V, satisfying Bruening's structure-match (ex. 123).
   merge DP_she
     (merge Voice_act
       (merge DP_us
@@ -114,17 +133,27 @@ def charged_doc_elided : SyntacticObject :=
 /-- Implicit second-object DOC sluicing is licit. Per @cite{bruening-2021}
     ex. 121, p. 1064: only `∃` differs between antecedent and elided, and
     `∃` is a head (not a maximal projection), so the identity condition
-    ignores it. -/
+    ignores it. The max-projs in both clauses agree categorially per
+    Bruening's enumeration on p. 1065 ("All of these match"), modulo the
+    wh-trace which is filtered as a movement non-head. -/
 theorem g1_serve_implicit_second_obj_licensed :
-    bruening2021Identity serve_doc_antecedent serve_doc_elided = true := by
+    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided = true := by
   decide
 
 /-- Implicit first-object DOC sluicing is blocked. Per @cite{bruening-2021}
     ex. 124, p. 1066: the antecedent's spec-ApplP DP (`someone`) has no
     structure-matching correlate in the elided clause (which has a wh-trace
-    there, filtered out as a movement non-head). -/
+    there, filtered out as a movement non-head).
+
+    This is also where Bruening's max-proj condition diverges from
+    @cite{rudin-2019}'s head-based identity (§5.5 p. 1065): Rudin's
+    head-pair condition is satisfied for this case (V/Appl/Voice heads
+    all match between antecedent and elided), but Bruening's max-proj
+    condition is not. The full Rudin-side prediction would require
+    lifting these SyntacticObject trees to `DomainAnnotatedPair` lists
+    (`FormalMatching.lean:587`); flagged as follow-up. -/
 theorem g1_charged_implicit_first_obj_blocked :
-    bruening2021Identity charged_doc_antecedent charged_doc_elided = false := by
+    bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided = false := by
   decide
 
 /-- @cite{bruening-2021} **Generalization 1** (§2.4 summary point 1, p. 1040;
@@ -136,27 +165,9 @@ theorem g1_charged_implicit_first_obj_blocked :
     `Phenomena/ArgumentStructure/Studies/Bruening2021.lean`'s deferred-
     substrate section. -/
 theorem g1_sluicing_asymmetry :
-    bruening2021Identity serve_doc_antecedent serve_doc_elided = true
-    ∧ bruening2021Identity charged_doc_antecedent charged_doc_elided = false :=
+    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided = true
+    ∧ bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided = false :=
   ⟨g1_serve_implicit_second_obj_licensed,
    g1_charged_implicit_first_obj_blocked⟩
-
-/-! ### Cross-framework contrast: Bruening vs Rudin 2019 -/
-
-/-- @cite{bruening-2021} §5.5 (p. 1065) explicitly modifies @cite{rudin-2019}'s
-    head-based identity condition to use maximal projections. The G1 case
-    is precisely where the two diverge: Rudin's head-pair condition is
-    satisfied for `charged_doc` (the V/Appl/Voice heads all match between
-    antecedent and elided), but Bruening's max-proj condition is not (the
-    antecedent's spec-ApplP DP `someone` has no correlate in the elided
-    clause's filtered max-projs).
-
-    The full Rudin-side prediction would require lifting our SyntacticObject
-    trees to `DomainAnnotatedPair` lists (FormalMatching.lean:587), which
-    is a larger task; flagged for follow-up. We land the Bruening-side
-    blocking claim now. -/
-theorem bruening_diverges_from_rudin_on_g1 :
-    bruening2021Identity charged_doc_antecedent charged_doc_elided = false :=
-  g1_charged_implicit_first_obj_blocked
 
 end Bruening2021Sluicing

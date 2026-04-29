@@ -365,13 +365,14 @@ theorem perfective_implies_aspect_assumption
 -- ════════════════════════════════════════════════════════════════
 
 /-! Per @cite{abusch-1997}'s analysis (formalized in
-`Theories/Semantics/Tense/TemporalDeRe.lean`), the simultaneous reading
-of "John said Mary was sick" is derived by a bound tense variable that
+`Phenomena/TenseAspect/Studies/Abusch1997.lean` against the
+`Core.Time.Tense.TensePronoun` substrate), the simultaneous reading of
+"John said Mary was sick" is derived by a bound tense variable that
 receives the matrix event time, and the shifted reading by a free past
 variable below the matrix event time. The two theorems below verify
 the *data-frame projections* (the simultaneous frame is `isPresent`,
-the shifted frame is `isPast`) — they do not invoke the TemporalDeRe
-substrate, since the data file defines `embeddedSickSimultaneous` and
+the shifted frame is `isPast`) — they do not invoke `TensePronoun`,
+since the data file defines `embeddedSickSimultaneous` and
 `embeddedSickShifted` as standalone `ReichenbachFrame ℤ` instances
 rather than as `embeddedFrame matrixSaid …` applications. Wiring
 through the substrate would require reshaping the data file. -/

@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
+import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
 /-! # Bruening 2021 — Implicit Arguments in English Double Object Constructions
 @cite{bruening-2021}
@@ -113,8 +113,7 @@ structure BruRow where
     expected projection. Returns `false` (rather than failing `decide`)
     so the diagnostic example below names the offending row directly. -/
 def BruRow.matches (r : BruRow) : Bool :=
-  decide (r.verb.implicitObj = r.expectedObj)
-    && decide (r.verb.implicitGoal = r.expectedGoal)
+  r.verb.implicitObj == r.expectedObj && r.verb.implicitGoal == r.expectedGoal
 
 /-- Bruening (56), p. 1037, encoded against the English verb fragment.
     Row groupings reflect Bruening's cell taxonomy; comments name each
