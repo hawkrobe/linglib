@@ -1,22 +1,32 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Linglib.Core.Constraint.Profile
 
 /-!
-# Communicative Efficiency and Pareto Optimality
+# Communicative Efficiency: β-scalarization and Frontier Deviation
 @cite{xu-etal-2024} @cite{kemp-regier-2012} @cite{zaslavsky-kemp-regier-tishby-2018}
 
-Domain-agnostic infrastructure for formalizing tradeoffs between competing
-communicative pressures via Pareto optimality. Many linguistic phenomena arise
-from the tension between two functional pressures — informativity vs. brevity,
-specificity vs. learnability, transparency vs. economy — and the resulting
-attested forms tend to be Pareto-efficient compromises.
+A `CostPair` is a 2-component cost profile (effort, information loss).
+Many linguistic phenomena arise from a tension between two functional
+pressures, and attested forms tend to be Pareto-efficient compromises.
+
+**Pareto dominance lives in `Core.Constraint.Pareto`.** This file does
+not redefine it. `CostPair.toProfile` projects a cost pair into
+`Core.Constraint.Profile ℝ 2`, where `paretoFeaturePreorder` answers
+"is `a` Pareto-dominated by `b`?" via the substrate.
+
+What this file does contribute is the β-scalarization (`weightedCost`)
+and the frontier-deviation primitives (`efficiencyLossAt`, `efficiencyLoss`)
+specific to the Xu-et-al / Kemp-Regier / Zaslavsky efficient-communication
+framework. These are not generic preorder operations.
 
 ## Main definitions
 
-- `CostPair`: two communicative costs (e.g., effort and information loss)
-- `dominates`: strict Pareto dominance
-- `isParetoOptimal`: non-dominated w.r.t. a set of alternatives
-- `weightedCost`: linear scalarization with tradeoff parameter β
-- `efficiencyLoss`: deviation from the Pareto frontier (Eq. 8 of @cite{xu-etal-2024})
+- `CostPair`: 2-component cost (effort, information loss)
+- `CostPair.toProfile`: bridge to `Profile ℝ 2` for substrate-side Pareto
+- `weightedCost`: linear scalarization `L_β = cost₂ + β · cost₁`
+- `efficiencyLossAt`: per-β deviation from optimal
+- `efficiencyLoss`: minimum deviation across a list of β values
+  (corresponds to ε in @cite{xu-etal-2024} eq. 8)
 -/
 
 namespace Pragmatics.Efficiency
@@ -32,27 +42,22 @@ structure CostPair where
   cost₁ : ℝ
   cost₂ : ℝ
 
-/-- Pareto dominance: `a` dominates `b` iff `a` is at least as good on
-    both dimensions and strictly better on at least one. -/
-def dominates (a b : CostPair) : Prop :=
-  a.cost₁ ≤ b.cost₁ ∧ a.cost₂ ≤ b.cost₂ ∧ (a.cost₁ < b.cost₁ ∨ a.cost₂ < b.cost₂)
+/-- Bridge a `CostPair` into the substrate `Core.Constraint.Profile ℝ 2`.
+    Pareto dominance and optimality on cost pairs come for free via
+    `Core.Constraint.paretoFeaturePreorder` composed with this function;
+    no per-file `dominates` / `isParetoOptimal` redefinition is needed. -/
+def CostPair.toProfile (c : CostPair) : Core.Constraint.Profile ℝ 2 :=
+  fun i => match i with | 0 => c.cost₁ | 1 => c.cost₂
 
-theorem dominates_irrefl (a : CostPair) : ¬dominates a a := by
-  intro ⟨_, _, h⟩; exact h.elim (lt_irrefl _) (lt_irrefl _)
+@[simp] theorem CostPair.toProfile_zero (c : CostPair) :
+    c.toProfile 0 = c.cost₁ := rfl
 
-theorem dominates_trans {a b c : CostPair}
-    (hab : dominates a b) (hbc : dominates b c) : dominates a c := by
-  obtain ⟨h1, h2, h3⟩ := hab; obtain ⟨h4, h5, _⟩ := hbc
-  exact ⟨le_trans h1 h4, le_trans h2 h5,
-    h3.elim (fun h => .inl (lt_of_lt_of_le h h4)) (fun h => .inr (lt_of_lt_of_le h h5))⟩
-
-/-- A cost pair is Pareto optimal if no alternative dominates it. -/
-def isParetoOptimal (x : CostPair) (alternatives : List CostPair) : Prop :=
-  ∀ y ∈ alternatives, ¬dominates y x
+@[simp] theorem CostPair.toProfile_one (c : CostPair) :
+    c.toProfile 1 = c.cost₂ := rfl
 
 /-- Weighted cost: linear scalarization of two costs.
-    L_β = cost₂ + β · cost₁.
-    β = 0 considers only cost₂; large β emphasizes cost₁. -/
+    `L_β = cost₂ + β · cost₁`.
+    `β = 0` considers only `cost₂`; large β emphasizes `cost₁`. -/
 def weightedCost (c : CostPair) (β : ℝ) : ℝ :=
   c.cost₂ + β * c.cost₁
 
@@ -61,20 +66,20 @@ def efficiencyLossAt (attested optimal : CostPair) (β : ℝ) : ℝ :=
   weightedCost attested β - weightedCost optimal β
 
 /-- Overall efficiency loss: minimum deviation across β values.
-    ε = min_β (L_β[attested] − L_β[optimal_β])   (Eq. 8, @cite{xu-etal-2024}). -/
+    `ε = min_β (L_β[attested] − L_β[optimal_β])` (@cite{xu-etal-2024} eq. 8). -/
 noncomputable def efficiencyLoss (attested : CostPair) (optimalAt : ℝ → CostPair)
     (βs : List ℝ) : ℝ :=
   match βs.map (fun β => efficiencyLossAt attested (optimalAt β) β) with
   | [] => 0
   | x :: xs => xs.foldl min x
 
-theorem efficiencyLossAt_self (c : CostPair) (β : ℝ) :
+@[simp] theorem efficiencyLossAt_self (c : CostPair) (β : ℝ) :
     efficiencyLossAt c c β = 0 := by
   simp [efficiencyLossAt]
 
 theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℝ}
     (hβ : β₁ ≤ β₂) (hc : 0 ≤ c.cost₁) :
-    weightedCost c β₁ ≤ weightedCost c β₂ := by
-  exact add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)
+    weightedCost c β₁ ≤ weightedCost c β₂ :=
+  add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)
 
 end Pragmatics.Efficiency

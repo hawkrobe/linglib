@@ -3,7 +3,8 @@ import Linglib.Core.FormFrequency
 import Linglib.Features.InformationStructure
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
-import Linglib.Phenomena.Alignment.Typology
+import Linglib.Typology.Alignment
+import Linglib.Phenomena.Alignment.Studies.Dixon1994
 
 /-!
 # @cite{haspelmath-2021}: Explaining Argument-Coding Splits @cite{haspelmath-2021}
@@ -67,7 +68,7 @@ open Core.FormFrequency
 open Core.Constraint.Evaluation
 open Aissen2003
 open DeHoopMalchukov2008
-open Phenomena.Alignment.Typology
+open Typology.Alignment
 
 -- ============================================================================
 -- § 1: Universal 1 — The Role-Reference Association Universal

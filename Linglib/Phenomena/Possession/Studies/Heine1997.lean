@@ -1,7 +1,11 @@
-import Linglib.Phenomena.Possession.Typology
+import Linglib.Typology.Possession
 import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 import Linglib.Datasets.WALS.Features.F117A
+import Linglib.Fragments.Slavic.Russian.Possession
+import Linglib.Fragments.Finnish.Possession
+import Linglib.Fragments.Turkish.Possession
+import Linglib.Fragments.Swahili.Possession
 
 /-!
 # Heine (1997): Possession — Cognitive Sources, Forces, and Grammaticalization
@@ -35,15 +39,14 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 
 ## Connections
 
-- `Phenomena.Possession.Typology.PossessionSource`: the eight schemas
-- `Phenomena.Possession.Typology.PossessiveNotion`: the seven target notions
+- `Typology.Possession.PossessionSource`: the eight schemas (substrate)
+- `Typology.Possession.PossessiveNotion`: the seven target notions (substrate)
 - `Theories.Diachronic.Grammaticalization.GramStage`: the verbal cline
 - `Theories.Semantics.Noun.Relational.Barker2011`: π operator and
   arity tracking — connects to which schemas have possessor-as-subject
   (Action, Companion = transitive/Pred2) vs possessee-as-subject (rest)
 -/
 
-open Phenomena.Possession.Typology
 open Typology.Possession
 open Diachronic.Grammaticalization
 open Semantics.Noun.Relational.Barker2011 (Pred1 Pred2 SemType)
@@ -431,12 +434,141 @@ def walsToSchema : Datasets.WALS.F117A.PredicativePossession → PossessionSourc
   | .have          => .action
 
 /-- The WALS-to-Heine mapping agrees with `predicativeSource` from
-    Typology.lean for the five strategies they share. -/
+    Typology/Possession.lean for the five strategies they share. -/
 theorem wals_agrees_with_predicativeSource :
     walsToSchema .have = predicativeSource .haveVerb ∧
     walsToSchema .locational = predicativeSource .locational ∧
     walsToSchema .topic = predicativeSource .topic ∧
     walsToSchema .conjunctional = predicativeSource .comitative := by
   exact ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- §9. Per-Language Heine Prediction Verification
+-- ============================================================================
+
+/-! Per-language verifications previously co-located in Fragment files.
+    Moved here per CLAUDE.md "Fragments never import Phenomena" rule:
+    paper-anchored predictions must live in the paper's study file. -/
+
+/-! ### Russian: Location Schema (primary) + Action Schema (`imet'`, secondary). -/
+section Russian
+open Fragments.Slavic.Russian.Possession
+
+/-- Russian's primary Location Schema matches Heine's predictions:
+    have-construction (not belong), possessee as subject. -/
+theorem russian_primary_matches_heine :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Russian's secondary Action Schema can yield both have and belong,
+    matching Table 2.4. -/
+theorem russian_secondary_is_dual :
+    schemaYieldsHave secondarySchema = true ∧
+    schemaYieldsBelong secondarySchema = true := by
+  exact ⟨rfl, rfl⟩
+
+/-- The `u` construction coexists across all three Overlap stages in
+    Russian, matching the paper's example (73a-d). Stage I and III
+    are strictly ordered. -/
+theorem russian_overlap_stages_ordered :
+    OverlapStage.sourceOnly.degree < OverlapStage.overlap.degree ∧
+    OverlapStage.overlap.degree < OverlapStage.targetOnly.degree := by
+  exact ⟨by decide, by decide⟩
+
+/-- WALS F117A classifies Russian as `locational`, matching its primary
+    Location Schema. -/
+theorem russian_wals_consistent :
+    walsToSchema .locational = sourceSchema := rfl
+
+end Russian
+
+/-! ### Finnish: Location Schema at Stage III. -/
+section Finnish
+open Fragments.Finnish.Possession
+
+/-- Finnish's Location Schema matches Heine's predictions:
+    have-construction (not belong), possessee as subject, Pred1 arity. -/
+theorem finnish_matches_heine_predictions :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Finnish at Stage III: the adessive in possessive use is no longer
+    interpreted as locative. This matches the Overlap Model prediction
+    that fully grammaticalized schemas lose their source meaning. -/
+theorem finnish_stage_III_grammaticalization :
+    OverlapStage.targetOnly.degree > OverlapStage.overlap.degree := by decide
+
+/-- WALS F117A classifies Finnish as `locational`, which maps to
+    Location Schema via `walsToSchema`. -/
+theorem finnish_wals_consistent :
+    walsToSchema .locational = sourceSchema := rfl
+
+end Finnish
+
+/-! ### Turkish: Genitive Schema (primary) + Location + Equation variants. -/
+section Turkish
+open Fragments.Turkish.Possession
+
+/-- Turkish's primary Genitive Schema matches Heine's predictions:
+    have-construction (not belong), possessee as subject. -/
+theorem turkish_genitive_matches_heine :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Heine predicts Genitive Schema correlates with permanent/inalienable
+    notions. Turkish's genitive notions match this. -/
+theorem turkish_genitive_notions_match_prediction :
+    (schemaTypicalNotions sourceSchema).contains .permanent = true ∧
+    (schemaTypicalNotions sourceSchema).contains .inalienable = true := by
+  native_decide
+
+/-- Heine predicts Location Schema correlates with physical/temporary
+    notions. Turkish's location variant notions match this. -/
+theorem turkish_location_notions_match_prediction :
+    (schemaTypicalNotions locationVariant).contains .physical = true ∧
+    (schemaTypicalNotions locationVariant).contains .temporary = true := by
+  native_decide
+
+/-- WALS F117A classifies Turkish as `genitive`, matching its primary
+    Genitive Schema. -/
+theorem turkish_wals_consistent :
+    walsToSchema .genitive = sourceSchema := rfl
+
+end Turkish
+
+/-! ### Swahili: Companion Schema (Bantu `-na`). -/
+section Swahili
+open Fragments.Swahili.Possession
+
+/-- Swahili's Companion Schema matches Heine's predictions:
+    have-construction (not belong), possessor as subject, Pred2. -/
+theorem swahili_companion_matches_heine :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Swahili is at Stage III: the `-na` marker is no longer decomposable
+    into copula + comitative, so the source meaning (accompaniment) is
+    no longer available. All seven notions expressible confirms full
+    grammaticalization. -/
+theorem swahili_full_grammaticalization :
+    expressibleNotions.length = 7 ∧
+    OverlapStage.targetOnly.degree = 2 := by
+  exact ⟨rfl, rfl⟩
+
+/-- WALS F117A classifies Swahili as `conjunctional` (Stassen's term
+    for comitative-based possession), which maps to Companion Schema
+    via `walsToSchema`. -/
+theorem swahili_wals_consistent :
+    walsToSchema .conjunctional = sourceSchema := rfl
+
+end Swahili
 
 end Heine1997

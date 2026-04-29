@@ -24,14 +24,14 @@ and distinct syntactic frames.
 -/
 
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Core.Lexical.DiathesisAlternation
+import Linglib.Features.Aktionsart
+import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 
-namespace Semantics.Verb.EventStructure
+namespace Features.EventStructure
 
-open Core.Verbs
-open Semantics.Verb.EntailmentProfile
-open Semantics.Tense.Aspect.LexicalAspect
+open Semantics.Verb
+open Features.EntailmentProfile
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Structure Templates (@cite{rappaport-hovav-levin-1998} + 2024)
@@ -361,27 +361,27 @@ def CausationType.LicensesBySelf : CausationType → Prop
 instance (c : CausationType) : Decidable c.LicensesBySelf := by
   cases c <;> unfold CausationType.LicensesBySelf <;> infer_instance
 
-end Semantics.Verb.EventStructure
+end Features.EventStructure
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 /-- Predicted event structure template from meaning components. -/
-def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Verb.EventStructure.Template
+def MeaningComponents.predictedTemplate : MeaningComponents → Features.EventStructure.Template
   | mc => if mc.changeOfState && mc.causation then .accomplishment
     else if mc.changeOfState then .achievement
     else if !mc.motion && !mc.contact then .state
     else .activity
 
 /-- Predicted template for a Levin class, with class-specific overrides. -/
-def LevinClass.eventTemplate : LevinClass → Semantics.Verb.EventStructure.Template
+def LevinClass.eventTemplate : LevinClass → Features.EventStructure.Template
   -- motionContact is class-specific (sweep/rub/scrape)
   | .wipe => .motionContact
   | c => c.meaningComponents.predictedTemplate
 
-end Core.Verbs
+end Semantics.Verb
 
-namespace Semantics.Verb.EventStructure
-open Core.Verbs
+namespace Features.EventStructure
+open Semantics.Verb
 
 /-! ### Verification: canonical quadruple -/
 
@@ -545,4 +545,4 @@ theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
     (v.fuse c).predictedTemplate.HasCause := by
   rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
 
-end Semantics.Verb.EventStructure
+end Features.EventStructure

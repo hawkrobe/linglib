@@ -1,5 +1,5 @@
-import Linglib.Core.Lexical.Word
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Core.Word
+import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 

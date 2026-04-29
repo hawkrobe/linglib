@@ -1,5 +1,9 @@
 import Linglib.Theories.Semantics.Modality.Exclusion
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 
 /-!
 # @cite{iatridou-2000} — Morphological Data @cite{iatridou-2000}
@@ -36,7 +40,8 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 namespace Iatridou2000
 
 open Semantics.Modality.Exclusion
-open Core.Verbs (VendlerClass)
+open Features (VendlerClass)
+open Features
 
 -- ════════════════════════════════════════════════════════════════
 -- § @cite{iatridou-2000}'s counterfactual typology

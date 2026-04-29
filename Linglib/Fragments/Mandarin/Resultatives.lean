@@ -35,7 +35,7 @@ remain in `Theories.Semantics.Causation.Resultatives`.
 namespace Fragments.Mandarin.Resultatives
 
 open Semantics.Causation.Resultatives (ResultativeRealization ResultOrientation)
-open Semantics.Verb.ChangeOfState (CoSType)
+open Features.ChangeOfState (CoSType)
 
 -- ════════════════════════════════════════════════════
 -- § 0. Phase complement morpheme enum

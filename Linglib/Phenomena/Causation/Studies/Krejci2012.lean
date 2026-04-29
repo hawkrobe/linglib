@@ -47,10 +47,11 @@ Texas at Austin.
 
 namespace Krejci2012
 
-open Core.Verbs
+open Semantics.Verb
+open Semantics.Verb.Roots
 open Semantics.Causation.Morphological
-open Semantics.Verb.EventStructure
-open Semantics.Verb.ArgDerivation
+open Features.EventStructure
+open Features.ArgDerivation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lexically Reflexive Verb Data
@@ -270,7 +271,7 @@ theorem eat_primary_accomplishment :
 /-- eat's ArgTemplate is `consumption` (agent + incremental theme). -/
 theorem eat_argTemplate_is_consumption :
     LevinClass.argTemplate .eat =
-    some Semantics.Verb.LevinClassProfiles.consumption := rfl
+    some Features.LevinClassProfiles.consumption := rfl
 
 /-- The accomplishment template has an intransitive variant (achievement).
     This is the template-level possibility that eat/dress *could* alternate

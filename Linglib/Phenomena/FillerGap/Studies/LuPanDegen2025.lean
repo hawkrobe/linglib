@@ -3,7 +3,11 @@ import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Phenomena.Islands.Studies.HofmeisterSag2010
 import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Studies.Sag2010
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -36,7 +40,7 @@ namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
 open Features.InformationStructure
-open Core.Verbs
+open Semantics.Verb
 
 /-! ## §1. Island Source Classification
 

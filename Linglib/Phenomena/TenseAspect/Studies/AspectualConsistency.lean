@@ -31,7 +31,8 @@ verifies that the *cross-cutting invariants* hold:
 
 namespace AspectualConsistency
 
-open Core.Verbs
+open Semantics.Verb
+open Features
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.Incrementality (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
@@ -39,7 +40,7 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
 open Champollion2017 (predictsSSR)
 open Semantics.Spatial.Path (PathShape)
-open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
+open Features.DegreeAchievement (DegreeAchievementScale)
 
 -- ════════════════════════════════════════════════════
 -- § 1. VendlerClass × VerbIncClass Consistency

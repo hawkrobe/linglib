@@ -354,7 +354,7 @@ theorem dm_bridge_faithful (s : GenderStatus) :
     The [non-human] core (Shona 7/8) maps to `.humanness` because
     Shona's system is organized around the human/non-human distinction.
     Xhosa's finer [animal] and [inanimate] cores map to `.animacy`. -/
-def toSemanticBasis : SemanticCore → Phenomena.Gender.Typology.SemanticBasis
+def toSemanticBasis : SemanticCore → Typology.Gender.SemanticBasis
   | .human     => .humanness
   | .animal    => .animacy
   | .inanimate => .animacy
@@ -372,7 +372,7 @@ theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
 /-- Xhosa gender profile: 5+ genders, non-sex-based, semantic+formal assignment.
     @cite{carstens-2026} §2.2: semantic cores for some genders, formal (class prefix)
     assignment for others. -/
-def xhosaGenderProfile : Phenomena.Gender.Typology.GenderProfile where
+def xhosaGenderProfile : Typology.Gender.GenderProfile where
   name := "Xhosa"
   iso639 := "xho"
   genderCount := .fivePlus
@@ -383,7 +383,7 @@ def xhosaGenderProfile : Phenomena.Gender.Typology.GenderProfile where
   agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verbTarget]
 
 /-- Shona gender profile: 8 genders (5+), non-sex-based. -/
-def shonaGenderProfile : Phenomena.Gender.Typology.GenderProfile where
+def shonaGenderProfile : Typology.Gender.GenderProfile where
   name := "Shona"
   iso639 := "sna"
   genderCount := .fivePlus

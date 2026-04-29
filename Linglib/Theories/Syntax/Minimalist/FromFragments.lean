@@ -3,7 +3,6 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Lexicon
 import Linglib.Theories.Semantics.Quantification.Lexicon
 
 /-!
@@ -13,19 +12,15 @@ Maps Fragment lexical entries (`VerbEntry`, `PronounEntry`, `NounEntry`,
 `QuantifierEntry`) into Minimalist `SyntacticObject` leaves with the
 appropriate `Cat` and `SelStack` features.
 
-This is the canonical Theories-side interpretation layer: parallel files
-exist at `Theories/Syntax/HPSG/Core/FromFragments.lean` and
-`Theories/Syntax/CCG/Core/FromFragments.lean` for the same five-projection
-shape (`verbToX`, `pronounToX`, `nounToX`, `determinerToX`,
-`lexResultToX`). Concrete derivation *instances* using these projections
-live in `Phenomena/`, anchored to specific paper analyses (e.g.
+Concrete derivation *instances* using these projections live in
+`Phenomena/`, anchored to specific paper analyses (e.g.
 `Phenomena/ArgumentStructure/Studies/Adger2003.lean` for c-selection).
 
 ## Sections
 
 - §1 Selectional encoding (`verbToSelStack`)
 - §2 Per-entry-type projections (`verbToSO`, `pronounToSO`, `nounToSO`,
-  `determinerToSO`, `lexResultToSO`)
+  `determinerToSO`)
 - §3 Sanity examples
 
 ## Selectional encoding
@@ -45,7 +40,6 @@ open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
 open Fragments.English.Pronouns (PronounEntry PronounType)
 open Fragments.English.Nouns (NounEntry)
 open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
-open Fragments.English.Lexicon (LexResult)
 
 section SelectionalEncoding
 
@@ -95,14 +89,6 @@ def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
     `the [D, uN]`). -/
 def determinerToSO (d : QuantifierEntry) (id : Nat) : SyntacticObject :=
   mkLeafPhon .D [.N] d.form id
-
-/-- Convert a unified `LexResult` to a formal `SyntacticObject`. -/
-def lexResultToSO (r : LexResult) (id : Nat) : SyntacticObject :=
-  match r with
-  | .verb v => verbToSO v id
-  | .pronoun p => pronounToSO p id
-  | .noun n => nounToSO n id
-  | .determiner d => determinerToSO d id
 
 end EntryProjections
 

@@ -1,6 +1,6 @@
 import Linglib.Typology.Question
 import Linglib.Phenomena.Islands.Studies.ShenHuang2026
-import Linglib.Core.Lexical.ExpressiveModifier
+import Linglib.Typology.ExpressiveModifier
 
 /-!
 # Singlish Question Formation Strategies
@@ -42,7 +42,7 @@ namespace Fragments.Singlish.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open ShenHuang2026 (WhDependencyType)
-open Core.Lexical.ExpressiveModifier
+open Typology.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 
 -- ============================================================================
@@ -188,10 +188,26 @@ def ah : SentenceFinalParticle :=
 
     Parametric values: parasitic movement (must adjoin to wh-phrase;
     cannot move on its own), matrix-scope host requirement. -/
-def theHell : Core.Lexical.ExpressiveModifier.ExpressiveWhModifier :=
+def theHell : Typology.ExpressiveModifier.ExpressiveWhModifier :=
   { form := "the hell"
   , gloss := "the-hell (ANDL intensifier)"
   , movementType := .parasitic
   , hostPosition := .matrixScope }
+
+-- ============================================================================
+-- WALS QuestionProfile bundle
+-- ============================================================================
+
+/-- Singlish question profile. Not in WALS (contact variety). Wh-movement
+    classified as `.mixed` because all three strategies (full movement,
+    partial movement, in-situ) are interchangeable (@cite{sato-2013}).
+    Polar questions use sentence-final particles (*ah*, *meh*)
+    (@cite{sato-ngui-2017}). -/
+def question : Typology.Question.QuestionProfile :=
+  { language := "Singlish"
+  , walsCode := "cse"
+  , qParticlePos := some .final
+  , whMovement := some .mixed
+  , polarStrategy := some .particle }
 
 end Fragments.Singlish.Questions

@@ -43,14 +43,18 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 namespace Semantics.Attitudes.Preferential
 
-open Core.Verbs (AttitudeValence)
-export Core.Verbs (AttitudeValence)
+open Features (AttitudeValence)
+export Features (AttitudeValence)
 open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDistributive
                       degreeComparisonProp degreeComparisonQuestion DegreeFn ThresholdFn)
 

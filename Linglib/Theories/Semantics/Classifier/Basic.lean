@@ -1,5 +1,5 @@
 import Linglib.Core.Mereology
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 import Linglib.Theories.Semantics.Plurality.Link1983
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Plurality.Link1983
 @cite{chierchia-1998} @cite{little-moroney-royer-2022} @cite{moroney-2021}
 
 Unified compositional semantics for classifier constructions, connecting
-the typological vocabulary in `Core.NounCategorization` to the mereological
+the typological vocabulary in `Typology` to the mereological
 infrastructure in `Core.Mereology` and the materialization homomorphism
 in `Theories.Semantics.Plurality.Link1983`.
 
@@ -51,7 +51,7 @@ This module composes existing pieces:
 namespace Semantics.Classifier
 
 open Mereology
-open Core.NounCategorization (ClassifierStrategy)
+open Typology (ClassifierStrategy)
 
 -- ============================================================================
 -- §1: CLF-for-N — Atomization (@cite{chierchia-1998})

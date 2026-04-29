@@ -174,7 +174,7 @@ theorem finnish_is_active_passive :
 
     The structure extends `FinnishVerb` with implicative fields. -/
 
-open Core.Verbs (Implicative)
+open Features (Implicative)
 open Semantics.Causation.Implicative (Directionality Prerequisite ImplicativeClass)
 
 /-- A Finnish implicative verb entry, extending the base verb with

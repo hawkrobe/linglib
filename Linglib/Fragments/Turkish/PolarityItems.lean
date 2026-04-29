@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Turkish Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Turkish indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **kimse**: Weak NPI (questions, conditionals, indirect negation)
 - **hiç kimse**: Emphatic negative indefinite (direct negation)
@@ -14,7 +14,7 @@ Turkish indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Turkish.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPIs

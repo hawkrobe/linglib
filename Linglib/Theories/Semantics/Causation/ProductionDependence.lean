@@ -37,7 +37,8 @@ namespace Semantics.Causation.ProductionDependence
 
 open Core (WorldTimeIndex)
 
-open Core.Verbs (Causative)
+open Features (Causative)
+open Features
 
 /-! ## Causation Type
 

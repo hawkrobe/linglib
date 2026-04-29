@@ -1,6 +1,10 @@
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Core.Modality.ModalTypes
 
 /-!
@@ -160,23 +164,23 @@ theorem attitudeTemporalConstraint_derived_circumstantial
     Note: preferential attitudes CAN also take DOX (e.g., "I hope she
     already left" = DOX → past reading). This function returns the kind
     that distinguishes them: the kind that PERMITS future orientation. -/
-def Attitude.toModalBaseKind : Core.Verbs.Attitude → ModalBaseKind
+def Attitude.toModalBaseKind : Features.Attitude → ModalBaseKind
   | .doxastic _ => ModalBaseKind.doxastic
   | .preferential _ => ModalBaseKind.circumstantial
 
 /-- Doxastic attitudes select DOX. -/
-theorem doxastic_selects_dox (v : Core.Verbs.Veridicality) :
+theorem doxastic_selects_dox (v : Features.Veridicality) :
     Attitude.toModalBaseKind (.doxastic v) = ModalBaseKind.doxastic := rfl
 
 /-- Preferential attitudes select CIR (= can access future histories). -/
-theorem preferential_selects_cir (k : Core.Verbs.Preferential) :
+theorem preferential_selects_cir (k : Features.Preferential) :
     Attitude.toModalBaseKind (.preferential k) = ModalBaseKind.circumstantial := rfl
 
 /-- `PermitsCircumstantial` ↔ `toModalBaseKind = .circumstantial`. -/
-theorem permitsCirc_iff_cir (a : Core.Verbs.Attitude) :
+theorem permitsCirc_iff_cir (a : Features.Attitude) :
     a.PermitsCircumstantial ↔
     Attitude.toModalBaseKind a = ModalBaseKind.circumstantial := by
-  cases a <;> simp [Core.Verbs.Attitude.PermitsCircumstantial, Attitude.toModalBaseKind]
+  cases a <;> simp [Features.Attitude.PermitsCircumstantial, Attitude.toModalBaseKind]
 
 
 /-! ## ModalFlavor → ModalBaseKind bridge

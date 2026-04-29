@@ -1,4 +1,5 @@
-import Linglib.Phenomena.WordOrder.Typology
+import Linglib.Typology.WordOrder
+import Linglib.Phenomena.WordOrder.Studies.Gibson2025
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 
@@ -31,7 +32,8 @@ Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, @cite{levshina-stoy
 
 namespace Phenomena.WordOrder.Gradience
 
-open Phenomena.WordOrder.Typology
+open Typology.WordOrder
+open Phenomena.WordOrder.Studies.Gibson2025
 -- ============================================================================
 -- §1: Gradient Measures on Existing CrossTab Data
 -- ============================================================================

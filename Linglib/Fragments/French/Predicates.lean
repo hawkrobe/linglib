@@ -16,9 +16,9 @@ despite being separate words.
 
 namespace Fragments.French.Predicates
 
-open Core.Verbs
-open Core.Verbs (Causative)
-open Semantics.Verb.EntailmentProfile
+open Semantics.Verb
+open Features (Causative)
+open Features.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
 /-- French verb entry: extends VerbCore with French inflectional paradigm. -/

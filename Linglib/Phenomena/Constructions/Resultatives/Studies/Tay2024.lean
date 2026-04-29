@@ -52,7 +52,7 @@ open Core (WorldTimeIndex)
 
 open Semantics.Causation.Resultatives
 open Morphology.WordStructure
-open Semantics.Verb.ChangeOfState (CoSType priorStatePresup)
+open Features.ChangeOfState (CoSType priorStatePresup)
 open Fragments.Mandarin.Resultatives
 
 -- ════════════════════════════════════════════════════

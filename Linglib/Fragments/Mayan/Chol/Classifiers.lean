@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 
 /-!
 # Ch'ol Numeral Classifier Lexicon
@@ -29,7 +29,7 @@ that the numeral requires as its first argument:
 
 namespace Fragments.Mayan.Chol.Classifiers
 
-open Core.NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
+open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Numeral classifiers (Table 4 of @cite{little-moroney-royer-2022})

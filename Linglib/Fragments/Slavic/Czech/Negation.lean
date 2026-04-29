@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Czech Negation Fragment
@@ -25,7 +25,7 @@ the n-word system at the sentence level.
 
 namespace Fragments.Slavic.Czech.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *ne-* — Czech's standard negation prefix.
     Attaches directly to the verb stem: *nepřijde* 'will not come',
@@ -36,7 +36,7 @@ def ne : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Czech negation system: a single verbal prefix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ces" [ne]
 
@@ -138,5 +138,24 @@ theorem all_concord_contain_ne :
 theorem all_nwords_ni_prefix :
     allConcordExamples.all (fun e => e.nword.startsWith "ni") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Czech negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Czech"
+  , iso := "ces"
+  , morphemeType := .affix
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .cooccur
+  , negMarkers := ["ne-"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Slavic.Czech.Negation

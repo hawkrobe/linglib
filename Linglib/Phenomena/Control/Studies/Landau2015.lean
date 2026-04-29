@@ -1,7 +1,8 @@
 import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Phenomena.Complementation.Typology
+import Linglib.Typology.Complementation
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Phenomena.Complementation.Studies.Noonan2007
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
@@ -43,7 +44,8 @@ OC in complement clauses divides into two subtypes:
 namespace Landau2015
 
 open Minimalist.MinimalPronoun
-open Core.Verbs (VerbCore ControlType Attitude ComplementType)
+open Semantics.Verb (VerbCore ControlType ComplementType)
+open Features (Attitude)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: The Two-Tiered Theory of Control
@@ -799,7 +801,7 @@ end VerbVerification
 -- § 14: Noonan CTP → Landau Tier Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.Complementation.Typology
+open Typology.Complementation
 
 /-- Map @cite{noonan-2007}'s CTP classes to @cite{landau-2015}'s
     control tiers.
@@ -864,5 +866,28 @@ theorem ctp_tier_consistent (c : CTPClass)
     (hClass : (ctpToLandauClass c).isSome = true) :
     ctpToControlTier c = (ctpToLandauClass c).map (·.controlTier) := by
   cases c <;> simp_all [ctpToControlTier, ctpToLandauClass, LandauPredicateClass.controlTier]
+
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge to @cite{noonan-2007}: equi-deletion → predicative tier
+-- ════════════════════════════════════════════════════════════════
+
+/-! @cite{noonan-2007}'s equi-deletion criterion (§2.1) and
+    @cite{landau-2015}'s control tiers (Ch 2, table (119)) classify the
+    same English verbs by independent properties: equi-deletion via
+    coreferential subject erasure, predicative tier via complement
+    head-feature ([uD]). The two should agree on `manage`-class verbs:
+    `english_manage` is `.achievement` per Noonan, `hasEquiDeletion = true`,
+    and Landau's `ctpToControlTier .achievement = some .predicative` holds
+    by `rfl`. The bridge theorem makes the consilience kernel-checked. -/
+
+open Phenomena.Complementation.Studies.Noonan2007 (english_manage)
+
+/-- Cross-paper consilience: Noonan-equi on the achievement class
+    coincides with Landau's predicative tier. Witnessed by `manage`. -/
+theorem manage_equi_implies_predicative :
+    english_manage.hasEquiDeletion = true →
+    ctpToControlTier english_manage.ctpClass = some .predicative := by
+  intro _
+  rfl
 
 end Landau2015

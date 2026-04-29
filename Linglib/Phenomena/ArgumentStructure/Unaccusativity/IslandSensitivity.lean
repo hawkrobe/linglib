@@ -46,7 +46,7 @@ namespace Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 
 open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
 open Fragments.English.Predicates.Verbal
-open Core.Verbs
+open Semantics.Verb
 
 /-! ## §1. The two empirical observations
 

@@ -36,7 +36,7 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
 namespace Condoravdi2002
 
 open Core.Time
-open Core.Verbs (Dynamicity)
+open Features (Dynamicity)
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Modal.AtOperator
 open Core.Modality.HistoricalAlternatives

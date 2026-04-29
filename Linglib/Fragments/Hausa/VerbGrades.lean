@@ -36,7 +36,7 @@ Per-cell verifications appear as `example`s.
 namespace Fragments.Hausa.VerbGrades
 
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Core.Verbs (VerbCore VoiceType ComplementType)
+open Semantics.Verb (VerbCore VoiceType ComplementType)
 
 -- ============================================================================
 -- § 1: Form Inventory (A/B/C/D — @cite{newman-2000} §74.2)

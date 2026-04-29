@@ -1,5 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Comparative
+import Linglib.Typology.Comparison
 /-!
 # Turkish Comparative Construction @cite{stassen-1985}
 
@@ -32,5 +33,21 @@ theorem standard_is_ablative : entry.standardCase = .abl := rfl
 theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
 theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
 theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
+
+-- ============================================================================
+-- ComparativeProfile bundle (consumed by Studies/Stassen2013.lean)
+-- ============================================================================
+
+/-- Turkish comparative profile (WALS Ch 121 + degree-word + superlative). -/
+def comparison : Typology.Comparison.ComparativeProfile :=
+  { language := "Turkish"
+  , iso := "tur"
+  , comparativeType := .locational
+  , degreeWord := .morphological
+  , superlative := .morphological
+  , comparativeForm := "X Y-den daha Adj"
+  , standardMarker := "-dan/-den"
+  , degreeMarker := "daha"
+  , basicOrder := "SOV" }
 
 end Fragments.Turkish.Comparison

@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Maori Negation Fragment
@@ -28,7 +28,7 @@ form with *e...ana* or bare.
 
 namespace Fragments.Maori.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *kāhore* — Maori's standard sentential negation word.
     WALS Ch 112A classifies this as `.wordUnclear` — in Maori's isolating
@@ -40,7 +40,7 @@ def kahore : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Maori negation system: a single quasi-auxiliary word.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "mri" [kahore]
 
@@ -92,5 +92,24 @@ private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 theorem all_negative_contain_kahore :
     allExamples.all (fun e => hasSubstr e.negative "Kāhore") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Maori negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Maori"
+  , iso := "mri"
+  , morphemeType := .wordUnclear
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finiteness
+  , negIndefinite := Option.none
+  , negMarkers := ["kaahore"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Maori.Negation

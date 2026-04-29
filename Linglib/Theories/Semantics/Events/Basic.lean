@@ -21,14 +21,13 @@ later module.
 import Mathlib.Order.Basic
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Tactics.OntSort
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 namespace Semantics.Events
 
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 open Semantics.Tense.Aspect.Core
 
 -- ════════════════════════════════════════════════════

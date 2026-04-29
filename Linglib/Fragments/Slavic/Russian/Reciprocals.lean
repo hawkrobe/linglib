@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # Russian Reciprocal Fragment
@@ -15,7 +15,7 @@ takes the case assigned by the verb.
 
 namespace Fragments.Slavic.Russian.Reciprocals
 
-open Core.Pronouns
+open Typology
 
 /-- друг друга *drug druga* — reciprocal pronoun 'each other'. -/
 def drugDruga : PronounEntry :=

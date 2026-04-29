@@ -30,7 +30,7 @@ Equations:
 
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 
 -- ════════════════════════════════════════════════════
 -- § Main Module
@@ -40,8 +40,7 @@ namespace Semantics.Tense.Aspect.Core
 
 open _root_.Core (WorldTimeIndex)
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
@@ -262,25 +261,10 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
 
 end Semantics.Tense.Aspect.Core
 
-namespace Core.Verbs
-
-/-- States and activities naturally pair with IMPF (homogeneous). -/
-def VendlerClass.naturallyImperfective : VendlerClass → Bool
-  | .state | .activity => true
-  | .achievement | .accomplishment | .semelfactive => false
-
-/-- Achievements and accomplishments naturally pair with PRFV (telic). -/
-def VendlerClass.naturallyPerfective : VendlerClass → Bool
-  | .state | .activity | .semelfactive => false
-  | .achievement | .accomplishment => true
-
-end Core.Verbs
-
 namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 

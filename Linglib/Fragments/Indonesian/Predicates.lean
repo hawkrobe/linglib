@@ -48,7 +48,8 @@ a reflexive reading arises even for obviative roots.
 
 namespace Fragments.Indonesian.Predicates
 
-open Core.Verbs
+open Semantics.Verb
+open Semantics.Verb.Roots
 open Semantics.Events.ArgumentRealization
 open Fragments.Indonesian.Morphophonology
 

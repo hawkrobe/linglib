@@ -1,5 +1,5 @@
-import Linglib.Core.Lexical.Word
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Core.Word
+import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
@@ -19,7 +19,7 @@ of Aikhenvald's semantic generalizations about classifier selection.
 
 namespace Fragments.Mandarin.Nouns
 
-open Core.NounCategorization (ClassifierEntry)
+open Typology (ClassifierEntry)
 open Fragments.Mandarin.Classifiers
 open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 

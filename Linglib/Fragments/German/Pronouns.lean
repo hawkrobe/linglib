@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Pronouns
 
 /-!
@@ -29,7 +29,7 @@ in assumed-identity copular constructions (@cite{keine-et-al-2019},
 
 namespace Fragments.German.Pronouns
 
-open Core.Pronouns
+open Typology
 open Features.Register (Level)
 
 -- ============================================================================

@@ -27,7 +27,7 @@ The layer assignments are theoretical overlays on the fragment particles —
 the fragments themselves carry only theory-neutral distributional fields.
 -/
 
-namespace Phenomena.Questions.TypologyBridge
+namespace Phenomena.Questions.Studies.BhattDayal2020
 
 open Features (QParticleLayer)
 open Core.Question (IsSingleton SingletonQuestion declarative polar
@@ -213,4 +213,4 @@ theorem kya_infelicitous_two_cell_polar {p : Set W}
 theorem kya_polarQuestion_signals_singletonPresup :
     Fragments.HindiUrdu.Particles.kya.polarQuestion = true := rfl
 
-end Phenomena.Questions.TypologyBridge
+end Phenomena.Questions.Studies.BhattDayal2020

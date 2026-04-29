@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 /-!
 # English Miscellaneous Function Words Fragment

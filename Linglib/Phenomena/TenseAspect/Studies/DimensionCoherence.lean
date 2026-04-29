@@ -30,7 +30,8 @@ namespace DimensionCoherence
 
 open Semantics.Events.DimensionCoherence
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
-open Core.Verbs
+open Semantics.Verb
+open Features
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Semantics.Spatial.Path (PathShape)
 open _root_.Mereology (quaBoundedness cumBoundedness)

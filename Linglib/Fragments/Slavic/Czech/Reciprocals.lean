@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # Czech Reciprocal Fragment
@@ -16,7 +16,7 @@ reflexive and reciprocal uses, consistent with "identical to reflexive."
 
 namespace Fragments.Slavic.Czech.Reciprocals
 
-open Core.Pronouns
+open Typology
 
 /-- se — reflexive/reciprocal clitic. -/
 def se : PronounEntry :=

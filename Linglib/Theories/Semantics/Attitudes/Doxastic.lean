@@ -43,14 +43,19 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 
 namespace Semantics.Attitudes.Doxastic
 
 open Core (WorldTimeIndex)
 
-open Core.Verbs (Veridicality)
-export Core.Verbs (Veridicality)
+open Features (Veridicality)
+open Features
+export Features (Veridicality)
 
 -- Accessibility Relations
 

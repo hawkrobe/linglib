@@ -2,8 +2,8 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.CombinationKind
-import Linglib.Core.Lexical.DiathesisAlternation
-import Linglib.Core.Lexical.UD
+import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Core.UD
 
 /-!
 # Argument Structure Constructions
@@ -30,7 +30,7 @@ phrasal patterns that only CxG can capture.
 namespace ConstructionGrammar
 
 open Core
-open Core.Verbs
+open Semantics.Verb
 
 /-! ## Construction slots and argument frames -/
 

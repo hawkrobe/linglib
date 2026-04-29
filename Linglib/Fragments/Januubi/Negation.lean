@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
@@ -43,7 +43,7 @@ clauses.
 
 namespace Fragments.Januubi.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Standard Negation
@@ -64,7 +64,7 @@ def standardNeg : String := maa.form
 /-- The Januubi negation system: a single particle.
     No WALS datapoint for Januubi-specific dialect; the lookup returns
     `none` and the WALS fields stay unset. The Fragment-side joint
-    consumed by `Phenomena/Negation/Typology.lean`. -/
+    consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "" [maa]
 

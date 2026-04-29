@@ -29,7 +29,7 @@ whether a verb can anticausativize:
 namespace Fragments.Spanish.Predicates
 
 open Minimalist
-open Core.Verbs
+open Semantics.Verb
 
 -- ============================================================================
 -- § 1: Anticausative Marking

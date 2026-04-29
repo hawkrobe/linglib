@@ -1,4 +1,7 @@
-import Linglib.Phenomena.Negation.Typology
+import Linglib.Typology.Negation
+import Linglib.Datasets.WALS.Features.F113A
+import Linglib.Datasets.WALS.Features.F114A
+import Linglib.Datasets.WALS.Features.F115A
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.German.Negation
@@ -67,12 +70,40 @@ Note: the WALS Ch 113 sample (also by Miestamo) covers 297 languages with
 different numbers; those are captured separately via `Datasets.WALS.F113A`.
 -/
 
-open Phenomena.Negation
-
 namespace Miestamo2005
 
-open Phenomena.Negation.Typology
-  (NegSymmetry AsymmetrySubtype NegMorphemeType AsymmetryDimension AsymmetrySource)
+open Typology.Negation
+  (NegSymmetry AsymmetrySubtype NegMorphemeType NegationProfile)
+
+-- ============================================================================
+-- § 1.5: Miestamo's two asymmetry dimensions (beyond WALS)
+-- ============================================================================
+
+/-- @cite{miestamo-2005}'s two dimensions of asymmetry. WALS Ch 113 collapses
+    these into a single symmetric/asymmetric distinction; Miestamo decomposes
+    asymmetry into two independent dimensions. Local to this study file
+    because the dimensions are framework-distinctive. -/
+inductive AsymmetryDimension where
+  /-- The negative clause has a different syntactic structure than the
+      affirmative, beyond just the negation marker. E.g., Finnish neg aux
+      restructures the clause; Japanese *-nai* changes verb to i-adjective. -/
+  | constructional
+  /-- The negative paradigm has fewer formal distinctions than the
+      affirmative. E.g., Burmese *-bu* neutralizes TAM; Turkish aorist
+      uses a different marker. -/
+  | paradigmatic
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether the asymmetry is derived from the negation marker type
+    or independent of it (@cite{miestamo-2005}). -/
+inductive AsymmetrySource where
+  /-- The asymmetry follows structurally from the negation marker's
+      properties. A negative verb necessarily creates A/Fin. -/
+  | derived
+  /-- The asymmetry is not predictable from the marker type alone.
+      E.g., TAM neutralization in Burmese is independent of circumfixing. -/
+  | independent
+  deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
 -- § 2: Extended Datum
@@ -405,99 +436,99 @@ theorem symmetric_implies_nonassignable :
 
 /-- Morpheme types are consistent with WALS Typology profiles. -/
 theorem finnish_morpheme_consistent :
-    finnish.morphemeType = Typology.finnish.morphemeType := rfl
+    finnish.morphemeType = Fragments.Finnish.Negation.negationProfile.morphemeType := rfl
 theorem german_morpheme_consistent :
-    german.morphemeType = Typology.german.morphemeType := rfl
+    german.morphemeType = Fragments.German.Negation.negationProfile.morphemeType := rfl
 theorem japanese_morpheme_consistent :
-    japanese.morphemeType = Typology.japanese.morphemeType := rfl
+    japanese.morphemeType = Fragments.Japanese.Negation.negationProfile.morphemeType := rfl
 theorem turkish_morpheme_consistent :
-    turkish.morphemeType = Typology.turkish.morphemeType := rfl
+    turkish.morphemeType = Fragments.Turkish.Negation.negationProfile.morphemeType := rfl
 theorem italian_morpheme_consistent :
-    italian.morphemeType = Typology.italian.morphemeType := rfl
+    italian.morphemeType = Fragments.Italian.Negation.negationProfile.morphemeType := rfl
 theorem burmese_morpheme_consistent :
-    burmese.morphemeType = Typology.burmese.morphemeType := rfl
+    burmese.morphemeType = Fragments.Burmese.Negation.negationProfile.morphemeType := rfl
 theorem french_morpheme_consistent :
-    french.morphemeType = Typology.french.morphemeType := rfl
+    french.morphemeType = Fragments.French.Negation.negationProfile.morphemeType := rfl
 theorem spanish_morpheme_consistent :
-    spanish.morphemeType = Typology.spanish.morphemeType := rfl
+    spanish.morphemeType = Fragments.Spanish.Negation.negationProfile.morphemeType := rfl
 theorem mandarin_morpheme_consistent :
-    mandarin.morphemeType = Typology.mandarin.morphemeType := rfl
+    mandarin.morphemeType = Fragments.Mandarin.Negation.negationProfile.morphemeType := rfl
 theorem english_morpheme_consistent :
-    english.morphemeType = Typology.english.morphemeType := rfl
+    english.morphemeType = Fragments.English.Negation.negationProfile.morphemeType := rfl
 theorem russian_morpheme_consistent :
-    russian.morphemeType = Typology.russian.morphemeType := rfl
+    russian.morphemeType = Fragments.Slavic.Russian.Negation.negationProfile.morphemeType := rfl
 theorem czech_morpheme_consistent :
-    czech.morphemeType = Typology.czech.morphemeType := rfl
+    czech.morphemeType = Fragments.Slavic.Czech.Negation.negationProfile.morphemeType := rfl
 theorem maori_morpheme_consistent :
-    maori.morphemeType = Typology.maori.morphemeType := rfl
+    maori.morphemeType = Fragments.Maori.Negation.negationProfile.morphemeType := rfl
 theorem hixkaryana_morpheme_consistent :
-    hixkaryana.morphemeType = Typology.hixkaryana.morphemeType := rfl
+    hixkaryana.morphemeType = Fragments.Hixkaryana.Negation.negationProfile.morphemeType := rfl
 theorem imbaburaQuechua_morpheme_consistent :
-    imbaburaQuechua.morphemeType = Typology.imbaburaQuechua.morphemeType := rfl
+    imbaburaQuechua.morphemeType = Fragments.Quechua.Negation.negationProfile.morphemeType := rfl
 
 /-- Symmetry values are consistent with WALS Typology profiles. -/
 theorem finnish_symmetry_consistent :
-    finnish.symmetry = Typology.finnish.symmetry := rfl
+    finnish.symmetry = Fragments.Finnish.Negation.negationProfile.symmetry := rfl
 theorem german_symmetry_consistent :
-    german.symmetry = Typology.german.symmetry := rfl
+    german.symmetry = Fragments.German.Negation.negationProfile.symmetry := rfl
 theorem japanese_symmetry_consistent :
-    japanese.symmetry = Typology.japanese.symmetry := rfl
+    japanese.symmetry = Fragments.Japanese.Negation.negationProfile.symmetry := rfl
 theorem turkish_symmetry_consistent :
-    turkish.symmetry = Typology.turkish.symmetry := rfl
+    turkish.symmetry = Fragments.Turkish.Negation.negationProfile.symmetry := rfl
 theorem italian_symmetry_consistent :
-    italian.symmetry = Typology.italian.symmetry := rfl
+    italian.symmetry = Fragments.Italian.Negation.negationProfile.symmetry := rfl
 theorem burmese_symmetry_consistent :
-    burmese.symmetry = Typology.burmese.symmetry := rfl
+    burmese.symmetry = Fragments.Burmese.Negation.negationProfile.symmetry := rfl
 theorem french_symmetry_consistent :
-    french.symmetry = Typology.french.symmetry := rfl
+    french.symmetry = Fragments.French.Negation.negationProfile.symmetry := rfl
 theorem spanish_symmetry_consistent :
-    spanish.symmetry = Typology.spanish.symmetry := rfl
+    spanish.symmetry = Fragments.Spanish.Negation.negationProfile.symmetry := rfl
 theorem mandarin_symmetry_consistent :
-    mandarin.symmetry = Typology.mandarin.symmetry := rfl
+    mandarin.symmetry = Fragments.Mandarin.Negation.negationProfile.symmetry := rfl
 theorem english_symmetry_consistent :
-    english.symmetry = Typology.english.symmetry := rfl
+    english.symmetry = Fragments.English.Negation.negationProfile.symmetry := rfl
 theorem russian_symmetry_consistent :
-    russian.symmetry = Typology.russian.symmetry := rfl
+    russian.symmetry = Fragments.Slavic.Russian.Negation.negationProfile.symmetry := rfl
 theorem czech_symmetry_consistent :
-    czech.symmetry = Typology.czech.symmetry := rfl
+    czech.symmetry = Fragments.Slavic.Czech.Negation.negationProfile.symmetry := rfl
 theorem maori_symmetry_consistent :
-    maori.symmetry = Typology.maori.symmetry := rfl
+    maori.symmetry = Fragments.Maori.Negation.negationProfile.symmetry := rfl
 theorem hixkaryana_symmetry_consistent :
-    hixkaryana.symmetry = Typology.hixkaryana.symmetry := rfl
+    hixkaryana.symmetry = Fragments.Hixkaryana.Negation.negationProfile.symmetry := rfl
 theorem imbaburaQuechua_symmetry_consistent :
-    imbaburaQuechua.symmetry = Typology.imbaburaQuechua.symmetry := rfl
+    imbaburaQuechua.symmetry = Fragments.Quechua.Negation.negationProfile.symmetry := rfl
 
 /-- Asymmetry subtypes are consistent with WALS Typology profiles. -/
 theorem finnish_subtype_consistent :
-    finnish.asymmetrySubtype = Typology.finnish.asymmetrySubtype := rfl
+    finnish.asymmetrySubtype = Fragments.Finnish.Negation.negationProfile.asymmetrySubtype := rfl
 theorem german_subtype_consistent :
-    german.asymmetrySubtype = Typology.german.asymmetrySubtype := rfl
+    german.asymmetrySubtype = Fragments.German.Negation.negationProfile.asymmetrySubtype := rfl
 theorem japanese_subtype_consistent :
-    japanese.asymmetrySubtype = Typology.japanese.asymmetrySubtype := rfl
+    japanese.asymmetrySubtype = Fragments.Japanese.Negation.negationProfile.asymmetrySubtype := rfl
 theorem turkish_subtype_consistent :
-    turkish.asymmetrySubtype = Typology.turkish.asymmetrySubtype := rfl
+    turkish.asymmetrySubtype = Fragments.Turkish.Negation.negationProfile.asymmetrySubtype := rfl
 theorem italian_subtype_consistent :
-    italian.asymmetrySubtype = Typology.italian.asymmetrySubtype := rfl
+    italian.asymmetrySubtype = Fragments.Italian.Negation.negationProfile.asymmetrySubtype := rfl
 theorem burmese_subtype_consistent :
-    burmese.asymmetrySubtype = Typology.burmese.asymmetrySubtype := rfl
+    burmese.asymmetrySubtype = Fragments.Burmese.Negation.negationProfile.asymmetrySubtype := rfl
 theorem french_subtype_consistent :
-    french.asymmetrySubtype = Typology.french.asymmetrySubtype := rfl
+    french.asymmetrySubtype = Fragments.French.Negation.negationProfile.asymmetrySubtype := rfl
 theorem spanish_subtype_consistent :
-    spanish.asymmetrySubtype = Typology.spanish.asymmetrySubtype := rfl
+    spanish.asymmetrySubtype = Fragments.Spanish.Negation.negationProfile.asymmetrySubtype := rfl
 theorem mandarin_subtype_consistent :
-    mandarin.asymmetrySubtype = Typology.mandarin.asymmetrySubtype := rfl
+    mandarin.asymmetrySubtype = Fragments.Mandarin.Negation.negationProfile.asymmetrySubtype := rfl
 theorem english_subtype_consistent :
-    english.asymmetrySubtype = Typology.english.asymmetrySubtype := rfl
+    english.asymmetrySubtype = Fragments.English.Negation.negationProfile.asymmetrySubtype := rfl
 theorem russian_subtype_consistent :
-    russian.asymmetrySubtype = Typology.russian.asymmetrySubtype := rfl
+    russian.asymmetrySubtype = Fragments.Slavic.Russian.Negation.negationProfile.asymmetrySubtype := rfl
 theorem czech_subtype_consistent :
-    czech.asymmetrySubtype = Typology.czech.asymmetrySubtype := rfl
+    czech.asymmetrySubtype = Fragments.Slavic.Czech.Negation.negationProfile.asymmetrySubtype := rfl
 theorem maori_subtype_consistent :
-    maori.asymmetrySubtype = Typology.maori.asymmetrySubtype := rfl
+    maori.asymmetrySubtype = Fragments.Maori.Negation.negationProfile.asymmetrySubtype := rfl
 theorem hixkaryana_subtype_consistent :
-    hixkaryana.asymmetrySubtype = Typology.hixkaryana.asymmetrySubtype := rfl
+    hixkaryana.asymmetrySubtype = Fragments.Hixkaryana.Negation.negationProfile.asymmetrySubtype := rfl
 theorem imbaburaQuechua_subtype_consistent :
-    imbaburaQuechua.asymmetrySubtype = Typology.imbaburaQuechua.asymmetrySubtype := rfl
+    imbaburaQuechua.asymmetrySubtype = Fragments.Quechua.Negation.negationProfile.asymmetrySubtype := rfl
 
 end WALSConsistency
 

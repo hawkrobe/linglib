@@ -1,5 +1,5 @@
 import Linglib.Typology.AuxiliaryVerbs
-import Linglib.Phenomena.Negation.Typology
+import Linglib.Typology.Negation
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 
@@ -163,11 +163,11 @@ theorem italian_form_from_fragment :
 
 /-! ## Bridge to Negation Typology (WALS Ch 112)
 
-`NegStrategy` in this file and `NegMorphemeType` in `Phenomena.Negation.Typology`
+`NegStrategy` in this file and `NegMorphemeType` in `Typology.Negation`
 classify the same dimension — the morphological status of the negative marker.
 This bridge maps between them. -/
 
-open Phenomena.Negation.Typology (NegMorphemeType)
+open Typology.Negation (NegMorphemeType)
 
 /-- Map from AVC-oriented `NegStrategy` to WALS-oriented `NegMorphemeType`. -/
 def NegStrategy.toNegMorphemeType : NegStrategy → NegMorphemeType

@@ -6,7 +6,8 @@ Quantifier scope phenomena.
 ## Main definitions
 - `ScopeFreezing.Availability`, `ScopeFreezing.FreezingContext`
 
-Numeral imprecision data has been consolidated into `Phenomena.Imprecision.Numerals`.
+Numeral imprecision data lives in
+`Phenomena.Imprecision.Studies.Haslinger2025` (sub-namespace `Numerals`).
 
 -/
 

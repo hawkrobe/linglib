@@ -1,7 +1,8 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Conjunction
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Phenomena.Coordination.Typology
+import Linglib.Features.Coordination
+import Linglib.Phenomena.Coordination.Studies.Haspelmath2007
 
 /-!
 # @cite{bill-etal-2025} — DP Conjunction Complexity
@@ -558,7 +559,7 @@ end MUDistributivity
 -- § Typological Challenges
 -- ============================================================================
 
-open Phenomena.Coordination.Typology in
+open Phenomena.Coordination.Studies.Haspelmath2007 (hasAllThreeStrategies georgian hungarian) in
 /--
 **M&S universality challenged.**
 
@@ -573,7 +574,8 @@ theorem ms_universality_challenged :
     georgianChild_j_vs_jmu.estimate_thou < 0 := by
   native_decide
 
-open Phenomena.Coordination.Typology in
+open Phenomena.Coordination.Studies.Haspelmath2007 (georgian hungarian) in
+open Typology.Coordination (ConjunctionSystem.muBoundness) in
 /--
 **The boundness confound.**
 
@@ -587,8 +589,8 @@ not the right level of analysis for acquisition predictions.
 -/
 theorem boundness_confound :
     -- Georgian MU is bound, Hungarian MU is free
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free ∧
+    georgian.muBoundness = some Boundness.bound ∧
+    hungarian.muBoundness = some Boundness.free ∧
     -- Georgian children found J-MU significantly harder
     georgianChild_j_vs_jmu.significant = true ∧
     -- Hungarian: no significant sentence-type effect on replays

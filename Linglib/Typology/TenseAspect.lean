@@ -29,10 +29,10 @@ Per-language data lives in `Fragments/{Lang}/TenseAspect.lean`.
 
 ## Note on EvidentialityCoding
 
-`EvidentialityCoding` is currently also declared (under a different name,
-`EvidentialCoding`) in `Phenomena/Modality/Typology.lean`. The duplication
-will be resolved when Modality/Typology is dissolved — substrate canonical
-location TBD at that point.
+A parallel enum `EvidentialCoding` lives in `Linglib/Typology/Modality.lean`
+(promoted there during the Modality/Typology dissolution). The two enums
+have overlapping values; consumers requiring full WALS Ch 78 round-tripping
+should use `Typology.Modality.EvidentialCoding`.
 -/
 
 set_option autoImplicit false

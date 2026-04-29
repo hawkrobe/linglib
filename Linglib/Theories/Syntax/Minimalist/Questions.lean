@@ -31,6 +31,21 @@ to the semantic `WHFeature`:
 - `FeatureVal.q true` ↔ `WHFeature.plusWH`
 - `FeatureVal.q false` ↔ `WHFeature.minusWH`
 
+## Cross-framework: clause-typing locus is contested
+
+This file places clause-typing at `Force⁰[+Q]` per @cite{rizzi-1997}. Two
+sibling analyses in linglib place it elsewhere:
+
+- **@cite{dayal-2025}** (`Phenomena/Questions/Studies/Dayal2025.lean`):
+  clause-typing locus is `C` for CP-typed languages (English, Italian) and
+  `PerspP` for PerspP-typed languages (Hindi-Urdu).
+- **@cite{holmberg-2016}** (`Phenomena/Questions/Studies/Holmberg2016.lean`):
+  the answering-system parameter places polar-Q-typing at `Pol⁰` via
+  `Features/AnsweringSystem.lean`.
+
+The bridge theorems (Force⁰[+Q] ↔ C[+WH], Force⁰[+Q] ↔ Pol⁰[uPol]) are
+unformalized — silent divergences, not committed disagreements.
+
 ## Connection to ClauseType
 
 A clause's `Core.Mood.ClauseType` (force × mood) is determined by

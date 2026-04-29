@@ -1,9 +1,8 @@
 import Linglib.Typology.Possession
-import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Turkish Possessive Constructions
-@cite{heine-1997} @cite{stassen-2009}
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
 
 Turkish (Altaic) derives its primary have-construction from the **Genitive
 Schema** ("X's Y exists" → "X has Y"). The construction consists of:
@@ -15,6 +14,11 @@ Schema** ("X's Y exists" → "X has Y"). The construction consists of:
 Turkish also has a Goal Schema variant using dative (`-A`) with
 existential `var`, and the Equation Schema for belong-constructions.
 
+PossessionProfile bundle for Turkish (ISO `tur`), per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+Turkish lives in `Phenomena/Possession/Studies/Heine1997.lean`.
+
 ## Examples
 
 - `Hasan-ın inek-i var.` 'Hasan has a cow.' (Hasan-GEN cow-POSS existent)
@@ -22,9 +26,11 @@ existential `var`, and the Equation Schema for belong-constructions.
 - `Kitab-ım var.` 'I have a book.' (book-POSS.1SG existent; Genitive)
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Turkish.Possession
 
-open Typology.Possession
+open _root_.Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
@@ -75,7 +81,7 @@ inductive ExistPred where
 
 /-- `var`/`yok` is not a verb — it is a non-verbal predicate that takes
     no tense/aspect morphology in the base form. This is characteristic
-    of non-lexical predicate nuclei in Heine's Genitive Schema. -/
+    of non-lexical predicate nuclei in @cite{heine-1997}'s Genitive Schema. -/
 def existPredIsNonVerbal : Bool := true
 
 -- ============================================================================
@@ -91,8 +97,8 @@ def locationVariant : PossessionSource := .location
     genitive predicates: `Kitap Hasan-ın.` 'The book is Hasan's.' -/
 def belongSchema : PossessionSource := .equation
 
-/-- Turkish exhibits three schemas, as Heine predicts is common for
-    languages that draw on Existence sub-schemas. -/
+/-- Turkish exhibits three schemas, as @cite{heine-1997} predicts is common
+    for languages that draw on Existence sub-schemas. -/
 def attestedSchemas : List PossessionSource :=
   [sourceSchema, locationVariant, belongSchema]
 
@@ -106,7 +112,7 @@ theorem three_schemas :
 /-- The Genitive Schema in Turkish is used for permanent, inalienable,
     and abstract possession. Physical/temporary possession is expressed
     by the Location Schema variant with locative case. This matches
-    Heine's generalizations: Existence schemas correlate with
+    @cite{heine-1997}'s generalizations: Existence schemas correlate with
     permanent/inalienable notions; Location with physical/temporary. -/
 def genitiveNotions : List PossessiveNotion :=
   [.permanent, .inalienable, .abstract]
@@ -123,36 +129,25 @@ theorem location_not_inalienable :
     ¬locationNotions.contains .inalienable := by native_decide
 
 -- ============================================================================
--- §6. Heine 1997 Prediction Verification
+-- §6. Turkish Possession Profile (PossessionProfile bundle)
 -- ============================================================================
 
-open Heine1997
+/-- Turkish possession profile.
 
-/-- Turkish's primary Genitive Schema matches Heine's predictions:
-    have-construction (not belong), possessee as subject. -/
-theorem genitive_matches_heine :
-    let p := predictionsFor sourceSchema
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Heine predicts Genitive Schema correlates with permanent/inalienable
-    notions. Turkish's genitive notions match this. -/
-theorem genitive_notions_match_prediction :
-    (schemaTypicalNotions sourceSchema).contains .permanent = true ∧
-    (schemaTypicalNotions sourceSchema).contains .inalienable = true := by
-  native_decide
-
-/-- Heine predicts Location Schema correlates with physical/temporary
-    notions. Turkish's location variant notions match this. -/
-theorem location_notions_match_prediction :
-    (schemaTypicalNotions locationVariant).contains .physical = true ∧
-    (schemaTypicalNotions locationVariant).contains .temporary = true := by
-  native_decide
-
-/-- WALS F117A classifies Turkish as `genitive`, matching our
-    primary Genitive Schema. -/
-theorem wals_consistent :
-    walsToSchema .genitive = sourceSchema := rfl
+    Note: Turkish's primary construction (`Hasan-ın inek-i var`) is
+    @cite{heine-1997}'s Genitive Schema, encoded as `.genitiveDative`
+    in @cite{stassen-2009}'s WALS Ch 117 typology. -/
+def possession : PossessionProfile :=
+  { language := "Turkish"
+  , family := "Turkic"
+  , iso := "tur"
+  , obligatoryPossession := .exists_
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .genitiveDative
+  , adnominalStrategy := .doubleMarking
+  , affixPosition := some .suffixes
+  , examples := ["(benim) kitab-im var", "Ali-nin kitab-i"]
+  , notes := "var/yok existential predicate; GEN on possessor + " ++
+             "possessive suffix on head (double-marking)" }
 
 end Fragments.Turkish.Possession

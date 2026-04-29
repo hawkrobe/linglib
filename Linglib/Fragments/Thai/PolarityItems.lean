@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Thai Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Thai indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **mâj mii khraj** (ไม่มีใคร): Negative indefinite (NEG + exist + wh)
 - **khraj kɔ̂** (ใครก็): FCI (wh + kɔ̂ particle)
@@ -14,7 +14,7 @@ Thai indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Thai.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPI

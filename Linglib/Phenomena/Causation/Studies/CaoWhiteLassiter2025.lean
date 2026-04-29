@@ -52,7 +52,8 @@ open Core.Causal (BoolSEM CausalGraph Valuation Mechanism)
 open Core.Causal.Mechanism (const)
 open Core.Causal.SEM (probabilisticSuf probabilisticSuf_of_deterministic)
 open Semantics.Causation.CoerciveImplication (ActionType)
-open Core.Verbs (Causative)
+open Features (Causative)
+open Features
 
 /-! ## The Three Measures
 

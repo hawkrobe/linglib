@@ -1,0 +1,33 @@
+import Linglib.Typology.Comparison
+
+/-!
+# French comparative profile
+@cite{stassen-2013} @cite{wals-2013}
+
+`ComparativeProfile` bundle for French (ISO `fra`) per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
+this profile live in `Phenomena/Comparison/Studies/Stassen2013.lean`. The
+@cite{stassen-1985} 6-way classification (where applicable) lives in
+`Phenomena/Comparison/Studies/Stassen1985.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.French.Comparison
+
+open _root_.Typology.Comparison
+
+/-- French comparative profile. -/
+def comparison : ComparativeProfile :=
+  { language := "French"
+  , iso := "fra"
+  , comparativeType := .particle
+  , degreeWord := .hasDegreeWord
+  , superlative := .definiteComparative
+  , comparativeForm := "X est plus Adj que Y"
+  , standardMarker := "que"
+  , degreeMarker := "plus"
+  , basicOrder := "SVO" }
+
+end Fragments.French.Comparison

@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Hixkaryana Negation Fragment
@@ -22,7 +22,7 @@ becomes the finite element carrying person/tense marking.
 
 namespace Fragments.Hixkaryana.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *-hira* — Hixkaryana's standard negation suffix.
     Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
@@ -33,7 +33,7 @@ def hira : NegMarkerEntry :=
   , position := .morphological }
 
 /-- The Hixkaryana negation system: a single deverbalizing suffix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "hix" [hira]
 
@@ -80,5 +80,24 @@ private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 theorem all_negative_contain_hira :
     allExamples.all (fun e => hasSubstr e.negative "-hira") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Hixkaryana negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Hixkaryana"
+  , iso := "hix"
+  , morphemeType := .affix
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finiteness
+  , negIndefinite := Option.none
+  , negMarkers := ["-hira"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Hixkaryana.Negation

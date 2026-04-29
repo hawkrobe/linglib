@@ -1,5 +1,5 @@
 import Linglib.Theories.Interfaces.Morphosyntax.Extraction
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 /-!
 # Mam Extraction Morphology Fragment @cite{elkins-torrence-brown-2026}

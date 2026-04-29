@@ -8,11 +8,11 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
 -/
 
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.Magahi.Pronouns
 
-open Core.Pronouns
+open Typology
 
 -- ============================================================================
 -- First Person

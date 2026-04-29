@@ -48,7 +48,7 @@ namespace Percus2000
 
 open Core (WorldTimeIndex Assignment)
 open Core.Context
-open Core.Verbs (Attitude)
+open Features (Attitude)
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
@@ -302,7 +302,7 @@ theorem nandao_felicitous_declarative (p : Set W) :
     @cite{bhatt-dayal-2020} fn. 11 holds by construction. -/
 theorem nandao_kya_share_felicity (p : Set W) :
     nandao_felicitous_declarative (W := W) p =
-      Phenomena.Questions.TypologyBridge.kya_felicitous_declarative
+      Phenomena.Questions.Studies.BhattDayal2020.kya_felicitous_declarative
         (W := W) p := rfl
 
 -- ════════════════════════════════════════════════════════════════════════════

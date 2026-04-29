@@ -48,10 +48,10 @@ Key differences from the modern analysis:
 namespace Karttunen1971
 
 open Semantics.Causation.Implicative
-open Core.Verbs (Causative)
+open Features (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
-open Core.Verbs
+open Semantics.Verb
 open Core.Causal
 
 -- ════════════════════════════════════════════════════════════════

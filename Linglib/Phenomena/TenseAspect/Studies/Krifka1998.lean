@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
 import Linglib.Theories.Semantics.Events.Mereology
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
@@ -101,7 +101,8 @@ K98's own writing.
 namespace Krifka1998
 
 open Fragments.English.Predicates.Verbal
-open Core.Verbs
+open Features
+open Semantics.Verb
 open Semantics.Events.ThematicRoleProperties (UP CumTheta IsCumThetaVerb)
 open Semantics.Events.Incrementality (SINC VerbIncClass IsSincVerb IsIncVerb)
 open Semantics.Events.CumulativityPropagation (VP cum_propagation qua_propagation)

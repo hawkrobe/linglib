@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Italian Polarity-Sensitive Items
 @cite{chierchia-2006} @cite{chierchia-2013}
 
 Lexical entries for Italian PSIs, typed by the theory-neutral categories
-from `Core.Lexical.PolarityItem`.
+from `Typology.PolarityItem`.
 
 ## The Italian PSI system
 
@@ -17,7 +17,7 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 
 namespace Fragments.Italian.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- Pure NPIs
@@ -201,8 +201,8 @@ def uno_qualsiasi : PolarityItemEntry :=
 -- Joint
 -- ============================================================================
 
-/-- The Italian polarity-item inventory: the Fragment-side joint consumed
-    by `Phenomena/Polarity/Typology.lean`. Every
+/-- The Italian polarity-item inventory: the Fragment-side joint listing
+    every polarity item this fragment defines. Every
     `Fragments/{Lang}/PolarityItems.lean` exposes `def items` of this type
     (see the operator/lexical-reactive split in `Core/Lexical/NegMarker.lean`). -/
 def items : List PolarityItemEntry :=

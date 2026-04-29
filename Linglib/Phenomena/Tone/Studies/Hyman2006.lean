@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
-import Linglib.Phenomena.Phonology.Typology
+import Linglib.Typology.Phonology
 
 /-!
 # Hyman 2006: Word-prosodic typology
@@ -48,7 +48,7 @@ Hyman's SA dimension.
 namespace Hyman2006
 
 open Phonology.Autosegmental.RegisterTier
-open Phenomena.Phonology
+open Typology.Phonology
 
 -- ============================================================================
 -- § 1: Two Prototypes
@@ -261,40 +261,65 @@ def wals13AToHasTone (t : ToneSystem) : Bool :=
 def wals14AToHasStress (_ : StressLocation) : Bool :=
   true  -- All values in F14A indicate the language *has* stress
 
-/-- Derive a partial word-prosodic profile from WALS data.
+/-- Construct a `WordProsodicProfile` directly from WALS F13A tone + optional
+    F14A stress coding. Replaces a former `PhonProfile → WordProsodicProfile`
+    indirection where `PhonProfile` carried 14 fields Hyman2006 never read.
+    The 16 language defs below construct their `WordProsodicProfile` values
+    via this helper, keeping the WALS-encoding visible at the call site. -/
+def wpProfile (t : ToneSystem) (s : Option StressLocation) : WordProsodicProfile :=
+  { hasTone := wals13AToHasTone t
+  , hasStressAccent := match s with
+      | some sloc => wals14AToHasStress sloc
+      | none      => false }
 
-    The stress dimension is only available when the language has
-    a WALS F14A entry. Languages absent from F14A may or may not
-    have stress — their profiles require independent evidence. -/
-def profileFromPhon (p : PhonProfile) : WordProsodicProfile :=
-  { hasTone := wals13AToHasTone p.tone
-  , hasStressAccent := match p.stress with
-      | some s => wals14AToHasStress s
-      | none => false }
+/-! Per-language sample (16 languages from a former
+    `Phenomena/Phonology/Typology.lean` `PhonProfile` block). Each
+    `wpProfile` argument pair is the language's WALS F13A coding (Hyman's
+    +T/−T) and WALS F14A coding (Hyman's +SA/−SA). The `none` stress
+    cases correspond to "WALS F14A does not survey this language" —
+    NOT "language has no stress" — see `french_wals_mismatch` for an
+    example of why this distinction matters. -/
+
+def english   : WordProsodicProfile := wpProfile .none    (some .noFixed)
+def german    : WordProsodicProfile := wpProfile .none    (some .noFixed)
+def finnish   : WordProsodicProfile := wpProfile .none    (some .initial)
+def turkish   : WordProsodicProfile := wpProfile .none    (some .ultimate)
+def russian   : WordProsodicProfile := wpProfile .none    (some .noFixed)
+def french    : WordProsodicProfile := wpProfile .none    (some .noFixed)  -- WALS: fixed-stress; Hyman: −SA (Table I) — `french_wals_mismatch`
+def spanish   : WordProsodicProfile := wpProfile .none    (some .penultimate)
+def japanese  : WordProsodicProfile := wpProfile .simple  none
+def mandarin  : WordProsodicProfile := wpProfile .complex (some .noFixed)
+def hindi     : WordProsodicProfile := wpProfile .none    (some .noFixed)
+def georgian  : WordProsodicProfile := wpProfile .none    (some .initial)
+def hungarian : WordProsodicProfile := wpProfile .none    (some .initial)
+def swahili   : WordProsodicProfile := wpProfile .none    (some .penultimate)
+def yoruba    : WordProsodicProfile := wpProfile .complex none
+def maori     : WordProsodicProfile := wpProfile .none    (some .initial)
+def zulu      : WordProsodicProfile := wpProfile .simple  (some .penultimate)
 
 /-- English: −tone (WALS none), +stress (WALS noFixed = free stress). -/
 theorem english_stress_only :
-    (profileFromPhon english).quadrant = .stressOnly := rfl
+    (english).quadrant = .stressOnly := rfl
 
 /-- Finnish: −tone, +stress (WALS initial = fixed stress). -/
 theorem finnish_stress_only :
-    (profileFromPhon finnish).quadrant = .stressOnly := rfl
+    (finnish).quadrant = .stressOnly := rfl
 
 /-- Yoruba: +tone (WALS complex), −stress (absent from WALS F14A). -/
 theorem yoruba_tone_only :
-    (profileFromPhon yoruba).quadrant = .toneOnly := rfl
+    (yoruba).quadrant = .toneOnly := rfl
 
 /-- Japanese: +tone (WALS simple), −stress (absent from WALS F14A). -/
 theorem japanese_tone_only :
-    (profileFromPhon japanese).quadrant = .toneOnly := rfl
+    (japanese).quadrant = .toneOnly := rfl
 
 /-- Mandarin: +tone (WALS complex), +stress (WALS noFixed). -/
 theorem mandarin_tone_and_stress :
-    (profileFromPhon mandarin).quadrant = .toneAndStress := rfl
+    (mandarin).quadrant = .toneAndStress := rfl
 
 /-- Zulu: +tone (WALS simple), +stress (WALS penultimate). -/
 theorem zulu_tone_and_stress :
-    (profileFromPhon zulu).quadrant = .toneAndStress := rfl
+    (zulu).quadrant = .toneAndStress := rfl
 
 /-- Three of the four quadrants are attested among the 16 PhonProfile
     languages. The −T−SA quadrant is NOT attested because WALS F14A
@@ -308,14 +333,14 @@ theorem wals_covers_three_quadrants :
     let profiles := [english, german, finnish, turkish, russian, french,
                      spanish, japanese, mandarin, hindi, georgian,
                      hungarian, swahili, yoruba, maori, zulu]
-    profiles.any (fun p => (profileFromPhon p).quadrant == .toneAndStress) = true ∧
-    profiles.any (fun p => (profileFromPhon p).quadrant == .toneOnly) = true ∧
-    profiles.any (fun p => (profileFromPhon p).quadrant == .stressOnly) = true := by
+    profiles.any (fun p => (p).quadrant == .toneAndStress) = true ∧
+    profiles.any (fun p => (p).quadrant == .toneOnly) = true ∧
+    profiles.any (fun p => (p).quadrant == .stressOnly) = true := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- French is classified as −T−SA in Hyman's Table I, but WALS F14A
     records it with `noFixed` stress (= free stress), which our
-    `profileFromPhon` maps to +SA. This mismatch arises because
+    `profileFromWPSample` maps to +SA. This mismatch arises because
     WALS F14A does not distinguish "free word stress" (English) from
     "no word stress" (French — stress is phrase-final, not word-level).
 
@@ -323,7 +348,7 @@ theorem wals_covers_three_quadrants :
     of the WALS→Hyman bridge. The −SA classification requires
     language-specific analysis beyond WALS data. -/
 theorem french_wals_mismatch :
-    (profileFromPhon french).quadrant = .stressOnly ∧
+    (french).quadrant = .stressOnly ∧
     (tableI.filter (fun e => e.name == "French")).all
       (fun e => e.profile.quadrant == .neither) = true := by
   exact ⟨rfl, by native_decide⟩
@@ -393,7 +418,7 @@ theorem drubea_tone_only :
 /-- Drubea's profile is consistent with Yoruba's
     (both +T, −SA from different sub-types of tone). -/
 theorem drubea_same_quadrant_as_yoruba :
-    drubea.quadrant = (profileFromPhon yoruba).quadrant := rfl
+    drubea.quadrant = (yoruba).quadrant := rfl
 
 /-- Drubea lacks stress accent — it is not an OBLHEAD system. -/
 theorem drubea_no_stress :

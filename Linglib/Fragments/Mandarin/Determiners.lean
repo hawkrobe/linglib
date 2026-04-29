@@ -1,5 +1,5 @@
-import Linglib.Core.Lexical.Word
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Core.Word
+import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 
@@ -28,7 +28,7 @@ Key typological properties:
 namespace Fragments.Mandarin.Determiners
 
 open Fragments.English.Determiners (QForce Monotonicity Strength)
-open Core.NounCategorization (ClassifierEntry)
+open Typology (ClassifierEntry)
 open Fragments.Mandarin.Classifiers (ge)
 
 /-- Mandarin quantifier entry. Extends the English pattern with

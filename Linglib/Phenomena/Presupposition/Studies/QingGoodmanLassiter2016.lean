@@ -122,7 +122,7 @@ def literalMeaning : Utterance → WorldState → Bool
   | .notNeverSmoked,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
-open Semantics.Verb.ChangeOfState (priorStatePresup resultStateAssertion)
+open Features.ChangeOfState (priorStatePresup resultStateAssertion)
 
 /-- "Stopped smoking" = cessation presupposition (past=T) ∧ cessation assertion (now=F).
 

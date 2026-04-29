@@ -19,7 +19,7 @@ provides the PMF-typed `Role → PMF Concept` form for paper replications.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Semantics.Verb.SelectionalPreferences
+namespace Features.SelectionalPreferences
 
 
 section Classes
@@ -220,4 +220,4 @@ example : sleepSoftened .human = 1 := rfl
 
 end SoftConstraints
 
-end Semantics.Verb.SelectionalPreferences
+end Features.SelectionalPreferences

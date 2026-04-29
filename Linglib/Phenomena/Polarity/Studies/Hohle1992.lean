@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 /-!
 # Polarity Stress @cite{hohle-1992}

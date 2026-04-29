@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
+import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Boundedness
@@ -59,8 +60,8 @@ typological metadata.
 
 namespace Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026
 
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Semantics.Verb
 open Semantics.Tense.MaximalInformativity
 open Core.Scale
 open Fragments.English.TemporalExpressions

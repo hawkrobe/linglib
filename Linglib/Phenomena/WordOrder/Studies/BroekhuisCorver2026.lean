@@ -191,7 +191,7 @@ theorem place_path_family :
     auxiliary selection`. -/
 
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
-open Core.Verbs
+open Semantics.Verb
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- All directional adpositions in the inventory carry a PathShape. -/

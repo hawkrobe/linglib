@@ -1,4 +1,5 @@
 import Linglib.Core.Word
+import Linglib.Datasets.WALS.Aggregation
 import Linglib.Datasets.WALS.Features.F46A
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Indefinite
@@ -131,15 +132,9 @@ open Datasets.WALS
 -- §1. WALS Chapter 46 distribution
 -- ============================================================================
 
-/-- A single row in a WALS frequency table. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq
+/-! `WALSCount` is imported from `Linglib/Datasets/WALS/Aggregation.lean`. -/
 
-/-- Sum of counts in a WALS table. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  (cs.map (·.count)).sum
+open Datasets.WALS (WALSCount)
 
 private abbrev ch46 := Datasets.WALS.F46A.allData
 

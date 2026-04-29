@@ -1,4 +1,4 @@
-import Linglib.Phenomena.WordOrder.Typology
+import Linglib.Typology.WordOrder
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
@@ -596,7 +596,7 @@ theorem german_decl_v2_bridge :
     the "basic" order indeterminate — SVO on the surface in root
     clauses, SOV underlyingly and in embedded clauses. -/
 
-open Phenomena.WordOrder.Typology in
+open Typology.WordOrder in
 /-- German's "no dominant order" classification in WALS is consistent
     with a profile that has BOTH +Decl° (V2 in roots → surface SVO) AND
     +Fin° (V-to-I in embedded → surface SOV). -/
@@ -606,7 +606,7 @@ theorem german_noDominant_explained :
     ForceHead.Fin  ∈ german := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
 
-open Phenomena.WordOrder.Typology in
+open Typology.WordOrder in
 /-- English is classified as SVO in WALS. Consistent with −Decl°
     (no verb movement in declaratives → surface SVO with SVO base)
     and −Fin° (no V-to-I in embedded → embedded order also SVO). -/

@@ -31,7 +31,7 @@ Heim-1992-era hole consensus.
 namespace Karttunen1973
 
 open Core.Presupposition
-open Core.Verbs (ProjectionBehavior VerbCore)
+open Semantics.Verb (ProjectionBehavior VerbCore)
 open Core.CommonGround (ContextSet)
 open Fragments.English.Predicates.Verbal
 

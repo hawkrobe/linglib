@@ -37,7 +37,7 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 
 namespace Semantics.Attitudes.BuilderProperties
 
-open Core.Verbs (Preferential Attitude AttitudeValence)
+open Features (Preferential Attitude AttitudeValence)
 open Semantics.Attitudes.Preferential (NVPClass)
 
 -- C-Distributivity from Semantic Builder

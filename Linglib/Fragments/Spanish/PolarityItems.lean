@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Spanish Polarity-Sensitive Items
 @cite{haspelmath-1997} @cite{zanuttini-1997}
 
 Lexical entries for Spanish polarity-sensitive items (n-word series),
-typed by the theory-neutral categories from `Core.Lexical.PolarityItem`.
+typed by the theory-neutral categories from `Typology.PolarityItem`.
 Standard sentential negation (the *no* marker) lives in the sibling
 `Fragments/Spanish/Negation.lean`; this file holds only the lexical
 reactives (operator/lexical-reactive split documented in
@@ -24,7 +24,7 @@ lexical-feature distinction across n-words.
 
 namespace Fragments.Spanish.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 /-- *nadie* — N-word for human ('nobody').
     Preverbal alone: *Nadie vino*. Postverbal with *no*: *No vino nadie*. -/
@@ -78,8 +78,8 @@ def jamas : PolarityItemEntry :=
 -- Joint
 -- ============================================================================
 
-/-- The Spanish polarity-item inventory: the Fragment-side joint consumed
-    by `Phenomena/Polarity/Typology.lean`. -/
+/-- The Spanish polarity-item inventory: the Fragment-side joint listing
+    every polarity item this fragment defines. -/
 def items : List PolarityItemEntry :=
   [nadie, nada, nunca, ninguno, jamas]
 

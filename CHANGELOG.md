@@ -4,6 +4,90 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.535] - 2026-04-29
+
+### Phenomena/X/Typology.lean dissolution campaign + Complementation audit + substrate sweep
+
+Multi-phase architectural cleanup of the Phenomena layer, completed in a single sustained session.
+
+**Phase 1 — Dissolution campaign (13 files).** Followed the established pattern (substrate enums + structs → `Linglib/Typology/X.lean`, per-language data → Fragments, cross-linguistic generalisations → `Phenomena/X/Studies/AuthorYear.lean`) for the remaining 13 `Phenomena/X/Typology.lean` files: Possession, Questions, Negation, Comparison, Coordination, Modality, Gender, Alignment, ArgumentStructure, Copulas, Morphology, Complementation. Each dissolution yielded one substrate file + one or more author-anchored Studies files; consumers re-pointed to substrate; trivial per-language WALS-grounding boilerplate (~400 theorems across the campaign) deleted per the established `feedback_no_per_lang_wals_grounding_in_studies.md` rule. Notable Studies created: Polinsky2013 (ArgumentStructure 19-lang sample), Stassen2013 (Copulas 20-lang sample), BickelNichols2013 (Morphology 18-lang sample), Dryer2013 + Cristofaro2013 (Complementation 20-lang and 19-lang samples), Noonan2007 (absorbed Part I CTP per-verb data + G1-G4 generalisations).
+
+**Phase 2 — Complementation audit + Phase A/B/C fixes.** Three-agent audit (linglib-integration-auditor + linguistics-domain-expert + cross-framework-reconciler) on the new Complementation files. Walked back two audit claims after PDF-verified Noonan reading: `english_make.realityStatus = .irrealis` is correct per Noonan Table 2.3 (manipulative→DTR→irrealis, not "should be realis" as audit claimed); Latin `dicere`-indicative restriction unsupported. Applied corrections that survived verification: `negative` CTPClass docstring fixed (was `avoid/refrain/prevent` — wrong; per Noonan §3.2.10 those are *negative achievement*, per §3.2.13 the `negative` class is `Fijian sega, Shuswap negative — predicates whose sole semantic content is negation`); `english_hope.hasNegativeRaising → true` per Noonan §2.7 NR class restriction (propAttitude/desiderative/modal); 6 vacuous G4 indicative-hierarchy theorems deleted (Latin/Turkish/Irish/Persian/Hindi-Urdu/Japanese all had false antecedents). Phase C cross-framework theorems added: `phasal_violates_realis_finite_correspondence` in Cacchioli2025 (kernel-checked refutation of realis ↔ +finite, with phasal as witness); `manage_equi_implies_predicative` in Landau2015 (Noonan-equi ↔ Landau-predicative consilience, manage as witness); `noonanToCristofaro` projection + `deranked_iff_reduced` + `balanced_iff_not_reduced` in Cristofaro2013 (kernel-checked correspondence between Noonan's `isReduced` and Cristofaro's `BalancedDeranked`).
+
+**Phase 3 — Cross-substrate sweep.** Promoted shared `WALSCount` + `totalOf` to `Linglib/Datasets/WALS/Aggregation.lean` (was 4-way duplicated across `Typology/Complementation`, `Typology/Morphology`, `Typology/Possession`, `Phenomena/Polarity/Studies/Haspelmath1997`); imported via `open Datasets.WALS (WALSCount)` in all 4 consumers. Cross-substrate audit (Explore agent) inventoried 88 `private abbrev chN := Datasets.WALS.FNA.allData` boilerplate, 97 `fromWALSNA` converters, 75 `theorem chN_total : chN.length = N := by native_decide` aggregate-size theorems. Deleted all 75 of the latter — they were `native_decide`-on-corpus with zero analytical value (just hard-coded number against the dataset; `native_decide` violates CLAUDE.md mathlib policy). Section banners cleaned up. Per-cell `chN_count_X` count theorems also dropped from the Morphology substrate (per user direction during dissolution). Audit recommendations on the 88 abbrev pattern (naming inconsistency: `ch143A` uppercase in Negation vs `ch94` lowercase elsewhere) and 97-converter pattern (audit-recommended NOT to typeclass-extract; type couplings too irregular) deferred.
+
+**Phase 4 — Stale-namespace fix.** `Studies/Grano2024.lean` referenced `Phenomena.Complementation.Bridge.deriveMoodSelector` — leftover from before the dissolution renamed `Bridge` → `Studies.Noonan2007`. One-line fix.
+
+**Bib entries added.** `cristofaro-2013` (her authorship of WALS Ch 124–128, marked `validated = false` for human verification).
+
+**New shared substrate file.** `Linglib/Datasets/WALS/Aggregation.lean` (~30 LOC) — bare-minimum primitive promoted from 4-way duplication.
+
+**Files deleted (campaign).** 13 `Phenomena/X/Typology.lean` files (1370–2345 LOC each, ~17000 LOC total).
+**Files created (campaign).** 13 `Linglib/Typology/X.lean` substrate files + ~12 new `Phenomena/X/Studies/AuthorYear.lean` files + 1 `Datasets/WALS/Aggregation.lean`.
+**Build.** 1959 jobs green for substrate + dissolved Studies + downstream consumers. (Pre-existing breaks in `Phenomena/Agreement/Studies/Pietraszko2026.lean` from another in-flight session unrelated to this work.)
+
+## [0.230.534] - 2026-04-29
+
+### Kratzer2012Conditionals.lean: refactor to Kratzer's actual §2.9 example (deontic, ex. 59-61)
+
+Per-paper PDF re-read of @cite{kratzer-2012} pp. 65-68 to drive a substantive refactor: the previous file demonstrated §2.9's four-conditional recipe on a Pearl/Lewis-tradition rain/wet-streets toy (admitted as such in 0.230.532 docstring), but Kratzer's *actual* concrete worked example in §2.9 is the German deontic scenario at p. 67 (examples 59-61). Refactor swaps the rain toy for Kratzer's deontic scenario and adds the headline §2.9 contrast theorem.
+
+**The §2.9 deontic example** (Kratzer p. 67 verbatim):
+- (59) Jedem Menschen muss Gerechtigkeit widerfahren — "Justice must be done."
+- (60) Wenn jemand ungerecht behandelt wurde, muss das Unrecht gesühnt werden — "If someone was treated unjustly, the injustice must be amended."
+- (61) Wenn jemand ungerecht behandelt wurde, muss das Unrecht belohnt werden — "If someone was treated unjustly, the injustice must be rewarded."
+
+Kratzer's argument (p. 67): under the traditional `□(α → β)` analysis with morally-accessible-worlds modal base, both (60) and (61) come out *vacuously true* whenever (59) holds (no injustice in any morally accessible world ⇒ vacuous truth on the antecedent). On Kratzer's analysis (empty f, morally-good ordering source g), (60) is true and (61) is false: the best injustice-world is one where injustice is amended for, since "a world where injustice is amended for is not good (since there is no injustice in a good world). But it is still closer to what is good than any world where injustice is rewarded."
+
+**Encoding.** 4 worlds (`Fin 4`), three propositions (`injustice`, `amended`, `rewarded`), morally-good ordering source carrying two propositions (`¬ injustice` and `injustice → amended`) inducing `w0 < w1 < {w2, w3}`. Theorems: `ex59_holds`, `ex60_holds`, `ex61_fails`, `traditional_60_vacuously_true`, `traditional_61_vacuously_true`, plus the headline `traditional_collapses_kratzer_distinguishes` showing both contrasts at the actual world (w0).
+
+**Recipe theorems abstracted.** Kept `pointwiseRealisticBg` (with disclaimer about Kratzer's stronger totally-realistic notion), promoted `material_implication_recipe` and `strict_implication_recipe` from rain-specific to **abstract over arbitrary world types W and predicates p, q : W → Prop** — they're now generic statements of Kratzer's §2.9 "Sketch of proof" for the material/strict cases. Counterfactual case defers to Ch. 3.
+
+**Eliminated**: rain/wet-streets/sprinkler/broken-drainage scenario; temporal layer (`atTime`/`rainedAt`/`wetStreetAt` + the two `tensed_*` theorems) — Kratzer's §2.9 has no temporal indexing on antecedents, this was a formaliser flourish unmotivated by §2.9 content.
+
+**Net.** ~310 LOC (was ~245); 9 named theorems (was 6) including the headline cross-traditional-analysis contrast. Builds clean. The file is now genuinely about Kratzer 2012 §2.9 rather than a Pearl/Lewis toy wearing §2.9's name.
+
+## [0.230.533] - 2026-04-29
+
+### `Fragments/English/Lexicon.lean` + 3 syntax-bridge files dissolved
+
+4-agent audit of `Fragments/English/Lexicon.lean` (100 LOC, sum-typed unified-lookup over 4 of ≥12 word classes + whitespace-tokenizer `parseSentence`) converged on three fatal findings: (a) `LexResult` covers 4 of ≥12 attested English word classes (no aux/comp/prep/conj/particle/adj/neg/polarity/temporal/numeral) while `lookupAll` short-circuits on first miss, so any sentence with *the/and/not/can/quickly* fails silently; (b) `Option LexResult` truncates homography (saw, can, to, that, like, left); (c) `parseSentence`'s whitespace tokenizer is layer-confused (no clitics, contractions, or punctuation). Cross-framework auditor surfaced the deeper finding: `LexResult` was the silent shared dispatch type for three syntax theories' `FromFragments.lean` files, with no bridge theorem stating they agree, and the competing `Theories/Morphology/DM/VocabularyInsertion.lean` architecture never engaged.
+
+**Empirical scope check.** Real downstream consumers: only `Adger2003.lean` and `Chomsky1995.lean`, both of which use Minimalist's per-class projections (`verbToSO`, `nounToSO`, `pronounToSO`) directly — neither goes through `LexResult`, `parseSentence`, or any `lexResultToX` dispatcher. `HPSG/Core/FromFragments.lean` had zero external consumers; `CCG/Core/FromFragments.lean`'s only external consumer was `CCGAgreement.lean`.
+
+**Resolution.** Four-file deletion + one targeted trim:
+- Deleted `Fragments/English/Lexicon.lean` (100 LOC).
+- Deleted `Phenomena/Agreement/Studies/CCGAgreement.lean` (122 LOC) — self-described "Bridge" file (forbidden by CLAUDE.md "no bridge files" rule), 6 `native_decide` theorems verifying hardcoded strings parse, real `ccg_captures_agreement` theorem was a TODO comment.
+- Deleted `Theories/Syntax/HPSG/Core/FromFragments.lean` (183 LOC) and `Theories/Syntax/CCG/Core/FromFragments.lean` (167 LOC) — no external consumers post-CCGAgreement deletion.
+- Trimmed `Theories/Syntax/Minimalist/FromFragments.lean`: dropped `lexResultToSO` + `Lexicon` import + `LexResult` open; kept the four per-class projections (`verbToSO`/`pronounToSO`/`nounToSO`/`determinerToSO`) which Adger2003 and Chomsky1995 actually use.
+- Linglib.lean: dropped 4 imports.
+
+Net ~580 LOC out, 0 consumer regressions. Build green for Adger2003 + Chomsky1995. Pre-existing failures in Grano2024.lean / Pietraszko2026.lean (`MoodSelector.subjunctiveSelecting`, `deriveMoodSelector` undefined) confirmed unrelated by stash test.
+
+**Memory.** This file was created in `4123b84d` ("Add Universal Dependencies infrastructure") as scaffolding when UD types were being plumbed through, never designed as a standalone aggregator. The deletion makes explicit what the empirical dependency graph already showed: there is no general "English lexicon" object in linglib, only per-class lookups + per-class projections to theory types. Future work needing a unified lookup should target `Theories/Interfaces/LexicalDispatch.lean` (parameterized over per-class entry types, with `lookup : String → List Result`) so it lives at the right layer and admits homography honestly — but only when ≥2 theories have a real consumer.
+
+## [0.230.532] - 2026-04-28
+
+### Modality/ overhaul: RainScenario re-anchoring + DegreeCollapse dissolution
+
+4-agent audit of `Phenomena/Modality/Studies/Kratzer2012Scenario.lean` (101 LOC) and `Phenomena/Modality/DegreeCollapse.lean` (267 LOC) found two related misattributions to @cite{kratzer-2012}; resolved by relocation + deletion.
+
+**Misattribution 1 (Scenario): rain/wet-streets is not Kratzer's example.** Linguistics agent read pp. 64-68 of Kratzer 2012 directly; §2.9 ("Conditionals") works abstractly with `p, q, r, s` and uses German deontic examples (Jedem Menschen muss Gerechtigkeit widerfahren) — no rain, sprinkler, or broken-drainage scenario. The 4-world causal toy traces to the Pearl 2000 / Lewis 1973 counterfactual-modeling tradition.
+
+**Resolution.** Initially promoted scenario to top-level theory-neutral data file `Phenomena/Modality/RainScenario.lean`, then **merged back into the single consumer** `Studies/Kratzer2012Conditionals.lean` after the DegreeCollapse dissolution (see below) reduced consumers to one. Honors the "promote on ≥2 consumers" pattern from MEMORY.md — a 1-consumer top-level data file is premature abstraction; co-locating scenario data with its sole user keeps paper-section provenance + analysis together. If a 2nd framework (Stalnaker selection, premise-semantic lumping, probabilistic) ever wants to test against rain/wet-streets, the scenario lifts back out at that moment. Kratzer-specific backgrounds also moved INTO the consumer Studies file.
+
+- `Phenomena/Modality/Studies/Kratzer2012Conditionals.lean`: absorbs `pointwiseRealisticBg` (renamed from `totallyRealisticBg`) + `normalcySource`. The rename is honest about the encoding: `λ w => [(=w)]` is the *trivial* collapse where one proposition already IS {w}, distinct from Kratzer's totally-realistic backgrounds (rich set of facts whose ∩ is {w}, with lumping/dividing doing theoretical work in Ch. 3 §3.1). For the §2.9 four-conditional recipe only ⋂f(w) = {w} matters, so the collapse is operationally sound here. Docstring rewritten to claim demonstration of §2.9's recipe via a Pearl/Lewis toy, NOT identification of the toy with §2.9.
+- Namespace updated: `Phenomena.Modality.ConditionalModality` (vestige of an earlier deleted `ConditionalModality/` directory) → `Phenomena.Modality.Studies.Kratzer2012Conditionals`.
+- Deleted `Phenomena/Modality/Studies/Kratzer2012Scenario.lean`.
+
+**Misattribution 2 (DegreeCollapse): §2.5 is not graded modality.** Linguistics agent read §2.5 ("Modals without duals", pp. 43-49) directly: it is about the typological observation that some languages (St'át'imcets/Lillooet, Gitksan, Nez Perce) lack lexical possibility/necessity duals. The phrase "degree collapse" is the formaliser's coinage; Kratzer's actual collapse claim in §2.5 is necessity↔possibility under the Limit Assumption. Quantitative apparatus appears in §2.4, where Kratzer introduces a probability measure example with explicit warning that *uniform-cardinality is insufficient* (her example uses unequal weights `P({w₂}) = 4/15, P({w₃}) = 8/15`), and p. 43 quote: "comparative notions of possibility might provide conceptual jump-off points for the development of corresponding quantitative notions by experts able to push beyond the limits of what the faculty of language provides for everyone" — putting numerical strength explicitly outside the linguistic faculty.
+
+**Cross-framework verdict.** `modalStrength := |best ∩ p| / |best| : ℚ` is *probabilistic modality wearing Kratzer's name*. The file's own theorems (`strength_one_iff_necessity`, `strength_pos_iff_possibility`) prove this: `modalStrength` recovers Kratzer ops only at endpoints {0, 1}; everything in between is non-Kratzerian. Linglib already has the right rivals (`Studies/Lassiter2017.lean`, `Studies/Yalcin2007.lean`, `Theories/Semantics/Modality/ProbabilityOrdering.lean`, `EpistemicProbability.lean`, `KnowledgeProbability.lean`) — none cited. Plus integration violation: top-level `Phenomena/Modality/` file imported `Theories/` transitively.
+
+**Resolution.** Pure deletion. Zero consumers (only `Linglib.lean` imported it). 267 LOC removed. The bridge theorems' content (mathematical agreement at endpoints between cardinality quotient and Kratzer ops) survives in the audit record; if revived, belongs in a Lassiter-anchored study with proper engagement of the existing probabilistic-modality substrate, not as a Kratzer §2.5 file.
+
+**Net.** -368 LOC across the two deletions; +50 LOC in `RainScenario.lean`; ~10 LOC of header/docstring touch-up in `Kratzer2012Conditionals.lean`. Build clean (`Linglib.Phenomena.Modality.RainScenario` + `…Kratzer2012Conditionals` both compile; pre-existing failures in `Pietraszko2026.lean` / `Grano2024.lean` from another in-flight session unrelated to modality).
+
 ## [0.230.531] - 2026-04-28
 
 ### Phase + Voice substrate refactor: phaseOverride carrier + Prop API + dead-code excision

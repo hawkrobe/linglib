@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Theories.Semantics.Reference.Reciprocals
 
 /-!
@@ -39,7 +39,7 @@ construction types, while reflexives require morphosyntactic plurality
 
 namespace Fragments.Hungarian.Reciprocals
 
-open Core.Pronouns
+open Typology
 open Semantics.Reference.Reciprocals
 
 /-- *egymás* — reciprocal pronoun 'each other'.

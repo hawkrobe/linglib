@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Features.Register
 

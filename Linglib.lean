@@ -203,6 +203,10 @@ import Linglib.Core.Time.Reichenbach
 import Linglib.Core.Time.Tense
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
+import Linglib.Typology.ArgumentStructure
+import Linglib.Typology.Copulas
+import Linglib.Typology.Morphology
+import Linglib.Typology.Complementation
 import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.Directives
 import Linglib.Typology.Indefinite
@@ -587,7 +591,6 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Fragments.English.Binominals
 import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Fragments.English.Lexicon
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.PolarityItems
@@ -849,6 +852,7 @@ import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Burmese.Numerals
+import Linglib.Fragments.Cantonese.Definiteness
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Basque.Pronouns
@@ -1091,7 +1095,7 @@ import Linglib.Phenomena.Case.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Case.Studies.Comrie1989
 import Linglib.Typology.ClauseChaining
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
-import Linglib.Phenomena.Copulas.Typology
+import Linglib.Phenomena.Copulas.Studies.Stassen2013
 import Linglib.Phenomena.Copulas.Studies.Partee1987
 import Linglib.Phenomena.Copulas.Studies.Elbourne2026
 import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
@@ -1127,7 +1131,7 @@ import Linglib.Phenomena.Anaphora.Studies.Rakosi2019
 import Linglib.Phenomena.Anaphora.Studies.Gong2022
 import Linglib.Phenomena.Anaphora.Studies.HaugDalrymple2020
 import Linglib.Phenomena.Anaphora.Studies.GroenendijkStokhof1991
-import Linglib.Phenomena.Alignment.Typology
+import Linglib.Phenomena.Alignment.Studies.Dixon1994
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Phenomena.Ergativity.Studies.Imanishi2014
@@ -1137,7 +1141,7 @@ import Linglib.Phenomena.Ergativity.Studies.Scott2023
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
-import Linglib.Phenomena.ArgumentStructure.Typology
+import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Phenomena.ArgumentStructure.Studies.Storment2026
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
@@ -1199,13 +1203,15 @@ import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
 import Linglib.Phenomena.DefaultReasoning.Studies.DarwichePearl1997
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Definiteness.Studies.Moroney2021
+import Linglib.Phenomena.Definiteness.Studies.Jenks2018
 import Linglib.Phenomena.Clarification.Basic
 import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
 import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Phenomena.Dialogue.Studies.Anderson2021
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
-import Linglib.Phenomena.Complementation.Typology
+import Linglib.Phenomena.Complementation.Studies.Dryer2013
+import Linglib.Phenomena.Complementation.Studies.Cristofaro2013
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
 import Linglib.Phenomena.Complementation.Studies.Grano2024
 import Linglib.Phenomena.Complementation.Studies.Karttunen1971
@@ -1285,7 +1291,7 @@ import Linglib.Phenomena.Generics.Studies.Nickel2009
 import Linglib.Phenomena.Generics.Studies.BonehDoron2013
 import Linglib.Phenomena.Generics.Studies.DelPrete2013
 import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
-import Linglib.Phenomena.Gender.Typology
+import Linglib.Phenomena.Gender.Studies.Corbett1991
 import Linglib.Phenomena.Gender.Studies.Kramer2020
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
@@ -1385,7 +1391,6 @@ import Linglib.Phenomena.Numerals.Studies.Spector2013
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2022
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2026
 import Linglib.Phenomena.Quantification.Studies.Scontras2014
-import Linglib.Phenomena.Modality.Studies.Kratzer2012Scenario
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Conditionals
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Phenomena.Modality.Studies.RotterLiu2025Concord
@@ -1399,7 +1404,6 @@ import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Practical
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Informational
-import Linglib.Phenomena.Modality.DegreeCollapse
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
@@ -1464,7 +1468,7 @@ import Linglib.Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
 import Linglib.Phenomena.Morphology.Studies.Baker1985
 import Linglib.Phenomena.Morphology.Studies.HalleMarantz1993
 import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
-import Linglib.Phenomena.Morphology.Typology
+import Linglib.Phenomena.Morphology.Studies.BickelNichols2013
 import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013
 import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
@@ -1756,11 +1760,9 @@ import Linglib.Phenomena.CompensatoryLengthening.Studies.Hayes1989
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
-import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
 import Linglib.Phenomena.Agreement.Studies.Cysouw2009
-import Linglib.Phenomena.Agreement.Studies.CCGAgreement
 import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003
@@ -1783,6 +1785,7 @@ import Linglib.Phenomena.Agreement.Studies.Harbour2016
 import Linglib.Phenomena.Agreement.Studies.Keine2019
 import Linglib.Phenomena.Agreement.Studies.Keine2020
 import Linglib.Phenomena.Agreement.Studies.Preminger2014
+import Linglib.Phenomena.Agreement.Studies.Pietraszko2026
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -1965,7 +1968,6 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 -- Theories: HPSG
 import Linglib.Theories.Syntax.HPSG.Core.Basic
-import Linglib.Theories.Syntax.HPSG.Core.FromFragments
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.HPSG.Core.RelativeClauses

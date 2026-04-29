@@ -46,8 +46,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 namespace Semantics.Events
 
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Subevent Phases

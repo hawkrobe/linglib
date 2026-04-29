@@ -1,7 +1,7 @@
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
 import Linglib.Theories.Syntax.Minimalist.Features
-import Linglib.Core.Lexical.ExpressiveModifier
+import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment
 import Linglib.Phenomena.Islands.Studies.Ross1967
@@ -105,7 +105,7 @@ merged in matrix C, and Spec-head Agree as the licensing relation.
    to reach matrix Spec-CP. For independent modifiers (Mandarin *daodi*),
    the modifier moves on its own. -/
 
-open Core.Lexical.ExpressiveModifier (ExpressiveWhModifier Licensed)
+open Typology.ExpressiveModifier (ExpressiveWhModifier Licensed)
 
 /-- The unvalued POV feature [*ud*] borne by ANDL modifiers
     (@cite{chou-2012}). A probe seeking a [+d] goal in a Spec-head
@@ -139,7 +139,7 @@ theorem pov_operator_valued :
       on its own — host reachability is irrelevant.
 
     This is the Minimalist instantiation of the theory-neutral
-    `Core.Lexical.ExpressiveModifier.Licensed`. The Minimalist version
+    `Typology.ExpressiveModifier.Licensed`. The Minimalist version
     doesn't add a separate condition — it identifies "modifier reaches
     Spec-CP" as the structural realization of "scope position reached". -/
 abbrev LicensedMinimalist (m : ExpressiveWhModifier)
@@ -155,7 +155,7 @@ open Fragments.Singlish.Questions (WhStrategy fullMovement partialMovement
 open Fragments.Mandarin.Questions (daodi)
 open Typology.Question (WhInterpMechanism)
 -- IslandSource is declared at top level in Phenomena/Islands/Studies/Ross1967.lean
-open Core.Lexical.ExpressiveModifier
+open Typology.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType Licensed)
 open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
@@ -182,7 +182,7 @@ instance (s : WhStrategy) : Decidable (TheHellLicensed s) := by
 theorem theHellLicensed_iff_reachesSpecCP (s : WhStrategy) :
     TheHellLicensed s ↔ s.ReachesMatrixSpecCP := by
   unfold TheHellLicensed LicensedMinimalist
-  exact Core.Lexical.ExpressiveModifier.parasitic_licensed_iff_host_reaches
+  exact Typology.ExpressiveModifier.parasitic_licensed_iff_host_reaches
     (m := theHell) rfl _
 
 -- ============================================================================
@@ -425,7 +425,7 @@ theorem theHell_daodi_movement_contrast :
     parameter, derived via `independent_matrix_always_licensed`. -/
 theorem daodi_licensed_insitu (P : Prop) :
     Licensed daodi P :=
-  Core.Lexical.ExpressiveModifier.independent_matrix_always_licensed
+  Typology.ExpressiveModifier.independent_matrix_always_licensed
     rfl rfl P
 
 end ChanShen2026

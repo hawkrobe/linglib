@@ -54,7 +54,7 @@ open Semantics.Composition.Modification (predMod truePred predMod_true_left pred
 open Core.Discourse.Accessibility (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
 open Pragmatics.Expressives (TwoDimProp)
-open Semantics.Verb.SelectionalPreferences (SemClass)
+open Features.SelectionalPreferences (SemClass)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Core Types

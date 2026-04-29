@@ -51,7 +51,7 @@ The Fragment split is a practical separation of entailment patterns;
 
 namespace Phenomena.Presupposition.Studies.Williams2026
 
-open Core.Verbs (ComplementType)
+open Semantics.Verb (ComplementType)
 
 /-- Whether a factive presupposition has modal content.
 

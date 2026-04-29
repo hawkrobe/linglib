@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # French Polarity-Sensitive Items
@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.PolarityItem
 
 Lexical entries for French polarity-sensitive items (n-word series and
 related), typed by the theory-neutral categories from
-`Core.Lexical.PolarityItem`. Standard sentential negation lives in the
+`Typology.PolarityItem`. Standard sentential negation lives in the
 sibling `Fragments/French/Negation.lean`; this file holds only the
 lexical reactives (operator/lexical-reactive split documented in
 `Core/Lexical/NegMarker.lean`).
@@ -30,7 +30,7 @@ licensing would live in the substrate, not per-Fragment.
 
 namespace Fragments.French.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 /-- *personne* — N-word for human ('nobody').
     Grammaticalized from the noun 'person'. Co-occurs with *ne* in
@@ -90,8 +90,8 @@ def plus : PolarityItemEntry :=
 -- Joint
 -- ============================================================================
 
-/-- The French polarity-item inventory: the Fragment-side joint consumed
-    by `Phenomena/Polarity/Typology.lean`. -/
+/-- The French polarity-item inventory: the Fragment-side joint listing
+    every polarity item this fragment defines. -/
 def items : List PolarityItemEntry :=
   [personne, rien, jamais, plus]
 

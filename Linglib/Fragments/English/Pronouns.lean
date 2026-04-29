@@ -4,8 +4,8 @@
 Lexical entries for English pronouns (personal, reflexive, wh-).
 -/
 
-import Linglib.Core.Lexical.Word
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Core.Word
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Pronouns
 
 namespace Fragments.English.Pronouns
@@ -45,7 +45,7 @@ def GenderParadigm.toSurfaceGender : GenderParadigm → Option Features.SurfaceG
   | .unspecified => none
 
 /-- Map a personal pronoun specification to its English gender paradigm. -/
-def Core.Pronouns.PronounSpec.toGenderParadigm : Core.Pronouns.PronounSpec → GenderParadigm
+def Typology.PronounSpec.toGenderParadigm : Typology.PronounSpec → GenderParadigm
   | .heHim   => .masculine
   | .sheHer  => .feminine
   | .theyThem => .epicene

@@ -2,7 +2,7 @@ import Mathlib.Order.Nat
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
-import Linglib.Core.Lexical.RootFeatures
+import Linglib.Theories.Semantics.Verb.Roots.RootFeatures
 
 /-!
 # Morphological Causation: Causative Construction Typology
@@ -74,7 +74,8 @@ the external cause entirely, yielding monoeventive structure.
 namespace Semantics.Causation.Morphological
 
 open Semantics.Causation.Psych (CausalSource)
-open Semantics.Verb.AgentivityLattice (AgentivityNode)
+open Features.AgentivityLattice (AgentivityNode)
+open Semantics.Verb.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causer Type (@cite{hafeez-2025}, @cite{comrie-1989})
@@ -168,7 +169,21 @@ def Mediation.rank : Mediation → Nat
     - **morphological**: productive affix (Urdu -aa, Japanese -(s)ase)
     - **periphrastic**: analytic multi-word (English "make X do Y")
 
-    Ordered from compact to analytic. -/
+    Ordered from compact to analytic.
+
+    Naming-collision note: `CausativeComplexity.lexical` (this constructor)
+    and `Phenomena/Causation/Studies/Song1996.CausativeMorphology.lexical`
+    share the constructor name `lexical` but encode different claims.
+    `CausativeComplexity.lexical` is a construction-level claim — "this
+    causative construction sits at the most-compact end of Comrie's
+    continuum"; Song's `CausativeMorphology.lexical` is a morpheme-shape
+    claim — "no separable causal morpheme exists". English *kill* satisfies
+    both, but the inferential content differs. The two enums are NOT
+    interconvertible; the lossy `CausativeConstructionType.toComplexity`
+    bridge in `Studies/Song1996.lean` collapses Song's
+    `compact / freeMorpheme` (e.g. French *faire-V*) into
+    `CausativeComplexity.morphological`, even though @cite{folli-harley-2005}
+    analyse French *faire* as periphrastic. -/
 inductive CausativeComplexity where
   | lexical
   | morphological

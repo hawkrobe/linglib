@@ -40,10 +40,10 @@ theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
 a second consumer materialises.
 -/
 
-open Core.Verbs
-open Semantics.Verb.EventStructure
-open Semantics.Verb.EntailmentProfile
-open Semantics.Verb.Affectedness
+open Semantics.Verb
+open Features.EventStructure
+open Features.EntailmentProfile
+open Features.Affectedness
 
 -- ════════════════════════════════════════════════════
 -- § 1. Outcome Set Cardinality (eq. 62)

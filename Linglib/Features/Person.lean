@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.UD
+import Linglib.Core.UD
 import Linglib.Features.Prominence
 import Linglib.Features.PrivativePair
 

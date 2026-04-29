@@ -43,7 +43,7 @@ and is banned elsewhere.
 
 namespace Semantics.Attitudes.PreExistence
 
-open Core.Verbs (ComplementType)
+open Semantics.Verb (ComplementType)
 
 -- ============================================================================
 -- §1. Temporal Satisfaction of Pre-Existence

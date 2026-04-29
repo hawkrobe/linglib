@@ -62,7 +62,7 @@ theorem caseGramCline_ordered :
     → abstract/core: the source function is less grammaticalized than the
     target.
 
-    See also `Phenomena.Possession.Typology.PossessionSource` for
+    See also `Typology.Possession.PossessionSource` for
     @cite{heine-2009} Table 29.5 (possessive case sources, adapted from
     @cite{heine-1997}). -/
 def Case.Extends : Case → Case → Prop

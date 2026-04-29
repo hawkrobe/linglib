@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Russian Negation Fragment
@@ -25,7 +25,7 @@ the sentence level, which is operator-side typology consumed by
 
 namespace Fragments.Slavic.Russian.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *не* — Russian's standard preverbal negation particle.
     A free word, syntactically immediately preverbal. -/
@@ -35,7 +35,7 @@ def ne : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Russian negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "rus" [ne]
 
@@ -136,5 +136,24 @@ theorem all_concord_contain_ne :
 theorem all_nwords_ni_prefix :
     allConcordExamples.all (fun e => e.nword.startsWith "ни") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Russian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Russian"
+  , iso := "rus"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .cooccur
+  , negMarkers := ["ne"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Slavic.Russian.Negation

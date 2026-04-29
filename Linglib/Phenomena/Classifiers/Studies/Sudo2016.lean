@@ -312,7 +312,7 @@ of `ClassifierStrategy` (`.sudoBlocking`), so the disagreement with
 
 /-- Sudo's strategy assignment for Japanese: classifier blocks the silent
     ∪-operator on numerals (Sudo §3, eqs. 15–16). -/
-def japaneseStrategy : Core.NounCategorization.ClassifierStrategy := .sudoBlocking
+def japaneseStrategy : Typology.ClassifierStrategy := .sudoBlocking
 
 /-- Sudo and Chierchia disagree about which strategy Japanese exhibits:
     Chierchia's analysis assigns `.forNoun` (CLF atomizes a kind-denoting

@@ -1,5 +1,4 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
-import Linglib.Phenomena.Case.Typology
 import Linglib.Theories.Syntax.Minimalist.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
@@ -12,7 +11,7 @@ Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
 
 Connects @cite{just-2024} differential indexing to three existing formalizations:
 
-1. **@cite{aissen-2003} DOM profiles** (`Phenomena/Case/Typology`): DOM is the
+1. **@cite{aissen-2003} DOM profiles** (`Features/Prominence`): DOM is the
    P-flagging specialization of the general differential marking framework.
    This bridge proves that DOM profiles and P-indexing profiles share the
    same monotonicity constraint over the same scales.
@@ -33,7 +32,6 @@ namespace Aissen2003
 
 open Features.Prominence
 open Phenomena.Agreement.DifferentialIndexing
-open Phenomena.Case.Typology
 open Minimalist
 open Fragments.Mayan.Kaqchikel
 

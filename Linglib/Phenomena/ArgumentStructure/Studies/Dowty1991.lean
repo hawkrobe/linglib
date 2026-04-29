@@ -29,8 +29,8 @@ succeed and where they diverge from the modern approach.
 
 namespace Dowty1991
 
-open Core.Verbs
-open Semantics.Verb.EntailmentProfile
+open Semantics.Verb
+open Features.EntailmentProfile
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 open Fragments.English.Predicates.Verbal
 
@@ -346,7 +346,7 @@ theorem run_prediction_matches_fragment :
     verify that Grimm's lattice predictions are consistent with the ASP
     predictions above, and that it also resolves the arrive anomaly. -/
 
-open Semantics.Verb.AgentivityLattice
+open Features.AgentivityLattice
 
 /-- Grimm's lattice handles the arrive anomaly: arrive's subject has
     motion but not instigation → not in the NOM/ERG region. Consistent

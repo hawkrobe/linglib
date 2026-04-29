@@ -2,9 +2,9 @@ import Linglib.Features.Prominence
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
-import Linglib.Phenomena.Alignment.Typology
-import Linglib.Phenomena.Causation.Typology
-import Linglib.Phenomena.Case.Typology
+import Linglib.Typology.Alignment
+import Linglib.Phenomena.Alignment.Studies.Dixon1994
+import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
@@ -69,7 +69,7 @@ namespace Comrie1989
 /-! ### Cross-domain unity of the animacy hierarchy
 
 The `AnimacyLevel` type in `Features.Prominence` is imported by both
-`Phenomena.Alignment.Typology` (Silverstein's split ergativity) and
+`Phenomena.Alignment.Studies.Dixon1994` (Silverstein's split ergativity) and
 `Aissen2003` (DOM via OT). This is structural
 grounding: the same 3-level hierarchy (human > animate > inanimate)
 governs both phenomena, with no possibility of drift between separate
@@ -80,7 +80,7 @@ three prominence scales are defined once in `Features.Prominence` and
 imported by every downstream module. -/
 
 open Features.Prominence (AnimacyLevel ArgumentRole)
-open Phenomena.Alignment.Typology (AlignmentType)
+open Typology.Alignment (AlignmentType)
 open Phenomena.Subjecthood.SubjectProperties
 
 -- ============================================================================
@@ -187,7 +187,7 @@ theorem syntacticErg_subject_converges :
 
 /-! ### Alignment profiles predict subject property convergence
 
-Each language's alignment profile (from `Phenomena.Alignment.Typology`)
+Each language's alignment profile (from `Phenomena.Alignment.Studies.Dixon1994`)
 generates a predicted subject property bundle via `toSubjectBundle`.
 These theorems verify the predictions against the known typological
 facts for each language:
@@ -201,7 +201,7 @@ facts for each language:
 The `syntacticErg` parameter captures the rare/common ergativity
 distinction that @cite{comrie-1989} Ch 5 identifies as central. -/
 
-open Phenomena.Alignment.Typology
+open Phenomena.Alignment.Studies.Dixon1994
   (english dyirbal basque hindiUrdu dargwa japanese)
 
 /-- English: accusative NP alignment → derived bundle converges. -/
@@ -254,7 +254,6 @@ theorem dyirbal_syntacticErg_converges :
 open Semantics.Causation.Morphological
     (CausativeComplexity CausativeConstruction Mediation comrie_monotone
      CauseeSlot causeeDemotion)
-open Phenomena.Causation.Typology (CausativeConstructionType)
 
 /-- @cite{comrie-1989}'s compact-to-analytic and direct-to-indirect
     dimensions are connected: a compact+direct construction and a
@@ -266,13 +265,10 @@ theorem compact_direct_vs_periphrastic_indirect :
       ⟨.periphrastic, .indirect, none, none⟩ := by
   intro _; decide
 
-/-- Song's AND and PURP types both map to periphrastic on Comrie's scale,
-    despite differing in implicativity. The implicativity distinction is
-    orthogonal to morphological complexity. -/
-theorem song_multiclause_both_periphrastic :
-    CausativeConstructionType.and_.toComplexity = CausativeComplexity.periphrastic ∧
-    CausativeConstructionType.purp.toComplexity = CausativeComplexity.periphrastic :=
-  ⟨rfl, rfl⟩
+-- The earlier `song_multiclause_both_periphrastic` theorem was a Song-1996-vs-
+-- Comrie-1989 cross-paper bridge; it was relocated to
+-- `Phenomena/Causation/Studies/Song1996.lean` per the chronology rule
+-- (Comrie 1989 cannot cite Song 1996 — the bridge belongs in the later paper).
 
 /-- Causee demotion: intransitive base → causee gets DO (rank 2),
     transitive base → causee gets IO (rank 1). The causee is demoted
@@ -421,9 +417,9 @@ The critical structural point: the **same** prominence hierarchies
 connection is built in by construction — both import `Features.Prominence`. -/
 
 open Features.Prominence (DefinitenessLevel)
-open Phenomena.Case.Typology
+open Aissen2003
   (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
-open Phenomena.Alignment.Typology (russian turkish dyirbalSplit)
+open Phenomena.Alignment.Studies.Dixon1994 (russian turkish dyirbalSplit)
 open Core (AlignmentFamily Aspect hindiSplit)
 
 /-- Whether DOM (differential P marking) is expected given alignment.

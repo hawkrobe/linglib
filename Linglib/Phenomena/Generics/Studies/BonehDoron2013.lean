@@ -52,7 +52,7 @@ open Core (WorldTimeIndex)
 
 open Semantics.Quantification.CovertQuantifier
 open Semantics.Noun.Kind.Generics (Situation traditionalGEN)
-open Semantics.Verb.Habituals (Occasion traditionalHAB)
+open Features.Habituals (Occasion traditionalHAB)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 -- ═══ Operator Distinction ═══

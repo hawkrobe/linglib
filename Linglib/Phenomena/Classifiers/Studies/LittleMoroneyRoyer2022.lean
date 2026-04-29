@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
@@ -47,7 +47,7 @@ meaning for "two dogs": {ab, ac, bc} — the set of pluralities of two dogs.
 CLF-for-NUM is formalized using `Mereology.QMOD` — the measure function
 `Finset.card` produces a quantized predicate (`clfForNum_qua`).
 CLF-for-N is formalized directly as atom-pair selection: `∃ d₁ d₂, d₁ ≠ d₂ ∧ s = {d₁, d₂}`.
-The `ClassifierStrategy` enum in `Core.NounCategorization` captures the
+The `ClassifierStrategy` enum in `Typology` captures the
 typological parameter.
 
 Note: `Mereology.atomize` cannot be applied to `Finset Dog` directly because
@@ -61,7 +61,7 @@ two via `Finset.card_eq_two`.
 
 namespace LittleMoroneyRoyer2022
 
-open Core.NounCategorization
+open Typology
 open Typology
 open Typology.NounCategorizationSystem
 open Aikhenvald2000
@@ -559,11 +559,11 @@ theorem chol_differs_from_chierchia_languages :
     - CLF-for-N → `clfForNoun` (= `atomize`)
     - CLF-for-NUM → `clfForNum` (= `QMOD`)
 
-    This confirms that the typological enum in `Core.NounCategorization`
+    This confirms that the typological enum in `Typology`
     is structurally connected to semantic content, not just a label. -/
 theorem strategy_dispatch_forNoun :
     Semantics.Classifier.classifierDenot
-      Core.NounCategorization.ClassifierStrategy.forNoun
+      Typology.ClassifierStrategy.forNoun
       (fun (_ : Finset Dog) => True) (fun _ => 0) 0
     = Semantics.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
 

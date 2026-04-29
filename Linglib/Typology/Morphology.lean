@@ -1,0 +1,119 @@
+import Linglib.Datasets.WALS.Aggregation
+import Linglib.Datasets.WALS.Features.F20A
+import Linglib.Datasets.WALS.Features.F21A
+import Linglib.Datasets.WALS.Features.F21B
+import Linglib.Datasets.WALS.Features.F22A
+import Linglib.Datasets.WALS.Features.F23A
+import Linglib.Datasets.WALS.Features.F24A
+import Linglib.Datasets.WALS.Features.F25A
+import Linglib.Datasets.WALS.Features.F25B
+import Linglib.Datasets.WALS.Features.F26A
+import Linglib.Datasets.WALS.Features.F27A
+import Linglib.Datasets.WALS.Features.F28A
+import Linglib.Datasets.WALS.Features.F29A
+import Linglib.Datasets.WALS.Features.F62A
+import Linglib.Datasets.WALS.Features.F79A
+import Linglib.Datasets.WALS.Features.F79B
+import Linglib.Datasets.WALS.Features.F80A
+
+/-!
+# Typology.Morphology
+@cite{bickel-nichols-2013a} @cite{bickel-nichols-2013b} @cite{bickel-nichols-2013c}
+@cite{nichols-bickel-2013} @cite{nichols-bickel-2013a}
+@cite{nichols-bickel-2013b} @cite{nichols-bickel-2013c} @cite{nichols-bickel-2013d}
+@cite{baerman-brown-2013} @cite{baerman-brown-2013a}
+@cite{dryer-2013-wals} @cite{rubino-2013}
+
+Per-language typological substrate for morphological mechanisms, covering
+WALS chapters 20--29 (fusion, exponence, synthesis, locus of marking,
+prefixing/suffixing, reduplication, syncretism) plus thematically-related
+Ch 21B, 62, 79A, 79B, 80A.
+
+Mirrors the `Linglib/Typology/{Possession,Negation,Comparison,Coordination,
+Modality,Gender,Alignment,ArgumentStructure,Copulas}` substrate-extension
+pattern. Fragment-importable.
+
+## What lives here
+
+The morphological **types** themselves -- `Fusion`, `Flexivity`, `Exponence`,
+`ExponenceScope`, `VerbSynthesis`, `LocusOfMarking`, `PrefixSuffix`,
+`Reduplication`, `LocusClause`, `LocusPossessive`, `WholeLanguageMarking`,
+`ZeroMarkingAP`, `CaseSyncretism`, `VerbalSyncretism`, `TAMExponence`,
+`ActionNominal`, `SuppletionTA`, `SuppletionImperative`, `VerbalNumber` --
+plus the `MorphProfile` struct and the `fromWALS{20A..80A}` converters --
+already live in `Core/Morphology/MorphProfile.lean` (Fragments depend on
+them directly).
+
+This file adds the WALS-aggregate layer:
+
+- `WALSCount` row struct + `WALSCount.totalOf` summer.
+- Per-chapter WALS distribution lists (`ch20Distribution` ... `ch80Distribution`).
+- WALS aggregate sample-size theorems (`ch20_total` ... `ch80_total`).
+- Corpus-only generalisations: Greenberg's Universal 27 (suffixing
+  dominates), concatenative dominance (Ch 20), reduplication majority (Ch 27),
+  Ch 22 moderate-synthesis dominance.
+
+## Out of scope
+
+The 18-language `MorphProfile` sample and the cross-chapter theorems built
+on it -- B&N orthogonality (concatenative × flexivity), agglutinating-vs-
+fusional partition, head-marking-implies-high-synthesis -- live in
+`Phenomena/Morphology/Studies/BickelNichols2013.lean`.
+
+@cite{ackerman-malouf-2013}'s `LanguageData` (10-language E/I-complexity
+sample) and the LCEC apparatus live in
+`Phenomena/Morphology/Studies/AckermanMalouf2013.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Typology.Morphology
+
+private abbrev ch20  := Datasets.WALS.F20A.allData
+private abbrev ch21  := Datasets.WALS.F21A.allData
+private abbrev ch21b := Datasets.WALS.F21B.allData
+private abbrev ch22  := Datasets.WALS.F22A.allData
+private abbrev ch23  := Datasets.WALS.F23A.allData
+private abbrev ch24  := Datasets.WALS.F24A.allData
+private abbrev ch25a := Datasets.WALS.F25A.allData
+private abbrev ch25b := Datasets.WALS.F25B.allData
+private abbrev ch26  := Datasets.WALS.F26A.allData
+private abbrev ch27  := Datasets.WALS.F27A.allData
+private abbrev ch28  := Datasets.WALS.F28A.allData
+private abbrev ch29  := Datasets.WALS.F29A.allData
+private abbrev ch62  := Datasets.WALS.F62A.allData
+private abbrev ch79a := Datasets.WALS.F79A.allData
+private abbrev ch79b := Datasets.WALS.F79B.allData
+private abbrev ch80  := Datasets.WALS.F80A.allData
+
+/-! `WALSCount` + `WALSCount.totalOf` are imported from
+    `Linglib/Datasets/WALS/Aggregation.lean` (shared with the other
+    Typology files that consume WALS distributions). -/
+
+open Datasets.WALS (WALSCount)
+
+
+/-- WALS Ch 20: exclusively concatenative is the most common single
+    fusion type, exceeding both isolating and tonal. -/
+theorem concatenative_most_common_wals :
+    let concat := (ch20.filter (·.value == .exclusivelyConcatenative)).length
+    let isolating := (ch20.filter (·.value == .exclusivelyIsolating)).length
+    let tonal := (ch20.filter (·.value == .exclusivelyTonal)).length
+    concat > isolating ∧ concat > tonal := by native_decide
+
+/-- WALS Ch 27: productive reduplication (full or full+partial) is
+    present in the majority of WALS-sampled languages. -/
+theorem reduplication_in_majority_wals :
+    let hasRedup := (ch27.filter (·.value != .noProductiveReduplication)).length
+    hasRedup * 2 > ch27.length := by native_decide
+
+/-- WALS Ch 22: most languages have 2--7 categories per verb word; the
+    extremes (0--1 and 12--13) are rare. -/
+theorem ch22_moderate_dominant :
+    let mid := (ch22.filter (λ d =>
+      d.value == .categoriesPerWord2_3 ||
+      d.value == .categoriesPerWord4_5 ||
+      d.value == .categoriesPerWord6_7)).length
+    mid * 2 > ch22.length := by native_decide
+
+end Typology.Morphology

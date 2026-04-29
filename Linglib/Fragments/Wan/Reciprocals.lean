@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Features.Logophoricity
 
 /-!
@@ -33,7 +33,7 @@ hierarchy: it refers to the individual whose mental state is reported.
 
 namespace Fragments.Wan.Reciprocals
 
-open Core.Pronouns
+open Typology
 open Features.Logophoricity
 
 -- ════════════════════════════════════════════════════════════════

@@ -1,5 +1,9 @@
-import Linglib.Core.Lexical.VerbClass
-import Linglib.Core.Lexical.RootFeatures
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Verb.Roots.RootFeatures
 
 /-!
 # Levin Verb Class Theory
@@ -29,8 +33,9 @@ components, plus universal consistency theorems.
 -- ════════════════════════════════════════════════════
 
 section LevinClassMethods
-open Core.Verbs
-namespace Core.Verbs
+open Semantics.Verb
+open Semantics.Verb.Roots
+namespace Semantics.Verb
 
 /-- Root structural entailments for each Levin class.
 
@@ -393,4 +398,4 @@ theorem root_cause_accounted_for (c : LevinClass) :
     c.causationSource = .rootNonDetachable := by
   cases c <;> decide
 
-end Core.Verbs
+end Semantics.Verb

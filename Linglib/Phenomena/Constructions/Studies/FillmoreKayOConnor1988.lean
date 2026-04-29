@@ -1,7 +1,7 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Features.Acceptability
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # @cite{fillmore-kay-oconnor-1988}: *Let Alone* — Empirical Data
@@ -309,7 +309,7 @@ end FillmoreKayOConnor1988
 
 Connects the Construction Grammar analysis of *let alone* to:
 
-1. NPI licensing contexts in `Core.Lexical.PolarityItem` — maps each FKO NPI
+1. NPI licensing contexts in `Typology.PolarityItem` — maps each FKO NPI
    trigger type to a known licensing context
 2. Empirical judgments in `FillmoreKayOConnor1988`
    — verifies that *barely* licenses *let alone* while *almost* does not
@@ -320,14 +320,14 @@ namespace ConstructionGrammar.Studies.FillmoreKayOConnor1988.Bridge
 
 open ConstructionGrammar.Studies.FillmoreKayOConnor1988
 
-/-! ### Bridge 1: NPI triggers → Core.Lexical.PolarityItem.LicensingContext
+/-! ### Bridge 1: NPI triggers → Typology.PolarityItem.LicensingContext
 
 FKO1988's NPI trigger inventory (§2.2.4) maps onto the licensing contexts
-already catalogued in `Core.Lexical.PolarityItem`. This bridge makes that
+already catalogued in `Typology.PolarityItem`. This bridge makes that
 mapping explicit: each FKO trigger type corresponds to a known NPI
 licensing context. -/
 
-open Core.Lexical.PolarityItem in
+open Typology.PolarityItem in
 /-- Map FKO1988 *let alone* NPI triggers to `LicensingContext`s. -/
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .simpleNegation         => .negation

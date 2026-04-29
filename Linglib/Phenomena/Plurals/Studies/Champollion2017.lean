@@ -32,7 +32,8 @@ empirical distributivity/atelicity data.
 namespace Champollion2017
 
 open Fragments.English.Predicates.Verbal
-open Core.Verbs
+open Semantics.Verb
+open Features
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 -- ════════════════════════════════════════════════════

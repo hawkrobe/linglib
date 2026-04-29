@@ -1,10 +1,11 @@
 import Mathlib.Order.Hom.BoundedLattice
+import Linglib.Theories.Semantics.Polarity.Licensing
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Hoeksema (1983): Negative Polarity and the Comparative
@@ -91,10 +92,13 @@ registry's classification, by `rfl`.
 
 namespace Hoeksema1983
 
+open Semantics.Polarity.Licensing
+
 open Semantics.Entailment.AntiAdditivity
 open Semantics.Degree.Comparative (sComparative sComparative_isAntiAdditive
   sComparative_atomic)
-open Core.Lexical.PolarityItem (LicensingContext contextProperties)
+open Typology.PolarityItem (LicensingContext)
+open Semantics.Polarity.Licensing (contextProperties)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]
 

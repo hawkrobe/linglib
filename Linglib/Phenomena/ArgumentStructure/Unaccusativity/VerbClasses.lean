@@ -1,5 +1,9 @@
-import Linglib.Core.Lexical.VerbClass
-import Linglib.Core.Lexical.DiathesisAlternation
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -34,7 +38,7 @@ membership alone cannot determine unaccusativity for §37.3 verbs.
 namespace Phenomena.ArgumentStructure.Unaccusativity.VerbClasses
 
 open Fragments.English.Predicates.Verbal
-open Core.Verbs
+open Semantics.Verb
 
 /-! ## §1. Aligned classes
 

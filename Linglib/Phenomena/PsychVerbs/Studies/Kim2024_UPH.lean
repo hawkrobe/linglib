@@ -59,7 +59,7 @@ open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs
 open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Consistency Predicates

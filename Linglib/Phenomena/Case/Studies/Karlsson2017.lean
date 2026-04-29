@@ -1,5 +1,5 @@
 import Linglib.Core.Case.Basic
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Core.Morphology.MorphRule
 
 /-!
@@ -34,7 +34,8 @@ telicity. The case morphology makes this composition visible.
 
 namespace Karlsson2017
 
-open Core.Verbs
+open Features
+open Features
 
 -- ============================================================================
 -- § 1: Case–Aspect Mapping

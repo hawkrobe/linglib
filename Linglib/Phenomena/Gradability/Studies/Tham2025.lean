@@ -55,12 +55,12 @@ Physical disturbance predicates (*crack/cracked*, *scratch/scratched*,
 
 namespace Tham2025
 
-open Core.Verbs (LevinClass MeaningComponents)
+open Semantics.Verb (LevinClass MeaningComponents)
 open Core.Scale (Boundedness LicensingPipeline)
 open Semantics.Gradability (DimensionBindingType GradableAdjEntry
   adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
-open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
-open Core.Verbs
+open Features.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb
 open Semantics.Degree (PositiveStandard interpretiveEconomy)
 open Fragments.English.Predicates
 

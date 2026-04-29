@@ -1,7 +1,11 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
@@ -10,7 +14,7 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
@@ -43,18 +47,20 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 - Mandarin: (none — isolating language)
 -/
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 open Core.Presupposition
-open Semantics.Verb.ChangeOfState
+open Features
+open Semantics.Verb.Roots
+open Features.ChangeOfState
 open Semantics.Probabilistic.Measurement (Dimension)
 open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
-open Semantics.Verb.EntailmentProfile (EntailmentProfile)
-open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
+open Features.EntailmentProfile (EntailmentProfile)
+open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Incrementality (VerbIncClass)
-open Semantics.Verb.LevinClassProfiles
+open Features.LevinClassProfiles
 
 /-- Framework-neutral voice type for deriving argument structure properties.
 
@@ -530,4 +536,4 @@ def lookupSense (verbs : List VerbCore) (form : String) (tag : SenseTag := .defa
     Option VerbCore :=
   verbs.find? (λ v => v.form == form && v.senseTag == tag)
 
-end Core.Verbs
+end Semantics.Verb

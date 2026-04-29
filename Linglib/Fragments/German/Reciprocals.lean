@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # German Reciprocal Fragment
@@ -20,7 +20,7 @@ between reflexive and reciprocal uses.
 
 namespace Fragments.German.Reciprocals
 
-open Core.Pronouns
+open Typology
 
 /-- sich — reflexive/reciprocal pronoun (3rd person). -/
 def sich : PronounEntry :=

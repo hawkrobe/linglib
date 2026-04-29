@@ -1,4 +1,8 @@
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
@@ -38,12 +42,21 @@ disagreement is theorem-provable.
 -/
 
 -- ════════════════════════════════════════════════════
--- § Semantic interpretation
+-- § Methods on `Features.Causative`
 -- ════════════════════════════════════════════════════
 
-namespace Core.Verbs
+/-! Methods on `Features.Causative` that depend on heavy semantic
+machinery (`Core.Causal.SEM`, `CausalGraph`, the `Necessity`/
+`Sufficiency`/`Prevention` modules) live here rather than in
+`Features/Causation.lean`, which is kept import-free per the
+"Features/ stays lightweight" convention. The `namespace
+Features.Causative` block below is the standard mathlib pattern for
+distributing methods on a type across files based on import weight. -/
+
+namespace Features.Causative
 
 open Semantics.Causation.CCSelection
+open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 
 /-- The CC-selection mode associated with each variant.
 
@@ -52,11 +65,23 @@ open Semantics.Causation.CCSelection
       `completionOfSufficientSet`
     - `.prevent` selects the condition that blocks the effect →
       `completionOfSufficientSet` (the preventer completes the blocking set) -/
-def Causative.selectionMode : Causative → CCSelectionMode
+def selectionMode : Causative → CCSelectionMode
   | .cause => .memberOfSufficientSet
   | .make | .force | .enable | .prevent => .completionOfSufficientSet
 
-end Core.Verbs
+/-- Force-dynamic dispatch: map a causative classification to its V2
+    polymorphic semantic function. -/
+noncomputable def toSemantics {V : Type*} {α : V → Type*}
+    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
+    Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
+  | .cause => Semantics.Causation.Necessity.causeSem M
+  | .make => Semantics.Causation.Sufficiency.makeSem M
+  | .force => Semantics.Causation.Sufficiency.makeSem M
+  | .enable => Semantics.Causation.Sufficiency.makeSem M
+  | .prevent => Semantics.Causation.Prevention.preventSem M
+
+end Features.Causative
 
 -- ════════════════════════════════════════════════════
 -- § Derivation theorems (substrate-independent)
@@ -64,7 +89,8 @@ end Core.Verbs
 
 namespace Semantics.Causation.Interpretation
 
-open Core.Verbs
+open Semantics.Verb
+open Features
 
 /-- `make` and `force` are distinguished by coercion despite sharing truth conditions. -/
 theorem make_force_distinguished_by_coercion :
@@ -96,37 +122,3 @@ theorem necessity_selects_member :
     Causative.cause.selectionMode = .memberOfSufficientSet := rfl
 
 end Semantics.Causation.Interpretation
-
-/-! ### Causative semantic dispatch
-
-`Causative.toSemantics` is the canonical force-dynamic dispatch:
-maps a `Causative` variant to its polymorphic V2 semantic function.
-All variants share arity `(bg, cause, xC, effect, xE)` — Bool models
-pass `xC = xE = true`, multi-valued models supply genuine values.
-
-The previous Bool-implicit `CausalDynamics`-based dispatch (Phase D-A
-and earlier) was deleted in Phase D-G2 in favor of this polymorphic
-form. The V2 sub-namespace `Core.Verbs.Causative.V2.toSemantics` was
-the staging area; it's now the canonical name. -/
-
-namespace Core.Verbs
-
-namespace Causative
-
-open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
-
-/-- Force-dynamic dispatch: map a causative classification to its V2
-    polymorphic semantic function. -/
-noncomputable def toSemantics {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M] :
-    Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
-  | .cause => Semantics.Causation.Necessity.causeSem M
-  | .make => Semantics.Causation.Sufficiency.makeSem M
-  | .force => Semantics.Causation.Sufficiency.makeSem M
-  | .enable => Semantics.Causation.Sufficiency.makeSem M
-  | .prevent => Semantics.Causation.Prevention.preventSem M
-
-end Causative
-
-end Core.Verbs

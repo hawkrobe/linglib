@@ -1,32 +1,255 @@
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
-import Linglib.Phenomena.Questions.Typology
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
 /-!
-# Bridge: Left Periphery Theory -> Embedding/Typology Data
-@cite{dayal-2025} @cite{mccloskey-2006}
+# Dayal (2025): Three-layer cartography for clause-typing
+@cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018}
+@cite{bhatt-dayal-2020}
 
-Connects the left-peripheral selection class theory from
-`Theories.Interfaces.SyntaxSemantics.LeftPeriphery` to the empirical embedding
-data in `Phenomena.Questions.Embedding` and cross-linguistic typology
-data in `Phenomena.Questions.Typology`.
+Veneeta Dayal (2025), *Linguistic Inquiry* 56(4):663-712. Develops the
+three-layer cartographic split `[SAP [PerspP [CP ...]]]` and uses it to
+account for cross-linguistic clause-typing variation, the responsive/
+rogative split, and McCloskey-style quasi-subordination.
 
-Sections F and G from the original LeftPeriphery module: per-datum
-verification against embedding judgments, shiftiness predictions, and
-cross-linguistic Q-particle predictions.
+This study file is the canonical home for:
 
+1. **Clause-typing typology** (§4.4): forced-CP vs delayed-PerspP variation
+   across English/Italian/Hindi-Urdu (formerly in
+   `Phenomena/Questions/Typology.lean` §B–C).
+2. **Hindi-Urdu shiftiness** (§3.2): the McCloskey parallel for Hindi-Urdu
+   *jaanna:* (formerly in `Phenomena/Questions/Typology.lean` §D).
+3. **Newari conjunct/disjunct** (§5.2): the perspective-shift evidence
+   from Newari person marking (formerly in
+   `Phenomena/Questions/Typology.lean` §E).
+4. **Left-Periphery bridge**: the verification of the LeftPeriphery
+   `SelectionClass` apparatus against `Phenomena.Questions.Embedding`
+   data and the cross-linguistic shiftiness data.
+
+## Cross-framework relations
+
+- **Rizzi 1997 / `Theories/Syntax/Minimalist/Questions.lean`** places
+  clause-typing at `Force⁰[+Q]`; Dayal places it at `C` with a downstream
+  `PerspP` shift. The disagreement is real and not currently formalized as
+  a bridge theorem. See `Theories/Syntax/Minimalist/Questions.lean`.
+- **Holmberg 2016 / `Phenomena/Questions/Studies/Holmberg2016.lean`**
+  places the polar-Q-typing locus at `PolP` (via the
+  `Features/AnsweringSystem.lean` typological parameter). Holmberg's
+  analysis competes with Dayal's for the same matrix-polar facts.
+- **Speas-Tenny / `Theories/Syntax/Minimalist/SpeechActs.lean`** derives
+  `seatOfKnowledge` from a 2×2 feature matrix; Dayal places SoK in PerspP
+  with PRO. Both predict the Newari conjunct/disjunct flip; the bridge
+  theorem `SpeechActs.SoK ↔ PerspP-PRO over Newari` is unformalized.
 -/
 
-namespace Phenomena.Questions.LeftPeripheryBridge
+namespace Phenomena.Questions.Studies.Dayal2025
 
 open Interfaces.SyntaxSemantics.LeftPeriphery
 open Phenomena.Questions.Embedding
-open Phenomena.Questions.Typology
-open Phenomena.Questions.TypologyBridge
+open Phenomena.Questions.Studies.BhattDayal2020
 
 -- ============================================================================
--- F. Verification against empirical data
+-- §1. Clause-typing typology (Dayal 2025 §4.4)
+-- ============================================================================
+
+/-- How a language handles clause-typing for polar questions. The contrast
+    is the cartographic locus of `[+Q]`-typing, not a difference in feature
+    inventory. CP-typed languages license simplex polars in subordination
+    via a wh-complementizer (English `whether`, Italian `se`); PerspP-typed
+    languages route polar questions through a higher PerspP layer that does
+    not embed under canonical responsive predicates. -/
+inductive ClauseTypingStrategy where
+  /-- Clause-typing locus is `C` (English `whether`, Italian `se`). -/
+  | cpTyped
+  /-- Clause-typing locus is `PerspP` (Hindi-Urdu rising intonation). -/
+  | perspPTyped
+  deriving DecidableEq, Repr
+
+/-- Structural projection: which clause-typing strategies license simplex
+    polar questions in subordination. CP-typed languages do (the wh-
+    complementizer is the embedding selector); PerspP-typed languages do
+    not (PerspP is too high to be selected by canonical responsive verbs).
+    `delayed_blocks_simplex_subordination` below derives from this
+    projection together with the Fragment data, rather than holding
+    vacuously over a 1-element sample. -/
+def ClauseTypingStrategy.licensesSimplexSubordination :
+    ClauseTypingStrategy → Bool
+  | .cpTyped     => true
+  | .perspPTyped => false
+
+/-- Data on simplex polar question embedding across languages.
+    A simplex polar question is just the nucleus *p* (no "or not"). -/
+structure SimplexPolarDatum where
+  language : String
+  clauseTyping : ClauseTypingStrategy
+  /-- Simplex polar in matrix? -/
+  matrixOk : Bool
+  /-- Simplex polar in quasi-subordination? -/
+  quasiSubOk : Bool
+  /-- Simplex polar in subordination? -/
+  subordinationOk : Bool
+  deriving Repr
+
+def english_simplex : SimplexPolarDatum :=
+  { language := "English", clauseTyping := .cpTyped
+  , matrixOk := true, quasiSubOk := true, subordinationOk := true }
+
+def italian_simplex : SimplexPolarDatum :=
+  { language := "Italian", clauseTyping := .cpTyped
+  , matrixOk := true, quasiSubOk := true, subordinationOk := true }
+
+/-- Hindi-Urdu: simplex polar questions require PerspP (rising intonation
+    activates [+WH] at PerspP level). No wh-complementizer → cannot
+    clause-type at C. (Dayal 2025: ex (70)–(71); UNVERIFIED page numbers.) -/
+def hindi_urdu_simplex : SimplexPolarDatum :=
+  { language := "Hindi-Urdu", clauseTyping := .perspPTyped
+  , matrixOk := true, quasiSubOk := true, subordinationOk := false }
+
+def allSimplexPolarData : List SimplexPolarDatum :=
+  [english_simplex, italian_simplex, hindi_urdu_simplex]
+
+/-- The Fragment data is consistent with the structural projection: every
+    PerspP-typed language in the sample lacks simplex-polar subordination.
+    Unlike a 1-direction stipulation, this connects per-language data to a
+    typed projection on `ClauseTypingStrategy`. -/
+theorem simplex_subordination_matches_projection :
+    ∀ d ∈ allSimplexPolarData,
+      d.subordinationOk = d.clauseTyping.licensesSimplexSubordination := by
+  intro d hd
+  simp only [allSimplexPolarData, List.mem_cons, List.mem_nil_iff, or_false] at hd
+  rcases hd with rfl | rfl | rfl <;> rfl
+
+/-- Corollary: PerspP-typed languages cannot subordinate simplex polars.
+    Now derived from the structural projection, not from the data alone. -/
+theorem perspPTyped_blocks_simplex_subordination :
+    ∀ d ∈ allSimplexPolarData,
+      d.clauseTyping = .perspPTyped → d.subordinationOk = false := by
+  intro d hd hp
+  rw [simplex_subordination_matches_projection d hd, hp]
+  rfl
+
+-- ============================================================================
+-- §2. Declarative questions and bias (Dayal 2025 §4.3)
+-- ============================================================================
+
+/-- Whether declarative questions in a language are obligatorily biased.
+    English: "You drink wine?" is obligatorily biased (speaker expects yes).
+    Hindi-Urdu/Italian: rising declaratives can be neutral.
+    This follows from whether clause-typing is forced at C (CP-typed) or
+    routed through PerspP. (Italian `neutralOk := true` is contested in
+    the rising-declarative literature, e.g. Gunlogson 2003 vs Bartels 1999;
+    Dayal 2025 makes the specific claim — UNVERIFIED page numbers.) -/
+structure DeclarativeQuestionDatum where
+  language : String
+  /-- Can a rising declarative be a neutral (unbiased) question? -/
+  neutralOk : Bool
+  /-- Is a rising declarative always biased? -/
+  obligatorilyBiased : Bool
+  clauseTyping : ClauseTypingStrategy
+  deriving Repr
+
+def english_decl_q : DeclarativeQuestionDatum :=
+  { language := "English"
+  , neutralOk := false, obligatorilyBiased := true
+  , clauseTyping := .cpTyped }
+
+def hindi_urdu_decl_q : DeclarativeQuestionDatum :=
+  { language := "Hindi-Urdu"
+  , neutralOk := true, obligatorilyBiased := false
+  , clauseTyping := .perspPTyped }
+
+def italian_decl_q : DeclarativeQuestionDatum :=
+  { language := "Italian"
+  , neutralOk := true, obligatorilyBiased := false
+  , clauseTyping := .cpTyped }
+
+def allDeclQData : List DeclarativeQuestionDatum :=
+  [english_decl_q, hindi_urdu_decl_q, italian_decl_q]
+
+-- ============================================================================
+-- §3. Hindi-Urdu shiftiness (Dayal 2025 §3.2, ex (39)–(41))
+-- ============================================================================
+
+/-- Cross-linguistic shiftiness data. Parallels McCloskey's English data.
+    Hindi-Urdu *kya:* shows the same pattern as English embedded inversion:
+    blocked under bare responsive, licensed under negation/questioning. -/
+structure CrossLingShiftinessDatum where
+  language : String
+  verb : String
+  sentence : String
+  negated : Bool
+  questioned : Bool
+  quasiSubOk : Bool
+  deriving Repr
+
+/-- Hindi-Urdu: "want to know" (rogative) freely takes *kya:*
+    (Dayal 2025: ex (39a)). -/
+def hindi_urdu_want_to_know : CrossLingShiftinessDatum :=
+  { language := "Hindi-Urdu", verb := "ja:n-na: ca:h-na: (want to know)"
+  , sentence := "anu ja:nna: ca:hti: hai [ki (kya:) tum cai piyoge↑]"
+  , negated := false, questioned := false, quasiSubOk := true }
+
+/-- Hindi-Urdu: "know" (responsive) rejects *kya:* (Dayal 2025: ex (39b)). -/
+def hindi_urdu_know_bare : CrossLingShiftinessDatum :=
+  { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
+  , sentence := "*anu ja:nti: hai [ki (kya:) tum cai piyoge↑]"
+  , negated := false, questioned := false, quasiSubOk := false }
+
+/-- Hindi-Urdu: "nobody knows" + *kya:* → OK (negation, Dayal 2025: ex (41a)). -/
+def hindi_urdu_know_negated : CrossLingShiftinessDatum :=
+  { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
+  , sentence := "koii nahii jaanta [ki kya: TiTo sTa:lin-se mile the↑]"
+  , negated := true, questioned := false, quasiSubOk := true }
+
+/-- Hindi-Urdu: "does anyone know" + *kya:* → OK (questioning,
+    Dayal 2025: ex (41b)). -/
+def hindi_urdu_know_questioned : CrossLingShiftinessDatum :=
+  { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
+  , sentence := "kisii-ko bhi maalum hai [ki (kya:) TiTo sTa:lin-se mile the↑]"
+  , negated := false, questioned := true, quasiSubOk := true }
+
+def allCrossLingShiftinessData : List CrossLingShiftinessDatum :=
+  [hindi_urdu_want_to_know, hindi_urdu_know_bare,
+   hindi_urdu_know_negated, hindi_urdu_know_questioned]
+
+/-- Hindi-Urdu shiftiness parallels English: bare responsive blocks quasi-sub,
+    negation and questioning license it. -/
+theorem hindi_urdu_shiftiness_parallels_english :
+    hindi_urdu_know_bare.quasiSubOk = false ∧
+    hindi_urdu_know_negated.quasiSubOk = true ∧
+    hindi_urdu_know_questioned.quasiSubOk = true := by
+  simp [hindi_urdu_know_bare, hindi_urdu_know_negated, hindi_urdu_know_questioned]
+
+-- ============================================================================
+-- §4. Newari conjunct/disjunct marking (Dayal 2025 §5.2, @cite{zu-2018})
+-- ============================================================================
+
+/-- Newari uses conjunct vs disjunct verb forms sensitive to whether the
+    subject is coindexed with the perspectival center (Seat of Knowledge).
+    - Declaratives: conjunct = 1st person subject (SoK = speaker)
+    - Interrogatives: conjunct = 2nd person subject (SoK = addressee)
+    This provides independent evidence for perspective shift in questions
+    (canonical Newari conjunct/disjunct pattern; Zu 2018 reanalyses as
+    perspective shift). -/
+structure ConjunctDisjunctDatum where
+  language : String
+  clauseType : String  -- "declarative" or "interrogative"
+  conjunctPerson : String  -- which person gets conjunct marking
+  deriving Repr
+
+def newari_declarative : ConjunctDisjunctDatum :=
+  { language := "Newari", clauseType := "declarative"
+  , conjunctPerson := "1st" }
+
+def newari_interrogative : ConjunctDisjunctDatum :=
+  { language := "Newari", clauseType := "interrogative"
+  , conjunctPerson := "2nd" }
+
+def allConjunctDisjunctData : List ConjunctDisjunctDatum :=
+  [newari_declarative, newari_interrogative]
+
+-- ============================================================================
+-- §5. Verification against empirical embedding data
 -- ============================================================================
 
 /-- Classify each empirical datum from Phenomena.Questions.Embedding. -/
@@ -44,14 +267,21 @@ def classifyVerb : String → SelectionClass
 /-- The theory correctly predicts all embedding judgments from the data. -/
 theorem theory_predicts_embedding :
     ∀ d ∈ allEmbeddingData,
-      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.subordination false false = d.subordination ∧
-      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quasiSubordination false false = d.quasiSubordination ∧
-      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quotation false false = d.quotation := by
+      allowsEmbedding (classifyVerb d.verb)
+        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.subordination
+        false false = d.subordination ∧
+      allowsEmbedding (classifyVerb d.verb)
+        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quasiSubordination
+        false false = d.quasiSubordination ∧
+      allowsEmbedding (classifyVerb d.verb)
+        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quotation
+        false false = d.quotation := by
   intro d hd
-  simp only [allEmbeddingData, List.mem_cons, List.mem_singleton, List.mem_nil_iff, or_false] at hd
+  simp only [allEmbeddingData, List.mem_cons, List.mem_singleton, List.mem_nil_iff,
+             or_false] at hd
   rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> native_decide
 
-/-- Shiftiness predictions match McCloskey's data for remember (responsive). -/
+/-- Shiftiness predictions match McCloskey's data for *remember* (responsive). -/
 theorem shiftiness_predicted :
     allowsQuasiSub .responsive remember_bare.negated remember_bare.questioned
       = remember_bare.quasiSubOk ∧
@@ -63,14 +293,14 @@ theorem shiftiness_predicted :
         remember_bare, remember_negated, remember_questioned]
 
 -- ============================================================================
--- G. Cross-linguistic predictions
+-- §6. Cross-linguistic predictions
 -- ============================================================================
 
 /-- Classify Hindi-Urdu verbs from the cross-linguistic shiftiness data. -/
 def classifyCrossLingVerb : String → SelectionClass
   | "ja:n-na: ca:h-na: (want to know)" => .rogativePerspP
-  | "ja:n-na: (know)" => .responsive
-  | _ => .responsive
+  | "ja:n-na: (know)"                  => .responsive
+  | _                                  => .responsive
 
 /-- Hindi-Urdu shiftiness follows the same derivation as English:
     responsive predicates reject quasi-sub in bare form, allow under
@@ -88,7 +318,8 @@ theorem cross_linguistic_shiftiness_predicted :
           hindi_urdu_know_negated, hindi_urdu_know_questioned]
 
 /-- Q-particle embedding follows from which left-peripheral layer they occupy.
-    CP-layer particles appear in subordination; PerspP and SAP particles do not. -/
+    CP-layer particles appear in subordination; PerspP and SAP particles do
+    not. -/
 theorem particle_layer_predicts_embedding :
     ∀ d ∈ allQParticleData,
       (d.layer = .cp → d.inSubordinated = true) ∧
@@ -101,7 +332,7 @@ theorem particle_layer_predicts_embedding :
   · exact sap_particles_not_in_quasi_sub d hd
 
 -- ============================================================================
--- H. Cross-layer agreement (moved from LeftPeriphery sections H-I)
+-- §7. Cross-layer agreement
 -- ============================================================================
 
 open Fragments.English.Predicates.Verbal
@@ -109,20 +340,32 @@ open Fragments.English.Predicates.Verbal
 /-- The structurally derived classification matches the manually-assigned
     string-based classification for all verbs in the embedding data. -/
 theorem derived_class_matches_manual :
-    deriveSelectionClass Fragments.English.Predicates.Verbal.know = classifyVerb "know" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.wonder = classifyVerb "wonder" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.ask = classifyVerb "ask" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.investigate = classifyVerb "investigate" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.believe = classifyVerb "believe" := by
+    deriveSelectionClass Fragments.English.Predicates.Verbal.know
+      = classifyVerb "know" ∧
+    deriveSelectionClass Fragments.English.Predicates.Verbal.wonder
+      = classifyVerb "wonder" ∧
+    deriveSelectionClass Fragments.English.Predicates.Verbal.ask
+      = classifyVerb "ask" ∧
+    deriveSelectionClass Fragments.English.Predicates.Verbal.investigate
+      = classifyVerb "investigate" ∧
+    deriveSelectionClass Fragments.English.Predicates.Verbal.believe
+      = classifyVerb "believe" := by
   decide
 
 /-- String-based classification matches field-based derivation. -/
 theorem classifyVerb_agrees_with_selectionClass :
-    classifyVerb "know" = fieldSelectionClass Fragments.English.Predicates.Verbal.know ∧
-    classifyVerb "wonder" = fieldSelectionClass Fragments.English.Predicates.Verbal.wonder ∧
-    classifyVerb "ask" = fieldSelectionClass Fragments.English.Predicates.Verbal.ask ∧
-    classifyVerb "investigate" = fieldSelectionClass Fragments.English.Predicates.Verbal.investigate ∧
-    classifyVerb "depend on" = fieldSelectionClass Fragments.English.Predicates.Verbal.depend_on ∧
-    classifyVerb "believe" = fieldSelectionClass Fragments.English.Predicates.Verbal.believe := by native_decide
+    classifyVerb "know"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.know ∧
+    classifyVerb "wonder"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.wonder ∧
+    classifyVerb "ask"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.ask ∧
+    classifyVerb "investigate"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.investigate ∧
+    classifyVerb "depend on"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.depend_on ∧
+    classifyVerb "believe"
+      = fieldSelectionClass Fragments.English.Predicates.Verbal.believe := by
+  decide
 
-end Phenomena.Questions.LeftPeripheryBridge
+end Phenomena.Questions.Studies.Dayal2025

@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -33,9 +34,10 @@ through the MAP.
 
 namespace Beavers2010
 
-open Semantics.Verb.EntailmentProfile
-open Semantics.Verb.AgentivityLattice
-open Semantics.Verb.Affectedness (AffectednessDegree profileToDegree)
+open Features.EntailmentProfile
+open Features.AgentivityLattice
+open Features.Affectedness (AffectednessDegree profileToDegree)
+open Semantics.Verb (DiathesisAlternation)
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 -- ════════════════════════════════════════════════════

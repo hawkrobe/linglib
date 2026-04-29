@@ -34,8 +34,8 @@ that the fragment annotations are consistent with that derivation.
 namespace KennedyLevin2008
 
 open Fragments.English.Predicates.Verbal hiding clean cool warm open_
-open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
-open Core.Verbs
+open Features.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 

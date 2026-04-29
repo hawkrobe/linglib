@@ -1,0 +1,33 @@
+import Linglib.Typology.Comparison
+
+/-!
+# Arabic (MSA) comparative profile
+@cite{stassen-2013} @cite{wals-2013}
+
+`ComparativeProfile` bundle for Arabic (MSA) (ISO `arb`) per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
+this profile live in `Phenomena/Comparison/Studies/Stassen2013.lean`. The
+@cite{stassen-1985} 6-way classification (where applicable) lives in
+`Phenomena/Comparison/Studies/Stassen1985.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.Arabic.Comparison
+
+open _root_.Typology.Comparison
+
+/-- Arabic (MSA) comparative profile. -/
+def comparison : ComparativeProfile :=
+  { language := "Arabic (MSA)"
+  , iso := "arb"
+  , comparativeType := .locational
+  , degreeWord := .noDegreeMarking
+  , superlative := .elative
+  , comparativeForm := "X ʔafʕal min Y"
+  , standardMarker := "min (from)"
+  , degreeMarker := ""
+  , basicOrder := "VSO/SVO" }
+
+end Fragments.Arabic.Comparison

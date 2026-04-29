@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.EventStructureBridge
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Core.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 
 /-!
 # Thick vs Thin Causative Verb Data
@@ -28,7 +28,7 @@ four binary properties:
 
 namespace Phenomena.Causation.ThickThin
 
-open Core.Verbs
+open Semantics.Verb
 open Semantics.Causation.ProductionDependence
 open Fragments.English.Predicates.Verbal (VerbEntry)
 namespace V
@@ -264,7 +264,7 @@ namespace Phenomena.Causation.Compare
 
 open Minimalist
 open Minimalist.Bridge
-open Semantics.Verb.EventStructure
+open Features.EventStructure
 open Semantics.Causation.ProductionDependence
 open Phenomena.Causation.ThickThin
 

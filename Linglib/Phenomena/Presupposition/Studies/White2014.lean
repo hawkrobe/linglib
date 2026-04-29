@@ -30,7 +30,7 @@ a known overprediction of the original MCA.
 
 namespace Phenomena.Presupposition.Studies.White2014
 
-open Core.Verbs (ComplementType)
+open Semantics.Verb (ComplementType)
 open Phenomena.Presupposition.Studies.Williams2026
 open Semantics.Attitudes.PreExistence
 open Fragments.English.Predicates.Verbal

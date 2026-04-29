@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Czech Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Lexical entries for Czech n-words (the *ni-* series), typed by the
-theory-neutral categories from `Core.Lexical.PolarityItem`. Standard
+theory-neutral categories from `Typology.PolarityItem`. Standard
 sentential negation (the *ne-* prefix) lives in the sibling
 `Fragments/Czech/Negation.lean`; this file holds only the lexical
 reactives (operator/lexical-reactive split documented in
@@ -22,7 +22,7 @@ Spanish position-dependent NC.
 
 namespace Fragments.Slavic.Czech.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 /-- *nikdo* — N-word for human ('nobody').
     Strict NC: requires the *ne-* prefix on the verb regardless of
@@ -81,8 +81,8 @@ def zadny : PolarityItemEntry :=
 -- Joint
 -- ============================================================================
 
-/-- The Czech polarity-item inventory: the Fragment-side joint consumed
-    by `Phenomena/Polarity/Typology.lean`. -/
+/-- The Czech polarity-item inventory: the Fragment-side joint listing
+    every polarity item this fragment defines. -/
 def items : List PolarityItemEntry :=
   [nikdo, nic, nikdy, nikam, zadny]
 

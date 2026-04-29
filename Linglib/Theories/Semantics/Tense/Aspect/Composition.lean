@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Core.Lexical.Word
+import Linglib.Features.Aktionsart
+import Linglib.Core.Word
 
 /-!
 # VP-Level Situation Type Composition
@@ -32,8 +32,8 @@ temporal feature clashes with the verb constellation's, the adverbial wins.
 
 namespace Semantics.Tense.Aspect.Composition
 
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Features
 open _root_ (MassCount)
 
 -- ════════════════════════════════════════════════════

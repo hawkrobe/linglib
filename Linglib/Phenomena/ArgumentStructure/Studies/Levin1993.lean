@@ -17,7 +17,7 @@ the agentless inchoative).
 
 namespace Phenomena.ArgumentStructure.DiathesisAlternations.Bridge
 
-open Core.Verbs
+open Semantics.Verb
 open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 

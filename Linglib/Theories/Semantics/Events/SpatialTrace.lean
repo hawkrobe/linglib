@@ -1,6 +1,10 @@
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Spatial.Path
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 
 /-!
 # Spatial Trace Function σ
@@ -45,8 +49,8 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 open Semantics.Events
 open Semantics.Events.Mereology
 open Semantics.Spatial.Path
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Semantics.Verb
 open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
@@ -175,7 +179,7 @@ end Semantics.Events.SpatialTrace
 -- § 6. Motion Verb Path Annotations
 -- ════════════════════════════════════════════════════
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 /-- Whether a verb class inherently specifies a path shape.
     Inherently directed motion verbs (Levin 51.1: arrive, come, go)
@@ -202,4 +206,4 @@ theorem leave_source :
 theorem mannerOfMotion_neutral :
     LevinClass.mannerOfMotion.pathSpec = none := rfl
 
-end Core.Verbs
+end Semantics.Verb

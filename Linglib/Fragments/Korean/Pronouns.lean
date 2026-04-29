@@ -39,12 +39,12 @@ much of the linguistics literature) appear in docstrings only.
 
 -/
 
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Pronouns
 
 namespace Fragments.Korean.Pronouns
 
-open Core.Pronouns
+open Typology
 open Features.Register (Level)
 
 -- ============================================================================

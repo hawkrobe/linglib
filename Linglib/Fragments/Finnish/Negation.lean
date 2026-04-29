@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Finnish Negation: The Negative Auxiliary *ei* @cite{karlsson-2017}
@@ -33,7 +33,7 @@ rather than within a synthetic word.
 namespace Fragments.Finnish.Negation
 
 open Core.Morphology (MorphCategory MorphRule InflDistribution)
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 -- ============================================================================
 -- § 0: Marker + System (Fragment-side joint)
@@ -55,7 +55,7 @@ def ei : NegMarkerEntry :=
     (`negParadigm`) are not multiple *markers* — they're inflectional
     variants of one auxiliary, captured cross-linguistically by the single
     `NegMarkerEntry`. The Fragment-side joint consumed by
-    `Phenomena/Negation/Typology.lean`. -/
+    `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fin" [ei]
 
@@ -151,5 +151,24 @@ theorem connegative_negates : connegativeRule.semEffect true = false := rfl
 theorem neg_aux_respects_bybee :
     MorphCategory.peripherality .negation <
     MorphCategory.peripherality .agreement := by decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Finnish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Finnish"
+  , iso := "fin"
+  , morphemeType := .auxVerb
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finiteness
+  , negIndefinite := some .cooccur
+  , negMarkers := ["e-"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Finnish.Negation

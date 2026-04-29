@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Swahili Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Swahili indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **hakuna mtu / mtu …-si-**: Negative indefinite
 - **mtu ye yote**: FCI ('person any whatsoever')
@@ -14,7 +14,7 @@ Swahili indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Swahili.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPI

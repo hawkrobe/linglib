@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Phenomena.Case.Typology
+import Linglib.Phenomena.Case.Studies.Aissen2003
 
 /-!
 # @cite{grimm-2011}: Semantics of Case — Lattice Predictions
@@ -8,7 +8,7 @@ import Linglib.Phenomena.Case.Typology
 
 Study file connecting @cite{grimm-2011}'s agentivity lattice
 (`Theories/Semantics/Events/AgentivityLattice.lean`) to the differential
-object marking profiles in `Phenomena/Case/Typology.lean`.
+object marking profiles in `Phenomena/Case/Studies/Aissen2003.lean`.
 
 ## Key results
 
@@ -36,10 +36,10 @@ object marking profiles in `Phenomena/Case/Typology.lean`.
 
 namespace Grimm2011
 
-open Semantics.Verb.AgentivityLattice
-open Semantics.Verb.EntailmentProfile
+open Features.AgentivityLattice
+open Features.EntailmentProfile
 open Features.Prominence
-open Phenomena.Case.Typology
+open Aissen2003
 
 -- ════════════════════════════════════════════════════
 -- § 1. DOM Profile Matching (@cite{grimm-2011} §4)

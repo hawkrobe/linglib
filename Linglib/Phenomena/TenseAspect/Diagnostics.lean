@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 
 /-!
 # Aspectual Diagnostics
@@ -49,8 +49,8 @@ The classic tests from @cite{vendler-1957} and @cite{dowty-1979}:
 
 namespace Phenomena.TenseAspect.Diagnostics
 
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Features
 
 -- Diagnostic Results
 

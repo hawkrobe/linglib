@@ -57,8 +57,8 @@ open Core (WorldTimeIndex)
 open Core.Scale
 open Core.Time
 open Semantics.Gradability
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Semantics.Verb
 open Fragments.English.Predicates.Adjectival
 
 -- ════════════════════════════════════════════════════

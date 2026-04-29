@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Imprecision.Numerals
 import Linglib.Core.Agent.RationalAction
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.InformationTheory
@@ -37,8 +36,6 @@ LU models cannot derive the triangular shape.
 -/
 
 namespace EgreEtAl2023
-
-open Phenomena.Imprecision.Numerals
 
 -- ============================================================================
 -- Section I: Empirical Data

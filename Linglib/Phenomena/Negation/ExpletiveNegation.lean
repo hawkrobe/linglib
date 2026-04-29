@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
@@ -28,7 +28,7 @@ lives in `Phenomena.Negation.Studies.Greco2020` under
 
 namespace Phenomena.Negation.ExpletiveNegation
 
-open Core.Lexical.PolarityItem (PolarityType)
+open Typology.PolarityItem (PolarityType)
 
 /-- Cross-linguistic reasons why a trigger class may not license
     expletive negation in a particular language (@cite{jin-koenig-2021} §7). -/

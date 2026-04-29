@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Pronouns
 
 /-!
@@ -29,7 +29,7 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 
 namespace Fragments.Spanish.Pronouns
 
-open Core.Pronouns
+open Typology
 open Features.Register (Level)
 
 -- ============================================================================

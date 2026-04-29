@@ -50,7 +50,7 @@ open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 open Core.IntensionalLogic (Ty)
 
@@ -80,11 +80,11 @@ def ComplementType.toTy : ComplementType → Ty
 def VerbCore.semanticType (v : VerbCore) : Ty :=
   v.complementType.toTy
 
-end Core.Verbs
+end Semantics.Verb
 
 namespace Semantics.Composition.LexiconBuilder
 
-open Core.Verbs (ComplementType VerbCore)
+open Semantics.Verb (ComplementType VerbCore)
 
 /-! ## Lexicon Construction -/
 

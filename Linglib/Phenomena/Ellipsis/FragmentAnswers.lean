@@ -27,7 +27,7 @@ Fragment answers differ from sluicing:
 
 -/
 
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 /-!
 ## Connection to RSA Theory

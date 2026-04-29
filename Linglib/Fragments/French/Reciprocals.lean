@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # French Reciprocal Fragment
@@ -19,7 +19,7 @@ WALS Ch 106 classifying French as "mixed."
 
 namespace Fragments.French.Reciprocals
 
-open Core.Pronouns
+open Typology
 
 /-- se — reflexive/reciprocal clitic (monovalent strategy). -/
 def se : PronounEntry :=

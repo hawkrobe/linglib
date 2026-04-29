@@ -1,10 +1,24 @@
-import Linglib.Phenomena.Comparison.Typology
+import Linglib.Typology.Comparison
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
+import Linglib.Fragments.English.Comparison
+import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison
+import Linglib.Fragments.Mandarin.Comparison
+import Linglib.Fragments.Yoruba.Comparison
+import Linglib.Fragments.HindiUrdu.Comparison
+import Linglib.Fragments.Slavic.Russian.Comparison
+import Linglib.Fragments.Finnish.Comparison
+import Linglib.Fragments.Swahili.Comparison
+import Linglib.Fragments.Latin.Comparison
+import Linglib.Fragments.Thai.Comparison
+import Linglib.Fragments.Tagalog.Comparison
+import Linglib.Fragments.Arabic.Comparison
+import Linglib.Fragments.Navajo.Comparison
+import Linglib.Fragments.French.Comparison
 
 /-!
 # Stassen 1985: Comparison and Universal Grammar
@@ -16,22 +30,33 @@ are not autonomous constructions but are "modelled upon" or "borrowed from"
 temporal chains (p. 105). The link runs through a diachronic pathway:
 "X is tall; Y is not tall" → "X is taller than Y".
 
+## Stassen 1985's six-way typology vs WALS 2013's five-way
+
+The 1985 book (110-language sample) classifies comparatives into six types:
+**separative**, **allative**, **locative** (the three adverbial subtypes
+collectively making up the "locational" category in WALS 2013), plus
+**exceed**, **conjoined**, and **particle**. The WALS 2013 typology
+(@cite{stassen-2013}, in the substrate `Linglib/Typology/Comparison.lean`)
+collapses the spatial triad into single `locational`, dropping the spatial-
+relation distinction that drives Stassen's explanatory universals connecting
+comparison to temporal chaining.
+
+This file holds the 1985-specific apparatus: the six-way `ComparativeType1985`
+inductive, the case-assignment + fixed-encoding + spatial-case projections,
+per-language 1985 type assignments, and the universal verifications.
+
 ## Chaining strategies (Ch 4)
 
-Languages encode temporal chains (consecutive and simultaneous action) using
-one of two basic strategies (§4.3.1, p. 76):
+Languages encode temporal chains using one of two basic strategies (§4.3.1, p. 76):
 
-- **Balancing**: both predicates retain the same structural rank (coordination);
-  both are finite main verbs.
-- **Deranking**: one predicate is structurally reduced to a non-finite subordinate
-  form (participle, gerund, converb, infinitive).
+- **Balancing**: both predicates retain the same structural rank.
+- **Deranking**: one predicate is structurally reduced.
 
-Deranking further subdivides (§4.4, pp. 83-94):
-- **Conditional**: deranking only when chain subjects are identical.
-- **Absolute**: deranking regardless of subject identity.
+Deranking subdivides into **conditional** (only same-subject chains) and
+**absolute** (regardless of subject identity).
 
-The Principle of Parallel Chaining (p. 99): a language selects parallel options
-for consecutive and simultaneous chains — balancing languages balance both.
+The Principle of Parallel Chaining (p. 99): a language selects parallel
+options for consecutive and simultaneous chains.
 
 ## The seven chaining-based universals (§5.2, pp. 106-108)
 
@@ -48,69 +73,96 @@ for consecutive and simultaneous chains — balancing languages balance both.
 
 Particle comparatives are modelled on balanced chains (either simultaneous
 or consecutive), confirming Universal 1A (p. 108).
-
-## This file
-
-We formalize Stassen's chaining type system, assign chaining types to our
-sample languages, state the universals as implications, and verify them over
-the sample. Fragment bridge theorems connect Fragments ↔ Typology ↔
-chaining types across three layers.
 -/
 
-namespace Stassen1985
+set_option autoImplicit false
 
-open Phenomena.Comparison.Typology
+namespace Phenomena.Comparison.Studies.Stassen1985
+
+open Typology.Comparison
+open Core (CaseAssignment FixedCaseEncoding)
+
+-- ════════════════════════════════════════════════════
+-- § 0. The Stassen 1985 six-way typology
+-- ════════════════════════════════════════════════════
+
+/-- The six comparative construction types of @cite{stassen-1985} Ch 2.
+
+    Finer than the WALS 2013 types (`Typology.Comparison.ComparativeType`):
+    the three adverbial subtypes (separative, allative, locative) are
+    collapsed into a single "locational" category in WALS. The six types
+    form a hierarchy based on case assignment and syntactic encoding:
+
+    ```
+                        Comparative
+                       /            \
+                Derived case    Fixed case
+               /        \       /        \
+          Conjoined  Particle  Exceed  Adverbial
+                                      /    |    \
+                                   Sep   All   Loc
+    ``` -/
+inductive ComparativeType1985 where
+  | separative | allative | locative | exceed | conjoined | particle
+  deriving DecidableEq, BEq, Repr
+
+/-- Map @cite{stassen-1985} types to the coarser WALS 2013 types
+    (`Typology.Comparison.ComparativeType`). -/
+def ComparativeType1985.toWALS :
+    ComparativeType1985 → Typology.Comparison.ComparativeType
+  | .separative => .locational
+  | .allative   => .locational
+  | .locative   => .locational
+  | .exceed     => .exceed
+  | .conjoined  => .conjoined
+  | .particle   => .particle
+
+/-- Case assignment for each 1985 type. -/
+def ComparativeType1985.caseAssignment : ComparativeType1985 → CaseAssignment
+  | .conjoined | .particle => .derived
+  | _ => .fixed
+
+/-- Fixed-case encoding (only meaningful for fixed-case types). -/
+def ComparativeType1985.fixedEncoding :
+    ComparativeType1985 → Option FixedCaseEncoding
+  | .exceed => some .directObject
+  | .separative | .allative | .locative => some .adverbial
+  | .conjoined | .particle => none
+
+/-- Spatial case of the standard marker (only meaningful for adverbial types). -/
+def ComparativeType1985.spatialCase :
+    ComparativeType1985 → Option Core.Case
+  | .separative => some .abl
+  | .allative => some .all
+  | .locative => some .loc
+  | _ => none
 
 -- ════════════════════════════════════════════════════
 -- § 1. Stassen's Chaining Type System (Ch 4)
 -- ════════════════════════════════════════════════════
 
-/-- Basic structural strategy for encoding temporal chains (§4.3.1, p. 76).
-
-    Balancing: both predicates in the chain retain coordinate structure
-    (same structural rank, both finite).
-
-    Deranking: one predicate is reduced to a non-finite subordinate form
-    (participle, gerund, converb, dependent mood, infinitive). -/
+/-- Basic structural strategy for encoding temporal chains (§4.3.1, p. 76). -/
 inductive ChainingStrategy where
   | balancing
   | deranking
   deriving DecidableEq, Repr
 
-/-- For deranking languages: whether deranking is restricted to
-    same-subject chains or applies unconditionally (§4.4, pp. 83-94). -/
+/-- For deranking languages: same-subject restriction or unconditional. -/
 inductive DerankedConditionality where
-  /-- Deranking only when the two predicates share a subject. -/
   | conditional
-  /-- Deranking regardless of subject identity. -/
   | absolute
   deriving DecidableEq, Repr
 
-/-- For absolutely deranked consecutive chains: which predicate in the
-    chain is deranked. Correlates with basic word order (§4.4.4, p. 94). -/
+/-- For absolutely deranked consecutive chains: which predicate is deranked. -/
 inductive DerankedDirection where
-  /-- The anterior (earlier, leftmost) predicate is deranked.
-      Typically SOV languages. -/
   | anterior
-  /-- The posterior (later, rightmost) predicate is deranked.
-      Typically VSO languages. -/
   | posterior
   deriving DecidableEq, Repr
 
-/-- Stassen's language type in temporal chaining (§4.7, pp. 98-101).
-
-    The Principle of Parallel Chaining (p. 99) restricts the 12 theoretical
-    combinations to 3 attested language types. -/
+/-- Stassen's language type in temporal chaining (§4.7, pp. 98-101). -/
 inductive ChainingLanguageType where
-  /-- Balancing language: coordination for both C-chains and S-chains.
-      No word-order preference. -/
   | balancing
-  /-- Conditionally deranking: deranking under subject identity only.
-      Typically SVO. -/
   | conditionalDeranking
-  /-- Absolutely deranking: deranking regardless of subject identity.
-      SOV languages derank the anterior predicate;
-      VSO languages derank the posterior predicate. -/
   | absoluteDeranking
   deriving DecidableEq, Repr
 
@@ -120,11 +172,39 @@ def ChainingLanguageType.strategy : ChainingLanguageType → ChainingStrategy
   | .conditionalDeranking | .absoluteDeranking => .deranking
 
 -- ════════════════════════════════════════════════════
--- § 2. Language Chaining Type Assignments
+-- § 2. Per-language 1985 type assignments
 -- ════════════════════════════════════════════════════
 
--- Assignments for languages in our Comparison/Typology sample that
--- are also in Stassen's 110-language sample (Appendix A).
+-- Languages classified by their 1985 type, verified against the language
+-- lists in §2.3.1-5 and §2.4. Only languages appearing in both our sample
+-- and Stassen's 110-language sample are included.
+
+-- §2.3.1 Separative: standard marked 'from'/ablative (p. 40 list)
+def japanese1985 : ComparativeType1985 := .separative
+def korean1985 : ComparativeType1985 := .separative
+def turkish1985 : ComparativeType1985 := .separative
+def hindiUrdu1985 : ComparativeType1985 := .separative
+def arabic1985 : ComparativeType1985 := .separative  -- "Arabic (Classical)"
+
+-- §2.3.3 Locative: standard marked 'at/on'/contact (p. 42 list)
+def navajo1985 : ComparativeType1985 := .locative  -- "Navaho" in the 1985 list
+
+-- §2.3.4 Exceed: standard is direct object of exceed-verb (p. 43 list)
+def mandarin1985 : ComparativeType1985 := .exceed
+def yoruba1985 : ComparativeType1985 := .exceed
+def swahili1985 : ComparativeType1985 := .exceed
+def thai1985 : ComparativeType1985 := .exceed
+
+-- §2.4 Particle: comparative particle marks standard NP (p. 47 list)
+def english1985 : ComparativeType1985 := .particle
+def russian1985 : ComparativeType1985 := .particle
+def finnish1985 : ComparativeType1985 := .particle  -- primary; secondary separative
+def latin1985 : ComparativeType1985 := .particle  -- primary; secondary separative
+def french1985 : ComparativeType1985 := .particle
+
+-- ════════════════════════════════════════════════════
+-- § 3. Per-language chaining type assignments
+-- ════════════════════════════════════════════════════
 
 -- Separative languages (SOV) → absolute deranking, anterior
 def japaneseCT  : ChainingLanguageType := .absoluteDeranking
@@ -150,60 +230,37 @@ def frenchCT    : ChainingLanguageType := .balancing
 def navajoCT    : ChainingLanguageType := .balancing
 
 -- ════════════════════════════════════════════════════
--- § 3. The Universals (§5.2, pp. 106-108)
+-- § 4. The Universals (§5.2, pp. 106-108)
 -- ════════════════════════════════════════════════════
 
--- Universal 1A: derived-case comparative → balancing
--- Universal 1B: fixed-case comparative → deranking
-
-/-- Universal 1A: derived-case comparative implies balancing chaining.
-
-    "If a language has a derived-case comparative, then that language
-    is balancing." (p. 106) -/
+/-- Universal 1A: derived-case comparative implies balancing chaining. -/
 def universal1A (compType : ComparativeType1985) (ct : ChainingLanguageType) :
     Prop :=
   compType.caseAssignment = .derived → ct.strategy = .balancing
 
-/-- Universal 1B: fixed-case comparative implies deranking.
-
-    "If a language has a fixed-case comparative, then that language
-    is deranking." (p. 106) -/
+/-- Universal 1B: fixed-case comparative implies deranking. -/
 def universal1B (compType : ComparativeType1985) (ct : ChainingLanguageType) :
     Prop :=
   compType.caseAssignment = .fixed → ct.strategy = .deranking
 
--- Universal 2A: exceed → conditional deranking
--- Universal 2B: adverbial → absolute deranking
-
-/-- Universal 2A: exceed comparative implies conditional deranking.
-
-    "If a language has an Exceed Comparative, then that language
-    has conditional deranking." (p. 106) -/
+/-- Universal 2A: exceed comparative implies conditional deranking. -/
 def universal2A (compType : ComparativeType1985) (ct : ChainingLanguageType) :
     Prop :=
   compType = .exceed → ct = .conditionalDeranking ∨ ct = .absoluteDeranking
 
-/-- Universal 2B: adverbial comparative implies absolute deranking.
-
-    "If a language has an adverbial comparative, then that language
-    has absolute deranking." (p. 106) -/
+/-- Universal 2B: adverbial comparative implies absolute deranking. -/
 def universal2B (compType : ComparativeType1985) (ct : ChainingLanguageType) :
     Prop :=
   compType.fixedEncoding = some .adverbial → ct = .absoluteDeranking
 
 -- ════════════════════════════════════════════════════
--- § 4. Universal Verification Over Sample
+-- § 5. Universal verification over sample
 -- ════════════════════════════════════════════════════
-
--- Verify Universal 1A for derived-case languages in our sample
 
 theorem u1a_english : universal1A english1985 englishCT := by intro _; rfl
 theorem u1a_russian : universal1A russian1985 russianCT := by intro _; rfl
 theorem u1a_french  : universal1A french1985 frenchCT := by intro _; rfl
-theorem u1a_navajo  : universal1A navajo1985 navajoCT := by
-  intro _; rfl
-
--- Verify Universal 1B for fixed-case languages
+theorem u1a_navajo  : universal1A navajo1985 navajoCT := by intro _; rfl
 
 theorem u1b_japanese  : universal1B japanese1985  japaneseCT  := by intro _; rfl
 theorem u1b_korean    : universal1B korean1985    koreanCT    := by intro _; rfl
@@ -215,18 +272,10 @@ theorem u1b_yoruba    : universal1B yoruba1985    yorubaCT    := by intro _; rfl
 theorem u1b_swahili   : universal1B swahili1985   swahiliCT   := by intro _; rfl
 theorem u1b_thai      : universal1B thai1985      thaiCT      := by intro _; rfl
 
--- Verify Universal 2A for exceed languages
-
-theorem u2a_mandarin : universal2A mandarin1985 mandarinCT := by
-  intro _; left; rfl
-theorem u2a_yoruba   : universal2A yoruba1985   yorubaCT   := by
-  intro _; left; rfl
-theorem u2a_swahili  : universal2A swahili1985  swahiliCT  := by
-  intro _; left; rfl
-theorem u2a_thai     : universal2A thai1985     thaiCT     := by
-  intro _; left; rfl
-
--- Verify Universal 2B for adverbial (separative/allative/locative) languages
+theorem u2a_mandarin : universal2A mandarin1985 mandarinCT := by intro _; left; rfl
+theorem u2a_yoruba   : universal2A yoruba1985   yorubaCT   := by intro _; left; rfl
+theorem u2a_swahili  : universal2A swahili1985  swahiliCT  := by intro _; left; rfl
+theorem u2a_thai     : universal2A thai1985     thaiCT     := by intro _; left; rfl
 
 theorem u2b_japanese  : universal2B japanese1985  japaneseCT  := by intro _; rfl
 theorem u2b_korean    : universal2B korean1985    koreanCT    := by intro _; rfl
@@ -235,42 +284,61 @@ theorem u2b_hindiUrdu : universal2B hindiUrdu1985 hindiUrduCT := by intro _; rfl
 theorem u2b_arabic    : universal2B arabic1985    arabicCT    := by intro _; rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Structural Properties of the Universals
+-- § 6. Structural properties of the universals
 -- ════════════════════════════════════════════════════
 
-/-- Universal 1A and 1B are contrapositives: every 1985 type has exactly
-    one case-assignment value, so the two universals partition the space. -/
+/-- Universal 1A and 1B partition the case-assignment space. -/
 theorem case_assignment_exhaustive (t : ComparativeType1985) :
     t.caseAssignment = .derived ∨ t.caseAssignment = .fixed := by
   cases t <;> simp [ComparativeType1985.caseAssignment] <;> decide
 
 /-- Particle and conjoined are the only derived-case types. -/
 theorem derived_iff_particle_or_conjoined (t : ComparativeType1985) :
-    t.caseAssignment = .derived ↔
-    (t = .particle ∨ t = .conjoined) := by
+    t.caseAssignment = .derived ↔ (t = .particle ∨ t = .conjoined) := by
   cases t <;> simp [ComparativeType1985.caseAssignment] <;> decide
 
-/-- Adverbial types are exactly the spatial triad (sep, all, loc). -/
+/-- Adverbial types are exactly the spatial triad. -/
 theorem adverbial_iff_spatial (t : ComparativeType1985) :
     t.fixedEncoding = some .adverbial ↔
     (t = .separative ∨ t = .allative ∨ t = .locative) := by
   cases t <;> simp [ComparativeType1985.fixedEncoding] <;> decide
 
+/-- The three adverbial types all collapse to locational under WALS. -/
+theorem adverbial_collapse :
+    ComparativeType1985.separative.toWALS = .locational ∧
+    ComparativeType1985.allative.toWALS = .locational ∧
+    ComparativeType1985.locative.toWALS = .locational :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Derived-case types never map to locational. -/
+theorem derived_case_not_locational (t : ComparativeType1985)
+    (h : t.caseAssignment = .derived) : t.toWALS ≠ .locational := by
+  cases t <;> simp_all [ComparativeType1985.caseAssignment,
+    ComparativeType1985.toWALS]
+
+/-- Fixed-case types never map to particle. -/
+theorem fixed_case_not_particle (t : ComparativeType1985)
+    (h : t.caseAssignment = .fixed) : t.toWALS ≠ .particle := by
+  cases t <;> simp_all [ComparativeType1985.caseAssignment,
+    ComparativeType1985.toWALS]
+
+/-- Every adverbial type is fixed-case (by construction). -/
+theorem adverbial_is_fixed (t : ComparativeType1985)
+    (h : t.fixedEncoding = some .adverbial) :
+    t.caseAssignment = .fixed := by
+  cases t <;> simp_all [ComparativeType1985.fixedEncoding,
+    ComparativeType1985.caseAssignment]
+
 -- ════════════════════════════════════════════════════
--- § 6. Localistic Hypothesis: Spatial Case → Comparative Marker
+-- § 7. Localistic Hypothesis: Spatial Case → Comparative Marker
 -- ════════════════════════════════════════════════════
 
-/-- Separative comparatives use ablative spatial case markers. -/
 theorem separative_uses_ablative :
     ComparativeType1985.separative.spatialCase = some .abl := rfl
-
 theorem allative_uses_allative :
     ComparativeType1985.allative.spatialCase = some .all := rfl
-
 theorem locative_uses_locative :
     ComparativeType1985.locative.spatialCase = some .loc := rfl
-
-/-- Non-spatial types have no spatial case. -/
 theorem exceed_no_spatial :
     ComparativeType1985.exceed.spatialCase = none := rfl
 theorem conjoined_no_spatial :
@@ -279,7 +347,7 @@ theorem particle_no_spatial :
     ComparativeType1985.particle.spatialCase = none := rfl
 
 -- ════════════════════════════════════════════════════
--- § 7. Fragment Bridge: ComparativeEntry ↔ Typology
+-- § 8. Fragment bridge: ComparativeEntry ↔ Typology
 -- ════════════════════════════════════════════════════
 
 /-- Japanese Fragment standard case matches 1985 spatial case prediction. -/
@@ -297,20 +365,20 @@ theorem turkish_fragment_case :
     some Fragments.Turkish.Comparison.entry.standardCase =
     turkish1985.spatialCase := rfl
 
-/-- Japanese Fragment standard marker matches Typology profile. -/
+/-- Japanese Fragment standard marker matches the Fragment profile. -/
 theorem japanese_marker_match :
     Fragments.Japanese.Comparison.entry.standardMarker =
-    japanese.standardMarker := rfl
+    Fragments.Japanese.Comparison.comparison.standardMarker := rfl
 
-/-- Korean Fragment standard marker matches Typology profile. -/
+/-- Korean Fragment standard marker matches the Fragment profile. -/
 theorem korean_marker_match :
     Fragments.Korean.Comparison.entry.standardMarker =
-    korean.standardMarker := rfl
+    Fragments.Korean.Comparison.comparison.standardMarker := rfl
 
-/-- Turkish Fragment standard marker matches Typology profile. -/
+/-- Turkish Fragment standard marker matches the Fragment profile. -/
 theorem turkish_marker_match :
     Fragments.Turkish.Comparison.entry.standardMarker =
-    turkish.standardMarker := rfl
+    Fragments.Turkish.Comparison.comparison.standardMarker := rfl
 
 /-- All three separative Fragment entries use fixed case assignment. -/
 theorem all_separative_fixed_case :
@@ -326,8 +394,7 @@ theorem all_separative_adverbial :
     Fragments.Turkish.Comparison.entry.fixedEncoding = some .adverbial :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Separative languages lack degree morphology (p. 28: degree marking
-    is irrelevant to comparative-type choice). -/
+/-- Separative languages lack degree morphology (p. 28). -/
 theorem separative_no_degree_morphology :
     Fragments.Japanese.Comparison.entry.hasDegreeMorphology = false ∧
     Fragments.Korean.Comparison.entry.hasDegreeMorphology = false ∧
@@ -335,15 +402,16 @@ theorem separative_no_degree_morphology :
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Three-Layer Consistency
+-- § 9. Three-Layer Consistency
 -- ════════════════════════════════════════════════════
 
-/-- Japanese: Fragment (ablative) ↔ 1985 type (separative) ↔
-    chaining type (absolute deranking). All three layers agree. -/
+/-- Japanese: Fragment (ablative) ↔ 1985 type (separative) ↔ chaining type
+    (absolute deranking). All three layers agree. -/
 theorem japanese_three_layer :
     some Fragments.Japanese.Comparison.entry.standardCase =
       japanese1985.spatialCase ∧
-    japanese1985.toWALS = japanese.comparativeType ∧
+    japanese1985.toWALS =
+      Fragments.Japanese.Comparison.comparison.comparativeType ∧
     japaneseCT = .absoluteDeranking ∧
     universal2B japanese1985 japaneseCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩
@@ -352,7 +420,8 @@ theorem japanese_three_layer :
 theorem korean_three_layer :
     some Fragments.Korean.Comparison.entry.standardCase =
       korean1985.spatialCase ∧
-    korean1985.toWALS = korean.comparativeType ∧
+    korean1985.toWALS =
+      Fragments.Korean.Comparison.comparison.comparativeType ∧
     koreanCT = .absoluteDeranking ∧
     universal2B korean1985 koreanCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩
@@ -361,18 +430,17 @@ theorem korean_three_layer :
 theorem turkish_three_layer :
     some Fragments.Turkish.Comparison.entry.standardCase =
       turkish1985.spatialCase ∧
-    turkish1985.toWALS = turkish.comparativeType ∧
+    turkish1985.toWALS =
+      Fragments.Turkish.Comparison.comparison.comparativeType ∧
     turkishCT = .absoluteDeranking ∧
     universal2B turkish1985 turkishCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Bridge to ClauseChaining/Data
+-- § 10. Bridge to ClauseChaining/Data
 -- ════════════════════════════════════════════════════
 
-/-- Stassen's absolute deranking predicts that medial verbs are non-finite.
-    For our languages also in the ClauseChaining sample, the medial verb
-    form should be converbal (non-finite), not fully finite. -/
+/-- Korean: absolute deranking predicts non-finite medial verbs. -/
 theorem korean_deranking_consistent :
     koreanCT = .absoluteDeranking ∧
     Phenomena.ClauseChaining.korean.medialVerbForm =
@@ -385,4 +453,22 @@ theorem turkish_deranking_consistent :
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 
-end Stassen1985
+-- ════════════════════════════════════════════════════
+-- § 11. 1985 ↔ WALS discrepancies
+-- ════════════════════════════════════════════════════
+
+-- Three languages show classification differences between the 1985 book
+-- and the current WALS-based profiles:
+--
+-- 1. Finnish: particle in 1985 (p. 47 list), locational in WALS 2013.
+--    Stassen may have reclassified Finnish between editions, or the WALS
+--    classification emphasizes the partitive-case standard marker.
+--
+-- 2. Latin: particle-primary in 1985 (p. 47, with quam), mixed in WALS
+--    2013 (because ablative comparative is also productive). The 1985
+--    system distinguished primary vs secondary options; WALS uses "mixed".
+--
+-- 3. Navajo: locative in 1985 (p. 42 "Navaho"), conjoined in WALS 2013.
+--    Genuine reclassification between the two works.
+
+end Phenomena.Comparison.Studies.Stassen1985

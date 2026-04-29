@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Imbabura Quechua Negation Fragment
@@ -28,7 +28,7 @@ asymmetry).
 
 namespace Fragments.Quechua.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *mana* — Imbabura Quechua's standard preverbal negation particle.
     The load-bearing element of the negation construction; the *-chu*
@@ -48,7 +48,7 @@ def mana : NegMarkerEntry :=
 def chuSuffix : String := "-chu"
 
 /-- The Imbabura Quechua negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "qvi" [mana]
 
@@ -99,5 +99,24 @@ theorem symasy_distribution :
 theorem asymmetric_iff_chu :
     allExamples.all (fun e => e.symmetric == !e.requiresChu) = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Quechua (Imbabura) negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Quechua (Imbabura)"
+  , iso := "qvi"
+  , morphemeType := .particle
+  , symmetry := .both
+  , asymmetrySubtype := .realityStatus
+  , negIndefinite := some .cooccur
+  , negMarkers := ["mana"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Quechua.Negation

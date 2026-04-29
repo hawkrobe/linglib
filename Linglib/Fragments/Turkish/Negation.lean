@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Turkish Negation Fragment
@@ -28,7 +28,7 @@ marker appears, not just insertion of the negative morpheme.
 
 namespace Fragments.Turkish.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *-mA-* — Turkish's negative verbal suffix (underlying form).
     Surfaces as *-ma-* (back-vowel stems) or *-me-* (front-vowel stems)
@@ -42,7 +42,7 @@ def negSuffix : NegMarkerEntry :=
   , position := .morphological }
 
 /-- The Turkish negation system: a single verbal affix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "tur" [negSuffix]
 
@@ -104,5 +104,24 @@ theorem aorist_different_markers :
     hasSubstr aor.affirmative "ir" = true ∧
     hasSubstr aor.negative "ez" = true := by
   exact ⟨by native_decide, by native_decide⟩
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Turkish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Turkish"
+  , iso := "tur"
+  , morphemeType := .affix
+  , symmetry := .both
+  , asymmetrySubtype := .otherCategories
+  , negIndefinite := some .cooccur
+  , negMarkers := ["-mA-"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Turkish.Negation

@@ -37,7 +37,8 @@ namespace Benz2025
 open Morphology.DM.Allosemy
 open Features (Acceptability)
 open Fragments.German.Predicates
-open Core.Verbs
+open Semantics.Verb
+open Features
 
 -- ════════════════════════════════════════════════════════════════════
 -- Part I: Content Nominalizations (Ch. 3)

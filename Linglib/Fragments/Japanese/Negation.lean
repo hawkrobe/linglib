@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Japanese Negation Fragment
@@ -36,7 +36,7 @@ category marking.
 namespace Fragments.Japanese.Negation
 
 open Core.Morphology (MorphCategory)
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *-nai* — Japanese's negative verbal suffix.
     Attaches to the verb stem (mizenkei/continuative form) and itself
@@ -51,7 +51,7 @@ def negSuffix : NegMarkerEntry :=
 
 /-- The Japanese negation system: a single verbal affix with rich
     morphological redistribution (see `japaneseNegDistribution`).
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "jpn" [negSuffix]
 
@@ -139,5 +139,24 @@ theorem tense_moves_to_suffix :
     japaneseNegDistribution.negativeOnStem.contains .tense = false ∧
     japaneseNegDistribution.negativeOnSuffix.contains .tense = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Japanese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Japanese"
+  , iso := "jpn"
+  , morphemeType := .affix
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finAndCat
+  , negIndefinite := some .cooccur
+  , negMarkers := ["-nai", "-nakat-"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Japanese.Negation

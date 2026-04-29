@@ -1,5 +1,5 @@
 import Linglib.Features.Gender
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.Accessibility
 import Linglib.Fragments.English.Pronouns
@@ -40,7 +40,7 @@ We model the distinction using three components:
 
 - `DiscourseElaboration`: how developed the referent's discourse
   representation is (underspecified vs. elaborated)
-- `Core.Pronouns.PronounSpec`: what personal pronouns the referent uses
+- `Typology.PronounSpec`: what personal pronouns the referent uses
   (if known)
 - `Features.GenderInfo`: what gender information is available in the discourse
 
@@ -63,7 +63,7 @@ set_option autoImplicit false
 namespace Arnold2026
 
 open Features (GenderInfo SurfaceGender)
-open Core.Pronouns (PronounSpec)
+open Typology (PronounSpec)
 open Core.Discourse.Accessibility (DiscourseElaboration AccessibilityLevel)
 open Fragments.English.Pronouns (GenderParadigm)
 

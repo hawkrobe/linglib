@@ -1,6 +1,7 @@
 import Linglib.Datasets.WALS.Features.F81A
 import Linglib.Datasets.WALS.Features.F82A
 import Linglib.Datasets.WALS.Features.F83A
+import Linglib.Core.Word
 
 /-!
 # Word-order typology: shared record types
@@ -100,5 +101,51 @@ def WordOrderProfile.ofWALS (iso : String) (notes : String := "") : WordOrderPro
     svOrder := svOrderOfWALS iso
     ovOrder := ovOrderOfWALS iso
     notes := notes }
+
+-- ============================================================================
+-- Cross-tabulation substrate (for harmonic-vs-disharmonic word-order analyses)
+-- ============================================================================
+
+/-- A single cell in a 2×2 head-direction cross-tabulation.
+    `dir1` is the direction for the first construction (typically verb-object),
+    `dir2` is the direction for the second construction. -/
+structure AlignmentCell where
+  dir1 : HeadDirection
+  dir2 : HeadDirection
+  count : Nat
+  deriving Repr, DecidableEq
+
+/-- Whether an alignment cell represents a harmonic (consistent-direction) pair. -/
+def AlignmentCell.isHarmonic (c : AlignmentCell) : Bool :=
+  c.dir1 == c.dir2
+
+/-- A 2×2 cross-tabulation of two head-direction-bearing construction types
+    (e.g. verb-object × adposition, verb-object × subordinator). The four cells
+    enumerate the head-initial / head-final combinations. -/
+structure CrossTab where
+  name : String
+  construction1 : String
+  construction2 : String
+  hihi : AlignmentCell    -- both head-initial
+  hihf : AlignmentCell    -- construction 1 HI, construction 2 HF
+  hfhi : AlignmentCell    -- construction 1 HF, construction 2 HI
+  hfhf : AlignmentCell    -- both head-final
+  deriving Repr
+
+/-- Total count of harmonic (diagonal) cells. -/
+def CrossTab.harmonicCount (t : CrossTab) : Nat :=
+  t.hihi.count + t.hfhf.count
+
+/-- Total count of disharmonic (off-diagonal) cells. -/
+def CrossTab.disharmonicCount (t : CrossTab) : Nat :=
+  t.hihf.count + t.hfhi.count
+
+/-- Total number of languages in the table. -/
+def CrossTab.totalCount (t : CrossTab) : Nat :=
+  t.harmonicCount + t.disharmonicCount
+
+/-- Whether harmonic pairings are the majority. -/
+def CrossTab.harmonicDominant (t : CrossTab) : Bool :=
+  t.harmonicCount > t.disharmonicCount
 
 end Typology.WordOrder

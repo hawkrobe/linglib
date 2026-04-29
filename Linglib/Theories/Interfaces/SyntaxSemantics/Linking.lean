@@ -62,7 +62,7 @@ Accounts expressible via this interface (non-exhaustive):
 
 -/
 
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 1. Theta Role Labels (derived convenience names)
@@ -92,7 +92,7 @@ inductive ThetaRole where
 -- § 2. EntailmentProfile → ThetaRole (canonical direction)
 -- ════════════════════════════════════════════════════════════════════════
 
-namespace Semantics.Verb.EntailmentProfile
+namespace Features.EntailmentProfile
 
 /-- Derive a convenience theta-role label from an entailment profile.
 
@@ -124,7 +124,7 @@ def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
     else none
   else none
 
-end Semantics.Verb.EntailmentProfile
+end Features.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 3. ThetaRole → Canonical Profile (inverse direction)

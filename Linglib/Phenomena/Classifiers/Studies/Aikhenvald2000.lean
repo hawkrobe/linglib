@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.French.ClassifierSystem
 import Linglib.Fragments.Italian.ClassifierSystem
@@ -48,7 +48,7 @@ appears here (Aikhenvald §15 cites Greenberg) and is refined in
 
 namespace Aikhenvald2000
 
-open Core.NounCategorization
+open Typology
 open Typology
 open Typology.NounCategorizationSystem
 

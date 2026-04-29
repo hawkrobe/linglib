@@ -1,143 +1,305 @@
-import Linglib.Phenomena.Modality.Studies.Kratzer2012Scenario
+import Mathlib.Data.Fin.Basic
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 
 /-!
-# Conditional Modality Bridge — @cite{kratzer-2012} §2.9 Derivations
+# §2.9 Conditionals — @cite{kratzer-2012}
 
-Proves that specific Kratzer parameter settings yield specific conditional types
-(material, strict, ordered), and that a past-tense antecedent composes
-transparently with the modal analysis via `atTime`.
+@cite{kratzer-2012} §2.9 ("Conditionals", pp. 65-68) presents the *if-clause-as-
+modal-base-restrictor* schema `[[if α β]]^{f,g} = [[β]]^{f⁺, g}` where
+`f⁺(w) = f(w) ∪ {[[α]]^{f,g}}`, plus a "Sketch of proof" showing the four
+conditional types (material, strict, counterfactual, deontic-ordering) fall
+out of varying f and g. The chapter's *only concrete worked example* in §2.9
+is the German deontic scenario at p. 67 (examples 59-61).
 
-## Section A: Conditional parameter derivations
+## Sections
+1. The §2.9 four-conditional recipe (abstract over predicates): material and
+   strict implication theorems. Counterfactual case defers to Ch. 3.
+2. Deontic scenario from p. 67: `injustice` / `amended` / `rewarded`
+   propositions over a 4-world model, with morally-good ordering source.
+3. Predictions on the deontic scenario (Kratzer's analysis of (59)-(61)).
+4. **Headline argument** — Kratzer's analysis differentiates (60) from (61);
+   the traditional `□(α → β)` analysis collapses them to vacuous truth.
 
-1. Totally realistic base + empty ordering = material implication
-2. Empty base + empty ordering = strict implication (fails: w1 counterexample)
-3. Empty base + normalcy ordering = ordered conditional (succeeds: w1 eliminated)
+## Kratzer's text (p. 67, paraphrased)
 
-## Section B: The ordering source resolves the counterexample
+> (59) Jedem Menschen muss Gerechtigkeit widerfahren.
+>      "Justice must be done to every person."
+> (60) Wenn jemand ungerecht behandelt wurde, muss das Unrecht gesühnt werden.
+>      "If someone was treated unjustly, the injustice must be amended."
+> (61) Wenn jemand ungerecht behandelt wurde, muss das Unrecht belohnt werden.
+>      "If someone was treated unjustly, the injustice must be rewarded."
 
-## Section C: Tensed conditional forces tense-modal composition
+> "Traditional approaches ... would have to analyze (60) and (61) as
+> modalized material implications and assign them the logical form
+> `necessarily (α→β)`. This leads to trouble. ... if there is no injustice
+> in any morally accessible world, anything you like is true in morally
+> accessible worlds where there is injustice." (p. 67)
 
-## Section D: Tensed conditional matches atemporal conditional
-
-Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press. Ch. 2 §2.9.
+> "On this analysis [Kratzer's], it is possible for the first two
+> propositions [(59) and (60)] to be true, and the third one [(61)] to be
+> false. For us, a world where injustice is amended for is not good (since
+> there is no injustice in a good world). But it is still closer to what
+> is good than any world where injustice is rewarded." (p. 67)
 -/
 
-namespace Phenomena.Modality.ConditionalModality
+namespace Phenomena.Modality.Studies.Kratzer2012Conditionals
 
 open Semantics.Modality.Kratzer
 
-/-! ## Section A: Conditional parameter derivations (§2.9) -/
+/-! ## §1. Four-conditional recipe (abstract) -/
 
-/-- **Material implication** (§2.9): With a totally realistic modal base and
-    empty ordering source, necessity over the restricted base equals material
-    implication. At w0/w1 the single accessible world decides; at w2/w3
-    the restricted base is vacuously satisfied (no rain-worlds accessible). -/
-theorem conditional_material_implication (w : World) :
-    necessity (restrictedBase totallyRealisticBg rained) emptyBackground streetWet w ↔
-    implies rained streetWet w := by
+/-- Pointwise-realistic modal base: `f(w) = [(= w)]`, so `⋂f(w) = {w}`.
+
+    NB: This is the *trivial* collapse where one proposition already IS the
+    singleton {w}. @cite{kratzer-2012} distinguishes this from totally-realistic
+    backgrounds proper (`isTotallyRealistic` in
+    `Core/IntensionalLogic/ConversationalBackground.lean`), which carry many
+    propositions — facts about `w` — whose intersection is `{w}`. The
+    lumping/dividing of those propositions does theoretical work in
+    counterfactuals (Ch. 3 §3.1). For the §2.9 recipe only `⋂f(w) = {w}`
+    matters, so the collapse is sound here — but it is NOT Kratzer's
+    totally-realistic notion. -/
+def pointwiseRealisticBg (W : Type*) [DecidableEq W] : ModalBase W :=
+  λ w => [λ w' => w' = w]
+
+/-- **Material implication recipe** (Kratzer 2012 §2.9, p. 65-66 "Sketch of
+    proof", Case one). With a pointwise-realistic modal base and empty
+    ordering source, the conditional `(if p) (necessarily q)` reduces to
+    material implication `p w → q w` at the evaluation world. -/
+theorem material_implication_recipe {W : Type*} [DecidableEq W]
+    (p q : W → Prop) [DecidablePred p] (w : W) :
+    necessity (restrictedBase (pointwiseRealisticBg W) p) emptyBackground q w ↔
+    (p w → q w) := by
   rw [necessity_iff_all, empty_ordering_emptyBackground]
-  unfold implies
   constructor
-  · intro h hRained
-    -- w itself is accessible: it satisfies rained (by hypothesis) and the totallyRealisticBg singleton
-    have hAcc : w ∈ accessibleWorlds (restrictedBase totallyRealisticBg rained) w := by
-      intro p hp
-      simp [restrictedBase, totallyRealisticBg] at hp
-      rcases hp with hp | hp
-      · subst hp; exact hRained
-      · subst hp; rfl
+  · intro h hP
+    have hAcc : w ∈ accessibleWorlds (restrictedBase (pointwiseRealisticBg W) p) w := by
+      intro r hr
+      simp [restrictedBase, pointwiseRealisticBg] at hr
+      rcases hr with hr | hr
+      · subst hr; exact hP
+      · subst hr; rfl
     exact h w hAcc
   · intro hImpl w' hAcc
-    -- w' satisfies rained (it's in the restricted base)
-    have hRainedW' : rained w' := hAcc rained (by simp [restrictedBase])
-    -- w' must equal w (totallyRealisticBg gives only w as accessible)
+    have hPW' : p w' := hAcc p (by simp [restrictedBase])
     have hEqW' : w' = w := by
-      have hMem : (λ z : World => z = w) ∈ (restrictedBase totallyRealisticBg rained) w := by
-        simp [restrictedBase, totallyRealisticBg]
-      exact hAcc (λ z : World => z = w) hMem
+      have hMem : (λ z : W => z = w) ∈ (restrictedBase (pointwiseRealisticBg W) p) w := by
+        simp [restrictedBase, pointwiseRealisticBg]
+      exact hAcc (λ z : W => z = w) hMem
     subst hEqW'
-    exact hImpl hRainedW'
+    exact hImpl hPW'
 
-/-- **Strict implication fails** (§2.9): With empty base and empty ordering,
-    all worlds are accessible. Restricting by `rained` gives {w0, w1}, and
-    since streetWet is false at w1, necessity fails at every evaluation world. -/
-theorem strict_conditional_fails (w : World) :
-    ¬ necessity (restrictedBase emptyBackground rained) emptyBackground streetWet w := by
+/-- **Strict implication recipe** (Kratzer 2012 §2.9, p. 66 "Sketch of proof"
+    for strict implication). With an empty modal base and empty ordering
+    source, the conditional `(if p) (necessarily q)` reduces to logical
+    implication: `q` must hold at *every* `p`-world. -/
+theorem strict_implication_recipe {W : Type*}
+    (p q : W → Prop) [DecidablePred p] (w : W) :
+    necessity (restrictedBase emptyBackground p) emptyBackground q w ↔
+    (∀ w', p w' → q w') := by
   rw [necessity_iff_all, empty_ordering_emptyBackground]
-  intro h
-  -- w1 is accessible: it satisfies rained, and emptyBackground gives universal access
-  have hAccW1 : ((1 : World) : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
-    intro p hp
-    simp [restrictedBase, emptyBackground] at hp
-    subst hp
-    exact w1_rained_dry.1
-  have := h (1 : World) hAccW1
-  exact w1_rained_dry.2 this
+  constructor
+  · intro h w' hPw'
+    apply h w'
+    intro r hr
+    simp [restrictedBase, emptyBackground] at hr
+    subst hr
+    exact hPw'
+  · intro hImpl w' hAcc
+    have hPW' : p w' := hAcc p (by simp [restrictedBase])
+    exact hImpl w' hPW'
 
-/-- **Ordering conditional succeeds** (§2.9): With empty base and normalcy
-    ordering, the rain-worlds {w0, w1} are ordered by normalcySource. Since w0
-    satisfies the normalcy proposition (rain → wet) and w1 does not, w0 is
-    strictly better. The best worlds are {w0}, and streetWet w0 = true. -/
-theorem ordering_conditional_succeeds (w : World) :
-    necessity (restrictedBase emptyBackground rained) normalcySource streetWet w := by
+/-! ## §2. Deontic scenario (Kratzer 2012 §2.9 p. 67, ex. 59-61)
+
+Four worlds:
+
+| World | injustice | amended | rewarded | Notes                                |
+|-------|-----------|---------|----------|--------------------------------------|
+| w0    | no        | n/a     | n/a      | "Morally good" — no injustice exists |
+| w1    | yes       | yes     | no       | Injustice amended for                |
+| w2    | yes       | no      | yes      | Injustice rewarded                   |
+| w3    | yes       | no      | no       | Injustice neither amended nor rewarded |
+-/
+
+abbrev World := Fin 4
+
+/-- "Someone was treated unjustly" — true at w1, w2, w3. -/
+def injustice : World → Prop
+  | 0 => False
+  | 1 | 2 | 3 => True
+
+instance : DecidablePred injustice := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable False)
+  | 1 | 2 | 3 => inferInstanceAs (Decidable True)
+
+/-- "The injustice was amended" — true at w1 only. -/
+def amended : World → Prop
+  | 1 => True
+  | 0 | 2 | 3 => False
+
+instance : DecidablePred amended := fun w =>
+  match w with
+  | 1 => inferInstanceAs (Decidable True)
+  | 0 | 2 | 3 => inferInstanceAs (Decidable False)
+
+/-- "The injustice was rewarded" — true at w2 only. -/
+def rewarded : World → Prop
+  | 2 => True
+  | 0 | 1 | 3 => False
+
+instance : DecidablePred rewarded := fun w =>
+  match w with
+  | 2 => inferInstanceAs (Decidable True)
+  | 0 | 1 | 3 => inferInstanceAs (Decidable False)
+
+/-- **Morally-good ordering source.** Two propositions track moral goodness:
+    no-injustice (the ideal), and if-injustice-then-amended (the corrective
+    ideal). Their joint pattern induces:
+
+    - w0 satisfies both (no injustice; vacuously amends)
+    - w1 satisfies only the corrective ideal (injustice + amended)
+    - w2, w3 satisfy neither (injustice without amends)
+
+    So `w0 < w1 < {w2, w3}` in the at-least-as-good ordering. Kratzer's
+    "morally good" ordering source is left informal in §2.9; this is a
+    minimal encoding sufficient for the (60)/(61) contrast. -/
+def morallyGood : OrderingSource World :=
+  fun _ => [(fun w' => ¬ injustice w'), (fun w' => injustice w' → amended w')]
+
+/-- **Traditional analysis modal base** (the foil Kratzer is arguing against,
+    p. 67). Treats "morally accessible worlds" as a single modal base — only
+    the morally good world (w0) is accessible. Under this analysis,
+    `□(α → β)` becomes vacuously true at the actual world whenever the
+    antecedent is false in all accessible worlds. -/
+def traditionalMoralBase : ModalBase World := fun _ => [(fun w' => w' = 0)]
+
+/-! ## §3. Predictions on the deontic scenario -/
+
+/-- **(59) "Justice must be done"** under Kratzer's analysis. With empty
+    modal base + morally-good ordering, the only best world is w0 (no
+    injustice). So necessity of `¬ injustice` holds. -/
+theorem ex59_holds (w : World) :
+    necessity emptyBackground morallyGood (fun w' => ¬ injustice w') w := by
   rw [necessity_iff_all]
-  intro w' hw'
-  obtain ⟨hAcc, hBest⟩ := hw'
-  -- w' satisfies rained (it's in the restricted base)
-  have hRainedW' : rained w' := hAcc rained (by simp [restrictedBase])
-  -- w0 is accessible (rained, and emptyBackground gives universal access)
-  have hAccW0 : ((0 : World) : World) ∈ accessibleWorlds (restrictedBase emptyBackground rained) w := by
+  intro w' ⟨_, hBest⟩
+  -- w0 is accessible (vacuously, since emptyBackground gives universal access)
+  have hAccW0 : (0 : World) ∈ accessibleWorlds emptyBackground w := by
+    intro p hp
+    simp [emptyBackground] at hp
+  -- w0 satisfies "¬ injustice"
+  have hP1AtW0 : ¬ injustice (0 : World) := by decide
+  -- The proposition "¬ injustice" is in morallyGood w
+  have hP1MemG : (fun w'' => ¬ injustice w'') ∈ morallyGood w := by
+    simp [morallyGood]
+  -- Since w' is best, w' is at-least-as-good as w0; transferring p1
+  exact hBest (0 : World) hAccW0 (fun w'' => ¬ injustice w'') hP1MemG hP1AtW0
+
+/-- **(60) "If injustice, must be amended"** under Kratzer's analysis succeeds.
+    With empty modal base restricted by `injustice` + morally-good ordering,
+    the only best world is w1 (amended is closer to the moral ideal than
+    rewarded or unredressed). So necessity of `amended` holds. -/
+theorem ex60_holds (w : World) :
+    necessity (restrictedBase emptyBackground injustice) morallyGood amended w := by
+  rw [necessity_iff_all]
+  intro w' ⟨hAcc, hBest⟩
+  -- w' has injustice (it's in the restricted base)
+  have hInjW' : injustice w' := hAcc injustice (by simp [restrictedBase])
+  -- w1 is accessible (injustice + emptyBackground)
+  have hAccW1 : (1 : World) ∈ accessibleWorlds (restrictedBase emptyBackground injustice) w := by
     intro p hp
     simp [restrictedBase, emptyBackground] at hp
     subst hp
-    exact w0_rained_wet.1
-  -- The normalcy proposition is satisfied at w0
-  have hNormW0 : ¬ (rained (0 : World) ∧ ¬ streetWet (0 : World)) := by
-    intro ⟨_, hNotWet⟩; exact hNotWet w0_rained_wet.2
-  -- So w' must satisfy the normalcy proposition (since w' is best)
-  have hNormW' : ¬ (rained w' ∧ ¬ streetWet w') :=
-    hBest (0 : World) hAccW0 (λ w' => ¬ (rained w' ∧ ¬ streetWet w')) (by simp [normalcySource]) hNormW0
-  -- Now case on w': only w0, w2, w3 satisfy the normalcy proposition,
-  -- and w' must satisfy rained, so w' = w0
-  match w' with
-  | 0 => exact w0_rained_wet.2
-  | 1 => exact absurd ⟨w1_rained_dry.1, w1_rained_dry.2⟩ hNormW'
-  | 2 => exact absurd hRainedW' w2_dry_wet.1
-  | 3 => exact absurd hRainedW' w3_dry_dry.1
+    decide
+  -- w1 satisfies "injustice → amended"
+  have hP2AtW1 : injustice (1 : World) → amended (1 : World) := fun _ => by decide
+  have hP2MemG : (fun w'' => injustice w'' → amended w'') ∈ morallyGood w := by
+    simp [morallyGood]
+  -- Transfer to w' via best-ness
+  have hP2AtW' : injustice w' → amended w' :=
+    hBest (1 : World) hAccW1 (fun w'' => injustice w'' → amended w'') hP2MemG hP2AtW1
+  exact hP2AtW' hInjW'
 
-/-! ## Section B: The ordering source makes the difference -/
+/-- **(61) "If injustice, must be rewarded"** under Kratzer's analysis fails.
+    The best injustice-world is w1, but w1 is NOT rewarded. -/
+theorem ex61_fails (w : World) :
+    ¬ necessity (restrictedBase emptyBackground injustice) morallyGood rewarded w := by
+  intro hNec
+  rw [necessity_iff_all] at hNec
+  -- Witness: w1 is best, but rewarded w1 = False
+  have hAccW1 : (1 : World) ∈ accessibleWorlds (restrictedBase emptyBackground injustice) w := by
+    intro p hp
+    simp [restrictedBase, emptyBackground] at hp
+    subst hp
+    decide
+  -- Show w1 is at-least-as-good as every accessible world
+  have hBestW1 : ∀ u ∈ accessibleWorlds (restrictedBase emptyBackground injustice) w,
+      atLeastAsGoodAs (morallyGood w) (1 : World) u := by
+    intro u hAccU p hpMemG hpAtU
+    -- u has injustice (accessible via restricted base)
+    have hInjU : injustice u := hAccU injustice (by simp [restrictedBase])
+    simp [morallyGood] at hpMemG
+    rcases hpMemG with hp1 | hp2
+    · -- p = ¬ injustice. Then `hpAtU : ¬ injustice u`. But u has injustice. Contradiction.
+      subst hp1
+      exact absurd hInjU hpAtU
+    · -- p = injustice → amended. We need w1 satisfies p, i.e., amended (1 : World).
+      subst hp2
+      intro _; decide
+  have : rewarded (1 : World) := hNec 1 ⟨hAccW1, hBestW1⟩
+  exact absurd this (by decide)
 
-/-- **The ordering source resolves the counterexample.** Strict implication
-    fails because w1 (rained ∧ ¬streetWet) is accessible, but the normalcy
-    ordering eliminates w1 as non-best. This is Kratzer's central insight:
-    the ordering source handles graded possibility and anomalous worlds. -/
-theorem ordering_resolves_counterexample :
-    (∀ w, ¬ necessity (restrictedBase emptyBackground rained) emptyBackground streetWet w) ∧
-    (∀ w, necessity (restrictedBase emptyBackground rained) normalcySource streetWet w) :=
-  ⟨strict_conditional_fails, ordering_conditional_succeeds⟩
+/-! ## §4. Headline: Kratzer differentiates (60) and (61); traditional analysis collapses them. -/
 
-/-! ## Section C: Tensed conditional (forces tense-modal composition) -/
+/-- **Kratzer's analysis differentiates (60) and (61).** Per @cite{kratzer-2012}
+    p. 67: "On this analysis, it is possible for the first two propositions
+    [(59) and (60)] to be true, and the third one [(61)] to be false." -/
+theorem kratzer_distinguishes_60_61 :
+    (∀ w, necessity (restrictedBase emptyBackground injustice) morallyGood amended w) ∧
+    (∀ w, ¬ necessity (restrictedBase emptyBackground injustice) morallyGood rewarded w) :=
+  ⟨ex60_holds, ex61_fails⟩
 
-/-- **Tensed counterfactual succeeds**: "If it had rained (yesterday), the
-    street would be wet (now)." The past-tense antecedent `atTime rainedAt (-1)`
-    enters the Kratzer modal base via the type bridge `atTime`, and the
-    normalcy-ordered analysis gives the correct prediction. -/
-theorem tensed_counterfactual_succeeds (w : World) :
-    necessity (restrictedBase emptyBackground (atTime rainedAt (-1)))
-             normalcySource (atTime wetStreetAt 0) w := by
-  rw [atTime_rainedAt_yesterday, atTime_wetStreetAt_now]
-  exact ordering_conditional_succeeds w
+/-- **Traditional `□(α → β)` analysis collapses (60) and (61) at the actual
+    world** (where actual = w0, the morally good world). When morally
+    accessible worlds = {w0} and w0 has no injustice, both `injustice → amended`
+    and `injustice → rewarded` are vacuously true at every accessible world.
+    This is the "vacuous truth" problem Kratzer flags on p. 67. -/
+theorem traditional_60_vacuously_true :
+    necessity traditionalMoralBase emptyBackground
+      (fun w' => injustice w' → amended w') (0 : World) := by
+  rw [necessity_iff_all, empty_ordering_emptyBackground]
+  intro w' hAcc
+  -- w' must equal 0 (only morally accessible world)
+  have hEq : w' = 0 := hAcc (fun z => z = 0) (by simp [traditionalMoralBase])
+  subst hEq
+  intro hInj
+  -- injustice 0 = False, so this case is vacuous
+  exact absurd hInj (by decide)
 
-/-! ## Section D: Composition bridge -/
+theorem traditional_61_vacuously_true :
+    necessity traditionalMoralBase emptyBackground
+      (fun w' => injustice w' → rewarded w') (0 : World) := by
+  rw [necessity_iff_all, empty_ordering_emptyBackground]
+  intro w' hAcc
+  have hEq : w' = 0 := hAcc (fun z => z = 0) (by simp [traditionalMoralBase])
+  subst hEq
+  intro hInj
+  exact absurd hInj (by decide)
 
-/-- **Tensed matches atemporal**: The tensed conditional gives the same result
-    as the atemporal one, witnessing that temporal projection via `atTime` is
-    transparent to the modal analysis. -/
-theorem tensed_matches_atemporal (w : World) :
-    necessity (restrictedBase emptyBackground (atTime rainedAt (-1)))
-             normalcySource (atTime wetStreetAt 0) w ↔
-    necessity (restrictedBase emptyBackground rained)
-             normalcySource streetWet w := by
-  rw [atTime_rainedAt_yesterday, atTime_wetStreetAt_now]
+/-- **Headline contrast.** The traditional analysis predicts (60) and (61) both
+    vacuously true; Kratzer's analysis predicts (60) true and (61) false. So
+    the traditional analysis cannot distinguish the two conditionals at the
+    morally-good actual world, while Kratzer's analysis does. -/
+theorem traditional_collapses_kratzer_distinguishes :
+    -- Traditional: both true at actual world
+    (necessity traditionalMoralBase emptyBackground
+        (fun w' => injustice w' → amended w') (0 : World) ∧
+     necessity traditionalMoralBase emptyBackground
+        (fun w' => injustice w' → rewarded w') (0 : World)) ∧
+    -- Kratzer: (60) true, (61) false (at every world, in particular w0)
+    (necessity (restrictedBase emptyBackground injustice) morallyGood amended (0 : World) ∧
+     ¬ necessity (restrictedBase emptyBackground injustice) morallyGood rewarded (0 : World)) :=
+  ⟨⟨traditional_60_vacuously_true, traditional_61_vacuously_true⟩,
+   ⟨ex60_holds 0, ex61_fails 0⟩⟩
 
-end Phenomena.Modality.ConditionalModality
+end Phenomena.Modality.Studies.Kratzer2012Conditionals

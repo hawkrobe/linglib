@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Gradability.StatesBased
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 
@@ -57,7 +57,8 @@ mereological structure enables monotonic measurement by `much`.
 namespace Semantics.Measurement
 
 open Mereology
-open Core.Verbs
+open Features
+open Features
 open Semantics.Noun.Kind.Dayal2004 (NumberFeature)
 
 -- ════════════════════════════════════════════════════

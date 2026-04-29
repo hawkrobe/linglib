@@ -4,8 +4,7 @@ import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Phenomena.Causation.Typology
-import Linglib.Phenomena.ArgumentStructure.Typology
+import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 
 /-!
@@ -395,18 +394,11 @@ single morphological head. English bundles ([Cause, Voice]); Japanese
 and Finnish do not.
 
 The `VoiceBundlingChoice` enum + `CauseSelection` axis + the full 2 × 3
-typology cells (Pylkkänen Table 3.1) live in `Phenomena/Causation/
-Typology.lean` so other studies of causation can consume the same
-inventory. This section just affirms the canonical-instance choices. -/
-
-open Phenomena.Causation.Typology
-  (VoiceBundlingChoice englishZeroCausative japaneseLexicalCausative)
-
-theorem english_zero_is_bundled :
-    englishZeroCausative.bundling = some VoiceBundlingChoice.bundled := rfl
-
-theorem japanese_lexical_is_independent :
-    japaneseLexicalCausative.bundling = some VoiceBundlingChoice.independent := rfl
+typology cells (Pylkkänen Table 3.1) are defined in §13 below, since
+this is the only Pylkkänen-derived consumer in the codebase. The two
+canonical-instance affirmations (`english_zero_is_bundled`,
+`japanese_lexical_is_independent`) live alongside the cell definitions
+in §13. -/
 
 /-! ## §9. Cause is not a θ-role (@cite{pylkkanen-2008} Ch. 3 §3.2)
 
@@ -590,16 +582,153 @@ def CuervoLowAppl.isDynamic : CuervoLowAppl → Bool
 theorem static_not_dynamic :
     CuervoLowAppl.staticPossession.isDynamic = false := rfl
 
-/-! ## §13. Causative typology — extracted to `Phenomena/Causation/Typology.lean`
+/-! ## §13. Causative typology (Pylkkänen Table 3.1, §3.4)
 
-Pylkkänen Table 3.1 (§3.4) is a 2 × 3 typology of causative
-constructions parameterized by Voice-bundling × selection. The full
-inventory (`CausativeCell`, `CauseSelection`, `MorphologyAccess`,
-`PredictsVerdict` + 6 canonical instances + prediction theorems) lives
-in `Phenomena/Causation/Typology.lean`, alongside @cite{song-1996}'s
-orthogonal expression-style typology. Other studies of causation
-(Wood 2015, Cuervo 2003 extensions, future Pylkkänen-derived work)
-consume the same cell inventory from that file. -/
+Pylkkänen Table 3.1 (§3.4) is a 2 × 3 typology of causative constructions
+parameterized by Voice-bundling × selection. The inventory
+(`VoiceBundlingChoice`, `CauseSelection`, `MorphologyAccess`,
+`CausativeCell` + 6 canonical instances + 4 prediction theorems) lives
+here; Pylkkanen2008 is the sole writer in the codebase, so substrate
+promotion is unwarranted (per CLAUDE.md "promote when ≥2 consumers").
+
+Orthogonal to @cite{song-1996}'s expression-style typology in
+`Phenomena/Causation/Studies/Song1996.lean`: Song classifies the
+morphosyntactic *packaging* of a causative (compact / and / purp);
+Pylkkänen classifies the underlying syntactic *configuration*
+(Voice-bundled vs independent; selecting root, verb, or phase). A
+language is characterized along both axes (English is COMPACT in Song,
+bundled-root in Pylkkänen).
+
+If Wood 2015 / Cuervo 2003 / Folli-Harley 2005 get formalized later as
+generative-side updates of this typology and re-use these cells, they
+should consume them from here. The earlier extracted-to-Causation/Typology
+plan was overengineering for n=1 writer; the file relocates here when
+the natural single home turns out to be the only home. -/
+
+/-- @cite{pylkkanen-2008} §3.3: whether Cause and Voice are bundled
+    into one morphological head. English bundles ([Cause, Voice]);
+    Japanese and Finnish do not. -/
+inductive VoiceBundlingChoice where
+  | bundled       -- English-type
+  | independent   -- Japanese/Finnish-type
+  deriving DecidableEq, Repr
+
+/-- @cite{pylkkanen-2008} §3.4: what does Cause select for? -/
+inductive CauseSelection where
+  /-- Cause + √Root: causes a category-free root (English zero-causative). -/
+  | root
+  /-- Cause + v + √Root: causes a category-defined verb (Bemba *-eshya*,
+      Finnish *-tta*). -/
+  | verb
+  /-- Cause + (something at least as big as a phase, can include
+      external args): causativizes unergatives and transitives
+      (Luganda *-sa*, Venda *-is*). -/
+  | phase
+  deriving DecidableEq, Repr
+
+/-- Three levels of root-Cause morpheme intervention. The three-way
+    distinction is essential — collapsing to Bool would lose §3.4's
+    central typological claim. -/
+inductive MorphologyAccess where
+  | none                  -- root-selecting Cause
+  | categoryDefiningOnly  -- verb-selecting Cause
+  | allMorphology         -- phase-selecting Cause
+  deriving DecidableEq, Repr
+
+/-- A causative-typology cell: Voice-bundling × selection.
+    `bundling` is `Option` because Pylkkänen Table 3.1 footnote *a*
+    explicitly states the Voice-bundling properties of Bemba,
+    Luganda, and Venda causatives are not known. -/
+structure CausativeCell where
+  bundling : Option VoiceBundlingChoice
+  selection : CauseSelection
+  deriving DecidableEq, Repr
+
+/-- Table 3.1 prediction (1): can a language have unaccusative
+    causatives? Bundled → no (Voice forces ext arg); independent →
+    yes; unknown → no clean prediction. (Reuses the `PredictsVerdict`
+    enum defined in §10 above for `PossessorDativeAnalysis.predicts`.) -/
+def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : PredictsVerdict :=
+  match c.bundling with
+  | none => .noCleanPrediction
+  | some .bundled => .antipredicts
+  | some .independent => .predicts
+
+/-- Table 3.1 prediction (2): can the language causativize unergatives
+    and transitives? Only phase-selecting Cause can. -/
+def CausativeCell.permitsUnergativeAndTransitiveCausativization
+    (c : CausativeCell) : Bool :=
+  match c.selection with
+  | .phase => true
+  | .root | .verb => false
+
+/-- Table 3.1 prediction (3): what morphology can intervene between
+    root and Cause? -/
+def CausativeCell.morphologyAccess (c : CausativeCell) : MorphologyAccess :=
+  match c.selection with
+  | .root => .none
+  | .verb => .categoryDefiningOnly
+  | .phase => .allMorphology
+
+-- Six canonical instances (Pylkkänen Table 3.1)
+
+/-- English zero-causative: Voice-bundling root-selecting. -/
+def englishZeroCausative : CausativeCell :=
+  { bundling := some .bundled, selection := .root }
+
+/-- Japanese lexical causative: non-Voice-bundling root-selecting. -/
+def japaneseLexicalCausative : CausativeCell :=
+  { bundling := some .independent, selection := .root }
+
+/-- Bemba *-eshya* causative: verb-selecting; bundling unknown
+    (Table 3.1 footnote a). -/
+def bembaEshyaCausative : CausativeCell :=
+  { bundling := none, selection := .verb }
+
+/-- Finnish *-tta* causative: non-Voice-bundling verb-selecting. -/
+def finnishTtaCausative : CausativeCell :=
+  { bundling := some .independent, selection := .verb }
+
+/-- Luganda *-sa* causative: phase-selecting; bundling unknown. -/
+def lugandaSaCausative : CausativeCell :=
+  { bundling := none, selection := .phase }
+
+/-- Venda *-is* causative: phase-selecting; bundling unknown. -/
+def vendaIsCausative : CausativeCell :=
+  { bundling := none, selection := .phase }
+
+/-- §11 Voice-bundling cross-references. English bundles, Japanese does
+    not — the two canonical affirmations §11 promised live here alongside
+    the Cell definitions they consume. -/
+theorem english_zero_is_bundled :
+    englishZeroCausative.bundling = some VoiceBundlingChoice.bundled := rfl
+
+theorem japanese_lexical_is_independent :
+    japaneseLexicalCausative.bundling = some VoiceBundlingChoice.independent := rfl
+
+theorem english_zero_predictions :
+    englishZeroCausative.permitsUnaccusativeCausative = .antipredicts ∧
+    englishZeroCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    englishZeroCausative.morphologyAccess = .none :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem japanese_lexical_predictions :
+    japaneseLexicalCausative.permitsUnaccusativeCausative = .predicts ∧
+    japaneseLexicalCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    japaneseLexicalCausative.morphologyAccess = .none :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem finnish_tta_predictions :
+    finnishTtaCausative.permitsUnaccusativeCausative = .predicts ∧
+    finnishTtaCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    finnishTtaCausative.morphologyAccess = .categoryDefiningOnly :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem luganda_phase_predictions :
+    lugandaSaCausative.permitsUnaccusativeCausative = .noCleanPrediction ∧
+    lugandaSaCausative.permitsUnergativeAndTransitiveCausativization = true ∧
+    lugandaSaCausative.morphologyAccess = .allMorphology :=
+  ⟨rfl, rfl, rfl⟩
 
 /-! ## §14. Broader Voice taxonomy under Pylkkänen's view
 
@@ -657,7 +786,7 @@ does *not* re-derive the type clash from event-semantic λ-calculus
 substantive content captured: "low Appl needs a theme; unergative
 provides none; composition fails." -/
 
-open Semantics.Verb.EntailmentProfile (EntailmentProfile)
+open Features.EntailmentProfile (EntailmentProfile)
 
 /-- A verb has an unsaturated theme argument iff its object entailment
     profile (if any) carries Proto-Patient entailments. Unergatives have
@@ -786,18 +915,18 @@ Pylkkänen counts the structural ApplP projection regardless of
 morphological exponent. The substrate is designed to make this kind
 of cross-framework editorial disagreement visible. -/
 
-/-- WALS Ch 109 (`Phenomena.ArgumentStructure.Typology.english.applicative`)
+/-- WALS Ch 109 (per `Studies/Polinsky2013.lean`'s `english.applicative`)
     and Pylkkänen's analysis (`english_appl.classification`) make
     contradictory predictions about English: WALS says no applicative,
     Pylkkänen says low recipient. Same for Japanese. The disagreement
     is about the criterion for "applicative," not about the data. -/
 theorem wals_pylkkanen_diverge_on_english :
-    Phenomena.ArgumentStructure.Typology.english.applicative
+    Phenomena.ArgumentStructure.Studies.Polinsky2013.english.applicative
         = .noApplicative ∧
     english_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
 
 theorem wals_pylkkanen_diverge_on_japanese :
-    Phenomena.ArgumentStructure.Typology.japanese.applicative
+    Phenomena.ArgumentStructure.Studies.Polinsky2013.japanese.applicative
         = .noApplicative ∧
     japanese_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
 

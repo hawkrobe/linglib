@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Binominal
+import Linglib.Theories.Semantics.Noun.BinominalDefs
 import Linglib.Theories.Semantics.Noun.Binominal
 import Linglib.Fragments.English.Binominals
 
@@ -30,7 +30,7 @@ and English fragment data to the empirical claims in @cite{ten-wolde-2023}.
 
 namespace TenWolde2023
 
-open Core.Lexical.Binominal
+open Semantics.Noun.Binominal
 open Semantics.Noun.Binominal
 open Semantics.Noun.GradableNouns (exampleIdiot)
 open Fragments.English.Binominals
@@ -43,7 +43,7 @@ open Fragments.English.Binominals
 
 The three evaluative constructions differ on multiple diagnostics.
 These theorems verify the Table 4.2 claims against the formalized
-diagnostic functions in `Core.Lexical.Binominal`. -/
+diagnostic functions in `Semantics.Noun.Binominal`. -/
 
 /-- EBNP: N₁ allows plural, Det₂ marks number, of replaceable by copula. -/
 theorem ebnp_profile :

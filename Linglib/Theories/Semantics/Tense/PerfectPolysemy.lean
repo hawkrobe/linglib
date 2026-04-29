@@ -39,8 +39,7 @@ namespace Semantics.Tense.PerfectPolysemy
 
 open Core.Time
 open Core.Time.Reichenbach
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 open Semantics.Tense.Aspect.Core
 open Semantics.Events
 

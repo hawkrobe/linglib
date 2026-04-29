@@ -31,8 +31,10 @@ communicated). Their key finding is that *both* matter.
 
 ## Integration
 
-- Theory layer: `Pragmatics.InformationTheory.ChannelCapacity` (NamingChannel, CAP, cap_linear)
-- The RSA connection: a NamingChannel is an RSA literal speaker S₀,
+- Theory layer: `Pragmatics.InformationTheory.Channel` (CommChannel,
+  commPrecision, mutualInfo) and `Pragmatics.InformationTheory.ChannelCapacity`
+  (IsCAP, cap_linear, channelCapacity).
+- The RSA connection: a CommChannel is an RSA literal speaker S₀,
   and the posterior is the literal listener L₀.
 -/
 
@@ -40,7 +42,7 @@ set_option autoImplicit false
 
 namespace ZaslavskyEtAl2019
 
-open Pragmatics.InformationTheory.ChannelCapacity
+open Pragmatics.InformationTheory
 
 -- ============================================================================
 -- §1. The WCS Color Domain
@@ -72,7 +74,7 @@ inductive Temperature where
     We state this as a property of a naming channel and temperature
     classification rather than as a concrete computation (which would
     require the full WCS dataset). -/
-def WarmCoolAsymmetry {W : Type} [Fintype W] (nc : NamingChannel WCSChip W) (prior : WCSChip → ℝ)
+def WarmCoolAsymmetry {W : Type} [Fintype W] (nc : CommChannel WCSChip W) (prior : WCSChip → ℝ)
     (temp : WCSChip → Temperature) : Prop :=
   let warmChips := Finset.univ.filter (λ c => temp c == .warm)
   let coolChips := Finset.univ.filter (λ c => temp c == .cool)
@@ -111,11 +113,11 @@ structure KMeansSystem where
   /-- Cluster assignment for each chip. -/
   assignment : WCSChip → Fin k
 
-/-- Convert a hard k-means partition to a NamingChannel.
+/-- Convert a hard k-means partition to a CommChannel.
     A hard partition assigns p(w|c) = 1 if w = assignment(c), else 0.
     This is a deterministic channel (zero conditional entropy). -/
 noncomputable def KMeansSystem.toChannel (km : KMeansSystem) :
-    NamingChannel WCSChip (Fin km.k) where
+    CommChannel WCSChip (Fin km.k) where
   encode c w := if km.assignment c = w then 1 else 0
   encode_nonneg _ _ := by split <;> norm_num
   encode_sum_one c := by simp [Finset.mem_univ]
@@ -165,7 +167,7 @@ noncomputable def averageCAP {L : Nat}
     it (r = 0.32) shows that perceptual structure alone does not yield
     the same robustness. -/
 theorem cap_implies_linearity {W : Type} [Fintype W]
-    (nc : NamingChannel WCSChip W) (prior : WCSChip → ℝ)
+    (nc : CommChannel WCSChip W) (prior : WCSChip → ℝ)
     (hCAP : IsCAP nc prior) {c : WCSChip} (hc : prior c > 0) :
     ∃ Z > 0, -Real.log (prior c) = commPrecision nc prior c + Real.log Z :=
   cap_linear' nc prior hCAP hc

@@ -1,5 +1,5 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
@@ -23,7 +23,8 @@ classification from `Theories.Semantics.Tense.Aspect.LexicalAspect`.
 
 namespace Phenomena.AuxiliaryVerbs.Studies.Sorace2000
 
-open Core.Verbs
+open Features
+open Features
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to

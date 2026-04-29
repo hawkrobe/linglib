@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 import Mathlib.Data.Fin.Basic
 /-!
 # Greek Negation Fragment
@@ -24,7 +24,7 @@ distinction that @cite{tsiakmakis-2025} argues is cross-linguistically valid.
 namespace Fragments.Greek.Negation
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
--- NB: not opening Core.Lexical.NegMarker namespace-wide to avoid
+-- NB: not opening Typology.Negation namespace-wide to avoid
 -- collision with the local `MoodMarkerEntry` (Tsiakmakis 2025 paper
 -- apparatus). The Core entries below are fully qualified.
 
@@ -37,7 +37,7 @@ abbrev World := Fin 4
 /-- A Greek sentential negation marker, augmented with the mood/NCI
     properties from @cite{tsiakmakis-2025}'s NEG₁/NEG₂ analysis.
 
-    Distinct from the cross-linguistic `Core.Lexical.NegMarker.NegMarkerEntry`
+    Distinct from the cross-linguistic `Typology.Negation.NegMarkerEntry`
     substrate (which carries only form/morphemeType/position): this
     structure exposes the Tsiakmakis-specific paper apparatus that other
     languages don't have analogues for. The Core entries `dhenMarker` and
@@ -77,19 +77,19 @@ def min : MoodMarkerEntry :=
   , licensesNCIs := false }
 
 -- ============================================================================
--- § 1b: Cross-linguistic substrate (Core.Lexical.NegMarker)
+-- § 1b: Cross-linguistic substrate (Typology.Negation)
 -- ============================================================================
 
 /-- *dhen* in Core substrate form. Cross-linguistic typology face of the
     indicative negator; the paper-specific mood/NCI apparatus lives on
     `MoodMarkerEntry` above. -/
-def dhenMarker : Core.Lexical.NegMarker.NegMarkerEntry :=
+def dhenMarker : Typology.Negation.NegMarkerEntry :=
   { form := "dhen"
   , morphemeType := .particle
   , position := .preverbal }
 
 /-- *min* in Core substrate form. -/
-def minMarker : Core.Lexical.NegMarker.NegMarkerEntry :=
+def minMarker : Typology.Negation.NegMarkerEntry :=
   { form := "min"
   , morphemeType := .particle
   , position := .preverbal }
@@ -97,9 +97,9 @@ def minMarker : Core.Lexical.NegMarker.NegMarkerEntry :=
 /-- The Greek negation system: two mood-conditioned preverbal particles.
     *dhen* (indicative, default-context) listed first, *min* (subjunctive/
     modal) second. The Fragment-side joint consumed by
-    `Phenomena/Negation/Typology.lean`. -/
-def negationSystem : Core.Lexical.NegMarker.NegationSystem :=
-  Core.Lexical.NegMarker.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
+    `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+def negationSystem : Typology.Negation.NegationSystem :=
+  Typology.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
 
 -- ============================================================================
 -- § 2: Semantics

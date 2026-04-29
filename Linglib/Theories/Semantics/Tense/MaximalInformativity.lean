@@ -1,7 +1,7 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Interval.Generalized
 import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
 
 /-!
@@ -56,8 +56,7 @@ namespace Semantics.Tense.MaximalInformativity
 
 open Core.Time
 open Semantics.Tense.Aspect.Core
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 open Semantics.Tense.Aspect.SubintervalProperty
 
 -- ════════════════════════════════════════════════════

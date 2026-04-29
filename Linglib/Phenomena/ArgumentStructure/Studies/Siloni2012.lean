@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ArgumentStructure.Typology
+import Linglib.Typology.ArgumentStructure
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 
 /-!
@@ -38,8 +38,8 @@ embedding.
 
 namespace Siloni2012
 
-open Phenomena.ArgumentStructure.Typology
-open Semantics.Verb.EntailmentProfile (EntailmentProfile)
+open Typology.ArgumentStructure
+open Features.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Three-Way Reciprocal Classification (§2.4)

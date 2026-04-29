@@ -41,10 +41,10 @@ namespace Semantics.Causation.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
-open Semantics.Verb.ChangeOfState
-open Core.Verbs (Causative)
+open Features
+open Semantics.Verb
+open Features.ChangeOfState
+open Features (Causative)
 open Semantics.Causation.ProductionDependence
 open Semantics.Causation.CCSelection
 

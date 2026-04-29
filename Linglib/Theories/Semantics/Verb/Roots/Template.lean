@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Verb.Roots.Basic
+import Linglib.Theories.Semantics.Verb.Roots.RootFeatures
 
 /-!
 # Templatic Heads and Event Structure Composition
@@ -36,11 +37,8 @@ inductive TemplaticHead where
   | v_cause   -- CAUSE:    λPλQλxλe. ∃e'. P(x, e) ∧ Q(e') ∧ cause(e, e')
   deriving DecidableEq, Repr
 
-/-- Structural position at which a root attaches to a head. -/
-inductive RootPosition where
-  | adjoined    -- modifier (typical of manner roots)
-  | complement  -- argument (typical of state roots)
-  deriving DecidableEq, Repr
+-- `RootPosition` (`adjoined` / `complement`) is now defined canonically
+-- in `Roots/RootFeatures.lean` and re-used here via the import above.
 
 -- ════════════════════════════════════════════════════
 -- § 2. Composed Event Structures

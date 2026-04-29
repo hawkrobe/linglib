@@ -10,6 +10,10 @@ import Linglib.Datasets.WALS.Features.F136A
 import Linglib.Datasets.WALS.Features.F136B
 import Linglib.Datasets.WALS.Features.F137A
 import Linglib.Datasets.WALS.Features.F137B
+import Linglib.Core.Word
+import Linglib.Features.Register
+import Linglib.Features.Prominence
+import Linglib.Features.Gender
 
 /-!
 # Pronoun typology — substrate types
@@ -359,6 +363,111 @@ def walsMT : MTCounts :=
     Despite its visibility in Indo-European, it is not a typological default. -/
 theorem mt_pronouns_minority :
     walsMT.absent > walsMT.paradigmatic + walsMT.nonParadigmatic := by decide
+
+end Typology
+
+-- ════════════════════════════════════════════════════
+-- § N. Cross-linguistic Pronoun Entry Schemas
+-- ════════════════════════════════════════════════════
+
+/-! ## Cross-linguistic pronoun and allocutive entry schemas
+@cite{alok-bhalla-2026} @cite{arnold-2026}
+
+Cross-linguistic structures for pronoun inventories and allocutive markers,
+shared across all `Fragments/{Lang}/Pronouns.lean` files.
+
+Moved here from `Core/Lexical/Pronouns.lean` in the cleanup that
+dissolved `Core/Lexical/`. The 21-consumer footprint (20 Fragments + 1
+Phenomena study) is precisely the per-language entry-schema pattern
+this file already serves for WALS-anchored substrate enums.
+
+### PronounEntry
+
+Covers the union of fields needed by all language fragments:
+- Core: form, person, number (all fragments)
+- Morphosyntactic: case_, gender (Galician, English, French, etc.)
+- Sociolinguistic: register (all SA-based fragments)
+- Orthographic: script (Korean hangul, Japanese kanji)
+
+### PronounSpec
+
+Personal pronoun specification — which pronouns a person uses. A
+social-linguistic fact independent of grammatical gender.
+@cite{arnold-2026}'s pragmatic condition for *personal* singular *they*:
+referent's pronouns are known to be *they/them*.
+
+### AllocutiveEntry
+
+Verbal suffixes (Hindi, Magahi, Maithili, Punjabi, Tamil, Basque),
+particles (Korean, Japanese), or clitics (Galician) realising
+speaker-addressee agreement. -/
+
+namespace Typology
+
+open Features.Register (Level)
+open Features (SurfaceGender)
+
+/-- Personal pronoun specification — which pronouns a person uses.
+
+    A social-linguistic fact that may or may not be in common ground.
+    Independent of grammatical gender: a person with known feminine
+    gender may use she/her, they/them, or neopronouns.
+    @cite{arnold-2026}: the pragmatic condition for *personal*
+    singular *they* is knowing that the referent's personal pronouns
+    are *they/them*. -/
+inductive PronounSpec where
+  | heHim      -- he/him/his
+  | sheHer     -- she/her/hers
+  | theyThem   -- they/them/theirs
+  deriving DecidableEq, Repr, BEq
+
+/-- Cross-linguistic pronoun entry.
+
+Covers personal pronouns across all Fragment languages. Language-specific
+extensions (e.g., English PronounType/wh) remain in their respective
+Fragment files. -/
+structure PronounEntry where
+  /-- Surface form (romanization or orthographic) -/
+  form : String
+  /-- Grammatical person (UD.Person via Core.Word abbrev) -/
+  person : Option Person := none
+  /-- Grammatical number -/
+  number : Option Number := none
+  /-- Grammatical case -/
+  case_ : Option Case := none
+  /-- Grammatical gender. For 3rd-person pronouns in gendered languages
+      (French il/elle, German er/sie/es, etc.). 1st/2nd-person pronouns
+      and languages without pronominal gender leave this as `none`. -/
+  gender : Option SurfaceGender := none
+  /-- Register level (formality/honorifics). Binary T/V systems use
+      `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
+      Maithili, Korean) use all three levels. -/
+  register : Level := .informal
+  /-- Referential person — who the pronoun refers to in terms of discourse
+      role — when it diverges from formal/agreement person. For polite
+      pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
+      field is 3rd (governing agreement, clitic allomorphy, reflexive binding),
+      while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
+      resolved agreement). For ordinary pronouns, leave as `none` —
+      referential person coincides with formal person.
+      @cite{adamson-zompi-2025} -/
+  referentialPerson : Option Features.Prominence.PersonLevel := none
+  /-- Native script form (hangul, kanji, Devanagari, etc.) -/
+  script : Option String := none
+  deriving Repr, BEq
+
+/-- Cross-linguistic allocutive marker entry.
+
+Covers verbal suffixes, particles, and clitics that realize allocutive
+agreement across all Fragment languages. -/
+structure AllocutiveEntry where
+  /-- Surface form of the marker -/
+  form : String
+  /-- Register level (matching PronounEntry.register scale) -/
+  register : Level
+  /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
+  gloss : String
+  deriving Repr, BEq
 
 end Typology
 

@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Free
-import Linglib.Core.Lexical.UD
+import Linglib.Core.UD
 
 /-!
 # Syntactic Objects and Containment

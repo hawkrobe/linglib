@@ -47,9 +47,9 @@ All ordering infrastructure uses Mathlib typeclasses:
 - Transitivity hierarchy → `Tsunoda` verb classification
 -/
 
-namespace Semantics.Verb.AgentivityLattice
+namespace Features.AgentivityLattice
 
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 open Core
 
 -- ════════════════════════════════════════════════════
@@ -1290,21 +1290,21 @@ theorem wellFormedPair_not_preserved_by_grimm :
 -- § 24. ArgTemplate → GrimmNode Bridge
 -- ════════════════════════════════════════════════════
 
-open Semantics.Verb.LevinClassProfiles
-open Semantics.Verb.Affectedness
+open Features.LevinClassProfiles
+open Features.Affectedness
 
 /-- Project an ArgTemplate's subject profile to a GrimmNode. -/
-def _root_.Semantics.Verb.LevinClassProfiles.ArgTemplate.subjectGrimm
+def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm
     (t : ArgTemplate) : GrimmNode :=
   GrimmNode.fromSubjectProfile t.subjectProfile
 
 /-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
-def _root_.Semantics.Verb.LevinClassProfiles.ArgTemplate.objectGrimm
+def _root_.Features.LevinClassProfiles.ArgTemplate.objectGrimm
     (t : ArgTemplate) : Option GrimmNode :=
   t.objectProfile.map GrimmNode.fromObjectProfile
 
 /-- Project an ArgTemplate's object to its affectedness degree. -/
-def _root_.Semantics.Verb.LevinClassProfiles.ArgTemplate.objectAffectedness
+def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
     (t : ArgTemplate) : Option AffectednessDegree :=
   t.objectProfile.map profileToDegree
 
@@ -1370,4 +1370,4 @@ theorem creation_cross_projection :
     creation.objectProfile.map PersistenceLevel.fromPatientProfile =
       some .exPersEnd := ⟨rfl, by native_decide⟩
 
-end Semantics.Verb.AgentivityLattice
+end Features.AgentivityLattice

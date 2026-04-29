@@ -45,12 +45,13 @@ adds information beyond what root entailments + template predict:
   existence — the object pre-exists but measures the event
 -/
 
-namespace Semantics.Verb.ArgDerivation
+namespace Features.ArgDerivation
 
-open Core.Verbs
+open Semantics.Verb
 open EventStructure (Template)
 open LevinClassProfiles
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
+open Semantics.Verb.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root-Template Compatibility
@@ -581,4 +582,4 @@ The full derivational chain:
     (RootEntailments)   (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
 -/
 
-end Semantics.Verb.ArgDerivation
+end Features.ArgDerivation

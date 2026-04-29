@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain

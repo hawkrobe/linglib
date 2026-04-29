@@ -1,6 +1,10 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 
 /-!
 # @cite{spalek-mcnally-2026}: The Anatomy of a Verb
@@ -34,7 +38,7 @@ patient restrictions, separation geometry, and agent control.
 
 namespace SpalekMcNally2026
 
-open Core.Verbs
+open Semantics.Verb
 open Fragments.English.Predicates.Verbal
 open Fragments.Spanish.Predicates
 

@@ -50,7 +50,7 @@ inductive LexEntailment where
       neutral about *what* causes — only that there is a cause.
       The cause-type distinction (internal vs external,
       @cite{bohnemeyer-2004}) is carried separately by
-      `Semantics.Verb.EventStructure.CausationType`. -/
+      `Features.EventStructure.CausationType`. -/
   | hasCause
   /-- The agent acts intentionally. -/
   | volitional

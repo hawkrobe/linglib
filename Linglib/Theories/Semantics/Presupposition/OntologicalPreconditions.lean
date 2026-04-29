@@ -37,14 +37,14 @@ Two tests from @cite{roberts-simons-2024} §2.1:
 import Linglib.Features.Polarity
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 
 namespace Semantics.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
-open Semantics.Verb.ChangeOfState
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features.ChangeOfState
+open Features
+open Features
 
 
 variable {W : Type*}

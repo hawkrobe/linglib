@@ -1,0 +1,34 @@
+import Linglib.Typology.Possession
+
+/-!
+# Irish possession profile
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997} 
+
+PossessionProfile bundle for Irish (ISO `gle`), per the
+project's "per-language data flows through Fragments" rule. Substrate
+types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
+…) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
+consuming this profile live in
+`Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.Irish.Possession
+
+open _root_.Typology.Possession
+
+/-- Irish possession profile. -/
+def possession : PossessionProfile :=
+  { language := "Irish"
+  , family := "Indo-European"
+  , iso := "gle"
+  , obligatoryPossession := .noObligatory
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .genitiveDative
+  , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
+  , examples := ["ta leabhar agam", "teach an fhir"]
+  , notes := "Celtic at-possession: ta X ag-PRON; genitive case on possessor in adnominal" }
+
+end Fragments.Irish.Possession

@@ -69,9 +69,9 @@ projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
 -/
 
-namespace Semantics.Verb.Affectedness
+namespace Features.Affectedness
 
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Re-exports from Events/AffectednessHierarchy
@@ -246,4 +246,4 @@ def IsQuantizedAffected.ofProfileAndWitness {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
 
-end Semantics.Verb.Affectedness
+end Features.Affectedness

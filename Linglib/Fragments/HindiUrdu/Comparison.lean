@@ -1,0 +1,33 @@
+import Linglib.Typology.Comparison
+
+/-!
+# Hindi-Urdu comparative profile
+@cite{stassen-2013} @cite{wals-2013}
+
+`ComparativeProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
+this profile live in `Phenomena/Comparison/Studies/Stassen2013.lean`. The
+@cite{stassen-1985} 6-way classification (where applicable) lives in
+`Phenomena/Comparison/Studies/Stassen1985.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.HindiUrdu.Comparison
+
+open _root_.Typology.Comparison
+
+/-- Hindi-Urdu comparative profile. -/
+def comparison : ComparativeProfile :=
+  { language := "Hindi-Urdu"
+  , iso := "hin"
+  , comparativeType := .locational
+  , degreeWord := .hasDegreeWord
+  , superlative := .comparativeUniversal
+  , comparativeForm := "X Y se (zyaadaa) Adj hai"
+  , standardMarker := "se"
+  , degreeMarker := "zyaadaa"
+  , basicOrder := "SOV" }
+
+end Fragments.HindiUrdu.Comparison

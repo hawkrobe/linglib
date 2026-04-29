@@ -43,7 +43,7 @@ field on `NounCategorizationSystem` captures this finer distinction.
 
 namespace Chierchia1998
 
-open Core.NounCategorization
+open Typology
 open Semantics.Noun.Kind.Chierchia1998 (NominalMapping)
 open Aikhenvald2000 (mandarin japanese french italian)
 
@@ -123,11 +123,11 @@ framework over alternatives like @cite{sudo-2016}'s `.sudoBlocking`. -/
 
 /-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting
     noun. -/
-def japaneseStrategy : Core.NounCategorization.ClassifierStrategy := .forNoun
+def japaneseStrategy : Typology.ClassifierStrategy := .forNoun
 
 /-- Chierchia's strategy assignment for Mandarin: CLF atomizes a kind-denoting
     noun. -/
-def mandarinStrategy : Core.NounCategorization.ClassifierStrategy := .forNoun
+def mandarinStrategy : Typology.ClassifierStrategy := .forNoun
 
 /-- Chierchia's framework assigns the CLF-for-N strategy to all
     [+arg, -pred] classifier languages. -/

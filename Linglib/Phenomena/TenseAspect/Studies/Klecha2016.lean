@@ -52,7 +52,7 @@ can be future-oriented:
 
 namespace Klecha2016
 
-open Core.Verbs (Attitude Preferential Veridicality)
+open Features (Attitude Preferential Veridicality)
 open Core.Modality (ModalBaseKind)
 open Core.Modality.HistoricalAlternatives
   (WorldHistory actualHistoryBase futureHistoryBase

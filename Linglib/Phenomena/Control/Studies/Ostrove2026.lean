@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
-import Linglib.Phenomena.Complementation.Typology
+import Linglib.Typology.Complementation
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec
@@ -458,7 +458,7 @@ theorem buli_classified : buliProfile.classify = .overtPRONoProDrop := by decide
 -- § 11: Complementation Typology Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.Complementation.Typology
+open Typology.Complementation
 
 /-- SMPM clause types map to @cite{noonan-2007}'s complement typology.
 

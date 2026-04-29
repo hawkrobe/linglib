@@ -86,10 +86,11 @@ what K89 study §3 now does for `qmod_of_cum_is_qua`.
 
 namespace Krifka1998Movement
 
-open Core.Verbs (LevinClass MeaningComponents)
+open Semantics.Verb (LevinClass MeaningComponents)
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
-open Core.Verbs
+open Semantics.Verb
+open Features
 open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)

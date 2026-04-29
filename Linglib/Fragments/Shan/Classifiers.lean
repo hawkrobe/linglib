@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 
 /-!
 # Shan Numeral Classifier Lexicon
@@ -33,7 +33,7 @@ position below ClfP to a position above the numeral and classifier.
 
 namespace Fragments.Shan.Classifiers
 
-open Core.NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
+open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Numeral classifiers (Table 6 of @cite{little-moroney-royer-2022})

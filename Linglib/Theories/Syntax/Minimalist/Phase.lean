@@ -101,12 +101,16 @@ inductive PICStrength where
 
     The phase head determines the domain boundary. Material in the
     complement is shipped to PF/LF; material at the edge remains
-    accessible for further operations. -/
+    accessible for further operations.
+
+    Per-analysis discipline determines which heads count as phase heads
+    — Keine 2020 (C-only), Chomsky 2000/2001 (C + v), Pietraszko 2026 +
+    Erlewine & Sommerlot 2025 (also Voice via `VoiceHead.phaseHead`),
+    Citko 2014 (also D). The struct is intentionally permissive about
+    `head`'s category so all four can register `Phase` instances. -/
 structure Phase where
-  /-- The phase head (C or v*) -/
+  /-- The phase head (per-analysis: C, v, Voice, D, …) -/
   head : SyntacticObject
-  /-- Proof that the head is indeed a phase head -/
-  isHead : isPhaseHeadOf .C head = true
   /-- The complement domain (shipped to interfaces) -/
   complement : SyntacticObject
   /-- The edge (specifier, accessible for further operations) -/

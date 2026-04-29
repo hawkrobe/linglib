@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-! # Italian Negation Fragment
 @cite{haspelmath-2013} @cite{dryer-2013-wals} @cite{zanuttini-1997} @cite{cinque-1999}
@@ -35,7 +35,7 @@ entries in `PolarityItems.lean`.
 
 namespace Fragments.Italian.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *non* — Italian's standard preverbal negation particle.
     `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
@@ -46,10 +46,29 @@ def non : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Italian negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`.
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`.
     WALS classifications are pulled from `Datasets/WALS/Features/F112A.lean`
     et al. via `NegationSystem.ofISO` — never hand-encoded. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ita" [non]
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Italian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Italian"
+  , iso := "ita"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .mixed
+  , negMarkers := ["non"]
+  , negIsHead := some true
+  , enAttested := some true }
 
 end Fragments.Italian.Negation

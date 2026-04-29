@@ -270,7 +270,7 @@ open Semantics.Events (Ev EvPred)
 open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
   modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
 open Semantics.Measurement
-open Core.Verbs
+open Features
 
 /-- Deg' = much_μ + -er: the comparative degree head.
 

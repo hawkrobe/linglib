@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # English Negation Fragment
@@ -24,7 +24,7 @@ WALS classifies English as **mixed**:
 
 namespace Fragments.English.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *not* — English's standard negation particle.
     The contracted form *n't* attaches as a clitic to auxiliaries
@@ -43,7 +43,7 @@ def not : NegMarkerEntry :=
 def negContracted : String := "n't"
 
 /-- The English negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "eng" [not]
 
@@ -111,5 +111,24 @@ theorem asymmetric_iff_dosupport :
 theorem symmetric_no_dosupport :
     (allExamples.filter (·.symmetric)).all (fun e => !e.doSupport) = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- English negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "English"
+  , iso := "eng"
+  , morphemeType := .particle
+  , symmetry := .both
+  , asymmetrySubtype := .otherCategories
+  , negIndefinite := some .mixed
+  , negMarkers := ["not"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.English.Negation

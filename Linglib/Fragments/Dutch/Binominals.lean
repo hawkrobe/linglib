@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Binominal
+import Linglib.Theories.Semantics.Noun.BinominalDefs
 
 /-!
 # Dutch Binominal Nouns
@@ -22,7 +22,7 @@ on Dutch data.
 
 namespace Fragments.Dutch.Binominals
 
-open Core.Lexical.Binominal
+open Semantics.Noun.Binominal
 
 /-- A Dutch binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

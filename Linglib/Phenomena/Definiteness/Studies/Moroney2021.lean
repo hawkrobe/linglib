@@ -12,6 +12,7 @@ import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Shan.Definiteness
+import Linglib.Phenomena.Definiteness.Studies.Jenks2018
 
 /-!
 # Moroney (2021): Definiteness and Quantification — Evidence from Shan
@@ -649,7 +650,7 @@ theorem demonstrative_adds_spatial_info {E : Type}
 theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
     Semantics.Classifier.classifierDenot
-      Core.NounCategorization.ClassifierStrategy.forNoun P
+      Typology.ClassifierStrategy.forNoun P
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
     = Semantics.Classifier.clfForNoun P := rfl
 
@@ -779,5 +780,43 @@ theorem shan_demonstrative_anaphoric_agreement {F : Frame}
     (gs : SitAssignment F) :
     Core.Nominal.interpret (.demonstrative R deictic sIdx d) g gs =
       Core.Nominal.interpret (.anaphoric R d) g gs := rfl
+
+-- ============================================================================
+-- §15: Refutation of @cite{jenks-2018}'s Typological Prediction
+-- ============================================================================
+
+/-! @cite{jenks-2018} §7 proposed a typology of definiteness marking with
+three attested cells (`.generallyMarked`, `.bipartite`, `.markedAnaphoric`)
+and one unattested cell (a language overtly marking only unique definites).
+The empirical core of @cite{moroney-2021} is the discovery that *Shan*
+instantiates a fourth attested cell — `.unmarked` — that Jenks's
+three-cell space had no slot for: bare nouns express both unique and
+anaphoric definiteness without any obligatory morphological marking.
+
+The theorems below state the refutation against the substrate. Shan
+derives `.unmarked` (already proved in §7 / §14); `.unmarked` is
+distinct from each of Jenks's three cells (already proved in §6); the
+new content is the joint statement that Shan instantiates a strategy
+*not in* the Jenks-attested set. -/
+
+/-- Shan's morphologically-derived strategy is not in the
+    @cite{jenks-2018}-attested set (imported from
+    `Phenomena.Definiteness.Studies.Jenks2018.jenksAttestedStrategies`). -/
+theorem shan_strategy_not_jenks_attested :
+    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+      ∉ Phenomena.Definiteness.Studies.Jenks2018.jenksAttestedStrategies := by
+  rw [show Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+        = .unmarked from rfl]
+  decide
+
+/-- The Moroney refutation in one statement: Shan instantiates a marking
+    strategy that @cite{jenks-2018}'s typology predicted to be unattested.
+    This is the formal content of the prose claim "contra
+    @cite{jenks-2018}'s prediction" in this file's module docstring. -/
+theorem moroney_shan_refutes_jenks_typology :
+    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+      = .unmarked ∧
+    .unmarked ∉ Phenomena.Definiteness.Studies.Jenks2018.jenksAttestedStrategies :=
+  ⟨rfl, by decide⟩
 
 end Moroney2021

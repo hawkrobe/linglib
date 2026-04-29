@@ -24,7 +24,7 @@ semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 
 namespace Minimalist.Bridge
 
-open Semantics.Verb.EventStructure
+open Features.EventStructure
 open Minimalist
 
 -- ============================================================================

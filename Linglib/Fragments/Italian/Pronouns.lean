@@ -1,5 +1,5 @@
-import Linglib.Core.Lexical.Pronouns
-import Linglib.Core.Lexical.Word
+import Linglib.Typology.Pronouns
+import Linglib.Core.Word
 
 /-! # Italian Pronoun and Clitic Fragment
 
@@ -29,7 +29,7 @@ and reflexive cases, while 3sg/3pl are not.
 
 namespace Fragments.Italian.Pronouns
 
-open Core.Pronouns
+open Typology
 open Features.Register (Level)
 
 -- ============================================================================

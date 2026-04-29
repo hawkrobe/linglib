@@ -17,7 +17,7 @@ confirming Mitrovic & Sauerland's prediction that MU = additive particle.
 @cite{bill-etal-2025} found no significant sentence-type effect on comprehension
 in Hungarian children (possibly ceiling effects).
 
-Connection to Typology.lean: `Phenomena.Coordination.Typology.hungarian`
+Connection to Typology.lean: `Phenomena.Coordination.Studies.Haspelmath2007.hungarian`
 Connection to BillEtAl2025: Hungarian is one of two test languages.
 
 -/

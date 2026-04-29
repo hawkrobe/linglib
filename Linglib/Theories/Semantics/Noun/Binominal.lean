@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Binominal
+import Linglib.Theories.Semantics.Noun.BinominalDefs
 import Linglib.Theories.Semantics.Noun.GradableNouns
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Gradability.Intensification
@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Gradability.Intensification
 # Binominal Noun Phrase Semantics
 
 Cross-linguistic semantic composition rules for binominal (N₁-of-N₂)
-constructions, connecting the taxonomy in `Core.Lexical.Binominal` to
+constructions, connecting the taxonomy in `Semantics.Noun.Binominal` to
 the semantic theories for gradable nouns and quantizing nouns.
 
 ## Evaluative BNP Semantics (Stage 4)
@@ -39,7 +39,6 @@ in @cite{ten-wolde-2023}'s taxonomy.
 
 namespace Semantics.Noun.Binominal
 
-open Core.Lexical.Binominal
 open Semantics.Noun.GradableNouns (GradableNoun)
 open Semantics.Probabilistic.Measurement (QuantizingNounClass)
 

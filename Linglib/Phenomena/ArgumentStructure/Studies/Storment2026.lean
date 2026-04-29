@@ -47,7 +47,7 @@ claims. They live in topic-named files alongside this study:
 
 namespace Phenomena.ArgumentStructure.Unaccusativity.Bridge
 
-open Core.Verbs
+open Semantics.Verb
 open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)

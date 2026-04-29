@@ -1,4 +1,8 @@
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
@@ -37,7 +41,8 @@ dispatch) are promoted to canonical here.
 
 namespace Semantics.Causation.Implicative
 
-open Core.Verbs (Implicative)
+open Features (Implicative)
+open Features
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 
 -- ════════════════════════════════════════════════════
@@ -203,10 +208,16 @@ theorem specific_vs_bleached :
 end Semantics.Causation.Implicative
 
 -- ════════════════════════════════════════════════════
--- § Implicative.toSemantics dispatch (V2 polymorphic)
+-- § `Features.Implicative.toSemantics` dispatch (V2 polymorphic)
 -- ════════════════════════════════════════════════════
 
-namespace Core.Verbs.Implicative
+/-! Lives here rather than in `Features/Causation.lean` because the
+dispatch needs `Core.Causal.SEM` + the `Implicative.manageSem`/`failSem`
+machinery defined above; `Features/Causation.lean` is kept import-free.
+Standard mathlib pattern: methods on a type may live in a sibling
+file via `namespace TypeName` block when import weight matters. -/
+
+namespace Features.Implicative
 
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 
@@ -219,4 +230,4 @@ noncomputable def toSemantics {V : Type*} {α : V → Type*}
   | .positive => Semantics.Causation.Implicative.manageSem M
   | .negative => Semantics.Causation.Implicative.failSem M
 
-end Core.Verbs.Implicative
+end Features.Implicative

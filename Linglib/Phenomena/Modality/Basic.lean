@@ -18,6 +18,6 @@ namespace Phenomena.Modality
 
 -- Re-export for convenience
 export FreeChoice (FreeChoiceDatum ModalFreeChoiceDatum)
-export Typology (tlingit javanese gitksan korean greek mandarin dutch hungarian)
+export Studies.ImelGuoST2026 (tlingit javanese gitksan korean greek mandarin dutch hungarian)
 
 end Phenomena.Modality

@@ -1,10 +1,9 @@
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Typology.Possession
-import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Swahili Possessive Constructions
-@cite{heine-1997} @cite{stassen-2009}
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
 
 Swahili (Bantu, Niger-Congo) derives its primary have-construction from the
 **Companion Schema** ("X is with Y" → "X has Y"). The possessive marker
@@ -15,6 +14,15 @@ leaving subject prefix + `na` as an unanalyzable possessive marker.
 Swahili also has locative noun classes 16 (`pa-`), 17 (`ku-`), and 18 (`mu-`)
 that are relevant to possession via the Location Schema, and an Equation
 Schema belong-construction using the associative `-a`.
+
+PossessionProfile bundle for Swahili (ISO `swh`), per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+Swahili lives in `Phenomena/Possession/Studies/Heine1997.lean`. The
+`PossessionProfile.adnominalStrategy = .headMarking` here flattens the
+@cite{nichols-1986} categorisation; Swahili's Bantu noun-class concord is
+strictly head-marking only in the agreement sense, with the associative
+particle `a` carrying class agreement to the possessum.
 
 ## Possessive paradigm
 
@@ -31,9 +39,11 @@ Schema belong-construction using the associative `-a`.
 - `Saa ni y-angu.` 'The watch is mine.' (Equation: watch is of-me)
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Swahili.Possession
 
-open Typology.Possession
+open _root_.Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
@@ -107,32 +117,27 @@ theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
 
 -- ============================================================================
--- §6. Heine 1997 Prediction Verification
+-- §6. Swahili Possession Profile (PossessionProfile bundle)
 -- ============================================================================
 
-open Heine1997
+/-- Swahili possession profile.
 
-/-- Swahili's Companion Schema matches Heine's predictions:
-    have-construction (not belong), possessor as subject, Pred2. -/
-theorem companion_matches_heine :
-    let p := predictionsFor sourceSchema
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Swahili is at Stage III: the `-na` marker is no longer decomposable
-    into copula + comitative, so the source meaning (accompaniment) is
-    no longer available. All seven notions expressible confirms full
-    grammaticalization. -/
-theorem full_grammaticalization :
-    expressibleNotions.length = 7 ∧
-    OverlapStage.targetOnly.degree = 2 := by
-  exact ⟨rfl, rfl⟩
-
-/-- WALS F117A classifies Swahili as `conjunctional` (Stassen's term
-    for comitative-based possession), which maps to Heine's Companion
-    Schema via `walsToSchema`. -/
-theorem wals_consistent :
-    walsToSchema .conjunctional = sourceSchema := rfl
+    Adnominal strategy is encoded as `.headMarking` to match Bantu
+    noun-class concord (the associative particle `a` agrees with the
+    possessum in class). The strict @cite{nichols-1986} typology would
+    classify it differently in some descriptions; we follow the WALS
+    convention here. -/
+def possession : PossessionProfile :=
+  { language := "Swahili"
+  , family := "Niger-Congo"
+  , iso := "swh"
+  , obligatoryPossession := .noObligatory
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .comitative
+  , adnominalStrategy := .headMarking
+  , affixPosition := some .suffixes
+  , examples := ["nina kitabu", "kitabu ch-angu"]
+  , notes := "Comitative na- for predicative possession; " ++
+             "noun-class agreement on possessive for adnominal" }
 
 end Fragments.Swahili.Possession

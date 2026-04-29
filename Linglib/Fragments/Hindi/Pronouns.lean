@@ -9,11 +9,11 @@ freely embeddable.
 
 -/
 
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.Hindi.Pronouns
 
-open Core.Pronouns
+open Typology
 
 -- ============================================================================
 -- First Person

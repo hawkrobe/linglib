@@ -44,7 +44,7 @@ namespace Glass2025
 open Semantics.Attitudes.Doxastic
 open Core.Presupposition
 open Core.Postsupposition
-open Core.Verbs
+open Semantics.Verb
 open Fragments.English.Predicates.Verbal
 open Fragments.Mandarin.Predicates
 

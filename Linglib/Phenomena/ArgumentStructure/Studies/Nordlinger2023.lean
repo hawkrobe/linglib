@@ -1,5 +1,6 @@
-import Linglib.Phenomena.ArgumentStructure.Typology
+import Linglib.Typology.ArgumentStructure
 import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
+import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
 import Linglib.Datasets.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Swahili.Reciprocals
@@ -17,9 +18,9 @@ empirical predictions about strategy/valency correlations and Siloni's
 discontinuity asymmetry.
 
 The underlying primitives (`RecipStrategy`, `RecipValency`, `RecipFormation`,
-`ReciprocalType`) live in `Phenomena.ArgumentStructure.Typology` because
+`ReciprocalType`) live in `Linglib/Typology/ArgumentStructure.lean` because
 they are anchored on the earlier sources Nordlinger reviews — keeping them
-in the typology layer preserves chronological dependency for older study
+in the substrate layer preserves chronological dependency for older study
 files (notably `Studies/Siloni2012.lean`, which would otherwise need to
 import a 2023 paper).
 
@@ -37,7 +38,7 @@ import a 2023 paper).
 
 namespace Phenomena.ArgumentStructure.Studies.Nordlinger2023
 
-open Phenomena.ArgumentStructure.Typology
+open Typology.ArgumentStructure
 
 -- ============================================================================
 -- Reciprocal Profiles (@cite{nordlinger-2023})
@@ -297,8 +298,12 @@ theorem rp_wambaya_wals :
 -- ValenceProfile-RecipProfile Cross-Validation
 -- ============================================================================
 
-/-- For languages with both a `ValenceProfile` (Typology) and a `RecipProfile`
-    (this file), the reflexive-reciprocal classification must agree. -/
+section ProfileAgreement
+open Phenomena.ArgumentStructure.Studies.Polinsky2013
+
+/-- For languages with both a `ValenceProfile` (Polinsky2013) and a
+    `RecipProfile` (this file), the reflexive-reciprocal classification
+    must agree. -/
 theorem english_profiles_agree :
     english.reciprocal = rp_english.reflexiveRelation := rfl
 theorem russian_profiles_agree :
@@ -311,6 +316,8 @@ theorem german_profiles_agree :
     german.reciprocal = rp_german.reflexiveRelation := rfl
 theorem modernGreek_profiles_agree :
     modernGreek.reciprocal = rp_greek.reflexiveRelation := rfl
+
+end ProfileAgreement
 
 -- ============================================================================
 -- Semantic Reciprocity Types (@cite{nordlinger-2023}, §4)
@@ -475,13 +482,14 @@ theorem reflexive_polysemy_tracks_wals :
 
 open Fragments.English.Pronouns in
 
-/-- The English profiles (both `Typology.english : ValenceProfile` and
+/-- The English profiles (both `Polinsky2013.english : ValenceProfile` and
     `rp_english : RecipProfile`) are grounded in the Fragment: English has
     reciprocal pronouns that are categorically different from reflexive
     pronouns, and the profile records "each other" as a bipartite NP
     strategy. -/
 theorem english_profile_grounded :
-    english.reciprocal = .distinctFromReflexive ∧
+    Phenomena.ArgumentStructure.Studies.Polinsky2013.english.reciprocal
+        = ReciprocalType.distinctFromReflexive ∧
     rp_english.primaryStrategy = .bipartiteNP ∧
     rp_english.valency = .bivalent ∧
     eachOther.pronounType = .reciprocal ∧

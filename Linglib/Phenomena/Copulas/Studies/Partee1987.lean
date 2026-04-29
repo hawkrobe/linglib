@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Composition.TypeShifting
-import Linglib.Phenomena.Copulas.Typology
+import Linglib.Typology.Copulas
+import Linglib.Phenomena.Copulas.Studies.Stassen2013
 
 /-!
 # Partee (1987): Type-Shifting and the Copula
@@ -32,7 +33,8 @@ namespace Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
 open Core.IntensionalLogic (Frame Ty)
-open Phenomena.Copulas.Typology
+open Typology.Copulas
+open Phenomena.Copulas.Studies.Stassen2013
 
 variable {m : Frame}
 

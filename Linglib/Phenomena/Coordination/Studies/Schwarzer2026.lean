@@ -2,7 +2,7 @@ import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
-import Linglib.Phenomena.WordOrder.Typology
+import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
@@ -52,9 +52,9 @@ namespace Schwarzer2026
 
 open Features
 open Features.Coordination
-open Core.Verbs (ComplementType VerbCore)
+open Semantics.Verb (ComplementType VerbCore)
 open Fragments.German.Predicates
-open Phenomena.WordOrder.Typology
+open Typology.WordOrder
 open BrueningAlKhalaf2020
 
 -- ============================================================================

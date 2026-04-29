@@ -1,5 +1,6 @@
 import Linglib.Features.Gender
-import Linglib.Phenomena.Gender.Typology
+import Linglib.Typology.Gender
+import Linglib.Phenomena.Gender.Studies.Corbett1991
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
@@ -65,7 +66,7 @@ The mapping is partial in two ways:
    nonhuman, which is orthogonal to animate vs inanimate).
 -/
 
-namespace Phenomena.Gender.Typology
+namespace Typology.Gender
 
 open Morphology.DM
 
@@ -100,11 +101,11 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
   | .shape       => none
   | .rationality => none
 
-end Phenomena.Gender.Typology
+end Typology.Gender
 
 namespace Morphology.DM
 
-open Phenomena.Gender.Typology
+open Typology.Gender
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
     (@cite{kramer-2020} §3) -/
@@ -121,8 +122,9 @@ end Morphology.DM
 
 namespace Phenomena.Gender.Studies.Kramer2020
 
-open Phenomena.Gender.Typology
+open Typology.Gender
 open Morphology.DM
+open Phenomena.Gender.Studies.Corbett1991 (allProfiles russian spanish)
 
 -- ============================================================================
 -- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)
@@ -844,7 +846,7 @@ theorem spanish_ninventory_matches_profile :
 
 /-- Spanish surface genders are consistent with the WALS gender count bin. -/
 theorem spanish_surface_genders_consistent :
-    Phenomena.Gender.Typology.GenderCount.two.contains spanishNs.surfaceGenders = true := rfl
+    Typology.Gender.GenderCount.two.contains spanishNs.surfaceGenders = true := rfl
 
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
     genders — a many-to-one mapping mediated by VI (@cite{kramer-2015} Ch 6).
@@ -968,7 +970,7 @@ theorem russian_ninventory_matches_profile :
 
 /-- Russian n-inventory matches the WALS gender count bin. -/
 theorem russian_surface_genders_consistent :
-    Phenomena.Gender.Typology.GenderCount.three.contains
+    Typology.Gender.GenderCount.three.contains
       russianNs.surfaceGenders = true := rfl
 
 /-- Russian has u-features → `semanticAndFormal` assignment, consistent

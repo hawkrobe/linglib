@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Features.ClauseForm
 import Linglib.Theories.Syntax.Common.Inversion
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 /-!
 # Minimalist Analysis of Subject-Auxiliary Inversion

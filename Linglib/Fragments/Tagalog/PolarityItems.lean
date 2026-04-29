@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Tagalog Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Tagalog indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **sinuman**: Weak NPI (wh-based, questions/conditionals/indirect neg)
 - **walang (tao)**: Negative existential (direct negation)
@@ -15,7 +15,7 @@ Tagalog indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Tagalog.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPIs

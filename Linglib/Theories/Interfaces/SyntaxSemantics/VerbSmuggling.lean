@@ -26,7 +26,7 @@ deeper Voice-as-not-introducing-external-argument characterization rather
 than the surface `unaccusative : Bool` annotation.
 -/
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 open Minimalist
 
@@ -85,4 +85,4 @@ theorem VerbCore.derivedQI_blocked_when_unergative (v : VerbCore)
   rw [VerbCore.voiceFor_of_unergative v hu]
   exact agentive_blocks_qi _
 
-end Core.Verbs
+end Semantics.Verb

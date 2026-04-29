@@ -6,8 +6,9 @@ by likelihood of showing agreement: attributive adjectives are most likely,
 verbs least likely. If a language shows gender/number agreement on a lower
 target, it shows agreement on all higher targets.
 
-This type is shared by gender typology (`Phenomena/Gender/Typology.lean`)
-and number agreement (`Phenomena/Agreement/Studies/Corbett2000.lean`).
+This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
+`Phenomena/Gender/Studies/Corbett1991.lean`) and number agreement
+(`Phenomena/Agreement/Studies/Corbett2000.lean`).
 -/
 
 namespace Core

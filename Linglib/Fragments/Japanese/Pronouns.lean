@@ -10,12 +10,12 @@ traditional Japanese relies heavily on null reference.
 
 -/
 
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 import Linglib.Typology.Pronouns
 
 namespace Fragments.Japanese.Pronouns
 
-open Core.Pronouns
+open Typology
 open Features.Register (Level)
 
 -- ============================================================================

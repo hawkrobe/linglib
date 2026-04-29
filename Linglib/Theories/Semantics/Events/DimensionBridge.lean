@@ -31,8 +31,8 @@ the theory-neutral infrastructure in `Core/MereoDim.lean`, `Core/Time.lean`,
 
 -/
 
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Semantics.Verb
 open Semantics.Events.SpatialTrace
 open Semantics.Events
 open Semantics.Events.Mereology

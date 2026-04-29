@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
@@ -34,7 +34,7 @@ not-exceed-threshold).
 
 namespace Fragments.Mandarin.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- 不 *bù* — the general non-perfective negation particle.
     Used with imperfective, stative, modal, and future contexts;
@@ -57,7 +57,7 @@ def mei : NegMarkerEntry :=
 /-- The Mandarin negation system: two aspect-conditioned markers.
     *bù* (default, non-perfective) listed first per the ordering
     convention in `NegationSystem`; *méi* second. The Fragment-side
-    joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "cmn" [bu, mei]
 
@@ -234,5 +234,24 @@ theorem regret_uses_deontic_neg :
     (enTriggerNegators.filter (fun e =>
       e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all
       (·.enNegatorForm == "bùgāi") = true := by native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Mandarin Chinese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Mandarin Chinese"
+  , iso := "cmn"
+  , morphemeType := .particle
+  , symmetry := .both
+  , asymmetrySubtype := .finiteness
+  , negIndefinite := some .cooccur
+  , negMarkers := ["bu", "mei"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Mandarin.Negation

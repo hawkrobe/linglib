@@ -8,7 +8,7 @@ References: @cite{hudson-2010}, @cite{gibson-2025} Syntax, MIT Press.
 -/
 
 import Mathlib.Data.List.Basic
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 
 namespace DepGrammar
 

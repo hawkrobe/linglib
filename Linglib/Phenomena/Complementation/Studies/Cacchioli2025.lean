@@ -1,6 +1,6 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Phenomena.Complementation.Typology
+import Linglib.Typology.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -122,7 +122,7 @@ def agreementData : List AgreementDatum := [
 -- ============================================================================
 
 open Minimalist
-open Phenomena.Complementation.Typology
+open Typology.Complementation
 
 /-- Map CTP reality status to [±finite] selection.
 
@@ -198,6 +198,23 @@ theorem irrealis_always_nonfinite (c : CTPClass)
     (b : Bool) (h : ctpToFiniteness c = some b)
     (hr : ctpRealityStatus c = .irrealis) : b = false := by
   cases c <;> simp_all [ctpToFiniteness, ctpRealityStatus]
+
+/-- **Cross-paper divergence theorem**: phasal CTPs witness the failure of
+    the realis ↔ finite correspondence. @cite{noonan-2007} §3.1.1 puts
+    phasal complements in DTR, but the substrate's `ctpRealityStatus`
+    classifies them as realis (event is asserted as actual). Cacchioli's
+    feature-based analysis classifies the same complements as
+    [-finite] (reduced). The contradiction makes visible a real Noonan-
+    internal tension between the realis-as-asserted-fact criterion and
+    the DTR → irrealis groupings of Table 2.3.
+
+    The witness: phasal is realis AND takes non-finite (irrealis-aligned)
+    complements. Any unification forcing realis ↔ +finite would have to
+    reclassify either Noonan's reality status of phasal or Cacchioli's
+    finiteness assignment. -/
+theorem phasal_violates_realis_finite_correspondence :
+    ctpRealityStatus .phasal = .realis ∧
+    ctpToFiniteness .phasal = some false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § Bridge Theorems: EP position, Fragment consistency, Selection

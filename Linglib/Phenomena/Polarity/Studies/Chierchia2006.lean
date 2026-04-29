@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Polarity.Typology
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Phenomena.Polarity.Studies.Haspelmath1997
+import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
@@ -55,7 +55,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 
 namespace Chierchia2006
 
-open Phenomena.Polarity.Typology
+open Phenomena.Polarity.Studies.Haspelmath1997
 open Typology.Indefinite
 open AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 
@@ -425,13 +425,13 @@ theorem pureNPI_no_rescue :
 /-!
 ## Bridging PSI profiles to Fragment entries
 
-`Core.Lexical.PolarityItem.PolarityType` is a 5-way distributional
+`Typology.PolarityItem.PolarityType` is a 5-way distributional
 classification. `PSIProfile` is a 4-parameter theoretical decomposition.
 Each PSI class predicts exactly one `PolarityType`, and each Fragment
 entry's `polarityType` should match its PSI profile's predicted type.
 -/
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 open Fragments.English.PolarityItems (any ever)
 open Fragments.Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)

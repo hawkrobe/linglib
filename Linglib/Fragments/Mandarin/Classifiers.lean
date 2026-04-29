@@ -1,26 +1,33 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 
 /-!
 # Mandarin Chinese Classifier Lexicon
-@cite{aikhenvald-2000}
+@cite{li-thompson-1981} §4.2.1; @cite{aikhenvald-2000} (typological schema)
 
 Typed classifier entries for Mandarin Chinese, replacing unstructured
 string representations with semantically annotated `ClassifierEntry` values.
 
 Mandarin has a large numeral classifier system (~100+ classifiers in common
 use). This fragment covers the classifiers attested in the noun lexicon.
+@cite{li-thompson-1981} p. 105 points to Chao (1968) §7.9 as the canonical
+inventory survey.
 
 ## Classifier selection
 
-Classifier selection in Mandarin is semantically motivated (@cite{aikhenvald-2000}
-§11.2.3). Sortal classifiers encode inherent properties (animacy, shape,
-function); the general classifier 个 serves as a default/residue.
+Classifier selection in Mandarin is semantically motivated but with
+substantial lexical residue: per @cite{li-thompson-1981} p. 112, "which
+nouns occur with which classifier must be memorized, though there is a
+slight amount of regularity with respect to the meanings of groups of
+nouns taking the same classifier." Sortal classifiers encode inherent
+properties (animacy, shape, function); the general classifier 个 serves
+as default/residue and is "gradually ... replacing the more specialized
+ones" (ibid.).
 
 -/
 
 namespace Fragments.Mandarin.Classifiers
 
-open Core.NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
+open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Sortal classifiers (inherent properties)

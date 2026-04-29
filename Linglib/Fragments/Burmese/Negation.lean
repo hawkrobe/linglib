@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Burmese Negation Fragment
@@ -28,7 +28,7 @@ future (*-laimeh*), but the negative collapses all three to *ma-...-bu*.
 
 namespace Fragments.Burmese.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- The Burmese negative prefix. Component of the bipartite *ma-...-bu*
     circumfix; see `circumfix` for the substrate-typed entry. -/
@@ -49,7 +49,7 @@ def circumfix : NegMarkerEntry :=
   , position := .discontinuous }
 
 /-- The Burmese negation system: a single bipartite circumfix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "mya" [circumfix]
 
@@ -116,5 +116,24 @@ theorem all_neg_circumfix :
     saParadigm.all (fun e =>
       hasSubstr e.negative "ma-" && hasSubstr e.negative "-bu") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Burmese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Burmese"
+  , iso := "mya"
+  , morphemeType := .doubleNeg
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .otherCategories
+  , negIndefinite := Option.none
+  , negMarkers := ["ma-", "-bu"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.Burmese.Negation

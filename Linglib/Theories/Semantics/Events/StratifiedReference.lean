@@ -44,8 +44,7 @@ open Semantics.Events
 open Semantics.Events.Mereology
 open _root_.Mereology
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Stratified Reference (@cite{champollion-2017} eq. 16/17)

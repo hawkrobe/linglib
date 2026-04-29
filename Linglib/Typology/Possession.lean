@@ -1,26 +1,73 @@
+import Linglib.Datasets.WALS.Aggregation
+import Linglib.Datasets.WALS.Features.F57A
+import Linglib.Datasets.WALS.Features.F58A
+import Linglib.Datasets.WALS.Features.F58B
+import Linglib.Datasets.WALS.Features.F59A
+
 /-!
-# Possession typology — type definitions
-@cite{stassen-2009} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{wals-2013}
+# Possession typology — substrate
+@cite{stassen-2009} @cite{nichols-1986} @cite{nichols-bickel-2013}
+@cite{heine-1997} @cite{wals-2013}
 
-Type-level enums for cross-linguistic possession typology, extracted from
-`Phenomena/Possession/Typology.lean` so that Fragments can import them
-without violating the Fragments → Phenomena dependency rule. WALS data,
-per-language profiles, and cross-linguistic theorems remain in
-`Phenomena/Possession/Typology.lean`.
+Per-language possession-typology substrate for Fragment import. Mirrors the
+`Linglib/Typology/{Domain}.lean` pattern (Case, Phonology, WordOrder).
 
-## Schema
+## Substrate enums
 
-- `ObligatoryPossession` (WALS Ch 58A): obligatory inflection, none, unclear
-- `PossessiveClassification` (WALS Ch 59A): noClassification / twoWay / threeOrMore
-- `PredicativePossession` (@cite{stassen-2009}): haveVerb / locational / genitiveDative / topic / comitative
-- `AdnominalPossession` (@cite{nichols-1986}): headMarking / dependentMarking / doubleMarking / juxtaposition
-- `PossessiveAffixPosition` (WALS Ch 57A): prefixes / suffixes / both / none
-- `NumberOfPossessiveNouns` (WALS Ch 58B): noneReported / one / twoToFour / fiveOrMore
+- `ObligatoryPossession` (WALS Ch 58A)
+- `PossessiveClassification` (WALS Ch 59A)
+- `PredicativePossession` (@cite{stassen-2009}): 5-way strategy typology
+- `AdnominalPossession` (@cite{nichols-1986}): head/dep/double/juxtaposition
+- `PossessiveAffixPosition` (WALS Ch 57A)
+- `NumberOfPossessiveNouns` (WALS Ch 58B)
+- `PossessiveNotion` (@cite{heine-1997} §2.3): 7-way semantic targets
+- `InalienabilityRank`: hierarchy of inalienability candidates
+- `PossessionSource` (@cite{heine-1997} Table 2.1): 8 grammaticalization schemas
+- `PossessionProfile`: bundle struct + 6 helper predicates
+
+## Theory-laden caveats
+
+Several substrate enums encode **specific frameworks**, not theory-neutral
+consensus, despite the file's substrate role:
+
+- **`PredicativePossession` is Stassen 2009's 5-way typology**, not field
+  consensus. Heine 1997 splits Genitive/Dative differently (Goal vs
+  Genitive as separable schemas); Creissels (2013, 2019) challenges the
+  Companion vs Locational boundary. WALS Ch 117A (Stassen 2013) endorses
+  these 5 categories — defensible substrate, but not framework-neutral.
+
+- **`PossessiveClassification` (3-way) hides substantial language-internal
+  variation.** Chappell & McGregor 1996, Stolz et al. 2008, Aikhenvald &
+  Dixon 2013 argue alienability is a continuum interacting with possessor
+  animacy and possessum semantics. Mayan 3-class systems and Hawaiian
+  a/o-class systems both code as `threeOrMore` with analytical loss.
+  Future work: a `PossessiveSplit` substrate indexed by
+  `(PossessorClass × PossessumClass)` for fine-grained Oceanic / Mayan /
+  Daakaka systems.
+
+- **`PossessionSource` (Heine 1997 8-way)** and **`PredicativePossession`**
+  (Stassen) coexist as **parallel typologies over the same data**;
+  `predicativeSource` is the bridge. This is the right pattern for parallel
+  substrates (cf. Causation's Song-vs-Pylkkänen architecture).
+
+## WALS aggregates
+
+WALS chapter aggregate distributions (`ch58_distribution`,
+`ch59_no_classification_plurality_wals`, etc.) live in this file at the
+substrate layer per the project's "WALS goes to `Linglib/Typology/`" rule,
+since they are theory-neutral facts about WALS data, not paper-specific
+contributions. Cross-linguistic theorems consuming Fragment per-language
+data live in `Phenomena/Possession/Studies/NicholsBickel2013.lean`.
 -/
 
 set_option autoImplicit false
 
 namespace Typology.Possession
+
+private abbrev ch57  := Datasets.WALS.F57A.allData
+private abbrev ch58  := Datasets.WALS.F58A.allData
+private abbrev ch58b := Datasets.WALS.F58B.allData
+private abbrev ch59  := Datasets.WALS.F59A.allData
 
 /-- WALS Ch 58A: whether some nouns (typically kinship, body parts) require
     obligatory possessive marking. Unpossessed forms are either ungrammatical
@@ -245,5 +292,146 @@ def PossessionProfile.isHeadMarking (p : PossessionProfile) : Bool :=
 /-- Does a language use dependent-marking for adnominal possession? -/
 def PossessionProfile.isDependentMarking (p : PossessionProfile) : Bool :=
   p.adnominalStrategy == .dependentMarking
+
+-- ============================================================================
+-- §2. WALS converters (Ch 57A, 58A, 58B, 59A)
+-- ============================================================================
+
+/-- WALS Ch 57A → `PossessiveAffixPosition`. -/
+def fromWALS57A : Datasets.WALS.F57A.PositionOfPronominalPossessiveAffixes →
+    PossessiveAffixPosition
+  | .possessivePrefixes  => .prefixes
+  | .possessiveSuffixes  => .suffixes
+  | .prefixesAndSuffixes => .both
+  | .noPossessiveAffixes => .none
+
+/-- WALS Ch 58A → `ObligatoryPossession`. WALS only encodes `exists`/`absent`;
+    our substrate adds `.unclear` for languages with optional/disputed coding. -/
+def fromWALS58A : Datasets.WALS.F58A.ObligatoryPossessiveInflection →
+    ObligatoryPossession
+  | .exists => .exists_
+  | .absent => .noObligatory
+
+/-- WALS Ch 58B → `NumberOfPossessiveNouns`. -/
+def fromWALS58B : Datasets.WALS.F58B.NumberOfPossessiveNouns →
+    NumberOfPossessiveNouns
+  | .noneReported => .noneReported
+  | .one          => .one
+  | .twoToFour    => .twoToFour
+  | .fiveOrMore   => .fiveOrMore
+
+/-- WALS Ch 59A → `PossessiveClassification`. WALS distinguishes "3–5
+    classes" from "more than 5"; we collapse both into `.threeOrMore`. -/
+def fromWALS59A : Datasets.WALS.F59A.PossessiveClassification →
+    PossessiveClassification
+  | .noPossessiveClassification => .noClassification
+  | .twoClasses                 => .twoWay
+  | .threeToFiveClasses         => .threeOrMore
+  | .moreThanFiveClasses        => .threeOrMore
+
+-- ============================================================================
+-- §3. WALS aggregate-distribution helpers
+-- ============================================================================
+
+/-! `WALSCount` + `WALSCount.totalOf` are imported from
+    `Linglib/Datasets/WALS/Aggregation.lean` (shared with the other
+    Typology files that consume WALS distributions). -/
+
+open Datasets.WALS (WALSCount)
+
+/-- Ch 58 distribution: obligatory possessive inflection (N = 244). -/
+def ch58Counts : List WALSCount :=
+  [ ⟨"Obligatory possessive inflection exists",
+      (ch58.filter (·.value == .exists)).length⟩
+  , ⟨"No obligatory possessive inflection",
+      (ch58.filter (·.value == .absent)).length⟩ ]
+
+/-- Ch 59 distribution: possessive classification (N = 243). WALS distinguishes
+    "3–5" from "more than 5"; we collapse both into "Three or more classes". -/
+def ch59Counts : List WALSCount :=
+  [ ⟨"No possessive classification",
+      (ch59.filter (·.value == .noPossessiveClassification)).length⟩
+  , ⟨"Two-way distinction (alienable/inalienable)",
+      (ch59.filter (·.value == .twoClasses)).length⟩
+  , ⟨"Three or more classes",
+      (ch59.filter (·.value == .threeToFiveClasses)).length +
+      (ch59.filter (·.value == .moreThanFiveClasses)).length⟩ ]
+
+/-- Ch 58B distribution: number of possessive nouns (N = 243). -/
+def ch58bCounts : List WALSCount :=
+  [ ⟨"None reported",
+      (ch58b.filter (·.value == .noneReported)).length⟩
+  , ⟨"One",
+      (ch58b.filter (·.value == .one)).length⟩
+  , ⟨"Two to four",
+      (ch58b.filter (·.value == .twoToFour)).length⟩
+  , ⟨"Five or more",
+      (ch58b.filter (·.value == .fiveOrMore)).length⟩ ]
+
+-- ============================================================================
+-- §4. WALS aggregate sample-size + distribution theorems
+-- ============================================================================
+
+
+
+/-- Ch 58 has one more language than Ch 59 (244 vs 243; Panare is in 58 but
+    not 59). -/
+theorem ch58_ch59_sample_diff :
+    WALSCount.totalOf ch58Counts = WALSCount.totalOf ch59Counts + 1 := by
+  native_decide
+
+/-- Ch 57 value distribution from WALS data. -/
+theorem ch57_distribution :
+    (ch57.filter (·.value == .possessivePrefixes)).length = 255 ∧
+    (ch57.filter (·.value == .possessiveSuffixes)).length = 355 ∧
+    (ch57.filter (·.value == .prefixesAndSuffixes)).length = 32 ∧
+    (ch57.filter (·.value == .noPossessiveAffixes)).length = 260 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58 value distribution from WALS data. -/
+theorem ch58_distribution :
+    (ch58.filter (·.value == .exists)).length = 43 ∧
+    (ch58.filter (·.value == .absent)).length = 201 := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Ch 59 value distribution from WALS data. -/
+theorem ch59_distribution :
+    (ch59.filter (·.value == .noPossessiveClassification)).length = 125 ∧
+    (ch59.filter (·.value == .twoClasses)).length = 94 ∧
+    (ch59.filter (·.value == .threeToFiveClasses)).length = 20 ∧
+    (ch59.filter (·.value == .moreThanFiveClasses)).length = 4 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58B value distribution from WALS data. -/
+theorem ch58b_distribution :
+    (ch58b.filter (·.value == .noneReported)).length = 233 ∧
+    (ch58b.filter (·.value == .one)).length = 3 ∧
+    (ch58b.filter (·.value == .twoToFour)).length = 4 ∧
+    (ch58b.filter (·.value == .fiveOrMore)).length = 3 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58B: vast majority of languages have no possessive nouns (233/243). -/
+theorem ch58b_none_reported_dominant :
+    (ch58b.filter (·.value == .noneReported)).length >
+    (ch58b.filter (·.value == .one)).length +
+    (ch58b.filter (·.value == .twoToFour)).length +
+    (ch58b.filter (·.value == .fiveOrMore)).length := by native_decide
+
+/-- Ch 57: possessive suffixes are the most common affix position. -/
+theorem ch57_suffixes_most_common :
+    (ch57.filter (·.value == .possessiveSuffixes)).length >
+    (ch57.filter (·.value == .possessivePrefixes)).length := by native_decide
+
+/-- Ch 58: languages without obligatory possession vastly outnumber those with
+    it in WALS data (201 vs 43, > 4×). -/
+theorem ch58_no_obligatory_majority_wals :
+    (ch58.filter (·.value == .absent)).length >
+    (ch58.filter (·.value == .exists)).length * 4 := by native_decide
+
+/-- Ch 59: no-possessive-classification is the most common pattern (125/243),
+    followed by two-way (94/243). -/
+theorem ch59_no_classification_plurality_wals :
+    (ch59.filter (·.value == .noPossessiveClassification)).length >
+    (ch59.filter (·.value == .twoClasses)).length := by native_decide
 
 end Typology.Possession

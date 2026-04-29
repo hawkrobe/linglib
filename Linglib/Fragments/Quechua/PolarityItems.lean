@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Quechua (Imbabura) Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Quechua indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **pi-pash**: Weak NPI (wh + pash in conditional/neg scope)
 - **mana pi-pash**: Negative indefinite (negation + wh + pash)
@@ -15,7 +15,7 @@ Quechua indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Quechua.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPIs

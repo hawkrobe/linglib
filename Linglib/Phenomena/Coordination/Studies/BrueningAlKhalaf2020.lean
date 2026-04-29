@@ -1,4 +1,4 @@
-import Linglib.Phenomena.WordOrder.Typology
+import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
 import Linglib.Core.Tree
 import Linglib.Theories.Syntax.Minimalist.Basic
@@ -49,7 +49,7 @@ namespace BrueningAlKhalaf2020
 open Features.Coordination
 open Core.Tree (Cat)
 open Core.Tree.Cat (NP VP AdjP AdvP PP)
-open Phenomena.WordOrder.Typology
+open Typology.WordOrder
 
 -- ============================================================================
 -- § 1: Shared Types for Selection-Violating Coordination

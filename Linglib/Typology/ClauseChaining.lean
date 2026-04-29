@@ -1,5 +1,5 @@
-import Linglib.Core.Lexical.UD
-import Linglib.Core.Lexical.Word
+import Linglib.Core.UD
+import Linglib.Core.Word
 
 /-! # Clause Chaining Typology @cite{sarvasy-aikhenvald-2025} @cite{foley-r-d-van-valin-1984} @cite{longacre-2007}
 

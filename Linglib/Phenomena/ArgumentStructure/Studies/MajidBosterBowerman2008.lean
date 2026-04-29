@@ -1,4 +1,8 @@
-import Linglib.Core.Lexical.VerbClass
+import Linglib.Features.Aktionsart
+import Linglib.Features.Attitudes
+import Linglib.Features.Causation
+import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -58,7 +62,9 @@ varies across languages.
 
 namespace MajidBosterBowerman2008
 
-open Core.Verbs
+open Semantics.Verb
+open Semantics.Verb.Roots
+open Features
 open InstrumentType ObjectDimensionality Robustness ResultType
      ForceLevel ForceDirection
 

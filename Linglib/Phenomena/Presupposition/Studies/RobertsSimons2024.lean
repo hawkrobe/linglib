@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
@@ -42,9 +42,8 @@ This study file imports and bridges:
 namespace RobertsSimons2024
 
 open Semantics.Presupposition.OntologicalPreconditions
-open Semantics.Verb.ChangeOfState
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features.ChangeOfState
+open Features
 open Phenomena.Presupposition.Diagnostics
 open Phenomena.Presupposition.ProjectiveContent
 

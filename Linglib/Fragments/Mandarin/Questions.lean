@@ -1,5 +1,5 @@
 import Linglib.Typology.Question
-import Linglib.Core.Lexical.ExpressiveModifier
+import Linglib.Typology.ExpressiveModifier
 
 /-!
 # Mandarin Wh-Question Formation
@@ -34,7 +34,7 @@ the lexical entries with their typological parameters.
 namespace Fragments.Mandarin.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
-open Core.Lexical.ExpressiveModifier
+open Typology.ExpressiveModifier
   (ExpressiveWhModifier ANDLMovementType ANDLHostPosition)
 
 -- ============================================================================
@@ -77,5 +77,19 @@ theorem mandarin_wh_no_specCP :
 /-- Mandarin wh-in-situ is island-insensitive (binding, not movement). -/
 theorem mandarin_wh_island_free :
     ¬ whMechanism.IslandSensitive := id
+
+-- ============================================================================
+-- WALS QuestionProfile bundle
+-- ============================================================================
+
+/-- Mandarin question profile (WALS-grounded).
+    Wh-in-situ, sentence-final question particle 吗 *ma*, polar via particle.
+    @cite{chan-shen-2026} -/
+def question : Typology.Question.QuestionProfile :=
+  { language := "Mandarin"
+  , walsCode := "mnd"
+  , qParticlePos := some .final
+  , whMovement := some .inSitu
+  , polarStrategy := some .particle }
 
 end Fragments.Mandarin.Questions

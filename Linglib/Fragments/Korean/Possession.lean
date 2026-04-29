@@ -1,0 +1,34 @@
+import Linglib.Typology.Possession
+
+/-!
+# Korean possession profile
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997} 
+
+PossessionProfile bundle for Korean (ISO `kor`), per the
+project's "per-language data flows through Fragments" rule. Substrate
+types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
+…) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
+consuming this profile live in
+`Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.Korean.Possession
+
+open _root_.Typology.Possession
+
+/-- Korean possession profile. -/
+def possession : PossessionProfile :=
+  { language := "Korean"
+  , family := "Koreanic"
+  , iso := "kor"
+  , obligatoryPossession := .noObligatory
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .locational
+  , adnominalStrategy := .dependentMarking
+  , affixPosition := Option.none
+  , examples := ["na-ege chaek-i iss-da", "Yeonghui-ui chaek"]
+  , notes := "Dative possessor + existential iss-da; genitive -ui for adnominal possession" }
+
+end Fragments.Korean.Possession

@@ -1,5 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Comparative
+import Linglib.Typology.Comparison
 /-!
 # Korean Comparative Construction @cite{stassen-1985}
 
@@ -33,5 +34,21 @@ theorem standard_is_ablative : entry.standardCase = .abl := rfl
 theorem case_is_fixed : entry.caseAssignment = .fixed := rfl
 theorem encoding_is_adverbial : entry.fixedEncoding = some .adverbial := rfl
 theorem no_degree_morphology : entry.hasDegreeMorphology = false := rfl
+
+-- ============================================================================
+-- ComparativeProfile bundle (consumed by Studies/Stassen2013.lean)
+-- ============================================================================
+
+/-- Korean comparative profile (WALS Ch 121 + degree-word + superlative). -/
+def comparison : Typology.Comparison.ComparativeProfile :=
+  { language := "Korean"
+  , iso := "kor"
+  , comparativeType := .locational
+  , degreeWord := .noDegreeMarking
+  , superlative := .comparativeUniversal
+  , comparativeForm := "Y-boda X-ga Adj"
+  , standardMarker := "-boda"
+  , degreeMarker := ""
+  , basicOrder := "SOV" }
 
 end Fragments.Korean.Comparison

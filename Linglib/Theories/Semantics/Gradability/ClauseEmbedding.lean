@@ -11,14 +11,15 @@ denote scalar properties of individuals. Clause-embedding adjectives
 denote attitudes or evaluations toward propositions.
 
 Whether predication requires a copula is a **language-level** property
-(tracked in `Phenomena/Copulas/Typology.lean`), not a property of the
+(tracked in `Phenomena/Copulas/Studies/Stassen2013.lean`), not a property of the
 adjective. English requires "be", Mandarin and Japanese do not. The
 copula and its syntax belong in the Theory/Syntax layer, not here.
 -/
 
 namespace Semantics.Gradability
 
-open Core.Verbs (ComplementType PresupTriggerType Attitude)
+open Semantics.Verb (ComplementType PresupTriggerType)
+open Features (Attitude)
 open Core.NaturalLogic (EntailmentSig)
 
 /-- A clause-embedding adjective: an adjective that takes a propositional

@@ -1,0 +1,34 @@
+import Linglib.Typology.Possession
+
+/-!
+# Japanese possession profile
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997} 
+
+PossessionProfile bundle for Japanese (ISO `jpn`), per the
+project's "per-language data flows through Fragments" rule. Substrate
+types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
+…) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
+consuming this profile live in
+`Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+-/
+
+set_option autoImplicit false
+
+namespace Fragments.Japanese.Possession
+
+open _root_.Typology.Possession
+
+/-- Japanese possession profile. -/
+def possession : PossessionProfile :=
+  { language := "Japanese"
+  , family := "Japonic"
+  , iso := "jpn"
+  , obligatoryPossession := .noObligatory
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .topic
+  , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
+  , examples := ["watashi-ni-wa hon-ga aru", "Tanaka-no hon"]
+  , notes := "Topic-comment: possessor-DAT-TOP possessum-NOM aru/iru; genitive no for adnominal" }
+
+end Fragments.Japanese.Possession

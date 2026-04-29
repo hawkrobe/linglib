@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # French Negation Fragment
@@ -28,7 +28,7 @@ informal speech, variable in formal registers.
 
 namespace Fragments.French.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- The French preverbal negative clitic. Phonologically a clitic on the
     finite verb (or auxiliary); syntactically the head of NegP per
@@ -60,7 +60,7 @@ def bipartite : NegMarkerEntry :=
 /-- The French negation system: a single bipartite construction.
     *Length-1* `markers` list — *ne* and *pas* are not alternative
     markers but two morphemes of one bipartite construction. The
-    Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fra" [bipartite]
 
@@ -210,5 +210,24 @@ theorem high_entrenchment_uses_ne_alone :
 /-- French EN marker = preverbal *ne* = same clitic as in standard
     *ne...pas*, but without the reinforcer. -/
 theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- French negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "French"
+  , iso := "fra"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .mixed
+  , negMarkers := ["ne", "pas"]
+  , negIsHead := some true
+  , enAttested := some true }
 
 end Fragments.French.Negation

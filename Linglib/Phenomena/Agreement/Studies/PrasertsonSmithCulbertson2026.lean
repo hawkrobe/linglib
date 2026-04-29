@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NounCategorization
+import Linglib.Typology.ClassifierSystem
 import Linglib.Features.Prominence
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 
@@ -51,7 +51,7 @@ and noun classification.
 
 namespace PrasertsonSmithCulbertson2026
 
-open Core.NounCategorization
+open Typology
 
 -- ============================================================================
 -- §1: The Animacy–Colour Asymmetry (derived from typological data)

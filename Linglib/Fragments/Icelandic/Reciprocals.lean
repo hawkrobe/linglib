@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 /-!
 # Icelandic Reciprocal Fragment
@@ -17,7 +17,7 @@ preserving transitivity. Formally distinct from the reflexive "sig".
 
 namespace Fragments.Icelandic.Reciprocals
 
-open Core.Pronouns
+open Typology
 
 /-- hvor...annad — bipartite reciprocal NP 'each other'.
 

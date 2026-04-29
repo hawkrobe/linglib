@@ -1,10 +1,11 @@
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
+import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Theories.Semantics.Entailment.Intolerance
 import Linglib.Theories.Semantics.Entailment.PresuppositionLicensing
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Fragments.English.PolarityItems
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # @cite{gajewski-2011} — Licensing strong NPIs
@@ -422,7 +423,8 @@ Gajewski's prediction: no strong NPI lists any `isStrawsonOnly`
 context. The substrate makes this `decide`-checkable.
 -/
 
-open Core.Lexical.PolarityItem (PolarityType LicensingContext contextProperties)
+open Typology.PolarityItem (PolarityType LicensingContext)
+open Semantics.Polarity.Licensing (contextProperties)
 open Fragments.English.PolarityItems
   (liftAFinger budgeAnInch inYears until_ either_npi)
 

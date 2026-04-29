@@ -1,9 +1,10 @@
 import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
+import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
 import Linglib.Theories.Semantics.Degree.ThanClause
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Bhatt & Pancheva 2004: Late Merger of Degree Clauses
@@ -75,7 +76,8 @@ open Minimalist.Semantics.DegreeMovement
    williams_scope_correlation williams_exempt_when_no_binding)
 open Semantics.Degree.Comparative (sComparative sComparative_eq_singleton_of_isGreatest)
 open Semantics.Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
-open Core.Lexical.PolarityItem (LicensingContext contextProperties)
+open Typology.PolarityItem (LicensingContext)
+open Semantics.Polarity.Licensing (contextProperties)
 
 variable {Entity : Type*}
 

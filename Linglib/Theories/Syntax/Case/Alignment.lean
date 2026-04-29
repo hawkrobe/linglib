@@ -10,7 +10,7 @@ configural algorithm. Each `Alignment.X.assignCase` is a function from
 `Features.Prominence.ArgumentRole` to `Core.Case` capturing the canonical
 case pattern of alignment type X. The configural derivations in
 `Dependent.lean` (Marantz/Baker) and the typology classifier in
-`Phenomena/Alignment/Typology.lean` (WALS-style observation) are checked
+`Linglib/Typology/Alignment.lean` (WALS-style observation) are checked
 against the functions here as ground truth.
 
 ## Coverage

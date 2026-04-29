@@ -45,10 +45,10 @@ namespace Cruse1973
 open Semantics.Events
 open Semantics.Events.ThematicRoles
 open Semantics.Causation.CoerciveImplication
-open Core.Verbs (Causative)
+open Features (Causative)
 open Core.Time
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
+open Semantics.Verb
 open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════

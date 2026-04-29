@@ -1,5 +1,5 @@
 import Linglib.Core.Case.Basic
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 

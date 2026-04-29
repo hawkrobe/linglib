@@ -40,7 +40,7 @@ linking-relevant property. Two classes of counterevidence:
 
 namespace Bohnemeyer2004
 
-open Semantics.Verb.EventStructure (EventType CausationType Template)
+open Features.EventStructure (EventType CausationType Template)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Fragments.Mayan (MarkerSet)
 open Fragments.Mayan.Yukatek
@@ -288,7 +288,7 @@ theorem inactive_split_by_causation :
 -- § 8. Bridge to Proto-Role Entailments
 -- ════════════════════════════════════════════════════
 
-open Semantics.Verb.EntailmentProfile (EntailmentProfile)
+open Features.EntailmentProfile (EntailmentProfile)
 
 /-- Internal causation corresponds to the Proto-Agent "causation"
     entailment in @cite{dowty-1991}'s framework: an internally-caused

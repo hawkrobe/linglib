@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.FunctionWords
 
 /-!
@@ -32,10 +32,9 @@ in `Determiners.lean`):
 
 namespace Fragments.English.TemporalExpressions
 
-open Semantics.Tense.Aspect.LexicalAspect
-open Core.Verbs
+open Features
 open Semantics.Tense.TemporalAdverbials (AdverbialType)
-open Core.Lexical.PolarityItem (PolarityType)
+open Typology.PolarityItem (PolarityType)
 
 -- ============================================================================
 -- § 1: Shared Types

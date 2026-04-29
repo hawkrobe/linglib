@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Verb.LevinTheory
 
-open Core.Verbs
+open Semantics.Verb
 
 /-!
 # Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
@@ -58,10 +58,11 @@ you nothing about whether it entails change, and vice versa.
   40, 225–276.
 -/
 
-open Semantics.Verb.EventStructure
-open Semantics.Verb.EntailmentProfile
-open Semantics.Verb.ChangeOfState
-open Semantics.Tense.Aspect.LexicalAspect
+open Features.EventStructure
+open Features.EntailmentProfile
+open Features.ChangeOfState
+open Semantics.Verb.Roots
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Type Subclasses (@cite{beavers-etal-2021} §3.1)
@@ -680,7 +681,7 @@ theorem carry_manner_accompaniment :
     let e := DitransitiveRootClass.entailments .carrying
     e.manner = true ∧ e.accompaniment = true ∧ e.possession = .none := ⟨rfl, rfl, rfl⟩
 
-namespace Core.Verbs
+namespace Semantics.Verb
 
 /-- Bridge to LevinClass: ditransitive Levin classes → root classes. -/
 def LevinClass.ditransitiveRootClass : LevinClass → Option DitransitiveRootClass
@@ -701,7 +702,7 @@ theorem send_class_sending :
 theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
 
-end Core.Verbs
+end Semantics.Verb
 
 -- ════════════════════════════════════════════════════
 -- § 7d. Ditransitive Root Denotations (B&@cite{beavers-koontz-garboden-2020} §3.5–3.6)
@@ -1521,6 +1522,8 @@ inductive TemplateHead where
   | pHave    -- P_have: possession preposition (ditransitive transfer)
   deriving DecidableEq, Repr
 
+namespace Semantics.Verb.Roots
+
 /-- Which template heads a root's entailments make redundant (Table 13).
 
     The mapping is monotone: more root entailments → more heads entailed.
@@ -1535,6 +1538,8 @@ def RootEntailments.entailedHeads (r : RootEntailments) : List TemplateHead :=
   (if r.result then [.vBecome] else []) ++
   (if r.cause then [.vCause] else []) ++
   (if r.manner && r.cause then [.vAct] else [])
+
+end Semantics.Verb.Roots
 
 /-- For ditransitive roots, additional prepositional heads beyond
     the verbal heads predicted by `entailedHeads`. -/

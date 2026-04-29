@@ -8,11 +8,11 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
 -/
 
-import Linglib.Core.Lexical.Pronouns
+import Linglib.Typology.Pronouns
 
 namespace Fragments.Punjabi.Pronouns
 
-open Core.Pronouns
+open Typology
 
 -- ============================================================================
 -- First Person

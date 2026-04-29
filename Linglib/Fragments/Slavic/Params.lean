@@ -8,7 +8,7 @@ Types and parameters shared across Slavic verbal-prefix fragments
 `Fragments/Mayan/Params.lean` pattern: shared cluster-level types
 factored out so per-language fragments don't triplicate them.
 
-Aspect is reused from `Linglib.Core.Lexical.UD` (UD-tag canonical
+Aspect is reused from `Linglib.Core.UD` (UD-tag canonical
 `Aspect.Imp` / `Aspect.Perf`) rather than redefined per Slavic
 fragment.
 
@@ -16,7 +16,7 @@ fragment.
 
 * `Aspect` — perfective vs imperfective (binary distinction sufficient
   for Slavic; the richer UD-tagset Aspect enum lives in
-  `Linglib.Core.Lexical.UD`).
+  `Linglib.Core.UD`).
 * `SuperlexicalSubtype` — six aspectual subtypes (paper §3).
 * `PrefixClass` — `lexical` or `superlexical _` ADT.
 * `PrefixClass.IsSuperlexical` predicate with `DecidablePred` instance.

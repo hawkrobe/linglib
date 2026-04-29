@@ -19,7 +19,7 @@ and 'make' — all four take subjunctive or nonfinite complements.
 
 namespace Fragments.Spanish.MoodChoice
 
-open Core.Verbs
+open Semantics.Verb
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
     @cite{grano-2024}, (1a): SBJV required, IND rejected. -/

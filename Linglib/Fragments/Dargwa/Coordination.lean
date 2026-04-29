@@ -20,7 +20,7 @@ the following strategies:
 - **=nu**: contrastive/causal particle.
 
 These patterns connect to the M&S (Mitrovic & Sauerland) typology
-formalized in `Phenomena.Coordination.Typology`.
+formalized in `Phenomena.Coordination.Studies.Haspelmath2007`.
 
 ## Connection to Typology
 

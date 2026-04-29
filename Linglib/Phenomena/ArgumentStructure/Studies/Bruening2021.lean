@@ -51,7 +51,7 @@ send/tell/throw that have NP, NP_NP, and NP_PP frames.
 namespace Bruening2021
 
 open Fragments.English.Predicates.Verbal
-open Core.Verbs
+open Semantics.Verb
 
 -- ════════════════════════════════════════════════════
 -- § Ditransitive verb data

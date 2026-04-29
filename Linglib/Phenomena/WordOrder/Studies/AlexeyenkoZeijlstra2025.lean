@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Datasets.WALS.Features.F87A
 import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Fragments.Greek.AdjAgreement

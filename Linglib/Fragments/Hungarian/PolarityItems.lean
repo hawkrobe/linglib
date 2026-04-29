@@ -1,11 +1,11 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 
 /-!
 # Hungarian Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Hungarian indefinite pronoun polarity items, typed by the categories from
-`Core.Lexical.PolarityItem`.
+`Typology.PolarityItem`.
 
 - **senki**: N-word, negative concord (with *sem* in direct negation)
 - **akárki / bárki**: Free choice items
@@ -13,7 +13,7 @@ Hungarian indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Hungarian.PolarityItems
 
-open Core.Lexical.PolarityItem
+open Typology.PolarityItem
 
 -- ============================================================================
 -- NPI

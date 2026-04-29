@@ -49,7 +49,7 @@ When neither departure is present, only indicative mood is possible.
 
 namespace Grano2024
 
-open Core.Verbs
+open Semantics.Verb
 open Core.Mood (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
@@ -176,7 +176,7 @@ theorem causatives_pattern_with_intend :
 -- § 3. Bridge: Empirical Data → MoodSelector
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.Complementation.Bridge (deriveMoodSelector)
+open Phenomena.Complementation.Studies.Noonan2007 (deriveMoodSelector)
 open Fragments.English.Predicates.Verbal (want hope)
 
 /-- The deriveMoodSelector function correctly classifies 'want' as

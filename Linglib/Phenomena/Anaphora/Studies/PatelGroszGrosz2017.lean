@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.Word
+import Linglib.Core.Word
 import Linglib.Features.Definiteness
 import Linglib.Features.PronounStrength
 import Linglib.Core.Nominal.ArticleInventory

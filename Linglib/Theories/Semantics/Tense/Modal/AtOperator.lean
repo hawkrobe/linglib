@@ -26,7 +26,7 @@ temporal operators (tense, aspect, modals).
 namespace Semantics.Tense.Modal.AtOperator
 
 open Core.Time
-open Core.Verbs (Dynamicity)
+open Features (Dynamicity)
 open Semantics.Tense.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]

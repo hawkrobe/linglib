@@ -23,7 +23,7 @@ vs *că* = IND) and verb morphology. 'want' and 'intend' take *să* (SBJV);
 
 namespace Fragments.Romanian.MoodChoice
 
-open Core.Verbs
+open Semantics.Verb
 
 /-- *a vrea* 'want' — robustly subjunctive-selecting via *să*.
     @cite{grano-2024}, (6): *să* (SBJV) required, *că* (IND) rejected. -/

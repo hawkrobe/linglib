@@ -153,7 +153,7 @@ namespace KoontzGarboden2009
 
 open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
-open Semantics.Verb.EventStructure
+open Features.EventStructure
 open KoontzGarboden2009.Monotonicity
 open Minimalist (VerbHead)
 open Syntax.ArgumentStructure.Alternation
@@ -233,7 +233,7 @@ def reflexivizationYieldsAnticausative : CauserSpec → Bool
     would carry more structure than K-G's underspecification account
     predicts. -/
 
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 
 /-- Derive `CauserSpec` from a proto-role entailment profile.
     Volition is the discriminating feature:

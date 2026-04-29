@@ -1,9 +1,8 @@
 import Linglib.Typology.Possession
-import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Finnish Possessive Constructions
-@cite{heine-1997} @cite{stassen-2009}
+@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
 
 Finnish (Uralic) derives its primary have-construction from the **Location
 Schema** ("Y is located at X" → "X has Y"). The construction consists of:
@@ -15,7 +14,13 @@ Schema** ("Y is located at X" → "X has Y"). The construction consists of:
 The adessive case is etymologically locative ('on the surface of'),
 grammaticalized to mark the possessor. Finnish is a textbook example
 of the Location Schema reaching Stage III: the adessive in possessive
-use is no longer interpreted as locative by speakers.
+use is no longer interpreted as locative by speakers
+(@cite{heine-1997} Overlap Model).
+
+PossessionProfile bundle for Finnish (ISO `fin`), per the project's
+"per-language data flows through Fragments" rule. Substrate types live in
+`Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
+Finnish lives in `Phenomena/Possession/Studies/Heine1997.lean`.
 
 ## Examples
 
@@ -24,9 +29,11 @@ use is no longer interpreted as locative by speakers.
 - `Minulla ei ole rahaa.` 'I have no money.' (I.ADESS not be money.PART)
 -/
 
+set_option autoImplicit false
+
 namespace Fragments.Finnish.Possession
 
-open Typology.Possession
+open _root_.Typology.Possession
 
 -- ============================================================================
 -- §1. Predicative Possession Strategy
@@ -110,28 +117,21 @@ theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
 
 -- ============================================================================
--- §6. Heine 1997 Prediction Verification
+-- §6. Finnish Possession Profile (PossessionProfile bundle)
 -- ============================================================================
 
-open Heine1997
-
-/-- Finnish's Location Schema matches Heine's predictions:
-    have-construction (not belong), possessee as subject, Pred1 arity. -/
-theorem matches_heine_predictions :
-    let p := predictionsFor sourceSchema
-    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
-    p.possessorIsSubject = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Finnish at Stage III: the adessive in possessive use is no longer
-    interpreted as locative. This matches Heine's Overlap Model prediction
-    that fully grammaticalized schemas lose their source meaning. -/
-theorem stage_III_grammaticalization :
-    OverlapStage.targetOnly.degree > OverlapStage.overlap.degree := by decide
-
-/-- WALS F117A classifies Finnish as `locational`, which maps to
-    Heine's Location Schema via `walsToSchema`. -/
-theorem wals_consistent :
-    walsToSchema .locational = sourceSchema := rfl
+/-- Finnish possession profile. -/
+def possession : PossessionProfile :=
+  { language := "Finnish"
+  , family := "Uralic"
+  , iso := "fin"
+  , obligatoryPossession := .noObligatory
+  , possessiveClassification := .noClassification
+  , predicativeStrategy := .locational
+  , adnominalStrategy := .dependentMarking
+  , affixPosition := some .suffixes
+  , examples := ["minu-lla on kirja", "Matin kirja"]
+  , notes := "Adessive -lla for locational predicative possession; " ++
+             "genitive + optional possessive suffix on head" }
 
 end Fragments.Finnish.Possession

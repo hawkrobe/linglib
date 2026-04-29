@@ -28,10 +28,11 @@ Individual verbs can override class-level profiles via explicit
 `subjectEntailments`/`objectEntailments` on `VerbCore`.
 -/
 
-namespace Semantics.Verb.LevinClassProfiles
+namespace Features.LevinClassProfiles
 
-open Core.Verbs
-open Semantics.Verb.EntailmentProfile
+open Semantics.Verb
+open Features.EntailmentProfile
+open Semantics.Verb.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -117,11 +118,11 @@ def directedMotion : ArgTemplate where
 -- § 3. LevinClass → ArgTemplate
 -- ════════════════════════════════════════════════════
 
-end Semantics.Verb.LevinClassProfiles
+end Features.LevinClassProfiles
 
-namespace Core.Verbs
-open Semantics.Verb.LevinClassProfiles
-open Semantics.Verb.EntailmentProfile
+namespace Semantics.Verb
+open Features.LevinClassProfiles
+open Features.EntailmentProfile
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -172,11 +173,12 @@ def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.argTemplate.bind (·.objectProfile)
 
-end Core.Verbs
+end Semantics.Verb
 
-namespace Semantics.Verb.LevinClassProfiles
-open Core.Verbs
-open Semantics.Verb.EntailmentProfile
+namespace Features.LevinClassProfiles
+open Semantics.Verb
+open Features.EntailmentProfile
+open Semantics.Verb.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles
@@ -396,4 +398,4 @@ theorem derived_subjects_wellformed :
   · show unaccusativeCoS.subjectProfile.WellFormedInternal; decide
   · show perception.subjectProfile.WellFormedInternal; decide
 
-end Semantics.Verb.LevinClassProfiles
+end Features.LevinClassProfiles

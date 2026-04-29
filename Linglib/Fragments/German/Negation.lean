@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # German Negation Fragment
@@ -26,7 +26,7 @@ no structural changes beyond the negation marker itself.
 
 namespace Fragments.German.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *nicht* — German's standard negation particle.
     Attaches to the VP at clause-final position; surfaces after the
@@ -47,7 +47,7 @@ def nicht : NegMarkerEntry :=
 def negDeterminer : String := "kein"
 
 /-- The German negation system: a single particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "deu" [nicht]
 
@@ -110,5 +110,24 @@ theorem all_negative_contain_nicht :
 
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
 theorem all_tenses_available : allExamples.length = 5 := by native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- German negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "German"
+  , iso := "deu"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .preclude
+  , negMarkers := ["nicht"]
+  , negIsHead := none
+  , enAttested := none }
 
 end Fragments.German.Negation

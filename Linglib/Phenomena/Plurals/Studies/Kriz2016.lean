@@ -1082,4 +1082,46 @@ theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
     allPluralTV P x w ≠ .indet := by
   simp only [allPluralTV]; split_ifs <;> simp
 
+-- ============================================================================
+-- Restrictor vs nuclear-scope plural readings
+-- ============================================================================
+
+/-! Plurals in the restrictor of a quantifier permit existential readings
+    not available in nuclear scope. Data structure relocated from
+    `Phenomena/Imprecision/Projection.lean` (then `Studies/Haslinger2025.lean`)
+    at 0.230.521 — the empirical observation is anchored in @cite{kriz-2016}. -/
+
+/-- Plurals in restrictor vs nuclear scope behave differently. -/
+structure RestrictorScopeDatum where
+  /-- Sentence -/
+  sentence : String
+  /-- Position of plural -/
+  pluralPosition : String  -- "restrictor" or "scope"
+  /-- Universal reading available? -/
+  universalReading : Bool
+  /-- Existential reading available? -/
+  existentialReading : Bool
+  /-- Notes -/
+  notes : String
+  deriving Repr
+
+def pluralInRestrictor : RestrictorScopeDatum :=
+  { sentence := "Every immigrant who lives in the five Nordic countries is worried."
+  , pluralPosition := "restrictor"
+  , universalReading := true   -- "lives in all five"
+  , existentialReading := true -- "lives in one of the five"
+  , notes := "Existential reading: quantify over immigrants living in at least one Nordic country"
+  }
+
+def pluralInScope : RestrictorScopeDatum :=
+  { sentence := "Every student read the books."
+  , pluralPosition := "scope"
+  , universalReading := true
+  , existentialReading := false  -- not a default reading
+  , notes := "Default is universal; existential requires special context"
+  }
+
+def restrictorScopeData : List RestrictorScopeDatum :=
+  [pluralInRestrictor, pluralInScope]
+
 end Phenomena.Plurals.Studies.Kriz2016

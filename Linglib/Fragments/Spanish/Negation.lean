@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.NegMarker
+import Linglib.Typology.Negation
 
 /-!
 # Spanish Negation Fragment
@@ -36,7 +36,7 @@ the n-word system at the sentence level (operator-side typology).
 
 namespace Fragments.Spanish.Negation
 
-open Core.Lexical.NegMarker
+open Typology.Negation
 
 /-- *no* — Spanish's standard preverbal negation particle.
     A free word, syntactically immediately preverbal:
@@ -47,7 +47,7 @@ def no : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Spanish negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Typology.lean`. -/
+    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "spa" [no]
 
@@ -125,5 +125,24 @@ private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
 theorem all_negative_contain_no :
     allExamples.all (fun e => hasSubstr e.negative " no ") = true := by
   native_decide
+
+
+-- ============================================================================
+-- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
+-- Studies/Miestamo2005.lean per the project's "per-language data flows
+-- through Fragments" rule)
+-- ============================================================================
+
+/-- Spanish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
+def negationProfile : Typology.Negation.NegationProfile :=
+  { language := "Spanish"
+  , iso := "spa"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .mixed
+  , negMarkers := ["no"]
+  , negIsHead := some false
+  , enAttested := some true }
 
 end Fragments.Spanish.Negation

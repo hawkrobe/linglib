@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Features.Aktionsart
 
 /-!
 # Degree Achievements
@@ -25,10 +25,11 @@ This module derives `VendlerClass` from `Boundedness`, connecting to the existin
   156–182. OUP.
 -/
 
-namespace Semantics.Verb.DegreeAchievement
+namespace Features.DegreeAchievement
 
 open Core.Scale (Boundedness LicensingPipeline)
-open Core.Verbs
+open Features
+open Features
 
 /-- A degree achievement's base scale structure.
 
@@ -120,4 +121,4 @@ theorem telicity_vendler_agree (s : DegreeAchievementScale) :
 instance : LicensingPipeline DegreeAchievementScale where
   toBoundedness s := if s.scaleBoundedness.hasMax then .closed else .open_
 
-end Semantics.Verb.DegreeAchievement
+end Features.DegreeAchievement

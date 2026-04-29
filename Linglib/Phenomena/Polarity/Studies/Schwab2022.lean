@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -36,7 +36,7 @@ illusion arises.
 
 namespace Schwab2022
 
-open Core.Lexical.PolarityItem (ScalarDirection)
+open Typology.PolarityItem (ScalarDirection)
 
 -- ============================================================================
 -- Experimental Data

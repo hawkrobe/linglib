@@ -1,17 +1,58 @@
+import Linglib.Datasets.WALS.Features.F92A
+import Linglib.Datasets.WALS.Features.F93A
+import Linglib.Datasets.WALS.Features.F116A
+
 /-!
-# Question typology — wh-movement and interpretation mechanism enums
+# Question typology — substrate
 @cite{wals-2013} @cite{pesetsky-1987} @cite{huang-1982}
 @cite{sato-ngui-2017} @cite{chan-shen-2026}
 
-Type-level enums for wh-movement strategies and the syntax-semantics
-mechanisms that derive them, extracted from
-`Phenomena/Questions/Typology.lean` so that Fragments can import them
-without violating the Fragments → Phenomena dependency rule.
+Per-language question-typology substrate for Fragment import. Mirrors the
+`Linglib/Typology/{Domain}.lean` pattern (Possession, Case, Phonology,
+WordOrder).
+
+## Substrate enums
+
+- `WhMovementStrategy` (WALS Ch 93A)
+- `WhInterpMechanism` (@cite{pesetsky-1987}, @cite{huang-1982},
+  @cite{sato-ngui-2017})
+- `QParticlePosition` (WALS Ch 92A)
+- `PolarQuestionStrategy` (WALS Ch 116A)
+- `QuestionProfile`: bundle struct over Chs 92A/93A/116A
+
+## Theory-laden caveats
+
+- **`WhInterpMechanism` is NOT theory-neutral.** The four mechanisms
+  (`overtMovement`, `covertMovement`, `partialMovement`,
+  `unselectiveBinding`) commit to a movement-vs-binding split that is
+  contested. Cable 2010's Q-particle Agree analysis, Reinhart's choice
+  functions, and Beck 2006's intervention-based account each derive the
+  same surface position via different mechanisms. The `partialMovement`
+  case is specifically Sato &amp; Ngui 2017's Singlish analysis.
+
+- **The cartographic clause-typing locus is contested.** Rizzi 1997 places
+  it at `Force⁰[+Q]`; Holmberg 2016 places it at `Pol⁰`; Dayal 2025 places
+  it at `C` with PerspP-shift. `QuestionProfile` is silent on this — see
+  `Phenomena/Questions/Studies/Dayal2025.lean`,
+  `Phenomena/Questions/Studies/Holmberg2016.lean`, and
+  `Theories/Syntax/Minimalist/Questions.lean` for competing analyses.
+
+## WALS aggregates
+
+WALS chapter aggregate distributions (`ch92Total`, `ch93Total`, etc.)
+live in this file at the substrate layer per the project's "WALS goes to
+`Linglib/Typology/`" rule. Cross-linguistic theorems consuming Fragment
+per-language data live in
+`Phenomena/Questions/Studies/Dryer2013.lean`.
 -/
 
 set_option autoImplicit false
 
 namespace Typology.Question
+
+private abbrev ch92  := Datasets.WALS.F92A.allData
+private abbrev ch93  := Datasets.WALS.F93A.allData
+private abbrev ch116 := Datasets.WALS.F116A.allData
 
 /-- WALS Ch 93A: position of interrogative phrases (wh-words). -/
 inductive WhMovementStrategy where
@@ -139,4 +180,36 @@ structure QuestionProfile where
   polarStrategy : Option PolarQuestionStrategy := none
   deriving Repr, DecidableEq
 
-end Typology.Question
+-- ============================================================================
+-- §2. WALS converters (Ch 92A, 93A, 116A)
+-- ============================================================================
+
+/-- WALS Ch 92A → `QParticlePosition`. -/
+def fromWALS92A : Datasets.WALS.F92A.PositionOfPolarQuestionParticles →
+    QParticlePosition
+  | .initial                => .initial
+  | .final                  => .final
+  | .secondPosition         => .secondPosition
+  | .otherPosition          => .otherPosition
+  | .inEitherOfTwoPositions => .eitherOfTwo
+  | .noQuestionParticle     => .noParticle
+
+/-- WALS Ch 93A → `WhMovementStrategy`. -/
+def fromWALS93A :
+    Datasets.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions →
+    WhMovementStrategy
+  | .initialInterrogativePhrase    => .initial
+  | .notInitialInterrogativePhrase => .inSitu
+  | .mixed                         => .mixed
+
+/-- WALS Ch 116A → `PolarQuestionStrategy`. -/
+def fromWALS116A : Datasets.WALS.F116A.PolarQuestionType →
+    PolarQuestionStrategy
+  | .questionParticle                      => .particle
+  | .interrogativeVerbMorphology           => .verbMorphology
+  | .mixtureOfPreviousTwoTypes             => .particleOrMorphology
+  | .interrogativeWordOrder                => .wordOrder
+  | .absenceOfDeclarativeMorphemes         => .absenceOfDeclarative
+  | .interrogativeIntonationOnly           => .intonationOnly
+  | .noInterrogativeDeclarativeDistinction => .noDistinction
+

@@ -10,9 +10,9 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 
 namespace Fragments.Turkish.Predicates
 
-open Core.Verbs
+open Semantics.Verb
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
-open Core.Verbs (Causative)
+open Features (Causative)
 
 /-- Turkish verb entry: extends VerbCore with Turkish inflectional paradigm. -/
 structure TurkishVerbEntry extends VerbCore where

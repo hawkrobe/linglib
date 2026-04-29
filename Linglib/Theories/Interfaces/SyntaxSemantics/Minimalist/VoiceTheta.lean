@@ -54,7 +54,7 @@ namespace Minimalist.VoiceTheta
 
 open _root_.Minimalist (VoiceFlavor VoiceHead voiceAgent voiceCauser
   voiceAnticausative voiceMiddle voiceImpersonal)
-open Core.Verbs (VerbCore ControlType SenseTag)
+open Semantics.Verb (VerbCore ControlType SenseTag)
 open Semantics.Causation.Psych (CausalSource)
 open _root_.Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
 
@@ -172,7 +172,7 @@ def severingAccount : LinkingTheory VerbCore VoiceFlavor where
     - Levin class flinch / learn → experiencer
     - unaccusative / measure → theme
     - default → agent -/
-def _root_.Core.Verbs.VerbCore.predictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
+def _root_.Semantics.Verb.VerbCore.predictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
   if v.controlType == .raising then none
   else if v.levinClass == some .weather then none
   else if v.causalSource.isSome then some .stimulus

@@ -58,7 +58,7 @@ of grammatical position.
 
 namespace SolstadBott2022
 
-open Semantics.Verb.EntailmentProfile
+open Features.EntailmentProfile
 open Core.Discourse.Coherence
 open Fragments.English.Predicates.Verbal
 

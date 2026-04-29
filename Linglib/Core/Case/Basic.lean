@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Lexical.UD
+import Linglib.Core.UD
 
 /-!
 # Case — Basic Definitions

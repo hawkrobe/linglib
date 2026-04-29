@@ -14,20 +14,19 @@ and provides smart constructors for regular verbs.
 
 namespace Fragments.English.Predicates.Verbal
 
--- Re-export Core.Verbs types so downstream files that open this namespace
--- (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
+-- Re-export verb-entry vocabulary so downstream files that open this
+-- namespace (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
-export Core.Verbs (Preferential Attitude PresupTriggerType
-  ProjectionBehavior ComplementType ControlType VerbCore ImplicitInterp
-  complementToValence)
+export Features (Preferential Attitude Causative Implicative)
+export Semantics.Verb (PresupTriggerType ProjectionBehavior ComplementType
+  ControlType VerbCore ImplicitInterp complementToValence)
 
-open Core.Verbs
--- Causative, Implicative already in scope via `open Core.Verbs`
-open Core.Verbs
-open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
+open Features
+open Semantics.Verb
+open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Events.Incrementality (VerbIncClass)
-open Semantics.Verb.EntailmentProfile (EntailmentProfile)
+open Features.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
@@ -3557,7 +3556,8 @@ theorems above remain intact. -/
 namespace V2
 
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
-open Core.Verbs
+open Features
+open Semantics.Verb
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
