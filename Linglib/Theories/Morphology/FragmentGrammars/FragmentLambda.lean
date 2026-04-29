@@ -506,22 +506,41 @@ variable {T : Type} [DecidableEq T] [Inhabited T]
   {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
 /-- Convert a `PYPSlot` to a sigma-pair `Σ n, OrderedFinpartition n`
-suitable for `AdaptorGrammar.TableAssignment`. Uses `numCustomers` for
-the total `n` and `OrderedFinpartition.atomic n` for the partition.
+suitable for `AdaptorGrammar.TableAssignment`. Three branches:
 
-**Approximation note**: `atomic n` makes every customer their own table.
-The slot's actual table-grouping information (`customerCounts`) is *lost*
-in this conversion — `pypFactor` evaluated on the resulting partition
-will not give the same value as on the slot's true partition. A faithful
-version would require an `OrderedFinpartition.fromSizes : (sizes : List ℕ)
-→ (∀ s ∈ sizes, 0 < s) → OrderedFinpartition sizes.sum` helper not in
-mathlib (~150-200 LOC of disjointness/coverage/ordering proofs).
+1. **Empty slot** (`numCustomers = 0`): returns `⟨0, default⟩` directly.
+   Preserves the depth-0 lemma's `from rfl` chain (the empty case is
+   defeq to `AdaptorGrammar.emptyTables G`'s entry).
+2. **Non-empty wellformed slot** (`∀ c ∈ customerCounts, 0 < c`): builds
+   a real `Composition s.numCustomers` and projects via the new
+   `Composition.toOrderedFinpartition` (in `Linglib/Core/Probability/PitmanYor.lean`).
+   The resulting partition faithfully captures the slot's table-grouping
+   structure — what `pypFactor` actually depends on for its EPPF value.
+3. **Non-empty non-wellformed slot** (a `customerCount` is `0`): falls
+   back to `OrderedFinpartition.atomic`. This branch is *unreachable*
+   under the sampler's invariant (`pypDraw`'s `addTable` initialises
+   counts to `1`, `seatCustomer` increments) but Lean doesn't know that
+   without an explicit `PYPSlot.WellFormed` invariant or matching theorem.
+   Future work: prove the sampler maintains wellformedness, then the
+   atomic fallback can be replaced with `absurd` discharging.
 
-The empty case (`numCustomers = 0`) gives `⟨0, atomic 0⟩ = ⟨0, default⟩`,
-which agrees definitionally with `AdaptorGrammar.emptyTables`'s entry. -/
+The `numCustomers = 0` special case is load-bearing: without it, the
+`Composition`-built partition for an empty slot is *not* definitionally
+equal to `OrderedFinpartition.atomic 0 = default` (both are unique
+inhabitants of `OrderedFinpartition 0` modulo `@[ext]`, but the `partSize`
+functions are syntactically distinct: one is `(empty composition).blocksFun`,
+the other is constant `1`). Splitting on `numCustomers = 0` keeps the
+empty branch defeq to the prior shim, preserving the depth-0 lemma. -/
 noncomputable def slotToFinpartition {D : Type} (s : PYPSlot D) :
     Σ n, OrderedFinpartition n :=
-  ⟨s.numCustomers, OrderedFinpartition.atomic s.numCustomers⟩
+  if h0 : s.numCustomers = 0 then
+    ⟨0, default⟩
+  else if h : ∀ c ∈ s.customerCounts, 0 < c then
+    let comp : Composition s.numCustomers :=
+      ⟨s.customerCounts, fun {x} hx => h x hx, rfl⟩
+    ⟨s.numCustomers, comp.toOrderedFinpartition⟩
+  else
+    ⟨s.numCustomers, OrderedFinpartition.atomic s.numCustomers⟩
 
 @[simp] theorem slotToFinpartition_empty {D : Type} :
     slotToFinpartition (PYPSlot.empty : PYPSlot D)
@@ -538,10 +557,14 @@ Maps a `LazyTree` (with PYP final state) into the input shape that
 **Status**:
 
 - `Z` is real (via `LazyTree.collectHaltCounts`).
-- `Y` is structurally real (per-NT total customer count via `slotToFinpartition`),
-  but uses the *atomic* partition rather than the slot's true partition —
-  loses table-grouping info needed for `pypFactor`'s exact value. See
-  `slotToFinpartition`'s docstring.
+- `Y` is **faithful for sampler-reachable slots** (via `slotToFinpartition`
+  using `Composition.toOrderedFinpartition`): for any slot the sampler
+  can produce (where `customerCounts` are all positive — `addTable`
+  initialises to `1`, `seatCustomer` increments), the resulting
+  `OrderedFinpartition` has the *true* partition structure, and
+  `pypFactor` evaluated on it gives its EPPF value. The atomic-fallback
+  branch in `slotToFinpartition` is only reached for non-wellformed
+  slots (impossible by sampler invariant; future work proves it).
 - `D` is real (via `LazyTree.toCFGTree?`): if the tree projects to a complete
   `CFGTree` (no fragment-leaves), `D` is the singleton multiset of that
   derivation; otherwise (`.fragment` somewhere in the tree) `D` is empty —

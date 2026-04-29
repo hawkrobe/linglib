@@ -4,6 +4,96 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.516] - 2026-04-28
+
+### `FragmentLambda.lean` v2.3 — `slotToFinpartition` now faithful for sampler-reachable slots
+
+Wires the `Composition.toOrderedFinpartition` primitive from `0.230.514` into `FragmentLambda.lean`. `samplesToCorpusCounts.Y` no longer uses the atomic-partition shim that lost table-grouping information; for any slot the sampler can produce, the resulting `OrderedFinpartition` faithfully captures the slot's true partition structure (which `pypFactor` actually depends on for its EPPF value).
+
+`slotToFinpartition` now has three branches:
+
+1. **Empty slot** (`numCustomers = 0`): returns `⟨0, default⟩` directly. Load-bearing for the depth-0 lemma's `from rfl` chain — without this special case, the `Composition`-built partition for an empty slot is *not* definitionally equal to `OrderedFinpartition.atomic 0 = default` (both are unique inhabitants of `OrderedFinpartition 0` modulo `@[ext]`, but their `partSize` functions on `Fin 0` are syntactically distinct: one is `(empty composition).blocksFun`, the other is constant `1`).
+2. **Non-empty wellformed slot** (`∀ c ∈ customerCounts, 0 < c`): builds a real `Composition s.numCustomers` and projects via `Composition.toOrderedFinpartition`. Faithful partition.
+3. **Non-empty non-wellformed slot**: falls back to `OrderedFinpartition.atomic`. This branch is *unreachable* under the sampler's invariant (`pypDraw`'s `addTable` initialises counts to `1`, `seatCustomer` increments) but Lean doesn't know that without an explicit `PYPSlot.WellFormed` invariant or matching theorem. Future work can prove sampler-maintains-wellformedness, then this branch becomes `absurd`-discharged.
+
+The depth-0 lemma `fragmentLambdaDepth_zero_marginalises` re-proves unchanged: empty special case preserves the `slotToFinpartition (PYPSlot.empty) = ⟨0, default⟩` equation as `rfl`, so the existing proof's `from rfl` chain still discharges. `slotToFinpartition_empty` simp lemma still proves by `rfl`.
+
+`samplesToCorpusCounts` docstring updated: Y status changed from "structurally real but loses table-grouping" to "faithful for sampler-reachable slots". Two structural complete components (Y, Z) now genuinely match the §3.1.8 model; D is real-via-projection (singleton if complete, empty if incomplete-fragment-leaves); single sorry remaining is the general soundness theorem statement (whose acknowledged-incorrect per-sample form is unchanged by this commit — the marginal-form reformulation is the next step).
+
+Build: 2721 jobs green for `lake build Linglib.Theories.Morphology.FragmentGrammars.FragmentLambda`. 1 sorry warning unchanged.
+
+## [0.230.515] - 2026-04-28
+
+### Diachronic substrate refactor: CommChannel + AsymmetricCommModel + slim Efficiency
+
+Architectural restructuring of the efficient-communication substrate that grounds `Theories/Diachronic/Lexicalization.lean`. Closes the round-2 audit on `0.230.512` (which itself closed the round-1 audit on `0.230.511` of `Lexicalization.lean`). Designed with mathlib organizational principles: single source of truth, layered specialization, no duplicate primitives, naming reflects content not domain.
+
+#### NEW: `Theories/Pragmatics/InformationTheory/Channel.lean`
+
+Lifts `CommChannel` (renamed from `NamingChannel`, originally only in ZaslavskyEtAl2019's substrate) to a top-level information-theoretic primitive. Carries the channel-and-prior derived quantities — `marginalWord`, `posterior`, `commPrecision`, `mutualInfo` — plus structural lemmas (`encode_le_one`, `marginalWord_nonneg`, `marginalWord_sum_one`, `marginalWord_pos_of`). Namespace becomes `Pragmatics.InformationTheory` (drops the `.ChannelCapacity` sub-namespace). Used by ChannelCapacity (capacity-specific theorems), AsymmetricCommunication (asymmetric speaker/listener), Color/ZaslavskyEtAl2019, and Diachronic/Lexicalization.
+
+#### REFACTORED: `Theories/Pragmatics/InformationTheory/ChannelCapacity.lean`
+
+Slimmed to capacity-specific content only: `IsCAP`, `cap_linear`, `cap_linear'`, `mutualInfo_eq_log_Z_of_cap`, `gibbs_inequality`, `mutualInfo_le_log_card`, `channelCapacity`, `channelCapacity_le_log_card`, `mutualInfo_le_log_fin`. Imports the new `Channel.lean`. Same namespace (`Pragmatics.InformationTheory`) so consumers' `open` statements work uniformly.
+
+#### NEW: `Theories/Pragmatics/AsymmetricCommunication.lean`
+
+Promotes Xu et al.'s "speaker uses `L'`, listener uses `L`" innovation to a reusable substrate. Two-layer design:
+
+- `ChannelAccess C W := C → W → ℝ` (abbrev) — bare-bones, non-finite, non-normalized score function. The minimal interface for per-pair surprisal queries.
+- `CommChannel.toAccess` — projection from the Shannon `CommChannel` (defined in `Pragmatics.InformationTheory` namespace via cross-namespace declaration so dot notation `ch.toAccess` resolves) onto `ChannelAccess`.
+- `AsymmetricCommModel C W` — structure with two `ChannelAccess` fields (`produce`, `comprehend`).
+- `AsymmetricCommModel.symmetric` — Kemp-Regier / Zaslavsky special case.
+- `AsymmetricCommModel.ofCommChannels` — bridge to construct from two finite Shannon channels.
+- `IsSymmetric` predicate + simp lemmas.
+
+The substrate covers any modeling case where speaker and listener have different generative models: lexicalization spread (`@cite{xu-etal-2024}`), iterated learning (`@cite{kirby-tamariz-cornish-smith-2015}`), L1/L2 accommodation, native/non-native adaptation studies. The variation-theory grounding (`@cite{labov-2011}`, `@cite{milroy-milroy-1985}`, `@cite{weinreich-labov-herzog-1968}`) lives in the docstring.
+
+#### REFACTORED: `Theories/Pragmatics/Efficiency.lean`
+
+Deleted `dominates`, `dominates_irrefl`, `dominates_trans`, `isParetoOptimal` — all redundant with `Core.Constraint.paretoFeaturePreorder` (the substrate's pointwise Pareto on `Profile β n`). Added `CostPair.toProfile : Profile ℝ 2` bridge so consumers wanting Pareto dominance go through the substrate. Kept `weightedCost`, `efficiencyLossAt`, `efficiencyLoss`, `efficiencyLossAt_self`, `weightedCost_mono_β` — these are the genuine Xu-specific β-scalarization and frontier-deviation primitives that aren't generic preorder operations. File shrinks from 80 to ~75 LOC but conceptually shrinks much more (no longer parallel-implements Pareto theory). Kept `CostPair` as a struct with named fields (`cost₁`, `cost₂`) rather than `abbrev CostPair := Profile ℝ 2` — the named accessors are more readable for the small fixed shape; the bridge equivalence to `Profile ℝ 2` covers the substrate-side Pareto needs.
+
+#### REFACTORED: `Theories/Diachronic/Lexicalization.lean`
+
+`encodingCosts` now consumes an `AsymmetricCommModel String String` instead of an opaque `listenerScore : String → String → ℝ`. The `_OnL` suffix cargo-cult is gone (replaced by genuine type-level asymmetry via the structure's `produce`/`comprehend` fields). Several round-2 audit fixes also landed:
+
+- **Diachronic framing restored.** Module docstring's "synchronic-efficiency account" rewritten to "innovation spread under variation" with explicit cites of Labov 2011, Milroy & Milroy 1985, Weinreich-Labov-Herzog 1968 (paper §1–§2's actual grounding). The contrast with grammaticalization is process-type (cline-following vs. punctuated lexical innovation), not diachronic-vs-synchronic.
+- **`surprisalCap` docstring units fixed.** Was "≈5–10 nats in the paper's setup"; corrected to "20 nats ≈ 28.8 bits, comfortably above attested typical information loss of ~10–15 bits" with explicit note that paper uses log₂ while file uses natural log.
+- **Deterministic-policy assumption documented.** `encodingCosts` signature takes concept-only `needProb` rather than joint `p(c, w | L')`; this implicitly assumes one form per concept. Now explicit in the docstring with reference to paper §5.2 for the joint formulation.
+- **`concept : String` name-uniqueness caveat documented.** Paper's actual concepts are WordNet sense IDs embedded via Sentence-BERT (paper §5.3); String labels are presentation-layer convenience.
+- **`Literality` documented as coarsening** of paper's continuous Wu-Palmer / Leacock-Chodorow-Miller taxonomic-distance measures (paper §3.2 final paragraph + SI §S5.E).
+
+#### REFACTORED: `Phenomena/Polysemy/Studies/XuEtAl2024.lean`
+
+Consumes the new substrate operationally:
+
+- `uniformNeed` and `stipulatedModel` (= `AsymmetricCommModel.symmetric`) define a toy instantiation.
+- `englishReuseCosts := encodingCosts englishReuse (uniformNeed _) stipulatedModel` validates the substrate is non-vacuous (not just typechecks but produces a witness `CostPair`).
+- `englishCompoundsCosts` ditto.
+- `unifiedObjective_eq_weightedCost` is the key witness theorem: an `rfl` showing `unifiedObjective = weightedCost ∘ encodingCosts`. Closes the round-2 zero-consumers finding from the structural side: `encodingCosts` and `unifiedObjective` are now consumed and the decomposition between them is mechanical (`rfl`).
+- **Gotham bridge caveat documented.** Xu's reuse polysemy and Gotham 2017's logical polysemy are not the same phenomenon (different sortal-compatibility requirements). The honest bridge: literal reuse is Gotham-compatible, non-literal isn't. The `Literality` enum is the partition this lives on. (Bridge theorems deferred; the Studies file now correctly disclaims rather than over-claiming.)
+
+#### UPDATED: `Phenomena/Color/Studies/ZaslavskyEtAl2019.lean`
+
+`NamingChannel → CommChannel` rename throughout; `open Pragmatics.InformationTheory.ChannelCapacity → open Pragmatics.InformationTheory`. Docstring updated to reference both `Channel.lean` (CommChannel etc.) and `ChannelCapacity.lean` (capacity-specific) as the substrate layer.
+
+#### Why the architecture matters (for future diachronic formalisms)
+
+The pre-refactor state had `CostPair`/`dominates` parallel to `Core.Constraint.paretoFeaturePreorder`, `NamingChannel` siloed in one Color file, and Xu's lexicon asymmetry only as docstring prose. After: there is **one** Pareto theory (in `Core/Constraint/`), **one** Shannon channel (in `Pragmatics/InformationTheory/`), and **one** asymmetric-communication primitive (in `Pragmatics/`). Future diachronic studies — iterated learning (Kirby/Smith/Tamariz), L1/L2 accommodation, semantic-change replication studies — can directly instantiate `AsymmetricCommModel`. Future cross-paper comparisons (e.g., Xu et al. vs Zaslavsky et al. as parallel Pareto-frontier claims on different domains) become statable as theorems on shared substrate rather than aspirational prose.
+
+#### Deferred (next session)
+
+- Cross-paper bridge: `Xu.unifiedObjective on channel η ≡ Zaslavsky-related quantity for η at need prior`. Would convert "two papers in the same tradition" from prose to theorem.
+- `Diachronic.UnidirectionalCline` substrate (typeclass over `[LinearOrder S]` + `step : S → Option S`) — the abstraction Grammaticalization, Subjectification, ModalChange, Areal all stipulate independently. Then `Strategy not_unidirectional_cline` is a stateable refutation theorem rather than a docstring disclaimer.
+- Mitchell-Lapata additive composition substrate — paper §5.3 explicitly uses this for compound prototypes (paper Eq. 6); not currently in linglib.
+- Pareto-frontier monotonicity in β: `β₁ ≤ β₂ → optimalAt β₂ shorter than optimalAt β₁`.
+
+#### Verification
+
+Targeted `lake build` of all 7 touched/new files green (1929 jobs in transitive closure). Full project build still fails on pre-existing concurrent-session breakage in `Phenomena/Presupposition/Studies/RobertsSimons2024.lean`, `Phenomena/ArgumentStructure/Studies/Beavers2010.lean`, `Phenomena/Polarity/Studies/Hoeksema1983.lean`, `Theories/Semantics/Tense/Aspect/Core.lean`, `Phenomena/Causation/Studies/Krejci2012.lean`, `Theories/Morphology/RootTypology.lean`, all downstream of the deleted `Core/Lexical/Word.lean`/`Pronouns.lean`/etc. visible in `git status`. Outside this refactor's scope.
+
+Grep verification: zero stale references to deleted symbols (`ChannelCapacity.NamingChannel`, `Efficiency.dominates`, etc.) anywhere in the codebase.
+
 ## [0.230.514] - 2026-04-28
 
 ### `Composition.toOrderedFinpartition` — bridges mathlib's two combinatorial views
