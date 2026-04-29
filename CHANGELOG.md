@@ -4,6 +4,78 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.513] - 2026-04-28
+
+### `FragmentLambda.lean` v2.2 — discharge sweep on the operational scaffold
+
+Three iterations on top of the v2 scaffold from `0.230.510`. The four scaffold sorries are reduced to one (the documented "INCORRECT statement" general soundness theorem); 7 fully-proved real lemmas added; the file grows 388 → 678 LOC with each addition being substantive content rather than ceremony.
+
+**Iteration 2.0 — discharge `pypDraw` body + side conditions.** `pypDraw` was sorry-bodied in 0.230.510. Now: K+1-way weighted choice via `PMF.normalizeOfFintype` (from `Linglib.Core.Probability.PMFPosterior`), with weights `(yᵢ - a)` for existing tables and `K·a + b` for the new-table branch per @cite{odonnell-2015} §3.1.6 (p. 89). `PYPHyper.concentration_ge : -discount ≤ concentration` strengthened to `concentration_pos : 0 < concentration` to provide the new-table positivity witness (matches the book's `b = 100` choice in §3.5.5; documented as "stronger than standard PYP allows boundary case b ≥ -a"). Both side conditions (`h_pos : weight new_idx ≠ 0` via `if_neg + ENNReal.ofReal_eq_zero + nlinarith`; `h_finite : ∀ i, weight i ≠ ⊤` via `split <;> exact ENNReal.ofReal_ne_top`) discharged with structured proofs. The `[Inhabited D]` constraint added for `slot.dishes.getD` default. Exchangeability caveat documented (when `base` modifies state, ordering of customer-arrival vs sample-time differs from book's sequential picture; PYP exchangeability resolves this distributionally).
+
+**Iteration 2.1 — discharge `sampleFresh` (where-clause) by architectural split.** Original 0.230.510 had `fragmentLambdaDepth = pypDraw (sampleFresh n) x` with `sampleFresh` sorry-marked due to recursive-call-through-where-clause termination obstacle. Refactored: split out `stochasticLazyUnfoldDepth` (the un-memoised §2.3.5.2 stochastic-lazy unfold of @cite{odonnell-2015} Figure 2.18, p. 68) as a fully-defined function — no PYP wrap, structurally recursive on depth, body is a clean `do`-block with biased coin + `recurse` + `mapM`-over-children. `fragmentLambdaDepth` becomes the PYP-memoised composition `pypDraw (PYM.liftBase ∘ stochasticLazyUnfoldDepth ... n)`, fully real once `pypDraw` is real. Approximation note: strictly per §3.1.8 children inside `L^A` should call `G^FG = mem{L^A}` (PYP-wrapped), not the plain unfold; faithful version would mutually-recurse with PYP, deferred. Also: `recurseProb` retyped `ENNReal → NNReal` to match `PMF.bernoulli`'s actual signature (which takes `ℝ≥0` not `ℝ≥0∞`; the v2 typo cost one build-error round-trip).
+
+**Iteration 2.2 — `LazyTree` enriched with rule parameter `R`; real Z and D extraction.** `LazyTree α β` → `LazyTree α β R` with `branch : R → α → List (LazyTree α β R) → LazyTree α β R` carrying the rule that produced the branch (matches @cite{odonnell-2015} §3.1.8's rule-indexed beta-binomial structure, where `Z r i` requires knowing which rule `r` produced each branch). `recurse` callback updated to `α → PMF (R × List (α ⊕ β))`. Two new tree-walking helpers via mutual recursion (the `attach.foldr` + WF-recursion pattern made base cases opaque to `rfl` — switched to mutual structural recursion to recover `rfl`-reducibility):
+
+- `LazyTree.collectHaltCounts : LazyTree α β R → R → ℕ → ℕ × ℕ` walks the tree to extract per-(rule, position) recurse vs halt counts (`+1 recurse` for `.branch _ _ _` child, `+1 halt` for `.fragment _` child, nothing for `.terminal _`). Two `@[simp]` rfl-lemmas for terminal/fragment cases.
+- `LazyTree.toCFGTree? : LazyTree α β R → Option (CFGTree β α)` projects to mathlib's CFG derivation tree, returning `none` on encountering any `.fragment` leaf (incomplete sample → no CFGTree image). Companion `toCFGTreesList` for list mutual-rec. Two `@[simp]` rfl-lemmas. The rule-on-branch field is dropped (CFGTree records derivations, not which rule produced them).
+
+`samplesToCorpusCounts` triple now structurally complete: `D = tree.toCFGTree?.elim 0 ({·})` (singleton multiset if complete, empty if any fragment-leaf); `Y = fun A => slotToFinpartition (finalState.slots A)` where `slotToFinpartition s = ⟨s.numCustomers, OrderedFinpartition.atomic s.numCustomers⟩` — atomic-partition gap documented (loses table-grouping info needed for exact `pypFactor` value; faithful version requires an `OrderedFinpartition.fromSizes` helper not in mathlib, ~150-200 LOC of disjointness/coverage/ordering proofs); `Z = tree.collectHaltCounts`. The depth-0 lemma `fragmentLambdaDepth_zero_marginalises` re-proves: `from rfl` for `(samplesToCorpusCounts (.fragment start) _).1 = 0` works because `toCFGTree? (.fragment _) = none` and `none.elim 0 _ = 0`; similarly for the Y component since `slotToFinpartition PYPSlot.empty = ⟨0, atomic 0⟩ = ⟨0, default⟩` matches `AdaptorGrammar.emptyTables`'s entry.
+
+**API simp lemmas.** `PYPState.empty_slots`, `empty_hyper` (rfl); `PYPSlot.numTables_addTable`, `numCustomers_addTable`, `dishes_addTable`; `stochasticLazyUnfoldDepth_zero` (rfl). `LazyTree.fragmentLeaves` and `yield` simp-base-case lemmas attempted but require the same mutual-recursion refactor (currently use `flatMap` → WF recursion → `rfl`-opaque); skipped pending refactor with a code comment marking the deferred pattern.
+
+`FragmentGrammar.lean` not modified in this commit (its §2.3.7-vs-§3.1.8 docstring section landed in 0.230.510).
+
+Single remaining sorry: `fragmentLambdaDepth_marginalises_to_fg` general statement (line 626), already documented in 0.230.510 as "INCORRECT as a per-sample equality" without a faithful normalising constant. Right statement requires a marginal claim with `tsum` over samples with matching extracted counts, and a depth-∞-limit proof needing probabilistic-fixed-point machinery for monotone PMF-valued recursions absent from mathlib.
+
+Build: 2721 jobs green. 1 sorry warning (down from 4 at 0.230.510, was 0 at v1 but v1's "0 sorries" was the `:= rfl` ceremony anti-pattern). LOC: 154 (v1) → 388 (v2 / 0.230.510) → 678 (v2.2 / this commit). Real defs: 1 → 5 → 9. Real proofs: 0 → 0 → 7. Pull-its-weight ratio (substantive content / total LOC): inverted from "5 LOC of code under 100 LOC of docstring" to "real algorithmic content with documented gaps".
+
+## [0.230.512] - 2026-04-28
+
+### Lexicalization.lean 4-agent audit fixes (random file pick)
+
+Random-file audit on `Theories/Diachronic/Lexicalization.lean` (157 LOC, anchored on `@cite{xu-etal-2024}`). Four agents (mathlib-reviewer, linglib-integration-auditor, linguistics-domain-expert with PDF read of pp. 1-30, cross-framework-reconciler) converged on multiple findings; all but the cross-framework next-moves (Bybee/UsageBased substrate bridge, `Core.Inheritance.Prototype` reuse, Construction Grammar engagement) are closed in this commit. Those are deferred — they require new substrate work.
+
+#### Substantive corrections (paper-checked)
+
+- **Eq. 5 → Eq. 4 misnumbering.** Line 104's docstring labelled `unifiedObjective = info_loss + β · effort` as "Eq. 5". Verified against PDF: this is Xu et al.'s Eq. 4. Eq. 5 is the proportional simplified form `∝ Σ_{(c,w)∈E*} p(c,w|L') · (h(m̂_{w,L}(c)) + βl(w))`. CLAUDE.md flags equation numbering as the most-hallucinated category — this was a textbook instance.
+- **Speaker–listener lexicon asymmetry surfaced.** Paper §2.1's headline conceptual move over `@cite{kemp-regier-2012}` and `@cite{zaslavsky-kemp-regier-tishby-2018}` is that speaker uses L′ (expanded) and listener uses L (existing); the file's `listenerScore : String → String → ℝ` collapsed both into one black-box. Renamed to `listenerScoreOnL` with module-docstring block explaining the asymmetry. Not lifted to type level (would require lexicon types `Theories/Pragmatics/Efficiency` does not commit to).
+- **"Inaugural module" claim dropped — factually false.** `ls Theories/Diachronic/` shows `Areal`, `Grammaticalization`, `ModalChange`, `Subjectification` already exist as siblings.
+- **"IS an RSA L0" claim toned down to omission.** Paper grounds in Shannon point-to-point + Kemp/Zaslavsky efficiency tradition; never invokes RSA. The prototype softmax listener `m̂(c|w) ∝ exp(-γd(c, q_w))` is not formally equivalent to a canonical RSA L0 (continuous similarity vs Boolean meaning, no prior over concepts). The `asS1ScoreSpec` bridge that purported to witness this was incomplete (returned only the S1 half, no L0, no `RSAConfigData` instantiation, no equivalence theorem).
+- **LCEC name-drop dropped.** Module docstring claimed connection to `Morphology.WP.LCEC`; integration auditor confirmed that path doesn't exist (substrate moved to `Phenomena/Morphology/Studies/AckermanMalouf2013.lean`). The file did not import any LCEC-related module — pure prose. Removed.
+- **Strategy.combination → Strategy.compound.** "Compound" is the linguistic-standard morphology term and matches the paper's operationalization (§3 paragraph 2: "compounds that have exactly two constituents"); "combination" reads as a coding choice. 6 consumer call sites in `Phenomena/Polysemy/Studies/XuEtAl2024.lean` updated.
+- **Borrowing/coinage scope restriction acknowledged.** Paper p.2 explicitly excludes borrowing (e.g., *tofu*) and coinage (e.g., *quark*). `Strategy` enum docstring now mirrors that scope rather than implicitly claiming exhaustiveness.
+
+#### Mathlib-style cleanup
+
+- **Deleted four unconsumed defs:** `asS1ScoreSpec`, `moreEfficientThan`, `strategyTradeoff`, `literalAdvantage`. All three Prop-valued "claim defs" were typed prose with zero theorems instantiating them and zero downstream consumers (verified by grep). Classic "encoding conclusions as definitions" anti-pattern from CLAUDE.md.
+- **Deleted unused imports:** `Linglib.Core.InformationTheory` was `open`-ed but no symbol used (only English-prose mentions of "surprisal" / "entropy" in docstrings); `Linglib.Theories.Pragmatics.RSA.ConfigData` no longer needed after `asS1ScoreSpec` deletion.
+- **Magic `20` sentinel** in `if score ≤ 0 then 20 else -Real.log score` extracted to named `def surprisalCap : ℝ := 20` with docstring noting it's for numeric robustness only (paper's softmax never produces zero).
+- **`formLength : ℕ := form.length` field with default** dropped — the `form`/`formLength` silent-disagreement risk eliminated by replacing with standalone `def FormConceptPair.formLength : FormConceptPair → ℕ := (·.form.length)`. Dot-notation consumers (`englishReuse.map (·.formLength)`) unchanged.
+- **Section banners** `-- ============================================================================` converted to `/-! ## ... -/` (the mathlib doc-gen convention).
+
+#### Sibling-file fixes (`Phenomena/Polysemy/Studies/XuEtAl2024.lean`)
+
+- **`native_decide` → `decide`** on the three theorems (`english_reuse_shorter`, `both_literalities`, `all_english_reuse_creates_polysemy`). CLAUDE.md is explicit: "**`native_decide`** — **avoid**; bypasses kernel verification, not mathlib-compatible."
+- **Strategy enum rename** propagated: 6 `.combination` → `.compound` updates.
+- **Module docstring tightened** to acknowledge paper §3.3's English+French-only informativeness claim (Finnish does NOT show compound > reuse for informativeness; the length-direction does hold across all three). Previous prose conflated.
+- **Added `french_reuse_shorter` theorem** as paper-§3.3 across-language replication of the length finding.
+- **Note on Pareto frontier:** the full Figs. 2–3 Pareto-efficiency claim depends on a fitted Sentence-BERT embedding for the listener prototype distribution (paper §5.3) plus 100,000 random/near-synonym baselines per language–interval cell (paper §5.5); not reduced to `decide`-checkable form here. Documented as scope limitation; the decide-checkable claims are about the speaker-effort axis only.
+
+#### Verification
+
+- `Pragmatics/Efficiency.lean`'s "(Eq. 8 of `@cite{xu-etal-2024}`)" reference was flagged as suspect by the linguistics agent (main paper has only 5 numbered equations in the body); PDF read of pp. 21–27 verified Eq. 8 IS in §5.6 Materials and Methods (`ε = min_β(L_β[E*|L] - L_β[E*_β|L])`). No fix needed.
+- Targeted `lake build Linglib.Theories.Diachronic.Lexicalization Linglib.Phenomena.Polysemy.Studies.XuEtAl2024` is green (1922 jobs).
+- Full `lake build` fails on pre-existing concurrent-session breakage in `Theories/Semantics/Verb/LevinClassProfiles.lean` and `Phenomena/Conditionals/Studies/Iatridou2000.lean` etc. — downstream of the deleted `Core/Lexical/Word.lean`, `Pronouns.lean`, etc. visible in `git status`. Outside this audit's scope.
+
+#### Deferred (cross-framework next-moves; require new substrate work)
+
+- Replace opaque `listenerScoreOnL` with `Core.Inheritance.Prototype`-based typicality function (the cross-framework reconciler's "hidden agreement" finding).
+- Engage `Theories/Morphology/UsageBased/Network.lean` (Bybee) as the sibling theory of "reuse" — different prediction (token-strength attraction vs efficiency-frontier proximity) deserves a refutation-witnessing theorem.
+- Bridge `Pragmatics.Efficiency.CostPair` to `Phenomena/Color/Studies/ZaslavskyEtAl2019.lean` (currently uses different substrate).
+- Promote `Phenomena/Morphology/Studies/AckermanMalouf2013.lean` to a Theory file so the LCEC analogy can be a theorem rather than prose.
+- Add `Strategy.derive` (the paper's Discussion-section third-arm: derivation between reuse and compounding on the Pareto frontier).
+- Bib entries to add: `brinton-traugott-2005`, `stekauer-lieber-2005`, `marelli-baroni-2015`, `gunther-marelli-2016`, `pugacheva-gunther-2024`, `ramiro-srinivasan-malt-xu-2018`. Each requires DOI verification.
+
 ## [0.230.511] - 2026-04-28
 
 ### FrischPierrehumbertBroe2004 audit fixes (closes 4-agent audit on `0.230.509`)

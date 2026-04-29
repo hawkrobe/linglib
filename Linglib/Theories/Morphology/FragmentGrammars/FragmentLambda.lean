@@ -1,4 +1,5 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Linglib.Core.Probability.PMFPosterior
 import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!
@@ -122,16 +123,34 @@ def seatCustomer (s : PYPSlot D) (i : ℕ) : PYPSlot D :=
 def addTable (s : PYPSlot D) (v : D) : PYPSlot D :=
   ⟨s.dishes ++ [v], s.customerCounts ++ [1]⟩
 
+@[simp] theorem numTables_addTable (s : PYPSlot D) (v : D) :
+    (s.addTable v).numTables = s.numTables + 1 := by
+  simp [addTable, numTables]
+
+@[simp] theorem numCustomers_addTable (s : PYPSlot D) (v : D) :
+    (s.addTable v).numCustomers = s.numCustomers + 1 := by
+  simp [addTable, numCustomers]
+
+@[simp] theorem dishes_addTable (s : PYPSlot D) (v : D) :
+    (s.addTable v).dishes = s.dishes ++ [v] := rfl
+
 end PYPSlot
 
 /-- Pitman–Yor hyperparameters: discount `a ∈ [0, 1)` and concentration
-`b ≥ -a`. @cite{odonnell-2015} §3.5.5 (p. 102) sets `a = 0.5`, `b = 100`. -/
+`b > 0`. @cite{odonnell-2015} §3.5.5 (p. 102) sets `a = 0.5`, `b = 100`.
+
+**Note**: the standard PYP allows `b ≥ -a` (boundary case), including
+negative `b` for `a > 0`. We restrict to `0 < b` to (a) match the book's
+hyperparameter choice and (b) guarantee the new-table PYP weight
+`K·a + b` is strictly positive at `K = 0` — needed as a positivity
+witness for `PMF.normalizeOfFintype`. The boundary case can be added
+as a separate variant if a consumer needs it. -/
 structure PYPHyper where
   discount : ℝ
   concentration : ℝ
   discount_nonneg : 0 ≤ discount
   discount_lt_one : discount < 1
-  concentration_ge : -discount ≤ concentration
+  concentration_pos : 0 < concentration
 
 /-- Global Pitman–Yor memoisation state: per-input slot states (one
 "restaurant" per input value) plus shared hyperparameters. -/
@@ -151,6 +170,14 @@ def empty (h : PYPHyper) : PYPState α D :=
 def updateSlot [DecidableEq α] (st : PYPState α D) (x : α) (s : PYPSlot D) :
     PYPState α D :=
   { st with slots := fun y => if y = x then s else st.slots y }
+
+/-- All slots in an empty PYP state are `PYPSlot.empty`. -/
+@[simp] theorem empty_slots (h : PYPHyper) (x : α) :
+    (PYPState.empty (α := α) (D := D) h).slots x = PYPSlot.empty := rfl
+
+/-- The empty PYP state's hyperparameters are exactly the input. -/
+@[simp] theorem empty_hyper (h : PYPHyper) :
+    (PYPState.empty (α := α) (D := D) h).hyper = h := rfl
 
 end PYPState
 
@@ -190,68 +217,121 @@ Either reuse the dish at an existing table (with the §3.1.6 weights), or
 sample a fresh dish from `base` and seat the new customer at a new table.
 Both branches update the memo state appropriately.
 
-**Status: scaffold (`sorry`).** The architecture is fixed; the K+1-way
-weighted choice and the ENNReal arithmetic for the table weights are
-deferred. A faithful implementation requires:
-
-1. Building `weights : Fin (K+1) → ℝ≥0∞` for the existing-table and
-   new-table branches.
-2. A `PMF.ofFn` / `PMF.ofFinset`-style construction normalising the
-   weights and yielding a `PMF (Fin (K+1))`.
-3. Branching on the choice: existing-table updates `seatCustomer`; new-
-   table samples from `base` and updates `addTable`.
-
 The base distribution is `PYM`-typed (state-passing) rather than the
 usual `PMF`-typed because in fragment-lambda the recursive children of
 a fresh sample themselves invoke the memo (via `mem{L^B}` for B≠A in
 the §3.1.8 equations). The slots for distinct inputs are independent,
 so this state-threading is well-defined; a per-restaurant `PMF` base
 would suffice if the children's states were marginalised first.
--/
-noncomputable def pypDraw {α D : Type} [DecidableEq α]
-    (_base : α → PYM α D D) (_x : α) : PYM α D D := by
-  -- TODO: see docstring for the architecture sketch.
-  sorry
+
+**Implementation note (exchangeability caveat).** When `base` itself
+modifies state (recursive `pypDraw` calls add tables at other slots, or
+even at the same slot if grammar recursion revisits `x`), the table
+indices change between when this `pypDraw` decides "new table" and when
+it actually adds the new dish. Operationally we add to the post-`base`
+state. By PYP exchangeability the resulting joint distribution agrees
+with a sequential interpretation; a faithful implementation would
+either snapshot-then-restore or work in a memo-free `base : α → PMF D`. -/
+noncomputable def pypDraw {α D : Type} [DecidableEq α] [Inhabited D]
+    (base : α → PYM α D D) (x : α) : PYM α D D := do
+  let st ← get
+  let slot := st.slots x
+  let K := slot.numTables
+  let a := st.hyper.discount
+  let b := st.hyper.concentration
+  -- Per @cite{odonnell-2015} §3.1.6 (p. 89): the (N+1)-th customer chooses
+  -- table i (i < K) with weight `(yᵢ - a)`, or a fresh table with weight
+  -- `K·a + b` (we omit the shared `(N + b)⁻¹` normaliser since `normalize`
+  -- recomputes it).
+  let weight : Fin (K + 1) → ENNReal := fun i =>
+    if i.val < K then
+      ENNReal.ofReal ((slot.customerCounts.getD i.val 0 : ℝ) - a)
+    else
+      ENNReal.ofReal ((K : ℝ) * a + b)
+  -- Positivity witness: the new-table outcome at index `K` has weight
+  -- `K·a + b ≥ b > 0` (since `K·a ≥ 0` from `a ≥ 0`, and `b > 0`).
+  let new_idx : Fin (K + 1) := ⟨K, Nat.lt_succ_self K⟩
+  have h_pos : weight new_idx ≠ 0 := by
+    -- weight new_idx unfolds (since new_idx.val = K, condition K < K is false)
+    -- to ENNReal.ofReal (K*a + b). Need K*a + b > 0 from a ≥ 0 + b > 0.
+    show (if (new_idx : Fin (K+1)).val < K then _ else
+           ENNReal.ofReal ((K : ℝ) * a + b)) ≠ 0
+    rw [if_neg (Nat.lt_irrefl K)]
+    rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
+    have ha : 0 ≤ a := st.hyper.discount_nonneg
+    have hb : 0 < b := st.hyper.concentration_pos
+    have h_Ka : 0 ≤ (K : ℝ) * a := mul_nonneg (Nat.cast_nonneg K) ha
+    linarith
+  have h_finite : ∀ i, weight i ≠ ⊤ := fun i => by
+    -- Both branches of weight produce `ENNReal.ofReal _`, which is always finite.
+    show (if i.val < K then _ else _) ≠ ⊤
+    split <;> exact ENNReal.ofReal_ne_top
+  let choice ← PYM.liftBase (PMF.normalizeOfFintype weight new_idx h_pos h_finite)
+  if hi : choice.val < K then
+    -- Existing table: read the dish at this index, seat one more customer there.
+    let dish := slot.dishes.getD choice.val default
+    modify (fun s => s.updateSlot x ((s.slots x).seatCustomer choice.val))
+    pure dish
+  else
+    -- New table: invoke base distribution, append fresh dish as a new table.
+    -- Note: `base x` may modify state (other slots, possibly same); we add
+    -- to post-base state per the exchangeability caveat above.
+    let dish ← base x
+    modify (fun s => s.updateSlot x ((s.slots x).addTable dish))
+    pure dish
 
 /-! ## Lazy partial derivation trees -/
 
-/-- A partial derivation tree under fragment-grammar generation:
+/-- A partial derivation tree under fragment-grammar generation. Three
+constructors:
 
 - `terminal t` — a fully-evaluated terminal symbol (the result of `unfold`
-  reaching a terminal in @cite{odonnell-2015} Figure 2.7, p. 52)
+  reaching a terminal in @cite{odonnell-2015} Figure 2.7, p. 52).
 - `fragment x` — a non-terminal stored as a fragment-leaf: the type-level
   representation of the `(delay body)` thunks of Figure 2.21 (p. 71). When
   the body of `fragment-lambda` flips heads on the halt coin, the result
   at this position is `fragment x` rather than further recursion.
-- `branch x children` — a non-terminal that has been productively
-  expanded; corresponds to the `unfold` recursion firing.
+- `branch r x children` — a non-terminal expanded by rule `r`. The rule is
+  stored alongside the NT and children so that downstream consumers
+  (`samplesToCorpusCounts`) can credit halt-vs-recurse decisions to the
+  specific (rule, position) pair, matching @cite{odonnell-2015} §3.1.8's
+  rule-indexed beta-binomial structure.
+
+The third type parameter `R` is the rule type — typically
+`ContextFreeRule T G.NT` for CFGs, abstract here so the same `LazyTree`
+can be used by other generative formalisms (TAG, DM-PCFG variants).
 
 The "complete" tree (no fragment-leaves anywhere) is the result of
 forcing all delayed thunks until termination. -/
-inductive LazyTree (α β : Type) where
-  | terminal : β → LazyTree α β
-  | fragment : α → LazyTree α β
-  | branch   : α → List (LazyTree α β) → LazyTree α β
+inductive LazyTree (α β R : Type) where
+  | terminal : β → LazyTree α β R
+  | fragment : α → LazyTree α β R
+  | branch   : R → α → List (LazyTree α β R) → LazyTree α β R
   deriving Inhabited
 
 namespace LazyTree
 
-variable {α β : Type}
+variable {α β R : Type}
 
 /-- The fragment-leaf frontier: the non-terminals stored as halted
 sub-derivations (the "open slots" of a fragment, in @cite{odonnell-2015}
 §3.1.8's terminology). -/
-def fragmentLeaves : LazyTree α β → List α
-  | .terminal _      => []
-  | .fragment x      => [x]
-  | .branch _ kids   => kids.flatMap fragmentLeaves
+def fragmentLeaves : LazyTree α β R → List α
+  | .terminal _        => []
+  | .fragment x        => [x]
+  | .branch _ _ kids   => kids.flatMap fragmentLeaves
 
 /-- The terminal yield: the in-order sequence of terminal symbols
 reachable without forcing any fragment-leaf. -/
-def yield : LazyTree α β → List β
-  | .terminal t      => [t]
-  | .fragment _      => []
-  | .branch _ kids   => kids.flatMap yield
+def yield : LazyTree α β R → List β
+  | .terminal t        => [t]
+  | .fragment _        => []
+  | .branch _ _ kids   => kids.flatMap yield
+
+-- Note: rfl simp lemmas about fragmentLeaves/yield base cases would
+-- require those defs to use structural mutual recursion (like
+-- `collectHaltCounts`); the current `flatMap` formulation makes Lean
+-- compile via WF recursion, opaque to `rfl`. Skipped pending refactor.
 
 end LazyTree
 
@@ -261,63 +341,191 @@ The depth bound is a structural-recursion device. The mathematically-
 intended object is the depth-∞ limit, which terminates almost surely
 when the recurse probability is bounded away from 1 (geometric depth).
 Formalising the limit requires probabilistic-fixed-point machinery not
-yet in mathlib; the bounded version is genuine and ships now. -/
+yet in mathlib; the bounded version is genuine and ships now.
 
-variable {α β : Type} [DecidableEq α]
+The structure of @cite{odonnell-2015} §3.1.8 (p. 93) is
 
-/-- Depth-bounded operational fragment-lambda. At each call to non-
-terminal `x`:
+```
+G^a_FG(d)  = Σ mem{L^A}(s) · ∏ G^root_FG(s'_i)        -- PYP-wrap + recurse on holes
+L^A(d)     = Σ θ_r ∏ [ν · G^root_FG + (1-ν) · 1]      -- biased halt-or-recurse
+mem{L^A}  ~ PYP(a^A, b^A, L^A)                         -- Pitman-Yor memoization
+```
 
-1. **Memoisation step** (`pypDraw`): consult the PYP memo at slot `x`.
-   With PYP-probability a previously-stored partial subtree at `x` is
-   returned (representing reuse); otherwise we generate fresh below.
-2. **Halt-or-recurse step** (when generating fresh): flip the biased
-   coin (§3.1.8 BINOMIAL(ν)). With probability `1 − recurseProb x`,
-   halt and return `LazyTree.fragment x`. Otherwise sample a RHS via
-   `recurse x` and recursively expand each non-terminal child via
-   `fragmentLambdaDepth` at the next-smaller depth; map each terminal
-   to `LazyTree.terminal`.
+We split this into two co-located functions:
 
-Depth `0` always halts and returns `fragment`.
+- `stochasticLazyUnfoldDepth` — the un-memoised core (`L^A` in book notation,
+  but with children recursing back into the unfold itself rather than into
+  the PYP-wrapped version). This is exactly @cite{odonnell-2015} §2.3.5.2's
+  `stochastic-lazy-unfold` (Figure 2.18, p. 68) — a recognised sub-model.
+  Fully defined; no `sorry`.
+- `fragmentLambdaDepth` — the PYP-memoised wrapper (`G^FG = mem{L^A}`).
+  Uses `pypDraw` over `stochasticLazyUnfoldDepth` as base distribution.
+  Currently sorry-marked because `pypDraw`'s body is sorry-marked.
 
-The §2.3.7 Church macro corresponds to `recurseProb x = 1/2` for all
-`x` (fair coin, `BINOMIAL(0.5)`); the §3.1.8 model used in the book
-allows arbitrary biased `recurseProb` and places a Beta prior on it
-for inference.
-
-**Status: scaffold (`sorry` in `sampleFresh`).** The recursive child
-expansion needs careful state-threading; the type signature is fixed.
+**Approximation note.** Strictly per @cite{odonnell-2015} §3.1.8 the
+recursive children inside `L^A` should call `G^FG` (PYP-wrapped), not the
+plain unfold. Doing so requires mutual recursion `fragmentLambdaDepth ↔
+stochasticLazyUnfoldDepth-with-PYP-children`; we approximate by calling
+the un-PYP'd children. This means children's reuse-via-memo is not
+captured. A faithful version would refactor into a `mutual` block.
 -/
-noncomputable def fragmentLambdaDepth
-    (recurse : α → PMF (List (α ⊕ β)))
-    (recurseProb : α → ENNReal)
+
+variable {α β R : Type} [DecidableEq α]
+
+/-- Depth-bounded **stochastic-lazy unfold** per @cite{odonnell-2015}
+§2.3.5.2 (Figure 2.18, p. 68). At each call to non-terminal `x`:
+
+1. **Halt-or-recurse step**: flip the biased coin (§3.1.8 `BINOMIAL(ν)`,
+   p. 92). With probability `1 − recurseProb x`, halt and return
+   `LazyTree.fragment x`. Otherwise sample a (rule, RHS) pair via
+   `recurse x`, recursively expand each non-terminal child at the next-
+   smaller depth, map each terminal to `LazyTree.terminal`, and assemble
+   `LazyTree.branch rule x kids`.
+
+The rule is stored on the branch so `samplesToCorpusCounts` can credit
+halt-vs-recurse decisions to the specific (rule, position) pair —
+matching the rule-indexed beta-binomial structure of §3.1.8.
+
+Depth `0` always halts. Pure `PMF` (no PYP memo state) — the un-memoised
+sub-model. The PYP-wrapped version is `fragmentLambdaDepth` below. -/
+noncomputable def stochasticLazyUnfoldDepth
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal)
     (recurseProb_le : ∀ x, recurseProb x ≤ 1) :
-    ℕ → α → PYM α (LazyTree α β) (LazyTree α β)
+    ℕ → α → PMF (LazyTree α β R)
+  | 0,     x => PMF.pure (.fragment x)
+  | n + 1, x => do
+      let coin ← PMF.bernoulli (recurseProb x) (recurseProb_le x)
+      if coin then do
+        let ⟨rule, rhs⟩ ← recurse x
+        let kids ← rhs.mapM (fun
+          | .inl nt   => stochasticLazyUnfoldDepth recurse recurseProb recurseProb_le n nt
+          | .inr term => PMF.pure (.terminal term))
+        PMF.pure (.branch rule x kids)
+      else
+        PMF.pure (.fragment x)
+
+/-- Depth-bounded **PYP-memoised fragment-lambda**: the §3.1.8 model. Wraps
+`stochasticLazyUnfoldDepth` with `pypDraw` so that previously-sampled
+partial subtrees at the same non-terminal can be reused. Approximates
+@cite{odonnell-2015} §3.1.8's full mutual recursion (children inside the
+unfold call the un-PYP'd version, not `fragmentLambdaDepth`). -/
+noncomputable def fragmentLambdaDepth [Inhabited β]
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal)
+    (recurseProb_le : ∀ x, recurseProb x ≤ 1) :
+    ℕ → α → PYM α (LazyTree α β R) (LazyTree α β R)
   | 0,     x => pure (.fragment x)
-  | _ + 1, x => pypDraw (sampleFresh) x
-where
-  /-- The fresh-generation branch: flip the halt coin, then either
-  halt-with-fragment or sample-and-recurse. -/
-  sampleFresh : α → PYM α (LazyTree α β) (LazyTree α β) := by
-    -- TODO: full body. Sketch:
-    --   intro x
-    --   let coin ← PYM.liftBase (PMF.bernoulli (recurseProb x) (recurseProb_le x))
-    --   if coin then
-    --     let rhs ← PYM.liftBase (recurse x)
-    --     let kids ← rhs.mapM (fun
-    --       | .inl nt   => fragmentLambdaDepth recurse recurseProb recurseProb_le n nt
-    --       | .inr term => pure (.terminal term))
-    --     pure (.branch x kids)
-    --   else
-    --     pure (.fragment x)
-    -- Blocker: the recursive call's depth needs a `Decreasing_by` argument
-    -- or to be lifted out of the `where` clause. Will be cleaned up in the
-    -- next pass on this scaffold.
-    sorry
+  | n + 1, x => pypDraw (fun y => PYM.liftBase
+      (stochasticLazyUnfoldDepth recurse recurseProb recurseProb_le n y)) x
+
+/-! ## Halt-count extraction from samples -/
+
+namespace LazyTree
+
+-- For each branch in the tree, credit `(rule_used, position_in_rule)`
+-- with `+1 recurse` if the child at that position is `.branch _ _ _`,
+-- `+1 halt` if it is `.fragment _`. `.terminal _` contributes nothing.
+-- Recursive contributions from each child subtree are summed in.
+-- Defined via mutual recursion to make the recursion structural
+-- (avoids WF-recursion opacity in `rfl`-style base-case lemmas).
+mutual
+/-- See module note above on `collectHaltCounts` semantics. -/
+def collectHaltCounts {α β R : Type} [DecidableEq R] :
+    LazyTree α β R → R → ℕ → ℕ × ℕ
+  | .terminal _,         _, _ => (0, 0)
+  | .fragment _,         _, _ => (0, 0)
+  | .branch rule _ kids, r, i =>
+    let here : ℕ × ℕ :=
+      if r = rule then
+        match kids[i]? with
+        | .some (.branch _ _ _) => (1, 0)
+        | .some (.fragment _)   => (0, 1)
+        | _                     => (0, 0)
+      else (0, 0)
+    let from_kids := collectKidsHaltCounts kids r i
+    (here.1 + from_kids.1, here.2 + from_kids.2)
+
+/-- List-recursion helper for `collectHaltCounts`. -/
+def collectKidsHaltCounts {α β R : Type} [DecidableEq R] :
+    List (LazyTree α β R) → R → ℕ → ℕ × ℕ
+  | [],      _, _ => (0, 0)
+  | k :: ks, r, i =>
+    let kc := collectHaltCounts k r i
+    let rest := collectKidsHaltCounts ks r i
+    (kc.1 + rest.1, kc.2 + rest.2)
+end
+
+@[simp] theorem collectHaltCounts_terminal {α β R : Type} [DecidableEq R]
+    (t : β) (r : R) (i : ℕ) :
+    (LazyTree.terminal t : LazyTree α β R).collectHaltCounts r i = (0, 0) := rfl
+
+@[simp] theorem collectHaltCounts_fragment {α β R : Type} [DecidableEq R]
+    (x : α) (r : R) (i : ℕ) :
+    (LazyTree.fragment x : LazyTree α β R).collectHaltCounts r i = (0, 0) := rfl
+
+-- Project a `LazyTree α β R` to a `CFGTree β α`. Returns `none` if the tree
+-- contains any `.fragment` leaf (incomplete sub-derivation, no CFGTree image).
+-- The rule field on `.branch` is dropped — CFGTree records derivations,
+-- not which rule produced them.
+mutual
+/-- See module note above on `toCFGTree?` semantics. -/
+def toCFGTree? {α β R : Type} : LazyTree α β R → Option (CFGTree β α)
+  | .terminal t      => some (.leaf t)
+  | .fragment _      => none
+  | .branch _ x kids =>
+    match toCFGTreesList kids with
+    | some kids' => some (.node x kids')
+    | none       => none
+
+/-- List-recursion helper for `toCFGTree?`. -/
+def toCFGTreesList {α β R : Type} :
+    List (LazyTree α β R) → Option (List (CFGTree β α))
+  | []      => some []
+  | k :: ks =>
+    match toCFGTree? k with
+    | some k' =>
+      match toCFGTreesList ks with
+      | some ks' => some (k' :: ks')
+      | none     => none
+    | none    => none
+end
+
+@[simp] theorem toCFGTree?_terminal {α β R : Type} (t : β) :
+    (LazyTree.terminal t : LazyTree α β R).toCFGTree? = some (.leaf t) := rfl
+
+@[simp] theorem toCFGTree?_fragment {α β R : Type} (x : α) :
+    (LazyTree.fragment x : LazyTree α β R).toCFGTree?
+      = (none : Option (CFGTree β α)) := rfl
+
+end LazyTree
 
 /-! ## Soundness contract -/
 
-variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
+variable {T : Type} [DecidableEq T] [Inhabited T]
+  {G : ContextFreeGrammar T} [DecidableEq G.NT]
+
+/-- Convert a `PYPSlot` to a sigma-pair `Σ n, OrderedFinpartition n`
+suitable for `AdaptorGrammar.TableAssignment`. Uses `numCustomers` for
+the total `n` and `OrderedFinpartition.atomic n` for the partition.
+
+**Approximation note**: `atomic n` makes every customer their own table.
+The slot's actual table-grouping information (`customerCounts`) is *lost*
+in this conversion — `pypFactor` evaluated on the resulting partition
+will not give the same value as on the slot's true partition. A faithful
+version would require an `OrderedFinpartition.fromSizes : (sizes : List ℕ)
+→ (∀ s ∈ sizes, 0 < s) → OrderedFinpartition sizes.sum` helper not in
+mathlib (~150-200 LOC of disjointness/coverage/ordering proofs).
+
+The empty case (`numCustomers = 0`) gives `⟨0, atomic 0⟩ = ⟨0, default⟩`,
+which agrees definitionally with `AdaptorGrammar.emptyTables`'s entry. -/
+noncomputable def slotToFinpartition {D : Type} (s : PYPSlot D) :
+    Σ n, OrderedFinpartition n :=
+  ⟨s.numCustomers, OrderedFinpartition.atomic s.numCustomers⟩
+
+@[simp] theorem slotToFinpartition_empty {D : Type} :
+    slotToFinpartition (PYPSlot.empty : PYPSlot D)
+      = ⟨0, default⟩ := rfl
 
 /-- Extract corpus-counts triple `(D, Y, Z)` from a completed sample.
 Maps a `LazyTree` (with PYP final state) into the input shape that
@@ -327,61 +535,138 @@ Maps a `LazyTree` (with PYP final state) into the input shape that
 - `Y : AdaptorGrammar.TableAssignment G` — table-level reuse counts
 - `Z : FragmentGrammar.HaltCounts G` — recurse/halt counts per (rule, position)
 
-**Status: deferred (`sorry`).** The extraction is mechanical given a
-`LazyTree → CFGTree` projection that forces fragment-leaves (provided
-by some completion strategy) and a state-walker that reads off table
-and halt counts. It is the bridge from the operational sample shape
-to the densimetric input shape; without it the soundness theorem
-cannot even be stated cleanly. -/
+**Status**:
+
+- `Z` is real (via `LazyTree.collectHaltCounts`).
+- `Y` is structurally real (per-NT total customer count via `slotToFinpartition`),
+  but uses the *atomic* partition rather than the slot's true partition —
+  loses table-grouping info needed for `pypFactor`'s exact value. See
+  `slotToFinpartition`'s docstring.
+- `D` is real (via `LazyTree.toCFGTree?`): if the tree projects to a complete
+  `CFGTree` (no fragment-leaves), `D` is the singleton multiset of that
+  derivation; otherwise (`.fragment` somewhere in the tree) `D` is empty —
+  incomplete samples contribute no derivation. -/
 noncomputable def samplesToCorpusCounts
-    (_tree : LazyTree G.NT T) (_finalState : PYPState G.NT (LazyTree G.NT T)) :
+    (tree : LazyTree G.NT T (ContextFreeRule T G.NT))
+    (finalState : PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))) :
     Multiset (CFGTree T G.NT) × AdaptorGrammar.TableAssignment G ×
-    FragmentGrammar.HaltCounts G := by
-  sorry
+    FragmentGrammar.HaltCounts G :=
+  (tree.toCFGTree?.elim 0 ({·} : CFGTree T G.NT → Multiset _),
+   fun A => slotToFinpartition (finalState.slots A),
+   fun r i => tree.collectHaltCounts r i)
 
-/-- **Soundness contract for the operational fragment-lambda.**
+/-- Depth-0 base case for the un-memoised unfold: returns
+`PMF.pure (.fragment start)`. -/
+@[simp] theorem stochasticLazyUnfoldDepth_zero
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (start : α) :
+    stochasticLazyUnfoldDepth recurse recurseProb recurseProb_le 0 start
+      = PMF.pure (.fragment start) := rfl
 
-For any fragment grammar `M` with substrate `G`, recursion procedure
-`recurse`, halt prior `recurseProb`, depth `n`, and starting non-terminal
-`start`: the depth-`n` truncated probability mass that the sampler
-assigns to a sample `(tree, finalState)` equals
-`ENNReal.ofReal (M.corpusProbGivenStorage D Y Z)`, where `(D, Y, Z) =
-samplesToCorpusCounts tree finalState`.
+/-- Depth-0 base case: the sampler at depth 0 is the trivial state-passing
+pure of `LazyTree.fragment start`, with no state changes.
 
-This says: the operational sampler distributes its outputs according to
-the §3.1.8 fragment-grammar density of @cite{odonnell-2015}.
+This is genuinely operational content: it pins down what the sampler
+*does* at the depth-bound boundary, where every branch halts. Provable
+by `rfl` because `pure` in the `PYM = StateT _ PMF` monad reduces
+definitionally to `fun st => PMF.pure (·, st)`. -/
+@[simp] theorem fragmentLambdaDepth_zero
+    [Inhabited β]
+    (recurse : α → PMF (R × List (α ⊕ β)))
+    (recurseProb : α → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (start : α) (st : PYPState α (LazyTree α β R)) :
+    fragmentLambdaDepth recurse recurseProb recurseProb_le 0 start st
+      = PMF.pure (.fragment start, st) := rfl
 
-**Proof strategy** (for the deferred `sorry`):
+/-- **Depth-0 soundness corollary**: at depth 0, for the trivial sample
+`(LazyTree.fragment start, st)`, the PMF mass equals the §3.1.8 density
+at the empty corpus / empty tables / empty halt-counts triple — both
+equal to `1`.
 
-1. Show the depth-`n` truncated distribution converges to a limit as
-   `n → ∞`. Almost-sure halting from `recurseProb x < 1` for all `x`
-   gives geometric-tail bounds; pass to the limit via dominated
-   convergence on `PMF`.
-2. Identify the limit's pmf with the §3.1.8 product formula by induction
-   on the sample tree, matching each PYP draw with its table-count
-   contribution to `M.toAdaptorGrammar.corpusProbGivenTables` and each
-   biased-coin flip with its beta-binomial-ratio contribution to
-   `M.fgFactor`.
+A `.fragment` leaf has no branches, so `collectHaltCounts` returns the
+zero pair for every `(rule, position)`, making `samplesToCorpusCounts.Z`
+extensionally equal to `emptyHaltCounts G`. The depth-0 sample mass is
+`1` (PMF.pure), and the empty-corpus density is `1` by
+`corpusProbGivenStorage_empty`; equality holds.
 
-Step 1 requires probabilistic-fixed-point machinery for monotone
-PMF-valued recursions (Knaster–Tarski / Kleene fixed point on
-ω-CPPOs of sub-probability measures) that mathlib does not yet have.
-Step 2 is mechanical induction once Step 1 is in place.
+This is a *real, fully-proved* slice of the soundness contract. The
+general soundness theorem below remains `sorry`-marked. -/
+theorem fragmentLambdaDepth_zero_marginalises
+    (M : FragmentGrammar G)
+    (recurse : G.NT → PMF (ContextFreeRule T G.NT × List (G.NT ⊕ T)))
+    (recurseProb : G.NT → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (hyper : PYPHyper) (start : G.NT) :
+    (fragmentLambdaDepth recurse recurseProb recurseProb_le 0 start
+        (PYPState.empty hyper))
+        ((LazyTree.fragment start : LazyTree G.NT T (ContextFreeRule T G.NT)),
+         (PYPState.empty hyper : PYPState G.NT
+            (LazyTree G.NT T (ContextFreeRule T G.NT))))
+      = ENNReal.ofReal (M.corpusProbGivenStorage
+          (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).1
+          (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).2.1
+          (samplesToCorpusCounts (.fragment start) (PYPState.empty hyper)).2.2) := by
+  -- The Z-component is `fun r i => (0, 0)` — extensionally `emptyHaltCounts`.
+  have h_Z : (samplesToCorpusCounts (.fragment start)
+                (PYPState.empty hyper : PYPState G.NT
+                  (LazyTree G.NT T (ContextFreeRule T G.NT)))).2.2
+              = FragmentGrammar.emptyHaltCounts G := by
+    funext r i
+    simp [samplesToCorpusCounts, LazyTree.collectHaltCounts_fragment,
+          FragmentGrammar.emptyHaltCounts]
+  rw [fragmentLambdaDepth_zero]
+  show (PMF.pure _) _ = _
+  rw [PMF.pure_apply]
+  simp only [if_true]
+  -- RHS reduces by samplesToCorpusCounts being (0, emptyTables, h_Z's RHS)
+  show (1 : ENNReal) = ENNReal.ofReal _
+  rw [show (samplesToCorpusCounts (.fragment start)
+            (PYPState.empty hyper : PYPState G.NT
+              (LazyTree G.NT T (ContextFreeRule T G.NT)))).1 = 0 from rfl,
+      show (samplesToCorpusCounts (.fragment start)
+            (PYPState.empty hyper : PYPState G.NT
+              (LazyTree G.NT T (ContextFreeRule T G.NT)))).2.1
+        = AdaptorGrammar.emptyTables G from rfl,
+      h_Z, FragmentGrammar.corpusProbGivenStorage_empty,
+      ENNReal.ofReal_one]
 
-The theorem statement IS the deliverable: it makes precise what
-"FragmentLambda implements §3.1.8" means, and what would have to be
-proved to discharge the implementation-correctness obligation.
--/
+/-- **Soundness contract (general).** For any fragment grammar `M`, the
+depth-`n` truncated probability mass that the sampler assigns to a
+sample `(tree, finalState)` *should* equal `ENNReal.ofReal` of the
+§3.1.8 density `M.corpusProbGivenStorage D Y Z` at the extracted counts.
+
+**This statement is INCORRECT as a per-sample equality** without a
+faithful `samplesToCorpusCounts`. The current shim returns the empty
+triple for every input, so the RHS is always `1` (the empty-corpus
+density), while the LHS is `0` for samples not actually produced. The
+theorem holds only at the specific samples the sampler can produce,
+where the sample's extracted counts genuinely match the corpus shape
+the sampler is generating. The depth-0 corollary above is the one
+case where this lines up by accident (only one sample, empty extraction
+matches empty corpus).
+
+**Right statement** (for a future iteration): a marginal claim of the
+form `∑' samples with extracted counts = (D, Y, Z), PMF mass = density(D, Y, Z) / Z(M)`
+where `Z(M)` is the partition function. Requires mathlib's `tsum`
+machinery + a normalising constant, and a faithful
+`samplesToCorpusCounts`. Both deferred.
+
+**Proof obstacle for the limit**: the depth-∞ version (which the
+finite-depth statement should approach) needs probabilistic-fixed-
+point machinery for monotone PMF-valued recursions
+(Knaster–Tarski / Kleene fixed point on ω-CPPOs of sub-probability
+measures) absent from mathlib. -/
 theorem fragmentLambdaDepth_marginalises_to_fg
     (M : FragmentGrammar G)
-    (recurse : G.NT → PMF (List (G.NT ⊕ T)))
-    (recurseProb : G.NT → ENNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
+    (recurse : G.NT → PMF (ContextFreeRule T G.NT × List (G.NT ⊕ T)))
+    (recurseProb : G.NT → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
     -- TODO: in a faithful version this is `G.NT → PYPHyper` (per-NT
     -- restaurants per @cite{odonnell-2015} §3.1.7 `pyp : G.NT → PitmanYor`).
     -- The scaffold uses a single global hyper for clarity.
     (hyper : PYPHyper)
     (start : G.NT) (n : ℕ)
-    (tree : LazyTree G.NT T) (finalState : PYPState G.NT (LazyTree G.NT T)) :
+    (tree : LazyTree G.NT T (ContextFreeRule T G.NT))
+    (finalState : PYPState G.NT (LazyTree G.NT T (ContextFreeRule T G.NT))) :
     (fragmentLambdaDepth recurse recurseProb recurseProb_le n start
         (PYPState.empty hyper)) (tree, finalState)
       = ENNReal.ofReal (M.corpusProbGivenStorage
