@@ -5,88 +5,41 @@ import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 /-!
 # Operational fragment-lambda: a stochastic-lazy unfold sampler
 
-@cite{odonnell-2015}
-
-This file gives an **operational** counterpart to the substrate in
-`FragmentGrammar.lean`. Where `FragmentGrammar` formalises the *joint
-density* `fg(F; F)` of @cite{odonnell-2015} §3.1.8 (p. 94) — the
-probability of a corpus given a table assignment and halt counts —
-this file formalises the *sampler* that draws from that density.
-
-The architecture follows the macro-expansion of @cite{odonnell-2015}
-§2.3.7 Figure 2.21:
-
-```
-(fragment-lambda args body)
-  ↦  (PYmem a b (lambda args (if (delay? args) (delay body) body)))
-```
-
+Operational counterpart to `FragmentGrammar.lean`'s joint density
+`fg(F; F)` of @cite{odonnell-2015} §3.1.8 (p. 94): the sampler that draws
+from that density. The architecture follows the macro-expansion of
+@cite{odonnell-2015} §2.3.7 Figure 2.21 — `(fragment-lambda args body) ↦
+(PYmem a b (lambda args (if (delay? args) (delay body) body)))` —
 mapping each Church construct to a Lean component:
 
-- `(PYmem a b _)` ⤳ `pypDraw` over `PYPState` with `PYM := StateT _ PMF`
-  (Pitman-Yor stochastic memoisation per §2.3.3.2 / §3.1.6).
+- `(PYmem a b _)` ⤳ `pypDraw` over `PYPState` with `PYM := StateT _ PMF`.
 - `(if (delay? args) (delay body) body)` ⤳ `PMF.bernoulli` halt-coin per
-  §3.1.8 (p. 92): "this decision is made by flipping a biased coin —
-  a binomial distribution with parameter ν not necessarily equal to 0.5".
-- The `(delay body)` thunks ⤳ `LazyTree.fragment` constructor: a
-  partial derivation tree whose leaves include unforced non-terminals.
+  §3.1.8 (p. 92).
+- The `(delay body)` thunks ⤳ `LazyTree.fragment` constructor.
 
-## Why operational and not just §3.1.8 distribution
+The single remaining `sorry` is on `fragmentLambdaDepth_marginalises_to_fg`
+— the depth-→-∞ proportionality theorem, documented in detail at the
+theorem itself. Probabilistic-fixed-point machinery on ω-CPPOs of
+sub-probability measures is the missing infrastructure (mathlib-level
+work). All other operational machinery and preservation theorems
+(`pypDraw_preserves_wellFormed`, `fragmentLambdaDepth_preserves_wellFormed`)
+are real proofs via the `PYM.Preserves` combinator algebra.
 
-The substrate `FragmentGrammar.corpusProbGivenStorage` is the *target*
-distribution. The sampler in this file is what makes the model
-*operational* — it lets a downstream consumer simulate fragment-grammar
-draws, not merely score corpora. The bridge is the soundness contract
-`fragmentLambdaDepth_marginalises_to_fg` (statement only; proof
-deferred — see TODO).
-
-## What is intentionally `sorry` / out of scope
-
-The file is a **scaffold**: types and operation shapes are present at
-mathlib quality, but several pieces are deferred:
-
-1. **`pypDraw` weighted choice** — the K+1-way choice between existing
-   tables and a fresh one needs ENNReal arithmetic and a `PMF.ofFinset`-
-   style construction; the architecture is in the docstring, the proof
-   is `sorry`.
-2. **`fragmentLambdaDepth` child threading** — recursive expansion of
-   non-terminal children needs careful state-passing through `mapM`;
-   sketch in the function, `sorry`-marked.
-3. **Soundness theorem proof** — equating the depth-∞ limit of sample
-   marginals with `corpusProbGivenStorage` requires probabilistic-
-   fixed-point machinery (an order-theoretic Knaster-Tarski for
-   ω-CPPOs of PMFs) absent from mathlib. The theorem statement is the
-   contract; the `sorry` is honestly deferred infrastructure.
-4. **Universal version** — a polymorphic
-   `fragmentLambda : (α → Free F β) → α → Free (PYP ⊕ Halt ⊕ F) β`
-   over arbitrary generative effects `F` would require `Free` monad
-   infrastructure absent from mathlib (cf. Heunen–Kammar–Staton–Yang
-   LICS 2017 quasi-Borel spaces for the categorical-PPL framing). Not
-   in scope here.
-5. **Inference (§3.2 Metropolis–Hastings)** — a separate file's worth.
-
-## Hyperparameters used in @cite{odonnell-2015}
-
-§3.5.5 (p. 102) reports the simulations in the book use `a = 0.5`,
-`b = 100` for all PYP restaurants; `ψ_B = 50` for all RHS NTs in the
-beta-binomial; `π_i = 1` for all DM-PCFG rules. These are
-configuration choices, not theorems — not encoded here as defaults.
-
-## References
-
-- @cite{odonnell-2015} §2.3.7 (Figure 2.21, p. 71 — fragment-lambda
-  Church macro), §3.1.8 (p. 92-94 — the actual halt-prior model),
-  §3.5.5 (p. 102 — hyperparameters).
-- Stochastic memoisation as a Church language primitive is from
-  Goodman, Mansinghka, Roy, Bonawitz, Tenenbaum (UAI 2008) — the
-  Church paper. Memoisation as an AI/learning technique originates
-  with Michie 1968 (*Nature* 218: 19–22, "Memo functions and machine
-  learning"); @cite{odonnell-2015} §2.3.3 cites both.
+@cite{odonnell-2015} §2.3.7, §3.1.8, §3.5.5 (hyperparameters: `a = 0.5`,
+`b = 100`, `ψ_B = 50`).
 -/
 
 namespace Morphology.FragmentGrammars.Operational
 
-/-! ## Pitman–Yor memoisation state -/
+/-! ## Pitman–Yor memoisation state
+
+**Universe note**: types in this file live at `Type` (= `Type 0`) rather than
+universe-polymorphic `Type u`. Universe polymorphism is blocked by the use of
+`PYM α D Unit` in `modify`'s signature: `Unit : Type 0`, so universe-
+polymorphizing `PYM` would require either `PUnit` (Type-polymorphic Unit) or
+`ULift` threading throughout. Both are tractable; deferred until a downstream
+consumer needs higher-universe support. Linguistic type domains (NTs,
+terminals, rules) are all small types so `Type` is sufficient in practice. -/
 
 /-- A Pitman–Yor memoisation slot for one input value. We track:
 - `dishes` — the value sampled at the i-th distinct table
@@ -131,11 +84,11 @@ def addTable (s : PYPSlot D) (v : D) : PYPSlot D :=
 
 @[simp] theorem numTables_addTable (s : PYPSlot D) (v : D) :
     (s.addTable v).numTables = s.numTables + 1 := by
-  simp [addTable, numTables]
+  simp only [numTables, addTable, List.length_append, List.length_singleton]
 
 @[simp] theorem numCustomers_addTable (s : PYPSlot D) (v : D) :
     (s.addTable v).numCustomers = s.numCustomers + 1 := by
-  simp [addTable, numCustomers]
+  simp only [numCustomers, addTable, List.sum_append, List.sum_cons, List.sum_nil, Nat.add_zero]
 
 @[simp] theorem dishes_addTable (s : PYPSlot D) (v : D) :
     (s.addTable v).dishes = s.dishes ++ [v] := rfl
@@ -149,14 +102,14 @@ to discharge the otherwise-unreachable atomic-fallback branch in
 def WellFormed (s : PYPSlot D) : Prop :=
   ∀ c ∈ s.customerCounts, 0 < c
 
-@[simp] theorem empty_wellFormed : (PYPSlot.empty : PYPSlot D).WellFormed := by
+theorem empty_wellFormed : (PYPSlot.empty : PYPSlot D).WellFormed := by
   intro c hc
-  simp [empty] at hc
+  simp only [empty, List.not_mem_nil] at hc
 
 theorem addTable_wellFormed {s : PYPSlot D} (h : s.WellFormed) (v : D) :
     (s.addTable v).WellFormed := by
   intro c hc
-  simp [addTable] at hc
+  simp only [addTable, List.mem_append, List.mem_singleton] at hc
   rcases hc with hc | rfl
   · exact h c hc
   · exact Nat.one_pos
@@ -229,7 +182,7 @@ preserve this — see `pypDraw_preserves_wellFormed` and
 def WellFormed (st : PYPState α D) : Prop :=
   ∀ x, (st.slots x).WellFormed
 
-@[simp] theorem empty_wellFormed (h : PYPHyper) :
+theorem empty_wellFormed (h : PYPHyper) :
     (PYPState.empty (α := α) (D := D) h).WellFormed := by
   intro x
   exact PYPSlot.empty_wellFormed
@@ -240,8 +193,8 @@ theorem updateSlot_wellFormed [DecidableEq α] {st : PYPState α D}
   intro y
   show (if y = x then newSlot else st.slots y).WellFormed
   by_cases hy : y = x
-  · simp [hy]; exact h_new
-  · simp [hy]; exact h_st y
+  · simp only [hy, if_true]; exact h_new
+  · simp only [hy, if_false]; exact h_st y
 
 end PYPState
 
@@ -284,7 +237,7 @@ namespace Preserves
 variable {P : PYPState α D → Prop}
 
 /-- `pure a` doesn't change state, so trivially preserves. -/
-theorem _pure (a : γ) : Preserves P (pure a : PYM α D γ) := by
+protected theorem pure (a : γ) : Preserves P (pure a : PYM α D γ) := by
   intro init h_init p hp
   rw [show (pure a : PYM α D γ) init = PMF.pure (a, init) from rfl,
       PMF.mem_support_pure_iff] at hp
@@ -292,17 +245,17 @@ theorem _pure (a : γ) : Preserves P (pure a : PYM α D γ) := by
   exact h_init
 
 /-- `bind` preserves if both halves do. -/
-theorem _bind {γ' : Type} {m : PYM α D γ} {f : γ → PYM α D γ'}
+protected theorem bind {δ : Type} {m : PYM α D γ} {f : γ → PYM α D δ}
     (h_m : Preserves P m) (h_f : ∀ a, Preserves P (f a)) :
     Preserves P (m >>= f) := by
   intro init h_init p hp
-  rw [show (m >>= f : PYM α D γ') init = (m init).bind (fun as => f as.1 as.2) from rfl,
+  rw [show (m >>= f : PYM α D δ) init = (m init).bind (fun as => f as.1 as.2) from rfl,
       PMF.mem_support_bind_iff] at hp
   obtain ⟨⟨a, s⟩, hs, hp⟩ := hp
   exact h_f a s (h_m init h_init (a, s) hs) p hp
 
 /-- `get` reads state without changing it; preserves trivially. -/
-theorem _get : Preserves P (get : PYM α D (PYPState α D)) := by
+protected theorem get : Preserves P (get : PYM α D (PYPState α D)) := by
   intro init h_init p hp
   rw [show (get : PYM α D (PYPState α D)) init = PMF.pure (init, init) from rfl,
       PMF.mem_support_pure_iff] at hp
@@ -311,7 +264,7 @@ theorem _get : Preserves P (get : PYM α D (PYPState α D)) := by
 
 /-- `liftBase` doesn't change state (the PMF runs over its own values, state
 threads through unchanged); preserves. -/
-theorem _liftBase (q : PMF γ) : Preserves P (PYM.liftBase q : PYM α D γ) := by
+protected theorem liftBase (q : PMF γ) : Preserves P (PYM.liftBase q : PYM α D γ) := by
   intro init h_init p hp
   unfold liftBase at hp
   rw [PMF.mem_support_bind_iff] at hp
@@ -321,7 +274,7 @@ theorem _liftBase (q : PMF γ) : Preserves P (PYM.liftBase q : PYM α D γ) := b
   exact h_init
 
 /-- `modify f` preserves `P` if `f` does. -/
-theorem _modify {f : PYPState α D → PYPState α D} (h_f : ∀ s, P s → P (f s)) :
+protected theorem modify {f : PYPState α D → PYPState α D} (h_f : ∀ s, P s → P (f s)) :
     Preserves P (modify f : PYM α D Unit) := by
   intro init h_init p hp
   rw [show (modify f : PYM α D Unit) init = PMF.pure ((), f init) from rfl,
@@ -330,33 +283,33 @@ theorem _modify {f : PYPState α D → PYPState α D} (h_f : ∀ s, P s → P (f
   exact h_f init h_init
 
 /-- Dependent `if-then-else` preserves if both branches do. -/
-theorem _dite {c : Prop} [Decidable c]
+protected theorem dite {c : Prop} [Decidable c]
     {m₁ : c → PYM α D γ} {m₂ : ¬c → PYM α D γ}
     (h₁ : ∀ hc, Preserves P (m₁ hc)) (h₂ : ∀ hc, Preserves P (m₂ hc)) :
     Preserves P (if hc : c then m₁ hc else m₂ hc) := by
   intro init h_init p hp
   by_cases hc : c
-  · simp [hc] at hp; exact h₁ hc init h_init p hp
-  · simp [hc] at hp; exact h₂ hc init h_init p hp
+  · simp only [hc, dite_true] at hp; exact h₁ hc init h_init p hp
+  · simp only [hc, dite_false] at hp; exact h₂ hc init h_init p hp
 
 /-- Non-dependent `if-then-else` preserves if both branches do. -/
-theorem _ite {c : Prop} [Decidable c] {m₁ m₂ : PYM α D γ}
+protected theorem ite {c : Prop} [Decidable c] {m₁ m₂ : PYM α D γ}
     (h₁ : Preserves P m₁) (h₂ : Preserves P m₂) :
     Preserves P (if c then m₁ else m₂) := by
   intro init h_init p hp
   by_cases hc : c
-  · simp [hc] at hp; exact h₁ init h_init p hp
-  · simp [hc] at hp; exact h₂ init h_init p hp
+  · simp only [hc, if_true] at hp; exact h₁ init h_init p hp
+  · simp only [hc, if_false] at hp; exact h₂ init h_init p hp
 
 /-- `List.mapM` over a preserves-respecting body preserves `P`. -/
-theorem _mapM {γ' : Type} {f : γ → PYM α D γ'}
+protected theorem mapM {δ : Type} {f : γ → PYM α D δ}
     (h_f : ∀ a, Preserves P (f a)) (l : List γ) :
     Preserves P (l.mapM f) := by
   induction l with
-  | nil => rw [List.mapM_nil]; exact _pure _
+  | nil => rw [List.mapM_nil]; exact Preserves.pure _
   | cons a l' ih =>
     rw [List.mapM_cons]
-    exact _bind (h_f a) (fun b => _bind ih (fun _ => _pure _))
+    exact Preserves.bind (h_f a) (fun _ => Preserves.bind ih (fun _ => Preserves.pure _))
 
 end Preserves
 
@@ -648,23 +601,23 @@ theorem pypDraw_preserves_wellFormed {α D : Type} [DecidableEq α] [Inhabited D
   -- with modify (preserving via slot lemmas) + pure.
   have h_pre : PYM.Preserves PYPState.WellFormed (pypDraw base x) := by
     unfold pypDraw
-    refine PYM.Preserves._bind PYM.Preserves._get ?_; intro st
-    refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro choice
-    refine PYM.Preserves._dite ?_ ?_
+    refine PYM.Preserves.bind PYM.Preserves.get ?_; intro st
+    refine PYM.Preserves.bind (PYM.Preserves.liftBase _) ?_; intro choice
+    refine PYM.Preserves.dite ?_ ?_
     · -- existing-table branch
       intro _
-      refine PYM.Preserves._bind (PYM.Preserves._modify ?_) (fun _ => PYM.Preserves._pure _)
+      refine PYM.Preserves.bind (PYM.Preserves.modify ?_) (fun _ => PYM.Preserves.pure _)
       intro s h_s
       exact PYPState.updateSlot_wellFormed h_s
         (PYPSlot.seatCustomer_wellFormed (h_s x) _)
     · -- new-table branch
       intro _
-      refine PYM.Preserves._bind ?_ ?_
+      refine PYM.Preserves.bind ?_ ?_
       · -- base x preserves wellformedness — `h_base` specialised at x
         intro init' h_init' p' hp'
         exact h_base x init' h_init' p' hp'
       · intro dish
-        refine PYM.Preserves._bind (PYM.Preserves._modify ?_) (fun _ => PYM.Preserves._pure _)
+        refine PYM.Preserves.bind (PYM.Preserves.modify ?_) (fun _ => PYM.Preserves.pure _)
         intro s h_s
         exact PYPState.updateSlot_wellFormed h_s
           (PYPSlot.addTable_wellFormed (h_s x) _)
@@ -700,7 +653,7 @@ theorem fragmentLambdaDepth_preserves_wellFormed
   induction k with
   | zero =>
     -- depth 0: fragmentLambdaDepth ... 0 start' = pure (.fragment start')
-    intro start'; exact PYM.Preserves._pure _
+    intro start'; exact PYM.Preserves.pure _
   | succ k ih =>
     -- depth k+1: fragmentLambdaDepth ... (k+1) start'
     --   = pypDraw (fragmentLambdaStep ... (fragmentLambdaDepth ... k)) start'
@@ -714,18 +667,18 @@ theorem fragmentLambdaDepth_preserves_wellFormed
         (fragmentLambdaStep recurse recurseProb recurseProb_le
            (fragmentLambdaDepth recurse recurseProb recurseProb_le k) y) := by
       unfold fragmentLambdaStep
-      refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro coin
-      refine PYM.Preserves._ite ?_ ?_
+      refine PYM.Preserves.bind (PYM.Preserves.liftBase _) ?_; intro coin
+      refine PYM.Preserves.ite ?_ ?_
       · -- coin = true branch: liftBase recurse + mapM children + pure branch
-        refine PYM.Preserves._bind (PYM.Preserves._liftBase _) ?_; intro ⟨_, rhs⟩
-        refine PYM.Preserves._bind ?_ (fun _ => PYM.Preserves._pure _)
-        apply PYM.Preserves._mapM
+        refine PYM.Preserves.bind (PYM.Preserves.liftBase _) ?_; intro ⟨_, rhs⟩
+        refine PYM.Preserves.bind ?_ (fun _ => PYM.Preserves.pure _)
+        apply PYM.Preserves.mapM
         intro c
         match c with
         | .inl nt => exact ih nt
-        | .inr _  => exact PYM.Preserves._pure _
+        | .inr _  => exact PYM.Preserves.pure _
       · -- coin = false branch: pure (LazyTree.fragment y)
-        exact PYM.Preserves._pure _
+        exact PYM.Preserves.pure _
     exact h_step init'' h_init'' p'' hp''
 
 /-! ## Halt-count extraction from samples -/
@@ -844,9 +797,9 @@ inhabitants of `OrderedFinpartition 0` modulo `@[ext]`, but the `partSize`
 functions are syntactically distinct: one is `(empty composition).blocksFun`,
 the other is constant `1`). Splitting on `numCustomers = 0` keeps the
 empty branch defeq to the prior shim, preserving the depth-0 lemma. -/
-noncomputable def slotToFinpartition {D : Type} (s : PYPSlot D) :
+def slotToFinpartition {D : Type} (s : PYPSlot D) :
     Σ n, OrderedFinpartition n :=
-  if h0 : s.numCustomers = 0 then
+  if _h0 : s.numCustomers = 0 then
     ⟨0, default⟩
   else if h : ∀ c ∈ s.customerCounts, 0 < c then
     let comp : Composition s.numCustomers :=
@@ -905,6 +858,10 @@ noncomputable def samplesToCorpusCounts
     (start : α) :
     stochasticLazyUnfoldDepth recurse recurseProb recurseProb_le 0 start
       = PMF.pure (.fragment start) := rfl
+-- Note: `[DecidableEq α]` is included from the section variable but unused
+-- here. `omit [DecidableEq α] in @[simp] theorem ...` works in mathlib but
+-- triggers an `unexpected token 'omit'` parse error here, possibly due to
+-- the `@[simp]` attribute interaction. Linter warning is benign.
 
 /-- Depth-0 base case: the sampler at depth 0 is the trivial state-passing
 pure of `LazyTree.fragment start`, with no state changes.
@@ -954,8 +911,8 @@ theorem fragmentLambdaDepth_zero_marginalises
                   (LazyTree G.NT T (ContextFreeRule T G.NT)))).2.2
               = FragmentGrammar.emptyHaltCounts G := by
     funext r i
-    simp [samplesToCorpusCounts, LazyTree.collectHaltCounts_fragment,
-          FragmentGrammar.emptyHaltCounts]
+    simp only [samplesToCorpusCounts, LazyTree.collectHaltCounts_fragment,
+               FragmentGrammar.emptyHaltCounts]
   rw [fragmentLambdaDepth_zero]
   show (PMF.pure _) _ = _
   rw [PMF.pure_apply]

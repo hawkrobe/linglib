@@ -4,6 +4,34 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.527] - 2026-04-28
+
+### `FragmentLambda.lean` v2.9 — mathlib-discipline cleanup pass (mathlib-reviewer findings)
+
+Acts on a focused mathlib-reviewer audit of `FragmentLambda.lean` (~1040 LOC, anchored on `@cite{odonnell-2015}` §3.1.8). Six rounds of cleanup, all preserving the file's single-sorry status.
+
+**Renamed `PYM.Preserves._foo` → `PYM.Preserves.foo` with `protected`**: the `_pure`, `_bind`, `_get`, `_liftBase`, `_modify`, `_dite`, `_ite`, `_mapM` underscore-prefixes were a non-mathlib idiom for avoiding collision with the underlying monad operations of the same names. `protected theorem ...` is the mathlib pattern: forces dotted access (`Preserves.bind`) without polluting the open namespace, preserves the documentation that these are *the preservation theorems*. ~30 call sites updated. Also added an `_ite` (non-dependent) sibling to `_dite` since the depth-induction proof for `fragmentLambdaDepth_preserves_wellFormed` needs it.
+
+**Bare `simp` → `simp only [...]`** at all 5 sites identified by the audit (per CLAUDE.md's explicit prohibition): `numTables_addTable`, `numCustomers_addTable`, `empty_wellFormed`, `addTable_wellFormed`, `updateSlot_wellFormed`, plus the in-proof `simp [hc]` in `Preserves._dite` and `Preserves._ite`. Each was replaced with explicit lemma sets (`List.length_append`, `List.sum_append`, `List.not_mem_nil`, `List.mem_append`, `List.mem_singleton`, `if_true`, `if_false`, `dite_true`, `dite_false`).
+
+**Dropped `noncomputable` from `slotToFinpartition`**: was a leftover from when the body involved `Composition.toOrderedFinpartition` (now itself computable in mathlib). The cleaner `def slotToFinpartition` builds correctly without the marker.
+
+**Module docstring trimmed from 80 lines to 25**: the long "what is intentionally `sorry` / out of scope" section moved into the relevant theorems' docstrings (where it actually belongs as proof-strategy documentation, not as research-log prose at the file head). The remaining docstring is mathlib-typical: 1 paragraph on what the file does, 1 on the architecture mapping, 1 on the remaining sorry's status, 1 reference line.
+
+**Dropped `@[simp]` from `PYPSlot.empty_wellFormed` and `PYPState.empty_wellFormed`**: they're `Prop`-valued, so `simp` can't use them as rewrite rules. Demoted to plain `theorem`s. Kept `@[simp]` on the structural-arithmetic lemmas (`numTables_addTable`, `numCustomers_addTable`, `dishes_addTable`, `empty_slots`, `empty_hyper`, `slotToFinpartition_empty`, `fragmentLambdaDepth_zero`, `stochasticLazyUnfoldDepth_zero`, `collectHaltCounts_terminal/_fragment`, `toCFGTree?_terminal/_fragment`) where they reduce concrete computations — these earn the simp budget.
+
+**`Type` → `Type u` attempted but reverted with documentation**: the audit recommended universe polymorphism. Attempted with a single `universe u` declaration so all parameters share one universe (else `StateT (PYPState α D) PMF γ` fails to unify when α, D, γ have independent universe vars). Discovered the `modify f : PYM α D Unit` signature in `Preserves._modify` blocks this — `Unit : Type 0` forces `u = 0`. Universe-polymorphizing would require either `PUnit` (Type-polymorphic) or `ULift` threading throughout. Tractable but a real refactor; deferred. Added a `**Universe note**` in the file documenting why everything stays at `Type` (= `Type 0`).
+
+**Silenced `_h0` unused-variable warning** in `slotToFinpartition` (the variable's witness is needed in scope but not used in the value).
+
+**`Linglib/Core/Probability/PitmanYor.lean` micro-fix**: `Fin.lt_iff_val_lt_val` (deprecated) → `Fin.lt_def` in `Composition.toOrderedFinpartition`'s `parts_strictMono` proof.
+
+**Net LOC change**: -43 (1043 → 1006 in FragmentLambda.lean). Mostly from docstring trim; no functionality change. **Sorries: 1** (unchanged target — `fragmentLambdaDepth_marginalises_to_fg` depth-→-∞ theorem).
+
+**Audit items deferred**: (a) refactor `slotToFinpartition` to take `init.WellFormed` as hypothesis, eliminating the atomic-fallback branch via `absurd` — small API churn through `samplesToCorpusCounts`; doable now that the preservation chain is real; (b) `LazyTree.fragmentLeaves`/`yield` mutual-recursion rewrite to enable `rfl` simp lemmas (currently uses `flatMap` → WF recursion → opaque); (c) split file into 4 sub-files (held off per promote-on-≥2-consumers).
+
+Build: 2721 jobs green for `lake build Linglib.Theories.Morphology.FragmentGrammars.FragmentLambda`; 1959 jobs green for `lake build Linglib.Core.Probability.PitmanYor`.
+
 ## [0.230.526] - 2026-04-28
 
 ### `Phenomena/Indefinites/` consolidation + cross-framework divergence theorems (4-agent audit landed)

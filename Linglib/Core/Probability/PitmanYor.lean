@@ -324,7 +324,7 @@ def toOrderedFinpartition {n : ℕ} (c : Composition n) : OrderedFinpartition n 
                 Nat.sub_one_lt_of_lt (c.blocks_pos' m2.val m2.isLt)⟩ : ℕ)
               = c.sizeUpTo m2.val + (c.blocksFun m2 - 1) :=
       c.coe_embedding m2 _
-    rw [Fin.lt_iff_val_lt_val, h1, h2]
+    rw [Fin.lt_def, h1, h2]
     -- sizeUpTo m1 + (blocksFun m1 - 1) < sizeUpTo m2 + (blocksFun m2 - 1)
     -- sizeUpTo m1 + blocksFun m1 = sizeUpTo (m1.val + 1)
     have h3 : c.sizeUpTo m1.val + c.blocksFun m1 = c.sizeUpTo (m1.val + 1) :=
