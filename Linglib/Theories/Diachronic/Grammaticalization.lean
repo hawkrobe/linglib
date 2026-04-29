@@ -21,8 +21,10 @@ greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-20
 
 ## Connections
 
-- `Core.FormFrequency`: form-frequency correspondence is a parallel diachronic
-  process (phonological erosion of frequent forms).
+- `Phenomena.Case.Studies.Haspelmath2021` (§0): form-frequency correspondence
+  is a parallel diachronic process (phonological erosion of frequent forms).
+  Apparatus co-located in the Haspelmath 2021 study file (single consumer);
+  promote to substrate when a second diachronic study materializes.
 - `Semantics.Noun.Binominal`: the bleaching cline for binominals (N+PP →
   pseudo-partitive → evaluative → modifier → intensifier) is a specialized
   grammaticalization path in the nominal domain.

@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Substrate-creep demotion: `Core/FormFrequency.lean` → Haspelmath2021 §0
+
+Follow-up to the 0.230.549–550 Haspelmath2021 audit cycle. The integration auditor's grep had flipped the substrate-creep question: every primitive in `Core/FormFrequency.lean` had **zero downstream consumers besides Haspelmath2021** itself, and four of the seven primitives (`respectsFormFrequency` (general), `argumentCodingRespectsFrequency`, `VoiceDirection`, `DitransitiveFrame`) were completely unused by anyone. CLAUDE.md's substrate principle: general-purpose substrate, not paper-specific apparatus. Earn-rate well below the consumer-count ≥ 2 bar that MEMORY's `project_core_triage` documents (32 Core/ files audited at ~22% earn-rate).
+
+**Demoted into Haspelmath2021.lean §0** (new "Form-Frequency Apparatus" section, paper-specific substrate co-located with consumer): `CodingLength` enum + `rank`, `frequencyProxy` + `frequency_proxy_matches_default`, `scenarioRespectsFormFrequency`. Bare `simp` in the moved `frequency_proxy_matches_default` proof tightened to `simp only [...]` per CLAUDE.md tactic discipline.
+
+**Deleted outright** (totally unused, no consumers anywhere): the general `respectsFormFrequency : List α → (α → Nat) → (α → CodingLength) → Bool`, `argumentCodingRespectsFrequency`, `VoiceDirection` enum, `DitransitiveFrame` enum + `codingLength`. These were "general-purpose substrate" the substrate file *anticipated* a second consumer for, but none materialized over multiple revisions.
+
+**File deleted**: `Linglib/Core/FormFrequency.lean` (was 165 LOC, 7 primitives, 1 consumer).
+
+**Manifest updated**: `Linglib.lean` `import Linglib.Core.FormFrequency` removed.
+
+**Cross-references updated**: `Theories/Diachronic/Grammaticalization.lean` docstring "Connections" section now points to `Phenomena.Case.Studies.Haspelmath2021 §0` rather than the deleted `Core.FormFrequency`, with the explicit note "promote to substrate when a second diachronic study materializes." `blog/data/references.bib` `sources` field for `haspelmath-2021` updated: drop `Core/FormFrequency.lean`, fix stale `Core/Prominence.lean` → `Features/Prominence.lean` (the reference predated the 0.230.200 Features/ split).
+
+**Net effect**: Haspelmath2021.lean grew 686 → 760 LOC by absorbing the demoted apparatus; Core/FormFrequency.lean (165 LOC) deleted entirely; net codebase size −91 LOC. The Haspelmath-specific substrate is now visible at the consumption site rather than hidden behind a substrate-shaped wrapper, and `Core/` is one file lighter on the path toward the "formal substrate only" target documented in CLAUDE.md's directory architecture section.
+
 ### Haspelmath2021 mathlib-discipline follow-up audit + structural strengthening
 
 Two-agent follow-up audit (mathlib-reviewer + linglib-integration-auditor) on `Phenomena/Case/Studies/Haspelmath2021.lean` after 0.230.549's full rewrite. Convergent highest-leverage finding: `differentialTargetsProminent` (in `Features/Prominence.lean`) and `ArgumentRole.lowDefault` were two pointwise-equal pattern-matches over the same five constructors — the equality re-proved as a `private` study lemma and unpacked as a four-conjunct universal. Strengthened to a substrate alias.

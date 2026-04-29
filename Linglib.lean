@@ -237,7 +237,6 @@ import Linglib.Core.Nominal.Interpret
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
-import Linglib.Core.FormFrequency
 import Linglib.Features.Genericity
 import Linglib.Core.Computability.FormalLanguage
 import Linglib.Core.Computability.Subregular.Basic

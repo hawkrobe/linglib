@@ -1,6 +1,5 @@
 import Linglib.Features.Prominence
 import Linglib.Features.InformationStructure
-import Linglib.Core.FormFrequency
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Marantz1991
@@ -82,11 +81,84 @@ claims about token frequencies.
 namespace Haspelmath2021
 
 open Features.Prominence
-open Core.FormFrequency
 open Core.Constraint.Evaluation
 open Aissen2003
 open DeHoopMalchukov2008
 open Typology.Alignment
+
+-- ============================================================================
+-- § 0: Form-Frequency Apparatus (paper-specific substrate, co-located)
+-- ============================================================================
+
+/-! Haspelmath 2021's deeper explanation of argument-coding splits: the
+    Role-Reference Association Universal (Universal 1) reduces to the
+    general cognitive tendency for frequent expressions to be short.
+
+    Three-step chain:
+
+    1. **Frequency asymmetry**: some role-reference combinations are more
+       frequent than others ("I saw him" > "He saw me"; animate agents >
+       inanimate agents).
+    2. **Form-frequency correspondence**: more frequent expressions tend
+       to get shorter forms (diachronic erosion + analogical extension).
+    3. **Coding asymmetry**: "usual" role-reference associations (= the
+       frequent ones) get shorter (often zero) coding; "unusual" ones get
+       longer (overt) coding.
+
+    Previously housed in `Core/FormFrequency.lean` — demoted to this study
+    file at 0.230.551 when the consumer count was 1 (only Haspelmath2021
+    used any of the primitives) and four primitives in the substrate file
+    (`respectsFormFrequency`, `argumentCodingRespectsFrequency`,
+    `VoiceDirection`, `DitransitiveFrame`) were completely unused. -/
+
+/-- Relative coding length of an argument expression. Haspelmath's claim
+    is about *relative* length, not absolute morpheme counts. -/
+inductive CodingLength where
+  /-- Zero coding (no overt marker) -/
+  | zero
+  /-- Short overt coding (e.g., clitic, monosyllabic affix) -/
+  | short
+  /-- Long overt coding (e.g., full adposition, bisyllabic affix) -/
+  | long
+  deriving DecidableEq, Repr
+
+/-- Numeric rank: zero (0) < short (1) < long (2). -/
+def CodingLength.rank : CodingLength → Nat
+  | .zero  => 0
+  | .short => 1
+  | .long  => 2
+
+/-- Frequency proxy from prominence + role: Haspelmath's bridge claim.
+    For P/T arguments, prominence correlates positively with unusualness
+    (and so with coding length); for A/R, frequency is directly related
+    to prominence rank. S is neutral. -/
+def frequencyProxy (role : ArgumentRole)
+    (a : AnimacyLevel) (d : DefinitenessLevel) : Nat :=
+  match role with
+  | .A | .R => prominenceRank a d        -- high prominence = high freq
+  | .P | .T => 6 - prominenceRank a d    -- high prominence = LOW freq
+  | .S      => 3                          -- neutral
+
+/-- The frequency proxy predicts that usual associations are more frequent:
+    every default-zone cell has at least the median proxy value. -/
+theorem frequency_proxy_matches_default (role : ArgumentRole)
+    (a : AnimacyLevel) (d : DefinitenessLevel) :
+    (isDefaultZone role a d = true) →
+    (frequencyProxy role a d ≥ 3) := by
+  intro h
+  cases role <;>
+    simp only [isDefaultZone, frequencyProxy, prominenceRank,
+               decide_eq_true_eq] at h ⊢ <;> omega
+
+/-- Scenario-level form-frequency correspondence: higher frequency-class
+    scenarios should get shorter-or-equal coding. -/
+def scenarioRespectsFormFrequency
+    (scenarios : List Scenario) (coding : Scenario → CodingLength) : Bool :=
+  scenarios.all λ s1 =>
+    scenarios.all λ s2 =>
+      if s1.frequencyClass > s2.frequencyClass
+      then (coding s1).rank ≤ (coding s2).rank
+      else true
 
 -- ============================================================================
 -- § 1: Universal 1 — The Role-Reference Association Universal
@@ -106,8 +178,8 @@ open Typology.Alignment
     the negation of `r`'s default zone (`isDefaultZone r a d = false`),
     and the meta-universal predicts non-default cells get longer coding.
     The cell-level corollary is captured by `frequency_proxy_matches_default`
-    (substrate, `Core/FormFrequency.lean`): default cells have
-    `frequencyProxy ≥ 3`, non-default cells have `frequencyProxy ≤ 3`.
+    (co-located in §0): default cells have `frequencyProxy ≥ 3`, non-default
+    cells have `frequencyProxy ≤ 3`.
     Form-frequency correspondence (U68) then maps this to coding length. -/
 
 /-- Universal 1 (cell form): default-zone cells have at least the median
@@ -386,8 +458,10 @@ theorem universal10_relative_scenario :
     > form tends to be longer than the direct form.
 
     Upstream = unusual = lower frequency class = predicted longer by FFC.
-    Substrate's `VoiceDirection` enum (in `Core/FormFrequency.lean`)
-    captures the direct/inverse distinction. -/
+    The direct/inverse distinction is captured at the scenario level via
+    `Scenario.isDownstream`/`isUpstream` (substrate `Features/Prominence.lean`);
+    a dedicated `VoiceDirection` enum was carried in `Core/FormFrequency.lean`
+    until 0.230.551 but never used and was demoted out. -/
 
 theorem universal11_inverse :
     upstreamScenario.frequencyClass < downstreamScenario.frequencyClass := by decide
@@ -563,10 +637,10 @@ theorem alignment_correlation_deHoopMalchukov :
     "reduce to U68" directly (that conflation was an error in earlier
     revisions of this file).
 
-    Substrate-level: `Core.FormFrequency.scenarioRespectsFormFrequency`
-    is the predicate "more frequent → shorter (or equal) coding". The
-    scenario-level theorem below shows that `Scenario.frequencyClass`
-    cohere with the form-frequency correspondence over the 9 scenarios. -/
+    `scenarioRespectsFormFrequency` (defined in §0) is the predicate
+    "more frequent → shorter (or equal) coding". The scenario-level
+    theorem below shows that `Scenario.frequencyClass` coheres with the
+    form-frequency correspondence over the 9 scenarios. -/
 
 /-- A coding function that assigns shortest coding to downstream
     scenarios, longest to upstream — exactly the gradient U10/U11
