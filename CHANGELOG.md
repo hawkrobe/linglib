@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.539] - 2026-04-29
+
+### Bretagnolle–Huber sorry discharged (`two_hellingerDistSq_le_klFinite` now a real theorem)
+
+The §-Hellinger Bretagnolle–Huber inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)` (the only sorry introduced in 0.230.536–537) is now proved. The Hellinger-speaker-permissiveness-over-KL framework difference is therefore a proved corollary, not just a typed claim.
+
+- **Added pointwise lemma `Core.InformationTheory.sqrt_sub_one_sq_le_klFun`** in the `KLDivergence` section: `(√x − 1)² ≤ klFun(x)` for `x ≥ 0`. Proof via the algebraic identity `klFun(x) = (√x − 1)² + 2√x · klFun(√x)` (substitute `s = √x`, use `Real.log_sqrt` for `log x = 2 log s`, then `ring`); both `2√x ≥ 0` and `klFun(√x) ≥ 0` (mathlib `klFun_nonneg`) make the difference non-negative.
+- **Added private helper `mul_sqrt_div_sub_one_sq`** in the `Hellinger` section: `q · (√(p/q) − 1)² = (√p − √q)²` for `p ≥ 0`, `q > 0`. Bridges the per-`klFun(p/q)`-shaped pointwise lemma to the `(√p − √q)²` form needed for the H² sum.
+- **Discharged main `two_hellingerDistSq_le_klFinite`**: the proof composes the pointwise lemma (scaled by `qᵢ ≥ 0` and summed) with the `2 H² = ∑(√pᵢ − √qᵢ)²` bridge (using `Real.sqrt_mul` + `∑P = ∑Q = 1`) and `kl_eq_sum_klFun`. ~25 lines.
+- **Docstring corrections**: prior sketch said `klFun(x) ≥ 2(√x − 1)²` (wrong — fails at `x = 0`: klFun(0)=1 < 2(0−1)²=2). The correct pointwise bound is `klFun(x) ≥ (√x − 1)²` (no factor of 2); the factor of 2 in `2 H² ≤ KL` comes from the sum bridge `Σ(√P − √Q)² = 2(1 − BC) = 2 H²`. Module docstring also updated to remove the "(sorried)" parenthetical.
+- **Build**: 2736 jobs green across `Core.InformationTheory` + the three Hellinger/KL consumers (HFr2019, TTG, EgreEtAl). Zero sorries in this file (down from 1).
+
 ## [0.230.538] - 2026-04-29
 
 ### ChannelCapacity Gibbs consolidation (closes "three parallel KL Gibbs proofs" audit thread)

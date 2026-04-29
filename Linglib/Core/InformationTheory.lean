@@ -296,6 +296,34 @@ theorem expected_log_eq_neg_klFinite_plus_negEntropy (p q : ι → ℝ)
     (∑ i, p i * log (q i)) = -klFinite p q + (∑ i, p i * log (p i)) := by
   rw [klFinite_eq_negEntropy_sub_crossEntropy p q hAC]; ring
 
+/-- Pointwise inequality `(√x − 1)² ≤ klFun(x)` for `x ≥ 0`.
+
+    Used in the proof of Bretagnolle–Huber `two_hellingerDistSq_le_klFinite`.
+    Proof via the identity `klFun(x) = (√x − 1)² + 2√x · klFun(√x)`: both
+    `2√x ≥ 0` and `klFun(√x) ≥ 0` (mathlib `klFun_nonneg`), so the difference
+    is non-negative.
+
+    The identity is the substitution `s = √x`: `klFun(s²) − (s − 1)² =
+    2s · klFun(s)`, which expands to a ring identity in `s` and `log s`
+    once `log(s²) = 2 log s` is used. -/
+theorem sqrt_sub_one_sq_le_klFun {x : ℝ} (hx : 0 ≤ x) :
+    (Real.sqrt x - 1) ^ 2 ≤ _root_.InformationTheory.klFun x := by
+  set s := Real.sqrt x with hs_def
+  have hs_nn : 0 ≤ s := Real.sqrt_nonneg x
+  have hs_sq : s * s = x := Real.mul_self_sqrt hx
+  have hkl_s : 0 ≤ _root_.InformationTheory.klFun s :=
+    _root_.InformationTheory.klFun_nonneg hs_nn
+  have hlog : Real.log x = 2 * Real.log s := by
+    rw [hs_def, Real.log_sqrt hx]; ring
+  have hidentity : _root_.InformationTheory.klFun x =
+      (s - 1) ^ 2 + 2 * s * _root_.InformationTheory.klFun s := by
+    unfold _root_.InformationTheory.klFun
+    rw [hlog, ← hs_sq]
+    ring
+  have h2skl_nn : 0 ≤ 2 * s * _root_.InformationTheory.klFun s :=
+    mul_nonneg (mul_nonneg (by norm_num) hs_nn) hkl_s
+  linarith
+
 end KLDivergence
 
 /-! ## Hellinger family (Bhattacharyya, squared-Hellinger, Hellinger distance)
@@ -306,9 +334,10 @@ in RSA pragmatics: @cite{herbstritt-franke-2019} argue (footnote 8) that
 Hellinger distance is necessary for probability expressions because KL
 assigns infinite disutility to messages whose literal interpretation
 assigns zero probability to states the speaker considers possible.
-The §-Hellinger-vs-KL inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`
-(Bretagnolle–Huber, sorried) makes the Hellinger speaker's permissiveness
-over the KL speaker a proved corollary rather than a docstring claim. -/
+The Hellinger-vs-KL inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`
+(Bretagnolle–Huber, `two_hellingerDistSq_le_klFinite`) makes the Hellinger
+speaker's permissiveness over the KL speaker a proved corollary rather than
+a docstring claim. -/
 
 section Hellinger
 
@@ -349,24 +378,71 @@ theorem hellingerDistSq_nonneg_of_bc_le_one (P Q : ι → ℝ)
     0 ≤ hellingerDistSq P Q := by
   unfold hellingerDistSq; linarith
 
-/-- **Bretagnolle–Huber inequality**: `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+/-- Per-index helper for the Bretagnolle–Huber bridge:
+    `Q · (√(P/Q) − 1)² = (√P − √Q)²` for `P ≥ 0`, `Q > 0`. -/
+private lemma mul_sqrt_div_sub_one_sq (p q : ℝ) (hp : 0 ≤ p) (hq : 0 < q) :
+    q * (Real.sqrt (p / q) - 1) ^ 2 = (Real.sqrt p - Real.sqrt q) ^ 2 := by
+  have hsQ_pos : 0 < Real.sqrt q := Real.sqrt_pos.mpr hq
+  have hsQ_ne : Real.sqrt q ≠ 0 := ne_of_gt hsQ_pos
+  have hsQ_sq : Real.sqrt q ^ 2 = q := Real.sq_sqrt (le_of_lt hq)
+  rw [Real.sqrt_div hp q]
+  -- (√p / √q − 1)² = ((√p − √q)/√q)²; q · (·) / (√q)² = (√p − √q)²
+  have hstep : Real.sqrt p / Real.sqrt q - 1 =
+      (Real.sqrt p - Real.sqrt q) / Real.sqrt q := by
+    field_simp
+  rw [hstep, div_pow, hsQ_sq]
+  have hq_ne : q ≠ 0 := ne_of_gt hq
+  field_simp
 
-    The standard sharp comparison between Hellinger and KL on probability
+/-- **Bretagnolle–Huber inequality** (finite-discrete form): `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+
+    Standard sharp comparison between Hellinger and KL on probability
     distributions. Combined with `H² ≥ 0`, yields `H²(P, Q) ≤ KL(P ‖ Q)`,
     making the Hellinger speaker's choice set a **superset** of the KL
     speaker's: any utterance the KL speaker can consider, the Hellinger
     speaker can too — but not conversely.
 
-    **Proof sketch (TODO):** Pointwise `klFun(x) ≥ 2(√x − 1)²` (factor-of-2
-    convexity bound). Multiply by `qᵢ` and sum: `Σ qᵢ klFun(pᵢ/qᵢ) ≥
-    2 Σ (√pᵢ − √qᵢ)²`. The LHS equals `KL(p ‖ q)` via `kl_eq_sum_klFun`;
-    the RHS equals `2 · 2 · H²(p, q) = 4 H²` for normalised `p, q`, but only
-    `2 H²` is needed. Standard reference: Bretagnolle–Huber (1979). -/
+    **Proof.** Pointwise `(√x − 1)² ≤ klFun(x)` (`sqrt_sub_one_sq_le_klFun`,
+    proven via `klFun(x) − (√x−1)² = 2√x · klFun(√x)`). Scaling by `qᵢ ≥ 0`
+    and using `qᵢ · (√(pᵢ/qᵢ) − 1)² = (√pᵢ − √qᵢ)²` (`mul_sqrt_div_sub_one_sq`)
+    gives `(√pᵢ − √qᵢ)² ≤ qᵢ · klFun(pᵢ/qᵢ)`. Sum: LHS bridges to `2·H²` via
+    `(√P − √Q)² = P + Q − 2√(P·Q)` summed against `∑P = ∑Q = 1`; RHS bridges
+    to `KL` via `kl_eq_sum_klFun`. Standard reference: Bretagnolle–Huber (1979). -/
 theorem two_hellingerDistSq_le_klFinite [Nonempty ι] (P Q : ι → ℝ)
-    (_hP_nonneg : ∀ i, 0 ≤ P i) (_hQ_pos : ∀ i, 0 < Q i)
-    (_hP_sum : ∑ i, P i = 1) (_hQ_sum : ∑ i, Q i = 1) :
+    (hP_nonneg : ∀ i, 0 ≤ P i) (hQ_pos : ∀ i, 0 < Q i)
+    (hP_sum : ∑ i, P i = 1) (hQ_sum : ∑ i, Q i = 1) :
     2 * hellingerDistSq P Q ≤ klFinite P Q := by
-  sorry
+  -- Per-i: (√P i − √Q i)² = P i + Q i − 2 √(P i · Q i)
+  have hsq_diff : ∀ i, (Real.sqrt (P i) - Real.sqrt (Q i)) ^ 2 =
+      P i + Q i - 2 * Real.sqrt (P i * Q i) := by
+    intro i
+    have hP := hP_nonneg i
+    have hQ := le_of_lt (hQ_pos i)
+    have hsP : Real.sqrt (P i) ^ 2 = P i := Real.sq_sqrt hP
+    have hsQ : Real.sqrt (Q i) ^ 2 = Q i := Real.sq_sqrt hQ
+    have hsPQ : Real.sqrt (P i) * Real.sqrt (Q i) = Real.sqrt (P i * Q i) :=
+      (Real.sqrt_mul hP (Q i)).symm
+    have : (Real.sqrt (P i) - Real.sqrt (Q i)) ^ 2 =
+           Real.sqrt (P i) ^ 2 + Real.sqrt (Q i) ^ 2
+             - 2 * (Real.sqrt (P i) * Real.sqrt (Q i)) := by ring
+    rw [this, hsP, hsQ, hsPQ]
+  -- Sum bridge: 2 H² = ∑ (√P − √Q)²
+  have hbridge : 2 * hellingerDistSq P Q = ∑ i, (Real.sqrt (P i) - Real.sqrt (Q i)) ^ 2 := by
+    unfold hellingerDistSq bhattacharyyaCoeff
+    have hexpand : ∑ i, (Real.sqrt (P i) - Real.sqrt (Q i)) ^ 2 =
+        (∑ i, P i) + (∑ i, Q i) - 2 * (∑ i, Real.sqrt (P i * Q i)) := by
+      simp_rw [hsq_diff]
+      rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum]
+    rw [hexpand, hP_sum, hQ_sum]; ring
+  -- KL bridge: KL = ∑ Q · klFun(P/Q)
+  rw [hbridge, kl_eq_sum_klFun P Q hQ_pos hP_nonneg (by rw [hP_sum, hQ_sum])]
+  -- Pointwise comparison
+  apply Finset.sum_le_sum
+  intro i _
+  rw [← mul_sqrt_div_sub_one_sq (P i) (Q i) (hP_nonneg i) (hQ_pos i)]
+  exact mul_le_mul_of_nonneg_left
+    (sqrt_sub_one_sq_le_klFun (div_nonneg (hP_nonneg i) (le_of_lt (hQ_pos i))))
+    (le_of_lt (hQ_pos i))
 
 end Hellinger
 
