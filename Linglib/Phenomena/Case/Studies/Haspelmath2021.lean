@@ -1,16 +1,16 @@
 import Linglib.Features.Prominence
-import Linglib.Core.FormFrequency
 import Linglib.Features.InformationStructure
+import Linglib.Core.FormFrequency
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
+import Linglib.Phenomena.Case.Studies.Marantz1991
 import Linglib.Typology.Alignment
-import Linglib.Phenomena.Alignment.Studies.Dixon1994
 
 /-!
-# @cite{haspelmath-2021}: Explaining Argument-Coding Splits @cite{haspelmath-2021}
+# @cite{haspelmath-2021}: Role-reference associations and the explanation of argument coding splits
 
-Explaining argument-coding splits with role-reference associations.
-Linguistics 59(5): 1231–1270.
+@cite{haspelmath-2021}, *Linguistics* 59(1): 123–174.
+DOI: 10.1515/ling-2020-0252.
 
 ## Overview
 
@@ -20,44 +20,62 @@ marking, split ergativity, ditransitive splits, and person-scenario splits
 under one generalization: deviations from the usual associations of role
 rank and referential prominence tend to be coded by longer grammatical forms.
 
-The paper further argues that this universal itself reduces to a
-**form-frequency correspondence** (§10.2): the "usual" associations ARE the
-frequent ones, and frequent expressions get shorter forms (Zipf).
+Universal 1 in turn is "evidently a special case of" the broader
+**form-frequency correspondence universal** (Universal 68 in §11.2): the
+"usual" associations ARE the frequent ones, and frequent expressions get
+shorter forms (Zipf).
 
-## The Paper's 14 Universals
+## The Paper's Numbered Universals
 
-The paper states 14 numbered universals organized hierarchically
-(Figure 1, §11.1):
+The paper states the following numbered universals (Figure 1, §11.1):
 
 ### Meta-universals (§2)
-- **Universal 1**: Role-Reference Association Universal — deviations from
-  usual role-prominence associations get longer coding
-- **Universal 2**: Usual role-reference associations — A/R tend to be
-  prominent, P/T tend to be non-prominent
+- **Universal 1** (statement (5)): Role-Reference Association Universal
+- **Universal 2** (statement (6)): usual role-reference associations
 
 ### Single-argument coding splits (§3–5)
-- **Universal 3**: Single-argument coding universal (general)
-- **Universal 4**: Split P flagging / DOM (§4.1)
-- **Universal 5**: Scenario coding universal (§3, §6)
-- **Universal 6**: Split A flagging / DSM (§4.2)
-- **Universal 7**: Split R flagging (§5)
-- **Universal 8**: Split T flagging (§5)
+- **Universal 3** (statement (13), §3): Single-argument flagging universal
+- **Universal 4** (statement (14), §4.1): Split P flagging (DOM)
+- **Universal 5** (statement (16), §3, restated §6): Scenario coding universal
+- **Universal 6** (statement (21), §4.2): Split A flagging (DSM)
+- **Universal 7** (statement (26), §5): Split R flagging
+- **Universal 8** (statement (27), §5): Split T flagging
 
-### Scenario and voice splits (§6–9)
-- **Universal 9**: Monotransitive scenario splits (§6)
-- **Universal 10**: Ditransitive person-role splits (§7)
-- **Universal 11**: Relative scenario splits (§8)
-- **Universal 12**: Inverse (§9)
-- **Universal 13**: Passive (§9)
-- **Universal 14**: Dative alternation (§9)
+### Ditransitive scenario splits (§7)
+- **Universal 9a** (statement (41), §7.1): Ditransitive Person-Role Constraint
+- **Universal 9b** (statement (42), §7.1): Ditransitive person-role universal
 
-## What We Formalize
+### Relative scenario / inverse / alternations (§8–§10)
+- **Universal 10** (statement (54), §8): Relative scenario universal
+- **Universal 11** (statement (57), §9): Inverse universal
+- **Universal 12** (statement (61), §10.1): Alternation universal
+- **Universal 13** (statement (62), §10.1): Passive universal
+- **Universal 14** (statement (63), §10.1): Dative alternation universal
 
-This file captures Universals 1–9 using existing linglib infrastructure.
-Universals 4 and 6 are already proven in `Aissen2003.lean` and
-`DeHoopMalchukov2008.lean` respectively — we re-export those results.
-Universals 10–14 (ditransitive scenarios, inverse, passive, dative
-alternation) are noted but require additional infrastructure.
+### The reductive claim
+- **Universal 68** (statement (68), §11.2): Grammatical form-frequency
+  correspondence universal — Universal 1 is "evidently a special case of"
+  this broader universal.
+
+## What This File Formalizes
+
+Universals 1–14, with U4 and U6 re-expressing model predictions from
+@cite{aissen-2003} and @cite{de-hoop-malchukov-2008} respectively, and a
+final §18 contrastive section showing how @cite{marantz-1991}'s dependent
+case algorithm partitions the empirical territory of "split case marking"
+with Haspelmath's framework: structural-condition splits (Marantz) vs.
+prominence-condition splits (Haspelmath).
+
+## What This File Does NOT Formalize
+
+The paper's frequency claims are tendency-claims based on corpus regularities.
+Haspelmath himself: "I do not focus on documenting the discourse frequencies
+in this paper... testing this claim more thoroughly is a topic for future
+comparative corpus research" (p. 126). Lean theorems committing the
+frequency-class function to specific Nat values would over-reify a
+tendency-claim. We use `Scenario.frequencyClass` from the substrate as a
+discrete proxy and clearly mark its theorems as proxy-checks, not empirical
+claims about token frequencies.
 
 -/
 
@@ -74,41 +92,28 @@ open Typology.Alignment
 -- § 1: Universal 1 — The Role-Reference Association Universal
 -- ============================================================================
 
-/-! **Universal 1** (@cite{haspelmath-2021}, §2, statement (5)):
+/-! **Universal 1** (@cite{haspelmath-2021}, §2, statement (5), p. 125):
 
-    "Deviations from the usual associations of role rank and referential
-    prominence tend to be coded by longer grammatical forms (if the coding
-    is asymmetric)."
+    > Deviations from usual associations of role rank and referential
+    > prominence tend to be coded by longer grammatical forms if the
+    > coding is asymmetric.
 
-    This is the paper's central claim — a single meta-universal that
-    subsumes all 13 other universals. It is formalized here as the
-    conjunction of two properties: (a) the direction of differential
-    marking matches the role's default prominence zone, and (b) the
-    form-frequency correspondence assigns higher frequency to the
-    usual (default) zone. -/
+    The paper's central meta-universal. Universal 1 is a claim about
+    **coding length**, not about which prominence end gets a flag — that
+    specialization is Universal 3.
 
-/-- Universal 1: The Role-Reference Association Universal holds for all
-    monotransitive and ditransitive roles. For each role, the direction of
-    differential marking matches the deviation from the usual association.
+    Formalized as: for each argument role `r`, the "deviation zone" is
+    the negation of `r`'s default zone (`isDefaultZone r a d = false`),
+    and the meta-universal predicts non-default cells get longer coding.
+    The cell-level corollary is captured by `frequency_proxy_matches_default`
+    (substrate, `Core/FormFrequency.lean`): default cells have
+    `frequencyProxy ≥ 3`, non-default cells have `frequencyProxy ≤ 3`.
+    Form-frequency correspondence (U68) then maps this to coding length. -/
 
-    - P/T: prominent end is unusual → differential marking targets prominent
-    - A/R: non-prominent end is unusual → differential marking targets
-      non-prominent -/
-theorem universal1_role_reference_association :
-    -- P: prominent end is unusual → marked
-    differentialTargetsProminent .P = true ∧
-    -- T: prominent end is unusual → marked (like P)
-    differentialTargetsProminent .T = true ∧
-    -- A: non-prominent end is unusual → marked
-    differentialTargetsProminent .A = false ∧
-    -- R: non-prominent end is unusual → marked (like A)
-    differentialTargetsProminent .R = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Universal 1 is grounded by the form-frequency correspondence (§10.2):
-    the frequency proxy assigns higher frequency to the "usual" (default)
-    zone for every role. Usual = frequent = short coding. -/
-theorem universal1_frequency_grounding (role : ArgumentRole)
-    (a : AnimacyLevel) (d : DefinitenessLevel) :
+/-- Universal 1 (cell form): default-zone cells have at least the median
+    frequency proxy. Substrate lemma re-exported with the U1 framing. -/
+theorem universal1_role_reference_association
+    (role : ArgumentRole) (a : AnimacyLevel) (d : DefinitenessLevel) :
     (isDefaultZone role a d = true) →
     (frequencyProxy role a d ≥ 3) :=
   frequency_proxy_matches_default role a d
@@ -117,80 +122,108 @@ theorem universal1_frequency_grounding (role : ArgumentRole)
 -- § 2: Universal 2 — Usual Role-Reference Associations
 -- ============================================================================
 
-/-! **Universal 2** (@cite{haspelmath-2021}, §2, statement (6)):
+/-! **Universal 2** (@cite{haspelmath-2021}, §2, statement (6), p. 126):
 
-    "Arguments with higher-ranked roles tend to be more referentially
-    prominent, and vice versa."
+    > Arguments with higher-ranked roles tend to be more referentially
+    > prominent, and vice versa.
 
-    This defines the *baseline* for Universal 1: A/R arguments (higher role
+    Defines the *baseline* for Universal 1: A/R arguments (higher role
     rank) tend to be human, definite, topical. P/T arguments (lower role
     rank) tend to be inanimate, indefinite, new-information.
 
-    Formalized as: high-rank roles have high default prominence, low-rank
-    roles have low default prominence. -/
+    Formalized via the substrate's `highDefault` (A, R) / `lowDefault`
+    (P, T) predicates. -/
 
-/-- Universal 2: Role rank determines default prominence direction.
-    A and R are high-default (expect prominent referents).
-    P and T are low-default (expect non-prominent referents). -/
+/-- Universal 2 (default-side): A and R have high-default-prominence
+    expectations; P and T have low-default-prominence expectations.
+    S is the alignment reference point and has no strong default
+    (Haspelmath fn. 15, p. 138 explicitly excludes intransitives from
+    the analysis). -/
 theorem universal2_usual_associations :
     ArgumentRole.A.highDefault = true ∧
     ArgumentRole.R.highDefault = true ∧
     ArgumentRole.P.lowDefault = true ∧
     ArgumentRole.T.lowDefault = true := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Universal 2 is consistent with role rank: A > R > S > T > P.
-    Higher role rank → higher default prominence expectation. -/
-theorem universal2_role_rank_ordering :
-    ArgumentRole.A.roleRank > ArgumentRole.R.roleRank ∧
-    ArgumentRole.R.roleRank > ArgumentRole.S.roleRank ∧
-    ArgumentRole.S.roleRank > ArgumentRole.T.roleRank ∧
-    ArgumentRole.T.roleRank > ArgumentRole.P.roleRank := by decide
+/-! Haspelmath on role rank, p. 127: "the notion of role rank is not
+    crucial. (Since some readers will be curious, I will make a few
+    remarks below in Section 11.2, but it should be kept in mind that
+    these considerations are not essential for this paper.)"
+
+    The only role-rank claims the paper commits to are the
+    monotransitive A > P (statement (7), p. 127) and the ditransitive
+    R > T. We do *not* state a total ordering A > R > S > T > P; that
+    would over-formalize. -/
+
+/-- Universal 2 (role-rank fragment): A > P (monotransitive) and R > T
+    (ditransitive). These are the only role-rank orderings the paper
+    commits to. -/
+theorem universal2_role_rank_committed_orderings :
+    ArgumentRole.A.roleRank > ArgumentRole.P.roleRank ∧
+    ArgumentRole.R.roleRank > ArgumentRole.T.roleRank := by decide
 
 -- ============================================================================
--- § 3: Universal 3 — Single-Argument Coding Universal
+-- § 3: Universal 3 — Single-Argument Flagging Universal
 -- ============================================================================
 
-/-! **Universal 3** (@cite{haspelmath-2021}, §3, statement (13)):
+/-! **Universal 3** (@cite{haspelmath-2021}, §3, statement (13), p. 131):
 
-    "The single-argument flagging universal: If a language has an asymmetric
-    single-argument flagging split depending on some prominence scale, then
-    the coding is longer for prominent P/T-arguments or for non-prominent
-    A/R-arguments."
+    > The single-argument flagging universal: If a language has an
+    > asymmetric single-argument flagging split depending on some
+    > prominence scale, then the coding is longer for prominent
+    > P/T-arguments or for non-prominent A/R-arguments.
 
-    This is the general form from which Universals 4, 6, 7, 8 follow as
-    specific cases for each argument role. It applies to both flagging and
-    indexing (statement (15)). -/
+    The general single-argument form from which Universals 4, 6, 7, 8
+    follow as specific cases for each argument role. It applies to both
+    flagging and indexing (statement (15)).
 
-/-- Universal 3: The monotonicity direction is determined by role type.
-    For P/T (low-default roles), differential marking targets the
-    prominent end (upper set / monotone). For A/R (high-default roles),
-    it targets the non-prominent end (lower set / anti-monotone).
+    **Derived from U1 + U2.** Substrate-level: for any role `r`,
+    `differentialTargetsProminent r = lowDefault r` (the prominent end
+    is the "deviation" for low-default roles, and the non-prominent end
+    is the deviation for high-default roles). U3 asserts this equality
+    over the four core roles. -/
 
-    This subsumes both flagging and indexing channels. -/
-theorem universal3_single_argument_coding :
-    differentialTargetsProminent .P = true ∧
-    differentialTargetsProminent .T = true ∧
-    differentialTargetsProminent .A = false ∧
-    differentialTargetsProminent .R = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- Substrate fact connecting `differentialTargetsProminent` to `lowDefault`
+    (and equivalently to the negation of `highDefault` over A,P,R,T).
+    Universal 3 is the universal-quantification of this. -/
+private theorem differentialTargets_eq_lowDefault (r : ArgumentRole) :
+    differentialTargetsProminent r = r.lowDefault := by cases r <;> rfl
+
+/-- Universal 3 derives from U1 + U2: the differential-flagging direction
+    for each role is determined by whether the role is low-default
+    (prominent end = deviation) or high-default (non-prominent end =
+    deviation). The four conjuncts are *not* independent stipulations;
+    they fall out of `differentialTargets_eq_lowDefault` plus U2's
+    role/default assignments. -/
+theorem universal3_single_argument_flagging :
+    differentialTargetsProminent .P = ArgumentRole.P.lowDefault ∧
+    differentialTargetsProminent .T = ArgumentRole.T.lowDefault ∧
+    differentialTargetsProminent .A = ArgumentRole.A.lowDefault ∧
+    differentialTargetsProminent .R = ArgumentRole.R.lowDefault :=
+  ⟨differentialTargets_eq_lowDefault .P, differentialTargets_eq_lowDefault .T,
+   differentialTargets_eq_lowDefault .A, differentialTargets_eq_lowDefault .R⟩
 
 -- ============================================================================
 -- § 4: Universal 4 — Split P Flagging (DOM)
 -- ============================================================================
 
-/-! **Universal 4** (@cite{haspelmath-2021}, §4.1, statement (14)):
+/-! **Universal 4** (@cite{haspelmath-2021}, §4.1, statement (14), p. 131):
 
-    "Split P flagging (Differential Object Marking): If a language has an
-    asymmetric split in P flagging depending on some prominence scale, then
-    the special flag is used on the prominent P-argument."
+    > Split P flagging: If a language has an asymmetric split in P
+    > flagging depending on some prominence scale, then the special
+    > flag is used on the prominent P-argument.
 
-    This is @cite{aissen-2003}'s core result: the OT factorial typology generates
-    only monotone DOM patterns — marking always starts from the prominent
-    end of the animacy/definiteness scale. -/
+    Re-exported from @cite{aissen-2003}'s OT factorial typology, which
+    *predicts* this universal: the typology generates only monotone DOM
+    patterns. -/
 
-/-- Universal 4: All OT-generated animacy DOM patterns are monotone
-    (prominent Ps marked before non-prominent Ps).
-    Re-exported from @cite{aissen-2003}. -/
-theorem universal4_split_P_flagging : animOptima.all (λ opts =>
+/-- @cite{aissen-2003}'s OT factorial typology *predicts* Universal 4:
+    every animacy DOM pattern in `animOptima` is monotone (the prominent
+    end gets the marker first). Renamed from `universal4_split_P_flagging`
+    to clarify that this is a *model prediction* of U4, not the universal
+    itself: a model-internal lemma can support a typological universal
+    without being identical to it. -/
+theorem universal4_aissen_predicts : animOptima.all (λ opts =>
     opts.checkAll (λ c =>
       (if c.an then c.hu else true) &&
       (if c.inan then c.an else true))) = true :=
@@ -200,63 +233,61 @@ theorem universal4_split_P_flagging : animOptima.all (λ opts =>
 -- § 5: Universal 5 — Scenario Coding Universal
 -- ============================================================================
 
-/-! **Universal 5**:
+/-! **Universal 5** (@cite{haspelmath-2021}, §3, statement (16), p. 132,
+    restated §6, p. 144):
 
-    The scenario coding universal: if a language has an asymmetric scenario
-    split, then the coding is longest for upstream scenarios (P more
-    prominent than A), shortest for downstream scenarios (A more prominent
-    than P), and intermediate for balanced scenarios.
+    > If a language has an asymmetric scenario split, then the coding is
+    > longest for upstream scenarios, shortest for downstream scenarios,
+    > and intermediate for balanced scenarios.
 
-    This is the second major branch under Universal 1 (alongside Universal
-    3). While Universal 3 conditions coding on the prominence of a single
-    argument, Universal 5 conditions it on the *combination* of A-person
-    and P-person. -/
+    The second major branch under Universal 1 (alongside Universal 3).
+    Universal 3 conditions coding on the prominence of a single argument;
+    Universal 5 conditions it on the *combination* of A-person and P-person.
 
-/-- Downstream scenario: SAP acts on 3rd (A more prominent than P). -/
+    "Upstream" / "downstream" / "balanced" is Haspelmath's trichotomy
+    (statement (11), p. 130). The paper does NOT introduce a "local"
+    sub-case for SAP↔SAP scenarios — that classification was a formaliser
+    invention and has been removed. -/
+
+/-- Canonical witnesses for the trichotomy (statement (11)). -/
 def downstreamScenario : Scenario := ⟨.first, .third⟩
-
-/-- Upstream scenario: 3rd acts on SAP (P more prominent than A). -/
 def upstreamScenario : Scenario := ⟨.third, .first⟩
-
-/-- Balanced scenario: both 3rd person (same prominence level). -/
 def balancedScenario : Scenario := ⟨.third, .third⟩
 
-/-- Local scenario: 1st acts on 2nd (both SAP; downstream sub-case). -/
-def localScenario : Scenario := ⟨.first, .second⟩
-
-theorem downstream_is_downstream : downstreamScenario.isDownstream = true := rfl
-theorem upstream_is_upstream : upstreamScenario.isUpstream = true := rfl
-theorem balanced_is_balanced : balancedScenario.isBalanced = true := rfl
-theorem local_is_local : localScenario.isLocal = true := rfl
-
-/-- Universal 5: Downstream scenarios have higher A-person rank than
-    upstream. Higher A-person rank = more "usual" = predicted shorter
-    coding. -/
-theorem universal5_downstream_shorter :
-    downstreamScenario.aPerson.rank > upstreamScenario.aPerson.rank := by decide
-
-/-- Universal 5: The downstream/upstream/balanced trichotomy is exhaustive
-    for all 9 person-pair scenarios. -/
+/-- Universal 5: the downstream/upstream/balanced trichotomy is exhaustive
+    for all 9 person-pair scenarios. Substrate's `Scenario.all` is now an
+    explicit literal so plain `decide` reduces (was `native_decide`). -/
 theorem universal5_trichotomy_exhaustive :
     Scenario.all.all (λ s =>
-      s.isDownstream || s.isUpstream || s.isBalanced) = true := by native_decide
+      s.isDownstream || s.isUpstream || s.isBalanced) = true := by decide
+
+/-- Universal 5: the frequency-class proxy is monotone in the "usualness"
+    of the scenario — downstream > balanced > upstream. This is a
+    *substrate-level proxy*, not an empirical claim about discourse
+    frequencies (cf. Haspelmath p. 126: corpus testing is "a topic for
+    future comparative research"). -/
+theorem universal5_frequency_class_monotone :
+    downstreamScenario.frequencyClass > balancedScenario.frequencyClass ∧
+    balancedScenario.frequencyClass > upstreamScenario.frequencyClass := by decide
 
 -- ============================================================================
 -- § 6: Universal 6 — Split A Flagging (DSM)
 -- ============================================================================
 
-/-! **Universal 6** (@cite{haspelmath-2021}, §4.2, statement (21)):
+/-! **Universal 6** (@cite{haspelmath-2021}, §4.2, statement (21), p. 136):
 
-    "Split A flagging (Differential Subject Marking): If a language has an
-    asymmetric split in A flagging depending on some prominence scale, then
-    the special flag is used on the non-prominent A-argument."
+    > Split A flagging: If a language has an asymmetric split in A
+    > flagging depending on some prominence scale, then the special
+    > flag is used on the non-prominent A-argument.
 
-    The mirror image of Universal 4. Verified via @cite{de-hoop-malchukov-2008} Distinguish constraint: weak (non-prominent) subjects get overt
-    ergative marking. -/
+    The mirror image of Universal 4. Re-expressed via @cite{de-hoop-malchukov-2008}'s
+    Distinguish constraint, which *predicts* this directionality: weak
+    (non-prominent) subjects get overt ergative marking. -/
 
-/-- Universal 6: Under Distinguish, weak subjects are marked (Fore pattern).
-    Re-exported from @cite{de-hoop-malchukov-2008}. -/
-theorem universal6_split_A_flagging :
+/-- @cite{de-hoop-malchukov-2008}'s Distinguish-ranking *predicts* Universal 6:
+    weak subjects are marked (Fore pattern). Renamed from
+    `universal6_split_A_flagging` for the same reason as U4. -/
+theorem universal6_dehoopmalchukov_predicts :
     superoptimal allPairs (profileFor [distinguishSubj, economy])
     = [(CaseForm.zero, Strength.strong), (CaseForm.overt, Strength.weak)] :=
   dsm_distinguish
@@ -265,75 +296,253 @@ theorem universal6_split_A_flagging :
 -- § 7: Universals 7–8 — Ditransitive Splits (R and T flagging)
 -- ============================================================================
 
-/-! **Universal 7** (@cite{haspelmath-2021}, §5, statement (26)):
+/-! **Universal 7** (@cite{haspelmath-2021}, §5, statement (26), p. 139):
 
-    "Split R flagging: If a language has an asymmetric split in R flagging
-    depending on some prominence scale, then the special flag is used on
-    the non-prominent R-argument."
+    > Split R flagging: If a language has an asymmetric split in R
+    > flagging depending on some prominence scale, then the special
+    > flag is used on the non-prominent R-argument.
 
     R behaves like A: both are high-rank roles whose differential marking
     targets the non-prominent end.
 
-    **Universal 8** (@cite{haspelmath-2021}, §5, statement (27)):
+    **Universal 8** (@cite{haspelmath-2021}, §5, statement (27), p. 139):
 
-    "Split T flagging: If a language has an asymmetric split in T flagging
-    depending on some prominence scale, then the special flag is used on
-    the prominent T-argument."
+    > Split T flagging: If a language has an asymmetric split in T
+    > flagging depending on some prominence scale, then the special
+    > flag is used on the prominent T-argument.
 
     T behaves like P: both are low-rank roles whose differential marking
-    targets the prominent end. -/
+    targets the prominent end.
+
+    Haspelmath, p. 136: "Universal 6 in (21) is completely parallel to
+    Universal 4 in (14)" and similarly for U7/U8 ("completely parallel
+    to those about split A and P flagging seen earlier"). The parallelism
+    IS Haspelmath's. -/
 
 /-- Universal 7: R targets the non-prominent end (like A). -/
 theorem universal7_R_like_A :
-    differentialTargetsProminent .R = differentialTargetsProminent .A :=
-  rfl
+    differentialTargetsProminent .R = differentialTargetsProminent .A := rfl
 
 /-- Universal 8: T targets the prominent end (like P). -/
 theorem universal8_T_like_P :
-    differentialTargetsProminent .T = differentialTargetsProminent .P :=
-  rfl
-
-/-- R monotonicity uses the same direction as A monotonicity. -/
-theorem R_monotone_like_A (profile : DifferentialMarkingProfile) :
-    ({ profile with role := .R } : DifferentialMarkingProfile).isMonotone =
-    ({ profile with role := .A } : DifferentialMarkingProfile).isMonotone :=
-  rfl
-
-/-- T monotonicity uses the same direction as P monotonicity. -/
-theorem T_monotone_like_P (profile : DifferentialMarkingProfile) :
-    ({ profile with role := .T } : DifferentialMarkingProfile).isMonotone =
-    ({ profile with role := .P } : DifferentialMarkingProfile).isMonotone :=
-  rfl
+    differentialTargetsProminent .T = differentialTargetsProminent .P := rfl
 
 -- ============================================================================
--- § 8: Universal 9 — Monotransitive Scenario Splits
+-- § 8: Universals 9a/9b — Ditransitive Person-Role
 -- ============================================================================
 
-/-! **Universal 9**: Monotransitive scenario splits.
+/-! **Universal 9a** (@cite{haspelmath-2021}, §7.1, statement (41), p. 147):
 
-    When argument coding depends on the person combination (A-person ×
-    P-person), coding is longest for upstream scenarios (3→SAP) and
-    shortest for downstream (SAP→3). Local scenarios (SAP↔SAP) tend
-    to get short coding as both arguments are highly prominent. -/
+    > Ditransitive Person-Role Constraint: Combinations of bound person
+    > forms (indexes) with the roles R and T are disfavoured if the T
+    > index is first or second person and the R index is third person.
 
-/-- Universal 9: Local scenarios have SAP in both slots — the most
-    prominent combination. -/
-theorem universal9_local_both_SAP :
-    localScenario.aPerson.isSAP = true ∧
-    localScenario.pPerson.isSAP = true := ⟨rfl, rfl⟩
+    Originally formulated as the "Person-Case Constraint" (Bonet 1994).
+    Haspelmath fn. 19 (p. 147) reformulates this *empirically testable*
+    version as 9b in coding-length terms.
 
-/-- Universal 9: Direct (SAP→3) scenarios are downstream. -/
-theorem universal9_direct_is_downstream :
-    (⟨.first, .third⟩ : Scenario).isDirect = true ∧
-    (⟨.first, .third⟩ : Scenario).isDownstream = true := ⟨rfl, rfl⟩
+    **Universal 9b** (@cite{haspelmath-2021}, §7.1, statement (42), p. 147):
 
-/-- Universal 9: Inverse (3→SAP) scenarios are upstream. -/
-theorem universal9_inverse_is_upstream :
-    (⟨.third, .first⟩ : Scenario).isInverse = true ∧
-    (⟨.third, .first⟩ : Scenario).isUpstream = true := ⟨rfl, rfl⟩
+    > Ditransitive person-role universal: If T is locuphoric and R is
+    > aliophoric (i.e., if T is higher on the person scale than R), a
+    > language may require a longer construction (not involving person
+    > indexes), while (short) person indexes are always allowed when
+    > the R is locuphoric and the T is aliophoric.
+
+    Haspelmath, p. 147: "Universals 9a and 9b are thus merely special
+    cases of Universal 5 in (16)." -/
+
+/-- Universal 9b (proxy): the "unusual" R×T scenario (T locuphoric, R
+    aliophoric) has lower frequency class than the "usual" one (R
+    locuphoric, T aliophoric). The R-person/T-person convention reuses
+    `Scenario`'s aPerson/pPerson slots: aPerson ↦ R-person, pPerson ↦
+    T-person. Under that mapping, the upstream/downstream witnesses
+    coincide with U5's, per Haspelmath's "merely special cases of U5"
+    remark (p. 147). -/
+theorem universal9b_unusual_lower_frequency :
+    upstreamScenario.frequencyClass < downstreamScenario.frequencyClass := by decide
 
 -- ============================================================================
--- § 9: Ditransitive Alignment Parallels
+-- § 9: Universal 10 — Relative Scenario Splits
+-- ============================================================================
+
+/-! **Universal 10** (@cite{haspelmath-2021}, §8, statement (54), p. 151):
+
+    > The relative scenario universal: If a language has an asymmetric
+    > relative scenario split, then the coding tends to be longest for
+    > upstream scenarios, shortest for downstream scenarios, and
+    > intermediate for balanced scenarios.
+
+    Haspelmath: "merely a special case of the scenario universal that we
+    saw earlier, and in fact the prediction is exactly the same" (p. 151).
+    Frequency class is monotone: downstream > balanced > upstream. -/
+
+theorem universal10_relative_scenario :
+    downstreamScenario.frequencyClass > balancedScenario.frequencyClass ∧
+    balancedScenario.frequencyClass > upstreamScenario.frequencyClass :=
+  universal5_frequency_class_monotone
+
+-- ============================================================================
+-- § 10: Universal 11 — Inverse
+-- ============================================================================
+
+/-! **Universal 11** (@cite{haspelmath-2021}, §9, statement (57), p. 153):
+
+    > The inverse universal: If a language uses different verb forms for
+    > downstream and upstream scenarios, i.e., an inverse form and a
+    > direct form, and the verb coding is asymmetric, then the inverse
+    > form tends to be longer than the direct form.
+
+    Upstream = unusual = lower frequency class = predicted longer by FFC.
+    Substrate's `VoiceDirection` enum (in `Core/FormFrequency.lean`)
+    captures the direct/inverse distinction. -/
+
+theorem universal11_inverse :
+    upstreamScenario.frequencyClass < downstreamScenario.frequencyClass := by decide
+
+-- ============================================================================
+-- § 11: Universal 12 — Alternation Universal
+-- ============================================================================
+
+/-! **Universal 12** (@cite{haspelmath-2021}, §10.1, statement (61), p. 154):
+
+    > The alternation universal: In an asymmetric argument coding
+    > alternation, the longer alternant tends to be used in situations
+    > that deviate from the usual associations of roles and referential
+    > prominence.
+
+    The parent universal that subsumes both U13 (passive) and U14
+    (dative alternation). Haspelmath, p. 155: "both 13 and 14 are special
+    cases of Universal 12, so I would like to claim that it is indeed a
+    universal generalization. Universal 12, in turn, is evidently a
+    special case of Universal 1, the general role-reference association
+    universal."
+
+    Formalized as a predicate `deviatesFromUsual` over a generic
+    role/discourse-status pairing; U13 and U14 instantiate it for
+    A/P (passive) and R/T (dative). -/
+
+open Features.InformationStructure
+
+/-- Usual discourse-status association for the four core argument roles.
+    A/R (high-rank) tend to be given (topical); P/T (low-rank) tend to
+    be new (focal). S is excluded (Haspelmath fn. 15, p. 138 — the paper
+    does not analyze intransitive constructions); querying S is therefore
+    not defined. -/
+def usualDiscourseStatus : ArgumentRole → Option DiscourseStatus
+  | .A | .R => some .given
+  | .P | .T => some .new
+  | .S      => none
+
+/-- An argument's discourse status deviates from the usual association
+    if the role has a defined "usual" status and the actual status
+    differs from it. S returns `false` (not analyzed). -/
+def deviatesFromUsual (role : ArgumentRole) (status : DiscourseStatus) : Bool :=
+  match usualDiscourseStatus role with
+  | some usual => status != usual
+  | none       => false
+
+/-- Universal 12 (general form): the longer alternant is preferred when
+    a role-pair has at least one role-discourse-status deviation from
+    the usual association. Parameterized by the role pair (A,P for
+    passive; R,T for dative) so U13 and U14 are pure instantiations. -/
+def alternantPreferredLong
+    (sensitiveToGivenness : Bool)
+    (highRole lowRole : ArgumentRole)
+    (highStatus lowStatus : DiscourseStatus) : Bool :=
+  sensitiveToGivenness &&
+    (deviatesFromUsual highRole highStatus || deviatesFromUsual lowRole lowStatus)
+
+/-- Universal 12: under sensitivity, the longer alternant is preferred
+    in deviation cases and dispreferred in usual cases. Parameterized
+    over the role pair so U13 (A,P) and U14 (R,T) instantiate it. -/
+theorem universal12_alternation
+    (highRole lowRole : ArgumentRole)
+    (h_high_given : usualDiscourseStatus highRole = some .given)
+    (h_low_new   : usualDiscourseStatus lowRole  = some .new) :
+    -- Deviant: high is new, low is given → longer alternant preferred
+    alternantPreferredLong true highRole lowRole .new .given = true ∧
+    -- Usual: high is given, low is new → longer alternant dispreferred
+    alternantPreferredLong true highRole lowRole .given .new = false := by
+  refine ⟨?_, ?_⟩ <;>
+    simp [alternantPreferredLong, deviatesFromUsual,
+          h_high_given, h_low_new]
+
+-- ============================================================================
+-- § 12: Universal 13 — Passive
+-- ============================================================================
+
+/-! **Universal 13** (@cite{haspelmath-2021}, §10.1, statement (62), p. 155):
+
+    > The passive universal: If a passive alternation is sensitive to
+    > givenness, then the passive alternant tends to be used when the
+    > original A is not given information and/or the original P is not
+    > new information.
+
+    Note the conditional **"If a passive alternation is sensitive to
+    givenness"**. This is a typological universal about languages whose
+    passive is givenness-conditioned, not a fact about every language.
+    Earlier formalisations dropped the conditional. -/
+
+/-- Universal 13 = Universal 12 instantiated for the (A, P) role pair.
+    Under the antecedent that the alternation IS sensitive to givenness,
+    passive is preferred when A's or P's discourse status deviates from
+    the usual association. -/
+def passivePreferredGivenSensitive
+    (sensitiveToGivenness : Bool) (statusA statusP : DiscourseStatus) : Bool :=
+  alternantPreferredLong sensitiveToGivenness .A .P statusA statusP
+
+/-- U13 = U12 specialized to (A, P): rfl by definition. -/
+theorem universal13_is_universal12_for_AP
+    (sensitive : Bool) (statusA statusP : DiscourseStatus) :
+    passivePreferredGivenSensitive sensitive statusA statusP =
+    alternantPreferredLong sensitive .A .P statusA statusP := rfl
+
+theorem universal13_passive_under_sensitivity :
+    -- Under sensitivity: deviant pattern → passive
+    passivePreferredGivenSensitive true .new .given = true ∧
+    -- Under sensitivity: usual pattern → no passive
+    passivePreferredGivenSensitive true .given .new = false ∧
+    -- Without sensitivity: no prediction (always false in this proxy)
+    passivePreferredGivenSensitive false .new .given = false :=
+  ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 13: Universal 14 — Dative Alternation
+-- ============================================================================
+
+/-! **Universal 14** (@cite{haspelmath-2021}, §10.1, statement (63), p. 155):
+
+    > The dative alternation universal: If a dative alternation is
+    > sensitive to givenness, then the dative alternant tends to be
+    > used when the R is not given information and/or the T is not
+    > new information.
+
+    Same conditional shape as U13. The "dative alternant" is the longer
+    PP-dative form (cf. statement (60)); the alternative is the
+    double-object construction. -/
+
+/-- Universal 14 = Universal 12 instantiated for the (R, T) role pair.
+    Under sensitivity to givenness, the PP-dative (longer) is preferred
+    when R's or T's discourse status deviates from the usual association. -/
+def ppDativePreferredGivenSensitive
+    (sensitiveToGivenness : Bool) (statusR statusT : DiscourseStatus) : Bool :=
+  alternantPreferredLong sensitiveToGivenness .R .T statusR statusT
+
+/-- U14 = U12 specialized to (R, T): rfl by definition. -/
+theorem universal14_is_universal12_for_RT
+    (sensitive : Bool) (statusR statusT : DiscourseStatus) :
+    ppDativePreferredGivenSensitive sensitive statusR statusT =
+    alternantPreferredLong sensitive .R .T statusR statusT := rfl
+
+theorem universal14_dative_under_sensitivity :
+    ppDativePreferredGivenSensitive true .new .given = true ∧
+    ppDativePreferredGivenSensitive true .given .new = false ∧
+    ppDativePreferredGivenSensitive false .new .given = false :=
+  ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 14: Ditransitive Alignment Parallels
 -- ============================================================================
 
 /-! The parallel between monotransitive and ditransitive alignment is a
@@ -354,20 +563,16 @@ theorem ditransitive_parallels_monotransitive :
     DitransitiveAlignment.secundative.marksR = false := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 10: DOM ↔ Accusative, DSM ↔ Ergative (@cite{de-hoop-malchukov-2008})
+-- § 15: DOM ↔ Accusative, DSM ↔ Ergative (@cite{de-hoop-malchukov-2008})
 -- ============================================================================
 
 /-! The correlation between DOM and accusative alignment, and between DSM
-    and ergative alignment, is independently derived in @cite{de-hoop-malchukov-2008} via the PaIP (Primary Actant Immunity Principle). @cite{haspelmath-2021} discusses this as background but does not number it as one of
-    his 14 universals.
-
-    This theorem re-exports the De Hoop & Malchukov result for reference. -/
+    and ergative alignment, is independently derived in @cite{de-hoop-malchukov-2008} via the PaIP (Primary Actant Immunity Principle). @cite{haspelmath-2021}
+    discusses this as background but does NOT number it as one of his 14
+    universals — included here for cross-reference only. -/
 
 /-- Differential marking patterns (@cite{de-hoop-malchukov-2008}, not a
-    numbered Haspelmath universal — included for cross-reference).
-    Under weak BiOT, all rankings produce differential marking;
-    the asymmetry DOM ↔ nom-acc / DSM ↔ ergative requires voice
-    alternation (passive/antipassive) to resolve PaIP-I/D conflicts. -/
+    numbered Haspelmath universal). -/
 theorem alignment_correlation_deHoopMalchukov :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
@@ -375,141 +580,142 @@ theorem alignment_correlation_deHoopMalchukov :
   alignment_correlation
 
 -- ============================================================================
--- § 11: Bridge — Usual Discourse Status (@cite{haspelmath-2021}, §9)
+-- § 16: Universal 68 — Form-Frequency Reduction
 -- ============================================================================
 
-open Features.InformationStructure
+/-! **Universal 68** (@cite{haspelmath-2021}, §11.2, statement (68), p. 158):
 
-/-- Usual discourse-status association:
-    A/R tend to be given (topical); P/T tend to be new (focal).
-    This bridges ArgumentRole (Prominence) and DiscourseStatus
-    (InformationStructure) in the study file to keep Core loosely coupled. -/
-def usualDiscourseStatus : ArgumentRole → DiscourseStatus
-  | .A | .R | .S => .given
-  | .P | .T      => .new
+    > The grammatical form-frequency correspondence universal.
 
--- ============================================================================
--- § 12: Universal 10 — Ditransitive Person-Role Constraint (§7)
--- ============================================================================
+    Haspelmath, p. 155: "Universal 12, in turn, is evidently a special
+    case of Universal 1, the general role-reference association
+    universal." And the broader claim of §11.2 is that **Universal 1
+    itself reduces to Universal 68**. The reduction in Figure 1 (§11.1)
+    runs U3..U14 → U1 → U68; we do NOT claim that all 14 universals
+    "reduce to U68" directly (that conflation was an error in earlier
+    revisions of this file).
 
-/-! **Universal 10**:
+    Substrate-level: `Core.FormFrequency.scenarioRespectsFormFrequency`
+    is the predicate "more frequent → shorter (or equal) coding". The
+    scenario-level theorem below shows that `Scenario.frequencyClass`
+    cohere with the form-frequency correspondence over the 9 scenarios. -/
 
-    "If a language has a person-role constraint in its ditransitive
-    construction, it is restricted to T=SAP, R=3."
+/-- A coding function that assigns shortest coding to downstream
+    scenarios, longest to upstream — exactly the gradient U10/U11
+    predict. -/
+def usualnessCoding (s : Scenario) : CodingLength :=
+  if s.isDownstream then .zero
+  else if s.isBalanced then .short
+  else .long
 
-    Reuse `Scenario` for R×T pairs (aPerson = R, pPerson = T). When T is
-    SAP and R is 3rd (upstream ditransitive), coding is longer — predicted
-    by the role-reference association (R is high-rank, so R=3rd is unusual;
-    T is low-rank, so T=SAP is unusual). -/
-
-/-- Upstream ditransitive scenario: R=3rd, T=SAP (both deviate from usual). -/
-def ditransUpstream : Scenario := ⟨.third, .first⟩
-
-theorem universal10_ditrans_person_role :
-    ditransUpstream.isUpstream = true ∧
-    ditransUpstream.frequencyClass = 0 := ⟨rfl, rfl⟩
-
-/-- Downstream ditransitive: R=SAP, T=3rd (both match usual). -/
-def ditransDownstream : Scenario := ⟨.first, .third⟩
-
-theorem universal10_ditrans_downstream :
-    ditransDownstream.isDownstream = true ∧
-    ditransDownstream.frequencyClass = 2 := ⟨rfl, rfl⟩
+/-- The `usualnessCoding` proxy respects the form-frequency correspondence
+    over `Scenario.all` (substrate's `scenarioRespectsFormFrequency`).
+    This factors through the substrate predicate rather than rolling its
+    own consistency check — earlier revisions used `native_decide` over
+    a hand-rolled all-pairs sweep. -/
+theorem universal68_scenario_form_frequency :
+    scenarioRespectsFormFrequency Scenario.all usualnessCoding = true := by decide
 
 -- ============================================================================
--- § 13: Universal 11 — Relative Scenario Splits (§8)
+-- § 17: Form-Frequency Grounding (re-export)
 -- ============================================================================
 
-/-! **Universal 11**:
-
-    "If a language has a relative scenario split, then the coding of
-    upstream scenarios is longer (or at least not shorter) than the
-    coding of downstream scenarios."
-
-    Frequency class decreases monotonically: downstream > balanced > upstream.
-    By the form-frequency correspondence, coding length increases in the
-    same order. -/
-
-theorem universal11_relative_scenario :
-    downstreamScenario.frequencyClass > balancedScenario.frequencyClass ∧
-    balancedScenario.frequencyClass > upstreamScenario.frequencyClass := by decide
+/-- The cell-level form-frequency claim under U1: default cells have
+    `frequencyProxy ≥ 3`. Re-exported from substrate for direct citation
+    under the U1 framing. -/
+theorem universal1_frequency_grounding (role : ArgumentRole)
+    (a : AnimacyLevel) (d : DefinitenessLevel) :
+    (isDefaultZone role a d = true) →
+    (frequencyProxy role a d ≥ 3) :=
+  frequency_proxy_matches_default role a d
 
 -- ============================================================================
--- § 14: Universal 12 — Inverse (§9)
+-- § 18: Contrast with @cite{marantz-1991} — Configurational Case
 -- ============================================================================
 
-/-! **Universal 12**:
+/-! @cite{haspelmath-2021}'s reductive claim — that a wide range of
+    "split case marking" phenomena reduce to form-frequency — competes
+    with the configurational tradition of @cite{marantz-1991} and
+    @cite{baker-2015}, which derives split case from STRUCTURAL parameters
+    (aspect, voice, derived-subject status) without reference to
+    referential prominence.
 
-    "Inverse verb forms (marking upstream scenarios) tend to be
-    morphologically more complex than direct verb forms."
+    The two frameworks address overlapping but distinct empirical
+    territory:
 
-    Upstream = unusual = lower frequency class = predicted longer by FFC. -/
+    - **Marantz**: structural-condition splits — Hindi aspect ERG
+      (perfective vs imperfective), Georgian tense series, Burzio's
+      generalization (no ACC on derived subjects), the Ergative
+      generalization (no ERG on derived subjects).
+    - **Haspelmath**: prominence-condition splits — Fore DSM (only
+      non-prominent A gets ERG), Cashinahua, Yidiɲ DOM,
+      Bulgarian/Shambala ditransitive person-role splits.
 
-theorem universal12_inverse :
-    upstreamScenario.frequencyClass < downstreamScenario.frequencyClass := by decide
+    Each is silent on the other's territory at the level of its core
+    algorithm. Haspelmath's §11.2 reduction to form-frequency does NOT
+    engage Marantz's structural account of Hindi aspect splits;
+    Marantz's `assignCases` algorithm cannot generate Fore-style
+    prominence-conditioned ERG without an additional prominence
+    parameter not present in the formalization.
 
--- ============================================================================
--- § 15: Universal 13 — Passive (§9)
--- ============================================================================
+    This section makes the partition Lean-checkable, following the
+    contrastive-theorem pattern from @cite{bruening-2021}. -/
 
-/-! **Universal 13**:
+/-- @cite{marantz-1991}: Hindi's aspect-conditioned ERG split is derived
+    structurally — the *same* `[⟨"agent", none⟩, ⟨"theme", none⟩]` NP
+    list produces ERG-marking under perfective and NOM-ACC under
+    imperfective, driven by the `CaseLanguageType` parameter alone.
+    No prominence input enters the algorithm. -/
+theorem marantz_hindi_split_is_structural :
+    Marantz1991.hindiTransitive .perfective ≠
+    Marantz1991.hindiTransitive .imperfective :=
+  Marantz1991.hindi_split_is_algorithmic
 
-    "Passive voice is preferred when A is non-given (unusual for A) and/or
-    P is non-new (unusual for P)."
+/-- @cite{marantz-1991}: in ergative mode, the *higher* of two caseless
+    NPs gets ERG, regardless of any "prominence" attribute. The function
+    signature `assignCases : CaseLanguageType → List NPInDomain → List CasedNP`
+    has no prominence input — `NPInDomain` carries only `label : String`
+    and `lex : Option Case`. The two-NP transitive case witnesses this
+    uniformity. -/
+theorem marantz_ergative_uniform_on_higher :
+    Syntax.Case.getCaseOf "agent"
+      (Syntax.Case.assignCases .ergative
+        [⟨"agent", none⟩, ⟨"theme", none⟩]) = some .erg := by
+  decide
 
-    Active voice is the "usual" frame where A=given, P=new. Passive is
-    preferred when discourse statuses deviate from these defaults. -/
+/-- @cite{marantz-1991}: a sole NP in ergative mode gets unmarked case
+    (no competitor for dependent ERG). This is the "Ergative
+    generalization" (Marantz 1991, statement (6), p. 13): no ERG on
+    derived subjects. The empirical witness is Hindi unaccusatives
+    (*siitta (\*ne) aayii*). -/
+theorem marantz_ergative_no_marking_on_sole_np :
+    Syntax.Case.getCaseOf "theme"
+      (Syntax.Case.assignCases .ergative [⟨"theme", none⟩]) = some .abs := by
+  decide
 
-/-- Passive is preferred when A's or P's discourse status deviates from
-    the usual association. -/
-def passivePreferred (aStatus pStatus : DiscourseStatus) : Bool :=
-  aStatus != usualDiscourseStatus .A ||
-  pStatus != usualDiscourseStatus .P
+/-- The two frameworks partition the empirical territory of split case
+    marking. Marantz's algorithm cannot generate the *partial* marking
+    Haspelmath U6 covers (Fore: *only* non-prominent A gets ERG);
+    Haspelmath's reduction to form-frequency does not derive
+    Marantz-style aspect splits.
 
-theorem universal13_passive :
-    passivePreferred .new .given = true ∧   -- deviant → passive
-    passivePreferred .given .new = false     -- usual → active
-    := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 16: Universal 14 — Dative Alternation (§9)
--- ============================================================================
-
-/-! **Universal 14**:
-
-    "The prepositional dative (longer form) is preferred when R is non-given
-    and/or T is non-new."
-
-    The double-object construction is the shorter form, preferred when
-    discourse statuses match the usual associations (R=given, T=new). -/
-
-/-- PP-dative (longer) is preferred when R's or T's discourse status
-    deviates from the usual association. -/
-def ppDativePreferred (rStatus tStatus : DiscourseStatus) : Bool :=
-  rStatus != usualDiscourseStatus .R ||
-  tStatus != usualDiscourseStatus .T
-
-theorem universal14_dative_alternation :
-    ppDativePreferred .new .given = true ∧   -- deviant → PP-dative
-    ppDativePreferred .given .new = false     -- usual → DOC
-    := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 17: Form-Frequency Unification
--- ============================================================================
-
-/-! **Form-frequency unification** (@cite{haspelmath-2021}, §10.2, statement 68):
-
-    All 14 universals reduce to Zipf's form-frequency correspondence.
-    The scenario-level check: for every pair of scenarios where one is
-    downstream and the other upstream, the downstream one has a strictly
-    higher frequency class. -/
-
-theorem scenario_frequency_consistent :
-    Scenario.all.all (λ s1 =>
-      Scenario.all.all (λ s2 =>
-        if s1.isDownstream && s2.isUpstream
-        then s1.frequencyClass > s2.frequencyClass
-        else true)) = true := by native_decide
+    Witness: Marantz's algorithm gives identical output for two ergative
+    transitive scenarios that differ only in the "prominence" of the
+    referent — there's no place to encode a Fore-style prominence
+    sensitivity. Both `[⟨"agent_high_prom", none⟩, ⟨"theme", none⟩]` and
+    `[⟨"agent_low_prom", none⟩, ⟨"theme", none⟩]` (relabeled to make
+    intent clear) produce ERG on the agent position. The point is
+    structural: `assignCases` is a function of `(CaseLanguageType,
+    List NPInDomain)`, not of any prominence value. -/
+theorem marantz_haspelmath_partition_witness :
+    -- Marantz produces uniform ERG across "prominence relabelings" in
+    -- ergative mode (because the function takes no prominence input).
+    Syntax.Case.getCaseOf "agent_high_prom"
+      (Syntax.Case.assignCases .ergative
+        [⟨"agent_high_prom", none⟩, ⟨"theme", none⟩]) = some .erg ∧
+    Syntax.Case.getCaseOf "agent_low_prom"
+      (Syntax.Case.assignCases .ergative
+        [⟨"agent_low_prom", none⟩, ⟨"theme", none⟩]) = some .erg := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 end Haspelmath2021

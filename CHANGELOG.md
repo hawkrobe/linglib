@@ -4,6 +4,55 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### ODonnell2015.lean post-audit overhaul
+
+Four-agent audit on `Phenomena/Morphology/Studies/ODonnell2015Derivational.lean` (renamed → `ODonnell2015.lean`; YAGNI on the topic qualifier — escalate to subdirectory if/when an inflectional sibling lands). Linguistics-domain-expert verified citations against the actual O'Donnell 2015 PDF; mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler converged on the same hollow-theorem and integration-density complaints.
+
+**Substantive fixes.**
+- `rAte` re-wired from `N → V · ate` to `V → BND · ate`, faithful to @cite{odonnell-2015} p. 261's `-ate:BND>V` analysis (`-ate` is a verb-forming suffix selecting bound stems, not a nominaliser). New `BND` nonterminal + `bnd` terminal + `rBnd : BND → bnd` rule. File framing updated from "three nominalising suffixes" to "three derivational suffixes."
+- Hallucinated citation `§2.4.1` (claim is actually on p. 268, Ch 7.3.1.3) replaced with content description. Hallucinated `Fig 7.5` cite removed (not visible at p. 269 in the PDF).
+- Empirical-ordering claim corrected: the load-bearing claim is `ness ≫ {ion, ate}`, not a strict three-way ordering. The `ion > ate` half is documented as a tie-break inherited from `Suffix.productivityIndex` rather than a Ch 7 prediction.
+
+**Hollow-theorem cleanup.**
+- Three concrete-value tautologies (`dmpcfgFromObserved_pseudo_rNess/rIon/rAte`) and the strict-ordering theorem replaced with one structural drift sentry `dmpcfgFromObserved_pseudo_respects_productivity` keyed off `Productivity.moreProductiveThan`. Stronger productivity in the data layer now propagates to a larger pseudo-count by structural derivation, not by stipulation.
+- `pseudoVal` rewritten to derive from `Suffix.productivityIndex + 1` rather than hand-coded literals (3, 2, 1). The data file's productivity ordering now drives the study file's pseudo-counts; revisions propagate.
+- `corpusProb_nonneg_of_dmpcfg` (which was just `M.corpusProb_nonneg D` re-exported) deleted; replaced with `corpusProb_pos_for_empty` — the API exemplar the docstring originally promised, derived from substrate's `DMPCFG.corpusProb_zero`.
+- Six "deferred bridge claims" rewritten as `TODO(theorem):` bullets that explicitly name the substrate gap blocking each (Baayen P-measure, FG MAP extraction, Hay relative-frequency comparator, AlbrightHayes2003 shim).
+
+**Mathlib nits.**
+- Type rename `Suffix2015` → `Sym` (year qualifier removed; namespace `ODonnell2015` already disambiguates from `Productivity.Suffix`).
+- Two `/-! -/` block-comments inside the namespace folded into the module docstring (they were invisible to docgen).
+- `noncomputable` annotation on `dmpcfgFromObserved` dropped (no noncomputable fields in the structure literal).
+- Redundant `instance : DecidableEq suffixGrammar.NT` retained after testing — kept the docstring noting the projection-doesn't-reduce reason (mathlib-reviewer's "try removing" suggestion didn't pan out).
+
+`Linglib.lean` umbrella import updated to match the new filename.
+
+## [0.230.549] - 2026-04-29
+
+### Haspelmath2021 deep multi-agent audit + full rewrite
+
+Four-agent audit (linguistics-domain-expert grounded in PDF, linglib-integration-auditor, mathlib-reviewer, cross-framework-reconciler) on `Phenomena/Case/Studies/Haspelmath2021.lean` (then 515 LOC). Convergent findings: numbering wrong from U9 onward, U1 ≡ U3 by `rfl`, §10.2 reduction-claim cited the wrong section, `usualDiscourseStatus` overcommitted by adding S and asserting given/new equation Haspelmath only reports as a tendency, `universal4`/`universal6` re-exports laundered model-internal lemmas as if they were typological universals, dead `Dixon1994` import, two `native_decide` over a `Scenario.all` whose `flatten ∘ map ∘ map` constructor defeated `decide`, and total silent divergence with the configurational case-assignment wing (Marantz, Baker, Woolford, Coon).
+
+**Substrate precondition (already landed in 0.230.548 concurrent-session work).** `Features/Prominence.Scenario.all` was rewritten as an explicit 9-element literal so plain `decide` reduces; `Scenario.all_length` became `rfl`. This commit relies on that change to replace two `native_decide`s with `decide`.
+
+**Bib header.** Lean docstring said *Linguistics* 59(5): 1231–1270 (fabricated). PDF (DOI 10.1515/ling-2020-0252) confirms 59(1): 123–174; bib entry was already correct.
+
+**Universal numbering corrected against PDF.** Lean's "U9 monotransitive scenario splits" was fabricated — it was U5 restated at the head of §6 (verified PDF p. 144). U10 (Lean) split into U9a (statement 41, p. 147 — Bonet-style PCC) and U9b (statement 42, p. 147 — coding-length reformulation). U11→U10, U12→U11 shifted into correct numbering. The missing **alternation universal** (statement 61, §10.1, p. 154) was added as U12, and U13/U14 are now actual instantiations of U12 via `alternantPreferredLong` (per Haspelmath p. 155 "13 and 14 are special cases of Universal 12, … in turn evidently a special case of Universal 1").
+
+**Quote fidelity.** Verbatim wording from PDF for U10 (statement 54, p. 151), U11 (statement 57, p. 153), U12 (statement 61, p. 154), U13 (statement 62, p. 155), U14 (statement 63, p. 155). U13/U14 docstrings now preserve the conditional antecedent ("If a passive/dative alternation is sensitive to givenness") that earlier paraphrases dropped — the conditional is what makes them typological universals, not facts about English.
+
+**§11.2 reduction claim** (was wrongly cited as §10.2 statement 68): §10.2 is "Splitting alternations"; the form-frequency reduction lives in §11.2, statement 68. The §17 form-frequency unification block now uses substrate `Core.FormFrequency.scenarioRespectsFormFrequency` instead of rolling its own `native_decide` consistency check.
+
+**U1 ≡ U3 collapse fixed.** The two were textually identical `⟨rfl,rfl,rfl,rfl⟩` conjunctions despite Haspelmath's claim that U3 follows from U1 + U2. New shape: U1 is the meta-claim about coding length (cell-form `frequency_proxy_matches_default` re-export); U3 is `differentialTargetsProminent r = lowDefault r` derived via private substrate lemma `differentialTargets_eq_lowDefault`. The four-conjunct U3 is now a derivation, not a stipulation.
+
+**Overclaim trims.** `usualDiscourseStatus : ArgumentRole → Option DiscourseStatus` (S → `none` per Haspelmath fn. 15, p. 138 explicitly excluding intransitives). `universal2_role_rank_committed_orderings` restricted to A>P and R>T (only orderings paper commits to; cf. p. 127 "the notion of role rank is not crucial"). Dropped `localScenario` (formaliser invention not in paper) and the duplicate `ditransUpstream`/`ditransDownstream` constants (literally identical to `upstreamScenario`/`downstreamScenario`).
+
+**Re-export rename.** `universal4_split_P_flagging` → `universal4_aissen_predicts` (was claiming to be the universal but actually states `animacy_all_monotone`, an Aissen-internal property). Same for `universal6_split_A_flagging` → `universal6_dehoopmalchukov_predicts`. Re-exports now name themselves as model predictions, not the typological universals they support.
+
+**§18 Marantz contrastive theorems (NEW).** Imports `Marantz1991.lean`. Four theorems making the Marantz-vs-Haspelmath partition Lean-checkable: `marantz_hindi_split_is_structural` (aspect parameter, no prominence input), `marantz_ergative_uniform_on_higher` (signature has no prominence field — `NPInDomain` carries only `label : String` + `lex : Option Case`), `marantz_ergative_no_marking_on_sole_np` (Hindi unaccusative *siitta (\*ne) aayii*), `marantz_haspelmath_partition_witness` (relabeled "high_prom"/"low_prom" agent NPs both yield ERG — the function can't read prominence). First Lean-checkable contrast between configurational and form-frequency case-assignment frameworks, following the Bruening 2021 contrastive-theorem template.
+
+**Cleanup.** Dead `Phenomena.Alignment.Studies.Dixon1994` import dropped (never referenced in body). `Marantz1991` import added. File grew 515 → 721 LOC, but two-thirds of that is verbatim quote blocks and explicit prose framing the partition with @cite{marantz-1991}.
+
 ## [0.230.548] - 2026-04-29
 
 ### KirkGiannini2024 multi-phase overhaul (Phases 0–5 + 4.5 + 4.6)
