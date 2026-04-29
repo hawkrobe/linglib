@@ -559,14 +559,14 @@ theorem Scenario.all_length : Scenario.all.length = 9 := rfl
     non-prominent end (lower set)?
 
     Returns `true` when differential marking targets the prominent end.
-    P and T → true (mark prominent referents).
-    A and R → false (mark non-prominent referents). -/
-def differentialTargetsProminent : ArgumentRole → Bool
-  | .P => true
-  | .T => true
-  | .A => false
-  | .R => false
-  | .S => false  -- S doesn't have differential marking
+    P and T → true (mark prominent referents); A and R → false (mark
+    non-prominent referents); S → false.
+
+    Definitionally `r.lowDefault` — the two functions agree pointwise
+    over all five argument roles. The aliasing makes U3, U7, U8 in
+    `Phenomena/Case/Studies/Haspelmath2021.lean` `rfl` against the
+    substrate, rather than re-proving the equality in the study file. -/
+def differentialTargetsProminent (r : ArgumentRole) : Bool := r.lowDefault
 
 /-- R behaves like A: both have high default prominence and differential
     marking targets the non-prominent end. -/

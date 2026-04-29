@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Haspelmath2021 mathlib-discipline follow-up audit + structural strengthening
+
+Two-agent follow-up audit (mathlib-reviewer + linglib-integration-auditor) on `Phenomena/Case/Studies/Haspelmath2021.lean` after 0.230.549's full rewrite. Convergent highest-leverage finding: `differentialTargetsProminent` (in `Features/Prominence.lean`) and `ArgumentRole.lowDefault` were two pointwise-equal pattern-matches over the same five constructors — the equality re-proved as a `private` study lemma and unpacked as a four-conjunct universal. Strengthened to a substrate alias.
+
+**Substrate change.** `Features/Prominence.differentialTargetsProminent r := r.lowDefault` (was a separate case-enumeration). The aliasing makes U3, U7, U8 in this file `rfl` against the substrate. Single-consumer (only Haspelmath2021), so the rewrite is local.
+
+**U3 universally quantified.** `universal3_single_argument_flagging (r : ArgumentRole) : differentialTargetsProminent r = r.lowDefault := rfl` replaces the previous 4-conjunct over `{P, T, A, R}`. Strictly stronger — covers all five roles including S. The `private differentialTargets_eq_lowDefault` bridge lemma is deleted (now `rfl` by construction).
+
+**U5 trichotomy universally quantified.** `universal5_trichotomy_exhaustive (s : Scenario) : (s.isDownstream || s.isUpstream || s.isBalanced) = true` proved by `obtain ⟨a, p⟩ := s; cases a <;> cases p <;> rfl`. Replaces the `Scenario.all.all (...)` form, which was anchored to a literal 9-element list (silently passes if `Scenario.all` ever loses an inhabitant; the universal form is robust to that).
+
+**U13/U14 cluster collapsed via abbrev.** `passivePreferredGivenSensitive` and `ppDativePreferredGivenSensitive` changed from `def` to `abbrev`. Four downstream theorems deleted: `universal13_is_universal12_for_AP`, `universal14_is_universal12_for_RT`, `universal13_passive_under_sensitivity`, `universal14_dative_under_sensitivity`. With `abbrev`, U13 is *literally* `alternantPreferredLong _ .A .P _ _` and U14 likewise for `(.R, .T)` — the bridge theorems become `rfl` by construction (deletable), and U12 instantiated at the role pair carries the same content as the readouts. U13/U14 now live as docstring framing on the `abbrev` definitions.
+
+**Marantz partition theorem strengthened.** `marantz_haspelmath_partition_witness` was previously two relabeled-string instances of `assignCases ... = some .erg` proved by `decide` — a single point on the "no prominence parameter" curve. Replaced with a relabeling-invariance theorem: `(assignCases lang [⟨l₁, none⟩, ⟨l₂, none⟩]).map (·.case) = (assignCases lang [⟨l₁', none⟩, ⟨l₂', none⟩]).map (·.case)` for arbitrary `l₁, l₂, l₁', l₂' : String` and arbitrary `lang`, proved by `cases lang <;> rfl`. This is the structural type-signature claim — `assignCases` cannot read labels as proxies for prominence because labels are uninterpreted strings, and the theorem is universally quantified over them.
+
+**Bare `simp` in U12 fixed.** CLAUDE.md says `simp only`, not bare `simp`. Replaced with `unfold alternantPreferredLong deviatesFromUsual; rw [h_high_given, h_low_new]; decide` — structural, robust to simp-set drift.
+
+File: 721 → 686 LOC. Substrate-creep finding (most of `Core/FormFrequency.lean` is single-consumer) deferred to a separate commit — that's a substrate-demotion campaign whose blast radius warrants its own audit cycle.
+
+### O'Donnell 2015 deepening: `DMPCFG.mapWeight` substrate + Ch 7 falsification theorem
+
+Follow-up to the post-audit overhaul of `Phenomena/Morphology/Studies/ODonnell2015.lean`. The audit's headline gap was that the file had zero **prediction-bearing** theorems — the central O'Donnell Ch 7 contrast lived only in `TODO(theorem):` bullets. This commit discharges the most central of them.
+
+**Substrate addition (`Theories/Morphology/FragmentGrammars/DMPCFG.lean`).**
+- `DMPCFG.mapWeight (r) (D) := (pseudo r + count r D) / Σ_{r' with same LHS} (pseudo r' + count r' D)` — the per-rule posterior MAP weight under Dirichlet–multinomial conjugacy. Per @cite{odonnell-2015} §2.4 / Ch 7 (p. 268), this is the productivity score O'Donnell identifies as DMPCFG's failure mode.
+- `DMPCFG.mapWeight_denom_pos` — denominator is positive whenever the LHS has any rule in `G` (each summand `≥ pseudo > 0`).
+- `DMPCFG.mapWeight_lt_mapWeight_of_same_lhs` — same-LHS comparison reduces to numerator comparison via shared denominator. The technical core of the @cite{odonnell-2015} Ch 7 critique: when corpus counts overcome pseudo-count differences, the more-frequent rule wins regardless of prior.
+
+**Discharged theorem.** `dmpcfg_wrongly_predicts_ion_productive (D) (h : count rNess D + 1 < count rIon D) : mapWeight rNess D < mapWeight rIon D`. Quantifies over arbitrary corpora; the abstract count gap `> 1` reflects the pseudo-count gap (`pseudoVal rNess − pseudoVal rIon = 3 − 2 = 1`). O'Donnell's Fig 7.4 CELEX numbers (`-ion` ~162k tokens, `-ness` ~16k) leave the gap an order of magnitude larger, so the wrong-prediction holds for realistic data.
+
+This is the file's first prediction-bearing theorem — `corpusProb_pos_for_empty` is an API exemplar; `dmpcfgFromObserved_pseudo_respects_productivity` is a structural drift sentry; `dmpcfg_wrongly_predicts_ion_productive` is a real falsification.
+
+The deferred-claims list in the file's docstring is updated to mark this discharged. The remaining 5 TODOs are still substrate-blocked (Baayen P-measure, FG MAP extraction, Hay relative-frequency, AlbrightHayes2003 shim, lexicalised storage for the -ability paradox).
+
 ## [0.230.550] - 2026-04-29
 
 ### Abusch 1997 temporal de re: substrate cleanup + centered-world rebuild

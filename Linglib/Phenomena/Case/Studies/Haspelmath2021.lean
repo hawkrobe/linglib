@@ -183,25 +183,16 @@ theorem universal2_role_rank_committed_orderings :
     is the deviation for high-default roles). U3 asserts this equality
     over the four core roles. -/
 
-/-- Substrate fact connecting `differentialTargetsProminent` to `lowDefault`
-    (and equivalently to the negation of `highDefault` over A,P,R,T).
-    Universal 3 is the universal-quantification of this. -/
-private theorem differentialTargets_eq_lowDefault (r : ArgumentRole) :
-    differentialTargetsProminent r = r.lowDefault := by cases r <;> rfl
+/-- Universal 3 derives from U1 + U2: for any argument role, the
+    differential-flagging direction is determined by whether the role is
+    low-default (prominent end = deviation) or high-default (non-prominent
+    end = deviation). Strictly stronger than the four-conjunct over
+    {A, P, R, T} since it ranges over all five roles, including S.
 
-/-- Universal 3 derives from U1 + U2: the differential-flagging direction
-    for each role is determined by whether the role is low-default
-    (prominent end = deviation) or high-default (non-prominent end =
-    deviation). The four conjuncts are *not* independent stipulations;
-    they fall out of `differentialTargets_eq_lowDefault` plus U2's
-    role/default assignments. -/
-theorem universal3_single_argument_flagging :
-    differentialTargetsProminent .P = ArgumentRole.P.lowDefault ∧
-    differentialTargetsProminent .T = ArgumentRole.T.lowDefault ∧
-    differentialTargetsProminent .A = ArgumentRole.A.lowDefault ∧
-    differentialTargetsProminent .R = ArgumentRole.R.lowDefault :=
-  ⟨differentialTargets_eq_lowDefault .P, differentialTargets_eq_lowDefault .T,
-   differentialTargets_eq_lowDefault .A, differentialTargets_eq_lowDefault .R⟩
+    `rfl` because substrate `differentialTargetsProminent r := r.lowDefault`
+    is the alias — the equality holds by construction, not by enumeration. -/
+theorem universal3_single_argument_flagging (r : ArgumentRole) :
+    differentialTargetsProminent r = r.lowDefault := rfl
 
 -- ============================================================================
 -- § 4: Universal 4 — Split P Flagging (DOM)
@@ -255,11 +246,12 @@ def upstreamScenario : Scenario := ⟨.third, .first⟩
 def balancedScenario : Scenario := ⟨.third, .third⟩
 
 /-- Universal 5: the downstream/upstream/balanced trichotomy is exhaustive
-    for all 9 person-pair scenarios. Substrate's `Scenario.all` is now an
-    explicit literal so plain `decide` reduces (was `native_decide`). -/
-theorem universal5_trichotomy_exhaustive :
-    Scenario.all.all (λ s =>
-      s.isDownstream || s.isUpstream || s.isBalanced) = true := by decide
+    for *every* `Scenario`, not just the 9 in `Scenario.all`. Strictly
+    stronger than the list-anchored form (which silently passes if
+    `Scenario.all` ever loses an inhabitant). -/
+theorem universal5_trichotomy_exhaustive (s : Scenario) :
+    (s.isDownstream || s.isUpstream || s.isBalanced) = true := by
+  obtain ⟨a, p⟩ := s; cases a <;> cases p <;> rfl
 
 /-- Universal 5: the frequency-class proxy is monotone in the "usualness"
     of the scenario — downstream > balanced > upstream. This is a
@@ -465,8 +457,9 @@ theorem universal12_alternation
     -- Usual: high is given, low is new → longer alternant dispreferred
     alternantPreferredLong true highRole lowRole .given .new = false := by
   refine ⟨?_, ?_⟩ <;>
-    simp [alternantPreferredLong, deviatesFromUsual,
-          h_high_given, h_low_new]
+    · unfold alternantPreferredLong deviatesFromUsual
+      rw [h_high_given, h_low_new]
+      decide
 
 -- ============================================================================
 -- § 12: Universal 13 — Passive
@@ -487,25 +480,12 @@ theorem universal12_alternation
 /-- Universal 13 = Universal 12 instantiated for the (A, P) role pair.
     Under the antecedent that the alternation IS sensitive to givenness,
     passive is preferred when A's or P's discourse status deviates from
-    the usual association. -/
-def passivePreferredGivenSensitive
+    the usual association. `abbrev` (not `def`) so U13 is *literally*
+    `alternantPreferredLong _ .A .P _ _` — no bridge or readout theorems
+    needed; U12 instantiated at `(.A, .P)` carries the content. -/
+abbrev passivePreferredGivenSensitive
     (sensitiveToGivenness : Bool) (statusA statusP : DiscourseStatus) : Bool :=
   alternantPreferredLong sensitiveToGivenness .A .P statusA statusP
-
-/-- U13 = U12 specialized to (A, P): rfl by definition. -/
-theorem universal13_is_universal12_for_AP
-    (sensitive : Bool) (statusA statusP : DiscourseStatus) :
-    passivePreferredGivenSensitive sensitive statusA statusP =
-    alternantPreferredLong sensitive .A .P statusA statusP := rfl
-
-theorem universal13_passive_under_sensitivity :
-    -- Under sensitivity: deviant pattern → passive
-    passivePreferredGivenSensitive true .new .given = true ∧
-    -- Under sensitivity: usual pattern → no passive
-    passivePreferredGivenSensitive true .given .new = false ∧
-    -- Without sensitivity: no prediction (always false in this proxy)
-    passivePreferredGivenSensitive false .new .given = false :=
-  ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 13: Universal 14 — Dative Alternation
@@ -523,23 +503,11 @@ theorem universal13_passive_under_sensitivity :
     double-object construction. -/
 
 /-- Universal 14 = Universal 12 instantiated for the (R, T) role pair.
-    Under sensitivity to givenness, the PP-dative (longer) is preferred
-    when R's or T's discourse status deviates from the usual association. -/
-def ppDativePreferredGivenSensitive
+    `abbrev` for the same reason as `passivePreferredGivenSensitive`: U14
+    is *literally* `alternantPreferredLong _ .R .T _ _`. -/
+abbrev ppDativePreferredGivenSensitive
     (sensitiveToGivenness : Bool) (statusR statusT : DiscourseStatus) : Bool :=
   alternantPreferredLong sensitiveToGivenness .R .T statusR statusT
-
-/-- U14 = U12 specialized to (R, T): rfl by definition. -/
-theorem universal14_is_universal12_for_RT
-    (sensitive : Bool) (statusR statusT : DiscourseStatus) :
-    ppDativePreferredGivenSensitive sensitive statusR statusT =
-    alternantPreferredLong sensitive .R .T statusR statusT := rfl
-
-theorem universal14_dative_under_sensitivity :
-    ppDativePreferredGivenSensitive true .new .given = true ∧
-    ppDativePreferredGivenSensitive true .given .new = false ∧
-    ppDativePreferredGivenSensitive false .new .given = false :=
-  ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 14: Ditransitive Alignment Parallels
@@ -699,23 +667,20 @@ theorem marantz_ergative_no_marking_on_sole_np :
     Haspelmath's reduction to form-frequency does not derive
     Marantz-style aspect splits.
 
-    Witness: Marantz's algorithm gives identical output for two ergative
-    transitive scenarios that differ only in the "prominence" of the
-    referent — there's no place to encode a Fore-style prominence
-    sensitivity. Both `[⟨"agent_high_prom", none⟩, ⟨"theme", none⟩]` and
-    `[⟨"agent_low_prom", none⟩, ⟨"theme", none⟩]` (relabeled to make
-    intent clear) produce ERG on the agent position. The point is
-    structural: `assignCases` is a function of `(CaseLanguageType,
-    List NPInDomain)`, not of any prominence value. -/
-theorem marantz_haspelmath_partition_witness :
-    -- Marantz produces uniform ERG across "prominence relabelings" in
-    -- ergative mode (because the function takes no prominence input).
-    Syntax.Case.getCaseOf "agent_high_prom"
-      (Syntax.Case.assignCases .ergative
-        [⟨"agent_high_prom", none⟩, ⟨"theme", none⟩]) = some .erg ∧
-    Syntax.Case.getCaseOf "agent_low_prom"
-      (Syntax.Case.assignCases .ergative
-        [⟨"agent_low_prom", none⟩, ⟨"theme", none⟩]) = some .erg := by
-  refine ⟨?_, ?_⟩ <;> decide
+    The structural witness: for ANY two label choices `l₁, l₂, l₁', l₂'`
+    and ANY language type, `assignCases` produces the same case sequence
+    (up to label relabeling). The labels are uninterpreted strings — the
+    function cannot read them as proxies for prominence. There is no
+    prominence input to `assignCases : CaseLanguageType → List NPInDomain
+    → List CasedNP`; `NPInDomain` carries only `label : String` and
+    `lex : Option Case`. A Fore-style prominence-conditioned ERG would
+    require an extra parameter not present in the algorithm. -/
+theorem marantz_haspelmath_partition_witness
+    (lang : Syntax.Case.CaseLanguageType) (l₁ l₂ l₁' l₂' : String) :
+    (Syntax.Case.assignCases lang
+        [⟨l₁, none⟩, ⟨l₂, none⟩]).map (·.case) =
+    (Syntax.Case.assignCases lang
+        [⟨l₁', none⟩, ⟨l₂', none⟩]).map (·.case) := by
+  cases lang <;> rfl
 
 end Haspelmath2021
