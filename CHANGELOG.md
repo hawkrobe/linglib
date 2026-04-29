@@ -4,6 +4,47 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### O'Donnell 2015 Tier 1: prior + flip narrative + `mapWeightPMF_lt_iff` substrate consolidation
+
+Continued the deepening of the O'Donnell 2015 study to use the new `DMPCFG.mapWeight` machinery end-to-end. Two complementary moves: a substrate iff lemma that collapses the bridging chain in PMF-form theorems, and a study-side theorem trio that tells the full Ch 7 critique narrative.
+
+**Substrate addition (`Theories/Morphology/FragmentGrammars/DMPCFG.lean`).**
+- `mapWeightPMF_lt_iff (r₁ r₂ : RulesWithLHS a) (D) : mapWeightPMF D r₁ < mapWeightPMF D r₂ ↔ pseudo r₁.1 + count r₁.1 D < pseudo r₂.1 + count r₂.1 D` — bundles `mapWeightPMF_apply` ×2 + `ENNReal.ofReal_lt_ofReal_iff` + `mapWeight_lt_mapWeight_iff_of_same_lhs` into one rewrite. The shared-LHS and `r₂.1 ∈ G.rules` premises both come for free from the subtype proofs `r₁.2`, `r₂.2`. Consumers can now go from PMF mass comparison to numerator arithmetic in a single `rw`.
+
+**Study additions (`Phenomena/Morphology/Studies/ODonnell2015.lean`).** Three theorems landing the prior + flip narrative.
+- **`dmpcfg_prior_correctly_orders_n_rules`** — *first half* of the Ch 7 critique. With empty corpus, DMPCFG's PMF over the N-rules ranks `rNess > rIon` correctly because the prior IS the per-LHS-normalised pseudo-counts. Proof uses `mapWeight_zero` to reduce the empty-corpus posterior to the prior, then `mapWeightPMF_lt_iff` to compare numerators (3 vs 2).
+- **`dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules`** (refactored) — *second half*. With sufficient corpus counts (`count rIon > count rNess + 1`), DMPCFG's PMF flips and ranks `rIon > rNess`. Proof now uses `mapWeightPMF_lt_iff` instead of the manual `mapWeightPMF_apply` + `ENNReal.ofReal_lt_ofReal_iff` chain — drops from ~12 lines to ~8 lines.
+- **`dmpcfg_prior_correct_data_wrong`** — bundles both halves into one theorem stating the full Ch 7 critique: DMPCFG starts with the right prior, but data overwhelms it. The book's actual argument made Lean-checkable end-to-end.
+
+**Why this matters.** This is the first place in the file where `mapWeight_zero` does substantive work (reducing posterior on empty corpus to prior), and the first place where the prior + flip dichotomy is theorem-checked rather than docstring-asserted. The Ch 7 critique of DMPCFG ("the data overwhelms the prior") is now a proof obligation, not a narrative claim. The `mapWeightPMF_lt_iff` substrate addition means future `dmpcfg_X_orders_Y` theorems on different empirical contrasts (Ch 7.3.3.4 paradoxical -ity/-ness suffix combinations, Ch 4-5 past-tense regulars vs irregulars, etc.) can land as 4-line proofs.
+
+## [0.230.553] - 2026-04-29
+
+### Abusch substrate stress tests + Bug 1/Bug 3 regression witnesses
+
+Stress-test suite added to `Phenomena/TenseAspect/Studies/Abusch1997.lean` to verify substrate correctness before PR-B's modal-base + holder-now refactor. Four classes per CLAUDE.md memory's "Test both layers of multi-component state" discipline: positive consistency, negative rejection, structural sanity, bug-exposing.
+
+**Concrete instance**: `W := Bool` (2-world domain, enough to distinguish rigid from non-rigid concepts), `E := Unit`, `P := Unit`, `T := ℤ`. Six `private def` witnesses (`matrixCtx`, `trivialHistory`, `nonRigidConcept`, `rigidReading`, `nonRigidReading`, `restrictiveHistory`) factored out of test bodies to avoid let-binding scoping issues with `intro`/`refine`.
+
+**Class 1 — Positive consistency** (2 `example`):
+- Abusch (1) backward-shifted (p. 2-3): jurors' belief about crime time, `(rigidReading 50 100).isAbuschFelicitous trivialHistory .past` discharged via past-constraint + rigid-concept lemma.
+- Shadow-lemma round-trip: `isFelicitousWith ↔ TensePronoun.fullPresupposition` for any TensePronoun whose resolve/evalTime align with the de re reading.
+
+**Class 2 — Negative rejection** (2 `example`):
+- Future actualRes (200 > 100) fails the past constraint.
+- **Non-vacuity check**: a non-rigid concept (50 in world `true`, 60 in world `false`) fails `IsRigidAcrossAlternatives` over the trivial history's non-empty alternative set. Without this test, the modal layer could silently vacuously-accept on an empty alternative set.
+
+**Class 3 — Structural sanity** (3 `example`):
+- `actualHistoryBase` non-empty for matrix self-membership (`(matrixCtx 100).toSituation ∈ actualHistoryBase trivialHistory (matrixCtx 100).toSituation`).
+- `KContext.shiftWorldTime` preserves agent (load-bearing for centered-world identity) and round-trips through `toSituation`.
+- `Intension.IsRigidOn` is monotone in the set parameter (rigidity on a larger set implies rigidity on any subset).
+
+**Class 4 — Bug-exposing regression witnesses** (2 named `theorem`):
+- `bug3_substrate_accepts_holder_future`: per @cite{abusch-1997} §7 ULC ("the now of an epistemic alternative is an upper limit for the denotation of tenses", p. 24), an embedded tense cannot denote a time later than the believer's now. Construct: speech S=100, attitude-holder's now = 50, `actualRes`=75. Per ULC, 75 > 50 → infelicitous. But substrate checks `actualRes < matrixContext.time` = `75 < 100` → felicitous. Theorem proves the false-positive currently passes; PR-B's `holderNow` field will turn it into a `¬`-witnessed negative test.
+- `bug1_substrate_history_shape_changes_verdict`: substrate behavior depends on `WorldHistory` parameter shape, but `KContext.agent` is never consulted — the predicate is **agent-blind by construction**. Demonstrated by: same non-rigid concept, same matrix; passes `IsRigidAcrossAlternatives restrictiveHistory` (alternatives confined to `{true}` world) AND fails `IsRigidAcrossAlternatives trivialHistory` (alternatives include `{false}` world). The verdict is determined by the upstream history-shape choice, not by any agent-relative doxastic fact. PR-B will lift the parameter type to `Set (WorldTimeIndex W T)` so doxastic + metaphysical become explicit instantiation choices.
+
+**Build verification**: 912 jobs green; no `sorry`, no `native_decide`. The Class 4 theorems intentionally pass — they document the gap concretely so PR-B can flip them to negatives without ambiguity about what the fix should achieve.
+
 ## [0.230.552] - 2026-04-29
 
 ### Abusch substrate: PR-A — citation fix + Intension.IsRigidOn lift + KContext.shiftWorldTime extract
