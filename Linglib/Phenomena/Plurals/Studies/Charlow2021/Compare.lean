@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Quantification.Dynamic.UpdateTheoretic
-import Linglib.Theories.Semantics.Quantification.Dynamic.HigherOrder
-import Linglib.Theories.Semantics.Quantification.Dynamic.SubtypePolymorphism
-import Linglib.Theories.Semantics.Quantification.Dynamic.PostSuppositional
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.UpdateTheoretic
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.HigherOrder
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.SubtypePolymorphism
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.PostSuppositional
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-!
@@ -22,10 +22,10 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 
 -/
 
-namespace Phenomena.Plurals.Compare
+namespace Phenomena.Plurals.Studies.Charlow2021.Compare
 
 open Data
-open Semantics.Quantification.Dynamic.SubtypePolymorphism
+open Phenomena.Plurals.Studies.Charlow2021.SubtypePolymorphism
 
 /-- All three approaches derive the cumulative reading for Scenario A. -/
 theorem all_three_cumulative_scenarioA :
@@ -59,4 +59,4 @@ theorem dependent_indefinites_need_extra {W E : Type*} [Nonempty W] [Nonempty E]
   simp only [Set.mem_empty_iff_false, false_and, exists_false, Set.setOf_false] at h0
   exact Set.univ_nonempty.ne_empty h0
 
-end Phenomena.Plurals.Compare
+end Phenomena.Plurals.Studies.Charlow2021.Compare

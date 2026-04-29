@@ -17,7 +17,7 @@ This file connects PIP to the rest of linglib, establishing correspondences
 between PIP's formulation and the standard treatments in:
 
 1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
-2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `PropGQ`
+2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `GQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
 4. **Modal logic** — PIP's must/might ↔ `Core.IntensionalLogic.boxR/diamondR`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
@@ -143,28 +143,28 @@ theorem pip_felicity_agrees_with_orFilter {W : Type*}
 -- ============================================================
 
 /-!
-### GQ Bridge: PIP's set-based quantifiers ↔ PropGQ
+### GQ Bridge: PIP's set-based quantifiers ↔ GQ
 
 PIP defines (paper item 28):
 - EVERY(R, S) iff R ⊆ S
 - SOME(R, S) iff R ∩ S ≠ ∅
 
 These are exactly the standard GQ denotations when restrictor and scope
-are sets (extensional GQs). The PropGQ type `(α → Prop) → (α → Prop) → Prop`
+are sets (extensional GQs). The GQ type `(α → Prop) → (α → Prop) → Prop`
 is the predicate-based version.
 -/
 
-/-- PIP's EVERY as a PropGQ: ∀x, R(x) → S(x) (= set inclusion). -/
-def pipEvery {α : Type*} : Semantics.Quantification.Quantifier.PropGQ α :=
+/-- PIP's EVERY as a GQ: ∀x, R(x) → S(x) (= set inclusion). -/
+def pipEvery {α : Type*} : Core.Quantification.GQ α :=
   λ R S => ∀ x, R x → S x
 
-/-- PIP's SOME as a PropGQ: ∃x, R(x) ∧ S(x) (= non-empty intersection). -/
-def pipSome {α : Type*} : Semantics.Quantification.Quantifier.PropGQ α :=
+/-- PIP's SOME as a GQ: ∃x, R(x) ∧ S(x) (= non-empty intersection). -/
+def pipSome {α : Type*} : Core.Quantification.GQ α :=
   λ R S => ∃ x, R x ∧ S x
 
 /-- PIP's EVERY is conservative: EVERY(R, S) ↔ EVERY(R, R ∩ S). -/
 theorem pipEvery_conservative {α : Type*} :
-    Semantics.Quantification.Quantifier.PConservative (pipEvery (α := α)) := by
+    Core.Quantification.Conservative (pipEvery (α := α)) := by
   intro R S
   simp only [pipEvery]
   constructor
@@ -173,13 +173,13 @@ theorem pipEvery_conservative {α : Type*} :
 
 /-- PIP's EVERY is scope-upward-monotone (right upward monotone). -/
 theorem pipEvery_scope_upward_mono {α : Type*} :
-    Semantics.Quantification.Quantifier.PScopeUpwardMono (pipEvery (α := α)) := by
+    Core.Quantification.ScopeUpwardMono (pipEvery (α := α)) := by
   intro R S S' hSS' h x hR
   exact hSS' x (h x hR)
 
 /-- PIP's SOME is conservative: SOME(R, S) ↔ SOME(R, R ∩ S). -/
 theorem pipSome_conservative {α : Type*} :
-    Semantics.Quantification.Quantifier.PConservative (pipSome (α := α)) := by
+    Core.Quantification.Conservative (pipSome (α := α)) := by
   intro R S
   simp only [pipSome]
   constructor
@@ -188,17 +188,17 @@ theorem pipSome_conservative {α : Type*} :
 
 /-- PIP's SOME is scope-upward-monotone (right upward monotone). -/
 theorem pipSome_scope_upward_mono {α : Type*} :
-    Semantics.Quantification.Quantifier.PScopeUpwardMono (pipSome (α := α)) := by
+    Core.Quantification.ScopeUpwardMono (pipSome (α := α)) := by
   intro R S S' hSS' ⟨x, hR, hS⟩
   exact ⟨x, hR, hSS' x hS⟩
 
--- Bridge: set-based GQs (Composition.lean) ↔ predicate-based PropGQ
+-- Bridge: set-based GQs (Composition.lean) ↔ predicate-based GQ
 
 /--
 `setEvery` from `PIP.Composition` agrees with `pipEvery` (and hence `every_sem`).
 
 Both express universal GQ as set inclusion / pointwise implication.
-This bridge lets `setEvery` inherit all `PropGQ` property proofs
+This bridge lets `setEvery` inherit all `GQ` property proofs
 (conservativity, monotonicity) from `pipEvery_conservative` etc.
 -/
 theorem setEvery_eq_pipEvery {α : Type*} (R S : Set α) :
@@ -213,7 +213,7 @@ theorem setSome_eq_pipSome {α : Type*} (R S : Set α) :
   ⟨fun ⟨x, hx⟩ => ⟨x, hx.1, hx.2⟩, fun ⟨x, hr, hs⟩ => ⟨x, hr, hs⟩⟩
 
 /--
-Conservativity of `setEvery` derived from the PropGQ proof.
+Conservativity of `setEvery` derived from the GQ proof.
 -/
 theorem setEvery_conservative' {α : Type*} (R S : Set α) :
     setEvery R S ↔ setEvery R (R ∩ S) := by
@@ -221,14 +221,14 @@ theorem setEvery_conservative' {α : Type*} (R S : Set α) :
   exact pipEvery_conservative R S
 
 /--
-Conservativity of `setSome` derived from the PropGQ proof.
+Conservativity of `setSome` derived from the GQ proof.
 -/
 theorem setSome_conservative' {α : Type*} (R S : Set α) :
     setSome R S ↔ setSome R (R ∩ S) := by
   rw [setSome_eq_pipSome, setSome_eq_pipSome]
   exact pipSome_conservative R S
 
--- Bridge: PIP's PropGQ ↔ model-theoretic GQ from Quantifier.lean
+-- Bridge: PIP's GQ ↔ model-theoretic GQ from Quantifier.lean
 
 /--
 PIP's EVERY is definitionally equal to `every_sem` from `Quantifier.lean`.
@@ -242,7 +242,7 @@ directly to PIP's quantifiers.
 -/
 theorem pipEvery_eq_every_sem (F : Core.IntensionalLogic.Frame)
     [Fintype F.Entity] :
-    (pipEvery : Semantics.Quantification.Quantifier.PropGQ F.Entity) =
+    (pipEvery : Core.Quantification.GQ F.Entity) =
     Semantics.Quantification.Quantifier.every_sem F := rfl
 
 /--
@@ -250,7 +250,7 @@ PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
 -/
 theorem pipSome_eq_some_sem (F : Core.IntensionalLogic.Frame)
     [Fintype F.Entity] :
-    (pipSome : Semantics.Quantification.Quantifier.PropGQ F.Entity) =
+    (pipSome : Core.Quantification.GQ F.Entity) =
     Semantics.Quantification.Quantifier.some_sem F := rfl
 
 

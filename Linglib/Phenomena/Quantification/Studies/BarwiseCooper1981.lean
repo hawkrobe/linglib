@@ -60,6 +60,7 @@ open Fragments.English.Determiners (Monotonicity Strength)
 open Phenomena.Quantification.Inventory
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier
+open Core.Quantification
 open Semantics.Quantification.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
 
@@ -73,7 +74,7 @@ open Semantics.Quantification.DomainRestriction (DomainRestrictor
     `every_conservative`, `some_conservative`, etc. -/
 theorem conservativity_universal :
   ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
-    PConservative (q.gqDenotation m) := by
+    Conservative (q.gqDenotation m) := by
   intro q m inst inst2
   cases q <;> simp only [QuantityWord.gqDenotation]
   · exact Semantics.Quantification.Quantifier.no_conservative
@@ -94,7 +95,7 @@ theorem conservativity_universal :
     which need `count_bij_inv` adapted to Prop predicates. -/
 theorem quantity_universal :
   ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
-    PQuantityInvariant (q.gqDenotation m) := by
+    QuantityInvariant (q.gqDenotation m) := by
   intro q m inst inst2 A B A' B' f hBij hA hB
   cases q <;> simp only [QuantityWord.gqDenotation]
   case all =>
@@ -245,7 +246,7 @@ theorem strong_not_symmetric :
     ¬(∀x. R(x) → ¬S(x)) = ∃x. R(x) ∧ S(x).
     Bridges `dualQ_every_eq_some` from Quantifier.lean to fragment entries. -/
 theorem dual_all_eq_some (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
-    pdualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
+    dualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pdualQ_every_eq_some
 
@@ -253,7 +254,7 @@ theorem dual_all_eq_some (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
     Bridges `pinnerNeg_every_eq_no` to fragment entries. -/
 theorem innerNeg_all_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
-    pinnerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
+    innerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pinnerNeg_every_eq_no
 
@@ -261,7 +262,7 @@ theorem innerNeg_all_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Entit
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
     Bridges `pouterNeg_some_eq_no` to fragment entries. -/
 theorem outerNeg_some_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
-    pouterNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
+    outerNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pouterNeg_some_eq_no
 
@@ -285,14 +286,14 @@ theorem outerNeg_some_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Enti
     or `R = λ _ => true`), making the implication trivially true. -/
 theorem positive_strong_determiners_upward_monotone :
   ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
-    PPositiveStrong (q.gqDenotation m) →
-    PScopeUpwardMono (q.gqDenotation m) := by
+    PositiveStrong (q.gqDenotation m) →
+    ScopeUpwardMono (q.gqDenotation m) := by
   intro q m inst inst2 hPS
   cases q
   case all => exact Semantics.Quantification.Quantifier.every_scope_up
   case some_ => exact Semantics.Quantification.Quantifier.some_scope_up
   -- TODO: Adapt remaining cases for Prop-valued GQs.
-  -- The vacuity argument (PPositiveStrong contradicted by R = fun _ => False)
+  -- The vacuity argument (PositiveStrong contradicted by R = fun _ => False)
   -- needs count lemmas adapted for Prop predicates.
   case most => sorry
   case few => sorry
@@ -386,7 +387,7 @@ structure UniversalsSimplicityRanking where
 theorem domain_restriction_preserves_conservativity :
     ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity]
       (C : DomainRestrictor m.Entity),
-    PConservative (λ R S => q.gqDenotation m (λ x => C x ∧ R x) S) := by
+    Conservative (λ R S => q.gqDenotation m (λ x => C x ∧ R x) S) := by
   intro q m inst inst2 C
   exact conservative_domain_restricted (conservativity_universal q m)
 

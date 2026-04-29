@@ -9,7 +9,7 @@ with the continuation approach.
 
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Variables
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 

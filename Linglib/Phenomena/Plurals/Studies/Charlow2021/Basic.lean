@@ -48,7 +48,7 @@ which the other four are measured.
 
 -/
 
-namespace Semantics.Quantification.Dynamic.Basic
+namespace Phenomena.Plurals.Studies.Charlow2021.Basic
 
 open Semantics.Dynamic.Core
 open Mereology
@@ -101,4 +101,4 @@ def cumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (CardTest u 5))
     (CardTest v 3)
 
-end Semantics.Quantification.Dynamic.Basic
+end Phenomena.Plurals.Studies.Charlow2021.Basic

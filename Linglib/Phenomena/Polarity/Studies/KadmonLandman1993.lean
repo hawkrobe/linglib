@@ -1,10 +1,11 @@
 import Linglib.Core.Logic.NaturalLogic
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Theories.Semantics.Polarity.Licensing
+import Linglib.Typology.PolarityItem
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Theories.Semantics.Quantification.DomainVagueness
+import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993Apparatus
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
 
@@ -61,10 +62,11 @@ do not freely license *any*. The difference traces to lexical semantics:
 namespace KadmonLandman1993
 
 open Core.NaturalLogic
-open Core.Lexical.PolarityItem (LicensingContext LicensingMechanism PolarityType)
+open Typology.PolarityItem (LicensingContext PolarityType)
+open Semantics.Polarity.Licensing (LicensingMechanism)
 open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
-open Semantics.Quantification.DomainVagueness
+open Phenomena.Polarity.Studies.KadmonLandman1993.Apparatus
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 
@@ -141,7 +143,7 @@ is on the DE side, not because they appear on an enumerated list.
 -/
 
 /-- Each licensing context's entailment signature, projected from the
-    canonical `Core.Lexical.PolarityItem.contextProperties` mapping.
+    canonical `Semantics.Polarity.Licensing.contextProperties` mapping.
 
     Contexts on the DE side (anti, antiAdd, antiAddMult) guarantee
     strengthening. Contexts that are not monotone (questions, superlatives)
@@ -152,7 +154,7 @@ is on the DE side, not because they appear on an enumerated list.
     This mapping unifies the surface inventory with the algebraic
     hierarchy from @cite{icard-2012}. -/
 abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
-  (Core.Lexical.PolarityItem.contextProperties c).signature
+  (Semantics.Polarity.Licensing.contextProperties c).signature
 
 /-- A licensing context guarantees K&L strengthening iff its entailment
     signature is on the DE side. -/
@@ -182,7 +184,7 @@ def guaranteesStrengthening (ctx : LicensingContext) : Bool :=
     This is the unifying function: instead of stipulating *that* each
     context licenses, we explain *why*. -/
 abbrev klExplanation (c : LicensingContext) : LicensingMechanism :=
-  (Core.Lexical.PolarityItem.contextProperties c).mechanism
+  (Semantics.Polarity.Licensing.contextProperties c).mechanism
 
 /-- Consistency check: every context classified as `byStrengthening`
     has a DE entailment signature. After Phase 1 unification, both sides
@@ -374,7 +376,7 @@ theorem conditional_satisfies_strengthening
     - `condNecessity domain α β`: DE in α, holding `domain` constant
     - `sorryFull bestOf p`: Strawson-DE in p, holding `bestOf` constant
 
-    This is formalized by `IsDE_OnConstant` in `DomainVagueness.lean`:
+    This is formalized by `IsDE_OnConstant` in the Apparatus sibling file:
     a multi-place function is DE in one argument when another is held
     constant. The difference: conditionals are *classically* DE (no
     presupposition), while adversatives are only *Strawson*-DE (factivity
@@ -677,7 +679,7 @@ def ex1 : KLDatum :=
 def ex2 : KLDatum :=
   { sentence := "*I have any potatoes"
   , grammatical := false
-  , explanation := .byOtherMechanism  -- strengthening fails: UE context
+  , explanation := .strengtheningFails  -- strengthening fails: UE context
   , localSig := .mono }
 
 -- (10) Any owl hunts mice. — FC any in generic context
@@ -700,7 +702,7 @@ def ex27b : KLDatum :=
 def ex55 : KLDatum :=
   { sentence := "*Every boy has any potatoes"
   , grammatical := false
-  , explanation := .byOtherMechanism  -- strengthening fails: local UE
+  , explanation := .strengtheningFails  -- strengthening fails: local UE
   , localSig := .mult  -- universal scope is multiplicative (UE)
   }
 
@@ -711,7 +713,7 @@ def ex55 : KLDatum :=
 def ex56 : KLDatum :=
   { sentence := "*It's not the case that every boy has any potatoes"
   , grammatical := false
-  , explanation := .byOtherMechanism  -- local sig is UE → strengthening fails
+  , explanation := .strengtheningFails  -- local sig is UE → strengthening fails
   , localSig := .mult  -- local: scope of every = multiplicative (UE)
   , globalSig := .antiMult  -- global: not ∘ every_scope = DE
   }
@@ -728,7 +730,7 @@ def ex72 : KLDatum :=
 def ex73 : KLDatum :=
   { sentence := "*I'm sure that I ever met him"
   , grammatical := false
-  , explanation := .byOtherMechanism  -- non-adversative = not DE
+  , explanation := .strengtheningFails  -- non-adversative = not DE
   , localSig := .mono
   }
 

@@ -166,7 +166,7 @@ theorem every_restricted_spectator {m : Frame} [Fintype m.Entity]
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mp (h1 x ⟨hC, hR⟩)
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mpr (h1 x ⟨hC, hR⟩)
 
-open Semantics.Quantification.Quantifier (PConservative PropGQ) in
+open Core.Quantification (Conservative GQ) in
 /-- Conservativity is preserved under domain restriction: if Q is conservative,
     then Q restricted by any domain predicate C is also conservative.
     Generalizes `every_restricted_conservative` from `every_sem` to any
@@ -174,9 +174,9 @@ open Semantics.Quantification.Quantifier (PConservative PropGQ) in
     infrastructure: @cite{barwise-cooper-1981}'s conservativity universal
     guarantees that C-intersection preserves the fundamental GQ property. -/
 theorem conservative_domain_restricted {E : Type*}
-    {Q : PropGQ E} {C : DomainRestrictor E}
-    (hQ : PConservative Q) :
-    PConservative (λ R S => Q (λ x => C x ∧ R x) S) := by
+    {Q : GQ E} {C : DomainRestrictor E}
+    (hQ : Conservative Q) :
+    Conservative (λ R S => Q (λ x => C x ∧ R x) S) := by
   intro R S
   show Q (λ x => C x ∧ R x) S ↔ Q (λ x => C x ∧ R x) (λ x => R x ∧ S x)
   have h1 := hQ (λ x => C x ∧ R x) S

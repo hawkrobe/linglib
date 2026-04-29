@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Variables
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora

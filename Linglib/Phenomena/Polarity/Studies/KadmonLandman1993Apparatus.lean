@@ -43,7 +43,7 @@ widening in every context. This is why *almost* can modify *any owl*
 
 set_option autoImplicit false
 
-namespace Semantics.Quantification.DomainVagueness
+namespace Phenomena.Polarity.Studies.KadmonLandman1993.Apparatus
 
 -- ============================================================================
 -- §1. Vague Sets and Precisifications
@@ -445,4 +445,4 @@ theorem total_widening_creates_universality {Property : Type*}
   intro ⟨hP, hNot⟩
   exact hNot (hAllOnDim P hP)
 
-end Semantics.Quantification.DomainVagueness
+end Phenomena.Polarity.Studies.KadmonLandman1993.Apparatus

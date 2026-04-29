@@ -1,5 +1,5 @@
 import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!

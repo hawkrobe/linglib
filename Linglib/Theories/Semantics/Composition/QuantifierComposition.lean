@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.IntensionalLogic.Variables
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Quantification.Quantifier
 

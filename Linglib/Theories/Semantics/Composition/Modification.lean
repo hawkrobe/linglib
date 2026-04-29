@@ -11,7 +11,7 @@ privative, extensional) is in
 -/
 
 import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Composition.Modification

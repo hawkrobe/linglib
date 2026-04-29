@@ -16,7 +16,7 @@ from different quantifiers compose independently.
 
 -/
 
-namespace Semantics.Quantification.Dynamic.PostSuppositional
+namespace Phenomena.Plurals.Studies.Charlow2021.PostSuppositional
 
 open Semantics.Dynamic.Core
 
@@ -96,4 +96,4 @@ theorem postsup_cumulative {S E : Type*} [AssignmentStructure S E]
     True := by
   intro _ _ _ _; trivial
 
-end Semantics.Quantification.Dynamic.PostSuppositional
+end Phenomena.Plurals.Studies.Charlow2021.PostSuppositional

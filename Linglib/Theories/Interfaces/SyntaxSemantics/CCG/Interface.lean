@@ -15,7 +15,7 @@ to function application and composition.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Conjunction
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 
 namespace CCG
 

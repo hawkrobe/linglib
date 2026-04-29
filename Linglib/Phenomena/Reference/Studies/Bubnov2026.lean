@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Quantification.DependenceLogic
-import Linglib.Theories.Semantics.Quantification.DeganoAloni2025
+import Linglib.Theories.Semantics.Quantification.Indefinites.DependenceLogic
+import Linglib.Theories.Semantics.Quantification.Indefinites.TeamSemanticTypology
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Phenomena.Reference.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
@@ -47,7 +47,7 @@ test case. Key claims:
   result — nanosyntax predicts containment that indefinites lack.
 - `Typology.Indefinite`: `IndefiniteEntry` (consensus function-coverage
   + morphological-basis data) and `classifyTriple` for syncretism patterns.
-- `Theories.Semantics.Quantification.DeganoAloni2025`: `DAType` and
+- `Theories.Semantics.Quantification.Indefinites.TeamSemanticTypology`: `DAType` and
   `surfaceDAType` / `consistentWith` projections from entries to D&A types.
 - `Fragments.{Russian,English,German,Latin,Yakut,Kannada}.Indefinites`:
   per-language indefinite paradigms witnessing the typology.
@@ -59,8 +59,8 @@ set_option autoImplicit false
 
 namespace Bubnov2026
 
-open Semantics.Quantification.DependenceLogic
-open Semantics.Quantification.DeganoAloni2025
+open Semantics.Quantification.Indefinites.DependenceLogic
+open Semantics.Quantification.Indefinites.TeamSemanticTypology
 open Morphology.Nanosyntax
 open Dekier2021
 open Typology.Indefinite

@@ -32,7 +32,7 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 - **Witness sets**: `Theories.Semantics.TypeTheoretic.Quantification` —
   `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
 - **GQT properties**: `Theories.Semantics.Quantification.Quantifier` —
-  `PropGQ`, `PConservative`
+  `GQ`, `Conservative`
 - **Conservative count**: `Core.Quantification.conservativeQuantifierCount`
 - **Dog example**: reuses `DogWorld` from TTR Ch. 7
 -/
@@ -308,7 +308,7 @@ RTT's bipartitions partition only the *restrictor* (head noun extension).
 Conservativity is guaranteed by construction: the scope set never appears
 independently. §1.3, §4.8. -/
 
-/-- Convert a QCond (bipartition sieve) to a classical PropGQ.
+/-- Convert a QCond (bipartition sieve) to a classical GQ.
     The QNP ⟨q-cond, N⟩ applied to VP = Q is true iff some bipartition
     survives the sieve such that all refset members satisfy Q. -/
 def qcondToGQ (qc : QCond) [Fintype α] (N : α → Prop) [DecidablePred N]

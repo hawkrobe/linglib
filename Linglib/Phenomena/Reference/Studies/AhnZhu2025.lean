@@ -31,7 +31,7 @@ is not just notational — it's the structural basis for bridging.
 
 -/
 
-namespace Semantics.Quantification.Demonstrative.AhnZhu2025
+namespace Phenomena.Reference.Studies.AhnZhu2025
 
 
 /--
@@ -459,4 +459,4 @@ This is how a library grows cumulatively: later work builds on earlier work,
 creating a web of interconnected results rather than isolated modules.
 -/
 
-end Semantics.Quantification.Demonstrative.AhnZhu2025
+end Phenomena.Reference.Studies.AhnZhu2025

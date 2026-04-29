@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Conjunction
-import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.ToyDomain
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
 

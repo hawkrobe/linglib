@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.Quantification
-import Linglib.Core.Lexical.PolarityItem
+import Linglib.Typology.PolarityItem
+import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
@@ -13,7 +14,7 @@ NPI licensing to downward entailingness (DE). The core claim:
 
 This file bridges the GQ monotonicity proofs from `Core.Quantification` and
 `Semantics.Quantification.Quantifier` to the NPI licensing classification
-indexed by `Core.Lexical.PolarityItem.LicensingContext`, making the DE ↔ NPI
+indexed by `Typology.PolarityItem.LicensingContext`, making the DE ↔ NPI
 connection formally explicit.
 
 ## Key connections
@@ -30,7 +31,7 @@ connection formally explicit.
 namespace Ladusaw1979
 
 open Core.Quantification
-open Core.Lexical.PolarityItem (LicensingContext)
+open Typology.PolarityItem (LicensingContext)
 open Core.IntensionalLogic
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier
@@ -59,11 +60,11 @@ def LicensingStrength.ofDEStrength : Option Core.NaturalLogic.DEStrength → Lic
   | none                                    => .nonDE
 
 /-- Classify NPI licensing contexts by their monotonicity-based strength,
-    derived from `Core.Lexical.PolarityItem.contextProperties`. The Ladusaw
+    derived from `Semantics.Polarity.Licensing.contextProperties`. The Ladusaw
     classification is a coarsening of the Icard signature lattice. -/
 def licensingStrength (c : LicensingContext) : LicensingStrength :=
   LicensingStrength.ofDEStrength
-    (Core.Lexical.PolarityItem.contextProperties c).signature.toDEStrength
+    (Semantics.Polarity.Licensing.contextProperties c).signature.toDEStrength
 
 -- ============================================================================
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)
@@ -72,14 +73,14 @@ def licensingStrength (c : LicensingContext) : LicensingStrength :=
 variable {m : Frame} [Fintype m.Entity] [DecidableEq m.Entity]
 
 /-- The core Ladusaw generalization: scope-DE quantifiers license weak NPIs
-    in their scope. Formally: `PScopeDownwardMono q` implies that the scope
+    in their scope. Formally: `ScopeDownwardMono q` implies that the scope
     of `q` is a weak-NPI-licensing environment.
 
     Verified instances:
     - `no_scope_down`: "No student saw anyone" ✓
     - `few_scope_down`: "Few students saw anyone" ✓ -/
 structure ScopeDELicensesWeakNPIs (q : m.Denot Ty.det) where
-  scopeDE : PScopeDownwardMono q
+  scopeDE : ScopeDownwardMono q
   /-- The licensing context this corresponds to -/
   context : LicensingContext
   /-- The context is classified as at least DE -/
@@ -107,7 +108,7 @@ def few_scope_licenses_weak :
     - `every_restrictor_down`: "Everyone who saw anyone was questioned" ✓
     - `no_restrictor_down`: "No one who saw anyone was questioned" ✓ -/
 structure RestrictorDELicensesWeakNPIs (q : m.Denot Ty.det) where
-  restrictorDE : PRestrictorDownwardMono q
+  restrictorDE : RestrictorDownwardMono q
   context : LicensingContext
   isDE : licensingStrength context = .downwardEntailing ∨
          licensingStrength context = .antiAdditive
@@ -141,7 +142,7 @@ def no_restrictor_licenses_weak :
     Counter-example: "few" is merely DE, not anti-additive:
     - *"Few people lifted a finger to help" ✗ -/
 structure AntiAddLicensesStrongNPIs (q : m.Denot Ty.det) where
-  laa : PLeftAntiAdditive q
+  laa : LeftAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
 
@@ -164,7 +165,7 @@ def no_laa_licenses_strong :
     `RightAntiAdditive q` means the scope of `q` is anti-additive.
     "Nobody lifted a finger" is licensed by scope-level AA of `no`. -/
 structure ScopeAALicensesStrongNPIs (q : m.Denot Ty.det) where
-  raa : PRightAntiAdditive q
+  raa : RightAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
 
@@ -200,8 +201,8 @@ set_option maxHeartbeats 400000 in
     - few(R, S) = (1 < 2) = true, few(R, S') = (1 < 2) = true
     - true ∧ true ≠ false -/
 theorem few_DE_not_RAA :
-    PScopeDownwardMono (few_sem (F := toyModel)) ∧
-    ¬PRightAntiAdditive (few_sem (F := toyModel)) := by
+    ScopeDownwardMono (few_sem (F := toyModel)) ∧
+    ¬RightAntiAdditive (few_sem (F := toyModel)) := by
   refine ⟨few_scope_down, fun h => ?_⟩
   -- Witness: R = not-book, S = john-only, S' = mary-only
   let R : ToyEntity → Prop := fun | .book => False | _ => True

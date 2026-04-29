@@ -45,7 +45,7 @@ import this file and project.
 
 set_option autoImplicit false
 
-namespace Semantics.Quantification.DeganoAloni2025
+namespace Semantics.Quantification.Indefinites.TeamSemanticTypology
 
 open Typology.Indefinite
 
@@ -99,7 +99,7 @@ instance : DecidablePred DAType.IsAttested :=
 
 theorem skPlusNS_unattested : ¬ DAType.IsAttested .skPlusNS := by decide
 
-end Semantics.Quantification.DeganoAloni2025
+end Semantics.Quantification.Indefinites.TeamSemanticTypology
 
 -- ============================================================================
 -- IndefiniteEntry projections
@@ -109,7 +109,7 @@ end Semantics.Quantification.DeganoAloni2025
    dot notation (`entry.surfaceDAType`) resolves them. -/
 namespace Typology.Indefinite.IndefiniteEntry
 
-open Semantics.Quantification.DeganoAloni2025
+open Semantics.Quantification.Indefinites.TeamSemanticTypology
 
 /-- Surface-classifier: project an entry to the D&A type whose theoretical
     profile exactly matches the entry's actual function-coverage.
