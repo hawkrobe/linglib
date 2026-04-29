@@ -228,31 +228,31 @@ def intransitiveVP : List HeadPair := [⟨.v, .V, none, none, none⟩]
     Antecedent "someone left" and ellipsis "[who] left" share the same
     verb, so their argument domains have identical head pairs. -/
 theorem basic_sluice_licensed :
-    structurallyIdentical transitiveVP transitiveVP = true := by
+    structurallyIdentical transitiveVP transitiveVP := by
   decide
 
 /-- SIC licenses object sluicing: "John ate something, but I don't know what."
 
     Same verb "ate" → same head pairs. -/
 theorem object_sluice_licensed :
-    structurallyIdentical transitiveVP transitiveVP = true := by
+    structurallyIdentical transitiveVP transitiveVP := by
   decide
 
 /-- A `SluicingLicense` for same-verb sluices is licensed. -/
 theorem same_verb_license_is_licensed :
-    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true := by
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed := by
   decide
 
 /-- SIC correctly predicts `basicSluice` is grammatical. -/
 theorem sic_predicts_basicSluice :
     basicSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true :=
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed :=
   ⟨rfl, by decide⟩
 
 /-- SIC correctly predicts `objectSluice` is grammatical. -/
 theorem sic_predicts_objectSluice :
     objectSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true :=
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed :=
   ⟨rfl, by decide⟩
 
 -- Case matching: case is assigned within the argument domain, so the SIC
@@ -270,12 +270,12 @@ def accusativeVP : List HeadPair :=
 
 /-- Same-case head pairs are structurally identical (case match OK). -/
 theorem case_match_licensed :
-    structurallyIdentical dativeVP dativeVP = true := by
+    structurallyIdentical dativeVP dativeVP := by
   decide
 
 /-- Case mismatch blocks structural identity. -/
 theorem case_mismatch_blocked :
-    structurallyIdentical dativeVP accusativeVP = false := by
+    ¬ structurallyIdentical dativeVP accusativeVP := by
   decide
 
 /-- SIC correctly predicts `germanCaseMatch` is grammatical:
@@ -284,7 +284,7 @@ theorem case_mismatch_blocked :
     (both assign dative). -/
 theorem sic_predicts_germanCaseMatch :
     germanCaseMatch.grammatical = true ∧
-    structurallyIdentical dativeVP dativeVP = true :=
+    structurallyIdentical dativeVP dativeVP :=
   ⟨rfl, by decide⟩
 
 /-- SIC correctly predicts `germanCaseMismatch` is ungrammatical:
@@ -293,7 +293,7 @@ theorem sic_predicts_germanCaseMatch :
     domain (@cite{merchant-2001}: German *wem*/*wen* data). -/
 theorem sic_predicts_germanCaseMismatch :
     germanCaseMismatch.grammatical = false ∧
-    structurallyIdentical dativeVP accusativeVP = false :=
+    ¬ structurallyIdentical dativeVP accusativeVP :=
   ⟨rfl, by decide⟩
 
 -- ============================================================================
@@ -356,7 +356,7 @@ theorem sic_partition_confirmed :
     but @cite{anand-hardt-mccloskey-2021} shows that voice flavor is encoded on v, which IS inside
     the argument domain. Uses `activeVP`/`passiveVP` from FormalMatching. -/
 theorem voice_correctly_blocked :
-    structurallyIdentical activeVP passiveVP = false ∧
+    ¬ structurallyIdentical activeVP passiveVP ∧
     MismatchDimension.corpusCount .voice = 0 :=
   ⟨by decide, rfl⟩
 

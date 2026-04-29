@@ -190,7 +190,7 @@ theorem outside_argdomain_free :
     Both reduce to the same structural mismatch: v[nonThematic] vs
     v[agentive] within the argument domain. -/
 theorem voice_mismatch_blocked :
-    structurallyIdentical passiveVP activeVP = false := by
+    ¬ structurallyIdentical passiveVP activeVP := by
   decide
 
 -- ============================================================================
@@ -238,7 +238,7 @@ theorem stranded_nonadjunct_pp_licensed :
        ⟨.P, .D, none, none, some false⟩]
     structurallyIdentical
       (filterArgumentPairs antecedentPairs)
-      (filterArgumentPairs ellipsisPairs) = true := by
+      (filterArgumentPairs ellipsisPairs) := by
   decide
 
 /-- Paper ex. (12): The argument/nonargument PP contrast.
@@ -275,10 +275,10 @@ theorem argument_pp_blocks_sluicing :
     -- Argument PP is NOT filtered out
     filterArgumentPairs ellipsisPairs = ellipsisPairs ∧
     -- So the SIC fails: 1 ≠ 2 head pairs
-    structurallyIdentical
+    ¬ structurallyIdentical
       (filterArgumentPairs antecedentPairs)
-      (filterArgumentPairs ellipsisPairs) = false := by
-  exact ⟨rfl, rfl⟩
+      (filterArgumentPairs ellipsisPairs) := by
+  refine ⟨rfl, ?_⟩; decide
 
 /-- Contrast: paper ex. (15a-b) — sluicing fails completely when the
     argument domain itself has no match.
@@ -361,7 +361,7 @@ theorem pseudosluice_copula_is_be :
     nominal. A nominal antecedent trivially provides this. -/
 theorem copular_pseudosluice_sic :
     let scPairs : List HeadPair := [⟨.N, .D, none, none, none⟩]
-    structurallyIdentical scPairs scPairs = true :=
+    structurallyIdentical scPairs scPairs :=
   single_pair_matches _
 
 -- ============================================================================
@@ -382,7 +382,7 @@ theorem copular_pseudosluice_sic :
 theorem sic_checks_heads_not_nodes :
     -- A single head pair ⟨N, D⟩ is sufficient for copular pseudosluice
     -- licensing — no SC-level phrasal node needs matching
-    structurallyIdentical [⟨.N, .D, none, none, none⟩] [⟨.N, .D, none, none, none⟩] = true :=
+    structurallyIdentical [⟨.N, .D, none, none, none⟩] [⟨.N, .D, none, none, none⟩] :=
   single_pair_matches _
 
 -- ============================================================================
@@ -420,12 +420,12 @@ theorem stranded_prep_prediction :
       [⟨.v, .V, none, some .agentive, none⟩, ⟨.V, .D, none, none, none⟩,
        ⟨.P, .D, none, none, some false⟩]  -- nonarg PP
     -- Without filtering: mismatch (3 ≠ 2 head pairs)
-    structurallyIdentical activeVP withStrandedPrep = false ∧
+    ¬ structurallyIdentical activeVP withStrandedPrep ∧
     -- With filtering: match (nonarg PP removed)
     structurallyIdentical
       (filterArgumentPairs activeVP)
-      (filterArgumentPairs withStrandedPrep) = true := by
-  exact ⟨rfl, rfl⟩
+      (filterArgumentPairs withStrandedPrep) := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 8: Collected Data

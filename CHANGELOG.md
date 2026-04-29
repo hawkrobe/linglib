@@ -4,6 +4,85 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Ellipsis `FormalMatching` AHM/Rudin sections Bool→Prop migration
+
+Closes the Bool-in-semantic-positions backlog in `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean`. Bruening §7 was migrated to Prop in the previous session; the older AHM (§§1-5) and Rudin (§6) sections were still Bool-typed, violating the project's `feedback_bool_migration_scope` policy that propositional/semantic content should be `Prop`-valued.
+
+**Why `List.Perm` doesn't directly suffice (unlike Bruening §7).** `lexicallyIdentical` uses **optional-field "agree if specified" semantics** (head/complement match strictly; case/voice/argPP match only if both `some`). This is a custom equivalence relation, not strict `=`, so `List.Perm` (which uses strict `=`) doesn't apply. The migration uses Prop versions of the matching predicates with manually-written `Decidable` instances.
+
+**Substrate (`FormalMatching.lean`).**
+- `removeFirst : (α → Bool) → List α → Option (List α)` → `(α → Prop) [DecidablePred p] → List α → Option (List α)`. Body unchanged (already Decidable). Call sites work directly without `decide` wrapping (Lean infers `DecidablePred (lexicallyIdentical hp)` from per-pair Decidable).
+- `optAgree : Option α → Option α → Prop` introduced as `o1.isNone ∨ o2.isNone ∨ o1 = o2` with `Decidable` derived via `unfold; infer_instance`.
+- 6 Bool defs migrated to Prop: `lexicallyIdentical`, `matchHeadPairs`, `structurallyIdentical`, `rudinIdentical`, `rudinMatchPairs`, `rudinStructurallyIdentical`. Recursive `Decidable` instances for `matchHeadPairs`/`rudinMatchPairs` written by hand (typeclass synthesis through structural recursion needs explicit cases).
+- `removeFirst_map` rewritten with `(p q : α → Prop) [DecidablePred p] [DecidablePred q] (hpq : ∀ a, p (f a) ↔ q a)`; Bool-`cases` proof translated to `by_cases`.
+- `same_root_convergence` upgraded from Bool-eq to Prop-`Iff` via `and_congr`.
+- Internal theorems (`lexicallyIdentical_refl`, `removeFirst_self`, `matchHeadPairs_refl`, `structurallyIdentical_refl`, `empty_domains_identical`, `single_pair_matches`, `rudinIdentical_same_root`, `rudinMatchPairs_eq`) restated as Prop. `lexicallyIdentical_refl` shrinks from a 17-line Bool destructure to a 5-tuple `⟨rfl, rfl, Or.inr (Or.inr rfl), ...⟩`.
+
+**Consumers.**
+- `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021.lean`: 10 theorems migrated. Drop `= true`/`= false`, wrap negative cases in `¬`, keep `by decide` proofs verbatim. Mixed conjunctions (e.g., `sic_predicts_germanCaseMatch`) restate the structural-identity conjunct as Prop.
+- `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2025.lean`: 4 theorems migrated. The two compound theorems (`argument_pp_blocks_sluicing`, `stranded_prep_prediction`) needed `refine ⟨...⟩ <;> decide` instead of the prior `⟨rfl, rfl⟩` because the Decidable reduction now goes through Prop's `Decidable.decide`-bridge rather than direct Bool equality.
+- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`: G1 theorems (`g1_serve_implicit_second_obj_licensed`, `g1_charged_implicit_first_obj_blocked`, `g1_sluicing_asymmetry`) restated as Prop / `¬`. Renamed `DP_she` → `DP_they_serve` to align with Bruening's actual paper text (ex. 121, p. 1064 has *they*, not *she*). Added 17 stress-test `example`s — reflexivity, symmetry, cross-paradigm rejection, max-proj count enumerations matching Bruening's textual claims (`[Voice, D, Appl, D, V]` for serve, `[Voice, D, Appl, D, V, D]` vs `[Voice, D, Appl, V, D]` for charged), and the load-bearing structural facts (∃ is NOT a max-proj of antecedent because V+∃ is one leaf via `LexicalItem.combine`; wh-trace IS a max-proj but is filtered as movement non-head).
+
+**Build verification.** All four affected modules build clean (1813/1813 jobs in scoped lake build). 0 `sorry`, 0 `native_decide` introduced.
+
+**Out of scope** (intentionally kept Bool): `SluicingLicense.isLicensed`, `frameSluicingLicensed`, `crossCategorySluicing`, `HeadPair.isNonargumentPP`. These return Bool *decisions* used computationally, not propositional claims; per the migration policy they only flip if a consumer needs them in a Prop position.
+
+### `Theories/Pragmatics/{Dialogue,Assertion}/` → `Theories/Dialogue/` promotion
+
+Promotion of dialogue-state machinery to a top-level `Theories/Dialogue/` directory per the mathlib pattern of distinct subfields as flat top-level entries (cf. `Mathlib.Probability/`, `Mathlib.Combinatorics/` rather than nesting under broader categories). Phase 0 of a deep Ginzburg 2012 refactor; resolved three concurrent layout problems in one campaign:
+
+- `Theories/Pragmatics/Dialogue/` was a singleton parent — only `KOS/` lived inside it.
+- The actual dialogue-state siblings of KOS — Krifka commitment-spaces, Farkas-Bruce table model, Stalnaker CG-update, Brandom scorekeeping, Gunlogson source-marked commitments, Lauer probabilistic threshold, ReasonableInference, DisjunctiveUpdate (Caie 2023), QuotationFBOntology — were filed under `Pragmatics/Assertion/` for historical reasons (each focuses on the *speech act* of assertion), even though all of them model multi-turn discourse-state evolution.
+- Cross-framework theorems planned for subsequent phases (KOS-vs-Krifka per-DGB-vs-shared-root, KOS-vs-FarkasBruce dcS/dcL/cg-vs-DGB-A/DGB-B, KOS-vs-Stalnaker `HasContextSet` divergence) had no coherent neighborhood to live in.
+
+**Moves.** 5 KOS substrate files: `Theories/Pragmatics/Dialogue/KOS/{Basic,Grammar,Rules,RepriseContent,TTRBridge}` → `Theories/Dialogue/KOS/{...}`. 10 dialogue-state-as-assertion files: `Theories/Pragmatics/Assertion/{Brandom,DisjunctiveUpdate,FarkasAdapter,FarkasBruce,Gunlogson,Krifka,Lauer,QuotationFBOntology,ReasonableInference,Stalnaker}` → `Theories/Dialogue/{...}`. Both old parent directories (`Theories/Pragmatics/Dialogue/` and `Theories/Pragmatics/Assertion/`) removed.
+
+**Namespace renames.** `Pragmatics.Dialogue.KOS{,.Grammar,.TTRBridge}` → `Dialogue.KOS{...}`; `Pragmatics.Assertion.{X}` → `Dialogue.{X}` for each of the 10 X's. All `namespace`/`end`/`open` declarations updated in-file.
+
+**Consumer updates.** 9 external consumers' imports + opens rewritten: `Phenomena/Assertion/Studies/{BringGunlogson2000,Gunlogson2001,Krifka2015}.lean`, `Phenomena/Conditionals/Studies/Stalnaker1975.lean`, `Phenomena/Dialogue/Studies/{Ginzburg2012,PurverGinzburg2004}.lean`, `Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean`, `Phenomena/Quotation/Studies/Rudin2025LI.lean`, `Phenomena/SentenceMood/Studies/Deo2025.lean`, `Theories/Semantics/Conditionals/{ConditionalType,LeftNested}.lean`, `Fragments/English/PropositionalLexemes.lean`. All discovered via `grep -rl 'Pragmatics\.\(Assertion\|Dialogue\)'`.
+
+**Manifest.** `Linglib.lean` section header `-- Theories: Pragmatics: Dialogue` → `-- Theories: Dialogue (KOS)`; 15 import paths rewritten across the Assertion-block and KOS-block.
+
+**Architectural rationale.** `Theories/Dialogue/` joins `Theories/Pragmatics/`, `Theories/Discourse/`, `Theories/Semantics/`, etc. as a top-level subfield directory. The narrow-discourse policy in MEMORY (`Theories/Discourse/` = coherence theory only — Centering, Hobbs/Kehler, future SDRT-coherence) stays intact. Dialogue and Discourse are now sibling subfields, matching the SIGDIAL conference / *Dialogue & Discourse* journal convention. Internal inconsistency between narrow-`Theories/Discourse/` and broad-`Core/Discourse/` (which contains QUDStack, IllocutionaryForce, Commitment, Coherence — a mix of dialogue + coherence substrate) is now visible and flagged as a follow-on audit; not blocking.
+
+**What stays in `Pragmatics/`.** RSA, IBR, Implicature, Expressives, RelevanceTheory, GameTheory, Bias, Bidirectional, AsymmetricCommunication, AvoidAmbiguity, Efficiency, GriceanMaxims, InformationTheory, SignalingGames, DecisionTheoretic — utility-theoretic pragmatics. Future speech-act-as-philosophy content (Searle, Bach & Harnish, ISO 24617-2 dialogue acts) would land in a new `Pragmatics/SpeechActs/` if/when it materializes; for now `Pragmatics/Assertion/` is gone.
+
+**Build verification.** All 27 migration-affected modules build clean (1851/1851 jobs in scoped `lake build`, including all 10 moved files + 5 KOS substrate files + 9 external consumers + the Phenomena/Dialogue Studies files). One pre-existing build failure in `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2025.lean` (concurrent session's uncommitted `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean` edits) is unrelated to this migration.
+
+**What's coming next** (subsequent phases of the Ginzburg 2012 refactor): PDF-verified errata in `Phenomena/Dialogue/Studies/Ginzburg2012.lean` (Ch. 7 self-repair → §8.2 correction; Table 7.4 functional-grouping totals; Ch. 4 page reference; missing `fernandez-2006`/`de-waijer-2001` bib entries); substrate hygiene (delete duplicate `DecidableSupport String String`, dissolve `CRReading` doublet of substrate `RFReading`, dissolve `NSUDatum` re-skin of `FragmentDatum`, delete inert §4 TuC tests); `native_decide` → `decide`/`rfl`/substrate-lemma migration (16 occurrences); KOS substrate decomposition (`Defs.lean`/`Basic.lean` split, extract `InquiryCycle.lean`/`Grounding.lean`/`Genre.lean`/`SelfRepair.lean`, promote `NSUTaxonomy.lean`/`CRTaxonomy.lean` from study); `Datasets/Fernandez2006.lean` for the BNC subcorpus; cross-framework theorems vs pre-2012 siblings (Stalnaker `HasContextSet` divergence, Farkas-Bruce dcS/dcL/cg-vs-DGB-A/DGB-B, Roberts 1996/2012 QUD-stack agreement, Purver-Ginzburg 2004 q-params/dgb-params split inheritance, Ginzburg-Sag 2000 HPSG grammar foundation). Per the CLAUDE.md "no bridge files" + chronology rule, contrasts vs Krifka 2015 and Anderson 2021 will live inside *those* files (Krifka2015 > Ginzburg2012; Anderson2021 > both).
+
+### `DMPCFG.mapWeight` API: `Nonempty` typeclass refactor + `mapWeight_pos`/`zero` + downstream PMF demo
+
+Continued mathlib-shaping of the `mapWeight` API. Three orthogonal strengthenings.
+
+**Typeclass refactor.** The `(ha : ∃ r ∈ G.rules, r.input = a)` argument threaded through `mapWeight_denom_pos`, `mapWeight_sum_eq_one_of_lhs`, `mapWeightPMF`, and `mapWeightPMF_apply` is now `[Nonempty (RulesWithLHS (G := G) a)]` — the per-LHS nonemptiness as a typeclass instance rather than an explicit propositional witness. Mathlib idiom (cf. `PMF.uniformOfFintype [Nonempty α]`). Consumers either declare `instance : Nonempty (RulesWithLHS …) := ⟨⟨r, _⟩⟩` once for their grammar+LHS pair (one-liner with `decide`), or `haveI` the witness locally.
+
+**`mapWeight_pos` as primary; `mapWeight_nonneg` demoted to corollary.** Strict positivity is the load-bearing fact (numerator > 0 since `pseudo_pos`, denominator > 0 since `r` is in its own LHS bucket). Nonneg is now a one-line `(mapWeight_pos hr D).le`. Both still exposed for ergonomics.
+
+**`@[simp] mapWeight_zero`.** Empty-corpus reduction: `mapWeight r 0 = pseudo r / Σ_{r' with same LHS} pseudo r'`. The Dirichlet posterior with no data IS the prior. Useful normalisation; `simp` will unfold corpus-free expressions automatically.
+
+**Downstream PMF demo (`Phenomena/Morphology/Studies/ODonnell2015.lean`).** Two additions exercising the new API end-to-end:
+- `instance n_bucket_nonempty : Nonempty (DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N) := ⟨⟨rNess, by decide⟩⟩` — declared once at file scope; instance resolution finds it for any subsequent `mapWeightPMF`/`mapWeight_sum_eq_one_of_lhs` call over the N-bucket.
+- `dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules` — PMF-form corollary of `dmpcfg_wrongly_predicts_ion_productive`. Same conclusion (DMPCFG misranks ion vs ness when corpus counts overcome the prior gap), but stated as a probability comparison `mapWeightPMF D ⟨rNess, _⟩ < mapWeightPMF D ⟨rIon, _⟩` rather than a raw `mapWeight` comparison. Proof is a 5-line bridge: `mapWeightPMF_apply` simp + `ENNReal.ofReal_lt_ofReal_iff` + the existing raw theorem. Demonstrates that the PMF lift gives the right consumer-facing object: the conclusion is genuinely about probabilities.
+
+### `DMPCFG.mapWeight` lifted to mathlib `PMF`
+
+Mathlib-discipline follow-up to the `DMPCFG.mapWeight` substrate addition earlier in this session. The deepest unstated fact about `mapWeight` was that it doesn't sum to 1 — calling it a "MAP weight" was technically misleading until the probability axiom was theorem-checked. This commit closes that gap and lifts the construct from raw-number to mathlib's standard probability infrastructure.
+
+**`Theories/Morphology/FragmentGrammars/DMPCFG.lean` additions.**
+- `mapWeight_nonneg (hr : r ∈ G.rules) (D) : 0 ≤ M.mapWeight r D` — the cousin of `mapWeight_denom_pos`, completing the "is a [0, 1] value" story.
+- `mapWeight_sum_eq_one_of_lhs (ha) (D) : ∑ r ∈ G.rules.filter (·.input = a), M.mapWeight r D = 1` — the probability axiom. Per-LHS sum is `(∑ numerators) / (shared denominator) = denominator / denominator = 1`. This is what justifies calling `mapWeight` a *weight*.
+- `mapWeightPMF (ha) (D) : PMF (RulesWithLHS a)` — the PMF lift, via `PMF.ofFintype` over the LHS-bucket subtype using `mapWeight_sum_eq_one_of_lhs` for the normalisation obligation. Connects DMPCFG to mathlib's standard probability infrastructure for the first time: `corpusProb` and `lhsFactor` are bare ℝ-valued, but `mapWeightPMF` inhabits `PMF` and inherits `support`, `bind`, `map`, `Measure`-side bridges, etc.
+- `@[simp] mapWeightPMF_apply : M.mapWeightPMF ha D r = ENNReal.ofReal (M.mapWeight r.1 D)` — the bridge lemma between PMF object and numeric accessor (true by `rfl`).
+
+**Iff variant + housekeeping on the existing comparison lemma.**
+- New `mapWeight_lt_mapWeight_iff_of_same_lhs` — the iff form per mathlib idiom (better for `rw` chains than the directional form for `apply` chains). Existing `mapWeight_lt_mapWeight_of_same_lhs` reduced to a one-line corollary `(iff-version).mpr`.
+- Dropped the unused `_hr_in : r ∈ G.rules` parameter on both forms — the same-LHS denominator only needs the witness from `r' ∈ G.rules`. `Phenomena/Morphology/Studies/ODonnell2015.lean`'s `dmpcfg_wrongly_predicts_ion_productive` consumer updated to drop the now-redundant proof obligation.
+
+**New import.** `Mathlib.Probability.ProbabilityMassFunction.Constructions` (for `PMF.ofFintype`).
+
+**Not done in this commit.** No downstream consumer USES `mapWeightPMF` yet — it's added for future O'Donnell study files (the `-ability` paradox in Ch 8 will want PMF-typed comparisons of stored vs derived structures, and AlbrightHayes2003-style cross-paradigm replications will want PMF.bind chains). The current `dmpcfg_wrongly_predicts_ion_productive` still consumes the raw `mapWeight` value for proof brevity.
+
 ### Substrate-creep demotion: `Core/FormFrequency.lean` → Haspelmath2021 §0
 
 Follow-up to the 0.230.549–550 Haspelmath2021 audit cycle. The integration auditor's grep had flipped the substrate-creep question: every primitive in `Core/FormFrequency.lean` had **zero downstream consumers besides Haspelmath2021** itself, and four of the seven primitives (`respectsFormFrequency` (general), `argumentCodingRespectsFrequency`, `VoiceDirection`, `DitransitiveFrame`) were completely unused by anyone. CLAUDE.md's substrate principle: general-purpose substrate, not paper-specific apparatus. Earn-rate well below the consumer-count ≥ 2 bar that MEMORY's `project_core_triage` documents (32 Core/ files audited at ~22% earn-rate).

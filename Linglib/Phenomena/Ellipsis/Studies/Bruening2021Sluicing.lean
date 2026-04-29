@@ -37,8 +37,12 @@ open Minimalist.Ellipsis.FormalMatching
 Pattern from `Phenomena/ArgumentStructure/Studies/HaddicanEtAl2026.lean:109`.
 Each leaf has a unique `id`; traces use `mkTrace` (id ≥ 10000). -/
 
-def DP_she     : SyntacticObject := mkLeafPhon .D [] "she" 1
-def Voice_act  : SyntacticObject := mkLeafPhon .Voice [.V] "Voice[act]" 3
+def DP_they_serve : SyntacticObject := mkLeafPhon .D [] "they" 1
+/-- Voice head selecting ApplP. Per @cite{bruening-2021} (121a) p. 1064:
+    in DOC, Voice merges directly with ApplP (no intermediate VP layer);
+    Voice's selectional feature is therefore `.Appl` for the DOC structure
+    (it would be `.V` for the PP frame; cf. p. 1043 (70) PP-frame tree). -/
+def Voice_act  : SyntacticObject := mkLeafPhon .Voice [.Appl] "Voice[act]" 3
 def DP_us      : SyntacticObject := mkLeafPhon .D [] "us" 5
 def Appl_h     : SyntacticObject := mkLeafPhon .Appl [.V] "∅" 6
 
@@ -83,21 +87,21 @@ Elided clause for "but I don't know what" — wh-trace in object position;
 condition does not require a correlate. -/
 
 def serve_doc_antecedent : SyntacticObject :=
-  -- [VoiceP DP_she [Voice [ApplP DP_us [Appl' Appl V+∃_complex]]]]
+  -- [VoiceP DP_they_serve [Voice [ApplP DP_us [Appl' Appl V+∃_complex]]]]
   -- where V+∃_complex is one LEAF (head-adjunction product), so ∃ is
   -- not a max-proj. Bruening §5.2 ex. (108) p. 1059.
-  merge DP_she
+  merge DP_they_serve
     (merge Voice_act
       (merge DP_us
         (merge Appl_h V_serve_exists)))
 
 def serve_doc_elided : SyntacticObject :=
-  -- [VoiceP DP_she [Voice [ApplP DP_us [Appl' Appl [VP V_serve t]]]]]
+  -- [VoiceP DP_they_serve [Voice [ApplP DP_us [Appl' Appl [VP V_serve t]]]]]
   -- The VP node here MIRRORS the V+∃ leaf in the antecedent's structurally-
   -- identical position; the wh-trace inside is filtered as a movement
   -- non-head. Both the antecedent's V+∃ leaf and the elided's VP-node
   -- have outerCat .V, satisfying Bruening's structure-match (ex. 123).
-  merge DP_she
+  merge DP_they_serve
     (merge Voice_act
       (merge DP_us
         (merge Appl_h
@@ -134,10 +138,11 @@ def charged_doc_elided : SyntacticObject :=
     ex. 121, p. 1064: only `∃` differs between antecedent and elided, and
     `∃` is a head (not a maximal projection), so the identity condition
     ignores it. The max-projs in both clauses agree categorially per
-    Bruening's enumeration on p. 1065 ("All of these match"), modulo the
-    wh-trace which is filtered as a movement non-head. -/
+    Bruening's enumeration on p. 1065 — both label as
+    [Voice, D, Appl, D, V] — modulo the wh-trace which is filtered as a
+    movement non-head. -/
 theorem g1_serve_implicit_second_obj_licensed :
-    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided = true := by
+    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided := by
   decide
 
 /-- Implicit first-object DOC sluicing is blocked. Per @cite{bruening-2021}
@@ -153,7 +158,7 @@ theorem g1_serve_implicit_second_obj_licensed :
     lifting these SyntacticObject trees to `DomainAnnotatedPair` lists
     (`FormalMatching.lean:587`); flagged as follow-up. -/
 theorem g1_charged_implicit_first_obj_blocked :
-    bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided = false := by
+    ¬ bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided := by
   decide
 
 /-- @cite{bruening-2021} **Generalization 1** (§2.4 summary point 1, p. 1040;
@@ -165,9 +170,52 @@ theorem g1_charged_implicit_first_obj_blocked :
     `Phenomena/ArgumentStructure/Studies/Bruening2021.lean`'s deferred-
     substrate section. -/
 theorem g1_sluicing_asymmetry :
-    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided = true
-    ∧ bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided = false :=
+    bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_elided
+    ∧ ¬ bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_elided :=
   ⟨g1_serve_implicit_second_obj_licensed,
    g1_charged_implicit_first_obj_blocked⟩
+
+/-! ### Stress tests / sanity checks
+
+These verify the matcher behaves correctly on edge cases — reflexivity,
+symmetry, cross-paradigm rejection, and adversarial near-misses. -/
+
+-- Reflexivity: every tree structurally matches itself.
+example : bruening2021StructurallyIdentical serve_doc_antecedent serve_doc_antecedent := by decide
+example : bruening2021StructurallyIdentical serve_doc_elided serve_doc_elided := by decide
+example : bruening2021StructurallyIdentical charged_doc_antecedent charged_doc_antecedent := by decide
+example : bruening2021StructurallyIdentical charged_doc_elided charged_doc_elided := by decide
+
+-- Symmetry: bidirectional matching is order-independent.
+example : bruening2021StructurallyIdentical serve_doc_elided serve_doc_antecedent := by decide
+example : ¬ bruening2021StructurallyIdentical charged_doc_elided charged_doc_antecedent := by decide
+
+-- Cross-paradigm rejection: serve trees ↔ charged trees should not match
+-- (different verb classes, different complement-position contents).
+example : ¬ bruening2021StructurallyIdentical serve_doc_antecedent charged_doc_antecedent := by decide
+example : ¬ bruening2021StructurallyIdentical serve_doc_antecedent charged_doc_elided := by decide
+example : ¬ bruening2021StructurallyIdentical serve_doc_elided charged_doc_antecedent := by decide
+example : ¬ bruening2021StructurallyIdentical serve_doc_elided charged_doc_elided := by decide
+
+-- Filtered max-proj counts agree with Bruening's textual enumeration on
+-- p. 1066: serve-licit case has 5/5 (after wh-trace filter), charged
+-- case has 6/5 (extra unmatched antecedent NP_someone is the blocker).
+example : ((maximalProjections serve_doc_antecedent).filter
+            (fun x => !isNonHeadMemberOfChain x)).length = 5 := by decide
+example : ((maximalProjections serve_doc_elided).filter
+            (fun x => !isNonHeadMemberOfChain x)).length = 5 := by decide
+example : ((maximalProjections charged_doc_antecedent).filter
+            (fun x => !isNonHeadMemberOfChain x)).length = 6 := by decide
+example : ((maximalProjections charged_doc_elided).filter
+            (fun x => !isNonHeadMemberOfChain x)).length = 5 := by decide
+
+-- ∃ is correctly NOT a max-proj of the antecedent (it's part of V+∃
+-- complex head, not a separate node).
+example : ¬ V_serve ∈ (maximalProjections serve_doc_antecedent) := by decide
+
+-- The wh-trace IS a max-proj of charged_doc_elided but is filtered.
+example : whTrace1 ∈ (maximalProjections charged_doc_elided) := by decide
+example : ¬ whTrace1 ∈ ((maximalProjections charged_doc_elided).filter
+                          (fun x => !isNonHeadMemberOfChain x)) := by decide
 
 end Bruening2021Sluicing

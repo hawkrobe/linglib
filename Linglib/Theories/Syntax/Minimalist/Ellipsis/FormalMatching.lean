@@ -84,6 +84,16 @@ structure HeadPair where
 -- § 2: Syntactic Identity
 -- ═══════════════════════════════════════════════════════════════
 
+/-- Optional-field "agreement" predicate: two `Option α` values agree iff
+    either is `none`, or both are `some` with equal contents. Used by
+    `lexicallyIdentical` (and `rudinIdentical` below) to model "match the
+    field if both sides specify it." -/
+def optAgree {α : Type} [DecidableEq α] (o1 o2 : Option α) : Prop :=
+  o1.isNone ∨ o2.isNone ∨ o1 = o2
+
+instance {α} [DecidableEq α] (o1 o2 : Option α) : Decidable (optAgree o1 o2) := by
+  unfold optAgree; infer_instance
+
 /-- Lexical identity of head pairs (@cite{anand-hardt-mccloskey-2025}, Def 5):
     Two head pairs are lexically identical iff they have the same
     head category, complement category, and assigned case (when both
@@ -95,21 +105,24 @@ structure HeadPair where
 
     When either side has `assignedCase = none`, case is not checked
     (the head pair does not involve case assignment, e.g., v selecting VP). -/
-def lexicallyIdentical (hp1 hp2 : HeadPair) : Bool :=
-  hp1.head == hp2.head && hp1.complement == hp2.complement &&
-  (match hp1.assignedCase, hp2.assignedCase with
-  | some c1, some c2 => c1 == c2
-  | _, _ => true) &&
-  (match hp1.voiceFlavor, hp2.voiceFlavor with
-  | some v1, some v2 => v1 == v2
-  | _, _ => true) &&
-  (match hp1.isArgumentPP, hp2.isArgumentPP with
-  | some a1, some a2 => a1 == a2
-  | _, _ => true)
+def lexicallyIdentical (hp1 hp2 : HeadPair) : Prop :=
+  hp1.head = hp2.head ∧
+  hp1.complement = hp2.complement ∧
+  optAgree hp1.assignedCase hp2.assignedCase ∧
+  optAgree hp1.voiceFlavor hp2.voiceFlavor ∧
+  optAgree hp1.isArgumentPP hp2.isArgumentPP
 
-/-- Remove the first element matching a predicate from a list.
-    Returns `none` if no match found, `some remaining` otherwise. -/
-def removeFirst {α : Type} (p : α → Bool) : List α → Option (List α)
+instance (hp1 hp2 : HeadPair) : Decidable (lexicallyIdentical hp1 hp2) := by
+  unfold lexicallyIdentical; infer_instance
+
+/-- Remove the first element matching a decidable predicate from a list.
+    Returns `none` if no match found, `some remaining` otherwise.
+
+    Polymorphic over `(α → Prop)` with `[DecidablePred p]` so that consumers
+    can pass Prop predicates (e.g., `lexicallyIdentical hp`) directly without
+    Bool wrapping. -/
+def removeFirst {α : Type} (p : α → Prop) [DecidablePred p] :
+    List α → Option (List α)
   | [] => none
   | x :: xs =>
     if p x then some xs
@@ -117,20 +130,32 @@ def removeFirst {α : Type} (p : α → Bool) : List α → Option (List α)
 
 /-- Check if every head pair in `pairs1` has a lexically identical
     match in `pairs2`, consuming matches (1-1 correspondence). -/
-def matchHeadPairs : List HeadPair → List HeadPair → Bool
-  | [], _ => true
+def matchHeadPairs : List HeadPair → List HeadPair → Prop
+  | [], _ => True
   | hp :: rest, candidates =>
     match removeFirst (lexicallyIdentical hp) candidates with
     | some remaining => matchHeadPairs rest remaining
-    | none => false
+    | none => False
+
+instance : (l1 l2 : List HeadPair) → Decidable (matchHeadPairs l1 l2)
+  | [], _ => isTrue trivial
+  | hp :: rest, candidates => by
+    unfold matchHeadPairs
+    match removeFirst (lexicallyIdentical hp) candidates with
+    | none => exact isFalse not_false
+    | some remaining => exact instDecidableMatchHeadPairs rest remaining
 
 /-- Structural identity (@cite{anand-hardt-mccloskey-2025}, Def 6):
     Two sets of head pairs are structurally identical iff they can be
     put in 1-1 correspondence where each pair is lexically identical.
 
     This requires same cardinality AND a bijective matching. -/
-def structurallyIdentical (pairs1 pairs2 : List HeadPair) : Bool :=
-  pairs1.length == pairs2.length && matchHeadPairs pairs1 pairs2
+def structurallyIdentical (pairs1 pairs2 : List HeadPair) : Prop :=
+  pairs1.length = pairs2.length ∧ matchHeadPairs pairs1 pairs2
+
+instance (pairs1 pairs2 : List HeadPair) :
+    Decidable (structurallyIdentical pairs1 pairs2) := by
+  unfold structurallyIdentical; infer_instance
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 3: Sluicing License (SIC)
@@ -148,8 +173,11 @@ structure SluicingLicense where
   ellipsisPairs : List HeadPair
 
 /-- Is sluicing licensed? Checks structural identity of head pairs. -/
-def SluicingLicense.isLicensed (sl : SluicingLicense) : Bool :=
+def SluicingLicense.isLicensed (sl : SluicingLicense) : Prop :=
   structurallyIdentical sl.antecedentPairs sl.ellipsisPairs
+
+instance (sl : SluicingLicense) : Decidable sl.isLicensed := by
+  unfold SluicingLicense.isLicensed; infer_instance
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 4: SIC Predictions
@@ -184,12 +212,12 @@ def passiveVP : List HeadPair :=
 /-- Voice mismatch blocks sluicing: active v[agentive] ≠ passive v[nonThematic]
     within the argument domain. -/
 theorem voice_mismatch_blocks_sluicing :
-    structurallyIdentical activeVP passiveVP = false := by
+    ¬ structurallyIdentical activeVP passiveVP := by
   decide
 
 /-- Same voice licenses sluicing: active→active is structurally identical. -/
 theorem voice_match_licenses_sluicing :
-    structurallyIdentical activeVP activeVP = true := by
+    structurallyIdentical activeVP activeVP := by
   decide
 
 -- Argument domain boundaries
@@ -257,41 +285,30 @@ theorem sc_sic_fewer_constraints :
 theorem sc_same_pred_sluicing_licensed (cat : SCPredCategory) :
     structurallyIdentical
       (scHeadPairsForCat cat)
-      (scHeadPairsForCat cat) = true := by
+      (scHeadPairsForCat cat) := by
   cases cat <;> decide
 
 -- Matching properties
 
+/-- `optAgree` is reflexive on any optional value. -/
+private theorem optAgree_refl {α} [DecidableEq α] (o : Option α) : optAgree o o :=
+  Or.inr (Or.inr rfl)
+
 /-- Lexical identity is reflexive for any head pair. -/
-theorem lexicallyIdentical_refl (hp : HeadPair) :
-    lexicallyIdentical hp hp = true := by
-  simp only [lexicallyIdentical, beq_self_eq_true, Bool.true_and]
-  cases hp.assignedCase with
-  | none =>
-    cases hp.voiceFlavor with
-    | none => cases hp.isArgumentPP with | none => rfl | some _ => simp
-    | some _ =>
-      simp only [beq_self_eq_true, Bool.true_and]
-      cases hp.isArgumentPP with | none => rfl | some _ => simp
-  | some _ =>
-    simp only [beq_self_eq_true, Bool.true_and]
-    cases hp.voiceFlavor with
-    | none => cases hp.isArgumentPP with | none => rfl | some _ => simp
-    | some _ =>
-      simp only [beq_self_eq_true, Bool.true_and]
-      cases hp.isArgumentPP with | none => rfl | some _ => simp
+theorem lexicallyIdentical_refl (hp : HeadPair) : lexicallyIdentical hp hp :=
+  ⟨rfl, rfl, optAgree_refl _, optAgree_refl _, optAgree_refl _⟩
 
 /-- Removing the first lexically identical element from a list headed
     by that element succeeds and returns the tail. -/
 theorem removeFirst_self (hp : HeadPair) (rest : List HeadPair) :
     removeFirst (lexicallyIdentical hp) (hp :: rest) = some rest := by
   unfold removeFirst
-  simp only [lexicallyIdentical_refl, ite_true]
+  rw [if_pos (lexicallyIdentical_refl hp)]
 
 /-- Head pair matching is reflexive: any list matches itself. -/
 theorem matchHeadPairs_refl : (pairs : List HeadPair) →
-    matchHeadPairs pairs pairs = true
-  | [] => by unfold matchHeadPairs; rfl
+    matchHeadPairs pairs pairs
+  | [] => by unfold matchHeadPairs; trivial
   | hp :: rest => by
     unfold matchHeadPairs
     rw [removeFirst_self]
@@ -301,19 +318,16 @@ theorem matchHeadPairs_refl : (pairs : List HeadPair) →
     structurally identical to itself. This subsumes `empty_domains_identical`
     and `single_pair_matches`. -/
 theorem structurallyIdentical_refl (pairs : List HeadPair) :
-    structurallyIdentical pairs pairs = true := by
-  unfold structurallyIdentical
-  simp only [beq_self_eq_true, Bool.true_and]
-  exact matchHeadPairs_refl pairs
+    structurallyIdentical pairs pairs :=
+  ⟨rfl, matchHeadPairs_refl pairs⟩
 
 /-- Empty argument domains are trivially structurally identical. -/
-theorem empty_domains_identical :
-    structurallyIdentical [] [] = true :=
+theorem empty_domains_identical : structurallyIdentical [] [] :=
   structurallyIdentical_refl []
 
 /-- A single head pair matches itself. -/
 theorem single_pair_matches (hp : HeadPair) :
-    structurallyIdentical [hp] [hp] = true :=
+    structurallyIdentical [hp] [hp] :=
   structurallyIdentical_refl [hp]
 
 -- Case matching
@@ -321,18 +335,18 @@ theorem single_pair_matches (hp : HeadPair) :
 /-- Case mismatch blocks lexical identity: a V–D pair assigning dative
     is not lexically identical to one assigning accusative. -/
 theorem case_mismatch_not_identical :
-    lexicallyIdentical ⟨.V, .D, some .Dat, none, none⟩ ⟨.V, .D, some .Acc, none, none⟩ = false := by
+    ¬ lexicallyIdentical ⟨.V, .D, some .Dat, none, none⟩ ⟨.V, .D, some .Acc, none, none⟩ := by
   decide
 
 /-- Case match preserves lexical identity. -/
 theorem case_match_identical :
-    lexicallyIdentical ⟨.V, .D, some .Dat, none, none⟩ ⟨.V, .D, some .Dat, none, none⟩ = true := by
+    lexicallyIdentical ⟨.V, .D, some .Dat, none, none⟩ ⟨.V, .D, some .Dat, none, none⟩ := by
   decide
 
 /-- When no case is specified (e.g., v–V), identity depends only on
     categories. -/
 theorem no_case_identity :
-    lexicallyIdentical ⟨.v, .V, none, none, none⟩ ⟨.v, .V, none, none, none⟩ = true := by
+    lexicallyIdentical ⟨.v, .V, none, none, none⟩ ⟨.v, .V, none, none, none⟩ := by
   decide
 
 /-- Case mismatch blocks structural identity even when all other head
@@ -340,16 +354,16 @@ theorem no_case_identity :
     data: "wem" (dat) matches "jemandem" (dat), but
     "wen" (acc) does not. -/
 theorem case_mismatch_blocks_sluicing :
-    structurallyIdentical
+    ¬ structurallyIdentical
       [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩]
-      [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Acc, none, none⟩] = false := by
+      [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Acc, none, none⟩] := by
   decide
 
 /-- Same case → structural identity holds → sluicing licensed. -/
 theorem case_match_licenses_sluicing :
     structurallyIdentical
       [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩]
-      [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩] = true :=
+      [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩] :=
   structurallyIdentical_refl _
 
 -- ═══════════════════════════════════════════════════════════════
@@ -427,14 +441,17 @@ theorem passiveFrame_eq : passiveFrame.headPairs = passiveVP := by decide
 
 /-- Is sluicing licensed between two verb frames?
     Checks structural identity of their argument domain head pairs. -/
-def frameSluicingLicensed (antecedent ellipsis : VerbFrame) : Bool :=
+def frameSluicingLicensed (antecedent ellipsis : VerbFrame) : Prop :=
   structurallyIdentical antecedent.headPairs ellipsis.headPairs
+
+instance (a e : VerbFrame) : Decidable (frameSluicingLicensed a e) := by
+  unfold frameSluicingLicensed; infer_instance
 
 /-- Any verb frame is structurally identical to itself.
     This is non-trivial: it says that 1-1 head pair matching succeeds
     reflexively, regardless of voice, case, and argument type. -/
 theorem same_frame_always_licensed (vf : VerbFrame) :
-    frameSluicingLicensed vf vf = true := by
+    frameSluicingLicensed vf vf := by
   unfold frameSluicingLicensed
   exact structurallyIdentical_refl _
 
@@ -450,20 +467,20 @@ theorem voice_determines_v_pair (v : VoiceFlavor)
     Proof: unfold to head pairs, then `activeFrame_eq`/`passiveFrame_eq`
     reduce to the known `voice_mismatch_blocks_sluicing`. -/
 theorem voice_mismatch_from_frames :
-    frameSluicingLicensed activeFrame passiveFrame = false := by
+    ¬ frameSluicingLicensed activeFrame passiveFrame := by
   unfold frameSluicingLicensed
   rw [activeFrame_eq, passiveFrame_eq]
   exact voice_mismatch_blocks_sluicing
 
 /-- Case mismatch blocks sluicing, derived from frames. -/
 theorem case_mismatch_from_frames :
-    frameSluicingLicensed dativeFrame accusativeFrame = false := by
+    ¬ frameSluicingLicensed dativeFrame accusativeFrame := by
   unfold frameSluicingLicensed dativeFrame accusativeFrame VerbFrame.headPairs
   decide
 
 /-- Same-case frames are licensed. -/
 theorem same_case_from_frames :
-    frameSluicingLicensed dativeFrame dativeFrame = true :=
+    frameSluicingLicensed dativeFrame dativeFrame :=
   same_frame_always_licensed _
 
 -- ── Small clause frames ────────────────────────────────────────
@@ -471,15 +488,19 @@ theorem same_case_from_frames :
 /-- Is sluicing licensed between a verb frame and an SC frame?
     Cross-category sluicing (full clause ↔ SC) involves different
     argument domain sizes, so it typically fails the SIC. -/
-def crossCategorySluicing (vf : VerbFrame) (sc : SCPredCategory) : Bool :=
+def crossCategorySluicing (vf : VerbFrame) (sc : SCPredCategory) : Prop :=
   structurallyIdentical vf.headPairs (scHeadPairsForCat sc)
+
+instance (vf : VerbFrame) (sc : SCPredCategory) :
+    Decidable (crossCategorySluicing vf sc) := by
+  unfold crossCategorySluicing; infer_instance
 
 /-- Full clause → SC cross-category sluicing fails: different numbers
     of head pairs (2 vs 1) means the SIC length check blocks. -/
 theorem cross_category_blocked (vf : VerbFrame) (sc : SCPredCategory) :
-    crossCategorySluicing vf sc = false := by
+    ¬ crossCategorySluicing vf sc := by
   unfold crossCategorySluicing structurallyIdentical VerbFrame.headPairs scHeadPairsForCat
-  rfl
+  intro ⟨hlen, _⟩; cases hlen
 
 -- ── Derivation well-formedness ─────────────────────────────────
 
@@ -551,7 +572,7 @@ theorem chung_generalization :
        ⟨.P, .D, none, none, some false⟩]
     structurallyIdentical
       (filterArgumentPairs antecedent)
-      (filterArgumentPairs ellipsis) = true := by
+      (filterArgumentPairs ellipsis) := by
   decide
 
 /-- An argument PP (selected by V) IS inside the argument domain and
@@ -604,56 +625,71 @@ def annotateWithRoot (root : Cat) (pairs : List HeadPair) : List DomainAnnotated
     @cite{rudin-2019} Def 9: domination chains necessarily include
     the domain root as their first element, so if domain roots
     differ, no chain can match. -/
-def rudinIdentical (h1 h2 : DomainAnnotatedPair) : Bool :=
-  lexicallyIdentical h1.pair h2.pair && h1.domainRoot == h2.domainRoot
+def rudinIdentical (h1 h2 : DomainAnnotatedPair) : Prop :=
+  lexicallyIdentical h1.pair h2.pair ∧ h1.domainRoot = h2.domainRoot
+
+instance (h1 h2 : DomainAnnotatedPair) : Decidable (rudinIdentical h1 h2) := by
+  unfold rudinIdentical; infer_instance
 
 /-- Match head pairs using Rudin's stricter criterion (1-1 correspondence). -/
-def rudinMatchPairs : List DomainAnnotatedPair → List DomainAnnotatedPair → Bool
-  | [], _ => true
+def rudinMatchPairs : List DomainAnnotatedPair → List DomainAnnotatedPair → Prop
+  | [], _ => True
   | hp :: rest, candidates =>
     match removeFirst (rudinIdentical hp) candidates with
     | some remaining => rudinMatchPairs rest remaining
-    | none => false
+    | none => False
+
+instance : (l1 l2 : List DomainAnnotatedPair) → Decidable (rudinMatchPairs l1 l2)
+  | [], _ => isTrue trivial
+  | hp :: rest, candidates => by
+    unfold rudinMatchPairs
+    match removeFirst (rudinIdentical hp) candidates with
+    | none => exact isFalse not_false
+    | some remaining => exact instDecidableRudinMatchPairs rest remaining
 
 /-- Rudin's structural identity: same cardinality + Rudin-style matching. -/
-def rudinStructurallyIdentical (pairs1 pairs2 : List DomainAnnotatedPair) : Bool :=
-  pairs1.length == pairs2.length && rudinMatchPairs pairs1 pairs2
+def rudinStructurallyIdentical (pairs1 pairs2 : List DomainAnnotatedPair) : Prop :=
+  pairs1.length = pairs2.length ∧ rudinMatchPairs pairs1 pairs2
+
+instance (pairs1 pairs2 : List DomainAnnotatedPair) :
+    Decidable (rudinStructurallyIdentical pairs1 pairs2) := by
+  unfold rudinStructurallyIdentical; infer_instance
 
 -- ── General convergence: same root → Rudin = AHM ───────────────
 
 /-- When domain roots match, rudinIdentical reduces to lexicallyIdentical. -/
 private theorem rudinIdentical_same_root (hp1 hp2 : HeadPair) (root : Cat) :
-    rudinIdentical ⟨hp1, root⟩ ⟨hp2, root⟩ = lexicallyIdentical hp1 hp2 := by
-  simp only [rudinIdentical, beq_self_eq_true, Bool.and_true]
+    rudinIdentical ⟨hp1, root⟩ ⟨hp2, root⟩ ↔ lexicallyIdentical hp1 hp2 := by
+  simp only [rudinIdentical, and_true]
 
-/-- removeFirst commutes with List.map when the predicate factors through
-    the mapping function. This is the key lemma enabling the general
-    convergence proof: it lets us reduce Rudin-style matching on
+/-- `removeFirst` commutes with `List.map` when the two predicates
+    correspond pointwise. Used to reduce Rudin-style matching on
     annotated pairs to AHM-style matching on bare pairs. -/
 private theorem removeFirst_map {α β : Type} (f : α → β)
-    (p : β → Bool) (q : α → Bool) (hpq : ∀ a, p (f a) = q a) :
+    (p : β → Prop) [DecidablePred p] (q : α → Prop) [DecidablePred q]
+    (hpq : ∀ a, p (f a) ↔ q a) :
     (xs : List α) →
     removeFirst p (xs.map f) = (removeFirst q xs).map (List.map f)
   | [] => rfl
   | x :: xs => by
     simp only [List.map_cons]
     unfold removeFirst
-    rw [hpq x]
-    cases q x with
-    | false =>
-      simp only [Bool.false_eq_true, ↓reduceIte, removeFirst_map f p q hpq xs]
+    by_cases h : q x
+    · have hp_fx : p (f x) := (hpq x).mpr h
+      simp [if_pos hp_fx, if_pos h]
+    · have hnp_fx : ¬ p (f x) := fun pfx => h ((hpq x).mp pfx)
+      simp [if_neg hnp_fx, if_neg h, removeFirst_map f p q hpq xs]
       cases removeFirst q xs with
       | none => rfl
       | some r => simp [Option.map, List.map_cons]
-    | true =>
-      simp only [↓reduceIte, Option.map]
 
-/-- Rudin matching on uniformly-annotated lists equals AHM matching. -/
+/-- Rudin matching on uniformly-annotated lists is equivalent to AHM matching. -/
 private theorem rudinMatchPairs_eq (root : Cat) :
     (pairs1 pairs2 : List HeadPair) →
-    rudinMatchPairs (annotateWithRoot root pairs1) (annotateWithRoot root pairs2) =
-    matchHeadPairs pairs1 pairs2
-  | [], _ => rfl
+    (rudinMatchPairs (annotateWithRoot root pairs1) (annotateWithRoot root pairs2) ↔
+     matchHeadPairs pairs1 pairs2)
+  | [], _ => by
+    unfold annotateWithRoot rudinMatchPairs matchHeadPairs; simp
   | hp :: rest, pairs2 => by
     unfold annotateWithRoot
     simp only [List.map_cons]
@@ -661,7 +697,7 @@ private theorem rudinMatchPairs_eq (root : Cat) :
     rw [removeFirst_map (⟨·, root⟩) (rudinIdentical ⟨hp, root⟩) (lexicallyIdentical hp)
         (fun hp2 => rudinIdentical_same_root hp hp2 root) pairs2]
     cases removeFirst (lexicallyIdentical hp) pairs2 with
-    | none => rfl
+    | none => simp [Option.map]
     | some remaining =>
       simp only [Option.map]
       exact rudinMatchPairs_eq root rest remaining
@@ -671,14 +707,15 @@ private theorem rudinMatchPairs_eq (root : Cat) :
     whenever the domain roots match — only differing domain roots can
     cause divergence (as in copular pseudosluices). -/
 theorem same_root_convergence (pairs1 pairs2 : List HeadPair) (root : Cat) :
-    rudinStructurallyIdentical (annotateWithRoot root pairs1) (annotateWithRoot root pairs2) =
+    rudinStructurallyIdentical (annotateWithRoot root pairs1) (annotateWithRoot root pairs2) ↔
     structurallyIdentical pairs1 pairs2 := by
   unfold rudinStructurallyIdentical structurallyIdentical
   have hl1 : (annotateWithRoot root pairs1).length = pairs1.length := by
     simp [annotateWithRoot]
   have hl2 : (annotateWithRoot root pairs2).length = pairs2.length := by
     simp [annotateWithRoot]
-  rw [hl1, hl2, rudinMatchPairs_eq]
+  rw [hl1, hl2]
+  exact and_congr Iff.rfl (rudinMatchPairs_eq root pairs1 pairs2)
 
 -- ── Convergence: standard full-clause sluicing ──────────────────
 
@@ -692,24 +729,23 @@ def rudinPassiveVP : List DomainAnnotatedPair := annotateWithRoot .v passiveVP
     Both theories: active v[agentive] ≠ passive v[nonThematic].
     Derived from `same_root_convergence` + `voice_mismatch_blocks_sluicing`. -/
 theorem rudin_also_blocks_voice_mismatch :
-    rudinStructurallyIdentical rudinActiveVP rudinPassiveVP = false := by
+    ¬ rudinStructurallyIdentical rudinActiveVP rudinPassiveVP := by
   unfold rudinActiveVP rudinPassiveVP
   rw [same_root_convergence]; exact voice_mismatch_blocks_sluicing
 
 /-- Convergence: Rudin and AHM agree that same voice licenses sluicing.
     Derived from `same_root_convergence` + `voice_match_licenses_sluicing`. -/
 theorem rudin_also_licenses_same_voice :
-    rudinStructurallyIdentical rudinActiveVP rudinActiveVP = true := by
+    rudinStructurallyIdentical rudinActiveVP rudinActiveVP := by
   unfold rudinActiveVP
   rw [same_root_convergence]; exact voice_match_licenses_sluicing
 
 /-- Convergence: Rudin and AHM agree on case mismatch blocking.
     Derived from `same_root_convergence` + `case_mismatch_blocks_sluicing`. -/
 theorem rudin_also_blocks_case_mismatch :
-    rudinStructurallyIdentical
+    ¬ rudinStructurallyIdentical
       (annotateWithRoot .v [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩])
-      (annotateWithRoot .v [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Acc, none, none⟩])
-      = false := by
+      (annotateWithRoot .v [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Acc, none, none⟩]) := by
   rw [same_root_convergence]; exact case_mismatch_blocks_sluicing
 
 -- ── Divergence: copular pseudosluices ───────────────────────────
@@ -734,7 +770,7 @@ def copularAntecedentDP : List DomainAnnotatedPair :=
 theorem ahm_licenses_copular_pseudosluice :
     structurallyIdentical
       [⟨.N, .D, none, none, none⟩]
-      [⟨.N, .D, none, none, none⟩] = true :=
+      [⟨.N, .D, none, none, none⟩] :=
   structurallyIdentical_refl _
 
 /-- @cite{rudin-2019}'s condition incorrectly blocks copular
@@ -747,7 +783,7 @@ theorem ahm_licenses_copular_pseudosluice :
     show that a head-pair–based SIC is empirically superior to a
     domination-chain–based one. -/
 theorem rudin_blocks_copular_pseudosluice :
-    rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP = false := by
+    ¬ rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP := by
   decide
 
 /-- The theories diverge on copular pseudosluices: AHM licenses them,
@@ -763,9 +799,9 @@ theorem copular_pseudosluice_divergence :
     -- AHM licenses: head pairs match (domain root ignored)
     structurallyIdentical
       [⟨.N, .D, none, none, none⟩]
-      [⟨.N, .D, none, none, none⟩] = true ∧
+      [⟨.N, .D, none, none, none⟩] ∧
     -- Rudin blocks: domain roots differ (.N ≠ .D)
-    rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP = false :=
+    ¬ rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP :=
   ⟨structurallyIdentical_refl _, by decide⟩
 
 /-- The source of divergence: Rudin's matching is sensitive to the
@@ -775,12 +811,12 @@ theorem copular_pseudosluice_divergence :
     both theories make identical predictions. -/
 theorem domain_root_is_divergence_source :
     -- Same root → Rudin agrees with AHM (both license)
-    rudinStructurallyIdentical rudinActiveVP rudinActiveVP = true ∧
+    rudinStructurallyIdentical rudinActiveVP rudinActiveVP ∧
     -- Different root → Rudin disagrees (blocks what AHM licenses)
-    rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP = false ∧
+    ¬ rudinStructurallyIdentical copularEllipsisSC copularAntecedentDP ∧
     structurallyIdentical
       [⟨.N, .D, none, none, none⟩]
-      [⟨.N, .D, none, none, none⟩] = true :=
+      [⟨.N, .D, none, none, none⟩] :=
   ⟨rudin_also_licenses_same_voice, by decide, structurallyIdentical_refl _⟩
 
 -- ═══════════════════════════════════════════════════════════════
@@ -825,72 +861,61 @@ def maximalProjections (root : SyntacticObject) : List SyntacticObject :=
 def isNonHeadMemberOfChain (x : SyntacticObject) : Bool :=
   (isTrace x).isSome
 
-/-- Structure matching for @cite{bruening-2021} §5.5 (ex. 123, p. 1065):
-    two max-projs structure-match iff their projecting categories agree.
+/-- Path from `root` down to a target subtree, recorded as the sequence
+    of `labelCat`s at each node along the way (root included, target
+    included). Returns `none` if `target` is not a subtree of `root`.
 
-    Bruening's criterion is identity of the *immediately dominating
-    sequence*, not internal subtree shape. For max-projs at corresponding
-    positions in two clauses, this reduces to outer-category equality —
-    e.g., the antecedent's VP `[V V[serve] ∃]` (V+∃ complex head) and the
-    elided's VP `[V[serve], t]` (V plus wh-trace) both have outerCat `.V`
-    and BOTH structure-match per Bruening's enumeration on p. 1065
-    ("All of these match, except the NP what"). -/
-def bruening2021Identical (x y : SyntacticObject) : Bool :=
-  SyntacticObject.outerCat x == SyntacticObject.outerCat y
+    Used to give each max-proj a position-aware identity per
+    @cite{bruening-2021} §5.5 ex. 123 ("dominated by an identical sequence
+    of immediately dominating nodes"). Path equality replaces the looser
+    cat-only equality, ruling out cross-paradigm false positives where
+    two unrelated trees happen to share a max-proj cat multiset. -/
+def labelPathFromRoot : SyntacticObject → SyntacticObject → Option (List Cat)
+  | root, target =>
+    if root = target then
+      some ((labelCat root).toList)
+    else
+      match root with
+      | .leaf _ => none
+      | .node a b =>
+        match labelPathFromRoot a target with
+        | some pa => some ((labelCat root).toList ++ pa)
+        | none =>
+          match labelPathFromRoot b target with
+          | some pb => some ((labelCat root).toList ++ pb)
+          | none => none
 
-/-- 1-1 correspondence helper for max-proj matching (mirrors `matchHeadPairs`
-    at line 119 and `rudinMatchPairs` at line 610). -/
-def bruening2021MatchPairs :
-    List SyntacticObject → List SyntacticObject → Bool
-  | [], _ => true
-  | xp :: rest, candidates =>
-      match removeFirst (bruening2021Identical xp) candidates with
-      | some remaining => bruening2021MatchPairs rest remaining
-      | none => false
+/-- Filtered max-proj paths for a tree. Each filtered max-proj is paired
+    with its path from the root (= sequence of `labelCat`s). Movement
+    non-heads (wh-traces and other lower copies) are excluded — exactly
+    Bruening's "not a nonhead member of a movement chain" filter. -/
+def filteredMaxProjPaths (root : SyntacticObject) : List (List Cat) :=
+  ((maximalProjections root).filter (fun x => !isNonHeadMemberOfChain x)).filterMap
+    (labelPathFromRoot root ·)
 
 /-- @cite{bruening-2021} §5.5 ex. 122 maximal-projection identity condition.
-    Ellipsis of `ellipsis` given `antecedent` is licit iff every max-proj
-    in `ellipsis` that is not a movement non-head has a structure-matching
-    correlate in `antecedent`, AND every max-proj in `antecedent` that is
-    not a movement non-head has a structure-matching correlate in
-    `ellipsis`. Mirrors the `rudinStructurallyIdentical` shape (line 618). -/
-def bruening2021StructurallyIdentical (antecedent ellipsis : SyntacticObject) : Bool :=
-  let aMaxProjs := (maximalProjections antecedent).filter
-                     (fun x => !isNonHeadMemberOfChain x)
-  let eMaxProjs := (maximalProjections ellipsis).filter
-                     (fun x => !isNonHeadMemberOfChain x)
-  bruening2021MatchPairs eMaxProjs aMaxProjs
-    && bruening2021MatchPairs aMaxProjs eMaxProjs
+    Ellipsis of `ellipsis` given `antecedent` is licit iff their filtered
+    max-proj path lists are permutations of each other — equivalently,
+    every max-proj in one has a position-matching correlate in the other.
 
-/-- Structure-matching is reflexive on any SO. -/
-theorem bruening2021Identical_refl (so : SyntacticObject) :
-    bruening2021Identical so so = true := by
-  simp only [bruening2021Identical, beq_self_eq_true]
+    Position-aware via `labelPathFromRoot`: same-cat max-projs at DIFFERENT
+    structural positions (different domination sequences) do NOT match,
+    correctly ruling out cross-paradigm false positives where two unrelated
+    trees share a max-proj cat multiset.
 
-/-- Removing the first `bruening2021Identical`-match from a list headed by
-    that element succeeds and returns the tail. Mirror of `removeFirst_self`
-    at line 286. -/
-theorem removeFirst_self_bruening (so : SyntacticObject) (rest : List SyntacticObject) :
-    removeFirst (bruening2021Identical so) (so :: rest) = some rest := by
-  unfold removeFirst
-  simp only [bruening2021Identical_refl, ite_true]
+    Stated as Prop (per the project's Bool→Prop substrate convention);
+    decidable via `List.decidablePerm`. -/
+def bruening2021StructurallyIdentical (antecedent ellipsis : SyntacticObject) : Prop :=
+  (filteredMaxProjPaths antecedent).Perm (filteredMaxProjPaths ellipsis)
 
-/-- Max-proj pair matching is reflexive: any list matches itself. Mirror of
-    `matchHeadPairs_refl` at line 292. -/
-theorem bruening2021MatchPairs_refl : (sos : List SyntacticObject) →
-    bruening2021MatchPairs sos sos = true
-  | [] => by unfold bruening2021MatchPairs; rfl
-  | so :: rest => by
-    unfold bruening2021MatchPairs
-    rw [removeFirst_self_bruening]
-    exact bruening2021MatchPairs_refl rest
+instance (a e : SyntacticObject) :
+    Decidable (bruening2021StructurallyIdentical a e) :=
+  inferInstanceAs (Decidable (List.Perm _ _))
 
 /-- The maximal-projection identity condition is reflexive: any SO is
-    structurally identical to itself. Mirror of `structurallyIdentical_refl`
-    at line 303. -/
+    structurally identical to itself. -/
 theorem bruening2021StructurallyIdentical_refl (so : SyntacticObject) :
-    bruening2021StructurallyIdentical so so = true := by
-  unfold bruening2021StructurallyIdentical
-  simp only [bruening2021MatchPairs_refl, Bool.and_self]
+    bruening2021StructurallyIdentical so so :=
+  List.Perm.refl _
 
 end Minimalist.Ellipsis.FormalMatching
