@@ -4,6 +4,17 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.538] - 2026-04-29
+
+### ChannelCapacity Gibbs consolidation (closes "three parallel KL Gibbs proofs" audit thread)
+
+Direct continuation of 0.230.536–537. The 4-agent audit identified three independent finite-KL Gibbs proofs in linglib; the previous commit consolidated two of them into `Core.InformationTheory.kl_nonneg`. `Pragmatics.InformationTheory.gibbs_inequality` was the third — now deleted.
+
+- **Deleted `Pragmatics.InformationTheory.gibbs_inequality`** (`ChannelCapacity.lean`, ~21 LOC). Mathlib pattern is one named theorem (`klDiv_nonneg`); "Gibbs" lives in docstrings, not as a parallel API surface. After this commit, linglib has exactly one finite-KL non-negativity proof, mathlib-routed via `klFun_nonneg`.
+- **Added `Core.InformationTheory.klFinite_eq_sum_log_div`** — unconditional bridge from the `if`-guarded `klFinite p q := ∑ if p i = 0 then 0 else p i · log (p i / q i)` to the literal sum form `∑ p i · log (p i / q i)`. The guard is vacuous because `Real.log 0 = 0` and `0 / q = 0` already give 0 on the `p i = 0` branch (no hypothesis needed).
+- **Refactored `ChannelCapacity.entropy_le_log_card`** to call `Core.InformationTheory.kl_nonneg` directly via the bridge, eliminating the last private dependency on `gibbs_inequality`. Added `import Linglib.Core.InformationTheory` to `ChannelCapacity.lean`.
+- **Build**: target files green (2655 jobs for `Core.InformationTheory + ChannelCapacity + RationalAction`); no new sorries; net ~−21 LOC.
+
 ## [0.230.537] - 2026-04-29
 
 ### RSA/Divergence.lean dissolved into Core/InformationTheory.lean

@@ -1,4 +1,5 @@
 import Linglib.Theories.Pragmatics.InformationTheory.Channel
+import Linglib.Core.InformationTheory
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
@@ -21,9 +22,10 @@ file is capacity-specific.
 
 - `cap_linear`: at a CAP, `-log p(c) = S(c) + log Z`
 - `mutualInfo_eq_log_Z_of_cap`: at a CAP, `I(W;C) = log Z`
-- `gibbs_inequality`: KL divergence is non-negative
 - `mutualInfo_le_log_card`: `I(W;C) ≤ log |W|`
 - `channelCapacity_le_log_card`: `C* ≤ log |W|`
+
+(KL non-negativity / Gibbs' inequality lives in `Core.InformationTheory.kl_nonneg`.)
 -/
 
 set_option autoImplicit false
@@ -99,30 +101,9 @@ theorem mutualInfo_eq_log_Z_of_cap (nc : CommChannel C W)
   unfold commPrecision at hcap_c
   linarith
 
-/-- Gibbs inequality: KL divergence is non-negative.
-    `D_KL(p ∥ q) = Σ p(i) log(p(i)/q(i)) ≥ 0` for distributions p, q.
-    Uses `log x ≤ x − 1`. -/
-theorem gibbs_inequality {ι : Type*} [Fintype ι] (p q : ι → ℝ)
-    (hp_nn : ∀ i, 0 ≤ p i) (hq_pos : ∀ i, 0 < q i)
-    (hp_sum : ∑ i : ι, p i = 1) (hq_sum : ∑ i : ι, q i = 1) :
-    0 ≤ ∑ i : ι, p i * log (p i / q i) := by
-  suffices hterm : ∀ i, p i - q i ≤ p i * log (p i / q i) by
-    calc (0 : ℝ) = ∑ i : ι, (p i - q i) := by rw [sum_sub_distrib, hp_sum, hq_sum, sub_self]
-      _ ≤ ∑ i : ι, p i * log (p i / q i) := sum_le_sum fun i _ => hterm i
-  intro i
-  by_cases hi : p i = 0
-  · simp [hi, le_of_lt (hq_pos i)]
-  · have hpi : 0 < p i := lt_of_le_of_ne (hp_nn i) (Ne.symm hi)
-    have h1 := log_le_sub_one_of_pos (div_pos (hq_pos i) hpi)
-    have h2 := mul_le_mul_of_nonneg_left h1 hpi.le
-    have h3 : p i * (q i / p i - 1) = q i - p i := by field_simp
-    rw [h3] at h2
-    rw [log_div (ne_of_gt (hq_pos i)) (ne_of_gt hpi)] at h2
-    rw [log_div (ne_of_gt hpi) (ne_of_gt (hq_pos i))]
-    nlinarith
-
 /-- Entropy of a distribution ≤ log of the support size: `H(q) ≤ log |W|`.
-    Follows from Gibbs inequality applied to `KL(q ∥ uniform)`. -/
+    Follows from Gibbs' inequality (`Core.InformationTheory.kl_nonneg`) applied
+    to `KL(q ‖ uniform)`. -/
 private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     (hq_nonneg : ∀ i, 0 ≤ q i) (hq_sum : ∑ i : ι, q i = 1) :
     -∑ i : ι, q i * log (q i) ≤ log (Fintype.card ι : ℝ) := by
@@ -133,8 +114,10 @@ private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     have hu_pos : ∀ i, (0 : ℝ) < u i := fun _ => div_pos one_pos hWpos
     have hu_sum : ∑ i : ι, u i = 1 := by
       simp [u, sum_const, nsmul_eq_mul, Nat.cast_ne_zero.mpr hW]
-    have hgibbs := gibbs_inequality q u hq_nonneg hu_pos hq_sum hu_sum
-    simp_rw [show ∀ i, q i / u i = q i * ↑(Fintype.card ι) from fun i => by simp [u]] at hgibbs
+    have hkl := Core.InformationTheory.kl_nonneg q u hu_pos hq_nonneg
+      (by rw [hq_sum, hu_sum])
+    rw [Core.InformationTheory.klFinite_eq_sum_log_div] at hkl
+    simp_rw [show ∀ i, q i / u i = q i * ↑(Fintype.card ι) from fun i => by simp [u]] at hkl
     suffices hsplit : ∑ i : ι, q i * log (q i * ↑(Fintype.card ι)) =
         (∑ i : ι, q i * log (q i)) + log ↑(Fintype.card ι) by linarith
     have hterm : ∀ i, q i * log (q i * ↑(Fintype.card ι)) =

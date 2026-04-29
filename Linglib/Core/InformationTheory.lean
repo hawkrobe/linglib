@@ -242,6 +242,17 @@ theorem kl_nonneg' [Nonempty ι] {p q : ι → ℝ}
     0 ≤ klFinite p q :=
   kl_nonneg p q hq_pos hp_nonneg (by rw [hp_sum, hq_sum])
 
+/-- The `if`-guard in `klFinite` is vacuous: `0 · log (0/q) = 0` already via
+    `Real.log 0 = 0` and `0 / q = 0`, so the guarded and unguarded forms agree
+    unconditionally. Useful when consumers want the literal sum form. -/
+theorem klFinite_eq_sum_log_div (p q : ι → ℝ) :
+    klFinite p q = ∑ i, p i * Real.log (p i / q i) := by
+  unfold klFinite
+  refine Finset.sum_congr rfl fun i _ => ?_
+  by_cases hp : p i = 0
+  · simp [hp]
+  · rw [if_neg hp]
+
 /-- Cross-entropy decomposition:
     `KL(p ‖ q) = (Σ pᵢ log pᵢ) − (Σ pᵢ log qᵢ)`
 
