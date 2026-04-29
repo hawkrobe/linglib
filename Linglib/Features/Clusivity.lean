@@ -1,3 +1,5 @@
+import Linglib.Features.Person
+
 /-!
 # Clusivity systems — typology of inclusive/exclusive distinctions
 @cite{cysouw-2009}
@@ -12,15 +14,23 @@ The substrate cut is intentionally finer than WALS Ch 39 (which collapses
 plain inclExcl with minimal-augmented into a single "inclusive/exclusive"
 value). The minimal-augmented type — which licenses a 1-dual-inclusive
 form in addition to a 1pl-inclusive — is the typologically distinctive
-property of Tagalog (*kitá* vs *tayo*), several other Philippine languages,
+property of Tagalog (*kata* / *tayo*), several other Philippine languages,
 and many Australian languages.
+
+Scope: pronominal clusivity (independent personal pronouns). Verbal
+clusivity (WALS Ch 40, `Typology.Pronouns.InclusiveExclusiveVerbal`) is a
+separately-marked phenomenon that may dissociate from pronominal clusivity
+(e.g. some Athabaskan languages). The five-value enum here is a first-cut
+typology; @cite{cysouw-2009} discusses additional minor types
+(degenerate-minimal-augmented, composite-unit-augmented) that this
+substrate does not currently distinguish.
 -/
 
 set_option autoImplicit false
 
 namespace Features.Clusivity
 
-/-- Cysouw 2009 typology of clusivity systems.
+/-- Cysouw 2009 typology of pronominal clusivity systems.
 
 The cuts: (a) is incl/excl distinguished at all? (b) is the inclusive
 itself further split into minimal vs augmented? -/
@@ -33,9 +43,10 @@ inductive System where
       Mandarin colloquial *zánmen*/*wǒmen*). -/
   | inclExcl
   /-- Minimal-augmented: inclusive further splits into minimal (1+2 only,
-      surfaces as a 1-dual-inclusive form) vs augmented (1+2+3); the
-      exclusive remains a single category. Tagalog *kitá*/*tayo*/*kami*,
-      many Australian languages. -/
+      surfaces as a 1-dual-inclusive form) vs augmented (1+2+others); the
+      exclusive remains a single category. Tagalog *kata*/*tayo*/*kami*
+      (per @cite{schachter-otanes-1972} Chart 7), many Australian
+      languages. -/
   | minimalAugmented
   /-- Unit-augmented: minimal-augmented plus a separate 1+2+1 form
       ("we two and one other"); rare (e.g. Rembarrnga). -/
@@ -47,22 +58,32 @@ inductive System where
 
 namespace System
 
-/-- All five system types in canonical order. -/
-def all : List System :=
-  [.noClusivity, .inclExcl, .minimalAugmented, .unitAugmented, .numberIndifferent]
+/-- The 1st-person `Features.Person.Category` distinctions a system
+    grammatically encodes. Captures Cysouw 2009's typology operationally:
+    `.noClusivity` collapses 1+2 and 1+3 into a single 1pl
+    (modeled here by listing only `.augIncl`, since `.augIncl` is the
+    closest catch-all for collapsed first-person plural); `.inclExcl`
+    distinguishes them; `.minimalAugmented` and `.unitAugmented` further
+    split inclusive into minimal (`.minIncl`) vs augmented (`.augIncl`).
+    `.numberIndifferent` languages have no plural form, so only `.s1`. -/
+def distinguishedCategories : System → List Features.Person.Category
+  | .noClusivity        => [.augIncl]                     -- single 1pl form
+  | .inclExcl           => [.augIncl, .excl]              -- 1+2(+3) vs 1+3
+  | .minimalAugmented   => [.minIncl, .augIncl, .excl]    -- + 1+2 minimal
+  | .unitAugmented      => [.minIncl, .augIncl, .excl]    -- + 1+2+1 not in Category
+  | .numberIndifferent  => []                             -- no 1pl distinction
 
-/-- Does the system grammatically distinguish inclusive from exclusive? -/
-def hasInclExcl : System → Bool
-  | .noClusivity        => false
-  | .numberIndifferent  => false
-  | _                   => true
+/-- A system grammatically distinguishes inclusive from exclusive iff
+    its first-person inventory contains an exclusive category. Derived
+    from `distinguishedCategories` (was a stipulated pattern-match before
+    the 0.230.544 audit). -/
+def hasInclExcl (s : System) : Bool :=
+  s.distinguishedCategories.contains .excl
 
-/-- Does the system distinguish minimal-inclusive from augmented-inclusive
-    (i.e., is there a separate "we two" form for speaker + addressee only)? -/
-def hasMinimalAugmented : System → Bool
-  | .minimalAugmented => true
-  | .unitAugmented    => true
-  | _                 => false
+/-- A system distinguishes minimal-inclusive from augmented-inclusive iff
+    its first-person inventory contains the minimal-inclusive category. -/
+def hasMinimalAugmented (s : System) : Bool :=
+  s.distinguishedCategories.contains .minIncl
 
 end System
 

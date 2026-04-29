@@ -4,6 +4,73 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.546] - 2026-04-29
+
+### Tagalog audit verification → fixes + WALS↔Cysouw bridge
+
+Four-agent verification audit (linguistics-domain-expert against the three Tagalog PDFs, linglib-integration-auditor, mathlib-reviewer, cross-framework-reconciler) on commits 0.230.542 + 0.230.543. Substantive errors fixed; design-improvement recommendations adopted where they paid clear rent.
+
+**Substantive corrections (linguistics audit)**:
+- `references.bib`: Schachter & Otanes 1972 ISBN-13 corrected from `978-0-520-01776-4` to `978-0-520-01776-1` (audit re-checked the verso, confirming ISBN-10 `0-520-01776-5`; the `9780520321205` from the file's title page is a later reissue).
+- `Fragments/Tagalog/Plurals.lean`: docstring incorrectly attributed `ang=mga=bata?` to Kroeger 1991 p. 14 ex. 12, but ex. 12 is the case-marker table without *mga*; the *mga*-with-clitic-marker example is from Kroeger p. 22 ex. 2.
+- `MgaDistribution.withMassNouns` documentation rewritten — S&O p. 112 explicitly says mass nouns "normally do not occur freely with *mga*"; the boolean is encoded as `true` in the conditional sense (the marker IS attested with mass nouns under "several masses" or implied-count-noun readings), but the defaults-are-blocked sense is now documented.
+- "*sina X*, NOT *mga X*" headline reframed: both *sina X* and *mga X* (with personal name) exist, with different meanings; the contrast is over the *associative reading* specifically.
+- *tayo* gloss corrected from "1+2+3 augmented-inclusive" to "1+2+others" (S&O p. 89 actually defines it as covering any 1+2+others grouping, not specifically 1+2+3).
+- §4.11 page reference corrected to `pp. 229–230` (was just `p. 230`; section starts at 229).
+
+**Mathlib code-quality fixes (mathlib-reviewer)**:
+- `personalNameMarkers_na_suffixation_regular` switched `decide` → `⟨rfl, rfl⟩` (definitional equality on hardcoded strings, per CLAUDE.md tactic preference).
+- `pronounParadigm_categories_match` switched `decide` → `rfl`.
+- Deleted `pronounParadigm_complete` — fully subsumed by `pronounParadigm_categories_match` (the stronger equality).
+- Added `set_option autoImplicit false` to `Fragments/Tagalog/Plurals.lean` (was inconsistent with sibling files).
+
+**Cross-framework bridge (cross-framework-reconciler)**:
+- `Features/Clusivity.lean` gains `import Linglib.Features.Person` and `System.distinguishedCategories : System → List Features.Person.Category`. The `hasInclExcl` and `hasMinimalAugmented` predicates now derive from `distinguishedCategories.contains ...` rather than being stipulated pattern matches — editing one automatically adjusts the other.
+- `Typology/Pronouns.lean` gains `import Linglib.Features.Clusivity` and `InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveExclusive` — the partial bridge from Cysouw (finer) to WALS Ch 39 (coarser, many-to-one). Lives in `Typology/Pronouns.lean` rather than `Features/Clusivity.lean` per layer discipline (Features < Typology in the import tier; the WALS-side reaches down for the Cysouw type, not the other way around — initial first-cut put the bridge in `Features/Clusivity.lean`, audit caught the layer violation).
+- `Fragments/Tagalog/Pronouns.lean` gains a second cross-substrate bridge theorem `wals_clusivity_consistent` (proved by `rfl`): `pronounProfile.inclusiveExclusive = some (InclusiveExclusive.fromClusivity clusivitySystem)`. Catches drift if either WALS-side or Cysouw-side commitment changes without the other.
+
+**Substrate scope clarification**: `Features/Clusivity.lean` docstring now explicitly notes (a) scope is *pronominal* clusivity; verbal-inflection clusivity (WALS Ch 40) may dissociate (Athabaskan) and would need a sibling file; (b) the 5-value enum is a first-cut Cysouw 2009 typology — minor types (degenerate-minimal-augmented, composite-unit-augmented) are not currently distinguished.
+
+**Audit findings deferred** (substrate evolution, not for this commit): promoting the Tagalog `clusivity_system_consistent_with_paradigm` theorem to a substrate-level lemma `paradigm.contains .minIncl → system ∈ {.minimalAugmented, .unitAugmented}` once a 2nd language commits to the same paradigm shape; refactoring `pronounParadigm` from `List PronounRow` to a total `Category → PronounRow` function (would make `_categories_match` true by typing); splitting `MgaDistribution`'s 6-Bool record into allowed-context Finset + semantic-shift fields; promoting the structured records to substrate when a 2nd language attests the same pattern.
+
+## [0.230.545] - 2026-04-29
+
+### Ney 2026 Pass 2: paper-fidelity expansion (§3 sub-arguments + Sentence (5) + Lennon)
+
+Audit-driven expansion of `Phenomena/Reference/Studies/Ney2026.lean` (Pass 2 of the multi-pass plan; Pass 1 was 0.230.544's correctness refactor). Adds the missing pieces of the paper's argument structure that Pass 1 left out, with paper-page-verified content (re-read PDF pp. 14-19 directly).
+
+- **§10. Sentence (5) — interrogative force.** New namespace mirroring Sentence2 with docstring noting the force difference. @cite{ney-2026} p. 5: "the unavowed content consists of a proposition and an illocutionary force with which it is presented. In (1)–(4) the illocutionary force is that of assertion. However, others, such as the interrogative force, are possible. We can see this in (5)." The current encoding does not represent forces; Sentence5 demonstrates that the metasemantic apparatus applies identically to interrogative cases. A force-aware refactor would distinguish (5) from (2) at the type level (deferred).
+- **§11. The §4 first-pass response and the Lennon counterexample.** New `LennonScene` namespace with `hasInsinuativeStructure` theorem + `first_pass_response_overgenerates` aggregate. Formalizes the structural-equivalence hook for @cite{ney-2026} §4's over-generation argument (paper pp. 19-20): the Lennon scene ("this is where John Lennon was born" pointing across busy street with house, car as plausible referents) has the same structural pattern as Sentence (4), but empirically does NOT admit deniability. The §4 first-pass response (drop ⟨TWO⟩) cannot distinguish them. The empirical asymmetry is documented but not formally derivable in the current substrate (deniability intent is not encoded as a `Scenario` field — flagged in the file docstring as a known gap).
+- **§12. §3 firstly: uniqueness vs indirect-speech reduction.** New section with `sentence4_unavowed_distinct_from_avowable` theorem (the bare hook) + paper-faithful docstring discussion. Argument requires Gricean implicature substrate not yet built; the formal hook records the truth-conditional distinctness that any indirect-speech reduction would have to flatten.
+- **§13. §3 secondly: de re vs de dicto recognition.** New section as paper-faithful docstring discussion. The avowable-existence requirement in `HasInsinuativeStructure` (`∃ r, r ≠ s.intendedRef ∧ licenses r`) is existential (de dicto), matching the structural requirement Ney needs. Full formalization distinguishing de re grasp from de dicto grasp requires belief-state substrate not yet built.
+- **§4 docstring expanded for (iia)/(iib) split.** The two empirical claims @cite{ney-2026} §3 distinguishes — (iia) "post-utterance not in CG that unavowed referent IS the semantic value", (iib) "post-utterance not in CG that the speaker had the unavowed referential intention" — are now explicitly documented. Witnessed in the paper by parallel dialogue pairs (2.2)-(2.5) for (iia) and (2.6)-(2.9) for (iib). In our encoding `coordination R s` packages "every reasonable hearer recognizes" with "success" (King's biconditional makes them definitionally the same Prop), so the (iia)/(iib) distinction is documented at the docstring level rather than as separate Lean propositions.
+- Net LOC: 668 → 866 (+198, all in new sections; existing sections unchanged except the §4 docstring expansion).
+- Build: `Linglib.Phenomena.Reference.Studies.Ney2026` builds clean.
+- **What remains for Pass 3** (deferred): lift `Account` codomain to `Core.Semantics.ContentLayer.LayeredProp` so the §7 anaphora discriminator becomes a non-vacuous refutation theorem against Camp 2018 (the cross-framework auditor's highest-leverage recommendation). Pre-requisite for Pass 3 is at least one Camp 2018 study file or other downstream consumer to motivate the abstraction lift.
+
+## [0.230.544] - 2026-04-29
+
+### Ney 2026 Pass 1: quantifier-flip refactor + bundled mathlib polish
+
+Audit-driven correctness refactor of `Phenomena/Reference/Studies/Ney2026.lean` (4-agent audit driven, with linguistics expert reading the actual PDF). The deepest finding: the prior encoding `ConceptionOfReasonableness := Set (SpeakerIntention)` flipped the quantifier in @cite{ney-2026}'s argument — under that encoding ∨-intro was a standard K-axiom closure that defeats Ney's revision the same way ∧-intro defeats King's binary, so the supposed deniability resolution didn't actually work. Verified against PDF p. 22 (intersection-of-belief-sets ↔ union-of-hearer-profile-sets) and p. 24 (verbatim revised statement: "every competent, attentive hearer H who is reasonable by the lights of at least one among the speaker and the actual hearer").
+
+- **Encoding fix**: `ConceptionOfReasonableness := Set (HearerProfile)` where `HearerProfile := SpeakerIntention → Prop`. `coordination R s := ∀ h ∈ R, h s` — universal quantification over hearers. Now anti-monotone: enlarging R makes success harder. Matches the verbatim revised statement (`∪` over hearer-profiles is harder, not easier). Old monotone `coordination_inter_le_coordination_union` reversed to `coordination_union_le_coordination_inter`.
+- **Prima facie challenge restructured**: now takes a CG-transparency hypothesis on the universal recognition fact `inCG (coordination R s)`. The substantive content moved to §5, where `coordination_inter_in_cg_but_union_not` exhibits a concrete model (degenerate `inCG := id`, `RS = ∅`, `RH = {alwaysRejectsProfile}`) where the intersection-success is in CG (vacuously) while the union-success is not (hearer rejects). This makes Ney's resolution structurally explicit: union-membership requires private knowledge, hence not CG-accessible.
+- **Extensional gap reversed direction**: `exists_inter_succeeds_union_fails` (was `exists_inter_fails_union_succeeds`). Under anti-monotone coordination, intersection is more permissive than union. Witness made `private` (only consumed internally). Honest docstring caveat: this gap is incidental to Ney's actual argument, which is at CG-availability not truth level.
+- **Sentence4 anaphor docstring corrected**: paper's gloss specifically identifies *they* (plural — sexual-harassment policies) as the anaphor, not *it*. Verified against PDF p. 16.
+- **Citations added**: `@cite{kaplan-1989}` (Character/Content), `@cite{almog-2014}` (ReferentialProfile), `@cite{donnellan-1966}` (intendedRef parallel), `@cite{stalnaker-2002}` (CG W), `@cite{searle-1983}` (intentional states), `@cite{beaver-stanley-2023}` (non-ideal POL framing per Ney's abstract), `@cite{king-2014b}` (Ney's footnote on King's "considered statement"). All exist in `references.bib`; no new bib entries needed.
+- **Mathlib polish bundled**:
+  - `coordination` now `abbrev` (eliminates the `Bool.noConfusion (show ... from h)` workaround).
+  - `Account` drops `cg : CG W` parameter (was unused everywhere; CG-availability handled via `inCG` hypothesis on prima facie).
+  - `noSemanticValueAccount := (⊥ : Account C W E)` — Pi-type bottom directly. `@[simp] noSemanticValueAccount_apply : ... ↔ False`.
+  - `coordination_inter_eq_coordination_union_of_aligned` renamed `coordination_inf_self_eq_sup_self` (no alignment hypothesis).
+  - `extensionalGapWitness` made `private` (only used inside `exists_inter_succeeds_union_fails`).
+  - Per-sentence `inter_succeeds`/`union_succeeds` proofs are now `rintro _ ⟨rfl, _⟩; exact Or.inl rfl` and `rintro _ (rfl | rfl) <;> exact Or.inl rfl` one-liners (was clunky `cases ... rename_i` ladders).
+  - `Linglib.lean` import alphabetical fix: Ney2026 moved from after EngelhardtEtAl2006 to between HawkinsGweonGoodman2021 and SikosEtAl2021.
+- Net LOC: 547 → 668 (+121, mostly docstring expansion: encoding-choice rationale, paper-page-verified citations, multi-CAVEAT honest disclaimers about deferred substrate work).
+- **Build**: `Linglib.Phenomena.Reference.Studies.Ney2026` builds clean.
+- **Pass 2 (paper-fidelity expansion) and Pass 3 (`ContentLayer` connection) not done in this session** — see audit summary in conversation. Pass 1 was the correctness refactor; Pass 2 will add the missing §3 sub-arguments (firstly: Sentence4 uniqueness vs (21); secondly: de re/de dicto recognition asymmetry), the (iia)/(iib) split, the §4 first-pass-rejection (Lennon counterexample), and Sentence (5) interrogative case. Pass 3 lifts `Account` codomain to `Core.Semantics.ContentLayer.LayeredProp` so the §7 anaphora discriminator becomes a non-vacuous refutation theorem against Camp 2018.
+
 ## [0.230.543] - 2026-04-29
 
 ### Tagalog Fragment structured-data extension + first cross-substrate bridge theorem

@@ -31,10 +31,13 @@ NOMINATIVE / GENITIVE / DATIVE, explicitly rejecting the older
 
 Tagalog instantiates Cysouw's *minimal-augmented* type (@cite{cysouw-2009}):
 the inclusive splits into a minimal 1du.in form (1+2 only, "we two") and
-an augmented *tayo* (1+2+3); the exclusive *kami* remains a single
-category. This is a finer typological cut than WALS Ch 39's binary
-incl/excl coding can express, which is why the WALS-shaped
-`inclusiveExclusive` field below underdetermines the paradigm.
+an augmented *tayo* (1+2+others — speaker + addressee + additional
+referents, of any number; @cite{schachter-otanes-1972} p. 89 glosses it
+as "you (singular) and I (and others)" / "you (plural) and I"); the
+exclusive *kami* remains a single category. This is a finer typological
+cut than WALS Ch 39's binary incl/excl coding can express, which is why
+the WALS-shaped `inclusiveExclusive` field below underdetermines the
+paradigm.
 
 The *kitá* / *katá* cell warrants care. @cite{schachter-otanes-1972}
 Chart 7 (p. 88) tabulates the 1du.in NOM as ***kata*** (with *nita*/*kanita*
@@ -124,15 +127,11 @@ def pronounParadigm : List PronounRow :=
   , { category := .thirdGrp,  angForm := "sila",  ngForm := "nila",   saForm := "kanila" }
   ]
 
-/-- The paradigm has one row per Cysouw 2009 category (no gaps, no
-    duplicates). -/
-theorem pronounParadigm_complete :
-    pronounParadigm.length = Features.Person.Category.all.length := by decide
-
-/-- The categories enumerated by the paradigm match Cysouw's canonical
-    ordering (singulars first, then groups). -/
+/-- The categories enumerated by the paradigm are exactly Cysouw's
+    canonical ordering (singulars first, then groups). Subsumes a
+    `length = Category.all.length` claim. -/
 theorem pronounParadigm_categories_match :
-    pronounParadigm.map (·.category) = Features.Person.Category.all := by decide
+    pronounParadigm.map (·.category) = Features.Person.Category.all := rfl
 
 /-- Cross-substrate consistency: the paradigm includes a minimal-inclusive
     row iff the language commits to the minimal-augmented clusivity
@@ -142,5 +141,12 @@ theorem pronounParadigm_categories_match :
 theorem clusivity_system_consistent_with_paradigm :
     (pronounParadigm.map (·.category)).contains .minIncl =
       clusivitySystem.hasMinimalAugmented := by decide
+
+/-- The WALS Ch 39 image of Tagalog's Cysouw clusivity system agrees with
+    the WALS-side commitment in `pronounProfile.inclusiveExclusive`. This
+    catches drift if either commitment changes without the other. -/
+theorem wals_clusivity_consistent :
+    pronounProfile.inclusiveExclusive =
+      some (Typology.InclusiveExclusive.fromClusivity clusivitySystem) := rfl
 
 end Fragments.Tagalog

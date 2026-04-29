@@ -14,6 +14,7 @@ import Linglib.Core.Word
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
+import Linglib.Features.Clusivity
 
 /-!
 # Pronoun typology — substrate types
@@ -468,6 +469,18 @@ structure AllocutiveEntry where
   /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
   gloss : String
   deriving Repr, BEq
+
+/-- WALS Ch 39 image of a Cysouw clusivity system (`Features.Clusivity.System`):
+    WALS Ch 39 collapses Cysouw's `.inclExcl`, `.minimalAugmented`, and
+    `.unitAugmented` into the single value `.inclusiveExclusive`. The
+    function is therefore many-to-one: given a WALS Ch 39 value, the
+    Cysouw value is underdetermined. -/
+def InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveExclusive
+  | .noClusivity        => .noDistinction
+  | .inclExcl           => .inclusiveExclusive
+  | .minimalAugmented   => .inclusiveExclusive
+  | .unitAugmented      => .inclusiveExclusive
+  | .numberIndifferent  => .weEqualsI
 
 end Typology
 
