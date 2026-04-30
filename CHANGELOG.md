@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Tham2025.lean total overhaul: schema additions + cross-paper engagement + spatial-extent normalization substrate
+
+Four-agent audit (linguistics-domain-expert + mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler) of `Phenomena/Gradability/Studies/Tham2025.lean` revealed:
+1. §9 framed Tham 2025 as making a D'Ambrosio-Hedden 2024 counting/utilitarian argument — verified against the PDF (pp. 23–26): Tham never cites D&H, never invokes Arrow, never uses the dichotomy. Linglib editorial overlay deleted.
+2. Schema missing the §3.2 objective/subjective wedge (the central evidence for the lower-bound = physical instantiation claim) and the §5.1 non-entailment of preceding change (cracked pumpkin, dented helmet model, scratched decal cases).
+3. `sassoon_binding_insufficient` was structurally trivial — proved `rfl` facts about toy Bool predicates without engaging Sassoon's `MultidimAdj` apparatus.
+4. Cross-framework: HayKennedyLevin1999 silently bypassed despite being the original closed-scale → telic prediction; Kennedy2007 licensing convergence buried in docstring prose; `Sassoon2013` import unused at file level despite docstring citation.
+5. §13 (new): Tham eq. 47b is a spatially-normalized weighted measure — the substrate's `weightedScore` captured only the numerator.
+
+**Substrate addition**: `spatialNormalizedScore` and `spatialNormalizedBinding` in `Theories/Semantics/Degree/Aggregation.lean` (Tham eq. 47b: `(Σᵢ wᵢ·fᵢ(x)) / s(x)` with host-extent denominator). Two unit lemmas (`spatialNormalizedScore_unit` reduces to plain weighted score when `spatial ≡ 1`; `spatialNormalizedScore_zero` documents the zero-extent edge convention). Re-exported from `Theories/Semantics/Gradability/Aggregation.lean`. Module docstring corrected: `weighted` aggregation no longer claims to subsume Tham eq. 47b (only Waldon eq. 8); spatial-normalized aggregation is the third mode, with Tham as the anchor.
+
+**Tham2025.lean rewrite (522 → 750 LOC, +228)**:
+- Schema: `simplePredicationObjective`, `degreeModifiedSubjective` (§3.2 wedge), `adjEntailsPrecedingChange` (§5.1)
+- Renamed `crack_/dent_/scratch_` → `crack/dent/scratch` (no keyword collision, trailing-underscore was vestigial)
+- §6 "Bridge Theorems" header → §8 "Substrate readouts" (no banned "bridge" vocabulary)
+- §9 reframed: K-L pipeline divergence is internal to linglib (Fragment vs pipeline default), not Tham's claim about K-L
+- §10 NEW: HKL strict matrix refutation — `crack_refutes_strict_hkl_matrix` makes the closed-scale-but-also-atelic gap Lean-checkable against `straighten_closed_accomplishment` in HayKennedyLevin1999.lean
+- §11 NEW: K2007 licensing convergence promoted from docstring to theorem — `cracked_licensing_converges_with_kennedy2007` shows *cracked* and *full* land at the same licensing verdict at `Boundedness` granularity
+- §12 REWRITE: `no_sassoon_binding_captures_cracked` engages `DimensionBindingType` directly with named bare-truth function and explicit Tham simple/completely targets; mixed-binding escape hatch addressed (Sassoon's mixed is context-modulated; Tham's data are modifier-modulated)
+- §13 NEW: Tham eq. 47b spatially-normalized measure with worked vase example — `weighted_score_blind_to_spatial_extent` (numerator alone can't tell small from large vase) vs `spatial_normalization_separates_small_from_large` (Tham's actual measure does)
+- "By analogy" stipulations for *dent*/*scratch* relabeled as "extends crack" with attestation policy documented in module docstring
+- Per-predicate field comments aligned with PDF examples; `verbInXEntailsResult` cite corrected from "(14)" to "(17a)" (the formal entailment example, not just the prose intro)
+
+**Bib**: `karmo-1977` added (Toomas Karmo, "Disturbances," *Analysis* 37(4): 147–148, doi 10.1093/analys/37.4.147 — verified via OUP). Tham anchors her "host irregularity" terminology to Karmo on p.1, p.3.
+
+**Cleared as false alarms**: aggregate `.all` theorems are substantive cross-predicate generalizations (drift sentries that break loudly on data drift), not the MEMORY anti-pattern; they earn their keep. The `native_decide` mathlib-reviewer suggestion was vindicated for the substrate's existing call sites but avoided in this file's §13 by using `weighted_score_vase` + `spatial_score_vase` helpers + `norm_num`.
+
 ### O'Donnell 2015 Tier 1: prior + flip narrative + `mapWeightPMF_lt_iff` substrate consolidation
 
 Continued the deepening of the O'Donnell 2015 study to use the new `DMPCFG.mapWeight` machinery end-to-end. Two complementary moves: a substrate iff lemma that collapses the bridging chain in PMF-form theorems, and a study-side theorem trio that tells the full Ch 7 critique narrative.
@@ -17,6 +44,49 @@ Continued the deepening of the O'Donnell 2015 study to use the new `DMPCFG.mapWe
 - **`dmpcfg_prior_correct_data_wrong`** — bundles both halves into one theorem stating the full Ch 7 critique: DMPCFG starts with the right prior, but data overwhelms it. The book's actual argument made Lean-checkable end-to-end.
 
 **Why this matters.** This is the first place in the file where `mapWeight_zero` does substantive work (reducing posterior on empty corpus to prior), and the first place where the prior + flip dichotomy is theorem-checked rather than docstring-asserted. The Ch 7 critique of DMPCFG ("the data overwhelms the prior") is now a proof obligation, not a narrative claim. The `mapWeightPMF_lt_iff` substrate addition means future `dmpcfg_X_orders_Y` theorems on different empirical contrasts (Ch 7.3.3.4 paradoxical -ity/-ness suffix combinations, Ch 4-5 past-tense regulars vs irregulars, etc.) can land as 4-line proofs.
+
+## [0.230.554] - 2026-04-29
+
+### Abusch substrate PR-B: Bug 1 + Bug 3 fixed; substrate now modal-base-agnostic and holder-now-honest
+
+The substantive correctness fix the audit's Bug 1 + Bug 3 had identified. Stress tests from 0.230.553 served as the regression specification: the two `bug*` theorems (which previously *passed* as false-positive witnesses) flip to negative-witnessed `pr_b_*` fix theorems.
+
+**Bug 3 fix (speech vs holder now)**. The `TemporalDeReReading` structure's context field renamed `matrixContext` → `holderContext`. Per @cite{abusch-1997} §7 ULC (p. 24, "the now of an epistemic alternative is an upper limit for the denotation of tenses"), the relevant evaluation time for embedded tenses is the **attitude holder's now**, not the outer speaker's speech time. The substrate's felicity check `constraint.constrains dr.actualRes dr.holderContext.time` is now correct by construction — the field semantically represents what was previously being labelled "speech time" in test code (a documentation/wiring conflation). For unembedded uses, the speaker is treated as her own attitude holder.
+
+**Bug 1 fix (modal base — metaphysical vs doxastic)**. `IsRigidAcrossAlternatives` parameter type lifted from `WorldHistory W T` → `Set (WorldTimeIndex W T)`. The substrate is now **modal-base-agnostic**; doxastic + metaphysical become explicit instantiation choices via two new convenience constructors:
+- `metaphysicalAlternatives history dr := actualHistoryBase history dr.holderContext.toSituation` — recovers the legacy `WorldHistory`-based behavior (Klecha 2016 DOX) as a special case.
+- `doxasticAlternatives dox dr := { s' | dox dr.holderContext.agent dr.holderContext.world s' }` — Hintikka belief alternatives, parameterized on a generic `dox : E → W → WorldTimeIndex W T → Prop`.
+
+`isAbuschFelicitous` signature updated to take `alternatives : Set (WorldTimeIndex W T)` directly. `IsRigidAcrossAlternatives_of_concept_isRigid` (rigid concept ⇒ rigid on any set) and `isFelicitousWith_of_isAbuschFelicitous` (full felicity ⇒ value-level shadow) updated for the new signature.
+
+**`Studies/Abusch1997.lean` updates**:
+- `abusch_derives_temporal_de_re_via_acquaintance` parameter renamed `matrixContext` → `holderContext`. Body unchanged (the formula was already correct under the new semantics).
+- `abusch_derives_temporal_de_re_full` signature changed: takes `alternatives : Set (WorldTimeIndex W Time)` directly; the modal-base choice is the consumer's, not baked in.
+- **NEW** `abusch_derives_temporal_de_re_full_metaphysical` — corollary at the metaphysical instantiation, demonstrating backward-compat with Klecha 2016 DOX-shaped reasoning.
+
+**Stress test updates**:
+- Class 1 positive: `(rigidReading 50 90).isAbuschFelicitous trivialAlts .past` — past constraint discharged 50 < 90 (against holder's now, not speech). The Abusch ex (1) test now correctly checks the constraint relative to the jurors' believing time tb=90, not the speech time S=100 (which the previous version was confusedly using).
+- **NEW** Class 1 metaphysical-instantiation demo using `(rigidReading 50 90).metaphysicalAlternatives trivialHistory`.
+- Class 2 negative: same shape, updated values.
+- Class 3 structural: shiftWorldTime / IsRigidOn tests still hold; non-vacuity baseline updated to `holderCtx 90`.
+- Class 4: **bug-exposing theorems flipped to PR-B-fix witnesses**:
+  - `bug3_substrate_accepts_holder_future` (positive theorem witnessing the false-positive) → `pr_b_substrate_rejects_actualRes_after_holderNow` (negative theorem: `¬ (rigidReading 75 50).isFelicitousWith .past`, since 75 ≥ holder's now = 50).
+  - `bug1_substrate_history_shape_changes_verdict` (witnessing agent-blindness via `WorldHistory`-shape sensitivity) → `pr_b_substrate_correctly_distinguishes_alternative_sets` (substrate now varies verdict by `Set (WorldTimeIndex W T)` parameter — no longer agent-blind, just consumer-driven).
+- **NEW** Class 4 doxastic-instantiation demo using `(rigidReading 50 90).doxasticAlternatives dox` with a max-permissive `dox`.
+
+**Helper renames**:
+- `matrixCtx` → `holderCtx` (parameter `S` for "speech" → `now` for "holder's now").
+- `trivialHistory` (kept for the `metaphysicalAlternatives` demo) + `trivialAlts : Set (WorldTimeIndex W ℤ)` (new, for direct-Set tests) + `restrictiveAlts : Set (WorldTimeIndex W ℤ) := { s | s.world = true }` (new, replaces `restrictiveHistory`).
+
+**Build verification**: 912 jobs green; no `sorry`, no `native_decide`. The substrate is now Abusch-faithful at the type level, not the docstring level. The stress-test suite from 0.230.553 served as a precise success criterion: every test that previously documented a known false positive now witnesses the correct negative; new positive tests demonstrate the doxastic instantiation works.
+
+**What's still deferred** (PR-C and beyond):
+- Anand-Nevins entity-concept bridge (CFR-flagged highest-leverage rent payoff; ~20 LOC, fully READY now).
+- Schlenker 2004 contrastive theorem (NEAR; needs ~15 LOC `WorldHistory` witness, but the substrate alignment is type-correct).
+- FID sibling theorem (NEAR; ~30 LOC `FIDProfile` adapter).
+- Heim 1994 study file (NEAR/VACUUM; ~80 LOC).
+- LF res-movement Tree rewrite (deferred design choice — output-only this cycle).
+- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
 
 ## [0.230.553] - 2026-04-29
 
