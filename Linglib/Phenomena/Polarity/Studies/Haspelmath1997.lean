@@ -373,13 +373,9 @@ def finnish : IndefiniteParadigm :=
         basis := .special,
         functions := {.irrealis} }
     , { language := "Finnish", form := "kukaan",
-        gloss := "polarity-sensitive indefinite",
+        gloss := "polarity-sensitive indefinite (direct-negation function realized as ei + connegative-V + kukaan)",
         basis := .special,
-        functions := {.question, .conditional, .indirectNeg} }
-    , { language := "Finnish", form := "ei kukaan",
-        gloss := "negative indefinite with negative verb ei",
-        basis := .special,
-        functions := {.directNeg} }
+        functions := {.question, .conditional, .indirectNeg, .directNeg} }
     , { language := "Finnish", form := "kuka tahansa",
         gloss := "free choice: whoever / anyone at all",
         basis := .special,
@@ -652,15 +648,15 @@ def countByFormCount (langs : List IndefiniteParadigm) (n : Nat) : Nat :=
 
 theorem sample_2_forms : countByFormCount allLanguages 2 = 2 := by decide
 theorem sample_3_forms : countByFormCount allLanguages 3 = 5 := by decide
-theorem sample_4_forms : countByFormCount allLanguages 4 = 6 := by decide
-theorem sample_5_forms : countByFormCount allLanguages 5 = 3 := by decide
+theorem sample_4_forms : countByFormCount allLanguages 4 = 7 := by decide
+theorem sample_5_forms : countByFormCount allLanguages 5 = 2 := by decide
 theorem sample_6_forms : countByFormCount allLanguages 6 = 1 := by decide
 
 /-- Per-language form-count summary for the 17-language sample. -/
 theorem language_form_counts :
     allLanguages.map (fun p => (p.isoCode, p.formCount)) =
       [ ("eng", 4), ("rus", 6), ("deu", 5), ("jpn", 3), ("cmn", 2)
-      , ("tur", 5), ("hin", 3), ("ita", 3), ("fin", 5), ("kor", 4)
+      , ("tur", 5), ("hin", 3), ("ita", 3), ("fin", 4), ("kor", 4)
       , ("hun", 4), ("kat", 4), ("qvi", 4), ("yor", 2), ("tha", 3)
       , ("tgl", 4), ("swh", 3) ] := by
   decide
@@ -812,7 +808,7 @@ theorem max_form_count :
     (allLanguages.map (·.formCount)).foldl max 0 = 6 := by decide
 
 /-- Total number of distinct forms across the sample. -/
-theorem total_forms : (allLanguages.map (·.formCount)).sum = 64 := by decide
+theorem total_forms : (allLanguages.map (·.formCount)).sum = 63 := by decide
 
 /-- The most common form count in the sample is 4 (six languages). -/
 theorem most_common_form_count :
