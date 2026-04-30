@@ -28,7 +28,7 @@ def possession : PossessionProfile :=
   , predicativeStrategy := .genitiveDative
   , adnominalStrategy := .juxtaposition
   , affixPosition := some .suffixes
-  , examples := ["indi kitaab", "kitaabu l-waladi"]
-  , notes := "Preposition inda for predicative; construct state (idaafa) for adnominal -- juxtaposition with reduced head vowel" }
+  , examples := ["ʿindii kitaab-un", "kitaab-u l-walad-i"]
+  , notes := "Preposition ʿinda for predicative possession (lit. 'at me [there is] a book'); construct state (iḍāfa) for adnominal possession — juxtaposition with the head noun in construct state (no nunation, no definite article) and the possessor in the genitive" }
 
 end Fragments.Arabic.ModernStandard.Possession

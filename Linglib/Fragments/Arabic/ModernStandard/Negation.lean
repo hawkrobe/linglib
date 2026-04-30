@@ -57,12 +57,32 @@ ch 6 (the analytic apparatus — NegP, head movement, feature checking
 
 ## Asymmetry
 
-Standard MSA negation is **asymmetric** in Miestamo's sense: the
-choice of negative marker conditions a change in the verb's mood
-(*lam* → jussive, *lan* → subjunctive — Ryding §35.1, §35.2), and
-*lays-a* introduces a copular verb where the affirmative would be
-verbless (Ryding §37.1.2 p. 642). This is asymmetry in TAM marking
-rather than in finiteness, mapped here to `otherCategories`.
+Standard MSA negation has **both symmetric and asymmetric**
+constructions (the WALS Ch 113 `.both` value). Symmetric branch:
+*laa* + present-tense indicative; *maa* + past-tense indicative.
+Asymmetric branch:
+
+- *lam* → jussive, *lan* → subjunctive (Ryding §35.1, §35.2): the
+  choice of negative marker conditions a paradigm-internal mood shift
+  on an otherwise finite verb (Miestamo's A/Cat — TAM-marking change).
+- *lays-a* introduces a finite copular verb where the affirmative
+  would be verbless (Ryding §37.1.2 p. 642): the negation introduces
+  finiteness where the affirmative has none (Miestamo's A/Fin —
+  finiteness change), parallel to Mandarin *méi(yǒu)* in
+  @cite{miestamo-2005} pp. 90–91.
+
+Combined, this places MSA in the WALS Ch 113 `.both` cell with the
+WALS Ch 114 `.finAndCat` subtype.
+
+**Note on source basis.** MSA (`arb`) is **not in** @cite{miestamo-2005}'s
+297-language sample (verified against the index of languages, pp. 470–476)
+and **not in** the WALS Ch 113A/114A datasets (which only carry the `aeg`
+row for `arz` Egyptian Arabic — classified there as `.symmetric` /
+`.nonAssignable`, since Egyptian *ma-…-š* doesn't trigger the mood shifts
+MSA's *lam*/*lan* do). The values populated below are therefore a
+project-internal extrapolation applying Miestamo's framework to the MSA
+data Ryding §37 + Benmamoun ch 6 describe; they should not be cited as
+Miestamo's own classification of MSA.
 
 ## Out of scope
 
@@ -78,7 +98,7 @@ rather than in finiteness, mapped here to `otherCategories`.
   `Fragments/Arabic/Egyptian/Negation.lean` if added later.
 -/
 
-namespace Fragments.Arabic.ModernStandard
+namespace Fragments.Arabic.ModernStandard.Negation
 
 open Typology.Negation
 
@@ -125,11 +145,11 @@ def negationProfile : NegationProfile :=
   { language := "Arabic (Modern Standard)"
   , iso := "arb"
   , morphemeType := .particle
-  , symmetry := .asymmetric
-  , asymmetrySubtype := .otherCategories
+  , symmetry := .both
+  , asymmetrySubtype := .finAndCat
   , negIndefinite := none
   , negMarkers := ["laa", "lam", "lan", "maa", "lays-a"]
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Arabic.ModernStandard
+end Fragments.Arabic.ModernStandard.Negation

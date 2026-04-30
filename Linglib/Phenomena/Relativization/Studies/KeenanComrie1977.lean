@@ -125,7 +125,15 @@ def lowestCovered (markers : List RelClauseMarker) : AHPosition :=
 
 abbrev english   := Fragments.English.relMarkers
 abbrev welsh     := Fragments.Welsh.relMarkers
-abbrev arabic    := Fragments.Arabic.ModernStandard.relMarkers
+/- The two MSA markers @cite{keenan-comrie-1977} Table 1 records: the
+   definite-headed pair (`relAlladhi` + `relResumptive`). MSA additionally
+   has indefinite-headed asyndetic markers per @cite{ryding-2005} §14.3,
+   §14.4.2, exposed in the Fragment as `relAsyndeticGap` and
+   `relAsyndeticResumptive` — but K&C 1977 does not record them, so this
+   study works with the K&C-documented subset. -/
+abbrev arabic    : List Core.RelClauseMarker :=
+  [Fragments.Arabic.ModernStandard.relAlladhi,
+   Fragments.Arabic.ModernStandard.relResumptive]
 abbrev hebrew    := Fragments.Hebrew.relMarkers
 abbrev tobaBatak := Fragments.TobaBatak.relMarkers
 abbrev korean    := Fragments.Korean.relMarkers

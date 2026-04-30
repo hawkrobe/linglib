@@ -16,11 +16,13 @@ Two definite-headed RC markers, anchored on @cite{ryding-2005} ch. 14
   personal pronoun (the *ʿaaʾid* / *raajiʿ*) appears in the relativized
   non-subject position.
 
-The indefinite-headed RC pattern (Ryding §14.3, §14.4.2 — Ø relative
-pronoun, with resumption when relativizing a non-subject) and the free
-relatives *maa* / *man* (Ryding §14.5) are not included in `relMarkers`,
-which is the K&C-Table-1-faithful pair; see `relMarkersComplete` for the
-fuller Ryding-attested set.
+`relMarkers` exposes the full Ryding-attested set (4 markers: definite-
+headed pair plus indefinite-headed pair from §14.3, §14.4.2 — Ø relative
+pronoun, with resumption when relativizing a non-subject). The free
+relatives *maa* / *man* (Ryding §14.5) are a separate construction
+(no head NP) and are not included. Paper-specific subsets (e.g., the
+two-marker subset @cite{keenan-comrie-1977} Table 1 records) live in
+the consuming Studies files, not in this Fragment.
 
 ## Variety
 
@@ -76,12 +78,6 @@ def relResumptive : RelClauseMarker :=
   , notes := "Resumptive pronoun (ʿaaʾid) in relativized position bears case; "
           ++ "@cite{ryding-2005} §14.4.1; K&C Table 1 DO–OCOMP" }
 
-/-- The two definite-headed RC markers of MSA, matching the row for Arabic
-    in @cite{keenan-comrie-1977} Table 1. The fuller Ryding-attested set
-    (including the indefinite-headed Ø-relative-pronoun pattern of
-    §14.3/§14.4.2) is `relMarkersComplete`. -/
-def relMarkers : List RelClauseMarker := [relAlladhi, relResumptive]
-
 /-- Indefinite-headed RC, subject relativization. Per @cite{ryding-2005}
     §14.3, "a relative clause may refer to an indefinite noun or noun
     phrase in the main clause, in which case the relative pronoun is
@@ -129,13 +125,13 @@ def relAsyndeticResumptive : RelClauseMarker :=
           ++ "@cite{ryding-2005} §14.4.2 (DO directly attested; "
           ++ "non-DO positions per K&C Table 1 + parsimony with definite case)" }
 
-/-- The MSA RC marker inventory per @cite{ryding-2005} ch. 14: definite-
-    headed pair (`relAlladhi`, `relResumptive`) plus indefinite-headed
-    pair (`relAsyndeticGap`, `relAsyndeticResumptive`). The free relatives
-    *maa* / *man* of §14.5 are a separate construction (no head NP) and
-    are not included. -/
-def relMarkersComplete : List RelClauseMarker :=
-  relMarkers ++ [relAsyndeticGap, relAsyndeticResumptive]
+/-- The full MSA RC marker inventory per @cite{ryding-2005} ch. 14:
+    definite-headed pair (`relAlladhi`, `relResumptive`) plus
+    indefinite-headed pair (`relAsyndeticGap`, `relAsyndeticResumptive`).
+    The free relatives *maa* / *man* of §14.5 are a separate construction
+    (no head NP) and are not included. -/
+def relMarkers : List RelClauseMarker :=
+  [relAlladhi, relResumptive, relAsyndeticGap, relAsyndeticResumptive]
 
 /-- Arabic relativization profile (WALS-style summary).
 
