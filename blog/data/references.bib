@@ -727,6 +727,19 @@
   role      = {formalized},
   sources   = {Phenomena/Gradability/Studies/AlexandropoulouGotzner2024.lean}
 }
+@article{alexandropoulou-gotzner-2024-jos,
+  author    = {Alexandropoulou, Stavroula and Gotzner, Nicole},
+  year      = {2024},
+  title     = {The Interpretation of Relative and Absolute Adjectives Under Negation},
+  journal   = {Journal of Semantics},
+  volume    = {41},
+  number    = {3},
+  pages     = {373--399},
+  doi       = {10.1093/jos/ffae012},
+  subfield  = {semantics/gradability},
+  role      = {formalized},
+  sources   = {Phenomena/Gradability/Studies/AlexandropoulouGotzner2024JoS.lean}
+}
 @article{alsop-2024,
   author    = {Alsop, Anna},
   year      = {2024},
@@ -2045,6 +2058,20 @@
   validated = {true},
   sources   = {Phenomena/Expressives/Studies/LoGuercio2025.lean}
 }% REF: McCready, E. (2019). The Semantics and Pragmatics of Honorification. OUP.
+% REF: Alonso-Ovalle, L. (2009). Counterfactuals, correlatives, and disjunction. Linguistics and Philosophy 32(2), 207-244.
+@article{alonso-ovalle-2009,
+  author    = {Alonso-Ovalle, Luis},
+  year      = {2009},
+  title     = {Counterfactuals, correlatives, and disjunction},
+  journal   = {Linguistics and Philosophy},
+  volume    = {32},
+  number    = {2},
+  pages     = {207--244},
+  doi       = {10.1007/s10988-009-9059-0},
+  subfield  = {semantics},
+  role      = {formalized},
+  sources   = {Phenomena/Conditionals/Studies/AlonsoOvalle2009.lean;Phenomena/Conditionals/Studies/Santorio2018.lean}
+}
 @article{alonso-ovalle-moghiseh-2025,
   author    = {Alonso-Ovalle, Luis and Moghiseh, Esmail},
   year      = {2025},
@@ -5989,12 +6016,13 @@
   year      = {2024},
   title     = {The Orthologic of Epistemic Modals},
   journal   = {Journal of Philosophical Logic},
-  note      = {Forthcoming. arXiv:2203.02872v8},
-  doi       = {10.48550/arXiv.2203.02872},
+  volume    = {53},
+  pages     = {831--907},
+  doi       = {10.1007/s10992-024-09746-7},
   subfield  = {semantics/modality},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/PossibilitySemantics/Basic.lean, Theories/Semantics/PossibilitySemantics/Epistemic.lean}
+  sources   = {Theories/Semantics/Modality/Orthologic/Frames.lean, Theories/Semantics/Modality/Orthologic/Modal.lean, Theories/Semantics/Modality/Orthologic/RegularProp.lean, Phenomena/Modality/Studies/HollidayMandelkern2024.lean}
 }
 @book{dowty-1979,
   author    = {Dowty, David R.},
@@ -16935,6 +16963,66 @@
   doi       = {10.1007/s10992-010-9165-z},
   subfield  = {philosophical logic},
   role      = {primary},
+  sources   = {Theories/Semantics/Supervaluation/TCS.lean; Phenomena/Gradability/Studies/CobrerosEtAl2012.lean; Core/Logic/Consequence.lean; Core/Logic/ThreeValuedLogic.lean},
+}
+@article{alxatib-pelletier-2011,
+  author    = {Alxatib, Sam and Pelletier, Francis Jeffry},
+  year      = {2011},
+  title     = {The Psychology of Vagueness: Borderline Cases and Contradictions},
+  journal   = {Mind \& Language},
+  volume    = {26},
+  number    = {3},
+  pages     = {287--326},
+  doi       = {10.1111/j.1468-0017.2011.01419.x},
+  subfield  = {psycholinguistics/vagueness},
+  role      = {cited},
+}
+@article{pawlak-1982,
+  author    = {Pawlak, Zdzis{\l}aw},
+  year      = {1982},
+  title     = {Rough Sets},
+  journal   = {International Journal of Computer and Information Sciences},
+  volume    = {11},
+  number    = {5},
+  pages     = {341--356},
+  doi       = {10.1007/BF01001956},
+  subfield  = {mathematical foundations/rough sets},
+  role      = {cited},
+}
+@article{skowron-stepaniuk-1996,
+  author    = {Skowron, Andrzej and Stepaniuk, Jaros{\l}aw},
+  year      = {1996},
+  title     = {Tolerance Approximation Spaces},
+  journal   = {Fundamenta Informaticae},
+  volume    = {27},
+  number    = {2--3},
+  pages     = {245--253},
+  subfield  = {mathematical foundations/rough sets},
+  role      = {cited},
+}
+@book{blackburn-derijke-venema-2001,
+  author    = {Blackburn, Patrick and de Rijke, Maarten and Venema, Yde},
+  year      = {2001},
+  title     = {Modal Logic},
+  series    = {Cambridge Tracts in Theoretical Computer Science},
+  number    = {53},
+  publisher = {Cambridge University Press},
+  doi       = {10.1017/CBO9781107050884},
+  subfield  = {modal logic},
+  role      = {cited},
+}
+@incollection{goranko-otto-2007,
+  author    = {Goranko, Valentin and Otto, Martin},
+  year      = {2007},
+  title     = {Model Theory of Modal Logic},
+  booktitle = {Handbook of Modal Logic},
+  editor    = {Blackburn, Patrick and van Benthem, Johan and Wolter, Frank},
+  series    = {Studies in Logic and Practical Reasoning},
+  volume    = {3},
+  pages     = {249--329},
+  publisher = {Elsevier},
+  subfield  = {modal logic},
+  role      = {cited},
 }
 @article{fine-1975,
   author    = {Fine, Kit},
@@ -19000,7 +19088,7 @@
   subfield  = {semantics/conditionals},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/Conditionals/Studies/McKayVanInwagen1977.lean;Theories/Semantics/Conditionals/AlternativeSensitive.lean;Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean}
+  sources   = {Phenomena/Conditionals/Studies/McKayVanInwagen1977.lean;Phenomena/Conditionals/Studies/Santorio2018.lean;Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean}
 }% REF: Santorio, P. (2018). Alternatives and truthmakers in conditional semantics. The Journal of Philosophy 115(10), 513-549.
 @article{santorio-2018,
   author    = {Santorio, Paolo},
@@ -19013,7 +19101,7 @@
   doi       = {10.5840/jphil20181151030},
   subfield  = {semantics},
   role      = {formalized},
-  sources   = {Theories/Semantics/Conditionals/AlternativeSensitive.lean, Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean}
+  sources   = {Phenomena/Conditionals/Studies/Santorio2018.lean;Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean;Phenomena/Conditionals/Studies/McKayVanInwagen1977.lean}
 }% REF: Cariani, F., & Goldstein, S. (2020). Conditional heresies. Philosophy and Phenomenological Research 101(2), 251-282.
 @article{cariani-goldstein-2020,
   author    = {Cariani, Fabrizio and Goldstein, Simon},
@@ -19025,8 +19113,8 @@
   pages     = {251--282},
   doi       = {10.1111/phpr.12565},
   subfield  = {semantics},
-  role      = {cited},
-  sources   = {Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean}
+  role      = {formalized},
+  sources   = {Phenomena/Conditionals/Studies/CarianiGoldstein2020.lean;Phenomena/Conditionals/Studies/Santorio2018.lean;Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean}
 }% REF: Aitha, A. (2026). The nouns that say -ni: Morpheme-specific phonology in Telugu. NLLT 44:16.
 @article{aitha-2026,
   author    = {Aitha, Akshay},
@@ -23852,6 +23940,250 @@
   sources   = {Core/Computability/Subregular/Basic.lean;Core/Computability/Subregular/Definite.lean;Core/Computability/Subregular/Hierarchy.lean;Core/Computability/Subregular/LocallyTestable.lean;Core/Computability/Subregular/Piecewise.lean;Core/Computability/Subregular/StrictlyLocal.lean;Core/Computability/Subregular/Tier.lean;Phenomena/Phonology/Studies/Belth2026.lean}
 }
 
+% ──────────────────────────────────────────────────────────────────────────────
+%  phonology/subregular — function-level hierarchy (ISL/OSL/Subseq/WD)
+%
+%  Entries below support Linglib/Core/Computability/Subregular/Function/ —
+%  the function-level (string-to-string map) analogue of the language-level
+%  hierarchy above. All entries verified against the References section of
+%  Meinhardt et al 2024 NLLT 42:1191-1232 (Fig 1 is the canonical 2024
+%  picture, per the Aksënova et al 2020 OUP handbook chapter).
+% ──────────────────────────────────────────────────────────────────────────────
+
+% REF: Chandlee (2014). Strictly Local Phonological Processes.
+% PhD thesis, University of Delaware. Original ISL definition.
+@phdthesis{chandlee-2014,
+  author    = {Chandlee, Jane},
+  year      = {2014},
+  title     = {Strictly Local Phonological Processes},
+  school    = {University of Delaware},
+  type      = {PhD dissertation},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/ISL.lean}
+}
+
+% REF: Chandlee, Eyraud & Heinz (2015). Output Strictly Local Functions.
+% Proc. 14th Mathematics of Language (MoL 2015), pp. 112-125. ACL Anthology
+% W15-2310. DOI 10.3115/v1/W15-2310. Anchor for OSL functions.
+@inproceedings{chandlee-eyraud-heinz-2015,
+  author    = {Chandlee, Jane and Eyraud, R{\'e}mi and Heinz, Jeffrey},
+  year      = {2015},
+  title     = {Output Strictly Local Functions},
+  booktitle = {Proceedings of the 14th Meeting on the Mathematics of Language (MoL 2015)},
+  pages     = {112--125},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/W15-2310/},
+  doi       = {10.3115/v1/W15-2310},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/OSL.lean}
+}
+
+% REF: Chandlee & Heinz (2018). Strict Locality and Phonological Maps.
+% Linguistic Inquiry 49(1):23-60. DOI 10.1162/ling_a_00265. Anchor for
+% Input Strictly Local (ISL) functions; companion to Chandlee 2014 diss.
+@article{chandlee-heinz-2018,
+  author    = {Chandlee, Jane and Heinz, Jeffrey},
+  year      = {2018},
+  title     = {Strict Locality and Phonological Maps},
+  journal   = {Linguistic Inquiry},
+  volume    = {49},
+  number    = {1},
+  pages     = {23--60},
+  doi       = {10.1162/ling_a_00265},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/ISL.lean;Theories/Phonology/Process/LocalRewrite.lean}
+}
+
+% REF: Mohri (1997). Finite-State Transducers in Language and Speech
+% Processing. Computational Linguistics 23(2):269-311. ACL Anthology J97-2003.
+% Foundational subsequential FST reference.
+@article{mohri-1997,
+  author    = {Mohri, Mehryar},
+  year      = {1997},
+  title     = {Finite-State Transducers in Language and Speech Processing},
+  journal   = {Computational Linguistics},
+  volume    = {23},
+  number    = {2},
+  pages     = {269--311},
+  url       = {https://aclanthology.org/J97-2003/},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/Subsequential.lean}
+}
+
+% REF: Heinz & Lai (2013). Vowel Harmony and Subsequentiality.
+% Proc. 13th Mathematics of Language (MoL 13), pp. 52-63. ACL Anthology W13-3007.
+% Original Weakly Deterministic class (subsequently tightened by
+% Meinhardt et al 2024 — definition is in flux).
+@inproceedings{heinz-lai-2013,
+  author    = {Heinz, Jeffrey and Lai, Regine},
+  year      = {2013},
+  title     = {Vowel Harmony and Subsequentiality},
+  booktitle = {Proceedings of the 13th Meeting on the Mathematics of Language (MoL 13)},
+  pages     = {52--63},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/W13-3007/},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/Subsequential.lean;Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean}
+}
+
+% REF: Meinhardt, Mai, Baković & McCollum (2024). Weak determinism and the
+% computational consequences of interaction. Natural Language and Linguistic
+% Theory 42:1191-1232. DOI 10.1007/s11049-023-09578-1. Tightening of the
+% Weakly Deterministic class; Fig 1 is the canonical 2024 hierarchy figure.
+@article{meinhardt-mai-bakovic-mccollum-2024,
+  author    = {Meinhardt, Eric and Mai, Anna and Bakovi{\'c}, Eric and McCollum, Adam G.},
+  year      = {2024},
+  title     = {Weak determinism and the computational consequences of interaction},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {42},
+  pages     = {1191--1232},
+  doi       = {10.1007/s11049-023-09578-1},
+  subfield  = {phonology/subregular},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/Hierarchy.lean;Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean}
+}
+
+% REF: Jardine (2016). Computationally, tone is different. Phonology
+% 33(2):247-283. DOI 10.1017/S0952675716000129. Demonstrates that tone
+% phenomena are non-subsequential — the canonical "outside subregular" result.
+@article{jardine-2016,
+  author    = {Jardine, Adam},
+  year      = {2016},
+  title     = {Computationally, tone is different},
+  journal   = {Phonology},
+  volume    = {33},
+  number    = {2},
+  pages     = {247--283},
+  doi       = {10.1017/S0952675716000129},
+  subfield  = {phonology/subregular},
+  role      = {cited},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/Hierarchy.lean}
+}
+
+% REF: Aksënova, Rawski, Graf & Heinz (2020). The Computational Power of
+% Harmony. In: The Oxford Handbook of Vowel Harmony, ed. Harry van der Hulst.
+% London: Oxford University Press. Canonical 2020 hierarchy of phonological
+% function classes (basis for Meinhardt et al 2024 Fig 1).
+@incollection{aksenova-rawski-graf-heinz-2020,
+  author    = {Aks{\"e}nova, Al{\"e}na and Rawski, Jonathan and Graf, Thomas and Heinz, Jeffrey},
+  year      = {2020},
+  title     = {The Computational Power of Harmony},
+  booktitle = {The Oxford Handbook of Vowel Harmony},
+  editor    = {van der Hulst, Harry},
+  publisher = {Oxford University Press},
+  address   = {London},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Core/Computability/Subregular/Function/Hierarchy.lean}
+}
+
+% REF: Kaplan & Kay (1994). Regular Models of Phonological Rule Systems.
+% Computational Linguistics 20(3):331-378. ACL Anthology J94-3001.
+% Foundational: ordered SPE-rule cascades are regular relations (provided
+% rules cannot reapply to the locus of their structural change).
+@article{kaplan-kay-1994,
+  author    = {Kaplan, Ronald M. and Kay, Martin},
+  year      = {1994},
+  title     = {Regular Models of Phonological Rule Systems},
+  journal   = {Computational Linguistics},
+  volume    = {20},
+  number    = {3},
+  pages     = {331--378},
+  url       = {https://aclanthology.org/J94-3001/},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Theories/Phonology/Process/LocalRewrite.lean}
+}
+
+% REF: Johnson (1972). Formal Aspects of Phonological Description.
+% Mouton: The Hague. Foundational rule-application formalism.
+@book{johnson-1972,
+  author    = {Johnson, C. Douglas},
+  year      = {1972},
+  title     = {Formal Aspects of Phonological Description},
+  publisher = {Mouton},
+  address   = {The Hague},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Theories/Phonology/Process/LocalRewrite.lean}
+}
+
+% REF: McCollum, Baković, Mai & Meinhardt (2020). Unbounded circumambient
+% patterns in segmental phonology. Phonology 37:215-255.
+% DOI 10.1017/S095267572000010X. Empirical motivation for the
+% Meinhardt et al 2024 WD redefinition.
+@article{mccollum-bakovic-mai-meinhardt-2020,
+  author    = {McCollum, Adam G. and Bakovi{\'c}, Eric and Mai, Anna and Meinhardt, Eric},
+  year      = {2020},
+  title     = {Unbounded circumambient patterns in segmental phonology},
+  journal   = {Phonology},
+  volume    = {37},
+  pages     = {215--255},
+  doi       = {10.1017/S095267572000010X},
+  subfield  = {phonology/subregular},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean}
+}
+
+% REF: Chomsky & Halle (1968). The Sound Pattern of English (SPE).
+% Harper & Row, New York. Foundational source for ordered-rule phonology;
+% the simultaneous-application convention `LocalRewrite.Rule.apply` mirrors.
+@book{chomsky-halle-1968,
+  author    = {Chomsky, Noam and Halle, Morris},
+  year      = {1968},
+  title     = {The Sound Pattern of English},
+  publisher = {Harper \& Row},
+  address   = {New York},
+  subfield  = {phonology/subregular},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Theories/Phonology/Process/LocalRewrite.lean}
+}
+
+% REF: Wilson (2003). Analyzing Unbounded Spreading with Constraints:
+% Marks, Targets, and Derivations. Unpublished manuscript, UCLA.
+% Original sour-grapes reference cited by Meinhardt et al 2024.
+@unpublished{wilson-2003,
+  author    = {Wilson, Colin},
+  year      = {2003},
+  title     = {Analyzing Unbounded Spreading with Constraints: Marks, Targets, and Derivations},
+  note      = {Unpublished manuscript, University of California Los Angeles},
+  subfield  = {phonology/subregular},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean}
+}
+
+% REF: Wilson (2006). Unbounded Spreading is Myopic. Talk at Workshop on
+% Current Perspectives on Phonology, Phonology Fest, Indiana University.
+% The "myopia" framing of sour-grapes patterns.
+@misc{wilson-2006,
+  author       = {Wilson, Colin},
+  year         = {2006},
+  title        = {Unbounded Spreading is Myopic},
+  howpublished = {Talk presented at the Workshop on Current Perspectives on Phonology, Phonology Fest, Indiana University},
+  subfield     = {phonology/subregular},
+  role         = {cited},
+  validated    = {true},
+  sources      = {Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 %  phonology/ocp — references for Frisch-Pierrehumbert-Broe 2004 study file
 %
@@ -24026,7 +24358,10 @@
 
 % REF: Buckley (1997). Tigrinya Root Consonants and the OCP. Penn Working
 % Papers in Linguistics 4(3):19-51.
-@article{buckley-1997,
+% NOTE: Key renamed from `buckley-1997` to `buckley-1997-ocp` to disambiguate
+% from `buckley-1997-vowel-length` (Studies in African Linguistics 26(1)).
+% Both 1997 Buckley papers are about Tigrinya phonology.
+@article{buckley-1997-ocp,
   author    = {Buckley, Eugene},
   year      = {1997},
   title     = {{T}igrinya Root Consonants and the {OCP}},
@@ -24090,6 +24425,691 @@
   role      = {data},
   validated = {true},
   sources   = {Linglib/Datasets/PHOIBLE/}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  Element Theory + Government Phonology + Strict CV (Kaye/Lowenstamm/Vergnaud
+%  school + Backley/Scheer/Charette + Faust corpus)
+%  Added 2026-04-30 alongside formalization of Faust & Lampitelli 2026
+%  (Guttural synseresis in Tigrinya and Tigre, Glossa 11(1)).
+
+@article{kaye-lowenstamm-vergnaud-1985,
+  author    = {Kaye, Jonathan and Lowenstamm, Jean and Vergnaud, Jean-Roger},
+  year      = {1985},
+  title     = {The Internal Structure of Phonological Elements: A Theory of {Charm} and {Government}},
+  journal   = {Phonology Yearbook},
+  volume    = {2},
+  number    = {1},
+  pages     = {305--328},
+  doi       = {10.1017/S0952675700000476},
+  subfield  = {phonology/element-theory},
+  role      = {foundational}
+}
+
+@book{backley-2011,
+  author    = {Backley, Phillip},
+  year      = {2011},
+  title     = {An Introduction to {Element} {Theory}},
+  publisher = {Edinburgh University Press},
+  address   = {Edinburgh},
+  subfield  = {phonology/element-theory},
+  role      = {foundational}
+}
+
+@article{backley-nasukawa-2010,
+  author    = {Backley, Phillip and Nasukawa, Kuniya},
+  year      = {2010},
+  title     = {Consonant-Vowel Unity in {Element} {Theory}},
+  journal   = {Phonological Studies},
+  volume    = {12},
+  pages     = {21--28},
+  subfield  = {phonology/element-theory},
+  role      = {cited}
+}
+
+@incollection{kaye-lowenstamm-1984,
+  author    = {Kaye, Jonathan and Lowenstamm, Jean},
+  year      = {1984},
+  title     = {De la syllabicité},
+  booktitle = {Forme sonore du langage},
+  editor    = {Dell, François and Hirst, Daniel and Vergnaud, Jean-Roger},
+  publisher = {Hermann},
+  address   = {Paris},
+  pages     = {123--159},
+  subfield  = {phonology/government},
+  role      = {foundational}
+}
+
+@article{kaye-lowenstamm-vergnaud-1990,
+  author    = {Kaye, Jonathan and Lowenstamm, Jean and Vergnaud, Jean-Roger},
+  year      = {1990},
+  title     = {Constituent Structure and Government in Phonology},
+  journal   = {Phonology Yearbook},
+  volume    = {7},
+  number    = {2},
+  pages     = {193--231},
+  doi       = {10.1017/S0952675700001184},
+  subfield  = {phonology/government},
+  role      = {foundational}
+}
+
+@incollection{kaye-1992,
+  author    = {Kaye, Jonathan},
+  year      = {1992},
+  title     = {On the Interaction of Theories of Lexical Phonology and Theories of Phonological Phenomena},
+  booktitle = {Phonologica 1988: Proceedings of the 6th International Phonology Meeting},
+  editor    = {Dressler, Wolfgang U. and Luschützky, Hans C. and Pfeiffer, Oskar E. and Rennison, John R.},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  pages     = {141--155},
+  subfield  = {phonology/lexical},
+  role      = {cited}
+}
+
+@book{charette-1991,
+  author    = {Charette, Monik},
+  year      = {1991},
+  title     = {Conditions on Phonological Government},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  series    = {Cambridge Studies in Linguistics},
+  volume    = {58},
+  isbn      = {9780521392464},
+  doi       = {10.1017/CBO9780511554339},
+  subfield  = {phonology/government},
+  role      = {foundational}
+}
+
+@book{scheer-2004,
+  author    = {Scheer, Tobias},
+  year      = {2004},
+  title     = {A Lateral Theory of Phonology: What is {CVCV} and Why Should It Be?},
+  publisher = {Mouton de Gruyter},
+  address   = {Berlin},
+  doi       = {10.1515/9783110908336},
+  subfield  = {phonology/cvcv},
+  role      = {foundational}
+}
+
+@incollection{scheer-2011,
+  author    = {Scheer, Tobias},
+  year      = {2011},
+  title     = {Aspects of the Development of Generative Phonology},
+  booktitle = {The Continuum Companion to Phonology},
+  editor    = {Botma, Bert and Kula, Nancy C. and Nasukawa, Kuniya},
+  publisher = {Continuum},
+  address   = {New York},
+  pages     = {397--446},
+  subfield  = {phonology/cvcv},
+  role      = {cited}
+}
+
+@article{scheer-segeral-2001,
+  author    = {Scheer, Tobias and Ségéral, Philippe},
+  year      = {2001},
+  title     = {La {Coda-Miroir}},
+  journal   = {Bulletin de la Société de Linguistique de Paris},
+  volume    = {96},
+  number    = {1},
+  pages     = {107--152},
+  doi       = {10.2143/BSL.96.1.503739},
+  subfield  = {phonology/cvcv},
+  role      = {cited}
+}
+
+@article{scheer-zikova-2010,
+  author    = {Scheer, Tobias and Ziková, Markéta},
+  year      = {2010},
+  title     = {The {Coda} {Mirror} v2},
+  journal   = {Acta Linguistica Hungarica},
+  volume    = {57},
+  number    = {4},
+  pages     = {411--431},
+  doi       = {10.1556/ALing.57.2010.4.4},
+  subfield  = {phonology/cvcv},
+  role      = {cited}
+}
+
+@incollection{lampitelli-to-appear,
+  author    = {Lampitelli, Nicola},
+  year      = {to appear},
+  title     = {Consonant-Vowel Division},
+  booktitle = {The {Wiley-Blackwell} Companion to Phonology},
+  edition   = {2nd},
+  editor    = {Nasukawa, Kuniya and Samuels, Bridget and Schwartz, Geoffrey and Torkenczy, Miklos},
+  publisher = {Wiley-Blackwell},
+  address   = {New York},
+  subfield  = {phonology/element-theory},
+  role      = {cited},
+  note      = {forthcoming}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  Tigrinya / Tigre / Ethiosemitic empirical sources
+
+@article{faust-lampitelli-2026,
+  author    = {Faust, Noam and Lampitelli, Nicola},
+  year      = {2026},
+  title     = {Guttural Synseresis in {Tigrinya} and {Tigre}},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {11},
+  number    = {1},
+  pages     = {1--31},
+  doi       = {10.16995/glossa.24525},
+  subfield  = {phonology/semitic},
+  role      = {formalized},
+  sources   = {Phenomena/Phonology/Studies/FaustLampitelli2026.lean;Fragments/Tigrinya/Phonology.lean;Fragments/Tigre/Phonology.lean}
+}
+
+@phdthesis{berhane-1991,
+  author    = {Berhane, Girmay},
+  year      = {1991},
+  title     = {Issues in the Phonology and Morphology of {Tigrinya}},
+  school    = {Université du Québec à Montréal},
+  address   = {Montréal, QC},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@book{leslau-1941,
+  author    = {Leslau, Wolf},
+  year      = {1941},
+  title     = {Documents tigrigna ({Éthiopien} septentrional). {Grammaire} et textes},
+  publisher = {Klincksieck},
+  address   = {Paris},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@phdthesis{denais-1990,
+  author    = {Denais, Michel},
+  year      = {1990},
+  title     = {Éléments de phonologie et de morphologie tigrigna},
+  school    = {Université de Nice Sophia Antipolis},
+  address   = {Nice},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@article{raz-1980,
+  author    = {Raz, Shlomo},
+  year      = {1980},
+  title     = {The Morphology of the {Tigre} Verb ({Mansaʕ} Dialect) ({I})},
+  journal   = {Journal of Semitic Studies},
+  volume    = {25},
+  number    = {1},
+  pages     = {66--84},
+  doi       = {10.1093/jss/25.1.66},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@book{raz-1983,
+  author    = {Raz, Shlomo},
+  year      = {1983},
+  title     = {{Tigre} Grammar and Texts},
+  publisher = {Udena Publications},
+  address   = {Malibu, CA},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@article{buckley-1994,
+  author    = {Buckley, Eugene},
+  year      = {1994},
+  title     = {{Tigrinya} Vowel Features and Vowel Coalescence},
+  journal   = {Penn Working Papers in Linguistics},
+  volume    = {1},
+  pages     = {1--28},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@article{buckley-1997-vowel-length,
+  author    = {Buckley, Eugene},
+  year      = {1997},
+  title     = {Against Vowel Length in {Tigrinya}},
+  journal   = {Studies in African Linguistics},
+  volume    = {26},
+  number    = {1},
+  pages     = {63--102},
+  doi       = {10.32473/sal.v26i1.107394},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@incollection{buckley-2000,
+  author    = {Buckley, Eugene},
+  year      = {2000},
+  title     = {Alignment and Weight in the {Tigrinya} Verb Stem},
+  booktitle = {Advances in African Linguistics},
+  editor    = {Carstens, Vicki and Parkinson, Frederick},
+  series    = {Trends in African Linguistics},
+  volume    = {4},
+  publisher = {Africa World Press},
+  pages     = {165--176},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@inproceedings{lowenstamm-prunet-1985,
+  author    = {Lowenstamm, Jean and Prunet, Jean-François},
+  year      = {1985},
+  title     = {On Certain Nominal Patterns in {Tigrinya}},
+  booktitle = {Proceedings of the 15th Conference on African Linguistics},
+  publisher = {Foris},
+  address   = {Dordrecht},
+  subfield  = {morphology/semitic},
+  role      = {cited}
+}
+
+@article{lowenstamm-prunet-1988,
+  author    = {Lowenstamm, Jean and Prunet, Jean-François},
+  year      = {1988},
+  title     = {{Tigre} Vowel Harmonies},
+  journal   = {Rapport Annuel du Groupe de Recherche sur la Linguistique Africaniste au CRSH 1987-88},
+  publisher = {Université du Québec à Montréal},
+  address   = {Montréal},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  Faust + Faust & Lampitelli prior work
+
+@article{faust-2014,
+  author    = {Faust, Noam},
+  year      = {2014},
+  title     = {Templatic Metathesis in {Tigre} Imperatives},
+  journal   = {Phonology},
+  volume    = {31},
+  number    = {2},
+  pages     = {209--227},
+  doi       = {10.1017/S0952675714000116},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@article{faust-2015,
+  author    = {Faust, Noam},
+  year      = {2015},
+  title     = {Eroded Prefixes, Gemination and Guttural Effects in {Tigre}: An Account in {CVCV} Phonology},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {33},
+  number    = {4},
+  pages     = {1209--1234},
+  doi       = {10.1007/s11049-014-9277-1},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@article{faust-2016,
+  author    = {Faust, Noam},
+  year      = {2016},
+  title     = {Weak Radicals, Weak Suppletion, and Phonological Indices in {Semitic}},
+  journal   = {Morphology},
+  volume    = {26},
+  number    = {3-4},
+  pages     = {379--397},
+  doi       = {10.1007/s11525-016-9278-3},
+  subfield  = {morphology/semitic},
+  role      = {primary}
+}
+
+@article{faust-2017a,
+  author    = {Faust, Noam},
+  year      = {2017},
+  title     = {Apophony in the Inflections of Weak and Strong Verbs in {Palestinian} {Arabic}},
+  journal   = {The Linguistic Review},
+  volume    = {34},
+  number    = {1},
+  pages     = {83--124},
+  doi       = {10.1515/tlr-2016-0006},
+  subfield  = {morphology/semitic},
+  role      = {primary}
+}
+
+@article{faust-2017b,
+  author    = {Faust, Noam},
+  year      = {2017},
+  title     = {Get That Into Your Head: {Tigre} Vowel Harmonies as Templatic},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {2},
+  number    = {1},
+  pages     = {95},
+  doi       = {10.5334/gjgl.466},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@inproceedings{faust-2021,
+  author    = {Faust, Noam},
+  year      = {2021},
+  title     = {The /aa/ Moment in {Modern} {Hebrew}},
+  booktitle = {Proceedings of {IATL} 35},
+  editor    = {Danon, Gabi},
+  series    = {MIT Working Papers in Linguistics},
+  volume    = {92},
+  pages     = {43--58},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@article{faust-2024,
+  author    = {Faust, Noam},
+  year      = {2024},
+  title     = {Epenthetic Vowel Quality Crosslinguistically, with Focus on {Modern} {Hebrew}},
+  journal   = {Linguistic Vanguard},
+  volume    = {10},
+  number    = {1},
+  pages     = {17--34},
+  doi       = {10.1515/lingvan-2023-0081},
+  subfield  = {phonology},
+  role      = {primary}
+}
+
+@article{faust-lampitelli-2020,
+  author    = {Faust, Noam and Lampitelli, Nicola},
+  year      = {2020},
+  title     = {Virtual Length and the Two i's of {Qaraqosh} {Neo-Aramaic}},
+  journal   = {Journal of Semitic Studies},
+  volume    = {65},
+  number    = {1},
+  pages     = {35--60},
+  doi       = {10.1093/jss/fgz036},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@incollection{faust-lampitelli-2023,
+  author    = {Faust, Noam and Lampitelli, Nicola},
+  year      = {2023},
+  title     = {Root and Pattern in {Semitic} -- and Beyond},
+  booktitle = {The {Wiley} {Blackwell} Companion to Morphology},
+  editor    = {Ackema, Peter and Bendjaballah, Sabrina and Bonet, Eulàlia and Fábregas, Antonio},
+  publisher = {Wiley-Blackwell},
+  address   = {Hoboken, NJ},
+  doi       = {10.1002/9781119693604.morphcom075},
+  subfield  = {morphology/semitic},
+  role      = {cited}
+}
+
+@article{faust-loiseau-to-appear,
+  author    = {Faust, Noam and Loiseau, Sylvain},
+  year      = {to appear},
+  title     = {The Phonology of {Tuwari}: Hiatus and Allophonic Pharyngealization},
+  journal   = {Language and Linguistics in Melanesia},
+  subfield  = {phonology},
+  role      = {cited},
+  note      = {forthcoming}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  Gutturals + glides + hiatus + epenthesis
+
+@article{rose-1996,
+  author    = {Rose, Sharon},
+  year      = {1996},
+  title     = {Variable Laryngeals and Lowering},
+  journal   = {Phonology},
+  volume    = {13},
+  number    = {1},
+  pages     = {73--117},
+  doi       = {10.1017/S0952675700000191},
+  subfield  = {phonology/semitic},
+  role      = {primary}
+}
+
+@misc{walker-rose-2015-amp,
+  author    = {Walker, Rachel and Rose, Sharon},
+  year      = {2015},
+  title     = {Guttural Semi-Transparency},
+  howpublished = {Handout, Annual Meeting on Phonology ({AMP}) 2015},
+  address   = {Vancouver},
+  note      = {October 10, 2015. Unpublished.},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@article{angoujard-1995,
+  author    = {Angoujard, Jean-Pierre},
+  year      = {1995},
+  title     = {Quelques 'Éléments' pour la représentation des gutturales},
+  journal   = {Langues Orientales Anciennes: Philologie et Linguistique},
+  volume    = {5-6},
+  pages     = {107--126},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@incollection{shahin-2011,
+  author    = {Shahin, Kimary},
+  year      = {2011},
+  title     = {Pharyngeals},
+  booktitle = {The {Wiley-Blackwell} Companion to Phonology},
+  editor    = {van Oostendorp, Marc and Ewen, Colin J. and Hume, Elizabeth and Rice, Keren},
+  publisher = {Wiley-Blackwell},
+  address   = {New York},
+  pages     = {604--627},
+  doi       = {10.1002/9781444335262.wbctp0025},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{esling-2005,
+  author    = {Esling, John H.},
+  year      = {2005},
+  title     = {There Are No Back Vowels: The Laryngeal Articulatory Model},
+  journal   = {Canadian Journal of Linguistics},
+  volume    = {50},
+  number    = {1-4},
+  pages     = {13--44},
+  doi       = {10.1017/S0008413100003650},
+  subfield  = {phonetics},
+  role      = {cited}
+}
+
+@phdthesis{bellem-2007,
+  author    = {Bellem, Alex},
+  year      = {2007},
+  title     = {Towards a Comparative Typology of Emphatics: Across {Semitic} and into {Arabic} Dialect Phonology},
+  school    = {SOAS, University of London},
+  address   = {London},
+  subfield  = {phonology/semitic},
+  role      = {cited}
+}
+
+@incollection{bye-2011,
+  author    = {Bye, Patrik},
+  year      = {2011},
+  title     = {Dissimilation},
+  booktitle = {The {Wiley-Blackwell} Companion to Phonology},
+  editor    = {van Oostendorp, Marc and Ewen, Colin J. and Hume, Elizabeth and Rice, Keren},
+  publisher = {Wiley-Blackwell},
+  address   = {Malden, MA},
+  pages     = {1408--1433},
+  doi       = {10.1002/9781444335262.wbctp0060},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@incollection{casali-2011,
+  author    = {Casali, Roderic F.},
+  year      = {2011},
+  title     = {Hiatus Resolution},
+  booktitle = {The {Wiley-Blackwell} Companion to Phonology},
+  editor    = {van Oostendorp, Marc and Ewen, Colin J. and Hume, Elizabeth and Rice, Keren},
+  publisher = {Wiley-Blackwell},
+  address   = {Malden, MA},
+  pages     = {2300--2326},
+  doi       = {10.1002/9781444335262.wbctp0061},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@incollection{levi-2011,
+  author    = {Levi, Susannah V.},
+  year      = {2011},
+  title     = {Glides},
+  booktitle = {The {Wiley-Blackwell} Companion to Phonology},
+  editor    = {van Oostendorp, Marc and Ewen, Colin J. and Hume, Elizabeth and Rice, Keren},
+  publisher = {Wiley-Blackwell},
+  address   = {Malden, MA},
+  pages     = {341--366},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{guerssel-1986,
+  author    = {Guerssel, Mohand},
+  year      = {1986},
+  title     = {Glides in {Berber} and Syllabicity},
+  journal   = {Linguistic Inquiry},
+  volume    = {17},
+  number    = {1},
+  pages     = {1--12},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{hall-2017,
+  author    = {Hall, Tracy Alan},
+  year      = {2017},
+  title     = {Underlying and Underived Glides in {Middle} {High} {German}},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {2},
+  number    = {1},
+  pages     = {54},
+  doi       = {10.5334/gjgl.170},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{hall-2006,
+  author    = {Hall, Nancy},
+  year      = {2006},
+  title     = {Cross-Linguistic Patterns of Vowel Intrusion},
+  journal   = {Phonology},
+  volume    = {23},
+  number    = {3},
+  pages     = {387--429},
+  doi       = {10.1017/S0952675706000996},
+  subfield  = {phonology},
+  role      = {primary}
+}
+
+@article{lombardi-2002,
+  author    = {Lombardi, Linda},
+  year      = {2002},
+  title     = {Coronal Epenthesis and Markedness},
+  journal   = {Phonology},
+  volume    = {19},
+  number    = {2},
+  pages     = {219--251},
+  doi       = {10.1017/S0952675702004323},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{flemming-2001,
+  author    = {Flemming, Edward},
+  year      = {2001},
+  title     = {Scalar and Categorial Phenomena in a Unified Model of Phonetics and Phonology},
+  journal   = {Phonology},
+  volume    = {18},
+  number    = {1},
+  pages     = {7--44},
+  doi       = {10.1017/S0952675701004006},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@incollection{clements-hume-1995,
+  author    = {Clements, George N. and Hume, Elizabeth},
+  year      = {1995},
+  title     = {The Internal Organization of Speech Sounds},
+  booktitle = {The Handbook of Phonology},
+  editor    = {Goldsmith, John A.},
+  publisher = {Blackwell},
+  address   = {Oxford},
+  pages     = {245--306},
+  subfield  = {phonology/featural},
+  role      = {foundational}
+}
+
+@book{archangeli-pulleyblank-1994,
+  author    = {Archangeli, Diana and Pulleyblank, Douglas},
+  year      = {1994},
+  title     = {Grounded Phonology},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  subfield  = {phonology},
+  role      = {foundational}
+}
+
+@phdthesis{staroverov-2014,
+  author    = {Staroverov, Petr},
+  year      = {2014},
+  title     = {Splitting Theory and Consonant Epenthesis},
+  school    = {Rutgers University},
+  address   = {New Brunswick, NJ},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@phdthesis{kelly-2015,
+  author    = {Kelly, Stephanie A.},
+  year      = {2015},
+  title     = {Variable Glide Formation in {Hexagonal} {French}},
+  school    = {The University of Western Ontario},
+  address   = {London, ON},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{cote-2018,
+  author    = {Côté, Marie-Hélène},
+  year      = {2018},
+  title     = {Glissantes et diphtongue en français laurentien},
+  journal   = {Cahiers du Centre de Linguistique et des Sciences du langage},
+  volume    = {56},
+  pages     = {41--59},
+  doi       = {10.26034/la.cdclsl.2018.211},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@unpublished{mccarthy-1995,
+  author    = {McCarthy, John J.},
+  year      = {1995},
+  title     = {Extensions of Faithfulness: {Rotuman} Revisited},
+  note      = {Manuscript, University of Massachusetts, Amherst. ROA-110},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@article{burzio-1998,
+  author    = {Burzio, Luigi},
+  year      = {1998},
+  title     = {Multiple Correspondence},
+  journal   = {Lingua},
+  volume    = {104},
+  number    = {1-2},
+  pages     = {79--109},
+  doi       = {10.1016/S0024-3841(97)00025-9},
+  subfield  = {phonology},
+  role      = {cited}
+}
+
+@book{khan-2002,
+  author    = {Khan, Geoffrey},
+  year      = {2002},
+  title     = {The {Neo-Aramaic} Dialect of {Qaraqosh}},
+  publisher = {Brill},
+  address   = {Leiden},
+  doi       = {10.1163/9789004348585},
+  subfield  = {phonology/semitic},
+  role      = {cited}
 }
 
 % REF: Goedemans & van der Hulst (2013). The four chapters Goedemans &
@@ -24496,4 +25516,715 @@
   validated = {true},
   role      = {grammar-sketch},
   sources   = {Fragments/Slavic/Belarusian/Case.lean}
+}
+
+% REF: Butt, Benjamin & Moreira Rodríguez (2019). A New Reference Grammar of Modern Spanish, 6th edition.
+@book{butt-benjamin-2019,
+  author    = {Butt, John and Benjamin, Carmen and Moreira Rodr{\'{i}}guez, Antonia},
+  year      = {2019},
+  title     = {A New Reference Grammar of Modern {Spanish}},
+  edition   = {Sixth},
+  publisher = {Routledge},
+  address   = {London and New York},
+  series    = {Routledge Reference Grammars},
+  isbn      = {9781138124004},
+  subfield  = {grammar},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Fragments/Spanish/Gender.lean}
+}
+
+% REF: Wade (2020). A Comprehensive Russian Grammar, 4th edition (revised by David Gillespie).
+@book{wade-2020,
+  author    = {Wade, Terence},
+  year      = {2020},
+  title     = {A Comprehensive {Russian} Grammar},
+  edition   = {Fourth},
+  publisher = {Wiley-Blackwell},
+  address   = {Hoboken, NJ},
+  series    = {Blackwell Reference Grammars},
+  isbn      = {9781119520283},
+  note      = {Revised and updated by David Gillespie},
+  subfield  = {grammar},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Fragments/Slavic/Russian/Gender.lean}
+}
+
+% REF: Newman (1979). Explaining Hausa Feminines.
+@article{newman-1979a,
+  author    = {Newman, Paul},
+  year      = {1979},
+  title     = {Explaining {Hausa} Feminines},
+  journal   = {Studies in African Linguistics},
+  volume    = {10},
+  number    = {2},
+  pages     = {197--226},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Hausa/Gender.lean;Phenomena/Gender/Studies/Kramer2020.lean}
+}
+
+% REF: Alexiadou (2003). Some notes on the structure of alienable and inalienable possessors.
+@incollection{alexiadou-2003,
+  author    = {Alexiadou, Artemis},
+  year      = {2003},
+  title     = {Some Notes on the Structure of Alienable and Inalienable Possessors},
+  booktitle = {From NP to DP: Volume 2: The Expression of Possession in Noun Phrases},
+  editor    = {Coene, Martine and D'Hulst, Yves},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {167--188},
+  doi       = {10.1075/la.56.12ale},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Greek/Possession.lean}
+}
+
+% REF: Kampanarou & Alexiadou (2026). Genitive alternation in possessives and beyond.
+@article{kampanarou-alexiadou-2026,
+  author    = {Kampanarou, Anna and Alexiadou, Artemis},
+  year      = {2026},
+  title     = {Genitive Alternation in Possessives and Beyond: Morphological or Structural Variation?},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {11},
+  number    = {1},
+  pages     = {1--39},
+  doi       = {10.16995/glossa.23696},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Fragments/Greek/Possession.lean;Fragments/Greek/Grevena/Possession.lean;Fragments/Greek/Smyrna/Possession.lean}
+}
+
+% REF: Holton, Mackridge, Philippaki-Warburton & Spyropoulos (2012). Greek: A comprehensive grammar of the modern language.
+@book{holton-mackridge-philippaki-warburton-spyropoulos-2012,
+  author    = {Holton, David and Mackridge, Peter and Philippaki-Warburton, Irene and Spyropoulos, Vassilios},
+  year      = {2012},
+  title     = {{Greek}: A Comprehensive Grammar of the Modern Language},
+  publisher = {Routledge},
+  address   = {London},
+  doi       = {10.4324/9780203802380},
+  subfield  = {grammar},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Greek/Possession.lean}
+}
+
+% REF: Michelioudakis, Chatzikyriakidis & Spathas (2024). The emergence of prepositional genitives in Greek.
+@incollection{michelioudakis-chatzikyriakidis-spathas-2024,
+  author    = {Michelioudakis, Dimitris and Chatzikyriakidis, Stergios and Spathas, Giorgos},
+  year      = {2024},
+  title     = {The Emergence of Prepositional Genitives in {Greek} and its Diachronic Implications},
+  booktitle = {The Place of Case in Grammar},
+  editor    = {Sevdali, Christina and Mertyris, Dionysios and Anagnostopoulou, Elena},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {275--303},
+  doi       = {10.1093/oso/9780198865926.003.0011},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Greek/Grevena/Possession.lean}
+}
+
+% REF: Liosis (2016). Cosmopolitan or local? The dialects of the Smyrna Region.
+@incollection{liosis-2016,
+  author    = {Liosis, Nikos},
+  year      = {2016},
+  title     = {Cosmopolitan or Local? The Dialects of the {Smyrna} Region},
+  booktitle = {Proceedings of the 6th International Conference of Modern {Greek} Dialects and Linguistic Theory (Patras, 25--28 September 2014)},
+  editor    = {Ralli, Angela and Koutsoukos, Nikos and Bompolas, Stavros},
+  publisher = {University of Patras},
+  address   = {Patras},
+  subfield  = {dialectology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Greek/Smyrna/Possession.lean}
+}
+
+% REF: Mertyris (2014). The loss of the genitive in Greek.
+@phdthesis{mertyris-2014,
+  author    = {Mertyris, Dionysios},
+  year      = {2014},
+  title     = {The Loss of the Genitive in {Greek}: A Diachronic and Dialectological Analysis},
+  school    = {La Trobe University},
+  address   = {Melbourne},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Mertyris (2019). Defective genitives of i-neuter nouns in Modern Greek.
+@inproceedings{mertyris-2019,
+  author    = {Mertyris, Dionysios},
+  year      = {2019},
+  title     = {Defective Genitives of \textiota-Neuter Nouns in Modern {Greek}: The Role of Synizesis},
+  booktitle = {Modern {Greek} Dialects and Linguistic Theory: Proceedings of the International Conference Series of Modern {Greek} Dialects and Linguistics Theory},
+  pages     = {163--176},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Mertyris (2023). The loss of the partitive genitive in Greek.
+@article{mertyris-2023,
+  author    = {Mertyris, Dionysios},
+  year      = {2023},
+  title     = {The Loss of the Partitive Genitive in {Greek}},
+  journal   = {Lexicographic Bulletin of the Research Center for Modern {Greek} Dialects of the Academy of Athens},
+  volume    = {27-28},
+  pages     = {251--282},
+  doi       = {10.12681/ld.38008},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Sims (2006). Minding the gaps: Inflectional defectiveness in a paradigmatic theory.
+@phdthesis{sims-2006,
+  author    = {Sims, Andrea},
+  year      = {2006},
+  title     = {Minding the Gaps: Inflectional Defectiveness in a Paradigmatic Theory},
+  school    = {Ohio State University},
+  address   = {Columbus},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Ralli (2000). A feature-based analysis of Greek nominal inflection.
+@article{ralli-2000,
+  author    = {Ralli, Angela},
+  year      = {2000},
+  title     = {A Feature-Based Analysis of {Greek} Nominal Inflection},
+  journal   = {Glossologia},
+  volume    = {11-12},
+  pages     = {201--227},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Nikiforidou (1991). The meanings of the genitive.
+@article{nikiforidou-1991,
+  author    = {Nikiforidou, Kiki},
+  year      = {1991},
+  title     = {The Meanings of the Genitive: A Case Study in Semantic Structure and Semantic Change},
+  journal   = {Cognitive Linguistics},
+  volume    = {2},
+  number    = {2},
+  pages     = {149--205},
+  doi       = {10.1515/cogl.1991.2.2.149},
+  subfield  = {semantics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou (2001). Functional structure in nominals.
+@book{alexiadou-2001,
+  author    = {Alexiadou, Artemis},
+  year      = {2001},
+  title     = {Functional Structure in Nominals},
+  publisher = {John Benjamins},
+  address   = {Amsterdam and Philadelphia},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou (2024). Paradigm gaps: the case of Greek diminutive genitives.
+@incollection{alexiadou-2024,
+  author    = {Alexiadou, Artemis},
+  year      = {2024},
+  title     = {Paradigm Gaps: The Case of {Greek} Diminutive Genitives},
+  booktitle = {Strict Cycling: A Festschrift for Gereon M\"{u}ller},
+  editor    = {Fischer, Silke and Georgi, Doreen and Heck, Fabian and Hein, Johannes and Himmelreich, Anke and Murphy, Andrew and Weisser, Philipp},
+  publisher = {University of Leipzig},
+  address   = {Leipzig},
+  pages     = {1--10},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou (2025). All nominalizations big and small.
+@inproceedings{alexiadou-2025,
+  author    = {Alexiadou, Artemis},
+  year      = {2025},
+  title     = {All Nominalizations Big and Small: Towards a Typology of Complex Event Nominals},
+  booktitle = {Proceedings of CLS 60},
+  pages     = {17--36},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou & Stavrou (2020). Partitives, pseudopartitives and the preposition apo in Greek.
+@article{alexiadou-stavrou-2020,
+  author    = {Alexiadou, Artemis and Stavrou, Melita},
+  year      = {2020},
+  title     = {Partitives, Pseudopartitives and the Preposition \textit{apo} in {Greek}},
+  journal   = {Linguistics},
+  volume    = {58},
+  number    = {3},
+  pages     = {713--743},
+  doi       = {10.1515/ling-2020-0082},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Horrocks & Stavrou (1987). Bounding theory and Greek syntax.
+@article{horrocks-stavrou-1987,
+  author    = {Horrocks, Geoffrey and Stavrou, Melita},
+  year      = {1987},
+  title     = {Bounding Theory and {Greek} Syntax: Evidence for Wh-Movement in {NP}},
+  journal   = {Journal of Linguistics},
+  volume    = {23},
+  number    = {1},
+  pages     = {79--108},
+  doi       = {10.1017/S002222670001104X},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Angelopoulos & Michelioudakis (2023). Greek possessor extraction.
+@inproceedings{angelopoulos-michelioudakis-2023,
+  author    = {Angelopoulos, Nikos and Michelioudakis, Dimitris},
+  year      = {2023},
+  title     = {Extraction Without an Escape Hatch: The Case of {Greek} Possessor Extraction},
+  booktitle = {Proceedings of NELS 53},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Tzitzilis & Papanastasiou (2024). Koineization of Modern Greek.
+@book{tzitzilis-papanastasiou-2024,
+  author    = {Tzitzilis, Christos and Papanastasiou, Georgios},
+  year      = {2024},
+  title     = {{Koine}, Koines and the Koineization of Modern {Greek}},
+  publisher = {Institute of Modern {Greek} Studies, Manolis Triandaphyllidis Foundation},
+  address   = {Thessaloniki},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Markopoulos (2018). Phonological realization of morphosyntactic features.
+@phdthesis{markopoulos-2018,
+  author    = {Markopoulos, Giorgos},
+  year      = {2018},
+  title     = {Phonological Realization of Morphosyntactic Features},
+  school    = {Aristotle University of Thessaloniki},
+  address   = {Thessaloniki},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Tsompanidou (2023). Gaps and overabundance in Modern Greek.
+@misc{tsompanidou-2023,
+  author    = {Tsompanidou, Katia},
+  year      = {2023},
+  title     = {Gaps and Overabundance in Modern {Greek}},
+  howpublished = {Paper presented at the 56th annual meeting of the Societas Linguistica Europaea, Athens, 29 August--1 September 2023},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Kampanarou (2021). Possessors as Locations (PAL) hypothesis.
+@misc{kampanarou-2021,
+  author    = {Kampanarou, Anna},
+  year      = {2021},
+  title     = {Revisiting and Revising the ``Possessors as Locations'' ({PAL}) Hypothesis},
+  howpublished = {Paper presented at \textit{Working on Linguistics 1}, University of Crete},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Kampanarou (2023). Argument Structure across grammatical categories.
+@phdthesis{kampanarou-2023,
+  author    = {Kampanarou, Anna},
+  year      = {2023},
+  title     = {Argument Structure Across Grammatical Categories: Existential, Possessive and Copular Constructions},
+  school    = {University of Crete},
+  address   = {Rethymnon},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Theophanopoulou-Kontou (2000). Locative adverbs and case in Greek.
+@article{theophanopoulou-kontou-2000,
+  author    = {Theophanopoulou-Kontou, Dimitra},
+  year      = {2000},
+  title     = {Topika Epirimata Kai ``Ptosi'' Stin Eliniki: Diaxroniki Proseggisi},
+  journal   = {Glossologia},
+  volume    = {11-12},
+  pages     = {1--40},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Lechner & Anagnostopoulou (2006). Clitics and adjacency in Greek PPs.
+@incollection{lechner-anagnostopoulou-2006,
+  author    = {Lechner, Winfried and Anagnostopoulou, Elena},
+  year      = {2006},
+  title     = {Clitics and Adjacency in {Greek} {PPs}},
+  booktitle = {Linguistic Studies in Honor of Henk van Riemsdijk},
+  editor    = {Broekhuis, Hans and Corver, Norbert and Huybregts, Riny and Kleinhenz, Ursula and Koster, Jan},
+  publisher = {De Gruyter Mouton},
+  address   = {Berlin},
+  pages     = {390--406},
+  doi       = {10.1515/9783110892994.390},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Ramadanidis (2022). Projective and other locative PPs in Greek.
+@article{ramadanidis-2022,
+  author    = {Ramadanidis, Athanasios Michael},
+  year      = {2022},
+  title     = {Projective and Other Locative {PPs} in {Greek}},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {7},
+  number    = {1},
+  doi       = {10.16995/glossa.6153},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Melissaropoulou (2014). Reorganization of grammar (Grico, Cappadocian).
+@inproceedings{melissaropoulou-2014,
+  author    = {Melissaropoulou, Dimitra},
+  year      = {2014},
+  title     = {Reorganization of Grammar in the Light of the Language Contact Factor: A Case Study on {Grico} and {Cappadocian}},
+  booktitle = {Proceedings of the 5th International Conference of Modern {Greek} Dialects and Linguistic Theory},
+  pages     = {311--334},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Zombolou (2011). Attrition in Greek diaspora.
+@incollection{zombolou-2011,
+  author    = {Zombolou, Katerina},
+  year      = {2011},
+  title     = {Attrition in {Greek} Diaspora},
+  booktitle = {Language Contact and Language Shift: Grammatical and Sociolinguistic Perspectives},
+  editor    = {Ihemere, Kelechukwu Uchechukwu},
+  publisher = {Lincom Europa},
+  address   = {Munich},
+  pages     = {1--33},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Kavoukopoulos (1990). The dynamic of the Genitive in Modern Greek.
+@article{kavoukopoulos-1990,
+  author    = {Kavoukopoulos, Fotis},
+  year      = {1990},
+  title     = {I Dinamiki Tis Genikis Sti Neoeliniki [The Dynamic of the Genitive in Modern {Greek}]},
+  journal   = {Studies in {Greek} Linguistics},
+  volume    = {10},
+  pages     = {265--284},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Bruening (2012). By phrases in passives and nominals.
+@article{bruening-2012,
+  author    = {Bruening, Benjamin},
+  year      = {2012},
+  title     = {By Phrases in Passives and Nominals},
+  journal   = {Syntax},
+  volume    = {16},
+  number    = {1},
+  pages     = {1--41},
+  doi       = {10.1111/j.1467-9612.2012.00171.x},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Grimshaw (1990). Argument structure.
+@book{grimshaw-1990,
+  author    = {Grimshaw, Jane},
+  year      = {1990},
+  title     = {Argument Structure},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou et al. (2009). PP licensing in nominalizations (NELS 38).
+@inproceedings{alexiadou-anagnostopoulou-schaefer-2009,
+  author    = {Alexiadou, Artemis and Anagnostopoulou, Elena and Sch\"{a}fer, Florian},
+  year      = {2009},
+  title     = {{PP} Licensing in Nominalizations},
+  booktitle = {Proceedings of NELS 38},
+  pages     = {39--52},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Alexiadou (2017). Ergativity in Nominalization.
+@incollection{alexiadou-2017,
+  author    = {Alexiadou, Artemis},
+  year      = {2017},
+  title     = {Ergativity in Nominalization},
+  booktitle = {The {Oxford} Handbook of Ergativity},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {355--372},
+  doi       = {10.1093/oxfordhb/9780198739371.013.15},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Bally (1996). The personal domain and indivisibility in IE languages.
+@incollection{bally-1996,
+  author    = {Bally, Charles},
+  year      = {1996},
+  title     = {The Expression of Concepts of the Personal Domain and Indivisibility in {Indo-European} Languages},
+  booktitle = {The Grammar of Inalienability: A Typological Perspective on Body Part Terms and the Part-Whole Relation},
+  editor    = {Chappell, Hilary and McGregor, William},
+  publisher = {De Gruyter Mouton},
+  address   = {Berlin},
+  pages     = {31--62},
+  doi       = {10.1515/9783110822137.31},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Chappell & McGregor (1989). Alienability, inalienability and nominal classification.
+@article{chappell-mcgregor-1989,
+  author    = {Chappell, Hilary and McGregor, William},
+  year      = {1989},
+  title     = {Alienability, Inalienability and Nominal Classification},
+  journal   = {Proceedings of the Annual Meeting of the Berkeley Linguistics Society},
+  volume    = {15},
+  pages     = {24--36},
+  doi       = {10.3765/bls.v15i0.1734},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Folli & Harley (2006). Causatives of directed motion.
+@article{folli-harley-2006,
+  author    = {Folli, Raffaella and Harley, Heidi},
+  year      = {2006},
+  title     = {On the Licensing of Causatives of Directed Motion: {Waltzing Matilda} All Over},
+  journal   = {Studia Linguistica},
+  volume    = {60},
+  number    = {2},
+  pages     = {121--155},
+  doi       = {10.1111/j.1467-9582.2006.00135.x},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Folli & Harley (2020). Talmy's typology head movement approach.
+@article{folli-harley-2020,
+  author    = {Folli, Raffaella and Harley, Heidi},
+  year      = {2020},
+  title     = {A Head Movement Approach to {Talmy}'s Typology},
+  journal   = {Linguistic Inquiry},
+  volume    = {51},
+  number    = {3},
+  pages     = {425--470},
+  doi       = {10.1162/ling_a_00351},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Roberts & Roussou (2009). Syntactic change.
+@book{roberts-roussou-2009,
+  author    = {Roberts, Ian and Roussou, Anna},
+  year      = {2009},
+  title     = {Syntactic Change: A Minimalist Approach to Grammaticalization},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: van Riemsdijk (1998). Categorial feature magnetism.
+@article{van-riemsdijk-1998,
+  author    = {van Riemsdijk, Henk},
+  year      = {1998},
+  title     = {Categorial Feature Magnetism: The Endocentricity and Distribution of Projections},
+  journal   = {The Journal of Comparative Germanic Linguistics},
+  volume    = {2},
+  number    = {1},
+  pages     = {1--48},
+  doi       = {10.1023/A:1009763305416},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Cinque (1980). On extraction from NP in Italian.
+@article{cinque-1980,
+  author    = {Cinque, Guglielmo},
+  year      = {1980},
+  title     = {On Extraction from {NP} in {Italian}},
+  journal   = {Journal of Italian Linguistics Amsterdam},
+  volume    = {5},
+  number    = {1},
+  pages     = {47--97},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Keenan (1987). A semantic definition of indefinite NP.
+@incollection{keenan-1987,
+  author    = {Keenan, Edward},
+  year      = {1987},
+  title     = {A Semantic Definition of Indefinite {NP}},
+  booktitle = {The Representation of (In)definiteness},
+  editor    = {Reuland, Eric J. and ter Meulen, Alice G. B.},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  pages     = {286--317},
+  subfield  = {semantics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Borer (2013). Structuring sense: Volume III: Taking form.
+@book{borer-2013,
+  author    = {Borer, Hagit},
+  year      = {2013},
+  title     = {Structuring Sense: Volume III: Taking Form},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  doi       = {10.1093/acprof:oso/9780199263936.001.0001},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Aikhenvald (2012). Possession and ownership: A cross-linguistic perspective.
+@incollection{aikhenvald-2012,
+  author    = {Aikhenvald, Alexandra Y.},
+  year      = {2012},
+  title     = {Possession and Ownership: A Cross-Linguistic Perspective},
+  booktitle = {Possession and Ownership},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {1--64},
+  doi       = {10.1093/acprof:oso/9780199660223.003.0001},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Aikhenvald (2019). Expressing 'possession'.
+@incollection{aikhenvald-2019,
+  author    = {Aikhenvald, Alexandra Y.},
+  year      = {2019},
+  title     = {Expressing `Possession'},
+  booktitle = {Possession in Languages of {Europe} and {North} and {Central} {Asia}},
+  editor    = {Johanson, Lars and Mazzitelli, Lidia Federica and Nevskaya, Irina},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {7--26},
+  doi       = {10.1075/slcs.206.02aik},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Haspelmath (2017). Predictability vs. iconicity in alienability contrasts.
+@article{haspelmath-2017,
+  author    = {Haspelmath, Martin},
+  year      = {2017},
+  title     = {Explaining Alienability Contrasts in Adpossessive Constructions: Predictability vs.~Iconicity},
+  journal   = {Zeitschrift f\"{u}r Sprachwissenschaft},
+  volume    = {36},
+  number    = {2},
+  pages     = {193--231},
+  doi       = {10.1515/zfs-2017-0009},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
+}
+
+% REF: Conti & Luraghi (2014). The Ancient Greek partitive genitive in typological perspective.
+@incollection{conti-luraghi-2014,
+  author    = {Conti, Luz and Luraghi, Silvia},
+  year      = {2014},
+  title     = {The {Ancient} {Greek} Partitive Genitive in Typological Perspective},
+  booktitle = {Partitive Cases and Related Categories},
+  editor    = {Luraghi, Silvia and Huumo, Tuomas},
+  publisher = {De Gruyter Mouton},
+  address   = {Berlin},
+  pages     = {443--476},
+  doi       = {10.1515/9783110346060.443},
+  subfield  = {historical-linguistics},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean}
 }
