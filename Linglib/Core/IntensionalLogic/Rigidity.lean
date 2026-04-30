@@ -77,6 +77,81 @@ theorem isRigid_iff_isRigidOn_univ {W τ : Type*} (f : Intension W τ) :
     IsRigid f ↔ IsRigidOn f Set.univ :=
   ⟨fun h _ _ _ _ => h _ _, fun h w₁ w₂ => h w₁ trivial w₂ trivial⟩
 
+
+-- ════════════════════════════════════════════════════════════════
+-- § Functoriality: closure of `IsRigid` under composition
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Post-composition closure** (`Intension W` is covariantly
+    functorial in its target type, and rigidity is preserved by the
+    functorial action). Given any `g : τ₁ → τ₂`, the post-composed
+    intension `g ∘ f : Intension W τ₂` is rigid whenever `f` is.
+
+    This is what makes the substrate's polymorphism in `Res`
+    non-trivial: a rigid `EntityConcept` (Res = Agent) yields a rigid
+    `TimeConcept` (Res = T) for any `Agent → T` function — the parallel
+    between individual de re (Anand-Nevins shifty operators) and
+    temporal de re (Abusch wide-scope tenses) is functorial. -/
+theorem IsRigid.map {W τ₁ τ₂ : Type*}
+    {f : Intension W τ₁} (h : IsRigid f) (g : τ₁ → τ₂) :
+    IsRigid (fun w => g (f w)) :=
+  fun w₁ w₂ => congrArg g (h w₁ w₂)
+
+/-- **Pre-composition closure** (`Intension W` is contravariantly
+    functorial in its index type). Given any `g : W₂ → W₁`, the
+    pre-composed intension `f ∘ g : Intension W₂ τ` is rigid whenever
+    `f` is — constancy survives any relabeling of the input space.
+
+    Used by `Theories/Semantics/Tense/DeRe.lean` to lift a rigid
+    `TimeConcept` over `KContext` to a rigid intension over the
+    holder's `WorldTimeIndex` alternative-shift. -/
+theorem IsRigid.precomp {W₁ W₂ τ : Type*}
+    {f : Intension W₁ τ} (h : IsRigid f) (g : W₂ → W₁) :
+    IsRigid (fun w => f (g w)) :=
+  fun w₁ w₂ => h (g w₁) (g w₂)
+
+/-- Set-relativized version of `IsRigid.map`: rigidity-on-a-set is
+    preserved by post-composition with any function. -/
+theorem IsRigidOn.map {W τ₁ τ₂ : Type*}
+    {f : Intension W τ₁} {S : Set W} (h : IsRigidOn f S) (g : τ₁ → τ₂) :
+    IsRigidOn (fun w => g (f w)) S :=
+  fun w₁ hw₁ w₂ hw₂ => congrArg g (h w₁ hw₁ w₂ hw₂)
+
+/-- **Reflection along injective post-composition**: if `g ∘ f` is
+    rigid and `g` is injective, then `f` was already rigid. Together
+    with `IsRigid.map`, this establishes that `IsRigid` is preserved
+    AND reflected by injective post-composition — i.e., injective
+    `g` makes the lifting `Intension W τ₁ → Intension W τ₂`
+    rigidity-preserving in both directions. -/
+theorem IsRigid.of_map_injective {W τ₁ τ₂ : Type*}
+    {f : Intension W τ₁} {g : τ₁ → τ₂} (hg : Function.Injective g)
+    (h : IsRigid (fun w => g (f w))) : IsRigid f :=
+  fun w₁ w₂ => hg (h w₁ w₂)
+
+/-- **Mathlib-style characterization**: over a nonempty index space,
+    `IsRigid` is exactly "equals a constant function" via
+    `Function.const`. The forward direction picks any witness
+    `w₀ : W` and uses `f w₀` as the constant value; the reverse is
+    `rfl`-trivial.
+
+    The `Nonempty W` hypothesis is needed because without it
+    `IsRigid f` is vacuously true (no two `w₁ w₂` to compare), while
+    `∃ x, f = Function.const W x` requires some `x : τ` to exist as
+    a witness — which fails when `τ` is also empty. -/
+theorem IsRigid_iff_eq_const {W τ : Type*} [Nonempty W]
+    (f : Intension W τ) : IsRigid f ↔ ∃ x : τ, f = Function.const W x := by
+  constructor
+  · intro h
+    obtain ⟨w₀⟩ := ‹Nonempty W›
+    exact ⟨f w₀, funext fun w => h w w₀⟩
+  · rintro ⟨x, rfl⟩ w₁ w₂
+    rfl
+
+/-- `rigid x` IS `Function.const W x` definitionally; this is the
+    rigid-named bridge to mathlib's `Function.const` API. -/
+theorem rigid_eq_const {W τ : Type*} (x : τ) :
+    rigid (W := W) x = Function.const W x := rfl
+
 /-- evalAt of rigid returns the original value. -/
 theorem evalAt_rigid {W τ : Type*} (x : τ) (w : W) : evalAt (rigid x) w = x := rfl
 

@@ -238,14 +238,22 @@ def isAbuschFelicitous [LinearOrder T] (dr : TemporalDeReReading W E P T)
 /-- A rigid time-concept (constant intension, `Core.Intension.IsRigid`)
     is automatically rigid across any alternative-set. The rigid-concept
     derivations in `Studies/Abusch1997.lean` discharge
-    `IsRigidAcrossAlternatives` "for free" via this lemma. -/
+    `IsRigidAcrossAlternatives` "for free" via this lemma.
+
+    Composes two general substrate lemmas:
+    `Intension.IsRigid.precomp` (pre-composition with the
+    `shiftWorldTime` map preserves rigidity) and
+    `Intension.IsRigid.isRigidOn` (full rigidity implies
+    rigidity-on-any-set). The chain makes the substrate's design
+    visible: temporal de re ≡ rigidity preserved under the centered
+    coordinate-shift, restricted to whichever alternative set the
+    consumer supplies. -/
 theorem IsRigidAcrossAlternatives_of_concept_isRigid
     (dr : TemporalDeReReading W E P T)
     (h : Intension.IsRigid dr.concept)
     (alternatives : Set (WorldTimeIndex W T)) :
     dr.IsRigidAcrossAlternatives alternatives :=
-  fun s₁ _ s₂ _ => h (dr.holderContext.shiftWorldTime s₁)
-                     (dr.holderContext.shiftWorldTime s₂)
+  (h.precomp dr.holderContext.shiftWorldTime).isRigidOn alternatives
 
 /-- **Abusch felicity ⇒ value-level felicity**: the modal-quantified
     predicate strictly refines the value-level shadow. Old code that

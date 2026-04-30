@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### ODonnell2015.lean mathlib-discipline cleanup post-audit
+
+`mathlib-reviewer` agent audit of `Phenomena/Morphology/Studies/ODonnell2015.lean`. No blockers — file built and substrate API was correctly used — but seven nits surfaced. All landed.
+
+**Drops.**
+- Removed the raw-`mapWeight` form `dmpcfg_wrongly_predicts_ion_productive`. The PMF version (`mapWeightPMF` comparison) is structurally equivalent, and the audit's "obvious next move" recommendation is to keep only the PMF version unless a downstream consumer needs the raw — there are none.
+
+**Adds.**
+- Two private named subtype witnesses: `nNess`, `nIon : DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N`. Replaces 5 sites of `⟨rNess, by decide⟩` / `⟨rIon, by decide⟩` boilerplate at theorem call sites and removes the `(a := SuffixNT.N)` annotation noise (the witness type carries the LHS).
+- Parametric private lemma `pseudoVal_suffixToRule (s : Suffix) : pseudoVal (suffixToRule s) = ((s.productivityIndex : ℕ) : ℝ) + 1`, proved by `cases s <;> rfl`. Used by the structural drift sentry.
+- Three `@[simp]` value-form private lemmas (`pseudoVal_rNess` = 3, `pseudoVal_rIon` = 2, `pseudoVal_rAte` = 1), each derived in 2 lines from the parametric lemma. Used by the count-gap and prior PMF theorems.
+
+**Renames** (drop evaluative adverbs — mathlib idiom is facts only, editorial in docstrings).
+- `dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules` → `dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap`
+- `dmpcfg_prior_correctly_orders_n_rules` → `dmpcfgFromObserved_mapWeightPMF_prior_lt`
+- `dmpcfg_prior_correct_data_wrong` → `dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree`
+
+**Hygiene.**
+- Module docstring's `TODO(theorem)` bullet list moved to a `/- TODO -/` block at the bottom of the file (mathlib idiom). Discharged `✅` checkmark dropped.
+- `suffixToRule` rename rationale trimmed from 3 sentences to 1 line.
+- File reordered: defs grouped at top → `Bridge from data layer + DMPCFG instance` section → `Plumbing` section (witnesses + lemmas) → `Theorems` section. `/-! ## -/` section headers throughout.
+
+**Net effect.** 405 LOC → 327 LOC (−78). Theorem count: 6 → 5 (one raw-mapWeight version dropped; remaining 5 = 1 API exemplar + 1 drift sentry + 2 PMF flip/prior + 1 bundle). The PMF version of every consumer-facing falsification is now the canonical form.
+
 ### Tham2025.lean total overhaul: schema additions + cross-paper engagement + spatial-extent normalization substrate
 
 Four-agent audit (linguistics-domain-expert + mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler) of `Phenomena/Gradability/Studies/Tham2025.lean` revealed:
@@ -44,6 +68,36 @@ Continued the deepening of the O'Donnell 2015 study to use the new `DMPCFG.mapWe
 - **`dmpcfg_prior_correct_data_wrong`** — bundles both halves into one theorem stating the full Ch 7 critique: DMPCFG starts with the right prior, but data overwhelms it. The book's actual argument made Lean-checkable end-to-end.
 
 **Why this matters.** This is the first place in the file where `mapWeight_zero` does substantive work (reducing posterior on empty corpus to prior), and the first place where the prior + flip dichotomy is theorem-checked rather than docstring-asserted. The Ch 7 critique of DMPCFG ("the data overwhelms the prior") is now a proof obligation, not a narrative claim. The `mapWeightPMF_lt_iff` substrate addition means future `dmpcfg_X_orders_Y` theorems on different empirical contrasts (Ch 7.3.3.4 paradoxical -ity/-ness suffix combinations, Ch 4-5 past-tense regulars vs irregulars, etc.) can land as 4-line proofs.
+
+## [0.230.555] - 2026-04-29
+
+### Abusch substrate PR-C: Anand-Nevins entity-concept bridge + `Intension` functoriality lifted
+
+Lands the cross-framework reconciler audit's flagged "highest-leverage" payoff: Anand & Nevins (2004) "Shifty Operators in Changing Contexts" — same `KContext` substrate, READY for an entity-concept bridge — instantiating the substrate's central architectural claim that individual de re (`EntityConcept`) and temporal de re (`TimeConcept`) are *the same machinery* at different `Res` types. PR-C makes this kernel-checked via `Intension` functoriality lemmas lifted to `Core/IntensionalLogic/Rigidity.lean`.
+
+**`Core/IntensionalLogic/Rigidity.lean` — six new functoriality lemmas** (the deep structural content):
+- `IsRigid.map (g : τ₁ → τ₂) : IsRigid f → IsRigid (g ∘ f)` — **post-composition closure** (`Intension W` is covariantly functorial in its target type; rigidity preserved by the functor action).
+- `IsRigid.precomp (g : W₂ → W₁) : IsRigid f → IsRigid (f ∘ g)` — **pre-composition closure** (`Intension W` is contravariantly functorial in its index type).
+- `IsRigidOn.map` — set-relativized version of `IsRigid.map`.
+- `IsRigid.of_map_injective (Function.Injective g) : IsRigid (g ∘ f) → IsRigid f` — **reflection** of rigidity along injective post-composition.
+- `IsRigid_iff_eq_const [Nonempty W] (f) : IsRigid f ↔ ∃ x, f = Function.const W x` — **mathlib-style characterization** bridging substrate `IsRigid` to mathlib's `Function.const` API.
+- `rigid_eq_const : Intension.rigid x = Function.const W x := rfl` — definitional bridge.
+
+**`Theories/Semantics/Tense/DeRe.lean::IsRigidAcrossAlternatives_of_concept_isRigid`** refactored as a one-liner derivation from `IsRigid.precomp + IsRigid.isRigidOn`. The substrate's design now visible as a chain of general lemmas (rigid concept → precomp preserves rigidity → restrict to alternative set), not a direct ad-hoc proof.
+
+**`Phenomena/Reference/Studies/AnandNevins2004.lean` — entity-concept bridge** (the audit's flagged payoff):
+- `kaplanI : EntityConcept Unit Agent Unit ℤ := Core.Intension.rigid .narrator` — Kaplan-compliant "I" as a rigid entity-concept.
+- `shiftedI : EntityConcept Unit Agent Unit ℤ := fun c => c.agent` — Anand-Nevins (2004 §1, eq. 2a, Zazaki under `OP_V`) shifted "I" as the agent-projection function (non-rigid).
+- `kaplanI_isRigid` — entity-side analog of Abusch's "rigid time-concept = de re reading."
+- `shiftedI_not_isRigid` — entity-side analog of Abusch's "descriptive time-concept = de dicto reading", with discriminating witness from contexts with different agents.
+- Two **bridges to FIDProfile** (`shiftedI_at_shiftLanguageTower`, `kaplanI_at_englishAttitudeTower`): the existing depth-based formalization and the new `EntityConcept` formalization agree by `rfl`. The substrate exposes Anand-Nevins's shift typology as concept rigidity; the FIDProfile mechanism exposes it as depth access. Both formalize the same phenomenon.
+- `entityConcept_and_timeConcept_share_isRigid_substrate` — concrete witnesses for the parallel: 4-conjunction (rigid/non-rigid × Agent/ℤ).
+- **`kaplanI_lifts_rigidly_to_timeConcept` — the deep structural payoff** (one-line corollary of `IsRigid.map`): rigidity transfers across `Res` types via post-composition with ANY function. The parallel between individual de re and temporal de re is **the covariant action of `Intension RefCtx` on its target type**, not a list of two facts.
+- `entityConcept_rigid_iff_image_rigid_under_injective` — bidirectional structural equivalence under injective lifting (forward via `IsRigid.map`, reverse via `IsRigid.of_map_injective`). Establishes that rigidity-classifying entity-concepts and their `f`-image rigid time-concepts are *the same problem* up to choice of injective `f`.
+
+**Why this matters**: the polymorphism in `Intension W τ` is now genuinely non-trivial — provably so. @cite{abusch-1997}'s prose claim at p. 6 ("To apply the same machinery to de re belief, a further constraint is required... the same parallel as for tenses") becomes functorially true: the centered-world reduction of @cite{lewis-1979-attitudes} + @cite{cresswell-vonstechow-1982} is formalized once and applies uniformly across all `Res` types via the same six closure lemmas. The Anand-Nevins shifty-vs-Kaplan-compliant typology and the Abusch wide-scope-vs-de-dicto typology are *the same typology* under the substrate's view, distinguished only by which `Res` type the analyst is interested in.
+
+**Build verification**: 916 jobs green (Rigidity.lean 91 jobs; AnandNevins2004 885; full cone 916). No `sorry`, no `native_decide`. Bib check: 7772/8099 valid (up from 7765 pre-PR-C — new cite usages resolve cleanly).
 
 ## [0.230.554] - 2026-04-29
 
