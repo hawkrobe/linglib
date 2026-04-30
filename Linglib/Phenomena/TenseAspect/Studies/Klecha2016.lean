@@ -7,6 +7,7 @@ import Linglib.Fragments.Gitksan.Modals
 import Linglib.Phenomena.Modality.Studies.Matthewson2013
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.TenseAspect.Studies.Sharvit2014
+import Linglib.Theories.Semantics.Tense.DeRe
 
 /-!
 # @cite{klecha-2016}: Modality and Embedded Temporal Operators
@@ -683,6 +684,28 @@ theorem klecha_covers_hope_future_oriented_reading
     attitudeTemporalConstraint .circumstantial hopeTime embRT ∧
     GramTense.constrains .nonpast embRT hopeTime :=
   ⟨cir_compatible_with_future hopeTime embRT h, le_of_lt h⟩
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Substrate bridge: Klecha DOX ≡ Abusch's `metaphysicalAlternatives`
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Substrate bridge**: @cite{klecha-2016}'s actual-history base
+    `actualHistoryBase history matrix.toSituation` IS the substrate's
+    `TemporalDeReReading.metaphysicalAlternatives` (defined in
+    `Theories/Semantics/Tense/DeRe.lean`) for a `TemporalDeReReading`
+    whose holderContext projects to `matrix`. The substrate's
+    metaphysical-alternatives constructor was *designed* to recover
+    Klecha's DOX behavior; this theorem makes the equivalence
+    kernel-checked (provable by `rfl`). -/
+theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
+    {W : Type*} (history : WorldHistory W ℤ)
+    (concept : Semantics.Tense.DeRe.TimeConcept W Unit Unit ℤ)
+    (matrix : Core.Context.KContext W Unit Unit ℤ) :
+    let dr : Semantics.Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
+      ⟨concept, matrix⟩
+    dr.metaphysicalAlternatives history =
+    actualHistoryBase history matrix.toSituation := rfl
 
 
 end Klecha2016

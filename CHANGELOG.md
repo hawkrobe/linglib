@@ -4,6 +4,46 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Tham2025/Solt2018Proportional round-3 cleanup + Solt2018Multidim (NEW) + substrate consumption
+
+Round-3 four-agent audit on the post-round-2 state. Caught one substantive error (Filip 2012 overclaim — *crack* is NOT a witness of Filip's middle ground), one block-merge integration risk (`Carlson1977.PredicateLevel` re-stipulation in Solt2018Proportional), and several cleanup opportunities. User-directed scope: Tier A + B + C + D (full cleanup including the Solt 2018 Springer-multidim-chapter typology enum).
+
+**Substantive corrections**:
+- **Deleted §15 Filip 2012 from Tham2025.lean.** Filip's middle ground (¬CUM ∧ ¬QUA) is incremental-theme verbs *eat/build/write* whose telicity is set compositionally — these do NOT entail result state under both readings. Tham's *crack* has variable-telicity-WITH-uniform-result, a genuinely different phenomenon. The §15 theorem `crack_is_filip_middle_ground` was a stretch the round-2 cross-framework agent introduced; round-3 linguistics agent caught it directly against the Filip2012.lean substrate.
+- **Carlson1977 substrate consumption.** Solt2018Proportional.lean §4 had a local `inductive PredicateType where | stageLevel | individualLevel` that bit-for-bit duplicated `Theories/Semantics/Noun/Kind/Carlson1977.PredicateLevel` (with 2 existing consumers: German BarePluralWordOrder + Generics/BarePlurals). Cite-without-import was the trap CLAUDE.md flags. Fix: drop local enum, import substrate.
+- **§4 docstring corrected** to match Solt's actual claim (p. 1135): (36) is infelicitous because *suckle their young* is individual-level → forces proportional reading → "are few" continuation is contradictory. Old gloss conflated this with the world-fact "few egg-laying mammals don't suckle." Added Milsark/Partee citations Solt explicitly attributes alongside Carlson.
+- **§14 BKG2020 deepened to substrate engagement.** `cracked_adj_refutes_bkg_crack_root_inheritance` now consumes `Semantics.Verb.Roots.Root.hasResult` directly on `BeaversKoontzGarboden2020.crack` (verified: `def crack : Root := ⟨"crack", [.becomesState "fissured", .hasCause]⟩` at BeaversKoontzGarboden2020.lean:52). Engages B&KG's substrate by name, not just docstring prose.
+- **§16 Waldon framing softened.** Old framing implied Waldon considered and rejected spatial normalization; corrected to "Waldon's domain doesn't have a host-extent denominator naturally." Theorem renamed `tham_spatial_normalization_distinguishes_what_waldon_does_not`.
+- **`solt-2018-proportional` bib `sources` field** corrected from `Solt2018.lean` to `Solt2018Proportional.lean` (5 entries fixed in batch).
+
+**Mathlib-quality fixes**:
+- `spatialNormalizedScore_le_one` proof: `div_le_one_of_le₀ hsum hpos.le` (the canonical `₀`-subscripted variant from `Mathlib.Algebra.Order.GroupWithZero.Unbundled.Basic` that takes `0 ≤` instead of `0 <`, sidestepping the OfNat-instance ambiguity between `Rat.instOfNat` and `Zero.toOfNat0` that blocked the obvious one-liner with `div_le_one`). The lesson: mathlib's `_of_le₀` family exists precisely for this elaboration trap.
+- `proportionalMeasure_mem_unit_interval` split into `_nonneg` + `_le_one` primitives + bundled corollary (mathlib idiom: one conclusion per lemma).
+- Both new primitives consume substrate `spatialNormalizedScore_nonneg` / `_le_one` rather than re-deriving.
+- `@[simp]` discipline applied: tagged `spatialNormalizedScore_unit`, `spatialNormalizedScore_zero`, `proportionalMeasure_self_eq_one`. Inequality lemmas left untagged.
+- `weightedScore_singleton` private helper added: `weightedScore [1] [μ] y = μ y`. Used to discharge substrate-side hypotheses in Solt's consumption.
+- Vacuous `ithaca_proportion : X = X := rfl` deleted; dead `ithacaProportion` def deleted; renamed `ithacaProportion_compute` to `ithaca_self_proportion_eq_one`.
+
+**Polish**:
+- `Scale` struct → `SoltScale` to avoid name-shadow with mathlib's `Scale`. Docstring TODO added: when a future consumer needs the multi-scale-per-dimension structure (inches vs cm), promote to `structure SoltScale (D : Type) [LinearOrder D]` carrying the `(D, <)` pair explicitly.
+- `proportionalMeasure_monotonic` docstring annotated as Solt 2018 SuB eq. (18), with explicit attribution to Schwarzschild 2006 part-whole monotonicity.
+- Aggregation.lean module docstring: added `solt-2018-proportional` to the consumer list.
+- Sassoon2013.lean: added "Cross-framework refutations" docstring section pointing at Tham2025 §12 (the closed-scale H3 counterexample distinct from `identical`/`unfamiliar`).
+- WaldonEtAl2023.lean: docstring note on substrate-level contrast with Tham 2025 (third aggregation mode).
+
+**Tier B substantive enhancements**:
+- New §16 `solt_tham_share_substrate_bounded_by_one` — explicit reciprocal bridge: Tham's `largeVase_score_le_one` and Solt's `proportionalMeasure_le_one` are the same mathlib-style theorem at different specializations.
+- New §17 `cracked_ie_max_vs_tham_lower_bound` — Kennedy 2007 Interpretive Economy `.maxEndpoint` standard vs Tham §3.2.1 lower-bound argument made Lean-checkable. Two endpoints of the closed scale, both load-bearing for different aspects of *cracked*'s meaning.
+
+**`Phenomena/Gradability/Studies/Solt2018Multidim.lean` (NEW, ~140 LOC)** — paper-anchored study file (NOT substrate; a deliberate-and-corrected round-3 placement decision: empirical content from Solt's experiment belongs in `Phenomena/X/Studies/AuthorYear.lean` per CLAUDE.md anchoring discipline, not in `Theories/`). Formalizes ONLY the experimental five-class typology (RelNum / AbsTot / AbsPart / RelNo / Eval) from Solt's Figure 1. Provides `SubjectivityClass` enum, `subjectivityRank` function, `representativeSample : List ClassifiedAdj` covering the high-information cases including the AbsPart middle class that Tham 2025 builds on, `crackedClass : SubjectivityClass := .absPart`, and the strict-ordering theorem.
+
+**Tham2025 §18 NEW**: `cracked_is_solt_AbsPart` consumes `Solt2018Multidim.crackedClass`, locating Tham's analysis within Solt's experimental typology by name (not by rfl-on-internal-fields).
+
+**Bib**:
+- `solt-2018` (Springer multidim chapter) `role` upgraded `cited` → `formalized`, `sources` field updated to point at both the new study file and Tham2025.lean.
+
+**Linglib.lean**: `Solt2018Multidim` imported between `Sassoon2013` and `Solt2018Proportional` in the Gradability/Studies/ block.
+
 ### Ginzburg2012.lean canonical rewrite (Phase B+ on top of Phase A substrate)
 
 Full rewrite of `Phenomena/Dialogue/Studies/Ginzburg2012.lean` consuming the Phase A substrate. From the original 651-LOC file (string-typed throughout, formaliser-invented `NSUDatum`/inert `tucMidRepair` content, 16 `native_decide`s, `CRReading` doublet, missing Ch. 2/§6.6–6.7/§8.2/cross-framework material) to a 695-LOC canonical exposition organized as 12 sections:
@@ -112,31 +152,25 @@ Round-2 four-agent audit on Tham2025.lean rewrite + the new `spatialNormalizedSc
 
 **Substrate-principle revisited**: Round-1 promoted `spatialNormalizedScore` on a single-consumer assumption; round-2 audit caught this as block-merge. Resolution = earn the substrate by adding the genuine second consumer (Solt 2018 SuB) rather than demote. The two consumers (Solt single-dim proportional + Tham multi-dim spatial-normalized) cover the substrate's general signature; future consumers (Solt 2018 multidim chapter on *clean*/*dirty*; potential Sassoon-Fadlon multiplicative contrast) can plug in without API changes.
 
-## [0.230.556] - 2026-04-29
+## [0.230.557] - 2026-04-29
 
-### Abusch substrate PR-D: Schlenker 2004 ↔ Abusch 1997 contrastive bridge
+### Abusch substrate v1.0 (consolidates 0.230.550-557; eight-PR development arc)
 
-Lands the cross-framework reconciler audit's flagged "agreement bridge READY, divergence theorem NEAR" (originally promised as PR-D after PR-C's Anand-Nevins entity-concept bridge). The PR-C parallel (Anand-Nevins entity-concepts ≡ Abusch time-concepts via `Intension.IsRigid` functoriality) extends to a *three-way* alignment with @cite{schlenker-2004-sot}'s tower-shift framework — all three formalize the Kaplan-stable-vs-shifted distinction at the substrate level via the same `Intension.IsRigid` predicate.
+Started as a random-file audit on `Theories/Semantics/Tense/DeRe/Defs.lean` (63 LOC); ended as a full centered-world de re substrate that aligns three frameworks (Schlenker 2004 SOT, Abusch 1997, Anand-Nevins 2004 indexical shift) at the type level via `Intension.IsRigid` + functoriality. Eight commits consolidated here as the Abusch substrate v1.0 banner; the development arc is preserved in git log.
 
-**Paper grounding** (verified against the Schlenker PDF, "Sequence Phenomena and Double Access Readings Generalized", SALT XIV / MIT Press *Syntax of Time* chapter):
-- §0 p. 5: Schlenker explicitly positions himself as "developing a somewhat generalized version of the theory of Abusch 1997, and especially of her Upper Limit Constraint." This is the textual basis for the cross-framework agreement theorem.
-- §1.3 def. 22: Schlenker's *actual* mechanism is morphological-agreement rules (the `<he, past, ind>` triple, semantically invisible features) — the existing `Schlenker2004.lean` tower-depth formalization captures the *idealized* access pattern only. PR-D's docstring caveat acknowledges this simplification.
-- §1.4+ DAR analysis: Schlenker's DAR derivation uses presupposition projection through attitude quantification, NOT the simplified `.origin` reading captured here. Out of scope for the current substrate bridge.
+#### Architecture
 
-**`Phenomena/TenseAspect/Studies/Schlenker2004.lean` — substrate bridge added** (~120 LOC):
-- `schlenkerPresent : TimeConcept Unit Unit Unit ℤ := Core.Intension.rigid 0` — Kaplan-stable origin reading as a rigid TimeConcept.
-- `schlenkerShifted : TimeConcept Unit Unit Unit ℤ := fun c => c.time` — local-shift reading as the non-rigid time-projection function. Substrate-level analog of @cite{anand-nevins-2004}'s `shiftedI = (·.agent)`, transposed from `Res = Agent` to `Res = ℤ`.
-- 2 bridge theorems (`presentAccess_eq_schlenkerPresent`, `shiftedAccess_eq_schlenkerShifted`) — Schlenker's tower-depth mechanism agrees with the substrate's Intension formulation by `rfl` at the value level.
-- 2 substrate rigidity theorems (`schlenkerPresent_isRigid`, `schlenkerShifted_not_isRigid`).
+The substrate has three layers:
 
-**Cross-framework agreement theorem** (Schlenker ↔ Abusch on simultaneous SOT):
-- `schlenker_abusch_agree_on_simultaneous_value`: Schlenker's `shiftedAccess.resolve sotTower` equals Abusch's `abusch_derives_simultaneous_via_binding`-derived value when applied with `matrixSaid` as the matrix frame. Both predict `matrixSaid.eventTime = -2`; Schlenker via context-shift, Abusch via variable-binding. Different mechanisms, same value. The agreement makes precise Schlenker's §0 claim that his framework is a "generalization" of Abusch's — agreement on basic SOT cases is by design.
+1. **`Core/IntensionalLogic/Rigidity.lean`** — polymorphic `Intension W τ`, `IsRigid`, `IsRigidOn`, with six functoriality closure lemmas (`IsRigid.map` for post-composition, `IsRigid.precomp` for pre-composition, `IsRigidOn.map` set-relativized, `IsRigid.of_map_injective` reflection, `IsRigid_iff_eq_const` mathlib characterization, `rigid_eq_const` definitional bridge to `Function.const`).
 
-**Architectural alignment theorem** (Schlenker ↔ Abusch ↔ Anand-Nevins):
-- `schlenker_substrate_aligned_with_isRigid` bundles the rigidity facts; the SAME `Intension.IsRigid` predicate proves Schlenker's Kaplan-stable-vs-shifted distinction at `Res = ℤ`, parallel to AnandNevins's `kaplanI_isRigid`/`shiftedI_not_isRigid` at `Res = Agent`.
-- `schlenkerPresent_lifts_rigidly`: PR-C's `Intension.IsRigid.map` applied to Schlenker — rigidity transfers across `Res` types via any function. The same architectural pattern that PR-C established for Anand-Nevins now demonstrably applies to Schlenker.
+2. **`Theories/Semantics/Reference/Acquaintance.lean`** — polymorphic `Cover Idx Res := Set (Intension Idx Res)`, `Cover.isExhaustiveOn` (via `Set.SurjOn`), `isAcquaintedWith` (via `Set.image`), `nameCover` + theorems. Built entirely on `Core.Intension` (no parallel `Concept` type). Anchored on @cite{lewis-1979-attitudes} + @cite{cresswell-vonstechow-1982} + @cite{aloni-2001} + @cite{abusch-1997}.
 
-**The cross-framework table** (now substrate-checkable):
+3. **`Theories/Semantics/Tense/DeRe.lean`** — `TimeConcept` and `EntityConcept` as `Intension (KContext W E P T) {T,E}`. `TemporalDeReReading` structure (concept + holderContext, with `actualRes` derived and `baseCoherent` true by construction). `IsRigidAcrossAlternatives` parameterized on `Set (WorldTimeIndex W T)` (modal-base-agnostic; doxastic + metaphysical are explicit instantiation choices via `doxasticAlternatives` + `metaphysicalAlternatives` constructors). `isAbuschFelicitous` combining value-level constraint with modal-rigidity. Value-level shadow lemma to `TensePronoun.fullPresupposition`. Per @cite{abusch-1997} §7 ULC (p. 24-25), `holderContext.time` is the holder's now, NOT outer speech time.
+
+Plus PLA migration (`Concept E` becomes typed alias of `Intension`; `Cover.isExhaustive` and `isAcquaintedWith` become thin delegates of polymorphic versions; the local `nameCover` triple deleted as redundant); `KContext.shiftWorldTime` extracted to `Core/Context/Basic.lean`; `AccessPattern.toIntension` bridge in `Core/Context/Tower.lean` connecting tower-side `AccessPattern` to substrate-side `Intension`; `SitProp` triple-duplication consolidated via `export Core.Time.Tense (SitProp)`.
+
+#### Three-framework alignment table (substrate-checkable)
 
 | Framework                  | Kaplan-stable      | Shifted            |
 |----------------------------|--------------------|--------------------|
@@ -144,441 +178,57 @@ Lands the cross-framework reconciler audit's flagged "agreement bridge READY, di
 | @cite{abusch-1997}         | rigid `TimeConcept`| bound `TimeConcept`|
 | @cite{anand-nevins-2004}   | `kaplanI` (Agent)  | `shiftedI` (Agent) |
 
-All three rows discriminate via `Intension.IsRigid`. By `IsRigid.map`, the discrimination transfers across `Res` types via any function. Three frameworks, three syntactic mechanisms (tower-shift, res-movement, operator-overwrite), one substrate-level architectural distinction.
+All three rows discriminate via `Intension.IsRigid`. By `IsRigid.map`, the discrimination transfers across `Res` types via any function — three syntactic mechanisms (tower-shift, res-movement, operator-overwrite) collapse to one substrate-level Kaplan-stable-vs-shifted distinction. Cross-framework value-coincidence theorem proves Schlenker `shiftedAccess.resolve sotTower = matrixSaid.eventTime` matches Abusch `abusch_derives_simultaneous_via_binding`-derived value (different mechanisms, same value, per @cite{schlenker-2004-sot} §0 p. 5 design intent — "a somewhat generalized version of the theory of Abusch 1997"). PR-C functoriality `kaplanI_lifts_rigidly_to_timeConcept` and `schlenkerPresent_lifts_rigidly` make the parallel a one-line corollary of `IsRigid.map`. PLA-side individual de re unifies via `pla_isAcquaintedWith_unifies_with_polymorphic` (`Iff.rfl` — the wrapper IS the polymorphic version).
 
-**Build verification**: 915 jobs green; no `sorry`, no `native_decide`. The existing `schlenker_origin_supports_abusch_double_access` Phase F bridge is left intact (it makes a different, complementary value-level claim about `doubleAccess` — substrate-level rigidity is a structural orthogonal claim).
+Klecha 2016 substrate-bridge theorem `klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives` (in `Studies/Klecha2016.lean`) makes the connection between Klecha's DOX and the substrate's metaphysicalAlternatives constructor kernel-checked (`rfl`).
 
-**What's still deferred** (substrate is now in shape; remaining items are extensions, not corrections):
-- A *real* divergence theorem distinguishing Schlenker's morphological-agreement DAR analysis from Abusch's res-movement DAR. Requires committing to a specific empirical case where the two predict different judgments — multiple-embedding shift-together (Anand-Nevins (3)), modal cases (Schlenker §1 modal might/ought), or Schlenker §1.4+ presupposition-projection cases. Each requires substantial Lean work to formalize the distinguishing case.
-- Heim 1994 study file (~80 LOC; substrate is ready).
+#### Bib
+
+Two new bib entries added with PDF-verified DOIs:
+- `lewis-1979-attitudes` (Phil Review 88(4):513-543, DOI `10.2307/2184843`) — repointed 9 cite sites that were previously mis-anchored to the existing `lewis-1979` (Scorekeeping in a Language Game, Journal of Philosophical Logic).
+- `cresswell-vonstechow-1982` (L&P 5(4):503-535, DOI `10.1007/BF00355585`).
+
+#### Final-pass cleanup (this commit)
+
+A four-agent post-audit (mathlib-reviewer, integration-auditor, cross-framework-reconciler, linguistics-domain-expert reading the actual PDFs of Abusch, Schlenker, Anand-Nevins, Lewis) surfaced six verified inaccuracies and a class of code-quality + integration debt. Discharged as follows:
+
+**Citation accuracy fixes (PDF-verified against the four papers):**
+- Cite typo `@cite{abusch-1997-attitudes}` (no such bib key) → `@cite{lewis-1979-attitudes}`.
+- "Schlenker §1.4+ DAR analysis" was wrong — §1.4 is "An alternative without person and mood agreement..." (Quine/Kaplan De Re); DAR is in §2.2 ("Extending Abusch's Account: the Generalized Upper Limit Constraint", p. 22+). Reframed.
+- "Abusch §3, def. 13" was claimed as the time-concept definition. Per PDF p. 8, (13) is the centered-proposition assembly using R₁ (acquaintance to *individuals*, type eeiwt). Abusch §3 develops the framework for individuals; the temporal application is in §12. Docstring reframed: time-concept is the substrate's specialization of Abusch's centered-proposition framework following §12, not directly defined at (13).
+- ULC `(p. 24)` → `(p. 24-25)` — formulation begins p. 24, formal "ULC" coining is p. 25.
+- "Modal rigidity (Abusch §3 p. 9)" reframed as substrate's lift of the §3 p. 9 base-world condition (Abusch herself does not state "modal rigidity" in those terms).
+- `references.bib` `abusch-1997.sources` field listed deleted `Theories/Semantics/Tense/DeRe/Defs.lean`; updated to current files. `anand-nevins-2004` + `lewis-1979-attitudes` + `cresswell-vonstechow-1982` `sources` fields updated to include all post-substrate consumers.
+
+**Mathlib code-quality fixes:**
+- Three theorems (`abusch_derives_temporal_de_re_via_acquaintance`, `_full`, `_full_metaphysical`) refactored from `let dr := ⟨...⟩` pattern (mathlib-reviewer block-fix from earlier audit) to take `dr : TemporalDeReReading` as hypothesis. `_via_acquaintance` proof shrinks to `:= hBefore` (definitional).
+- `pr_b_*` theorem names renamed to drop commit-history prefix; PR-A/B/C/D references stripped from all docstrings (mathlib doesn't bake commit history into docs — that's CHANGELOG's job).
+- 218 LOC `StressTests` namespace deleted from `Studies/Abusch1997.lean` — was development-time scaffolding for the bug→fix flip; now that the substrate is correct, the regression witnesses are paper-genealogy artifacts that don't anchor to Abusch (per CLAUDE.md "anchored to a specific paper" discipline).
+- PLA `Belief.lean` `nameCover` + `nameCover_exhaustive` + `nameCover_rigid` (3 redundant defs) deleted; `nameCover` now `abbrev` of polymorphic `Acquaintance.nameCover`. `believeExists_nameCover_deRe` proof updated to use polymorphic shape.
+- PLA `isAcquaintedWith` unused `_agent` parameter deleted (3-arg → 2-arg). `believeDeReWithAcquaintance` and `pla_isAcquaintedWith_unifies_with_polymorphic` updated.
+- `SitProp` triple duplication: `Theories/Semantics/Attitudes/SituationDependent.lean:56` was re-defining `Core.Time.Tense.SitProp`. Replaced with `export Core.Time.Tense (SitProp)`. Lying docstring fragment in `Core/Time/Tense.lean` (claiming SituationDependent had a "Bool-valued counterpart") corrected.
+- `@[ext]` added to `TemporalDeReReading` (now multi-consumer).
+- Demoted 4-conjunction `entityConcept_and_timeConcept_share_isRigid_substrate` from `theorem` to `example` (subsumed by structural `kaplanI_lifts_rigidly_to_timeConcept`).
+
+**Substantive framing fixes (linguistics-domain-expert):**
+- `kaplanI` docstring reframed to acknowledge the substrate's `Intension.rigid .narrator` is the *content-level* shadow of Kaplan-stable (Kaplan's `I` is technically a *character* `c.author`; substrate captures content rigidity). Matches Anand-Nevins's English `[[I]] = AUTH(c*)` sticky-to-actual-context framing.
+- `schlenker_abusch_agree_on_simultaneous_value` docstring acknowledges this is a **value-coincidence**, not a mechanism agreement — both sides equal `matrixSaid.eventTime` by construction; deeper bridge comparing the *paths* through each mechanism would be substantively different.
+
+**Integration deepening:**
+- `Klecha2016.lean::klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives` bridge theorem (`rfl`) makes the connection between Klecha's DOX and the substrate's `metaphysicalAlternatives` constructor kernel-checked.
+- `AccessPattern.toIntension : AccessPattern C R → Intension (ContextTower C) R` bridge in `Core/Context/Tower.lean` — access patterns are now substrate-typed, the substrate's `Intension`-machinery applies to tower-side access patterns. Plus `@[simp] toIntension_apply` lemma.
+
+**Build verification**: 1832 jobs green; no `sorry`, no `native_decide`. Bibliography check: 7802/8114 valid (the 312 unknowns are pre-existing).
+
+**What's deferred** (each a focused follow-up):
+- LF res-movement as a `Tree C W` rewrite operator (output-only this cycle by design).
+- Real divergence theorem distinguishing Schlenker's morphological-agreement DAR from Abusch's res-movement DAR (requires committing to a specific empirical case where they predict differently — multiple-embedding shift-together, modal cases, or DAR presupposition-projection).
+- Heim 1994 ("Comments on Abusch") study file (~80 LOC; substrate is ready).
 - Stephenson 2007 PPT seed in `Phenomena/PredicatesOfPersonalTaste/` (greenfield; substrate's `KContext.agent` slot is the missing infrastructure).
-- LF res-movement Tree rewrite (deferred design choice — output-only this cycle).
-- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
-
-### Slavic Case substrate factor + Blake↔Caha convergence theorem
-
-Multi-agent audit of `Fragments/Slavic/Ukrainian/Case.lean` (linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert + mathlib-reviewer) surfaced four convergent issues across the six modern case-bearing Slavic Fragments: (i) byte-identical `Finset Core.Case` literals duplicated across Czech/Polish/Russian/Serbian/Slovenian/Ukrainian; (ii) docstring/code mismatches (Polish/Czech/Serbian/Ukrainian claimed "7 cases" but encoded 6); (iii) silent VOC-exclusion choice with no per-language defense; (iv) two `decide` runs on same inventory in `Phenomena/Case/Studies/Caha2009.lean` (one for Blake's `IsValidInventory`, one for Caha's `RespectsCahaContainment`) presented as coincidence rather than theorem.
-
-Verified per-language inventories against authoritative chapters in @cite{comrie-corbett-1993} *The Slavonic Languages* (Routledge, ed. Comrie & Corbett, ISBN 0-415-04755-2), reading each of @cite{shevelov-1993} (Ukrainian, p. 952), @cite{rothstein-1993} (Polish, p. 696), @cite{short-1993-czech} (Czech, p. 466), @cite{browne-1993} (Serbo-Croat, p. 319), @cite{timberlake-1993} (Russian, p. 836), and @cite{priestly-1993} (Slovene, p. 399) directly from the PDF before touching code. Russian's existing docstring is the most accurate of the six — kept; the other five reframed using the chapter authors' own words.
-
-**Adds.**
-- `Linglib/Fragments/Slavic/Case.lean` (sibling of existing `Slavic/Params.lean`) — `slavicCoreInventory : Finset Core.Case` (NOM/ACC/GEN/DAT/LOC/INST), `slavicSevenCaseInventory` (+VOC for Ukrainian/Polish/Czech/Serbo-Croat), with named lemmas `slavicCoreInventory_isValid` / `slavicCoreInventory_respectsCaha` / `slavicSevenCaseInventory_not_isValid`. Documents the cross-Slavic prepositional restriction on LOC/INST that @cite{priestly-1993} attributes to "other Slavonic languages" (substrate gap flagged for future work).
-- `Phenomena/Case/Studies/Caha2009.lean` § 1.6: `slavic_core_blake_caha_converge` and `slavic_seven_case_blake_caha_disagree` theorems making explicit that the convergence holds on the 6-case core but the general biconditional `IsValidInventory ↔ RespectsCahaContainment` fails (VOC is rank-0 for Blake but off-hierarchy for Caha — the +VOC inventory fails Blake while satisfying Caha vacuously).
-- 7 `references.bib` entries: `comrie-corbett-1993` (handbook), plus `browne-1993`, `priestly-1993`, `short-1993-czech`, `rothstein-1993`, `timberlake-1993`, `shevelov-1993` (chapters with verified page ranges).
-
-**Changes.**
-- 6 per-language Slavic Case Fragments (Czech, Polish, Russian, Serbian, Slovenian, Ukrainian) refactored: each `caseInventory` is now a 1-line alias of `Slavic.Case.slavicCoreInventory`; the four 7-case languages additionally expose `fullInventory` (mirrors `Fragments/Latin/Case.lean`'s `caseInventory`/`coreInventory` split); each docstring quotes the relevant Comrie & Corbett chapter author and cites the verified page number.
-- `Phenomena/Case/Studies/Caha2009.lean` Slavic block (§ 1.5): six per-language theorems collapse from `by decide` to one-line term-mode proofs sharing the substrate result `slavicCoreInventory_respectsCaha`. The cross-Slavic agreement is now structural (one substrate decide-run discharges all six theorems via definitional unfolding), not coincidental.
-- `Caha2009.lean` module docstring expanded with a "Caha's actual case sequence vs. substrate encoding" section noting that `Core.Case.Order.containmentRank` is Blake-shaped (LOC top, INST off-hierarchy) rather than Caha-shaped (Caha's universal sequence is NOM-ACC-GEN-DAT-INST-COM with no LOC; Russian-specific is NOM-ACC-GEN-PREP-DAT-INST per @cite{caha-2009} §1.1, p. 14, with PREP/LOC inserted between GEN and DAT). Both encodings yield the same verdict on the Slavic 6-case inventory; reconciling the substrate's naming is a separate task.
-
-**Net.** New file +95 LOC (substrate); 6 per-language files refactored from ~22 LOC each to ~30 LOC each (more docstring, less data); Caha2009.lean +60 LOC (convergence + disagreement theorems + Slavic structural block); 7 bib entries added. 961 case-related jobs green; the one Slavic theorem in `Pesetsky2013.lean` (Russian core) builds unchanged.
-
-### ODonnell2015.lean mathlib-discipline cleanup post-audit
-
-`mathlib-reviewer` agent audit of `Phenomena/Morphology/Studies/ODonnell2015.lean`. No blockers — file built and substrate API was correctly used — but seven nits surfaced. All landed.
-
-**Drops.**
-- Removed the raw-`mapWeight` form `dmpcfg_wrongly_predicts_ion_productive`. The PMF version (`mapWeightPMF` comparison) is structurally equivalent, and the audit's "obvious next move" recommendation is to keep only the PMF version unless a downstream consumer needs the raw — there are none.
-
-**Adds.**
-- Two private named subtype witnesses: `nNess`, `nIon : DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N`. Replaces 5 sites of `⟨rNess, by decide⟩` / `⟨rIon, by decide⟩` boilerplate at theorem call sites and removes the `(a := SuffixNT.N)` annotation noise (the witness type carries the LHS).
-- Parametric private lemma `pseudoVal_suffixToRule (s : Suffix) : pseudoVal (suffixToRule s) = ((s.productivityIndex : ℕ) : ℝ) + 1`, proved by `cases s <;> rfl`. Used by the structural drift sentry.
-- Three `@[simp]` value-form private lemmas (`pseudoVal_rNess` = 3, `pseudoVal_rIon` = 2, `pseudoVal_rAte` = 1), each derived in 2 lines from the parametric lemma. Used by the count-gap and prior PMF theorems.
-
-**Renames** (drop evaluative adverbs — mathlib idiom is facts only, editorial in docstrings).
-- `dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules` → `dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap`
-- `dmpcfg_prior_correctly_orders_n_rules` → `dmpcfgFromObserved_mapWeightPMF_prior_lt`
-- `dmpcfg_prior_correct_data_wrong` → `dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree`
-
-**Hygiene.**
-- Module docstring's `TODO(theorem)` bullet list moved to a `/- TODO -/` block at the bottom of the file (mathlib idiom). Discharged `✅` checkmark dropped.
-- `suffixToRule` rename rationale trimmed from 3 sentences to 1 line.
-- File reordered: defs grouped at top → `Bridge from data layer + DMPCFG instance` section → `Plumbing` section (witnesses + lemmas) → `Theorems` section. `/-! ## -/` section headers throughout.
-
-**Net effect.** 405 LOC → 327 LOC (−78). Theorem count: 6 → 5 (one raw-mapWeight version dropped; remaining 5 = 1 API exemplar + 1 drift sentry + 2 PMF flip/prior + 1 bundle). The PMF version of every consumer-facing falsification is now the canonical form.
-
-### Tham2025.lean total overhaul: schema additions + cross-paper engagement + spatial-extent normalization substrate
-
-Four-agent audit (linguistics-domain-expert + mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler) of `Phenomena/Gradability/Studies/Tham2025.lean` revealed:
-1. §9 framed Tham 2025 as making a D'Ambrosio-Hedden 2024 counting/utilitarian argument — verified against the PDF (pp. 23–26): Tham never cites D&H, never invokes Arrow, never uses the dichotomy. Linglib editorial overlay deleted.
-2. Schema missing the §3.2 objective/subjective wedge (the central evidence for the lower-bound = physical instantiation claim) and the §5.1 non-entailment of preceding change (cracked pumpkin, dented helmet model, scratched decal cases).
-3. `sassoon_binding_insufficient` was structurally trivial — proved `rfl` facts about toy Bool predicates without engaging Sassoon's `MultidimAdj` apparatus.
-4. Cross-framework: HayKennedyLevin1999 silently bypassed despite being the original closed-scale → telic prediction; Kennedy2007 licensing convergence buried in docstring prose; `Sassoon2013` import unused at file level despite docstring citation.
-5. §13 (new): Tham eq. 47b is a spatially-normalized weighted measure — the substrate's `weightedScore` captured only the numerator.
-
-**Substrate addition**: `spatialNormalizedScore` and `spatialNormalizedBinding` in `Theories/Semantics/Degree/Aggregation.lean` (Tham eq. 47b: `(Σᵢ wᵢ·fᵢ(x)) / s(x)` with host-extent denominator). Two unit lemmas (`spatialNormalizedScore_unit` reduces to plain weighted score when `spatial ≡ 1`; `spatialNormalizedScore_zero` documents the zero-extent edge convention). Re-exported from `Theories/Semantics/Gradability/Aggregation.lean`. Module docstring corrected: `weighted` aggregation no longer claims to subsume Tham eq. 47b (only Waldon eq. 8); spatial-normalized aggregation is the third mode, with Tham as the anchor.
-
-**Tham2025.lean rewrite (522 → 750 LOC, +228)**:
-- Schema: `simplePredicationObjective`, `degreeModifiedSubjective` (§3.2 wedge), `adjEntailsPrecedingChange` (§5.1)
-- Renamed `crack_/dent_/scratch_` → `crack/dent/scratch` (no keyword collision, trailing-underscore was vestigial)
-- §6 "Bridge Theorems" header → §8 "Substrate readouts" (no banned "bridge" vocabulary)
-- §9 reframed: K-L pipeline divergence is internal to linglib (Fragment vs pipeline default), not Tham's claim about K-L
-- §10 NEW: HKL strict matrix refutation — `crack_refutes_strict_hkl_matrix` makes the closed-scale-but-also-atelic gap Lean-checkable against `straighten_closed_accomplishment` in HayKennedyLevin1999.lean
-- §11 NEW: K2007 licensing convergence promoted from docstring to theorem — `cracked_licensing_converges_with_kennedy2007` shows *cracked* and *full* land at the same licensing verdict at `Boundedness` granularity
-- §12 REWRITE: `no_sassoon_binding_captures_cracked` engages `DimensionBindingType` directly with named bare-truth function and explicit Tham simple/completely targets; mixed-binding escape hatch addressed (Sassoon's mixed is context-modulated; Tham's data are modifier-modulated)
-- §13 NEW: Tham eq. 47b spatially-normalized measure with worked vase example — `weighted_score_blind_to_spatial_extent` (numerator alone can't tell small from large vase) vs `spatial_normalization_separates_small_from_large` (Tham's actual measure does)
-- "By analogy" stipulations for *dent*/*scratch* relabeled as "extends crack" with attestation policy documented in module docstring
-- Per-predicate field comments aligned with PDF examples; `verbInXEntailsResult` cite corrected from "(14)" to "(17a)" (the formal entailment example, not just the prose intro)
-
-**Bib**: `karmo-1977` added (Toomas Karmo, "Disturbances," *Analysis* 37(4): 147–148, doi 10.1093/analys/37.4.147 — verified via OUP). Tham anchors her "host irregularity" terminology to Karmo on p.1, p.3.
-
-**Cleared as false alarms**: aggregate `.all` theorems are substantive cross-predicate generalizations (drift sentries that break loudly on data drift), not the MEMORY anti-pattern; they earn their keep. The `native_decide` mathlib-reviewer suggestion was vindicated for the substrate's existing call sites but avoided in this file's §13 by using `weighted_score_vase` + `spatial_score_vase` helpers + `norm_num`.
-
-### O'Donnell 2015 Tier 1: prior + flip narrative + `mapWeightPMF_lt_iff` substrate consolidation
-
-Continued the deepening of the O'Donnell 2015 study to use the new `DMPCFG.mapWeight` machinery end-to-end. Two complementary moves: a substrate iff lemma that collapses the bridging chain in PMF-form theorems, and a study-side theorem trio that tells the full Ch 7 critique narrative.
-
-**Substrate addition (`Theories/Morphology/FragmentGrammars/DMPCFG.lean`).**
-- `mapWeightPMF_lt_iff (r₁ r₂ : RulesWithLHS a) (D) : mapWeightPMF D r₁ < mapWeightPMF D r₂ ↔ pseudo r₁.1 + count r₁.1 D < pseudo r₂.1 + count r₂.1 D` — bundles `mapWeightPMF_apply` ×2 + `ENNReal.ofReal_lt_ofReal_iff` + `mapWeight_lt_mapWeight_iff_of_same_lhs` into one rewrite. The shared-LHS and `r₂.1 ∈ G.rules` premises both come for free from the subtype proofs `r₁.2`, `r₂.2`. Consumers can now go from PMF mass comparison to numerator arithmetic in a single `rw`.
-
-**Study additions (`Phenomena/Morphology/Studies/ODonnell2015.lean`).** Three theorems landing the prior + flip narrative.
-- **`dmpcfg_prior_correctly_orders_n_rules`** — *first half* of the Ch 7 critique. With empty corpus, DMPCFG's PMF over the N-rules ranks `rNess > rIon` correctly because the prior IS the per-LHS-normalised pseudo-counts. Proof uses `mapWeight_zero` to reduce the empty-corpus posterior to the prior, then `mapWeightPMF_lt_iff` to compare numerators (3 vs 2).
-- **`dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules`** (refactored) — *second half*. With sufficient corpus counts (`count rIon > count rNess + 1`), DMPCFG's PMF flips and ranks `rIon > rNess`. Proof now uses `mapWeightPMF_lt_iff` instead of the manual `mapWeightPMF_apply` + `ENNReal.ofReal_lt_ofReal_iff` chain — drops from ~12 lines to ~8 lines.
-- **`dmpcfg_prior_correct_data_wrong`** — bundles both halves into one theorem stating the full Ch 7 critique: DMPCFG starts with the right prior, but data overwhelms it. The book's actual argument made Lean-checkable end-to-end.
-
-**Why this matters.** This is the first place in the file where `mapWeight_zero` does substantive work (reducing posterior on empty corpus to prior), and the first place where the prior + flip dichotomy is theorem-checked rather than docstring-asserted. The Ch 7 critique of DMPCFG ("the data overwhelms the prior") is now a proof obligation, not a narrative claim. The `mapWeightPMF_lt_iff` substrate addition means future `dmpcfg_X_orders_Y` theorems on different empirical contrasts (Ch 7.3.3.4 paradoxical -ity/-ness suffix combinations, Ch 4-5 past-tense regulars vs irregulars, etc.) can land as 4-line proofs.
-
-## [0.230.555] - 2026-04-29
-
-### Abusch substrate PR-C: Anand-Nevins entity-concept bridge + `Intension` functoriality lifted
-
-Lands the cross-framework reconciler audit's flagged "highest-leverage" payoff: Anand & Nevins (2004) "Shifty Operators in Changing Contexts" — same `KContext` substrate, READY for an entity-concept bridge — instantiating the substrate's central architectural claim that individual de re (`EntityConcept`) and temporal de re (`TimeConcept`) are *the same machinery* at different `Res` types. PR-C makes this kernel-checked via `Intension` functoriality lemmas lifted to `Core/IntensionalLogic/Rigidity.lean`.
-
-**`Core/IntensionalLogic/Rigidity.lean` — six new functoriality lemmas** (the deep structural content):
-- `IsRigid.map (g : τ₁ → τ₂) : IsRigid f → IsRigid (g ∘ f)` — **post-composition closure** (`Intension W` is covariantly functorial in its target type; rigidity preserved by the functor action).
-- `IsRigid.precomp (g : W₂ → W₁) : IsRigid f → IsRigid (f ∘ g)` — **pre-composition closure** (`Intension W` is contravariantly functorial in its index type).
-- `IsRigidOn.map` — set-relativized version of `IsRigid.map`.
-- `IsRigid.of_map_injective (Function.Injective g) : IsRigid (g ∘ f) → IsRigid f` — **reflection** of rigidity along injective post-composition.
-- `IsRigid_iff_eq_const [Nonempty W] (f) : IsRigid f ↔ ∃ x, f = Function.const W x` — **mathlib-style characterization** bridging substrate `IsRigid` to mathlib's `Function.const` API.
-- `rigid_eq_const : Intension.rigid x = Function.const W x := rfl` — definitional bridge.
-
-**`Theories/Semantics/Tense/DeRe.lean::IsRigidAcrossAlternatives_of_concept_isRigid`** refactored as a one-liner derivation from `IsRigid.precomp + IsRigid.isRigidOn`. The substrate's design now visible as a chain of general lemmas (rigid concept → precomp preserves rigidity → restrict to alternative set), not a direct ad-hoc proof.
-
-**`Phenomena/Reference/Studies/AnandNevins2004.lean` — entity-concept bridge** (the audit's flagged payoff):
-- `kaplanI : EntityConcept Unit Agent Unit ℤ := Core.Intension.rigid .narrator` — Kaplan-compliant "I" as a rigid entity-concept.
-- `shiftedI : EntityConcept Unit Agent Unit ℤ := fun c => c.agent` — Anand-Nevins (2004 §1, eq. 2a, Zazaki under `OP_V`) shifted "I" as the agent-projection function (non-rigid).
-- `kaplanI_isRigid` — entity-side analog of Abusch's "rigid time-concept = de re reading."
-- `shiftedI_not_isRigid` — entity-side analog of Abusch's "descriptive time-concept = de dicto reading", with discriminating witness from contexts with different agents.
-- Two **bridges to FIDProfile** (`shiftedI_at_shiftLanguageTower`, `kaplanI_at_englishAttitudeTower`): the existing depth-based formalization and the new `EntityConcept` formalization agree by `rfl`. The substrate exposes Anand-Nevins's shift typology as concept rigidity; the FIDProfile mechanism exposes it as depth access. Both formalize the same phenomenon.
-- `entityConcept_and_timeConcept_share_isRigid_substrate` — concrete witnesses for the parallel: 4-conjunction (rigid/non-rigid × Agent/ℤ).
-- **`kaplanI_lifts_rigidly_to_timeConcept` — the deep structural payoff** (one-line corollary of `IsRigid.map`): rigidity transfers across `Res` types via post-composition with ANY function. The parallel between individual de re and temporal de re is **the covariant action of `Intension RefCtx` on its target type**, not a list of two facts.
-- `entityConcept_rigid_iff_image_rigid_under_injective` — bidirectional structural equivalence under injective lifting (forward via `IsRigid.map`, reverse via `IsRigid.of_map_injective`). Establishes that rigidity-classifying entity-concepts and their `f`-image rigid time-concepts are *the same problem* up to choice of injective `f`.
-
-**Why this matters**: the polymorphism in `Intension W τ` is now genuinely non-trivial — provably so. @cite{abusch-1997}'s prose claim at p. 6 ("To apply the same machinery to de re belief, a further constraint is required... the same parallel as for tenses") becomes functorially true: the centered-world reduction of @cite{lewis-1979-attitudes} + @cite{cresswell-vonstechow-1982} is formalized once and applies uniformly across all `Res` types via the same six closure lemmas. The Anand-Nevins shifty-vs-Kaplan-compliant typology and the Abusch wide-scope-vs-de-dicto typology are *the same typology* under the substrate's view, distinguished only by which `Res` type the analyst is interested in.
-
-**Build verification**: 916 jobs green (Rigidity.lean 91 jobs; AnandNevins2004 885; full cone 916). No `sorry`, no `native_decide`. Bib check: 7772/8099 valid (up from 7765 pre-PR-C — new cite usages resolve cleanly).
-
-## [0.230.554] - 2026-04-29
-
-### Abusch substrate PR-B: Bug 1 + Bug 3 fixed; substrate now modal-base-agnostic and holder-now-honest
-
-The substantive correctness fix the audit's Bug 1 + Bug 3 had identified. Stress tests from 0.230.553 served as the regression specification: the two `bug*` theorems (which previously *passed* as false-positive witnesses) flip to negative-witnessed `pr_b_*` fix theorems.
-
-**Bug 3 fix (speech vs holder now)**. The `TemporalDeReReading` structure's context field renamed `matrixContext` → `holderContext`. Per @cite{abusch-1997} §7 ULC (p. 24, "the now of an epistemic alternative is an upper limit for the denotation of tenses"), the relevant evaluation time for embedded tenses is the **attitude holder's now**, not the outer speaker's speech time. The substrate's felicity check `constraint.constrains dr.actualRes dr.holderContext.time` is now correct by construction — the field semantically represents what was previously being labelled "speech time" in test code (a documentation/wiring conflation). For unembedded uses, the speaker is treated as her own attitude holder.
-
-**Bug 1 fix (modal base — metaphysical vs doxastic)**. `IsRigidAcrossAlternatives` parameter type lifted from `WorldHistory W T` → `Set (WorldTimeIndex W T)`. The substrate is now **modal-base-agnostic**; doxastic + metaphysical become explicit instantiation choices via two new convenience constructors:
-- `metaphysicalAlternatives history dr := actualHistoryBase history dr.holderContext.toSituation` — recovers the legacy `WorldHistory`-based behavior (Klecha 2016 DOX) as a special case.
-- `doxasticAlternatives dox dr := { s' | dox dr.holderContext.agent dr.holderContext.world s' }` — Hintikka belief alternatives, parameterized on a generic `dox : E → W → WorldTimeIndex W T → Prop`.
-
-`isAbuschFelicitous` signature updated to take `alternatives : Set (WorldTimeIndex W T)` directly. `IsRigidAcrossAlternatives_of_concept_isRigid` (rigid concept ⇒ rigid on any set) and `isFelicitousWith_of_isAbuschFelicitous` (full felicity ⇒ value-level shadow) updated for the new signature.
-
-**`Studies/Abusch1997.lean` updates**:
-- `abusch_derives_temporal_de_re_via_acquaintance` parameter renamed `matrixContext` → `holderContext`. Body unchanged (the formula was already correct under the new semantics).
-- `abusch_derives_temporal_de_re_full` signature changed: takes `alternatives : Set (WorldTimeIndex W Time)` directly; the modal-base choice is the consumer's, not baked in.
-- **NEW** `abusch_derives_temporal_de_re_full_metaphysical` — corollary at the metaphysical instantiation, demonstrating backward-compat with Klecha 2016 DOX-shaped reasoning.
-
-**Stress test updates**:
-- Class 1 positive: `(rigidReading 50 90).isAbuschFelicitous trivialAlts .past` — past constraint discharged 50 < 90 (against holder's now, not speech). The Abusch ex (1) test now correctly checks the constraint relative to the jurors' believing time tb=90, not the speech time S=100 (which the previous version was confusedly using).
-- **NEW** Class 1 metaphysical-instantiation demo using `(rigidReading 50 90).metaphysicalAlternatives trivialHistory`.
-- Class 2 negative: same shape, updated values.
-- Class 3 structural: shiftWorldTime / IsRigidOn tests still hold; non-vacuity baseline updated to `holderCtx 90`.
-- Class 4: **bug-exposing theorems flipped to PR-B-fix witnesses**:
-  - `bug3_substrate_accepts_holder_future` (positive theorem witnessing the false-positive) → `pr_b_substrate_rejects_actualRes_after_holderNow` (negative theorem: `¬ (rigidReading 75 50).isFelicitousWith .past`, since 75 ≥ holder's now = 50).
-  - `bug1_substrate_history_shape_changes_verdict` (witnessing agent-blindness via `WorldHistory`-shape sensitivity) → `pr_b_substrate_correctly_distinguishes_alternative_sets` (substrate now varies verdict by `Set (WorldTimeIndex W T)` parameter — no longer agent-blind, just consumer-driven).
-- **NEW** Class 4 doxastic-instantiation demo using `(rigidReading 50 90).doxasticAlternatives dox` with a max-permissive `dox`.
-
-**Helper renames**:
-- `matrixCtx` → `holderCtx` (parameter `S` for "speech" → `now` for "holder's now").
-- `trivialHistory` (kept for the `metaphysicalAlternatives` demo) + `trivialAlts : Set (WorldTimeIndex W ℤ)` (new, for direct-Set tests) + `restrictiveAlts : Set (WorldTimeIndex W ℤ) := { s | s.world = true }` (new, replaces `restrictiveHistory`).
-
-**Build verification**: 912 jobs green; no `sorry`, no `native_decide`. The substrate is now Abusch-faithful at the type level, not the docstring level. The stress-test suite from 0.230.553 served as a precise success criterion: every test that previously documented a known false positive now witnesses the correct negative; new positive tests demonstrate the doxastic instantiation works.
-
-**What's still deferred** (PR-C and beyond):
-- Anand-Nevins entity-concept bridge (CFR-flagged highest-leverage rent payoff; ~20 LOC, fully READY now).
-- Schlenker 2004 contrastive theorem (NEAR; needs ~15 LOC `WorldHistory` witness, but the substrate alignment is type-correct).
-- FID sibling theorem (NEAR; ~30 LOC `FIDProfile` adapter).
-- Heim 1994 study file (NEAR/VACUUM; ~80 LOC).
-- LF res-movement Tree rewrite (deferred design choice — output-only this cycle).
-- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
-
-## [0.230.553] - 2026-04-29
-
-### Abusch substrate stress tests + Bug 1/Bug 3 regression witnesses
-
-Stress-test suite added to `Phenomena/TenseAspect/Studies/Abusch1997.lean` to verify substrate correctness before PR-B's modal-base + holder-now refactor. Four classes per CLAUDE.md memory's "Test both layers of multi-component state" discipline: positive consistency, negative rejection, structural sanity, bug-exposing.
-
-**Concrete instance**: `W := Bool` (2-world domain, enough to distinguish rigid from non-rigid concepts), `E := Unit`, `P := Unit`, `T := ℤ`. Six `private def` witnesses (`matrixCtx`, `trivialHistory`, `nonRigidConcept`, `rigidReading`, `nonRigidReading`, `restrictiveHistory`) factored out of test bodies to avoid let-binding scoping issues with `intro`/`refine`.
-
-**Class 1 — Positive consistency** (2 `example`):
-- Abusch (1) backward-shifted (p. 2-3): jurors' belief about crime time, `(rigidReading 50 100).isAbuschFelicitous trivialHistory .past` discharged via past-constraint + rigid-concept lemma.
-- Shadow-lemma round-trip: `isFelicitousWith ↔ TensePronoun.fullPresupposition` for any TensePronoun whose resolve/evalTime align with the de re reading.
-
-**Class 2 — Negative rejection** (2 `example`):
-- Future actualRes (200 > 100) fails the past constraint.
-- **Non-vacuity check**: a non-rigid concept (50 in world `true`, 60 in world `false`) fails `IsRigidAcrossAlternatives` over the trivial history's non-empty alternative set. Without this test, the modal layer could silently vacuously-accept on an empty alternative set.
-
-**Class 3 — Structural sanity** (3 `example`):
-- `actualHistoryBase` non-empty for matrix self-membership (`(matrixCtx 100).toSituation ∈ actualHistoryBase trivialHistory (matrixCtx 100).toSituation`).
-- `KContext.shiftWorldTime` preserves agent (load-bearing for centered-world identity) and round-trips through `toSituation`.
-- `Intension.IsRigidOn` is monotone in the set parameter (rigidity on a larger set implies rigidity on any subset).
-
-**Class 4 — Bug-exposing regression witnesses** (2 named `theorem`):
-- `bug3_substrate_accepts_holder_future`: per @cite{abusch-1997} §7 ULC ("the now of an epistemic alternative is an upper limit for the denotation of tenses", p. 24), an embedded tense cannot denote a time later than the believer's now. Construct: speech S=100, attitude-holder's now = 50, `actualRes`=75. Per ULC, 75 > 50 → infelicitous. But substrate checks `actualRes < matrixContext.time` = `75 < 100` → felicitous. Theorem proves the false-positive currently passes; PR-B's `holderNow` field will turn it into a `¬`-witnessed negative test.
-- `bug1_substrate_history_shape_changes_verdict`: substrate behavior depends on `WorldHistory` parameter shape, but `KContext.agent` is never consulted — the predicate is **agent-blind by construction**. Demonstrated by: same non-rigid concept, same matrix; passes `IsRigidAcrossAlternatives restrictiveHistory` (alternatives confined to `{true}` world) AND fails `IsRigidAcrossAlternatives trivialHistory` (alternatives include `{false}` world). The verdict is determined by the upstream history-shape choice, not by any agent-relative doxastic fact. PR-B will lift the parameter type to `Set (WorldTimeIndex W T)` so doxastic + metaphysical become explicit instantiation choices.
-
-**Build verification**: 912 jobs green; no `sorry`, no `native_decide`. The Class 4 theorems intentionally pass — they document the gap concretely so PR-B can flip them to negatives without ambiguity about what the fix should achieve.
-
-## [0.230.552] - 2026-04-29
-
-### Abusch substrate: PR-A — citation fix + Intension.IsRigidOn lift + KContext.shiftWorldTime extract
-
-Three-bug audit (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert, all four convergent on the load-bearing findings) of the substrate that landed in 0.230.550–0.230.551. PR-A discharges the substrate-cleanup half of the audit; PR-B (deferred) will fix the substantive doxastic-vs-metaphysical modal-base bug.
-
-**Bug 2 (citation): wrong Lewis 1979 paper.** The bib's `lewis-1979` is "Scorekeeping in a Language Game" (J Phil Logic 8:339-359). The centered-worlds + de re/de se framework Abusch builds on is "Attitudes De Dicto and De Se" (Phil Review 88(4):513-543, October 1979 — verified directly from the JSTOR cover page, DOI `10.2307/2184843`). Two different Lewis 1979 papers, same year. Every `@cite{lewis-1979}` in the centered-world neighborhood (9 sites across `Tense/DeRe.lean` ×3, `Reference/Acquaintance.lean` ×2, `Attitudes/SituationDependent.lean` ×2, `Studies/Abusch1997.lean` ×2) was mis-anchored. Added `lewis-1979-attitudes` bib entry; repointed all 9. (`HistoricalAlternatives.lean:13` actually wants Lewis 1979 *Counterfactual Dependence and Time's Arrow* — separate fix, deferred.)
-
-**Mathlib finding 1: `Intension.IsRigidOn` lift.** Both `Cover.isExhaustiveOn` and `IsRigidAcrossAlternatives` were specializations of "constant on a set"; the underlying primitive belonged in `Core/IntensionalLogic/Rigidity.lean` rather than reinvented at each consumer.
-- `Intension.IsRigidOn (f : Intension W τ) (S : Set W) : Prop := ∀ w₁ ∈ S, ∀ w₂ ∈ S, f w₁ = f w₂` added to `Rigidity.lean`. Fully polymorphic — agnostic about whether `S` is a doxastic, metaphysical, or shifted-context alternative set.
-- `IsRigid.isRigidOn` lemma (full rigidity ⇒ rigid on any set), `rigid_isRigidOn` (the constant intension is rigid on every set), and `isRigid_iff_isRigidOn_univ` round-trip lemma added.
-
-**Mathlib finding 2: `KContext.shiftWorldTime` extract.** `Tense/DeRe.lean` open-coded `{ matrix with world := s'.world, time := s'.time }` in two places — the natural "shift to alternative situation" operation hadn't been factored out.
-- `KContext.shiftWorldTime (c : KContext W E P T) (s : WorldTimeIndex W T) : KContext W E P T := { c with world := s.world, time := s.time }` added to `Core/Context/Basic.lean`.
-- Four `@[simp]` projection lemmas (`shiftWorldTime_world`, `shiftWorldTime_time`, `shiftWorldTime_agent`, `shiftWorldTime_toSituation`) — preserve agent / addressee / position; world+time match the situation argument; toSituation round-trip.
-
-**Refactor: `Tense/DeRe.lean::IsRigidAcrossAlternatives`** rewritten to use the new primitives:
-```
-def IsRigidAcrossAlternatives [LE T] (dr : TemporalDeReReading W E P T) (history : WorldHistory W T) : Prop :=
-  Intension.IsRigidOn (fun s => dr.concept (dr.matrixContext.shiftWorldTime s))
-    (actualHistoryBase history dr.matrixContext.toSituation)
-```
-The structural insight (temporal de re ≡ rigidity-on-an-alternative-set) is now visible as types, not buried in `∀ s' ∈ ..., ... = dr.actualRes` open-coding. `IsRigidAcrossAlternatives_of_concept_isRigid` proof shrinks to a one-liner (`fun s₁ _ s₂ _ => h _ _`).
-
-**What PR-A does NOT fix** (deferred to PR-B + downstream):
-- **Bug 1 (modal base)**: `actualHistoryBase` is metaphysical (Lewis-Cariani-Santorio shared-past), but Abusch §3 quantifies over the **believer's doxastic** alternatives (Hintikka-style). The `KContext.agent` field is never consulted — the predicate is agent-blind by construction. Fix: parameterize `IsRigidAcrossAlternatives` on the alternative-set itself (`Set (WorldTimeIndex W T)`), with doxastic / metaphysical / shifted-context cases as instantiations. PR-B.
-- **Bug 3 (speech time vs holder now)**: `dr.matrixContext.time` is matrix utterance time; Abusch's constraint is relative to the attitude-holder's centered "now" (paper p. 13: "in all of Mary's belief worlds the time of the raining is co-temporal with **her now**"). Add `holderNow : T` to `TemporalDeReReading` or take as parameter to `isFelicitousWith`. PR-B.
-- **Mathlib nits** (PLA `_agent` parameter, `Concept.const` alias, `let dr := ⟨...⟩` theorem-statement pattern, `isAbuschFelicitous` → `IsAbuschFelicitous` casing): PR-B drive-bys.
-- **Anand-Nevins entity-concept bridge** (the highest-leverage rent payoff per CFR audit): PR-C, after PR-B fixes the substrate.
-
-PR-A is pure infrastructure — no semantics change, all theorems unchanged, the substrate is now ready for the Bug 1 + Bug 3 fix without further refactoring.
-
-### Ellipsis `FormalMatching` AHM/Rudin sections Bool→Prop migration
-
-Closes the Bool-in-semantic-positions backlog in `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean`. Bruening §7 was migrated to Prop in the previous session; the older AHM (§§1-5) and Rudin (§6) sections were still Bool-typed, violating the project's `feedback_bool_migration_scope` policy that propositional/semantic content should be `Prop`-valued.
-
-**Why `List.Perm` doesn't directly suffice (unlike Bruening §7).** `lexicallyIdentical` uses **optional-field "agree if specified" semantics** (head/complement match strictly; case/voice/argPP match only if both `some`). This is a custom equivalence relation, not strict `=`, so `List.Perm` (which uses strict `=`) doesn't apply. The migration uses Prop versions of the matching predicates with manually-written `Decidable` instances.
-
-**Substrate (`FormalMatching.lean`).**
-- `removeFirst : (α → Bool) → List α → Option (List α)` → `(α → Prop) [DecidablePred p] → List α → Option (List α)`. Body unchanged (already Decidable). Call sites work directly without `decide` wrapping (Lean infers `DecidablePred (lexicallyIdentical hp)` from per-pair Decidable).
-- `optAgree : Option α → Option α → Prop` introduced as `o1.isNone ∨ o2.isNone ∨ o1 = o2` with `Decidable` derived via `unfold; infer_instance`.
-- 6 Bool defs migrated to Prop: `lexicallyIdentical`, `matchHeadPairs`, `structurallyIdentical`, `rudinIdentical`, `rudinMatchPairs`, `rudinStructurallyIdentical`. Recursive `Decidable` instances for `matchHeadPairs`/`rudinMatchPairs` written by hand (typeclass synthesis through structural recursion needs explicit cases).
-- `removeFirst_map` rewritten with `(p q : α → Prop) [DecidablePred p] [DecidablePred q] (hpq : ∀ a, p (f a) ↔ q a)`; Bool-`cases` proof translated to `by_cases`.
-- `same_root_convergence` upgraded from Bool-eq to Prop-`Iff` via `and_congr`.
-- Internal theorems (`lexicallyIdentical_refl`, `removeFirst_self`, `matchHeadPairs_refl`, `structurallyIdentical_refl`, `empty_domains_identical`, `single_pair_matches`, `rudinIdentical_same_root`, `rudinMatchPairs_eq`) restated as Prop. `lexicallyIdentical_refl` shrinks from a 17-line Bool destructure to a 5-tuple `⟨rfl, rfl, Or.inr (Or.inr rfl), ...⟩`.
-
-**Consumers.**
-- `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021.lean`: 10 theorems migrated. Drop `= true`/`= false`, wrap negative cases in `¬`, keep `by decide` proofs verbatim. Mixed conjunctions (e.g., `sic_predicts_germanCaseMatch`) restate the structural-identity conjunct as Prop.
-- `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2025.lean`: 4 theorems migrated. The two compound theorems (`argument_pp_blocks_sluicing`, `stranded_prep_prediction`) needed `refine ⟨...⟩ <;> decide` instead of the prior `⟨rfl, rfl⟩` because the Decidable reduction now goes through Prop's `Decidable.decide`-bridge rather than direct Bool equality.
-- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`: G1 theorems (`g1_serve_implicit_second_obj_licensed`, `g1_charged_implicit_first_obj_blocked`, `g1_sluicing_asymmetry`) restated as Prop / `¬`. Renamed `DP_she` → `DP_they_serve` to align with Bruening's actual paper text (ex. 121, p. 1064 has *they*, not *she*). Added 17 stress-test `example`s — reflexivity, symmetry, cross-paradigm rejection, max-proj count enumerations matching Bruening's textual claims (`[Voice, D, Appl, D, V]` for serve, `[Voice, D, Appl, D, V, D]` vs `[Voice, D, Appl, V, D]` for charged), and the load-bearing structural facts (∃ is NOT a max-proj of antecedent because V+∃ is one leaf via `LexicalItem.combine`; wh-trace IS a max-proj but is filtered as movement non-head).
-
-**Build verification.** All four affected modules build clean (1813/1813 jobs in scoped lake build). 0 `sorry`, 0 `native_decide` introduced.
-
-**Out of scope** (intentionally kept Bool): `SluicingLicense.isLicensed`, `frameSluicingLicensed`, `crossCategorySluicing`, `HeadPair.isNonargumentPP`. These return Bool *decisions* used computationally, not propositional claims; per the migration policy they only flip if a consumer needs them in a Prop position.
-
-### `Theories/Pragmatics/{Dialogue,Assertion}/` → `Theories/Dialogue/` promotion
-
-Promotion of dialogue-state machinery to a top-level `Theories/Dialogue/` directory per the mathlib pattern of distinct subfields as flat top-level entries (cf. `Mathlib.Probability/`, `Mathlib.Combinatorics/` rather than nesting under broader categories). Phase 0 of a deep Ginzburg 2012 refactor; resolved three concurrent layout problems in one campaign:
-
-- `Theories/Pragmatics/Dialogue/` was a singleton parent — only `KOS/` lived inside it.
-- The actual dialogue-state siblings of KOS — Krifka commitment-spaces, Farkas-Bruce table model, Stalnaker CG-update, Brandom scorekeeping, Gunlogson source-marked commitments, Lauer probabilistic threshold, ReasonableInference, DisjunctiveUpdate (Caie 2023), QuotationFBOntology — were filed under `Pragmatics/Assertion/` for historical reasons (each focuses on the *speech act* of assertion), even though all of them model multi-turn discourse-state evolution.
-- Cross-framework theorems planned for subsequent phases (KOS-vs-Krifka per-DGB-vs-shared-root, KOS-vs-FarkasBruce dcS/dcL/cg-vs-DGB-A/DGB-B, KOS-vs-Stalnaker `HasContextSet` divergence) had no coherent neighborhood to live in.
-
-**Moves.** 5 KOS substrate files: `Theories/Pragmatics/Dialogue/KOS/{Basic,Grammar,Rules,RepriseContent,TTRBridge}` → `Theories/Dialogue/KOS/{...}`. 10 dialogue-state-as-assertion files: `Theories/Pragmatics/Assertion/{Brandom,DisjunctiveUpdate,FarkasAdapter,FarkasBruce,Gunlogson,Krifka,Lauer,QuotationFBOntology,ReasonableInference,Stalnaker}` → `Theories/Dialogue/{...}`. Both old parent directories (`Theories/Pragmatics/Dialogue/` and `Theories/Pragmatics/Assertion/`) removed.
-
-**Namespace renames.** `Pragmatics.Dialogue.KOS{,.Grammar,.TTRBridge}` → `Dialogue.KOS{...}`; `Pragmatics.Assertion.{X}` → `Dialogue.{X}` for each of the 10 X's. All `namespace`/`end`/`open` declarations updated in-file.
-
-**Consumer updates.** 9 external consumers' imports + opens rewritten: `Phenomena/Assertion/Studies/{BringGunlogson2000,Gunlogson2001,Krifka2015}.lean`, `Phenomena/Conditionals/Studies/Stalnaker1975.lean`, `Phenomena/Dialogue/Studies/{Ginzburg2012,PurverGinzburg2004}.lean`, `Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean`, `Phenomena/Quotation/Studies/Rudin2025LI.lean`, `Phenomena/SentenceMood/Studies/Deo2025.lean`, `Theories/Semantics/Conditionals/{ConditionalType,LeftNested}.lean`, `Fragments/English/PropositionalLexemes.lean`. All discovered via `grep -rl 'Pragmatics\.\(Assertion\|Dialogue\)'`.
-
-**Manifest.** `Linglib.lean` section header `-- Theories: Pragmatics: Dialogue` → `-- Theories: Dialogue (KOS)`; 15 import paths rewritten across the Assertion-block and KOS-block.
-
-**Architectural rationale.** `Theories/Dialogue/` joins `Theories/Pragmatics/`, `Theories/Discourse/`, `Theories/Semantics/`, etc. as a top-level subfield directory. The narrow-discourse policy in MEMORY (`Theories/Discourse/` = coherence theory only — Centering, Hobbs/Kehler, future SDRT-coherence) stays intact. Dialogue and Discourse are now sibling subfields, matching the SIGDIAL conference / *Dialogue & Discourse* journal convention. Internal inconsistency between narrow-`Theories/Discourse/` and broad-`Core/Discourse/` (which contains QUDStack, IllocutionaryForce, Commitment, Coherence — a mix of dialogue + coherence substrate) is now visible and flagged as a follow-on audit; not blocking.
-
-**What stays in `Pragmatics/`.** RSA, IBR, Implicature, Expressives, RelevanceTheory, GameTheory, Bias, Bidirectional, AsymmetricCommunication, AvoidAmbiguity, Efficiency, GriceanMaxims, InformationTheory, SignalingGames, DecisionTheoretic — utility-theoretic pragmatics. Future speech-act-as-philosophy content (Searle, Bach & Harnish, ISO 24617-2 dialogue acts) would land in a new `Pragmatics/SpeechActs/` if/when it materializes; for now `Pragmatics/Assertion/` is gone.
-
-**Build verification.** All 27 migration-affected modules build clean (1851/1851 jobs in scoped `lake build`, including all 10 moved files + 5 KOS substrate files + 9 external consumers + the Phenomena/Dialogue Studies files). One pre-existing build failure in `Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2025.lean` (concurrent session's uncommitted `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean` edits) is unrelated to this migration.
-
-**What's coming next** (subsequent phases of the Ginzburg 2012 refactor): PDF-verified errata in `Phenomena/Dialogue/Studies/Ginzburg2012.lean` (Ch. 7 self-repair → §8.2 correction; Table 7.4 functional-grouping totals; Ch. 4 page reference; missing `fernandez-2006`/`de-waijer-2001` bib entries); substrate hygiene (delete duplicate `DecidableSupport String String`, dissolve `CRReading` doublet of substrate `RFReading`, dissolve `NSUDatum` re-skin of `FragmentDatum`, delete inert §4 TuC tests); `native_decide` → `decide`/`rfl`/substrate-lemma migration (16 occurrences); KOS substrate decomposition (`Defs.lean`/`Basic.lean` split, extract `InquiryCycle.lean`/`Grounding.lean`/`Genre.lean`/`SelfRepair.lean`, promote `NSUTaxonomy.lean`/`CRTaxonomy.lean` from study); `Datasets/Fernandez2006.lean` for the BNC subcorpus; cross-framework theorems vs pre-2012 siblings (Stalnaker `HasContextSet` divergence, Farkas-Bruce dcS/dcL/cg-vs-DGB-A/DGB-B, Roberts 1996/2012 QUD-stack agreement, Purver-Ginzburg 2004 q-params/dgb-params split inheritance, Ginzburg-Sag 2000 HPSG grammar foundation). Per the CLAUDE.md "no bridge files" + chronology rule, contrasts vs Krifka 2015 and Anderson 2021 will live inside *those* files (Krifka2015 > Ginzburg2012; Anderson2021 > both).
-
-### `DMPCFG.mapWeight` API: `Nonempty` typeclass refactor + `mapWeight_pos`/`zero` + downstream PMF demo
-
-Continued mathlib-shaping of the `mapWeight` API. Three orthogonal strengthenings.
-
-**Typeclass refactor.** The `(ha : ∃ r ∈ G.rules, r.input = a)` argument threaded through `mapWeight_denom_pos`, `mapWeight_sum_eq_one_of_lhs`, `mapWeightPMF`, and `mapWeightPMF_apply` is now `[Nonempty (RulesWithLHS (G := G) a)]` — the per-LHS nonemptiness as a typeclass instance rather than an explicit propositional witness. Mathlib idiom (cf. `PMF.uniformOfFintype [Nonempty α]`). Consumers either declare `instance : Nonempty (RulesWithLHS …) := ⟨⟨r, _⟩⟩` once for their grammar+LHS pair (one-liner with `decide`), or `haveI` the witness locally.
-
-**`mapWeight_pos` as primary; `mapWeight_nonneg` demoted to corollary.** Strict positivity is the load-bearing fact (numerator > 0 since `pseudo_pos`, denominator > 0 since `r` is in its own LHS bucket). Nonneg is now a one-line `(mapWeight_pos hr D).le`. Both still exposed for ergonomics.
-
-**`@[simp] mapWeight_zero`.** Empty-corpus reduction: `mapWeight r 0 = pseudo r / Σ_{r' with same LHS} pseudo r'`. The Dirichlet posterior with no data IS the prior. Useful normalisation; `simp` will unfold corpus-free expressions automatically.
-
-**Downstream PMF demo (`Phenomena/Morphology/Studies/ODonnell2015.lean`).** Two additions exercising the new API end-to-end:
-- `instance n_bucket_nonempty : Nonempty (DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N) := ⟨⟨rNess, by decide⟩⟩` — declared once at file scope; instance resolution finds it for any subsequent `mapWeightPMF`/`mapWeight_sum_eq_one_of_lhs` call over the N-bucket.
-- `dmpcfgFromObserved_mapWeightPMF_wrongly_orders_n_rules` — PMF-form corollary of `dmpcfg_wrongly_predicts_ion_productive`. Same conclusion (DMPCFG misranks ion vs ness when corpus counts overcome the prior gap), but stated as a probability comparison `mapWeightPMF D ⟨rNess, _⟩ < mapWeightPMF D ⟨rIon, _⟩` rather than a raw `mapWeight` comparison. Proof is a 5-line bridge: `mapWeightPMF_apply` simp + `ENNReal.ofReal_lt_ofReal_iff` + the existing raw theorem. Demonstrates that the PMF lift gives the right consumer-facing object: the conclusion is genuinely about probabilities.
-
-### `DMPCFG.mapWeight` lifted to mathlib `PMF`
-
-Mathlib-discipline follow-up to the `DMPCFG.mapWeight` substrate addition earlier in this session. The deepest unstated fact about `mapWeight` was that it doesn't sum to 1 — calling it a "MAP weight" was technically misleading until the probability axiom was theorem-checked. This commit closes that gap and lifts the construct from raw-number to mathlib's standard probability infrastructure.
-
-**`Theories/Morphology/FragmentGrammars/DMPCFG.lean` additions.**
-- `mapWeight_nonneg (hr : r ∈ G.rules) (D) : 0 ≤ M.mapWeight r D` — the cousin of `mapWeight_denom_pos`, completing the "is a [0, 1] value" story.
-- `mapWeight_sum_eq_one_of_lhs (ha) (D) : ∑ r ∈ G.rules.filter (·.input = a), M.mapWeight r D = 1` — the probability axiom. Per-LHS sum is `(∑ numerators) / (shared denominator) = denominator / denominator = 1`. This is what justifies calling `mapWeight` a *weight*.
-- `mapWeightPMF (ha) (D) : PMF (RulesWithLHS a)` — the PMF lift, via `PMF.ofFintype` over the LHS-bucket subtype using `mapWeight_sum_eq_one_of_lhs` for the normalisation obligation. Connects DMPCFG to mathlib's standard probability infrastructure for the first time: `corpusProb` and `lhsFactor` are bare ℝ-valued, but `mapWeightPMF` inhabits `PMF` and inherits `support`, `bind`, `map`, `Measure`-side bridges, etc.
-- `@[simp] mapWeightPMF_apply : M.mapWeightPMF ha D r = ENNReal.ofReal (M.mapWeight r.1 D)` — the bridge lemma between PMF object and numeric accessor (true by `rfl`).
-
-**Iff variant + housekeeping on the existing comparison lemma.**
-- New `mapWeight_lt_mapWeight_iff_of_same_lhs` — the iff form per mathlib idiom (better for `rw` chains than the directional form for `apply` chains). Existing `mapWeight_lt_mapWeight_of_same_lhs` reduced to a one-line corollary `(iff-version).mpr`.
-- Dropped the unused `_hr_in : r ∈ G.rules` parameter on both forms — the same-LHS denominator only needs the witness from `r' ∈ G.rules`. `Phenomena/Morphology/Studies/ODonnell2015.lean`'s `dmpcfg_wrongly_predicts_ion_productive` consumer updated to drop the now-redundant proof obligation.
-
-**New import.** `Mathlib.Probability.ProbabilityMassFunction.Constructions` (for `PMF.ofFintype`).
-
-**Not done in this commit.** No downstream consumer USES `mapWeightPMF` yet — it's added for future O'Donnell study files (the `-ability` paradox in Ch 8 will want PMF-typed comparisons of stored vs derived structures, and AlbrightHayes2003-style cross-paradigm replications will want PMF.bind chains). The current `dmpcfg_wrongly_predicts_ion_productive` still consumes the raw `mapWeight` value for proof brevity.
-
-### Substrate-creep demotion: `Core/FormFrequency.lean` → Haspelmath2021 §0
-
-Follow-up to the 0.230.549–550 Haspelmath2021 audit cycle. The integration auditor's grep had flipped the substrate-creep question: every primitive in `Core/FormFrequency.lean` had **zero downstream consumers besides Haspelmath2021** itself, and four of the seven primitives (`respectsFormFrequency` (general), `argumentCodingRespectsFrequency`, `VoiceDirection`, `DitransitiveFrame`) were completely unused by anyone. CLAUDE.md's substrate principle: general-purpose substrate, not paper-specific apparatus. Earn-rate well below the consumer-count ≥ 2 bar that MEMORY's `project_core_triage` documents (32 Core/ files audited at ~22% earn-rate).
-
-**Demoted into Haspelmath2021.lean §0** (new "Form-Frequency Apparatus" section, paper-specific substrate co-located with consumer): `CodingLength` enum + `rank`, `frequencyProxy` + `frequency_proxy_matches_default`, `scenarioRespectsFormFrequency`. Bare `simp` in the moved `frequency_proxy_matches_default` proof tightened to `simp only [...]` per CLAUDE.md tactic discipline.
-
-**Deleted outright** (totally unused, no consumers anywhere): the general `respectsFormFrequency : List α → (α → Nat) → (α → CodingLength) → Bool`, `argumentCodingRespectsFrequency`, `VoiceDirection` enum, `DitransitiveFrame` enum + `codingLength`. These were "general-purpose substrate" the substrate file *anticipated* a second consumer for, but none materialized over multiple revisions.
-
-**File deleted**: `Linglib/Core/FormFrequency.lean` (was 165 LOC, 7 primitives, 1 consumer).
-
-**Manifest updated**: `Linglib.lean` `import Linglib.Core.FormFrequency` removed.
-
-**Cross-references updated**: `Theories/Diachronic/Grammaticalization.lean` docstring "Connections" section now points to `Phenomena.Case.Studies.Haspelmath2021 §0` rather than the deleted `Core.FormFrequency`, with the explicit note "promote to substrate when a second diachronic study materializes." `blog/data/references.bib` `sources` field for `haspelmath-2021` updated: drop `Core/FormFrequency.lean`, fix stale `Core/Prominence.lean` → `Features/Prominence.lean` (the reference predated the 0.230.200 Features/ split).
-
-**Net effect**: Haspelmath2021.lean grew 686 → 760 LOC by absorbing the demoted apparatus; Core/FormFrequency.lean (165 LOC) deleted entirely; net codebase size −91 LOC. The Haspelmath-specific substrate is now visible at the consumption site rather than hidden behind a substrate-shaped wrapper, and `Core/` is one file lighter on the path toward the "formal substrate only" target documented in CLAUDE.md's directory architecture section.
-
-### Haspelmath2021 mathlib-discipline follow-up audit + structural strengthening
-
-Two-agent follow-up audit (mathlib-reviewer + linglib-integration-auditor) on `Phenomena/Case/Studies/Haspelmath2021.lean` after 0.230.549's full rewrite. Convergent highest-leverage finding: `differentialTargetsProminent` (in `Features/Prominence.lean`) and `ArgumentRole.lowDefault` were two pointwise-equal pattern-matches over the same five constructors — the equality re-proved as a `private` study lemma and unpacked as a four-conjunct universal. Strengthened to a substrate alias.
-
-**Substrate change.** `Features/Prominence.differentialTargetsProminent r := r.lowDefault` (was a separate case-enumeration). The aliasing makes U3, U7, U8 in this file `rfl` against the substrate. Single-consumer (only Haspelmath2021), so the rewrite is local.
-
-**U3 universally quantified.** `universal3_single_argument_flagging (r : ArgumentRole) : differentialTargetsProminent r = r.lowDefault := rfl` replaces the previous 4-conjunct over `{P, T, A, R}`. Strictly stronger — covers all five roles including S. The `private differentialTargets_eq_lowDefault` bridge lemma is deleted (now `rfl` by construction).
-
-**U5 trichotomy universally quantified.** `universal5_trichotomy_exhaustive (s : Scenario) : (s.isDownstream || s.isUpstream || s.isBalanced) = true` proved by `obtain ⟨a, p⟩ := s; cases a <;> cases p <;> rfl`. Replaces the `Scenario.all.all (...)` form, which was anchored to a literal 9-element list (silently passes if `Scenario.all` ever loses an inhabitant; the universal form is robust to that).
-
-**U13/U14 cluster collapsed via abbrev.** `passivePreferredGivenSensitive` and `ppDativePreferredGivenSensitive` changed from `def` to `abbrev`. Four downstream theorems deleted: `universal13_is_universal12_for_AP`, `universal14_is_universal12_for_RT`, `universal13_passive_under_sensitivity`, `universal14_dative_under_sensitivity`. With `abbrev`, U13 is *literally* `alternantPreferredLong _ .A .P _ _` and U14 likewise for `(.R, .T)` — the bridge theorems become `rfl` by construction (deletable), and U12 instantiated at the role pair carries the same content as the readouts. U13/U14 now live as docstring framing on the `abbrev` definitions.
-
-**Marantz partition theorem strengthened.** `marantz_haspelmath_partition_witness` was previously two relabeled-string instances of `assignCases ... = some .erg` proved by `decide` — a single point on the "no prominence parameter" curve. Replaced with a relabeling-invariance theorem: `(assignCases lang [⟨l₁, none⟩, ⟨l₂, none⟩]).map (·.case) = (assignCases lang [⟨l₁', none⟩, ⟨l₂', none⟩]).map (·.case)` for arbitrary `l₁, l₂, l₁', l₂' : String` and arbitrary `lang`, proved by `cases lang <;> rfl`. This is the structural type-signature claim — `assignCases` cannot read labels as proxies for prominence because labels are uninterpreted strings, and the theorem is universally quantified over them.
-
-**Bare `simp` in U12 fixed.** CLAUDE.md says `simp only`, not bare `simp`. Replaced with `unfold alternantPreferredLong deviatesFromUsual; rw [h_high_given, h_low_new]; decide` — structural, robust to simp-set drift.
-
-File: 721 → 686 LOC. Substrate-creep finding (most of `Core/FormFrequency.lean` is single-consumer) deferred to a separate commit — that's a substrate-demotion campaign whose blast radius warrants its own audit cycle.
-
-### O'Donnell 2015 deepening: `DMPCFG.mapWeight` substrate + Ch 7 falsification theorem
-
-Follow-up to the post-audit overhaul of `Phenomena/Morphology/Studies/ODonnell2015.lean`. The audit's headline gap was that the file had zero **prediction-bearing** theorems — the central O'Donnell Ch 7 contrast lived only in `TODO(theorem):` bullets. This commit discharges the most central of them.
-
-**Substrate addition (`Theories/Morphology/FragmentGrammars/DMPCFG.lean`).**
-- `DMPCFG.mapWeight (r) (D) := (pseudo r + count r D) / Σ_{r' with same LHS} (pseudo r' + count r' D)` — the per-rule posterior MAP weight under Dirichlet–multinomial conjugacy. Per @cite{odonnell-2015} §2.4 / Ch 7 (p. 268), this is the productivity score O'Donnell identifies as DMPCFG's failure mode.
-- `DMPCFG.mapWeight_denom_pos` — denominator is positive whenever the LHS has any rule in `G` (each summand `≥ pseudo > 0`).
-- `DMPCFG.mapWeight_lt_mapWeight_of_same_lhs` — same-LHS comparison reduces to numerator comparison via shared denominator. The technical core of the @cite{odonnell-2015} Ch 7 critique: when corpus counts overcome pseudo-count differences, the more-frequent rule wins regardless of prior.
-
-**Discharged theorem.** `dmpcfg_wrongly_predicts_ion_productive (D) (h : count rNess D + 1 < count rIon D) : mapWeight rNess D < mapWeight rIon D`. Quantifies over arbitrary corpora; the abstract count gap `> 1` reflects the pseudo-count gap (`pseudoVal rNess − pseudoVal rIon = 3 − 2 = 1`). O'Donnell's Fig 7.4 CELEX numbers (`-ion` ~162k tokens, `-ness` ~16k) leave the gap an order of magnitude larger, so the wrong-prediction holds for realistic data.
-
-This is the file's first prediction-bearing theorem — `corpusProb_pos_for_empty` is an API exemplar; `dmpcfgFromObserved_pseudo_respects_productivity` is a structural drift sentry; `dmpcfg_wrongly_predicts_ion_productive` is a real falsification.
-
-The deferred-claims list in the file's docstring is updated to mark this discharged. The remaining 5 TODOs are still substrate-blocked (Baayen P-measure, FG MAP extraction, Hay relative-frequency, AlbrightHayes2003 shim, lexicalised storage for the -ability paradox).
-
-## [0.230.551] - 2026-04-29
-
-### Abusch 1997 modal-alternative quantification of de re felicity
-
-Follow-up to 0.230.550 closing the substrate-vs-shadow gap that landed there. The previous `TemporalDeReReading.isFelicitousWith` was extensionally identical to `TensePronoun.fullPresupposition` (the shadow lemma was `simp only [...]`); the new substrate had richer types but no richer semantics. This commit wires `Core.Modality.HistoricalAlternatives.actualHistoryBase` (Klecha 2016 DOX, the substrate the deleted `DeRe/Defs.lean` docstring originally cited as deferred) into the felicity predicate.
-
-**`Theories/Semantics/Tense/DeRe.lean`**:
-- New `IsRigidAcrossAlternatives [LE T] (dr) (history) : Prop` — the time-concept evaluates to the same time at every believer-actual-history alternative of the matrix context. Concretely: `∀ s' ∈ actualHistoryBase history dr.matrixContext.toSituation, dr.concept { dr.matrixContext with world := s'.world, time := s'.time } = dr.actualRes`. This is the de re property — what distinguishes a wide-scope res-time from a de dicto descriptive concept.
-- New `isAbuschFelicitous [LinearOrder T] (dr) (history) (constraint) : Prop := dr.isFelicitousWith constraint ∧ dr.IsRigidAcrossAlternatives history` — the Abusch §3 felicity, value-level constraint AND modal rigidity.
-- New `IsRigidAcrossAlternatives_of_concept_isRigid` — concept rigidity (`Core.Intension.IsRigid`, the constant-intension property) discharges modal rigidity automatically.
-- New `isFelicitousWith_of_isAbuschFelicitous` — the modal-quantified predicate strictly refines the value-level shadow; old code projects through.
-
-**`Phenomena/TenseAspect/Studies/Abusch1997.lean`**:
-- New `abusch_derives_temporal_de_re_full` — the `Intension.rigid pastTime`-witnessed derivation now discharges *both* conjuncts of `isAbuschFelicitous`: the past constraint (already had this from `_via_acquaintance`) and the modal rigidity (new, via the rigid-concept-implies-modal-rigid bridge).
-
-**Substrate-vs-shadow distinction now load-bearing**:
-- `isFelicitousWith` = local constraint check at the matrix context. The value-level shadow.
-- `isAbuschFelicitous` = constraint check + modal rigidity. The Abusch-faithful felicity.
-- The shadow lemma `isFelicitousWith_iff_tensePronoun_fullPresupposition` continues to bridge the value-level half to the existing `TensePronoun.fullPresupposition` machinery.
-
-**Why this matters for the Schlenker bridge** (next-step alignment): the contrastive theorem the cross-framework reconciler audit flagged ("Abusch-acquaintance vs Schlenker-monster as two formally distinct strategies for the SAME shifted-perspective phenomenon") needs a felicity quantified over alternatives — without it, "the two predict the same simultaneous SOT but diverge on double-access" is unstatable. The strengthened substrate is now ready to compare against `Phenomena/TenseAspect/Studies/Schlenker2004.lean` (which already builds against the same `KContext` substrate).
-
-## [0.230.550] - 2026-04-29
-
-### Abusch 1997 temporal de re: substrate cleanup + centered-world rebuild
-
-Random-file audit landed on `Theories/Semantics/Tense/DeRe/Defs.lean` (63 lines). Four-agent audit (semantics expert, cross-framework reconciler, integration auditor, mathlib reviewer) converged: the `TemporalDeRe Time` structure (3 fields: `referent`, `evalTime`, `constraint : GramTense` + `isFelicitous`) was a verbatim re-stipulation of `Core.Time.Tense.TensePronoun.fullPresupposition` and erased everything Abusch 1997 actually argues for (acquaintance relation `R : eeiwt` from def. 13, centered worlds `⟨x_self, t_now, w⟩` from §3, base-world condition from p. 9).
-
-PDF read of @cite{abusch-1997} pages 1-15 confirmed: the substrate's "captures the *output* of res-movement" framing under-claimed the gap (the output IS the time-concept + base anchoring, not a back-shifted frame with a tense label).
-
-**Cleanup phase**:
-- Deleted `Theories/Semantics/Tense/DeRe/Defs.lean` and the `DeRe/` subdirectory entirely.
-- Rewrote the one consumer (`Phenomena/TenseAspect/Studies/Abusch1997.lean::abusch_derives_temporal_de_re`) against `TensePronoun.fullPresupposition`.
-- Fixed stale path comment in `Phenomena/TenseAspect/Studies/HeimKratzer1998.lean:368`.
-- Removed import from `Linglib.lean:2382`.
-
-**Substrate rebuild phase** (post pre-implementation reuse audit on the rebuild plan — three additional agents found the original plan was about to massively reinvent existing infrastructure; scope dropped from ~370 LOC new + 50 LOC refactor → ~130 LOC new + 30 LOC refactor):
-- **NEW** `Theories/Semantics/Reference/Acquaintance.lean` (74 LOC): polymorphic `Cover Idx Res := Set (Intension Idx Res)`, `Cover.isExhaustiveOn` (uses `Set.SurjOn`), `isAcquaintedWith` (uses `Set.image` membership), `nameCover` + `nameCover_rigid`/`nameCover_isExhaustiveOn`/`nameCover_isAcquaintedWith_of_mem` lemmas. Built entirely on `Core.Intension W τ` (`Core/IntensionalLogic/Rigidity.lean`) — no parallel `Concept` type. Anchored on @cite{lewis-1979} + @cite{cresswell-vonstechow-1982} + @cite{aloni-2001} + @cite{abusch-1997}.
-- **NEW** `Theories/Semantics/Tense/DeRe.lean` (159 LOC, flat — no subdir): `TimeConcept (W E P T) := Intension (KContext W E P T) T`, `EntityConcept` dual, `TemporalDeReReading` structure (concept + matrixContext, `actualRes` derived, `baseCoherent` true by construction), `isFelicitousWith` predicate, `isFelicitousWith_iff_tensePronoun_fullPresupposition` value-level shadow lemma bridging to the existing `TensePronoun` machinery, `TimeCover` + `isTemporallyAcquaintedWith` instantiating polymorphic `Acquaintance`. Anchored on the centered-world de re framework (Lewis 1979 + C&vS 1982 + Abusch 1997), not on Abusch alone.
-- **REFACTOR** `Theories/Semantics/Dynamic/PLA/Epistemic.lean`: `Concept E` becomes `abbrev` of `Core.Intension (Assignment E × WitnessSeq E) E`; `Concept.isRigid`/`Concept.const` become one-line `abbrev`s of `Intension.IsRigid`/`Intension.rigid`; `const_is_rigid` delegates to `Intension.rigid_isRigid`. Two-year-silent `Core.Intension` shadowing made visible.
-- **REFACTOR** `Theories/Semantics/Dynamic/PLA/Belief.lean`: `Cover.isExhaustive` body delegates to `Acquaintance.Cover.isExhaustiveOn _ Set.univ`; `isAcquaintedWith` body delegates to `Acquaintance.isAcquaintedWith` (the discarded `_agent` parameter retained for backward compat).
-- `Phenomena/TenseAspect/Studies/Abusch1997.lean` extended: added `abusch_derives_temporal_de_re_via_acquaintance` (centered-world derivation against `TemporalDeReReading`) and `pla_isAcquaintedWith_unifies_with_polymorphic` (provable by `Iff.rfl` — the structural unification is true by construction post-PLA migration). Module docstring updated to flag the two coexisting derivation styles (value-level shadow vs centered-world substrate) and the bridge lemma between them.
-
-**Bib**: added `cresswell-vonstechow-1982` (DOI `10.1007/BF00355585`, Linguistics and Philosophy 5.4:503-535).
-
-**Reuse hits the audits found** (would have been reinvented otherwise):
-- `Concept Idx Res` → `Core.Intension W τ` (already has `IsRigid`, `rigid`, Kripke necessity-of-identity)
-- `CenteredIndex W A T` (planned 3-field struct) → `Core.Context.KContext W E P T` (5-field Kaplanian, already cited by Tower.lean as the Abusch-unification anchor)
-- Custom `Cover.isExhaustive` predicate → mathlib's `Set.SurjOn`
-- Custom `isAcquaintedWith` ∃-form → mathlib's `Set.image` membership
-
-**Deferred follow-ups** (each a separately-scoped PR):
-- Modal-alternative quantification of time-concept rigidity over `Core.Modality.HistoricalAlternatives.actualHistoryBase` (Klecha 2016 substrate is in place; just needs wiring).
-- LF res-movement as a `Tree C W` rewrite operator.
-- Schlenker 2004 ↔ Abusch 1997 contrastive theorem (tower-temporalShift ↔ centered-world equivalence + double-access divergence).
-- FID sibling theorem (`FIDProfile` per-coordinate independence ↔ Abusch's individual/temporal de re parallel).
-- Stephenson 2007 PPT judge-parameter substrate (no sibling exists yet — substrate's `agent : A` field is the missing infrastructure).
-- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
-
-### ODonnell2015.lean post-audit overhaul
-
-Four-agent audit on `Phenomena/Morphology/Studies/ODonnell2015Derivational.lean` (renamed → `ODonnell2015.lean`; YAGNI on the topic qualifier — escalate to subdirectory if/when an inflectional sibling lands). Linguistics-domain-expert verified citations against the actual O'Donnell 2015 PDF; mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler converged on the same hollow-theorem and integration-density complaints.
-
-**Substantive fixes.**
-- `rAte` re-wired from `N → V · ate` to `V → BND · ate`, faithful to @cite{odonnell-2015} p. 261's `-ate:BND>V` analysis (`-ate` is a verb-forming suffix selecting bound stems, not a nominaliser). New `BND` nonterminal + `bnd` terminal + `rBnd : BND → bnd` rule. File framing updated from "three nominalising suffixes" to "three derivational suffixes."
-- Hallucinated citation `§2.4.1` (claim is actually on p. 268, Ch 7.3.1.3) replaced with content description. Hallucinated `Fig 7.5` cite removed (not visible at p. 269 in the PDF).
-- Empirical-ordering claim corrected: the load-bearing claim is `ness ≫ {ion, ate}`, not a strict three-way ordering. The `ion > ate` half is documented as a tie-break inherited from `Suffix.productivityIndex` rather than a Ch 7 prediction.
-
-**Hollow-theorem cleanup.**
-- Three concrete-value tautologies (`dmpcfgFromObserved_pseudo_rNess/rIon/rAte`) and the strict-ordering theorem replaced with one structural drift sentry `dmpcfgFromObserved_pseudo_respects_productivity` keyed off `Productivity.moreProductiveThan`. Stronger productivity in the data layer now propagates to a larger pseudo-count by structural derivation, not by stipulation.
-- `pseudoVal` rewritten to derive from `Suffix.productivityIndex + 1` rather than hand-coded literals (3, 2, 1). The data file's productivity ordering now drives the study file's pseudo-counts; revisions propagate.
-- `corpusProb_nonneg_of_dmpcfg` (which was just `M.corpusProb_nonneg D` re-exported) deleted; replaced with `corpusProb_pos_for_empty` — the API exemplar the docstring originally promised, derived from substrate's `DMPCFG.corpusProb_zero`.
-- Six "deferred bridge claims" rewritten as `TODO(theorem):` bullets that explicitly name the substrate gap blocking each (Baayen P-measure, FG MAP extraction, Hay relative-frequency comparator, AlbrightHayes2003 shim).
-
-**Mathlib nits.**
-- Type rename `Suffix2015` → `Sym` (year qualifier removed; namespace `ODonnell2015` already disambiguates from `Productivity.Suffix`).
-- Two `/-! -/` block-comments inside the namespace folded into the module docstring (they were invisible to docgen).
-- `noncomputable` annotation on `dmpcfgFromObserved` dropped (no noncomputable fields in the structure literal).
-- Redundant `instance : DecidableEq suffixGrammar.NT` retained after testing — kept the docstring noting the projection-doesn't-reduce reason (mathlib-reviewer's "try removing" suggestion didn't pan out).
-
-`Linglib.lean` umbrella import updated to match the new filename.
+- HeimKratzer1998Data refactor to use `TimeConcept`/`TemporalDeReReading` instead of standalone `ReichenbachFrame` instances.
+- VonStechow / Ogihara substrate hooks (small bridge theorems, NEAR).
+- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith` (false-positive name-collision; left alone).
+- `Phenomena/TenseAspect/Compare.lean::hasTemporalDeRe : Bool` cards refactored to substrate-typed witness theorems.
 
 ## [0.230.549] - 2026-04-29
 

@@ -1,4 +1,5 @@
 import Linglib.Core.Context.Basic
+import Linglib.Core.IntensionalLogic.Rigidity
 
 /-!
 # Context Tower
@@ -224,6 +225,20 @@ theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local)
   simp only [resolve, hd, DepthSpec.local_resolve, ContextTower.push_depth]
   rw [← ContextTower.push_depth, ContextTower.contextAt_depth,
       ContextTower.push_innermost]
+
+/-- Bridge to the substrate's `Intension` framework: an `AccessPattern`
+    IS an `Intension (ContextTower C) R` via its `resolve` method. The
+    substrate's `Intension`-based machinery (`Core.Intension.IsRigid`,
+    `IsRigidOn`, the functoriality lemmas in
+    `Core/IntensionalLogic/Rigidity.lean`) thereby applies to access
+    patterns. The push-invariance of origin-depth access (`origin_stable`
+    above) is the access-pattern analog of the substrate's `IsRigidOn`
+    on tower-shift orbits. -/
+def toIntension (ap : AccessPattern C R) : Core.Intension (ContextTower C) R :=
+  ap.resolve
+
+@[simp] theorem toIntension_apply (ap : AccessPattern C R) (t : ContextTower C) :
+    ap.toIntension t = ap.resolve t := rfl
 
 /-- In a root tower, origin and local access agree. -/
 theorem root_origin_eq_local (ap₁ ap₂ : AccessPattern C R)

@@ -1,4 +1,5 @@
 import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Time.Tense
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!
@@ -47,13 +48,9 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 -- § Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
-
-    Where standard propositions are `W → Prop` (sets of worlds),
-    situation-dependent propositions are `WorldTimeIndex W Time → Prop`
-    (sets of world–time pairs). This is the complement type for
-    attitude verbs that support temporal interpretation. -/
-abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
+-- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
+-- Re-exported from `Core.Time.Tense` (the canonical definition).
+export Core.Time.Tense (SitProp)
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 

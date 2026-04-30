@@ -236,7 +236,7 @@ theorem schlenker_origin_supports_abusch_double_access
 
 
 -- ============================================================================
--- § Substrate Bridge: Schlenker tower-shifts ↔ Abusch `TimeConcept`s (PR-D)
+-- § Substrate Bridge: Schlenker tower-shifts ↔ Abusch `TimeConcept`s
 -- ============================================================================
 
 /-! Substrate-level bridge from @cite{schlenker-2004-sot}'s tower-shift
@@ -252,7 +252,7 @@ theorem schlenker_origin_supports_abusch_double_access
     theory of Abusch 1997, and especially of her Upper Limit
     Constraint." This bridge makes that relationship substrate-level
     structural: both frameworks discriminate Kaplan-stable from
-    shifted via `Intension.IsRigid`, and PR-C's `IsRigid.map` lifts
+    shifted via `Intension.IsRigid`, and `IsRigid.map` lifts
     the discrimination uniformly across `Res` types — so the
     parallel with @cite{anand-nevins-2004}'s Kaplan-compliant vs
     shifted indexicals at `Res = Agent`
@@ -270,9 +270,11 @@ theorem schlenker_origin_supports_abusch_double_access
     coordinates. The substrate-level discrimination formalized here
     corresponds to the *idealized* case where access depth determines
     the reading directly, suppressing the morphological-agreement
-    layer. The DAR analysis Schlenker develops in §1.4+ further
-    builds on presupposition projection through attitude quantification;
-    that's also out of scope for the current substrate bridge. -/
+    layer. The DAR analysis Schlenker develops in §2.2 ("Extending
+    Abusch's Account: the Generalized Upper Limit Constraint", p. 22+)
+    further builds on presupposition-failure conditions in attitude
+    contexts (Schlenker eqs. 38, 40) generalizing Abusch's ULC to
+    mood; that's also out of scope for the current substrate bridge. -/
 
 open Semantics.Tense.DeRe (TimeConcept TemporalDeReReading)
 
@@ -328,25 +330,30 @@ theorem schlenkerShifted_not_isRigid : ¬ Core.Intension.IsRigid schlenkerShifte
 -- ============================================================================
 
 open Phenomena.TenseAspect.Studies.Abusch1997 in
-/-- **Cross-framework agreement on the simultaneous SOT value**:
+/-- **Cross-framework value-coincidence on the simultaneous SOT value**:
     @cite{schlenker-2004-sot}'s `shiftedAccess.resolve sotTower` and
     @cite{abusch-1997}'s `abusch_derives_simultaneous_via_binding`
     (applied with `matrixSaid` as the matrix frame) yield the SAME
-    value (= `matrixSaid.eventTime = -2`). Both frameworks encode
-    "the embedded simultaneous reading inherits the matrix event
-    time" — Schlenker via context-shift on the tower, Abusch via
-    variable-binding on the temporal assignment. Different
-    mechanisms, same value-level prediction; substrate-level
-    kernel-checked.
+    value (= `matrixSaid.eventTime = -2`).
 
-    Per @cite{schlenker-2004-sot} §0 p. 5, this agreement is by
-    design: Schlenker explicitly proposes "a somewhat generalized
-    version of the theory of Abusch 1997". The agreement on basic
-    SOT cases is what makes Schlenker's framework a *generalization*
-    rather than an alternative — divergence between the two is
-    expected only in cases (DAR, modals, multiple embedding) where
-    Schlenker's morphological-agreement + presupposition-projection
-    apparatus does extra work that Abusch's res-movement does not. -/
+    *Caveat*: This is a **value-coincidence**, not a mechanism
+    agreement. Both sides equal `matrixSaid.eventTime` by construction
+    (Schlenker's `.local` reading IS the matrix event time; Abusch's
+    bound-tense IS bound to it). The theorem documents that the two
+    frameworks predict the same surface value at the simultaneous SOT
+    case — but they do so via *genuinely different* mechanisms
+    (Schlenker via context-shift on the tower, Abusch via
+    variable-binding on the temporal assignment), and a deeper bridge
+    theorem comparing the *paths* through each mechanism would be
+    substantively different from this output-coincidence theorem.
+
+    Per @cite{schlenker-2004-sot} §0 p. 5, the value-coincidence on
+    basic SOT cases is by design: Schlenker explicitly proposes
+    "a somewhat generalized version of the theory of Abusch 1997".
+    Genuine divergence between the two would show up in cases (DAR,
+    modals, multiple embedding) where Schlenker's morphological-
+    agreement apparatus and Abusch's res-movement make different
+    predictions — not yet substrate-formalized. -/
 theorem schlenker_abusch_agree_on_simultaneous_value
     (tp : Core.Time.Tense.TensePronoun)
     (g : Core.Time.Tense.TemporalAssignment ℤ) :
@@ -361,12 +368,12 @@ theorem schlenker_abusch_agree_on_simultaneous_value
 -- § Architectural Alignment (Schlenker ↔ Abusch ↔ Anand-Nevins)
 -- ============================================================================
 
-/-- **Architectural alignment via `Intension.IsRigid` + PR-C
-    functoriality**: the substrate's `Intension.IsRigid` predicate
-    distinguishes Kaplan-stable from shifted readings uniformly
-    across all three frameworks at the substrate level. The same
-    closure lemmas (`IsRigid.map`, `IsRigid.precomp`,
-    `IsRigid.of_map_injective` from PR-C) apply uniformly:
+/-- **Architectural alignment via `Intension.IsRigid` functoriality**:
+    the substrate's `Intension.IsRigid` predicate distinguishes
+    Kaplan-stable from shifted readings uniformly across all three
+    frameworks at the substrate level. The same closure lemmas
+    (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
+    from `Core/IntensionalLogic/Rigidity.lean`) apply uniformly:
 
     | Framework                  | Kaplan-stable      | Shifted          |
     |----------------------------|--------------------|------------------|
@@ -393,7 +400,7 @@ theorem schlenker_substrate_aligned_with_isRigid :
     ¬ Core.Intension.IsRigid schlenkerShifted :=
   ⟨schlenkerPresent_isRigid, schlenkerShifted_not_isRigid⟩
 
-/-- **PR-C functoriality applied to Schlenker**: rigidity of
+/-- **`Intension` functoriality applied to Schlenker**: rigidity of
     `schlenkerPresent` transfers across `Res` types via any
     function `g : ℤ → α`, by `Intension.IsRigid.map`. So
     Schlenker's Kaplan-stability is preserved by the substrate's

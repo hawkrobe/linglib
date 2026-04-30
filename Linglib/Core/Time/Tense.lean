@@ -187,14 +187,13 @@ theorem zeroTense_receives_binder_time {Time : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 /--
-Type of situation-level propositions (Prop-valued, for proof-level temporal reasoning).
+Type of situation-level propositions (Prop-valued, for proof-level
+temporal reasoning).
 
-A temporal predicate takes a situation and returns truth value.
-This is what tense operators modify.
-
-Note: a Bool-valued counterpart exists at
-`Semantics.Attitudes.SituationDependent.SitProp` for
-computational RSA evaluation.
+A temporal predicate takes a situation and returns a truth value.
+This is what tense operators modify. Re-exported by
+`Theories/Semantics/Attitudes/SituationDependent.lean` and
+`Theories/Semantics/Tense/Compositional.lean` for downstream use.
 -/
 abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 

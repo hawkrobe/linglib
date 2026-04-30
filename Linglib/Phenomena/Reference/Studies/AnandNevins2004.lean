@@ -191,15 +191,20 @@ theorem fid_time_eq_direct :
 
 open Semantics.Tense.DeRe (EntityConcept TimeConcept)
 
-/-- **Kaplan-compliant "I"** as a rigid `EntityConcept`. In standard
-    Kaplanian semantics (Kaplan 1989), `I` is interpreted via the
-    *context* parameter and does not shift under attitude embedding.
-    As an entity-concept (intension from `KContext` to entity), it is
-    constant — always returns the matrix speaker (here: `.narrator`).
+/-- **Kaplan-compliant "I"** as a rigid `EntityConcept`.
 
-    @cite{anand-nevins-2004} take this as the contrast case for
-    shifty operators: it's what shifty languages like Zazaki and
-    Slave deviate from. -/
+    The substrate's `EntityConcept` `Intension (KContext) E` is at
+    Kaplan's *content* level — the result of applying his *character*
+    to a context. Kaplan's `I` is technically a character (function
+    from context to content) that returns `c.author` for any context;
+    the **content** at a fixed actual context IS rigid. The substrate
+    captures this content rigidity by modeling `kaplanI` as a constant
+    intension at the speaker (here `.narrator`); the character-level
+    structure is elided. This matches @cite{anand-nevins-2004}'s
+    framing of English `I` as `AUTH(c*)` (sticky to actual context),
+    contrasted with shifty languages where the operator can override
+    the context parameter (yielding non-rigid agent-projection — see
+    `shiftedI`). -/
 def kaplanI : EntityConcept Unit Agent Unit ℤ :=
   Core.Intension.rigid .narrator
 
@@ -246,16 +251,12 @@ theorem shiftedI_at_shiftLanguageTower :
 theorem kaplanI_at_englishAttitudeTower (c : RefCtx) :
     kaplanI c = indirectProfile.resolveAgent englishAttitudeTower := rfl
 
-/-- **Concrete witnesses** demonstrating the parallel: the same
-    `Intension.IsRigid` predicate distinguishes Kaplan-compliant from
-    shifty indexicals (this file, `Res = Agent`) and Abusch-style
-    wide-scope rigid time-references from de dicto descriptive
-    time-concepts (`Studies/Abusch1997.lean`, `Res = ℤ`). Four points
-    in the matrix: rigid/non-rigid × Agent/ℤ. The deep structural
-    statement of *why* this parallel holds is
+/-- Concrete witnesses (4 points in the rigid/non-rigid × Agent/ℤ
+    matrix) — kept as a verifiable example. The deep structural
+    statement of why the parallel holds is
     `kaplanI_lifts_rigidly_to_timeConcept` below — functoriality of
     `Intension.IsRigid` does the work. -/
-theorem entityConcept_and_timeConcept_share_isRigid_substrate :
+example :
     -- Res = Agent (this file)
     Core.Intension.IsRigid kaplanI ∧
     ¬ Core.Intension.IsRigid shiftedI ∧

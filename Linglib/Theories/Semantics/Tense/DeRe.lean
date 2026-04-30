@@ -11,10 +11,19 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 Abusch 1997's temporal de re analysis: a tense morpheme can take wide
 scope over an attitude operator by occupying the *res* position. The res
-contributes a **time-concept** (`Intension (KContext) T` — Abusch's
-`R₁ : eeiwt` of def. 13) plus a **base-world condition** (in `w₀`, the
-actual time-denotation is picked out by the concept relative to the
-holder's centered context — Abusch §3, p. 9).
+contributes a **time-concept** (`Intension (KContext) T`) plus a
+**base-world condition** (in `w₀`, the actual time-denotation is picked
+out by an acquaintance relation relative to the holder's centered
+context — Abusch §3 p. 9).
+
+Abusch §3 develops the centered-proposition framework using the
+**individual** Ortcutt case: equation (12) defines an acquaintance
+relation `R₁ : eeiwt` to *individuals*, and (13) shows the
+centered-proposition assembly that combines `R₁` with the
+complement-property `P`. The substrate's `TimeConcept` is the
+**temporal** specialization of this framework (cf. Abusch's own
+generalization in §12), where the res is a time rather than an
+individual.
 
 This file is anchored on the centered-world de re framework, not on
 Abusch 1997 alone — Lewis 1979 + Cresswell & von Stechow 1982 are the
@@ -63,42 +72,29 @@ live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
   is sufficient to discharge modal-rigidity for any alternative-set
   — a constant-intension concept is automatically rigid.
 
-## Bug fixes (PR-B, 0.230.554)
+## Design choices
 
-- **Bug 3 (speech vs holder now)**. The structure's context field was
-  named `matrixContext` and the felicity predicate checked the
-  constraint against `matrixContext.time`, which test code treated as
-  speech time. Per @cite{abusch-1997} §7 ULC (p. 24): "the now of an
-  epistemic alternative is an upper limit for the denotation of
-  tenses" — the relevant time is the **attitude holder's now**, not
-  the outer speech time. Field renamed `holderContext`; semantics
-  clarified in docstring; the felicity check is now correct by
-  construction (the relevant time IS what `holderContext.time`
-  represents).
-- **Bug 1 (modal base — metaphysical vs doxastic)**.
-  `IsRigidAcrossAlternatives` previously took a `WorldHistory W T`
-  parameter and quantified over `actualHistoryBase`, which is
-  *metaphysical* (per `Core/Modality/HistoricalAlternatives.lean`'s
-  own docstring). @cite{abusch-1997} §3 quantifies over the
-  believer's **doxastic** alternatives (Hintikka). Parameter type
-  lifted to `Set (WorldTimeIndex W T)`; doxastic + metaphysical
-  become explicit instantiation choices via convenience
-  constructors.
+- The `holderContext` field represents the **attitude holder's
+  centered context**, NOT the outer speaker's context. Per
+  @cite{abusch-1997} §7 ULC (p. 24-25), the relevant evaluation time
+  for embedded tenses is the holder's now (= `holderContext.time`),
+  not the outer speech time.
+- `IsRigidAcrossAlternatives` is parameterized on
+  `Set (WorldTimeIndex W T)` rather than committing to a particular
+  modal base. Doxastic (the @cite{abusch-1997}-canonical Hintikka
+  setup) and metaphysical (Klecha 2016 DOX, Lewis-Cariani-Santorio
+  shared past) become explicit instantiation choices via convenience
+  constructors `doxasticAlternatives` and `metaphysicalAlternatives`.
 
-## What's still deferred
+## What's deferred
 
 - **LF res-movement as a `Tree C W` rewrite operator.** This file
   exposes the *output* of res-movement (a coherent ⟨concept, holder⟩
   bundle), not the syntactic operation that produces it.
-- **Schlenker 2004 ↔ Abusch 1997 contrastive theorem.** Both treat
-  shifted temporal reference but with different mechanisms
-  (centered-world acquaintance vs tower-temporalShift); the bridge
-  theorem is a follow-up.
 - **PLA-side individual unification.** The `EntityConcept` analog at
   `Idx := Assignment E × WitnessSeq E` is what PLA's `Concept E` is
   (definitionally); the formal unification theorem is in
   `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
-- **Anand-Nevins entity-concept bridge** (PR-C target).
 -/
 
 namespace Semantics.Tense.DeRe
@@ -113,8 +109,11 @@ open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
 -- § Time-concepts and entity-concepts
 -- ════════════════════════════════════════════════════════════════
 
-/-- A **time-concept** (@cite{abusch-1997} §3, def. 13): an intension
-    from a centered Kaplanian context to a time. The Lewis-style
+/-- A **time-concept**: an intension from a centered Kaplanian context
+    to a time. The temporal specialization of @cite{abusch-1997}'s
+    centered-proposition framework (§3 develops it for individuals via
+    the acquaintance relation `R₁ : eeiwt` at eq. 12; §12 generalizes
+    to times). The Lewis-style
     "way of identifying a time" Abusch's `R₁ : eeiwt` builds on. -/
 abbrev TimeConcept (W E P T : Type*) := Intension (KContext W E P T) T
 
@@ -142,6 +141,7 @@ abbrev EntityConcept (W E P T : Type*) := Intension (KContext W E P T) E
     tenses are evaluated, per @cite{abusch-1997} §7 ULC). It is *not*
     the outer speaker's speech context; for unembedded uses the
     speaker is treated as her own attitude holder. -/
+@[ext]
 structure TemporalDeReReading (W E P T : Type*) where
   /-- The time-concept (Abusch's R₁): the way of identifying the res
       time across centered-world alternatives. -/
@@ -175,7 +175,7 @@ theorem baseCoherent (dr : TemporalDeReReading W E P T) :
 /-- Felicity of a temporal de re reading under a tense constraint:
     the actual res-time stands in the constraint's relation to the
     **holder's now** (= `holderContext.time`). Per @cite{abusch-1997}
-    §7 ULC (p. 24), the holder's now is the relevant evaluation time
+    §7 ULC (p. 24-25), the holder's now is the relevant evaluation time
     for embedded tenses — a past-marked tense res-moved from under
     `believe` is constrained to denote a time before the believer's
     now, NOT before the outer speaker's speech time. -/
@@ -205,11 +205,19 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
 -- § Modal-alternative quantification (Abusch §3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Modal rigidity** (@cite{abusch-1997} §3, p. 9): the time-concept
-    evaluates to the same time at every world-time pair in a supplied
-    alternative set, when that alternative is plugged into the holder's
-    centered context. This is *the* de re property — what distinguishes
-    a wide-scope res-time from a de dicto descriptive concept.
+/-- **Modal rigidity**: the time-concept evaluates to the same time at
+    every world-time pair in a supplied alternative set, when that
+    alternative is plugged into the holder's centered context. This is
+    *the* de re property — what distinguishes a wide-scope res-time
+    from a de dicto descriptive concept.
+
+    Substrate-level lift of @cite{abusch-1997}'s base-world condition
+    (§3 p. 9: "in the base world, the [res] is picked out by the
+    acquaintance relation relative to the believer and the believing
+    time") to a quantification over the believer's alternative set.
+    Abusch herself does not state "modal rigidity" in those terms; the
+    framing is the substrate's reformulation of her acquaintance-based
+    de re analysis.
 
     The `alternatives` parameter is **agnostic** about modal base: the
     substrate accepts any `Set (WorldTimeIndex W T)`. Abusch's canonical
@@ -274,7 +282,7 @@ theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
 /-- **Metaphysical** alternative-set instantiation (@cite{klecha-2016}
     DOX): the worlds sharing the holder's actual world's history up to
     her now, paired with times at-or-before her now. Recovers the
-    pre-PR-B `WorldHistory`-based behavior as a special case. -/
+    legacy `WorldHistory`-based behavior as a special case. -/
 def metaphysicalAlternatives [LE T]
     (history : WorldHistory W T) (dr : TemporalDeReReading W E P T) :
     Set (WorldTimeIndex W T) :=

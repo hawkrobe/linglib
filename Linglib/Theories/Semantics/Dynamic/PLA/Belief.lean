@@ -156,11 +156,14 @@ def Cover.isExhaustive (C : Cover E) : Prop :=
   Semantics.Reference.Acquaintance.Cover.isExhaustiveOn C Set.univ
 
 /--
-The name cover: rigid concepts for each entity.
-This is the "de re" cover - thinking of entities as themselves.
+The name cover: rigid concepts for each entity. PLA-side reference to
+the polymorphic `Semantics.Reference.Acquaintance.nameCover` at index
+`Idx := Poss E`. Definitionally equal; the polymorphic version is
+preferred in new proofs (this `abbrev` exists for PLA-literature
+readers familiar with the original naming).
 -/
-def nameCover (dom : Set E) : Cover E :=
-  { Concept.const e | e ∈ dom }
+abbrev nameCover (dom : Set E) : Cover E :=
+  Semantics.Reference.Acquaintance.nameCover (Idx := Poss E) dom
 
 /--
 The variable cover: concepts from variable assignments.
@@ -168,28 +171,6 @@ This is more "de dicto" - thinking via variable bindings.
 -/
 def variableCover : Cover E :=
   { Concept.fromVar i | i : VarIdx }
-
-/--
-Name cover is exhaustive over its domain.
--/
-theorem nameCover_exhaustive (dom : Set E) (_hne : dom.Nonempty) :
-    ∀ (p : Poss E) (e : E), e ∈ dom → ∃ c ∈ nameCover dom, c p = e := by
-  intro p e he
-  use Concept.const e
-  constructor
-  · simp only [nameCover, Set.mem_setOf_eq]
-    exact ⟨e, he, rfl⟩
-  · rfl
-
-/--
-All concepts in the name cover are rigid.
--/
-theorem nameCover_rigid (dom : Set E) :
-    ∀ c ∈ nameCover dom, c.isRigid := by
-  intro c hc
-  simp only [nameCover, Set.mem_setOf_eq] at hc
-  obtain ⟨e, _, rfl⟩ := hc
-  exact const_is_rigid e
 
 
 /--
@@ -546,18 +527,19 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
     (agent : E) (dom : Set E) (pred : String) (s : InfoState E) (p : Poss E) :
     p ∈ believeExistsWithCover R M agent (nameCover dom) pred s ↔
     p ∈ s ∧ ∃ e ∈ dom, ∀ q ∈ doxAccessible R agent p, M.interp pred [e] := by
-  simp only [believeExistsWithCover, nameCover, Set.mem_setOf_eq]
+  simp only [believeExistsWithCover, nameCover,
+    Semantics.Reference.Acquaintance.nameCover, Set.mem_setOf_eq]
   constructor
   · intro ⟨hp, c, ⟨e, he, hc⟩, hall⟩
     refine ⟨hp, e, he, ?_⟩
     intro q hq
     specialize hall q hq
-    simp only [← hc, Concept.const] at hall
+    simp only [hc, Core.Intension.rigid] at hall
     exact hall
   · intro ⟨hp, e, he, hall⟩
-    refine ⟨hp, Concept.const e, ⟨e, he, rfl⟩, ?_⟩
+    refine ⟨hp, Core.Intension.rigid e, ⟨e, he, rfl⟩, ?_⟩
     intro q hq
-    simp only [Concept.const]
+    simp only [Core.Intension.rigid]
     exact hall q hq
 
 
@@ -565,12 +547,12 @@ theorem believeExists_nameCover_deRe (R : DoxAccessibility E) (M : Model E)
 Acquaintance requirement (Russell): De re belief requires acquaintance.
 
 You can only have de re beliefs about entities you're "acquainted with"
-(entities in your conceptual cover). PLA-side wrapper around
-`Acquaintance.isAcquaintedWith` — the agent parameter is unused at the
-predicate level (the cover already encodes the agent's perspective) and
-preserved for backward compat with PLA-internal call sites.
+(entities in your conceptual cover). PLA-side reference to
+`Semantics.Reference.Acquaintance.isAcquaintedWith` at the PLA index
+`Idx := Poss E`. Definitionally equal — the abbrev preserves the
+PLA-literature naming.
 -/
-def isAcquaintedWith (_agent : E) (individual : E) (C : Cover E) (p : Poss E) : Prop :=
+abbrev isAcquaintedWith (individual : E) (C : Cover E) (p : Poss E) : Prop :=
   Semantics.Reference.Acquaintance.isAcquaintedWith individual C p
 
 /--
@@ -580,7 +562,7 @@ def believeDeReWithAcquaintance (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (individual : E) (pred : String) : Update E :=
   λ s => { p ∈ s |
     -- Presupposition: agent is acquainted with individual
-    isAcquaintedWith agent individual C p ∧
+    isAcquaintedWith individual C p ∧
     -- Belief content: predicate holds in all belief worlds
     ∀ q ∈ doxAccessible R agent p, M.interp pred [individual] }
 
