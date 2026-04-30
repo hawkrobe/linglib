@@ -1,7 +1,4 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
 
 /-!
 # KOS: Type Definitions
@@ -22,7 +19,7 @@ This file collects the load-bearing KOS types in dependency order:
 - §3. `SubUtterance` — addressable sub-utterance (G-C 2004 §2). Shared.
 - §4. `LocProp` — locutionary proposition (Ch. 6 ex. 8d), polymorphic in content
 - §5. `InfoStruc` — QUD-cell with focus-establishing constituents (Ch. 7 App. B ex. 2)
-- §6. `DGB` — the dialogue gameboard, Ch. 6 final shape (ex. 113 p. 215):
+- §6. `DGB` — the dialogue gameboard, Ch. 6 final shape (ex. 43 p. 175):
        pending = LocProp, qud = InfoStruc
 - §7. `GenreType` — TTR record classifying conversations (§4.6, ex. 88).
        Currently a thin record; full TTR enrichment in `Genre.lean`.
@@ -31,10 +28,10 @@ This file collects the load-bearing KOS types in dependency order:
 ## Ginzburg fidelity
 
 The DGB and TIS types take a `Cont` parameter for utterance content,
-enabling the Ch. 6 final shape (ex. 113 p. 215) where `Pending` stores
+enabling the Ch. 6 final shape (ex. 43 p. 175) where `Pending` stores
 `LocProp Cont` (utterances with form + cparams + content) and `QUD`
 stores `InfoStruc QContent Cont` (questions paired with their
-focus-establishing constituents, ex. 39 p. 239). Moves still use
+focus-establishing constituents, §6.3 (Pending added to DGB; QUD-as-InfoStruc treatment in §7.6 FEC discussion)). Moves still use
 `IllocMove Fact QContent` for case-analysis convenience; in the book's
 final version they are also LocProps, but the IllocMove constructor
 tags carry information our consumers find useful.
@@ -214,7 +211,7 @@ def InfoStruc.withFEC {QContent Cont : Type}
 
 /-- The Dialogue Gameboard.
 
-@cite{ginzburg-2012} ex. 100 (p. 111) and final version ex. 113 (p. 215).
+@cite{ginzburg-2012} ex. 100 (p. 111) and final version ex. 43 (p. 175).
 
 Each conversational participant maintains their own DGB — distinct but
 coupled gameboards, NOT a single shared context. The DGB tracks the
@@ -227,7 +224,7 @@ The type parameters make content types explicit:
 - `Cont`: type of locutionary content (e.g., `String` for surface form
   or `BCheckableAustinian S` for TTR-typed propositions)
 
-This shape matches Ginzburg's Ch. 6 final DGB (ex. 113 p. 215):
+This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175):
 - `pending` stores `LocProp` (with cparams, enabling CRification on form)
 - `qud` stores `InfoStruc` (questions paired with FECs, enabling NSU resolution)
 - `moves` keeps `IllocMove` for case-analysis convenience (the book's
@@ -240,14 +237,14 @@ structure DGB (Participant Fact QContent Cont : Type) where
   addr : Option Participant := none
   /-- Shared commitments. @cite{ginzburg-2012}: "Facts : Set(Prop)" -/
   facts : List Fact := []
-  /-- History of illocutionary moves (Ch. 4 ex. 100; cf. Ch. 6 ex. 113 LocProp form) -/
+  /-- History of illocutionary moves (Ch. 4 ex. 100; cf. Ch. 6 ex. 43 LocProp form) -/
   moves : List (IllocMove Fact QContent) := []
-  /-- Ungrounded locutionary propositions: Ch. 6 ex. 113 (p. 215) final shape.
+  /-- Ungrounded locutionary propositions: Ch. 6 ex. 43 (p. 175) final shape.
       Each LocProp carries cparams (dgb-params) that the integration protocol
       (`integrateLocProp` in `KOS/Grounding.lean`) checks for resolution. -/
   pending : List (LocProp Cont) := []
   /-- Partially ordered set of questions under discussion.
-      @cite{ginzburg-2012} ex. 39 (p. 239) final shape: QUD entries are
+      @cite{ginzburg-2012} §6.3 / §7.6 (location verified against Ch. 6/7 narrative; specific ex. number not directly cited) final shape: QUD entries are
       `InfoStruc`s (questions with focus-establishing constituents),
       not bare questions. We use a list (most recent = front) following
       QUD-maximality. -/
@@ -311,29 +308,19 @@ def GenreType.generic {Fact QContent : Type} : GenreType Fact QContent where
 -- § 8. Total Information State
 -- ════════════════════════════════════════════════════
 
-/-- A turn under construction: an incomplete utterance being built incrementally.
+/-! ### MaxPending = head of Pending (no separate field)
 
-@cite{ginzburg-2012} §8.2 (pp. 282–290): the formaliser's `MaxPending`
-is a stub for Ginzburg's extended Pending field with a MaxPending locus
-for incomplete utterances. The TuC tracks the unfolding utterance as it is
-produced word-by-word; participants can intervene mid-turn (completions,
-collaborative finishes, self-repairs).
+Per @cite{ginzburg-2012} §6.3 (footnote 31 p. 168) and §8.2: **MaxPending
+is the maximal element of the `dgb.pending` field**, not a separately-
+stored struct. Pending stores `LocProp Cont`s in last-in-first-out order;
+MaxPending is `pending.head?`. The previous formaliser struct
+(`MaxPending` with `phonSoFar`/`cat`/`partialContent`) bore no resemblance
+to Ginzburg's notion and is now deleted. The accessor lives on `TIS`
+(see `KOS/SelfRepair.lean`).
 
-The `pending` field on the DGB tracks ungrounded *complete* utterances;
-TuC tracks *incomplete* ones. When the turn is complete, its content
-moves from TuC to Pending (if unresolved) or Facts (if grounded).
-
-**Naming caveat**: `MaxPending` is the formaliser's name. Ginzburg
-uses `MaxPending` as the substrate primitive (eq. 31 p. 287); a future
-substrate phase renames accordingly. -/
-structure MaxPending where
-  /-- Phonological material produced so far -/
-  phonSoFar : String := ""
-  /-- Syntactic category of the emerging constituent -/
-  cat : Option String := none
-  /-- Partial content accumulated -/
-  partialContent : Option String := none
-  deriving Repr, DecidableEq
+For incremental construction (§8.2.3 word-by-word), substrate operates
+on the head of Pending directly — the LocProp's `phon` field gets
+extended, no separate "phonSoFar" field needed. -/
 
 /-- The private component of an information state.
 
@@ -345,9 +332,6 @@ structure PrivateState (Fact QContent : Type) where
   genre : Option (GenreType Fact QContent) := none
   /-- The participant's agenda: planned illocutionary moves. -/
   agenda : List (IllocMove Fact QContent) := []
-  /-- The turn currently under construction (if any).
-      @cite{ginzburg-2012} §8.2: enables self-repair and collaborative completion. -/
-  maxPending : Option MaxPending := none
 
 /-- Total Information State (TIS).
 
@@ -358,7 +342,7 @@ structure TIS (Participant Fact QContent Cont : Type) where
   /-- The public dialogue gameboard -/
   dgb : DGB Participant Fact QContent Cont := {}
   /-- Private state: genre, agenda -/
-  private_ : PrivateState Fact QContent := {}
+  priv : PrivateState Fact QContent := {}
 
 /-- An empty TIS. -/
 def TIS.initial {Participant Fact QContent Cont : Type} :

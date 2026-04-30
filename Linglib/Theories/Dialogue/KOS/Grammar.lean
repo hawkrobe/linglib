@@ -36,11 +36,16 @@ open HPSG
 
 /-- An HPSG sign extended with dialogue features.
 
-@cite{ginzburg-2012} Ch. 5, §5.2: the sign type has three dialogue-relevant
-features:
+@cite{ginzburg-2012} Ch. 5 §5.2 (Sign schema, p. 122 ex. 12) introduces
+**dgb-params** and **quest-dom** as dialogue-relevant features on Sign:
 - `dgbParams`: contextual parameters that must be resolved for grounding
-- `qParams`: parameters contributed by interrogative elements (wh-words)
 - `questDom`: the question domain — what question the sign introduces
+
+The third field, **q-params** (parameters contributed by interrogative
+elements like wh-words), is added in Ch. 8 §8.5.1 (ex. 101 p. 325, ex.
+103 p. 326, ex. 104 p. 326) — Ginzburg's footnote on p. 122 explicitly
+notes "the field q-params introduced in section 8.5 of Chapter 8". We
+include it here in the canonical form for substrate convenience.
 
 These correspond to DGB-PARAMS, Q-PARAMS, and QUEST-DOM in the book.
 

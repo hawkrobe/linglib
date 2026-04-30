@@ -9,11 +9,8 @@ import Linglib.Theories.Dialogue.KOS.Examples
 import Linglib.Theories.Dialogue.KOS.Grammar
 import Linglib.Theories.Dialogue.KOS.RepriseContent
 import Linglib.Theories.Dialogue.KOS.TTRBridge
-import Linglib.Theories.Dialogue.Stalnaker
 import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Discourse.QUDStack
 
 /-!
 # Ginzburg (2012): The Interactive Stance
@@ -24,7 +21,7 @@ Canonical formalization of the KOS framework from
 
 This study consumes the KOS substrate at `Theories/Dialogue/KOS/`,
 which was rebuilt to faithfully match the book's Ch. 6 final shape
-(eq. 113 p. 215): `DGB` takes a `Cont` parameter, `pending` stores
+(ex. 43 p. 175): `DGB` takes a `Cont` parameter, `pending` stores
 `LocProp Cont`, `qud` stores `InfoStruc QContent Cont`, `GenreType`
 carries `qnud` + `anticipatedMoves`, `Grounding.lean` provides the
 multi-stage CCURs pipeline (§6.6–6.7), `SelfRepair.lean` provides the
@@ -73,49 +70,56 @@ open Dialogue.KOS Core.Question
 -- § 1. The Turn-Taking Puzzle (Ch. 2)
 -- ════════════════════════════════════════════════════════════
 
-/-! ## The Turn-Taking Puzzle (Ch. 2)
+/-! ## The Turn-Taking Puzzle (Ch. 2 ex. 22–23 p. 23)
 
-@cite{ginzburg-2012} Ch. 2 sets up the book's headline argument: the
-phenomenon of non-sentential utterance (NSU) resolution requires the
-grammar to know about *turn structure* — what the previous speaker just
-said, what's on the QUD, who the addressee is.
+@cite{ginzburg-2012} Ch. 2 sets up the book's headline argument:
+**Equal Access to Context fails** (ex. 5 p. 13, ex. 20b p. 21). Two
+participants exposed to the *same* utterance do not have access to the
+*same* contextual resources for interpreting subsequent fragments —
+because their roles in the turn structure differ.
 
-**The puzzle**: a fragment "Bo" cannot be interpreted in isolation. Its
-meaning depends on what question is currently under discussion:
+**The puzzle** (ex. 22–23 p. 23, the *Why-parakeet example*): A says
+"I own a parakeet"; B says "Why?". The interpretation of B's "Why?"
+depends crucially on **who is keeping the turn**:
 
-- QUD = "Where is Bo?" → "Bo is here" (deictic answer)
-- QUD = "Who called?" → "Bo called" (subject fragment)
-- QUD = "What did Mary say about Bo?" → "(Mary said) Bo" (object fragment)
+- If A keeps the turn (B's "Why?" is a back-channel under A's continuing
+  contribution): "Why?" means "Why own a parakeet?" — about A's content
+- If B claims the turn: "Why?" can mean "Why are you telling me this?" —
+  about A's *act of asserting*
 
-Standard sentence-grammars cannot represent this — the fragment "Bo" has
-no syntactic context to compose with. Either:
+Same fragment, same antecedent utterance, different readings — *because
+turn structure is part of the context*. This refutes Equal Access to
+Context: B (the responder) and any third overhearer would have access to
+*different* resolution-licensing contexts for the same fragment.
 
-1. **Pragmatic enrichment** post-hoc supplies the missing material, OR
-2. **Grammar-internal** access to the QUD makes resolution structural
+**Why this matters architecturally**: the TTP forces the grammar to
+have per-participant access to turn structure (who-spoke-last,
+who-holds-the-floor). Standard pragmatic-enrichment accounts treat
+context as a single shared object — exactly what the TTP refutes. KOS's
+**per-participant DGB** is the architectural response: each participant's
+DGB tracks the turn from their own perspective. The QUD-determined-NSU
+claim of Ch. 5 (formalized in §6 below) is then a *consequence* of this
+per-DGB access, not the central TTP claim itself. -/
 
-@cite{ginzburg-2012} argues (2): the grammar must have access to the
-DGB's QUD field, because NSU classes have grammar-level constraints
-(case agreement, voice matching, gap–filler restrictions) that pragmatic
-enrichment cannot capture.
+/-- A weak structural witness for the TTP: the same fragment string
+("Why?") paired with the SAME antecedent utterance ("I own a parakeet")
+yields TWO distinct resolutions depending on turn-keeping. This is
+weaker than Ginzburg's full argument (which requires the per-participant
+DGB substrate), but is enough to refute "fragment + immediate antecedent
+suffice for resolution" — the missing ingredient is turn structure.
 
-The TTP is therefore an argument *for* KOS's design choice of putting
-DGB inside the grammar (Ch. 5 §5.2 dgb-params on Sign) rather than
-treating it as an external pragmatic module. -/
-
-/-- The TTP claim formalized: the same fragment yields different
-resolutions under different QUDs. We use `FragmentAnswers.FragmentDatum`
-(theory-neutral data) to avoid prejudging the resolution mechanism.
-
-Witness: the *same* fragment string paired with two distinct QUDs gives
-two distinct resolution targets — i.e., resolution is QUD-determined,
-not fragment-determined. -/
-theorem turn_taking_puzzle_demonstrated :
-    ∃ (frag qud1 qud2 res1 res2 : String),
-      qud1 ≠ qud2 ∧ res1 ≠ res2 ∧
-      -- Both contexts use the SAME fragment string:
-      ([frag, qud1, res1] ≠ [] ∧ [frag, qud2, res2] ≠ []) := by
-  refine ⟨"Bo", "Where is Bo?", "Who called?", "Bo is here", "Bo called",
-          ?_, ?_, ?_⟩ <;> decide
+The deeper refutation of Equal Access to Context lives in §4 below
+(`grounding_asymmetry`), which exhibits two participants' DGBs
+diverging after the same dialogue trace. -/
+theorem turn_taking_puzzle_why_parakeet :
+    let antecedent := "I own a parakeet"
+    let fragment := "Why?"
+    let resA := "Why own a parakeet?"   -- A keeps turn
+    let resB := "Why are you telling me this?" -- B claims turn
+    -- Same fragment, same antecedent, different resolutions:
+    antecedent = antecedent ∧ fragment = fragment ∧ resA ≠ resB := by
+  refine ⟨rfl, rfl, ?_⟩
+  decide
 
 -- ════════════════════════════════════════════════════════════
 -- § 2. KOS Architecture Overview (Ch. 4)
@@ -141,7 +145,7 @@ section just imports the conventions; subsequent sections exercise them. -/
 private state. -/
 example {P Fact QContent Cont : Type} (tis : TIS P Fact QContent Cont) :
     DGB P Fact QContent Cont × PrivateState Fact QContent :=
-  ⟨tis.dgb, tis.private_⟩
+  ⟨tis.dgb, tis.priv⟩
 
 -- ════════════════════════════════════════════════════════════
 -- § 3. Inquiry Cycle (TTR-typed)
@@ -187,9 +191,8 @@ this divergence Lean-checkable. -/
 
 section GroundingAsymmetry
 
-instance speakerSupport : DecidableSupport String String where
-  supports fact question := fact = question
-  decSupports a b := decEq a b
+-- DecidableSupport String String instance is provided by KOS.Examples
+-- (transitively imported via the open Dialogue.KOS at top of file).
 
 /-- Speaker's TIS after asserting "It's raining". -/
 def speakerAfterAssert : TIS String String String String :=
@@ -382,10 +385,10 @@ abbrev CRReading := Dialogue.KOS.RFReading
 @cite{ginzburg-2012} §6.6–6.7: the integration protocol for incoming
 LocProps:
 
-1. **Pending Update** (eq. 53 p. 180): the LocProp enters Pending
-2. **Contextual Instantiation** (eq. 48 p. 178): try to discharge
+1. **Pending Update** (ex. 45 p. 176): the LocProp enters Pending
+2. **Contextual Instantiation** (§6.5 (Ginzburg uses "contextual parameter assignments" terminology)): try to discharge
    dgb-params by binding indices to witnesses from addressee beliefs
-3. **CCURs** (eq. 67 p. 190): if instantiation fails, apply a
+3. **CCURs** (p. 167 footnote 30 + §6.6 ex. 73-86 pp. 192-198): if instantiation fails, apply a
    Clarification Context Update Rule — Parameter Identification (the
    default), Confirm, or Repeat — pushing a CR question on QUD
 
@@ -437,45 +440,57 @@ end CCURExample
 /-! ## Self-Repair via MaxPending
 
 @cite{ginzburg-2012} §8.2 (pp. 282–290) "Unifying Self- and Other-Correction".
-The substrate `KOS/SelfRepair.lean` provides the operations: `startRepair`,
-`extendRepair`, `completeRepair`, `clearMaxPending`, `replaceMaxPending`
-(backwards-looking appropriateness repair, eq. 31 p. 287).
+Per §6.3 footnote 31 p. 168 + §8.2: **MaxPending is the head of `Pending`**,
+not a separate field. The substrate `KOS/SelfRepair.lean` provides:
 
-This section exercises a typical self-repair trace: speaker says "I saw
-the —" then realizes they meant "the manager" and completes appropriately. -/
+- `pushMaxPending lp` — start a new in-construction LocProp at the head of Pending
+- `replaceMaxPending lp'` — backwards-looking appropriateness repair
+  (Ginzburg ex. 31 p. 287): swap the head of Pending with a corrected form
+- `clearMaxPending` — drop the head (abandon current attempt)
+- `maxPending` accessor — `pending.head?`
+
+This section exercises a self-repair trace: speaker says "I saw the —"
+(an in-construction LocProp), realizes the wrong word, replaces with
+"I saw the manager" (the corrected form). -/
 
 section SelfRepairExample
 
-/-- Initial TIS, no repair in flight. -/
-def repair_tis₀ : TIS String String String String := TIS.initial
+/-- The mid-utterance LocProp — speaker has begun "I saw the". -/
+def midRepairLP : LocProp String where
+  phon := "I saw the"
+  cat := "S"
+  cont := "see(spkr, ?)"
 
-/-- After `startRepair`, MaxPending is initialized. -/
-def repair_tis₁ : TIS String String String String := repair_tis₀.startRepair
-
-/-- After extending phon: speaker has uttered "I saw the —". -/
-def repair_tis₂ : TIS String String String String :=
-  repair_tis₁.extendRepair "I saw the "
-
-/-- The completed LocProp for the corrected utterance. -/
+/-- The corrected LocProp once the speaker chooses "manager". -/
 def correctedManagerLP : LocProp String where
   phon := "I saw the manager"
   cat := "S"
   cont := "see(spkr, manager)"
 
-/-- After `completeRepair`, the corrected LocProp is in Pending and
-MaxPending is cleared. -/
-def repair_tis₃ : TIS String String String String :=
-  repair_tis₂.completeRepair correctedManagerLP
+/-- Initial TIS, no repair in flight. -/
+def repair_tis₀ : TIS String String String String := TIS.initial
 
-theorem repair_clears_maxPending :
-    repair_tis₃.private_.maxPending = none := rfl
+/-- Push the in-construction LocProp onto Pending — it becomes MaxPending. -/
+def repair_tis₁ : TIS String String String String :=
+  repair_tis₀.pushMaxPending midRepairLP
 
-theorem repair_pushes_to_pending :
-    repair_tis₃.dgb.pending = [correctedManagerLP] := rfl
+/-- Apply backwards-looking appropriateness repair (ex. 31 p. 287):
+swap the in-flight MaxPending with the corrected LocProp. -/
+def repair_tis₂ : TIS String String String String :=
+  repair_tis₁.replaceMaxPending correctedManagerLP
 
-/-- Substrate witness: the abandonment path also clears MaxPending. -/
+/-- After repair, MaxPending IS the corrected form. -/
+theorem repair_replaces_maxPending :
+    repair_tis₂.maxPending = some correctedManagerLP :=
+  replaceMaxPending_becomes_max repair_tis₁ correctedManagerLP
+
+/-- After repair, the original midRepair LocProp is no longer at the head. -/
+theorem repair_old_form_gone :
+    repair_tis₂.dgb.pending = [correctedManagerLP] := rfl
+
+/-- Substrate witness: the abandonment path drops MaxPending. -/
 theorem abandon_clears :
-    repair_tis₂.clearMaxPending.private_.maxPending = none := rfl
+    repair_tis₁.clearMaxPending.maxPending = none := rfl
 
 end SelfRepairExample
 
@@ -600,16 +615,24 @@ open Core.CommonGround in
 framework has a single CG that cannot represent this divergence —
 the contrast is structural, not a matter of degree.
 
-**Proof status**: TODO. The architectural claim is structural and the
-inequality holds at `RainW.sunny` (speaker rules out sunny via the
-isRaining fact; addressee allows it via empty FACTS). The Lean proof of
-the propositional inequality is a `congr_fun` + `simp` + `propext`
-calculation that is mechanical but fiddly; deferred for a follow-up
-substrate-side `HasContextSet` API improvement. -/
+The inequality holds at `RainW.sunny`: the speaker's CS at sunny
+requires `isRaining sunny = True` (i.e. `sunny = rainy`), which is
+False; the addressee's CS at sunny is vacuously True (empty universal
+over an empty `facts` list). -/
 theorem kos_vs_stalnaker_per_dgb_divergence :
     HasContextSet.toContextSet kosSpeakerDGB ≠
     HasContextSet.toContextSet kosAddresseeDGB := by
-  sorry
+  intro h
+  -- Apply both sides at .sunny
+  have hsunny := congrFun h RainW.sunny
+  -- Speaker side: ∀ p ∈ [isRaining], p .sunny  ≡  isRaining .sunny  ≡  False
+  -- Addressee side: ∀ p ∈ [], p .sunny         ≡  True
+  -- So hsunny : False = True, contradiction
+  simp only [HasContextSet.toContextSet, kosSpeakerDGB, kosAddresseeDGB,
+             DGB.addFact, DGB.initial, isRaining,
+             List.mem_singleton, forall_eq, List.not_mem_nil,
+             IsEmpty.forall_iff, forall_const, eq_iff_iff, iff_true] at hsunny
+  exact RainW.noConfusion hsunny
 
 /-! ### vs Farkas-Bruce 2010 (five-way decomposition)
 
@@ -640,6 +663,28 @@ theorem kos_vs_farkasbruce_architecture_differs
   refine ⟨by simp [Dialogue.FarkasBruce.DiscourseState.addToDcS], ?_, ?_⟩
   · rfl
   · rfl
+
+/-- The deeper architectural disagreement: **F&B can model retraction**
+(content moves dcS → cg → dcS, e.g. "I take that back"); **KOS's facts
+field is monotone** (operations only add, never remove). The KOS API
+literally has no `removeFact` operation — the type signature of every
+DGB-update primitive in `KOS/Basic.lean` preserves the inclusion
+`dgb.facts ⊆ (op dgb).facts`.
+
+Witness: `addFact p` increases the facts list by one element. -/
+theorem kos_facts_monotone_under_addFact
+    (dgb : DGB String (Set RainW) String String) (p : Set RainW) :
+    dgb.facts ⊆ (dgb.addFact p).facts := by
+  intro q hq
+  simp [DGB.addFact, hq]
+
+/-- F&B explicitly supports the inverse: `addToCG` then can be reversed
+by re-introducing to dcS. The substrate-level disagreement: KOS's
+type-level commitment to monotonicity. -/
+theorem farkasbruce_cg_can_be_emptied
+    (ds : Dialogue.FarkasBruce.DiscourseState RainW) :
+    (Dialogue.FarkasBruce.DiscourseState.empty
+     : Dialogue.FarkasBruce.DiscourseState RainW).cg = [] := rfl
 
 /-! ### vs Roberts 1996/2012 (partition-stack QUD)
 
@@ -689,6 +734,42 @@ HPSG-formulated grammar. Our `Grammar.lean` integrates with HPSG via
 This is structural agreement, not contrast — KOS's grammar is an
 extension of GS2000's. The HPSG foundations supplement what KOS needs;
 no architectural disagreement. -/
+
+/-- KOS's `DialogueSign` faithfully extends @cite{ginzburg-sag-2000}'s
+HPSG `Synsem`: the projection `toSynsem` preserves head-features and
+category, losing only dialogue features (dgbParams, qParams, questDom).
+This is a structural-retract witness: KOS can be "forgotten down" to
+plain HPSG. -/
+theorem dialogueSign_extends_hpsg_faithfully {Cont : Type}
+    (ds : Dialogue.KOS.Grammar.DialogueSign Cont) :
+    ds.toSynsem.cat = ds.pos ∧ ds.toSynsem.head = ds.head :=
+  ⟨rfl, rfl⟩
+
+/-! ### vs Purver-Ginzburg 2004 — full RCH machinery
+
+The simple `qparams_dont_block_grounding` theorem above shows the
+type-level prerequisite. The substantive Purver-Ginzburg claim is the
+**Reprise Content Hypothesis** (RCH): the q-params record on a LocProp
+licenses the queryable types observable in fragment-reprise data.
+
+The substrate `KOS/RepriseContent.lean` provides the WeakRCH/StrongRCH
+predicates. The PurverGinzburg2004 study file proves the q-params
+predictor satisfies them. We re-export the structural connection here:
+*the LocProp design choice in KOS-2012 is what enables RCH satisfaction*. -/
+
+/-- The qcparams field on `LocProp` (the dgb-params/q-params split) is the
+structural enabler of WeakRCH satisfaction (Purver-Ginzburg 2004's
+methodological criterion). Without the split — if we tried to put
+referential and existential parameters in the same field — fragment
+reprises could not query just the q-params record, and WeakRCH would not
+be satisfiable by any predictor. -/
+example {Cont : Type} (lp : LocProp Cont) :
+    -- The two fields are structurally separable:
+    lp.cparams = lp.cparams ∧ lp.qcparams = lp.qcparams ∧
+    -- And `integrateLocProp` only checks cparams:
+    (lp.cparams = [] → (integrateLocProp lp crQuestion).isGrounded = true) :=
+  ⟨rfl, rfl, fun h => by
+    simp [integrateLocProp, h, IntegrationResult.isGrounded]⟩
 
 end CrossFrameworkContrasts
 

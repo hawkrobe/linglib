@@ -74,7 +74,7 @@ theorem inquiry_step2_has_fact : "Bo is here" ∈ tis₂.dgb.facts := by
   simp [tis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud, DGB.recordMove]
 
 /-- After Assert, QUD is empty (the question was resolved). -/
-theorem inquiry_step2_qud_empty : tis₂.dgb.qud = [] := by native_decide
+theorem inquiry_step2_qud_empty : tis₂.dgb.qud = [] := by decide
 
 /-- After Accept, the fact appears twice (once from assert, once from accept). -/
 theorem inquiry_step3_facts : tis₃.dgb.facts = ["Bo is here", "Bo is here"] := by
@@ -113,7 +113,7 @@ theorem check_pushes :
   native_decide
 
 /-- After Confirm, the fact is in FACTS and QUD is resolved. -/
-theorem confirm_resolves : checkTIS₃.dgb.qud = [] := by native_decide
+theorem confirm_resolves : checkTIS₃.dgb.qud = [] := by decide
 
 end CheckExample
 
@@ -133,7 +133,7 @@ def awq₁ := awq₀.ask "Bo is here"
 def awq₂ := awq₁.assertWithQUD "Bo is here" "Bo is here"
 
 /-- After assertWithQUD, the question from Ask is resolved (fact matches). -/
-theorem awq_resolves_original_question : awq₂.dgb.qud = [] := by native_decide
+theorem awq_resolves_original_question : awq₂.dgb.qud = [] := by decide
 
 /-- The fact is in FACTS after assertWithQUD. -/
 theorem awq_has_fact : "Bo is here" ∈ awq₂.dgb.facts := by

@@ -106,12 +106,12 @@ instance austinianSupport (S : Type) :
 
 | TIS (Ginzburg 2012)        | InfoState (Cooper 2023)      |
 |----------------------------|------------------------------|
-| `private_.agenda`          | `agenda`                     |
+| `priv.agenda`          | `agenda`                     |
 | `dgb.moves.getLast?`       | `latestUtterance`            |
 | `dgb.facts`                | `commitments`                |
 | `dgb.qud`                  | *(not represented)*          |
 | `dgb.pending`              | *(not represented)*          |
-| `private_.genre`           | *(not represented)*          |
+| `priv.genre`           | *(not represented)*          |
 
 TIS is a record extension of InfoState: it adds QUD, Pending, genre,
 and separates public from private. -/
@@ -124,7 +124,7 @@ def tisToInfoState {P Fact QContent Cont SignT : Type}
     (tis : TIS P Fact QContent Cont)
     (moveToSign : IllocMove Fact QContent → SignT) :
     InfoState SignT (List Fact) where
-  agenda := tis.private_.agenda.map moveToSign
+  agenda := tis.priv.agenda.map moveToSign
   latestUtterance := tis.dgb.latestMove.map moveToSign
   commitments := tis.dgb.facts
 
@@ -204,5 +204,48 @@ theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
   simp [atis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud, DGB.recordMove]
 
 end AustinianExample
+
+-- ════════════════════════════════════════════════════
+-- § 5. SubtypeOf: LocProp ⊐ TTRSign
+-- ════════════════════════════════════════════════════
+
+/-! ## LocProp as a structural refinement of TTRSign
+
+`LocProp Cont` (Ginzburg 2012 Ch. 6) extends `TTRSign String Cont`
+(Cooper 2023, the foundational TTR sign) by adding contextual-parameter
+fields (`cparams`, `qcparams`) and accessible sub-constituents
+(`constits`). The forgetful projection makes the refinement structural,
+not just commented:
+
+  TTRSign String Cont      ⟵   LocProp Cont
+  ⟨sEvent := lp.phon, cont := lp.cont⟩
+
+This mirrors the existing `ForcedSign ⊐ TTRSign` `SubtypeOf` instance
+in `Theories/Semantics/TypeTheoretic/Discourse.lean`. -/
+
+/-- Forgetful projection from `LocProp Cont` to a Cooper-shaped
+`TTRSign String Cont`: keep phon + cont, drop dialogue features.
+Plain function (not `LocProp.toTTRSign`) because `LocProp` lives in
+the `Dialogue.KOS` namespace and dot notation looks there for the
+method, not in `Dialogue.KOS.TTRBridge`. -/
+def locPropToTTRSign {Cont : Type} (lp : LocProp Cont) :
+    Semantics.TypeTheoretic.TTRSign String Cont where
+  sEvent := lp.phon
+  cont := lp.cont
+
+/-- `LocProp Cont` is a `SubtypeOf` `TTRSign String Cont`: the structural
+refinement is now true by construction, dischargeable as a typeclass. -/
+instance {Cont : Type} :
+    Semantics.TypeTheoretic.SubtypeOf (LocProp Cont)
+      (Semantics.TypeTheoretic.TTRSign String Cont) where
+  up := locPropToTTRSign
+
+/-- The projection preserves phon. -/
+@[simp] theorem locPropToTTRSign_phon {Cont : Type} (lp : LocProp Cont) :
+    (locPropToTTRSign lp).sEvent = lp.phon := rfl
+
+/-- The projection preserves cont. -/
+@[simp] theorem locPropToTTRSign_cont {Cont : Type} (lp : LocProp Cont) :
+    (locPropToTTRSign lp).cont = lp.cont := rfl
 
 end Dialogue.KOS.TTRBridge

@@ -6,7 +6,7 @@ import Linglib.Theories.Dialogue.KOS.Basic
 
 The `genreRelevant` predicate (eq. 90 p. 105) constraining which
 initiating moves are felicitous given a conversational genre, plus
-the outcome-fulfillability machinery (eq. 91 p. 106) that ex. 90
+the outcome-fulfillability machinery (ex. 89 p. 105) that ex. 90
 reduces to.
 
 ## Relevance per ex. 90 p. 105
@@ -32,11 +32,11 @@ This file provides two relevance computations:
   directly.
 
 Both project through the `InfoStruc` layer that QUD now stores
-(per Ch. 6 final shape, ex. 39 p. 239).
+(per Ch. 6 final shape, with QUD-as-InfoStruc treatment per §7.6 FEC discussion).
 
 ## Outcome predicate
 
-`GenreType.outcomeFulfilled` formalizes ex. 91's outcome relation: a
+`GenreType.outcomeFulfilled` formalizes ex. 89's outcome relation: a
 DGB fulfills the genre's outcome when its QUD-projected questions are
 all in the anticipated `qnud` set. This is the substrate ex. 90 reduces
 to ("outcome will be fulfilled").
@@ -53,13 +53,13 @@ they exercise these claims.
 namespace Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
--- § 1. Outcome fulfillment (eq. 91 p. 106)
+-- § 1. Outcome fulfillment (ex. 89 p. 105)
 -- ════════════════════════════════════════════════════
 
 /-- A DGB fulfills the genre's outcome when its QUD's projected questions
 are all anticipated (i.e., in `genre.qnud`).
 
-@cite{ginzburg-2012} ex. 91 (p. 106): the outcome of a dialogue is
+@cite{ginzburg-2012} ex. 89 (p. 105): the outcome of a dialogue is
 fulfilled when its trajectory is consistent with the genre's anticipated
 question stack. The full version also requires move sequence to be
 consistent with `anticipatedMoves`; we model the QUD half here. -/
@@ -123,7 +123,7 @@ theorem genreRelevantViaQnud_preserves_outcomeFulfilled
     (m : IllocMove Fact QContent)
     (hm : genreRelevantViaQnud genre dgb m = true) :
     -- After pushing m's question content (if any), the resulting QUD is
-    -- still in qnud — that's the ex. 91 outcome relation maintained.
+    -- still in qnud — that's the ex. 89 outcome relation maintained.
     (match m.questionContent with
      | none => True  -- non-question moves don't change QUD
      | some q => q ∈ genre.qnud) := by

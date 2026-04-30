@@ -1,4 +1,5 @@
 import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Core.Discourse.IllocutionaryForce
 
 /-!
 # IllocMove ↔ Searle Bridge

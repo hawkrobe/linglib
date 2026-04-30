@@ -2,136 +2,115 @@ import Linglib.Theories.Dialogue.KOS.Defs
 import Linglib.Theories.Dialogue.KOS.Basic
 
 /-!
-# KOS: Self-Repair via MaxPending
+# KOS: Self-Repair via MaxPending (= head of Pending)
 @cite{ginzburg-2012} §8.2 (pp. 282–290) "Unifying Self- and Other-Correction"
 
-The self-repair substrate that previous formaliser stubs (`tucMidRepair`,
-`repair_clears_tuc`) gestured at without backing. Operations on the
-`MaxPending` field of `TIS.private_`:
+Per @cite{ginzburg-2012} §6.3 footnote 31 p. 168 and §8.2: **MaxPending is
+the maximal element of `dgb.pending`**, not a separate field. Self-repair
+operates on the head of Pending directly.
 
-- `startRepair` — initialize MaxPending with an empty form
-- `extendRepair` — append phonological material
-- `completeRepair` — promote MaxPending to Pending as a full LocProp,
-  then clear MaxPending
-- `clearMaxPending` — abandon the partial form
-- `replaceMaxPending` — backwards-looking appropriateness repair (eq. 31
-  p. 287): the speaker notices a problem and substitutes a corrected form
+## Operations
 
-## Architecture
+- `TIS.maxPending` — accessor: `dgb.pending.head?`
+- `TIS.replaceMaxPending` — backwards-looking appropriateness repair
+  (Ginzburg §8.2 ex. 31 p. 287 — the canonical repair operation):
+  swap the current head of Pending with a corrected LocProp
+- `TIS.clearMaxPending` — drop the head of Pending (abandon current
+  incomplete utterance)
+- `TIS.extendMaxPendingPhon` — extend the head's `phon` field
+  (Ginzburg §8.2.3 incremental construction)
+- `TIS.pushMaxPending` — push a new LocProp onto Pending (start a new
+  in-construction utterance; equivalent to `DGB.pushPending`)
 
-`MaxPending` is the formaliser's name for what Ginzburg models as an
-extension of the Pending field tracking incomplete utterances. It lives
-in `PrivateState.maxPending : Option MaxPending`. The substrate
-operations here lift to TIS so consumers don't have to thread through
-`tis.private_` directly.
+## Caveat
 
-## Backwards-looking appropriateness repair (eq. 31 p. 287)
-
-Ginzburg's central self-repair rule: when the current maxpending's
-content is inappropriate (e.g., the speaker realizes they used the
-wrong name), a single update step replaces it with an alternative
-form. We model this as `replaceMaxPending` taking the new MaxPending
-record directly.
-
-## Connection to LocProp Pending
-
-A completed self-repair feeds the Pending field with a LocProp,
-where it then enters the standard grounding/CRification protocol
-(`KOS/Grounding.lean`).
+`TIS.extendMaxPendingPhon` and the procedural startRepair/completeRepair
+sketched in earlier formaliser drafts are not Ginzburg operations per se —
+he describes (informally) "incrementalising" Pending word-by-word but
+doesn't enumerate operations. We expose only the `replaceMaxPending`
+operation (which corresponds to ex. 31 p. 287's Backwards-looking
+appropriateness repair) and the LocProp-stack manipulators that any
+incremental-construction model needs. The §8.2.3 incremental dynamics is
+deferred substrate work.
 -/
 
 namespace Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
--- § 1. MaxPending Operations on TIS
+-- § 1. MaxPending Accessor
 -- ════════════════════════════════════════════════════
 
-/-- Start a self-repair: initialize `MaxPending` with an empty form.
+/-- The current MaxPending: the head of `dgb.pending`, if any.
+@cite{ginzburg-2012} §6.3 footnote 31 p. 168. -/
+def TIS.maxPending {P Fact QContent Cont : Type}
+    (tis : TIS P Fact QContent Cont) : Option (LocProp Cont) :=
+  tis.dgb.pending.head?
 
-If a MaxPending was already in flight, it is overwritten — this models
-the speaker abandoning one repair attempt and starting fresh. -/
-def TIS.startRepair {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) : TIS P Fact QContent Cont :=
-  { tis with private_ := { tis.private_ with maxPending := some {} } }
+-- ════════════════════════════════════════════════════
+-- § 2. MaxPending Stack Operations
+-- ════════════════════════════════════════════════════
 
-/-- Extend the in-flight `MaxPending` with additional phonological material.
-
-If no MaxPending is in flight, this is a no-op. -/
-def TIS.extendRepair {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (phon : String) : TIS P Fact QContent Cont :=
-  { tis with private_ := { tis.private_ with
-      maxPending := tis.private_.maxPending.map (fun mp =>
-        { mp with phonSoFar := mp.phonSoFar ++ phon }) } }
-
-/-- Complete a self-repair: promote MaxPending to the Pending field as a
-full `LocProp`, then clear MaxPending.
-
-The caller supplies the final LocProp (the substrate doesn't impose how
-the partial form maps to a complete locutionary proposition — that's
-grammar-specific). -/
-def TIS.completeRepair {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (final : LocProp Cont) :
+/-- Push a fresh LocProp onto Pending (start a new in-construction
+utterance, becoming the new MaxPending). Equivalent to `DGB.pushPending`
+lifted to TIS. -/
+def TIS.pushMaxPending {P Fact QContent Cont : Type}
+    (tis : TIS P Fact QContent Cont) (lp : LocProp Cont) :
     TIS P Fact QContent Cont :=
-  { tis with
-    dgb := tis.dgb.pushPending final
-    private_ := { tis.private_ with maxPending := none } }
+  { tis with dgb := tis.dgb.pushPending lp }
 
-/-- Abandon any in-flight MaxPending without promoting. -/
+/-- Drop the current MaxPending (abandon the in-construction or ungrounded
+LocProp at the head of Pending). -/
 def TIS.clearMaxPending {P Fact QContent Cont : Type}
     (tis : TIS P Fact QContent Cont) : TIS P Fact QContent Cont :=
-  { tis with private_ := { tis.private_ with maxPending := none } }
+  { tis with dgb := { tis.dgb with pending := tis.dgb.pending.tail } }
 
 -- ════════════════════════════════════════════════════
--- § 2. Backwards-Looking Appropriateness Repair
+-- § 3. Backwards-Looking Appropriateness Repair (§8.2 ex. 31 p. 287)
 -- ════════════════════════════════════════════════════
 
-/-- Backwards-looking appropriateness repair: substitute the current
-in-flight MaxPending with a corrected form.
+/-- Backwards-looking appropriateness repair: replace the current
+MaxPending with a corrected LocProp.
 
-@cite{ginzburg-2012} eq. 31 (p. 287): the speaker recognises that the
+@cite{ginzburg-2012} ex. 31 (p. 287): the speaker recognises that the
 current maxpending's content fails appropriateness (wrong word, wrong
 referent) and updates it to a candidate replacement.
 
-If no MaxPending is in flight, this initializes one with the supplied
-form (lenient default). -/
+If Pending is empty, this initializes it with the supplied form
+(lenient default — Ginzburg's rule presupposes a MaxPending to repair). -/
 def TIS.replaceMaxPending {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (replacement : MaxPending) :
+    (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
     TIS P Fact QContent Cont :=
-  { tis with private_ := { tis.private_ with maxPending := some replacement } }
+  { tis with dgb := { tis.dgb with
+      pending := match tis.dgb.pending with
+                 | [] => [replacement]
+                 | _ :: rest => replacement :: rest } }
 
 -- ════════════════════════════════════════════════════
--- § 3. Substrate Theorems
+-- § 4. Substrate Theorems
 -- ════════════════════════════════════════════════════
 
-/-- After `startRepair`, MaxPending is initialized to the empty bundle. -/
-theorem startRepair_initializes_maxPending {P Fact QContent Cont : Type}
+/-- `pushMaxPending` makes the pushed LocProp the new MaxPending. -/
+@[simp] theorem pushMaxPending_becomes_max {P Fact QContent Cont : Type}
+    (tis : TIS P Fact QContent Cont) (lp : LocProp Cont) :
+    (tis.pushMaxPending lp).maxPending = some lp := rfl
+
+/-- `clearMaxPending` removes the head of Pending. -/
+@[simp] theorem clearMaxPending_drops_head {P Fact QContent Cont : Type}
     (tis : TIS P Fact QContent Cont) :
-    tis.startRepair.private_.maxPending = some {} := rfl
+    (tis.clearMaxPending).dgb.pending = tis.dgb.pending.tail := rfl
 
-/-- `clearMaxPending` clears the field. -/
-theorem clearMaxPending_clears {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) :
-    tis.clearMaxPending.private_.maxPending = none := rfl
+/-- `replaceMaxPending` makes the replacement the new MaxPending. -/
+@[simp] theorem replaceMaxPending_becomes_max {P Fact QContent Cont : Type}
+    (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
+    (tis.replaceMaxPending replacement).maxPending = some replacement := by
+  unfold TIS.replaceMaxPending TIS.maxPending
+  cases tis.dgb.pending <;> rfl
 
-/-- After `completeRepair`, MaxPending is cleared. -/
-theorem completeRepair_clears_maxPending {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (final : LocProp Cont) :
-    (tis.completeRepair final).private_.maxPending = none := rfl
-
-/-- After `completeRepair`, the supplied LocProp is in Pending. -/
-theorem completeRepair_pushes_pending {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (final : LocProp Cont) :
-    (tis.completeRepair final).dgb.pending = final :: tis.dgb.pending := rfl
-
-/-- After `replaceMaxPending`, MaxPending is the supplied replacement. -/
-theorem replaceMaxPending_substitutes {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) (replacement : MaxPending) :
-    (tis.replaceMaxPending replacement).private_.maxPending = some replacement := rfl
-
-/-- `startRepair` followed by `clearMaxPending` is a no-op on the maxPending
-field (returns to none). -/
-theorem startRepair_then_clear {P Fact QContent Cont : Type}
-    (tis : TIS P Fact QContent Cont) :
-    tis.startRepair.clearMaxPending.private_.maxPending = none := rfl
+/-- `replaceMaxPending` preserves the rest of Pending (only the head changes). -/
+@[simp] theorem replaceMaxPending_preserves_tail {P Fact QContent Cont : Type}
+    (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
+    (tis.replaceMaxPending replacement).dgb.pending.tail = tis.dgb.pending.tail := by
+  unfold TIS.replaceMaxPending
+  cases tis.dgb.pending <;> rfl
 
 end Dialogue.KOS

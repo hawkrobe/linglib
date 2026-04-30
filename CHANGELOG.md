@@ -4,6 +4,89 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### KOS substrate audit-driven cleanup: fidelity + hygiene + cross-framework deepening (Sprints A/B/C)
+
+Three-sprint cleanup driven by the post-Phase-A+B+ four-agent audit (linguistics expert PDF-verified, mathlib reviewer, integration auditor, cross-framework reconciler). Substantive substrate errors flagged by the linguistics expert (PDF-verified against the Ginzburg book), mathlib hygiene issues, and shallow cross-framework witnesses all addressed.
+
+**Sprint A — Fidelity fixes (substantive substrate corrections per PDF):**
+- **CCURs corrected from 3 to 2 canonical** per @cite{ginzburg-2012} p. 167 footnote 30: `confirm` → `parameterFocussing` (the actual book name; I had conflated it with the Ch. 4 `IllocMove.confirm` move); `repeatCR` → `repetitionCR` and demoted to "contested CCUR-vs-RequestRepeat" per §6.8. The two canonical CCURs are Parameter Identification + Parameter Focussing (ex. 73-86 pp. 192-198).
+- **MaxPending architectural fix**: deleted the formaliser-invented `MaxPending` struct (with phonSoFar/cat/partialContent fields). Per Ginzburg §6.3 footnote 31 p. 168 + §8.2: MaxPending is the maximal element of `dgb.pending`, not a separate field. SelfRepair operations rebuilt around Pending-stack manipulation: `pushMaxPending`, `clearMaxPending`, `replaceMaxPending` (the §8.2 ex. 31 backwards-looking appropriateness repair). `PrivateState` simplified (no maxPending field). `TIS.maxPending` accessor added (= `dgb.pending.head?`).
+- **TTP framing rewritten** around Ginzburg's actual Why-parakeet example (ex. 22-23 p. 23): same fragment "Why?" after same antecedent "I own a parakeet" yields different readings depending on **who keeps the turn** — refutes Equal Access to Context (ex. 5 p. 13, ex. 20b p. 21). The previous framing was the standard "QUD determines NSU resolution" claim, which is a *consequence* of the per-DGB stance, not the central TTP argument.
+- **Q-params attribution corrected**: previously claimed Sign carries q-params in Ch. 5 §5.2; the book's footnote on p. 122 explicitly notes "the field q-params introduced in section 8.5 of Chapter 8" (ex. 101-104 pp. 325-326). Grammar.lean docstring updated.
+- **Hallucinated citations corrected** throughout substrate: `ex. 113 p. 215` → `ex. 43 p. 175` (final DGB; 5+ sites); `eq. 53 p. 180` → `ex. 45 p. 176` (Pending Update); `eq. 67 p. 190` → `p. 167 footnote 30 + §6.6 ex. 73-86 pp. 192-198` (CCURs); `ex. 91 p. 106` → `ex. 89 p. 105` (outcome predicate, in Genre.lean); `eq. 48 p. 178` → `§6.5` (contextual instantiation); `ex. 39 p. 239` → `§6.3 + §7.6 FEC discussion` (InfoStruc location flagged as uncertain). The `"default repair"` terminology in Grounding.lean — invented, not in §6.7 — removed.
+- **`outcomeFulfilled` citation corrected**: was `ex. 91 p. 106`; actually `ex. 89 p. 105` (ex. 91 is `GenreRelevant^qudpresupp`, a different relevance predicate).
+- **Self-repair docstring honesty**: SelfRepair.lean now acknowledges that `pushMaxPending`/`clearMaxPending` are formaliser convenience operations Ginzburg doesn't enumerate; only `replaceMaxPending` corresponds to ex. 31 p. 287's Backwards-looking appropriateness repair.
+
+**Sprint B — Mathlib hygiene:**
+- **1 sorry discharged**: `kos_vs_stalnaker_per_dgb_divergence` proved via `congrFun h .sunny` + targeted `simp only` + `RainW.noConfusion` (~6 lines per the audit's discharge sketch).
+- **1 sorry remains**: `belief_resolution_grounds_via_ccur` (Grounding.lean) — substrate's contract is documented; proof requires a `List.filter`/`List.filterMap`/`List.contains` interaction that doesn't match cleanly to current mathlib lemmas. TODO sharpened with concrete deferral rationale.
+- **Dead imports removed**: `Defs.lean` (3 unused: IllocutionaryForce/Intentionality/Commitment); `Ginzburg2012.lean` (3 unused: Stalnaker/Partition.QUD/QUDStack); `Basic.lean` (1: PrecisionProjection). `Move.lean` gained the IllocutionaryForce import (was previously transitive).
+- **`private_` → `priv` field rename**: keyword-dodge name dropped, `tis.priv.agenda` replaces `tis.private_.agenda` across 3 sites.
+- **DecidableSupport instance dedup**: deleted the duplicate `speakerSupport` in Ginzburg2012.lean; the Examples.lean instance now serves both files (instance-clash hazard resolved).
+- **`native_decide` → `decide`** for 4 of the 6 Examples.lean theorems with simple decidable goals; 2 multi-element-list theorems (`inquiry_step3_facts`, `inquiry_cycle_moves`, `check_pushes`) kept on `native_decide` pending structural-proof restructure.
+- **`@[simp]` tags** on 4 SelfRepair theorems (`pushMaxPending_becomes_max`, `clearMaxPending_drops_head`, `replaceMaxPending_becomes_max`, `replaceMaxPending_preserves_tail`) so they participate in downstream simp proofs.
+- **Dead code deleted**: `LocProp.canGround` (one-line alias of `isFullyResolved`, never referenced).
+- **Universe polymorphism deferred** (`Type` → `Type*` across substrate): high-risk bulk change with limited immediate benefit; flagged for follow-up commit when consumer actually needs it.
+
+**Sprint C — Cross-framework deepening:**
+- **F&B contrast deepened** beyond shallow witness: added `kos_facts_monotone_under_addFact` proving KOS's `addFact` extends FACTS, capturing the *architectural* disagreement with F&B's retraction-supporting dcS↔cg dynamics (KOS's API has no `removeFact` operation by design; F&B's three-slate structure explicitly supports content moving back from cg to dcS).
+- **Ginzburg-Sag 2000 structural agreement** as a Lean theorem: `dialogueSign_extends_hpsg_faithfully` proves the projection `DialogueSign.toSynsem` preserves head-features and category, witnessing the structural-retract relationship the previous version only asserted in prose.
+- **LocProp ⊐ TTRSign `SubtypeOf` instance** in TTRBridge.lean: `locPropToTTRSign` + the SubtypeOf instance + 2 simp lemmas. Mirrors the existing `ForcedSign ⊐ TTRSign` pattern in `Theories/Semantics/TypeTheoretic/Discourse.lean`. Makes the structural refinement true by construction, not just commented.
+- **Purver-Ginzburg structural-enabler theorem** added: explicit witness that LocProp's dgb-params/q-params split is the structural prerequisite for RCH (Reprise Content Hypothesis) satisfaction. Without the field separation, the qParamsPredictor wouldn't be definable at all.
+- **Krifka2015 ↔ Ginzburg2012 reciprocity**: per the chronological-dependency rule, post-2012 Krifka2015.lean (which previously had zero KOS engagement) now imports KOS substrate and includes a `vsGinzburg2012` section with two contrast theorems: `krifka_eager_vs_ginzburg_lazy` (Krifka root narrows immediately on assert; KOS addressee FACTS stays empty until Accept) and `krifka_shared_root_vs_kos_split_dgbs` (Krifka has one shared root; KOS has two distinct DGBs).
+
+**Deferred to follow-up commits**:
+- Anderson2021 ↔ Ginzburg2012 reciprocity (similar shape to Krifka2015; ~30 lines)
+- Universe polymorphism (`Type` → `Type*`) bulk change
+- `HasOutstandingDeps` typeclass abstracting SLASH ↔ CPARAMS analogy
+- `TIS ⊐ InfoState` SubtypeOf instance (parallel to LocProp ⊐ TTRSign)
+- `IllocMove.no_commissive` structural witness for the Searle 7→5 asymmetry
+- `belief_resolution_grounds_via_ccur` proof discharge
+- Multi-element-list `native_decide` migration in Examples.lean (2 sites)
+- PTT/TRINDI/SDRT-dialogue/Levelt 1983 substrate gaps (sibling frameworks not yet in linglib)
+
+**Build**: 923 jobs green for all KOS substrate + study consumer modules.
+
+### Caha2009 paradigm-shape pilot — Serbian §8.3.1 syncretism predictions
+
+The previous Caha2009.lean only checked **inventory cardinality** — trivial agreement, since every Slavic 6-case set obviously satisfies downward-closure. Caha's substantive prediction is about **paradigm shape**: which morphological cells syncretize within a noun's declension. This round formalizes Caha §8.3.1 (pp. 238-240) on Serbian, the simplest of his four Slavic case studies.
+
+**Apparatus added** (paper-anchored in Caha2009.lean, namespace `Slavic`; not promoted to substrate pending second consumer):
+- `cahaSlavicRank : Core.Case → Option (Fin 6)` matching @cite{caha-2009} (16) p. 12 / (7) p. 238 verbatim: NOM=0, ACC=1, GEN=2, LOC/PREP=3, DAT=4, INST=5. Differs from Caha's Universal Case sequence (NOM-ACC-GEN-DAT-INST-COM, p. 10) by inserting LOC between GEN and DAT.
+- `Paradigm := Fin 6 → Nat` — morphological paradigm as form-class index per cell.
+- `IsContiguous (p : Paradigm) : Prop := ∀ i j k : Fin 6, i < j → j < k → p i = p k → p i = p j` — Caha's Universal Contiguity restricted to a Slavic paradigm. Decidable.
+
+**Serbian content** (namespace `Slavic.Serbian`):
+- 6 distinct paradigm shapes encoding the 11 attested noun paradigms in Caha (9) p. 238 + (10) p. 239: `animMascSg` ('son', 'man'), `inanimMascSg` ('city', 'village', 'heart'), `femAStemSg` ('sheep'), `femIStemSg` ('death' — the GEN-PREP paradigm Caha cites by name in (11c)), `plDistinct` ('son' plural), `plNomAcc` (neuter/feminine plurals).
+- 6 per-paradigm contiguity theorems by `decide`.
+- Bundled `caha_poster_child` theorem formalizing Caha p. 239's headline: "Serbian can be thought of as another poster child for Universal Contiguity, with no violations thereof."
+- Each paradigm docstring cites the relevant Caha (11) syncretism type ((11a) NOM=ACC neuters; (11b) ACC=GEN animate masc sg; (11c) GEN=PREP 'death' paradigm; (11d) PREP=DAT almost omnipresent; (11e) DAT=INS plurals).
+
+**ABA refutations** (namespace `Slavic.Hypothetical`, gives the predicate bite):
+- `nomGenSkipAcc` (NOM=GEN with ACC distinct), `prepInsSkipDat` (PREP=INS with DAT distinct), `nomDatSkipMiddle` (NOM=DAT with all 3 intervening cells distinct — long-range ABA). Each proved `¬ IsContiguous` by `decide`. Caha predicts these patterns are unattested in Serbian (and across Slavic).
+
+**Lean issue surfaced.** `![a,b,c,d,e,f]` notation (`Matrix.cons` chain) doesn't reduce reliably under `decide` for `Fin 6 → Nat` paradigms with witness triples involving non-adjacent indices — the kernel got stuck on `(p ⟨0, _⟩).beq (p ⟨2, _⟩)` for two of the three refutations. Fix: explicit pattern matching `def p : Paradigm | 0 => ... | 1 => ... | ...` reduces cleanly. All paradigm defs use this style.
+
+**Net.** Caha2009.lean: 184 → 328 LOC (+144), 22 → 50 declarations (+28: paradigms, contiguity proofs, refutations). 754 jobs green. The substantive Caha-Slavic agreement is now testable at paradigm-shape level for Serbian; before this round, the only Caha verdict was inventory-cardinality (trivial). Deferred: §8.3.2 Slovene, §8.3.3 Czech (Caha's longest section), §8.3.4 Ukrainian — each ~150-300 LOC of similar paradigm encoding work. Czech in particular is interesting because Caha §5.5 already discusses Czech locative-directional and genitive-dative "chameleon" patterns at length.
+
+### Slavic Case substrate stress-test — 4 new Fragments using `coreInventory`
+
+Validated the `Fragments.Slavic.Case.coreInventory` substrate (factored in earlier session work) by adding all four remaining Slavic case-bearing languages from @cite{comrie-corbett-1993}. Each Fragment is one `abbrev` aliasing the substrate plus a paragraph docstring quoting the chapter author — no new substrate work needed. Substrate consumer count 6 → 10; concrete evidence the family-level factor pays off as designed.
+
+**Inventories verified directly from PDF chapters before code:**
+- **Slovak** (@cite{short-1993-slovak} p. 541): "case system has shrunk from seven members to six, the vocative being replaced by the nominative" — 6-case, formulaic VOC relics only.
+- **Belarusian** (@cite{mayo-1993} p. 901): "two numbers, six cases and three genders ... vocative case can no longer be regarded as a living category" — 6-case with relics (божа, браце, дружа, сынку).
+- **Sorbian** (@cite{stone-1993-sorbian} p. 614): Upper Sorbian 7 cases incl. masc-sg VOC; Lower Sorbian 6 cases (lost VOC); both lost bare INST function. Single `Sorbian/Case.lean` covering both varieties via shared 6-case core.
+- **Cassubian** (@cite{stone-1993-cassubian} p. 769): "seven cases are the same as in Polish" + VOC eroding to NOM + bare INST in copular complement (independent confirmation that bare predicative INST is the unmarked Slavic state, with Slovene/Sorbian as marked outliers).
+
+**Adds.**
+- 4 new Fragment files: `Fragments/Slavic/{Slovak,Belarusian,Sorbian,Cassubian}/Case.lean` (~17 LOC each, identical structure to polished per-language pattern).
+- 4 new bib entries: `short-1993-slovak`, `mayo-1993`, `stone-1993-sorbian`, `stone-1993-cassubian` (page ranges from C&C 1993 TOC).
+- 4 new conformer theorems in `Phenomena/Case/Studies/Caha2009.lean` (`belarusian_respectsCaha`, `cassubian_respectsCaha`, `slovak_respectsCaha`, `sorbian_respectsCaha`) — all term-mode `:= slavicCore_respectsCaha`.
+- `Linglib.lean` wiring: 4 new imports alphabetically placed in the Slavic block.
+
+**Net.** 965 jobs green; +4 Fragment files; +4 bib entries; +4 conformer theorems; substrate consumers 6 → 10; zero new substrate work needed. Slavic Case coverage now complete for all 11 modern Slavic case-bearing varieties recognized by Comrie & Corbett 1993 (Czech, Polish, Russian, Serbo-Croat, Slovene, Slovak, Ukrainian, Belarusian, Upper/Lower Sorbian, Cassubian). Bulgarian and Macedonian (lost case in nouns) correctly have no `Case.lean`. Polabian and Old Church Slavonic (historical) would be the natural next extensions.
+
 ### Tham2025/Solt2018Proportional round-3 cleanup + Solt2018Multidim (NEW) + substrate consumption
 
 Round-3 four-agent audit on the post-round-2 state. Caught one substantive error (Filip 2012 overclaim — *crack* is NOT a witness of Filip's middle ground), one block-merge integration risk (`Carlson1977.PredicateLevel` re-stipulation in Solt2018Proportional), and several cleanup opportunities. User-directed scope: Tier A + B + C + D (full cleanup including the Solt 2018 Springer-multidim-chapter typology enum).

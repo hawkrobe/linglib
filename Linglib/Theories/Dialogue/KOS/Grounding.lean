@@ -26,14 +26,21 @@ This file provides two integration interfaces:
 Both produce an `IntegrationResult`. The CCUR variant is the one the
 Ginzburg2012 §9 grounding-protocol section consumes.
 
-## CCURs (eq. 67 p. 190)
+## CCURs (Clarification Context Update Rules)
 
-Three Clarification Context Update Rules replace the 2004 coercion
-operations:
+@cite{ginzburg-2012} Ch. 6 footnote 30 p. 167 introduces "CCURs" as
+the renamed and reformulated successors to the 2004 *coercion operations*.
+The book posits TWO canonical CCURs (p. 167; full treatments at
+ex. 73-79 pp. 192-195 and ex. 80-86 pp. 196-198):
 
-- **Parameter Identification** ("What do you mean by X?") — constituent CR
-- **Confirm** ("Are you asking p?") — clausal CR
-- **Repeat** ("Could you say that again?") — phonetic CR
+- **Parameter Identification** (constituent CR — "What is the intended
+  reference of u_i?", ex. 31 p. 167)
+- **Parameter Focussing** (clausal CR — "Was Ariadne asking if JO SREDOVIC
+  left?", p. 167)
+
+A third construct, **Repetition CR** (Ginzburg §6.8), is included for
+completeness with the caveat that its CCUR-vs-RequestRepeat status is
+contested in the book.
 
 ## Belief Base
 
@@ -62,9 +69,6 @@ A fully resolved LocProp can be grounded directly. -/
 def LocProp.isFullyResolved {Cont : Type} (lp : LocProp Cont) : Bool :=
   lp.cparams.isEmpty
 
-/-- Whether a LocProp can be grounded (= fully resolved). -/
-def LocProp.canGround {Cont : Type} (lp : LocProp Cont) : Bool :=
-  lp.isFullyResolved
 
 -- ════════════════════════════════════════════════════
 -- § 2. Integration Result
@@ -175,53 +179,70 @@ theorem contextualInstantiate_empty {Cont : Type} (lp : LocProp Cont)
 -- § 5. CCURs — Clarification Context Update Rules
 -- ════════════════════════════════════════════════════
 
-/-- The three Clarification Context Update Rules of @cite{ginzburg-2012}
-§6.6–6.7 (eq. 67 p. 190).
+/-- The Clarification Context Update Rules of @cite{ginzburg-2012}
+§6.6 (canonical pair) and §6.8 (debated third).
 
 Each CCUR fires when contextual instantiation fails and produces a
 specific kind of CR question:
 
-- `parameterIdentification`: "What do you mean by X?" — the constituent CR
-- `confirm`: "Are you asking p?" — the clausal CR (polar confirmation)
-- `repeat`: "Could you say that again?" — the phonetic CR
+- `parameterIdentification` (Ginzburg ex. 31 p. 167, §6.6 ex. 73-79
+  pp. 192-195): target one unresolved cparam, ask "What is the intended
+  reference of u_i?" — the constituent CR
+- `parameterFocussing` (Ginzburg p. 167, §6.6 ex. 80-86 pp. 196-198):
+  abstract over the target's content while instantiating all other
+  parameters, ask a confirmation question about the antecedent
+  proposition — the clausal CR
+- `repetitionCR` (Ginzburg §6.8): a debated CCUR-analog handling
+  phonetic repetition requests; included for completeness
 
 These replace the three coercion operations of @cite{ginzburg-cooper-2004}
 (`parameterFocussing`, `parameterIdentification`, `existentialGeneralization`),
 which now live as paper-specific apparatus in
-`Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean §0`. -/
+`Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean §0`. The 2004→2012
+correspondence: `parameterFocussing` (2004) ↔ `parameterFocussing` (2012);
+`parameterIdentification` (both); `existentialGeneralization` (2004) has
+no 2012 CCUR analog (the 2012 framework handles it via contextual
+instantiation succeeding without a CR being needed). -/
 inductive CCUR (Cont QContent : Type) where
-  /-- Parameter Identification: target one unresolved cparam, ask
-      "What do you mean by [phon of constituent]?" (constituent CR). -/
+  /-- Parameter Identification (Ginzburg ex. 31 p. 167): target one
+      unresolved cparam, ask "What is the intended reference of u_i?"
+      (constituent CR). -/
   | parameterIdentification (paramIdx : String) (crQuestion : QContent)
-  /-- Confirm: target the whole LocProp, ask "Are you asking p?"
-      (clausal CR — polar confirmation). -/
-  | confirm (lp : LocProp Cont) (crQuestion : QContent)
-  /-- Repeat: ask "Could you say that again?" (phonetic CR). -/
-  | repeatCR (lp : LocProp Cont) (crQuestion : QContent)
+  /-- Parameter Focussing (Ginzburg p. 167): abstract over the target's
+      content while instantiating all other parameters, ask a
+      confirmation question (clausal CR — polar confirmation). -/
+  | parameterFocussing (lp : LocProp Cont) (crQuestion : QContent)
+  /-- Repetition CR (Ginzburg §6.8): a debated CCUR-analog for phonetic
+      repetition requests ("Pardon?"). -/
+  | repetitionCR (lp : LocProp Cont) (crQuestion : QContent)
   deriving Repr
 
 /-- Project a CCUR back to its CR question content. -/
 def CCUR.crQuestion {Cont QContent : Type} :
     CCUR Cont QContent → QContent
   | .parameterIdentification _ q => q
-  | .confirm _ q => q
-  | .repeatCR _ q => q
+  | .parameterFocussing _ q => q
+  | .repetitionCR _ q => q
 
 -- ════════════════════════════════════════════════════
 -- § 6. Multi-stage Integration with CCURs
 -- ════════════════════════════════════════════════════
 
-/-- The faithful @cite{ginzburg-2012} §6.6–6.7 integration pipeline.
+/-- The faithful @cite{ginzburg-2012} §6.6 integration pipeline.
 
 Stages:
 1. The LocProp `lp` enters Pending (caller's responsibility).
-2. **Contextual Instantiation** (eq. 48 p. 178): consult addressee
+2. **Contextual Instantiation** (Ginzburg §6.5): consult addressee
    beliefs to instantiate cparams.
 3. **Branching**:
    - If fully instantiated → grounding (content enters FACTS)
-   - If partial → apply a **CCUR**, defaulting to Parameter Identification
-     on the first unresolved cparam (most common in practice — Ginzburg
-     §6.7 calls this the "default repair")
+   - If partial → apply a **CCUR**: this implementation defaults to
+     Parameter Identification on the first unresolved cparam (the most
+     common case per Ginzburg's worked examples in §6.6, and the form
+     instantiated by the running "Did Jo leave?"/"Jo?" example, ex. 31
+     p. 167). Choice between `parameterIdentification` and
+     `parameterFocussing` depends on whether the target is a
+     sub-utterance (former) or the whole utterance (latter).
 
 The `toCR` function constructs the CR question for an unresolved param.
 
@@ -250,13 +271,18 @@ theorem resolved_grounds_via_ccur {Cont QContent : Type}
 
 /-- A LocProp with cparams but full belief coverage grounds via the CCUR
 pipeline. This is the substantive difference from the one-shot stub:
-unresolved cparams aren't an automatic CRification trigger.
+unresolved cparams aren't an automatic CRification trigger when
+addressee beliefs witness them.
 
-TODO: prove. The proof requires showing that under the hypothesis, the
-`unresolved` set computed inside `contextualInstantiate` is empty,
-which involves a List.filter_filterMap-style lemma that's a bit fiddly.
-The substrate's contract is that this theorem should hold; the proof
-is left as future work. -/
+**Proof status**: TODO. Requires showing the `unresolved` set computed
+inside `contextualInstantiate` is empty. The bridge lemma involves
+`List.filter`/`List.filterMap`/`List.contains` interactions that don't
+match cleanly to mathlib lemmas at this commit; deferred until a
+substrate-side `BeliefBase` API rework (likely promoting the
+intermediate `resolvedIdx`/`unresolved` computation into named helpers
+with their own structural lemmas, or switching to a `Finmap`-based
+representation that gives the membership-discipline properties for
+free). -/
 theorem belief_resolution_grounds_via_ccur {Cont QContent : Type}
     (lp : LocProp Cont) (beliefs : BeliefBase) (toCR : CParam → QContent)
     (h : ∀ cp ∈ lp.cparams, (cp.instantiate beliefs).isSome) :

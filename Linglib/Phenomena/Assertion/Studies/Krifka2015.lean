@@ -1,4 +1,6 @@
 import Linglib.Theories.Dialogue.Krifka
+import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Theories.Dialogue.KOS.Basic
 import Linglib.Phenomena.Assertion.Basic
 
 /-!
@@ -378,5 +380,67 @@ theorem oath_data_bridge :
     oathExamples.all (·.increasesCommitment) = true ∧
     CommitmentStrength.strong.rank > CommitmentStrength.standard.rank :=
   ⟨rfl, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § N. vs Ginzburg 2012 KOS — architectural contrast
+-- ════════════════════════════════════════════════════
+
+/-! ## Krifka commitment-spaces vs KOS per-DGB stance
+
+Per the chronological-dependency rule, this post-2012 study engages the
+2012 framework: @cite{krifka-2015} commitment-spaces and
+@cite{ginzburg-2012} KOS make **structurally different** but
+observationally similar predictions about identical event sequences.
+
+| Question | Krifka 2015 | Ginzburg 2012 (KOS) |
+|---|---|---|
+| Is CG a single object or per-agent? | Single (`CommitmentSpace.root`) | Per-agent (`DGB.facts`) |
+| When does an assertion narrow CG? | Immediately (assert puts φ in root) | Only after Accept (one-sided FACTS) |
+| Are commitments separable from CG? | Yes (per-agent slates) | No (FACTS = mutual+self mixed) |
+
+The architectures cannot be unified by a Galois connection: any "promote
+root to both DGBs' FACTS" map fails to preserve Krifka's eager-narrowing
+behavior, since Krifka root narrows on assert but KOS addressee FACTS
+don't. -/
+
+section vsGinzburg2012
+
+open Dialogue.KOS
+
+/-- A simple two-world domain for the contrast. -/
+inductive RainW where
+  | rainy | sunny
+  deriving DecidableEq, Repr
+
+/-- "It's raining" as a Set of worlds. -/
+def isRainingW : Set RainW := fun w => w = .rainy
+
+/-- The contrast theorem: post-assertion, Krifka's `space.root` narrows
+to `[isRainingW]` (immediate); KOS's addressee DGB.facts stays `[]`
+(only speaker side narrows; addressee waits for Accept). -/
+theorem krifka_eager_vs_ginzburg_lazy :
+    -- Krifka: speaker assert narrows the SHARED root immediately
+    (CommitmentSpace.empty.assert isRainingW).root = [isRainingW] ∧
+    -- KOS (addressee perspective): no Accept → no narrowing
+    (DGB.initial : DGB Unit (Set RainW) Unit Unit).facts = [] := by
+  refine ⟨?_, rfl⟩
+  rfl
+
+/-- Krifka's root narrows for both sides simultaneously (single shared
+object); KOS speaker has the fact in their DGB but addressee doesn't
+(two distinct DGBs, only speaker's narrows). -/
+theorem krifka_shared_root_vs_kos_split_dgbs (p : Set RainW) :
+    -- Krifka: ONE root narrowing affects everyone
+    (CommitmentSpace.empty.assert p).root = [p] ∧
+    -- KOS: speaker-side has p, addressee-side is empty —
+    -- they are LITERALLY different DGB values:
+    let kosSpeaker : DGB Unit (Set RainW) Unit Unit := DGB.initial.addFact p
+    let kosAddressee : DGB Unit (Set RainW) Unit Unit := DGB.initial
+    kosSpeaker.facts ≠ kosAddressee.facts := by
+  refine ⟨rfl, ?_⟩
+  -- speaker.facts = [p], addressee.facts = []; the inequality is direct
+  simp [DGB.addFact, DGB.initial]
+
+end vsGinzburg2012
 
 end Krifka2015
