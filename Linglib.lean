@@ -247,6 +247,12 @@ import Linglib.Core.Computability.Subregular.Hierarchy
 import Linglib.Core.Computability.Subregular.Piecewise
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.ISL
+import Linglib.Core.Computability.Subregular.Function.OSL
+import Linglib.Core.Computability.Subregular.Function.Subsequential
+import Linglib.Core.Computability.Subregular.Function.Hierarchy
+import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
 import Linglib.Core.StringHom
 import Linglib.Features.VerbCluster
 import Linglib.Core.Case.Basic
@@ -560,12 +566,12 @@ import Linglib.Paradigms.WugTest
 import Linglib.Paradigms.AcceptabilityJudgment
 import Linglib.Paradigms.SelfPacedReading
 -- Fragments
-import Linglib.Fragments.Arabic.Relativization
-import Linglib.Fragments.Arabic.Morph
-import Linglib.Fragments.Arabic.Plurals
-import Linglib.Fragments.Arabic.Reference
-import Linglib.Fragments.Arabic.Directives
-import Linglib.Fragments.Arabic.TenseAspect
+import Linglib.Fragments.Arabic.ModernStandard.Relativization
+import Linglib.Fragments.Arabic.Egyptian.Morph
+import Linglib.Fragments.Arabic.ModernStandard.Plurals
+import Linglib.Fragments.Arabic.Egyptian.Reference
+import Linglib.Fragments.Arabic.ModernStandard.Directives
+import Linglib.Fragments.Arabic.Egyptian.TenseAspect
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Dutch.Adjectives
@@ -619,7 +625,13 @@ import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.English.PolarityMarking
+import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
+import Linglib.Fragments.Slavic.Case
+import Linglib.Fragments.Slavic.Cassubian.Case
+import Linglib.Fragments.Slavic.Params
+import Linglib.Fragments.Slavic.Slovak.Case
+import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Slavic.Czech.Case
 import Linglib.Fragments.Slavic.Czech.Determiners
 import Linglib.Fragments.Slavic.Czech.Particles
@@ -679,15 +691,18 @@ import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
-import Linglib.Fragments.Greek.Negation
-import Linglib.Fragments.Greek.Nouns
-import Linglib.Fragments.Greek.TemporalConnectives
-import Linglib.Fragments.Greek.TemporalDeictic
-import Linglib.Fragments.Greek.Reciprocals
-import Linglib.Fragments.Greek.AdjAgreement
-import Linglib.Fragments.Greek.Modals
-import Linglib.Fragments.Greek.MoodChoice
-import Linglib.Fragments.Greek.AncientDirectives
+import Linglib.Fragments.Greek.StandardModern.Negation
+import Linglib.Fragments.Greek.StandardModern.Nouns
+import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
+import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
+import Linglib.Fragments.Greek.StandardModern.Reciprocals
+import Linglib.Fragments.Greek.StandardModern.AdjAgreement
+import Linglib.Fragments.Greek.StandardModern.Modals
+import Linglib.Fragments.Greek.StandardModern.MoodChoice
+import Linglib.Fragments.Greek.StandardModern.Possession
+import Linglib.Fragments.Greek.AncientGreek.Directives
+import Linglib.Fragments.Greek.Grevena.Possession
+import Linglib.Fragments.Greek.Smyrna.Possession
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.Hebrew.ConsonantalRoots
@@ -937,7 +952,7 @@ import Linglib.Fragments.Mandarin.Possession
 import Linglib.Fragments.Hungarian.Possession
 import Linglib.Fragments.Irish.Possession
 import Linglib.Fragments.Korean.Possession
-import Linglib.Fragments.Arabic.Possession
+import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Quechua.Possession
 import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Georgian.Possession
@@ -1109,8 +1124,10 @@ import Linglib.Phenomena.Anaphora.Studies.Reinhart1976
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.SagWasowBender2003
 import Linglib.Phenomena.Anaphora.Studies.BakayEtAl2026
+import Linglib.Phenomena.Anaphora.Studies.Charlow2014
 import Linglib.Phenomena.Anaphora.Studies.Chomsky1981
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
+import Linglib.Phenomena.Anaphora.Studies.Cooper2023Ch8
 import Linglib.Phenomena.Anaphora.Studies.Heim1982.Basic
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
@@ -1181,21 +1198,24 @@ import Linglib.Phenomena.TenseAspect.Studies.Cumming2026
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970
 import Linglib.Phenomena.Countability.Studies.Moon2026
 import Linglib.Phenomena.Conditionals.LeftNested.Data
-import Linglib.Phenomena.Conditionals.Studies.Lassiter2025
-import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
-import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
-import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
-import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
-import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
-import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
+import Linglib.Phenomena.Conditionals.Studies.AlonsoOvalle2009
 import Linglib.Phenomena.Conditionals.Studies.Belnap1970
-import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
-import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
-import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
+import Linglib.Phenomena.Conditionals.Studies.CarianiGoldstein2020
 import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
 import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018Lumping
-import Linglib.Phenomena.Conditionals.Studies.Kratzer2012Lumping
+import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
+import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
+import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
+import Linglib.Phenomena.Conditionals.Studies.Kratzer2012Lumping
+import Linglib.Phenomena.Conditionals.Studies.Lassiter2025
+import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
+import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
+import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
+import Linglib.Phenomena.Conditionals.Studies.Santorio2018
+import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
+import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
+import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1294,8 +1314,10 @@ import Linglib.Phenomena.Gender.Studies.Corbett1991
 import Linglib.Phenomena.Gender.Studies.Kramer2020
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
+import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024JoS
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
 import Linglib.Phenomena.Gradability.Studies.Bochnak2015
+import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
 import Linglib.Phenomena.Gradability.Studies.Fine1975
 import Linglib.Phenomena.Gradability.Studies.Kamp1975
 import Linglib.Phenomena.Gradability.Studies.Klein1980
@@ -1391,6 +1413,7 @@ import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2022
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2026
 import Linglib.Phenomena.Quantification.Studies.Scontras2014
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Conditionals
+import Linglib.Phenomena.Modality.Studies.Cooper2023
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Phenomena.Modality.Studies.RotterLiu2025Concord
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
@@ -1527,6 +1550,7 @@ import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020PMF
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
+import Linglib.Phenomena.Polysemy.Studies.Sutton2024
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Studies.Heine1997
@@ -1588,6 +1612,7 @@ import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Studies.Bruening2001
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
+import Linglib.Phenomena.Quantification.Studies.Cooper2023
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021PMF
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
@@ -1746,6 +1771,7 @@ import Linglib.Phenomena.Phonology.Studies.Jaeger2007
 import Linglib.Phenomena.Phonology.Studies.Kawahara2015
 import Linglib.Phenomena.Phonology.Studies.Magri2025
 import Linglib.Phenomena.Phonology.Studies.MarcoRasin2026
+import Linglib.Phenomena.Phonology.Studies.MeinhardtEtAl2024
 import Linglib.Phenomena.Phonology.Studies.RoseWalker2004
 import Linglib.Phenomena.Phonology.Studies.Sagey1986
 import Linglib.Phenomena.Phonology.Studies.SPEDerivations
@@ -1805,8 +1831,6 @@ import Linglib.Theories.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
 import Linglib.Theories.Syntax.Mueller2013
 import Linglib.Theories.Syntax.Minimalist.CategorialFeatures
-import Linglib.Theories.Semantics.TypeTheoretic.CNsAsTypes
-import Linglib.Theories.Semantics.TypeTheoretic.FrameComposition
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Phenomena.Anaphora.Studies.BarkerPullum1990
 import Linglib.Phenomena.Assertion.Compare
@@ -1951,14 +1975,7 @@ import Linglib.Theories.Pragmatics.RelevanceTheory.Ostension
 import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Theories.Semantics.TypeTheoretic.Core
-import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
-import Linglib.Theories.Semantics.TypeTheoretic.DFrame
-import Linglib.Theories.Semantics.TypeTheoretic.FrameBridge
-import Linglib.Theories.Semantics.TypeTheoretic.Modality
-import Linglib.Theories.Semantics.TypeTheoretic.Quantification
-import Linglib.Theories.Semantics.TypeTheoretic.Underspecification
-import Linglib.Theories.Semantics.TypeTheoretic.Selectional
 -- Theories: Construction Grammar
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
@@ -2108,6 +2125,8 @@ import Linglib.Theories.Semantics.Modality.Orthologic.Modal
 import Linglib.Theories.Semantics.Modality.Orthologic.RegularProp
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Gradability.Antonymy
+import Linglib.Theories.Semantics.Gradability.AntonymPrediction
+import Linglib.Theories.Semantics.Gradability.AntonymQuadruplet
 import Linglib.Theories.Semantics.Gradability.ClauseEmbedding
 import Linglib.Theories.Semantics.Gradability.Classification
 import Linglib.Theories.Semantics.Gradability.Intensification
@@ -2318,7 +2337,6 @@ import Linglib.Theories.Semantics.Causation.CauserSort
 import Linglib.Theories.Semantics.Causation.Progressive
 import Linglib.Phenomena.Causation.Studies.BarAsherSiegal2026
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
-import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
@@ -2436,9 +2454,10 @@ import Linglib.Theories.Semantics.Alternatives.Symmetric
 import Linglib.Theories.Semantics.Exhaustification.Combinators
 import Linglib.Theories.Semantics.Exhaustification.Excluder
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
 import Linglib.Theories.Semantics.Exhaustification.Relevance
@@ -2526,6 +2545,7 @@ import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
 import Linglib.Phenomena.Gradability.Studies.DAmbrosioHedden2024
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
+import Linglib.Phenomena.Gradability.Studies.Solt2018Multidim
 import Linglib.Phenomena.Gradability.Studies.Solt2018Proportional
 import Linglib.Phenomena.Gradability.Studies.Tham2025
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
@@ -2562,7 +2582,8 @@ import Linglib.Theories.Dialogue.KOS.NSUTaxonomy
 import Linglib.Theories.Dialogue.KOS.Examples
 import Linglib.Theories.Dialogue.KOS.Grammar
 import Linglib.Theories.Dialogue.KOS.RepriseContent
-import Linglib.Theories.Dialogue.KOS.TTRBridge
+import Linglib.Theories.Dialogue.KOS.Austinian
+import Linglib.Theories.Dialogue.KOS.CooperInfoState
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Featural.Geometry
@@ -2584,7 +2605,7 @@ import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
 import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Phonology.Prosodic.Templates
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 import Linglib.Theories.Phonology.Process.Alternation
 import Linglib.Theories.Phonology.Process.Harmony.Defs
 import Linglib.Theories.Phonology.Process.Harmony.OT
@@ -2614,7 +2635,7 @@ import Linglib.Theories.Phonology.LexicalFrequency.UseListed
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
-import Linglib.Theories.Sociolinguistics.SMG
+import Linglib.Theories.Sociolinguistics.SocialMeaningGame
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core

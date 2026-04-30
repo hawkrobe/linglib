@@ -12,7 +12,7 @@ import Linglib.Fragments.Hungarian.Possession
 import Linglib.Fragments.Irish.Possession
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Korean.Possession
-import Linglib.Fragments.Arabic.Possession
+import Linglib.Fragments.Arabic.ModernStandard.Possession
 import Linglib.Fragments.Quechua.Possession
 import Linglib.Fragments.Yoruba.Possession
 import Linglib.Fragments.Georgian.Possession
@@ -75,7 +75,7 @@ def allLanguages : List PossessionProfile :=
   , Fragments.Irish.Possession.possession
   , Fragments.Swahili.Possession.possession
   , Fragments.Korean.Possession.possession
-  , Fragments.Arabic.Possession.possession
+  , Fragments.Arabic.ModernStandard.Possession.possession
   , Fragments.Quechua.Possession.possession
   , Fragments.Yoruba.Possession.possession
   , Fragments.Georgian.Possession.possession

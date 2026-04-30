@@ -104,6 +104,34 @@ inductive NPRelType where
   deriving DecidableEq, Repr
 
 -- ============================================================================
+-- § 3a: Head-NP definiteness contexts (descriptive)
+-- ============================================================================
+
+/-- Which definiteness contexts attest a given relative-clause marker.
+
+    Purely empirical: tracks the descriptive correlation between marker
+    choice and head-NP (anti)definiteness, as observed in reference
+    grammars. The substrate makes **no** claim about the syntactic
+    mechanism — no feature checking, no complex-DP analysis, no
+    movement-vs-base-generation. Use this field only when a descriptive
+    grammar makes the contrast directly.
+
+    The distinction is the one drawn by every Arabic descriptive grammar
+    (Wright 1896; Cantarino 1974; @cite{ryding-2005} §14.2 vs §14.3):
+    MSA *alladhī* appears with definite antecedents; an Ø-relative-pronoun
+    construction appears with indefinite antecedents. Other languages may
+    or may not make a comparable distinction; for those that don't, the
+    marker's `headDefiniteness` field stays `none`. -/
+inductive HeadDefiniteness where
+  /-- Marker attested only with definite-headed antecedents. -/
+  | definite
+  /-- Marker attested only with indefinite-headed antecedents. -/
+  | indefinite
+  /-- Marker attested with both definite- and indefinite-headed antecedents. -/
+  | both
+  deriving DecidableEq, Repr
+
+-- ============================================================================
 -- § 4: Relative Clause Marker
 -- ============================================================================
 
@@ -130,6 +158,11 @@ structure RelClauseMarker where
   rcPosition : RCPosition
   /-- Which grammatical positions can be relativized using this marker. -/
   positions : List AHPosition
+  /-- Which head-NP definiteness contexts attest the marker (purely
+      descriptive; see `HeadDefiniteness`). `none` if the language doesn't
+      make a comparable definiteness contrast or if the data hasn't been
+      encoded. Default `none` keeps existing Fragments unchanged. -/
+  headDefiniteness : Option HeadDefiniteness := none
   /-- Additional notes. -/
   notes : String := ""
   deriving BEq, Repr

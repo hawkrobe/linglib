@@ -8,7 +8,7 @@ WALS uses Egyptian Arabic (ISO arz, WALS code aeg) as the representative
 Arabic variety for most morphology chapters.
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.Egyptian
 
 open Core.Morphology in
 /-- Arabic (Egyptian): F20A nonlinear; F22A moderate; F23A noMarking;
@@ -37,4 +37,4 @@ def morphProfile : MorphProfile :=
   , bnExponence := some .cumulative
   }
 
-end Fragments.Arabic
+end Fragments.Arabic.Egyptian

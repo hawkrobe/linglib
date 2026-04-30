@@ -5,7 +5,7 @@ import Linglib.Typology.Pronouns
 @cite{wals-2013}
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.Egyptian
 
 /-- Egyptian Arabic (Afro-Asiatic, Semitic, ISO `arz`). No incl/excl;
     gender in 3rd AND 1st/2nd person (inta/inti, huwwa/hiyya); no
@@ -35,4 +35,4 @@ def pronounShapeProfile : Typology.PronounShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Arabic
+end Fragments.Arabic.Egyptian

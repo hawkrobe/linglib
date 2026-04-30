@@ -16,7 +16,7 @@ import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Latin.Comparison
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Tagalog.Comparison
-import Linglib.Fragments.Arabic.Comparison
+import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Navajo.Comparison
 import Linglib.Fragments.French.Comparison
 

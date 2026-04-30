@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.Egyptian
 
 /-- Arabic (Egyptian) (Afro-Asiatic, Semitic): definite prefix *al-* on nouns
     (definite affix); no indefinite article (unmarked nouns are indefinite,
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.Arabic
+end Fragments.Arabic.Egyptian

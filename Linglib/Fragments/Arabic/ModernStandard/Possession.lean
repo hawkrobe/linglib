@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Arabic.Possession
+namespace Fragments.Arabic.ModernStandard.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["indi kitaab", "kitaabu l-waladi"]
   , notes := "Preposition inda for predicative; construct state (idaafa) for adnominal -- juxtaposition with reduced head vowel" }
 
-end Fragments.Arabic.Possession
+end Fragments.Arabic.ModernStandard.Possession

@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.ModernStandard
 
 /-- Arabic (Modern Standard): second-and-other-person morphological imperative
     (2SG.M *uktub!*, 2SG.F *uktubī!*; jussive *li-yaktub* 'let him write');
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Imperative from jussive stem with initial vowel; " ++
              "prohibitive lā + jussive (not imperative); jussive for 3rd person." }
 
-end Fragments.Arabic
+end Fragments.Arabic.ModernStandard

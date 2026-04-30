@@ -9,8 +9,8 @@ import Linglib.Fragments.Mandarin.WordOrder
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Korean.WordOrder
 import Linglib.Fragments.Korean.Adposition
-import Linglib.Fragments.Arabic.WordOrder
-import Linglib.Fragments.Arabic.Adposition
+import Linglib.Fragments.Arabic.ModernStandard.WordOrder
+import Linglib.Fragments.Arabic.ModernStandard.Adposition
 import Linglib.Fragments.Welsh.WordOrder
 import Linglib.Fragments.Welsh.Adposition
 import Linglib.Fragments.Irish.WordOrder
@@ -89,7 +89,7 @@ def fragmentSample : Finset SampleEntry :=
   , ⟨ "jpn", "Japanese",   Fragments.Japanese.wordOrder,        Fragments.Japanese.adposition ⟩
   , ⟨ "cmn", "Mandarin",   Fragments.Mandarin.wordOrder,        Fragments.Mandarin.adposition ⟩
   , ⟨ "kor", "Korean",     Fragments.Korean.wordOrder,          Fragments.Korean.adposition ⟩
-  , ⟨ "arb", "Arabic",     Fragments.Arabic.wordOrder,          Fragments.Arabic.adposition ⟩
+  , ⟨ "arb", "Arabic",     Fragments.Arabic.ModernStandard.wordOrder,          Fragments.Arabic.ModernStandard.adposition ⟩
   -- VSO + prepositional (Celtic):
   , ⟨ "cym", "Welsh",      Fragments.Welsh.wordOrder,           Fragments.Welsh.adposition ⟩
   , ⟨ "gle", "Irish",      Fragments.Irish.wordOrder,           Fragments.Irish.adposition ⟩

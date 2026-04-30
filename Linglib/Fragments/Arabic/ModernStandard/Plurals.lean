@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.ModernStandard
 
 /-- Standard Arabic: mixed morphological plural — both suffixation
     (*-aat*, *-uun*) and "broken" stem-internal changes are productive,
@@ -19,4 +19,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Arabic
+end Fragments.Arabic.ModernStandard

@@ -1,7 +1,7 @@
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
-import Linglib.Fragments.Arabic.Relativization
+import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Korean.Relativization
@@ -125,7 +125,7 @@ def lowestCovered (markers : List RelClauseMarker) : AHPosition :=
 
 abbrev english   := Fragments.English.relMarkers
 abbrev welsh     := Fragments.Welsh.relMarkers
-abbrev arabic    := Fragments.Arabic.relMarkers
+abbrev arabic    := Fragments.Arabic.ModernStandard.relMarkers
 abbrev hebrew    := Fragments.Hebrew.relMarkers
 abbrev tobaBatak := Fragments.TobaBatak.relMarkers
 abbrev korean    := Fragments.Korean.relMarkers
@@ -244,8 +244,9 @@ theorem welsh_strategy_split :
     (welsh.map (·.covers .indirectObject)) = [false, true] ∧
     (welsh.map (·.covers .objComparison))  = [false, true] := by decide
 
-/-- Arabic Classical (Table 1 p. 76): -case complementizer covers SU only;
-    +case complementizer + resumptive covers DO–OCOMP. -/
+/-- Arabic (MSA) (Table 1 p. 76): the relative pronoun *alladhī/allatii*
+    used alone (-case strategy) covers SU only; *alladhī/allatii* with a
+    resumptive pronoun (+case strategy) covers DO–OCOMP. -/
 theorem arabic_primary_su_only :
     (arabic.map (·.covers .subject))      = [true, false] ∧
     (arabic.map (·.covers .directObject)) = [false, true] := by decide
@@ -319,7 +320,7 @@ theorem hebrew_kc_covers_deeper_than_wals :
 
 theorem arabic_kc_covers_deeper_than_wals :
     lowestCovered arabic = .objComparison ∧
-    Fragments.Arabic.relativization.lowestRelativizable = .oblique := by decide
+    Fragments.Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
 
 theorem yoruba_kc_matches_wals :
     lowestCovered yoruba = .genitive ∧
@@ -335,7 +336,7 @@ theorem kc_at_least_as_detailed_as_wals :
     (lowestCovered malagasy).rank  ≤ Fragments.Malagasy.relativization.lowestRelativizable.rank ∧
     (lowestCovered finnish).rank   ≤ Fragments.Finnish.relativization.lowestRelativizable.rank ∧
     (lowestCovered hebrew).rank    ≤ Fragments.Hebrew.relativization.lowestRelativizable.rank ∧
-    (lowestCovered arabic).rank    ≤ Fragments.Arabic.relativization.lowestRelativizable.rank ∧
+    (lowestCovered arabic).rank    ≤ Fragments.Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
     (lowestCovered yoruba).rank    ≤ Fragments.Yoruba.relativization.lowestRelativizable.rank :=
   by decide
 

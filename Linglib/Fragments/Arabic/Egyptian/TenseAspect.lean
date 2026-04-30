@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Arabic
+namespace Fragments.Arabic.Egyptian
 
 /-- Arabic (Egyptian) (Afro-Asiatic, Semitic): perfective/imperfective
     (*katab*/*yiktib*); inflectional past (perfective form encodes past);
@@ -16,4 +16,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .none, affixPosition := .suffixing }
 
-end Fragments.Arabic
+end Fragments.Arabic.Egyptian

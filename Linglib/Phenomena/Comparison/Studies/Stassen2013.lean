@@ -13,7 +13,7 @@ import Linglib.Fragments.Swahili.Comparison
 import Linglib.Fragments.Latin.Comparison
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Tagalog.Comparison
-import Linglib.Fragments.Arabic.Comparison
+import Linglib.Fragments.Arabic.ModernStandard.Comparison
 import Linglib.Fragments.Navajo.Comparison
 import Linglib.Fragments.French.Comparison
 
@@ -67,7 +67,7 @@ def allLanguages : List ComparativeProfile :=
   , Fragments.Latin.Comparison.comparison
   , Fragments.Thai.Comparison.comparison
   , Fragments.Tagalog.Comparison.comparison
-  , Fragments.Arabic.Comparison.comparison
+  , Fragments.Arabic.ModernStandard.Comparison.comparison
   , Fragments.Navajo.Comparison.comparison
   , Fragments.French.Comparison.comparison ]
 
