@@ -4,6 +4,67 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.556] - 2026-04-29
+
+### Abusch substrate PR-D: Schlenker 2004 ↔ Abusch 1997 contrastive bridge
+
+Lands the cross-framework reconciler audit's flagged "agreement bridge READY, divergence theorem NEAR" (originally promised as PR-D after PR-C's Anand-Nevins entity-concept bridge). The PR-C parallel (Anand-Nevins entity-concepts ≡ Abusch time-concepts via `Intension.IsRigid` functoriality) extends to a *three-way* alignment with @cite{schlenker-2004-sot}'s tower-shift framework — all three formalize the Kaplan-stable-vs-shifted distinction at the substrate level via the same `Intension.IsRigid` predicate.
+
+**Paper grounding** (verified against the Schlenker PDF, "Sequence Phenomena and Double Access Readings Generalized", SALT XIV / MIT Press *Syntax of Time* chapter):
+- §0 p. 5: Schlenker explicitly positions himself as "developing a somewhat generalized version of the theory of Abusch 1997, and especially of her Upper Limit Constraint." This is the textual basis for the cross-framework agreement theorem.
+- §1.3 def. 22: Schlenker's *actual* mechanism is morphological-agreement rules (the `<he, past, ind>` triple, semantically invisible features) — the existing `Schlenker2004.lean` tower-depth formalization captures the *idealized* access pattern only. PR-D's docstring caveat acknowledges this simplification.
+- §1.4+ DAR analysis: Schlenker's DAR derivation uses presupposition projection through attitude quantification, NOT the simplified `.origin` reading captured here. Out of scope for the current substrate bridge.
+
+**`Phenomena/TenseAspect/Studies/Schlenker2004.lean` — substrate bridge added** (~120 LOC):
+- `schlenkerPresent : TimeConcept Unit Unit Unit ℤ := Core.Intension.rigid 0` — Kaplan-stable origin reading as a rigid TimeConcept.
+- `schlenkerShifted : TimeConcept Unit Unit Unit ℤ := fun c => c.time` — local-shift reading as the non-rigid time-projection function. Substrate-level analog of @cite{anand-nevins-2004}'s `shiftedI = (·.agent)`, transposed from `Res = Agent` to `Res = ℤ`.
+- 2 bridge theorems (`presentAccess_eq_schlenkerPresent`, `shiftedAccess_eq_schlenkerShifted`) — Schlenker's tower-depth mechanism agrees with the substrate's Intension formulation by `rfl` at the value level.
+- 2 substrate rigidity theorems (`schlenkerPresent_isRigid`, `schlenkerShifted_not_isRigid`).
+
+**Cross-framework agreement theorem** (Schlenker ↔ Abusch on simultaneous SOT):
+- `schlenker_abusch_agree_on_simultaneous_value`: Schlenker's `shiftedAccess.resolve sotTower` equals Abusch's `abusch_derives_simultaneous_via_binding`-derived value when applied with `matrixSaid` as the matrix frame. Both predict `matrixSaid.eventTime = -2`; Schlenker via context-shift, Abusch via variable-binding. Different mechanisms, same value. The agreement makes precise Schlenker's §0 claim that his framework is a "generalization" of Abusch's — agreement on basic SOT cases is by design.
+
+**Architectural alignment theorem** (Schlenker ↔ Abusch ↔ Anand-Nevins):
+- `schlenker_substrate_aligned_with_isRigid` bundles the rigidity facts; the SAME `Intension.IsRigid` predicate proves Schlenker's Kaplan-stable-vs-shifted distinction at `Res = ℤ`, parallel to AnandNevins's `kaplanI_isRigid`/`shiftedI_not_isRigid` at `Res = Agent`.
+- `schlenkerPresent_lifts_rigidly`: PR-C's `Intension.IsRigid.map` applied to Schlenker — rigidity transfers across `Res` types via any function. The same architectural pattern that PR-C established for Anand-Nevins now demonstrably applies to Schlenker.
+
+**The cross-framework table** (now substrate-checkable):
+
+| Framework                  | Kaplan-stable      | Shifted            |
+|----------------------------|--------------------|--------------------|
+| @cite{schlenker-2004-sot}  | `schlenkerPresent` | `schlenkerShifted` |
+| @cite{abusch-1997}         | rigid `TimeConcept`| bound `TimeConcept`|
+| @cite{anand-nevins-2004}   | `kaplanI` (Agent)  | `shiftedI` (Agent) |
+
+All three rows discriminate via `Intension.IsRigid`. By `IsRigid.map`, the discrimination transfers across `Res` types via any function. Three frameworks, three syntactic mechanisms (tower-shift, res-movement, operator-overwrite), one substrate-level architectural distinction.
+
+**Build verification**: 915 jobs green; no `sorry`, no `native_decide`. The existing `schlenker_origin_supports_abusch_double_access` Phase F bridge is left intact (it makes a different, complementary value-level claim about `doubleAccess` — substrate-level rigidity is a structural orthogonal claim).
+
+**What's still deferred** (substrate is now in shape; remaining items are extensions, not corrections):
+- A *real* divergence theorem distinguishing Schlenker's morphological-agreement DAR analysis from Abusch's res-movement DAR. Requires committing to a specific empirical case where the two predict different judgments — multiple-embedding shift-together (Anand-Nevins (3)), modal cases (Schlenker §1 modal might/ought), or Schlenker §1.4+ presupposition-projection cases. Each requires substantial Lean work to formalize the distinguishing case.
+- Heim 1994 study file (~80 LOC; substrate is ready).
+- Stephenson 2007 PPT seed in `Phenomena/PredicatesOfPersonalTaste/` (greenfield; substrate's `KContext.agent` slot is the missing infrastructure).
+- LF res-movement Tree rewrite (deferred design choice — output-only this cycle).
+- Migration of `Theories/Semantics/Attitudes/Doxastic.lean::acq_a_ip` causal-vertex semantics to use polymorphic `isAcquaintedWith`.
+
+### Slavic Case substrate factor + Blake↔Caha convergence theorem
+
+Multi-agent audit of `Fragments/Slavic/Ukrainian/Case.lean` (linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert + mathlib-reviewer) surfaced four convergent issues across the six modern case-bearing Slavic Fragments: (i) byte-identical `Finset Core.Case` literals duplicated across Czech/Polish/Russian/Serbian/Slovenian/Ukrainian; (ii) docstring/code mismatches (Polish/Czech/Serbian/Ukrainian claimed "7 cases" but encoded 6); (iii) silent VOC-exclusion choice with no per-language defense; (iv) two `decide` runs on same inventory in `Phenomena/Case/Studies/Caha2009.lean` (one for Blake's `IsValidInventory`, one for Caha's `RespectsCahaContainment`) presented as coincidence rather than theorem.
+
+Verified per-language inventories against authoritative chapters in @cite{comrie-corbett-1993} *The Slavonic Languages* (Routledge, ed. Comrie & Corbett, ISBN 0-415-04755-2), reading each of @cite{shevelov-1993} (Ukrainian, p. 952), @cite{rothstein-1993} (Polish, p. 696), @cite{short-1993-czech} (Czech, p. 466), @cite{browne-1993} (Serbo-Croat, p. 319), @cite{timberlake-1993} (Russian, p. 836), and @cite{priestly-1993} (Slovene, p. 399) directly from the PDF before touching code. Russian's existing docstring is the most accurate of the six — kept; the other five reframed using the chapter authors' own words.
+
+**Adds.**
+- `Linglib/Fragments/Slavic/Case.lean` (sibling of existing `Slavic/Params.lean`) — `slavicCoreInventory : Finset Core.Case` (NOM/ACC/GEN/DAT/LOC/INST), `slavicSevenCaseInventory` (+VOC for Ukrainian/Polish/Czech/Serbo-Croat), with named lemmas `slavicCoreInventory_isValid` / `slavicCoreInventory_respectsCaha` / `slavicSevenCaseInventory_not_isValid`. Documents the cross-Slavic prepositional restriction on LOC/INST that @cite{priestly-1993} attributes to "other Slavonic languages" (substrate gap flagged for future work).
+- `Phenomena/Case/Studies/Caha2009.lean` § 1.6: `slavic_core_blake_caha_converge` and `slavic_seven_case_blake_caha_disagree` theorems making explicit that the convergence holds on the 6-case core but the general biconditional `IsValidInventory ↔ RespectsCahaContainment` fails (VOC is rank-0 for Blake but off-hierarchy for Caha — the +VOC inventory fails Blake while satisfying Caha vacuously).
+- 7 `references.bib` entries: `comrie-corbett-1993` (handbook), plus `browne-1993`, `priestly-1993`, `short-1993-czech`, `rothstein-1993`, `timberlake-1993`, `shevelov-1993` (chapters with verified page ranges).
+
+**Changes.**
+- 6 per-language Slavic Case Fragments (Czech, Polish, Russian, Serbian, Slovenian, Ukrainian) refactored: each `caseInventory` is now a 1-line alias of `Slavic.Case.slavicCoreInventory`; the four 7-case languages additionally expose `fullInventory` (mirrors `Fragments/Latin/Case.lean`'s `caseInventory`/`coreInventory` split); each docstring quotes the relevant Comrie & Corbett chapter author and cites the verified page number.
+- `Phenomena/Case/Studies/Caha2009.lean` Slavic block (§ 1.5): six per-language theorems collapse from `by decide` to one-line term-mode proofs sharing the substrate result `slavicCoreInventory_respectsCaha`. The cross-Slavic agreement is now structural (one substrate decide-run discharges all six theorems via definitional unfolding), not coincidental.
+- `Caha2009.lean` module docstring expanded with a "Caha's actual case sequence vs. substrate encoding" section noting that `Core.Case.Order.containmentRank` is Blake-shaped (LOC top, INST off-hierarchy) rather than Caha-shaped (Caha's universal sequence is NOM-ACC-GEN-DAT-INST-COM with no LOC; Russian-specific is NOM-ACC-GEN-PREP-DAT-INST per @cite{caha-2009} §1.1, p. 14, with PREP/LOC inserted between GEN and DAT). Both encodings yield the same verdict on the Slavic 6-case inventory; reconciling the substrate's naming is a separate task.
+
+**Net.** New file +95 LOC (substrate); 6 per-language files refactored from ~22 LOC each to ~30 LOC each (more docstring, less data); Caha2009.lean +60 LOC (convergence + disagreement theorems + Slavic structural block); 7 bib entries added. 961 case-related jobs green; the one Slavic theorem in `Pesetsky2013.lean` (Russian core) builds unchanged.
+
 ### ODonnell2015.lean mathlib-discipline cleanup post-audit
 
 `mathlib-reviewer` agent audit of `Phenomena/Morphology/Studies/ODonnell2015.lean`. No blockers — file built and substrate API was correctly used — but seven nits surfaced. All landed.
