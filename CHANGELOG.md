@@ -29,6 +29,26 @@ Single-paper study formalizing @cite{heim-1994-comments} as a structural quotien
 
 **Net**: +1 study file, +1 wired import in `Linglib.lean`, bib `heim-1994-comments` `role` flipped `cited` → `formalized` and `sources` updated to current consumers (drops deleted `Theories/Semantics/Tense/TemporalDeRe.lean`, adds the new study file). 5645 jobs green.
 
+### Heim 1994 audit-driven mathlib-purity refactor
+
+Two-agent audit (mathlib reviewer + linglib integration auditor) on the just-landed `HeimComments1994.lean`. Both auditors converged on three findings; one substrate-evolution opportunity surfaced. All five fixes applied.
+
+**Substrate evolution** (`Core/IntensionalLogic/Rigidity.lean`):
+- Promoted `Intension.precomp : (W₂ → W₁) → Intension W₁ τ → Intension W₂ τ` as a standalone def (previously inlined in `IsRigid.precomp` proof). `@[simp] precomp_apply` for unfolding.
+- Refactored `IsRigid.precomp`'s return type from `IsRigid (fun w => f (g w))` to `IsRigid (Intension.precomp g f)` (def-equal; `Tense/DeRe.lean` consumer worked unchanged).
+- Added **`IsRigidOn.precomp`**: rigidity-on-`S` precomp by `g` gives rigidity-on-`Set.preimage g S`. New import: `Mathlib.Data.Set.Image`. Closes the `IsRigidOn`-side under contravariant functoriality (companion to existing `IsRigidOn.map`).
+
+**Heim file refactor** (`Phenomena/TenseAspect/Studies/HeimComments1994.lean`):
+- **`ulcDefined` deleted** as substrate-deduplication. The substrate already has `Theories/Semantics/Tense/Basic.lean::upperLimitConstraint` typed `[LE Time]`, anchored to `@cite{heim-1994-comments}` in its docstring. The new file was redefining it as `¬ (resolved > evalTime)` typed `[LinearOrder T]` and proving `ulcDefined_iff_le` to recover canonical form — textbook bridge-file anti-pattern. Deleted `ulcDefined` + `ulcDefined_iff_le`. Renamed `isFelicitousWith_past_imp_ulcDefined` → `isFelicitousWith_past_imp_upperLimitConstraint`, proof collapses to `le_of_lt h` (one line, no helper).
+- **`IsSuitable` deleted** as naked `Set.Mem` re-skin (`def IsSuitable c cov := c ∈ cov`). Inlined `c ∈ cov` at the one consumer.
+- **`toSubstrate_isSuitable_image` strengthened** to `toSubstrate_image_isExhaustiveOn`. The old theorem was `Set.mem_image_of_mem` tautology — used no property of `toSubstrate`. The new theorem proves the substantive claim that **cover exhaustiveness lifts under the pullback**: if `cov.isExhaustiveOn dom` for Heim time-concepts, then `(toSubstrate '' cov).isExhaustiveOn dom` for substrate time-concepts. The agent-blind quotient does not weaken exhaustiveness because every substrate context projects to a Heim index where the cover is exhaustive.
+- **`toSubstrate` refactored** to `Intension.precomp KContext.toSituation c` (was `fun k => c k.toSituation`; def-equal). Makes the substrate-call explicit at the definition site. `toSubstrate_eq_precomp` deleted as redundant.
+- **`toSubstrate_isRigidOn` added** as companion to `toSubstrate_isRigid`, using the new `IsRigidOn.precomp` substrate lemma. Closes the last-mile gap to `Tense/DeRe.lean::IsRigidAcrossAlternatives_of_concept_isRigid` — Heim time-concepts rigid across a doxastic alternative set lift to substrate concepts rigid across the corresponding pulled-back alternative set.
+
+**Skipped from audit recommendations**: dot-notation rename `IsRigid.toSubstrate` (would shadow the `IsRigid.precomp` it calls; mathlib reviewer flagged but integration auditor didn't prioritize), ASCII diagram → prose (kept as Studies-file legibility aid).
+
+**Net**: `Rigidity.lean` +13 LOC (1 new def + 1 simp lemma + 1 new theorem + 1 import); `HeimComments1994.lean` 262 → 235 LOC (-27, despite adding `toSubstrate_isRigidOn` + strengthening exhaustiveness theorem); module docstring tightened. Theorem count net-zero (deleted 2: `ulcDefined_iff_le`, `toSubstrate_eq_precomp`; added 2: `toSubstrate_isRigidOn`, `toSubstrate_image_isExhaustiveOn`). 5645 jobs green.
+
 ### KOS substrate audit-driven cleanup: fidelity + hygiene + cross-framework deepening (Sprints A/B/C)
 
 Three-sprint cleanup driven by the post-Phase-A+B+ four-agent audit (linguistics expert PDF-verified, mathlib reviewer, integration auditor, cross-framework reconciler). Substantive substrate errors flagged by the linguistics expert (PDF-verified against the Ginzburg book), mathlib hygiene issues, and shallow cross-framework witnesses all addressed.

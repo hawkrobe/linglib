@@ -1,4 +1,5 @@
 import Mathlib.Logic.Function.Basic
+import Mathlib.Data.Set.Image
 
 /-!
 # Intensional Properties: Rigidity, Reference, and Variable Interpretation
@@ -97,6 +98,18 @@ theorem IsRigid.map {W τ₁ τ₂ : Type*}
     IsRigid (fun w => g (f w)) :=
   fun w₁ w₂ => congrArg g (h w₁ w₂)
 
+/-- **Pre-composition operator** for intensions: given any
+    `g : W₂ → W₁`, send `f : Intension W₁ τ` to `f ∘ g : Intension W₂ τ`.
+    Equivalently `Function.comp f g`; named here to give the
+    contravariant-functor action a domain-specific handle. -/
+def precomp {W₁ W₂ τ : Type*} (g : W₂ → W₁) (f : Intension W₁ τ) :
+    Intension W₂ τ :=
+  fun w => f (g w)
+
+@[simp] theorem precomp_apply {W₁ W₂ τ : Type*}
+    (g : W₂ → W₁) (f : Intension W₁ τ) (w : W₂) :
+    Intension.precomp g f w = f (g w) := rfl
+
 /-- **Pre-composition closure** (`Intension W` is contravariantly
     functorial in its index type). Given any `g : W₂ → W₁`, the
     pre-composed intension `f ∘ g : Intension W₂ τ` is rigid whenever
@@ -107,7 +120,7 @@ theorem IsRigid.map {W τ₁ τ₂ : Type*}
     holder's `WorldTimeIndex` alternative-shift. -/
 theorem IsRigid.precomp {W₁ W₂ τ : Type*}
     {f : Intension W₁ τ} (h : IsRigid f) (g : W₂ → W₁) :
-    IsRigid (fun w => f (g w)) :=
+    IsRigid (Intension.precomp g f) :=
   fun w₁ w₂ => h (g w₁) (g w₂)
 
 /-- Set-relativized version of `IsRigid.map`: rigidity-on-a-set is
@@ -116,6 +129,15 @@ theorem IsRigidOn.map {W τ₁ τ₂ : Type*}
     {f : Intension W τ₁} {S : Set W} (h : IsRigidOn f S) (g : τ₁ → τ₂) :
     IsRigidOn (fun w => g (f w)) S :=
   fun w₁ hw₁ w₂ hw₂ => congrArg g (h w₁ hw₁ w₂ hw₂)
+
+/-- Set-relativized version of `IsRigid.precomp`: rigidity-on-`S` is
+    preserved by pre-composition with `g : W₂ → W₁`, with the resulting
+    intension rigid on the preimage `Set.preimage g S`. Mathlib idiom:
+    precomp pulls back the constancy-set along `g`. -/
+theorem IsRigidOn.precomp {W₁ W₂ τ : Type*}
+    {f : Intension W₁ τ} {S : Set W₁} (h : IsRigidOn f S) (g : W₂ → W₁) :
+    IsRigidOn (Intension.precomp g f) (Set.preimage g S) :=
+  fun w₁ hw₁ w₂ hw₂ => h (g w₁) hw₁ (g w₂) hw₂
 
 /-- **Reflection along injective post-composition**: if `g ∘ f` is
     rigid and `g` is injective, then `f` was already rigid. Together

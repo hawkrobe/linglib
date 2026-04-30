@@ -19,10 +19,11 @@ contributions:
 
 2. **§2 (pp. 148–157)** — Heim's central contribution. Two pieces:
    - **ULC as presupposition** (eq 16, p. 149): "If α_i is a tense,
-     then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`." Implemented
-     as a definedness condition on semantic values (eq 18, p. 150).
-     The substrate's `isFelicitousWith` is the value-level Prop
-     analog (no partiality).
+     then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
+     The substrate's `Tense.upperLimitConstraint` (in `Tense/Basic.lean`)
+     IS this presupposition, already typed at `[LE Time]` and credited
+     to @cite{heim-1994-comments} in its docstring; this study file
+     proves the felicity-to-ULC bridge through the substrate primitive.
    - **Time-concept** (p. 155): "By a 'time-concept' I mean a function
      from world-time pairs to times. Think of these as the meanings
      of descriptions which a thinker might represent a time to herself."
@@ -45,25 +46,17 @@ contributions:
 ## Substrate identification
 
 Heim's `time-concept` framework is a **proper coordinate-projection**
-of the substrate's:
-
-```
-   Heim:       Intension (WorldTimeIndex W T)        T
-                  (W × T → T, no agent)
-                                ↑
-                          precompose
-                          (KContext.toSituation)
-                                |
-   Substrate:  Intension (KContext W E P T)          T
-                  (agent + world + time + ... → T)
-```
-
-By @cite{abusch-1997}-substrate's `Intension.IsRigid.precomp`
-(`Core/IntensionalLogic/Rigidity.lean`), the pullback preserves
-rigidity. The image of `toSubstrate` is exactly the **agent-blind**
-substrate concepts — concepts that factor through `KContext.toSituation`,
-i.e., depend only on the ⟨world, time⟩ projection. Universal-property
-characterisation below.
+of the substrate's: Heim works at `Intension (WorldTimeIndex W T) T`
+(world + time → time), the substrate at
+`Intension (KContext W E P T) T` (agent + addressee + world + time +
+position → time). The pullback `toSubstrate := Intension.precomp
+KContext.toSituation` carries Heim's framework into the substrate by
+pre-composing with the forgetful projection. The image is exactly the
+**agent-blind** substrate concepts (universal property below). Rigidity
+preservation, set-relativized rigidity preservation, and
+exhaustiveness preservation all factor through the substrate's
+intensional precomp infrastructure
+(`Core/IntensionalLogic/Rigidity.lean`).
 
 ## What's not formalised
 
@@ -110,22 +103,41 @@ abbrev TimeConcept (W T : Type*) := Intension (WorldTimeIndex W T) T
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Substrate-level pullback** of a Heim time-concept along the
-    forgetful projection `Core.Context.KContext.toSituation`. This is
-    the canonical embedding of Heim's framework into the substrate's
-    centered-world setup: any Heim time-concept lifts to an agent-blind
-    substrate `TimeConcept` via pre-composition with the projection. -/
+    forgetful projection `Core.Context.KContext.toSituation`. This IS
+    the substrate's intensional pre-composition operator
+    `Intension.precomp` instantiated at `g := KContext.toSituation` —
+    no new content; the pullback's structural properties transport
+    from the substrate's `precomp`/`IsRigid.precomp`/`IsRigidOn.precomp`
+    closure lemmas (`Core/IntensionalLogic/Rigidity.lean`). -/
 def toSubstrate {W E P T : Type*} (c : TimeConcept W T) :
     Semantics.Tense.DeRe.TimeConcept W E P T :=
-  fun k => c k.toSituation
+  Intension.precomp KContext.toSituation c
 
-/-- **Pullback preserves rigidity**: by `Intension.IsRigid.precomp`
-    (PR-C functoriality), a rigid Heim time-concept lifts to a rigid
-    substrate `TimeConcept`. The forgetful projection is the
-    substrate's instantiation of the precomposition closure lemma
-    at `g := KContext.toSituation`. -/
+/-- **Pullback preserves rigidity**: a rigid Heim time-concept lifts to
+    a rigid substrate `TimeConcept`. Direct application of substrate's
+    `Intension.IsRigid.precomp` at `g := KContext.toSituation`. -/
 theorem toSubstrate_isRigid {W E P T : Type*}
     {c : TimeConcept W T} (h : Intension.IsRigid c) :
     Intension.IsRigid (toSubstrate (E := E) (P := P) c) :=
+  h.precomp KContext.toSituation
+
+/-- **Pullback preserves set-relativized rigidity**: rigidity on a set
+    `S : Set (WorldTimeIndex W T)` of Heim alternatives lifts to
+    rigidity on the preimage `Set.preimage KContext.toSituation S` of
+    substrate alternatives. Direct application of substrate's
+    `Intension.IsRigidOn.precomp` at `g := KContext.toSituation`.
+
+    This is the last-mile companion to `toSubstrate_isRigid` that
+    closes the substrate's `IsRigidAcrossAlternatives` family
+    (in `Tense/DeRe.lean`) under the Heim quotient — Heim time-concepts
+    that are rigid across a doxastic alternative set lift to substrate
+    concepts rigid across the corresponding pulled-back alternative
+    set. -/
+theorem toSubstrate_isRigidOn {W E P T : Type*}
+    {c : TimeConcept W T} {S : Set (WorldTimeIndex W T)}
+    (h : Intension.IsRigidOn c S) :
+    Intension.IsRigidOn (toSubstrate (E := E) (P := P) c)
+      (Set.preimage KContext.toSituation S) :=
   h.precomp KContext.toSituation
 
 /-- **Universal property of the pullback** (the deep structural
@@ -161,63 +173,33 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     apply h
     rfl
 
-/-- **`toSubstrate` is precomposition with `KContext.toSituation`** —
-    the bridge IS the substrate's intensional precomposition operator
-    at the forgetful projection. This rfl-equivalence wires the
-    `Intension.IsRigid.precomp` (and `IsRigidOn.precomp`)
-    functoriality lemmas on `Core/IntensionalLogic/Rigidity.lean`
-    directly through to Heim time-concepts: any closure property of
-    rigidity under precomposition transports to the pullback. -/
-theorem toSubstrate_eq_precomp {W E P T : Type*}
-    (c : TimeConcept W T) :
-    toSubstrate (E := E) (P := P) c = c ∘ KContext.toSituation := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
--- § ULC as presupposition (eq 16, p. 149; eq 18, p. 150)
+-- § ULC as presupposition (eq 16, p. 149)
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{heim-1994-comments} eq (16) p. 149: "If α_i is a tense, then
-    [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`." Heim's
-    presuppositional construal of @cite{abusch-1997}'s Upper Limit
-    Constraint, encoded as a definedness condition.
+    [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
+    Heim's presuppositional construal of @cite{abusch-1997}'s Upper
+    Limit Constraint is already encoded in the substrate as
+    `Theories.Semantics.Tense.upperLimitConstraint` (typed `[LE Time]`,
+    anchored to @cite{heim-1994-comments} in its docstring). This
+    bridge theorem projects the substrate's `TemporalDeReReading`
+    `isFelicitousWith .past` (strict `<`) onto the substrate's ULC
+    primitive (weak `≤`), via `le_of_lt`.
 
-    ``g(i)` does-not-follow `g(0)`` reads "g(i) does not follow g(0)" — i.e., the
-    resolved tense value does not strictly succeed the local evaluation
-    time. The substrate's `isFelicitousWith` `.past` is the Prop-valued
-    analog: `actualRes < holderContext.time`.
-
-    This def captures Heim's "does not follow" as `¬ (resolved >
-    evalTime)` (using the `LinearOrder` ambient on `T`). For
-    `LinearOrder`, this is equivalent to `resolved ≤ evalTime`. -/
-def ulcDefined {T : Type*} [LinearOrder T] (resolved evalTime : T) : Prop :=
-  ¬ (resolved > evalTime)
-
-/-- @cite{heim-1994-comments}'s ULC-as-presupposition (eq 16, p. 149)
-    matches the substrate's `isFelicitousWith` for a `TemporalDeReReading`
-    under the past constraint, modulo `≤` vs `<`. Heim's "does not
-    follow" (`¬ >`, equivalently `≤`) is the strict-past presupposition;
-    `isFelicitousWith .past` is `<` (strict precedence). The two
-    coincide only on the strict-precedence reading of past tense; the
-    weak version (`≤`) admits same-time as the eval-time, which is the
-    canonical present-under-past coincidence the substrate's
-    `.present` constraint handles. -/
-theorem ulcDefined_iff_le {T : Type*} [LinearOrder T] (resolved evalTime : T) :
-    ulcDefined resolved evalTime ↔ resolved ≤ evalTime := by
-  unfold ulcDefined
-  exact not_lt
-
-/-- @cite{heim-1994-comments}'s ULC presupposition projected onto the
-    substrate: a `TemporalDeReReading`'s `isFelicitousWith .past`
-    implies Heim's ULC definedness. The converse fails for the
-    strict-equality case (Heim allows simultaneous; substrate's `.past`
-    requires strict precedence). -/
-theorem isFelicitousWith_past_imp_ulcDefined
+    The implication is one-way: substrate `.past` is strict precedence,
+    Heim's ULC is non-strict, the converse fails on the simultaneous
+    boundary case. The substrate's `.present` constraint (which Heim
+    handles separately as a tense-pronoun resolution) covers the
+    boundary case. -/
+theorem isFelicitousWith_past_imp_upperLimitConstraint
     {W E P T : Type*} [LinearOrder T]
     (dr : TemporalDeReReading W E P T)
     (h : dr.isFelicitousWith .past) :
-    ulcDefined dr.actualRes dr.holderContext.time := by
-  exact (ulcDefined_iff_le _ _).mpr (le_of_lt h)
+    Semantics.Tense.upperLimitConstraint
+      dr.actualRes dr.holderContext.time :=
+  le_of_lt h
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -231,32 +213,32 @@ theorem isFelicitousWith_past_imp_ulcDefined
 
     Heim's "suitable" set of time-concepts IS the substrate's
     `Semantics.Reference.Acquaintance.Cover` at the appropriate
-    instantiation `Idx := WorldTimeIndex W T`, `Res := T`. The
-    polymorphic substrate's Cover infrastructure handles Heim's
-    informal "suitability" filter as a typeclass-shaped concept-set. -/
+    instantiation `Idx := WorldTimeIndex W T`, `Res := T`. Membership
+    `c ∈ cov` is the suitability predicate directly — no separate
+    `IsSuitable` wrapper is needed. -/
 abbrev SuitableTimeCover (W T : Type*) :=
   Semantics.Reference.Acquaintance.Cover (WorldTimeIndex W T) T
 
-/-- Heim's "suitable" predicate on a Heim time-concept: a `TimeConcept
-    W T` is suitable iff it belongs to the available cover. The
-    substrate's `Acquaintance.Cover` membership predicate handles
-    this directly. -/
-def IsSuitable {W T : Type*}
-    (c : TimeConcept W T) (cov : SuitableTimeCover W T) : Prop :=
-  c ∈ cov
-
-/-- Suitability is preserved under the pullback to the substrate: a
-    suitable Heim time-concept lifts to a substrate `TimeConcept` whose
-    image lies in the corresponding pulled-back substrate cover. The
-    image cover construction documents how Heim's acquaintance
-    qualification carries through to the substrate framework. -/
-theorem toSubstrate_isSuitable_image {W E P T : Type*}
-    (c : TimeConcept W T) (cov : SuitableTimeCover W T)
-    (h : IsSuitable c cov) :
-    toSubstrate (E := E) (P := P) c ∈
-      (fun c' : TimeConcept W T =>
-        toSubstrate (E := E) (P := P) c') '' cov := by
-  exact ⟨c, h, rfl⟩
+/-- **Pullback preserves cover exhaustiveness**: if `cov` is a
+    suitability cover for Heim time-concepts that exhaustively
+    identifies values in `dom : Set T` at every Heim
+    `WorldTimeIndex`, then the lifted cover `toSubstrate '' cov`
+    exhaustively identifies the same `dom` at every substrate
+    `KContext`. This is the substantive content of "Heim's
+    acquaintance qualification carries through to the substrate
+    framework": the agent-blind quotient does not weaken
+    exhaustiveness, because every substrate context projects to a
+    Heim index where the cover is exhaustive. -/
+theorem toSubstrate_image_isExhaustiveOn {W E P T : Type*}
+    {cov : SuitableTimeCover W T} {dom : Set T}
+    (h : cov.isExhaustiveOn dom) :
+    Semantics.Reference.Acquaintance.Cover.isExhaustiveOn
+      ((fun c : TimeConcept W T =>
+        toSubstrate (E := E) (P := P) c) '' cov) dom := by
+  intro k r hr
+  obtain ⟨c, hcov, hcr⟩ := h k.toSituation hr
+  refine ⟨toSubstrate (E := E) (P := P) c, ⟨c, hcov, rfl⟩, ?_⟩
+  exact hcr
 
 
 end Phenomena.TenseAspect.Studies.HeimComments1994
