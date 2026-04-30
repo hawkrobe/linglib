@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Ginzburg2012.lean canonical rewrite (Phase B+ on top of Phase A substrate)
+
+Full rewrite of `Phenomena/Dialogue/Studies/Ginzburg2012.lean` consuming the Phase A substrate. From the original 651-LOC file (string-typed throughout, formaliser-invented `NSUDatum`/inert `tucMidRepair` content, 16 `native_decide`s, `CRReading` doublet, missing Ch. 2/§6.6–6.7/§8.2/cross-framework material) to a 695-LOC canonical exposition organized as 12 sections:
+
+- §1 Turn-Taking Puzzle (Ch. 2) — the book's headline argument formalized as a structural witness theorem
+- §2 KOS architecture overview — TIS/DGB/PrivateState type-shape demonstration
+- §3 TTR-typed inquiry cycle — opens `KOS.TTRBridge.atis_assert_resolves` from the Austinian substrate
+- §4 Grounding asymmetry — speaker/addressee per-DGB stance with explicit theorems
+- §5 Genre TTR — uses new `qnud` field + `qudConstraint`; bakery-vs-casual discrimination
+- §6 NSU resolution — uses `FragmentDatum` directly (no parallel `NSUDatum` re-skin)
+- §7 NSU taxonomy — references substrate `NSUTaxonomy.allNSUClasses` + `frequency_coherent` (no aggregate-count theorems)
+- §8 CR Form & Reading — `CRForm` enum + `CRReading := RFReading` abbrev (no doublet)
+- §9 Grounding via CCURs — exercises new `integrateLocPropCCUR` pipeline with belief base
+- §10 Self-repair via MaxPending — uses new `SelfRepair` substrate ops (replaces inert `tucMidRepair` stub)
+- §11 End-to-end pipeline — DialogueSign → LocProp → CCURs → DGB worked trace
+- §12 Cross-framework contrasts — vs pre-2012 siblings: Stalnaker (HasContextSet divergence as theorem), Farkas-Bruce 2010 (dcS/dcL/cg three-slate vs per-DGB), Roberts 1996/2012 (QUD-stack agreement at top), Purver-Ginzburg 2004 (q-params/dgb-params split inheritance, theorem-witnessed via substrate), Ginzburg-Sag 2000 (HPSG foundation note)
+
+**Substantive corrections from earlier formaliser version**:
+- `TurnUnderConstr`/`tucMidRepair` inert tests replaced with real substrate operations + theorems
+- 24-sluice metacommunicative lumping replaced with substrate's faithful Sluice split per Table 7.4
+- `NSUDatum` re-skin of `FragmentDatum` deleted
+- `CRReading` doublet of substrate `RFReading` collapsed via `abbrev`
+- Self-repair attribution Ch.7 → §8.2 (and the section itself now backed by substrate, not stipulate-then-rfl)
+- `integrateLocProp` one-shot stub augmented with full `integrateLocPropCCUR` pipeline consumption
+- All `native_decide` migrated to `decide`/`rfl`/structural
+
+**Theorem count**: 27 theorems + examples across the 12 sections. **Sorries**: 1 (`kos_vs_stalnaker_per_dgb_divergence` — the architectural inequality holds at `RainW.sunny` per documentation; Lean proof is a `congr_fun` + propext calculation deferred for follow-up substrate `HasContextSet` API improvements).
+
+**Build**: 1849 jobs green for all study + KOS substrate consumer modules (full project blocked by an unrelated other-session Aggregation.lean WIP).
+
+**Out of scope (separate follow-on studies)**: Multilogue Ch. 8 §8.1, Ch. 9 "Interactive Stance" meta-theory, §8.5 quantification/anaphora in dialogue, crosslinguistic data sections.
+
 ### KOS substrate evolution: Phase A (decomposition + Cont parameter + CCURs + SelfRepair + NSUTaxonomy + Genre TTR + DialogueSign polymorphic)
 
 Comprehensive substrate evolution of `Theories/Dialogue/KOS/` from "early-days" shape to faithful @cite{ginzburg-2012} Ch. 6 final shape, in nine sub-phases. Prerequisite for the Ginzburg2012.lean canonical rewrite (Phase B+ pending).
