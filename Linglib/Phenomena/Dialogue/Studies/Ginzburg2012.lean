@@ -1,4 +1,7 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
+import Linglib.Theories.Dialogue.KOS.Grammar
+import Linglib.Theories.Dialogue.KOS.InquiryCycle
+import Linglib.Theories.Dialogue.KOS.Genre
+import Linglib.Theories.Dialogue.KOS.Grounding
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
@@ -12,6 +15,37 @@ import Linglib.Core.Discourse.Strategy
 Key empirical claims from @cite{ginzburg-2012} formalized against the KOS
 framework and verified with the existing DGB/TIS/conversational-rule machinery.
 
+## Substrate caveats — what this file simplifies
+
+Three load-bearing simplifications relative to the book that callers should know:
+
+- **This file runs on `String` rather than the available TTR substrate.**
+  Ginzburg's KOS is built on TTR (Type Theory with Records); Sign / DGB-PARAMS
+  / LocProp / GenreType are all record types with subtyping. The TTR substrate
+  is in fact present and substantial: `Theories/Semantics/TypeTheoretic/Core.lean`
+  (~1073 LOC: `IType`, `PredType`, `DepRecordType`, `SituationRec`, `MeetType`/
+  `JoinType`, record merges, `ModalTypeSystem`) plus `Discourse.lean` (~947 LOC:
+  `TTRSign`, `InfoState`, `TTRQuestion`, `BCheckableAustinian`) plus
+  `Theories/Dialogue/KOS/TTRBridge.lean` (`AustinianTIS`, `austinianSupport`,
+  `tisToInfoState`, with a worked Bool-typed inquiry cycle). This study uses
+  bare `String` for spkr/addressee/QContent/Fact throughout, *not* because the
+  typed substrate is absent but for example-readability. The typed counterpart
+  of every theorem here is straightforwardly portable to `AustinianTIS Weather
+  Weather` (or any concrete `S`/`R` instantiation). See @cite{cooper-2023} for
+  the canonical TTR reference.
+- **`integrateLocProp` is the formaliser's stub for §6.7.** Ginzburg's actual
+  grounding/CRification protocol is a multi-stage pipeline (Pending Update →
+  Contextual Instantiation → CCURs — Clarification Context Update Rules) over
+  the rich Sign-typed Pending field. This file's one-shot `integrateLocProp`
+  branches purely on `cparams = []` vs `cparams ≠ []`, which collapses the
+  contextual-instantiation step that decides whether dgb-params are *witnessed*
+  by addressee beliefs. See §6.6–6.7 for the full machinery.
+- **`MaxPending` is the formaliser's name.** Ginzburg uses an extended
+  Pending field with a MaxPending locus for incomplete utterances. The TuC
+  bundle here (phon/cat/partialContent) is a stub for the Sign schema he uses
+  in §8.2. The post-2012 successor treatment is
+  @cite{ginzburg-fernandez-schlangen-2014}.
+
 ## Claims Formalized
 
 1. **Non-sentential utterances** (Ch. 5): bare fragments ("Paris.") are
@@ -21,22 +55,24 @@ framework and verified with the existing DGB/TIS/conversational-rule machinery.
    QUD; the addressee's acceptance resolves it.
 3. **Grounding asymmetry** (Ch. 4): the speaker's DGB and addressee's DGB
    evolve differently — only acceptance synchronizes them.
-4. **Self-repair** (Ch. 7): disfluencies are modeled via TurnUnderConstr
-   in the private state.
-5. **Genre relevance** (Ch. 4): initiating moves must be relevant to the
+4. **Self-repair** (§8.2): disfluencies are modeled via a MaxPending
+   stub in the private state. (Section earlier mis-cited as Ch. 7; the
+   self-repair material is in §8.2 "Unifying Self- and Other-Correction",
+   not in Ch. 7's NSU taxonomy.)
+5. **Genre relevance** (§4.6): initiating moves must be relevant to the
    conversational genre.
 6. **NSU taxonomy** (Ch. 7, Tables 7.3–7.4): 15 empirical NSU classes from
    BNC corpus + 4 functional groupings.
 7. **Grounding protocol** (Ch. 6): LocProp integration branches on cparam
-   resolution — grounding vs CRification.
-8. **End-to-end chain** (§10): DialogueSign → LocProp → integration →
+   resolution — grounding vs CRification (stub for §6.6–6.7 CCURs).
+8. **End-to-end chain** (§10 below): DialogueSign → LocProp → integration →
    DGB update, with non-resolve-cond verification.
 
 -/
 
 namespace Ginzburg2012
 
-open Pragmatics.Dialogue.KOS
+open Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. NSU Resolution via QUD
@@ -45,8 +81,9 @@ open Pragmatics.Dialogue.KOS
 /-! ## Non-Sentential Utterances
 
 @cite{ginzburg-2012} Ch. 1 (p. 2) cites estimates that ~30% of utterances
-are non-sentential (de Waijer 2001); the BNC corpus study in Ch. 7 (§7.2.2)
-finds 1,299 NSUs in 14,315 sentences (~9%).
+in adult-adult conversation are one-word (@cite{de-waijer-2001});
+the BNC corpus study in Ch. 7 §7.2 (citing @cite{fernandez-2006})
+finds 1,299 NSUs in a 14,315-sentence subcorpus (~9%).
 Their interpretation depends on the QUD — the same fragment "Paris" means
 different things depending on what question is under discussion:
 
@@ -109,7 +146,9 @@ theorem all_nsu_resolved :
 
 /-! ## The Full Inquiry Cycle
 
-@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 66): the canonical dialogue pattern.
+@cite{ginzburg-2012} Ch. 4: the canonical Ask → Assert → Accept dialogue
+pattern, walked through in §4.4.5 (the worked Hi/Hi/Who's coming…/Several
+colleagues/I see/Mike too dialogue).
 
 A(1): "Is Bo here?" — Ask: pushes q onto QUD
 B(1): "Bo is here." — Assert: adds p to FACTS, pushes About(p), downdates
@@ -127,7 +166,7 @@ instance : Core.Question.DecidableSupport String String where
   decSupports a b := decEq a b
 
 /-- A asks "Is Bo here?" -/
-private def cycle₀ : TIS String String String := TIS.initial
+private def cycle₀ : TIS String String String String := TIS.initial
 private def cycle₁ := cycle₀.ask "Bo is here"
 
 /-- QUD is non-empty after Ask. -/
@@ -177,11 +216,11 @@ instance : Core.Question.DecidableSupport String String where
   decSupports a b := decEq a b
 
 /-- Speaker's DGB after asserting "It's raining". -/
-private def speakerDGB : TIS String String String :=
+private def speakerDGB : TIS String String String String :=
   TIS.initial.assertRule "It's raining"
 
 /-- Addressee's DGB before accepting — no facts yet. -/
-private def addresseeDGBBefore : TIS String String String := TIS.initial
+private def addresseeDGBBefore : TIS String String String String := TIS.initial
 
 /-- Speaker has the fact; addressee does not. -/
 theorem grounding_asymmetry :
@@ -193,7 +232,7 @@ theorem grounding_asymmetry :
   · simp [addresseeDGBBefore, TIS.initial]
 
 /-- After addressee accepts, the asymmetry is resolved. -/
-private def addresseeDGBAfter : TIS String String String :=
+private def addresseeDGBAfter : TIS String String String String :=
   addresseeDGBBefore.accept "It's raining"
 
 theorem grounding_resolved :
@@ -203,32 +242,32 @@ theorem grounding_resolved :
 end GroundingAsymmetry
 
 -- ════════════════════════════════════════════════════
--- § 4. Self-Repair via TurnUnderConstr
+-- § 4. Self-Repair via MaxPending
 -- ════════════════════════════════════════════════════
 
 /-! ## Disfluencies and Self-Repair
 
 @cite{ginzburg-2012} Ch. 7: self-repairs ("I went to the — to the store")
-are modeled via TurnUnderConstr. The speaker interrupts the current turn,
+are modeled via MaxPending. The speaker interrupts the current turn,
 revises it, and continues. The TuC tracks the partial content so that
 the repair can target the right constituent.
 
 We model a simple self-repair: "I saw the, uh, the manager." -/
 
 /-- A TuC mid-repair: speaker has said "I saw the" and is about to correct. -/
-def tucMidRepair : TurnUnderConstr where
+def maxPendingMidRepair : MaxPending where
   phonSoFar := "I saw the"
   cat := some "S"
   partialContent := some "see(spkr, ?)"
 
 /-- After repair: "I saw the manager" — TuC is cleared, content goes to DGB. -/
-def tucAfterRepair : Option TurnUnderConstr := none
+def maxPendingAfterRepair : Option MaxPending := none
 
 /-- Self-repair clears the TuC. -/
-theorem repair_clears_tuc : tucAfterRepair = none := rfl
+theorem repair_clears_tuc : maxPendingAfterRepair = none := rfl
 
 /-- The TuC tracks partial content before repair. -/
-theorem tuc_has_partial : tucMidRepair.partialContent = some "see(spkr, ?)" := rfl
+theorem tuc_has_partial : maxPendingMidRepair.partialContent = some "see(spkr, ?)" := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Genre Relevance
@@ -245,17 +284,17 @@ We verify that genre constraints correctly filter moves. -/
 section GenreRelevance
 
 /-- A bakery genre: only questions about baked goods are relevant. -/
-def bakeryGenre : GenreType String where
+def bakeryGenre : GenreType String String where
   name := "bakery"
   qudConstraint := some (fun qud =>
     qud.all (fun q => q == "What would you like?" || q == "How much?"))
 
 /-- An unrestricted casual chat genre. -/
-def casualChat : GenreType String where
+def casualChat : GenreType String String where
   name := "casual"
   qudConstraint := none
 
-private def emptyDGB : DGB String String String := DGB.initial
+private def emptyDGB : DGB String String String String := DGB.initial
 
 /-- "What would you like?" is relevant in a bakery. -/
 theorem bakery_bread_relevant :
@@ -545,7 +584,7 @@ This section proves the full pipeline for the worked example
 
 section EndToEndChain
 
-open Pragmatics.Dialogue.KOS.Grammar
+open Dialogue.KOS.Grammar
 
 instance : Core.Question.DecidableSupport String String where
   supports fact question := fact = question
@@ -587,20 +626,20 @@ theorem e2e_cr_question :
 -- Step 4a: CRification path — CR question goes on QUD
 
 /-- Starting DGB: B has asked "Did Jo leave?", QUD has the question. -/
-private def tis₀ : TIS String String String := TIS.initial.ask "leave(jo)"
+private def tis₀ : TIS String String String String := TIS.initial.ask "leave(jo)"
 
 /-- CRification: the CR question is pushed onto QUD. -/
-private def tis₁_cr : TIS String String String :=
+private def tis₁_cr : TIS String String String String :=
   { tis₀ with dgb := tis₀.dgb.pushQud "Who do you mean by 'jo_ref'?" }
 
 /-- After CRification, QUD has the CR question at the top. -/
 theorem e2e_cr_on_qud :
-    (tis₁_cr.dgb.qud).head? = some "Who do you mean by 'jo_ref'?" := rfl
+    (tis₁_cr.dgb.qud).head?.map (·.q) = some "Who do you mean by 'jo_ref'?" := rfl
 
 /-- The original question is still on QUD (below the CR). -/
 theorem e2e_original_still_on_qud :
-    "leave(jo)" ∈ tis₁_cr.dgb.qud := by
-  simp [tis₁_cr, tis₀, TIS.ask, DGB.pushQud, DGB.recordMove]
+    "leave(jo)" ∈ tis₁_cr.dgb.qud.map (·.q) := by
+  simp [tis₁_cr, tis₀, TIS.ask, DGB.pushQud, DGB.recordMove, InfoStruc.fromQuestion]
 
 -- Step 4b: Grounding path — resolved LocProp enters FACTS
 
@@ -615,7 +654,7 @@ theorem e2e_resolved_grounds :
     (integrateLocProp joResolved crQuestion).isGrounded = true := rfl
 
 /-- After grounding "Jo left", the assertion enters FACTS and resolves QUD. -/
-private def tis₁_ground : TIS String String String :=
+private def tis₁_ground : TIS String String String String :=
   tis₀.assertRule "leave(jo)"
 
 theorem e2e_ground_resolves_qud : tis₁_ground.dgb.qud = [] := by native_decide

@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Assertion.Krifka
+import Linglib.Theories.Dialogue.Krifka
 import Linglib.Phenomena.Assertion.Basic
 
 /-!
@@ -24,7 +24,7 @@ questions, acceptance, and rejection interact.
 
 namespace Krifka2015
 
-open Pragmatics.Assertion.Krifka
+open Dialogue.Krifka
 
 -- ════════════════════════════════════════════════════
 -- § 1. Finite World Setup

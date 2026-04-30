@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.Stalnaker
-import Linglib.Theories.Pragmatics.Assertion.ReasonableInference
+import Linglib.Theories.Dialogue.ReasonableInference
 
 /-!
 # Stalnaker 1975 @cite{stalnaker-1975}
@@ -65,7 +65,7 @@ open Core.Mood (GramMood)
 open Core.CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals
-open Pragmatics.Assertion.ReasonableInference
+open Dialogue.ReasonableInference
 
 -- § 1. The direct argument is REASONABLE (abstract version)
 

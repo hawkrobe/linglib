@@ -34,7 +34,7 @@ inferential role.
 
 -/
 
-namespace Pragmatics.Assertion.Brandom
+namespace Dialogue.Brandom
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet CG)
@@ -216,4 +216,4 @@ theorem scorekeepers_can_disagree :
       { commitments := ⟨[λ _ => True]⟩, entitlements := CommitmentSlate.empty }
     else NormativeStatus.empty⟩, by decide⟩
 
-end Pragmatics.Assertion.Brandom
+end Dialogue.Brandom

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Quotation.Demonstration
-import Linglib.Theories.Pragmatics.Assertion.QuotationFBOntology
+import Linglib.Theories.Dialogue.QuotationFBOntology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -47,8 +47,8 @@ matrix and its derivation are the same proposition.
 namespace Phenomena.Quotation.Studies.Rudin2025LI
 
 open Semantics.Quotation.Demonstration
-open Pragmatics.Assertion.QuotationFBOntology
-open Pragmatics.Assertion.FarkasBruce
+open Dialogue.QuotationFBOntology
+open Dialogue.FarkasBruce
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════

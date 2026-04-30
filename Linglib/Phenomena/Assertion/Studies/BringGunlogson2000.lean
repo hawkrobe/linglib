@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Assertion.Basic
-import Linglib.Theories.Pragmatics.Assertion.Gunlogson
+import Linglib.Theories.Dialogue.Gunlogson
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -27,7 +27,7 @@ This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 
 namespace BringGunlogson2000
 
-open Pragmatics.Assertion.Gunlogson
+open Dialogue.Gunlogson
 open Core.Discourse.Commitment
 
 -- ════════════════════════════════════════════════════

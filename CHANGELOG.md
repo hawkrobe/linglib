@@ -4,6 +4,82 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### KOS substrate evolution: Phase A (decomposition + Cont parameter + CCURs + SelfRepair + NSUTaxonomy + Genre TTR + DialogueSign polymorphic)
+
+Comprehensive substrate evolution of `Theories/Dialogue/KOS/` from "early-days" shape to faithful @cite{ginzburg-2012} Ch. 6 final shape, in nine sub-phases. Prerequisite for the Ginzburg2012.lean canonical rewrite (Phase B+ pending).
+
+**Phase A.1: File decomposition.** `KOS/Basic.lean` (750 LOC) + `KOS/Rules.lean` (700 LOC) split into mathlib-style files: `Defs.lean` (340 LOC types-only) + `Basic.lean` (225 LOC DGB ops) + `Move.lean` (75 LOC IllocMove ↔ Searle bridge) + `InquiryCycle.lean` (210 LOC TIS rules + theorems + mCoherent) + `Genre.lean` (initial 30 LOC) + `Grounding.lean` (initial 95 LOC integrateLocProp) + `Examples.lean` (205 LOC public worked examples promoted from `private` defs in Rules.lean). KOS/Rules.lean deleted.
+
+**Phase A.2: Demote 2004-only apparatus.** `CtxtAssignment` + 3 ops, `UttSkeleton` + `constitForParam`, `SignAssignment`, `CEState`, `CoercionOp` + `CoercionOutput` + 3 coercion operations, `IS` + 4 ops, 4 general theorems on coercions, `UttSkeleton`↔`LocProp` converters — all moved from substrate into `Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean §0` "1994/2004 CE Apparatus" inside a `GinzburgCooper2004.Apparatus` sub-namespace. Single-consumer pattern (cf. recent `Core/FormFrequency.lean → Haspelmath2021 §0` demotion at 0.230.551). Kept in substrate: `CParam`, `CParamSet`, `SubUtterance` — these survive into 2012 as the dgb-params/sub-constituents apparatus.
+
+**Phase A.3: Type-parameter expansion (DGB/TIS gets `Cont`).** Per @cite{ginzburg-2012} ex. 113 (p. 215) final shape:
+- `DGB Participant Fact QContent` → `DGB Participant Fact QContent Cont`
+- `pending : List PendingLoc` → `pending : List (LocProp Cont)` (Pending stores LocProps with cparams enabling proper CRification on form)
+- `qud : List QContent` → `qud : List (InfoStruc QContent Cont)` (per ex. 39 p. 239 — questions paired with focus-establishing constituents enabling NSU resolution)
+- `moves : List (IllocMove Fact QContent)` kept (constructor-tagged for case-analysis convenience)
+- `TIS` threads `Cont` through to `DGB`; `PrivateState` unchanged
+- `PendingLoc` deleted (subsumed by `LocProp String`)
+- `pushQud` wraps in `InfoStruc.fromQuestion`; `downdateQud` projects through `is.q`
+- Added `pushQudInfoStruc` for FEC-carrying entries; added `pushPending` for the LocProp Pending field
+- All consumers updated: TTRBridge `AustinianDGB/AustinianTIS` aliases gain Cont parameter; GinzburgCooper2004 Apparatus.IS uses `DGB String Fact QContent String`; `Ginzburg2012.lean` 8 type-sig updates
+
+**Phase A.4: Genre TTR enrichment.** `GenreType (QContent : Type)` → `GenreType (Fact QContent : Type)` with new fields per @cite{ginzburg-2012} ex. 88 (p. 104): `qnud` (anticipated questions), `anticipatedMoves` (genre-licensed moves), `qudConstraint` kept. `Genre.lean` provides two relevance variants (`genreRelevant` qudConstraint-based; `genreRelevantViaQnud` qnud-based with DecidableEq), `outcomeFulfilled` predicate per ex. 91 (p. 106), and a coherence theorem `genreRelevantViaQnud_preserves_outcomeFulfilled`.
+
+**Phase A.5: KOS/Grounding.lean — CCURs pipeline.** Replaces the one-shot `integrateLocProp` stub with the multi-stage @cite{ginzburg-2012} §6.6–6.7 pipeline: `BeliefBase`, `CParam.instantiate`, `ContextualInstantiationResult` (`fullyInstantiated` | `partiallyResolved`), `contextualInstantiate`, `CCUR` inductive (parameterIdentification | confirm | repeatCR — eq. 67 p. 190), `integrateLocPropCCUR`. Legacy stub kept for backward compat. `resolved_grounds_via_ccur` proved; `belief_resolution_grounds_via_ccur` `sorry`d (load-bearing; deferred).
+
+**Phase A.6: KOS/SelfRepair.lean + rename TurnUnderConstr → MaxPending.** Substrate for §8.2 "Unifying Self- and Other-Correction": `MaxPending` (Ginzburg's eq. 31 p. 287 substrate primitive name) + TIS operations `startRepair`/`extendRepair`/`completeRepair` (promotes MaxPending to Pending as a LocProp)/`clearMaxPending`/`replaceMaxPending` (backwards-looking appropriateness repair). 6 substrate theorems verifying field updates. Replaces the inert `tucMidRepair`/`repair_clears_tuc` stipulate-then-rfl content from the original Ginzburg2012.lean §4.
+
+**Phase A.7: DialogueSign polymorphic + lexicon rebuild.** `DialogueSign` (Grammar.lean) gains a `Cont` type parameter; `cont : String` → `cont : Cont`. `toLocProp : LocProp String` → `toLocProp : LocProp Cont`. Concrete lexicon entries (`who`, `jo`, `left`) explicitly typed as `DialogueSign String`. Enables consumer instantiation with TTR-typed content for full TTR-typed grammars.
+
+**Phase A.8: KOS/NSUTaxonomy.lean substrate.** New 200-LOC substrate file housing the Tables 7.3 + 7.4 NSU taxonomy that previously lived in Ginzburg2012.lean §7. Substantive correction: 16-class taxonomy with Sluice split (Reprise Sluice 13, metacommunicative + Direct Sluice 11, extension move) per Table 7.4 — was 15-class with all 24 sluices lumped under metacommunicative, a formaliser-imposed cut that didn't match the book. Cell sums: 685+403+132+63 = 1283 ✓. Single-source-of-truth `freqTable : List (NSUClass × NSUFunction × Nat)` + structural drift sentry `frequency_coherent` replaces the campaigned-out aggregate-count theorems (`nsu_total_1283`, `functional_groups_sum_to_total`).
+
+**Phase A.9: Public TTR-typed examples.** `KOS/TTRBridge.lean` worked example (`adgb₀`, `atis₁`, `atis₂` over `AustinianDGB Weather Weather Unit` with `BCheckableAustinian` content + `TTRQuestionB` questions) gains `def`/`public` visibility. Consumers can now reference `Dialogue.KOS.TTRBridge.atis_assert_resolves` etc. as the typed counterpart of the String-based examples in `KOS/Examples.lean`.
+
+**Manifest.** `Linglib.lean` updated: 12 KOS substrate files registered (was: 5). All 9 sub-phases verified by `lake build` (5639 jobs green).
+
+**Carried over to Phase B+** (the Ginzburg2012.lean rewrite): use the new substrate to give Ginzburg2012 a faithful, TTR-typed, mathlib-quality canonical exposition with Ch. 2 TTP framing, §6.6–6.7 CCURs consumption, §8.2 self-repair (now backed by real substrate), the 16-class NSU taxonomy (now in substrate), and cross-framework contrast theorems vs pre-2012 siblings (Stalnaker, Farkas-Bruce 2010, Roberts 1996/2012, Purver-Ginzburg 2004, Ginzburg-Sag 2000).
+
+### Solt2018Proportional.lean (NEW) + Tham2025 round-2 cleanup + deeper substrate theorems
+
+Round-2 four-agent audit on Tham2025.lean rewrite + the new `spatialNormalizedScore` substrate. Audit identified single-consumer substrate as block-merge (Core/FormFrequency.lean precedent at `f457764f`); rather than demote, earned the substrate by adding `Solt2018Proportional.lean` as the second consumer (Solt's eq. 21 proportional measure function `μ_DIM(y) / μ_DIM(x)` is exactly `spatialNormalizedScore` with `weights=[1]`, `measures=[μ_DIM]`, `spatial = fun _ => μ_DIM(totality)`).
+
+**`Phenomena/Gradability/Studies/Solt2018Proportional.lean` (NEW, ~440 LOC)** — anchored on Solt 2018 *Proceedings of Sinn und Bedeutung 21* "Proportional comparatives and relative scales":
+- §1 Background data: NYC/Ithaca proportional comparative puzzle; cardinal reading false, proportional reading true
+- §2.1 Ambiguity account (Partee 1989, Romero 2015): `manyCard` vs `manyProp` entries
+- §2.2 Measurement-based account: Scale ⟨D, ≻, DIM⟩ structure, `MeasureFn`, `Monotonic` constraint
+- §3 Solt's eq. (21) proportional measure: `proportionalMeasure := spatialNormalizedScore [1] [μ_DIM] (fun _ => μ_DIM tot)` — the substrate consumer point
+- §4 Distribution constraints: stage-level vs individual-level predicates (Carlson 1977)
+- §5 Cross-paper engagement: substrate-sharing with Tham 2025; relation to Springer multidim chapter
+- **§6 Mathlib-style structural properties** (the deepest content): `proportionalMeasure_self_eq_one`, `proportionalMeasure_mem_unit_interval` (the probability-style range theorem — score in `[0, 1]` when measure is monotonic and `y ⊑ tot`), `proportionalMeasure_scale_invariant` (proportion is invariant under measure rescaling — NYC/Ithaca proportion is the same whether population is in thousands or millions)
+
+**Substrate deepening — `Theories/Semantics/Degree/Aggregation.lean`**:
+- `spatialNormalizedScore_le_one`: when weighted-score numerator ≤ spatial denominator and spatial > 0, normalized score ≤ 1. Makes Tham 2025 §3.4 "boundedness from spatial extent" into a structural theorem rather than a stipulation.
+- `spatialNormalizedScore_nonneg`: nonneg numerator + nonneg spatial → nonneg score. Combined with `_le_one`, places the score in `[0, 1]` (the "fraction of totality" intuition both Tham §3.4 and Solt eq. 21 require).
+- Both re-exported from `Theories/Semantics/Gradability/Aggregation.lean`.
+
+**`Phenomena/Gradability/Studies/Tham2025.lean` round-2 cleanup**:
+- **Schema correction**: `adjMuch : Bool` (formaliser's gloss on Tham §3.3) replaced by `adjMuchSelects : List DisturbanceDimension` with new `DisturbanceDimension` enum (`.quantity`, `.quality`, `.positioning`). Theorem `much_selects_quantity_only` now proves Tham's actual selectivity claim (*much* selects ONLY quantity, p. 16) rather than the weaker compatibility claim.
+- **§6 universal → existential**: theorem renamed `all_disturbance_adj_can_lack_preceding_change` to honestly reflect Tham's "do not necessarily express resultant state" (p. 23) — the (45) cases are existence proofs, not universals.
+- **§13 vase docstring honesty**: framed as "we construct" not "Tham's intent" (Tham's actual intuition is disturbance approaching the structural-integrity limit, not the inverse direction the vase example illustrates).
+- **§12 Sassoon honesty caveat**: docstring now explicitly says the binding-type insufficiency argument is the formaliser's reconstruction of what Tham's data WOULD force on Sassoon's apparatus — Tham herself adopts Solt's representation, not Sassoon's.
+- **§12 genuine `MultidimAdj` engagement**: added `crackedAsConjunctive`/`crackedAsDisjunctive`/`crackedAsMixed` as concrete `Sassoon2013.MultidimAdj` instances, with theorems showing each violates either Sassoon's H3 prediction OR Tham's data — the `Sassoon2013` import now has Lean-level use, not just docstring reference.
+- **§14 NEW Beavers & Koontz-Garboden 2020**: `cracked_adj_refutes_strict_root_eventivity` makes Tham §5.1's challenge to root-driven CoS entailment Lean-checkable.
+- **§15 NEW Filip 2012 middle ground**: `crack_is_filip_middle_ground` — *crack* is a textbook witness of Filip's third class (telic + atelic + result-entailing).
+- **§16 NEW Waldon vs Tham contrast**: `tham_unlike_waldon_normalization` — same substrate, divergent normalizer; the contrast lives entirely in the spatial denominator.
+- **§13 substrate consumption**: `largeVase_score_le_one` consumes `spatialNormalizedScore_le_one` from substrate, making the boundedness claim Lean-checkable on the worked example.
+- **Cleanup**: `thamSimpleTarget`/`thamCompletelyTarget` Bool constants inlined (mathlib-reviewer noise flag); duplicate `open Semantics.Verb` removed; unused `PositiveStandard` open dropped.
+
+**Bib additions** (`blog/data/references.bib`):
+- `solt-2018-proportional` (SuB 21 paper, distinct from existing `solt-2018` Springer multidim chapter)
+- `partee-1989` (cardinal/proportional ambiguity origin)
+- `romero-2015` (Solt's ambiguity-account formal entries)
+- `ahn-sauerland-2017` (the *percent* analysis Solt argues against, doi 10.1515/tlr-2017-0010)
+- `milsark-1977` (egg-laying mammals example)
+
+**Linglib.lean wiring**: `Solt2018Proportional` imported between `Sassoon2013` and `Tham2025` in the `Phenomena.Gradability.Studies` block.
+
+**Substrate-principle revisited**: Round-1 promoted `spatialNormalizedScore` on a single-consumer assumption; round-2 audit caught this as block-merge. Resolution = earn the substrate by adding the genuine second consumer (Solt 2018 SuB) rather than demote. The two consumers (Solt single-dim proportional + Tham multi-dim spatial-normalized) cover the substrate's general signature; future consumers (Solt 2018 multidim chapter on *clean*/*dirty*; potential Sassoon-Fadlon multiplicative contrast) can plug in without API changes.
+
 ## [0.230.556] - 2026-04-29
 
 ### Abusch substrate PR-D: Schlenker 2004 ↔ Abusch 1997 contrastive bridge

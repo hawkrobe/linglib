@@ -1,5 +1,4 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
+import Linglib.Theories.Dialogue.KOS.Defs
 
 /-!
 # The Reprise Content Hypothesis (RCH)
@@ -45,7 +44,7 @@ in `Phenomena/Dialogue/Studies/PurverGinzburg2004.lean`, which consumes this
 file.
 -/
 
-namespace Pragmatics.Dialogue.KOS
+namespace Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. Reprise readings (@cite{ginzburg-2012} Ch. 6 §6.2.1, Table 6.1)
@@ -193,4 +192,4 @@ theorem qParamsPredictor_satisfies_strongRCH {Cont : Type} :
   intro ev qt
   exact Iff.rfl
 
-end Pragmatics.Dialogue.KOS
+end Dialogue.KOS

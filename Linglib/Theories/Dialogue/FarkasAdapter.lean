@@ -1,11 +1,11 @@
-import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
+import Linglib.Theories.Dialogue.FarkasBruce
 
 /-!
 # @cite{farkas-bruce-2010} Assertion Adapter
 
 @cite{farkas-bruce-2010}
 
-Wraps the existing `Pragmatics.Assertion.FarkasBruce.DiscourseState` with
+Wraps the existing `Dialogue.FarkasBruce.DiscourseState` with
 bridge theorems for Farkas & Bruce's model. The model separates individual
 discourse commitments (dcS, dcL) from the common ground (cg), with
 assertions going through a "table" stage before reaching the CG.
@@ -25,9 +25,9 @@ from `Theories/Pragmatics/Assertion/FarkasBruce.lean` rather than redefining it.
 
 -/
 
-namespace Pragmatics.Assertion.FarkasAdapter
+namespace Dialogue.FarkasAdapter
 
-open Pragmatics.Assertion.FarkasBruce
+open Dialogue.FarkasBruce
 open Core.CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
@@ -67,4 +67,4 @@ theorem accept_restores_stability {W : Type*} (ds : DiscourseState W) (p : Set W
              DiscourseState.isStable] at *
   exact hStable
 
-end Pragmatics.Assertion.FarkasAdapter
+end Dialogue.FarkasAdapter

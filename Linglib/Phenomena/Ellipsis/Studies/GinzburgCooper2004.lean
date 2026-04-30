@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
+import Linglib.Theories.Dialogue.KOS.Defs
 import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 
 /-!
@@ -30,8 +30,288 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 
 namespace GinzburgCooper2004
 
-open Pragmatics.Dialogue.KOS
+open Dialogue.KOS
 open Phenomena.Ellipsis.ClarificationEllipsis
+
+-- ════════════════════════════════════════════════════
+-- § 0. Apparatus (demoted from former KOS substrate)
+-- ════════════════════════════════════════════════════
+
+/-! ## 1994/2004 Clarification Ellipsis Apparatus
+
+This section was previously in `Theories/Dialogue/KOS/Basic.lean`
+§§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
+@cite{ginzburg-cooper-2004}: in @cite{ginzburg-2012}, the corresponding
+machinery uses dgb-params (record types built on the shared `CParam`)
+rather than `CtxtAssignment`, and CCURs (Clarification Context Update
+Rules) rather than the three coercion operations
+(parameterFocussing, parameterIdentification, existentialGeneralization).
+
+We preserve the 2004 formulation here because this study replicates the
+2004 paper directly — the apparatus is single-consumer paper-specific
+content, demoted from substrate to consumer per the linglib pattern
+(cf. `Core/FormFrequency.lean → Phenomena/Case/Studies/Haspelmath2021.lean §0`).
+
+The shared substrate primitives — `CParam`, `CParamSet`, `SubUtterance` —
+remain in `KOS/Defs.lean` since they survive into the 2012 framework as
+the dgb-params/sub-constituents apparatus.
+
+The four general theorems about coercion operations are namespaced under
+`Apparatus` to avoid colliding with this file's specific-instance theorems
+on the running example. -/
+
+namespace Apparatus
+
+-- ─── Contextual Assignment ─────────────────────────────────
+
+/-- A contextual assignment maps parameter indices to values.
+
+Grounding requires a *total* assignment (all C-PARAMS resolved).
+Clarification arises when the assignment is *partial*.
+@cite{ginzburg-cooper-2004} §6, ex. 81–82. -/
+structure CtxtAssignment where
+  bindings : List (String × String) := []
+  deriving Repr, DecidableEq
+
+/-- Does the assignment resolve a given parameter? -/
+def CtxtAssignment.resolves (f : CtxtAssignment) (cp : CParam) : Bool :=
+  f.bindings.any (·.1 == cp.index)
+
+/-- Does the assignment resolve all parameters in a set? -/
+def CtxtAssignment.resolvesAll (f : CtxtAssignment) (ps : CParamSet) : Bool :=
+  ps.all f.resolves
+
+/-- Which parameters remain unresolved? -/
+def CtxtAssignment.unresolved (f : CtxtAssignment) (ps : CParamSet) : CParamSet :=
+  ps.filter (!f.resolves ·)
+
+-- ─── Utterance Skeletons ───────────────────────────────────
+
+/-- An utterance skeleton: a sign with C-PARAMS and CONSTITS.
+
+The CONSTITS feature (ex. 30) provides access to all sub-utterances.
+C-PARAMS (ex. 28–29) are the contextual dependencies introduced by the
+sign, amalgamated from daughters via the Non-local Amalgamation Constraint.
+@cite{ginzburg-cooper-2004} §3. -/
+structure UttSkeleton where
+  phon : String
+  cat : String
+  cont : String
+  cparams : CParamSet := []
+  constits : List SubUtterance := []
+  deriving Repr, DecidableEq
+
+/-- Find the constituent whose CONT matches a parameter index. -/
+def UttSkeleton.constitForParam (u : UttSkeleton) (paramIdx : String) :
+    Option SubUtterance :=
+  u.constits.find? (·.cont == paramIdx)
+
+-- ─── CE Processing State ───────────────────────────────────
+
+/-- A sign paired with a contextual assignment.
+
+@cite{ginzburg-cooper-2004} ex. 81 p.353. The assignment f records which
+C-PARAMS have been resolved. Grounding checks whether f is total. -/
+structure SignAssignment where
+  sign : UttSkeleton
+  assignment : CtxtAssignment
+  deriving Repr, DecidableEq
+
+/-- Clarification Ellipsis processing state.
+
+@cite{ginzburg-cooper-2004}: MAX-QUD and SAL-UTT are processing state for
+the CE analysis. These are NOT part of the @cite{ginzburg-2012} DGB or TIS
+(in 2012, MaxQUD is computed from the QUD poset's maximal element, not
+stored separately).
+
+This state can be used alongside the 2012 TIS when CE processing is needed. -/
+structure CEState (QContent : Type) where
+  /-- The currently maximal question — for CE coercion operations -/
+  maxQud : Option QContent := none
+  /-- The salient sub-utterance — target of clarification -/
+  salUtt : Option SubUtterance := none
+  /-- Pending utterances awaiting C-PARAMS resolution -/
+  pendingUtts : List SignAssignment := []
+
+-- ─── Coercion Operations ───────────────────────────────────
+
+/-- The three coercion operations on signs with unresolved C-PARAMS.
+@cite{ginzburg-cooper-2004} §5. -/
+inductive CoercionOp where
+  /-- Clausal CE reading: polar question about content (ex. 53) -/
+  | paramFocussing
+  /-- Constituent CE reading: wh-question about speaker meaning (ex. 59) -/
+  | paramIdentification
+  /-- Ground without clarification: ∃-quantify a parameter (ex. 77) -/
+  | existentialGeneralization
+  deriving Repr, DecidableEq
+
+/-- Output of a coercion operation: partial specification for the
+    clarification context. -/
+structure CoercionOutput where
+  op : CoercionOp
+  /-- SAL-UTT: the sub-utterance to be echoed -/
+  salUtt : SubUtterance
+  /-- MAX-QUD: the question raised (string representation) -/
+  maxQud : String
+  deriving Repr, DecidableEq
+
+/-- Parameter focussing (@cite{ginzburg-cooper-2004} ex. 53):
+derive clausal CE reading.
+
+Takes the *antecedent sign* and a problematic parameter index.
+Finds the constituent that introduced the parameter.
+Produces MAX-QUD = polar question about the antecedent content. -/
+def parameterFocussing (antecedent : UttSkeleton) (paramIdx : String) :
+    Option CoercionOutput :=
+  match antecedent.constitForParam paramIdx with
+  | none => none
+  | some constit => some {
+    op := .paramFocussing
+    salUtt := constit
+    maxQud := s!"?{paramIdx}.{antecedent.cont}"
+  }
+
+/-- Parameter identification (@cite{ginzburg-cooper-2004} ex. 59):
+derive constituent CE reading.
+
+Produces MAX-QUD = wh-question about speaker meaning. -/
+def parameterIdentification (antecedent : UttSkeleton) (paramIdx : String) :
+    Option CoercionOutput :=
+  match antecedent.constitForParam paramIdx with
+  | none => none
+  | some constit => some {
+    op := .paramIdentification
+    salUtt := constit
+    maxQud := s!"?c.spkr-meaning-rel(addr,{constit.phon},c)"
+  }
+
+/-- Contextual existential generalization (@cite{ginzburg-cooper-2004} ex. 77):
+ground without clarifying.
+
+Removes a parameter from C-PARAMS by existentially quantifying it. -/
+def existentialGeneralization (sk : UttSkeleton) (paramIdx : String) : UttSkeleton :=
+  { sk with
+    cparams := sk.cparams.filter (·.index != paramIdx)
+    cont := s!"∃{paramIdx}.{sk.cont}" }
+
+-- ─── 2004-era Information State ────────────────────────────
+
+/-- Information State for the @cite{ginzburg-cooper-2004} model.
+
+Bundles a DGB with CE processing state (pending utterances). Uses `String`
+for both Fact and QContent, matching the string-based representations in
+the 2004 paper. The `Participant` type parameter is set to `String`,
+and the LocProp `Cont` is set to `String` since this is a 2004-era model.
+
+This is NOT the @cite{ginzburg-2012} TIS — it predates the genre/agenda
+private state. It exists to support the CE running example. -/
+structure IS (Fact QContent : Type) where
+  dgb : DGB String Fact QContent String := {}
+  /-- Utterances awaiting full C-PARAMS resolution -/
+  pending : List SignAssignment := []
+  ce : CEState QContent := {}
+
+/-- An empty IS. -/
+def IS.initial {Fact QContent : Type} : IS Fact QContent := {}
+
+/-- Integrate an utterance into the IS.
+
+If the assignment fully resolves all C-PARAMS, the utterance is grounded:
+its content goes to FACTS. Otherwise, it goes to PENDING.
+@cite{ginzburg-cooper-2004} §6, ex. 82. -/
+def IS.integrateUtterance {Fact QContent : Type} [BEq Fact]
+    (is_ : IS Fact QContent) (skel : UttSkeleton) (assign : CtxtAssignment)
+    (toFact : String → Fact) : IS Fact QContent :=
+  if assign.resolvesAll skel.cparams then
+    { is_ with dgb := { is_.dgb with facts := is_.dgb.facts ++ [toFact skel.cont] } }
+  else
+    { is_ with pending := is_.pending ++ [{ sign := skel, assignment := assign }] }
+
+/-- String-specialized integration (content IS the fact). -/
+def IS.integrateUtteranceStr (is_ : IS String String)
+    (skel : UttSkeleton) (assign : CtxtAssignment) : IS String String :=
+  is_.integrateUtterance skel assign id
+
+/-- Apply a coercion output to the IS: set MAX-QUD and SAL-UTT. -/
+def IS.applyCoercion {Fact QContent : Type}
+    (is_ : IS Fact QContent) (co : CoercionOutput)
+    (toQ : String → QContent) : IS Fact QContent :=
+  { is_ with ce := { is_.ce with maxQud := some (toQ co.maxQud), salUtt := some co.salUtt } }
+
+/-- String-specialized coercion application. -/
+def IS.applyCoercionStr (is_ : IS String String) (co : CoercionOutput) : IS String String :=
+  is_.applyCoercion co id
+
+-- ─── LocProp ↔ UttSkeleton converters ──────────────────────
+
+/-- Convert an `UttSkeleton` to a string-content `LocProp`.
+    Subsumes the 2004 skeleton representation in the 2012 LocProp framework. -/
+def UttSkeleton.toLocProp (sk : UttSkeleton) : LocProp String where
+  phon := sk.phon
+  cat := sk.cat
+  cont := sk.cont
+  cparams := sk.cparams
+  constits := sk.constits
+
+/-- Convert a `LocProp String` back to an `UttSkeleton`.
+    Plain function (not `LocProp.toSkeleton`) because `LocProp` lives in
+    `Dialogue.KOS` and dot notation looks there for the method, not in
+    `Apparatus`. Use as `locPropToSkeleton lp`. -/
+def locPropToSkeleton (lp : LocProp String) : UttSkeleton where
+  phon := lp.phon
+  cat := lp.cat
+  cont := lp.cont
+  cparams := lp.cparams
+  constits := lp.constits
+
+/-- Round-trip: UttSkeleton → LocProp → UttSkeleton is identity. -/
+theorem skeleton_locprop_roundtrip (sk : UttSkeleton) :
+    locPropToSkeleton sk.toLocProp = sk := rfl
+
+-- ─── General theorems on coercion operations ───────────────
+
+/-- Both coercion operations target the same SAL-UTT. -/
+theorem coercions_same_salUtt (ant : UttSkeleton) (idx : String) :
+    (parameterFocussing ant idx).map CoercionOutput.salUtt =
+    (parameterIdentification ant idx).map CoercionOutput.salUtt := by
+  unfold parameterFocussing parameterIdentification
+  cases ant.constitForParam idx <;> rfl
+
+/-- The two coercion operations produce different operation types. -/
+theorem coercions_different_op (ant : UttSkeleton) (idx : String)
+    (r1 r2 : CoercionOutput)
+    (h1 : parameterFocussing ant idx = some r1)
+    (h2 : parameterIdentification ant idx = some r2) :
+    r1.op ≠ r2.op := by
+  unfold parameterFocussing at h1; unfold parameterIdentification at h2
+  cases h : ant.constitForParam idx with
+  | none => rw [h] at h1; simp at h1
+  | some _ =>
+    rw [h] at h1 h2; simp only [Option.some.injEq] at h1 h2
+    subst h1; subst h2; exact CoercionOp.noConfusion
+
+/-- A fully resolved assignment leaves no unresolved parameters. -/
+theorem resolved_means_no_unresolved (f : CtxtAssignment) (ps : CParamSet)
+    (h : f.resolvesAll ps = true) :
+    f.unresolved ps = [] := by
+  unfold CtxtAssignment.unresolved CtxtAssignment.resolvesAll at *
+  induction ps with
+  | nil => simp
+  | cons p ps ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at h
+    simp only [List.filter_cons, h.1]
+    exact ih h.2
+
+/-- Existential generalization never increases the parameter count. -/
+theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
+    (existentialGeneralization sk idx).cparams.length ≤ sk.cparams.length := by
+  simp [existentialGeneralization]
+  exact List.length_filter_le _ _
+
+end Apparatus
+
+open Apparatus
 
 -- ════════════════════════════════════════════════════
 -- § 1. C-PARAMS for "Did Bo leave?" (paper ex. 28/32)

@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.Roles
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Theories.Pragmatics.Assertion.Gunlogson
+import Linglib.Theories.Dialogue.Gunlogson
 import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
 
@@ -61,7 +61,7 @@ namespace Phenomena.SentenceMood.Studies.Deo2025
 
 open Core.Discourse
 open Core.Discourse.Commitment
-open Pragmatics.Assertion.Gunlogson (GunlogsonState)
+open Dialogue.Gunlogson (GunlogsonState)
 
 universe u
 

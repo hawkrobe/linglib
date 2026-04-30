@@ -2525,6 +2525,7 @@ import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
 import Linglib.Phenomena.Gradability.Studies.DAmbrosioHedden2024
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
+import Linglib.Phenomena.Gradability.Studies.Solt2018Proportional
 import Linglib.Phenomena.Gradability.Studies.Tham2025
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Gradability.Studies.WaldonEtAl2023
@@ -2538,22 +2539,29 @@ import Linglib.Phenomena.Indefinites.Studies.Bubnov2026
 import Linglib.Phenomena.Indefinites.Studies.Dekier2021
 import Linglib.Phenomena.Reference.Studies.AhnKocabDavidson2026
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
-import Linglib.Theories.Pragmatics.Assertion.Stalnaker
-import Linglib.Theories.Pragmatics.Assertion.ReasonableInference
-import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
-import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
-import Linglib.Theories.Pragmatics.Assertion.QuotationFBOntology
-import Linglib.Theories.Pragmatics.Assertion.Krifka
-import Linglib.Theories.Pragmatics.Assertion.Brandom
-import Linglib.Theories.Pragmatics.Assertion.Gunlogson
-import Linglib.Theories.Pragmatics.Assertion.Lauer
-import Linglib.Theories.Pragmatics.Assertion.DisjunctiveUpdate
--- Theories: Pragmatics: Dialogue
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
-import Linglib.Theories.Pragmatics.Dialogue.KOS.RepriseContent
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
-import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
+import Linglib.Theories.Dialogue.Stalnaker
+import Linglib.Theories.Dialogue.ReasonableInference
+import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Theories.Dialogue.FarkasAdapter
+import Linglib.Theories.Dialogue.QuotationFBOntology
+import Linglib.Theories.Dialogue.Krifka
+import Linglib.Theories.Dialogue.Brandom
+import Linglib.Theories.Dialogue.Gunlogson
+import Linglib.Theories.Dialogue.Lauer
+import Linglib.Theories.Dialogue.DisjunctiveUpdate
+-- Theories: Dialogue (KOS)
+import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Theories.Dialogue.KOS.Move
+import Linglib.Theories.Dialogue.KOS.Basic
+import Linglib.Theories.Dialogue.KOS.InquiryCycle
+import Linglib.Theories.Dialogue.KOS.Genre
+import Linglib.Theories.Dialogue.KOS.Grounding
+import Linglib.Theories.Dialogue.KOS.SelfRepair
+import Linglib.Theories.Dialogue.KOS.NSUTaxonomy
+import Linglib.Theories.Dialogue.KOS.Examples
+import Linglib.Theories.Dialogue.KOS.Grammar
+import Linglib.Theories.Dialogue.KOS.RepriseContent
+import Linglib.Theories.Dialogue.KOS.TTRBridge
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Featural.Geometry

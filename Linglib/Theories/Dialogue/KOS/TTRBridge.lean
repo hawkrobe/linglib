@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
+import Linglib.Theories.Dialogue.KOS.InquiryCycle
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 
 /-!
@@ -22,7 +22,7 @@ TTRQuestions). This closes the loop between:
 
 -/
 
-namespace Pragmatics.Dialogue.KOS.TTRBridge
+namespace Dialogue.KOS.TTRBridge
 
 open Semantics.TypeTheoretic (BCheckableAustinian TTRQuestion TTRAnswer CheckableAustinian
   InfoState IsTrue IsFalse SubtypeOf)
@@ -64,14 +64,18 @@ def TTRQuestionB.isResolved {R : Type} (q : TTRQuestionB R) (domain : List R) : 
 -- ════════════════════════════════════════════════════
 
 /-- A DGB whose facts are checkable Austinian propositions and whose
-QUD entries are Bool-valued TTR questions.
+QUD entries are Bool-valued TTR questions. The `Cont` parameter governs
+the LocProp content type for `pending` and `qud` (use `Unit` if Pending
+is unused; use `BCheckableAustinian S` for full TTR-typed CRification).
 
 @cite{ginzburg-2012} Ch. 4: FACTS is a set of Austinian propositions
 `[sit = s, sit-type = T]`. QUD is a poset of questions. -/
-abbrev AustinianDGB (S R : Type) := DGB String (BCheckableAustinian S) (TTRQuestionB R)
+abbrev AustinianDGB (S R Cont : Type) :=
+  DGB String (BCheckableAustinian S) (TTRQuestionB R) Cont
 
 /-- A TIS with Austinian content types. -/
-abbrev AustinianTIS (S R : Type) := TIS String (BCheckableAustinian S) (TTRQuestionB R)
+abbrev AustinianTIS (S R Cont : Type) :=
+  TIS String (BCheckableAustinian S) (TTRQuestionB R) Cont
 
 -- ════════════════════════════════════════════════════
 -- § 3. Support: Austinian Facts Resolve TTR Questions
@@ -116,8 +120,8 @@ and separates public from private. -/
 
 The projection loses QUD, Pending, and genre information — these are
 the components that @cite{ginzburg-2012} adds beyond @cite{cooper-2023}. -/
-def tisToInfoState {P Fact QContent SignT : Type}
-    (tis : TIS P Fact QContent)
+def tisToInfoState {P Fact QContent Cont SignT : Type}
+    (tis : TIS P Fact QContent Cont)
     (moveToSign : IllocMove Fact QContent → SignT) :
     InfoState SignT (List Fact) where
   agenda := tis.private_.agenda.map moveToSign
@@ -125,8 +129,8 @@ def tisToInfoState {P Fact QContent SignT : Type}
   commitments := tis.dgb.facts
 
 /-- The projection preserves commitments (= FACTS). -/
-theorem tisToInfoState_commitments {P Fact QContent SignT : Type}
-    (tis : TIS P Fact QContent) (f : IllocMove Fact QContent → SignT) :
+theorem tisToInfoState_commitments {P Fact QContent Cont SignT : Type}
+    (tis : TIS P Fact QContent Cont) (f : IllocMove Fact QContent → SignT) :
     (tisToInfoState tis f).commitments = tis.dgb.facts := rfl
 
 -- ════════════════════════════════════════════════════
@@ -172,24 +176,28 @@ theorem sunny_does_not_resolve_raining :
       itIsSunny isItRaining := by
   rintro ⟨_, h⟩; cases h
 
-/-- An empty Austinian DGB. -/
-private def adgb₀ : AustinianDGB Weather Weather := DGB.initial
+/-- An empty Austinian DGB. We use `Unit` for the LocProp content type
+since this worked example exercises only QUD and FACTS, not the
+Pending/CRification pipeline. -/
+def adgb₀ : AustinianDGB Weather Weather Unit := DGB.initial
 
-/-- After asking "Is it raining?", QUD has the question. -/
-private def atis₁ : AustinianTIS Weather Weather :=
+/-- After asking "Is it raining?", QUD has the question (wrapped in `InfoStruc`). -/
+def atis₁ : AustinianTIS Weather Weather Unit :=
   { dgb := (adgb₀.pushQud isItRaining).recordMove (.ask isItRaining) }
 
-theorem atis_ask_qud : atis₁.dgb.qud = [isItRaining] := rfl
+theorem atis_ask_qud :
+    atis₁.dgb.qud =
+      [(InfoStruc.fromQuestion isItRaining : InfoStruc (TTRQuestionB Weather) Unit)] := rfl
 
 /-- After asserting "it is raining", the fact resolves the question and QUD empties. -/
-private def atis₂ : AustinianTIS Weather Weather :=
-  @TIS.assertRule _ _ _ (austinianSupport Weather) atis₁ itIsRaining
+def atis₂ : AustinianTIS Weather Weather Unit :=
+  @TIS.assertRule _ _ _ _ (austinianSupport Weather) atis₁ itIsRaining
 
 theorem atis_assert_resolves : atis₂.dgb.qud = [] := by
   simp [atis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud,
-    DGB.recordMove, Core.Question.Support.supports, austinianSupport,
+    DGB.recordMove, Core.Question.Support.supports,
     BCheckableAustinian.isTrue, itIsRaining, isItRaining, atis₁, adgb₀,
-    DGB.initial, DGB.pushQud]
+    DGB.initial, DGB.pushQud, InfoStruc.fromQuestion]
 
 /-- The fact is in FACTS after assertion. -/
 theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
@@ -197,4 +205,4 @@ theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
 
 end AustinianExample
 
-end Pragmatics.Dialogue.KOS.TTRBridge
+end Dialogue.KOS.TTRBridge

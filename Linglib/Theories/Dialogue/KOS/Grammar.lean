@@ -1,4 +1,5 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
+import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Theories.Dialogue.KOS.Grounding
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 
 /-!
@@ -24,9 +25,9 @@ continue to use plain HPSG signs. Theories that need the Ginzburg 2012
 architecture import this module.
 -/
 
-namespace Pragmatics.Dialogue.KOS.Grammar
+namespace Dialogue.KOS.Grammar
 
-open Pragmatics.Dialogue.KOS
+open Dialogue.KOS
 open HPSG
 
 -- ════════════════════════════════════════════════════
@@ -41,8 +42,12 @@ features:
 - `qParams`: parameters contributed by interrogative elements (wh-words)
 - `questDom`: the question domain — what question the sign introduces
 
-These correspond to DGB-PARAMS, Q-PARAMS, and QUEST-DOM in the book. -/
-structure DialogueSign where
+These correspond to DGB-PARAMS, Q-PARAMS, and QUEST-DOM in the book.
+
+The `Cont` parameter is the content type — `String` for surface form,
+or richer typed values (`BCheckableAustinian S`, etc.) for TTR-typed
+grammars. -/
+structure DialogueSign (Cont : Type) where
   /-- Phonological form -/
   phon : String
   /-- Part of speech (UD-based, matching HPSG.Synsem.cat) -/
@@ -50,7 +55,7 @@ structure DialogueSign where
   /-- Head features from HPSG -/
   head : HeadFeatures := {}
   /-- Semantic content -/
-  cont : String
+  cont : Cont
   /-- DGB-PARAMS: contextual parameters requiring grounding.
       Non-empty for referential NPs ("Bo"), demonstratives, etc. -/
   dgbParams : CParamSet := []
@@ -59,14 +64,13 @@ structure DialogueSign where
   qParams : CParamSet := []
   /-- QUEST-DOM: the question this sign introduces (if interrogative). -/
   questDom : Option String := none
-  deriving Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Conversions
 -- ════════════════════════════════════════════════════
 
 /-- Project a DialogueSign to its HPSG Synsem (dropping dialogue features). -/
-def DialogueSign.toSynsem (ds : DialogueSign) : Synsem where
+def DialogueSign.toSynsem {Cont : Type} (ds : DialogueSign Cont) : Synsem where
   cat := ds.pos
   head := ds.head
 
@@ -75,7 +79,8 @@ DGB-PARAMS become `cparams` (block grounding until resolved);
 Q-PARAMS become `qcparams` (travel with the sign, do not block grounding,
 but remain available for fragment-reprise queries per
 @cite{ginzburg-2012} §8.5.1, @cite{purver-ginzburg-2004}). -/
-def DialogueSign.toLocProp (ds : DialogueSign) : LocProp String where
+def DialogueSign.toLocProp {Cont : Type} (ds : DialogueSign Cont) :
+    LocProp Cont where
   phon := ds.phon
   cat := toString ds.pos
   cont := ds.cont
@@ -83,30 +88,30 @@ def DialogueSign.toLocProp (ds : DialogueSign) : LocProp String where
   qcparams := ds.qParams
 
 /-- Conversion preserves phonological form. -/
-theorem toLocProp_preserves_phon (ds : DialogueSign) :
+theorem toLocProp_preserves_phon {Cont : Type} (ds : DialogueSign Cont) :
     ds.toLocProp.phon = ds.phon := rfl
 
 /-- Conversion preserves content. -/
-theorem toLocProp_preserves_cont (ds : DialogueSign) :
+theorem toLocProp_preserves_cont {Cont : Type} (ds : DialogueSign Cont) :
     ds.toLocProp.cont = ds.cont := rfl
 
 /-- Conversion routes DGB-PARAMS to `cparams` (the resolution channel). -/
-theorem toLocProp_dgb_to_cparams (ds : DialogueSign) :
+theorem toLocProp_dgb_to_cparams {Cont : Type} (ds : DialogueSign Cont) :
     ds.toLocProp.cparams = ds.dgbParams := rfl
 
 /-- Conversion routes Q-PARAMS to `qcparams` (the existential-witness
 channel) — the structural prerequisite for the Reprise Content Hypothesis. -/
-theorem toLocProp_q_to_qcparams (ds : DialogueSign) :
+theorem toLocProp_q_to_qcparams {Cont : Type} (ds : DialogueSign Cont) :
     ds.toLocProp.qcparams = ds.qParams := rfl
 
 -- ════════════════════════════════════════════════════
--- § 3. Example Entries
+-- § 3. Example Entries (String-typed lexicon)
 -- ════════════════════════════════════════════════════
 
 /-- "who" — a wh-word with Q-PARAMS.
 @cite{ginzburg-2012} Ch. 5: wh-words contribute Q-PARAMS that
 project to the QUEST-DOM of the clause. -/
-def who : DialogueSign where
+def who : DialogueSign String where
   phon := "who"
   pos := .PRON
   cont := "who(x)"
@@ -116,14 +121,14 @@ def who : DialogueSign where
 /-- "Jo" — a proper name with DGB-PARAMS.
 @cite{ginzburg-2012} Ch. 6: referential NPs introduce DGB-PARAMS
 that must be resolved (grounded) for the utterance to be integrated. -/
-def jo : DialogueSign where
+def jo : DialogueSign String where
   phon := "Jo"
   pos := .PROPN
   cont := "jo"
   dgbParams := [{ index := "jo_ref", restriction := "individual" }]
 
 /-- "left" — an intransitive verb (no dialogue params). -/
-def left : DialogueSign where
+def left : DialogueSign String where
   phon := "left"
   pos := .VERB
   head := { vform := .finite }
@@ -165,4 +170,4 @@ theorem slash_cparams_both_decrease
   · simp only [HPSG.SlashValue.discharge]; exact List.length_erase_le
   · exact List.length_filter_le _ _
 
-end Pragmatics.Dialogue.KOS.Grammar
+end Dialogue.KOS.Grammar

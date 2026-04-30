@@ -27,7 +27,7 @@ The norms are relevant to Krifka's separation of commitment from belief.
 
 -/
 
-namespace Pragmatics.Assertion.Stalnaker
+namespace Dialogue.Stalnaker
 
 open Core.CommonGround (CG ContextSet)
 
@@ -74,4 +74,4 @@ theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Set W) :
 /-- Stalnaker states are always stable. -/
 theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 
-end Pragmatics.Assertion.Stalnaker
+end Dialogue.Stalnaker

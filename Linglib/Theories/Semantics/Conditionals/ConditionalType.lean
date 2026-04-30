@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
+import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
@@ -34,7 +34,7 @@ This explains why PCs block NPIs despite being semantically DE!
 namespace Semantics.Conditionals
 
 open Semantics.Entailment.Polarity
-open Pragmatics.Assertion.FarkasBruce
+open Dialogue.FarkasBruce
 
 -- Conditional Type: HC vs PC
 

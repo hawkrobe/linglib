@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Quotation.Demonstration
-import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
-import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
+import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Theories.Dialogue.FarkasAdapter
 
 /-!
 # Farkas-Bruce Performance Ontology Bridge
@@ -54,9 +54,9 @@ The `Volume` enumeration (`neutral`, `loud`, `whispered`) makes
 simultaneously be both values.
 -/
 
-namespace Pragmatics.Assertion.QuotationFBOntology
+namespace Dialogue.QuotationFBOntology
 
-open Pragmatics.Assertion.FarkasBruce
+open Dialogue.FarkasBruce
 open Semantics.Quotation.Demonstration
 
 -- ════════════════════════════════════════════════════
@@ -264,4 +264,4 @@ theorem update_decl_eq_assert (u : FBPerformance W)
 
 end FBPerformance
 
-end Pragmatics.Assertion.QuotationFBOntology
+end Dialogue.QuotationFBOntology

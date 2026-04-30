@@ -36,7 +36,7 @@ import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 
-namespace Pragmatics.Assertion.FarkasBruce
+namespace Dialogue.FarkasBruce
 
 open Core.CommonGround
 
@@ -286,4 +286,4 @@ Accommodation is updating one's model of the common ground.
 
 end DiscourseState
 
-end Pragmatics.Assertion.FarkasBruce
+end Dialogue.FarkasBruce

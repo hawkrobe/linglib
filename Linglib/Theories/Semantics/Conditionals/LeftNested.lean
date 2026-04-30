@@ -42,7 +42,7 @@ that can be genuinely supposed without prior discourse.
 
 namespace Semantics.Conditionals
 
-open Pragmatics.Assertion.FarkasBruce
+open Dialogue.FarkasBruce
 
 -- Left-Nested Conditional Structure
 
