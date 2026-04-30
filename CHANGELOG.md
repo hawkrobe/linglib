@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### Heim 1994 "Comments on Abusch's Theory of Tense" — substrate bridge
+
+Single-paper study formalizing @cite{heim-1994-comments} as a structural quotient of the Abusch substrate landed in 0.230.557. Heim's "time-concept" (p. 155: "a function from world-time pairs to times") is precisely `Intension (WorldTimeIndex W T) T` — one coordinate fewer than the substrate's `TimeConcept := Intension (KContext W E P T) T` (which adds the Speas-Tenny agent slot). The study identifies the substrate-coordinate Heim's framework projects out and proves the universal property that characterizes the projection.
+
+**File**: `Phenomena/TenseAspect/Studies/HeimComments1994.lean` (~250 LOC, 0 sorries).
+
+**Substrate identifications**:
+- `HeimComments1994.TimeConcept W T := Intension (WorldTimeIndex W T) T` — abbreviation matching Heim's p. 155 prose verbatim.
+- `toSubstrate : TimeConcept W T → Semantics.Tense.DeRe.TimeConcept W E P T := fun c k => c k.toSituation` — pullback via `KContext.toSituation` forgetful projection.
+- `SuitableTimeCover W T := Acquaintance.Cover (WorldTimeIndex W T) T` — Heim's "suitable" qualification (p. 155: "meant to exclude descriptions by which one might pick out a time without being sufficiently acquainted with it; see Abusch and Lewis") at the polymorphic substrate's `Idx := WorldTimeIndex W T`, `Res := T` instantiation.
+
+**Structural theorems**:
+- `toSubstrate_isRigid` — pullback preserves rigidity, via direct application of the substrate's `Intension.IsRigid.precomp` functoriality lemma at `g := KContext.toSituation`. The whole closure-under-precomposition story is wired through this one-line proof.
+- `toSubstrate_factors_iff_agent_blind` — **universal property**: a substrate `TimeConcept k` arises as `toSubstrate c` for some Heim time-concept `c` iff `k` is **agent-blind** (factors through `KContext.toSituation`, i.e., `c₁.toSituation = c₂.toSituation → k c₁ = k c₂`). Backward direction constructs the witness by `Classical.arbitrary` on `[Nonempty E] [Nonempty P]`. This characterizes Heim's framework as the *quotient* of the substrate's framework by the ⟨agent, addressee, position⟩ refinement.
+- `toSubstrate_eq_precomp : toSubstrate c = c ∘ KContext.toSituation` (rfl) — wires the precomp-functoriality story through to Heim time-concepts.
+- `ulcDefined_iff_le` + `isFelicitousWith_past_imp_ulcDefined` — Heim's eq (16) p. 149 ULC-as-presupposition formulation projected onto the substrate's Prop-valued `isFelicitousWith .past`. Heim's "does not follow" is `¬ >`, equivalent to `≤` under `LinearOrder`; the substrate's `.past` requires strict precedence; `isFelicitousWith .past → ulcDefined` holds, the converse fails on simultaneous tense (which Heim's weak version admits but `.past` doesn't).
+- `toSubstrate_isSuitable_image` — Heim's "suitable" qualification carries through the pullback to a `Set.image` of the cover.
+
+**Out of scope** (documented in module docstring):
+- Heim's §3 Tense Licensing Condition (eq 49, p. 161) — covert `<` and `≺` zero affixes plus LF-distribution. Requires Tree-rewrite operators on `Tree C W` not exposed by the substrate.
+- Heim's de se PRO Comp-binding analysis (eq 11–12, p. 147) — substrate's `holderContext.agent` IS the de se anchor structurally, but the LF-binding mechanism is deferred along with §3.
+- Heim's res-movement syntax (eq 32–33, pp. 154–155) — substrate's `TemporalDeReReading` IS the output-level encoding; the Tree-rewrite that produces it is deferred.
+
+**Net**: +1 study file, +1 wired import in `Linglib.lean`, bib `heim-1994-comments` `role` flipped `cited` → `formalized` and `sources` updated to current consumers (drops deleted `Theories/Semantics/Tense/TemporalDeRe.lean`, adds the new study file). 5645 jobs green.
+
 ### KOS substrate audit-driven cleanup: fidelity + hygiene + cross-framework deepening (Sprints A/B/C)
 
 Three-sprint cleanup driven by the post-Phase-A+B+ four-agent audit (linguistics expert PDF-verified, mathlib reviewer, integration auditor, cross-framework reconciler). Substantive substrate errors flagged by the linguistics expert (PDF-verified against the Ginzburg book), mathlib hygiene issues, and shallow cross-framework witnesses all addressed.

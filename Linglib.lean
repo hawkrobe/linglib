@@ -2381,6 +2381,7 @@ import Linglib.Theories.Semantics.Tense.LexicalType
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Before
 import Linglib.Theories.Semantics.Tense.DeRe
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
+import Linglib.Phenomena.TenseAspect.Studies.HeimComments1994
 import Linglib.Phenomena.TenseAspect.Studies.VonStechow2009
 import Linglib.Theories.Semantics.Tense.SOT.Decomposition
 import Linglib.Phenomena.TenseAspect.Studies.Kratzer1998
