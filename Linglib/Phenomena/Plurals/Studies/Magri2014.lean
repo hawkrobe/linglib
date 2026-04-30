@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening

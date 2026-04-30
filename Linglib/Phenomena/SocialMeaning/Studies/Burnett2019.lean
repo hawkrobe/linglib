@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Sociolinguistics.EckertMontague
-import Linglib.Theories.Sociolinguistics.SMG
+import Linglib.Theories.Sociolinguistics.SocialMeaningGame
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
@@ -383,7 +383,7 @@ into the meaning function to recover Bayesian conditioning. -/
 
 section smgBridge
 
-open Sociolinguistics.SMG
+open Sociolinguistics.SocialMeaningGame
 
 /-- Obama's social value function μ at the barbecue
     (@cite{burnett-2019}, Table 6, p. 438).

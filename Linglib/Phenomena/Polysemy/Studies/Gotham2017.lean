@@ -1,5 +1,4 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 
 /-!
 # Copredication: @cite{gotham-2017}'s account + bridge data
@@ -8,11 +7,14 @@ import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 
 Copredication is the phenomenon where predicates selecting different
 semantic aspects apply to the same polysemous noun phrase ("the book
-is heavy and interesting"). This study file owns the canonical
-empirical data (formerly `Polysemy/Data.lean`, dissolved per the
-provenance-tracking policy) and proves bridge theorems connecting
-the data to the TTR dot-type infrastructure
-(@cite{chatzikyriakidis-etal-2025}).
+is heavy and interesting"). This study file owns:
+
+1. The TTR dot-type infrastructure (formerly
+   `Theories/Semantics/TypeTheoretic/Copredication.lean`, absorbed
+   here as the only consumer per linglib's substrate-by-need rule).
+2. The canonical empirical data (formerly `Polysemy/Data.lean`,
+   dissolved per the provenance-tracking policy).
+3. Bridge theorems connecting (1) and (2).
 
 ## Empirical phenomena
 
@@ -27,16 +29,101 @@ the data to the TTR dot-type infrastructure
 
 ## Bridge theorems
 
-1. Copredication is well-typed via meet-type projection
-2. Different individuation criteria yield different counts
-3. The counting puzzle from @cite{gotham-2017} is reproduced
+1. Copredication is well-typed via meet-type projection.
+2. Different individuation criteria yield different counts.
+3. The counting puzzle from @cite{gotham-2017} is reproduced.
 
 -/
 
 namespace Phenomena.Polysemy
 
 -- ============================================================
--- Empirical data (was `Polysemy/Data.lean`, inlined 0.230.270)
+-- § 1. TTR Dot-Type Infrastructure
+-- (formerly TypeTheoretic/Copredication.lean, absorbed here as
+-- the only consumer)
+-- ============================================================
+
+/-! ## Copredication
+
+Copredication applies predicates selecting different aspects to the
+same pair-typed argument. The aspects are accessed via `Prod.fst`/`.snd`
+projections (= the `MeetType` projections in TTR's Core). -/
+
+/-- Apply a predicate selecting the first aspect. -/
+def copred₁ {A₁ A₂ : Type} (P : A₁ → Prop) (x : A₁ × A₂) : Prop := P x.1
+
+/-- Apply a predicate selecting the second aspect. -/
+def copred₂ {A₁ A₂ : Type} (P : A₂ → Prop) (x : A₁ × A₂) : Prop := P x.2
+
+/-- Copredication: conjunction of predicates on different aspects.
+"The book is heavy and interesting" = heavy(book.phys) ∧ interesting(book.info). -/
+def copredicate {A₁ A₂ : Type}
+    (P : A₁ → Prop) (Q : A₂ → Prop) (x : A₁ × A₂) : Prop :=
+  P x.1 ∧ Q x.2
+
+/-- Copredication factors into independent aspect predicates. -/
+theorem copredicate_factors {A₁ A₂ : Type}
+    (P : A₁ → Prop) (Q : A₂ → Prop) (x : A₁ × A₂) :
+    copredicate P Q x ↔ copred₁ P x ∧ copred₂ Q x :=
+  Iff.rfl
+
+/-! ## Dot types
+
+A dot type bundles two aspect types with a `Setoid` for individuation.
+The individuation is part of the lexical specification — "book" =
+⟨PhysObj, Info, individuate by volume⟩ — not just the raw product type.
+
+Values of a dot type are pairs `A₁ × A₂` (= `MeetType A₁ A₂` in TTR). -/
+
+/-- A dot type: a polysemous type with two aspects and an individuation
+criterion (a `Setoid`). The individuation determines counting under
+copredication. @cite{chatzikyriakidis-etal-2025} §3. -/
+structure DotType (A₁ A₂ : Type) where
+  /-- How to individuate objects of this complex type -/
+  individuation : Setoid (A₁ × A₂)
+
+/-- Individuate by the first aspect.
+"book" individuated physically: two copies of Hamlet count as two. -/
+def DotType.byAspect₁ {A₁ A₂ : Type} [DecidableEq A₁] : DotType A₁ A₂ where
+  individuation :=
+    { r := λ x y => x.1 = y.1
+      iseqv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
+
+/-- Individuate by the second aspect.
+"book" individuated informationally: two copies of Hamlet count as one. -/
+def DotType.byAspect₂ {A₁ A₂ : Type} [DecidableEq A₂] : DotType A₁ A₂ where
+  individuation :=
+    { r := λ x y => x.2 = y.2
+      iseqv := ⟨λ _ => rfl, λ h => h.symm, λ h₁ h₂ => h₁.trans h₂⟩ }
+
+/-- Count distinct individuals in a list under a `Setoid`.
+Uses a simple quadratic distinctness check (fine for finite linguistic examples). -/
+def countDistinct {α : Type} (s : Setoid α)
+    [∀ x y, Decidable (s.r x y)]
+    (xs : List α) : Nat :=
+  xs.foldl (λ (seen : List α) x =>
+    if seen.any (λ e => decide (s.r e x)) then seen else x :: seen
+  ) [] |>.length
+
+/-- Different individuation criteria can yield different counts
+for the same collection. This is the formal content of
+@cite{chatzikyriakidis-etal-2025} §3's counting puzzle. -/
+theorem individuation_can_diverge :
+    ∃ (A₁ A₂ : Type) (_ : DecidableEq A₁) (_ : DecidableEq A₂)
+      (xs : List (A₁ × A₂))
+      (_ : ∀ x y, Decidable ((@DotType.byAspect₁ A₁ A₂ _).individuation.r x y))
+      (_ : ∀ x y, Decidable ((@DotType.byAspect₂ A₁ A₂ _).individuation.r x y)),
+      countDistinct (@DotType.byAspect₁ A₁ A₂ _).individuation xs ≠
+      countDistinct (@DotType.byAspect₂ A₁ A₂ _).individuation xs := by
+  refine ⟨Bool, Bool, inferInstance, inferInstance,
+    [(true, true), (false, true)],
+    λ (x : Bool × Bool) (y : Bool × Bool) => inferInstanceAs (Decidable (x.1 = y.1)),
+    λ (x : Bool × Bool) (y : Bool × Bool) => inferInstanceAs (Decidable (x.2 = y.2)), ?_⟩
+  native_decide
+
+-- ============================================================
+-- § 2. Empirical data
+-- (was `Polysemy/Data.lean`, inlined 0.230.270)
 -- ============================================================
 
 /-- Acceptability judgment for copredication examples. -/
@@ -119,10 +206,11 @@ theorem all_copred_acceptable :
   simp [copredData] at hd
   rcases hd with rfl | rfl | rfl <;> rfl
 
+-- ============================================================
+-- § 3. Bridge: empirical data ↔ dot-type machinery
+-- ============================================================
 
 namespace Bridge
-
-open Semantics.TypeTheoretic
 
 /-! ## Book as a dot type -/
 

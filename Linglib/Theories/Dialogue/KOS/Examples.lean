@@ -10,7 +10,7 @@ import Linglib.Core.Question.Partition.QUD
 Public worked examples demonstrating the substrate operations on concrete
 inputs. Earlier these lived inline in `KOS/Rules.lean` as `private` defs;
 they are public here so consumers (study files, the TTR-typed counterpart
-in `KOS/TTRBridge.lean`) can reference them.
+in `KOS/Austinian.lean`) can reference them.
 
 ## Sections
 
@@ -23,7 +23,7 @@ in `KOS/TTRBridge.lean`) can reference them.
 The string-based examples use a generic `DecidableSupport String String`
 instance (string equality as answerhood), and instantiate Cont = String
 for utterance content (since the worked examples don't exercise the
-LocProp Pending pipeline). See `KOS/TTRBridge.lean` for the TTR-typed
+LocProp Pending pipeline). See `KOS/Austinian.lean` for the TTR-typed
 counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
 **Native_decide caveat**: several theorems below use `native_decide`. This

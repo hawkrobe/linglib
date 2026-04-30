@@ -114,7 +114,8 @@ theorem ext_equiv_not_implies_int_eq :
   intro h
   -- groundhog and woodchuck: same carrier (Bool as stand-in), different names
   have := h ⟨Bool, "groundhog"⟩ ⟨Bool, "woodchuck"⟩ ⟨Equiv.refl Bool⟩
-  simp [IType.intEq] at this
+  simp only [IType.intEq, IType.mk.injEq] at this
+  exact absurd this.2 (by decide)
 
 /-! ## § 1.4.1 Predicate types (ptypes)
 
@@ -228,9 +229,15 @@ instance subtypeRefl (T : Type) : SubtypeOf T T where
   up := id
 
 /-- Subtyping is transitive. -/
-def subtypeTrans {T₁ T₂ T₃ : Type} [h₁₂ : SubtypeOf T₁ T₂] [h₂₃ : SubtypeOf T₂ T₃] :
+@[reducible] def subtypeTrans {T₁ T₂ T₃ : Type}
+    [h₁₂ : SubtypeOf T₁ T₂] [h₂₃ : SubtypeOf T₂ T₃] :
     SubtypeOf T₁ T₃ where
   up := h₂₃.up ∘ h₁₂.up
+
+/-- `Trans` registration so `calc` blocks can chain subtype steps:
+`(_ : SubtypeOf T₁ T₂) ▸ (_ : SubtypeOf T₂ T₃)` composes via `subtypeTrans`. -/
+instance : Trans (@SubtypeOf) (@SubtypeOf) (@SubtypeOf) where
+  trans := fun h₁₂ h₂₃ => @subtypeTrans _ _ _ h₁₂ h₂₃
 
 /-! ## § 1.5 Propositions as types
 
@@ -577,55 +584,40 @@ def asymMerge_unit_override (T : Type) : AsymMerge T Unit ≃ T where
 A sign pairs a speech event with its content. -/
 
 /-- A TTR sign: a pairing of speech event type and content type.
-§2.5, ex (70). -/
+§2.5, ex (70). The phonological-form field is named `phon`
+(broader linguistic terminology; Cooper writes "s-event" interchangeably). -/
 structure TTRSign (Phon Cont : Type) where
-  sEvent : Phon
+  phon : Phon
   cont : Cont
+  deriving Repr, DecidableEq
 
--- ============================================================================
--- Intensionality Phenomena
--- ============================================================================
+namespace TTRSign
 
-section CorePhenomena
+variable {Phon Cont Phon' Cont' : Type}
 
-/-- `groundhog` and `woodchuck` as intensional types: same carrier, different names.
-§1.3: types are not sets; two types can share all witnesses
-yet remain distinct. -/
-def groundhog : IType := ⟨Unit, "groundhog"⟩
-def woodchuck : IType := ⟨Unit, "woodchuck"⟩
+/-- Extensionality for TTR signs. -/
+@[ext] theorem ext {s t : TTRSign Phon Cont}
+    (hphon : s.phon = t.phon) (hcont : s.cont = t.cont) : s = t := by
+  cases s; cases t; congr
 
-/-- They are extensionally equivalent (same carrier). -/
-theorem groundhog_woodchuck_ext_equiv : groundhog.extEquiv woodchuck :=
-  ⟨Equiv.refl Unit⟩
+/-- Map both fields of a TTR sign — the `Bifunctor.bimap` analogue. -/
+def map (f : Phon → Phon') (g : Cont → Cont') (s : TTRSign Phon Cont) :
+    TTRSign Phon' Cont' :=
+  ⟨f s.phon, g s.cont⟩
 
-/-- But they are intensionally distinct (different names).
-This is Cooper's key point: groundhog ≠ woodchuck in TTR,
-whereas in extensional set theory {marmota} = {marmota}. -/
-theorem groundhog_ne_woodchuck : ¬ groundhog.intEq woodchuck := by
-  simp [IType.intEq, groundhog, woodchuck]
+@[simp] theorem map_phon (f : Phon → Phon') (g : Cont → Cont') (s : TTRSign Phon Cont) :
+    (s.map f g).phon = f s.phon := rfl
 
-/-- `round_square` and `even_prime_gt_2` are both empty but distinct.
-§1.3: possible worlds cannot distinguish these since both
-have empty extension at every world. TTR can: they are different types. -/
-def roundSquare : IType := ⟨Empty, "round_square"⟩
-def evenPrimeGt2 : IType := ⟨Empty, "even_prime_gt_2"⟩
+@[simp] theorem map_cont (f : Phon → Phon') (g : Cont → Cont') (s : TTRSign Phon Cont) :
+    (s.map f g).cont = g s.cont := rfl
 
-theorem round_square_empty : IsFalse roundSquare.carrier :=
-  show IsEmpty Empty from inferInstance
-theorem even_prime_gt2_empty : IsFalse evenPrimeGt2.carrier :=
-  show IsEmpty Empty from inferInstance
-theorem empty_types_distinct : ¬ roundSquare.intEq evenPrimeGt2 := by
-  simp [IType.intEq, roundSquare, evenPrimeGt2]
+@[simp] theorem map_id (s : TTRSign Phon Cont) : s.map id id = s := rfl
 
-/-- Subtyping example from ex (53):
-A situation with a boy hugging a dog is a subtype of a situation with
-a boy and a dog (regardless of what is going on between them). -/
-example (E : Type) (Boy Dog : E → Prop) (Hug : E → E → Prop)
-    (sit : BoyHugsDog E Boy Dog Hug) :
-    BoyAndDog E Boy Dog :=
-  SubtypeOf.up sit
+end TTRSign
 
-end CorePhenomena
+-- (Cooper §1.3 intensional examples — `groundhog`/`woodchuck`,
+--  `roundSquare`/`evenPrimeGt2`, `BoyHugsDog` subtyping demo —
+--  moved to `Phenomena/Modality/Studies/Cooper2023.lean` §7.)
 
 -- ============================================================================
 -- Grammar (Cat, GSign, PSRule)
@@ -691,13 +683,13 @@ theorem cat_lexical_has_upos (c : Cat) (h : c.isLexical = true) :
 /-- A grammatical sign with syntactic structure.
 §3.3, ex (11). -/
 inductive GSign (Phon Cont : Type) where
-  | mk (sEvent : Phon) (cat : Cat)
+  | mk (phon : Phon) (cat : Cat)
        (daughters : List (GSign Phon Cont)) (cont : Cont)
 
 namespace GSign
 variable {Phon Cont : Type}
 
-def sEvent : GSign Phon Cont → Phon
+def phon : GSign Phon Cont → Phon
   | .mk e _ _ _ => e
 
 def cat : GSign Phon Cont → Cat
@@ -715,7 +707,7 @@ def isLexical (s : GSign Phon Cont) : Bool :=
 
 /-- Project out the Ch2 sign (dropping syntactic structure). -/
 def toTTRSign (s : GSign Phon Cont) : TTRSign Phon Cont where
-  sEvent := s.sEvent
+  phon := s.phon
   cont := s.cont
 
 end GSign
@@ -843,178 +835,14 @@ theorem existPQ_iff_witness {E : Type} (P Q : Ppty E) :
 /-- Bridge: TTR existPQ reduces to classical ∃ when properties are Prop-valued. -/
 theorem existPQ_eq_exists {E : Type} (P Q : E → Prop) :
     existPQ (λ e => propT (P e)) (λ e => propT (Q e)) ↔ ∃ a, P a ∧ Q a := by
+  -- bare `simp` retained: `existPQ` unfolds to `∃ a, Nonempty (PLift _) ∧ Nonempty (PLift _)`
+  -- and the trip through `PLift`/`Nonempty` involves multiple non-`@[simp]` rewrites
   simp [existPQ]
 
--- ============================================================================
--- Compositional Derivation Phenomena
--- ============================================================================
+-- (Cooper §3.4 derivation examples — `Conductor`/`Composer`/`Dudamel`/
+--  `Beethoven`, `cnstrIsA`, `aConductorIsDudamel` reversal demo —
+--  moved to `Phenomena/Modality/Studies/Cooper2023.lean` §8.)
 
-section DerivationPhenomena
-
-/-- Individuals in Cooper's fragment: Dudamel and Beethoven. -/
-inductive Ind where
-  | dudamel | beethoven
-  deriving Repr, DecidableEq
-
-/-- Predicate "conductor": Dudamel is a conductor. -/
-inductive Conductor : Ind → Type where
-  | mk : Conductor .dudamel
-
-/-- Predicate "composer": Beethoven is a composer. -/
-inductive Composer : Ind → Type where
-  | mk : Composer .beethoven
-
-/-- "conductor" content: Ppty Ind. -/
-def conductorPpty : Ppty Ind := semCommonNoun Conductor
-
-/-- "composer" content: Ppty Ind. -/
-def composerPpty : Ppty Ind := semCommonNoun Composer
-
-/-- "Dudamel" content: Quant Ind (GQ). -/
-def dudamelQuant : Quant Ind := semPropName .dudamel
-
-/-- "Beethoven" content: Quant Ind (GQ). -/
-def beethovenQuant : Quant Ind := semPropName .beethoven
-
-/-- Step 3: "a conductor" — existential quantifier over conductors. -/
-abbrev aConductor : Quant Ind := semIndefArt conductorPpty
-
-/-- Step 5: "is a conductor" — property of being a conductor. -/
-abbrev isAConductor : Ppty Ind := semBe aConductor
-
-/-- Step 7: "Dudamel is a conductor" — a proposition (type). -/
-abbrev dudamelIsAConductor : Type := dudamelQuant isAConductor
-
-/-- "Dudamel is a conductor" is TRUE (the proposition type is inhabited). -/
-def dudamelIsAConductorTrue : dudamelIsAConductor :=
-  ⟨.dudamel, Conductor.mk, PLift.up rfl⟩
-
-/-- The analogous sentence with Beethoven. -/
-abbrev beethovenIsAConductor : Type := beethovenQuant isAConductor
-
-/-- "Beethoven is a conductor" is FALSE (the proposition type is empty). -/
-instance : IsFalse beethovenIsAConductor :=
-  ⟨fun | ⟨.dudamel, _, ⟨heq⟩⟩ => nomatch heq
-       | ⟨.beethoven, hc, _⟩ => nomatch hc⟩
-
-/-- "Beethoven is a composer" — TRUE. -/
-abbrev aComposer : Quant Ind := semIndefArt composerPpty
-abbrev isAComposer : Ppty Ind := semBe aComposer
-abbrev beethovenIsAComposer : Type := beethovenQuant isAComposer
-
-def beethovenIsAComposerTrue : beethovenIsAComposer :=
-  ⟨.beethoven, Composer.mk, PLift.up rfl⟩
-
-/-- "a conductor" unfolds to semIndefArt applied to conductor property. -/
-theorem aConductor_unfold :
-    aConductor = semIndefArt conductorPpty := rfl
-
-/-- "is a conductor" unfolds to semBe applied to the quantifier. -/
-theorem isAConductor_unfold :
-    isAConductor = semBe (semIndefArt conductorPpty) := rfl
-
-/-- The full derivation: semPropName applied to the VP property. -/
-theorem dudamelSentence_unfold :
-    dudamelIsAConductor =
-    semPropName .dudamel (semBe (semIndefArt conductorPpty)) := rfl
-
-/-- The sentence type is exactly ExistWitness with identity scope. -/
-theorem dudamelSentence_is_existWitness :
-    dudamelIsAConductor =
-    ExistWitness Ind Conductor (λ y => propT (Ind.dudamel = y)) := rfl
-
-/-! ## § 3.4 CnstrIsA — Construction-based "is a" (ex 85–92)
-
-Cooper §3.4 shows that TTR can distinguish two analyses of
-"Dudamel is a conductor" that Montague collapses:
-
-1. **Compositional** (via `semBe` + `semIndefArt`): the content involves
-   existential quantification — `ExistWitness Ind Conductor (λ y => propT (d = y))`.
-
-2. **Construction-based** `CnstrIsA` (§3.4, ex 87): the VP ↟ NP construction
-   makes the VP content equal to the NP content directly — `conductor(d)`.
-
-The two are truth-conditionally equivalent (inhabited iff Dudamel is a conductor)
-but structurally distinct as types. This structural distinction is unavailable
-in Montague's system, where truth-conditional equivalence entails identity of
-denotation. The reversed sentence "A conductor is Dudamel" only receives the
-compositional (existentially quantified) reading.
-
-This is what Cooper means (§3.4, p.117) when he says the distinction between
-"Dudamel is a conductor" and "A conductor is Dudamel" is "not available on
-Montague's (1973) original approach since the two contents are
-truth-conditionally equivalent." -/
-
-/-- CnstrIsA: construction-based content for "NP is a CN".
-§3.4, ex (87): VP → V NP ∧ CnstrIsA. The content is the predicate
-applied directly to the individual — no existential quantification.
-§3.4, ex (92a): `[ e : conductor(d) ]`. -/
-abbrev cnstrIsA {E : Type} (pred : E → Type) (individual : E) : Type :=
-  pred individual
-
-/-- Construction-based "Dudamel is a conductor" — direct predication.
-§3.4, ex (92a): the CnstrIsA content is `conductor(d)`. -/
-abbrev dudamelIsAConductor_cnstr : Type := cnstrIsA Conductor .dudamel
-
-/-- CnstrIsA "Dudamel is a conductor" is TRUE. -/
-def dudamelIsAConductor_cnstr_true : dudamelIsAConductor_cnstr :=
-  Conductor.mk
-
-/-- CnstrIsA "Beethoven is a conductor" is FALSE. -/
-instance : IsFalse (cnstrIsA Conductor .beethoven) :=
-  ⟨fun h => nomatch h⟩
-
-/-- The compositional reading (via semBe + semIndefArt) and the construction
-reading (CnstrIsA) are truth-conditionally equivalent: both are inhabited
-iff the individual has the property.
-§3.4, p.115: "(82c) has a witness ('is true') if and only if (83) has a witness". -/
-theorem cnstrIsA_equiv_compositional (individual : Ind) (pred : Ind → Type) :
-    Nonempty (cnstrIsA pred individual) ↔
-    Nonempty (ExistWitness Ind pred (λ y => propT (individual = y))) := by
-  constructor
-  · intro ⟨h⟩; exact ⟨⟨individual, h, PLift.up rfl⟩⟩
-  · intro ⟨⟨y, hy, ⟨heq⟩⟩⟩; subst heq; exact ⟨hy⟩
-
-/-- As ITypes, the compositional and construction readings are
-intensionally distinct even though truth-conditionally equivalent.
-This is the formal content of Cooper's claim (§3.4, p.115) that
-"they are distinct properties" — the distinction is precisely the
-IType-level intensional identity that TTR provides and Montague lacks. -/
-theorem cnstrIsA_intensionally_distinct :
-    ¬ IType.intEq
-      ⟨cnstrIsA Conductor .dudamel, "conductor(d)"⟩
-      ⟨dudamelIsAConductor, "exist(conductor, be(d))"⟩ := by
-  simp [IType.intEq]
-
-/-- "A conductor is Dudamel" always gets the compositional (existential) reading.
-The CnstrIsA construction requires the subject to be a proper name and the
-complement to be an indefinite NP (§3.4, ex 87: VP → V NP ∧ CnstrIsA).
-When the subject is "a conductor", only the compositional derivation
-(via ContForwardApp) is available.
-
-The reversed sentence's content: `semIndefArt conductor (λ x => semBe (semPropName d) x)`.
-This expands to `ExistWitness Ind Conductor (λ x => propT (x = .dudamel))` — note
-the reversed equality compared to "Dudamel is a conductor". -/
-abbrev aConductorIsDudamel : Type :=
-  (semIndefArt conductorPpty) (λ x => semBe (semPropName .dudamel) x)
-
-/-- "A conductor is Dudamel" is TRUE (Dudamel is a conductor, so the
-existential witness exists). -/
-def aConductorIsDudamel_true : aConductorIsDudamel :=
-  ⟨.dudamel, Conductor.mk, PLift.up rfl⟩
-
-/-- "A conductor is Dudamel" and "Dudamel is a conductor" (compositional)
-are truth-conditionally equivalent — in Montague's system, they are
-indistinguishable. But TTR distinguishes them structurally: the
-CnstrIsA reading of "Dudamel is a conductor" (direct predication) has
-no analogue for "A conductor is Dudamel". -/
-theorem reversed_equiv_compositional :
-    Nonempty aConductorIsDudamel ↔ Nonempty dudamelIsAConductor := by
-  constructor
-  · intro ⟨⟨y, hc, ⟨heq⟩⟩⟩; subst heq; exact ⟨⟨.dudamel, hc, PLift.up rfl⟩⟩
-  · intro ⟨⟨y, hc, ⟨heq⟩⟩⟩; subst heq; exact ⟨⟨.dudamel, hc, PLift.up rfl⟩⟩
-
-end DerivationPhenomena
 
 -- ============================================================================
 -- Proposition Granularity Hierarchy

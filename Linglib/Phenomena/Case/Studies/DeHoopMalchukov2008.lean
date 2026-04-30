@@ -1,5 +1,6 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Evaluation
+import Linglib.Core.Constraint.Superoptimal
 import Linglib.Features.Prominence
 import Linglib.Phenomena.Case.Studies.Aissen2003
 
@@ -75,7 +76,8 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 namespace DeHoopMalchukov2008
 
-open Core.Constraint.Evaluation (superoptimal)
+open Core.Constraint.Evaluation (superoptimal superoptimalSet
+  superoptimal_coe_eq_set Blocks)
 open Core.Constraint.OT
 open Features.Prominence
 open Aissen2003
@@ -107,8 +109,16 @@ inductive Strength where
   deriving DecidableEq, Repr
 
 /-- All form–meaning pairs for asymmetrical marking. -/
-def allPairs : List (CaseForm × Strength) :=
-  [(.zero, .strong), (.zero, .weak), (.overt, .strong), (.overt, .weak)]
+def allPairs : Finset (CaseForm × Strength) :=
+  { (.zero, .strong), (.zero, .weak), (.overt, .strong), (.overt, .weak) }
+
+/-- Witness: pair (zero, weak) + (overt, strong) wins under Identify rankings. -/
+def winnerIdentify : Finset (CaseForm × Strength) :=
+  { (.zero, .weak), (.overt, .strong) }
+
+/-- Witness: pair (zero, strong) + (overt, weak) wins under Distinguish-subject rankings. -/
+def winnerDistinguishSubj : Finset (CaseForm × Strength) :=
+  { (.zero, .strong), (.overt, .weak) }
 
 -- ============================================================================
 -- § 2: Constraints (@cite{de-hoop-malchukov-2008}, §2)
@@ -188,28 +198,30 @@ def profileFor (ranking : List (NamedConstraint (CaseForm × Strength)))
     Tableau (18), p. 572: Identify drives overt marking of the prototypical
     (strong) agent, because ERG "identifies" the strong agent role. -/
 theorem dsm_identify :
-    superoptimal allPairs (profileFor [identify, economy])
-    = [(.zero, .weak), (.overt, .strong)] := by native_decide
+    superoptimal allPairs (profileFor [identify, economy]) = winnerIdentify := by
+  decide
 
 /-- D >> *! for subjects: weak subjects get ERG (Fore pattern).
     Tableau (21), p. 573: Distinguish drives overt marking of the atypical
     (weak) agent, because it's confusable with the patient. -/
 theorem dsm_distinguish :
     superoptimal allPairs (profileFor [distinguishSubj, economy])
-    = [(.zero, .strong), (.overt, .weak)] := by native_decide
+    = winnerDistinguishSubj := by
+  decide
 
 /-- *! >> I for subjects: under weak BiOT, ranking-independent — same
     result as I >> *!. The fixed-point re-admits ⟨overt, strong⟩ once its
     blocker ⟨zero, strong⟩ is eliminated. -/
 theorem dsm_economy_over_identify :
-    superoptimal allPairs (profileFor [economy, identify])
-    = [(.zero, .weak), (.overt, .strong)] := by native_decide
+    superoptimal allPairs (profileFor [economy, identify]) = winnerIdentify := by
+  decide
 
 /-- *! >> D for subjects: under weak BiOT, ranking-independent — same
     result as D >> *!. -/
 theorem dsm_economy_over_distinguish :
     superoptimal allPairs (profileFor [economy, distinguishSubj])
-    = [(.zero, .strong), (.overt, .weak)] := by native_decide
+    = winnerDistinguishSubj := by
+  decide
 
 -- ============================================================================
 -- § 4: DOM — Object Case (Convergence)
@@ -225,43 +237,46 @@ theorem dsm_economy_over_distinguish :
     wants to mark them (strong P is confusable with A). -/
 
 /-- I >> *! for objects: strong objects get ACC.
-    Tableau (31): ACC identifies the prominent patient. -/
+    Tableau (31): ACC identifies the prominent patient. Same witness as
+    `dsm_identify` (the constraint Identify is role-independent). -/
 theorem dom_identify :
-    superoptimal allPairs (profileFor [identify, economy])
-    = [(.zero, .weak), (.overt, .strong)] := by native_decide
+    superoptimal allPairs (profileFor [identify, economy]) = winnerIdentify := by
+  decide
 
 /-- D >> *! for objects: strong objects get ACC — same as Identify!
     Tableau (32)/(35): ACC distinguishes the prominent (confusable)
     patient from the agent. -/
 theorem dom_distinguish :
     superoptimal allPairs (profileFor [distinguishObj, economy])
-    = [(.zero, .weak), (.overt, .strong)] := by native_decide
+    = winnerIdentify := by
+  decide
 
 /-- **DOM convergence** (p. 576): Identify and Distinguish produce
-    identical superoptimal sets for objects. This is the strongest
-    form: the literal output lists are equal. -/
+    identical superoptimal sets for objects. The structural reason:
+    both rankings have `winnerIdentify` as Park-witness. -/
 theorem dom_convergence :
     superoptimal allPairs (profileFor [identify, economy]) =
     superoptimal allPairs (profileFor [distinguishObj, economy]) := by
-  native_decide
+  rw [dom_identify, dom_distinguish]
 
 /-- **DSM divergence**: Identify and Distinguish produce different
     superoptimal sets for subjects. Contrast with `dom_convergence`. -/
 theorem dsm_divergence :
     superoptimal allPairs (profileFor [identify, economy]) ≠
     superoptimal allPairs (profileFor [distinguishSubj, economy]) := by
-  native_decide
+  rw [dsm_identify, dsm_distinguish]
+  decide
 
 -- ============================================================================
 -- § 5: Case-Pattern Extraction
 -- ============================================================================
 
 /-- Extract the case form assigned to a given strength level from the
-    superoptimal set. If no pair matches, defaults to zero. -/
-def extractForm (pairs : List (CaseForm × Strength)) (s : Strength) : CaseForm :=
-  match pairs.find? (·.2 == s) with
-  | some (f, _) => f
-  | none => .zero
+    superoptimal Finset. Prefers overt over zero when both are present
+    (irrelevant for asymmetrical 2×2 winners since each strength gets
+    a unique form). Defaults to zero when no overt form is selected. -/
+def extractForm (pairs : Finset (CaseForm × Strength)) (s : Strength) : CaseForm :=
+  if (.overt, s) ∈ pairs then .overt else .zero
 
 /-- A case-marking pattern for one argument position: what form each
     strength level receives. -/
@@ -270,7 +285,8 @@ structure MarkingPattern where
   weakForm   : CaseForm
   deriving DecidableEq, Repr
 
-/-- Derive the marking pattern from a ranking's superoptimal set. -/
+/-- Derive the marking pattern from a ranking's superoptimal Finset
+    (the canonical `superoptimal` form). -/
 def markingPattern (ranking : List (NamedConstraint (CaseForm × Strength)))
     : MarkingPattern :=
   let pairs := superoptimal allPairs (profileFor ranking)
@@ -284,7 +300,7 @@ theorem subject_typology :
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
     markingPattern [economy, identify] = ⟨.overt, .zero⟩ ∧
     markingPattern [economy, distinguishSubj] = ⟨.zero, .overt⟩ := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- **Object marking always targets strong** regardless of ranking
     (under weak BiOT). Both I and D agree on the object pattern,
@@ -294,7 +310,7 @@ theorem object_typology :
     markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [economy, identify] = ⟨.overt, .zero⟩ ∧
     markingPattern [economy, distinguishObj] = ⟨.overt, .zero⟩ := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 6: Symmetrical Marking (§3, p. 574–578)
@@ -323,10 +339,19 @@ inductive SymForm where
   deriving DecidableEq, Repr
 
 /-- All symmetrical-marking form–meaning pairs. -/
-def symPairs : List (SymForm × Strength) :=
-  [(.zero, .strong), (.zero, .weak),
-   (.form1, .strong), (.form1, .weak),
-   (.form2, .strong), (.form2, .weak)]
+def symPairs : Finset (SymForm × Strength) :=
+  { (.zero, .strong), (.zero, .weak),
+    (.form1, .strong), (.form1, .weak),
+    (.form2, .strong), (.form2, .weak) }
+
+/-- Witness Park-set for `sym_identify`: distinct overt form per strength. -/
+def winnerSymIdentify : Finset (SymForm × Strength) :=
+  { (.form1, .strong), (.form2, .weak) }
+
+/-- Witness Park-set for `sym_distinguish_no_differentiation`: zero + both
+    overt forms collapse to strong (form1 and form2 indistinguishable). -/
+def winnerSymDistinguish : Finset (SymForm × Strength) :=
+  { (.zero, .weak), (.form1, .strong), (.form2, .strong) }
 
 /-- Identify for 3-form system: form1 matches strong, form2 matches weak.
     Tableau (29), p. 576: ACC identifies strong P, PART identifies weak P. -/
@@ -379,7 +404,8 @@ theorem distinguish_overt_indifferent :
     Each overt form is paired with a distinct strength. -/
 theorem sym_identify :
     superoptimal symPairs (symProfileFor [identifySym, economySym])
-    = [(.form1, .strong), (.form2, .weak)] := by native_decide
+    = winnerSymIdentify := by
+  decide
 
 /-- D >> *! in 3-form system: both overt forms map to strong, zero
     maps to weak. Distinguish cannot differentiate form1 from form2 —
@@ -387,22 +413,20 @@ theorem sym_identify :
     No overt form is paired with weak. -/
 theorem sym_distinguish_no_differentiation :
     superoptimal symPairs (symProfileFor [distinguishObjSym, economySym])
-    = [(.zero, .weak), (.form1, .strong), (.form2, .strong)] := by native_decide
+    = winnerSymDistinguish := by
+  decide
 
 /-- **Symmetrical marking requires Identify**: under Identify, each
     overt form is paired with a unique strength (form1↔strong, form2↔weak).
     Under Distinguish, no overt form is paired with weak — the
     symmetrical alternation cannot arise. -/
 theorem symmetrical_requires_identify :
-    -- Identify produces the symmetrical pattern: distinct overt forms for each strength
-    let ident := superoptimal symPairs (symProfileFor [identifySym, economySym])
-    let dist := superoptimal symPairs (symProfileFor [distinguishObjSym, economySym])
-    -- Under Identify: exactly one overt form per strength level
-    (ident.any (λ p => p.1 == .form1 && p.2 == .strong) &&
-     ident.any (λ p => p.1 == .form2 && p.2 == .weak) &&
+    -- Under Identify: distinct overt form per strength
+    (.form1, .strong) ∈ winnerSymIdentify ∧
+    (.form2, .weak)   ∈ winnerSymIdentify ∧
     -- Under Distinguish: NO overt form is paired with weak
-     dist.all (λ p => !(p.1 != .zero && p.2 == .weak))) = true := by
-  native_decide
+    (∀ p ∈ winnerSymDistinguish, ¬(p.1 ≠ .zero ∧ p.2 = .weak)) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 7: PaIP and Alignment Correlation (§4, p. 580)
@@ -447,7 +471,7 @@ theorem paip_ranking_independent :
     markingPattern [paip, identify] = markingPattern [identify, economy] ∧
     markingPattern [paip, distinguishSubj] = markingPattern [distinguishSubj, economy] ∧
     markingPattern [paip, distinguishObj] = markingPattern [distinguishObj, economy] := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- **Nom-acc: DOM proceeds** (p. 580).
     Objects are NOT the primary actant, so PaIP doesn't apply.
@@ -455,7 +479,7 @@ theorem paip_ranking_independent :
 theorem nomacc_dom_proceeds :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ := by
-  refine ⟨?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- **Ergative: DSM proceeds** (p. 580).
     Subjects are NOT the primary actant, so PaIP doesn't apply.
@@ -463,7 +487,7 @@ theorem nomacc_dom_proceeds :
 theorem erg_dsm_proceeds :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ := by
-  refine ⟨?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- **Alignment correlation** (p. 580).
     Under weak BiOT, both argument positions show differential marking
@@ -476,7 +500,7 @@ theorem alignment_correlation :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
     markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 8: Bridge to @cite{aissen-2003}
@@ -506,12 +530,9 @@ theorem economy_matches_aissen :
     Under both Identify and Distinguish, strong (prominent) objects
     are marked before weak (non-prominent) ones. -/
 theorem dom_targets_prominent :
-    let pairs_i := superoptimal allPairs (profileFor [identify, economy])
-    let pairs_d := superoptimal allPairs (profileFor [distinguishObj, economy])
-    (pairs_i.any (λ p => p.1 == .overt && p.2 == .strong) &&
-     pairs_i.any (λ p => p.1 == .zero && p.2 == .weak) &&
-     pairs_d.any (λ p => p.1 == .overt && p.2 == .strong) &&
-     pairs_d.any (λ p => p.1 == .zero && p.2 == .weak)) = true := by
-  native_decide
+    -- Both Identify and Distinguish on objects produce `winnerIdentify`,
+    -- which contains both (overt, strong) and (zero, weak).
+    (.overt, .strong) ∈ winnerIdentify ∧ (.zero, .weak) ∈ winnerIdentify := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 end DeHoopMalchukov2008

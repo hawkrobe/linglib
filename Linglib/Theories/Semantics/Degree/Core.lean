@@ -132,20 +132,20 @@ def positiveFromScale {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
 -- § 4. Concrete Threshold-Based Meaning Functions
 -- ════════════════════════════════════════════════════
 
-/-! Computational (`Bool`) versions of threshold comparison using concrete
-    `Degree max` types. Moved from `Gradability.Theory` — these are
-    general degree operations, not adjective-specific. -/
+/-! Threshold-comparison predicates using concrete `Degree max` types.
+    Moved from `Gradability.Theory` — these are general degree operations,
+    not adjective-specific. Decidable via `Degree`/`Threshold` order. -/
 
 /-- Positive form: degree > threshold -/
-def positiveMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+abbrev positiveMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Prop :=
   (t : Degree max) < d
 
 /-- Negative form: degree < threshold -/
-def negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+abbrev negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Prop :=
   d < (t : Degree max)
 
 /-- Antonym reverses the comparison -/
-def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
+abbrev antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Prop :=
   d ≤ (t : Degree max)
 
 /-- Monotonicity of `positiveMeaning` in the threshold: a higher threshold
@@ -155,10 +155,9 @@ def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
 theorem positiveMeaning_monotone {max : Nat} (d : Degree max)
     (θ_weak θ_strong : Threshold max)
     (h_ord : θ_weak ≤ θ_strong)
-    (h_strong : positiveMeaning d θ_strong = true) :
-    positiveMeaning d θ_weak = true := by
-  simp only [positiveMeaning, decide_eq_true_eq] at *
-  exact lt_of_le_of_lt h_ord h_strong
+    (h_strong : positiveMeaning d θ_strong) :
+    positiveMeaning d θ_weak :=
+  lt_of_le_of_lt h_ord h_strong
 
 -- ════════════════════════════════════════════════════
 -- § 5. Degree Modifiers (@cite{kennedy-mcnally-2005}; @cite{israel-2011})
@@ -190,8 +189,8 @@ def DegreeModifier.applyToThreshold {max : Nat} (m : DegreeModifier max)
     ⟨⟨θ.value.val - m.shift.val, by omega⟩⟩
 
 /-- A modified gradable predicate: degree(x) > M(θ). -/
-def modifiedMeaning {max : Nat} (m : DegreeModifier max)
-    (d : Degree max) (θ : Threshold max) : Bool :=
+abbrev modifiedMeaning {max : Nat} (m : DegreeModifier max)
+    (d : Degree max) (θ : Threshold max) : Prop :=
   positiveMeaning d (m.applyToThreshold θ)
 
 section ModifierInstances

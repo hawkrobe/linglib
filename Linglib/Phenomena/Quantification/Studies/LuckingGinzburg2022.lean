@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.TypeTheoretic.Quantification
+import Linglib.Phenomena.Quantification.Studies.Cooper2023
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Core.Logic.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
@@ -40,6 +40,7 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 namespace LuckingGinzburg2022
 
 open Semantics.TypeTheoretic
+open Phenomena.Quantification.Studies.Cooper2023
 open Core.Quantification
 
 -- ============================================================================
@@ -199,7 +200,7 @@ referentiality (refset in dgb-params vs q-params) and plurality — distinctions
 orthogonal to RTT's q-persp mechanism. RTT's novel prediction is specifically
 about **compset accessibility**, which we derive here. -/
 
-open Semantics.TypeTheoretic (DogWorld)
+open Phenomena.Quantification.Studies.Cooper2023 (DogWorld)
 
 /-- Prop version of `isDog` for decidable sieving. -/
 def isDogB : DogWorld → Prop

@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
+import Linglib.Phenomena.Conditionals.Studies.Santorio2018
+import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
 
@@ -37,8 +38,13 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 ## Connection to Linglib
 
 - DAC readings use the alternative-sensitive conditional semantics from
-  `AlternativeSensitive.lean` (@cite{santorio-2018}): `homogeneityEval`,
-  `sdaEval`, `dcrEval`
+  `Phenomena/Conditionals/Studies/Santorio2018.lean`:
+  `homogeneityEval`, `sdaEval`
+- The DCR (Disjunctive Conditional Reading) operator `dcrEval` is
+  defined in this file. **DCR is named here in @cite{zani-ciardelli-sanfelici-2026} (p. 10),
+  not in @cite{santorio-2018}** — Santorio's two readings are SDA (with
+  the DIST_π operator) and the asymmetric Lewis reading (without DIST_π,
+  via default existential closure of the antecedent alternatives).
 - SDA/DCR correspond to conjunctive/disjunctive `ProjectionType`
 - Developmental trajectory parallels @cite{tieu-kriz-chemla-2019}'s
   existential→homogeneous shift
@@ -48,12 +54,33 @@ namespace ZaniCiardelliSanfelici2026
 
 open Core.Duality (Truth3 ProjectionType)
 open Core.Order (SimilarityOrdering)
-open Semantics.Conditionals.AlternativeSensitive
+open Semantics.Conditionals.Counterfactual (universalCounterfactual)
+open Phenomena.Conditionals.Studies.Santorio2018
 
 
 -- ============================================================
 -- SECTION 1: Three Readings of DACs
 -- ============================================================
+
+/-- **DCR** (Disjunctive Conditional Reading): existential resolution
+    over per-alternative conditionals — "if A or B, C" iff *some*
+    simplification (if A, C) ∨ (if B, C) holds.
+
+    Named in @cite{zani-ciardelli-sanfelici-2026} (p. 10): "We will refer
+    to this reading of DACs as the *disjunctive conditional reading*."
+    Lives in this file (rather than the @cite{santorio-2018} substrate)
+    because DCR is not part of Santorio's framework. -/
+def dcrEval {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
+    (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C]
+    (w : W) : Prop :=
+  ∃ a ∈ alts, universalCounterfactual sim a.pred C w
+
+instance {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W) (alts : List (DecAlt W))
+    (C : W → Prop) [DecidablePred C] (w : W) :
+    Decidable (dcrEval sim alts C w) :=
+  inferInstanceAs (Decidable (∃ a ∈ alts, _))
 
 /-- The three theoretically predicted readings of disjunctive antecedent
     conditionals (DACs). Table 2 of the paper. -/
@@ -79,8 +106,10 @@ theorem ar_entails_dcr : DACReading.ar.strength ≥ DACReading.dcr.strength := b
 -- ============================================================
 
 -- Alternative-sensitive conditional semantics (altConditionalResults,
--- sdaEval, dcrEval, homogeneityEval, lewisDAC) are imported from
--- Theories/Semantics/Conditionals/AlternativeSensitive.lean
+-- sdaEval, homogeneityEval, lewisDAC) are imported from
+-- Phenomena/Conditionals/Studies/Santorio2018.lean. `dcrEval` is
+-- defined locally above because DCR is a Zani-Ciardelli-Sanfelici 2026
+-- coinage, not part of Santorio's framework.
 
 /-- SDA = conjunctive projection over alternatives.
     DCR = disjunctive projection over alternatives.
@@ -91,23 +120,17 @@ def dacProjection : DACReading → ProjectionType
   | .dcr => .disjunctive
   | .ar  => .disjunctive
 
-/-- `List.all id` on a two-element list is conjunction. -/
-private theorem all_id_pair (a b : Bool) : [a, b].all id = (a && b) := by
-  cases a <;> cases b <;> rfl
-
 /-- Alternative semantics validates SDA universally (for two alternatives):
     "if {A,B}, C" ≡ ∀p ∈ {A,B}. min_w(p) ⊆ C ≡ (if A, C) ∧ (if B, C).
     Under Lewis, SDA is only contingently valid. -/
 theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W] [Fintype W]
-    (sim : SimilarityOrdering W)
-    (A B C : W → Bool) (w : W) :
-    sdaEval sim [A, B] C w =
-    (decide (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter (fun w => A w = true)),
-       C w' = true) &&
-     decide (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter (fun w => B w = true)),
-       C w' = true)) := by
-  unfold sdaEval altConditionalResults
-  exact all_id_pair _ _
+    (sim : SimilarityOrdering W) (A B : DecAlt W)
+    (C : W → Prop) [DecidablePred C] (w : W) :
+    sdaEval sim [A, B] C w ↔
+    universalCounterfactual sim A.pred C w ∧
+    universalCounterfactual sim B.pred C w := by
+  rw [sdaEval_iff_forall]
+  simp
 
 
 -- ============================================================
@@ -480,6 +503,71 @@ SDA still dominated (87.76% adults, 39.34% children) and AR was
 marginal (4.08% adults, 2.84% children). This falsifies Lewis's
 prediction that non-equally-realistic disjuncts should yield AR.
 -/
+
+
+-- ============================================================
+-- SECTION 13: Substrate-grounded cross-framework agreement
+-- ============================================================
+
+/-!
+## From enum stipulation to substrate derivation
+
+The `SDATheory.predictedPreSDA` enum in §11 records each framework's
+predicted **pre-SDA stage** as a stipulation. The two SDA-deriving
+mature accounts (homogeneity / exhaustification) themselves coincide on
+the SDA inference proper — verifiable at the Lean substrate level via:
+
+- @cite{santorio-2018}'s `Santorio2018.sdaEval` (per-alternative
+  homogeneity, `Phenomena/Conditionals/Studies/Santorio2018.lean`)
+- @cite{bar-lev-fox-2020}'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
+  Inclusion derivation, `Phenomena/Modality/Studies/BarLevFox2020.lean`)
+
+The cross-mechanism agreement
+`BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference` proves
+that on the shared 4-world `SDAWorld` model, Bar-Lev/Fox's
+`Exh^{IE+II}` verdict entails Santorio's `sdaEval` verdict on the SDA
+inference proper. Bar-Lev/Fox is **strictly stronger** (also derives
+`¬((p∧q)□→r)`); Santorio is silent on the conjunctive negation. They
+**agree on the SDA inference itself** — the empirical pattern this
+study measures.
+
+The developmental contrast between the two accounts (Santorio:
+DCR→SDA via homogeneity-gap-then-resolution; Bar-Lev/Fox: AR→SDA via
+EXH-acquisition) is about **different stages of the developmental
+trajectory**, not about disagreement on the mature SDA prediction.
+The empirical finding (DCR→SDA, AR nearly absent) thus distinguishes
+the two only at the developmental level, not the mature-grammar level.
+-/
+
+/-- **Substrate witness for the mature-grammar agreement**: on the
+    shared 4-world `SDAWorld` model from
+    `BarLevFox2020.lean`, Bar-Lev/Fox's `Exh^{IE+II}` verdict at
+    `.actual` entails Santorio's `sdaEval` verdict on the SDA
+    inference. Direct re-export of the cross-framework theorem
+    proved in `BarLevFox2020.lean §7`. -/
+theorem bar_lev_fox_and_santorio_agree_on_mature_sda :
+    ∀ w, Exhaustification.exhIEII
+            Phenomena.Modality.Studies.BarLevFox2020.sdaALT
+            Phenomena.Modality.Studies.BarLevFox2020.sdaPrejacent w →
+      Phenomena.Conditionals.Studies.Santorio2018.sdaEval
+        Phenomena.Modality.Studies.BarLevFox2020.sdaSim
+        Phenomena.Modality.Studies.BarLevFox2020.sdaSantorioAlts
+        Phenomena.Modality.Studies.BarLevFox2020.sdaR w :=
+  Phenomena.Modality.Studies.BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference
+
+/-- **Bar-Lev/Fox derives a STRICTLY STRONGER verdict than Santorio**
+    on the same model: in addition to the SDA inference proper,
+    Bar-Lev/Fox's `Exh^{IE+II}` derives `¬((p∧q)□→r)`. This is the
+    Innocent-Exclusion-of-the-conjunctive-alternative component
+    (paper eqn 67 p. 206) that has no analogue in Santorio's
+    homogeneity-based derivation. -/
+theorem bar_lev_fox_strictly_stronger_than_santorio :
+    ∀ w, Exhaustification.exhIEII
+            Phenomena.Modality.Studies.BarLevFox2020.sdaALT
+            Phenomena.Modality.Studies.BarLevFox2020.sdaPrejacent w →
+      ¬ Phenomena.Modality.Studies.BarLevFox2020.sdaPandQbox w := by
+  intro w h
+  exact (Phenomena.Modality.Studies.BarLevFox2020.bar_lev_fox_sda w h).2.2
 
 
 end ZaniCiardelliSanfelici2026

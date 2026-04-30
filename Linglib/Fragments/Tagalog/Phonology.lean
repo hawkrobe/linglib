@@ -1,12 +1,12 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 
 /-!
 # Tagalog Phonological Inventory and Nasal Substitution
 @cite{hayes-2009} @cite{zuraw-2010}
 
 Segment inventory and the nasal substitution process for Tagalog,
-defined using the SPE formalism from `Phonology.RuleBased.Defs`.
+defined using the SPE formalism from `Phonology.LocalRewrite`.
 
 ## Nasal substitution
 
@@ -23,7 +23,7 @@ p,b → m; t,d → n; k,g → ŋ.
 
 ## SPE encoding
 
-The `PhonRule` formalism in `Theories/Phonology/Process/RuleBased/Defs.lean`
+The `Rule` formalism in `Theories/Phonology/Process/LocalRewrite.lean`
 supports `changeFeatures` and `delete` effects, and segment / wordBoundary
 contexts. It does not support α-spreading (assimilatory rules where the
 target inherits a feature value from the context). Tagalog nasal
@@ -46,7 +46,7 @@ the independent rule of homorganic-nasal-place assimilation, which
 -/
 
 open Phonology
-open Phonology.RuleBased
+open Phonology.LocalRewrite
 
 namespace Fragments.Tagalog.Phonology
 
@@ -121,7 +121,7 @@ def ŋ : Segment := Segment.ofSpecs
     ~52% for /g/ in @cite{zuraw-2010}'s dictionary count — is a
     paper-specific empirical claim and lives in the relevant study
     files, not here. -/
-def nasalSubstitution : PhonRule where
+def nasalSubstitution : Rule where
   name := "Tagalog Nasal Substitution"
   target := Segment.ofSpecs
     [(Feature.consonantal, true), (Feature.sonorant, false)]

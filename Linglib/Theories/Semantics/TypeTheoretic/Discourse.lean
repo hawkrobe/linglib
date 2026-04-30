@@ -766,7 +766,7 @@ def chicago95 : ConcreteTempFrame :=
   ⟨95, .chicago, trivial⟩
 
 def tempRising : RiseEvent ConcreteTempFrame ζ_temp :=
-  ⟨chicago90, chicago95, by native_decide⟩
+  ⟨chicago90, chicago95, by decide⟩
 
 theorem temp_is_ninety : ζ_temp chicago90 = 90 := rfl
 

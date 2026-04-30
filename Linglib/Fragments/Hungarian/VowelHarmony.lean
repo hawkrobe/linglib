@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 import Linglib.Theories.Phonology.Process.Harmony.Defs
 
 /-!

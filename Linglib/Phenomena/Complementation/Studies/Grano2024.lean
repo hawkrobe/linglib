@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Mood.VerbalMood
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
-import Linglib.Fragments.Greek.MoodChoice
+import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Portuguese.MoodChoice
@@ -542,19 +542,19 @@ is captured by deriveMoodSelector returning .crossLinguisticallyVariable. -/
 
 -- Greek fragments match Greek data
 theorem greek_want_fragment_consistent :
-    Fragments.Greek.MoodChoice.thelo.levinClass = some LevinClass.want ∧
+    Fragments.Greek.StandardModern.MoodChoice.thelo.levinClass = some LevinClass.want ∧
     greek_want.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem greek_hope_fragment_consistent :
-    Fragments.Greek.MoodChoice.elpizo.levinClass ≠ some LevinClass.want ∧
+    Fragments.Greek.StandardModern.MoodChoice.elpizo.levinClass ≠ some LevinClass.want ∧
     greek_hope.rejectsIndicative = false := ⟨by decide, rfl⟩
 
 theorem greek_intend_fragment_consistent :
-    Fragments.Greek.MoodChoice.protithete.levinClass = some LevinClass.want ∧
+    Fragments.Greek.StandardModern.MoodChoice.protithete.levinClass = some LevinClass.want ∧
     greek_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem greek_make_fragment_consistent :
-    Fragments.Greek.MoodChoice.vazo.causative.isSome = true ∧
+    Fragments.Greek.StandardModern.MoodChoice.vazo.causative.isSome = true ∧
     greek_make.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 -- Romanian fragments match Romanian data

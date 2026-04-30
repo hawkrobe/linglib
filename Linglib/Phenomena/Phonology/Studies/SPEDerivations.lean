@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.Korean.Phonology
 import Linglib.Phenomena.Phonology.Alternation
@@ -11,13 +11,13 @@ data via SPE ordered derivation. For each alternation datum, defines the
 underlying segment string, applies `derive` with the language's rule set,
 and verifies the output matches the expected surface form.
 
-All theorems are proved by `native_decide` (finite segment data).
+All theorems are proved by `decide` (finite segment data).
 -/
 
 namespace SPEDerivations
 
 open Phonology
-open Phonology.RuleBased (derive)
+open Phonology.LocalRewrite (derive)
 
 -- ============================================================================
 -- § 1: English Preglottalization
@@ -37,11 +37,11 @@ def t_cg : Segment := Segment.ofSpecs
     Word-final /t/ acquires [+c.g.]; /k/ is not word-final so is unchanged. -/
 theorem preglottalization_derives :
     (derive [preglottalization] [k, æ, t] == [k, æ, t_cg]) = true := by
-  native_decide
+  decide
 
 /-- The derivation output has the same length (feature change, not deletion). -/
 theorem preglottalization_preserves_length :
-    (derive [preglottalization] [k, æ, t]).length = 3 := by native_decide
+    (derive [preglottalization] [k, æ, t]).length = 3 := by decide
 
 end EnglishPreglottalization
 
@@ -56,11 +56,11 @@ open Fragments.English.Phonology
     /t/ deletes between /n/ ([+nasal]) and /ə/ ([+syll]). -/
 theorem postnasal_deletion_derives :
     (derive [postnasalDeletion] [w, laxI, n, t, schwa, r] == [w, laxI, n, schwa, r]) = true := by
-  native_decide
+  decide
 
 /-- Deletion reduces the string by one segment. -/
 theorem postnasal_deletion_reduces_length :
-    (derive [postnasalDeletion] [w, laxI, n, t, schwa, r]).length = 5 := by native_decide
+    (derive [postnasalDeletion] [w, laxI, n, t, schwa, r]).length = 5 := by decide
 
 end EnglishPostnasalDeletion
 
@@ -83,11 +83,11 @@ def k_nasalized : Segment := Segment.ofSpecs
     /k/ at position 2 nasalizes before /m/ ([+nasal]). -/
 theorem korean_nasalization_derives :
     (derive [stopNasalization] [p, a, k, m, u, l] == [p, a, k_nasalized, m, u, l]) = true := by
-  native_decide
+  decide
 
 /-- Nasalization preserves string length (feature change, not deletion). -/
 theorem korean_nasalization_preserves_length :
-    (derive [stopNasalization] [p, a, k, m, u, l]).length = 6 := by native_decide
+    (derive [stopNasalization] [p, a, k, m, u, l]).length = 6 := by decide
 
 end KoreanNasalization
 

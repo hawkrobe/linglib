@@ -171,25 +171,23 @@ def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace (Threshold max) 
 
 /-- Extract Nat-level upper bound from `inGapRegion`. -/
 theorem inGapRegion_le_pos {max : Nat} (d : Degree max) (tp : ThresholdPair max)
-    (h : inGapRegion d tp = true) : d.toNat ≤ tp.pos.toNat := by
-  simp only [inGapRegion, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact h.2
+    (h : inGapRegion d tp) : d.toNat ≤ tp.pos.toNat :=
+  h.2
 
 /-- Extract Nat-level lower bound from `inGapRegion`. -/
 theorem inGapRegion_ge_neg {max : Nat} (d : Degree max) (tp : ThresholdPair max)
-    (h : inGapRegion d tp = true) : tp.neg.toNat ≤ d.toNat := by
-  simp only [inGapRegion, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact h.1
+    (h : inGapRegion d tp) : tp.neg.toNat ≤ d.toNat :=
+  h.1
 
 /-- When a degree is strictly inside the gap, the positive-meaning
     predicate disagrees across the two thresholds: true at the negative
     threshold, false at the positive. -/
 theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPair max)
-    (h_in : inGapRegion d tp = true) (h_strict : tp.neg.toNat < d.toNat) :
-    decide (d.toNat > tp.neg.toNat) = true ∧
-    decide (d.toNat > tp.pos.toNat) = false := by
-  simp only [gt_iff_lt, decide_eq_true_eq, decide_eq_false_iff_not, not_lt]
-  exact ⟨h_strict, inGapRegion_le_pos d tp h_in⟩
+    (h_in : inGapRegion d tp) (h_strict : tp.neg.toNat < d.toNat) :
+    d.toNat > tp.neg.toNat ∧ ¬ d.toNat > tp.pos.toNat := by
+  refine ⟨h_strict, ?_⟩
+  simp only [gt_iff_lt, not_lt]
+  exact inGapRegion_le_pos d tp h_in
 
 -- ════════════════════════════════════════════════════
 -- § 6. Higher-Order D

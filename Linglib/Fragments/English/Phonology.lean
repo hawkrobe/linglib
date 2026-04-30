@@ -1,12 +1,12 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 import Linglib.Datasets.PHOIBLE.Inventories.English
 
 /-!
 # English Phonological Inventory
 
 Concrete English segments and language-specific phonological rules,
-defined using the SPE formalism from `Phonology.RuleBased.Defs`.
+defined using the SPE formalism from `Phonology.LocalRewrite`.
 
 ## Segments
 
@@ -21,7 +21,7 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 -/
 
 open Phonology
-open Phonology.RuleBased
+open Phonology.LocalRewrite
 
 namespace Fragments.English.Phonology
 
@@ -126,7 +126,7 @@ def schwa : Segment := Segment.ofSpecs
     `[-cont, -voice] → [+c.g.] / __]word`
 
     Voiceless stops become glottalized word-finally. -/
-def preglottalization : PhonRule where
+def preglottalization : Rule where
   name := "Preglottalization"
   target := Segment.ofSpecs [(Feature.continuant, false), (Feature.voice, false)]
   effect := .changeFeatures (Segment.ofSpecs [(Feature.constrGlottis, true)])
@@ -136,7 +136,7 @@ def preglottalization : PhonRule where
     `[-cont, +cor, +ant, -voice] → ∅ / [+nasal] __ [+syll]`
 
     Voiceless coronal stops delete between a nasal and a vowel. -/
-def postnasalDeletion : PhonRule where
+def postnasalDeletion : Rule where
   name := "Postnasal /t/ Deletion"
   target := Segment.ofSpecs
     [(Feature.continuant, false), (Feature.coronal, true),

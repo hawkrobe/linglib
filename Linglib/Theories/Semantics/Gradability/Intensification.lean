@@ -102,8 +102,13 @@ The intensified form is the conjunction (intersection) of:
 2. The evaluative threshold: μ_eval(d) > θ_eval
 -/
 def intensifiedMeaning {max : Nat}
-    (eval : EvaluativeMeasure max) (d : Degree max) (θ_adj θ_eval : Threshold max) : Bool :=
-  positiveMeaning d θ_adj && (eval.mu d.toNat > θ_eval.toNat)
+    (eval : EvaluativeMeasure max) (d : Degree max) (θ_adj θ_eval : Threshold max) : Prop :=
+  positiveMeaning d θ_adj ∧ eval.mu d.toNat > θ_eval.toNat
+
+instance {max : Nat} (eval : EvaluativeMeasure max)
+    (d : Degree max) (θ_adj θ_eval : Threshold max) :
+    Decidable (intensifiedMeaning eval d θ_adj θ_eval) := by
+  unfold intensifiedMeaning; infer_instance
 
 -- Bridge Theorem: Intensified → Positive
 
@@ -116,10 +121,9 @@ the positive meaning as one conjunct.
 -/
 theorem intensified_implies_positive {max : Nat}
     (eval : EvaluativeMeasure max) (d : Degree max) (θ_adj θ_eval : Threshold max)
-    (h : intensifiedMeaning eval d θ_adj θ_eval = true) :
-    positiveMeaning d θ_adj = true := by
-  simp [intensifiedMeaning] at h
-  exact h.1
+    (h : intensifiedMeaning eval d θ_adj θ_eval) :
+    positiveMeaning d θ_adj :=
+  h.1
 
 -- Structural Properties of Evaluative Measures
 

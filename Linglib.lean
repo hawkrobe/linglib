@@ -139,6 +139,7 @@ import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile
 import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Constraint.Evaluation
+import Linglib.Core.Constraint.Superoptimal
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.Antimatroid
@@ -1558,6 +1559,7 @@ import Linglib.Phenomena.Possession.Studies.NicholsBickel2013
 import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Possession.Studies.Myler2016
 import Linglib.Phenomena.Possession.Studies.AissenPolian2025
+import Linglib.Phenomena.Possession.Studies.KampanarouAlexiadou2026
 import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
@@ -1764,6 +1766,7 @@ import Linglib.Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
 import Linglib.Phenomena.Phonology.Studies.Clements1985
 import Linglib.Phenomena.Phonology.Studies.CoetzeePater2011
 import Linglib.Phenomena.Phonology.Studies.Flemming2021
+import Linglib.Phenomena.Phonology.Studies.FaustLampitelli2026
 import Linglib.Phenomena.Phonology.Studies.FrischPierrehumbertBroe2004
 import Linglib.Phenomena.Phonology.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.Phonology.Studies.Hansson2010
@@ -2589,11 +2592,14 @@ import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Featural.Geometry
 import Linglib.Theories.Phonology.Featural.ComplexSegments
 import Linglib.Theories.Phonology.Featural.Bundle
+import Linglib.Theories.Phonology.Featural.ElementTheory
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Autosegmental.Floating
 import Linglib.Theories.Phonology.Tier
+import Linglib.Theories.Phonology.OCPMerger
+import Linglib.Theories.Phonology.Government.StrictCV
 import Linglib.Theories.Phonology.Tone.Constraints
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Theories.Phonology.Autosegmental.CoPScope

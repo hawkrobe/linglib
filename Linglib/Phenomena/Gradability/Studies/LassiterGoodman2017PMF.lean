@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
@@ -410,5 +411,51 @@ theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S
   rw [h_sub_toReal]
   -- Now: q * (1 - q) ≤ 1/4 on ℝ via (2q - 1)² ≥ 0
   nlinarith [sq_nonneg (2 * q - 1)]
+
+/-! ## §8. L&G-vs-TCS framework expressivity gap (Lean-checkable reciprocation)
+
+The previous version of this engagement was docstring-prose-only: §7
+above mentions TCS as the framework that handles the data direction
+the literal rule misses, and `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`
+docstring mentions L&G's `lg_literal_borderline_bounded` as the empirical
+challenge that motivated TCS — but no Lean theorem connected the two.
+
+The theorem below closes that gap with a **concrete PMF-typed**
+witness of the expressivity divergence: simultaneously, L&G's
+literal-rule prediction is bounded (`≤ 1/4`) AND TCS's
+borderline-contradiction prediction is categorical (true, not
+fractional). The abstract real-arithmetic version of the same gap is
+`CobrerosEtAl2012.tcs_categorical_vs_product_bounded`. Together the two
+make the framework architecture difference visible at theorem level
+from both sides. -/
+
+open Phenomena.Gradability.Studies.CobrerosEtAl2012 (
+  tcs_borderline_contradiction_categorical)
+open Semantics.Supervaluation.TCS (
+  TModel IsBorderline Sat SatMode TCSAtom)
+
+/-- **L&G-vs-TCS framework gap, PMF-typed**: L&G's literal-rule
+    prediction `P(P) · P(¬P)` is bounded above by `1/4` for any PMF
+    (`lg_literal_borderline_bounded`), while TCS's borderline-contradiction
+    prediction is **categorical** — the conjunction is tolerantly true,
+    not a fractional value to be matched.
+
+    The empirical Alxatib-Pelletier 2011 acceptance rate (44.7%) exceeds
+    the L&G literal upper bound (25%), refuting the literal-rule's
+    expressivity at this dataset. TCS's categorical prediction is
+    consistent with the empirical direction. The Lean theorem records
+    both halves of the framework gap simultaneously. -/
+theorem lg_literal_vs_tcs_categorical
+    {S : Type*} (L1_latent : PMF S) (s : Set S)
+    {D Pred : Type*} (M : TModel D Pred) (P : Pred) (a : D)
+    (hb : IsBorderline M P a) :
+    -- L&G literal-rule's framework-level upper bound:
+    L1_latent.toOuterMeasure s * (1 - L1_latent.toOuterMeasure s)
+      ≤ (1/4 : ℝ≥0∞) ∧
+    -- TCS's framework-level categorical prediction:
+    Sat M SatMode.tolerant
+      (.conj (.atom (TCSAtom.pred P a)) (.neg (.atom (TCSAtom.pred P a)))) :=
+  ⟨lg_literal_borderline_bounded L1_latent s,
+   tcs_borderline_contradiction_categorical M P a hb⟩
 
 end LassiterGoodman2017.PMF

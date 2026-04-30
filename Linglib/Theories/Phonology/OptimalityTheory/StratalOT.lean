@@ -27,6 +27,23 @@ captures level-ordering effects — e.g., compensatory lengthening is
 optimal at the Word level but not at the Phrase level — without ad hoc
 rules or extrinsic ordering.
 
+## Sibling derivational architectures
+
+Stratal OT keeps a derivational architecture (strata) inside an
+otherwise constraint-based framework. Linglib's siblings:
+
+* `Theories/Phonology/Process/LocalRewrite.lean` — full extrinsic-
+  ordering derivation via local rewrite rules; the modern subregular
+  characterization grounds these as Input Strictly Local functions
+  (@cite{chandlee-heinz-2018}).
+* `Core/Constraint/OT/HarmonicSerialism.lean` — gradual constraint
+  optimization, no strata.
+* `Core/Computability/Subregular/Function/` — function-level subregular
+  hierarchy (ISL ⊊ OSL ⊊ Subsequential ⊊ Weakly Deterministic) that
+  classifies what each architecture can express
+  (@cite{aksenova-rawski-graf-heinz-2020};
+  @cite{meinhardt-mai-bakovic-mccollum-2024}).
+
 ## Connection to Linglib
 
 Each individual stratum is evaluated using `Core.Constraint.OT.mkTableau` and

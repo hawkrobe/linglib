@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals

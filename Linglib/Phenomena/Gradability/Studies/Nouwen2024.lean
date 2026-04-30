@@ -698,29 +698,46 @@ def meaning (u : Utterance) (h : Height) (θ θ_e : Threshold) : Bool :=
 
 -- Theory-Layer Grounding
 
+/-- Local ℕ-valued `muHorrible` agrees with theory-layer ℚ-valued
+    `Intensification.muHorrible` on every height. The theory definition
+    `(d : ℕ → ℚ) - norm` collapses to `|d - 3|` when norm = 6/2 = 3 and d : ℕ. -/
+private lemma muHorrible_eq (h : Height) :
+    (Semantics.Gradability.Intensification.muHorrible 6).mu h.toNat =
+    (muHorrible h : ℚ) := by
+  unfold Semantics.Gradability.Intensification.muHorrible muHorrible
+  fin_cases h <;> simp [Core.Scale.Degree.toNat] <;> norm_num
+
 /--
 The local horribly_warm meaning agrees with theory-layer `intensifiedMeaning`
 for all inputs. This bridges the ℕ-valued local measures to the ℚ-valued
 theory-layer `Intensification.muHorrible`.
 -/
-theorem meaning_grounded_horribly :
-    ∀ (h : Height) (θ θ_e : Threshold),
-      meaning .horribly_warm h θ θ_e =
-      Semantics.Gradability.Intensification.intensifiedMeaning
-        (Semantics.Gradability.Intensification.muHorrible 6) h θ θ_e := by
-  native_decide
+theorem meaning_grounded_horribly (h : Height) (θ θ_e : Threshold) :
+    (meaning .horribly_warm h θ θ_e = true) ↔
+    Semantics.Gradability.Intensification.intensifiedMeaning
+      (Semantics.Gradability.Intensification.muHorrible 6) h θ θ_e := by
+  simp only [meaning, tallMeaning, Bool.and_eq_true, decide_eq_true_eq,
+             Semantics.Gradability.Intensification.intensifiedMeaning,
+             muHorrible_eq, Nat.cast_lt]
+
+private lemma muPleasant_eq (h : Height) :
+    (Semantics.Gradability.Intensification.muPleasant 6).mu h.toNat =
+    (muPleasant h : ℚ) := by
+  unfold Semantics.Gradability.Intensification.muPleasant muPleasant
+  fin_cases h <;> simp [Core.Scale.Degree.toNat] <;> norm_num
 
 /--
 The local pleasantly_warm meaning agrees with theory-layer `intensifiedMeaning`
 for all inputs. This bridges the ℕ-valued local measures to the ℚ-valued
 theory-layer `Intensification.muPleasant`.
 -/
-theorem meaning_grounded_pleasantly :
-    ∀ (h : Height) (θ θ_e : Threshold),
-      meaning .pleasantly_warm h θ θ_e =
-      Semantics.Gradability.Intensification.intensifiedMeaning
-        (Semantics.Gradability.Intensification.muPleasant 6) h θ θ_e := by
-  native_decide
+theorem meaning_grounded_pleasantly (h : Height) (θ θ_e : Threshold) :
+    (meaning .pleasantly_warm h θ θ_e = true) ↔
+    Semantics.Gradability.Intensification.intensifiedMeaning
+      (Semantics.Gradability.Intensification.muPleasant 6) h θ θ_e := by
+  simp only [meaning, tallMeaning, Bool.and_eq_true, decide_eq_true_eq,
+             Semantics.Gradability.Intensification.intensifiedMeaning,
+             muPleasant_eq, Nat.cast_lt]
 
 -- Zwicky Vacuity
 

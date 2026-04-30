@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Evaluation
+import Linglib.Core.Constraint.Superoptimal
 
 /-!
 # Bidirectional Optimality Theory
@@ -34,17 +35,26 @@ These correspond to the speaker/hearer optimization layers in RSA
 
 - **Strong** (eq. 9): Q and I are independent — ⟨A, τ⟩ is optimal iff
   it survives BOTH Q and I evaluated against the full candidate set.
-  Solution concept: Nash Equilibrium.
+  Solution concept: Nash Equilibrium. Substrate: `strongOptimal`
+  (Finset, computable) + `IsStrongOptimal` (Set-valued Prop).
 
 - **Weak** (eq. 14): Q and I mutually constrain each other — competition
   under Q is restricted to I-surviving pairs, and vice versa.
   Solution concept: greatest fixed point of the blocking operator.
+  Substrate: `superoptimal` (Finset, computable) + `superoptimalSet`
+  (Set-valued, anchored in mathlib's `OrderHom.gfp`).
 
 The weak version derives @cite{horn-1984}'s **division of pragmatic
 labour**: unmarked forms pair with unmarked (stereotypical) meanings,
-and marked forms pair with marked (non-stereotypical) meanings.
-The strong version incorrectly predicts that marked forms are blocked
-in ALL their interpretations.
+and marked forms pair with marked (marked) meanings. The strong
+version incorrectly predicts that marked forms are blocked in ALL
+their interpretations.
+
+The structural meta-theorem `strong ⊂ weak` (@cite{blutner-2000} p. 12)
+lives in `Core/Constraint/Evaluation/Superoptimal.lean` as
+`isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, coinductive
+proof against `OrderHom.gfp`) and its Finset corollary
+`strongOptimal_subset_superoptimal`.
 
 ## Connection to RSA and IBR
 
@@ -70,8 +80,20 @@ namespace Pragmatics.Bidirectional
 open Core.Constraint.Evaluation
 
 -- ============================================================================
--- § 1: Q-Principle and I-Principle as Predicates
+-- § 1: Q-Principle and I-Principle as Bool Predicates (List-based, decidable)
 -- ============================================================================
+
+/-! These are List-Bool versions of the per-pair Q and I checks, used by
+    consumer studies (e.g. `Blutner2000.lean`'s `accommodation_blocked_is_Q`)
+    that want to check Q or I in isolation rather than the conjunction. The
+    relationship to the substrate's Set-valued `Blocks` predicate:
+
+    `¬ Blocks profile S p ↔ (no Q-blocker in S for p) ∧ (no I-blocker in S for p)`
+
+    where Q-blocker = same meaning, different form; I-blocker = same form,
+    different meaning. So `satisfiesQ` and `satisfiesI` together pin down the
+    `¬ Blocks` condition that defines `IsStrongOptimal` and (via the gfp)
+    `superoptimalSet`. -/
 
 /-- **Q-principle** (production optimality, @cite{blutner-2000} eq. 9(Q)):
     ⟨A, τ⟩ satisfies Q iff no other pair with the same meaning τ
@@ -102,14 +124,6 @@ def satisfiesI {F M : Type} [DecidableEq F] [DecidableEq M]
     (p : F × M) : Bool :=
   gen.all fun q =>
     decide (q.1 = p.1 → q.2 ≠ p.2 → ¬LexLT (profile q) (profile p))
-
-/-- Strong-optimal = satisfies BOTH Q and I against the full candidate set.
-    This is equivalent to `strongOptimal` in `ConstraintEvaluation`. -/
-theorem strongOptimal_eq_both {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat) :
-    strongOptimal pairs profile =
-    pairs.filter (fun p => satisfiesQ pairs profile p && satisfiesI pairs profile p) := by
-  simp only [strongOptimal, satisfiesQ, satisfiesI]
 
 -- ============================================================================
 -- § 2: Horn's Division of Pragmatic Labour
@@ -143,9 +157,9 @@ inductive HornMeaning where
   deriving DecidableEq, Repr
 
 /-- All form-meaning pairs (forms are semantically equivalent). -/
-def hornPairs : List (HornForm × HornMeaning) :=
-  [(.unmarked, .stereotypical), (.unmarked, .nonStereotypical),
-   (.marked, .stereotypical),   (.marked, .nonStereotypical)]
+def hornPairs : Finset (HornForm × HornMeaning) :=
+  { (.unmarked, .stereotypical), (.unmarked, .nonStereotypical),
+    (.marked, .stereotypical),   (.marked, .nonStereotypical) }
 
 /-- Constraint profile: [F-violations, C-violations].
     F penalizes marked forms; C penalizes non-stereotypical meanings. -/
@@ -159,23 +173,24 @@ def hornProfile : HornForm × HornMeaning → List Nat
     marked ↔ non-stereotypical. Both pairs survive. -/
 theorem horn_weak_biot :
     superoptimal hornPairs hornProfile =
-      [(.unmarked, .stereotypical), (.marked, .nonStereotypical)] := by
-  native_decide
+      ({(.unmarked, .stereotypical), (.marked, .nonStereotypical)} :
+        Finset (HornForm × HornMeaning)) := by
+  decide
 
 /-- **Strong BiOT** blocks the marked form entirely — only the
     unmarked pair survives. This is empirically wrong: marked forms
     DO get used (for marked meanings). -/
 theorem horn_strong_biot :
     strongOptimal hornPairs hornProfile =
-      [(.unmarked, .stereotypical)] := by
-  native_decide
+      ({(.unmarked, .stereotypical)} : Finset (HornForm × HornMeaning)) := by
+  decide
 
 /-- The weak version admits strictly MORE pairs than the strong version
     for this case. This is the key empirical argument for weak BiOT. -/
 theorem weak_strictly_larger :
-    (superoptimal hornPairs hornProfile).length >
-    (strongOptimal hornPairs hornProfile).length := by
-  native_decide
+    (strongOptimal hornPairs hornProfile).card <
+    (superoptimal hornPairs hornProfile).card := by
+  decide
 
 -- ============================================================================
 -- § 3: Total Blocking (Lexical Blocking)
@@ -204,9 +219,9 @@ inductive LexMeaning where
 
 /-- Gen for total blocking: the listed form only covers the specialized
     meaning; the derived form covers both meanings. -/
-def totalBlockPairs : List (LexForm × LexMeaning) :=
-  [(.listed, .specialized),
-   (.derived, .specialized), (.derived, .general)]
+def totalBlockPairs : Finset (LexForm × LexMeaning) :=
+  { (.listed, .specialized),
+    (.derived, .specialized), (.derived, .general) }
 
 /-- Profile: listed form is less marked (0 F-violations); specialized
     meaning is less marked (0 C-violations). -/
@@ -221,8 +236,9 @@ def totalBlockProfile : LexForm × LexMeaning → List Nat
     Result: listed ↔ specialized, derived ↔ general. -/
 theorem total_blocking_weak :
     superoptimal totalBlockPairs totalBlockProfile =
-      [(.listed, .specialized), (.derived, .general)] := by
-  native_decide
+      ({(.listed, .specialized), (.derived, .general)} :
+        Finset (LexForm × LexMeaning)) := by
+  decide
 
 /-- Strong BiOT over-blocks: the derived form loses ALL interpretations
     because (.derived, .specialized) is I-better than (.derived, .general)
@@ -230,86 +246,47 @@ theorem total_blocking_weak :
     partial blocking — only the listed form survives. -/
 theorem total_blocking_strong :
     strongOptimal totalBlockPairs totalBlockProfile =
-      [(.listed, .specialized)] := by
-  native_decide
+      ({(.listed, .specialized)} : Finset (LexForm × LexMeaning)) := by
+  decide
 
 /-- Weak BiOT correctly handles partial blocking — the derived form
     keeps the general meaning because its I-competitor (.derived, .specialized)
     was removed by Q-blocking from (.listed, .specialized). -/
 theorem total_blocking_weak_vs_strong :
-    (superoptimal totalBlockPairs totalBlockProfile).length >
-    (strongOptimal totalBlockPairs totalBlockProfile).length := by
-  native_decide
+    (strongOptimal totalBlockPairs totalBlockProfile).card <
+    (superoptimal totalBlockPairs totalBlockProfile).card := by
+  decide
 
 -- ============================================================================
--- § 4: Properties
+-- § 4: Strong ⊂ Weak — applied to the worked examples
 -- ============================================================================
 
-/-- Every strong-optimal pair satisfies Q against the full set. -/
-theorem strongOptimal_satisfies_Q {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat)
-    (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
-    satisfiesQ pairs profile p = true := by
-  rw [strongOptimal_eq_both, List.mem_filter] at hp
-  exact (Bool.and_eq_true_iff.mp hp.2).1
+/-! The structural meta-theorem `strongOptimal pairs profile ⊆ superoptimal
+    pairs profile` (@cite{blutner-2000} p. 12) is proved coinductively in the
+    substrate at `Core/Constraint/Evaluation/Superoptimal.lean` via
+    `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, against mathlib's
+    `OrderHom.gfp`) and `strongOptimal_subset_superoptimal` (Finset
+    corollary using the bridge theorem). The applications below are one-line
+    discharges of the convergence hypothesis via `by decide`. -/
 
-/-- Every strong-optimal pair satisfies I against the full set. -/
-theorem strongOptimal_satisfies_I {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat)
-    (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
-    satisfiesI pairs profile p = true := by
-  rw [strongOptimal_eq_both, List.mem_filter] at hp
-  exact (Bool.and_eq_true_iff.mp hp.2).2
+/-- Substrate's strong ⊂ weak applied to the Horn example. -/
+theorem strong_subset_weak_horn :
+    strongOptimal hornPairs hornProfile ⊆
+    superoptimal hornPairs hornProfile :=
+  strongOptimal_subset_superoptimal hornPairs hornProfile (by decide)
 
-/-- `strongOptimal` membership implies not blocked by the full pair set.
-    The two independent checks in `strongOptimal` (no Q-blocker, no
-    I-blocker) together cover the disjunction checked by `blocked`
-    (Q-blocker ∨ I-blocker). -/
-theorem strongOptimal_not_blocked {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat)
-    (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
-    blocked profile pairs p = false := by
-  rw [Bool.eq_false_iff]
-  intro hb
-  rw [← isBlocked_iff_blocked] at hb
-  rw [mem_strongOptimal_iff] at hp
-  obtain ⟨q, hq_mem, hq_dim, hq_lt⟩ := hb
-  rcases hq_dim with ⟨heq_f, hne_m⟩ | ⟨hne_f, heq_m⟩
-  · exact hp.2.2 q hq_mem heq_f hne_m hq_lt
-  · exact hp.2.1 q hq_mem heq_m hne_f hq_lt
-
-/-- @cite{blutner-2000} p. 12: "It is simple to prove that a pair which
-    is optimal (strong bidirection), is super-optimal (weak bidirection)
-    as well." Strong-optimal is a subset of super-optimal. -/
-theorem strong_subset_weak {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat)
-    (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
-    p ∈ superoptimal pairs profile := by
-  have hm : p ∈ pairs := (List.mem_filter.mp hp).1
-  have hnb := strongOptimal_not_blocked pairs profile p hp
-  exact superoptimal_of_unblocked pairs profile p hm hnb
-
-/-- Horn's division demonstrates strong ⊂ weak (strict inclusion):
-    the marked pair survives weak but not strong BiOT. -/
+/-- Strict inclusion in the Horn example: weak admits the marked-pair
+    that strong eliminates. -/
 theorem strong_strict_subset_weak_horn :
-    (strongOptimal hornPairs hornProfile).length <
-    (superoptimal hornPairs hornProfile).length := by
-  native_decide
+    (strongOptimal hornPairs hornProfile).card <
+    (superoptimal hornPairs hornProfile).card :=
+  weak_strictly_larger
 
-/-- The iterative-removal algorithm (`iterativeSuperoptimal`) agrees with
-    strong BiOT for Horn's division. This shows that iterative removal
-    over-removes: it behaves like the strong version (eq. 9), not
-    the weak version (eq. 14). -/
-theorem iterative_eq_strong_horn :
-    iterativeSuperoptimal hornPairs hornProfile =
-    strongOptimal hornPairs hornProfile := by
-  native_decide
-
-/-- The iterative-removal algorithm agrees with strong BiOT for
-    total blocking as well. -/
-theorem iterative_eq_strong_totalBlock :
-    iterativeSuperoptimal totalBlockPairs totalBlockProfile =
-    strongOptimal totalBlockPairs totalBlockProfile := by
-  native_decide
+/-- Substrate's strong ⊂ weak applied to total blocking. -/
+theorem strong_subset_weak_totalBlock :
+    strongOptimal totalBlockPairs totalBlockProfile ⊆
+    superoptimal totalBlockPairs totalBlockProfile :=
+  strongOptimal_subset_superoptimal totalBlockPairs totalBlockProfile
+    (by decide)
 
 end Pragmatics.Bidirectional

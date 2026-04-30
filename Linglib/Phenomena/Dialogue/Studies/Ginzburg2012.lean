@@ -8,7 +8,8 @@ import Linglib.Theories.Dialogue.KOS.NSUTaxonomy
 import Linglib.Theories.Dialogue.KOS.Examples
 import Linglib.Theories.Dialogue.KOS.Grammar
 import Linglib.Theories.Dialogue.KOS.RepriseContent
-import Linglib.Theories.Dialogue.KOS.TTRBridge
+import Linglib.Theories.Dialogue.KOS.Austinian
+import Linglib.Theories.Dialogue.KOS.CooperInfoState
 import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
@@ -32,7 +33,7 @@ Sluice-split-faithful Table 7.4 taxonomy.
 
 - §1. The Turn-Taking Puzzle (Ch. 2) — KOS's headline argument
 - §2. KOS architecture overview (Ch. 4)
-- §3. Inquiry cycle, TTR-typed (§4.4.5, via `TTRBridge.AustinianTIS`)
+- §3. Inquiry cycle, TTR-typed (§4.4.5, via `Austinian.AustinianTIS`)
 - §4. Grounding asymmetry: per-DGB stance (Ch. 4)
 - §5. Genre as TTR record (§4.6)
 - §6. Non-sentential utterance resolution (Ch. 5)
@@ -155,7 +156,7 @@ example {P Fact QContent Cont : Type} (tis : TIS P Fact QContent Cont) :
 
 @cite{ginzburg-2012} Ch. 4 §4.4.5 walks through the canonical
 Ask → Assert → Accept dialogue. We exercise the TTR-typed substrate
-from `KOS/TTRBridge.lean`, which instantiates `TIS` with
+from `KOS/Austinian.lean`, which instantiates `TIS` with
 `BCheckableAustinian` propositions and `TTRQuestionB` questions over
 a `Weather` situation type.
 
@@ -165,8 +166,8 @@ the substrate has been built to support them. -/
 /-- KOS's inquiry cycle works at TTR-typed content level: asserting
 "it is raining" resolves "is it raining?". -/
 theorem ttr_inquiry_cycle_resolves :
-    Dialogue.KOS.TTRBridge.atis₂.dgb.qud = [] :=
-  Dialogue.KOS.TTRBridge.atis_assert_resolves
+    Dialogue.KOS.Austinian.atis₂.dgb.qud = [] :=
+  Dialogue.KOS.Austinian.atis_assert_resolves
 
 /-- The same inquiry cycle in string-typed form (legacy worked example). -/
 theorem string_inquiry_cycle_resolves :

@@ -164,4 +164,65 @@ theorem mem_II_of_cell_witness {target : Set World}
   rw [II_eq_nonExcludable_of_cell_nonempty ALT φ ⟨w, hwitness⟩]
   exact ⟨htarget_alt, fun hexc => hwitness.2.1 target hexc htarget⟩
 
+/-! ## Cell-witness factorization: from cell verdict to `exhIEII` consequences
+
+The headline theorem of cell-identification (@cite{bar-lev-fox-2020}
+§3.3): once a cell witness is exhibited, `exhIEII` factors through
+the per-alternative verdict at the witness. In abstract terms, every
+alternative that holds at a cell witness is in II, hence asserted by
+`exhIEII`; every innocently excludable alternative is in IE, hence
+negated by `exhIEII`. The two corollaries below package these
+patterns as substrate-level theorems consumable by any
+`Exh^{IE+II}`-based study (basic FC, universal FC, SDA via Innocent
+Inclusion, etc.). -/
+
+/-- **Substrate-level cell-witness factorization (positive side).**
+    Any alternative that holds at a cell witness is entailed by
+    `exhIEII` at every world. Composition of `mem_II_of_cell_witness`
+    with the `hII` projection of `exhIEII`. -/
+theorem exhIEII_implies_cell_witnessed_alt {target : Set World}
+    (htarget_alt : target ∈ ALT)
+    (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
+    ∀ u, exhIEII ALT φ u → target u := by
+  intro u h_exh
+  exact h_exh.2.2 target (mem_II_of_cell_witness ALT φ htarget_alt w hwitness htarget)
+
+/-- **Substrate-level cell-witness factorization (list / multi-target).**
+    Given a cell witness and a list of alternatives all true at the
+    witness, `exhIEII` jointly entails every list member. The
+    cross-mechanism agreement template: any per-alternative-conjunction
+    operator (e.g., @cite{santorio-2018}'s `sdaEval`) factors through
+    `exhIEII` whenever the per-alternatives hold at a shared cell
+    witness. -/
+theorem exhIEII_implies_cell_witnessed_alts
+    (targets : List (Set World))
+    (h_in_alt : ∀ t ∈ targets, t ∈ ALT)
+    (w : World) (hwitness : cell ALT φ w)
+    (h_witness : ∀ t ∈ targets, t w) :
+    ∀ u, exhIEII ALT φ u → ∀ t ∈ targets, t u :=
+  fun u h_exh t ht =>
+    exhIEII_implies_cell_witnessed_alt ALT φ
+      (h_in_alt t ht) w hwitness (h_witness t ht) u h_exh
+
+/-- **Substrate-level cell-witness factorization (negation side).**
+    Any innocently excludable alternative is negated by `exhIEII`.
+    Definitional unfolding of `exhIEII`'s IE projection — named for
+    structural parallel with the positive side. -/
+theorem exhIEII_negates_excludable {target : Set World}
+    (h_ie : IsInnocentlyExcludable ALT φ target) :
+    ∀ u, exhIEII ALT φ u → ¬ target u :=
+  fun _ h_exh => h_exh.2.1 target h_ie
+
+/-- **Cell-witness refutes IE-ness.** Any alternative true at the cell
+    witness is NOT innocently excludable. Direct contrapositive of the
+    cell predicate's IE clause: the cell witness falsifies every IE
+    alternative, so an alternative true at the witness cannot be IE.
+    Avoids constructing MC-set witnesses for non-IE-ness proofs in
+    study files: once the cell is established, every cell-witnessed
+    alternative is non-IE by this 1-line corollary. -/
+theorem not_isInnocentlyExcludable_of_cell_witness {target : Set World}
+    (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
+    ¬ IsInnocentlyExcludable ALT φ target :=
+  fun h_ie => hwitness.2.1 target h_ie htarget
+
 end Exhaustification

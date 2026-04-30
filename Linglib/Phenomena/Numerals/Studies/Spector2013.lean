@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Spector 2013: Bare Numerals and Scalar Implicatures

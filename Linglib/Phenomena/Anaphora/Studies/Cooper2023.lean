@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.TypeTheoretic.Underspecification
-import Linglib.Theories.Semantics.TypeTheoretic.Quantification
+import Linglib.Phenomena.Anaphora.Studies.Cooper2023Ch8
+import Linglib.Phenomena.Quantification.Studies.Cooper2023
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
@@ -29,9 +29,10 @@ surveyed in @cite{sutton-2024}.
 
 -/
 
-namespace Cooper2023
+namespace Phenomena.Anaphora.Studies.Cooper2023
 
 open Semantics.TypeTheoretic
+open Phenomena.Anaphora.Studies.Cooper2023.Ch8
 open Phenomena.Anaphora.DonkeyAnaphora
 open Phenomena.Anaphora.Coreference
 
@@ -58,30 +59,24 @@ theorem geach_weak_available :
     Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer2) :=
   ⟨rfl, ⟨farmer1_weak_donkey⟩, ⟨farmer2_weak_donkey⟩⟩
 
-/-- Geach donkey: strong reading available -- TTR predicts checkmark.
-    `geachDonkey.strongReading = true` and TTR produces a conditional
-    strong witness for both farmers. -/
-theorem geach_strong_available :
-    geachDonkey.strongReading = true ∧
-    Nonempty (strongDonkeyConditional .farmer1) ∧
-    Nonempty (strongDonkeyConditional .farmer2) :=
-  ⟨rfl, ⟨farmer1_strong_conditional⟩, ⟨farmer2_strong_conditional⟩⟩
-
-/-- Geach donkey: bound reading -- TTR confirms the pronoun depends on
+/-- Geach donkey: bound reading — TTR confirms the pronoun depends on
     the indefinite via parametric background (the donkey is the Bg). -/
 theorem geach_bound_reading :
     geachDonkey.boundReading = true ∧
     farmerOwnsBeatsDonkey.Bg = DonkeyBg :=
   ⟨rfl, rfl⟩
 
-/-- Strong dominant: both readings TTR-available (consistent with
-    `strongDominant` recording both as available with strong preferred). -/
+/-- Strong dominant: TTR records the weak reading is available (𝔏 produces
+    a witness). The conditional-strong reading via the formaliser-invented
+    `localizeConditional` was deleted in 0.230.564 (per audit: Cooper's own
+    strong-donkey mechanism is 𝔓^∀ over an indexed background, not a
+    separate conditional gate; see TODO note in `Cooper2023Ch8.lean`
+    DonkeyAnaphora section). -/
 theorem strongDominant_readings_available :
     strongDominant.strongAvailable = true ∧
     strongDominant.weakAvailable = true ∧
-    Nonempty (strongDonkeyConditional .farmer1) ∧
     Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer1) :=
-  ⟨rfl, rfl, ⟨farmer1_strong_conditional⟩, ⟨farmer1_weak_donkey⟩⟩
+  ⟨rfl, rfl, ⟨farmer1_weak_donkey⟩⟩
 
 -- ============================================================================
 -- Bridge: TTR binding -> Phenomena/Anaphora/Coreference (bridge theorem 3)
@@ -180,8 +175,8 @@ to the same classical truth conditions.
 -/
 
 open Semantics.Dynamic.CDRT (DProp Register SProp)
-open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse
-  propT purify purifyUniv)
+open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
+open Phenomena.Quantification.Studies.Cooper2023 (purify purifyUniv)
 
 variable {E : Type}
 
@@ -414,4 +409,4 @@ theorem concrete_agreement :
 
 end ConcreteModel
 
-end Cooper2023
+end Phenomena.Anaphora.Studies.Cooper2023

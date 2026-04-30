@@ -1,23 +1,21 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Fragments.Slavic.Case
+
 /-!
-# Slovenian Case Inventory
-@cite{blake-1994}
+# Slovene Case Inventory
+@cite{priestly-1993} @cite{blake-1994}
 
-Slovenian has **6 cases**: NOM, ACC, GEN, DAT, LOC, INST. Unlike
-most other South Slavic languages (which have lost case), Slovenian
-preserves the full 6-case system. No distinct vocative.
-
-Perfectly contiguous on Blake's hierarchy.
-
+Per @cite{priestly-1993} (p. 399), Slovene has 6 cases
+(NOM/ACC/GEN/DAT/INST/LOC) with no productive vocative, patterning
+with standard Russian against Ukrainian/Polish/Czech/Serbo-Croat among
+the modern Slavic case-bearing languages. The prepositional
+restriction Priestly notes for INST is Slovene-specific within Slavic
+(see `Fragments/Slavic/Case.lean` for cross-Slavic discussion). The
+directory name `Slovenian` is historical; Priestly's chapter title is
+"Slovene".
 -/
 
 namespace Fragments.Slavic.Slovenian.Case
 
-/-- Slovenian 6-case inventory. -/
-def caseInventory : Finset Core.Case :=
-  {.nom, .acc, .gen, .dat, .loc, .inst}
-
-example : Core.Case.IsValidInventory caseInventory := by decide
+abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Slovenian.Case

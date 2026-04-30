@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Datasets.WALS.Features.F87A
 import Linglib.Theories.Syntax.Minimalist.Modification
-import Linglib.Fragments.Greek.AdjAgreement
+import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.Slavic.Russian.AdjAgreement
 import Linglib.Fragments.Italian.AdjAgreement
@@ -436,21 +436,21 @@ def english_enough : AdjMorphProfile :=
 
 /-- Greek: fragment entry confirms pred = attr agreement. -/
 theorem greek_fragment_sameAgreement :
-    Fragments.Greek.AdjAgreement.entry.sameAgreement = true := by native_decide
+    Fragments.Greek.StandardModern.AdjAgreement.entry.sameAgreement = true := by native_decide
 
 /-- Greek: fragment entry confirms φ/κ-completeness. -/
 theorem greek_fragment_phiKappaComplete :
-    Fragments.Greek.AdjAgreement.entry.phiKappaComplete = true := by native_decide
+    Fragments.Greek.StandardModern.AdjAgreement.entry.phiKappaComplete = true := by native_decide
 
 /-- Greek profile is consistent with fragment: pred = attr. -/
 theorem greek_profile_consistent_pred :
     greek.predAttrSameAgreement =
-    Fragments.Greek.AdjAgreement.entry.sameAgreement := by native_decide
+    Fragments.Greek.StandardModern.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Greek profile is consistent with fragment: φ/κ-complete. -/
 theorem greek_profile_consistent_phikappa :
     greek.agreementPhiKappaComplete =
-    Fragments.Greek.AdjAgreement.entry.phiKappaComplete := by native_decide
+    Fragments.Greek.StandardModern.AdjAgreement.entry.phiKappaComplete := by native_decide
 
 /-- German: fragment entry confirms pred ≠ attr. -/
 theorem german_fragment_not_sameAgreement :

@@ -4,9 +4,154 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-### 0.230.568 — Tier-A audit fixes on the Arabic MSA work (commit 4f6309fe)
+### 0.230.571 — Superoptimal substrate rename + flatten directory: bare `superoptimal` Finset-canonical, `superoptimalSet` Set-abstract, `Constraint/Evaluation/` one-file subdir promoted to sibling
 
-Four-agent audit of `4f6309fe` (linguistics-domain-expert + mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler) surfaced six convergent findings; this commit applies them. **A1 (substrate dedup)**: dropped the new `Core.HeadDefiniteness | definite | indefinite | both` enum and replaced the `RelClauseMarker.headDefiniteness` field type with `Option Features.Definiteness.Definiteness` (the existing 2-case enum from @cite{heim-1982}). The fresh enum was a substrate fork — CLAUDE.md "derive don't stipulate". `.both` was unused (markers split into definite-headed and indefinite-headed entries, each with a single value). All 4 Arabic markers populate cleanly via dot-notation through the `Option`. Default `none` keeps the 18 sibling Relativization Fragments unchanged. **A2 (relMarkers naming)**: dropped the paper-specific `relMarkersKC` from the Fragment substrate (caught mid-fix as the same paper-specific-apparatus-in-Fragment anti-pattern MEMORY.md flags); `relMarkers` now is the explicit 4-marker MSA-complete inventory (definite-headed pair + indefinite-headed asyndetic pair); the K&C 1977 study's 2-marker subset is enumerated explicitly inline at `Phenomena/Relativization/Studies/KeenanComrie1977.lean::arabic` with a docstring noting K&C's narrower scope. **A3 (Numerals ordinal)**: `firstSecondSuppletion` → `firstSuppletion`; *thaanin* shares the th-n-y root with *ithnaani* and uses the regular *faaʿil* template, so per Greenberg/WALS Ch 53A's formal-distinctness criterion only "first" *ʾawwal* (root ʾ-w-l) is suppletive. Docstring rewritten to reflect this. **A4 (Possession example)**: replaced Egyptian-shaped `"indi kitaab"` example with MSA-correct `"ʿindii kitaab-un" / "kitaab-u l-walad-i"`; expanded `notes` to describe construct state and case marking precisely (no nunation, no definite article on head, possessor in genitive). **A5 (Negation namespace)**: nested `Fragments.Arabic.ModernStandard.Negation` under `.Negation` to match every sibling Negation Fragment's convention (English/French/Slavic/Russian etc. all use `Fragments.X.Negation` namespace). **A6 (Miestamo registration)**: REVERSED COURSE after PDF verification. Read Miestamo (2005) directly via the Anna's Archive PDF; verified via the index of languages (pp. 470–476) that **Arabic is not in Miestamo's 297-language sample**. Also verified that WALS Ch 113A/114A (which Miestamo authored) carries only the `aeg` row for Egyptian Arabic (`arz`), classified there as `.symmetric` / `.nonAssignable` — `arb` (MSA) is absent. So registering MSA in `Phenomena/Negation/Studies/Miestamo2005.lean::allData` would have been claiming a Miestamo classification that doesn't exist. The Miestamo2005 study file is fully reverted (no MSA addition); the Fragment's WALS Ch 113/114 fields are populated as project-internal extrapolation per Ryding §37 + Benmamoun ch 6, with the Negation Fragment's docstring explicitly flagging that MSA isn't in Miestamo's sample or WALS data so the values shouldn't be cited as Miestamo's own. The Fragment's `symmetry := .both` / `asymmetrySubtype := .finAndCat` reflect the descriptive truth that *laa* + present indicative and *maa* + past are structurally symmetric while *lam* + jussive / *lan* + subjunctive (paradigmatic mood shift) and *lays-a* (constructional copula introduction) are asymmetric. Build green for 950 jobs. Tier B (sharper `intensifierReflexive` docstring, MSA addition to Caha2009.lean, Aoun-Choueiri-Hornstein 2001 bib + TODO for resumption refinement, `Linglib.lean` aggregation + alphabetization, ISBN format normalization) deferred to follow-up.
+Direct continuation of 0.230.569 + 0.230.570 (dual-API substrate + Bidirectional.lean rewrite). User picked "Bare Finset + symmetric Set suffix" rename scheme; spotted that `Core/Constraint/Evaluation/` was a one-file subdirectory and asked to flatten.
+
+**Rename pass** (consistent across substrate + 5 consumer files via `scratch/rename_superoptimal.py`, applied in collision-safe order with TEMP markers between Step name swaps):
+
+- `superoptimalFin` → `superoptimal` (Finset, the canonical consumer-facing form).
+- `superoptimalGfp` → `superoptimalSet` (Set, the abstract form for structural arguments).
+- `superoptimalStep` (Set, anti-monotone op) → `superoptimalSetStep`.
+- `superoptimalStepSq` (Set, monotone OrderHom) → `superoptimalSetStepSq`.
+- `superoptimalFinsetStep` (Finset, computable op used in iteration) → `superoptimalStep` (now bare).
+- `superoptimalFin_coe_eq_gfp` → `superoptimal_coe_eq_set` (the bridge theorem).
+- `superoptimalFin_subset` → `superoptimal_subset`.
+- `superoptimalFin_isFixedPoint` → `superoptimal_isFixedPoint`.
+- `strongOptimalFin` → `strongOptimal` (Finset, parallel to bare `superoptimal`).
+- `strongOptimalFin_subset_superoptimalFin` → `strongOptimal_subset_superoptimal`.
+- `mem_strongOptimalFin` → `mem_strongOptimal`.
+- `isStrongOptimal_imp_mem_superoptimalGfp` → `isStrongOptimal_imp_mem_superoptimalSet`.
+- `isStrongOptimal_subset_superoptimalGfp` → `isStrongOptimal_subset_superoptimalSet`.
+- `superoptimalGfp_eq_of_witness` → `superoptimalSet_eq_of_witness`.
+- `superoptimalGfp_eq_of_finset_witness` → `superoptimalSet_eq_of_finset_witness`.
+- `superoptimalGfp_subset` → `superoptimalSet_subset`.
+
+The rename script is idempotent and parameterized; available at `scratch/rename_superoptimal.py` for any followup.
+
+**Directory flattening**: `Core/Constraint/Evaluation/Superoptimal.lean` → `Core/Constraint/Superoptimal.lean`; the `Evaluation/` one-file subdirectory removed. Mathlib convention: a subdirectory implies multiple related files; one file alone reads as speculative scaffolding. `Constraint/` flattens to consistent siblings (now: `Cumulativity`, `Decoder`, `Evaluation`, `MaxEnt`, `NoiseKernel`, `NoisyHG`, `Pareto`, `PartiallyOrderedConstraints`, `PermSubsetCombinatorics`, `Profile`, `Semiring`, `Separability`, `Superoptimal`, `System`, `Variation`, `Weighted`, plus `Dequantization/` and `OT/` real multi-file subdirs).
+
+**Import updates** at 5 sites: `Linglib.lean` (mega-import file), `Bidirectional.lean`, `Krifka2007.lean`, `Blutner2000.lean`, `DeHoopMalchukov2008.lean`. Docstring path mentions in `Evaluation.lean` updated.
+
+**Build**: full project 5671 jobs green; no theorem-content changes, only namespacing.
+
+### 0.230.570 — Bidirectional.lean substrate-up rewrite: strong-BiOT mathlib-grounded + legacy List substrate retired
+
+Direct continuation of 0.230.569 (dual-API `superoptimal`/`superoptimalSet` substrate). User picked "Substrate-up rewrite + structural deepening" for `Theories/Pragmatics/Bidirectional.lean`.
+
+**New strong-BiOT substrate** (added to `Core/Constraint/Superoptimal.lean`, ~115 LOC):
+
+- `IsStrongOptimal pairs profile p : Prop` — Set-valued strong-BiOT predicate (`p ∈ pairs ∧ ¬ Blocks profile pairs p`); reduces to `superoptimalSetStep pairs profile pairs` by definition (`isStrongOptimal_iff_mem_superoptimalSetStep_self`).
+- `IsStrongOptimal.decidableOnFinset` — Decidable instance on Finset-coerced witnesses, derived from `Blocks.decidableOnFinset`.
+- `strongOptimal pairs profile : Finset (F × M)` — Finset-native computable form via `Finset.filter`. `mem_strongOptimal` membership simp-lemma.
+- **Headline structural meta-theorem** `isStrongOptimal_imp_mem_superoptimalSet` (@cite{blutner-2000} p. 12: "every strong-optimal pair is super-optimal"): coinductive proof against mathlib's `OrderHom.gfp` via the `OrderHom.le_gfp` rule. Witness: the singleton `{p}` is a post-fixed point of `superoptimalSetStepSq` whenever `p` is strong-optimal — the only candidate blocker for `p` from `F({p}) ⊆ pairs` is excluded by strong-optimality (no `pairs`-element blocks `p`) plus `Blocks.mono`. NO algorithmic detour through `superoptimal_of_unblocked` or iterative-removal preservation lemmas; pure structural argument against `OrderHom.gfp` as the supremum of post-fixed points on the `Set α` complete lattice.
+- Set-inclusion form `isStrongOptimal_subset_superoptimalSet` and Finset corollary `strongOptimal_subset_superoptimal` (consumer-facing convergence-discharged form via the bridge theorem `superoptimal_coe_eq_set`).
+
+**Bidirectional.lean rewrite** (~315 LOC → ~270 LOC): converted `hornPairs` and `totalBlockPairs` from `List` to `Finset`. All worked-example theorems migrated:
+
+- `horn_weak_biot`, `horn_strong_biot` (Finset equality, `decide`).
+- `total_blocking_weak`, `total_blocking_strong` (Finset equality, `decide`).
+- `weak_strictly_larger`, `total_blocking_weak_vs_strong` (`Finset.card` strict inequality, `decide`).
+- `strong_subset_weak_horn`, `strong_subset_weak_totalBlock` (substrate-grounded one-line discharges via `strongOptimal_subset_superoptimal _ _ (by decide)`).
+- `strong_strict_subset_weak_horn` (alias of `weak_strictly_larger` for symmetry).
+
+**Net `native_decide` reductions in Bidirectional.lean**: −7 (was the only remaining file using `native_decide` in the Bidirectional substrate stack).
+
+**Deleted illustrative theorems** (`iterative_eq_strong_horn`, `iterative_eq_strong_totalBlock`): the iterative-removal-without-readmission algorithm is no longer formalized. The "iterative ≠ weak" point is captured directly by the existence of the re-admission step in `superoptimalLoop`. `strongOptimal` IS the strong-BiOT Finset and `superoptimal` IS the weak-BiOT Finset.
+
+**Deleted helper theorems** (`strongOptimal_eq_both`, `strongOptimal_satisfies_Q`, `strongOptimal_satisfies_I`, `strongOptimal_not_blocked`): these connected the legacy List-based `strongOptimal` to `satisfiesQ`/`satisfiesI`. The new substrate's `mem_strongOptimal` directly captures the same content (`p ∈ strongOptimal pairs profile ↔ p ∈ pairs ∧ ¬ Blocks profile (↑pairs : Set _) p`); `Blocks` is the Set-valued blocker conjunction of Q-blocker and I-blocker.
+
+**Retained** `satisfiesQ`/`satisfiesI` (List-Bool) for `Blutner2000.lean`'s `accommodation_blocked_is_Q`/`indefinite_satisfies_both` consumer theorems that check Q or I in isolation.
+
+**Legacy substrate retired from `Core/Constraint/Evaluation.lean`** (~190 LOC deleted, replaced with two pointer-docstrings to `Superoptimal.lean`):
+
+- `IsBlocked` (List-based Prop), `blocked` (List-based Bool), `isBlocked_iff_blocked` — superseded by `Superoptimal.Blocks` (Set, decidable on Finset).
+- `iterativeSuperoptLoop`, `iterativeSuperoptimal` — algorithm not formalized post-rewrite.
+- `superoptLoop` (private fuel-iter helper), legacy `superoptimal` (List) — superseded by `Superoptimal.superoptimal` (Finset, computable) + `Superoptimal.superoptimalSet` (Set, gfp).
+- Legacy `IsStrongOptimal` (List Prop), `strongOptimal` (List), `mem_strongOptimal_iff` — superseded by Set-valued `Superoptimal.IsStrongOptimal` + Finset-native `Superoptimal.strongOptimal`.
+- `blocked_anti_mono`, `superoptLoop_preserves`, `superoptimal_of_unblocked` — invariant lemmas for the legacy superoptimal loop. Their structural content (mathlib `OrderHom.gfp` IS the supremum of post-fixed points) is built into the Park-rule / coinduction API of `superoptimalSet`.
+
+**Substrate layering achieved**: `Evaluation.lean` is now exclusively LexLE/SatLE preorder substrate + `LexProfile`/`SatProfile` `Preorder` instances + `ViolationProfile n` `LinearOrder`. All BiOT machinery (Blocks, Set-gfp, Finset-native, Park-witness, strong-vs-weak meta-theorem) lives in `Superoptimal.lean`. Single source of truth; no parallel List-based vs Finset-based vs Set-based shadow APIs.
+
+**Build**: full project 5671 jobs green. Bibliography validation: 8000 valid + 312 unknown citations (all pre-existing, none from the substrate touch).
+
+### 0.230.569 — Bidirectional OT superoptimality: dual API (Finset-native computable + Set-valued mathlib `OrderHom.gfp`) + 4 consumer migrations
+
+User-driven refactor (with mid-flight mathlib-reviewer audit and post-implementation pivot to dual API): replace the legacy fuel-bounded list-iteration `superoptimal` algorithm in `Core/Constraint/Evaluation.lean` with a mathlib-grounded greatest-fixed-point design. Substantial substrate work + 4 paper-side migrations (Krifka 2007, Blutner 2000, DeHoop & Malchukov 2008, Haspelmath 2021).
+
+**Design pivot mid-implementation**: initial single-API design used `superoptimalSet` (Set-valued, abstract) with `superoptimalSet_eq_of_finset_witness` Park-witness lemma — every per-paper proof was three `by decide`s on subset/unblocked/closure conditions. User feedback: "still feels clunky." Pivoted to a **dual API** following the mathlib house pattern (e.g. `Finset.gcd` + `Nat.gcd` + bridge): a Finset-native computable form for per-paper `decide` proofs, plus the Set-valued abstract form for structural arguments, plus a bridge theorem connecting them.
+
+**New substrate** (`Core/Constraint/Superoptimal.lean`, ~370 LOC):
+
+- `Blocks profile S p` (Set-valued blocking relation) + `Blocks.decidableOnFinset` (load-bearing Decidable instance for Finset-coerced witnesses, derived via `Finset.decidableBExists`).
+- `superoptimalSetStep`/`superoptimalSetStepSq` (anti-monotone step + monotone OrderHom square).
+- `noncomputable def superoptimalSet pairs profile := (superoptimalSetStepSq pairs profile).gfp` anchored in mathlib's `OrderHom.gfp` via `Set α`'s `CompleteAtomicBooleanAlgebra` instance; the abstract Set-valued canonical form for structural arguments (uniqueness, ranking-invariance across BiOT variants, etc.).
+- `IsParkWitness` Park-style witness structure (subset/unblocked/closure) + `superoptimalSet_eq_of_witness h_finite witness` — abstract Park-rule uniqueness theorem. Proof: `S ≤ gfp` via `OrderHom.le_gfp` (coinduction); `gfp ≤ S` via `OrderHom.gfp_le` (Park rule) + minimum-profile descent using `Set.Finite.exists_minimalFor` against the existing `LexProfile` preorder. Knaster-Tarski-style maximality with profile-LexLT-minimum extraction, end-to-end against mathlib.
+- `superoptimalSet_eq_of_finset_witness` — Finset-bounded version of the Park-witness lemma; hypotheses syntactically Finset-bounded ∀, decidable when paired with `Blocks.decidableOnFinset`.
+- **Finset-native canonical form** (`section Computable`): `superoptimalSetStep_TEMPFIN` (`Finset.filter`-based, computable via `Blocks.decidableOnFinset`); private `superoptimalLoop` (bounded-fuel iteration); `def superoptimal pairs profile := superoptimalLoop pairs profile pairs (2*pairs.card+1)` — the consumer-facing canonical form. `superoptimal_subset` (output ⊆ input). `superoptimal_coe_eq_set` — **bridge theorem**: when iteration converges, `↑(superoptimal pairs profile) = superoptimalSet ↑pairs profile`, established by exhibiting the Finset's coercion as the Park-witness for the gfp.
+
+**Per-paper consumer API** (the result of the pivot): each per-paper output equality is **one `by decide`** on a literal Finset:
+
+```
+theorem foo : superoptimal pairs profile = winner := by decide
+```
+
+Same proof-content character as the original `native_decide` approach but kernel-verified via `decide`, and the abstract structural argument lifts via the bridge when needed:
+
+```
+theorem foo_gfp : superoptimalSet ↑pairs profile = ↑winner := by
+  rw [← superoptimal_coe_eq_set _ _ (by decide), foo]
+```
+
+**Substrate cleanup**: promoted `lexLT_trans` from a private helper to a public theorem in `Evaluation.lean` next to siblings `lexLT_irrefl`/`lexLT_asymm`. Legacy list-based `superoptimal`/`strongOptimal`/`iterativeSuperoptimal` retained in `Evaluation.lean` — used by `Theories/Pragmatics/Bidirectional.lean`'s structural `strong_subset_weak` theorem comparing strong vs weak BiOT (a structural meta-theorem about TWO different OT algorithms; not just an alternative computation of the same algorithm).
+
+**Mathlib-reviewer audit corrections applied** (mid-flight on the GFP-only initial design): universe polymorphism (`Type*`); `IsGfpWitness → IsParkWitness` rename (Park's-induction terminology is the recognized mental hook); `@[simp] mem_superoptimalSetStep`; `Subrel`/`WellFoundedOn`/`Set.univ` ceremony replaced with the canonical `Set.Finite.exists_minimalFor` mathlib idiom (deletes private `profileLT` + `profileLT_isStrictOrder`); `Set.not_subset.mp` replaces `by_contra/push_neg` dance.
+
+**Per-paper migrations** (4 files, ~18 theorems total, all converging on the post-pivot Finset-native form):
+
+- `Phenomena/Negation/Studies/Krifka2007.lean`: 7 theorems migrated. `krifka_biot_prediction` is `by decide` on the Finset; companion `krifka_biot_prediction_gfp` lifts to the Set-valued abstract form via the bridge theorem (3-line proof). Headline `economy_ranking_independent` is `by decide` (both rankings stabilize to the same Finset — the substantive Blutner-2000 ranking-invariance claim is Lean-checked by literal output equality on the iteration). `biot_covers_all_*` collapse to `by decide` on Finset image equalities.
+- `Phenomena/Presupposition/Studies/Blutner2000.lean`: 3 theorems migrated. Each is `by decide` on `superoptimal gen profile = winner`. Auxiliary `accommodation_blocked_is_Q`/`indefinite_satisfies_both` use a parallel `genAccidentList` for the legacy `satisfiesQ`/`satisfiesI` API; converted from `native_decide` to `decide`.
+- `Phenomena/Case/Studies/DeHoopMalchukov2008.lean`: 8 theorems migrated. `dom_convergence` becomes `rw [dom_identify, dom_distinguish]` (both rankings map to the same `winnerIdentify` Finset — the structural reason for DOM convergence). `dsm_divergence` reduces to `decide` after rewriting both sides. `markingPattern` migrated from legacy List-based `superoptimal` + `List.find?` to `superoptimal` + `Finset.mem` membership check (`extractForm` simplified from `find?` pattern to `if (.overt, s) ∈ pairs then .overt else .zero`); deletes the parallel `allPairsList : List`. All 4 typology theorems (subject/object/PaIP-ranking/alignment-correlation) migrated from `native_decide` to `decide`.
+- `Phenomena/Case/Studies/Haspelmath2021.lean`: 1 theorem migrated, one-line restate via `dsm_distinguish`.
+
+**Net `native_decide` reductions across the 4 files**: −20 (12 in DeHoopMalchukov2008, 6 in Krifka2007, 2 in Blutner2000).
+
+**Substrate-vs-paper layering achieved**: substrate carries the Park-rule grounding (mathlib `OrderHom.gfp`, `Set.Finite.exists_minimalFor`, `IsParkWitness`) AND the Finset-native computable form via `Blocks.decidableOnFinset`. Per-paper consumers carry only the ranking, profile, and winner Finset — output equality is `by decide`. Structural cross-framework theorems (e.g. `dom_convergence`/`economy_ranking_independent`/`dsm_divergence`) are direct rewrites on the Finset form; lifts to the abstract gfp form available via the bridge for any consumer who needs them.
+
+**Out of scope (deferred)**: legacy list-based `superoptimal`/`strongOptimal`/`iterativeSuperoptimal` retained for `Bidirectional.lean`'s `strong_subset_weak` structural theorem (strong-optimal ⊂ weak-optimal as a meta-theorem about OT algorithms). Renaming `superoptimalSet → superoptimalSet` deferred (would require a coordinated cross-file rename; current name is unambiguous alongside `superoptimal`). Bidirectional.lean's worked Horn examples retained on the legacy list form (illustrative theory-file content; not blocking any paper).
+
+**Build**: full project 5671 jobs green.
+
+### 0.230.568 — Kampanarou & Alexiadou 2026 (Greek genitive alternation): 4-agent audit-driven study + 3 dialect Possession Fragments + Greek/ Arabic-style restructure + SocialMeaningGame rename + 45-entry bib batch
+
+Formalization of @cite{kampanarou-alexiadou-2026} (Glossa 11(1), DOI 10.16995/glossa.23696). K&A's central claim: in SMG, the alternation between inflectional GEN and *apo*-PP is **structural** (distinct syntactic mechanisms) not morphological. Plan iterated through 4-agent audit (linguistics-domain-expert PDF-verified, linglib-integration-auditor, cross-framework-reconciler, Explore) before any code landed; revised plan in `scratch/kampanarou_alexiadou_2026_plan_v2.md`.
+
+**Architectural restructure** (Arabic-style; matches `Fragments/Arabic/{Egyptian,ModernStandard}/` precedent). `Fragments/Greek/` flat layout reorganized: 9 SMG-specific files moved into `Fragments/Greek/StandardModern/` with namespaces updated `Fragments.Greek.X → Fragments.Greek.StandardModern.X`. `AncientDirectives.lean` moved to `Fragments/Greek/AncientGreek/Directives.lean` (namespace `Fragments.Greek.AncientGreek.Directives` was `Fragments.Greek.Ancient`). `Case.lean` stays at parent level as multi-variety substrate. 9 consumer files updated mechanically via `scratch/greek_namespace_migrate.py`.
+
+**Naming-clash cleanup** (separable, landed pre-emptively): `Theories/Sociolinguistics/SMG.lean` (Burnett 2019 Social Meaning Games) → `SocialMeaningGame.lean`, namespace `Sociolinguistics.SMG → Sociolinguistics.SocialMeaningGame`. SMG is field-standard for Standard Modern Greek; rename eliminates a footgun before Greek work proliferates. 3 consumer files updated via `scratch/smg_rename.py` with negative-lookahead regex preserving prose abbreviations (`SMGs`, `mkSMG`).
+
+**3 new dialect Possession Fragments** (per linguistics-expert finding F10: K&A footnote 7 + Liosis 2016 establishes a 3-way contrast not 2-way):
+
+- `Fragments/Greek/StandardModern/Possession.lean` (~70 LOC): SMG `PossessionProfile` per Holton et al. 2012. Schema-consensus only (noObligatory / noClassification / haveVerb / dependentMarking) plus `genNotions`/`apoNotions : List PossessiveNotion` projections.
+- `Fragments/Greek/Grevena/Possession.lean` (~80 LOC): genitive-loss endpoint per @cite{michelioudakis-chatzikyriakidis-spathas-2024}. `adnominalStrategy = .juxtaposition`; `apoNotions` covers full GEN range; `genNotions` empty.
+- `Fragments/Greek/Smyrna/Possession.lean` (~70 LOC): genitive-OVER-extension endpoint per @cite{liosis-2016}. Same surface strategy as SMG but more permissive paradigm: -aki diminutives license inflectional genitive that SMG rejects as paradigm gaps. Establishes bidirectionality of the dialect continuum.
+
+**Study file** `Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean` (~370 LOC, 0 sorries; 6 stub theorems carry `True := trivial` placeholder with TODO):
+
+- §1 partitive-coercion-aware felicity (`PossessionRelation` over `PossessiveNotion × Animacy × isBodyPart` reuses substrate enum NOT a new one — auditor B1 caught the parallel-re-stipulation risk against `Barker2011.PossessionRelationType` + `Typology.Possession.PossessiveNotion` + `InalienabilityRank`); `SetConstrualFactors` + `canBeConstruedAsSet` + `isApoFelicitous` capture K&A's actual analysis (set-construability gates partitive coercion); 5 decide-checked example theorems over data exx (5)–(28).
+- §2 paradigm gaps with 4-way `Acceptability` (per linguistics-expert F14: K&A use `*`/`??`/`#`/`?`); `gap_does_not_force_apo` decide-checked sentry showing apo only rescues part-whole.
+- §4 scope diagnostic (per linguistics-expert F5: corrected inferential direction — alienable uniquely blocks surface scope, not "apo patterns with inalienable" symmetry); `canAffectGender_iff_licensesSurfaceScope` bridges to GLH substrate.
+- §5 three syntactic analyses grounded in real substrate (per auditor B4 + reconciler #6): `predSC_predCat := SCPredCategory.P`; `lightP_relator := ApplType.lowSource`; `kampanarou_preferred := .lightP` per K&A pp. 29+31; `lightP_is_lowSource_in_DP` bridge theorem to verbal-domain Applicative (silent-divergence lodge per reconciler tier 2).
+- §6 Single Argument Restriction (per linguistics-expert F7: K&A's strengthening of familiar Single Genitive Restriction); imports `Wood2023.NominalizationReading` for derived-nominal vs result-nominal distinction (per reconciler — REUSE Wood2023's enum, do NOT promote substrate); `cen_blocks_theme_apo` + `result_licenses_theme_apo` capture K&A §6.
+- §7 3 forced contrastive theorems (per reconciler tier 1): `ka2026_refutes_myler_VI_for_smg` (K&A §5 explicit refutation); `apo_PP_cannot_extract_per_ka2026` (vs AissenPolian2025 — same nP slot, opposite predictions; sorry-stub with TODO once Distinctness substrate lands); `gg_uses_reduced_relative_smg_does_not` (Fragment-grounded `adnominalStrategy` mismatch). Plus 3 stubs (Alexiadou & Stavrou 2020, Cardinaletti & Giusti 2006, Barker 1995) per linguistics-expert §5: 4-way controversy not settled debate.
+- §8 diachronic note + `ka2026_smg_to_gg_not_in_heine_typology` negative theorem (per reconciler tier 1 + linguistics-expert F4: Mertyris 2023 is proximate cite; Heine's `PossessionSource` has no slot for inflection-to-adposition ADNOMINAL trajectory).
+- Local `distinctnessLocal` predicate with TODO promotion (0 current Lean consumers of Richards 2010; defer substrate landing per `SC particles`/`Indefinite paradigm` deferred-substrate convention).
+
+**Substrate touch** (per linguistics-expert F2 + auditor option-1 D4): `Theories/Morphology/DM/NominalStructure.lean` docstring rewritten — `@cite{alexiadou-2003}` elevated as primary source for inalienable=complement-of-NP / alienable=Spec,PossP distinction (was downstream-attributed via Adamson 2024); `@cite{kampanarou-alexiadou-2026}` added; inline caveat flags that `.specN` is a contemporary DM gloss on Alexiadou 2003's complement-of-NP, and that Michelioudakis et al. 2024 collapses both possessor types into Spec,nP (field divergence not yet substrate-represented). NO signature changes.
+
+**45-entry bib batch** verified against K&A References pp. 33–39 read directly. Greek-specialist additions: `kampanarou-alexiadou-2026`, `alexiadou-2003`, `holton-mackridge-philippaki-warburton-spyropoulos-2012`, `michelioudakis-chatzikyriakidis-spathas-2024` (3 named authors), `liosis-2016`, `mertyris-{2014,2019,2023}` (mertyris-2014 = La Trobe NOT Melbourne per linguistics-expert correction), `sims-2006`, `ralli-2000`, `nikiforidou-1991`, `alexiadou-{2001,2024,2025}`, `alexiadou-stavrou-2020`, `horrocks-stavrou-1987`, `angelopoulos-michelioudakis-2023`, `tzitzilis-papanastasiou-2024`, `markopoulos-2018`, `tsompanidou-2023`, `kampanarou-{2021,2023}`, `theophanopoulou-kontou-2000`, `lechner-anagnostopoulou-2006`, `ramadanidis-2022`, `melissaropoulou-2014`, `zombolou-2011`, `kavoukopoulos-1990`. Theoretical: `bruening-2012`, `grimshaw-1990` (was missing despite 6+ citing files), `alexiadou-anagnostopoulou-schaefer-2009` (NELS 38 — load-bearing for §6), `alexiadou-2017`, `bally-1996`, `chappell-mcgregor-1989`, `folli-harley-{2006,2020}`, `roberts-roussou-2009`, `van-riemsdijk-1998`, `cinque-1980` (NP-internal hierarchy, distinct from extant `cinque-1999` modal hierarchy), `keenan-1987`, `borer-2013`, `aikhenvald-{2012,2019}`, `haspelmath-2017` (Predictability vs Iconicity — alienability framework K&A's coercion fits inside), `conti-luraghi-2014`. Festschrift contributions and conference talks left without DOI per minimum-but-correct convention. Bib batch idempotently re-runnable via `scratch/kampanarou_bib_batch.py` (parallel-session reverts mid-PR required two re-applications).
+
+**Build status**: `lake build Linglib.Phenomena.Possession.Studies.KampanarouAlexiadou2026` green; bib check 7992 valid / 312 unknown (none from this PR). Scope of restructure: 18 Greek Fragment files moved/touched, 11 consumer files updated, 1 substrate docstring + 4 new SocialMeaningGame consumer-edits, 1 study + 45 bib entries.
 
 ### 0.230.567 — Holliday & Mandelkern 2024 audit-driven refactor: substrate Wittgenstein's Law (Prop 4.27) + first cross-framework Lean-checkable contradiction in Modality (HM vs Veltman 1996)
 

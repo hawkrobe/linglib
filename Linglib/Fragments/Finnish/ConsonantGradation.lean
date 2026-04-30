@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 
 /-!
 # Finnish Consonant Gradation @cite{karlsson-2017}
@@ -23,7 +23,7 @@ Single stops weaken:
 
 ## Formalization
 
-We model the quantitative and qualitative rules as SPE `PhonRule`s. The
+We model the quantitative and qualitative rules as SPE `Rule`s. The
 conditioning environment — closed vs. open syllable — is approximated by
 right context: a following consonant signals a closed syllable.
 
@@ -32,7 +32,7 @@ right context: a following consonant signals a closed syllable.
 namespace Fragments.Finnish.ConsonantGradation
 
 open Phonology (Segment Feature Segment.ofSpecs)
-open Phonology.RuleBased
+open Phonology.LocalRewrite
 
 -- ============================================================================
 -- § 1: Natural Classes
@@ -79,7 +79,7 @@ def consonant : Segment := Segment.ofSpecs
 /-- **Quantitative** pp → p: geminate voiceless bilabial shortens before a
     consonant. Modeled as: the second /p/ of a geminate is deleted when
     followed by a consonant (closed syllable). -/
-def ppGradation : PhonRule where
+def ppGradation : Rule where
   name := "pp → p (quantitative)"
   target := p_stop
   effect := .delete
@@ -87,7 +87,7 @@ def ppGradation : PhonRule where
   rightContext := [.seg consonant]
 
 /-- **Quantitative** tt → t: geminate voiceless alveolar shortens. -/
-def ttGradation : PhonRule where
+def ttGradation : Rule where
   name := "tt → t (quantitative)"
   target := t_stop
   effect := .delete
@@ -95,7 +95,7 @@ def ttGradation : PhonRule where
   rightContext := [.seg consonant]
 
 /-- **Quantitative** kk → k: geminate voiceless velar shortens. -/
-def kkGradation : PhonRule where
+def kkGradation : Rule where
   name := "kk → k (quantitative)"
   target := k_stop
   effect := .delete
@@ -104,7 +104,7 @@ def kkGradation : PhonRule where
 
 /-- **Qualitative** p → v: single voiceless bilabial becomes a voiced
     labial continuant before a consonant. -/
-def pGradation : PhonRule where
+def pGradation : Rule where
   name := "p → v (qualitative)"
   target := p_stop
   effect := .changeFeatures (Segment.ofSpecs
@@ -113,14 +113,14 @@ def pGradation : PhonRule where
 
 /-- **Qualitative** t → d: single voiceless alveolar becomes voiced
     before a consonant. -/
-def tGradation : PhonRule where
+def tGradation : Rule where
   name := "t → d (qualitative)"
   target := t_stop
   effect := .changeFeatures (Segment.ofSpecs [(Feature.voice, true)])
   rightContext := [.seg consonant]
 
 /-- **Qualitative** k → ∅: single voiceless velar deletes before a consonant. -/
-def kGradation : PhonRule where
+def kGradation : Rule where
   name := "k → ∅ (qualitative)"
   target := k_stop
   effect := .delete

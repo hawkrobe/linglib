@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Fox & Spector 2018: Economy and Embedded Exhaustification

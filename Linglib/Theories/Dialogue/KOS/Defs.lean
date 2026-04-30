@@ -1,4 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
+import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # KOS: Type Definitions
@@ -8,6 +9,22 @@ Pure type definitions for the KOS framework. No operations beyond the
 trivial constructors / accessors required for type families to compose.
 Operations live in sibling files (`Basic`, `InquiryCycle`, `Grounding`,
 `Genre`, `Move`).
+
+## TTR-residence
+
+KOS is built on TTR (@cite{cooper-2023}). `LocProp` is a structural
+refinement of `TTRSign String Cont` (Cooper §2.5 ex 70): same
+`phon : String` + `cont : Cont` fields, plus dialogue-grade additions
+(`cat`, `cparams`, `qcparams`, `constits`). The `SubtypeOf` instance and
+the forgetful projection `LocProp.toTTRSign` live with the type definition
+itself — `LocProp ⊐ TTRSign` is part of the substrate, not a downstream
+bridge file.
+
+(Lean's `deriving` machinery doesn't compose smoothly with `extends`-based
+inheritance when parent fields involve free type parameters, so we keep
+`LocProp` as a flat structure and provide the forgetful map by hand.
+The structural commitment is unchanged: every `LocProp` projects to a
+`TTRSign`, dischargeable via the typeclass.)
 
 ## Architecture
 
@@ -39,6 +56,8 @@ tags carry information our consumers find useful.
 -/
 
 namespace Dialogue.KOS
+
+open Semantics.TypeTheoretic (TTRSign SubtypeOf)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Illocutionary Moves
@@ -153,11 +172,11 @@ grounding. This is the structural prerequisite for the Reprise Content
 Hypothesis (@cite{purver-ginzburg-2004}, @cite{ginzburg-2012} §8.5.1):
 fragment reprises query the q-params record, not the dgb-params one. -/
 structure LocProp (Cont : Type) where
-  /-- Phonological form of the utterance -/
+  /-- Phonological form of the utterance — same field name as `TTRSign.phon`. -/
   phon : String
   /-- Syntactic category -/
   cat : String
-  /-- Semantic content -/
+  /-- Semantic content — same field name as `TTRSign.cont`. -/
   cont : Cont
   /-- DGB-PARAMS: referential parameters requiring contextual resolution.
       Empty = fully grounded; non-empty = CRification may be needed. -/
@@ -171,6 +190,25 @@ structure LocProp (Cont : Type) where
       @cite{ginzburg-2012} Ch. 6: any sub-utterance can be targeted by a CR. -/
   constits : List SubUtterance := []
   deriving Repr, DecidableEq
+
+/-- Forgetful projection `LocProp Cont → TTRSign String Cont`: keep `phon`
++ `cont`, drop dialogue-grade fields. -/
+def LocProp.toTTRSign {Cont : Type} (lp : LocProp Cont) : TTRSign String Cont where
+  phon := lp.phon
+  cont := lp.cont
+
+/-- `LocProp Cont ⊐ TTRSign String Cont` is structural: every `LocProp`
+projects to a `TTRSign` via `LocProp.toTTRSign`. -/
+instance {Cont : Type} : SubtypeOf (LocProp Cont) (TTRSign String Cont) where
+  up := LocProp.toTTRSign
+
+/-- The projection preserves `phon`. -/
+@[simp] theorem LocProp.toTTRSign_phon {Cont : Type} (lp : LocProp Cont) :
+    lp.toTTRSign.phon = lp.phon := rfl
+
+/-- The projection preserves `cont`. -/
+@[simp] theorem LocProp.toTTRSign_cont {Cont : Type} (lp : LocProp Cont) :
+    lp.toTTRSign.cont = lp.cont := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. InfoStruc — QUD entries with focus-establishing constituents

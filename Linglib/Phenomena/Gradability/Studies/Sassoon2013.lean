@@ -44,6 +44,18 @@ as total, *bad* and *similar* as partial. These reclassifications are noted in
 comments but not encoded, since the correlational H3 test (r = 0.62, p < 0.013
 for non-comparatives) is the paper's actual finding — per-adjective binary
 predictions are our addition for verification purposes.
+
+## Cross-framework refutations using `MultidimAdj`
+
+`Phenomena/Gradability/Studies/Tham2025.lean §12` constructs
+`crackedAsConjunctive`/`Disjunctive`/`Mixed` as concrete `MultidimAdj`
+instances and proves `no_cracked_multidimAdj_satisfies_both`: no
+`DimensionBindingType` choice satisfies both Tham's §3.2.1 simple-
+predication data and her §3 ex. 20a *completely*-modification data.
+This is a closed-scale counterexample to H3 distinct from the
+`identical`/`unfamiliar` counterexamples flagged in §6 below — Tham's
+data force the wedge in a different direction (modifier-driven binding
+shift, not context-driven).
 -/
 
 namespace Sassoon2013

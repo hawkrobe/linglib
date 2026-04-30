@@ -1,91 +1,140 @@
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Features.Gender
 
 /-!
-# Spanish Noun Gender @cite{kramer-2015}
+# Spanish Noun Gender
+@cite{butt-benjamin-2019} @cite{kramer-2015} @cite{kramer-2020}
+@cite{harris-1991}
 
-Gender assignments for Spanish nouns, typed by the DM categorizing head
-(n) that each noun merges with (@cite{kramer-2015} Ch 6).
+Spanish has two genders, masculine and feminine
+(@cite{butt-benjamin-2019} §1.1). Per @cite{butt-benjamin-2019} §1.2,
+Group A: nouns referring to humans + a few well-known animals get
+natural gender; per §1.3, Group B (lifeless things, plants, other
+animals) get arbitrary gender. Per §1.2.11, a small set of common-gender
+nouns (e.g. *persona*, *víctima*, *ángel*) take fixed gender regardless
+of referent.
 
-Spanish is a **Set 1** language: the four n-types in the [±FEM] dimension are
-- n i[+FEM]: natural feminine (female referents)
-- n i[−FEM]: natural masculine (male referents)
-- n u[+FEM]: arbitrary feminine (no semantic motivation)
-- plain n: default (masculine by VI)
+## Theory-neutral data layer
+
+The Fragment carries two empirical fields per entry:
+
+- `attestedGender : SurfaceGender` — the agreement-trigger fact
+  (verified against @cite{butt-benjamin-2019} §1.2-1.3).
+- `isNaturalGender : Bool` — whether the gender is semantically
+  motivated by the referent's biological sex. False for inanimates,
+  for non-natural-gender animals (cf. §1.3.1), and for the §1.2.11
+  fixed-gender common-gender exceptions (*persona*, *ángel*).
+
+These two fields suffice to project every entry's structural analysis
+under @cite{kramer-2015} Ch. 6's Set-1 DM categorizer (the projection
+lives in `Phenomena/Gender/Studies/Kramer2020.lean`); they also support
+@cite{harris-1991}'s lexical-rule analysis directly (Harris's [FEMALE]
+and [HUMAN] features map onto `attestedGender` and the natural-gender
+inference).
+
+## Per-entry verification
+
+Entries explicitly named in @cite{kramer-2015}: *hombre*, *mujer*,
+*niño*, *niña*, *mesa*, *cama*, *persona*, *libro*, *soldado*,
+*estudiante*, *artista*. Other entries (*rey/reina/gato/gata,
+silla/casa/puerta/ventana, zapato/coche/árbol/cielo/vaso, ángel*) are
+extrapolations from Kramer's framework, anchored on the
+textbook-consensus genders documented in @cite{butt-benjamin-2019}.
 -/
 
 namespace Fragments.Spanish.Gender
 
-open Morphology.DM
+open Features (SurfaceGender)
 
 -- ============================================================================
--- § 1: Spanish Noun with Gender
+-- § 1: Spanish Noun (theory-neutral schema)
 -- ============================================================================
 
-/-- A Spanish noun annotated with its categorizing head, enabling
-    gender derivation from the structural approach. -/
+/-- A Spanish noun. No commitment to any specific theoretical framework
+    — Kramer's DM categorizing head, Harris's lexical rule, etc. are
+    projections that live in `Studies/`. -/
 structure SpanishNoun where
   form : String
   gloss : String
-  nHead : CatHead
-  deriving Repr
+  /-- Empirical agreement-trigger fact (@cite{butt-benjamin-2019}). -/
+  attestedGender : SurfaceGender
+  /-- True iff the gender is semantically motivated by the referent's
+      biological sex. False for inanimates, for non-natural-gender
+      animals, and for the @cite{butt-benjamin-2019} §1.2.11 common-gender
+      fixed-assignment exceptions (*persona* feminine for any sex;
+      *ángel* masculine for any sex). -/
+  isNaturalGender : Bool
+  deriving DecidableEq, Repr
+
+namespace SpanishNoun
+
+/-- Surface gender alias for ergonomic consumer access. -/
+abbrev gender (n : SpanishNoun) : SurfaceGender := n.attestedGender
+
+end SpanishNoun
 
 -- ============================================================================
--- § 2: Natural Gender Nouns (i[+FEM] / i[−FEM])
+-- § 2: Natural-Gender Nouns (Group A, @cite{butt-benjamin-2019} §1.2)
 -- ============================================================================
 
-def hombre   : SpanishNoun := ⟨"hombre",    "man",      CatHead.n_iMasc⟩
-def mujer    : SpanishNoun := ⟨"mujer",     "woman",    CatHead.n_iFem⟩
-def niño     : SpanishNoun := ⟨"niño",      "boy",      CatHead.n_iMasc⟩
-def niña     : SpanishNoun := ⟨"niña",      "girl",     CatHead.n_iFem⟩
-def rey      : SpanishNoun := ⟨"rey",       "king",     CatHead.n_iMasc⟩
-def reina    : SpanishNoun := ⟨"reina",     "queen",    CatHead.n_iFem⟩
-def gato     : SpanishNoun := ⟨"gato",      "cat.M",    CatHead.n_iMasc⟩
-def gata     : SpanishNoun := ⟨"gata",      "cat.F",    CatHead.n_iFem⟩
+def hombre : SpanishNoun := ⟨"hombre", "man",    .masculine, true⟩
+def mujer  : SpanishNoun := ⟨"mujer",  "woman",  .feminine,  true⟩
+def niño   : SpanishNoun := ⟨"niño",   "boy",    .masculine, true⟩
+def niña   : SpanishNoun := ⟨"niña",   "girl",   .feminine,  true⟩
+def rey    : SpanishNoun := ⟨"rey",    "king",   .masculine, true⟩
+def reina  : SpanishNoun := ⟨"reina",  "queen",  .feminine,  true⟩
+def gato   : SpanishNoun := ⟨"gato",   "cat.M",  .masculine, true⟩
+def gata   : SpanishNoun := ⟨"gata",   "cat.F",  .feminine,  true⟩
 
 -- ============================================================================
--- § 3: Arbitrary Feminine Nouns (u[+FEM])
+-- § 3: Arbitrary Feminines (Group B, @cite{butt-benjamin-2019} §1.3)
 -- ============================================================================
 
-def mesa     : SpanishNoun := ⟨"mesa",      "table",    CatHead.n_uFem⟩
-def silla    : SpanishNoun := ⟨"silla",     "chair",    CatHead.n_uFem⟩
-def casa     : SpanishNoun := ⟨"casa",      "house",    CatHead.n_uFem⟩
-def puerta   : SpanishNoun := ⟨"puerta",    "door",     CatHead.n_uFem⟩
-def ventana  : SpanishNoun := ⟨"ventana",   "window",   CatHead.n_uFem⟩
-def cama     : SpanishNoun := ⟨"cama",      "bed",      CatHead.n_uFem⟩
-def persona  : SpanishNoun := ⟨"persona",   "person",   CatHead.n_uFem⟩
+def mesa    : SpanishNoun := ⟨"mesa",    "table",  .feminine, false⟩
+def silla   : SpanishNoun := ⟨"silla",   "chair",  .feminine, false⟩
+def casa    : SpanishNoun := ⟨"casa",    "house",  .feminine, false⟩
+def puerta  : SpanishNoun := ⟨"puerta",  "door",   .feminine, false⟩
+def ventana : SpanishNoun := ⟨"ventana", "window", .feminine, false⟩
+def cama    : SpanishNoun := ⟨"cama",    "bed",    .feminine, false⟩
+/-- *persona* 'person': common-gender noun (@cite{butt-benjamin-2019}
+    §1.2.11) — feminine regardless of referent's sex. The famous
+    @cite{kramer-2015} §6.2 exception: human-denoting noun with
+    structurally arbitrary feminine gender. `isNaturalGender = false`
+    captures that the gender does NOT come from biological sex (even
+    though referent is human). -/
+def persona : SpanishNoun := ⟨"persona", "person", .feminine, false⟩
 
 -- ============================================================================
--- § 4: Default Masculine Nouns (plain n)
+-- § 4: Default Masculines (Group B, @cite{butt-benjamin-2019} §1.3)
 -- ============================================================================
 
-def libro    : SpanishNoun := ⟨"libro",     "book",     CatHead.n_plain⟩
-def zapato   : SpanishNoun := ⟨"zapato",    "shoe",     CatHead.n_plain⟩
-def coche    : SpanishNoun := ⟨"coche",     "car",      CatHead.n_plain⟩
-def árbol    : SpanishNoun := ⟨"árbol",     "tree",     CatHead.n_plain⟩
-def cielo    : SpanishNoun := ⟨"cielo",     "sky",      CatHead.n_plain⟩
-def vaso     : SpanishNoun := ⟨"vaso",      "glass",    CatHead.n_plain⟩
-def ángel    : SpanishNoun := ⟨"ángel",     "angel",    CatHead.n_plain⟩
+def libro  : SpanishNoun := ⟨"libro",  "book",  .masculine, false⟩
+def zapato : SpanishNoun := ⟨"zapato", "shoe",  .masculine, false⟩
+def coche  : SpanishNoun := ⟨"coche",  "car",   .masculine, false⟩
+def árbol  : SpanishNoun := ⟨"árbol",  "tree",  .masculine, false⟩
+def cielo  : SpanishNoun := ⟨"cielo",  "sky",   .masculine, false⟩
+def vaso   : SpanishNoun := ⟨"vaso",   "glass", .masculine, false⟩
+/-- *ángel* 'angel': common-gender noun (@cite{butt-benjamin-2019}
+    §1.2.11) — masculine for any sex. Companion to *persona*: the
+    masculine fixed-gender exception. `isNaturalGender = false`. -/
+def ángel  : SpanishNoun := ⟨"ángel",  "angel", .masculine, false⟩
 
 -- ============================================================================
--- § 5: Same-Root Nominals
+-- § 5: Same-Root Nominals (@cite{kramer-2020} §2.2.3)
 -- ============================================================================
 
-/-- Same-root nominals: a single root that merges with either i[+FEM]
-    or i[−FEM] depending on the referent's sex. -/
+/-- Same-root nominals: a single root that surfaces as either masculine
+    or feminine depending on the referent's sex. Empirically polymorphic
+    in gender (one form, two genders), distinct from the atomic
+    `SpanishNoun` schema. The DM analysis (combination with i[+FEM] vs
+    i[−FEM]) lives in `Studies/Kramer2020.lean`. -/
 structure SameRootEntry where
   form : String
   gloss : String
-  mascHead : CatHead := CatHead.n_iMasc
-  femHead  : CatHead := CatHead.n_iFem
-  deriving Repr
+  deriving DecidableEq, Repr
 
-/-- The possible n heads for a same-root entry (always two: masc and fem). -/
-def SameRootEntry.possibleNHeads (e : SameRootEntry) : List CatHead :=
-  [e.femHead, e.mascHead]
-
-def soldado    : SameRootEntry := { form := "soldado",    gloss := "soldier" }
-def estudiante : SameRootEntry := { form := "estudiante", gloss := "student" }
-def artista    : SameRootEntry := { form := "artista",    gloss := "artist"  }
+def soldado    : SameRootEntry := ⟨"soldado",    "soldier"⟩
+def estudiante : SameRootEntry := ⟨"estudiante", "student"⟩
+def artista    : SameRootEntry := ⟨"artista",    "artist"⟩
 
 -- ============================================================================
 -- § 6: Inventory
@@ -108,38 +157,5 @@ def allNouns : List SpanishNoun :=
 
 def sameRootNouns : List SameRootEntry :=
   [soldado, estudiante, artista]
-
--- ============================================================================
--- § 7: Verification
--- ============================================================================
-
-theorem naturalFem_all_iFem :
-    naturalFemNouns.all (·.nHead == CatHead.n_iFem) = true := by native_decide
-
-theorem naturalMasc_all_iMasc :
-    naturalMascNouns.all (·.nHead == CatHead.n_iMasc) = true := by native_decide
-
-theorem arbitraryFem_all_uFem :
-    arbitraryFemNouns.all (·.nHead == CatHead.n_uFem) = true := by native_decide
-
-theorem defaultMasc_all_plain :
-    defaultMascNouns.all (·.nHead == CatHead.n_plain) = true := by native_decide
-
-/-- *persona* 'person' is always feminine regardless of referent's sex:
-    the gender is arbitrary (u[+FEM]), not interpretable. -/
-theorem persona_arbitrary_fem :
-    persona.nHead.phi.gender = some ⟨.u, ⟨.fem, .pos⟩⟩ := rfl
-
-/-- *ángel* 'angel' is always masculine (plain n, default gender). -/
-theorem ángel_default_masc :
-    ángel.nHead.phi.gender = none := rfl
-
-/-- All four n-types are represented in the inventory. -/
-theorem four_n_types_covered :
-    allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
-    allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
-    allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
-    allNouns.any (·.nHead == CatHead.n_plain) = true := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 end Fragments.Spanish.Gender

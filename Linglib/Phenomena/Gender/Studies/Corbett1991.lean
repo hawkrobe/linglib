@@ -9,7 +9,7 @@ import Linglib.Core.AgreementTarget
 Greville Corbett. *Gender*. Cambridge University Press, 1991.
 Plus @cite{corbett-2013}'s WALS Chs 30, 31, 32.
 
-This study file holds the 21-language exemplar sample of gender / noun
+This study file holds the 22-language exemplar sample of gender / noun
 class systems and cross-linguistic generalisations consuming the substrate
 `GenderProfile`. WALS aggregate distribution theorems live in
 `Linglib/Typology/Gender.lean`. Per-language Fragment-vs-WALS data-equality
@@ -18,10 +18,11 @@ theorems are deliberately absent — see
 
 ## Sample composition
 
-21 languages chosen to span all five `GenderCount` values:
+22 languages chosen to span all five `GenderCount` values:
 - **No gender** (English, Mandarin, Japanese, Turkish, Finnish, Korean,
   Quechua — 7 languages).
-- **2 genders** (French, Spanish, Hindi-Urdu, Irish, Hebrew — 5 languages).
+- **2 genders** (French, Spanish, Hindi-Urdu, Irish, Hebrew, Hausa —
+  6 languages).
 - **3 genders** (German, Russian, Latin, Romanian — 4 languages).
 - **4 genders** (Dyirbal, Georgian — 2 languages).
 - **5+ noun classes** (Swahili, Zulu, Fula — 3 languages).
@@ -40,7 +41,7 @@ open Typology.Gender
 open Core (AgreementTarget)
 
 -- ============================================================================
--- §1. The 21-language exemplar sample
+-- §1. The 22-language exemplar sample
 -- ============================================================================
 
 -- ── No-gender languages ─────────────────────────────────────────────────
@@ -132,6 +133,30 @@ def hebrew : GenderProfile :=
   , agreementTargets := [.attributive, .predicate, .verbTarget]
   , semanticBases := [.sex] }
 
+/-- Hausa (Chadic, Afroasiatic): 2 genders (masc/fem). @cite{corbett-1991}
+    §3.2.2 (pp. 52–53) describes the synchronic Hausa pattern as
+    phonological assignment with exceptions ("nouns ending in *-aa* are
+    feminine"), with morphological diachronic origin discussed separately
+    in §4.5 (pp. 102–103, citing Newman 1979). @cite{kramer-2020} §3.3.1
+    (pp. 60–61) re-analyzes the *-aa* suffix as morphophonological
+    *realization* of [+FEM] on n rather than gender *assignment*. This
+    aligns synchronically with @cite{newman-2000} pp. 210–213, where the
+    {-ā} suffix is a feminine marker (acquired diachronically via
+    "overt characterization") rather than a synchronic phonological rule
+    — so the Corbett-Kramer disagreement is asymmetric: Newman's source
+    grammar favors Kramer. The cross-framework theorems live in
+    `Phenomena/Gender/Studies/Kramer2020.lean`. WALS-side
+    `semanticAndFormal` is the umbrella all three analyses share.
+
+    Agreement on determiners/possessive linkers (attributive), TAM clitics
+    (verb-target in person/aspect), and personal pronouns. -/
+def hausa : GenderProfile :=
+  { name := "Hausa", iso639 := "hau"
+  , genderCount := .two, rawGenderCount := 2
+  , basis := .sexBased, assignment := .semanticAndFormal
+  , agreementTargets := [.attributive, .personalPronoun, .verbTarget]
+  , semanticBases := [.sex] }
+
 -- ── 3-gender languages ──────────────────────────────────────────────────
 
 /-- German: 3 genders (masc/fem/neut), sex-based with extensive formal
@@ -221,10 +246,10 @@ def fula : GenderProfile :=
   , agreementTargets := [.attributive, .predicate, .personalPronoun, .verbTarget]
   , semanticBases := [.humanness, .animacy, .shape] }
 
-/-- All 21 language profiles in the sample. -/
+/-- All 22 language profiles in the sample. -/
 def allProfiles : List GenderProfile :=
   [ english, mandarin, japanese, turkish, finnish, korean, quechua
-  , french, spanish, hindiUrdu, irish, hebrew
+  , french, spanish, hindiUrdu, irish, hebrew, hausa
   , german, russian, latin, romanian
   , dyirbal, georgian
   , swahili, zulu, fula ]
@@ -233,7 +258,7 @@ def allProfiles : List GenderProfile :=
 -- §2. Sample-level statistics
 -- ============================================================================
 
-theorem allProfiles_count : allProfiles.length = 21 := by native_decide
+theorem allProfiles_count : allProfiles.length = 22 := by native_decide
 
 /-- All raw gender counts are consistent with their WALS bins. -/
 theorem all_raw_consistent :
@@ -275,10 +300,10 @@ theorem sample_diversity :
 /-- Sample distribution counts. -/
 theorem sample_counts :
     (allProfiles.filter (λ p => p.genderCount == .none)).length = 7 ∧
-    (allProfiles.filter (λ p => p.basis == .sexBased)).length = 9 ∧
+    (allProfiles.filter (λ p => p.basis == .sexBased)).length = 10 ∧
     (allProfiles.filter (λ p => p.basis == .nonSexBased)).length = 5 ∧
     (allProfiles.filter (λ p => p.assignment == .semanticOnly)).length = 2 ∧
-    (allProfiles.filter (λ p => p.assignment == .semanticAndFormal)).length = 12 ∧
+    (allProfiles.filter (λ p => p.assignment == .semanticAndFormal)).length = 13 ∧
     (allProfiles.filter (·.isNounClassSystem)).length = 3 := by
   native_decide
 
@@ -289,7 +314,7 @@ theorem sample_counts :
 /-- @cite{corbett-1991}: among gender systems, 2-gender is the most common
     in the WALS sample and well-represented in our sample. -/
 theorem two_gender_in_sample :
-    (allProfiles.filter (λ p => p.genderCount == .two)).length = 5 := by
+    (allProfiles.filter (λ p => p.genderCount == .two)).length = 6 := by
   native_decide
 
 /-- All 2- and 3-gender systems in the sample are sex-based. Reflects the

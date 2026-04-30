@@ -19,8 +19,16 @@ deletion helps.
 
 The output of D2L is a tier-based alternation rule, modelled here by the
 canonical `Phonology.Alternation.TierRule` schema (in
-`Theories/Phonology/Alternation.lean`). For Latin -alis / -aris allomorphy
-(@cite{belth-2026} §5.3, rule 54), the rule D2L converges to is
+`Theories/Phonology/Alternation.lean`); the closely-related SPE
+non-tier `Phonology.LocalRewrite.Rule` schema in
+`Theories/Phonology/Process/LocalRewrite.lean` is the right substrate
+when the alternation does not factor through a tier projection.
+The function-level subregular classification of D2L outputs lives in
+`Core/Computability/Subregular/Function/`: tier-mediated dissimilation
+rules of the form Belth converges to are Tier-Subsequential
+(@cite{aksenova-rawski-graf-heinz-2020}). For Latin -alis / -aris
+allomorphy (@cite{belth-2026} §5.3, rule 54), the rule D2L converges
+to is
 
   `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`,
 

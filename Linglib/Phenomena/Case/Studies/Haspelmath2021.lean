@@ -353,7 +353,7 @@ theorem universal5_frequency_class_monotone :
     `universal6_split_A_flagging` for the same reason as U4. -/
 theorem universal6_dehoopmalchukov_predicts :
     superoptimal allPairs (profileFor [distinguishSubj, economy])
-    = [(CaseForm.zero, Strength.strong), (CaseForm.overt, Strength.weak)] :=
+    = winnerDistinguishSubj :=
   dsm_distinguish
 
 -- ============================================================================

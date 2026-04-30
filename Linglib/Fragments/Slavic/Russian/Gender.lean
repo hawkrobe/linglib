@@ -1,41 +1,57 @@
-import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Features.Gender
 
 /-!
-# Russian Noun Gender @cite{corbett-1991} @cite{kramer-2020}
+# Russian Noun Gender
+@cite{wade-2020} @cite{corbett-1991} @cite{kramer-2020} @cite{kramer-2015}
 
-Gender assignments for Russian nouns, typed by DM categorizing heads.
+Russian has three surface genders: masculine, feminine, neuter. Gender
+is partly determined by the referent's biological sex (semantic core)
+and partly by morphological declension class.
 
-Russian has three surface genders (masculine, feminine, neuter) and is
-analyzed here as a **5-n language** in @cite{kramer-2015}'s framework:
+## Theory-neutral data layer
 
-| n head    | Gender value   | Surface gender | Example        |
-|-----------|----------------|----------------|----------------|
-| n i[+FEM] | natural fem    | feminine       | mat' 'mother'  |
-| n i[−FEM] | natural masc   | masculine      | otec 'father'  |
-| n u[+FEM] | arbitrary fem  | feminine       | škola 'school' |
-| n u[−FEM] | arbitrary masc | masculine      | zakon 'law'    |
-| plain n   | (default)      | neuter         | vino 'wine'    |
+The Fragment carries empirical fields per entry:
 
-The semantic core (@cite{kramer-2020} ex. 17): male humans and higher
-animals are masculine; female humans and higher animals are feminine.
+- `attestedGender : SurfaceGender` — the agreement-trigger fact
+  (verified against @cite{wade-2020}). Three values for Russian:
+  masculine, feminine, neuter.
+- `isNaturalGender : Bool` — whether the gender comes from the
+  referent's biological sex.
+- `declClass : Option DeclClass` — Russian-specific morphological
+  classification (@cite{wade-2020}). Optional because semantic-core
+  nouns get their gender from the referent, not morphology.
 
-Remainder nouns correlate with declension class (@cite{corbett-1991}):
-Class I → masculine, Class II/III → feminine, others → neuter.
-The correlation is imperfect: *put'* (Class III) is masculine and
-*znamja* (Class III) is neuter (@cite{kramer-2020} ex. 19).
+These fields suffice to project entries to @cite{kramer-2015} Ch. 7's
+5-n DM analysis (projection in `Studies/Kramer2020.lean`); they also
+support @cite{corbett-1991}'s controller-target classification directly.
 
-Hybrid nouns like *vrač* 'doctor' trigger masculine agreement on some
-targets and feminine on others in the same clause
-(@cite{kramer-2020} ex. 15–16).
+## Hybrid nouns
+
+*vrač* 'doctor' triggers feminine agreement on some targets (verb,
+predicate adjective) when the referent is female, while retaining
+masculine morphology (@cite{wade-2020}, e.g. "Врач обязана..." with
+fem.-agreeing predicate; @cite{corbett-1991}). The Fragment encodes
+*vrač*'s morphological gender (masculine, derived from Class I); the
+hybrid agreement story lives in `Studies/Kramer2020.lean §7` via the
+existing `russianVrac : HybridNoun` struct.
+
+## Per-entry verification
+
+Entries explicitly named in @cite{kramer-2015}: *otec*, *put'*, *vrač*.
+All others are extrapolations from Kramer's framework, anchored on
+@cite{wade-2020}'s declension and gender treatment + @cite{corbett-1991}'s
+canonical 5-language sample. *kost'* (Class III feminine) verified at
+Wade ≈ noun-declension tables; *put'* (Class III masculine, sole
+exception) verified at Wade §6397; *znamja* (-мя neuter) is the textbook
+Class III neuter group.
 -/
 
 namespace Fragments.Slavic.Russian.Gender
 
-open Morphology.DM
+open Features (SurfaceGender)
 
 -- ============================================================================
--- § 1: Declension Classes
+-- § 1: Declension Classes (@cite{wade-2020})
 -- ============================================================================
 
 /-- Russian declension classes. Gender correlates with class but neither
@@ -49,83 +65,100 @@ inductive DeclClass where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- § 2: Russian Noun
+-- § 2: Russian Noun (theory-neutral schema)
 -- ============================================================================
 
-/-- A Russian noun annotated with its categorizing head and (optionally)
-    its declension class. Semantic-core nouns omit the class since their
-    gender is determined by the referent, not morphology. -/
+/-- A Russian noun. Empirical agreement-gender + natural-gender +
+    optional declension class. No commitment to any specific theoretical
+    framework — Kramer's DM categorizing head, Corbett's controller-target
+    are projections in `Studies/`. -/
 structure RussianNoun where
   form : String
   gloss : String
-  nHead : CatHead
+  /-- Empirical agreement-trigger fact (@cite{wade-2020}). -/
+  attestedGender : SurfaceGender
+  /-- True iff the gender comes from biological sex of the referent.
+      For *vrač* 'doctor' (hybrid) the morphological gender is encoded
+      here as masculine; the hybrid female-referent agreement lives in
+      `Studies/Kramer2020.lean §7`. -/
+  isNaturalGender : Bool
+  /-- Optional declension class. Semantic-core nouns may omit since
+      their gender is determined by the referent. -/
   declClass : Option DeclClass := none
-  deriving Repr
+  deriving DecidableEq, Repr
+
+namespace RussianNoun
+
+abbrev gender (n : RussianNoun) : SurfaceGender := n.attestedGender
+
+end RussianNoun
 
 -- ============================================================================
 -- § 3: Semantic Core (@cite{kramer-2020} ex. 17)
 -- ============================================================================
 
-def otec   : RussianNoun := { form := "otec",   gloss := "father",  nHead := .n_iMasc }
-def mat'   : RussianNoun := { form := "mat'",   gloss := "mother",  nHead := .n_iFem }
-def brat   : RussianNoun := { form := "brat",   gloss := "brother", nHead := .n_iMasc }
-def sestra : RussianNoun := { form := "sestra", gloss := "sister",  nHead := .n_iFem }
-def byk    : RussianNoun := { form := "byk",    gloss := "bull",    nHead := .n_iMasc }
-def korova : RussianNoun := { form := "korova", gloss := "cow",     nHead := .n_iFem }
+def otec   : RussianNoun :=
+  { form := "otec",   gloss := "father",  attestedGender := .masculine, isNaturalGender := true }
+def mat'   : RussianNoun :=
+  { form := "mat'",   gloss := "mother",  attestedGender := .feminine,  isNaturalGender := true }
+def brat   : RussianNoun :=
+  { form := "brat",   gloss := "brother", attestedGender := .masculine, isNaturalGender := true }
+def sestra : RussianNoun :=
+  { form := "sestra", gloss := "sister",  attestedGender := .feminine,  isNaturalGender := true }
+def byk    : RussianNoun :=
+  { form := "byk",    gloss := "bull",    attestedGender := .masculine, isNaturalGender := true }
+def korova : RussianNoun :=
+  { form := "korova", gloss := "cow",     attestedGender := .feminine,  isNaturalGender := true }
 
 -- ============================================================================
--- § 4: Remainder — Declension Class Correlation (@cite{kramer-2020} ex. 18)
+-- § 4: Remainder — Declension-Class Correlation (@cite{kramer-2020} ex. 18)
 -- ============================================================================
 
 def zakon : RussianNoun :=
-  { form := "zakon", gloss := "law",    nHead := .n_uNegFem, declClass := some .I }
+  { form := "zakon", gloss := "law",    attestedGender := .masculine
+  , isNaturalGender := false, declClass := some .I }
 def škola : RussianNoun :=
-  { form := "škola", gloss := "school", nHead := .n_uFem,    declClass := some .II }
+  { form := "škola", gloss := "school", attestedGender := .feminine
+  , isNaturalGender := false, declClass := some .II }
 def kost' : RussianNoun :=
-  { form := "kost'", gloss := "bone",   nHead := .n_uFem,    declClass := some .III }
+  { form := "kost'", gloss := "bone",   attestedGender := .feminine
+  , isNaturalGender := false, declClass := some .III }
 def vino  : RussianNoun :=
-  { form := "vino",  gloss := "wine",   nHead := .n_plain,   declClass := some .IV }
+  { form := "vino",  gloss := "wine",   attestedGender := .neuter
+  , isNaturalGender := false, declClass := some .IV }
 
 -- ============================================================================
 -- § 5: Class III Exceptions (@cite{kramer-2020} ex. 19)
 -- ============================================================================
 
-/-- *znamja* 'banner': Class III but neuter, not feminine.
-    (@cite{corbett-1991}; @cite{kramer-2020} ex. 19a) -/
+/-- *znamja* 'banner': Class III but neuter, not feminine (the -мя
+    neuter group; @cite{corbett-1991}; @cite{kramer-2020} ex. 19a). -/
 def znamja : RussianNoun :=
-  { form := "znamja", gloss := "banner", nHead := .n_plain, declClass := some .III }
+  { form := "znamja", gloss := "banner", attestedGender := .neuter
+  , isNaturalGender := false, declClass := some .III }
 
-/-- *put'* 'way': the only masculine noun in Class III.
-    (@cite{corbett-1991}; @cite{kramer-2020} ex. 19b) -/
+/-- *put'* 'way': the only masculine noun in Class III
+    (@cite{wade-2020} §6397: "путь is qualified by masculine adjectives";
+    @cite{corbett-1991}; @cite{kramer-2020} ex. 19b). -/
 def put'   : RussianNoun :=
-  { form := "put'", gloss := "way", nHead := .n_uNegFem, declClass := some .III }
+  { form := "put'", gloss := "way", attestedGender := .masculine
+  , isNaturalGender := false, declClass := some .III }
 
 -- ============================================================================
 -- § 6: Hybrid Noun (@cite{kramer-2020} ex. 15–16)
 -- ============================================================================
 
-/-- *vrač* 'doctor': morphologically masculine (Class I), but can trigger
-    feminine agreement when the referent is female.
-    (@cite{kramer-2020} ex. 15–16; @cite{corbett-1991}) -/
+/-- *vrač* 'doctor': morphologically masculine (Class I), but triggers
+    feminine agreement on some targets when the referent is female
+    (verified at @cite{wade-2020} "Врач обязана…" with feminine-agreeing
+    predicate). The Fragment encodes morphological gender; the hybrid
+    behavior is captured in `Studies/Kramer2020.lean §7`. -/
 def vrač : RussianNoun :=
-  { form := "vrač", gloss := "doctor", nHead := .n_uNegFem, declClass := some .I }
+  { form := "vrač", gloss := "doctor", attestedGender := .masculine
+  , isNaturalGender := false, declClass := some .I }
 
 -- ============================================================================
--- § 7: Surface Gender Derivation
--- ============================================================================
-
-/-- Derive surface gender from n head via Russian VI rules.
-
-    Unlike Set 1 Spanish (plain n → masculine) or Set 2 Maa
-    (plain n → feminine), Russian maps plain n to a THIRD gender
-    (neuter), yielding 3 surface genders from 5 n-head types. -/
-def surfaceGender (ch : CatHead) : Features.SurfaceGender :=
-  match ch.phi.gender with
-  | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
-  | none    => .neuter
-
--- ============================================================================
--- § 8: Inventory & Verification
+-- § 7: Inventory
 -- ============================================================================
 
 def semanticCoreNouns : List RussianNoun :=
@@ -137,47 +170,16 @@ def remainderNouns : List RussianNoun :=
 def allNouns : List RussianNoun :=
   semanticCoreNouns ++ remainderNouns ++ [vrač]
 
-theorem semanticMasc_all_iMasc :
-    [otec, brat, byk].all (·.nHead == CatHead.n_iMasc) = true := by native_decide
-
-theorem semanticFem_all_iFem :
-    [mat', sestra, korova].all (·.nHead == CatHead.n_iFem) = true := by native_decide
-
--- Semantic core surface gender derivation (ex. 17)
-theorem otec_masculine  : surfaceGender otec.nHead   = .masculine := rfl
-theorem mat'_feminine   : surfaceGender mat'.nHead   = .feminine  := rfl
-theorem brat_masculine  : surfaceGender brat.nHead   = .masculine := rfl
-theorem sestra_feminine : surfaceGender sestra.nHead = .feminine  := rfl
-theorem byk_masculine   : surfaceGender byk.nHead    = .masculine := rfl
-theorem korova_feminine : surfaceGender korova.nHead = .feminine  := rfl
-
--- Declension class ↔ gender correlation (ex. 18)
-theorem classI_masculine  : surfaceGender zakon.nHead = .masculine := rfl
-theorem classII_feminine  : surfaceGender škola.nHead = .feminine  := rfl
-theorem classIII_feminine : surfaceGender kost'.nHead = .feminine  := rfl
-theorem default_neuter    : surfaceGender vino.nHead  = .neuter    := rfl
-
--- Class III exceptions show declension class ≠ gender (ex. 19)
-theorem znamja_classIII_neuter :
-    znamja.declClass = some .III ∧ surfaceGender znamja.nHead = .neuter := ⟨rfl, rfl⟩
-
-theorem put'_classIII_masculine :
-    put'.declClass = some .III ∧ surfaceGender put'.nHead = .masculine := ⟨rfl, rfl⟩
+-- ============================================================================
+-- § 8: Cross-class observation
+-- ============================================================================
 
 /-- Declension class does not determine gender: *znamja* and *kost'*
-    share Class III but differ in surface gender. -/
+    share Class III but differ in surface gender (the Class III
+    counter-correlation @cite{corbett-1991} highlights). Stated
+    directly over `attestedGender` (no DM intermediary). -/
 theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧
-    surfaceGender znamja.nHead ≠ surfaceGender kost'.nHead := ⟨rfl, by decide⟩
-
-/-- All five n-types are represented in the inventory. -/
-theorem five_n_types_covered :
-    allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
-    allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
-    allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
-    allNouns.any (·.nHead == CatHead.n_uNegFem) = true ∧
-    allNouns.any (·.nHead == CatHead.n_plain) = true :=
-  ⟨by native_decide, by native_decide, by native_decide,
-   by native_decide, by native_decide⟩
+    znamja.attestedGender ≠ kost'.attestedGender := ⟨rfl, by decide⟩
 
 end Fragments.Slavic.Russian.Gender

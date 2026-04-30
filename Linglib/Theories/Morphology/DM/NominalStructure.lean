@@ -1,7 +1,8 @@
 /-!
 # Nominal Phrase Structure (Distributed Morphology)
 
-@cite{adamson-2024} @cite{myler-2016} @cite{kramer-2015}
+@cite{alexiadou-2003} @cite{adamson-2024} @cite{myler-2016} @cite{kramer-2015}
+@cite{kampanarou-alexiadou-2026}
 
 Structural positions within the extended nominal projection, the
 **Gender Locality Hypothesis** (GLH), and the possession-type distinction.
@@ -13,9 +14,26 @@ independent of any particular language:
 - The GLH: gender features on n must be valued within nP
 - Inalienable vs alienable possession: nP-internal vs PossP-external
 
-The GLH was proposed by @cite{adamson-2024}; the inalienable/alienable
-structural distinction follows @cite{myler-2016} (following @cite{alexiadou-2003},
-@cite{barker-1995}).
+The inalienable/alienable structural distinction is canonically
+@cite{alexiadou-2003} (with earlier proposals in Guéron 1985, Vergnaud &
+Zubizarreta 1992); subsequent treatments include @cite{myler-2016} and the
+DM refinement of @cite{adamson-2024}, which adds the GLH. Recent uptake of
+the same distinction (recoverable from Greek genitive alternation):
+@cite{kampanarou-alexiadou-2026}.
+
+**Caveat on `PossessionType.possessorPosition .inalienable = .specN`.**
+The original Alexiadou 2003 / @cite{kampanarou-alexiadou-2026} eq. 37a
+analysis represents the inalienable possessor as the *complement of NP*
+(sister of the possessee under a higher NP node), not as Spec,nP. The
+substrate's `.specN` is a contemporary DM gloss on this — close enough
+that downstream consumers (Tseltalan possessor extraction in
+@cite{aissen-polian-2025}, Icelandic *hafa*/*eiga* in @cite{myler-2016})
+recover the right empirical predictions, but readers should be aware that
+not every formulation in the literature carves up the alienable/inalienable
+contrast at exactly Spec,nP vs Spec,PossP. **Field divergence**:
+Michelioudakis et al. 2024 explicitly collapses both possessor types into
+Spec,nP (cf. @cite{kampanarou-alexiadou-2026} p. 24), which the substrate
+does not currently represent.
 -/
 
 namespace Morphology.DM

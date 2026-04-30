@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Phenomena.Negation.FlexibleNegation
+import Linglib.Theories.Semantics.Gradability.AntonymPrediction
 
 /-!
 # @cite{tessler-franke-2019}: Not Unreasonable
@@ -51,6 +52,9 @@ set_option autoImplicit false
 namespace TesslerFranke2020
 
 open Core.Scale (Degree Threshold deg thr Degree.toNat Threshold.toNat)
+open Features (NegationType)
+open Semantics.Gradability (AntonymForm ThresholdPair contraryNegMeaning
+  notContraryNegMeaning contradictoryNeg positiveMeaning')
 open Semantics.Degree (positiveMeaning negativeMeaning)
 open Real (rpow rpow_nonneg exp exp_pos)
 
@@ -79,11 +83,11 @@ inductive Utterance where
 
 /-- Lexicon for morphological negation "un-":
     contrary (polar opposite with gap) vs contradictory (complement).
-    Syntactic negation "not" is always contradictory in this model. -/
-inductive NegLexicon where
-  | contrary
-  | contradictory
-  deriving Repr, DecidableEq, Fintype
+    Syntactic negation "not" is always contradictory in this model.
+
+    Aliased to `Features.NegationType` (substrate); the constructors
+    `.contrary` and `.contradictory` are identical. -/
+abbrev NegLexicon := NegationType
 
 -- ============================================================================
 -- § 3. Latent State
@@ -177,7 +181,7 @@ theorem happy_excludes_gap :
     ∀ d : HappinessDeg,
       utteranceMeaning (thr 3) (thr 2) .contrary .happy d = true →
       negativeMeaning d (thr 2) = false := by
-  native_decide
+  decide
 
 /-- "not unhappy" (contrary) includes the gap: degrees 2 and 3 satisfy
     "not unhappy" under contrary lexicon with θ₂ = 2. -/
@@ -185,7 +189,7 @@ theorem not_unhappy_includes_gap :
     ∃ d : HappinessDeg,
       utteranceMeaning (thr 3) (thr 2) .contrary .notUnhappy d = true ∧
       utteranceMeaning (thr 3) (thr 2) .contrary .happy d = false := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 8. RSA Predictions
@@ -250,5 +254,56 @@ theorem not_unhappy_more_positive_than_not_happy :
 
 The ordering `happy_implies_high` + `not_unhappy_prefers_gap` together
 show that "not unhappy" ≠ "happy": they peak in different regions. -/
+
+-- ============================================================================
+-- § 10. Substrate Bridge: TF Utterance ↔ AntonymForm
+-- ============================================================================
+
+/-! TF2020's `Utterance` enum is isomorphic to the substrate's `AntonymForm`
+    (the four-form quadruplet from `AntonymQuadruplet.lean`). The mapping
+    `tfQuadForm` makes the iso explicit; bridge theorems below witness that
+    `utteranceMeaning` under each lexicon coincides with the substrate's
+    canonical denotations.
+
+    The `Iff.rfl`-style proofs are intentional load-bearing structural
+    anchors (cf. AG-JoS §7): if `Theory.lean`'s `contraryNegMeaning`/
+    `notContraryNegMeaning` ever stop being `def`-equal abbrevs over
+    `Semantics.Degree.negativeMeaning`, these bridges break loudly. -/
+
+/-- Isomorphism between TF2020's lexically-flavored `Utterance` enum and
+    the theory-neutral substrate `AntonymForm`. -/
+def tfQuadForm : Utterance → AntonymForm
+  | .happy      => .positive
+  | .notHappy   => .notPositive
+  | .unhappy    => .negative
+  | .notUnhappy => .notNegative
+
+/-- Under the contradictory lexicon, TF2020's `utteranceMeaning` agrees with
+    the substrate `AntonymForm.contradictoryDenot` applied to the same
+    threshold and the corresponding `AntonymForm`. The two `θ` arguments to
+    `utteranceMeaning` collapse to one (θ₂ is unused under the contradictory
+    lexicon — the contradictory base uses only θ₁). -/
+theorem utteranceMeaning_contradictory_iff_substrate
+    (θ₁ θ₂ : HThreshold) (u : Utterance) (d : HappinessDeg) :
+    utteranceMeaning θ₁ θ₂ .contradictory u d = true ↔
+    AntonymForm.contradictoryDenot θ₁ (tfQuadForm u) d := by
+  cases u <;>
+  · simp only [utteranceMeaning, tfQuadForm, AntonymForm.contradictoryDenot,
+      decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
+
+/-- Under the contrary lexicon, TF2020's `utteranceMeaning` agrees with the
+    substrate `AntonymForm.strengthenedDenot` applied to the corresponding
+    `ThresholdPair ⟨θ₁, θ₂, h⟩` and `AntonymForm`. Requires the gap-existence
+    hypothesis `θ₂ ≤ θ₁` so the threshold pair is well-formed. -/
+theorem utteranceMeaning_contrary_iff_substrate
+    (θ₁ θ₂ : HThreshold) (h : θ₂ ≤ θ₁) (u : Utterance) (d : HappinessDeg) :
+    utteranceMeaning θ₁ θ₂ .contrary u d = true ↔
+    AntonymForm.strengthenedDenot ⟨θ₁, θ₂, h⟩ (tfQuadForm u) d := by
+  cases u <;>
+  · simp only [utteranceMeaning, tfQuadForm, AntonymForm.strengthenedDenot,
+      notContraryNegMeaning, contradictoryNeg, contraryNegMeaning,
+      positiveMeaning', Semantics.Degree.negativeMeaning,
+      Semantics.Degree.antonymMeaning,
+      decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not, not_lt]
 
 end TesslerFranke2020

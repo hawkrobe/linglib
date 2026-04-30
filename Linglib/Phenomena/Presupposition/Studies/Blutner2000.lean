@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Evaluation
+import Linglib.Core.Constraint.Superoptimal
 import Linglib.Theories.Pragmatics.Bidirectional
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 
@@ -111,8 +112,12 @@ abbrev Strength := Nat
 inductive Form18 where | sentence deriving DecidableEq, Repr
 
 /-- Generator: one form, three projection sites. -/
-def gen18 : List (Form18 × ProjectionSite) :=
-  [(.sentence, .local), (.sentence, .intermediate), (.sentence, .global)]
+def gen18 : Finset (Form18 × ProjectionSite) :=
+  { (.sentence, .local), (.sentence, .intermediate), (.sentence, .global) }
+
+/-- Witness Park-set: the global-accommodation interpretation. -/
+def winner18 : Finset (Form18 × ProjectionSite) :=
+  { (.sentence, .global) }
 
 /-- Constraint profile: [AvoidA, BeStrong].
     All three sites require accommodation (AvoidA = 1).
@@ -123,10 +128,11 @@ def profile18 : Form18 × ProjectionSite → List Nat
   | (.sentence, .local)        => [1, 2]  -- accommodated, weakest
 
 /-- Example (18): AvoidA is tied (all sites accommodate), so BeStrong
-    is decisive. Global accommodation wins (strongest interpretation). -/
+    is decisive. Global accommodation wins (strongest interpretation).
+    Direct kernel-verified `decide` on the Finset-native canonical form. -/
 theorem ex18_global_wins :
-    superoptimal gen18 profile18 = [(.sentence, .global)] := by
-  native_decide
+    superoptimal gen18 profile18 = winner18 := by
+  decide
 
 -- ============================================================================
 -- § 4: Example (19) — "If Peter has a cat, then his cat is gray"
@@ -140,8 +146,12 @@ theorem ex18_global_wins :
 /-- Generator for example (19). -/
 inductive Form19 where | sentence deriving DecidableEq, Repr
 
-def gen19 : List (Form19 × ProjectionSite) :=
-  [(.sentence, .local), (.sentence, .intermediate), (.sentence, .global)]
+def gen19 : Finset (Form19 × ProjectionSite) :=
+  { (.sentence, .local), (.sentence, .intermediate), (.sentence, .global) }
+
+/-- Witness Park-set: the intermediate (bound) interpretation. -/
+def winner19 : Finset (Form19 × ProjectionSite) :=
+  { (.sentence, .intermediate) }
 
 /-- Constraint profile for example (19): [AvoidA, BeStrong].
     Intermediate: binding possible → AvoidA = 0.
@@ -156,8 +166,8 @@ def profile19 : Form19 × ProjectionSite → List Nat
     binding (0 violations) while local and global require accommodation.
     BeStrong is irrelevant since AvoidA already discriminates. -/
 theorem ex19_intermediate_wins :
-    superoptimal gen19 profile19 = [(.sentence, .intermediate)] := by
-  native_decide
+    superoptimal gen19 profile19 = winner19 := by
+  decide
 
 -- ============================================================================
 -- § 5: Accommodation Blocking (Q-Principle)
@@ -186,8 +196,12 @@ inductive AccidentMeaning where
   deriving DecidableEq, Repr
 
 /-- Generator: both forms map to the same meaning. -/
-def genAccident : List (DefForm × AccidentMeaning) :=
-  [(.definite, .carHitHim), (.indefinite, .carHitHim)]
+def genAccident : Finset (DefForm × AccidentMeaning) :=
+  { (.definite, .carHitHim), (.indefinite, .carHitHim) }
+
+/-- Witness Park-set: the indefinite form (Q-principle winner). -/
+def winnerAccident : Finset (DefForm × AccidentMeaning) :=
+  { (.indefinite, .carHitHim) }
 
 /-- Profile: [FormComplexity, AccommodationCost].
     The definite requires accommodation (more complex pragmatically);
@@ -200,24 +214,28 @@ def profileAccident : DefForm × AccidentMeaning → List Nat
     meaning with fewer violations. The definite form is blocked
     (pragmatically anomalous) in neutral contexts. -/
 theorem accommodation_blocked :
-    superoptimal genAccident profileAccident =
-      [(.indefinite, .carHitHim)] := by
-  native_decide
+    superoptimal genAccident profileAccident = winnerAccident := by
+  decide
+
+/-- List form of `genAccident`, for the `satisfiesQ`/`satisfiesI` API which
+    operates on Lists. -/
+def genAccidentList : List (DefForm × AccidentMeaning) :=
+  [(.definite, .carHitHim), (.indefinite, .carHitHim)]
 
 /-- This is a Q-principle effect: the definite is blocked because
     a competing form (indefinite) with the same meaning is better. -/
 theorem accommodation_blocked_is_Q :
     Pragmatics.Bidirectional.satisfiesQ
-      genAccident profileAccident (.definite, .carHitHim) = false := by
-  native_decide
+      genAccidentList profileAccident (.definite, .carHitHim) = false := by
+  decide
 
 /-- The indefinite satisfies both Q and I. -/
 theorem indefinite_satisfies_both :
     Pragmatics.Bidirectional.satisfiesQ
-      genAccident profileAccident (.indefinite, .carHitHim) = true ∧
+      genAccidentList profileAccident (.indefinite, .carHitHim) = true ∧
     Pragmatics.Bidirectional.satisfiesI
-      genAccident profileAccident (.indefinite, .carHitHim) = true := by
-  exact ⟨by native_decide, by native_decide⟩
+      genAccidentList profileAccident (.indefinite, .carHitHim) = true :=
+  ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 6: Connection to Accommodation Infrastructure

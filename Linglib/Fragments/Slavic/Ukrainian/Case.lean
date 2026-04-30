@@ -1,21 +1,19 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Fragments.Slavic.Case
+
 /-!
 # Ukrainian Case Inventory
-@cite{blake-1994}
+@cite{shevelov-1993} @cite{blake-1994}
 
-Ukrainian has **7 cases**: NOM, ACC, GEN, DAT, LOC, INST, VOC.
-The standard Slavic 7-case system. The 6-case core (excluding VOC)
-is perfectly contiguous on Blake's hierarchy.
-
+Per @cite{shevelov-1993} (p. 956), Ukrainian preserves the original
+6-case set (NOM/ACC/GEN/DAT/INST/LOC) and additionally retains a
+productive vocative — robust in the singular (батько → батьку,
+син → сину, хлопець → хлопче), eroded in the plural except for
+панове/panove 'gentlemen'. `caseInventory` aliases the shared 6-case
+core; `Fragments.Slavic.Case.sevenCaseInventory` carries the +VOC form.
 -/
 
 namespace Fragments.Slavic.Ukrainian.Case
 
-/-- Ukrainian 6-case core inventory (excluding VOC). -/
-def caseInventory : Finset Core.Case :=
-  {.nom, .acc, .gen, .dat, .loc, .inst}
-
-example : Core.Case.IsValidInventory caseInventory := by decide
+abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Ukrainian.Case

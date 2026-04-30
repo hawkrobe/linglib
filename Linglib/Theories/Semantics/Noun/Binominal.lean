@@ -211,7 +211,7 @@ def biSemantics {Entity : Type} {max : Nat}
     (adjDegree : Entity → Degree max)
     (θ_adj θ_eval : Threshold max)
     (n₂ : Entity → Bool) : Entity → Bool :=
-  λ x => n₂ x && intensifiedMeaning eval (adjDegree x) θ_adj θ_eval
+  λ x => n₂ x && decide (intensifiedMeaning eval (adjDegree x) θ_adj θ_eval)
 
 /-- BI preserves the N₂ restriction. -/
 theorem bi_requires_n₂ {Entity : Type} {max : Nat}
@@ -232,11 +232,10 @@ theorem bi_entails_em {Entity : Type} {max : Nat}
     (θ_adj θ_eval : Threshold max) (n₂ : Entity → Bool) (x : Entity) :
     biSemantics eval adjDeg θ_adj θ_eval n₂ x = true →
     emSemantics eval adjDeg θ_eval n₂ x = true := by
-  simp only [biSemantics, emSemantics, intensifiedMeaning]
-  intro h
-  have ⟨h₁, h₂⟩ := Bool.and_eq_true_iff.mp h
-  have ⟨_, h₃⟩ := Bool.and_eq_true_iff.mp h₂
-  exact Bool.and_eq_true_iff.mpr ⟨h₁, h₃⟩
+  simp only [biSemantics, emSemantics, intensifiedMeaning, Bool.and_eq_true,
+             decide_eq_true_eq]
+  intro ⟨h₁, _, h₃⟩
+  exact ⟨h₁, by simpa using h₃⟩
 
 end EM
 

@@ -4,7 +4,7 @@ import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Korean.Modals
-import Linglib.Fragments.Greek.Modals
+import Linglib.Fragments.Greek.StandardModern.Modals
 import Linglib.Fragments.Mandarin.Modals
 import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Hungarian.Modals
@@ -130,7 +130,7 @@ def greek : ModalInventory where
   language := "Modern Greek"
   family := "Indo-European"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Greek.Modals.allExpressions
+  expressions := Fragments.Greek.StandardModern.Modals.allExpressions
 
 theorem greek_not_all_iff : greek.allIFF = false := by native_decide
 theorem greek_size : greek.size = 3 := by native_decide

@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Supervaluation.TCS
+import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
 
 /-!
 # Vagueness Theory Comparison
@@ -161,36 +162,48 @@ theorem supervaluationism_D_verified {Spec : Type*}
 -- ════════════════════════════════════════════════════
 
 /-! The TCS profile's claims are backed by formal proofs in
-    `Theories/Semantics/Supervaluation/TCS.lean`:
+    `Theories/Semantics/Supervaluation/TCS.lean` (substrate) +
+    `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean` (worked
+    4-element example):
 
     - `allowsTruthValueGaps = true`: borderline cases exist and
-      tolerantly satisfy contradictions
+      tolerantly satisfy contradictions (`b_is_borderline`,
+      `b_tolerant_contradiction`)
     - `soritesResolution`: st-consequence blocks sorites chaining
-      (non-transitivity demonstrated on concrete model)
-    - `preservesClassicalLogic = false`: st-consequence is non-transitive
+      (`st_three_step_invalid` — actual non-transitivity using
+      similarity atoms, paper §3.4.1 + footnote 14)
+    - `preservesClassicalLogic = false`: borderline contradictions
+      diverge from supervaluation
+      (`tcs_supervaluation_disagree_concrete`)
 
     These verification theorems re-export the key results. -/
 
 open Semantics.Supervaluation.TCS
+open Phenomena.Gradability.Studies.CobrerosEtAl2012
 
 /-- TCS allows borderline contradictions: in the 4-element sorites
     model, borderline individuals tolerantly satisfy P ∧ ¬P. -/
 theorem tcs_borderline_contradiction_verified :
-    isBorderline soritesModel .tall .b = true ∧
-    isBorderline soritesModel .tall .c = true :=
+    IsBorderline soritesModel .tall .b ∧
+    IsBorderline soritesModel .tall .c :=
   ⟨b_is_borderline, c_is_borderline⟩
 
-/-- TCS resolves the sorites: the full chain is st-invalid. -/
+/-- TCS resolves the sorites: the single-premise chain `Pa ⊨ˢᵗ Pd` is
+    invalid. The Studies file's `st_three_step_invalid` provides the
+    stronger statement (non-transitivity proper, with similarity atoms
+    in the chain). -/
 theorem tcs_sorites_resolution_verified :
-    ¬tcsConsequence (D := Elt) (Pred := VPred) .strict .tolerant
-      [.atom .tall .a] (.atom .tall .d) :=
+    ¬ tcsConsequence (D := Elt) (Pred := VPred) .strict .tolerant
+      [(.atom (.pred .tall .a) : TCSFormula VPred Elt)]
+      (.atom (.pred .tall .d)) :=
   sorites_chain_invalid
 
-/-- TCS validates tolerance: the extension hierarchy s ⊆ c ⊆ t. -/
+/-- TCS validates tolerance: the extension hierarchy s ⊆ c ⊆ t at the
+    formula level (Lemma 1 of @cite{cobreros-etal-2012}, p. 357). -/
 theorem tcs_hierarchy_verified :
     ∀ (M : TModel Elt VPred) (φ : TCSFormula VPred Elt),
-      (sat M .strict φ = true → sat M .classical φ = true) ∧
-      (sat M .classical φ = true → sat M .tolerant φ = true) :=
-  fun M φ => sat_hierarchy M φ
+      (Sat M .strict φ → Sat M .classical φ) ∧
+      (Sat M .classical φ → Sat M .tolerant φ) :=
+  fun M φ => Sat.hierarchy M φ
 
 end Phenomena.Gradability.Compare

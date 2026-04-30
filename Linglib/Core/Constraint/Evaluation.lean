@@ -262,6 +262,12 @@ theorem lexLT_asymm (a b : List Nat) (h : LexLT a b) :
     ¬ LexLT b a :=
   fun ⟨hba, _⟩ => h.2 hba
 
+/-- Lexicographic < is transitive: `LexLT a b → LexLT b c → LexLT a c`. -/
+theorem lexLT_trans (a b c : List Nat)
+    (hab : LexLT a b) (hbc : LexLT b c) : LexLT a c :=
+  ⟨lexLE_trans _ _ _ hab.1 hbc.1,
+   fun hca => hab.2 (lexLE_trans _ _ _ hbc.1 hca)⟩
+
 /-- Lexicographic ≤ is antisymmetric on equal-length profiles: if two
     profiles of the same length are mutually ≤, they are equal.
 
@@ -386,194 +392,35 @@ theorem satLE_not_antisymm :
 -- § 5: Bidirectional OT — Blocking (@cite{blutner-2000})
 -- ============================================================================
 
-/-- A pair ⟨f, m⟩ is **blocked** by some pair in set `s` iff there exists
-    a pair sharing exactly one dimension (same form or same meaning, not
-    both) that is strictly more harmonic (lexicographic <).
+/-! @cite{blutner-2000}'s blocking relation lives at maximum generality in
+    `Core/Constraint/Superoptimal.lean` as the Set-valued
+    `Blocks profile S p` (Prop, decidable on Finset witnesses via
+    `Blocks.decidableOnFinset`). The legacy List-based `IsBlocked`/`blocked`
+    pair was retired at 0.230.570 in favour of the Set/Finset substrate +
+    `superoptimalSet`/`superoptimal` API. -/
 
-    This is the blocking relation for @cite{blutner-2000}'s superoptimality,
-    used by @cite{de-hoop-malchukov-2008} for bidirectional case optimization. -/
-def IsBlocked {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat)
-    (s : List (F × M)) (p : F × M) : Prop :=
-  ∃ q ∈ s, ((q.1 = p.1 ∧ q.2 ≠ p.2) ∨ (q.1 ≠ p.1 ∧ q.2 = p.2)) ∧
-    LexLT (profile q) (profile p)
+/-! @cite{blutner-2000}'s superoptimality (weak BiOT, eq. 14) lives at
+    `Core/Constraint/Superoptimal.lean` as the dual API:
 
-/-- Computable blocking check (for `native_decide` proofs). -/
-def blocked {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat)
-    (s : List (F × M)) (p : F × M) : Bool :=
-  s.any fun q =>
-    decide (((q.1 = p.1 ∧ q.2 ≠ p.2) ∨ (q.1 ≠ p.1 ∧ q.2 = p.2)) ∧
-      LexLT (profile q) (profile p))
+    - **`superoptimalSet pairs profile`** — Set-valued, anchored in mathlib's
+      `OrderHom.gfp` over the `Set α` complete lattice. The abstract canonical
+      form for structural arguments (uniqueness, ranking-invariance across
+      BiOT variants, strong⊂weak meta-theorem).
+    - **`superoptimal pairs profile`** — Finset-native computable form,
+      consumer-facing for per-paper `decide` proofs. Bridge to the abstract
+      gfp via `superoptimal_coe_eq_set`.
 
-/-- `blocked` computes `IsBlocked`. -/
-theorem isBlocked_iff_blocked {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat) (s : List (F × M)) (p : F × M) :
-    IsBlocked profile s p ↔ blocked profile s p = true := by
-  simp only [IsBlocked, blocked, List.any_eq_true, decide_eq_true_eq]
+    Strong BiOT (eq. 9) is in the same file as `IsStrongOptimal` (Set-valued
+    Prop) + `strongOptimal` (Finset-native), with the structural
+    `isStrongOptimal_imp_mem_superoptimalSet` meta-theorem (Blutner p. 12)
+    proved coinductively against `OrderHom.gfp` — no algorithmic detour
+    through iterated removal.
 
--- ============================================================================
--- § 6: Iterative Removal (@cite{blutner-2000})
--- ============================================================================
-
-/-- Iterative removal: remove blocked pairs from current set until stable.
-    Fuel is bounded by the initial list length (each round removes ≥ 1). -/
-private def iterativeSuperoptLoop {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat)
-    : List (F × M) → Nat → List (F × M)
-  | s, 0 => s
-  | s, fuel + 1 =>
-    let s' := s.filter λ p => !blocked profile s p
-    if s'.length == s.length then s else iterativeSuperoptLoop profile s' fuel
-
-/-- Iterative-removal superoptimality: start with all pairs, remove those
-    blocked by any remaining pair, repeat until stable.
-
-    **Important**: this algorithm is equivalent to strong BiOT (eq. 9 of
-    @cite{blutner-2000}) for typical cases — once a pair is removed, it
-    can never return, even if its blockers are themselves eliminated.
-    For @cite{blutner-2000}'s weak BiOT (eq. 14), use `superoptimal`,
-    which correctly re-evaluates against all original pairs each round. -/
-def iterativeSuperoptimal {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M))
-    (profile : F × M → List Nat) : List (F × M) :=
-  iterativeSuperoptLoop profile pairs pairs.length
-
--- ============================================================================
--- § 7: Superoptimality — Greatest Fixed Point (@cite{blutner-2000})
--- ============================================================================
-
-/-- Greatest-fixed-point iteration for @cite{blutner-2000}'s superoptimality
-    (eq. 14). Each round re-evaluates ALL original pairs against the current
-    survivor set, so pairs removed in one round can return if their blockers
-    were also removed.
-
-    Converges because the operator Φ²(S) is monotone on finite lattices
-    (Φ is anti-monotone: fewer survivors → fewer blockers → more survivors).
-    Bounded by 2·|pairs| iterations. -/
-private def superoptLoop {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat) (pairs : List (F × M))
-    : List (F × M) → Nat → List (F × M)
-  | s, 0 => s
-  | s, fuel + 1 =>
-    let s' := pairs.filter λ p => !blocked profile s p
-    if s' == s then s' else superoptLoop profile pairs s' fuel
-
-/-- @cite{blutner-2000}'s **superoptimality** (eq. 14): the greatest
-    fixed point S = {p ∈ Gen | no q ∈ S blocks p}.
-
-    A pair ⟨A, τ⟩ is super-optimal iff:
-    - (Q) No other super-optimal ⟨A', τ⟩ (same meaning) is strictly better
-    - (I) No other super-optimal ⟨A, τ'⟩ (same form) is strictly better
-
-    The Q- and I-principles mutually constrain each other: competition under
-    Q is restricted to I-surviving pairs, and vice versa. This derives
-    @cite{horn-1984}'s division of pragmatic labour: unmarked forms pair with
-    unmarked (stereotypical) meanings, marked forms with marked meanings.
-
-    Differs from `iterativeSuperoptimal` (iterative removal) when indirect
-    blocking creates cycles — `superoptimal` correctly re-admits pairs whose
-    blockers were themselves eliminated. -/
-def superoptimal {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M))
-    (profile : F × M → List Nat) : List (F × M) :=
-  superoptLoop profile pairs pairs (2 * pairs.length)
-
--- ============================================================================
--- § 8: Strong Bidirectional OT (@cite{blutner-2000} eq. 9)
--- ============================================================================
-
-/-- @cite{blutner-2000}'s **strong bidirectional OT** (eq. 9): Q and I are
-    evaluated independently against the full candidate set.
-
-    ⟨A, τ⟩ is strong-optimal iff:
-    - (Q) No pair ⟨A', τ⟩ in Gen (same meaning) is strictly better
-    - (I) No pair ⟨A, τ'⟩ in Gen (same form) is strictly better
-
-    Unlike superoptimality (eq. 14), the two directions do not constrain
-    each other. Strong-optimal ⊆ super-optimal: every strong-optimal pair
-    is also super-optimal, but superoptimality can admit additional pairs
-    (marked forms for marked meanings). -/
-def IsStrongOptimal {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat) (p : F × M) : Prop :=
-  p ∈ pairs ∧
-  (∀ q ∈ pairs, q.2 = p.2 → q.1 ≠ p.1 → ¬LexLT (profile q) (profile p)) ∧
-  (∀ q ∈ pairs, q.1 = p.1 → q.2 ≠ p.2 → ¬LexLT (profile q) (profile p))
-
-/-- Computable strong-optimal set (for `native_decide` proofs). -/
-def strongOptimal {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M))
-    (profile : F × M → List Nat) : List (F × M) :=
-  pairs.filter fun p =>
-    -- Q: no better form for same meaning
-    pairs.all (fun q =>
-      decide (q.2 = p.2 → q.1 ≠ p.1 → ¬LexLT (profile q) (profile p))) &&
-    -- I: no better meaning for same form
-    pairs.all (fun q =>
-      decide (q.1 = p.1 → q.2 ≠ p.2 → ¬LexLT (profile q) (profile p)))
-
-/-- `p ∈ strongOptimal` iff `IsStrongOptimal`. -/
-theorem mem_strongOptimal_iff {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat) (p : F × M) :
-    p ∈ strongOptimal pairs profile ↔ IsStrongOptimal pairs profile p := by
-  simp only [strongOptimal, IsStrongOptimal, List.mem_filter,
-    Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq]
-
--- ============================================================================
--- § 9: Properties of Superoptimality
--- ============================================================================
-
-/-- `blocked` is anti-monotone in the witness set: if no element of a
-    larger set blocks `p`, then no element of a subset can block it either. -/
-private theorem blocked_anti_mono {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat) (s₁ s₂ : List (F × M)) (p : F × M)
-    (hsub : ∀ q, q ∈ s₁ → q ∈ s₂)
-    (h : blocked profile s₂ p = false) :
-    blocked profile s₁ p = false := by
-  unfold blocked at *
-  rw [Bool.eq_false_iff] at *
-  intro hb
-  apply h
-  rw [List.any_eq_true] at hb ⊢
-  obtain ⟨q, hq_mem, hq_pred⟩ := hb
-  exact ⟨q, hsub q hq_mem, hq_pred⟩
-
-/-- Loop invariant: a pair that is in `pairs` and not blocked by `pairs`
-    survives every round of `superoptLoop`. -/
-private theorem superoptLoop_preserves {F M : Type} [DecidableEq F] [DecidableEq M]
-    (profile : F × M → List Nat) (pairs : List (F × M))
-    (p : F × M) (hp : p ∈ pairs) (hnb : blocked profile pairs p = false)
-    (s : List (F × M)) (fuel : Nat)
-    (hps : p ∈ s) (hsub : ∀ q, q ∈ s → q ∈ pairs) :
-    p ∈ superoptLoop profile pairs s fuel := by
-  induction fuel generalizing s with
-  | zero => exact hps
-  | succ n ih =>
-    unfold superoptLoop
-    simp only
-    have hp_in_s' : p ∈ pairs.filter (fun q => !blocked profile s q) := by
-      rw [List.mem_filter]
-      constructor
-      · exact hp
-      · simp only [Bool.not_eq_true']
-        exact blocked_anti_mono profile s pairs p hsub hnb
-    split
-    · exact hp_in_s'
-    · apply ih
-      · exact hp_in_s'
-      · intro q hq
-        exact (List.mem_filter.mp hq).1
-
-/-- A pair that belongs to `pairs` and is not blocked by any element
-    of `pairs` is in `superoptimal pairs profile`. -/
-theorem superoptimal_of_unblocked {F M : Type} [DecidableEq F] [DecidableEq M]
-    (pairs : List (F × M)) (profile : F × M → List Nat)
-    (p : F × M) (hp : p ∈ pairs)
-    (hnb : blocked profile pairs p = false) :
-    p ∈ superoptimal pairs profile := by
-  unfold superoptimal
-  exact superoptLoop_preserves profile pairs p hp hnb
-    pairs (2 * pairs.length) hp (fun _ h => h)
+    Iterative removal (the algorithm equivalent to strong BiOT for typical
+    cases) is no longer formalized: `strongOptimal` IS the strong-BiOT
+    Finset, and `superoptimal` IS the weak-BiOT Finset. The illustrative
+    "iterative ≠ weak" point is captured directly by the existence of the
+    re-admission step in `superoptimalLoop`. -/
 
 -- ============================================================================
 -- § 10: LexProfile — Variable-Length Lexicographic Preorder

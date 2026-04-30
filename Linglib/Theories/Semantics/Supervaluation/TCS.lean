@@ -2,277 +2,406 @@ import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Logic.Function.Basic
 
 /-!
 # Tolerant, Classical, Strict (TCS)
+
 @cite{cobreros-etal-2012}
 
-@cite{cobreros-etal-2012} "Tolerant, Classical, Strict."
+@cite{cobreros-etal-2012} "Tolerant, Classical, Strict",
 *Journal of Philosophical Logic* 41:347–385.
 
-## Overview
+A similarity-based three-valued semantics for vague predicates that
+derives three notions of truth from a single model:
 
-A similarity-based semantics for vague predicates that derives three
-notions of truth from a single model:
+- **Classical (c)**: standard satisfaction `M ⊨ᶜ P(a) iff a ∈ I(P)` (Def 9)
+- **Tolerant (t)**: `M ⊨ᵗ P(a) iff ∃d ~_P a, d ∈ I(P)` (Def 9)
+- **Strict (s)**: `M ⊨ˢ P(a) iff ∀d ~_P a, d ∈ I(P)` (Def 9)
 
-- **Classical (c)**: standard satisfaction M ⊨c P(a) iff a ∈ I(P)
-- **Tolerant (t)**: M ⊨t P(a) iff ∃d ~_P a, d ∈ I(P)
-- **Strict (s)**: M ⊨s P(a) iff ∀d ~_P a, d ∈ I(P)
+The indifference relation `~_P` is reflexive and symmetric — but, crucially,
+not necessarily transitive — capturing "looks the same for predicate P."
 
-The tolerance relation ~_P is reflexive and symmetric (but not
-transitive) — an indifference relation for predicate P.
+## Paper-anchored mathematical foundation
 
-## Key Results
+The paper formulates TCS in terms of indifference relations derived from
+**semi-orders** (paper p. 350 fn 1, citing Luce 1956). The same atom-level
+operators are equivalently described as the **lower / upper approximation
+operators** of a tolerance approximation space in the rough-set tradition.
+The paper flags this analogy in **footnote 5 (p. 355)**, citing
+@cite{pawlak-1982} (paper's reference [19]) for the equivalence-relation
+case; borderline cases are exactly the boundary `upper \ lower`.
 
-- **Extension hierarchy**: strict ⊆ classical ⊆ tolerant (Lemma 1)
-- **Tolerance is t-valid**: ∀x∀y(P(x) ∧ x~_Py → P(y)) (Fact 2)
-- **Two-step tolerance**: ∀x∀y∀z(P(x) ∧ x~_Py ∧ y~_Pz → P(z)) (Fact 3)
-- **Borderline contradictions**: borderline cases tolerantly satisfy P ∧ ¬P
-- **LP/K3 correspondence**: t-consequence = LP-consequence,
-  s-consequence = K3-consequence (Theorem 3)
+## Re-reading TCS through a modal-logic lens (formaliser's framing)
 
-## Connection to Supervaluation
+The paper itself does NOT use modal-logic vocabulary. The framing in this
+section is the formaliser's lens, used to integrate with the existing
+`Core/IntensionalLogic/RestrictedModality.lean` substrate; it is not
+paper-anchored.
 
-Strict truth for an atomic predicate at individual a is supervaluation
-over the tolerance neighborhood of a: `superTrue (I(P) ·) {d | d ~_P a}`.
-Tolerant truth is the existential dual (sub-truth). This makes TCS a
-*localized* supervaluation — each individual gets its own specification
-space determined by its similarity neighborhood.
+Structurally, TCS is a propositional modal logic in which each predicate
+`P` carries its own reflexive-symmetric (KTB) Kripke accessibility
+relation `~_P`. The strict and tolerant satisfaction operators are
+exactly the modal `□` and `◇` over `~_P`, applied to the classical
+extension of `P`:
 
-Unlike standard supervaluationism, TCS **allows** borderline
-contradictions: P ∧ ¬P is tolerantly true for borderline cases.
-In supervaluationism, P ∧ ¬P is super-false even when P is borderline
-(penumbral connection). This difference traces to TCS negation:
-tolerant ¬φ = not strictly φ (weaker than not classically φ).
+- `strict P at a` ≡ `boxR (~_P) I(P) a` (Definition 9)
+- `tolerant P at a` ≡ `diamondR (~_P) I(P) a` (Definition 9)
+
+The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `boxR`
+(`Core.IntensionalLogic.boxR_T`); the t/s duality is the standard
+modal de Morgan `boxR R ¬p ↔ ¬diamondR R p`. T-models satisfy
+`frameConditions Logic.KTB` by construction (Definition 4 of
+@cite{cobreros-etal-2012}); see `TModel.satisfies_KTB` for the explicit
+witness. The Brouwersche axiom B / symmetric-frame correspondence is
+a standard Sahlqvist result; for systematic treatment see
+@cite{blackburn-derijke-venema-2001} §3.5–3.6 and the model-theoretic
+overview @cite{goranko-otto-2007}. The non-equivalence-relation
+generalisation of Pawlak's rough sets to tolerance approximation spaces
+(which the paper implicitly uses in footnote 5) is due to
+@cite{skowron-stepaniuk-1996}; this attribution is supplied by the
+formaliser, not the paper.
+
+## Key Results (paper-section-tagged)
+
+- **Definition 9** (p. 353): t/s atomic clauses + their compositional lift
+- **Lemma 1** (p. 357): extension hierarchy s ⊆ c ⊆ t
+- **Facts 2-3** (p. 354): one-step + two-step tolerance principle
+- **Definition 10** (p. 355): borderline = `upper \ lower`
+- **Lemma 2** (p. 357): identity-model collapse of all three modes
+- **Definition 17** (p. 366): nine mixed consequence relations ⊨ᵐⁿ
+- **Lemma 7** (p. 368): strength ordering ⊨ᵗᵐ ⊆ ⊨ᶜᵐ ⊆ ⊨ˢᵐ
+- **Lemma 8** (p. 369): collapse cc = sc = ct = st on restricted vocabulary
+- **Remark 1** (p. 353), **Lemma 10** (p. 371): t/s duality + self-duality
+  of st and cc → deduction theorem
+- **Lemma 4** (p. 361) + **Theorem 3** (p. 362): formula-level then
+  consequence-level correspondence with LP and K3. Note: paper Lemma 4 is
+  stated only for the restricted vocabulary (no `I_P`); the formalisation
+  in §15 extends it to handle similarity atoms by treating them as
+  classical Bool-valued (always in `{0, 1} ⊂ {0, 1/2, 1}`), which is a
+  faithful extension of the paper's construction.
+
+## Cross-framework comparators (paper p. 356, p. 359)
+
+The paper draws TWO distinct contrasts on the borderline-contradictions
+question, with two different opponents:
+
+- **Borderline-verdict contrast (p. 356)** — TCS vs **subvaluationism**
+  (Hyde 1997). Both make `P ∧ ¬P` true at borderline cases; the contrast
+  is over the underlying framework foundations (TCS via similarity-based
+  modal semantics; subvaluationism via dual super-truth). Subvaluationism
+  is not formalised in linglib; this is the closer comparator on the
+  *verdict* but cannot be checked at the Lean level here.
+- **Formal-validity contrast (p. 359)** — TCS vs **supervaluationism**
+  (Fine 1975). Supervaluationism makes `P ∧ ¬P` super-FALSE even at
+  borderline cases (penumbral connection); this is the comparator
+  formalised here, and it is realised as the §17 cross-framework theorem
+  `tcs_vs_supervaluation_borderline_contradiction`. The Lean theorem
+  combines the TCS half (`IsBorderline` definition unfolding through
+  `SatMode.dual`) with the supervaluation half (`nonContradiction_superFalse`
+  from `Supervaluation/Basic.lean`).
+
+Strict truth for an atomic predicate at individual `a` IS supervaluation
+over the tolerance neighborhood of `a`: `superTrue I(P) {d | d ~_P a}`.
+Tolerant truth is its existential dual. This makes TCS a **localized**
+supervaluation — each individual gets its own specification space
+determined by its similarity neighborhood.
 
 ## Architecture
 
-This file provides the core TCS framework. It connects to
-`Supervaluation/Basic.lean` by showing that strict/tolerant truth
-instantiate `superTrue` over tolerance neighborhoods.
+This file provides the **propositional restricted-vocabulary** fragment
+of TCS — atoms cover both predicate atoms `P(a)` and similarity atoms
+`a I_P b` (paper Definition 8), but no quantifiers. All §2 (restricted
+vocabulary) results apply; phenomena requiring first-order quantifiers
+(paper §2.3) are out of scope.
+
+The 4-element worked example from p. 354 of the paper (in the body text
+immediately above footnote 4) lives in
+`Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`. The asymmetric
+reciprocation point with `LassiterGoodman2017PMF.lean::lg_literal_borderline_bounded`
+is addressed in that Studies file's §8-§9.
 -/
 
 namespace Semantics.Supervaluation.TCS
 
 open Core.Duality (Truth3)
-open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff
-  superTrue_false_iff superTrue_indet_iff)
+open Core.IntensionalLogic
+  (AccessRel IsReflexive IsSymmetric IsSerial boxR diamondR
+   boxR_T refl_serial Logic)
+open Core.Logic.ThreeValuedLogic (PropFormula MVModel mvEval lpSat k3Sat
+  isLPDesignated isK3Designated lpSat_neg_iff k3Sat_neg_iff
+  lpSat_conj k3Sat_conj)
+open Core.Logic.Consequence (MixedConsequence SatImplies IsSelfDual
+  premise_monotone conclusion_monotone mixed_monotone)
+open Semantics.Supervaluation (SpecSpace superTrue
+  superTrue_true_iff superTrue_false_iff superTrue_indet_iff
+  nonContradiction_superFalse)
 
 -- ════════════════════════════════════════════════════
--- § 1. T-Models
+-- § 1. T-Models (Definition 4, p. 351)
 -- ════════════════════════════════════════════════════
 
-/-- A T-model: a classical model equipped with tolerance (indifference)
-    relations per predicate. Each ~_P is reflexive and symmetric but
-    possibly non-transitive — capturing "looks the same" for predicate P.
+/-- A T-model: a classical model equipped with per-predicate tolerance
+    relations. Each `~_P` is reflexive and symmetric — but possibly
+    non-transitive — capturing "looks the same for predicate P."
 
     Definition 4 of @cite{cobreros-etal-2012}. The non-transitivity of
-    ~_P is what makes vagueness possible: a can look like b and b can
-    look like c, but a need not look like c. -/
+    `~_P` is what makes vagueness possible: a can look like b and b can
+    look like c, but a need not look like c.
+
+    Following the modal-logic tradition, the similarity relation is
+    `Prop`-valued so that it integrates directly with `boxR`/`diamondR`.
+    Decidability is added per-model where computation is needed. -/
 structure TModel (D Pred : Type*) where
-  /-- Classical interpretation: I(P) ∈ {0,1}^D -/
+  /-- Classical interpretation `I : Pred → D → Bool`. -/
   interp : Pred → D → Bool
-  /-- Tolerance relation ~_P per predicate -/
-  sim : Pred → D → D → Bool
-  /-- Reflexivity: every individual is similar to itself -/
-  sim_refl : ∀ P d, sim P d d = true
-  /-- Symmetry: similarity is undirected -/
-  sim_symm : ∀ P d₁ d₂, sim P d₁ d₂ = true → sim P d₂ d₁ = true
+  /-- Tolerance (indifference) relation `~_P` per predicate. -/
+  sim : Pred → D → D → Prop
+  /-- Reflexivity: every individual is similar to itself. -/
+  sim_refl : ∀ P, IsReflexive (sim P)
+  /-- Symmetry: similarity is undirected. -/
+  sim_symm : ∀ P, IsSymmetric (sim P)
+
+namespace TModel
+
+variable {D Pred : Type*}
+
+/-- The similarity relation as an `AccessRel` — the Kripke frame
+    associated with each predicate. By construction this frame is
+    reflexive + symmetric, i.e., a **KTB frame** (`Core.IntensionalLogic.Logic.KTB`). -/
+@[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
+
+/-- T-models satisfy `frameConditions Logic.KTB` by construction.
+    The B axiom (Brouwersche, `□p → □◇p` from `p`) holds via `boxR_B`
+    + `M.sim_symm`; the T axiom (`□p → p`) via `boxR_T` + `M.sim_refl`. -/
+theorem simAccess_isReflexive (M : TModel D Pred) (P : Pred) :
+    IsReflexive (M.simAccess P) := M.sim_refl P
+
+theorem simAccess_isSymmetric (M : TModel D Pred) (P : Pred) :
+    IsSymmetric (M.simAccess P) := M.sim_symm P
+
+theorem simAccess_isSerial (M : TModel D Pred) (P : Pred) :
+    IsSerial (M.simAccess P) := refl_serial (M.sim_refl P)
+
+/-- **T-models are KTB frames by construction**: every per-predicate
+    similarity relation `~_P` satisfies the frame conditions for the
+    normal modal logic `KTB = K + T + B` (reflexive + symmetric Kripke
+    frame). The four flag-fields beyond `.M` and `.B` are vacuously
+    satisfied because `Logic.KTB` doesn't require D, 4, or 5. -/
+theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
+    Logic.KTB.frameConditions (M.simAccess P) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro _; exact M.simAccess_isReflexive P
+  · intro h; exact absurd h (by decide)
+  · intro _; exact M.simAccess_isSymmetric P
+  · intro h; exact absurd h (by decide)
+  · intro h; exact absurd h (by decide)
+
+end TModel
 
 -- ════════════════════════════════════════════════════
--- § 2. Atomic Satisfaction
+-- § 2. Atoms and Formulas
 -- ════════════════════════════════════════════════════
 
-variable {D Pred : Type*} [Fintype D] [DecidableEq D]
+/-- Atoms of the propositional restricted vocabulary of TCS. Two
+    constructors per Definitions 8-9 of @cite{cobreros-etal-2012}:
 
-/-- Tolerant atomic satisfaction: M ⊨t P(a) iff some P-similar
-    individual classically satisfies P. Definition 9, t-atomic. -/
-def tolerantAtom (M : TModel D Pred) (P : Pred) (a : D) : Bool :=
-  decide (∃ d : D, M.sim P a d = true ∧ M.interp P d = true)
+    - `pred P a` ≡ `P(a)` — predicate application; t/c/s satisfaction
+      clauses depend on the mode (Definition 9).
+    - `sim P a b` ≡ `a I_P b` — similarity predicate; **classically
+      interpreted in all modes** (Definition 8, p. 353 + Remark 2,
+      p. 354 reiterating the assumption for s/t modes). -/
+inductive TCSAtom (Pred D : Type*) where
+  | pred : Pred → D → TCSAtom Pred D
+  | sim : Pred → D → D → TCSAtom Pred D
 
-/-- Strict atomic satisfaction: M ⊨s P(a) iff every P-similar
-    individual classically satisfies P. Definition 9, s-atomic. -/
-def strictAtom (M : TModel D Pred) (P : Pred) (a : D) : Bool :=
-  decide (∀ d : D, M.sim P a d = true → M.interp P d = true)
-
--- ════════════════════════════════════════════════════
--- § 3. Extension Hierarchy (Lemma 1, atomic)
--- ════════════════════════════════════════════════════
-
-omit [DecidableEq D] in
-/-- Strict ⟹ classical: if P holds for all similar individuals,
-    it holds for a itself (by reflexivity of ~_P). -/
-theorem strict_implies_classical (M : TModel D Pred) (P : Pred) (a : D)
-    (hs : strictAtom M P a = true) :
-    M.interp P a = true := by
-  rw [strictAtom, decide_eq_true_eq] at hs
-  exact hs a (M.sim_refl P a)
-
-omit [DecidableEq D] in
-/-- Classical ⟹ tolerant: if a classically satisfies P, then a
-    itself witnesses tolerant satisfaction (by reflexivity of ~_P). -/
-theorem classical_implies_tolerant (M : TModel D Pred) (P : Pred) (a : D)
-    (hc : M.interp P a = true) :
-    tolerantAtom M P a = true := by
-  rw [tolerantAtom, decide_eq_true_eq]
-  exact ⟨a, M.sim_refl P a, hc⟩
-
-omit [DecidableEq D] in
-/-- Strict ⟹ tolerant (transitive from above). -/
-theorem strict_implies_tolerant (M : TModel D Pred) (P : Pred) (a : D)
-    (hs : strictAtom M P a = true) :
-    tolerantAtom M P a = true :=
-  classical_implies_tolerant M P a (strict_implies_classical M P a hs)
+/-- TCS formulas: propositional combinations (¬, ∧) of TCS atoms.
+    Reuses the canonical `PropFormula` from `Core.Logic.ThreeValuedLogic`
+    rather than introducing a duplicate inductive — `mvEval` and the
+    `lpSat`/`k3Sat` lemmas in that file apply directly. -/
+abbrev TCSFormula (Pred D : Type*) := PropFormula (TCSAtom Pred D)
 
 -- ════════════════════════════════════════════════════
--- § 4. Tolerance Principle (Facts 2–3)
+-- § 3. Atomic Satisfaction (Definition 9 atomic clauses, p. 353)
 -- ════════════════════════════════════════════════════
 
-omit [DecidableEq D] in
-/-- Strict P at a, plus a ~_P b, gives classical P at b. The strict
-    extension is closed under similarity. -/
-theorem strict_sim_classical (M : TModel D Pred) (P : Pred) (a b : D)
-    (hs : strictAtom M P a = true) (hsim : M.sim P a b = true) :
-    M.interp P b = true := by
-  rw [strictAtom, decide_eq_true_eq] at hs
-  exact hs b hsim
+variable {D Pred : Type*}
 
-omit [DecidableEq D] in
-/-- **One-step tolerance** (Fact 2): if a is strictly P and a ~_P b,
-    then b is tolerantly P. This is the tolerance principle
-    ∀x∀y(P(x) ∧ x~_Py → P(y)) being t-valid: the premises hold
-    strictly, the conclusion holds tolerantly.
+/-- **Strict** atomic satisfaction: `P` holds at every `~_P`-neighbour
+    of `a`. Definition 9, atomic clause for `⊨ˢ`. Modal-logic-wise,
+    this is `boxR (M.simAccess P)` over the classical extension. -/
+def StrictAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
+  ∀ d, M.sim P a d → M.interp P d = true
 
-    Proof: strict(a) + sim(a,b) → classical(b) → tolerant(b). -/
+/-- **Tolerant** atomic satisfaction: `P` holds at some `~_P`-neighbour
+    of `a`. Definition 9, atomic clause for `⊨ᵗ`. Modal-logic-wise,
+    this is `diamondR (M.simAccess P)` over the classical extension. -/
+def TolerantAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
+  ∃ d, M.sim P a d ∧ M.interp P d = true
+
+/-- **Strict atom = `boxR` over the similarity frame.** This is
+    definitionally true; the lemma exists to expose the modal-logic
+    framing and to let downstream proofs invoke `boxR_T`/`boxR_B`
+    directly. -/
+theorem strictAt_eq_boxR (M : TModel D Pred) (P : Pred) (a : D) :
+    StrictAt M P a = boxR (M.simAccess P) (λ d => M.interp P d = true) a := rfl
+
+/-- **Tolerant atom = `diamondR` over the similarity frame.** Definitional. -/
+theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
+    TolerantAt M P a = diamondR (M.simAccess P) (λ d => M.interp P d = true) a := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. Lemma 1 atomic (extension hierarchy, p. 357)
+-- ════════════════════════════════════════════════════
+
+/-- **Strict ⟹ classical** at the atomic level: if `P` holds for every
+    `~_P`-neighbour of `a`, it holds for `a` itself by reflexivity of
+    `~_P`. This is the **T axiom** instantiated. -/
+theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
+    (hs : StrictAt M P a) : M.interp P a = true :=
+  boxR_T (M.simAccess P) (M.simAccess_isReflexive P) _ a hs
+
+/-- **Classical ⟹ tolerant** at the atomic level: `a` itself
+    witnesses the existential by reflexivity of `~_P`. -/
+theorem TolerantAt.of_classical (M : TModel D Pred) (P : Pred) (a : D)
+    (hc : M.interp P a = true) : TolerantAt M P a :=
+  ⟨a, M.sim_refl P a, hc⟩
+
+/-- **Strict ⟹ tolerant** (transitive from above). -/
+theorem StrictAt.imp_tolerant (M : TModel D Pred) (P : Pred) (a : D)
+    (hs : StrictAt M P a) : TolerantAt M P a :=
+  TolerantAt.of_classical M P a (StrictAt.imp_classical M P a hs)
+
+-- ════════════════════════════════════════════════════
+-- § 5. Tolerance Principle (Facts 2-3, p. 354)
+-- ════════════════════════════════════════════════════
+
+/-- **One-step tolerance** (Fact 2 of @cite{cobreros-etal-2012}, p. 354):
+    if `a` is strictly `P` and `a ~_P b`, then `b` is tolerantly `P`.
+    The tolerance principle `∀x∀y(P(x) ∧ x~_Py → P(y))` is t-valid.
+
+    Proof structure: strict-at-a + sim(a,b) gives classical-at-b
+    (via the strict clause); classical implies tolerant. -/
 theorem tolerance_one_step (M : TModel D Pred) (P : Pred) (a b : D)
-    (hs : strictAtom M P a = true) (hsim : M.sim P a b = true) :
-    tolerantAtom M P b = true :=
-  classical_implies_tolerant M P b (strict_sim_classical M P a b hs hsim)
+    (hs : StrictAt M P a) (hsim : M.sim P a b) :
+    TolerantAt M P b :=
+  TolerantAt.of_classical M P b (hs b hsim)
 
-omit [DecidableEq D] in
-/-- **Two-step tolerance** (Fact 3): tolerance propagates across
-    two similarity steps. If strictly P(a), a ~_P b, b ~_P c, then
-    tolerantly P(c). Two steps is the maximum: the third step can
-    fail because ~_P is non-transitive.
+/-- **Two-step tolerance** (Fact 3 of @cite{cobreros-etal-2012}, p. 354):
+    tolerance propagates across two similarity steps. The third step
+    can fail because `~_P` is non-transitive — paper footnote 4
+    illustrates this on the 4-element model with `Pa, a~b, b~c, c~d`
+    where `Pd` is NOT tolerantly true.
 
-    Proof: strict(a) + sim(a,b) → classical(b). Then b witnesses
+    Proof: strict(a) + sim(a,b) gives classical(b); then b witnesses
     tolerant(c) via sim(c,b) (by symmetry). -/
 theorem tolerance_two_step (M : TModel D Pred) (P : Pred) (a b c : D)
-    (hs : strictAtom M P a = true)
-    (hab : M.sim P a b = true) (hbc : M.sim P b c = true) :
-    tolerantAtom M P c = true := by
-  rw [tolerantAtom, decide_eq_true_eq]
-  exact ⟨b, M.sim_symm P b c hbc, strict_sim_classical M P a b hs hab⟩
+    (hs : StrictAt M P a) (hab : M.sim P a b) (hbc : M.sim P b c) :
+    TolerantAt M P c :=
+  ⟨b, M.sim_symm P b c hbc, hs b hab⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Borderline Cases (Definition 10)
+-- § 6. Borderline (Definition 10, p. 355)
 -- ════════════════════════════════════════════════════
 
-/-- An individual is borderline-P if it is in the tolerant extension
-    but not the strict extension. Equivalently: tolerantly P AND
-    tolerantly ¬P (since tolerant ¬P = not strictly P). -/
-def isBorderline (M : TModel D Pred) (P : Pred) (a : D) : Bool :=
-  tolerantAtom M P a && !strictAtom M P a
+/-- **Borderline**: in the tolerant extension but not the strict.
 
-omit [DecidableEq D] in
-/-- Borderline ↔ witnesses exist on both sides: some P-similar
-    individual is classically P, and some is classically not-P. -/
-theorem borderline_iff_both_witnesses (M : TModel D Pred) (P : Pred) (a : D) :
-    isBorderline M P a = true ↔
-    (∃ d, M.sim P a d = true ∧ M.interp P d = true) ∧
-    (∃ d, M.sim P a d = true ∧ M.interp P d = false) := by
-  simp only [isBorderline, Bool.and_eq_true, Bool.not_eq_true',
-    tolerantAtom, strictAtom, decide_eq_true_eq, decide_eq_false_iff_not]
-  constructor
+    Definition 10 (p. 355): `b(P)^M := ⟦P⟧ᵗ \ ⟦P⟧ˢ`. We adopt this
+    set-difference form as canonical; the equivalent paraconsistent
+    characterisation `tolerant P ∧ tolerant ¬P` follows from Definition
+    9's negation clause (`tolerant ¬P ↔ ¬strict P`) and is recorded as
+    `IsBorderline.iff_tolerant_pair` below. -/
+def IsBorderline (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
+  TolerantAt M P a ∧ ¬ StrictAt M P a
+
+/-- **Borderline iff witnesses on both sides** of the classical extension
+    in the similarity neighbourhood. This is the structural reading
+    underlying paper p. 355's discussion of borderline-as-disagreement. -/
+theorem IsBorderline.iff_both_witnesses (M : TModel D Pred) (P : Pred) (a : D) :
+    IsBorderline M P a ↔
+      (∃ d, M.sim P a d ∧ M.interp P d = true) ∧
+      (∃ d, M.sim P a d ∧ M.interp P d = false) := by
+  refine ⟨?_, ?_⟩
   · rintro ⟨⟨d, hsd, hpd⟩, hns⟩
-    push_neg at hns
-    obtain ⟨e, hse, hne⟩ := hns
-    refine ⟨⟨d, hsd, hpd⟩, ⟨e, hse, ?_⟩⟩
+    refine ⟨⟨d, hsd, hpd⟩, ?_⟩
+    by_contra hc
+    apply hns
+    intro e hse
+    by_contra hne
+    apply hc
+    refine ⟨e, hse, ?_⟩
     cases hv : M.interp P e
     · rfl
     · exact absurd hv hne
   · rintro ⟨⟨d, hsd, hpd⟩, ⟨e, hse, hne⟩⟩
     refine ⟨⟨d, hsd, hpd⟩, ?_⟩
-    push_neg; exact ⟨e, hse, by simp [hne]⟩
+    intro hs
+    have := hs e hse
+    rw [this] at hne
+    exact Bool.noConfusion hne
 
 -- ════════════════════════════════════════════════════
--- § 6. Tolerant Contradictions
+-- § 7. Bridge: TCS atoms ↔ Supervaluation (paper p. 355 footnote 5)
 -- ════════════════════════════════════════════════════
 
-omit [DecidableEq D] in
-/-- Borderline cases satisfy tolerant contradictions: tolerantly P
-    AND not strictly P (= tolerantly ¬P). Unlike supervaluationism
-    where P ∧ ¬P is super-false even for borderline cases, TCS
-    allows borderline contradictions because tolerant negation only
-    requires strict truth to fail. -/
-theorem borderline_tolerant_contradiction (M : TModel D Pred) (P : Pred) (a : D)
-    (hb : isBorderline M P a = true) :
-    tolerantAtom M P a = true ∧ strictAtom M P a = false := by
-  simp only [isBorderline, Bool.and_eq_true, Bool.not_eq_true'] at hb
-  exact hb
+section Bridge
 
--- ════════════════════════════════════════════════════
--- § 7. Bridge: TCS ↔ Supervaluation
--- ════════════════════════════════════════════════════
+variable [Fintype D]
 
-/-- The tolerance neighborhood of a under P: the set of individuals
-    P-similar to a. This is a `SpecSpace` because ~_P is reflexive
-    (a is always in its own neighborhood).
+/-- The tolerance neighborhood of `a` under `P` as a `SpecSpace`.
+    Reflexivity of `~_P` ensures `a` is in its own neighbourhood, so the
+    admissible Finset is non-empty.
 
-    This makes TCS a *localized* supervaluation: each individual
-    gets its own specification space. -/
-def toleranceSpace (M : TModel D Pred) (P : Pred) (a : D) : SpecSpace D where
-  admissible := Finset.univ.filter (fun d => M.sim P a d)
+    This makes TCS a **localized supervaluation**: each individual gets
+    its own specification space (the rough-set / tolerance-approximation
+    "granule" around it). -/
+def toleranceSpace (M : TModel D Pred) (P : Pred) (a : D)
+    [DecidablePred (M.sim P a)] : SpecSpace D where
+  admissible := Finset.univ.filter (M.sim P a)
   nonempty := ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a, M.sim_refl P a⟩⟩
 
-omit [DecidableEq D] in
 /-- **Strict truth = super-truth** over the tolerance neighborhood.
-    An individual strictly satisfies P iff P is true at ALL
-    specification points (P-similar individuals) in its tolerance
-    space. This is the central architectural connection to
+    `P` is strict at `a` iff `P` is super-true (true at every spec point)
+    over `a`'s tolerance space. The central architectural connection to
     `Supervaluation/Basic.lean`. -/
-theorem strict_iff_superTrue (M : TModel D Pred) (P : Pred) (a : D) :
-    strictAtom M P a = true ↔
-    superTrue (M.interp P) (toleranceSpace M P a) = Truth3.true := by
-  rw [strictAtom, decide_eq_true_eq, superTrue_true_iff]
-  constructor
-  · intro h d hd; exact h d (Finset.mem_filter.mp hd).2
-  · intro h d hd; exact h d (Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩)
+theorem StrictAt.iff_superTrue (M : TModel D Pred) (P : Pred) (a : D)
+    [DecidablePred (M.sim P a)] :
+    StrictAt M P a ↔
+      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.true := by
+  rw [superTrue_true_iff]
+  refine ⟨λ h d hd => h d (Finset.mem_filter.mp hd).2,
+          λ h d hd => h d (Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩)⟩
 
-omit [DecidableEq D] in
-/-- **¬Tolerant = super-false** over the tolerance neighborhood.
-    An individual is not tolerantly P iff P is false at ALL
-    specification points in its tolerance space. -/
-theorem not_tolerant_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D) :
-    tolerantAtom M P a = false ↔
-    superTrue (M.interp P) (toleranceSpace M P a) = Truth3.false := by
-  rw [tolerantAtom, decide_eq_false_iff_not, superTrue_false_iff]
-  push_neg
-  constructor
+/-- **¬Tolerant = super-false** over the tolerance neighborhood. -/
+theorem TolerantAt.not_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D)
+    [DecidablePred (M.sim P a)] :
+    ¬ TolerantAt M P a ↔
+      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.false := by
+  rw [superTrue_false_iff]
+  refine ⟨?_, ?_⟩
   · intro h d hd
     have hsim := (Finset.mem_filter.mp hd).2
-    have := h d hsim
-    cases hv : M.interp P d <;> simp_all
-  · intro h d hd
-    have := h d (Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩)
-    simp_all
+    cases hv : M.interp P d
+    · rfl
+    · exact absurd ⟨d, hsim, hv⟩ h
+  · rintro h ⟨d, hsim, hpd⟩
+    have hd : d ∈ Finset.univ.filter (M.sim P a) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ d, hsim⟩
+    rw [h d hd] at hpd
+    exact Bool.noConfusion hpd
 
-omit [DecidableEq D] in
-/-- **Borderline = indefinite** under supervaluation. An individual
-    is borderline-P in TCS iff P is indefinite (neither super-true
-    nor super-false) over its tolerance space.
-
-    This connects TCS to @cite{fine-1975}'s supervaluationism:
-    borderline cases are exactly the cases where the tolerance
-    neighborhood disagrees — some similar individuals satisfy P,
-    others don't. -/
-theorem borderline_iff_superTrue_indet (M : TModel D Pred) (P : Pred) (a : D) :
-    isBorderline M P a = true ↔
-    superTrue (M.interp P) (toleranceSpace M P a) = Truth3.indet := by
-  rw [borderline_iff_both_witnesses, superTrue_indet_iff]
-  constructor
+/-- **Borderline = supervaluationally indeterminate** over the tolerance
+    neighborhood. Connects TCS to @cite{fine-1975}: borderline cases are
+    exactly where the tolerance neighborhood disagrees on `P`. -/
+theorem IsBorderline.iff_superTrue_indet (M : TModel D Pred) (P : Pred) (a : D)
+    [DecidablePred (M.sim P a)] :
+    IsBorderline M P a ↔
+      superTrue (M.interp P) (toleranceSpace M P a) = Truth3.indet := by
+  rw [IsBorderline.iff_both_witnesses, superTrue_indet_iff]
+  refine ⟨?_, ?_⟩
   · rintro ⟨⟨d, hsd, hpd⟩, ⟨e, hse, hne⟩⟩
     exact ⟨⟨d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hsd⟩, hpd⟩,
            ⟨e, Finset.mem_filter.mpr ⟨Finset.mem_univ e, hse⟩, hne⟩⟩
@@ -280,657 +409,653 @@ theorem borderline_iff_superTrue_indet (M : TModel D Pred) (P : Pred) (a : D) :
     exact ⟨⟨d, (Finset.mem_filter.mp hd).2, hpd⟩,
            ⟨e, (Finset.mem_filter.mp he).2, hne⟩⟩
 
+end Bridge
+
 -- ════════════════════════════════════════════════════
--- § 8. Formula Language and Compositional Satisfaction
+-- § 8. SatMode and Compositional Satisfaction (Definition 9 full)
 -- ════════════════════════════════════════════════════
 
-/-- Propositional TCS formulas with ground atomic predications.
-    No quantifiers — the key results (hierarchy, tolerance,
-    borderline contradictions) are visible at this level. -/
-inductive TCSFormula (Pred D : Type*) where
-  | atom : Pred → D → TCSFormula Pred D
-  | neg : TCSFormula Pred D → TCSFormula Pred D
-  | conj : TCSFormula Pred D → TCSFormula Pred D → TCSFormula Pred D
-
-/-- Satisfaction mode: tolerant, classical, or strict. -/
+/-- The three satisfaction modes of @cite{cobreros-etal-2012}. -/
 inductive SatMode | tolerant | classical | strict
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
-/-- Dual mode: negation swaps t ↔ s and leaves c fixed.
-    This encodes the mutual recursion of Definition 9:
-    tolerant negation checks strict failure, strict negation
-    checks tolerant failure. -/
-def SatMode.dual : SatMode → SatMode
+namespace SatMode
+
+/-- The dual operation on modes: tolerant ↔ strict, classical fixed.
+    Encodes the mutual recursion of Definition 9: `M ⊨ᵗ ¬φ iff M ⊭ˢ φ`. -/
+def dual : SatMode → SatMode
   | .tolerant => .strict
   | .strict => .tolerant
   | .classical => .classical
 
-/-- Three-valued satisfaction (Definition 9). The mutual recursion
-    between t and s through negation is encoded via `SatMode.dual`. -/
-def sat (M : TModel D Pred) : SatMode → TCSFormula Pred D → Bool
-  | .classical, .atom P a => M.interp P a
-  | .tolerant, .atom P a => tolerantAtom M P a
-  | .strict, .atom P a => strictAtom M P a
-  | m, .neg φ => !sat M m.dual φ
-  | m, .conj φ ψ => sat M m φ && sat M m ψ
+/-- `dual` is an involution. Packaged as `Function.Involutive` so
+    downstream consumers can use mathlib's involution machinery. -/
+theorem dual_involutive : Function.Involutive dual := λ m => by cases m <;> rfl
+
+@[simp] theorem dual_dual (m : SatMode) : m.dual.dual = m := dual_involutive m
+
+end SatMode
+
+/-- **Three-valued satisfaction (Definition 9 full).** The propositional
+    fragment of Definition 9, dispatching on mode at atoms and threading
+    `SatMode.dual` through negation. Similarity atoms `a I_P b` are
+    classically interpreted regardless of mode (Definition 8 +
+    standing assumption above Definition 9). -/
+def Sat (M : TModel D Pred) : SatMode → TCSFormula Pred D → Prop
+  | _, .atom (.sim P a b) => M.sim P a b
+  | .classical, .atom (.pred P a) => M.interp P a = true
+  | .tolerant, .atom (.pred P a) => TolerantAt M P a
+  | .strict, .atom (.pred P a) => StrictAt M P a
+  | m, .neg φ => ¬ Sat M m.dual φ
+  | m, .conj φ ψ => Sat M m φ ∧ Sat M m ψ
+
+@[simp] theorem Sat.atom_classical_pred (M : TModel D Pred) (P : Pred) (a : D) :
+    Sat M .classical (.atom (.pred P a)) = (M.interp P a = true) := rfl
+
+@[simp] theorem Sat.atom_tolerant_pred (M : TModel D Pred) (P : Pred) (a : D) :
+    Sat M .tolerant (.atom (.pred P a)) = TolerantAt M P a := rfl
+
+@[simp] theorem Sat.atom_strict_pred (M : TModel D Pred) (P : Pred) (a : D) :
+    Sat M .strict (.atom (.pred P a)) = StrictAt M P a := rfl
+
+@[simp] theorem Sat.atom_sim (M : TModel D Pred) (m : SatMode)
+    (P : Pred) (a b : D) :
+    Sat M m (.atom (.sim P a b)) = M.sim P a b := by
+  cases m <;> rfl
+
+@[simp] theorem Sat.neg_eq (M : TModel D Pred) (m : SatMode) (φ : TCSFormula Pred D) :
+    Sat M m (.neg φ) = ¬ Sat M m.dual φ := rfl
+
+@[simp] theorem Sat.conj_eq (M : TModel D Pred) (m : SatMode) (φ ψ : TCSFormula Pred D) :
+    Sat M m (.conj φ ψ) = (Sat M m φ ∧ Sat M m ψ) := rfl
 
 -- ════════════════════════════════════════════════════
--- § 9. Full Hierarchy (Lemma 1)
+-- § 9. Lemma 1 full (formula-level hierarchy, p. 357)
 -- ════════════════════════════════════════════════════
 
-private lemma bool_contra_neg {a b : Bool}
-    (h : a = true → b = true) : !b = true → !a = true := by
-  cases a <;> cases b <;> simp_all
-
-omit [DecidableEq D] in
-/-- **Lemma 1** (full formula level): for any formula φ,
+/-- **Lemma 1** (paper p. 357, formula level): for any TCS formula φ,
     strict satisfaction implies classical, and classical implies
-    tolerant. The negation case uses contrapositive of the other
-    direction — this is why both directions must be proved together. -/
-theorem sat_hierarchy (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    (sat M .strict φ = true → sat M .classical φ = true) ∧
-    (sat M .classical φ = true → sat M .tolerant φ = true) := by
+    tolerant. Both directions must be proved together because the
+    negation case for one direction needs the contrapositive of the
+    other.
+
+    For predicate atoms this is the atomic Lemma 1 (`StrictAt.imp_classical`,
+    `TolerantAt.of_classical`). For similarity atoms all three modes
+    agree (similarity predicates are uniformly classical). The negation
+    case turns into a `dual`-swap; conjunction is pointwise. -/
+theorem Sat.hierarchy (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    (Sat M .strict φ → Sat M .classical φ) ∧
+    (Sat M .classical φ → Sat M .tolerant φ) := by
   induction φ with
-  | atom P a =>
-    exact ⟨strict_implies_classical M P a, classical_implies_tolerant M P a⟩
+  | atom α =>
+    cases α with
+    | pred P a =>
+      exact ⟨StrictAt.imp_classical M P a, TolerantAt.of_classical M P a⟩
+    | sim P a b => exact ⟨id, id⟩
   | neg ψ ih =>
-    refine ⟨?_, ?_⟩
-    · -- s(¬ψ) → c(¬ψ): contrapositive of c(ψ) → t(ψ)
-      cases hc : sat M .classical ψ <;> cases ht : sat M .tolerant ψ <;>
-        simp_all [sat, SatMode.dual]
-    · -- c(¬ψ) → t(¬ψ): contrapositive of s(ψ) → c(ψ)
-      cases hs : sat M .strict ψ <;> cases hc : sat M .classical ψ <;>
-        simp_all [sat, SatMode.dual]
+    -- The neg case reduces both directions to contrapositives of `ih`.
+    -- `Sat M .strict (.neg ψ) = ¬ Sat M .tolerant ψ` and
+    -- `Sat M .classical (.neg ψ) = ¬ Sat M .classical ψ` definitionally,
+    -- so each direction is `(¬ q) → (¬ p)` which is `mt p_imp_q`.
+    exact ⟨λ h hc => h (ih.2 hc), λ h hs => h (ih.1 hs)⟩
   | conj ψ χ ihψ ihχ =>
-    simp only [sat, Bool.and_eq_true]
-    exact ⟨fun ⟨h1, h2⟩ => ⟨ihψ.1 h1, ihχ.1 h2⟩,
-           fun ⟨h1, h2⟩ => ⟨ihψ.2 h1, ihχ.2 h2⟩⟩
+    exact ⟨λ ⟨h1, h2⟩ => ⟨ihψ.1 h1, ihχ.1 h2⟩,
+           λ ⟨h1, h2⟩ => ⟨ihψ.2 h1, ihχ.2 h2⟩⟩
 
-omit [DecidableEq D] in
-theorem sat_strict_implies_classical (M : TModel D Pred)
-    (φ : TCSFormula Pred D) :
-    sat M .strict φ = true → sat M .classical φ = true :=
-  (sat_hierarchy M φ).1
+theorem Sat.strict_imp_classical (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .strict φ → Sat M .classical φ := (Sat.hierarchy M φ).1
 
-omit [DecidableEq D] in
-theorem sat_classical_implies_tolerant (M : TModel D Pred)
-    (φ : TCSFormula Pred D) :
-    sat M .classical φ = true → sat M .tolerant φ = true :=
-  (sat_hierarchy M φ).2
+theorem Sat.classical_imp_tolerant (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .classical φ → Sat M .tolerant φ := (Sat.hierarchy M φ).2
+
+theorem Sat.strict_imp_tolerant (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .strict φ → Sat M .tolerant φ :=
+  λ h => Sat.classical_imp_tolerant M φ (Sat.strict_imp_classical M φ h)
 
 -- ════════════════════════════════════════════════════
--- § 10. Duality (Remark 1)
+-- § 10. Identity Models and Lemma 2 (p. 357)
 -- ════════════════════════════════════════════════════
 
-omit [DecidableEq D] in
-/-- **Remark 1**: tolerant and strict are duals. M ⊨t φ iff M ⊭s ¬φ,
-    and M ⊨s φ iff M ⊭t ¬φ. This falls out of the definition:
-    sat .tolerant (neg φ) = !(sat .strict φ). -/
-theorem tolerant_strict_duality (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    sat M .tolerant φ = !sat M .strict (.neg φ) := by
-  simp [sat, SatMode.dual, Bool.not_not]
+/-- An **identity T-model**: similarity is propositional equality.
+    Paper Lemma 2 (p. 357): every C-model can be expanded to a T-model
+    where t/c/s satisfaction coincide.
 
-omit [DecidableEq D] in
-/-- Dual direction: M ⊨s φ iff M ⊭t ¬φ. -/
-theorem strict_tolerant_duality (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    sat M .strict φ = !sat M .tolerant (.neg φ) := by
-  simp [sat, SatMode.dual, Bool.not_not]
-
--- ════════════════════════════════════════════════════
--- § 11. Concrete Example: 4-Element Sorites Model
--- ════════════════════════════════════════════════════
-
-/-! The paper's running example (p. 354–355): four individuals
-    a, b, c, d in a chain of pairwise similarities.
-    I(P) = {a, b}: a and b are classically tall.
-    a ~_P b ~_P c ~_P d (chain), nothing else beyond reflexivity.
-
-    Predictions:
-    - Strict extension: {a} (only a has ALL neighbors classically P)
-    - Classical extension: {a, b}
-    - Tolerant extension: {a, b, c} (c has neighbor b who is P)
-    - Borderline: {b, c}
-    - b and c tolerantly satisfy P ∧ ¬P -/
-
-section Example
-
-inductive Elt | a | b | c | d
-  deriving Repr, DecidableEq
-
-instance : Fintype Elt where
-  elems := {.a, .b, .c, .d}
-  complete x := by cases x <;> simp
-
-inductive VPred | tall
-  deriving Repr, DecidableEq
-
-def soritesModel : TModel Elt VPred where
-  interp
-    | .tall, .a => true | .tall, .b => true
-    | .tall, .c => false | .tall, .d => false
-  sim
-    | .tall, .a, .a => true | .tall, .a, .b => true
-    | .tall, .b, .a => true | .tall, .b, .b => true | .tall, .b, .c => true
-    | .tall, .c, .b => true | .tall, .c, .c => true | .tall, .c, .d => true
-    | .tall, .d, .c => true | .tall, .d, .d => true
-    | _, _, _ => false
-  sim_refl P x := by cases P; cases x <;> rfl
-  sim_symm P x₁ x₂ h := by cases P; cases x₁ <;> cases x₂ <;> simp_all
-
--- Extension verification
-
-theorem strict_extension :
-    strictAtom soritesModel .tall .a = true ∧
-    strictAtom soritesModel .tall .b = false ∧
-    strictAtom soritesModel .tall .c = false ∧
-    strictAtom soritesModel .tall .d = false := by native_decide
-
-theorem classical_extension :
-    soritesModel.interp .tall .a = true ∧
-    soritesModel.interp .tall .b = true ∧
-    soritesModel.interp .tall .c = false ∧
-    soritesModel.interp .tall .d = false := by decide
-
-theorem tolerant_extension :
-    tolerantAtom soritesModel .tall .a = true ∧
-    tolerantAtom soritesModel .tall .b = true ∧
-    tolerantAtom soritesModel .tall .c = true ∧
-    tolerantAtom soritesModel .tall .d = false := by native_decide
-
--- Borderline cases: b and c
-
-theorem b_is_borderline :
-    isBorderline soritesModel .tall .b = true := by native_decide
-
-theorem c_is_borderline :
-    isBorderline soritesModel .tall .c = true := by native_decide
-
-theorem a_not_borderline :
-    isBorderline soritesModel .tall .a = false := by native_decide
-
-theorem d_not_borderline :
-    isBorderline soritesModel .tall .d = false := by native_decide
-
--- Tolerant contradictions at borderline cases
-
-theorem b_tolerant_contradiction :
-    sat soritesModel .tolerant
-      (.conj (.atom .tall .b) (.neg (.atom .tall .b))) = true := by
-  native_decide
-
-theorem c_tolerant_contradiction :
-    sat soritesModel .tolerant
-      (.conj (.atom .tall .c) (.neg (.atom .tall .c))) = true := by
-  native_decide
-
--- Non-borderline cases do NOT satisfy tolerant contradictions
-
-theorem a_no_tolerant_contradiction :
-    sat soritesModel .tolerant
-      (.conj (.atom .tall .a) (.neg (.atom .tall .a))) = false := by
-  native_decide
-
-theorem d_no_tolerant_contradiction :
-    sat soritesModel .tolerant
-      (.conj (.atom .tall .d) (.neg (.atom .tall .d))) = false := by
-  native_decide
-
--- Classical contradictions are always classically false
-
-theorem classical_contradiction_false (x : Elt) :
-    sat soritesModel .classical
-      (.conj (.atom .tall x) (.neg (.atom .tall x))) = false := by
-  cases x <;> native_decide
-
--- Non-transitivity: a ~_P b and b ~_P c but a ≁_P c
-
-theorem sim_non_transitive :
-    soritesModel.sim .tall .a .b = true ∧
-    soritesModel.sim .tall .b .c = true ∧
-    soritesModel.sim .tall .a .c = false := by decide
-
--- Tolerance propagation: a is strictly tall, c is tolerantly tall
--- (two steps along the chain), but d is NOT tolerantly tall
--- (three steps would be needed)
-
-theorem tolerance_reaches_c :
-    strictAtom soritesModel .tall .a = true ∧
-    tolerantAtom soritesModel .tall .c = true ∧
-    tolerantAtom soritesModel .tall .d = false := by native_decide
-
-end Example
-
--- ════════════════════════════════════════════════════
--- § 12. Nine Consequence Relations (Definition 17)
--- ════════════════════════════════════════════════════
-
-/-! @cite{cobreros-etal-2012} §3: from three notions of satisfaction
-    {s, c, t} we obtain nine consequence relations ⊨ᵐⁿ by varying
-    the standard for premises (m) and conclusions (n). -/
-
-/-- Lift Boolean satisfaction to Prop for use with `MixedConsequence`. -/
-def satProp (M : TModel D Pred) (mode : SatMode) (φ : TCSFormula Pred D) : Prop :=
-  sat M mode φ = true
-
-open Core.Logic.Consequence (MixedConsequence SatImplies)
-
-/-- The nine TCS consequence relations as instances of `MixedConsequence`. -/
-def tcsConsequence [Fintype D] [DecidableEq D]
-    (m n : SatMode) (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) : Prop :=
-  MixedConsequence (satProp (D := D) (Pred := Pred)) m n Γ φ
-
--- ════════════════════════════════════════════════════
--- § 13. Strength Ordering (Lemma 7)
--- ════════════════════════════════════════════════════
-
-omit [DecidableEq D] in
-/-- Strict satisfaction implies classical. -/
-theorem satImplies_strict_classical :
-    SatImplies (satProp (D := D) (Pred := Pred)) SatMode.strict SatMode.classical :=
-  fun M φ h => sat_strict_implies_classical M φ h
-
-omit [DecidableEq D] in
-/-- Classical satisfaction implies tolerant. -/
-theorem satImplies_classical_tolerant :
-    SatImplies (satProp (D := D) (Pred := Pred)) SatMode.classical SatMode.tolerant :=
-  fun M φ h => sat_classical_implies_tolerant M φ h
-
-omit [DecidableEq D] in
-/-- Strict satisfaction implies tolerant (transitive). -/
-theorem satImplies_strict_tolerant :
-    SatImplies (satProp (D := D) (Pred := Pred)) SatMode.strict SatMode.tolerant :=
-  SatImplies.trans satImplies_strict_classical satImplies_classical_tolerant
-
--- ════════════════════════════════════════════════════
--- § 14. Identity Models and Mode Collapse
--- ════════════════════════════════════════════════════
-
-/-- An **identity T-model**: similarity is the identity relation.
-    In such models, tolerant = classical = strict for all formulas,
-    since the only element similar to a is a itself.
-
-    This is the key construction in @cite{cobreros-etal-2012} Lemma 2:
-    every C-model can be expanded to a T-model where all three notions
-    of satisfaction coincide. -/
+    The construction is parameterised by an `interp` and produces the
+    T-model whose similarity relation is `(· = ·)`. -/
 def identityModel (interp : Pred → D → Bool) : TModel D Pred where
   interp := interp
-  sim _ d₁ d₂ := decide (d₁ = d₂)
-  sim_refl _ d := by simp
-  sim_symm _ d₁ d₂ h := by simp [decide_eq_true_eq] at *; exact h.symm
+  sim _ d₁ d₂ := d₁ = d₂
+  sim_refl _ _ := rfl
+  sim_symm _ _ _ h := h.symm
 
-/-- In an identity model, tolerant satisfaction equals classical. -/
-theorem identityModel_tolerant_eq_classical (interp : Pred → D → Bool)
+/-- In an identity model, tolerant atomic = classical. -/
+theorem identityModel.tolerantAt_iff (interp : Pred → D → Bool)
     (P : Pred) (a : D) :
-    tolerantAtom (identityModel interp) P a = interp P a := by
-  simp only [tolerantAtom, identityModel, decide_eq_true_eq]
-  cases hv : interp P a <;> simp [hv]
+    TolerantAt (identityModel interp) P a ↔ interp P a = true :=
+  ⟨λ ⟨_, hsim, hp⟩ => by cases hsim; exact hp,
+   λ h => ⟨a, rfl, h⟩⟩
 
-/-- In an identity model, strict satisfaction equals classical. -/
-theorem identityModel_strict_eq_classical (interp : Pred → D → Bool)
+/-- In an identity model, strict atomic = classical. -/
+theorem identityModel.strictAt_iff (interp : Pred → D → Bool)
     (P : Pred) (a : D) :
-    strictAtom (identityModel interp) P a = interp P a := by
-  simp only [strictAtom, identityModel, decide_eq_true_eq]
-  cases hv : interp P a <;> simp [hv]
+    StrictAt (identityModel interp) P a ↔ interp P a = true :=
+  ⟨λ h => h a rfl, λ h _ hsim => by cases hsim; exact h⟩
 
-/-- **All modes agree in an identity model** (Lemma 2).
-    For any formula, satisfaction under all three modes coincides. -/
-theorem identityModel_modes_agree (interp : Pred → D → Bool)
+/-- **Lemma 2** (formula level): all three modes agree in an identity
+    model, for every formula. -/
+theorem identityModel.modes_agree (interp : Pred → D → Bool)
     (mode : SatMode) (φ : TCSFormula Pred D) :
-    sat (identityModel interp) mode φ =
-    sat (identityModel interp) .classical φ := by
+    Sat (identityModel interp) mode φ ↔ Sat (identityModel interp) .classical φ := by
   induction φ generalizing mode with
-  | atom P a =>
-    cases mode with
-    | classical => rfl
-    | tolerant => exact identityModel_tolerant_eq_classical interp P a
-    | strict => exact identityModel_strict_eq_classical interp P a
+  | atom α =>
+    cases α with
+    | pred P a =>
+      cases mode with
+      | classical => exact Iff.rfl
+      | tolerant =>
+        simp only [Sat.atom_tolerant_pred, Sat.atom_classical_pred]
+        exact identityModel.tolerantAt_iff interp P a
+      | strict =>
+        simp only [Sat.atom_strict_pred, Sat.atom_classical_pred]
+        exact identityModel.strictAt_iff interp P a
+    | sim P a b => simp only [Sat.atom_sim]
   | neg ψ ih =>
-    simp only [sat]; congr 1; exact ih mode.dual
+    simp only [Sat.neg_eq]
+    exact not_congr (ih mode.dual)
   | conj ψ χ ihψ ihχ =>
-    simp only [sat]; exact congr (congrArg _ (ihψ mode)) (ihχ mode)
+    simp only [Sat.conj_eq]
+    exact and_congr (ihψ mode) (ihχ mode)
 
 -- ════════════════════════════════════════════════════
--- § 15. Collapse Theorem (Lemma 8)
+-- § 11. Mixed Consequence (Definition 17, p. 366)
 -- ════════════════════════════════════════════════════
 
-/-- **Lemma 8**: cc = sc = ct = st. All four relations coincide.
+/-- **Mixed TCS-consequence** (Definition 17 of @cite{cobreros-etal-2012}):
+    `Γ ⊨ᵐⁿ φ` iff every T-model that m-satisfies all premises also
+    n-satisfies the conclusion. The nine combinations (m, n ∈ {t, c, s})
+    yield the nine consequence relations.
 
-    Proof strategy:
-    - cc ⊆ sc ⊆ st (by premise/conclusion monotonicity)
-    - cc ⊆ ct ⊆ st (by premise/conclusion monotonicity)
-    - st ⊆ cc (by identity model argument: every cc-counterexample
-      gives an st-counterexample via the identity model)
+    Specialisation of `Core.Logic.Consequence.MixedConsequence`. As an
+    `abbrev` so the substrate API surface (`mixed_monotone`, etc.) is
+    reachable without `unfold`. -/
+abbrev tcsConsequence
+    (m n : SatMode) (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) : Prop :=
+  MixedConsequence (Sat (D := D) (Pred := Pred)) m n Γ φ
 
-    Hence all four are equal. We prove st ⊆ cc; the rest follow
-    from monotonicity. -/
-theorem st_implies_cc
+-- ════════════════════════════════════════════════════
+-- § 12. Lemma 7 strength ordering (consequence level, p. 368)
+-- ════════════════════════════════════════════════════
+
+/-- The atomic-level **`Sat`Implies** witnesses for the three pairwise
+    implications among satisfaction modes. These lift the formula-level
+    Lemma 1 (`Sat.strict_imp_classical` etc.) into the abstract
+    `SatImplies` shape that `MixedConsequence`'s monotonicity API
+    consumes. -/
+theorem satImplies_strict_classical :
+    SatImplies (Sat (D := D) (Pred := Pred)) .strict .classical :=
+  λ M φ h => Sat.strict_imp_classical M φ h
+
+theorem satImplies_classical_tolerant :
+    SatImplies (Sat (D := D) (Pred := Pred)) .classical .tolerant :=
+  λ M φ h => Sat.classical_imp_tolerant M φ h
+
+theorem satImplies_strict_tolerant :
+    SatImplies (Sat (D := D) (Pred := Pred)) .strict .tolerant :=
+  SatImplies.trans satImplies_strict_classical satImplies_classical_tolerant
+
+/-- **Lemma 7, premise-mode clause** (p. 368): premise-mode strengthening
+    coarsens consequence: `⊨ᵗᵐ ⊆ ⊨ᶜᵐ ⊆ ⊨ˢᵐ` for any conclusion mode `m`.
+    The "first/second part" decomposition is the formaliser's exposition;
+    the paper states both clauses as a single result. -/
+theorem tcsConsequence.from_tolerant_premise
+    {m : SatMode} {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (h : tcsConsequence .tolerant m Γ φ) :
+    tcsConsequence .classical m Γ φ :=
+  premise_monotone satImplies_classical_tolerant h
+
+theorem tcsConsequence.from_classical_premise
+    {m : SatMode} {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (h : tcsConsequence .classical m Γ φ) :
+    tcsConsequence .strict m Γ φ :=
+  premise_monotone satImplies_strict_classical h
+
+/-- **Lemma 7, conclusion-mode clause** (p. 368): conclusion-mode weakening
+    coarsens consequence: `⊨ᵐˢ ⊆ ⊨ᵐᶜ ⊆ ⊨ᵐᵗ` for any premise mode `m`. -/
+theorem tcsConsequence.to_classical_conclusion
+    {m : SatMode} {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (h : tcsConsequence m .strict Γ φ) :
+    tcsConsequence m .classical Γ φ :=
+  conclusion_monotone satImplies_strict_classical h
+
+theorem tcsConsequence.to_tolerant_conclusion
+    {m : SatMode} {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (h : tcsConsequence m .classical Γ φ) :
+    tcsConsequence m .tolerant Γ φ :=
+  conclusion_monotone satImplies_classical_tolerant h
+
+-- ════════════════════════════════════════════════════
+-- § 13. Lemma 8 collapse cc = sc = ct = st (p. 369, restricted vocabulary)
+-- ════════════════════════════════════════════════════
+
+/-- A TCS formula is **restricted** if it uses only predicate atoms.
+    Paper §2 (p. 356) defines the restricted vocabulary as formulas
+    free of BOTH `I_P` (similarity) atoms AND `=` (identity) atoms;
+    this Lean substrate has no `=` constructor on `TCSAtom`, so this
+    predicate captures only the no-`I_P` half of the paper's restriction.
+    For the propositional fragment under consideration here, the two
+    coincide.
+
+    On this fragment the **Lemma 8** collapse holds (paper §3.3.1, p. 369,
+    states `⊨ˢᵗ ⇒ ⊨ᶜᶜ`, and combined with Lemma 7 monotonicity gives
+    cc = sc = ct = st). With similarity (or identity) atoms in the
+    language, ALL NINE consequence relations of Definition 17 become
+    genuinely distinct (paper §3.4 full-vocabulary diagram, p. 371);
+    the four strongest (cc, sc, ct, st) are demonstrated distinct in
+    paper §3.4 via the one-step tolerance inference `{Pa, aI_Pb} ⊨ Pb`. -/
+def IsRestricted : TCSFormula Pred D → Prop
+  | .atom (.pred _ _) => True
+  | .atom (.sim _ _ _) => False
+  | .neg φ => IsRestricted φ
+  | .conj φ ψ => IsRestricted φ ∧ IsRestricted ψ
+
+/-- **Identity-model construction for Lemma 8.** On the restricted
+    vocabulary (no sim atoms), the identity model built from `M`'s
+    classical interpretation classically satisfies the same formulas
+    as `M`. Combined with `identityModel.modes_agree` (where t = c = s
+    in the identity model), this drives the cc=st collapse. -/
+private theorem identityModel.classical_eq (M : TModel D Pred)
+    (φ : TCSFormula Pred D) (hr : IsRestricted φ) :
+    Sat (identityModel M.interp) .classical φ ↔ Sat M .classical φ := by
+  induction φ with
+  | atom α =>
+    cases α with
+    | pred P a => exact Iff.rfl
+    | sim P a b => exact hr.elim
+  | neg ψ ih =>
+    simp only [Sat.neg_eq, SatMode.dual]
+    exact not_congr (ih hr)
+  | conj ψ χ ihψ ihχ =>
+    simp only [Sat.conj_eq]
+    exact and_congr (ihψ hr.1) (ihχ hr.2)
+
+/-- **Lemma 8, st ⟹ cc** on restricted formulas (paper p. 369): the
+    heart of the collapse. An st-counterexample to a cc-claim survives
+    in the identity model where all modes agree.
+
+    The restriction to `IsRestricted` formulas is essential — paper §3.4
+    (p. 371) shows all nine consequence relations are distinct in the
+    full vocabulary. -/
+theorem tcsConsequence.st_imp_cc_restricted
     {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (hΓ : ∀ ψ ∈ Γ, IsRestricted ψ) (hφ : IsRestricted φ)
     (hst : tcsConsequence (D := D) (Pred := Pred) .strict .tolerant Γ φ) :
     tcsConsequence .classical .classical Γ φ := by
   intro M hprem
-  -- Construct identity model from M's interpretation
   let M' := identityModel (D := D) (Pred := Pred) M.interp
-  -- In M', all modes agree with classical
-  have hagree : ∀ (mode : SatMode) (ψ : TCSFormula Pred D),
-      sat M' mode ψ = sat M' .classical ψ :=
-    identityModel_modes_agree M.interp
-  -- M' has the same classical interpretation as M
-  have hsame : ∀ ψ : TCSFormula Pred D,
-      sat M .classical ψ = sat M' .classical ψ := by
-    intro ψ; induction ψ with
-    | atom P a => rfl
-    | neg ψ ih => simp [sat, SatMode.dual, ih]
-    | conj ψ χ ihψ ihχ => simp [sat, ihψ, ihχ]
-  -- Premises hold strictly in M' (since strict = classical in M')
-  have hprem' : ∀ γ ∈ Γ, satProp M' .strict γ := fun γ hγ => by
-    rw [satProp, hagree .strict γ, ← hsame γ]
+  have hprem' : ∀ γ ∈ Γ, Sat M' .strict γ := by
+    intro γ hγ
+    rw [identityModel.modes_agree, identityModel.classical_eq _ _ (hΓ γ hγ)]
     exact hprem γ hγ
-  -- Conclusion holds tolerantly in M' (by st-consequence)
   have hconc' := hst M' hprem'
-  -- Tolerant = classical in M'
-  rw [satProp, hagree .tolerant φ, ← hsame φ] at hconc'
+  rw [identityModel.modes_agree, identityModel.classical_eq _ _ hφ] at hconc'
   exact hconc'
 
-/-- cc ⊆ st (by monotonicity). -/
-theorem cc_implies_st
+/-- **cc ⟹ st** by monotonicity (Lemma 7, twice). Holds unrestricted. -/
+theorem tcsConsequence.cc_imp_st
     {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
     (hcc : tcsConsequence (D := D) (Pred := Pred) .classical .classical Γ φ) :
     tcsConsequence .strict .tolerant Γ φ :=
-  Core.Logic.Consequence.mixed_monotone
-    satImplies_strict_classical satImplies_classical_tolerant hcc
+  mixed_monotone satImplies_strict_classical satImplies_classical_tolerant hcc
 
-/-- **cc = st**: the four mixed consequence relations coincide. -/
-theorem cc_iff_st
-    {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D} :
+/-- **Lemma 8 cc ↔ st** on restricted formulas: classical consequence
+    collapses with strict-to-tolerant. -/
+theorem tcsConsequence.cc_iff_st_restricted
+    {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (hΓ : ∀ ψ ∈ Γ, IsRestricted ψ) (hφ : IsRestricted φ) :
     tcsConsequence (D := D) (Pred := Pred) .classical .classical Γ φ ↔
-    tcsConsequence .strict .tolerant Γ φ :=
-  ⟨cc_implies_st, st_implies_cc⟩
+      tcsConsequence .strict .tolerant Γ φ :=
+  ⟨tcsConsequence.cc_imp_st, tcsConsequence.st_imp_cc_restricted hΓ hφ⟩
+
+/-- **Lemma 8 cc ↔ sc** on restricted formulas: sandwiching via Lemma 7. -/
+theorem tcsConsequence.cc_iff_sc_restricted
+    {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (hΓ : ∀ ψ ∈ Γ, IsRestricted ψ) (hφ : IsRestricted φ) :
+    tcsConsequence (D := D) (Pred := Pred) .classical .classical Γ φ ↔
+      tcsConsequence .strict .classical Γ φ := by
+  refine ⟨premise_monotone satImplies_strict_classical, ?_⟩
+  intro h
+  apply tcsConsequence.st_imp_cc_restricted hΓ hφ
+  exact conclusion_monotone satImplies_classical_tolerant h
+
+/-- **Lemma 8 cc ↔ ct** on restricted formulas: the dual sandwich. -/
+theorem tcsConsequence.cc_iff_ct_restricted
+    {Γ : List (TCSFormula Pred D)} {φ : TCSFormula Pred D}
+    (hΓ : ∀ ψ ∈ Γ, IsRestricted ψ) (hφ : IsRestricted φ) :
+    tcsConsequence (D := D) (Pred := Pred) .classical .classical Γ φ ↔
+      tcsConsequence .classical .tolerant Γ φ := by
+  refine ⟨conclusion_monotone satImplies_classical_tolerant, ?_⟩
+  intro h
+  apply tcsConsequence.st_imp_cc_restricted hΓ hφ
+  exact premise_monotone satImplies_strict_classical h
 
 -- ════════════════════════════════════════════════════
--- § 16. Duality of TCS Satisfaction
+-- § 14. Duality (Remark 1 + Lemma 10, pp. 353+371)
 -- ════════════════════════════════════════════════════
 
-open Core.Logic.Consequence (SatDuality IsSelfDual)
+/-- **Remark 1** (p. 353): satisfaction-level duality. Negation swaps
+    the satisfaction mode via `dual`: `M ⊨ᵐ ¬φ ↔ ¬ M ⊨^{dual m} φ`.
+    Definitionally true from `Sat.neg_eq`.
 
-/-- The dual mode involution: d(d(m)) = m. -/
-theorem dual_invol (m : SatMode) : m.dual.dual = m := by
-  cases m <;> rfl
+    Note: the abstract `Core.Logic.Consequence.SatDuality` structure
+    requires `neg` to be a syntactic involution (`¬¬φ = φ`). TCSFormula
+    negation is NOT syntactically involutive (we have `.neg (.neg φ)`,
+    not `φ`), so the abstract structure does not literally apply. The
+    semantic-level swap is what's needed downstream and is proved here
+    directly. -/
+theorem Sat.neg_swap (M : TModel D Pred) (m : SatMode) (φ : TCSFormula Pred D) :
+    Sat M m (.neg φ) ↔ ¬ Sat M m.dual φ := Iff.rfl
 
-omit [DecidableEq D] in
-/-- **Satisfaction-level duality**: M ⊨ᵐ ¬φ iff M ⊭^{d(m)} φ.
-    Negation swaps the satisfaction mode via the dual operation.
-
-    Note: TCSFormula.neg is NOT an involution (¬¬φ ≠ φ syntactically),
-    so the abstract `SatDuality` structure from Consequence.lean
-    does not apply. Instead we prove the key property directly. -/
-theorem sat_neg_swap (M : TModel D Pred) (m : SatMode) (φ : TCSFormula Pred D) :
-    sat M m (.neg φ) = !sat M m.dual φ := by
-  simp [sat]
-
-/-- **st is self-dual**: d(t) = s and d(s) = t. Self-dual
-    consequence relations satisfy the deduction theorem
-    (Lemma 10 of @cite{cobreros-etal-2012}). -/
+/-- **Lemma 10** self-dual witnesses: the consequence relations satisfying
+    `m = dual n` (equivalently `n = dual m`) are exactly the self-dual ones,
+    and these are exactly the ones for which the deduction theorem holds.
+    For TCS this gives `st`, `ts`, and `cc`. -/
 theorem st_self_dual : IsSelfDual SatMode.dual .strict .tolerant := rfl
 
-/-- **cc is self-dual**: d(c) = c. -/
+theorem ts_self_dual : IsSelfDual SatMode.dual .tolerant .strict := rfl
+
 theorem cc_self_dual : IsSelfDual SatMode.dual .classical .classical := rfl
 
 -- ════════════════════════════════════════════════════
--- § 17. LP/K3 Correspondence (Theorem 3)
+-- § 15. Lemma 4 + Theorem 3 (LP/K3 correspondence, pp. 361-362)
 -- ════════════════════════════════════════════════════
 
-private theorem Bool.ne_false_eq_true {b : Bool} (h : b ≠ false) : b = true := by
-  cases b <;> simp at h ⊢
+section LpK3
 
-private theorem Bool.ne_true_eq_false {b : Bool} (h : b ≠ true) : b = false := by
-  cases b <;> simp at h ⊢
+attribute [local instance] Classical.propDecidable
 
-open Core.Duality (Truth3)
-open Core.Logic.ThreeValuedLogic (isLPDesignated isK3Designated
-  lp_neg_iff_not_k3 k3_neg_iff_not_lp lp_meet k3_meet)
+/-- The MV-model construction of Lemma 4 (p. 361). Each TCS atom is
+    classified into Strong Kleene's `{true, false, indet}`:
 
-/-- Construct a three-valued interpretation from a T-model.
-    Each atom (P, a) gets:
-    - `Truth3.true` if strictly P(a) (all similar individuals satisfy P)
-    - `Truth3.false` if not tolerantly P(a) (no similar individual satisfies P)
-    - `Truth3.indet` otherwise (borderline: some similar individuals do, others don't)
+    - `pred P a` → `.true` if `StrictAt M P a`, `.false` if `¬TolerantAt M P a`,
+      `.indet` otherwise (borderline).
+    - `sim P a b` → classical: `.true` if similar, `.false` otherwise.
 
-    This is the construction in Lemma 4 of @cite{cobreros-etal-2012}. -/
-def toMV (M : TModel D Pred) : Pred → D → Truth3 :=
-  fun P a =>
-    if strictAtom M P a then Truth3.true
-    else if tolerantAtom M P a then Truth3.indet
+    Definition is `noncomputable` because strictness/tolerance are not
+    decidable in general (only when `D` is finite and `sim` is decidable).
+    The local `Classical.propDecidable` instance makes the `if-then-else`
+    well-typed; every theorem about `toMV` remains constructive. -/
+noncomputable def toMV (M : TModel D Pred) : MVModel (TCSAtom Pred D) := λ α =>
+  match α with
+  | .pred P a =>
+    if StrictAt M P a then Truth3.true
+    else if TolerantAt M P a then Truth3.indet
     else Truth3.false
+  | .sim P a b => if M.sim P a b then Truth3.true else Truth3.false
 
-/-- Three-valued evaluation of TCS formulas using Strong Kleene
-    connectives, parameterized by a three-valued atom valuation. -/
-def mvEvalTCS (v : Pred → D → Truth3) : TCSFormula Pred D → Truth3
-  | .atom P a => v P a
-  | .neg φ => Truth3.neg (mvEvalTCS v φ)
-  | .conj φ ψ => mvEvalTCS v φ ⊓ mvEvalTCS v ψ
-
-omit [DecidableEq D] in
-/-- The three-valued interpretation correctly classifies atoms:
-    `toMV` produces `Truth3.true` exactly when strict, `Truth3.false`
-    exactly when not tolerant, and `Truth3.indet` for borderline. -/
-theorem toMV_true_iff (M : TModel D Pred) (P : Pred) (a : D) :
-    toMV M P a = Truth3.true ↔ strictAtom M P a = true := by
-  simp [toMV]; split <;> simp_all
-
-omit [DecidableEq D] in
-theorem toMV_false_iff (M : TModel D Pred) (P : Pred) (a : D) :
-    toMV M P a = Truth3.false ↔ tolerantAtom M P a = false := by
+theorem toMV_pred_true_iff (M : TModel D Pred) (P : Pred) (a : D) :
+    toMV M (.pred P a) = Truth3.true ↔ StrictAt M P a := by
   unfold toMV
-  constructor
-  · intro h
-    by_contra ht
-    have ht' := Bool.ne_false_eq_true ht
-    have hs : strictAtom M P a = false := by
-      by_contra hsc; simp [Bool.ne_false_eq_true hsc] at h
-    simp [hs, ht'] at h
-  · intro h
-    have hns : strictAtom M P a = false := by
-      by_contra hc
-      have := strict_implies_tolerant M _ a (Bool.ne_false_eq_true hc)
-      rw [h] at this; cases this
-    simp [hns, h]
+  by_cases hs : StrictAt M P a
+  · simp [hs]
+  · simp only [if_neg hs]
+    refine ⟨λ h => absurd ?_ hs, λ h => absurd h hs⟩
+    by_cases ht : TolerantAt M P a
+    · rw [if_pos ht] at h; exact Truth3.noConfusion h
+    · rw [if_neg ht] at h; exact Truth3.noConfusion h
 
-omit [DecidableEq D] in
-/-- **Correspondence at the formula level** (Theorem 3).
+theorem toMV_pred_false_iff (M : TModel D Pred) (P : Pred) (a : D) :
+    toMV M (.pred P a) = Truth3.false ↔ ¬ TolerantAt M P a := by
+  unfold toMV
+  by_cases hs : StrictAt M P a
+  · simp only [if_pos hs]
+    exact ⟨λ h => Truth3.noConfusion h,
+           λ h => absurd (StrictAt.imp_tolerant M P a hs) h⟩
+  · simp only [if_neg hs]
+    by_cases ht : TolerantAt M P a
+    · simp only [if_pos ht]
+      exact ⟨λ h => Truth3.noConfusion h, λ h => absurd ht h⟩
+    · simp only [if_neg ht]
+      refine Iff.intro (λ _ => ht) (λ _ => ?_)
+      trivial
 
-    For any T-model M and formula φ:
-    - M ⊨ᵗ φ iff `mvEvalTCS (toMV M) φ` is LP-designated
-    - M ⊨ˢ φ iff `mvEvalTCS (toMV M) φ` is K3-designated
+theorem toMV_sim_true_iff (M : TModel D Pred) (P : Pred) (a b : D) :
+    toMV M (.sim P a b) = Truth3.true ↔ M.sim P a b := by
+  unfold toMV
+  by_cases h : M.sim P a b
+  · simp [h]
+  · simp only [if_neg h]
+    exact ⟨λ heq => Truth3.noConfusion heq, λ hh => absurd hh h⟩
 
-    This establishes that t-satisfaction = LP-satisfaction and
-    s-satisfaction = K3-satisfaction via the `toMV` translation. -/
-theorem tcs_lp_k3_correspondence (M : TModel D Pred)
-    (φ : TCSFormula Pred D) :
-    (sat M .tolerant φ = true ↔ isLPDesignated (mvEvalTCS (toMV M) φ)) ∧
-    (sat M .strict φ = true ↔ isK3Designated (mvEvalTCS (toMV M) φ)) := by
+theorem toMV_sim_false_iff (M : TModel D Pred) (P : Pred) (a b : D) :
+    toMV M (.sim P a b) = Truth3.false ↔ ¬ M.sim P a b := by
+  unfold toMV
+  by_cases h : M.sim P a b
+  · simp only [if_pos h]
+    exact ⟨λ heq => Truth3.noConfusion heq, λ hn => absurd h hn⟩
+  · simp [h]
+
+/-- **Lemma 4** (p. 361, formula-level): for every T-model `M` and TCS
+    formula `φ`,
+
+    - `M ⊨ᵗ φ ↔ mvEval (toMV M) φ` is LP-designated (non-false)
+    - `M ⊨ˢ φ ↔ mvEval (toMV M) φ` is K3-designated (= true)
+
+    The two halves are proved by mutual induction. The negation case
+    uses `lpSat_neg_iff`/`k3Sat_neg_iff` from the substrate; the
+    conjunction case uses `lpSat_conj`/`k3Sat_conj`. -/
+theorem tcs_lp_k3_correspondence (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    (Sat M .tolerant φ ↔ lpSat (toMV M) φ) ∧
+    (Sat M .strict φ ↔ k3Sat (toMV M) φ) := by
   induction φ with
-  | atom P a =>
-    constructor
-    · -- tolerant ↔ LP-designated (non-false)
-      unfold sat mvEvalTCS
-      constructor
-      · intro h hf
-        have := (toMV_false_iff M P a).mp hf
-        rw [h] at this; cases this
-      · intro h
-        by_contra hc
-        exact h ((toMV_false_iff M P a).mpr (Bool.ne_true_eq_false hc))
-    · -- strict ↔ K3-designated (= true)
-      unfold sat mvEvalTCS isK3Designated
-      exact (toMV_true_iff M P a).symm
+  | atom α =>
+    cases α with
+    | pred P a =>
+      refine ⟨?_, ?_⟩
+      · -- tolerant ↔ LP-designated
+        simp only [Sat.atom_tolerant_pred, lpSat, isLPDesignated, mvEval]
+        constructor
+        · intro h heq
+          have := (toMV_pred_false_iff M P a).mp heq
+          exact this h
+        · intro h
+          by_contra hnot
+          exact h ((toMV_pred_false_iff M P a).mpr hnot)
+      · -- strict ↔ K3-designated
+        simp only [Sat.atom_strict_pred, k3Sat, isK3Designated, mvEval]
+        exact (toMV_pred_true_iff M P a).symm
+    | sim P a b =>
+      refine ⟨?_, ?_⟩
+      · -- For sim atoms: Sat M m (sim) = M.sim P a b regardless of m.
+        -- LP-sat: mvEval = sim ? .true : .false; LP-designated iff true iff sim.
+        simp only [Sat.atom_sim, lpSat, isLPDesignated, mvEval, toMV]
+        by_cases hsim : M.sim P a b
+        · simp only [if_pos hsim]
+          exact ⟨λ _ h => Truth3.noConfusion h, λ _ => hsim⟩
+        · simp only [if_neg hsim]
+          exact ⟨λ h => absurd h hsim, λ h => absurd rfl h⟩
+      · simp only [Sat.atom_sim, k3Sat, isK3Designated, mvEval, toMV]
+        by_cases hsim : M.sim P a b
+        · simp only [if_pos hsim]
+          refine Iff.intro (λ _ => ?_) (λ _ => hsim)
+          trivial
+        · simp only [if_neg hsim]
+          exact ⟨λ h => absurd h hsim, λ h => Truth3.noConfusion h⟩
   | neg ψ ih =>
     obtain ⟨iht, ihs⟩ := ih
-    -- Key: sat M m (.neg ψ) = !sat M m.dual ψ  (by sat definition)
-    have neg_t : sat M .tolerant (.neg ψ) = !sat M .strict ψ := by simp [sat, SatMode.dual]
-    have neg_s : sat M .strict (.neg ψ) = !sat M .tolerant ψ := by simp [sat, SatMode.dual]
-    constructor
-    · -- tolerant (neg ψ) ↔ LP(neg eval)
-      unfold mvEvalTCS
-      rw [lp_neg_iff_not_k3]
-      constructor
-      · intro h hk3
-        rw [neg_t] at h
-        exact absurd (ihs.mpr hk3) (by cases sat M .strict ψ <;> simp_all)
-      · intro h
-        rw [neg_t]
-        cases hv : sat M .strict ψ <;> simp
-        exact absurd (ihs.mp hv) h
-    · -- strict (neg ψ) ↔ K3(neg eval)
-      unfold mvEvalTCS
-      rw [k3_neg_iff_not_lp]
-      constructor
-      · intro h hlp
-        rw [neg_s] at h
-        exact absurd (iht.mpr hlp) (by cases sat M .tolerant ψ <;> simp_all)
-      · intro h
-        rw [neg_s]
-        cases hv : sat M .tolerant ψ <;> simp
-        exact absurd (iht.mp hv) h
+    refine ⟨?_, ?_⟩
+    · -- tolerant (¬ψ) ↔ LP-designated of neg
+      simp only [Sat.neg_eq, SatMode.dual, lpSat_neg_iff]
+      exact not_congr ihs
+    · simp only [Sat.neg_eq, SatMode.dual, k3Sat_neg_iff]
+      exact not_congr iht
   | conj ψ χ ihψ ihχ =>
     obtain ⟨ihtψ, ihsψ⟩ := ihψ
     obtain ⟨ihtχ, ihsχ⟩ := ihχ
-    have hsat_conj : ∀ m, sat M m (.conj ψ χ) = (sat M m ψ && sat M m χ) :=
-      fun _ => by simp [sat]
-    constructor
-    · -- tolerant conj ↔ LP meet
-      unfold mvEvalTCS
-      rw [lp_meet]
-      constructor
-      · intro h
-        rw [hsat_conj] at h; simp [Bool.and_eq_true] at h
-        exact ⟨ihtψ.mp h.1, ihtχ.mp h.2⟩
-      · intro ⟨h1, h2⟩
-        rw [hsat_conj]; simp [Bool.and_eq_true]
-        exact ⟨ihtψ.mpr h1, ihtχ.mpr h2⟩
-    · -- strict conj ↔ K3 meet
-      unfold mvEvalTCS
-      rw [k3_meet]
-      constructor
-      · intro h
-        rw [hsat_conj] at h; simp [Bool.and_eq_true] at h
-        exact ⟨ihsψ.mp h.1, ihsχ.mp h.2⟩
-      · intro ⟨h1, h2⟩
-        rw [hsat_conj]; simp [Bool.and_eq_true]
-        exact ⟨ihsψ.mpr h1, ihsχ.mpr h2⟩
+    refine ⟨?_, ?_⟩
+    · simp only [Sat.conj_eq, lpSat_conj]
+      exact and_congr ihtψ ihtχ
+    · simp only [Sat.conj_eq, k3Sat_conj]
+      exact and_congr ihsψ ihsχ
 
-omit [DecidableEq D] in
-/-- **Theorem 3, t-direction**: tolerant satisfaction = LP-satisfaction. -/
-theorem tolerant_iff_lp (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    sat M .tolerant φ = true ↔ isLPDesignated (mvEvalTCS (toMV M) φ) :=
+/-- **Lemma 4, t-direction**: tolerant satisfaction = LP-satisfaction
+    via `toMV`. -/
+theorem tolerant_iff_lpSat (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .tolerant φ ↔ lpSat (toMV M) φ :=
   (tcs_lp_k3_correspondence M φ).1
 
-omit [DecidableEq D] in
-/-- **Theorem 3, s-direction**: strict satisfaction = K3-satisfaction. -/
-theorem strict_iff_k3 (M : TModel D Pred) (φ : TCSFormula Pred D) :
-    sat M .strict φ = true ↔ isK3Designated (mvEvalTCS (toMV M) φ) :=
+/-- **Lemma 4, s-direction**: strict satisfaction = K3-satisfaction
+    via `toMV`. -/
+theorem strict_iff_k3Sat (M : TModel D Pred) (φ : TCSFormula Pred D) :
+    Sat M .strict φ ↔ k3Sat (toMV M) φ :=
   (tcs_lp_k3_correspondence M φ).2
 
--- ════════════════════════════════════════════════════
--- § 18. Sorites Resolution via st-consequence (§3.6)
--- ════════════════════════════════════════════════════
+/-- **Theorem 3** (paper p. 362, consequence-level): on the restricted
+    propositional vocabulary, t-consequence equals LP-consequence and
+    s-consequence equals K3-consequence (modulo the `toMV` translation
+    on premise/conclusion). The forward direction lifts Lemma 4
+    pointwise; the reverse direction uses the same `toMV`. -/
+theorem tcs_lp_consequence_correspondence
+    (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) :
+    tcsConsequence .tolerant .tolerant Γ φ ↔
+      ∀ M : TModel D Pred,
+        (∀ γ ∈ Γ, lpSat (toMV M) γ) → lpSat (toMV M) φ := by
+  refine ⟨?_, ?_⟩
+  · intro h M hprem
+    rw [← tolerant_iff_lpSat]
+    exact h M (λ γ hγ => (tolerant_iff_lpSat M γ).mpr (hprem γ hγ))
+  · intro h M hprem
+    rw [tolerant_iff_lpSat]
+    exact h M (λ γ hγ => (tolerant_iff_lpSat M γ).mp (hprem γ hγ))
 
-/-! The sorites paradox is resolved by st-consequence:
+theorem tcs_k3_consequence_correspondence
+    (Γ : List (TCSFormula Pred D)) (φ : TCSFormula Pred D) :
+    tcsConsequence .strict .strict Γ φ ↔
+      ∀ M : TModel D Pred,
+        (∀ γ ∈ Γ, k3Sat (toMV M) γ) → k3Sat (toMV M) φ := by
+  refine ⟨?_, ?_⟩
+  · intro h M hprem
+    rw [← strict_iff_k3Sat]
+    exact h M (λ γ hγ => (strict_iff_k3Sat M γ).mpr (hprem γ hγ))
+  · intro h M hprem
+    rw [strict_iff_k3Sat]
+    exact h M (λ γ hγ => (strict_iff_k3Sat M γ).mp (hprem γ hγ))
 
-    **Version 1**: Pa₁, a₁Iₚa₂, a₂Iₚa₃, ..., aₙ₋₁Iₚaₙ ⊨ˢᵗ Paₙ
-
-    This is st-INVALID. The premises require strict truth (all
-    similar individuals satisfy P), but in the sorites model,
-    the first premise Pa₁ is strictly true while the similarity
-    premises create a chain. The conclusion Paₙ fails tolerantly.
-
-    Each individual step IS st-valid: Pa, aIₚb ⊨ˢᵗ Pb.
-    But st-consequence is non-transitive, so chaining fails.
-
-    We demonstrate this on the concrete 4-element model from § 11. -/
-
-section Sorites
-
-/-- Tolerance steps in the sorites model: each adjacent pair
-    has the tolerant-conclusion step valid (the similar individual
-    is tolerantly P), but the strict-premise step only works for a.
-
-    a: strictly tall, b: tolerantly tall (but not strictly),
-    c: tolerantly tall (but not classically), d: not tolerantly tall. -/
-theorem sorites_satisfaction_profile :
-    sat soritesModel .strict (.atom .tall .a) = true ∧
-    sat soritesModel .classical (.atom .tall .b) = true ∧
-    sat soritesModel .tolerant (.atom .tall .c) = true ∧
-    sat soritesModel .tolerant (.atom .tall .d) = false := by
-  native_decide
-
-/-- **Non-transitivity of st-consequence.** Even though each step
-    a→b and b→c holds individually in `soritesModel`, the chain
-    a→d fails: d is NOT tolerantly tall.
-
-    In the 4-element sorites model:
-    - a is strictly tall, b is tolerantly tall (step a→b valid)
-    - b is classically tall, c is tolerantly tall (step b→c valid)
-    - But d is NOT tolerantly tall (chain breaks)
-
-    This demonstrates that st-consequence is non-transitive
-    (Footnote 14 of @cite{cobreros-etal-2012}). -/
-theorem st_nontransitive :
-    -- a is strictly tall
-    sat soritesModel .strict (.atom .tall .a) = true ∧
-    -- b is tolerantly tall
-    sat soritesModel .tolerant (.atom .tall .b) = true ∧
-    -- c is tolerantly tall
-    sat soritesModel .tolerant (.atom .tall .c) = true ∧
-    -- But d is NOT tolerantly tall (chain breaks)
-    sat soritesModel .tolerant (.atom .tall .d) = false := by
-  native_decide
-
-/-- The sorites argument a₁ → a₂ → a₃ → a₄ is st-invalid: we
-    cannot derive tolerant Pa₄ from strict Pa₁ plus the full
-    similarity chain, because the chain exceeds the two-step
-    tolerance limit. -/
-theorem sorites_chain_invalid :
-    ¬tcsConsequence (D := Elt) (Pred := VPred) .strict .tolerant
-      [.atom .tall .a] (.atom .tall .d) := by
-  intro h
-  have hprem : sat soritesModel .strict (.atom .tall .a) = true := by native_decide
-  have hd := h soritesModel (fun γ hγ => by simp at hγ; subst hγ; exact hprem)
-  -- But d is not tolerantly tall in soritesModel
-  have hfalse : sat soritesModel .tolerant (.atom .tall .d) = false := by native_decide
-  exact absurd hd (by simp [satProp, hfalse])
-
-end Sorites
+end LpK3
 
 -- ════════════════════════════════════════════════════
--- § 19. Strength Lattice Summary
+-- § 16. Non-transitivity schema via similarity atoms
 -- ════════════════════════════════════════════════════
 
-/-! The nine consequence relations on the restricted vocabulary
-    (propositional formulas — no identity or similarity predicates)
-    collapse to six distinct relations, ordered by strength:
+/-! Schema theorems for the non-transitivity demonstration. With
+    similarity atoms in the formula language, we can now state and prove
+    the structural pattern of paper §3.4.1: each one-step / two-step
+    sorites inference is individually valid in mixed consequence, but
+    chaining past Fact 3's two-step limit fails.
 
-    ```
-        cc = sc = ct = st        (classical)
-         /              \
-       ss               tt
-        \              /
-       cs              tc
-         \            /
-            ts         (empty)
-    ```
+    Attribution caveat: the paper's §3.4.1 demonstration of
+    non-transitivity is for `⊨ᶜᵗ` (the corresponding chain `Pa, aI_Pb,
+    bI_Pc ⊭ᶜᵗ Pc`). The `⊨ˢᵗ` version of the sorites is stated separately
+    in paper §3.6 (Version 1 of the sorites, p. 376). The structural
+    pattern — each step valid in isolation, chain fails — is what §3.4.1
+    contributes; the `st`-instantiation here applies the same pattern to
+    the relation the paper ultimately advocates (paper p. 373: "st" is
+    the best-motivated choice).
 
-    - **cc = st**: classical consequence (four collapse)
-    - **ss**: K3-consequence (strict-to-strict)
-    - **tt**: LP-consequence (tolerant-to-tolerant)
-    - **cs**: strictly weaker than ss
-    - **tc**: strictly weaker than tt
-    - **ts**: the empty relation (Lemma 9: nothing follows)
+    Each one-step inference `[Pa, a I_P b] ⊨ˢᵗ Pb` is st-valid (Fact 2 of
+    the paper, p. 354). Two such inferences chain to give
+    `[Pa, a I_P b, b I_P c] ⊨ˢᵗ Pc` via Fact 3 (two-step tolerance,
+    p. 354). But three steps cannot be chained: on a model where `~_P`
+    exhausts at two steps, `[Pa, a I_P b, b I_P c, c I_P d] ⊭ˢᵗ Pd`. The
+    Studies file instantiates this on the 4-element model from p. 354. -/
 
-    Key properties of st (the recommended relation):
-    - Validates tolerance (the principle ∀xy(Px ∧ xIᵨy → Py))
-    - Satisfies the deduction theorem
-    - Has modus ponens
-    - Is non-transitive (blocks sorites chaining)
--/
+/-- Convenience: `Pa, a I_P b ⊨ˢᵗ Pb` is st-valid for every T-model
+    (one-step tolerance, schema form). Consumes paper Fact 2. -/
+theorem st_one_step_valid (P : Pred) (a b : D) :
+    tcsConsequence (D := D) (Pred := Pred) .strict .tolerant
+      [.atom (.pred P a), .atom (.sim P a b)]
+      (.atom (.pred P b)) := by
+  intro M hprem
+  have hPa : StrictAt M P a := hprem (.atom (.pred P a)) (by simp)
+  have hsim : M.sim P a b := hprem (.atom (.sim P a b)) (by simp)
+  exact tolerance_one_step M P a b hPa hsim
+
+/-- Two-step tolerance is st-valid in schema form. Consumes paper Fact 3. -/
+theorem st_two_step_valid (P : Pred) (a b c : D) :
+    tcsConsequence (D := D) (Pred := Pred) .strict .tolerant
+      [.atom (.pred P a), .atom (.sim P a b), .atom (.sim P b c)]
+      (.atom (.pred P c)) := by
+  intro M hprem
+  have hPa : StrictAt M P a := hprem (.atom (.pred P a)) (by simp)
+  have hab : M.sim P a b := hprem (.atom (.sim P a b)) (by simp)
+  have hbc : M.sim P b c := hprem (.atom (.sim P b c)) (by simp)
+  exact tolerance_two_step M P a b c hPa hab hbc
+
+-- ════════════════════════════════════════════════════
+-- § 17. Cross-framework divergence: TCS vs Supervaluation
+-- ════════════════════════════════════════════════════
+
+/-! Cross-framework divergence between TCS and Fine 1975 supervaluationism
+    on borderline contradictions: TCS makes `P ∧ ¬P` tolerantly true while
+    supervaluation makes it super-FALSE on the same neighbourhood. Both
+    ingredients exist in the substrate (`TolerantAt`,
+    `nonContradiction_superFalse`); this section combines them into a
+    Lean-checkable existential divergence claim.
+
+    Comparator caveat: the paper's headline borderline-contradiction
+    contrast (p. 356) is actually with **Hyde 1997 subvaluationism**, NOT
+    with Fine 1975 supervaluationism. Subvaluation and TCS *agree* that
+    `P ∧ ¬P` holds at borderline cases; they disagree on the underlying
+    framework. The contrast formalised here — TCS vs supervaluation —
+    is the *formal-validity-side* contrast (paper p. 359, where TCS's
+    *t*/*s*-validity diverge from supervaluationist validity in the
+    quantifier-pattern sense). Subvaluationism is not formalised in
+    linglib; if it were, a NEW divergence theorem on the
+    framework-foundations axis would be the right comparator on the
+    *verdict* question.
+
+    A concrete instantiation on the paper's 4-element model is provided
+    in `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`. -/
+
+/-- **TCS-vs-Supervaluation borderline-contradiction divergence (schema
+    form)**: for any T-model `M`, predicate `P`, and individual `a` that
+    is borderline-`P`, the conjunction `P(a) ∧ ¬P(a)` is **tolerantly**
+    true at `a` in TCS while the supervaluation of the same conjunction
+    over the tolerance neighborhood is **super-FALSE**.
+
+    The two frameworks DISAGREE on the formal-validity-side verdict of
+    borderline contradictions: TCS at `t` mode says ✓, supervaluation
+    says ✗ everywhere. (Note: on the *verdict* question, the paper's
+    headline contrast is with subvaluationism; see the section docstring.) -/
+theorem tcs_vs_supervaluation_borderline_contradiction
+    [Fintype D] [DecidableEq D]
+    (M : TModel D Pred) (P : Pred) (a : D) [DecidablePred (M.sim P a)]
+    (hb : IsBorderline M P a) :
+    Sat M .tolerant (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) ∧
+    superTrue (λ d => M.interp P d && !M.interp P d) (toleranceSpace M P a)
+      = Truth3.false := by
+  refine ⟨?_, nonContradiction_superFalse _ _⟩
+  -- TCS side: tolerant(P) ∧ tolerant(¬P)
+  -- tolerant(¬P) = ¬strict(P), which holds because borderline.
+  refine ⟨hb.1, ?_⟩
+  -- Sat M .tolerant (.neg (.atom (.pred P a))) = ¬ Sat M .strict (.atom (.pred P a)) = ¬ StrictAt M P a
+  simp only [Sat.neg_eq, SatMode.dual, Sat.atom_strict_pred]
+  exact hb.2
+
+/-- **Paracomplete dual** (schema form): on the same borderline cases,
+    `¬(P ∧ ¬P)` (i.e., excluded middle in dual form) fails strictly.
+
+    Note that strict satisfaction is the **paracomplete** dual of
+    tolerant: in TCS, borderline cases satisfy `P ∧ ¬P` tolerantly
+    AND fail to satisfy classical principles strictly. -/
+theorem tcs_borderline_excluded_middle_strict_fails
+    (M : TModel D Pred) (P : Pred) (a : D) (hb : IsBorderline M P a) :
+    ¬ Sat M .strict (.neg (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a))))) := by
+  -- Sat M .strict (.neg φ) = ¬ Sat M .tolerant φ. The conjunction is
+  -- tolerantly true at borderline cases (`tcs_vs_supervaluation_borderline_contradiction`),
+  -- so its strict negation fails. simp collapses ¬¬ to give the IsBorderline
+  -- shape directly.
+  simp only [Sat.neg_eq, SatMode.dual, Sat.conj_eq, Sat.atom_tolerant_pred,
+    Sat.atom_strict_pred, not_not]
+  exact hb
 
 end Semantics.Supervaluation.TCS

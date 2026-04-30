@@ -269,24 +269,49 @@ theorem resolved_grounds_via_ccur {Cont QContent : Type}
   unfold integrateLocPropCCUR contextualInstantiate
   simp [h, IntegrationResult.isGrounded]
 
+/-- Helper: when every cparam in a LocProp has a witness in the belief
+base, contextual instantiation returns `fullyInstantiated`.
+
+Pulls out the `unresolved.isEmpty = true` derivation that
+`belief_resolution_grounds_via_ccur` consumes. -/
+private theorem contextualInstantiate_fullyInstantiated_of_all_witnessed
+    {Cont : Type} (lp : LocProp Cont) (beliefs : BeliefBase)
+    (h : ∀ cp ∈ lp.cparams, (cp.instantiate beliefs).isSome) :
+    ∃ ws, contextualInstantiate lp beliefs =
+      ContextualInstantiationResult.fullyInstantiated ws := by
+  unfold contextualInstantiate
+  have hempty :
+      (lp.cparams.filter (fun cp => !((lp.cparams.filterMap (fun cp' =>
+        (cp'.instantiate beliefs).map (fun w => (cp'.index, w)))).map
+          (·.1)).contains cp.index)).isEmpty = true := by
+    rw [List.isEmpty_iff, List.filter_eq_nil_iff]
+    intro cp hcp h_pos
+    obtain ⟨w, hw⟩ := Option.isSome_iff_exists.mp (h cp hcp)
+    have hcontains :
+        ((lp.cparams.filterMap (fun cp' =>
+          (cp'.instantiate beliefs).map (fun w => (cp'.index, w)))).map
+            (·.1)).contains cp.index = true := by
+      rw [List.contains_iff_mem, List.mem_map]
+      refine ⟨(cp.index, w), ?_, rfl⟩
+      rw [List.mem_filterMap]
+      exact ⟨cp, hcp, by rw [hw]; rfl⟩
+    rw [hcontains] at h_pos
+    exact Bool.false_ne_true h_pos
+  simp only [hempty, ↓reduceIte]
+  exact ⟨_, rfl⟩
+
 /-- A LocProp with cparams but full belief coverage grounds via the CCUR
 pipeline. This is the substantive difference from the one-shot stub:
 unresolved cparams aren't an automatic CRification trigger when
-addressee beliefs witness them.
-
-**Proof status**: TODO. Requires showing the `unresolved` set computed
-inside `contextualInstantiate` is empty. The bridge lemma involves
-`List.filter`/`List.filterMap`/`List.contains` interactions that don't
-match cleanly to mathlib lemmas at this commit; deferred until a
-substrate-side `BeliefBase` API rework (likely promoting the
-intermediate `resolvedIdx`/`unresolved` computation into named helpers
-with their own structural lemmas, or switching to a `Finmap`-based
-representation that gives the membership-discipline properties for
-free). -/
+addressee beliefs witness them. -/
 theorem belief_resolution_grounds_via_ccur {Cont QContent : Type}
     (lp : LocProp Cont) (beliefs : BeliefBase) (toCR : CParam → QContent)
     (h : ∀ cp ∈ lp.cparams, (cp.instantiate beliefs).isSome) :
     (integrateLocPropCCUR lp beliefs toCR).isGrounded = true := by
-  sorry
+  obtain ⟨_, hws⟩ :=
+    contextualInstantiate_fullyInstantiated_of_all_witnessed lp beliefs h
+  unfold integrateLocPropCCUR
+  rw [hws]
+  rfl
 
 end Dialogue.KOS

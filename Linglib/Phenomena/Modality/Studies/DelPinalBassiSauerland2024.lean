@@ -60,14 +60,6 @@ covert operator pex), not a semantic entailment. This matches the empirical
 data in `Phenomena.Modality.FreeChoice`.
 -/
 
-/-- FC is pragmatic (not semantic), matching empirical data -/
-theorem fc_is_pragmatic :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
-
-/-- FC is captured pragmatically -/
-theorem fc_is_captured :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
-
 -- ============================================================================
 -- §1b. The pex output for free choice over FCWorld
 -- ============================================================================

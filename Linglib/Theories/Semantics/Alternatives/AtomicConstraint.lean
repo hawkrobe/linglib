@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Trinh & Haida 2015: Constraining the Derivation of Alternatives

@@ -1,21 +1,19 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Fragments.Slavic.Case
+
 /-!
 # Polish Case Inventory
-@cite{blake-1994}
+@cite{rothstein-1993} @cite{blake-1994}
 
-Polish has **7 cases**: NOM, ACC, GEN, DAT, LOC, INST, VOC.
-The standard Slavic 7-case system. The 6-case core (excluding VOC)
-is perfectly contiguous on Blake's hierarchy.
-
+Per @cite{rothstein-1993} (p. 696), Polish has the full inherited
+7-case system including a productive vocative used consistently with
+titles and vocative phrases (panie Janku, kochana Basiu), with a
+growing tendency for NOM to substitute for VOC with bare personal
+names. `caseInventory` aliases the shared 6-case core;
+`Fragments.Slavic.Case.sevenCaseInventory` carries the +VOC form.
 -/
 
 namespace Fragments.Slavic.Polish.Case
 
-/-- Polish 6-case core inventory (excluding VOC). -/
-def caseInventory : Finset Core.Case :=
-  {.nom, .acc, .gen, .dat, .loc, .inst}
-
-example : Core.Case.IsValidInventory caseInventory := by decide
+abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Polish.Case

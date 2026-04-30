@@ -25,6 +25,14 @@ Bedeutung 27*, pp. 674–692.
    them. Artifact nouns compose additively (@cite{sassoon-fadlon-2017}),
    in contrast to natural kinds which compose multiplicatively.
 
+   This is the `weightedScore` substrate primitive in
+   `Theories/Semantics/Degree/Aggregation.lean`. Tham 2025 adds a
+   third aggregation mode (`spatialNormalizedScore`, with a host-extent
+   denominator) for physical disturbance predicates — see
+   `Phenomena/Gradability/Studies/Tham2025.lean §15` for the
+   substrate-level contrast (Waldon's domain has no host-extent
+   denominator naturally; Tham's does).
+
 3. **RSA model** (companion handout): a signaler (rule-maker) produces
    rules to advance policy goals; the listener jointly infers which
    objects are targeted and what the signaler's goal is:

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.Greek.Nouns
+import Linglib.Fragments.Greek.StandardModern.Nouns
 
 /-! # Longobardi (2001): A Unified Parametric Theory of Bare Nouns and Proper Names
 @cite{longobardi-2001}
@@ -730,7 +730,7 @@ theorem english_matches_english_fragment :
 /-- Longobardi's `greek` parameters correctly predict the Greek
     fragment's independently-declared mapping parameter. -/
 theorem greek_matches_greek_fragment :
-    toNominalMapping greek = Fragments.Greek.Nouns.greekMapping := rfl
+    toNominalMapping greek = Fragments.Greek.StandardModern.Nouns.greekMapping := rfl
 
 /-- All three fragment bridges together: `DPParameter` *predicts*
     the independently-stipulated `NominalMapping` in each fragment.
@@ -744,7 +744,7 @@ theorem greek_matches_greek_fragment :
 theorem all_fragment_mappings :
     toNominalMapping romance = Fragments.Italian.Nouns.italianMapping ∧
     toNominalMapping english = Fragments.English.Nouns.englishMapping ∧
-    toNominalMapping greek = Fragments.Greek.Nouns.greekMapping := ⟨rfl, rfl, rfl⟩
+    toNominalMapping greek = Fragments.Greek.StandardModern.Nouns.greekMapping := ⟨rfl, rfl, rfl⟩
 
 /-- Longobardi's analysis explains WHY Italian bare plurals are not
     licensed: strong D means BNs are always quantificational variables,
@@ -764,7 +764,7 @@ theorem english_bare_plurals_licensed :
 /-- Greek bare plurals are not licensed (same as Italian: strong D). -/
 theorem greek_bare_restriction_from_strong_d :
     bnAlwaysQuantificational greek = true ∧
-    Fragments.Greek.Nouns.barePluralLicensed = false := ⟨rfl, rfl⟩
+    Fragments.Greek.StandardModern.Nouns.barePluralLicensed = false := ⟨rfl, rfl⟩
 
 end FragmentBridges
 

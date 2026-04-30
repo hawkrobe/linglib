@@ -79,27 +79,30 @@ instance {n : Nat} : DecidableEq (ThresholdPair n) :=
 /-- Contradictory negation: "not happy" = degree ≤ theta.
     Alias for `Semantics.Degree.antonymMeaning` — same comparison,
     named for its role in the contradictory/contrary distinction. -/
-abbrev contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+abbrev contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
   Semantics.Degree.antonymMeaning d θ
 
-/-- Contrary negation: "unhappy" = degree < theta_neg. -/
-def contraryNeg {max : Nat} (d : Degree max) (θ_neg : Threshold max) : Bool :=
-  d < (θ_neg : Degree max)
+/-- Contrary negation: "unhappy" = degree < theta_neg.
+    Alias for `Semantics.Degree.negativeMeaning`. -/
+abbrev contraryNeg {max : Nat} (d : Degree max) (θ_neg : Threshold max) : Prop :=
+  Semantics.Degree.negativeMeaning d θ_neg
 
 /-- Check if a degree is in the gap region (neither positive nor negative). -/
-def inGapRegion {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
-  (tp.neg : Degree max) ≤ d && d ≤ (tp.pos : Degree max)
+abbrev inGapRegion {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+  (tp.neg : Degree max) ≤ d ∧ d ≤ (tp.pos : Degree max)
 
-/-- Positive meaning with two-threshold model: degree > theta_pos. -/
-def positiveMeaning' {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
-  (tp.pos : Degree max) < d
+/-- Positive meaning in the two-threshold model: degree > theta_pos.
+    Alias for `Semantics.Degree.positiveMeaning` projected through `tp.pos`. -/
+abbrev positiveMeaning' {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+  Semantics.Degree.positiveMeaning d tp.pos
 
-/-- Negative meaning with contrary semantics: "unhappy" = degree < theta_neg. -/
-def contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
-  d < (tp.neg : Degree max)
+/-- Negative meaning in the two-threshold model: degree < theta_neg.
+    Alias for `Semantics.Degree.negativeMeaning` projected through `tp.neg`. -/
+abbrev contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
+  Semantics.Degree.negativeMeaning d tp.neg
 
 /-- Negation of contrary negative: "not unhappy" = degree >= theta_neg. -/
-def notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
+abbrev notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Prop :=
   (tp.neg : Degree max) ≤ d
 
 -- ════════════════════════════════════════════════════

@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Antonymy — Contradictory vs Contrary Distinction
 
@@ -36,6 +38,21 @@ namespace Features
 inductive NegationType where
   | contradictory
   | contrary
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
+
+/-- Predicted behaviour of an antonymic adjective pair under sentential
+    negation: do positive and negative forms diverge under polarity
+    (asymmetric — gap-licensed strengthening) or behave in parallel
+    (symmetric — no gap available)?
+
+    Used as the codomain of prediction signatures in studies of negated
+    antonymic adjectives (Horn 1989, Krifka 2007, Tessler & Franke 2019,
+    Alexandropoulou & Gotzner 2024). Anchored in
+    `Theories/Semantics/Gradability/AntonymPrediction.lean`'s
+    `predictionForAntonymy` map and its substrate witness theorems. -/
+inductive Asymmetry where
+  | asymmetric    -- diverging behavior under polarity
+  | symmetric     -- parallel behavior under polarity
+  deriving Repr, DecidableEq, Fintype
 
 end Features

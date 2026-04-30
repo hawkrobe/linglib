@@ -3,7 +3,7 @@ import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Japanese.TemporalDeictic
-import Linglib.Fragments.Greek.TemporalDeictic
+import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
 import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
@@ -73,7 +73,7 @@ def thenAdverbs : List ThenAdverb :=
   , Fragments.German.TemporalDeictic.damals
   , Fragments.Mandarin.TemporalDeictic.nashi
   , Fragments.Japanese.TemporalDeictic.sonotoki
-  , Fragments.Greek.TemporalDeictic.tote
+  , Fragments.Greek.StandardModern.TemporalDeictic.tote
   , Fragments.Slavic.Russian.TemporalDeictic.togda
   , Fragments.Hebrew.TemporalDeictic.az
   , Fragments.Hungarian.TemporalDeictic.akkor ]

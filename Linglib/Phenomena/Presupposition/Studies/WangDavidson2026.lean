@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Presupposition

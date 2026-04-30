@@ -98,6 +98,17 @@ inductive Utterance where
 -- Semantics (§4.1, Eqs. 22–23)
 -- ============================================================================
 
+/-! **Bool/Prop boundary.** `Theories/Semantics/Degree/Core.lean` provides
+    `positiveMeaning` and `negativeMeaning` as `Prop`-valued abbrevs (with
+    `Decidable` instances). The lexicons in this file are deliberately
+    `Bool`-valued because they feed the RSA pipeline (`tallMeaning`,
+    `shortMeaning`, `meaning`) which scores utterances via
+    `if meaning u θ h = true then prior h else 0` weighting. The implicit
+    `decide`-coercion at use sites is the principled boundary between the
+    Prop-typed substrate semantics and the Bool-typed computational pipeline;
+    do not migrate these to Prop without an audit of the RSA scoring
+    consumers in `Theories/Pragmatics/RSA/`. -/
+
 open Semantics.Degree (positiveMeaning negativeMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ (@cite{kennedy-2007}, positive form). -/

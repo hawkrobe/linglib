@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
-import Linglib.Theories.Semantics.TypeTheoretic.Modality
+import Linglib.Phenomena.Modality.Studies.Cooper2023
 import Mathlib.Data.Set.Basic
 
 /-!

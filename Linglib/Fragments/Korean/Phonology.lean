@@ -1,11 +1,11 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.LocalRewrite
 
 /-!
 # Korean Phonological Inventory
 
 Korean segments and the stop nasalization rule, using the SPE formalism
-from `Phonology.RuleBased.Defs`.
+from `Phonology.LocalRewrite`.
 
 ## Segments
 
@@ -21,7 +21,7 @@ target feature for the nasalization rule.
 -/
 
 open Phonology
-open Phonology.RuleBased
+open Phonology.LocalRewrite
 
 namespace Fragments.Korean.Phonology
 
@@ -91,7 +91,7 @@ def l : Segment := Segment.ofSpecs
     `[-del.rel.] → [+nasal, +voice, +son] / __ [+nasal]`
 
     Non-affricate stops become nasalized before nasals. -/
-def stopNasalization : PhonRule where
+def stopNasalization : Rule where
   name := "Korean Stop Nasalization"
   target := Segment.ofSpecs [(Feature.delayedRelease, false)]
   effect := .changeFeatures (Segment.ofSpecs

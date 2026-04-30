@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.TemporalExpressions
-import Linglib.Fragments.Greek.TemporalConnectives
+import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 
 /-!
 # Icelandic Temporal Connectives Fragment
@@ -101,14 +101,14 @@ theorem flangaTil_matches_until :
     flangaTil.defaultReading = until_.defaultReading :=
   ⟨rfl, rfl, rfl⟩
 
-open Fragments.Greek.TemporalConnectives in
+open Fragments.Greek.StandardModern.TemporalConnectives in
 /-- Icelandic *flanga til* matches Greek *mexri* on key properties. -/
 theorem flangaTil_matches_mexri :
     flangaTil.complementVeridical = mexri.complementVeridical ∧
     flangaTil.forcesPunctual = mexri.forcesPunctual :=
   ⟨rfl, rfl⟩
 
-open Fragments.Greek.TemporalConnectives in
+open Fragments.Greek.StandardModern.TemporalConnectives in
 /-- Icelandic *fyrr en* matches Greek *para monon* on key properties. -/
 theorem fyrrEn_matches_paraMonon :
     fyrrEn.complementVeridical = paraMonon.complementVeridical ∧

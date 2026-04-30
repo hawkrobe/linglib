@@ -38,6 +38,14 @@ surface stringset that their derivation produces. The two analyses
 operate at different levels and are not in competition for the same
 explanatory work.
 
+The function-level subregular substrate at
+`Core/Computability/Subregular/Function/` provides a separate axis of
+classification for the *map* (UR → SR) rather than the stringset; LDCA
+maps are typically Tier-Subsequential (specifically Right-Tier-Subsequential
+per @cite{hansson-2010}'s anticipatory directionality argument). We
+keep the language-level TSL_2 statement here because the directionality
+argument is upstream of the surface filter formalised in this file.
+
 Kikongo nasal harmony is *asymmetric*: the forbidden tier-adjacent pair
 is `(nasal, voiced-stop)`, not the reverse. This is a strict instance of
 the generic `TSLGrammar.ofForbiddenPairs` constructor and does **not**

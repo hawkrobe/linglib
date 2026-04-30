@@ -84,6 +84,21 @@ Things this formalization is silent on, by design:
    tier-resident object; that representational layer is upstream of
    the surface stringset characterized here.
 
+## Function-level subregular classification (cross-reference)
+
+The TSL_2 description here characterizes the **stringset** of Navajo
+sibilant harmony — the language that the harmony filter accepts. The
+**function** that maps an underlying form to its surface realization
+admits a separate subregular classification per
+`Core/Computability/Subregular/Function/`: long-distance consonant
+agreement is generally **Tier-Subsequential** (not ISL or OSL — those
+require a *contiguous* k-window), and per @cite{hansson-2010}'s
+strictly-anticipatory directionality argument it is specifically
+**Right-Tier-Subsequential**. We do not encode the function-level
+classification here; the language-level TSL_2 statement is the cleaner
+unit because the directionality is upstream and the surface filter is
+direction-symmetric.
+
 ## Navajo sibilant harmony — the leading case
 
 Navajo (Athapaskan; @cite{hansson-2010} §1.1, §2.4.1.1) has two

@@ -393,12 +393,4 @@ The model predicts the patterns in `Phenomena.Modality.FreeChoice`:
    - The asymmetry comes from the alternative structure
 -/
 
-/-- Free choice is predicted -/
-theorem predicts_free_choice :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
-
-/-- The inference is not semantic -/
-theorem fc_not_semantic :
-    Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
-
 end Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge

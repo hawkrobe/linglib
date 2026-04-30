@@ -1,26 +1,20 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Fragments.Slavic.Case
+
 /-!
-# Russian Case Inventory @cite{blake-1994}
+# Russian Case Inventory
+@cite{timberlake-1993} @cite{blake-1994} @cite{pesetsky-2013}
 
-Russian has **6 cases**: NOM, ACC, GEN, DAT, INST, LOC (prepositional).
-No distinct vocative in standard Russian (unlike Ukrainian, Czech, Polish).
-
-The inventory is perfectly contiguous on Blake's hierarchy.
-
-For @cite{pesetsky-2013}'s POS-as-case reduction over the four core
-cases (NOM=D, ACC=V, GEN=N, DAT=P), see
-`Phenomena.Case.Studies.Pesetsky2013`, which imports this fragment.
-
+Per @cite{timberlake-1993} (p. 836), Russian has 6 primary cases
+(NOM/ACC/GEN/DAT/INST/LOC) and 2 secondary cases (second GEN, second
+LOC) used by a small and shrinking class of masculines; the historical
+vocative is moribund. `caseInventory` aliases the shared 6-case core
+(secondary cases are paradigm slots within selected nouns, not modeled
+at the inventory level). For @cite{pesetsky-2013}'s POS-as-case
+reduction, see `Phenomena.Case.Studies.Pesetsky2013`.
 -/
 
 namespace Fragments.Slavic.Russian.Case
 
-/-- Russian 6-case inventory. -/
-def caseInventory : Finset Core.Case :=
-  {.nom, .acc, .gen, .dat, .inst, .loc}
-
--- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 2, 3).
-example : Core.Case.IsValidInventory caseInventory := by decide
+abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Russian.Case

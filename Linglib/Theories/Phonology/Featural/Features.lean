@@ -187,7 +187,7 @@ instance : BEq Segment where
   beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
 
 /-- Decidable equality on segments via exhaustive feature comparison.
-    Enables `native_decide` on segment-level goals and OT tableaux
+    Enables `decide` on segment-level goals and OT tableaux
     over `List Segment` candidates. -/
 instance : DecidableEq Segment := fun s1 s2 =>
   if h : (Feature.allFeatures.all fun f => s1.spec f == s2.spec f) = true
@@ -197,5 +197,72 @@ instance : DecidableEq Segment := fun s1 s2 =>
   else isFalse (fun heq => by
     subst heq
     exact h (List.all_eq_true.mpr fun f _ => beq_self_eq_true (s1.spec f)))
+
+-- ============================================================================
+-- § 6: Pattern Matching and Feature Changes
+-- ============================================================================
+
+/-- Build a segment from a list of (feature, value) pairs.
+    Unmentioned features are unspecified (`none`), giving natural-class
+    semantics: `ofSpecs [(continuant, false)]` matches all [-cont] segments. -/
+def Segment.ofSpecs (specs : List (Feature × Bool)) : Segment where
+  spec f := match specs.find? (λ p => p.1 == f) with
+    | some (_, v) => some v
+    | none => none
+
+/-- Bool: does segment `s` match natural-class pattern `p`? True when every
+    feature specified in `p` agrees with `s`; unspecified features in `p`
+    match anything. -/
+def Segment.matchesPattern (s : Segment) (p : Segment) : Bool :=
+  Feature.allFeatures.all λ f =>
+    match p.spec f with
+    | none => true
+    | some v => s.spec f == some v
+
+/-- Prop wrapper around `matchesPattern` (mirrors `Segment.HasValue` from
+    § 3). Lets consumers write mathlib-style universally-quantified theorems
+    with Decidable inference via the Bool computation. -/
+def Segment.MatchesPattern (s p : Segment) : Prop := s.matchesPattern p = true
+
+instance (s p : Segment) : Decidable (Segment.MatchesPattern s p) :=
+  inferInstanceAs (Decidable (_ = _))
+
+/-- Merge feature changes from `change` into `s`: features specified in
+    `change` override `s`'s values; unspecified features in `change` are
+    preserved. Implements the SPE structural change `A → B` when `B` is a
+    partial feature bundle. -/
+def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
+  spec f := match change.spec f with
+    | some v => some v
+    | none => s.spec f
+
+/-- Two segments are equal iff their `spec` functions agree on every feature. -/
+@[ext] theorem Segment.ext {s t : Segment} (h : ∀ f, s.spec f = t.spec f) :
+    s = t := by
+  cases s; cases t; congr; funext f; exact h f
+
+/-- Every segment matches itself as a pattern. -/
+@[simp] theorem Segment.matchesPattern_self (s : Segment) :
+    s.matchesPattern s = true := by
+  unfold Segment.matchesPattern
+  rw [List.all_eq_true]
+  intro f _
+  cases s.spec f
+  · rfl
+  · exact beq_self_eq_true _
+
+/-- Applying the empty change list is the identity. -/
+@[simp] theorem Segment.applyChanges_ofSpecs_nil (s : Segment) :
+    s.applyChanges (Segment.ofSpecs []) = s := by
+  ext f
+  unfold Segment.applyChanges Segment.ofSpecs
+  rfl
+
+/-- Applying the same change twice equals applying it once. -/
+@[simp] theorem Segment.applyChanges_idem (s change : Segment) :
+    (s.applyChanges change).applyChanges change = s.applyChanges change := by
+  ext f
+  simp only [Segment.applyChanges]
+  cases change.spec f <;> rfl
 
 end Phonology

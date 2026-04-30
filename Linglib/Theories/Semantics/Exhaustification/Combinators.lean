@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Excluder Combinators

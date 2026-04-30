@@ -2,7 +2,7 @@ import Linglib.Typology.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Phenomena.TemporalConnectives.NegationData
-import Linglib.Fragments.Greek.TemporalConnectives
+import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Dutch.TemporalConnectives
 import Linglib.Fragments.Finnish.TemporalConnectives
@@ -481,7 +481,7 @@ theorem aspect_matches_scope :
 -- § 10: Bridge to Greek Fragment
 -- ============================================================================
 
-open Fragments.Greek.TemporalConnectives
+open Fragments.Greek.StandardModern.TemporalConnectives
 
 /-- Greek lexicalizes the three semantic types as distinct lexemes:
     *mexri* (durative), *para monon* (eventive NPI), *prin* (before).
@@ -754,7 +754,7 @@ theorem aspect_not_required :
 
 -- Bridge to Fragment data --
 
-open Fragments.Greek.TemporalConnectives in
+open Fragments.Greek.StandardModern.TemporalConnectives in
 /-- Greek strategy confirmed by fragment: three distinct forms. -/
 theorem greek_confirmed :
     mexri.form ≠ paraMonon.form ∧

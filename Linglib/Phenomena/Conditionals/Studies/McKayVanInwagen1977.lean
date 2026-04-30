@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
+import Linglib.Theories.Semantics.Conditionals.Counterfactual
 
 /-!
 # McKay & Van Inwagen 1977 @cite{mckay-vaninwagen-1977}
@@ -8,8 +8,9 @@ Counterfactuals with Disjunctive Antecedents.
 
 ## Core Contribution
 
-Defends Lewis's variably strict conditional semantics against the claim
-that **Simplification of Disjunctive Antecedents (SDA)** should be valid:
+Defends @cite{lewis-1973}'s variably strict conditional semantics against
+the claim that **Simplification of Disjunctive Antecedents (SDA)** should
+be valid:
 
     SDA: [(A ∨ B) > C] ⊃ (B > C)
 
@@ -18,28 +19,33 @@ validity constraint on counterfactual logic. McKay & Van Inwagen refute
 this with two arguments:
 
 1. **The bumper crop argument**: The English sentence "if good weather or
-   sun cold, bumper crop" is false, but Lewis's disjunctive-closure
-   reading (goodWeather ∨ sunCold) > bumperCrop is true. So the English
-   sentence is NOT equivalent to the disjunctive-closure reading. The
-   correct regimentation is the conjunction (goodWeather > bumperCrop) ∧
-   (sunCold > bumperCrop), which IS false — matching the English judgment.
+   sun cold, bumper crop" is false, but @cite{lewis-1973}'s
+   disjunctive-closure reading `(goodWeather ∨ sunCold) > bumperCrop` is
+   true. So the English sentence is NOT equivalent to the
+   disjunctive-closure reading. The correct regimentation is the
+   conjunction `(goodWeather > bumperCrop) ∧ (sunCold > bumperCrop)`,
+   which IS false — matching the English judgment.
 
 2. **The Spain counterexample**: "If Spain had fought on the Axis side or
    the Allied side, Spain would have fought on the Axis side" is
    acceptable, but SDA gives the absurd "If Spain had fought on the
    Allied side, Spain would have fought on the Axis side."
 
-## Integration
+## Substrate consumption
 
-- The conjunction regimentation corresponds to `sdaEval` in
-  `AlternativeSensitive.lean`
-- Lewis's disjunctive-closure semantics corresponds to `lewisDAC`
+Both readings reduce to the canonical Lewis universal counterfactual
+operator `Conditionals.Counterfactual.universalCounterfactual`. The
+disjunctive-closure reading evaluates the operator on `A ∨ B`; the
+conjunction regimentation conjoins per-disjunct evaluations.
+Worlds and predicates are typed `Prop` (not `Bool`) — DecidablePred
+instances are auto-derived from `DecidableEq` on the world enums.
 -/
 
 namespace McKayVanInwagen1977
 
 open Core.Order (SimilarityOrdering)
-open Semantics.Conditionals.AlternativeSensitive (lewisDAC sdaEval)
+open Semantics.Conditionals.Counterfactual (universalCounterfactual)
+
 
 -- ════════════════════════════════════════════════════
 -- The Bumper Crop Argument: S ≠ S*
@@ -79,31 +85,42 @@ def cropSim : SimilarityOrdering CropWorld := .ofBool
   (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .goodWeather && w₂ == .sunCold))
   (by decide) (by decide)
 
-def goodWeather : CropWorld → Bool | .goodWeather => true | _ => false
-def sunCold : CropWorld → Bool | .sunCold => true | _ => false
-def bumperCrop : CropWorld → Bool | .goodWeather => true | _ => false
+/-- "Good weather" world predicate. -/
+def goodWeather (w : CropWorld) : Prop := w = .goodWeather
+/-- "Sun cold" world predicate. -/
+def sunCold (w : CropWorld) : Prop := w = .sunCold
+/-- "Bumper crop" world predicate. True at the good-weather world. -/
+def bumperCrop (w : CropWorld) : Prop := w = .goodWeather
+
+instance : DecidablePred goodWeather := fun w => decEq w .goodWeather
+instance : DecidablePred sunCold := fun w => decEq w .sunCold
+instance : DecidablePred bumperCrop := fun w => decEq w .goodWeather
 
 /-- S* (Lewis disjunctive closure) is TRUE: the closest
     (goodWeather ∨ sunCold)-world is a good-weather world. This is
     premise (3) of the critics' argument. -/
 theorem bumperCrop_lewis_true :
-    lewisDAC cropSim goodWeather sunCold
-      bumperCrop .actual = true := by decide
+    universalCounterfactual cropSim
+      (fun w => goodWeather w ∨ sunCold w) bumperCrop .actual := by decide
 
 /-- The conjunction regimentation is FALSE:
     "if the sun grew cold, we'd have a bumper crop" is false.
     This matches the English judgment that S is false. -/
 theorem bumperCrop_conjunction_false :
-    sdaEval cropSim [goodWeather, sunCold]
-      bumperCrop .actual = false := by decide
-
-/-- Lewis's disjunctive closure and the conjunction regimentation diverge.
-    Since the English sentence S is false (matching the conjunction) while
-    S* is true (matching Lewis), S ≠ S*: premise (2) is false. -/
-theorem lewis_ne_conjunction :
-    lewisDAC cropSim goodWeather sunCold bumperCrop .actual ≠
-    sdaEval cropSim [goodWeather, sunCold] bumperCrop .actual := by
+    ¬ (universalCounterfactual cropSim goodWeather bumperCrop .actual ∧
+       universalCounterfactual cropSim sunCold bumperCrop .actual) := by
   decide
+
+/-- Lewis's disjunctive closure is true while the conjunction
+    regimentation is false. Since the English sentence S is false
+    (matching the conjunction) while S* is true (matching Lewis),
+    S ≠ S*: premise (2) is false. -/
+theorem lewis_ne_conjunction :
+    universalCounterfactual cropSim
+      (fun w => goodWeather w ∨ sunCold w) bumperCrop .actual ∧
+    ¬ (universalCounterfactual cropSim goodWeather bumperCrop .actual ∧
+       universalCounterfactual cropSim sunCold bumperCrop .actual) :=
+  ⟨bumperCrop_lewis_true, bumperCrop_conjunction_false⟩
 
 end BumperCrop
 
@@ -139,29 +156,36 @@ def spainSim : SimilarityOrdering SpainWorld := .ofBool
   (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies))
   (by decide) (by decide)
 
-def foughtAxis : SpainWorld → Bool | .axis => true | _ => false
-def foughtAllies : SpainWorld → Bool | .allies => true | _ => false
+/-- "Spain fought with the Axis" world predicate. -/
+def foughtAxis (w : SpainWorld) : Prop := w = .axis
+/-- "Spain fought with the Allies" world predicate. -/
+def foughtAllies (w : SpainWorld) : Prop := w = .allies
+
+instance : DecidablePred foughtAxis := fun w => decEq w .axis
+instance : DecidablePred foughtAllies := fun w => decEq w .allies
 
 /-- Lewis's disjunctive-closure reading is TRUE: the closest
     (Axis ∨ Allies)-world is the Axis-world, which satisfies C.
     The English sentence "if she had fought on one side or the other,
     it would have been the Axis" is acceptable. -/
 theorem spain_lewis_true :
-    lewisDAC spainSim foughtAxis foughtAllies
-      foughtAxis .actual = true := by decide
+    universalCounterfactual spainSim
+      (fun w => foughtAxis w ∨ foughtAllies w) foughtAxis .actual := by
+  decide
 
 /-- The absurd SDA simplification: "If Spain had fought on the Allied
     side, Spain would have fought on the Axis side" is false. This is
     what the SDA schema would derive from `spain_lewis_true`. -/
 theorem allies_implies_axis_false :
-    sdaEval spainSim [foughtAllies]
-      foughtAxis .actual = false := by decide
+    ¬ universalCounterfactual spainSim foughtAllies foughtAxis .actual := by
+  decide
 
 /-- The conjunction reading (both simplifications must hold) is FALSE,
     because the Allies simplification fails. -/
 theorem spain_conjunction_false :
-    sdaEval spainSim [foughtAxis, foughtAllies]
-      foughtAxis .actual = false := by decide
+    ¬ (universalCounterfactual spainSim foughtAxis foughtAxis .actual ∧
+       universalCounterfactual spainSim foughtAllies foughtAxis .actual) := by
+  decide
 
 /-- **SDA is not a valid schema for counterfactuals.** There exist
     propositions A, B, C and a world w such that (A ∨ B) > C is true
@@ -169,48 +193,16 @@ theorem spain_conjunction_false :
     true, but Allies > Axis is false. -/
 theorem sda_invalid :
     ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (sim : SimilarityOrdering W) (A B C : W → Bool) (w : W),
-      lewisDAC sim A B C w = true ∧
-      sdaEval sim [B] C w = false :=
+      (sim : SimilarityOrdering W) (A B C : W → Prop)
+      (_ : DecidablePred A) (_ : DecidablePred B) (_ : DecidablePred C)
+      (w : W),
+      universalCounterfactual sim (fun v => A v ∨ B v) C w ∧
+      ¬ universalCounterfactual sim B C w :=
   ⟨SpainWorld, inferInstance, inferInstance, spainSim,
-   foughtAxis, foughtAllies, foughtAxis, .actual,
-   ⟨by decide, by decide⟩⟩
+   foughtAxis, foughtAllies, foughtAxis,
+   inferInstance, inferInstance, inferInstance, .actual,
+   spain_lewis_true, allies_implies_axis_false⟩
 
 end Spain
-
--- ════════════════════════════════════════════════════
--- Summary: The Two Readings Diverge
--- ════════════════════════════════════════════════════
-
-/-!
-## Divergence of Readings
-
-In both examples, Lewis's disjunctive closure (`lewisDAC`) returns true
-while the conjunction regimentation (`sdaEval`) returns false. But the
-English judgments differ:
-- Spain: the English sentence is **acceptable** (matches Lewis)
-- Bumper crop: the English sentence is **unacceptable** (matches conjunction)
-
-This shows that natural-language "or" in counterfactual antecedents does
-not uniformly correspond to either formal reading. The ambiguity is
-between conjunction/SDA (each disjunct evaluated separately) and Lewis's
-disjunctive closure (disjuncts combined before evaluation).
--/
-
-/-- Both examples show the two formal readings diverge: Lewis gives true,
-    conjunction gives false. The English judgments select different
-    readings in each case — confirming that natural-language "or" in
-    counterfactual antecedents is ambiguous between the two. -/
-theorem readings_diverge :
-    (lewisDAC spainSim foughtAxis foughtAllies
-       foughtAxis .actual = true ∧
-     sdaEval spainSim [foughtAxis, foughtAllies]
-       foughtAxis .actual = false) ∧
-    (lewisDAC cropSim goodWeather sunCold
-       bumperCrop .actual = true ∧
-     sdaEval cropSim [goodWeather, sunCold]
-       bumperCrop .actual = false) :=
-  ⟨⟨spain_lewis_true, spain_conjunction_false⟩,
-   ⟨bumperCrop_lewis_true, bumperCrop_conjunction_false⟩⟩
 
 end McKayVanInwagen1977

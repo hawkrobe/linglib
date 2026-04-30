@@ -87,7 +87,7 @@ guttural/dorsal OCPs.
   — gradient OCP applied selectively to incorporated Italian forms;
   @cite{mifsud-1995}) — corpus-based, summarised only.
 * **§4.2 cross-linguistic similarity-OCP attestations** (Tigrinya
-  @cite{buckley-1997}, Russian @cite{padgett-1995}, English
+  @cite{buckley-1997-ocp}, Russian @cite{padgett-1995}, English
   @cite{berkley-1994}, Thai @cite{frisch-2000a}) — referenced in
   docstring.
 * **§4.3 phonetic / cognitive origin** (@cite{berg-1998},
