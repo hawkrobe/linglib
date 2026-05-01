@@ -111,41 +111,26 @@ def fragmentSample : Finset SampleEntry :=
 -- ============================================================================
 
 /-- Language has WALS basic order VSO. -/
-def isVSO (p : SampleEntry) : Prop :=
-  p.wordOrder.basicOrder = .vso
+abbrev isVSO (p : SampleEntry) : Prop := p.wordOrder.basicOrder.IsVSO
 
 /-- Language has WALS basic order SOV. -/
-def isSOV (p : SampleEntry) : Prop :=
-  p.wordOrder.basicOrder = .sov
+abbrev isSOV (p : SampleEntry) : Prop := p.wordOrder.basicOrder.IsSOV
 
 /-- Subject-before-object basic orders (SOV, SVO, VSO). -/
-def isSubjectBeforeObject (p : SampleEntry) : Prop :=
-  p.wordOrder.basicOrder = .sov ∨
-  p.wordOrder.basicOrder = .svo ∨
-  p.wordOrder.basicOrder = .vso
+abbrev isSubjectBeforeObject (p : SampleEntry) : Prop :=
+  p.wordOrder.basicOrder.IsSubjectBeforeObject
 
 /-- Object-before-subject basic orders (VOS, OVS, OSV). -/
-def isObjectBeforeSubject (p : SampleEntry) : Prop :=
-  p.wordOrder.basicOrder = .vos ∨
-  p.wordOrder.basicOrder = .ovs ∨
-  p.wordOrder.basicOrder = .osv
+abbrev isObjectBeforeSubject (p : SampleEntry) : Prop :=
+  p.wordOrder.basicOrder.IsObjectBeforeSubject
 
 /-- Language is classified as prepositional in WALS Ch 85. -/
-def isPrepositional (p : SampleEntry) : Prop :=
+abbrev isPrepositional (p : SampleEntry) : Prop :=
   p.adposition = some .prepositional
 
 /-- Language is classified as postpositional in WALS Ch 85. -/
-def isPostpositional (p : SampleEntry) : Prop :=
+abbrev isPostpositional (p : SampleEntry) : Prop :=
   p.adposition = some .postpositional
-
-instance : DecidablePred isVSO := fun p => by unfold isVSO; infer_instance
-instance : DecidablePred isSOV := fun p => by unfold isSOV; infer_instance
-instance : DecidablePred isSubjectBeforeObject :=
-  fun p => by unfold isSubjectBeforeObject; infer_instance
-instance : DecidablePred isObjectBeforeSubject :=
-  fun p => by unfold isObjectBeforeSubject; infer_instance
-instance : DecidablePred isPrepositional := fun p => by unfold isPrepositional; infer_instance
-instance : DecidablePred isPostpositional := fun p => by unfold isPostpositional; infer_instance
 
 -- ============================================================================
 -- §3. Greenberg's Universals 1, 3, 4 over `fragmentSample`
@@ -182,5 +167,17 @@ set_option maxRecDepth 4096 in
 theorem greenberg_universal_4 :
     ImplicationalUniversal isSOV isPostpositional fragmentSample := by
   decide
+
+-- ============================================================================
+-- §4. Sample-wide drift sentinels
+-- ============================================================================
+
+set_option maxRecDepth 4096 in
+/-- Every Fragment in `fragmentSample` has an internally consistent
+    word-order profile (per `Typology.WordOrder.WordOrderProfile.IsConsistent`).
+    Catches drift if a future Fragment edit produces a contradictory profile
+    like `{basicOrder := .sov, svOrder := .vs}`. -/
+theorem fragment_sample_word_order_consistent :
+    ∀ p ∈ fragmentSample, p.wordOrder.IsConsistent := by decide
 
 end Phenomena.WordOrder.Studies.Greenberg1963

@@ -1,58 +1,113 @@
 import Linglib.Datasets.WALS.Features.F81A
 import Linglib.Datasets.WALS.Features.F82A
 import Linglib.Datasets.WALS.Features.F83A
-import Linglib.Core.Word
 
 /-!
-# Word-order typology: shared record types
+# Word-order typology: per-language profile substrate
+@cite{dryer-2013-wals} @cite{greenberg-1963} @cite{dryer-1992}
 
-Framework-agnostic record types for storing per-language word-order data
-(WALS Chapters 81–83). These types live in `Core/` so that both `Fragments/`
+Framework-agnostic substrate for storing per-language word-order data
+(WALS Chs 81–83). Lives in `Typology/` so that both `Fragments/`
 (per-language profiles) and `Phenomena/WordOrder/` (cross-linguistic
-generalizations) can import them without violating the layered dependency
-hierarchy.
+generalisations) can import it without violating the layered
+dependency hierarchy.
 
-The key record is `WordOrderProfile` — a plain bundle of order values plus a
-free-text `notes` field. Provenance for individual values lives in the
-`@cite{...}` keys of whichever Fragment populates the record, not in a runtime
-wrapper.
+The key record is `WordOrderProfile`, a flat bundle of three
+orthogonal WALS classifications. `WordOrderProfile.ofWALS` provides
+the canonical "derive from WALS by ISO lookup" convenience.
 
-`WordOrderProfile.ofWALS` provides the canonical "derive from WALS by ISO
-lookup" convenience so per-language Fragments can write `ofWALS "eng"` rather
-than re-implementing the lookup-and-fall-back boilerplate. Languages absent
-from a given WALS chapter get `.noDominant` for that field.
+## Epistemic distinction: `noDominant` vs `notInWALS`
+
+The three enums each carry both `.noDominant` (WALS-attested
+nondominance, e.g., German Ch 81 — *itself a finding* about the
+language) and `.notInWALS` (the language is not coded in this WALS
+chapter). A consumer that filtered on `≠ .noDominant` would otherwise
+silently include unencoded languages as "genuinely nondominant".
+
+## Independence assumption and `IsConsistent`
+
+The three fields are bundled *independently* even though they are
+not logically independent: SOV basicOrder entails sv + ov projections,
+etc. WALS codes them independently for empirical-coverage reasons (a
+language can be Ch 81 nondominant but Ch 82 dominant — German is
+exactly this), so the substrate mirrors WALS rather than collapsing
+fields. The `WordOrderProfile.IsConsistent` predicate rules out
+internally contradictory combinations.
+
+## Greenbergian vs Dryerian primacy
+
+The substrate is *neutral* on which classification is theoretically
+primary. @cite{greenberg-1963} treated `BasicOrder` as primary;
+@cite{dryer-1992} explicitly demoted SOV/SVO/VSO in favour of OV/VO
+(Branching Direction Theory). Consumers downstream choose which
+fields to read.
+
+## Scope
+
+Covers WALS Chs 81–83 (clausal word-order features). Sibling
+substrates carry adjacent typology: `Typology/Adposition.lean` for
+Ch 85; nominal-internal and correlation-pair profiles can be added
+when consumers demand them. Cross-tabulation primitives for
+correlation tables (Gibson 2025-style 2×2 head-direction tables) live
+in their consuming Studies file (`Phenomena/WordOrder/Studies/
+Gibson2025.lean`) until a second framework consumer materialises.
 -/
 
 namespace Typology.WordOrder
 
-/-- WALS Ch 81: six-way classification of basic constituent order, plus
-    a `noDominant` cell for languages where no single order clearly dominates. -/
+-- ============================================================================
+-- Enums
+-- ============================================================================
+
+/-- WALS Ch 81: six-way classification of basic constituent order.
+    `noDominant` is WALS's "lacking a dominant word order" code (a
+    substantive finding about the language); `notInWALS` is absence
+    from the chapter. The two are epistemically different and must
+    not be conflated. -/
 inductive BasicOrder where
-  | sov | svo | vso | vos | ovs | osv | noDominant
+  | sov | svo | vso | vos | ovs | osv
+  /-- WALS-attested "lacking a dominant word order" (Ch 81). -/
+  | noDominant
+  /-- Language not coded in WALS Ch 81. -/
+  | notInWALS
   deriving DecidableEq, Repr
 
 /-- WALS Ch 82: binary classification of subject–verb order. -/
 inductive SVOrder where
-  | sv | vs | noDominant
+  | sv | vs
+  /-- WALS-attested "lacking a dominant order" (Ch 82). -/
+  | noDominant
+  /-- Language not coded in WALS Ch 82. -/
+  | notInWALS
   deriving DecidableEq, Repr
 
 /-- WALS Ch 83: binary classification of object–verb order. -/
 inductive OVOrder where
-  | ov | vo | noDominant
+  | ov | vo
+  /-- WALS-attested "lacking a dominant order" (Ch 83). -/
+  | noDominant
+  /-- Language not coded in WALS Ch 83. -/
+  | notInWALS
   deriving DecidableEq, Repr
 
-/-- A bundle of WALS-style word-order classifications for a single language.
-    `notes` carries free-text commentary (and is the natural home for the
-    `@cite{...}` keys that document non-WALS sources for hand-coded values). -/
+/-- A bundle of WALS-style word-order classifications for a single
+    language. The three fields are bundled independently because
+    WALS codes them independently; the `IsConsistent` predicate
+    captures the logical entailments between them. -/
 structure WordOrderProfile where
   basicOrder : BasicOrder
   svOrder : SVOrder
   ovOrder : OVOrder
-  notes : String := ""
   deriving Repr, DecidableEq
 
-/-- Convert WALS F81A's `BasicWordOrder` to our local `BasicOrder`. -/
-def fromWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
+-- ============================================================================
+-- WALS converters and ISO lookups
+-- ============================================================================
+
+namespace BasicOrder
+
+/-- Convert WALS F81A's `BasicWordOrder` value to a `BasicOrder`. -/
+def ofWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
   | .sov => .sov
   | .svo => .svo
   | .vso => .vso
@@ -61,91 +116,149 @@ def fromWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
   | .osv => .osv
   | .noDominantOrder => .noDominant
 
-/-- Convert WALS F82A's `SubjectVerbOrder` to our local `SVOrder`. -/
-def fromWALS82A : Datasets.WALS.F82A.SubjectVerbOrder → SVOrder
+/-- Look up Ch 81 basic order for an ISO 639-3 code. Returns
+    `.notInWALS` when the language is absent from the chapter. -/
+def ofWALS (iso : String) : BasicOrder :=
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F81A.allData iso with
+  | some d => ofWALS81A d.value
+  | none => .notInWALS
+
+end BasicOrder
+
+namespace SVOrder
+
+/-- Convert WALS F82A's `SubjectVerbOrder` to an `SVOrder`. -/
+def ofWALS82A : Datasets.WALS.F82A.SubjectVerbOrder → SVOrder
   | .sv => .sv
   | .vs => .vs
   | .noDominantOrder => .noDominant
 
-/-- Convert WALS F83A's `ObjectVerbOrder` to our local `OVOrder`. -/
-def fromWALS83A : Datasets.WALS.F83A.ObjectVerbOrder → OVOrder
+/-- Look up Ch 82 subject–verb order for an ISO 639-3 code. Returns
+    `.notInWALS` when the language is absent from the chapter. -/
+def ofWALS (iso : String) : SVOrder :=
+  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F82A.allData iso with
+  | some d => ofWALS82A d.value
+  | none => .notInWALS
+
+end SVOrder
+
+namespace OVOrder
+
+/-- Convert WALS F83A's `ObjectVerbOrder` to an `OVOrder`. -/
+def ofWALS83A : Datasets.WALS.F83A.ObjectVerbOrder → OVOrder
   | .ov => .ov
   | .vo => .vo
   | .noDominantOrder => .noDominant
 
-/-- Look up Ch 81 basic order for an ISO 639-3 code; `.noDominant` if absent. -/
-def basicOrderOfWALS (iso : String) : BasicOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F81A.allData iso with
-  | some d => fromWALS81A d.value
-  | none => .noDominant
-
-/-- Look up Ch 82 subject–verb order for an ISO 639-3 code; `.noDominant` if absent. -/
-def svOrderOfWALS (iso : String) : SVOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F82A.allData iso with
-  | some d => fromWALS82A d.value
-  | none => .noDominant
-
-/-- Look up Ch 83 object–verb order for an ISO 639-3 code; `.noDominant` if absent. -/
-def ovOrderOfWALS (iso : String) : OVOrder :=
+/-- Look up Ch 83 object–verb order for an ISO 639-3 code. Returns
+    `.notInWALS` when the language is absent from the chapter. -/
+def ofWALS (iso : String) : OVOrder :=
   match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F83A.allData iso with
-  | some d => fromWALS83A d.value
-  | none => .noDominant
+  | some d => ofWALS83A d.value
+  | none => .notInWALS
 
-/-- Construct a `WordOrderProfile` for a language by ISO 639-3 lookup against
-    WALS chapters 81/82/83. Each field independently falls back to `.noDominant`
-    if its WALS chapter has no entry for the language. Use this as the default
-    backend in Fragment files; override per-field when grammar-grounded sources
-    disagree with WALS or fill its gaps. -/
-def WordOrderProfile.ofWALS (iso : String) (notes : String := "") : WordOrderProfile :=
-  { basicOrder := basicOrderOfWALS iso
-    svOrder := svOrderOfWALS iso
-    ovOrder := ovOrderOfWALS iso
-    notes := notes }
+end OVOrder
+
+/-- Construct a `WordOrderProfile` for a language by ISO 639-3 lookup
+    against WALS chapters 81/82/83. Each field independently falls
+    back to `.notInWALS` if its WALS chapter has no entry. Use this as
+    the default backend in Fragment files; override per-field when
+    grammar-grounded sources disagree with WALS or fill its gaps. -/
+def WordOrderProfile.ofWALS (iso : String) : WordOrderProfile :=
+  { basicOrder := BasicOrder.ofWALS iso
+    svOrder := SVOrder.ofWALS iso
+    ovOrder := OVOrder.ofWALS iso }
 
 -- ============================================================================
--- Cross-tabulation substrate (for harmonic-vs-disharmonic word-order analyses)
+-- BasicOrder → SVOrder/OVOrder projections (and consistency)
 -- ============================================================================
 
-/-- A single cell in a 2×2 head-direction cross-tabulation.
-    `dir1` is the direction for the first construction (typically verb-object),
-    `dir2` is the direction for the second construction. -/
-structure AlignmentCell where
-  dir1 : HeadDirection
-  dir2 : HeadDirection
-  count : Nat
-  deriving Repr, DecidableEq
+/-- The SVOrder a basic order entails (`none` if basic order is
+    itself uninformative). -/
+def BasicOrder.entailedSV : BasicOrder → Option SVOrder
+  | .sov | .svo => some .sv
+  | .vso | .vos | .ovs | .osv => some .vs
+  | .noDominant | .notInWALS => none
 
-/-- Whether an alignment cell represents a harmonic (consistent-direction) pair. -/
-def AlignmentCell.isHarmonic (c : AlignmentCell) : Bool :=
-  c.dir1 == c.dir2
+/-- The OVOrder a basic order entails. -/
+def BasicOrder.entailedOV : BasicOrder → Option OVOrder
+  | .sov | .ovs | .osv => some .ov
+  | .svo | .vso | .vos => some .vo
+  | .noDominant | .notInWALS => none
 
-/-- A 2×2 cross-tabulation of two head-direction-bearing construction types
-    (e.g. verb-object × adposition, verb-object × subordinator). The four cells
-    enumerate the head-initial / head-final combinations. -/
-structure CrossTab where
-  name : String
-  construction1 : String
-  construction2 : String
-  hihi : AlignmentCell    -- both head-initial
-  hihf : AlignmentCell    -- construction 1 HI, construction 2 HF
-  hfhi : AlignmentCell    -- construction 1 HF, construction 2 HI
-  hfhf : AlignmentCell    -- both head-final
-  deriving Repr
+/-- A profile is consistent if its `svOrder` and `ovOrder` either
+    match what `basicOrder` entails, or are themselves uninformative
+    (`.noDominant` / `.notInWALS`). The latter accommodates languages
+    coded in some WALS chapters but not others (e.g., German has
+    nondominant Ch 81 but dominant Ch 82). When `basicOrder` itself
+    is uninformative, no constraint is imposed on the projections. -/
+def WordOrderProfile.IsConsistent (p : WordOrderProfile) : Prop :=
+  (match p.basicOrder.entailedSV with
+   | none => True
+   | some sv =>
+     p.svOrder = sv ∨ p.svOrder = .noDominant ∨ p.svOrder = .notInWALS) ∧
+  (match p.basicOrder.entailedOV with
+   | none => True
+   | some ov =>
+     p.ovOrder = ov ∨ p.ovOrder = .noDominant ∨ p.ovOrder = .notInWALS)
 
-/-- Total count of harmonic (diagonal) cells. -/
-def CrossTab.harmonicCount (t : CrossTab) : Nat :=
-  t.hihi.count + t.hfhf.count
+instance (p : WordOrderProfile) : Decidable p.IsConsistent := by
+  unfold WordOrderProfile.IsConsistent
+  cases p.basicOrder.entailedSV <;> cases p.basicOrder.entailedOV <;>
+    infer_instance
 
-/-- Total count of disharmonic (off-diagonal) cells. -/
-def CrossTab.disharmonicCount (t : CrossTab) : Nat :=
-  t.hihf.count + t.hfhi.count
+-- ============================================================================
+-- Classification predicates over BasicOrder
+-- ============================================================================
+-- These are abbrevs (transparent) so `Decidable` resolves automatically
+-- via `BasicOrder`'s `DecidableEq`. Add new predicates here when a
+-- second consumer materialises (rather than letting individual studies
+-- re-stipulate them).
 
-/-- Total number of languages in the table. -/
-def CrossTab.totalCount (t : CrossTab) : Nat :=
-  t.harmonicCount + t.disharmonicCount
+namespace BasicOrder
 
-/-- Whether harmonic pairings are the majority. -/
-def CrossTab.harmonicDominant (t : CrossTab) : Bool :=
-  t.harmonicCount > t.disharmonicCount
+/-- `b` is SOV. -/
+abbrev IsSOV (b : BasicOrder) : Prop := b = .sov
+
+/-- `b` is SVO. -/
+abbrev IsSVO (b : BasicOrder) : Prop := b = .svo
+
+/-- `b` is VSO. -/
+abbrev IsVSO (b : BasicOrder) : Prop := b = .vso
+
+/-- `b` has Subject before Object: SOV, SVO, or VSO.
+    @cite{greenberg-1963} Universal 1's antecedent. -/
+abbrev IsSubjectBeforeObject (b : BasicOrder) : Prop :=
+  b = .sov ∨ b = .svo ∨ b = .vso
+
+/-- `b` has Object before Subject: VOS, OVS, or OSV.
+    @cite{greenberg-1963} Universal 1's negative class. -/
+abbrev IsObjectBeforeSubject (b : BasicOrder) : Prop :=
+  b = .vos ∨ b = .ovs ∨ b = .osv
+
+end BasicOrder
+
+-- ============================================================================
+-- Verb position (theory-neutral OVOrder projection)
+-- ============================================================================
+
+/-- Verb position in the clause as derived from object–verb order.
+    Theory-neutral: VO ⇒ post-verbal object (verb precedes
+    complement), OV ⇒ pre-verbal object (verb follows complement).
+    Consumers: `Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean`,
+    `Phenomena/Coordination/Studies/Schwarzer2026.lean`. -/
+inductive VerbPosition where
+  /-- Verb precedes complement (head-initial VP). -/
+  | postverbal
+  /-- Verb follows complement (head-final VP). -/
+  | preverbal
+  deriving DecidableEq, Repr
+
+/-- Project an `OVOrder` to a `VerbPosition`. Returns `none` for
+    uninformative orders (`.noDominant`, `.notInWALS`). -/
+def OVOrder.verbPosition : OVOrder → Option VerbPosition
+  | .vo => some .postverbal
+  | .ov => some .preverbal
+  | .noDominant | .notInWALS => none
 
 end Typology.WordOrder

@@ -164,9 +164,10 @@ theorem beschliessen_selecting :
 -- § 3: Competing Analyses & Structural Predictions
 -- ============================================================================
 
-/-! `ConjunctOrder`, `VerbPosition`, `OVOrder.toVerbPosition`,
-    `bottomUpPrediction`, and `linearClosenessPrediction` are defined
-    in @cite{bruening-alkhalaf-2020} and imported via `open`. -/
+/-! `ConjunctOrder`, `bottomUpPrediction`, and `linearClosenessPrediction`
+    are defined in @cite{bruening-alkhalaf-2020} and imported via `open`.
+    `VerbPosition` and `OVOrder.verbPosition` live in `Typology.WordOrder`
+    substrate. -/
 
 /-- **Temporal closeness prediction**: the conjunct parsed closest in
     time to the verb has its features checked. Makes the same
@@ -448,22 +449,22 @@ theorem german_wals_vs_clausetype :
 /-- For any OV language in the typological sample, the OVOrder→VerbPosition
     bridge yields preverbal position. -/
 theorem ov_languages_preverbal :
-    OVOrder.toVerbPosition .ov = some VerbPosition.preverbal := rfl
+    OVOrder.verbPosition .ov = some VerbPosition.preverbal := rfl
 
 /-- For any VO language in the typological sample, the OVOrder→VerbPosition
     bridge yields postverbal position. -/
 theorem vo_languages_postverbal :
-    OVOrder.toVerbPosition .vo = some VerbPosition.postverbal := rfl
+    OVOrder.verbPosition .vo = some VerbPosition.postverbal := rfl
 
 /-- Linear closeness makes the wrong prediction for all OV languages:
     deriving VerbPosition from OVOrder and then applying linear closeness
     yields CP-first, which is refuted by German data. -/
 theorem linear_wrong_for_ov_languages :
-    (OVOrder.toVerbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
+    (OVOrder.verbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
 
 /-- Bottom-up makes the correct prediction for all OV languages. -/
 theorem bottomUp_correct_for_ov_languages :
-    (OVOrder.toVerbPosition .ov).map bottomUpPrediction = some .dpFirst := rfl
+    (OVOrder.verbPosition .ov).map bottomUpPrediction = some .dpFirst := rfl
 
 -- ============================================================================
 -- § 11: Fragment Membership & Coordination Particle

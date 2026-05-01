@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
-import Linglib.Typology.WordOrder
+import Linglib.Datasets.WALS.Features.F95A
+import Linglib.Core.Word
 
 /-!
 # Gibson 2025: DLM and the Head-Direction Generalization
@@ -18,22 +19,86 @@ statement over those tables, and the DLM-vs-WALS consistency theorems that
 package the central claim. The DLM apparatus itself lives in
 `Theories/Syntax/DependencyGrammar/Formal/HarmonicOrder.lean`.
 
-Substrate types `CrossTab` / `AlignmentCell` plus `harmonicCount` /
-`disharmonicCount` / `harmonicDominant` helpers live in
-`Linglib/Typology/WordOrder.lean` (substrate, theory-neutral 2×2 contingency
-tables; consumers like `Phenomena/WordOrder/Gradience.lean` import them
-directly).
+## Cross-tabulation apparatus
 
-This file was previously named `Studies/Dryer1992.lean` but the content was
-already Gibson 2025 in nature (DLM + WALS counts + the central
-DLM-explains-Greenberg theorem) — renamed to fix the chronology violation
-(Dryer 1992 cannot cite a 2025 paper or a 2013 atlas).
+The `AlignmentCell` / `CrossTab` 2×2 head-direction tabulation types are
+defined here as paper-anchored apparatus rather than substrate, since the
+only consumers are this paper plus the Levshina-style gradient extension
+(`Phenomena/WordOrder/Gradience.lean`). They will be promoted to
+`Typology/WordOrder.lean` substrate when a second paper-independent
+consumer materialises (e.g., a `FOFC.lean`, a `Hawkins1983.lean`, or a
+systematic WALS Ch 95/96/97 ingestion that needs the type at substrate
+level).
+
+## Bridge to WALS Ch 95
+
+`fromWALSCh95` constructs a `CrossTab` directly from
+`Datasets.WALS.F95A.allData` (verb-object × adposition correlation;
+@cite{dryer-haspelmath-2013} Ch 95). The substrate-derived counts diverge
+slightly from Gibson's hand-coded Table 1 (likely a snapshot
+difference) but both prove harmonic dominance.
 -/
 
 namespace Phenomena.WordOrder.Studies.Gibson2025
 
 open DepGrammar DependencyLength DepGrammar.HarmonicOrder
-open Typology.WordOrder
+
+-- ============================================================================
+-- §0. Cross-tabulation apparatus (paper-anchored substrate)
+-- ============================================================================
+
+/-- A single cell in a 2×2 head-direction cross-tabulation. `dir1`
+    and `dir2` are the head directions of two construction types being
+    correlated. The struct does not enforce that `dir1` / `dir2`
+    originate from genuinely head-direction-bearing constructions;
+    consumers carry that contract. -/
+structure AlignmentCell where
+  dir1 : HeadDirection
+  dir2 : HeadDirection
+  count : Nat
+  deriving Repr, DecidableEq
+
+/-- A cell is harmonic when both constructions take the same head
+    direction. -/
+def AlignmentCell.IsHarmonic (c : AlignmentCell) : Prop :=
+  c.dir1 = c.dir2
+
+instance : DecidablePred AlignmentCell.IsHarmonic := fun c =>
+  decEq c.dir1 c.dir2
+
+/-- A 2×2 cross-tabulation of two head-direction-bearing construction
+    types (e.g., verb-object × adposition). The four cells enumerate
+    the head-initial / head-final combinations. -/
+structure CrossTab where
+  name : String
+  construction1 : String
+  construction2 : String
+  hihi : AlignmentCell    -- both head-initial
+  hihf : AlignmentCell    -- construction 1 HI, construction 2 HF
+  hfhi : AlignmentCell    -- construction 1 HF, construction 2 HI
+  hfhf : AlignmentCell    -- both head-final
+  deriving Repr, DecidableEq
+
+/-- Total count of harmonic (diagonal) cells. -/
+def CrossTab.harmonicCount (t : CrossTab) : Nat :=
+  t.hihi.count + t.hfhf.count
+
+/-- Total count of disharmonic (off-diagonal) cells. -/
+def CrossTab.disharmonicCount (t : CrossTab) : Nat :=
+  t.hihf.count + t.hfhi.count
+
+/-- Total number of languages in the table. -/
+def CrossTab.totalCount (t : CrossTab) : Nat :=
+  t.harmonicCount + t.disharmonicCount
+
+/-- Harmonic pairings strictly outnumber disharmonic. A *raw-count*
+    primitive; serious typological generalisations require sample-bias
+    correction (cf. @cite{dryer-1992}'s genus method). -/
+def CrossTab.IsHarmonicDominant (t : CrossTab) : Prop :=
+  t.harmonicCount > t.disharmonicCount
+
+instance : DecidablePred CrossTab.IsHarmonicDominant := fun _ =>
+  Nat.decLt _ _
 
 -- ============================================================================
 -- §1. Gibson Tables 1–3: WALS cross-tabulations
@@ -81,23 +146,23 @@ def allTables : List CrossTab :=
 
 /-- Table 1: harmonic (926) > disharmonic (55). -/
 theorem voAdposition_harmonic_dominant :
-    voAdposition.harmonicDominant = true := by decide
+    voAdposition.IsHarmonicDominant := by decide
 
 /-- Table 2: harmonic (393) > disharmonic (63). -/
 theorem voSubordinator_harmonic_dominant :
-    voSubordinator.harmonicDominant = true := by decide
+    voSubordinator.IsHarmonicDominant := by decide
 
 /-- Table 3: harmonic (547) > disharmonic (118). -/
 theorem voRelativeClause_harmonic_dominant :
-    voRelativeClause.harmonicDominant = true := by decide
+    voRelativeClause.IsHarmonicDominant := by decide
 
 /-- Harmonic cells have matching directions. -/
-theorem hihi_is_harmonic : voAdposition.hihi.isHarmonic = true := by decide
-theorem hfhf_is_harmonic : voAdposition.hfhf.isHarmonic = true := by decide
+theorem hihi_is_harmonic : voAdposition.hihi.IsHarmonic := by decide
+theorem hfhf_is_harmonic : voAdposition.hfhf.IsHarmonic := by decide
 
 /-- Disharmonic cells have mismatched directions. -/
-theorem hihf_is_disharmonic : voAdposition.hihf.isHarmonic = false := by decide
-theorem hfhi_is_disharmonic : voAdposition.hfhi.isHarmonic = false := by decide
+theorem hihf_is_disharmonic : ¬ voAdposition.hihf.IsHarmonic := by decide
+theorem hfhi_is_disharmonic : ¬ voAdposition.hfhi.IsHarmonic := by decide
 
 -- ============================================================================
 -- §3. The Head-Direction Generalization (@cite{greenberg-1963} / @cite{dryer-1992})
@@ -109,7 +174,7 @@ theorem hfhi_is_disharmonic : voAdposition.hfhi.isHarmonic = false := by decide
     systematized by @cite{dryer-1992}; @cite{gibson-2025} argues DLM explains
     it (consistent head direction keeps recursive spine dependencies local). -/
 theorem head_direction_generalization :
-    allTables.all CrossTab.harmonicDominant = true := by decide
+    ∀ t ∈ allTables, t.IsHarmonicDominant := by decide
 
 -- ============================================================================
 -- §4. Single-Word Exceptions (Gibson Table 4)
@@ -156,7 +221,7 @@ theorem all_exceptions_single_word :
 
 /-- WALS confirms harmonic order is more common, for a given table. -/
 def walsConfirmsHarmonic (t : CrossTab) : Bool :=
-  t.harmonicDominant
+  decide t.IsHarmonicDominant
 
 /-- Combined consistency check: DLM prediction and WALS observation agree. -/
 def dlmWalsConsistent (t : CrossTab) : Bool :=
@@ -203,5 +268,35 @@ example : oberstesGesetz harmonicHI 2 = true := by native_decide
 example : oberstesGesetz harmonicHF 2 = true := by native_decide
 example : oberstesGesetz disharmonicHF 2 = false := by native_decide
 example : oberstesGesetz disharmonicFH 2 = false := by native_decide
+
+-- ============================================================================
+-- §7. WALS Ch 95 → CrossTab bridge (substrate-derived counterpart)
+-- ============================================================================
+
+/-- Build a `CrossTab` for WALS Ch 95 (verb-object × adposition) by
+    counting datapoints in each of the four cells of
+    @cite{dryer-haspelmath-2013}'s WALS Ch 95. The same underlying
+    correlation viewed via raw WALS counts rather than Gibson's
+    hand-coded snapshot. -/
+def CrossTab.fromWALSCh95 : CrossTab :=
+  let data := Datasets.WALS.F95A.allData
+  let voPrep   := (data.filter (·.value == .voAndPrepositions)).length
+  let voPostp  := (data.filter (·.value == .voAndPostpositions)).length
+  let ovPrep   := (data.filter (·.value == .ovAndPrepositions)).length
+  let ovPostp  := (data.filter (·.value == .ovAndPostpositions)).length
+  { name := "WALS Ch 95: VO × Adposition"
+    construction1 := "Verb-Object"
+    construction2 := "Adposition"
+    hihi := ⟨.headInitial, .headInitial, voPrep⟩
+    hihf := ⟨.headInitial, .headFinal, voPostp⟩
+    hfhi := ⟨.headFinal, .headInitial, ovPrep⟩
+    hfhf := ⟨.headFinal, .headFinal, ovPostp⟩ }
+
+set_option maxRecDepth 8192 in
+/-- The raw WALS Ch 95 counts also exhibit harmonic dominance (the same
+    fact `voAdposition_harmonic_dominant` proves over Gibson's hand-
+    coded snapshot, restated over substrate-derived counts). -/
+theorem fromWALSCh95_harmonic_dominant :
+    CrossTab.fromWALSCh95.IsHarmonicDominant := by decide
 
 end Phenomena.WordOrder.Studies.Gibson2025

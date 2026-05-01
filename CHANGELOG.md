@@ -4,6 +4,69 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.576 — Audit-driven Typology/WordOrder.lean refactor: noDominant/notInWALS split + IsConsistent substrate + 4 classification predicates + VerbPosition substrate + 17 Fragment drift sentinels + CrossTab demoted to Gibson2025
+
+Four-agent deep audit on a randomly-picked file (`Linglib/Typology/WordOrder.lean`, 151 LOC) — mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/typology — surfaced ~15 findings across critical / major / minor severities. The audit was prompted by user request "pick a random file" (selected via Python from .lean candidates). Followed up with a "what does the substrate need to do for its consumers? how would mathlib organize this?" thinking pass before executing.
+
+**Substantive epistemic fix — split `noDominant` into two cases**:
+
+`BasicOrder.noDominant`, `SVOrder.noDominant`, `OVOrder.noDominant` previously did double-duty as both (a) WALS-attested "lacking a dominant word order" (German, Acehnese — *itself a finding*) and (b) language absent from the WALS chapter (most of the world — silence). A consumer filtering on `≠ .noDominant` would silently include unencoded languages as "genuinely nondominant". Each enum now has a separate `.notInWALS` case; `*OfWALS` lookups return `.notInWALS` on chapter miss; existing pattern matches that name `.noDominant` (e.g., Greenberg1963's universals) keep their semantics because they only care about the dominant 6/2/2 cases.
+
+**Independence-violating profiles can now be ruled out — `IsConsistent` predicate**:
+
+`WordOrderProfile`'s three fields are bundled independently (because WALS codes them independently — German has `.noDominant` Ch 81 + `.sv` Ch 82 + `.noDominant` Ch 83), but they are not logically independent: `.sov` basicOrder entails `.sv` + `.ov` projections. A Fragment writing `{basicOrder := .sov, svOrder := .vs, ovOrder := .vo}` previously typechecked but was internally absurd. New `BasicOrder.entailedSV` / `entailedOV` projections (returning `Option SVOrder` / `Option OVOrder`) + `WordOrderProfile.IsConsistent` predicate (lenient: allows `.noDominant`/`.notInWALS` projections to handle partial WALS coverage) + auto-derived Decidable instance. Each of the 16 existing per-language `Fragments/{Lang}/WordOrder.lean` files (Arabic.ModernStandard, Basque, English, German, HindiUrdu, Hixkaryana, Indonesian, Irish, Japanese, Korean, Mandarin, Slavic.Russian, Swahili, Turkish, Tzotzil, Welsh) plus the new K'iche' file gets a one-line drift sentinel `theorem wordOrder_consistent : wordOrder.IsConsistent := by decide` (wrapped in `set_option maxRecDepth 4096 in` because `WordOrderProfile.ofWALS "iso"` walks ~1300-element WALS lists). Aggregate sentinel `fragment_sample_word_order_consistent : ∀ p ∈ fragmentSample, p.wordOrder.IsConsistent := by decide` added to `Phenomena/WordOrder/Studies/Greenberg1963.lean`.
+
+**Classification predicates promoted to substrate (8 → 4 actual)**:
+
+`Phenomena/WordOrder/Studies/Greenberg1963.lean` re-stipulated 4 predicates over `BasicOrder` (`isVSO`, `isSOV`, `isSubjectBeforeObject`, `isObjectBeforeSubject`) plus 2 over `AdpositionOrder` (which stay local). The 4 BasicOrder predicates promoted to substrate as `BasicOrder.IsVSO` / `IsSOV` / `IsSubjectBeforeObject` / `IsObjectBeforeSubject` (`abbrev` so Decidable resolves automatically via `BasicOrder.DecidableEq`). Greenberg1963 collapses to a one-liner consumer (`abbrev isVSO p := p.wordOrder.basicOrder.IsVSO`); the explicit `instance : DecidablePred isVSO := ...` blocks dissolve. Plus `BasicOrder.IsSVO` for completeness. Additional predicates (`IsVerbInitial`, `IsVerbFinal`, `IsObjectInitial`, etc.) deferred per `project_permsubset_swap_vs_orbit` "don't add substrate ahead of consumers" memory — promote when a second cross-linguistic study demands them.
+
+**`VerbPosition` + `OVOrder.verbPosition` promoted to substrate**:
+
+`Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean` declared `inductive VerbPosition` + `def OVOrder.toVerbPosition : OVOrder → Option VerbPosition` as paper-local apparatus, but `Schwarzer2026.lean` already imports it via `open BrueningAlKhalaf2020` — two consumers means substrate. Moved to `Typology/WordOrder.lean` as theory-neutral derivation (VO ⇒ post-verbal, OV ⇒ pre-verbal, .noDominant/.notInWALS ⇒ none). Renamed `toVerbPosition → verbPosition` (mathlib pattern: `Foo.bar` projection, not `Foo.toBar`). Both consumer files refactored via `sed` rename; their inline declarations dropped with a comment pointing at substrate.
+
+**Mathlib-style WALS converter naming**:
+
+`fromWALS81A` / `fromWALS82A` / `fromWALS83A` / `basicOrderOfWALS` / `svOrderOfWALS` / `ovOrderOfWALS` renamed to `BasicOrder.ofWALS81A` / `SVOrder.ofWALS82A` / `OVOrder.ofWALS83A` / `BasicOrder.ofWALS` / `SVOrder.ofWALS` / `OVOrder.ofWALS` (mathlib pattern: type-prefixed `ofBar`/`toBar` constructors namespaced under target type). `WordOrderProfile.ofWALS` already followed the convention; the rename now uniform across the family.
+
+**`Bool` → `Prop` for harmonic predicates**:
+
+`AlignmentCell.isHarmonic : Bool` and `CrossTab.harmonicDominant : Bool` rewritten as `IsHarmonic : Prop` and `IsHarmonicDominant : Prop` with explicit Decidable instances. Aligns with the Bool→Prop migration campaign in memory `project_truth3_notation_migration` and matches mathlib aesthetic. Consumer Gibson2025 + Gradience updated: `voAdposition.harmonicDominant = true := by decide` → `voAdposition.IsHarmonicDominant := by decide`; `walsConfirmsHarmonic (t : CrossTab) : Bool := t.harmonicDominant` → `... := decide t.IsHarmonicDominant`; Gradience's compound theorems rewritten from `allTables.all (...)` to `∀ t ∈ allTables, ...` form.
+
+**Architectural finding — CrossTab demoted from substrate to Gibson2025.lean**:
+
+Pre-audit `Typology/WordOrder.lean` housed `AlignmentCell` + `CrossTab` + `harmonicCount/disharmonicCount/totalCount/IsHarmonicDominant` + the planned `fromWALSCh95` bridge. User probe "why do we need CrossTab?" surfaced that the only consumers are `Gibson2025` (1 paper) + `Gradience` (Gibson derivative). Per `project_permsubset_swap_vs_orbit` memory ("substrate built ahead of consumer"), the apparatus is paper-anchored, not substrate. Moved to `Phenomena/WordOrder/Studies/Gibson2025.lean` as new §0 (declarations) + §7 (`fromWALSCh95` bridge). The bridge naturally lives there per chronological-dependency rule (Gibson 2025 is the later paper, allowed to comment on the earlier Dryer-Haspelmath WALS dataset). Will be promoted back to substrate when/if a second framework-independent consumer materializes (FOFC.lean, Hawkins1983.lean, or systematic WALS Ch 95/96/97 ingestion). Substrate `Typology/WordOrder.lean` shrinks accordingly and stays single-file at top level matching all 11 sibling `Typology/*.lean` files. Module docstring rewritten: stale "These types live in Core/" claim fixed (file lives in Typology/, not Core/, since pre-Typology-extraction era); Greenbergian-vs-Dryerian primacy explicitly flagged; clausal-only scope (Chs 81/82/83) rationale added.
+
+**`fromWALSCh95` bridge resolves Dryer-Haspelmath/Gibson hidden agreement**:
+
+`Phenomena/WordOrder/Studies/DryerHaspelmath2013.lean ch95_harmonic_dominant` and Gibson's `voAdposition_harmonic_dominant` proved the same fact in different notations (raw WALS Ch 95 aggregate count vs hand-coded CrossTab). New `CrossTab.fromWALSCh95` constructs the substrate-derived counterpart by counting WALS F95A datapoints in each of the four cells; `theorem fromWALSCh95_harmonic_dominant : CrossTab.fromWALSCh95.IsHarmonicDominant := by decide` (with `set_option maxRecDepth 8192 in`) restates the harmonic-dominance fact over the substrate-derived counts. Note: Gibson's hand-coded Table 1 (454/41/14/472) diverges slightly from raw WALS Ch 95 totals (456/14/42/472 per F95A header) — likely a snapshot difference, possibly Gibson's exclusion of "Other" languages — both prove harmonic dominance; the bridge documents the divergence in a docstring.
+
+**K'iche' Fragment WordOrder hookup (BLOCK-MERGE-adjacent finding from integration auditor)**:
+
+`Fragments/Mayan/Kiche/VoiceSystem.lean` line 324 declared an inline `inductive BasicWordOrder | VS | VOS | VS_passive` with `def intransitiveOrder := .VS` / `def transitiveOrder := .VOS` — paper-specific Mondloch-2017 transitive/intransitive/passive distinction baked into a Fragment file in violation of `feedback_fragment_schema_consensus_only` discipline. K'iche' was invisible to `Greenberg1963.fragmentSample` (no substrate-typed `wordOrder` field) and the inline enum had zero downstream consumers. Inline declarations deleted with a comment pointing at the new file; new `Fragments/Mayan/Kiche/WordOrder.lean` carries `wordOrder : WordOrderProfile := { basicOrder := .vos, svOrder := .vs, ovOrder := .vo }` (grammar-grounded via `@cite{mondloch-2017}` Lesson 9 — K'iche' is absent from WALS Chs 81/82/83, so override needed) plus the standard drift sentinel. The transitive/intransitive distinction becomes apparatus that would belong in a future `Phenomena/WordOrder/Studies/Mondloch2017.lean` if anyone writes one.
+
+**Files touched** (24 modified + 1 new):
+
+- Substrate: `Typology/WordOrder.lean` (rewritten, 151 → 215 LOC: no more CrossTab, gained IsConsistent + 4 predicates + VerbPosition).
+- Studies: `Phenomena/WordOrder/Studies/Gibson2025.lean` (gained CrossTab apparatus + bridge), `Phenomena/WordOrder/Studies/Greenberg1963.lean` (4 predicates dissolved, sample-consistency sentinel added), `Phenomena/WordOrder/Gradience.lean` (`open` rationalized + theorems rewritten), `Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean` + `Phenomena/Coordination/Studies/Schwarzer2026.lean` (VerbPosition consumed from substrate via rename).
+- Fragments: 16 existing `Fragments/{Lang}/WordOrder.lean` files (sentinel added, no other content change) + 1 new `Fragments/Mayan/Kiche/WordOrder.lean`.
+- Cleanup: `Fragments/Mayan/Kiche/VoiceSystem.lean` (inline BasicWordOrder enum + 2 defs deleted with substrate-pointing comment).
+- `Linglib.lean`: K'iche' WordOrder import added.
+
+**Out of scope** (audit findings deferred per CLAUDE.md "don't add features beyond what the task requires"):
+
+- Cross-`Typology/*.lean` converter unification (10+ Typology files have parallel `fromWALSXXA` patterns; would need typeclass `WALSEncodable` or schema-generator rename pass). Filed as project memory.
+- `IsVerbInitial` / `IsVerbFinal` / `IsVerbMedial` / `IsObjectInitial` / `IsSubjectInitial` predicates — speculative until a second consumer demands.
+- Framework-anchored studies (Adger2003 Minimalism, SagWasowBender2003 HPSG, Steedman2000 CCG) all analyze SAI without producing a `WordOrderProfile` — bridge `predictedProfile : Grammar → WordOrderProfile` per framework would be the highest-leverage cross-framework theorem in WordOrder/, but each requires substantial per-framework work.
+- Promote `SampleEntry` (WordOrderProfile + AdpositionOrder + iso + name) from Greenberg1963 to a `Typology/CrossLinguisticEntry.lean` substrate — only one consumer right now.
+- WALS Ch 84 (object-verb-oblique), Ch 92-94 (clausal periphery): could extend `WordOrderProfile` but no consumer demands.
+- Hungarian/Case.lean is failing in the working tree with the `/-` docstring trap (`-nak/-nek` substring) — pre-existing in-flight work from another session, NOT touched.
+
+**Build state**: 5672/5673 jobs green (the only failure is the pre-existing Hungarian/Case from another concurrent session; nothing this commit touches imports it).
+
+### 0.230.575 — follow-up to 0.230.573 (commit fb4af234): add lost heine-1993 bib entry + CHANGELOG entry that were dropped in a concurrent-edit collision with the in-progress 0.230.574 work
+
+Re-applied via fresh Edit on bib (heine-1993 inserted alphabetically between yakut entry and heine-1995, sources lists Theories/Diachronic/Grammaticalization.lean + Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean + Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean) + CHANGELOG entry inserted between 0.230.574 and 0.230.572. The original 0.230.573 commit (fb4af234) landed the 6 substantive Lean files cleanly; the bib + CHANGELOG additions hit a race with another session's bib edits + CHANGELOG draft for 0.230.574, both files were silently reverted between 'git add' and 'git commit', and the commit landed without them. Verified that this follow-up is non-destructive to the 0.230.574 commit (HEAD = 571a1581): only inserts heine-1993 entry between existing entries; CHANGELOG insert is between the two existing version sections.
+
 ### 0.230.574 — Audit-driven Citko-Gračanin-Yuksek 2025 + Economy.lean refactor: per-op Pronunciation Economy + Pareto cost comparison + Multidominance substrate + tri-valued MWFParameter + FormalMatching engagement
 
 Eight-agent deep audit on the Theory file `Linglib/Theories/Syntax/Minimalist/Economy.lean` (347 LOC) AND its heavy consumer `Linglib/Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean` (906 LOC) — mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/syntax on each file, with the Citko & Gračanin-Yuksek 2025 PDF (LI Early Access, DOI 10.1162/LING.a.63) read directly by the syntax experts. The audit was prompted by user request "pick a random file" — Economy.lean was selected via awk-rand, and after I noted the heavy consumer, the user provided the C&G-Y PDF and said "audit both". Three convergent substantive findings + one major architectural finding + standard cleanup.

@@ -63,22 +63,8 @@ inductive ConjunctOrder where
   | cpFirst
   deriving DecidableEq, Repr, BEq
 
-/-- Surface position of the coordination relative to the selecting verb. -/
-inductive VerbPosition where
-  /-- Coordination precedes verb (OV complements, VO subjects). -/
-  | preverbal
-  /-- Coordination follows verb (VO complements). -/
-  | postverbal
-  deriving DecidableEq, Repr, BEq
-
-/-- Derive verb position from typological OV order.
-    OV: complements precede verb → preverbal.
-    VO: complements follow verb → postverbal.
-    No dominant order: indeterminate. -/
-def OVOrder.toVerbPosition : OVOrder → Option VerbPosition
-  | .ov => some .preverbal
-  | .vo => some .postverbal
-  | .noDominant => none
+-- `VerbPosition` and the `OVOrder → Option VerbPosition` projection
+-- live in `Typology.WordOrder` substrate; consumed via `open` above.
 
 -- ============================================================================
 -- § 2: Feature Percolation & The Directionality Principle (§3.1)
@@ -204,7 +190,7 @@ theorem english_is_vo : Fragments.English.wordOrder.ovOrder = .vo := rfl
 
 /-- English complement position maps to postverbal. -/
 theorem english_complement_postverbal :
-    OVOrder.toVerbPosition Fragments.English.wordOrder.ovOrder = some .postverbal := rfl
+    OVOrder.verbPosition Fragments.English.wordOrder.ovOrder = some .postverbal := rfl
 
 /-- B&AK predict DP-first in English complement position: the first
     conjunct is closest to V.
@@ -266,11 +252,11 @@ theorem subject_position_distinguishes :
 /-- For OV languages, B&AK predict CP-first: complements precede V,
     so the last conjunct is closest. The DP must be last → CP-first. -/
 theorem bak_predicts_cpfirst_ov :
-    (OVOrder.toVerbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
+    (OVOrder.verbPosition .ov).map linearClosenessPrediction = some .cpFirst := rfl
 
 /-- For VO languages, B&AK predict DP-first. -/
 theorem bak_predicts_dpfirst_vo :
-    (OVOrder.toVerbPosition .vo).map linearClosenessPrediction = some .dpFirst := rfl
+    (OVOrder.verbPosition .vo).map linearClosenessPrediction = some .dpFirst := rfl
 
 /-- OV is the cross-linguistic test case. Bottom-up and B&AK diverge
     on OV complement order.
@@ -278,8 +264,8 @@ theorem bak_predicts_dpfirst_vo :
     @cite{schwarzer-2026} tests this with German and finds DP-first (~77%),
     supporting bottom-up over B&AK for OV complement position. -/
 theorem ov_predictions_diverge :
-    (OVOrder.toVerbPosition .ov).map linearClosenessPrediction ≠
-    (OVOrder.toVerbPosition .ov).map bottomUpPrediction := by
+    (OVOrder.verbPosition .ov).map linearClosenessPrediction ≠
+    (OVOrder.verbPosition .ov).map bottomUpPrediction := by
   decide
 
 -- ============================================================================

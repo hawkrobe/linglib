@@ -313,25 +313,10 @@ def negVerbal : Negation := { enclitic := "ta" }
 theorem neg_same_proclitic :
     negNonverbal.proclitic = negVerbal.proclitic := rfl
 
--- ============================================================================
--- § 12: Word Order — Lesson 9
--- ============================================================================
-
-/-- K'iche' basic word order for intransitive clauses with noun
-    subjects is Verb-Subject (VS).
-   , Lesson 9: "the preferred word order appears
-    to be: verb-subject." -/
-inductive BasicWordOrder where
-  | VS   -- Verb-Subject (intransitive)
-  | VOS  -- Verb-Object-Subject (transitive active)
-  | VS_passive  -- Verb-Subject (passive, with oblique agent)
-  deriving DecidableEq, Repr
-
-/-- Intransitive basic word order is verb-initial. -/
-def intransitiveOrder : BasicWordOrder := .VS
-
-/-- Transitive active basic word order is VOS. The object appears
-    between the verb and the subject. -/
-def transitiveOrder : BasicWordOrder := .VOS
+-- The substrate-typed word-order profile lives in
+-- `Fragments/Mayan/Kiche/WordOrder.lean`. The transitive vs intransitive
+-- vs passive distinction Mondloch draws (Lesson 9) is paper-specific
+-- apparatus and would belong in a `Phenomena/WordOrder/Studies/Mondloch2017.lean`
+-- if a study file were written; nothing currently consumes it.
 
 end Fragments.Mayan.Kiche

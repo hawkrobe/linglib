@@ -1,4 +1,3 @@
-import Linglib.Typology.WordOrder
 import Linglib.Phenomena.WordOrder.Studies.Gibson2025
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
@@ -32,7 +31,6 @@ Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, @cite{levshina-stoy
 
 namespace Phenomena.WordOrder.Gradience
 
-open Typology.WordOrder
 open Phenomena.WordOrder.Studies.Gibson2025
 -- ============================================================================
 -- §1: Gradient Measures on Existing CrossTab Data
@@ -72,11 +70,11 @@ theorem harmony_decreases_with_complexity :
     harmonicProportion1000 voSubordinator > harmonicProportion1000 voRelativeClause := by
   constructor <;> native_decide
 
-/-- Gradient and categorical measures agree: harmonicProportion1000 > 500 ↔ harmonicDominant.
+/-- Gradient and categorical measures agree: harmonicProportion1000 > 500 ↔ IsHarmonicDominant.
     The gradient measure refines, not contradicts, the binary one. -/
 theorem categorical_consistent_with_gradient :
-    allTables.all (λ t => (harmonicProportion1000 t > 500) == t.harmonicDominant) = true := by
-  native_decide
+    ∀ t ∈ allTables, (harmonicProportion1000 t > 500) ↔ t.IsHarmonicDominant := by
+  decide
 
 -- ============================================================================
 -- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
@@ -275,11 +273,10 @@ theorem so_proportion_is_continuous :
 
 -- Bridge 1: Gradient harmony ↔ categorical harmony (Typology.lean)
 
-/-- For all three WALS tables, harmonicProportion1000 > 500 → harmonicDominant = true. -/
+/-- For all three WALS tables, harmonicProportion1000 > 500 → IsHarmonicDominant. -/
 theorem gradient_implies_categorical :
-    allTables.all (λ t =>
-      if harmonicProportion1000 t > 500 then t.harmonicDominant else true) = true := by
-  native_decide
+    ∀ t ∈ allTables, harmonicProportion1000 t > 500 → t.IsHarmonicDominant := by
+  decide
 
 /-- The three tables have different harmonic proportions (943 vs 861 vs 822),
     showing harmony is a matter of degree, not a binary universal. -/
