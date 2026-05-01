@@ -4,6 +4,51 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.577 — Mathlib-quality re-audit on 0.230.574 substrate: SharingType→MDSharing collision fix + MWFParameter to Typology/Question.lean + Bool→Prop migration (UsesMD/MWFViolation/EllipsisRepairsMWF/AllowsMultipleSluicing) + PhaseEdge enum consolidation + FeaturePreorder.ofFeature realization + strictlyMoreEconomical_iff_lt bridge + DecidableEq derives
+
+Mathlib-reviewer agent re-audit on the substrate landed in 0.230.574 (Economy.lean + Multidominance.lean + MultipleWh.lean MWF additions). The agent surfaced 4 block-tier findings, 1 architectural finding, and 10 nice-to-haves — user said "All actionable" → land 4 blocks + arch + 4 nice-to-haves; defer 5 cosmetic items (B4/N1/N4/N7/N10).
+
+**Block (B1) — `SharingType` name collision fixed**: `Theories/Syntax/Minimalist/Multidominance.lean:60` defined `SharingType` with cases `bulk | nonBulk` (constituent sharing in MD); `Theories/Syntax/DependencyGrammar/Formal/CoordinationParallelism.lean:44` independently defines `SharingType` with cases `forward | backward | symmetric | none_` (extraction symmetry). Different empirical concepts, identical bare name in sibling files within `Theories/Syntax/`. Mathlib does not tolerate this. Renamed Multidominance's to `MDSharing` (per the audit recommendation); the DG-side `SharingType` keeps its name (older + less rename cascade). Consumer site at `CitkoGY:558,572` (`csStructure.sharing := some .bulk`, `cwhStructure.sharing := some .nonBulk`) — sum-type case names `.bulk`/`.nonBulk` unchanged so the `some .bulk` syntax still works.
+
+**Block (B3) — `MWFParameter` substrate moved to `Typology/Question.lean`**: per CLAUDE.md "Typology/ houses per-language typological substrate types Fragments import to type their lexical entries", the `MWFParameter` sum type + `EdgeAsterisk`/`MWFViolation`/`EllipsisRepairsMWF` projections + small theorems (`single_wh_no_violation`, `zero_wh_no_violation`, `mwf_language_no_violation`) belong in `Typology/Question.lean` (which already houses `WhMovementStrategy`, `QParticlePosition`, `PolarQuestionStrategy`, `QuestionProfile`). The substrate now lives under `Typology.Question` namespace; `Phenomena/Questions/MultipleWh.lean` keeps only the per-language data (`MWFLanguageDatum` struct + `bulgarian`/`german`/`greek` entries + per-language theorems) and imports `Linglib.Typology.Question` to consume the substrate. CitkoGY likewise imports both.
+
+**Block (B2) + N6 — Bool→Prop migration with `PhaseEdge` consolidation**: per memory `feedback_no_intrinsic_bool` ("mathlib API everywhere; cascading multi-file changes are in scope. Migrate non-mathlib `Bool` in *propositional* positions to `Prop` with `[DecidablePred]`"). All Bool predicates in the new substrate migrated to `Prop` with explicit `Decidable` instances:
+- `MWFParameter.allowsMWF : Bool` → `MWFParameter.AllowsMWF : Prop` + `Decidable` instance
+- `MWFParameter.vPEdgeAsterisk` and `cPEdgeAsterisk` (two parallel Bool defs) → consolidated `MWFParameter.EdgeAsterisk : MWFParameter → PhaseEdge → Nat → Prop` with new `inductive PhaseEdge | vP | CP` enum (per N6: single point of edit, exhaustivity, generalizes to other phase-edge phenomena)
+- `mwfViolation : Bool` → `MWFViolation : Prop`
+- `ellipsisRepairsMWF : Bool` → `EllipsisRepairsMWF : Prop` (vpEdgeDeleted parameter stays `Bool` for ergonomic call sites)
+- `MWFLanguageDatum.allowsMultipleSluicing : Bool` → `MWFLanguageDatum.AllowsMultipleSluicing : Prop`
+- `PFReducedCoordination.usesMD/usesEllipsis/usesBoth : Bool` → `UsesMD/UsesEllipsis/UsesBoth : Prop`
+- All `Decidable` instances explicit so consumer `decide`-checked theorems continue to work
+
+PascalCase naming follows mathlib convention for `Prop`-valued definitions (e.g. `IsHausdorff`, `IsCompact`). 17 consumer call sites in CitkoGY rewritten: `mwfViolation foo n = true` → `MWFViolation foo n`, `mwfViolation foo n = false` → `¬ MWFViolation foo n`, `cwhStructure.usesMD = true` → `cwhStructure.UsesMD`, `english_varietyA.allowsMultipleSluicing = false` → `¬ english_varietyA.AllowsMultipleSluicing`, etc. The `cwhStructure_csStructure_drift_sentry` theorem rewritten as a 7-conjunction of Props (was 7-conjunction of Bool equalities).
+
+**Architectural — `FeaturePreorder.ofFeature` realization**: pre-audit `Economy.lean` module docstring promised `DerivationCost` "instantiates the same Pareto-on-violations shape as `Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder`" but the file hand-rolled a `Preorder DerivationCost` and never built the `FeaturePreorder DerivationCost (Fin 4 → Nat)` that would make the connection load-bearing. Per the auditor: "exactly the half-finished implementation anti-pattern: a docstring gesture toward an architecture that the code does not actually enter." Realized:
+- New `def DerivationCost.profile (c : DerivationCost) : Fin 4 → Nat` with explicit case-analysis on `Fin 4` (lexicalItems / mergeOps / agreeOps / ellipsisOps)
+- New `def DerivationCost.featurePreorder : Core.Order.FeaturePreorder DerivationCost (Fin 4 → Nat) := Core.Order.FeaturePreorder.ofFeature profile (fun a a' => decidable_of_iff (∀ i, a.profile i ≤ a'.profile i) Iff.rfl)`
+- `instance : Preorder DerivationCost := featurePreorder.toPreorder` (replaces hand-rolled instance)
+- `coarsen_via_monotone` (`Core/Order/FeaturePreorder.lean`) now available for free on `DerivationCost`. Future "Minimalist economy implies qualitative coarsening of Pareto frontier" bridges to OT optimality (per `Pareto.lean` § "The gap" critique) get a typed entry point.
+
+The `Pi.preorder` `≤` doesn't have a direct auto-derivable `Decidable` instance for `Fin 4 → Nat`, so the explicit `decidable_of_iff (∀ i, ...)` wrapping is needed. The `Iff.rfl` works because `Pi.preorder.le` unfolds definitionally to the universal quantifier.
+
+**N3 — `strictlyMoreEconomical_iff_lt` bridge theorem stated**: pre-audit docstring at `Economy.lean:138` promised the connection but never proved it. Now stated and proved using mathlib's `lt_iff_le_not_ge` (the lemma was renamed from `lt_iff_le_not_le` in current mathlib — the `_le` form raises "Unknown identifier"). Proof: `rw [lt_iff_le_not_ge, ← atLeastAsEconomical_iff_le, ← atLeastAsEconomical_iff_le]; constructor; ...`. The forward direction unpacks the strict-disjunction; the backward direction uses `by_contra` + `push Not` + `omega`. (Note: `push_neg` is deprecated; use `push Not` per the build warning.)
+
+**N5 — Dropped `pronunciationEconomy_nil` and `pronunciationEconomy_cons`**: the auditor flagged both as unconsumed (only `pronunciationEconomy_violated_of_vacuous` is used in CitkoGY:537). Removed; future consumers can rederive trivially.
+
+**N9 — `DecidableEq` added to `MWFLanguageDatum`, `PFReducedCoordination`, `SharedNode`**: previously only `Repr`. The auditor's case for `DecidableEq` is "future drift sentries against renames". `SharedNode` includes `node : SyntacticObject` + `category : Option Cat` — both already have `DecidableEq` from upstream Basic.lean, so the derive succeeded.
+
+**Bridge theorem `atLeastAsEconomical_iff_le` upgraded** from `Iff.rfl` to a proper `refine`/`match` decomposition: with the new `FeaturePreorder` instance, `c1 ≤ c2 ↔ ∀ i : Fin 4, profile c1 i ≤ profile c2 i`. The 4-conjunction iff requires explicit `match i with | ⟨0, _⟩ => ... | ⟨1, _⟩ => ... | ⟨2, _⟩ => ... | ⟨3, _⟩ => ...` decomposition. No longer `Iff.rfl` but no consumer cared.
+
+**Out of scope** (audit nice-to-haves deferred per CLAUDE.md "don't add features beyond what the task requires"):
+
+- B4 (MWFLanguageDatum substrate-vs-data split): not needed once MWFParameter migrated to Typology — the datum is already pure phenomenon data carrying a substrate reference.
+- N1 (Multidominance.lean to Core/Syntax/): defensible at one consumer per the auditor; revisit when Bachrach-Katzir or Belk-Neeleman-Philip lands.
+- N4 (drop `atLeastAsEconomical_iff_le` Iff alias): kept as a documented bridge between the linguistic-named API and the Preorder algebra. With FeaturePreorder realization the iff is no longer `Iff.rfl` so it does have content.
+- N7 (`AllowsMWF` could be `p = .fronts`): cosmetic; the case-analysis def is clearer about the partition semantics.
+- N10 (`PFReductionMechanism` rename to `PFReduction`): cosmetic.
+
+**Build status**: all 6 directly-affected files build clean (Typology/Question.lean +103 LOC, Phenomena/Questions/MultipleWh.lean -107/+39 LOC, Theories/Syntax/Minimalist/Multidominance.lean ~unchanged net but Bool→Prop, Theories/Syntax/Minimalist/Economy.lean +30 net for FeaturePreorder, Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean ~12 line modifications for API renames). Pre-existing concurrent-session WIP from another author (Doyayo/Hemba/Pipil/Hungarian) untouched.
+
 ### 0.230.576 — Audit-driven Typology/WordOrder.lean refactor: noDominant/notInWALS split + IsConsistent substrate + 4 classification predicates + VerbPosition substrate + 17 Fragment drift sentinels + CrossTab demoted to Gibson2025
 
 Four-agent deep audit on a randomly-picked file (`Linglib/Typology/WordOrder.lean`, 151 LOC) — mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/typology — surfaced ~15 findings across critical / major / minor severities. The audit was prompted by user request "pick a random file" (selected via Python from .lean candidates). Followed up with a "what does the substrate need to do for its consumers? how would mathlib organize this?" thinking pass before executing.

@@ -19,6 +19,12 @@ WordOrder).
 - `QParticlePosition` (WALS Ch 92A)
 - `PolarQuestionStrategy` (WALS Ch 116A)
 - `QuestionProfile`: bundle struct over Chs 92A/93A/116A
+- `MWFParameter`: multiple-wh-fronting parameter (@cite{rudin-1988},
+  with @cite{citko-gracanin-yuksek-2025}'s tri-valued refinement
+  splitting non-MWF into vP-only vs both-edges asterisk languages)
+- `PhaseEdge`: which phase edge an asterisk lands on
+- `EdgeAsterisk`/`MWFViolation`/`EllipsisRepairsMWF`: Prop predicates
+  derived from `MWFParameter`
 
 ## Theory-laden caveats
 
@@ -212,4 +218,102 @@ def fromWALS116A : Datasets.WALS.F116A.PolarQuestionType →
   | .absenceOfDeclarativeMorphemes         => .absenceOfDeclarative
   | .interrogativeIntonationOnly           => .intonationOnly
   | .noInterrogativeDeclarativeDistinction => .noDistinction
+
+-- ============================================================================
+-- §3. Multiple Wh-Fronting parameter (@cite{rudin-1988}, refined by
+--      @cite{citko-gracanin-yuksek-2025} p. 19)
+-- ============================================================================
+
+/-- The MWF parameter as in @cite{rudin-1988} + @cite{citko-gracanin-yuksek-2025}.
+
+    The textbook contrast (@cite{rudin-1988}) is binary — MWF (Bulgarian,
+    Romanian) vs non-MWF (English, German, Greek). C&G-Y refine the
+    non-MWF case by where the PF asterisk for multiple wh-specifiers
+    lands: vP-only (sluicing repairs by deleting vP) vs both vP and CP
+    (sluicing leaves the CP-edge asterisk unrepaired). The tripartition
+    lets the multiple-sluicing asymmetry be **derived** from the
+    parameter rather than stipulated as an independent flag. -/
+inductive MWFParameter where
+  /-- Multiple wh-fronting language (Bulgarian, Romanian). No PF asterisk
+      at any edge. -/
+  | fronts
+  /-- Non-MWF with vP-only asterisk (German, Greek;
+      @cite{citko-gracanin-yuksek-2025} "English variety B"). Sluicing
+      (deleting the vP edge) repairs. -/
+  | nonFrontsVPOnly
+  /-- Non-MWF with asterisks at *both* vP and CP edges
+      (@cite{citko-gracanin-yuksek-2025} "English variety A"). Sluicing
+      cannot repair — the CP-edge asterisk survives ellipsis. -/
+  | nonFrontsBothEdges
+  deriving DecidableEq, Repr
+
+/-- Which phase edge is being checked for an MWF asterisk. -/
+inductive PhaseEdge where
+  | vP
+  | CP
+  deriving DecidableEq, Repr
+
+namespace MWFParameter
+
+/-- The language allows multiple wh-fronting in matrix questions. -/
+def AllowsMWF : MWFParameter → Prop
+  | .fronts => True
+  | .nonFrontsVPOnly | .nonFrontsBothEdges => False
+
+instance (p : MWFParameter) : Decidable (AllowsMWF p) := by
+  cases p <;> unfold AllowsMWF <;> infer_instance
+
+/-- The given phase edge incurs a PF asterisk under `n > 1`
+    wh-specifiers. Generalizes the per-edge `vPEdgeAsterisk` /
+    `cPEdgeAsterisk` distinction earlier revisions of this code carried
+    as separate definitions. -/
+def EdgeAsterisk : MWFParameter → PhaseEdge → Nat → Prop
+  | .fronts,             _,    _ => False
+  | .nonFrontsVPOnly,    .vP,  n => n > 1
+  | .nonFrontsVPOnly,    .CP,  _ => False
+  | .nonFrontsBothEdges, _,    n => n > 1
+
+instance (p : MWFParameter) (e : PhaseEdge) (n : Nat) :
+    Decidable (EdgeAsterisk p e n) := by
+  cases p <;> cases e <;> unfold EdgeAsterisk <;> infer_instance
+
+end MWFParameter
+
+/-- A multiple-wh-fronting violation: *some* phase edge incurs an
+    asterisk for `n` wh-specifiers. -/
+def MWFViolation (p : MWFParameter) (n : Nat) : Prop :=
+  p.EdgeAsterisk .vP n ∨ p.EdgeAsterisk .CP n
+
+instance (p : MWFParameter) (n : Nat) : Decidable (MWFViolation p n) := by
+  unfold MWFViolation; infer_instance
+
+/-- Ellipsis of the vP edge repairs an MWF violation iff doing so
+    eliminates every asterisk — i.e., there is no surviving CP-edge
+    asterisk. In `nonFrontsVPOnly` languages, deleting the vP edge
+    removes the only asterisk; in `nonFrontsBothEdges`, the CP-edge
+    asterisk survives. -/
+def EllipsisRepairsMWF (p : MWFParameter) (n : Nat) (vpEdgeDeleted : Bool) : Prop :=
+  ¬ MWFViolation p n ∨ (vpEdgeDeleted = true ∧ ¬ p.EdgeAsterisk .CP n)
+
+instance (p : MWFParameter) (n : Nat) (vpDel : Bool) :
+    Decidable (EllipsisRepairsMWF p n vpDel) := by
+  unfold EllipsisRepairsMWF; infer_instance
+
+/-- Single wh-specifier never triggers an MWF violation. -/
+theorem single_wh_no_violation (p : MWFParameter) :
+    ¬ MWFViolation p 1 := by
+  cases p <;> decide
+
+/-- Zero wh-specifiers never trigger an MWF violation. -/
+theorem zero_wh_no_violation (p : MWFParameter) :
+    ¬ MWFViolation p 0 := by
+  cases p <;> decide
+
+/-- MWF languages never have violations. -/
+theorem mwf_language_no_violation (p : MWFParameter)
+    (h : p.AllowsMWF) (n : Nat) : ¬ MWFViolation p n := by
+  cases p <;> simp_all [MWFParameter.AllowsMWF, MWFViolation,
+    MWFParameter.EdgeAsterisk]
+
+end Typology.Question
 

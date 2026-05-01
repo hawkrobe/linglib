@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Multidominance
 import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Questions.MultipleWh
+import Linglib.Typology.Question
 /-!
 # Economy in PF Reduction
 @cite{citko-gracanin-yuksek-2025}
@@ -42,15 +43,17 @@ multidominance as the PF reduction mechanism.
 
 ## Substrate engagement
 
-- MD primitives (`PFReductionMechanism`, `SharingType`, `SharedNode`,
+- MD primitives (`PFReductionMechanism`, `MDSharing`, `SharedNode`,
   `PFReducedCoordination`) are imported from
   `Theories/Syntax/Minimalist/Multidominance.lean` (anchored on Citko
   2014). They were briefly inlined here while the substrate file was
   absent; restored to substrate for cross-paper reuse.
-- MWF parameter and cross-linguistic data (Bulgarian, German, Greek) live
-  in `Phenomena/Questions/MultipleWh.lean`. The intra-English variety A/B
-  split — paper-specific to @cite{citko-gracanin-yuksek-2025} — stays
-  here.
+- MWF parameter substrate (`MWFParameter`, `PhaseEdge`, `EdgeAsterisk`,
+  `MWFViolation`, `EllipsisRepairsMWF`) lives in
+  `Typology/Question.lean`. Cross-linguistic data (Bulgarian, German,
+  Greek) lives in `Phenomena/Questions/MultipleWh.lean`. The
+  intra-English variety A/B split — paper-specific to
+  @cite{citko-gracanin-yuksek-2025} — stays here.
 - Pronunciation Economy is the **per-operation** primitive
   `pronunciationEconomy : List PFOperation → Prop` from
   `Theories/Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
@@ -77,6 +80,7 @@ namespace CitkoGracaninYuksek2025
 
 open Minimalist
 open Phenomena.Questions.MultipleWh
+open Typology.Question
 
 -- ============================================================================
 -- § 1: Construction Types and Empirical Data
@@ -305,10 +309,10 @@ this derivation: variety B is `.nonFrontsVPOnly`, variety A is
 def english : MWFParameter := .nonFrontsBothEdges
 
 /-- English bans multiple wh-specifiers at a phase edge. -/
-theorem english_bans_multiple_wh : mwfViolation english 2 = true := by decide
+theorem english_bans_multiple_wh : MWFViolation english 2 := by decide
 
 /-- A single wh-specifier is fine in English. -/
-theorem english_allows_single_wh : mwfViolation english 1 = false := by decide
+theorem english_allows_single_wh : ¬ MWFViolation english 1 := by decide
 
 /-- English variety A: non-MWF, bans multiple sluicing. The CP-edge
     asterisk survives ellipsis (vP-edge deletion is not enough). -/
@@ -329,11 +333,11 @@ def english_varietyB : MWFLanguageDatum :=
   , notes := "MWF asterisk only at vP edge; sluicing repairs by deleting vP" }
 
 /-- Variety A bans multiple sluicing, variety B allows it. **Derived** from
-    the parameter via `ellipsisRepairsMWF`, not stipulated as an
+    the parameter via `EllipsisRepairsMWF`, not stipulated as an
     independent Bool. -/
 theorem english_variety_split :
-    english_varietyA.allowsMultipleSluicing = false ∧
-    english_varietyB.allowsMultipleSluicing = true := by decide
+    ¬ english_varietyA.AllowsMultipleSluicing ∧
+    english_varietyB.AllowsMultipleSluicing := by decide
 
 -- ============================================================================
 -- § 3: Derivation Cost Functions
@@ -473,18 +477,18 @@ the offending vP edge), removing the asterisk before PF interprets it. -/
 /-- The bulk-sharing structure for CWHs crashes in English:
     2 wh-specifiers at vP edge in a non-MWF language. -/
 theorem cwh_bulk_crashes_in_english :
-    mwfViolation english 2 = true := by decide
+    MWFViolation english 2 := by decide
 
 /-- CWHs have no ellipsis to repair the MWF violation —
     the vP edge survives to PF, and the asterisk crashes. -/
 theorem cwh_no_ellipsis_repair :
-    ellipsisRepairsMWF english 2 (vpEdgeDeleted := false) = false := by decide
+    ¬ EllipsisRepairsMWF english 2 (vpEdgeDeleted := false) := by decide
 
 /-- In English variety B (vP-only asterisk), CSs survive the same MWF
     configuration because ellipsis deletes the vP edge. Variety A
     (both-edges asterisk) is **not** repairable — CP-edge survives. -/
 theorem cs_ellipsis_repairs_mwf_varietyB :
-    ellipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true) = true := by decide
+    EllipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true) := by decide
 
 -- ============================================================================
 -- § 6: Why CSs Cannot Have the CWH Structure (per-op Pronunciation Economy)
@@ -581,8 +585,8 @@ def csStructure : PFReducedCoordination where
     (`cwh_uses_md_only`, `cs_uses_both`, `cwh_shares_heads_cs_shares_constituent`,
     `cwh_shared_categories`, `cs_shared_categories`). -/
 theorem cwhStructure_csStructure_drift_sentry :
-    cwhStructure.usesMD = true ∧ cwhStructure.usesEllipsis = false ∧
-    csStructure.usesBoth = true ∧
+    cwhStructure.UsesMD ∧ ¬ cwhStructure.UsesEllipsis ∧
+    csStructure.UsesBoth ∧
     cwhStructure.sharedNodes.length = 2 ∧ csStructure.sharedNodes.length = 3 ∧
     cwhStructure.sharedNodes.all (·.category.isSome) = true ∧
     csStructure.sharedNodes.all (·.category.isSome) = true := by decide
@@ -626,9 +630,9 @@ theorem cwh_forced_to_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) 
     -- Bulk-sharing IS more economical...
     strictlyMoreEconomical (cwhBulkMDCost hm hl pm pl wm wl) (cwhNonBulkCost hm hl pm pl wm wl)
     -- ...but it crashes in English (MWF at vP)...
-    ∧ mwfViolation english 2 = true
+    ∧ MWFViolation english 2
     -- ...and CWHs can't repair the crash (no ellipsis).
-    ∧ ellipsisRepairsMWF english 2 (vpEdgeDeleted := false) = false :=
+    ∧ ¬ EllipsisRepairsMWF english 2 (vpEdgeDeleted := false) :=
   ⟨cwh_bulk_beats_nonbulk hm hl pm pl wm wl h, by decide, by decide⟩
 
 /-- End-to-end: CSs use bulk-sharing because it is most economical AND the
@@ -638,7 +642,7 @@ theorem cs_forced_to_bulk (sm sl nsm nsl : Nat) :
     -- Bulk-sharing beats double-ellipsis...
     strictlyMoreEconomical (csBulkCost sm sl nsm nsl) (csDoubleEllipsisCost sm sl nsm nsl)
     -- ...ellipsis repairs the MWF violation at vP (variety B / German / Greek)...
-    ∧ ellipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true) = true
+    ∧ EllipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true)
     -- ...and the two-E-feature CWH-style CS violates Pronunciation Economy.
     ∧ ¬ pronunciationEconomy cs_twoEFeature_deletions :=
   ⟨cs_bulk_beats_double_ellipsis sm sl nsm nsl, by decide,
