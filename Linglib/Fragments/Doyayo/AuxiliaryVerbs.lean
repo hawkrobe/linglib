@@ -4,42 +4,87 @@ import Linglib.Core.Morphology.MorphRule
 # Doyayo Auxiliary Verb Fragment
 @cite{anderson-2006}
 
-Doyayo (Adamawa, Niger-Congo; Cameroon) has auxiliary verb constructions
-with a **split** inflectional pattern: tense is marked on lexical verbs,
-while the auxiliary hosts subject marking, benefactive, and object
-arguments.
+Doyayo (Adamawa, Niger-Congo; Cameroon) appears in @cite{anderson-2006}
+under **two** distinct AVC patterns:
 
-Source: Wiering and Wiering 1994: 75, cited in @cite{anderson-2006}.
+- **Ch 3 (LEX-headed), ex. (15a-b), p. 121.** Auxiliary uninflected
+  (or marked only by tone for subject person); lexical verb carries
+  TAM and argument-structure morphology. Sources: Wiering and
+  Wiering 1994: 55, 77.
+- **Ch 5 (SPLIT/DOUBLED), ex. (128-129), pp. 222-223.** Subjects
+  doubly marked on AUX and LV; objects only on LV; the auxiliary
+  is a grammaticalized motion verb encoding TAM. Sources: Wiering
+  and Wiering 1994: 217, 221, 222.
+
+This Fragment exposes BOTH patterns; the `Phenomena/AuxiliaryVerbs/
+Studies/Anderson2006.lean` study file consumes them as two separate
+`AVCDatum`s.
+
+The earlier single-pattern entry (W&W 1994: 75 'they will be
+catching him for me' classified as `.split`) was removed in the
+2026-04-30 audit: Anderson never classifies Doyayo as plain split,
+and the cited W&W p. 75 example does not appear in any of Anderson's
+Doyayo passages (Anderson cites W&W pp. 55, 77, 217, 221, 222).
 -/
 
 namespace Fragments.Doyayo.AuxiliaryVerbs
 
 open Core.Morphology (InflDistribution MorphCategory)
 
-/-- Primary AVC example form.
-    *hi¹ gi²-s-i¹-mi²-ge-³ wàà⁵-ko⁵*
-    'they AUX-BEN-EP-1-3 catch-PROX'
-    'they will be catching him for me'
-    (Wiering and Wiering 1994: 75, cited in @cite{anderson-2006}). -/
-def form : String := "hi¹ gi²-s-i¹-mi²-ge-³ wàà⁵-ko⁵"
-
-def gloss : String :=
-  "they AUX-BEN-EP-1-3 catch-PROX 'they will be catching him for me'"
-
-/-- Secondary example: *mi³ gi²-s-i-g kaa¹-ko¹*
-    'I AUX-BEN-EP-3 weep-PRES' = 'I'm crying to him'
-    (Wiering and Wiering 1994: 75, cited in @cite{anderson-2006}). -/
-def secondaryForm : String := "mi³ gi²-s-i-g kaa¹-ko¹"
-
 def family : String := "Adamawa, Niger-Congo"
 def location : String := "Cameroon"
 
-/-- Split inflection distribution: AUX hosts subject/object agreement and
-    benefactive applicative; LV hosts tense.
-    (Subject and object cross-referencing are both `.agreement`;
-    benefactive is `.valence`.) -/
-def inflDistribution : InflDistribution :=
-  { onAux := [.agreement, .valence]
-  , onLex := [.tense] }
+/-! ## Lex-headed pattern (Anderson 2006, Ch 3 ex. 15a, p. 121) -/
+
+/-- Lex-headed AVC form (Anderson Ch 3 ex. 15a, p. 121).
+    *mi¹ (gi²) kpel¹-ko¹*
+    'I AUX pour-PROX'
+    'I'm going to pour'
+    (Wiering and Wiering 1994: 55, cited in @cite{anderson-2006}).
+    AUX `gi²` is parenthesized in Anderson's gloss — it is uninflected
+    (or only tone-marked for subject person); the LV `kpel¹-ko¹`
+    carries the proximate-future TAM marker. -/
+def lexHeadedForm : String := "mi¹ (gi²) kpel¹-ko¹"
+
+def lexHeadedGloss : String := "I AUX pour-PROX 'I'm going to pour'"
+
+/-- Lex-headed inflection: AUX uninflected, LV carries TAM. -/
+def lexHeadedDistribution : InflDistribution :=
+  { onAux := [], onLex := [.tense] }
+
+/-! ## Split/doubled pattern (Anderson 2006, Ch 5 ex. 128-129, pp. 222-223) -/
+
+/-- Split/doubled AVC form (Anderson Ch 5 ex. 129, p. 223).
+    *hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ*
+    '3PL-POT 3PL-come 3PL-bite-2'
+    'they might come bite you'
+    (Wiering and Wiering 1994: 221, cited in @cite{anderson-2006}).
+    Subject `hi¹` is doubly marked on AUX and LV (each prefixed with
+    `hi¹-`); object `-mɔ` (2nd person) appears only on the LV.
+    Anderson p. 223: "this pattern, consisting of an object found on
+    the lexical verb with doubled subject inflection, is common in
+    Doyayo." -/
+def splitDoubledForm : String := "hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ"
+
+def splitDoubledGloss : String :=
+  "3PL-POT 3PL-come 3PL-bite-2 'they might come bite you'"
+
+/-- Split/doubled inflection: subject agreement doubled on both
+    elements (subject category appears on AUX *and* LV); object
+    valence appears only on LV. The doubled subject is what makes
+    this split/doubled rather than plain split. -/
+def splitDoubledDistribution : InflDistribution :=
+  { onAux := [.agreement], onLex := [.agreement, .valence] }
+
+/-! ## Primary pattern alias
+
+The Ch 3 lex-headed pattern is the chronologically earlier, simpler
+construction; the split/doubled pattern derives diachronically from
+serialization (Anderson p. 222-223). For consumers needing a single
+`form`/`distribution` pair, the lex-headed entries are the default. -/
+
+def form : String := lexHeadedForm
+def gloss : String := lexHeadedGloss
+def inflDistribution : InflDistribution := lexHeadedDistribution
 
 end Fragments.Doyayo.AuxiliaryVerbs

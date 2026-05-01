@@ -12,13 +12,13 @@ varies across 5 macro-patterns.
 
 ## The Five Patterns
 
-| Pattern        | Infl Host  | Example Language               |
-|----------------|------------|--------------------------------|
-| Aux-headed     | AUX        | English *will go*              |
-| Lex-headed     | LEX        | Pipil *weli ni-nehnemi wehka*  |
-| Doubled        | AUX+LEX    | Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru* |
-| Split          | AUX or LEX | Doyayo, Jakaltek, Finnish      |
-| Split/doubled  | AUX+LEX    | Hemba (some doubled, some split) |
+| Pattern        | Infl Host  | Example Language                          |
+|----------------|------------|-------------------------------------------|
+| Aux-headed     | AUX        | English *have eaten*, *is eating*         |
+| Lex-headed     | LEX        | Pipil *weli ni-nehnemi*, Doyayo (Ch 3)    |
+| Doubled        | AUX+LEX    | Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru*           |
+| Split          | AUX or LEX | Jakaltek (abs/erg), Finnish (neg-aux *ei*) |
+| Split/doubled  | AUX+LEX    | Pipil *n-yu ni-mitsin-ilwitia*, Doyayo (Ch 5), Hemba |
 
 ## Schema
 
@@ -44,18 +44,24 @@ inductive InflPattern where
       E.g., English *will go*, French *va manger*. -/
   | auxHeaded
   /-- Inflection hosted on lexical verb; auxiliary is grammaticalized.
-      E.g., Pipil *weli ni-nehnemi wehka* (AUX uninflected, LV carries person). -/
+      E.g., Pipil *weli ni-nehnemi* (AUX uninflected, LV carries person);
+      Doyayo *mi¹ (gi²) kpel¹-ko¹* (Ch 3 ex 15a). -/
   | lexHeaded
   /-- Inflection appears on both auxiliary and lexical verb.
       E.g., Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru* (subject + TAM on both). -/
   | doubled
-  /-- Inflection split between AUX and LV (different features on each).
-      E.g., Jakaltek *šk-ach w-ila* (absolutive on AUX, ergative on LV). -/
+  /-- Inflection split between AUX and LV (different features on each
+      element, with no overlap). E.g., Jakaltek *šk-ach w-ila*
+      (absolutive on AUX, ergative on LV); Finnish neg-aux *ei*
+      (person/number on AUX, connegative + aspect on LV). -/
   | split
-  /-- Combination of split and doubled: different inflectional features
-      appear on both AUX and LV, but neither hosts the same set.
-      @cite{anderson-2006} discusses this as a logical possibility;
-      clear exemplars are rare. -/
+  /-- Some categories on both AUX and LV (doubled), others exclusive
+      to one element (split). @cite{anderson-2006} ch. 5 §5.2 dedicates
+      ~30 pages to this pattern with 30+ language exemplars across
+      §§5.2.1–5.2.3 (Limbu, Manam, Kuot, Doyayo, Mbay, Lamba, Pipil,
+      Persian, Swahili, Panyjima, Kemantney, Oshikwanyama, Shambala,
+      Vinmavis, Nambiquara, Baure, Luganda, Nasioi, Os, Xhosa, ...).
+      Common, not marginal. -/
   | splitDoubled
   deriving DecidableEq, Repr, Inhabited
 
