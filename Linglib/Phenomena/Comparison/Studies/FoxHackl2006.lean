@@ -1,6 +1,10 @@
+import Linglib.Phenomena.Comparison.Studies.Heim2001
+import Linglib.Theories.Semantics.Degree.Abstraction
+
 /-!
 # Fox & Hackl 2006: Degree Questions and Negative Islands
-@cite{fox-hackl-2006} @cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
+@cite{fox-hackl-2006} @cite{heim-2001} @cite{beck-rullmann-1999}
+@cite{fox-2007} @cite{rullmann-1995}
 
 Empirical data on degree questions ("how tall is Kim?"), including
 negative islands, modal obviation, and comparative subdeletion.
@@ -8,6 +12,14 @@ negative islands, modal obviation, and comparative subdeletion.
 @cite{fox-hackl-2006}'s Universal Density of Measurement predicts that
 degree questions fail under negation because the maximality presupposition
 of "how" is undefined over dense scales with downward-monotone predicates.
+
+## Bridge to @cite{heim-2001}
+
+The negative-island mechanism is the same as Heim's §2.1 high-DegP-over-
+negation argument: both invoke the failure of `IsGreatest (Ioi (μ a))` on
+an unbounded scale. We discharge the negative-island prediction by
+appeal to `Heim2001.negation_high_DegP_undefined` (chronological
+dependency: 2006 imports 2001).
 
 ## Key Empirical Patterns
 
@@ -21,6 +33,8 @@ of "how" is undefined over dense scales with downward-monotone predicates.
 -/
 
 namespace FoxHackl2006
+
+open Semantics.Degree.Abstraction (negatedDegreePredicate)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Degree Question Data
@@ -59,6 +73,18 @@ def negativeIslandExamples : List DegreeQuestionDatum :=
     , mechanism := "negative island"
     , note := "degree question + negation" }
   ]
+
+/-- **Bridge to @cite{heim-2001} §2.1**. The maximality-failure mechanism
+behind the negative-island data is the same as Heim's high-DegP-over-
+negation argument: on any `NoMaxOrder` scale, the negated degree
+predicate `{d | ¬ μ(a) ≥ d}` has no greatest element, so the
+maximality presupposition of `how` (which Fox & Hackl tie to Universal
+Density of Measurement) cannot be satisfied. Re-export of
+`Heim2001.negation_high_DegP_undefined`. -/
+theorem negativeIsland_via_no_max {Entity D : Type*} [LinearOrder D]
+    [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
+    ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m :=
+  Heim2001.negation_high_DegP_undefined μ a
 
 -- ════════════════════════════════════════════════════
 -- § 3. Modal Obviation

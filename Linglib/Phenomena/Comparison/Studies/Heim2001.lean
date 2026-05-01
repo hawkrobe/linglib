@@ -1,337 +1,317 @@
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
 import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Superlative
-import Linglib.Theories.Semantics.Degree.Differential
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
+import Mathlib.Order.Interval.Set.Disjoint
 
 /-!
 # Heim 2001: Degree Operators and Scope
-@cite{heim-2001} @cite{heim-1999} @cite{kennedy-1999}
+@cite{heim-2001} @cite{heim-1999} @cite{kennedy-1999} @cite{percus-2000}
+@cite{von-stechow-1984} @cite{fox-hackl-2006} @cite{schwarzschild-wilkinson-2002}
+@cite{beck-2001} @cite{kennedy-mcnally-2005} @cite{szabolcsi-1986}
 
 Irene Heim. Degree Operators and Scope. In C. Féry & W. Sternefeld (eds.),
 *Audiatur Vox Sapientiae*, Akademie Verlag, pp. 214–239.
 
-## Core Claim
+## Headline
 
-Degree phrases (DegPs) are **generalized quantifiers over degrees** that
-take scope by QR, analogous to DP quantifiers. The paper probes which
-scope configurations are empirically available.
+Heim's central §2.1 observation — that the high-DegP and low-DegP LFs for
+↑monotone operators are truth-conditionally equivalent — reduces to two
+lattice identities:
 
-## Key Results
+* `sSup (⋃ᵢ Iic (μ i)) = ⨆ᵢ μ i`   (mathlib's `sSup_iUnion_Iic`)
+* `sSup (⋂ᵢ Iic (μ i)) = ⨅ᵢ μ i`   (`sSup_iInter_Iic_eq_iInf` below)
 
-1. **Monotone collapse** (§2.1): with ↑monotone operators (∀, ∃,
-   required, allowed), low-DegP and high-DegP are truth-conditionally
-   equivalent — scope is undetectable for plain comparatives.
+Heim's max-set semantics for `-er` (paper exs. (5)–(6)) computes the high-DegP
+truth condition as `sSup (matrixSet) > threshold`. The lattice identities
+reduce this to the low-DegP threshold form (with an attainment caveat for
+the ∀ direction; see `heim_collapse_forall_low_to_high`, paper fn. 6).
 
-2. **Negation** (§2.1): high-DegP over negation yields presupposition
-   failure (max of {d: ¬tall(x,d)} is undefined on unbounded scales).
+For the negation case (paper exs. 17–19), `no_isGreatest_Ioi_of_noMaxOrder`
+shows the high-DegP LF is undefined: the negated degree set `Ioi (μ a)` has
+no greatest element on any `NoMaxOrder` scale. This is the same mechanism
+behind @cite{fox-hackl-2006} negative islands.
 
-3. **Kennedy's generalization** (§2.2): DegP cannot scope over a
-   quantificational DP whose scope contains the DegP's trace.
+Kennedy's generalization (paper ex. (27)) is formalized via the
+Heim-Kennedy Constraint substrate
+(`Theories/Interfaces/SyntaxSemantics/Minimalist/DegreeMovement.lean`),
+re-exported below.
 
-4. **Intensional verbs** (§2.3): DegP CAN scope over `require`, `allow`,
-   `need`, `be able`; but NOT over `might`, `should`, `supposed to`, `want`.
+## Section map
 
-5. **De re/de dicto ≠ DegP-scope** (§2.4): the Russell ambiguity
-   ("John thinks the yacht is longer than it is") is world-variable
-   binding in the than-clause, not DegP movement.
+| Paper                                | This file                                    |
+|--------------------------------------|----------------------------------------------|
+| §2.1 monotone collapse (8–16)        | `heim_collapse_exists`, `heim_collapse_forall_*` |
+| §2.1 negation (17–19)                | `no_isGreatest_Ioi_of_noMaxOrder`, `negation_high_DegP_undefined` |
+| §2.2 Kennedy's generalization (20–27) | `nonMonotone_blocked_by_HKC`                |
+| §2.3 intensional verbs (28–36)       | `intensionalVerbData` + `BhattPancheva2004` HKC bridge |
+| §2.4 Russell ambiguity (37–42)       | docstring only — see `VonStechow1984.lean`   |
+| §3.2 semantic ellipsis (58–64)       | reference to `Superlative.absoluteSuperlative` |
 
-6. **Semantic ellipsis** (§3.2): `-est` and `too` use their complement
-   twice — evidence for DegP movement independent of VP-ellipsis.
+## What this file does NOT formalize
+
+- **Heim's free-world-variable implementation of de re/de dicto**
+  (paper §2.4, ex. (40); Percus-style binding per @cite{percus-2000} and
+  Abusch 1994 — paper fn. 16). The substrate's
+  `Theories/Semantics/Degree/Intensional.lean` formalizes the alternative
+  ACTUALLY-operator implementation (von Stechow 1984), used in
+  `VonStechow1984.lean`. The two implementations agree on the diagnosis
+  (Russell ambiguity is de re/de dicto, not DegP-scope) but differ on the
+  LF mechanism.
+- **Typed ⟨dt,t⟩ DegP-as-generalized-quantifier denotations** over
+  arbitrary degree predicates. For monotone adjectives the max-set
+  computation reduces to a measure-function form already in the substrate
+  (`Abstraction.heimComparativeWithMeasure = Comparative.comparativeSem`,
+  proved by `Iff.rfl` at `Abstraction.heim_extensional_equivalence`).
+
+## Recent literature this file does not engage
+
+- @cite{schwarzschild-wilkinson-2002} interval semantics, which Heim's
+  own fn. 21 flags as work that may force her to revise basic assumptions
+- @cite{beck-2001} intervention effects, parallel to Kennedy's generalization
+- @cite{kennedy-mcnally-2005} closed-scale adjective behavior under negation
 
 -/
 
 namespace Heim2001
 
+open Set
 open Semantics.Degree.Abstraction
+  (lowDegP_forall lowDegP_exists highDegP_forall highDegP_exists
+   forall_more_high_to_low forall_more_low_to_high exists_more_scope_collapse
+   negatedDegreePredicate negatedDegreePredicate_eq)
 open Semantics.Degree.Comparative (comparativeSem)
+open Minimalist.Semantics.DegreeMovement
+  (IsHeimKennedy ScopeBinding not_isHeimKennedy_QP_above_bound_DegP)
 
 -- ════════════════════════════════════════════════════
--- § 1. Heim = Kennedy Extensionally
+-- § 1. Lattice substrate (the Galois identity)
 -- ════════════════════════════════════════════════════
 
-/-- For simple comparatives, Heim and Kennedy yield the same truth
-    conditions. The derivation differs (degree abstraction + max vs
-    direct measure comparison), but the result is identical. -/
-theorem heim_eq_kennedy_simple {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    heimComparativeWithMeasure μ a b ↔
-      comparativeSem μ a b .positive :=
-  Iff.rfl
+/-- The intersection of principal downsets is the principal downset of the
+infimum. Pure order-theoretic fact, dual to mathlib's `iUnion_Iic`. -/
+private theorem iInter_Iic_eq_Iic_iInf {α : Type*} [CompleteLattice α]
+    {ι : Type*} (f : ι → α) :
+    ⋂ i, Iic (f i) = Iic (⨅ i, f i) := by
+  ext x; simp [le_iInf_iff]
+
+/-- **`sSup ∘ ⋂ ∘ Iic = ⨅`** on a `CompleteLinearOrder`. The dual of
+mathlib's `sSup_iUnion_Iic`. Heim's high-DegP-over-∀ truth condition
+reduces to this two-step calculation (`⋂Iic = Iic ⨅`, then `csSup_Iic`). -/
+theorem sSup_iInter_Iic_eq_iInf {α : Type*} [CompleteLinearOrder α]
+    {ι : Type*} (f : ι → α) :
+    sSup (⋂ i, Iic (f i)) = ⨅ i, f i := by
+  rw [iInter_Iic_eq_Iic_iInf]; exact csSup_Iic
 
 -- ════════════════════════════════════════════════════
--- § 2. Scope Interaction Data
+-- § 2. Heim §2.1: monotone collapse (exs 8–16)
 -- ════════════════════════════════════════════════════
 
-/-- A scope interaction datum: does high-DegP yield a distinct,
-    available reading? -/
-structure ScopeInteractionDatum where
-  sentence : String
-  /-- The operator DegP interacts with -/
-  operator : String
-  /-- Are low-DegP and high-DegP truth-conditionally equivalent? -/
-  scopeCollapse : Bool
-  /-- Is the high-DegP reading empirically available? -/
-  highDegPAvailable : Bool
-  /-- Why (equivalence, presupposition failure, constraint) -/
-  explanation : String
-  deriving Repr
+/-- **Heim §2.1, ∃-side**: high-DegP and low-DegP collapse for existentially
+quantified subjects ("Some girl is taller than 4 feet"). Re-export of the
+substrate identity; the underlying lattice content is `sSup_iUnion_Iic`:
+`sSup (⋃ᵢ Iic (μ i)) > t ↔ ∃ i, μ i > t`. -/
+theorem heim_collapse_exists {α D : Type*} [LinearOrder D]
+    (R : α → Prop) (μ : α → D) (t : D) :
+    lowDegP_exists R μ t ↔ highDegP_exists R μ t :=
+  exists_more_scope_collapse R μ t
 
-/-- Heim §2.1: scope collapses with monotone increasing operators.
-    For plain comparatives (no `exactly`, no `less`), low-DegP ↔ high-DegP
-    with ∀, ∃, required, allowed. Scope is undetectable. -/
-def monotoneCollapseData : List ScopeInteractionDatum :=
-  [ { sentence := "Every girl is taller than 4 feet"
-    , operator := "∀ (every)"
-    , scopeCollapse := true
-    , highDegPAvailable := true
-    , explanation := "low: each girl > 4'; high: shortest girl > 4' — equivalent" }
-  , { sentence := "Some girl is taller than 4 feet"
-    , operator := "∃ (some)"
-    , scopeCollapse := true
-    , highDegPAvailable := true
-    , explanation := "low: some girl > 4'; high: tallest girl > 4' — equivalent" }
-  , { sentence := "Every girl is as tall as John"
-    , operator := "∀ (every)"
-    , scopeCollapse := true
-    , highDegPAvailable := true
-    , explanation := "generalizes from comparatives to equatives" }
-  , { sentence := "The paper is required to be longer than 10 pages"
-    , operator := "□ (required)"
-    , scopeCollapse := true
-    , highDegPAvailable := true
-    , explanation := "monotone collapse with necessity modal" }
-  , { sentence := "The paper is allowed to be longer than 10 pages"
-    , operator := "◇ (allowed)"
-    , scopeCollapse := true
-    , highDegPAvailable := true
-    , explanation := "monotone collapse with possibility modal" }
-  ]
+/-- **Heim §2.1, ∀-side, lattice form**: the high-DegP-over-∀ max-set
+`{d | ∀ i, d ≤ μ i}` has truth condition `(⨅ᵢ μ i) > t`. -/
+theorem highDegP_forall_lattice {α : Type*} [CompleteLinearOrder α]
+    {ι : Type*} (μ : ι → α) (t : α) :
+    sSup {d | ∀ i, d ≤ μ i} > t ↔ ⨅ i, μ i > t := by
+  have h : {d : α | ∀ i, d ≤ μ i} = ⋂ i, Iic (μ i) := by ext; simp
+  rw [h, sSup_iInter_Iic_eq_iInf]
 
-/-- All monotone collapse examples have scopeCollapse = true. -/
-theorem monotone_collapse_all_equivalent :
-    ∀ d ∈ monotoneCollapseData, d.scopeCollapse = true := by
-  intro d hd
-  simp [monotoneCollapseData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl <;> rfl
+/-- **Heim §2.1, ∀-side collapse, forward direction** (paper p. 218,
+discussion of ex. (10)): high-DegP entails low-DegP. Always holds.
+Substrate re-export. -/
+theorem heim_collapse_forall_high_to_low {α D : Type*} [LinearOrder D]
+    (R : α → Prop) (μ : α → D) (t : D) :
+    highDegP_forall R μ t → lowDegP_forall R μ t :=
+  forall_more_high_to_low R μ t
+
+/-- **Heim §2.1, ∀-side collapse, reverse direction** (paper fn. 6: holds
+"whenever these maxima are defined"): low-DegP entails high-DegP given an
+attaining witness — the "shortest girl" of Heim's prose. Substrate
+re-export. -/
+theorem heim_collapse_forall_low_to_high {α D : Type*} [LinearOrder D]
+    (R : α → Prop) (μ : α → D) (t : D) (w : α)
+    (hw : R w) (hmin : ∀ x, R x → μ x ≥ μ w) :
+    lowDegP_forall R μ t → highDegP_forall R μ t :=
+  forall_more_low_to_high R μ t w hw hmin
 
 -- ════════════════════════════════════════════════════
--- § 3. Negation and Downward Monotone Operators
+-- § 3. Heim §2.1: negation (exs 17–19)
 -- ════════════════════════════════════════════════════
 
-/-- Heim §2.1: high-DegP over negation → presupposition failure.
-    max{d: ¬tall(m,d)} = max{d: d > μ(m)} is undefined on unbounded
-    scales. The high-DegP LF is semantically deviant. -/
-def negationData : List ScopeInteractionDatum :=
-  [ { sentence := "Mary isn't taller than 4 feet"
-    , operator := "¬ (negation)"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "high-DegP: max{d: ¬tall(m,d)} undefined — presupposition failure" }
-  , { sentence := "At most two girls are taller than 5 feet"
-    , operator := "at most (↓monotone)"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "high-DegP: max{d: |{x: girl(x) ∧ tall(x,d)}| ≤ 2} > 5' — deviant" }
-  , { sentence := "She refuses to work harder than that"
-    , operator := "refuse (implicit negation)"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "refuse = neg-raising verb; high-DegP presupposes undefined max" }
-  ]
+/-- **The lattice fact behind Heim's negation argument**: on any
+`NoMaxOrder` linear order, the strict upper interval `Ioi a` has no
+greatest element. This is the same mechanism behind @cite{fox-hackl-2006}
+negative islands. -/
+theorem no_isGreatest_Ioi_of_noMaxOrder {α : Type*} [LinearOrder α]
+    [NoMaxOrder α] (a : α) :
+    ¬ ∃ m, IsGreatest (Ioi a) m := by
+  rintro ⟨m, hm, hub⟩
+  obtain ⟨n, hn⟩ := exists_gt m
+  exact absurd (hub (lt_trans hm hn)) (not_le.mpr hn)
 
-/-- The negated degree set {d : d > μ(a)} has no maximum, confirming
-    presupposition failure for high-DegP over negation. -/
-theorem negation_presupposition_failure {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a : Entity) (d : D) :
-    negatedDegreePredicate μ a d ↔ d > μ a :=
-  negatedDegreePredicate_eq μ a d
+/-- **Heim §2.1, ex. (17c)**: the high-DegP LF for "Mary isn't taller than
+4 feet" computes `max{d | ¬ tall(m,d)} > 4` = `max(Ioi (μ m)) > 4`, which
+is undefined on any `NoMaxOrder` scale. The high-DegP LF is therefore
+ruled out by presupposition failure.
 
--- ════════════════════════════════════════════════════
--- § 4. Non-Monotone Operators: Scope Matters
--- ════════════════════════════════════════════════════
-
-/-- Heim §2.1–2.2: with `exactly` and `less`, the two scope
-    configurations are truth-conditionally DISTINCT. This is where
-    Heim's approach makes testable predictions. -/
-def nonMonotoneData : List ScopeInteractionDatum :=
-  [ { sentence := "Exactly two girls are taller than 5 feet"
-    , operator := "exactly (non-monotone)"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "high-DegP blocked by Kennedy's generalization: DegP cannot scope over quantificational DP" }
-  , { sentence := "Every girl is exactly 1 inch taller than John"
-    , operator := "∀ + exactly (differential)"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "high: shortest girl is exactly 1\" taller — false reading unavailable" }
-  , { sentence := "Every girl is less tall than John"
-    , operator := "∀ + less"
-    , scopeCollapse := false
-    , highDegPAvailable := false
-    , explanation := "high: max{d: ∀x.tall(x,d)} < John — weaker, unavailable reading" }
-  ]
+Heim p. 220 generalizes this to `at most n` (ex. 18) and to implicitly
+negative verbs like `refuse` (ex. 19) — both classified as
+"implicitly negative or monotone decreasing operators", not as
+neg-raising verbs (which are §2.3, exs (34)–(36)). -/
+theorem negation_high_DegP_undefined {Entity D : Type*} [LinearOrder D]
+    [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
+    ¬ ∃ m, IsGreatest {d | negatedDegreePredicate μ a d} m := by
+  have h : {d | negatedDegreePredicate μ a d} = Ioi (μ a) := by
+    ext d
+    rw [mem_setOf_eq, negatedDegreePredicate_eq]
+    rfl
+  rw [h]; exact no_isGreatest_Ioi_of_noMaxOrder (μ a)
 
 -- ════════════════════════════════════════════════════
--- § 5. Kennedy's Generalization
+-- § 4. Heim §2.2: Kennedy's generalization (exs 20–27)
 -- ════════════════════════════════════════════════════
 
--- **Kennedy's generalization** (Heim (27)):
--- If the scope of a quantificational DP contains the trace of a DegP,
--- it also contains that DegP itself.
---
--- DegP cannot cross over a quantificational DP that c-commands its trace.
--- This is a *syntactic* constraint on DegP-movement, not a semantic
--- equivalence. It targets quantificational DPs specifically —
--- non-quantificational DPs (traces, names) CAN be crossed by DegP.
---
--- This explains why high-DegP readings are unavailable for `nonMonotoneData`
--- (e.g., "exactly two girls are taller than 5 feet" lacks the wide-scope
--- DegP reading). Not formalized as a predicate — requires syntactic
--- movement infrastructure (c-command, traces, QR) not yet in linglib.
+/-- **Kennedy's generalization** (paper ex. (27)): "If the scope of a
+quantificational DP contains the trace of a DegP, it also contains that
+DegP itself." Equivalently: a high-DegP LF in which the QP binds into
+the DegP's restrictor is illicit.
+
+Re-export of `not_isHeimKennedy_QP_above_bound_DegP` from the
+Minimalism–degree-semantics interface substrate. The exemplar binding
+`⟨degHeight := 0, qpHeight := 1, qpBindsDeg := true⟩` covers Heim's
+§2.2 examples uniformly: `exactly`-differentials (exs 20, 22),
+`less`-comparatives (24), and object-position quantifiers (25).
+@cite{bhatt-pancheva-2004} §4 is the dedicated formalization; see
+`BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
+theorem nonMonotone_blocked_by_HKC (degH qpH : Nat) (h : degH < qpH) :
+    ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
+  not_isHeimKennedy_QP_above_bound_DegP degH qpH h
+
+/-- The §2.2 examples instantiate `nonMonotone_blocked_by_HKC` at the
+exemplar binding `⟨0, 1, 1, true⟩` (high-DegP attempted; QP binds DegP). -/
+example : ¬ IsHeimKennedy ⟨0, 1, 1, true⟩ :=
+  nonMonotone_blocked_by_HKC 0 1 (by omega)
 
 -- ════════════════════════════════════════════════════
--- § 6. Intensional Verb Scope
+-- § 5. Heim §2.3: intensional verb data (exs 28–36)
 -- ════════════════════════════════════════════════════
 
-/-- Heim §2.3: with `exactly`-differentials and `less`, some intensional
-    verbs allow high-DegP (= DegP scopes over the modal), others don't.
+/-- Heim's classification of intensional verbs by whether they admit the
+high-DegP reading with `exactly`-differentials or `less`. Heim presents
+this 4-vs-4 split as descriptive, **not** explanatory: paper p. 226
+("I am unable to spell out any concrete explanations for the unambiguity
+of (33–36), and it is only a hope that it will follow without specific
+stipulations about DegP-movement").
 
-    This is NOT detectable with plain `more` comparatives — those
-    collapse due to monotonicity (§2.1). Only `exactly`/`less` break
-    the equivalence. -/
+@cite{bhatt-pancheva-2004} §5.2 derives the split from the Heim-Kennedy
+Constraint plus the assumption that intensional subjects bind into the
+degree predicate; see `BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
+inductive IntensionalVerbClass where
+  /-- Necessity / requirement modals. Heim §2.3 (28), (32b). -/
+  | deontic
+  /-- Possibility / ability modals. Heim §2.3 (29), (32a). -/
+  | possibility
+  /-- Epistemic modals: high-DegP unavailable. Heim §2.3 (33). -/
+  | epistemic
+  /-- Neg-raising verbs (`should`, `supposed-to`, `want`): high-DegP
+      unavailable. Heim §2.3 (34)–(36), citing von Fintel & Iatridou
+      2001 in fn. 14. (Note: `refuse` from Heim §2.1 ex. (19) is
+      *implicitly negative*, **not** neg-raising.) -/
+  | negRaising
+  deriving DecidableEq, Repr
+
+/-- Per `IntensionalVerbClass`, predict whether high-DegP is admitted. -/
+def IntensionalVerbClass.admitsHighDegP : IntensionalVerbClass → Bool
+  | .deontic | .possibility => true
+  | .epistemic | .negRaising => false
+
+/-- A row of Heim's §2.3 intensional-verb table. -/
 structure IntensionalVerbDatum where
   sentence : String
   verb : String
-  /-- Does DegP scope over this verb (with exactly/less)? -/
+  verbClass : IntensionalVerbClass
+  /-- Does the high-DegP reading exist for this verb (with `exactly` or
+      `less`)? Determined by `verbClass` (see `verbClass_predicts_highDegPAvailable`). -/
   highDegPAvailable : Bool
-  note : String := ""
   deriving Repr
 
+/-- Heim §2.3, exs. (28)–(36). The 4-vs-4 split is by `verbClass`;
+`deontic` and `possibility` admit high-DegP, `epistemic` and `negRaising`
+block it. -/
 def intensionalVerbData : List IntensionalVerbDatum :=
-  -- Verbs that ALLOW high-DegP
-  [ { sentence := "The paper is required to be exactly 5 pages longer than that"
-    , verb := "require"
-    , highDegPAvailable := true
-    , note := "low: required length = exactly 15pp; high: length in minimal-compliance worlds = 15pp" }
-  , { sentence := "The paper is allowed to be exactly 5 pages longer than that"
-    , verb := "allow"
-    , highDegPAvailable := true
-    , note := "both readings clearly distinct and available" }
-  , { sentence := "John is able to run less fast than that"
-    , verb := "be able"
-    , highDegPAvailable := true }
-  , { sentence := "The paper needs to be exactly 5 pp longer than that"
-    , verb := "need"
-    , highDegPAvailable := true }
-  -- Verbs that BLOCK high-DegP
-  , { sentence := "The paper might be less long than that"
-    , verb := "might"
-    , highDegPAvailable := false
-    , note := "epistemic modal resists DegP scoping over it" }
-  , { sentence := "The paper should be less long than that"
-    , verb := "should"
-    , highDegPAvailable := false
-    , note := "neg-raising: outer negation = inner negation" }
-  , { sentence := "The paper is supposed to be less long than that"
-    , verb := "supposed to"
-    , highDegPAvailable := false }
-  , { sentence := "I want the paper to be less long than that"
-    , verb := "want"
-    , highDegPAvailable := false
-    , note := "neg-raising verb" }
+  [ ⟨"The paper is required to be exactly 5 pages longer than that",
+     "require", .deontic, true⟩
+  , ⟨"The paper is allowed to be exactly 5 pages longer than that",
+     "allow", .possibility, true⟩
+  , ⟨"John is able to run less fast than that",
+     "be able", .possibility, true⟩
+  , ⟨"The paper needs to be exactly 5 pp longer than that",
+     "need", .deontic, true⟩
+  , ⟨"The paper might be less long than that",
+     "might", .epistemic, false⟩
+  , ⟨"The paper should be less long than that",
+     "should", .negRaising, false⟩
+  , ⟨"The paper is supposed to be less long than that",
+     "supposed to", .negRaising, false⟩
+  , ⟨"I want the paper to be less long than that",
+     "want", .negRaising, false⟩
   ]
 
-/-- The pattern: deontic/ability modals allow high-DegP,
-    epistemic/neg-raising verbs block it. -/
-theorem intensional_verb_pattern :
-    (intensionalVerbData.filter (·.highDegPAvailable)).length = 4 ∧
-    (intensionalVerbData.filter (! ·.highDegPAvailable)).length = 4 := by
-  simp [intensionalVerbData]
+/-- Per-row drift sentry: each datum's `highDegPAvailable` flag matches
+its `verbClass`. Adding/removing a row keeps the witness localized.
+Replaces the previous aggregate-count theorem (`length = 4 ∧ length = 4`),
+which would silently go stale on any data edit. -/
+theorem verbClass_predicts_highDegPAvailable :
+    ∀ d ∈ intensionalVerbData,
+      d.highDegPAvailable = d.verbClass.admitsHighDegP := by
+  intro d hd
+  simp only [intensionalVerbData, List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 7. De Re / De Dicto ≠ DegP-Scope
+-- § 6. Heim §2.4: Russell ambiguity ≠ DegP-scope (exs 37–42)
 -- ════════════════════════════════════════════════════
 
-/-- Heim §2.4: the Russell ambiguity is NOT evidence for DegP-scope.
-    "John thinks the yacht is longer than it is" has two readings from
-    world-variable binding in the than-clause (de re vs de dicto),
-    both compatible with narrow DegP-scope. -/
-structure RussellAmbiguityDatum where
-  sentence : String
-  readings : List String
-  isDegPScope : Bool
-  explanation : String
-  deriving Repr
-
-def russellAmbiguity : RussellAmbiguityDatum :=
-  { sentence := "John thinks the yacht is longer than it is"
-  , readings := ["de dicto (contradictory)", "de re (sensible)"]
-  , isDegPScope := false
-  , explanation := "Von Stechow (1984): both readings arise from presence/absence of ACTUALLY operator in the than-clause, not DegP movement" }
-
--- ════════════════════════════════════════════════════
--- § 8. Superlative Readings
--- ════════════════════════════════════════════════════
-
-/-- @cite{heim-1999} absolute vs relative superlative ambiguity.
-    Absolute = narrow-scope `-est`, relative = wide-scope `-est`.
-    Focus determines the comparison set for relative readings. -/
-structure SuperlativeJudgment where
-  sentence : String
-  readings : List String
-  focus : Option String := none
-  note : String := ""
-  deriving Repr
-
-def superlativeExamples : List SuperlativeJudgment :=
-  [ { sentence := "Kim climbed the highest mountain"
-    , readings := ["absolute", "relative"]
-    , note := "ambiguous between absolute and relative" }
-  , { sentence := "KIM climbed the highest mountain"
-    , readings := ["relative"]
-    , focus := some "Kim"
-    , note := "focus on subject forces relative reading" }
-  , { sentence := "Everest is the highest mountain"
-    , readings := ["absolute"]
-    , note := "predicative: only absolute reading" }
-  ]
+-- Heim follows von Stechow 1984's diagnosis: the Russell ambiguity in
+-- "John thinks the yacht is longer than it is" arises from de re vs de
+-- dicto interpretation of the than-clause, NOT from DegP-movement over
+-- `think`.
+--
+-- Heim's *implementation* of the de re / de dicto distinction (paper
+-- exs. (40a/b), p. 228) uses **free world-variables** on than-clause
+-- predicates (`long_w'` vs `long_w`), citing @cite{percus-2000} and
+-- Abusch 1994 (paper fn. 16). This is distinct from von Stechow 1984's
+-- own ACTUALLY-operator implementation, which the substrate
+-- (`Theories/Semantics/Degree/Intensional.lean`) formalizes — see
+-- `VonStechow1984.lean` for the substrate use.
+--
+-- The two implementations agree on the diagnosis but differ on the LF
+-- mechanism. Heim's free-world-variable implementation is not currently
+-- in the linglib substrate.
 
 -- ════════════════════════════════════════════════════
--- § 9. Bridges
+-- § 7. Heim §3.2: superlative semantic ellipsis (exs 58–64)
 -- ════════════════════════════════════════════════════
 
-/-- **Bridge to Superlative.lean**: Heim's `-est` denotation (59)
-    λR⟨d,et⟩.λx. max{d: R(x,d)} > max{d: ∃y ≠ x. R(y,d)}
-    matches `absoluteSuperlative` when `R` is a monotone adjective. -/
-theorem heim_est_matches_absolute {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (C : Set Entity) (x : Entity) :
-    Semantics.Degree.Superlative.absoluteSuperlative μ C x ↔
-      (x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ x > μ y) :=
-  Iff.rfl
-
-/-- **Bridge to Differential.lean**: Heim's exactly-differential (5b)
-    ⟦exactly 2" -er than 1'⟧ = λP. max(P) = 1' + 2"
-    corresponds to `differentialComparative` with `diff = 2`. -/
-theorem heim_exactly_matches_differential {Entity : Type*}
-    (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) :
-    Semantics.Degree.Differential.differentialComparative μ a b diff ↔
-      (μ a - μ b = diff) :=
-  Iff.rfl
-
--- **Bridge to FoxHackl2006**: Heim's presupposition failure for
--- high-DegP over negation (max of {d: ¬tall(m,d)} undefined) is
--- the same mechanism as Fox & Hackl's negative islands (max of
--- downward-monotone degree predicate undefined on dense scales).
--- See `negation_presupposition_failure` (§3) and the underlying
--- `negatedDegreePredicate_eq` from the theory layer.
-
-/-- **Bridge to scope theory**: the monotone collapse for ∃ is a
-    proper theorem (not Iff.rfl). -/
-theorem scope_collapse_exists {Entity D : Type*} [LinearOrder D]
-    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
-    lowDegP_exists restrictor μ threshold ↔
-    highDegP_exists restrictor μ threshold :=
-  exists_more_scope_collapse restrictor μ threshold
+-- Heim §3.2 argues that `-est` in "John screamed (the) loudest" uses its
+-- complement `R` twice in the semantic calculation (paper ex. (59)),
+-- giving evidence for DegP-movement independent of VP-ellipsis. The
+-- semantic decomposition `λR. λx. max{d : R(x,d)} > max{d : ∃y ≠ x. R(y,d)}`
+-- is formalized as `Theories.Semantics.Degree.Superlative.absoluteSuperlative`;
+-- consumers should reference the substrate definition directly.
+--
+-- The contrast "Kim climbed the highest mountain" / "KIM climbed the
+-- highest mountain" (focus-sensitive relative reading) is from
+-- @cite{szabolcsi-1986} / @cite{heim-1999} — *not* from Heim 2001 — and
+-- belongs in a future `Heim1999.lean` study file.
 
 end Heim2001

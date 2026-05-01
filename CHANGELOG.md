@@ -4,6 +4,36 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.585 — `Heim2001.lean` mathlib-quality overhaul + FoxHackl2006 bridge
+
+Ground-up rewrite of `Phenomena/Comparison/Studies/Heim2001.lean` (337→317 LOC; structural reduction is in dropped data structures and aggregate-count theorems, offset by added section docstrings and the new lattice/HKC theorems). Three factual errors in the prior file fixed against the paper PDF.
+
+**Headline**: `sSup_iInter_Iic_eq_iInf` (`CompleteLinearOrder` ⋂-side dual of mathlib's `sSup_iUnion_Iic`). Heim's §2.1 monotone-collapse observation reduces to this Galois identity in two lines (`⋂Iic = Iic ⨅`, then `csSup_Iic`). The high-DegP-over-∀ max-set computation `sSup {d | ∀ i, d ≤ μ i} > t` collapses to `(⨅ μ) > t`. Companion theorems wire the substrate's witness-form `forall_more_*` lemmas (paper fn. 6's "whenever these maxima are defined" qualification).
+
+**Negation companion**: `no_isGreatest_Ioi_of_noMaxOrder` — on any `NoMaxOrder` linear order, `Ioi a` has no greatest element. Linguistic corollary `negation_high_DegP_undefined` discharges Heim §2.1 ex. (17c) via the substrate's `negatedDegreePredicate`. Same mechanism as @cite{fox-hackl-2006} negative islands (now bridged).
+
+**FoxHackl2006 bridge** (`negativeIsland_via_no_max`): re-export of `Heim2001.negation_high_DegP_undefined`. Replaces a 6-line "Bridge to FoxHackl2006" comment in the previous Heim file that pointed at a target with zero theorems and zero substrate imports. Per chronological dependency (2006 imports 2001), the bridge lives on the FoxHackl side. FoxHackl2006 went from 0 imports of Degree substrate / 0 theorems → 1 import / 1 bridge theorem.
+
+**Anti-patterns dropped**:
+- `monotone_collapse_all_equivalent` — encoded conclusions as definitions (proved `scopeCollapse = true` after stipulating it as a struct field; "deeper principles" lemma `sSup_iInter_Iic_eq_iInf` is the substitute);
+- `intensional_verb_pattern` (`length = 4 ∧ length = 4` aggregate-count flagged in MEMORY) — replaced by per-row drift sentry `verbClass_predicts_highDegPAvailable`;
+- `heim_eq_kennedy_simple`, `heim_est_matches_absolute`, `heim_exactly_matches_differential` — tautological `Iff.rfl` over substrate definitions; equivalent theorems already in `Abstraction.heim_extensional_equivalence`;
+- String-fielded `monotoneCollapseData`/`negationData`/`nonMonotoneData` (5+3+3 rows of stipulated Bool flags) — covered structurally now;
+- `RussellAmbiguityDatum` (struct for one value), `superlativeExamples` (Heim 1999 data, wrong attribution).
+
+**§5 Kennedy's generalization formalized**: `nonMonotone_blocked_by_HKC` re-exports `Minimalist.Semantics.DegreeMovement.not_isHeimKennedy_QP_above_bound_DegP`. Replaces 13 lines of "not yet in linglib" prose; the substrate has been there since BhattPancheva2004 went in.
+
+**Drift-sentry encoding for §2.3**: `IntensionalVerbDatum` keeps `highDegPAvailable` (BhattPancheva consumer surface preserved) but adds typed `verbClass : IntensionalVerbClass` (`deontic | possibility | epistemic | negRaising`). Heim's 4-vs-4 split is now derivable from `verbClass`, with the explanation Heim explicitly disclaimed (paper p. 226: "I am unable to spell out any concrete explanations") flagged in the docstring rather than asserted as a clean generalization.
+
+**Three factual errors fixed against the paper PDF (pp. 214–239)**:
+- §2.4: docstring previously attributed Heim's Russell-ambiguity analysis to "ACTUALLY operator". Heim's actual implementation in (40a/b) p. 228 uses **free world-variables** (`long_w'` vs `long_w`), citing @cite{percus-2000} and Abusch 1994 (paper fn. 16). The ACTUALLY operator is von Stechow 1984's mechanism (which the substrate's `Theories/Semantics/Degree/Intensional.lean` does formalize, used in `VonStechow1984.lean`). The two implementations agree on the diagnosis but differ on the LF mechanism.
+- §2.1: docstring previously called `refuse` a "neg-raising verb". Heim p. 220 explicitly groups `refuse` under "implicitly negative or monotone decreasing operators" — parallel to `at most two`, NOT to `want/should/supposed-to` (which are §2.3 + footnote-14 neg-raising).
+- §3.2: "Kim/KIM climbed the highest mountain" was attributed to Heim 2001 but is @cite{szabolcsi-1986} / @cite{heim-1999}. `superlativeExamples` removed; deferred to a future `Heim1999.lean` study.
+
+**Out of scope** (per CLAUDE.md don't-add-features-beyond-task): Heim's free-world-variable de re/de dicto in the substrate (would need a new file alongside `Intensional.lean`); Schwarzschild & Wilkinson 2002 interval-semantics study file (Heim's own fn. 21 calls it work that may force her to revise — separate study); Beck 2001 intervention bridge; promoting the lattice headline to `Theories/Semantics/Degree/Abstraction.lean` (only one consumer so far; promote when n=2). Domain-expert audit also flagged Bumford 2017 / Krasikova / Heim 2006 as unengaged literature — not addressed.
+
+**Build**: 5677/5677 jobs green.
+
 ### 0.230.584 — `Core/Agreement/Controller.lean` (Corbett 2006 §6.6) + parameterize `MorphCategory.agreement`
 
 The substrate gap identified at 0.230.578 (subj/obj agreement collapse blocking Anderson Ch 5 §5.2 typology) is now closed.
