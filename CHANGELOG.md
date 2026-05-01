@@ -4,6 +4,16 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.588 — `scripts/changelog_add.py` for race-safe CHANGELOG appends
+
+Three sessions (0.230.575, 0.230.578, 0.230.586) lost CHANGELOG entries to concurrent-edit races. CHANGELOG.md is ~34k lines, so direct `Edit` calls hold a multi-second window between read and write — long enough for another session to land its own edit and invalidate the read.
+
+- `scripts/changelog_add.py` — reads entry from stdin, validates `### ` H3 prefix, locates the Unreleased marker, inserts after it via tmpfile + atomic rename. `flock` guard for cooperative sessions.
+- CLAUDE.md "Git Conventions" updated to require the script for all CHANGELOG modifications.
+- Memory entry `feedback_changelog_via_script.md` added so future sessions inherit the convention even though CLAUDE.md is gitignored.
+
+Usage: `cat entry.md | python3 scripts/changelog_add.py`. The entry must start with `### 0.230.X — title`. The script narrows the race window from ~minutes to ~milliseconds.
+
 ### 0.230.587 — CHANGELOG entry for 0.230.586 (lost in concurrent-edit race)
 
 `053136aa` (0.230.586) landed the 4-file Hungarian-case substrate cleanup but the CHANGELOG entry was lost to a concurrent-session edit collision (third occurrence of this race; see also 0.230.575, 0.230.578).
