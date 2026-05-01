@@ -101,8 +101,6 @@ namespace Anderson2006
 open Typology.AuxiliaryVerbs
 open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
 open Phenomena.AuxiliaryVerbs.Selection
-open Core.Morphology (InflDistribution MorphCategory)
-open Diachronic.Grammaticalization (GramStage)
 
 /-! ## Per-language AVC data
 
@@ -114,8 +112,9 @@ theorem). -/
 
 /-- English *have eaten* — aux-headed (AUX *have* carries tense and
     agreement, LV *eaten* is a past participle). Anderson ch. 2
-    (p. 40) treats English progressives (*is V-ing*) and perfects
-    (*have V-ed*) as the canonical AUX-headed exemplars. -/
+    (p. 40) describes English perfects schematically as *have V-ed*;
+    the specific *have eaten* form is this file's instantiation of
+    that pattern, not a verbatim Anderson example. -/
 def english : AVCDatum :=
   { language := "English"
   , form := "have eaten"
@@ -189,14 +188,20 @@ def pipilLexHeaded : AVCDatum :=
   , gloss := Fragments.Pipil.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Finnish negative auxiliary *ei* (split): person/number on aux,
-    TAM on lexical verb (connegative form). Anderson §1.7.2 (p. 33)
-    treats Uralic negative auxiliaries as aux-headed AVCs. The split
-    nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
-    the negative auxiliary hosts negation, tense, and agreement,
-    while the lexical verb retains stem and aspect. @cite{karlsson-2017}.
-    The 1sg neg-aux form derives from `negParadigm`; see
-    `finnish_1sg_in_paradigm` below for the lookup-witness theorem
-    that grounds the form-construction in the actual paradigm. -/
+    TAM on lexical verb (connegative form). Anderson §1.7.2 (p. 33-34)
+    treats Uralic negative auxiliaries as a class spanning multiple
+    AVC patterns — Udihe and Neyo as aux-headed, Kokota as split,
+    Kwerba as lex-headed, 'Iipay as doubled. Finnish *ei* itself is
+    not classified by Anderson in §1.7.2 with a specific pattern label;
+    the split classification here follows @cite{karlsson-2017} §19.5
+    where the connegative suffix on the LV is the load-bearing diagnostic.
+    The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
+    the negative auxiliary hosts negation, tense, and agreement, while
+    the lexical verb retains stem and aspect.
+    The 1sg neg-aux form derives from `negParadigm`; see the
+    `finnish_1sg_form_eq` witness lemma for the strong pinning of
+    the form-construction. Gloss style follows Anderson's Uralic
+    convention (`Neg-1 read-conneg`). -/
 def finnish : AVCDatum :=
   { language := "Finnish"
   , form := match Fragments.Finnish.Negation.negParadigm.find?
@@ -205,7 +210,7 @@ def finnish : AVCDatum :=
     | none => "en lue"
   , inflPattern := .split
   , distribution := some Fragments.Finnish.Negation.finnishNegDistribution
-  , gloss := "NEG-1SG read.CONNEG" }
+  , gloss := "Neg-1 read-conneg" }
 
 /-- Hemba split/doubled: subject doubled on both AUX and LV; tense
     on AUX only; mood on LV only. Form derived from
@@ -285,28 +290,27 @@ chosen to coincide with the success-branch result, making
 *would* return `none`. The witness theorem below grounds the
 construction in the actual paradigm content. -/
 
-/-- The Finnish 1sg negative-auxiliary entry exists in `negParadigm`.
-    Together with `finnish_form_from_paradigm`, this pins
-    `finnish.form` to the Fragment's actual paradigm content
-    rather than the dead-branch fallback. -/
+/-- The Finnish 1sg negative-auxiliary entry exists in `negParadigm`. -/
 theorem finnish_1sg_in_paradigm :
     (Fragments.Finnish.Negation.negParadigm.find?
       (fun f => f.person == 1 && f.number == "sg")).isSome = true := by
   decide
 
+/-- Strong pinning: the 1sg paradigm entry's form is exactly `"en"`.
+    Together with `finnish_1sg_in_paradigm`, this pins `finnish.form`
+    to the Fragment's actual paradigm content. A future change to
+    `negParadigm` that altered the 1sg form (or removed the entry
+    entirely) would break this theorem; the dead-branch `| none =>
+    "en lue"` fallback in `finnish.form` cannot mask the change. -/
+theorem finnish_1sg_form_eq :
+    (Fragments.Finnish.Negation.negParadigm.find?
+      (fun f => f.person == 1 && f.number == "sg")).map (·.form)
+      = some "en" := by
+  decide
+
 /-- The Finnish form is the 1sg `negParadigm` entry's form
     concatenated with `" lue"`. -/
 theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
-
-/-! ## Connection to FunctionWords (English modals)
-
-Anderson's framework subsumes English modals as aux-headed AVCs:
-*can* (and *will*, *may*, etc.) take `AuxType.modal` and the
-lexical verb appears bare. -/
-
-theorem english_modals_are_aux_type :
-    Fragments.English.Auxiliaries.can.auxType =
-      Fragments.English.Auxiliaries.AuxType.modal := rfl
 
 /-! ## Connection to Finnish Fragment -/
 
@@ -341,30 +345,40 @@ theorem gorum_doubled_same_categories :
     let dist := Fragments.Gorum.AuxiliaryVerbs.inflDistribution
     dist.onAux == dist.onLex = true := by decide
 
-/-- In Doyayo's lex-headed AVC, the auxiliary hosts no inflection. -/
-theorem doyayo_lexHeaded_aux_empty :
-    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [] := rfl
+/-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
+    agreement (per Anderson p. 120), and the LV carries TAM. -/
+theorem doyayo_lexHeaded_aux_agreement_only :
+    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement] ∧
+    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onLex = [.tense] := by
+  exact ⟨rfl, rfl⟩
 
-/-- In Doyayo's split/doubled AVC, subject agreement is shared
-    (doubled on both elements); object valence appears only on LV. -/
+/-- In Doyayo's split/doubled AVC, agreement appears on both AUX
+    and LV (subject doubled), and the LV's agreement list has length
+    2 (subject + object), while AUX's has length 1 (subject only).
+    The list-length asymmetry is the only way to encode "object on
+    LV only" in the current substrate, since `MorphCategory.agreement`
+    doesn't distinguish subject vs object. -/
 theorem doyayo_splitDoubled_agreement_doubled :
     let dist := Fragments.Doyayo.AuxiliaryVerbs.splitDoubledDistribution
     dist.onAux.contains .agreement = true ∧
     dist.onLex.contains .agreement = true ∧
-    dist.onLex.contains .valence = true ∧
-    dist.onAux.contains .valence = false := by
+    dist.onAux.length = 1 ∧
+    dist.onLex.length = 2 := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
-/-- In Pipil's split/doubled AVC, subject agreement is doubled
-    (on both AUX and LV); object valence appears only on LV.
-    The AUX itself encodes TAM lexically (no separate `.tense`
-    morpheme on AUX). -/
+/-- In Pipil's split/doubled AVC, agreement appears on both AUX and
+    LV (subject doubled), and the LV's agreement list has length 2
+    (subject + object), while AUX's has length 1 (subject only).
+    The AUX root *yu* itself encodes TAM lexically (no separate
+    `.tense` morpheme on AUX). Same substrate-gap caveat as Doyayo:
+    object-on-LV-only is encoded via list length, not via a
+    role-typed agreement constructor. -/
 theorem pipil_splitDoubled_agreement_doubled :
     let dist := Fragments.Pipil.AuxiliaryVerbs.splitDoubledDistribution
     dist.onAux.contains .agreement = true ∧
     dist.onLex.contains .agreement = true ∧
-    dist.onLex.contains .valence = true ∧
-    dist.onAux.contains .valence = false := by
+    dist.onAux.length = 1 ∧
+    dist.onLex.length = 2 := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
@@ -420,16 +434,15 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
 
 /-! ## Negative auxiliaries as AVCs
 
-@cite{anderson-2006} §1.7.2 (p. 33) treats negative auxiliaries
-(Finnish *ei*, Komi *oz*, Mari, Veps) as a special case of
-aux-headed AVCs: the negative element IS the auxiliary, hosting
-inflection that the lexical verb would otherwise carry. The
-substantive theorems about NegStrategy live in
-`Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean`; this section
-re-exports the connection visible from Anderson's framing. -/
-
-theorem negVerb_creates_auxHeaded :
-    NegStrategy.negVerb.expectedInflPattern = some InflPattern.auxHeaded := rfl
+@cite{anderson-2006} §1.7.2 (p. 33-34) treats negative auxiliaries
+across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
+Kokota; lex-headed in Kwerba; doubled in 'Iipay. The substantive
+theorems about NegStrategy → InflPattern live in
+`Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean` (`negVerb_implies_auxHeaded`
+encodes the most common verbal-negator → aux-headed mapping; the
+other patterns Anderson documents are not yet a Lean-checkable
+`NegStrategy → InflPattern` typology because they require finer
+sub-typing of `NegStrategy.negVerb`). This file does not re-export. -/
 
 /-! ## LV form predictions across patterns
 
@@ -464,10 +477,8 @@ Be/have auxiliary selection (`Selection.lean`) operates within
 aux-headed AVCs: the question of *which* auxiliary appears
 presupposes the auxiliary hosts inflection. @cite{sorace-2000}'s
 sister study `Studies/Sorace2000.lean` provides
-`vendlerClassToTypicalTransitivity`; chaining through it gives
-a Vendler→TransitivityClass→PerfectAux derivation that Anderson's
-framework presupposes (the *which-aux* question is well-posed
-only inside aux-headed AVCs).
+`vendlerClassToTypicalTransitivity`; the quantified composition
+with `canonicalSelection` is given below.
 
 Sorace's **gradient** Auxiliary Selection Hierarchy is not yet
 formalized in linglib (per `Sorace2000.lean` docstring); the
@@ -481,54 +492,68 @@ are added. -/
 theorem selection_presupposes_auxHeaded :
     InflPattern.auxHeaded.inflHost = .aux := rfl
 
-/-- Two-step Vendler → TransitivityClass → PerfectAux derivation
-    via Sorace's mapping: an achievement-class verb projects onto
-    `.unaccusative`, which canonical (Romance) selection maps to
-    `.be`. Italian *arrivare* (Selection datum) is independently
-    classified as unaccusative; the chain agrees. -/
-theorem italian_arrivare_chain :
+/-- Quantified Sorace bridge: composing `vendlerClassToTypicalTransitivity`
+    with `canonicalSelection` yields `.be` exactly for achievements,
+    `.have` elsewhere. This generalizes the per-datum Italian
+    *arrivare* claim to all Vendler classes, exposing the
+    composition `canonicalSelection ∘ vendlerClassToTypicalTransitivity`
+    as a single theorem rather than a hand-picked tuple. Falsifiable
+    by changing either lookup. -/
+theorem sorace_canonical_chain (v : Features.VendlerClass) :
     canonicalSelection
-      (Phenomena.AuxiliaryVerbs.Studies.Sorace2000.vendlerClassToTypicalTransitivity
-        Features.VendlerClass.achievement) = .be ∧
+      (Phenomena.AuxiliaryVerbs.Studies.Sorace2000.vendlerClassToTypicalTransitivity v) =
+        match v with
+        | .achievement => .be
+        | _ => .have := by
+  cases v <;> rfl
+
+/-- Italian *arrivare* grounds the achievement → unaccusative → BE
+    chain: the Selection datum independently classifies *arrivare*
+    as unaccusative, and `canonicalSelection .unaccusative = .be`.
+    Composes with `sorace_canonical_chain .achievement`. -/
+theorem italian_arrivare_grounds_chain :
     italianArrivare.transitivityClass = .unaccusative ∧
-    canonicalSelection italianArrivare.transitivityClass = .be := by
-  exact ⟨rfl, rfl, rfl⟩
+    italianArrivare.selectedAux = .be := ⟨rfl, rfl⟩
 
-/-- In aux-headed AVCs (where be/have selection is well-posed),
-    the LV is nonfinite — past participle in Romance compound
-    perfects: *è arrivato*, *a mangé*, *ist angekommen*. -/
-theorem selection_lv_is_nonfinite_in_auxHeaded :
-    InflPattern.auxHeaded.lvVerbForm = UD.VerbForm.Inf := rfl
+/-! ## Cross-framework: Miestamo 2005 (negation morpheme classification)
 
-/-! ## Cross-framework: Miestamo 2005 (negation symmetry)
+@cite{miestamo-2005} classifies negation strategies by morpheme
+type (`NegMorphemeType`: `.auxVerb`, `.affix`, `.particle`, ...);
+@cite{anderson-2006} via @cite{heine-1993}'s grammaticalization
+framework places verbal negators on the cline at `.auxiliary` and
+non-verbal negators off the cline (Anderson §1.7.2 covers only
+verbal negators). The two frameworks classify by independently-
+motivated criteria but, for the strategies linglib's
+`NegStrategy` enum exposes, AGREE on which strategies are
+"verbal": Anderson's `.toGramStage = some .auxiliary` is exactly
+Miestamo's `.toNegMorphemeType = .auxVerb`.
 
-@cite{miestamo-2005} draws a sharp morphological distinction
-between negative *verbs* (Finnish *ei*, an inflecting verb) and
-negative *particles* (German *nicht*, English *not*) — verbs
-typically create constructional asymmetry, particles typically
-don't. Anderson's grammaticalization-cline framework, via the
-`NegStrategy.toGramStage` projection now in `NegativeAuxiliaries.lean`,
-keeps this distinction visible at the cline level: verbs map to
-`.auxiliary`, particles map to `none` (not on the verbal cline).
+Composition with @cite{miestamo-2005}'s
+`verbal_constructional_always_derived` (in
+`Linglib/Phenomena/Negation/Studies/Miestamo2005.lean`) then
+yields: any `NegStrategy` Anderson places at the auxiliary cline
+stage, in any Miestamo datum showing constructional asymmetry,
+has its asymmetry classified as `.derived` rather than
+`.independent` — a falsifiable empirical prediction whose chain
+runs Anderson's cline → Miestamo's morpheme type → Miestamo's
+asymmetry source.
 
-The 2026-04-30 audit removed an earlier formaliser-introduced
-synthesis `negStrategyStage : NegStrategy → GramStage` (then in
-this file) that mapped both `.negVerb` and `.negParticle` onto
-`.auxiliary` — collapsing the Miestamo distinction. The theorem
-below documents the cross-framework agreement that the corrected
-`toGramStage` mapping makes Lean-checkable. -/
+The earlier `anderson_miestamo_agree_on_neg_morphology` theorem
+in this slot (0.230.573) was a stapled conjunction of three
+independent facts; the meta-audit at 0.230.576 replaced it with
+the quantified-equivalence shape below. -/
 
-/-- Anderson's grammaticalization framework (via `toGramStage`)
-    distinguishes negative verbs from negative particles by
-    placement on the cline; @cite{miestamo-2005} distinguishes
-    them by clause-structure asymmetry. The two frameworks
-    agree: Finnish *ei* and German *nicht* are different
-    morphological categories with different structural
-    consequences (asymmetric vs symmetric negation). -/
-theorem anderson_miestamo_agree_on_neg_morphology :
-    NegStrategy.negVerb.toGramStage = some .auxiliary ∧
-    NegStrategy.negParticle.toGramStage = none ∧
-    Miestamo2005.finnish.symmetry ≠ Miestamo2005.german.symmetry := by
-  exact ⟨rfl, rfl, by decide⟩
+/-- Cross-framework equivalence: Anderson's grammaticalization-cline
+    placement at `.auxiliary` and Miestamo's morpheme-type
+    classification as `.auxVerb` partition the `NegStrategy` enum
+    *identically*. Both frameworks classify exactly `.negVerb`
+    (Finnish *ei*-style inflecting negators) as the verbal subtype.
+    Falsifiable by changing either projection: a future split of
+    `NegStrategy.negVerb` into Miestamo-style auxVerb-vs-doubleNeg
+    subtypes would break this without breaking either projection
+    individually. -/
+theorem auxiliary_stage_iff_aux_verb_morpheme (s : NegStrategy) :
+    s.toGramStage = some .auxiliary ↔ s.toNegMorphemeType = .auxVerb := by
+  cases s <;> decide
 
 end Anderson2006

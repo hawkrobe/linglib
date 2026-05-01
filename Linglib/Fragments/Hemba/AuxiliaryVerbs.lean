@@ -51,18 +51,18 @@ theorem form_nonempty : form ≠ "" := by decide
 theorem agreement_doubled :
     inflDistribution.onAux.contains .agreement = true ∧
     inflDistribution.onLex.contains .agreement = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Tense is split to AUX only. -/
 theorem tense_on_aux_only :
     inflDistribution.onAux.contains .tense = true ∧
     inflDistribution.onLex.contains .tense = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Mood is split to LV only. -/
 theorem mood_on_lex_only :
     inflDistribution.onAux.contains .mood = false ∧
     inflDistribution.onLex.contains .mood = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end Fragments.Hemba.AuxiliaryVerbs

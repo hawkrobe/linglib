@@ -41,21 +41,24 @@ def location : String := "Cameroon"
     'I AUX pour-PROX'
     'I'm going to pour'
     (Wiering and Wiering 1994: 55, cited in @cite{anderson-2006}).
-    AUX `gi²` is parenthesized in Anderson's gloss — it is uninflected
-    (or only tone-marked for subject person); the LV `kpel¹-ko¹`
-    carries the proximate-future TAM marker. -/
+    AUX `gi²` is parenthesized in Anderson's gloss; per Anderson p. 120
+    it "partially encodes person of the subject through the tone associated
+    with the auxiliary". The LV `kpel¹-ko¹` carries the proximate-future
+    TAM marker. -/
 def lexHeadedForm : String := "mi¹ (gi²) kpel¹-ko¹"
 
 def lexHeadedGloss : String := "I AUX pour-PROX 'I'm going to pour'"
 
-/-- Lex-headed inflection: AUX uninflected, LV carries TAM. -/
+/-- Lex-headed inflection: AUX carries tonal subject agreement (Anderson
+    p. 120: "partially encodes person of the subject through the tone");
+    LV carries TAM. -/
 def lexHeadedDistribution : InflDistribution :=
-  { onAux := [], onLex := [.tense] }
+  { onAux := [.agreement], onLex := [.tense] }
 
 /-! ## Split/doubled pattern (Anderson 2006, Ch 5 ex. 128-129, pp. 222-223) -/
 
 /-- Split/doubled AVC form (Anderson Ch 5 ex. 129, p. 223).
-    *hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ*
+    *hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ*
     '3PL-POT 3PL-come 3PL-bite-2'
     'they might come bite you'
     (Wiering and Wiering 1994: 221, cited in @cite{anderson-2006}).
@@ -63,18 +66,29 @@ def lexHeadedDistribution : InflDistribution :=
     `hi¹-`); object `-mɔ` (2nd person) appears only on the LV.
     Anderson p. 223: "this pattern, consisting of an object found on
     the lexical verb with doubled subject inflection, is common in
-    Doyayo." -/
-def splitDoubledForm : String := "hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ"
+    Doyayo." Note `hi¹-zaa¹³` carries a contour tone (1+3); the
+    earlier single-tone `hi¹-zaa³` rendering was a transcription
+    error caught in the 0.230.576 meta-audit. -/
+def splitDoubledForm : String := "hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ"
 
 def splitDoubledGloss : String :=
   "3PL-POT 3PL-come 3PL-bite-2 'they might come bite you'"
 
 /-- Split/doubled inflection: subject agreement doubled on both
     elements (subject category appears on AUX *and* LV); object
-    valence appears only on LV. The doubled subject is what makes
-    this split/doubled rather than plain split. -/
+    agreement appears only on LV (encoded as a second `.agreement`
+    on `onLex`). The doubled subject is what makes this split/doubled
+    rather than plain split.
+
+    Substrate gap: `MorphCategory.agreement` does not distinguish
+    subject vs object agreement — both `1` (subject) and `-mɔ`
+    (object) collapse to the same `.agreement` constructor. The
+    object-on-LV-only generalization that Anderson Ch 5 §5.2 turns
+    on can therefore not be stated at the substrate level today.
+    See `scratch/morphcategory_agreement_split_plan.md` for the
+    proposed parameterized `agreement (target : ArgRole)` extension. -/
 def splitDoubledDistribution : InflDistribution :=
-  { onAux := [.agreement], onLex := [.agreement, .valence] }
+  { onAux := [.agreement], onLex := [.agreement, .agreement] }
 
 /-! ## Primary pattern alias
 

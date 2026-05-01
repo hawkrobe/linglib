@@ -68,22 +68,14 @@ def NegStrategy.isVerbal : NegStrategy → Bool
     Heine's/Anderson's verbal sense. Returning `none` for `.negParticle`
     rather than collapsing it onto `.auxiliary` (an earlier
     formaliser shorthand) preserves @cite{miestamo-2005}'s
-    particle-vs-verb morphological distinction; see
-    `negStrategyStage_collapses_miestamo_symmetry` in
-    `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean` for the
-    cross-framework theorem documenting why this matters. -/
+    particle-vs-verb morphological distinction; the cross-framework
+    equivalence theorem `auxiliary_stage_iff_aux_verb_morpheme` in
+    `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean` makes the
+    Anderson-cline / Miestamo-morpheme-type agreement Lean-checkable. -/
 def NegStrategy.toGramStage : NegStrategy → Option GramStage
   | .negVerb     => some .auxiliary
   | .negAffix    => some .affix
   | .negParticle => none
-
-/-- Negative affixes are further along the grammaticalization cline
-    than negative verbs (boundedness strictly increases). The particle
-    case is not comparable here because particles are not on the verbal
-    cline (`toGramStage .negParticle = none`). -/
-theorem negAffix_more_grammaticalized :
-    GramStage.affix.boundedness > GramStage.auxiliary.boundedness := by
-  decide
 
 /-! ## Data -/
 

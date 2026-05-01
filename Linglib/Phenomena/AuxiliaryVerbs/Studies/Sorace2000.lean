@@ -24,7 +24,6 @@ classification from `Theories.Semantics.Tense.Aspect.LexicalAspect`.
 namespace Phenomena.AuxiliaryVerbs.Studies.Sorace2000
 
 open Features
-open Features
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to

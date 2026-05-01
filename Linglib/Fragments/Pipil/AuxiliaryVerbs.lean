@@ -4,17 +4,21 @@ import Linglib.Core.Morphology.MorphRule
 # Pipil Auxiliary Verb Fragment
 @cite{anderson-2006}
 
-Pipil (Uto-Aztecan; El Salvador) appears in @cite{anderson-2006}
-under **two** distinct AVC patterns:
+Pipil (Uto-Aztecan; El Salvador) has two distinct AVC constructions
+in @cite{anderson-2006}, with **different auxiliaries**:
 
-- **LEX-headed** (Ch 3 vicinity, also Ch 5 fn. 6 p. 220-221).
-  Capability auxiliary *weli* uninflected; LV carries subject
-  agreement. Source: Campbell 1985: 139, cited in @cite{anderson-2006}.
-- **SPLIT/DOUBLED** (Ch 5 §5.2.2, ex. 133a-c, p. 224). Subjects
-  doubly marked on AUX and LV; objects only on LV. AUX root *yu*
-  (← 'go') encodes prospective TAM lexically. Source: Campbell
-  1985: 137-138, cited in @cite{anderson-2006}; cf. footnote 6
-  on p. 220-221 explicitly contrasting these two Pipil patterns.
+- **LEX-headed CAPABILITY AVC** (Campbell 1985: 139). Capability
+  auxiliary *weli* uninflected; LV carries subject agreement.
+- **SPLIT/DOUBLED PROGRESSIVE AVC** (Ch 5 §5.2.2, ex. 133a-c, p. 224).
+  Progressive auxiliary *yu* (← 'go'); subjects doubly marked on AUX
+  and LV; objects only on LV. AUX root *yu* encodes prospective TAM
+  lexically. Source: Campbell 1985: 137-138, cited in @cite{anderson-2006}.
+
+The 0.230.576 meta-audit caught an earlier docstring overreading of
+Anderson p. 220-221 fn. 6: that footnote contrasts two variants of the
+*progressive* AVC (lex-headed vs split/doubled, both with *yu*-class
+auxiliaries) — NOT *weli* (CAP) vs *yu* (PROG). The *weli* and *yu*
+forms are different AVCs entirely, not two patterns of the same AVC.
 
 The earlier classification of the second pattern as plain `.split`
 with distribution `{onAux := [.tense], onLex := [.agreement]}` was
@@ -67,9 +71,18 @@ def splitDoubledGloss : String :=
   "1-AUX 1-2PL-show 'I'm going to show you'"
 
 /-- Split/doubled inflection: subject agreement doubled on both AUX
-    and LV; object valence appears only on LV. -/
+    and LV; object agreement appears only on LV (encoded as a second
+    `.agreement` on `onLex`).
+
+    Substrate gap: `MorphCategory.agreement` does not distinguish
+    subject vs object agreement — both `1` (subject) and `mitsin-`
+    (2pl object) collapse to the same `.agreement` constructor. The
+    object-on-LV-only generalization that Anderson Ch 5 §5.2 turns on
+    can therefore not be stated at the substrate level today. See
+    `scratch/morphcategory_agreement_split_plan.md` for the proposed
+    parameterized `agreement (target : ArgRole)` extension. -/
 def splitDoubledDistribution : InflDistribution :=
-  { onAux := [.agreement], onLex := [.agreement, .valence] }
+  { onAux := [.agreement], onLex := [.agreement, .agreement] }
 
 /-! ## Primary pattern alias
 

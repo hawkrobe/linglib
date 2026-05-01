@@ -60,10 +60,20 @@ namespace Diachronic.Grammaticalization
 -- ============================================================================
 
 /-- Stage on the grammaticalization cline for verbal elements.
-    Cline anchored on @cite{heine-1993} ch. 3; the 5-stage segmentation
-    follows @cite{lehmann-1985} and @cite{hopper-traugott-2003} ch. 6;
-    @cite{anderson-2006} ch. 7 traces grammaticalization of source
-    constructions onto these stages. -/
+    Cline anchored on @cite{heine-1993} for the broad path
+    `LV >> AV >> AFFIX`; the specific 5-stage segmentation
+    (`fullVerb / auxiliary / clitic / affix / zero`) is a
+    *coarsening* drawn from @cite{lehmann-1985} and
+    @cite{hopper-traugott-2003} ch. 6, NOT a direct rendering of
+    Heine's own staging (Heine 1993 §2.4.2 uses a finer 7-stage
+    A-G chain: concrete-source → starting-down → budding →
+    defective → linguistic-hybrid → firmly-grammaticalized →
+    orphaning). @cite{anderson-2006} p. 5 attributes the
+    `LV >> AV > AFX` path to Heine 1993:48ff. without committing
+    to a specific stage count; ch. 7 traces grammaticalization of
+    source constructions onto whatever cline the framework adopts.
+    The 5-stage enum here is the linglib working approximation,
+    not Heine's own taxonomy. -/
 inductive GramStage where
   /-- Lexical verb with full argument structure. -/
   | fullVerb
@@ -110,6 +120,14 @@ def GramStage.toMorphStatus : GramStage → Option Core.Morphology.MorphStatus
   | .clitic    => some .simpleClitic
   | .affix     => some .inflAffix
   | .zero      => none
+
+/-- The `.affix` stage is strictly more grammaticalized (more
+    morphologically bound) than the `.auxiliary` stage. Used by
+    `Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean` to compare
+    the cline placement of negative affixes vs negative verbs. -/
+theorem affix_more_bound_than_auxiliary :
+    GramStage.affix.boundedness > GramStage.auxiliary.boundedness := by
+  decide
 
 -- ============================================================================
 -- §2. Source Constructions
