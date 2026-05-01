@@ -47,9 +47,11 @@ p. 12). Vocatives are explicitly excluded from Caha's scope
 this hierarchy and how it relates to Caha's actual sequence, see
 `Core/Case/Order.lean`.
 
-Of 22 Fragment case inventories, 20 conform; Dargwa (ergative — Caha
-is keyed to accusative alignment) and Finnish (DAT-less, ALL → DAT
-extension per @cite{blake-1994} Ch. 6) are the principled exceptions.
+Of 22 Fragment case inventories, 19 conform; the three principled
+exceptions are: Dargwa (ergative — Caha is keyed to accusative
+alignment), Finnish (DAT-less, ALL → DAT extension per @cite{blake-1994}
+Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
+@cite{caha-2008} §5).
 -/
 
 namespace Phenomena.Case.Studies.Caha2009
@@ -82,9 +84,6 @@ theorem greek_respectsCaha :
 
 theorem hindi_respectsCaha :
     RespectsCahaContainment Fragments.Hindi.Case.caseInventory := by decide
-
-theorem hungarian_respectsCaha :
-    RespectsCahaContainment Fragments.Hungarian.Case.caseInventory := by decide
 
 theorem icelandic_respectsCaha :
     RespectsCahaContainment Fragments.Icelandic.Case.caseInventory := by decide
@@ -180,6 +179,22 @@ theorem dargwa_not_respectsCaha :
     without rank 3 (DAT). -/
 theorem finnish_not_respectsCaha :
     ¬ RespectsCahaContainment Fragments.Finnish.Case.caseInventory := by decide
+
+/-- Hungarian has no morphological genitive — both standard reference
+    grammars (@cite{kenesei-vago-fenyvesi-1998} §1.10, @cite{rounds-2001}
+    ch. 6) gloss -nak / -nek exclusively as dative; @cite{caha-2008} §5
+    (pp. 266–267) explicitly addresses Hungarian as the textbook
+    Blake-hierarchy surface counterexample, citing Blake's own footnote
+    that the GEN-less inventory is resolved by treating the dative as
+    expressing possessor function. The inventory has rank 3 (DAT) on
+    Caha's containment hierarchy without rank 2 (GEN), failing
+    downward closure. (Note: this is a counterexample to the
+    `containmentRank`-based downward-closure predicate, which encodes
+    Blake's hierarchy in Caha's notation; it is *not* a counterexample
+    to Caha 2008's (28), which is about suffix-vs-postposition ordering
+    and holds vacuously here since Hungarian marks all cases suffixally.) -/
+theorem hungarian_not_respectsCaha :
+    ¬ RespectsCahaContainment Fragments.Hungarian.Case.caseInventory := by decide
 
 /-! ## § 4: Slavic paradigm-shape syncretism (Caha §§8.3.1-4)
 
