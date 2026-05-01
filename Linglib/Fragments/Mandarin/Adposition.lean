@@ -11,7 +11,7 @@ classifies Mandarin as having both prepositions and postpositions
 namespace Fragments.Mandarin
 
 /-- Mandarin adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "cmn"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "cmn"
 
 end Fragments.Mandarin

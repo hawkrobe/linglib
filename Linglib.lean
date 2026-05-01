@@ -1025,6 +1025,7 @@ import Linglib.Fragments.Ga.Basic
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Kiche.Adposition
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Fragments.Mayan.Kiche.VoiceSystem

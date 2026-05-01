@@ -31,6 +31,8 @@ import Linglib.Fragments.Tzotzil.WordOrder
 import Linglib.Fragments.Tzotzil.Adposition
 import Linglib.Fragments.Hixkaryana.WordOrder
 import Linglib.Fragments.Hixkaryana.Adposition
+import Linglib.Fragments.Mayan.Kiche.WordOrder
+import Linglib.Fragments.Mayan.Kiche.Adposition
 
 /-!
 # Greenberg 1963: Implicational Universals on Basic Word Order
@@ -72,12 +74,12 @@ open _root_.Typology (ImplicationalUniversal)
 -- ============================================================================
 
 /-- A sample-language entry for the Greenberg / cross-chapter theorems:
-    Fragment-sourced word-order profile plus optional adposition order. -/
+    Fragment-sourced word-order profile plus adposition order. -/
 structure SampleEntry where
   iso : String
   name : String
   wordOrder : _root_.Typology.WordOrder.WordOrderProfile
-  adposition : Option _root_.Typology.Adposition.AdpositionOrder
+  adposition : _root_.Typology.Adposition.AdpositionOrder
   deriving Repr, DecidableEq
 
 /-- Hand-verified 15-language sample spanning the four major basic-order
@@ -104,6 +106,9 @@ def fragmentSample : Finset SampleEntry :=
   -- Object-initial / verb-final-object orders for shape diversity:
   , ⟨ "tzo", "Tzotzil",    Fragments.Tzotzil.wordOrder,         Fragments.Tzotzil.adposition ⟩    -- VOS
   , ⟨ "hix", "Hixkaryana", Fragments.Hixkaryana.wordOrder,      Fragments.Hixkaryana.adposition ⟩ -- OVS
+  -- K'iche' (Mayan, ergative, VOS, prepositional per @cite{mondloch-2017} Ch 85
+  -- absence; classification contested per @cite{clemens-coon-2018}):
+  , ⟨ "quc", "K'iche'",    Fragments.Mayan.Kiche.wordOrder,     Fragments.Mayan.Kiche.adposition ⟩ -- VOS
   }
 
 -- ============================================================================
@@ -126,11 +131,15 @@ abbrev isObjectBeforeSubject (p : SampleEntry) : Prop :=
 
 /-- Language is classified as prepositional in WALS Ch 85. -/
 abbrev isPrepositional (p : SampleEntry) : Prop :=
-  p.adposition = some .prepositional
+  p.adposition.IsPrepositional
 
 /-- Language is classified as postpositional in WALS Ch 85. -/
 abbrev isPostpositional (p : SampleEntry) : Prop :=
-  p.adposition = some .postpositional
+  p.adposition.IsPostpositional
+
+/-- Language is OV (object precedes verb) per WALS Ch 83.
+    @cite{dryer-1992}'s primary classification under BDT. -/
+abbrev isOV (p : SampleEntry) : Prop := p.wordOrder.ovOrder.IsOV
 
 -- ============================================================================
 -- §3. Greenberg's Universals 1, 3, 4 over `fragmentSample`
@@ -144,11 +153,13 @@ set_option maxRecDepth 4096 in
     subject and object, the subject almost always precedes the object.
     Tested over `fragmentSample`: subject-before-object entries (SOV + SVO +
     VSO) outnumber object-before-subject entries (VOS + OVS + OSV) by more
-    than 6×. The sample includes Tzotzil (VOS) and Hixkaryana (OVS) so the
-    margin is non-trivial. -/
+    than 4×. The sample's three object-initial languages (Tzotzil VOS,
+    Hixkaryana OVS, K'iche' VOS) give a non-trivial margin; the multiplier
+    is sample-dependent (Greenberg's claim is "almost always", not a
+    specific ratio). -/
 theorem greenberg_universal_1 :
     (fragmentSample.filter isSubjectBeforeObject).card >
-    (fragmentSample.filter isObjectBeforeSubject).card * 6 := by
+    (fragmentSample.filter isObjectBeforeSubject).card * 4 := by
   decide
 
 set_option maxRecDepth 4096 in
@@ -168,9 +179,28 @@ theorem greenberg_universal_4 :
     ImplicationalUniversal isSOV isPostpositional fragmentSample := by
   decide
 
+-- ============================================================================
+-- §4. Dryer 1992 BDT cross-framework theorem
+-- ============================================================================
+
+set_option maxRecDepth 4096 in
+/-- @cite{dryer-1992}'s Branching Direction Theory primary correlation,
+    stated as an implicational universal: in the sample, every OV
+    (object-precedes-verb) language is postpositional.
+
+    Greenbergian U4 above commits to `BasicOrder.IsSOV` (SOV-specific)
+    as the antecedent; Dryer's BDT primary commits to `OVOrder.IsOV`
+    (covers SOV + OVS + OSV under one head-direction predicate). Both
+    hold over the curated sample; they would diverge on a language with
+    `BasicOrder.noDominant` Ch 81 + dominant `.ov` Ch 83 — exactly the
+    Greenbergian-vs-Dryerian primacy choice flagged in
+    `Typology.WordOrder`'s module docstring. -/
+theorem dryer_bdt_ov_postp :
+    ImplicationalUniversal isOV isPostpositional fragmentSample := by
+  decide
+
 -- The per-Fragment `wordOrder_consistent : wordOrder.IsConsistent := by decide`
 -- sentinel in each `Fragments/{Lang}/WordOrder.lean` already covers the drift
--- this aggregate would catch (15 of these 15 sample languages have their own).
--- No aggregate sentinel needed here.
+-- an aggregate sample-consistency theorem would catch.
 
 end Phenomena.WordOrder.Studies.Greenberg1963

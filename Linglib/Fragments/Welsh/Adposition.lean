@@ -10,7 +10,7 @@ classifies Welsh as prepositional.
 namespace Fragments.Welsh
 
 /-- Welsh adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "cym"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "cym"
 
 end Fragments.Welsh

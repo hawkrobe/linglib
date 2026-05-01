@@ -4,6 +4,50 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.582 — Audit-driven Typology/Adposition.lean refactor: substrate parity with WordOrder + AdpositionOrder.notInWALS / Option flatten + AdpositionOrder.ofWALS namespacing + IsPrepositional/IsPostpositional/headDirection promotion + K'iche' Adposition + dryer_bdt_ov_postp cross-framework theorem + BroekhuisCorver2026 substrate adoption + OVOrder.IsOV/IsVO promotion
+
+Four-agent deep audit on `Linglib/Typology/Adposition.lean` (49 LOC, sister substrate to `Typology/WordOrder.lean`). The audit was the natural follow-up to the 0.230.576/579 WordOrder refactor cycle: parallel structure (WALS-derived enum + `ofWALS` converter), shared consumer (`Greenberg1963.lean` imports both for U3/U4), and the WordOrder-side patterns ready to transfer. Convergent findings across agents: substrate-hygiene mismatch with WordOrder (Option-wrapping vs `.notInWALS` enum case), naming convention divergence, classification predicates re-stipulated in consumer, missing head-direction projection, missing Dryer-BDT cross-framework theorem, K'iche' Adposition Fragment absent (deferred MJ-4 from WordOrder round 1), `BroekhuisCorver2026.lean` bypassing the substrate.
+
+**Substrate parity with WordOrder (sister substrate brought up to post-0.230.576 standard)**:
+
+1. **`AdpositionOrder.notInWALS` enum case + `Option` flatten**: Pre-audit `adpositionOfWALS : String → Option AdpositionOrder` returned `none` for absence-from-WALS; the `Option`-wrapping propagated through 15 Fragment files + `SampleEntry.adposition` field + 2 abbrevs in Greenberg1963. WordOrder's just-landed pattern uses a `.notInWALS` enum case so consumers see a flat enum value. Migrated: added `.notInWALS` to `AdpositionOrder`; `AdpositionOrder.ofWALS` now returns `AdpositionOrder` directly (`.notInWALS` on lookup miss); 15 Fragment files dropped `Option` wrapping; `SampleEntry.adposition : _root_.Typology.Adposition.AdpositionOrder` (no Option); `Greenberg1963`'s `isPrepositional`/`isPostpositional` abbrevs use the substrate's `IsPrepositional`/`IsPostpositional` predicates rather than `= some .prepositional` Option-wrapped equality.
+
+2. **Mathlib-style namespacing**: `fromWALS85A` → `AdpositionOrder.ofWALS85A`; `adpositionOfWALS` → `AdpositionOrder.ofWALS`. Type-prefixed under target namespace, parity with `BasicOrder.ofWALS81A` etc. from 0.230.576.
+
+3. **Module docstring rewrite**: dropped stale "Lives in `Core/`" claim (file is in `Typology/`, not `Core/`; same artifact WordOrder had); dropped reference to deleted `LanguageProfile`; added `@cite{greenberg-1963}` and `@cite{dryer-1992}` cite keys to match WordOrder's docstring; added an "Epistemic distinction" section (parallel to WordOrder), a "`noAdpositions` as a category" section explaining the WALS distinction, and a "Greenbergian vs Dryerian primacy" section flagging neutrality.
+
+4. **Classification predicates promoted to substrate**: `Greenberg1963.lean:128-133` re-stipulated `isPrepositional`/`isPostpositional` as study-local abbrevs (Option-wrapped equalities) — the only Adposition-side predicates the WordOrder 0.230.576 promotion campaign missed. Promoted to substrate as `AdpositionOrder.IsPrepositional`/`IsPostpositional` abbrevs (transparent so `Decidable` resolves automatically). Greenberg1963 collapses to one-line consumer `abbrev isPrepositional (p : SampleEntry) : Prop := p.adposition.IsPrepositional`. `IsAdposed` predicate not added (no current consumer).
+
+5. **`AdpositionOrder.headDirection` projection**: parallel to WordOrder's `OVOrder.verbPosition`. `.prepositional ⇒ some .headInitial`, `.postpositional ⇒ some .headFinal`, others (`.inpositional`/`.noAdpositions`/`.noDominant`/`.notInWALS`) ⇒ `none`. Uses existing `Core.Word.HeadDirection`. Not currently consumed but flagged by cross-framework-reconciler as the BDT-natural sibling of `verbPosition`; sets up future Dryer1992-style consumers.
+
+**WordOrder substrate symmetric addition (one-line cleanup folded in)**:
+
+6. **`OVOrder.IsOV` and `OVOrder.IsVO` abbrevs** added to `Typology/WordOrder.lean`. Parallel to existing `BasicOrder.IsSOV`/`IsSVO`/`IsVSO` predicates; needed by the new `dryer_bdt_ov_postp` theorem. Was a spillover from this audit's BDT-correlation work.
+
+**K'iche' Adposition Fragment + sample inclusion**:
+
+7. **`Linglib/Fragments/Mayan/Kiche/Adposition.lean`**: K'iche' (`quc`) absent from WALS Ch 85 (verified). Mondloch documents preposition-like constructions; Mayanist literature contests "prepositional" vs "relational nouns" (Aissen 1992, Coon 2010); @cite{clemens-coon-2018} (already in `references.bib`) surveys derivational accounts. Module docstring carries the contestation note (parallel to `Fragments/Mayan/Kiche/WordOrder.lean`'s pattern). Commits `.prepositional` per Mondloch's description; the relational-noun reading would give `.noAdpositions`. Either is consistent with `.headInitial` head-direction projection.
+
+8. **K'iche' added to `Greenberg1963.fragmentSample`**: the deferred MJ-4 finding from WordOrder round 1 ("K'iche' invisible to Greenberg sample") is now resolved. Sample grows from 15 → 16 with K'iche' as a non-Indo-European VOS+prepositional witness. K'iche'-as-VOS is `IsObjectBeforeSubject = True`, which strengthened U1's denominator: pre-K'iche' the sample had 13 sb / 2 ob (6.5:1); with K'iche' it's 13 sb / 3 ob (4.33:1). The U1 multiplier was lowered from `* 6` to `* 4` accordingly with a docstring caveat that the multiplier is sample-dependent (Greenberg's claim is "almost always", not a specific ratio). U3 (VSO → Prep) and U4 (SOV → Postp) unchanged: K'iche' is VOS, antecedents don't fire.
+
+**Cross-framework theorem — Dryer's BDT primary correlation**:
+
+9. **`dryer_bdt_ov_postp : ImplicationalUniversal isOV isPostpositional fragmentSample`**: one-line `decide` over the 16-language sample (with `set_option maxRecDepth 4096 in`). Surfaces the Greenbergian-vs-Dryerian primacy choice at theorem level: U4 (Greenberg, basicOrder primary) commits to `BasicOrder.IsSOV` as antecedent; this theorem (Dryer, BDT primary) commits to `OVOrder.IsOV`. Both hold over the curated sample; they would diverge on a language with `BasicOrder.noDominant` Ch 81 + dominant `.ov` Ch 83 — exactly the substrate-neutrality choice flagged in `Typology/WordOrder.lean`'s module docstring. Cross-framework-reconciler called this the "highest-leverage cheap addition the substrate makes possible".
+
+**Consumer cleanup — BroekhuisCorver2026 substrate adoption**:
+
+10. **`Phenomena/WordOrder/Studies/BroekhuisCorver2026.lean:296-300`** previously bypassed the substrate with `(F85A.allData.find? (fun d => d.walsCode == "dut")).map (·.value) = some .prepositions := by native_decide`. Two issues: layered-grounding bypass (raw aggregate filter on F85A instead of substrate `AdpositionOrder.ofWALS`) AND `native_decide` (CLAUDE.md proof-style §7 violation). Replaced with `Typology.Adposition.AdpositionOrder.ofWALS "nld" = .prepositional := by decide` (with `set_option maxRecDepth 4096 in`). Note: Dutch's WALS-internal code is `dut` but ISO 639-3 is `nld`; the substrate lookup is by ISO. Import switched from `Linglib.Datasets.WALS.Features.F85A` to `Linglib.Typology.Adposition`.
+
+**Out of scope (audit findings deferred per CLAUDE.md "don't add features beyond what the task requires")**:
+
+- **Greenberg U4 statistical-vs-absolute character** (linguistics-domain-expert): U4 is "with overwhelmingly greater than chance frequency" but linglib treats it as absolute via `ImplicationalUniversal`. Genuine architectural finding — would need a `StatisticalUniversal` substrate type + counterexample languages in sample (Persian SOV+prepositional). Touches all Greenberg universals; defer as separate campaign.
+- **`Hawkins1983.lean` / `FOFC.lean` / `Antisymmetry.lean`** as study files (cross-framework-reconciler): no current substrate consumer; would each be substantial new files.
+- **Cross-`Typology/*.lean` `WALSEncodable` typeclass abstraction**: still n=2 (WordOrder + Adposition); per `project_permsubset_swap_vs_orbit` discipline, wait for n=3 (likely `Possession.lean` next, with its 4-chapter F57A/F58A/F58B/F59A bundle, the closest structural analog to WordOrder's 3-chapter bundle).
+- **Hungarian Adposition Fragment** (`hun → .postpositions` in WALS F85A): one-line addable but blocked by lack of `Hungarian/WordOrder.lean`; would need both files for `SampleEntry`.
+- **`AdpositionOrder.IsAdposed` predicate** (`a ≠ .noAdpositions`): no current consumer.
+
+**Build state**: 5676/5676 jobs green.
+
 ### 0.230.581 — Wire WellFoundedLT headline to consumers + mathlib PR cleanup on Economy.lean
 
 - New `Minimalist.economy_winner_of_pair` helper: discharges binary-reference-set winner identification from a strict-domination fact via `lt_irrefl` + `lt_asymm`.

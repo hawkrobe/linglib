@@ -10,7 +10,7 @@ classifies Tzotzil as prepositional.
 namespace Fragments.Tzotzil
 
 /-- Tzotzil adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "tzo"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "tzo"
 
 end Fragments.Tzotzil

@@ -10,7 +10,7 @@ classifies Korean as postpositional.
 namespace Fragments.Korean
 
 /-- Korean adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "kor"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "kor"
 
 end Fragments.Korean

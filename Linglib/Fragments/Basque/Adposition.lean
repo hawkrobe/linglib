@@ -10,7 +10,7 @@ classifies Basque as postpositional.
 namespace Fragments.Basque
 
 /-- Basque adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "eus"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "eus"
 
 end Fragments.Basque

@@ -10,7 +10,7 @@ classifies Irish as prepositional.
 namespace Fragments.Irish
 
 /-- Irish adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "gle"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "gle"
 
 end Fragments.Irish

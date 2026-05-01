@@ -1,6 +1,6 @@
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
-import Linglib.Datasets.WALS.Features.F85A
+import Linglib.Typology.Adposition
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Theories.Semantics.Events.SpatialTrace
@@ -293,11 +293,13 @@ theorem no_rPron_not_postP :
     is always P-DP (preP); postP/circumP are derived by movement, not by
     a different head-direction parameter. -/
 
-/-- Dutch is listed as "prepositions" in WALS F85A (code "dut"). -/
+set_option maxRecDepth 4096 in
+/-- Dutch is classified as prepositional in WALS Ch 85, via the
+    substrate `Typology.Adposition.AdpositionOrder.ofWALS` lookup
+    (Dutch ISO 639-3 = `nld`; the WALS-internal code is `dut`). -/
 theorem dutch_wals_prepositions :
-    (Datasets.WALS.F85A.allData.find?
-      (fun d => d.walsCode == "dut")).map (·.value)
-    = some .prepositions := by native_decide
+    Typology.Adposition.AdpositionOrder.ofWALS "nld"
+    = .prepositional := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to Den Dikken (1995): particles as P heads

@@ -10,7 +10,7 @@ classifies Japanese as postpositional.
 namespace Fragments.Japanese
 
 /-- Japanese adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "jpn"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "jpn"
 
 end Fragments.Japanese

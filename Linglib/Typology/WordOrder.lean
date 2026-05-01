@@ -240,6 +240,17 @@ abbrev IsObjectBeforeSubject (b : BasicOrder) : Prop :=
 
 end BasicOrder
 
+namespace OVOrder
+
+/-- `o` is OV (object precedes verb). @cite{dryer-1992}'s primary
+    typological classification under Branching Direction Theory. -/
+abbrev IsOV (o : OVOrder) : Prop := o = .ov
+
+/-- `o` is VO (verb precedes object). -/
+abbrev IsVO (o : OVOrder) : Prop := o = .vo
+
+end OVOrder
+
 -- ============================================================================
 -- Verb position (theory-neutral OVOrder projection)
 -- ============================================================================

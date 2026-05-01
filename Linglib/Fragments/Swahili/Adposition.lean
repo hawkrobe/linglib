@@ -10,7 +10,7 @@ classifies Swahili as prepositional.
 namespace Fragments.Swahili
 
 /-- Swahili adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "swh"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "swh"
 
 end Fragments.Swahili

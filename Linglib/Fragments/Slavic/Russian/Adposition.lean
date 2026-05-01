@@ -10,7 +10,7 @@ classifies Russian as prepositional.
 namespace Fragments.Slavic.Russian
 
 /-- Russian adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "rus"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "rus"
 
 end Fragments.Slavic.Russian

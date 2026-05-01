@@ -10,7 +10,7 @@ classifies Turkish as postpositional.
 namespace Fragments.Turkish
 
 /-- Turkish adposition order (WALS Ch 85 by ISO lookup). -/
-def adposition : Option Typology.Adposition.AdpositionOrder :=
-  Typology.Adposition.adpositionOfWALS "tur"
+def adposition : Typology.Adposition.AdpositionOrder :=
+  Typology.Adposition.AdpositionOrder.ofWALS "tur"
 
 end Fragments.Turkish
