@@ -53,7 +53,7 @@ def lexHeadedGloss : String := "I AUX pour-PROX 'I'm going to pour'"
     p. 120: "partially encodes person of the subject through the tone");
     LV carries TAM. -/
 def lexHeadedDistribution : InflDistribution :=
-  { onAux := [.agreement], onLex := [.tense] }
+  { onAux := [.agreement .subj], onLex := [.tense] }
 
 /-! ## Split/doubled pattern (Anderson 2006, Ch 5 ex. 128-129, pp. 222-223) -/
 
@@ -75,20 +75,13 @@ def splitDoubledGloss : String :=
   "3PL-POT 3PL-come 3PL-bite-2 'they might come bite you'"
 
 /-- Split/doubled inflection: subject agreement doubled on both
-    elements (subject category appears on AUX *and* LV); object
-    agreement appears only on LV (encoded as a second `.agreement`
-    on `onLex`). The doubled subject is what makes this split/doubled
-    rather than plain split.
-
-    Substrate gap: `MorphCategory.agreement` does not distinguish
-    subject vs object agreement — both `1` (subject) and `-mɔ`
-    (object) collapse to the same `.agreement` constructor. The
-    object-on-LV-only generalization that Anderson Ch 5 §5.2 turns
-    on can therefore not be stated at the substrate level today.
-    See `scratch/morphcategory_agreement_split_plan.md` for the
-    proposed parameterized `agreement (target : ArgRole)` extension. -/
+    elements; object agreement appears only on LV. The role-typed
+    encoding (subj vs obj) makes the Anderson Ch 5 §5.2 "objects on
+    LV only" generalization directly Lean-checkable: see
+    `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean`. -/
 def splitDoubledDistribution : InflDistribution :=
-  { onAux := [.agreement], onLex := [.agreement, .agreement] }
+  { onAux := [.agreement .subj]
+  , onLex := [.agreement .subj, .agreement .obj] }
 
 /-! ## Primary pattern alias
 

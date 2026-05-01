@@ -108,7 +108,7 @@ structure NegInflDistribution where
   deriving Repr, BEq
 
 def japaneseNegDistribution : NegInflDistribution :=
-  { affirmativeOnStem := [.tense, .aspect, .mood, .agreement]
+  { affirmativeOnStem := [.tense, .aspect, .mood, .agreement .subj]
   , negativeOnStem := [.aspect]
   , negativeOnSuffix := [.negation, .tense, .mood] }
 

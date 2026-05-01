@@ -38,7 +38,7 @@ def location : String := "India"
 /-- Doubled inflection distribution: both AUX and LV are marked for
     subject agreement, tense, and affectedness (version/voice). -/
 def inflDistribution : InflDistribution :=
-  { onAux := [.agreement, .tense, .voice]
-  , onLex := [.agreement, .tense, .voice] }
+  { onAux := [.agreement .subj, .tense, .voice]
+  , onLex := [.agreement .subj, .tense, .voice] }
 
 end Fragments.Gorum.AuxiliaryVerbs

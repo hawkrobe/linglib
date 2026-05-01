@@ -189,7 +189,7 @@ def pluralNounRuleFlat {α : Type}
 
 /-- Verb agreement -s: formal change only, semantically vacuous. -/
 def verbAgreement3sg (σ : Type) : MorphRule σ :=
-  { category := .agreement
+  { category := .agreement .subj
   , value := "3sg"
   , formRule := λ lemma_ => lemma_ ++ "s"
   , featureRule := λ f => { f with number := some .Sing, person := some .third }

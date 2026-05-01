@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.584 — `Core/Agreement/Controller.lean` (Corbett 2006 §6.6) + parameterize `MorphCategory.agreement`
+
+The substrate gap identified at 0.230.578 (subj/obj agreement collapse blocking Anderson Ch 5 §5.2 typology) is now closed.
+
+**Substrate**:
+- `Core/Agreement/Controller.lean` — new file. `inductive Controller | subj | obj | iobj | poss | obl | defaultAgr` anchored on @cite{corbett-2006} §2.1 + §6.6. Cases derived from Hindi/Urdu rule (p. 195) + Upper Sorbian possessive controller (§2.1.4) + Italian *piove* defective controller (§2.1.3). Typological metalanguage; framework-specific projections (LFG SUBJ → Controller.subj etc.) belong in `Theories/Syntax/`.
+- `Core/Morphology/MorphRule.lean` — `MorphCategory.agreement` parameterized as `agreement (controller : Core.Agreement.Controller)`. Added `MorphCategory.IsAgreement : MorphCategory → Bool` for role-blind tests. `peripherality` updated to pattern-match `.agreement _ => 8` (Bybee bucket unchanged).
+
+**Bib**: `corbett-2006` added (Cambridge UP, ISBN 978-0-521-00170-0, DOI 10.1017/cbo9781139164306).
+
+**Anderson Ch 5 §5.2 payoff** in `Anderson2006.lean`: `doyayo_splitDoubled_subj_doubled_obj_lex_only` and `pipil_splitDoubled_subj_doubled_obj_lex_only` directly state Anderson's "subjects doubled, objects on LV only" generalization as `dist.onLex.contains (.agreement .obj) ∧ ¬ dist.onAux.contains (.agreement .obj)`. The 0.230.578 list-length workaround (fragile) is replaced. New `jakaltek_abs_on_aux_erg_on_lex` makes the abs/erg split a category-level distinction.
+
+**Bybee 1985 round-trip** in `Phenomena/Morphology/Studies/Bybee1985.lean`: `personAgr → .agreement .subj`, `personAgrObj → .agreement .obj`, `genderAgr → .agreement .subj` — Bybee's source distinctions now project losslessly. Same restoration in `HahnDegenFutrell2021.lean` (Sesotho subject vs object agreement prefix slots).
+
+**Karlsson 2017 round-trip**: Finnish possessive suffix is now `.agreement .poss` rather than collapsed onto `.agreement`.
+
+**Consumer migrations** (~17 files, mostly mechanical `.agreement → .agreement .subj`): Doyayo, Pipil, Hemba, Gorum, Jakaltek (abs/erg → obj/subj), Japanese Negation, Finnish Negation, English Verbal predicates, Karlsson2017, Bybee1985, HalleMarantz1993, HahnDegenFutrell2021, Baker1985, Anderson2006, Core/Morphology/Exponence.
+
+**Evaluated, NOT promoted** (per inspection):
+- `Fragments/Dargwa/Agreement.lean` `GenderController` (`absolutive | predicate | ergOrDat`) — case-label cases, not grammatical-relation. Genuinely a different concept; Corbett §6.6 confirms case ⊥ grammatical-relation.
+- `Fragments/Icelandic/Verbs.lean` local `AgreementTarget` (`nominativeArg | default3sg`) — case-based, not Corbett-1991 morphosyntactic-position. Name collides with `Core.AgreementTarget` only superficially.
+
+**Build**: 5677/5677 jobs green.
+
 ### 0.230.583 — Refactor `Core/AgreementTarget.lean` (mathlib-shaped) + dir move to `Core/Agreement/`
 
 Mathlib-quality cleanup of the Corbett-1991/2000/Bickel-Nichols-2001 agreement substrate, prepping for the new `Controller` axis (Corbett 2006 §6.6) landing in 0.230.584.

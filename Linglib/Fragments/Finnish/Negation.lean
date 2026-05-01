@@ -100,7 +100,7 @@ def connegativeRule : MorphRule Bool :=
 /-- The negative auxiliary's agreement rule: semantically vacuous,
     carries person/number agreement that would otherwise be on the main verb. -/
 def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
-  { category := .agreement
+  { category := .agreement .subj
   , value := s!"{person}{number}"
   , formRule := fun _ =>
     match person, number with
@@ -123,7 +123,7 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
     Uses the shared `InflDistribution` from `Core.Morphology`:
     `onAux` = negative auxiliary, `onLex` = main verb. -/
 def finnishNegDistribution : InflDistribution :=
-  { onAux := [.negation, .tense, .agreement]
+  { onAux := [.negation, .tense, .agreement .subj]
   , onLex := [.stem, .aspect] }
 
 -- ============================================================================
@@ -150,7 +150,7 @@ theorem connegative_negates : connegativeRule.semEffect true = false := rfl
     respecting Bybee's hierarchy within the neg aux word. -/
 theorem neg_aux_respects_bybee :
     MorphCategory.peripherality .negation <
-    MorphCategory.peripherality .agreement := by decide
+    MorphCategory.peripherality (.agreement .subj) := by decide
 
 
 -- ============================================================================

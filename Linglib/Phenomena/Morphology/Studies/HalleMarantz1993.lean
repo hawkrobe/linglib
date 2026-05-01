@@ -434,7 +434,7 @@ section BakerBridge
 def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
   | .past => .tense
   | .participle => .aspect
-  | .sg3 => .agreement
+  | .sg3 => .agreement .subj
 
 /-- All English Tns/Agr features map to categories that are OUTSIDE
     GF-rule categories in @cite{bybee-1985}'s relevance hierarchy.

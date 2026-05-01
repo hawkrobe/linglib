@@ -3518,7 +3518,7 @@ def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
   , baseFeatures := { valence := some (complementToValence v.complementType)
                     , vform := some .infinitive }
   , paradigm :=
-    [ { category := .agreement, value := "3sg"
+    [ { category := .agreement .subj, value := "3sg"
       , formRule := λ _ => v.form3sg
       , featureRule := λ f => { f with number := some .Sing
                                      , person := some .third

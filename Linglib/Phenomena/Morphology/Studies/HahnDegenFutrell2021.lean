@@ -77,7 +77,7 @@ def japaneseSuffixSlots : List MorphCategory :=
   , .valence      -- 2. -(s)ase (causative)
   , .voice        -- 3. -are, -rare (passive/potential)
   , .mood         -- 4. -ta (desiderative)
-  , .agreement    -- 5. -mas (politeness)
+  , .agreement .subj    -- 5. -mas (politeness, treated as subj agreement)
   , .negation     -- 6. -na (negation)
   , .tense        -- 7. -ta, -yoo (past/future)
   ]
@@ -134,10 +134,10 @@ def sesothoSuffixSlots : List MorphCategory :=
 
 /-- Sesotho prefix template: morpheme categories from word edge inward. -/
 def sesothoPrefixSlots : List MorphCategory :=
-  [ .agreement    -- 1. subject agreement
+  [ .agreement .subj    -- 1. subject agreement
   , .negation     -- 2. negation
   , .tense        -- 3. tense/aspect/mood
-  , .agreement    -- 4. object agreement
+  , .agreement .obj    -- 4. object agreement
   ]
 
 /-- Sesotho suffixes respect the relevance hierarchy:

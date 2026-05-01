@@ -348,37 +348,33 @@ theorem gorum_doubled_same_categories :
 /-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
     agreement (per Anderson p. 120), and the LV carries TAM. -/
 theorem doyayo_lexHeaded_aux_agreement_only :
-    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement] ∧
+    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement .subj] ∧
     Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onLex = [.tense] := by
   exact ⟨rfl, rfl⟩
 
-/-- In Doyayo's split/doubled AVC, agreement appears on both AUX
-    and LV (subject doubled), and the LV's agreement list has length
-    2 (subject + object), while AUX's has length 1 (subject only).
-    The list-length asymmetry is the only way to encode "object on
-    LV only" in the current substrate, since `MorphCategory.agreement`
-    doesn't distinguish subject vs object. -/
-theorem doyayo_splitDoubled_agreement_doubled :
+/-- **Anderson Ch 5 §5.2 payoff (Doyayo)**: subject agreement is
+    doubled across AUX and LV; object agreement appears on LV only.
+    Now Lean-checkable directly via `Controller`-typed `.agreement`,
+    rather than via the fragile list-length encoding the 0.230.578
+    workaround used. -/
+theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     let dist := Fragments.Doyayo.AuxiliaryVerbs.splitDoubledDistribution
-    dist.onAux.contains .agreement = true ∧
-    dist.onLex.contains .agreement = true ∧
-    dist.onAux.length = 1 ∧
-    dist.onLex.length = 2 := by
+    dist.onAux.contains (.agreement .subj) = true ∧
+    dist.onLex.contains (.agreement .subj) = true ∧
+    dist.onLex.contains (.agreement .obj) = true ∧
+    dist.onAux.contains (.agreement .obj) = false := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
-/-- In Pipil's split/doubled AVC, agreement appears on both AUX and
-    LV (subject doubled), and the LV's agreement list has length 2
-    (subject + object), while AUX's has length 1 (subject only).
+/-- **Anderson Ch 5 §5.2 payoff (Pipil)**: same generalization as
+    Doyayo — subject doubled across AUX and LV, object on LV only.
     The AUX root *yu* itself encodes TAM lexically (no separate
-    `.tense` morpheme on AUX). Same substrate-gap caveat as Doyayo:
-    object-on-LV-only is encoded via list length, not via a
-    role-typed agreement constructor. -/
-theorem pipil_splitDoubled_agreement_doubled :
+    `.tense` morpheme on AUX). -/
+theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
     let dist := Fragments.Pipil.AuxiliaryVerbs.splitDoubledDistribution
-    dist.onAux.contains .agreement = true ∧
-    dist.onLex.contains .agreement = true ∧
-    dist.onAux.length = 1 ∧
-    dist.onLex.length = 2 := by
+    dist.onAux.contains (.agreement .subj) = true ∧
+    dist.onLex.contains (.agreement .subj) = true ∧
+    dist.onLex.contains (.agreement .obj) = true ∧
+    dist.onAux.contains (.agreement .obj) = false := by
   exact ⟨by decide, by decide, by decide, by decide⟩
 
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
@@ -391,24 +387,25 @@ theorem finnish_split_disjoint :
     let dist := Fragments.Finnish.Negation.finnishNegDistribution
     dist.onAux.all (fun c => !dist.onLex.contains c) = true := by decide
 
-/-- Jakaltek's split distributes agreement across both elements —
-    absolutive on AUX and ergative on LV. At the `MorphCategory` level,
-    both are `.agreement`, so the split is *within* a single category
-    type rather than *between* category types. Anderson classifies this
-    as split despite the shared `.agreement` label because the specific
-    agreement relations (absolutive vs. ergative) differ. -/
-theorem jakaltek_split_within_agreement :
+/-- **Anderson Ch 5 abs/erg payoff (Jakaltek)**: with role-typed
+    agreement, the absolutive-on-AUX / ergative-on-LV split is now
+    a category-level distinction (`.agreement .obj` vs `.agreement .subj`),
+    not just a within-category meta-comment. -/
+theorem jakaltek_abs_on_aux_erg_on_lex :
     let dist := Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution
-    dist.onAux.contains .agreement = true ∧
-    dist.onLex.contains .agreement = true := by
-  exact ⟨by decide, by decide⟩
+    dist.onAux.contains (.agreement .obj) = true ∧
+    dist.onLex.contains (.agreement .subj) = true ∧
+    dist.onAux.contains (.agreement .subj) = false ∧
+    dist.onLex.contains (.agreement .obj) = false := by
+  exact ⟨by decide, by decide, by decide, by decide⟩
 
-/-- In Hemba's split/doubled AVC, agreement is doubled (on both
-    elements), tense is AUX-only, mood is LV-only. -/
+/-- In Hemba's split/doubled AVC, subject agreement is doubled (on both
+    elements), tense is AUX-only, mood is LV-only. No object agreement
+    in this construction. -/
 theorem hemba_splitDoubled_agreement_doubled :
     let dist := Fragments.Hemba.AuxiliaryVerbs.inflDistribution
-    dist.onAux.contains .agreement = true ∧
-    dist.onLex.contains .agreement = true ∧
+    dist.onAux.contains (.agreement .subj) = true ∧
+    dist.onLex.contains (.agreement .subj) = true ∧
     dist.onAux.contains .tense = true ∧
     dist.onLex.contains .tense = false ∧
     dist.onAux.contains .mood = false ∧

@@ -40,17 +40,17 @@ def gloss : String := "1PL-PST-AUX 1PL-cut-FV/IND tree"
 
 /-- Inflectional distribution: agreement doubled, tense on AUX, mood on LV. -/
 def inflDistribution : InflDistribution :=
-  { onAux := [.agreement, .tense]
-  , onLex := [.agreement, .mood] }
+  { onAux := [.agreement .subj, .tense]
+  , onLex := [.agreement .subj, .mood] }
 
 /-! ## Verification -/
 
 theorem form_nonempty : form ≠ "" := by decide
 
-/-- Agreement is doubled: it appears on both AUX and LV. -/
+/-- Agreement is doubled: subject agreement appears on both AUX and LV. -/
 theorem agreement_doubled :
-    inflDistribution.onAux.contains .agreement = true ∧
-    inflDistribution.onLex.contains .agreement = true := by
+    inflDistribution.onAux.contains (.agreement .subj) = true ∧
+    inflDistribution.onLex.contains (.agreement .subj) = true := by
   exact ⟨by decide, by decide⟩
 
 /-- Tense is split to AUX only. -/

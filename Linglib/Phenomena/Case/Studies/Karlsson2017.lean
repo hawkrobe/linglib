@@ -175,7 +175,7 @@ def slotToBybeeCat : NominalSlot → Option MorphCategory
   | .stem       => some .stem
   | .number     => some .number
   | .case_      => none          -- no Bybee category for case
-  | .possessive => some .agreement
+  | .possessive => some (.agreement .poss)
   | .clitic     => none          -- clitics are outside Bybee's scope
 
 /-- The Bybee-mappable subset of Finnish nominal slots, in suffix order. -/
@@ -194,7 +194,7 @@ theorem three_bybee_mappable : bybeeSlots.length = 3 := by native_decide
 
 /-- The Bybee-mappable slots are: stem, number, agreement. -/
 theorem bybee_slots_are :
-    bybeeSlots = [.stem, .number, .agreement] := by native_decide
+    bybeeSlots = [.stem, .number, .agreement .poss] := by native_decide
 
 /-- The Bybee-mappable nominal slots respect the relevance hierarchy:
     stem (0) < number (3) < agreement (8). -/
@@ -214,6 +214,6 @@ theorem clitic_no_bybee_category :
     consistent with number appearing closer to the stem in Finnish. -/
 theorem number_closer_than_agreement :
     MorphCategory.peripherality .number <
-    MorphCategory.peripherality .agreement := by decide
+    MorphCategory.peripherality (.agreement .poss) := by decide
 
 end Karlsson2017

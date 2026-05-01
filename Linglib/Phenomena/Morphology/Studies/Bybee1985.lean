@@ -252,9 +252,9 @@ def toMorphCategory : BybeeCategory → MorphCategory
   | .tense         => .tense
   | .mood          => .mood
   | .numberAgr     => .number
-  | .personAgr     => .agreement
-  | .personAgrObj  => .agreement
-  | .genderAgr     => .agreement
+  | .personAgr     => .agreement .subj
+  | .personAgrObj  => .agreement .obj
+  | .genderAgr     => .agreement .subj
 
 /-- The substrate's `peripherality` ordering is **strictly monotonic** on
 the six categories Bybee discusses in Ch 2 §3 (excluding the agreement

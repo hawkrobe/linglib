@@ -1,4 +1,5 @@
 import Linglib.Core.Word
+import Linglib.Core.Agreement.Controller
 
 /-!
 # Morphological Infrastructure
@@ -204,11 +205,27 @@ inductive MorphCategory where
   | tense         -- past, future, present
   | mood          -- desiderative, subjunctive, imperative
   | negation      -- negation markers
-  | agreement     -- subject/object agreement, politeness
+  /-- Agreement morphology, parameterized by the grammatical role of
+      the controlling NP (`Core.Agreement.Controller`). The role
+      distinction (subj vs obj vs poss vs ...) is what allows Anderson
+      Ch 5 §5.2 split/doubled AVC typology to be Lean-checkable;
+      Bybee 1985's `personAgr / personAgrObj / genderAgr` source
+      distinctions also round-trip cleanly. See
+      `scratch/morphcategory_agreement_split_plan.md` for the design
+      rationale (0.230.578-0.230.584). -/
+  | agreement (controller : Core.Agreement.Controller)
   | nonfinite     -- nonfinite markers, interrogative/relative
   | number        -- number marking on nouns (not verb agreement)
   | degree        -- comparative/superlative on adjectives
   deriving Repr, DecidableEq
+
+/-- Predicate testing whether a `MorphCategory` is an agreement category,
+    independent of which `Controller` role parameterizes it. Used for
+    Bybee-style relevance-hierarchy code that doesn't care which role
+    triggers the agreement, only that agreement IS the category. -/
+def MorphCategory.IsAgreement : MorphCategory → Bool
+  | .agreement _ => true
+  | _ => false
 
 /-- Peripherality: numerical embedding of Bybee's relevance hierarchy
 where **higher = farther from stem = less semantically relevant**.
@@ -245,18 +262,18 @@ that reads these ranks):
   morphology often changes syntactic category, outside the scope
   of inflectional categories proper). -/
 def MorphCategory.peripherality : MorphCategory → Nat
-  | .stem       => 0
-  | .derivation => 1
-  | .valence    => 2
-  | .number     => 3
-  | .voice      => 3
-  | .aspect     => 4
-  | .degree     => 5
-  | .tense      => 5
-  | .mood       => 6
-  | .negation   => 7
-  | .agreement  => 8
-  | .nonfinite  => 9
+  | .stem        => 0
+  | .derivation  => 1
+  | .valence     => 2
+  | .number      => 3
+  | .voice       => 3
+  | .aspect      => 4
+  | .degree      => 5
+  | .tense       => 5
+  | .mood        => 6
+  | .negation    => 7
+  | .agreement _ => 8  -- any controller role lands at Bybee rank 8
+  | .nonfinite   => 9
 
 /-- A morpheme ordering respects the relevance hierarchy if peripherality
 is non-decreasing from stem outward (stem-adjacent first). -/
