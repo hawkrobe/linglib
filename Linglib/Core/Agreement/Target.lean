@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Agreement Target Hierarchy @cite{corbett-1991}
 
@@ -23,8 +25,8 @@ inductive AgreementTarget where
   | predicate         -- predicate adjective/verb (e.g. Russian *kniga interesnaja*)
   | relativePronoun   -- relative pronoun (e.g. German *der/die/das*)
   | personalPronoun   -- personal pronoun (e.g. English *he/she/it*)
-  | verbTarget        -- verb (e.g. Hindi *laRkaa aayaa / laRkii aayii*)
-  deriving DecidableEq, Repr
+  | verb              -- verb (e.g. Hindi *laRkaa aayaa / laRkii aayii*)
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numeric rank in the Agreement Hierarchy: higher = more likely to show
     agreement (more syntactic); lower = less likely (more semantic). -/
@@ -33,13 +35,19 @@ def AgreementTarget.rank : AgreementTarget → Nat
   | .predicate       => 3
   | .relativePronoun => 2
   | .personalPronoun => 1
-  | .verbTarget      => 0
+  | .verb            => 0
 
-/-- The hierarchy rank is injective — no two positions share a rank.
-    This guarantees the Agreement Hierarchy is a total (not just partial) order:
-    for any two targets, one strictly outranks the other. -/
-theorem agreement_rank_injective (a b : AgreementTarget) (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [AgreementTarget.rank]
+/-- The Agreement Hierarchy is a `LinearOrder` lifted from the rank.
+    Provides `≤`, `<`, `min`, `max`, `Finset.sort`, etc. for free. -/
+instance : LinearOrder AgreementTarget :=
+  LinearOrder.lift' AgreementTarget.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank])
+
+/-- The hierarchy rank is injective — derivable from the `LinearOrder`
+    instance, restated here as a named lemma for direct invocation. -/
+theorem AgreementTarget.rank_injective :
+    Function.Injective AgreementTarget.rank :=
+  fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank]
 
 -- ============================================================================
 -- § 2: Predicate Hierarchy (@cite{corbett-2000} Ch 6)
@@ -54,14 +62,14 @@ theorem agreement_rank_injective (a b : AgreementTarget) (h : a.rank = b.rank) :
     participle; if on a participle, then on an adjective; etc.
 
     This is orthogonal to `AgreementTarget`, which treats `.predicate` and
-    `.verbTarget` as two positions on the main hierarchy. The Predicate
-    Hierarchy provides finer resolution *within* the predicate position. -/
+    `.verb` as two positions on the main hierarchy. The Predicate Hierarchy
+    provides finer resolution *within* the predicate position. -/
 inductive PredicateTarget where
-  | verb         -- finite verb agreement (= AgreementTarget.verbTarget)
+  | verb         -- finite verb agreement (= AgreementTarget.verb)
   | participle   -- participial agreement
   | adjective    -- predicate adjective (= AgreementTarget.predicate)
   | noun         -- predicate noun ("she is a doctor")
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Rank in the Predicate Hierarchy: higher = more likely to show
     semantic agreement. verb (0) < participle (1) < adjective (2) < noun (3). -/
@@ -71,16 +79,23 @@ def PredicateTarget.rank : PredicateTarget → Nat
   | .adjective  => 2
   | .noun       => 3
 
-/-- The Predicate Hierarchy rank is injective — a total order on predicate
-    positions. Semantic agreement increases monotonically along the hierarchy. -/
-theorem predicate_rank_injective (a b : PredicateTarget) (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [PredicateTarget.rank]
+/-- The Predicate Hierarchy is a `LinearOrder` lifted from the rank. -/
+instance : LinearOrder PredicateTarget :=
+  LinearOrder.lift' PredicateTarget.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [PredicateTarget.rank])
 
-/-- Map a PredicateTarget to the corresponding AgreementTarget.
-    The predicate sub-positions map to either `.predicate` or `.verbTarget`. -/
+/-- The Predicate Hierarchy rank is injective. -/
+theorem PredicateTarget.rank_injective :
+    Function.Injective PredicateTarget.rank :=
+  fun a b h => by cases a <;> cases b <;> simp_all [PredicateTarget.rank]
+
+/-- Map a `PredicateTarget` to the corresponding `AgreementTarget`.
+    Verb maps to `.verb`; participle/adjective/noun all map to
+    `.predicate`. Many-to-one, monotone (preserves the `≤` order
+    once you account for rank collapsing inside `.predicate`). -/
 def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
-  | .verb       => .verbTarget
-  | .participle => .predicate  -- participial agreement ≈ predicate position
+  | .verb       => .verb
+  | .participle => .predicate
   | .adjective  => .predicate
   | .noun       => .predicate
 
@@ -105,7 +120,7 @@ def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
 inductive AgreementType where
   | grammatical   -- pure agreement (cannot stand alone as argument)
   | pronominal    -- cross-referencing (can be sole argument expression)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 4: Agreement Direction (@cite{bickel-nichols-2001})
@@ -133,6 +148,6 @@ inductive AgreementType where
 inductive AgreementDirection where
   | headDriven       -- head drives features → dependents carry morphology (NP concord)
   | dependentDriven  -- dependent drives features → head carries morphology (verb agreement)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 end Core

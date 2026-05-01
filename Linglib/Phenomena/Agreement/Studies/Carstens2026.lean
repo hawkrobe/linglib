@@ -380,7 +380,7 @@ def xhosaGenderProfile : Typology.Gender.GenderProfile where
   basis := .nonSexBased
   assignment := .semanticAndFormal
   semanticBases := [.humanness, .animacy]
-  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verbTarget]
+  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb]
 
 /-- Shona gender profile: 8 genders (5+), non-sex-based. -/
 def shonaGenderProfile : Typology.Gender.GenderProfile where
@@ -391,7 +391,7 @@ def shonaGenderProfile : Typology.Gender.GenderProfile where
   basis := .nonSexBased
   assignment := .semanticAndFormal
   semanticBases := [.humanness]
-  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verbTarget]
+  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb]
 
 /-- Both profiles satisfy the Semantic Core Generalization
     (@cite{kramer-2020} ex. 2/28). -/

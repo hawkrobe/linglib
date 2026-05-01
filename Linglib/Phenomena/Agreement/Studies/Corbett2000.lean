@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
-import Linglib.Core.AgreementTarget
+import Linglib.Core.Agreement.Target
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
@@ -360,7 +360,7 @@ def britishCommittee : AgreementProfile :=
       | .predicate       => true   -- the committee have decided
       | .relativePronoun => true   -- the committee, who have...
       | .personalPronoun => true   -- the committee... they
-      | .verbTarget      => true }
+      | .verb      => true }
 
 /-- American English *committee*: semantic agreement rare in predicate,
     but available in relative and personal pronoun. -/
@@ -371,7 +371,7 @@ def americanCommittee : AgreementProfile :=
       | .predicate       => false  -- ?the committee have decided (rare in AmE)
       | .relativePronoun => true
       | .personalPronoun => true
-      | .verbTarget      => false }
+      | .verb      => false }
 
 /-- Serbo-Croatian *deca* 'children': morphologically feminine singular,
     semantically plural. Semantic agreement available everywhere. -/

@@ -1,4 +1,4 @@
-import Linglib.Core.AgreementTarget
+import Linglib.Core.Agreement.Target
 import Linglib.Datasets.WALS.Features.F30A
 import Linglib.Datasets.WALS.Features.F31A
 import Linglib.Datasets.WALS.Features.F32A

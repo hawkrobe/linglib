@@ -1,5 +1,5 @@
 import Linglib.Typology.Gender
-import Linglib.Core.AgreementTarget
+import Linglib.Core.Agreement.Target
 
 /-!
 # Corbett (1991): Gender — typology of noun-class systems
@@ -116,7 +116,7 @@ def hindiUrdu : GenderProfile :=
   { name := "Hindi-Urdu", iso639 := "hin"
   , genderCount := .two, rawGenderCount := 2
   , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .verbTarget]
+  , agreementTargets := [.attributive, .predicate, .verb]
   , semanticBases := [.sex] }
 
 def irish : GenderProfile :=
@@ -130,7 +130,7 @@ def hebrew : GenderProfile :=
   { name := "Hebrew", iso639 := "heb"
   , genderCount := .two, rawGenderCount := 2
   , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .verbTarget]
+  , agreementTargets := [.attributive, .predicate, .verb]
   , semanticBases := [.sex] }
 
 /-- Hausa (Chadic, Afroasiatic): 2 genders (masc/fem). @cite{corbett-1991}
@@ -154,7 +154,7 @@ def hausa : GenderProfile :=
   { name := "Hausa", iso639 := "hau"
   , genderCount := .two, rawGenderCount := 2
   , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .personalPronoun, .verbTarget]
+  , agreementTargets := [.attributive, .personalPronoun, .verb]
   , semanticBases := [.sex] }
 
 -- ── 3-gender languages ──────────────────────────────────────────────────
@@ -176,7 +176,7 @@ def russian : GenderProfile :=
   , genderCount := .three, rawGenderCount := 3
   , basis := .sexBased, assignment := .semanticAndFormal
   , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verbTarget]
+                         .personalPronoun, .verb]
   , semanticBases := [.sex] }
 
 def latin : GenderProfile :=
@@ -213,7 +213,7 @@ def georgian : GenderProfile :=
   { name := "Georgian", iso639 := "kat"
   , genderCount := .four, rawGenderCount := 4
   , basis := .nonSexBased, assignment := .semanticOnly
-  , agreementTargets := [.personalPronoun, .verbTarget]
+  , agreementTargets := [.personalPronoun, .verb]
   , semanticBases := [.rationality, .animacy] }
 
 -- ── 5+ noun-class languages ────────────────────────────────────────────
@@ -226,7 +226,7 @@ def swahili : GenderProfile :=
   , genderCount := .fivePlus, rawGenderCount := 15
   , basis := .nonSexBased, assignment := .semanticAndFormal
   , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verbTarget]
+                         .personalPronoun, .verb]
   , semanticBases := [.humanness, .animacy, .shape] }
 
 def zulu : GenderProfile :=
@@ -234,7 +234,7 @@ def zulu : GenderProfile :=
   , genderCount := .fivePlus, rawGenderCount := 15
   , basis := .nonSexBased, assignment := .semanticAndFormal
   , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verbTarget]
+                         .personalPronoun, .verb]
   , semanticBases := [.humanness, .animacy, .shape] }
 
 /-- Fula (Atlantic, Niger-Congo): ~20+ noun classes, one of the richest
@@ -243,7 +243,7 @@ def fula : GenderProfile :=
   { name := "Fula", iso639 := "ful"
   , genderCount := .fivePlus, rawGenderCount := 20
   , basis := .nonSexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .personalPronoun, .verbTarget]
+  , agreementTargets := [.attributive, .predicate, .personalPronoun, .verb]
   , semanticBases := [.humanness, .animacy, .shape] }
 
 /-- All 22 language profiles in the sample. -/
@@ -362,7 +362,7 @@ theorem gender_implies_agreement :
     the languages agree only on verbs). -/
 theorem agreement_hierarchy_verb_implies_higher :
     allProfiles.all (λ p =>
-      if hasTarget p.agreementTargets .verbTarget
+      if hasTarget p.agreementTargets .verb
       then hasTarget p.agreementTargets .attributive ||
            hasTarget p.agreementTargets .predicate ||
            hasTarget p.agreementTargets .personalPronoun
@@ -371,7 +371,7 @@ theorem agreement_hierarchy_verb_implies_higher :
 /-- No language in the sample agrees only on verbs. -/
 theorem no_verb_only_agreement :
     allProfiles.all (λ p =>
-      if p.agreementTargets == [.verbTarget]
+      if p.agreementTargets == [.verb]
       then false
       else true) = true := by native_decide
 
@@ -383,7 +383,7 @@ theorem no_pronoun_only_agreement :
       if p.genderCount != .none && hasTarget p.agreementTargets .personalPronoun
       then hasTarget p.agreementTargets .attributive ||
            hasTarget p.agreementTargets .predicate ||
-           hasTarget p.agreementTargets .verbTarget
+           hasTarget p.agreementTargets .verb
       else true) = true := by native_decide
 
 /-- Noun-class systems (5+) show agreement on more targets than smaller

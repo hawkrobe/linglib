@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.583 — Refactor `Core/AgreementTarget.lean` (mathlib-shaped) + dir move to `Core/Agreement/`
+
+Mathlib-quality cleanup of the Corbett-1991/2000/Bickel-Nichols-2001 agreement substrate, prepping for the new `Controller` axis (Corbett 2006 §6.6) landing in 0.230.584.
+
+**Refactor**:
+- `LinearOrder` instances on `AgreementTarget` and `PredicateTarget` via `LinearOrder.lift'` (mathlib pattern, mirroring `Theories/Diachronic/Grammaticalization.lean:99`).
+- Rename `agreement_rank_injective` / `predicate_rank_injective` to dot-namespace `AgreementTarget.rank_injective` / `PredicateTarget.rank_injective`.
+- Rename `verbTarget` → `verb` (symmetric with sibling cases; `Core.AgreementTarget.verb` and `Core.PredicateTarget.verb` coexist via namespacing).
+- `Inhabited` derives added.
+
+**Dir move**: `Core/AgreementTarget.lean` → `Core/Agreement/Target.lean`. Sets up the subdir for `Controller.lean` (Commit B) and future `Direction.lean` / `Type.lean` splits if the Bickel-Nichols enums grow out of `Target.lean`.
+
+**Consumer migrations** (4 files): `Phenomena/Agreement/Studies/Corbett2000.lean` + `Phenomena/Gender/Studies/Corbett1991.lean` + `Typology/Gender.lean` (import path updated) + `Phenomena/Agreement/Studies/Carstens2026.lean` (verbTarget → verb). 13 verbTarget references migrated total.
+
+**Build**: 5676/5676 jobs green.
+
 ### 0.230.582 — Audit-driven Typology/Adposition.lean refactor: substrate parity with WordOrder + AdpositionOrder.notInWALS / Option flatten + AdpositionOrder.ofWALS namespacing + IsPrepositional/IsPostpositional/headDirection promotion + K'iche' Adposition + dryer_bdt_ov_postp cross-framework theorem + BroekhuisCorver2026 substrate adoption + OVOrder.IsOV/IsVO promotion
 
 Four-agent deep audit on `Linglib/Typology/Adposition.lean` (49 LOC, sister substrate to `Typology/WordOrder.lean`). The audit was the natural follow-up to the 0.230.576/579 WordOrder refactor cycle: parallel structure (WALS-derived enum + `ofWALS` converter), shared consumer (`Greenberg1963.lean` imports both for U3/U4), and the WordOrder-side patterns ready to transfer. Convergent findings across agents: substrate-hygiene mismatch with WordOrder (Option-wrapping vs `.notInWALS` enum case), naming convention divergence, classification predicates re-stipulated in consumer, missing head-direction projection, missing Dryer-BDT cross-framework theorem, K'iche' Adposition Fragment absent (deferred MJ-4 from WordOrder round 1), `BroekhuisCorver2026.lean` bypassing the substrate.
