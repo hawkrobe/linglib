@@ -1,0 +1,549 @@
+import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.InformationTheory
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+import Mathlib.InformationTheory.KullbackLeibler.Basic
+
+/-!
+# Shannon entropy on `PMF`
+
+Entropy / mutual information / conditional entropy / KL divergence / JSD as
+methods on mathlib's `PMF α` (gated by `[Fintype α]`).
+
+This file makes `PMF` the canonical distribution type for Shannon-entropy
+operations across linglib. After the unification refactor (CHANGELOG entry
+forthcoming), consumers go from:
+
+    Core.InformationTheory.entropy Finset.univ p     -- old shape (private after Phase 6)
+    p.entropy                                          -- new shape (PMF α)
+
+The `Core.InformationTheory` module is reduced to non-Shannon-entropy
+primitives (ΔP, structural lemmas about negMulLog/klFun/Hellinger). The
+PMF-canonical shape is what RSA pragmatic operators (`L0OfMeaning` /
+`S1Belief` / `L1`) already use as their normalized output type, and is the
+natural target type for `ParadigmSystem` and the Rathi `LearnerModel`
+(both refactored in the same migration).
+
+## Public API
+
+| Operator | Signature |
+|---|---|
+| `PMF.entropy` | `(p : PMF α) → ℝ`  — `H(p) = -∑ p log p` |
+| `PMF.mutualInformation` | `(joint : PMF (α × β)) → ℝ`  — `I(X;Y)` from joint |
+| `PMF.conditionalEntropy` | `(joint : PMF (α × β)) → ℝ`  — `H(β \| α)` from joint |
+| `PMF.klDiv` | `(p q : PMF α) [MeasurableSpace α] → ℝ≥0∞`  — KL(p ‖ q), grounded in mathlib's `InformationTheory.klDiv` via `PMF.toMeasure` |
+| `PMF.jsd` | `(p q : PMF α) → ℝ`  — Jensen-Shannon divergence |
+| `PMF.toRealFn` | `(p : PMF α) → α → ℝ`  — `ℝ≥0∞ → ℝ` coercion |
+
+## Implementation
+
+Each operator is defined as `noncomputable def` (uses `Real.log` via
+`Real.negMulLog`, plus `ENNReal.toReal`). Marginals are derived via
+`PMF.map Prod.fst/snd` so the joint-distribution shape is canonical.
+
+The proofs delegate to `Core.InformationTheory` lemmas via the coercion
+`PMF.toRealFn : PMF α → α → ℝ`. The bridge is purely definitional
+(`rfl`-provable). Phase 6 of the unification refactor keeps the
+`Core.InformationTheory.entropy`-family operators as `private` helpers
+for these delegations rather than as a public API.
+
+## Cover-Thomas anchoring
+
+Foundational properties match the Cover-Thomas (2006) information-theory
+text. `entropy_nonneg` (CT 2.6.4) is proved here; `mutualInformation_nonneg`
+(CT 2.6.5) and `conditionalEntropy_le_entropy` (CT 2.6.4) require
+marginal-from-joint structural lemmas (`PMF.map_apply` on `Prod.fst/snd`)
+and live in Phase 4 of the refactor (cross-paper bridges) along with the
+substrate-level theorems that consume them.
+
+All proofs in this file are structural. No `sorry`, no `native_decide`.
+-/
+
+set_option autoImplicit false
+
+namespace PMF
+
+variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
+
+open scoped ENNReal
+
+-- ============================================================================
+-- §1: ENNReal-to-Real coercion + sum-to-1 lemma
+-- ============================================================================
+
+/-- Coerce a `PMF α`'s mass function from `ℝ≥0∞` to `ℝ`. -/
+noncomputable def toRealFn (p : PMF α) : α → ℝ := fun a => (p a).toReal
+
+theorem toRealFn_nonneg {α : Type*} (p : PMF α) (a : α) : 0 ≤ p.toRealFn a :=
+  ENNReal.toReal_nonneg
+
+theorem toRealFn_le_one {α : Type*} (p : PMF α) (a : α) : p.toRealFn a ≤ 1 := by
+  have h := p.coe_le_one a
+  unfold toRealFn
+  exact ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using h)
+
+/-- For a `[Fintype α]` PMF, the sum of `toReal`-coerced masses is 1. -/
+theorem sum_toRealFn_eq_one (p : PMF α) :
+    ∑ a, p.toRealFn a = 1 := by
+  -- Step 1: ∑ a, p a = 1 in ℝ≥0∞ (use the pattern from PMFFin.lean line 73)
+  have h_sum_ennreal : ∑ a : α, p a = 1 :=
+    (PMF.tsum_coe p ▸ tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
+      absurd (Finset.mem_univ a) h)).symm
+  -- Step 2: convert to ℝ via toReal_sum (each summand is finite)
+  unfold toRealFn
+  rw [show (∑ a, (p a).toReal) = ((∑ a : α, p a) : ℝ≥0∞).toReal from
+      (ENNReal.toReal_sum (fun a _ => p.apply_ne_top a)).symm]
+  rw [h_sum_ennreal, ENNReal.toReal_one]
+
+-- ============================================================================
+-- §1.5: PMF construction from real-valued weight functions
+-- ============================================================================
+
+/-! ### Constructing PMFs from `α → ℝ` weight functions
+
+The bridge consumers use to convert their `(α → ℝ)`-shape data
+(non-negative weights with a positive sum) into the canonical `PMF α`.
+Wraps mathlib's `PMF.normalize` with the ENNReal coercion.
+
+Anti-drift: grounded in `PMF.normalize` (mathlib). -/
+
+/-- Construct a `PMF α` from a non-negative real-valued weight function with
+    at least one positive entry. Normalizes to sum to 1.
+
+    Use this for consumers migrating from the (deprecated)
+    `Core.InformationTheory.entropy Finset.univ p`-style API: the new shape
+    is `(PMF.ofRealWeightFn p hp_nn ⟨a, ha⟩).entropy`. -/
+noncomputable def ofRealWeightFn {α : Type*} [Fintype α]
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a)
+    (h_pos : ∃ a, 0 < f a) : PMF α :=
+  let g : α → ℝ≥0∞ := fun a => ENNReal.ofReal (f a)
+  PMF.normalizeOfFintype g (Classical.choose h_pos)
+    (by
+      simp only [g, ne_eq, ENNReal.ofReal_eq_zero, not_le]
+      exact Classical.choose_spec h_pos)
+    (fun _ => ENNReal.ofReal_ne_top)
+
+-- ============================================================================
+-- §2: Entropy
+-- ============================================================================
+
+/-- Shannon entropy of `p` (in nats): `H(p) = -∑ p log p = ∑ negMulLog p`.
+
+    Defined directly on `PMF α` (not via delegation to
+    `Core.InformationTheory.entropy`); the equivalence is the bridge
+    theorem `entropy_eq_sum_negMulLog_toReal`. This independence lets the
+    PMF entropy substrate stand on its own (mathlib pattern: each operator
+    at its natural type, no cross-namespace delegation). -/
+noncomputable def entropy (p : PMF α) : ℝ :=
+  ∑ a, Real.negMulLog (p a).toReal
+
+/-- Entropy is non-negative (Cover-Thomas 2.6.4). Direct proof via
+    `Real.negMulLog_nonneg` applied pointwise: each summand is `≥ 0` since
+    `(p a).toReal ∈ [0, 1]`. -/
+theorem entropy_nonneg (p : PMF α) : 0 ≤ p.entropy := by
+  apply Finset.sum_nonneg
+  intro a _
+  exact Real.negMulLog_nonneg (p.toRealFn_nonneg a) (p.toRealFn_le_one a)
+
+/-- **Anti-drift bridge to mathlib's `Real.binEntropy`** (deferred): on a
+    Bernoulli PMF with mass `p` and `1 - p`, our `PMF.entropy` should
+    agree with mathlib's specialized `binEntropy p`. The bridge SHAPE is
+    anti-drift — if mathlib changes `binEntropy` semantics the equivalence
+    becomes provably false.
+
+    TODO: stated in a follow-up. Requires `PMF.bernoulli` (mathlib has it
+    over `ℝ≥0`; needs ℝ-coercion + arithmetic identities `negMulLog x =
+    x · log x⁻¹` for the Bernoulli case). ~20 LOC. -/
+example : True := trivial  -- placeholder; see TODO above
+
+-- ============================================================================
+-- §3: Marginals (via PMF.map)
+-- ============================================================================
+
+/-- Marginal along the first projection. -/
+noncomputable def marginalFst (joint : PMF (α × β)) : PMF α := joint.map Prod.fst
+
+/-- Marginal along the second projection. -/
+noncomputable def marginalSnd (joint : PMF (α × β)) : PMF β := joint.map Prod.snd
+
+-- ============================================================================
+-- §3.5: Marginal-from-joint structural lemmas
+-- ============================================================================
+
+/-- `(joint.map Prod.fst) a = ∑ b, joint (a, b)` for finite-Fintype joint PMFs.
+    The first marginal is the row-sum of the joint. -/
+theorem marginalFst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
+    joint.map Prod.fst a = ∑ b : β, joint (a, b) := by
+  rw [PMF.map_apply]
+  rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
+        (fun p (h : p ∉ Finset.univ) => absurd (Finset.mem_univ p) h)]
+  rw [Fintype.sum_prod_type]
+  rw [Finset.sum_eq_single a]
+  · simp
+  · intro b _ hb
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [if_neg]
+    exact fun h => hb h.symm
+  · intro h
+    exact absurd (Finset.mem_univ a) h
+
+/-- `(joint.map Prod.snd) b = ∑ a, joint (a, b)` for finite-Fintype joint PMFs.
+    The second marginal is the column-sum of the joint. -/
+theorem marginalSnd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
+    joint.map Prod.snd b = ∑ a : α, joint (a, b) := by
+  rw [PMF.map_apply]
+  rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
+        (fun p (h : p ∉ Finset.univ) => absurd (Finset.mem_univ p) h)]
+  rw [Fintype.sum_prod_type]
+  rw [Finset.sum_comm, Finset.sum_eq_single b]
+  · simp
+  · intro a _ ha
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [if_neg]
+    exact fun h => ha h.symm
+  · intro h
+    exact absurd (Finset.mem_univ b) h
+
+/-- `toRealFn` of the first marginal equals the row-sum of `toRealFn` of the joint. -/
+theorem marginalFst_toRealFn_eq_sum [DecidableEq α] (joint : PMF (α × β)) (a : α) :
+    joint.marginalFst.toRealFn a = ∑ b : β, joint.toRealFn (a, b) := by
+  unfold marginalFst toRealFn
+  rw [marginalFst_apply]
+  rw [ENNReal.toReal_sum (fun b _ => joint.apply_ne_top (a, b))]
+
+/-- `toRealFn` of the second marginal equals the column-sum of `toRealFn` of the joint. -/
+theorem marginalSnd_toRealFn_eq_sum [DecidableEq β] (joint : PMF (α × β)) (b : β) :
+    joint.marginalSnd.toRealFn b = ∑ a : α, joint.toRealFn (a, b) := by
+  unfold marginalSnd toRealFn
+  rw [marginalSnd_apply]
+  rw [ENNReal.toReal_sum (fun a _ => joint.apply_ne_top (a, b))]
+
+-- ============================================================================
+-- §4: Mutual information
+-- ============================================================================
+
+/-- Mutual information `I(X;Y) = H(X) + H(Y) - H(X,Y)`, from a joint PMF on
+    `(α × β)` with marginals derived via `PMF.map`. -/
+noncomputable def mutualInformation (joint : PMF (α × β)) : ℝ :=
+  joint.marginalFst.entropy + joint.marginalSnd.entropy - joint.entropy
+
+/-- **Mutual information is non-negative** (Cover-Thomas 2.6.5).
+    Requires strictly-positive marginals on both axes (the standard hypothesis
+    for `kl_nonneg`-based proofs of MI ≥ 0). -/
+theorem mutualInformation_nonneg [DecidableEq α] [DecidableEq β]
+    (joint : PMF (α × β))
+    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
+    0 ≤ joint.mutualInformation := by
+  have h := Core.InformationTheory.mutualInformation_nonneg
+    joint.toRealFn joint.marginalFst.toRealFn joint.marginalSnd.toRealFn
+    (fun p => joint.toRealFn_nonneg p)
+    h_margX_pos h_margY_pos
+    joint.marginalFst_toRealFn_eq_sum
+    joint.marginalSnd_toRealFn_eq_sum
+    joint.sum_toRealFn_eq_one
+    joint.marginalFst.sum_toRealFn_eq_one
+    joint.marginalSnd.sum_toRealFn_eq_one
+  -- PMF.entropy = Core.InformationTheory.entropy Finset.univ p.toRealFn by definition.
+  -- mutualInformation in PMF shape and Core shape are therefore equal.
+  show 0 ≤ Core.InformationTheory.entropy Finset.univ joint.marginalFst.toRealFn +
+           Core.InformationTheory.entropy Finset.univ joint.marginalSnd.toRealFn -
+           Core.InformationTheory.entropy Finset.univ joint.toRealFn
+  unfold Core.InformationTheory.mutualInformation at h
+  exact h
+
+-- ============================================================================
+-- §5: Conditional entropy
+-- ============================================================================
+
+/-- Conditional entropy `H(β | α) = H(α, β) - H(α)`. -/
+noncomputable def conditionalEntropy (joint : PMF (α × β)) : ℝ :=
+  joint.entropy - joint.marginalFst.entropy
+
+/-- **Conditioning reduces entropy** (Cover-Thomas 2.6.4): `H(β | α) ≤ H(β)`.
+    Direct corollary of `mutualInformation_nonneg`: `I(X;Y) = H(Y) - H(Y|X) ≥ 0`. -/
+theorem conditionalEntropy_le_entropy [DecidableEq α] [DecidableEq β]
+    (joint : PMF (α × β))
+    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
+    joint.conditionalEntropy ≤ joint.marginalSnd.entropy := by
+  have hmi := joint.mutualInformation_nonneg h_margX_pos h_margY_pos
+  unfold mutualInformation conditionalEntropy at *
+  linarith
+
+-- ============================================================================
+-- §6: KL divergence — grounded in mathlib's `InformationTheory.klDiv`
+-- ============================================================================
+
+/-! ### KL divergence on PMFs: rfl-bridge to mathlib
+
+`PMF.klDiv` is defined as the mathlib measure-theoretic
+`InformationTheory.klDiv` applied to `PMF.toMeasure`. The bridge is
+`rfl`-provable — drift is structurally impossible. If mathlib refactors
+`klDiv`, our def follows automatically.
+
+The return type `ℝ≥0∞` matches mathlib's. Non-negativity is by **type**,
+not by theorem — no `klDiv_nonneg` lemma needed. All ~12 mathlib `klDiv`
+theorems (`klDiv_self`, `klDiv_zero_left`, `klDiv_eq_zero_iff`,
+`klDiv_eq_top_iff`, `klDiv_ne_top`, ...) become available on `PMF.klDiv`
+via the `rfl`-bridge with no further proof obligation.
+
+**There is no `PMF.klDivergence` (`ℝ`-returning) backwards-compatibility
+form.** Per linglib's no-backcompat-shims discipline (MEMORY:
+`feedback_no_backcompat`), the previous discrete-sum `klDivergence` was
+deleted to force consumers onto the single canonical API. Consumers that
+need an `ℝ` value use `(p.klDiv q).toReal`. The discrete-sum form (when
+needed for proof manipulation) is the theorem `klDiv_eq_sum_klFun`. -/
+
+/-- **KL divergence on PMFs**, grounded in mathlib's
+    `InformationTheory.klDiv`. Returns `ℝ≥0∞` (non-negative by type;
+    `∞` for non-abs-continuous case). Inherits all mathlib `klDiv`
+    theorems via the `rfl`-bridge. Requires `[MeasurableSpace α]`; for
+    `[Fintype α]`, equip with the discrete `⊤` measurable space. -/
+noncomputable def klDiv {α : Type*} [MeasurableSpace α] (p q : PMF α) : ℝ≥0∞ :=
+  _root_.InformationTheory.klDiv p.toMeasure q.toMeasure
+
+/-- The rfl-bridge: `PMF.klDiv` IS mathlib's `klDiv` on the `toMeasure`
+    coercions. Drift is structurally impossible. -/
+@[simp] theorem klDiv_eq_toMeasure_klDiv {α : Type*} [MeasurableSpace α]
+    (p q : PMF α) :
+    p.klDiv q = _root_.InformationTheory.klDiv p.toMeasure q.toMeasure := rfl
+
+/-! ### Mathlib-inherited theorems
+
+The following theorems are direct corollaries of mathlib's `klDiv` API on
+the `toMeasure`-coerced PMFs. They're stated here as 1-line wrappers for
+ergonomic consumer access (`p.klDiv_self` reads better than
+`_root_.InformationTheory.klDiv_self p.toMeasure`). -/
+
+/-- Mathlib `klDiv_self`: KL divergence of a PMF against itself is 0. -/
+theorem klDiv_self {α : Type*} [MeasurableSpace α] (p : PMF α) :
+    p.klDiv p = 0 :=
+  _root_.InformationTheory.klDiv_self _
+
+/-- KL divergence is `∞` exactly when `p` is not absolutely continuous wrt `q`
+    or `llr` is not integrable. Inherited from mathlib's `klDiv_eq_top_iff`. -/
+theorem klDiv_eq_top_iff {α : Type*} [MeasurableSpace α] (p q : PMF α) :
+    p.klDiv q = ∞ ↔
+    MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure →
+    ¬ MeasureTheory.Integrable
+        (MeasureTheory.llr p.toMeasure q.toMeasure) p.toMeasure :=
+  _root_.InformationTheory.klDiv_eq_top_iff
+
+/-- KL divergence is finite iff `p ≪ q` and `llr` is integrable.
+    Inherited from mathlib's `klDiv_ne_top_iff`. -/
+theorem klDiv_ne_top_iff {α : Type*} [MeasurableSpace α] (p q : PMF α) :
+    p.klDiv q ≠ ∞ ↔
+    MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure ∧
+    MeasureTheory.Integrable
+      (MeasureTheory.llr p.toMeasure q.toMeasure) p.toMeasure :=
+  _root_.InformationTheory.klDiv_ne_top_iff
+
+/-- Sufficient condition for `p.klDiv q ≠ ∞`. Inherited from mathlib's
+    `klDiv_ne_top`. -/
+theorem klDiv_ne_top {α : Type*} [MeasurableSpace α] {p q : PMF α}
+    (hpq : MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure)
+    (hint : MeasureTheory.Integrable
+      (MeasureTheory.llr p.toMeasure q.toMeasure) p.toMeasure) :
+    p.klDiv q ≠ ∞ :=
+  _root_.InformationTheory.klDiv_ne_top hpq hint
+
+/-- **Discrete-sum reduction theorem** (`klDiv_eq_sum_klFun`):
+    for `[Fintype α]` PMFs, the mathlib-grounded `klDiv` reduces to a
+    discrete sum (when `p ≪ q`; the value is `∞` otherwise).
+
+        p.klDiv q = ∑ a, q a * ENNReal.ofReal (klFun ((p a / q a).toReal))
+
+    Proof structure: bridge `p.toMeasure = q.toMeasure.withDensity (p/q)`
+    via `Measure.ext` + `lintegral_fintype` + per-atom ENNReal cancellation
+    `(p a / q a) * q a = p a` (which holds under singleton-AC); from there
+    `Measure.rnDeriv_withDensity` gives the rnDeriv ae-equality, and
+    `klDiv_eq_lintegral_klFun_of_ac` plus `lintegral_fintype` close the
+    sum reduction. -/
+theorem klDiv_eq_sum_klFun {α : Type*} [Fintype α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] (p q : PMF α)
+    (hpq : MeasureTheory.Measure.AbsolutelyContinuous p.toMeasure q.toMeasure) :
+    p.klDiv q =
+      ∑ a, q a * ENNReal.ofReal (_root_.InformationTheory.klFun
+        (((p a) / (q a)).toReal)) := by
+  -- All functions on `[Fintype α] [MeasurableSingletonClass α]` are measurable.
+  have hf_meas : Measurable (fun x : α => p x / q x) := measurable_of_finite _
+  -- Lift set-AC to atom-AC: `q a = 0 → p a = 0`. Used in ENNReal cancellation.
+  have h_ac_atom : ∀ x : α, q x = 0 → p x = 0 := by
+    intro x hqx
+    have hQ : q.toMeasure {x} = 0 := by
+      rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton x)]; exact hqx
+    have hP : p.toMeasure {x} = 0 := hpq hQ
+    rwa [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton x)] at hP
+  -- Pointwise ENNReal cancellation: `(p x / q x) * q x = p x`.
+  have h_div_mul : ∀ x : α, (p x) / (q x) * (q x) = p x := fun x =>
+    ENNReal.div_mul_cancel' (h_ac_atom x) (fun h => absurd h (PMF.apply_ne_top q x))
+  -- Lift the pointwise identity to a measure-level one:
+  -- `p.toMeasure = q.toMeasure.withDensity (p/q)`.
+  have h_with_density :
+      p.toMeasure = q.toMeasure.withDensity (fun x => p x / q x) := by
+    refine MeasureTheory.Measure.ext (fun s hs => ?_)
+    rw [MeasureTheory.withDensity_apply _ hs,
+        ← MeasureTheory.lintegral_indicator hs,
+        MeasureTheory.lintegral_fintype,
+        PMF.toMeasure_apply_fintype _ s]
+    refine Finset.sum_congr rfl (fun y _ => ?_)
+    rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y)]
+    by_cases hy : y ∈ s
+    · simp only [Set.indicator_of_mem hy]
+      exact (h_div_mul y).symm
+    · simp only [Set.indicator_of_notMem hy, zero_mul]
+  -- The density is the rnDeriv (q.toMeasure-almost-everywhere).
+  have h_rnDeriv :
+      p.toMeasure.rnDeriv q.toMeasure =ᵐ[q.toMeasure] fun x => p x / q x := by
+    conv_lhs => rw [h_with_density]
+    exact MeasureTheory.Measure.rnDeriv_withDensity _ hf_meas
+  -- ae-equality of klFun composed with rnDeriv vs (p/q).
+  have h_integrand : (fun x => ENNReal.ofReal
+      (_root_.InformationTheory.klFun (p.toMeasure.rnDeriv q.toMeasure x).toReal))
+      =ᵐ[q.toMeasure] (fun x => ENNReal.ofReal
+      (_root_.InformationTheory.klFun ((p x / q x).toReal))) := by
+    filter_upwards [h_rnDeriv] with x hx
+    rw [hx]
+  -- Combine: klDiv → mathlib lintegral form → ae-rewrite → lintegral_fintype → atomwise.
+  rw [PMF.klDiv_eq_toMeasure_klDiv,
+      _root_.InformationTheory.klDiv_eq_lintegral_klFun_of_ac hpq,
+      MeasureTheory.lintegral_congr_ae h_integrand,
+      MeasureTheory.lintegral_fintype]
+  refine Finset.sum_congr rfl (fun y _ => ?_)
+  rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y), mul_comm]
+
+-- ============================================================================
+-- §7: Jensen-Shannon divergence
+-- ============================================================================
+
+/-- Jensen-Shannon divergence: `JSD(p, q) = H(m) - (H(p) + H(q))/2` where
+    `m(a) = (p(a) + q(a))/2`. Symmetric and bounded; sqrt is a metric.
+    Defined directly on PMFs. -/
+noncomputable def jsd (p q : PMF α) : ℝ :=
+  (∑ a, Real.negMulLog ((p.toRealFn a + q.toRealFn a) / 2)) -
+    (p.entropy + q.entropy) / 2
+
+-- ============================================================================
+-- §7.5: Hellinger family (Bhattacharyya, squared-Hellinger, Hellinger distance)
+-- ============================================================================
+
+/-! ### Hellinger family on PMF
+
+@cite{herbstritt-franke-2019} use Hellinger distance as an alternative to
+KL divergence in RSA speaker utilities, because Hellinger remains finite
+when literal interpretations assign zero probability to states the speaker
+considers possible (whereas KL diverges).
+
+These definitions wrap the Finset+function versions in `Core.InformationTheory`
+via `PMF.toRealFn`. The key inequality `two_hellingerDistSq_le_klDivergence`
+(Bretagnolle-Huber, @cite{cover-thomas-2006}) is delegated to the existing
+proof. -/
+
+/-- Bhattacharyya coefficient `BC(P, Q) = ∑ √(P · Q)`. -/
+noncomputable def bhattacharyyaCoeff (P Q : PMF α) : ℝ :=
+  Core.InformationTheory.bhattacharyyaCoeff P.toRealFn Q.toRealFn
+
+/-- Squared Hellinger distance `H²(P, Q) = 1 - BC(P, Q)`. -/
+noncomputable def hellingerDistSq (P Q : PMF α) : ℝ :=
+  Core.InformationTheory.hellingerDistSq P.toRealFn Q.toRealFn
+
+/-- Hellinger distance `HD(P, Q) = √H²(P, Q)`. Proper metric on PMFs;
+    bounded in `[0, 1]` for probability distributions. -/
+noncomputable def hellingerDist (P Q : PMF α) : ℝ :=
+  Core.InformationTheory.hellingerDist P.toRealFn Q.toRealFn
+
+theorem hellingerDistSq_nonneg (P Q : PMF α)
+    (h : bhattacharyyaCoeff P Q ≤ 1) :
+    0 ≤ hellingerDistSq P Q :=
+  Core.InformationTheory.hellingerDistSq_nonneg_of_bc_le_one P.toRealFn Q.toRealFn h
+
+/-- **Bretagnolle-Huber inequality** on PMFs: `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+
+    Stated against the mathlib-grounded `PMF.klDiv` (returns `ℝ≥0∞`); the
+    `2 * hellingerDistSq` factor is wrapped via `ENNReal.ofReal` for type
+    compatibility.
+
+    Proof: `klDiv_eq_sum_klFun` reduces `P.klDiv Q` to a discrete ENNReal
+    sum, which bridges via `ENNReal.ofReal_mul`/`ofReal_sum_of_nonneg` and
+    `kl_eq_sum_klFun` (Core) to `ENNReal.ofReal (klFinite P.toRealFn
+    Q.toRealFn)`. The existing `two_hellingerDistSq_le_klFinite` then
+    closes the comparison via `ENNReal.ofReal_le_ofReal`. -/
+theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
+    [MeasurableSingletonClass α]
+    (P Q : PMF α)
+    (hQ_pos : ∀ a, 0 < Q.toRealFn a) :
+    ENNReal.ofReal (2 * hellingerDistSq P Q) ≤ P.klDiv Q := by
+  -- ENNReal-side facts about Q from the strict-positivity hypothesis.
+  have hQ_ne_top : ∀ a, Q a ≠ ∞ := PMF.apply_ne_top Q
+  have hQ_ne_zero : ∀ a, Q a ≠ 0 := fun a hQa => by
+    have h := hQ_pos a
+    rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
+    exact lt_irrefl 0 h
+  -- Strict-positive Q ⇒ AC: every singleton has positive Q-mass, so the only
+  -- Q-null s in a finite type is one disjoint from every {x}, i.e., empty.
+  have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
+    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
+    rw [PMF.toMeasure_apply_fintype _ s] at hQs
+    rw [PMF.toMeasure_apply_fintype _ s]
+    have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
+    have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
+      have h := h_each_zero x (Finset.mem_univ x)
+      rw [Set.indicator_of_mem hx_in] at h
+      exact hQ_ne_zero x h
+    refine Finset.sum_eq_zero (fun x _ => Set.indicator_of_notMem (h_x_notin x) _)
+  -- Apply the discrete-sum reduction landed above.
+  rw [klDiv_eq_sum_klFun P Q hAC]
+  -- Per-atom bridge: ENNReal mul → ofReal of ℝ mul.
+  have hP_nn : ∀ a, 0 ≤ P.toRealFn a := P.toRealFn_nonneg
+  have hQ_real_nn : ∀ a, 0 ≤ Q.toRealFn a := Q.toRealFn_nonneg
+  have h_klFun_nn : ∀ a, 0 ≤ _root_.InformationTheory.klFun
+      (P.toRealFn a / Q.toRealFn a) := fun a =>
+    _root_.InformationTheory.klFun_nonneg
+      (div_nonneg (hP_nn a) (hQ_real_nn a))
+  have h_summand : ∀ a, Q a * ENNReal.ofReal
+      (_root_.InformationTheory.klFun ((P a / Q a).toReal))
+      = ENNReal.ofReal (Q.toRealFn a *
+          _root_.InformationTheory.klFun (P.toRealFn a / Q.toRealFn a)) := by
+    intro a
+    rw [show ((P a) / (Q a)).toReal = P.toRealFn a / Q.toRealFn a from
+          ENNReal.toReal_div _ _,
+        show Q a = ENNReal.ofReal (Q.toRealFn a) from
+          (ENNReal.ofReal_toReal (hQ_ne_top a)).symm,
+        ← ENNReal.ofReal_mul (hQ_real_nn a)]
+  simp_rw [h_summand]
+  -- Bring ofReal outside the sum (each summand non-negative).
+  rw [← ENNReal.ofReal_sum_of_nonneg (s := Finset.univ) (fun a _ =>
+        mul_nonneg (hQ_real_nn a) (h_klFun_nn a))]
+  -- Bridge ℝ-sum to klFinite.
+  rw [← Core.InformationTheory.kl_eq_sum_klFun P.toRealFn Q.toRealFn
+        hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one])]
+  -- Close via the existing finite-sum BH inequality + ofReal monotonicity.
+  exact ENNReal.ofReal_le_ofReal
+    (Core.InformationTheory.two_hellingerDistSq_le_klFinite
+      P.toRealFn Q.toRealFn hP_nn hQ_pos
+      P.sum_toRealFn_eq_one Q.sum_toRealFn_eq_one)
+
+-- ============================================================================
+-- §8: Bridge theorems back to Core.InformationTheory
+-- ============================================================================
+
+/-- Bridge theorem: `PMF.entropy` equals the `Core.InformationTheory.entropy`
+    of the toReal-coerced mass function. Useful for migrating proofs that
+    operate at the Finset+function level. -/
+theorem entropy_eq_core_entropy (p : PMF α) :
+    p.entropy = Core.InformationTheory.entropy Finset.univ p.toRealFn := rfl
+
+/-- Bridge theorem for JSD: `PMF.jsd` equals `Core.InformationTheory.jsdOf`
+    on the toReal-coerced mass functions. (`Core.InformationTheory.jsdOf`
+    is private substrate; this bridge is for internal use only.) -/
+theorem jsd_eq_jsdOf (p q : PMF α) :
+    p.jsd q = Core.InformationTheory.jsdOf Finset.univ p.toRealFn q.toRealFn := by
+  unfold jsd Core.InformationTheory.jsdOf entropy
+  rfl
+
+end PMF

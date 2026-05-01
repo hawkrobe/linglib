@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.594 — `klDiv_eq_sum_klFun` + `two_hellingerDistSq_le_klDiv` proved (PMFEntropy)
+
+Closes the two `sorry`s flagged as substrate blockers in 0.230.593. Both proofs are structural; no `native_decide`.
+
+- `klDiv_eq_sum_klFun` (~50 LOC): bridge `p.toMeasure = q.toMeasure.withDensity (p/q)` via `Measure.ext` + `lintegral_fintype` + per-atom ENNReal cancellation `(p a / q a) * q a = p a` (which holds under singleton-AC). `Measure.rnDeriv_withDensity` then gives the rnDeriv ae-equality, and mathlib's `klDiv_eq_lintegral_klFun_of_ac` + `lintegral_fintype` close the discrete-sum reduction.
+- `two_hellingerDistSq_le_klDiv` (~40 LOC): derive AC from strict-positive Q (the only Q-null measurable set in a finite type is empty), apply `klDiv_eq_sum_klFun`, bridge each ENNReal summand to `ofReal` of an ℝ-summand via `ofReal_mul`/`toReal_div`, lift `ofReal` outside the sum (each summand non-negative), bridge the ℝ-sum to `Core.InformationTheory.klFinite` via `kl_eq_sum_klFun`, then close via `ENNReal.ofReal_le_ofReal` applied to the existing `two_hellingerDistSq_le_klFinite`.
+- Bonus theorem now requires `[MeasurableSingletonClass α]` (added to its signature).
+
+**Mathlib gap closed.** `PMF.klDiv_eq_sum_klFun` is the discrete-sum reduction missing from mathlib's PMF API; candidate for upstream contribution.
+
+**Build**: green at 5683 jobs. PMFEntropy.lean has zero `sorry`. Consumer migrations (RationalAction, Tessler, Channel, Herbstritt) and `Core.InformationTheory.{entropy, klFinite, ...}` deletion now unblocked.
+
+Out of scope: consumer migrations, Core.InformationTheory deletion, file reorg into `Core/InformationTheory/{Entropy, KullbackLeibler, Hellinger}.lean` — separate efforts.
+
 ### 0.230.588 — `scripts/changelog_add.py` for race-safe CHANGELOG appends
 
 Three sessions (0.230.575, 0.230.578, 0.230.586) lost CHANGELOG entries to concurrent-edit races. CHANGELOG.md is ~34k lines, so direct `Edit` calls hold a multi-second window between read and write — long enough for another session to land its own edit and invalidate the read.
