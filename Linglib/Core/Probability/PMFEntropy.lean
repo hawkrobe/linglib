@@ -124,6 +124,30 @@ noncomputable def ofRealWeightFn {α : Type*} [Fintype α]
       exact Classical.choose_spec h_pos)
     (fun _ => ENNReal.ofReal_ne_top)
 
+/-- **Round-trip**: when `f` is already normalized (sums to 1 in ℝ),
+    `ofRealWeightFn`'s normalization divides by 1, so the resulting PMF's
+    `toRealFn` recovers `f` exactly.
+
+    Bridge for ℝ-native consumers: any `(p : α → ℝ)` already satisfying
+    PMF axioms (`hp_nn`, `hp_sum_one`, plus a positivity witness for
+    `ofRealWeightFn`) round-trips losslessly through `PMF.ofRealWeightFn`. -/
+theorem ofRealWeightFn_toRealFn_eq {α : Type*} [Fintype α]
+    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : ∃ a, 0 < f a)
+    (h_sum_one : ∑ a, f a = 1) :
+    (PMF.ofRealWeightFn f h_nonneg h_pos).toRealFn = f := by
+  funext a
+  -- The unnormalized ENNReal weights sum to 1.
+  have h_tsum :
+      (∑' x : α, ENNReal.ofReal (f x)) = 1 := by
+    rw [tsum_eq_sum (fun x (h : x ∉ Finset.univ) =>
+          absurd (Finset.mem_univ x) h),
+        ← ENNReal.ofReal_sum_of_nonneg (fun x _ => h_nonneg x),
+        h_sum_one, ENNReal.ofReal_one]
+  -- Reduce `ofRealWeightFn` to the underlying `PMF.normalize` and compute.
+  unfold ofRealWeightFn PMF.normalizeOfFintype toRealFn
+  rw [PMF.normalize_apply, h_tsum, inv_one, mul_one,
+      ENNReal.toReal_ofReal (h_nonneg a)]
+
 -- ============================================================================
 -- §2: Entropy
 -- ============================================================================

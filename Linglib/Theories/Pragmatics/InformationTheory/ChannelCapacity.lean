@@ -25,7 +25,9 @@ file is capacity-specific.
 - `mutualInfo_le_log_card`: `I(W;C) ≤ log |W|`
 - `channelCapacity_le_log_card`: `C* ≤ log |W|`
 
-(KL non-negativity / Gibbs' inequality lives in `Core.InformationTheory.kl_nonneg`.)
+(KL non-negativity / Gibbs' inequality is `0 ≤ (P.klDiv Q).toReal` by
+`ENNReal.toReal_nonneg` on the PMF API, or `Core.InformationTheory.kl_nonneg`
+on the (ι→ℝ) form. Bridge: `PMF.toReal_klDiv_eq_klFinite`.)
 -/
 
 set_option autoImplicit false
@@ -102,8 +104,9 @@ theorem mutualInfo_eq_log_Z_of_cap (nc : CommChannel C W)
   linarith
 
 /-- Entropy of a distribution ≤ log of the support size: `H(q) ≤ log |W|`.
-    Follows from Gibbs' inequality (`Core.InformationTheory.kl_nonneg`) applied
-    to `KL(q ‖ uniform)`. -/
+    Follows from Gibbs' inequality (`Core.InformationTheory.kl_nonneg` —
+    canonical PMF form is `0 ≤ (q.klDiv u).toReal` by type) applied to
+    `KL(q ‖ uniform)`. -/
 private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     (hq_nonneg : ∀ i, 0 ≤ q i) (hq_sum : ∑ i : ι, q i = 1) :
     -∑ i : ι, q i * log (q i) ≤ log (Fintype.card ι : ℝ) := by

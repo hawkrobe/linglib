@@ -1084,10 +1084,13 @@ section Entropy
 
 /-! ## Entropy + softmax interactions
 
-The canonical Shannon entropy lives in `Core/InformationTheory.lean` as
-`Core.InformationTheory.entropy : Finset α → (α → ℝ) → ℝ`. This section
-adds softmax/KL-dependent theorems that need both entropy and softmax in
-scope; they specialize to `entropy Finset.univ p` for `[Fintype ι]`. -/
+The (ι→ℝ)-typed Shannon entropy lives in `Core/InformationTheory.lean` as
+`Core.InformationTheory.entropy : Finset α → (α → ℝ) → ℝ`. The PMF-typed
+canonical form is `PMF.entropy : PMF α → ℝ`; the two agree by definition
+on `(ofRealWeightFn p).toRealFn = p` for normalized `p` (see
+`PMF.ofRealWeightFn_toRealFn_eq`). This section uses the (ι→ℝ) form because
+softmax is a real-arithmetic construction; consumers wanting the PMF form
+can wrap via `PMF.ofRealWeightFn`. -/
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 

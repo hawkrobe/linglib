@@ -344,11 +344,13 @@ open RSA Real in
     Eq. 18: P_PL(s, o, a|m) ∝ P_S · Hyp(o|a, s) · P(a) · P(s)  (pragmatic listener)
 
     The speaker utility uses **Hellinger distance** (not KL divergence),
-    via `-Core.InformationTheory.hellingerDist`. This is necessary because KL
+    via `-Core.InformationTheory.hellingerDist` (or equivalently the
+    PMF wrapper `PMF.hellingerDist`). This is necessary because KL
     divergence assigns infinite disutility to "true enough" messages — a
     speaker who is 95% sure of RED can never say "certainly" under KL, but
-    CAN under Hellinger (see `Core.InformationTheory.two_hellingerDistSq_le_klFinite`
-    for the comparison theorem).
+    CAN under Hellinger (see `PMF.two_hellingerDistSq_le_klDiv` for the
+    PMF-canonical Bretagnolle-Huber comparison; the underlying Finset+function
+    proof is `Core.InformationTheory.two_hellingerDistSq_le_klFinite`).
 
     The model is parametric in `access` (number of balls the speaker draws).
     Each access level yields a separate RSAConfig, with L1 marginalizing
@@ -506,9 +508,9 @@ theorem belief_uses_general_hypergeometric (access : ℕ) (s : UrnState)
 ### Hellinger vs KL: Why the Divergence Measure Matters
 
 The choice of divergence measure is not a free parameter — it determines
-which messages the speaker can consider. See
-`Core.InformationTheory.two_hellingerDistSq_le_klFinite` for the
-full theoretical analysis.
+which messages the speaker can consider. See `PMF.two_hellingerDistSq_le_klDiv`
+(canonical PMF form) and `Core.InformationTheory.two_hellingerDistSq_le_klFinite`
+(Finset+function form) for the inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
 
 **Example**: Consider a speaker who observes 9/10 red balls (access=10).
 Her belief is a point mass at s=9.

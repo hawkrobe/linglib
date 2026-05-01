@@ -4,6 +4,17 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.596 — `ofRealWeightFn_toRealFn_eq` round-trip + consumer docstring updates
+
+Lands the second round-trip lemma needed for consumer migration plus minimal docstring updates pointing the 4 main consumers (RationalAction/Tessler/Channel/Herbstritt) at the PMF API.
+
+- `PMF.ofRealWeightFn_toRealFn_eq` (~10 LOC): when input `f : α → ℝ` already sums to 1, `(ofRealWeightFn f).toRealFn = f`. Bridge for ℝ-native consumers' round-trip into PMF.
+- Docstring updates in 4 consumers: cite `PMF.entropy` / `PMF.klDiv` / `PMF.hellingerDist` / `PMF.two_hellingerDistSq_le_klDiv` / `PMF.toReal_klDiv_eq_klFinite` as canonical, keep the (ι→ℝ) call sites natively (softmax is a real-arithmetic construction; KL on (ι→ℝ) data round-trips losslessly via the bridge).
+
+**Migration scope this commit**: docstrings + bridges only. Call-site rewrites + `Core.InformationTheory.{entropy, klFinite, ...}` deletion + file reorg deferred — the deletion cascade requires re-proving `PMF.mutualInformation_nonneg` without Core dependency (currently delegates) and constructing a PMF product distribution to recover Cover-Thomas Thm 2.6.5 in PMF form.
+
+**Build**: green at 5683 jobs.
+
 ### 0.230.595 — `toReal_klDiv_eq_klFinite` bridge: PMF.klDiv ↔ Core.klFinite
 
 Lands the migration-enabling bridge for ℝ-native consumers wanting to cite the PMF API.
