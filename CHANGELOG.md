@@ -4,6 +4,17 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.595 — `toReal_klDiv_eq_klFinite` bridge: PMF.klDiv ↔ Core.klFinite
+
+Lands the migration-enabling bridge for ℝ-native consumers wanting to cite the PMF API.
+
+- `(P.klDiv Q).toReal = Core.InformationTheory.klFinite P.toRealFn Q.toRealFn` under strict-positive Q. Composes `klDiv_eq_sum_klFun` (0.230.594) with `kl_eq_sum_klFun` (Core) and `ENNReal.ofReal_sum_of_nonneg`. ~50 LOC structural.
+- AC derivation reused from `two_hellingerDistSq_le_klDiv` (in finite types with strict-positive Q, the only Q-null measurable set is empty).
+
+**Migration substrate**: any consumer holding `(P Q : α → ℝ)` with PMF properties can now cite `(P_pmf.klDiv Q_pmf).toReal` and recover the exact discrete sum via this bridge. Used by the in-flight consumer migration (TesslerTenenbaumGoodman2022, ChannelCapacity, etc.) which lands in subsequent commits.
+
+**Build**: green at 5683 jobs.
+
 ### 0.230.594 — `klDiv_eq_sum_klFun` + `two_hellingerDistSq_le_klDiv` proved (PMFEntropy)
 
 Closes the two `sorry`s flagged as substrate blockers in 0.230.593. Both proofs are structural; no `native_decide`.

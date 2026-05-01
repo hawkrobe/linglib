@@ -461,6 +461,63 @@ theorem hellingerDistSq_nonneg (P Q : PMF α)
     0 ≤ hellingerDistSq P Q :=
   Core.InformationTheory.hellingerDistSq_nonneg_of_bc_le_one P.toRealFn Q.toRealFn h
 
+/-- **Bridge to `Core.InformationTheory.klFinite`** (real-valued discrete KL):
+    `(P.klDiv Q).toReal = klFinite P.toRealFn Q.toRealFn` under strict-positive Q.
+
+    Lets ℝ-native consumers cite the PMF API without re-deriving the discrete
+    sum. Composes `klDiv_eq_sum_klFun` with `kl_eq_sum_klFun` (Core) and
+    pulls `ENNReal.ofReal` outside the sum.
+
+    This is the consumer-migration headline: any consumer holding `(P Q : α → ℝ)`
+    with PMF properties can write `(P_pmf.klDiv Q_pmf).toReal` and get back
+    exactly `klFinite P Q` modulo the bridge. -/
+theorem toReal_klDiv_eq_klFinite [MeasurableSpace α] [MeasurableSingletonClass α]
+    (P Q : PMF α) (hQ_pos : ∀ a, 0 < Q.toRealFn a) :
+    (P.klDiv Q).toReal =
+      Core.InformationTheory.klFinite P.toRealFn Q.toRealFn := by
+  -- ENNReal-side facts about Q from the strict-positivity hypothesis.
+  have hQ_ne_top : ∀ a, Q a ≠ ∞ := PMF.apply_ne_top Q
+  have hQ_ne_zero : ∀ a, Q a ≠ 0 := fun a hQa => by
+    have h := hQ_pos a
+    rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
+    exact lt_irrefl 0 h
+  have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
+    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
+    rw [PMF.toMeasure_apply_fintype _ s] at hQs
+    rw [PMF.toMeasure_apply_fintype _ s]
+    have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
+    have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
+      have h := h_each_zero x (Finset.mem_univ x)
+      rw [Set.indicator_of_mem hx_in] at h
+      exact hQ_ne_zero x h
+    refine Finset.sum_eq_zero (fun x _ => Set.indicator_of_notMem (h_x_notin x) _)
+  rw [klDiv_eq_sum_klFun P Q hAC]
+  have hP_nn : ∀ a, 0 ≤ P.toRealFn a := P.toRealFn_nonneg
+  have hQ_real_nn : ∀ a, 0 ≤ Q.toRealFn a := Q.toRealFn_nonneg
+  have h_klFun_nn : ∀ a, 0 ≤ _root_.InformationTheory.klFun
+      (P.toRealFn a / Q.toRealFn a) := fun a =>
+    _root_.InformationTheory.klFun_nonneg
+      (div_nonneg (hP_nn a) (hQ_real_nn a))
+  have h_summand : ∀ a, Q a * ENNReal.ofReal
+      (_root_.InformationTheory.klFun ((P a / Q a).toReal))
+      = ENNReal.ofReal (Q.toRealFn a *
+          _root_.InformationTheory.klFun (P.toRealFn a / Q.toRealFn a)) := by
+    intro a
+    rw [show ((P a) / (Q a)).toReal = P.toRealFn a / Q.toRealFn a from
+          ENNReal.toReal_div _ _,
+        show Q a = ENNReal.ofReal (Q.toRealFn a) from
+          (ENNReal.ofReal_toReal (hQ_ne_top a)).symm,
+        ← ENNReal.ofReal_mul (hQ_real_nn a)]
+  simp_rw [h_summand]
+  rw [← ENNReal.ofReal_sum_of_nonneg (s := Finset.univ) (fun a _ =>
+        mul_nonneg (hQ_real_nn a) (h_klFun_nn a))]
+  rw [← Core.InformationTheory.kl_eq_sum_klFun P.toRealFn Q.toRealFn
+        hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one])]
+  exact ENNReal.toReal_ofReal
+    (Core.InformationTheory.kl_nonneg P.toRealFn Q.toRealFn
+      hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one]))
+
 /-- **Bretagnolle-Huber inequality** on PMFs: `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
 
     Stated against the mathlib-grounded `PMF.klDiv` (returns `ℝ≥0∞`); the
