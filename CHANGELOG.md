@@ -4,6 +4,21 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.587 — CHANGELOG entry for 0.230.586 (lost in concurrent-edit race)
+
+`053136aa` (0.230.586) landed the 4-file Hungarian-case substrate cleanup but the CHANGELOG entry was lost to a concurrent-session edit collision (third occurrence of this race; see also 0.230.575, 0.230.578).
+
+### 0.230.586 — Hungarian case substrate cleanup: drop spurious GEN, classify as third Caha exception
+
+Picks up uncommitted Hungarian-case work from another session's working tree (4 files), all build-clean and grounded in two reference grammars + Caha 2008.
+
+- `Fragments/Hungarian/Case.lean` rewritten on @cite{kenesei-vago-fenyvesi-1998} §1.10 + @cite{rounds-2001} §6.2 + @cite{caha-2008} §5. Three substantive findings: (1) no morphological genitive — both reference grammars gloss -nak/-nek exclusively as DAT, possessor-DAT analysis attributed to Szabolcsi 1986/1992; (2) local cases form a 3×3 motion×spatial-region matrix per Rounds; (3) Hungarian is a known surface counterexample to Blake's hierarchy (Caha §5 verbatim).
+- `Fragments/Hungarian/Possession.lean` docstring expanded with KVF + Rounds citations explaining the head-marking choice (possessive suffix on possessum, optional dative on extracted possessor).
+- `Phenomena/Case/Studies/Caha2009.lean` adds `hungarian_not_respectsCaha` to the principled-exception group (alongside `dargwa_not_respectsCaha` and `finnish_not_respectsCaha`); was previously incorrectly in the "respects" group. Counterexample-count text updated 20→19; principled exceptions 2→3.
+- `blog/content/bibliography.md` auto-regenerated for new cite-keys (`kenesei-vago-fenyvesi-1998`, `rounds-2001` — both already in `references.bib`).
+
+**Build**: 5677/5677 jobs green.
+
 ### 0.230.585 — `Heim2001.lean` mathlib-quality overhaul + FoxHackl2006 bridge
 
 Ground-up rewrite of `Phenomena/Comparison/Studies/Heim2001.lean` (337→317 LOC; structural reduction is in dropped data structures and aggregate-count theorems, offset by added section docstrings and the new lattice/HKC theorems). Three factual errors in the prior file fixed against the paper PDF.
