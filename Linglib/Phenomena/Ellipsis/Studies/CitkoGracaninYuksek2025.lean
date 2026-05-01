@@ -457,6 +457,33 @@ theorem cwh_bulk_beats_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl)
   all_goals simp only [cwhBulkMDCost, cwhNonBulkCost]
   all_goals omega
 
+/-! ### Identifying economy winners
+
+The Theorems 1-3 above establish *strict-domination* facts; combining
+each with `Minimalist.economy_winner_of_pair` (which discharges the
+existence guarantee from `economy_admits_winner` for the binary case)
+identifies the actual economy winner of the relevant 2-candidate
+reference set. These are the load-bearing wirings: C&G-Y's selection
+arguments need both "X dominates Y" AND "the reference set has a
+winner" to deliver "X is THE winner". -/
+
+/-- **CWH economy winner**: of the reference set `{cwhMDCost, cwhEllipsisCost}`,
+    `cwhMDCost` is an economy winner — no element of the set is
+    strictly more economical than it. Wires `cwh_md_beats_ellipsis`
+    through `Minimalist.economy_winner_of_pair`. -/
+theorem cwh_md_is_economy_winner (sm sl nsm nsl : Nat) :
+    ∀ alt ∈ ({cwhMDCost sm sl nsm nsl, cwhEllipsisCost sm sl nsm nsl} : Set _),
+      ¬ strictlyMoreEconomical alt (cwhMDCost sm sl nsm nsl) :=
+  Minimalist.economy_winner_of_pair (cwh_md_beats_ellipsis sm sl nsm nsl)
+
+/-- **CS economy winner**: of the reference set `{csBulkCost, csDoubleEllipsisCost}`,
+    `csBulkCost` is an economy winner. Wires `cs_bulk_beats_double_ellipsis`
+    through `Minimalist.economy_winner_of_pair`. -/
+theorem cs_bulk_is_economy_winner (sm sl nsm nsl : Nat) :
+    ∀ alt ∈ ({csBulkCost sm sl nsm nsl, csDoubleEllipsisCost sm sl nsm nsl} : Set _),
+      ¬ strictlyMoreEconomical alt (csBulkCost sm sl nsm nsl) :=
+  Minimalist.economy_winner_of_pair (cs_bulk_beats_double_ellipsis sm sl nsm nsl)
+
 -- ============================================================================
 -- § 5: Why CWHs Cannot Have the CS Structure
 -- ============================================================================
@@ -778,6 +805,14 @@ theorem rnr_md_beats_ellipsis (pm pl nm nl : Nat) :
   refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
   all_goals simp only [rnrMDPivotCost, rnrEllipsisCost]
   all_goals omega
+
+/-- **RNR economy winner**: of the reference set `{rnrMDPivotCost, rnrEllipsisCost}`,
+    `rnrMDPivotCost` is an economy winner. Wires `rnr_md_beats_ellipsis`
+    through `Minimalist.economy_winner_of_pair`. -/
+theorem rnr_md_is_economy_winner (pm pl nm nl : Nat) :
+    ∀ alt ∈ ({rnrMDPivotCost pm pl nm nl, rnrEllipsisCost pm pl nm nl} : Set _),
+      ¬ strictlyMoreEconomical alt (rnrMDPivotCost pm pl nm nl) :=
+  Minimalist.economy_winner_of_pair (rnr_md_beats_ellipsis pm pl nm nl)
 
 -- ============================================================================
 -- § 10: Cross-framework consilience — Bruening 2021 identity condition

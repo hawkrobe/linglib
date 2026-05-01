@@ -4,6 +4,13 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.581 — Wire WellFoundedLT headline to consumers + mathlib PR cleanup on Economy.lean
+
+- New `Minimalist.economy_winner_of_pair` helper: discharges binary-reference-set winner identification from a strict-domination fact via `lt_irrefl` + `lt_asymm`.
+- 3 consumer wirings in CitkoGY: `cwh_md_is_economy_winner`, `cs_bulk_is_economy_winner`, `rnr_md_is_economy_winner` — one-line applications of the helper to existing `cwh_md_beats_ellipsis` / `cs_bulk_beats_double_ellipsis` / `rnr_md_beats_ellipsis`. C&G-Y's "MD is the winner" claim now load-bears on `economy_admits_winner` (existence) + the strict-domination theorems (uniqueness in the binary case).
+- Mathlib PR cleanup on Economy.lean: `-- ====` separators → `section`/`end` blocks; module docstring tightened (long Provenance + Pre-Phase prose moved to brief notes); `@[simp]` on `atLeastAsEconomical_iff_le` + 4 `profile_*` projection lemmas; `profile_injective` proof simplified via `congr 1` + 4 `congrFun h _` shots.
+- Build: 1079 jobs green; Economy + CitkoGY + Longobardi2005 clean.
+
 ### 0.230.580 — Headline theorem on Economy.lean: WellFoundedLT DerivationCost via Dickson's lemma + economy_admits_winner existence theorem + PartialOrder + profile OrderEmbedding
 
 Following a "let's put our mathlib hat on and think about the most mathematically deep headline theorem in this file" prompt, identified `WellFoundedLT DerivationCost` as the deepest natural result. Landed §3 "Well-Foundedness — the headline (Dickson's lemma)" in `Theories/Syntax/Minimalist/Economy.lean` with five declarations:

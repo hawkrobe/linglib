@@ -8,90 +8,60 @@ import Mathlib.Data.DFinsupp.WellFounded
 @cite{chomsky-1991} @cite{chomsky-1995} @cite{boskovic-1997} @cite{collins-2001}
 @cite{citko-gracanin-yuksek-2025}
 
-Economy principles constrain syntactic derivations by comparing
-competing derivations that converge on the same PF string and LF
-interpretation, selecting the one with fewest operations and lexical
-resources.
-
-## Provenance
-
-The "Least Effort" view formalized here draws on @cite{chomsky-1991},
-@cite{chomsky-1995}, @cite{boskovic-1997}, and @cite{collins-2001}; it is
-not exclusively Chomsky 1995. The current loadbearing consumer is
-@cite{citko-gracanin-yuksek-2025} on PF reduction, which adopts a
-**global, transderivational** flavor of economy (their fn 3) — the
-local-economy alternative due to @cite{collins-2001} is not formalized
-here.
+Economy compares competing derivations that converge on the same PF
+string and LF interpretation, selecting the one with fewest operations
+and lexical resources.
 
 ## Two principles
 
-- **Least Effort**: among derivations yielding the same PF string and LF
-  interpretation, prefer the one Pareto-minimal on lexical items / Merge
-  ops / Agree ops / E-feature deletions.
-- **Pronunciation Economy** (@cite{citko-gracanin-yuksek-2025} p. 27):
-  no PF-affecting operation in the derivation is vacuous (does nothing
-  to the PF string). Checked **per operation**, not on the whole
-  derivation's PF before/after pair — a derivation containing one real
-  deletion plus N vacuous ones must still be banned, and a whole-derivation
-  ≠ check would let it through.
+- **Least Effort**: Pareto-minimize on lexical items / Merge ops / Agree
+  ops / E-feature deletions. Drawn from @cite{chomsky-1991},
+  @cite{chomsky-1995}, @cite{boskovic-1997}; the **global**
+  transderivational variant per @cite{citko-gracanin-yuksek-2025} fn 3.
+  The local-economy alternative (@cite{collins-2001}) is not formalized.
 
-## Pre-Phase principles deferred
+- **Pronunciation Economy** (@cite{citko-gracanin-yuksek-2025} p. 27): no
+  PF-affecting operation is vacuous. Checked **per operation**, not on
+  whole-derivation PF before/after — see `pronunciationEconomy`'s
+  docstring for why a whole-derivation `≠` check under-rejects.
 
-Procrastinate, Last Resort, and Greed are 1995-era principles. Phase
-Theory (Chomsky 2000+) effectively replaces Procrastinate with cyclic
-Spell-Out at phase edges, and the Move-only-with-trigger discipline is
-absorbed into feature-checking by Probe. Earlier revisions of this file
-carried Bool-identity wrappers (`def lastResort (b : Bool) : Bool := b`)
-and a `Procrastinate`-vs-Economy interaction whose `overtOps` cost field
-was never populated by any producer; both were dead code and have been
-removed. Future consumers wanting these principles should formalize them
-against actual `Step`/`Phase` infrastructure.
+## Headline (§3): well-foundedness via Dickson's lemma
+
+`instance : WellFoundedLT DerivationCost` lifts `Pi.wellFoundedLT` on
+`Fin 4 → Nat` (= Dickson 1913 applied to `Nat^n`) through the order
+embedding `DerivationCost.profileEmbedding`. This is what makes "economy
+selects an optimum from the reference set" mathematically *coherent*:
+without WF, an infinite chain of ever-more-economical derivations could
+exist and "the economy winner" would be ill-defined. WF is a
+precondition for the linguistic content, not a corollary.
+
+The load-bearing corollary `economy_admits_winner` says any non-empty
+`R : Set DerivationCost` admits a Pareto-minimum. Consumers identifying
+a *specific* winner of a binary reference set (the common C&G-Y pattern)
+use the `economy_winner_of_pair` helper.
 
 ## Architectural realization
 
-`DerivationCost` is a 4-Nat record. Its preorder is the pullback through
-the 4-vector projection `DerivationCost.profile : DerivationCost →
-Fin 4 → Nat`, with `Pi.preorder` giving pointwise ≤ on the feature
-space. This realizes the same shape as `Core/Constraint/Pareto.lean`'s
-`paretoFeaturePreorder` (used for OT/HG candidate comparison): both
-views Pareto-compare a candidate by a vector of Nat-valued counts. The
-OT side requires `ConstraintSystem` (with candidate set + decoder); we
-don't need either, so we drop straight to `Core.Order.FeaturePreorder`.
+`DerivationCost` is a 4-Nat record. Its preorder is the pullback of
+`Pi.preorder` on `Fin 4 → Nat` through `DerivationCost.profile`,
+realized via `Core.Order.FeaturePreorder.ofFeature`. Same shape as
+`Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder` (used for OT/HG
+candidate comparison); the OT side wraps in `ConstraintSystem` with
+candidate set + decoder, but Minimalist economy needs neither, so we
+register `Preorder DerivationCost` directly. `coarsen_via_monotone` from
+`Core/Order/FeaturePreorder.lean` is then available for free.
 
-The payoff is real: `Core.Order.FeaturePreorder.coarsen_via_monotone`
-becomes available for free on `DerivationCost`, so any future
-"Minimalist economy implies qualitative coarsening of Pareto frontier"
-bridge to OT optimality (per `Pareto.lean` § "The gap") gets a typed
-entry point.
+## Removed (for git history)
 
-## Headline: well-foundedness via Dickson's lemma
-
-The mathematically deepest content of this file is **§3**: the
-`WellFoundedLT DerivationCost` instance, lifted from `Pi.wellFoundedLT`
-on `Fin 4 → Nat` (which IS Dickson's lemma applied to `Nat^4`) through
-the `DerivationCost.profileEmbedding` order embedding.
-
-Why this is the headline rather than a corollary: it is what makes the
-@cite{chomsky-1995} / @cite{citko-gracanin-yuksek-2025} claim that
-"economy selects an optimum from the reference set" *coherent*. Without
-well-foundedness, an infinite chain `c₀ > c₁ > c₂ > …` of
-ever-more-economical derivations could exist and "the economy winner"
-would be ill-defined. Well-foundedness is a precondition for the
-linguistic content, not a corollary of it.
-
-The immediately load-bearing corollary `economy_admits_winner` says:
-any non-empty (set-theoretic) reference set of derivation costs admits
-at least one Pareto-minimum — an "economy winner" not strictly
-dominated by any other element. This is the existence theorem that
-underwrites all of the C&G-Y `cwh_*_beats_*` style cost-comparison
-arguments: the file's central comparison machinery is well-defined.
+Pre-Phase principles (Procrastinate, Last Resort, Greed) and `overtOps`
+field were removed at 0.230.574 — Bool-identity wrappers and a cost
+field no producer populated. Future consumers wanting Phase-Theoretic
+analogues should formalize against actual `Step`/`Phase` infrastructure.
 -/
 
 namespace Minimalist
 
--- ============================================================================
--- § 1: Derivation Cost
--- ============================================================================
+section DerivationCost
 
 /-- 4-dimensional cost of a syntactic derivation, measured by operation
     and resource counts. The dimensions are exactly those
@@ -110,26 +80,24 @@ namespace DerivationCost
 
 /-- The 4-vector projection: `profile c i` is the i-th cost dimension
     (0 = lexicalItems, 1 = mergeOps, 2 = agreeOps, 3 = ellipsisOps).
-    The feature map for the `Core.Order.FeaturePreorder` instance below. -/
+    Feature map for the `Core.Order.FeaturePreorder` instance. -/
 def profile (c : DerivationCost) : Fin 4 → Nat
   | ⟨0, _⟩ => c.lexicalItems
   | ⟨1, _⟩ => c.mergeOps
   | ⟨2, _⟩ => c.agreeOps
   | ⟨3, _⟩ => c.ellipsisOps
 
+@[simp] theorem profile_zero (c : DerivationCost) : c.profile 0 = c.lexicalItems := rfl
+@[simp] theorem profile_one (c : DerivationCost) : c.profile 1 = c.mergeOps := rfl
+@[simp] theorem profile_two (c : DerivationCost) : c.profile 2 = c.agreeOps := rfl
+@[simp] theorem profile_three (c : DerivationCost) : c.profile 3 = c.ellipsisOps := rfl
+
 /-- Cost-comparison preorder via `FeaturePreorder.ofFeature` pullback
     through `profile`, with `Pi.preorder` (pointwise ≤) on the
     `Fin 4 → Nat` feature space.
 
-    This realizes the architectural parallel with
-    `Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder`: both Pareto-
-    compare a candidate by a Nat-valued vector under pointwise ≤. The
-    OT side wraps this in a `ConstraintSystem` (candidate set + decoder);
-    Minimalist economy doesn't need either, so we instantiate
-    `FeaturePreorder` directly.
-
-    `coarsen_via_monotone` (`Core/Order/FeaturePreorder.lean`) becomes
-    available for free on `DerivationCost`. -/
+    See module docstring § "Architectural realization" for the parallel
+    with `Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder`. -/
 def featurePreorder : Core.Order.FeaturePreorder DerivationCost (Fin 4 → Nat) :=
   Core.Order.FeaturePreorder.ofFeature profile (fun a a' =>
     decidable_of_iff (∀ i, a.profile i ≤ a'.profile i) Iff.rfl)
@@ -155,9 +123,9 @@ def Derivation.cost (d : Derivation) : DerivationCost where
   agreeOps := 0
   ellipsisOps := 0
 
--- ============================================================================
--- § 2: Economy Comparison (linguistic-named API)
--- ============================================================================
+end DerivationCost
+
+section EconomyComparison
 
 /-- Componentwise Pareto: `c1` is at-least-as-economical as `c2` iff every
     cost dimension is no worse. Linguistic-named alias for the underlying
@@ -191,10 +159,10 @@ def strictlyMoreEconomical (c1 c2 : DerivationCost) : Prop :=
 instance (c1 c2 : DerivationCost) : Decidable (strictlyMoreEconomical c1 c2) := by
   unfold strictlyMoreEconomical; infer_instance
 
-/-- The linguistic alias agrees with the `FeaturePreorder.toPreorder`-derived
-    `≤` componentwise. Decomposes the `Pi.preorder` `∀ i, profile c1 i ≤
-    profile c2 i` quantifier into the 4-conjunction. -/
-theorem atLeastAsEconomical_iff_le (c1 c2 : DerivationCost) :
+/-- The linguistic alias agrees with `≤` from the `FeaturePreorder` pullback
+    componentwise. Tagged `@[simp]` so consumers can rewrite freely between
+    the linguistic and order-theoretic forms. -/
+@[simp] theorem atLeastAsEconomical_iff_le (c1 c2 : DerivationCost) :
     atLeastAsEconomical c1 c2 ↔ c1 ≤ c2 := by
   refine ⟨fun ⟨h0, h1, h2, h3⟩ i => ?_, fun h => ?_⟩
   · match i with
@@ -202,7 +170,7 @@ theorem atLeastAsEconomical_iff_le (c1 c2 : DerivationCost) :
     | ⟨1, _⟩ => exact h1
     | ⟨2, _⟩ => exact h2
     | ⟨3, _⟩ => exact h3
-  · refine ⟨h ⟨0, by decide⟩, h ⟨1, by decide⟩, h ⟨2, by decide⟩, h ⟨3, by decide⟩⟩
+  · exact ⟨h ⟨0, by decide⟩, h ⟨1, by decide⟩, h ⟨2, by decide⟩, h ⟨3, by decide⟩⟩
 
 /-- Strict economy is the strict order of the `Preorder` instance:
     `at-least-as-economical AND strictly better on at least one dimension`
@@ -211,20 +179,20 @@ theorem strictlyMoreEconomical_iff_lt (c1 c2 : DerivationCost) :
     strictlyMoreEconomical c1 c2 ↔ c1 < c2 := by
   rw [lt_iff_le_not_ge, ← atLeastAsEconomical_iff_le, ← atLeastAsEconomical_iff_le]
   unfold strictlyMoreEconomical atLeastAsEconomical
-  constructor
-  · rintro ⟨⟨hl, hm, ha, he⟩, hstrict⟩
-    refine ⟨⟨hl, hm, ha, he⟩, fun ⟨hl', hm', ha', he'⟩ => ?_⟩
-    rcases hstrict with h | h | h | h <;> omega
-  · rintro ⟨⟨hl, hm, ha, he⟩, hnot⟩
-    refine ⟨⟨hl, hm, ha, he⟩, ?_⟩
-    by_contra hbad
+  refine ⟨fun ⟨⟨hl, hm, ha, he⟩, hstrict⟩ =>
+    ⟨⟨hl, hm, ha, he⟩, fun ⟨hl', hm', ha', he'⟩ => ?_⟩,
+    fun ⟨⟨hl, hm, ha, he⟩, hnot⟩ => ⟨⟨hl, hm, ha, he⟩, ?_⟩⟩
+  · rcases hstrict with h | h | h | h <;> omega
+  · by_contra hbad
     push Not at hbad
     obtain ⟨hl', hm', ha', he'⟩ := hbad
     exact hnot ⟨by omega, by omega, by omega, by omega⟩
 
--- ============================================================================
--- § 3: Well-Foundedness — the headline (Dickson's lemma)
--- ============================================================================
+end EconomyComparison
+
+section WellFoundedness
+
+/-! ### Well-Foundedness — the headline (Dickson's lemma) -/
 
 namespace DerivationCost
 
@@ -233,21 +201,18 @@ namespace DerivationCost
     `PartialOrder` instances below. -/
 theorem profile_injective : Function.Injective profile := by
   intro c1 c2 h
-  have h0 := congrFun h 0
-  have h1 := congrFun h 1
-  have h2 := congrFun h 2
-  have h3 := congrFun h 3
-  cases c1
-  cases c2
-  simp only [profile] at h0 h1 h2 h3
-  subst h0; subst h1; subst h2; subst h3; rfl
+  cases c1; cases c2
+  congr 1
+  · exact congrFun h 0
+  · exact congrFun h 1
+  · exact congrFun h 2
+  · exact congrFun h 3
 
-/-- The order-theoretic embedding of `DerivationCost` into the 4-vector
-    Pareto preorder on `Fin 4 → Nat`.
-
-    `map_rel_iff'` is `Iff.rfl` because `DerivationCost`'s `Preorder` is
-    `featurePreorder.toPreorder = Preorder.lift profile` (`≤` is
-    *definitionally* `profile a ≤ profile b`). -/
+/-- Order embedding of `DerivationCost` into the 4-vector Pareto preorder
+    on `Fin 4 → Nat`. `map_rel_iff'` is `Iff.rfl` because the
+    `Preorder DerivationCost` instance is `featurePreorder.toPreorder =
+    Preorder.lift profile` (`≤` is *definitionally* `profile a ≤
+    profile b`). -/
 def profileEmbedding : DerivationCost ↪o (Fin 4 → Nat) where
   toFun := profile
   inj' := profile_injective
@@ -256,14 +221,9 @@ def profileEmbedding : DerivationCost ↪o (Fin 4 → Nat) where
 end DerivationCost
 
 /-- `DerivationCost` is a `PartialOrder`, not just a `Preorder`:
-    antisymmetry holds because each `Nat` component admits
-    `Nat.le_antisymm`, and `profile` is injective so componentwise
-    equality lifts to structural equality.
-
-    Strengthens the `Preorder` instance into a `PartialOrder` (a
-    `Preorder` with antisymmetric `≤`). Mathlib's order algebra (e.g.,
-    `IsAntichain`, `Maximal`, `Minimal`) thereby gets the partial-order
-    flavor for free. -/
+    antisymmetry from componentwise `Nat.le_antisymm` lifted by
+    `profile_injective`. Mathlib's order algebra (`IsAntichain`,
+    `Maximal`, `Minimal`) gets the partial-order flavor for free. -/
 instance : PartialOrder DerivationCost where
   __ := (inferInstance : Preorder DerivationCost)
   le_antisymm a b hab hba := DerivationCost.profile_injective <| by
@@ -300,27 +260,37 @@ instance : WellFoundedLT DerivationCost :=
     dominated by any other element of `R`.
 
     Direct corollary of `WellFoundedLT DerivationCost` via mathlib's
-    `WellFounded.has_min`. Translates from mathlib's `<` to the
-    file's `strictlyMoreEconomical` via `strictlyMoreEconomical_iff_lt`.
+    `WellFounded.has_min`, with the `<` ↔ `strictlyMoreEconomical`
+    translation through `strictlyMoreEconomical_iff_lt`.
 
     Linguistically: the @cite{citko-gracanin-yuksek-2025} selection
     procedure is mathematically well-defined; whatever else economy +
     Pronunciation Economy + MWF do to break ties among winners, the set
-    of winners is non-empty for any non-empty reference set. The C&G-Y
-    cost-comparison theorems (`cwh_md_beats_ellipsis`,
-    `cs_bulk_beats_double_ellipsis`, etc.) all presuppose this existence
-    — they argue that ONE candidate is strictly better than ANOTHER, but
-    that argument only delivers a winner if the reference set has minima,
-    which `economy_admits_winner` guarantees. -/
+    of winners is non-empty for any non-empty reference set. -/
 theorem economy_admits_winner {R : Set DerivationCost} (hR : R.Nonempty) :
     ∃ winner ∈ R, ∀ alt ∈ R, ¬ strictlyMoreEconomical alt winner := by
   obtain ⟨winner, hwR, hmin⟩ := wellFounded_lt.has_min R hR
-  refine ⟨winner, hwR, fun alt haltR hsme => ?_⟩
-  exact hmin alt haltR ((strictlyMoreEconomical_iff_lt _ _).mp hsme)
+  exact ⟨winner, hwR, fun alt haltR hsme =>
+    hmin alt haltR ((strictlyMoreEconomical_iff_lt _ _).mp hsme)⟩
 
--- ============================================================================
--- § 4: Pronunciation Economy (per-operation)
--- ============================================================================
+/-- **Consumer-friendly form**: in a 2-element reference set `{c, c'}`
+    where `c` strictly beats `c'`, `c` is the economy winner. The common
+    pattern in @cite{citko-gracanin-yuksek-2025}-style cost-comparison
+    arguments: pair MD-cost vs ellipsis-cost, prove MD beats ellipsis,
+    conclude MD is the winner.
+
+    Discharges via `lt_irrefl` (anti-self-domination) + asymmetry of `<`. -/
+theorem economy_winner_of_pair {c c' : DerivationCost}
+    (h : strictlyMoreEconomical c c') :
+    ∀ alt ∈ ({c, c'} : Set DerivationCost), ¬ strictlyMoreEconomical alt c := by
+  have hlt : c < c' := (strictlyMoreEconomical_iff_lt _ _).mp h
+  rintro alt (rfl | rfl) halt_lt
+  · exact lt_irrefl _ ((strictlyMoreEconomical_iff_lt _ _).mp halt_lt)
+  · exact lt_asymm hlt ((strictlyMoreEconomical_iff_lt _ _).mp halt_lt)
+
+end WellFoundedness
+
+section PronunciationEconomy
 
 /-- A single PF-affecting operation: PF state immediately before vs
     immediately after the op fires. Used to express
@@ -369,5 +339,7 @@ theorem pronunciationEconomy_violated_of_vacuous {op : PFOperation}
     {ops : List PFOperation} (hmem : op ∈ ops) (hvac : op.isVacuous) :
     ¬ pronunciationEconomy ops := by
   intro h; exact h op hmem hvac
+
+end PronunciationEconomy
 
 end Minimalist
