@@ -64,6 +64,75 @@ Dropped: `vacuousEllipsis` (subsumed by `PFOperation.isVacuous`); `pronEcon_iff_
 
 **Build status**: `lake build Linglib.Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025` succeeds (665 jobs); 5 directly-affected files (Economy, Multidominance, MultipleWh, CitkoGY, Longobardi2005) all build clean.
 
+### 0.230.573 — Audit-driven Anderson 2006 study refactor: PDF-verified Doyayo + Pipil reclassification + cline reattribution + substrate move + Sorace bridge + Miestamo cross-framework theorem
+
+Four-agent deep audit on a randomly-picked file (`Linglib/Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean`, 385 LOC) — mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/morphology-typology — surfaced 4 substantive linguistic errors (verified by reading Anderson 2006 pp. 5, 114, 117, 121, 222–225 in PDF + Heine 1993 title page + p. 5 cite metadata) plus the usual code/integration items. The audit was prompted by user request "pick a random file" (selected via Python from 2771 candidates).
+
+**Substantive linguistic errors confirmed against the book**:
+
+1. **Doyayo `.split` → `.lexHeaded` + new `.splitDoubled` second datum.** @cite{anderson-2006} Ch 3 ex. (15a-b) p. 121 (*mi¹ (gi²) kpel¹-ko¹*, Wiering & Wiering 1994: 55) classifies Doyayo as **lex-headed**. @cite{anderson-2006} Ch 5 ex. (128–129) p. 222–223 (*hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ*, W&W 1994: 221) classifies a separate construction as **split/doubled** with subjects "doubly marked... while objects occur only on lexical verbs." Anderson NEVER classifies Doyayo as plain split. The pre-audit Fragment also cited an unrelated W&W p. 75 example (*hi¹ gi²-s-i¹-mi²-ge-³ wàà⁵-ko⁵*) that does not appear in any of Anderson's Doyayo passages.
+2. **Pipil `.split` → `.splitDoubled`; Fragment `splitDistribution` corrected.** @cite{anderson-2006} Ch 5 §5.2.2 ex. (133b) p. 224 (*n-yu ni-mitsin-ilwitia*, Campbell 1985: 137) explicitly: "Subjects are doubly marked... while objects occur only on lexical verbs." The pre-audit Fragment had `splitDistribution := { onAux := [.tense], onLex := [.agreement] }` — but the Fragment's own gloss `1-AUX 1-2PL-show` shows the `1` (subject) prefix on BOTH elements. New `splitDoubledDistribution := { onAux := [.agreement], onLex := [.agreement, .valence] }`. Pipil's two patterns (per @cite{anderson-2006} p. 220–221 fn. 6) are lex-headed (*weli ni-nehnemi wehka*) and split/doubled, not lex-headed and plain-split.
+3. **"Table 2.3" mischaracterized.** Pre-audit docstring claimed "Anderson predicts the verb form of the lexical verb from the inflectional pattern in Table 2.3 (auxHeaded → nonfinite, all others → finite)". @cite{anderson-2006} Table 2.3 (p. 114) is actually titled "Sample non-finite forms of lexical verbs in AUX-headed AVCs" — a one-pattern grid of language exemplars (INF / NOMLZR / GER / PRTCPL / TAM / SUB.DEP / REDPL / SS / CONNEG / Case / CONJ / IRR.SBJ / Bare Stem). The pattern→LV-form prediction is in Ch 2-5 prose, not in any single table. Direct hit on the CLAUDE.md "never cite equation/table/section/theorem numbers unless looking at the paper" prohibition.
+4. **Grammaticalization cline reattributed to @cite{heine-1993}.** @cite{anderson-2006} p. 5 explicitly: "*According to Heine (1993: 48ff.)*..." Anderson's own cline as written on p. 5 collapses to three stages (`L[exical] V[erb] >> A[uxiliary] V > AF[fi]X`); the 5-stage `fullVerb / auxiliary / clitic / affix / zero` enum in `Theories/Diachronic/Grammaticalization.lean` is a Lehmann-1985 / Hopper-Traugott-2003-flavored expansion, but the cline source is Heine. Bonus finding from p. 5: Anderson explicitly endorses a Heine 1993 p. 66 quote — *"we are dealing with chains [of grammaticalization] and since chains are by definition continuous structures, setting up stages along these structures must remain an arbitrary and/or artificial endeavor"* — which argues against discrete-stage formalizations like the 5-case enum (substrate docstring now flags this caveat).
+
+**Bibliography** (`blog/data/references.bib`):
+
+- **Added `heine-1993`**: Heine, B. (1993). *Auxiliaries: Cognitive Forces and Grammaticalization*. New York: Oxford University Press. ISBN-13 from PDF title verso (9780195083873). DOI omitted (the OUP 1993 book has no canonical DOI verifiable; per CLAUDE.md "When in doubt, leave fields blank rather than guessing"). Inserted alphabetically between yakut entry and `heine-1995`. `sources` field lists the three files now citing it.
+
+**Substrate** (`Theories/Diachronic/Grammaticalization.lean`):
+
+- **Added `GramStage.toMorphStatus : GramStage → Option Core.Morphology.MorphStatus`**, moved from `Anderson2006.lean` (was a study-file-private projection that other Studies — `Heine1997`, `SadakaneKoizumi1995` — could not consume). Substrate-level position now per linglib-integration-auditor finding #4.
+- **Rewrote docstring**: opens with @cite{heine-1993} as primary anchor, traces the 5-stage formulation to Lehmann 1985 + Hopper-Traugott 2003 explicitly; documents Anderson's 3-stage shorthand (`LV >> AV > AFX`); adds the chains-not-stages caveat from Anderson p. 5 quoting Heine 1993:66.
+
+**Substrate** (`Typology/AuxiliaryVerbs.lean`):
+
+- **Reworded `splitDoubled` docstring** (linguistics-domain-expert finding #11). Pre-audit text: "@cite{anderson-2006} discusses this as a logical possibility; clear exemplars are rare." @cite{anderson-2006} ch. 5 §5.2 dedicates ~30 pages (pp. 215–242) to split/doubled with three subtypes (§§5.2.1, 5.2.2, 5.2.3) covering 30+ language exemplars. New text: "Common, not marginal."
+- **Updated example table** in module docstring: Pipil now under split/doubled (was under lex-headed); Doyayo appears under both lex-headed (Ch 3) and split/doubled (Ch 5).
+
+**Phenomenon-level** (`Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean`):
+
+- **Added `NegStrategy.toGramStage : NegStrategy → Option GramStage`** with `.negVerb => some .auxiliary`, `.negAffix => some .affix`, `.negParticle => none`. Moved from `Anderson2006.lean`'s formaliser-introduced `negStrategyStage : NegStrategy → GramStage` mapping that collapsed `.negParticle` onto `.auxiliary`. The `Option` type makes the cline-applicability gap explicit (English *not* is not on the verbal grammaticalization cline at all — particles are not bleached verbs); preserves @cite{miestamo-2005}'s sharp morphological distinction between negative *verbs* (Finnish *ei*, an inflecting verb) and negative *particles* (English *not*, German *nicht*).
+
+**Fragment** (`Fragments/Doyayo/AuxiliaryVerbs.lean`, complete rewrite):
+
+- **Exposes both Anderson patterns**: `lexHeadedForm` / `lexHeadedDistribution` / `lexHeadedGloss` (Ch 3 ex. 15a, W&W 1994: 55) + `splitDoubledForm` / `splitDoubledDistribution` / `splitDoubledGloss` (Ch 5 ex. 129, W&W 1994: 221).
+- **Removed pre-audit single-pattern entry** (`hi¹ gi²-s-i¹-mi²-ge-³ wàà⁵-ko⁵` 'they will be catching him for me' classified as `.split` with W&W 1994: 75). Anderson never classifies Doyayo as plain split, and the cited W&W p. 75 example does not appear in any Anderson passage (Anderson cites W&W pp. 55, 77, 217, 221, 222 for Doyayo).
+
+**Fragment** (`Fragments/Pipil/AuxiliaryVerbs.lean`, complete rewrite):
+
+- **Replaced bogus `splitDistribution`** `{ onAux := [.tense], onLex := [.agreement] }` with `splitDoubledDistribution := { onAux := [.agreement], onLex := [.agreement, .valence] }`. The new distribution matches Anderson p. 224 prose ("Subjects are doubly marked... objects occur only on lexical verbs") and the Fragment's own gloss `1-AUX 1-2PL-show` (which shows agreement on both elements, not just LV).
+- **Updated `splitForm` → `splitDoubledForm`**: was `te: weli-k ni-k-namaka` (a hybrid form combining negation + capability + transitive that doesn't appear in Anderson's split/doubled examples); now `n-yu ni-mitsin-ilwitia` (Anderson Ch 5 ex. 133b, Campbell 1985: 137) — the canonical Anderson exemplar.
+
+**Study file** (`Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean`, 385 → 412 LOC, complete rewrite):
+
+- **Updated docstring**: drops "Five-pattern inflectional typology" framing, adds Heine 1993 as co-anchor, drops Table 2.3 reference, adds full audit chronology with PDF page anchors.
+- **English exemplar switched**: `will go` (modal) → `have eaten` (perfect). Anderson Ch 2 (p. 40) treats English progressives (*is V-ing*) and perfects (*have V-ed*) as canonical AUX-headed examples; modals are mentioned but not central. FUT gloss for *will* (non-Andersonian) replaced with AUX.PRS + PTCP.
+- **9 datums** (was 8): added `doyayoSplitDoubled`; renamed `pipil` → `pipilSplitDoubled` (the old name was misclassified). All 5 Anderson patterns still attested with named witnesses.
+- **`finnish_form_from_paradigm`** paired with new witness lemma `finnish_1sg_in_paradigm : (negParadigm.find? ...).isSome = true`. Pre-audit `finnish_form_from_fragment : finnish.form = "en lue" := rfl` passed even when the `negParadigm` lookup returned `none` (the fallback `| none => "en lue"` was chosen to coincide with the success-branch result, making the rfl theorem vacuous on grounding-failure). Now the pair (`isSome` witness + form-equality) actually pins the form to the paradigm content.
+- **9× `native_decide` → `decide`** (mathlib-reviewer B1; CLAUDE.md proof-style §7 banned). All replaceable with `decide`; structural reduction tractable.
+- **`five_patterns_attested` reshaped**: was a 5-conjunct `allData.any (·.inflPattern == .X) = true` aggregate scan (each conjunct `by native_decide`). Now a 5-conjunct conjunction of named-witness rfl theorems. Adding new datums doesn't break it; changing a witness's pattern breaks it loudly.
+- **Deleted duplicate `selection_lv_is_nonfinite`** (was textually identical to `auxHeaded_predicts_nonfinite_lv`; mathlib-reviewer M3).
+- **Dropped duplicate negation theorems** (`negAffix_no_avc`, `negParticle_no_avc`): now live solely in `NegativeAuxiliaries.lean`.
+- **Dropped `AVCSource` from `open`** (mathlib-reviewer m2): never used in the body.
+- **Dropped `GramStage.toMorphStatus`** (moved to substrate).
+- **Dropped `negStrategyStage`** (moved to NegativeAuxiliaries as `NegStrategy.toGramStage`, with `.negParticle => none` to fix the Miestamo collapse).
+- **Sorace bridge `italian_arrivare_chain`** chains @cite{sorace-2000}'s `vendlerClassToTypicalTransitivity` with `canonicalSelection`: achievement → unaccusative → BE. Cross-checks with `italianArrivare.transitivityClass = .unaccusative` from `Selection.lean`. Two-step Vendler→TransitivityClass→PerfectAux derivation that Anderson's framework presupposes (well-posed only inside aux-headed AVCs).
+- **Cross-framework theorem `anderson_miestamo_agree_on_neg_morphology`**: states (i) `NegStrategy.negVerb.toGramStage = some .auxiliary`, (ii) `NegStrategy.negParticle.toGramStage = none`, (iii) `Miestamo2005.finnish.symmetry ≠ Miestamo2005.german.symmetry`. With the corrected `toGramStage` mapping, Anderson's grammaticalization framework and Miestamo's symmetry framework now AGREE on the morphological distinction (verbs ≠ particles). Pre-audit, with `negStrategyStage .negParticle = .auxiliary`, the cross-framework result would have been a CONTRADICTION (anderson-collapses-miestamo-symmetry). Fix-the-bug-then-prove-the-agreement is the principled outcome here.
+
+**Out of scope, explicitly deferred**:
+
+- **Dedicated `Heine1993.lean` study file** (cross-framework-reconciler D3) — would land Heine's grammaticalization-channels framework as a peer of Anderson's pattern typology. Substantive new file; not in this audit's scope.
+- **Dedicated `Wurmbrand2001.lean` / `Cinque2006.lean` study files** (cross-framework-reconciler D4) — would land restructuring-as-biclausal as alternative to Anderson's monoclausal AVC. Substantive new files; not in this audit.
+- **HPSG `[AUX+]` ↔ Anderson `.auxHeaded`** bridge theorem (cross-framework-reconciler D5) — needs investigation of `Theories/Syntax/HPSG/Inversion.lean` shape; deferred.
+- **`Diagnostics.lean` → `Studies/Huddleston1976.lean`** rename (linglib-integration-auditor #9) — separate concern; off-topic for this audit.
+- **`Sorace2000.lean` ASH ranks** (cross-framework-reconciler D1) — Sorace's gradient hierarchy is currently not formalized (per `Sorace2000.lean` docstring TODO); the contrastive theorem `anderson_silent_on_intermediate_ash` will land when ASH ranks are added.
+- **BruRow-style drift sentry** consolidating the 24 trivial-rfl readouts (mathlib-reviewer M1) — would benefit from a project-wide `Core/Study/DriftSentry.lean` substrate, not yet built; deferred to a project-wide refactor.
+- **`@[simp]` tags on `InflPattern.lvVerbForm` / `.inflHost` / `.semanticHead`** (mathlib-reviewer m1) — would eliminate ~10 of this file's theorems as derived simp consequences. Low-priority polish; deferred.
+
+**Build state**: 7 Lean files + 1 bib (+856 / -507 LOC across the substantive files). Anderson2006 + transitive deps build green at job 904/904. Two pre-existing failures elsewhere in the tree (`Coordination/Studies/BrueningAlKhalaf2020`, `Theories/Syntax/Minimalist/Economy`) are caused by other concurrent sessions' in-progress edits to WordOrder + Minimalist substrate — neither imports anything this commit touches.
+
+**Commit chronology note**: the initial commit `fb4af234` landed the 6 Lean files from this work but lost the `references.bib` and `CHANGELOG.md` additions in a concurrent-edit collision (another session's bib edits and CHANGELOG draft for `0.230.574` overlapped in time with mine). This entry plus the `heine-1993` bib insertion was added in a follow-up commit. NOT done in either commit: the agent's flagged "Heim paste-residue" after `anderson-2006` entry was actually the bib file's `}% REF: <next-entry>` foreshadowing convention, not residue.
+
 ### 0.230.572 — Audit-driven Finnish PolarityItems Fragment fix + parallel Haspelmath1997 Studies-file *ei kukaan* deletion + `karlsson-2017` bib metadata correction
 
 Four-agent deep audit of `Linglib/Fragments/Finnish/PolarityItems.lean` (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/semantics) surfaced convergent findings; PDF verification against Karlsson 2018 (*Finnish: A Comprehensive Grammar*) §§18.4/19.5/25.6 and Haspelmath 1997 *Indefinite Pronouns* Appendix A.27 (pp. 341–343) confirmed the substantive corrections.
