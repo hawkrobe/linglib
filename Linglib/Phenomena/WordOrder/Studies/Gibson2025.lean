@@ -30,13 +30,21 @@ consumer materialises (e.g., a `FOFC.lean`, a `Hawkins1983.lean`, or a
 systematic WALS Ch 95/96/97 ingestion that needs the type at substrate
 level).
 
-## Bridge to WALS Ch 95
+## Substrate-derivation evidence: WALS Ch 95
 
 `fromWALSCh95` constructs a `CrossTab` directly from
 `Datasets.WALS.F95A.allData` (verb-object × adposition correlation;
-@cite{dryer-haspelmath-2013} Ch 95). The substrate-derived counts diverge
-slightly from Gibson's hand-coded Table 1 (likely a snapshot
-difference) but both prove harmonic dominance.
+@cite{dryer-haspelmath-2013} Ch 95). This is internal evidence that
+Gibson's hand-coded Table 1 corresponds to the substrate-derivable
+form: same correlation, same harmonic-dominance conclusion. Counts
+differ in magnitude (Gibson 981 = 454+41+14+472; WALS Ch 95 raw =
+984 = 456+42+14+472, the residual ~3 absorbed in Gibson's reporting
+and ~158 "Other" languages excluded by Gibson). Cell *pairings* match
+exactly: hihf = HI×HF = (VO, postpositions); hfhi = HF×HI = (OV,
+prepositions). `Phenomena/WordOrder/Studies/DryerHaspelmath2013.lean`
+has its own aggregate-count `ch95_harmonic_dominant` theorem at higher
+stringency (>16×); chronological dependency rules prohibit DH2013
+importing this file, so it is not currently wired through.
 -/
 
 namespace Phenomena.WordOrder.Studies.Gibson2025
@@ -77,7 +85,7 @@ structure CrossTab where
   hihf : AlignmentCell    -- construction 1 HI, construction 2 HF
   hfhi : AlignmentCell    -- construction 1 HF, construction 2 HI
   hfhf : AlignmentCell    -- both head-final
-  deriving Repr, DecidableEq
+  deriving Repr
 
 /-- Total count of harmonic (diagonal) cells. -/
 def CrossTab.harmonicCount (t : CrossTab) : Nat :=
@@ -293,9 +301,12 @@ def CrossTab.fromWALSCh95 : CrossTab :=
     hfhf := ⟨.headFinal, .headFinal, ovPostp⟩ }
 
 set_option maxRecDepth 8192 in
-/-- The raw WALS Ch 95 counts also exhibit harmonic dominance (the same
-    fact `voAdposition_harmonic_dominant` proves over Gibson's hand-
-    coded snapshot, restated over substrate-derived counts). -/
+/-- The substrate-derived Ch 95 CrossTab is harmonic-dominant — the
+    same fact `voAdposition_harmonic_dominant` proves over Gibson's
+    hand-coded counts, restated over the WALS-derived form. The
+    substrate-side claim is `harmonicCount > disharmonicCount`; the
+    aggregate-count form in `DryerHaspelmath2013.ch95_harmonic_dominant`
+    proves the stronger 16-to-1 dominance. -/
 theorem fromWALSCh95_harmonic_dominant :
     CrossTab.fromWALSCh95.IsHarmonicDominant := by decide
 

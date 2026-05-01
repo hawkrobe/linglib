@@ -168,16 +168,9 @@ theorem greenberg_universal_4 :
     ImplicationalUniversal isSOV isPostpositional fragmentSample := by
   decide
 
--- ============================================================================
--- §4. Sample-wide drift sentinels
--- ============================================================================
-
-set_option maxRecDepth 4096 in
-/-- Every Fragment in `fragmentSample` has an internally consistent
-    word-order profile (per `Typology.WordOrder.WordOrderProfile.IsConsistent`).
-    Catches drift if a future Fragment edit produces a contradictory profile
-    like `{basicOrder := .sov, svOrder := .vs}`. -/
-theorem fragment_sample_word_order_consistent :
-    ∀ p ∈ fragmentSample, p.wordOrder.IsConsistent := by decide
+-- The per-Fragment `wordOrder_consistent : wordOrder.IsConsistent := by decide`
+-- sentinel in each `Fragments/{Lang}/WordOrder.lean` already covers the drift
+-- this aggregate would catch (15 of these 15 sample languages have their own).
+-- No aggregate sentinel needed here.
 
 end Phenomena.WordOrder.Studies.Greenberg1963

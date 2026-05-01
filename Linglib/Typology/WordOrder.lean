@@ -174,10 +174,12 @@ def WordOrderProfile.ofWALS (iso : String) : WordOrderProfile :=
 -- ============================================================================
 
 /-- The SVOrder a basic order entails (`none` if basic order is
-    itself uninformative). -/
+    itself uninformative). Subject precedes verb in SOV, SVO, OSV
+    (V is final or last in those orders); verb precedes subject in
+    VSO, VOS, OVS. -/
 def BasicOrder.entailedSV : BasicOrder → Option SVOrder
-  | .sov | .svo => some .sv
-  | .vso | .vos | .ovs | .osv => some .vs
+  | .sov | .svo | .osv => some .sv
+  | .vso | .vos | .ovs => some .vs
   | .noDominant | .notInWALS => none
 
 /-- The OVOrder a basic order entails. -/
@@ -195,12 +197,12 @@ def BasicOrder.entailedOV : BasicOrder → Option OVOrder
 def WordOrderProfile.IsConsistent (p : WordOrderProfile) : Prop :=
   (match p.basicOrder.entailedSV with
    | none => True
-   | some sv =>
-     p.svOrder = sv ∨ p.svOrder = .noDominant ∨ p.svOrder = .notInWALS) ∧
+   | some entailed =>
+     p.svOrder = entailed ∨ p.svOrder = .noDominant ∨ p.svOrder = .notInWALS) ∧
   (match p.basicOrder.entailedOV with
    | none => True
-   | some ov =>
-     p.ovOrder = ov ∨ p.ovOrder = .noDominant ∨ p.ovOrder = .notInWALS)
+   | some entailed =>
+     p.ovOrder = entailed ∨ p.ovOrder = .noDominant ∨ p.ovOrder = .notInWALS)
 
 instance (p : WordOrderProfile) : Decidable p.IsConsistent := by
   unfold WordOrderProfile.IsConsistent
@@ -244,9 +246,7 @@ end BasicOrder
 
 /-- Verb position in the clause as derived from object–verb order.
     Theory-neutral: VO ⇒ post-verbal object (verb precedes
-    complement), OV ⇒ pre-verbal object (verb follows complement).
-    Consumers: `Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean`,
-    `Phenomena/Coordination/Studies/Schwarzer2026.lean`. -/
+    complement), OV ⇒ pre-verbal object (verb follows complement). -/
 inductive VerbPosition where
   /-- Verb precedes complement (head-initial VP). -/
   | postverbal

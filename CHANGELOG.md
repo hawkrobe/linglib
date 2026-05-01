@@ -4,6 +4,115 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.579 — Re-audit follow-up to 0.230.576: OSV bug fix in BasicOrder.entailedSV + dropped redundant aggregate sentinel + K'iche' Mayanist contestation note + Gibson2025 docstring fix
+
+Four-agent re-audit on the just-landed commit `c01adfb5` (0.230.576) — same quartet as round 1. The audit surfaced one CRITICAL correctness bug masked by sample coverage, plus several MAJOR / MINOR cleanups recoverable in this follow-up.
+
+**CRITICAL — OSV bug in `BasicOrder.entailedSV`**:
+
+Pre-audit `Linglib/Typology/WordOrder.lean:178-181`:
+```
+def BasicOrder.entailedSV : BasicOrder → Option SVOrder
+  | .sov | .svo => some .sv
+  | .vso | .vos | .ovs | .osv => some .vs   -- .osv is wrong
+```
+OSV = O-S-V: subject is in the *middle* and **precedes** the verb, so entailed `SVOrder` should be `.sv`, not `.vs`. Linguistics-domain-expert verified against WALS F82A: all four OSV-coded languages (ǂHõã `xuu`, Nadëb `mbj`, Tobati `tti`, Wik Ngathana `wig`) are coded `.sv` in F82A. The bug was masked because `Phenomena/WordOrder/Studies/Greenberg1963.lean.fragmentSample` contains no OSV language. Without the fix, any future OSV Fragment with WALS-attested `.sv` svOrder would fail the `IsConsistent` sentinel even though the data is correct. One-line fix: move `.osv` from the `.vs` line to the `.sv` line. Docstring of `entailedSV` updated to make the mnemonic explicit ("Subject precedes verb in SOV, SVO, OSV").
+
+**MAJOR — drop redundant aggregate sentinel in Greenberg1963**:
+
+Pre-audit `Phenomena/WordOrder/Studies/Greenberg1963.lean` ended with `theorem fragment_sample_word_order_consistent : ∀ p ∈ fragmentSample, p.wordOrder.IsConsistent := by decide`. Per linglib-integration-auditor MJ-1: this aggregate proves *exactly* what 15 of the 17 per-Fragment sentinels (in `Fragments/{Lang}/WordOrder.lean`) already prove individually — only K'iche' + German aren't currently in `fragmentSample`. The aggregate is the textbook `feedback_no_aggregate_count_theorems` failure mode (all-of-Finset-satisfies-X grows stale together with per-element sentinels). Replaced with a comment pointing at the per-Fragment coverage.
+
+**MAJOR — drop `set_option maxRecDepth 4096 in` from K'iche'**:
+
+Per linglib-integration-auditor MJ-2: the K'iche' Fragment is a *literal struct* (`{ basicOrder := .vos, svOrder := .vs, ovOrder := .vo }`) with no WALS list walk. The `maxRecDepth` bump was inherited blindly from the `ofWALS`-derived sibling Fragments where it's actually needed. Verified: K'iche' Fragment now builds in 214ms without the option. (The 16 ofWALS-derived Fragments still need the bump — substrate-level `WordOrderProfile.ofWALS_consistent` would require WALS data to be universally consistent across all isos in all 3 chapters, which would itself need a heavy decide; deferred until a cleaner approach materializes.)
+
+**MAJOR — K'iche' Mayanist contestation note + `clemens-coon-2018` citation**:
+
+Per linguistics-domain-expert finding: pre-audit K'iche' Fragment confidently committed `basicOrder := .vos` citing only Mondloch 2017. Mayanist literature on basic word order in K'iche'an is contested — sister-language WALS codings illustrate divergence (Kaqchikel `cak` is `.vos`, Tzutujil `tzj` is `.noDominantOrder`, Mam `mam` is `.vso`). @cite{clemens-coon-2018} (already in `references.bib`) surveys derivational accounts. K'iche' Fragment docstring expanded with "A contested classification" section: notes the contestation, sister-language codings, alternative substrate commitments (`.noDominant` à la Tzutujil; `.vso` per corpus analysis), and clarifies that `.vs` svOrder + `.vo` ovOrder are robust across the contestation. Aissen 1992 + England 1991 not cited (not in `references.bib` — per CLAUDE.md "leave fields blank rather than guessing", the contestation reference uses only the verifiable Clemens & Coon entry).
+
+**MINOR — drop unused `CrossTab deriving DecidableEq`**:
+
+Per mathlib-reviewer m4: no consumer compares two `CrossTab` values for equality. The 4-`AlignmentCell`-deep `DecidableEq` derivation was harmless but dead. Dropped from `Phenomena/WordOrder/Studies/Gibson2025.lean`.
+
+**MINOR — drop `verbPosition` consumer enumeration in docstring**:
+
+Per linglib-integration-auditor MN-3: pre-audit `VerbPosition` docstring listed `Phenomena/Coordination/Studies/{BrueningAlKhalaf2020, Schwarzer2026}.lean` as the consumer set. Reverse-index lists in docstrings go stale silently when consumers change. Dropped. Replaced `OVOrder.verbPosition` docstring with "principled only for non-V2" caveat (per cross-framework-reconciler #4 + #10 finding that Schwarzer's German V2 case sidesteps the projection).
+
+**MINOR — fix Gibson2025 docstring overclaim about F95A "inversion"**:
+
+Per linguistics-domain-expert: the previous CHANGELOG and `fromWALSCh95` docstring worry that "Gibson's hihf=41/hfhi=14 INVERTS the F95A pairing (voPostp=42 vs ovPrep=14 in WALS)" was incorrect — Gibson's `hihf` (HI VO + HF Adp) maps to voPostp; `hfhi` (HF OV + HI Adp) maps to ovPrep. **Same pairing**, different magnitudes (Gibson 981 = 454+41+14+472; WALS Ch 95 raw = 984 = 456+42+14+472, residual ~3 in Gibson reporting + ~158 "Other" languages excluded). Module docstring rewritten to explain the magnitude reconciliation rather than claim a pairing inversion. Also the "Bridge to WALS Ch 95" section header reframed from "hidden agreement resolved" (overclaim — DH2013 doesn't import this, the bridge has no consumer beyond Gibson-internal substrate-derivation evidence) to "Substrate-derivation evidence", clarifying that DH2013 cannot consume the bridge per chronological dependency rule and so the "resolution" is Gibson-internal.
+
+**MINOR — constructor-name shadowing in IsConsistent body**:
+
+Pre-audit `match ... with | some sv => p.svOrder = sv ∨ ...` used `sv`/`ov` as bound variable names, shadowing the `SVOrder.sv` / `OVOrder.ov` constructors. Lean's `linter.constructorNameAsVariable` flagged. Renamed to `entailed` (carries the semantic role: this is the projection target).
+
+**Out of scope (audit findings deferred per CLAUDE.md "don't add features beyond what the task requires")**:
+
+- Substrate-level `WordOrderProfile.ofWALS_consistent (iso : String)` theorem (mathlib-reviewer M2): would require WALS data to be universally consistent across all isos in all 3 chapters, which would itself need a heavy decide; the per-Fragment cost is currently ~5s × 16 Fragments ≈ 80s — workable.
+- Symmetrize `IsConsistent` predicate to be Greenberg/Dryer-neutral (cross-framework-reconciler #1, #2, #9): the body case-splits on `basicOrder` (Greenberg-primary). Genuine architectural finding but defer until a Dryer1992-style consumer exists to refactor against.
+- `VerbPosition.secondPosition` for V2 frameworks (cross-framework-reconciler #10): Schwarzer2026 currently sidesteps the projection by stipulating `germanRootComplementPosition := .postverbal` directly. Adding a third constructor and a movement-aware projection would require Kayne/Antisymmetry substrate that doesn't exist yet.
+- Add K'iche' to `Phenomena/WordOrder/Studies/Greenberg1963.lean.fragmentSample` (linglib-integration-auditor MJ-4): would require creating `Fragments/Mayan/Kiche/Adposition.lean` (K'iche' is prepositional per Greenberg U3, but Mondloch verification needed); deferred.
+- Wire `fromWALSCh95` bridge to `DryerHaspelmath2013.ch95_harmonic_dominant` (linglib-integration-auditor MJ-3): blocked by chronological dependency rule (DH2013 cannot import the newer Gibson 2025); the bridge stays as Gibson-internal substrate-derivation evidence.
+- Bool→Prop full migration in Gradience (linglib-integration-auditor MN-2): lingering `native_decide` consumers; explicitly out of scope.
+
+**Build state**: 5672/5673 jobs green (only failure is the pre-existing Hungarian/Case from another concurrent session — `-nak/-nek` triggers the `/-` docstring trap; nothing this commit touches imports it).
+
+### 0.230.578 — Meta-audit cleanup on 0.230.573 (Anderson 2006 study refactor): substantive Doyayo + Pipil corrections + decorative-theorem replacements + duplicate-deletion sweep + MorphCategory subj/obj agreement architecture plan
+
+Four-agent meta-audit on the 0.230.573 audit-driven refactor (mathlib-reviewer + linglib-integration-auditor + cross-framework-reconciler + linguistics-domain-expert/morphology-typology) surfaced 5 blockers, 7 majors, and 8 minors — substantive errors I introduced while fixing the original ones, plus several "decorative" cross-framework theorems that looked impressive but didn't carry content. PDF re-verification against Anderson 2006 pp. 5, 33-34, 40, 117, 120-121, 222-225 + Heine 1993 §2.4.2 grounded the corrections.
+
+**Substantive Fragment data fixes** (PDF-verified):
+
+1. **Doyayo `splitDoubledForm` tone correction**: `hi¹-zaa³` → `hi¹-zaa¹³` (Anderson p. 223 ex. 129 has a contour tone, not a single tone). Single-character orthographic error introduced in 0.230.573.
+2. **Doyayo `lexHeadedDistribution.onAux`**: `[]` → `[.agreement]`. Anderson p. 120 (last paragraph) explicitly: *"The auxiliary partially encodes person of the subject through the tone associated with the auxiliary."* The 0.230.573 fix dropped this. The associated theorem `doyayo_lexHeaded_aux_empty` (now `doyayo_lexHeaded_aux_agreement_only`) updated accordingly.
+3. **Pipil + Doyayo `.valence` → `.agreement` for object marking**: `Core.Morphology.MorphCategory.valence` is reserved for "causative, applicative, reciprocal" per the substrate (`MorphRule.lean:201`); encoding Pipil `mitsin-` (2pl object) and Doyayo `-mɔ` (2 object) as `.valence` was wrong. Object agreement is `.agreement` again, so the LV's agreement list now has length 2 (subject + object) and AUX's has length 1 (subject only). The four `*_splitDoubled_agreement_doubled` theorems updated to test list lengths instead of `.valence` absence (which was passing for the wrong reason: `.valence` shouldn't be on either side at all). Both Fragments' docstrings now flag the substrate gap (subj/obj agreement collapse) and point to the architecture plan.
+
+**Decorative-theorem replacements** (cross-framework reconciler convergent finding with mathlib reviewer):
+
+4. **`anderson_miestamo_agree_on_neg_morphology` deleted, replaced with `auxiliary_stage_iff_aux_verb_morpheme`**. The 0.230.573 theorem was three rfls about three independent facts (`NegStrategy.negVerb.toGramStage = some .auxiliary` ∧ `NegStrategy.negParticle.toGramStage = none` ∧ `Miestamo2005.finnish.symmetry ≠ Miestamo2005.german.symmetry`) — a stapled conjunction, not a cross-framework relationship. The replacement is a quantified equivalence: `∀ s : NegStrategy, s.toGramStage = some .auxiliary ↔ s.toNegMorphemeType = .auxVerb` — Anderson's grammaticalization-cline placement at `.auxiliary` and Miestamo's morpheme-type classification at `.auxVerb` partition the `NegStrategy` enum identically; both frameworks classify exactly `.negVerb` as the verbal subtype. Genuine cross-framework equivalence, falsifiable by changing either projection.
+5. **`italian_arrivare_chain` deleted, replaced with `sorace_canonical_chain` + `italian_arrivare_grounds_chain`**. The 0.230.573 theorem was three rfls about constants — exactly the anti-pattern Sorace2000.lean's own docstring already warns against ("rfl-trivial theorems that chained it... have been dropped because they just unpacked two lookup tables"). The replacement is a quantified theorem `∀ v : VendlerClass, canonicalSelection (vendlerClassToTypicalTransitivity v) = match v with | .achievement => .be | _ => .have` (real composition over all Vendler classes) plus a separate per-datum grounding for *arrivare*.
+
+**Duplicate deletions**:
+
+6. **`selection_lv_is_nonfinite_in_auxHeaded` deleted** (was textually identical to `auxHeaded_predicts_nonfinite_lv` 54 lines apart in the same file). The 0.230.573 CHANGELOG claimed this was deleted; meta-audit found it was just renamed and both copies were still present.
+7. **`negVerb_creates_auxHeaded` deleted** (was textually identical to `negVerb_implies_auxHeaded` in `NegativeAuxiliaries.lean`).
+8. **`english_modals_are_aux_type` deleted**. Was a Fragment-grounding fact (`can.auxType = .modal := rfl`) framed as a bridge to AVC pattern but didn't actually establish the bridge; just stated a Fragment fact.
+
+**Substrate organization**:
+
+9. **`negAffix_more_grammaticalized` moved from `NegativeAuxiliaries.lean` to `Theories/Diachronic/Grammaticalization.lean`** as `affix_more_bound_than_auxiliary`. The body was purely substrate-level (`GramStage.affix.boundedness > GramStage.auxiliary.boundedness`); name + location now align.
+10. **`Theories/Diachronic/Grammaticalization.lean` `GramStage` docstring rewritten** to clarify the 5-stage `fullVerb / auxiliary / clitic / affix / zero` enum is a *coarsening* drawn from Lehmann 1985 + Hopper-Traugott 2003 ch. 6, NOT a direct rendering of Heine 1993 §2.4.2's finer 7-stage A-G chain (concrete-source → starting-down → budding → defective → linguistic-hybrid → firmly-grammaticalized → orphaning). Anderson p. 5 attributes the broad path `LV >> AV > AFFIX` to Heine without committing to a specific stage count; the 5-stage enum is linglib's working approximation.
+
+**Docstring fixes** (linguistics-domain-expert convergent findings):
+
+11. **Anderson §1.7.2 overreach corrected**. Pre-meta-audit Finnish docstring claimed "Anderson §1.7.2 (p. 33) treats negative auxiliaries as aux-headed AVCs"; Anderson p. 34 actually classifies Uralic neg-auxes across multiple patterns (Udihe/Neyo aux-headed, Kokota split, Kwerba lex-headed, 'Iipay doubled). Finnish-as-split classification now anchored on @cite{karlsson-2017} §19.5 (CONNEG suffix as load-bearing diagnostic) rather than overstated as Anderson's classification.
+12. **Finnish gloss style corrected**: `"NEG-1SG read.CONNEG"` → `"Neg-1 read-conneg"`. Anderson's Uralic glossing convention uses initial-cap `Neg-N` (no person suffix) and lowercase `conneg` per his actual examples on pp. 33-34 (Veps `e-n luge` etc.); the 0.230.573 gloss followed Leipzig conventions, not Anderson's.
+13. **English "have eaten" claim softened**. Pre-meta-audit docstring said "Anderson p. 40 canonical Ch 2 example"; Anderson p. 40 describes the perfect schematically as `have V-ed` but doesn't give the specific *have eaten* form. Docstring now clarifies the form is this file's instantiation, not a verbatim Anderson example.
+14. **Pipil `weli` mislabeling corrected** in Fragment docstring. Anderson p. 220-221 fn. 6 contrasts two variants of the *progressive* AVC (lex-headed vs split/doubled, both with *yu*-class auxiliaries) — NOT *weli* (capability auxiliary) vs *yu* (progressive auxiliary). The 0.230.573 docstring overread the footnote. Fragment docstring now explicitly notes *weli* and *yu* are different AVCs entirely.
+
+**Cleanup**:
+
+15. **Sorace2000.lean duplicate `open Features`** removed (was on consecutive lines 26-27). The 0.230.573 audit consumed two `Features.*` references from this file but didn't notice the trivial cleanup sitting next to them.
+16. **Hemba 6× `native_decide` → `decide`**. The 0.230.573 audit converted 9 sister `native_decide` to `decide` in Anderson2006 but left Hemba (touched-namespace sibling) untouched. Same CLAUDE.md proof-style §7 ban applies.
+17. **Unused `open Diachronic.Grammaticalization (GramStage)` and `open Core.Morphology (InflDistribution MorphCategory)` clauses** dropped from Anderson2006.lean (only docstring mentions, never code references).
+18. **`finnish_form_from_paradigm` strengthened** with new `finnish_1sg_form_eq` witness lemma proving `(negParadigm.find? ...).map (·.form) = some "en"`. The 0.230.573 witness lemma proved only `.isSome`; the strengthened pair pins both existence AND identity — a future change to `negParadigm`'s 1sg form would now break the lemma loudly.
+19. **Dangling docstring reference fixed**: `NegativeAuxiliaries.lean:72` previously referenced `negStrategyStage_collapses_miestamo_symmetry` (a theorem that never existed; the cross-framework-reconciler proposed the contradiction theorem; I implemented the agreement theorem instead but forgot to update the cross-reference). Now points to the actual `auxiliary_stage_iff_aux_verb_morpheme` theorem.
+
+**Architecture plan** (`scratch/morphcategory_agreement_split_plan.md`):
+
+The recurring pain point identified by the meta-audit is `Core.Morphology.MorphCategory.agreement` collapsing subject vs object agreement (and possessor, indirect object, etc.). This is a substrate gap: Anderson Ch 5 §5.2 typology turns critically on "subjects on both AUX and LV; objects only on LV", but the substrate cannot express the role distinction. The 0.230.578 fix encodes the asymmetry as fragile `dist.onLex.length = 2 ∧ dist.onAux.length = 1` theorems. The plan document surveys the gap (also documented in linglib's own `Phenomena/Morphology/Studies/Bybee1985.lean:255-257` — Bybee's `personAgr / personAgrObj / genderAgr` source distinctions all collapse to `.agreement` in the projection), three design alternatives (additive cases / parameterize / hybrid sidecar), recommends Option B (parameterize: `agreement (target : ArgRole)`), and lays out a migration plan: 34 consumer sites total, ~3-hour migration, mostly mechanical (`s/.agreement/.agreement .subj/`), with principled migrations for ~5-10 sites that need actual role thought (Bybee1985, Karlsson2017, Aitha2026, Halle-Marantz1993). Decision needed before implementation.
+
+**Out of scope this commit** (per scoping conversation):
+
+- **MorphCategory parameterization itself** — substantive substrate change; needs user approval before execution per the architecture plan's "Decision needed" section.
+- **Sister-Fragment audit** for multi-pattern Anderson languages (Hemba's other patterns from Ch 5 §5.2.1 ex. 105-106; Limbu, Manam, Kuot, Mbay, Lamba, Persian, Swahili, Panyjima, Os, Kemantney, Oshikwanyama, Shambala, Vinmavis, Nambiquara, Baure, Luganda, Nasioi, Xhosa, Tzutujil) — separate session, would benefit from substrate split landing first.
+- **Heine1993.lean / Wurmbrand2001.lean / Cinque2006.lean dedicated study files** (cross-framework-reconciler D3-D4 from original audit) — substantive new files.
+- **Substrate move reversal** for `GramStage.toMorphStatus` and `NegStrategy.toGramStage`. Both are factually-correct projections that *can* be consumed by sister Studies; the 0.230.573 CHANGELOG overstated this as "Heine1997, SadakaneKoizumi1995 will consume them" when they don't yet. Disposition this session: keep the substrate position (the projections are correct and cheap to keep available), remove the misleading "X will consume" claims from docstrings, accept that they're single-consumer pending sister Studies adoption. Per memory `project_indefinite_substrate_contested` warning about premature substrate, this is borderline; if no sister consumer arrives in the next 3-4 audits, revert.
+
+**Build state**: 7 Lean files modified (Doyayo + Pipil + Hemba Fragments + Anderson2006 + NegativeAuxiliaries + Sorace2000 + Grammaticalization). Anderson2006 + transitive deps green at 904/904. Full project: 5672/5673 jobs green; only failure is pre-existing `Linglib/Fragments/Hungarian/Case.lean` from another concurrent session's WIP (per CLAUDE.md "other sessions may have uncommitted work" — not touched).
+
+**Meta-audit chronology**: user request "let's launch another audit of what we just did" → 4 agents dispatched in parallel on commits `fb4af234` + `e4d4c62c` (the previous audit refactor) → convergent findings on 5 substantive errors (3 Fragment data, 2 duplicate non-deletions) + 7 architectural problems (decorative theorems, premature substrate moves, dangling refs) + 8 cleanup items → user "let's fix everything and then plan out the best architecture for this" → fix-all execution + scratch architecture plan for the MorphCategory split.
+
 ### 0.230.577 — Mathlib-quality re-audit on 0.230.574 substrate: SharingType→MDSharing collision fix + MWFParameter to Typology/Question.lean + Bool→Prop migration (UsesMD/MWFViolation/EllipsisRepairsMWF/AllowsMultipleSluicing) + PhaseEdge enum consolidation + FeaturePreorder.ofFeature realization + strictlyMoreEconomical_iff_lt bridge + DecidableEq derives
 
 Mathlib-reviewer agent re-audit on the substrate landed in 0.230.574 (Economy.lean + Multidominance.lean + MultipleWh.lean MWF additions). The agent surfaced 4 block-tier findings, 1 architectural finding, and 10 nice-to-haves — user said "All actionable" → land 4 blocks + arch + 4 nice-to-haves; defer 5 cosmetic items (B4/N1/N4/N7/N10).
