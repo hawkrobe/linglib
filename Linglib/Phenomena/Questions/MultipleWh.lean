@@ -163,4 +163,158 @@ def t2_category : TermCategory :=
 def termCategories : List TermCategory :=
   [t0_category, t1_category, t2_category]
 
+-- ============================================================================
+-- § Cross-linguistic MWF parameter (Rudin 1988, Bošković 2002, …)
+-- ============================================================================
+
+/-! Languages vary in whether multiple wh-specifiers at a phase edge are
+tolerable at PF. The textbook contrast (@cite{rudin-1988}) splits:
+
+- **MWF languages** (Bulgarian, Romanian): all wh-phrases overtly front;
+  phase edges with multiple wh-specifiers do not crash.
+- **Non-MWF languages** (English, German, Greek): only one wh-phrase
+  fronts in questions.
+
+Within non-MWF, @cite{citko-gracanin-yuksek-2025} (p. 19) further splits
+by *which* phase edges incur the PF asterisk:
+
+- **vP-only** (German, Greek): sluicing — which deletes the vP edge —
+  licenses multiple-wh-remnant configurations.
+- **both vP and CP**: even sluicing leaves the CP-edge asterisk; no
+  repair possible.
+
+This tripartition lets the multiple-sluicing asymmetry be **derived**
+from the parameter rather than stipulated as an independent Bool. -/
+
+/-- Where the PF asterisk lands for multiple wh-specifiers in a non-MWF
+    language. @cite{citko-gracanin-yuksek-2025} (p. 19). -/
+inductive MWFParameter where
+  /-- Multiple wh-fronting language (Bulgarian, Romanian). No PF asterisk
+      at any edge. -/
+  | fronts
+  /-- Non-MWF with vP-only asterisk (German, Greek; @cite{citko-gracanin-yuksek-2025}
+      "English variety B"). Sluicing (deleting the vP edge) repairs. -/
+  | nonFrontsVPOnly
+  /-- Non-MWF with asterisks at *both* vP and CP edges
+      (@cite{citko-gracanin-yuksek-2025} "English variety A"). Sluicing
+      cannot repair — the CP-edge asterisk survives ellipsis. -/
+  | nonFrontsBothEdges
+  deriving Repr, DecidableEq
+
+namespace MWFParameter
+
+/-- Whether the language allows multiple wh-fronting in matrix questions. -/
+def allowsMWF : MWFParameter → Bool
+  | .fronts => true
+  | .nonFrontsVPOnly | .nonFrontsBothEdges => false
+
+/-- Whether the vP edge incurs an asterisk for `n > 1` wh-specifiers. -/
+def vPEdgeAsterisk : MWFParameter → Nat → Bool
+  | .fronts, _ => false
+  | .nonFrontsVPOnly, n | .nonFrontsBothEdges, n => decide (n > 1)
+
+/-- Whether the CP edge incurs an asterisk for `n > 1` wh-specifiers. -/
+def cPEdgeAsterisk : MWFParameter → Nat → Bool
+  | .fronts, _ => false
+  | .nonFrontsVPOnly, _ => false
+  | .nonFrontsBothEdges, n => decide (n > 1)
+
+end MWFParameter
+
+/-- A phase edge has a multiple-wh-fronting violation when *some* edge
+    receives an asterisk. -/
+def mwfViolation (p : MWFParameter) (numWhSpecifiers : Nat) : Bool :=
+  p.vPEdgeAsterisk numWhSpecifiers || p.cPEdgeAsterisk numWhSpecifiers
+
+/-- Ellipsis of the vP edge repairs a MWF violation iff doing so eliminates
+    every asterisk — i.e., there is no surviving CP-edge asterisk. -/
+def ellipsisRepairsMWF (p : MWFParameter) (numWhSpecifiers : Nat)
+    (vpEdgeDeleted : Bool) : Bool :=
+  if mwfViolation p numWhSpecifiers then
+    vpEdgeDeleted && !p.cPEdgeAsterisk numWhSpecifiers
+  else true
+
+/-- Single wh-specifier never triggers an MWF violation. -/
+theorem single_wh_no_violation (p : MWFParameter) :
+    mwfViolation p 1 = false := by
+  cases p <;> decide
+
+/-- Zero wh-specifiers never trigger an MWF violation. -/
+theorem zero_wh_no_violation (p : MWFParameter) :
+    mwfViolation p 0 = false := by
+  cases p <;> decide
+
+/-- MWF languages never have violations. -/
+theorem mwf_language_no_violation (p : MWFParameter)
+    (h : p.allowsMWF = true) (n : Nat) : mwfViolation p n = false := by
+  cases p <;> simp_all [MWFParameter.allowsMWF, mwfViolation,
+    MWFParameter.vPEdgeAsterisk, MWFParameter.cPEdgeAsterisk]
+
+-- ============================================================================
+-- § Cross-linguistic MWF data
+-- ============================================================================
+
+/-- Cross-linguistic MWF datum. Records the parameter setting and an
+    example question. `allowsMultipleSluicing` is **derived** from the
+    parameter via `ellipsisRepairsMWF`. -/
+structure MWFLanguageDatum where
+  language : String
+  mwfParam : MWFParameter
+  /-- Example multiple wh-question. -/
+  exampleQuestion : String
+  /-- Is the bare multiple-wh question grammatical? -/
+  grammatical : Bool
+  notes : String := ""
+  deriving Repr
+
+/-- Multiple sluicing is licensed iff vP-edge ellipsis repairs the MWF
+    violation for `n = 2` wh-specifiers. Derived, not stipulated. -/
+def MWFLanguageDatum.allowsMultipleSluicing (d : MWFLanguageDatum) : Bool :=
+  ellipsisRepairsMWF d.mwfParam 2 (vpEdgeDeleted := true)
+
+/-- Bulgarian: MWF language (@cite{rudin-1988} canonical case). -/
+def bulgarian : MWFLanguageDatum :=
+  { language := "Bulgarian"
+  , mwfParam := .fronts
+  , exampleQuestion := "Koj kakvo e kupil?"
+  , grammatical := true
+  , notes := "All wh-phrases front; @cite{rudin-1988} canonical MWF language" }
+
+/-- German: non-MWF; vP-only asterisk; multiple sluicing repairs.
+    @cite{citko-gracanin-yuksek-2025} ex 31a. -/
+def german : MWFLanguageDatum :=
+  { language := "German"
+  , mwfParam := .nonFrontsVPOnly
+  , exampleQuestion := "*Wer was hat gesehen?"
+  , grammatical := false
+  , notes := "Non-MWF; bans multiple wh-fronting in questions; "
+           ++ "allows multiple sluicing (@cite{citko-gracanin-yuksek-2025} ex 31a)" }
+
+/-- Greek: non-MWF; vP-only asterisk; multiple sluicing repairs.
+    @cite{citko-gracanin-yuksek-2025} ex 31b. -/
+def greek : MWFLanguageDatum :=
+  { language := "Greek"
+  , mwfParam := .nonFrontsVPOnly
+  , exampleQuestion := "*Pços ti efere?"
+  , grammatical := false
+  , notes := "Non-MWF; bans multiple wh-fronting in questions; "
+           ++ "allows multiple sluicing (@cite{citko-gracanin-yuksek-2025} ex 31b)" }
+
+/-- Cross-linguistic MWF table (textbook-consensus subset). The
+    intra-English variety A/B split is paper-specific to
+    @cite{citko-gracanin-yuksek-2025} and lives there. -/
+def mwfLanguageTable : List MWFLanguageDatum := [bulgarian, german, greek]
+
+/-- Bulgarian: MWF language → no violations on bare multiple wh. -/
+theorem bulgarian_no_violation : mwfViolation bulgarian.mwfParam 2 = false := by decide
+
+/-- German question with two wh-phrases is starred. -/
+theorem german_violates_in_questions :
+    mwfViolation german.mwfParam 2 = true := by decide
+
+/-- Sluicing repairs in German and Greek (vP-only asterisk eliminated). -/
+theorem german_greek_sluicing_repairs :
+    german.allowsMultipleSluicing = true ∧
+    greek.allowsMultipleSluicing = true := by decide
+
 end Phenomena.Questions.MultipleWh

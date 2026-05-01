@@ -1028,6 +1028,7 @@ import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kiche.Agreement
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Fragments.Mayan.Kiche.VoiceSystem
+import Linglib.Fragments.Mayan.Kiche.WordOrder
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Tseltalan
@@ -2040,6 +2041,7 @@ import Linglib.Theories.Syntax.Minimalist.Polarity
 import Linglib.Theories.Syntax.Minimalist.Questions
 import Linglib.Theories.Syntax.Minimalist.Labeling
 import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Theories.Syntax.Minimalist.Multidominance
 import Linglib.Theories.Syntax.Minimalist.Economy
 import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Theories.Syntax.Minimalist.Scope

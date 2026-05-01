@@ -1,6 +1,8 @@
 import Linglib.Theories.Syntax.Minimalist.Economy
-import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Theories.Syntax.Minimalist.Multidominance
+import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Phenomena.Ellipsis.Sluicing
+import Linglib.Phenomena.Questions.MultipleWh
 /-!
 # Economy in PF Reduction
 @cite{citko-gracanin-yuksek-2025}
@@ -38,152 +40,43 @@ multidominance as the PF reduction mechanism.
   CSs allow paired readings (with obligatorily transitive verbs)
   and nonpaired readings (with optionally transitive verbs).
 
+## Substrate engagement
+
+- MD primitives (`PFReductionMechanism`, `SharingType`, `SharedNode`,
+  `PFReducedCoordination`) are imported from
+  `Theories/Syntax/Minimalist/Multidominance.lean` (anchored on Citko
+  2014). They were briefly inlined here while the substrate file was
+  absent; restored to substrate for cross-paper reuse.
+- MWF parameter and cross-linguistic data (Bulgarian, German, Greek) live
+  in `Phenomena/Questions/MultipleWh.lean`. The intra-English variety A/B
+  split — paper-specific to @cite{citko-gracanin-yuksek-2025} — stays
+  here.
+- Pronunciation Economy is the **per-operation** primitive
+  `pronunciationEconomy : List PFOperation → Prop` from
+  `Theories/Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
+  per-op vacuity (a derivation with one real deletion + one vacuous
+  deletion violates), which a whole-derivation `pfBefore ≠ pfAfter`
+  check could not express.
+- The CS bulk-sharing structure trivially satisfies @cite{bruening-2021}'s
+  identity condition (Minimalist.Ellipsis.FormalMatching §7), since
+  bulk-sharing means the elided TP literally **is** the antecedent TP
+  (one node, two parents). Stated as a theorem in §10 below.
+
 ## Integration
 
 - CSs are coordinated sluices — each conjunct of a CS is a sluice.
   Bridge theorems connect CS data to `Sluicing.lean` data structures.
 - The MWF parameter connects to `Questions/MultipleWh.lean`:
   non-MWF languages (English) ban multiple wh-fronting in questions.
-- RNR (§6.2) demonstrates that economy can force BOTH ellipsis and MD
-  in a single derivation.
-
-## Multidominance Apparatus (relocated from `Minimalism/Multidominance.lean`)
-
-The PF-reduction primitives below are paper-specific to @cite{citko-2014}
-and @cite{citko-gracanin-yuksek-2025} and are not consumed elsewhere in
-the library, so they live with the study that uses them. They remain
-under `namespace Minimalist` for symmetry with other Minimalist apparatus
-and to support qualified lookup if a future paper picks them up.
+- RNR (§9) demonstrates that economy can force BOTH ellipsis and MD
+  in a single derivation (@cite{belk-neeleman-philip-2023},
+  @cite{barros-vicente-2011}).
 -/
-
-namespace Minimalist
-
-/-- The two mechanisms of PF reduction.
-
-    Both produce representations where material is interpreted but not
-    pronounced. Economy governs the choice between them. -/
-inductive PFReductionMechanism where
-  /-- E-feature on a functional head triggers deletion of its complement
-      at PF. The deleted material is built in full during the derivation. -/
-  | ellipsis
-  /-- A syntactic object is built once and shared between two dominating
-      nodes. Pronounced at one position only. -/
-  | multidominance
-  deriving Repr, DecidableEq
-
-/-- How material is shared between conjuncts in an MD structure.
-
-    The distinction is empirically motivated: coordinated wh-questions
-    use non-bulk-sharing (individual heads shared), while coordinated
-    sluices use bulk-sharing (entire C' shared). The two sharing types
-    derive different syntactic and interpretive properties. -/
-inductive SharingType where
-  /-- Individual functional heads shared between conjuncts.
-      Each conjunct remains a separate full phrase; only specific heads
-      (e.g., C, T) are multiply dominated. -/
-  | nonBulk
-  /-- An entire constituent is shared between conjuncts.
-      Both conjuncts dominate the same subtree, so they share all
-      material inside it (C, TP, vP, VP, ...). -/
-  | bulk
-  deriving Repr, DecidableEq
-
-/-- A node shared between two conjuncts in a coordination structure.
-
-    The shared node is built once but is structurally accessible from
-    both `parent1` and `parent2`. At PF, it is linearized once. -/
-structure SharedNode where
-  /-- The multiply dominated node -/
-  node : SyntacticObject
-  /-- Category of the shared node (if it has a label) -/
-  category : Option Cat
-  /-- The shared node is pronounced (has PF content) -/
-  pronounced : Bool
-  deriving Repr
-
-/-- A coordination structure with PF reduction.
-
-    Models a coordinate &P where material is either multiply dominated
-    (shared between conjuncts) or elided by an E-feature. -/
-structure PFReducedCoordination where
-  /-- First conjunct -/
-  conjunct1 : SyntacticObject
-  /-- Second conjunct -/
-  conjunct2 : SyntacticObject
-  /-- PF reduction mechanism(s) used -/
-  mechanisms : List PFReductionMechanism
-  /-- Type of sharing (for MD structures) -/
-  sharing : Option SharingType
-  /-- Nodes that are shared or deleted -/
-  sharedNodes : List SharedNode
-  /-- PF output after reduction -/
-  pfOutput : List String
-  deriving Repr
-
-/-- Does this coordination use multidominance? -/
-def PFReducedCoordination.usesMD (c : PFReducedCoordination) : Bool :=
-  c.mechanisms.any (· == .multidominance)
-
-/-- Does this coordination use ellipsis? -/
-def PFReducedCoordination.usesEllipsis (c : PFReducedCoordination) : Bool :=
-  c.mechanisms.any (· == .ellipsis)
-
-/-- Does this coordination use both MD and ellipsis? -/
-def PFReducedCoordination.usesBoth (c : PFReducedCoordination) : Bool :=
-  c.usesMD && c.usesEllipsis
-
-/-- The Multiple Wh-Fronting (MWF) parameter.
-
-    Languages vary in whether multiple wh-specifiers at a phase edge
-    are tolerable at PF:
-
-    - **MWF languages** (e.g., Bulgarian, Romanian): a phase node with
-      multiple wh-specifiers does NOT receive an asterisk at PF.
-    - **Non-MWF languages** (e.g., English, German, Greek): a phase node
-      with multiple wh-specifiers receives an asterisk, which is
-      uninterpretable at PF, crashing the derivation.
-
-    In non-MWF languages, structures with multiple wh-specifiers at a
-    phase edge are only grammatical if the offending edge is deleted
-    by ellipsis before PF interprets the asterisk. -/
-structure MWFParameter where
-  /-- Does this language allow multiple wh-fronting? -/
-  allowsMWF : Bool
-  deriving Repr, DecidableEq
-
-/-- A phase edge has a MWF violation when it contains multiple
-    wh-specifiers in a non-MWF language. -/
-def mwfViolation (param : MWFParameter) (numWhSpecifiers : Nat) : Bool :=
-  !param.allowsMWF && numWhSpecifiers > 1
-
-/-- Ellipsis can repair a MWF violation by deleting the phase edge
-    containing the offending multiple wh-specifiers. -/
-def ellipsisRepairsMWF (param : MWFParameter) (numWhSpecs : Nat)
-    (edgeDeleted : Bool) : Bool :=
-  if mwfViolation param numWhSpecs then edgeDeleted
-  else true
-
-/-- No repair is needed if the language allows MWF. -/
-theorem mwf_language_no_violation (param : MWFParameter)
-    (h : param.allowsMWF = true) (n : Nat) :
-    mwfViolation param n = false := by
-  simp [mwfViolation, h]
-
-/-- A single wh-specifier never causes a MWF violation. -/
-theorem single_wh_no_violation (param : MWFParameter) :
-    mwfViolation param 1 = false := by
-  simp [mwfViolation]
-
-/-- Zero wh-specifiers never cause a MWF violation. -/
-theorem zero_wh_no_violation (param : MWFParameter) :
-    mwfViolation param 0 = false := by
-  simp [mwfViolation]
-
-end Minimalist
 
 namespace CitkoGracaninYuksek2025
 
 open Minimalist
+open Phenomena.Questions.MultipleWh
 
 -- ============================================================================
 -- § 1: Construction Types and Empirical Data
@@ -243,143 +136,149 @@ def cs_basic : WHCoordDatum :=
 
 /-- CSs allow coordination of obligatory wh-arguments (ex 5b). -/
 def cs_obligatory_args_allowed : WHCoordDatum :=
-  { sentence := "I heard that John gave something to someone, but I forgot what and to whom."
+  { sentence := "John gave something to someone, but I forgot what and to whom."
   , construction := .CS
   , whPhrases := ["what", "to whom"]
   , grammatical := true
-  , notes := "Both are obligatory arguments of 'give'; allowed in CSs" }
+  , notes := "Both obligatory args; allowed in CSs" }
 
 /-- CSs allow wh-object + wh-adjunct coordination (ex 6b). -/
 def cs_obj_adjunct_allowed : WHCoordDatum :=
-  { sentence := "I heard that John bought something sometime last week, but I forgot what and when."
+  { sentence := "John bought something at some point, but I forgot what and when."
   , construction := .CS
   , whPhrases := ["what", "when"]
   , grammatical := true
-  , notes := "Wh-object + wh-adjunct with obligatorily transitive 'buy'; allowed in CSs" }
+  , notes := "Wh-object + wh-adjunct; allowed in CSs even with 'buy'" }
 
--- Paired vs nonpaired readings
+/-- All CWH/CS empirical contrasts as a single drift-sentry table. Replaces
+    seven trivial `rfl` readouts (`cwh_bans_obligatory_args` etc.) with one
+    decide-checked aggregate that catches drift in any row. -/
+def whCoordContrastTable : List (WHCoordDatum × Bool) :=
+  [ (cwh_basic, true)
+  , (cwh_obligatory_args_banned, false)
+  , (cwh_obj_adjunct_banned, false)
+  , (cs_basic, true)
+  , (cs_obligatory_args_allowed, true)
+  , (cs_obj_adjunct_allowed, true) ]
+
+theorem whCoordContrastTable_consistent :
+    whCoordContrastTable.all (fun ⟨d, expected⟩ => d.grammatical == expected) = true := by
+  decide
+
+-- ============================================================================
+-- § 1a: Reading Typology
+-- ============================================================================
 
 /-- Reading type for wh-coordination. -/
 inductive ReadingType where
-  /-- Each wh-phrase interpreted in its own conjunct only. -/
-  | nonpaired
-  /-- The trace of the first wh-phrase is interpreted as an E-type
-      pronoun in the second conjunct (pairing). -/
+  /-- Each wh-phrase ranges over a single value (n-tuple as the answer). -/
   | paired
+  /-- Each wh-phrase ranges over multiple values (cross-product answer). -/
+  | nonpaired
   deriving Repr, DecidableEq
 
 /-- Reading availability datum. -/
 structure ReadingDatum where
-  sentence : String
   construction : WHCoordType
   reading : ReadingType
   available : Bool
-  paraphrase : String := ""
+  notes : String := ""
   deriving Repr
 
 /-- CWHs: only nonpaired reading available (ex 8a). -/
 def cwh_nonpaired : ReadingDatum :=
-  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
-  , construction := .CWH
+  { construction := .CWH
   , reading := .nonpaired
   , available := true
-  , paraphrase := "what candy he ate; why he was stressed out" }
+  , notes := "Each wh-phrase ranges over multiple values" }
 
 /-- CWHs: paired reading unavailable (ex 8a). -/
 def cwh_no_paired : ReadingDatum :=
-  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
-  , construction := .CWH
+  { construction := .CWH
   , reading := .paired
   , available := false
-  , paraphrase := "*what candy he ate and why he ate it" }
+  , notes := "Single-pair reading is unavailable for CWHs" }
 
 /-- CSs: paired reading available with obligatorily transitive verbs (ex 8b).
-    The paired reading arises because in the bulk-sharing structure,
-    both wh-phrases originate inside the shared vP — the lower copy of
-    the first wh-phrase is interpreted as an E-type pronoun in the
-    second conjunct. -/
+    The bulk-sharing CS structure puts both wh-phrases inside a single vP. -/
 def cs_paired : ReadingDatum :=
-  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
-  , construction := .CS
+  { construction := .CS
   , reading := .paired
   , available := true
-  , paraphrase := "what candy he ate and why he ate it (= that candy)" }
+  , notes := "Both wh-phrases share scope inside the bulk-shared vP" }
 
 /-- CSs: nonpaired reading available with optionally transitive verbs (§6.1, ex 43).
-    With verbs like 'teach' (optionally transitive), each wh-phrase can
-    start in its own clause, yielding a nonpaired reading. This requires
-    a different structure: non-bulk-sharing with two independent Cs,
-    only one bearing the E-feature. -/
+    With optionally transitive verbs, the CWH-style structure becomes
+    available, yielding a nonpaired reading. -/
 def cs_nonpaired : ReadingDatum :=
-  { sentence := "I know John taught something, but I forgot what and where."
-  , construction := .CS
+  { construction := .CS
   , reading := .nonpaired
   , available := true
-  , paraphrase := "what he taught; where he taught" }
+  , notes := "Available with optionally transitive verbs (CWH-style structure)" }
 
--- Verification: CWH and CS differ on all three properties
-theorem cwh_bans_obligatory_args : cwh_obligatory_args_banned.grammatical = false := rfl
-theorem cs_allows_obligatory_args : cs_obligatory_args_allowed.grammatical = true := rfl
-theorem cwh_bans_obj_adjunct : cwh_obj_adjunct_banned.grammatical = false := rfl
-theorem cs_allows_obj_adjunct : cs_obj_adjunct_allowed.grammatical = true := rfl
-theorem cwh_bans_paired_reading : cwh_no_paired.available = false := rfl
-theorem cs_allows_paired_reading : cs_paired.available = true := rfl
-theorem cs_allows_nonpaired_reading : cs_nonpaired.available = true := rfl
+/-- Reading availability drift sentry. Replaces three rfl-readouts. -/
+def readingTable : List ReadingDatum :=
+  [cwh_nonpaired, cwh_no_paired, cs_paired, cs_nonpaired]
+
+/-- Drift sentry: the four reading datums encode the paper's central
+    paired/nonpaired contrast — CWH bans paired, CS allows both. -/
+theorem readingTable_consistent :
+    cwh_nonpaired.available = true ∧
+    cwh_no_paired.available = false ∧
+    cs_paired.available = true ∧
+    cs_nonpaired.available = true := by decide
 
 -- ============================================================================
--- § 1b: CSs as Coordinated Sluices — Bridge to Sluicing.lean
+-- § 1b: Sluicing Decomposition (CSs ≈ coordinated sluices)
 -- ============================================================================
-
-/-! Each conjunct of a CS is itself a sluice: the wh-phrase is the remnant
-and the TP is the elided material. We show this by decomposing CS examples
-into `SluicingDatum` instances from `Phenomena.Ellipsis.Sluicing`. -/
 
 open Phenomena.Ellipsis.Sluicing
 
 /-- The "what" conjunct of `cs_basic` as a standalone sluice:
-    "John taught something, but I forgot what [John taught _]" -/
+    "John taught something, but I forgot what." -/
 def cs_basic_sluice_what : SluicingDatum :=
-  { sentence := "John taught something, but I forgot what"
+  { sentence := "John taught something, but I forgot what."
   , antecedent := "John taught something"
   , innerAntecedent := "something"
   , whPhrase := "what"
   , elided := "John taught"
-  , notes := "First conjunct of cs_basic decomposed as sluice" }
+  , source := "CitkoGracaninYuksek2025 cs_basic decomposition" }
 
 /-- The "when" conjunct of `cs_basic` as a standalone sluice:
-    "John taught something, but I forgot when [John taught something]" -/
+    "John taught (then), but I forgot when." -/
 def cs_basic_sluice_when : SluicingDatum :=
-  { sentence := "John taught something, but I forgot when"
-  , antecedent := "John taught something"
-  , innerAntecedent := "something"
+  { sentence := "John taught (then), but I forgot when."
+  , antecedent := "John taught (then)"
+  , innerAntecedent := "(then)"
   , whPhrase := "when"
-  , elided := "John taught something"
-  , notes := "Second conjunct of cs_basic decomposed as sluice (sprouting-like: temporal adjunct)" }
+  , elided := "John taught"
+  , source := "CitkoGracaninYuksek2025 cs_basic decomposition" }
 
 /-- Each CS decomposes into sluices: the wh-phrases in a CS are
-    exactly the remnants of the component sluices. -/
+    each sluice remnants. -/
 theorem cs_basic_decomposes_into_sluices :
-    cs_basic.whPhrases = [cs_basic_sluice_what.whPhrase, cs_basic_sluice_when.whPhrase] := rfl
+    cs_basic.whPhrases =
+      [cs_basic_sluice_what.whPhrase, cs_basic_sluice_when.whPhrase] := rfl
 
 /-- Both component sluices are grammatical. -/
 theorem cs_components_grammatical :
-    cs_basic_sluice_what.grammatical = true ∧ cs_basic_sluice_when.grammatical = true :=
-  ⟨rfl, rfl⟩
+    cs_basic_sluice_what.grammatical = true ∧
+    cs_basic_sluice_when.grammatical = true := ⟨rfl, rfl⟩
 
 /-- The "what" and "to whom" conjuncts of `cs_obligatory_args_allowed`. -/
 def cs_oblig_sluice_what : SluicingDatum :=
-  { sentence := "I heard that John gave something to someone, but I forgot what"
+  { sentence := "John gave something to someone, but I forgot what."
   , antecedent := "John gave something to someone"
   , innerAntecedent := "something"
   , whPhrase := "what"
-  , elided := "John gave _ to someone" }
+  , elided := "John gave (to someone)" }
 
 def cs_oblig_sluice_toWhom : SluicingDatum :=
-  { sentence := "I heard that John gave something to someone, but I forgot to whom"
+  { sentence := "John gave something to someone, but I forgot to whom."
   , antecedent := "John gave something to someone"
   , innerAntecedent := "to someone"
   , whPhrase := "to whom"
-  , elided := "John gave something _" }
+  , elided := "John gave (something)" }
 
 /-- Obligatory-argument CS also decomposes into sluices. -/
 theorem cs_obligatory_decomposes :
@@ -387,12 +286,23 @@ theorem cs_obligatory_decomposes :
       [cs_oblig_sluice_what.whPhrase, cs_oblig_sluice_toWhom.whPhrase] := rfl
 
 -- ============================================================================
--- § 2: English MWF Parameter
+-- § 2: English MWF — intra-English variety A/B split
 -- ============================================================================
 
-/-- English is a non-MWF language: multiple wh-fronting is banned.
-    *"Who what saw?" is ungrammatical (ex 28). -/
-def english : MWFParameter := ⟨false⟩
+/-! Bulgarian, German, Greek MWF data live in
+`Phenomena/Questions/MultipleWh.lean` (textbook-consensus typology). The
+intra-English variety A/B split is paper-specific to
+@cite{citko-gracanin-yuksek-2025} (p. 19): both varieties are non-MWF in
+matrix questions, but they diverge on multiple sluicing — variety A bans
+it, variety B allows it. The paper *derives* this asymmetry from where
+the PF asterisk lands (vP only vs both vP and CP edges), not as a free
+parameter. The tri-valued `MWFParameter` in `MultipleWh.lean` captures
+this derivation: variety B is `.nonFrontsVPOnly`, variety A is
+`.nonFrontsBothEdges`. -/
+
+/-- English (default): variety A — both vP and CP asterisks; no sluicing
+    repair. -/
+def english : MWFParameter := .nonFrontsBothEdges
 
 /-- English bans multiple wh-specifiers at a phase edge. -/
 theorem english_bans_multiple_wh : mwfViolation english 2 = true := by decide
@@ -400,100 +310,44 @@ theorem english_bans_multiple_wh : mwfViolation english 2 = true := by decide
 /-- A single wh-specifier is fine in English. -/
 theorem english_allows_single_wh : mwfViolation english 1 = false := by decide
 
--- ============================================================================
--- § 2b: MWF Cross-Linguistic Typology
--- ============================================================================
-
-/-! The MWF parameter varies cross-linguistically. We define language
-classifications that connect to the multiple wh-question data in
-`Phenomena/Questions/MultipleWh.lean`. -/
-
-/-- MWF language classification. -/
-structure MWFLanguageDatum where
-  language : String
-  mwfParam : MWFParameter
-  /-- Example multiple wh-question -/
-  example_ : String
-  /-- Is the example grammatical? -/
-  grammatical : Bool
-  /-- Does this language allow multiple sluicing? -/
-  allowsMultipleSluicing : Bool
-  notes : String := ""
-  deriving Repr
-
-/-- Bulgarian: MWF language. -/
-def bulgarian : MWFLanguageDatum :=
-  { language := "Bulgarian"
-  , mwfParam := ⟨true⟩
-  , example_ := "Koj kakvo e kupil?"
-  , grammatical := true
-  , allowsMultipleSluicing := true
-  , notes := "All wh-phrases front; MWF language" }
-
-/-- German: non-MWF language, but allows multiple sluicing. -/
-def german_mwf : MWFLanguageDatum :=
-  { language := "German"
-  , mwfParam := ⟨false⟩
-  , example_ := "*Wer was hat gesehen?"
-  , grammatical := false
-  , allowsMultipleSluicing := true
-  , notes := "Non-MWF; bans multiple wh-fronting in questions but allows multiple sluicing (ex 31a)" }
-
-/-- Greek: non-MWF language, but allows multiple sluicing. -/
-def greek_mwf : MWFLanguageDatum :=
-  { language := "Greek"
-  , mwfParam := ⟨false⟩
-  , example_ := "*Pços ti efere?"
-  , grammatical := false
-  , allowsMultipleSluicing := true
-  , notes := "Non-MWF; bans multiple wh-fronting in questions but allows multiple sluicing (ex 31b)" }
-
-/-- English variety A: non-MWF, bans multiple sluicing. -/
+/-- English variety A: non-MWF, bans multiple sluicing. The CP-edge
+    asterisk survives ellipsis (vP-edge deletion is not enough). -/
 def english_varietyA : MWFLanguageDatum :=
   { language := "English (variety A)"
-  , mwfParam := ⟨false⟩
-  , example_ := "*Who what saw?"
+  , mwfParam := .nonFrontsBothEdges
+  , exampleQuestion := "*Who what saw?"
   , grammatical := false
-  , allowsMultipleSluicing := false
-  , notes := "MWF violation at BOTH vP and CP edges; no ellipsis repair possible" }
+  , notes := "MWF asterisks at BOTH vP and CP edges; ellipsis cannot repair" }
 
-/-- English variety B: non-MWF, allows multiple sluicing. -/
+/-- English variety B: non-MWF, allows multiple sluicing. Only the vP
+    edge has the asterisk; vP-edge deletion repairs it. -/
 def english_varietyB : MWFLanguageDatum :=
   { language := "English (variety B)"
-  , mwfParam := ⟨false⟩
-  , example_ := "*Who what saw?"
+  , mwfParam := .nonFrontsVPOnly
+  , exampleQuestion := "*Who what saw?"
   , grammatical := false
-  , allowsMultipleSluicing := true
-  , notes := "MWF violation only at vP edge; sluicing repairs by deleting vP" }
+  , notes := "MWF asterisk only at vP edge; sluicing repairs by deleting vP" }
 
-/-- MWF languages never have MWF violations in questions. -/
-theorem mwf_language_questions_ok :
-    mwfViolation bulgarian.mwfParam 2 = false := by decide
-
-/-- Non-MWF languages DO have violations with 2+ wh-specifiers. -/
-theorem non_mwf_language_questions_bad :
-    mwfViolation german_mwf.mwfParam 2 = true := by decide
-
-/-- German and Greek: non-MWF but allow multiple sluicing — the
-    offending vP edge is deleted by ellipsis (same mechanism as CSs). -/
-theorem german_greek_sluicing_repair :
-    german_mwf.allowsMultipleSluicing = true ∧
-    greek_mwf.allowsMultipleSluicing = true ∧
-    ellipsisRepairsMWF german_mwf.mwfParam 2 (edgeDeleted := true) = true := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- Variety A bans multiple sluicing, variety B allows it. **Derived** from
+    the parameter via `ellipsisRepairsMWF`, not stipulated as an
+    independent Bool. -/
+theorem english_variety_split :
+    english_varietyA.allowsMultipleSluicing = false ∧
+    english_varietyB.allowsMultipleSluicing = true := by decide
 
 -- ============================================================================
 -- § 3: Derivation Cost Functions
 -- ============================================================================
 
-/-! The derivation cost of a PF-reduced coordination depends on whether
-the shared material is built once (MD) or twice (ellipsis). We provide
-two levels of parameterization:
+/-! Cost defs unchanged in shape from earlier revisions. The 4-Nat
+parameterization (sm/sl/nsm/nsl coarse, hm/hl/pm/pl/wm/wl fine) is
+ergonomically cryptic but matches the paper's argument granularity:
 
 **Coarse** (MD vs ellipsis): parameterized by total shared/non-shared cost.
 Used for Theorems 1–2.
 
-- `sm`/`sl`: Merge/lexical cost of shared material (built once with MD, twice with ellipsis)
+- `sm`/`sl`: Merge/lexical cost of shared material (built once with MD,
+  twice with ellipsis)
 - `nsm`/`nsl`: cost of non-shared parts (wh-movement, coordination)
 
 **Fine** (non-bulk vs bulk sharing): decomposes shared material into
@@ -561,15 +415,15 @@ def csDoubleEllipsisCost (sm sl nsm nsl : Nat) : DerivationCost where
 /-- **Theorem 1**: For CWHs, the MD derivation is strictly more economical
     than the ellipsis alternative (paper's (10b) vs (11b)).
 
-    The MD derivation saves `sm` Merge operations (shared material built
-    once instead of twice) and avoids the ellipsis operation entirely.
-    This holds for ANY amount of shared material — even if `sm = 0`,
-    the ellipsis operation alone makes the alternative costlier. -/
+    The MD derivation saves `sm` Merge ops and `sl` lexical items, and
+    avoids the ellipsis op entirely. This holds for ANY shared material —
+    even `sm = sl = 0`, the ellipsis op alone makes the alternative
+    costlier. -/
 theorem cwh_md_beats_ellipsis (sm sl nsm nsl : Nat) :
     strictlyMoreEconomical (cwhMDCost sm sl nsm nsl) (cwhEllipsisCost sm sl nsm nsl) := by
-  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
-    cwhMDCost, cwhEllipsisCost]
-  omega
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
+  all_goals simp only [cwhMDCost, cwhEllipsisCost]
+  all_goals omega
 
 /-- **Theorem 2**: For CSs, the bulk-sharing derivation is strictly more
     economical than the double-ellipsis alternative (paper's (20b) vs (19b)).
@@ -578,26 +432,26 @@ theorem cwh_md_beats_ellipsis (sm sl nsm nsl : Nat) :
     lexical items, and uses one fewer ellipsis operation. -/
 theorem cs_bulk_beats_double_ellipsis (sm sl nsm nsl : Nat) :
     strictlyMoreEconomical (csBulkCost sm sl nsm nsl) (csDoubleEllipsisCost sm sl nsm nsl) := by
-  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
-    csBulkCost, csDoubleEllipsisCost]
-  omega
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
+  all_goals simp only [csBulkCost, csDoubleEllipsisCost]
+  all_goals omega
 
 /-- **Theorem 3**: Bulk-sharing is strictly more economical than
     non-bulk-sharing for CWHs (paper's (12b) vs (10b)).
 
-    This is the paper's crucial insight: the MOST economical derivation
-    for CWHs (bulk-sharing, which builds C' once) is blocked by an
-    independent constraint (MWF), forcing the LESS economical
-    non-bulk-sharing structure. The precondition `0 < pm ∨ 0 < pl`
-    ensures there is at least some phrasal structure to share —
-    which holds for any non-trivial clause. -/
+    The paper's crucial insight: the MOST economical derivation for CWHs
+    (bulk-sharing, which builds C' once) is blocked by an independent
+    constraint (MWF), forcing the LESS economical non-bulk-sharing
+    structure. The precondition `0 < pm ∨ 0 < pl` ensures there is at
+    least some phrasal structure to share — which holds for any
+    non-trivial clause. -/
 theorem cwh_bulk_beats_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) :
     strictlyMoreEconomical
       (cwhBulkMDCost hm hl pm pl wm wl)
       (cwhNonBulkCost hm hl pm pl wm wl) := by
-  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
-    cwhBulkMDCost, cwhNonBulkCost]
-  omega
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
+  all_goals simp only [cwhBulkMDCost, cwhNonBulkCost]
+  all_goals omega
 
 -- ============================================================================
 -- § 5: Why CWHs Cannot Have the CS Structure
@@ -624,42 +478,72 @@ theorem cwh_bulk_crashes_in_english :
 /-- CWHs have no ellipsis to repair the MWF violation —
     the vP edge survives to PF, and the asterisk crashes. -/
 theorem cwh_no_ellipsis_repair :
-    ellipsisRepairsMWF english 2 (edgeDeleted := false) = false := by decide
+    ellipsisRepairsMWF english 2 (vpEdgeDeleted := false) = false := by decide
 
-/-- CSs survive the same MWF configuration because ellipsis deletes
-    the vP edge containing the multiple wh-specifiers. -/
-theorem cs_ellipsis_repairs_mwf :
-    ellipsisRepairsMWF english 2 (edgeDeleted := true) = true := by decide
+/-- In English variety B (vP-only asterisk), CSs survive the same MWF
+    configuration because ellipsis deletes the vP edge. Variety A
+    (both-edges asterisk) is **not** repairable — CP-edge survives. -/
+theorem cs_ellipsis_repairs_mwf_varietyB :
+    ellipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true) = true := by decide
 
 -- ============================================================================
--- § 6: Why CSs Cannot Have the CWH Structure
+-- § 6: Why CSs Cannot Have the CWH Structure (per-op Pronunciation Economy)
 -- ============================================================================
 
-/-- If CSs had the non-bulk-sharing (CWH) structure (paper's (38d)),
-    with a shared C bearing the E-feature, the C would have two TP
-    complements (one per conjunct). The E-feature triggers deletion
-    of both TPs:
+/-! Paper p. 32 (re. ex (45c)): "If both Cs had the E feature, …
+Pronunciation Economy would be violated since the TP would be elided
+twice (once by the E feature on each C)."
 
-    1. Deleting TP₁ removes the TP-internal string from PF.
-    2. Deleting TP₂ would remove the same string — but it was already
-       removed by step 1.
-    3. The second deletion is vacuous → violates Pronunciation Economy.
+The argument depends on the CS structure where a **shared TP** has two
+Cs each bearing the E-feature. Both Cs fire the E-feature on the same
+TP — but only the first deletion has any PF effect; the second targets
+material the first already removed. This is the per-operation vacuity
+that requires the new `pronunciationEconomy : List PFOperation → Prop`
+shape: a whole-derivation `pfBefore ≠ pfAfter` check would let this
+through (the first deletion ensures the whole derivation's PF differs).
+-/
 
-    This reasoning crucially relies on C being shared (economy forces
-    sharing unless independent Cs are needed, as in (16) where each
-    C hosts different phonological material). -/
-theorem cs_nonbulk_violates_pronunciation_economy :
-    let pfAfterFirstDeletion := ["what", "and", "when"]
-    let pfAfterBothDeletions := ["what", "and", "when"]
-    vacuousEllipsis pfAfterFirstDeletion pfAfterBothDeletions := rfl
+/-- Initial PF state of the shared TP: contains "John taught". -/
+def cs_twoEFeature_initialPF : List String := ["John", "taught"]
 
-/-- The Pronunciation Economy principle is violated: the second ellipsis
-    does not change the PF output. -/
-theorem cs_nonbulk_fails_pronEcon :
-    let pfAfterFirstDeletion := ["what", "and", "when"]
-    let pfAfterBothDeletions := ["what", "and", "when"]
-    ¬pronunciationEconomy pfAfterFirstDeletion pfAfterBothDeletions := by
-  simp [pronunciationEconomy]
+/-- The first C's E-feature deletion: removes "John taught" from the
+    shared TP. Non-vacuous. -/
+def cs_twoEFeature_firstDeletion : PFOperation :=
+  { pfBefore := cs_twoEFeature_initialPF, pfAfter := [] }
+
+/-- The second C's E-feature deletion: tries to delete the same shared
+    TP, but it is already empty after the first deletion. Vacuous. -/
+def cs_twoEFeature_secondDeletion : PFOperation :=
+  { pfBefore := [], pfAfter := [] }
+
+/-- The full deletion sequence under a hypothetical two-E-feature CS
+    structure (paper's (45c) configuration). -/
+def cs_twoEFeature_deletions : List PFOperation :=
+  [cs_twoEFeature_firstDeletion, cs_twoEFeature_secondDeletion]
+
+/-- The second deletion is vacuous (its PF before/after coincide). -/
+theorem cs_twoEFeature_secondDeletion_vacuous :
+    cs_twoEFeature_secondDeletion.isVacuous := rfl
+
+/-- The two-E-feature CS structure violates Pronunciation Economy at
+    the second deletion. This is the paper's (45c) ban — the per-op
+    vacuity is what rules it out, even though the full derivation's
+    pfBefore (`["John", "taught"]`) ≠ pfAfter (`[]`) is satisfied.
+
+    A whole-derivation PF≠ check would pass this configuration
+    incorrectly; the per-op `pronunciationEconomy` correctly fails it. -/
+theorem cs_twoEFeature_violates_pronunciation_economy :
+    ¬ pronunciationEconomy cs_twoEFeature_deletions :=
+  pronunciationEconomy_violated_of_vacuous
+    (op := cs_twoEFeature_secondDeletion)
+    (by simp [cs_twoEFeature_deletions])
+    cs_twoEFeature_secondDeletion_vacuous
+
+/-- Whole-derivation PF differs (initial ["John","taught"] → final [])
+    even though the second op is vacuous. This is exactly what makes a
+    whole-derivation PF≠ check inadequate for the paper's argument. -/
+theorem cs_twoEFeature_wholeDeriv_pf_differs :
+    cs_twoEFeature_initialPF ≠ ([] : List String) := by decide
 
 -- ============================================================================
 -- § 7: Structural Summary — with populated sharedNodes
@@ -692,24 +576,15 @@ def csStructure : PFReducedCoordination where
     , { node := mkLeaf .v [] 12, category := some .v, pronounced := false } ]
   pfOutput := ["what", "and", "when"]
 
-/-- CWHs use only MD. -/
-theorem cwh_uses_md_only :
-    cwhStructure.usesMD = true ∧ cwhStructure.usesEllipsis = false := by decide
-
-/-- CSs use both MD and ellipsis. -/
-theorem cs_uses_both :
-    csStructure.usesBoth = true := by decide
-
-/-- CWHs share individual heads (C, T); CSs share an entire constituent. -/
-theorem cwh_shares_heads_cs_shares_constituent :
-    cwhStructure.sharedNodes.length = 2 ∧ csStructure.sharedNodes.length = 3 := by decide
-
-/-- All CWH shared nodes have explicit categories. -/
-theorem cwh_shared_categories :
-    cwhStructure.sharedNodes.all (·.category.isSome) = true := by decide
-
-/-- All CS shared nodes have explicit categories. -/
-theorem cs_shared_categories :
+/-- Structural drift sentry over the four key properties of cwhStructure
+    and csStructure. Replaces five individual rfl theorems
+    (`cwh_uses_md_only`, `cs_uses_both`, `cwh_shares_heads_cs_shares_constituent`,
+    `cwh_shared_categories`, `cs_shared_categories`). -/
+theorem cwhStructure_csStructure_drift_sentry :
+    cwhStructure.usesMD = true ∧ cwhStructure.usesEllipsis = false ∧
+    csStructure.usesBoth = true ∧
+    cwhStructure.sharedNodes.length = 2 ∧ csStructure.sharedNodes.length = 3 ∧
+    cwhStructure.sharedNodes.all (·.category.isSome) = true ∧
     csStructure.sharedNodes.all (·.category.isSome) = true := by decide
 
 -- ============================================================================
@@ -728,29 +603,24 @@ properties — despite their superficial similarity.
 
 **For CSs** (§4.2):
 1. Bulk-sharing MD + ellipsis is most economical (`cs_bulk_beats_double_ellipsis`)
-2. Bulk-sharing creates MWF at vP, but ellipsis repairs it (`cs_ellipsis_repairs_mwf`)
-3. Non-bulk-sharing (CWH structure) violates Pronunciation Economy (`cs_nonbulk_fails_pronEcon`)
+2. Bulk-sharing creates MWF at vP, but ellipsis repairs it
+   (`cs_ellipsis_repairs_mwf_varietyB`, in vP-only varieties)
+3. Non-bulk-sharing (CWH structure) violates Pronunciation Economy
+   (`cs_twoEFeature_violates_pronunciation_economy`)
 4. So bulk-sharing MD + ellipsis is selected
-
-**Different structures → different properties**:
-- Non-bulk-sharing (CWH): each conjunct has one wh-phrase → bans
-  obligatory arg coordination, bans obj+adjunct coordination with
-  obligatorily transitive verbs, only nonpaired readings
-- Bulk-sharing (CS): both wh-phrases in shared vP → allows all of the above
 -/
 
-/-- The two constructions use different PF reduction mechanisms,
-    explaining why they have different empirical properties. -/
+/-- The two constructions differ in which mechanisms they use. -/
 theorem different_mechanisms :
     cwhStructure.mechanisms ≠ csStructure.mechanisms := by decide
 
-/-- The two constructions use different sharing types. -/
+/-- The two constructions differ in sharing type. -/
 theorem different_sharing :
     cwhStructure.sharing ≠ csStructure.sharing := by decide
 
 /-- End-to-end: CWHs cannot use bulk-sharing (most economical)
     because the MWF violation at vP cannot be repaired without ellipsis.
-    Combines Theorems 3, `cwh_bulk_crashes_in_english`, and
+    Combines Theorem 3, `cwh_bulk_crashes_in_english`, and
     `cwh_no_ellipsis_repair`. -/
 theorem cwh_forced_to_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) :
     -- Bulk-sharing IS more economical...
@@ -758,21 +628,21 @@ theorem cwh_forced_to_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) 
     -- ...but it crashes in English (MWF at vP)...
     ∧ mwfViolation english 2 = true
     -- ...and CWHs can't repair the crash (no ellipsis).
-    ∧ ellipsisRepairsMWF english 2 (edgeDeleted := false) = false := by
-  exact ⟨cwh_bulk_beats_nonbulk hm hl pm pl wm wl h, rfl, rfl⟩
+    ∧ ellipsisRepairsMWF english 2 (vpEdgeDeleted := false) = false :=
+  ⟨cwh_bulk_beats_nonbulk hm hl pm pl wm wl h, by decide, by decide⟩
 
-/-- End-to-end: CSs use bulk-sharing because it is most economical
-    AND the MWF violation is repaired by ellipsis; the CWH structure
-    is excluded by Pronunciation Economy. -/
+/-- End-to-end: CSs use bulk-sharing because it is most economical AND the
+    MWF violation is repaired by ellipsis (in vP-only varieties); the CWH
+    (two-E-feature) structure is excluded by per-op Pronunciation Economy. -/
 theorem cs_forced_to_bulk (sm sl nsm nsl : Nat) :
     -- Bulk-sharing beats double-ellipsis...
     strictlyMoreEconomical (csBulkCost sm sl nsm nsl) (csDoubleEllipsisCost sm sl nsm nsl)
-    -- ...ellipsis repairs the MWF violation at vP...
-    ∧ ellipsisRepairsMWF english 2 (edgeDeleted := true) = true
-    -- ...and the CWH (non-bulk) structure violates Pronunciation Economy.
-    ∧ ¬pronunciationEconomy ["what", "and", "when"] ["what", "and", "when"] := by
-  refine ⟨cs_bulk_beats_double_ellipsis sm sl nsm nsl, rfl, ?_⟩
-  simp [pronunciationEconomy]
+    -- ...ellipsis repairs the MWF violation at vP (variety B / German / Greek)...
+    ∧ ellipsisRepairsMWF english_varietyB.mwfParam 2 (vpEdgeDeleted := true) = true
+    -- ...and the two-E-feature CWH-style CS violates Pronunciation Economy.
+    ∧ ¬ pronunciationEconomy cs_twoEFeature_deletions :=
+  ⟨cs_bulk_beats_double_ellipsis sm sl nsm nsl, by decide,
+   cs_twoEFeature_violates_pronunciation_economy⟩
 
 -- ============================================================================
 -- § 9: Right Node Raising — Ellipsis + MD Interaction
@@ -781,23 +651,13 @@ theorem cs_forced_to_bulk (sm sl nsm nsl : Nat) :
 /-! Section 6.2 of the paper extends the economy analysis to Right Node
 Raising (RNR). RNR is a key test case because it can involve BOTH
 ellipsis and MD simultaneously — the "mix and match" analysis of
-@cite{belk-neeleman-philip-2023}.
+@cite{belk-neeleman-philip-2023} (and earlier @cite{barros-vicente-2011}).
 
 The core claim: economy favors MD over ellipsis when both yield the same
 string and interpretation. In RNR, the shared pivot (rightmost material)
 is multiply dominated. When the pivot and antecedent are not morphologically
 identical (vehicle change), ellipsis is additionally required for the
-non-shared material in the first conjunct.
-
-Examples:
-- Pure MD: "Alice must, and Iris should, work on different topics" (ex 55)
-  → No morphological mismatch, so MD alone suffices.
-- Ellipsis + MD: "Alice must ⟨work on different topics⟩, and Iris ought
-  to be, working on different topics" (ex 52/53)
-  → Morphological mismatch forces ellipsis for verb form; MD for PP pivot.
-
-The analysis predicts prosodic break placement: the break should occur
-at the onset of the MD-shared material. -/
+non-shared material in the first conjunct. -/
 
 /-- RNR pivot type: what is shared at the right edge. -/
 inductive RNRPivotType where
@@ -810,7 +670,7 @@ inductive RNRPivotType where
 /-- An RNR datum captures the structural analysis. -/
 structure RNRDatum where
   sentence : String
-  /-- The shared pivot string -/
+  /-- The shared pivot string (right-edge material). -/
   pivot : String
   /-- Does the pivot exhibit morphological identity with the antecedent? -/
   morphologicalIdentity : Bool
@@ -844,15 +704,25 @@ def rnr_ellipsisPlusMD : RNRDatum :=
   , pivotType := .minimal
   , notes := "Morphological mismatch (work vs working); PP shared via MD, VP ellipsis in first conjunct" }
 
-/-- Morphological mismatch signals ellipsis, not MD. -/
+/-- Vehicle-change diagnostic from @cite{barros-vicente-2011} ex (47):
+    morphological mismatch signals ellipsis (not MD).
+
+    The angled brackets mark the **first** conjunct's predicate as
+    PF-reduced under identity with the **second** conjunct's overt
+    predicate — backwards elision, not forwards RNR with a right-edge
+    pivot. The morphological mismatch (`wake` vs `wakes`) confirms
+    ellipsis (which tolerates vehicle change) over MD (which requires
+    morphological identity for a single multiply-dominated node). -/
 def rnr_ellipsisOnly : RNRDatum :=
-  { sentence := "I usually don't wake up early every day, but Alice wakes up early every day."
-  , pivot := "wake up early every day"
+  { sentence := "I usually don't ⟨wake up early every day⟩, but Alice wakes up early every day."
+  , pivot := "wake up early every day"  -- the elided string in 1st conjunct
   , morphologicalIdentity := false
   , mdProperties := false
   , involvesEllipsis := true
   , pivotType := .extended
-  , notes := "Vehicle change effect: 'wake' vs 'wakes'; ellipsis signature" }
+  , notes := "@cite{barros-vicente-2011} ex (47): backwards elision pattern; "
+           ++ "1st conjunct predicate PF-reduced under identity with 2nd; "
+           ++ "morphological mismatch ('wake' vs 'wakes') signals ellipsis not MD" }
 
 /-- Relational adjective with internal reading signals MD. -/
 def rnr_internalReading : RNRDatum :=
@@ -864,18 +734,21 @@ def rnr_internalReading : RNRDatum :=
   , pivotType := .minimal
   , notes := "Internal reading of 'different' requires c-command from both subjects → MD" }
 
-/-- Economy prediction for RNR: when morphology matches and no
-    independent constraint forces ellipsis, pure MD is selected. -/
-theorem rnr_economy_prefers_md :
-    rnr_pureMD.involvesEllipsis = false ∧
+/-- RNR datum drift sentry: morphological-identity / MD-properties /
+    ellipsis-involvement consistent with the paper's typology. Replaces
+    `rnr_economy_prefers_md` and `rnr_mismatch_forces_ellipsis`. -/
+theorem rnr_typology_drift_sentry :
+    -- pureMD: morph match, MD, no ellipsis
     rnr_pureMD.morphologicalIdentity = true ∧
-    rnr_pureMD.mdProperties = true := ⟨rfl, rfl, rfl⟩
-
-/-- When morphology mismatches, ellipsis is ADDITIONALLY needed. -/
-theorem rnr_mismatch_forces_ellipsis :
+    rnr_pureMD.mdProperties = true ∧
+    rnr_pureMD.involvesEllipsis = false ∧
+    -- ellipsisPlusMD: morph mismatch, MD, ellipsis
     rnr_ellipsisPlusMD.morphologicalIdentity = false ∧
+    rnr_ellipsisPlusMD.mdProperties = true ∧
     rnr_ellipsisPlusMD.involvesEllipsis = true ∧
-    rnr_ellipsisPlusMD.mdProperties = true := ⟨rfl, rfl, rfl⟩
+    -- internalReading: morph match, MD (internal-reading diagnostic)
+    rnr_internalReading.mdProperties = true ∧
+    rnr_internalReading.involvesEllipsis = false := by decide
 
 /-- RNR pivot cost: MD derivation for the shared pivot.
     The pivot is built once (MD) rather than twice (ellipsis). -/
@@ -895,12 +768,37 @@ def rnrEllipsisCost (pivotMerge pivotLex nonsharedMerge nonsharedLex : Nat) :
   ellipsisOps := 1
 
 /-- **Theorem 4**: For RNR, MD is strictly more economical than
-    ellipsis when both yield the same string. Same reasoning as
-    Theorem 1 (CWHs). -/
+    ellipsis when both yield the same string. Same shape as Theorem 1. -/
 theorem rnr_md_beats_ellipsis (pm pl nm nl : Nat) :
     strictlyMoreEconomical (rnrMDPivotCost pm pl nm nl) (rnrEllipsisCost pm pl nm nl) := by
-  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
-    rnrMDPivotCost, rnrEllipsisCost]
-  omega
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
+  all_goals simp only [rnrMDPivotCost, rnrEllipsisCost]
+  all_goals omega
+
+-- ============================================================================
+-- § 10: Cross-framework consilience — Bruening 2021 identity condition
+-- ============================================================================
+
+/-! @cite{bruening-2021}'s max-projection identity condition for ellipsis
+(formalized as `Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical`)
+requires the antecedent and the elided constituent to have the same
+filtered max-projection path lists (up to permutation).
+
+In the C&G-Y CS bulk-sharing structure, the elided TP **literally is**
+the antecedent TP — one node in the multidominance graph with two
+parents. So the filtered max-projection paths are physically identical,
+and `List.Perm.refl` discharges the identity condition. -/
+
+/-- The C&G-Y CS bulk-sharing structure is robust to identity-condition
+    choice: it trivially satisfies @cite{bruening-2021}'s max-projection
+    identity by `List.Perm.refl` on identical path lists.
+
+    This is a positive cross-framework consilience: the C&G-Y MD
+    architecture and the Bruening 2021 identity condition agree on CS,
+    so the paper's predictions for CS sluicing licensing do not depend
+    on identity-condition choice. -/
+theorem cs_bulk_satisfies_bruening2021_identity (so : SyntacticObject) :
+    Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical so so :=
+  Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical_refl so
 
 end CitkoGracaninYuksek2025
