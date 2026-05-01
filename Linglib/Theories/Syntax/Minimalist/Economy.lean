@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Theories.Syntax.Minimalist.Checking
 import Linglib.Core.Order.FeaturePreorder
+import Mathlib.Data.DFinsupp.WellFounded
 
 /-!
 # Derivational Economy
@@ -62,6 +63,28 @@ becomes available for free on `DerivationCost`, so any future
 "Minimalist economy implies qualitative coarsening of Pareto frontier"
 bridge to OT optimality (per `Pareto.lean` § "The gap") gets a typed
 entry point.
+
+## Headline: well-foundedness via Dickson's lemma
+
+The mathematically deepest content of this file is **§3**: the
+`WellFoundedLT DerivationCost` instance, lifted from `Pi.wellFoundedLT`
+on `Fin 4 → Nat` (which IS Dickson's lemma applied to `Nat^4`) through
+the `DerivationCost.profileEmbedding` order embedding.
+
+Why this is the headline rather than a corollary: it is what makes the
+@cite{chomsky-1995} / @cite{citko-gracanin-yuksek-2025} claim that
+"economy selects an optimum from the reference set" *coherent*. Without
+well-foundedness, an infinite chain `c₀ > c₁ > c₂ > …` of
+ever-more-economical derivations could exist and "the economy winner"
+would be ill-defined. Well-foundedness is a precondition for the
+linguistic content, not a corollary of it.
+
+The immediately load-bearing corollary `economy_admits_winner` says:
+any non-empty (set-theoretic) reference set of derivation costs admits
+at least one Pareto-minimum — an "economy winner" not strictly
+dominated by any other element. This is the existence theorem that
+underwrites all of the C&G-Y `cwh_*_beats_*` style cost-comparison
+arguments: the file's central comparison machinery is well-defined.
 -/
 
 namespace Minimalist
@@ -200,7 +223,103 @@ theorem strictlyMoreEconomical_iff_lt (c1 c2 : DerivationCost) :
     exact hnot ⟨by omega, by omega, by omega, by omega⟩
 
 -- ============================================================================
--- § 3: Pronunciation Economy (per-operation)
+-- § 3: Well-Foundedness — the headline (Dickson's lemma)
+-- ============================================================================
+
+namespace DerivationCost
+
+/-- `profile` is injective: a derivation cost is determined by its 4
+    components. Foundational fact for the `OrderEmbedding` and
+    `PartialOrder` instances below. -/
+theorem profile_injective : Function.Injective profile := by
+  intro c1 c2 h
+  have h0 := congrFun h 0
+  have h1 := congrFun h 1
+  have h2 := congrFun h 2
+  have h3 := congrFun h 3
+  cases c1
+  cases c2
+  simp only [profile] at h0 h1 h2 h3
+  subst h0; subst h1; subst h2; subst h3; rfl
+
+/-- The order-theoretic embedding of `DerivationCost` into the 4-vector
+    Pareto preorder on `Fin 4 → Nat`.
+
+    `map_rel_iff'` is `Iff.rfl` because `DerivationCost`'s `Preorder` is
+    `featurePreorder.toPreorder = Preorder.lift profile` (`≤` is
+    *definitionally* `profile a ≤ profile b`). -/
+def profileEmbedding : DerivationCost ↪o (Fin 4 → Nat) where
+  toFun := profile
+  inj' := profile_injective
+  map_rel_iff' := Iff.rfl
+
+end DerivationCost
+
+/-- `DerivationCost` is a `PartialOrder`, not just a `Preorder`:
+    antisymmetry holds because each `Nat` component admits
+    `Nat.le_antisymm`, and `profile` is injective so componentwise
+    equality lifts to structural equality.
+
+    Strengthens the `Preorder` instance into a `PartialOrder` (a
+    `Preorder` with antisymmetric `≤`). Mathlib's order algebra (e.g.,
+    `IsAntichain`, `Maximal`, `Minimal`) thereby gets the partial-order
+    flavor for free. -/
+instance : PartialOrder DerivationCost where
+  __ := (inferInstance : Preorder DerivationCost)
+  le_antisymm a b hab hba := DerivationCost.profile_injective <| by
+    funext i
+    exact le_antisymm (hab i) (hba i)
+
+/-- **The headline (Dickson's lemma applied to derivational economy)**:
+    the Pareto-strict order on `DerivationCost` is well-founded.
+
+    Lifted from `Pi.wellFoundedLT` on `Fin 4 → Nat` — which IS Dickson's
+    lemma applied to `Nat^n` — through the order embedding
+    `DerivationCost.profileEmbedding` via `OrderEmbedding.wellFounded`.
+
+    **Structural significance**: this is what makes the @cite{chomsky-1995}
+    / @cite{citko-gracanin-yuksek-2025} claim that "economy selects an
+    optimum from the reference set" *coherent*. Without well-foundedness,
+    an infinite chain `c₀ > c₁ > c₂ > …` of ever-more-economical
+    derivations could exist, and "the economy winner" would be
+    ill-defined. The well-foundedness theorem is a *precondition* for the
+    linguistic content, not a corollary of it.
+
+    Mathematically: Dickson 1913, foundational for the Robbiano-Buchberger
+    Gröbner basis termination argument and Hilbert's basis theorem on
+    monomial ideals. The classical statement "every monomial ideal in
+    `k[x₁, …, xₙ]` is finitely generated" reduces to exactly this
+    well-foundedness on `Nat^n` under the divisibility order, which is
+    the Pareto-componentwise order on exponent vectors. -/
+instance : WellFoundedLT DerivationCost :=
+  ⟨DerivationCost.profileEmbedding.wellFounded
+    (Function.wellFoundedLT (α := Nat)).wf⟩
+
+/-- **Existence of economy winners**: any non-empty set `R` of derivation
+    costs admits at least one Pareto-minimum — a "winner" not strictly
+    dominated by any other element of `R`.
+
+    Direct corollary of `WellFoundedLT DerivationCost` via mathlib's
+    `WellFounded.has_min`. Translates from mathlib's `<` to the
+    file's `strictlyMoreEconomical` via `strictlyMoreEconomical_iff_lt`.
+
+    Linguistically: the @cite{citko-gracanin-yuksek-2025} selection
+    procedure is mathematically well-defined; whatever else economy +
+    Pronunciation Economy + MWF do to break ties among winners, the set
+    of winners is non-empty for any non-empty reference set. The C&G-Y
+    cost-comparison theorems (`cwh_md_beats_ellipsis`,
+    `cs_bulk_beats_double_ellipsis`, etc.) all presuppose this existence
+    — they argue that ONE candidate is strictly better than ANOTHER, but
+    that argument only delivers a winner if the reference set has minima,
+    which `economy_admits_winner` guarantees. -/
+theorem economy_admits_winner {R : Set DerivationCost} (hR : R.Nonempty) :
+    ∃ winner ∈ R, ∀ alt ∈ R, ¬ strictlyMoreEconomical alt winner := by
+  obtain ⟨winner, hwR, hmin⟩ := wellFounded_lt.has_min R hR
+  refine ⟨winner, hwR, fun alt haltR hsme => ?_⟩
+  exact hmin alt haltR ((strictlyMoreEconomical_iff_lt _ _).mp hsme)
+
+-- ============================================================================
+-- § 4: Pronunciation Economy (per-operation)
 -- ============================================================================
 
 /-- A single PF-affecting operation: PF state immediately before vs

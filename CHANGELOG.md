@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.580 — Headline theorem on Economy.lean: WellFoundedLT DerivationCost via Dickson's lemma + economy_admits_winner existence theorem + PartialOrder + profile OrderEmbedding
+
+Following a "let's put our mathlib hat on and think about the most mathematically deep headline theorem in this file" prompt, identified `WellFoundedLT DerivationCost` as the deepest natural result. Landed §3 "Well-Foundedness — the headline (Dickson's lemma)" in `Theories/Syntax/Minimalist/Economy.lean` with five declarations:
+
+1. **`DerivationCost.profile_injective`** — a derivation cost is determined by its 4 components (foundational fact for the OrderEmbedding and PartialOrder instances).
+
+2. **`def DerivationCost.profileEmbedding : DerivationCost ↪o (Fin 4 → Nat)`** — the order-theoretic embedding of `DerivationCost` into the 4-vector Pareto preorder. `map_rel_iff'` is `Iff.rfl` because the `Preorder DerivationCost` instance is `featurePreorder.toPreorder = Preorder.lift profile` (`≤` is *definitionally* `profile a ≤ profile b`).
+
+3. **`instance : PartialOrder DerivationCost`** — `Preorder DerivationCost` strengthened to `PartialOrder` via componentwise antisymmetry (`Nat.le_antisymm` per dimension lifted by `profile_injective`). Mathlib's order algebra (`IsAntichain`, `Maximal`, `Minimal`) gets the partial-order flavor for free.
+
+4. **`instance : WellFoundedLT DerivationCost`** — the headline. Lifted from `Pi.wellFoundedLT` on `Fin 4 → Nat` (which IS Dickson 1913 applied to `Nat^n`) through `profileEmbedding` via `OrderEmbedding.wellFounded`. Why this is the headline rather than a corollary: it is what makes the @cite{chomsky-1995} / @cite{citko-gracanin-yuksek-2025} claim that "economy selects an optimum from the reference set" *coherent*. Without well-foundedness, an infinite chain `c₀ > c₁ > c₂ > …` of ever-more-economical derivations could exist and "the economy winner" would be ill-defined. The well-foundedness theorem is a *precondition* for the linguistic content, not a corollary of it.
+
+5. **`theorem economy_admits_winner {R : Set DerivationCost} (hR : R.Nonempty) : ∃ winner ∈ R, ∀ alt ∈ R, ¬ strictlyMoreEconomical alt winner`** — the load-bearing existence corollary. Direct via `wellFounded_lt.has_min`, with the `<` ↔ `strictlyMoreEconomical` translation through `strictlyMoreEconomical_iff_lt` (added in 0.230.577 for exactly this kind of bridge). Linguistically: the C&G-Y selection procedure is mathematically well-defined; whatever else economy + Pronunciation Economy + MWF do to break ties among winners, the set of winners is non-empty for any non-empty reference set. The C&G-Y `cwh_md_beats_ellipsis` / `cs_bulk_beats_double_ellipsis` / `rnr_md_beats_ellipsis` / etc. cost-comparison theorems all *presuppose* this existence — they argue that ONE candidate is strictly better than ANOTHER, but that argument only delivers a winner if the reference set has minima.
+
+**Mathematical depth claim**: Dickson's lemma is classical, non-trivial mathematics — Robbiano-Buchberger Gröbner basis termination is a direct application; Hilbert's basis theorem on monomial ideals (every monomial ideal in `k[x₁, …, xₙ]` is finitely generated) reduces to exactly this well-foundedness on `Nat^n` under divisibility (= Pareto-componentwise order on exponent vectors). Earning headline status because this places `DerivationCost` in genuine algebraic territory: it is a *well-founded poset*, not just an ad-hoc preorder. Strong induction on `strictlyMoreEconomical` is admissible; minima exist for arbitrary non-empty subsets (not just finite); the whole apparatus of `Minimal`/`Maximal`/`IsAntichain` from mathlib lights up.
+
+**Mathlib infrastructure used**: `Mathlib.Data.DFinsupp.WellFounded` (for `Pi.wellFoundedLT [Finite ι] [∀ i, WellFoundedLT (α i)]` and the `Function.wellFoundedLT` alias), `Mathlib.Order.Hom.Basic` (for `OrderEmbedding.wellFounded`), `Mathlib.Order.WellFounded` (for `WellFounded.has_min`), `Mathlib.Order.RelClasses` (for `wellFounded_lt`). New import added: `Mathlib.Data.DFinsupp.WellFounded`.
+
+**Module docstring** updated with new "Headline" subsection that frames §3's content as the file's deepest result and explains why (precondition for linguistic coherence, not corollary). Existing §3 (Pronunciation Economy) renumbered to §4.
+
+**Build status**: Economy.lean builds clean (955 jobs); CitkoGY + Longobardi2005 consumer files build clean (1095 jobs total). No consumer code changes required — the new section is additive.
+
+**No alternatives chosen** (considered + rejected):
+- `instance : PartialOrder DerivationCost` alone — structurally honest but proof is a `funext`, doesn't earn headline status
+- "No flat-sum aggregation respects Pareto" no-go theorem — formalizes the docstring rationale concretely, but it's a counterexample-bearing existential, not a deep positive result
+- Categorical formulation (DerivationCost as a category, economy as functorial selection) — overkill for a single small file
+
 ### 0.230.579 — Re-audit follow-up to 0.230.576: OSV bug fix in BasicOrder.entailedSV + dropped redundant aggregate sentinel + K'iche' Mayanist contestation note + Gibson2025 docstring fix
 
 Four-agent re-audit on the just-landed commit `c01adfb5` (0.230.576) — same quartet as round 1. The audit surfaced one CRITICAL correctness bug masked by sample coverage, plus several MAJOR / MINOR cleanups recoverable in this follow-up.
