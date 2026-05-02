@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.601 — Phase 5+6: Core.InformationTheory entropy/MI/CE/KL/Hellinger families DELETED
+
+Verified zero active call sites remain (all references are docstring/comment mentions of "deleted Core.InformationTheory.X" — the migration's audit trail). Deleted ~640 lines from `Linglib/Core/InformationTheory.lean`, retaining only the ΔP family.
+
+**Deleted definitions** (~25 declarations):
+
+Entropy / MI / CE / JSD:
+- `entropy`, `entropy_nonneg`, `entropy_uniform`
+- `mutualInformation`, `mutualInformation_nonneg`, `mutualInformation_eq_klFinite_with_productDist`
+- `conditionalEntropy`, `conditionalEntropy_le_entropy`
+- `jsdOf`
+- `productDist`, `isMarginalX`, `isMarginalY`, `interactionInformation`
+
+KL family:
+- `klFinite`, `kl_term_eq_klFun`, `kl_eq_sum_klFun`, `kl_nonneg`, `kl_nonneg'`
+- `klFinite_eq_sum_log_div`, `klFinite_eq_negEntropy_sub_crossEntropy`
+- `klFinite_pi_single_eq_neg_log`, `expected_log_eq_neg_klFinite_plus_negEntropy`
+- `sqrt_sub_one_sq_le_klFun`
+
+Hellinger family:
+- `bhattacharyyaCoeff`, `hellingerDistSq`, `hellingerDist`
+- `hellingerDistSq_nonneg_of_bc_le_one`, `mul_sqrt_div_sub_one_sq`
+- `two_hellingerDistSq_le_klFinite`
+
+Adapter:
+- `distOfList`
+
+**Surviving in `Linglib/Core/InformationTheory.lean`**: only `deltaP`, `deltaPCounts`, `deltaP_eq_zero_of_independent` (~30 LOC). ΔP is contingency-table association (Cheng & Holyoak 1995, Ellis 2006), not Shannon entropy — wrong directory all along. Phase 7 relocates it to `Core/Statistics/Association.lean` (queued; this commit holds the file as a transitional ΔP-only file to avoid a same-commit file-rename + namespace-change cascade).
+
+**Mathlib upstream status**: `PMF.entropy`, `PMF.klDiv`, `PMF.product`, `PMF.mutualInformation`, `PMF.bhattacharyyaCoeff`/`hellingerDist`/`hellingerDistSq`/`two_hellingerDistSq_le_klDiv`, `PMF.toReal_klDiv_eq_sum_log_div`, `PMF.klDiv_eq_sum_klFun` are all genuine mathlib gaps closed by this migration. Candidates for upstream contribution to `Mathlib/Probability/ProbabilityMassFunction/{Entropy,KullbackLeibler,Hellinger,MutualInformation}.lean`.
+
+**Build**: green at 5684 jobs.
+
 ### 0.230.600 — Phase 4g: concurrent-session files migrated off Core.InformationTheory
 
 Picked up from concurrent sessions per the established convention (cf. 0.230.586 commit pattern). All 4 concurrent-session files now Core.InformationTheory-free:
