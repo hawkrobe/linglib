@@ -5,7 +5,8 @@ import Mathlib.InformationTheory.KullbackLeibler.KLFun
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Analysis.Convex.Mul
-import Linglib.Core.InformationTheory
+import Mathlib.InformationTheory.KullbackLeibler.KLFun
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
 # Rational Action @cite{luce-1959}
@@ -851,10 +852,7 @@ theorem RationalAction.fromSoftmax_policy_eq [Nonempty A]
 
 The softmax distribution uniquely maximizes entropy + expected score
 on the probability simplex. This is the mathematical foundation for
-RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1). The KL
-machinery used in the proof — `klFinite`, `kl_nonneg`, `kl_nonneg'`,
-`kl_eq_sum_klFun`, and the cross-entropy decomposition — lives in
-`Core.InformationTheory` and is opened below.
+RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1).
 
 ### Proof strategy
 
@@ -866,9 +864,67 @@ The Gibbs VP reduces to KL non-negativity via three identities:
 
 Combining: H(p) + α⟨p,s⟩ + KL = log Z = H(q) + α⟨q,s⟩, so KL ≥ 0 ⟹ LHS ≤ RHS.
 
+The KL machinery used here — `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg` —
+is inlined as private (ι→ℝ) helpers in this file (mathlib gap; the PMF
+form lives at `PMF.klDiv` / `PMF.toReal_klDiv_eq_sum_log_div`).
+
 -/
 
-open Core.InformationTheory (klFinite kl_nonneg kl_nonneg' kl_eq_sum_klFun)
+/-- **Private (ι→ℝ) discrete KL** for the Gibbs proofs in this section.
+    Inlined from the deleted `Core.InformationTheory.klFinite`. -/
+private noncomputable def klFinite {ι : Type*} [Fintype ι] (p q : ι → ℝ) : ℝ :=
+  ∑ i, if p i = 0 then 0 else p i * Real.log (p i / q i)
+
+/-- Per-element identity: `q · klFun(p/q) = if p=0 then 0 else p log(p/q) + (q − p)`. -/
+private theorem kl_term_eq_klFun {p_i q_i : ℝ} (hq : 0 < q_i) (_hp : 0 ≤ p_i) :
+    (if p_i = 0 then (0 : ℝ) else p_i * Real.log (p_i / q_i)) =
+    q_i * _root_.InformationTheory.klFun (p_i / q_i) + (p_i - q_i) := by
+  by_cases hp0 : p_i = 0
+  · simp only [hp0, ↓reduceIte, zero_div, _root_.InformationTheory.klFun_zero, mul_one,
+               zero_sub, add_neg_cancel]
+  · simp only [hp0, ↓reduceIte]
+    unfold _root_.InformationTheory.klFun
+    have hq_ne : q_i ≠ 0 := ne_of_gt hq
+    field_simp
+    ring
+
+/-- `klFinite = ∑ q · klFun(p/q)` when sums match. -/
+private theorem kl_eq_sum_klFun {ι : Type*} [Fintype ι]
+    (p q : ι → ℝ) (hq : ∀ i, 0 < q i) (hp : ∀ i, 0 ≤ p i)
+    (hsum : ∑ i, p i = ∑ i, q i) :
+    klFinite p q = ∑ i, q i * _root_.InformationTheory.klFun (p i / q i) := by
+  unfold klFinite
+  have hterm : ∀ i, (if p i = 0 then (0 : ℝ) else p i * Real.log (p i / q i)) =
+      q i * _root_.InformationTheory.klFun (p i / q i) + (p i - q i) :=
+    λ i => kl_term_eq_klFun (hq i) (hp i)
+  simp_rw [hterm]
+  rw [Finset.sum_add_distrib]
+  have hcancel : ∑ i, (p i - q i) = 0 := by
+    rw [Finset.sum_sub_distrib, hsum, sub_self]
+  linarith
+
+/-- KL non-negativity (Gibbs' inequality). -/
+private theorem kl_nonneg {ι : Type*} [Fintype ι]
+    (p q : ι → ℝ) (hq : ∀ i, 0 < q i) (hp : ∀ i, 0 ≤ p i)
+    (hsum : ∑ i, p i = ∑ i, q i) :
+    0 ≤ klFinite p q := by
+  rw [kl_eq_sum_klFun p q hq hp hsum]
+  apply Finset.sum_nonneg
+  intro i _
+  exact mul_nonneg (le_of_lt (hq i))
+    (_root_.InformationTheory.klFun_nonneg (div_nonneg (hp i) (le_of_lt (hq i))))
+
+/-- KL non-negativity, distribution form. -/
+private theorem kl_nonneg' {ι : Type*} [Fintype ι] [Nonempty ι] {p q : ι → ℝ}
+    (hp_nonneg : ∀ i, 0 ≤ p i) (hq_pos : ∀ i, 0 < q i)
+    (hp_sum : ∑ i, p i = 1) (hq_sum : ∑ i, q i = 1) :
+    0 ≤ klFinite p q :=
+  kl_nonneg p q hq_pos hp_nonneg (by rw [hp_sum, hq_sum])
+
+/-- **Private (ι→ℝ) Shannon entropy** for the Gibbs proofs in this section.
+    Inlined from the deleted `entropy`. -/
+private noncomputable def entropy {α : Type*} (s : Finset α) (p : α → ℝ) : ℝ :=
+  ∑ a ∈ s, Real.negMulLog (p a)
 
 -- ============================================================================
 -- §3a. Gibbs Variational Principle
@@ -1085,7 +1141,7 @@ section Entropy
 /-! ## Entropy + softmax interactions
 
 The (ι→ℝ)-typed Shannon entropy lives in `Core/InformationTheory.lean` as
-`Core.InformationTheory.entropy : Finset α → (α → ℝ) → ℝ`. The PMF-typed
+`entropy : Finset α → (α → ℝ) → ℝ`. The PMF-typed
 canonical form is `PMF.entropy : PMF α → ℝ`; the two agree by definition
 on `(ofRealWeightFn p).toRealFn = p` for normalized `p` (see
 `PMF.ofRealWeightFn_toRealFn_eq`). This section uses the (ι→ℝ) form because
@@ -1094,7 +1150,7 @@ can wrap via `PMF.ofRealWeightFn`. -/
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
-open Core.InformationTheory in
+
 /-- Maximum entropy is achieved by uniform distribution.
 
 Proof: KL(p ‖ uniform) ≥ 0, and KL(p ‖ uniform) = log n - H(p). -/
@@ -1129,7 +1185,7 @@ theorem entropy_le_log_card (p : ι → ℝ)
   rw [Finset.sum_add_distrib, ← Finset.sum_mul, hp_sum, one_mul,
       Finset.sum_neg_distrib]
 
-open Core.InformationTheory in
+
 /-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
 theorem entropy_softmax (s : ι → ℝ) (α : ℝ) :
     entropy Finset.univ (softmax s α) =
@@ -1167,7 +1223,7 @@ theorem entropy_softmax (s : ι → ℝ) (α : ℝ) :
 
 /-- Entropy-regularized objective: G_α(p, s) = ⟨s, p⟩ + (1/α) H(p). -/
 noncomputable def entropyRegObjective (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
-  ∑ i : ι, p i * s i + (1 / α) * Core.InformationTheory.entropy Finset.univ p
+  ∑ i : ι, p i * s i + (1 / α) * entropy Finset.univ p
 
 /-- The maximum value of the entropy-regularized objective. -/
 theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
@@ -1186,7 +1242,7 @@ theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     entropyRegObjective s α p ≤ entropyRegObjective s α (softmax s α) := by
   -- entropyRegObjective unfolds to ∑ pᵢsᵢ + (1/α) · entropy Finset.univ p
   -- and entropy Finset.univ p = ∑ negMulLog (p i), exactly what gibbs_variational uses
-  simp only [entropyRegObjective, Core.InformationTheory.entropy]
+  simp only [entropyRegObjective, entropy]
   have hgibbs := gibbs_variational s α p hp_nonneg hp_sum
   have hα_ne : α ≠ 0 := ne_of_gt hα
   have h := div_le_div_of_nonneg_right hgibbs (le_of_lt hα)
@@ -1254,7 +1310,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
         entropyRegObjective s α r = (1 / α) * speakerObj s α r := by
       intro r hr_nn
       simp only [entropyRegObjective, speakerObj]
-      simp only [Core.InformationTheory.entropy]
+      simp only [entropy]
       rw [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i _
@@ -1271,7 +1327,7 @@ theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
 
 /-- Free energy (from statistical mechanics). -/
 noncomputable def freeEnergy (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ :=
-  -∑ i : ι, p i * s i - (1 / α) * Core.InformationTheory.entropy Finset.univ p
+  -∑ i : ι, p i * s i - (1 / α) * entropy Finset.univ p
 
 /-- Softmax is the Boltzmann distribution: minimizes free energy. -/
 theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
@@ -1491,7 +1547,7 @@ theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
     (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax s α i * s i = c) :
-    Core.InformationTheory.entropy Finset.univ (softmax s α) =
+    entropy Finset.univ (softmax s α) =
     log (partitionFn s α) - α * c := by
   rw [entropy_softmax, h_constraint]
 

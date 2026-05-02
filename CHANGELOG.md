@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.599 — Phase 4: 6 consumer migrations + RSA/InformationTheory.lean dissolved
+
+Migrated 6 consumers off `Core.InformationTheory.{entropy, klFinite, hellingerDist, kl_*}` onto either the PMF API or mathlib primitives directly. The transitional `Linglib/Theories/Pragmatics/RSA/InformationTheory.lean` re-exporter is dissolved.
+
+**Per-file changes**:
+
+- `Linglib/Theories/Pragmatics/RSA/InformationTheory.lean` **deleted** (was a `Core.InformationTheory` re-export shim; nothing actually used the re-exports). Removed import from `Linglib.lean`, `EgreEtAl2023.lean`, `ArgumentativeStrength.lean` (latter gets `Mathlib.Analysis.SpecialFunctions.Log.Basic` directly).
+
+- `Linglib/Theories/Syntax/ConstructionGrammar/GrammarDist.lean`: inlined `entropy s p := ∑ negMulLog p` and `jsd p q := H(m) − (H(p) + H(q))/2` directly. No more Core dep.
+
+- `Linglib/Theories/Pragmatics/InformationTheory/ChannelCapacity.lean`: rewrote `entropy_le_log_card` to construct PMFs via `PMF.ofRealWeightFn`, get Gibbs' inequality from `ENNReal.toReal_nonneg`, expand discrete sum via `PMF.toReal_klDiv_eq_sum_log_div`. ~15 LOC of PMF setup, but uses the canonical PMF API throughout.
+
+- `Linglib/Phenomena/Quantification/Studies/TesslerTenenbaumGoodman2022.lean`: inlined `klFinite premPost (naivePost c)` as `∑ s, premPost s * Real.log (premPost s / naivePost c s)` (mathlib-style; `0 · log 0 = 0` collapses the if-guard). Updated `stateCom_eq_beliefAlignment`, `beliefAlignment_nvc_uninformative`, `baScore` accordingly.
+
+- `Linglib/Phenomena/Modality/Studies/HerbstrittFranke2019.lean`: replaced `Core.hellingerDist` with a private `hellingerDistR : (UrnState → ℝ) → (UrnState → ℝ) → ℝ` defined directly via `Real.sqrt`.
+
+- `Linglib/Core/Agent/RationalAction.lean`: heaviest migration. Added private (ι→ℝ) helpers `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg`, `kl_nonneg'`, `entropy` at the start of the Gibbs section (inlined from Core). Removed `import Linglib.Core.InformationTheory`, replaced all `Core.InformationTheory.entropy` references with the private `entropy`. The Gibbs proofs continue to work with private helpers — no behavior change.
+
+**Build**: green at 5683 jobs (the unrelated MayanAlignment.lean failure is a pre-existing concurrent-session issue, not caused by this work).
+
+**Phase 5+6 unblocked**: zero remaining call sites of `Core.InformationTheory.{entropy, klFinite, mutualInformation, conditionalEntropy, jsdOf}` in the migrated 4-consumer set. Concurrent-session files (AckermanMalouf2013, Paradigm, InformationalFusion, RathiHahnFutrell2026) still use them — those need separate session migration before Phase 6 deletion.
+
 ### 0.230.598 — Phases 2+3: Hellinger family direct on PMF + drop stale bridges
 
 PMFEntropy.lean is now fully self-contained against `Core.InformationTheory` deletion. The only remaining Core references are the `bhattacharyyaCoeff`/`hellingerDistSq`/`hellingerDist` defs being inlined directly (Phase 2) and stale bridge theorems removed (Phase 3).

@@ -1,6 +1,5 @@
 import Linglib.Core.Agent.RationalAction
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators

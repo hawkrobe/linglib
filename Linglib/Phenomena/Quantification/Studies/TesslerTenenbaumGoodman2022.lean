@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Core.InformationTheory
 import Linglib.Core.Logic.Opposition.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -48,10 +47,11 @@ in this paper, so the asymmetric stance is encoded honestly.
 ## RSA pipeline
 
 - Noisy semantics via `RSA.Noise.noiseChannel`
-- Belief Alignment utility via `Core.InformationTheory.klFinite` (the
-  canonical PMF form is `(P.klDiv Q).toReal`, bridged by
-  `PMF.toReal_klDiv_eq_sum_log_div`)
-- SC ≡ BA equivalence via `Core.InformationTheory.klFinite_eq_negEntropy_sub_crossEntropy`
+- Belief Alignment utility via the inline discrete sum `∑ p · log(p/q)`
+  (the canonical PMF form is `(P.klDiv Q).toReal`, bridged by
+  `PMF.toReal_klDiv_eq_sum_log_div`; the (VennState → ℝ) form is natural here)
+- SC ≡ BA equivalence via `Real.log_div` + sum manipulation (Cover-Thomas
+  identity `KL = -H(P) - ∑ P log Q`)
 - "Nothing follows" as vacuous utterance (true in every state)
 
 ## See also
@@ -184,13 +184,14 @@ noncomputable def stateComScore
 
     `S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]`
 
-    Uses `Core.InformationTheory.klFinite` directly (the (VennState → ℝ)
-    form is natural here; bridge to PMF API via
-    `PMF.toReal_klDiv_eq_sum_log_div`). -/
+    Inlined discrete KL `∑ p · log(p/q)` (mathlib-canonical form; the
+    `0 · log 0 = 0` guard collapses for `Real.log`). The PMF-canonical form is
+    `(P.klDiv Q).toReal` via `PMF.toReal_klDiv_eq_sum_log_div`. -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
-  Real.exp (α * (-Core.InformationTheory.klFinite premPost (naivePost c)))
+  Real.exp (α * (-(∑ s : VennState, premPost s *
+    Real.log (premPost s / naivePost c s))))
 
 -- ============================================================================
 -- §5. State Communication ≡ Belief Alignment (per-syllogism)
@@ -205,8 +206,8 @@ noncomputable def beliefAlignmentScore
     under SC vs BA — explaining the paper's distinct fit statistics
     (r = .67 vs .82) without any difference in functional form.
 
-    Derivation via `klFinite_eq_negEntropy_sub_crossEntropy`:
-      KL(P ∥ Q) = Σ P·log P − Σ P·log Q
+    Derivation via `Real.log_div`:
+      KL(P ∥ Q) = Σ P · log(P/Q) = Σ P·log P − Σ P·log Q
       −KL(P ∥ Q) = Σ P·log Q − Σ P·log P = [SC utility] + H(P)  -/
 theorem stateCom_eq_beliefAlignment
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
@@ -216,8 +217,17 @@ theorem stateCom_eq_beliefAlignment
     Real.exp (α * (-(∑ s : VennState, premPost s * Real.log (premPost s)))) *
     stateComScore premPost naivePost α c := by
   simp only [beliefAlignmentScore, stateComScore]
-  rw [Core.InformationTheory.klFinite_eq_negEntropy_sub_crossEntropy premPost
-    (naivePost c) (fun s _ => ne_of_gt (hQ s))]
+  -- Inline KL decomposition: ∑ p·log(p/q) = ∑ p·log p − ∑ p·log q
+  have h_kl_split :
+      (∑ s : VennState, premPost s * Real.log (premPost s / naivePost c s))
+      = (∑ s : VennState, premPost s * Real.log (premPost s))
+          - (∑ s : VennState, premPost s * Real.log (naivePost c s)) := by
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    by_cases hP : premPost s = 0
+    · simp [hP]
+    · rw [Real.log_div hP (ne_of_gt (hQ s))]; ring
+  rw [h_kl_split]
   rw [show α * -((_ : ℝ) - _) = α * -(∑ s, premPost s * Real.log (premPost s))
     + α * ∑ s, premPost s * Real.log (naivePost c s) from by ring]
   rw [Real.exp_add]
@@ -230,7 +240,7 @@ theorem stateCom_eq_beliefAlignment
 theorem beliefAlignment_nvc_uninformative
     (post prior : VennState → ℝ) (α : ℝ) :
     beliefAlignmentScore post (fun c => if c = .nvc then prior else fun _ => 0) α .nvc =
-    Real.exp (α * (-Core.InformationTheory.klFinite post prior)) := by
+    Real.exp (α * (-(∑ s : VennState, post s * Real.log (post s / prior s)))) := by
   simp [beliefAlignmentScore]
 
 -- ============================================================================
@@ -312,9 +322,9 @@ def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
 noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
   (figuralWeight β syl c : ℝ) *
-  Real.exp (α * (-Core.InformationTheory.klFinite
-    (fun s => (l0Post φ syl s : ℝ))
-    (fun s => (naiveL0Post φ c s : ℝ))))
+  Real.exp (α * (-(∑ s : VennState,
+    (l0Post φ syl s : ℝ) *
+      Real.log ((l0Post φ syl s : ℝ) / (naiveL0Post φ c s : ℝ)))))
 
 /-- Conclusion probability: `P(c|syl) = baScore(c) / Σ_c' baScore(c')`. -/
 noncomputable def conclusionProb (α : ℝ) (φ β : ℚ) (syl : Syllogism)

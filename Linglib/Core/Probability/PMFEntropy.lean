@@ -1,6 +1,5 @@
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.PMFPosterior
-import Linglib.Core.InformationTheory
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.InformationTheory.KullbackLeibler.Basic

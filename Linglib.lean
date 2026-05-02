@@ -2512,7 +2512,6 @@ import Linglib.Theories.Pragmatics.RSA.Limits
 import Linglib.Theories.Pragmatics.RSA.Speaker.Discrimination
 import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Speaker.Noncooperative
-import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Theories.Pragmatics.RSA.Sequential
 import Linglib.Theories.Pragmatics.RSA.Noisy

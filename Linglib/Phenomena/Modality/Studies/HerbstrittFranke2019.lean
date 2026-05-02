@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
-import Linglib.Core.InformationTheory
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 /-!
 # @cite{herbstritt-franke-2019}
@@ -25,7 +25,7 @@ to an urn scenario with 10 balls, where both the proportion of red balls
 manipulated. The key innovation over @cite{goodman-stuhlmuller-2013}:
 Hellinger distance replaces KL divergence as the speaker utility measure,
 because KL-divergence assigns infinite disutility to "true enough" messages
-(see `Core.InformationTheory` for the theoretical analysis).
+(see `PMF.hellingerDist` and `PMF.two_hellingerDistSq_le_klDiv` for substrate).
 
 ## Model (Eq. 12–18)
 
@@ -58,7 +58,7 @@ set_option autoImplicit false
 
 namespace HerbstrittFranke2019
 
-open RSA.Distributions Core.InformationTheory
+open RSA.Distributions
 
 -- ============================================================================
 -- §1. Domain Types
@@ -75,6 +75,12 @@ def proportion (s : UrnState) : ℚ := s.val / 10
     `access` balls drawn. For access level a, valid observations are
     0..a; the observation model assigns probability 0 to obs > a. -/
 abbrev Obs := Fin 11
+
+/-- Hellinger distance on real-valued distributions over `UrnState`:
+    `HD(P, Q) = √(1 − ∑ √(P · Q))`. Inline definition (mathlib-style; the
+    canonical PMF form is `PMF.hellingerDist`). -/
+private noncomputable def hellingerDistR (P Q : UrnState → ℝ) : ℝ :=
+  Real.sqrt (1 - ∑ s : UrnState, Real.sqrt (P s * Q s))
 
 -- ============================================================================
 -- §2. Belief Formation (Eq. 9/12)
@@ -344,13 +350,12 @@ open RSA Real in
     Eq. 18: P_PL(s, o, a|m) ∝ P_S · Hyp(o|a, s) · P(a) · P(s)  (pragmatic listener)
 
     The speaker utility uses **Hellinger distance** (not KL divergence),
-    via `-Core.InformationTheory.hellingerDist` (or equivalently the
-    PMF wrapper `PMF.hellingerDist`). This is necessary because KL
-    divergence assigns infinite disutility to "true enough" messages — a
-    speaker who is 95% sure of RED can never say "certainly" under KL, but
-    CAN under Hellinger (see `PMF.two_hellingerDistSq_le_klDiv` for the
-    PMF-canonical Bretagnolle-Huber comparison; the underlying Finset+function
-    proof is `Core.InformationTheory.two_hellingerDistSq_le_klFinite`).
+    via `-hellingerDistR` (the local (UrnState → ℝ) form; PMF-canonical is
+    `PMF.hellingerDist`). This is necessary because KL divergence assigns
+    infinite disutility to "true enough" messages — a speaker who is 95%
+    sure of RED can never say "certainly" under KL, but CAN under Hellinger
+    (see `PMF.two_hellingerDistSq_le_klDiv` for the canonical
+    Bretagnolle–Huber comparison).
 
     The model is parametric in `access` (number of balls the speaker draws).
     Each access level yields a separate RSAConfig, with L1 marginalizing
@@ -365,7 +370,7 @@ noncomputable def hfCfg (access : ℕ) : RSAConfig SimpleExpr UrnState where
   meaning_nonneg _ _ _ _ := by split <;> positivity
   -- Eq. 16–17: P_S(m|o,a) ∝ exp(λ · (−HD[bel, L0]))
   s1Score l0 α obs _w u :=
-    exp (α * -hellingerDist (speakerBeliefR access obs) (l0 u))
+    exp (α * -hellingerDistR (speakerBeliefR access obs) (l0 u))
   s1Score_nonneg _ _ _ _ _ _ _ := le_of_lt (exp_pos _)
   -- λ ≈ 4.873 (posterior mean, Table 6 footnote 9)
   α := 4873/1000
@@ -509,8 +514,7 @@ theorem belief_uses_general_hypergeometric (access : ℕ) (s : UrnState)
 
 The choice of divergence measure is not a free parameter — it determines
 which messages the speaker can consider. See `PMF.two_hellingerDistSq_le_klDiv`
-(canonical PMF form) and `Core.InformationTheory.two_hellingerDistSq_le_klFinite`
-(Finset+function form) for the inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+for the inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)` (Bretagnolle–Huber).
 
 **Example**: Consider a speaker who observes 9/10 red balls (access=10).
 Her belief is a point mass at s=9.

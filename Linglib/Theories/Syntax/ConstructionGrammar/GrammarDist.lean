@@ -1,6 +1,6 @@
-import Linglib.Core.InformationTheory
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
 # Grammar as Distribution
@@ -25,8 +25,6 @@ constructional diversity and Jensen-Shannon divergence for grammar similarity.
 -/
 
 namespace ConstructionGrammar
-
-open Core.InformationTheory
 
 -- ============================================================================
 -- §1. Core Types
@@ -62,16 +60,25 @@ variable {C : Type*}
 
 Higher entropy = more diverse construction usage. @cite{dunn-2025} uses
 grammar entropy to compare registers, dialects, and individual variation
-within L1 populations. -/
+within L1 populations.
+
+Direct definition via mathlib's `Real.negMulLog`. The PMF-canonical form is
+`(PMF.ofRealWeightFn ...).entropy` after normalization; this Finset-restricted
+form is natural here because grammars carry relative-frequency profiles
+(unnormalized) and the inventory is a subset rather than a full Fintype. -/
 noncomputable def GrammarDist.entropyOver (g : GrammarDist C) (inventory : Finset C) : ℝ :=
-  entropy inventory (fun c => ((g.freq c : ℚ) : ℝ))
+  ∑ c ∈ inventory, Real.negMulLog ((g.freq c : ℝ))
 
 /-- Jensen-Shannon divergence between two grammars over a shared inventory (in nats).
 
 Symmetric, bounded, and a metric (after sqrt). Used by @cite{dunn-2025} to
-measure register distance, dialect boundaries, and L1-L2 differences. -/
+measure register distance, dialect boundaries, and L1-L2 differences.
+
+Defined via the standard mixture form `H(m) − (H(p) + H(q))/2` where
+`m(a) = (p(a) + q(a))/2`. -/
 noncomputable def GrammarDist.jsd (p q : GrammarDist C) (inventory : Finset C) : ℝ :=
-  jsdOf inventory (fun c => ((p.freq c : ℚ) : ℝ)) (fun c => ((q.freq c : ℚ) : ℝ))
+  (∑ c ∈ inventory, Real.negMulLog (((p.freq c : ℝ) + (q.freq c : ℝ)) / 2)) -
+    (p.entropyOver inventory + q.entropyOver inventory) / 2
 
 end EntropyAndSimilarity
 

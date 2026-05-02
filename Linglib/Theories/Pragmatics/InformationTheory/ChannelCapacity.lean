@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.InformationTheory.Channel
-import Linglib.Core.InformationTheory
+import Linglib.Core.Probability.PMFEntropy
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
@@ -104,23 +104,45 @@ theorem mutualInfo_eq_log_Z_of_cap (nc : CommChannel C W)
   linarith
 
 /-- Entropy of a distribution ≤ log of the support size: `H(q) ≤ log |W|`.
-    Follows from Gibbs' inequality (`Core.InformationTheory.kl_nonneg` —
-    canonical PMF form is `0 ≤ (q.klDiv u).toReal` by type) applied to
-    `KL(q ‖ uniform)`. -/
+    Follows from Gibbs' inequality (`0 ≤ (q.klDiv u).toReal` by `ENNReal.toReal_nonneg`)
+    applied to `KL(q ‖ uniform)`, plus `PMF.toReal_klDiv_eq_sum_log_div` to expand
+    the discrete sum form. -/
 private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     (hq_nonneg : ∀ i, 0 ≤ q i) (hq_sum : ∑ i : ι, q i = 1) :
     -∑ i : ι, q i * log (q i) ≤ log (Fintype.card ι : ℝ) := by
   by_cases hW : Fintype.card ι = 0
   · haveI := Fintype.card_eq_zero_iff.mp hW; simp
   · have hWpos : (0 : ℝ) < ↑(Fintype.card ι) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hW)
+    have hWne : (Fintype.card ι : ℝ) ≠ 0 := ne_of_gt hWpos
     let u : ι → ℝ := fun _ => 1 / ↑(Fintype.card ι)
     have hu_pos : ∀ i, (0 : ℝ) < u i := fun _ => div_pos one_pos hWpos
     have hu_sum : ∑ i : ι, u i = 1 := by
       simp [u, sum_const, nsmul_eq_mul, Nat.cast_ne_zero.mpr hW]
-    have hkl := Core.InformationTheory.kl_nonneg q u hu_pos hq_nonneg
-      (by rw [hq_sum, hu_sum])
-    rw [Core.InformationTheory.klFinite_eq_sum_log_div] at hkl
-    simp_rw [show ∀ i, q i / u i = q i * ↑(Fintype.card ι) from fun i => by simp [u]] at hkl
+    -- PMF substrate setup: discrete MeasurableSpace + nonempty.
+    haveI : Nonempty ι := Fintype.card_pos_iff.mp (Nat.pos_of_ne_zero hW)
+    letI : MeasurableSpace ι := ⊤
+    haveI : MeasurableSingletonClass ι :=
+      ⟨fun _ => MeasurableSpace.measurableSet_top⟩
+    -- q has at least one positive mass (else its sum would be 0, contradicting hq_sum = 1).
+    have hq_exists_pos : ∃ i, 0 < q i := by
+      by_contra h_no_pos
+      have h_all_le : ∀ i, q i ≤ 0 := fun i =>
+        le_of_not_gt (fun hgt => h_no_pos ⟨i, hgt⟩)
+      have hsum_zero : ∑ i, q i = 0 := Finset.sum_eq_zero (fun i _ =>
+        le_antisymm (h_all_le i) (hq_nonneg i))
+      linarith
+    -- Construct PMFs from q and u. Both round-trip losslessly (already normalized).
+    let q_pmf := PMF.ofRealWeightFn q hq_nonneg hq_exists_pos
+    let u_pmf := PMF.ofRealWeightFn u (fun i => le_of_lt (hu_pos i))
+                   ⟨Classical.arbitrary ι, hu_pos (Classical.arbitrary ι)⟩
+    have hq_eq : q_pmf.toRealFn = q := PMF.ofRealWeightFn_toRealFn_eq q _ _ hq_sum
+    have hu_eq : u_pmf.toRealFn = u := PMF.ofRealWeightFn_toRealFn_eq u _ _ hu_sum
+    -- Gibbs' inequality: KL ≥ 0 by type. Discrete sum form via PMF bridge.
+    have hkl_nn : 0 ≤ (q_pmf.klDiv u_pmf).toReal := ENNReal.toReal_nonneg
+    rw [PMF.toReal_klDiv_eq_sum_log_div q_pmf u_pmf (hu_eq ▸ hu_pos)] at hkl_nn
+    rw [hq_eq, hu_eq] at hkl_nn
+    -- hkl_nn : 0 ≤ ∑ q · log(q / u). Same algebra as the original proof.
+    simp_rw [show ∀ i, q i / u i = q i * ↑(Fintype.card ι) from fun i => by simp [u]] at hkl_nn
     suffices hsplit : ∑ i : ι, q i * log (q i * ↑(Fintype.card ι)) =
         (∑ i : ι, q i * log (q i)) + log ↑(Fintype.card ι) by linarith
     have hterm : ∀ i, q i * log (q i * ↑(Fintype.card ι)) =
@@ -128,7 +150,7 @@ private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
       intro i
       by_cases hi : q i = 0
       · simp [hi]
-      · rw [log_mul (ne_of_gt (lt_of_le_of_ne (hq_nonneg i) (Ne.symm hi))) (ne_of_gt hWpos)]
+      · rw [log_mul (ne_of_gt (lt_of_le_of_ne (hq_nonneg i) (Ne.symm hi))) hWne]
         ring
     simp_rw [hterm, sum_add_distrib, ← sum_mul, hq_sum, one_mul]
 

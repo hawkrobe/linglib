@@ -1,6 +1,6 @@
-import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Mathlib.Data.Rat.Defs
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Argumentative Strength for Quantity Expressions
@@ -33,7 +33,6 @@ A pragmatic variant replaces literal truth with assertability:
 
 namespace RSA.ArgumentativeStrength
 
-open RSA.InformationTheory
 open RSA.CombinedUtility
 
 
