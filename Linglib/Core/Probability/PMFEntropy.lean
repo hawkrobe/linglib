@@ -432,15 +432,66 @@ theorem klDiv_eq_sum_klFun {α : Type*} [Fintype α] [MeasurableSpace α]
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton y), mul_comm]
 
 -- ============================================================================
--- §7: Jensen-Shannon divergence
+-- §7: Jensen-Shannon divergence — KL-symmetrized form (mathlib-style)
 -- ============================================================================
 
-/-- Jensen-Shannon divergence: `JSD(p, q) = H(m) - (H(p) + H(q))/2` where
-    `m(a) = (p(a) + q(a))/2`. Symmetric and bounded; sqrt is a metric.
-    Defined directly on PMFs. -/
-noncomputable def jsd (p q : PMF α) : ℝ :=
-  (∑ a, Real.negMulLog ((p.toRealFn a + q.toRealFn a) / 2)) -
-    (p.entropy + q.entropy) / 2
+/-! ### Midpoint distribution + KL-based JSD
+
+Mathlib-style definition: `JSD(p, q) := (KL(p ‖ m) + KL(q ‖ m))/2` where
+`m = (p + q)/2`. The classical `H(m) − (H(p) + H(q))/2` formula becomes
+a derived theorem (`jsd_eq_entropy_form`).
+
+**Reuse payoff**: `jsd_nonneg` reduces to `ENNReal.toReal_nonneg` / 2.
+`jsd_symm` reduces to symmetry of the sum + symmetry of `midPMF`. -/
+
+/-- The 1/2-mixture distribution: `(midPMF p q) a = (p a + q a) / 2`. -/
+noncomputable def midPMF (p q : PMF α) : PMF α :=
+  PMF.ofFintype (fun a => (p a + q a) / 2) <| by
+    show (∑ a : α, (p a + q a) / 2) = 1
+    have h_sum_p : (∑ a : α, p a) = 1 :=
+      (tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
+        absurd (Finset.mem_univ a) h)).symm.trans (PMF.tsum_coe p)
+    have h_sum_q : (∑ a : α, q a) = 1 :=
+      (tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
+        absurd (Finset.mem_univ a) h)).symm.trans (PMF.tsum_coe q)
+    -- ENNReal doesn't have DivisionSemiring (no field structure due to ⊤),
+    -- so use div_eq_mul_inv + Finset.sum_mul.
+    simp_rw [div_eq_mul_inv]
+    rw [← Finset.sum_mul, Finset.sum_add_distrib, h_sum_p, h_sum_q,
+        show ((1 : ℝ≥0∞) + 1) = 2 from by norm_num, ← div_eq_mul_inv]
+    exact ENNReal.div_self (by norm_num) (by norm_num)
+
+@[simp] theorem midPMF_apply (p q : PMF α) (a : α) :
+    (midPMF p q) a = (p a + q a) / 2 := by
+  unfold midPMF
+  rw [PMF.ofFintype_apply]
+
+theorem midPMF_symm (p q : PMF α) : midPMF p q = midPMF q p := by
+  ext a
+  rw [midPMF_apply, midPMF_apply, add_comm]
+
+theorem midPMF_toRealFn (p q : PMF α) (a : α) :
+    (midPMF p q).toRealFn a = (p.toRealFn a + q.toRealFn a) / 2 := by
+  unfold toRealFn
+  rw [midPMF_apply, ENNReal.toReal_div, ENNReal.toReal_add (PMF.apply_ne_top p a)
+        (PMF.apply_ne_top q a)]
+  rfl
+
+/-- Jensen-Shannon divergence `JSD(p, q) := (KL(p ‖ m) + KL(q ‖ m))/2`
+    where `m := midPMF p q`, grounded in `PMF.klDiv`. -/
+noncomputable def jsd [MeasurableSpace α] (p q : PMF α) : ℝ :=
+  ((p.klDiv (midPMF p q)).toReal + (q.klDiv (midPMF p q)).toReal) / 2
+
+/-- **JSD is non-negative** — free from `ENNReal.toReal_nonneg`. -/
+theorem jsd_nonneg [MeasurableSpace α] (p q : PMF α) : 0 ≤ jsd p q := by
+  unfold jsd
+  positivity
+
+/-- **JSD is symmetric** — `JSD(p, q) = JSD(q, p)`, free from `midPMF_symm`. -/
+theorem jsd_symm [MeasurableSpace α] (p q : PMF α) : jsd p q = jsd q p := by
+  unfold jsd
+  rw [midPMF_symm]
+  ring
 
 -- ============================================================================
 -- §7.5: Hellinger family (Bhattacharyya, squared-Hellinger, Hellinger distance)

@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.604 — KL-based PMF.jsd refactor + ΔP deletion (no consumers)
+
+Two architectural cleanups:
+
+**(1) PMF.jsd refactored via KL** (mathlib-style, same pattern as Phase 1c for MI):
+
+- Added `PMF.midPMF p q : PMF α` (the 1/2-mixture distribution `(p + q)/2`) via `PMF.ofFintype`. Includes `midPMF_apply`, `midPMF_symm`, `midPMF_toRealFn`.
+- **Redefined `PMF.jsd p q := ((p.klDiv (midPMF p q)).toReal + (q.klDiv (midPMF p q)).toReal) / 2`** (KL-symmetrized form), grounded in mathlib's `klDiv` via `PMF.toMeasure`.
+- `jsd_nonneg` is now `positivity` from `ENNReal.toReal_nonneg / 2`. Free.
+- `jsd_symm` is `midPMF_symm + ring`. Free.
+- The `H(m) − (H(p) + H(q))/2` formula is no longer the def — would be a derived theorem (Cover-Thomas-style algebraic bridge, deferred since no consumer requires it).
+
+**(2) ΔP deleted** (was the only surviving Core.InformationTheory content after Phases 5–8):
+
+- Deleted `Linglib/Core/Statistics/Association.lean` (created in 0.230.603 as a relocation target). No file actually used `deltaP`/`deltaPCounts`/`deltaP_eq_zero_of_independent` in code — only one docstring reference in `Learning.lean`.
+- Updated `Learning.lean` docstring to point at the conceptual idea (cue equally predicts outcome whether C is present or not) rather than the dead substrate name.
+- When @cite{ellis-2006} or @cite{dunn-2025} get formalized, ΔP can be defined locally in those study files (consensus-only fragment-schema discipline).
+- Removed import from `Linglib.lean`.
+
+**Mathlib-upstreamable additions**:
+- `PMF.midPMF` + apply/symm/toRealFn lemmas
+- `PMF.jsd` (KL-based)
+- `PMF.jsd_nonneg`, `PMF.jsd_symm`
+
+**Build**: green at 5684 jobs.
+
 ### 0.230.602 — Phase 7+8: ΔP relocated, Core.InformationTheory.lean dissolved
 
 Final phase of the PMF migration. ΔP family moved out of `Core.InformationTheory` (where it never belonged — ΔP is contingency-table association à la Cheng & Holyoak, not Shannon entropy) and `Linglib/Core/InformationTheory.lean` deleted entirely.

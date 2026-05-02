@@ -303,7 +303,6 @@ import Linglib.Theories.Semantics.Noun.BinominalDefs
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Pragmatics.Efficiency
 import Linglib.Phenomena.Reference.SearchEfficiency
-import Linglib.Core.Statistics.Association
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.PMFPosterior

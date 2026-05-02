@@ -602,8 +602,10 @@ the R-W equilibrium strengths predict the same pattern as ΔP:
 
 This theorem states the blocked direction: if cue A already captures all
 the associative strength and C starts at zero, then C remains at zero
-after compound AC→X trials. The ΔP = 0 counterpart is `deltaPCounts`
-with `a = c` (cue equally predicts outcome whether C is present or not).
+after compound AC→X trials. The ΔP = 0 counterpart (`P(X|C) = P(X|¬C)`,
+i.e., cue equally predicts outcome whether C is present or not) lives in
+the contingency-association literature (@cite{cheng-holyoak-1995},
+@cite{ellis-2006}) — to be defined locally in the study file when formalized.
 
 See `Phenomena.Acquisition.Studies.Ellis2006` for the concrete
 Chapman & Robbins (1990) experiment verifying both measures. -/
