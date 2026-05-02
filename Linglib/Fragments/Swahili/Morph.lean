@@ -2,37 +2,33 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Swahili Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Swahili.
-Swahili: F20A: exclusivelyConcatenative; F21A: noCase (fallback monoexponential); F22A: 4-5 (moderate); F23A: headMarking; F26A: weaklyPrefixing; F27A: productiveFull.
+WALS-derived profile for Swahili (ISO `swh`). B&N 2001 places Swahili in the
+"agglutinating" cell (concatenative + nonflexive + separative); Swahili is
+unusual among the 18-language sample in being weakly prefixing rather than
+suffixing.
 -/
 
 namespace Fragments.Swahili
 
-open Core.Morphology in
-/-- Swahili: F20A: exclusivelyConcatenative; F21A: noCase (fallback monoexponential); F22A: 4-5 (moderate); F23A: headMarking; F26A: weaklyPrefixing; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Swahili: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Swahili"
-  , iso := "swh"
-  , fusion := (walsFusion "swh").getD .concatenative
-  , exponence := (walsExponence "swh").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "swh").getD .moderate
-  , locus := (walsLocus "swh").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "swh").getD .stronglySuffixing
-  , reduplication := (walsReduplication "swh").getD .noProductive
-  , locusClause := walsLocusClause "swh"
-  , locusPossessive := walsLocusPossessive "swh"
-  , wholeLanguageMarking := walsWholeLanguageMarking "swh"
-  , zeroMarkingAP := walsZeroMarkingAP "swh"
-  , caseSyncretism := walsCaseSyncretism "swh"
-  , verbalSyncretism := walsVerbalSyncretism "swh"
-  , tamExponence := walsTAMExponence "swh"
-  , actionNominal := walsActionNominal "swh"
-  , suppletionTA := walsSuppletionTA "swh"
-  , suppletionImperative := walsSuppletionImperative "swh"
-  , verbalNumber := walsVerbalNumber "swh"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Swahili" "swh"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "swh" ∧ morphProfile.language = "Swahili" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Swahili in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Swahili

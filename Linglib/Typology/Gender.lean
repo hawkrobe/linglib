@@ -1,4 +1,5 @@
 import Linglib.Core.Agreement.Target
+import Linglib.Features.Gender
 import Linglib.Datasets.WALS.Features.F30A
 import Linglib.Datasets.WALS.Features.F31A
 import Linglib.Datasets.WALS.Features.F32A
@@ -141,6 +142,14 @@ structure GenderProfile where
   agreementTargets : List AgreementTarget
   /-- Semantic dimensions organising the system. -/
   semanticBases : List SemanticBasis
+  /-- Bridge to the lexical-layer `Features.SurfaceGender` taxonomy: the
+      surface gender values attested in this language. Defaults to `[]` for
+      noun-class systems (Bantu, Mixtec, Dyirbal) whose per-class agreement
+      doesn't map onto the Indo-European `masculine/feminine/neuter/common`
+      scheme; per-Fragment files for those languages retain a fine-grained
+      `Gender` type and provide their own `Features.SurfaceGender` bridge
+      via a `.primary` function. -/
+  attestedSurfaceGenders : List Features.SurfaceGender := []
   deriving Repr, DecidableEq
 
 -- ============================================================================
@@ -213,6 +222,43 @@ def fromWALS32A :
   | .semantic          => .semanticOnly
   | .semanticAndFormal => .semanticAndFormal
 
+-- ============================================================================
+-- §5. WALS Lookup Helpers + Smart Constructor
+-- ============================================================================
+
+def walsGenderCount (iso : String) : Option GenderCount :=
+  (Datasets.WALS.F30A.lookupISO iso).map (fromWALS30A ·.value)
+
+def walsGenderBasis (iso : String) : Option GenderBasis :=
+  (Datasets.WALS.F31A.lookupISO iso).map (fromWALS31A ·.value)
+
+def walsAssignment (iso : String) : Option AssignmentSystem :=
+  (Datasets.WALS.F32A.lookupISO iso).map (fromWALS32A ·.value)
+
+/-- Build a `GenderProfile` from an ISO 639-3 code via WALS lookups for
+    Chs 30/31/32. The three required-field fallbacks (`genderCountFb`,
+    `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO.
+    The `rawGenderCount`, `agreementTargets`, `semanticBases`, and
+    `attestedSurfaceGenders` fields are paper-stipulated per @cite{corbett-1991}
+    — they are not derivable from any WALS chapter and must be passed
+    explicitly. -/
+def GenderProfile.fromWALS
+    (name iso : String)
+    (rawGenderCount : Nat)
+    (agreementTargets : List AgreementTarget := [])
+    (semanticBases : List SemanticBasis := [])
+    (attestedSurfaceGenders : List Features.SurfaceGender := [])
+    (genderCountFb : GenderCount := .none)
+    (basisFb : GenderBasis := .noGender)
+    (assignmentFb : AssignmentSystem := .noGender) : GenderProfile :=
+  { name, iso639 := iso
+  , genderCount := (walsGenderCount iso).getD genderCountFb
+  , rawGenderCount
+  , basis := (walsGenderBasis iso).getD basisFb
+  , assignment := (walsAssignment iso).getD assignmentFb
+  , agreementTargets
+  , semanticBases
+  , attestedSurfaceGenders }
 
 -- ============================================================================
 -- §6. Theory-neutral WALS distribution facts

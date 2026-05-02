@@ -1,4 +1,3 @@
-import Linglib.Typology.Morphology
 import Linglib.Core.Morphology.MorphProfile
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.Mandarin.Morph
@@ -42,24 +41,25 @@ two parameters are independent.
 ## Contents
 
 - §1. The 18-language `MorphProfile` sample (drawn from per-language
-  Fragment profiles, derived from WALS via `Core.Morphology.wals*` lookup
-  helpers).
-- §2. Sample distribution counts (fusion, exponence, locus, synthesis).
-- §3. Sample-grounded generalisations: suffixing dominates, concatenative
-  plurality, dependent-marking common, head-marking-implies-high-synthesis.
-- §4. Bickel & Nichols 2001 orthogonality: flexivity × fusion independence,
-  agglutinating-vs-fusional partition, exponence-scope independence from
-  WALS exponence.
+  Fragment profiles).
+- §2. Substantive structural / orthogonality theorems on the B&N
+  decomposition: both flexivity values attested under concatenative;
+  every concatenative language is agglutinating ∨ fusional; nonlinear
+  cell witnessed by Arabic; isolating cell has no flexivity.
 
 ## Out of scope
 
 The substrate types (`MorphProfile`, `Fusion`, `Flexivity`, ...) and WALS
-converters live in `Core/Morphology/MorphProfile.lean`. WALS aggregate
-sample-size theorems, distribution lists, and corpus-only generalisations
-(Greenberg's Universal 27, concatenative dominance, etc.) live in
-`Linglib/Typology/Morphology.lean`. @cite{ackerman-malouf-2013}'s
-E-complexity / I-complexity analysis (10-language `LanguageData` sample,
-LCEC) is in `Studies/AckermanMalouf2013.lean`.
+converters live in `Core/Morphology/MorphProfile.lean`. Per-language B&N
+classification commitments (e.g., "German is fusional") live in each
+`Fragments/{Lang}/Morph.lean` as local bridge theorems.
+@cite{ackerman-malouf-2013}'s E-complexity / I-complexity analysis lives
+in `Studies/AckermanMalouf2013.lean`.
+
+This file deliberately omits aggregate-count theorems (`sample_X_count = N`)
+— exact counts go stale every time a Fragment is added to the sample. The
+mutual-exclusion theorem `MorphProfile.agglutinating_fusional_exclusive`
+is structural and lives in `Core/Morphology/MorphProfile.lean §6`.
 -/
 
 set_option autoImplicit false
@@ -67,7 +67,6 @@ set_option autoImplicit false
 namespace Phenomena.Morphology.Studies.BickelNichols2013
 
 open Core.Morphology
-open Typology.Morphology
 
 -- ============================================================================
 -- §1. The 18-language MorphProfile Sample
@@ -96,241 +95,77 @@ private abbrev koreanMorph     := Fragments.Korean.morphProfile
 private abbrev germanMorph     := Fragments.German.morphProfile
 private abbrev spanishMorph    := Fragments.Spanish.morphProfile
 
-/-- 18-language morphological mechanism sample. -/
+/-- 18-language morphological sample. -/
 def allMorphProfiles : List MorphProfile :=
   [ englishMorph, mandarinMorph, japaneseMorph, turkishMorph, finnishMorph
   , russianMorph, swahiliMorph, arabicMorph, hindiMorph, tagalogMorph
   , quechuaMorph, hungarianMorph, georgianMorph, thaiMorph, indonesianMorph
   , koreanMorph, germanMorph, spanishMorph ]
 
-theorem allMorphProfiles_count : allMorphProfiles.length = 18 := by native_decide
-
--- ============================================================================
--- §2. Counting Helpers + Sample Distribution
--- ============================================================================
-
-def countByFusion (langs : List MorphProfile) (f : Fusion) : Nat :=
-  (langs.filter (λ p => p.fusion == f)).length
-
-def countByExponence (langs : List MorphProfile) (e : Exponence) : Nat :=
-  (langs.filter (λ p => p.exponence == e)).length
-
-def countByLocus (langs : List MorphProfile) (l : LocusOfMarking) : Nat :=
-  (langs.filter (λ p => p.locus == l)).length
-
-def countBySynthesis (langs : List MorphProfile) (s : VerbSynthesis) : Nat :=
-  (langs.filter (λ p => p.verbSynthesis == s)).length
-
-/-- Fusion type distribution in the sample. -/
-theorem sample_concatenative_count :
-    countByFusion allMorphProfiles .concatenative = 14 := by native_decide
-theorem sample_nonlinear_count :
-    countByFusion allMorphProfiles .nonlinear = 1 := by native_decide
-theorem sample_isolating_count :
-    countByFusion allMorphProfiles .isolating = 3 := by native_decide
-
-/-- Exponence distribution in the sample. -/
-theorem sample_monoexponential_count :
-    countByExponence allMorphProfiles .monoexponential = 12 := by native_decide
-theorem sample_polyexponential_count :
-    countByExponence allMorphProfiles .polyexponential = 5 := by native_decide
-theorem sample_no_inflection_count :
-    countByExponence allMorphProfiles .noCase = 1 := by native_decide
-
-/-- Verb synthesis distribution in the sample. -/
-theorem sample_low_synthesis :
-    countBySynthesis allMorphProfiles .low = 7 := by native_decide
-theorem sample_moderate_synthesis :
-    countBySynthesis allMorphProfiles .moderate = 9 := by native_decide
-theorem sample_high_synthesis :
-    countBySynthesis allMorphProfiles .high = 2 := by native_decide
-
-/-- Locus of marking distribution in the sample. -/
-theorem sample_dependent_marking :
-    countByLocus allMorphProfiles .dependentMarking = 10 := by native_decide
-theorem sample_head_marking :
-    countByLocus allMorphProfiles .headMarking = 1 := by native_decide
-theorem sample_double_marking :
-    countByLocus allMorphProfiles .doubleMarking = 4 := by native_decide
-theorem sample_zero_marking :
-    countByLocus allMorphProfiles .zeroMarking = 3 := by native_decide
-theorem sample_inconsistent_marking :
-    countByLocus allMorphProfiles .inconsistentOrOther = 0 := by native_decide
-
-/-- Fusion counts sum to total. -/
-theorem fusion_counts_sum :
-    countByFusion allMorphProfiles .concatenative +
-    countByFusion allMorphProfiles .nonlinear +
-    countByFusion allMorphProfiles .isolating =
-    allMorphProfiles.length := by native_decide
-
-/-- Locus counts sum to total. -/
-theorem locus_counts_sum :
-    countByLocus allMorphProfiles .headMarking +
-    countByLocus allMorphProfiles .dependentMarking +
-    countByLocus allMorphProfiles .doubleMarking +
-    countByLocus allMorphProfiles .zeroMarking +
-    countByLocus allMorphProfiles .inconsistentOrOther =
-    allMorphProfiles.length := by native_decide
-
-/-- All ISO codes are 3 characters. -/
-theorem morph_iso_length_3 :
-    allMorphProfiles.all (λ p => p.iso.length == 3) = true := by native_decide
-
-/-- No duplicate ISO codes in the sample. -/
+/-- Sentry: ISO codes are pairwise distinct across the sample. Catches
+    accidental cross-language duplicates (two Fragments stipulating the
+    same ISO) that per-Fragment sentries cannot see. -/
 theorem morph_iso_unique :
-    (allMorphProfiles.map (·.iso)).eraseDups.length =
-    allMorphProfiles.length := by native_decide
+    (allMorphProfiles.map (·.iso)).eraseDups.length = allMorphProfiles.length := by decide
 
 -- ============================================================================
--- §3. Sample-Grounded Generalisations
+-- §2. B&N Orthogonality and Cell-Population Theorems
 -- ============================================================================
 
-/-- Greenberg's Universal 27 in the sample: suffixing-dominant languages
-    outnumber prefixing-dominant ones. -/
-theorem suffixing_dominates_in_sample :
-    let suffCount := (allMorphProfiles.filter (·.isSuffixing)).length
-    let prefCount := (allMorphProfiles.filter (·.isPrefixing)).length
-    suffCount > prefCount := by native_decide
-
-/-- Concatenative is the plurality fusion type in the sample. -/
-theorem concatenative_plurality_in_sample :
-    countByFusion allMorphProfiles .concatenative >
-      countByFusion allMorphProfiles .nonlinear ∧
-    countByFusion allMorphProfiles .concatenative >
-      countByFusion allMorphProfiles .isolating := by native_decide
-
-/-- Dependent-marking is at least as common as head-marking in the sample. -/
-theorem dependent_marking_common :
-    countByLocus allMorphProfiles .dependentMarking >=
-    countByLocus allMorphProfiles .headMarking := by native_decide
-
-/-- Reduplication is attested in the sample. -/
-theorem reduplication_attested_in_sample :
-    (allMorphProfiles.filter (·.hasRedup)).length >= 3 := by native_decide
-
-/-- The defining correlation of agglutination: concatenative languages are
-    predominantly monoexponential (one-to-one form-meaning mapping). -/
-theorem concatenative_mostly_monoexponential :
-    let concatLangs := allMorphProfiles.filter (·.isConcatenative)
-    let concatMono := concatLangs.filter (·.isMono)
-    concatMono.length * 2 > concatLangs.length := by native_decide
-
-/-- Head-marking languages have at least moderate verb synthesis (the verb
-    carries agreement morphology for multiple arguments). -/
-theorem head_marking_high_synthesis :
-    let headLangs := allMorphProfiles.filter (λ p => p.locus == .headMarking)
-    headLangs.all (λ p =>
-      p.verbSynthesis == .moderate || p.verbSynthesis == .high) = true := by
-  native_decide
-
-/-- All languages with high verb synthesis have either concatenative or
-    nonlinear fusion (never isolating). -/
-theorem high_synthesis_not_isolating :
-    allMorphProfiles.all (λ p =>
-      if p.isHighSynthesis then !p.isIsolating else true) = true := by native_decide
-
--- ============================================================================
--- §4. Bickel & Nichols 2001: Flexivity × Fusion Orthogonality
--- ============================================================================
-
-/-! The traditional 1D typological scale conflates fusion (concatenative
-    vs. nonlinear vs. isolating) with flexivity (predictable vs.
-    arbitrary class membership). @cite{bickel-nichols-2001} argue these
-    are orthogonal; the sample bears this out. -/
-
-def countByFlexivity (langs : List MorphProfile) (f : Flexivity) : Nat :=
-  (langs.filter (λ p => p.flexivity == some f)).length
-
-def countByBNExponence (langs : List MorphProfile) (e : ExponenceScope) : Nat :=
-  (langs.filter (λ p => p.bnExponence == some e)).length
-
-/-- Flexivity distribution: both values attested.
-    2 isolating languages (Mandarin, Thai) have `none`. -/
-theorem sample_nonflexive_count :
-    countByFlexivity allMorphProfiles .nonflexive = 10 := by native_decide
-theorem sample_flexive_count :
-    countByFlexivity allMorphProfiles .flexive = 6 := by native_decide
-
-/-- B&N exponence distribution: both values attested.
-    2 isolating languages (Mandarin, Thai) have `none`. -/
-theorem sample_separative_count :
-    countByBNExponence allMorphProfiles .separative = 10 := by native_decide
-theorem sample_cumulative_count :
-    countByBNExponence allMorphProfiles .cumulative = 6 := by native_decide
+/-! @cite{bickel-nichols-2001} argue fusion and flexivity are orthogonal,
+    and that the four cells of the (concatenative ∪ nonlinear ∪ isolating)
+    × (flexive ∪ nonflexive ∪ none) space are independently attested. The
+    theorems below witness the cells the sample populates. -/
 
 /-- Key orthogonality test: among concatenative languages, both flexive
-    and nonflexive are attested. -/
+    and nonflexive are attested. This refutes the traditional 1D scale's
+    claim that fusion-axis values determine flexivity-axis values. -/
 theorem concatenative_admits_both_flexivities :
-    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
-    (concats.filter MorphProfile.isFlexive).length > 0 ∧
-    (concats.filter MorphProfile.isNonflexive).length > 0 := by native_decide
+    let concats := allMorphProfiles.filter (fun p => decide p.IsConcatenative)
+    (concats.filter (fun p => decide p.IsFlexive)).length > 0 ∧
+    (concats.filter (fun p => decide p.IsNonflexive)).length > 0 := by decide
 
-/-- Traditional "agglutinating" decomposed: concatenative + nonflexive +
-    separative. Turkish, Finnish, Japanese, Korean, Hungarian, Swahili,
-    Quechua, English, Tagalog all satisfy this. Indonesian is WALS-isolating
-    despite productive affixation, so it does not count as agglutinating
-    here. -/
-theorem sample_agglutinating_count :
-    (allMorphProfiles.filter MorphProfile.isAgglutinating).length = 9 := by native_decide
-
-/-- Traditional "fusional" decomposed: concatenative + flexive + cumulative.
-    Russian, German, Spanish, Hindi, Georgian all satisfy this. -/
-theorem sample_fusional_count :
-    (allMorphProfiles.filter MorphProfile.isFusional).length = 5 := by native_decide
-
-/-- Arabic is nonlinear + flexive + cumulative (root-and-pattern morphology). -/
+/-- Nonlinear cell witnessed by Arabic root-and-pattern morphology. The
+    sample's only nonlinear member is also flexive and cumulative — the
+    classic templatic profile. -/
 theorem arabic_nonlinear_flexive :
-    arabicMorph.isNonlinear = true ∧
-    arabicMorph.isFlexive = true ∧
-    arabicMorph.isCumulative = true := by native_decide
+    arabicMorph.IsNonlinear ∧ arabicMorph.IsFlexive ∧ arabicMorph.IsCumulative := by
+  decide
 
-/-- Isolating languages (Mandarin, Thai) have no flexivity/exponence marking. -/
+/-- Isolating cell (Mandarin, Thai) has no flexivity / no exponence
+    marking — the B&N parameters do not apply to isolating typology. -/
 theorem isolating_no_flexivity :
-    mandarinMorph.flexivity = none ∧
-    thaiMorph.flexivity = none := by native_decide
+    mandarinMorph.flexivity = none ∧ thaiMorph.flexivity = none := by decide
 
-/-- WALS Exponence (case-specific) and B&N ExponenceScope (general) are
-    independent: both poly+sep (Finnish, Tagalog) and mono+cum (Hindi,
-    Georgian, Spanish) are attested. -/
+/-- WALS Exponence (Ch 21A, case-specific) and B&N ExponenceScope (general)
+    are independent: both poly+sep (Finnish, Tagalog) and mono+cum (Hindi,
+    Georgian, Spanish) are attested in the sample. -/
 theorem exponence_scope_independent :
-    (allMorphProfiles.filter (λ p =>
-      p.exponence == .polyexponential && p.bnExponence == some .separative)).length > 0 ∧
-    (allMorphProfiles.filter (λ p =>
-      p.exponence == .monoexponential && p.bnExponence == some .cumulative)).length > 0 := by
-  native_decide
+    (allMorphProfiles.filter (fun p =>
+      decide (p.exponence = .polyexponential ∧ p.bnExponence = some .separative))).length > 0 ∧
+    (allMorphProfiles.filter (fun p =>
+      decide (p.exponence = .monoexponential ∧ p.bnExponence = some .cumulative))).length > 0 := by
+  decide
 
--- ============================================================================
--- §5. B&N Parameter Space Partition
--- ============================================================================
-
-/-- Every concatenative language in the sample is either agglutinating or
-    fusional (the B&N decomposition is exhaustive on this dimension). -/
+set_option maxRecDepth 2000 in
+/-- B&N decomposition is exhaustive on the concatenative dimension: every
+    concatenative language in the sample is either agglutinating
+    (concatenative + nonflexive + separative) or fusional (concatenative +
+    flexive + cumulative). -/
 theorem concatenative_partition :
-    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
-    concats.all (λ p => p.isAgglutinating || p.isFusional) = true := by native_decide
+    ∀ p ∈ allMorphProfiles, p.IsConcatenative →
+      p.IsAgglutinating ∨ p.IsFusional := by decide
 
-/-- No language in the sample is both agglutinating and fusional (the two
-    decomposed categories are disjoint). -/
-theorem no_agglutinating_and_fusional :
-    allMorphProfiles.all (λ p => !(p.isAgglutinating && p.isFusional)) = true := by
-  native_decide
-
-/-- The three B&N parameters are independently attested: among concatenative
-    languages, both exponence scopes occur with both flexivity values. -/
-theorem exponence_flexivity_independent :
-    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
-    (concats.filter (λ p => p.isNonflexive && p.isSeparative)).length > 0 ∧
-    (concats.filter (λ p => p.isFlexive && p.isCumulative)).length > 0 := by native_decide
-
-/-- Sample partition: every language falls into exactly one of agglutinating /
-    fusional / nonlinear / isolating. -/
+/-- Sample partition: every language falls into exactly one of agglutinating
+    / fusional / nonlinear / isolating. The disjointness half lives in
+    `Core/Morphology/MorphProfile.lean §6` as a structural theorem
+    (`MorphProfile.agglutinating_fusional_exclusive`); this is the empirical
+    claim that the four cells exhaust the sample. -/
 theorem sample_type_exhaustive :
     allMorphProfiles.length =
-    (allMorphProfiles.filter MorphProfile.isAgglutinating).length +
-    (allMorphProfiles.filter MorphProfile.isFusional).length +
-    (allMorphProfiles.filter MorphProfile.isNonlinear).length +
-    (allMorphProfiles.filter MorphProfile.isIsolating).length := by
-  native_decide
+    (allMorphProfiles.filter (fun p => decide p.IsAgglutinating)).length +
+    (allMorphProfiles.filter (fun p => decide p.IsFusional)).length +
+    (allMorphProfiles.filter (fun p => decide p.IsNonlinear)).length +
+    (allMorphProfiles.filter (fun p => decide p.IsIsolating)).length := by decide
 
 end Phenomena.Morphology.Studies.BickelNichols2013

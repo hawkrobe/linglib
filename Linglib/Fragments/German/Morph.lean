@@ -2,37 +2,44 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # German Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for German.
-German: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: caseNumber (polyexponential); F22A: 2-3 (low); F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive.
+WALS-derived profile (Ch 20A–29A, 21B, 62A, 79A/B, 80A) for German (ISO `deu`,
+WALS code `ger`). The B&N 2001 parameters (`flexivity := flexive`,
+`bnExponence := cumulative`) are not derivable from any WALS chapter and are
+paper-stipulated per @cite{bickel-nichols-2001}; together with the WALS-derived
+`fusion := concatenative` they place German in the traditional "fusional" cell.
+
+WALS F20A's `exclusivelyConcatenative` verdict samples a small set of formatives
+and systematically under-weights ablaut (`singen` ~ `sang` ~ `gesungen`) and
+umlaut (`Bruder` ~ `Brüder`); a process-based treatment would not classify
+German as exclusively concatenative.
 -/
 
 namespace Fragments.German
 
-open Core.Morphology in
-/-- German: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: caseNumber (polyexponential); F22A: 2-3 (low); F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive. -/
+open Core.Morphology
+
+/-- German: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. Required-field
+    fallbacks match WALS values (lookup wins when present); `flexivity` and
+    `bnExponence` are stipulated per B&N 2001. -/
 def morphProfile : MorphProfile :=
-  { language := "German"
-  , iso := "deu"
-  , fusion := (walsFusion "deu").getD .concatenative
-  , exponence := (walsExponence "deu").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "deu").getD .moderate
-  , locus := (walsLocus "deu").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "deu").getD .stronglySuffixing
-  , reduplication := (walsReduplication "deu").getD .noProductive
-  , locusClause := walsLocusClause "deu"
-  , locusPossessive := walsLocusPossessive "deu"
-  , wholeLanguageMarking := walsWholeLanguageMarking "deu"
-  , zeroMarkingAP := walsZeroMarkingAP "deu"
-  , caseSyncretism := walsCaseSyncretism "deu"
-  , verbalSyncretism := walsVerbalSyncretism "deu"
-  , tamExponence := walsTAMExponence "deu"
-  , actionNominal := walsActionNominal "deu"
-  , suppletionTA := walsSuppletionTA "deu"
-  , suppletionImperative := walsSuppletionImperative "deu"
-  , verbalNumber := walsVerbalNumber "deu"
-  , flexivity := some .flexive
-  , bnExponence := some .cumulative
-  }
+  .fromWALS "German" "deu"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .flexive)
+    (bnExponence     := some .cumulative)
+
+/-- Typo sentry for the ISO and language label. -/
+example : morphProfile.iso = "deu" ∧ morphProfile.language = "German" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places German in the "fusional" cell. Bridge theorem made local
+    so the per-language commitment is visible here, not only inside
+    `BickelNichols2013.lean`'s 18-language aggregate. -/
+example : morphProfile.IsFusional := by decide
 
 end Fragments.German

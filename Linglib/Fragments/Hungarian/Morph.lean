@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Hungarian Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Hungarian.
-Hungarian: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: productiveFull.
+WALS-derived profile for Hungarian (ISO `hun`). B&N 2001 places Hungarian
+in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Fragments.Hungarian
 
-open Core.Morphology in
-/-- Hungarian: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Hungarian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Hungarian"
-  , iso := "hun"
-  , fusion := (walsFusion "hun").getD .concatenative
-  , exponence := (walsExponence "hun").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "hun").getD .moderate
-  , locus := (walsLocus "hun").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "hun").getD .stronglySuffixing
-  , reduplication := (walsReduplication "hun").getD .noProductive
-  , locusClause := walsLocusClause "hun"
-  , locusPossessive := walsLocusPossessive "hun"
-  , wholeLanguageMarking := walsWholeLanguageMarking "hun"
-  , zeroMarkingAP := walsZeroMarkingAP "hun"
-  , caseSyncretism := walsCaseSyncretism "hun"
-  , verbalSyncretism := walsVerbalSyncretism "hun"
-  , tamExponence := walsTAMExponence "hun"
-  , actionNominal := walsActionNominal "hun"
-  , suppletionTA := walsSuppletionTA "hun"
-  , suppletionImperative := walsSuppletionImperative "hun"
-  , verbalNumber := walsVerbalNumber "hun"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Hungarian" "hun"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "hun" ∧ morphProfile.language = "Hungarian" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Hungarian in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Hungarian

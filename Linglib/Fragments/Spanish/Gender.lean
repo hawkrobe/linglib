@@ -1,4 +1,5 @@
 import Linglib.Features.Gender
+import Linglib.Typology.Gender
 
 /-!
 # Spanish Noun Gender
@@ -157,5 +158,26 @@ def allNouns : List SpanishNoun :=
 
 def sameRootNouns : List SameRootEntry :=
   [soldado, estudiante, artista]
+
+-- ============================================================================
+-- § 7: Typology profile (Corbett 1991, WALS Ch 30/31/32)
+-- ============================================================================
+
+open Typology.Gender
+open Core (AgreementTarget)
+
+/-- Spanish gender typology: 2-gender canonical sex-based. -/
+def genderTypology : GenderProfile :=
+  .fromWALS "Spanish" "spa"
+    (rawGenderCount := 2)
+    (genderCountFb := .two)
+    (basisFb := .sexBased)
+    (assignmentFb := .semanticAndFormal)
+    (agreementTargets := [.attributive, .predicate, .personalPronoun])
+    (semanticBases := [.sex])
+    (attestedSurfaceGenders := [.masculine, .feminine])
+
+example : genderTypology.iso639 = "spa" ∧ genderTypology.name = "Spanish" :=
+  ⟨rfl, rfl⟩
 
 end Fragments.Spanish.Gender

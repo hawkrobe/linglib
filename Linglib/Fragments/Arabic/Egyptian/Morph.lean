@@ -2,39 +2,42 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Arabic (Egyptian) Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Arabic (Egyptian).
-WALS uses Egyptian Arabic (ISO arz, WALS code aeg) as the representative
-Arabic variety for most morphology chapters.
+WALS-derived profile for Egyptian Arabic (ISO `arz`, WALS code `aeg`).
+WALS F20A codes Arabic as `ablautConcatenative`, mapping to the local
+`.nonlinear` `Fusion` value. B&N flexive + cumulative are stipulated, but
+the language is NOT in the "fusional" cell because that requires
+`.concatenative` fusion — Arabic root-and-pattern templatic morphology
+is the canonical non-concatenative case.
 -/
 
 namespace Fragments.Arabic.Egyptian
 
-open Core.Morphology in
-/-- Arabic (Egyptian): F20A nonlinear; F22A moderate; F23A noMarking;
-    F25A inconsistentOrOther; F26A weaklySuffixing; F27A productiveFull. -/
+open Core.Morphology
+
+/-- Arabic (Egyptian): WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Arabic (Egyptian)"
-  , iso := "arz"
-  , fusion := (walsFusion "arz").getD .nonlinear
-  , exponence := (walsExponence "arz").getD .polyexponential
-  , verbSynthesis := (walsVerbSynthesis "arz").getD .moderate
-  , locus := (walsLocus "arz").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "arz").getD .weaklySuffixing
-  , reduplication := (walsReduplication "arz").getD .productiveFull
-  , locusClause := walsLocusClause "arz"
-  , locusPossessive := walsLocusPossessive "arz"
-  , wholeLanguageMarking := walsWholeLanguageMarking "arz"
-  , zeroMarkingAP := walsZeroMarkingAP "arz"
-  , caseSyncretism := walsCaseSyncretism "arz"
-  , verbalSyncretism := walsVerbalSyncretism "arz"
-  , tamExponence := walsTAMExponence "arz"
-  , actionNominal := walsActionNominal "arz"
-  , suppletionTA := walsSuppletionTA "arz"
-  , suppletionImperative := walsSuppletionImperative "arz"
-  , verbalNumber := walsVerbalNumber "arz"
-  , flexivity := some .flexive
-  , bnExponence := some .cumulative
-  }
+  .fromWALS "Arabic (Egyptian)" "arz"
+    (fusionFb        := .nonlinear)
+    (exponenceFb     := .polyexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .weaklySuffixing)
+    (reduplicationFb := .productiveFull)
+    (flexivity       := some .flexive)
+    (bnExponence     := some .cumulative)
+
+example : morphProfile.iso = "arz" ∧ morphProfile.language = "Arabic (Egyptian)" :=
+  ⟨rfl, rfl⟩
+
+/-- Arabic is NOT in the "fusional" cell despite being flexive + cumulative,
+    because templatic root-and-pattern morphology is `.nonlinear`, not
+    `.concatenative`. The `IsFusional` predicate correctly excludes it. -/
+example : ¬ morphProfile.IsFusional := by decide
+
+/-- Arabic is also not "agglutinating" — the same templatic morphology
+    fails the concatenative requirement. -/
+example : ¬ morphProfile.IsAgglutinating := by decide
 
 end Fragments.Arabic.Egyptian

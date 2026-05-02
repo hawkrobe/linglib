@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.610 — GenderProfile per-Fragment refactor; first-class Corbett-1991-vs-2013 within-author divergence theorems
+
+- Add `GenderProfile.fromWALS` smart constructor + `attestedSurfaceGenders : List Features.SurfaceGender` field to `Linglib/Typology/Gender.lean`. The new field bridges the Typology layer (per-language profile) to the Features layer (per-noun lexical labels) — `Features.SurfaceGender` and `Typology.GenderProfile` are NOT duplicates; they capture different things at different levels and shouldn't be merged.
+- Move 22 per-language `GenderProfile` literals out of `Phenomena/Gender/Studies/Corbett1991.lean` into `Fragments/{Lang}/Gender.lean` (20 new files: English, Mandarin, Japanese, Turkish, Finnish, Korean, Quechua, French, Hindi, Irish, Hebrew, Latin, Romanian, Dyirbal, Georgian, Swahili, Zulu, Fula, Xhosa, Shona; 2 new directories: Dyirbal/, Fula/). 4 existing `Fragments/{German,Hausa,Spanish,Slavic/Russian}/Gender.lean` extended with `def genderTypology` alongside their existing derivational/lexical content.
+- All 24 Fragment files use `GenderProfile.fromWALS` and bind `genderTypology` to WALS-derived (Corbett 2013) values — the more recent of Corbett's two classifications.
+- **Bridge theorem caught 3 within-Corbett (1991 vs 2013) divergences**: WALS @cite{corbett-2013} classifies English as 3-gender sex-based on the *he/she/it* pronoun distinction (Corbett 1991: no gender, controller-marking criterion); Dyirbal as sex-based (Corbett 1991: non-sex-based per Lakoff's organising principles); Georgian as no-gender (Corbett 1991: 4-class on the rationality/animacy split via pronominal+verbal agreement). The Studies file `Phenomena/Gender/Studies/Corbett1991.lean` now record-updates these 3 cases to the 1991 values and exposes the divergences as first-class theorems (`english_corbett1991_vs_corbett2013`, `dyirbal_corbett1991_vs_corbett2013`, `georgian_corbett1991_vs_corbett2013`) — making the within-author shift visible per linglib's interconnection-density thesis.
+- `Phenomena/Gender/Studies/Corbett1991.lean` (484→245 LOC): trimmed aggregate-count theorems (`sample_counts`, `two_gender_in_sample`, `gender_scale_range`, `max_gender_count_is_fula`, `sample_diversity`, `allProfiles_count`, `all_iso_length_3`, `all_iso_nonempty`) per the no-aggregate-count anti-pattern memory note. Kept Corbett's substantive Agreement Hierarchy theorems, no-purely-formal claim, basis × count interactions, canonical-gender notion, ISO-uniqueness drift sentry.
+- Converted `native_decide` → `decide` throughout Corbett1991.lean.
+- `Phenomena/Agreement/Studies/Carstens2026.lean`: replaced 2 inline `xhosaGenderProfile`/`shonaGenderProfile` literals with abbrevs to the new Fragment files.
+- `Phenomena/Gender/Studies/Kramer2020.lean`: rewired `russian/spanish/hausa` references to draw from Fragment files directly (not from Corbett1991's now-private abbrevs).
+- Out of scope: Negation per-Fragment refactor (auditor identified, deferred); `LanguageStub` unification; further `native_decide` cleanup in Kramer2020.
+
 ### 0.230.610 — RSA.WithSilence + liftMeaning substrate; GoodmanStuhlmuller2013PMF prototype proves some_full_implicature_sil
 
 New `Linglib/Theories/Pragmatics/RSA/Silence.lean` (50 LOC) lifts @cite{bergen-levy-goodman-2016}'s "silence as low-prior alternative" treatment into reusable RSA substrate:

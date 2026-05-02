@@ -480,64 +480,185 @@ def walsVerbalNumber (iso : String) : Option VerbalNumber :=
   (Datasets.WALS.F80A.lookupISO iso).map (fromWALS80A ·.value)
 
 -- ============================================================================
+-- §4½. Smart Constructor
+-- ============================================================================
+
+/-- Build a `MorphProfile` from an ISO 639-3 code via WALS lookups.
+
+    Required-field fallbacks (`fusionFb`, `exponenceFb`, …) must be supplied
+    for the six WALS chapters where the lookup may return `none` (language
+    absent from chapter, or grounding function uninformative — e.g. WALS 20A
+    `isolatingConcatenative` does not map cleanly to the local 3-way `Fusion`
+    enum and yields `none`). When WALS has data the lookup wins; the fallback
+    is exercised only when WALS is silent.
+
+    Optional WALS fields (`locusClause`, `locusPossessive`, …) auto-populate
+    from their lookup helpers and remain `none` if absent.
+
+    The B&N 2001 parameters `flexivity` and `bnExponence` are NOT derivable
+    from any WALS chapter — they are paper-stipulated per
+    @cite{bickel-nichols-2001} and must be passed explicitly when known. -/
+def MorphProfile.fromWALS
+    (language iso : String)
+    (fusionFb : Fusion)
+    (exponenceFb : Exponence)
+    (verbSynthesisFb : VerbSynthesis)
+    (locusFb : LocusOfMarking)
+    (prefixSuffixFb : PrefixSuffix)
+    (reduplicationFb : Reduplication)
+    (flexivity : Option Flexivity := none)
+    (bnExponence : Option ExponenceScope := none) : MorphProfile :=
+  { language, iso
+  , fusion := (walsFusion iso).getD fusionFb
+  , exponence := (walsExponence iso).getD exponenceFb
+  , verbSynthesis := (walsVerbSynthesis iso).getD verbSynthesisFb
+  , locus := (walsLocus iso).getD locusFb
+  , prefixSuffix := (walsPrefixSuffix iso).getD prefixSuffixFb
+  , reduplication := (walsReduplication iso).getD reduplicationFb
+  , locusClause := walsLocusClause iso
+  , locusPossessive := walsLocusPossessive iso
+  , wholeLanguageMarking := walsWholeLanguageMarking iso
+  , zeroMarkingAP := walsZeroMarkingAP iso
+  , caseSyncretism := walsCaseSyncretism iso
+  , verbalSyncretism := walsVerbalSyncretism iso
+  , tamExponence := walsTAMExponence iso
+  , actionNominal := walsActionNominal iso
+  , suppletionTA := walsSuppletionTA iso
+  , suppletionImperative := walsSuppletionImperative iso
+  , verbalNumber := walsVerbalNumber iso
+  , flexivity, bnExponence
+  }
+
+-- ============================================================================
 -- §5. Helper Predicates
 -- ============================================================================
 
-def MorphProfile.isConcatenative (p : MorphProfile) : Bool :=
-  p.fusion == .concatenative
+namespace MorphProfile
 
-def MorphProfile.isIsolating (p : MorphProfile) : Bool :=
-  p.fusion == .isolating
+/-! Mathlib-style `Prop`-typed predicates with `Decidable` instances and
+    `@[simp] _iff` lemmas. Filter sites that need `Bool` should call
+    `decide` at the boundary. The `_iff` lemmas are `Iff.rfl` (unfolding-
+    only) but make the decomposition visible to `simp` and to mathlib-
+    pattern `decidable_of_iff` derivations. -/
 
-def MorphProfile.isNonlinear (p : MorphProfile) : Bool :=
-  p.fusion == .nonlinear
+def IsConcatenative (p : MorphProfile) : Prop := p.fusion = .concatenative
+@[simp] theorem isConcatenative_iff (p : MorphProfile) :
+    p.IsConcatenative ↔ p.fusion = .concatenative := Iff.rfl
+instance : DecidablePred IsConcatenative :=
+  fun p => decidable_of_iff _ (isConcatenative_iff p).symm
 
-def MorphProfile.isMono (p : MorphProfile) : Bool :=
-  p.exponence == .monoexponential
+def IsIsolating (p : MorphProfile) : Prop := p.fusion = .isolating
+@[simp] theorem isIsolating_iff (p : MorphProfile) :
+    p.IsIsolating ↔ p.fusion = .isolating := Iff.rfl
+instance : DecidablePred IsIsolating :=
+  fun p => decidable_of_iff _ (isIsolating_iff p).symm
 
-def MorphProfile.isPoly (p : MorphProfile) : Bool :=
-  p.exponence == .polyexponential
+def IsNonlinear (p : MorphProfile) : Prop := p.fusion = .nonlinear
+@[simp] theorem isNonlinear_iff (p : MorphProfile) :
+    p.IsNonlinear ↔ p.fusion = .nonlinear := Iff.rfl
+instance : DecidablePred IsNonlinear :=
+  fun p => decidable_of_iff _ (isNonlinear_iff p).symm
 
-def MorphProfile.hasRedup (p : MorphProfile) : Bool :=
-  p.reduplication == .productiveFull || p.reduplication == .fullOnly
+def IsMono (p : MorphProfile) : Prop := p.exponence = .monoexponential
+@[simp] theorem isMono_iff (p : MorphProfile) :
+    p.IsMono ↔ p.exponence = .monoexponential := Iff.rfl
+instance : DecidablePred IsMono :=
+  fun p => decidable_of_iff _ (isMono_iff p).symm
 
-def MorphProfile.isSuffixing (p : MorphProfile) : Bool :=
-  p.prefixSuffix == .stronglySuffixing || p.prefixSuffix == .weaklySuffixing
+def IsPoly (p : MorphProfile) : Prop := p.exponence = .polyexponential
+@[simp] theorem isPoly_iff (p : MorphProfile) :
+    p.IsPoly ↔ p.exponence = .polyexponential := Iff.rfl
+instance : DecidablePred IsPoly :=
+  fun p => decidable_of_iff _ (isPoly_iff p).symm
 
-def MorphProfile.isPrefixing (p : MorphProfile) : Bool :=
-  p.prefixSuffix == .stronglyPrefixing || p.prefixSuffix == .weaklyPrefixing
+def HasRedup (p : MorphProfile) : Prop :=
+  p.reduplication = .productiveFull ∨ p.reduplication = .fullOnly
+@[simp] theorem hasRedup_iff (p : MorphProfile) :
+    p.HasRedup ↔ p.reduplication = .productiveFull ∨ p.reduplication = .fullOnly :=
+  Iff.rfl
+instance : DecidablePred HasRedup :=
+  fun p => decidable_of_iff _ (hasRedup_iff p).symm
 
-def MorphProfile.isLowSynthesis (p : MorphProfile) : Bool :=
-  p.verbSynthesis == .low
+def IsSuffixing (p : MorphProfile) : Prop :=
+  p.prefixSuffix = .stronglySuffixing ∨ p.prefixSuffix = .weaklySuffixing
+@[simp] theorem isSuffixing_iff (p : MorphProfile) :
+    p.IsSuffixing ↔
+      p.prefixSuffix = .stronglySuffixing ∨ p.prefixSuffix = .weaklySuffixing :=
+  Iff.rfl
+instance : DecidablePred IsSuffixing :=
+  fun p => decidable_of_iff _ (isSuffixing_iff p).symm
 
-def MorphProfile.isHighSynthesis (p : MorphProfile) : Bool :=
-  p.verbSynthesis == .high
+def IsPrefixing (p : MorphProfile) : Prop :=
+  p.prefixSuffix = .stronglyPrefixing ∨ p.prefixSuffix = .weaklyPrefixing
+@[simp] theorem isPrefixing_iff (p : MorphProfile) :
+    p.IsPrefixing ↔
+      p.prefixSuffix = .stronglyPrefixing ∨ p.prefixSuffix = .weaklyPrefixing :=
+  Iff.rfl
+instance : DecidablePred IsPrefixing :=
+  fun p => decidable_of_iff _ (isPrefixing_iff p).symm
 
-def MorphProfile.isFlexive (p : MorphProfile) : Bool :=
-  p.flexivity == some .flexive
+def IsLowSynthesis (p : MorphProfile) : Prop := p.verbSynthesis = .low
+@[simp] theorem isLowSynthesis_iff (p : MorphProfile) :
+    p.IsLowSynthesis ↔ p.verbSynthesis = .low := Iff.rfl
+instance : DecidablePred IsLowSynthesis :=
+  fun p => decidable_of_iff _ (isLowSynthesis_iff p).symm
 
-def MorphProfile.isNonflexive (p : MorphProfile) : Bool :=
-  p.flexivity == some .nonflexive
+def IsHighSynthesis (p : MorphProfile) : Prop := p.verbSynthesis = .high
+@[simp] theorem isHighSynthesis_iff (p : MorphProfile) :
+    p.IsHighSynthesis ↔ p.verbSynthesis = .high := Iff.rfl
+instance : DecidablePred IsHighSynthesis :=
+  fun p => decidable_of_iff _ (isHighSynthesis_iff p).symm
 
-def MorphProfile.isCumulative (p : MorphProfile) : Bool :=
-  p.bnExponence == some .cumulative
+def IsFlexive (p : MorphProfile) : Prop := p.flexivity = some .flexive
+@[simp] theorem isFlexive_iff (p : MorphProfile) :
+    p.IsFlexive ↔ p.flexivity = some .flexive := Iff.rfl
+instance : DecidablePred IsFlexive :=
+  fun p => decidable_of_iff _ (isFlexive_iff p).symm
 
-def MorphProfile.isSeparative (p : MorphProfile) : Bool :=
-  p.bnExponence == some .separative
+def IsNonflexive (p : MorphProfile) : Prop := p.flexivity = some .nonflexive
+@[simp] theorem isNonflexive_iff (p : MorphProfile) :
+    p.IsNonflexive ↔ p.flexivity = some .nonflexive := Iff.rfl
+instance : DecidablePred IsNonflexive :=
+  fun p => decidable_of_iff _ (isNonflexive_iff p).symm
+
+def IsCumulative (p : MorphProfile) : Prop := p.bnExponence = some .cumulative
+@[simp] theorem isCumulative_iff (p : MorphProfile) :
+    p.IsCumulative ↔ p.bnExponence = some .cumulative := Iff.rfl
+instance : DecidablePred IsCumulative :=
+  fun p => decidable_of_iff _ (isCumulative_iff p).symm
+
+def IsSeparative (p : MorphProfile) : Prop := p.bnExponence = some .separative
+@[simp] theorem isSeparative_iff (p : MorphProfile) :
+    p.IsSeparative ↔ p.bnExponence = some .separative := Iff.rfl
+instance : DecidablePred IsSeparative :=
+  fun p => decidable_of_iff _ (isSeparative_iff p).symm
 
 /-- Traditional "agglutinating" = concatenative + nonflexive + separative.
     @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
-def MorphProfile.isAgglutinating (p : MorphProfile) : Bool :=
-  p.isConcatenative && p.isNonflexive && p.isSeparative
+def IsAgglutinating (p : MorphProfile) : Prop :=
+  p.IsConcatenative ∧ p.IsNonflexive ∧ p.IsSeparative
+@[simp] theorem isAgglutinating_iff (p : MorphProfile) :
+    p.IsAgglutinating ↔ p.IsConcatenative ∧ p.IsNonflexive ∧ p.IsSeparative :=
+  Iff.rfl
+instance : DecidablePred IsAgglutinating :=
+  fun p => decidable_of_iff _ (isAgglutinating_iff p).symm
 
 /-- Traditional "fusional" = concatenative + flexive + cumulative.
     @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
-def MorphProfile.isFusional (p : MorphProfile) : Bool :=
-  p.isConcatenative && p.isFlexive && p.isCumulative
+def IsFusional (p : MorphProfile) : Prop :=
+  p.IsConcatenative ∧ p.IsFlexive ∧ p.IsCumulative
+@[simp] theorem isFusional_iff (p : MorphProfile) :
+    p.IsFusional ↔ p.IsConcatenative ∧ p.IsFlexive ∧ p.IsCumulative := Iff.rfl
+instance : DecidablePred IsFusional :=
+  fun p => decidable_of_iff _ (isFusional_iff p).symm
+
+end MorphProfile
 
 -- ============================================================================
 -- §6. Structural Theorems on the B&N Parameter Space
 -- ============================================================================
+
+namespace MorphProfile
 
 /-! ### Mutual exclusion
 
@@ -546,32 +667,25 @@ because they require contradictory values on the flexivity dimension
 (nonflexive vs flexive). This follows from the B&N decomposition — it is
 not an empirical observation but a structural consequence of the definitions. -/
 
-/-- Agglutinating and fusional are mutually exclusive: they require opposite
-    flexivity values (nonflexive vs flexive). -/
-theorem agglutinating_fusional_exclusive (p : MorphProfile) :
-    ¬(p.isAgglutinating = true ∧ p.isFusional = true) := by
-  simp only [MorphProfile.isAgglutinating, MorphProfile.isFusional,
-             MorphProfile.isConcatenative, MorphProfile.isNonflexive,
-             MorphProfile.isFlexive, MorphProfile.isCumulative,
-             MorphProfile.isSeparative]
-  cases p.flexivity with
-  | none => simp
-  | some f => cases f <;> simp
-
 /-- Nonflexive and flexive are contradictory: a language cannot be both. -/
 theorem nonflexive_flexive_exclusive (p : MorphProfile) :
-    ¬(p.isNonflexive = true ∧ p.isFlexive = true) := by
-  simp only [MorphProfile.isNonflexive, MorphProfile.isFlexive]
-  cases p.flexivity with
-  | none => simp
-  | some f => cases f <;> simp
+    ¬(p.IsNonflexive ∧ p.IsFlexive) := by
+  rintro ⟨h1, h2⟩
+  exact absurd (h1.symm.trans h2) (by decide)
 
 /-- Cumulative and separative are contradictory: a language cannot be both. -/
 theorem cumulative_separative_exclusive (p : MorphProfile) :
-    ¬(p.isCumulative = true ∧ p.isSeparative = true) := by
-  simp only [MorphProfile.isCumulative, MorphProfile.isSeparative]
-  cases p.bnExponence with
-  | none => simp
-  | some e => cases e <;> simp
+    ¬(p.IsCumulative ∧ p.IsSeparative) := by
+  rintro ⟨h1, h2⟩
+  exact absurd (h1.symm.trans h2) (by decide)
+
+/-- Agglutinating and fusional are mutually exclusive: they require opposite
+    flexivity values (nonflexive vs flexive). Follows from the B&N
+    decomposition; not an empirical observation. -/
+theorem agglutinating_fusional_exclusive (p : MorphProfile) :
+    ¬(p.IsAgglutinating ∧ p.IsFusional) := fun ⟨⟨_, hnf, _⟩, _, hf, _⟩ =>
+  nonflexive_flexive_exclusive p ⟨hnf, hf⟩
+
+end MorphProfile
 
 end Core.Morphology

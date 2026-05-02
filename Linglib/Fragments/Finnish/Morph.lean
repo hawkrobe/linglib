@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Finnish Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Finnish.
-Finnish: F20A: exclusivelyConcatenative; F21A: caseNumber (polyexponential); F22A: 2-3 (low); F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive.
+WALS-derived profile for Finnish (ISO `fin`). B&N 2001 places Finnish in the
+"agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Fragments.Finnish
 
-open Core.Morphology in
-/-- Finnish: F20A: exclusivelyConcatenative; F21A: caseNumber (polyexponential); F22A: 2-3 (low); F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive. -/
+open Core.Morphology
+
+/-- Finnish: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Finnish"
-  , iso := "fin"
-  , fusion := (walsFusion "fin").getD .concatenative
-  , exponence := (walsExponence "fin").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "fin").getD .moderate
-  , locus := (walsLocus "fin").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "fin").getD .stronglySuffixing
-  , reduplication := (walsReduplication "fin").getD .noProductive
-  , locusClause := walsLocusClause "fin"
-  , locusPossessive := walsLocusPossessive "fin"
-  , wholeLanguageMarking := walsWholeLanguageMarking "fin"
-  , zeroMarkingAP := walsZeroMarkingAP "fin"
-  , caseSyncretism := walsCaseSyncretism "fin"
-  , verbalSyncretism := walsVerbalSyncretism "fin"
-  , tamExponence := walsTAMExponence "fin"
-  , actionNominal := walsActionNominal "fin"
-  , suppletionTA := walsSuppletionTA "fin"
-  , suppletionImperative := walsSuppletionImperative "fin"
-  , verbalNumber := walsVerbalNumber "fin"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Finnish" "fin"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "fin" ∧ morphProfile.language = "Finnish" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Finnish in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Finnish

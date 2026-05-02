@@ -2,37 +2,34 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Russian Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Russian.
-Russian: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: caseNumber (polyexponential); F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive.
+WALS-derived profile for Russian (ISO `rus`). B&N 2001 places Russian in the
+canonical "fusional" cell (concatenative + flexive + cumulative); the genitive
+singular *-ī ~ -ae ~ -ūs* class-conditioned allomorphy pattern cited by
+B&N as the diagnostic for flexivity is the same pattern Russian instantiates
+across declension classes.
 -/
 
 namespace Fragments.Slavic.Russian
 
-open Core.Morphology in
-/-- Russian: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: caseNumber (polyexponential); F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: noProductive. -/
+open Core.Morphology
+
+/-- Russian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Russian"
-  , iso := "rus"
-  , fusion := (walsFusion "rus").getD .concatenative
-  , exponence := (walsExponence "rus").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "rus").getD .moderate
-  , locus := (walsLocus "rus").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "rus").getD .stronglySuffixing
-  , reduplication := (walsReduplication "rus").getD .noProductive
-  , locusClause := walsLocusClause "rus"
-  , locusPossessive := walsLocusPossessive "rus"
-  , wholeLanguageMarking := walsWholeLanguageMarking "rus"
-  , zeroMarkingAP := walsZeroMarkingAP "rus"
-  , caseSyncretism := walsCaseSyncretism "rus"
-  , verbalSyncretism := walsVerbalSyncretism "rus"
-  , tamExponence := walsTAMExponence "rus"
-  , actionNominal := walsActionNominal "rus"
-  , suppletionTA := walsSuppletionTA "rus"
-  , suppletionImperative := walsSuppletionImperative "rus"
-  , verbalNumber := walsVerbalNumber "rus"
-  , flexivity := some .flexive
-  , bnExponence := some .cumulative
-  }
+  .fromWALS "Russian" "rus"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .flexive)
+    (bnExponence     := some .cumulative)
+
+example : morphProfile.iso = "rus" ∧ morphProfile.language = "Russian" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Russian in the canonical "fusional" cell. -/
+example : morphProfile.IsFusional := by decide
 
 end Fragments.Slavic.Russian

@@ -2,35 +2,29 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Thai Morphological Profile
+@cite{wals-2013}
 
-WALS-derived morphological profile for Thai.
-Thai: F20A: isolatingConcatenative (fallback isolating); F21A: noCase (fallback noCase); F22A: 2-3 (low); F23A: noMarking (zeroMarking); F26A: littleAffixation; F27A: productiveFull.
+WALS-derived profile for Thai (ISO `tha`). WALS F20A codes Thai as
+`isolatingConcatenative`, a mixed type the local 3-way `Fusion` enum cannot
+represent — `walsFusion` returns `none` and the fallback `.isolating` is
+exercised. F21A returns `noCase`, mapping to `none`; the local `.noCase`
+fallback is exercised. B&N 2001 flexivity/bnExponence are not stipulated.
 -/
 
 namespace Fragments.Thai
 
-open Core.Morphology in
-/-- Thai: F20A: isolatingConcatenative (fallback isolating); F21A: noCase (fallback noCase); F22A: 2-3 (low); F23A: noMarking (zeroMarking); F26A: littleAffixation; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Thai: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Thai"
-  , iso := "tha"
-  , fusion := (walsFusion "tha").getD .isolating
-  , exponence := (walsExponence "tha").getD .noCase
-  , verbSynthesis := (walsVerbSynthesis "tha").getD .moderate
-  , locus := (walsLocus "tha").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "tha").getD .stronglySuffixing
-  , reduplication := (walsReduplication "tha").getD .noProductive
-  , locusClause := walsLocusClause "tha"
-  , locusPossessive := walsLocusPossessive "tha"
-  , wholeLanguageMarking := walsWholeLanguageMarking "tha"
-  , zeroMarkingAP := walsZeroMarkingAP "tha"
-  , caseSyncretism := walsCaseSyncretism "tha"
-  , verbalSyncretism := walsVerbalSyncretism "tha"
-  , tamExponence := walsTAMExponence "tha"
-  , actionNominal := walsActionNominal "tha"
-  , suppletionTA := walsSuppletionTA "tha"
-  , suppletionImperative := walsSuppletionImperative "tha"
-  , verbalNumber := walsVerbalNumber "tha"
-  }
+  .fromWALS "Thai" "tha"
+    (fusionFb        := .isolating)
+    (exponenceFb     := .noCase)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+
+example : morphProfile.iso = "tha" ∧ morphProfile.language = "Thai" := ⟨rfl, rfl⟩
 
 end Fragments.Thai

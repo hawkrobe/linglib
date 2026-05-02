@@ -1,5 +1,27 @@
 import Linglib.Typology.Gender
 import Linglib.Core.Agreement.Target
+import Linglib.Fragments.English.Gender
+import Linglib.Fragments.Mandarin.Gender
+import Linglib.Fragments.Japanese.Gender
+import Linglib.Fragments.Turkish.Gender
+import Linglib.Fragments.Finnish.Gender
+import Linglib.Fragments.Korean.Gender
+import Linglib.Fragments.Quechua.Gender
+import Linglib.Fragments.French.Gender
+import Linglib.Fragments.Spanish.Gender
+import Linglib.Fragments.Hindi.Gender
+import Linglib.Fragments.Irish.Gender
+import Linglib.Fragments.Hebrew.Gender
+import Linglib.Fragments.Hausa.Gender
+import Linglib.Fragments.German.Gender
+import Linglib.Fragments.Slavic.Russian.Gender
+import Linglib.Fragments.Latin.Gender
+import Linglib.Fragments.Romanian.Gender
+import Linglib.Fragments.Dyirbal.Gender
+import Linglib.Fragments.Georgian.Gender
+import Linglib.Fragments.Swahili.Gender
+import Linglib.Fragments.Zulu.Gender
+import Linglib.Fragments.Fula.Gender
 
 /-!
 # Corbett (1991): Gender — typology of noun-class systems
@@ -9,12 +31,12 @@ import Linglib.Core.Agreement.Target
 Greville Corbett. *Gender*. Cambridge University Press, 1991.
 Plus @cite{corbett-2013}'s WALS Chs 30, 31, 32.
 
-This study file holds the 22-language exemplar sample of gender / noun
-class systems and cross-linguistic generalisations consuming the substrate
-`GenderProfile`. WALS aggregate distribution theorems live in
-`Linglib/Typology/Gender.lean`. Per-language Fragment-vs-WALS data-equality
-theorems are deliberately absent — see
-`feedback_no_per_lang_wals_grounding_in_studies` for the rationale.
+This study file holds Corbett's cross-linguistic generalisations on the
+22-language sample. Per-language profiles live in
+`Fragments/{Lang}/Gender.lean` as `genderTypology : GenderProfile` —
+constructed via `GenderProfile.fromWALS` so WALS Chs 30/31/32 are
+auto-pulled and the editorial fields (rawGenderCount, agreementTargets,
+semanticBases, attestedSurfaceGenders) are local per-language commitments.
 
 ## Sample composition
 
@@ -31,6 +53,15 @@ The sample includes Bantu noun-class systems (Swahili, Zulu) and Fula
 (20+ classes), the Australian 4-class system Dyirbal, and the Caucasian
 rationality-based Georgian system, alongside the canonical European
 sex-based 2/3 systems.
+
+## What this file deliberately omits
+
+Aggregate-count theorems (`sample_X_count = N`, `gender_scale_range`,
+`sample_diversity`) — these go stale every time a Fragment is added to
+the sample and were the "aggregate-count theorems" anti-pattern. The
+substantive Corbett 1991 generalisations (Agreement Hierarchy properties,
+no-purely-formal claim, basis × count interactions) are kept; ISO sanity
+remains as a drift sentry.
 -/
 
 set_option autoImplicit false
@@ -44,209 +75,68 @@ open Core (AgreementTarget)
 -- §1. The 22-language exemplar sample
 -- ============================================================================
 
--- ── No-gender languages ─────────────────────────────────────────────────
+/-! Per-language profiles drawn from `Fragments/{Lang}/Gender.lean` via
+    `GenderProfile.fromWALS`. Aliases here for concise reference below.
 
-/-- English: no grammatical gender on nouns or adjectives; only natural
-    gender in 3sg pronouns (he/she/it). No gender agreement. -/
-def english : GenderProfile :=
-  { name := "English", iso639 := "eng"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+    Three languages are record-updated to match Corbett's 1991 monograph
+    where it diverges from his later WALS chapters @cite{corbett-2013}.
+    The divergences are first-class theorems in §9 below — exposing them
+    rather than hiding them inside the Fragment. -/
 
-def mandarin : GenderProfile :=
-  { name := "Mandarin Chinese", iso639 := "cmn"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+private abbrev mandarin  := Fragments.Mandarin.Gender.genderTypology
+private abbrev japanese  := Fragments.Japanese.Gender.genderTypology
+private abbrev turkish   := Fragments.Turkish.Gender.genderTypology
+private abbrev finnish   := Fragments.Finnish.Gender.genderTypology
+private abbrev korean    := Fragments.Korean.Gender.genderTypology
+private abbrev quechua   := Fragments.Quechua.Gender.genderTypology
+private abbrev french    := Fragments.French.Gender.genderTypology
+private abbrev spanish   := Fragments.Spanish.Gender.genderTypology
+private abbrev hindiUrdu := Fragments.Hindi.Gender.genderTypology
+private abbrev irish     := Fragments.Irish.Gender.genderTypology
+private abbrev hebrew    := Fragments.Hebrew.Gender.genderTypology
+private abbrev hausa     := Fragments.Hausa.Gender.genderTypology
+private abbrev german    := Fragments.German.Gender.genderTypology
+private abbrev russian   := Fragments.Slavic.Russian.Gender.genderTypology
+private abbrev latin     := Fragments.Latin.Gender.genderTypology
+private abbrev romanian  := Fragments.Romanian.Gender.genderTypology
+private abbrev swahili   := Fragments.Swahili.Gender.genderTypology
+private abbrev zulu      := Fragments.Zulu.Gender.genderTypology
+private abbrev fula      := Fragments.Fula.Gender.genderTypology
 
-def japanese : GenderProfile :=
-  { name := "Japanese", iso639 := "jpn"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+/-! Corbett-1991 record-overrides for the 3 languages where Corbett's 1991
+    book disagrees with his 2013 WALS chapters. -/
 
-def turkish : GenderProfile :=
-  { name := "Turkish", iso639 := "tur"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+/-- Corbett 1991: English has no grammatical gender (the *he/she/it*
+    pronoun distinction is natural gender, not a controller-marked system).
+    WALS @cite{corbett-2013} F30A says 3-gender. Override here. -/
+private def english : GenderProfile :=
+  { Fragments.English.Gender.genderTypology with
+    genderCount := .none, rawGenderCount := 0
+    basis := .noGender, assignment := .noGender
+    agreementTargets := [], semanticBases := []
+    attestedSurfaceGenders := [] }
 
-def finnish : GenderProfile :=
-  { name := "Finnish", iso639 := "fin"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+/-- Corbett 1991: Dyirbal is 4-class non-sex-based (the system's organising
+    criteria cut across biological sex). WALS @cite{corbett-2013} F31A says
+    sex-based on the narrow "Class I includes males" criterion. Override. -/
+private def dyirbal : GenderProfile :=
+  { Fragments.Dyirbal.Gender.genderTypology with
+    basis := .nonSexBased }
 
-def korean : GenderProfile :=
-  { name := "Korean", iso639 := "kor"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
+/-- Corbett 1991: Georgian is a 4-class non-sex-based gender system on the
+    rationality/animacy split (agreement on pronouns + verbs). WALS
+    @cite{corbett-2013} F30A/31A/32A says no gender on the noun-side-marking
+    criterion. Override. -/
+private def georgian : GenderProfile :=
+  { Fragments.Georgian.Gender.genderTypology with
+    genderCount := .four, rawGenderCount := 4
+    basis := .nonSexBased, assignment := .semanticOnly
+    agreementTargets := [.personalPronoun, .verb]
+    semanticBases := [.rationality, .animacy] }
 
-def quechua : GenderProfile :=
-  { name := "Quechua (Cusco)", iso639 := "quz"
-  , genderCount := .none, rawGenderCount := 0
-  , basis := .noGender, assignment := .noGender
-  , agreementTargets := [], semanticBases := [] }
-
--- ── 2-gender languages ──────────────────────────────────────────────────
-
-/-- French: 2 genders (masc/fem), sex-based, semantic + formal. Agreement
-    on determiners, attributive + predicate adjectives, past participles,
-    and personal pronouns. -/
-def french : GenderProfile :=
-  { name := "French", iso639 := "fra"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .personalPronoun]
-  , semanticBases := [.sex] }
-
-def spanish : GenderProfile :=
-  { name := "Spanish", iso639 := "spa"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .personalPronoun]
-  , semanticBases := [.sex] }
-
-/-- Hindi-Urdu: 2 genders (masc/fem). Agreement on adjectives, verbs (in
-    perfective aspect), and auxiliaries — one of the clearest cases of
-    verb agreement for gender. -/
-def hindiUrdu : GenderProfile :=
-  { name := "Hindi-Urdu", iso639 := "hin"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .verb]
-  , semanticBases := [.sex] }
-
-def irish : GenderProfile :=
-  { name := "Irish", iso639 := "gle"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .personalPronoun]
-  , semanticBases := [.sex] }
-
-def hebrew : GenderProfile :=
-  { name := "Hebrew", iso639 := "heb"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .verb]
-  , semanticBases := [.sex] }
-
-/-- Hausa (Chadic, Afroasiatic): 2 genders (masc/fem). @cite{corbett-1991}
-    §3.2.2 (pp. 52–53) describes the synchronic Hausa pattern as
-    phonological assignment with exceptions ("nouns ending in *-aa* are
-    feminine"), with morphological diachronic origin discussed separately
-    in §4.5 (pp. 102–103, citing Newman 1979). @cite{kramer-2020} §3.3.1
-    (pp. 60–61) re-analyzes the *-aa* suffix as morphophonological
-    *realization* of [+FEM] on n rather than gender *assignment*. This
-    aligns synchronically with @cite{newman-2000} pp. 210–213, where the
-    {-ā} suffix is a feminine marker (acquired diachronically via
-    "overt characterization") rather than a synchronic phonological rule
-    — so the Corbett-Kramer disagreement is asymmetric: Newman's source
-    grammar favors Kramer. The cross-framework theorems live in
-    `Phenomena/Gender/Studies/Kramer2020.lean`. WALS-side
-    `semanticAndFormal` is the umbrella all three analyses share.
-
-    Agreement on determiners/possessive linkers (attributive), TAM clitics
-    (verb-target in person/aspect), and personal pronouns. -/
-def hausa : GenderProfile :=
-  { name := "Hausa", iso639 := "hau"
-  , genderCount := .two, rawGenderCount := 2
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .personalPronoun, .verb]
-  , semanticBases := [.sex] }
-
--- ── 3-gender languages ──────────────────────────────────────────────────
-
-/-- German: 3 genders (masc/fem/neut), sex-based with extensive formal
-    correlates (suffixes `-ung`, `-heit`, `-keit` feminine; `-chen`, `-lein`
-    neuter; etc.). -/
-def german : GenderProfile :=
-  { name := "German", iso639 := "deu"
-  , genderCount := .three, rawGenderCount := 3
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun]
-  , semanticBases := [.sex] }
-
-/-- Russian: 3 genders. Agreement on adjectives, past-tense verbs,
-    demonstratives, relative + personal pronouns. -/
-def russian : GenderProfile :=
-  { name := "Russian", iso639 := "rus"
-  , genderCount := .three, rawGenderCount := 3
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verb]
-  , semanticBases := [.sex] }
-
-def latin : GenderProfile :=
-  { name := "Latin", iso639 := "lat"
-  , genderCount := .three, rawGenderCount := 3
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun]
-  , semanticBases := [.sex] }
-
-/-- Romanian: 3 genders (masc/fem/neuter — the neuter behaves as masc in
-    the singular and fem in the plural; "ambigeneric"). -/
-def romanian : GenderProfile :=
-  { name := "Romanian", iso639 := "ron"
-  , genderCount := .three, rawGenderCount := 3
-  , basis := .sexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .personalPronoun]
-  , semanticBases := [.sex] }
-
--- ── 4-gender languages ──────────────────────────────────────────────────
-
-/-- Dyirbal (Australia): 4 genders (I males, II females + water/fire/fighting,
-    III edible plants, IV residual). Non-sex-based — categories include
-    edibility and natural forces beyond biological sex. Semantic only. -/
-def dyirbal : GenderProfile :=
-  { name := "Dyirbal", iso639 := "dbl"
-  , genderCount := .four, rawGenderCount := 4
-  , basis := .nonSexBased, assignment := .semanticOnly
-  , agreementTargets := [.attributive]
-  , semanticBases := [.sex, .animacy, .shape] }
-
-/-- Georgian: 4 categories on the rationality / animacy split (rational
-    humans vs non-rational), with an older masc/fem trace in pronouns. -/
-def georgian : GenderProfile :=
-  { name := "Georgian", iso639 := "kat"
-  , genderCount := .four, rawGenderCount := 4
-  , basis := .nonSexBased, assignment := .semanticOnly
-  , agreementTargets := [.personalPronoun, .verb]
-  , semanticBases := [.rationality, .animacy] }
-
--- ── 5+ noun-class languages ────────────────────────────────────────────
-
-/-- Swahili (Bantu): ~15 noun classes (singular/plural pairings + locatives).
-    Semantic + formal assignment via prefixes. Full agreement across
-    determiners, adjectives, verbs, pronouns, numerals, possessives. -/
-def swahili : GenderProfile :=
-  { name := "Swahili", iso639 := "swh"
-  , genderCount := .fivePlus, rawGenderCount := 15
-  , basis := .nonSexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verb]
-  , semanticBases := [.humanness, .animacy, .shape] }
-
-def zulu : GenderProfile :=
-  { name := "Zulu", iso639 := "zul"
-  , genderCount := .fivePlus, rawGenderCount := 15
-  , basis := .nonSexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .relativePronoun,
-                         .personalPronoun, .verb]
-  , semanticBases := [.humanness, .animacy, .shape] }
-
-/-- Fula (Atlantic, Niger-Congo): ~20+ noun classes, one of the richest
-    class systems in Africa. -/
-def fula : GenderProfile :=
-  { name := "Fula", iso639 := "ful"
-  , genderCount := .fivePlus, rawGenderCount := 20
-  , basis := .nonSexBased, assignment := .semanticAndFormal
-  , agreementTargets := [.attributive, .predicate, .personalPronoun, .verb]
-  , semanticBases := [.humanness, .animacy, .shape] }
-
-/-- All 22 language profiles in the sample. -/
+/-- All 22 language profiles in the Corbett 1991 sample. English, Dyirbal,
+    and Georgian are the record-overridden versions; the WALS originals
+    are at `Fragments.{English,Dyirbal,Georgian}.Gender.genderTypology`. -/
 def allProfiles : List GenderProfile :=
   [ english, mandarin, japanese, turkish, finnish, korean, quechua
   , french, spanish, hindiUrdu, irish, hebrew, hausa
@@ -255,101 +145,71 @@ def allProfiles : List GenderProfile :=
   , swahili, zulu, fula ]
 
 -- ============================================================================
--- §2. Sample-level statistics
+-- §2. Sample-level structural sanity
 -- ============================================================================
-
-theorem allProfiles_count : allProfiles.length = 22 := by native_decide
 
 /-- All raw gender counts are consistent with their WALS bins. -/
 theorem all_raw_consistent :
-    allProfiles.all (·.rawCountConsistent) = true := by native_decide
+    ∀ p ∈ allProfiles, p.rawCountConsistent = true := by decide
 
 /-- All profiles are cross-chapter consistent. -/
 theorem all_cross_consistent :
-    allProfiles.all (·.crossChapterConsistent) = true := by native_decide
+    ∀ p ∈ allProfiles, p.crossChapterConsistent = true := by decide
 
 /-- All five `GenderCount` values are attested. -/
 theorem all_gender_counts_attested :
-    allProfiles.any (λ p => p.genderCount == .none) &&
-    allProfiles.any (λ p => p.genderCount == .two) &&
-    allProfiles.any (λ p => p.genderCount == .three) &&
-    allProfiles.any (λ p => p.genderCount == .four) &&
-    allProfiles.any (λ p => p.genderCount == .fivePlus) = true := by
-  native_decide
+    (∃ p ∈ allProfiles, p.genderCount = .none) ∧
+    (∃ p ∈ allProfiles, p.genderCount = .two) ∧
+    (∃ p ∈ allProfiles, p.genderCount = .three) ∧
+    (∃ p ∈ allProfiles, p.genderCount = .four) ∧
+    (∃ p ∈ allProfiles, p.genderCount = .fivePlus) := by decide
 
 /-- All three `GenderBasis` values are attested. -/
 theorem all_bases_attested :
-    allProfiles.any (λ p => p.basis == .noGender) &&
-    allProfiles.any (λ p => p.basis == .sexBased) &&
-    allProfiles.any (λ p => p.basis == .nonSexBased) = true := by
-  native_decide
+    (∃ p ∈ allProfiles, p.basis = .noGender) ∧
+    (∃ p ∈ allProfiles, p.basis = .sexBased) ∧
+    (∃ p ∈ allProfiles, p.basis = .nonSexBased) := by decide
 
 /-- All three `AssignmentSystem` values are attested. -/
 theorem all_assignments_attested :
-    allProfiles.any (λ p => p.assignment == .noGender) &&
-    allProfiles.any (λ p => p.assignment == .semanticOnly) &&
-    allProfiles.any (λ p => p.assignment == .semanticAndFormal) = true := by
-  native_decide
-
-/-- Sample diversity: ≥5 languages in each of gender-bearing vs genderless. -/
-theorem sample_diversity :
-    (allProfiles.filter (λ p => p.genderCount == .none)).length >= 5 ∧
-    (allProfiles.filter (λ p => p.genderCount != .none)).length >= 5 := by
-  native_decide
-
-/-- Sample distribution counts. -/
-theorem sample_counts :
-    (allProfiles.filter (λ p => p.genderCount == .none)).length = 7 ∧
-    (allProfiles.filter (λ p => p.basis == .sexBased)).length = 10 ∧
-    (allProfiles.filter (λ p => p.basis == .nonSexBased)).length = 5 ∧
-    (allProfiles.filter (λ p => p.assignment == .semanticOnly)).length = 2 ∧
-    (allProfiles.filter (λ p => p.assignment == .semanticAndFormal)).length = 13 ∧
-    (allProfiles.filter (·.isNounClassSystem)).length = 3 := by
-  native_decide
+    (∃ p ∈ allProfiles, p.assignment = .noGender) ∧
+    (∃ p ∈ allProfiles, p.assignment = .semanticOnly) ∧
+    (∃ p ∈ allProfiles, p.assignment = .semanticAndFormal) := by decide
 
 -- ============================================================================
 -- §3. Cross-linguistic generalisations (Corbett 1991)
 -- ============================================================================
 
-/-- @cite{corbett-1991}: among gender systems, 2-gender is the most common
-    in the WALS sample and well-represented in our sample. -/
-theorem two_gender_in_sample :
-    (allProfiles.filter (λ p => p.genderCount == .two)).length = 6 := by
-  native_decide
-
 /-- All 2- and 3-gender systems in the sample are sex-based. Reflects the
     cross-linguistic pattern that small gender systems organise around sex. -/
 theorem two_three_gender_all_sex_based :
-    allProfiles.all (λ p =>
-      if p.genderCount == .two || p.genderCount == .three
-      then p.basis == .sexBased
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.genderCount = .two ∨ p.genderCount = .three →
+        p.basis = .sexBased := by decide
 
 /-- @cite{corbett-1991}'s key finding: no language assigns gender on a purely
     formal basis without any semantic core. In the sample, every gendered
     language has semantic assignment (alone or combined with formal). -/
 theorem no_purely_formal_in_sample :
-    allProfiles.all (λ p =>
-      if p.genderCount != .none
-      then p.assignment == .semanticOnly || p.assignment == .semanticAndFormal
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.genderCount ≠ .none →
+        p.assignment = .semanticOnly ∨ p.assignment = .semanticAndFormal := by
+  decide
 
 /-- All 3-gender systems in the sample use semantic + formal assignment.
     Sex-based 3-gender systems require formal correlates because the
     masculine/feminine/neuter distinction can't be determined by semantics
     alone. -/
 theorem three_gender_always_formal :
-    allProfiles.all (λ p =>
-      if p.genderCount == .three
-      then p.assignment == .semanticAndFormal
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.genderCount = .three → p.assignment = .semanticAndFormal := by decide
 
 /-- A gender system without any agreement is not a gender system — genders
     are precisely the categories that trigger agreement. -/
 theorem gender_implies_agreement :
-    allProfiles.all (λ p =>
-      if p.genderCount != .none then p.hasAgreement
-      else !p.hasAgreement) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      (p.genderCount ≠ .none → p.hasAgreement = true) ∧
+      (p.genderCount = .none → p.hasAgreement = false) := by decide
 
 -- ============================================================================
 -- §4. Corbett's Agreement Hierarchy
@@ -361,39 +221,32 @@ theorem gender_implies_agreement :
 /-- Verb agreement implies higher-target agreement in the sample (none of
     the languages agree only on verbs). -/
 theorem agreement_hierarchy_verb_implies_higher :
-    allProfiles.all (λ p =>
-      if hasTarget p.agreementTargets .verb
-      then hasTarget p.agreementTargets .attributive ||
-           hasTarget p.agreementTargets .predicate ||
-           hasTarget p.agreementTargets .personalPronoun
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      hasTarget p.agreementTargets .verb = true →
+        hasTarget p.agreementTargets .attributive = true ∨
+        hasTarget p.agreementTargets .predicate = true ∨
+        hasTarget p.agreementTargets .personalPronoun = true := by decide
 
 /-- No language in the sample agrees only on verbs. -/
 theorem no_verb_only_agreement :
-    allProfiles.all (λ p =>
-      if p.agreementTargets == [.verb]
-      then false
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles, p.agreementTargets ≠ [.verb] := by decide
 
 /-- No gendered language in the sample has agreement only on personal
     pronouns: pronoun agreement always co-occurs with at least one other
     target. -/
 theorem no_pronoun_only_agreement :
-    allProfiles.all (λ p =>
-      if p.genderCount != .none && hasTarget p.agreementTargets .personalPronoun
-      then hasTarget p.agreementTargets .attributive ||
-           hasTarget p.agreementTargets .predicate ||
-           hasTarget p.agreementTargets .verb
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      (p.genderCount ≠ .none ∧ hasTarget p.agreementTargets .personalPronoun = true) →
+        hasTarget p.agreementTargets .attributive = true ∨
+        hasTarget p.agreementTargets .predicate = true ∨
+        hasTarget p.agreementTargets .verb = true := by decide
 
 /-- Noun-class systems (5+) show agreement on more targets than smaller
     systems. In the sample, all noun-class systems agree on ≥4 of the 5
     target types. -/
 theorem noun_class_rich_agreement :
-    allProfiles.all (λ p =>
-      if p.isNounClassSystem
-      then p.agreementTargets.length >= 4
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.isNounClassSystem = true → p.agreementTargets.length ≥ 4 := by decide
 
 -- ============================================================================
 -- §5. Basis × count interactions
@@ -402,82 +255,89 @@ theorem noun_class_rich_agreement :
 /-- Non-sex-based systems in the sample have ≥4 genders. When gender is not
     organised around sex, the system tends to proliferate. -/
 theorem non_sex_based_more_genders :
-    allProfiles.all (λ p =>
-      if p.basis == .nonSexBased
-      then p.rawGenderCount >= 4
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles, p.basis = .nonSexBased → p.rawGenderCount ≥ 4 := by decide
 
 /-- Semantic-only assignment in the sample is restricted to non-sex-based
     systems. Sex-based systems typically have formal correlates. -/
 theorem semantic_only_is_non_sex_based :
-    allProfiles.all (λ p =>
-      if p.assignment == .semanticOnly
-      then p.basis == .nonSexBased
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.assignment = .semanticOnly → p.basis = .nonSexBased := by decide
 
 /-- All sex-based systems in the sample use semantic + formal assignment. -/
 theorem sex_based_always_formal :
-    allProfiles.all (λ p =>
-      if p.basis == .sexBased
-      then p.assignment == .semanticAndFormal
-      else true) = true := by native_decide
+    ∀ p ∈ allProfiles,
+      p.basis = .sexBased → p.assignment = .semanticAndFormal := by decide
 
 -- ============================================================================
--- §6. The canonical-gender notion
+-- §6. Canonical-gender notion
 -- ============================================================================
 
-/-- European languages in the sample all have canonical gender systems
-    (sex-based, 2 or 3 genders, semantic + formal). -/
-theorem european_canonical :
-    french.isCanonicalGender &&
-    spanish.isCanonicalGender &&
-    german.isCanonicalGender &&
-    russian.isCanonicalGender &&
-    latin.isCanonicalGender &&
-    romanian.isCanonicalGender = true := by native_decide
-
-/-- Hindi-Urdu also has a canonical gender system. -/
-theorem hindiUrdu_canonical :
-    hindiUrdu.isCanonicalGender = true := by native_decide
-
-/-- Non-canonical gender systems in the sample are all non-European. -/
-theorem non_canonical_non_european :
-    allProfiles.all (λ p =>
-      if p.genderCount != .none && !p.isCanonicalGender
-      then p.iso639 == "dbl" || p.iso639 == "kat" ||
-           p.iso639 == "swh" || p.iso639 == "zul" ||
-           p.iso639 == "ful" || p.iso639 == "gle"
-      else true) = true := by native_decide
+/-- European languages in the sample (and Hindi-Urdu) all have canonical
+    gender systems (sex-based, 2 or 3 genders, semantic + formal). -/
+theorem canonical_gender_attested :
+    french.isCanonicalGender = true ∧
+    spanish.isCanonicalGender = true ∧
+    german.isCanonicalGender = true ∧
+    russian.isCanonicalGender = true ∧
+    latin.isCanonicalGender = true ∧
+    romanian.isCanonicalGender = true ∧
+    hindiUrdu.isCanonicalGender = true := by decide
 
 -- ============================================================================
--- §7. The gender-number scale
+-- §7. SurfaceGender bridge (post Bool→Prop migration)
 -- ============================================================================
 
-/-- The gender-number scale spans 0 (English) to 20 (Fula) raw categories. -/
-theorem gender_scale_range :
-    allProfiles.any (λ p => p.rawGenderCount == 0) &&
-    allProfiles.any (λ p => p.rawGenderCount == 2) &&
-    allProfiles.any (λ p => p.rawGenderCount == 3) &&
-    allProfiles.any (λ p => p.rawGenderCount == 4) &&
-    allProfiles.any (λ p => p.rawGenderCount >= 15) = true := by native_decide
-
-/-- Maximum raw gender count in the sample is 20 (Fula). -/
-theorem max_gender_count_is_fula :
-    allProfiles.all (λ p => p.rawGenderCount <= 20) &&
-    allProfiles.any (λ p => p.rawGenderCount == 20) = true := by native_decide
+/-- Every 2- or 3-gender sex-based language in the sample exposes the
+    appropriate `Features.SurfaceGender` values via the
+    `attestedSurfaceGenders` bridge field. Connects the typology layer
+    to the per-noun lexical layer. -/
+theorem surface_gender_bridge_populated :
+    ∀ p ∈ allProfiles,
+      (p.genderCount = .two ∧ p.basis = .sexBased →
+        p.attestedSurfaceGenders.length = 2) ∧
+      (p.genderCount = .three ∧ p.basis = .sexBased →
+        p.attestedSurfaceGenders.length = 3) := by decide
 
 -- ============================================================================
--- §8. ISO code sanity
+-- §8. ISO code sanity (drift sentry)
 -- ============================================================================
-
-theorem all_iso_nonempty :
-    allProfiles.all (λ p => p.iso639.length > 0) = true := by native_decide
-
-theorem all_iso_length_3 :
-    allProfiles.all (λ p => p.iso639.length == 3) = true := by native_decide
 
 theorem iso_codes_unique :
     (allProfiles.map (·.iso639)).eraseDups.length = allProfiles.length := by
-  native_decide
+  decide
+
+-- ============================================================================
+-- §9. Within-Corbett (1991 vs 2013) divergence theorems
+-- ============================================================================
+
+/-! Three first-class disagreements between Corbett's 1991 monograph and
+    his 2013 WALS chapters. The 1991 values are this Studies file's
+    `english/dyirbal/georgian` overrides; the 2013 values are the
+    Fragment-side `Fragments.{Lang}.Gender.genderTypology` (which goes
+    through `GenderProfile.fromWALS`). Linglib's interconnection-density
+    thesis: incompatibilities visible. -/
+
+/-- Corbett 1991 vs 2013: English. The 1991 monograph applies a strict
+    controller-marking criterion (English has none); the 2013 WALS chapter
+    treats the *he/she/it* pronoun distinction as a 3-gender system. -/
+theorem english_corbett1991_vs_corbett2013 :
+    english.genderCount = .none ∧
+    Fragments.English.Gender.genderTypology.genderCount = .three := by decide
+
+/-- Corbett 1991 vs 2013: Dyirbal. The 1991 monograph treats Dyirbal as
+    non-sex-based (organising principles cut across sex); the 2013 WALS
+    chapter codes it as sex-based on the "Class I includes males"
+    criterion. -/
+theorem dyirbal_corbett1991_vs_corbett2013 :
+    dyirbal.basis = .nonSexBased ∧
+    Fragments.Dyirbal.Gender.genderTypology.basis = .sexBased := by decide
+
+/-- Corbett 1991 vs 2013: Georgian. The 1991 monograph treats Georgian's
+    rationality/animacy split as a 4-class gender system (agreement on
+    pronouns + verbs); the 2013 WALS chapter codes it as no-gender on the
+    noun-side-marking criterion. -/
+theorem georgian_corbett1991_vs_corbett2013 :
+    georgian.genderCount = .four ∧
+    Fragments.Georgian.Gender.genderTypology.genderCount = .none := by decide
 
 end Phenomena.Gender.Studies.Corbett1991

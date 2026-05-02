@@ -1,6 +1,8 @@
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
+import Linglib.Fragments.Xhosa.Gender
 import Linglib.Fragments.Shona.Basic
+import Linglib.Fragments.Shona.Gender
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Phenomena.Gender.Studies.Kramer2020
@@ -369,29 +371,13 @@ theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
 -- § 9: Bridge to Gender Typology (WALS)
 -- ============================================================================
 
-/-- Xhosa gender profile: 5+ genders, non-sex-based, semantic+formal assignment.
-    @cite{carstens-2026} §2.2: semantic cores for some genders, formal (class prefix)
-    assignment for others. -/
-def xhosaGenderProfile : Typology.Gender.GenderProfile where
-  name := "Xhosa"
-  iso639 := "xho"
-  genderCount := .fivePlus
-  rawGenderCount := 5
-  basis := .nonSexBased
-  assignment := .semanticAndFormal
-  semanticBases := [.humanness, .animacy]
-  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb]
+/-- Xhosa gender profile drawn from `Fragments/Xhosa/Gender.lean`.
+    @cite{carstens-2026} §2.2: semantic cores for some genders, formal
+    (class prefix) assignment for others. -/
+abbrev xhosaGenderProfile := Fragments.Xhosa.Gender.genderTypology
 
-/-- Shona gender profile: 8 genders (5+), non-sex-based. -/
-def shonaGenderProfile : Typology.Gender.GenderProfile where
-  name := "Shona"
-  iso639 := "sna"
-  genderCount := .fivePlus
-  rawGenderCount := 8
-  basis := .nonSexBased
-  assignment := .semanticAndFormal
-  semanticBases := [.humanness]
-  agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb]
+/-- Shona gender profile drawn from `Fragments/Shona/Gender.lean`. -/
+abbrev shonaGenderProfile := Fragments.Shona.Gender.genderTypology
 
 /-- Both profiles satisfy the Semantic Core Generalization
     (@cite{kramer-2020} ex. 2/28). -/

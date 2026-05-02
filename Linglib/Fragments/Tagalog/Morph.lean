@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Tagalog Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Tagalog.
-Tagalog: F20A: exclusivelyConcatenative; F21A: caseReferentiality (polyexponential); F22A: 2-3 (low); F23A: doubleMarking; F26A: littleAffixation; F27A: productiveFull.
+WALS-derived profile for Tagalog (ISO `tgl`). B&N 2001 places Tagalog in
+the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Fragments.Tagalog
 
-open Core.Morphology in
-/-- Tagalog: F20A: exclusivelyConcatenative; F21A: caseReferentiality (polyexponential); F22A: 2-3 (low); F23A: doubleMarking; F26A: littleAffixation; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Tagalog: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , fusion := (walsFusion "tgl").getD .concatenative
-  , exponence := (walsExponence "tgl").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "tgl").getD .moderate
-  , locus := (walsLocus "tgl").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "tgl").getD .stronglySuffixing
-  , reduplication := (walsReduplication "tgl").getD .noProductive
-  , locusClause := walsLocusClause "tgl"
-  , locusPossessive := walsLocusPossessive "tgl"
-  , wholeLanguageMarking := walsWholeLanguageMarking "tgl"
-  , zeroMarkingAP := walsZeroMarkingAP "tgl"
-  , caseSyncretism := walsCaseSyncretism "tgl"
-  , verbalSyncretism := walsVerbalSyncretism "tgl"
-  , tamExponence := walsTAMExponence "tgl"
-  , actionNominal := walsActionNominal "tgl"
-  , suppletionTA := walsSuppletionTA "tgl"
-  , suppletionImperative := walsSuppletionImperative "tgl"
-  , verbalNumber := walsVerbalNumber "tgl"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Tagalog" "tgl"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "tgl" ∧ morphProfile.language = "Tagalog" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Tagalog in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Tagalog

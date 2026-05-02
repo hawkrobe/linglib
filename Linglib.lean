@@ -295,16 +295,17 @@ import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
 import Linglib.Features.Person
 import Linglib.Features.PronounStrength
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.PhiSemantics
 import Linglib.Features.Number
 import Linglib.Core.CoreConcept
 import Linglib.Core.Morphology.MorphRule
+import Linglib.Core.Morphology.Paradigm
 import Linglib.Theories.Semantics.Noun.BinominalDefs
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Pragmatics.Efficiency
 import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.PMFEntropy
 import Linglib.Core.Probability.PMFPosterior
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.DirichletMultinomial
@@ -939,7 +940,6 @@ import Linglib.Fragments.Italian.DiscourseParticles
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Xhosa.Basic
-import Linglib.Fragments.Zapotec.Basic
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Definiteness
 import Linglib.Fragments.Shona.Basic
@@ -1498,6 +1498,7 @@ import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
+import Linglib.Phenomena.Morphology.Studies.RathiHahnFutrell2026
 import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Morphology.Studies.Bhadra2024
 import Linglib.Phenomena.Morphology.Studies.Benz2025
@@ -1829,6 +1830,7 @@ import Linglib.Core.Computability.CFGTree
 import Linglib.Core.Computability.CFGFragment
 import Linglib.Core.Computability.PumpingLemma
 import Linglib.Core.Computability.NonContextFree
+import Linglib.Core.Computability.WeightedCFG
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -1871,6 +1873,7 @@ import Linglib.Theories.Processing.LanguageModel.Basic
 import Linglib.Theories.Processing.Memory.Basic
 import Linglib.Theories.Processing.Memory.LossyContext
 import Linglib.Theories.Processing.MemorySurprisal.Basic
+import Linglib.Theories.Processing.MemorySurprisal.InformationalFusion
 import Linglib.Theories.Processing.PredictiveUncertainty.Config
 import Linglib.Theories.Processing.PredictiveUncertainty.IAS
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
@@ -2045,7 +2048,7 @@ import Linglib.Theories.Syntax.Minimalist.Multidominance
 import Linglib.Theories.Syntax.Minimalist.Economy
 import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Theories.Syntax.Minimalist.Scope
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.Interface
+import Linglib.Theories.Syntax.Minimalist.TraceInterpretation
 import Linglib.Theories.Syntax.Minimalist.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalist.RelativeClauses
 import Linglib.Theories.Syntax.Minimalist.Basic
@@ -2058,16 +2061,14 @@ import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Theories.Syntax.Minimalist.Copula
 import Linglib.Theories.Syntax.Minimalist.Cascade
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.EventStructureBridge
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.VoiceTheta
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.TopologicalMapping
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
+import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Theories.Morphology.FragmentGrammars.AdaptorGrammar
 import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Theories.Morphology.FragmentGrammars.FragmentLambda
+import Linglib.Theories.Morphology.FragmentGrammars.Comparisons
 import Linglib.Theories.Morphology.UsageBased.Network
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
@@ -2516,6 +2517,7 @@ import Linglib.Theories.Pragmatics.RSA.Sequential
 import Linglib.Theories.Pragmatics.RSA.Noisy
 import Linglib.Theories.Pragmatics.RSA.Composition
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Theories.Pragmatics.RSA.Silence
 import Linglib.Phenomena.ArealTypology.Studies.Haspelmath2001
 import Linglib.Theories.Diachronic.Areal
 import Linglib.Theories.Diachronic.Grammaticalization
@@ -2666,3 +2668,24 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 -- Pylkkänen ↔ Collins/Storment Voice contrast: first divergence meta-bridge
 -- under the cross-theory meta-bridges convention.
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
+-- Per-language Gender Fragments (Corbett 1991 sample)
+import Linglib.Fragments.English.Gender
+import Linglib.Fragments.Mandarin.Gender
+import Linglib.Fragments.Japanese.Gender
+import Linglib.Fragments.Turkish.Gender
+import Linglib.Fragments.Finnish.Gender
+import Linglib.Fragments.Korean.Gender
+import Linglib.Fragments.Quechua.Gender
+import Linglib.Fragments.French.Gender
+import Linglib.Fragments.Hindi.Gender
+import Linglib.Fragments.Irish.Gender
+import Linglib.Fragments.Hebrew.Gender
+import Linglib.Fragments.Latin.Gender
+import Linglib.Fragments.Romanian.Gender
+import Linglib.Fragments.Dyirbal.Gender
+import Linglib.Fragments.Georgian.Gender
+import Linglib.Fragments.Swahili.Gender
+import Linglib.Fragments.Zulu.Gender
+import Linglib.Fragments.Fula.Gender
+import Linglib.Fragments.Xhosa.Gender
+import Linglib.Fragments.Shona.Gender

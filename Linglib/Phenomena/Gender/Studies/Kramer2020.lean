@@ -125,7 +125,13 @@ namespace Phenomena.Gender.Studies.Kramer2020
 
 open Typology.Gender
 open Morphology.DM
-open Phenomena.Gender.Studies.Corbett1991 (allProfiles russian spanish hausa)
+open Phenomena.Gender.Studies.Corbett1991 (allProfiles)
+
+/-- Aliases for Kramer's three case-study languages, drawn from Fragment
+    typology files (i.e. WALS-derived per Corbett 2013). -/
+private abbrev russian := Fragments.Slavic.Russian.Gender.genderTypology
+private abbrev spanish := Fragments.Spanish.Gender.genderTypology
+private abbrev hausa   := Fragments.Hausa.Gender.genderTypology
 
 -- ============================================================================
 -- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)

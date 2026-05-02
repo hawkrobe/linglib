@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Georgian Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Georgian.
-Georgian: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: monoexponentialCase; F22A: 8-9 (high); F23A: doubleMarking; F26A: weaklySuffixing; F27A: productiveFull.
+WALS-derived profile for Georgian (ISO `kat`). B&N 2001 places Georgian
+in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
 namespace Fragments.Georgian
 
-open Core.Morphology in
-/-- Georgian: F20A: exclusivelyConcatenative (WALS evaluates selected formatives); F21A: monoexponentialCase; F22A: 8-9 (high); F23A: doubleMarking; F26A: weaklySuffixing; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Georgian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Georgian"
-  , iso := "kat"
-  , fusion := (walsFusion "kat").getD .concatenative
-  , exponence := (walsExponence "kat").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "kat").getD .moderate
-  , locus := (walsLocus "kat").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "kat").getD .stronglySuffixing
-  , reduplication := (walsReduplication "kat").getD .noProductive
-  , locusClause := walsLocusClause "kat"
-  , locusPossessive := walsLocusPossessive "kat"
-  , wholeLanguageMarking := walsWholeLanguageMarking "kat"
-  , zeroMarkingAP := walsZeroMarkingAP "kat"
-  , caseSyncretism := walsCaseSyncretism "kat"
-  , verbalSyncretism := walsVerbalSyncretism "kat"
-  , tamExponence := walsTAMExponence "kat"
-  , actionNominal := walsActionNominal "kat"
-  , suppletionTA := walsSuppletionTA "kat"
-  , suppletionImperative := walsSuppletionImperative "kat"
-  , verbalNumber := walsVerbalNumber "kat"
-  , flexivity := some .flexive
-  , bnExponence := some .cumulative
-  }
+  .fromWALS "Georgian" "kat"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .flexive)
+    (bnExponence     := some .cumulative)
+
+example : morphProfile.iso = "kat" ∧ morphProfile.language = "Georgian" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Georgian in the "fusional" cell. -/
+example : morphProfile.IsFusional := by decide
 
 end Fragments.Georgian

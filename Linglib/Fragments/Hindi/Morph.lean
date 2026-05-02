@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Hindi-Urdu Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Hindi-Urdu.
-Hindi-Urdu: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 2-3 (low); F23A: doubleMarking; F26A: stronglySuffixing; F27A: productiveFull.
+WALS-derived profile for Hindi-Urdu (ISO `hin`). B&N 2001 places Hindi-Urdu
+in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
 namespace Fragments.Hindi
 
-open Core.Morphology in
-/-- Hindi-Urdu: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 2-3 (low); F23A: doubleMarking; F26A: stronglySuffixing; F27A: productiveFull. -/
+open Core.Morphology
+
+/-- Hindi-Urdu: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Hindi-Urdu"
-  , iso := "hin"
-  , fusion := (walsFusion "hin").getD .concatenative
-  , exponence := (walsExponence "hin").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "hin").getD .moderate
-  , locus := (walsLocus "hin").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "hin").getD .stronglySuffixing
-  , reduplication := (walsReduplication "hin").getD .noProductive
-  , locusClause := walsLocusClause "hin"
-  , locusPossessive := walsLocusPossessive "hin"
-  , wholeLanguageMarking := walsWholeLanguageMarking "hin"
-  , zeroMarkingAP := walsZeroMarkingAP "hin"
-  , caseSyncretism := walsCaseSyncretism "hin"
-  , verbalSyncretism := walsVerbalSyncretism "hin"
-  , tamExponence := walsTAMExponence "hin"
-  , actionNominal := walsActionNominal "hin"
-  , suppletionTA := walsSuppletionTA "hin"
-  , suppletionImperative := walsSuppletionImperative "hin"
-  , verbalNumber := walsVerbalNumber "hin"
-  , flexivity := some .flexive
-  , bnExponence := some .cumulative
-  }
+  .fromWALS "Hindi-Urdu" "hin"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .flexive)
+    (bnExponence     := some .cumulative)
+
+example : morphProfile.iso = "hin" ∧ morphProfile.language = "Hindi-Urdu" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Hindi-Urdu in the "fusional" cell. -/
+example : morphProfile.IsFusional := by decide
 
 end Fragments.Hindi

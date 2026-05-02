@@ -2,37 +2,31 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Japanese Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Japanese.
-Japanese: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: fullReduplicationOnly.
+WALS-derived profile for Japanese (ISO `jpn`). B&N 2001 places Japanese
+in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
 namespace Fragments.Japanese
 
-open Core.Morphology in
-/-- Japanese: F20A: exclusivelyConcatenative; F21A: monoexponentialCase; F22A: 4-5; F23A: dependentMarking; F26A: stronglySuffixing; F27A: fullReduplicationOnly. -/
+open Core.Morphology
+
+/-- Japanese: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , fusion := (walsFusion "jpn").getD .concatenative
-  , exponence := (walsExponence "jpn").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "jpn").getD .moderate
-  , locus := (walsLocus "jpn").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "jpn").getD .stronglySuffixing
-  , reduplication := (walsReduplication "jpn").getD .noProductive
-  , locusClause := walsLocusClause "jpn"
-  , locusPossessive := walsLocusPossessive "jpn"
-  , wholeLanguageMarking := walsWholeLanguageMarking "jpn"
-  , zeroMarkingAP := walsZeroMarkingAP "jpn"
-  , caseSyncretism := walsCaseSyncretism "jpn"
-  , verbalSyncretism := walsVerbalSyncretism "jpn"
-  , tamExponence := walsTAMExponence "jpn"
-  , actionNominal := walsActionNominal "jpn"
-  , suppletionTA := walsSuppletionTA "jpn"
-  , suppletionImperative := walsSuppletionImperative "jpn"
-  , verbalNumber := walsVerbalNumber "jpn"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Japanese" "jpn"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .moderate)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .noProductive)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "jpn" ∧ morphProfile.language = "Japanese" := ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Japanese in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Japanese

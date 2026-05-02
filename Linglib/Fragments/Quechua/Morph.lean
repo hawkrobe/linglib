@@ -2,40 +2,34 @@ import Linglib.Core.Morphology.MorphProfile
 
 /-!
 # Quechua (Imbabura) Morphological Profile
+@cite{wals-2013} @cite{bickel-nichols-2001}
 
-WALS-derived morphological profile for Imbabura Quechua (ISO qvi).
+WALS-derived profile for Imbabura Quechua (ISO `qvi`). B&N 2001 places
+Quechua in the "agglutinating" cell (concatenative + nonflexive + separative).
 Consistent with the Imbabura data used in the Negation and PolarityItems
 fragments in this directory.
 -/
 
 namespace Fragments.Quechua
 
-open Core.Morphology in
-/-- Quechua (Imbabura): F20A concatenative; F21A monoexponential; F22A high;
-    F23A dependentMarking; F25A dependentMarking; F26A stronglySuffixing;
-    F27A fullOnly. -/
+open Core.Morphology
+
+/-- Quechua (Imbabura): WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=
-  { language := "Quechua (Imbabura)"
-  , iso := "qvi"
-  , fusion := (walsFusion "qvi").getD .concatenative
-  , exponence := (walsExponence "qvi").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "qvi").getD .high
-  , locus := (walsLocus "qvi").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "qvi").getD .stronglySuffixing
-  , reduplication := (walsReduplication "qvi").getD .fullOnly
-  , locusClause := walsLocusClause "qvi"
-  , locusPossessive := walsLocusPossessive "qvi"
-  , wholeLanguageMarking := walsWholeLanguageMarking "qvi"
-  , zeroMarkingAP := walsZeroMarkingAP "qvi"
-  , caseSyncretism := walsCaseSyncretism "qvi"
-  , verbalSyncretism := walsVerbalSyncretism "qvi"
-  , tamExponence := walsTAMExponence "qvi"
-  , actionNominal := walsActionNominal "qvi"
-  , suppletionTA := walsSuppletionTA "qvi"
-  , suppletionImperative := walsSuppletionImperative "qvi"
-  , verbalNumber := walsVerbalNumber "qvi"
-  , flexivity := some .nonflexive
-  , bnExponence := some .separative
-  }
+  .fromWALS "Quechua (Imbabura)" "qvi"
+    (fusionFb        := .concatenative)
+    (exponenceFb     := .monoexponential)
+    (verbSynthesisFb := .high)
+    (locusFb         := .dependentMarking)
+    (prefixSuffixFb  := .stronglySuffixing)
+    (reduplicationFb := .fullOnly)
+    (flexivity       := some .nonflexive)
+    (bnExponence     := some .separative)
+
+example : morphProfile.iso = "qvi" ∧ morphProfile.language = "Quechua (Imbabura)" :=
+  ⟨rfl, rfl⟩
+
+/-- B&N 2001 places Quechua in the "agglutinating" cell. -/
+example : morphProfile.IsAgglutinating := by decide
 
 end Fragments.Quechua
