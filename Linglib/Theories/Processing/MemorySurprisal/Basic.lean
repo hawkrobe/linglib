@@ -1,4 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.PredictiveUncertainty.Config
 
@@ -49,13 +48,13 @@ at which predictive information concentrates.
 
 ## Sections
 
-- §1: Memory-surprisal framework (MemoryEncoding, averageSurprisal, memoryEntropy)
+- §1: Memory-surprisal framework (MemoryEncoding, MemoryEncoding.summary)
 - §2: Mutual information profile (MutualInfoProfile, surplusSurprisal, memoryCost)
 - §3: Marginal analysis (surplus_step, memoryCost_step, marginal_rate)
 - §4: Information locality bound (comprehension postulates, Theorem 1)
 - §5: Trade-off curve (TradeoffPoint, TradeoffCurve, AUC)
-- §6: Concrete profiles and efficiency comparison
-- §7: Bridges (rate-distortion, processing model, dependency locality)
+- §6: Bridges (rate-distortion, processing model, dependency locality)
+- §7: Bridge to generalised surprisal
 
 -/
 
@@ -95,29 +94,6 @@ def MemoryEncoding.summary {W Mem : Type} (me : MemoryEncoding W Mem)
     (history : List W) : Mem :=
   history.foldl me.encode me.initial
 
-/-- Average surprisal under a memory encoding (in nats).
-
-This is the conditional entropy of the next word given the current
-memory state: S_M = H(W_t | M_t).
-
-Lower memory → less information about the past → higher surprisal.
-When memory is unlimited, S_M = S_∞ (the entropy rate of the language).
-
-Uses `conditionalEntropy` from `Core.InformationTheory`. -/
-noncomputable def averageSurprisal {W Mem : Type*}
-    (sJoint : Finset (Mem × W)) (joint : Mem × W → ℝ)
-    (sMem : Finset Mem) (marginalMem : Mem → ℝ) : ℝ :=
-  RSA.InformationTheory.conditionalEntropy sJoint joint sMem marginalMem
-
-/-- Memory entropy: the entropy of the memory state distribution (in nats).
-
-H_M = H(M_t), measuring how much information the processor uses.
-
-Uses `entropy` from `Core.InformationTheory`. -/
-noncomputable def memoryEntropy {Mem : Type*}
-    (sMem : Finset Mem) (memDist : Mem → ℝ) : ℝ :=
-  RSA.InformationTheory.entropy sMem memDist
-
 -- ============================================================================
 -- §2: Mutual Information Profile
 -- ============================================================================
@@ -133,7 +109,7 @@ Key insight: I_t = S_t - S_{t+1}, where S_t is the surprisal when
 the processor remembers only t steps of context. So I_t measures
 the *marginal value* of remembering one more step.
 
-The profile connects to `Core.InformationTheory.mutualInformation`:
+The profile connects to `PMF.mutualInformation`:
 each I_t is I(W_n; W_{n+t}), the mutual information between words
 at distance t in the stationary process. -/
 
@@ -262,7 +238,7 @@ theorem memoryCost_step (p : MutualInfoProfile) (T : Nat) (hT : T < p.values.len
   rw [take_succ_eq_append p.values T hT, weightedPrefixSum_append]
   congr 1
   have hlen : (List.take T p.values).length = T := by
-    rw [List.length_take]; exact Nat.min_eq_left (le_of_lt hT)
+    rw [List.length_take]; exact Nat.min_eq_left (Nat.le_of_lt hT)
   simp [weightedPrefixSum, hlen]
 
 /-- **Marginal rate of substitution**: at distance T, each bit of
@@ -498,76 +474,7 @@ def MutualInfoProfile.toTradeoffBound (p : MutualInfoProfile) : TradeoffCurve :=
         surprisal1000 := p.surplusSurprisal T }) }
 
 -- ============================================================================
--- §6: Concrete Profiles and Efficiency Comparison
--- ============================================================================
-
-/-! ### Concrete profiles
-
-Illustrative profiles demonstrating the information locality effect.
-The "efficient" profile concentrates I_t at short distances (rapid decay),
-while the "inefficient" profile spreads I_t across many distances (slow
-decay). Both have comparable total information, but the efficient profile
-achieves a strictly lower AUC on the trade-off bound. -/
-
-/-- A language with high information locality: I_t decays rapidly.
-Predictive information concentrated at short distances.
-Represents an efficient language like English or Japanese. -/
-def efficientProfile : MutualInfoProfile :=
-  { name := "Efficient"
-    values := [500, 200, 80, 30, 10, 5, 2, 1] }
-
-/-- A language with low information locality: I_t decays slowly.
-Predictive information spread across many distances.
-Represents a less efficient baseline. -/
-def inefficientProfile : MutualInfoProfile :=
-  { name := "Inefficient"
-    values := [200, 180, 150, 120, 90, 60, 30, 10] }
-
-/-- The efficient profile has lower weighted sum (less memory for same info). -/
-theorem efficient_lower_weighted_sum :
-    efficientProfile.weightedSum < inefficientProfile.weightedSum := by native_decide
-
-/-- Both profiles have comparable total information. -/
-theorem profiles_similar_total_info :
-    efficientProfile.totalInfo > 700 ∧ inefficientProfile.totalInfo > 700 := by
-  constructor <;> native_decide
-
-/-- **Information locality determines trade-off efficiency.**
-
-Profiles with faster I_t decay (more information locality) produce
-strictly lower trade-off bound AUC. This is the deep content of
-@cite{hahn-degen-futrell-2021}: the memory-surprisal trade-off is
-*determined* by the mutual information profile, and languages whose
-word orders concentrate predictive information at short distances
-achieve more efficient bounds.
-
-The two profiles have comparable total predictive information
-(`profiles_similar_total_info`) but the efficient profile concentrates
-it at shorter distances (`efficient_lower_weighted_sum`), producing a
-steeper trade-off curve and lower AUC. -/
-theorem information_locality_determines_efficiency :
-    efficientTradeoffHypothesis
-      efficientProfile.toTradeoffBound
-      inefficientProfile.toTradeoffBound = true := by
-  native_decide
-
-/-- Verify the marginal rate theorem on the efficient profile:
-at T=0, memory cost step = 1 × I_0 = 500, surplus step = I_0 = 500.
-Cost ratio = 1. -/
-theorem efficient_marginal_at_zero :
-    efficientProfile.memoryCost 1 - efficientProfile.memoryCost 0 =
-    1 * (efficientProfile.surplusSurprisal 0 - efficientProfile.surplusSurprisal 1) := by
-  native_decide
-
-/-- At T=3, memory cost step = 4 × I_3 = 120, surplus step = I_3 = 30.
-Cost ratio = 4: four bits of memory per bit of surprisal. -/
-theorem efficient_marginal_at_three :
-    efficientProfile.memoryCost 4 - efficientProfile.memoryCost 3 =
-    4 * (efficientProfile.surplusSurprisal 3 - efficientProfile.surplusSurprisal 4) := by
-  native_decide
-
--- ============================================================================
--- §7: Bridges
+-- §6: Bridges
 -- ============================================================================
 
 /-! ### Bridge: Memory-Surprisal ↔ Rate-Distortion
@@ -649,7 +556,7 @@ theorem MutualInfoProfile.weightedSum_le_length_mul_totalInfo
     (fun _ hi hL => absurd hL (Nat.not_le.mpr hi))
 
 -- ============================================================================
--- §8: Bridge to Generalised Surprisal
+-- §7: Bridge to Generalised Surprisal
 -- ============================================================================
 
 /-! ### Bridge: Memory-Surprisal ↔ Generalised Surprisal

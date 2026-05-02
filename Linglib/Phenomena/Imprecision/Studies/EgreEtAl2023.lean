@@ -485,7 +485,7 @@ def aroundWeight : Value → Nat
 
 Weight 2 at center, 1 at ±1, 0 elsewhere. Unnormalized weights preserve
 S1 ranking because exp is monotone and the normalization constant is
-independent of u (see `Core.InformationTheory.expected_log_eq_neg_klFinite_plus_negEntropy`). -/
+independent of u (the inlined `klFinite_eq_negEntropy_sub_crossEntropy` algebra). -/
 noncomputable def speakerBeliefR (observed w : Value) : ℝ :=
   let d := if observed.toNat ≥ w.toNat then observed.toNat - w.toNat
             else w.toNat - observed.toNat
@@ -500,7 +500,7 @@ triangular "around" posterior after normalization, matching `birWeight`.
 **S1** = KL speaker: the speaker with peaked beliefs chooses the message
 whose L0 posterior best matches those beliefs, measured by expected
 log-likelihood (= negative KL divergence up to constant entropy,
-see `Core.InformationTheory.expected_log_eq_neg_klFinite_plus_negEntropy`). -/
+the inlined `klFinite_eq_negEntropy_sub_crossEntropy` algebra). -/
 noncomputable def cfg : RSAConfig Utt Value where
   Latent := Unit
   meaning _ _ u w := match u with

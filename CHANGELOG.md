@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.600 — Phase 4g: concurrent-session files migrated off Core.InformationTheory
+
+Picked up from concurrent sessions per the established convention (cf. 0.230.586 commit pattern). All 4 concurrent-session files now Core.InformationTheory-free:
+
+- **`Linglib/Core/Morphology/Paradigm.lean`**: inlined private `entropy`, `conditionalEntropy`, `distOfList` helpers (mathlib-style, ~3 lines each). `cellEntropy` and `conditionalCellEntropy` use the private versions. No behavior change.
+
+- **`Linglib/Phenomena/Morphology/Studies/AckermanMalouf2013.lean`**: removed `import Linglib.Core.InformationTheory` and `open Core.InformationTheory` — the file only references the namespace in docstrings, no actual symbols used.
+
+- **`Linglib/Theories/Processing/MemorySurprisal/InformationalFusion.lean`**: deleted the dead-code re-export theorems `fusion_can_lower_marginal_entropy` and `agglutination_lowers_remote_uncertainty` (RathiHahnFutrell2026 only references them in docstrings, not actual proofs). Removed Core.InformationTheory import + open. Replaced re-export theorems with docstring blocks pointing at `PMF.conditionalEntropy_le_entropy` and `PMF.mutualInformation_nonneg`.
+
+- **`Linglib/Phenomena/Morphology/Studies/RathiHahnFutrell2026.lean`**: docstring updates only (`Core.InformationTheory.conditionalEntropy_le_entropy` → `PMF.conditionalEntropy_le_entropy` etc).
+
+- **`Linglib/Theories/Processing/MemorySurprisal/Basic.lean`**: 1 docstring line updated.
+
+- **`Linglib/Phenomena/Imprecision/Studies/EgreEtAl2023.lean`**: 1 docstring line updated.
+
+**Phase 5+6 unblocked**: `grep -rn "Core\.InformationTheory\.\(entropy\|klFinite\|kl_\|mutualInformation\|conditionalEntropy\|jsdOf\)" Linglib/` returns only docstring/comment matches at this point — no active code uses the to-be-deleted Core operators. Phase 6 deletion can proceed.
+
+**Build**: green at 5684 jobs.
+
 ### 0.230.599 — Phase 4: 6 consumer migrations + RSA/InformationTheory.lean dissolved
 
 Migrated 6 consumers off `Core.InformationTheory.{entropy, klFinite, hellingerDist, kl_*}` onto either the PMF API or mathlib primitives directly. The transitional `Linglib/Theories/Pragmatics/RSA/InformationTheory.lean` re-exporter is dissolved.

@@ -1,5 +1,5 @@
-import Linglib.Core.InformationTheory
 import Linglib.Core.Morphology.MorphRule
+import Linglib.Core.Morphology.Paradigm
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -28,84 +28,42 @@ H(Cᵢ | Cⱼ) is the conditional entropy of cell i given cell j.
 
 ## Structure
 
-- §0: LCEC substrate (was Theories/Morphology/WP/LCEC.lean, relocated 0.230.455
-  — single consumer; WP/ dir dissolves; LCEC is one specific empirical
-  conjecture, not the whole WP framework)
+- §0: i-Complexity (paper-specific aggregation; substrate types
+  `InflectionClass`/`ParadigmSystem`/`cellEntropy`/`conditionalCellEntropy`
+  live in `Core/Morphology/Paradigm.lean`, hoisted there 0.230.X for shared
+  use with @cite{rathi-hahn-futrell-2026}'s informational fusion)
 - §1: Per-language LCEC verification (all 10 languages)
 - §2: E-complexity / I-complexity dissociation
 - §3: Mazatec case study (observed vs. random baseline)
 -/
 
 -- ============================================================================
--- §0: LCEC Substrate
+-- §0: i-Complexity (paper-specific aggregation over substrate primitives)
 -- ============================================================================
 
 namespace Morphology.WP
 
-open Core.InformationTheory
+open Core.Morphology
 
-/-- An inflection class: function from cell index to surface realization. -/
-structure InflectionClass (numCells : Nat) where
-  realize : Fin numCells → String
+/-- @cite{ackerman-malouf-2013}'s **integrative complexity**: average
+    conditional cell entropy across all off-diagonal cell pairs.
 
-instance {n : Nat} : BEq (InflectionClass n) where
-  beq a b := (List.finRange n).all λ i => a.realize i == b.realize i
+    `iComplexity(L) = (1 / n(n-1)) · Σᵢ≠ⱼ H(Cᵢ | Cⱼ)`
 
-/-- A paradigm system: inflection classes paired with frequencies. -/
-structure ParadigmSystem (numCells : Nat) where
-  entries : List (InflectionClass numCells × ℚ)
-
-/-- Group a tagged list by key, summing associated ℚ values. -/
-def groupBySum {α : Type} [BEq α] (tagged : List (α × ℚ)) : List (α × ℚ) :=
-  tagged.foldl (λ acc (key, f) =>
-    match acc.find? (λ (k, _) => k == key) with
-    | some _ => acc.map (λ (k, p) => if k == key then (k, p + f) else (k, p))
-    | none => acc ++ [(key, f)]
-  ) []
-
-def cellDistribution {n : Nat} (ps : ParadigmSystem n) (c : Fin n) :
-    List (String × ℚ) :=
-  groupBySum (ps.entries.map λ (ic, f) => (ic.realize c, f))
-
-def jointCellDistribution {n : Nat} (ps : ParadigmSystem n)
-    (ci cj : Fin n) : List ((String × String) × ℚ) :=
-  groupBySum (ps.entries.map λ (ic, f) => ((ic.realize ci, ic.realize cj), f))
-
-def eComplexity {n : Nat} (ps : ParadigmSystem n) : Nat :=
-  ps.entries.length
-
-private noncomputable def listToFinsetFn {α : Type*} [DecidableEq α]
-    (dist : List (α × ℚ)) : Finset α × (α → ℝ) :=
-  ((dist.map Prod.fst).toFinset,
-   fun a => (((dist.find? (·.1 == a)).map Prod.snd).getD 0 : ℚ))
-
-noncomputable def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℝ :=
-  let (support, prob) := listToFinsetFn (cellDistribution ps c)
-  entropy support prob
-
-noncomputable def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
-    (ci cj : Fin n) : ℝ :=
-  let (sJoint, joint) := listToFinsetFn (jointCellDistribution ps ci cj)
-  let (sMargX, margX) := listToFinsetFn (cellDistribution ps cj)
-  conditionalEntropy sJoint joint sMargX margX
-
-noncomputable def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℝ :=
+    Instantiated at `Form := String` since A&M's paradigms are over
+    natural-language surface forms. -/
+noncomputable def iComplexity {n : Nat} (ps : ParadigmSystem n String) : ℝ :=
   let cells := List.finRange n
   let pairs := cells.flatMap λ ci => (cells.filter (· != ci)).map λ cj => (ci, cj)
-  let total := pairs.map λ (ci, cj) => conditionalCellEntropy ps ci cj
+  let total := pairs.map λ (ci, cj) => ps.conditionalCellEntropy ci cj
   let sum := total.sum
   let numPairs := n * (n - 1)
   if numPairs == 0 then 0 else sum / (numPairs : ℝ)
 
-def LCECHolds {n : Nat} (ps : ParadigmSystem n) (threshold : ℝ) : Prop :=
+/-- The Low Conditional Entropy Conjecture: i-complexity is bounded by
+    a small threshold. The threshold is empirical (typically ≤ 1 nat). -/
+def LCECHolds {n : Nat} (ps : ParadigmSystem n String) (threshold : ℝ) : Prop :=
   iComplexity ps ≤ threshold
-
-def isImplicative {n : Nat} (ps : ParadigmSystem n)
-    (ci cj : Fin n) : Prop :=
-  conditionalCellEntropy ps ci cj = 0
-
-def isTransparent {n : Nat} (ps : ParadigmSystem n) : Prop :=
-  ∀ (ci cj : Fin n), ci ≠ cj → isImplicative ps ci cj
 
 private lemma sum_eq_zero_of_forall_zero {l : List ℝ}
     (h : ∀ x ∈ l, x = 0) : l.sum = 0 := by
@@ -115,11 +73,11 @@ private lemma sum_eq_zero_of_forall_zero {l : List ℝ}
     simp only [List.sum_cons]
     rw [h a (.head as), ih (fun y hy => h y (.tail a hy)), add_zero]
 
-theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n)
-    (h : isTransparent ps) : iComplexity ps = 0 := by
+theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n String)
+    (h : ps.isTransparent) : iComplexity ps = 0 := by
   have hall : ∀ x ∈ ((List.finRange n).flatMap fun ci =>
       ((List.finRange n).filter (· != ci)).map fun cj =>
-      (ci, cj)).map (fun x => conditionalCellEntropy ps x.1 x.2),
+      (ci, cj)).map (fun x => ps.conditionalCellEntropy x.1 x.2),
       x = 0 := by
     intro x hx
     simp only [List.mem_map, List.mem_flatMap, List.mem_filter] at hx
@@ -129,18 +87,6 @@ theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n)
   have hfold := sum_eq_zero_of_forall_zero hall
   simp only [iComplexity]
   simp only [hfold]; split <;> simp
-
-/-- Extract a `ParadigmSystem` from a list of `Stem`s. -/
-def fromStems {σ : Type} (stems : List (Core.Morphology.Stem σ))
-    (baseMeaning : σ) (numCells : Nat)
-    (cellExtractor : List (String × Features × σ) → Fin numCells → String) :
-    ParadigmSystem numCells :=
-  let allParadigms := stems.map λ s =>
-    let forms := s.allForms baseMeaning
-    { realize := cellExtractor forms : InflectionClass numCells }
-  let total := stems.length
-  let unique := groupBySum (allParadigms.map λ ic => (ic, (1 : ℚ)))
-  { entries := unique.map λ (ic, count) => (ic, count / total) }
 
 end Morphology.WP
 
@@ -284,16 +230,26 @@ def mazatecRandomBaseline : ℚ := 525 / 100  -- 5.25
     changing a language's avgCondEntropy breaks exactly the corresponding
     theorem. -/
 
-theorem fur_lcec : fur.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem ngiti_lcec : ngiti.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem nuer_lcec : nuer.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem kwerba_lcec : kwerba.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem chinantec_lcec : chinantec.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem mazatec_lcec : mazatec.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem finnish_lcec : finnish.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem german_lcec : german.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem russian_lcec : russian.avgCondEntropy ≤ lcecThreshold := by native_decide
-theorem spanish_lcec : spanish.avgCondEntropy ≤ lcecThreshold := by native_decide
+theorem fur_lcec : fur.avgCondEntropy ≤ lcecThreshold := by
+  unfold fur lcecThreshold; norm_num
+theorem ngiti_lcec : ngiti.avgCondEntropy ≤ lcecThreshold := by
+  unfold ngiti lcecThreshold; norm_num
+theorem nuer_lcec : nuer.avgCondEntropy ≤ lcecThreshold := by
+  unfold nuer lcecThreshold; norm_num
+theorem kwerba_lcec : kwerba.avgCondEntropy ≤ lcecThreshold := by
+  unfold kwerba lcecThreshold; norm_num
+theorem chinantec_lcec : chinantec.avgCondEntropy ≤ lcecThreshold := by
+  unfold chinantec lcecThreshold; norm_num
+theorem mazatec_lcec : mazatec.avgCondEntropy ≤ lcecThreshold := by
+  unfold mazatec lcecThreshold; norm_num
+theorem finnish_lcec : finnish.avgCondEntropy ≤ lcecThreshold := by
+  unfold finnish lcecThreshold; norm_num
+theorem german_lcec : german.avgCondEntropy ≤ lcecThreshold := by
+  unfold german lcecThreshold; norm_num
+theorem russian_lcec : russian.avgCondEntropy ≤ lcecThreshold := by
+  unfold russian lcecThreshold; norm_num
+theorem spanish_lcec : spanish.avgCondEntropy ≤ lcecThreshold := by
+  unfold spanish lcecThreshold; norm_num
 
 /-- All 10 languages satisfy the LCEC. -/
 theorem all_satisfy_lcec :
@@ -301,7 +257,16 @@ theorem all_satisfy_lcec :
   intro l hl
   simp only [ackermanMalouf2013, List.mem_cons, List.mem_nil_iff, or_false] at hl
   rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  all_goals native_decide
+  · exact fur_lcec
+  · exact ngiti_lcec
+  · exact nuer_lcec
+  · exact kwerba_lcec
+  · exact chinantec_lcec
+  · exact mazatec_lcec
+  · exact finnish_lcec
+  · exact german_lcec
+  · exact russian_lcec
+  · exact spanish_lcec
 
 -- ============================================================================
 -- §2. E-complexity / I-complexity Dissociation
@@ -321,7 +286,7 @@ theorem mazatec_max_eComplexity :
 /-- Mazatec's I-complexity is still below 1 bit despite 109 classes. -/
 theorem mazatec_high_e_low_i :
     mazatec.numClasses = 109 ∧ mazatec.avgCondEntropy ≤ 1 :=
-  ⟨rfl, by native_decide⟩
+  ⟨rfl, by unfold mazatec; norm_num⟩
 
 /-- Kwerba has minimal E-complexity (2 classes) but its I-complexity
     is *not* the lowest — German (7 classes) has lower I-complexity.
@@ -329,7 +294,7 @@ theorem mazatec_high_e_low_i :
 theorem eComplexity_doesnt_predict_iComplexity :
     kwerba.numClasses < german.numClasses ∧
     german.avgCondEntropy < kwerba.avgCondEntropy :=
-  ⟨by simp [kwerba, german], by native_decide⟩
+  ⟨by simp [kwerba, german], by unfold german kwerba; norm_num⟩
 
 /-- Spanish has only 3 classes but 57 cells — yet its I-complexity is
     the lowest in the sample (0.003 bits). More cells with fewer classes
@@ -339,7 +304,17 @@ theorem spanish_minimal_iComplexity :
   intro l hl
   simp only [ackermanMalouf2013, List.mem_cons, List.mem_nil_iff, or_false] at hl
   rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  all_goals native_decide
+  all_goals (first
+    | (unfold spanish fur; norm_num)
+    | (unfold spanish ngiti; norm_num)
+    | (unfold spanish nuer; norm_num)
+    | (unfold spanish kwerba; norm_num)
+    | (unfold spanish chinantec; norm_num)
+    | (unfold spanish mazatec; norm_num)
+    | (unfold spanish finnish; norm_num)
+    | (unfold spanish german; norm_num)
+    | (unfold spanish russian; norm_num)
+    | (unfold spanish; norm_num))
 
 -- ============================================================================
 -- §3. Mazatec Case Study: Observed vs. Random Baseline
@@ -353,16 +328,19 @@ theorem spanish_minimal_iComplexity :
     Observed: 0.709 bits. Random permutation baseline: ~5.25 bits.
     The observed value is less than 14% of the random baseline. -/
 theorem mazatec_well_below_random :
-    mazatec.avgCondEntropy < mazatecRandomBaseline := by native_decide
+    mazatec.avgCondEntropy < mazatecRandomBaseline := by
+  unfold mazatec mazatecRandomBaseline; norm_num
 
 /-- The ratio of observed to random I-complexity is less than 1/7.
     (0.709 / 5.25 ≈ 0.135, i.e., ~13.5% of random) -/
 theorem mazatec_ratio_to_random :
-    mazatec.avgCondEntropy * 7 < mazatecRandomBaseline := by native_decide
+    mazatec.avgCondEntropy * 7 < mazatecRandomBaseline := by
+  unfold mazatec mazatecRandomBaseline; norm_num
 
 /-- Mazatec has nonzero I-complexity: it violates @cite{carstairs-mccarthy-2010}'s synonymy avoidance but satisfies the LCEC. This witnesses
     that the LCEC is strictly weaker than synonymy avoidance. -/
 theorem mazatec_violates_synonymyAvoidance :
-    mazatec.avgCondEntropy > 0 := by native_decide
+    mazatec.avgCondEntropy > 0 := by
+  unfold mazatec; norm_num
 
 end Phenomena.Morphology.AckermanMalouf2013
