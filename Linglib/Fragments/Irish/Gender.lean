@@ -12,7 +12,6 @@ Romance).
 namespace Fragments.Irish.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Irish gender typology: 2-gender sex-based, restricted agreement targets. -/
 def genderTypology : GenderProfile :=
@@ -27,5 +26,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "gle" ∧ genderTypology.name = "Irish" :=
   ⟨rfl, rfl⟩
+
+/-- Irish is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Irish.Gender

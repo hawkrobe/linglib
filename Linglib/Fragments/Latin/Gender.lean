@@ -11,7 +11,6 @@ attributive + predicate adjectives, relative + personal pronouns.
 namespace Fragments.Latin.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Latin gender typology: 3-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=
@@ -25,5 +24,8 @@ def genderTypology : GenderProfile :=
     (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
 
 example : genderTypology.iso639 = "lat" ∧ genderTypology.name = "Latin" := ⟨rfl, rfl⟩
+
+/-- Latin is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Latin.Gender

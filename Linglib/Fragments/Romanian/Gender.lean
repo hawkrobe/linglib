@@ -11,7 +11,6 @@ fem in the plural; "ambigeneric"). Sex-based, semantic + formal.
 namespace Fragments.Romanian.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Romanian gender typology: 3-gender sex-based with ambigeneric neuter. -/
 def genderTypology : GenderProfile :=
@@ -26,5 +25,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "ron" ∧ genderTypology.name = "Romanian" :=
   ⟨rfl, rfl⟩
+
+/-- Romanian is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Romanian.Gender

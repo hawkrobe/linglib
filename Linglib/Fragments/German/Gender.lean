@@ -126,7 +126,6 @@ theorem maedchen_neuter_override :
 -- ============================================================================
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- German gender typology: 3-gender canonical sex-based. The derivational
     facts above (-schaft, -chen, etc.) are the formal-assignment evidence
@@ -143,5 +142,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "deu" ∧ genderTypology.name = "German" :=
   ⟨rfl, rfl⟩
+
+/-- German is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.German.Gender

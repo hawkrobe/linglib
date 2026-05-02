@@ -10,7 +10,6 @@ Bantu noun-class system. Carstens 2026 cites 8 active gender classes.
 namespace Fragments.Shona.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Shona gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
@@ -25,5 +24,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "sna" ∧ genderTypology.name = "Shona" :=
   ⟨rfl, rfl⟩
+
+/-- Shona is a noun-class system (Bantu, 8 classes per @cite{carstens-2026}). -/
+example : genderTypology.IsNounClassSystem := by decide
 
 end Fragments.Shona.Gender

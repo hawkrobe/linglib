@@ -11,7 +11,6 @@ and auxiliaries — one of the clearest cases of verb agreement for gender.
 namespace Fragments.Hindi.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Hindi-Urdu gender typology: 2-gender canonical sex-based with verb agr. -/
 def genderTypology : GenderProfile :=
@@ -26,5 +25,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "hin" ∧ genderTypology.name = "Hindi-Urdu" :=
   ⟨rfl, rfl⟩
+
+/-- Hindi-Urdu is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Hindi.Gender

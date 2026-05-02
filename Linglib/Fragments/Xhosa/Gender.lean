@@ -11,7 +11,6 @@ the agreement-side analysis; the morphological inventory is larger.
 namespace Fragments.Xhosa.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Xhosa gender typology: noun-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
@@ -26,5 +25,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "xho" ∧ genderTypology.name = "Xhosa" :=
   ⟨rfl, rfl⟩
+
+/-- Xhosa is a noun-class system (Bantu, 5+ classes). -/
+example : genderTypology.IsNounClassSystem := by decide
 
 end Fragments.Xhosa.Gender

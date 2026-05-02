@@ -150,11 +150,11 @@ def allProfiles : List GenderProfile :=
 
 /-- All raw gender counts are consistent with their WALS bins. -/
 theorem all_raw_consistent :
-    ∀ p ∈ allProfiles, p.rawCountConsistent = true := by decide
+    ∀ p ∈ allProfiles, p.IsRawCountConsistent := by decide
 
 /-- All profiles are cross-chapter consistent. -/
 theorem all_cross_consistent :
-    ∀ p ∈ allProfiles, p.crossChapterConsistent = true := by decide
+    ∀ p ∈ allProfiles, p.IsCrossChapterConsistent := by decide
 
 /-- All five `GenderCount` values are attested. -/
 theorem all_gender_counts_attested :
@@ -208,8 +208,8 @@ theorem three_gender_always_formal :
     are precisely the categories that trigger agreement. -/
 theorem gender_implies_agreement :
     ∀ p ∈ allProfiles,
-      (p.genderCount ≠ .none → p.hasAgreement = true) ∧
-      (p.genderCount = .none → p.hasAgreement = false) := by decide
+      (p.genderCount ≠ .none → p.HasAgreement) ∧
+      (p.genderCount = .none → ¬ p.HasAgreement) := by decide
 
 -- ============================================================================
 -- §4. Corbett's Agreement Hierarchy
@@ -222,10 +222,10 @@ theorem gender_implies_agreement :
     the languages agree only on verbs). -/
 theorem agreement_hierarchy_verb_implies_higher :
     ∀ p ∈ allProfiles,
-      hasTarget p.agreementTargets .verb = true →
-        hasTarget p.agreementTargets .attributive = true ∨
-        hasTarget p.agreementTargets .predicate = true ∨
-        hasTarget p.agreementTargets .personalPronoun = true := by decide
+      .verb ∈ p.agreementTargets →
+        .attributive ∈ p.agreementTargets ∨
+        .predicate ∈ p.agreementTargets ∨
+        .personalPronoun ∈ p.agreementTargets := by decide
 
 /-- No language in the sample agrees only on verbs. -/
 theorem no_verb_only_agreement :
@@ -236,17 +236,17 @@ theorem no_verb_only_agreement :
     target. -/
 theorem no_pronoun_only_agreement :
     ∀ p ∈ allProfiles,
-      (p.genderCount ≠ .none ∧ hasTarget p.agreementTargets .personalPronoun = true) →
-        hasTarget p.agreementTargets .attributive = true ∨
-        hasTarget p.agreementTargets .predicate = true ∨
-        hasTarget p.agreementTargets .verb = true := by decide
+      (p.genderCount ≠ .none ∧ .personalPronoun ∈ p.agreementTargets) →
+        .attributive ∈ p.agreementTargets ∨
+        .predicate ∈ p.agreementTargets ∨
+        .verb ∈ p.agreementTargets := by decide
 
 /-- Noun-class systems (5+) show agreement on more targets than smaller
     systems. In the sample, all noun-class systems agree on ≥4 of the 5
     target types. -/
 theorem noun_class_rich_agreement :
     ∀ p ∈ allProfiles,
-      p.isNounClassSystem = true → p.agreementTargets.length ≥ 4 := by decide
+      p.IsNounClassSystem → p.agreementTargets.length ≥ 4 := by decide
 
 -- ============================================================================
 -- §5. Basis × count interactions
@@ -275,13 +275,10 @@ theorem sex_based_always_formal :
 /-- European languages in the sample (and Hindi-Urdu) all have canonical
     gender systems (sex-based, 2 or 3 genders, semantic + formal). -/
 theorem canonical_gender_attested :
-    french.isCanonicalGender = true ∧
-    spanish.isCanonicalGender = true ∧
-    german.isCanonicalGender = true ∧
-    russian.isCanonicalGender = true ∧
-    latin.isCanonicalGender = true ∧
-    romanian.isCanonicalGender = true ∧
-    hindiUrdu.isCanonicalGender = true := by decide
+    french.IsCanonicalGender ∧ spanish.IsCanonicalGender ∧
+    german.IsCanonicalGender ∧ russian.IsCanonicalGender ∧
+    latin.IsCanonicalGender ∧ romanian.IsCanonicalGender ∧
+    hindiUrdu.IsCanonicalGender := by decide
 
 -- ============================================================================
 -- §7. SurfaceGender bridge (post Bool→Prop migration)

@@ -16,7 +16,6 @@ expose a fine-grained `Class` type for noun-class agreement morphology.
 namespace Fragments.Swahili.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Swahili gender typology: 15-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
@@ -31,5 +30,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "swh" ∧ genderTypology.name = "Swahili" :=
   ⟨rfl, rfl⟩
+
+/-- Swahili is a noun-class system (5+ classes per @cite{corbett-1991}). -/
+example : genderTypology.IsNounClassSystem := by decide
 
 end Fragments.Swahili.Gender

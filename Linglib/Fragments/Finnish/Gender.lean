@@ -10,7 +10,6 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 namespace Fragments.Finnish.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Finnish gender typology: no gender. -/
 def genderTypology : GenderProfile :=

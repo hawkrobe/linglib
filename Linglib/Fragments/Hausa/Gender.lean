@@ -154,7 +154,6 @@ def allNouns : List Noun :=
 -- ============================================================================
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Hausa gender typology: 2-gender (Chadic, Afroasiatic), sex-based,
     semantic + formal. Agreement on attributive, personal pronoun, and
@@ -172,5 +171,9 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "hau" ∧ genderTypology.name = "Hausa" :=
   ⟨rfl, rfl⟩
+
+/-- Hausa is in @cite{corbett-1991}'s "canonical" cell (2-gender,
+    sex-based, semantic + formal). -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Hausa.Gender

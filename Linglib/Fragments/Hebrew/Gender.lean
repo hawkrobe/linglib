@@ -11,7 +11,6 @@ import Linglib.Typology.Gender
 namespace Fragments.Hebrew.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Hebrew gender typology: 2-gender canonical sex-based with verb agreement. -/
 def genderTypology : GenderProfile :=
@@ -26,5 +25,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "heb" ∧ genderTypology.name = "Hebrew" :=
   ⟨rfl, rfl⟩
+
+/-- Hebrew is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Hebrew.Gender

@@ -16,7 +16,6 @@ biological sex. The Corbett 1991 view is a per-Study override at
 namespace Fragments.Dyirbal.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Dyirbal gender typology per WALS @cite{corbett-2013}: 4-class sex-based
     semantic. The 4 classes are I (male humans + dangerous things),

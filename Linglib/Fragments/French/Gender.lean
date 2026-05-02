@@ -11,7 +11,6 @@ attributive + predicate adjectives, past participles, and personal pronouns.
 namespace Fragments.French.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- French gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=
@@ -26,5 +25,9 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "fra" ∧ genderTypology.name = "French" :=
   ⟨rfl, rfl⟩
+
+/-- French is in @cite{corbett-1991}'s "canonical" cell:
+    sex-based, 2-or-3 gender, semantic + formal. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.French.Gender

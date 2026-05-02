@@ -11,7 +11,6 @@ in Africa. Sample maximum in Corbett's 22-language exemplar.
 namespace Fragments.Fula.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Fula gender typology: 20-class Atlantic, semantic + formal. -/
 def genderTypology : GenderProfile :=
@@ -25,5 +24,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "ful" ∧ genderTypology.name = "Fula" :=
   ⟨rfl, rfl⟩
+
+/-- Fula is a noun-class system (20+ classes per @cite{corbett-1991}). -/
+example : genderTypology.IsNounClassSystem := by decide
 
 end Fragments.Fula.Gender

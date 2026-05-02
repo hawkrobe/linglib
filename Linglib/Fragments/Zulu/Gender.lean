@@ -10,7 +10,6 @@ import Linglib.Typology.Gender
 namespace Fragments.Zulu.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Zulu gender typology: 15-class Bantu, semantic + formal. -/
 def genderTypology : GenderProfile :=
@@ -25,5 +24,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "zul" ∧ genderTypology.name = "Zulu" :=
   ⟨rfl, rfl⟩
+
+/-- Zulu is a noun-class system (5+ classes per @cite{corbett-1991}). -/
+example : genderTypology.IsNounClassSystem := by decide
 
 end Fragments.Zulu.Gender

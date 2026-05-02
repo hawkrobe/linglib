@@ -10,7 +10,6 @@ No grammatical gender. WALS Ch 30/31/32 = none.
 namespace Fragments.Korean.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Korean gender typology: no gender. -/
 def genderTypology : GenderProfile :=

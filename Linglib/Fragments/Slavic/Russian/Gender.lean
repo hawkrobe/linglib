@@ -188,7 +188,6 @@ theorem declClass_ne_gender :
 -- ============================================================================
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Russian gender typology: 3-gender canonical sex-based with verb
     agreement (past tense). The declension classes above (I/II/III/IV)
@@ -207,5 +206,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "rus" ∧ genderTypology.name = "Russian" :=
   ⟨rfl, rfl⟩
+
+/-- Russian is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Slavic.Russian.Gender

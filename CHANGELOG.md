@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.611 — GenderProfile mathlib polish: Bool→Prop migration; corpus theorem trim; classification bridges; dead-open cleanup
+
+Brings GenderProfile to MorphProfile-quality, completing what cycle 0.230.610 started.
+
+- **Bool→Prop migration of all GenderProfile predicates** in `Typology/Gender.lean` (6 predicates): `rawCountConsistent → IsRawCountConsistent`, `crossChapterConsistent → IsCrossChapterConsistent`, `isNounClassSystem → IsNounClassSystem`, `hasAgreement → HasAgreement`, `isCanonicalGender → IsCanonicalGender`, plus `GenderCount.contains → GenderCount.Contains`. Each gets `DecidablePred` instance + `@[simp] _iff` lemma via `decidable_of_iff` — same canonical mathlib idiom landed for MorphProfile (0.230.609). Predicates moved into `namespace GenderProfile` block.
+- **Deleted free function `hasTarget`**: replaced consumer sites with mathlib-idiomatic `t ∈ targets` directly. The free function was a Bool-returning wrapper around `List.any (· == t)` — `∈` with `DecidableEq` does the job natively.
+- **Trimmed §6 corpus aggregate-count theorems** (`ch30_no_gender_modal`, `ch30_two_most_common`, `ch31_sex_based_dominant`, `ch32_mixed_slightly_more`, `ch32_no_purely_formal`): same anti-pattern memory note as BN2013's count theorems + required `native_decide` on ~1000-element lists. No external consumers; documentary content moved to docstring prose.
+- **Updated all consumer call sites** in `Phenomena/Gender/Studies/Corbett1991.lean`: 11 sites switching from `p.foo = true`/`p.foo = false`/`hasTarget l t = true` to the Prop forms. Theorems read more naturally: `p.IsCanonicalGender` not `p.isCanonicalGender = true`; `.verb ∈ p.agreementTargets` not `hasTarget p.agreementTargets .verb = true`.
+- **Updated `Phenomena/Gender/Studies/Kramer2020.lean`** (3 sites) to use the renamed `GenderCount.Contains` Prop form.
+- **Dropped dead `open Core (AgreementTarget)` from all 24 Gender Fragment files**: Fragment files use anonymous-constructor dot notation `.attributive` which resolves through the field type — the qualifier was never actually used.
+- **Added per-Fragment classification bridges** to 15 Fragment files (10 canonical + 5 noun-class): `example : genderTypology.IsCanonicalGender := by decide` for French, Spanish, Hindi, Irish, Hebrew, Hausa, German, Russian, Latin, Romanian; `example : genderTypology.IsNounClassSystem := by decide` for Swahili, Zulu, Xhosa, Shona, Fula. Mirrors MorphProfile's per-Fragment B&N classification bridge pattern.
+- Out of scope (deferred): substrate-wide rename `MorphProfile.iso → iso639` for cross-substrate consistency; propagating the smart-constructor pattern to `Typology/Modality.lean` (Aikhenvald2004).
+
+### 0.230.611 — GS2013PMF: Prop-migrate softmaxBelief; finish 4 .a3 silence-extended findings
+
+- Migrate `RSA.softmaxBelief` (and `softmaxBelief_concentrated_apply`, `softmaxBelief_uniform_on_support`, `softmaxBelief_ne_zero_of_qOk`, `softmaxBelief_tsum_ne_zero_of_witness`) from `qOk : U → Bool` to `qOk : U → Prop` with `[DecidablePred qOk]`. Per the Prop-migration goal: propositional positions take Prop, Bool only for genuine decisions. Wrap pre-existing `qualityOk : ... → Bool` at the `s1Score` boundary via `(qualityOk meaning obs · = true)`.
+- Add `RSA.softmaxBelief_uniform_on_support`: when `lex u` takes the same positive value on every world in the belief support and the belief sums to 1, the softmax collapses to `ENNReal.ofReal v`. Generalises `_concentrated_apply` from Kronecker delta to any belief whose support sits in `lex u`'s level set.
+- Substrate helpers in `GoodmanStuhlmuller2013PMF.lean`: `obsKernel_a3_s0/s1_eq_pure`, `speakerBelief_o0a3/o1a3_eq_pure`, `beliefReal_o0a3/o1a3`, `obsKernel_a3_s0/s1_apply_diag/_off`, `marginalSpeaker_a3_s0/s1_apply`, `s1Score_liftMeaning_o0a3/o1a3_apply`. Plus `WithSilence NumUtt` lex evaluations and 24 per-(obs, utt) `s1Score` helpers + 6 sum-of-scores helpers.
+- Migrate paper findings 4, 6, 7 to silence-extended `WithSilence`-typed `cover_silent`-discharged versions: `two_full_upper_bounded_sil`, `one_full_1v2_sil`, `one_full_1v3_sil`. Each uses the prototype's `marginalSpeaker_a3_sX_apply` collapse + `PMF.normalize_lt_of_apply_eq_of_sum_lt`.
+- Delete the 11 original vacuous-cover findings (`some_full_implicature` through `one_partial_1v2_canceled`) and their per-finding leaf lemmas — the silence-extended versions are paper-faithful and not blocked by `(access, word) ∉ {sensible}` carve-outs.
+- File ends at 0 sorrys. 4 of 11 silence-extended findings proven (paper findings 1, 4, 6, 7 — all `.a3`). Remaining 7 (`.a1`/`.a2`) carry a docstring TODO listing the substrate they need + numerical predictions; non-concentrated belief case requires more substrate work.
+
 ### 0.230.610 — GenderProfile per-Fragment refactor; first-class Corbett-1991-vs-2013 within-author divergence theorems
 
 - Add `GenderProfile.fromWALS` smart constructor + `attestedSurfaceGenders : List Features.SurfaceGender` field to `Linglib/Typology/Gender.lean`. The new field bridges the Typology layer (per-language profile) to the Features layer (per-noun lexical labels) — `Features.SurfaceGender` and `Typology.GenderProfile` are NOT duplicates; they capture different things at different levels and shouldn't be merged.

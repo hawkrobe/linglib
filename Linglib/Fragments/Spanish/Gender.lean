@@ -164,7 +164,6 @@ def sameRootNouns : List SameRootEntry :=
 -- ============================================================================
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Spanish gender typology: 2-gender canonical sex-based. -/
 def genderTypology : GenderProfile :=
@@ -179,5 +178,8 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "spa" ∧ genderTypology.name = "Spanish" :=
   ⟨rfl, rfl⟩
+
+/-- Spanish is in @cite{corbett-1991}'s "canonical" cell. -/
+example : genderTypology.IsCanonicalGender := by decide
 
 end Fragments.Spanish.Gender

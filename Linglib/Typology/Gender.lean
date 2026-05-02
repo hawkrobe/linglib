@@ -82,13 +82,16 @@ def GenderCount.lowerBound : GenderCount → Nat
   | .fivePlus => 5
 
 /-- Whether a raw gender count falls in a given `GenderCount` category. -/
-def GenderCount.contains (gc : GenderCount) (n : Nat) : Bool :=
+def GenderCount.Contains (gc : GenderCount) (n : Nat) : Prop :=
   match gc with
-  | .none     => n == 0
-  | .two      => n == 2
-  | .three    => n == 3
-  | .four     => n == 4
-  | .fivePlus => n >= 5
+  | .none     => n = 0
+  | .two      => n = 2
+  | .three    => n = 3
+  | .four     => n = 4
+  | .fivePlus => n ≥ 5
+
+instance (gc : GenderCount) (n : Nat) : Decidable (gc.Contains n) := by
+  cases gc <;> unfold GenderCount.Contains <;> infer_instance
 
 /-- Whether a gender system is based on biological sex (WALS Ch 31). -/
 inductive GenderBasis where
@@ -156,46 +159,84 @@ structure GenderProfile where
 -- §3. Helper predicates
 -- ============================================================================
 
-/-- Whether the raw gender count is consistent with the WALS bin. -/
-def GenderProfile.rawCountConsistent (p : GenderProfile) : Bool :=
-  p.genderCount.contains p.rawGenderCount
+namespace GenderProfile
 
-/-- Whether the profile is internally consistent across chapters:
-    no-gender in Ch 30 should align with `noGender` in Ch 31 and Ch 32. -/
-def GenderProfile.crossChapterConsistent (p : GenderProfile) : Bool :=
-  if p.genderCount == .none then
-    p.basis == .noGender && p.assignment == .noGender &&
-    p.agreementTargets.length == 0
+/-! Mathlib-style `Prop`-typed predicates with `Decidable` instances and
+    `@[simp] _iff` lemmas. Filter sites that need `Bool` should call
+    `decide` at the boundary. -/
+
+def IsRawCountConsistent (p : GenderProfile) : Prop :=
+  p.genderCount.Contains p.rawGenderCount
+@[simp] theorem isRawCountConsistent_iff (p : GenderProfile) :
+    p.IsRawCountConsistent ↔ p.genderCount.Contains p.rawGenderCount := Iff.rfl
+instance : DecidablePred IsRawCountConsistent :=
+  fun p => decidable_of_iff _ (isRawCountConsistent_iff p).symm
+
+/-- Internal consistency across WALS chapters: no-gender in Ch 30 aligns with
+    `noGender` in Ch 31, Ch 32, and an empty agreement-target list. -/
+def IsCrossChapterConsistent (p : GenderProfile) : Prop :=
+  if p.genderCount = .none then
+    p.basis = .noGender ∧ p.assignment = .noGender ∧
+    p.agreementTargets = []
   else
-    p.basis != .noGender && p.assignment != .noGender
+    p.basis ≠ .noGender ∧ p.assignment ≠ .noGender
+@[simp] theorem isCrossChapterConsistent_iff (p : GenderProfile) :
+    p.IsCrossChapterConsistent ↔
+      (if p.genderCount = .none then
+        p.basis = .noGender ∧ p.assignment = .noGender ∧
+        p.agreementTargets = []
+      else
+        p.basis ≠ .noGender ∧ p.assignment ≠ .noGender) := Iff.rfl
+instance : DecidablePred IsCrossChapterConsistent := fun p =>
+  show Decidable
+      (if p.genderCount = .none then
+        p.basis = .noGender ∧ p.assignment = .noGender ∧
+        p.agreementTargets = []
+      else
+        p.basis ≠ .noGender ∧ p.assignment ≠ .noGender) from
+    inferInstance
 
-/-- Whether the language qualifies as a "noun class" system (5+ categories). -/
-def GenderProfile.isNounClassSystem (p : GenderProfile) : Bool :=
-  p.rawGenderCount >= 5
+/-- "Noun class" system: 5+ categories per @cite{corbett-1991}. -/
+def IsNounClassSystem (p : GenderProfile) : Prop := p.rawGenderCount ≥ 5
+@[simp] theorem isNounClassSystem_iff (p : GenderProfile) :
+    p.IsNounClassSystem ↔ p.rawGenderCount ≥ 5 := Iff.rfl
+instance : DecidablePred IsNounClassSystem :=
+  fun p => decidable_of_iff _ (isNounClassSystem_iff p).symm
 
 /-- Whether the language has any gender agreement. -/
-def GenderProfile.hasAgreement (p : GenderProfile) : Bool :=
-  p.agreementTargets.length > 0
+def HasAgreement (p : GenderProfile) : Prop := p.agreementTargets ≠ []
+@[simp] theorem hasAgreement_iff (p : GenderProfile) :
+    p.HasAgreement ↔ p.agreementTargets ≠ [] := Iff.rfl
+instance : DecidablePred HasAgreement :=
+  fun p => decidable_of_iff _ (hasAgreement_iff p).symm
+
+/-- "Canonical" gender system in @cite{corbett-1991}'s sense: sex-based,
+    2 or 3 genders, semantic + formal assignment. -/
+def IsCanonicalGender (p : GenderProfile) : Prop :=
+  (p.genderCount = .two ∨ p.genderCount = .three) ∧
+  p.basis = .sexBased ∧
+  p.assignment = .semanticAndFormal
+@[simp] theorem isCanonicalGender_iff (p : GenderProfile) :
+    p.IsCanonicalGender ↔
+      (p.genderCount = .two ∨ p.genderCount = .three) ∧
+      p.basis = .sexBased ∧
+      p.assignment = .semanticAndFormal := Iff.rfl
+instance : DecidablePred IsCanonicalGender := fun p =>
+  show Decidable
+      ((p.genderCount = .two ∨ p.genderCount = .three) ∧
+       p.basis = .sexBased ∧
+       p.assignment = .semanticAndFormal) from
+    inferInstance
 
 /-- Lowest agreement target in @cite{corbett-1991}'s hierarchy. -/
-def GenderProfile.lowestAgreementTarget (p : GenderProfile) :
-    Option AgreementTarget :=
+def lowestAgreementTarget (p : GenderProfile) : Option AgreementTarget :=
   p.agreementTargets.foldl
     (λ acc t => match acc with
       | none => some t
       | some prev => if t.rank < prev.rank then some t else some prev)
     none
 
-/-- Whether a gender system is "canonical" in @cite{corbett-1991}'s sense:
-    sex-based, with 2 or 3 genders, and semantic + formal assignment. -/
-def GenderProfile.isCanonicalGender (p : GenderProfile) : Bool :=
-  (p.genderCount == .two || p.genderCount == .three) &&
-  p.basis == .sexBased &&
-  p.assignment == .semanticAndFormal
-
-/-- Whether a list of agreement targets contains a specific target. -/
-def hasTarget (targets : List AgreementTarget) (t : AgreementTarget) : Bool :=
-  targets.any (· == t)
+end GenderProfile
 
 -- ============================================================================
 -- §4. WALS converters
@@ -261,42 +302,16 @@ def GenderProfile.fromWALS
   , attestedSurfaceGenders }
 
 -- ============================================================================
--- §6. Theory-neutral WALS distribution facts
+-- §6. WALS distribution facts
 -- ============================================================================
 
-/-- Ch 30: languages with no gender are the modal category. -/
-theorem ch30_no_gender_modal :
-    let noGender := (ch30.filter (·.value == .none)).length
-    noGender > (ch30.filter (·.value == .two)).length ∧
-    noGender > (ch30.filter (·.value == .three)).length ∧
-    noGender > (ch30.filter (·.value == .four)).length ∧
-    noGender > (ch30.filter (·.value == .fiveOrMore)).length := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
-
-/-- Ch 30: among gender-bearing languages, 2-gender systems are most common. -/
-theorem ch30_two_most_common :
-    (ch30.filter (·.value == .two)).length >
-    (ch30.filter (·.value == .three)).length ∧
-    (ch30.filter (·.value == .two)).length >
-    (ch30.filter (·.value == .four)).length ∧
-    (ch30.filter (·.value == .two)).length >
-    (ch30.filter (·.value == .fiveOrMore)).length := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
-
-/-- Ch 31: sex-based systems far outnumber non-sex-based ones. -/
-theorem ch31_sex_based_dominant :
-    (ch31.filter (·.value == .sexBased)).length >
-    (ch31.filter (·.value == .nonSexBased)).length := by native_decide
-
-/-- Ch 32: semantic-and-formal assignment slightly outnumbers semantic-only. -/
-theorem ch32_mixed_slightly_more :
-    (ch32.filter (·.value == .semanticAndFormal)).length >
-    (ch32.filter (·.value == .semantic)).length := by native_decide
-
-/-- Ch 32: no purely-formal assignment system is attested. WALS F32A has only
-    three categories: `noGender`, `semantic`, `semanticAndFormal`. -/
-theorem ch32_no_purely_formal :
-    ch32.all (λ d => d.value == .noGender || d.value == .semantic ||
-                     d.value == .semanticAndFormal) := by native_decide
+/-! Earlier revisions of this file carried five aggregate-count theorems on
+    the full WALS Ch 30/31/32 corpora (`ch30_no_gender_modal`,
+    `ch30_two_most_common`, `ch31_sex_based_dominant`,
+    `ch32_mixed_slightly_more`, `ch32_no_purely_formal`). These were the
+    "aggregate-count theorems go stale" anti-pattern AND required
+    `native_decide` for ~1000-element list reductions; deleted as part of
+    the GenderProfile mathlib polish. The corpus distributions remain
+    documentary in @cite{corbett-2013}'s WALS chapters. -/
 
 end Typology.Gender

@@ -15,7 +15,6 @@ override at `Phenomena/Gender/Studies/Corbett1991.lean`.
 namespace Fragments.English.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- English gender typology per WALS @cite{corbett-2013}: 3-gender
     sex-based, semantic-only (he/she/it pronominal distinction). -/

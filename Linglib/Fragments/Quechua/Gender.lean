@@ -12,7 +12,6 @@ Quechua (`quz`) specifically; the Imbabura variety (`qvi`) used by
 namespace Fragments.Quechua.Gender
 
 open Typology.Gender
-open Core (AgreementTarget)
 
 /-- Cusco Quechua gender typology: no gender. -/
 def genderTypology : GenderProfile :=
