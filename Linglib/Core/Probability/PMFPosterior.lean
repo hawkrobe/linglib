@@ -134,6 +134,26 @@ private theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≠ ∞ :=
   (lt_of_le_of_lt (marginal_le_one κ μ b) ENNReal.one_lt_top).ne
 
+/-- **`PMF.normalize` collapses to `pure`** when only one element has positive
+weight. Mirror of `posterior_eq_pure_of_singleton_score_support` for the
+prior-free `normalize` constructor — useful for "deterministic kernel"
+patterns (e.g., a hypergeometric kernel at full sample access). -/
+theorem normalize_eq_pure_of_singleton_support {α : Type*} (f : α → ℝ≥0∞)
+    (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞) (x : α)
+    (h_unique : ∀ y, y ≠ x → f y = 0) :
+    PMF.normalize f h0 hF = PMF.pure x := by
+  have h_sum : (∑' z, f z) = f x :=
+    tsum_eq_single x (fun z hz => h_unique z hz)
+  have hfx_ne_zero : f x ≠ 0 := h_sum ▸ h0
+  have hfx_ne_top : f x ≠ ∞ := h_sum ▸ hF
+  apply PMF.ext
+  intro y
+  rw [PMF.pure_apply, PMF.normalize_apply, h_sum]
+  by_cases h : y = x
+  · rw [h, if_pos rfl]
+    exact ENNReal.mul_inv_cancel hfx_ne_zero hfx_ne_top
+  · rw [if_neg h, h_unique y h, zero_mul]
+
 /-- **Inequality decomposition for `PMF.normalize`**: comparing two normalised
 values reduces to comparing the raw scores — the shared `(∑' x, f x)⁻¹` factor
 cancels (it is positive and finite by the well-formedness hypotheses).
@@ -567,6 +587,28 @@ theorem posterior_eq_one_of_singleton_score_support {α β : Type*}
   · rw [h_marg_eq] at h_marg
     exact h_marg
   · exact ENNReal.mul_ne_top (apply_ne_top _ _) (apply_ne_top _ _)
+
+/-- **Posterior collapses to `pure` at deterministic observation**: when only
+one prior-supported world has positive kernel mass at `b`, the posterior is
+exactly `PMF.pure a_unique`. Strengthens
+`posterior_eq_one_of_singleton_score_support` from a single apply value to
+full PMF equality. -/
+theorem posterior_eq_pure_of_singleton_score_support {α β : Type*}
+    (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h_marg : marginal κ μ b ≠ 0) (a_unique : α)
+    (h_unique : ∀ a', a' ≠ a_unique → μ a' = 0 ∨ κ a' b = 0) :
+    posterior κ μ b h_marg = PMF.pure a_unique := by
+  apply PMF.ext
+  intro a
+  rw [PMF.pure_apply]
+  by_cases h : a = a_unique
+  · subst h
+    rw [if_pos rfl]
+    exact posterior_eq_one_of_singleton_score_support κ μ b h_marg a h_unique
+  · rw [if_neg h, posterior_apply]
+    rcases h_unique a h with hμ | hκ
+    · simp [hμ]
+    · simp [hκ]
 
 /-- **Posterior order tracks kernel order at equal prior**: when
 `μ a₁ = μ a₂` and the prior is positive there, the posterior ranks `a₁ <

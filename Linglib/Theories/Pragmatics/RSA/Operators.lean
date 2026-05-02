@@ -240,6 +240,36 @@ theorem softmaxBelief_tsum_ne_zero_of_witness [Fintype W]
     ∑' u', softmaxBelief lex belief α qOk u' ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, softmaxBelief_ne_zero_of_qOk h⟩
 
+/-- **Softmax collapse at concentrated belief (α = 1)**: when the belief is a
+Kronecker delta on a single world `s*`, the expected log collapses to a
+single log term, and `exp ∘ log` cancels at any positive value. The score
+becomes simply `lex u s*` (lifted via `ENNReal.ofReal`).
+
+The hypothesis `qOk u → 0 < lex u s*` is the canonical "quality-OK
+utterances are true at the speaker-believed world" condition — it ensures
+`Real.log (lex u s*)` is well-defined (non-junk-zero) so that `exp ∘ log`
+gives back `lex u s*` rather than `1`.
+
+This is the bridge that lets transcendental softmax expressions reduce to
+rational arithmetic in models with deterministic full-access observations
+(e.g., @cite{goodman-stuhlmuller-2013} at access `.a3`). -/
+theorem softmaxBelief_concentrated_apply [Fintype W] [DecidableEq W]
+    (lex : U → W → ℝ) (sStar : W) (qOk : U → Bool) (u : U)
+    (h : qOk u = true → 0 < lex u sStar) :
+    softmaxBelief lex (fun s => if s = sStar then 1 else 0) 1 qOk u =
+      if qOk u then ENNReal.ofReal (lex u sStar) else 0 := by
+  unfold softmaxBelief
+  split_ifs with h_qOk
+  · congr 1
+    rw [one_mul, Finset.sum_eq_single sStar]
+    · simp only [if_pos, one_mul]
+      exact Real.exp_log (h h_qOk)
+    · intro s _ hs
+      simp [hs]
+    · intro h_not_mem
+      exact absurd (Finset.mem_univ sStar) h_not_mem
+  · rfl
+
 /-! ## L1: Pragmatic Listener -/
 
 /-- Pragmatic listener: Bayesian inversion of the speaker kernel against the

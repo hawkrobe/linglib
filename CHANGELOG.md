@@ -4,6 +4,108 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.610 — RSA.WithSilence + liftMeaning substrate; GoodmanStuhlmuller2013PMF prototype proves some_full_implicature_sil
+
+New `Linglib/Theories/Pragmatics/RSA/Silence.lean` (50 LOC) lifts @cite{bergen-levy-goodman-2016}'s "silence as low-prior alternative" treatment into reusable RSA substrate:
+
+- `WithSilence U := Option U` (so `DecidableEq`/`Fintype`/`Repr`/`Inhabited` come for free).
+- `liftMeaning m : WithSilence U → W → Bool` — silence is "vacuously honest" (true at every world).
+- `liftMeaning_some` / `liftMeaning_none` simp lemmas.
+
+This dissolves the "no `qOk` witness" defect that made GS2013 PMF formalization's `(access, word) ∉ {1/1, 2/1, 2/2, 3/1, 3/2, 3/3}` cases vacuous (5 of 11 findings, including the headline `one_partial_1v3`). With silence in the alternative set, every obs has at least the silence witness; cover hypothesis is universally satisfiable.
+
+GS PMF file restructured to use the substrate:
+- `cover_silent` (5-line proof, paper-specific because `qualityOk` depends on `obsCompatible`) discharges the cover via the silence witness.
+- Added structural-collapse helpers: `obsKernel_a3_s_eq_pure` (×2), `speakerBelief_o_a3_eq_pure` (×2), `beliefReal_o_a3` (×2), `obsKernel_apply_zero_of_raw_zero`, `marginalSpeaker_a3_s_apply` (×2 — `bindOnSupport` collapse via concentrated kernel).
+- Added `s1Score_liftMeaning_o_a3_apply` — softmax-collapse for `liftMeaning`-lifted models with concentrated belief.
+- Added quantifier-side lex evaluations (`extensionOf_qLifted_*_card`, `lexReal_qLifted_*`).
+- Closed `some_full_implicature_sil` (prototype): full proof using all the above + `normalize_lt_of_apply_eq_of_sum_lt`. Numerator equality (both `s2`/`s3` give `1/3`), denominator differ (`7/12` at `.o2a3` vs `19/12` at `.o3a3`).
+
+Two new mathlib-shaped lemmas (substrate-level):
+- `PMF.posterior_eq_pure_of_singleton_score_support` (PMFPosterior.lean): strengthens `posterior_eq_one_of_singleton_score_support` from single-apply to full PMF equality.
+- `PMF.normalize_eq_pure_of_singleton_support` (PMFPosterior.lean): mirror for the prior-free `normalize` constructor.
+- `RSA.softmaxBelief_concentrated_apply` (Operators.lean): softmax → rational at δ-belief; `Real.exp_log` cancellation.
+
+Original 11 findings still sorry'd alongside (vacuous-cover formulation). Migration of the remaining 10 to `_sil` versions deferred to a follow-up session: substrate is now in place, each finding follows the prototype's pattern (~50 LOC each for `.a3`, ~80-100 LOC for `.a1`/`.a2` because of multi-obs `bindOnSupport_apply`).
+
+Build: 5680 jobs green project-wide.
+
+### 0.230.609 — MorphProfile mathlib polish: namespace §6, decidable_of_iff + @[simp] _iff lemmas
+
+- Move §6 mutual-exclusion theorems (`agglutinating_fusional_exclusive`, `nonflexive_flexive_exclusive`, `cumulative_separative_exclusive`) from top-level `Core.Morphology` namespace into `MorphProfile.` so dot-notation works (mathlib idiom).
+- Wrap §5 predicates in `namespace MorphProfile ... end MorphProfile` block (was using qualified `MorphProfile.IsX` declarations inline).
+- Add `@[simp] theorem isX_iff` lemmas for all 16 predicates (`isConcatenative_iff`, `isFusional_iff`, etc.). Each is `Iff.rfl` since predicates are pure equality `def`s, but the named iff makes the decomposition visible to `simp` and to mathlib-style `decidable_of_iff` derivations. Mathlib precedent: `Set.Finite_iff`, `Nat.Prime_iff`.
+- Replace folkloric `Decidable` instance constructions with the canonical mathlib `decidable_of_iff _ (isFooIff p).symm` pattern at all 16 sites. The previous `decEq p.field _` (simple preds) and `show Decidable (...) from inferInstance` (compound preds) ceremony both replaced by uniform `decidable_of_iff` derivation through the `_iff` lemma.
+- Update 4 stale docstring mentions: `Fragments/Indonesian/Morph.lean:11`, `Fragments/Arabic/Egyptian/Morph.lean:36` (predicate names; lowercase → capitalized post-Bool→Prop), and 2 BN2013 references to `agglutinating_fusional_exclusive` (now `MorphProfile.agglutinating_fusional_exclusive`).
+- Regenerate `blog/content/bibliography.md`.
+- Out of scope: pre-existing `GoodmanStuhlmuller2013PMF.lean` build failure in the RSA subsystem (unrelated, in-flight from prior session work).
+
+### 0.230.608 — MorphProfile predicates Bool→Prop (mathlib quality); BN2013 trimmed of aggregate-count theorems
+
+- Convert all 16 `MorphProfile.isFoo / hasRedup / isAgglutinating / isFusional / ...` predicates from `→ Bool` to canonical `→ Prop` (capitalized: `IsConcatenative`, `IsAgglutinating`, etc.) with `DecidablePred` instances. Mathlib idiom — `Bool` survives only at `List.filter` boundaries via explicit `decide`.
+- Rewrite §6 mutual-exclusion theorems in Prop form: `agglutinating_fusional_exclusive`, `nonflexive_flexive_exclusive`, `cumulative_separative_exclusive` no longer need `simp; cases; cases <;> simp` ceremony — proofs are 1-2 lines using the structural decomposition.
+- Update all 18 `Fragments/{Lang}/Morph.lean` per-file bridge theorems from `morphProfile.isFusional = true` to `morphProfile.IsFusional` (and `¬ morphProfile.IsAgglutinating` for the negative cases on Indonesian / Arabic).
+- **Aggressive trim of `BickelNichols2013.lean`** (337 → 171 LOC). Deleted ~25 aggregate-count theorems (`sample_X_count = N`) and weak observational generalizations (`suffixing_dominates_in_sample`, `head_marking_high_synthesis`, etc.) — these were the "aggregate-count theorems go stale" anti-pattern. Also dropped the `countByFusion` / `countByExponence` / `countByLocus` / `countBySynthesis` / `countByFlexivity` / `countByBNExponence` helpers (only used by deleted theorems). Kept 6 substantive structural theorems: `morph_iso_unique` (drift sentry), `concatenative_admits_both_flexivities` (B&N orthogonality), `arabic_nonlinear_flexive` (nonlinear cell witness), `isolating_no_flexivity`, `exponence_scope_independent`, `concatenative_partition`, `sample_type_exhaustive`.
+- All remaining `native_decide` in BN2013 converted to `decide`. Two theorems require `set_option maxRecDepth 2000 in` because `decide` traverses the 18-element sample × 17 WALS lookups per element.
+- Out of scope: `LanguageStub` promotion (still deferred).
+
+### 0.230.607 — MorphProfile.fromWALS smart constructor; B&N classification bridge theorems caught Indonesian editorial drift
+
+- Add `Core.Morphology.MorphProfile.fromWALS` smart constructor: takes language label, ISO, and 6 required-field fallbacks; auto-populates 11 optional WALS fields and the 2 paper-stipulated B&N 2001 fields (`flexivity`, `bnExponence`). Replaces 22-field record literals at every call site.
+- Refactor 18 `Fragments/{Lang}/Morph.lean` files (English, Finnish, Georgian, German, Hindi, Hungarian, Indonesian, Japanese, Korean, Mandarin, Quechua, Spanish, Swahili, Tagalog, Thai, Turkish, Slavic/Russian, Arabic/Egyptian) to use `MorphProfile.fromWALS`. Each file now ~25-35 LOC: smart-constructor invocation + ISO/language sanity sentry + per-file B&N classification bridge theorem (`isFusional` / `isAgglutinating` / `isolating`).
+- Add per-file `@cite{wals-2013}` and `@cite{bickel-nichols-2001}` references; previously the files cited WALS chapter numbers in prose without a `@cite{...}` block.
+- **Bridge theorem caught a real editorial drift in `Fragments/Indonesian/Morph.lean`**: the previous record literal stipulated `(walsFusion "ind").getD .concatenative` (suggesting concatenative fallback) plus `flexivity := some .nonflexive`, `bnExponence := some .separative` — implying agglutinating B&N classification. But WALS F20A actually returns `Some .isolating` for Indonesian (via `exclusivelyIsolating`), so `isAgglutinating` is in fact false. New theorem makes this visible: `morphProfile.fusion = .isolating` and `morphProfile.isAgglutinating = false`.
+- Out of scope: `LanguageStub` promotion (would unify `MorphProfile`'s identifier triple with `AckermanMalouf2013.LanguageData` — deferred since A&M2013 lacks ISO codes); provenance tracking for WALS-vs-default (the `.getD` mask remains, but the smart constructor confines it to one place).
+
+### 0.230.606 — Dissolve PhiSemantics + Zapotec Fragment; structural Finset proofs
+
+Final piece of the Theories/Interfaces/SyntaxSemantics/Minimalist/ dissolution. The directory is now empty and gone (5 files dissolved across 0.230.601–0.230.606).
+
+- Inline all PhiSemantics.lean content (oplus, lexComp, npow, PhiDomain, feature denotations, pronoun composition, LC) into Phenomena/Agreement/Studies/Toosarvandani2023.lean.
+- Inline Fragments/Zapotec/Basic.lean (ZapInd 6-atom domain + zapotecDomain instance) into the same study. The Fragment was Toosarvandani's didactic minimum, not real lexical data.
+- DELETE featureContainmentLicit + 4 _refl/_trans/_antisymm/_total lemmas — thin Bool wrappers over Finset.Subset; pccLicit now uses `decide (features obj ⊆ features subj)` directly, with pcc_refl/trans/antisymm/total proved via Finset.Subset lemmas.
+- DELETE Linglib/Theories/Interfaces/SyntaxSemantics/Minimalist/PhiSemantics.lean and Linglib/Fragments/Zapotec/Basic.lean. Both parent directories auto-deleted.
+- Drop both imports from Linglib.lean.
+
+Bib fix: toosarvandani-2023 had hallucinated pages (695-740) and DOI (a913065). Verified against PDF: pages 760-808, DOI 10.1353/lan.2023.a914193.
+
+Citation fixes throughout the study file based on PDF verification:
+- ⊕ operator is (50), not "(48)–(50)" as previous draft claimed.
+- Lexical Complementarity is (52), not (62). (62) is the LC-applied derivations of elder/human/animal pronouns.
+- ELDER/HUMAN/ANIMATE lexical entries are (58); schematic extensions are (59).
+- 3SG.{EL,HU,AN,IN} trees are (61), not (60). (60) is feature specs for 1/2 person.
+- PCC condition (86) verified verbatim ("A functional head F Agrees with two pronouns A and B...").
+- Header note added on absolute vs relative PCC (footnote 22) — (86) predicts same-rank licit; absolute PCC requires probe-relativization not formalized here.
+
+Proof discipline (per "no native_decide, keep it structural"):
+- Add structural lemmas: oplus_eq_image₂, oplus_subset (via Finset.image₂_subset), oplus_assoc (via Finset.image₂_assoc + Finset.union_assoc), npow_mono (via Finset.powerset_mono + erase_subset_erase), mem_oplus_iff, mem_oplus_of_mem, npow_union_mem, oplus_subset_npow, oplus_npow_self_subset.
+- Chain proofs (elderPron_sub_humanPron, humanPron_sub_animalPron, animalPron_sub_piDen) and oplus_assoc_elder rewritten structurally — no decide on Finset-of-Finset goals.
+- Empirical witnesses (elderPron_nonempty etc., elder_heterogeneous, elder_with_animal) proved via singleton_mem_oplus / doubleton_mem_oplus helpers — explicit `{x} = {x} ∪ {x}` decompositions through nested oplus.
+- third_restricts_elder proved via Finset.card_lt_card + ssubset_iff_subset_ne with structural witness {.i}.
+- Drop human_animal_in_humanLC (negative-side structural proof would require additional elderPron-structure lemmas with no consumer; can be re-added when justified).
+- Drop denotation_pcc_elder_human + denotation_pcc_full_chain aggregators (each conjunct is its own theorem; aggregators were aggregate-count style).
+- One scoped maxRecDepth=16000 remains (correct_1sg, a Finset equality with singularFilter ∘ oplus over the 6-atom domain). No native_decide anywhere.
+
+Directory state: Theories/Interfaces/SyntaxSemantics/Minimalist/ is GONE. All 5 sibling files dissolved cleanly across this session.
+
+### 0.230.605 — Dissolve VoiceTheta.lean
+
+Continuing the Interfaces/SyntaxSemantics/Minimalist/ dissolution. Deep audit revealed most content was zero-consumer packaging.
+
+- `VoiceFlavor.thetaRole` (the only widely-used method) → `Theories/Syntax/Minimalist/Voice.lean`, dropping the `_root_` prefix; lives next to `VoiceFlavor.defaultPhasal`.
+- `VerbCore.predictedSubjectTheta` (lexicalist cascade, real derivation) → `Theories/Semantics/Verb/VerbEntry.lean`, placed after `VerbCore.factivePresup` is defined to satisfy field-reference order.
+- DELETE: `selectedVoice`, `compatibleVoices`, `severingTheta`, `severingAccount`, `lexicalistAccount` (zero consumers; `LinkingTheory` packaging that no Studies file ever loaded).
+- DELETE: 3 unpacking-rfl theorems (`agentive_predicts_agent`, `causer_predicts_stimulus`, `nonthematic_predicts_none`) — Wood2015 has its own per-flavor verifications for the cases it cares about (reflexive/experiencer/expletive).
+- `git rm` Linglib/Theories/Interfaces/SyntaxSemantics/Minimalist/VoiceTheta.lean.
+- Update Wood2015 (drop import + `open Minimalist.VoiceTheta`).
+- Update Copula (drop import + `open Minimalist.VoiceTheta in`); the `(...).toFlavor.thetaRole` call now resolves directly via the Voice import.
+- Drop import from Linglib.lean.
+- Stale docstring references in Kratzer1996.lean and VoiceSemantics.lean updated to point at the new homes.
+- Voice.lean and VerbEntry.lean each gain `import …Interfaces.SyntaxSemantics.Linking` for ThetaRole — interim awkwardness pending Linking.lean's own move out of Interfaces/.
+- 1816-job targeted build green.
+
+Directory state: `Theories/Interfaces/SyntaxSemantics/Minimalist/` now holds 1 file (PhiSemantics.lean). Four of five sibling files dissolved; PhiSemantics is the heaviest remaining (also touches Fragments/Zapotec/Basic.lean and ~40 native_decide sites in Toosarvandani2023.lean).
+
 ### 0.230.605 — Phase 9: Mam + K'iche' join MayanLang registry; substrate exposes 2 falsifications
 
 Extends the cross-Mayan agreement consolidation (0.230.602, Phases 1-8) to two more languages, taking `MayanLang` from 5 to 7. The substrate immediately surfaced two pan-Mayan invariants that are NOT actually pan-Mayan once Mam (tripartite per @cite{scott-2023}) is in scope.

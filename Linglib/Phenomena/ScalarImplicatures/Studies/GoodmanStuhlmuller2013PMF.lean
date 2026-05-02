@@ -1,4 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
+import Linglib.Theories.Pragmatics.RSA.Silence
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
@@ -330,26 +331,251 @@ unfolding two normalisation chains and showing equality of finite sums. -/
 -- `rsa_predict` — manual discharge requires unfolding two normalisation chains
 -- and showing equality of finite sums.
 
-/-! ## §10. Findings — explicit `sorry`s pending PMF-shaped `rsa_predict`
+/-! ## §10. Silence-extended utterance types
+
+`RSA.WithSilence`, `RSA.liftMeaning`, and the simp lemmas live in
+`Theories/Pragmatics/RSA/Silence.lean` (generic substrate). Each consumer
+paper proves its own `cover_silent` from the generic `liftMeaning_none`
+simp lemma — the cover proof is paper-specific because `qualityOk`
+depends on the paper's observation type.
+
+Following @cite{bergen-levy-goodman-2016}, silence has universal extension
+(`liftMeaning` makes it true at every world), giving it the smallest lex
+value (`1/4` for our 4-world setting). This dissolves the "no `qOk`
+witness" defect that made the paper's `(access, word) ∉ {1/1, 2/1, 2/2,
+3/1, 3/2, 3/3}` cases vacuous. -/
+
+open RSA (WithSilence liftMeaning)
+
+/-- Universal cover: silence (`none`) is `qOk` at every obs because
+`liftMeaning m none _ = true` at every world. The cover hypothesis is
+automatically discharged for any `liftMeaning`-lifted model — paper-specific
+because `qualityOk` depends on `obsCompatible`. -/
+theorem cover_silent {U : Type*} (m : U → WorldState → Bool) (a : Access) (w : WorldState) :
+    ∀ obs ∈ (obsKernel a w).support,
+      ∃ u : WithSilence U, qualityOk (liftMeaning m) obs u := by
+  intro obs _
+  refine ⟨none, ?_⟩
+  simp only [qualityOk, RSA.liftMeaning_none, Bool.or_true, List.all_cons, List.all_nil,
+             Bool.and_true]
+
+/-! ## §10.1. Per-obs/per-world structural collapses
+
+These helpers express the deterministic-at-`.a3` structure of the obsKernel
+and speakerBelief as `pure` PMFs — enabling `marginalSpeaker` to collapse
+to a single `S1g` evaluation. They're independent of the meaning function. -/
+
+private theorem obsKernel_a3_s2_eq_pure : obsKernel .a3 .s2 = PMF.pure .o2a3 := by
+  apply PMF.normalize_eq_pure_of_singleton_support
+  intro y hy
+  cases y <;>
+    first
+      | exact absurd rfl hy
+      | (unfold obsKernelRaw Obs.access Obs.count Obs.sampleSize WorldState.toNat; simp)
+
+private theorem obsKernel_a3_s3_eq_pure : obsKernel .a3 .s3 = PMF.pure .o3a3 := by
+  apply PMF.normalize_eq_pure_of_singleton_support
+  intro y hy
+  cases y <;>
+    first
+      | exact absurd rfl hy
+      | (unfold obsKernelRaw Obs.access Obs.count Obs.sampleSize WorldState.toNat; simp)
+
+private theorem obsKernel_apply_zero_of_raw_zero {a : Access} {w : WorldState} {obs : Obs}
+    (h : obsKernelRaw a w obs = 0) : obsKernel a w obs = 0 := by
+  rw [obsKernel, PMF.normalize_apply, h, zero_mul]
+
+private theorem speakerBelief_o2a3_eq_pure :
+    speakerBelief .o2a3 = PMF.pure .s2 := by
+  apply PMF.posterior_eq_pure_of_singleton_score_support
+  intro s' hs'
+  right
+  refine obsKernel_apply_zero_of_raw_zero ?_
+  cases s' <;>
+    first
+      | exact absurd rfl hs'
+      | (unfold obsKernelRaw Obs.access Obs.count Obs.sampleSize WorldState.toNat; simp)
+
+private theorem speakerBelief_o3a3_eq_pure :
+    speakerBelief .o3a3 = PMF.pure .s3 := by
+  apply PMF.posterior_eq_pure_of_singleton_score_support
+  intro s' hs'
+  right
+  refine obsKernel_apply_zero_of_raw_zero ?_
+  cases s' <;>
+    first
+      | exact absurd rfl hs'
+      | (unfold obsKernelRaw Obs.access Obs.count Obs.sampleSize WorldState.toNat; simp)
+
+private theorem beliefReal_o2a3 (s : WorldState) :
+    beliefReal .o2a3 s = if s = .s2 then 1 else 0 := by
+  unfold beliefReal
+  rw [speakerBelief_o2a3_eq_pure, PMF.pure_apply]
+  split_ifs with h <;> simp
+
+private theorem beliefReal_o3a3 (s : WorldState) :
+    beliefReal .o3a3 s = if s = .s3 then 1 else 0 := by
+  unfold beliefReal
+  rw [speakerBelief_o3a3_eq_pure, PMF.pure_apply]
+  split_ifs with h <;> simp
+
+private theorem obsKernel_a3_s2_apply_diag : obsKernel .a3 .s2 .o2a3 = 1 := by
+  rw [obsKernel_a3_s2_eq_pure, PMF.pure_apply, if_pos rfl]
+
+private theorem obsKernel_a3_s3_apply_diag : obsKernel .a3 .s3 .o3a3 = 1 := by
+  rw [obsKernel_a3_s3_eq_pure, PMF.pure_apply, if_pos rfl]
+
+private theorem obsKernel_a3_s2_apply_off {b : Obs} (h : b ≠ .o2a3) :
+    obsKernel .a3 .s2 b = 0 := by
+  rw [PMF.apply_eq_zero_iff]
+  rw [obsKernel_a3_s2_eq_pure, PMF.support_pure]
+  simp [h]
+
+private theorem obsKernel_a3_s3_apply_off {b : Obs} (h : b ≠ .o3a3) :
+    obsKernel .a3 .s3 b = 0 := by
+  rw [PMF.apply_eq_zero_iff]
+  rw [obsKernel_a3_s3_eq_pure, PMF.support_pure]
+  simp [h]
+
+/-- `marginalSpeaker` at `.a3 .s2` collapses to `S1g` at the diagonal obs. -/
+private theorem marginalSpeaker_a3_s2_apply
+    {U : Type*} [Fintype U]
+    (meaning : U → WorldState → Bool)
+    (hCov : ∀ obs ∈ (obsKernel .a3 .s2).support, ∃ u : U, qualityOk meaning obs u)
+    (u : U) :
+    marginalSpeaker meaning 1 .a3 .s2 hCov u =
+      S1g meaning 1 .o2a3
+        (RSA.softmaxBelief_tsum_ne_zero_of_witness
+          (hCov .o2a3 (by rw [obsKernel_a3_s2_eq_pure]; simp)).choose_spec) u := by
+  unfold marginalSpeaker
+  rw [PMF.bindOnSupport_apply, tsum_eq_single Obs.o2a3]
+  · have h_ne : obsKernel .a3 .s2 Obs.o2a3 ≠ 0 := by
+      rw [obsKernel_a3_s2_apply_diag]; norm_num
+    rw [dif_neg h_ne, obsKernel_a3_s2_apply_diag, one_mul]
+  · intro b hb
+    exact mul_eq_zero.mpr (Or.inl (obsKernel_a3_s2_apply_off hb))
+
+private theorem marginalSpeaker_a3_s3_apply
+    {U : Type*} [Fintype U]
+    (meaning : U → WorldState → Bool)
+    (hCov : ∀ obs ∈ (obsKernel .a3 .s3).support, ∃ u : U, qualityOk meaning obs u)
+    (u : U) :
+    marginalSpeaker meaning 1 .a3 .s3 hCov u =
+      S1g meaning 1 .o3a3
+        (RSA.softmaxBelief_tsum_ne_zero_of_witness
+          (hCov .o3a3 (by rw [obsKernel_a3_s3_eq_pure]; simp)).choose_spec) u := by
+  unfold marginalSpeaker
+  rw [PMF.bindOnSupport_apply, tsum_eq_single Obs.o3a3]
+  · have h_ne : obsKernel .a3 .s3 Obs.o3a3 ≠ 0 := by
+      rw [obsKernel_a3_s3_apply_diag]; norm_num
+    rw [dif_neg h_ne, obsKernel_a3_s3_apply_diag, one_mul]
+  · intro b hb
+    exact mul_eq_zero.mpr (Or.inl (obsKernel_a3_s3_apply_off hb))
+
+/-! ## §10.2. `s1Score` evaluation via softmax-collapse
+
+At `.a3`, the speaker's belief is concentrated (`pure`) so the softmax
+collapses to the literal lex value. These helpers express `s1Score` for
+`liftMeaning`-lifted utterances at the diagonal observations. -/
+
+/-- `s1Score` is non-zero iff the quality predicate holds. -/
+private theorem s1Score_ne_zero_iff_qualityOk
+    {U : Type*} [Fintype U]
+    {meaning : U → WorldState → Bool} {α : ℝ} {obs : Obs} {u : U} :
+    s1Score meaning α obs u ≠ 0 ↔ qualityOk meaning obs u = true := by
+  unfold s1Score RSA.softmaxBelief
+  constructor
+  · intro h
+    by_contra hQ
+    rw [Bool.not_eq_true] at hQ
+    rw [if_neg (by simp [hQ])] at h
+    exact h rfl
+  · intro h
+    rw [if_pos h]
+    exact (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
+
+/-- For `liftMeaning`-lifted models, `s1Score` at `.o2a3` collapses to
+`ENNReal.ofReal (lexReal (liftMeaning m) u .s2)` when qOk-passing,
+`0` otherwise. -/
+private theorem s1Score_liftMeaning_o2a3_apply
+    {U : Type*} [Fintype U] [DecidableEq U]
+    (m : U → WorldState → Bool) (u : WithSilence U)
+    (h_pos : qualityOk (liftMeaning m) .o2a3 u = true →
+              0 < lexReal (liftMeaning m) u .s2) :
+    s1Score (liftMeaning m) 1 .o2a3 u =
+      if qualityOk (liftMeaning m) .o2a3 u
+      then ENNReal.ofReal (lexReal (liftMeaning m) u .s2) else 0 := by
+  show RSA.softmaxBelief (lexReal (liftMeaning m)) (beliefReal .o2a3) 1
+        (fun u' => qualityOk (liftMeaning m) .o2a3 u') u = _
+  rw [show beliefReal .o2a3 = (fun s => if s = .s2 then 1 else 0) from
+        funext beliefReal_o2a3]
+  exact RSA.softmaxBelief_concentrated_apply _ _ _ _ h_pos
+
+private theorem s1Score_liftMeaning_o3a3_apply
+    {U : Type*} [Fintype U] [DecidableEq U]
+    (m : U → WorldState → Bool) (u : WithSilence U)
+    (h_pos : qualityOk (liftMeaning m) .o3a3 u = true →
+              0 < lexReal (liftMeaning m) u .s3) :
+    s1Score (liftMeaning m) 1 .o3a3 u =
+      if qualityOk (liftMeaning m) .o3a3 u
+      then ENNReal.ofReal (lexReal (liftMeaning m) u .s3) else 0 := by
+  show RSA.softmaxBelief (lexReal (liftMeaning m)) (beliefReal .o3a3) 1
+        (fun u' => qualityOk (liftMeaning m) .o3a3 u') u = _
+  rw [show beliefReal .o3a3 = (fun s => if s = .s3 then 1 else 0) from
+        funext beliefReal_o3a3]
+  exact RSA.softmaxBelief_concentrated_apply _ _ _ _ h_pos
+
+/-! ## §10.3. Lex evaluations for the silence-extended quantifier model
+
+The four utterances of `WithSilence QUtt` have these extension cards:
+- `some QUtt.none_`: extension = `{.s0}`, card = 1, lex .s0 = 1.
+- `some QUtt.some_`: extension = `{.s1, .s2, .s3}`, card = 3, lex = 1/3.
+- `some QUtt.all`: extension = `{.s3}`, card = 1, lex .s3 = 1.
+- `none` (silence): extension = `{.s0, .s1, .s2, .s3}`, card = 4, lex = 1/4. -/
+
+private theorem extensionOf_qLifted_some_some_card :
+    (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.some_)).card = 3 := by decide
+
+private theorem extensionOf_qLifted_all_card :
+    (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.all)).card = 1 := by decide
+
+private theorem extensionOf_qLifted_silent_card :
+    (RSA.extensionOf (liftMeaning qMeaning) (none : WithSilence QUtt)).card = 4 := by decide
+
+private theorem lexReal_qLifted_some_some (s : WorldState)
+    (h : qMeaning .some_ s = true) :
+    lexReal (liftMeaning qMeaning) (some QUtt.some_) s = 1/3 := by
+  unfold lexReal
+  rw [if_pos (by simp; exact h), extensionOf_qLifted_some_some_card]
+  norm_num
+
+private theorem lexReal_qLifted_all_s3 :
+    lexReal (liftMeaning qMeaning) (some QUtt.all) .s3 = 1 := by
+  unfold lexReal
+  rw [if_pos (by decide), extensionOf_qLifted_all_card]
+  norm_num
+
+private theorem lexReal_qLifted_silent (s : WorldState) :
+    lexReal (liftMeaning qMeaning) none s = 1/4 := by
+  unfold lexReal
+  rw [if_pos (RSA.liftMeaning_none qMeaning s), extensionOf_qLifted_silent_card]
+  norm_num
+
+/-! ## §11. Findings — explicit `sorry`s pending PMF-shaped `rsa_predict`
 
 The 11 findings of `GoodmanStuhlmuller2013.lean`'s `findings` list translate
 to inequalities (or negated inequalities) on `L1` apply values. Each is a
 finite computation in `ℝ≥0∞` arithmetic that requires the PMF-shaped
-`rsa_predict` tactic (Task #36). Each is stated below with its full L1
-content and `sorry` per CLAUDE.md "Prefer `sorry` over weakening theorem
-statements".
+`rsa_predict` tactic (Task #36).
 
-The 4 quantifier findings can be stated cleanly via `qCover`. The 7
-lower-bound numeral findings carry the cover hypothesis as a parameter:
-no `lbCover` exists at any access (see `lb_defect_at_o0a3` for the
-honest no-witness theorem at `.a3`; the same `s0` defect blocks `.a1`
-and `.a2`). Instantiating these will require either an alternative L1
-that excludes `.s0` from the world prior or extending the model with
-upper-bound semantics.
+**With silence as an alternative**, the cover hypothesis is universally
+satisfiable (`cover_silent_*`), so the 5 previously-vacuous findings
+(`some_minimal_canceled`, `one_minimal_1v2_canceled`, `one_minimal_1v3_canceled`,
+`one_partial_1v3`, `one_partial_1v2_canceled`) become non-vacuously stateable
+and provable.
 
-The marginal-non-zero hypotheses (`hMarg`) are also taken as parameters;
-they are finite-arithmetic facts the PMF-shaped tactic will discharge
-alongside the inequalities. -/
+The marginal-non-zero hypotheses (`hMarg`) are taken as parameters;
+they are finite-arithmetic facts to be discharged alongside the inequalities. -/
 
 namespace Findings
 
@@ -579,6 +805,104 @@ theorem one_partial_1v2_canceled
   unfold L1 worldPrior
   rw [gt_iff_lt, not_lt, PMF.posterior_le_iff_kernel_le_of_uniform]
   exact marginalSpeaker_lbOne_a2_s1_le_s2 hCov
+
+/-! ### Silence-extended findings (prototype)
+
+Demonstrates the migration target: each finding restated using `WithSilence`
++ `liftMeaning` + `cover_silent`. The cover hypothesis is automatically
+satisfiable, eliminating vacuity. -/
+
+/-- Finding 1 with silence-extended utterance space: at full access, `some`
+favors `s2 > s3`. The "scalar implicature" is preserved because at
+infeasible obs (where silence dominates) the listener already conditioned
+on hearing `.some_`, not silence. -/
+theorem some_full_implicature_sil
+    (hMarg : PMF.marginal
+              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
+                          (cover_silent qMeaning .a3 w))
+              worldPrior (some QUtt.some_) ≠ 0) :
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s2 >
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s3 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  -- Goal: marginalSpeaker .a3 .s3 .. (some .some_) < marginalSpeaker .a3 .s2 .. (some .some_)
+  rw [marginalSpeaker_a3_s2_apply, marginalSpeaker_a3_s3_apply]
+  -- Per-utterance s1Score evaluations (post-softmax-collapse)
+  have h_o2_some : s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.some_) =
+                    ENNReal.ofReal (1/3 : ℝ) := by
+    rw [s1Score_liftMeaning_o2a3_apply _ _ (fun _ => by
+          rw [lexReal_qLifted_some_some _ (by decide)]; norm_num),
+        if_pos (by decide), lexReal_qLifted_some_some _ (by decide)]
+  have h_o2_silent : s1Score (liftMeaning qMeaning) 1 .o2a3 (none : WithSilence QUtt) =
+                      ENNReal.ofReal (1/4 : ℝ) := by
+    rw [s1Score_liftMeaning_o2a3_apply _ _ (fun _ => by
+          rw [lexReal_qLifted_silent]; norm_num),
+        if_pos (by simp [qualityOk]), lexReal_qLifted_silent]
+  have h_o2_none : s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.none_) = 0 := by
+    rw [s1Score_liftMeaning_o2a3_apply _ _ (fun h => absurd h (by decide)),
+        if_neg (by decide)]
+  have h_o2_all : s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.all) = 0 := by
+    rw [s1Score_liftMeaning_o2a3_apply _ _ (fun h => absurd h (by decide)),
+        if_neg (by decide)]
+  have h_o3_some : s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.some_) =
+                    ENNReal.ofReal (1/3 : ℝ) := by
+    rw [s1Score_liftMeaning_o3a3_apply _ _ (fun _ => by
+          rw [lexReal_qLifted_some_some _ (by decide)]; norm_num),
+        if_pos (by decide), lexReal_qLifted_some_some _ (by decide)]
+  have h_o3_all : s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.all) =
+                   ENNReal.ofReal (1 : ℝ) := by
+    rw [s1Score_liftMeaning_o3a3_apply _ _ (fun _ => by
+          rw [lexReal_qLifted_all_s3]; norm_num),
+        if_pos (by decide), lexReal_qLifted_all_s3]
+  have h_o3_silent : s1Score (liftMeaning qMeaning) 1 .o3a3 (none : WithSilence QUtt) =
+                      ENNReal.ofReal (1/4 : ℝ) := by
+    rw [s1Score_liftMeaning_o3a3_apply _ _ (fun _ => by
+          rw [lexReal_qLifted_silent]; norm_num),
+        if_pos (by simp [qualityOk]), lexReal_qLifted_silent]
+  have h_o3_none : s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.none_) = 0 := by
+    rw [s1Score_liftMeaning_o3a3_apply _ _ (fun h => absurd h (by decide)),
+        if_neg (by decide)]
+  -- S1g = PMF.normalize, apply structural lemma
+  show (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .o3a3) _ _) (some QUtt.some_) <
+        (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .o2a3) _ _) (some QUtt.some_)
+  apply PMF.normalize_lt_of_apply_eq_of_sum_lt
+    (a := some QUtt.some_)
+  · -- numerator equal
+    rw [h_o2_some, h_o3_some]
+  · -- g .some_ ≠ 0
+    rw [h_o2_some]; exact (ENNReal.ofReal_ne_zero_iff.mpr (by norm_num))
+  · -- g .some_ ≠ ⊤
+    rw [h_o2_some]; exact ENNReal.ofReal_ne_top
+  · -- tsum g (.o2a3) < tsum f (.o3a3): 7/12 < 19/12
+    rw [tsum_fintype, tsum_fintype]
+    -- Sum over Fintype (WithSilence QUtt) = 4 utterances
+    have h_sum_o2 :
+        (∑ u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .o2a3 u) =
+          ENNReal.ofReal (7/12 : ℝ) := by
+      show s1Score (liftMeaning qMeaning) 1 .o2a3 none +
+            (s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.none_) +
+              (s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.some_) +
+                (s1Score (liftMeaning qMeaning) 1 .o2a3 (some QUtt.all) + 0))) = _
+      rw [h_o2_silent, h_o2_none, h_o2_some, h_o2_all]
+      simp only [add_zero, zero_add]
+      rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      congr 1; norm_num
+    have h_sum_o3 :
+        (∑ u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .o3a3 u) =
+          ENNReal.ofReal (19/12 : ℝ) := by
+      show s1Score (liftMeaning qMeaning) 1 .o3a3 none +
+            (s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.none_) +
+              (s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.some_) +
+                (s1Score (liftMeaning qMeaning) 1 .o3a3 (some QUtt.all) + 0))) = _
+      rw [h_o3_silent, h_o3_none, h_o3_some, h_o3_all]
+      simp only [add_zero, zero_add]
+      rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+          ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+      congr 1; norm_num
+    rw [h_sum_o2, h_sum_o3]
+    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
 end Findings
 
