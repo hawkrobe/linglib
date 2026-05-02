@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.605 — Phase 9: Mam + K'iche' join MayanLang registry; substrate exposes 2 falsifications
+
+Extends the cross-Mayan agreement consolidation (0.230.602, Phases 1-8) to two more languages, taking `MayanLang` from 5 to 7. The substrate immediately surfaced two pan-Mayan invariants that are NOT actually pan-Mayan once Mam (tripartite per @cite{scott-2023}) is in scope.
+
+- **`MayanLang.isStandard : MayanLang → Bool`** added to `Mayan/Params.lean` — false only for Mam. Scopes the standard-ergative invariants around Mam's tripartite analysis.
+- **Mam refactor** (`Mam/Agreement.lean`): local `MamPersonNumber` replaced with `Mayan.PersonNumber`; `mamSetAExponent`/`mamSetBExponent`/etc. dropped per-language prefix. + `setALinearity`, `setBLinearity`, `extractionProfile`. `Phenomena/Agreement/Studies/Scott2023.lean` consumer updated.
+- **K'iche' refactor** (`Kiche/Agreement.lean`): added canonical `setAExponent`/`setBExponent : Mayan.PersonNumber → String` wrappers (delegating to existing `setBMarker`/`setAPreC` via `phi`-projection; preserves K'iche'-specific formality dimension). + missing `absPosition := .high` (bug fix). + `setALinearity`, `setBLinearity`, `extractionProfile`, `p3sg_abs_null`. Normalized `"Ø"` → `"∅"`.
+- **Cross-Mayan theorems sharpened** (`Phenomena/Ergativity/MayanAlignment.lean`):
+    - `mayan_p3sg_abs_null` now requires `lang.isStandard = true` — Mam's default Set B `tz'=` falsifies it.
+    - `mayan_perfective_ergative` now requires `lang.isStandard = true` — Mam's tripartite `caseMam .Perf .P = .acc` falsifies it.
+    - **NEW** falsification theorems: `mam_set_b_3sg_not_null`, `mam_is_tripartite_in_perfective`.
+    - `mayan_set_a_uniformly_prefixal` survives unchanged (Mam Set A IS prefixal).
+    - `mayan_tada` survives unchanged in CMP2014.lean (Mam IS HIGH-ABS).
+
+**Citations verified verbatim against primary sources** (PDFs of @cite{mondloch-2017} and @cite{scott-2023}):
+
+- K'iche' AF morpheme: was `-Vw` (wrong) → `-n` (Mondloch 2017 Lesson 22 schema p. 99). The `-n` is the antipassive marker doing double duty in AF contexts (Lessons 21 vs 22 — alternation is syntactic, not morphological).
+- Mam AF morpheme: was `-n` → `-(a)n + -ta` (Scott 2023 §2.5.4.1 ex. 169: `b'yo-n-ta` 'hit-AP-AF'). Morphologically distinct from K'iche'.
+- Mam "ch. 5" reference: hallucinated (Scott has only 4 chapters) → §2.5.4.1 + §2.7.1.
+
+**Build**: green at 5683 jobs.
+
+**Out of scope**: Yukatek (no consolidated Agreement.lean shape, `caseYukatek` not yet in Params); Ch'orti' (Zavala 2017 §4 calls it the actual canonical tripartite Mayan vs Scott's SJA-Mam-only analysis — could justify a different `isStandard` partition later).
+
+### 0.230.604 — Dissolve TopologicalMapping.lean into Longobardi2005
+
+Continuing the Interfaces/SyntaxSemantics/Minimalist/ dissolution. Deep audit confirmed wholesale move into the existing study file (the file's entire content was Longobardi 2005 §§1–10 reformulated with explicit equation numbers).
+
+- Inline 18 declarations (NominalHeadClass, ObjectReferential/CanBePredicate/KindReferential/RaisingObligatory, propernessRank + raising_monotone, NominalConfig + axioms (52)/(53)/(54), theorems (55)/(56)/(41), proper_names_must_raise/common_nouns_need_not_raise, ArticleType + ExpletiveBlocksKindReading, proper_name_in_d_is_constant) into Phenomena/Reference/Studies/Longobardi2005.lean as new §1–§7. Existing §1–§6 renumber to §8–§13.
+- DELETE table_28 (decide-readback over 4 stipulated `def`s) and core_generalization (`Iff.rfl` after `isConstant := dHasReferentialContent`). Section comments retain (28) and (33) provenance.
+- DELETE 2 duplicates: study's last_resort_proper_names ≡ TM's proper_names_must_raise (and likewise for common_nouns); kept TM versions.
+- `git rm` Linglib/Theories/Interfaces/SyntaxSemantics/Minimalist/TopologicalMapping.lean.
+- Drop import from Linglib.lean.
+- Rakosi2019.lean unaffected — its `core_generalization` is a name collision (different theorem about reciprocals/reflexives, not Longobardi); the original triage's "two consumers" was wrong. Single real consumer was Longobardi2005 itself.
+- Reference/Basic.lean unchanged — the §7 bridge is a thin study-side recap of properName_isDirectlyReferential + properName_constantCharacter, not new substrate.
+- 1121-job targeted build green.
+
+Directory state: Theories/Interfaces/SyntaxSemantics/Minimalist/ now holds 2 files (PhiSemantics, VoiceTheta) — both have refined moveplans from the parallel deep audits, awaiting execution.
+
 ### 0.230.604 — KL-based PMF.jsd refactor + ΔP deletion (no consumers)
 
 Two architectural cleanups:

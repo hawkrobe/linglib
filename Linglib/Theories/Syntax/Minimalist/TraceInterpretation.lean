@@ -1,36 +1,25 @@
-/-
-# Minimalism-Montague Semantics Interface
+import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Theories.Semantics.Composition.Modification
+
+/-!
+# Trace Interpretation
 @cite{heim-kratzer-1998}
 
 Traces left by movement are interpreted as variables bound by
-λ-abstraction at the landing site.
-
-## Architecture
-
-This module bridges Minimalist syntax and Montague semantics:
-
-```
-SyntacticObjects.lean Montague/Variables.lean
-       ↓ ↓
-    SyntacticObject with Assignment functions
-    mkTrace/isTrace ↓
-              ↘ ↙
-         Minimalism/Bridge/Interface.lean
-                     ↓
-         interpTrace: traces → g(n)
-         predicateAbstraction: λ-bind at landing site
-```
+λ-abstraction at the landing site (H&K Ch. 5, 7).
 
 ## Rules
 
-1. Trace Interpretation: A trace t_n is interpreted as g(n)
+1. Trace Interpretation: a trace t_n is interpreted as g(n)
    ⟦t_n⟧^g = g(n)
 
-2. Predicate Abstraction: At the landing site of movement,
+2. Predicate Abstraction: at the landing site of movement,
    λ-abstract over the trace's index
-   ⟦[CP Op_n... t_n...]⟧^g = λx. ⟦... t_n...⟧^{g[n↦x]}
+   ⟦[CP Op_n ... t_n ...]⟧^g = λx. ⟦... t_n ...⟧^{g[n↦x]}
 
-## Trace Convention
+## Trace convention
 
 Traces are encoded as `SyntacticObject.leaf` with id ≥ 10000.
 The trace index is `id - 10000`. Created via `mkTrace n`,
@@ -38,36 +27,25 @@ detected via `isTrace so`.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
-import Linglib.Theories.Semantics.Composition.Modification
-
-namespace Minimalist.Semantics
+namespace Minimalist
 
 open Core.IntensionalLogic Core.IntensionalLogic.Variables Semantics.Composition.Modification
-open Minimalist
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)
 -- ============================================================================
 
-/--
-Interpret a trace as a variable: ⟦t_n⟧^g = g(n)
+/-- Interpret a trace as a variable: ⟦t_n⟧^g = g(n).
 
-Heim and Kratzer's trace interpretation rule: traces left by movement
-are semantically identical to pronouns. Both are interpreted by looking up
-the assignment function at the appropriate index.
+    Heim and Kratzer's trace interpretation rule: traces and pronouns
+    are semantically identical, looked up via the assignment function.
+    The trace index n matches the binder (λ-abstraction) at the
+    landing site of movement.
 
-The trace index n should match the index of the binder (λ-abstraction)
-at the landing site of movement.
--/
-def interpTrace {F : Frame} (n : ℕ) : DenotG F .e :=
+    `abbrev` because trace interpretation IS pronoun interpretation —
+    the only difference is the syntactic source. -/
+abbrev interpTrace {F : Frame} (n : ℕ) : DenotG F .e :=
   interpPronoun n
-
-/-- Traces and pronouns have the same interpretation -/
-theorem interpTrace_eq_interpPronoun {F : Frame} (n : ℕ) :
-    interpTrace (F := F) n = interpPronoun n := rfl
 
 -- ============================================================================
 -- Predicate Abstraction (H&K Ch. 7)
@@ -168,16 +146,7 @@ def getTraceIndex : SyntacticObject → Option ℕ
 -- Theorems about Movement Interpretation
 -- ============================================================================
 
-/--
-Identity of indiscernibles for traces:
-traces with the same index have the same interpretation.
--/
-theorem trace_index_determines_meaning {F : Frame} (n : ℕ)
-    : interpTrace (F := F) n = interpTrace n := rfl
-
-/--
-Different indices yield independent interpretations.
--/
+/-- Different indices yield independent interpretations. -/
 theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
     (x : F.Entity) (g : Core.Assignment F.Entity)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
@@ -223,4 +192,4 @@ theorem relativePM_comm {F : Frame} (n : ℕ)
   simp only [relativePM, predicateModification_comm]
 
 
-end Minimalist.Semantics
+end Minimalist

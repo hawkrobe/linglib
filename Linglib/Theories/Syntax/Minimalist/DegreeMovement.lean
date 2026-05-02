@@ -2,32 +2,20 @@ import Linglib.Theories.Syntax.Minimalist.LateMerger
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
-# Degree Movement: Minimalism–Degree-Semantics Interface
+# Degree Movement
 @cite{bhatt-pancheva-2004} @cite{heim-2000} @cite{williams-1974}
 
-## What this file is about
-
 The interpretation of degree clauses requires them to take scope at LF.
-Their *syntactic* placement is constrained by late merger
-(@cite{bhatt-pancheva-2004}); their *semantic* scope is constrained by
+Their syntactic placement is constrained by late merger
+(@cite{bhatt-pancheva-2004}); their semantic scope is constrained by
 the Heim-Kennedy Constraint (@cite{heim-2000}). Both constraints
 relate the LF position of a DegP to the LF position of any
-quantificational DP whose trace appears inside it. This file is the
-bridge: it imports late merger from `Theories/Syntax/Minimalism/`
-and the comparative operator from `Theories/Semantics/Degree/`, and
-expresses the constraints that reach across the two.
+quantificational DP whose trace appears inside it.
 
-## What lives where
-
-- **Syntactic late merger** (`Theories/Syntax/Minimalism/LateMerger.lean`):
-  `lateMergerBleeds`, polymorphic over admissibility. Knows nothing
-  about degrees.
-- **Comparative operator** (`Theories/Semantics/Degree/Comparative.lean`):
-  `sComparative`, anti-additive on degree sets. Knows nothing about
-  syntax.
-- **This file**: degree-clause late-merger admissibility, the
-  Heim-Kennedy Constraint as a structural filter, and the Williams
-  correlation as a derivable corollary.
+Specializes `lateMergerBleeds` for degree clauses, formalizes the
+Heim-Kennedy Constraint as a structural filter, derives the Williams
+correlation as a corollary, and adds the @cite{bhatt-takahashi-2011}
+§4 (43) base-position generalization.
 
 ## Heim-Kennedy Constraint (@cite{heim-2000})
 
@@ -49,7 +37,7 @@ B&P §5.2 derives this from HKC + the assumption that intensional
 subjects bind into degree predicates.
 -/
 
-namespace Minimalist.Semantics.DegreeMovement
+namespace Minimalist.DegreeMovement
 
 open Minimalist
 
@@ -214,4 +202,4 @@ theorem isBhattTakahashiScopeLicit_base_below_DegP
     IsBhattTakahashiScopeLicit ⟨degH, qpH, qpBase, qpBindsDeg⟩ :=
   h
 
-end Minimalist.Semantics.DegreeMovement
+end Minimalist.DegreeMovement

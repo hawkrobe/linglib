@@ -56,6 +56,7 @@ both paths.
 
 namespace Scott2023
 
+open Fragments.Mayan (PersonNumber)
 open Minimalist Fragments.Mayan.Mam
 
 -- ============================================================================
@@ -69,7 +70,7 @@ open Minimalist Fragments.Mayan.Mam
     `FeatureBundle` and `Cat` for use with `spellout`. -/
 
 /-- PhiFeature list per Mam person-number cell. -/
-def mamToPhiFeatures : MamPersonNumber → List PhiFeature
+def mamToPhiFeatures : PersonNumber → List PhiFeature
   | .p1sg => [.person .first, .number .sg]
   | .p2sg => [.person .second, .number .sg]
   | .p3sg => [.person .third, .number .sg]
@@ -81,7 +82,7 @@ def mamToPhiFeatures : MamPersonNumber → List PhiFeature
     yield the morphological exponent (@cite{scott-2023} Table 2.8).
     All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab mamPersonNumbers mamToPhiFeatures mamSetAExponent (some .v)
+  makePersonVocab PersonNumber.all mamToPhiFeatures setAExponent (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
     yield the morphological exponent (@cite{scott-2023} Table 3.5).
@@ -90,7 +91,7 @@ def setAVocab : Vocabulary :=
     (no features, tz'=) which surfaces when no specific entry
     matches — also catching the blocked-Infl-probe case in transitives. -/
 def setBVocab : Vocabulary :=
-  makePersonVocab mamSetBSpecificCells mamToPhiFeatures mamSetBExponent (some .T) ++
+  makePersonVocab setBSpecificCells mamToPhiFeatures setBExponent (some .T) ++
     [{ features := [], exponent := defaultSetB, context := some .T }]
 
 /-- Which Minimalist head φ-Agrees with each argument position.

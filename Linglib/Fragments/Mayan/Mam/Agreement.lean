@@ -2,6 +2,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # Mam Agreement Fragment @cite{scott-2023}
@@ -74,31 +75,16 @@ with neutral patterns in dependent clauses (England 1983b;
 
 namespace Fragments.Mayan.Mam
 
+open Fragments.Mayan (PersonNumber MarkerLinearity)
+
 -- ============================================================================
--- § 1: Person-Number Inventory (theory-neutral cells)
+-- § 1: Person-Number Inventory
 -- ============================================================================
 
-/-- Person-number combinations for Mam agreement paradigms.
-    Six cells: three persons × two numbers. Mirrors the Kaqchikel
-    `PersonNumber` structure for cross-Mayan helper compatibility. -/
-inductive MamPersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
-
-/-- All six person-number values. -/
-def mamPersonNumbers : List MamPersonNumber :=
-  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
-
-/-- Person value as `PersonLevel`. -/
-def MamPersonNumber.person : MamPersonNumber → Features.Prominence.PersonLevel
-  | .p1sg | .p1pl => .first
-  | .p2sg | .p2pl => .second
-  | .p3sg | .p3pl => .third
-
-/-- Is this person-number [+plural]? -/
-def MamPersonNumber.isPlural : MamPersonNumber → Bool
-  | .p1pl | .p2pl | .p3pl => true
-  | .p1sg | .p2sg | .p3sg => false
+-- Person-number values come from the pan-Mayan `Fragments.Mayan.PersonNumber`
+-- enum (six cells: three persons × two numbers). Projections `.person`,
+-- `.isPlural`, and the full inventory `PersonNumber.all` live in
+-- `Mayan/Params.lean`.
 
 -- ============================================================================
 -- § 2: Agreement Marker Paradigms (theory-neutral)
@@ -108,7 +94,7 @@ def MamPersonNumber.isPlural : MamPersonNumber → Bool
     cross-reference the transitive agent (@cite{scott-2023}, Table 2.8).
     All six cells have distinct exponents (with t- syncretism for 2sg/3sg
     and ky- syncretism for 2pl/3pl). -/
-def mamSetAExponent : MamPersonNumber → String
+def setAExponent : PersonNumber → String
   | .p1sg => "n-/w-"
   | .p2sg => "t-"
   | .p3sg => "t-"
@@ -125,9 +111,9 @@ def mamSetAExponent : MamPersonNumber → String
     surface via the Elsewhere fallback. The total function below
     returns "tz'=" for both, but downstream Vocabulary construction
     should treat them as derived from the Elsewhere entry. See
-    `mamSetBSpecificCells` for the cells that have actual specific
+    `setBSpecificCells` for the cells that have actual specific
     Vocabulary Items in the DM analysis. -/
-def mamSetBExponent : MamPersonNumber → String
+def setBExponent : PersonNumber → String
   | .p1sg => "chin"
   | .p2sg => "tz'="
   | .p3sg => "tz'="
@@ -138,7 +124,7 @@ def mamSetBExponent : MamPersonNumber → String
 /-- The four Set B cells that have specific Vocabulary Items (per
     Scott's DM analysis). 2sg and 3sg are NOT included — they fall
     through to the Elsewhere entry. -/
-def mamSetBSpecificCells : List MamPersonNumber :=
+def setBSpecificCells : List PersonNumber :=
   [.p1sg, .p1pl, .p2pl, .p3pl]
 
 /-- The default (Elsewhere) Set B marker. Surfaces in transitives when
@@ -408,20 +394,46 @@ def absPosition : Fragments.Mayan.ABSPosition := .high
 theorem mam_case_locus :
     Fragments.Mayan.toCaseLocus absPosition = .absNom := rfl
 
+/-- Set A linearity: prefixal (per @cite{scott-2023} ch. 2; pan-Mayan). -/
+def setALinearity : MarkerLinearity := .prefixal
+
+/-- Set B linearity: prefixal (HIGH-ABS Mam morphology; pre-stem on Infl,
+    per @cite{scott-2023} §2.5.1). -/
+def setBLinearity : MarkerLinearity := .prefixal
+
+/-- Mam's extraction profile: AF morphology is productive in SJA Mam
+    (@cite{scott-2023} §2.5.4.1 ex. 169 + §2.7.1 syntactic ergativity).
+    The construction combines the antipassive suffix *-(a)n* with the
+    AF-specific suffix *-ta* (e.g., `b'yo-n-ta` 'hit-AP-AF'), making
+    SJA Mam's AF morphologically distinct from K'iche''s (which uses
+    bare antipassive *-n* in AF contexts per @cite{mondloch-2017}
+    Lesson 22 — no extra AF morpheme).
+
+    For the cross-Mayan typology, we mark the strategy as
+    `agentFocusAlternation` to parallel Q'anjob'al/Kaqchikel/K'iche';
+    the morphological discontinuity (`-(a)n` + `-ta` vs bare `-n`)
+    is noted but doesn't surface in the strategy enum. -/
+def extractionProfile : Interfaces.ExtractionProfile :=
+  { language := "Mam (SJA)"
+  , strategy := .agentFocusAlternation
+  , markedPositions := [.subject]
+  , distinguishesPosition := true
+  , notes := "AF (-(a)n + -ta) for A-extraction; HIGH-ABS tripartite Mam (Scott 2023 §2.5.4.1)" }
+
 -- ============================================================================
 -- § 8: Theory-Neutral Marker Verification
 -- ============================================================================
 
 /-- Set A 1SG marker. -/
-theorem setA_1sg : mamSetAExponent .p1sg = "n-/w-" := rfl
+theorem setA_1sg : setAExponent .p1sg = "n-/w-" := rfl
 
 /-- Set A 3SG marker is "t-" (the default singular Set A — syncretic with 2SG). -/
-theorem setA_3sg : mamSetAExponent .p3sg = "t-" := rfl
+theorem setA_3sg : setAExponent .p3sg = "t-" := rfl
 
 /-- Set B 1SG marker is "chin". -/
-theorem setB_1sg : mamSetBExponent .p1sg = "chin" := rfl
+theorem setB_1sg : setBExponent .p1sg = "chin" := rfl
 
 /-- Set B 3SG marker is the default "tz'=". -/
-theorem setB_3sg : mamSetBExponent .p3sg = defaultSetB := rfl
+theorem setB_3sg : setBExponent .p3sg = defaultSetB := rfl
 
 end Fragments.Mayan.Mam

@@ -2,6 +2,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Word
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # K'iche' Agreement Fragment @cite{mondloch-2017}
@@ -106,7 +107,7 @@ abbrev phi (p : Features.Prominence.PersonLevel) (n : Number) : PhiFeatures :=
 def setBMarker : PhiFeatures → String
   | ⟨.first,  .Sing, .informal⟩ => "in-"
   | ⟨.second, .Sing, .informal⟩ => "at-"
-  | ⟨.third,  .Sing, .informal⟩ => "Ø"
+  | ⟨.third,  .Sing, .informal⟩ => "∅"
   | ⟨.first,  .Plur, .informal⟩ => "oj-"
   | ⟨.second, .Plur, .informal⟩ => "ix-"
   | ⟨.third,  .Plur, .informal⟩ => "ee-"
@@ -241,8 +242,8 @@ theorem kiche_not_tripartite :
 theorem setB_1sg : setBMarker (phi .first .Sing) = "in-" := rfl
 /-- 2SG absolutive: at- -/
 theorem setB_2sg : setBMarker (phi .second .Sing) = "at-" := rfl
-/-- 3SG absolutive: Ø -/
-theorem setB_3sg : setBMarker (phi .third .Sing) = "Ø" := rfl
+/-- 3SG absolutive: ∅ (null morpheme) -/
+theorem setB_3sg : setBMarker (phi .third .Sing) = "∅" := rfl
 /-- 1PL absolutive: oj- -/
 theorem setB_1pl : setBMarker (phi .first .Plur) = "oj-" := rfl
 /-- 2PL absolutive: ix- -/
@@ -346,5 +347,58 @@ theorem pronoun_setB_correspondence :
     independentPronoun (phi .first .Plur)  = "oj"  ∧
     independentPronoun (phi .second .Plur) = "ix"  :=
   ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 12: Cross-Mayan Canonical Wrappers
+-- ============================================================================
+
+open Fragments.Mayan (PersonNumber MarkerLinearity)
+
+/-- K'iche' is HIGH-ABS: Set B markers appear pre-stem on Infl. -/
+def absPosition : Fragments.Mayan.ABSPosition := .high
+
+/-- Set A linearity: prefixal (per Mondloch Lessons 7-8). -/
+def setALinearity : MarkerLinearity := .prefixal
+
+/-- Set B linearity: prefixal (HIGH-ABS K'ichean morphology). -/
+def setBLinearity : MarkerLinearity := .prefixal
+
+/-- Canonical Set A exponent table (pre-consonantal allomorph; informal),
+    keyed on `Mayan.PersonNumber` for cross-Mayan consumption. -/
+def setAExponent : PersonNumber → String
+  | .p1sg => setAPreC (phi .first  .Sing)
+  | .p2sg => setAPreC (phi .second .Sing)
+  | .p3sg => setAPreC (phi .third  .Sing)
+  | .p1pl => setAPreC (phi .first  .Plur)
+  | .p2pl => setAPreC (phi .second .Plur)
+  | .p3pl => setAPreC (phi .third  .Plur)
+
+/-- Canonical Set B exponent table (informal) keyed on `Mayan.PersonNumber`. -/
+def setBExponent : PersonNumber → String
+  | .p1sg => setBMarker (phi .first  .Sing)
+  | .p2sg => setBMarker (phi .second .Sing)
+  | .p3sg => setBMarker (phi .third  .Sing)
+  | .p1pl => setBMarker (phi .first  .Plur)
+  | .p2pl => setBMarker (phi .second .Plur)
+  | .p3pl => setBMarker (phi .third  .Plur)
+
+/-- 3rd person absolutive is null — pan-Mayan invariant per
+    @cite{kaufman-norman-1984} Table 8. -/
+theorem p3sg_abs_null : setBExponent .p3sg = "∅" := rfl
+
+/-- K'iche''s extraction profile: Agent-Focus Antipassive is productive
+    (@cite{mondloch-2017} Lesson 22, with parallel coverage at Lessons
+    30 + 33 for radical TV and perfect aspect). The voice marker is
+    *-n* (shared morphologically with the Absolutive Antipassive of
+    Lesson 21; the AF vs absolutive-antipassive alternation is
+    *syntactic* — both arguments overt for AF, object suppressed for
+    absolutive antipassive — not morphological). HIGH-ABS K'ichean,
+    structurally analogous to Kaqchikel. -/
+def extractionProfile : Interfaces.ExtractionProfile :=
+  { language := "K'iche'"
+  , strategy := .agentFocusAlternation
+  , markedPositions := [.subject]
+  , distinguishesPosition := true
+  , notes := "AF (-n) for A-extraction; HIGH-ABS K'ichean (Mondloch 2017 Lesson 22)" }
 
 end Fragments.Mayan.Kiche

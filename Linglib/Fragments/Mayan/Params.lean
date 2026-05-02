@@ -430,18 +430,38 @@ inductive MarkerLinearity where
 -- § 8: Mayan Language Registry + caseAt Dispatcher
 -- ============================================================================
 
-/-- The Mayan languages with consolidated Fragment files. Mam, K'iche',
-    and Yukatek have substrate `case*` functions but not yet the full
-    consolidated Agreement.lean shape; they're added to the registry
-    in a later phase. -/
+/-- The Mayan languages with consolidated Fragment files. Yukatek has
+    substrate work pending and is not yet in the registry; it'll be
+    added once `caseYukatek` and the consolidated Agreement.lean shape
+    are in place. -/
 inductive MayanLang where
-  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil
+  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil | Mam | Kiche
   deriving DecidableEq, Repr
 
 /-- All registered Mayan languages, useful for cross-Mayan typology
     theorems quantified by `∀ lang ∈ MayanLang.all`. -/
 def MayanLang.all : List MayanLang :=
-  [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil]
+  [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil, .Mam, .Kiche]
+
+/-- The Mayan languages with the **standard ergative-absolutive base**
+    (perfective ergative; Set B 3sg null per K&N reconstruction).
+
+    Mam is the **exception**: per @cite{scott-2023}, San Juan Atitán
+    Mam is morphologically **tripartite** (S, A, P each receive
+    distinct case and agreement), and its Set B 3sg surfaces as the
+    default `tz'=` form rather than null. The substrate exposes this
+    as a falsification of pan-Mayan invariants when Mam is in scope —
+    `mayan_p3sg_abs_null` and `mayan_perfective_ergative` quantify
+    only over `isStandard = true` languages.
+
+    Whether Mam is "really" tripartite vs ergative-with-neutral-objects
+    is a contested analytical question (cf. England 1983b vs Scott
+    2023; Zavala 2017 §4 calls Ch'orti' the only tripartite Mayan).
+    The substrate adopts Scott's analysis as recorded in
+    `Mam/Agreement.lean`. -/
+def MayanLang.isStandard : MayanLang → Bool
+  | .Mam => false
+  | _    => true
 
 /-- Aspect-driven case assignment dispatched by language. Routes to the
     existing per-branch `case*` substrate functions; the dispatcher is
@@ -453,5 +473,7 @@ def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Co
   | .Kaqchikel, asp, r => caseKaqchikel asp r
   | .Tseltal,   asp, r => caseTseltalan asp r
   | .Tsotsil,   asp, r => caseTseltalan asp r
+  | .Mam,       asp, r => caseMam asp r
+  | .Kiche,     asp, r => caseKiche asp r
 
 end Fragments.Mayan

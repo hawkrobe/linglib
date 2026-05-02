@@ -3,6 +3,8 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Tsotsil.Agreement
+import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
 # Cross-Mayan Alignment Typology
@@ -58,6 +60,8 @@ def setBExponentOf : MayanLang → Fragments.Mayan.ExponentTable
   | .Kaqchikel => Fragments.Mayan.Kaqchikel.setBExponent
   | .Tseltal   => Fragments.Mayan.Tseltal.setBExponent
   | .Tsotsil   => Fragments.Mayan.Tsotsil.setBExponent
+  | .Mam       => Fragments.Mayan.Mam.setBExponent
+  | .Kiche     => Fragments.Mayan.Kiche.setBExponent
 
 /-- Set A exponent table (canonical / pre-consonantal allomorph) indexed
     by Mayan language. -/
@@ -67,6 +71,8 @@ def setAExponentOf : MayanLang → Fragments.Mayan.ExponentTable
   | .Kaqchikel => Fragments.Mayan.Kaqchikel.setAExponent
   | .Tseltal   => Fragments.Mayan.Tseltal.setAExponent
   | .Tsotsil   => Fragments.Mayan.Tsotsil.setAExponent
+  | .Mam       => Fragments.Mayan.Mam.setAExponent
+  | .Kiche     => Fragments.Mayan.Kiche.setAExponent
 
 /-- Set A linearity (uniformly prefixal across Mayan; see theorem below). -/
 def setALinearityOf : MayanLang → MarkerLinearity
@@ -75,16 +81,21 @@ def setALinearityOf : MayanLang → MarkerLinearity
   | .Kaqchikel => .prefixal
   | .Tseltal   => Fragments.Mayan.Tseltal.setALinearity
   | .Tsotsil   => Fragments.Mayan.Tsotsil.setALinearity
+  | .Mam       => Fragments.Mayan.Mam.setALinearity
+  | .Kiche     => Fragments.Mayan.Kiche.setALinearity
 
 /-- Set B linearity. Varies across Mayan: suffixal in Cholan, Q'anjob'alan,
-    and Tseltal; prefixal in Kaqchikel (HIGH-ABS K'ichean); either in
-    Tsotsil (dialectally and morphosyntactically conditioned). -/
+    and Tseltal; prefixal in Kaqchikel and K'iche' (HIGH-ABS K'ichean) and
+    Mam (HIGH-ABS pre-stem on Infl); either in Tsotsil (dialectally and
+    morphosyntactically conditioned). -/
 def setBLinearityOf : MayanLang → MarkerLinearity
   | .Chol      => .suffixal
   | .Qanjobal  => .suffixal
   | .Kaqchikel => .prefixal
   | .Tseltal   => Fragments.Mayan.Tseltal.setBLinearity
   | .Tsotsil   => Fragments.Mayan.Tsotsil.setBLinearity
+  | .Mam       => Fragments.Mayan.Mam.setBLinearity
+  | .Kiche     => Fragments.Mayan.Kiche.setBLinearity
 
 /-- Absolutive structural position (HIGH-ABS / LOW-ABS) indexed by
     Mayan language. The substantive parameter for Tada's Generalization. -/
@@ -94,21 +105,35 @@ def absPositionOf : MayanLang → ABSPosition
   | .Kaqchikel => Fragments.Mayan.Kaqchikel.absPosition
   | .Tseltal   => Fragments.Mayan.Tseltal.absPosition
   | .Tsotsil   => Fragments.Mayan.Tsotsil.absPosition
+  | .Mam       => Fragments.Mayan.Mam.absPosition
+  | .Kiche     => Fragments.Mayan.Kiche.absPosition
 
 -- ============================================================================
 -- § 2: Pan-Mayan Set B 3sg Null Invariant (@cite{kaufman-norman-1984})
 -- ============================================================================
 
-/-- **Pan-Mayan Set B 3sg invariant**: across all formalised Mayan
-    languages, the third-person singular Set B exponent is morphologically
-    null. Replaces five parallel per-language `rfl` facts with one
+/-- **Pan-Mayan Set B 3sg invariant** (standard languages): across the
+    formalised Mayan languages with the **standard ergative-absolutive
+    base** (Cholan, Q'anjob'alan, Tseltalan, K'ichean — i.e., all except
+    Mam), the third-person singular Set B exponent is morphologically
+    null. Replaces parallel per-language `rfl` facts with one
     universally-quantified theorem.
 
     Notation differs by linearity (`"-∅"` for suffixal Set B,
-    `"∅"` for prefixal); `IsThirdSgZero` is notation-agnostic. -/
-theorem mayan_p3sg_abs_null (lang : MayanLang) :
+    `"∅"` for prefixal); `IsThirdSgZero` is notation-agnostic.
+
+    **Mam exception**: per @cite{scott-2023}, San Juan Atitán Mam's
+    Set B 3sg surfaces as the default `tz'=` form (not null) — see
+    `mam_set_b_3sg_not_null` below. This theorem hypothesizes
+    `lang.isStandard = true` to scope around the exception. -/
+theorem mayan_p3sg_abs_null (lang : MayanLang) (h : lang.isStandard = true) :
     (setBExponentOf lang).IsThirdSgZero := by
-  cases lang <;> decide
+  cases lang <;> first | decide | (simp [MayanLang.isStandard] at h)
+
+/-- The Mam exception to the pan-Mayan Set B 3sg null invariant: Mam's
+    default Set B `tz'=` surfaces in the 3sg slot, not a null morpheme. -/
+theorem mam_set_b_3sg_not_null :
+    ¬ (setBExponentOf .Mam).IsThirdSgZero := by decide
 
 -- ============================================================================
 -- § 3: Pan-Mayan Set A Uniformly Prefixal
@@ -127,15 +152,29 @@ theorem mayan_set_a_uniformly_prefixal (lang : MayanLang) :
 -- § 4: Pan-Mayan Perfective Ergative Alignment
 -- ============================================================================
 
-/-- **Pan-Mayan perfective alignment invariant**: in perfective aspect,
-    every formalised Mayan language assigns case canonically ergatively
-    (A → ERG, S/P → ABS), regardless of any aspect-conditioned splits in
-    non-perfective aspects. -/
+/-- **Pan-Mayan perfective alignment invariant** (standard languages):
+    in perfective aspect, every formalised Mayan language with the
+    standard ergative-absolutive base assigns case canonically
+    ergatively (A → ERG, S/P → ABS), regardless of any aspect-conditioned
+    splits in non-perfective aspects.
+
+    **Mam exception**: per @cite{scott-2023}, Mam is morphologically
+    tripartite — `caseMam .Perf .P = .acc`, not `.abs`. The substrate
+    surfaces this falsification when Mam is in scope; this theorem
+    hypothesizes `lang.isStandard = true` to scope around it. See
+    `mam_is_tripartite_in_perfective` for the contrast. -/
 theorem mayan_perfective_ergative
-    (lang : MayanLang) (r : Features.Prominence.ArgumentRole) :
+    (lang : MayanLang) (h : lang.isStandard = true)
+    (r : Features.Prominence.ArgumentRole) :
     Fragments.Mayan.caseAt lang .Perf r =
       Alignment.ergative.assignCase r := by
-  cases lang <;> rfl
+  cases lang <;> first | rfl | (simp [MayanLang.isStandard] at h)
+
+/-- The Mam exception to pan-Mayan ergative perfective alignment:
+    `caseMam .Perf .P = .acc` (tripartite, not ergative). -/
+theorem mam_is_tripartite_in_perfective :
+    Fragments.Mayan.caseAt .Mam .Perf .P =
+      Alignment.tripartite.assignCase .P := rfl
 
 -- ============================================================================
 -- § 5: Tada's Generalization (parameterized form lives in CMP 2014 Study)
