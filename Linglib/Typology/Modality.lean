@@ -1,3 +1,4 @@
+import Linglib.Features.Evidentiality
 import Linglib.Datasets.WALS.Features.F74A
 import Linglib.Datasets.WALS.Features.F75A
 import Linglib.Datasets.WALS.Features.F76A
@@ -82,22 +83,33 @@ inductive EvidentialSystem where
   | threeOrMore
   deriving DecidableEq, BEq, Repr
 
+namespace EvidentialSystem
+
 /-- Whether a language has any grammatical evidential marking. -/
-def EvidentialSystem.hasEvidentials : EvidentialSystem → Bool
-  | .noGrammatical => false
-  | .indirectOnly | .directAndIndirect | .threeOrMore => true
+def HasEvidentials : EvidentialSystem → Prop
+  | .noGrammatical => False
+  | .indirectOnly | .directAndIndirect | .threeOrMore => True
+@[simp] theorem hasEvidentials_iff (s : EvidentialSystem) :
+    s.HasEvidentials ↔ s ≠ .noGrammatical := by cases s <;> simp [HasEvidentials]
+instance : DecidablePred HasEvidentials := fun s => by cases s <;> unfold HasEvidentials <;> infer_instance
 
 /-- Whether a language grammaticalizes a direct evidence category. -/
-def EvidentialSystem.hasDirect : EvidentialSystem → Bool
-  | .directAndIndirect | .threeOrMore => true
-  | .noGrammatical | .indirectOnly => false
+def HasDirect : EvidentialSystem → Prop
+  | .directAndIndirect | .threeOrMore => True
+  | .noGrammatical | .indirectOnly => False
+@[simp] theorem hasDirect_iff (s : EvidentialSystem) :
+    s.HasDirect ↔ (s = .directAndIndirect ∨ s = .threeOrMore) := by
+  cases s <;> simp [HasDirect]
+instance : DecidablePred HasDirect := fun s => by cases s <;> unfold HasDirect <;> infer_instance
 
 /-- Number of evidential choices in the system (0, 1, 2, or 3+). -/
-def EvidentialSystem.numChoices : EvidentialSystem → Nat
+def numChoices : EvidentialSystem → Nat
   | .noGrammatical => 0
   | .indirectOnly => 1
   | .directAndIndirect => 2
   | .threeOrMore => 3
+
+end EvidentialSystem
 
 /-- WALS Ch 78: how evidentiality is morphologically expressed. -/
 inductive EvidentialCoding where
@@ -114,10 +126,17 @@ inductive EvidentialCoding where
   | notApplicable
   deriving DecidableEq, BEq, Repr
 
+namespace EvidentialCoding
+
 /-- Whether the coding strategy involves a bound morpheme (affix or clitic). -/
-def EvidentialCoding.isBound : EvidentialCoding → Bool
-  | .verbalAffix | .clitic => true
-  | .particle | .partOfTAM | .notApplicable => false
+def IsBound : EvidentialCoding → Prop
+  | .verbalAffix | .clitic => True
+  | .particle | .partOfTAM | .notApplicable => False
+@[simp] theorem isBound_iff (c : EvidentialCoding) :
+    c.IsBound ↔ (c = .verbalAffix ∨ c = .clitic) := by cases c <;> simp [IsBound]
+instance : DecidablePred IsBound := fun c => by cases c <;> unfold IsBound <;> infer_instance
+
+end EvidentialCoding
 
 -- ============================================================================
 -- §2. EvidentialityProfile (Fragment-side joint)
@@ -139,6 +158,13 @@ structure EvidentialityProfile where
   markers : List String := []
   /-- Notes on the evidential system. -/
   notes : String := ""
+  /-- Bridge to the lexical-layer `Features.Evidentiality.EvidentialSource`
+      taxonomy: the canonical Aikhenvald-style source categories
+      (direct / hearsay / inference) attested in this language. Defaults to
+      `[]` for no-grammatical-evidentials languages. For 5-term systems
+      (Tuyuca, Tariana, Kashaya) the visual/nonvisual distinction collapses
+      onto `.direct`; the finer Aikhenvald categories live in `markers`. -/
+  attestedEvidentials : List Features.Evidentiality.EvidentialSource := []
   deriving Repr, DecidableEq
 
 -- ============================================================================
@@ -168,13 +194,23 @@ def fromWALS78A : Datasets.WALS.F78A.EvidentialityCoding → EvidentialCoding
 -- §4. Helper predicates
 -- ============================================================================
 
+namespace EvidentialityProfile
+
 /-- Does a language have grammatical evidentials? -/
-def EvidentialityProfile.hasEvidentials (p : EvidentialityProfile) : Bool :=
-  p.system.hasEvidentials
+def HasEvidentials (p : EvidentialityProfile) : Prop := p.system.HasEvidentials
+@[simp] theorem hasEvidentials_iff (p : EvidentialityProfile) :
+    p.HasEvidentials ↔ p.system.HasEvidentials := Iff.rfl
+instance : DecidablePred HasEvidentials :=
+  fun p => decidable_of_iff _ (hasEvidentials_iff p).symm
 
 /-- Does a language have a direct evidence category? -/
-def EvidentialityProfile.hasDirect (p : EvidentialityProfile) : Bool :=
-  p.system.hasDirect
+def HasDirect (p : EvidentialityProfile) : Prop := p.system.HasDirect
+@[simp] theorem hasDirect_iff (p : EvidentialityProfile) :
+    p.HasDirect ↔ p.system.HasDirect := Iff.rfl
+instance : DecidablePred HasDirect :=
+  fun p => decidable_of_iff _ (hasDirect_iff p).symm
+
+end EvidentialityProfile
 
 /-- Count of languages in a sample with a given system type. -/
 def countBySystem (langs : List EvidentialityProfile) (s : EvidentialSystem) :
@@ -186,107 +222,49 @@ def countByCoding (langs : List EvidentialityProfile) (c : EvidentialCoding) :
     Nat :=
   (langs.filter (·.coding == c)).length
 
-
-/-- Ch 77 and Ch 78 use the same 418-language sample. -/
-theorem ch77_ch78_same_sample : ch77.length = ch78.length := by native_decide
-
 -- ============================================================================
--- §6. Theory-neutral WALS distribution facts
+-- §5. WALS Lookup Helpers + Smart Constructor
 -- ============================================================================
 
-/-- Ch 74: verbal constructions are the dominant strategy for situational
-    possibility (158/234 = 68%). -/
-theorem ch74_verbal_dominant :
-    (ch74.filter (·.value == .verbalConstructions)).length >
-    (ch74.filter (·.value == .affixesOnVerbs)).length ∧
-    (ch74.filter (·.value == .verbalConstructions)).length >
-    (ch74.filter (·.value == .otherKindsOfMarkers)).length := by
-  native_decide
+def walsEvidentialSystem (iso : String) : Option EvidentialSystem :=
+  (Datasets.WALS.F77A.lookupISO iso).map (fromWALS77A ·.value)
 
-/-- Ch 75: epistemic possibility coding is more evenly distributed than
-    situational. -/
-theorem ch75_more_even_distribution :
-    let verbal := (ch75.filter (·.value == .verbalConstructions)).length
-    let affixes := (ch75.filter (·.value == .affixesOnVerbs)).length
-    let other := (ch75.filter (·.value == .other)).length
-    verbal * 5 < ch75.length * 2 ∧
-    affixes * 5 < ch75.length * 2 ∧
-    other * 5 < ch75.length * 2 := by
-  native_decide
+def walsEvidentialCoding (iso : String) : Option EvidentialCoding :=
+  (Datasets.WALS.F78A.lookupISO iso).map (fromWALS78A ·.value)
 
-/-- Ch 76: most languages show no overlap between situational and epistemic
-    modal marking (105/207 = 51%). -/
-theorem ch76_no_overlap_majority :
-    (ch76.filter (·.value == .noOverlap)).length >
-    (ch76.filter (·.value == .overlapForEitherPossibilityOrNecessity)).length ∧
-    (ch76.filter (·.value == .noOverlap)).length >
-    (ch76.filter (·.value == .overlapForBothPossibilityAndNecessity)).length := by
-  native_decide
+/-- Build an `EvidentialityProfile` from an ISO 639-3 code via WALS lookups
+    for Chs 77/78. Required-field fallbacks (`systemFb`, `codingFb`) fire
+    only when WALS is silent for that ISO. The `markers`, `notes`,
+    `attestedEvidentials`, and `family` fields are paper-stipulated.
 
-/-- Ch 77: languages without grammatical evidentials form the largest single
-    category. -/
-theorem no_evidentials_most_common :
-    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
-    (ch77.filter (·.value == .indirectOnly)).length ∧
-    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
-    (ch77.filter (·.value == .directAndIndirect)).length := by
-  native_decide
+    Note: WALS Ch 77 only encodes a 3-way classification (no `threeOrMore`);
+    languages with rich evidential systems (Quechua, Tuyuca, Tariana, etc.)
+    will get `.directAndIndirect` from `fromWALS77A` rather than
+    `.threeOrMore`. Per @cite{aikhenvald-2004}'s richer typology, those
+    languages need a Studies-side override (mirrors the Corbett 1991 vs
+    2013 record-update pattern in `Phenomena/Gender/Studies/Corbett1991`). -/
+def EvidentialityProfile.fromWALS
+    (language iso family : String)
+    (markers : List String := [])
+    (notes : String := "")
+    (attestedEvidentials : List Features.Evidentiality.EvidentialSource := [])
+    (systemFb : EvidentialSystem := .noGrammatical)
+    (codingFb : EvidentialCoding := .notApplicable) : EvidentialityProfile :=
+  { language, iso, family
+  , system := (walsEvidentialSystem iso).getD systemFb
+  , coding := (walsEvidentialCoding iso).getD codingFb
+  , markers, notes, attestedEvidentials }
 
-/-- Ch 77: languages without grammatical evidentials do NOT outnumber all
-    languages with evidentials combined. -/
-theorem no_evidentials_not_majority :
-    (ch77.filter (·.value == .noGrammaticalEvidentials)).length <
-    (ch77.filter (·.value == .indirectOnly)).length +
-    (ch77.filter (·.value == .directAndIndirect)).length := by
-  native_decide
+-- ============================================================================
+-- §6. WALS distribution facts
+-- ============================================================================
 
-/-- Ch 78: verbal affix / clitic is the most common coding strategy. -/
-theorem verbal_affix_dominant :
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
-    (ch78.filter (·.value == .separateParticle)).length ∧
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
-    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
-    (ch78.filter (·.value == .modalMorpheme)).length ∧
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
-    (ch78.filter (·.value == .mixed)).length := by
-  native_decide
-
-/-- Ch 78: among languages with evidentials, verbal affixes account for
-    over half of all coding strategies. -/
-theorem verbal_affix_majority_of_evidential_langs :
-    let withEvid := ch78.filter (·.value != .noGrammaticalEvidentials)
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length * 2 >
-    withEvid.length := by
-  native_decide
-
-/-- Ch 78: modal morpheme is the rarest evidential coding strategy. -/
-theorem modal_morpheme_rarest :
-    (ch78.filter (·.value == .modalMorpheme)).length <
-    (ch78.filter (·.value == .mixed)).length ∧
-    (ch78.filter (·.value == .modalMorpheme)).length <
-    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
-    (ch78.filter (·.value == .modalMorpheme)).length <
-    (ch78.filter (·.value == .separateParticle)).length ∧
-    (ch78.filter (·.value == .modalMorpheme)).length <
-    (ch78.filter (·.value == .verbalAffixOrClitic)).length := by
-  native_decide
-
-/-- Ch 78: separate particle is the second most common coding strategy. -/
-theorem separate_particle_second_most_common :
-    (ch78.filter (·.value == .separateParticle)).length >
-    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
-    (ch78.filter (·.value == .separateParticle)).length >
-    (ch78.filter (·.value == .modalMorpheme)).length ∧
-    (ch78.filter (·.value == .separateParticle)).length >
-    (ch78.filter (·.value == .mixed)).length := by
-  native_decide
-
-/-- Ch 77: among languages with evidentials, indirect-only systems are
-    more common than direct+indirect. -/
-theorem indirect_only_more_common_than_two_choice :
-    (ch77.filter (·.value == .indirectOnly)).length >
-    (ch77.filter (·.value == .directAndIndirect)).length := by
-  native_decide
+/-! Earlier revisions of this file carried 11 aggregate-count corpus
+    theorems on the full WALS Ch 74-78 datasets (`ch74_verbal_dominant`,
+    `ch77_no_evidentials_most_common`, etc.). These were the
+    "aggregate-count theorems go stale" anti-pattern AND required
+    `native_decide` for ~250-418-element list reductions; deleted as part
+    of the EvidentialityProfile mathlib polish. The corpus distributions
+    remain documentary in @cite{de-haan-2013}'s WALS chapters. -/
 
 end Typology.Modality

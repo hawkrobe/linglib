@@ -2689,3 +2689,22 @@ import Linglib.Fragments.Zulu.Gender
 import Linglib.Fragments.Fula.Gender
 import Linglib.Fragments.Xhosa.Gender
 import Linglib.Fragments.Shona.Gender
+-- Per-language Evidentiality Fragments (Aikhenvald 2004 sample)
+import Linglib.Fragments.English.Evidentiality
+import Linglib.Fragments.French.Evidentiality
+import Linglib.Fragments.German.Evidentiality
+import Linglib.Fragments.Mandarin.Evidentiality
+import Linglib.Fragments.Japanese.Evidentiality
+import Linglib.Fragments.Korean.Evidentiality
+import Linglib.Fragments.Turkish.Evidentiality
+import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
+import Linglib.Fragments.Tibetan.Evidentiality
+import Linglib.Fragments.Georgian.Evidentiality
+import Linglib.Fragments.Quechua.Evidentiality
+import Linglib.Fragments.Aymara.Evidentiality
+import Linglib.Fragments.Tuyuca.Evidentiality
+import Linglib.Fragments.Kashaya.Evidentiality
+import Linglib.Fragments.Tariana.Evidentiality
+import Linglib.Fragments.WestGreenlandic.Evidentiality
+import Linglib.Fragments.Abkhaz.Evidentiality
+import Linglib.Fragments.Finnish.Evidentiality

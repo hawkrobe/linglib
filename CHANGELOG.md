@@ -4,6 +4,23 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.612 — EvidentialityProfile per-Fragment refactor; 10 first-class Aikhenvald-vs-de-Haan divergence theorems
+
+Direction 2 of the architectural refactor: same recipe just landed for MorphProfile (0.230.607-609) and GenderProfile (0.230.610-611), now applied to Modality/Evidentiality.
+
+- Add `EvidentialityProfile.fromWALS` smart constructor + `attestedEvidentials : List Features.Evidentiality.EvidentialSource` bridge field to `Linglib/Typology/Modality.lean`. The new field bridges the Typology layer to the Features layer (`EvidentialSource` is the canonical Aikhenvald 3-way direct/hearsay/inference taxonomy).
+- Bool→Prop migration of all 5 substrate predicates: `EvidentialSystem.HasEvidentials`, `EvidentialSystem.HasDirect`, `EvidentialCoding.IsBound`, `EvidentialityProfile.HasEvidentials`, `EvidentialityProfile.HasDirect`. Each gets `DecidablePred` instance + `@[simp] _iff` lemma. Same canonical mathlib idiom (`decidable_of_iff` over the `_iff` lemma).
+- Trimmed 11 corpus aggregate-count theorems (`ch74_verbal_dominant`, `ch77_no_evidentials_most_common`, `verbal_affix_dominant`, `modal_morpheme_rarest`, etc.): same anti-pattern as BN2013/Corbett1991 + native_decide on ~250-418-element WALS lists.
+- Move 18 inline `EvidentialityProfile` literals out of `Phenomena/Modality/Studies/Aikhenvald2004.lean` into `Fragments/{Lang}/Evidentiality.lean` (18 new files: English, French, German, Mandarin, Japanese, Korean, Turkish, Slavic/Bulgarian, Tibetan, Georgian, Quechua, Aymara, Tuyuca, Kashaya, Tariana, WestGreenlandic, Abkhaz, Finnish; 7 new directories: Tibetan, Aymara, Tuyuca, Kashaya, Tariana, WestGreenlandic, Abkhaz). Each Fragment uses `EvidentialityProfile.fromWALS` and binds `evidentialityProfile` to WALS-derived (de Haan 2013) values.
+- **Bridge theorem caught 10 within-author divergences** between Aikhenvald 2004 and de Haan 2013 (WALS):
+  - 5 modal-verb-classification disagreements: French, German, Japanese, Korean, Finnish (de Haan counts modal verbs as `indirectOnly` evidentials; Aikhenvald excludes them).
+  - 4 system-classification disagreements: Georgian (`indirectOnly` vs `directAndIndirect`), Tuyuca / Kashaya / Tariana (5-term system per Aikhenvald, lumped into `directAndIndirect` by WALS Ch 77).
+  - 1 system+coding disagreement: Abkhaz (`directAndIndirect`+`partOfTAM` vs `indirectOnly`+`verbalAffix`).
+- Studies file `Phenomena/Modality/Studies/Aikhenvald2004.lean` now record-overrides these 10 cases per Aikhenvald and exposes the divergences as 10 first-class theorems (`french_aikhenvald_vs_de_haan` etc.) — making the within-author shift visible per linglib's interconnection-density thesis.
+- All `native_decide` in Aikhenvald2004 → `decide`. Six bounded-∀-on-allLanguages theorems need `set_option maxRecDepth 2000 in` (same precedent as BN2013 `concatenative_partition`).
+- 18 imports added to `Linglib.lean`.
+- Out of scope: substrate-wide rename `MorphProfile.iso → iso639` (still deferred); LanguageStub unification (still deferred).
+
 ### 0.230.611 — GenderProfile mathlib polish: Bool→Prop migration; corpus theorem trim; classification bridges; dead-open cleanup
 
 Brings GenderProfile to MorphProfile-quality, completing what cycle 0.230.610 started.
