@@ -246,57 +246,49 @@ theorem marginalSnd_toRealFn_eq_sum [DecidableEq β] (joint : PMF (α × β)) (b
   rw [ENNReal.toReal_sum (fun a _ => joint.apply_ne_top (a, b))]
 
 -- ============================================================================
--- §4: Mutual information
+-- §3.6: Independent product distribution
 -- ============================================================================
 
-/-- Mutual information `I(X;Y) = H(X) + H(Y) - H(X,Y)`, from a joint PMF on
-    `(α × β)` with marginals derived via `PMF.map`. -/
-noncomputable def mutualInformation (joint : PMF (α × β)) : ℝ :=
-  joint.marginalFst.entropy + joint.marginalSnd.entropy - joint.entropy
+/-! ### Product PMF
 
-/-- **Mutual information is non-negative** (Cover-Thomas 2.6.5).
-    Requires strictly-positive marginals on both axes (the standard hypothesis
-    for `kl_nonneg`-based proofs of MI ≥ 0). -/
-theorem mutualInformation_nonneg [DecidableEq α] [DecidableEq β]
-    (joint : PMF (α × β))
-    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
-    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
-    0 ≤ joint.mutualInformation := by
-  have h := Core.InformationTheory.mutualInformation_nonneg
-    joint.toRealFn joint.marginalFst.toRealFn joint.marginalSnd.toRealFn
-    (fun p => joint.toRealFn_nonneg p)
-    h_margX_pos h_margY_pos
-    joint.marginalFst_toRealFn_eq_sum
-    joint.marginalSnd_toRealFn_eq_sum
-    joint.sum_toRealFn_eq_one
-    joint.marginalFst.sum_toRealFn_eq_one
-    joint.marginalSnd.sum_toRealFn_eq_one
-  -- PMF.entropy = Core.InformationTheory.entropy Finset.univ p.toRealFn by definition.
-  -- mutualInformation in PMF shape and Core shape are therefore equal.
-  show 0 ≤ Core.InformationTheory.entropy Finset.univ joint.marginalFst.toRealFn +
-           Core.InformationTheory.entropy Finset.univ joint.marginalSnd.toRealFn -
-           Core.InformationTheory.entropy Finset.univ joint.toRealFn
-  unfold Core.InformationTheory.mutualInformation at h
-  exact h
+`PMF.product P Q` is the independent joint distribution: `(P.product Q) (a, b) =
+P a · Q b`. Foundation for defining `mutualInformation` as `KL(joint ‖ product)`.
 
--- ============================================================================
--- §5: Conditional entropy
--- ============================================================================
+**Mathlib gap.** `PMF.product` is missing from mathlib. Defined here via the
+standard monadic `bind`/`map` construction. -/
 
-/-- Conditional entropy `H(β | α) = H(α, β) - H(α)`. -/
-noncomputable def conditionalEntropy (joint : PMF (α × β)) : ℝ :=
-  joint.entropy - joint.marginalFst.entropy
+/-- The independent product distribution of two PMFs. -/
+noncomputable def product (P : PMF α) (Q : PMF β) : PMF (α × β) :=
+  P.bind (fun a => Q.map (Prod.mk a))
 
-/-- **Conditioning reduces entropy** (Cover-Thomas 2.6.4): `H(β | α) ≤ H(β)`.
-    Direct corollary of `mutualInformation_nonneg`: `I(X;Y) = H(Y) - H(Y|X) ≥ 0`. -/
-theorem conditionalEntropy_le_entropy [DecidableEq α] [DecidableEq β]
-    (joint : PMF (α × β))
-    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
-    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
-    joint.conditionalEntropy ≤ joint.marginalSnd.entropy := by
-  have hmi := joint.mutualInformation_nonneg h_margX_pos h_margY_pos
-  unfold mutualInformation conditionalEntropy at *
-  linarith
+@[simp] theorem product_apply (P : PMF α) (Q : PMF β) (a : α) (b : β) :
+    P.product Q (a, b) = P a * Q b := by
+  classical
+  simp only [product, PMF.bind_apply, PMF.map_apply]
+  rw [tsum_eq_sum (fun a' (h : a' ∉ Finset.univ) => absurd (Finset.mem_univ a') h)]
+  rw [Finset.sum_eq_single a]
+  · rw [tsum_eq_sum (fun b' (h : b' ∉ Finset.univ) => absurd (Finset.mem_univ b') h)]
+    rw [Finset.sum_eq_single b]
+    · rw [if_pos rfl]
+    · intro b' _ hb'
+      exact if_neg (fun h => hb' (Prod.mk.inj h).2.symm)
+    · intro h; exact absurd (Finset.mem_univ b) h
+  · intro a' _ ha'
+    convert mul_zero _
+    rw [tsum_eq_sum (fun b' (h : b' ∉ Finset.univ) => absurd (Finset.mem_univ b') h)]
+    apply Finset.sum_eq_zero
+    intro b' _
+    exact if_neg (fun h => ha' (Prod.mk.inj h).1.symm)
+  · intro h; exact absurd (Finset.mem_univ a) h
+
+@[simp] theorem product_toRealFn (P : PMF α) (Q : PMF β) (a : α) (b : β) :
+    (P.product Q).toRealFn (a, b) = P.toRealFn a * Q.toRealFn b := by
+  unfold toRealFn
+  rw [product_apply]
+  exact ENNReal.toReal_mul
+
+-- §4 (mutualInformation) and §5 (conditionalEntropy) moved to after §6 KL —
+-- they depend on `PMF.klDiv` which is defined in §6.
 
 -- ============================================================================
 -- §6: KL divergence — grounded in mathlib's `InformationTheory.klDiv`
@@ -484,6 +476,217 @@ theorem hellingerDistSq_nonneg (P Q : PMF α)
     (h : bhattacharyyaCoeff P Q ≤ 1) :
     0 ≤ hellingerDistSq P Q :=
   Core.InformationTheory.hellingerDistSq_nonneg_of_bc_le_one P.toRealFn Q.toRealFn h
+
+/-- **Discrete log-ratio sum form of `klDiv`**:
+    `(P.klDiv Q).toReal = ∑ a, P a · log (P a / Q a)` under strict-positive Q.
+
+    This is the consumer-facing discrete sum that downstream files want
+    (Cover-Thomas Eq. 2.23). Self-contained — uses only mathlib's `klFun`
+    plus `klDiv_eq_sum_klFun`. Independent of `Core.InformationTheory.klFinite`. -/
+theorem toReal_klDiv_eq_sum_log_div [MeasurableSpace α] [MeasurableSingletonClass α]
+    (P Q : PMF α) (hQ_pos : ∀ a, 0 < Q.toRealFn a) :
+    (P.klDiv Q).toReal =
+      ∑ a, P.toRealFn a * Real.log (P.toRealFn a / Q.toRealFn a) := by
+  have hQ_ne_top : ∀ a, Q a ≠ ∞ := PMF.apply_ne_top Q
+  have hQ_ne_zero : ∀ a, Q a ≠ 0 := fun a hQa => by
+    have h := hQ_pos a
+    rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
+    exact lt_irrefl 0 h
+  -- AC from strict-positive Q (same derivation as toReal_klDiv_eq_klFinite).
+  have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
+    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
+    rw [PMF.toMeasure_apply_fintype _ s] at hQs
+    rw [PMF.toMeasure_apply_fintype _ s]
+    have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
+    have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
+      have h := h_each_zero x (Finset.mem_univ x)
+      rw [Set.indicator_of_mem hx_in] at h
+      exact hQ_ne_zero x h
+    refine Finset.sum_eq_zero (fun x _ => Set.indicator_of_notMem (h_x_notin x) _)
+  -- Apply discrete reduction.
+  rw [klDiv_eq_sum_klFun P Q hAC]
+  -- Pull `.toReal` inside the sum (each summand is finite).
+  rw [ENNReal.toReal_sum (fun a _ =>
+      ENNReal.mul_ne_top (hQ_ne_top a) ENNReal.ofReal_ne_top)]
+  -- Per-summand: ENNReal arithmetic → real arithmetic.
+  have h_summand : ∀ a, (Q a * ENNReal.ofReal
+      (_root_.InformationTheory.klFun ((P a / Q a).toReal))).toReal
+      = Q.toRealFn a * _root_.InformationTheory.klFun
+          (P.toRealFn a / Q.toRealFn a) := by
+    intro a
+    rw [ENNReal.toReal_mul,
+        ENNReal.toReal_ofReal
+          (_root_.InformationTheory.klFun_nonneg ENNReal.toReal_nonneg),
+        ENNReal.toReal_div]
+    rfl
+  simp_rw [h_summand]
+  -- Bridge ∑ q · klFun(p/q) = ∑ p · log(p/q) via the identity
+  -- `q · klFun(p/q) - p · log(p/q) = q - p` (when q > 0), summed against
+  -- ∑P = ∑Q = 1.
+  have h_per : ∀ a,
+      Q.toRealFn a * _root_.InformationTheory.klFun
+          (P.toRealFn a / Q.toRealFn a)
+        - P.toRealFn a * Real.log (P.toRealFn a / Q.toRealFn a)
+        = Q.toRealFn a - P.toRealFn a := by
+    intro a
+    have hq_ne : Q.toRealFn a ≠ 0 := ne_of_gt (hQ_pos a)
+    unfold _root_.InformationTheory.klFun
+    field_simp
+    ring
+  have h_sum_diff :
+      (∑ a, Q.toRealFn a * _root_.InformationTheory.klFun
+          (P.toRealFn a / Q.toRealFn a))
+        - (∑ a, P.toRealFn a * Real.log (P.toRealFn a / Q.toRealFn a))
+      = 0 := by
+    rw [← Finset.sum_sub_distrib]
+    simp_rw [h_per]
+    rw [Finset.sum_sub_distrib, Q.sum_toRealFn_eq_one,
+        P.sum_toRealFn_eq_one, sub_self]
+  linarith
+
+-- ============================================================================
+-- §7.6: Mutual information — KL of joint vs product (mathlib-style)
+-- ============================================================================
+
+/-! ### MI as KL of joint vs product
+
+Mathlib-style definition: `I(X;Y) := KL(joint ‖ marginal_X × marginal_Y).toReal`.
+The classical `H(X) + H(Y) − H(X,Y)` formula becomes a derived theorem
+(Cover-Thomas Thm 2.6.5, `mutualInformation_eq_entropy_sum`).
+
+**Reuse payoff**: `mutualInformation_nonneg` reduces to `ENNReal.toReal_nonneg`.
+Future `klDiv` chain rules from mathlib transfer to MI for free. -/
+
+/-- Mutual information `I(X;Y) := KL(joint ‖ marginal_X × marginal_Y).toReal`,
+    grounded in `PMF.klDiv` (rfl-bridged to mathlib's `InformationTheory.klDiv`). -/
+noncomputable def mutualInformation [MeasurableSpace α] [MeasurableSpace β]
+    (joint : PMF (α × β)) : ℝ :=
+  (joint.klDiv (joint.marginalFst.product joint.marginalSnd)).toReal
+
+/-- **Mutual information is non-negative** (Cover-Thomas 2.6.5):
+    free from `ENNReal.toReal_nonneg` since `klDiv` returns `ℝ≥0∞`. -/
+theorem mutualInformation_nonneg [MeasurableSpace α] [MeasurableSpace β]
+    (joint : PMF (α × β)) : 0 ≤ joint.mutualInformation :=
+  ENNReal.toReal_nonneg
+
+/-- **Cover-Thomas Thm 2.6.5 bridge**: `I(X;Y) = H(X) + H(Y) − H(X,Y)`.
+    Connects the KL-based definition (this file) to the classical
+    H-difference form. -/
+theorem mutualInformation_eq_entropy_sum [MeasurableSpace α] [MeasurableSpace β]
+    [MeasurableSingletonClass α] [MeasurableSingletonClass β]
+    [DecidableEq α] [DecidableEq β]
+    (joint : PMF (α × β))
+    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
+    joint.mutualInformation
+      = joint.marginalFst.entropy + joint.marginalSnd.entropy - joint.entropy := by
+  -- Strict-positive product follows from strict-positive marginals.
+  have h_prod_pos : ∀ p : α × β,
+      0 < (joint.marginalFst.product joint.marginalSnd).toRealFn p := by
+    rintro ⟨a, b⟩
+    rw [product_toRealFn]
+    exact mul_pos (h_margX_pos a) (h_margY_pos b)
+  -- Step 1: expand KL as discrete log-ratio sum.
+  unfold mutualInformation
+  rw [toReal_klDiv_eq_sum_log_div joint
+        (joint.marginalFst.product joint.marginalSnd) h_prod_pos]
+  -- Step 2: substitute product_toRealFn for cleaner working form.
+  have h_subst : (∑ p : α × β, joint.toRealFn p *
+            Real.log (joint.toRealFn p /
+              (joint.marginalFst.product joint.marginalSnd).toRealFn p))
+      = ∑ ab : α × β, joint.toRealFn ab *
+            Real.log (joint.toRealFn ab /
+              (joint.marginalFst.toRealFn ab.1 * joint.marginalSnd.toRealFn ab.2)) := by
+    refine Finset.sum_congr rfl (fun ⟨a, b⟩ _ => ?_)
+    rw [product_toRealFn]
+  rw [h_subst, Fintype.sum_prod_type]
+  -- Step 3: per-(a,b) algebra: split log of product, distribute joint.
+  have h_per : ∀ a b,
+      joint.toRealFn (a, b) *
+        Real.log (joint.toRealFn (a, b) /
+          (joint.marginalFst.toRealFn a * joint.marginalSnd.toRealFn b))
+        = joint.toRealFn (a, b) * Real.log (joint.toRealFn (a, b))
+          - joint.toRealFn (a, b) * Real.log (joint.marginalFst.toRealFn a)
+          - joint.toRealFn (a, b) * Real.log (joint.marginalSnd.toRealFn b) := by
+    intro a b
+    by_cases hJ : joint.toRealFn (a, b) = 0
+    · simp [hJ]
+    · have hMX_ne : joint.marginalFst.toRealFn a ≠ 0 := ne_of_gt (h_margX_pos a)
+      have hMY_ne : joint.marginalSnd.toRealFn b ≠ 0 := ne_of_gt (h_margY_pos b)
+      have hMXY_ne : joint.marginalFst.toRealFn a * joint.marginalSnd.toRealFn b ≠ 0 :=
+        mul_ne_zero hMX_ne hMY_ne
+      rw [Real.log_div hJ hMXY_ne, Real.log_mul hMX_ne hMY_ne]
+      ring
+  simp_rw [h_per, Finset.sum_sub_distrib]
+  -- Step 4: each split sum is -H(·) by negMulLog identity + marginal.
+  have h_term1 :
+      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.toRealFn (a, b)))
+        = -joint.entropy := by
+    rw [← Fintype.sum_prod_type
+          (fun p : α × β => joint.toRealFn p * Real.log (joint.toRealFn p))]
+    unfold entropy toRealFn
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl (fun p _ => ?_)
+    simp only [Real.negMulLog]; ring
+  have h_term2 :
+      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.marginalFst.toRealFn a))
+        = -joint.marginalFst.entropy := by
+    have h_inner : ∀ a, (∑ b, joint.toRealFn (a, b) *
+            Real.log (joint.marginalFst.toRealFn a))
+        = joint.marginalFst.toRealFn a * Real.log (joint.marginalFst.toRealFn a) := by
+      intro a
+      rw [← Finset.sum_mul, ← marginalFst_toRealFn_eq_sum joint a]
+    simp_rw [h_inner]
+    unfold entropy
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl (fun a _ => ?_)
+    show joint.marginalFst.toRealFn a * Real.log (joint.marginalFst.toRealFn a) =
+         -Real.negMulLog _
+    simp only [Real.negMulLog, toRealFn]; ring
+  have h_term3 :
+      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.marginalSnd.toRealFn b))
+        = -joint.marginalSnd.entropy := by
+    rw [Finset.sum_comm]
+    have h_inner : ∀ b, (∑ a, joint.toRealFn (a, b) *
+            Real.log (joint.marginalSnd.toRealFn b))
+        = joint.marginalSnd.toRealFn b * Real.log (joint.marginalSnd.toRealFn b) := by
+      intro b
+      rw [← Finset.sum_mul, ← marginalSnd_toRealFn_eq_sum joint b]
+    simp_rw [h_inner]
+    unfold entropy
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl (fun b _ => ?_)
+    show joint.marginalSnd.toRealFn b * Real.log (joint.marginalSnd.toRealFn b) =
+         -Real.negMulLog _
+    simp only [Real.negMulLog, toRealFn]; ring
+  rw [h_term1, h_term2, h_term3]
+  ring
+
+-- ============================================================================
+-- §7.7: Conditional entropy
+-- ============================================================================
+
+/-- Conditional entropy `H(β | α) = H(α, β) - H(α)`. -/
+noncomputable def conditionalEntropy (joint : PMF (α × β)) : ℝ :=
+  joint.entropy - joint.marginalFst.entropy
+
+/-- **Conditioning reduces entropy** (Cover-Thomas 2.6.4): `H(β | α) ≤ H(β)`.
+    Direct corollary of `mutualInformation_nonneg` (free from
+    `ENNReal.toReal_nonneg`) plus the H-difference bridge
+    `mutualInformation_eq_entropy_sum`. -/
+theorem conditionalEntropy_le_entropy
+    [MeasurableSpace α] [MeasurableSpace β]
+    [MeasurableSingletonClass α] [MeasurableSingletonClass β]
+    [DecidableEq α] [DecidableEq β]
+    (joint : PMF (α × β))
+    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
+    joint.conditionalEntropy ≤ joint.marginalSnd.entropy := by
+  have hmi_nonneg : 0 ≤ joint.mutualInformation := joint.mutualInformation_nonneg
+  rw [mutualInformation_eq_entropy_sum joint h_margX_pos h_margY_pos] at hmi_nonneg
+  unfold conditionalEntropy
+  linarith
 
 /-- **Bridge to `Core.InformationTheory.klFinite`** (real-valued discrete KL):
     `(P.klDiv Q).toReal = klFinite P.toRealFn Q.toRealFn` under strict-positive Q.

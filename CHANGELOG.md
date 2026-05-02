@@ -4,6 +4,25 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.597 — Phase 1b+1c: PMF.product + MI redefined via KL on product (mathlib-style)
+
+Substrate refactor: mutual information is now defined as `KL(joint ‖ marginal_X × marginal_Y).toReal`, which is the mathlib-canonical formulation. The classical `H(X) + H(Y) − H(X,Y)` formula becomes a derived theorem (Cover-Thomas Thm 2.6.5).
+
+- **`PMF.product`** (Phase 1b, ~25 LOC): independent joint distribution `(P.product Q) (a, b) = P a · Q b`. Mathlib gap — defined via standard `bind`/`map`. Companion: `product_apply`, `product_toRealFn`.
+- **`PMF.mutualInformation` redefined**: `(joint.klDiv (joint.marginalFst.product joint.marginalSnd)).toReal`. Drops the H+H−H definitional axiom.
+- **`PMF.mutualInformation_nonneg` is one-liner**: `ENNReal.toReal_nonneg`. (Was a substantive re-proof going through Core.kl_nonneg + Core.mutualInformation_eq_klFinite_with_productDist.)
+- **`PMF.mutualInformation_eq_entropy_sum`** (Phase 1c, ~80 LOC): the Cover-Thomas Thm 2.6.5 bridge connecting KL-based MI to the H-difference form. Composes `toReal_klDiv_eq_sum_log_div` with log-of-product expansion + marginal sum identities.
+- **`PMF.conditionalEntropy_le_entropy`** rewritten to use MI ≥ 0 (free) + the bridge. Drops Core.InformationTheory dep at this site.
+
+**Reuse payoff**: future mathlib `klDiv` chain rules (e.g. KL chain rule, data processing inequality) transfer to MI via the rfl-bridge for free.
+
+**Mathlib gaps closed by this commit** (upstreamable):
+- `PMF.product` (independent joint)
+- `PMF.product_apply`, `product_toRealFn`
+- `PMF.mutualInformation` (KL-based) + `mutualInformation_nonneg` + `mutualInformation_eq_entropy_sum`
+
+**Build**: green at 5683 jobs.
+
 ### 0.230.596 — `ofRealWeightFn_toRealFn_eq` round-trip + consumer docstring updates
 
 Lands the second round-trip lemma needed for consumer migration plus minimal docstring updates pointing the 4 main consumers (RationalAction/Tessler/Channel/Herbstritt) at the PMF API.
