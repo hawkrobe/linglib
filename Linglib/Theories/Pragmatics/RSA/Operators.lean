@@ -203,40 +203,53 @@ automatically zero on quality-violating utterances (via `exp (-∞) = 0`), but
 in Lean an explicit filter is required. Consumers typically pass
 `qOk u := ∀ s ∈ supp belief, lex u s > 0` or a problem-specific predicate.
 
-The score is positive iff `qOk u = true` (regardless of `lex`/`belief`
+The score is positive iff `qOk u` (regardless of `lex`/`belief`
 internals — `Real.exp` is always positive). The `tsum`-positivity cover
 collapses to `∃ u, qOk u` (see `softmaxBelief_tsum_ne_zero_of_witness`),
 which is the natural shape for a `PMF.normalize` discharge. -/
 noncomputable def softmaxBelief [Fintype W]
-    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) (u : U) : ℝ≥0∞ :=
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Prop) [DecidablePred qOk]
+    (u : U) : ℝ≥0∞ :=
   if qOk u then
     ENNReal.ofReal (Real.exp (α * ∑ s : W, belief s * Real.log (lex u s)))
   else 0
 
 theorem softmaxBelief_ne_top [Fintype W]
-    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) (u : U) :
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Prop) [DecidablePred qOk]
+    (u : U) :
     softmaxBelief lex belief α qOk u ≠ ∞ := by
   unfold softmaxBelief
   split <;> simp [ENNReal.ofReal_ne_top]
 
 theorem softmaxBelief_tsum_ne_top [Fintype U] [Fintype W]
-    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) :
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Prop) [DecidablePred qOk] :
     ∑' u, softmaxBelief lex belief α qOk u ≠ ∞ :=
   ENNReal.tsum_ne_top_of_fintype fun u => softmaxBelief_ne_top lex belief α qOk u
 
 theorem softmaxBelief_ne_zero_of_qOk [Fintype W]
-    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Bool} {u : U}
-    (h : qOk u = true) :
+    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Prop} [DecidablePred qOk] {u : U}
+    (h : qOk u) :
     softmaxBelief lex belief α qOk u ≠ 0 := by
   unfold softmaxBelief
   rw [if_pos h]
   exact (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
 
+/-- The score is `0` exactly when the quality predicate fails. The
+companion to `softmaxBelief_ne_zero_of_qOk` (positive direction); the two
+characterise the support of `softmaxBelief lex belief α qOk` as
+`{u | qOk u}`. -/
+theorem softmaxBelief_eq_zero_of_not_qOk [Fintype W]
+    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Prop} [DecidablePred qOk] {u : U}
+    (h : ¬ qOk u) :
+    softmaxBelief lex belief α qOk u = 0 := by
+  unfold softmaxBelief
+  rw [if_neg h]
+
 /-- Cover discharge: a single quality-OK witness is enough to make the
 fan-out sum non-zero — the standard `PMF.normalize` precondition shape. -/
 theorem softmaxBelief_tsum_ne_zero_of_witness [Fintype W]
-    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Bool}
-    {u : U} (h : qOk u = true) :
+    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Prop} [DecidablePred qOk]
+    {u : U} (h : qOk u) :
     ∑' u', softmaxBelief lex belief α qOk u' ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, softmaxBelief_ne_zero_of_qOk h⟩
 
@@ -254,8 +267,8 @@ This is the bridge that lets transcendental softmax expressions reduce to
 rational arithmetic in models with deterministic full-access observations
 (e.g., @cite{goodman-stuhlmuller-2013} at access `.a3`). -/
 theorem softmaxBelief_concentrated_apply [Fintype W] [DecidableEq W]
-    (lex : U → W → ℝ) (sStar : W) (qOk : U → Bool) (u : U)
-    (h : qOk u = true → 0 < lex u sStar) :
+    (lex : U → W → ℝ) (sStar : W) (qOk : U → Prop) [DecidablePred qOk] (u : U)
+    (h : qOk u → 0 < lex u sStar) :
     softmaxBelief lex (fun s => if s = sStar then 1 else 0) 1 qOk u =
       if qOk u then ENNReal.ofReal (lex u sStar) else 0 := by
   unfold softmaxBelief
@@ -269,6 +282,40 @@ theorem softmaxBelief_concentrated_apply [Fintype W] [DecidableEq W]
     · intro h_not_mem
       exact absurd (Finset.mem_univ sStar) h_not_mem
   · rfl
+
+/-- **Softmax collapse at lex uniform on belief support (α = 1)**: when `lex u`
+takes the same positive value `v` on every world in the belief support, the
+expected log collapses to `log v`, and `exp ∘ log` cancels to give `v`. The
+score becomes `ENNReal.ofReal v` (lifted via `ENNReal.ofReal`).
+
+Generalises `softmaxBelief_concentrated_apply` from a Kronecker-delta belief
+to any belief whose support sits inside `lex u`'s level set at `v`. Captures
+the natural property of uniform-on-extension lex functions: when `qOk` passes,
+the speaker's belief support is contained in the utterance's extension, where
+lex is uniformly `1/|extension|`.
+
+The hypothesis `∑ s, belief s = 1` is the canonical "belief is a probability
+distribution" assumption; combined with bilinearity of multiplication it lets
+the constant `log v` factor out of the sum. -/
+theorem softmaxBelief_uniform_on_support [Fintype W]
+    (lex : U → W → ℝ) (belief : W → ℝ) (qOk : U → Prop) [DecidablePred qOk]
+    (u : U) (v : ℝ)
+    (h_qok : qOk u)
+    (h_uniform : ∀ s, belief s ≠ 0 → lex u s = v)
+    (h_pos : 0 < v)
+    (h_sum : (∑ s, belief s) = 1) :
+    softmaxBelief lex belief 1 qOk u = ENNReal.ofReal v := by
+  unfold softmaxBelief
+  rw [if_pos h_qok]
+  congr 1
+  rw [one_mul]
+  have h_eq : ∀ s ∈ Finset.univ, belief s * Real.log (lex u s) = belief s * Real.log v := by
+    intro s _
+    by_cases hs : belief s = 0
+    · simp [hs]
+    · rw [h_uniform s hs]
+  rw [Finset.sum_congr rfl h_eq, ← Finset.sum_mul, h_sum, one_mul]
+  exact Real.exp_log h_pos
 
 /-! ## L1: Pragmatic Listener -/
 

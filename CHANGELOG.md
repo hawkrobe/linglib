@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.612 — PMF.hypergeometric primitive + GS2013PMF .a1 findings + Bool→Prop softmaxBelief
+
+- Add `PMF.hypergeometric (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N) : PMF (Fin (n + 1))` in `Linglib/Core/Probability/Hypergeometric.lean` (NEW). Sum-to-1 via `Nat.add_choose_eq` (Chu-Vandermonde) + `Finset.Nat.sum_antidiagonal_eq_sum_range_succ`. Plus `hypergeometric_apply` and `hypergeometric_apply_ne_zero_iff` (feasibility characterization).
+- Add `Nat.sum_choose_mul_choose_eq (N K n : ℕ) (h_K : K ≤ N) : ∑ k ∈ range (n + 1), K.choose k * (N - K).choose (n - k) = N.choose n` — `Finset.range`-style restatement of Chu-Vandermonde.
+- Add `RSA.softmaxBelief_eq_zero_of_not_qOk` to `Linglib/Theories/Pragmatics/RSA/Operators.lean` — closed-form for the qOk-failing case. Reuses across GS2013PMF (~13 call sites refactored from 5 lines to 2).
+- Add `PMF.bindOnSupport_apply_two_support` to `Linglib/Core/Probability/PMFPosterior.lean` — generic 2-element bindOnSupport expansion. Replaces manual `tsum_eq_sum + Finset.sum_insert + dif_neg` dance in `marginalSpeaker_a*_s*_apply` lemmas.
+- GS2013PMF: prove paper findings 2, 8, 9 (`.a1` minimal-access cases). All use the agent-discovered closed-form `S1g_*_eq` pattern. Each is ~10 lines using the new `bindOnSupport_apply_two_support` helper.
+- GS2013PMF: refactor `some_full_implicature_sil` (the prototype) from 90 lines of inline `have` to 15 lines using the `s1Score_*_apply` helpers + `sum_s1Score_*` helpers. Same pattern as findings 4, 6, 7.
+- GS2013PMF: 7 of 11 silence-extended findings proven, 0 sorrys. Remaining 4 (`.a2` cases — paper findings 3, 5, 10 (HEADLINE), 11) deferred per architectural concern: the open-coded hypergeometric + per-(a, w, obs) value lemmas signaled missing primitives. PMF.hypergeometric is built; refactor to use it (parameterizing over a, eliminating .a1/.a2/.a3 separation) is the next phase.
+- File: 1979 → 1847 LOC (-132 from consolidation; will shrink further when refactored to use PMF.hypergeometric).
+- Sketch doc at `scratch/pmf_rsa_target_architecture.md` enumerates the missing primitives (Hypergeometric, condition-style literalListener, finite-bind expansion) and proposes Stage A→D execution.
+
 ### 0.230.612 — EvidentialityProfile per-Fragment refactor; 10 first-class Aikhenvald-vs-de-Haan divergence theorems
 
 Direction 2 of the architectural refactor: same recipe just landed for MorphProfile (0.230.607-609) and GenderProfile (0.230.610-611), now applied to Modality/Evidentiality.

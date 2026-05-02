@@ -307,6 +307,7 @@ import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.PMFEntropy
 import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.PolyaUrn

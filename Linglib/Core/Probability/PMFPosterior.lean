@@ -247,6 +247,31 @@ theorem normalize_lt_of_apply_eq_of_sum_lt {α : Type*}
   exact (ENNReal.mul_lt_mul_iff_right h_pos h_pos_top).mpr
     (ENNReal.inv_lt_inv.mpr h_sum)
 
+/-- **`bindOnSupport` collapses to a 2-element sum** when the prior PMF's
+support is contained in `{a₁, a₂}`. Each retained term `p a_i * f a_i h b`
+uses the corresponding non-zero `a_i ∈ p.support` witness via `dif_neg`.
+
+Useful for sparse `PMF.bindOnSupport` patterns (e.g., observation kernels
+with 1-2 reachable obs per condition). Generalises trivially to k-element
+support via repeated `Finset.sum_insert`. -/
+theorem bindOnSupport_apply_two_support
+    {α β : Type*} [Fintype α] [DecidableEq α] (p : PMF α)
+    (f : (a : α) → a ∈ p.support → PMF β) (b : β)
+    (a₁ a₂ : α) (h_distinct : a₁ ≠ a₂)
+    (h_supp : ∀ a, a ≠ a₁ → a ≠ a₂ → p a = 0)
+    (h₁ : p a₁ ≠ 0) (h₂ : p a₂ ≠ 0) :
+    (p.bindOnSupport f) b =
+      p a₁ * f a₁ ((p.mem_support_iff a₁).mpr h₁) b +
+      p a₂ * f a₂ ((p.mem_support_iff a₂).mpr h₂) b := by
+  rw [PMF.bindOnSupport_apply]
+  rw [tsum_eq_sum (s := ({a₁, a₂} : Finset α)) (fun a ha => by
+    have ha' : a ≠ a₁ ∧ a ≠ a₂ := by
+      constructor <;> (intro heq; apply ha; subst heq; simp)
+    rw [dif_pos (h_supp a ha'.1 ha'.2), mul_zero])]
+  rw [show ({a₁, a₂} : Finset α) = insert a₁ {a₂} from rfl,
+      Finset.sum_insert (by simp [h_distinct]), Finset.sum_singleton]
+  rw [dif_neg h₁, dif_neg h₂]
+
 -- Reweight: PMF × non-negative weight → PMF (the algebraic primitive
 -- behind both Bayesian posterior and Product of Experts)
 
