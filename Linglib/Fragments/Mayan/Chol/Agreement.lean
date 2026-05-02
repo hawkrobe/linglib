@@ -7,10 +7,10 @@ import Linglib.Fragments.Mayan.Params
 
 Agreement morphology and case assignment for Chol (Cholan, Mayan), a
 **low absolutive** language with aspect-based split alignment. Per
-@cite{vazquez-alvarez-2011} §1.9.4, Chol is "an ergative language" in
-which "the ergative pattern is split in all non-perfective aspects,
-resulting in nominative-accusative alignment" — Set A indicates both
-transitive and intransitive subjects in non-perfective.
+@cite{vazquez-alvarez-2011} §1.9.4, Chol is "an ergative
+language" in which "the ergative pattern is split in all non-perfective
+aspects, resulting in nominative-accusative alignment" — Set A indicates
+both transitive and intransitive subjects in non-perfective.
 
 ## Descriptive vs analytical framing of the non-perfective pattern
 
@@ -24,25 +24,30 @@ embeds a nominalized clause (with the aspectual predicate *choñkol* as
 matrix), so Set A on the embedded subject is genitive-from-D, NOT
 nominative — the morphological identity of Set A with the possessive
 marker (cf. `tyi j-kajpelo` 'in my coffee field' vs `tyi j-k'el-e-ø`
-'I saw him', both with Set A `j-` per @cite{vazquez-alvarez-2011} p. 76)
-is taken as evidence. @cite{imanishi-2020} parameterizes the same
-surface pattern via inherent vs structural Case. The substrate's
+'I saw him', both with Set A `j-` per @cite{vazquez-alvarez-2011}
+p. 76) is taken as evidence. @cite{imanishi-2020} parameterizes Mayan
+split-ergative alignment via two parameters: (i) the Restriction on
+Nominalization (RON) on the nominalizing head *n*, and (ii) the Mayan
+Absolutive Parameter (high vs low ABS, after
+@cite{coon-mateo-pedro-preminger-2014}). For Chol, *n* does not impose
+RON, so S/A is the highest DP in the nominalized clause and receives
+genitive from D — matching Coon's analytical view. The substrate's
 `extendedErgative.assignCase` returns `.gen` (Coon's analytical view);
 a descriptive-grammar implementation would return `.nom`. The label
 "extended ergative" is Coon's coinage, generalizing one subtype of
-@cite{dixon-1994}'s split-ergative-on-TAM-lines pattern (Dixon Ch. 4).
+@cite{dixon-1994}'s split-ergative-on-TAM-lines pattern.
 
 ## Morpheme order and word-class status
 
-Per @cite{vazquez-alvarez-2011} §3.4: in Chol "the aspect markers are
-auxiliaries" — `tyi` (perfective) and `mi` (imperfective) are
-**aspectual auxiliaries** (independent words preceding the verbal
+Per @cite{vazquez-alvarez-2011} §3.4: in Chol "the aspect
+markers are auxiliaries" — `tyi` (perfective) and `mi` (imperfective)
+are **aspectual auxiliaries** (independent words preceding the verbal
 complex), not particles, not clitics, not verbal prefixes. Set A
 ergative/genitive markers are prefixes on the verbal complex (per
 @cite{vazquez-alvarez-2011} §4.1.1; some prior literature treats them
-as proclitics — Martínez Cruz 2007, Arcos López 2009). Set B
-absolutive markers are suffixes (per Kaufman & Norman 1984:90, originally
-cliticized pronouns).
+as proclitics — @cite{martinez-cruz-2007}, @cite{arcos-lopez-2009}).
+Set B absolutive markers are suffixes (per @cite{kaufman-norman-1984}
+p. 90, originally cliticized pronouns).
 
 Schematic order: `[Aux] [ERG-modifier*-ROOT-DERIV-STATUS-ABS]`, with
 the bracketed verbal complex as a single phonological unit. Contrasts
@@ -71,8 +76,8 @@ S/A = GEN (from D), O = ABS (from Voice).
 
 ## What this fragment doesn't model
 
-Per @cite{vazquez-alvarez-2011} §1.9.4, Chol exhibits all four Dixon
-alignment types: ergative-absolutive, nominative-accusative, **Split-S**
+Per @cite{vazquez-alvarez-2011} §1.9.4, Chol exhibits all
+four Dixon alignment types: ergative-absolutive, nominative-accusative, **Split-S**
 (some intransitives obligatorily Sa = Set A on light verb *cha'l*; others
 obligatorily So = Set B), and **Fluid-S** (verbs like *wäy* 'sleep' that
 take either Set A or Set B). The current `ArgPosition.intranS` collapses
@@ -83,6 +88,8 @@ the agentive split. Future refinement: split into `intranSAgentive` /
 -/
 
 namespace Fragments.Mayan.Chol
+
+open Fragments.Mayan (PersonNumber)
 
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
@@ -123,28 +130,19 @@ def absPosition : Fragments.Mayan.ABSPosition := .low
 -- § 3: Extraction Data
 -- ============================================================================
 
-/-- Extraction possibilities in Chol transitive clauses. Unlike
-    Q'anjob'al, Chol requires **no Agent Focus morphology** for A-extraction
-    (the diagnostic for "lacking syntactic ergativity" in the
-    @cite{coon-mateo-pedro-preminger-2014} sense). The local
-    `ExtractionTarget` uses thematic-role labels (agent/patient/intranS)
-    parallel to `ArgPosition`, distinct from the syntactic-position vocabulary
-    of `Interfaces.ExtractionTarget` (subject/directObject/...).
+/-- Chol's extraction profile: no special morphology for any extraction.
+    Unlike Q'anjob'al, Chol requires **no Agent Focus morphology** for
+    A-extraction (the diagnostic for "lacking syntactic ergativity" in the
+    @cite{coon-mateo-pedro-preminger-2014} sense). The substantive claim
+    is `extractionProfile.strategy = .none`; per-position extractability
+    follows trivially (every argument extracts freely), so no per-position
+    table is stipulated — the contrast with Q'anjob'al lives at the
+    `strategy` field.
 
     The resulting ambiguity (when both arguments are 3rd person) is a
     natural consequence of the absence of AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-inductive ExtractionTarget where
-  | intranS | patient | agent
-  deriving DecidableEq
-
-def ExtractionTarget.extractable : ExtractionTarget → Bool
-  | .intranS => true
-  | .patient => true
-  | .agent   => true   -- Chol: agent extracts freely!
-
-/-- Chol's extraction profile: no special morphology for any extraction. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Chol"
   , strategy := .none
@@ -170,5 +168,66 @@ def absObjectInNonFinite : Bool := true
     `Choñkol [k-ts'äm-el]` 'I am bathing.' (ERG prefix, not ABS)
     `*Choñkol [ts'äm-i-yoñ]` intended: 'I am bathing.' (ABS ✗) -/
 def absIntranSInNonFinite : Bool := false
+
+-- ============================================================================
+-- § 5: Person-Number Paradigm (Tables 9-10 of @cite{vazquez-alvarez-2011})
+-- ============================================================================
+
+/-- Set A (ergative/possessive/genitive) markers: pre-consonantal allomorphs
+    (@cite{vazquez-alvarez-2011} Table 10, p. 83). Note the morphophonemic
+    rule k- → j- /_k (1sg before a /k/ root, e.g., `tyi j-kajpelo`
+    'in my coffee field' p. 76). Plural forms use the inclusive clitic
+    `=la` for 1pl (the unmarked plural form per VA §4.2); the exclusive
+    paradigm with `=l(oj)oñ` is a per-language refinement not exposed
+    by the pan-Mayan `PersonNumber` substrate. -/
+def setAExponentPreC : PersonNumber → String
+  | .p1sg => "k-"
+  | .p2sg => "a-"
+  | .p3sg => "i-"
+  | .p1pl => "k-…=la"
+  | .p2pl => "a-…=la"
+  | .p3pl => "i-…-ob"
+
+/-- Set A markers: pre-vocalic allomorphs (@cite{vazquez-alvarez-2011}
+    Table 10, p. 83). 1sg `k-` is identical pre-C and pre-V; 2sg surfaces
+    as `aw-`, 3sg as `(i)y-` (some speakers omit the initial vowel —
+    @cite{vazquez-alvarez-2011} examples (12)-(13) p. 76-77). -/
+def setAExponentPreV : PersonNumber → String
+  | .p1sg => "k-"
+  | .p2sg => "aw-"
+  | .p3sg => "(i)y-"
+  | .p1pl => "k-…=la"
+  | .p2pl => "aw-…=la"
+  | .p3pl => "(i)y-…-ob"
+
+/-- Canonical Set A exponent table for cross-Mayan typology. The
+    pre-consonantal allomorph is the citation form (matching Q'anjob'al's
+    convention); per-context realization uses `setAExponentPreV` before
+    vowel-initial roots. -/
+abbrev setAExponent : PersonNumber → String := setAExponentPreC
+
+/-- Set B (absolutive) markers: suffixes (@cite{vazquez-alvarez-2011}
+    Table 10, p. 83). 3rd person is null (`-∅`). Plurals use the
+    inclusive `=la` clitic for 1pl per the convention above. -/
+def setBExponent : PersonNumber → String
+  | .p1sg => "-oñ"
+  | .p2sg => "-ety"
+  | .p3sg => "-∅"
+  | .p1pl => "-oñ=la"
+  | .p2pl => "-ety=la"
+  | .p3pl => "-∅-ob"
+
+/-- 3rd person absolutive is null — pan-Mayan invariant per
+    @cite{kaufman-norman-1984} Table 8. -/
+theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+
+/-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic
+    `(i)y-`. Distinct from Q'anjob'al's `s-` vs `y-` (the proto-Mayan
+    `*s-` ~ `*y-` allomorphy was leveled to `*r` → `y` in proto-Tseltalan,
+    and Chol inherited the leveled form per @cite{kaufman-norman-1984}
+    p. 91). -/
+theorem p3sg_erg_allomorphy :
+    setAExponentPreC .p3sg = "i-" ∧ setAExponentPreV .p3sg = "(i)y-" :=
+  ⟨rfl, rfl⟩
 
 end Fragments.Mayan.Chol

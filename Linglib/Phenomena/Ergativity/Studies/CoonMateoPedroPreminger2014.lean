@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Phenomena.Ergativity.MayanAlignment
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Theories.Syntax.Minimalist.ClauseSpine
@@ -350,14 +351,34 @@ theorem fragments_ground_tada :
     hasSyntacticErgativity (toCaseLocus Fragments.Mayan.Chol.absPosition) = false :=
   ⟨rfl, rfl⟩
 
-/-- Q'anjob'al's extraction data is consistent with the prediction:
-    agent extraction is banned in regular transitives. -/
-theorem qanjobal_extraction_consistent :
-    Fragments.Mayan.Qanjobal.ExtractionTarget.agent.extractable = false := rfl
+/-- **Tada's Generalization, parameterized form**: a Mayan language
+    exhibits syntactic ergativity (the analytical predicate from §4)
+    **iff** it is HIGH-ABS. Quantified over `Fragments.Mayan.MayanLang`
+    via the cross-Mayan `absPositionOf` dispatcher
+    (`Phenomena.Ergativity.MayanAlignment`).
 
-/-- Chol's extraction data is consistent: agent extracts freely. -/
+    Replaces the per-language enumeration in `fragments_ground_tada`
+    with a single quantified theorem that scales as the `MayanLang`
+    registry grows. -/
+theorem mayan_tada (lang : Fragments.Mayan.MayanLang) :
+    hasSyntacticErgativity
+        (toCaseLocus (Phenomena.Ergativity.MayanAlignment.absPositionOf lang))
+      = true ↔
+      Phenomena.Ergativity.MayanAlignment.absPositionOf lang =
+        Fragments.Mayan.ABSPosition.high := by
+  cases lang <;> decide
+
+/-- Q'anjob'al's extraction data is consistent with the prediction:
+    agent extraction is marked (requires AF morphology in regular
+    transitives). The substantive claim lives at `extractionProfile`'s
+    `markedPositions := [.subject]` field. -/
+theorem qanjobal_extraction_consistent :
+    Fragments.Mayan.Qanjobal.extractionProfile.marks .subject = true := rfl
+
+/-- Chol's extraction data is consistent: no Agent Focus morphology
+    required (every argument extracts freely under the absent strategy). -/
 theorem chol_extraction_consistent :
-    Fragments.Mayan.Chol.ExtractionTarget.agent.extractable = true := rfl
+    Fragments.Mayan.Chol.extractionProfile.strategy = .none := rfl
 
 /-- Q'anjob'al's AF form carries the intransitive status suffix, matching
     the prediction that AF Voice is non-phasal (intransitive v⁰). -/
@@ -721,7 +742,7 @@ theorem shared_phase_problem :
     asymmetries: agent extraction is blocked without AF in both. -/
 theorem both_have_extraction_asymmetries :
     Fragments.Mayan.Qanjobal.absPosition = .high ∧
-    Fragments.Mayan.Qanjobal.ExtractionTarget.agent.extractable = false ∧
+    Fragments.Mayan.Qanjobal.extractionProfile.marks .subject = true ∧
     Fragments.Mayan.Kaqchikel.kaqAFType = .afLanguage := ⟨rfl, rfl, rfl⟩
 
 /-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).

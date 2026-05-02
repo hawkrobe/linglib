@@ -1,5 +1,7 @@
+import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Fragments.Mayan.Params
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment
@@ -54,51 +56,13 @@ namespace Fragments.Mayan.Qanjobal
 
 open Minimalist
 
--- ============================================================================
--- § 1: Person Morphology
--- ============================================================================
-
-/-- Person-number values relevant for Q'anjob'al agreement. -/
-inductive PN where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
-
-/-- Set A (ergative/possessive) markers: pre-consonantal allomorphs. -/
-def setAPreC : PN → String
-  | .p1sg => "hin-"
-  | .p2sg => "ha-"
-  | .p3sg => "s-"
-  | .p1pl => "ko-"
-  | .p2pl => "he-"
-  | .p3pl => "s-…heb'"
-
-/-- Set A (ergative/possessive) markers: pre-vocalic allomorphs. -/
-def setAPreV : PN → String
-  | .p1sg => "w-"
-  | .p2sg => "h-"
-  | .p3sg => "y-"
-  | .p1pl => "j-"
-  | .p2pl => "hey-"
-  | .p3pl => "y-…heb'"
-
-/-- Set B (absolutive) markers: suffixes. -/
-def setBMarker : PN → String
-  | .p1sg => "-in"
-  | .p2sg => "-ach"
-  | .p3sg => "-∅"
-  | .p1pl => "-on"
-  | .p2pl => "-ex"
-  | .p3pl => "heb'"
-
-/-- 3rd person absolutive is null (∅). -/
-theorem p3sg_abs_null : setBMarker .p3sg = "-∅" := rfl
-
-/-- 3rd person ergative (pre-vocalic) is *y-*, pre-consonantal is *s-*. -/
-theorem p3sg_erg_allomorphy :
-    setAPreC .p3sg = "s-" ∧ setAPreV .p3sg = "y-" := ⟨rfl, rfl⟩
+-- Person-number paradigm and Set A / Set B exponent tables
+-- (`PersonNumber`, `setAExponent`, `setAExponentPreC`, `setAExponentPreV`,
+-- `setBExponent`) live in Qanjobal/Agreement.lean — agreement morphology
+-- is general, not AF-specific.
 
 -- ============================================================================
--- § 2: Status Suffixes
+-- § 1: Status Suffixes
 -- ============================================================================
 
 /-- Verb status suffixes encode transitivity. Surface only phrase-finally. -/
@@ -111,34 +75,14 @@ def StatusSuffix.form : StatusSuffix → String
   | .itv => "-i"
   | .tv  => "-V'"
 
--- ============================================================================
--- § 3: Extraction Data
--- ============================================================================
-
-/-- Extraction possibilities in Q'anjob'al transitive clauses. -/
-inductive ExtractionTarget where
-  | intranS   -- S: intransitive subject
-  | patient   -- P: transitive object
-  | agent     -- A: transitive subject
-  deriving DecidableEq, Repr
-
-/-- Can this argument be A-bar extracted from a regular transitive clause? -/
-def ExtractionTarget.extractable : ExtractionTarget → Bool
-  | .intranS => true   -- S extracts freely
-  | .patient => true   -- P extracts freely
-  | .agent   => false  -- A banned without AF
-
-/-- A (transitive subject) cannot be extracted. -/
-theorem agent_extraction_banned :
-    ExtractionTarget.agent.extractable = false := rfl
-
-/-- S and P extract freely. -/
-theorem absolutive_extraction_free :
-    ExtractionTarget.intranS.extractable = true ∧
-    ExtractionTarget.patient.extractable = true := ⟨rfl, rfl⟩
+-- The local `inductive ExtractionTarget` (intranS/patient/agent) was
+-- redundant with `extractionProfile.markedPositions`: the substantive
+-- claim "A-extraction is banned without AF" is now expressed as
+-- `extractionProfile.marks .subject = true` (subject = .agent's default
+-- position per `Interfaces.ArgumentRole.defaultPosition`).
 
 -- ============================================================================
--- § 4: Agent Focus Construction
+-- § 2: Agent Focus Construction
 -- ============================================================================
 
 /-- Morphological properties of a Q'anjob'al verb form. -/
@@ -185,8 +129,29 @@ theorem af_permits_extraction :
     agentFocusForm.permitsAgentExtraction = true ∧
     regularTransitive.permitsAgentExtraction = false := ⟨rfl, rfl⟩
 
+/-- Project Q'anjob'al's `VerbMorphology` (which carries the
+    Q'anjob'al-specific `statusSuffix` field) down to the pan-Mayan
+    `Fragments.Mayan.VerbForm` for cross-Mayan typology theorems. The
+    `hasAFSuffix` flag is the discriminator: AF morphology = AF form. -/
+def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Fragments.Mayan.VerbForm :=
+  if v.hasAFSuffix then .agentFocus else .transitive
+
+/-- AF morphology projects to `.agentFocus`; regular transitive to
+    `.transitive`. -/
+theorem toMayanVerbForm_canonical :
+    agentFocusForm.toMayanVerbForm = .agentFocus ∧
+    regularTransitive.toMayanVerbForm = .transitive := ⟨rfl, rfl⟩
+
+/-- Cross-Mayan consistency: Q'anjob'al's AF form lacks Set A under both
+    the language-internal `hasSetA` field and the projected
+    `Mayan.VerbForm.hasSetA` predicate. -/
+theorem hasSetA_consistent_with_projection :
+    agentFocusForm.toMayanVerbForm.hasSetA = agentFocusForm.hasSetA ∧
+    regularTransitive.toMayanVerbForm.hasSetA = regularTransitive.hasSetA :=
+  ⟨rfl, rfl⟩
+
 -- ============================================================================
--- § 5: Crazy Antipassive
+-- § 3: Crazy Antipassive
 -- ============================================================================
 
 /-- The Crazy Antipassive uses the same *-on* morpheme as AF, but in
@@ -205,7 +170,7 @@ theorem crazy_ap_is_af_form :
     crazyAntipassiveForm = agentFocusForm := rfl
 
 -- ============================================================================
--- § 6: Person Restriction on AF
+-- § 4: Person Restriction on AF
 -- ============================================================================
 
 /-- In Q'anjob'al, AF is restricted to clauses with **3rd person** agents.
@@ -246,7 +211,7 @@ theorem crazy_ap_all_persons :
     PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 7: Extraction Profile
+-- § 5: Extraction Profile
 -- ============================================================================
 
 /-- Q'anjob'al's extraction morphology profile. -/

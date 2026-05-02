@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Params
+import Linglib.Features.Prominence
 
 /-!
 # Shared Tseltalan Infrastructure
@@ -74,5 +75,33 @@ theorem abs_uniform :
     GramFunction.S_O.markerSet = .setB ∧
     GramFunction.O.markerSet = .setB ∧
     GramFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 3: Projection to Canonical ArgumentRole
+-- ============================================================================
+
+/-- Project the Tseltalan-specific Split-S grammatical function down to
+    the canonical pan-linguistic `ArgumentRole` (S/A/P/R/T) used across
+    linglib. The projection is **partial** (`Option`-valued):
+
+    - `.A → .A`, `.O → .P`, `.G → .R`: verbal arguments map cleanly.
+    - `.S_A`, `.S_O → .S`: agentivity distinction is collapsed (lossy
+      but expected for cross-Mayan typology theorems that don't track
+      Split-S granularity).
+    - `.psr → none`: possessors are DP-internal, with no `ArgumentRole`
+      analog. Cross-Mayan typology theorems quantify over verbal
+      arguments only.
+
+    Tseltal/Tsotsil consumers of cross-Mayan theorems use this projection
+    to feed Tseltalan agreement data into the canonical inventory; the
+    Aissen-Polian possessor-extraction analysis continues to use
+    `GramFunction` directly for its DP-internal claims. -/
+def GramFunction.toArgumentRole? : GramFunction → Option Features.Prominence.ArgumentRole
+  | .A   => some .A
+  | .S_A => some .S
+  | .S_O => some .S
+  | .O   => some .P
+  | .G   => some .R
+  | .psr => none
 
 end Fragments.Mayan.Tseltalan

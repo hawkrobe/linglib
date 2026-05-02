@@ -70,6 +70,8 @@ language family.
 
 namespace Fragments.Mayan.Qanjobal
 
+open Fragments.Mayan (PersonNumber)
+
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
 -- ============================================================================
@@ -98,5 +100,51 @@ abbrev ArgPosition.accCase : ArgPosition → Core.Case := Fragments.Mayan.accCas
     aspect marker, pre-stem). Observable from morpheme order:
     ASP-ABS-ERG-ROOT-SUFFIX. -/
 def absPosition : Fragments.Mayan.ABSPosition := .high
+
+-- ============================================================================
+-- § 3: Person-Number Paradigm (table (13))
+-- ============================================================================
+
+/-- Set A (ergative/possessive) markers: pre-consonantal allomorphs
+    (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
+def setAExponentPreC : PersonNumber → String
+  | .p1sg => "hin-"
+  | .p2sg => "ha-"
+  | .p3sg => "s-"
+  | .p1pl => "ko-"
+  | .p2pl => "he-"
+  | .p3pl => "s-…heb'"
+
+/-- Set A (ergative/possessive) markers: pre-vocalic allomorphs
+    (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
+def setAExponentPreV : PersonNumber → String
+  | .p1sg => "w-"
+  | .p2sg => "h-"
+  | .p3sg => "y-"
+  | .p1pl => "j-"
+  | .p2pl => "hey-"
+  | .p3pl => "y-…heb'"
+
+/-- Canonical Set A exponent table for cross-Mayan typology. The
+    pre-consonantal allomorph is the citation form; per-context
+    realization uses `setAExponentPreV` before vowels. -/
+abbrev setAExponent : PersonNumber → String := setAExponentPreC
+
+/-- Set B (absolutive) markers: suffixes
+    (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
+def setBExponent : PersonNumber → String
+  | .p1sg => "-in"
+  | .p2sg => "-ach"
+  | .p3sg => "-∅"
+  | .p1pl => "-on"
+  | .p2pl => "-ex"
+  | .p3pl => "heb'"
+
+/-- 3rd person absolutive is null (∅). -/
+theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+
+/-- 3rd person ergative (pre-vocalic) is *y-*, pre-consonantal is *s-*. -/
+theorem p3sg_erg_allomorphy :
+    setAExponentPreC .p3sg = "s-" ∧ setAExponentPreV .p3sg = "y-" := ⟨rfl, rfl⟩
 
 end Fragments.Mayan.Qanjobal

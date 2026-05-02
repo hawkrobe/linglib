@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # Tsotsil Agreement Fragment
@@ -24,38 +25,75 @@ usually unpronounced unless topicalized or focused.
 
 Grammatical function classification is shared across Tseltalan — see
 `Fragments.Mayan.Tseltalan` for the shared definitions.
+
+## Alignment
+
+Tseltalan languages are uniformly **ergative-absolutive** with no
+aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
 -/
 
 namespace Fragments.Mayan.Tsotsil
 
-open Fragments.Mayan (MarkerSet)
+open Fragments.Mayan (MarkerSet PersonNumber MarkerLinearity)
 
 -- Re-export shared Tseltalan types
 export Fragments.Mayan.Tseltalan (GramFunction)
 
 -- ============================================================================
--- § 1: Agreement Marker Position
+-- § 1: Argument Positions (alias to canonical SAP type)
 -- ============================================================================
 
-/-- Set A markers in Tsotsil are prefixal. -/
-def setAPosition : String := "prefixal"
+/-- Argument positions in a Tsotsil clause. Aliased to the canonical
+    `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
+    cross-framework code shares one inventory. -/
+abbrev ArgPosition := Features.Prominence.ArgumentRole
+
+/-- Case assignment for Tsotsil. Definitionally equal to
+    `Fragments.Mayan.caseTseltalan .Perf`, which derives from
+    `Alignment.ergative.assignCase`. Tseltalan has no aspect-conditioned
+    split. -/
+abbrev ArgPosition.case : ArgPosition → Core.Case :=
+  Fragments.Mayan.caseTseltalan .Perf
+
+/-- Non-perfective case assignment for Tsotsil. Identical to perfective
+    (no aspect split per @cite{polian-2013}). -/
+abbrev ArgPosition.accCase : ArgPosition → Core.Case :=
+  Fragments.Mayan.caseTseltalan .Imp
+
+-- ============================================================================
+-- § 2: Absolutive Position (LOW-ABS)
+-- ============================================================================
+
+/-- Tsotsil's absolutive morphemes appear in low (post-stem) position
+    when suffixal, consistent with Tseltalan being LOW-ABS. The
+    prefixal-or-suffixal alternation is conditioned by morphosyntactic
+    context (see `setBLinearity`); the LOW-ABS classification refers to
+    the structural position of the licensing head, not the linear
+    position of every Set B exponent. -/
+def absPosition : Fragments.Mayan.ABSPosition := .low
+
+-- ============================================================================
+-- § 3: Agreement Marker Linearity
+-- ============================================================================
+
+/-- Set A markers in Tsotsil are prefixal (per @cite{aissen-polian-2025}
+    Table 1; pan-Mayan invariant). -/
+def setALinearity : MarkerLinearity := .prefixal
 
 /-- Set B markers in Tsotsil are prefixal or suffixal, depending on
-    dialect and morphosyntactic context. -/
-def setBPosition : String := "prefixal/suffixal"
+    dialect and morphosyntactic context (@cite{aissen-polian-2025}
+    Table 1). The Tsotsil-vs-Tseltal contrast in Set B linearity is the
+    headline Tseltalan-internal divergence. -/
+def setBLinearity : MarkerLinearity := .either
 
 -- ============================================================================
--- § 2: Set A/B Exponents (Zinacantec Tsotsil)
+-- § 4: Set A/B Exponents (Zinacantec Tsotsil)
 -- ============================================================================
 
-/-- Person-number values for Tsotsil agreement. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
-
-/-- Set A (ERG/GEN) exponents for Zinacantec Tsotsil.
-    These are prefixes on the verb (for ERG) or the possessed noun (for GEN).
-    Forms vary by following segment; simplified here. -/
+/-- Set A (ERG/GEN) exponents for Zinacantec Tsotsil
+    (@cite{polian-2013}). Prefixes on the verb (for ERG) or the possessed
+    noun (for GEN). Forms vary by following segment; shown as
+    `pre-C/pre-V` allomorph pairs. -/
 def setAExponent : PersonNumber → String
   | .p1sg => "k-/j-"
   | .p2sg => "a-/av-"
@@ -64,14 +102,32 @@ def setAExponent : PersonNumber → String
   | .p2pl => "a-/av-"
   | .p3pl => "s-/y-"
 
-/-- Set B (ABS) exponents for Zinacantec Tsotsil.
-    3rd person singular has no overt exponent. -/
+/-- Set B (ABS) exponents for Zinacantec Tsotsil (@cite{polian-2013}).
+    3rd person singular has no overt exponent (`-∅`). Some forms show
+    allomorphic alternation depending on suffix harmony. -/
 def setBExponent : PersonNumber → String
   | .p1sg => "-on/-un"
   | .p2sg => "-ot/-at"
-  | .p3sg => "∅"
+  | .p3sg => "-∅"
   | .p1pl => "-otik/-utik"
   | .p2pl => "-oxuk"
   | .p3pl => "-ik"
+
+/-- 3rd person absolutive is null — pan-Mayan invariant per
+    @cite{kaufman-norman-1984} Table 8. -/
+theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+
+-- ============================================================================
+-- § 5: Extraction Profile
+-- ============================================================================
+
+/-- Tsotsil's extraction profile: no Agent Focus morphology required for
+    A-extraction, consistent with Tsotsil being LOW-ABS. -/
+def extractionProfile : Interfaces.ExtractionProfile :=
+  { language := "Tsotsil"
+  , strategy := .none
+  , markedPositions := []
+  , distinguishesPosition := false
+  , notes := "LOW-ABS Tseltalan; no AF morphology" }
 
 end Fragments.Mayan.Tsotsil

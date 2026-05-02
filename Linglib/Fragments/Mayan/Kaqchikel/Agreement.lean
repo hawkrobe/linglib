@@ -61,30 +61,25 @@ deliberately avoids picking sides on that question.
 
 namespace Fragments.Mayan.Kaqchikel
 
+open Fragments.Mayan (PersonNumber)
+
 -- ============================================================================
 -- § 1: Person-Number Inventory
 -- ============================================================================
 
-/-- Person-number combinations for Kaqchikel agreement paradigms.
-    Six cells: three persons × two numbers. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
+-- Person-number combinations for Kaqchikel agreement paradigms come from
+-- the pan-Mayan `Fragments.Mayan.PersonNumber` enum (six cells: three
+-- persons × two numbers). Projections `.person`, `.isPlural`, and the
+-- full inventory `PersonNumber.all` live in `Mayan/Params.lean`.
 
-/-- All six person-number values. -/
-def personNumbers : List PersonNumber :=
-  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
+-- ============================================================================
+-- § 1b: ABS Position (LOW-ABS / HIGH-ABS)
+-- ============================================================================
 
-/-- Person value as `PersonLevel` (the canonical person type). -/
-def PersonNumber.person : PersonNumber → Features.Prominence.PersonLevel
-  | .p1sg | .p1pl => .first
-  | .p2sg | .p2pl => .second
-  | .p3sg | .p3pl => .third
-
-/-- Is this person-number [+plural]? -/
-def PersonNumber.isPlural : PersonNumber → Bool
-  | .p1pl | .p2pl | .p3pl => true
-  | .p1sg | .p2sg | .p3sg => false
+/-- Kaqchikel's absolutive morphemes appear in HIGH position (between
+    aspect marker and the verb stem, pre-stem). Morpheme order:
+    ASP-ABS-ERG-Stem (per `## The System` table above). -/
+def absPosition : Fragments.Mayan.ABSPosition := .high
 
 -- ============================================================================
 -- § 2: Set A (ERG) Vocabulary

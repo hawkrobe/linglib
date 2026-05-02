@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Theories.Interfaces.Morphosyntax.Extraction
 
 /-!
 # Tseltal Agreement Fragment
@@ -24,36 +25,72 @@ or suffixal depending on context.
 
 Grammatical function classification is shared across Tseltalan — see
 `Fragments.Mayan.Tseltalan` for the shared definitions.
+
+## Alignment
+
+Tseltalan languages are uniformly **ergative-absolutive** with no
+aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
+Set A indicates A; Set B indicates S and P alike.
 -/
 
 namespace Fragments.Mayan.Tseltal
 
-open Fragments.Mayan (MarkerSet)
+open Fragments.Mayan (MarkerSet PersonNumber MarkerLinearity)
 
 -- Re-export shared Tseltalan types
 export Fragments.Mayan.Tseltalan (GramFunction)
 
 -- ============================================================================
--- § 1: Agreement Marker Position
+-- § 1: Argument Positions (alias to canonical SAP type)
 -- ============================================================================
 
-/-- Set A markers in Tseltal are prefixal. -/
-def setAPosition : String := "prefixal"
+/-- Argument positions in a Tseltal clause. Aliased to the canonical
+    `Features.Prominence.ArgumentRole` (S/A/P/R/T) so cross-Mayan and
+    cross-framework code shares one inventory. -/
+abbrev ArgPosition := Features.Prominence.ArgumentRole
 
-/-- Set B markers in Tseltal are consistently suffixal. -/
-def setBPosition : String := "suffixal"
+/-- Case assignment for Tseltal. Definitionally equal to
+    `Fragments.Mayan.caseTseltalan .Perf`, which derives from
+    `Alignment.ergative.assignCase`. Tseltalan has no aspect-conditioned
+    split, so a single case function suffices for both perfective and
+    non-perfective. -/
+abbrev ArgPosition.case : ArgPosition → Core.Case :=
+  Fragments.Mayan.caseTseltalan .Perf
+
+/-- Non-perfective case assignment for Tseltal. Identical to perfective
+    (no aspect split per @cite{polian-2013}). Provided for cross-Mayan
+    shape-uniformity with the other Mayan fragments. -/
+abbrev ArgPosition.accCase : ArgPosition → Core.Case :=
+  Fragments.Mayan.caseTseltalan .Imp
 
 -- ============================================================================
--- § 2: Set A/B Exponents (Oxchuc Tseltal)
+-- § 2: Absolutive Position (LOW-ABS)
 -- ============================================================================
 
-/-- Person-number values for Tseltal agreement. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
+/-- Tseltal's absolutive morphemes appear in low (post-stem) position,
+    consistent with Tseltalan being LOW-ABS. -/
+def absPosition : Fragments.Mayan.ABSPosition := .low
 
-/-- Set A (ERG/GEN) exponents for Oxchuc Tseltal.
-    Prefixes on the verb or possessed noun. -/
+-- ============================================================================
+-- § 3: Agreement Marker Linearity
+-- ============================================================================
+
+/-- Set A markers in Tseltal are prefixal (per @cite{aissen-polian-2025}
+    Table 1; pan-Mayan invariant). -/
+def setALinearity : MarkerLinearity := .prefixal
+
+/-- Set B markers in Tseltal are consistently suffixal. Contrasts with
+    Tsotsil Set B, which is prefixal or suffixal depending on context
+    (@cite{aissen-polian-2025} Table 1, footnote 9). -/
+def setBLinearity : MarkerLinearity := .suffixal
+
+-- ============================================================================
+-- § 4: Set A/B Exponents (Oxchuc Tseltal)
+-- ============================================================================
+
+/-- Set A (ERG/GEN) exponents for Oxchuc Tseltal (@cite{polian-2013}).
+    Prefixes on the verb or possessed noun. Forms shown as
+    `pre-C/pre-V` allomorph pairs. -/
 def setAExponent : PersonNumber → String
   | .p1sg => "k-/j-"
   | .p2sg => "a-/aw-"
@@ -62,18 +99,35 @@ def setAExponent : PersonNumber → String
   | .p2pl => "a-/aw-"
   | .p3pl => "s-/y-"
 
-/-- Set B (ABS) exponents for Oxchuc Tseltal.
-    Suffixes on the verb stem. 3rd person singular is ∅. -/
+/-- Set B (ABS) exponents for Oxchuc Tseltal (@cite{polian-2013}).
+    Suffixes on the verb stem. 3rd person singular is null (`-∅`). -/
 def setBExponent : PersonNumber → String
   | .p1sg => "-on"
   | .p2sg => "-at"
-  | .p3sg => "∅"
+  | .p3sg => "-∅"
   | .p1pl => "-otik"
   | .p2pl => "-ex"
   | .p3pl => "-ik"
 
-/-- Tseltal Set B differs from Tsotsil in position (suffixal vs
-    prefixal/suffixal), though the marker set assignment is identical. -/
-theorem setB_is_suffixal : setBPosition = "suffixal" := rfl
+/-- 3rd person absolutive is null — pan-Mayan invariant per
+    @cite{kaufman-norman-1984} Table 8. -/
+theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+
+/-- Tseltal Set B differs from Tsotsil in linearity (suffixal vs
+    prefixal-or-suffixal); the marker set assignment is identical. -/
+theorem setB_is_suffixal : setBLinearity = .suffixal := rfl
+
+-- ============================================================================
+-- § 5: Extraction Profile
+-- ============================================================================
+
+/-- Tseltal's extraction profile: no Agent Focus morphology required for
+    A-extraction, consistent with Tseltal being LOW-ABS. -/
+def extractionProfile : Interfaces.ExtractionProfile :=
+  { language := "Tseltal"
+  , strategy := .none
+  , markedPositions := []
+  , distinguishesPosition := false
+  , notes := "LOW-ABS Tseltalan; no AF morphology" }
 
 end Fragments.Mayan.Tseltal

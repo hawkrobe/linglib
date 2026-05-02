@@ -311,4 +311,147 @@ def caseMam : UD.Aspect → Features.Prominence.ArgumentRole → Core.Case
 abbrev ergCaseMam : Features.Prominence.ArgumentRole → Core.Case :=
   caseMam .Perf
 
+/-- Tseltalan (Tseltal, Tsotsil) case assignment.
+
+    Per @cite{polian-2013} and @cite{aissen-polian-2025}: Tseltalan
+    languages are uniformly **ergative-absolutive** with no aspect-
+    conditioned split (in contrast with their Cholan cousins). The
+    aspect parameter is retained for shape-uniformity with the other
+    Mayan `case*` functions. -/
+def caseTseltalan : UD.Aspect → Features.Prominence.ArgumentRole → Core.Case
+  | _, r => Alignment.ergative.assignCase r
+
+/-- Tseltalan ergative-absolutive case (uniform across aspects). Equals
+    `Alignment.ergative.assignCase` by definition. -/
+abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Core.Case :=
+  caseTseltalan .Perf
+
+-- ============================================================================
+-- § 5: Person-Number Paradigm
+-- ============================================================================
+
+/-- The pan-Mayan person/number agreement paradigm.
+
+    Six values cover the consensus across Cholan, K'ichean,
+    Q'anjob'alan, and Tseltalan agreement morphology
+    (@cite{kaufman-norman-1984} Tables 7-8 reconstruct this paradigm
+    to proto-Cholan with `-∅` 3sg invariant). Languages with an
+    inclusive/exclusive distinction in 1pl (Chol's `-on lojon` 1plExcl
+    per @cite{kaufman-norman-1984} p. 91) accommodate the refinement
+    at the per-language level. -/
+inductive PersonNumber where
+  | p1sg | p2sg | p3sg
+  | p1pl | p2pl | p3pl
+  deriving DecidableEq, Repr
+
+namespace PersonNumber
+
+/-- Project the person component (independent of number). -/
+def person : PersonNumber → Features.Prominence.PersonLevel
+  | .p1sg | .p1pl => .first
+  | .p2sg | .p2pl => .second
+  | .p3sg | .p3pl => .third
+
+/-- Is this a plural form? -/
+def isPlural : PersonNumber → Bool
+  | .p1sg | .p2sg | .p3sg => false
+  | .p1pl | .p2pl | .p3pl => true
+
+/-- All six values, useful for `decide`-checked drift sentries. -/
+def all : List PersonNumber :=
+  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
+
+end PersonNumber
+
+-- ============================================================================
+-- § 6: Verb Form (transitive vs Agent Focus)
+-- ============================================================================
+
+/-- The two verb forms relevant to Mayan agreement morphology.
+    Used by HIGH-ABS languages with an Agent Focus alternation
+    (Q'anjob'al, Kaqchikel) and trivially by LOW-ABS languages
+    (where `.agentFocus` is unattested). -/
+inductive VerbForm where
+  | transitive   -- canonical transitive
+  | agentFocus   -- AF construction (HIGH-ABS A-extraction)
+  deriving DecidableEq, Repr
+
+/-- Whether the form bears Set A agreement (ergative cross-reference).
+    Canonical transitive: yes. AF: no (the agent loses Set A under
+    @cite{coon-mateo-pedro-preminger-2014}'s analysis). -/
+def VerbForm.hasSetA : VerbForm → Bool
+  | .transitive => true
+  | .agentFocus => false
+
+-- ============================================================================
+-- § 7: Exponent Tables
+-- ============================================================================
+
+/-- An exponent table mapping each person/number value to its surface
+    string realization. Per-language `setAExponent` and `setBExponent`
+    populate this; cross-Mayan typology theorems quantify over it. -/
+abbrev ExponentTable := PersonNumber → String
+
+/-- Decidable predicate: the third-person singular slot is morphologically
+    null. A pan-Mayan invariant per @cite{kaufman-norman-1984} Table 8 —
+    Set B 3sg null reconstructs to proto-Cholan and proto-Mayan. The
+    predicate is **notation-agnostic** — surface notation varies by
+    linearity: `"-∅"` for suffixal Set B (Cholan, Q'anjob'alan, Tseltal,
+    Tsotsil), `"∅"` for prefixal Set B (Kaqchikel and other K'ichean
+    HIGH-ABS languages), `"∅-"` for prefixal-with-trailing-dash
+    convention. All resolve to the same morphological claim: no overt
+    3sg exponent. The disjunction form is kernel-decidable (unlike a
+    `String.replace` normalization, which is opaque to `decide`). -/
+def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
+  e .p3sg = "-∅" ∨ e .p3sg = "∅" ∨ e .p3sg = "∅-"
+
+instance (e : ExponentTable) : Decidable e.IsThirdSgZero := by
+  unfold ExponentTable.IsThirdSgZero; exact inferInstance
+
+-- ============================================================================
+-- § 7b: Marker Linearity
+-- ============================================================================
+
+/-- The morphological linearity of an agreement marker on the verb stem.
+
+    Tseltalan languages contrast on this dimension: per
+    @cite{aissen-polian-2025} Table 1, Tseltal Set B is consistently
+    suffixal, while Tsotsil Set B is prefixal-or-suffixal depending on
+    dialect and morphosyntactic context. Cholan and Q'anjob'alan Set B
+    are uniformly suffixal. Set A is uniformly prefixal across all
+    formalised Mayan languages — a candidate cross-Mayan invariant. -/
+inductive MarkerLinearity where
+  | prefixal
+  | suffixal
+  | either   -- prefixal-or-suffixal (Tsotsil Set B)
+  deriving DecidableEq, Repr
+
+-- ============================================================================
+-- § 8: Mayan Language Registry + caseAt Dispatcher
+-- ============================================================================
+
+/-- The Mayan languages with consolidated Fragment files. Mam, K'iche',
+    and Yukatek have substrate `case*` functions but not yet the full
+    consolidated Agreement.lean shape; they're added to the registry
+    in a later phase. -/
+inductive MayanLang where
+  | Chol | Qanjobal | Kaqchikel | Tseltal | Tsotsil
+  deriving DecidableEq, Repr
+
+/-- All registered Mayan languages, useful for cross-Mayan typology
+    theorems quantified by `∀ lang ∈ MayanLang.all`. -/
+def MayanLang.all : List MayanLang :=
+  [.Chol, .Qanjobal, .Kaqchikel, .Tseltal, .Tsotsil]
+
+/-- Aspect-driven case assignment dispatched by language. Routes to the
+    existing per-branch `case*` substrate functions; the dispatcher is
+    the consolidation point that lets cross-Mayan theorems quantify
+    over `MayanLang` rather than enumerate per-language `rfl` facts. -/
+def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Core.Case
+  | .Chol,      asp, r => caseChol asp r
+  | .Qanjobal,  asp, r => caseQanjobalan asp r
+  | .Kaqchikel, asp, r => caseKaqchikel asp r
+  | .Tseltal,   asp, r => caseTseltalan asp r
+  | .Tsotsil,   asp, r => caseTseltalan asp r
+
 end Fragments.Mayan

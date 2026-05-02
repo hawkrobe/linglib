@@ -4,6 +4,21 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.602 — Cross-Mayan agreement substrate consolidation (5 langs, 8 phases) + 4 quantified typology theorems
+
+Closes the structural-drift finding from a multi-agent audit of `Fragments/Mayan/Chol/Agreement.lean`: 5 Mayan agreement Fragment files had 3 different shapes, blocking quantified cross-Mayan theorems. Now uniform.
+
+- **Substrate (Mayan/Params.lean)**: `PersonNumber` (6 cells) + projections; `VerbForm`; `ExponentTable` abbrev; `IsThirdSgZero` (kernel-decidable disjunction form, notation-agnostic across `"-∅"`/`"∅"`/`"∅-"`); `MarkerLinearity`; `MayanLang` enum; `caseAt` dispatcher; `caseTseltalan` (uniformly ergative).
+- **Per-language refactor**: Chol/Q'anjob'al/Kaqchikel/Tseltal/Tsotsil now consume `Mayan.PersonNumber`, expose `setAExponent`/`setBExponent` keyed on it, canonical `extractionProfile` (no per-language prefixes), `absPosition`. Q'anjob'al's Set A/B exponent cluster moved from AgentFocus.lean to Agreement.lean. Q'anjob'al's redundant `inductive ExtractionTarget` deleted (subsumed by `extractionProfile.markedPositions`). Kaqchikel `absPosition := .high` bug fix. Chol exponent tables verified verbatim against VA 2011 Table 10.
+- **Tseltalan branch (Tseltalan.lean)**: `GramFunction.toArgumentRole?` partial projection — preserves Split-S granularity while enabling cross-Mayan consumption.
+- **Cross-Mayan typology (Phenomena/Ergativity/MayanAlignment.lean, NEW)**: 5 dispatchers + 3 quantified theorems — `mayan_p3sg_abs_null`, `mayan_set_a_uniformly_prefixal`, `mayan_perfective_ergative`. Anchored on Tada's Generalization + K&N 1984 pan-Mayan invariants.
+- **CMP2014**: parameterized `mayan_tada` (replaces per-language `fragments_ground_tada` enumeration); 2 `Qanjobal.ExtractionTarget.agent.extractable = false` consumers rewritten to `extractionProfile.marks .subject = true`; `chol_extraction_consistent` rewritten to `extractionProfile.strategy = .none`. Imanishi 2020 mischaracterization fixed (was "inherent vs structural Case", correct = RON + MAP).
+- **Bibliography**: 2 new entries (`martinez-cruz-2007`, `kaufman-norman-1984`); raw author-year strings in Chol docstring converted to `@cite{}`; all section/page refs (§1.9.4, §3.4, §4.1.1, p. 76, K&N p. 90) verified verbatim against PDFs.
+
+**Build**: green at 5685 jobs. No new sorrys.
+
+**Out of scope**: Mam/K'iche'/Yukatek (substrate has `case*` but not consolidated Agreement.lean shape); per-language `ArgPosition` aliases (kept for consistency); Kaqchikel local `VerbForm` consolidation (structurally identical to `Mayan.VerbForm`).
+
 ### 0.230.601 — Phase 5+6: Core.InformationTheory entropy/MI/CE/KL/Hellinger families DELETED
 
 Verified zero active call sites remain (all references are docstring/comment mentions of "deleted Core.InformationTheory.X" — the migration's audit trail). Deleted ~640 lines from `Linglib/Core/InformationTheory.lean`, retaining only the ΔP family.

@@ -106,8 +106,9 @@ def longDistanceAgentExtraction : ExtractionDatum :=
 -- § 3: Extraction Profile
 -- ============================================================================
 
-/-- Kaqchikel's extraction morphology profile: agent focus alternation. -/
-def kaqExtractionProfile : Interfaces.ExtractionProfile :=
+/-- Kaqchikel's extraction morphology profile: agent focus alternation.
+    Canonical name `extractionProfile` (uniform with Chol, Q'anjob'al). -/
+def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Kaqchikel"
   , strategy := .agentFocusAlternation
   , markedPositions := [.subject]

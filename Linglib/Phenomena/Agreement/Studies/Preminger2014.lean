@@ -107,6 +107,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 namespace Phenomena.Agreement.Studies.Preminger2014
 
+open Fragments.Mayan (PersonNumber)
 open Fragments.Mayan.Kaqchikel
 open Minimalist
 
@@ -146,11 +147,11 @@ def toPhiFeatures : PersonNumber → List PhiFeature
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
     Built via the shared `makePersonVocab` helper. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab personNumbers toPhiFeatures setAExponent (some .v)
+  makePersonVocab PersonNumber.all toPhiFeatures setAExponent (some .v)
 
 /-- Set B as DM Vocabulary entries, contextualized to Infl/T. -/
 def setBVocab : Vocabulary :=
-  makePersonVocab personNumbers toPhiFeatures setBExponent (some .T)
+  makePersonVocab PersonNumber.all toPhiFeatures setBExponent (some .T)
 
 -- ============================================================================
 -- § 3: Two-Probe Relativized Probing (@cite{bejar-rezac-2003}, applied per §4.4)
@@ -208,7 +209,7 @@ theorem feature_decomposition_correct :
     ¬IsParticipant .p3sg ∧
     ¬IsParticipant .p3pl ∧
     -- author entails participant (H&R 2002 containment)
-    (∀ pn ∈ personNumbers, IsAuthor pn → IsParticipant pn) ∧
+    (∀ pn ∈ PersonNumber.all, IsAuthor pn → IsParticipant pn) ∧
     -- two-probe ranks: [+participant] → 2, [+plural,−participant] → 1, 3SG → 0
     afRank .p1sg = 2 ∧ afRank .p2sg = 2 ∧
     afRank .p3pl = 1 ∧ afRank .p3sg = 0 := by
@@ -231,7 +232,7 @@ theorem af_paradigm_correct :
     relativized probing — the probes see both arguments
     symmetrically. -/
 theorem af_commutative :
-    personNumbers.all (λ s => personNumbers.all (λ o =>
+    PersonNumber.all.all (λ s => PersonNumber.all.all (λ o =>
       afMarker s o == afMarker o s)) = true := by
   decide
 
