@@ -4,6 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.598 — Phases 2+3: Hellinger family direct on PMF + drop stale bridges
+
+PMFEntropy.lean is now fully self-contained against `Core.InformationTheory` deletion. The only remaining Core references are the `bhattacharyyaCoeff`/`hellingerDistSq`/`hellingerDist` defs being inlined directly (Phase 2) and stale bridge theorems removed (Phase 3).
+
+**Phase 2 — Hellinger direct (~80 LOC reorg)**:
+- `PMF.bhattacharyyaCoeff P Q := ∑ √(P · Q)` directly, no Core delegation.
+- `PMF.hellingerDistSq`, `PMF.hellingerDist` similarly direct.
+- `PMF.hellingerDistSq_nonneg` direct proof.
+- Inlined `sqrt_sub_one_sq_le_klFun` and `mul_sqrt_div_sub_one_sq` as private helpers (pure real-arithmetic, ~30 LOC).
+- `PMF.two_hellingerDistSq_le_klDiv` re-proven without Core deps: composes `klDiv_eq_sum_klFun` + per-atom ENNReal bridge + Hellinger algebraic identity `2·H² = ∑ (√P − √Q)²` + per-index `(√P − √Q)² ≤ Q · klFun(P/Q)`. Self-contained.
+
+**Phase 3 — drop stale bridges**:
+- Deleted `PMF.entropy_eq_core_entropy` (rfl bridge to `Core.entropy`, soon to be deleted).
+- Deleted `PMF.jsd_eq_jsdOf` (rfl bridge to `Core.jsdOf`).
+- Deleted `PMF.toReal_klDiv_eq_klFinite` (uses `Core.kl_eq_sum_klFun`+`Core.kl_nonneg`, soon-deleted). Consumers now use `toReal_klDiv_eq_sum_log_div` (the Core-independent form added in 0.230.597 as Phase 1a).
+- Updated docstring references in TesslerTenenbaumGoodman2022 and ChannelCapacity to point at `toReal_klDiv_eq_sum_log_div`.
+
+PMFEntropy.lean still imports `Core.InformationTheory` only for `klFun` access (which is in mathlib via `_root_.InformationTheory.klFun`, not Core). Phase 6 deletion is now unblocked from PMFEntropy's side.
+
+**Build**: green at 5683 jobs.
+
 ### 0.230.597 — Phase 1b+1c: PMF.product + MI redefined via KL on product (mathlib-style)
 
 Substrate refactor: mutual information is now defined as `KL(joint ‖ marginal_X × marginal_Y).toReal`, which is the mathlib-canonical formulation. The classical `H(X) + H(Y) − H(X,Y)` formula becomes a derived theorem (Cover-Thomas Thm 2.6.5).

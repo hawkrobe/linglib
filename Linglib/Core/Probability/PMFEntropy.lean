@@ -454,28 +454,66 @@ KL divergence in RSA speaker utilities, because Hellinger remains finite
 when literal interpretations assign zero probability to states the speaker
 considers possible (whereas KL diverges).
 
-These definitions wrap the Finset+function versions in `Core.InformationTheory`
-via `PMF.toRealFn`. The key inequality `two_hellingerDistSq_le_klDivergence`
-(Bretagnolle-Huber, @cite{cover-thomas-2006}) is delegated to the existing
-proof. -/
+Defined directly on PMFs (no `Core.InformationTheory` delegation). Mathlib
+gap — these specializations to `PMF` are upstreamable. -/
 
 /-- Bhattacharyya coefficient `BC(P, Q) = ∑ √(P · Q)`. -/
 noncomputable def bhattacharyyaCoeff (P Q : PMF α) : ℝ :=
-  Core.InformationTheory.bhattacharyyaCoeff P.toRealFn Q.toRealFn
+  ∑ a : α, Real.sqrt (P.toRealFn a * Q.toRealFn a)
 
 /-- Squared Hellinger distance `H²(P, Q) = 1 - BC(P, Q)`. -/
 noncomputable def hellingerDistSq (P Q : PMF α) : ℝ :=
-  Core.InformationTheory.hellingerDistSq P.toRealFn Q.toRealFn
+  1 - bhattacharyyaCoeff P Q
 
 /-- Hellinger distance `HD(P, Q) = √H²(P, Q)`. Proper metric on PMFs;
     bounded in `[0, 1]` for probability distributions. -/
 noncomputable def hellingerDist (P Q : PMF α) : ℝ :=
-  Core.InformationTheory.hellingerDist P.toRealFn Q.toRealFn
+  Real.sqrt (hellingerDistSq P Q)
 
 theorem hellingerDistSq_nonneg (P Q : PMF α)
     (h : bhattacharyyaCoeff P Q ≤ 1) :
-    0 ≤ hellingerDistSq P Q :=
-  Core.InformationTheory.hellingerDistSq_nonneg_of_bc_le_one P.toRealFn Q.toRealFn h
+    0 ≤ hellingerDistSq P Q := by
+  unfold hellingerDistSq; linarith
+
+/-! ### Bretagnolle–Huber substrate (private helpers)
+
+Pure real-arithmetic helpers for the BH inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+Inlined here (not in `Core.InformationTheory`) so that PMFEntropy is
+self-contained against Core deletion. -/
+
+/-- Pointwise: `(√x − 1)² ≤ klFun(x)` for `x ≥ 0`. Identity:
+    `klFun(x) − (√x − 1)² = 2√x · klFun(√x)`, both factors non-negative. -/
+private theorem sqrt_sub_one_sq_le_klFun {x : ℝ} (hx : 0 ≤ x) :
+    (Real.sqrt x - 1) ^ 2 ≤ _root_.InformationTheory.klFun x := by
+  set s := Real.sqrt x with hs_def
+  have hs_nn : 0 ≤ s := Real.sqrt_nonneg x
+  have hs_sq : s * s = x := Real.mul_self_sqrt hx
+  have hkl_s : 0 ≤ _root_.InformationTheory.klFun s :=
+    _root_.InformationTheory.klFun_nonneg hs_nn
+  have hlog : Real.log x = 2 * Real.log s := by
+    rw [hs_def, Real.log_sqrt hx]; ring
+  have hidentity : _root_.InformationTheory.klFun x =
+      (s - 1) ^ 2 + 2 * s * _root_.InformationTheory.klFun s := by
+    unfold _root_.InformationTheory.klFun
+    rw [hlog, ← hs_sq]
+    ring
+  have h2skl_nn : 0 ≤ 2 * s * _root_.InformationTheory.klFun s :=
+    mul_nonneg (mul_nonneg (by norm_num) hs_nn) hkl_s
+  linarith
+
+/-- Per-index BH bridge: `q · (√(p/q) − 1)² = (√p − √q)²` for `p ≥ 0`, `q > 0`. -/
+private theorem mul_sqrt_div_sub_one_sq (p q : ℝ) (hp : 0 ≤ p) (hq : 0 < q) :
+    q * (Real.sqrt (p / q) - 1) ^ 2 = (Real.sqrt p - Real.sqrt q) ^ 2 := by
+  have hsQ_pos : 0 < Real.sqrt q := Real.sqrt_pos.mpr hq
+  have hsQ_ne : Real.sqrt q ≠ 0 := ne_of_gt hsQ_pos
+  have hsQ_sq : Real.sqrt q ^ 2 = q := Real.sq_sqrt (le_of_lt hq)
+  rw [Real.sqrt_div hp q]
+  have hstep : Real.sqrt p / Real.sqrt q - 1 =
+      (Real.sqrt p - Real.sqrt q) / Real.sqrt q := by
+    field_simp
+  rw [hstep, div_pow, hsQ_sq]
+  have hq_ne : q ≠ 0 := ne_of_gt hq
+  field_simp
 
 /-- **Discrete log-ratio sum form of `klDiv`**:
     `(P.klDiv Q).toReal = ∑ a, P a · log (P a / Q a)` under strict-positive Q.
@@ -492,7 +530,8 @@ theorem toReal_klDiv_eq_sum_log_div [MeasurableSpace α] [MeasurableSingletonCla
     have h := hQ_pos a
     rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
     exact lt_irrefl 0 h
-  -- AC from strict-positive Q (same derivation as toReal_klDiv_eq_klFinite).
+  -- AC from strict-positive Q (every singleton has positive Q-mass, so the
+  -- only Q-null measurable set is empty).
   have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
     refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
     rw [PMF.toMeasure_apply_fintype _ s] at hQs
@@ -688,74 +727,15 @@ theorem conditionalEntropy_le_entropy
   unfold conditionalEntropy
   linarith
 
-/-- **Bridge to `Core.InformationTheory.klFinite`** (real-valued discrete KL):
-    `(P.klDiv Q).toReal = klFinite P.toRealFn Q.toRealFn` under strict-positive Q.
-
-    Lets ℝ-native consumers cite the PMF API without re-deriving the discrete
-    sum. Composes `klDiv_eq_sum_klFun` with `kl_eq_sum_klFun` (Core) and
-    pulls `ENNReal.ofReal` outside the sum.
-
-    This is the consumer-migration headline: any consumer holding `(P Q : α → ℝ)`
-    with PMF properties can write `(P_pmf.klDiv Q_pmf).toReal` and get back
-    exactly `klFinite P Q` modulo the bridge. -/
-theorem toReal_klDiv_eq_klFinite [MeasurableSpace α] [MeasurableSingletonClass α]
-    (P Q : PMF α) (hQ_pos : ∀ a, 0 < Q.toRealFn a) :
-    (P.klDiv Q).toReal =
-      Core.InformationTheory.klFinite P.toRealFn Q.toRealFn := by
-  -- ENNReal-side facts about Q from the strict-positivity hypothesis.
-  have hQ_ne_top : ∀ a, Q a ≠ ∞ := PMF.apply_ne_top Q
-  have hQ_ne_zero : ∀ a, Q a ≠ 0 := fun a hQa => by
-    have h := hQ_pos a
-    rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
-    exact lt_irrefl 0 h
-  have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
-    refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
-    rw [PMF.toMeasure_apply_fintype _ s] at hQs
-    rw [PMF.toMeasure_apply_fintype _ s]
-    have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
-    have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
-      have h := h_each_zero x (Finset.mem_univ x)
-      rw [Set.indicator_of_mem hx_in] at h
-      exact hQ_ne_zero x h
-    refine Finset.sum_eq_zero (fun x _ => Set.indicator_of_notMem (h_x_notin x) _)
-  rw [klDiv_eq_sum_klFun P Q hAC]
-  have hP_nn : ∀ a, 0 ≤ P.toRealFn a := P.toRealFn_nonneg
-  have hQ_real_nn : ∀ a, 0 ≤ Q.toRealFn a := Q.toRealFn_nonneg
-  have h_klFun_nn : ∀ a, 0 ≤ _root_.InformationTheory.klFun
-      (P.toRealFn a / Q.toRealFn a) := fun a =>
-    _root_.InformationTheory.klFun_nonneg
-      (div_nonneg (hP_nn a) (hQ_real_nn a))
-  have h_summand : ∀ a, Q a * ENNReal.ofReal
-      (_root_.InformationTheory.klFun ((P a / Q a).toReal))
-      = ENNReal.ofReal (Q.toRealFn a *
-          _root_.InformationTheory.klFun (P.toRealFn a / Q.toRealFn a)) := by
-    intro a
-    rw [show ((P a) / (Q a)).toReal = P.toRealFn a / Q.toRealFn a from
-          ENNReal.toReal_div _ _,
-        show Q a = ENNReal.ofReal (Q.toRealFn a) from
-          (ENNReal.ofReal_toReal (hQ_ne_top a)).symm,
-        ← ENNReal.ofReal_mul (hQ_real_nn a)]
-  simp_rw [h_summand]
-  rw [← ENNReal.ofReal_sum_of_nonneg (s := Finset.univ) (fun a _ =>
-        mul_nonneg (hQ_real_nn a) (h_klFun_nn a))]
-  rw [← Core.InformationTheory.kl_eq_sum_klFun P.toRealFn Q.toRealFn
-        hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one])]
-  exact ENNReal.toReal_ofReal
-    (Core.InformationTheory.kl_nonneg P.toRealFn Q.toRealFn
-      hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one]))
-
-/-- **Bretagnolle-Huber inequality** on PMFs: `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
+/-- **Bretagnolle–Huber inequality** on PMFs: `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
 
     Stated against the mathlib-grounded `PMF.klDiv` (returns `ℝ≥0∞`); the
     `2 * hellingerDistSq` factor is wrapped via `ENNReal.ofReal` for type
     compatibility.
 
-    Proof: `klDiv_eq_sum_klFun` reduces `P.klDiv Q` to a discrete ENNReal
-    sum, which bridges via `ENNReal.ofReal_mul`/`ofReal_sum_of_nonneg` and
-    `kl_eq_sum_klFun` (Core) to `ENNReal.ofReal (klFinite P.toRealFn
-    Q.toRealFn)`. The existing `two_hellingerDistSq_le_klFinite` then
-    closes the comparison via `ENNReal.ofReal_le_ofReal`. -/
+    Proof: combines `klDiv_eq_sum_klFun` (discrete reduction) with the
+    sqrt-klFun pointwise inequality and the Hellinger bridge
+    `(√p − √q)² = q · (√(p/q) − 1)²`. Self-contained — no `Core` deps. -/
 theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
     [MeasurableSingletonClass α]
     (P Q : PMF α)
@@ -767,8 +747,7 @@ theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
     have h := hQ_pos a
     rw [show Q.toRealFn a = (Q a).toReal from rfl, hQa, ENNReal.toReal_zero] at h
     exact lt_irrefl 0 h
-  -- Strict-positive Q ⇒ AC: every singleton has positive Q-mass, so the only
-  -- Q-null s in a finite type is one disjoint from every {x}, i.e., empty.
+  -- Strict-positive Q ⇒ AC.
   have hAC : MeasureTheory.Measure.AbsolutelyContinuous P.toMeasure Q.toMeasure := by
     refine MeasureTheory.Measure.AbsolutelyContinuous.mk fun s hs hQs => ?_
     rw [PMF.toMeasure_apply_fintype _ s] at hQs
@@ -780,7 +759,6 @@ theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
       rw [Set.indicator_of_mem hx_in] at h
       exact hQ_ne_zero x h
     refine Finset.sum_eq_zero (fun x _ => Set.indicator_of_notMem (h_x_notin x) _)
-  -- Apply the discrete-sum reduction landed above.
   rw [klDiv_eq_sum_klFun P Q hAC]
   -- Per-atom bridge: ENNReal mul → ofReal of ℝ mul.
   have hP_nn : ∀ a, 0 ≤ P.toRealFn a := P.toRealFn_nonneg
@@ -800,34 +778,37 @@ theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
           (ENNReal.ofReal_toReal (hQ_ne_top a)).symm,
         ← ENNReal.ofReal_mul (hQ_real_nn a)]
   simp_rw [h_summand]
-  -- Bring ofReal outside the sum (each summand non-negative).
   rw [← ENNReal.ofReal_sum_of_nonneg (s := Finset.univ) (fun a _ =>
         mul_nonneg (hQ_real_nn a) (h_klFun_nn a))]
-  -- Bridge ℝ-sum to klFinite.
-  rw [← Core.InformationTheory.kl_eq_sum_klFun P.toRealFn Q.toRealFn
-        hQ_pos hP_nn (by rw [P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one])]
-  -- Close via the existing finite-sum BH inequality + ofReal monotonicity.
-  exact ENNReal.ofReal_le_ofReal
-    (Core.InformationTheory.two_hellingerDistSq_le_klFinite
-      P.toRealFn Q.toRealFn hP_nn hQ_pos
-      P.sum_toRealFn_eq_one Q.sum_toRealFn_eq_one)
-
--- ============================================================================
--- §8: Bridge theorems back to Core.InformationTheory
--- ============================================================================
-
-/-- Bridge theorem: `PMF.entropy` equals the `Core.InformationTheory.entropy`
-    of the toReal-coerced mass function. Useful for migrating proofs that
-    operate at the Finset+function level. -/
-theorem entropy_eq_core_entropy (p : PMF α) :
-    p.entropy = Core.InformationTheory.entropy Finset.univ p.toRealFn := rfl
-
-/-- Bridge theorem for JSD: `PMF.jsd` equals `Core.InformationTheory.jsdOf`
-    on the toReal-coerced mass functions. (`Core.InformationTheory.jsdOf`
-    is private substrate; this bridge is for internal use only.) -/
-theorem jsd_eq_jsdOf (p q : PMF α) :
-    p.jsd q = Core.InformationTheory.jsdOf Finset.univ p.toRealFn q.toRealFn := by
-  unfold jsd Core.InformationTheory.jsdOf entropy
-  rfl
+  -- Inlined Hellinger BH proof on ℝ-side: `2 * H²(P, Q) ≤ ∑ Q · klFun(P/Q)`.
+  apply ENNReal.ofReal_le_ofReal
+  -- Bridge `2 · H² = ∑ (√P − √Q)²` (uses ∑P = ∑Q = 1).
+  have hsq_diff : ∀ a, (Real.sqrt (P.toRealFn a) - Real.sqrt (Q.toRealFn a)) ^ 2 =
+      P.toRealFn a + Q.toRealFn a - 2 * Real.sqrt (P.toRealFn a * Q.toRealFn a) := by
+    intro a
+    have hsP : Real.sqrt (P.toRealFn a) ^ 2 = P.toRealFn a := Real.sq_sqrt (hP_nn a)
+    have hsQ : Real.sqrt (Q.toRealFn a) ^ 2 = Q.toRealFn a := Real.sq_sqrt (hQ_real_nn a)
+    have hsPQ : Real.sqrt (P.toRealFn a) * Real.sqrt (Q.toRealFn a) =
+        Real.sqrt (P.toRealFn a * Q.toRealFn a) :=
+      (Real.sqrt_mul (hP_nn a) (Q.toRealFn a)).symm
+    nlinarith [hsP, hsQ, hsPQ]
+  have hbridge : 2 * hellingerDistSq P Q =
+      ∑ a, (Real.sqrt (P.toRealFn a) - Real.sqrt (Q.toRealFn a)) ^ 2 := by
+    unfold hellingerDistSq bhattacharyyaCoeff
+    have hexpand : ∑ a, (Real.sqrt (P.toRealFn a) - Real.sqrt (Q.toRealFn a)) ^ 2 =
+        (∑ a, P.toRealFn a) + (∑ a, Q.toRealFn a)
+          - 2 * (∑ a, Real.sqrt (P.toRealFn a * Q.toRealFn a)) := by
+      simp_rw [hsq_diff]
+      rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum]
+    rw [hexpand, P.sum_toRealFn_eq_one, Q.sum_toRealFn_eq_one]
+    ring
+  rw [hbridge]
+  -- Pointwise: `(√P − √Q)² ≤ Q · klFun(P/Q)` via the two helper lemmas.
+  apply Finset.sum_le_sum
+  intro a _
+  rw [← mul_sqrt_div_sub_one_sq (P.toRealFn a) (Q.toRealFn a) (hP_nn a) (hQ_pos a)]
+  exact mul_le_mul_of_nonneg_left
+    (sqrt_sub_one_sq_le_klFun (div_nonneg (hP_nn a) (hQ_real_nn a)))
+    (hQ_real_nn a)
 
 end PMF

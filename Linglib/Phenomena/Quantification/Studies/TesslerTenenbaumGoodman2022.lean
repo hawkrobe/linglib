@@ -50,7 +50,7 @@ in this paper, so the asymmetric stance is encoded honestly.
 - Noisy semantics via `RSA.Noise.noiseChannel`
 - Belief Alignment utility via `Core.InformationTheory.klFinite` (the
   canonical PMF form is `(P.klDiv Q).toReal`, bridged by
-  `PMF.toReal_klDiv_eq_klFinite`)
+  `PMF.toReal_klDiv_eq_sum_log_div`)
 - SC ≡ BA equivalence via `Core.InformationTheory.klFinite_eq_negEntropy_sub_crossEntropy`
 - "Nothing follows" as vacuous utterance (true in every state)
 
@@ -186,7 +186,7 @@ noncomputable def stateComScore
 
     Uses `Core.InformationTheory.klFinite` directly (the (VennState → ℝ)
     form is natural here; bridge to PMF API via
-    `PMF.toReal_klDiv_eq_klFinite`). -/
+    `PMF.toReal_klDiv_eq_sum_log_div`). -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=

@@ -27,7 +27,7 @@ file is capacity-specific.
 
 (KL non-negativity / Gibbs' inequality is `0 ≤ (P.klDiv Q).toReal` by
 `ENNReal.toReal_nonneg` on the PMF API, or `Core.InformationTheory.kl_nonneg`
-on the (ι→ℝ) form. Bridge: `PMF.toReal_klDiv_eq_klFinite`.)
+on the (ι→ℝ) form. Bridge: `PMF.toReal_klDiv_eq_sum_log_div`.)
 -/
 
 set_option autoImplicit false
