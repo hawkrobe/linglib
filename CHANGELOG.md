@@ -4,6 +4,50 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.602 — Phase 7+8: ΔP relocated, Core.InformationTheory.lean dissolved
+
+Final phase of the PMF migration. ΔP family moved out of `Core.InformationTheory` (where it never belonged — ΔP is contingency-table association à la Cheng & Holyoak, not Shannon entropy) and `Linglib/Core/InformationTheory.lean` deleted entirely.
+
+- **Created `Linglib/Core/Statistics/Association.lean`** in namespace `Core.Statistics`: `deltaP`, `deltaPCounts`, `deltaP_eq_zero_of_independent`. Same definitions, new home, new namespace prefix.
+- **Deleted `Linglib/Core/InformationTheory.lean`** entirely.
+- **Updated `Linglib.lean`**: import path swap.
+
+`Linglib.Core.InformationTheory` namespace no longer exists.
+
+## Migration recap (0.230.594 → 0.230.602)
+
+The PMF entropy substrate is now **mathlib-grounded**:
+
+```
+mathlib's InformationTheory.klDiv (on Measure)  ← ground truth
+        ↑
+PMF.klDiv  ← rfl-bridge via PMF.toMeasure
+        ↑
+PMF.entropy / mutualInformation / conditionalEntropy / jsd /
+bhattacharyya / hellingerDist / two_hellingerDistSq_le_klDiv
+        ↑
+all consumers
+```
+
+Core.InformationTheory's `entropy/MI/CE/KL/Hellinger` (~25 declarations, ~640 LOC) all gone. Where consumers naturally work in (ι→ℝ) (RationalAction's softmax, Tessler's belief alignment, ChannelCapacity's entropy bound, HerbstrittFranke's Hellinger utility, Paradigm's cellEntropy, GrammarDist's grammar entropy), they use private (ι→ℝ) helpers inlined from mathlib primitives directly — no namespace shim. PMF API is canonical for new PMF-typed code.
+
+**Mathlib-upstreamable additions** (Phase 1b/c/2 substrate gaps closed):
+- `PMF.entropy`, `PMF.entropy_nonneg`
+- `PMF.product` + `product_apply` + `product_toRealFn` (independent joint)
+- `PMF.mutualInformation` (KL-based, Cover-Thomas Thm 2.6.5 derived)
+- `PMF.mutualInformation_nonneg` (free from `ENNReal.toReal_nonneg`)
+- `PMF.mutualInformation_eq_entropy_sum` (Cover-Thomas bridge to H+H−H form)
+- `PMF.conditionalEntropy_le_entropy` (data processing inequality)
+- `PMF.bhattacharyyaCoeff`, `hellingerDistSq`, `hellingerDist`, `hellingerDistSq_nonneg`
+- `PMF.two_hellingerDistSq_le_klDiv` (Bretagnolle–Huber)
+- `PMF.klDiv_eq_sum_klFun`, `PMF.toReal_klDiv_eq_sum_log_div`
+- `PMF.ofRealWeightFn` + `PMF.ofRealWeightFn_toRealFn_eq` (round-trip)
+- `PMF.jsd`
+
+Candidates for `Mathlib/Probability/ProbabilityMassFunction/{Entropy, KullbackLeibler, MutualInformation, Hellinger, JSD, Product}.lean`.
+
+**Build**: green at 5684 jobs.
+
 ### 0.230.602 — Cross-Mayan agreement substrate consolidation (5 langs, 8 phases) + 4 quantified typology theorems
 
 Closes the structural-drift finding from a multi-agent audit of `Fragments/Mayan/Chol/Agreement.lean`: 5 Mayan agreement Fragment files had 3 different shapes, blocking quantified cross-Mayan theorems. Now uniform.
