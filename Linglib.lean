@@ -1411,9 +1411,8 @@ import Linglib.Phenomena.Relativization.Studies.SagWasowBender2003RelativeClause
 import Linglib.Phenomena.Relativization.Studies.Scott2021
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
-import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015PMF
-import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
+import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025PMF
 import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014PMF

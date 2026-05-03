@@ -4,6 +4,109 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.616 — Spinoso–Di Piano (RSA)² PMF migration + retire Irony rsa_predict files
+
+@cite{spinoso-di-piano-etal-2025} (RSA)² migrated to mathlib `PMF`. Closes the entire Irony directory's `rsa_predict` footprint.
+
+- **New** `Phenomena/Nonliteral/Irony/Studies/SpinosoDiPiano2025PMF.lean` (295 LOC). Headline-focused: the architectural payoff is `irony_iff_prior_favors_antonym`, formalising the paper's deepest result — for non-midpoint utterances, the entire (RSA)² model behavior reduces to a single prior comparison. Affect dimensions and QUD projection are unnecessary for irony.
+- **Construction**: per-strategy speakers as `PMF.pure` kernels (deterministic in the binary fragment with indicator meanings); `mixedS1` as the strategy-marginalised `bind`; L1 as `PMF.posterior`. Two helper lemmas (`mixedS1_at_literal_world`, `mixedS1_at_ironic_world`) show `mixedS1 = 1/2` at both matching worlds for non-midpoint utterances. The headline reduces to `posterior_lt_iff_score_lt` + `mul_lt_mul_iff_left` (the shared `1/2` factor cancels).
+- **Retired** `KaoEtAl2015.lean` (362 LOC) and `SpinosoDiPiano2025.lean` (603 LOC), both `rsa_predict`-based. Domain types (Weather, Utterance, Strategy, opposite, opposite_involutive) inlined. The 10 numerical predictions from the paper are out of scope (paper-finding empirical-fit content).
+- **Cross-paper**: docstring notes the connection to `RSA.QUD.proj` substrate (used by Kao metaphor/hyperbole/irony PMF migrations) per the paper's Appendix A.3 — QUD-RSA is a strict special case of (RSA)² (Lemma 1 + Lemma 2).
+
+Net: −671 LOC. The `Phenomena/Nonliteral/Irony/` directory is now 100% PMF-based; `rsa_predict` is no longer used anywhere under `Nonliteral/`.
+
+### 0.230.677 — P4.4: F-R 2017 study now actually consumes F&B substrate
+
+Re-audit caught the F-R 2017 study landed (CHANGELOG 0.230.675)
+imported `Theories.Dialogue.FarkasBruce` but never used it —
+`FarkasBruce.` namespace appeared 0 times in the body. Hollow
+import. Closed by adding §7 "F&B-substrate threading":
+
+**`SentenceForm.update`**: maps each F-R sentence type to F&B's
+discourse-state operators per the paper's "single basic convention
+of use" (eq. (21), p. 250):
+- Falling declarative → `assertDeclarative` (writes dcS, pushes issue)
+- Polar interrogative → `askPolarQuestion` (no dcS write)
+- Rising declarative → `pushIssue` with one-alternative `RaisedIssue`
+  (no dcS write — F&B has no dedicated operator for this; constructed
+  inline)
+- Tag interrogative → `assertDeclarative` + `askPolarQuestion` (anchor
+  commits, tag raises)
+
+**Theorems threading commitment-table semantics through F&B**:
+- `fallingDec_writes_dcS`, `polarInt_doesnt_write_dcS_falling/rising`,
+  `risingDec_doesnt_write_dcS`, `tag_writes_dcS_falling/rising`
+- `all_paper_forms_push_issue`: every paper-canonical sentence type
+  pushes ≥1 issue onto the table
+- `fullCommitment_iff_dcS_grows`: commitment-table's "fullCommitment"
+  classification corresponds structurally to dcS-write behavior
+
+**Honest finding (documented in theorem comment)**: the p. 240
+commitment table's "bias" middle row is NOT structurally uniform in
+F&B terms — rising declaratives don't write dcS (like neutral), tag
+interrogatives DO write dcS (like full). The p. 240 table abstracts
+over a structural distinction F&B's substrate makes visible. This
+is a substantive finding about F-R 2017 that emerges from the
+threading work, not a bug.
+
+The integration auditor's "extends F&B is aspirational" finding now
+retracted: the F&B namespace appears 14 times in the body
+(operators + types), and the central F-R abstractions (commitment
+table, markedness) are connected to F&B substrate behavior via
+per-form theorems.
+
+Build verification: `lake build Linglib.Phenomena.Dialogue.Studies.FarkasRoelofsen2017`
+clean; all my touched files (SDRT, Centering, K&R, F-R, Coherence)
+build via targeted multi-target lake invocation.
+
+### 0.230.676 — P4.3: unify SDRT.RhetoricalRelation with Core.Coherence.CoherenceRelation
+
+Re-audit caught my P4.1 work landing the textbook reinvented-infrastructure
+anti-pattern: `Discourse.SDRT.RhetoricalRelation` had a 5-name overlap
+with `Core.Discourse.Coherence.CoherenceRelation` (elaboration,
+explanation, result, contrast, parallel/correction). Fixed by unifying.
+
+**Core extension** (`Core/Discourse/Coherence.lean`):
+- 3 new constructors: `background`, `consequence`, `alternation`
+  (the genuine SDRT additions per @cite{asher-lascarides-2003} §4.6).
+- `CoherenceRelation.Narration : CoherenceRelation := .occasion`
+  alias — Asher-Lascarides's "Narration" = Hobbs/Kehler's "Occasion"
+  for the same temporal-succession relation.
+- `toClass` extended: background → contiguity, consequence → causeEffect,
+  alternation → resemblance.
+- `causalDirection` extended: background → none, consequence → forward
+  (hypothetical-causal), alternation → none.
+
+**SDRT refactor** (`Theories/Discourse/SDRT/Defs.lean`):
+- `RhetoricalRelation` is now `abbrev RhetoricalRelation := CoherenceRelation`
+  (no parallel inductive).
+- `CoherenceRelation.sdrtKind`, `CoherenceRelation.isSubordinating`,
+  `CoherenceRelation.veridicality` defined in `Core.Discourse.Coherence`
+  namespace so dot-notation projection `R.sdrtKind` works for any
+  consumer, not just SDRT-internal code.
+
+**Cascading consumer updates**:
+- `Theories/Discourse/Centering/Coherence.lean` `preferredTransition`:
+  added 3 cases (background → continuation, consequence → continuation,
+  alternation → shifting) with comment flagging these as
+  predictions-by-analogy rather than Grosz-Joshi-Weinstein assertions.
+- `Phenomena/Reference/Studies/KehlerRohde2013.lean`: 4 match-on-CR
+  patterns extended (perfective_model.pCR / pSourceGivenCR,
+  sharedBias, whatNext_model.pCR, why_model.pCR) — all 0% for SDRT
+  additions since K&R 2013's coding scheme didn't include them. The
+  marginalization list in `NextMentionModel.sourceBasisPts` extended
+  to cover the new constructors for exhaustiveness.
+
+**Verification**: full `lake build Linglib` green (5761 jobs).
+SDRT worked example (AsherLascarides2003.lean) still decide-checks
+without changes — `.elaboration` and `.background` are now Core
+constructors that the abbrev resolves correctly.
+
+The integration auditor's headline finding now retracted: SDRT no
+longer reinvents `CoherenceRelation`. Same enum, same instances, no
+fork. Future SDRT consumers (Q-bearing relations, glue logic) extend
+Core, not parallel-build.
+
 ### 0.230.615 — Retire 3 dual rsa_predict files (DongEtAl2026, TesslerFranke2020, GS2013)
 
 Three Phenomena papers had both an `rsa_predict` legacy file and a `*PMF.lean` sibling. None of the legacy files had downstream consumers. Retired.
