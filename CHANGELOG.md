@@ -4,6 +4,28 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.616 — Phase 1: StarABA → Core/Morphology/Containment.lean
+
+Migration phase 1/9 dissolving `Theories/Interfaces/Morphosyntax/`.
+
+- `git mv Theories/Interfaces/Morphosyntax/StarABA.lean → Core/Morphology/Containment.lean` — framework-neutral *ABA contiguity substrate moves down to `Core/`.
+- Namespace `Morphology.Containment` unchanged; 4 downstream qualified references (CaseContainment, DegreeContainment, Caha2009, Bobaljik2012) keep working without rename.
+- Adds Prop wrappers `ViolatesABA` / `IsContiguous` with `Decidable` instances, alongside the existing `Bool` decision procedure (`violatesABA` / `isContiguous`). Bridge: `isContiguous_iff_not_violatesABA`.
+- Drops 3 aggregate-count theorems (`six_aba_violations`, `twentyone_contiguous`, `no_aba_contiguous`) per project rule against count-based assertions on derived lists.
+- Docstring made framework-neutral: no claim that *ABA is post-syntactic morphology (DM) vs. phrasal-spellout syntax (Nanosyntax). Notes the contested locus of explanation.
+
+Out of scope: BSML and PMFPosterior build failures at HEAD are pre-existing from concurrent-session WIP (committed in 0.230.615), not introduced by this phase. Phase 1's full dependency closure builds clean.
+
+### 0.230.614 — Aktionsart vocabulary refactor: drop Bool predictors
+
+- Delete six Bool predictors from `Features/Aktionsart.lean` (`isHomogeneous`, `hasFullSubintervalProp`, `naturallyImperfective`, `naturallyPerfective`, `predictsSubintervalProp`, `predictsAtomDist`) + ~17 `:= rfl` corollaries
+- Each was a Bool projection of substrate already present propositionally (`Tense/Aspect/SubintervalProperty.lean`, `Core/Time/AtomDist.lean`, `Events/Mereology.lean`, `Events/Basic.lean`)
+- Framing: `Features/` is descriptive vocabulary Fragment authors use to label entries; predictions about how labels behave belong in `Theories/` or `Studies/`
+- Migrate consumers (Zhao2025, Rouillard2026, AspectInteractionData, AlstottAravind2026) to direct subset-membership checks; delete two orphan iff-theorems (`naturally_imperfective_iff_homogeneous`, `naturally_perfective_iff_telic`) from `Tense/Aspect/Core.lean`
+- Cleanup: duplicate `Linglib.lean` import (line 2265); 8 stale `LexicalAspect.lean` docstring references; false "competitors not formalized" claim in Aktionsart docstring corrected with paths to `Events/Basic.lean` (Bach `EventSort`), `Events/Mereology.lean` (Krifka), `SubintervalProperty.lean` (Dowty SIP), `Studies/Filip2012.lean` (three-way refutation)
+- Bridge theorems (VendlerClass tag → substrate `Prop`) deferred — no current consumer needs them
+- File: 491 → 326 lines; ~165 lines of Bool-predicate substrate-duplication removed
+
 ### 0.230.613 — GS2013PMF: parameterized over Access via PMF.hypergeometric — all 11 findings sorry-free
 
 - **Architectural refactor**: replaced flat `Obs` enum (`.o0a1 | .o1a1 | ... | .o3a3`) with parameterized `Fin (a.toNat + 1)` everywhere downstream. The substrate now has *one* definition each for `obsKernel`, `speakerBelief`, `qualityOk`, `s1Score`, `S1g`, `marginalSpeaker`, `L1` — all parameterized over `(a : Access)` and `(k : Fin (a.toNat + 1))`. No more per-`.a1`/`.a2`/`.a3` separation.
