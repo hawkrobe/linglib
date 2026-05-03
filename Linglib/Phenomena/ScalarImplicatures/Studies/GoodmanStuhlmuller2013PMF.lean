@@ -1233,21 +1233,23 @@ private theorem marginalSpeaker_a2_apply
 The 11 paper findings restated against `WithSilence` + `liftMeaning` so the
 cover hypothesis is automatically satisfied via `cover_silent`.
 
-Proof template for `.a3` (full-access, deterministic kernel):
-1. `unfold L1 worldPrior; rw [posterior_lt_iff_kernel_lt_of_uniform]` —
-   reduce to a marginalSpeaker comparison.
-2. `rw [marginalSpeaker_a3_sX_apply, marginalSpeaker_a3_sY_apply]` —
-   collapse `marginalSpeaker = bind` to single `S1g` evaluations.
-3. `apply PMF.normalize_lt_of_apply_eq_of_sum_lt` — reduce to numerators
-   matching plus partition functions differing.
-4. Discharge via per-(a, k, u) `s1Score_*` and per-(a, k) `sum_s1Score_*` lemmas. -/
+## Status: illustrations, not standalone theorems
 
-namespace Findings
+The 11 cells below are computational evaluations of the model at specific
+(meaning, access, world-pair, utterance) tuples. They are **illustrations**
+of the cancellation principle (`Linglib.Theories.Pragmatics.RSA.Cancellation`),
+which is the structural theorem this paper actually establishes. The cells
+demonstrate that the model produces the predictions plotted in Fig. 2 (A, B);
+they are not theorems independent of the cancellation result.
+
+Demoted to `example`s rather than named theorems: per the option-C audit
+("the actual paper-cited theorem is the cancellation interaction") these
+should not be referenced as separate claims. -/
 
 open RSA (WithSilence liftMeaning)
 
-/-- Finding 1: at full access, `some` favors `s2 > s3` (scalar implicature). -/
-theorem some_full_implicature_sil
+-- Finding 1: at full access, `some` favors `s2 > s3` (scalar implicature).
+example
     (hMarg : PMF.marginal
               (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
                           (cover_silent qMeaning .a3))
@@ -1475,7 +1477,5 @@ theorem one_partial_1v2_canceled_sil
       obsKernel_a2_s1_k1, obsKernel_a2_s2_k1, obsKernel_a2_s2_k2,
       obsKernel_a2_s1_k2_zero]
   ennreal_close
-
-end Findings
 
 end Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.PMF
