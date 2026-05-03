@@ -2113,7 +2113,7 @@ import Linglib.Theories.Syntax.Minimalist.Properties.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
 import Linglib.Theories.Morphology.DM.VocabSimple
-import Linglib.Theories.Syntax.Minimalist.Linearization.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
 import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation

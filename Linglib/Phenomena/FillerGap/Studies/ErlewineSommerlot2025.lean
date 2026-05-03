@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Linearization.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Theories.Syntax.Minimalist.Voice
 
@@ -38,7 +38,7 @@ nominal A'-extraction from cyclic linearization (@cite{fox-pesetsky-2005}).
 
 We model each derivation as a sequence of Spell-out domains, where each
 domain is the left-to-right sequence of overt terminals. The cyclic
-linearization machinery from `CyclicLinearization.lean` checks for
+linearization machinery from `Linearization/Cyclic.lean` checks for
 ordering contradictions. The key theorem is that object extraction with
 overt Voice creates a contradiction, while null Voice does not.
 -/
@@ -338,7 +338,7 @@ Core's single `VoiceHead` type (@cite{kratzer-1996}, @cite{schaefer-2008}).
 The phase divergence is theoretically significant: E&S need VoiceP to be
 a phase in ALL clause types to trigger cyclic linearization at VoiceP
 Spell-out, including in passives. Phase.lean's `Transfer` corresponds
-to each Spell-out domain in `CyclicLinearization.lean`, but operates on
+to each Spell-out domain in `Linearization/Cyclic.lean`, but operates on
 `SyntacticObject` rather than terminal strings.
 -/
 
