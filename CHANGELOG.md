@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.662 — Booth 2022 polish + Independence witness on worked 3-world model
+
+- `IsMinCover` migrated to `Minimal (IsCover · S) C` using mathlib's `Minimal` predicate (mirrors `Question.alt`'s `Maximal` pattern).
+- Worked example `BoothExample` now genuinely tests `necessity`/`possibility`: three theorems (`boothExample_necessity_holds`, `boothExample_possibility_holds`, `boothExample_independence`) prove `□(p ∨ q) ∧ ◇(p ∧ ¬q)` at `(true, true)` on a 3-world deontic model with constant `R₃ = Vp ∪ Vq`.
+- Helper lemmas: `declarative_inf` (`declarative A ⊓ declarative B = declarative (A ∩ B)`), `alt_p_or_q_pos` (alt of disjoint declaratives), `alt_p_and_not_q_pos`. Pivotal world facts as private lemmas.
+- Polish: dropped `(W : Type*)` shadowing in `independence_p_not_q`; consolidated two `namespace BilatInqProp` blocks; dropped redundant `conj_eq_negate_disj_negate`; tightened `simp only` in pivotal world lemmas; fixed stale docstring reference to non-existent `example_independence_holds_concretely`.
+- Single remaining `sorry`: meta-language `independence_p_not_q` (Booth Fact 9 over arbitrary non-Hurford models). Worked-example specialization discharges the concrete case.
+
+### 0.230.659 — CohenKrifka2014 restructure: structural theorems over decide-units; Prop grade
+
+User pushback on prior `decide`-style worked-example: "why do we need a computational story? I thought the point was deep structural theorems." Restructure executed.
+
+**Substrate addition (`Theories/Dialogue/CommitmentSpace.lean`):**
+- New `denegate_surviving_no_match` theorem — every continuation surviving denegation does not match the marker. Justifies calling `denegate` "filtering out matching paths". Counterpart to `denegate_no_match_eq_self`.
+
+**CohenKrifka2014.lean rewrite (Bool → Prop, decide → structural):**
+
+- **G = Prop instead of G = Bool**. The Bool grade was substantively required for `decide`-proven `rfl` worked examples (Prop lacks DecidableEq, so opaque `Weather → Prop` content can't be compared via `decide`). With theorems quantifying over `cs : CommitmentSpace W Prop` and `φ : W → Prop`, the marker decidability comes from `Classical.decPred` (noncomputable, fine because theorems are propositional).
+- **Headline theorems are propositional, not concrete-fixture rfl**:
+  - `grant_preserves_root : ∀ cs φ, (grant cs φ).root = cs.root`
+  - `grant_continuation_count_le : ∀ cs φ, (grant cs φ).continuations.length ≤ cs.continuations.length`
+  - `grant_idempotent`
+  - `grant_filters_speaker_neg_assertions : ∀ cs φ, ∀ cont ∈ (grant cs φ).continuations, ¬ ∃ ic ∈ cont, assertsSpeakerNeg φ ic`
+  - `assert_contextSet_subset_grant_contextSet : ∀ cs φ w, asserted-cg w → granted-cg w` (paper p. 54: ASSERT entails GRANT, captured at context-set observable)
+  - `assert_strictly_stronger_witness : ∃ cs φ w, granted-cg w ∧ ¬ asserted-cg w` (the strict direction)
+- **Honest "out of scope" §∞** naming what the substrate cannot capture and why:
+  - eq. 40 modal duality `ASSERT(φ) ≡ ~GRANT(¬φ)` — substrate-blocked (list-shape `denegate_idempotent` is `(C-X)-X = C-X`, not `C-(C-X) = X`; would require ComplexSpeechAct.denegate constructor with act provenance)
+  - eq. 31 set-intersection — substrate uses sequential composition (paper's "≈")
+  - eq. 34–35 de Morgan — blocked on substrate `applyComplex .disj := sorry`
+  - §3 superlatives — needs numeric content + iterated conj fixture
+
+**Drops:** Bool-graded fixture (`s_choice`), Bool-comparable markers (`assertNotRaining_marker`, `assertRaining_marker`), `decide`-proven theorems (`grant_isRaining_filters_choice`, `denegate_assertRaining_on_choice`, `assert_eq_double_denegation_lengths`), and the `IsCommit` polarity check that was Bool-flavoured. ~250 LOC → ~200 LOC of honest structural content.
+
+**The principle:** linglib's thesis is structural theorems about commitments and dialogue dynamics. `decide`-proven concrete-fixture equalities are unit-tests, not theorems. The new file says what the paper's apparatus says, scoped to what our list-shape substrate can faithfully express, with explicit deferrals for what it cannot.
+
+Substrate + Krifka2015 + Krifka2020 + CohenKrifka2014 + CondoravdiLauer2012 + Compare.lean all build.
+
 ### 0.230.661 — Stage 1.5/1.6: mathlib-PR cleanup pass on CK substrate
 
 Audit-driven cleanup (mathlib-reviewer + integration-auditor on the post-Stage-1 state). Two stages folded into one commit:

@@ -35,6 +35,9 @@ combine both.
   `rfl`-trivial — bilateral negation is bundled-record swap. This is
   the sixth consumer of the `IsBilateral` substrate (BSML, QBSML, BUS,
   ICDRT, Truthmaker propositions, and now Booth bilateral inquisitive).
+- `IsMinCover` is expressed as `Minimal (IsCover · S) C` using mathlib's
+  `Minimal` predicate, mirroring how `Question.alt` uses `Maximal`
+  (Booth's `alt` is the dual of his m-cover).
 
 ## Out of scope
 
@@ -46,8 +49,8 @@ combine both.
   carried as a documented `sorry` — its proof relies on
   non-Hurford-disjunction reasoning (Fact 6) plus finite-alt machinery
   that goes beyond a self-contained study file. The companion concrete
-  example (`example_independence_holds_concretely`) hand-verifies
-  Independence on a 4-world deontic model.
+  example (`BoothExample.boothExample_independence`) hand-verifies
+  Independence on a 3-world deontic model.
 -/
 
 namespace Phenomena.Modality.Studies.Booth2022
@@ -57,7 +60,31 @@ open Core.Logic.Bilateral
 
 variable {W : Type*}
 
-/-! ### §1 Bilateral inquisitive propositions (Booth Def 10) -/
+/-! ### §1 Cover and minimal cover (Booth Section 2.1)
+
+Booth's `□φ` differs from Kratzerian necessity by requiring not just
+that the alternatives of `⟦φ⟧⁺` cover `R(w)`, but that they form a
+**minimal cover** — no proper subset of the alternatives still covers
+`R(w)`. This is what derives Independence inferences (Fact 9): each
+alternative must be "needed", so no single alternative dominates.
+
+Expressed via mathlib's `Minimal` predicate (mirrors `Question.alt`'s
+use of `Maximal` — Booth's `alt` and `m-cover` are dual instances of
+the order-theoretic extremality pattern). -/
+
+/-- **Booth §2.1**: `C` covers `S` iff `S ⊆ ⋃C`. -/
+def IsCover (C : Set (Set W)) (S : Set W) : Prop := S ⊆ ⋃₀ C
+
+/-- **Booth §2.1**: `C` is a **minimal cover** (m-cover) of `S` iff `C`
+    covers `S` and no proper subfamily `C' ⊂ C` covers `S`. Expressed
+    via mathlib's `Minimal`. -/
+def IsMinCover (C : Set (Set W)) (S : Set W) : Prop :=
+  Minimal (fun X => IsCover X S) C
+
+theorem IsMinCover.isCover {C : Set (Set W)} {S : Set W}
+    (h : IsMinCover C S) : IsCover C S := h.prop
+
+/-! ### §2 Bilateral inquisitive propositions (Booth Def 10) -/
 
 /-- **Booth Def 10**: a bilateral inquisitive proposition is a paired
     `pos`/`neg : Question W` with no substantive overlap — only the
@@ -100,8 +127,6 @@ theorem isBilateral :
   positive_negate _ := rfl
   negative_negate _ := rfl
 
-/-! ### §2 Atomic, disjunctive, conjunctive clauses (Booth Def 14) -/
-
 /-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}`,
     `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Question.declarative` since
     `↓{X} = declarative X`. -/
@@ -122,14 +147,14 @@ def disj (φ ψ : BilatInqProp W) : BilatInqProp W where
   pos := φ.pos ⊔ ψ.pos
   neg := φ.neg ⊓ ψ.neg
   no_overlap s hpos hneg := by
-    -- hpos : s ∈ (φ.pos ⊔ ψ.pos), reduces to s ∈ φ.pos.props ∪ ψ.pos.props
-    -- hneg : s ∈ (φ.neg ⊓ ψ.neg), reduces to s ∈ φ.neg.props ∩ ψ.neg.props
     rcases hpos with h | h
     · exact φ.no_overlap s h hneg.1
     · exact ψ.no_overlap s h hneg.2
 
-/-- **Booth Def 14, ∧-clause** via the derivation `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧`.
-    Direct unfolding gives `pos = φ.pos ⊓ ψ.pos`, `neg = φ.neg ⊔ ψ.neg`. -/
+/-- **Booth Def 14, ∧-clause** via the derivation `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧`
+    — direct unfolding gives `pos = φ.pos ⊓ ψ.pos`, `neg = φ.neg ⊔ ψ.neg`.
+    The Booth-equivalence `conj φ ψ = negate (disj (negate φ) (negate ψ))`
+    holds by `rfl`. -/
 def conj (φ ψ : BilatInqProp W) : BilatInqProp W where
   pos := φ.pos ⊓ ψ.pos
   neg := φ.neg ⊔ ψ.neg
@@ -138,40 +163,12 @@ def conj (φ ψ : BilatInqProp W) : BilatInqProp W where
     · exact φ.no_overlap s hpos.1 h
     · exact ψ.no_overlap s hpos.2 h
 
-/-- The Booth-derived `conj` agrees structurally with negate∘disj∘negate. -/
-theorem conj_eq_negate_disj_negate (φ ψ : BilatInqProp W) :
-    conj φ ψ = negate (disj (negate φ) (negate ψ)) := rfl
+/-! ### §3 Necessity and possibility (Booth Def 14)
 
-end BilatInqProp
-
-/-! ### §3 Cover and minimal cover (Booth Section 2.1)
-
-Booth's `□φ` differs from Kratzerian necessity by requiring not just
-that the alternatives of `⟦φ⟧⁺` cover `R(w)`, but that they form a
-**minimal cover** — no proper subset of the alternatives still covers
-`R(w)`. This is what derives Independence inferences (Fact 9): each
-alternative must be "needed", so no single alternative dominates. -/
-
-/-- **Booth §2.1**: `C` covers `S` iff `S ⊆ ⋃C`. -/
-def IsCover (C : Set (Set W)) (S : Set W) : Prop := S ⊆ ⋃₀ C
-
-/-- **Booth §2.1**: `C` is a **minimal cover** (m-cover) of `S` iff `C`
-    covers `S` and no proper subfamily `C' ⊊ C` covers `S`. -/
-def IsMinCover (C : Set (Set W)) (S : Set W) : Prop :=
-  IsCover C S ∧ ∀ C' : Set (Set W), C' ⊂ C → ¬ IsCover C' S
-
-theorem IsMinCover.isCover {C : Set (Set W)} {S : Set W}
-    (h : IsMinCover C S) : IsCover C S := h.1
-
-/-! ### §4 Necessity and possibility (Booth Def 14)
-
-`R : W → Set W` is the relevant-worlds accessibility relation. Booth's
-necessity has both polarities defined via `↓` of a witness w-set. The
-positive w-set requires `R(w)` non-empty and m-covered by alt⁺(⟦φ⟧);
-the negative w-set requires *some* non-empty `R' ⊆ R(w)` to be m-covered
-by alt⁻(⟦φ⟧). -/
-
-namespace BilatInqProp
+`R : W → Set W` is the relevant-worlds accessibility relation
+(equivalent in expressive power to `Core.Logic.Intensional.AccessRel W
+= W → W → Prop`; Booth uses the curried `W → Set W` form throughout
+his Def 14, which we mirror). -/
 
 /-- **Booth Def 14, □-clause**:
     `⟦□φ⟧⁺ = ↓{ {w | R(w) ≠ ∅ ∧ alt⁺(⟦φ⟧) m-covers R(w)} }`,
@@ -198,20 +195,16 @@ def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W where
         R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R' := hneg hws
     obtain ⟨v, hvR'⟩ := hR'ne
     have hvRw : v ∈ R w := hR'sub hvR'
-    -- alt⁺ m-covers R(w), so v lands in some α ∈ alt⁺(φ.pos)
     obtain ⟨α, hαAlt, hvα⟩ : ∃ α ∈ Question.alt φ.pos, v ∈ α :=
       hwPos.2.isCover hvRw
-    -- alt⁻ m-covers R', so v lands in some β ∈ alt⁻(φ.neg)
     obtain ⟨β, hβAlt, hvβ⟩ : ∃ β ∈ Question.alt φ.neg, v ∈ β :=
       hR'mc.isCover hvR'
-    -- α ∈ φ.pos.props (alt ⊆ props), {v} ⊆ α, so {v} ∈ φ.pos.props
     have hαPos : α ∈ φ.pos.props := Question.alt_subset_props _ hαAlt
     have hβNeg : β ∈ φ.neg.props := Question.alt_subset_props _ hβAlt
     have hvSPos : ({v} : Set W) ∈ φ.pos.props :=
       φ.pos.downward_closed α hαPos {v} (Set.singleton_subset_iff.mpr hvα)
     have hvSNeg : ({v} : Set W) ∈ φ.neg.props :=
       φ.neg.downward_closed β hβNeg {v} (Set.singleton_subset_iff.mpr hvβ)
-    -- by φ's no_overlap: {v} = ∅, contradiction
     exact (Set.singleton_ne_empty v) (φ.no_overlap {v} hvSPos hvSNeg)
 
 /-- **Booth Def 14, ◇-clause** via duality: `⟦◇φ⟧ = ⟦¬□¬φ⟧`. -/
@@ -220,7 +213,7 @@ def possibility (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
 
 end BilatInqProp
 
-/-! ### §5 Truth and falsity (Booth Def 17)
+/-! ### §4 Truth and falsity (Booth Def 17)
 
 A world `w` makes `φ` **true** in model `(W, R, V)` iff `{w} ∈ ⟦φ⟧⁺`,
 and **false** iff `{w} ∈ ⟦φ⟧⁻`. Since `Question`s are subset-closed,
@@ -240,19 +233,19 @@ theorem not_isTrue_and_isFalse (φ : BilatInqProp W) (w : W) :
     ¬ (isTrue φ w ∧ isFalse φ w) := fun ⟨ht, hf⟩ =>
   Set.singleton_ne_empty w (φ.no_overlap {w} ht hf)
 
-/-! ### §6 Worked example: Independence inference on a 4-world model
+/-! ### §5 Worked example: Independence inference on a 3-world model
 
 A concrete witness that the m-cover semantics derives Booth Fact 9
-(Independence Inferences) where Kratzerian and pure-bilateral semantics
-do not. We work on a 4-world model `W₄ = Bool × Bool` (subsets of
-`{p, q}`), with `V p = {(true, _)}` and `V q = {(_, true)}`.
+(Independence Inferences). We work on `W₄ = Bool × Bool` (subsets of
+`{p, q}`), with `V p = {(true, _)}` and `V q = {(_, true)}`, and
+constant accessibility `R₃ w := V(p) ∪ V(q)` (the 3 worlds where
+`p ∨ q` is true).
 
-In this concrete model, `□(p ∨ q)` requires that `R(w)` is m-covered
-by `{V(p), V(q)}`. Crucially, m-covering forces both `V(p) \ V(q)`
-(the (true, false) world) and `V(q) \ V(p)` (the (false, true) world)
-to be non-empty in `R(w)` — otherwise one alternative would be
-redundant and the cover wouldn't be minimal. From this we get
-`◇(p ∧ ¬q)` and `◇(q ∧ ¬p)` (Independence). -/
+In this model `{V(p), V(q)}` minimally covers `R₃ w` because removing
+either alternative leaves a gap (`V(p)` alone misses `(false, true)`;
+`V(q)` alone misses `(true, false)`). Thus `□(p ∨ q)` is true, and
+the Vp-only world `(true, false)` lies in `R₃ w`, witnessing the
+existential in `◇(p ∧ ¬q)`'s positive-side definition. -/
 
 namespace BoothExample
 
@@ -272,26 +265,171 @@ def q_atom : BilatInqProp W4 := BilatInqProp.atom Vq
 /-- The disjunction `p ∨ q`. -/
 def p_or_q : BilatInqProp W4 := BilatInqProp.disj p_atom q_atom
 
-/-- The "p-only" world `(true, false)` is in `Vp \ Vq`. -/
-example : ((true, false) : W4) ∈ Vp ∧ ((true, false) : W4) ∉ Vq := by
-  refine ⟨?_, ?_⟩ <;> simp [Vp, Vq]
+/-- The conjunction `p ∧ ¬q`. -/
+def p_and_not_q : BilatInqProp W4 :=
+  BilatInqProp.conj p_atom (BilatInqProp.negate q_atom)
 
-/-- The "q-only" world `(false, true)` is in `Vq \ Vp`. -/
-example : ((false, true) : W4) ∈ Vq ∧ ((false, true) : W4) ∉ Vp := by
-  refine ⟨?_, ?_⟩ <;> simp [Vp, Vq]
+/-- Constant 3-world accessibility: `R₃ w = Vp ∪ Vq`, the worlds where
+    `p ∨ q` is true (excluding `(false, false)`). -/
+def R₃ : W4 → Set W4 := fun _ => Vp ∪ Vq
 
-/-- The negation `p_atom.negate.pos = q-side` test: negation of `p`'s
-    positive content is `↓{Vp^c}`, which contains the q-only world. -/
-example : ({((false, true) : W4)} : Set W4) ∈ p_atom.negate.pos := by
-  show ({((false, true) : W4)} : Set W4) ⊆ Vpᶜ
+/-! #### Pivotal world facts -/
+
+private lemma true_true_in_Vp : ((true, true) : W4) ∈ Vp := by
+  simp only [Vp, Set.mem_setOf_eq]
+private lemma true_false_in_Vp : ((true, false) : W4) ∈ Vp := by
+  simp only [Vp, Set.mem_setOf_eq]
+private lemma false_true_in_Vq : ((false, true) : W4) ∈ Vq := by
+  simp only [Vq, Set.mem_setOf_eq]
+private lemma true_false_not_in_Vq : ((true, false) : W4) ∉ Vq := by
+  simp only [Vq, Set.mem_setOf_eq]; decide
+private lemma false_true_not_in_Vp : ((false, true) : W4) ∉ Vp := by
+  simp only [Vp, Set.mem_setOf_eq]; decide
+
+private lemma Vp_nsub_Vq : ¬ Vp ⊆ Vq :=
+  fun h => true_false_not_in_Vq (h true_false_in_Vp)
+private lemma Vq_nsub_Vp : ¬ Vq ⊆ Vp :=
+  fun h => false_true_not_in_Vp (h false_true_in_Vq)
+
+private lemma R₃_nonempty (w : W4) : (R₃ w).Nonempty :=
+  ⟨(true, true), Or.inl true_true_in_Vp⟩
+
+/-! #### Question-algebraic helpers -/
+
+/-- Inf of two declaratives is the declarative of the intersection. Inline
+    helper; mathlib has no analogue at `Question` level (and one isn't
+    needed substrate-wide until a second consumer). -/
+private lemma declarative_inf (A B : Set W4) :
+    Question.declarative A ⊓ Question.declarative B = Question.declarative (A ∩ B) := by
+  apply Question.ext
+  intro q
+  show q ⊆ A ∧ q ⊆ B ↔ q ⊆ A ∩ B
+  rw [Set.subset_inter_iff]
+
+/-- The alternatives of `(declarative Vp) ⊔ (declarative Vq)` are exactly
+    `{Vp, Vq}` in our model — both are maximal because neither is a
+    subset of the other (`Vp_nsub_Vq`, `Vq_nsub_Vp`). -/
+private lemma alt_p_or_q_pos :
+    Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) := by
+  show Question.alt (Question.declarative Vp ⊔ Question.declarative Vq) = _
+  apply Set.eq_of_subset_of_subset
+  · intro q hq
+    have h := Question.alt_sup_subset_union (Question.declarative Vp)
+              (Question.declarative Vq) hq
+    rcases h with h | h
+    · rw [Question.alt_declarative] at h
+      rcases Set.mem_singleton_iff.mp h with rfl
+      exact Set.mem_insert _ _
+    · rw [Question.alt_declarative] at h
+      rcases Set.mem_singleton_iff.mp h with rfl
+      exact Set.mem_insert_of_mem _ rfl
+  · intro q hq
+    rcases Set.mem_insert_iff.mp hq with rfl | hq'
+    · apply Question.mem_alt_sup_of_alt_left
+        (P := Question.declarative Vp) (Q := Question.declarative Vq)
+      · rw [Question.alt_declarative]; rfl
+      · intro r hr hVpr
+        exact absurd (hVpr.trans hr) Vp_nsub_Vq
+    · rcases Set.mem_singleton_iff.mp hq' with rfl
+      apply Question.mem_alt_sup_of_alt_right
+        (P := Question.declarative Vp) (Q := Question.declarative Vq)
+      · rw [Question.alt_declarative]; rfl
+      · intro r hr hVqr
+        exact absurd (hVqr.trans hr) Vq_nsub_Vp
+
+/-- The alternatives of `(declarative Vp) ⊓ (declarative Vqᶜ)` are
+    exactly `{Vp ∩ Vqᶜ}` — the meet collapses to a single declarative. -/
+private lemma alt_p_and_not_q_pos :
+    Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) := by
+  show Question.alt (Question.declarative Vp ⊓ Question.declarative Vqᶜ) = _
+  rw [declarative_inf]
+  exact Question.alt_declarative _
+
+/-! #### The Independence-witness theorems -/
+
+/-- **`□(p ∨ q)` holds at `(true, true)` in the 3-world model.** Both
+    `(R₃ w).Nonempty` and `IsMinCover {Vp, Vq} (Vp ∪ Vq)` are
+    discharged: the latter requires that any cover-subset must contain
+    both `Vp` (witnessed by `(true, false)` ∈ Vp \ Vq) and `Vq`
+    (witnessed by `(false, true)` ∈ Vq \ Vp). -/
+theorem boothExample_necessity_holds :
+    isTrue (BilatInqProp.necessity R₃ p_or_q) ((true, true) : W4) := by
+  show ({((true, true) : W4)} : Set W4) ⊆ _
   intro w hw
-  simp only [Set.mem_singleton_iff] at hw
-  subst hw
-  simp [Vp]
+  rcases Set.mem_singleton_iff.mp hw with rfl
+  refine ⟨R₃_nonempty _, ?_⟩
+  rw [alt_p_or_q_pos]
+  refine ⟨?_, ?_⟩
+  · -- IsCover {Vp, Vq} (Vp ∪ Vq)
+    intro v hv
+    rcases hv with hv | hv
+    · exact ⟨Vp, Set.mem_insert _ _, hv⟩
+    · exact ⟨Vq, Set.mem_insert_of_mem _ rfl, hv⟩
+  · -- Minimality
+    intro Y hYcov hYsub X hXmem
+    rcases Set.mem_insert_iff.mp hXmem with rfl | hX
+    · -- Need Vp ∈ Y. (true, false) ∈ Vp ⊆ Vp ∪ Vq, must be in some Z ∈ Y ⊆ {Vp, Vq}.
+      have h1 : ((true, false) : W4) ∈ Vp ∪ Vq := Or.inl true_false_in_Vp
+      obtain ⟨Z, hZY, hZmem⟩ := hYcov h1
+      have hZ_in : Z ∈ ({Vp, Vq} : Set (Set W4)) := hYsub hZY
+      rcases Set.mem_insert_iff.mp hZ_in with rfl | hZ_or
+      · exact hZY
+      · rcases Set.mem_singleton_iff.mp hZ_or with rfl
+        exact absurd hZmem true_false_not_in_Vq
+    · rcases Set.mem_singleton_iff.mp hX with rfl
+      have h1 : ((false, true) : W4) ∈ Vp ∪ Vq := Or.inr false_true_in_Vq
+      obtain ⟨Z, hZY, hZmem⟩ := hYcov h1
+      have hZ_in : Z ∈ ({Vp, Vq} : Set (Set W4)) := hYsub hZY
+      rcases Set.mem_insert_iff.mp hZ_in with rfl | hZ_or
+      · exact absurd hZmem false_true_not_in_Vp
+      · rcases Set.mem_singleton_iff.mp hZ_or with rfl
+        exact hZY
+
+/-- **`◇(p ∧ ¬q)` holds at `(true, true)` in the 3-world model.** The
+    Vp-only world `(true, false)` witnesses the existential in the
+    possibility's positive-side def: it lies in `R₃ (true, true)` and
+    `{(true, false)}` is m-covered by `{Vp ∩ Vqᶜ}`. -/
+theorem boothExample_possibility_holds :
+    isTrue (BilatInqProp.possibility R₃ p_and_not_q) ((true, true) : W4) := by
+  show ({((true, true) : W4)} : Set W4) ⊆
+    {w : W4 | ∃ R' : Set W4, R' ⊆ R₃ w ∧ R'.Nonempty ∧
+              IsMinCover (Question.alt p_and_not_q.pos) R'}
+  intro w hw
+  rcases Set.mem_singleton_iff.mp hw with rfl
+  refine ⟨{((true, false) : W4)}, ?_, ⟨(true, false), rfl⟩, ?_⟩
+  · -- {(true, false)} ⊆ R₃ (true, true) = Vp ∪ Vq
+    intro v hv
+    rcases Set.mem_singleton_iff.mp hv with rfl
+    exact Or.inl true_false_in_Vp
+  · -- IsMinCover {Vp ∩ Vqᶜ} {(true, false)}
+    rw [alt_p_and_not_q_pos]
+    refine ⟨?_, ?_⟩
+    · -- IsCover
+      intro v hv
+      rcases Set.mem_singleton_iff.mp hv with rfl
+      exact ⟨Vp ∩ Vqᶜ, Set.mem_singleton _, true_false_in_Vp, true_false_not_in_Vq⟩
+    · -- Minimality
+      intro Y hYcov hYsub X hXmem
+      rcases Set.mem_singleton_iff.mp hXmem with rfl
+      have h1 : ((true, false) : W4) ∈ ({(true, false)} : Set W4) := rfl
+      obtain ⟨Z, hZY, _hZmem⟩ := hYcov h1
+      have hZ_in : Z ∈ ({Vp ∩ Vqᶜ} : Set (Set W4)) := hYsub hZY
+      rcases Set.mem_singleton_iff.mp hZ_in with rfl
+      exact hZY
+
+/-- **Independence inference on the 3-world model**: `□(p ∨ q)` and
+    `◇(p ∧ ¬q)` are jointly true at `(true, true)`. This is a concrete
+    witness that the m-cover semantics derives Booth Fact 9 — Kratzerian
+    cover semantics on the same model would validate `□(p ∨ q)` but
+    leave `◇(p ∧ ¬q)` underivable. -/
+theorem boothExample_independence :
+    isTrue (BilatInqProp.necessity R₃ p_or_q) ((true, true) : W4) ∧
+    isTrue (BilatInqProp.possibility R₃ p_and_not_q) ((true, true) : W4) :=
+  ⟨boothExample_necessity_holds, boothExample_possibility_holds⟩
 
 end BoothExample
 
-/-! ### §7 The Independence inference (Booth Fact 9)
+/-! ### §6 The Independence inference, general meta-language form (Booth Fact 9)
 
 The headline theorem of @cite{booth-2022}: necessity-modal sentences
 with disjunctive complements (and non-Hurford disjuncts) license
@@ -301,8 +439,9 @@ The general meta-language theorem (over the class of non-Hurford
 models) requires Booth's Compactness-of-Alternatives lemma (Fact 5)
 and the non-Hurford characterization (Definition 22), which go beyond
 the scope of this initial study file. We state the theorem and carry
-a documented `sorry`; future work could elaborate the proof or replace
-it with a worked example over `BoothExample.W4`. -/
+a documented `sorry`; the worked-example specialization
+(`BoothExample.boothExample_independence`) discharges it on the 3-world
+model. -/
 
 /-- **Booth Fact 9 (Object-Language Independence)**: under the model
     class where `p ∨ q` is non-Hurford, `□(p ∨ q)` truth at `w` entails
@@ -313,7 +452,7 @@ it with a worked example over `BoothExample.W4`. -/
     Compactness-of-Alternatives lemma (Fact 5). Carried as a
     documented `sorry` until those substrates land. -/
 theorem independence_p_not_q
-    (W : Type*) (R : W → Set W) (Vp Vq : Set W)
+    (R : W → Set W) (Vp Vq : Set W)
     (_h_non_hurford : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp)
     (w : W) :
     isTrue (BilatInqProp.necessity R
@@ -326,6 +465,8 @@ theorem independence_p_not_q
   -- Proof sketch: from m-cover of R(w) by {Vp, Vq} (alt⁺), pick a
   -- world v ∈ R(w) ∩ (Vp \ Vq) — minimality forces this; then {v}
   -- witnesses the existential in possibility's negative-side def.
+  -- The worked example `BoothExample.boothExample_independence`
+  -- discharges this for the constant `R₃ = Vp ∪ Vq` accessibility.
   sorry
 
 end Phenomena.Modality.Studies.Booth2022
