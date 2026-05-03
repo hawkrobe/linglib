@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.644 — retrofit + SmithMoskal §4: domain-aware framing + case/number partitions
+
+**#1 Retrofit** (`Theories/Morphology/DegreeContainment.lean`):
+
+`vi_cmpr_eq_sprl_under_domain` — a domain-aware framing of the existing `vi_cmpr_eq_sprl`. Takes a `DomainPartition Tag` and a `SameDomain π 1 2` hypothesis; proves `viWinner cmpr = viWinner sprl`. The hypothesis is unused because the original theorem holds unconditionally (LocalVIRule's structural-locality field forces the equality regardless of partition). Future-proofing shim, not a structural strengthening — the "real" domain-relativized variant (where `LocalVIRule.locality` becomes partition-aware) requires extending `LocalVIRule` with a domain field, deferred per docstring in the new §5.
+
+`vi_cmpr_eq_sprl_trivial` documents that `DomainPartition.trivial` recovers the original theorem (the `SameDomain` hypothesis is `rfl`).
+
+**#2 SmithMoskal §4 substantive content** (`Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean`):
+
+Replaces the prose-only §3.7 stub with concrete partition definitions + structural facts:
+
+- `caseDomainPartition : DomainPartition Bool := λ i => i ≥ 2` (ABS+ERG in non-oblique; DAT in oblique, per `@cite{caha-2009}`'s Unmarked-Dependent vs Oblique boundary)
+- `numberDomainPartition : DomainPartition Bool := λ i => i ≥ 2` (SG+PL in non-dual; DL in dual, per `@cite{harbour-2014}`'s feature-recursion split)
+- `case_partition_splits_erg_dat` / `number_partition_splits_pl_dl` (the structural splits)
+- `wardaman_3sg_within_case_domain` / `yagua_2_within_number_domain` (the AAB witnesses are within-domain contiguous; honest scope note that this is trivially true since `[0, 0, 1]` is *ABA-contiguous universally)
+
+Per `mathlib-reviewer` audit's anti-pattern flag: partitions are derived from independently-motivated linguistic boundaries (Caha + Harbour hierarchies), not from cell-index thresholds tuned to the empirical data.
+
+The closing `What's deferred` section sketches the `DomainLocalVIRule` shape for the follow-up commit that would land the substantive converse-direction theorem (domain-aware DM admits AAB when positions are split). The current `LocalVIRule` is too strong (Bobaljik-style locality forces `cmpr = sprl` regardless of partition), explained in the docstring.
+
+Build green for both files (631 jobs).
+
 ### 0.230.643 — Core/Morphology/DomainLocality.lean substrate
 
 The §3.7 substrate addition the Smith-Moskal-Bobaljik 2019 study file's §4 stub was waiting for. Encodes domain-relativized contiguity:
