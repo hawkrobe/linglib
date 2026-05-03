@@ -112,31 +112,23 @@ theorem counit_rTensor :
     (Algebra.TensorProduct.map (counit : Hc R α →ₐ[R] R)
       (AlgHom.id R (Hc R α))).comp comulAlgHom
     = (Algebra.TensorProduct.lid R (Hc R α)).symm.toAlgHom := by
-  -- Stage 1a partial: helpers landed (`comulAlgHom_apply_single`,
-  -- `counit_apply_single` above), strategy below, but the tensor-product
-  -- algebra requires careful management of the `def Hc` boundary that
-  -- Lean's elaborator stumbles over (`Finsupp.single 0 1 : Hc R α`
-  -- vs `: Forest α →₀ R` typeclass slot for `OfNat _ 1`).
+  -- The two AlgHoms agree on every basis vector `Finsupp.single F 1`.
+  apply AddMonoidAlgebra.algHom_ext
+  intro F
+  -- LHS factors through `comulForest F` via `comulAlgHom_apply_single`.
+  -- RHS is `lid.symm.toAlgHom (single F 1) = 1 ⊗ₜ single F 1`.
+  -- Strategy: induction on F; both sides reduce to `1 ⊗ₜ single F 1`.
+  -- Empty case: `comulForest 0 = 1`; `(map counit id) 1 = 1 ⊗ₜ 1`;
+  --   `lid.symm (single 0 1) = 1 ⊗ₜ single 0 1 = 1 ⊗ₜ 1` via `one_def`.
+  -- Cons case: `comulForest (T ::ₘ F') = comulTree T * comulForest F'`;
+  --   apply mul-distributivity of `(map counit id)` (it's an AlgHom);
+  --   IH gives `(map counit id) (comulForest F') = 1 ⊗ₜ single F' 1`;
+  --   singleton case `(map counit id) (comulTree T) = 1 ⊗ₜ single {T} 1`
+  --   needs `comulTree` term-by-term: only the empty cut survives counit
+  --   projection (since `cutForest_empty = 0` and `counit (single 0 1) = 1`).
   --
-  -- Strategy:
-  --   1. `apply AddMonoidAlgebra.algHom_ext; intro F` reduces to
-  --      `(map counit id) (comulAlgHom (single F 1)) = lid.symm (single F 1)`.
-  --   2. `rw [comulAlgHom_apply_single]` rewrites LHS to
-  --      `(map counit id) (comulForest F)`.
-  --   3. `induction F using Multiset.induction`:
-  --      - empty: `comulForest 0 = 1`, both sides give `1 ⊗ₜ 1`.
-  --      - cons T F': `comulForest (T ::ₘ F') = comulTree T * comulForest F'`.
-  --   4. Singleton case (F = {T}, F' = 0): expand `comulTree T` via its def
-  --      at `Coproduct.lean:96`; only the empty-cut term contributes to
-  --      `(map counit id)` (counit kills nonzero forests; cutForest_empty = 0
-  --      means the empty cut has cutForest 0 hence counit 1).
-  --
-  -- The Lean-elaboration friction (single F 1 needing OfNat (Forest α →₀ R) 1
-  -- when written through the Hc/AddMonoidAlgebra/Finsupp def chain) suggests
-  -- the cleaner path is to write the proof at the `AddMonoidAlgebra R (Forest α)`
-  -- level throughout (where `1`'s OfNat is mathlib-provided directly), then
-  -- conclude via the `def Hc = AddMonoidAlgebra` definitional equality at the end.
-  -- ~30-50 LOC, focused session.
+  -- Genuine multi-session proof effort due to def-Hc/Finsupp/TensorProduct
+  -- interplay; helpers above are the prerequisite landed scaffolding.
   sorry
 
 /-- Left-tensor counit law: `(id ⊗ ε) ∘ Δ^c = rid.symm`.
