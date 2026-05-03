@@ -45,6 +45,7 @@ overt Voice creates a contradiction, while null Voice does not.
 
 namespace Phenomena.FillerGap.Studies.ErlewineSommerlot2025
 
+open Minimalist.Linearization
 open Fragments.Malayic.VoiceSystem
 
 -- ============================================================================

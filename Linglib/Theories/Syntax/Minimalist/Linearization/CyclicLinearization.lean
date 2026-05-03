@@ -31,8 +31,16 @@ requirements. All three are formalized as concrete theorems.
 - `allPrecs`: generates all pairwise precedences from a terminal sequence
 - `hasContradiction`: checks for direct ordering cycles (a < b ∧ b < a)
 - `hasCycle`: checks for cycles of any length via BFS reachability
-- `spelloutAndCheck`: accumulates ordering across phases and checks consistency
+- `extendOrderingTable`: Linearize operation accumulating precedences across phases
+- `spelloutAndCheck`: extend an empty table over all phases and check consistency
+
+The operation `extendOrderingTable` was previously named `spellout` and
+collided with `Minimalist.spellout` (the VI exponent-realization
+operation in `Theories/Morphology/DM/VocabSimple.lean`); the rename
+disambiguates.
 -/
+
+namespace Minimalist.Linearization
 
 -- ============================================================================
 -- § 1: Precedence Statements
@@ -50,7 +58,7 @@ structure Prec where
     [a < b, a < c, b < c]. -/
 def allPrecs : List String → List Prec
   | [] => []
-  | x :: xs => (xs.map fun y => ⟨x, y⟩) ++ allPrecs xs
+  | x :: xs => (xs.map λ y => ⟨x, y⟩) ++ allPrecs xs
 
 -- ============================================================================
 -- § 2: Ordering Table and Consistency
@@ -69,24 +77,26 @@ abbrev OrderingTable := List Prec
     are direct (no transitive closure needed). A more general implementation
     would compute the transitive closure; we leave that as future work. -/
 def hasContradiction (table : OrderingTable) : Bool :=
-  table.any fun s =>
-    table.any fun t => s.before == t.after && s.after == t.before
+  table.any λ s =>
+    table.any λ t => s.before == t.after && s.after == t.before
 
 /-- An Ordering Table is consistent iff it contains no contradictions. -/
 def isConsistent (table : OrderingTable) : Bool := !hasContradiction table
 
 -- ============================================================================
--- § 3: Spell-out
+-- § 3: Spell-out (Linearize)
 -- ============================================================================
 
-/-- Spell-out a phase: generate ordering statements from the left-to-right
-    sequence of overt terminals in the phase, and add them to the existing
-    Ordering Table.
+/-- Extend an existing Ordering Table by Linearizing one phase: generate
+    ordering statements from the left-to-right sequence of overt
+    terminals in the phase, and append them to the table.
 
-    This implements Order Preservation: existing statements are kept
-    (never deleted), and new statements are added.
-    Corresponds to @cite{fox-pesetsky-2005}'s Linearize operation ((52)). -/
-def spellout (existing : OrderingTable) (phaseTerminals : List String) : OrderingTable :=
+    Implements Order Preservation: existing statements are kept (never
+    deleted), new statements appended. Corresponds to @cite{fox-pesetsky-2005}'s
+    Linearize operation ((52)). Renamed from `spellout` to disambiguate
+    from `Minimalist.spellout` (the VI exponent-realization operation). -/
+def extendOrderingTable (existing : OrderingTable)
+    (phaseTerminals : List String) : OrderingTable :=
   existing ++ allPrecs phaseTerminals
 
 /-- Check whether a multi-phase derivation is consistently linearizable.
@@ -94,14 +104,14 @@ def spellout (existing : OrderingTable) (phaseTerminals : List String) : Orderin
     terminals at the corresponding Spell-out domain. Ordering statements
     accumulate across phases via Order Preservation. -/
 def spelloutAndCheck (phases : List (List String)) : Bool :=
-  isConsistent (phases.foldl spellout [])
+  isConsistent (phases.foldl extendOrderingTable [])
 
 /-- Order Preservation: existing ordering statements are never deleted
-    by Spell-out. All precedences from earlier phases persist.
+    by extension. All precedences from earlier phases persist.
     Formal content of @cite{fox-pesetsky-2005}'s Order Preservation. -/
-theorem spellout_preserves (existing : OrderingTable) (phase : List String)
-    (p : Prec) (hp : p ∈ existing) : p ∈ spellout existing phase := by
-  unfold spellout; exact List.mem_append_left _ hp
+theorem extendOrderingTable_preserves (existing : OrderingTable) (phase : List String)
+    (p : Prec) (hp : p ∈ existing) : p ∈ extendOrderingTable existing phase := by
+  unfold extendOrderingTable; exact List.mem_append_left _ hp
 
 -- ============================================================================
 -- § 4: Core Theorems
@@ -111,7 +121,7 @@ theorem spellout_preserves (existing : OrderingTable) (phase : List String)
 theorem allPrecs_after_mem {p : Prec} {ts : List String}
     (h : p ∈ allPrecs ts) : p.after ∈ ts := by
   induction ts with
-  | nil => simp [allPrecs] at h
+  | nil => simp only [allPrecs, List.not_mem_nil] at h
   | cons x xs ih =>
     simp only [allPrecs, List.mem_append] at h
     rcases h with h | h
@@ -123,7 +133,7 @@ theorem allPrecs_after_mem {p : Prec} {ts : List String}
 theorem allPrecs_before_mem {p : Prec} {ts : List String}
     (h : p ∈ allPrecs ts) : p.before ∈ ts := by
   induction ts with
-  | nil => simp [allPrecs] at h
+  | nil => simp only [allPrecs, List.not_mem_nil] at h
   | cons x xs ih =>
     simp only [allPrecs, List.mem_append] at h
     rcases h with h | h
@@ -138,33 +148,29 @@ theorem allPrecs_antisym : ∀ (ts : List String), ts.Nodup →
     s.before = t.after → s.after ≠ t.before := by
   intro ts
   induction ts with
-  | nil => intro _ s hs; simp [allPrecs] at hs
+  | nil => intro _ s hs; simp only [allPrecs, List.not_mem_nil] at hs
   | cons x xs ih =>
     intro hnd s hs t ht h1
     rw [List.nodup_cons] at hnd; obtain ⟨hx, hnd'⟩ := hnd
     simp only [allPrecs, List.mem_append] at hs ht
     rcases hs with hs | hs <;> rcases ht with ht | ht
-    · -- Both from map: s = ⟨x, ys⟩, t = ⟨x, yt⟩
-      obtain ⟨ys, hys, rfl⟩ := List.mem_map.mp hs
+    · obtain ⟨ys, hys, rfl⟩ := List.mem_map.mp hs
       obtain ⟨yt, hyt, rfl⟩ := List.mem_map.mp ht
       dsimp at h1
       rw [← h1] at hyt
       exact absurd hyt hx
-    · -- s from map, t from allPrecs xs
-      obtain ⟨ys, hys, rfl⟩ := List.mem_map.mp hs
+    · obtain ⟨ys, hys, rfl⟩ := List.mem_map.mp hs
       dsimp at h1
       have hta := allPrecs_after_mem ht
       rw [← h1] at hta
       exact absurd hta hx
-    · -- s from allPrecs xs, t from map
-      obtain ⟨yt, hyt, rfl⟩ := List.mem_map.mp ht
+    · obtain ⟨yt, hyt, rfl⟩ := List.mem_map.mp ht
       dsimp at h1 ⊢
       intro heq
       have hsa := allPrecs_after_mem hs
       rw [heq] at hsa
       exact hx hsa
-    · -- Both from allPrecs xs: use IH
-      exact ih hnd' s hs t ht h1
+    · exact ih hnd' s hs t ht h1
 
 /-- A single phase is always consistent: no ordering contradiction can arise
     within a single left-to-right linearization of distinct terminals.
@@ -173,7 +179,7 @@ theorem allPrecs_antisym : ∀ (ts : List String), ts.Nodup →
 theorem single_phase_consistent (ts : List String) (hnd : ts.Nodup) :
     isConsistent (allPrecs ts) = true := by
   unfold isConsistent
-  suffices h : hasContradiction (allPrecs ts) = false by simp [h]
+  suffices h : hasContradiction (allPrecs ts) = false by simp only [h, Bool.not_false]
   rcases Bool.eq_false_or_eq_true (hasContradiction (allPrecs ts)) with hc | hc
   · exfalso
     unfold hasContradiction at hc
@@ -187,14 +193,14 @@ theorem single_phase_consistent (ts : List String) (hnd : ts.Nodup) :
     X was at the left edge of D; when D' is spelled out, X moves further
     left. The new ordering X < α is consistent with X < Y from D. -/
 theorem edge_movement_consistent :
-    spelloutAndCheck [["X", "Y", "Z"], ["X", "α", "Y", "Z"]] = true := by native_decide
+    spelloutAndCheck [["X", "Y", "Z"], ["X", "α", "Y", "Z"]] = true := by decide
 
 /-- Leftward movement from a non-edge position creates contradiction.
     Scenario 2 of @cite{fox-pesetsky-2005} (their (14)):
     Y was NOT at the left edge of D (X < Y at D Spell-out). When Y moves
     left in D', it must precede α, but α < X and X < Y yield a cycle. -/
 theorem non_edge_movement_contradiction :
-    spelloutAndCheck [["X", "Y", "Z"], ["Y", "α", "X", "Z"]] = false := by native_decide
+    spelloutAndCheck [["X", "Y", "Z"], ["Y", "α", "X", "Z"]] = false := by decide
 
 /-- Successive-cyclic *wh*-movement avoids ordering contradiction.
     @cite{fox-pesetsky-2005} (their (6)–(8)): *to whom* moves through
@@ -202,7 +208,7 @@ theorem non_edge_movement_contradiction :
 theorem successive_cyclic_ok :
     spelloutAndCheck [["to_whom", "gave", "the_book"],
                       ["to_whom", "that", "Mary", "gave", "the_book"]] = true := by
-  native_decide
+  decide
 
 /-- Non-successive-cyclic movement creates ordering contradiction.
     @cite{fox-pesetsky-2005} (their (3)–(5)): *to whom* skips Spec,VP
@@ -210,18 +216,18 @@ theorem successive_cyclic_ok :
 theorem non_successive_cyclic_bad :
     spelloutAndCheck [["gave", "the_book", "to_whom"],
                       ["to_whom", "that", "Mary", "gave", "the_book"]] = false := by
-  native_decide
+  decide
 
 /-- Order-preserving simultaneous movement: two elements moving out of a
     phase in their original relative order creates no contradiction.
     This is the key configuration for Malayic object extraction
     (@cite{erlewine-sommerlot-2025} ex. 55–56). -/
 theorem simultaneous_order_preserving :
-    spelloutAndCheck [["A", "B", "C"], ["A", "B", "D", "C"]] = true := by native_decide
+    spelloutAndCheck [["A", "B", "C"], ["A", "B", "D", "C"]] = true := by decide
 
 /-- Simultaneous movement that reverses relative order contradicts. -/
 theorem simultaneous_order_reversing :
-    spelloutAndCheck [["A", "B", "C"], ["B", "A", "D", "C"]] = false := by native_decide
+    spelloutAndCheck [["A", "B", "C"], ["B", "A", "D", "C"]] = false := by decide
 
 -- ============================================================================
 -- § 5: Holmberg's Generalization
@@ -241,14 +247,14 @@ contradicting V < Obj. When the verb also moves, V < Obj is preserved.
     VP contains only [V, Obj]; Neg is above VP. -/
 theorem no_object_shift :
     spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "V", "Neg", "Obj"]] = true := by native_decide
+                      ["Subj", "V", "Neg", "Obj"]] = true := by decide
 
 /-- Object Shift WITH verb movement: both V and Obj move past Neg.
     VP-internal ordering V < Obj is preserved at IP. Consistent.
     @cite{fox-pesetsky-2005} §3. -/
 theorem object_shift_with_verb_movement :
     spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "V", "Obj", "Neg"]] = true := by native_decide
+                      ["Subj", "V", "Obj", "Neg"]] = true := by decide
 
 /-- Object Shift WITHOUT verb movement: Obj moves past Neg but V stays.
     VP: V < Obj. IP: Obj < ... < V. Direct contradiction → crash.
@@ -256,7 +262,7 @@ theorem object_shift_with_verb_movement :
     @cite{fox-pesetsky-2005} §3. -/
 theorem object_shift_without_verb_movement :
     spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "Obj", "Neg", "V"]] = false := by native_decide
+                      ["Subj", "Obj", "Neg", "V"]] = false := by decide
 
 -- ============================================================================
 -- § 6: Transitive Cycle Detection
@@ -293,17 +299,19 @@ def reachable (table : OrderingTable) (src dst : String) : Bool :=
 /-- Whether an Ordering Table contains a directed cycle of any length.
     For each edge a → b, checks if b can reach a via other edges. -/
 def hasCycle (table : OrderingTable) : Bool :=
-  table.any fun edge => reachable table edge.after edge.before
+  table.any λ edge => reachable table edge.after edge.before
 
 /-- `hasCycle` detects the transitive cycle a < b, b < c, c < a
     which `hasContradiction` misses (no direct a < b ∧ b < a pair). -/
 theorem hasCycle_detects_transitive :
     hasCycle [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] = true ∧
-    hasContradiction [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] = false := by native_decide
+    hasContradiction [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] = false := by decide
 
 /-- On the Malayic meN-deletion example, both checks agree
     (the contradiction is direct). -/
 theorem cycle_direct_agree_malayic :
     let t := allPrecs ["theme", "me-", "agent", "NV"] ++
              allPrecs ["theme", "agent", "Aux", "me-", "NV"]
-    hasCycle t = hasContradiction t := by native_decide
+    hasCycle t = hasContradiction t := by decide
+
+end Minimalist.Linearization

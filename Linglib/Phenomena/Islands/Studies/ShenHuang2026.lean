@@ -51,6 +51,7 @@ equally regardless of verb class — hence no VOC effect.
 
 namespace ShenHuang2026
 
+open Minimalist.Linearization
 open Semantics.Verb
 open Features.Definiteness
 open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
@@ -643,25 +644,26 @@ converges. This is why `WhDependencyType.binding` is not constrained
 by the PIC — it cannot create the ordering conflicts that the PIC
 (via Order Preservation) is designed to prevent.
 
-The `spellout` function from `CyclicLinearization` takes an existing
-`OrderingTable` and a list of terminals that move — for binding, this
-list is empty, so the table is unchanged and trivially consistent. -/
+The `extendOrderingTable` function from `Minimalist.Linearization`
+takes an existing `OrderingTable` and a list of terminals that move —
+for binding, this list is empty, so the table is unchanged and
+trivially consistent. -/
 
 /-- Binding adds no precedence statements: when no elements move
-(the terminal list is empty), `spellout` returns the existing table
-unchanged. This is the formal content of "binding does not change
-linear order" (@cite{fox-pesetsky-2005}, as applied in
+(the terminal list is empty), `extendOrderingTable` returns the
+existing table unchanged. This is the formal content of "binding does
+not change linear order" (@cite{fox-pesetsky-2005}, as applied in
 @cite{shen-huang-2026} §4.2). -/
 theorem binding_no_new_precedences (existing : OrderingTable) :
-    spellout existing [] = existing := by
-  unfold spellout allPrecs; simp
+    extendOrderingTable existing [] = existing := by
+  unfold extendOrderingTable allPrecs; simp
 
 /-- Consequence: binding never creates an ordering contradiction.
 If the existing ordering table is consistent, it stays consistent
 after a binding operation (because nothing changes). -/
 theorem binding_preserves_consistency (existing : OrderingTable)
     (h : isConsistent existing = true) :
-    isConsistent (spellout existing []) = true := by
+    isConsistent (extendOrderingTable existing []) = true := by
   rw [binding_no_new_precedences]; exact h
 
 -- ============================================================================
