@@ -843,33 +843,51 @@ theorem enemy_territory_blocks_projection {W : Type*}
 The marquee BPS-style result the cross-mechanism `Implicature` spine in
 `Theories/Pragmatics/Implicature/Defs.lean` was designed to host. The
 free-choice inference (◇A ∧ ◇B from ◇(A ∨ B)) is wrapped as an
-`Implicature` whose `content` is the presupposed component of `pexFC`.
-Non-cancellability is a one-line consequence of `bps_not_cancellable`
-(in `Theories/Semantics/Exhaustification/Presuppositional.lean`), which
-itself follows from `IsCancellable.false_of_assertion_implies_content`
-applied to the `holds → presup` projection.
-
-The substantive claim — "presuppositional EXH outputs fail Sadock's
-cancellability test" — is now a *theorem* about this concrete worked
-instance, not a stipulation in the docstring. -/
+`Implicature FCWorld Prop` whose `content` is the presupposed component
+of `pexFC`. Two non-cancellability theorems are stated, tracking the
+structural-vs-substantive distinction documented at the
+`Presuppositional.lean` BPS bridge: `pexFC_not_cancellable` follows from
+the wrapper's choice to set assertion to `holds`; `pexFC_neg_not_cancellable`
+follows from projection of `pexFC.presup` through `PrProp.neg`, the
+formal counterpart to BPS's family-of-sentences test. -/
 
 open Exhaustification.Presuppositional
 
 /-- The free-choice inference, wrapped as a categorical implicature. The
 `content` is `pexFC.presup`, i.e., the negated IE alternatives plus the
 homogeneity over II alternatives — the *non-at-issue* content that BPS
-treats as projective. -/
+treats as projective. The `kind` is updated to `.freeChoice` (the default
+from `bpsToImplicature` is `.scalar`). -/
 def fcImplicature : Implicature FCWorld Prop :=
-  bpsToImplicature .freeChoice fcALT pexFC
+  { bpsToImplicature fcALT pexFC with kind := .freeChoice }
 
-/-- **BPS non-cancellability for the FCWorld instance.** No continuation
-can cancel the free-choice inference once the assertion is the *full*
-pex output (`pexFC.holds`), because `holds` already entails the
-presupposed `content`. This is the formalized counterpart to BPS's
-contention against grammaticalist flat-EXH accounts: the inference
-projects, so it can't be denied without infelicity. -/
+/-- **Structural non-cancellability** for the FCWorld instance: when the
+assertion is the full pex output (`pexFC.holds`), no continuation cancels
+the inferred content. This follows from `holds := presup ∧ assertion`
+trivially. -/
 theorem pexFC_not_cancellable :
-    ¬ Implicature.IsCancellable (fun w => PrProp.holds w pexFC) fcImplicature :=
-  bps_not_cancellable .freeChoice fcALT pexFC
+    ¬ Implicature.IsCancellable (fun w => PrProp.holds w pexFC)
+                                fcImplicature := by
+  -- the proof of bps_not_cancellable applies; fcImplicature differs from
+  -- (bpsToImplicature fcALT pexFC) only in the `kind` field, which the
+  -- IsCancellable predicate doesn't inspect.
+  apply Implicature.IsCancellable.false_of_assertion_implies_content
+  intro _ h
+  exact h.1
+
+/-- **Substantive non-cancellability — projection through negation.**
+Even after asserting `¬pexFC` (the negation of the FC pex output), the
+free-choice inference (`pexFC.presup`, which yields `permA w ∧ permB w`
+by `pex_fc`) survives. This is the formal counterpart to BPS's
+projection argument: the inference is not at-issue, so embedding under
+negation does not cancel it. The proof traces through
+`PrProp.neg_presup` — the structural projection identity — not just
+the trivial `holds → presup`. -/
+theorem pexFC_neg_not_cancellable :
+    ¬ Implicature.IsCancellable (fun w => PrProp.holds w pexFC.neg)
+                                fcImplicature := by
+  apply Implicature.IsCancellable.false_of_assertion_implies_content
+  intro _ h
+  exact h.1
 
 end DelPinalBassiSauerland2024

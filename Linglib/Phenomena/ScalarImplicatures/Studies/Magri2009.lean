@@ -101,6 +101,27 @@ def blindOdd (u : U) : Bool :=
   decide (innocent.excluded alts φ).Nonempty &&
   decide (∀ w ∈ s.cWorlds, w ∉ innocent.exh alts φ)
 
+/-- Structural extraction of the second `blindOdd` conjunct: when the
+strengthened meaning is `blindOdd`, every CK-compatible world is
+*excluded* by the EXH operator. This is the load-bearing fact for the
+"strengthened meaning has no CK-realizer" claim — `strengthened u w =
+true` means `w ∈ innocent.exh ...`, but blindOdd says no CK world is in
+that set. Lifting this lemma to the `BlindScenario` level (rather than
+inlining it at every consumer site) decouples the proof from the
+specific shape of `blindOdd`. -/
+theorem blindOdd_excludes_cWorlds (u : U) (h : s.blindOdd u = true) :
+    ∀ w ∈ s.cWorlds,
+      w ∉ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
+                      (predToFinset (s.meaning u)) := by
+  simp only [blindOdd, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact h.2
+
+/-- Membership in `cWorlds` reflects context truth. Convenience for callers
+that have a `s.context w = true` hypothesis and need `w ∈ s.cWorlds`. -/
+theorem mem_cWorlds_of_context (w : W) (h : s.context w = true) :
+    w ∈ s.cWorlds := by
+  simp only [cWorlds, Finset.mem_filter, Finset.mem_univ, true_and, h]
+
 /-- Ignorance-based oddness: alternatives exist that are NOT innocently
 excludable (so ignorance inferences are derived), yet CK settles every
 alternative (all true at every CK world, or all false at every CK
@@ -1112,19 +1133,11 @@ theorem magri_blindOdd_no_ck_realizer
     (s : BlindScenario W U) (u : U) (h : s.blindOdd u = true) :
     ¬ ∃ w, s.context w = true ∧ (magriToImplicature s u).content w := by
   rintro ⟨w, hctx, hcontent⟩
-  -- hcontent : s.strengthened u w = true, by definition of magriToImplicature
-  -- unfold to: w ∈ innocent.exh ...
-  simp only [magriToImplicature, BlindScenario.strengthened,
-             decide_eq_true_eq] at hcontent
-  -- unpack blindOdd: second conjunct gives ∀ w ∈ cWorlds, w ∉ exh ...
-  simp only [BlindScenario.blindOdd, Bool.and_eq_true,
-             decide_eq_true_eq] at h
-  obtain ⟨_, hCK_excludes⟩ := h
-  -- show w ∈ s.cWorlds, then apply
-  have hMem : w ∈ s.cWorlds := by
-    simp only [BlindScenario.cWorlds, Finset.mem_filter, Finset.mem_univ,
-               true_and, hctx]
-  exact hCK_excludes w hMem hcontent
+  have hExhMem :
+      w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
+                       (predToFinset (s.meaning u)) := by
+    simpa [magriToImplicature, BlindScenario.strengthened] using hcontent
+  exact s.blindOdd_excludes_cWorlds u h w (s.mem_cWorlds_of_context w hctx) hExhMem
 
 end ImplicatureSpineBridge
 

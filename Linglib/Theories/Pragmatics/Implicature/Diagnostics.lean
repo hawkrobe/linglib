@@ -7,14 +7,17 @@ import Linglib.Theories.Pragmatics.Implicature.Defs
 
 Formalizes the standard Gricean diagnostic tests for distinguishing
 implicatures from entailments and presuppositions, stated uniformly
-over the `Implicature W Prop` type from `Defs.lean`. The headline application
-is the BPS bridge: when a Presuppositional-EXH output is wrapped as an
-`Implicature` via the `bpsPresuppositional` mechanism, the
-non-cancellability of the inferred (presupposed) content becomes a
-genuine theorem (`bps_not_cancellable`, in
-`Theories/Semantics/Exhaustification/Presuppositional.lean`),
-not a stipulation. This is the formal contact with the
-@cite{bassi-delpinal-sauerland-2021} critique of flat-EXH grammaticalism.
+over the `Implicature W Prop` type from `Defs.lean`. The headline
+application is the BPS bridge in
+`Theories/Semantics/Exhaustification/Presuppositional.lean`, which
+delivers two non-cancellability theorems for pex outputs: `bps_not_cancellable`
+(structural — assertion = `p.holds` makes content survive trivially)
+and `bps_neg_not_cancellable` (substantive — assertion = `p.neg.holds`
+makes content survive *because `PrProp.neg` projects*; the
+family-of-sentences test in @cite{bassi-delpinal-sauerland-2021}'s
+sense). The substrate's projecting `PrProp.neg` is what makes the
+projection theorem work; swapping in non-projecting `PrProp.negExt`
+would falsify it.
 
 ## The four classical tests
 
@@ -69,20 +72,25 @@ diagnostics divide the implicature space.
 
 ## What this file delivers vs. what it does NOT
 
-**Delivered:** BPS pex outputs (mechanism `.bpsPresuppositional`) wrap as
-`Implicature W Prop` with `content := p.presup` and `assertion := p.holds`;
-non-cancellability is a one-line theorem from
-`IsCancellable.false_of_assertion_implies_content`. The formal anchor
-the @cite{bassi-delpinal-sauerland-2021} critique needed.
+**Delivered structurally** (`bps_not_cancellable`): when assertion =
+`p.holds`, the inferred presup is trivially entailed by the assertion.
+The substantive content lives in the wrapper's choice to use `holds`,
+not in pex itself.
+
+**Delivered substantively** (`bps_neg_not_cancellable`): when assertion =
+`p.neg.holds` (i.e., the speaker negates the pex output), the inferred
+presup *still* survives — because `PrProp.neg` is constructed to project
+the presupposition (`(neg p).presup := p.presup`). This is the family-of-
+sentences projection test in formal form. Falsifies for `PrProp.negExt`.
 
 **Not delivered as cancellability failure:** Magri-style obligatory SI
 (@cite{magri-2009}) is not non-cancellable in the Sadock sense, even
 CK-relativized. For "#Some Italians come from a warm country" with CK
 restricting to all-warm worlds, "in fact all" is a consistent
 continuation at the CK world that contradicts the EXH'd implicature —
-so `IsCancellable` (and `IsCancellableInContext`) both hold. The
-contentful Magri claim is a different diagnostic — *no CK-realizer of
-the strengthened meaning* — formalized as
+so `IsCancellable` holds even with the CK restriction baked into the
+assertion. The contentful Magri claim is a different diagnostic — *no
+CK-realizer of the strengthened meaning* — formalized as
 `magri_blindOdd_no_ck_realizer` in `Magri2009.lean`. Magri obligatoriness
 ≠ IsCancellable failure; the docstring previously conflated these.
 -/
@@ -182,34 +190,6 @@ theorem IsCancellable.false_of_assertion_implies_content
     (h : ∀ w, φ w → i.content w) : ¬ IsCancellable φ i := by
   rintro ⟨cancel, ⟨w, hφ, hc⟩, hcontra⟩
   exact hcontra w hc (h w hφ)
-
-/--
-**Context-relativized cancellability**, generalizing `IsCancellable` by
-restricting both the witness and the closing condition to a context
-predicate `ctx`. Recovers `IsCancellable` when `ctx = fun _ => True`
-(see `IsCancellable.iff_inContext_true`).
-
-Useful for studies that need to relativize cancellability to common
-knowledge, QuD, or any other context predicate. NB: this generalization
-does NOT close the @cite{magri-2009} obligatoriness claim — Magri's
-deviance is "no CK-realizer of the strengthened meaning," not
-contextual non-cancellability. See file docstring.
--/
-def IsCancellableInContext (φ : W → Prop) (ctx : W → Prop)
-    (i : Implicature W Prop) : Prop :=
-  ∃ cancel : W → Prop,
-    (∃ w, ctx w ∧ φ w ∧ cancel w) ∧
-    (∀ w, ctx w → cancel w → ¬ i.content w)
-
-/-- `IsCancellable` is `IsCancellableInContext` with a vacuous context. -/
-theorem IsCancellable.iff_inContext_true {φ : W → Prop} {i : Implicature W Prop} :
-    IsCancellable φ i ↔ IsCancellableInContext φ (fun _ => True) i := by
-  unfold IsCancellable IsCancellableInContext
-  constructor
-  · rintro ⟨cancel, ⟨w, hφ, hc⟩, hcontra⟩
-    exact ⟨cancel, ⟨w, trivial, hφ, hc⟩, fun w _ => hcontra w⟩
-  · rintro ⟨cancel, ⟨w, _, hφ, hc⟩, hcontra⟩
-    exact ⟨cancel, ⟨w, hφ, hc⟩, fun w => hcontra w trivial⟩
 
 
 -- ============================================================

@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.653 — Implicature.bps: substantive projection theorem; trim audit dead-substrate
+
+Audit of 0.230.651 found `bps_not_cancellable` was structurally
+`(A ∧ B) → A` and `IsCancellableInContext` was dead substrate. This
+addresses both.
+
+**Substantive cash-out** (`Theories/Semantics/Exhaustification/Presuppositional.lean`):
+- New `bps_neg_not_cancellable`: even when speaker asserts `p.neg.holds`,
+  the inferred `p.presup` survives. Depends on `PrProp.neg_presup`
+  projection identity — would falsify for non-projecting `PrProp.negExt`.
+- `bps_not_cancellable` (structural form) retained alongside, with
+  honest docstring distinguishing structural vs substantive content.
+- `bpsToImplicature` no longer takes `kind` param (callers use `with
+  kind := ...`) — prevents incoherent `.manner` case.
+- `bps_holds_implies_presup` one-line wrapper inlined.
+
+**Worked instance** (`DelPinalBassiSauerland2024.lean`):
+- New `pexFC_neg_not_cancellable`: BPS family-of-sentences test on FCWorld.
+
+**Trim** (`Theories/Pragmatics/Implicature/Diagnostics.lean`):
+- Delete `IsCancellableInContext` + `iff_inContext_true` (zero
+  consumers; even Magri's docstring conceded it didn't apply).
+- Module docstring rewritten with structural-vs-substantive distinction.
+
+**Magri proof less brittle** (`Phenomena/ScalarImplicatures/Studies/Magri2009.lean`):
+- New `BlindScenario.blindOdd_excludes_cWorlds` and `mem_cWorlds_of_context`
+  lemmas at the BlindScenario level.
+- `magri_blindOdd_no_ck_realizer` proof rewritten via these lemmas
+  (decoupled from internal shape of `blindOdd`/`cWorlds`).
+
+**Bibliography stragglers**:
+- 2 stale `sources` paths in `references.bib` (still referencing
+  `PresuppositionalExhaustification.lean` + wrong `Modality/` dir for
+  DelPinal study) updated.
+- `bassi-delpinal-sauerland-2021` gains `pages = {1--48}`.
+
 ### 0.230.651 — QBSML/FreeChoice.lean substrate + AvO 2023 refactor
 
 QBSML substrate now mirrors BSML's free-choice apparatus. AvO 2023 study
