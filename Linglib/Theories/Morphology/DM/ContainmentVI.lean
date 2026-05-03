@@ -34,14 +34,14 @@ applicable rules is monotone in position. From monotonicity + a
 `viWinningContextLevel_const_above_cap`). Specialized to `n = 3, M = 1`
 this is the comparative-superlative result `vi_cmpr_eq_sprl`.
 
-**PART II** (degree specialization, §§7–10, sub-namespace `Degree`):
-the original `LocalVIRule` / `vi_cmpr_eq_sprl` machinery from the
-n=3 degree case, retained verbatim for backward compatibility with
-`Phenomena/Comparison/Studies/Bobaljik2012.lean` and
-`Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean`. The
-specialization could in principle derive from PART I but is kept
-independent so the degree-specific theorem statements remain crisp
-(working with `DegreePattern` rather than `List Nat`).
+**PART II** (degree specialization, §§7–9, sub-namespace `Degree`):
+the n=3 degree case derived from PART I via subtype refinement.
+`Degree.LocalVIRule := { r : ContainmentVIRule 3 // r.contextLevel ≤ cmprLevel }`
+bundles the locality cap into the rule type (mathlib `OrderHom` idiom).
+`Degree.vi_cmpr_eq_sprl` is a one-line corollary of PART I's
+`viExponent_const_above_cap`. Consumers (`Bobaljik2012`,
+`SmithMoskalEtAl2019`) keep their `DegreePattern`-typed signatures
+unchanged — `Degree.viPattern` still returns `DegreePattern`.
 
 ## The deep mathematical content
 
@@ -70,11 +70,7 @@ PART II's `vi_cmpr_eq_sprl` (n=3 case directly) or apply
 
 The `Theories/Morphology/Nanosyntax/` parallel — phrasal spellout +
 Superset Principle deriving the same *ABA exclusion — is a separate
-file the substrate anticipates but does not yet exist. The PART II
-machinery could in principle be derived from PART I (express
-`LocalVIRule` as a `ContainmentVIRule 3` with `CappedAt _ ⟨1, …⟩`),
-but the resulting theorem statements would lose their direct
-`DegreePattern` typing — deferred until a consumer needs it.
+file the substrate anticipates but does not yet exist.
 -/
 
 namespace Theories.Morphology.DM.ContainmentVI
@@ -310,119 +306,84 @@ namespace Degree
 open Core.Morphology.DegreeContainment
 
 -- ============================================================================
--- § 7: LocalVIRule
+-- § 7: LocalVIRule (subtype of `ContainmentVIRule 3`)
 -- ============================================================================
+
+/-- The locality cap for degree morphology: CMPR is the deepest
+    position whose features a root VI rule can be conditioned on. -/
+def cmprLevel : Fin 3 := ⟨1, by decide⟩
 
 /-- A locality-constrained VI rule for root morphemes in degree
     contexts (@cite{bobaljik-2012}, @cite{bobaljik-2000}).
 
+    Subtype of `ContainmentVIRule 3` with the locality cap `≤ cmprLevel`
+    bundled in via subtype refinement. This is the mathlib `OrderHom`
+    idiom (bundle the constraint with the carrier) applied to a
+    morphological rule with a structural locality property.
+
     Root-out insertion (@cite{bobaljik-2000}) means root VI rules can
     only be conditioned on features in the root's local domain — the
     CMPR head that immediately contains the root. The SPRL head is
-    outside CMPR and invisible to root VI.
+    outside CMPR and invisible to root VI; this is the cap. -/
+abbrev LocalVIRule : Type := { r : ContainmentVIRule 3 // r.contextLevel ≤ cmprLevel }
 
-    `condGrade` is the highest grade whose features the rule checks.
-    Locality constrains this to at most CMPR.
+/-- Project a list of `LocalVIRule` to the underlying
+    `ContainmentVIRule 3` list. -/
+private def liftRules (rules : List LocalVIRule) : List (ContainmentVIRule 3) :=
+  rules.map (·.val)
 
-    The structurally analogous PART I type is
-    `ContainmentVIRule 3` paired with the cap `CappedAt _ ⟨1, by decide⟩`,
-    but `LocalVIRule` is kept independent so that downstream theorems
-    state directly in terms of `DegreeGrade` and `DegreePattern`. -/
-structure LocalVIRule where
-  /-- The form-class index this rule inserts. -/
-  formClass : Nat
-  /-- The grade whose features condition the rule. -/
-  condGrade : DegreeGrade
-  /-- Specificity for Elsewhere ordering. -/
-  specificity : Nat
-  /-- Locality: root VI rules see at most the CMPR layer. -/
-  locality : condGrade.rank ≤ DegreeGrade.cmpr.rank
+/-- A lifted rule list automatically satisfies the cap — every member
+    inherits the subtype constraint. -/
+private theorem liftRules_capped (rules : List LocalVIRule) :
+    CappedAt (liftRules rules) cmprLevel := by
+  intro r hr
+  obtain ⟨r', _, heq⟩ := List.mem_map.mp hr
+  exact heq ▸ r'.property
 
-/-- A local VI rule matches at a given grade when the conditioning
-    grade is contained in (i.e. has rank `≤`) the target grade. -/
-def LocalVIRule.Matches (r : LocalVIRule) (g : DegreeGrade) : Prop :=
-  r.condGrade.rank ≤ g.rank
-
-instance (r : LocalVIRule) (g : DegreeGrade) : Decidable (r.Matches g) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+/-- Map a degree grade to its position index in the 3-cell hierarchy.
+    Attached to `DegreeGrade`'s home namespace so dot notation `g.toFin`
+    resolves. -/
+def _root_.Core.Morphology.DegreeContainment.DegreeGrade.toFin :
+    DegreeGrade → Fin 3
+  | .pos => 0
+  | .cmpr => 1
+  | .sprl => 2
 
 -- ============================================================================
--- § 8: VI Locality Theorems
+-- § 8: VI Competition + Core Theorems (derived from PART I)
 -- ============================================================================
 
-/-- Under locality, a root VI rule that matches at one of CMPR/SPRL
-    matches at both — both representations contain the CMPR layer,
-    and the rule is conditioned on ≤ CMPR features. -/
-theorem matches_cmpr_iff_sprl (r : LocalVIRule) :
-    r.Matches .cmpr ↔ r.Matches .sprl := by
-  unfold LocalVIRule.Matches
-  cases h : r.condGrade
-  · decide   -- pos: 0 ≤ 1 ↔ 0 ≤ 2
-  · decide   -- cmpr: 1 ≤ 1 ↔ 1 ≤ 2
-  · exfalso
-    have := r.locality
-    simp only [h, DegreeGrade.rank] at this
-    omega
-
-/-- The filter of local VI rules that match CMPR equals the filter
-    that match SPRL — same rules compete at both grades. The Bool
-    `decide`-wrap bridges the Prop predicate `Matches` to `List.filter`'s
-    Bool argument; mathlib pattern. -/
-theorem vi_filter_cmpr_eq_sprl (rules : List LocalVIRule) :
-    rules.filter (λ r => decide (r.Matches .cmpr)) =
-      rules.filter (λ r => decide (r.Matches .sprl)) := by
-  induction rules with
-  | nil => rfl
-  | cons r rs ih =>
-    simp only [List.filter, decide_eq_decide.mpr (matches_cmpr_iff_sprl r), ih]
-
--- ============================================================================
--- § 9: VI Competition + Core Theorems
--- ============================================================================
-
-/-- Select the root form at a grade by VI competition: pick the
-    highest-specificity matching rule, or the default. -/
-def viWinner (rules : List LocalVIRule) (defaultForm : Nat)
-    (g : DegreeGrade) : Nat :=
-  let matching := rules.filter (λ r => decide (r.Matches g))
-  let sorted := matching.mergeSort (λ a b => a.specificity ≥ b.specificity)
-  match sorted.head? with
-  | some r => r.formClass
-  | none => defaultForm
-
-/-- The degree pattern generated by a VI competition. -/
+/-- The degree pattern generated by VI competition. Built directly from
+    PART I's `viExponent`, applied at each grade's position. -/
 def viPattern (rules : List LocalVIRule) (defaultForm : Nat) : DegreePattern :=
-  ⟨viWinner rules defaultForm .pos,
-   viWinner rules defaultForm .cmpr,
-   viWinner rules defaultForm .sprl⟩
+  ⟨viExponent (liftRules rules) defaultForm DegreeGrade.pos.toFin,
+   viExponent (liftRules rules) defaultForm DegreeGrade.cmpr.toFin,
+   viExponent (liftRules rules) defaultForm DegreeGrade.sprl.toFin⟩
 
-/-- **Core result**: under locality, VI selects the same root form at
-    CMPR and SPRL. Matching rule sets are identical (by
-    `vi_filter_cmpr_eq_sprl`); the Elsewhere winner is the same.
+/-- **Core result**: under degree locality, VI selects the same root
+    form at CMPR and SPRL. Direct corollary of PART I's plateau theorem
+    `viExponent_const_above_cap` at the cap `cmprLevel`, instantiated
+    at positions 1 (CMPR) and 2 (SPRL).
 
     Formal content of @cite{bobaljik-2012}'s containment argument:
-    root suppletion at SPRL ↔ root suppletion at CMPR.
-
-    The PART I generalization of this is
-    `viWinningContextLevel_const_above_cap` (specialize to `n = 3`,
-    `M = 1`). -/
+    root suppletion at SPRL ↔ root suppletion at CMPR. -/
 theorem vi_cmpr_eq_sprl (rules : List LocalVIRule) (defaultForm : Nat) :
-    viWinner rules defaultForm .cmpr = viWinner rules defaultForm .sprl := by
-  unfold viWinner
-  rw [vi_filter_cmpr_eq_sprl]
+    (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
+  viExponent_const_above_cap (liftRules_capped rules) defaultForm
+    (le_refl cmprLevel) (by decide)
 
 /-- **CSG Part I from VI**: root suppletive at CMPR ⇒ root suppletive at SPRL. -/
 theorem csg_part1_vi (rules : List LocalVIRule) (defaultForm : Nat)
     (h : (viPattern rules defaultForm).CmprSuppletive) :
     (viPattern rules defaultForm).SprlSuppletive := by
-  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive viPattern at *
+  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive at *
   rwa [← vi_cmpr_eq_sprl]
 
 /-- **CSG Part II from VI**: root suppletive at SPRL ⇒ root suppletive at CMPR. -/
 theorem csg_part2_vi (rules : List LocalVIRule) (defaultForm : Nat)
     (h : (viPattern rules defaultForm).SprlSuppletive) :
     (viPattern rules defaultForm).CmprSuppletive := by
-  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive viPattern at *
+  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive at *
   rwa [vi_cmpr_eq_sprl]
 
 /-- VI-generated root suppletion patterns are AAA or ABB only. *ABA is
@@ -433,12 +394,12 @@ theorem vi_pattern_abb_or_aaa (rules : List LocalVIRule) (defaultForm : Nat) :
   vi_cmpr_eq_sprl rules defaultForm
 
 -- ============================================================================
--- § 10: Domain-Aware Framing
+-- § 9: Domain-Aware Framing
 -- ============================================================================
 
 /-! `vi_cmpr_eq_sprl` is implicitly an "all-positions-same-domain"
 theorem: under @cite{bobaljik-2012}'s strong-locality assumption
-(formalized in `LocalVIRule.locality : condGrade.rank ≤ DegreeGrade.cmpr.rank`),
+(now expressed as the subtype refinement `LocalVIRule := { r // r.contextLevel ≤ cmprLevel }`),
 positions 1 (CMPR) and 2 (SPRL) are forced to share a winning rule
 because no rule sees beyond CMPR. This is a degenerate case of
 @cite{moskal-2015a-dissertation}'s domain-based locality where the
@@ -453,31 +414,31 @@ explicitly. The `SameDomain π 1 2` hypothesis is unused in the proof
 because the original theorem holds unconditionally — the parametric
 form is a future-proofing shim, not a structural strengthening.
 
-A real domain-relativized variant (where `LocalVIRule.locality` is
-replaced by a partition-aware bound, and the theorem becomes
-"under domain locality, CMPR = SPRL only when in same domain")
-requires extending `LocalVIRule` with a domain field. Deferred until
-a consumer requires it. -/
+A real domain-relativized variant (where the cap is replaced by a
+partition-aware bound, and the theorem becomes "under domain locality,
+CMPR = SPRL only when in same domain") requires the cap-refinement to
+itself be partition-aware. Deferred until a consumer requires it. -/
 
 open Morphology.DomainLocality
 
 /-- Domain-aware framing of `vi_cmpr_eq_sprl`: under any partition
     where positions 1 and 2 are in the same domain, VI selects the
     same root form at CMPR and SPRL. The proof discharges the
-    `SameDomain` hypothesis as unused — the structural-locality field
-    on `LocalVIRule` already forces the equality unconditionally. -/
+    `SameDomain` hypothesis as unused — the structural-locality
+    refinement on `LocalVIRule` already forces the equality
+    unconditionally. -/
 theorem vi_cmpr_eq_sprl_under_domain
     {Tag : Type*} [DecidableEq Tag] (π : DomainPartition Tag)
     (rules : List LocalVIRule) (defaultForm : Nat)
     (_h : SameDomain π 1 2) :
-    viWinner rules defaultForm .cmpr = viWinner rules defaultForm .sprl :=
+    (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
   vi_cmpr_eq_sprl rules defaultForm
 
 /-- Trivial-partition recovery: under `DomainPartition.trivial`, the
     `SameDomain` hypothesis is `rfl`, so `vi_cmpr_eq_sprl_under_domain`
     reduces to the original `vi_cmpr_eq_sprl`. -/
 theorem vi_cmpr_eq_sprl_trivial (rules : List LocalVIRule) (defaultForm : Nat) :
-    viWinner rules defaultForm .cmpr = viWinner rules defaultForm .sprl :=
+    (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
   vi_cmpr_eq_sprl_under_domain DomainPartition.trivial rules defaultForm rfl
 
 end Degree

@@ -4,6 +4,34 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.648 — DM/ContainmentVI PART II collapse: subtype refinement
+
+Replaces PART II's hand-rolled `LocalVIRule` structure (4 fields:
+`formClass`, `condGrade`, `specificity`, `locality`) with the subtype
+`{ r : ContainmentVIRule 3 // r.contextLevel ≤ cmprLevel }`. Mathlib
+`OrderHom`-style: bundle the constraint with the carrier via subtype
+refinement.
+
+Removed (now derivable from PART I):
+- `LocalVIRule.Matches` + decidability instance (subsumed by
+  `ContainmentVIRule.AppliesAt`)
+- `matches_cmpr_iff_sprl`
+- `vi_filter_cmpr_eq_sprl`
+- Standalone PART II `viWinner` (uses PART I's `viExponent` directly)
+
+Added:
+- `Degree.cmprLevel : Fin 3` (the locality cap)
+- `Degree.liftRules` + `liftRules_capped` (private projections)
+- `DegreeGrade.toFin` (attached to `_root_.Core.Morphology.DegreeContainment.DegreeGrade`)
+
+Theorem statements changed: `vi_cmpr_eq_sprl`, `vi_pattern_abb_or_aaa`,
+`vi_cmpr_eq_sprl_under_domain`, `vi_cmpr_eq_sprl_trivial` now state
+`(viPattern rules d).cmpr = (viPattern rules d).sprl` directly
+(was: `viWinner rules d .cmpr = viWinner rules d .sprl`). Consumer
+proofs (`Bobaljik2012`, `SmithMoskalEtAl2019`) unchanged.
+
+LOC: 39 net deletion (485 → 446). Full build green.
+
 ### 0.230.648 — Trim Specializations.lean: speculative SR aliases deleted
 
 The four `IsAtelic`/`IsStative`/`IsRoleDistributive`/`IsMassReference`
