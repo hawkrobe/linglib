@@ -264,7 +264,7 @@ import Linglib.Core.Case.Split
 import Linglib.Core.Case.Grammaticalization
 import Linglib.Core.Case.Comparative
 import Linglib.Core.AgreementTarget
-import Linglib.Theories.Interfaces.Morphosyntax.StarABA
+import Linglib.Core.Morphology.Containment
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
 import Linglib.Core.Relativization.Basic

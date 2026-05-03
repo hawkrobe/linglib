@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.StarABA
+import Linglib.Core.Morphology.Containment
 
 /-!
 # Degree Containment and the *ABA Constraint

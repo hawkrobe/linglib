@@ -1,39 +1,39 @@
 /-!
-# Generic Containment and the *ABA Constraint
+# Generic Containment and the *ABA Pattern
 @cite{bobaljik-2012} @cite{caha-2009}
 
 ## Overview
 
-Many morphological hierarchies obey a **contiguity** constraint: if two
-positions X and Z on the hierarchy share a suppletive form A, then every
-position Y between them also has form A. The pattern A–B–A — with B ≠ A —
-is systematically unattested. This is the **\*ABA constraint**.
+A widely-discussed cross-linguistic generalization across several
+domains of inflectional morphology: when a list of form-class indices
+along an ordered hierarchy of paradigm positions is read off a
+suppletion pattern, the configuration A–B–A — outer positions sharing
+a form that the intervening position lacks — is systematically
+unattested. Contiguity (`A–A–B`, `A–B–B`, `A–B–C`) is the modal
+pattern.
 
-The constraint arises whenever three conditions hold:
-1. **Containment**: each position's representation properly contains
-   all lower positions' representations.
-2. **Late Insertion** (Vocabulary Insertion): exponents are inserted
-   post-syntactically based on feature matching.
-3. **Elsewhere ordering**: among competing VI rules, the most specific
-   match wins.
+This module supplies framework-neutral substrate: a contiguity
+predicate over `List Nat` (a list of form-class indices), with both a
+computable `Bool` decision procedure and a `Prop` wrapper carrying a
+`Decidable` instance. Domain-specific instantiations live elsewhere:
 
-This module provides **domain-independent** contiguity predicates on
-`List Nat` (lists of form-class indices), which are then instantiated
-by domain-specific modules:
+- Case allomorphy (`Core/Case/Allomorphy.lean`)
+- Degree morphology (`Core/Morphology/DegreeContainment.lean`)
 
-- **Degree containment**: POS ⊂ CMPR ⊂ SPRL
-  (`DegreeContainment.lean`, @cite{bobaljik-2012})
-- **Case containment**: NOM ⊂ ACC ⊂ GEN ⊂ DAT
-  (`CaseContainment.lean`, @cite{caha-2009})
-
-The structural isomorphism between these domains is made explicit
-via bridge theorems in each domain module.
+What *explains* the gap is theory-laden and contested. The DM
+tradition (`@cite{bobaljik-2012}`) derives it from post-syntactic
+Vocabulary Insertion + Elsewhere ordering on a containment hierarchy.
+The Nanosyntax tradition (`@cite{caha-2009}`, `@cite{starke-2009}`)
+derives it from phrasal spellout + the Superset Principle on the same
+containment hierarchy interpreted as syntactic structure. The two
+disagree on whether the locus of explanation is morphology or syntax;
+this module takes no position.
 -/
 
 namespace Morphology.Containment
 
 -- ============================================================================
--- § 1: Generic *ABA Detection
+-- § 1: Generic *ABA Detection (Bool decision procedure)
 -- ============================================================================
 
 /-- Helper: does any value `vk` in the remaining list create an ABA
@@ -62,13 +62,38 @@ def violatesABA : List Nat → Bool
   | [] => false
   | vi :: rest => checkFromI vi rest || violatesABA rest
 
-/-- Is a pattern contiguous? Each form class occupies a contiguous
-    span of positions on the hierarchy. Equivalent to ¬violatesABA. -/
+/-- Is a pattern contiguous (Bool)? Each form class occupies a
+    contiguous span of positions on the hierarchy. Equivalent to
+    ¬violatesABA. -/
 def isContiguous (pattern : List Nat) : Bool :=
   !violatesABA pattern
 
 -- ============================================================================
--- § 2: Closed-Form Lemmas for Small Lists
+-- § 2: Prop Wrappers + Decidable Instances
+-- ============================================================================
+
+/-- A list violates the *ABA pattern (Prop). Bridge to the Bool
+    decision procedure; downstream files that prefer Prop+`Decidable`
+    over `= true` boilerplate use this. -/
+def ViolatesABA (l : List Nat) : Prop := violatesABA l = true
+
+instance (l : List Nat) : Decidable (ViolatesABA l) :=
+  inferInstanceAs (Decidable (violatesABA l = true))
+
+/-- A list is contiguous (Prop). -/
+def IsContiguous (l : List Nat) : Prop := ¬ ViolatesABA l
+
+instance (l : List Nat) : Decidable (IsContiguous l) :=
+  inferInstanceAs (Decidable (¬ _))
+
+/-- The Bool and Prop forms of contiguity agree. -/
+theorem isContiguous_iff_not_violatesABA (l : List Nat) :
+    isContiguous l = true ↔ ¬ ViolatesABA l := by
+  unfold isContiguous ViolatesABA
+  cases h : violatesABA l <;> simp
+
+-- ============================================================================
+-- § 3: Closed-Form Lemmas for Small Lists
 -- ============================================================================
 
 /-- *ABA on a 3-position hierarchy (degree: POS, CMPR, SPRL).
@@ -88,7 +113,7 @@ theorem violatesABA_four (a b c d : Nat) :
   simp only [violatesABA, checkFromI, checkRest, Bool.or_false]
 
 -- ============================================================================
--- § 3: Verification on Concrete Patterns
+-- § 4: Verification on Concrete Patterns
 -- ============================================================================
 
 /-- ABA: the canonical violation. -/
@@ -103,7 +128,8 @@ theorem abb_contiguous : isContiguous [0, 1, 1] = true := by decide
 /-- ABC: three distinct forms. -/
 theorem abc_contiguous : isContiguous [0, 1, 2] = true := by decide
 
-/-- AAB: contiguous (but excluded by VI locality in degree domain). -/
+/-- AAB: contiguous (but excluded by VI locality in the degree domain;
+    see `Theories/Morphology/DegreeContainment.lean`). -/
 theorem aab_contiguous : isContiguous [0, 0, 1] = true := by decide
 
 /-- ABAB: violates on 4-position hierarchy. -/
@@ -111,31 +137,5 @@ theorem abab_violates : violatesABA [0, 1, 0, 1] = true := by decide
 
 /-- AABB: contiguous on 4-position hierarchy. -/
 theorem aabb_contiguous : isContiguous [0, 0, 1, 1] = true := by decide
-
--- ============================================================================
--- § 4: Exhaustive 3-Position Check
--- ============================================================================
-
-/-- All 27 patterns over 3 positions with indices {0, 1, 2}. -/
-def allPatterns3 : List (List Nat) :=
-  (List.map (λ a =>
-    (List.map (λ b =>
-      List.map (λ c => [a, b, c]) [0, 1, 2]
-    ) [0, 1, 2]).flatten
-  ) [0, 1, 2]).flatten
-
-/-- Exactly 6 of the 27 three-position patterns violate *ABA.
-    (3 choices for the "A" value × 2 choices for the "B" value.) -/
-theorem six_aba_violations :
-    (allPatterns3.filter violatesABA).length = 6 := by decide
-
-/-- The remaining 21 patterns are contiguous. -/
-theorem twentyone_contiguous :
-    (allPatterns3.filter isContiguous).length = 21 := by decide
-
-/-- No pattern is both ABA-violating and contiguous. -/
-theorem no_aba_contiguous :
-    (allPatterns3.filter (λ p => violatesABA p && isContiguous p)).length = 0 := by
-  decide
 
 end Morphology.Containment
