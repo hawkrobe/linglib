@@ -1371,7 +1371,6 @@ import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
-import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017PMF
 import Linglib.Phenomena.Gradability.Studies.BumfordRett2021
 -- Phenomena: Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)

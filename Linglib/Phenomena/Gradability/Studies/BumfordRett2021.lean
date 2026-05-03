@@ -499,7 +499,7 @@ theorem rsa_neo_gricean_agreement :
 
 /-! ### Relationship to @cite{lassiter-goodman-2017}
 
-`LassiterGoodman2017.lean` formalizes the threshold RSA model for the
+`LassiterGoodman2017PMF.lean` formalizes the threshold RSA model for the
 positive construction only (1D world = height, latent = threshold).
 This file extends that model to 2D worlds (height × CC center) and
 adds cost-driven antonym competition. The positive construction

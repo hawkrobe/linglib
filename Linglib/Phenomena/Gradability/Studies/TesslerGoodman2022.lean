@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Phenomena.Gradability.ComparisonClass
-import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Core.NestedRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -370,22 +369,15 @@ The key structural relationship:
 - TG2022 marginalizes θ analytically (via `thresholdCount`) and adds
   comparison class c as the `Latent` variable (L1 infers c)
 
-The height priors are identical — this is the same empirical domain,
-with a different question being asked of the same RSA machinery. -/
-
-open RSA.LassiterGoodman2017 in
-/-- Person height weights match @cite{lassiter-goodman-2017}'s general
-    population prior (same bell curve peaked at h=5). -/
-theorem personWeight_eq_lassiterGoodman :
-    ∀ h : Height, (personHeightWeight h : ℚ) =
-      RSA.LassiterGoodman2017.heightPrior h := by native_decide
-
-open RSA.LassiterGoodman2017 in
-/-- Basketball height weights match @cite{lassiter-goodman-2017}'s
-    basketball player prior (same bell curve peaked at h=7). -/
-theorem basketballWeight_eq_lassiterGoodman :
-    ∀ h : Height, (basketballHeightWeight h : ℚ) =
-      RSA.LassiterGoodman2017.basketballPrior h := by native_decide
+The height priors used here (`personHeightWeight`, `basketballHeightWeight`)
+match @cite{lassiter-goodman-2017}'s general-population and
+basketball-player priors respectively — same empirical domain, different
+question. The cross-paper compatibility was previously enforced via
+`personWeight_eq_lassiterGoodman` / `basketballWeight_eq_lassiterGoodman`
+bridge theorems referencing `RSA.LassiterGoodman2017.heightPrior`; those
+were removed when L&G's old bundled-RSAConfig formalisation was retired.
+The PMF formalisation (`LassiterGoodman2017PMF.lean`) does not duplicate
+the empirical priors. -/
 
 -- ============================================================================
 -- § 8. L1 Comparison Class Inference (Eq. 1)

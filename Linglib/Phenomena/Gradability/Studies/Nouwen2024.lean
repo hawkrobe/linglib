@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Theories.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Tactics.RSAPredict
