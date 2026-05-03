@@ -317,7 +317,8 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 agree with the generic quantity domain semantics from `Phenomena.ScalarImplicatures.QuantityDomain.meaning`.
 This grounds the stipulated `utteranceTruth` in the shared quantifier infrastructure.
 
-See also: `GoodmanStuhlmuller2013.quantifier_meaning_grounded`. -/
+See also: `GoodmanStuhlmuller2013PMF`'s `qMeaning` definition (uses
+the same `QuantityDomain.meaning`-derived shape). -/
 
 private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
     predCount sq lex w < 4 := by

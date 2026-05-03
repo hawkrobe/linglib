@@ -1,12 +1,11 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # @cite{dong-etal-2026} on mathlib `PMF` (binary identification)
 @cite{dong-etal-2026}
 
-PMF-shaped re-formalisation of `DongEtAl2026.lean`'s 4 findings on binary
+PMF-shaped formalisation of the paper's 4 findings on binary
 identification. The task is intentionally degenerate: at any target,
 exactly one utterance applies (matching pair).
 
@@ -15,17 +14,10 @@ mass is 0, hence "correct > wrong".
 
 Stakes parameter `k` (animal: 1, medical: 10) is irrelevant to the
 qualitative predictions because the L0 gate zeros incorrect responses.
-The PMF migration uses `S1Belief` with cost factor `exp(α·k)` for matching
-pairs (matching mathlib's `Real.exp` via `ENNReal.ofReal`), but the
-qualitative claims hold regardless.
 
 For the simplest PMF formulation, we set α = 1 and use a unit cost factor
 (no stakes-dependence). Both bundled-API configs (`animalCfg`, `medicalCfg`)
-collapse to the same PMF model after qualitative-only migration.
-
-## Reused from `DongEtAl2026.lean`
-
-* `Target`, `targetMatches` — domain + Boolean meaning
+in the paper collapse to the same PMF model after qualitative-only migration.
 -/
 
 set_option autoImplicit false
@@ -34,7 +26,18 @@ namespace DongEtAl2026.PMF
 
 open scoped ENNReal
 
+/-- Binary identification task (simplified from the paper's Mixed-Stakes
+    20 Questions, which uses 100 animals / 15 diseases). -/
+inductive Target where | t₁ | t₂
+  deriving DecidableEq, Repr, Fintype
+
 instance : Nonempty Target := ⟨.t₁⟩
+
+/-- Boolean match: does guess match target? -/
+def targetMatches : Target → Target → Bool
+  | .t₁, .t₁ => true
+  | .t₂, .t₂ => true
+  | _, _ => false
 
 /-! ## §1. L0 — uniform on extension via `RSA.L0OfBoolMeaning` -/
 

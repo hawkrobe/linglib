@@ -1,14 +1,15 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
-import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
+import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Phenomena.Negation.FlexibleNegation
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # @cite{tessler-franke-2019} on mathlib `PMF` (Shape B + cost-factor migration)
 @cite{tessler-franke-2019}
 
-PMF-shaped re-formalisation of `TesslerFranke2020.lean`'s 6 findings. This is
-the **first PMF migration with a cost factor in the S1 score**:
+PMF-shaped formalisation of the paper's 6 findings. The **first PMF
+migration with a cost factor in the S1 score**:
 `S1(u | w) ∝ L0(w | u)^α · exp(−C(u))`. Validates that `RSA.S1Belief`'s
 `costFactor : U → ℝ≥0∞` argument handles the canonical `exp(-cost)` shape.
 
@@ -22,13 +23,7 @@ the **first PMF migration with a cost factor in the S1 score**:
 - **Shape D mixture**: finding `not_unhappy_more_positive_than_not_happy`
   compares `L1 .notUnhappy (deg 3) > L1 .notHappy (deg 3)` — same world,
   DIFFERENT observation. Different from same-observation Shape B; needs
-  cross-observation API analysis. (Not the same as cross-utterance tsum
-  Shape D either.)
-
-## Reused from `TesslerFranke2020.lean`
-
-* `HappinessDeg`, `HThreshold`, `Utterance`, `NegLexicon`, `LatentState`
-* `utteranceMeaning`, `utteranceCost`
+  cross-observation API analysis.
 -/
 
 set_option autoImplicit false
@@ -37,6 +32,55 @@ namespace TesslerFranke2020.PMF
 
 open scoped ENNReal
 open Core.Scale (Degree Threshold deg thr)
+open Features (NegationType)
+open Semantics.Degree (positiveMeaning negativeMeaning)
+
+/-! ## §0. Domain types -/
+
+/-- Happiness degree: 0 (miserable) to 4 (ecstatic). -/
+abbrev HappinessDeg := Degree 4
+
+instance : NeZero (4 : Nat) := ⟨by omega⟩
+
+/-- Threshold values 0–3, used for both θ₁ (positive) and θ₂ (contrary). -/
+abbrev HThreshold := Threshold 4
+
+inductive Utterance where
+  | happy       -- "is happy"
+  | notHappy    -- "is not happy"
+  | unhappy     -- "is unhappy"
+  | notUnhappy  -- "is not unhappy"
+  deriving Repr, DecidableEq, Fintype
+
+/-- Lexicon for morphological negation "un-": contrary (polar opposite with
+gap) vs contradictory (complement). Aliased to `Features.NegationType`. -/
+abbrev NegLexicon := NegationType
+
+/-- Joint latent state: (θ₁, θ₂, L) — 4 × 4 × 2 = 32 latent states. -/
+@[reducible] def LatentState := HThreshold × HThreshold × NegLexicon
+
+/-- Utterance meaning parameterized by thresholds and lexicon, grounded in
+shared `Semantics.Degree` predicates. -/
+def utteranceMeaning (θ₁ θ₂ : HThreshold) (L : NegLexicon)
+    (u : Utterance) (d : HappinessDeg) : Bool :=
+  match u with
+  | .happy => positiveMeaning d θ₁
+  | .notHappy => !positiveMeaning d θ₁
+  | .unhappy => match L with
+    | .contrary => negativeMeaning d θ₂
+    | .contradictory => !positiveMeaning d θ₁
+  | .notUnhappy => match L with
+    | .contrary => !negativeMeaning d θ₂
+    | .contradictory => positiveMeaning d θ₁
+
+/-- Utterance cost (morphological complexity): `C(un-) = 2`, `C(not) = 3`,
+combined additively. -/
+def utteranceCost (u : Utterance) : ℚ :=
+  match u with
+  | .happy => 0
+  | .unhappy => 2
+  | .notHappy => 3
+  | .notUnhappy => 5
 
 instance : Nonempty HappinessDeg := ⟨deg 0⟩
 instance : Nonempty Utterance := ⟨.happy⟩

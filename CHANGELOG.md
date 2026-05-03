@@ -4,6 +4,73 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.615 — Retire 3 dual rsa_predict files (DongEtAl2026, TesslerFranke2020, GS2013)
+
+Three Phenomena papers had both an `rsa_predict` legacy file and a `*PMF.lean` sibling. None of the legacy files had downstream consumers. Retired.
+
+- **`DongEtAl2026.lean`** (141 LOC) — deleted. `Target` and `targetMatches` inlined into `DongEtAl2026PMF.lean`.
+- **`TesslerFranke2020.lean`** (309 LOC) — deleted. `HappinessDeg`, `HThreshold`, `Utterance`, `NegLexicon`, `LatentState`, `utteranceMeaning`, `utteranceCost` inlined into `TesslerFranke2020PMF.lean`.
+- **`GoodmanStuhlmuller2013.lean`** (606 LOC) — deleted. The PMF version's `qMeaning` is the same definition; the deleted `quantifier_meaning_grounded` cross-paper grounding theorem is no longer essential.
+- **Linglib.lean** — replace 3 import lines.
+- **Prose updates** — `PottsEtAl2016`, `Doxastic`, `Distributions` cross-references updated to point at PMF versions.
+
+Net: −1008 LOC. The `rsa_predict` tactic now has 3 fewer Phenomena consumers, edging closer to deprecation. Remaining `rsa_predict` users (~17 Phenomena Studies + 1 dual KaoEtAl2015 blocked by SpinosoDiPiano2025).
+
+### 0.230.675 — P4.2: Farkas & Roelofsen 2017 — Division of Labor study
+
+Second of the Phase 4 coverage gaps. Closes the audit's "@cite{farkas-roelofsen-2017}
+study missing despite the bib entry" finding.
+
+**New** `Phenomena/Dialogue/Studies/FarkasRoelofsen2017.lean`:
+
+§1 **Clause-type markers** (paper §4.1 eq. (26), p. 257):
+- `ClauseType` (dec/int) and `Intonation` (closed/rising) inductive
+  enums; `SentenceForm` triple = clauseType + intonation + hasTag.
+  Six paper-canonical sentence forms (3)–(8) defined as `def`s:
+  fallingDeclarative, risingDeclarative, fallingPolarInterrogative,
+  risingPolarInterrogative, fallingTagInterrogative,
+  risingTagInterrogative.
+
+§2 **Markedness** (paper §3 eq. (21) "Division of Labor", p. 250):
+- `SentenceForm.isMarked` predicate. Falling declarative + polar
+  interrogatives are unmarked; rising declarative + tag interrogatives
+  are marked.
+
+§3 **Commitment table** (paper p. 240):
+- `CommitmentType` (fullCommitment / bias / neutral).
+- `commitmentType : SentenceForm → CommitmentType`.
+- `commitment_table` headline theorem decide-checking the
+  4-row paper table for all 6 sentence types.
+
+§4 **Credence intervals** (paper §3.2, p. 256):
+- `CredenceLevel` (zero/low/moderate/high) with linear order.
+- `CredenceInterval` (lower/upper bounds).
+- `signaledCredence` mapping marked forms to their intervals:
+  rising declarative ↦ [zero, low]; rising tag ↦ [moderate, high];
+  falling tag ↦ [high, high].
+
+§5 **Felicity contrasts** (paper examples (24)/(25), p. 256):
+- `felicitous` predicate.
+- 5 decide-checked theorems for examples (24) and (25): rising
+  declarative felicitous + tag infelicitous when no evidence
+  (24); rising declarative infelicitous + tag felicitous when
+  high evidence (25).
+- `rising_dec_and_falling_tag_disjoint` and
+  `rising_dec_and_rising_tag_disjoint`: complementary distribution
+  of marked forms across speaker-credence levels.
+
+§6 **Markedness ↔ commitment-table connection**:
+- `unmarked_iff_full_or_neutral_paper`: every unmarked paper-form
+  is either fullyCommitting (falling declarative) or neutral
+  (polar interrogatives). The "Division of Labor" structural
+  signature: bias is reserved for marked forms.
+
+**Out of scope**: full inquisitive semantics (projection operators
+! and ?, highlighting), §4.2 compositional semantics, §5–7
+conventions of use + comparison to alternatives. These would need
+a deeper integration with `Core.Inquisitive` and a more involved
+substrate refactor; deferred to follow-up.
+
 ### 0.230.614 — Metaphor PMF: extract architectural positivity lemmas (audit C1)
 
 The Kao 2014 metaphor PMF formalisation had 7 sorrys; one (`L1Kernel_marginal_ne_zero`) was purely architectural (positivity from PMF-level full-support facts) but the file lacked the supporting lemmas. Audit recommendation: extract `mixedS1_pos` so the architectural sorry can be closed and the 6 remaining (paper-finding) sorrys are isolated as numerical-fit content.

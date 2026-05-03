@@ -1240,7 +1240,7 @@ import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Definiteness.Studies.Moroney2021
 import Linglib.Phenomena.Definiteness.Studies.Jenks2018
 import Linglib.Phenomena.Clarification.Basic
-import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
+import Linglib.Phenomena.Clarification.Studies.DongEtAl2026PMF
 import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Phenomena.Dialogue.Studies.Anderson2021
@@ -1762,7 +1762,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsLevy2015
-import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013PMF
 import Linglib.Typology.Phonology
 import Linglib.Phenomena.Phonology.Alternation
@@ -2571,7 +2570,7 @@ import Linglib.Phenomena.Dialogue.Studies.Ginzburg2012
 import Linglib.Phenomena.Dialogue.Studies.PurverGinzburg2004
 -- Nouwen2024RSA merged into Nouwen2024
 import Linglib.Phenomena.Quantification.Studies.Steedman2000
-import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
+import Linglib.Phenomena.Negation.Studies.TesslerFranke2020PMF
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Gradability.Studies.TesslerGoodman2022
 import Linglib.Phenomena.Gradability.Studies.Horn1984

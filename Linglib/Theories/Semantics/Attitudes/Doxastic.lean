@@ -698,7 +698,8 @@ can be computed locally (inside the attitude) or globally (about speaker):
 @cite{goodman-stuhlmuller-2013} show the "local" reading arises from
 pragmatic inference about speaker knowledge, not true local computation.
 
-See `RSA/Implementations/GoodmanStuhlmuller2013.lean` for the RSA treatment.
+See `Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013PMF.lean`
+for the RSA treatment.
 -/
 
 -- ════════════════════════════════════════════════════════════════
