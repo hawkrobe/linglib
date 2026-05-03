@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Basic
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Context Tower

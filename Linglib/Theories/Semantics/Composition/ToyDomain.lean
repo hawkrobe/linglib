@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 /-!
 # Toy Domain for Testing
@@ -11,7 +11,7 @@ Minimal model for testing compositional semantics:
 
 namespace Semantics.Montague
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 inductive ToyEntity where
   | john | mary | pizza | book

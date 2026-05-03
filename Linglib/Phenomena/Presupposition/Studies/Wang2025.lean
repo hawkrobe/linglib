@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Acceptability
@@ -189,7 +189,7 @@ open Core.CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
-`Core.IntensionalLogic.AccessRel`; lift via
+`Core.Logic.Intensional.AccessRel`; lift via
 `fun a b => R a b = true` to bridge. -/
 abbrev BAccessRel (W : Type*) := W → W → Bool
 open Semantics.Presupposition.TriggerTypology (AltStructure Obligatoriness)
@@ -356,7 +356,7 @@ epistemic stance. It scopes relative to exh_mx:
 - exh_mx >> K: available for complex sentences
 
 Uses a local Bool-valued accessibility relation; for the Prop-valued
-canonical Kripke semantics see `Core.IntensionalLogic.boxR`.
+canonical Kripke semantics see `Core.Logic.Intensional.boxR`.
 -/
 noncomputable def speakerK [Fintype W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
   fun w => ((Finset.univ : Finset W).toList.filter (R w)).all φ

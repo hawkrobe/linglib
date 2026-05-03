@@ -29,13 +29,13 @@ since all derivations in an equivalence class have the same meaning.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Syntax.CCG.Core.Combinators
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 namespace CCG.Equivalence
 
 open CCG
 open CCG.Combinators
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 -- Semantic Equivalence
 

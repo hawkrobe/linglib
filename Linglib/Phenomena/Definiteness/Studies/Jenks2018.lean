@@ -37,8 +37,8 @@ lives in `Moroney2021.lean` per chronology discipline.
 namespace Phenomena.Definiteness.Studies.Jenks2018
 
 open Features.Definiteness
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Core.Nominal
 
 abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory

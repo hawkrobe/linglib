@@ -100,7 +100,7 @@ theorem raincoat_downstream : downstreamEvidence raincoatFrame := by
 -- § 3. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-open Core.IntensionalLogic.Premise (propExtension propIntersection)
+open Core.Logic.Intensional.Premise (propExtension propIntersection)
 
 /-- The raincoat kernel doesn't settle isRaining: K = {wearingRaincoat},
     and wearingRaincoat neither entails nor excludes isRaining. -/

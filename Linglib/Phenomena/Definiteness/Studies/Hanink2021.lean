@@ -18,7 +18,7 @@ context, and that index can be bound by higher operators.
 
 The IL substrate operationalizes this in two parallel pieces:
 
-- **`SitAssignment F := Nat → F.Index`** in `Core.IntensionalLogic.Variables`
+- **`SitAssignment F := Nat → F.Index`** in `Core.Logic.Intensional.Variables`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
 - **`NominalKind.unique R sIdx`** in `Core.Nominal.Description`
@@ -48,8 +48,8 @@ We additionally verify:
 
 namespace Phenomena.Definiteness.Studies.Hanink2021
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Core.Nominal
 
 -- ════════════════════════════════════════════════════════════════

@@ -1,5 +1,5 @@
 import Mathlib.Data.Nat.Basic
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Numerals as Type-n Singular Terms

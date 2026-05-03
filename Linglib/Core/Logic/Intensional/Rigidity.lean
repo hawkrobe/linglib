@@ -10,7 +10,7 @@ Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, evaluation,
 and referential interpretation modes.
 
-These primitives are shared by `Core.IntensionalLogic.Frame`,
+These primitives are shared by `Core.Logic.Intensional.Frame`,
 `Semantics.Reference/`, `Semantics.Attitudes/`, and `RSA/` — any module
 that needs world-parameterized meanings.
 

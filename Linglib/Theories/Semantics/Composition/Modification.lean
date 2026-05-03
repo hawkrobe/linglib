@@ -10,13 +10,13 @@ privative, extensional) is in
 `Theories/Semantics/Lexical/Adjective/Classification.lean`.
 -/
 
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Composition.Modification
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 section Generic
 

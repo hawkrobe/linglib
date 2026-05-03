@@ -11,12 +11,12 @@ T = CI, C is definable from B and T, and BTS is equivalent to the lambda-I calcu
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 namespace CCG.Combinators
 
 open CCG
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 section Combinators
 

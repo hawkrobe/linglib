@@ -1,6 +1,6 @@
 import Linglib.Core.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Mathlib.Data.Fin.Basic
 
 -- ============================================================================
@@ -323,13 +323,13 @@ lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
 We formalize this using `boxR`/`diamondR` from
-`Core.IntensionalLogic`: a Kripke countermodel exhibits
+`Core.Logic.Intensional`: a Kripke countermodel exhibits
 an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
 open Core.Modality (ModalForce)
-open Core.IntensionalLogic (AccessRel boxR diamondR)
+open Core.Logic.Intensional (AccessRel boxR diamondR)
 
 abbrev World := Fin 4
 

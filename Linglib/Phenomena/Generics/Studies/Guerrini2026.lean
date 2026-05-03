@@ -1840,7 +1840,7 @@ truth value.
 
 section CompositionalTreeDemo
 
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 -- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree

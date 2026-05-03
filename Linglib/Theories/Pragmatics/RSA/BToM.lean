@@ -75,7 +75,7 @@ def channelClassification (Latent : Type*) : LatentClassification Latent where
 correspondence (previously stubbed in the deleted `Core/Conjectures.lean`):
 
 1. **Accessibility ↔ positive credence**: the categorical accessibility
-   relation `R` from `Core.IntensionalLogic` should be the support of the
+   relation `R` from `Core.Logic.Intensional` should be the support of the
    probabilistic credence: `R x w w' ↔ credence x w w' > 0`.
 2. **Doxastic necessity ↔ credence one**: `□_x p ↔ P_x(p) = 1`. The two
    doxastic operators agree at the probability-1 limit.

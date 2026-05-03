@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -359,7 +359,7 @@ theorem cost_reflects_polarity :
 
 section CompositionalGrounding
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 /-- A simple model for part-whole relations. -/
 inductive PWEntity where

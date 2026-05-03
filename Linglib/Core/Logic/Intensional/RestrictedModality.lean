@@ -1,6 +1,6 @@
-import Linglib.Core.IntensionalLogic.Defs
-import Linglib.Core.IntensionalLogic.Quantification
-import Linglib.Core.IntensionalLogic.Algebra
+import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Core.Logic.Intensional.Quantification
+import Linglib.Core.Logic.Intensional.Algebra
 import Linglib.Core.Modality.ModalTypes
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
@@ -50,7 +50,7 @@ worlds. In IL terms:
 - S5 necessity = `boxR (fun _ _ => True)` = `box`
 -/
 
-namespace Core.IntensionalLogic
+namespace Core.Logic.Intensional
 
 variable {W : Type*}
 
@@ -502,4 +502,4 @@ theorem boxR_entailment_lift (R : AccessRel F.Index)
 
 end FrameSpecialization
 
-end Core.IntensionalLogic
+end Core.Logic.Intensional

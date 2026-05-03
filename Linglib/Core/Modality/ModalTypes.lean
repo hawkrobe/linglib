@@ -10,17 +10,17 @@ These types classify modal meanings along two independent dimensions — force
 (quantificational strength) and flavor (contextual source) — following
 @cite{kratzer-1981} and @cite{imel-guo-steinert-threlkeld-2026}.
 
-**Separated from `Core.IntensionalLogic`** because Kripke frames and frame
+**Separated from `Core.Logic.Intensional`** because Kripke frames and frame
 correspondence are pure mathematical logic, while force/flavor classification
 is linguistic typology. The two are connected (Kripke semantics *interprets*
 force-flavor pairs) but conceptually independent.
 
-## What belongs here vs. `Core.IntensionalLogic`
+## What belongs here vs. `Core.Logic.Intensional`
 
 - **Here** (`Core.Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`,
   `ModalItem`, `ConcordType`, `ModalDecomposition` — linguistic classification
   of modal meanings.
-- **There** (`Core.IntensionalLogic`): `AccessRel`, `kripkeEval`, frame conditions
+- **There** (`Core.Logic.Intensional`): `AccessRel`, `kripkeEval`, frame conditions
   (`IsReflexive`, `IsSerial`, `IsTransitive`, `IsSymmetric`, `IsEuclidean`),
   correspondence theorems,
   the lattice of normal modal logics — mathematical semantics.

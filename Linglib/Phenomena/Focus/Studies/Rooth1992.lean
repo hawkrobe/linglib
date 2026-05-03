@@ -404,7 +404,7 @@ theorem bridge_qa_incongruent :
       Fragment entry → Montague LexEntry → Tree → interp → Bool
     run once per world to yield a world-indexed proposition. -/
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 -- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Core.Tree

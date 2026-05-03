@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Premise
+import Linglib.Core.Logic.Intensional.Premise
 
 /-!
 # Conversational Backgrounds
@@ -17,7 +17,7 @@ Kratzer-flavored modality theory in `Theories/Semantics/Modality/Kratzer/`
 re-exports these so that consumers can keep using either namespace.
 -/
 
-namespace Core.IntensionalLogic
+namespace Core.Logic.Intensional
 
 variable {W : Type*}
 
@@ -52,4 +52,4 @@ def isTotallyRealistic (f : ConvBackground W) : Prop :=
     trivially realistic. UNVERIFIED page reference. -/
 def emptyBackground : ConvBackground W := λ _ => []
 
-end Core.IntensionalLogic
+end Core.Logic.Intensional

@@ -13,14 +13,14 @@ to function application and composition.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Theories.Semantics.Composition.ToyDomain
 
 namespace CCG
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Conjunction
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Conjunction
 open Semantics.Montague
 
 -- Combinators (defined locally to avoid circular import)

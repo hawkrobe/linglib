@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Scales.EpistemicScale.Defs
 
 /-!
@@ -37,7 +37,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 
 namespace Semantics.Modality.EpistemicLogic
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
   (AccessRel AgentAccessRel boxR diamondR IsReflexive IsSerial IsTransitive IsSymmetric IsEuclidean
    boxR_T boxR_D boxR_four boxR_B boxR_five)
 open Core.CommonGround (CG)

@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Assignment
 import Linglib.Core.CylindricAlgebra
 
@@ -8,7 +8,7 @@ import Linglib.Core.CylindricAlgebra
 @cite{heim-kratzer-1998} @cite{charlow-2018}
 
 Framework-neutral infrastructure for interpreting expressions with free variables,
-built on `Core.IntensionalLogic.Frame`.
+built on `Core.Logic.Intensional.Frame`.
 
 ## Main definitions
 
@@ -20,9 +20,9 @@ built on `Core.IntensionalLogic.Frame`.
 - Cylindric algebra bridge (@cite{henkin-monk-tarski-1971})
 -/
 
-namespace Core.IntensionalLogic.Variables
+namespace Core.Logic.Intensional.Variables
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 scoped notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
 
@@ -282,4 +282,4 @@ def DenotGS.const {F : Frame} {ty : Ty} (d : F.Denot ty) : DenotGS F ty :=
 theorem DenotGS.ofDenotG_const {F : Frame} {ty : Ty} (d : F.Denot ty) :
     DenotGS.ofDenotG (constDenot d) = DenotGS.const d := rfl
 
-end Core.IntensionalLogic.Variables
+end Core.Logic.Intensional.Variables

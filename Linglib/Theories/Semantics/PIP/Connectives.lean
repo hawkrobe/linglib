@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.PIP.Basic
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -27,7 +27,7 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 Our encoding parameterizes by an accessibility relation (`Semantics.PIP.BAccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
 The grounding theorem `must_truth_agrees_boxR` proves that PIP's `must`
-produces the same truth conditions as `Core.IntensionalLogic.boxR`.
+produces the same truth conditions as `Core.Logic.Intensional.boxR`.
 
 -/
 
@@ -277,10 +277,10 @@ end Properties
 
 
 -- ============================================================
--- Grounding: PIP modals ↔ Core.IntensionalLogic.boxR/diamondR
+-- Grounding: PIP modals ↔ Core.Logic.Intensional.boxR/diamondR
 -- ============================================================
 
-open Core.IntensionalLogic (boxR diamondR IsReflexive boxR_T)
+open Core.Logic.Intensional (boxR diamondR IsReflexive boxR_T)
 
 /-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
 private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
@@ -291,7 +291,7 @@ private def liftP {W : Type*} (p : W → Bool) : W → Prop :=
   fun w => p w = true
 
 /--
-PIP's `must` produces the same truth conditions as `Core.IntensionalLogic.boxR`.
+PIP's `must` produces the same truth conditions as `Core.Logic.Intensional.boxR`.
 
 Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
 `boxR R (fun w => p g w = true) w₀` — the body predicate holds at
@@ -344,7 +344,7 @@ holds at (g, w₀), then p g w₀ = true.
 
 This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
-`Core.IntensionalLogic.boxR_T`.
+`Core.Logic.Intensional.boxR_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
     (R : BAccessRel W) (hRefl : IsReflexive (liftR R))

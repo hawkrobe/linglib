@@ -64,8 +64,8 @@ We verify:
 namespace Phenomena.Definiteness.Studies.Schwarz2009
 
 open Features.Definiteness
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Core.Nominal
 
 -- ════════════════════════════════════════════════════════════════

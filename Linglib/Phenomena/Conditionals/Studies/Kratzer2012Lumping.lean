@@ -137,8 +137,8 @@ still-life painting variant from §5.2.
 
 namespace Phenomena.Conditionals.Studies.Kratzer2012Lumping
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Lumping (Lumps IsConsistent IsCompatible Follows)
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Lumping (Lumps IsConsistent IsCompatible Follows)
 open Semantics.Conditionals.PremiseSemantic
 
 /-! ## The minimal Paula scenario -/

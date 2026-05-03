@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Deixis.Feature
 import Linglib.Features.Definiteness
 
@@ -18,7 +18,7 @@ description that the syntax–semantics interface needs to distinguish:
 - demonstrative (Patel-Grosz–Grosz/Davis: a separate object, not "strong the")
 - possessive (definite via a possession relation)
 
-The whole type is parameterized by a `Core.IntensionalLogic.Frame`, so all
+The whole type is parameterized by a `Core.Logic.Intensional.Frame`, so all
 restrictors, situation pronouns, and possessor expressions are typed via the
 unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 
@@ -61,8 +61,8 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 
 namespace Core.Nominal
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Sum Type

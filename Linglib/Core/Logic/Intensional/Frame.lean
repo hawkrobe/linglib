@@ -17,7 +17,7 @@ types; **Frame.Denot** computes denotation domains from a frame and type.
 - `up`, `down` — intension formation / extension extraction (DWP Rules B.14–B.15)
 -/
 
-namespace Core.IntensionalLogic
+namespace Core.Logic.Intensional
 
 -- ════════════════════════════════════════════════════════════════
 -- § Semantic Types (DWP Ch. 6, Def B.1)
@@ -161,4 +161,4 @@ theorem curry_uncurry {F : Frame} (f : F.Denot (.e ⇒ .e ⇒ .t)) :
 theorem uncurry_curry {F : Frame} (r : F.Entity × F.Entity → Prop) :
     uncurry (curry r) = r := rfl
 
-end Core.IntensionalLogic
+end Core.Logic.Intensional

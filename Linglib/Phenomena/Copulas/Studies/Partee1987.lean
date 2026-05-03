@@ -32,7 +32,7 @@ copula), covert (zero copula), or expressed through other strategies.
 namespace Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
-open Core.IntensionalLogic (Frame Ty)
+open Core.Logic.Intensional (Frame Ty)
 open Typology.Copulas
 open Phenomena.Copulas.Studies.Stassen2013
 

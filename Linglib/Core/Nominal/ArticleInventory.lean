@@ -29,10 +29,10 @@ the type-shift hierarchy, not the article inventory).
 
 namespace Core.Nominal
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Features.Definiteness
 
--- The structure is declared before `open Core.IntensionalLogic.Variables`
+-- The structure is declared before `open Core.Logic.Intensional.Variables`
 -- because that namespace introduces a `g[n ↦ x]` notation whose `[`
 -- conflicts with structure instance-field syntax `[name : Type]`.
 
@@ -81,7 +81,7 @@ attribute [instance] ArticleInventory.decHasIndefinite
   ArticleInventory.decHasPossessive
 
 -- Now safe to open Variables — structure is already declared.
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional.Variables
 
 -- ════════════════════════════════════════════════════════════════
 -- § Constructor-Level Licensing

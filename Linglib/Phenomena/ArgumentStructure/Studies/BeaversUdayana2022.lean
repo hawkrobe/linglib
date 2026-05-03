@@ -94,7 +94,7 @@ open Beavers2010
 open Features.Affectedness (AffectednessDegree)
 open Semantics.Events.ArgumentRealization
 open Interfaces.SyntaxSemantics.VoiceSemantics
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 -- ============================================================================
 -- § 2: Indonesian ber- Middle Inventory

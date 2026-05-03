@@ -58,7 +58,7 @@ namespace Phenomena.Quantification.Bridge
 
 open Fragments.English.Determiners (Monotonicity Strength)
 open Phenomena.Quantification.Inventory
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
 open Core.Quantification
 open Semantics.Quantification.DomainRestriction (DomainRestrictor

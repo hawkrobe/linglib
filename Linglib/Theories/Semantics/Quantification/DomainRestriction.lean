@@ -46,7 +46,7 @@ set_option autoImplicit false
 
 namespace Semantics.Quantification.DomainRestriction
 
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
 
 -- ============================================================================

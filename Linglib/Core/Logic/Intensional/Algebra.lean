@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Quantification
-import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.Logic.Intensional.Quantification
+import Linglib.Core.Logic.Intensional.Conjunction
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Heyting.Basic
 
@@ -41,9 +41,9 @@ is defined recursively over types and *why* it only works for
 conjoinable types (those admitting a lattice structure).
 -/
 
-namespace Core.IntensionalLogic.Algebra
+namespace Core.Logic.Intensional.Algebra
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 variable {F : Frame}
 
@@ -222,4 +222,4 @@ theorem entails_singleton (p q : F.Denot .prop) :
     entails (F := F) [p] q = box (fun i => impl (p i) (q i)) := by
   simp [entails, trueAt, box, impl]
 
-end Core.IntensionalLogic.Algebra
+end Core.Logic.Intensional.Algebra

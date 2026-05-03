@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Quantification.Lexicon
@@ -45,7 +45,7 @@ the universals.
 
 namespace Semantics.Quantification.Quantifier
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Semantics.Montague (toyModel ToyEntity)
 open Core.Quantification
 

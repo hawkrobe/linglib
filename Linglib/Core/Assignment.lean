@@ -10,7 +10,7 @@ substrate shared by extensional Heim-Kratzer composition, DPL-style register
 state, CDRT, Charlow continuations, and trivalent partial-valuation systems.
 
 `Assignment E := ℕ → E` is **pre-intensional** — pure Tarski variable mapping —
-so it lives at the top of `Core` rather than inside `Core.IntensionalLogic`.
+so it lives at the top of `Core` rather than inside `Core.Logic.Intensional`.
 The intensional substrate (`Frame`, `SitAssignment F := Assignment F.Index`,
 `DenotGS`) builds on this in `Core/IntensionalLogic/`.
 

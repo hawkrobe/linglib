@@ -51,7 +51,7 @@ open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
 -- `BAccessRel` is re-exported by `Semantics.PIP` (opened above);
 -- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
 -- been replaced by the Prop-valued `Refl`/`boxR` API in
--- `Core.IntensionalLogic` and isn't needed here.
+-- `Core.Logic.Intensional` and isn't needed here.
 open Phenomena.Anaphora
 
 

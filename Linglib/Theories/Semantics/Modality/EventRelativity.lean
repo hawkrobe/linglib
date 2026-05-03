@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 
 /-!
 # Event-Relative Modality

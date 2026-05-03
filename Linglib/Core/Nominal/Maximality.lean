@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Variables
 
 /-!
 # Maximality and Coppock–Beaver Factorization
@@ -6,7 +6,7 @@ import Linglib.Core.IntensionalLogic.Variables
 
 Predicate operators consumed by the `NominalKind` interpretation function in
 `Core/Nominal/Interpret.lean`. All operators live over
-`Core.IntensionalLogic.Frame.Denot` so they slot directly into the IL stack.
+`Core.Logic.Intensional.Frame.Denot` so they slot directly into the IL stack.
 
 ## What this module provides
 
@@ -48,7 +48,7 @@ Predicate operators consumed by the `NominalKind` interpretation function in
 
 namespace Core.Nominal
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 -- ════════════════════════════════════════════════════════════════
 -- § Coppock–Beaver Factorization

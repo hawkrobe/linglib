@@ -73,7 +73,7 @@ set_option autoImplicit false
 
 namespace DavidsonGagne2022
 
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
 open Semantics.Quantification.DomainRestriction
 open Fragments.ASL.Height

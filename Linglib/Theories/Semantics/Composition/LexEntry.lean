@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 /-!
 # Lexical Entry Types
@@ -11,7 +11,7 @@ Typed lexical entries for compositional semantics.
 
 namespace Semantics.Montague
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 structure LexEntry (F : Frame) where
   ty : Ty

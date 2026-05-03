@@ -59,7 +59,7 @@ The semantic effects of grammatical mood, connecting two independent dimensions:
 
 - **Situation-level** (@cite{mendes-2025}): SUBJ introduces a new situation dref;
   IND retrieves an existing one
-- **Eventuality-level** (@cite{grano-2024}): SBJV leaves the complement's eventuality
+- **Event-level** (@cite{grano-2024}): SBJV leaves the complement's eventuality
   argument open for abstraction; IND existentially closes it
 
 These dimensions are complementary: situation introduction enables temporal

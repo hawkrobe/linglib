@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Lumping
+import Linglib.Core.Logic.Intensional.Lumping
 
 /-!
 # Kratzer 2012 Premise-Semantic Counterfactuals
@@ -7,7 +7,7 @@ import Linglib.Core.IntensionalLogic.Lumping
 
 Truth conditions for "would"- and "might"-counterfactuals from
 @cite{kratzer-2012} §5.4.4 ("The formal definitions", p. 132–133),
-built on top of the lumping API in `Core.IntensionalLogic.Lumping`.
+built on top of the lumping API in `Core.Logic.Intensional.Lumping`.
 
 ## §5.4.4 in brief
 
@@ -75,8 +75,8 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 
 namespace Semantics.Conditionals.PremiseSemantic
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Lumping (Lumps IsConsistent IsCompatible Follows)
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Lumping (Lumps IsConsistent IsCompatible Follows)
 
 variable {F : SituationFrame}
 

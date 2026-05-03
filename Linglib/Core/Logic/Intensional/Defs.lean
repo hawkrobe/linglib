@@ -7,7 +7,7 @@ import Mathlib.Logic.Basic
 
 The bare foundation for accessibility-restricted modal logic, parameterised
 by `{W : Type*}` — no Frame, no Entity, no type system. This file holds the
-definitions and very simple lemmas that the rest of `Core.IntensionalLogic`
+definitions and very simple lemmas that the rest of `Core.Logic.Intensional`
 (including Montague's S5 `box`/`diamond` in `Quantification.lean` and the
 modal-axiom theorems in `RestrictedModality.lean`) builds on.
 
@@ -17,7 +17,7 @@ relationships among frame conditions. Modal axiom correspondence theorems
 and the Gallin hierarchy live in `RestrictedModality.lean`.
 -/
 
-namespace Core.IntensionalLogic
+namespace Core.Logic.Intensional
 
 -- ────────────────────────────────────────────────────────────────
 -- §1 Accessibility Relations
@@ -114,7 +114,7 @@ theorem M5_implies_4 {R : AccessRel W} (hM : IsReflexive R) (h5 : IsEuclidean R)
     `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)`.
 
     This is the Kripke generalization of DWP's Rule B.13 (`box`); the
-    `Core.IntensionalLogic.box` operator in `Quantification.lean` is the
+    `Core.Logic.Intensional.box` operator in `Quantification.lean` is the
     universal-accessibility special case. -/
 def boxR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
@@ -143,4 +143,4 @@ theorem diamondR_neg_boxR (R : AccessRel W) (p : W → Prop) (w : W) :
       simp only [not_exists, not_and] at hne
       exact h (fun v hwv => hne v hwv)⟩
 
-end Core.IntensionalLogic
+end Core.Logic.Intensional

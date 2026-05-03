@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Features.Coordination
 import Linglib.Phenomena.Coordination.Studies.Haspelmath2007
@@ -52,7 +52,7 @@ so the M&S derivation is the definition itself, not a theorem.
 namespace BillEtAl2025
 
 open Features.Coordination
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 
 -- Conjunction Particle Typology
 
@@ -476,7 +476,7 @@ P(e₁) ∧ P(e₂) equals Link's `distMaximal P {e₁, e₂}`
 (`mu_is_distributive_check`).
 -/
 
-open Core.IntensionalLogic.Conjunction in
+open Core.Logic.Intensional.Conjunction in
 /--
 Type-raising an entity and checking subset inclusion of its singleton
 is equivalent to applying the predicate directly.
@@ -487,7 +487,7 @@ This is the core of the M&S decomposition: the roundtrip through
 theorem typeRaise_incl_reduces {F : Frame} (e : F.Entity) (p : F.Entity → Prop) :
     typeRaise (F := F) e p = p e := rfl
 
-open Core.IntensionalLogic.Conjunction in
+open Core.Logic.Intensional.Conjunction in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
@@ -531,7 +531,7 @@ general case for arbitrary pluralities.
 
 section MUDistributivity
 
-open Core.IntensionalLogic.Conjunction
+open Core.Logic.Intensional.Conjunction
 open Semantics.Plurality.Distributivity
 
 /--

@@ -28,7 +28,7 @@ import Mathlib.Data.Fintype.Basic
 
 namespace MontagueExhaustivity
 
-open Core.IntensionalLogic Semantics.Quantification.Quantifier
+open Core.Logic.Intensional Semantics.Quantification.Quantifier
 open Exhaustification
 
 /-

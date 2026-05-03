@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Assignment
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Relation

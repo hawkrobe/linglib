@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
@@ -29,8 +29,8 @@ which extend the same type-shift to kinds and bare plurals.
 
 namespace Semantics.Composition.TypeShifting
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Conjunction (typeRaise)
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Conjunction (typeRaise)
 open Semantics.Montague (toyModel ToyEntity)
 
 variable {F : Frame}

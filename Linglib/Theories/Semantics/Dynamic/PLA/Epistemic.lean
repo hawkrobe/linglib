@@ -23,7 +23,7 @@ For de re/de dicto distinctions:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 
 namespace Semantics.Dynamic.PLA
 

@@ -1,5 +1,5 @@
 import Mathlib.Order.Monotone.Basic
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 /-!
 # Situations: Partial Indices
@@ -47,7 +47,7 @@ depend on a chosen modal base. This file keeps only the order-theoretic
 core.
 -/
 
-namespace Core.IntensionalLogic
+namespace Core.Logic.Intensional
 
 /-! ## Situation frames -/
 
@@ -141,4 +141,4 @@ theorem discrete_persistent_all (p : F.Index → Prop) : Persistent p :=
 
 end DiscreteCorollaries
 
-end Core.IntensionalLogic
+end Core.Logic.Intensional

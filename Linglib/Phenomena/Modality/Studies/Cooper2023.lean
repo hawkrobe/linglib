@@ -205,7 +205,7 @@ theorem _root_.Semantics.TypeTheoretic.ModalTypeSystem.roundtrip
     ((mts.toModalSystem Unit).poss w).witnesses P () ↔ (mts w P = true) :=
   Iff.rfl
 
-/-! ## Bridge: ModalSystem ↔ Core.IntensionalLogic.BAccessRel
+/-! ## Bridge: ModalSystem ↔ Core.Logic.Intensional.BAccessRel
 
 A Cooper modal system induces a Kripke accessibility relation for each type T:
 R_T(p₁, p₂) holds iff every witness of T in p₁ is also a witness in p₂.
@@ -1432,7 +1432,7 @@ section TtrKratzerBridge
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource bestWorlds
   necessity possibility)
-open Core.IntensionalLogic (boxR diamondR)
+open Core.Logic.Intensional (boxR diamondR)
 
 variable {W : Type}
 

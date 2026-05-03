@@ -207,7 +207,7 @@ open Interfaces.SyntaxSemantics.VoiceSemantics
 /-- The Sinhala suppression operator can be instantiated for *kadann*
     'break' because its causer sort `.any` admits individuals. The
     obligation is discharged by `decide` over the lattice. -/
-example {F : Core.IntensionalLogic.Frame} (z : F.Entity)
+example {F : Core.Logic.Intensional.Frame} (z : F.Entity)
     (vp : F.Denot (.e ⇒ .t)) :
     F.Denot .t :=
   causerSuppress kadann.causerSort (by decide) z vp

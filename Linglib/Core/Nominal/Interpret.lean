@@ -32,8 +32,8 @@ not referent selection).
 
 namespace Core.Nominal
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 
 variable {F : Frame}
 

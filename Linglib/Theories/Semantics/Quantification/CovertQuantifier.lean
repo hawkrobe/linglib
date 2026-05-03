@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.LexEntry
 
 /-!
@@ -137,7 +137,7 @@ theorem reduces_to_threshold (domain : List D)
 
 section Compositional
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Semantics.Montague (LexEntry Lexicon)
 
 /-- Gen: `(e→t) → (e→t) → t`. Dyadic generic quantifier.

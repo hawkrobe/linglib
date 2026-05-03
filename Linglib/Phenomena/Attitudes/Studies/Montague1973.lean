@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Rigidity
 import Mathlib.Data.Fin.Basic
 
 /-! # Montague (1973) intensional examples @cite{montague-1973}
@@ -16,7 +16,7 @@ namespace Phenomena.Attitudes.Studies.Montague1973
 
 abbrev World := Fin 4
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 /-- A small domain for examples -/
 inductive ToyIEntity where

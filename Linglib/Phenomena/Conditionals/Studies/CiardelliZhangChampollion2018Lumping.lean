@@ -56,7 +56,7 @@ because `Follows {notBothUp} lightOff` also fails (again `dd` blocks).
 
 We use the worlds-only switches model lifted to a `SituationFrame` via
 `Frame.toDiscreteSituationFrame`. Under discrete parthood,
-`Core.IntensionalLogic.Lumping.Lumps.discrete_iff` reduces lumping to
+`Core.Logic.Intensional.Lumping.Lumps.discrete_iff` reduces lumping to
 joint truth at `w`. This gives a clean (if degenerate) lumping
 behavior: every fact true at `uu` lumps every other fact true at `uu`,
 so the Crucial Set's lumping-closure clause forces any Crucial Set
@@ -84,8 +84,8 @@ The empty Base Set keeps the proofs direct.
 
 namespace Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018Lumping
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Lumping (Lumps IsConsistent IsCompatible Follows)
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Lumping (Lumps IsConsistent IsCompatible Follows)
 open Semantics.Conditionals.PremiseSemantic
   (CrucialSet IsCrucialSet wouldCF)
 

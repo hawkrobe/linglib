@@ -36,7 +36,7 @@ with a concrete linguistic example: "the book that John read _"
 
 namespace Minimalist.RelativeClauses
 
-open Core.IntensionalLogic Core.IntensionalLogic.Variables Semantics.Composition.Modification
+open Core.Logic.Intensional Core.Logic.Intensional.Variables Semantics.Composition.Modification
 open Minimalist
 
 -- ============================================================================

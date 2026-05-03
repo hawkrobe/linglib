@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Logic.Function.Basic
@@ -52,7 +52,7 @@ extension of `P`:
 - `tolerant P at a` ≡ `diamondR (~_P) I(P) a` (Definition 9)
 
 The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `boxR`
-(`Core.IntensionalLogic.boxR_T`); the t/s duality is the standard
+(`Core.Logic.Intensional.boxR_T`); the t/s duality is the standard
 modal de Morgan `boxR R ¬p ↔ ¬diamondR R p`. T-models satisfy
 `frameConditions Logic.KTB` by construction (Definition 4 of
 @cite{cobreros-etal-2012}); see `TModel.satisfies_KTB` for the explicit
@@ -128,7 +128,7 @@ is addressed in that Studies file's §8-§9.
 namespace Semantics.Supervaluation.TCS
 
 open Core.Duality (Truth3)
-open Core.IntensionalLogic
+open Core.Logic.Intensional
   (AccessRel IsReflexive IsSymmetric IsSerial boxR diamondR
    boxR_T refl_serial Logic)
 open Core.Logic.ThreeValuedLogic (PropFormula MVModel mvEval lpSat k3Sat
@@ -171,7 +171,7 @@ variable {D Pred : Type*}
 
 /-- The similarity relation as an `AccessRel` — the Kripke frame
     associated with each predicate. By construction this frame is
-    reflexive + symmetric, i.e., a **KTB frame** (`Core.IntensionalLogic.Logic.KTB`). -/
+    reflexive + symmetric, i.e., a **KTB frame** (`Core.Logic.Intensional.Logic.KTB`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
 
 /-- T-models satisfy `frameConditions Logic.KTB` by construction.

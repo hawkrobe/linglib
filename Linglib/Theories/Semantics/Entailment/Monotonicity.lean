@@ -36,7 +36,7 @@ consistent instances of those general proofs.
 -/
 
 /-- The entailment World type, viewed as a Frame entity domain. -/
-def entailmentModel : Core.IntensionalLogic.Frame :=
+def entailmentModel : Core.Logic.Intensional.Frame :=
   { Entity := World, Index := Unit }
 
 instance : Fintype entailmentModel.Entity where

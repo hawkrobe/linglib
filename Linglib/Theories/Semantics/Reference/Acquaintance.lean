@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 import Mathlib.Data.Set.Function
 
 /-!

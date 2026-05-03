@@ -9,11 +9,11 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 
 -/
 
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 
 namespace Semantics.Montague.Interface.SyntaxInterface
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 /-- Type assignment maps syntactic categories to semantic types -/
 structure TypeAssignment (SynCat : Type) where

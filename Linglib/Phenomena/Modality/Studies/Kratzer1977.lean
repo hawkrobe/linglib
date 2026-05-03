@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Premise
+import Linglib.Core.Logic.Intensional.Premise
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -8,7 +8,7 @@ import Mathlib.Data.Fintype.Basic
 
 A concrete formalization of the New Zealand judgments scenario from §1.3
 of @cite{kratzer-1977} (= Chapter 1 of @cite{kratzer-2012}), exercising
-the API of `Core.IntensionalLogic.Premise`.
+the API of `Core.Logic.Intensional.Premise`.
 
 ## The scenario
 
@@ -42,7 +42,7 @@ the intuitive predictions.
 
 ## What this study is
 
-A Phenomenon-layer **integration test** for `Core.IntensionalLogic.Premise`:
+A Phenomenon-layer **integration test** for `Core.Logic.Intensional.Premise`:
 it picks the worked example Kratzer uses to motivate the revision from
 Defs 5–6 to Defs 7–8 and verifies, by structural proofs over the four-world
 frame, that the formalization gets each prediction right and that the
@@ -51,7 +51,7 @@ unrevised definitions fail in exactly the way Kratzer says they do.
 
 namespace Phenomena.Modality.Studies.Kratzer1977
 
-open Core.IntensionalLogic.Premise
+open Core.Logic.Intensional.Premise
 
 /-! ## §1. The model
 

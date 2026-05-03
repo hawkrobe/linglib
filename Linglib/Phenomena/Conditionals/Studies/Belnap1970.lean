@@ -74,7 +74,7 @@ open Core.Presupposition (PrProp)
 open Core.Duality (Truth3)
 open Core.Opposition (Square SquareRelations)
 open Semantics.Quantification.Quantifier
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 open Semantics.Montague (toyModel ToyEntity)
 
 -- ════════════════════════════════════════════════════════════════

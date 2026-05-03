@@ -7,16 +7,16 @@ with the continuation approach.
 
 -/
 
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 
 namespace Semantics.Reference.Binding
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Semantics.Montague
 open Interfaces.BindingSemantics
 

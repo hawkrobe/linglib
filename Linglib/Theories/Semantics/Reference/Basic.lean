@@ -18,7 +18,7 @@ These mechanisms are independent: a term can exhibit any subset.
 
 -/
 
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Context.Basic
 
 namespace Semantics.Reference.Basic

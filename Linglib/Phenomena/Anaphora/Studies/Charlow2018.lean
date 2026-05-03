@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Semantics.Composition.Applicative
@@ -50,8 +50,8 @@ set_option autoImplicit false
 
 namespace Charlow2018
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Semantics.Montague
 open Semantics.Composition.Applicative
 

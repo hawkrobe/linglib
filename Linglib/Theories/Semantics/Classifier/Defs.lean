@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Card
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Classifier Denotations à la Sudo (2016)

@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Composition.Scope
@@ -52,7 +52,7 @@ scope example.
 
 namespace Semantics.Composition.Glue
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Semantics.Montague
 open Semantics.Quantification.Quantifier
 
@@ -430,7 +430,7 @@ theorem glue_inverse_false : ¬glue_inverse_meaning := by
 open Semantics.Scope
 open Core.Tree
 open Semantics.Composition.Tree
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional.Variables
 
 /-- Lexicon for the QR bridge (matching QuantifierComposition). -/
 private def bridgeLex : Lexicon toyModel := λ word =>

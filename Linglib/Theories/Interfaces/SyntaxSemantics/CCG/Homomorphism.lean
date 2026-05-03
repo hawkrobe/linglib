@@ -16,14 +16,14 @@ corresponds to a semantic operation.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Syntax.CCG.Core.Combinators
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.ToyDomain
 
 namespace CCG.Homomorphism
 
 open CCG
 open CCG.Combinators
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Semantics.Montague
 
 -- Well-Typed Derivations

@@ -6,8 +6,8 @@ import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Reference.Binding
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Composition.ToyDomain
 import Linglib.Theories.Semantics.Composition.LexEntry
 
@@ -63,8 +63,8 @@ open Semantics.Composition.QuantifierComposition
 open Pragmatics.Expressives
 open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Semantics.Montague
 
 -- ════════════════════════════════════════════════════════════════════

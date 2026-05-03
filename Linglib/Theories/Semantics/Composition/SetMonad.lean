@@ -219,7 +219,7 @@ indefinites compositionally. -/
 section LiftDecomposition
 
 open Semantics.Composition.TypeShifting (lift A ident A_ident_eq_lift)
-open Core.IntensionalLogic (Frame Ty)
+open Core.Logic.Intensional (Frame Ty)
 
 variable {F : Frame}
 

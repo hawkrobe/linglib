@@ -14,15 +14,15 @@ Composition principles:
 -/
 
 import Linglib.Core.Tree
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Composition.Modification
 
 namespace Semantics.Composition.Tree
 
-open Core.IntensionalLogic Semantics.Composition.Modification
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional Semantics.Composition.Modification
+open Core.Logic.Intensional.Variables
 open Semantics.Montague (Lexicon)
 
 -- ============================================================================

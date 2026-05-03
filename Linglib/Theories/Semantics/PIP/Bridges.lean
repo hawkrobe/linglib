@@ -19,7 +19,7 @@ between PIP's formulation and the standard treatments in:
 1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `GQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
-4. **Modal logic** — PIP's must/might ↔ `Core.IntensionalLogic.boxR/diamondR`
+4. **Modal logic** — PIP's must/might ↔ `Core.Logic.Intensional.boxR/diamondR`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
@@ -39,8 +39,8 @@ namespace Semantics.PIP.Bridges
 
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
-open Core.IntensionalLogic (IsReflexive)
-open Core.IntensionalLogic.Logic (frameConditions)
+open Core.Logic.Intensional (IsReflexive)
+open Core.Logic.Intensional.Logic (frameConditions)
 
 
 -- ============================================================
@@ -240,7 +240,7 @@ All GQ property proofs in Quantifier.lean (duality, monotonicity,
 Zwarts monotonicity hierarchy, quantity invariance, etc.) apply
 directly to PIP's quantifiers.
 -/
-theorem pipEvery_eq_every_sem (F : Core.IntensionalLogic.Frame)
+theorem pipEvery_eq_every_sem (F : Core.Logic.Intensional.Frame)
     [Fintype F.Entity] :
     (pipEvery : Core.Quantification.GQ F.Entity) =
     Semantics.Quantification.Quantifier.every_sem F := rfl
@@ -248,7 +248,7 @@ theorem pipEvery_eq_every_sem (F : Core.IntensionalLogic.Frame)
 /--
 PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
 -/
-theorem pipSome_eq_some_sem (F : Core.IntensionalLogic.Frame)
+theorem pipSome_eq_some_sem (F : Core.Logic.Intensional.Frame)
     [Fintype F.Entity] :
     (pipSome : Core.Quantification.GQ F.Entity) =
     Semantics.Quantification.Quantifier.some_sem F := rfl
@@ -334,7 +334,7 @@ frame condition: reflexivity).
 The `must_truth_agrees_kripkeEval` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
-normal modal logics from `Core.IntensionalLogic`.
+normal modal logics from `Core.Logic.Intensional`.
 -/
 
 /--
@@ -346,21 +346,21 @@ with a reflexive R guarantees the description holds at the evaluation
 world; might with a non-reflexive R does not.
 -/
 theorem pip_anaphora_requires_T :
-    Core.IntensionalLogic.Logic.K ≤ Core.IntensionalLogic.Logic.T :=
-  Core.IntensionalLogic.Logic.K_bot ▸ OrderBot.bot_le _
+    Core.Logic.Intensional.Logic.K ≤ Core.Logic.Intensional.Logic.T :=
+  Core.Logic.Intensional.Logic.K_bot ▸ OrderBot.bot_le _
 
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
 Stated for the Prop-valued `AccessRel`/`IsReflexive`/`frameConditions` API in
-`Core.IntensionalLogic`. To apply this to a PIP
+`Core.Logic.Intensional`. To apply this to a PIP
 `BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.IntensionalLogic.AccessRel W) (hRefl : IsReflexive R) :
-    frameConditions Core.IntensionalLogic.Logic.T R := by
-  unfold frameConditions Core.IntensionalLogic.Logic.hasAxiom
-    Core.IntensionalLogic.Logic.T
+    (R : Core.Logic.Intensional.AccessRel W) (hRefl : IsReflexive R) :
+    frameConditions Core.Logic.Intensional.Logic.T R := by
+  unfold frameConditions Core.Logic.Intensional.Logic.hasAxiom
+    Core.Logic.Intensional.Logic.T
   refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
     simp_all [Finset.mem_singleton]
 
@@ -382,7 +382,7 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
 
-The formal connection is established via `Core.IntensionalLogic.boxR`:
+The formal connection is established via `Core.Logic.Intensional.boxR`:
 `must_truth_agrees_boxR` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
 `boxR (liftR R) (liftP (p g))`.
@@ -405,10 +405,10 @@ The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
 theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [Fintype W]
     (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
-    Core.IntensionalLogic.boxR
+    Core.Logic.Intensional.boxR
       (fun a b => R a b = true) (fun w' => φ.truth w' = true) w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, Core.IntensionalLogic.boxR]
+    Set.mem_setOf_eq, Core.Logic.Intensional.boxR]
 
 
 -- ============================================================

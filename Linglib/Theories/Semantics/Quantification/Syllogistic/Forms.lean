@@ -37,7 +37,7 @@ for the full opposition diagram in the Demey–Smessaert sense.
 
 namespace Semantics.Quantification.Syllogistic
 
-open Core.IntensionalLogic (Frame)
+open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
   (every_sem some_sem no_sem subalternation_a_i)
 

@@ -29,7 +29,7 @@ live in the relevant `Studies/` files, not here.
 namespace Phenomena.Quantification.Inventory
 
 open Theories.Semantics.Quantification.Lexicon (QuantifierEntry Monotonicity)
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 open Semantics.Quantification.Quantifier
 
 /-- The canonical 6-element quantity scale. -/

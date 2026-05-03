@@ -8,7 +8,7 @@ A `WorldTimeIndex` is a (world, time) pair used as a context of evaluation
 for intensional, dynamic, modal, and tense semantics. This is the
 Lewis/Kaplan-style "index of evaluation" with world and temporal
 coordinates only — *not* the full Kratzer parthood-structured situation
-(see `Core.IntensionalLogic.Situations`) and *not* the Pearl/Halpern
+(see `Core.Logic.Intensional.Situations`) and *not* the Pearl/Halpern
 partial valuation (see `Core.Causal.Situation`).
 
 The name `WorldTimeIndex` is preferred over `Situation` to disambiguate
@@ -23,7 +23,7 @@ namespace Core
 
     This is the Lewis/Kaplan "index" — a coordinate tuple as point of
     evaluation, abstracting from the spatial/parthood structure of true
-    Kratzer situations (see `Core.IntensionalLogic.Situations`). -/
+    Kratzer situations (see `Core.Logic.Intensional.Situations`). -/
 @[ont_sort] structure WorldTimeIndex (W Time : Type*) where
   /-- The world coordinate -/
   world : W

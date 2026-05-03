@@ -2,7 +2,7 @@
 @cite{kratzer-1981} Modal Operators — IL Foundation
 
 Necessity and possibility operators defined as `boxR`/`diamondR` from
-`Core.IntensionalLogic`, with Kratzer-specific
+`Core.Logic.Intensional`, with Kratzer-specific
 accessibility relations derived from conversational backgrounds.
 
 The key architectural insight: Kratzer's operators ARE restricted modal
@@ -21,13 +21,13 @@ themselves are `W → Prop`; reasoning is classical.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Logic.Opposition.Aristotelian
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Modality.Kratzer
 
-open Core.IntensionalLogic
+open Core.Logic.Intensional
 
 variable {W : Type*}
 

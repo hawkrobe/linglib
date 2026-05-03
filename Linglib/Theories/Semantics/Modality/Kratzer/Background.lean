@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.ConversationalBackground
+import Linglib.Core.Logic.Intensional.ConversationalBackground
 
 /-!
 # Kratzer Conversational Backgrounds — Re-Exports
@@ -6,18 +6,18 @@ import Linglib.Core.IntensionalLogic.ConversationalBackground
 @cite{kratzer-1981} @cite{kratzer-2012}
 
 The conversational-background primitives moved to
-`Core.IntensionalLogic.ConversationalBackground` (they're not Kratzer-specific).
+`Core.Logic.Intensional.ConversationalBackground` (they're not Kratzer-specific).
 This file re-exports them under the `Semantics.Modality.Kratzer` namespace
 so the historical call style continues to work. New code should prefer the
-`Core.IntensionalLogic.*` names.
+`Core.Logic.Intensional.*` names.
 -/
 
 namespace Semantics.Modality.Kratzer
 
-export Core.IntensionalLogic.Premise
+export Core.Logic.Intensional.Premise
   (propExtension propIntersection followsFrom isConsistent isCompatibleWith)
 
-export Core.IntensionalLogic
+export Core.Logic.Intensional
   (ConvBackground ModalBase OrderingSource isRealistic isTotallyRealistic
    emptyBackground)
 

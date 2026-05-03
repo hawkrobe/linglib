@@ -1,5 +1,5 @@
-import Linglib.Core.IntensionalLogic.Frame
-import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Theories.Semantics.Causation.CauserSort
 
 /-!
@@ -53,8 +53,8 @@ not a stipulated data structure.
 
 namespace Interfaces.SyntaxSemantics.VoiceSemantics
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 
 -- ============================================================================
 -- § 1: Active Voice — Identity

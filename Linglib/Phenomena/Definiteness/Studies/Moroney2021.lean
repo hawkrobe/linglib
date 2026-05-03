@@ -670,8 +670,8 @@ licensing predicate `ArticleInventory.licensesKind` to Moroney's central
 empirical finding: Shan licenses anaphoric definiteness without any
 anaphoric article. -/
 
-open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
+open Core.Logic.Intensional
+open Core.Logic.Intensional.Variables
 open Core.Nominal (ArticleInventory NominalKind)
 
 /-- Shorthand handles for the four Table 4.4 inventories, each defined in

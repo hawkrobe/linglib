@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Verb.VerbEntry
 
@@ -45,14 +45,14 @@ def myLexicon : Lexicon myModel :=
 ```
 -/
 
-open Core.IntensionalLogic (Ty Frame)
+open Core.Logic.Intensional (Ty Frame)
 open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
 namespace Semantics.Verb
 
-open Core.IntensionalLogic (Ty)
+open Core.Logic.Intensional (Ty)
 
 /-- Map a verb's complement type to its Montague semantic type.
 

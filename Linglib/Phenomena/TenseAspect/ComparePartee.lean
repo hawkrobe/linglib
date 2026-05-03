@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.SOT.Decomposition
 import Linglib.Theories.Semantics.Reference.KaplanLD
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy

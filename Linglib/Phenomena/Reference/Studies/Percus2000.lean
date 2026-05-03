@@ -1,4 +1,4 @@
-import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Assignment
 import Linglib.Core.Time.Tense
 import Linglib.Core.Context.Tower
