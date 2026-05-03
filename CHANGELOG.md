@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.623 — Phase 5b: Extraction → Typology/Extraction.lean
+
+Migration phase 5b/9.
+
+- `git mv Theories/Interfaces/Morphosyntax/Extraction.lean → Typology/Extraction.lean`. Namespace `Interfaces` → `Typology` (matches Typology/ siblings: Adposition, ClassifierSystem, etc.).
+- 12 import sites retargeted (10 Mayan/TobaBatak Fragments + Phenomena/ArgumentStructure/VoiceSystem + Phenomena/FillerGap/Studies/{Erlewine2016, Erlewine2018} + Phenomena/WordOrder/Studies/ColeHermon2008 + Theories/Interfaces/Morphosyntax/Relativization). Qualified body refs (`Interfaces.ExtractionMarkingStrategy / ExtractionTarget / ExtractionProfile / Extractee / ArgumentRole`) rewritten to `Typology.X`.
+- Added `open Typology (ArgumentRole)` to VoiceSystem.lean and `open Typology (ExtractionTarget)` to Relativization.lean — both files live in `namespace Interfaces` and consume Extraction symbols by short name; the open lines preserve that ergonomy across the namespace move.
+- Linglib.lean root index updated (line 115). `Theories/Interfaces/Morphosyntax/` now contains only `Relativization.lean` ahead of Phase 6.
+
 ### 0.230.622 — Phase 5a: trim ExtractionMarkingStrategy enum
 
 Migration phase 5a (pre-step for the file move in 5b).
