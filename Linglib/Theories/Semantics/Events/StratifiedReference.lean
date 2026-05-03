@@ -34,6 +34,20 @@ Built directly on `Mereology.AlgClosure` (= Champollion's `*` operator,
 @cite{link-1983}). No new closure operator is introduced; SR is a
 predicate-transformer over the existing one.
 
+## Four oppositions (@cite{champollion-2017} §1.2)
+
+Champollion's exposition catalogues four oppositions
+(atelic/telic, stative/non-stative, distributive/collective, mass/count)
+under one SR umbrella. In the linglib substrate only those with
+consumers are exposed as named primitives: `SDR_univ` (distributivity),
+`SSR_univ` (atelicity), `SMR_univ` (mass) — each a genuine instance of
+`SR_univ`. The stativity opposition along τ is realized in linglib by
+the witness-universal `HasSubintervalProp` in
+`Tense/Aspect/SubintervalProperty.lean` rather than an SR-decomposition
+form: ∀-projection over hypothetical witness events is the structure
+the existing IMPF/PRFV theorems require, and the SR-decomposition form
+at (τ, point-granularity) has no current consumer.
+
 -/
 
 import Linglib.Theories.Semantics.Events.Mereology

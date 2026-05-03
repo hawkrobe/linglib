@@ -13,15 +13,14 @@ fixing the trace as any subinterval `i'` of `i`.
 
 Per the strata-theory unification (@cite{champollion-2017}), this is
 the quantifier-level form of stratified reference at point-interval
-granularity along the time dimension — i.e., a sibling of the
-Bennett-Partee 1972 strict subinterval property and
-`Theories/Semantics/Events/StratifiedReference/Specializations.lean`'s
-`IsStative`. The bridge `EvQuant.ofPred` below lifts an event
-predicate to an event quantifier; the three formulations
-(universal-witness, decomposition, quantifier-restriction) all live at
-the same parameter-space point but differ in universal-quantification
-structure and are not directly interderivable without explicit
-witness-existence assumptions.
+granularity along the time dimension — a sibling of the Bennett-Partee
+1972 strict subinterval property (`HasSubintervalProp` in
+`Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`). The
+bridge `EvQuant.ofPred` below lifts an event predicate to an event
+quantifier; the witness-universal and quantifier-restriction
+formulations live at the same parameter-space point but differ in
+quantification structure and are not directly interderivable without
+explicit witness-existence assumptions.
 
 The `antiAtomDistLicensed` predicate is the licensing condition for
 Mandarin perfective particles in @cite{zhao-2025} (le, méi-yǒu).

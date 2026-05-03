@@ -2289,7 +2289,6 @@ import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.EventRelations
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
-import Linglib.Theories.Semantics.Events.StratifiedReference.Specializations
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.ScalarResult
 import Linglib.Theories.Semantics.Events.AffectednessHierarchy

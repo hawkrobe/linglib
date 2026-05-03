@@ -35,15 +35,14 @@ variable {W Time : Type*} [LinearOrder Time]
     lack it.
 
     This is the universal-witness (Bennett-Partee 1972) form of stativity
-    along the time dimension. Cousin formulations at the same point in
-    @cite{champollion-2017}'s parameter space (dimension = τ, atomic
-    granularity) live in `Theories/Semantics/Events/StratifiedReference/Specializations.lean`'s
-    `IsStative` (decomposition form, on `Event Time`) and
-    `Core/Time/AtomDist.lean`'s `AtomDist` (quantifier-restriction form).
-    The three formulations are NOT directly interderivable — the
-    universal-witness form (this file) makes a stronger universal claim
-    over hypothetical witness events than the decomposition form (SR);
-    bridging requires explicit witness-existence assumptions. -/
+    along the time dimension. The `SR_univ` decomposition form at
+    @cite{champollion-2017}'s analogous parameter-space point (dim = τ,
+    point-interval granularity) is genuinely different math — ∃-decomposition
+    over P-parts vs ∀-projection over hypothetical witness events. The
+    quantifier-level cousin (Zhao 2025 Def. 5.36, ATOM-DIST_t) lives in
+    `Core/Time/AtomDist.lean`. The three formulations are NOT directly
+    interderivable; bridging requires explicit witness-existence
+    assumptions. -/
 def HasSubintervalProp (P : EventPred W Time) : Prop :=
   ∀ (e₁ : Event Time) (w : W),
     P w e₁ →

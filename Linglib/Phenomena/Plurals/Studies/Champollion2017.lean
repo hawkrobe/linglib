@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Events.StratifiedReference
-import Linglib.Theories.Semantics.Events.StratifiedReference.Specializations
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -9,23 +8,23 @@ import Linglib.Phenomena.TenseAspect.Diagnostics
 @cite{champollion-2017}
 
 Eponymous study file connecting strata theory to concrete English
-verb entries and empirical distributivity/atelicity data. Designed
-as the worked example demonstrating consumer-side use of the
-four-opposition API in
-`Theories/Semantics/Events/StratifiedReference/Specializations.lean`:
+verb entries and empirical distributivity/atelicity data. Targets the
+two SR specializations on which this file's data bears:
 
-- `IsAtelic` (= `SSR_univ`) — for-adverbial diagnostic, dim = τ runtime
-- `IsRoleDistributive` (= `SDR_univ`) — adverbial-each, dim = θ role
-- `IsMassReference` (= `SMR_univ`) — pseudopartitives, dim = μ
-- `IsStative` — Bennett-Partee atomic SR, dim = τ at point granularity
+- `SSR_univ` — for-adverbial diagnostic, dim = τ runtime (atelicity)
+- `SDR_univ` — adverbial-each, dim = θ role (role-distributivity)
 
-(`IsStative` not exercised here — see `Phenomena/TenseAspect/Studies/Zhao2025.lean`
-for that opposition; this file targets the `IsRoleDistributive` and
-`IsAtelic` ones.)
+@cite{champollion-2017} §1.2 catalogues four oppositions
+(atelic/telic, stative/non-stative, distributive/collective, mass/count)
+under one SR umbrella, but only the two above are exercised in the
+present substrate; `SMR_univ` (mass) has no current consumer, and the
+τ-dimension stativity primitive in linglib is the witness-universal
+form `HasSubintervalProp` in `Tense/Aspect/SubintervalProperty.lean`,
+not an SR-decomposition form.
 
 The Fragment-side `agentSDR`/`themeSDR` Bool fields below are per-verb
-typology tags; the substrate-side proof obligation `IsRoleDistributive
-agentOf seePred` requires a verb predicate denotation `Event Time → Prop`,
+typology tags; the substrate-side proof obligation `SDR_univ agentOf
+seePred` requires a verb predicate denotation `Event Time → Prop`,
 which Fragment files don't currently provide. Bridging tags to
 substrate predicates is theory-hub denotation discipline (CLAUDE.md)
 and is follow-up work; this file demonstrates the API at the *naming*
@@ -36,8 +35,8 @@ level.
 1. **Distributivity profiles** — per-verb agent/theme distributivity tags
 2. **Distributivity data** — empirical collective/distributive judgments
 3. **Profile → data alignment** — profiles predict empirical data
-4. **VerbDistributivity postulate alignment** — tags match `IsRoleDistributive` postulates
-5. **`IsAtelic` ↔ Vendler bridge** — atelicity predictions per verb class
+4. **VerbDistributivity postulate alignment** — tags match `SDR_univ` postulates
+5. **`SSR_univ` ↔ Vendler bridge** — atelicity predictions per verb class
 -/
 
 namespace Champollion2017
@@ -136,7 +135,7 @@ theorem all_collective_ok :
 -- ════════════════════════════════════════════════════
 
 /-! The `VerbDistributivity` class from `Events/StratifiedReference.lean`
-    axiomatizes `SDR_univ` (= `IsRoleDistributive`) for specific verbs.
+    axiomatizes `SDR_univ` for specific verbs.
     Verify our profiles match:
     - `see_agent_sdr`, `see_theme_sdr` ↔ seeProfile = (true, true)
     - `kill_theme_sdr`, `kill_agent_not_sdr` ↔ killProfile = (false, true)
@@ -163,27 +162,25 @@ theorem verb_vendler_for_sdr :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. `IsAtelic` ↔ Vendler Bridge
+-- § 5. `SSR_univ` ↔ Vendler Bridge
 -- ════════════════════════════════════════════════════
 
-/-! `IsAtelic` (= `SSR_univ`) connects to Vendlerian atelicity via
+/-! `SSR_univ` connects to Vendlerian atelicity via
     `qua_incompatible_with_ssr` and `forAdverbial_requires_ssr`:
-    QUA(P) + `IsAtelic` P → ⊥ at any P-event, so telic predicates can't
-    be `IsAtelic`. The atelic Vendler classes (states/activities) are
-    expected to be `IsAtelic` and to accept *for X*; the telic classes
-    (achievements/accomplishments) are not and accept *in X*.
+    QUA(P) + `SSR_univ` P → ⊥ at any P-event, so telic predicates
+    can't have `SSR_univ`. The atelic Vendler classes (states/activities)
+    are expected to have `SSR_univ` and to accept *for X*; the telic
+    classes (achievements/accomplishments) are not and accept *in X*.
 
     We verify this through the Vendler classification of fragment verbs.
-    The Bool-valued `predictsIsAtelic` below is the per-class typology
-    prediction; bridging to the substrate-side `IsAtelic` predicate on
+    The Bool-valued `predictsSSR` below is the per-class typology
+    prediction; bridging to the substrate-side `SSR_univ` predicate on
     a verb's denotation requires a verb-side `Event Time → Prop` denotation
     (theory-hub denotation discipline; follow-up work). -/
 
-/-- Per-verb prediction of `IsAtelic` (= SSR_univ) based on Vendler
-    class: state / activity → atelic; achievement / accomplishment /
-    semelfactive → not atelic. The Bool function name keeps "SSR" as
-    the substrate-level reference; consumers are directed to read
-    `predictsSSR P = true` as "predicts P satisfies `IsAtelic`". -/
+/-- Per-verb prediction of `SSR_univ` based on Vendler class:
+    state / activity → atelic; achievement / accomplishment /
+    semelfactive → not atelic. -/
 def predictsSSR : Option VendlerClass → Bool
   | some .state => true
   | some .activity => true

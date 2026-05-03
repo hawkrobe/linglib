@@ -22,16 +22,16 @@ dynamicity projection in Aktionsart), not a single theorem.
 
 `le.requiresAntiAtomDist = true` is the Fragment-level encoding of
 @cite{zhao-2025} Def. 5.36 (p. 165) ATOM-DIST_t at the verb-quantifier
-level. The substrate-side treatment lives in
-`Core/Time/AtomDist.lean` (`AtomDist τ V`, with `EvQuant.ofPred`
-bridging from event predicates to event quantifiers) and at the
-predicate level via `IsStative` (= `SR_univ τ point-interval-γ`) in
-`Theories/Semantics/Events/StratifiedReference/Specializations.lean`.
-The unification: Zhao 2025's particle-licensing condition is
-exactly the strata-theory atomic-granularity stativity test
-along the time dimension. Bridging Fragment Bool fields to
-substrate `Prop`s for specific Mandarin verbs requires per-verb
-denotations (theory-hub denotation discipline; follow-up).
+level. The substrate-side treatment lives in `Core/Time/AtomDist.lean`
+(`AtomDist τ V`, with `EvQuant.ofPred` bridging from event predicates
+to event quantifiers); for the witness-universal subinterval form on
+event predicates, see `HasSubintervalProp` in
+`Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`. The
+unification: Zhao 2025's particle-licensing condition is the
+quantifier-level atomic-granularity stativity test along the time
+dimension. Bridging Fragment Bool fields to substrate `Prop`s for
+specific Mandarin verbs requires per-verb denotations (theory-hub
+denotation discipline; follow-up).
 -/
 
 namespace Phenomena.TenseAspect.CrossDomainBridge
