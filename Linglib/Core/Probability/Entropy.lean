@@ -194,10 +194,11 @@ noncomputable def snd (joint : PMF (α × β)) : PMF β := joint.map Prod.snd
 -- §3.5: Marginal-from-joint structural lemmas
 -- ============================================================================
 
-/-- `(joint.map Prod.fst) a = ∑ b, joint (a, b)` for finite-Fintype joint PMFs.
+/-- `joint.fst a = ∑ b, joint (a, b)` for finite-Fintype joint PMFs.
     The first marginal is the row-sum of the joint. -/
 theorem fst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
-    joint.map Prod.fst a = ∑ b : β, joint (a, b) := by
+    joint.fst a = ∑ b : β, joint (a, b) := by
+  show joint.map Prod.fst a = _
   rw [PMF.map_apply]
   rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
         (fun p (h : p ∉ Finset.univ) => absurd (Finset.mem_univ p) h)]
@@ -212,10 +213,11 @@ theorem fst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
   · intro h
     exact absurd (Finset.mem_univ a) h
 
-/-- `(joint.map Prod.snd) b = ∑ a, joint (a, b)` for finite-Fintype joint PMFs.
+/-- `joint.snd b = ∑ a, joint (a, b)` for finite-Fintype joint PMFs.
     The second marginal is the column-sum of the joint. -/
 theorem snd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
-    joint.map Prod.snd b = ∑ a : α, joint (a, b) := by
+    joint.snd b = ∑ a : α, joint (a, b) := by
+  show joint.map Prod.snd b = _
   rw [PMF.map_apply]
   rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
         (fun p (h : p ∉ Finset.univ) => absurd (Finset.mem_univ p) h)]
@@ -233,14 +235,14 @@ theorem snd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
 /-- `toRealFn` of the first marginal equals the row-sum of `toRealFn` of the joint. -/
 theorem fst_toRealFn_eq_sum [DecidableEq α] (joint : PMF (α × β)) (a : α) :
     joint.fst.toRealFn a = ∑ b : β, joint.toRealFn (a, b) := by
-  unfold fst toRealFn
+  unfold toRealFn
   rw [fst_apply]
   rw [ENNReal.toReal_sum (fun b _ => joint.apply_ne_top (a, b))]
 
 /-- `toRealFn` of the second marginal equals the column-sum of `toRealFn` of the joint. -/
 theorem snd_toRealFn_eq_sum [DecidableEq β] (joint : PMF (α × β)) (b : β) :
     joint.snd.toRealFn b = ∑ a : α, joint.toRealFn (a, b) := by
-  unfold snd toRealFn
+  unfold toRealFn
   rw [snd_apply]
   rw [ENNReal.toReal_sum (fun a _ => joint.apply_ne_top (a, b))]
 

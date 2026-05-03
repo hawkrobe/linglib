@@ -120,7 +120,7 @@ noncomputable def normalizeOfFintype {α : Type*} [Fintype α] (f : α → ℝ�
     (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, h_pos⟩)
     (ENNReal.tsum_ne_top_of_fintype h_finite)
 
-private theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
+theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≤ 1 := by
   unfold marginal
   calc ∑' a, μ a * κ a b
@@ -130,7 +130,7 @@ private theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
           _ = μ a := mul_one _
     _ = 1 := PMF.tsum_coe μ
 
-private theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
+theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≠ ∞ :=
   (lt_of_le_of_lt (marginal_le_one κ μ b) ENNReal.one_lt_top).ne
 
@@ -583,6 +583,47 @@ of "the integral of a probability density over any set is ≤ 1". -/
 theorem sum_finset_le_one {α : Type*} (p : PMF α) (s : Finset α) :
     (∑ a ∈ s, p a) ≤ 1 :=
   (ENNReal.sum_le_tsum s).trans p.tsum_coe.le
+
+/-- **Finite-disjoint additivity bound for `PMF.toOuterMeasure`**.
+For a `Finset`-indexed family of pairwise-disjoint sets, the sum of their
+PMF measures is at most `1`.
+
+Proof via the indicator decomposition: each `p.toOuterMeasure (f i)` is
+`∑' x, (f i).indicator p x` (mathlib's `toOuterMeasure_apply`). Swap finset
+sum and tsum (`Summable.tsum_finsetSum`, with `ENNReal.summable` discharging
+the summability hypothesis). Per-`x`, the inner sum bound uses disjointness:
+at most one `i ∈ s` has `x ∈ f i`, so `∑ i ∈ s, (f i).indicator p x ≤ p x`.
+Summing pointwise: `∑' x, (...) ≤ ∑' x, p x = 1` (`PMF.tsum_coe`).
+
+Used by interval-additive sorites bounds in
+`Phenomena/Gradability/Studies/LassiterGoodman2017PMF.lean` (Eq. 37).
+General enough that any disjoint-events probability bound consumer
+can use it. -/
+theorem toOuterMeasure_finset_sum_disjoint_le_one
+    {α ι : Type*} (p : PMF α) (s : Finset ι) (f : ι → Set α)
+    (h_disj : (s : Set ι).PairwiseDisjoint f) :
+    (∑ i ∈ s, p.toOuterMeasure (f i)) ≤ 1 := by
+  -- Step 1: each toOuterMeasure unfolds to a tsum of indicators.
+  simp_rw [toOuterMeasure_apply]
+  -- Step 2: swap finset sum with tsum (ENNReal terms are summable).
+  rw [← Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
+  -- Step 3: pointwise bound `∑ i ∈ s, indicator (f i) p x ≤ p x`,
+  -- then chain through `∑' x, p x = 1`.
+  refine (ENNReal.tsum_le_tsum ?_).trans p.tsum_coe.le
+  intro x
+  by_cases hx : ∃ i ∈ s, x ∈ f i
+  · -- exactly one term is nonzero, equal to `p x`.
+    obtain ⟨i, hi, hxi⟩ := hx
+    have h_eq : (∑ j ∈ s, (f j).indicator p x) = (f i).indicator p x := by
+      refine Finset.sum_eq_single i (fun j hj hji => ?_) (fun h => absurd hi h)
+      -- For j ≠ i, x ∉ f j by disjointness (since x ∈ f i)
+      exact Set.indicator_of_notMem
+        ((h_disj hj hi hji).notMem_of_mem_right hxi) _
+    rw [h_eq, Set.indicator_of_mem hxi]
+  · -- no term is nonzero.
+    rw [Finset.sum_eq_zero (fun i hi => Set.indicator_of_notMem
+          (fun hxi => hx ⟨i, hi, hxi⟩) _)]
+    exact zero_le _
 
 /-- `PMF.toOuterMeasure` is strictly positive on any set that intersects
 the support. This is the "lower-bound half" of intermediacy: a probabilistic

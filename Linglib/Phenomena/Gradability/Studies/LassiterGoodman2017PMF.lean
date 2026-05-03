@@ -164,9 +164,9 @@ its own `Core/Probability/` slot. The discrete singleton form
 captures the §5 geometry. -/
 theorem sorites_premise_interval_sum_le_one (L1_latent : PMF Threshold)
     {β : Type*} (s : Finset β) (I : β → Set Threshold)
-    (_h_disjoint : ∀ b ∈ s, ∀ b' ∈ s, b ≠ b' → Disjoint (I b) (I b')) :
-    (∑ b ∈ s, L1_latent.toOuterMeasure (I b)) ≤ 1 := by
-  sorry  -- TODO: PMF.toOuterMeasure_finset_sum_disjoint_le_one in Core/Probability/
+    (h_disjoint : ∀ b ∈ s, ∀ b' ∈ s, b ≠ b' → Disjoint (I b) (I b')) :
+    (∑ b ∈ s, L1_latent.toOuterMeasure (I b)) ≤ 1 :=
+  PMF.toOuterMeasure_finset_sum_disjoint_le_one L1_latent s I h_disjoint
 
 /-! ## §2. Borderline as intermediate measure (L&G §4.4 closing argument)
 
