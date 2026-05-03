@@ -17,7 +17,6 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
-import Linglib.Core.Logic.Bilateral.Polarity
 import Linglib.Core.Logic.Bilateral.Classical
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
@@ -317,6 +316,7 @@ import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Hypergeometric
+import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.DirichletMultinomial

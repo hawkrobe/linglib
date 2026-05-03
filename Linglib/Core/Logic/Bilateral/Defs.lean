@@ -40,7 +40,12 @@ mathlib pattern (compare `IsLowerSet`, `SatDuality`, `IsLub`).
 
 Consumers provide their `positive`, `negative`, `negate` as ordinary
 definitions, then prove `IsBilateral` separately. Derived theorems
-(`Bilateral/Polarity.lean`) take the `IsBilateral` proof as a hypothesis.
+(triple-negation collapse, congruence) take the `IsBilateral` proof as
+a hypothesis and live in this file's §3.
+
+For the common case where consumers have pointwise `Iff` lemmas
+(`positive (negate φ) a ↔ negative φ a`) rather than function-level `=`,
+use the `IsBilateral.of_iff` helper to lift via `funext + propext`.
 
 ## Anti-pattern this avoids
 
@@ -53,9 +58,7 @@ form lets consumers continue to use their existing names.
 
 namespace Core.Logic.Bilateral
 
-universe u v
-
-variable {Form : Type u} {Result : Type v}
+variable {Form Result : Type*}
 
 -- ============================================================================
 -- §1 The paraconsistent bilateral predicate
@@ -97,5 +100,71 @@ theorem IsBilateral.negative_negate_negate
     (h : IsBilateral positive negative negate) (φ : Form) :
     negative (negate (negate φ)) = negative φ := by
   rw [h.negative_negate, h.positive_negate]
+
+-- ============================================================================
+-- §3 Constructor: pointwise Iff → function-level IsBilateral
+-- ============================================================================
+
+/-- **Construct `IsBilateral` from pointwise `Iff` lemmas**, lifted via
+    `funext + propext`. The common case for consumers whose `positive`
+    and `negative` produce `Form → α → Prop` (curried predicates over
+    states) and have `Iff.rfl`-style polarity-flip lemmas at the
+    pointwise level.
+
+    BSML and QBSML both fit this shape: `support_neg : support M (.neg φ) t ↔
+    antiSupport M φ t` lifts to `support M ∘ .neg = antiSupport M` via this
+    helper. Consumers like BUS / ICDRT / Truthmaker that bundle
+    positive/negative as record fields prove `IsBilateral` directly with
+    `rfl` and don't need this. -/
+theorem IsBilateral.of_iff {α : Type*}
+    {p q : Form → α → Prop} {neg : Form → Form}
+    (hp : ∀ φ a, p (neg φ) a ↔ q φ a)
+    (hn : ∀ φ a, q (neg φ) a ↔ p φ a) :
+    IsBilateral p q neg where
+  positive_negate φ := funext fun a => propext (hp φ a)
+  negative_negate φ := funext fun a => propext (hn φ a)
+
+-- ============================================================================
+-- §4 Triple-negation collapse
+-- ============================================================================
+
+/-- Three applications of `negate` collapse to one (on `positive`):
+    `positive (negate^3 φ) = negative φ`. Composes
+    `positive_negate_negate` with one more `positive_negate`. -/
+theorem IsBilateral.positive_negate_three
+    {positive negative : Form → Result} {negate : Form → Form}
+    (h : IsBilateral positive negative negate) (φ : Form) :
+    positive (negate (negate (negate φ))) = negative φ := by
+  rw [h.positive_negate_negate, h.positive_negate]
+
+/-- Three applications of `negate` collapse to one (on `negative`):
+    `negative (negate^3 φ) = positive φ`. -/
+theorem IsBilateral.negative_negate_three
+    {positive negative : Form → Result} {negate : Form → Form}
+    (h : IsBilateral positive negative negate) (φ : Form) :
+    negative (negate (negate (negate φ))) = positive φ := by
+  rw [h.negative_negate_negate, h.negative_negate]
+
+-- ============================================================================
+-- §5 Bilateral congruence
+-- ============================================================================
+
+/-- If two formulas have equal `positive`, their negations have equal
+    `negative` — bilateral analogue of "negation is a function." -/
+theorem IsBilateral.negate_congr_negative
+    {positive negative : Form → Result} {negate : Form → Form}
+    (h : IsBilateral positive negative negate) {φ ψ : Form}
+    (heq : positive φ = positive ψ) :
+    negative (negate φ) = negative (negate ψ) := by
+  rw [h.negative_negate, h.negative_negate, heq]
+
+/-- If two formulas have equal `negative`, their negations have equal
+    `positive`. -/
+theorem IsBilateral.negate_congr_positive
+    {positive negative : Form → Result} {negate : Form → Form}
+    (h : IsBilateral positive negative negate) {φ ψ : Form}
+    (heq : negative φ = negative ψ) :
+    positive (negate φ) = positive (negate ψ) := by
+  rw [h.positive_negate, h.positive_negate, heq]
 
 end Core.Logic.Bilateral

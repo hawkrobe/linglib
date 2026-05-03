@@ -384,15 +384,16 @@ theorem dne_antiSupport (M : QBSMLModel W Domain Pred)
 
 /-- QBSML's `support` and `antiSupport` form a paraconsistent bilateral
     logic (`Core.Logic.Bilateral.IsBilateral`) under `QBSMLFormula.neg`.
-    Same shape as BSML's `isBilateral`, lifted to the `Index W Var Domain`
-    carrier — point-polymorphism at work. -/
+    Same shape as BSML's `isBilateral`, lifted to `Index W Var Domain` —
+    point-polymorphism at work. The `of_iff` helper resolves the
+    metavariables that previously required explicit `Form/Result`
+    annotations. -/
 theorem isBilateral (M : QBSMLModel W Domain Pred) :
     Core.Logic.Bilateral.IsBilateral
       (Form := QBSMLFormula Var Pred)
       (Result := Finset (Index W Var Domain) → Prop)
-      (support M) (antiSupport M) QBSMLFormula.neg where
-  positive_negate φ := funext fun s => propext (support_neg M φ s)
-  negative_negate φ := funext fun s => propext (antiSupport_neg M φ s)
+      (support M) (antiSupport M) QBSMLFormula.neg :=
+  Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 -- ============================================================================
 -- §7 Frame conditions via s↓ projection

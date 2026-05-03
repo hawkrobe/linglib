@@ -27,11 +27,15 @@ namespace BilateralICDRT
 
 variable {W E : Type*}
 
-/-- DNE holds definitionally: ¬¬φ = φ. -/
+/-- DNE for `BilateralICDRT`: pointwise positive and negative interpretations
+    of `¬¬φ` agree with `φ`. Routed through the substrate's
+    `Core.Logic.Bilateral.IsBilateral.{positive,negative}_negate_negate`,
+    via `BilateralICDRT.isBilateral` (parent file). -/
 theorem dne_equality (φ : BilateralICDRT W E) (c : IContext W E) :
     φ.neg.neg.positive c = φ.positive c ∧
-    φ.neg.neg.negative c = φ.negative c := by
-  simp [neg_neg]
+    φ.neg.neg.negative c = φ.negative c :=
+  ⟨congrFun (BilateralICDRT.isBilateral.positive_negate_negate φ) c,
+   congrFun (BilateralICDRT.isBilateral.negative_negate_negate φ) c⟩
 
 /-- Negation preserves context consistency. -/
 theorem neg_consistent_iff (φ : BilateralICDRT W E) (c : IContext W E) :

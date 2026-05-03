@@ -219,13 +219,12 @@ theorem dne_antiSupport (M : BSMLModel W Atom)
 
 /-- BSML's `support` and `antiSupport` form a paraconsistent bilateral
     logic (`Core.Logic.Bilateral.IsBilateral`) under `BSMLFormula.neg`.
-    The polarity-flip axioms are `Iff.rfl` pointwise (`support_neg` /
-    `antiSupport_neg`), lifted to function equality via `funext + propext`. -/
+    Pointwise polarity-flip lemmas (`support_neg` / `antiSupport_neg`,
+    both `Iff.rfl`) lift to function equality via `IsBilateral.of_iff`. -/
 theorem isBilateral (M : BSMLModel W Atom) :
     Core.Logic.Bilateral.IsBilateral
-      (support M) (antiSupport M) BSMLFormula.neg where
-  positive_negate φ := funext fun t => propext (support_neg M φ t)
-  negative_negate φ := funext fun t => propext (antiSupport_neg M φ t)
+      (support M) (antiSupport M) BSMLFormula.neg :=
+  Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 @[simp] lemma support_conj (M : BSMLModel W Atom)
     (φ ψ : BSMLFormula Atom) (t : Finset W) :
