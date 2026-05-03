@@ -4,6 +4,29 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.611 — Kao 2015 Irony PMF migration (headline architectural)
+
+`Phenomena/Nonliteral/Irony/KaoEtAl2015PMF.lean` (new, 344 LOC) — paper-faithful
+5-weather formalisation on the same `qudProjL0` substrate as Kao 2014 hyperbole.
+
+- Headline theorem `irony_emerges_at_arousal_QUD`: `0 < qudProjL0 .arousal .terrible (.amazing, true, true)` — the architectural mechanism for irony, derived from the arousal U-curve creating valence-opposite equivalence classes
+- Architectural lemma `arousal_QUD_equivalence_iff`: arousal QUD partitions worlds purely by arousal value, ignoring valence and weather
+- Contrast theorem `no_irony_under_state_QUD`: state QUD does NOT enable irony (no arousal-symmetric prior structure on weather alone)
+- Substrate validation: zero new substrate needed — same `qudProjL0` + `Finset.sum_pos_iff_of_nonneg` pattern as hyperbole
+
+Old `KaoEtAl2015.lean` (rsa_predict version) retained — still imported by downstream `SpinosoDiPiano2025` (RSAConfig consumer using `Weather`/`pleasantWeather`/`terribleWeather`). Retire when Spinoso migrates.
+
+Out of scope: the 6 paper findings (`ironic_nonliteral`, `ironic_valence_flip`, etc.) — empirical-fit content sketched in §6 prose; architectural payoff is the headline.
+
+### 0.230.667 — Stage 1b step 3+RHS: DoubleCut substrate + rhs_eq_sum_DoubleCut
+
+- New file `Linglib/Core/Algebra/ConnesKreimer/DoubleCut.lean` (~205 LOC, 0 sorrys).
+- `DoubleCut T := (Σ C : CutShape T, AugCutShape (remainder C)) ⊕ Unit` — right-iterated form. `abbrev` so mathlib's `Sum.fintype` + `Sigma.fintype` apply automatically. Constructors `real C ac₂` and `extractWhole`.
+- `tripleTensor R : DoubleCut T → Hc R α ⊗[R] (Hc R α ⊗[R] Hc R α)` — projection to right-associated triple tensor. Mirrors the (BOT, MID, TOP) 3-level partition: real cut → (cutForest C, cutForest_aug ac₂, remainderForest ac₂); extractWhole → ({T}, 0, 0).
+- `rhs_eq_sum_DoubleCut` — proved: `(map id Δ)(comulTree T) = ∑ dc : DoubleCut T, dc.tripleTensor R`. Easier direction; ~60 LOC. Strategy: `comulTree_eq_sum_AugCutShape` + `map_sum` + `Fintype.sum_sum_type` to split, then `Fintype.sum_sigma` to flatten Σ on the RHS, then `comulAlgHom_apply_single` + `comulTree_eq_sum_AugCutShape` again on the inner expansion.
+- Refactor: `comulAlgHom_apply_single` moved from `Bialgebra.lean` to `Coproduct.lean` (next to `comulAlgHom`'s definition) so `DoubleCut.lean` can use it without an upstream import cycle.
+- Sorry count unchanged (1, on `comul_coassoc_tree`); next session attacks LHS direction (`comulForest (cutForest C)` multi-tree expansion).
+
 ### 0.230.660 — Kao 2014 hyperbole: PMF migration, headline architectural theorem
 
 Replaces 347-LOC rsa_predict version with 364-LOC PMF version focused on
