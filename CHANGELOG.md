@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.657 — Kao 2014 metaphor: PMF migration with EReal-softmax; retire rsa_predict
+
+Replaces `Linglib/Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean`
+(rsa_predict-tactic) with a self-contained PMF formalisation built
+directly on the substrate.
+
+The architectural payoff: speaker as `PMF.softmax` of EReal-valued
+log-utility, exactly as the paper writes it (Eq. 1-2):
+
+    s1Score α g f u = (α : EReal) * ENNReal.log (qudProjL0 g u f)
+    s1 α g f        = PMF.softmax (s1Score α g f) ...
+
+The EReal substrate handles the boundary case correctly: when the
+QUD-projected L0 marginal is 0, `ENNReal.log = ⊥` and `EReal.exp(⊥) = 0`,
+so impossible utterances correctly receive 0 mass.
+
+The previous KaoEtAl2014PMF.lean used `rpow` as a workaround for mathlib's
+`Real.log 0 = 0` quirk. The fix landed at the substrate level
+(0.230.656), not at the per-paper level.
+
+- §0-§4: model setup (types, priors, L0, QUD projection)
+- §5: speaker via `PMF.softmax (EReal-valued log-score)`
+- §6: goal-marginalised speaker via `PMF.bind`
+- §7: pragmatic listener via `PMF.posterior`
+- §9: 6 findings stated as outer-measure inequalities; numerical
+  proofs sorry'd (TODO: ℚ-analogue + `native_decide` for parity with
+  retired rsa_predict version)
+
+The numerical retirement-parity is deferred — substantial machinery
+(ℚ-analogue of rpow / ENNReal.log) needed. The structural skeleton +
+EReal-softmax architecture is the load-bearing contribution.
+
 ### 0.230.657 — Audit cleanups + Condoravdi-Lauer 2012 imperatives (force = .preferential first consumer)
 
 Three threads landed: 8 audit cleanups, three new substrate variants, and the first study consumer of the substrate's `force = .preferential` axis.
