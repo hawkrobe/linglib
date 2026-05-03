@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.626 — Phase 7: Spellout → Theories/Morphology/DM/VocabSimple.lean
+
+Migration phase 7/9.
+
+- `git mv Theories/Interfaces/SyntaxPhonology/Minimalist/Spellout.lean → Theories/Morphology/DM/VocabSimple.lean`. Renamed away from "Spellout" — the linguistics review flagged the `SpellOut.lean` (Y-model junction) / `Spellout.lean` (DM-style Vocabulary Insertion) overload as confusing because Chomsky-style Spell-Out and DM-style VI are different operations at adjacent stages of the PF branch.
+- `VocabEntry` kept as the Minimalist specialization (hardcoded `features : FeatureBundle` + `exponent : String` + `Option Cat`), sitting alongside DM's parametric `VocabItem (Ctx Root : Type)` in `VocabularyInsertion.lean` rather than merged into it — discovery found ~25+ call sites depending on the simpler shape's ergonomy.
+- Namespace stays `Minimalist` (the type uses Minimalist's `FeatureBundle` and `Cat` globals).
+- Docstring rewritten to make the specialization-vs-general relationship explicit.
+- 3 importers retargeted (Scott2023, Preminger2014, ElkinsTorrenceBrown2026); Preminger2014 docstring path ref updated. Linglib.lean root index updated.
+
+Out of scope (deferred to follow-up): explicit equivalence lemma `VocabEntry ↔ VocabItem FeatureBundle Unit`; polymorphizing `VocabItem (Ctx Root : Type)` → `Type*`. Both belong to a consolidation pass that ties the two structures together end-to-end.
+
 ### 0.230.625 — Phase 6: Relativization → Typology/Relativization/ExtractionBridge
 
 Migration phase 6/9.
