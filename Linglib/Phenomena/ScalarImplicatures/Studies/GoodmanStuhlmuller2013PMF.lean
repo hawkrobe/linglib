@@ -669,7 +669,9 @@ private theorem s1Score_liftMeaning_apply_eq_ite
 -- File-scoped: the if-form depends on Access/WorldState/qualityOk, so we keep
 -- the simp tag local rather than polluting the substrate set with a private
 -- paper lemma (audit hygiene rule).
-attribute [local pmf_eval_simps] s1Score_liftMeaning_apply_eq_ite
+attribute [local pmf_eval_simps]
+  s1Score_liftMeaning_apply_eq_ite
+  obsKernel_apply
 
 /-- Sum unfolder for `WithSilence U` over a derived-Fintype `U`. Required
 because `Fin.sum_univ_*` doesn't apply to custom enums; users supply this
@@ -1624,17 +1626,11 @@ theorem some_minimal_canceled_sil
         (some QUtt.some_) hMarg) .s3) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a1_apply, marginalSpeaker_a1_apply]
-  rw [S1g_qLifted_a1_k0_some_eq_zero, S1g_qLifted_a1_k1_some_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  -- LHS: obsKernel .a1 .s2 ⟨1,_⟩ * 4/7
-  -- RHS: obsKernel .a1 .s3 ⟨1,_⟩ * 4/7
-  rw [obsKernel_a1_s2_k1, obsKernel_a1_s3_k1]
-  rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from by simp,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
+      S1g_qLifted_a1_k0_some_eq_zero, S1g_qLifted_a1_k1_some_eq,
+      obsKernel_a1_s2_k1, obsKernel_a1_s3_k1]
+  ennreal_close
 
 /-- Finding 8: at minimal access, "one" does NOT favor `s1 > s2`. -/
 theorem one_minimal_1v2_canceled_sil
@@ -1648,14 +1644,11 @@ theorem one_minimal_1v2_canceled_sil
         (some NumUtt.one) hMarg) .s2) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a1_apply, marginalSpeaker_a1_apply]
-  rw [S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  rw [obsKernel_a1_s1_k1, obsKernel_a1_s2_k1]
-  rw [← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
+      S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
+      obsKernel_a1_s1_k1, obsKernel_a1_s2_k1]
+  ennreal_close
 
 /-- Finding 9: at minimal access, "one" does NOT favor `s1 > s3`. -/
 theorem one_minimal_1v3_canceled_sil
@@ -1669,15 +1662,11 @@ theorem one_minimal_1v3_canceled_sil
         (some NumUtt.one) hMarg) .s3) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a1_apply, marginalSpeaker_a1_apply]
-  rw [S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  rw [obsKernel_a1_s1_k1, obsKernel_a1_s3_k1]
-  rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from by simp,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a1_apply, marginalSpeaker_a1_apply,
+      S1g_lbLifted_a1_k0_one_eq_zero, S1g_lbLifted_a1_k1_one_eq,
+      obsKernel_a1_s1_k1, obsKernel_a1_s3_k1]
+  ennreal_close
 
 /-! ### `.a2` partial-access findings -/
 
