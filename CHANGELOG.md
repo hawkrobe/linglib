@@ -4,6 +4,16 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.661 — Booth 2022 bilateral inquisitive minimal-cover semantics; sixth `IsBilateral` consumer
+
+- New `Phenomena/Modality/Studies/Booth2022.lean` (~330 LOC): `BilatInqProp W` record (paired `Question W` + `no_overlap`), `negate`/`isBilateral`/`atom`/`disj`/`conj`/`necessity`/`possibility` constructors, `IsCover`/`IsMinCover` substrate, truth/falsity wrappers, 4-world worked example.
+- `BilatInqProp.isBilateral` instance is `rfl`-trivial (bilateral negation = bundled-record swap), bringing the `IsBilateral` substrate to 6 consumers (BSML, QBSML, BUS, ICDRT, Truthmaker, Booth).
+- `necessity.no_overlap` proved structurally: any non-empty state in both polarities yields a witness world `v` with `{v} ∈ φ.pos ∩ φ.neg`, contradicting `φ.no_overlap` via `IH`.
+- Substrate alignment: `Question.declarative` = Booth's `↓{·}`, `Question.alt` = Booth's `alt`, `IsBilateral.of_iff` not even needed (record swap = `rfl`).
+- Out of scope (deferred until 2nd consumer warrants): `Theories/Semantics/Modality/BilateralInquisitive.lean` substrate split, `Core/Combinatorics/Cover.lean` hoist, `Phenomena/Modality/Divergences.lean` cross-framework theorem file.
+- One documented `sorry`: meta-language Independence (Booth Fact 9) requires Compactness-of-Alternatives + non-Hurford machinery beyond first-cut scope.
+- New bib entry: `booth-2022` (SuB 26 proceedings); validated=false pending DOI confirmation.
+
 ### 0.230.660 — Stage 1 scaffolding: CK Bialgebra instance + 3 law sorries; backed out Stage 0.7 abbrev
 
 Two moves: revert Stage 0.7's premature `abbrev Hc` switch, then create the CK Bialgebra scaffolding.
