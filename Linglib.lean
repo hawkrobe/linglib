@@ -16,6 +16,8 @@ import Linglib.Typology.Pronouns
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
+import Linglib.Core.Logic.StateAlgebra.Partition
+import Linglib.Core.Logic.StateAlgebra.Frames
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD
@@ -266,7 +268,6 @@ import Linglib.Core.Case.Comparative
 import Linglib.Core.AgreementTarget
 import Linglib.Core.Morphology.Containment
 import Linglib.Core.Case.Allomorphy
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
 import Linglib.Core.Relativization.Basic
 import Linglib.Theories.Interfaces.Morphosyntax.Relativization

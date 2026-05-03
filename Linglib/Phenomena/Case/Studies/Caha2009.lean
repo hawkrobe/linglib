@@ -1,4 +1,5 @@
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Order
 import Linglib.Fragments.Slavic.Case
 import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Cassubian.Case
@@ -34,10 +35,9 @@ import Linglib.Fragments.Yakut.Case
 Caha's central proposal (@cite{caha-2009} §1.1): the morphosyntactic
 representation of each case literally *contains* the representations
 of all cases below it on the universal hierarchy:
-`[[[[[ NOM ] ACC ] GEN ] DAT ] P ]`. This study file applies the
-containment predicate `RespectsCahaContainment` (in
-`Theories/Interfaces/Morphosyntax/CaseContainment.lean`) to each
-Fragment case inventory.
+`[[[[[ NOM ] ACC ] GEN ] DAT ] P ]`. This study file defines the
+Caha-specific containment predicate `RespectsCahaContainment` and
+applies it to each Fragment case inventory.
 
 Caha's **Universal Case sequence** is NOM – ACC – GEN – DAT – INST –
 COM (@cite{caha-2009} (10b), p. 10); the Russian-specific sequence
@@ -57,7 +57,27 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 namespace Phenomena.Case.Studies.Caha2009
 
 open Core
-open Interfaces.Morphosyntax.CaseContainment
+
+/-! ## Caha containment-respect predicate
+
+Does an inventory respect Caha's containment hierarchy? True iff `inv`
+is downward-closed under the canonical `PartialOrder Case` (Caha
+containment) defined in `Core/Case/Order.lean`: whenever `c ∈ inv` and
+`d ≤ c`, then `d ∈ inv`. Off-hierarchy cases (ERG, ABS, INST, COM, …)
+impose no constraint — in the Caha order they only have `c ≤ c`, so
+the downward-closure condition is vacuous. On-hierarchy `c` of rank
+`r` forces every lower on-hierarchy case (ranks `0, …, r-1`) into
+`inv`, which is exactly the prefix-contiguity Caha demands.
+
+Mathlib's `IsLowerSet` would suffice for the same content; the
+Caha-named predicate is kept here for grep-ability and because the
+substantive claim is Caha-specific. -/
+
+def RespectsCahaContainment (inv : Finset Case) : Prop :=
+  ∀ c ∈ inv, ∀ d, d ≤ c → d ∈ inv
+
+instance (inv : Finset Case) : Decidable (RespectsCahaContainment inv) := by
+  unfold RespectsCahaContainment; infer_instance
 
 /-! ## Slavic substrate: containment lemmas
 
