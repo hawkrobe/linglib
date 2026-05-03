@@ -4,6 +4,112 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.654 — Core/Logic/Bilateral/: paraconsistent + classical bilateral substrate
+
+Five bilateral consumers (BSML, QBSML, BUS, ICDRT, Truthmaker) now share a common `Core/Logic/Bilateral/` substrate. `SatDuality` migrated from `Consequence.lean` to its mathlib-shaped home as the classical sibling.
+
+**`Core/Logic/Bilateral/Defs.lean`** (NEW, ~101 LOC):
+- `IsBilateral` Prop-bundle of polarity-flip axioms (`positive_negate`,
+  `negative_negate`). Mathlib unbundled-axioms pattern (cf. `IsLowerSet`).
+  Replaces the deleted typeclass-based `Bilateral.lean` whose three
+  orthogonal type parameters caused elaboration failures.
+- `IsBilateral.{positive,negative}_negate_negate`: DNE on each interpretation.
+
+**`Core/Logic/Bilateral/Polarity.lean`** (NEW, ~59 LOC):
+- Triple-negation collapse, bilateral congruence theorems on top of `IsBilateral`.
+
+**`Core/Logic/Bilateral/Classical.lean`** (NEW, ~71 LOC):
+- `SatDuality` structure (Mode-parametric classical bilateral). Migrated
+  by content from `Consequence.lean`; the Cobreros `consequence_dual`
+  theorem stays where it is and now uses fully-qualified
+  `Core.Logic.Bilateral.SatDuality`.
+
+**Five consumer instances** (~10 LOC each):
+- `BSML/Defs.lean`: `isBilateral` via `support_neg`/`antiSupport_neg` +
+  `funext + propext`.
+- `QBSML/Defs.lean`: same shape, point-polymorphic to `Index W Var Domain`.
+- `Dynamic/Effects/Bilateral.lean`: `BilateralDen.isBilateral` (`rfl`).
+- `Dynamic/Bilateral/ICDRT.lean`: `BilateralICDRT.isBilateral` (`rfl`).
+- `Truthmaker/Basic.lean`: `BilProp.isBilateral` (`rfl`).
+
+**The substrate joint exposed**: BSML/QBSML fold support+antiSupport into
+`eval pol`; BUS/ICDRT/Truthmaker bundle as record fields. Both shapes are
+valid `IsBilateral` instances under the `Result`-type polymorphism. The
+previously-implicit pattern is now substrate.
+
+**Out of scope** (deferred):
+- `enrichment_strengthens_both` per-formula-type duplication (BSML, QBSML).
+  Closure-operator-on-TeamPred lift defers until 3rd predicate-bilateral
+  logic with NE atom lands.
+- `PrProp` / `TwoDimProp` carrier unification. Same shape, different
+  algebra (presup-projection, CI vs polarity-swap); carrier-only unification
+  would be visual-only.
+- `RegularProp` (orthologic) `IsBilateral` instance — defer until that
+  module gets actively consumed.
+
+### 0.230.656 — Stage 0.5: Hopf substrate hoisted from Theories/Syntax/Minimalist/Hopf/ to Core/
+
+Per `scratch/mcb_stage1_plan.md` Stage 0.5. The `[UPSTREAM]` portions of the Hopf substrate (generic Connes-Kreimer-style bialgebra of decorated rooted trees, parameterized over leaf type α and coefficient ring R) relocated to `Linglib/Core/`. The `[LINGLIB]` LIToken-specific bridges stay in `Theories/Syntax/Minimalist/Hopf/`.
+
+**Moves**:
+- `Linglib/Core/Combinatorics/RootedTree/Decorated.lean` (NEW, 138 LOC) ← `Hopf/Defs.lean` §1-§2 (DecoratedTree, recOnMul, leafCount, Mul instance) + Forest abbrev
+- `Linglib/Core/Combinatorics/RootedTree/AdmissibleCut.lean` (NEW, 288 LOC) ← `Hopf/AdmissibleCut.lean` (entire — was [UPSTREAM] per its own docstring)
+- `Linglib/Core/Algebra/ConnesKreimer/Defs.lean` (NEW, 80 LOC) ← `Hopf/Defs.lean` §3-§4 (Hc R α + Algebra/Semiring forwarding instances)
+- `Linglib/Core/Algebra/ConnesKreimer/Coproduct.lean` (NEW, 279 LOC) ← `Hopf/Comul.lean` (entire — Δ^c, Δ^d, counit, comulAlgHom, comulDelAlgHom)
+
+**Trims**:
+- `Hopf/Defs.lean` 282 → 95 LOC (kept SyntacticObjectH := DecoratedTree LIToken + SyntacticObject.toH + DecoratedTree.toSyntacticObject? + round-trip theorem)
+- `Hopf/AdmissibleCut.lean` 285 → 15 LOC (re-export shim)
+- `Hopf/Comul.lean` 269 → 19 LOC (re-export shim)
+
+**Namespace decision**: kept `namespace Minimalist.Hopf` in the new Core/ files for now to minimize migration risk. Cleaner namespace (e.g., `ConnesKreimer.X`) is a separate follow-up; the directory placement already encodes the [UPSTREAM] honesty the audit recommended.
+
+**Behavior unchanged**: no proofs touched, no types changed, no instances added or removed. The `def Hc` (vs `abbrev Hc`) workaround that prevents mathlib's group-like `Bialgebra` instance from clashing with our Connes-Kreimer one is preserved with its docstring explanation.
+
+**Linglib.lean**: 4 new Core imports inserted before the existing Hopf imports (lines 2111-2114).
+
+**Build**: 1842-job downstream cone green (NoComplexityLoss, MinimalSearch, BinaryOptimality, Counting, Selection, Economy, Chomsky1995, FromFragments, all transitive). Pre-existing 2 sorrys in `Hopf/MergeAction.lean` (the EM bridges Stage 1 will close) and 1 sorry in `Derivation.lean:133` are untouched.
+
+**3-agent architecture-audit motivation** (separate from this commit): the substrate is already mathlib-shaped at the type level — only the directory paths lied. Stage 0.5 closes the path-honesty gap as zero-migration-cost prep work for Stage 1 (coassoc proof + Bialgebra instance).
+
+### 0.230.655 — Polymorphic commitment substrate: `IndexedWeightedCommitment W G`, `CommitmentSpace W G`
+
+Phase 1 + 2 of the unified polymorphic substrate that subsumes binary (Krifka, F&B) and probabilistic (Lauer-credence, Anderson distributional) commitment frameworks under one type family.
+
+**`Core/Discourse/Commitment.lean` §4** — new polymorphic primitive:
+- `IndexedWeightedCommitment W G` inductive with `commit (committer, force, weight : W → G)` and `refuse (committer, force, content : W → Prop)` constructors. Three orthogonal axes: who commits, with what `CommitmentForce` (doxastic per @cite{krifka-2015} / preferential per @cite{lauer-2013} via @cite{cohen-krifka-2014}), with what per-world grade in `G`.
+- `IndexedCommitment W := IndexedWeightedCommitment W Prop` — abbrev for the binary doxastic case (Krifka 2015 default).
+- Smart constructors `IndexedCommitment.commit/refuse` defaulting to `.doxastic` keep existing call sites source-compatible.
+- Helpers `committer`, `force`, `IsCommit` lifted to the polymorphic type; `content`, `toCommitment` stay binary-specific (require `G = Prop`).
+
+**`Theories/Dialogue/CommitmentSpace.lean`** — substrate polymorphic in `G`:
+- `CommitmentSpace W G` (was `CommitmentSpace W`).
+- Polymorphic operators (work for any `G`): `empty`, `assert`, `monopolarQuestion`, `negatedQuestionHigh` (refuse takes `W → Prop` regardless of `G`), `acceptFirst`, `rejectFirst`, `hasNoOpenContinuations`. Each takes `force : CommitmentForce := .doxastic` defaulted, so existing binary call sites are unchanged.
+- Binary-specific operators (require `G = Prop` because they use propositional negation): `bipolarQuestion`, `negatedQuestionLow`, `toContextSet`. `HasContextSet` instance for `CommitmentSpace W Prop`.
+- `KrifkaState` keeps its field `space : CommitmentSpace W Prop` — per-agent slates are inherently binary; future graded states belong in a separate `WeightedKrifkaState W G`.
+
+**Documents the structural target**: dialogue frameworks differ on three orthogonal axes — committer, force, grade — and the substrate now factors all three. Per-world grade (Anderson density-style) vs per-proposition grade (Lauer credence aggregate-style) is a measure-theoretic duality; substrate picks per-world (strictly more general).
+
+**Consumers**: `Krifka2015.lean`, `Krifka2020.lean` build unchanged via the `IndexedCommitment` abbrev + smart constructors. Full Linglib build green (5742 jobs); only sorrys are pre-existing or the documented `applyComplex .disj` placeholder.
+
+**Out of scope**: per-agent slate polymorphism (Lauer's PB/PEP separate slates), `Complement G` typeclass to generalize `bipolarQuestion`/`negatedQuestionLow`, `HasSupport G` typeclass for polymorphic `toContextSet`, first probabilistic worked example. These are the natural Phase 3 targets once a study consumer demands them.
+
+### 0.230.655 — Algebra.lean audit: factual fixes + foundation-vs-orphan note
+
+Random-pick 4-agent audit on `Theories/Syntax/Minimalist/Algebra.lean` (207 LOC, anchored on Marcolli-Chomsky-Berwick 2025). Fixes landed:
+
+- **Takahashi-Hulsey misattribution to MCB removed**. PDF-grep confirmed strings "Takahashi"/"Hulsey"/"Wholesale" appear ZERO times in MCB 2025. Algebra.lean's §1.7 paraphrase had wrongly attributed WLM-as-T-H to MCB; T-H 2009 IS the WLM source but the attribution belongs at Derivation.lean's `Step.wlm` (where it already correctly cites T-H), not in any MCB paraphrase.
+- **§1.7 reduction-direction paraphrase corrected** against MCB pp. 73-80 read directly. Old wording "operations on a separate Lie-algebra structure dual to the workspace Hopf algebra; they reduce to External/Internal Merge under that duality" obscured the actual mechanism (Milnor-Moore duality between commutative connected Hopf and Lie algebra of primitives in dual; Lemma 1.7.2 right pre-Lie identity). Rewrote to match MCB's §1.7 prelude conclusion verbatim, including the previously-missing reference [142]/Sideward-Merge caveat.
+- **Stale `leafCount = FreeMagma.length` "now `rfl`" claim fixed**. Basic.lean:324-326 has `def SyntacticObject.leafCount` as a separate recursive def, not an `abbrev`; the bridge proof needs induction. Docstring now says so + flags abbrev-promotion as deferred.
+- **Step.wlm anchored with TODO marker** at Derivation.lean:43-52, pointing at the §1.7 rederivation path (was an orphan promise from Algebra.lean docstring).
+- **Mathlib hygiene**: dropped `@[simp]` from `mul_eq_node` (competed with `mul_eq_merge` for `x * y` LHS); deleted duplicate `merge_is_freeMagma_mul` (sides-flipped clone of `mul_eq_merge`); replaced 6 bare `simp` calls with `simp only` or direct term proofs (`Or.inl rfl` / `Or.inr rfl` for `immediatelyContains` membership).
+- **Foundation-vs-orphan docstring note added**: the integration auditor flagged `nonplanarEquiv` / `liftMagma` / `properSubterm` as "dead substrate" with zero consumers. History check (commits 0.230.126-449, Stage-0 SyntacticObject→FreeMagma migration + Hopf substrate rebuild) plus `Hopf/Defs.lean:40-59` explicitly flagging the planar/nonplanar gap as unresolved show these are foundation-ahead-of-consumers, not dead. Docstring now flags them as such with the no-dead-substrate caveat: re-audit if still unused after Hopf trajectory clarifies.
+- **Set-vs-multiset divergence from MCB documented**: MCB p.25 explicitly identifies `{a,a} = {a}`; `nonplanarEquiv` does not add an `idem` generator and so realizes the unordered-pair (multiset) abstraction, not MCB's set abstraction. Documented as an open faithfulness gap on the quotient.
+
+Out of scope: SynGraph embedding (`SyntacticObject → SynGraph LIToken` that `SynGraph.lean` docstring promises but doesn't construct); cross-framework comparison theorems vs MereologicalSyntax / CCG; the 110-page Hopf-algebra coverage gap (workspace Hopf, Markov-chain Merge, Insertion Lie algebra) — file scope remains §1.1.2 + §1.1.3 only, filename "Algebra.lean" overpromises but renaming deferred.
+
+Build: 1885-job downstream cone (Counting, BinaryOptimality, Derivation, Selection, Economy, NoComplexityLoss, MinimalSearch, Hopf/MergeAction, Larson1988, Erlewine2018, Chomsky1995, ColeHermon2008, HarizanovGribanova2019Bulgarian) green.
+
 ### 0.230.653 — TeamPred α: drop decorative Form/Model parameters
 
 Path 3 of the substrate-grounding plan (after 0.230.652's lattice-fact
