@@ -4,6 +4,47 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.652 — Mathlib-grounded team-set closure substrate
+
+The Anttila Prop 2.2.2 flatness theorem hoisted from a parametric
+support-relation form to a pure lattice fact about `Set (Finset α)` using
+mathlib's `IsLowerSet` and `SupClosed`.
+
+**`Core/Logic/Team/Closure.lean`** (NEW, ~169 LOC):
+- `TeamSet α := Set (Finset α)` — the underlying type
+- `IsTeamFlat (T : TeamSet α)` — flatness as "membership reduces pointwise"
+- `isTeamFlat_iff_isLowerSet_supClosed_empty` — Anttila Prop 2.2.2 stated
+  using mathlib's `IsLowerSet` (`Mathlib.Order.Defs.Unbundled`) and
+  `SupClosed` (`Mathlib.Order.SupClosed`). No Form / Model parameters;
+  the theorem is about subsets of `Finset α` under inclusion + union.
+- Forward extraction: `IsTeamFlat.isLowerSet`, `.supClosed`, `.hasEmpty`.
+- Constructor `isTeamFlat_of_isLowerSet_supClosed_empty`.
+
+**`Core/Logic/Team/Properties.lean`** (refactored, -34 LOC net):
+- Original parametric defs unchanged (consumer-stable).
+- `flat_iff_downwardClosed_unionClosed_emptyTeam`: proof delegates to
+  `Closure.isTeamFlat_iff_isLowerSet_supClosed_empty` instantiated at
+  `{ t | support M φ t }` per model. The deep content lives in
+  `Closure.lean`; this theorem curries it across `(M, φ)`.
+- Docstring rewritten to surface the relationship.
+
+**`Core/Question/Flatness.lean`** (additions, +25 LOC):
+- `isLowerSet_props`: Question's `downward_closed` axiom IS mathlib's
+  `IsLowerSet` at `Set W` carrier (`LE = ⊆`).
+- `supClosed_props_of_isDeclarative`: declarative implies binary
+  `SupClosed` (`⊔ = ∪`).
+- `bot_mem_props`: `contains_empty` IS `⊥ ∈ P.props`.
+
+**Architectural payoff**: BSML, QBSML, Question, and any future
+team-semantic logic with `Finset α` or `Set α` carrier inherit the
+flatness theorem at zero substrate cost. One proof in `Closure.lean`,
+specialised everywhere.
+
+**What's still duplicated** (next-layer abstraction): BSML and QBSML's
+`enrichment_strengthens_*` proofs are still per-formula-type. A
+`TeamFormula` typeclass (with `ne`, `conj`, `disj` constructors and
+bilateral-eval shape) would unify them. Defer until 4th consumer lands.
+
 ### 0.230.654 — Magri 2009 audit fixes: R machinery (eq. 41-43), correct .exhIE mechanism
 
 Audit of 0.230.651 Magri bridge against the actual paper found three
