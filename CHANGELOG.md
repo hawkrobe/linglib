@@ -4,6 +4,72 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.614 — Metaphor PMF: extract architectural positivity lemmas (audit C1)
+
+The Kao 2014 metaphor PMF formalisation had 7 sorrys; one (`L1Kernel_marginal_ne_zero`) was purely architectural (positivity from PMF-level full-support facts) but the file lacked the supporting lemmas. Audit recommendation: extract `mixedS1_pos` so the architectural sorry can be closed and the 6 remaining (paper-finding) sorrys are isolated as numerical-fit content.
+
+- **`catPriorℕ_pos`** — every category has positive integer count (decide).
+- **`catPmf_pos`** — `0 < catPmf c` for all c, via the integer count.
+- **`worldPmf_pos`** — `0 < worldPmf w` for all worlds. Discharged structurally via `PMF.mem_support_bind_iff` + `PMF.mem_support_map_iff` from mathlib (no numerical computation needed).
+- **`s1_pos`** — `0 < s1 α hα g f u` for all u, direct from substrate `PMF.softmax_pos_iff_score_ne_bot` + existing `s1Score_ne_bot`.
+- **`mixedS1_pos`** — `0 < mixedS1 α hα goalPrior f u` whenever some goal `g` has `goalPrior g ≠ 0`. Witnessed via `mem_support_bind_iff` with the `g`-th term.
+- **`L1Kernel_marginal_ne_zero`** — sorry → 1-line proof: `marginal_ne_zero` + `worldPmf_pos` + `mixedS1_pos`.
+
+Net: 7 sorrys → 6 sorrys. The 6 remaining (`nonliteral`, `feature_large/graceful/majestic`, `context_sensitivity`, `literal_correct`) are paper-finding numerical claims at Kao's specific λ=3 and 99×whale-vs-person catPrior asymmetry — each requires bounding `mixedS1` numerically against the prior asymmetry, not architecture.
+
+### 0.230.670 — Stage 1b: leaf+trace cases of lhs_eq_sum_DoubleCut closed via primitive coassoc
+
+- Added generic `comul_coassoc_of_primitive` (~7 LOC): for any `y : Hc R α` with `Δ y = y ⊗ 1 + 1 ⊗ y` (primitive form), iterated coassoc holds automatically. The classical "primitive elements satisfy coassoc" fact, applied to our specific coalgebra.
+- Added wrapper `lhs_eq_sum_DoubleCut_of_primitive_tree` (~17 LOC): bridges `comulTree T` (primitive form) → `comulAlgHom (forestToHc {T})` → primitive coassoc → RHS via `rhs_eq_sum_DoubleCut`.
+- `lhs_eq_sum_DoubleCut` now case-on-T: leaf (~6 LOC), trace (~6 LOC), node (sorry). Each primitive case uses the generic helper + a few simp lemmas to compute the singleton-cut sum.
+- New `@[simp]` lemmas: `forestToHc_zero` in Coproduct.lean; `cutForest_atLeaf`, `remainder_atLeaf`, `cutForest_atTrace`, `remainder_atTrace` in AdmissibleCut.lean. Each is `rfl`. Eliminates explicit `show` rewrites in the primitive cases.
+- The remaining sorry is now ONLY on the `.node l r` case of `lhs_eq_sum_DoubleCut` — the substantive Foissy cut-commutation bijection. Stage 1b's last unresolved obligation.
+- Compare to legacy: this approach reuses mathlib infrastructure (`Multiset.Sections`, `Multiset.prod_map_sum`, `Fintype.sum_*` lemmas, generic primitive-coassoc) instead of legacy's hand-rolled list-permutation machinery (~200 LOC of `forestTerms_filter_*`, `flatMap_comm_perm`, `childLHS_perm_childRHS`).
+
+### 0.230.674 — P4.1: SDRT substrate + Asher & Lascarides 2003 Example 21 RFC verification
+
+First of the Phase 4 coverage gaps from the audit. Closes the
+"SDRT entirely absent" finding by landing the substrate with the
+RFC computation and a paper-anchored worked example.
+
+**New substrate** (`Theories/Discourse/SDRT/`):
+- `Defs.lean` — `RhetoricalRelation` (Vocabulary-3 + denial-bearing
+  Correction): Narration / Elaboration / Explanation / Result /
+  Background / Contrast / Parallel / Consequence / Alternation /
+  Correction. With `kind` (subordinating / coordinating /
+  structural per §4.7) and `veridicality` (veridical /
+  nonVeridical / denialBearing per preface "What's New") classifications.
+  `SDRSEdge` carries a `container` field so iOutscopes is properly
+  asymmetric (Def 14 condition 2a). `SDRS L α` is content-polymorphic
+  per the book's "abstracting away from DRT" decision.
+- `RightFrontier.lean` — `dominatesOneStep` encoding Def 14
+  conditions 2a + 2b; `availableViaChain` (bounded transitive
+  closure); `availableAttachmentPoints` returning the RFC-respecting
+  list. Plus structural theorems `last_self_available`,
+  `availableViaChain_mono`, `oneStep_available`.
+
+**New study** (`Phenomena/Anaphora/Studies/AsherLascarides2003.lean`):
+Replicates Example (21) p. 149 — the discourse where the book
+explicitly enumerates which sites are available under the RFC.
+`decide`-checks all four positive cases (π₂, π₄, π₃, π₀ via
+conditions 1, 2a, 2b+3, 3) and the headline negative case
+(π₁ ∉ availableAttachmentPoints) plus the exact set match
+{π₀, π₂, π₃, π₄}. Coordinating Background blocks π₁'s
+accessibility from π₂'s right frontier — the structural fact the
+book uses to motivate the RFC.
+
+**Bib**: `asher-lascarides-2003` added (ISBN 9780521659512).
+
+**Out of scope** (deferred to follow-ups):
+- Glue logic + discourse update (Ch. 5).
+- Question/request-bearing relations (Ch. 7) — the Q-Elab/QAP/IQAP
+  family.
+- Cognitive-modelling axioms (Ch. 9): Rationality + Cooperativity.
+- DRT-style accessibility for anaphora resolution (Def 15) — the
+  worked example only verifies the RFC; the full anaphora-resolution
+  proof would need DRS-internal accessibility too.
+- The structural relations' special RFC behavior (Parallel, Contrast).
+
 ### 0.230.613 — Posterior.lean: collapse marginal/bind parallel APIs
 
 Audit finding A3: `marginal κ μ b` and `(μ.bind κ) b` were parallel APIs over the same definitionally-equal expression — `PMF.bind_apply` is `rfl`.

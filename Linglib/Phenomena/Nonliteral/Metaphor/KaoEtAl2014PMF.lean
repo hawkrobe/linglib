@@ -174,9 +174,26 @@ noncomputable def catPmf : PMF Cat :=
 
 theorem catPmf_apply (c : Cat) : catPmf c = (catPriorℕ c : ℝ≥0∞) / 100 := rfl
 
+theorem catPriorℕ_pos (c : Cat) : 0 < catPriorℕ c := by cases c <;> decide
+
+theorem catPmf_pos (c : Cat) : 0 < catPmf c := by
+  rw [catPmf_apply]
+  exact ENNReal.div_pos (by exact_mod_cast (catPriorℕ_pos c).ne') (by norm_num)
+
 /-- Joint world prior `P(c, f⃗) = P(c) · P(f⃗|c)`. -/
 noncomputable def worldPmf : PMF World :=
   catPmf.bind (fun c => (featurePmf c).map (fun f => (c, f)))
+
+/-- **`worldPmf` is full-support**: every world has positive joint prior
+mass (since both `catPriorℕ` and `featurePriorℕ` are strictly positive
+across the full domain). Discharged via `mem_support_bind_iff` +
+`mem_support_map_iff` from mathlib. -/
+theorem worldPmf_pos (w : World) : 0 < worldPmf w := by
+  show 0 < (catPmf.bind _) w
+  rw [PMF.apply_pos_iff, PMF.mem_support_bind_iff]
+  refine ⟨w.1, (PMF.apply_pos_iff _ _).mp (catPmf_pos w.1), ?_⟩
+  rw [PMF.mem_support_map_iff]
+  exact ⟨w.2, (PMF.apply_pos_iff _ _).mp (featurePmf_pos _ _), rfl⟩
 
 /-! ## §3. Literal listener L0
 
@@ -256,12 +273,33 @@ noncomputable def s1 (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) : PMF
     (fun u => s1Score_ne_top α hα g f u)
     ⟨.whale, s1Score_ne_bot α hα g f .whale⟩
 
+/-- **`s1` is full-support**: every utterance has positive speaker mass.
+Direct from the substrate `softmax_pos_iff_score_ne_bot`: the score is
+finite-below at every utterance because `qudProjL0 g u f > 0` (full
+literal-listener support across the QUD-projection in Kao's model). -/
+theorem s1_pos (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) (u : Cat) :
+    0 < s1 α hα g f u := by
+  show 0 < PMF.softmax _ _ _ u
+  rw [PMF.softmax_pos_iff_score_ne_bot]
+  exact s1Score_ne_bot α hα g f u
+
 /-! ## §6. Goal-marginalised speaker -/
 
 /-- **Goal-marginalised speaker**: `Σ_g P(g) · S1(· | g, f⃗)`. -/
 noncomputable def mixedS1 (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
     (f : Features) : PMF Cat :=
   goalPrior.bind (fun g => s1 α hα g f)
+
+/-- **`mixedS1` positivity** (the architectural lemma the audit identified).
+The goal-marginalised speaker assigns positive mass at every utterance,
+provided some goal has positive prior. Witnessed by the `g`-th term of the
+bind-tsum: `goalPrior g * s1 ... u > 0` because both factors are positive. -/
+theorem mixedS1_pos (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    {g : Goal} (hg : goalPrior g ≠ 0) (f : Features) (u : Cat) :
+    0 < mixedS1 α hα goalPrior f u := by
+  show 0 < (goalPrior.bind _) u
+  rw [PMF.apply_pos_iff, PMF.mem_support_bind_iff]
+  exact ⟨g, hg, (s1_pos α hα g f u).ne'⟩
 
 /-! ## §7. Pragmatic listener L1
 
@@ -274,12 +312,15 @@ noncomputable def L1Kernel (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal) :
     World → PMF Cat :=
   fun w => mixedS1 α hα goalPrior w.2
 
-/-- L1 marginal at `u` is non-zero — needed for `posterior` discharge. -/
+/-- L1 marginal at `u` is non-zero — needed for `posterior` discharge.
+Direct from the witness `(.whale, (true, true, true))`: `worldPmf` is
+full-support (`worldPmf_pos`) and `mixedS1` is positive at every utterance
+when some goal has positive prior (`mixedS1_pos`). -/
 theorem L1Kernel_marginal_ne_zero (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
     {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) :
-    PMF.marginal (L1Kernel α hα goalPrior) worldPmf u ≠ 0 := by
-  sorry  -- TODO: pick witness world (u, (true, true, true)); both prior > 0 and
-         -- kernel(u | (u, ...)) > 0 since softmax has full support and goal g has prior > 0.
+    PMF.marginal (L1Kernel α hα goalPrior) worldPmf u ≠ 0 :=
+  PMF.marginal_ne_zero _ _ _ (worldPmf_pos (.whale, (true, true, true))).ne'
+    (mixedS1_pos α hα goalPrior hg _ u).ne'
 
 /-- **Pragmatic listener L1**: posterior over `World` given utterance `u`. -/
 noncomputable def L1 (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
