@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.655 — HerbstrittFranke2019 → PMF migration; retire RSAConfig version
+
+PMF version (594 LOC) replaces the RSAConfig file (588 LOC) at the same
+content footprint. The substantive changes:
+
+- Observation kernel via `PMF.hypergeometric` from
+  `Core/Probability/Hypergeometric.lean` — drops local `obsPrior` /
+  `obsPrior_eq_hypergeometric` redundancy.
+- Speaker belief as `PMF.posterior` of hypergeometric kernel against
+  uniform world prior.
+- Pragmatic listener as `PMF.posterior` over joint `(state × access)`,
+  with Eq. 19/20 marginalisations via `Core/Probability/JointPosterior.lean`'s
+  `posterior_fst_apply` / `posterior_snd_apply`.
+- Hellinger-vs-KL architectural witness: `klDiv_eq_top_when_zero_support`
+  (KL = ∞ when Q has zero support on P, via mathlib `klDiv_of_not_ac`),
+  `hellingerDist_le_one`, and concrete witness
+  `hellinger_admits_what_KL_excludes` showing `pure 9 / pure 10` (speaker
+  at 9/10 red + literal listener for "certainly") yields KL = ∞ but HD ≤ 1.
+- Threshold semantics + complex expressions + cross-experiment stability +
+  LaBToM disagreement preserved verbatim — these don't depend on RSA.
+
+Old file's RSAConfig setup carried no proof load: `rsa_predict` can't
+handle `Real.sqrt`, so all qualitative predictions were unproven prose.
+
 ### 0.230.654 — Core/Logic/Bilateral/: paraconsistent + classical bilateral substrate
 
 Five bilateral consumers (BSML, QBSML, BUS, ICDRT, Truthmaker) now share a common `Core/Logic/Bilateral/` substrate. `SatDuality` migrated from `Consequence.lean` to its mathlib-shaped home as the classical sibling.
