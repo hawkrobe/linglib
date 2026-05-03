@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.665 — Booth Fact 5 (Compactness equations) per BilatInqProp constructor
+
+- Per-constructor compactness equations `(... constructor ...).pos = ⨆ p ∈ alt _.pos, declarative p` (Booth Fact 5 form), discharged via `Question.eq_iSup_declarative_alt_of_exists_alt`. Section §7 in `Booth2022.lean`.
+- Lemmas: `pos_eq_iSup_alt_atom`/`neg`, `pos_eq_iSup_alt_negate`/`neg` (rfl via polarity swap), `pos_eq_iSup_alt_necessity`/`neg`, `pos_eq_iSup_alt_disj` (under summand pos-compactness + alt non-Hurford), `pos_eq_iSup_alt_possibility` (via duality from `neg_eq_iSup_alt_necessity`). Helper `alt_necessity_neg` for the `.neg` singleton w-set.
+- Independence theorem renumbered to §8.
+- File 575 → 683 LOC. Sorry-free, builds clean (locally).
+- Sets up next session: with per-constructor compactness in hand, an inductive `BSMLFormula` type + interpretation function would let us prove Booth Fact 5 by structural induction, unlocking general Independence (`independence_for_arbitrary_φψ`).
+
+### 0.230.665 — Dialogue.Assertable typeclass + Stalnaker/Krifka instances + cross-framework theorems
+
+**New**: `Linglib/Theories/Dialogue/Assertable.lean` introduces a typeclass
+`Dialogue.Assertable S W extends HasContextSet S W` over commitment-tracking
+dialogue-state types. The single law `speakerAssert_monotone` packs both
+narrowing and monotonicity:
+
+  toContextSet (speakerAssert s φ) w → toContextSet s w ∧ φ w
+
+**Cross-framework theorems** (proved once, hold for any instance):
+- `speakerAssert_narrows`, `speakerAssert_subset_prior`
+- `speakerAssert_initial_subset` — the headline Stalnakerian narrowing
+- `speakerAssert_twice_narrows` — composition gives `φ ∧ ψ` narrowing
+- `speakerAssert_twice_subset_prior` — iterated monotonicity
+
+**Instances**:
+- `instStalnaker` — `StalnakerState W` via `CG.add` set-intersection
+- `instKrifka` — `KrifkaState W` (binary, `G = Prop`) via root-prepend
+
+**Structurally important non-instance**: `FarkasBruce.DiscourseState` does
+not get an instance because `assertDeclarative` writes to `dcS` and
+`table` but not to `cg`; the F&B speaker/listener split is a two-step
+`assertDeclarative ∘ acceptTop` that doesn't fit the
+`S → (W → Prop) → S` shape. Documented in module docstring as the
+informationally-important divergence point — the typeclass exposes
+where Stalnakerian one-step assertion diverges from F&B's
+propose-then-settle architecture.
+
 ### 0.230.664 — Compactness substrate: declarative_inf + relaxed Resolutions; per-constructor alt API for BilatInqProp
 
 - `Core/Question/Basic.lean`: added `declarative_inf` (`declarative A ⊓ declarative B = declarative (A ∩ B)`, `@[simp]`) and `eq_iSup_declarative_alt_of_exists_alt` (relaxed Resolutions Theorem requiring only `∀ p ∈ P.props, ∃ q ∈ alt P, p ⊆ q` instead of `P.props.Finite`). Original `eq_iSup_declarative_alt` becomes a 1-line corollary. The relaxed hypothesis is **strictly weaker**: atoms have infinite props but singleton alt, so the new version applies where the old fails.
