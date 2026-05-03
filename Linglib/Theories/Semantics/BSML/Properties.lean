@@ -100,9 +100,9 @@ private theorem support_and_antiSupport_unionClosed
       -- (s₁ ∪ t₁, s₂ ∪ t₂) of s ∪ t. By IH for antiSupport.
       intro s t ⟨s₁, s₂, hsplit_s, ha_s₁, ha_s₂⟩ ⟨t₁, t₂, hsplit_t, ha_t₁, ha_t₂⟩
       refine ⟨s₁ ∪ t₁, s₂ ∪ t₂, ?_, ?_, ?_⟩
-      · unfold Core.Logic.Team.splitsAs
-        have h1 : s₁ ∪ s₂ = s := hsplit_s
+      · have h1 : s₁ ∪ s₂ = s := hsplit_s
         have h2 : t₁ ∪ t₂ = t := hsplit_t
+        show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = s ∪ t
         rw [show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = (s₁ ∪ s₂) ∪ (t₁ ∪ t₂) from by
           ext x; simp [Finset.mem_union]; tauto]
         rw [h1, h2]
@@ -115,9 +115,9 @@ private theorem support_and_antiSupport_unionClosed
     · -- support: split (s₁, s₂) of s and (t₁, t₂) of t; combine.
       intro s t ⟨s₁, s₂, hsplit_s, hs_s₁, hs_s₂⟩ ⟨t₁, t₂, hsplit_t, hs_t₁, hs_t₂⟩
       refine ⟨s₁ ∪ t₁, s₂ ∪ t₂, ?_, ?_, ?_⟩
-      · unfold Core.Logic.Team.splitsAs
-        have h1 : s₁ ∪ s₂ = s := hsplit_s
+      · have h1 : s₁ ∪ s₂ = s := hsplit_s
         have h2 : t₁ ∪ t₂ = t := hsplit_t
+        show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = s ∪ t
         rw [show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = (s₁ ∪ s₂) ∪ (t₁ ∪ t₂) from by
           ext x; simp [Finset.mem_union]; tauto]
         rw [h1, h2]
@@ -247,7 +247,7 @@ private theorem support_and_antiSupport_downward_of_isNEFree
       intro s t hsub ⟨t₁, t₂, hsplit, ha₁, ha₂⟩
       refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
       · -- splitsAs t (t₁∩t) (t₂∩t) := (t₁∩t) ∪ (t₂∩t) = t
-        unfold Core.Logic.Team.splitsAs
+        show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
         rw [show (t₁ ∩ t) ∪ (t₂ ∩ t) = (t₁ ∪ t₂) ∩ t from by
           ext x; simp [Finset.mem_inter, Finset.mem_union]; tauto]
         have heq : t₁ ∪ t₂ = s := hsplit
@@ -266,7 +266,7 @@ private theorem support_and_antiSupport_downward_of_isNEFree
     · -- support: split into (t₁, t₂); for t ⊆ s, intersect
       intro s t hsub ⟨t₁, t₂, hsplit, hs₁, hs₂⟩
       refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
-      · unfold Core.Logic.Team.splitsAs
+      · show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
         rw [show (t₁ ∩ t) ∪ (t₂ ∩ t) = (t₁ ∪ t₂) ∩ t from by
           ext x; simp [Finset.mem_inter, Finset.mem_union]; tauto]
         have heq : t₁ ∪ t₂ = s := hsplit

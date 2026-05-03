@@ -119,7 +119,9 @@ theorem antiSupport_strip_ne (M : BSMLModel W Atom)
     antiSupport M φ t := by
   obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
   -- h₂ : t₂ = ∅, so t₁ = t
-  subst h₂; simp at hunion; subst hunion; exact h₁
+  subst h₂
+  have heq : t₁ = t := (Finset.union_empty t₁).symm.trans hunion
+  subst heq; exact h₁
 
 /-- Anti-support of φ implies anti-support of (φ ∧ NE).
     Use the trivial split (t, ∅). -/

@@ -56,22 +56,20 @@ variable {α : Type*} [DecidableEq α]
     *tensor disjunction* in dependence logic; cf. Anttila 2021 Definition
     2.1.5, Yang & Väänänen 2017).
 
-    Argument order `s t₁ t₂` reads as "splits team s into t₁ and t₂". -/
-def splitsAs (s t₁ t₂ : Finset α) : Prop :=
+    Argument order `s t₁ t₂` reads as "splits team s into t₁ and t₂".
+
+    Defined as `abbrev` so that `t₁ ∪ t₂ = s` reduces transparently in proofs
+    — consumers don't need `unfold splitsAs` and can pattern-match on the
+    underlying union equation directly. -/
+abbrev splitsAs (s t₁ t₂ : Finset α) : Prop :=
   t₁ ∪ t₂ = s
 
 /-- Binary cover with both parts non-empty. Used by pragmatically-enriched
     split disjunction in BSML+ / QBSML+ (Aloni 2022 §3.3): `[φ ∨ ψ]⁺` requires
     both sub-teams to be non-empty (forced by the NE conjunct propagating
     through enrichment). -/
-def splitsAsNE (s t₁ t₂ : Finset α) : Prop :=
+abbrev splitsAsNE (s t₁ t₂ : Finset α) : Prop :=
   t₁ ∪ t₂ = s ∧ t₁.Nonempty ∧ t₂.Nonempty
-
-@[simp] theorem splitsAs_iff (s t₁ t₂ : Finset α) :
-    splitsAs s t₁ t₂ ↔ t₁ ∪ t₂ = s := Iff.rfl
-
-@[simp] theorem splitsAsNE_iff (s t₁ t₂ : Finset α) :
-    splitsAsNE s t₁ t₂ ↔ t₁ ∪ t₂ = s ∧ t₁.Nonempty ∧ t₂.Nonempty := Iff.rfl
 
 theorem splitsAsNE_imp_splitsAs (s t₁ t₂ : Finset α)
     (h : splitsAsNE s t₁ t₂) : splitsAs s t₁ t₂ := h.1

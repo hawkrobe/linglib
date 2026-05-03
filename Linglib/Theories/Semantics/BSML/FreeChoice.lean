@@ -32,24 +32,30 @@ namespace Semantics.BSML
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
--- §1: Flatness
+-- §1: Downward closure of atom and NE primitives
 -- ============================================================================
 
-/-- A team property is flat if it is downward closed under subset. -/
-def isFlat (prop : Finset W → Prop) : Prop :=
-  ∀ t t' : Finset W, t' ⊆ t → prop t → prop t'
+-- `Semantics.BSML.flat_support_of_isNEFree` (in `Properties.lean`) gives true
+-- pointwise-iff flatness for all NE-free formulas via the substrate. The two
+-- per-primitive theorems below isolate the *downward closure* clause that
+-- splits atom from NE: atoms have it, NE doesn't, and the FC arguments below
+-- depend only on this restriction, not on full flatness.
 
-/-- Atoms are flat. -/
-theorem atom_is_flat (M : BSMLModel W Atom) (p : Atom) :
-    isFlat (λ t => support M (.atom p) t) :=
+/-- Atoms are downward-closed. Direct corollary of the substrate's
+    `Core.Logic.Team.downwardClosed_support_of_isNEFree` when one wants to
+    name the atom case explicitly. -/
+theorem atom_downwardClosed (M : BSMLModel W Atom) (p : Atom) :
+    ∀ t t' : Finset W, t' ⊆ t → support M (.atom p) t → support M (.atom p) t' :=
   fun _ _ hSub hSupp w hw => hSupp w (hSub hw)
 
-/-- NE is NOT flat. -/
-theorem ne_not_flat [Nonempty W] (M : BSMLModel W Atom) :
-    ¬isFlat (λ t => support M .ne t) := by
-  intro hFlat
+/-- NE is NOT downward-closed: an inhabited team supports NE but ∅ doesn't.
+    This is the obstruction that prevents the substrate's
+    `flat_support_of_isNEFree` from extending to NE-bearing formulas. -/
+theorem ne_not_downwardClosed [Nonempty W] (M : BSMLModel W Atom) :
+    ¬(∀ t t' : Finset W, t' ⊆ t → support M .ne t → support M .ne t') := by
+  intro hDC
   have hFull : (Finset.univ : Finset W).Nonempty := Finset.univ_nonempty
-  have := hFlat Finset.univ ∅ (Finset.empty_subset _) hFull
+  have := hDC Finset.univ ∅ (Finset.empty_subset _) hFull
   exact Finset.not_nonempty_empty this
 
 -- ============================================================================

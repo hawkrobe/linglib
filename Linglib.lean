@@ -18,7 +18,6 @@ import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Properties
-import Linglib.Core.Logic.Team.Bilateral
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD
@@ -99,6 +98,7 @@ import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Question.Support
 import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Flatness
 import Linglib.Core.Question.Hamblin
 import Linglib.Core.Question.Partition.Basic
 import Linglib.Core.Question.Singleton
