@@ -1096,6 +1096,8 @@ import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
+import Linglib.Phenomena.Assertion.Studies.Krifka2015
+import Linglib.Phenomena.Assertion.Studies.Krifka2020
 import Linglib.Phenomena.Assertion.Studies.Rudin2025
 import Linglib.Typology.Case
 import Linglib.Phenomena.Case.Studies.Caha2009
@@ -1462,6 +1464,7 @@ import Linglib.Theories.Semantics.BSML.Properties
 import Linglib.Theories.Semantics.QBSML.Defs
 import Linglib.Theories.Semantics.QBSML.Properties
 import Linglib.Theories.Semantics.QBSML.Enrichment
+import Linglib.Theories.Semantics.QBSML.FreeChoice
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
 import Linglib.Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
 import Linglib.Phenomena.FreeChoice.Divergences
@@ -2586,7 +2589,8 @@ import Linglib.Theories.Dialogue.ReasonableInference
 import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Theories.Dialogue.FarkasAdapter
 import Linglib.Theories.Dialogue.QuotationFBOntology
-import Linglib.Theories.Dialogue.Krifka
+import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Theories.Dialogue.LayeredAssertion
 import Linglib.Theories.Dialogue.Brandom
 import Linglib.Theories.Dialogue.Gunlogson
 import Linglib.Theories.Dialogue.Lauer

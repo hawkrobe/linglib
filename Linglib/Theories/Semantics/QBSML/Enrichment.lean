@@ -107,4 +107,41 @@ theorem enriched_support_implies_nonempty (M : QBSMLModel W Domain Pred)
   | ne => exact h
   | _  => exact h.2
 
+-- ============================================================================
+-- §4 Anti-support of (φ ∧ NE) stripping (QBSML analogue of BSML's)
+-- ============================================================================
+
+/-- Anti-support of `φ ∧ NE` implies anti-support of `φ` on the whole state.
+    The split partitions the state into `t₁ ∪ t₂` with `antiSupport NE t₂`
+    forcing `t₂ = ∅`, hence `t₁ = s`. The QBSML analogue of
+    `BSML/Enrichment.antiSupport_strip_ne`; the workhorse of every
+    Fact 7-10 derivation in `QBSML/FreeChoice.lean` and the AvO 2023
+    study file. -/
+theorem antiSupport_strip_ne (M : QBSMLModel W Domain Pred)
+    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+    (h : antiSupport M (.conj φ .ne) s) :
+    antiSupport M φ s := by
+  obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
+  -- h₂ : antiSupport M .ne t₂ = (t₂ = ∅)
+  have ht₂ : t₂ = ∅ := h₂
+  have heq : t₁ = s := by
+    have hnow : t₁ ∪ t₂ = s := hunion
+    rw [ht₂, Finset.union_empty] at hnow
+    exact hnow
+  rw [← heq]; exact h₁
+
+/-- Anti-support of `φ` implies anti-support of `φ ∧ NE` via the trivial
+    split `(s, ∅)`. The reverse direction of `antiSupport_strip_ne`. -/
+theorem antiSupport_conj_ne_of_antiSupport (M : QBSMLModel W Domain Pred)
+    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain))
+    (h : antiSupport M φ s) :
+    antiSupport M (.conj φ .ne) s :=
+  ⟨s, ∅, by show s ∪ ∅ = s; simp, h, rfl⟩
+
+/-- Anti-support of `φ ∧ NE` ↔ anti-support of `φ`. -/
+theorem antiSupport_conj_ne_iff (M : QBSMLModel W Domain Pred)
+    (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
+    antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s :=
+  ⟨antiSupport_strip_ne M φ s, antiSupport_conj_ne_of_antiSupport M φ s⟩
+
 end Semantics.QBSML

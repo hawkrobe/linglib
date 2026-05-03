@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.QBSML.Enrichment
+import Linglib.Theories.Semantics.QBSML.FreeChoice
 import Linglib.Theories.Semantics.QBSML.Properties
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
@@ -18,50 +18,54 @@ The framework's central facts (paper §5):
 | Fact | Statement |
 |------|-----------|
 | 3   | `[Pa ∨ Pb]⁺ ⊨_epi ◇Pa ∧ ◇Pb` (ignorance, R state-based) |
-| 4   | `[∀x(Px ∨ Qx)]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` (obviation; counterexample exists) |
-| 5   | `card(s)=1 ⇒ M, s ⊨ [∀x(Px ∨ Qx)]⁺ ⇒ M, s ⊨ ∃xPx ∧ ∃xQx` (distribution under full info) |
-| 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution° with epistemic R) |
+| 4   | `[∀xPx ∨ Qx]⁺ ⊭ ∀x(◇Px ∧ ◇Qx)` (obviation; counterexample on paper Fig. 16) |
+| 5   | `card(s)=1 ⇒ M, s ⊨ [∀x(Px ∨ Qx)]⁺ ⇒ M, s ⊨ ∃xPx ∧ ∃xQx` (distribution under full information) |
+| 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution° on epistemic models) |
 | 7   | `[□(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (□-free choice) |
 | 8   | `[◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (◇-free choice; ≡ Aloni 2022 NS FC at first-order) |
 | 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; @cite{chemla-2009}) |
 | 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation behaviour; ignorance disappears) |
 
-## Scope of this file
+## What this file proves
 
-This study file proves the **negation fact (Fact 10)** directly on a
-concrete QBSML model with:
-- 4 worlds (parallel to Aloni 2022's `PowerSet2World`),
-- 2-element domain `{a, b}` (reusing `Phenomena.FreeChoice.FCAtom`),
-- single unary predicate `P` and single variable `x`.
+The QBSML substrate now carries the universal forms of Facts 8 and 10
+(in `Theories/Semantics/QBSML/FreeChoice.lean`). This file instantiates
+both at a concrete model — paralleling `Aloni2022.lean`'s pattern of
+substrate-theorem invocation:
 
-The negation fact is the simplest QBSML-substantive result that exercises
-the substrate's bilateral evaluation + split-disjunction + NE-enrichment
-pipeline on first-order syntax. It also instantiates the paper's "negation
-behaves classically" desideratum.
+- **Fact 10 (negation)** at `avoModel` for `Pa, Pb`: one-line invocation
+  of `negationStrip_Q`.
+- **Fact 8 (narrow-scope ◇-FC)** at `avoModel` for `Pa, Pb`: one-line
+  invocation of `narrowScopeFC_Q`.
+
+## Concrete model
+
+- 4 worlds (parallel to Aloni 2022): `PowerSet2World.{nothing, onlyA, onlyB, both}`.
+- 2-element domain: `FCAtom.{a, b}` (reused from `Phenomena.FreeChoice.Atoms`).
+- Two unary predicates `P`, `Q` so that `Pa ∨ Qa` is a non-degenerate
+  disjunction (the audit's "duplicate-disjunct collapse" objection
+  motivated adding `Q`).
+- Single variable `x` (the variable language is monadic; this is the
+  paper's setup).
 
 ## What is deferred
 
-A universal-substrate `Theories/Semantics/QBSML/FreeChoice.lean` paralleling
-`BSML/FreeChoice.lean` is not yet written. It would carry the universal
-forms of Facts 7, 8, 9, plus an `enrichment_strengthens_support` lemma
-(QBSML analogue of `BSML/Enrichment.lean`'s). Once landed, this file
-would invoke those theorems by name (per the `Aloni2022.lean` pattern in
-the same directory) rather than proving Fact 10 inline.
-
-The propositional analogues of Facts 3-5, 11-12 already live in
-`Aloni2022.lean` via the BSML substrate; they can be lifted to QBSML
-formulas but the lifting itself is the deferred substrate work.
+- **Universal FC (Fact 9)**: needs `extendUniversal` lemmas tying the
+  `∀x◇(Px ∨ Qx)` premise to `narrowScopeFC_Q` per index. Substrate
+  add-on, not difficult, but a separate session.
+- **Distribution / Obviation (Facts 4, 5, 6)**: need first-order
+  quantifier interaction with frame conditions; the obviation
+  counter-example (paper Fig. 16) is empirically constructive but
+  requires a non-trivial state.
+- **`Decidable` instance for `QBSML.eval`**: would let `decide` close
+  premise-supported checks on concrete teams (BSML has this; QBSML
+  doesn't yet).
 
 ## Atoms and worlds
 
 This file reuses `Phenomena.FreeChoice.{FCAtom, PowerSet2World}` from
-`Aloni2022.lean` for:
-- the domain (`FCAtom.{a, b}` ≡ Aloni & van Ormondt 2023's `D = {a, b}`)
-- the world space (`PowerSet2World.{nothing, onlyA, onlyB, both}`).
-
-A new lightweight `QPred` enum encodes the single predicate `P`. The QBSML
-model interprets `P` at a world as the Finset of domain elements that
-satisfy `P` there, matching `PowerSet2World.holds` from Aloni 2022.
+the existing FreeChoice substrate, ensuring AvO 2023 + Aloni 2022 both
+target the same world space.
 -/
 
 namespace Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
@@ -73,13 +77,17 @@ open Phenomena.FreeChoice (FCAtom PowerSet2World)
 -- §1 Predicates and variables
 -- ============================================================================
 
-/-- Single unary predicate `P` (extensional reading: "is P at world w"). -/
-inductive QPred | P
+/-- Two unary predicates `P` and `Q`: provides the non-degenerate disjunction
+    `Pa ∨ Qa` matching the paper's `Pa ∨ Pb` schema (where the `a, b` are
+    domain elements rather than predicate-instances). With monadic predicates
+    over a 2-element domain, `Pa ∨ Qa` and `Pa ∨ Pb` are equally non-trivial
+    instantiations of split disjunction. -/
+inductive QPred | P | Q
   deriving DecidableEq, Repr
 
 instance : Fintype QPred where
-  elems := {.P}
-  complete := by intro p; cases p; simp
+  elems := {.P, .Q}
+  complete := by intro p; cases p <;> simp
 
 /-- Single variable `x`. -/
 inductive QVar | x
@@ -93,14 +101,16 @@ instance : Fintype QVar where
 -- §2 Concrete QBSML model
 -- ============================================================================
 
-/-- Universal-access deontic-style model on `PowerSet2World`. The interpretation
-    of `P` at a world `w` is the Finset of `FCAtom`s that satisfy `P` at `w`,
-    routed through `PowerSet2World.holds` from Aloni 2022's substrate.
+/-- Universal-access deontic-style model on `PowerSet2World`.
 
-    - `pInterp P .both = {a, b}`
-    - `pInterp P .onlyA = {a}`
-    - `pInterp P .onlyB = {b}`
-    - `pInterp P .nothing = ∅`
+    - `pInterp .P w = {d ∈ {a, b} | w.holds d}` (P holds at w iff w models the atom)
+    - `pInterp .Q w = {d ∈ {a, b} | w.holds d}` (Q same shape — picks out same set)
+
+    Both predicates have the same per-world extension. The disjunction
+    `Px ∨ Qx` is non-degenerate at the *formula* level even though at this
+    model the two interpretations coincide. A model with divergent P and Q
+    extensions would discriminate further; this minimal model suffices for
+    the substrate-instantiation tests below.
 
     Universal access (`access _ = univ`) means R is indisputable on every
     state but **not** state-based — same shape as `Aloni2022.deonticModel`. -/
@@ -115,107 +125,80 @@ def avoModel : QBSMLModel PowerSet2World FCAtom QPred where
 /-- The atomic formula `Px`. -/
 def Px : QBSMLFormula QVar QPred := .pred .P .x
 
-/-- Disjunction `Px ∨ Px`. The paper writes `Pa ∨ Pb` for two distinct
-    predicate-instances; with our single-variable + monadic-predicate
-    setup, the structurally equivalent shape is `Px ∨ Px`, since QBSML's
-    `disj` is split disjunction (Aloni & van Ormondt §3.1) — its support
-    requires the team to be partitioned into two sub-teams each supporting
-    the corresponding disjunct, even when the two disjuncts coincide
-    syntactically. The Fact 10 proof below depends only on the
-    antiSupport-disj clause + NE-stripping; the duplicate-disjunct
-    formulation suffices. -/
-def PxOrPx : QBSMLFormula QVar QPred := .disj Px Px
+/-- The atomic formula `Qx`. -/
+def Qx : QBSMLFormula QVar QPred := .pred .Q .x
 
-/-- The negation premise `¬(Px ∨ Px)` corresponding to the paper's
+/-- Disjunction `Px ∨ Qx` — paper's `Pa ∨ Pb`-shape with two distinct
+    predicate-instances. -/
+def PxOrQx : QBSMLFormula QVar QPred := .disj Px Qx
+
+/-- The negation premise `¬(Px ∨ Qx)` corresponding to the paper's
     `¬(Pa ∨ Pb)` schema. -/
-def negPxOrPx : QBSMLFormula QVar QPred := .neg PxOrPx
+def negPxOrQx : QBSMLFormula QVar QPred := .neg PxOrQx
+
+/-- The narrow-scope FC premise `◇(Px ∨ Qx)` corresponding to the paper's
+    `◇(Pa ∨ Pb)` schema. -/
+def possPxOrQx : QBSMLFormula QVar QPred := .poss PxOrQx
 
 -- ============================================================================
--- §4 Fact 10 (Negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb`
+-- §4 Substrate facts: Px, Qx are NE-free
 -- ============================================================================
 
-/-- **Fact 10 (Negation behaviour)** at the AvO 2023 model:
+theorem Px_isNEFree : Px.isNEFree = true := rfl
+theorem Qx_isNEFree : Qx.isNEFree = true := rfl
 
-    Enriched negation `[¬(Px ∨ Px)]⁺` entails the conjunction of the negated
-    disjuncts `¬Px ∧ ¬Px` (which collapses to `¬Px` since both disjuncts
-    are the same formula, but the proof structure exhibits the paper's
-    Fact 10 pattern: NE-stripping on the antiSupport-conj clause forces
-    each part of the split to anti-support its disjunct on the **whole**
-    state, recovering classical negation behaviour).
+-- ============================================================================
+-- §5 Fact 10 (Negation): `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb`
+-- ============================================================================
 
-    The paper's full statement uses `Pa ∨ Pb` with two distinct predicate
-    instances; here we use `Px ∨ Px` to keep the model + formula language
-    minimal. The structural proof — antiSupport-conj split + antiSupport-NE
-    stripping + antiSupport-disj conjunction — is identical. -/
+/-- **Fact 10 (Negation behaviour)** at `avoModel`:
+
+    Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
+    disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
+    `negationStrip_Q` (`Theories/Semantics/QBSML/FreeChoice.lean`).
+    Mirrors `Aloni2022.aloni2022_fact11_dual_prohibition` style — substrate
+    theorem, model + NE-free witnesses applied. -/
 theorem fact10_negation
     (s : Finset (Index PowerSet2World QVar FCAtom))
-    (h : support avoModel negPxOrPx.enrich s) :
-    antiSupport avoModel Px s ∧ antiSupport avoModel Px s := by
-  -- Unfold enrich (¬φ) = (¬enrich φ) ∧ NE; the outer NE conjunct is `h.2`.
-  have hNeg := h.1  -- support (¬enrich (Px ∨ Px)) s = antiSupport (enrich (Px ∨ Px)) s
-  -- Stripping NE three times: antiSupport-conj split + antiSupport-NE = empty.
-  -- Helper: any conj-with-NE antiSupport on s collapses its left-conjunct
-  -- antiSupport onto the whole state s.
-  -- Outer split: antiSupport ((enrich Px ∨ enrich Px) ∧ NE) on s
-  obtain ⟨t₁, t₂, hsplit, hDisj, hNEt₂⟩ := hNeg
-  have heqOuter : t₁ = s := by
-    have hnow : t₁ ∪ t₂ = s := hsplit
-    rw [show t₂ = ∅ from hNEt₂, Finset.union_empty] at hnow
-    exact hnow
-  rw [heqOuter] at hDisj
-  -- antiSupport disj at s gives antiSupport on each disjunct (paper §4.1, antiSupport-disj clause)
-  obtain ⟨hL, hR⟩ := hDisj
-  -- Strip NE inside enrich Px on the left disjunct
-  obtain ⟨t₃, t₄, hsplit', haPx, hNEt₄⟩ := hL
-  have heqLeft : t₃ = s := by
-    have hnow : t₃ ∪ t₄ = s := hsplit'
-    rw [show t₄ = ∅ from hNEt₄, Finset.union_empty] at hnow
-    exact hnow
-  rw [heqLeft] at haPx
-  -- Strip NE inside enrich Px on the right disjunct
-  obtain ⟨t₅, t₆, hsplit'', haPx', hNEt₆⟩ := hR
-  have heqRight : t₅ = s := by
-    have hnow : t₅ ∪ t₆ = s := hsplit''
-    rw [show t₆ = ∅ from hNEt₆, Finset.union_empty] at hnow
-    exact hnow
-  rw [heqRight] at haPx'
-  exact ⟨haPx, haPx'⟩
+    (h : support avoModel negPxOrQx.enrich s) :
+    support avoModel (.neg Px) s ∧ support avoModel (.neg Qx) s :=
+  negationStrip_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
 
 -- ============================================================================
--- §5 Frame condition fact: avoModel is indisputable on every state
+-- §6 Fact 8 (Narrow-Scope FC): `[◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb`
+-- ============================================================================
+
+/-- **Fact 8 (Narrow-Scope free choice / ◇-FC)** at `avoModel`:
+
+    Enriched possibility-disjunction `[◇(Px ∨ Qx)]⁺` entails `◇Px ∧ ◇Qx`.
+    One-line invocation of `narrowScopeFC_Q`. The first-order analogue of
+    `Aloni2022.aloni2022_fact4_NS_FC` — same template, lifted to QBSML's
+    monadic predicate language. -/
+theorem fact8_narrowScopeFC
+    (s : Finset (Index PowerSet2World QVar FCAtom))
+    (h : support avoModel possPxOrQx.enrich s) :
+    support avoModel (.poss Px) s ∧ support avoModel (.poss Qx) s :=
+  narrowScopeFC_Q avoModel Px Qx s Px_isNEFree Qx_isNEFree h
+
+-- ============================================================================
+-- §7 Frame condition: avoModel is indisputable on every state
 -- ============================================================================
 
 /-- `avoModel`'s universal accessibility makes R indisputable on every state
     (every world sees the same `Finset.univ`). Mirrors
     `Aloni2022.deonticModel_indisputable_on_team` for the QBSML carrier.
 
-    Indisputability is the frame condition for Fact 5 (Wide Scope FC) and
-    Fact 6 (epistemic distribution); state-basedness (strictly stronger)
-    is the precondition for Facts 3 and 7. The paper distinguishes the two
-    in §4.1.1. -/
+    Indisputability vs state-basedness (paper §4.1.1, Definition 4.10):
+    - Indisputable: all worlds in s↓ see the same accessible set (R constant).
+    - State-based: every w ∈ s↓ sees exactly s↓ (R(w) = s↓).
+
+    State-basedness is strictly stronger and is the precondition for the
+    epistemic facts: Fact 3 (ignorance), Fact 6 (epistemic distribution).
+    Facts 8 and 10 (formalised above) need no frame condition at all —
+    they hold on every model. -/
 theorem avoModel_indisputable
     (s : Finset (Index PowerSet2World QVar FCAtom)) :
     avoModel.isIndisputable s := by
   intro _ _ _ _; rfl
-
--- ============================================================================
--- §6 Substrate-flatness corollary applied to `avoModel`
--- ============================================================================
-
-/-- **Application of Anttila Prop 2.2.16 / QBSML Proposition 4.1**:
-
-    For the NE-free formula `Px`, the substrate's
-    `flat_support_of_isNEFree` (in `QBSML/Properties.lean`) gives that
-    `support avoModel Px s ↔ ∀ i ∈ s, support avoModel Px {i}`.
-
-    This is the QBSML analogue of the BSML/classical reduction Aloni 2022
-    Proposition 2.2.16 + Aloni & van Ormondt 2023 Proposition 4.1: NE-free
-    QBSML formulas reduce to classical first-order modal logic on
-    singleton states. The substrate built in `QBSML/Properties.lean`
-    delivers it. -/
-theorem Px_flat (s : Finset (Index PowerSet2World QVar FCAtom)) :
-    support avoModel Px s ↔ ∀ i ∈ s, support avoModel Px {i} := by
-  exact flat_support_of_isNEFree (W := PowerSet2World) (Domain := FCAtom)
-    (φ := Px) rfl avoModel s
 
 end Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
