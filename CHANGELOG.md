@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.650 — AloniVanOrmondt2023 study file: Fact 10 + QBSML/Enrichment substrate
+
+First QBSML consumer study file. The honest substrate (post 0.230.646
+property closure + 0.230.649 cleanup) supports a real first-order
+empirical study.
+
+**`Theories/Semantics/QBSML/Enrichment.lean`** (NEW, ~110 LOC):
+- `QBSMLFormula.enrich` per AvO 2023 Definition 4.13 (8-case recursion
+  including `exi`/`univ`)
+- 7 structural unfolding lemmas (`enrich_neg`, `enrich_disj`, etc.)
+- `enriched_support_implies_nonempty` — the NE-conjunct guard
+
+**`Phenomena/FreeChoice/Studies/AloniVanOrmondt2023.lean`** (NEW, ~220 LOC):
+- Concrete model: `PowerSet2World` (reused from Aloni2022), `FCAtom`
+  domain, single predicate `P`, single variable `x`.
+- `fact10_negation`: `[¬(Px ∨ Px)]⁺ ⊨ ¬Px ∧ ¬Px` proved structurally via
+  triple NE-strip + bilateral antiSupport-disj clause. ~25 line proof.
+- `avoModel_indisputable`: universal-access model trivially indisputable.
+- `Px_flat`: substrate's `flat_support_of_isNEFree` invoked on `Px` —
+  demonstrating Anttila Prop 2.2.16 / AvO Prop 4.1 (NE-free QBSML reduces
+  to classical FOML on singletons) lands as expected.
+
+**Out of scope** (deferred to follow-up):
+- Universal substrate FC theorems for QBSML (`narrowScopeFC_Q`,
+  `enrichment_strengthens_support_Q`, etc.) — needed for AvO Facts 7, 8, 9.
+- `Decidable` instance for `QBSML.eval` — would enable `decide`-style
+  premise-supported checks on concrete teams (BSML has this; QBSML doesn't).
+- Facts 3, 5, 6 — first-order quantification + state-based/epistemic frame.
+
+The file is intentionally narrow: it lands the substrate's first
+real-world consumer with one carefully-proved fact, rather than
+sketching all 10 facts via `sorry`.
+
 ### 0.230.649 — Substrate cleanup: splitsAs abbrev + isFlat shadow + Question/Team flatness
 
 Four-item cleanup pass following multi-agent audit of team-semantic substrate.
