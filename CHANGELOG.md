@@ -4,6 +4,54 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.660 — Stage 1 scaffolding: CK Bialgebra instance + 3 law sorries; backed out Stage 0.7 abbrev
+
+Two moves: revert Stage 0.7's premature `abbrev Hc` switch, then create the CK Bialgebra scaffolding.
+
+**1. Revert `abbrev Hc → def Hc`** in `Core/Algebra/ConnesKreimer/Defs.lean` (54 → 92 LOC). Restored 6 manual instance forwarders (Semiring, CommSemiring, Ring, CommRing, Algebra, FunLike). Stage 0.7's switch to `abbrev` was chosen on the assumption we'd never register a CK Bialgebra instance — but Stage 1's whole point IS that registration. With `abbrev`, mathlib's `AddMonoidAlgebra.instBialgebra` (group-like Δ(F) = F ⊗ F, NOT Connes-Kreimer) automatically fires on `Hc R α`, blocking ours. With `def`, `Hc R α` has its own typeclass slot. **This is the mathlib-canonical pattern** — verified `MonoidAlgebra R M : Type _ := M →₀ R` in `Mathlib.Algebra.MonoidAlgebra.Defs` is also `def`, precisely so different bialgebra structures can coexist on the underlying vs wrapped types.
+
+**2. Create `Linglib/Core/Algebra/ConnesKreimer/Bialgebra.lean`** (108 LOC). Registers `instance instBialgebra : Bialgebra R (Hc R α) := Bialgebra.ofAlgHom comulAlgHom counit ?_ ?_ ?_`. Three law theorems with sorries + concrete proof-strategy comments:
+- `comul_coassoc` — cuts-of-cuts bijection per @cite{foissy-2002} §2 / @cite{connes-kreimer-1998}. ~hundreds of LOC + new `DoubleCut T` combinatorial helpers. Multi-session work.
+- `counit_rTensor` — `AddMonoidAlgebra.algHom_ext` + Multiset induction on F + singleton case (only empty-cut term survives counit projection). ~30-50 LOC, focused session work.
+- `counit_lTensor` — symmetric to `counit_rTensor`.
+
+The instance scaffolding is the architectural payoff: downstream code can now use `Coalgebra.comul` / `Bialgebra.counit` typeclass projections that resolve to our CK structure. The Coalgebra/Bialgebra/HopfAlgebra typeclass hierarchy is now usable on Hc with the right semantics (modulo the 3 unproven laws). Closing the sorries is split as Stage 1a (counit laws, ~6-10h) and Stage 1b (coassoc, multi-session) — see `scratch/mcb_stage1_plan.md`.
+
+**Linglib.lean**: 1 new import added (`Core.Algebra.ConnesKreimer.Bialgebra`).
+
+**Build**: 1317 jobs green. 5 sorrys total in the substrate: 3 new (Bialgebra.lean's three laws) + 2 pre-existing in `Hopf/MergeAction.lean` (Stage 2 work). 1 pre-existing in `Derivation.lean:133` untouched.
+
+**Methodological note**: This session also surfaced an architectural lesson that's worth recording for future linglib work — the choice between `def` and `abbrev` for a wrapper type is determined by whether you want to register your own typeclass instances on the wrapped type (use `def`, with manual forwarding of foundational instances) or inherit everything from the underlying type (use `abbrev`, accept the underlying defaults). The 0.230.659 audit's `def → abbrev` recommendation was correct *only* under the no-own-instance assumption; once Stage 1's instance-registration goal materialized, the original `def` pattern (mathlib-canonical) had to be restored.
+
+### 0.230.658 — `[CommitmentGrade G]` typeclass: bipolarQuestion / negatedQuestionLow / toContextSet now polymorphic
+
+Mathlib-polish move. The substrate has had a polymorphic `CommitmentSpace W G` since 0.230.655, but several operators were stuck at `G = Prop` because they needed propositional negation (for `bipolarQuestion`/`negatedQuestionLow`) or a binary projection (for `toContextSet`). The `[CommitmentGrade G]` typeclass factors out exactly the per-grade operations needed, lifting all three to polymorphic.
+
+**New typeclass (`Core/Discourse/Commitment.lean` §4):**
+```lean
+class CommitmentGrade (G : Type*) where
+  complement : G → G       -- for "no" branch of bipolar / negated questions
+  support    : G → Prop    -- for context-set projection
+```
+Instances for `G = Prop` (`complement := Not`, `support := id`) and `G = Bool` (`complement := !`, `support := (· = true)`). Other grades (ℚ, ℝ) deferred until a study consumer demands them.
+
+**Polymorphic operators (`Theories/Dialogue/CommitmentSpace.lean`):**
+- `IndexedWeightedCommitment.toCommitment [CommitmentGrade G]` — projects `commit` cases via `support (weight w)`. Subsumes the binary `IndexedCommitment.toCommitment` (definitionally equal at `G = Prop` via `support := id`).
+- `CommitmentSpace.bipolarQuestion [CommitmentGrade G]` — uses `complement` for the "no" branch. Was binary-only; now works for any grade.
+- `CommitmentSpace.negatedQuestionLow [CommitmentGrade G]` — same.
+- `CommitmentSpace.toContextSet [CommitmentGrade G]`, `toDoxasticContextSet [CommitmentGrade G]`, `toPreferentialContextSet [CommitmentGrade G]` — all polymorphic via `support`.
+- `toContextSet_eq_doxastic_and_preferential` theorem now polymorphic too.
+
+**Cleanup:**
+- Removed `IndexedWeightedCommitment.contentBinary` (the information-discarding "lie" — returned `True` for any commit case regardless of weight). Audit-flagged BLOCK; its use case is now subsumed by the polymorphic `toCommitment` via `support`.
+- `@[simp]` attributes on `denegate_preserves_root`, `monopolarQuestion_preserves_root`, `bipolarQuestion_preserves_root` — three obvious projection lemmas the prior audit flagged as `@[simp]`-discipline gaps.
+
+**Consumer impact:** Krifka2015, Krifka2020, CohenKrifka2014, CondoravdiLauer2012, Compare.lean — all build unchanged. The `Prop` instance recovers the binary case definitionally; the `Bool` instance covers Cohen-Krifka 2014's denegation markers. KrifkaState's `bipolarQuestion`/`negatedQuestionLow` wrappers stay binary-typed via `CommitmentSpace W Prop` and the `Prop` instance.
+
+**The architectural payoff:** the substrate's binary-only operators are now lifted out of the binary corner. Adding `[CommitmentGrade ℝ]` (Anderson 2021 distributional) or `[CommitmentGrade ℚ]` (Lauer credence) becomes a typeclass instance, not a substrate refactor. The `KrifkaState W G` polymorphism deferral becomes unblockable when a graded consumer arrives.
+
+Targeted builds of substrate + 4 study files + Compare.lean green at 903 jobs.
+
 ### 0.230.657 — Kao 2014 metaphor: PMF migration with EReal-softmax; retire rsa_predict
 
 Replaces `Linglib/Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean`

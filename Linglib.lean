@@ -1194,6 +1194,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
 import Linglib.Phenomena.ArgumentStructure.Studies.StapsRooryck2024
 import Linglib.Phenomena.ArgumentStructure.Studies.Hewett2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Nordlinger2023
+import Linglib.Phenomena.Modality.Studies.Booth2022
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -1858,6 +1859,7 @@ import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Algebra.ConnesKreimer.Defs
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
+import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
