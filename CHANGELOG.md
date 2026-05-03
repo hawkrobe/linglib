@@ -4,7 +4,7 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-### 0.230.648 — DM/ContainmentVI PART II collapse: subtype refinement
+### 0.230.649 — DM/ContainmentVI PART II collapse: subtype refinement
 
 Replaces PART II's hand-rolled `LocalVIRule` structure (4 fields:
 `formClass`, `condGrade`, `specificity`, `locality`) with the subtype
