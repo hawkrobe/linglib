@@ -4,6 +4,70 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.651 — QBSML/FreeChoice.lean substrate + AvO 2023 refactor
+
+QBSML substrate now mirrors BSML's free-choice apparatus. AvO 2023 study
+file's two facts (8, 10) become one-line substrate invocations, audit
+findings addressed.
+
+**`Theories/Semantics/QBSML/FreeChoice.lean`** (NEW, ~333 LOC):
+- `enrichment_strengthens_both` — joint bilateral induction over 8
+  QBSMLFormula constructors. The QBSML analogue of BSML/Enrichment's
+  central engine. Pred / NE / Neg / Conj / Disj / Poss / Exi / Univ
+  cases all interleave support and antiSupport directions; `Exi`/`Univ`
+  use `extendUniversal` and `extendFunctional` plus `antiSupport_strip_ne`.
+- `negationStrip_Q` — Fact 10 universal. Composes three NE-strips with
+  the antiSupport-disj clause.
+- `narrowScopeFC_Q` — Fact 8 universal. Per-index `◇` destructure,
+  world-projection of the disjunction split via three private helper
+  lemmas (`modalLift_image_fst_subset`, etc.).
+
+**`QBSML/Enrichment.lean`** (~37 LOC added):
+- `antiSupport_strip_ne` — used 5+ times across `QBSML/FreeChoice.lean`.
+- `antiSupport_conj_ne_of_antiSupport`, `antiSupport_conj_ne_iff`
+  (reverse direction + round-trip).
+
+**`Phenomena/FreeChoice/Studies/AloniVanOrmondt2023.lean`** refactored:
+- `QPred` extended with `.Q` constructor — fixes audit's "degenerate
+  `Px ∨ Px`" finding. Disjunction is now `Px ∨ Qx` matching paper's
+  `Pa ∨ Pb`.
+- `fact10_negation`: one-line `negationStrip_Q avoModel ...` invocation
+  (was ~25-line inline proof).
+- `fact8_narrowScopeFC`: NEW, one-line `narrowScopeFC_Q ...` invocation.
+- `Px_flat` smoke-test removed (audit: `rfl`-equivalent on `pred P x`).
+- Docstring table fixed: Fact 4 formula `[∀xPx ∨ Qx]⁺` (matches paper);
+  Fact 5 relabeled "Distribution under full information" (was mislabeled
+  WSFC).
+
+**`blog/data/references.bib`**: added `aloni-vanormondt-2023` and
+`chemla-2009` (both cited downstream but missing — `gen_bibliography.py
+--check` now resolves them).
+
+**Deferred** (next session candidates):
+- `universalFC_Q` (Fact 9): `extendUniversal` interaction with
+  `narrowScopeFC_Q` per index.
+- Distribution / Obviation / Modal Disjunction (Facts 3-6): need
+  state-based frame condition handling.
+- `Decidable` instance for `QBSML.eval`: would unlock `decide`-style
+  premise checks at concrete teams.
+
+### 0.230.652 — Krifka 2015/2020 overhaul: speaker-indexed commitments, `S⊢φ` substrate, file split
+
+Deleted the previous `Phenomena/Assertion/Studies/Krifka2015.lean` after a 4-agent audit found three substantive errors against the SALT 25 paper: bipolar question modeled as two stacked monopolars (producing a contradictory `[¬rain, rain]` continuation that the docstring rationalized as a "Krifka observation"); matching tag modeled as sequential `assert; question` despite Krifka p. 342 explicitly rejecting that decomposition; central `S⊢φ` Frege-turnstile primitive entirely missing from the substrate, blocking §4 (the paper's titular high vs low negated questions).
+
+**Substrate changes:**
+- New `Core.Discourse.Commitment.IndexedCommitment` (commit/refuse cases) — formalizes Krifka's `S⊢φ` and `¬S⊢φ` notations.
+- Split `Theories/Dialogue/Krifka.lean` into `CommitmentSpace.lean` (2015 framework) + `LayeredAssertion.lean` (2020 framework). Names are now mathlib-style concept-anchored, not author-anchored.
+- `CommitmentSpace.root : List (IndexedCommitment W)` (was `List (Set W)`). Operators take a `committer : DiscourseRole`. Renamed `question` → `monopolarQuestion`, added `bipolarQuestion`, `negatedQuestionLow`, `negatedQuestionHigh`, `applyComplex`. Renamed `isSettled`/`isStable` → `hasNoOpenContinuations`. Multiple substrate equation citations corrected.
+
+**New study files:**
+- `Phenomena/Assertion/Studies/Krifka2015.lean` — covers paper §§1–5 + reciprocal KOS contrast. Includes Table 1 (Büring & Gunlogson 2000 contextual-evidence licensing) as `decide`-checked predictive bundle. Bipolar continuations are now provably non-contradictory.
+- `Phenomena/Assertion/Studies/Krifka2020.lean` — JP/ComP layered-clause material (was misattributed to Krifka 2015 in deleted file). Refactored data bridges to call `Phenomena.Assertion.Basic.all_hedges_reduce` / `all_oaths_increase`.
+
+**Bib entries added:** `cohen-krifka-2014`, `speas-2004`, `wiltschko-2014`. All verified against publication PDFs — no fabricated DOIs/pages.
+
+**Deferred:** speech-act denegation/conjunction/disjunction primitives (§1, eqs. 5–7); cross-framework contrasts beyond KOS (Stalnaker, Farkas-Bruce, Inquisitive — substrates present, theorems future work).
+
 ### 0.230.651 — Implicature spine: BPS non-cancellability cashed; S=Prop default dropped
 
 Multi-agent audit found `Diagnostics.lean`'s docstring claim — "BPS
