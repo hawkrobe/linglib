@@ -231,7 +231,7 @@ H[Y₂] for each via `decide` on rationals.
     marginal entropy of the derived variable.
 
     The canonical statement lives at `PMF.conditionalEntropy_le_entropy` —
-    `joint.conditionalEntropy ≤ joint.marginalSnd.entropy` for any joint
+    `joint.conditionalEntropy ≤ joint.snd.entropy` for any joint
     PMF on `(α × β)` with strict-positive marginals. Consumers wanting the
     (ι→ℝ) form construct PMFs via `PMF.ofRealWeightFn` then apply.
 

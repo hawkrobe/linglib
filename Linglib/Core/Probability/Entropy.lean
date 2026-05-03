@@ -185,10 +185,10 @@ example : True := trivial  -- placeholder; see TODO above
 -- ============================================================================
 
 /-- Marginal along the first projection. -/
-noncomputable def marginalFst (joint : PMF (α × β)) : PMF α := joint.map Prod.fst
+noncomputable def fst (joint : PMF (α × β)) : PMF α := joint.map Prod.fst
 
 /-- Marginal along the second projection. -/
-noncomputable def marginalSnd (joint : PMF (α × β)) : PMF β := joint.map Prod.snd
+noncomputable def snd (joint : PMF (α × β)) : PMF β := joint.map Prod.snd
 
 -- ============================================================================
 -- §3.5: Marginal-from-joint structural lemmas
@@ -196,7 +196,7 @@ noncomputable def marginalSnd (joint : PMF (α × β)) : PMF β := joint.map Pro
 
 /-- `(joint.map Prod.fst) a = ∑ b, joint (a, b)` for finite-Fintype joint PMFs.
     The first marginal is the row-sum of the joint. -/
-theorem marginalFst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
+theorem fst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
     joint.map Prod.fst a = ∑ b : β, joint (a, b) := by
   rw [PMF.map_apply]
   rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
@@ -214,7 +214,7 @@ theorem marginalFst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
 
 /-- `(joint.map Prod.snd) b = ∑ a, joint (a, b)` for finite-Fintype joint PMFs.
     The second marginal is the column-sum of the joint. -/
-theorem marginalSnd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
+theorem snd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
     joint.map Prod.snd b = ∑ a : α, joint (a, b) := by
   rw [PMF.map_apply]
   rw [tsum_eq_sum (s := (Finset.univ : Finset (α × β)))
@@ -231,17 +231,17 @@ theorem marginalSnd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
     exact absurd (Finset.mem_univ b) h
 
 /-- `toRealFn` of the first marginal equals the row-sum of `toRealFn` of the joint. -/
-theorem marginalFst_toRealFn_eq_sum [DecidableEq α] (joint : PMF (α × β)) (a : α) :
-    joint.marginalFst.toRealFn a = ∑ b : β, joint.toRealFn (a, b) := by
-  unfold marginalFst toRealFn
-  rw [marginalFst_apply]
+theorem fst_toRealFn_eq_sum [DecidableEq α] (joint : PMF (α × β)) (a : α) :
+    joint.fst.toRealFn a = ∑ b : β, joint.toRealFn (a, b) := by
+  unfold fst toRealFn
+  rw [fst_apply]
   rw [ENNReal.toReal_sum (fun b _ => joint.apply_ne_top (a, b))]
 
 /-- `toRealFn` of the second marginal equals the column-sum of `toRealFn` of the joint. -/
-theorem marginalSnd_toRealFn_eq_sum [DecidableEq β] (joint : PMF (α × β)) (b : β) :
-    joint.marginalSnd.toRealFn b = ∑ a : α, joint.toRealFn (a, b) := by
-  unfold marginalSnd toRealFn
-  rw [marginalSnd_apply]
+theorem snd_toRealFn_eq_sum [DecidableEq β] (joint : PMF (α × β)) (b : β) :
+    joint.snd.toRealFn b = ∑ a : α, joint.toRealFn (a, b) := by
+  unfold snd toRealFn
+  rw [snd_apply]
   rw [ENNReal.toReal_sum (fun a _ => joint.apply_ne_top (a, b))]
 
 -- ============================================================================
@@ -651,7 +651,7 @@ Future `klDiv` chain rules from mathlib transfer to MI for free. -/
     grounded in `PMF.klDiv` (rfl-bridged to mathlib's `InformationTheory.klDiv`). -/
 noncomputable def mutualInformation [MeasurableSpace α] [MeasurableSpace β]
     (joint : PMF (α × β)) : ℝ :=
-  (joint.klDiv (joint.marginalFst.product joint.marginalSnd)).toReal
+  (joint.klDiv (joint.fst.product joint.snd)).toReal
 
 /-- **Mutual information is non-negative** (Cover-Thomas 2.6.5):
     free from `ENNReal.toReal_nonneg` since `klDiv` returns `ℝ≥0∞`. -/
@@ -666,27 +666,27 @@ theorem mutualInformation_eq_entropy_sum [MeasurableSpace α] [MeasurableSpace �
     [MeasurableSingletonClass α] [MeasurableSingletonClass β]
     [DecidableEq α] [DecidableEq β]
     (joint : PMF (α × β))
-    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
-    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
+    (h_margX_pos : ∀ a, 0 < joint.fst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.snd.toRealFn b) :
     joint.mutualInformation
-      = joint.marginalFst.entropy + joint.marginalSnd.entropy - joint.entropy := by
+      = joint.fst.entropy + joint.snd.entropy - joint.entropy := by
   -- Strict-positive product follows from strict-positive marginals.
   have h_prod_pos : ∀ p : α × β,
-      0 < (joint.marginalFst.product joint.marginalSnd).toRealFn p := by
+      0 < (joint.fst.product joint.snd).toRealFn p := by
     rintro ⟨a, b⟩
     rw [product_toRealFn]
     exact mul_pos (h_margX_pos a) (h_margY_pos b)
   -- Step 1: expand KL as discrete log-ratio sum.
   unfold mutualInformation
   rw [toReal_klDiv_eq_sum_log_div joint
-        (joint.marginalFst.product joint.marginalSnd) h_prod_pos]
+        (joint.fst.product joint.snd) h_prod_pos]
   -- Step 2: substitute product_toRealFn for cleaner working form.
   have h_subst : (∑ p : α × β, joint.toRealFn p *
             Real.log (joint.toRealFn p /
-              (joint.marginalFst.product joint.marginalSnd).toRealFn p))
+              (joint.fst.product joint.snd).toRealFn p))
       = ∑ ab : α × β, joint.toRealFn ab *
             Real.log (joint.toRealFn ab /
-              (joint.marginalFst.toRealFn ab.1 * joint.marginalSnd.toRealFn ab.2)) := by
+              (joint.fst.toRealFn ab.1 * joint.snd.toRealFn ab.2)) := by
     refine Finset.sum_congr rfl (fun ⟨a, b⟩ _ => ?_)
     rw [product_toRealFn]
   rw [h_subst, Fintype.sum_prod_type]
@@ -694,16 +694,16 @@ theorem mutualInformation_eq_entropy_sum [MeasurableSpace α] [MeasurableSpace �
   have h_per : ∀ a b,
       joint.toRealFn (a, b) *
         Real.log (joint.toRealFn (a, b) /
-          (joint.marginalFst.toRealFn a * joint.marginalSnd.toRealFn b))
+          (joint.fst.toRealFn a * joint.snd.toRealFn b))
         = joint.toRealFn (a, b) * Real.log (joint.toRealFn (a, b))
-          - joint.toRealFn (a, b) * Real.log (joint.marginalFst.toRealFn a)
-          - joint.toRealFn (a, b) * Real.log (joint.marginalSnd.toRealFn b) := by
+          - joint.toRealFn (a, b) * Real.log (joint.fst.toRealFn a)
+          - joint.toRealFn (a, b) * Real.log (joint.snd.toRealFn b) := by
     intro a b
     by_cases hJ : joint.toRealFn (a, b) = 0
     · simp [hJ]
-    · have hMX_ne : joint.marginalFst.toRealFn a ≠ 0 := ne_of_gt (h_margX_pos a)
-      have hMY_ne : joint.marginalSnd.toRealFn b ≠ 0 := ne_of_gt (h_margY_pos b)
-      have hMXY_ne : joint.marginalFst.toRealFn a * joint.marginalSnd.toRealFn b ≠ 0 :=
+    · have hMX_ne : joint.fst.toRealFn a ≠ 0 := ne_of_gt (h_margX_pos a)
+      have hMY_ne : joint.snd.toRealFn b ≠ 0 := ne_of_gt (h_margY_pos b)
+      have hMXY_ne : joint.fst.toRealFn a * joint.snd.toRealFn b ≠ 0 :=
         mul_ne_zero hMX_ne hMY_ne
       rw [Real.log_div hJ hMXY_ne, Real.log_mul hMX_ne hMY_ne]
       ring
@@ -719,34 +719,34 @@ theorem mutualInformation_eq_entropy_sum [MeasurableSpace α] [MeasurableSpace �
     refine Finset.sum_congr rfl (fun p _ => ?_)
     simp only [Real.negMulLog]; ring
   have h_term2 :
-      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.marginalFst.toRealFn a))
-        = -joint.marginalFst.entropy := by
+      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.fst.toRealFn a))
+        = -joint.fst.entropy := by
     have h_inner : ∀ a, (∑ b, joint.toRealFn (a, b) *
-            Real.log (joint.marginalFst.toRealFn a))
-        = joint.marginalFst.toRealFn a * Real.log (joint.marginalFst.toRealFn a) := by
+            Real.log (joint.fst.toRealFn a))
+        = joint.fst.toRealFn a * Real.log (joint.fst.toRealFn a) := by
       intro a
-      rw [← Finset.sum_mul, ← marginalFst_toRealFn_eq_sum joint a]
+      rw [← Finset.sum_mul, ← fst_toRealFn_eq_sum joint a]
     simp_rw [h_inner]
     unfold entropy
     rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl (fun a _ => ?_)
-    show joint.marginalFst.toRealFn a * Real.log (joint.marginalFst.toRealFn a) =
+    show joint.fst.toRealFn a * Real.log (joint.fst.toRealFn a) =
          -Real.negMulLog _
     simp only [Real.negMulLog, toRealFn]; ring
   have h_term3 :
-      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.marginalSnd.toRealFn b))
-        = -joint.marginalSnd.entropy := by
+      (∑ a, ∑ b, joint.toRealFn (a, b) * Real.log (joint.snd.toRealFn b))
+        = -joint.snd.entropy := by
     rw [Finset.sum_comm]
     have h_inner : ∀ b, (∑ a, joint.toRealFn (a, b) *
-            Real.log (joint.marginalSnd.toRealFn b))
-        = joint.marginalSnd.toRealFn b * Real.log (joint.marginalSnd.toRealFn b) := by
+            Real.log (joint.snd.toRealFn b))
+        = joint.snd.toRealFn b * Real.log (joint.snd.toRealFn b) := by
       intro b
-      rw [← Finset.sum_mul, ← marginalSnd_toRealFn_eq_sum joint b]
+      rw [← Finset.sum_mul, ← snd_toRealFn_eq_sum joint b]
     simp_rw [h_inner]
     unfold entropy
     rw [← Finset.sum_neg_distrib]
     refine Finset.sum_congr rfl (fun b _ => ?_)
-    show joint.marginalSnd.toRealFn b * Real.log (joint.marginalSnd.toRealFn b) =
+    show joint.snd.toRealFn b * Real.log (joint.snd.toRealFn b) =
          -Real.negMulLog _
     simp only [Real.negMulLog, toRealFn]; ring
   rw [h_term1, h_term2, h_term3]
@@ -758,7 +758,7 @@ theorem mutualInformation_eq_entropy_sum [MeasurableSpace α] [MeasurableSpace �
 
 /-- Conditional entropy `H(β | α) = H(α, β) - H(α)`. -/
 noncomputable def conditionalEntropy (joint : PMF (α × β)) : ℝ :=
-  joint.entropy - joint.marginalFst.entropy
+  joint.entropy - joint.fst.entropy
 
 /-- **Conditioning reduces entropy** (Cover-Thomas 2.6.4): `H(β | α) ≤ H(β)`.
     Direct corollary of `mutualInformation_nonneg` (free from
@@ -769,9 +769,9 @@ theorem conditionalEntropy_le_entropy
     [MeasurableSingletonClass α] [MeasurableSingletonClass β]
     [DecidableEq α] [DecidableEq β]
     (joint : PMF (α × β))
-    (h_margX_pos : ∀ a, 0 < joint.marginalFst.toRealFn a)
-    (h_margY_pos : ∀ b, 0 < joint.marginalSnd.toRealFn b) :
-    joint.conditionalEntropy ≤ joint.marginalSnd.entropy := by
+    (h_margX_pos : ∀ a, 0 < joint.fst.toRealFn a)
+    (h_margY_pos : ∀ b, 0 < joint.snd.toRealFn b) :
+    joint.conditionalEntropy ≤ joint.snd.entropy := by
   have hmi_nonneg : 0 ≤ joint.mutualInformation := joint.mutualInformation_nonneg
   rw [mutualInformation_eq_entropy_sum joint h_margX_pos h_margY_pos] at hmi_nonneg
   unfold conditionalEntropy
