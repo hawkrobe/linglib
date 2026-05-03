@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.664 — Compactness substrate: declarative_inf + relaxed Resolutions; per-constructor alt API for BilatInqProp
+
+- `Core/Question/Basic.lean`: added `declarative_inf` (`declarative A ⊓ declarative B = declarative (A ∩ B)`, `@[simp]`) and `eq_iSup_declarative_alt_of_exists_alt` (relaxed Resolutions Theorem requiring only `∀ p ∈ P.props, ∃ q ∈ alt P, p ⊆ q` instead of `P.props.Finite`). Original `eq_iSup_declarative_alt` becomes a 1-line corollary. The relaxed hypothesis is **strictly weaker**: atoms have infinite props but singleton alt, so the new version applies where the old fails.
+- `Booth2022.lean` per-constructor alt API (substrate for Booth Compactness of Alternatives): `alt_atom_pos = {V}`, `alt_negate_pos = alt φ.neg` (rfl), `alt_necessity_pos = {witness-set}`, `alt_disj_pos_eq_union` (general non-Hurford form). The atomic-case private corollaries (`alt_disj_atom_eq_pair`, `alt_conj_atom_negate_eq_singleton`) now derive from these.
+- `Booth2022.lean` polish per mathlib-reviewer audit: dropped private `declarative_inf` (uses hoisted), collapsed Step 2 of `independence_p_not_q` to single `simp only`, replaced `subset_refl` → `Set.Subset.refl`, added `isTrue_possibility_iff` characterization eliminating Step 4's verbose `show` block.
+- File 544 → 575 LOC. Sorry-free. Builds clean.
+- Sets up the next session: prove `(BilatInqProp.constructor _).pos = ⨆ p ∈ alt _.pos, declarative p` for each constructor, giving Booth Fact 5 in full and unlocking Independence for arbitrary BSML formulas.
+
+### 0.230.664 — Stage 1a: counit_rTensor + counit_lTensor closed; bialgebraStructure stays def
+
+- `Linglib/Core/Algebra/ConnesKreimer/Bialgebra.lean`: 3 sorrys → 1 sorry. Counit laws fully proved; `comul_coassoc` remains (Stage 1b).
+- Helper `cutForest_eq_zero_imp_empty`: structural induction on `T`, key fact that the empty cut is the **unique** cut with `cutForest = 0`. Used to isolate the surviving term in the `(ε ⊗ id) ∘ Δ^c` sum via `Finset.sum_eq_single`.
+- Helper `counit_rTensor_apply_comulTree` / `counit_lTensor_apply_comulTree`: singleton-tree base cases. The lTensor version is much simpler (no uniqueness needed) — every cut has `forestToHc {remainder c}` on the right channel, a singleton workspace and therefore non-zero, so the entire sum vanishes after `(id ⊗ ε)`.
+- Forest-level lemmas: `Multiset.induction` on `F`; cons step uses multiplicativity (`comulForest_add`) + the singleton-tree lemma + `single_mul_single` on the underlying `AddMonoidAlgebra`.
+- `bialgebraStructure` stays a `def` (not `instance`) per audit discipline: one `sorry` remains in the obligation chain, so promoting would let typeclass-resolved code silently inherit unproven coassoc.
+
 ### 0.230.663 — Booth Fact 9 (Independence inference) discharged for atomic disjunctions
 
 - `independence_p_not_q` now PROVED (was `sorry`): when `p ∨ q` is non-Hurford, `□(atom Vp ∨ atom Vq)` truth at `w` entails `◇(atom Vp ∧ ¬ atom Vq)` truth at `w`, over arbitrary `R : W → Set W` and `W`.
