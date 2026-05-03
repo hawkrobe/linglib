@@ -53,6 +53,15 @@ def DegreeGrade.rank : DegreeGrade → Nat
   | .cmpr => 1
   | .sprl => 2
 
+/-- The degree grade as a position index in the 3-cell hierarchy.
+    Sibling of `rank` for callers that need a `Fin 3` directly (e.g.
+    indexing into `Theories.Morphology.DM.ContainmentVI`'s n-parametric
+    machinery at `n = 3`). -/
+def DegreeGrade.toFin : DegreeGrade → Fin 3
+  | .pos  => 0
+  | .cmpr => 1
+  | .sprl => 2
+
 -- ============================================================================
 -- § 2: DegreePattern + *ABA
 -- ============================================================================
