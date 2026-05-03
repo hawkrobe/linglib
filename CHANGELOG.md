@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.618 — Phase 3: dissolve CaseContainment.lean into Caha2009
+
+Migration phase 3/9.
+
+- `RespectsCahaContainment` (def + Decidable instance) moved into `Phenomena/Case/Studies/Caha2009.lean` — the Caha-anchored predicate now lives in the Caha-anchored study file.
+- Dropped §8 Anderson-features theorems (`erg_inst_share_src`, `nom_acc_share_abs`, `abl_loc_same_case_relation`); no external consumers found. If Anderson 1992 warrants formalization later, it gets its own `Studies/Anderson1992.lean`.
+- Deleted `Theories/Interfaces/Morphosyntax/CaseContainment.lean`. The Morphosyntax/ directory now has 3 files (DegreeContainment, Extraction, Relativization) ahead of phases 4–6.
+- Caha2009 imports retargeted: `Core.Case.Basic` + `Core.Case.Order` replace the CaseContainment import; `open Interfaces.Morphosyntax.CaseContainment` removed (predicate now in local namespace). Linglib.lean root index updated.
+
 ### 0.230.617 — Phase 2: CaseContainment substrate → Core/Case/Allomorphy.lean
 
 Migration phase 2/9.
