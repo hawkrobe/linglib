@@ -402,6 +402,38 @@ theorem posterior_le_iff_score_le {α β : Type*} (κ : α → PMF β) (μ : PMF
   rw [← not_lt, ← not_lt, not_iff_not]
   exact posterior_lt_iff_score_lt κ μ b h a₂ a₁
 
+/-- **Set-version of `posterior_lt_iff_score_lt`**: comparing the
+outer-measure-of-Finset values of a posterior at two `Finset`s reduces to
+comparing the corresponding conditional joint sums. The shared
+`(marginal κ μ b)⁻¹` factor cancels.
+
+Foundation lemma for "L1 prefers worlds-in-A over worlds-in-B" in RSA
+findings — e.g. `(L1 u).toOuterMeasure {w | w.1 = .person} >
+(L1 u).toOuterMeasure {w | w.1 = .whale}` reduces to comparing summed
+conditional joint masses on the two cat-fibres.
+
+`posterior_lt_iff_score_lt` is the singleton case (`A = {a₁}`, `B = {a₂}`). -/
+theorem posterior_toOuterMeasure_lt_iff_finset_score_lt
+    {α β : Type*} [Fintype α] (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) (A B : Finset α) :
+    (posterior κ μ b h).toOuterMeasure A < (posterior κ μ b h).toOuterMeasure B ↔
+      (∑ a ∈ A, μ a * κ a b) < ∑ a ∈ B, μ a * κ a b := by
+  rw [PMF.toOuterMeasure_apply_finset, PMF.toOuterMeasure_apply_finset]
+  simp_rw [posterior_apply]
+  rw [← Finset.sum_mul, ← Finset.sum_mul]
+  exact ENNReal.mul_lt_mul_iff_left
+    (ENNReal.inv_ne_zero.mpr (marginal_ne_top κ μ b))
+    (ENNReal.inv_ne_top.mpr h)
+
+/-- The `≤` companion of `posterior_toOuterMeasure_lt_iff_finset_score_lt`. -/
+theorem posterior_toOuterMeasure_le_iff_finset_score_le
+    {α β : Type*} [Fintype α] (κ : α → PMF β) (μ : PMF α) (b : β)
+    (h : marginal κ μ b ≠ 0) (A B : Finset α) :
+    (posterior κ μ b h).toOuterMeasure A ≤ (posterior κ μ b h).toOuterMeasure B ↔
+      (∑ a ∈ A, μ a * κ a b) ≤ ∑ a ∈ B, μ a * κ a b := by
+  rw [← not_lt, ← not_lt, not_iff_not]
+  exact posterior_toOuterMeasure_lt_iff_finset_score_lt κ μ b h B A
+
 /-- **Chained-posterior decomposition** (PMF analogue of mathlib's
 `Mathlib.Probability.Kernel.Posterior.posterior_comp`): comparing two
 sequentially-updated posteriors `posterior κ₂ (posterior κ₁ μ b₁) b₂` at

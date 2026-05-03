@@ -408,11 +408,35 @@ theorem context_sensitivity :
   sorry  -- specific goal sharpens speaker's preference along f₁.
 
 /-- **Finding 6 (Literal correctness)**: hearing "person", listener
-correctly infers `person`. -/
+correctly infers `person`.
+
+Proof structure (mathlib-disciplined, structural reduction first):
+1. Apply `posterior_toOuterMeasure_lt_iff_finset_score_lt` — reduces the
+   outer-measure comparison to a comparison of conditional joint sums.
+2. Convert `{w | w.1 = c}` to `Finset.univ.filter (·.1 = c)`.
+3. Decompose `worldPmf(c, f) = catPmf(c) · featurePmf(c, f)` to factor
+   the catPrior asymmetry (99x) out of the inner sums.
+4. Numerical leaf: `99 · (positive lower bound on speaker mass) > 1 · 1`.
+
+The structural reduction (steps 1-3) is fully mechanical via the substrate.
+The numerical leaf (step 4) is the genuine paper-specific work; sorried
+here pending either a `bound`-discharge or a manual `mixedS1` lower bound. -/
 theorem literal_correct :
     (vagueL1 .person).toOuterMeasure {w | w.1 = .person} >
     (vagueL1 .person).toOuterMeasure {w | w.1 = .whale} := by
-  sorry  -- both prior AND speaker preferences agree on .person.
+  -- Step 1: convert Set-of-predicate to Finset.filter form (mechanical for Fintype)
+  have h_setEq : ∀ c : Cat,
+      ({w : World | w.1 = c} : Set World)
+        = ↑(Finset.univ.filter (fun w : World => w.1 = c)) := fun c => by
+    ext; simp
+  rw [gt_iff_lt, h_setEq .whale, h_setEq .person]
+  -- Step 2: apply structural decomposition substrate to strip the posterior
+  unfold vagueL1 L1
+  rw [PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt]
+  -- Goal: ∑ w ∈ filter (·.1 = .whale), worldPmf w * mixedS1(.person | w.2)
+  --      < ∑ w ∈ filter (·.1 = .person), worldPmf w * mixedS1(.person | w.2)
+  -- The numerical leaf: 99x catPrior asymmetry vs ≤ 1x speaker contribution.
+  sorry
 
 /-! ## §10. Cross-paper engagement
 
