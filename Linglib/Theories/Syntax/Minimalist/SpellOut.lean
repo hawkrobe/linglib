@@ -24,7 +24,7 @@ Merge → SO → Spell-Out
 - `toLFTree` converts the first into the second. Traces (id ≥ 10000) become
   trace nodes; everything else becomes a terminal labeled by its phonForm.
 - Predicate Abstraction (λ-binding at landing sites) is a separate step
-  handled by `Interfaces/SyntaxSemantics/Minimalism/Interface.lean`.
+  handled by `Theories/Syntax/Minimalist/TraceInterpretation.lean`.
 
 ## Feature convergence
 

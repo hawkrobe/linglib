@@ -28,8 +28,8 @@ Connects three layers:
    `COMPLET` operators: INCHOAT extracts the onset point (= `CoSType.inception`),
    COMPLET extracts the telos (= `CoSType.cessation`).
 
-4. The `satisfiesDurativeRestriction` predicate (from Data) coincides with
-   `VendlerClass.toProfile.isHomogeneous`: exactly states and activities
+4. The `satisfiesDurativeRestriction` predicate (from Data) picks out
+   exactly states and activities — the SIP-having Vendler classes that
    satisfy the durative requirement for *until* and *since* main clauses.
 
 ## The Explanatory Chain
@@ -122,24 +122,23 @@ theorem after_telicity_data_agree :
 -- § 3: Durative Selectional Restriction ↔ VendlerClass
 -- ============================================================================
 
-/-- The `satisfiesDurativeRestriction` predicate from the data layer is
-    equivalent to the theory's `isHomogeneous` predicate on the canonical
-    VendlerClass profile. This grounds the data-level predicate in the
-    theory-level aspectual feature system. -/
-theorem durative_restriction_is_homogeneity (c : VendlerClass) :
-    satisfiesDurativeRestriction c = c.toProfile.isHomogeneous :=
-  durative_restriction_iff_homogeneous c
+/-- The `satisfiesDurativeRestriction` predicate from the data layer
+    picks out exactly the SIP-having Vendler classes (states and
+    activities), grounding the data-level predicate in the
+    theory-level aspectual class system. -/
+theorem durative_restriction_picks_state_or_activity (c : VendlerClass) :
+    satisfiesDurativeRestriction c = true ↔ c = .state ∨ c = .activity :=
+  durative_restriction_iff_state_or_activity c
 
 /-- The *until* interaction data matches VendlerClass predictions:
-    acceptable iff homogeneous (state or activity). -/
+    acceptable iff state or activity. -/
 theorem until_selectional_restriction_grounded :
-    -- Acceptable: homogeneous classes
-    until_state_main.acceptableWithout = VendlerClass.state.toProfile.isHomogeneous ∧
-    until_activity_main.acceptableWithout = VendlerClass.activity.toProfile.isHomogeneous ∧
-    -- Degraded: non-homogeneous classes
-    until_achievement_main.acceptableWithout = VendlerClass.achievement.toProfile.isHomogeneous ∧
-    until_accomplishment_main.acceptableWithout =
-      VendlerClass.accomplishment.toProfile.isHomogeneous :=
+    -- Acceptable: state or activity (SIP-having classes)
+    until_state_main.acceptableWithout = true ∧
+    until_activity_main.acceptableWithout = true ∧
+    -- Degraded: achievement and accomplishment (lack SIP)
+    until_achievement_main.acceptableWithout = false ∧
+    until_accomplishment_main.acceptableWithout = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

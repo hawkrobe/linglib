@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!
 # Voice Head Flavors
@@ -83,6 +84,23 @@ inductive VoiceFlavor where
 def VoiceFlavor.defaultPhasal : VoiceFlavor → Bool
   | .agentive | .causer | .reflexive | .experiencer => true
   | .nonThematic | .expletive | .impersonal | .passive | .antipassive => false
+
+/-- Severing prediction (@cite{kratzer-1996}): Voice flavor determines
+    WHICH theta role the external argument gets, going beyond
+    `VoiceHead.AssignsTheta` (which only says WHETHER there is one).
+
+    The current typology distinguishes agent, stimulus, and experiencer
+    among θ-assigning flavors; non-θ flavors return `none`. -/
+def VoiceFlavor.thetaRole : VoiceFlavor → Option ThetaRole
+  | .agentive     => some .agent
+  | .causer       => some .stimulus
+  | .antipassive  => some .agent     -- agent still present, just with ABS case
+  | .reflexive    => some .agent     -- agent that binds internal arg (@cite{wood-2015})
+  | .experiencer  => some .experiencer  -- subject-experiencer (@cite{wood-2015})
+  | .nonThematic  => none
+  | .expletive    => none
+  | .impersonal   => none
+  | .passive      => none
 
 -- ============================================================================
 -- § 2: Voice Head Structure

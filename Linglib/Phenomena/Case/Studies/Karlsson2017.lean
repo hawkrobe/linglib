@@ -21,7 +21,7 @@ The partitive also appears obligatorily under negation:
   *En lukenut kirja-a.* 'I didn't read the book.'
 
 This is the first bridge in linglib connecting `Core.Case` to
-`Semantics.Tense.Aspect.LexicalAspect.Telicity`, making the case–aspect
+`Features.Telicity`, making the case–aspect
 interaction formally verifiable.
 
 ## Theoretical significance

@@ -1,7 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.VoiceTheta
 import Linglib.Fragments.Icelandic.Predicates
 
 /-!
@@ -69,7 +68,6 @@ namespace Wood2015
 
 open Minimalist
 open Fragments.Icelandic.Predicates
-open Minimalist.VoiceTheta
 
 -- ============================================================================
 -- § 0: Wood-Apparatus (the analytical layer over the Fragment)

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
-import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.FreeChoice.Basic
 import Linglib.Phenomena.Conditionals.Studies.Santorio2018
 
 /-!

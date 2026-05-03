@@ -1,4 +1,5 @@
 import Mathlib.Computability.ContextFreeGrammar
+import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 /-!
 # Derivation Trees for Context-Free Grammars
@@ -63,6 +64,53 @@ inductive ValidFor (g : ContextFreeGrammar T) : CFGTree T g.NT → Prop where
     (hrule : ⟨nt, children.map rootSymbol⟩ ∈ g.rules)
     (hchildren : ∀ c ∈ children, ValidFor g c) :
     ValidFor g (.node nt children)
+
+section RuleCount
+
+variable [DecidableEq T] [DecidableEq N]
+
+mutual
+/-- Number of times rule `r` is applied at internal nodes of the
+    derivation tree `t`. A leaf contributes nothing; a node `(nt, cs)`
+    contributes 1 if its instantiated rule `⟨nt, cs.map rootSymbol⟩`
+    matches `r`, plus the count over its children. Substrate primitive
+    used by any weighted-CFG analysis (PCFG corpus probability,
+    Dirichlet posterior, etc.). -/
+def ruleCount (r : ContextFreeRule T N) :
+    CFGTree T N → ℕ
+  | .leaf _ => 0
+  | .node nt cs =>
+      (if r = ⟨nt, cs.map rootSymbol⟩ then 1 else 0) + ruleCountList r cs
+
+/-- List version of `ruleCount` (mutual companion). -/
+def ruleCountList (r : ContextFreeRule T N) :
+    List (CFGTree T N) → ℕ
+  | [] => 0
+  | t :: ts => ruleCount r t + ruleCountList r ts
+end
+
+/-- Total number of times rule `r` is used across a corpus `D` of
+    derivation trees. -/
+def corpusRuleCount (r : ContextFreeRule T N)
+    (D : Multiset (CFGTree T N)) : ℕ :=
+  (D.map (ruleCount r)).sum
+
+/-- Empty corpus contributes no rule applications. -/
+@[simp]
+theorem corpusRuleCount_zero (r : ContextFreeRule T N) :
+    corpusRuleCount r (0 : Multiset (CFGTree T N)) = 0 := by
+  simp [corpusRuleCount]
+
+/-- Corpus rule counts add over disjoint corpora — `corpusRuleCount`
+    is a `Multiset` sum over `ruleCount`, which respects multiset
+    addition by `Multiset.map_add` + `Multiset.sum_add`. -/
+theorem corpusRuleCount_add (r : ContextFreeRule T N)
+    (D₁ D₂ : Multiset (CFGTree T N)) :
+    corpusRuleCount r (D₁ + D₂) = corpusRuleCount r D₁ + corpusRuleCount r D₂ := by
+  unfold corpusRuleCount
+  rw [Multiset.map_add, Multiset.sum_add]
+
+end RuleCount
 
 end CFGTree
 

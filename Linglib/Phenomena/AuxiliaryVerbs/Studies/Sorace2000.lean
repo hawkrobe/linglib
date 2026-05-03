@@ -7,7 +7,7 @@ import Linglib.Features.Aktionsart
 
 Connects the auxiliary selection data in
 `Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
-classification from `Theories.Semantics.Tense.Aspect.LexicalAspect`.
+classification from `Features.Aktionsart`.
 
 ## Known gaps
 

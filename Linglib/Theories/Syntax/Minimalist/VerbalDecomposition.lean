@@ -19,8 +19,7 @@ Key decompositions:
 Voice contributes vDO (the agent's activity); CAUSE is part of the root
 structure, present in both causative and anticausative alternants.
 
-Independent of applicative heads — used by Fission, EventStructureBridge,
-and the Spanish fragment.
+Independent of applicative heads — used by Fission and the Spanish fragment.
 
 -/
 

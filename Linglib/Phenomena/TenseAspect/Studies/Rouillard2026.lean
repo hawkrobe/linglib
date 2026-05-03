@@ -323,15 +323,16 @@ theorem surviving_is_neg_gtia_pfv :
 -- ════════════════════════════════════════════════════
 
 /-- The subinterval property (homogeneity) corresponds to open-scale
-    boundedness in the Kennedy–Rouillard isomorphism.
-    `homogeneous_iff_durative_atelic` (from LexicalAspect.lean) +
-    `atelic_open` (from MaximalInformativity.lean) form the bridge chain:
-    homogeneous → state ∨ activity → atelic → open scale → E-TIA blocked. -/
+    boundedness in the Kennedy–Rouillard isomorphism. The hypothesis
+    `p.toVendlerClass ∈ {.state, .activity}` is the SIP-having class
+    condition (formerly stated as `p.isHomogeneous = true` before the
+    Aktionsart Bool predictors were dissolved). Combined with
+    `atelic_open` (from MaximalInformativity.lean) it forms the bridge
+    chain: state ∨ activity → atelic → open scale → E-TIA blocked. -/
 theorem homogeneous_implies_open_scale (p : AspectualProfile)
-    (h : p.isHomogeneous = true) :
+    (h : p.toVendlerClass = .state ∨ p.toVendlerClass = .activity) :
     scaleBoundedness p.toVendlerClass = .open_ := by
-  have hvc := (homogeneous_iff_durative_atelic p).mp h
-  rcases hvc with hc | hc <;> rw [hc] <;> decide
+  rcases h with hc | hc <;> rw [hc] <;> decide
 
 /-- Telic → closed scale → E-TIA licensed.
     Note: non-homogeneous alone is insufficient — semelfactives are

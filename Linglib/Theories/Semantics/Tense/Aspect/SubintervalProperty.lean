@@ -57,9 +57,9 @@ def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
     @cite{smith-1997} Ch. 2: states and activities have the subinterval
     property; accomplishments, achievements, and semelfactives lack it.
 
-    The VendlerClass-level classification (`predictsSubintervalProp`,
-    `sub_agrees_with_homogeneous`) is in `LexicalAspect.lean`. Here we
-    prove the operator-level consequences:
+    `Features/Aktionsart.lean` carries the VendlerClass enum used to
+    state the consumer-side facts (`c = .state ∨ c = .activity` for
+    SUB-having classes). Here we prove the operator-level consequences:
 
     1. **Activity entailment** (p. 25): IMPF(activity) at I entails
        PRFV(activity) at some I' ⊆ I — activities have part-whole homogeneity.

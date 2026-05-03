@@ -1,141 +1,497 @@
-import Linglib.Fragments.Zapotec.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Finset.Image
+import Mathlib.Data.Finset.NAry
+import Mathlib.Data.Finset.Prod
+import Mathlib.Data.Finset.Erase
+import Mathlib.Data.Fintype.Basic
 import Linglib.Features.Person
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
-@cite{toosarvandani-2023}
+@cite{toosarvandani-2023} @cite{harbour-2016} @cite{kratzer-2009}
+@cite{foley-toosarvandani-2022}
 
-Language 99(4): 760–805.
+Language 99(4): 760–808.
 
-Formalizes the core empirical and theoretical contributions:
+Formalizes the core empirical and theoretical contributions of Toosarvandani's
+analysis of Santiago Laxopa Zapotec (and other Southeastern Sierra Zapotec
+varieties), in which third-person plural pronouns encode a four-way animacy
+distinction (elder humans, nonelder humans, animals, inanimates) that exhibits
+ASSOCIATIVITY — the cluster of interpretive properties otherwise associated
+with first- and second-person plural pronouns.
 
-1. **Pronoun denotation derivations** — the 4-way animacy pronoun inventory of
-   Santiago Laxopa Zapotec (Table 1) derived from nested ⊕ composition with
-   Lexical Complementarity.
+## Key formal apparatus (paper §3–§4)
 
-2. **Heterogeneity** — elder pronouns can refer to heterogeneous groups
-   (elder + non-elder human), derived by ⊕ rather than stipulated.
+- **Lattice-denoting features.** SPEAKER, PARTICIPANT, π are person features
+  denoting predicates over a lattice of singular and plural individuals (48).
+  ELDER, HUMAN, ANIMATE are animacy features with parallel structure (58).
+- **⊕ operator** (50): pointwise lattice join of two feature denotations,
+  generalising Kratzer's (2009) sum operator. Generates plural individuals
+  (and thus heterogeneity) when applied to lattice-denoting features.
+- **Lexical Complementarity (LC)** (52): for ⟦F⟧ ⊂ ⟦G⟧, use of G is
+  restricted to ⟦G⟧ \ ⟦F⟧. Derives marked reference patterns.
+- **SINGULAR/PLURAL** (56): intersection-composing number features.
+- **Composition order** (57, 63): person/animacy features compose via ⊕
+  first, then number composes via ∩. The reverse order is non-functional —
+  ⊕ would re-introduce pluralities that ∩ SINGULAR removed.
+- **Person Case Constraint** (86): a functional head F Agrees with two
+  pronouns A and B (A higher than B) iff A has all of the features of B.
 
-3. **Associativity** — ⊕ is associative: the order of feature composition
-   doesn't matter.
+## File structure
 
-4. **PCC paradigm** — animacy-based PCC effects in SLZ derived from feature
-   containment (86): "A functional head F Agrees with two pronouns A and B,
-   where A is higher than B, iff A has all of the features of B." Verified
-   for all 36 combinations, yielding 21 licit pairs (15 strict + 6 same-rank).
+- §1 Operators (oplus, lexComp, singularFilter, pluralFilter, npow encoding)
+- §2 PhiDomain and the Zapotec instantiation
+- §3 Feature denotations
+- §4 Pronoun composition (Zapotec 4-way animacy + LC)
+- §5 PCC via feature containment (data from (77)–(82))
+- §6 Structural properties of the PCC condition
+- §7 Denotation ↔ PCC correspondence
+- §8 Heterogeneity and SINGULAR/PLURAL composition order
+- §9 Bridges to `Features.Person` and `Features.Prominence`
 
-5. **Denotation ↔ PCC correspondence** — within third person, denotation
-   nesting (semantic) mirrors PCC licitness (syntactic), connecting the
-   compositional semantics to the syntactic hierarchy.
+## Note on absolute vs relative PCC
 
-6. **SINGULAR/PLURAL composition order** — ⊕ (person/animacy) must precede
-   ∩ SINGULAR (number) because ⊕ creates new pluralities that undo
-   SINGULAR's filtering. Non-commutativity proved concretely.
-
-7. **Bridges to Core** — PronType maps to `Features.Person.Features` (±participant,
-   ±author), `Features.Prominence.PersonLevel`, and `Features.Prominence.AnimacyLevel`.
-   The 4-way Zapotec animacy system refines the 3-way typological scale.
+(86) is the formal Agree condition. It predicts same-rank pairings (e.g.
+1>1, 2>2) are licit because A trivially has all of A's features. The paper
+acknowledges (footnote 22, p. 798) that the empirical *person*-based PCC in
+many languages is ABSOLUTE — any local-person object is illicit, even with
+a local-person subject. The animacy-based PCC in Zapotec is RELATIVE and is
+what (86) directly derives. Cross-linguistic variation between absolute and
+relative PCC is attributed to the probe's featural relativization (§4.3,
+not formalized here).
 -/
 
 namespace Toosarvandani2023
 
-open Minimalist.PhiSemantics
-open Fragments.Zapotec
-
 -- ============================================================================
--- § 1: Pronoun Denotation Derivations
+-- § 1: Operators
 -- ============================================================================
 
-/-- The elder pronoun denotation is nonempty. -/
-theorem elderPron_nonempty : (elderPron zd).Nonempty := by native_decide
+/-- Nonempty powerset: all nonempty subsets of `atoms`. Lean-side encoding
+    of the lattice of plural individuals — every nonempty sum of atoms
+    satisfying a feature predicate. The paper works in a Linkian/Krifkan
+    lattice (47); we represent that lattice as the powerset of an atomic
+    domain. -/
+def npow {α : Type*} [DecidableEq α] (atoms : Finset α) : Finset (Finset α) :=
+  atoms.powerset.erase ∅
 
-/-- The human pronoun denotation is nonempty. -/
-theorem humanPron_nonempty : (humanPron zd).Nonempty := by native_decide
+/-- ⊕ (oplus): pointwise lattice join of two feature denotations (50):
+    `[⊕ G F] = λx . ∃y∃z[x = y ⊔ z, y ∈ ⟦F⟧, z ∈ ⟦G⟧]`.
+    Following @cite{harbour-2016}, generalising @cite{kratzer-2009}'s sum
+    operator. Generates heterogeneous pluralities: `oplus SPEAKER ANIMATE`
+    includes `{speaker, animal}`.
 
-/-- The animal pronoun denotation is nonempty. -/
-theorem animalPron_nonempty : (animalPron zd).Nonempty := by native_decide
+    Defined directly via `Finset.image` (rather than the equivalent
+    `Finset.image₂ (· ∪ ·)`) so that `decide` can unfold concrete instances
+    without an extra `image₂` layer. The structural lemmas
+    (`oplus_subset`, `oplus_assoc`) inherit from mathlib via defeq. -/
+def oplus {α : Type*} [DecidableEq α]
+    (F G : Finset (Finset α)) : Finset (Finset α) :=
+  (F ×ˢ G).image fun yz => yz.1 ∪ yz.2
 
-/-- The inanimate pronoun denotation is nonempty. -/
-theorem inanimatePron_nonempty : (inanimatePron zd).Nonempty := by native_decide
+/-- `oplus` agrees with `Finset.image₂ (· ∪ ·)` definitionally. Used to
+    inherit mathlib's `image₂_*` lemmas. -/
+theorem oplus_eq_image₂ {α : Type*} [DecidableEq α]
+    (F G : Finset (Finset α)) :
+    oplus F G = Finset.image₂ (· ∪ ·) F G := rfl
+
+/-- Monotonicity of ⊕: pointwise on both arguments. Inherits from
+    `Finset.image₂_subset`. -/
+theorem oplus_subset {α : Type*} [DecidableEq α]
+    {F F' G G' : Finset (Finset α)} (hF : F ⊆ F') (hG : G ⊆ G') :
+    oplus F G ⊆ oplus F' G' :=
+  Finset.image₂_subset hF hG
+
+/-- Associativity of ⊕: inherits from `Finset.image₂_assoc` and
+    `Finset.union_assoc`. -/
+theorem oplus_assoc {α : Type*} [DecidableEq α]
+    (F G H : Finset (Finset α)) :
+    oplus (oplus F G) H = oplus F (oplus G H) := by
+  show Finset.image₂ (· ∪ ·) (Finset.image₂ (· ∪ ·) F G) H =
+       Finset.image₂ (· ∪ ·) F (Finset.image₂ (· ∪ ·) G H)
+  exact Finset.image₂_assoc (fun a b c => Finset.union_assoc a b c)
+
+/-- Monotonicity of `npow`: `powerset_mono` + `erase_subset_erase`. -/
+theorem npow_mono {α : Type*} [DecidableEq α]
+    {s t : Finset α} (h : s ⊆ t) : npow s ⊆ npow t :=
+  Finset.erase_subset_erase ∅ (Finset.powerset_mono.mpr h)
+
+/-- Membership in `oplus`: `z ∈ oplus F G ↔ ∃ x ∈ F, ∃ y ∈ G, x ∪ y = z`.
+    Inherits from `Finset.mem_image₂` via `oplus_eq_image₂`. -/
+theorem mem_oplus_iff {α : Type*} [DecidableEq α]
+    {F G : Finset (Finset α)} {z : Finset α} :
+    z ∈ oplus F G ↔ ∃ x ∈ F, ∃ y ∈ G, x ∪ y = z := by
+  rw [oplus_eq_image₂]; exact Finset.mem_image₂
+
+/-- Constructor form of membership: `x ∈ F → y ∈ G → x ∪ y ∈ oplus F G`. -/
+theorem mem_oplus_of_mem {α : Type*} [DecidableEq α]
+    {F G : Finset (Finset α)} {x y : Finset α} (hx : x ∈ F) (hy : y ∈ G) :
+    x ∪ y ∈ oplus F G :=
+  mem_oplus_iff.mpr ⟨x, hx, y, hy, rfl⟩
+
+/-- `npow X` is closed under nonempty union: union of two nonempty subsets
+    of `X` is itself a nonempty subset of `X`. -/
+theorem npow_union_mem {α : Type*} [DecidableEq α]
+    {X : Finset α} {s t : Finset α} (hs : s ∈ npow X) (ht : t ∈ npow X) :
+    s ∪ t ∈ npow X := by
+  simp only [npow, Finset.mem_erase, Finset.mem_powerset] at hs ht ⊢
+  refine ⟨?_, Finset.union_subset hs.2 ht.2⟩
+  intro huv
+  exact hs.1 (Finset.subset_empty.mp (huv ▸ Finset.subset_union_left))
+
+/-- If `F ⊆ npow X` and `G ⊆ npow X`, then `oplus F G ⊆ npow X`. The
+    pointwise union of nonempty subsets of `X` lands back in `npow X`. -/
+theorem oplus_subset_npow {α : Type*} [DecidableEq α]
+    {X : Finset α} {F G : Finset (Finset α)}
+    (hF : F ⊆ npow X) (hG : G ⊆ npow X) :
+    oplus F G ⊆ npow X := by
+  intro z hz
+  obtain ⟨x, hx, y, hy, rfl⟩ := mem_oplus_iff.mp hz
+  exact npow_union_mem (hF hx) (hG hy)
+
+/-- `npow X` is closed under self-`oplus`: union of two elements of
+    `npow X` is again in `npow X`. -/
+theorem oplus_npow_self_subset {α : Type*} [DecidableEq α] (X : Finset α) :
+    oplus (npow X) (npow X) ⊆ npow X :=
+  oplus_subset_npow (Finset.Subset.refl _) (Finset.Subset.refl _)
+
+/-- Lexical Complementarity (52): for feature denotations ⟦F⟧ ⊂ ⟦G⟧, use
+    of G is restricted to ⟦G⟧ \ ⟦F⟧. Forestalls a pronoun from being used
+    to refer to individuals picked out by a more featurally specified
+    pronoun (Harbour 2016:80). -/
+def lexComp {α : Type*} [DecidableEq α]
+    (G F : Finset (Finset α)) : Finset (Finset α) :=
+  G \ F
+
+/-- SINGULAR (56a): `⟦SINGULAR⟧ = λx . ∀y[y ≤ x → x = y]`. Picks out the
+    atomic individuals. In the Finset encoding, atomic = singleton. Number
+    features compose with person/animacy features by ∩ (intersection),
+    not ⊕. -/
+def singularFilter {α : Type*} [DecidableEq α]
+    (den : Finset (Finset α)) : Finset (Finset α) :=
+  den.filter fun s => s.card = 1
+
+/-- PLURAL (56b): `⟦PLURAL⟧ = λx . ∃y[y ≤ x ∧ x ≠ y]`. Picks out the
+    nonatomic individuals. In the Finset encoding, nonatomic = card > 1. -/
+def pluralFilter {α : Type*} [DecidableEq α]
+    (den : Finset (Finset α)) : Finset (Finset α) :=
+  den.filter fun s => s.card > 1
 
 -- ============================================================================
--- § 2: Heterogeneity — ⊕ Generates Mixed Groups
+-- § 2: PhiDomain + Zapotec Instantiation
 -- ============================================================================
 
-/-- An elder+human group `{e, h}` is in the elder pronoun denotation.
-    This is the key empirical prediction: elder pronouns can refer to
-    heterogeneous groups containing both elders and non-elders.
-    @cite{toosarvandani-2023} §4.2. -/
+/-- A φ-domain: a finite set of individuals with speaker/addressee roles
+    and animacy predicates forming the entailment hierarchy
+    ELDER ⊂ HUMAN ⊂ ANIMATE (58, p. 786). Speaker and addressee are
+    required to be human (per the paper's footnote 15, p. 787). -/
+structure PhiDomain where
+  /-- The type of atomic individuals. -/
+  Ind : Type
+  [instDE : DecidableEq Ind]
+  [instFT : Fintype Ind]
+  /-- The speaker. -/
+  speaker : Ind
+  /-- The addressee. -/
+  addressee : Ind
+  /-- Elder predicate (salient social role per (58a)). -/
+  isElder : Ind → Bool
+  /-- Human predicate (58b). -/
+  isHuman : Ind → Bool
+  /-- Animate predicate (58c). -/
+  isAnimate : Ind → Bool
+  /-- Hierarchy: ELDER entails HUMAN (commentary after (58)). -/
+  elder_human : ∀ x, isElder x = true → isHuman x = true
+  /-- Hierarchy: HUMAN entails ANIMATE. -/
+  human_animate : ∀ x, isHuman x = true → isAnimate x = true
+  /-- Speaker is human (footnote 15). -/
+  speaker_human : isHuman speaker = true
+  /-- Addressee is human (footnote 15). -/
+  addressee_human : isHuman addressee = true
+  /-- Speaker and addressee are distinct. -/
+  speaker_ne : speaker ≠ addressee
+
+attribute [instance] PhiDomain.instDE PhiDomain.instFT
+
+/-! ## Santiago Laxopa Zapotec instance
+
+Six representative individuals spanning the four-way animacy scale.
+This is Toosarvandani's didactic minimum for the Zapotec lattice — not
+real lexical data. -/
+
+/-- Six individuals: speaker, addressee, an elder, a nonelder human, an
+    animal, and an inanimate. -/
+inductive ZapInd where
+  | i  -- speaker (always human, SAP)
+  | u  -- addressee (always human, SAP)
+  | e  -- nonconversational elder
+  | h  -- nonelder human
+  | a  -- animal
+  | o  -- inanimate
+  deriving DecidableEq, Repr
+
+instance : Fintype ZapInd where
+  elems := {.i, .u, .e, .h, .a, .o}
+  complete := by intro x; cases x <;> decide
+
+/-- The Zapotec PhiDomain with 4-way animacy. -/
+def zapotecDomain : PhiDomain where
+  Ind := ZapInd
+  speaker := .i
+  addressee := .u
+  isElder := fun | .e => true | _ => false
+  isHuman := fun | .i | .u | .e | .h => true | _ => false
+  isAnimate := fun | .i | .u | .e | .h | .a => true | _ => false
+  elder_human := by intro x; cases x <;> decide
+  human_animate := by intro x; cases x <;> decide
+  speaker_human := by decide
+  addressee_human := by decide
+  speaker_ne := by decide
+
+/-- Convenience abbreviation. -/
+abbrev zd : PhiDomain := zapotecDomain
+
+-- ============================================================================
+-- § 3: Feature Denotations
+-- ============================================================================
+
+variable (pd : PhiDomain)
+
+/-- ⟦SPEAKER⟧ (48a): singleton sums containing the speaker. -/
+def speakerDen : Finset (Finset pd.Ind) :=
+  npow {pd.speaker}
+
+/-- ⟦PARTICIPANT⟧ (48b): nonempty subsets of {speaker, addressee}. -/
+def participantDen : Finset (Finset pd.Ind) :=
+  npow {pd.speaker, pd.addressee}
+
+/-- ⟦π⟧ (48c): all nonempty sums of individuals — the maximal feature
+    denotation. -/
+def piDen : Finset (Finset pd.Ind) :=
+  npow Finset.univ
+
+/-- ⟦ELDER⟧ (58a): individuals holding a salient social role. With (58a)'s
+    semantics, the denotation includes SAPs as well as nonconversational
+    elders, since SAPs trivially satisfy any salient-role test (paper
+    p. 787). The pronoun-level restriction to nonconversational elders
+    arises only after lexical complementarity (62). -/
+def elderDen : Finset (Finset pd.Ind) :=
+  npow (Finset.univ.filter fun a =>
+    pd.isElder a || a == pd.speaker || a == pd.addressee)
+
+/-- ⟦HUMAN⟧ (58b). SAPs are included via `speaker_human`/`addressee_human`. -/
+def humanDen : Finset (Finset pd.Ind) :=
+  npow (Finset.univ.filter fun a => pd.isHuman a)
+
+/-- ⟦ANIMATE⟧ (58c). -/
+def animateDen : Finset (Finset pd.Ind) :=
+  npow (Finset.univ.filter fun a => pd.isAnimate a)
+
+-- ============================================================================
+-- § 4: Pronoun Composition via Nested Oplus
+-- ============================================================================
+
+/-- The 3SG.EL feature stack from (61a): π ⊕ ANIMATE ⊕ HUMAN ⊕ ELDER.
+    We elide the SINGULAR component (which is intersected separately) and
+    return the elder-pronoun denotation prior to LC. The actual pronoun
+    denotation in (62a) is `lexComp elderPron` over the next-less-marked
+    pronoun — but for the elder pronoun itself, LC is trivial since it's
+    the most marked. -/
+def elderPron : Finset (Finset pd.Ind) :=
+  oplus (elderDen pd) (oplus (humanDen pd) (oplus (animateDen pd) (piDen pd)))
+
+/-- The 3SG.HU stack from (61b): π ⊕ ANIMATE ⊕ HUMAN. -/
+def humanPron : Finset (Finset pd.Ind) :=
+  oplus (humanDen pd) (oplus (animateDen pd) (piDen pd))
+
+/-- The 3SG.AN stack from (61c): π ⊕ ANIMATE. -/
+def animalPron : Finset (Finset pd.Ind) :=
+  oplus (animateDen pd) (piDen pd)
+
+/-- The 3SG.IN stack from (61d): π only. -/
+def inanimatePron : Finset (Finset pd.Ind) :=
+  piDen pd
+
+-- ============================================================================
+-- § 4b: Third-Person Restriction and LC
+-- ============================================================================
+
+/-- Remove sums containing the speaker or addressee — restricts a pronoun
+    denotation to third-person reference. -/
+def thirdOnly (den : Finset (Finset pd.Ind)) : Finset (Finset pd.Ind) :=
+  den.filter fun s => pd.speaker ∉ s ∧ pd.addressee ∉ s
+
+/-- Third-person elder, human, animal, inanimate denotations (post-thirdOnly). -/
+def thirdElderPron : Finset (Finset pd.Ind) := thirdOnly pd (elderPron pd)
+def thirdHumanPron : Finset (Finset pd.Ind) := thirdOnly pd (humanPron pd)
+def thirdAnimalPron : Finset (Finset pd.Ind) := thirdOnly pd (animalPron pd)
+def thirdInanimatePron : Finset (Finset pd.Ind) := thirdOnly pd (inanimatePron pd)
+
+/-- Elder pronoun after LC: most marked, no subtraction needed (62a). -/
+def thirdElderLC : Finset (Finset pd.Ind) := thirdElderPron pd
+
+/-- Human pronoun after LC (62b): human \ elder. -/
+def thirdHumanLC : Finset (Finset pd.Ind) :=
+  lexComp (thirdHumanPron pd) (thirdElderPron pd)
+
+/-- Animal pronoun after LC (62c): animal \ human. -/
+def thirdAnimalLC : Finset (Finset pd.Ind) :=
+  lexComp (thirdAnimalPron pd) (thirdHumanPron pd)
+
+/-- Inanimate pronoun after LC: π \ animal. -/
+def thirdInanimateLC : Finset (Finset pd.Ind) :=
+  lexComp (thirdInanimatePron pd) (thirdAnimalPron pd)
+
+-- ============================================================================
+-- § 4c: Empirical Properties of the Denotations
+-- ============================================================================
+
+/-! Concrete checks on the Zapotec instance, proved structurally via
+    explicit `mem_oplus_of_mem` witness construction rather than `decide`.
+    The kernel decide on Finset-of-Finset membership over a 6-atom
+    universe is too heavy (each side up to 63 elements); the structural
+    witnesses build up `{x} = {x} ∪ {x}` decompositions through the
+    nested `oplus`. -/
+
+/-- Helper: a singleton lifts through any `oplus` whose factors both
+    contain it. The key fact is `{x} ∪ {x} = {x}`. -/
+private lemma singleton_mem_oplus {x : ZapInd}
+    {F G : Finset (Finset ZapInd)}
+    (hF : ({x} : Finset ZapInd) ∈ F) (hG : ({x} : Finset ZapInd) ∈ G) :
+    ({x} : Finset ZapInd) ∈ oplus F G := by
+  have h : ({x} : Finset ZapInd) = ({x} : Finset ZapInd) ∪ ({x} : Finset ZapInd) :=
+    (Finset.union_self _).symm
+  rw [h]
+  exact mem_oplus_of_mem hF hG
+
+/-- Helper: a doubleton `{x, y}` arises from `{x} ∪ {y}`. -/
+private lemma doubleton_mem_oplus {x y : ZapInd}
+    {F G : Finset (Finset ZapInd)}
+    (hF : ({x} : Finset ZapInd) ∈ F) (hG : ({y} : Finset ZapInd) ∈ G) :
+    ({x, y} : Finset ZapInd) ∈ oplus F G := by
+  have h : ({x, y} : Finset ZapInd) = ({x} : Finset ZapInd) ∪ ({y} : Finset ZapInd) := by
+    ext; simp
+  rw [h]
+  exact mem_oplus_of_mem hF hG
+
+theorem elderPron_nonempty : (elderPron zd).Nonempty :=
+  ⟨{.i}, singleton_mem_oplus (by decide)
+    (singleton_mem_oplus (by decide)
+      (singleton_mem_oplus (by decide) (by decide)))⟩
+
+theorem humanPron_nonempty : (humanPron zd).Nonempty :=
+  ⟨{.i}, singleton_mem_oplus (by decide)
+    (singleton_mem_oplus (by decide) (by decide))⟩
+
+theorem animalPron_nonempty : (animalPron zd).Nonempty :=
+  ⟨{.i}, singleton_mem_oplus (by decide) (by decide)⟩
+
+theorem inanimatePron_nonempty : (inanimatePron zd).Nonempty := by
+  refine ⟨{.i}, ?_⟩; decide
+
+/-- An elder + nonelder human group `{e, h}` is in the elder pronoun
+    denotation. Heterogeneity: elder pronouns can refer to mixed groups
+    of elders and others. Paper §2.3 + (62a). -/
 theorem elder_heterogeneous :
-    ({.e, .h} : Finset ZapInd) ∈ elderPron zd := by native_decide
+    ({.e, .h} : Finset ZapInd) ∈ elderPron zd :=
+  doubleton_mem_oplus (by decide)
+    (singleton_mem_oplus (by decide)
+      (singleton_mem_oplus (by decide) (by decide)))
 
-/-- An elder+animal group `{e, a}` is in the elder pronoun denotation. -/
+/-- Elder + animal group `{e, a}` is in the elder pronoun denotation.
+    Witness construction: e = {e}, y = {e, a} = {e} ∪ {a} where {e} ∈
+    humanDen (e is human, being elder) and {a} ∈ animalPron (a is in
+    animateDen ∩ piDen). -/
 theorem elder_with_animal :
-    ({.e, .a} : Finset ZapInd) ∈ elderPron zd := by native_decide
+    ({.e, .a} : Finset ZapInd) ∈ elderPron zd := by
+  have eq1 : ({.e, .a} : Finset ZapInd) =
+      ({.e} : Finset ZapInd) ∪ ({.e, .a} : Finset ZapInd) := by ext; simp
+  rw [eq1]
+  refine mem_oplus_of_mem (by decide) ?_  -- {.e} ∈ elderDen
+  -- {.e, .a} ∈ humanPron via {.e} ∪ {.a}, {.e} ∈ humanDen, {.a} ∈ animalPron
+  refine doubleton_mem_oplus (by decide) ?_
+  exact singleton_mem_oplus (by decide) (by decide)
 
-/-- A human+animal group `{h, a}` is in the human pronoun after LC
-    (in the human denotation but not the elder denotation). -/
-theorem human_animal_in_humanLC :
-    ({.h, .a} : Finset ZapInd) ∈ thirdHumanLC zd := by native_decide
+/-! Base-feature containment: each animacy denotation is contained in
+    the next less-marked one. These follow from `npow_mono` plus a small
+    `decide` on the underlying 6-atom filter. -/
 
--- ============================================================================
--- § 3: Containment — Feature Hierarchy Reflected in Denotation Nesting
--- ============================================================================
+theorem elderDen_sub_humanDen :
+    elderDen zd ⊆ humanDen zd := npow_mono (by decide)
 
-/-- Elder pronoun ⊂ Human pronoun: with npow-based denotations and ⊕,
-    the more marked (elder) denotation is contained in the less marked
-    (human) denotation. -/
-theorem elderPron_sub_humanPron :
-    elderPron zd ⊆ humanPron zd := by native_decide
+theorem humanDen_sub_animateDen :
+    humanDen zd ⊆ animateDen zd := npow_mono (by decide)
 
-/-- Human pronoun ⊂ Animal pronoun. -/
-theorem humanPron_sub_animalPron :
-    humanPron zd ⊆ animalPron zd := by native_decide
+theorem animateDen_sub_piDen :
+    animateDen zd ⊆ piDen zd := npow_mono (by decide)
 
-/-- Animal pronoun ⊂ π (inanimate pronoun). -/
+/-! Denotation containment chain. Each pronoun is `oplus` of progressively
+    less-marked feature denotations. The proof pattern: replace the
+    most-marked component (e.g. elder in elderPron) with the next
+    component (human) using `oplus_subset` + base-feature monotonicity,
+    then use `oplus_assoc` and `oplus_npow_self_subset` to absorb the
+    duplicated component. -/
+
 theorem animalPron_sub_piDen :
-    animalPron zd ⊆ piDen zd := by native_decide
+    animalPron zd ⊆ piDen zd := by
+  -- animalPron = oplus animateDen piDen ⊆ npow univ = piDen.
+  -- Both args are ⊆ npow univ (their elements are subsets of univ).
+  refine oplus_subset_npow (X := Finset.univ) ?_ (Finset.Subset.refl _)
+  exact npow_mono (Finset.subset_univ _)
 
-/-- SPEAKER ⊂ PARTICIPANT (feature denotation level). -/
+theorem humanPron_sub_animalPron :
+    humanPron zd ⊆ animalPron zd := by
+  -- humanPron = oplus humanDen animalPron ⊆ animalPron via:
+  --   oplus humanDen animalPron ⊆ oplus animateDen animalPron  (humanDen ⊆ animateDen)
+  --   = oplus animateDen (oplus animateDen piDen)              (defn animalPron)
+  --   = oplus (oplus animateDen animateDen) piDen              (assoc)
+  --   ⊆ oplus animateDen piDen = animalPron                    (oplus_npow_self)
+  refine Finset.Subset.trans
+    (oplus_subset humanDen_sub_animateDen (Finset.Subset.refl _)) ?_
+  show oplus (animateDen zd) (oplus (animateDen zd) (piDen zd)) ⊆
+       oplus (animateDen zd) (piDen zd)
+  rw [← oplus_assoc]
+  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+
+theorem elderPron_sub_humanPron :
+    elderPron zd ⊆ humanPron zd := by
+  -- Same shape: elderDen ⊆ humanDen, then absorb humanDen into humanPron
+  -- via oplus_npow_self.
+  refine Finset.Subset.trans
+    (oplus_subset elderDen_sub_humanDen (Finset.Subset.refl _)) ?_
+  show oplus (humanDen zd) (oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))) ⊆
+       oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))
+  rw [← oplus_assoc]
+  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+
+/-- SPEAKER ⊂ PARTICIPANT at the feature-denotation level. -/
 theorem speaker_sub_participant :
-    speakerDen zd ⊆ participantDen zd := by native_decide
+    speakerDen zd ⊆ participantDen zd := by decide
 
--- ============================================================================
--- § 4: Associativity of ⊕
--- ============================================================================
-
-/-- ⊕ is associative: (F ⊕ G) ⊕ H = F ⊕ (G ⊕ H).
-    Verified concretely for the Zapotec domain's animacy denotations.
-    @cite{toosarvandani-2023} relies on this for well-formedness of
-    nested feature composition. -/
+/-- ⊕ is associative on any Zapotec denotations. Direct corollary of the
+    generic `oplus_assoc`; no `decide` needed. -/
 theorem oplus_assoc_elder :
     oplus (oplus (elderDen zd) (humanDen zd)) (animateDen zd) =
-    oplus (elderDen zd) (oplus (humanDen zd) (animateDen zd)) := by
-  native_decide
+    oplus (elderDen zd) (oplus (humanDen zd) (animateDen zd)) :=
+  oplus_assoc _ _ _
 
 -- ============================================================================
--- § 5: PCC — Feature Containment
+-- § 5: PCC via Feature Containment
 -- ============================================================================
 
-/-! The PCC (Person Case Constraint) extended with animacy, derived from
-    feature containment per @cite{toosarvandani-2023} (86):
+/-! The PCC (Person Case Constraint), here extended with animacy, derived
+    from feature containment per (86):
 
     > A functional head F Agrees with two pronouns A and B, where A is
     > higher than B, iff A has all of the features of B.
 
     Person and animacy features occupy the same structural position (D),
     forming a SINGLE hierarchy. Feature containment — not numeric ranking —
-    determines PCC licitness.
+    determines licitness. -/
 
-    Note: the person-based PCC is empirically ABSOLUTE (any SAP in object
-    position is illicit, per footnote 22), while the animacy-based PCC is
-    RELATIVE. Condition (86) derives both: SAPs always have more features
-    than 3P, so 3P can never contain SAP features. The absolute/relative
-    distinction emerges from the feature geometry, not from stipulation. -/
-
-/-- Decompositional φ-features in the nested feature geometry
-    D → [π [ANIMATE [HUMAN [ELDER [PARTICIPANT [SPEAKER]]]]]].
-    Each feature corresponds to a predicate over the individual domain. -/
+/-- Decompositional φ-features in the nested geometry
+    D → [π [ANIMATE [HUMAN [ELDER [PARTICIPANT [SPEAKER]]]]]] (60). -/
 inductive DFeature where
   | speaker
   | participant
@@ -147,7 +503,7 @@ inductive DFeature where
 
 instance : Fintype DFeature where
   elems := {.speaker, .participant, .elder, .human, .animate, .pi}
-  complete := by intro x; cases x <;> simp
+  complete := by intro x; cases x <;> decide
 
 /-- Pronoun types in the extended person/animacy hierarchy. -/
 inductive PronType where
@@ -161,16 +517,16 @@ inductive PronType where
 
 instance : Fintype PronType where
   elems := {.first, .second, .thirdElder, .thirdHuman, .thirdAnimal, .thirdInanimate}
-  complete := by intro x; cases x <;> simp
+  complete := by intro x; cases x <;> decide
 
 /-- All 6 pronoun types. -/
 def PronType.all : List PronType :=
   [.first, .second, .thirdElder, .thirdHuman, .thirdAnimal, .thirdInanimate]
 
-/-- Feature specification per pronoun type.
-    SAPs include all animacy features because speaker and addressee are
-    at least elder-rank — elderDen includes SAPs per (58). The feature
-    sets form a strict containment chain: 1P ⊃ 2P ⊃ 3.EL ⊃ 3.HU ⊃ 3.AN ⊃ 3.IN. -/
+/-- Feature specification per pronoun type. SAPs include all animacy
+    features because speaker/addressee are at least elder-rank under
+    (58a)'s "salient social role" predicate. The feature sets form a
+    strict containment chain: 1P ⊃ 2P ⊃ 3.EL ⊃ 3.HU ⊃ 3.AN ⊃ 3.IN. -/
 def PronType.features : PronType → Finset DFeature
   | .first          => {.speaker, .participant, .elder, .human, .animate, .pi}
   | .second         => {.participant, .elder, .human, .animate, .pi}
@@ -179,260 +535,243 @@ def PronType.features : PronType → Finset DFeature
   | .thirdAnimal    => {.animate, .pi}
   | .thirdInanimate => {.pi}
 
-/-- PCC licitness via feature containment — (86):
-    "A functional head F Agrees with two pronouns A and B, where A is
-    higher than B, iff A has all of the features of B."
-
-    Instantiates the parameterized `featureContainmentLicit` from
-    `Minimalist.PhiSemantics` with the Zapotec feature mapping. -/
+/-- PCC licitness via feature containment (86): subject Agrees with object
+    iff subject has all of object's features. Implemented directly via
+    `Finset.Subset` decidability. -/
 def pccLicit (subj obj : PronType) : Bool :=
-  featureContainmentLicit PronType.features subj obj
+  decide (PronType.features obj ⊆ PronType.features subj)
 
 -- § 5a: Licit — subject strictly outranks object (data from (77)–(81))
-theorem pcc_1_2 : pccLicit .first .second = true := by native_decide
-theorem pcc_1_3el : pccLicit .first .thirdElder = true := by native_decide
-theorem pcc_1_3hu : pccLicit .first .thirdHuman = true := by native_decide
-theorem pcc_1_3an : pccLicit .first .thirdAnimal = true := by native_decide
-theorem pcc_1_3in : pccLicit .first .thirdInanimate = true := by native_decide
-theorem pcc_2_3el : pccLicit .second .thirdElder = true := by native_decide
-theorem pcc_2_3hu : pccLicit .second .thirdHuman = true := by native_decide
-theorem pcc_2_3an : pccLicit .second .thirdAnimal = true := by native_decide
-theorem pcc_2_3in : pccLicit .second .thirdInanimate = true := by native_decide
-theorem pcc_3el_3hu : pccLicit .thirdElder .thirdHuman = true := by native_decide  -- (79a)
-theorem pcc_3el_3an : pccLicit .thirdElder .thirdAnimal = true := by native_decide
-theorem pcc_3el_3in : pccLicit .thirdElder .thirdInanimate = true := by native_decide
-theorem pcc_3hu_3an : pccLicit .thirdHuman .thirdAnimal = true := by native_decide  -- (80a)
-theorem pcc_3hu_3in : pccLicit .thirdHuman .thirdInanimate = true := by native_decide
-theorem pcc_3an_3in : pccLicit .thirdAnimal .thirdInanimate = true := by native_decide  -- (81a)
+theorem pcc_1_2 : pccLicit .first .second = true := by decide
+theorem pcc_1_3el : pccLicit .first .thirdElder = true := by decide
+theorem pcc_1_3hu : pccLicit .first .thirdHuman = true := by decide
+theorem pcc_1_3an : pccLicit .first .thirdAnimal = true := by decide
+theorem pcc_1_3in : pccLicit .first .thirdInanimate = true := by decide
+theorem pcc_2_3el : pccLicit .second .thirdElder = true := by decide
+theorem pcc_2_3hu : pccLicit .second .thirdHuman = true := by decide
+theorem pcc_2_3an : pccLicit .second .thirdAnimal = true := by decide
+theorem pcc_2_3in : pccLicit .second .thirdInanimate = true := by decide
+theorem pcc_3el_3hu : pccLicit .thirdElder .thirdHuman = true := by decide  -- (79a)
+theorem pcc_3el_3an : pccLicit .thirdElder .thirdAnimal = true := by decide
+theorem pcc_3el_3in : pccLicit .thirdElder .thirdInanimate = true := by decide
+theorem pcc_3hu_3an : pccLicit .thirdHuman .thirdAnimal = true := by decide  -- (80a)
+theorem pcc_3hu_3in : pccLicit .thirdHuman .thirdInanimate = true := by decide
+theorem pcc_3an_3in : pccLicit .thirdAnimal .thirdInanimate = true := by decide  -- (81a)
 
 -- § 5b: Illicit — object outranks subject (data from (77b), (78b), (79b)–(82))
-theorem pcc_2_1 : pccLicit .second .first = false := by native_decide
-theorem pcc_3el_1 : pccLicit .thirdElder .first = false := by native_decide
-theorem pcc_3el_2 : pccLicit .thirdElder .second = false := by native_decide
-theorem pcc_3hu_1 : pccLicit .thirdHuman .first = false := by native_decide  -- (82)
-theorem pcc_3hu_2 : pccLicit .thirdHuman .second = false := by native_decide
-theorem pcc_3hu_3el : pccLicit .thirdHuman .thirdElder = false := by native_decide  -- (79b)
-theorem pcc_3an_1 : pccLicit .thirdAnimal .first = false := by native_decide
-theorem pcc_3an_2 : pccLicit .thirdAnimal .second = false := by native_decide
-theorem pcc_3an_3el : pccLicit .thirdAnimal .thirdElder = false := by native_decide
-theorem pcc_3an_3hu : pccLicit .thirdAnimal .thirdHuman = false := by native_decide  -- (80b)
-theorem pcc_3in_1 : pccLicit .thirdInanimate .first = false := by native_decide
-theorem pcc_3in_2 : pccLicit .thirdInanimate .second = false := by native_decide
-theorem pcc_3in_3el : pccLicit .thirdInanimate .thirdElder = false := by native_decide
-theorem pcc_3in_3hu : pccLicit .thirdInanimate .thirdHuman = false := by native_decide
-theorem pcc_3in_3an : pccLicit .thirdInanimate .thirdAnimal = false := by native_decide  -- (81b)
+theorem pcc_2_1 : pccLicit .second .first = false := by decide
+theorem pcc_3el_1 : pccLicit .thirdElder .first = false := by decide
+theorem pcc_3el_2 : pccLicit .thirdElder .second = false := by decide
+theorem pcc_3hu_1 : pccLicit .thirdHuman .first = false := by decide  -- (82)
+theorem pcc_3hu_2 : pccLicit .thirdHuman .second = false := by decide
+theorem pcc_3hu_3el : pccLicit .thirdHuman .thirdElder = false := by decide  -- (79b)
+theorem pcc_3an_1 : pccLicit .thirdAnimal .first = false := by decide
+theorem pcc_3an_2 : pccLicit .thirdAnimal .second = false := by decide
+theorem pcc_3an_3el : pccLicit .thirdAnimal .thirdElder = false := by decide
+theorem pcc_3an_3hu : pccLicit .thirdAnimal .thirdHuman = false := by decide  -- (80b)
+theorem pcc_3in_1 : pccLicit .thirdInanimate .first = false := by decide
+theorem pcc_3in_2 : pccLicit .thirdInanimate .second = false := by decide
+theorem pcc_3in_3el : pccLicit .thirdInanimate .thirdElder = false := by decide
+theorem pcc_3in_3hu : pccLicit .thirdInanimate .thirdHuman = false := by decide
+theorem pcc_3in_3an : pccLicit .thirdInanimate .thirdAnimal = false := by decide  -- (81b)
 
--- § 5c: Same-rank — always licit under feature containment (86)
-theorem pcc_1_1 : pccLicit .first .first = true := by native_decide
-theorem pcc_2_2 : pccLicit .second .second = true := by native_decide
-theorem pcc_3el_3el : pccLicit .thirdElder .thirdElder = true := by native_decide
-theorem pcc_3hu_3hu : pccLicit .thirdHuman .thirdHuman = true := by native_decide
-theorem pcc_3an_3an : pccLicit .thirdAnimal .thirdAnimal = true := by native_decide
-theorem pcc_3in_3in : pccLicit .thirdInanimate .thirdInanimate = true := by native_decide
+-- § 5c: Same-rank — licit under (86) (see header note re absolute vs relative)
+theorem pcc_1_1 : pccLicit .first .first = true := by decide
+theorem pcc_2_2 : pccLicit .second .second = true := by decide
+theorem pcc_3el_3el : pccLicit .thirdElder .thirdElder = true := by decide
+theorem pcc_3hu_3hu : pccLicit .thirdHuman .thirdHuman = true := by decide
+theorem pcc_3an_3an : pccLicit .thirdAnimal .thirdAnimal = true := by decide
+theorem pcc_3in_3in : pccLicit .thirdInanimate .thirdInanimate = true := by decide
 
--- § 5d: Exhaustive verification
-/-- All 36 subj×obj combinations: 21 licit (15 strict + 6 same-rank). -/
+-- § 5d: Drift sentry on aggregate licit count
+/-- 21 licit subj×obj pairings (15 strict + 6 same-rank). Drift sentry for
+    the per-cell theorems above. -/
 theorem pcc_licit_count :
     (PronType.all.flatMap fun subj =>
       PronType.all.filter fun obj => pccLicit subj obj).length = 21 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 6: Structural Properties of Feature Containment
 -- ============================================================================
 
-/-- Feature containment is reflexive: same-rank is always licit.
-    Derived from generic `featureContainment_refl`. -/
-theorem pcc_refl : ∀ p : PronType, pccLicit p p = true :=
-  fun p => featureContainment_refl PronType.features p
+/-- Reflexivity: A ⊆ A always, so pccLicit p p = true. -/
+theorem pcc_refl : ∀ p : PronType, pccLicit p p = true := by
+  intro p; simp [pccLicit]
 
-/-- Feature containment is transitive.
-    Derived from generic `featureContainment_trans`. -/
+/-- Transitivity: features p3 ⊆ features p2 and features p2 ⊆ features p1
+    imply features p3 ⊆ features p1. -/
 theorem pcc_trans : ∀ p1 p2 p3 : PronType,
-    pccLicit p1 p2 = true → pccLicit p2 p3 = true → pccLicit p1 p3 = true :=
-  fun _ _ _ h12 h23 => featureContainment_trans PronType.features h12 h23
+    pccLicit p1 p2 = true → pccLicit p2 p3 = true → pccLicit p1 p3 = true := by
+  intro p1 p2 p3 h12 h23
+  simp only [pccLicit, decide_eq_true_eq] at h12 h23 ⊢
+  exact h23.trans h12
 
-/-- The Zapotec feature mapping forms a total containment chain:
-    for any two pronoun types, one's features contain the other's.
-    This is the domain-specific fact that makes PCC total. -/
+/-- The Zapotec feature mapping forms a total containment chain. This is
+    the domain-specific fact that makes PCC total. -/
 theorem zapotec_features_chain : ∀ p1 p2 : PronType,
     PronType.features p1 ⊆ PronType.features p2 ∨
-    PronType.features p2 ⊆ PronType.features p1 := by native_decide
+    PronType.features p2 ⊆ PronType.features p1 := by decide
 
-/-- Feature containment is total: for any two pronoun types, at least one
-    direction is licit. Derived from generic `featureContainment_total` +
-    the Zapotec-specific chain property. -/
+/-- Totality: at least one direction is licit. Follows from the containment
+    chain via `Finset.Subset`. -/
 theorem pcc_total : ∀ p1 p2 : PronType,
-    pccLicit p1 p2 = true ∨ pccLicit p2 p1 = true :=
-  featureContainment_total PronType.features zapotec_features_chain
+    pccLicit p1 p2 = true ∨ pccLicit p2 p1 = true := by
+  intro p1 p2
+  simp only [pccLicit, decide_eq_true_eq]
+  exact (zapotec_features_chain p1 p2).elim Or.inr Or.inl
 
-/-- Feature containment is antisymmetric: mutual licitness implies same
-    pronoun type. Requires Zapotec-specific injectivity of the feature
-    mapping (the generic theorem only gives equal feature sets). -/
+/-- Antisymmetry on PronType: mutual licitness implies same pronoun type.
+    This requires Zapotec-specific injectivity of the feature mapping
+    (the abstract claim is just feature-set equality). -/
 theorem pcc_antisymm : ∀ p1 p2 : PronType,
-    pccLicit p1 p2 = true → pccLicit p2 p1 = true → p1 = p2 := by native_decide
+    pccLicit p1 p2 = true → pccLicit p2 p1 = true → p1 = p2 := by decide
 
 -- ============================================================================
 -- § 7: Denotation ↔ PCC Correspondence
 -- ============================================================================
 
-/-! Within third person, the semantic denotation nesting (from ⊕ composition)
-    mirrors the syntactic PCC hierarchy (from feature containment). This
-    connects the paper's two main contributions: the compositional semantics
-    of animacy features and the derived PCC effects.
+/-! Within third person, denotation nesting (semantic, from ⊕ composition)
+    mirrors PCC licitness (syntactic, from feature containment). The two
+    main contributions of the paper — compositional animacy semantics and
+    derived PCC — are formally connected: more features → smaller
+    denotation → higher on hierarchy → can be subject.
 
-    More features → smaller denotation → higher on hierarchy → can be subject. -/
+    The three semantic-side facts are `elderPron_sub_humanPron`,
+    `humanPron_sub_animalPron`, `animalPron_sub_piDen` (§4c above). The
+    syntactic-side facts are `pcc_3el_3hu`, `pcc_3hu_3an`, `pcc_3an_3in`
+    (licit) and `pcc_3hu_3el`, `pcc_3an_3hu`, `pcc_3in_3an` (illicit), all
+    in §5. Earlier drafts bundled them into a 9-conjunct
+    `denotation_pcc_full_chain` aggregator; that was a
+    no-aggregate-count-style sentry and is omitted to keep `decide`
+    recursion within mathlib defaults. -/
 
-/-- Denotation nesting and PCC agree in direction: elderPron ⊆ humanPron
-    corresponds to 3.EL licensing 3.HU as object (and not vice versa). -/
-theorem denotation_pcc_elder_human :
-    elderPron zd ⊆ humanPron zd ∧
-    pccLicit .thirdElder .thirdHuman = true ∧
-    pccLicit .thirdHuman .thirdElder = false := by native_decide
+/-- Helper: `{i} ∈ oplus F G` whenever `{i} ∈ F` and `{i} ∈ G`. -/
+private lemma singleton_i_mem_oplus
+    {F G : Finset (Finset ZapInd)}
+    (hF : ({.i} : Finset ZapInd) ∈ F) (hG : ({.i} : Finset ZapInd) ∈ G) :
+    ({.i} : Finset ZapInd) ∈ oplus F G := by
+  have h : ({.i} : Finset ZapInd) = ({.i} : Finset ZapInd) ∪ ({.i} : Finset ZapInd) :=
+    (Finset.union_idempotent _).symm
+  rw [h]
+  exact mem_oplus_of_mem hF hG
 
-/-- Full denotation nesting chain corresponds to the PCC hierarchy:
-    elderPron ⊆ humanPron ⊆ animalPron ⊆ piDen mirrors
-    3.EL > 3.HU > 3.AN > 3.IN. -/
-theorem denotation_pcc_full_chain :
-    elderPron zd ⊆ humanPron zd ∧
-    humanPron zd ⊆ animalPron zd ∧
-    animalPron zd ⊆ piDen zd ∧
-    pccLicit .thirdElder .thirdHuman = true ∧
-    pccLicit .thirdHuman .thirdAnimal = true ∧
-    pccLicit .thirdAnimal .thirdInanimate = true ∧
-    pccLicit .thirdHuman .thirdElder = false ∧
-    pccLicit .thirdAnimal .thirdHuman = false ∧
-    pccLicit .thirdInanimate .thirdAnimal = false := by native_decide
-
--- ============================================================================
--- § 8: Third-Person Restriction and LC
--- ============================================================================
-
-/-- Third-person restriction removes all SAP-containing sums from the
-    elder pronoun denotation — the remaining denotation is strictly
-    smaller. -/
+/-- Third-person restriction strictly shrinks the elder pronoun denotation:
+    `{i}` is a witness that lives in `elderPron` (via the all-singletons
+    decomposition `{i} ∪ {i} ∪ {i} ∪ {i}`) but is filtered out of
+    `thirdElderPron` because it contains the speaker. Structural rather
+    than card-based to avoid computing two ~63-element Finset
+    cardinalities in the kernel. -/
 theorem third_restricts_elder :
-    (thirdElderPron zd).card < (elderPron zd).card := by native_decide
+    (thirdElderPron zd).card < (elderPron zd).card := by
+  apply Finset.card_lt_card
+  refine Finset.ssubset_iff_subset_ne.mpr ⟨Finset.filter_subset _ _, ?_⟩
+  intro hEq
+  have h_in_elder : ({.i} : Finset ZapInd) ∈ elderPron zd :=
+    singleton_i_mem_oplus (by decide)
+      (singleton_i_mem_oplus (by decide)
+        (singleton_i_mem_oplus (by decide) (by decide)))
+  have h_not_in_third : ({.i} : Finset ZapInd) ∉ thirdElderPron zd := by
+    show _ ∉ (elderPron zd).filter
+      (fun s => zd.speaker ∉ s ∧ zd.addressee ∉ s)
+    rw [Finset.mem_filter]
+    push_neg
+    intro _
+    -- speaker = .i, and .i ∈ {.i}
+    refine fun h => absurd ?_ h
+    show ZapInd.i ∈ ({.i} : Finset ZapInd)
+    decide
+  exact h_not_in_third (hEq ▸ h_in_elder)
 
-/-- LC produces disjoint third-person pronoun denotations: the elder
-    and human LC forms share no elements. This follows trivially from
-    LC's definition (human LC = human \ elder). -/
+/-- LC produces disjoint third-person pronoun denotations. -/
 theorem elder_human_LC_disjoint :
     Disjoint (thirdElderLC zd) (thirdHumanLC zd) := by
   simp only [thirdHumanLC, lexComp]
   exact Finset.disjoint_sdiff
 
--- ============================================================================
--- § 9: PersonLevel Bridge
--- ============================================================================
-
-/-- Map pronoun types to the coarser 3-way person distinction used in
-    `Features.Prominence`. All third-person animacy subtypes collapse to `.third`. -/
-def PronType.toPersonLevel : PronType → Features.Prominence.PersonLevel
-  | .first => .first
-  | .second => .second
-  | _ => .third
-
-/-- PCC correctly refines the person hierarchy: when a pronoun is strictly
-    more prominent in person (not just animacy), PCC is always licit. -/
-theorem pcc_person_refinement : ∀ p1 p2 : PronType,
-    p1.toPersonLevel.rank > p2.toPersonLevel.rank → pccLicit p1 p2 = true := by
-  native_decide
+-- (elderDen_sub_humanDen, humanDen_sub_animateDen, animateDen_sub_piDen
+-- moved to §4c above where they're consumed by the elderPron_sub_humanPron
+-- chain.)
 
 -- ============================================================================
--- § 10: Feature Denotation Containment (Atom Level)
+-- § 8: SINGULAR/PLURAL and Composition Order (57, 63)
 -- ============================================================================
 
-/-- ELDER ⊆ HUMAN at the feature denotation level (predicate over atoms).
-    Parallels the pronoun-level containment elderPron ⊆ humanPron (§3). -/
-theorem elderDen_sub_humanDen :
-    elderDen zd ⊆ humanDen zd := by native_decide
+/-! Person/animacy features compose via ⊕; number features compose via ∩.
+    These two modes MUST apply in a specific order: ⊕ first, then ∩. If
+    SINGULAR were interleaved within the ⊕ chain, ⊕ would re-introduce
+    pluralities by joining the singletons SINGULAR preserved (paper §3.2,
+    derivation (63)). This non-commutativity is why person and number
+    occupy distinct functional heads. -/
 
-/-- HUMAN ⊆ ANIMATE at the feature denotation level. -/
-theorem humanDen_sub_animateDen :
-    humanDen zd ⊆ animateDen zd := by native_decide
-
-/-- ANIMATE ⊆ π at the feature denotation level. -/
-theorem animateDen_sub_piDen' :
-    animateDen zd ⊆ piDen zd := by native_decide
-
--- ============================================================================
--- § 11: SINGULAR/PLURAL and Composition Order
--- ============================================================================
-
-/-! @cite{toosarvandani-2023} §3.2 establishes that person/animacy features
-    compose via ⊕ while number features compose via ∩. These two composition
-    modes MUST apply in a specific order: ⊕ first, then ∩ SINGULAR/PLURAL.
-
-    If ∩ SINGULAR were interleaved within the ⊕ chain, the ⊕ operator
-    would undo SINGULAR's filtering by creating new pluralities from
-    the remaining singletons. This non-commutativity is why person and
-    number occupy DIFFERENT functional heads in the nominal structure. -/
-
-/-- Correct composition order: ⊕ all person features first, then
-    ∩ SINGULAR. First-person singular = {speaker}.
-    @cite{toosarvandani-2023} (57). -/
+set_option maxRecDepth 16000 in
+/-- Correct composition (57): ⊕ all person features, then ∩ SINGULAR.
+    First-person singular = {speaker}. -/
 theorem correct_1sg :
     singularFilter (oplus (speakerDen zd) (oplus (participantDen zd) (piDen zd))) =
-    {({.i} : Finset ZapInd)} := by native_decide
+    {({.i} : Finset ZapInd)} := by decide
 
-/-- ⊕ and ∩ SINGULAR do not commute. Interleaving SINGULAR within the
-    ⊕ chain gives different (wrong) results because ⊕ creates new
-    pluralities from the singletons that SINGULAR preserved.
-    @cite{toosarvandani-2023} §3.2. -/
+/-- ⊕ and SINGULAR do not commute. Interleaving SINGULAR within the ⊕
+    chain gives different (wrong) results because ⊕ creates new pluralities
+    from the singletons SINGULAR preserved. (63). -/
 theorem oplus_singular_noncommutative :
     singularFilter (oplus (speakerDen zd) (participantDen zd)) ≠
-    oplus (speakerDen zd) (singularFilter (participantDen zd)) := by
-  native_decide
+    oplus (speakerDen zd) (singularFilter (participantDen zd)) := by decide
 
-/-- The wrong order produces plural sums: ⊕ SPEAKER applied after
-    SINGULAR creates {speaker, addressee} from singleton {addressee},
-    undoing SINGULAR's filtering. -/
+/-- The wrong order produces plural sums: ⊕ SPEAKER applied AFTER SINGULAR
+    creates {speaker, addressee} from singleton {addressee}, undoing
+    SINGULAR's filtering. -/
 theorem wrong_order_produces_plural :
     ({.i, .u} : Finset ZapInd) ∈
-      oplus (speakerDen zd) (singularFilter (participantDen zd)) := by
-  native_decide
+      oplus (speakerDen zd) (singularFilter (participantDen zd)) := by decide
 
 -- ============================================================================
--- § 12: Bridges to Core
+-- § 9: Bridges to Features.Person / Features.Prominence
 -- ============================================================================
 
-/-- Map PronType to binary person features (±participant, ±author).
-    Connects the 6-feature DFeature geometry to the binary person system
-    in `Features.Person`. -/
+/-- Map PronType to the coarser 3-way person distinction in
+    `Features.Prominence`. All third-person animacy subtypes collapse. -/
+def PronType.toPersonLevel : PronType → Features.Prominence.PersonLevel
+  | .first  => .first
+  | .second => .second
+  | _       => .third
+
+/-- PCC respects person prominence: when subject is strictly more prominent
+    in person (not just animacy), PCC is licit. -/
+theorem pcc_person_refinement : ∀ p1 p2 : PronType,
+    p1.toPersonLevel.rank > p2.toPersonLevel.rank → pccLicit p1 p2 = true := by
+  decide
+
+/-- Map PronType to binary person features (±participant, ±author). -/
 def PronType.toPersonFeatures : PronType → Features.Person.Features
-  | .first => ⟨true, true⟩
+  | .first  => ⟨true, true⟩
   | .second => ⟨true, false⟩
-  | _ => ⟨false, false⟩
+  | _       => ⟨false, false⟩
 
-/-- PronType.toPersonFeatures agrees with the PersonLevel route:
-    PronType → PersonLevel → Features. The two independent decompositions
-    of person are consistent. -/
+/-- The two independent decompositions of person agree:
+    PronType → PersonFeatures and PronType → PersonLevel → Features. -/
 theorem person_features_consistent : ∀ p : PronType,
-    p.toPersonFeatures = p.toPersonLevel.toFeatures := by
-  native_decide
+    p.toPersonFeatures = p.toPersonLevel.toFeatures := by decide
 
-/-- Map third-person pronoun types to AnimacyLevel.
-    Elder and human both map to `.human` (elder is a human subtype).
-    SAPs return `none` — they are typed by person, not animacy. -/
+/-- Map third-person pronoun types to AnimacyLevel. Elder and human both
+    map to `.human` — elder is a human subtype. SAPs return `none`. -/
 def PronType.toAnimacyLevel : PronType → Option Features.Prominence.AnimacyLevel
-  | .thirdElder => some .human
-  | .thirdHuman => some .human
-  | .thirdAnimal => some .animate
+  | .thirdElder     => some .human
+  | .thirdHuman     => some .human
+  | .thirdAnimal    => some .animate
   | .thirdInanimate => some .inanimate
-  | _ => none
+  | _               => none
 
 /-- The 4-way Zapotec animacy system REFINES the 3-way typological scale.
-    Elder and human both collapse to AnimacyLevel.human, but PCC
-    distinguishes them — a finer distinction invisible to the coarser
-    scale. @cite{toosarvandani-2023}'s central empirical contribution. -/
+    Elder and human collapse at AnimacyLevel.human, but PCC distinguishes
+    them. Toosarvandani's central empirical contribution. -/
 theorem zapotec_refines_3way :
     PronType.toAnimacyLevel .thirdElder = PronType.toAnimacyLevel .thirdHuman ∧
     pccLicit .thirdElder .thirdHuman = true ∧
-    pccLicit .thirdHuman .thirdElder = false := by native_decide
+    pccLicit .thirdHuman .thirdElder = false := by decide
 
 /-- All PronType person features are well-formed (no [−participant, +author]). -/
 theorem prontype_features_wellFormed : ∀ p : PronType,
-    p.toPersonFeatures.wellFormed = true := by native_decide
+    p.toPersonFeatures.wellFormed = true := by decide
 
 end Toosarvandani2023

@@ -1,10 +1,10 @@
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.Interface
+import Linglib.Theories.Syntax.Minimalist.TraceInterpretation
 import Linglib.Theories.Syntax.Minimalist.Basic
 
 /-!
 # Relative Clause Semantics: A Worked Example
 
-Demonstrates the full machinery from Interfaces/SyntaxSemantics/Minimalism/Interface.lean
+Demonstrates the full machinery from Syntax/Minimalist/TraceInterpretation.lean
 with a concrete linguistic example: "the book that John read _"
 
 ## The Derivation
@@ -37,7 +37,6 @@ with a concrete linguistic example: "the book that John read _"
 namespace Minimalist.RelativeClauses
 
 open Core.IntensionalLogic Core.IntensionalLogic.Variables Semantics.Composition.Modification
-open Minimalist.Semantics
 open Minimalist
 
 -- ============================================================================

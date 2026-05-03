@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
 # @cite{alsop-2024} — Free Choice *Any* as GI-RSA
@@ -426,7 +426,7 @@ end RSA.FCIAny
 @cite{alsop-2024}
 
 Connects the RSA free choice *any* model from @cite{alsop-2024} to empirical
-data in `Phenomena.Modality.FreeChoice`.
+data in `Phenomena.FreeChoice`.
 
 ## Bridge Theorems
 
@@ -435,12 +435,12 @@ data in `Phenomena.Modality.FreeChoice`.
 -/
 
 
-namespace Phenomena.Modality.RSA_Alsop2024Bridge
+namespace Phenomena.FreeChoice.RSA_Alsop2024Bridge
 
 /-!
 ## Connection to Phenomena
 
-The model predicts the patterns in `Phenomena.Modality.FreeChoice`:
+The model predicts the patterns in `Phenomena.FreeChoice`:
 
 1. **FCI Any** (`anyClass`, `anyFruit`):
    - "You may take any class" → permission for each class specifically
@@ -457,10 +457,10 @@ The model predicts the patterns in `Phenomena.Modality.FreeChoice`:
 
 /-- Free choice *any* is predicted for permission sentences -/
 theorem predicts_fci_any :
-    Phenomena.Modality.FreeChoice.anyClass.exclusivenessArises = true := rfl
+    Phenomena.FreeChoice.anyClass.exclusivenessArises = true := rfl
 
 /-- Exclusiveness is robust to priors (as recorded in the data) -/
 theorem predicts_robustness :
-    Phenomena.Modality.FreeChoice.anyClass.robustToPriors = true := rfl
+    Phenomena.FreeChoice.anyClass.robustToPriors = true := rfl
 
-end Phenomena.Modality.RSA_Alsop2024Bridge
+end Phenomena.FreeChoice.RSA_Alsop2024Bridge

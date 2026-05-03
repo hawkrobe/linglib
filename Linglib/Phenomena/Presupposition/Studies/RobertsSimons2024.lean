@@ -34,7 +34,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 This study file imports and bridges:
 - `OntologicalPreconditions` (EventPhase, entailment classification)
 - `ChangeOfState.Theory` (CoS presuppositions)
-- `LexicalAspect` (Vendler classes, telicity)
+- `Features.Aktionsart` (Vendler classes, telicity)
 - `ProjectiveContent` (Tonhauser taxonomy: all three verb classes are Class C)
 - `Diagnostics` (empirical diagnostic data)
 -/

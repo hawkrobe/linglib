@@ -393,15 +393,19 @@ def VerbForm.hasSetA : VerbForm → Bool
 abbrev ExponentTable := PersonNumber → String
 
 /-- Decidable predicate: the third-person singular slot is morphologically
-    null. A pan-Mayan invariant per @cite{kaufman-norman-1984} Table 8 —
-    Set B 3sg null reconstructs to proto-Cholan and proto-Mayan. The
-    predicate is **notation-agnostic** — surface notation varies by
-    linearity: `"-∅"` for suffixal Set B (Cholan, Q'anjob'alan, Tseltal,
-    Tsotsil), `"∅"` for prefixal Set B (Kaqchikel and other K'ichean
-    HIGH-ABS languages), `"∅-"` for prefixal-with-trailing-dash
-    convention. All resolve to the same morphological claim: no overt
-    3sg exponent. The disjunction form is kernel-decidable (unlike a
-    `String.replace` normalization, which is opaque to `decide`). -/
+    null. An invariant of the **standard** Mayan branches per
+    @cite{kaufman-norman-1984} Table 8 — Set B 3sg null reconstructs to
+    proto-Cholan and proto-Mayan. **Not strictly pan-Mayan**: SJA Mam's
+    default Set B `tz'=` surfaces in the 3sg slot per @cite{scott-2023}
+    §3.3.2; the cross-Mayan theorem `mayan_p3sg_abs_null` quantifies
+    only over `MayanLang.isStandard = true`. The predicate is
+    **notation-agnostic** — surface notation varies by linearity:
+    `"-∅"` for suffixal Set B (Cholan, Q'anjob'alan, Tseltal, Tsotsil),
+    `"∅"` for prefixal Set B (Kaqchikel and other K'ichean HIGH-ABS
+    languages), `"∅-"` for prefixal-with-trailing-dash convention. All
+    resolve to the same morphological claim: no overt 3sg exponent. The
+    disjunction form is kernel-decidable (unlike a `String.replace`
+    normalization, which is opaque to `decide`). -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
   e .p3sg = "-∅" ∨ e .p3sg = "∅" ∨ e .p3sg = "∅-"
 

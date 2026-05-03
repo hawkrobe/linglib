@@ -217,8 +217,12 @@ def setBExponent : PersonNumber → String
   | .p2pl => "-ety=la"
   | .p3pl => "-∅-ob"
 
-/-- 3rd person absolutive is null — pan-Mayan invariant per
-    @cite{kaufman-norman-1984} Table 8. -/
+/-- 3rd person absolutive is null — invariant across the standard
+    Mayan branches (Cholan, Q'anjob'alan, Tseltalan, K'ichean) per
+    @cite{kaufman-norman-1984} Table 8 reconstruction. **Not** universally
+    pan-Mayan: Mam's default Set B `tz'=` surfaces in the 3sg slot
+    (@cite{scott-2023}), and `MayanLang.isStandard` excludes Mam from
+    the relevant cross-Mayan theorem (`mayan_p3sg_abs_null`). -/
 theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
 
 /-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic

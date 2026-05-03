@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
 # @cite{champollion-alsop-grosu-2019} — Free Choice Disjunction as RSA
@@ -363,7 +363,7 @@ end RSA.FreeChoice
 @cite{champollion-alsop-grosu-2019}
 
 Connects the RSA free choice model from @cite{champollion-alsop-grosu-2019}
-to empirical data in `Phenomena.Modality.FreeChoice`.
+to empirical data in `Phenomena.FreeChoice`.
 
 ## Bridge Theorems
 
@@ -377,7 +377,7 @@ namespace Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge
 /-!
 ## Connection to Empirical Data
 
-The model predicts the patterns in `Phenomena.Modality.FreeChoice`:
+The model predicts the patterns in `Phenomena.FreeChoice`:
 
 1. **Free Choice Permission** (`coffeeOrTea`):
    - "You may have coffee or tea" → "You may have coffee AND you may have tea"

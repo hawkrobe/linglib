@@ -255,28 +255,13 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
   intro ⟨pts, tLB, hmem, hLB, hRB, hp⟩
   exact ⟨pts, tLB, hSub hmem, hLB, hRB, hp⟩
 
--- ════════════════════════════════════════════════════
--- § Vendler Class Compatibility
--- ════════════════════════════════════════════════════
-
 end Semantics.Tense.Aspect.Core
 
 namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
-open Features
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
-
-/-- Natural imperfectivity = homogeneity (subinterval property). -/
-theorem naturally_imperfective_iff_homogeneous (c : VendlerClass) :
-    c.naturallyImperfective = c.toProfile.isHomogeneous := by
-  cases c <;> rfl
-
-/-- Natural perfectivity = telicity. -/
-theorem naturally_perfective_iff_telic (c : VendlerClass) :
-    c.naturallyPerfective = (c.telicity == .telic) := by
-  cases c <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § Entailment Properties

@@ -109,8 +109,9 @@ def setBExponent : PersonNumber → String
   | .p2pl => "-ex"
   | .p3pl => "-ik"
 
-/-- 3rd person absolutive is null — pan-Mayan invariant per
-    @cite{kaufman-norman-1984} Table 8. -/
+/-- 3rd person absolutive is null — invariant across the standard
+    Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
+    pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
 
 /-- Tseltal Set B differs from Tsotsil in linearity (suffixal vs

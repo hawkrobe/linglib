@@ -161,18 +161,35 @@ def dmpcfgFromObserved : DMPCFG suffixGrammar where
 
 /-- `rNess` as an inhabitant of the N-LHS subtype. Named once so
     consumers don't repeat `⟨rNess, by decide⟩` at every call. -/
-private def nNess : DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N :=
+private def nNess : suffixGrammar.RulesWithLHS SuffixNT.N :=
   ⟨rNess, by decide⟩
 
 /-- `rIon` as an inhabitant of the N-LHS subtype. -/
-private def nIon : DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N :=
+private def nIon : suffixGrammar.RulesWithLHS SuffixNT.N :=
   ⟨rIon, by decide⟩
 
 /-- The N-LHS bucket of `suffixGrammar` is nonempty (`rNess` ∈ it).
     Required for `mapWeightPMF` and `mapWeight_sum_eq_one_of_lhs`. -/
 instance n_bucket_nonempty :
-    Nonempty (DMPCFG.RulesWithLHS (G := suffixGrammar) SuffixNT.N) :=
+    Nonempty (suffixGrammar.RulesWithLHS SuffixNT.N) :=
   ⟨nNess⟩
+
+/-- All four LHS buckets of `suffixGrammar` are nonempty: every
+    nonterminal in this toy grammar has at least one rule expanding
+    it (N has rNess + rIon, A has rAdj, V has rAte + rV, BND has rBnd).
+
+    Required to construct `dmpcfgFromObserved.posteriorMAP D`
+    as a full `MultinomialPCFG suffixGrammar` (the structure carries
+    the typeclass `[∀ a, Nonempty (G.RulesWithLHS a)]` because
+    PMFs over empty supports don't exist). -/
+instance suffixGrammar_buckets_nonempty :
+    ∀ a : suffixGrammar.NT, Nonempty (suffixGrammar.RulesWithLHS a) := by
+  intro a
+  match a with
+  | SuffixNT.N => exact ⟨nNess⟩
+  | SuffixNT.A => exact ⟨⟨rAdj, by decide⟩⟩
+  | SuffixNT.V => exact ⟨⟨rV, by decide⟩⟩
+  | SuffixNT.BND => exact ⟨⟨rBnd, by decide⟩⟩
 
 /-- Parametric pseudo-count formula for productivity-bearing rules:
     `pseudoVal (suffixToRule s) = productivityIndex s + 1`. -/
@@ -234,18 +251,18 @@ theorem dmpcfgFromObserved_pseudo_respects_productivity
     hypothesis is the abstract minimum that suffices. -/
 theorem dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap
     (D : Multiset (CFGTree Sym SuffixNT))
-    (h : DMPCFG.corpusRuleCount (G := suffixGrammar) rNess D + 1 <
-         DMPCFG.corpusRuleCount (G := suffixGrammar) rIon D) :
+    (h : CFGTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         CFGTree.corpusRuleCount (N := SuffixNT) rIon D) :
     dmpcfgFromObserved.mapWeightPMF D nNess <
         dmpcfgFromObserved.mapWeightPMF D nIon := by
   rw [DMPCFG.mapWeightPMF_lt_iff]
   show pseudoVal rNess +
-        (DMPCFG.corpusRuleCount (G := suffixGrammar) rNess D : ℝ) <
+        (CFGTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) <
       pseudoVal rIon +
-        (DMPCFG.corpusRuleCount (G := suffixGrammar) rIon D : ℝ)
+        (CFGTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ)
   rw [pseudoVal_rNess, pseudoVal_rIon]
-  have h' : (DMPCFG.corpusRuleCount (G := suffixGrammar) rNess D : ℝ) + 1 <
-            (DMPCFG.corpusRuleCount (G := suffixGrammar) rIon D : ℝ) := by
+  have h' : (CFGTree.corpusRuleCount (N := SuffixNT) rNess D : ℝ) + 1 <
+            (CFGTree.corpusRuleCount (N := SuffixNT) rIon D : ℝ) := by
     exact_mod_cast h
   linarith
 
@@ -262,11 +279,26 @@ theorem dmpcfgFromObserved_mapWeightPMF_prior_lt :
     dmpcfgFromObserved.mapWeightPMF 0 nIon <
       dmpcfgFromObserved.mapWeightPMF 0 nNess := by
   rw [DMPCFG.mapWeightPMF_lt_iff]
-  show pseudoVal rIon + (DMPCFG.corpusRuleCount (G := suffixGrammar) rIon 0 : ℝ) <
-       pseudoVal rNess + (DMPCFG.corpusRuleCount (G := suffixGrammar) rNess 0 : ℝ)
-  rw [DMPCFG.corpusRuleCount_zero, DMPCFG.corpusRuleCount_zero,
+  show pseudoVal rIon + (CFGTree.corpusRuleCount (N := SuffixNT) rIon 0 : ℝ) <
+       pseudoVal rNess + (CFGTree.corpusRuleCount (N := SuffixNT) rNess 0 : ℝ)
+  rw [CFGTree.corpusRuleCount_zero, CFGTree.corpusRuleCount_zero,
       pseudoVal_rIon, pseudoVal_rNess]
   norm_num
+
+/-- **Bridge demo.** The same prior comparison stated as a fact about
+    `dmpcfgFromObserved.posteriorMAP 0` — a `MultinomialPCFG suffixGrammar`
+    derived from the DMPCFG via the conjugate-prior collapse.
+
+    This is the proof-of-life that the `DMPCFG → MultinomialPCFG`
+    bridge cashes out: any DMPCFG-side PMF fact translates straight
+    to a MultinomialPCFG-side fact about the posterior MAP, via
+    `posteriorMAP_rulePMF`. Future cross-paper consumers (Albright-Hayes,
+    Bybee, dual-route) can target `MultinomialPCFG` and have their
+    theorems automatically apply to DMPCFG-derived posteriors. -/
+theorem dmpcfgFromObserved_posteriorMAP_prior_lt :
+    (dmpcfgFromObserved.posteriorMAP 0).rulePMF SuffixNT.N nIon <
+      (dmpcfgFromObserved.posteriorMAP 0).rulePMF SuffixNT.N nNess :=
+  dmpcfgFromObserved_mapWeightPMF_prior_lt
 
 /-- The full @cite{odonnell-2015} Ch 7 critique of DMPCFG, in one
     theorem. Two facts that look contradictory but aren't:
@@ -288,8 +320,8 @@ theorem dmpcfgFromObserved_mapWeightPMF_prior_lt :
     doesn't collapse productivity into raw frequency. -/
 theorem dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree
     (D : Multiset (CFGTree Sym SuffixNT))
-    (h : DMPCFG.corpusRuleCount (G := suffixGrammar) rNess D + 1 <
-         DMPCFG.corpusRuleCount (G := suffixGrammar) rIon D) :
+    (h : CFGTree.corpusRuleCount (N := SuffixNT) rNess D + 1 <
+         CFGTree.corpusRuleCount (N := SuffixNT) rIon D) :
     -- Prior: ness > ion at empty corpus
     (dmpcfgFromObserved.mapWeightPMF 0 nIon <
       dmpcfgFromObserved.mapWeightPMF 0 nNess) ∧

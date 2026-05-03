@@ -13,6 +13,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
@@ -461,6 +462,36 @@ def VerbCore.isCausative (v : VerbCore) : Bool :=
     DERIVED: delegates to `Causative.assertsSufficiency`. -/
 def VerbCore.assertsSufficiency (v : VerbCore) : Bool :=
   v.causative.map (·.assertsSufficiency) |>.getD false
+
+/-- Lexicalist prediction of the external argument's theta role
+    (@cite{levin-1993}, @cite{rappaport-hovav-levin-1998}), based solely
+    on verb-internal properties.
+
+    The cascade mirrors traditional linking rules:
+    - raising / weather → no external role
+    - external causal source → stimulus (Class II psych, @cite{kim-2024})
+    - attitude builder or factive presupposition → experiencer
+    - occasion sense (manage-to) → experiencer
+    - Levin class flinch / learn → experiencer
+    - unaccusative / measure → theme
+    - default → agent
+
+    Contrasts with the Kratzer severing prediction (`VoiceFlavor.thetaRole`),
+    which derives the role from Voice flavor rather than verb-internal
+    semantics. Studies comparing the two accounts can apply both to the
+    same `VerbCore` and inspect divergence. -/
+def VerbCore.predictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
+  if v.controlType == .raising then none
+  else if v.levinClass == some .weather then none
+  else if v.causalSource.isSome then some .stimulus
+  else if v.attitude.isSome then some .experiencer
+  else if v.factivePresup && v.attitude.isNone then some .experiencer
+  else if v.senseTag == .occasion then some .experiencer
+  else if v.levinClass == some .flinch then some .experiencer
+  else if v.levinClass == some .learn then some .experiencer
+  else if v.unaccusative then some .theme
+  else if v.levinClass == some .measure then some .theme
+  else some .agent
 
 /-- Does this verb's semantics predict it is an expletive negation trigger?
 

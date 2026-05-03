@@ -128,18 +128,18 @@ def tadasTable : List MayanExtractionDatum :=
 /-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/
 theorem high_abs_all_have_asymmetries :
     (tadasTable.filter (fun l => l.absPosition == .high)).all
-      (fun l => l.hasExtractionAsymmetry) = true := by native_decide
+      (fun l => l.hasExtractionAsymmetry) = true := by decide
 
 /-- All LOW-ABS languages except the two noted outliers lack
     extraction asymmetries. -/
 theorem low_abs_mostly_lack_asymmetries :
     (tadasTable.filter (fun l => l.absPosition == .low &&
       l.name != "Yucatec" && l.name != "Ixil")).all
-      (fun l => !l.hasExtractionAsymmetry) = true := by native_decide
+      (fun l => !l.hasExtractionAsymmetry) = true := by decide
 
 /-- No HIGH-ABS language lacks extraction asymmetries (unattested cell). -/
 theorem high_abs_none_lack_asymmetries :
     (tadasTable.filter (fun l => l.absPosition == .high &&
-      !l.hasExtractionAsymmetry)).length = 0 := by native_decide
+      !l.hasExtractionAsymmetry)).length = 0 := by decide
 
 end Phenomena.Ergativity

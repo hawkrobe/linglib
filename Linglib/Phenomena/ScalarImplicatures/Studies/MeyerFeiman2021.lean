@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
 # @cite{meyer-feiman-2021} — Composing Alternatives
@@ -266,7 +266,7 @@ def hurfordNumeralProfile : ProcessProfile := classProfile .numeral
 
 /-- FC phenomena use a fundamentally different mechanism from standard SI.
 
-This connects to `Phenomena.Modality.FreeChoice`, where the FC inference
+This connects to `Phenomena.FreeChoice`, where the FC inference
 ◇(A ∨ B) → ◇A ∧ ◇B is derived via Innocent Inclusion rather than
 Innocent Exclusion. -/
 def freeChoiceProfile : ProcessProfile := classProfile .freeChoiceDisjunction
@@ -445,7 +445,7 @@ theorem fc_data_distinct_from_si :
 /-- FC cancellability (from FreeChoice.lean) is consistent with the FC
     profile using innocentInclusion. -/
 theorem fc_cancellable_consistent :
-    Phenomena.Modality.FreeChoice.explicitCancellation.felicitous = true := rfl
+    Phenomena.FreeChoice.explicitCancellation.felicitous = true := rfl
 
 -- § The Spectrum as a Whole
 

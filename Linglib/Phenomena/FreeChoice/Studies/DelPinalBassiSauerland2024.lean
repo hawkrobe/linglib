@@ -57,7 +57,7 @@ open Semantics.Presupposition.Accommodation
 
 pex predicts that free choice is a pragmatic inference (derived by the
 covert operator pex), not a semantic entailment. This matches the empirical
-data in `Phenomena.Modality.FreeChoice`.
+data in `Phenomena.FreeChoice`.
 -/
 
 -- ============================================================================

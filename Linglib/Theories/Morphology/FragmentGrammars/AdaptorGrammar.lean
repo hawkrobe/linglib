@@ -218,6 +218,79 @@ theorem corpusProbGivenTables_empty :
     simp [PitmanYor.partitionProb, default, Nat.Partition.indiscrete]
   rw [h_dm, h_py, mul_one]
 
+/-! ## Bridge: AdaptorGrammar → MultinomialPCFG via posterior MAP
+
+An AG is a *prior over* multinomial PCFGs: the per-LHS rule weights
+have a Dirichlet prior (inherited from the underlying DMPCFG via
+`extends`), augmented with PYP table state. The PYP component is a
+multiplicative factor in `corpusProbGivenTables` that does not enter
+the per-LHS rule-weight inference — DMPCFG's `lhsFactor a D` consumes
+the same corpus rule counts whether or not stored fragments are
+reused (under this Lean formalization; see the AG module docstring
+for the simplification relative to @cite{odonnell-2015} §3.1.7).
+
+Consequence: the posterior MAP rule weights of an AG are exactly the
+posterior MAP rule weights of its underlying DMPCFG. The bridge is a
+one-liner. The PYP layer is "purely additive" on the prior tower:
+it multiplies corpus probability without disturbing rule-weight
+estimation. -/
+
+/-- The Dirichlet posterior MAP collapse for AG: package per-LHS
+    posterior MAP weights (inherited from the underlying DMPCFG) as a
+    `MultinomialPCFG`. The PYP component does not contribute — see the
+    section docstring above. -/
+noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+  M.toDMPCFG.posteriorMAP D
+
+/-- **Coherence.** AG's posterior-MAP MultinomialPCFG agrees with
+    the underlying DMPCFG's posterior-MAP MultinomialPCFG. Holds by
+    `rfl` — AG's rule-weight inference IS DMPCFG's rule-weight
+    inference. The "prior tower" claim made formal at this layer. -/
+theorem posteriorMAP_eq_toDMPCFG [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = M.toDMPCFG.posteriorMAP D := rfl
+
+/-! ## Conjugacy decomposition (mirror of DMPCFG)
+
+AG inherits Dirichlet conjugacy on its DMPCFG component: the posterior
+of an AG given a corpus is again an AG, with the DMPCFG component
+updated and the PYP component unchanged. The mode projection (= mean,
+in CL convention) delegates to `DMPCFG.mode`. The decomposition
+`posteriorMAP = mode ∘ posterior` therefore holds by `rfl` at the AG
+layer too. -/
+
+/-- AG's posterior update: bump the underlying DMPCFG's pseudo-counts
+    by the corpus rule counts (Dirichlet conjugacy on the DMPCFG
+    component), leave PYP table state unchanged. -/
+noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : AdaptorGrammar G :=
+  { M with toDMPCFG := M.toDMPCFG.posterior D }
+
+/-- AG's mode in `MultinomialPCFG`-space: the mode of the underlying
+    DMPCFG. The PYP component does not contribute to rule-weight
+    inference. -/
+noncomputable def mode [∀ a : G.NT, Nonempty (G.RulesWithLHS a)] :
+    MultinomialPCFG G :=
+  M.toDMPCFG.mode
+
+/-- Empty corpus = identity update (delegated to `DMPCFG.posterior_zero`). -/
+@[simp]
+theorem posterior_zero : M.posterior 0 = M := by
+  ext1 <;> simp [posterior, DMPCFG.posterior_zero]
+
+/-- Incrementality at the AG layer (delegated to `DMPCFG.posterior_add`). -/
+theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+    M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
+  ext1 <;> simp [posterior, DMPCFG.posterior_add]
+
+/-- **The conjugacy decomposition at AG layer.** `posteriorMAP =
+    mode ∘ posterior`, holding by `rfl` because both AG operations
+    delegate through DMPCFG's. -/
+theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = (M.posterior D).mode :=
+  M.toDMPCFG.posteriorMAP_eq_mode_posterior D
+
 end AdaptorGrammar
 
 end Morphology.FragmentGrammars

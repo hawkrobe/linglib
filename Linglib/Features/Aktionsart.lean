@@ -9,6 +9,11 @@ binary features (telicity, duration, dynamicity), the five-way Vendler
 class projection, the bundled `AspectualProfile`, and aspectual-shift
 operations modeling compositional coercion.
 
+This file is **descriptive vocabulary** Fragment authors use to label
+lexical entries (`verb.aspectualProfile = activityProfile`). Predictions
+about how a labelled verb's denotation behaves live in `Theories/`
+(consequence theorems) or framework-specific `Studies/` files, not here.
+
 ## Provenance
 
 Moved from `Core/Lexical/VerbClass.lean` (the inductives + class theorems)
@@ -25,39 +30,46 @@ must be declared in `namespace Features.AspectualProfile`).
 
 The 5-way classification (`VendlerClass`) and the orthogonal-binary
 parameterization (`AspectualProfile`) follow @cite{vendler-1957} as
-extended by @cite{smith-1997} (binary feature decomposition + 5-cell
-map including semelfactives). The semelfactive category itself
-predates Smith — it comes from Slavic aspectology and was introduced
-into the typological literature by Comrie 1976 *Aspect* (Cambridge UP;
-not currently in `references.bib`); Smith 1997 integrated it with the
-binary-feature decomposition formalised here.
+extended by Smith 1991 *The Parameter of Aspect* (1st ed.; both the
+binary-feature decomposition and the 5-cell map including semelfactives
+appear there — the @cite{smith-1997} 2nd ed. cited here is a revision).
+The semelfactive category predates Smith — it comes from Slavic
+aspectology and was introduced into the typological literature by
+Comrie 1976 *Aspect* (Cambridge UP; not currently in `references.bib`).
 
-The split between substrate-shaped and framework-specific content:
-- **Consensus substrate**: the `Telicity`/`Duration`/`Dynamicity` enums
-  and the `AspectualProfile` struct itself — every framework below
-  recognizes the [±dynamic, ±durative, ±telic] dimensions.
-- **Smith 1997-specific**: the `VendlerClass` 5-cell map +
-  `toVendlerClass` projection + `predictsSubintervalProp` /
-  `hasFullSubintervalProp` / `predictsAtomDist` predictions.
+## Substrate primacy
 
-Competitor frameworks for lexical aspect (not formalized at parallel
-substrate granularity in linglib):
-- @cite{vendler-1957}: original 4-way (state/activity/achievement/accomplishment).
-- @cite{bach-1986}: distinct eventuality typology
-  (states/processes/events) with explicit mereological algebra.
-- @cite{krifka-1989}, @cite{krifka-1998}: cumulativity / quantization on
-  event predicates as the primitive, Vendler classes as derived.
-- @cite{rothstein-2004}: incremental-theme-based redrawing of
-  accomplishments, with consequences for telicity diagnostics.
-- @cite{dowty-1979}: foundational subinterval-property characterization
-  of states; the basis for `isHomogeneous` and the "qualified SIP"
-  observation about activities.
+`Telicity.toMereoTag` projects this file's binary `Telicity` onto
+`Core.Scales.Scale.MereoTag`, the canonical cumulative/quantized tag.
+The mereological algebra of CUM/QUA/DIV event predicates lives in
+`Theories/Semantics/Events/Mereology.lean`; this file's `Telicity` is
+the Smith-flavored derived label, not the primary notion. Reversing
+the projection — defining `Telicity` as a quotient of the substrate —
+is a follow-up.
 
-**Note on terminology**: the predicate `isHomogeneous` here is the
-Vendler/Dowty SIP-based "homogeneous" (states + activities). This
-conflicts with the Bach/Krifka mereological "homogeneous" (cumulative
-AND divisive — mass-noun-like). Downstream consumers should be aware
-of the overload; use `predictsSubintervalProp` if disambiguation needed.
+## Sibling formalizations elsewhere in linglib
+
+- @cite{vendler-1957}: the original 4-way is `VendlerClass` minus
+  `.semelfactive`.
+- @cite{bach-1986}: `EventSort = action | state` in
+  `Theories/Semantics/Events/Basic.lean`, with `dynamicityToEventSort`
+  round-trip against this file's `Dynamicity`.
+- @cite{krifka-1989}, @cite{krifka-1998}: full CUM/QUA/DIV algebra in
+  `Theories/Semantics/Events/Mereology.lean`, plus study files
+  `Phenomena/TenseAspect/Studies/Krifka1989.lean` and `Krifka1998.lean`.
+- @cite{dowty-1979}: subinterval property as `HasSubintervalProp` in
+  `Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`.
+- @cite{rothstein-2004}: complex-event analysis of accomplishments —
+  partial coverage in `Phenomena/ArgumentStructure/Studies/Dowty1991.lean`
+  and `Theories/Semantics/Verb/Affectedness.lean`.
+- @cite{filip-2012}: three-way CUM/QUA/neither classification in
+  `Phenomena/TenseAspect/Studies/Filip2012.lean`, with a
+  `three_way_exhaustive` theorem refuting the binary `Telicity` here
+  for incremental verbs (no refutation theorem yet ties back to this file).
+
+Bridges between this vocabulary and those substrate formalizations
+(e.g., "a verb of class `.state` has a denotation satisfying
+`HasSubintervalProp`") are not yet landed.
 -/
 
 namespace Features

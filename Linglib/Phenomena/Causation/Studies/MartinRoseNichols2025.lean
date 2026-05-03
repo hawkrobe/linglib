@@ -1,7 +1,8 @@
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Applicative
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.EventStructureBridge
+import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 
@@ -263,32 +264,34 @@ end Phenomena.Causation.ThickThin
 namespace Phenomena.Causation.Compare
 
 open Minimalist
-open Minimalist.Bridge
 open Features.EventStructure
 open Semantics.Causation.ProductionDependence
 open Phenomena.Causation.ThickThin
 
 -- § 1: Template ↔ Syntactic Structure
 
-/-- Accomplishment templates (external cause) map to causative structure
-    with agentive Voice. -/
-theorem accomplishment_has_agentive_voice :
+/-- Causative structure (transitive alternant of a change-of-state verb)
+    pairs an external causer with agentive Voice. The full head-list
+    `[vDO, vCAUSE, vGO, vBE]` matches `accomplishment` semantically. -/
+theorem causative_has_agentive_voice :
     -- Semantic: accomplishment has external causer
     Template.HasExternalCauser .accomplishment ∧
-    -- Syntactic: maps to causative heads (vDO + vCAUSE + vGO + vBE)
-    isCausative (templateToHeads .accomplishment) = true ∧
+    -- Syntactic: causative heads (vDO + vCAUSE + vGO + vBE) per @cite{cuervo-2003}
+    isCausative [VerbHead.vDO, .vCAUSE, .vGO, .vBE] = true ∧
     -- Voice: agentive Voice assigns θ-role
-    voiceAgent.AssignsTheta := ⟨by decide, by native_decide, by decide⟩
+    voiceAgent.AssignsTheta := ⟨by decide, by decide, by decide⟩
 
-/-- Achievement templates (no external cause) map to inchoative structure
-    with non-thematic Voice. -/
-theorem achievement_has_nonthematic_voice :
-    -- Semantic: achievement lacks external causer
+/-- Anticausative structure (intransitive alternant of a change-of-state
+    verb) drops the external argument while keeping CAUSE. The head-list
+    `[vCAUSE, vGO, vBE]` is what `VerbalDecomposition` calls inchoative,
+    contra @cite{martin-rose-nichols-2025}'s prose framing of "achievements". -/
+theorem anticausative_has_nonthematic_voice :
+    -- Semantic: achievement (here: anticausative use) lacks external causer
     ¬ Template.HasExternalCauser .achievement ∧
-    -- Syntactic: maps to inchoative heads (vCAUSE + vGO + vBE)
-    isInchoative (templateToHeads .achievement) = true ∧
+    -- Syntactic: inchoative heads (vCAUSE + vGO + vBE)
+    isInchoative [VerbHead.vCAUSE, .vGO, .vBE] = true ∧
     -- Voice: non-thematic Voice has no semantics
-    ¬ voiceAnticausative.HasSemantics := ⟨by decide, by native_decide, by decide⟩
+    ¬ voiceAnticausative.HasSemantics := ⟨by decide, by decide, by decide⟩
 
 -- § 2: Thick/Thin ↔ Causation Type ↔ Voice
 
@@ -311,16 +314,15 @@ theorem production_aligns_agentive :
 
 -- § 3: Alternation ↔ Voice Alternation
 
-/-- The causative alternation IS a Voice alternation:
-    transitive = agentive Voice, anticausative = non-thematic Voice.
-    The VP-internal structure (vCAUSE + vGO + vBE) is shared. -/
+/-- The causative alternation IS a Voice alternation: transitive = agentive
+    Voice, anticausative = non-thematic Voice. The VP-internal structure
+    `[vCAUSE, vGO, vBE]` is shared; causative just prepends `vDO`. -/
 theorem alternation_is_voice_alternation :
-    -- Achievement heads are a subset of accomplishment heads
-    (templateToHeads .achievement).all
-      ((templateToHeads .accomplishment).contains ·) = true ∧
+    -- Causative head-list extends anticausative by prepending vDO
+    ([VerbHead.vDO, .vCAUSE, .vGO, .vBE] = .vDO :: [VerbHead.vCAUSE, .vGO, .vBE]) ∧
     -- The difference is whether Voice introduces an external argument
     voiceAgent.AssignsTheta ∧
-    ¬ voiceAnticausative.AssignsTheta := ⟨by native_decide, by decide, by decide⟩
+    ¬ voiceAnticausative.AssignsTheta := ⟨rfl, by decide, by decide⟩
 
 -- § 4: Empirical Bridge: ThickThin Data
 

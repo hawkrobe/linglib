@@ -184,7 +184,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 
 /-! @cite{smith-1997} §3.2.2, §3.2.5: semelfactives shift to activities
     under duration. This is the same shift captured by `duratize_semelfactive`
-    in LexicalAspect.lean, but here derived compositionally via
+    in `Features/Aktionsart.lean`, but here derived compositionally via
     external override of the duration feature. -/
 
 /-- Semelfactive + durative adverbial → activity (multiple-event reading).
@@ -193,7 +193,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 theorem semelfactive_durative_is_activity :
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity := rfl
 
-/-- This matches the existing LexicalAspect shift operator. -/
+/-- This matches the existing `Features/Aktionsart` shift operator. -/
 theorem override_agrees_with_shift :
     (overrideDuration semelfactiveProfile .durative).toVendlerClass =
     semelfactiveProfile.duratize.toVendlerClass := rfl

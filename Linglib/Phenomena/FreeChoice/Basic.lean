@@ -15,7 +15,7 @@ This is not a semantic entailment; it is a pragmatic inference.
 
 -/
 
-namespace Phenomena.Modality.FreeChoice
+namespace Phenomena.FreeChoice
 
 
 /--
@@ -513,4 +513,4 @@ All standard FC examples (contrast with bathroom).
 def standardFCExamples : List StandardFCDatum :=
   [coffeeTeaStandard, parisLondonStandard]
 
-end Phenomena.Modality.FreeChoice
+end Phenomena.FreeChoice

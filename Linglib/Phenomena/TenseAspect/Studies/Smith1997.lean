@@ -24,7 +24,7 @@ aspectual meaning = situation type × viewpoint aspect, independently combined.
 
 ## What lives elsewhere
 
-- Situation type classification (VendlerClass): `LexicalAspect.lean`
+- Situation type classification (VendlerClass): `Features/Aktionsart.lean`
 - Viewpoint operators (IMPF, PRFV, INIT_OVERLAP): `Core.lean`
 - VP-level composition rules: `Composition.lean`
 - Aspectual diagnostics: `Diagnostics.lean`
@@ -508,7 +508,7 @@ theorem krifka_smith_agreement :
 
 /-- Semelfactive coercion under duration is compositionally derived:
     VCon[+Dyn, -Tel, -Dur] + [+Dur] → DVCon[+Dyn, -Tel, +Dur] = Activity.
-    This matches `duratize_semelfactive` in LexicalAspect.lean and
+    This matches `duratize_semelfactive` in `Features/Aktionsart.lean` and
     `semelfactive_durative_is_activity` in Composition.lean. -/
 theorem semelfactive_coercion_three_ways :
     semelfactiveProfile.duratize.toVendlerClass = .activity ∧

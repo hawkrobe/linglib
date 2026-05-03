@@ -5,37 +5,33 @@ import Linglib.Fragments.Mandarin.AspectComparison
 # Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles
 @cite{zhao-2025}
 
-Bridges VendlerClass ATOM-DIST predictions (from Theories/) to the
-Mandarin cross-domain particle entries (from Fragments/).
-
-The core classification (`predictsAtomDist`, `predictsAtomDist_iff_stative`,
-etc.) lives in `Theories/Semantics/Lexical/Verb/Aspect.lean` alongside
-the other VendlerClass feature functions. This file connects those
-predictions to the Fragment-level particle licensing.
+Connects @cite{zhao-2025}'s ATOM-DIST_t prediction — that only states
+distribute over temporal atoms, while dynamic VendlerClasses do not — to
+the Mandarin cross-domain particle entries in
+`Fragments/Mandarin/AspectComparison.lean`. The relevant per-class
+witness here is `c.dynamicity = .dynamic` (equivalently, `c ≠ .state`),
+which is the consumer-side recovery of the deleted Bool predictor
+`predictsAtomDist` formerly in `Features/Aktionsart.lean`.
 
 -/
 
 namespace Phenomena.TenseAspect.CrossDomainBridge
 
 open Features
-open Features
 open Fragments.Mandarin.AspectComparison
 open Core.Time
 
 /-- le is temporally licensed for a VendlerClass iff the class is dynamic:
     states predict ATOM-DIST_t → le NOT licensed;
-    dynamic classes predict ¬ATOM-DIST_t → le licensed.
-
-    Connects `VendlerClass.predictsAtomDist` (Theories/) to
-    `CrossDomainParticle.requiresAntiAtomDist` (Fragments/). -/
+    dynamic classes predict ¬ATOM-DIST_t → le licensed. -/
 theorem le_temporal_licensed_iff_dynamic (c : VendlerClass) :
-    (c.predictsAtomDist = false) ↔ (le.requiresAntiAtomDist = true ∧ c.dynamicity = .dynamic) := by
-  cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity, le]
+    (c.dynamicity = .dynamic) ↔ (le.requiresAntiAtomDist = true ∧ c.dynamicity = .dynamic) := by
+  cases c <;> simp [VendlerClass.dynamicity, le]
 
 /-- meiyou has the same licensing pattern as le. -/
 theorem meiyou_temporal_licensed_iff_dynamic (c : VendlerClass) :
-    (c.predictsAtomDist = false) ↔ (meiyou.requiresAntiAtomDist = true ∧ c.dynamicity = .dynamic) := by
-  cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity, meiyou]
+    (c.dynamicity = .dynamic) ↔ (meiyou.requiresAntiAtomDist = true ∧ c.dynamicity = .dynamic) := by
+  cases c <;> simp [VendlerClass.dynamicity, meiyou]
 
 /-- guo imposes no ATOM-DIST restriction, so it is compatible with all
     VendlerClasses including states. -/

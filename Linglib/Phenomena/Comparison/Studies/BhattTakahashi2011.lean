@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
 import Linglib.Phenomena.Comparison.Studies.Lechner2004
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
+import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 
 /-!
 # Bhatt & Takahashi 2011: Reduced and Unreduced Phrasal Comparatives
@@ -97,7 +97,7 @@ open Lechner2004 (BindingDatum RAPredictsCoref DAPredictsCoref
   PhrasalAnalysis)
 open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
 open Features (Acceptability)
-open Minimalist.Semantics.DegreeMovement
+open Minimalist.DegreeMovement
   (ScopeBinding IsBhattTakahashiScopeLicit
    not_isBhattTakahashiScopeLicit_base_above_DegP
    isBhattTakahashiScopeLicit_base_below_DegP)

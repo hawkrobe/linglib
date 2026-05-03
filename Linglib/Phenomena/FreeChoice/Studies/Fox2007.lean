@@ -19,7 +19,7 @@ so that the four Sauerland alternatives have non-trivial truth values
 and the IE algorithm has something to compute over.
 -/
 
-namespace Phenomena.Modality.Studies.Fox2007
+namespace Phenomena.FreeChoice.Studies.Fox2007
 
 open Exhaustification (innocent predToFinset altsFromPreds)
 
@@ -112,4 +112,4 @@ theorem fc_entails_both_disjuncts (w : ModalW)
   rw [free_choice] at h
   cases w <;> simp_all [predToFinset, diamP, diamQ, diamPandQ]
 
-end Phenomena.Modality.Studies.Fox2007
+end Phenomena.FreeChoice.Studies.Fox2007

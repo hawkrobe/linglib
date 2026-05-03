@@ -1,7 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.VoiceTheta
 
 /-!
 # Copula Theory: HAVE, BE, and Delayed Gratification
@@ -460,11 +459,10 @@ theorem expletive_voice_complement_determines_meaning (c : HaveComplement) :
     HaveComplement.IsEventDP, HaveComplement.IsStativePredicate]
 
 -- ════════════════════════════════════════════════════
--- § 6b. Voice Alloseme → Theta Role (via VoiceTheta)
+-- § 6b. Voice Alloseme → Theta Role (via VoiceFlavor.thetaRole)
 -- ════════════════════════════════════════════════════
 
 open Morphology.DM.Allosemy (VoiceAlloseme) in
-open Minimalist.VoiceTheta in
 
 /-- The complete theta-role prediction chain for HAVE sentences:
 
@@ -473,7 +471,7 @@ open Minimalist.VoiceTheta in
     This composes three independently motivated mappings:
     1. Complement type determines Voice alloseme (§5, table (100))
     2. Alloseme maps to syntactic VoiceFlavor (Allosemy.lean)
-    3. VoiceFlavor determines theta role (VoiceTheta.lean)
+    3. `VoiceFlavor.thetaRole` determines theta role (Voice.lean)
 
     The result: each HAVE reading predicts a specific external θ-role
     (or none, for expletive Voice). -/

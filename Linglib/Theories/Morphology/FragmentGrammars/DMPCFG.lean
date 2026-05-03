@@ -1,5 +1,7 @@
 import Linglib.Core.Computability.CFGTree
+import Linglib.Core.Computability.WeightedCFG
 import Linglib.Core.Probability.PolyaUrn
+import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -47,10 +49,9 @@ of derivations, not a draw from the unlabeled-count distribution.)
 ## Main definitions
 
 - `DMPCFG G` — per-rule Dirichlet pseudo-counts.
-- `DMPCFG.derivRuleCount` — count of rule applications in one
-  derivation tree.
-- `DMPCFG.corpusRuleCount` — count of rule applications across a
-  corpus.
+- Rule application counts (`CFGTree.ruleCount`,
+  `CFGTree.corpusRuleCount`) are CFGTree-level operations in
+  `Core/Computability/CFGTree.lean`; opened into this namespace.
 - `DMPCFG.lhsUrn` — per-LHS `PolyaUrn` over the subtype of rules
   with that LHS.
 - `DMPCFG.lhsCounts` — per-LHS corpus counts as a function on the
@@ -73,8 +74,19 @@ A Dirichlet–multinomial PCFG over `G`: per-rule pseudo-counts that
 parametrize a Dirichlet prior on the per-LHS rule-weight vector.
 
 Per @cite{odonnell-2015} §2.4.1 the conditional distribution over
-weights given a corpus is again Dirichlet (conjugacy), so the
-posterior MAP weights are proportional to corpus rule frequencies.
+weights given a corpus is again Dirichlet (conjugacy). The "MAP
+weights" (CL convention) are taken to be the Dirichlet posterior
+**mean** `(π + x) / Σ(π + x)`, proportional to corpus rule frequencies.
+
+*Terminology note*: in strict Bayesian usage MAP = mode of posterior
+over θ, with formula `(π - 1) / Σ(π - 1)` requiring `π > 1` everywhere.
+For the symmetric Dirichlet priors typical in CL (α ≤ 1) the strict
+mode is at the simplex boundary, so practitioners use the posterior
+mean (= posterior predictive probability) and call it "MAP" loosely.
+@cite{odonnell-2015} follows this convention; we do too. The strict
+mode is also formalized as `posteriorMode`; see that section for the
+ordering-equivalence theorem (`mapWeight_lt_iff_posteriorMode_lt`)
+that shows the loose convention is harmless for ordering claims.
 -/
 @[ext]
 structure DMPCFG {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
@@ -88,46 +100,22 @@ namespace DMPCFG
 
 variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT]
 
-mutual
-/-- Number of times rule `r` is applied at internal nodes of the
-    derivation tree `t`. -/
-def derivRuleCount (r : ContextFreeRule T G.NT) :
-    CFGTree T G.NT → ℕ
-  | .leaf _ => 0
-  | .node nt cs =>
-      (if r = ⟨nt, cs.map CFGTree.rootSymbol⟩ then 1 else 0) +
-      derivRuleCountList r cs
-
-/-- List version of `derivRuleCount`. -/
-def derivRuleCountList (r : ContextFreeRule T G.NT) :
-    List (CFGTree T G.NT) → ℕ
-  | [] => 0
-  | t :: ts => derivRuleCount r t + derivRuleCountList r ts
-end
-
-/-- Total number of times rule `r` is used across the corpus `D`. -/
-def corpusRuleCount (r : ContextFreeRule T G.NT)
-    (D : Multiset (CFGTree T G.NT)) : ℕ :=
-  (D.map (derivRuleCount r)).sum
+open CFGTree (corpusRuleCount corpusRuleCount_zero corpusRuleCount_add)
 
 variable (M : DMPCFG G)
-
-/-- The subtype of rules with LHS `a` (as a sort, for indexing). -/
-abbrev RulesWithLHS (a : G.NT) : Type :=
-  { r : ContextFreeRule T G.NT // r ∈ G.rules.filter (·.input = a) }
 
 /--
 Per-LHS Pólya urn over the subtype of rules with LHS `a`,
 parameterized by `M.pseudo` restricted to those rules.
 -/
 noncomputable def lhsUrn (a : G.NT) :
-    ProbabilityTheory.PolyaUrn (RulesWithLHS (G := G) a) where
+    ProbabilityTheory.PolyaUrn (G.RulesWithLHS a) where
   pseudo := fun ⟨r, _⟩ => M.pseudo r
   pseudo_pos := fun ⟨r, hr⟩ => M.pseudo_pos r (Finset.mem_filter.mp hr).1
 
 /-- Per-LHS corpus rule-count vector as a function on the subtype. -/
 def lhsCounts (a : G.NT) (D : Multiset (CFGTree T G.NT)) :
-    RulesWithLHS (G := G) a → ℕ :=
+    G.RulesWithLHS a → ℕ :=
   fun ⟨r, _⟩ => corpusRuleCount r D
 
 /--
@@ -154,7 +142,7 @@ omit [DecidableEq T] in
 /-- For LHSs that have at least one rule, the subtype is nonempty. -/
 theorem nonempty_rulesWithLHS_of_mem_image {a : G.NT}
     (ha : a ∈ G.rules.image (·.input)) :
-    Nonempty (RulesWithLHS (G := G) a) := by
+    Nonempty (G.RulesWithLHS a) := by
   obtain ⟨r0, hr0_mem, hr0_input⟩ := Finset.mem_image.mp ha
   exact ⟨r0, Finset.mem_filter.mpr ⟨hr0_mem, hr0_input⟩⟩
 
@@ -172,12 +160,6 @@ theorem corpusProb_nonneg (D : Multiset (CFGTree T G.NT)) :
   apply Finset.prod_nonneg
   intro a ha
   exact (M.lhsFactor_pos ha D).le
-
-/-- Corpus rule-counts vanish on the empty corpus. -/
-@[simp]
-theorem corpusRuleCount_zero (r : ContextFreeRule T G.NT) :
-    corpusRuleCount r (0 : Multiset (CFGTree T G.NT)) = 0 := by
-  simp [corpusRuleCount]
 
 /-- Per-LHS counts vanish on the empty corpus. -/
 @[simp]
@@ -235,7 +217,7 @@ noncomputable def mapWeight (r : ContextFreeRule T G.NT)
     Consumers either declare `instance : Nonempty (RulesWithLHS …) := ⟨⟨r, _⟩⟩`
     once for their grammar+LHS pair, or `haveI` the witness locally. -/
 theorem mapWeight_denom_pos {a : G.NT}
-    [hne : Nonempty (RulesWithLHS (G := G) a)]
+    [hne : Nonempty (G.RulesWithLHS a)]
     (D : Multiset (CFGTree T G.NT)) :
     0 < ∑ r' ∈ G.rules.filter (·.input = a),
         (M.pseudo r' + (corpusRuleCount r' D : ℝ)) := by
@@ -262,7 +244,7 @@ theorem mapWeight_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
   · have h1 : 0 < M.pseudo r := M.pseudo_pos r hr
     have h2 : 0 ≤ (corpusRuleCount r D : ℝ) := Nat.cast_nonneg _
     linarith
-  · haveI : Nonempty (RulesWithLHS (G := G) r.input) :=
+  · haveI : Nonempty (G.RulesWithLHS r.input) :=
       ⟨⟨r, Finset.mem_filter.mpr ⟨hr, rfl⟩⟩⟩
     exact M.mapWeight_denom_pos D
 
@@ -298,7 +280,7 @@ theorem mapWeight_lt_mapWeight_iff_of_same_lhs
   have h_denom_eq : G.rules.filter (·.input = r.input) =
                     G.rules.filter (·.input = r'.input) := by rw [h_lhs]
   rw [h_denom_eq]
-  haveI : Nonempty (RulesWithLHS (G := G) r'.input) :=
+  haveI : Nonempty (G.RulesWithLHS r'.input) :=
     ⟨⟨r', Finset.mem_filter.mpr ⟨hr'_in, rfl⟩⟩⟩
   exact div_lt_div_iff_of_pos_right (M.mapWeight_denom_pos D)
 
@@ -320,7 +302,7 @@ theorem mapWeight_lt_mapWeight_of_same_lhs
     rather than just a number — it is the per-LHS Dirichlet
     posterior mass function. -/
 theorem mapWeight_sum_eq_one_of_lhs {a : G.NT}
-    [Nonempty (RulesWithLHS (G := G) a)]
+    [Nonempty (G.RulesWithLHS a)]
     (D : Multiset (CFGTree T G.NT)) :
     ∑ r ∈ G.rules.filter (·.input = a), M.mapWeight r D = 1 := by
   have hdenom_pos := M.mapWeight_denom_pos (a := a) D
@@ -355,14 +337,14 @@ than a follow-up theorem. -/
     obligation. The PMF's value at `⟨r, hr⟩` is
     `ENNReal.ofReal (M.mapWeight r D)` — see `mapWeightPMF_apply`. -/
 noncomputable def mapWeightPMF {a : G.NT}
-    [Nonempty (RulesWithLHS (G := G) a)]
+    [Nonempty (G.RulesWithLHS a)]
     (D : Multiset (CFGTree T G.NT)) :
-    PMF (RulesWithLHS (G := G) a) :=
+    PMF (G.RulesWithLHS a) :=
   PMF.ofFintype
     (fun x => ENNReal.ofReal (M.mapWeight x.1 D))
     (by
       -- Reduce the subtype-Fintype sum to a Finset sum over the LHS bucket
-      rw [show (∑ x : RulesWithLHS (G := G) a,
+      rw [show (∑ x : G.RulesWithLHS a,
                   ENNReal.ofReal (M.mapWeight x.1 D)) =
               ∑ r ∈ G.rules.filter (·.input = a),
                 ENNReal.ofReal (M.mapWeight r D) from
@@ -379,8 +361,8 @@ noncomputable def mapWeightPMF {a : G.NT}
     `PMF.ofFintype_apply`. -/
 @[simp]
 theorem mapWeightPMF_apply {a : G.NT}
-    [Nonempty (RulesWithLHS (G := G) a)]
-    (D : Multiset (CFGTree T G.NT)) (r : RulesWithLHS (G := G) a) :
+    [Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) (r : G.RulesWithLHS a) :
     M.mapWeightPMF D r = ENNReal.ofReal (M.mapWeight r.1 D) := rfl
 
 /-- PMF comparison lemma: at a shared LHS, the per-LHS posterior
@@ -391,8 +373,8 @@ theorem mapWeightPMF_apply {a : G.NT}
     and `r₂.1 ∈ G.rules` premises both come for free from the
     subtype proofs `r₁.2`, `r₂.2`. -/
 theorem mapWeightPMF_lt_iff {a : G.NT}
-    [Nonempty (RulesWithLHS (G := G) a)]
-    (r₁ r₂ : RulesWithLHS (G := G) a)
+    [Nonempty (G.RulesWithLHS a)]
+    (r₁ r₂ : G.RulesWithLHS a)
     (D : Multiset (CFGTree T G.NT)) :
     M.mapWeightPMF D r₁ < M.mapWeightPMF D r₂ ↔
       M.pseudo r₁.1 + (corpusRuleCount r₁.1 D : ℝ) <
@@ -404,6 +386,239 @@ theorem mapWeightPMF_lt_iff {a : G.NT}
     rw [(Finset.mem_filter.mp r₁.2).2, (Finset.mem_filter.mp r₂.2).2]
   rw [ENNReal.ofReal_lt_ofReal_iff hr₂_pos]
   exact M.mapWeight_lt_mapWeight_iff_of_same_lhs hr₂_in h_lhs
+
+/-! ## Strict Bayesian mode (the actual MAP)
+
+`mapWeight` computes the Dirichlet posterior **mean**, which is what
+@cite{odonnell-2015} and CL practice generally call "MAP" (a loose
+convention). The strict Bayesian MAP — the single most likely value
+of the rule-weight vector under the posterior — is the **mode** of
+`Dir(pseudo + count)`, with closed form `(π_i - 1) / Σ(π_j - 1)`.
+
+The mode is well-defined only when `pseudo + count > 1` for every
+rule in the LHS bucket. Otherwise the posterior density goes to ∞ at
+a simplex vertex (when some `π_i + x_i < 1`) or has flat edges
+(equality case). For symmetric Dirichlet priors with concentration
+α ≤ 1 (the CL norm), the strict mode lives at the boundary; this is
+exactly why CL uses the mean instead.
+
+When both estimators are defined, **they agree on orderings**: rule
+with higher `pseudo + count` has higher mean *and* higher mode. So
+the productivity-ordering theorems we prove for `mapWeight` apply to
+`posteriorMode` automatically (under its precondition). The mode adds
+genuinely new content the mean can't express: vertex behavior,
+asymptotic agreement (mode → mean as `pseudo + count → ∞`), and
+boundary collapse. -/
+
+/-- The Dirichlet posterior **mode** of the rule weight: the single
+    most likely value of θ_r under `Dir(pseudo + count)`. Closed form
+    `(π_i - 1) / Σ(π_j - 1)`, valid in the simplex interior when
+    `pseudo r' + count r' D > 1` for every `r'` in the LHS bucket
+    (otherwise the mode is at the boundary; see `posteriorMode_well_defined`).
+
+    Returns `0/0 = 0` (Lean convention) outside the well-defined
+    regime; theorems carry the well-definedness hypothesis. -/
+noncomputable def posteriorMode (M : DMPCFG G)
+    (r : ContextFreeRule T G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
+  (M.pseudo r + (corpusRuleCount r D : ℝ) - 1) /
+    ∑ r' ∈ G.rules.filter (·.input = r.input),
+      (M.pseudo r' + (corpusRuleCount r' D : ℝ) - 1)
+
+/-- The mode-well-definedness condition: every entry of the LHS
+    bucket exceeds 1 in the posterior. Equivalent to "the Dirichlet
+    posterior has its mode strictly in the simplex interior." -/
+def PosteriorModeWellDefined (M : DMPCFG G) (a : G.NT)
+    (D : Multiset (CFGTree T G.NT)) : Prop :=
+  ∀ r ∈ G.rules.filter (·.input = a), 1 < M.pseudo r + (corpusRuleCount r D : ℝ)
+
+/-- The mode denominator is positive when the well-definedness
+    condition holds. Each summand exceeds 0 by hypothesis. -/
+theorem posteriorMode_denom_pos {a : G.NT}
+    [hne : Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT))
+    (h : M.PosteriorModeWellDefined a D) :
+    0 < ∑ r' ∈ G.rules.filter (·.input = a),
+        (M.pseudo r' + (corpusRuleCount r' D : ℝ) - 1) := by
+  obtain ⟨⟨r₀, hr₀_in⟩⟩ := hne
+  apply Finset.sum_pos'
+  · intro r' hr'
+    have := h r' hr'
+    linarith
+  · refine ⟨r₀, hr₀_in, ?_⟩
+    have := h r₀ hr₀_in
+    linarith
+
+/-- `posteriorMode` is strictly positive on rules in `G` when the
+    well-definedness condition holds. The numerator and denominator
+    are both positive. -/
+theorem posteriorMode_pos {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
+    (D : Multiset (CFGTree T G.NT))
+    (h : M.PosteriorModeWellDefined r.input D) :
+    0 < M.posteriorMode r D := by
+  unfold posteriorMode
+  apply div_pos
+  · have := h r (Finset.mem_filter.mpr ⟨hr, rfl⟩)
+    linarith
+  · haveI : Nonempty (G.RulesWithLHS r.input) :=
+      ⟨⟨r, Finset.mem_filter.mpr ⟨hr, rfl⟩⟩⟩
+    exact M.posteriorMode_denom_pos D h
+
+/-- **Same-LHS comparison (mode version).** Mode ordering matches
+    `pseudo + count` ordering, just like `mapWeight`. The shared
+    denominator cancels. This is the key fact that makes CL's "MAP =
+    mean" loose convention harmless for *ordering* claims: both
+    estimators give the same productivity ranking. -/
+theorem posteriorMode_lt_iff_of_same_lhs
+    {r r' : ContextFreeRule T G.NT} (hr'_in : r' ∈ G.rules)
+    (h_lhs : r.input = r'.input)
+    {D : Multiset (CFGTree T G.NT)}
+    (h_wd : M.PosteriorModeWellDefined r'.input D) :
+    M.posteriorMode r D < M.posteriorMode r' D ↔
+      M.pseudo r + (corpusRuleCount r D : ℝ) <
+        M.pseudo r' + (corpusRuleCount r' D : ℝ) := by
+  unfold posteriorMode
+  have h_denom_eq : G.rules.filter (·.input = r.input) =
+                    G.rules.filter (·.input = r'.input) := by rw [h_lhs]
+  rw [h_denom_eq]
+  haveI : Nonempty (G.RulesWithLHS r'.input) :=
+    ⟨⟨r', Finset.mem_filter.mpr ⟨hr'_in, rfl⟩⟩⟩
+  rw [div_lt_div_iff_of_pos_right (M.posteriorMode_denom_pos D h_wd)]
+  constructor
+  · intro h; linarith
+  · intro h; linarith
+
+/-- **Mean-mode ordering equivalence.** Whenever both `mapWeight`
+    and `posteriorMode` are well-defined for the same comparison,
+    they agree on ordering of two rules sharing an LHS. This is the
+    formal Lean witness of "the mean-vs-mode distinction is moot for
+    productivity-ranking claims." -/
+theorem mapWeight_lt_iff_posteriorMode_lt {r r' : ContextFreeRule T G.NT}
+    (hr'_in : r' ∈ G.rules) (h_lhs : r.input = r'.input)
+    {D : Multiset (CFGTree T G.NT)}
+    (h_wd : M.PosteriorModeWellDefined r'.input D) :
+    M.mapWeight r D < M.mapWeight r' D ↔
+      M.posteriorMode r D < M.posteriorMode r' D := by
+  rw [M.mapWeight_lt_mapWeight_iff_of_same_lhs hr'_in h_lhs,
+      M.posteriorMode_lt_iff_of_same_lhs hr'_in h_lhs h_wd]
+
+/-! ## Bridge: DMPCFG → MultinomialPCFG via posterior MAP
+
+A DMPCFG is a *prior over* multinomial PCFGs (Dirichlet hyperparameters
+parameterize a distribution over per-LHS rule-weight vectors). The
+posterior given a corpus is again Dirichlet (conjugacy); the posterior
+MAP weights are a single multinomial PCFG.
+
+This is the bridge: collapse a DMPCFG, conditioned on a corpus, into
+its MAP point estimate. At the empty corpus (`D = 0`), the result is
+the prior mean — see `posteriorMAP_zero`.
+
+`DMPCFG` does **not** `extends MultinomialPCFG`: a prior is a different
+kind of object than a point in weight space. The two relate via this
+*function*, not via inheritance. -/
+
+/-- The Dirichlet posterior MAP collapse: given a corpus `D`, package
+    DMPCFG's per-LHS posterior MAP weights as a `MultinomialPCFG`.
+    Per-LHS PMFs come straight from `mapWeightPMF`; sum-to-1 is
+    structural via `PMF`.
+
+    Requires `[∀ a, Nonempty (G.RulesWithLHS a)]` (carried by
+    `MultinomialPCFG` itself): the construction can't deliver a
+    multinomial PCFG over a grammar with empty LHS buckets. -/
+noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+  ⟨fun a => M.mapWeightPMF (a := a) D⟩
+
+/-- The posterior MAP `MultinomialPCFG`'s per-LHS PMF unfolds to
+    DMPCFG's `mapWeightPMF`. Holds by `rfl`. **Not `@[simp]`** —
+    Lean unfolds eagerly anyway (consumers like ODonnell2015's
+    bridge demo use direct application without `rw`), and tagging
+    `simp` risks loops in unfamiliar simp contexts. -/
+theorem posteriorMAP_rulePMF [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) (a : G.NT) :
+    (M.posteriorMAP D).rulePMF a = M.mapWeightPMF D := rfl
+
+/-! ## Conjugacy decomposition: posterior + mode
+
+The `posteriorMAP` collapses two distinct Bayesian operations:
+
+1. `DMPCFG.posterior : DMPCFG G → Multiset _ → DMPCFG G` —
+   Dirichlet-conjugate update: bump pseudo-counts by the corpus rule
+   counts. The posterior of a Dirichlet given multinomial data is again
+   a Dirichlet (conjugacy), so this stays inside the DMPCFG type.
+2. `DMPCFG.mode : DMPCFG G → MultinomialPCFG G` — the Dirichlet-mode
+   projection (= `posteriorMAP` at the empty corpus).
+
+The decomposition `posteriorMAP = mode ∘ posterior` is captured by
+`posteriorMAP_eq_mode_posterior`. Naming the two primitives separately
+makes the Bayesian structure visible in code and exposes incrementality
+of the update (`posterior_add`) as a stand-alone theorem rather than
+an unspoken consequence. -/
+
+/-- The Dirichlet-conjugate posterior update: given a corpus, bump
+    each rule's Dirichlet pseudo-count by that rule's corpus count.
+    Stays inside the `DMPCFG` type — that's the point of conjugacy. -/
+noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : DMPCFG G where
+  pseudo r := M.pseudo r + (corpusRuleCount r D : ℝ)
+  pseudo_pos r hr := by
+    have h1 : 0 < M.pseudo r := M.pseudo_pos r hr
+    have h2 : 0 ≤ (corpusRuleCount r D : ℝ) := Nat.cast_nonneg _
+    linarith
+
+/-- Posterior at the empty corpus is the prior: no data, no update. -/
+@[simp]
+theorem posterior_zero : M.posterior 0 = M := by
+  ext r
+  show M.pseudo r + ((corpusRuleCount r 0 : ℕ) : ℝ) = M.pseudo r
+  rw [corpusRuleCount_zero]
+  simp
+
+/-- **Incrementality.** Updating with `D₁ + D₂` equals updating
+    sequentially with `D₁` then `D₂`. Bayesian update is associative
+    over disjoint data — the actual content of "the prior commutes
+    with corpus aggregation." Follows from `corpusRuleCount_add`. -/
+theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+    M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
+  ext r
+  show M.pseudo r + ((corpusRuleCount r (D₁ + D₂) : ℕ) : ℝ) =
+       (M.posterior D₁).pseudo r + ((corpusRuleCount r D₂ : ℕ) : ℝ)
+  rw [corpusRuleCount_add]
+  show M.pseudo r + ((corpusRuleCount r D₁ + corpusRuleCount r D₂ : ℕ) : ℝ) =
+       (M.pseudo r + ((corpusRuleCount r D₁ : ℕ) : ℝ)) +
+         ((corpusRuleCount r D₂ : ℕ) : ℝ)
+  push_cast
+  ring
+
+/-- **Mode** of the Dirichlet prior in `MultinomialPCFG`-space:
+    the per-LHS-normalized pseudo-counts as a `MultinomialPCFG`.
+    Equivalently: `posteriorMAP` at the empty corpus (no data). -/
+noncomputable def mode [∀ a : G.NT, Nonempty (G.RulesWithLHS a)] :
+    MultinomialPCFG G :=
+  M.posteriorMAP 0
+
+/-- **The conjugacy decomposition.** `posteriorMAP` factors as
+    `mode ∘ posterior`: first update the prior with data (Dirichlet
+    conjugacy), then take the mode (Dirichlet-to-MultinomialPCFG
+    projection). The Bayesian-MAP estimator stops being a primitive
+    and becomes a derived composition. -/
+theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = (M.posterior D).mode := by
+  show M.posteriorMAP D = (M.posterior D).posteriorMAP 0
+  apply MultinomialPCFG.ext
+  funext a
+  show M.mapWeightPMF (a := a) D = (M.posterior D).mapWeightPMF (a := a) 0
+  ext x
+  rw [DMPCFG.mapWeightPMF_apply, DMPCFG.mapWeightPMF_apply]
+  congr 1
+  show M.mapWeight x.1 D = (M.posterior D).mapWeight x.1 0
+  unfold mapWeight
+  show (M.pseudo x.1 + ((corpusRuleCount x.1 D : ℕ) : ℝ)) /
+        ∑ r' ∈ G.rules.filter (·.input = x.1.input),
+          (M.pseudo r' + ((corpusRuleCount r' D : ℕ) : ℝ))
+       = ((M.posterior D).pseudo x.1 + ((corpusRuleCount x.1 0 : ℕ) : ℝ)) /
+        ∑ r' ∈ G.rules.filter (·.input = x.1.input),
+          ((M.posterior D).pseudo r' + ((corpusRuleCount r' 0 : ℕ) : ℝ))
+  simp [DMPCFG.posterior, corpusRuleCount_zero]
 
 end DMPCFG
 

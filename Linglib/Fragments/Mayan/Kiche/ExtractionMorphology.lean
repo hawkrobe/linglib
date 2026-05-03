@@ -145,7 +145,7 @@ theorem wi_subset_of_obliques :
     allData.all (λ d =>
       d.wiLicensed == (d.extractedType == .obliqueSpatial ||
                        d.extractedType == .obliqueInstrumental)) = true := by
-  native_decide
+  decide
 
 /-- *wi* does not appear with subject or object extraction. -/
 theorem wi_not_core_args :

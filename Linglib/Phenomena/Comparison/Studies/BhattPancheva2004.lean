@@ -2,7 +2,7 @@ import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
 import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalist.DegreeMovement
+import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Typology.PolarityItem
 
@@ -20,7 +20,7 @@ Rajesh Bhatt and Roumyana Pancheva. Late Merger of Degree Clauses.
 This file is a paper-faithful study of B&P 2004. It does **not** define
 late merger or the Heim-Kennedy Constraint — those live in the
 syntax–semantics interface module
-`Theories/Interfaces/SyntaxSemantics/Minimalism/DegreeMovement.lean`,
+`Theories/Syntax/Minimalist/DegreeMovement.lean`,
 which itself imports `Theories/Syntax/Minimalism/LateMerger.lean`
 (generic late merger, polymorphic in admissibility) and
 `Theories/Semantics/Degree/Comparative.lean` (set-of-degrees comparative
@@ -69,7 +69,7 @@ open Hoeksema1983
 open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
 open Heim2001 (IntensionalVerbDatum intensionalVerbData)
 open Minimalist (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
-open Minimalist.Semantics.DegreeMovement
+open Minimalist.DegreeMovement
   (DegreeChainPosition degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
    ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
    isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP

@@ -257,6 +257,83 @@ theorem corpusProbGivenStorage_empty :
   unfold emptyHaltCounts
   exact M.fgFactor_zero r i
 
+/-! ## Bridge: FragmentGrammar → MultinomialPCFG via posterior MAP
+
+FG = AG + per-(rule, RHS-position) beta-binomial halt prior. Like
+PYP in AG, the halt-prior factor is multiplicative in
+`corpusProbGivenStorage` and does not enter per-LHS rule-weight
+inference. So FG's posterior MAP rule weights factor through AG
+which factors through DMPCFG.
+
+The "tower equality" `FG.posteriorMAP D = AG.posteriorMAP D =
+DMPCFG.posteriorMAP D` is structural — every layer above DMPCFG in
+the prior tower is purely additive on rule-weight inference. This
+is the architectural payoff: the family-of-priors structure
+(`extends` chain) is genuinely "richer hyperparameter sets," not
+"different rule-weight semantics." -/
+
+/-- The Dirichlet posterior MAP collapse for FG. Same one-liner as
+    AG, factoring transitively through `extends`: FG → AG → DMPCFG.
+    The beta-binomial halt prior contributes a multiplicative factor
+    to corpus probability but does not alter rule-weight inference. -/
+noncomputable def posteriorMAP [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) : MultinomialPCFG G :=
+  M.toAdaptorGrammar.posteriorMAP D
+
+/-- **Coherence (one step).** FG's posterior-MAP agrees with AG's
+    posterior-MAP. Holds by `rfl` — FG only adds halt priors on top
+    of AG; rule-weight inference is unchanged. -/
+theorem posteriorMAP_eq_toAdaptorGrammar
+    [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = M.toAdaptorGrammar.posteriorMAP D := rfl
+
+/-- **Coherence (two steps).** FG's posterior-MAP agrees with the
+    underlying DMPCFG's posterior-MAP. The "prior tower" of length
+    three collapses to a single canonical MultinomialPCFG by `rfl`. -/
+theorem posteriorMAP_eq_toDMPCFG
+    [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = M.toAdaptorGrammar.toDMPCFG.posteriorMAP D := rfl
+
+/-! ## Conjugacy decomposition (mirror of AG / DMPCFG)
+
+FG's posterior delegates through AG which delegates through DMPCFG.
+Halt-prior pseudo-counts are unchanged by corpus updates (the
+beta-binomial layer doesn't see corpus rule counts). Mode delegates
+to the underlying DMPCFG. The decomposition holds by `rfl` at all
+three layers, witnessing the rfl-tower discovery (the prior tower's
+extends-chain is structurally orthogonal to rule-weight inference). -/
+
+/-- FG's posterior update: bump the underlying AG/DMPCFG, leave
+    halt-prior pseudo-counts unchanged. -/
+noncomputable def posterior (D : Multiset (CFGTree T G.NT)) : FragmentGrammar G :=
+  { M with toAdaptorGrammar := M.toAdaptorGrammar.posterior D }
+
+/-- FG's mode in `MultinomialPCFG`-space: delegates through AG to
+    DMPCFG. Halt-prior pseudo-counts contribute no rule-weight mass. -/
+noncomputable def mode [∀ a : G.NT, Nonempty (G.RulesWithLHS a)] :
+    MultinomialPCFG G :=
+  M.toAdaptorGrammar.mode
+
+/-- Empty corpus = identity update (delegated to `AG.posterior_zero`). -/
+@[simp]
+theorem posterior_zero : M.posterior 0 = M := by
+  ext1 <;> simp [posterior, AdaptorGrammar.posterior_zero]
+
+/-- Incrementality at the FG layer. -/
+theorem posterior_add (D₁ D₂ : Multiset (CFGTree T G.NT)) :
+    M.posterior (D₁ + D₂) = (M.posterior D₁).posterior D₂ := by
+  ext1 <;> simp [posterior, AdaptorGrammar.posterior_add]
+
+/-- **The conjugacy decomposition at FG layer.** `posteriorMAP =
+    mode ∘ posterior`, holding by `rfl` because all FG operations
+    delegate through DMPCFG. -/
+theorem posteriorMAP_eq_mode_posterior [∀ a : G.NT, Nonempty (G.RulesWithLHS a)]
+    (D : Multiset (CFGTree T G.NT)) :
+    M.posteriorMAP D = (M.posterior D).mode :=
+  M.toAdaptorGrammar.toDMPCFG.posteriorMAP_eq_mode_posterior D
+
 end FragmentGrammar
 
 end Morphology.FragmentGrammars

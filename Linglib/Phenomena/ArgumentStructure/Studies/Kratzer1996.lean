@@ -7,13 +7,17 @@ import Linglib.Theories.Syntax.Minimalist.Voice
 @cite{kratzer-1996} @cite{rappaport-hovav-levin-1998}
 
 Two accounts of argument realization make predictions about external
-argument theta roles. The Severing vs Lexicalist comparison
-infrastructure now lives in `VoiceTheta.lean` and operates over
-proto-role entailment profiles (`subjectEntailments` /
-`objectEntailments`) rather than the legacy `subjectTheta` /
-`objectTheta` labels (which were removed from `VerbCore`). Both accounts
-are instantiated as `LinkingTheory` (see
-`Theories/Interfaces/SyntaxSemantics/Linking.lean`).
+argument theta roles. The two predicates live next to the types they
+project from: severing in `VoiceFlavor.thetaRole`
+(`Theories/Syntax/Minimalist/Voice.lean`) and lexicalist in
+`VerbCore.predictedSubjectTheta`
+(`Theories/Semantics/Verb/VerbEntry.lean`). Both operate over proto-role
+entailment profiles (`subjectEntailments` / `objectEntailments`) rather
+than the legacy `subjectTheta` / `objectTheta` labels (which were
+removed from `VerbCore`). Studies comparing the two accounts apply both
+predicates to the same `VerbCore` and inspect divergence; the
+`LinkingTheory` packaging that previously lived in `VoiceTheta.lean`
+was dissolved as having no remaining consumers.
 
 ## Account 1: Severing
 

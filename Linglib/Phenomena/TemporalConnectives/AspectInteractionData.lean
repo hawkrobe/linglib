@@ -238,9 +238,12 @@ def since_achievement_main : AspectInteraction where
 -- ============================================================================
 
 /-- Whether a VendlerClass satisfies the durative selectional restriction
-    required by *until* and *since* for their main clauses. -/
-def satisfiesDurativeRestriction (c : VendlerClass) : Bool :=
-  c.duration == .durative && c.toProfile.isHomogeneous
+    required by *until* and *since* for their main clauses. Picks out
+    exactly the SIP-having classes (states and activities) — i.e., the
+    Vendler/Dowty-homogeneous ones. -/
+def satisfiesDurativeRestriction : VendlerClass → Bool
+  | .state | .activity => true
+  | .achievement | .accomplishment | .semelfactive => false
 
 /-- States satisfy the durative restriction. -/
 theorem state_satisfies : satisfiesDurativeRestriction .state = true := rfl
@@ -254,11 +257,11 @@ theorem achievement_fails : satisfiesDurativeRestriction .achievement = false :=
 /-- Accomplishments do NOT satisfy the durative restriction. -/
 theorem accomplishment_fails : satisfiesDurativeRestriction .accomplishment = false := rfl
 
-/-- The durative selectional restriction coincides with homogeneity
-    (the subinterval property): exactly states and activities pass. -/
-theorem durative_restriction_iff_homogeneous (c : VendlerClass) :
-    satisfiesDurativeRestriction c = c.toProfile.isHomogeneous := by
-  cases c <;> rfl
+/-- The durative selectional restriction picks out exactly states and
+    activities — the Vendler/Dowty SIP-having classes. -/
+theorem durative_restriction_iff_state_or_activity (c : VendlerClass) :
+    satisfiesDurativeRestriction c = true ↔ c = .state ∨ c = .activity := by
+  cases c <;> simp [satisfiesDurativeRestriction]
 
 -- ============================================================================
 -- § 7: Coercion Network Transitions (@cite{moens-steedman-1988}, Fig. 2)

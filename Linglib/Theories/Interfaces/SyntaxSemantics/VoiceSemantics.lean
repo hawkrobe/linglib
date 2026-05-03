@@ -10,15 +10,17 @@ import Linglib.Theories.Semantics.Causation.CauserSort
 Voice heads are type-changing compositional functions: they take a VP
 denotation and return a clause-level meaning with modified argument
 structure. This file defines the semantic operations; the theta-role
-assignments are in `VoiceTheta.lean` (an independent interface).
+labels are projected from Voice flavor by `VoiceFlavor.thetaRole` in
+`Theories/Syntax/Minimalist/Voice.lean`.
 
-## Independence from VoiceTheta
+## Independence from VoiceFlavor.thetaRole
 
-This file and `VoiceTheta.lean` are independent interfaces from the
-syntactic voice head:
+The two are orthogonal projections from the syntactic voice head:
 
-- **VoiceTheta**: Voice → theta role label (what the ext arg IS)
-- **VoiceSemantics**: Voice → compositional operation (what the voice head DOES)
+- **`VoiceFlavor.thetaRole`** (Voice.lean): Voice → theta role label
+  (what the external argument IS)
+- **VoiceSemantics** (this file): Voice → compositional operation
+  (what the voice head DOES)
 
 Same theta role, different operations: Agent is projected (active) or
 suppressed-coreferent (reflexive). Same operation, different theta roles:

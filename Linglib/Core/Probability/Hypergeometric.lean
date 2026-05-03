@@ -111,4 +111,48 @@ theorem hypergeometric_apply_ne_zero_iff (N K n : ℕ) (h_n : n ≤ N) (h_K : K 
     have h2 : (N - K).choose (n - k.val) ≠ 0 := (Nat.choose_pos h_nkNK).ne'
     exact_mod_cast Nat.mul_ne_zero h1 h2
 
+/-- **`ENNReal.ofReal`-friendly closed form**: lifts the value to a single
+`ENNReal.ofReal (rational)`, suitable for `norm_num` discharge. The
+hypothesis `0 < N.choose n` is implied by `n ≤ N` but stated separately
+to keep the theorem simp-friendly. -/
+theorem hypergeometric_apply_eq_ofReal (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N)
+    (k : Fin (n + 1)) :
+    hypergeometric N K n h_n h_K k =
+      ENNReal.ofReal
+        ((K.choose k.val * (N - K).choose (n - k.val) : ℝ) / (N.choose n : ℝ)) := by
+  rw [hypergeometric_apply]
+  have h_pos : (0 : ℝ) < N.choose n := by exact_mod_cast Nat.choose_pos h_n
+  rw [show ((K.choose k.val * (N - K).choose (n - k.val) : ℕ) : ℝ≥0∞) =
+        ENNReal.ofReal ((K.choose k.val * (N - K).choose (n - k.val) : ℝ)) from by
+      push_cast; exact (ENNReal.ofReal_natCast _).symm,
+      show ((N.choose n : ℕ) : ℝ≥0∞) = ENNReal.ofReal (N.choose n : ℝ) from
+        (ENNReal.ofReal_natCast _).symm,
+      ← ENNReal.ofReal_div_of_pos h_pos]
+
+/-- The kernel value at `k = 0`: `C(N - K, n) / C(N, n)`. -/
+theorem hypergeometric_apply_zero (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N) :
+    hypergeometric N K n h_n h_K ⟨0, Nat.lt_succ_of_le (Nat.zero_le _)⟩ =
+      ((N - K).choose n : ℕ) / (N.choose n : ℝ≥0∞) := by
+  rw [hypergeometric_apply]
+  simp
+
+/-- The kernel value at `k = n` (when `n ≤ K`): `C(K, n) / C(N, n)`. -/
+theorem hypergeometric_apply_last (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N) :
+    hypergeometric N K n h_n h_K ⟨n, Nat.lt_succ_self _⟩ =
+      (K.choose n : ℕ) / (N.choose n : ℝ≥0∞) := by
+  rw [hypergeometric_apply]
+  simp
+
+/-- Symmetry under `K ↔ N − K` and `k ↔ n − k`: complementary parameterization. -/
+theorem hypergeometric_symm (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N)
+    (k : Fin (n + 1)) :
+    hypergeometric N (N - K) n h_n (Nat.sub_le _ _) k =
+      hypergeometric N K n h_n h_K ⟨n - k.val, by omega⟩ := by
+  rw [hypergeometric_apply, hypergeometric_apply]
+  congr 1
+  · push_cast
+    rw [show N - (N - K) = K from by omega,
+        show n - (n - k.val) = k.val from by have := k.isLt; omega,
+        Nat.mul_comm]
+
 end PMF
