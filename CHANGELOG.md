@@ -4,6 +4,17 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.617 — Phase 2: CaseContainment substrate → Core/Case/Allomorphy.lean
+
+Migration phase 2/9.
+
+- Extracted framework-neutral substrate (`AllomorphyPattern`, `ViolatesABA`, `IsContiguous`, `HierarchyAdjacent`, `InventoryAdjacent`, syncretism examples, adjacency theorems, Blake-vs-containment ordering theorem) from `Theories/Interfaces/Morphosyntax/CaseContainment.lean` to new `Core/Case/Allomorphy.lean` (namespace `Core.Case.Allomorphy`).
+- `AllomorphyPattern.ViolatesABA` redefined as `Morphology.Containment.ViolatesABA [p.nom, p.acc, p.gen, p.dat]` — generic substrate becomes the implementation, the bridge `case_violatesABA_iff_generic` is now `Iff.rfl`.
+- `CaseContainment.lean` trimmed to its residual Caha/Anderson-anchored content (§8 Anderson case-feature theorems, §10 `RespectsCahaContainment`); Phase 3 will dissolve it into `Phenomena/Case/Studies/Caha2009.lean`.
+- 7 consumers retargeted (5 Fragments + Aitha2026 + Nanosyntax/Core): `import` and `open` lines switched to `Core.Case.Allomorphy`. Added direct `Core.Case.Order` imports where transitive reach through CaseContainment broke. 4 Fragment docstrings updated (`Core.Case.Syncretism` → `Core.Case.Allomorphy`); 2 Nanosyntax/Core docstring path refs updated.
+- `Caha2009.lean` keeps importing `CaseContainment` until Phase 3.
+- Build closure for the 9 affected files: green (2744 jobs).
+
 ### 0.230.616 — Phase 1: StarABA → Core/Morphology/Containment.lean
 
 Migration phase 1/9 dissolving `Theories/Interfaces/Morphosyntax/`.
