@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 
 /-!
 # K'iche' Extraction Morphology Fragment
@@ -233,7 +233,7 @@ theorem fronting_particle_generalization :
 
 /-- K'ichean extraction profile: *wi* marks oblique extraction via
     copy spellout at the foot of the Ā-chain. -/
-def kicheanExtractionProfile : Interfaces.ExtractionProfile :=
+def kicheanExtractionProfile : Typology.ExtractionProfile :=
   { language := "K'ichean (K'iche', Kaqchikel, Tz'utujil)"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.oblique]

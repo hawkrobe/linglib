@@ -2,7 +2,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Word
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 
 /-!
 # K'iche' Agreement Fragment @cite{mondloch-2017}
@@ -395,7 +395,7 @@ theorem p3sg_abs_null : setBExponent .p3sg = "∅" := rfl
     *syntactic* — both arguments overt for AF, object suppressed for
     absolutive antipassive — not morphological). HIGH-ABS K'ichean,
     structurally analogous to Kaqchikel. -/
-def extractionProfile : Interfaces.ExtractionProfile :=
+def extractionProfile : Typology.ExtractionProfile :=
   { language := "K'iche'"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]

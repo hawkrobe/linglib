@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
@@ -65,9 +65,9 @@ def VerbForm.hasAFSuffix : VerbForm → Bool
 /-- An extraction datum: which argument is extracted and which verb form
     surfaces. -/
 structure ExtractionDatum where
-  extracted : Interfaces.ArgumentRole
+  extracted : Typology.ArgumentRole
   verbForm : VerbForm
-  judgment : Interfaces.ExtractionMarkingStrategy
+  judgment : Typology.ExtractionMarkingStrategy
   deriving Repr
 
 /-- Agent extraction (clause-local) requires AF. -/
@@ -108,7 +108,7 @@ def longDistanceAgentExtraction : ExtractionDatum :=
 
 /-- Kaqchikel's extraction morphology profile: agent focus alternation.
     Canonical name `extractionProfile` (uniform with Chol, Q'anjob'al). -/
-def extractionProfile : Interfaces.ExtractionProfile :=
+def extractionProfile : Typology.ExtractionProfile :=
   { language := "Kaqchikel"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]

@@ -1,5 +1,5 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 
 /-!
 # Bridge: Extraction Morphology ↔ Accessibility Hierarchy
@@ -23,6 +23,7 @@ maps to `genitive`.
 namespace Interfaces
 
 open Core (AHPosition)
+open Typology (ExtractionTarget)
 
 -- ============================================================================
 -- § 1: ExtractionTarget → AHPosition

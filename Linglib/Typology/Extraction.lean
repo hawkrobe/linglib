@@ -17,7 +17,7 @@ Languages vary dramatically in whether and how they track extraction:
 
 -/
 
-namespace Interfaces
+namespace Typology
 
 -- ============================================================================
 -- S 1: Extraction Marking Strategy
@@ -157,4 +157,4 @@ def ExtractionProfile.marks (p : ExtractionProfile) (t : ExtractionTarget) : Boo
 def ExtractionProfile.hasOvertMarking (p : ExtractionProfile) : Bool :=
   p.strategy != .unmarked
 
-end Interfaces
+end Typology

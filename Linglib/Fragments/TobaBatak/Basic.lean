@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
@@ -44,7 +44,7 @@ inductive Voice where
   deriving Repr, DecidableEq
 
 /-- Which argument role is the pivot for a given voice? -/
-def Voice.pivotRole : Voice → Interfaces.ArgumentRole
+def Voice.pivotRole : Voice → Typology.ArgumentRole
   | .av => .agent
   | .ov => .patient
 
@@ -67,7 +67,7 @@ structure ExtractionDatum where
   /-- Which voice the clause is in -/
   voice : Voice
   /-- What is being extracted (DP argument or adjunct) -/
-  extracted : Interfaces.Extractee
+  extracted : Typology.Extractee
   /-- Whether the extraction is grammatical -/
   judgment : ExtractionJudgment
   /-- Description -/
@@ -136,7 +136,7 @@ def extractionData : List ExtractionDatum :=
 -- ============================================================================
 
 /-- Toba Batak extraction profile: structural restriction (pivot-only). -/
-def tbExtractionProfile : Interfaces.ExtractionProfile :=
+def tbExtractionProfile : Typology.ExtractionProfile :=
   { language := "Toba Batak"
     strategy := .voiceAlternation
     markedPositions := [.subject]

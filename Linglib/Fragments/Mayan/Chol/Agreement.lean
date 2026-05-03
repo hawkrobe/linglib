@@ -1,5 +1,5 @@
 import Linglib.Core.Case.Basic
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -143,7 +143,7 @@ def absPosition : Fragments.Mayan.ABSPosition := .low
     natural consequence of the absence of AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def extractionProfile : Interfaces.ExtractionProfile :=
+def extractionProfile : Typology.ExtractionProfile :=
   { language := "Chol"
   , strategy := .unmarked
   , markedPositions := []

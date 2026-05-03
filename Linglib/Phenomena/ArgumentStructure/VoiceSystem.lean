@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 
 /-!
 # Voice System
@@ -19,6 +19,8 @@ Languages vary in:
 -/
 
 namespace Interfaces
+
+open Typology (ArgumentRole)
 
 -- ============================================================================
 -- S 1: Pivot Target

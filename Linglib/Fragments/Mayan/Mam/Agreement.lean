@@ -2,7 +2,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 
 /-!
 # Mam Agreement Fragment @cite{scott-2023}
@@ -416,7 +416,7 @@ def setBLinearity : MarkerLinearity := .prefixal
     `Phenomena/FillerGap/Studies/Erlewine2016.lean`; rival accounts
     (Coon-Mateo Pedro-Preminger absolutive licensing, Coon-Keine
     Feature Gluttony) are not encoded in the typology enum. -/
-def extractionProfile : Interfaces.ExtractionProfile :=
+def extractionProfile : Typology.ExtractionProfile :=
   { language := "Mam (SJA)"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]

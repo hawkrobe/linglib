@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Core.Word
 
 /-!
@@ -358,7 +358,7 @@ theorem passive_oblique_cooccurrence :
 
 /-- Mam extraction profile: dedicated morpheme strategy, marks oblique only.
     Excludes temporal obliques (§8.1). -/
-def mamExtractionProfile : Interfaces.ExtractionProfile :=
+def mamExtractionProfile : Typology.ExtractionProfile :=
   { language := "Mam (SJO)"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.oblique]

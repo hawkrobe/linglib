@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -79,7 +79,7 @@ def StatusSuffix.form : StatusSuffix → String
 -- redundant with `extractionProfile.markedPositions`: the substantive
 -- claim "A-extraction is banned without AF" is now expressed as
 -- `extractionProfile.marks .subject = true` (subject = .agent's default
--- position per `Interfaces.ArgumentRole.defaultPosition`).
+-- position per `Typology.ArgumentRole.defaultPosition`).
 
 -- ============================================================================
 -- § 2: Agent Focus Construction
@@ -215,7 +215,7 @@ theorem crazy_ap_all_persons :
 -- ============================================================================
 
 /-- Q'anjob'al's extraction morphology profile. -/
-def extractionProfile : Interfaces.ExtractionProfile :=
+def extractionProfile : Typology.ExtractionProfile :=
   { language := "Q'anjob'al"
   , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]

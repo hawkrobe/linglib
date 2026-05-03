@@ -112,7 +112,7 @@ import Linglib.Features.CoreferenceStatus
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 import Linglib.Core.CombinationKind
 import Linglib.Features.ScopeTypes
-import Linglib.Theories.Interfaces.Morphosyntax.Extraction
+import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 import Linglib.Core.Causal.BayesNet
@@ -308,7 +308,7 @@ import Linglib.Theories.Pragmatics.Efficiency
 import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Core.Probability.PMFFin
-import Linglib.Core.Probability.PMFEntropy
+import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.PMFPosterior
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.ProductOfExperts

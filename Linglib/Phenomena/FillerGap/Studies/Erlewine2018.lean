@@ -227,7 +227,7 @@ theorem extraction_profile_relativization_chain :
       Spec,TP) before Ā-extraction.
     - Non-DP adjuncts: always grammatical, because adjuncts don't need
       Case licensing. -/
-def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Interfaces.Extractee) :
+def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Typology.Extractee) :
     ExtractionJudgment :=
   match extractee with
   | .adjunct => .grammatical
