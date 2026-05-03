@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Linearization.CyclicLinearization
 import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Theories.Syntax.Minimalist.Voice
 

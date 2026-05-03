@@ -16,8 +16,8 @@ import Linglib.Typology.Pronouns
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Core.Logic.StateAlgebra.Partition
-import Linglib.Core.Logic.StateAlgebra.Frames
+import Linglib.Core.Logic.Team.Algebra
+import Linglib.Core.Logic.Team.Properties
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD
@@ -2106,9 +2106,9 @@ import Linglib.Theories.Syntax.Minimalist.Hopf.MergeAction
 import Linglib.Theories.Syntax.Minimalist.Properties.MinimalSearch
 import Linglib.Theories.Syntax.Minimalist.Properties.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.SpellOut
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.LCA
+import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
 import Linglib.Theories.Morphology.DM.VocabSimple
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Linearization.CyclicLinearization
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
 import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation

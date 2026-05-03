@@ -7,7 +7,7 @@ import Linglib.Features.Causation
 import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalist.Linearization.CyclicLinearization
 import Linglib.Theories.Syntax.Minimalist.Phase
 
 set_option autoImplicit false
