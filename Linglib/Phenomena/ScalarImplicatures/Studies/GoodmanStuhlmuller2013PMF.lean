@@ -2,7 +2,6 @@ import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.PMFEvalLemmas
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Silence
-import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.Distributions.Uniform
 
@@ -36,22 +35,66 @@ silence (paper p. 180 "sensible situations").
 
 set_option autoImplicit false
 
-/-! ## §1. Access arity (extends `GoodmanStuhlmuller2013` types) -/
+/-! ## §1. Substrate: world states, utterance enums, meaning functions, access -/
 
-namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
+namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.PMF
 
-def Access.toNat : Access → Nat
-  | .a1 => 1 | .a2 => 2 | .a3 => 3
+/-- World states: how many of 3 objects have the property. -/
+inductive WorldState where
+  | s0 | s1 | s2 | s3
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-theorem Access.toNat_le_three (a : Access) : a.toNat ≤ 3 := by
-  cases a <;> decide
+def WorldState.toNat : WorldState → Nat
+  | .s0 => 0 | .s1 => 1 | .s2 => 2 | .s3 => 3
 
 theorem WorldState.toNat_le_three (w : WorldState) : w.toNat ≤ 3 := by
   cases w <;> decide
 
-end Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
+/-- Quantifier alternative set. -/
+inductive QUtt where
+  | none_ | some_ | all
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.PMF
+def qMeaning : QUtt → WorldState → Bool
+  | .none_, s => s.toNat == 0
+  | .some_, s => s.toNat ≥ 1
+  | .all,   s => s.toNat == 3
+
+/-- Numeral alternative set (lower-bound semantics). -/
+inductive NumUtt where
+  | one | two | three
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+def lbMeaning : NumUtt → WorldState → Bool
+  | .one,   s => s.toNat ≥ 1
+  | .two,   s => s.toNat ≥ 2
+  | .three, s => s.toNat ≥ 3
+
+/-- **Speaker access** = number of objects (out of 3) the speaker observes.
+A `Fin 4` indexed at 0..3. The paper restricts to {1, 2, 3}; access=0
+(speaker observes nothing) is well-defined but unused.
+
+Carrying this as `Fin 4` instead of a custom `Access` enum eliminates the
+`Access.toNat` indirection — `a.val` is just the access value and
+`Fin (a.val + 1)` reduces in type position when `a` is concrete. -/
+abbrev Access : Type := Fin 4
+
+namespace Access
+
+/-- Access value 1 (speaker observes 1 of 3 objects). -/
+abbrev a1 : Access := 1
+/-- Access value 2 (speaker observes 2 of 3 objects). -/
+abbrev a2 : Access := 2
+/-- Access value 3 — full access (speaker observes all 3 objects). -/
+abbrev a3 : Access := 3
+
+/-- Compatibility shim: `a.toNat = a.val` since `Access = Fin 4`. -/
+abbrev toNat (a : Access) : Nat := a.val
+
+theorem toNat_le_three (a : Access) : a.toNat ≤ 3 :=
+  Nat.lt_succ_iff.mp a.isLt
+
+end Access
 
 open scoped ENNReal
 open Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
@@ -689,8 +732,19 @@ private theorem WithSilence_NumUtt_sum_univ {β : Type*} [AddCommMonoid β]
       f none + (f (some .one) + (f (some .two) + (f (some .three) + 0))) := by
   rfl
 
+/-- Bare `QUtt` sum unfolder. Needed when `Fintype.sum_option` fires and
+leaves a residual `∑ i : QUtt, f (some i)`. -/
+private theorem QUtt_sum_univ {β : Type*} [AddCommMonoid β] (f : QUtt → β) :
+    ∑ i, f i = f .none_ + (f .some_ + (f .all + 0)) := by
+  rfl
+
+private theorem NumUtt_sum_univ {β : Type*} [AddCommMonoid β] (f : NumUtt → β) :
+    ∑ i, f i = f .one + (f .two + (f .three + 0)) := by
+  rfl
+
 attribute [local pmf_eval_simps]
   WithSilence_QUtt_sum_univ WithSilence_NumUtt_sum_univ
+  QUtt_sum_univ NumUtt_sum_univ
 
 /-! ### `pmf_eval` smoke tests for the if-form variants -/
 
