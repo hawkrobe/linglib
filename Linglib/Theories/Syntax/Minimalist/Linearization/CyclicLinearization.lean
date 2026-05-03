@@ -32,7 +32,7 @@ requirements. All three are formalized as concrete theorems.
 - `hasContradiction`: checks for direct ordering cycles (a < b ∧ b < a)
 - `hasCycle`: checks for cycles of any length via BFS reachability
 - `extendOrderingTable`: Linearize operation accumulating precedences across phases
-- `spelloutAndCheck`: extend an empty table over all phases and check consistency
+- `SpelloutAndCheck`: extend an empty table over all phases and check consistency
 
 The operation `extendOrderingTable` was previously named `spellout` and
 collided with `Minimalist.spellout` (the VI exponent-realization
@@ -69,19 +69,24 @@ def allPrecs : List String → List Prec
     Corresponds to @cite{fox-pesetsky-2005}'s Ordering Table ((52)). -/
 abbrev OrderingTable := List Prec
 
-/-- Whether an Ordering Table contains a direct contradiction: some α, β
-    such that both α < β and β < α appear. A contradiction means the
+/-- An Ordering Table contains a direct contradiction: some α, β such
+    that both α < β and β < α appear. A contradiction means the
     derivation cannot be coherently linearized and crashes.
 
     Note: for the Malayic voice/extraction application, all contradictions
-    are direct (no transitive closure needed). A more general implementation
-    would compute the transitive closure; we leave that as future work. -/
-def hasContradiction (table : OrderingTable) : Bool :=
-  table.any λ s =>
-    table.any λ t => s.before == t.after && s.after == t.before
+    are direct (no transitive closure needed). For cycles of length > 2
+    use `HasCycle` (BFS-based, decidable too). -/
+def HasContradiction (table : OrderingTable) : Prop :=
+  ∃ s ∈ table, ∃ t ∈ table, s.before = t.after ∧ s.after = t.before
+
+instance (table : OrderingTable) : Decidable (HasContradiction table) := by
+  unfold HasContradiction; infer_instance
 
 /-- An Ordering Table is consistent iff it contains no contradictions. -/
-def isConsistent (table : OrderingTable) : Bool := !hasContradiction table
+def Consistent (table : OrderingTable) : Prop := ¬ HasContradiction table
+
+instance (table : OrderingTable) : Decidable (Consistent table) :=
+  inferInstanceAs (Decidable (¬ _))
 
 -- ============================================================================
 -- § 3: Spell-out (Linearize)
@@ -99,12 +104,15 @@ def extendOrderingTable (existing : OrderingTable)
     (phaseTerminals : List String) : OrderingTable :=
   existing ++ allPrecs phaseTerminals
 
-/-- Check whether a multi-phase derivation is consistently linearizable.
-    Each element of `phases` is the left-to-right sequence of overt
-    terminals at the corresponding Spell-out domain. Ordering statements
-    accumulate across phases via Order Preservation. -/
-def spelloutAndCheck (phases : List (List String)) : Bool :=
-  isConsistent (phases.foldl extendOrderingTable [])
+/-- Multi-phase derivation is consistently linearizable. Each element
+    of `phases` is the left-to-right sequence of overt terminals at the
+    corresponding Spell-out domain. Ordering statements accumulate
+    across phases via Order Preservation. -/
+def SpelloutAndCheck (phases : List (List String)) : Prop :=
+  Consistent (phases.foldl extendOrderingTable [])
+
+instance (phases : List (List String)) : Decidable (SpelloutAndCheck phases) :=
+  inferInstanceAs (Decidable (Consistent _))
 
 /-- Order Preservation: existing ordering statements are never deleted
     by extension. All precedences from earlier phases persist.
@@ -175,47 +183,41 @@ theorem allPrecs_antisym : ∀ (ts : List String), ts.Nodup →
 /-- A single phase is always consistent: no ordering contradiction can arise
     within a single left-to-right linearization of distinct terminals.
     Requires `Nodup` because duplicate terminals create trivial self-loops
-    (α < α), which `hasContradiction` correctly flags. -/
+    (α < α), which `HasContradiction` correctly flags. -/
 theorem single_phase_consistent (ts : List String) (hnd : ts.Nodup) :
-    isConsistent (allPrecs ts) = true := by
-  unfold isConsistent
-  suffices h : hasContradiction (allPrecs ts) = false by simp only [h, Bool.not_false]
-  rcases Bool.eq_false_or_eq_true (hasContradiction (allPrecs ts)) with hc | hc
-  · exfalso
-    unfold hasContradiction at hc
-    simp only [List.any_eq_true, Bool.and_eq_true, beq_iff_eq] at hc
-    obtain ⟨s, hs, t, ht, h1, h2⟩ := hc
-    exact allPrecs_antisym _ hnd s hs t ht h1 h2
-  · exact hc
+    Consistent (allPrecs ts) := by
+  unfold Consistent HasContradiction
+  rintro ⟨s, hs, t, ht, h1, h2⟩
+  exact allPrecs_antisym _ hnd s hs t ht h1 h2
 
 /-- Leftward movement from the phase edge preserves ordering.
     Scenario 1 of @cite{fox-pesetsky-2005} (their (13)):
     X was at the left edge of D; when D' is spelled out, X moves further
     left. The new ordering X < α is consistent with X < Y from D. -/
 theorem edge_movement_consistent :
-    spelloutAndCheck [["X", "Y", "Z"], ["X", "α", "Y", "Z"]] = true := by decide
+    SpelloutAndCheck [["X", "Y", "Z"], ["X", "α", "Y", "Z"]] := by decide
 
 /-- Leftward movement from a non-edge position creates contradiction.
     Scenario 2 of @cite{fox-pesetsky-2005} (their (14)):
     Y was NOT at the left edge of D (X < Y at D Spell-out). When Y moves
     left in D', it must precede α, but α < X and X < Y yield a cycle. -/
 theorem non_edge_movement_contradiction :
-    spelloutAndCheck [["X", "Y", "Z"], ["Y", "α", "X", "Z"]] = false := by decide
+    ¬ SpelloutAndCheck [["X", "Y", "Z"], ["Y", "α", "X", "Z"]] := by decide
 
 /-- Successive-cyclic *wh*-movement avoids ordering contradiction.
     @cite{fox-pesetsky-2005} (their (6)–(8)): *to whom* moves through
     Spec,VP before moving to Spec,CP, preserving VP-internal order. -/
 theorem successive_cyclic_ok :
-    spelloutAndCheck [["to_whom", "gave", "the_book"],
-                      ["to_whom", "that", "Mary", "gave", "the_book"]] = true := by
+    SpelloutAndCheck [["to_whom", "gave", "the_book"],
+                      ["to_whom", "that", "Mary", "gave", "the_book"]] := by
   decide
 
 /-- Non-successive-cyclic movement creates ordering contradiction.
     @cite{fox-pesetsky-2005} (their (3)–(5)): *to whom* skips Spec,VP
     and moves directly to Spec,CP, contradicting VP-internal order. -/
 theorem non_successive_cyclic_bad :
-    spelloutAndCheck [["gave", "the_book", "to_whom"],
-                      ["to_whom", "that", "Mary", "gave", "the_book"]] = false := by
+    ¬ SpelloutAndCheck [["gave", "the_book", "to_whom"],
+                        ["to_whom", "that", "Mary", "gave", "the_book"]] := by
   decide
 
 /-- Order-preserving simultaneous movement: two elements moving out of a
@@ -223,11 +225,11 @@ theorem non_successive_cyclic_bad :
     This is the key configuration for Malayic object extraction
     (@cite{erlewine-sommerlot-2025} ex. 55–56). -/
 theorem simultaneous_order_preserving :
-    spelloutAndCheck [["A", "B", "C"], ["A", "B", "D", "C"]] = true := by decide
+    SpelloutAndCheck [["A", "B", "C"], ["A", "B", "D", "C"]] := by decide
 
 /-- Simultaneous movement that reverses relative order contradicts. -/
 theorem simultaneous_order_reversing :
-    spelloutAndCheck [["A", "B", "C"], ["B", "A", "D", "C"]] = false := by decide
+    ¬ SpelloutAndCheck [["A", "B", "C"], ["B", "A", "D", "C"]] := by decide
 
 -- ============================================================================
 -- § 5: Holmberg's Generalization
@@ -246,23 +248,23 @@ contradicting V < Obj. When the verb also moves, V < Obj is preserved.
 /-- Baseline: no Object Shift, verb moves to I. Consistent.
     VP contains only [V, Obj]; Neg is above VP. -/
 theorem no_object_shift :
-    spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "V", "Neg", "Obj"]] = true := by decide
+    SpelloutAndCheck [["V", "Obj"],
+                      ["Subj", "V", "Neg", "Obj"]] := by decide
 
 /-- Object Shift WITH verb movement: both V and Obj move past Neg.
     VP-internal ordering V < Obj is preserved at IP. Consistent.
     @cite{fox-pesetsky-2005} §3. -/
 theorem object_shift_with_verb_movement :
-    spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "V", "Obj", "Neg"]] = true := by decide
+    SpelloutAndCheck [["V", "Obj"],
+                      ["Subj", "V", "Obj", "Neg"]] := by decide
 
 /-- Object Shift WITHOUT verb movement: Obj moves past Neg but V stays.
     VP: V < Obj. IP: Obj < ... < V. Direct contradiction → crash.
     This IS Holmberg's Generalization, derived from cyclic linearization.
     @cite{fox-pesetsky-2005} §3. -/
 theorem object_shift_without_verb_movement :
-    spelloutAndCheck [["V", "Obj"],
-                      ["Subj", "Obj", "Neg", "V"]] = false := by decide
+    ¬ SpelloutAndCheck [["V", "Obj"],
+                        ["Subj", "Obj", "Neg", "V"]] := by decide
 
 -- ============================================================================
 -- § 6: Transitive Cycle Detection
@@ -270,16 +272,16 @@ theorem object_shift_without_verb_movement :
 
 /-! ### Full cycle detection via reachability
 
-`hasContradiction` detects direct ordering cycles (a < b ∧ b < a).
-For completeness, `hasCycle` detects cycles of any length via BFS
+`HasContradiction` detects direct ordering cycles (a < b ∧ b < a).
+For completeness, `HasCycle` detects cycles of any length via BFS
 reachability. For all current applications (Malayic voice, Holmberg's
-Generalization), contradictions are direct, so both functions agree.
-`hasCycle` is provided for future applications involving transitive cycles.
+Generalization), contradictions are direct, so both predicates agree.
+`HasCycle` is provided for future applications involving transitive cycles.
 -/
 
-/-- BFS step for reachability in the directed precedence graph.
-    Implementation detail for `reachable`. -/
-def reachGo (table : OrderingTable) (dst : String) :
+/-- BFS step for reachability in the directed precedence graph. Private
+    implementation detail for `Reachable`'s decidability instance. -/
+private def reachGo (table : OrderingTable) (dst : String) :
     Nat → List String → List String → Bool
   | 0, _, _ => false
   | fuel + 1, worklist, visited =>
@@ -292,26 +294,35 @@ def reachGo (table : OrderingTable) (dst : String) :
         let next := (table.filter (·.before == x)).map (·.after)
         reachGo table dst fuel (rest ++ next) (x :: visited)
 
-/-- Whether `dst` is reachable from `src` via directed edges in `table`. -/
-def reachable (table : OrderingTable) (src dst : String) : Bool :=
-  reachGo table dst (2 * table.length + 1) [src] []
+/-- `dst` is reachable from `src` via directed edges in `table`. The
+    Bool engine `reachGo` is private; this Prop wraps it via Decidable.
+    A future cleanup may replace the BFS-with-fuel decision procedure
+    with a structural path-existence formulation. -/
+def Reachable (table : OrderingTable) (src dst : String) : Prop :=
+  reachGo table dst (2 * table.length + 1) [src] [] = true
 
-/-- Whether an Ordering Table contains a directed cycle of any length.
-    For each edge a → b, checks if b can reach a via other edges. -/
-def hasCycle (table : OrderingTable) : Bool :=
-  table.any λ edge => reachable table edge.after edge.before
+instance (table : OrderingTable) (src dst : String) : Decidable (Reachable table src dst) :=
+  inferInstanceAs (Decidable (_ = true))
 
-/-- `hasCycle` detects the transitive cycle a < b, b < c, c < a
-    which `hasContradiction` misses (no direct a < b ∧ b < a pair). -/
+/-- An Ordering Table contains a directed cycle of any length: some
+    edge a → b such that b can reach a via other edges. -/
+def HasCycle (table : OrderingTable) : Prop :=
+  ∃ edge ∈ table, Reachable table edge.after edge.before
+
+instance (table : OrderingTable) : Decidable (HasCycle table) := by
+  unfold HasCycle; infer_instance
+
+/-- `HasCycle` detects the transitive cycle a < b, b < c, c < a which
+    `HasContradiction` misses (no direct a < b ∧ b < a pair). -/
 theorem hasCycle_detects_transitive :
-    hasCycle [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] = true ∧
-    hasContradiction [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] = false := by decide
+    HasCycle [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] ∧
+    ¬ HasContradiction [⟨"a", "b"⟩, ⟨"b", "c"⟩, ⟨"c", "a"⟩] := by decide
 
 /-- On the Malayic meN-deletion example, both checks agree
     (the contradiction is direct). -/
 theorem cycle_direct_agree_malayic :
     let t := allPrecs ["theme", "me-", "agent", "NV"] ++
              allPrecs ["theme", "agent", "Aux", "me-", "NV"]
-    hasCycle t = hasContradiction t := by decide
+    HasCycle t ↔ HasContradiction t := by decide
 
 end Minimalist.Linearization

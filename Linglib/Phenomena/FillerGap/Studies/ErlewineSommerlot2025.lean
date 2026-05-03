@@ -147,38 +147,38 @@ Each grammatical derivation produces consistent ordering across phases.
 /-- Active clause is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (36). -/
 theorem active_consistent :
-    spelloutAndCheck [voiceP_active, cp_active] = true := by decide
+    SpelloutAndCheck [voiceP_active, cp_active] := by decide
 
 /-- Active clause with short *N-* prefix (Desa free variation). -/
 theorem active_short_consistent :
-    spelloutAndCheck [voiceP_active_short, cp_active_short] = true := by decide
+    SpelloutAndCheck [voiceP_active_short, cp_active_short] := by decide
 
 /-- Subject extraction from active is consistent.
     The subject (agent) was already leftmost in VoiceP and moves further
     left through Spec,TP to Spec,CP — classic edge movement (Scenario 1
     of @cite{fox-pesetsky-2005}). -/
 theorem subject_extraction_consistent :
-    spelloutAndCheck [voiceP_active, cp_subjExtr] = true := by decide
+    SpelloutAndCheck [voiceP_active, cp_subjExtr] := by decide
 
 /-- *di-* passive is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (37a). -/
 theorem di_passive_consistent :
-    spelloutAndCheck [voiceP_diPassive, cp_diPassive] = true := by decide
+    SpelloutAndCheck [voiceP_diPassive, cp_diPassive] := by decide
 
 /-- Bare passive is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (37b)/(39c). -/
 theorem bare_passive_consistent :
-    spelloutAndCheck [voiceP_barePassive, cp_barePassive] = true := by decide
+    SpelloutAndCheck [voiceP_barePassive, cp_barePassive] := by decide
 
 /-- Object extraction with null Voice (Desa) is consistent.
     @cite{erlewine-sommerlot-2025} (44). -/
 theorem obj_extraction_desa_consistent :
-    spelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] = true := by decide
+    SpelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] := by decide
 
 /-- Object extraction with null Voice (SI/SM) is consistent.
     @cite{erlewine-sommerlot-2025} (54)–(56). -/
 theorem obj_extraction_sism_consistent :
-    spelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] = true := by decide
+    SpelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] := by decide
 
 /-! ### The ordering paradox: overt Voice in object extraction
 
@@ -198,20 +198,20 @@ establishing agent < *me-*. The two are contradictory.
 
     These two statements contradict: me- < agent ∧ agent < me-. -/
 theorem men_deletion :
-    spelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] = false := by decide
+    ¬ SpelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] := by decide
 
 /-- The specific contradiction: VoiceP says me- before agent;
     CP says agent before me-. -/
 theorem men_deletion_witness :
     -- me- < agent from VoiceP
     (allPrecs voiceP_objExtr_overt).any
-      (fun s => s.before == "me-" && s.after == "agent") = true ∧
+      (λ s => s.before == "me-" && s.after == "agent") = true ∧
     -- agent < me- from CP
     (allPrecs cp_objExtr_overt).any
-      (fun s => s.before == "agent" && s.after == "me-") = true ∧
+      (λ s => s.before == "agent" && s.after == "me-") = true ∧
     -- combined is inconsistent
-    hasContradiction (allPrecs voiceP_objExtr_overt ++ allPrecs cp_objExtr_overt)
-      = true := by decide
+    HasContradiction
+      (allPrecs voiceP_objExtr_overt ++ allPrecs cp_objExtr_overt) := by decide
 
 -- ============================================================================
 -- § 4: Cross-Linguistic Predictions
@@ -291,8 +291,8 @@ Voice is overt.
 -- VoiceP: [PP, agent, me-, NV, theme]  (PP is leftmost, then agent)
 -- CP: [PP, agent, Aux, me-, NV, theme]
 theorem pp_extraction_with_overt_voice :
-    spelloutAndCheck [["PP", "agent", "me-", "NV", "theme"],
-                      ["PP", "agent", "Aux", "me-", "NV", "theme"]] = true := by
+    SpelloutAndCheck [["PP", "agent", "me-", "NV", "theme"],
+                      ["PP", "agent", "Aux", "me-", "NV", "theme"]] := by
   decide
 
 -- ============================================================================
@@ -304,20 +304,20 @@ theorem pp_extraction_with_overt_voice :
     Object extraction requires null Voice (derived, not stipulated). -/
 theorem all_grammatical_derivations_consistent :
     -- Active (with me-N-)
-    spelloutAndCheck [voiceP_active, cp_active] = true ∧
+    SpelloutAndCheck [voiceP_active, cp_active] ∧
     -- Active (with N- only, Desa)
-    spelloutAndCheck [voiceP_active_short, cp_active_short] = true ∧
+    SpelloutAndCheck [voiceP_active_short, cp_active_short] ∧
     -- Di-passive
-    spelloutAndCheck [voiceP_diPassive, cp_diPassive] = true ∧
+    SpelloutAndCheck [voiceP_diPassive, cp_diPassive] ∧
     -- Bare passive
-    spelloutAndCheck [voiceP_barePassive, cp_barePassive] = true ∧
+    SpelloutAndCheck [voiceP_barePassive, cp_barePassive] ∧
     -- Object extraction, null Voice (Desa)
-    spelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] = true ∧
+    SpelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] ∧
     -- Object extraction, null Voice (SI/SM)
-    spelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] = true ∧
+    SpelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] ∧
     -- Object extraction, overt Voice → CRASH
-    spelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ SpelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- § 8: Bridge to Core Minimalist Voice Theory

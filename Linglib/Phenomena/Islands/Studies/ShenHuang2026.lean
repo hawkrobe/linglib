@@ -662,8 +662,8 @@ theorem binding_no_new_precedences (existing : OrderingTable) :
 If the existing ordering table is consistent, it stays consistent
 after a binding operation (because nothing changes). -/
 theorem binding_preserves_consistency (existing : OrderingTable)
-    (h : isConsistent existing = true) :
-    isConsistent (extendOrderingTable existing []) = true := by
+    (h : Consistent existing) :
+    Consistent (extendOrderingTable existing []) := by
   rw [binding_no_new_precedences]; exact h
 
 -- ============================================================================
