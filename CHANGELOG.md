@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.643 — Core/Morphology/DomainLocality.lean substrate
+
+The §3.7 substrate addition the Smith-Moskal-Bobaljik 2019 study file's §4 stub was waiting for. Encodes domain-relativized contiguity:
+
+```
+def ViolatesABAWithin (π : DomainPartition Tag) (cells : List Nat) : Prop :=
+  ∃ i ∈ Finset.range cells.length,
+  ∃ j ∈ Finset.range cells.length,
+  ∃ k ∈ Finset.range cells.length,
+    i < j ∧ j < k ∧
+    SameDomain π i j ∧ SameDomain π i k ∧
+    cells[i]? = cells[k]? ∧ cells[i]? ≠ cells[j]?
+```
+
+Decidability via `Finset.decidableBExists` — direct propositional content, no Bool wrapper, no `Classical.dec` fallback.
+
+**Design wins:**
+- `DomainPartition Tag := Nat → Tag` as `abbrev` (not `def`) so `decide` reduces through the type alias on concrete partitions. With `def`, typeclass inference for nested decidability silently fell back to `Classical.dec` (sorry-equivalent for kernel reduction). Same `abbrev` discipline for `SameDomain` and `DomainPartition.trivial`.
+- `cells[i]?` notation (returns `Option Nat`, decidably equal) for cell access — `List.get?` doesn't exist in this Lean version.
+- `Finset.range`-bounded existential: cleanly composes via `Finset.decidableBExists` for triple-nested form. Tried unbounded `∃ i j k : Nat`, `∃ i j k : Fin cells.length`, both fell to `Classical.dec`.
+
+**Anchored on:**
+- `@cite{moskal-2015a-dissertation}` (PhD thesis "Domains on the Border", UConn 2015) — the canonical AD-theory reference Smith et al. 2019 §3.7 cite. Added to bib alongside the existing `@cite{moskal-2015}` (LI 2015 nominal-suppletion paper).
+- `@cite{smith-moskal-xu-kang-bobaljik-2019}` §3.7 (Wardaman 3SG case AAB; Yagua 2 number AAB) — the empirical witnesses the substrate makes statable as cross-framework theorems.
+
+**Anti-bridge / framework-relativity discipline:**
+- Substrate represents the OUTPUT of an AD computation projected onto cell positions; the docstring acknowledges the trigger-relative AD theory (Moskal 2015a) is more nuanced. Consumers state which projection they want; the substrate doesn't pick.
+- Phase.lean (`Theories/Syntax/Minimalist/`) is intentionally NOT imported — morphological "domain" is more abstract than syntactic phase, and no consumer requires the connection yet. Future cross-layer projection lives in `Theories/Morphology/` if a consumer materializes.
+- Caha (2009) Nanosyntax doesn't fit a domain-partition shape at all (derives AAB exclusion via phrasal spellout + Superset Principle, not locality). The docstring documents this.
+
+**Build:** green for `Core.Morphology.DomainLocality` (594 jobs); 7 smoke tests pass via `decide` (trivial-partition match + across-domain ABA admission + within-domain ABA exclusion). 
+
+**Next steps deferred to follow-up commits:**
+- `vi_cmpr_eq_sprl_within` retrofit in `Theories/Morphology/DegreeContainment.lean` — convert the existing `vi_cmpr_eq_sprl` into a corollary with `DomainPartition.trivial` instantiation.
+- Wire SmithMoskal §4 with concrete `caseDomainPartition` (Caha Oblique boundary) and `numberDomainPartition` instantiations, prove the converse direction `domain_locality_admits_aab`.
+
 ### 0.230.618 — Architectural audit: per-(a,w,u) lemmas are wrong; Option D is the fix
 
 - New `scratch/pmf_eval_design.md` and `scratch/gs2013pmf_clunkiness_audit.md` (already committed earlier) plus a fresh **mathlib-architect audit** (in conversation, archived to scratch). Verdict:
