@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Theories.Morphology.DM.VocabSimple
 import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Theories.Morphology.DM.Impoverishment
 

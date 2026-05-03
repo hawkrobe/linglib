@@ -4,7 +4,7 @@ import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Theories.Morphology.DM.VocabSimple
 import Linglib.Phenomena.Agreement.Studies.Scott2023
 
 /-!

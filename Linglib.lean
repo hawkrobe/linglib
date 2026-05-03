@@ -2106,7 +2106,7 @@ import Linglib.Theories.Syntax.Minimalist.Properties.MinimalSearch
 import Linglib.Theories.Syntax.Minimalist.Properties.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.LCA
-import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.Spellout
+import Linglib.Theories.Morphology.DM.VocabSimple
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalist.CyclicLinearization
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
 import Linglib.Theories.Syntax.MereologicalSyntax.Bridge

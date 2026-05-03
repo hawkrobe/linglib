@@ -1,21 +1,30 @@
 import Linglib.Theories.Syntax.Minimalist.Agree
 
 /-!
-# Spellout: Feature-to-Morphology Mapping
-@cite{elkins-torrence-brown-2026} @cite{halle-marantz-1993} @cite{kiparsky-1973}
+# VocabSimple: Minimalist-specific Vocabulary Insertion
+@cite{halle-marantz-1993} @cite{kiparsky-1973} @cite{elkins-torrence-brown-2026}
 
-Bridges the gap between Agree (which values features in narrow syntax) and
-PF (which realizes valued feature bundles as phonological exponents). In
-Distributed Morphology terms, this is Vocabulary
-Insertion: a Vocabulary Item is inserted into a terminal node if its
-features are a subset of the node's features.
+A concrete Minimalist specialization of Vocabulary Insertion.
+`VocabEntry` carries `features : FeatureBundle` (the Minimalist
+global) + `exponent : String` + optional context restriction
+`Option Cat`. Sits alongside the more general parametric type
+`Theories.Morphology.DM.VI.VocabItem (Ctx Root : Type)` in
+`VocabularyInsertion.lean`: same Distributed Morphology mechanism
+(Halle-Marantz late insertion + Elsewhere Condition), specialized to
+Minimalist's feature-bundle ergonomics so downstream consumers don't
+have to instantiate the parametric Ctx/Root each call.
 
-The key mechanism is the **Elsewhere Condition**: when
-multiple Vocabulary Items match, the most specific one (most features)
-wins. This captures e.g. Mam =(y)a' appearing specifically when Voice⁰
-bears [+oblique], while a less specific entry would yield the default
-(zero) exponent.
+Bridges Agree (which values features in narrow syntax) and PF (which
+realizes the valued bundles as phonological exponents). When multiple
+Vocabulary Items match, the most specific one (most features) wins —
+the **Elsewhere Condition**. Captures e.g. Mam =(y)a' surfacing only
+when Voice⁰ bears [+oblique], while a less specific entry yields the
+default (zero) exponent.
 
+The `makePersonVocab` builder at the end of this file constructs
+Vocabularies from per-cell paradigm functions; used by Mayan, Romance,
+and Bantu agreement studies (Scott2023, Preminger2014,
+ElkinsTorrenceBrown2026).
 -/
 
 namespace Minimalist
