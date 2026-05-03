@@ -114,7 +114,7 @@ Anti-drift: grounded in `PMF.normalize` (mathlib). -/
     `Core.InformationTheory.entropy Finset.univ p`-style API: the new shape
     is `(PMF.ofRealWeightFn p hp_nn ⟨a, ha⟩).entropy`. -/
 noncomputable def ofRealWeightFn {α : Type*} [Fintype α]
-    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a)
+    (f : α → ℝ) (_h_nonneg : ∀ a, 0 ≤ f a)
     (h_pos : ∃ a, 0 < f a) : PMF α :=
   let g : α → ℝ≥0∞ := fun a => ENNReal.ofReal (f a)
   PMF.normalizeOfFintype g (Classical.choose h_pos)
@@ -655,6 +655,7 @@ noncomputable def mutualInformation [MeasurableSpace α] [MeasurableSpace β]
     (joint : PMF (α × β)) : ℝ :=
   (joint.klDiv (joint.fst.product joint.snd)).toReal
 
+omit [Fintype α] [Fintype β] in
 /-- **Mutual information is non-negative** (Cover-Thomas 2.6.5):
     free from `ENNReal.toReal_nonneg` since `klDiv` returns `ℝ≥0∞`. -/
 theorem mutualInformation_nonneg [MeasurableSpace α] [MeasurableSpace β]

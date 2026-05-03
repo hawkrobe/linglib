@@ -23,6 +23,10 @@ on the marginal at `b`.
 ## Main definitions
 
 * `PMF.marginal κ μ b` — joint marginal `P(b) = ∑' a, μ a * κ a b`.
+  Defined as a `noncomputable abbrev` for `(μ.bind κ) b`; mathlib's
+  `PMF.bind_apply` is `rfl`, so the two shapes are interchangeable. Use
+  `marginal` when the formula is the natural reading; mathlib `bind_*`
+  lemmas apply directly for the monadic shape.
 * `PMF.posterior κ μ b h` — posterior PMF over `α` given kernel `κ`,
   prior `μ`, observation `b`, and proof `h : marginal κ μ b ≠ 0`.
 
@@ -43,8 +47,8 @@ strict and non-strict forms with parallel naming:
 
 Sum-over-prior monotonicity (no iff — pointwise ≤ doesn't reverse):
 
-* `marginal_le_marginal` / `marginal_lt_marginal` — `marginal κ μ b` over varying κ
-* `bind_lt_bind` — same for `μ.bind f` shape
+* `marginal_le_marginal` / `marginal_lt_marginal` — `marginal κ μ b` (≡ `(μ.bind κ) b`)
+* `bind_le_bind` / `bind_lt_bind` — aliases exposing the monadic shape
 
 Specialization for the common "uniform world prior" case:
 
@@ -86,15 +90,20 @@ theorem tsum_apply_ne_top [Fintype α] (κ : α → PMF β) (b : β) :
 
 /-- The marginal probability of observation `b` under the joint
 distribution induced by kernel `κ` and prior `μ`:
-`P(b) = ∑' a, μ a * κ a b`. -/
-noncomputable def marginal (κ : α → PMF β) (μ : PMF α) (b : β) : ℝ≥0∞ :=
-  ∑' a, μ a * κ a b
+`P(b) = ∑' a, μ a * κ a b = (μ.bind κ) b`.
+
+An `abbrev` for the bind shape with reversed argument order. Definitionally
+equal to `(μ.bind κ) b` via mathlib's `PMF.bind_apply` (`rfl`); all mathlib
+`bind_*` lemmas apply directly. -/
+noncomputable abbrev marginal (κ : α → PMF β) (μ : PMF α) (b : β) : ℝ≥0∞ :=
+  (μ.bind κ) b
 
 /-- A single witness `a` with `μ a ≠ 0` and `κ a b ≠ 0` suffices to make the
 marginal non-zero — the standard positivity discharge for `PMF.posterior`. -/
 theorem marginal_ne_zero (κ : α → PMF β) (μ : PMF α) (b : β)
-    {a : α} (hμ : μ a ≠ 0) (hκ : κ a b ≠ 0) : marginal κ μ b ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, mul_ne_zero hμ hκ⟩
+    {a : α} (hμ : μ a ≠ 0) (hκ : κ a b ≠ 0) : marginal κ μ b ≠ 0 := by
+  show ∑' a, μ a * κ a b ≠ 0
+  exact ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, mul_ne_zero hμ hκ⟩
 
 /-- Kernel-slice analogue of `marginal_ne_zero`: a single witness `a` with
 `κ a b ≠ 0` makes the prior-free fan-out `∑' a', κ a' b` non-zero. The
@@ -121,18 +130,12 @@ noncomputable def normalizeOfFintype {α : Type*} [Fintype α] (f : α → ℝ�
     (ENNReal.tsum_ne_top_of_fintype h_finite)
 
 theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
-    marginal κ μ b ≤ 1 := by
-  unfold marginal
-  calc ∑' a, μ a * κ a b
-      ≤ ∑' a, μ a := by
-        refine ENNReal.tsum_le_tsum (fun a => ?_)
-        calc μ a * κ a b ≤ μ a * 1 := mul_le_mul_right (PMF.coe_le_one _ _) _
-          _ = μ a := mul_one _
-    _ = 1 := PMF.tsum_coe μ
+    marginal κ μ b ≤ 1 :=
+  PMF.coe_le_one (μ.bind κ) b
 
 theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≠ ∞ :=
-  (lt_of_le_of_lt (marginal_le_one κ μ b) ENNReal.one_lt_top).ne
+  PMF.apply_ne_top (μ.bind κ) b
 
 /-- **`PMF.bind` over a `Fintype` is a `Finset.sum`**: the convenience
 `tsum_fintype` form of `PMF.bind_apply`. Saves the `rw [PMF.bind_apply,
@@ -497,22 +500,20 @@ theorem marginal_lt_marginal {α β : Type*} {κ₁ κ₂ : α → PMF β} {μ :
     (fun a => mul_le_mul_right (h a) (μ a))
   exact ENNReal.mul_lt_mul_right hμ (PMF.apply_ne_top _ _) hi
 
-/-- **Bind monotonicity (<)**: a `bind`-shape lift of `marginal_lt_marginal`.
-If `f a b ≤ g a b` pointwise *and* the inequality is strict at some `a₀`
-with positive prior mass, then `(μ.bind f) b < (μ.bind g) b`.
-
-Direct lift via `bind_apply` — both sides unfold to the same shape that
-`marginal_lt_marginal` consumes. Convenient for consumers using `PMF.bind`
-directly (the mathlib monadic idiom) rather than the `marginal`-style
-explicit-sum form.
-
-(Not `@[gcongr]`-tagged — `f` and `g` appear as explicit args of `μ.bind`,
-and gcongr requires varying arguments to be free variables.) -/
+/-- **Bind monotonicity (<)** — alias of `marginal_lt_marginal` exposing the
+mathlib monadic shape `(μ.bind f) b` for the goal. Definitionally identical
+to `marginal_lt_marginal` after `marginal` was made an `abbrev` for the bind
+form, but kept as a named alias for consumers that already reach for it. -/
 theorem bind_lt_bind {α β : Type*} (μ : PMF α) (f g : α → PMF β) (b : β)
     {a₀ : α} (hμ : μ a₀ ≠ 0) (h : ∀ a, f a b ≤ g a b) (hi : f a₀ b < g a₀ b) :
-    μ.bind f b < μ.bind g b := by
-  rw [bind_apply, bind_apply]
-  exact marginal_lt_marginal hμ h hi
+    μ.bind f b < μ.bind g b :=
+  marginal_lt_marginal hμ h hi
+
+/-- **Bind monotonicity (≤)** — companion alias of `marginal_le_marginal`. -/
+theorem bind_le_bind {α β : Type*} (μ : PMF α) (f g : α → PMF β) (b : β)
+    (h : ∀ a, f a b ≤ g a b) :
+    μ.bind f b ≤ μ.bind g b :=
+  marginal_le_marginal h
 
 /-- **Posterior comparison under uniform prior**: the workhorse for any RSA
 model with a uniform world prior. The shared prior factor `(card α)⁻¹` is
@@ -704,7 +705,7 @@ theorem posterior_eq_one_of_singleton_score_support {α β : Type*}
     posterior κ μ b h_marg a_unique = 1 := by
   rw [posterior_apply]
   have h_marg_eq : marginal κ μ b = μ a_unique * κ a_unique b := by
-    unfold marginal
+    show ∑' a, μ a * κ a b = _
     rw [tsum_eq_single a_unique]
     intro a' ha'
     rcases h_unique a' ha' with h | h

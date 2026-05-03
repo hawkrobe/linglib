@@ -97,6 +97,7 @@ theorem posterior_fst_le_iff
   rw [← not_lt, ← not_lt, not_iff_not]
   exact posterior_fst_lt_iff κ joint c h a₂ a₁
 
+omit [DecidableEq α] in
 /-- **Closed form for the second-marginalized joint posterior**.
 Companion of `posterior_fst_apply` for the second component. Used by
 L&G2017 for the threshold-marginal posterior `P_L1(θ | u)` (Fig. 5 left
@@ -110,6 +111,7 @@ theorem posterior_snd_apply [DecidableEq β]
   simp_rw [posterior_apply]
   rw [← Finset.sum_mul, ← div_eq_mul_inv]
 
+omit [DecidableEq α] in
 /-- **Comparison decomposition for the second-marginalized joint posterior**.
 Companion of `posterior_fst_lt_iff`. -/
 theorem posterior_snd_lt_iff [DecidableEq β]

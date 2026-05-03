@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.613 — Posterior.lean: collapse marginal/bind parallel APIs
+
+Audit finding A3: `marginal κ μ b` and `(μ.bind κ) b` were parallel APIs over the same definitionally-equal expression — `PMF.bind_apply` is `rfl`.
+
+- **`PMF.marginal` is now a `noncomputable abbrev`** for `(μ.bind κ) b`. Mathlib's `bind_*` lemmas apply directly; existing `marginal_*` API works unchanged.
+- **`marginal_le_one` / `marginal_ne_top`** now route through mathlib's `PMF.coe_le_one` / `PMF.apply_ne_top` directly (was: 8-line `tsum`-bounding proof).
+- **`bind_lt_bind` / `bind_le_bind`** now exposed as named aliases of `marginal_lt_marginal` / `marginal_le_marginal` (was: redundant proof going through `bind_apply`).
+- **JointPosterior `posterior_snd_apply` / `posterior_snd_lt_iff`** — added `omit [DecidableEq α] in` clauses to silence section-variable lint warnings (the `α`-decidability was section-introduced but unused in the snd-marginal proofs).
+- **Entropy `ofRealWeightFn`** — renamed unused `h_nonneg` to `_h_nonneg` (kept as documentation hypothesis).
+- **Entropy `mutualInformation_nonneg`** — `omit [Fintype α] [Fintype β]` clause; the proof is `ENNReal.toReal_nonneg`, which doesn't use Fintype.
+
+Net: −20 LOC in `Posterior.lean`, all 13 downstream PMF consumers (HF2019, Dong2026, Kao trio, GS2013, Nouwen2024, Kennedy2015, BylininaNouwen2020, YoonEtAl2020, ScontrasPearl2021, FG2012, L&G2017) build green. Substrate now warning-clean.
+
 ### 0.230.612 — RSA.QUD substrate + audit-driven cleanup of 3 Kao PMF papers
 
 Mathlib-quality audit of the RSA → PMF migration identified the highest-leverage refactor: promote `qudProjL0` (re-declared in 3 Kao papers) to a parametric substrate.
