@@ -4,6 +4,63 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.646 — QBSML: closed unionClosed + downwardClosed via 4-property joint induction
+
+QBSML/Properties.lean's two `sorry`'d theorems are now fully proved.
+The substrate test (Anttila 2.2.8 for first-order team semantics) is
+complete; the flat corollary (Anttila 2.2.16) chains through honestly.
+
+- `support_and_antiSupport_dc_uc_of_isNEFree`: single bilateral mutual
+  induction proving all four properties (DC support, UC support, DC
+  antiSupport, UC antiSupport) for NE-free formulas.
+- `unionClosed_support_of_isNEFree`, `downwardClosed_support_of_isNEFree`:
+  one-line corollaries.
+
+**Why one big joint induction**: QBSML's `exi` UC needs DC of ψ as IH —
+the union-case witness `h_st(i) = if i ∈ s then h_s i else h_t i`
+decomposes `(s ∪ t).extendFunctional` into
+`s.extendFunctional x h_s ∪ (t \ s).extendFunctional x h_t`, and weakening
+the original `t.extendFunctional x h_t` to `(t \ s).extendFunctional x h_t`
+requires ψ DC. BSML can split DC and UC into separate inductions because
+no BSML operator has this dependency.
+
+**Scope narrowing**: `unionClosed_support_of_isNEFree` requires NE-free
+(BSML's `unionClosed_support` is unconditional). Documented in the file
+docstring. Downstream `flat` consumer uses NE-free anyway.
+
+QBSML/Defs.lean: two new state-extension lemmas to support the above:
+- `State.extendFunctional_union_distrib` (via `Finset.union_biUnion`)
+- `State.extendFunctional_subset_mono`
+  (via `Finset.biUnion_subset_biUnion_of_subset_left`)
+
+### 0.230.646 — DM ContainmentVI: n-parametric headline + merge
+
+Merges the n=3 degree-VI machinery and the new n-parametric VI
+machinery into a single file `Theories/Morphology/DM/ContainmentVI.lean`
+under the existing `DM/` framework subdirectory.
+
+- **PART I (n-parametric)**: `ContainmentVIRule (n : Nat)` with
+  `applicableRules`, `viWinner`, `viWinningContextLevel`, `viExponent`,
+  `viCellPattern`, `CappedAt`. Headline lemma
+  `applicableRules_sublist_of_le` (monotone in position, via
+  `List.monotone_filter_right`); squeeze lemma
+  `applicableRules_eq_squeeze` (mathlib `Monotone.eq_of_le_of_le`
+  analog); plateau theorem `viWinningContextLevel_const_above_cap`.
+- **PART II (sub-namespace `Degree`)**: previous `LocalVIRule`,
+  `vi_cmpr_eq_sprl`, `csg_part1_vi`/`csg_part2_vi`,
+  `vi_pattern_abb_or_aaa`, `vi_cmpr_eq_sprl_under_domain`,
+  `vi_cmpr_eq_sprl_trivial` retained verbatim for backward
+  compatibility with `Bobaljik2012` and `SmithMoskalEtAl2019`.
+
+Old top-level `Theories/Morphology/DegreeContainment.lean` removed
+(content folded into `Degree` sub-namespace). Three consumers updated:
+`Linglib.lean`, `Bobaljik2012.lean`, `SmithMoskalEtAl2019.lean`
+(open path → `Theories.Morphology.DM.ContainmentVI.Degree`).
+
+Out of scope: collapsing PART II as a strict specialization of PART I
+— would force consumer-side refactors of theorem statements from
+`DegreePattern` to `List Nat`. Deferred until a consumer needs it.
+
 ### 0.230.645 — Core/IntensionalLogic → Core/Logic/Intensional rename completion
 
 Followup to 0.230.643 (`ac8dc731`, which moved the directory but left
