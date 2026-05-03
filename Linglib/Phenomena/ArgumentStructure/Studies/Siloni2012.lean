@@ -187,9 +187,12 @@ theorem properties_complementary :
     mutual kissing, not two directional sub-events.
 
     The `VerbDistributivity` class in `Events/StratifiedReference.lean`
-    axiomatizes the same property: *meet* has `¬ SDR_univ agentOf meet`
-    — it does not distribute over atomic agents, because the event is
-    necessarily collective/atomic. -/
+    axiomatizes the same property: *meet* has `¬ IsRoleDistributive
+    agentOf meet` (= `¬ SDR_univ agentOf meet`, exposed via the
+    four-opposition aliases in
+    `StratifiedReference/Specializations.lean`) — it does not
+    distribute over atomic agents, because the event is necessarily
+    collective/atomic. -/
 def isSymmetricVerb : RecipFormation → Prop
   | .lexical  => True
   | .syntactic => False

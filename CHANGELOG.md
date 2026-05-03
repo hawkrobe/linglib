@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.636 — Strata-theory unification: seed consumer migrations
+
+Three study files migrated to use the four-opposition API from `Theories/Semantics/Events/StratifiedReference/Specializations.lean` (`IsAtelic`, `IsStative`, `IsRoleDistributive`, `IsMassReference`) at the user-facing docstring level, demonstrating the consumption pattern for other study-file authors.
+
+- `Phenomena/Plurals/Studies/Champollion2017.lean` — eponymous study; module docstring + §4/§5 section headers updated to lead with `IsAtelic` / `IsRoleDistributive` rather than raw `SSR_univ` / `SDR_univ`. The `predictsSSR` def keeps its name (downstream consumer in `AspectualConsistency.lean`); docstring directs readers to read it as "predicts `IsAtelic`".
+- `Phenomena/TenseAspect/Studies/Zhao2025.lean` — added "Substrate connection" section pointing to `Core/Time/AtomDist.lean`'s `EvQuant.ofPred` bridge and `Specializations.lean`'s `IsStative`. Recognises Zhao 2025's particle-licensing as the strata-theory atomic-granularity stativity test along τ.
+- `Phenomena/ArgumentStructure/Studies/Siloni2012.lean` line 190 — `¬ SDR_univ agentOf meet` annotated with `¬ IsRoleDistributive agentOf meet` to anchor the symmetric-verb collectivity claim against the new alias.
+
+Per-Fragment substrate proofs (e.g., `IsRoleDistributive agentOf seePredicate`) require `Ev Time → Prop` denotations that Fragment files don't currently provide; this is theory-hub denotation discipline (CLAUDE.md) and is the natural follow-up. The current migrations are docstring-level — they make the new API discoverable and the substrate connection explicit, without requiring the per-verb denotation infrastructure.
+
+Build clean (1794 jobs targeted closure), no `sorry`s, no warnings.
+
 ### 0.230.634 — QBSML state-extension lemmas + emptyTeam fully proved
 
 Continuation of QBSML substrate validation. Anttila 2.2.8's empty-team property fully discharged for QBSML; union closure and downward closure remain as sorry'd TODOs (substantive proof work, not architectural).
