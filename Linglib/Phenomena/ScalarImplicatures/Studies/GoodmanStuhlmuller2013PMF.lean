@@ -1233,18 +1233,25 @@ private theorem marginalSpeaker_a2_apply
 The 11 paper findings restated against `WithSilence` + `liftMeaning` so the
 cover hypothesis is automatically satisfied via `cover_silent`.
 
-## Status: illustrations, not standalone theorems
+## Status: illustrations, not corollaries of a single structural theorem
 
 The 11 cells below are computational evaluations of the model at specific
-(meaning, access, world-pair, utterance) tuples. They are **illustrations**
-of the cancellation principle (`Linglib.Theories.Pragmatics.RSA.Cancellation`),
-which is the structural theorem this paper actually establishes. The cells
-demonstrate that the model produces the predictions plotted in Fig. 2 (A, B);
-they are not theorems independent of the cancellation result.
+(meaning, access, world-pair, utterance) tuples. They demonstrate that the
+model produces the predictions plotted in Fig. 2 (A, B).
 
-Demoted to `example`s rather than named theorems: per the option-C audit
-("the actual paper-cited theorem is the cancellation interaction") these
-should not be referenced as separate claims. -/
+**They are NOT corollaries of a single information-theoretic cancellation
+theorem.** The structural theorem that IS provable
+(`RSA.mutualInfoStateObs_bind_noise_le` in
+`Linglib/Theories/Pragmatics/RSA/Cancellation.lean`) only gives obs-level
+MI cancellation: `MI(state; obs_n) ≤ MI(state; obs_i)`. The per-(world-pair)
+orderings these cells encode are utterance-level claims that depend on the
+specific lex shape, not just on kernel informativity — see Cancellation.lean
+§3 for why utterance-level MI cancellation isn't a clean DPI corollary.
+
+Demoted to `example`s rather than named theorems: they're computational
+illustrations of model behavior, not load-bearing claims. Anyone wanting to
+prove a structural property about the model should use the obs-level
+cancellation theorem in Cancellation.lean. -/
 
 open RSA (WithSilence liftMeaning)
 
