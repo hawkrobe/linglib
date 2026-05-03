@@ -33,7 +33,7 @@ QBSML/Defs.lean: two new state-extension lemmas to support the above:
 - `State.extendFunctional_subset_mono`
   (via `Finset.biUnion_subset_biUnion_of_subset_left`)
 
-### 0.230.646 — DM ContainmentVI: n-parametric headline + merge
+### 0.230.647 — DM ContainmentVI: n-parametric headline + merge
 
 Merges the n=3 degree-VI machinery and the new n-parametric VI
 machinery into a single file `Theories/Morphology/DM/ContainmentVI.lean`

@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.DegreeContainment
-import Linglib.Theories.Morphology.DegreeContainment
+import Linglib.Theories.Morphology.DM.ContainmentVI
 import Linglib.Core.Morphology.Exponence
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Degree.Superlative
@@ -145,8 +145,8 @@ theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
 
 /-- All English root suppletion patterns satisfy both contiguity (no
     *ABA — `csg_part1`) and VI locality (CMPR cell = SPRL cell — the
-    DM-locality conjunction `vi_cmpr_eq_sprl` of `Theories/Morphology/
-    DegreeContainment.lean`). The conjunction restricts root patterns
+    DM-locality conjunction `Degree.vi_cmpr_eq_sprl` of
+    `Theories/Morphology/DM/ContainmentVI.lean`). The conjunction restricts root patterns
     to AAA / ABB. Stated as the explicit conjunction so the underlying
     derivation is visible at use site, rather than packaged as a
     stipulated `isAttested` field. -/

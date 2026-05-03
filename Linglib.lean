@@ -271,7 +271,7 @@ import Linglib.Core.Morphology.Containment
 import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Morphology.DomainLocality
 import Linglib.Core.Case.Allomorphy
-import Linglib.Theories.Morphology.DegreeContainment
+import Linglib.Theories.Morphology.DM.ContainmentVI
 import Linglib.Core.Relativization.Basic
 import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Core.Relativization.Hierarchy
