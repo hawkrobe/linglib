@@ -4,6 +4,31 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.620–621 — Phase 4: DegreeContainment three-way dissolution
+
+Migration phase 4/9. Two commits (a Phase 4 commit captured only the deletion; the fixup added the new substrate files + retargeted consumers).
+
+- Substrate (`Core/Morphology/DegreeContainment.lean`, namespace `Core.Morphology.DegreeContainment`): `DegreeGrade` + rank + `containedIn` (with reflexivity, transitivity); `DegreePattern` + Bool/Prop ABA detector defined via `Morphology.Containment` so `degree_violatesABA_eq_generic` is `rfl`; `isRegular` / `cmprSuppletive` / `sprlSuppletive`; concrete pattern constants (`aaa`, `abb`, `abc`, `aba`, `aab`); `csg_part1` (general contiguity-only); `patternFromForms` helper. All theorems use `decide`; no `native_decide`.
+- VI machinery (`Theories/Morphology/DegreeContainment.lean`, namespace `Theories.Morphology.DegreeContainment`): `LocalVIRule` + `matches` + locality-conditioned `condGrade`; `matches_cmpr_eq_sprl` + `vi_filter_cmpr_eq_sprl`; `viWinner` + `viPattern`; `vi_cmpr_eq_sprl` (the core DM result); `csg_part1_vi` + `csg_part2_vi` + `vi_pattern_abb_or_aaa`.
+- Bobaljik2012 retargeted: imports + open lines updated to `Core.Morphology.DegreeContainment`. `english_all_attested` rewritten as the explicit conjunction (`isContiguous && cmpr == sprl`) — the conclusion-encoded `isVIConsistent` / `isAttested` defs and their 5 trailing `_attested` theorems are dropped per project anti-pattern rule.
+- Latin/Adjectives.lean and English/Modifiers/Adjectives.lean: imports + open lines updated; the body reference at English Adjectives.lean:69 (`suppletion : Interfaces.Morphosyntax.DegreeContainment.DegreePattern`) becomes `Core.Morphology.DegreeContainment.DegreePattern`.
+- `Theories/Interfaces/Morphosyntax/DegreeContainment.lean` deleted (430 LOC).
+- `Theories/Interfaces/Morphosyntax/` now has 2 files (Extraction, Relativization) ahead of phases 5–6.
+
+Out of scope: 13 native_decide instances remain in Bobaljik2012 outside the dropped §11 (lines 125, 131, 134, 138, 139, 160, 188, 204, 240, 244, 254, 268, 282) — these convert to `decide` in a follow-up; bundling them with the substrate move risks proof-time blowup on `allEntries` filters, deserves its own commit with timing checks.
+
+### 0.230.619 — Aktionsart cleanup pass: theorem-shape fixes + @[simp] discipline + namespace merge
+
+Follow-up to `0.230.614` after multi-agent code review surfaced theorem-shape regressions and code-quality misses.
+
+- **Theorem-shape fixes (Zhao2025)**: deleted two tautology iffs (`le_temporal_licensed_iff_dynamic`, `meiyou_temporal_licensed_iff_dynamic`) that stated `P ↔ (Q ∧ P)` collapsing to `Q`; replaced with three clean lexical facts (`le_requires_anti_atomDist`, `meiyou_requires_anti_atomDist`, plus existing `guo_compatible_with_all`). Cross-domain bridge content moved to docstring prose explaining the composition with Aktionsart's dynamicity projection
+- **Theorem-shape fix (AlstottAravind2026)**: `until_selectional_restriction_grounded` restated to reference `satisfiesDurativeRestriction X` rather than literal `= true`/`= false` values, restoring the data ↔ predicate "grounded" framing; deleted redundant `durative_restriction_picks_state_or_activity` re-export of the data-side theorem
+- **Naming consistency**: `homogeneous_implies_open_scale` → `state_or_activity_implies_open_scale` (Rouillard2026); "homogeneous" stays in docstring prose only
+- **Namespace cleanup (Tense/Aspect/Core.lean)**: merged the two namespace blocks left by the orphan-theorem deletion in `0.230.614`; dropped redundant `end ... namespace ...` reopen + duplicate `open Core.Time` and `variable` declarations
+- **`@[simp]` discipline (Aktionsart.lean)**: marked 10 canonical projections — `VendlerClass.{telicity, duration, dynamicity}`, `AspectualProfile.toVendlerClass`, `VendlerClass.toProfile`, `Telicity.toMereoTag`, `vendler_profile_roundtrip`, five `*Profile_toClass` corollaries — so consumer proofs degrade to `cases c <;> simp` without explicit lemma lists
+- **Cleanup**: deleted duplicate `open Features` lines in `AspectInteractionData.lean` and `Composition.lean`; fixed stale `LexicalAspect.lean` path reference in Aktionsart.lean provenance docstring; trimmed Aktionsart docstring from ~70 to ~30 lines (mathlib voice)
+- Build: 5725 jobs green
+
 ### 0.230.618 — Phase 3: dissolve CaseContainment.lean into Caha2009
 
 Migration phase 3/9.
