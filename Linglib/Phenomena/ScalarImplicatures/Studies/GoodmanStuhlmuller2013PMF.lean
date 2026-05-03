@@ -716,6 +716,37 @@ attribute [local pmf_eval_simps]
   s1Score_liftMeaning_apply_eq_ite
   obsKernel_apply
 
+/-- Tag the missing `.a2` obsKernel zero cases (used in §20 .a2 findings)
+into the local `pmf_eval_simps` set so the macro can fire `zero_mul` cleanups. -/
+private theorem obsKernel_a2_s3_k1_zero : obsKernel .a2 .s3 ⟨1, by decide⟩ = 0 :=
+  obsKernel_a2_off .s3 ⟨1, by decide⟩ (by
+    rintro ⟨_, h2⟩; simp [WorldState.toNat] at h2)
+
+private theorem obsKernel_a2_s1_k2_zero : obsKernel .a2 .s1 ⟨2, by decide⟩ = 0 :=
+  obsKernel_a2_off .s1 ⟨2, by decide⟩ (by
+    rintro ⟨h1, _⟩; simp [WorldState.toNat] at h1)
+
+private theorem obsKernel_a2_s0_k1_zero : obsKernel .a2 .s0 ⟨1, by decide⟩ = 0 :=
+  obsKernel_a2_off .s0 ⟨1, by decide⟩ (by
+    rintro ⟨h1, _⟩; simp [WorldState.toNat] at h1)
+
+private theorem obsKernel_a2_s0_k2_zero : obsKernel .a2 .s0 ⟨2, by decide⟩ = 0 :=
+  obsKernel_a2_off .s0 ⟨2, by decide⟩ (by
+    rintro ⟨h1, _⟩; simp [WorldState.toNat] at h1)
+
+private theorem obsKernel_a2_s2_k0_zero : obsKernel .a2 .s2 ⟨0, by decide⟩ = 0 :=
+  obsKernel_a2_off .s2 ⟨0, by decide⟩ (by
+    rintro ⟨_, h2⟩; simp [WorldState.toNat] at h2)
+
+private theorem obsKernel_a2_s3_k0_zero : obsKernel .a2 .s3 ⟨0, by decide⟩ = 0 :=
+  obsKernel_a2_off .s3 ⟨0, by decide⟩ (by
+    rintro ⟨_, h2⟩; simp [WorldState.toNat] at h2)
+
+attribute [local pmf_eval_simps]
+  obsKernel_a2_s3_k1_zero obsKernel_a2_s1_k2_zero
+  obsKernel_a2_s0_k1_zero obsKernel_a2_s0_k2_zero
+  obsKernel_a2_s2_k0_zero obsKernel_a2_s3_k0_zero
+
 /-- Sum unfolder for `WithSilence U` over a derived-Fintype `U`. Required
 because `Fin.sum_univ_*` doesn't apply to custom enums; users supply this
 at-call-site with their specific `U`. Local-tagged for `pmf_eval_simps`
@@ -1736,27 +1767,12 @@ theorem some_partial_canceled_sil
         (some QUtt.some_) hMarg) .s3) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a2_apply, marginalSpeaker_a2_apply]
-  -- s2: 0 + (2/3)*4/7 + (1/3)*4/7 = 4/7
-  -- s3: 0 + 0*4/7 + 1*4/7 = 4/7
-  rw [S1g_qLifted_a2_k0_some_eq_zero, S1g_qLifted_a2_k1_some_eq, S1g_qLifted_a2_k2_some_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  -- LHS: obsKernel .a2 .s2 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s2 ⟨2,_⟩ * 4/7
-  -- RHS: obsKernel .a2 .s3 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s3 ⟨2,_⟩ * 4/7
-  -- For .s3 ⟨1,_⟩: not compatible (2 - 1 = 1 > 3 - 3 = 0)
-  have h_a2_s3_k1 : obsKernel .a2 .s3 ⟨1, by decide⟩ = 0 :=
-    obsKernel_a2_off .s3 ⟨1, by decide⟩ (by
-      rintro ⟨_, h2⟩; simp [WorldState.toNat] at h2)
-  rw [obsKernel_a2_s2_k1, obsKernel_a2_s2_k2, obsKernel_a2_s3_k2, h_a2_s3_k1]
-  -- Now: ofReal(2/3) * ofReal(4/7) + ofReal(1/3) * ofReal(4/7) ≤ 0 * ofReal(4/7) + 1 * ofReal(4/7)
-  rw [zero_mul, zero_add]
-  rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from by simp,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
+      S1g_qLifted_a2_k0_some_eq_zero, S1g_qLifted_a2_k1_some_eq, S1g_qLifted_a2_k2_some_eq,
+      obsKernel_a2_s2_k1, obsKernel_a2_s2_k2, obsKernel_a2_s3_k2,
+      obsKernel_a2_s3_k1_zero, obsKernel_a2_s2_k0_zero, obsKernel_a2_s3_k0_zero]
+  ennreal_close
 
 /-- Finding 5: at partial access, "two" does NOT favor `s2 > s3` (weakened). -/
 theorem two_partial_weakened_sil
@@ -1770,16 +1786,12 @@ theorem two_partial_weakened_sil
         (some NumUtt.two) hMarg) .s3) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a2_apply, marginalSpeaker_a2_apply]
-  rw [S1g_lbLifted_a2_k0_two_eq_zero, S1g_lbLifted_a2_k1_two_eq_zero,
-      S1g_lbLifted_a2_k2_two_eq]
-  simp only [mul_zero, zero_add, add_zero]
-  rw [obsKernel_a2_s2_k2, obsKernel_a2_s3_k2]
-  rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from by simp,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1)]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
+      S1g_lbLifted_a2_k0_two_eq_zero, S1g_lbLifted_a2_k1_two_eq_zero,
+      S1g_lbLifted_a2_k2_two_eq,
+      obsKernel_a2_s2_k2, obsKernel_a2_s3_k2]
+  ennreal_close
 
 /-- Finding 10 (HEADLINE): at partial access, "one" favors `s1 > s3`. -/
 theorem one_partial_1v3_sil
@@ -1792,24 +1804,12 @@ theorem one_partial_1v3_sil
     (L1 (liftMeaning lbMeaning) 1 .a2 (cover_silent lbMeaning .a2)
         (some NumUtt.one) hMarg) .s3 := by
   unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  rw [marginalSpeaker_a2_apply, marginalSpeaker_a2_apply]
-  rw [S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  -- s3 (LHS, smaller): obsKernel .a2 .s3 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s3 ⟨2,_⟩ * 4/13
-  -- s1 (RHS, larger): obsKernel .a2 .s1 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s1 ⟨2,_⟩ * 4/13
-  have h_a2_s3_k1 : obsKernel .a2 .s3 ⟨1, by decide⟩ = 0 :=
-    obsKernel_a2_off .s3 ⟨1, by decide⟩ (by
-      rintro ⟨_, h2⟩; simp [WorldState.toNat] at h2)
-  have h_a2_s1_k2 : obsKernel .a2 .s1 ⟨2, by decide⟩ = 0 :=
-    obsKernel_a2_off .s1 ⟨2, by decide⟩ (by
-      rintro ⟨h1, _⟩; simp [WorldState.toNat] at h1)
-  rw [obsKernel_a2_s3_k2, obsKernel_a2_s1_k1, h_a2_s3_k1, h_a2_s1_k2]
-  rw [zero_mul, zero_add, zero_mul, add_zero]
-  rw [show (1 : ℝ≥0∞) = ENNReal.ofReal 1 from by simp,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1),
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3)]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
+      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
+      S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
+      obsKernel_a2_s3_k2, obsKernel_a2_s1_k1,
+      obsKernel_a2_s3_k1_zero, obsKernel_a2_s1_k2_zero]
+  ennreal_close
 
 /-- Finding 11: at partial access, "one" does NOT favor `s1 > s2`. -/
 theorem one_partial_1v2_canceled_sil
@@ -1823,28 +1823,12 @@ theorem one_partial_1v2_canceled_sil
         (some NumUtt.one) hMarg) .s2) := by
   rw [gt_iff_lt, not_lt]
   unfold L1 worldPrior
-  rw [PMF.posterior_le_iff_kernel_le_of_uniform]
-  rw [marginalSpeaker_a2_apply, marginalSpeaker_a2_apply]
-  rw [S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
-      mul_zero, zero_add, mul_zero, zero_add]
-  -- LHS (s1): obsKernel .a2 .s1 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s1 ⟨2,_⟩ * 4/13 = 2/3*4/7 + 0 = 8/21
-  -- RHS (s2): obsKernel .a2 .s2 ⟨1,_⟩ * 4/7 + obsKernel .a2 .s2 ⟨2,_⟩ * 4/13 = 2/3*4/7 + 1/3*4/13 = 132/273
-  have h_a2_s1_k2 : obsKernel .a2 .s1 ⟨2, by decide⟩ = 0 :=
-    obsKernel_a2_off .s1 ⟨2, by decide⟩ (by
-      rintro ⟨h1, _⟩; simp [WorldState.toNat] at h1)
-  rw [obsKernel_a2_s1_k1, obsKernel_a2_s2_k1, obsKernel_a2_s2_k2, h_a2_s1_k2]
-  rw [zero_mul, add_zero]
-  -- Goal: ofReal(2/3)*ofReal(4/7) ≤ ofReal(2/3)*ofReal(4/7) + ofReal(1/3)*ofReal(4/13)
-  rw [show ENNReal.ofReal (2/3) * ENNReal.ofReal (4/7) +
-            ENNReal.ofReal (1/3) * ENNReal.ofReal (4/13) =
-          ENNReal.ofReal (2/3 * (4/7) + 1/3 * (4/13)) from by
-        rw [ENNReal.ofReal_add (by norm_num) (by norm_num),
-            ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3),
-            ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1/3)],
-      show ENNReal.ofReal (2/3) * ENNReal.ofReal (4/7) =
-          ENNReal.ofReal (2/3 * (4/7)) from by
-        rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2/3)]]
-  exact ENNReal.ofReal_le_ofReal (by norm_num)
+  rw [PMF.posterior_le_iff_kernel_le_of_uniform,
+      marginalSpeaker_a2_apply, marginalSpeaker_a2_apply,
+      S1g_lbLifted_a2_k0_one_eq_zero, S1g_lbLifted_a2_k1_one_eq, S1g_lbLifted_a2_k2_one_eq,
+      obsKernel_a2_s1_k1, obsKernel_a2_s2_k1, obsKernel_a2_s2_k2,
+      obsKernel_a2_s1_k2_zero]
+  ennreal_close
 
 end Findings
 

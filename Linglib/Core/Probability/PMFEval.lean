@@ -111,7 +111,10 @@ an `AddLeftStrictMono` instance (⊤ + a = ⊤ + b would block strict cancellati
 -/
 
 macro "ennreal_close" : tactic => `(tactic|
-  (-- Combine ofReal sums: `ofReal a + ofReal b → ofReal (a + b)`.
+  (-- Pre-normalization: drop spurious `* 0` / `+ 0` so the `← ofReal_add`
+   -- positivity proofs don't get tripped up by un-simplified subexpressions.
+   try simp only [mul_zero, zero_mul, add_zero, zero_add, one_mul, mul_one];
+   -- Combine ofReal sums: `ofReal a + ofReal b → ofReal (a + b)`.
    repeat rw [← ENNReal.ofReal_add (by positivity) (by positivity)];
    -- Combine ofReal products: `ofReal a * ofReal b → ofReal (a * b)`.
    repeat rw [← ENNReal.ofReal_mul (by positivity)];
