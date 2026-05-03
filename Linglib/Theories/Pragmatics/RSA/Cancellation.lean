@@ -1,132 +1,172 @@
 import Linglib.Core.Probability.DataProcessing
+import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.PMFPosterior
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Silence
 
 /-!
-# Cancellation theorem for RSA models with noisy observation
+# Cancellation theorems for RSA models with noisy observation
 
-@cite{goodman-stuhlmuller-2013}'s **cancellation principle**: as a speaker's
-observation kernel becomes noisier (less informative about the state), the
-listener's posterior given an utterance moves closer to the prior (gains
-less information from the utterance).
+@cite{goodman-stuhlmuller-2013}'s **cancellation principle** (informal):
+as a speaker's observation kernel becomes noisier, the listener's posterior
+given an utterance moves closer to the prior.
 
-Stated information-theoretically:
+This file states the **structural information-theoretic content** that follows
+from the data processing inequality (DPI), and **honestly scopes** what's
+universal vs paper-specific.
 
-  `KL(L1 noisy u ‖ prior) ≤ KL(L1 informative u ‖ prior)`
+## What IS structurally provable (Path B from session audit)
 
-where "noisy" and "informative" compare two observation kernels via a
-post-composition relation: the noisy kernel is a post-processing of the
-informative one through a stochastic map.
+* **Observation-level cancellation** (`mutualInformation_state_obs_le`):
+  `MI(state; obs_noisy) ≤ MI(state; obs_informative)` when
+  `κ_noisy = κ_informative.bind noise`. Direct corollary of `PMF.klDiv_bind_le`
+  applied per-state with the noise kernel.
 
-## Architectural role
+## What IS NOT structurally provable
 
-This theorem is the structural foundation that should drive every
-RSA-with-noisy-observation paper's findings. Per-paper "cancellation"
-phenomena (GS2013 partial-access implicature weakening, Kao et al. metaphor
-literal-reading recovery under noise, etc.) are corollaries.
+* **Utterance-level cancellation** `MI(state; utt_noisy) ≤ MI(state; utt_informative)`:
+  this is **not** a clean DPI corollary. The Markov chain `state → Y_i → (U_i, U_n) → U_n`
+  gives `MI(state; U_n) ≤ MI(state; Y_i)`, but no direct comparison between `U_n` and
+  `U_i` because `U_i` and `U_n` share `Y_i` as a common parent — there's no chain
+  `state → U_i → U_n`. May or may not hold depending on `S1g` shape.
 
-## Proof structure
+* **Per-(world-pair) ordering** (e.g. GS2013's "L1(s2 | u) > L1(s3 | u) weakens with
+  noise"): this is per-paper, depends on lex shape, and requires numerical evaluation.
 
-The proof reduces cancellation to:
-1. **Data processing inequality** on PMF KL — `PMF.klDiv_bind_le` from
-   `Linglib/Core/Probability/DataProcessing.lean`.
-2. **Posterior monotonicity under more-informative likelihood** — the
-   listener's posterior given a more-informative speaker model carries more
-   KL from the prior.
+## Architectural framing
 
-Both are general probability-theory results not tied to RSA. The RSA
-specialization just instantiates them for the speaker chain
-`state → obs → utterance`.
-
-## Status
-
-DPI is proved up to a discharge sorry (see `Linglib/Core/Probability/DataProcessing.lean`);
-the cancellation specialization is built on top assuming DPI. When the
-DPI sorry lands, this file becomes sorry-free.
+- **Universal substrate** (here): the obs-level MI cancellation — a real theorem
+  any RSA paper with a noisy obs chain can use.
+- **Per-paper findings**: numerical evaluations of model behavior, illustrations
+  of how the structural inequality manifests for specific lex / kernel shapes.
+- **Anti-pattern**: claiming a single "cancellation theorem" that yields all the
+  per-cell numerical orderings as corollaries. (No such theorem; the per-paper
+  orderings depend on more than just kernel informativity.)
 -/
 
 set_option autoImplicit false
 
 namespace RSA
 
-open InformationTheory
+open InformationTheory PMF
+open scoped ENNReal
 
-/-!
-## §1. Cancellation theorem statement
+/-! ## §1. Observation-level mutual information
 
-The general statement: for two noisy speaker chains differing only in the
-observation kernel, the one with the "noisier" kernel produces a listener
-posterior with smaller KL from the prior.
+Define `MI(state; obs) = ∑_s prior(s) · KL(κ s ‖ marg)`. This is the standard
+chain-rule decomposition (Cover-Thomas Eq 2.61): the average information about
+the state contained in an observation, equivalent to `KL(joint ‖ product)`.
 
-We parameterize the speaker chain by the observation kernel `obsKernel`
-and the score function `S1g`. The marginalSpeaker is `obsKernel.bind S1g`,
-and L1 is the posterior of marginalSpeaker against the prior.
+Working with this form rather than `PMF.mutualInformation` directly because the
+per-state decomposition is what makes DPI applicable: each `KL(κ_n s ‖ marg_n)`
+vs `KL(κ_i s ‖ marg_i)` term reduces by `klDiv_bind_le` per-state with kernel
+`noise : Obs → PMF Obs`. The state component never enters the kernel, so the
+state-preservation support issue vanishes.
 -/
 
-variable {W U Obs : Type*} [Fintype W] [Fintype Obs] [Fintype U]
+variable {W Obs : Type*} [Fintype W] [Fintype Obs]
   [MeasurableSpace W] [MeasurableSingletonClass W]
-  [MeasurableSpace U] [MeasurableSingletonClass U]
   [MeasurableSpace Obs] [MeasurableSingletonClass Obs]
 
-/-! ## §1. The MI-form cancellation theorem (the correct statement)
+/-- The observation marginal `marg_o(o) = ∑_s prior(s) · κ(s)(o)`. -/
+noncomputable def obsMarginal (prior : PMF W) (κ : W → PMF Obs) : PMF Obs :=
+  prior.bind κ
 
-A subtle point: **per-`u` KL cancellation is NOT generally true**. The
-correct cancellation statement is on **average** over the marginal of `u`:
+/-- **Per-state-decomposed mutual information** between state and observation:
+`MI(state; obs) = ∑_s prior(s) · KL(κ s ‖ marg)`.
 
-  `E_{u ~ marginal}[KL(L1 u ‖ prior)] = MutualInformation(state; utt)`
+This is the conditional-relative-entropy form (Cover-Thomas Eq 2.61). For any
+joint `J(s, o) = prior(s) · κ(s)(o)` with marginal `marg(o) = ∑_s J(s, o)`,
+the standard MI `KL(J ‖ prior × marg)` equals this per-state weighted sum.
+The decomposition is what makes the DPI argument tractable. -/
+noncomputable def mutualInfoStateObs (prior : PMF W) (κ : W → PMF Obs) : ℝ≥0∞ :=
+  ∑ s, prior s * (κ s).klDiv (obsMarginal prior κ)
 
-and DPI says this MI decreases under noisification of the observation
-kernel. Per-`u` KL can go either way depending on which `u` happens to
-align with the noise outcome.
+/-! ## §2. Observation-level DPI cancellation
 
-GS2013's 11 numerical findings are **per-(a, w, u) ordering comparisons**
-(which state has higher posterior given `u`), not per-`u` KL comparisons.
-They are NOT corollaries of any clean cancellation theorem; they are
-specific numerical evaluations of the model.
+**Theorem**: if `κ_n s = (κ_i s).bind noise` for all states `s` (the noisy
+observation kernel is a post-processing of the informative one through some
+noise channel), then `MI(state; obs_n) ≤ MI(state; obs_i)`.
 
-What IS a corollary of DPI: the **mutual information** `I(state; utt)`
-decreases as the observation kernel becomes noisier. This explains the
-"information loss" intuition behind cancellation, but doesn't directly
-yield the 11 numerical findings.
+The proof applies `PMF.klDiv_bind_le` per-state. For each `s`, we have
+`κ_n s = (κ_i s).bind noise` AND `obsMarginal prior κ_n = (obsMarginal prior κ_i).bind noise`
+(since bind distributes over outer bind). The per-state KL inequality lifts
+to the prior-weighted sum.
+-/
 
-The right architectural framing for paper-replication studies like GS2013PMF:
-- **Structural theorems** (Eq 5 reduction at full access; MI-form cancellation
-  via DPI) live at the substrate level (here, in `RSA/`).
-- **Per-finding numerical claims** are per-paper instances of the structural
-  theorems plus arithmetic.
+/-- **Observation marginal under noisy kernel = noise-bind of informative marginal**.
+This is the fact that lets the per-state DPI lift to the marginal level. -/
+theorem obsMarginal_bind_noise (prior : PMF W) (κ_i : W → PMF Obs)
+    (noise : Obs → PMF Obs) :
+    obsMarginal prior (fun s => (κ_i s).bind noise)
+      = (obsMarginal prior κ_i).bind noise := by
+  unfold obsMarginal
+  exact (PMF.bind_bind prior κ_i noise).symm
 
-Below: the MI-form cancellation theorem, statement only. Full proof requires
-extending the file with `PMF.mutualInformation` and a posterior decomposition;
-not blocking the broader GS2013PMF refactor. -/
+/-- **Observation-level cancellation theorem (DPI form)**.
 
-/-- **MI-form cancellation theorem (statement)**: if observation kernel
-`κ_noisy = κ_informative.bind noise` (the noisy is a post-processing of
-the informative), then the listener's average information gain
-`E_{u ~ marginal}[KL(L1 u ‖ prior)]` is smaller in the noisy chain.
+If the noisy observation kernel is a post-processing of the informative kernel
+through a noise channel (`κ_n s = (κ_i s).bind noise`), then the mutual
+information between state and observation decreases.
 
-This is the structurally correct form of cancellation. It is a direct
-corollary of `PMF.klDiv_bind_le` (DPI) — the proof goes through `MI =
-KL(joint ‖ product)`, where joint and product are both `bind`s of the
-prior with derived kernels.
+Reduces to `PMF.klDiv_bind_le` applied per-state. The state component never
+enters the noise kernel, so the technical support precondition on `klDiv_bind_le`
+applies cleanly to `noise : Obs → PMF Obs`.
 
-The per-`u` KL form is NOT generally true; the statement above (averaged)
-is. Per-paper findings like GS2013's 11 predictions are specific numerical
-instances and don't follow from this theorem alone. -/
-theorem cancellation_mi_via_dpi
-    (worldPrior : PMF W)
-    (κ_noisy κ_informative : W → PMF Obs)
-    (S1g : Obs → PMF U)
-    (noise : Obs → PMF Obs)
-    (h_noise : ∀ w, κ_noisy w = (κ_informative w).bind noise) :
-    True := by
-  -- Statement-only stub — full version requires PMF.mutualInformation +
-  -- posterior decomposition. The proof would be:
-  -- 1. Define `M_noisy w := (κ_noisy w).bind S1g`, `M_informative w := …`.
-  -- 2. By h_noise: M_noisy w = M_informative w composed with extra noise.
-  -- 3. By PMF.klDiv_bind_le, KL of joints (state ⊗ marginalSpeaker) is monotone.
-  -- 4. MI = KL(joint ‖ product); both sides factor through bind.
-  -- 5. Conclude MI .noisy ≤ MI .informative.
-  trivial
+The hypothesis `h_ac` is per-state absolute continuity of `κ_i s` w.r.t.
+`obsMarginal prior κ_i`; `h_marg_pos` ensures the obs marginal has full support;
+`h_noise_pos` ensures noise has full support compatible with the marginals (the
+standard DPI support precondition).
+
+This is the structural information-theoretic content of "less informative
+observation kernel → less information about state in the observation". -/
+theorem mutualInfoStateObs_bind_noise_le
+    (prior : PMF W) (κ_i : W → PMF Obs) (noise : Obs → PMF Obs)
+    (h_ac : ∀ s, MeasureTheory.Measure.AbsolutelyContinuous
+              (κ_i s).toMeasure (obsMarginal prior κ_i).toMeasure)
+    (h_bind_ac : ∀ s, MeasureTheory.Measure.AbsolutelyContinuous
+              ((κ_i s).bind noise).toMeasure
+              ((obsMarginal prior κ_i).bind noise).toMeasure)
+    (h_marg_pos : ∀ o, obsMarginal prior κ_i o ≠ 0)
+    (h_noise_pos : ∀ o o', obsMarginal prior κ_i o ≠ 0 →
+                   ((obsMarginal prior κ_i).bind noise) o' ≠ 0 →
+                   noise o o' ≠ 0) :
+    mutualInfoStateObs prior (fun s => (κ_i s).bind noise)
+      ≤ mutualInfoStateObs prior κ_i := by
+  unfold mutualInfoStateObs
+  rw [obsMarginal_bind_noise]
+  refine Finset.sum_le_sum (fun s _ => ?_)
+  -- For each state s: the noisy term `KL((κ_i s).bind noise ‖ marg.bind noise)`
+  -- is ≤ informative term `KL(κ_i s ‖ marg)` by `klDiv_bind_le`.
+  -- Need: prior(s) · KL_n ≤ prior(s) · KL_i (left-mult preserves ≤ in ℝ≥0∞)
+  have h_kl := klDiv_bind_le (κ_i s) (obsMarginal prior κ_i) noise
+    (h_ac s) (h_bind_ac s) h_marg_pos h_noise_pos
+  -- mul_le_mul_left needs left arg as `(a : ℝ≥0∞)`, returns `b ≤ c → a * b ≤ a * c`
+  exact mul_le_mul' (le_refl _) h_kl
+
+/-! ## §3. Honest scoping note
+
+The utterance-level form (`MI(state; utt_n) ≤ MI(state; utt_i)`) does NOT follow
+from §2 by composing with `S1g : Obs → PMF U`. The natural composition gives:
+
+```
+MI(state; utt_x) ≤ MI(state; obs_x) ≤ MI(state; obs_i)   for x ∈ {n, i}
+```
+
+So both `MI(state; utt_n)` and `MI(state; utt_i)` are bounded by `MI(state; obs_i)`
+— no direct comparison between them. The Markov chain `state → Y_i → (U_i, U_n)`
+gives `MI(state; U_n) ≤ MI(state; Y_i)` but there's no chain `state → U_i → U_n`
+because `U_n` depends on `Y_i` directly via `noise(Y_i)`, not just on `U_i`.
+
+GS2013's per-(world-pair) findings (e.g. "L1(s2 | u) > L1(s3 | u) weakens at
+lower access") are NOT corollaries of any clean MI cancellation. They are
+specific numerical evaluations of the model — see
+`Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013PMF.lean` for the
+illustrative computations.
+
+The proper architectural framing: §2 above is the universal structural theorem
+about RSA models with noisy observation chains. Per-paper findings are
+illustrations of how that structural fact manifests for specific (lex, kernel)
+shapes — not corollaries provable from §2 alone. -/
 
 end RSA
