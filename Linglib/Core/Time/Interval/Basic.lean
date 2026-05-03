@@ -61,6 +61,13 @@ def meets (i₁ i₂ : Interval Time) : Prop :=
 def properSubinterval (i₁ i₂ : Interval Time) : Prop :=
   i₁.subinterval i₂ ∧ (i₂.start < i₁.start ∨ i₁.finish < i₂.finish)
 
+/-- An interval is a *point* iff its endpoints coincide (start = finish).
+    The atomic case in the time dimension — used by Bennett-Partee 1972
+    strict subinterval property and Zhao 2025 ATOM-DIST_t at the atomic
+    granularity. -/
+def IsPoint (i : Interval Time) : Prop :=
+  i.start = i.finish
+
 /-- i₁ is entirely after i₂ (i₁ starts at or after i₂ finishes). -/
 def isAfter (i₁ i₂ : Interval Time) : Prop :=
   i₂.finish ≤ i₁.start

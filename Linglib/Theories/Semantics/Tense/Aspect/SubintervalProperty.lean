@@ -31,7 +31,18 @@ variable {W Time : Type*} [LinearOrder Time]
     SUB(P) iff every subinterval of a P-event's runtime that is also
     the runtime of some event is the runtime of a P-event.
     States and activities have this property; accomplishments/achievements
-    lack it. -/
+    lack it.
+
+    This is the universal-witness (Bennett-Partee 1972) form of stativity
+    along the time dimension. Cousin formulations at the same point in
+    @cite{champollion-2017}'s parameter space (dimension = τ, atomic
+    granularity) live in `Theories/Semantics/Events/StratifiedReference/Specializations.lean`'s
+    `IsStative` (decomposition form, on `Ev Time`) and
+    `Core/Time/AtomDist.lean`'s `AtomDist` (quantifier-restriction form).
+    The three formulations are NOT directly interderivable — the
+    universal-witness form (this file) makes a stronger universal claim
+    over hypothetical witness events than the decomposition form (SR);
+    bridging requires explicit witness-existence assumptions. -/
 def HasSubintervalProp (P : EventPred W Time) : Prop :=
   ∀ (e₁ : Eventuality Time) (w : W),
     P w e₁ →

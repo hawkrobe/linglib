@@ -81,6 +81,24 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
   ∀ x, P x → SR d γ P x
 
 -- ════════════════════════════════════════════════════
+-- § 2.5. Atomic granularity (shared γ)
+-- ════════════════════════════════════════════════════
+
+/-- Atomic granularity for dimensions where `[PartialOrder β]` is
+    available: the inner d-image is an `Atom` in β. Used by `SDR`
+    (dimension = θ thematic role; entities have a partial-order
+    instance via the entity lattice).
+
+    For dimensions without a `PartialOrder` instance — notably the
+    runtime dimension (`Interval Time`) used by stativity — atomicity
+    is expressed dimension-natively (e.g., `Interval.IsPoint` for
+    `Interval Time`). The unification is at the `SR` parameter-space
+    level: both express "γ = inner is atomic in the dimension's
+    natural sense" at different concrete instantiations. -/
+def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
+  fun inner _outer => Atom inner
+
+-- ════════════════════════════════════════════════════
 -- § 3. SDR — Stratified Distributive Reference (@cite{champollion-2017} eq. 24)
 -- ════════════════════════════════════════════════════
 
@@ -91,10 +109,10 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
     SDR captures *distributivity*: "The boys each saw a movie" distributes
     over atomic agents.
 
-    Genuine instance of `SR` with `γ := fun yβ _ => Atom yβ`. -/
+    Genuine instance of `SR` with `γ := AtomicGranularity`. -/
 def SDR {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) (x : α) : Prop :=
-  SR θ (fun yβ _ => Atom yβ) P x
+  SR θ AtomicGranularity P x
 
 /-- Universal SDR: every P-entity has SDR along θ. -/
 def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
