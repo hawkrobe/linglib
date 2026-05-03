@@ -13,14 +13,14 @@ Empirical data from @cite{izvorski-1997}. In Bulgarian, Turkish, Norwegian,
 and other languages, present perfect morphology doubles as an indirect evidential
 (the "Perfect of Evidentiality" = PE). The paper's central proposal (8):
 
-> The indirect evidential Ev is an epistemic modal which:
+> The indirect evidential Event is an epistemic modal which:
 > (i) has universal quantificational force,
 > (ii) has a presupposition that the evidence for the core proposition is indirect.
 
 The key empirical contrasts establishing (8):
 
-1. **Ev vs. must** ((10)–(13)): Both are epistemic necessity modals (same □
-   force), but Ev restricts the modal base to *indirect* evidence only. Must
+1. **Event vs. must** ((10)–(13)): Both are epistemic necessity modals (same □
+   force), but Event restricts the modal base to *indirect* evidence only. Must
    allows any epistemic base. The difference is in the *base*, not the force.
 2. **Presupposition diagnostics** ((14)–(16)): The indirect-evidence requirement
    is a *presupposition* (not an implicature) — it resists cancellation (14),
@@ -42,25 +42,25 @@ inductive PELanguage where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Ev vs. Must: Same Force, Different Base
+-- § 2. Event vs. Must: Same Force, Different Base
 -- ════════════════════════════════════════════════════
 
 /-- Binary evidence basis: Izvorski's central contrast variable.
-    The paper argues that Ev and must have the same quantificational
+    The paper argues that Event and must have the same quantificational
     force (□) but differ in whether the modal base is restricted to
     indirect evidence only. -/
 inductive EvidenceBasis where
   | direct | indirect
   deriving DecidableEq, Repr
 
-/-- A data point from the Ev/must paradigm.
+/-- A data point from the Event/must paradigm.
     The paper's argument (§3, pp. 227–229):
-    - (10)–(11): With indirect evidence, both Ev and must are felicitous
-    - (12)–(13): Ev + "I have no evidence" → contradictory;
+    - (10)–(11): With indirect evidence, both Event and must are felicitous
+    - (12)–(13): Event + "I have no evidence" → contradictory;
       must + "I have no evidence" → acceptable (must doesn't presuppose
       indirect evidence)
     - Prose (p. 228): With direct evidence (speaker witnessed the event),
-      Ev is infelicitous; must is fine -/
+      Event is infelicitous; must is fine -/
 structure EvMustDatum where
   evidenceBasis : EvidenceBasis
   evFelicitous : Bool
@@ -68,7 +68,7 @@ structure EvMustDatum where
   label : String
   deriving Repr, BEq
 
-/-- Indirect evidence context: both Ev and must felicitous.
+/-- Indirect evidence context: both Event and must felicitous.
     Paper (10)–(11): "Knowing how much John likes wine..." -/
 def evMust_indirect : EvMustDatum where
   evidenceBasis := .indirect
@@ -76,7 +76,7 @@ def evMust_indirect : EvMustDatum where
   mustFelicitous := true
   label := "(10)–(11): indirect evidence context"
 
-/-- Direct evidence context: Ev infelicitous, must fine.
+/-- Direct evidence context: Event infelicitous, must fine.
     Paper prose (p. 228): when speaker has direct evidence (witnessed
     the event), PE is infelicitous but must is acceptable. -/
 def evMust_direct : EvMustDatum where
@@ -85,7 +85,7 @@ def evMust_direct : EvMustDatum where
   mustFelicitous := true
   label := "prose p.228: direct evidence context"
 
-/-- All Ev/must data points. -/
+/-- All Event/must data points. -/
 def evMustData : List EvMustDatum := [evMust_indirect, evMust_direct]
 
 -- ════════════════════════════════════════════════════
@@ -110,7 +110,7 @@ structure PresupDiagnosticDatum where
 def presup_cancellation : PresupDiagnosticDatum where
   diagnostic := .cancellation
   evidentialSurvives := true
-  label := "(14): Ev + 'I witnessed it' → contradictory"
+  label := "(14): Event + 'I witnessed it' → contradictory"
 
 /-- (15): Projection under negation — "Apparently, Ivan didn't pass the exam."
     The indirect-evidence requirement projects past negation: the speaker
@@ -118,7 +118,7 @@ def presup_cancellation : PresupDiagnosticDatum where
 def presup_projection : PresupDiagnosticDatum where
   diagnostic := .projection
   evidentialSurvives := true
-  label := "(15): not-Ev-p still presupposes indirect evidence"
+  label := "(15): not-Event-p still presupposes indirect evidence"
 
 /-- (16): Denial targets assertion — "Ivan passed-PE the exam. That's not true."
     The denial targets p (Ivan passed), not the evidential content (that the
@@ -136,7 +136,7 @@ def presupData : List PresupDiagnosticDatum :=
 -- § 4. Generalizations
 -- ════════════════════════════════════════════════════
 
-/-- Ev requires indirect evidence: felicitous with indirect, infelicitous
+/-- Event requires indirect evidence: felicitous with indirect, infelicitous
     with direct. This captures (8ii). -/
 def evRequiresIndirect (d : EvMustDatum) : Bool :=
   match d.evidenceBasis with

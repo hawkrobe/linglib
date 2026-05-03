@@ -45,8 +45,8 @@ open Core.Time
     Activities (run, dance) and states (love, know) both satisfy this;
     accomplishments (build a sandcastle) and achievements (arrive) do
     not. -/
-abbrev IsAtelic {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (P : Ev Time → Prop) : Prop :=
+abbrev IsAtelic {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (P : Event Time → Prop) : Prop :=
   SSR_univ P
 
 -- ════════════════════════════════════════════════════
@@ -69,9 +69,9 @@ abbrev IsAtelic {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     Champollion's parameter space (τ, atomic) but differ in
     universal-quantification structure. They are not directly
     interderivable without auxiliary witness-existence assumptions. -/
-abbrev IsStative {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (P : Ev Time → Prop) : Prop :=
-  SR_univ (fun e : Ev Time => e.runtime)
+abbrev IsStative {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (P : Event Time → Prop) : Prop :=
+  SR_univ (fun e : Event Time => e.runtime)
     (fun inner _outer => inner.IsPoint) P
 
 -- ════════════════════════════════════════════════════

@@ -7,10 +7,21 @@ predicates (see `ThematicRoles.lean`).
 
 This module provides:
 - Event sorts (action vs state, following @cite{bach-1986})
-- The `Ev` type: temporal individuals with sort
-- Bridges to `Verb.Aspect.Dynamicity` and `ViewpointAspect.Eventuality`
+- The `Event` type: temporal individuals with sort
 - Event mereology (part-of as partial order)
-- Event predicates (`EvPred`, `EvPredW`) and existential closure
+- Event predicates (`EvPred`, `EventPred`) and existential closure
+
+## Naming note (2026 terminology)
+
+`Event` is the unified type for linguistic events. The Bach 1981/1986
+distinction between "eventuality" (genus, sortless) and "event" (narrow
+sense, non-state) has largely collapsed in current practice — Champollion
+2017 and Zhao 2025 both use "event" generically with sort/aktionsart as
+an inherent attribute. The previous `Event Time` type (Klein/Pancheva,
+runtime-only, formerly in `Tense/Aspect/Core.lean`) is now subsumed by
+`Event Time`; tense-aspect code that doesn't care about sort simply
+doesn't reference `.sort`. Sortless construction sites default to `.action`
+with a docstring comment.
 
 Syntax-neutral: no commitment to Voice heads or specific composition
 principles. @cite{kratzer-1996} Event Identification deferred to optional
@@ -22,23 +33,21 @@ import Mathlib.Order.Basic
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Tactics.OntSort
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 namespace Semantics.Events
 
 open Core.Time
 open Features
-open Semantics.Tense.Aspect.Core
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Sort (@cite{bach-1986})
 -- ════════════════════════════════════════════════════
 
-/-- Binary ontological sort for eventualities.
+/-- Binary ontological sort for events.
     Actions involve change; states do not. -/
 inductive EventSort where
-  | action  -- dynamic eventualities (run, kick, build)
-  | state   -- stative eventualities (know, love, own)
+  | action  -- dynamic events (run, kick, build)
+  | state   -- stative events (know, love, own)
   deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════
@@ -46,8 +55,14 @@ inductive EventSort where
 -- ════════════════════════════════════════════════════
 
 /-- An event: a temporal individual with ontological sort.
-    Events have interval-valued runtimes, following @cite{krifka-1989}. -/
-@[ont_sort] structure Ev (Time : Type*) [LinearOrder Time] where
+    Events have interval-valued runtimes, following @cite{krifka-1989}.
+
+    Subsumes the historical `Event` distinction (Bach 1981/1986
+    "eventuality = genus / event = narrow sense"). The field has largely
+    let go of that distinction by 2026; "event" is the generic term in
+    @cite{champollion-2017}, @cite{zhao-2025}, @cite{krifka-1998}. Code
+    that doesn't care about sort simply doesn't reference `.sort`. -/
+@[ont_sort] structure Event (Time : Type*) [LinearOrder Time] where
   /-- The temporal extent of this event -/
   runtime : Interval Time
   /-- Ontological sort: action or state -/
@@ -55,19 +70,19 @@ inductive EventSort where
 
 /-- Temporal trace function τ(e) = the runtime interval of event e. -/
 @[simp]
-def Ev.τ {Time : Type*} [LinearOrder Time] (e : Ev Time) : Interval Time :=
+def Event.τ {Time : Type*} [LinearOrder Time] (e : Event Time) : Interval Time :=
   e.runtime
 
 -- ════════════════════════════════════════════════════
 -- § 3. Sort Predicates
 -- ════════════════════════════════════════════════════
 
-/-- Is this event an action (dynamic eventuality)? -/
-def Ev.isAction {Time : Type*} [LinearOrder Time] (e : Ev Time) : Bool :=
+/-- Is this event an action (dynamic event)? -/
+def Event.isAction {Time : Type*} [LinearOrder Time] (e : Event Time) : Bool :=
   e.sort == .action
 
-/-- Is this event a state (stative eventuality)? -/
-def Ev.isState {Time : Type*} [LinearOrder Time] (e : Ev Time) : Bool :=
+/-- Is this event a state (stative event)? -/
+def Event.isState {Time : Type*} [LinearOrder Time] (e : Event Time) : Bool :=
   e.sort == .state
 
 /-- Every event is either an action or a state (exhaustivity). -/
@@ -79,15 +94,15 @@ theorem sort_exclusive : EventSort.action ≠ EventSort.state := by
   decide
 
 /-- `isAction` and `isState` are complementary. -/
-theorem isAction_iff_not_isState {Time : Type*} [LinearOrder Time] (e : Ev Time) :
+theorem isAction_iff_not_isState {Time : Type*} [LinearOrder Time] (e : Event Time) :
     e.isAction = true ↔ e.isState = false := by
-  simp only [Ev.isAction, Ev.isState]
+  simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
 /-- `isState` and `isAction` are complementary. -/
-theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Ev Time) :
+theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Event Time) :
     e.isState = true ↔ e.isAction = false := by
-  simp only [Ev.isAction, Ev.isState]
+  simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
 -- ════════════════════════════════════════════════════
@@ -123,45 +138,14 @@ theorem vendlerClass_sort_agrees (c : VendlerClass) :
   cases c <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Eventuality Bridge (Ev ↔ ViewpointAspect.Eventuality)
--- ════════════════════════════════════════════════════
-
-/-- Forget the sort: project Ev down to Eventuality. -/
-def Ev.toEventuality {Time : Type*} [LinearOrder Time] (e : Ev Time) : Eventuality Time :=
-  ⟨e.runtime⟩
-
-/-- Lift an Eventuality to Ev with a given sort. -/
-def eventualityToEv {Time : Type*} [LinearOrder Time]
-    (ev : Eventuality Time) (s : EventSort) : Ev Time :=
-  ⟨ev.runtime, s⟩
-
-/-- Roundtrip: toEventuality ∘ eventualityToEv forgets the sort
-    (we recover the Eventuality). -/
-theorem toEv_toEventuality_roundtrip {Time : Type*} [LinearOrder Time]
-    (ev : Eventuality Time) (s : EventSort) :
-    (eventualityToEv ev s).toEventuality = ev := by
-  cases ev; rfl
-
-/-- The temporal trace is preserved by the Ev → Eventuality projection. -/
-theorem toEventuality_τ {Time : Type*} [LinearOrder Time] (e : Ev Time) :
-    e.toEventuality.τ = e.τ := by
-  cases e; rfl
-
-/-- Lift an EventPred (over Eventuality) to a world-indexed predicate over Ev,
-    ignoring the sort. -/
-def EventPred.liftToEv {W Time : Type*} [LinearOrder Time]
-    (P : EventPred W Time) : W → Ev Time → Prop :=
-  λ w e => P w e.toEventuality
-
--- ════════════════════════════════════════════════════
--- § 6. Event Mereology
+-- § 5. Event Mereology
 -- ════════════════════════════════════════════════════
 
 /-- Axioms for event part-of structure.
     Part-of is a partial order on events with temporal and sort constraints. -/
 class EventMereology (Time : Type*) [LinearOrder Time] where
   /-- e₁ is a part of e₂ -/
-  partOf : Ev Time → Ev Time → Prop
+  partOf : Event Time → Event Time → Prop
   /-- Part-of is reflexive -/
   refl : ∀ e, partOf e e
   /-- Part-of is antisymmetric -/
@@ -177,40 +161,43 @@ class EventMereology (Time : Type*) [LinearOrder Time] where
 
 /-- Event mereology induces a Preorder. -/
 instance eventPreorder (Time : Type*) [LinearOrder Time]
-    [m : EventMereology Time] : Preorder (Ev Time) where
+    [m : EventMereology Time] : Preorder (Event Time) where
   le := m.partOf
   le_refl := m.refl
   le_trans := m.trans
 
 -- ════════════════════════════════════════════════════
--- § 7. Event Predicates (Neo-Davidsonian verb types)
+-- § 6. Event Predicates (Neo-Davidsonian verb types)
 -- ════════════════════════════════════════════════════
 
 /-- A predicate over events (not world-indexed). -/
-abbrev EvPred (Time : Type*) [LinearOrder Time] := Ev Time → Prop
+abbrev EvPred (Time : Type*) [LinearOrder Time] := Event Time → Prop
 
-/-- A world-indexed predicate over events. -/
-abbrev EvPredW (W Time : Type*) [LinearOrder Time] := W → Ev Time → Prop
+/-- A world-indexed predicate over events. The standard type for verb /
+    VP denotations in tense-aspect composition. Moved here from
+    `Tense/Aspect/Core.lean` (where it was the canonical predicate type
+    for tense-aspect operators) as part of the event-type unification. -/
+abbrev EventPred (W Time : Type*) [LinearOrder Time] := W → Event Time → Prop
 
 /-- Existential closure: ∃e. P(e).
     The fundamental step from event semantics to truth conditions. -/
 def existsClosure {Time : Type*} [LinearOrder Time] (P : EvPred Time) : Prop :=
-  ∃ e : Ev Time, P e
+  ∃ e : Event Time, P e
 
 /-- World-indexed existential closure: λw. ∃e. P(w)(e). -/
-def existsClosureW {W Time : Type*} [LinearOrder Time] (P : EvPredW W Time) : W → Prop :=
-  λ w => ∃ e : Ev Time, P w e
+def existsClosureW {W Time : Type*} [LinearOrder Time] (P : EventPred W Time) : W → Prop :=
+  λ w => ∃ e : Event Time, P w e
 
 -- ════════════════════════════════════════════════════
--- § 8. Concrete Examples (ℤ-time events)
+-- § 7. Concrete Examples (ℤ-time events)
 -- ════════════════════════════════════════════════════
 
 /-- Example: a running event from time 1 to 5. -/
-def exampleRun : Ev ℤ :=
+def exampleRun : Event ℤ :=
   ⟨⟨1, 5, by omega⟩, .action⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Manners (@cite{liefke-2024} §4.3)
+-- § 8. Manners (@cite{liefke-2024} §4.3)
 -- ════════════════════════════════════════════════════
 
 /-- A manner: the "how" of an event, individuated as an equivalence class
@@ -231,21 +218,21 @@ def exampleRun : Ev ℤ :=
     - Liefke, K. (2024). Natural Language Ontology, §4.3. -/
 @[ont_sort] structure Manner (Time : Type*) [LinearOrder Time] where
   /-- The characteristic predicate: which events exhibit this manner -/
-  exhibits : Ev Time → Prop
+  exhibits : Event Time → Prop
 
 /-- The manner of an event under a similarity criterion.
     `mannerOf sim e` gives the manner class of `e` under `sim`. -/
 def mannerOf {Time : Type*} [LinearOrder Time]
-    (sim : Ev Time → Ev Time → Prop) (e : Ev Time) : Manner Time :=
+    (sim : Event Time → Event Time → Prop) (e : Event Time) : Manner Time :=
   ⟨sim e⟩
 
 /-- Two events share a manner iff both satisfy the manner predicate. -/
 def Manner.sharedBy {Time : Type*} [LinearOrder Time]
-    (m : Manner Time) (e₁ e₂ : Ev Time) : Prop :=
+    (m : Manner Time) (e₁ e₂ : Event Time) : Prop :=
   m.exhibits e₁ ∧ m.exhibits e₂
 
 /-- Example: a knowing state from time 0 to 10. -/
-def exampleKnow : Ev ℤ :=
+def exampleKnow : Event ℤ :=
   ⟨⟨0, 10, by omega⟩, .state⟩
 
 /-- The run event is an action. -/
@@ -270,10 +257,5 @@ theorem exampleRun_finish : exampleRun.τ.finish = 5 := rfl
 theorem exampleKnow_runtime :
     exampleKnow.τ.start = 0 ∧ exampleKnow.τ.finish = 10 :=
   ⟨rfl, rfl⟩
-
-/-- Projecting the run event to Eventuality preserves the runtime. -/
-theorem exampleRun_toEventuality_τ :
-    exampleRun.toEventuality.τ = exampleRun.τ :=
-  toEventuality_τ exampleRun
 
 end Semantics.Events

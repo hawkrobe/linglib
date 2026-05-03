@@ -37,6 +37,7 @@ namespace Condoravdi2002
 
 open Core.Time
 open Features (Dynamicity)
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Modal.AtOperator
 open Core.Modality.HistoricalAlternatives

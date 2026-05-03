@@ -18,9 +18,9 @@ are consumed by:
 
 ## Sections
 
-1. `Ev.adjacent` — event adjacency via runtime-meet
-2. `Ev.precedes` — event temporal precedence via `Interval.isBefore`
-3. `Ev.adjacent_symm` — adjacency is symmetric
+1. `Event.adjacent` — event adjacency via runtime-meet
+2. `Event.precedes` — event temporal precedence via `Interval.isBefore`
+3. `Event.adjacent_symm` — adjacency is symmetric
 
 -/
 
@@ -29,24 +29,24 @@ namespace Semantics.Events
 /-- Two events are temporally adjacent (`∞_E` in @cite{krifka-1998}'s
     notation) if their runtime intervals meet: one's finish equals
     the other's start. The natural concrete instance of K98's
-    abstract event-adjacency primitive (eq. 14) on the `Ev Time`
+    abstract event-adjacency primitive (eq. 14) on the `Event Time`
     structure where events have `runtime : Interval Time`. -/
-def Ev.adjacent {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Ev Time) : Prop :=
+def Event.adjacent {Time : Type*} [LinearOrder Time]
+    (e1 e2 : Event Time) : Prop :=
   e1.runtime.finish = e2.runtime.start ∨ e2.runtime.finish = e1.runtime.start
 
 /-- Event temporal precedence (`«_E` in K98 §2.5): one event's runtime
     is entirely before the other's. Defined via `Interval.isBefore`
     from `Core/Time/Interval/Basic.lean`. -/
-def Ev.precedes {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Ev Time) : Prop :=
+def Event.precedes {Time : Type*} [LinearOrder Time]
+    (e1 e2 : Event Time) : Prop :=
   e1.runtime.isBefore e2.runtime
 
 /-- Event adjacency is symmetric. -/
-theorem Ev.adjacent_symm {Time : Type*} [LinearOrder Time]
-    (e1 e2 : Ev Time) :
+theorem Event.adjacent_symm {Time : Type*} [LinearOrder Time]
+    (e1 e2 : Event Time) :
     e1.adjacent e2 ↔ e2.adjacent e1 := by
-  unfold Ev.adjacent
+  unfold Event.adjacent
   exact ⟨Or.symm, Or.symm⟩
 
 end Semantics.Events

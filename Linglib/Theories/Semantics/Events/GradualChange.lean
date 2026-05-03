@@ -133,7 +133,7 @@ theorem GRADSquare.qua_pullback_ev {α β γ : Type*}
 -- ════════════════════════════════════════════════════
 
 /-! Specialization of `GRADSquare` to the canonical Krifka event
-    structure: `Entity →θ Ev Time →runtime Interval Time →len ℚ`.
+    structure: `Entity →θ Event Time →runtime Interval Time →len ℚ`.
     Provides a constructor for `GRADSquare` from concrete extensivity
     + proportionality witnesses on the duration measure derived from
     runtime + interval-length. -/
@@ -144,16 +144,16 @@ open Core.Time
 /-- `durationMeasure len = len ∘ (fun e => e.runtime)` by definition. -/
 theorem durationMeasure_eq_comp {Time : Type*} [LinearOrder Time]
     (len : Interval Time → ℚ) :
-    durationMeasure len = len ∘ (fun (e : Ev Time) => e.runtime) := rfl
+    durationMeasure len = len ∘ (fun (e : Event Time) => e.runtime) := rfl
 
 /-- Constructor for the GRAD square in the Krifka event structure case:
-    `Entity →θ Ev Time →runtime Interval Time →len ℚ`. -/
+    `Entity →θ Event Time →runtime Interval Time →len ℚ`. -/
 def krifkaGRADSquare
     {Entity Time : Type*}
-    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (θ : Entity → Ev Time → Prop) (μ_obj : Entity → ℚ) (len : Interval Time → ℚ)
+    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (θ : Entity → Event Time → Prop) (μ_obj : Entity → ℚ) (len : Interval Time → ℚ)
     (hSinc : SINC θ) (hObjExt : ExtMeasure Entity μ_obj)
-    (hEvExt : ExtMeasure (Ev Time) (durationMeasure len))
+    (hEvExt : ExtMeasure (Event Time) (durationMeasure len))
     (hProp : MeasureProportional θ μ_obj (durationMeasure len)) :
     GRADSquare θ μ_obj (fun e => e.runtime) len :=
   { laxComm := hProp
@@ -165,10 +165,10 @@ def krifkaGRADSquare
     `len(e.runtime) = rate * μ_obj(x)` for θ-pairs. -/
 theorem krifka_lax_commutativity
     {Entity Time : Type*}
-    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {θ : Entity → Ev Time → Prop} {μ_obj : Entity → ℚ} {len : Interval Time → ℚ}
+    [SemilatticeSup Entity] [LinearOrder Time] [SemilatticeSup (Event Time)]
+    {θ : Entity → Event Time → Prop} {μ_obj : Entity → ℚ} {len : Interval Time → ℚ}
     (sq : GRADSquare θ μ_obj (fun e => e.runtime) len)
-    {x : Entity} {e : Ev Time} (hθ : θ x e) :
+    {x : Entity} {e : Event Time} (hθ : θ x e) :
     len e.runtime = sq.laxComm.rate * μ_obj x :=
   sq.laxCommutativity hθ
 

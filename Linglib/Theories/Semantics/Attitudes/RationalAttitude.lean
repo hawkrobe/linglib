@@ -37,7 +37,7 @@ The parameter P is determined by complement size:
 
 namespace Semantics.Attitudes.RationalAttitude
 
-open Semantics.Events (Ev EvPredW existsClosureW EventSort)
+open Semantics.Events (Event EventPred existsClosureW EventSort)
 open Minimalist (ComplementSize fValue)
 
 -- ════════════════════════════════════════════════════════════════
@@ -115,28 +115,28 @@ abbrev closure {W Time : Type*} [LinearOrder Time] := @existsClosureW W Time _
     - Sub-CP (*a*): P is an event predicate (intention) -/
 structure CausativeAttitude (E Time : Type*) [LinearOrder Time] where
   /-- The verb's descriptive predicate (e.g., Convince) -/
-  verbPred : Ev Time → Prop
+  verbPred : Event Time → Prop
   /-- The agent of the matrix event -/
   agent : E
   /-- The patient/experiencer who enters the attitude -/
   experiencer : E
   /-- Agent thematic role -/
-  isAgent : Ev Time → E → Prop
+  isAgent : Event Time → E → Prop
   /-- Patient thematic role -/
-  isPatient : Ev Time → E → Prop
+  isPatient : Event Time → E → Prop
   /-- Experiencer thematic role (on the attitude event) -/
-  isExperiencer : Ev Time → E → Prop
+  isExperiencer : Event Time → E → Prop
   /-- CAUSE(e, e'): the matrix event e causally brings about the attitude
       state e'. Abstract relation; instantiated per verb/scenario. -/
-  cause : Ev Time → Ev Time → Prop
+  cause : Event Time → Event Time → Prop
 
 /-- Semantics of a causative attitude verb applied to complement P.
 
     Returns a proposition existentially closed over both the matrix
     event and the resulting attitude event. -/
 def CausativeAttitude.denote {E Time : Type*} [LinearOrder Time]
-    (v : CausativeAttitude E Time) (P : Ev Time → Prop) : Prop :=
-  ∃ e e' : Ev Time,
+    (v : CausativeAttitude E Time) (P : Event Time → Prop) : Prop :=
+  ∃ e e' : Event Time,
     v.verbPred e ∧
     v.isAgent e v.agent ∧
     v.isPatient e v.experiencer ∧
@@ -148,13 +148,13 @@ def CausativeAttitude.denote {E Time : Type*} [LinearOrder Time]
 /-- Belief reading: CLOSURE applies to the embedded VP, yielding a proposition.
     The attitude is evaluated via CONTENT (doxastic alternatives). -/
 def CausativeAttitude.beliefReading {E Time : Type*} [LinearOrder Time]
-    (v : CausativeAttitude E Time) (embeddedVP : Ev Time → Prop) : Prop :=
-  v.denote (λ _ => ∃ e'' : Ev Time, embeddedVP e'')
+    (v : CausativeAttitude E Time) (embeddedVP : Event Time → Prop) : Prop :=
+  v.denote (λ _ => ∃ e'' : Event Time, embeddedVP e'')
 
 /-- Intention reading: no CLOSURE — the embedded VP is applied directly as an
     event predicate. The attitude is evaluated via INERTIA. -/
 def CausativeAttitude.intentionReading {E Time : Type*} [LinearOrder Time]
-    (v : CausativeAttitude E Time) (embeddedVP : Ev Time → Prop) : Prop :=
+    (v : CausativeAttitude E Time) (embeddedVP : Event Time → Prop) : Prop :=
   v.denote embeddedVP
 
 /-- Both readings are instances of the same `denote` applied to different P.
@@ -162,7 +162,7 @@ def CausativeAttitude.intentionReading {E Time : Type*} [LinearOrder Time]
     denotation; the belief/intention split is compositional, arising from
     complement size (CP triggers CLOSURE, sub-CP does not). -/
 theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LinearOrder Time]
-    (v : CausativeAttitude E Time) (VP : Ev Time → Prop) :
+    (v : CausativeAttitude E Time) (VP : Event Time → Prop) :
     v.beliefReading VP = v.denote (fun _ => ∃ e, VP e) ∧
     v.intentionReading VP = v.denote VP :=
   ⟨rfl, rfl⟩
@@ -185,7 +185,7 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LinearOr
     but not "in the right way" — the causal chain was deviant. CAUSE*
     would not hold, correctly predicting that Betty did not carry out
     her intention. -/
-abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Ev Time → Ev Time → W → Prop
+abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Event Time → Event Time → W → Prop
 
 /-- Semantics for intention reports with causal self-reference
     (@cite{grano-2024}, version 4, (79)).
@@ -195,23 +195,23 @@ abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Ev Time → Ev Time → 
         ∧ ∀⟨w',x⟩ ∈ CONTENT(s):
             ∃e. CAUSE*(s,e,w') ∧ P(x,w',e)
 
-    The complement `P` has type `(E → W → Ev Time → Prop)` — an event
+    The complement `P` has type `(E → W → Event Time → Prop)` — an event
     predicate with an open eventuality argument. This is the formal
     correlate of @cite{grano-2024}'s Premise 3: IND would existentially
     close the event argument, yielding `(E → W → Prop)`, which is
     type-incompatible with CAUSE*. The type system enforces that
     intention reports require eventuality abstraction. -/
 def intentionHolds {E W Time : Type*} [LinearOrder Time]
-    (isIntention : Ev Time → W → Prop)
-    (holder : E → Ev Time → W → Prop)
-    (content : Ev Time → Set (W × E))
+    (isIntention : Event Time → W → Prop)
+    (holder : E → Event Time → W → Prop)
+    (content : Event Time → Set (W × E))
     (causeStar : CauseStar W Time)
-    (agent : E) (P : E → W → Ev Time → Prop) (w : W) : Prop :=
-  ∃ s : Ev Time,
+    (agent : E) (P : E → W → Event Time → Prop) (w : W) : Prop :=
+  ∃ s : Event Time,
     s.sort = .state ∧
     isIntention s w ∧
     holder agent s w ∧
-    ∀ p ∈ content s, ∃ e : Ev Time, causeStar s e p.1 ∧ P p.2 p.1 e
+    ∀ p ∈ content s, ∃ e : Event Time, causeStar s e p.1 ∧ P p.2 p.1 e
 
 /-- Plain belief reports do NOT require CAUSE*: the complement is a
     proposition (event argument already closed by IND), so there is no
@@ -221,7 +221,7 @@ def intentionHolds {E W Time : Type*} [LinearOrder Time]
       ∀w' ∈ DOX(k,w): P(w')
 
     The contrast in complement type — `(W → Prop)` for belief vs
-    `(E → W → Ev Time → Prop)` for intention — is what makes 'believe'
+    `(E → W → Event Time → Prop)` for intention — is what makes 'believe'
     indicative-selecting and 'intend' subjunctive-selecting. -/
 def beliefHolds {E W : Type*}
     (dox : E → W → Set W)
@@ -231,17 +231,17 @@ def beliefHolds {E W : Type*}
 /-! ### Premise 3: Type-Level Enforcement (@cite{grano-2024}, §4.3)
 
 Intention reports require eventuality abstraction: `intentionHolds`
-demands a complement with an open event argument (`P : E → W → Ev Time → Prop`),
+demands a complement with an open event argument (`P : E → W → Event Time → Prop`),
 while `beliefHolds` takes a closed proposition (`P : W → Prop`).
 
 Indicative mood existentially closes the event argument ((87)),
 yielding `W → Prop`, which is type-incompatible with `intentionHolds`.
 Only subjunctive/nonfinite clauses leave the event argument open,
-enabling the `E → W → Ev Time → Prop` type that CAUSE* requires.
+enabling the `E → W → Event Time → Prop` type that CAUSE* requires.
 
 The distinction is enforced by construction — no theorem is needed
 because you literally cannot pass a `W → Prop` where
-`E → W → Ev Time → Prop` is expected. The Lean type checker is the proof.
+`E → W → Event Time → Prop` is expected. The Lean type checker is the proof.
 -/
 
 -- ════════════════════════════════════════════════════════════════

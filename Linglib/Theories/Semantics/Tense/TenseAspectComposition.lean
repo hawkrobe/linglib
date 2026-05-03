@@ -41,6 +41,7 @@ namespace Semantics.Tense.TenseAspectComposition
 open Core (WorldTimeIndex)
 
 open Core.Time
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -108,7 +109,7 @@ def pastPerfProg (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
 /-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
 theorem simplePresent_unfold (V : EventPred W Time) (tc : Time) (w : W) :
     simplePresent V tc w ↔
-    ∃ e : Eventuality Time, (Interval.point tc).properSubinterval e.τ ∧ V w e := by
+    ∃ e : Event Time, (Interval.point tc).properSubinterval e.τ ∧ V w e := by
   rfl
 
 /-- Present perfect progressive with XN unfolds to K&S eq. 39b:
@@ -235,14 +236,15 @@ theorem earlier_lb_not_weaker_impf :
       PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ := by
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
-  let e₀ : Eventuality ℤ := ⟨⟨1, 5, by omega⟩⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₀ : Event ℤ := ⟨⟨1, 5, by omega⟩, .action⟩
   let V : EventPred Unit ℤ := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
   have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by
     refine ⟨⟨2, 4, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
     dsimp only [e₀]
-    simp only [Interval.properSubinterval, Interval.subinterval, Eventuality.τ]
+    simp only [Interval.properSubinterval, Interval.subinterval, Event.τ]
     omega
   -- Conclusion: PERF_XN(IMPF(V), {0})((), 4) — should be false
   have concl := hall V 0 2 4 () (by omega) prem
@@ -255,7 +257,7 @@ theorem earlier_lb_not_weaker_impf :
   dsimp only [V] at hV
   subst hV
   dsimp only [e₀] at hS1
-  simp only [LB, Eventuality.τ] at hLB hS1
+  simp only [LB, Event.τ] at hLB hS1
   omega
 
 end Semantics.Tense.TenseAspectComposition

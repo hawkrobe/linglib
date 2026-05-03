@@ -4,7 +4,7 @@
 Neo-Davidsonian thematic roles as two-place predicates relating entities
 to events. This module provides:
 
-- `ThematicRel`: the type `Entity → Ev Time → Prop`
+- `ThematicRel`: the type `Entity → Event Time → Prop`
 - `ThematicFrame`: a model's assignment of role relations
 - Bridge from `ThetaRole` enum (Fragment layer) to `ThematicFrame` fields
 - `ThematicAxioms`: Aktionsart selection + uniqueness constraints
@@ -31,7 +31,7 @@ open Core.Time
     The core neo-Davidsonian type.
     Agent(j, e) means "j is the agent of event e". -/
 abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
-  Entity → Ev Time → Prop
+  Entity → Event Time → Prop
 
 -- ════════════════════════════════════════════════════
 -- § 2. ThematicFrame
@@ -112,16 +112,16 @@ theorem stimulus_toRel : ThetaRole.toRel .stimulus frame = frame.stimulus := rfl
 class ThematicAxioms (Entity Time : Type*) [LinearOrder Time]
     (frame : ThematicFrame Entity Time) where
   /-- Agents only participate in actions (dynamic events). -/
-  agent_selects_action : ∀ (x : Entity) (e : Ev Time),
+  agent_selects_action : ∀ (x : Entity) (e : Event Time),
     frame.agent x e → e.sort = .action
   /-- Holders only participate in states. -/
-  holder_selects_state : ∀ (x : Entity) (e : Ev Time),
+  holder_selects_state : ∀ (x : Entity) (e : Event Time),
     frame.holder x e → e.sort = .state
   /-- Each event has at most one agent. -/
-  agent_unique : ∀ (x y : Entity) (e : Ev Time),
+  agent_unique : ∀ (x y : Entity) (e : Event Time),
     frame.agent x e → frame.agent y e → x = y
   /-- Each event has at most one patient. -/
-  patient_unique : ∀ (x y : Entity) (e : Ev Time),
+  patient_unique : ∀ (x y : Entity) (e : Event Time),
     frame.patient x e → frame.patient y e → x = y
 
 -- ════════════════════════════════════════════════════
@@ -132,7 +132,7 @@ class ThematicAxioms (Entity Time : Type*) [LinearOrder Time]
     since agents require actions and holders require states. -/
 theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time} [ax : ThematicAxioms Entity Time frame]
-    (x : Entity) (e : Ev Time) :
+    (x : Entity) (e : Event Time) :
     frame.agent x e → frame.holder x e → False := by
   intro hAgent hHolder
   have hAction := ax.agent_selects_action x e hAgent
@@ -152,21 +152,21 @@ theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
 def transitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj obj : Entity) : Prop :=
-  ∃ e : Ev Time, V e ∧ frame.agent subj e ∧ frame.patient obj e
+  ∃ e : Event Time, V e ∧ frame.agent subj e ∧ frame.patient obj e
 
 /-- Neo-Davidsonian logical form for an intransitive sentence:
     "x V-ed" ↦ ∃e. V(e) ∧ Agent(x, e) -/
 def intransitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj : Entity) : Prop :=
-  ∃ e : Ev Time, V e ∧ frame.agent subj e
+  ∃ e : Event Time, V e ∧ frame.agent subj e
 
 /-- Neo-Davidsonian logical form for a ditransitive sentence:
     "x V-ed y z" ↦ ∃e. V(e) ∧ Agent(x, e) ∧ Theme(y, e) ∧ Goal(z, e) -/
 def ditransitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj directObj indirectObj : Entity) : Prop :=
-  ∃ e : Ev Time, V e ∧ frame.agent subj e ∧
+  ∃ e : Event Time, V e ∧ frame.agent subj e ∧
     frame.theme directObj e ∧ frame.goal indirectObj e
 
 -- ════════════════════════════════════════════════════
@@ -219,7 +219,7 @@ theorem modify_assoc {Time : Type*} [LinearOrder Time]
 def stativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) : Prop :=
-  ∃ s : Ev Time, P s ∧ frame.holder x s
+  ∃ s : Event Time, P s ∧ frame.holder x s
 
 /-- Modified stative logical form:
     "x is happy in the morning" ↦ ∃s. P(s) ∧ Holder(x, s) ∧ M(s)
@@ -231,7 +231,7 @@ def stativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
 def modifiedStativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) (M : EventModifier Time) : Prop :=
-  ∃ s : Ev Time, P s ∧ frame.holder x s ∧ M s
+  ∃ s : Event Time, P s ∧ frame.holder x s ∧ M s
 
 /-- Modified stative = stative of modified predicate (Predicate Modification):
     `modifiedStativeLogicalForm P frame x M ↔ stativeLogicalForm (modify P M) frame x`

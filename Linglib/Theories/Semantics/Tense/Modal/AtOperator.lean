@@ -27,6 +27,7 @@ namespace Semantics.Tense.Modal.AtOperator
 
 open Core.Time
 open Features (Dynamicity)
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -37,13 +38,13 @@ variable {W Time : Type*} [LinearOrder Time]
     ∃e[P(w)(e) ∧ τ(e) ⊆ t]. Events must be fully contained in the
     reference interval. -/
 def atEvent (P : EventPred W Time) (w : W) (t : Interval Time) : Prop :=
-  ∃ e : Eventuality Time, P w e ∧ e.runtime.subinterval t
+  ∃ e : Event Time, P w e ∧ e.runtime.subinterval t
 
 /-- Temporal instantiation of a stative predicate at interval `t`:
     ∃e[P(w)(e) ∧ τ(e) ∘ t]. States need only overlap the reference
     interval. -/
 def atState (P : EventPred W Time) (w : W) (t : Interval Time) : Prop :=
-  ∃ e : Eventuality Time, P w e ∧ e.runtime.overlaps t
+  ∃ e : Event Time, P w e ∧ e.runtime.overlaps t
 
 /-- @cite{condoravdi-2002} [19]: unified AT relation dispatching on
     eventuality sort.
@@ -80,12 +81,12 @@ theorem atState_of_atEvent (P : EventPred W Time) (w : W)
 /-- Event instantiated in the future of `t`: the event starts at or
     after `t`. Corresponds to AT([t,_), w, P) for eventive P. -/
 def atEventForward (P : EventPred W Time) (w : W) (t : Time) : Prop :=
-  ∃ e : Eventuality Time, P w e ∧ t ≤ e.runtime.start
+  ∃ e : Event Time, P w e ∧ t ≤ e.runtime.start
 
 /-- State instantiated through `t`: the state persists at or past `t`.
     Corresponds to AT([t,_), w, P) for stative P. -/
 def atStateForward (P : EventPred W Time) (w : W) (t : Time) : Prop :=
-  ∃ e : Eventuality Time, P w e ∧ t ≤ e.runtime.finish
+  ∃ e : Event Time, P w e ∧ t ≤ e.runtime.finish
 
 /-- Forward AT, dispatching on sort. -/
 def atForward (sort : Dynamicity) (P : EventPred W Time) (w : W)

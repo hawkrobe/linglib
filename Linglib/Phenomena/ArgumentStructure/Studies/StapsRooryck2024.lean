@@ -72,7 +72,7 @@ open Minimalist
     domain types, constrained by the syntactic/semantic context. -/
 inductive SemDomain where
   | e  -- Entity: concrete individuals
-  | s  -- Eventuality: situations or events
+  | s  -- Event: situations or events
   | f  -- Force: causal forces (@cite{copley-harley-2022})
   deriving DecidableEq, Repr
 

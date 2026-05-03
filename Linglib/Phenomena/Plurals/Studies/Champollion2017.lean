@@ -25,7 +25,7 @@ for that opposition; this file targets the `IsRoleDistributive` and
 
 The Fragment-side `agentSDR`/`themeSDR` Bool fields below are per-verb
 typology tags; the substrate-side proof obligation `IsRoleDistributive
-agentOf seePred` requires a verb predicate denotation `Ev Time → Prop`,
+agentOf seePred` requires a verb predicate denotation `Event Time → Prop`,
 which Fragment files don't currently provide. Bridging tags to
 substrate predicates is theory-hub denotation discipline (CLAUDE.md)
 and is follow-up work; this file demonstrates the API at the *naming*
@@ -176,7 +176,7 @@ theorem verb_vendler_for_sdr :
     We verify this through the Vendler classification of fragment verbs.
     The Bool-valued `predictsIsAtelic` below is the per-class typology
     prediction; bridging to the substrate-side `IsAtelic` predicate on
-    a verb's denotation requires a verb-side `Ev Time → Prop` denotation
+    a verb's denotation requires a verb-side `Event Time → Prop` denotation
     (theory-hub denotation discipline; follow-up work). -/
 
 /-- Per-verb prediction of `IsAtelic` (= SSR_univ) based on Vendler

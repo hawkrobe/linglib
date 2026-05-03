@@ -12,13 +12,16 @@ event property fixing the trace as `i`, it also applies to the property
 fixing the trace as any subinterval `i'` of `i`.
 
 Per the strata-theory unification (@cite{champollion-2017}), this is
-the quantifier-level lift of stratified reference at point-interval
-granularity along the time dimension — i.e., the same algebraic content
-as Bennett-Partee 1972 strict subinterval property and
+the quantifier-level form of stratified reference at point-interval
+granularity along the time dimension — i.e., a sibling of the
+Bennett-Partee 1972 strict subinterval property and
 `Theories/Semantics/Events/StratifiedReference/Specializations.lean`'s
-`IsStativePred`. The bridge is `champollionLift` below: for any
-predicate `P`, `AtomDist τ (champollionLift P)` is provably equivalent
-to `IsStativePred P`.
+`IsStative`. The bridge `EvQuant.ofPred` below lifts an event
+predicate to an event quantifier; the three formulations
+(universal-witness, decomposition, quantifier-restriction) all live at
+the same parameter-space point but differ in universal-quantification
+structure and are not directly interderivable without explicit
+witness-existence assumptions.
 
 The `antiAtomDistLicensed` predicate is the licensing condition for
 Mandarin perfective particles in @cite{zhao-2025} (le, méi-yǒu).

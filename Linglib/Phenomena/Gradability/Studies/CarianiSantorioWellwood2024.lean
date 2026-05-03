@@ -411,8 +411,8 @@ theorem confidence_comparative_reduces
     {E : Type*} {Time : Type*} [LinearOrder Time]
     {frame : Semantics.Events.ThematicRoles.ThematicFrame E Time}
     {P : Semantics.Events.EvPred Time}
-    {μ : Semantics.Events.Ev Time → ℚ}
-    {a b : E} {sa sb : Semantics.Events.Ev Time}
+    {μ : Semantics.Events.Event Time → ℚ}
+    {a b : E} {sa sb : Semantics.Events.Event Time}
     (ha : frame.holder a sa ∧ P sa)
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)

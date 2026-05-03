@@ -72,7 +72,7 @@ inductive Complement
 
 /-- Selector: map a `Verb` enum to the corresponding model predicate. -/
 def Verb.toPred {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
-    (M : SpeechVerbs Time SemObj Perf Ω) : Verb → (Ev Time → Prop)
+    (M : SpeechVerbs Time SemObj Perf Ω) : Verb → (Event Time → Prop)
   | .say => M.SAY
   | .assert => M.ASSERT
   | .yell => M.YELL
@@ -103,7 +103,7 @@ def Verb.toPred {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceO
     if those constraints conflict with the complement's, no witness
     exists and the cell is infelicitous. -/
 def Felicitous {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
-    (M : SpeechVerbs Time SemObj Perf Ω) (V : Ev Time → Prop) :
+    (M : SpeechVerbs Time SemObj Perf Ω) (V : Event Time → Prop) :
     Complement → Prop
   | .quoteDecl =>
       ∃ e u, V e ∧ M.REENACT e u ∧ Ω.LINGMAT u ∧ Ω.Commits u
@@ -184,14 +184,14 @@ postulates hold by `rfl`. The discriminator for verb classes is
 witnesses and exclusions. -/
 
 /-- A canonical event for each verb class, indexed by `runtime.start`. -/
-def E (n : ℕ) : Ev ℕ := ⟨⟨n, n, le_refl _⟩, .action⟩
+def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .action⟩
 
 /-- The REENACT relation: per verb-class events have different REENACT
     targets, chosen so the postulates' universal quantifiers reduce to
     obvious tautologies (e.g., for SAY events, REENACT only relates to
     LINGMAT performances, so SAY's postulate `∀u, REENACT → LINGMAT`
     is vacuously true). -/
-def rudinReenact (e : Ev ℕ) (u : FBPerformance Bool) : Prop :=
+def rudinReenact (e : Event ℕ) (u : FBPerformance Bool) : Prop :=
   match e.runtime.start with
   | 0 => (fbOntology Bool).LINGMAT u                              -- say
   | 1 => (fbOntology Bool).LINGMAT u ∧ (fbOntology Bool).Commits u  -- assert
@@ -203,7 +203,7 @@ def rudinReenact (e : Ev ℕ) (u : FBPerformance Bool) : Prop :=
 /-- The CONTENT relation: SAY-class events take propositional (true)
     content; ASK-class events take question (false) content; other
     events have no propositional content. -/
-def rudinContent (e : Ev ℕ) (b : Bool) : Prop :=
+def rudinContent (e : Event ℕ) (b : Bool) : Prop :=
   match e.runtime.start with
   | 0 | 1 | 2 | 3 => b = true
   | 4 => b = false
@@ -211,15 +211,15 @@ def rudinContent (e : Ev ℕ) (b : Bool) : Prop :=
 
 /-- Verb predicates: defined as the postulate RHS so the iff-axioms
     hold by `rfl`. -/
-def rudinSay     (e : Ev ℕ) : Prop :=
+def rudinSay     (e : Event ℕ) : Prop :=
   ∀ u, rudinReenact e u → (fbOntology Bool).LINGMAT u
-def rudinAssert  (e : Ev ℕ) : Prop :=
+def rudinAssert  (e : Event ℕ) : Prop :=
   rudinSay e ∧ ∀ u, rudinReenact e u → (fbOntology Bool).Commits u
-def rudinAsk     (e : Ev ℕ) : Prop :=
+def rudinAsk     (e : Event ℕ) : Prop :=
   ∀ u, rudinReenact e u → (fbOntology Bool).RESP u
-def rudinYell    (e : Ev ℕ) : Prop :=
+def rudinYell    (e : Event ℕ) : Prop :=
   rudinSay e ∧ ∀ u, rudinReenact e u → (fbOntology Bool).Loud u
-def rudinWhisper (e : Ev ℕ) : Prop :=
+def rudinWhisper (e : Event ℕ) : Prop :=
   rudinSay e ∧ ∀ u, rudinReenact e u → (fbOntology Bool).Whispered u
 
 /-- A non-LINGMAT RESP performance: a non-linguistic, non-rising

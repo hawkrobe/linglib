@@ -64,26 +64,26 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
 -- ════════════════════════════════════════════════════
 
 /-- Classical Extensional Mereology for events: enriches `EventMereology`
-    with binary sum (⊔) via `SemilatticeSup (Ev Time)`.
+    with binary sum (⊔) via `SemilatticeSup (Event Time)`.
     @cite{champollion-2017} Ch. 2: event domain forms a join semilattice. -/
 class EventCEM (Time : Type*) [LinearOrder Time]
     extends EventMereology Time where
   /-- Events form a join semilattice (binary sum ⊕ exists). -/
-  evSemilatticeSup : SemilatticeSup (Ev Time)
+  evSemilatticeSup : SemilatticeSup (Event Time)
   /-- ≤ from SemilatticeSup agrees with partOf. -/
-  le_eq_partOf : ∀ (e₁ e₂ : Ev Time),
-    @LE.le (Ev Time) evSemilatticeSup.toLE e₁ e₂ ↔ partOf e₁ e₂
+  le_eq_partOf : ∀ (e₁ e₂ : Event Time),
+    @LE.le (Event Time) evSemilatticeSup.toLE e₁ e₂ ↔ partOf e₁ e₂
   /-- Intervals form a join semilattice (for τ homomorphism). -/
   intervalSemilatticeSup : SemilatticeSup (Interval Time)
   /-- τ is a sum homomorphism: τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
       @cite{champollion-2017} §2.5.1. -/
-  τ_hom : ∀ (e₁ e₂ : Ev Time),
+  τ_hom : ∀ (e₁ e₂ : Event Time),
     (@SemilatticeSup.sup _ evSemilatticeSup e₁ e₂).runtime =
      @SemilatticeSup.sup _ intervalSemilatticeSup e₁.runtime e₂.runtime
 
 -- Provide the SemilatticeSup instance from EventCEM
 noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
-    [cem : EventCEM Time] : SemilatticeSup (Ev Time) :=
+    [cem : EventCEM Time] : SemilatticeSup (Event Time) :=
   cem.evSemilatticeSup
 
 -- ════════════════════════════════════════════════════
@@ -96,7 +96,7 @@ noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
     @cite{champollion-2017} §3.2: activities and states are lexically cumulative. -/
 def LexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     (P : EvPred Time) : Prop :=
-  ∀ (e₁ e₂ : Ev Time), P e₁ → P e₂ →
+  ∀ (e₁ e₂ : Event Time), P e₁ → P e₂ →
     P (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂)
 
 /-- LexCum is exactly CUM specialized to EvPred.
@@ -116,20 +116,20 @@ theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     to its θ-role filler preserves ⊕.
     @cite{champollion-2017} §2.5.1 eq. 34–35: Agent(e₁ ⊕ e₂) = Agent(e₁) ⊕ Agent(e₂).
 
-    This is stated as: given a function `θ : Ev Time → Entity` extracting
+    This is stated as: given a function `θ : Event Time → Entity` extracting
     the unique role-filler, θ is a sum homomorphism. -/
 class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     [SemilatticeSup Entity] where
   /-- Agent extraction function (partial: only defined for events with agents). -/
-  agentOf : Ev Time → Entity
+  agentOf : Event Time → Entity
   /-- Agent extraction preserves ⊕. -/
   agent_hom : @IsSumHom _ _ cem.evSemilatticeSup _ agentOf
   /-- Patient extraction function. -/
-  patientOf : Ev Time → Entity
+  patientOf : Event Time → Entity
   /-- Patient extraction preserves ⊕. -/
   patient_hom : @IsSumHom _ _ cem.evSemilatticeSup _ patientOf
   /-- Theme extraction function. -/
-  themeOf : Ev Time → Entity
+  themeOf : Event Time → Entity
   /-- Theme extraction preserves ⊕. -/
   theme_hom : @IsSumHom _ _ cem.evSemilatticeSup _ themeOf
 
@@ -137,14 +137,14 @@ class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
 -- § 4. Trace Functions: τ, σ, θ as IsSumHom (@cite{champollion-2017} §2.5)
 -- ════════════════════════════════════════════════════
 
-/-! ### Trace functions = sum-homomorphisms on `Ev T`
+/-! ### Trace functions = sum-homomorphisms on `Event T`
 
 @cite{champollion-2017} §2.5 calls τ, σ, and the thematic-role extractors
 "trace functions" — functions that trace each event into a different
 domain (time, space, entities). The structural property they share is
 **sum-homomorphism**: the trace of a sum equals the sum of the traces.
 Linglib uses `Mereology.IsSumHom` as the unifying abstraction; any function
-`f : Ev Time → β` that admits an `IsSumHom` instance qualifies as a trace
+`f : Event Time → β` that admits an `IsSumHom` instance qualifies as a trace
 function for substrate purposes.
 
 The concrete trace functions in linglib are:
@@ -156,7 +156,7 @@ The concrete trace functions in linglib are:
 
 This unification means SR theorems (`StratifiedReference.lean`) can be
 stated dimension-polymorphically as
-`(d : Ev T → β) [IsSumHom d] → ...` and instantiate uniformly across all
+`(d : Event T → β) [IsSumHom d] → ...` and instantiate uniformly across all
 five trace functions, rather than per-trace.
 -/
 
@@ -164,7 +164,7 @@ five trace functions, rather than per-trace.
     τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
     @cite{champollion-2017} §2.5.1: the runtime function preserves sums. -/
 theorem τ_is_sum_hom (Time : Type*) [LinearOrder Time] [cem : EventCEM Time] :
-    ∀ (e₁ e₂ : Ev Time),
+    ∀ (e₁ e₂ : Event Time),
       (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂).runtime =
       @SemilatticeSup.sup _ cem.intervalSemilatticeSup e₁.runtime e₂.runtime :=
   cem.τ_hom

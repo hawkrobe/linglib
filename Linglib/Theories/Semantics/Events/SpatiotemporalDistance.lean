@@ -20,9 +20,9 @@ at the same time but a different place).
 
 ## Architectural Note
 
-Events (`Ev Time`) currently lack a location field. Rather than extending
+Events (`Event Time`) currently lack a location field. Rather than extending
 the core event type (which would affect ~20 files), this module defines △
-parameterized over an external location function `loc : Ev Time → L`.
+parameterized over an external location function `loc : Event Time → L`.
 The temporal component (`temporallyDisjoint`) is self-contained and
 connects to @cite{cumming-2026}'s downstream evidence constraint (T ≤ A)
 via `disjoint_earlier_implies_isBefore`.
@@ -43,7 +43,7 @@ open Semantics.Events
     direct perception: if the speaker was present for the event, the
     evidential is infelicitous. -/
 def temporallyDisjoint {Time : Type*} [LinearOrder Time]
-    (e₁ e₂ : Ev Time) : Prop :=
+    (e₁ e₂ : Event Time) : Prop :=
   ¬ (e₁.τ.overlaps e₂.τ)
 
 -- ════════════════════════════════════════════════════
@@ -53,11 +53,11 @@ def temporallyDisjoint {Time : Type*} [LinearOrder Time]
 /-- Spatiotemporal distance △ (@cite{koev-2017}, Definition 24).
     Two events are spatiotemporally distant if either their temporal traces
     don't overlap or they occur at different locations. Parameterized over
-    a location function `loc : Ev Time → L` since `Ev` lacks a built-in
+    a location function `loc : Event Time → L` since `Event` lacks a built-in
     location field. -/
 def spatiotemporallyDistant {Time : Type*} [LinearOrder Time]
     {L : Type*} [DecidableEq L]
-    (loc : Ev Time → L) (e₁ e₂ : Ev Time) : Prop :=
+    (loc : Event Time → L) (e₁ e₂ : Event Time) : Prop :=
   temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂
 
 -- ════════════════════════════════════════════════════
@@ -69,10 +69,10 @@ def spatiotemporallyDistant {Time : Type*} [LinearOrder Time]
     evidence case: the described event finished before the learning event
     started. -/
 theorem temporallyDisjoint_of_precedes {Time : Type*} [LinearOrder Time]
-    (e₁ e₂ : Ev Time)
+    (e₁ e₂ : Event Time)
     (h : e₁.τ.precedes e₂.τ) : temporallyDisjoint e₁ e₂ := by
   unfold temporallyDisjoint Interval.overlaps Interval.precedes at *
-  simp only [Ev.τ] at *
+  simp only [Event.τ] at *
   exact fun ⟨_, h2⟩ => absurd h2 (not_le.mpr h)
 
 /-- If two events are temporally disjoint and the first starts no later
@@ -80,12 +80,12 @@ theorem temporallyDisjoint_of_precedes {Time : Type*} [LinearOrder Time]
     e₁.τ.finish ≤ e₂.τ.start. This bridges Koev's event-based △ to
     Cumming's point-based T ≤ A constraint. -/
 theorem disjoint_earlier_implies_isBefore {Time : Type*} [LinearOrder Time]
-    (e₁ e₂ : Ev Time)
+    (e₁ e₂ : Event Time)
     (hd : temporallyDisjoint e₁ e₂)
     (hearlier : e₁.τ.start ≤ e₂.τ.start) : e₁.τ.isBefore e₂.τ := by
   unfold temporallyDisjoint Interval.overlaps at hd
   unfold Interval.isBefore
-  simp only [Ev.τ] at *
+  simp only [Event.τ] at *
   by_contra h
   push_neg at h
   exact hd ⟨le_trans hearlier e₂.runtime.valid, le_of_lt h⟩
@@ -94,7 +94,7 @@ theorem disjoint_earlier_implies_isBefore {Time : Type*} [LinearOrder Time]
     disjoint. Direct perception (overlapping runtimes) is incompatible
     with temporal distance. -/
 theorem overlapping_not_disjoint {Time : Type*} [LinearOrder Time]
-    (e₁ e₂ : Ev Time)
+    (e₁ e₂ : Event Time)
     (h : e₁.τ.overlaps e₂.τ) : ¬ temporallyDisjoint e₁ e₂ :=
   fun hd => hd h
 
@@ -102,14 +102,14 @@ theorem overlapping_not_disjoint {Time : Type*} [LinearOrder Time]
     overlap (@cite{koev-2017}, ex. 25b: smoke from chimney). -/
 theorem spatiotemporallyDistant_of_different_location
     {Time : Type*} [LinearOrder Time] {L : Type*} [DecidableEq L]
-    (loc : Ev Time → L) (e₁ e₂ : Ev Time)
+    (loc : Event Time → L) (e₁ e₂ : Event Time)
     (h : loc e₁ ≠ loc e₂) : spatiotemporallyDistant loc e₁ e₂ :=
   Or.inr h
 
 /-- Temporal disjointness alone suffices for △. -/
 theorem spatiotemporallyDistant_of_temporallyDisjoint
     {Time : Type*} [LinearOrder Time] {L : Type*} [DecidableEq L]
-    (loc : Ev Time → L) (e₁ e₂ : Ev Time)
+    (loc : Event Time → L) (e₁ e₂ : Event Time)
     (h : temporallyDisjoint e₁ e₂) : spatiotemporallyDistant loc e₁ e₂ :=
   Or.inl h
 

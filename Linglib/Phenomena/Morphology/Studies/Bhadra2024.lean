@@ -237,48 +237,48 @@ variable {Entity State Time : Type*} [LinearOrder Time]
 
 abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
 
-abbrev Applies (Entity Time : Type*) [LinearOrder Time] := Entity → Ev Time → Prop
+abbrev Applies (Entity Time : Type*) [LinearOrder Time] := Entity → Event Time → Prop
 
 structure VerbRootVRO (Entity State Time : Type*) [LinearOrder Time] where
-  verb : Entity → Ev Time → Prop
-  applies : Entity → Ev Time → Prop
+  verb : Entity → Event Time → Prop
+  applies : Entity → Event Time → Prop
   outcomes : Set State
   thresholds : Set State
 
 def resState (stateAt : StateFunction Entity State Time)
-    (e : Ev Time) (x : Entity) : State :=
-  stateAt (Ev.τ e).finish x
+    (e : Event Time) (x : Entity) : State :=
+  stateAt (Event.τ e).finish x
 
 def preState (stateAt : StateFunction Entity State Time)
-    (e : Ev Time) (x : Entity) : State :=
-  stateAt (Ev.τ e).start x
+    (e : Event Time) (x : Entity) : State :=
+  stateAt (Event.τ e).start x
 
 def Set.multiMembered (s : Set State) : Prop :=
   ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
 
 def unSem (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Ev Time) : Prop :=
-  ∃ e' : Ev Time,
+    (x : Entity) (e : Event Time) : Prop :=
+  ∃ e' : Event Time,
     vro.verb x e' ∧
     vro.applies x e' ∧
-    (Ev.τ e').precedes (Ev.τ e) ∧
+    (Event.τ e').precedes (Event.τ e) ∧
     resState stateAt e' x = preState stateAt e x ∧
     vro.outcomes.multiMembered ∧
     resState stateAt e x = preState stateAt e' x
 
 def rePresupposition (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Ev Time) : Prop :=
-  ∃ e' : Ev Time,
+    (x : Entity) (e : Event Time) : Prop :=
+  ∃ e' : Event Time,
     vro.verb x e' ∧
     vro.applies x e' ∧
-    (Ev.τ e').precedes (Ev.τ e) ∧
+    (Event.τ e').precedes (Event.τ e) ∧
     resState stateAt e x = resState stateAt e' x
 
 def reSem (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Ev Time) : Prop :=
+    (x : Entity) (e : Event Time) : Prop :=
   rePresupposition stateAt vro x e ∧
   vro.applies x e ∧
   vro.verb x e
@@ -287,7 +287,7 @@ theorem singleton_blocks_un
     (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (h_single : ∃ s, vro.outcomes = {s})
-    (x : Entity) (e : Ev Time) :
+    (x : Entity) (e : Event Time) :
     ¬ unSem stateAt vro x e := by
   intro ⟨e', _, _, _, _, h_multi, _⟩
   obtain ⟨s, hs⟩ := h_single
@@ -300,7 +300,7 @@ theorem empty_blocks_un
     (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (h_empty : vro.outcomes = ∅)
-    (x : Entity) (e : Ev Time) :
+    (x : Entity) (e : Event Time) :
     ¬ unSem stateAt vro x e := by
   intro ⟨e', _, _, _, _, h_multi, _⟩
   obtain ⟨s₁, _, h1, _, _⟩ := h_multi
@@ -586,7 +586,7 @@ def breakVRO : VerbRootVRO Unit LimbState ℤ where
     to fail because |O| = 1, so the multi-membered presupposition
     of un- (eq. 66) cannot be satisfied. -/
 theorem break_blocks_un (stateAt : StateFunction Unit LimbState ℤ)
-    (x : Unit) (e : Ev ℤ) :
+    (x : Unit) (e : Event ℤ) :
     ¬ unSem stateAt breakVRO x e :=
   singleton_blocks_un stateAt breakVRO ⟨.broken, rfl⟩ x e
 
@@ -605,7 +605,7 @@ def hitVRO : VerbRootVRO Unit SurfaceState ℤ where
 /-- hit's singleton outcome set blocks un-: *unhit is predicted
     to fail for the same reason as *unbreak. -/
 theorem hit_blocks_un (stateAt : StateFunction Unit SurfaceState ℤ)
-    (x : Unit) (e : Ev ℤ) :
+    (x : Unit) (e : Event ℤ) :
     ¬ unSem stateAt hitVRO x e :=
   singleton_blocks_un stateAt hitVRO ⟨.surfaceAltered, rfl⟩ x e
 
@@ -625,7 +625,7 @@ def destroyVRO : VerbRootVRO Unit ObjectExistence ℤ where
 
 /-- destroy blocks un- (singleton outcomes). -/
 theorem destroy_blocks_un (stateAt : StateFunction Unit ObjectExistence ℤ)
-    (x : Unit) (e : Ev ℤ) :
+    (x : Unit) (e : Event ℤ) :
     ¬ unSem stateAt destroyVRO x e :=
   singleton_blocks_un stateAt destroyVRO ⟨.ceasedToExist, rfl⟩ x e
 
@@ -656,17 +656,17 @@ section StressTests
 open Semantics.Events Core.Time
 
 /-- Event from t=0 to t=5 (the base event, e.g. folding). -/
-private def ev₁ : Ev ℤ where
+private def ev₁ : Event ℤ where
   runtime := ⟨0, 5, by omega⟩
   sort := .action
 
 /-- Event from t=10 to t=15 (the reversal/restitution event, e.g. unfolding). -/
-private def ev₂ : Ev ℤ where
+private def ev₂ : Event ℤ where
   runtime := ⟨10, 15, by omega⟩
   sort := .action
 
 /-- ev₁ temporally precedes ev₂: τ(ev₁).finish < τ(ev₂).start. -/
-private theorem ev₁_precedes_ev₂ : (Ev.τ ev₁).precedes (Ev.τ ev₂) := by
+private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
   show (5 : ℤ) < 10; omega
 
 /-- State function for fold/unfold: the parchment starts flat, is folded
@@ -692,7 +692,7 @@ private theorem fold_unfold_boundaries :
 /-- **Positive existence: un- IS satisfiable for PFC verbs.**
     Constructs a concrete witness showing `unSem` holds for fold. -/
 theorem fold_un_satisfiable :
-    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Ev ℤ),
+    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
     unSem stateAt foldVRO x e :=
   ⟨foldUnfoldState, (), ev₂, ev₁, trivial, trivial,
    ev₁_precedes_ev₂,
@@ -703,7 +703,7 @@ theorem fold_un_satisfiable :
    rfl⟩
 
 /-- Event from t=20 to t=25 (the re-event, e.g. re-folding). -/
-private def ev₃ : Ev ℤ where
+private def ev₃ : Event ℤ where
   runtime := ⟨20, 25, by omega⟩
   sort := .action
 
@@ -719,7 +719,7 @@ private def foldRefoldState : StateFunction Unit ParchmentState ℤ := λ t _ =>
   else .folded
 
 /-- ev₁ precedes ev₃. -/
-private theorem ev₁_precedes_ev₃ : (Ev.τ ev₁).precedes (Ev.τ ev₃) := by
+private theorem ev₁_precedes_ev₃ : (Event.τ ev₁).precedes (Event.τ ev₃) := by
   show (5 : ℤ) < 20; omega
 
 /-- **Positive existence: re- IS satisfiable for PFC verbs.**
@@ -727,7 +727,7 @@ private theorem ev₁_precedes_ev₃ : (Ev.τ ev₁).precedes (Ev.τ ev₃) := b
     The rePresupposition of ev₃ is witnessed by ev₁ (prior fold with
     matching result state). -/
 theorem fold_re_satisfiable :
-    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Ev ℤ),
+    ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
     reSem stateAt foldVRO x e :=
   ⟨foldRefoldState, (), ev₃,
    -- rePresupposition: ∃ e', verb e' ∧ applies e' ∧ precedes ∧ resState match
@@ -752,7 +752,7 @@ private def breakRebreakState : StateFunction Unit LimbState ℤ := λ t _ =>
     COS verbs (break) block un- but allow re-. This demonstrates
     that reSem is satisfiable for break despite singleton outcomes. -/
 theorem break_re_satisfiable :
-    ∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Ev ℤ),
+    ∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
     reSem stateAt breakVRO x e :=
   ⟨breakRebreakState, (), ev₃,
    ⟨ev₁, trivial, trivial, ev₁_precedes_ev₃, rfl⟩,
@@ -766,10 +766,10 @@ theorem cross_layer_un_agreement :
     (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
     (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
     -- Compositional layer: fold (PFC) un- is satisfiable
-    (∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Ev ℤ),
+    (∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Event ℤ),
       unSem stateAt foldVRO x e) ∧
     -- Compositional layer: break (COS) un- is blocked
-    (∀ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Ev ℤ),
+    (∀ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
       ¬ unSem stateAt breakVRO x e) :=
   ⟨rfl, rfl,
    fold_un_satisfiable,
@@ -792,7 +792,7 @@ theorem cross_layer_un_agreement :
 def destroyVRO_withApplies (stateAt : StateFunction Unit ObjectExistence ℤ)
     : VerbRootVRO Unit ObjectExistence ℤ where
   verb := λ _ _ => True
-  applies := λ _ e => stateAt (Ev.τ e).start () = .exists_
+  applies := λ _ e => stateAt (Event.τ e).start () = .exists_
   outcomes := {.ceasedToExist}
   thresholds := {.exists_}
 
@@ -807,14 +807,14 @@ private def postDestroyState : StateFunction Unit ObjectExistence ℤ := λ t _ 
     at t=0 when force is first exerted. -/
 private theorem destroy_applies_ev₁ :
     (destroyVRO_withApplies postDestroyState).applies () ev₁ := by
-  show postDestroyState (Ev.τ ev₁).start () = .exists_; rfl
+  show postDestroyState (Event.τ ev₁).start () = .exists_; rfl
 
 /-- APPLIES fails for any event after destruction: at t≥10, the object
     has ceased to exist. -/
 private theorem destroy_not_applies_ev₃ :
     ¬ (destroyVRO_withApplies postDestroyState).applies () ev₃ := by
-  show ¬ (postDestroyState (Ev.τ ev₃).start () = .exists_)
-  simp [postDestroyState, ev₃, Ev.τ]
+  show ¬ (postDestroyState (Event.τ ev₃).start () = .exists_)
+  simp [postDestroyState, ev₃, Event.τ]
 
 /-- **Compositional re- blocking for destroy.**
     With state-aware APPLIES, `reSem` is unsatisfiable for destroy because
@@ -840,7 +840,7 @@ theorem cross_layer_re_agreement :
     -- Compositional: destroy re- blocked (with state-aware APPLIES)
     ¬ reSem postDestroyState (destroyVRO_withApplies postDestroyState) () ev₃ ∧
     -- Compositional: break re- satisfiable
-    (∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Ev ℤ),
+    (∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Event ℤ),
       reSem stateAt breakVRO x e) :=
   ⟨rfl, rfl,
    destroy_re_blocked_compositionally,

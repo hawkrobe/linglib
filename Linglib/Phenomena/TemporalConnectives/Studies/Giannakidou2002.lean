@@ -68,6 +68,7 @@ namespace Giannakidou2002
 
 open Core.Time
 open Core.Time.Interval
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.TemporalConnectives
 
@@ -92,7 +93,7 @@ abbrev impfDen (P : EventPred Unit Time) : SentDenotation Time :=
     interval set that directly characterizes the event's temporal extent.
     This matches the `eventDenotation` pattern from `EventBridge.lean`. -/
 def prfvDen (P : EventPred Unit Time) : SentDenotation Time :=
-  { i | ∃ e : Eventuality Time, P () e ∧ e.τ = i }
+  { i | ∃ e : Event Time, P () e ∧ e.τ = i }
 
 -- ============================================================================
 -- § 2: Homogeneity
@@ -119,7 +120,7 @@ theorem impfDen_subinterval_closed (P : EventPred Unit Time)
 
 /-- IMPF denotation contains the event runtime itself (the maximal interval). -/
 theorem impfDen_contains_runtime (P : EventPred Unit Time)
-    (e : Eventuality Time) (hP : P () e) :
+    (e : Event Time) (hP : P () e) :
     e.τ ∈ impfDen P :=
   ⟨e, subinterval_refl _, hP⟩
 
@@ -135,18 +136,19 @@ theorem prfvDen_not_subinterval_closed :
     ¬ ∀ (P : EventPred Unit ℤ) (t : Interval ℤ),
       t ∈ prfvDen P → ∀ t', t'.subinterval t → t' ∈ prfvDen P := by
   intro h
-  let e₀ : Eventuality ℤ := ⟨⟨0, 5, by omega⟩⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
   let P : EventPred Unit ℤ := fun _ e => e = e₀
   let sub : Interval ℤ := ⟨1, 3, by omega⟩
   have hrt : e₀.τ ∈ prfvDen P := ⟨e₀, rfl, rfl⟩
   have hsub : sub.subinterval e₀.τ := by
     dsimp only [sub, e₀]
-    simp only [subinterval, Eventuality.τ]; omega
+    simp only [subinterval, Event.τ]; omega
   have hmem := h P e₀.τ hrt sub hsub
   obtain ⟨e', he', hτ⟩ := hmem
   dsimp only [P] at he'
   subst he'
-  simp only [Eventuality.τ] at hτ
+  simp only [Event.τ] at hτ
   have : (0 : ℤ) = 1 := congrArg Interval.start hτ
   omega
 
@@ -188,26 +190,28 @@ theorem scope_pattern_derived :
     in `Basic.lean`. -/
 theorem impfDen_singleton_eq_stativeDenotation
     (i : Interval Time) :
-    impfDen (fun () (e : Eventuality Time) => e.τ = i) =
+    impfDen (fun () (e : Event Time) => e.τ = i) =
     stativeDenotation i := by
   ext j
-  simp only [UNBOUNDED, stativeDenotation, Set.mem_setOf_eq, Eventuality.τ]
+  simp only [UNBOUNDED, stativeDenotation, Set.mem_setOf_eq, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨i⟩, h, rfl⟩
+    -- sort defaults to .action; the proof doesn't reference .sort
+  · intro h; exact ⟨⟨i, .action⟩, h, rfl⟩
 
 /-- For a single event, the PRFV denotation is exactly the accomplishment
     denotation (singleton containing just the runtime). -/
 theorem prfvDen_singleton_eq_accomplishmentDenotation
     (i : Interval Time) :
-    prfvDen (fun () (e : Eventuality Time) => e.τ = i) =
+    prfvDen (fun () (e : Event Time) => e.τ = i) =
     accomplishmentDenotation i := by
   ext j
   simp only [prfvDen, accomplishmentDenotation,
-    Set.mem_setOf_eq, Eventuality.τ]
+    Set.mem_setOf_eq, Event.τ]
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
-  · intro h; exact ⟨⟨i⟩, rfl, h.symm⟩
+    -- sort defaults to .action; the proof doesn't reference .sort
+  · intro h; exact ⟨⟨i, .action⟩, rfl, h.symm⟩
 
 -- ============================================================================
 -- § 5: Time Traces Coincide
@@ -222,7 +226,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
 theorem timeTrace_impf_eq_prfv (P : EventPred Unit Time) :
     timeTrace (impfDen P) = timeTrace (prfvDen P) := by
   ext t
-  simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_setOf_eq, Eventuality.τ]
+  simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_setOf_eq, Event.τ]
   constructor
   · rintro ⟨i, ⟨e, hSub, hP⟩, ht⟩
     exact ⟨e.τ, ⟨e, hP, rfl⟩,
@@ -276,7 +280,8 @@ theorem narrowScope_eq_not_before (A : EventPred Unit Time) (B : SentDenotation 
 theorem scope_readings_distinct :
     ∃ (A : EventPred Unit ℤ) (B : SentDenotation ℤ),
       wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
-  let e₀ : Eventuality ℤ := ⟨⟨0, 5, by omega⟩⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
   let A : EventPred Unit ℤ := fun _ e => e = e₀
   let iB : Interval ℤ := ⟨7, 7, by omega⟩
   let B : SentDenotation ℤ := {iB}
@@ -286,12 +291,12 @@ theorem scope_readings_distinct :
     dsimp only [A] at he; subst he
     obtain ⟨j, (hj : j = iB), hjt⟩ := ht_B
     subst hj
-    simp only [subinterval, contains, Eventuality.τ, e₀, iB] at hSub hi hjt
+    simp only [subinterval, contains, Event.τ, e₀, iB] at hSub hi hjt
     omega
   · intro hNot
     apply hNot
     refine ⟨0, ⟨e₀.τ, ⟨e₀, rfl, rfl⟩, ?_⟩, ?_⟩
-    · simp only [contains, Eventuality.τ, e₀]; omega
+    · simp only [contains, Event.τ, e₀]; omega
     · intro t' ⟨j, (hj : j = iB), hjt⟩
       subst hj
       simp only [contains, iB] at hjt; omega
@@ -302,7 +307,8 @@ theorem scope_readings_distinct :
 theorem scope_readings_independent :
     ∃ (A : EventPred Unit ℤ) (B : SentDenotation ℤ),
       ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
-  let e₀ : Eventuality ℤ := ⟨⟨5, 10, by omega⟩⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₀ : Event ℤ := ⟨⟨5, 10, by omega⟩, .action⟩
   let A : EventPred Unit ℤ := fun _ e => e = e₀
   let iB : Interval ℤ := ⟨3, 7, by omega⟩
   let B : SentDenotation ℤ := {iB}
@@ -311,7 +317,7 @@ theorem scope_readings_independent :
     apply hWide
     refine ⟨5,
       ⟨Interval.point 5, ⟨e₀, by
-        simp only [subinterval, Interval.point, Eventuality.τ, e₀]; omega,
+        simp only [subinterval, Interval.point, Event.τ, e₀]; omega,
         rfl⟩,
         by simp only [contains, Interval.point]; omega⟩,
       ⟨iB, rfl, by simp only [contains, iB]; omega⟩⟩
@@ -319,7 +325,7 @@ theorem scope_readings_independent :
     obtain ⟨i, ⟨e, he, hτ⟩, hi⟩ := ht_A
     dsimp only [A] at he; subst he
     rw [← hτ] at hi
-    simp only [contains, Eventuality.τ, e₀] at hi
+    simp only [contains, Event.τ, e₀] at hi
     have h3 : (3 : ℤ) ∈ timeTrace B :=
       ⟨iB, rfl, by simp only [contains, iB]; omega⟩
     have := hall 3 h3

@@ -266,7 +266,7 @@ def patientPlaygroundDatum : StateModificationDatum :=
 -- § 7. Compositional Pieces (§2.1 eqs. 37–38)
 -- ════════════════════════════════════════════════════
 
-open Semantics.Events (Ev EvPred)
+open Semantics.Events (Event EvPred)
 open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
   modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
 open Semantics.Measurement
@@ -458,7 +458,7 @@ def thanDegrees {Ent α Measured : Type*}
     Role: Agent. Extract: themeOf (the consumed/affected entity). -/
 def nominalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
-    (P : EvPred Time) (themeOf : Ev Time → Entity)
+    (P : EvPred Time) (themeOf : Event Time → Entity)
     (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
@@ -468,7 +468,7 @@ def nominalComparative {Entity Time : Type*} [LinearOrder Time]
     Measured domain: events directly (extract = id). Role: Agent. -/
 def verbalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
-    (P : EvPred Time) (μ : Ev Time → ℚ) (a b : Entity) : Prop :=
+    (P : EvPred Time) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
 /-- Adjectival comparative (§3.2, eq. 65):
@@ -477,7 +477,7 @@ def verbalComparative {Entity Time : Type*} [LinearOrder Time]
     Measured domain: states directly (extract = id). Role: Holder. -/
 def adjectivalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
-    (P : EvPred Time) (μ : Ev Time → ℚ) (a b : Entity) : Prop :=
+    (P : EvPred Time) (μ : Event Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
 -- ════════════════════════════════════════════════════
@@ -544,8 +544,8 @@ theorem comparativeTruth_max {Ent α Measured : Type*}
 /-- Adjectival comparative under maximality reduces to `μ(sb) < μ(sa)`. -/
 theorem adjectival_max_reduces {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
-    {P : EvPred Time} {μ : Ev Time → ℚ}
-    {a b : Entity} {sa sb : Ev Time}
+    {P : EvPred Time} {μ : Event Time → ℚ}
+    {a b : Entity} {sa sb : Event Time}
     (ha : frame.holder a sa ∧ P sa)
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)
@@ -563,11 +563,11 @@ theorem statesComparativeSem_is_lt {S D : Type*} [Preorder S] [Preorder D]
 /-- All comparative domains under maximality = `comparativeSem`
     (Rett/Schwarzschild) on measured values. -/
 theorem max_eq_comparativeSem {Entity Time Measured : Type*} [LinearOrder Time]
-    {role : Entity → Ev Time → Prop}
+    {role : Entity → Event Time → Prop}
     {P : EvPred Time}
-    {extract : Ev Time → Measured}
+    {extract : Event Time → Measured}
     {μ : Measured → ℚ}
-    {a b : Entity} {ea eb : Ev Time}
+    {a b : Entity} {ea eb : Event Time}
     (ha : role a ea ∧ P ea)
     (ha_unique : ∀ e, role a e → P e → e = ea)
     (hb : role b eb ∧ P eb)

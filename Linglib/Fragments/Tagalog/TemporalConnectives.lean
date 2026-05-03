@@ -22,6 +22,7 @@ overt aspect markers in Tagalog.
 
 namespace Fragments.Tagalog.TemporalConnectives
 
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 

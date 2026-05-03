@@ -8,7 +8,7 @@ Gradable predicates introduce events with degree traces τ_d parallel to
 temporal traces τ_i. Comparison involves thematic roles [STD], [TAR], [DIFF]
 that relate events to degree intervals.
 
-This extends the neo-Davidsonian event ontology (`Ev`) with a degree
+This extends the neo-Davidsonian event ontology (`Event`) with a degree
 dimension, following Zhao's cross-domain parallel:
 
 | Temporal domain           | Degree domain               |
@@ -25,11 +25,11 @@ open Core.Time
 open Semantics.Events
 
 /-- A degree event: an event with both temporal and degree traces.
-    Extends the standard `Ev` (which has temporal trace τ_i = runtime)
+    Extends the standard `Event` (which has temporal trace τ_i = runtime)
     with a degree trace τ_d. -/
 @[ont_sort] structure DegreeEv (Time Deg : Type*) [LinearOrder Time] [LinearOrder Deg] where
   /-- The underlying temporal event -/
-  base : Ev Time
+  base : Event Time
   /-- Degree trace: the interval on the degree scale spanned by this event -/
   degTrace : Interval Deg
 

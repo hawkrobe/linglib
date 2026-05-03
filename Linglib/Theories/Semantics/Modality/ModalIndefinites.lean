@@ -51,14 +51,14 @@ there exists an accessible world w' (via anchoring function f applied
 to event e₁) where y satisfies scope predicate Q. This is the
 "modal variation" inference: every domain member is a possible
 witness. -/
-def modalComponent {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+def modalComponent {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop)
     (w : W) : Prop :=
   ∀ y ∈ domain, P y w → possibility f e allW (λ w' => Q y w') w
 
-instance {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop)
     [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (modalComponent f e allW domain P Q w) :=
@@ -75,14 +75,14 @@ both restrictor and scope. The universal modal component asserts
 that EVERY restrictor individual is a possible scope-satisfier
 in some accessible world — the free choice / modal variation
 effect. -/
-def modalIndefiniteSat {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+def modalIndefiniteSat {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
   (∃ x ∈ domain, P x w ∧ Q x w) ∧
     modalComponent f e allW domain P Q w
 
-instance {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop)
     [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (modalIndefiniteSat f e allW domain P Q w) :=
@@ -101,14 +101,14 @@ for all domain members to satisfy Q.
 
 This is the anti-singleton inference of *algún*. Items like *yalnhej* lack
 this condition and are compatible with all P being Q. -/
-def upperBoundedSat {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+def upperBoundedSat {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
   modalIndefiniteSat f e allW domain P Q w ∧
     ¬ (∀ x ∈ domain, P x w → Q x w)
 
-instance {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop)
     [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (upperBoundedSat f e allW domain P Q w) :=
@@ -116,8 +116,8 @@ instance {Ev W Entity : Type*}
 
 /-- Upper-boundedness strengthens the modal indefinite:
 if the UB version holds, the plain MI version holds. -/
-theorem upperBounded_entails_plain {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+theorem upperBounded_entails_plain {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Prop) (w : W)
     (h : upperBoundedSat f e allW domain P Q w) :
     modalIndefiniteSat f e allW domain P Q w :=

@@ -267,7 +267,7 @@ theorem BC.uniform_structure (A B : Set (W × T)) (alt : HistAlt W T) (w : W) :
   ⟨Iff.rfl, Iff.rfl⟩
 
 -- ============================================================================
--- § 7: O&ST Eventuality-Relative Equivalence (def 17)
+-- § 7: O&ST Event-Relative Equivalence (def 17)
 -- ============================================================================
 
 /-! @cite{ogihara-steinert-threlkeld-2024} §4 propose revising B&C's equivalence
@@ -285,7 +285,7 @@ theorem BC.uniform_structure (A B : Set (W × T)) (alt : HistAlt W T) (w : W) :
     share essential properties such as starting time and thematic participants. -/
 abbrev Counterpart (W T : Type*) := W → T → W → T → Prop
 
-/-- **Eventuality-relative equivalence** ≃_{I,e₁}
+/-- **Event-relative equivalence** ≃_{I,e₁}
     (@cite{ogihara-steinert-threlkeld-2024}, def 17).
 
     For worlds w₁, w₂ ∈ W, interval I, and eventuality e₁ in w₁,
@@ -317,7 +317,7 @@ def equivIE
 /-! The revised alt(w, I, e) uses the eventuality-relative equivalence
     (@cite{ogihara-steinert-threlkeld-2024}, def 18a). -/
 
-/-- **Eventuality-relative alternatives** alt(w, I, e)
+/-- **Event-relative alternatives** alt(w, I, e)
     (@cite{ogihara-steinert-threlkeld-2024}, def 18a):
     alt(w, I, e) ⊆ {w' : w ≃_{I,e} w'}. -/
 def altIE

@@ -31,6 +31,7 @@ Equations:
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Features.Aktionsart
+import Linglib.Theories.Semantics.Events.Basic
 
 -- ════════════════════════════════════════════════════
 -- § Main Module
@@ -41,24 +42,17 @@ namespace Semantics.Tense.Aspect.Core
 open _root_.Core (WorldTimeIndex)
 open Core.Time
 open Features
+open Semantics.Events
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
 -- ════════════════════════════════════════════════════
 
-/-- An eventuality with interval-valued runtime. @cite{pancheva-2003}
-    Unlike `Situation` (point-valued τ), eventualities occupy temporal intervals. -/
-structure Eventuality (Time : Type*) [LinearOrder Time] where
-  /-- The temporal extent of this eventuality -/
-  runtime : Interval Time
-
-/-- Temporal trace: the runtime interval of an eventuality. -/
-@[simp]
-def Eventuality.τ {Time : Type*} [LinearOrder Time] (e : Eventuality Time) : Interval Time :=
-  e.runtime
-
-/-- Predicate over eventualities (VP denotations). -/
-abbrev EventPred (W Time : Type*) [LinearOrder Time] := W → Eventuality Time → Prop
+/-! Event predicates and the `Event` type are imported from
+    `Theories/Semantics/Events/Basic.lean` — the unified event ontology.
+    Tense-aspect code uses `Event Time` and `EventPred W Time` without
+    referencing `.sort` (the field exists for Krifka-style consumers but
+    is irrelevant for Klein-style tense composition). -/
 
 /-- Predicate over time intervals (output of IMPF/PRFV). -/
 abbrev IntervalPred (W Time : Type*) [LinearOrder Time] := W → Interval Time → Prop
@@ -130,18 +124,18 @@ variable {Time : Type*} [LinearOrder Time] {W : Type*}
 /-- **IMPERFECTIVE**: reference time properly contained in event runtime.
     @cite{klein-1994}: TT INCL TSit. @cite{knick-sharf-2026} eq. 25. -/
 def IMPF (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, t.properSubinterval e.τ ∧ P w e
+  λ w t => ∃ e : Event Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
     @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1997}).
     @cite{knick-sharf-2026} eq. 28. -/
 def PRFV (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, e.τ.subinterval t ∧ P w e
+  λ w t => ∃ e : Event Time, e.τ.subinterval t ∧ P w e
 
 /-- **PROSPECTIVE**: reference time before situation time.
     @cite{klein-1994}: TT BEFORE TSit. -/
 def PROSP (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, t.isBefore e.τ ∧ P w e
+  λ w t => ∃ e : Event Time, t.isBefore e.τ ∧ P w e
 
 /-- **INIT_OVERLAP**: initial overlap between reference time and event runtime.
     @cite{pancheva-2003} eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
@@ -153,7 +147,7 @@ def PROSP (P : EventPred W Time) : IntervalPred W Time :=
     Pancheva's operator is an inner Asp₂ head; Smith's neutral viewpoint is
     a default viewpoint type. -/
 def INIT_OVERLAP (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, t.initialOverlap e.τ ∧ P w e
+  λ w t => ∃ e : Event Time, t.initialOverlap e.τ ∧ P w e
 
 
 -- ════════════════════════════════════════════════════
@@ -186,12 +180,12 @@ def PERF_XN (p : IntervalPred W Time) (tᵣ : Set Time) : PointPred W Time :=
 /-- IMPF matches Klein's IMPERFECTIVE: ∃e where TT ⊂ TSit. -/
 theorem impf_is_klein_imperfective (P : EventPred W Time) (w : W) (t : Interval Time) :
     IMPF P w t ↔ ∃ e, ViewpointType.ttTSitRelation .imperfective t e.τ ∧ P w e := by
-  simp only [IMPF, ViewpointType.ttTSitRelation, Eventuality.τ]
+  simp only [IMPF, ViewpointType.ttTSitRelation, Event.τ]
 
 /-- PRFV matches Klein's PERFECTIVE: ∃e where TSit ⊆ TT. -/
 theorem prfv_is_klein_perfective (P : EventPred W Time) (w : W) (t : Interval Time) :
     PRFV P w t ↔ ∃ e, ViewpointType.ttTSitRelation .perfective t e.τ ∧ P w e := by
-  simp only [PRFV, ViewpointType.ttTSitRelation, Eventuality.τ]
+  simp only [PRFV, ViewpointType.ttTSitRelation, Event.τ]
 
 -- ════════════════════════════════════════════════════
 -- § Compositional Stacking
@@ -209,7 +203,7 @@ abbrev perfSimple (P : EventPred W Time) : PointPred W Time :=
     the PTS properly inside the event, and P holds of the event. -/
 theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
     perfProg P ⟨w, t⟩ ↔
-    ∃ pts : Interval Time, ∃ e : Eventuality Time,
+    ∃ pts : Interval Time, ∃ e : Event Time,
       RB pts t ∧ pts.properSubinterval e.τ ∧ P w e := by
   constructor
   · intro ⟨pts, hRB, e, hSub, hP⟩
@@ -221,7 +215,7 @@ theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
     the event inside the PTS, and P holds of the event. -/
 theorem perf_prfv_unfold (P : EventPred W Time) (w : W) (t : Time) :
     perfSimple P ⟨w, t⟩ ↔
-    ∃ pts : Interval Time, ∃ e : Eventuality Time,
+    ∃ pts : Interval Time, ∃ e : Event Time,
       RB pts t ∧ e.τ.subinterval pts ∧ P w e := by
   constructor
   · intro ⟨pts, hRB, e, hSub, hP⟩
@@ -297,13 +291,13 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
     ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from IMPF in using non-strict ⊆ rather than strict ⊂. -/
 def UNBOUNDED (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, t.subinterval e.τ ∧ P w e
+  λ w t => ∃ e : Event Time, t.subinterval e.τ ∧ P w e
 
 /-- Pancheva's BOUNDED (Asp₂): strict ⊂ variant of PRFV.
     ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from PRFV in using strict ⊂ rather than non-strict ⊆. -/
 def BOUNDED (P : EventPred W Time) : IntervalPred W Time :=
-  λ w t => ∃ e : Eventuality Time, e.τ.properSubinterval t ∧ P w e
+  λ w t => ∃ e : Event Time, e.τ.properSubinterval t ∧ P w e
 
 /-- IMPF (strict ⊂) entails UNBOUNDED (non-strict ⊆). -/
 theorem impf_entails_unbounded (P : EventPred W Time) (w : W) (t : Interval Time) :

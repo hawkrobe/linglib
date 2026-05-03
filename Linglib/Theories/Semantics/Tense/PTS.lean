@@ -46,6 +46,7 @@ PerfectPolysemy      PerfectReading, existential/universalReading
 namespace Semantics.Tense.PTS
 
 open Core.Time
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
@@ -264,7 +265,7 @@ theorem subdomain_monotone (τ₁ τ₂ : Interval Time)
     This is the assertion form for both PTS and UTS:
     ∃e.[P(e) ∧ Run(e) ⊆ τ] -/
 def eventInSpan (P : EventPred W Time) (w : W) (τ : Interval Time) : Prop :=
-  ∃ e : Eventuality Time, e.τ.subinterval τ ∧ P w e
+  ∃ e : Event Time, e.τ.subinterval τ ∧ P w e
 
 /-- Negated form: no P-event has runtime inside τ.
     ¬∃e.[P(e) ∧ Run(e) ⊆ τ] -/
@@ -346,7 +347,7 @@ def actualityInference (P : EventPred W Time) (w : W)
 /-- The AI with *in years* is at the LB: the event occurs at the LB point. -/
 def aiAtBoundary (P : EventPred W Time) (w : W)
     (τ : Interval Time) : Prop :=
-  ∃ e : Eventuality Time, e.τ.finish = τ.start ∧ P w e
+  ∃ e : Event Time, e.τ.finish = τ.start ∧ P w e
 
 -- ════════════════════════════════════════════════════
 -- § 9. The Beyond Expectation Inference
@@ -376,14 +377,14 @@ structure BeyondExpectationInference where
 /-- Perfective contributes ST ⊆ TT: the event is contained in the time span.
     @cite{iatridou-zeijlstra-2021} §1 (eq. 17a), following @cite{klein-1994}.
     Equivalently, the E-perfect: the event is contained in the PTS. -/
-def perfectiveContainment (e : Eventuality Time) (τ : Interval Time) : Prop :=
+def perfectiveContainment (e : Event Time) (τ : Interval Time) : Prop :=
   e.τ.subinterval τ
 
 /-- Imperfective contributes TT ⊆ ST: the time span is contained in the event.
     @cite{iatridou-zeijlstra-2021} §1 (eq. 17b).
     With the subinterval property, every subinterval of a P-event is also
     a P-event. This is the key to *until*-d (affirmative imperfective). -/
-def imperfectiveContainment (e : Eventuality Time) (τ : Interval Time) : Prop :=
+def imperfectiveContainment (e : Event Time) (τ : Interval Time) : Prop :=
   τ.subinterval e.τ
 
 /-- Under IMPF + subinterval property, all subdomain alternatives of the
@@ -393,7 +394,7 @@ def imperfectiveContainment (e : Eventuality Time) (τ : Interval Time) : Prop :
     @cite{iatridou-zeijlstra-2021} §7.2 -/
 theorem impf_subdomain_entailed (P : EventPred W Time)
     (hSub : HasSubintervalProp P) (w : W)
-    (e : Eventuality Time) (τ : Interval Time)
+    (e : Event Time) (τ : Interval Time)
     (hP : P w e) (hImpf : τ.subinterval e.τ)
     (τ' : Interval Time) (hτ' : τ'.subinterval τ) :
     eventInSpan P w τ' := by
@@ -401,7 +402,8 @@ theorem impf_subdomain_entailed (P : EventPred W Time)
   have h_sub_e : τ'.subinterval e.τ :=
     ⟨le_trans hImpf.1 hτ'.1, le_trans hτ'.2 hImpf.2⟩
   -- By SUB, any event with runtime τ' is a P-event
-  exact ⟨⟨τ'⟩, ⟨le_refl _, le_refl _⟩, hSub e w hP τ' h_sub_e ⟨τ'⟩ rfl⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  exact ⟨⟨τ', .action⟩, ⟨le_refl _, le_refl _⟩, hSub e w hP τ' h_sub_e ⟨τ', .action⟩ rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Bridge: Constant's Observation

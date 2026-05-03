@@ -215,9 +215,9 @@ open Fragments.Slavic.Bulgarian.Evidentials
       predicates. We collapse these into a single △ constraint. -/
 structure LearningScenario (Time : Type*) [LinearOrder Time] where
   /-- The described event (what happened: e.g., Ivan kissing Maria) -/
-  described : Ev Time
+  described : Event Time
   /-- The learning event (how the speaker found out: e.g., hearing a report) -/
-  learning : Ev Time
+  learning : Event Time
 
 /-- △ holds for this scenario (temporal component): the described and
     learning events have non-overlapping temporal traces. -/
@@ -228,7 +228,7 @@ def LearningScenario.isTemporallyDisjoint {Time : Type*} [LinearOrder Time]
 /-- △ holds for this scenario (full spatiotemporal version): temporal
     disjointness OR spatial distance. -/
 def LearningScenario.isSpatiotemporallyDistant {Time : Type*} [LinearOrder Time]
-    {L : Type*} [DecidableEq L] (loc : Ev Time → L)
+    {L : Type*} [DecidableEq L] (loc : Event Time → L)
     (s : LearningScenario Time) : Prop :=
   spatiotemporallyDistant loc s.described s.learning
 
@@ -243,7 +243,7 @@ def LearningScenario.triangleTemporalB (s : LearningScenario ℤ) : Bool :=
 theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     s.triangleTemporalB = true ↔ s.isTemporallyDisjoint := by
   unfold triangleTemporalB isTemporallyDisjoint temporallyDisjoint Interval.overlaps
-  simp only [Ev.τ]
+  simp only [Event.τ]
   constructor
   · intro h ⟨h1, h2⟩
     simp only [Bool.not_eq_true', Bool.and_eq_false_iff,
@@ -276,17 +276,17 @@ def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
 -- ════════════════════════════════════════════════════
 
 /-- Described event: interval [0, 5]. -/
-def describedEvent : Ev ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
+def describedEvent : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
 
 /-- Learning event (indirect): interval [10, 15] — strictly later. -/
-def learningEventIndirect : Ev ℤ := ⟨⟨10, 15, by omega⟩, .state⟩
+def learningEventIndirect : Event ℤ := ⟨⟨10, 15, by omega⟩, .state⟩
 
 /-- Learning event (direct witness): interval [2, 4] — overlaps described. -/
-def learningEventDirect : Ev ℤ := ⟨⟨2, 4, by omega⟩, .state⟩
+def learningEventDirect : Event ℤ := ⟨⟨2, 4, by omega⟩, .state⟩
 
 /-- Learning event (spatial distance): interval [0, 5] — same time,
     different place (smoke from chimney). -/
-def learningEventSpatial : Ev ℤ := ⟨⟨0, 5, by omega⟩, .state⟩
+def learningEventSpatial : Event ℤ := ⟨⟨0, 5, by omega⟩, .state⟩
 
 /-- Indirect evidence scenario: described event [0,5], learning event [10,15]. -/
 def indirectScenario : LearningScenario ℤ where
@@ -309,7 +309,7 @@ def smokeScenario : LearningScenario ℤ where
 theorem indirect_temporallyDisjoint :
     temporallyDisjoint indirectScenario.described indirectScenario.learning := by
   unfold temporallyDisjoint Interval.overlaps indirectScenario describedEvent learningEventIndirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   omega
 
 /-- Direct witness: described event [0,5] and learning event [2,4] overlap.
@@ -317,7 +317,7 @@ theorem indirect_temporallyDisjoint :
 theorem direct_not_disjoint :
     ¬ temporallyDisjoint describedEvent learningEventDirect := by
   unfold temporallyDisjoint Interval.overlaps describedEvent learningEventDirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   push_neg
   omega
 
@@ -326,7 +326,7 @@ theorem direct_not_disjoint :
 theorem smoke_temporally_overlapping :
     ¬ temporallyDisjoint smokeScenario.described smokeScenario.learning := by
   unfold temporallyDisjoint Interval.overlaps smokeScenario describedEvent learningEventSpatial
-  simp only [Ev.τ]
+  simp only [Event.τ]
   push_neg
   omega
 
@@ -334,7 +334,7 @@ theorem smoke_temporally_overlapping :
     locations to the described and learning events yields △. This captures
     the smoke-from-chimney scenario (§4): spatial distance suffices. -/
 theorem smoke_spatiotemporallyDistant
-    {L : Type*} [DecidableEq L] (loc : Ev ℤ → L)
+    {L : Type*} [DecidableEq L] (loc : Event ℤ → L)
     (hdiff : loc smokeScenario.described ≠ loc smokeScenario.learning) :
     spatiotemporallyDistant loc smokeScenario.described smokeScenario.learning :=
   Or.inr hdiff
@@ -357,7 +357,7 @@ theorem smoke_spatiotemporallyDistant
 theorem indirect_tense_ordering :
     indirectScenario.described.τ.precedes indirectScenario.learning.τ := by
   unfold Interval.precedes indirectScenario describedEvent learningEventIndirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   omega
 
 /-- The smoke scenario has NO temporal ordering (events are simultaneous),
@@ -366,7 +366,7 @@ theorem indirect_tense_ordering :
 theorem smoke_no_tense_ordering :
     ¬ smokeScenario.described.τ.precedes smokeScenario.learning.τ := by
   unfold Interval.precedes smokeScenario describedEvent learningEventSpatial
-  simp only [Ev.τ]
+  simp only [Event.τ]
   omega
 
 -- ════════════════════════════════════════════════════
@@ -388,7 +388,7 @@ theorem indirect_presup_satisfied {W : Type*} (p : W → Prop) (w : W) :
     (indirectScenario.toEvidentialProp p).presup w := by
   unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
          indirectScenario describedEvent learningEventIndirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   decide
 
 /-- When △ fails (direct witness), the presupposition fails —
@@ -401,7 +401,7 @@ theorem direct_presup_fails {W : Type*} (p : W → Prop) (w : W) :
     ¬ (directScenario.toEvidentialProp p).presup w := by
   unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
          directScenario describedEvent learningEventDirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   decide
 
 /-- Property (6ii): the assertion of a scenario's PrProp IS the scope
@@ -449,7 +449,7 @@ theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W �
 theorem indirect_isBefore :
     indirectScenario.described.τ.isBefore indirectScenario.learning.τ := by
   unfold Interval.isBefore indirectScenario describedEvent learningEventIndirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   omega
 
 /-- Construct Cumming's EvidentialFrame from the learning scenario:
@@ -466,7 +466,7 @@ def indirectFrame : EvidentialFrame ℤ where
     the temporal special case of Koev's △. -/
 theorem indirect_downstream : downstreamEvidence indirectFrame := by
   unfold downstreamEvidence indirectFrame indirectScenario describedEvent learningEventIndirect
-  simp only [Ev.τ]
+  simp only [Event.τ]
   omega
 
 -- ════════════════════════════════════════════════════

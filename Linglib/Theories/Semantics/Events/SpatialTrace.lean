@@ -70,9 +70,9 @@ namespace Semantics.Events
 class SpatialTrace (Loc Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     [SemilatticeSup (Path Loc)] where
   /-- Extract the spatial path of an event. -/
-  σ : Ev Time → Path Loc
+  σ : Event Time → Path Loc
   /-- σ preserves sums: σ(e₁ ⊕ e₂) = σ(e₁) ⊕ σ(e₂). -/
-  σ_map_sup : ∀ (e₁ e₂ : Ev Time),
+  σ_map_sup : ∀ (e₁ e₂ : Event Time),
     σ (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂) =
       σ e₁ ⊔ σ e₂
 

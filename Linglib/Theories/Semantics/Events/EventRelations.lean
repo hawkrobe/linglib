@@ -4,15 +4,15 @@ import Linglib.Theories.Semantics.Events.Basic
 # Event Relations (Generalized over Argument Sort)
 
 A generalization of `ThematicRel` to arbitrary argument sorts. Where
-`ThematicRel Entity Time := Entity → Ev Time → Prop` fixes the argument
-sort to entities, `EventRel Time α := Ev Time → α → Prop` lets the
+`ThematicRel Entity Time := Entity → Event Time → Prop` fixes the argument
+sort to entities, `EventRel Time α := Event Time → α → Prop` lets the
 argument range over any type.
 
 This is the type of relations like:
 
-- `CONTENT : Ev Time → SemObj → Prop` — event-to-content relations
+- `CONTENT : Event Time → SemObj → Prop` — event-to-content relations
   where the argument is a propositional/question denotation, not an entity
-- `REENACT : Ev Time → Performance Time → Prop` — event-to-performance
+- `REENACT : Event Time → Performance Time → Prop` — event-to-performance
   relations, where the argument is itself an event
   (@cite{rudin-2025b}, §4.4–4.7)
 
@@ -32,6 +32,6 @@ open Core.Time
     arguments may be propositions, questions, performances, content
     individuals, or any other ontological category that the analysis
     requires. -/
-abbrev EventRel (Time α : Type*) [LinearOrder Time] := Ev Time → α → Prop
+abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Prop
 
 end Semantics.Events

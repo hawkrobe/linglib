@@ -131,7 +131,7 @@ variable {Time : Type*} [LinearOrder Time] [cem : EventCEM Time]
 noncomputable def temporalChain
     {dur : Core.Time.Interval Time → ℚ}
     [hDur : @ExtMeasure _ cem.intervalSemilatticeSup dur]
-    (hInj : @Function.Injective _ _ (fun (e : Ev Time) => e.runtime)) :
+    (hInj : @Function.Injective _ _ (fun (e : Event Time) => e.runtime)) :
     @DimensionChain _ _ ℚ
       cem.evSemilatticeSup.toPartialOrder
       cem.intervalSemilatticeSup.toPartialOrder
@@ -139,7 +139,7 @@ noncomputable def temporalChain
       (fun e => e.runtime) dur :=
   letI : PartialOrder (Core.Time.Interval Time) :=
     cem.intervalSemilatticeSup.toPartialOrder
-  letI : PartialOrder (Ev Time) := cem.evSemilatticeSup.toPartialOrder
+  letI : PartialOrder (Event Time) := cem.evSemilatticeSup.toPartialOrder
   { leg₁ := @MereoDim.ofInjSumHom _ _ cem.evSemilatticeSup cem.intervalSemilatticeSup
       (f := fun e => e.runtime) (instIsSumHomRuntime Time) hInj
     leg₂ := @instMereoDimOfExtMeasure _ cem.intervalSemilatticeSup dur hDur }
@@ -148,7 +148,7 @@ noncomputable def temporalChain
 theorem temporal_qua_licensed
     {dur : Core.Time.Interval Time → ℚ}
     [hDur : @ExtMeasure _ cem.intervalSemilatticeSup dur]
-    (hInj : @Function.Injective _ _ (fun (e : Ev Time) => e.runtime))
+    (hInj : @Function.Injective _ _ (fun (e : Event Time) => e.runtime))
     {P : ℚ → Prop} (hP : QUA P) :
     @QUA _ cem.evSemilatticeSup.toPartialOrder (P ∘ dur ∘ (fun e => e.runtime)) :=
   letI : PartialOrder (Core.Time.Interval Time) :=

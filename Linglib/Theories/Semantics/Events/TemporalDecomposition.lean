@@ -135,29 +135,29 @@ theorem hasComplexDecomposition_iff_telic (c : VendlerClass) :
   cases c <;> simp [HasComplexDecomposition, VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════
--- § 4. Ev with Decomposition
+-- § 4. Event with Decomposition
 -- ════════════════════════════════════════════════════
 
 /-- An event enriched with temporal decomposition information.
-    Extends `Ev` (which has runtime + sort) with subevent phase structure. -/
+    Extends `Event` (which has runtime + sort) with subevent phase structure. -/
 structure DecomposedEv (Time : Type*) [LinearOrder Time] where
   /-- The underlying event -/
-  event : Ev Time
+  event : Event Time
   /-- Temporal decomposition of the event -/
   decomposition : TemporalDecomposition Time
   /-- The decomposition's runtime matches the event's runtime -/
   runtime_consistent : decomposition.runtime = event.runtime
 
 /-- Attach a simple decomposition to an event (for states/activities). -/
-def Ev.withSimpleDecomposition {Time : Type*} [LinearOrder Time]
-    (e : Ev Time) : DecomposedEv Time where
+def Event.withSimpleDecomposition {Time : Type*} [LinearOrder Time]
+    (e : Event Time) : DecomposedEv Time where
   event := e
   decomposition := .simple e.runtime
   runtime_consistent := rfl
 
 /-- Attach a complex decomposition to an event (for accomplishments/achievements). -/
-def Ev.withComplexDecomposition {Time : Type*} [LinearOrder Time]
-    (e : Ev Time) (phases : SubeventPhases Time)
+def Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
+    (e : Event Time) (phases : SubeventPhases Time)
     (h_act : phases.activityTrace.subinterval e.runtime)
     (h_res : phases.resultTrace.subinterval e.runtime) : DecomposedEv Time where
   event := e
@@ -197,6 +197,7 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
 -- § 6. Phase Event Predicates
 -- ════════════════════════════════════════════════════
 
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 
 /-- Event predicate localized to an interval: holds of eventualities whose
@@ -216,20 +217,20 @@ def phasePred {Time : Type*} [LinearOrder Time]
 theorem impf_phasePred {Time : Type*} [LinearOrder Time]
     (phase t : Interval Time) :
     IMPF (phasePred phase) () t ↔ t.properSubinterval phase := by
-  simp only [IMPF, phasePred, Eventuality.τ]
+  simp only [IMPF, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
 
 /-- PRFV applied to a phase predicate reduces to the phase interval being
     contained in the reference time. -/
 theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
     (phase t : Interval Time) :
     PRFV (phasePred phase) () t ↔ phase.subinterval t := by
-  simp only [PRFV, phasePred, Eventuality.τ]
+  simp only [PRFV, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. ViewpointAspect ↔ Decomposition Bridge

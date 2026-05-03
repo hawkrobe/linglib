@@ -260,10 +260,11 @@ theorem existential_eq_perf_prfv {Time : Type*} [LinearOrder Time]
     (d : TemporalDecomposition Time) (R : Time) :
     (∃ pts, existentialReading d pts R) ↔
     PERF (PRFV (phasePred d.runtime)) ⟨(), R⟩ := by
-  simp only [existentialReading, PERF, RB, PRFV, phasePred, Eventuality.τ]
+  simp only [existentialReading, PERF, RB, PRFV, phasePred, Event.τ]
   constructor
   · rintro ⟨pts, hR, hSub⟩
-    exact ⟨pts, hR, ⟨d.runtime⟩, hSub, rfl⟩
+    -- sort defaults to .action; the proof doesn't reference .sort
+    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 
@@ -275,10 +276,11 @@ theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
     (d : TemporalDecomposition Time) (R : Time) :
     (∃ pts, universalReading d pts R) ↔
     PERF (UNBOUNDED (phasePred d.runtime)) ⟨(), R⟩ := by
-  simp only [universalReading, PERF, RB, UNBOUNDED, phasePred, Eventuality.τ]
+  simp only [universalReading, PERF, RB, UNBOUNDED, phasePred, Event.τ]
   constructor
   · rintro ⟨pts, hR, hSub⟩
-    exact ⟨pts, hR, ⟨d.runtime⟩, hSub, rfl⟩
+    -- sort defaults to .action; the proof doesn't reference .sort
+    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 

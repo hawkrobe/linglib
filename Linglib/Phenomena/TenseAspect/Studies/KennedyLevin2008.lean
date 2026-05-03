@@ -312,7 +312,7 @@ theorem warm_pipeline_converge :
     instances in linglib** — toy domains for *straighten* (closed
     scale, max = 1) and *widen* (open scale, no max) — and demonstrates
     that the auto-synthesis arrow
-    `[HasMeasureFunction α δ Time] → HasScalarResult α δ (Ev Time)`
+    `[HasMeasureFunction α δ Time] → HasScalarResult α δ (Event Time)`
     fires structurally. Downstream `IsQuantizedAffected.mk'` /
     `IsNonQuantizedAffected.mk'` smart constructors find the
     `HasScalarResult` instance by typeclass resolution without explicit
@@ -363,14 +363,14 @@ instance straightMeasure : HasMeasureFunction RodToy ℚ SubstrateTime where
     `HasLatentScale.ofHasMeasureFunction` since auto-synthesis isn't
     available (δ-inference issue documented in
     `Degree/MeasureFunction.lean`). -/
-instance : HasLatentScale RodToy (Ev SubstrateTime) :=
+instance : HasLatentScale RodToy (Event SubstrateTime) :=
   HasLatentScale.ofHasMeasureFunction (δ := ℚ)
 
 /-- *straighten*'s θ-relation: rod `x` is straightened in event `e`
     iff `x` has straightness `1` at the end of `e`. K&L eq. 20: "*x
     undergoes a change from non-maximal to maximal straightness*".
     The toy entails only the maximal-end condition. -/
-def θ_straighten_toy : RodToy → Ev SubstrateTime → Prop :=
+def θ_straighten_toy : RodToy → Event SubstrateTime → Prop :=
   fun x e => HasMeasureFunction.measure
     (α := RodToy) (δ := ℚ) (Time := SubstrateTime)
     x e.runtime.finish = (1 : ℚ)
@@ -404,7 +404,7 @@ example : IsQuantizedAffected.finalDegree (θ := θ_straighten_toy) = (1 : ℚ) 
 example : IsNonQuantizedAffected (δ := ℚ) θ_straighten_toy := inferInstance
 
 /-- Synthesis test: extends-chain gives `IsPotentialAffected` (bottom). -/
-example : IsPotentialAffected (β := Ev SubstrateTime) θ_straighten_toy :=
+example : IsPotentialAffected (β := Event SubstrateTime) θ_straighten_toy :=
   inferInstance
 
 -- ────────────────────────────────────────────────────
@@ -423,13 +423,13 @@ instance wideMeasure : HasMeasureFunction GapToy ℚ SubstrateTime where
   measure _ t := (t : ℚ) + 1
 
 /-- HasLatentScale companion for *widen*. -/
-instance : HasLatentScale GapToy (Ev SubstrateTime) :=
+instance : HasLatentScale GapToy (Event SubstrateTime) :=
   HasLatentScale.ofHasMeasureFunction (δ := ℚ)
 
 /-- *widen*'s θ-relation: gap `x` widens in event `e` iff `x` has
     SOME width at the end of `e`. K&L's atelic "comparative" reading
     — no specific final value entailed. -/
-def θ_widen_toy : GapToy → Ev SubstrateTime → Prop :=
+def θ_widen_toy : GapToy → Event SubstrateTime → Prop :=
   fun x e => ∃ g : ℚ, HasMeasureFunction.measure
     (α := GapToy) (δ := ℚ) (Time := SubstrateTime)
     x e.runtime.finish = g
@@ -458,7 +458,7 @@ instance widen_isNonQuantizedAffected_toy :
   IsNonQuantizedAffected.mk' (fun _ _ _ => trivial) widen_nonQuantized_toy
 
 /-- Extends-chain still gives Potential. -/
-example : IsPotentialAffected (β := Ev SubstrateTime) θ_widen_toy := inferInstance
+example : IsPotentialAffected (β := Event SubstrateTime) θ_widen_toy := inferInstance
 
 -- ────────────────────────────────────────────────────
 -- §5.3 Telicity Bridge to AffectednessDegree

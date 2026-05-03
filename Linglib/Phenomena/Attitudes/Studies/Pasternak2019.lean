@@ -68,7 +68,7 @@ do not exist. Corrected:
 
 - §4.2 two-dimensional ontology: a vertical-altitude axis would *extend*
   `Semantics.Events.Basic.EventMereology` (which already provides the
-  `Preorder (Ev Time)` instance Pasternak's part-whole relation
+  `Preorder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
 - §5 `want`/`wish`/`regret`: `Theories/Semantics/Attitudes/Desire.lean`
   already provides `wantVF` (von Fintel-style) and
@@ -86,7 +86,7 @@ namespace Phenomena.Attitudes.Studies.Pasternak2019
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
-open Semantics.Events (Ev EvPred)
+open Semantics.Events (Event EvPred)
 open Semantics.Events.ThematicRoles (ThematicFrame)
 
 /-! ## §1. Monotonicity (Pasternak (4))
@@ -154,14 +154,14 @@ structure MentalStateVerb (Time : Type*) [LinearOrder Time] where
   /-- The verb's lexical predicate on eventualities (e.g., `hate`, `love`) -/
   predicate : EvPred Time
   /-- Intensity measure function — Pasternak's `μ_int` -/
-  μint : Ev Time → ℚ
+  μint : Event Time → ℚ
 
 /-- Pasternak (27)/(48b): "α V x at degree d" — eventuality is in the
     verb's denotation, has experiencer α and theme x via the frame, and
     intensity at or above d. -/
 def MentalStateVerb.holdsAtDegree {Entity Time : Type*} [LinearOrder Time]
     (v : MentalStateVerb Time) (frame : ThematicFrame Entity Time)
-    (α x : Entity) (d : ℚ) (e : Ev Time) : Prop :=
+    (α x : Entity) (d : ℚ) (e : Event Time) : Prop :=
   v.predicate e ∧ frame.experiencer α e ∧ frame.theme x e ∧ v.μint e ≥ d
 
 /-! ## §4. Intensity Comparative (Pasternak (53))
@@ -232,7 +232,7 @@ theorem positive_entailment_matrix {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {v : MentalStateVerb Time} {α β x y : Entity}
     (h : intensityComparative frame v α β x y) :
-    ∃ e : Ev Time,
+    ∃ e : Event Time,
       frame.experiencer α e ∧ v.predicate e ∧ frame.theme x e := by
   obtain ⟨e, hExp, ⟨hPred, hThm⟩, _⟩ := h
   exact ⟨e, hExp, hPred, hThm⟩
@@ -251,7 +251,7 @@ def thanDegreesAug62 {Entity Time : Type*} [LinearOrder Time]
 def intensityComparativeAug62 {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (v : MentalStateVerb Time) (α β x y : Entity) : Prop :=
-  ∃ ea : Ev Time,
+  ∃ ea : Event Time,
     frame.experiencer α ea ∧ themedPredicate v frame x ea ∧
     ∃ δ : ℚ, Wellwood2015.IsMaxDeg (thanDegreesAug62 frame v β y) δ ∧
               v.μint ea > δ
@@ -269,7 +269,7 @@ theorem positive_non_entailment_than_clause_witness
     {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (v : MentalStateVerb Time) (α β x y : Entity)
-    (eα : Ev Time)
+    (eα : Event Time)
     (hExp : frame.experiencer α eα) (hPred : v.predicate eα)
     (hThm : frame.theme x eα) (hμ : v.μint eα > 0)
     (hβ_empty : ∀ e, frame.experiencer β e → v.predicate e →
@@ -296,16 +296,16 @@ The biconditional form. Forward direction is exactly `Mereology.DIV`
 /-- Mental state homogeneity (Pasternak (55)): the predicate is closed
     under taking parts. Defined as `Mereology.DIV` — the substrate-level
     downward-closure primitive @cite{champollion-2017} §2.3.3. -/
-def MentalStateHomogeneity {Ev : Type*} [Preorder Ev] (P : Ev → Prop) : Prop :=
+def MentalStateHomogeneity {Event : Type*} [Preorder Event] (P : Event → Prop) : Prop :=
   Mereology.DIV P
 
 /-- Bridge to Pasternak's biconditional form (55): `P e ↔ ∀ e' ≤ e, P e'`.
     The forward direction is `Mereology.DIV` instantiated; the reverse
     direction uses `Preorder.le_refl` to instantiate the universal at
     `e' := e`. -/
-theorem mentalStateHomogeneity_iff {Ev : Type*} [Preorder Ev]
-    (P : Ev → Prop) (h : MentalStateHomogeneity P) (e : Ev) :
-    P e ↔ ∀ e' : Ev, e' ≤ e → P e' := by
+theorem mentalStateHomogeneity_iff {Event : Type*} [Preorder Event]
+    (P : Event → Prop) (h : MentalStateHomogeneity P) (e : Event) :
+    P e ↔ ∀ e' : Event, e' ≤ e → P e' := by
   constructor
   · intro hPe e' hle; exact h e e' hPe hle
   · intro hAll; exact hAll e (le_refl e)
@@ -328,7 +328,7 @@ when the type-level `comparativeTruthHetero` quantification adds noise. -/
 theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {v : MentalStateVerb Time}
-    {α β x y : Entity} {ea eb : Ev Time}
+    {α β x y : Entity} {ea eb : Event Time}
     (ha : frame.experiencer α ea ∧ themedPredicate v frame x ea)
     (ha_unique : ∀ e, frame.experiencer α e → themedPredicate v frame x e → e = ea)
     (hb : frame.experiencer β eb ∧ themedPredicate v frame y eb)
@@ -338,8 +338,8 @@ theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
 
 /-! ## §6. Bridge to Event Mereology + CSW
 
-`MentalStateHomogeneity` is `Mereology.DIV` over the ambient `[Preorder Ev]`.
-When `Ev = Ev Time` and the preorder comes from
+`MentalStateHomogeneity` is `Mereology.DIV` over the ambient `[Preorder Event]`.
+When `Event = Event Time` and the preorder comes from
 `Theories/Semantics/Events/Basic.lean::EventMereology`, Pasternak's claim
 becomes: vP-predicates respect the event-mereology part-of. We expose
 two substrate consequences below: a downward-closure inheritance lemma
@@ -351,7 +351,7 @@ CSW @cite{cariani-santorio-wellwood-2024} share Pasternak's monotonicity
 discipline: their eq. (21) is the same `StrictMono` constraint exposed
 as `StatesBased.admissibleMeasure` (multi-tradition naming there). The
 architectural mismatch with Pasternak is theme typing — Pasternak's
-`Thm : Entity → Ev → Prop` is entity-themed (§4 transitive psych
+`Thm : Entity → Event → Prop` is entity-themed (§4 transitive psych
 verbs); CSW's `theme : W → Prop` is propositional (gradable attitude
 adjectives like `confident that p`). The substrate-level identification
 (monotonicity = admissibleMeasure) is now in the `admissibleMeasure`
@@ -369,7 +369,7 @@ theorem sortDetermined_isHomogeneous
     {Time : Type*} [LinearOrder Time] [EventMereology Time]
     (s : EventSort) :
     letI := eventPreorder Time
-    MentalStateHomogeneity (fun e : Ev Time => e.sort = s) := by
+    MentalStateHomogeneity (fun e : Event Time => e.sort = s) := by
   intro e e' hPe hle
   exact (EventMereology.sort_preserved e' e hle).trans hPe
 
@@ -379,7 +379,7 @@ theorem sortDetermined_isHomogeneous
     `Mereology.div_implies_gHomogeneous` since `MentalStateHomogeneity`
     is definitionally `Mereology.DIV`. -/
 theorem mentalStateHomogeneity_implies_gHomogeneous
-    {Ev : Type*} [PartialOrder Ev] {P : Ev → Prop}
+    {Event : Type*} [PartialOrder Event] {P : Event → Prop}
     (h : MentalStateHomogeneity P) : Mereology.gHomogeneous P :=
   Mereology.div_implies_gHomogeneous h
 
@@ -432,7 +432,7 @@ entries with measure-function payloads.
 Pasternak's vertical altitude axis `K` (PDF p.288) extends rather than
 replaces the substrate's `EventMereology Time` preorder. A
 `Theories/Semantics/Events/VerticalDimension.lean` add-on with
-`κ : Ev Time → Set Altitude` plus the DOG fineness lattice (which can
+`κ : Event Time → Set Altitude` plus the DOG fineness lattice (which can
 consume `Core.Order.FeaturePreorder.coarsen_via_monotone`) is a clean
 follow-up. Out of scope here because it is not load-bearing for §1–§6.
 

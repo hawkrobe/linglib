@@ -23,6 +23,7 @@ of event predicates, not specific to any particular analysis.
 namespace Semantics.Tense.Aspect.SubintervalProperty
 
 open Core.Time
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -37,17 +38,17 @@ variable {W Time : Type*} [LinearOrder Time]
     along the time dimension. Cousin formulations at the same point in
     @cite{champollion-2017}'s parameter space (dimension = τ, atomic
     granularity) live in `Theories/Semantics/Events/StratifiedReference/Specializations.lean`'s
-    `IsStative` (decomposition form, on `Ev Time`) and
+    `IsStative` (decomposition form, on `Event Time`) and
     `Core/Time/AtomDist.lean`'s `AtomDist` (quantifier-restriction form).
     The three formulations are NOT directly interderivable — the
     universal-witness form (this file) makes a stronger universal claim
     over hypothetical witness events than the decomposition form (SR);
     bridging requires explicit witness-existence assumptions. -/
 def HasSubintervalProp (P : EventPred W Time) : Prop :=
-  ∀ (e₁ : Eventuality Time) (w : W),
+  ∀ (e₁ : Event Time) (w : W),
     P w e₁ →
     ∀ (t : Interval Time), t.subinterval e₁.τ →
-    ∀ (e₂ : Eventuality Time), e₂.τ = t →
+    ∀ (e₂ : Event Time), e₂.τ = t →
     P w e₂
 
 /-- **Closed subinterval property** (CSUB).
@@ -55,10 +56,10 @@ def HasSubintervalProp (P : EventPred W Time) : Prop :=
     whose runtime is t. Stronger than SUB: guarantees witnesses exist,
     not just that predication is preserved. -/
 def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
-  ∀ (e₁ : Eventuality Time) (w : W),
+  ∀ (e₁ : Event Time) (w : W),
     P w e₁ →
     ∀ (t : Interval Time), t.subinterval e₁.τ →
-    ∃ (e₂ : Eventuality Time), e₂.τ = t ∧ P w e₂
+    ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂
 
 -- ════════════════════════════════════════════════════
 -- § Operator-Level Consequences
@@ -93,9 +94,9 @@ open Features
     every subinterval of I. -/
 theorem activity_entailment
     (P : EventPred W Time) (hSub : HasClosedSubintervalProp P)
-    (w : W) (e₁ : Eventuality Time) (hP : P w e₁)
+    (w : W) (e₁ : Event Time) (hP : P w e₁)
     (t : Interval Time) (hSub' : t.subinterval e₁.τ) :
-    ∃ (e₂ : Eventuality Time), e₂.τ = t ∧ P w e₂ :=
+    ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂ :=
   hSub e₁ w hP t hSub'
 
 /-- **Imperfective paradox** (@cite{smith-1997} p. 29):
@@ -117,13 +118,15 @@ theorem imperfective_paradox_possible
   let P : EventPred W Time := λ _ e => e.τ.finish = t₂
   have hSub := hall P
   -- Construct an event e₁ with runtime [t₁, t₂]; P holds (finish = t₂)
-  let e₁ : Eventuality Time := ⟨⟨t₁, t₂, le_of_lt hlt⟩⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₁ : Event Time := ⟨⟨t₁, t₂, le_of_lt hlt⟩, .action⟩
   have hPe₁ : P w e₁ := rfl
   -- [t₁, t₁] is a subinterval of [t₁, t₂]
   let sub : Interval Time := ⟨t₁, t₁, le_refl t₁⟩
   have hSI : sub.subinterval e₁.τ := ⟨le_refl t₁, le_of_lt hlt⟩
   -- SIP says P must hold for any event with runtime [t₁, t₁]
-  let e₂ : Eventuality Time := ⟨sub⟩
+  -- sort defaults to .action; the proof doesn't reference .sort
+  let e₂ : Event Time := ⟨sub, .action⟩
   have hPe₂ := hSub e₁ w hPe₁ sub hSI e₂ rfl
   -- But P w e₂ means t₁ = t₂, contradicting t₁ < t₂
   exact absurd hPe₂ (ne_of_lt hlt)
@@ -221,8 +224,8 @@ theorem csip_necessary_for_impf_prfv :
     refine ⟨e₂, ?_, hPe₂⟩
     have ⟨a1, a2⟩ := hSub₂
     have ⟨b1, b2⟩ := hSubRev
-    rcases e₂ with ⟨⟨_, _, _⟩⟩; rcases t with ⟨_, _, _⟩
-    simp only [Eventuality.τ, Interval.mk.injEq]
+    rcases e₂ with ⟨⟨_, _, _⟩, _⟩; rcases t with ⟨_, _, _⟩
+    simp only [Event.τ, Interval.mk.injEq]
     exact ⟨le_antisymm b1 a1, le_antisymm a2 b2⟩
 
 end Semantics.Tense.Aspect.SubintervalProperty

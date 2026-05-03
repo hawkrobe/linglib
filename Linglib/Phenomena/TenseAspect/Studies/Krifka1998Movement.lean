@@ -258,7 +258,7 @@ theorem motion_vendler_path_coherence :
     (`pathShapeToTelicity` mapping `PathShape` to `Telicity`). The
     section below INVOKES the propositional K98 §4 substrate from
     `Theories/Semantics/Events/MovementRelations.lean` on abstract
-    θ + Path Loc + Ev Time instances — paralleling K89 study §3's
+    θ + Path Loc + Event Time instances — paralleling K89 study §3's
     invocations of `qmod_of_cum_is_qua`/`measure_phrase_makes_qua`.
 
     The big propositional theorems for K98 §4's central result
@@ -270,7 +270,7 @@ theorem motion_vendler_path_coherence :
     `k98_unbounded_movement_atelic_via_spatial_trace`.
 
     The K98 §4 substrate predicates EXP, SEINC, ADJ, SMR, MR,
-    SOURCE, GOAL, KM' are exercised below on Path Loc + Ev Time.
+    SOURCE, GOAL, KM' are exercised below on Path Loc + Event Time.
 
     Deferred (require new substrate per `MovementRelations.lean`'s
     architectural notes): TANG_H tangentiality (eq. 17), full ADJ
@@ -313,10 +313,10 @@ end PropositionalMovement
 -- § 6. K98 §4.1 EXP / SEINC instances
 -- ════════════════════════════════════════════════════
 
-/-! K98 §4.1 EXP (eq. 63) and SEINC (eq. 65) on `Ev Time`. The
-    precedence relation is `Ev.precedes` (one event's runtime is
+/-! K98 §4.1 EXP (eq. 63) and SEINC (eq. 65) on `Event Time`. The
+    precedence relation is `Event.precedes` (one event's runtime is
     entirely before the other's). These abbreviations show that the
-    K98 §4 EXP/SEINC predicates are well-formed on `Ev Time` and
+    K98 §4 EXP/SEINC predicates are well-formed on `Event Time` and
     can be reasoned about given concrete θ instances. -/
 
 section Expansiveness
@@ -328,14 +328,14 @@ open Semantics.Events.MovementRelations
 variable {α : Type*} [SemilatticeSup α]
 variable {Time : Type*} [LinearOrder Time]
 
-/-- EXP-as-property of any θ : α → Ev Time → Prop using `Ev.precedes`. -/
-abbrev expEv (θ : α → Ev Time → Prop) : Prop :=
-  EXP (Ev.precedes (Time := Time)) θ
+/-- EXP-as-property of any θ : α → Event Time → Prop using `Event.precedes`. -/
+abbrev expEv (θ : α → Event Time → Prop) : Prop :=
+  EXP (Event.precedes (Time := Time)) θ
 
-/-- SEINC-as-property using `Ev.precedes`. Requires `[SemilatticeSup (Ev Time)]`,
+/-- SEINC-as-property using `Event.precedes`. Requires `[SemilatticeSup (Event Time)]`,
     which `EventCEM` provides automatically. -/
-abbrev seincEv [EventCEM Time] (θ : α → Ev Time → Prop) : Prop :=
-  SEINC (Ev.precedes (Time := Time)) θ
+abbrev seincEv [EventCEM Time] (θ : α → Event Time → Prop) : Prop :=
+  SEINC (Event.precedes (Time := Time)) θ
 
 end Expansiveness
 
@@ -343,9 +343,9 @@ end Expansiveness
 -- § 7. K98 §4.2 SMR / §4.3 MR instances
 -- ════════════════════════════════════════════════════
 
-/-! K98 §4.2 SMR (eq. 69) and §4.3 MR (eq. 71) on `Path Loc → Ev Time → Prop`.
+/-! K98 §4.2 SMR (eq. 69) and §4.3 MR (eq. 71) on `Path Loc → Event Time → Prop`.
     The path-adjacency relation is `Path.adjacent` (share an endpoint);
-    event-adjacency is `Ev.adjacent` (runtime intervals meet);
+    event-adjacency is `Event.adjacent` (runtime intervals meet);
     `isPath := fun _ => True` since the source type is already `Path Loc`. -/
 
 section MovementInstances
@@ -361,14 +361,14 @@ variable [EventCEM Time] [PartialOrder (Path Loc)] [SemilatticeSup (Path Loc)]
 /-- SMR specialized to paths and events with concrete adjacency. The
     `isPath` predicate is trivially true for `Path Loc` since every
     inhabitant is already a path. -/
-abbrev smrPath (θ : Path Loc → Ev Time → Prop) : Prop :=
-  SMR Path.adjacent (Ev.adjacent (Time := Time))
+abbrev smrPath (θ : Path Loc → Event Time → Prop) : Prop :=
+  SMR Path.adjacent (Event.adjacent (Time := Time))
     (fun _ : Path Loc => True) θ
 
 /-- MR specialized to paths and events with concrete adjacency
     + precedence. -/
-abbrev mrPath (θ : Path Loc → Ev Time → Prop) : Prop :=
-  MR Path.adjacent (Ev.adjacent (Time := Time)) (Ev.precedes (Time := Time))
+abbrev mrPath (θ : Path Loc → Event Time → Prop) : Prop :=
+  MR Path.adjacent (Event.adjacent (Time := Time)) (Event.precedes (Time := Time))
     (fun _ : Path Loc => True) θ
 
 end MovementInstances

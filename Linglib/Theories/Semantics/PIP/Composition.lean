@@ -316,7 +316,7 @@ applies ↑ to each curried application. Iterated application via
 `fxApply_twice` captures the effect for two-argument roles.
 
 Cf. `Theories.Semantics.Events.ThematicRoles.ThematicRel` for the
-general Davidsonian role type `Entity → Ev → Prop`; FX is PIP's
+general Davidsonian role type `Entity → Event → Prop`; FX is PIP's
 mechanism for composing such roles with restricted variables.
 -/
 def fxApply (f : D → W → Bool) (φ : W → Bool) (x : D) : W → Bool :=

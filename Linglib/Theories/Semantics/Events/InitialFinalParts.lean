@@ -6,7 +6,7 @@ import Mathlib.Order.Basic
 
 A part `e'` of a whole `e` is INITIAL iff no other part precedes `e'`,
 FINAL iff no other part follows `e'`. Generic over a partial order
-and a precedence relation; specialize with `Ev.precedes` for events
+and a precedence relation; specialize with `Event.precedes` for events
 (`Theories/Semantics/Events/EventAdjacency.lean`).
 
 These are the substrate predicates for `MovementRelations.lean`'s
@@ -28,7 +28,7 @@ namespace Semantics.Events.InitialFinalParts
 
 /-- K98 §2.5 eq. 36 INI: e' is an initial part of e iff e' ≤ e and
     no other part of e precedes e'. Generic over a part order and a
-    precedence relation; specialize with `Ev.precedes` for events. -/
+    precedence relation; specialize with `Event.precedes` for events. -/
 def IsInitialPart {β : Type*} [PartialOrder β]
     (precedes : β → β → Prop) (e' e : β) : Prop :=
   e' ≤ e ∧ ¬ ∃ e'', e'' ≤ e ∧ precedes e'' e'

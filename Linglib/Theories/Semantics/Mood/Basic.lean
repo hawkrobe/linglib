@@ -11,7 +11,7 @@ determiners for situations:
 - **SUBJ**: Introduces a new situation dref (like indefinite "a")
 - **IND**: Retrieves/uses an existing situation (like definite "the")
 
-**Eventuality-level** (@cite{grano-2024}): Mood morphemes existentially close
+**Event-level** (@cite{grano-2024}): Mood morphemes existentially close
 or leave open the complement clause's eventuality argument:
 - **IND**: ∃e.P(e) — existentially closes, yielding a proposition
 - **SBJV₁**: P — leaves open, enabling eventuality abstraction
@@ -113,11 +113,11 @@ def IND {W Time : Type*}
   sameWorld s₂ s₁ ∧ P s₂ s₁
 
 -- ════════════════════════════════════════════════════════════════
--- § Eventuality-Level Mood Operators (@cite{grano-2024})
+-- § Event-Level Mood Operators (@cite{grano-2024})
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Mood as Eventuality Closure
+### Mood as Event Closure
 
 @cite{grano-2024} proposes that mood morphemes operate on the eventuality
 argument of the complement clause:
@@ -138,7 +138,7 @@ SUBJ/IND operators defined above.
     ⟦INDIC⟧ = λP_(⟨vt⟩).∃e.P(e)
 
     The eventuality variable is bound; the complement denotes a proposition. -/
-def INDev {Ev : Type*} (P : Ev → Prop) : Prop := ∃ e, P e
+def INDev {Event : Type*} (P : Event → Prop) : Prop := ∃ e, P e
 
 /-- SBJV₁ leaves the eventuality argument open (@cite{grano-2024}, (88a);
     §7 Subjunctive₃ (135)).
@@ -155,7 +155,7 @@ def INDev {Ev : Type*} (P : Ev → Prop) : Prop := ∃ e, P e
     variant (§7, Subjunctive₁ (133)), which uses Portner & Rubinstein's `ln`
     (local necessity), and the 'intend' variant (Subjunctive₂ (134) =
     `SBJVev₂`), which incorporates CAUSE*. -/
-def SBJVev₁ {Ev : Type*} (P : Ev → Prop) : Ev → Prop := P
+def SBJVev₁ {Event : Type*} (P : Event → Prop) : Event → Prop := P
 
 /-- SBJV₂ leaves the eventuality argument open AND requires causal
     self-reference (@cite{grano-2024}, (134); unified theory §7).
@@ -167,19 +167,19 @@ def SBJVev₁ {Ev : Type*} (P : Ev → Prop) : Ev → Prop := P
     & Rubinstein's (@cite{portner-rubinstein-2020}) modal quantification
     framework. The attitude state e must causally bring about the described
     event e' "in the right way" (@cite{searle-1983}; @cite{harman-1976}). -/
-def SBJVev₂ {Ev W : Type*}
-    (causeStar : Ev → Ev → W → Prop)  -- CAUSE*(state, event, world)
-    (content : Ev → W → Prop)          -- content of the attitude state
-    (P : W → Ev → Prop)               -- world-indexed event predicate
-    (e : Ev) : Prop :=
+def SBJVev₂ {Event W : Type*}
+    (causeStar : Event → Event → W → Prop)  -- CAUSE*(state, event, world)
+    (content : Event → W → Prop)          -- content of the attitude state
+    (P : W → Event → Prop)               -- world-indexed event predicate
+    (e : Event) : Prop :=
   ∀ w, content e w → ∃ e', causeStar e e' w ∧ P w e'
 
 /-- IND closure yields a proposition (no free eventuality variable). -/
-theorem INDev_is_propositional {Ev : Type*} (P : Ev → Prop) :
+theorem INDev_is_propositional {Event : Type*} (P : Event → Prop) :
     (INDev P) = (∃ e, P e) := rfl
 
 /-- SBJV₁ is the identity on event predicates. -/
-theorem SBJVev₁_is_identity {Ev : Type*} (P : Ev → Prop) :
+theorem SBJVev₁_is_identity {Event : Type*} (P : Event → Prop) :
     SBJVev₁ P = P := rfl
 
 

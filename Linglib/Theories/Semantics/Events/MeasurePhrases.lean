@@ -83,7 +83,7 @@ theorem qmod_of_cum_is_qua
     @cite{krifka-1989}: temporal adverbials modify via QMOD on
     duration. -/
 def durationMeasure {Time : Type*} [LinearOrder Time]
-    (len : Interval Time → ℚ) : Ev Time → ℚ :=
+    (len : Interval Time → ℚ) : Event Time → ℚ :=
   λ e => len e.runtime
 
 /-- "V for δ" as QMOD: the for-adverbial restricts VP events to those
@@ -98,9 +98,9 @@ def durationMeasure {Time : Type*} [LinearOrder Time]
     QMOD explains why the resulting VP is QUA (telic-like bounded),
     while SSR explains why the base predicate must be atelic. -/
 theorem forAdverbial_subsumes_qmod
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {V : Ev Time → Prop} {len : Interval Time → ℚ}
-    {dur : Interval Time} {e : Ev Time}
+    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    {V : Event Time → Prop} {len : Interval Time → ℚ}
+    {dur : Interval Time} {e : Event Time}
     (h : forAdverbialMeaning V dur e) :
     QMOD V (durationMeasure len) (len dur) e :=
   ⟨h.1, by simp [durationMeasure, h.2.1]⟩

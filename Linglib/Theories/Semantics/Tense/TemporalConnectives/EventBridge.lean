@@ -56,11 +56,11 @@ def eventDenotation (P : EvPred Time) : SentDenotation Time :=
 
 /-- Empty predicate gives empty denotation. -/
 theorem eventDenotation_empty :
-    eventDenotation (fun (_ : Ev Time) => False) = ∅ := by
+    eventDenotation (fun (_ : Event Time) => False) = ∅ := by
   ext i; simp [eventDenotation]
 
 /-- Nonempty predicate gives nonempty denotation (if there exists a witness). -/
-theorem eventDenotation_nonempty (P : EvPred Time) (e : Ev Time) (he : P e) :
+theorem eventDenotation_nonempty (P : EvPred Time) (e : Event Time) (he : P e) :
     e.τ ∈ eventDenotation P :=
   ⟨e, he, rfl⟩
 
@@ -90,7 +90,7 @@ theorem timeTrace_eventDenotation (P : EvPred Time) :
 
 /-- A singleton event predicate (exactly one event with runtime i) gives an
     accomplishment denotation. -/
-theorem eventDenotation_singleton (e₀ : Ev Time) :
+theorem eventDenotation_singleton (e₀ : Event Time) :
     eventDenotation (fun e => e = e₀) = accomplishmentDenotation e₀.τ := by
   ext i
   simp only [eventDenotation, accomplishmentDenotation, Set.mem_setOf_eq]

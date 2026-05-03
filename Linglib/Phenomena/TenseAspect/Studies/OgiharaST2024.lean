@@ -429,7 +429,7 @@ theorem fragment_veridicality_asymmetry :
 
     This is not a stipulation in the Fragment — it follows from the semantics. -/
 theorem after_veridicality_derived :
-    ∀ (P Q : EvPred ℤ), AnscombeEvent.after P Q → ∃ e : Ev ℤ, Q e :=
+    ∀ (P Q : EvPred ℤ), AnscombeEvent.after P Q → ∃ e : Event ℤ, Q e :=
   fun P Q h => AnscombeEvent.after_veridical P Q h
 
 /-- O&ST's theory derives *before*'s non-veridicality from the universal
@@ -438,7 +438,7 @@ theorem after_veridicality_derived :
 
     Concretely: any P-event with an empty Q yields `before(P, Q)`. -/
 theorem before_nonveridicality_derived :
-    ∃ (P Q : EvPred ℤ), AnscombeEvent.before P Q ∧ ¬∃ e : Ev ℤ, Q e :=
+    ∃ (P Q : EvPred ℤ), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e :=
   AnscombeEvent.before_nonveridical
 
 -- ════════════════════════════════════════════════════════════════
@@ -450,28 +450,28 @@ theorem before_nonveridicality_derived :
     - arriving event at time 0
     O&ST predicts: after(leave, arrive) holds (τ(arrive) ≺ τ(leave)). -/
 theorem scenario_after_punctual :
-    let leave : Ev ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Ev ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
     AnscombeEvent.after (· = leave) (· = arrive) := by
   refine ⟨⟨⟨1, 1, le_refl _⟩, .action⟩, ⟨⟨0, 0, le_refl _⟩, .action⟩, rfl, rfl, ?_⟩
-  simp [Core.Time.Interval.precedes, Ev.τ]
+  simp [Core.Time.Interval.precedes, Event.τ]
 
 /-- Scenario: "He left₁ before she arrived₃" with punctual events.
     - leaving event at time 1
     - arriving event at time 3
     O&ST predicts: before(leave, arrive) holds (τ(leave) ≺ τ(arrive)). -/
 theorem scenario_before_punctual :
-    let leave : Ev ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Ev ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
     AnscombeEvent.before (· = leave) (· = arrive) := by
   refine ⟨⟨⟨1, 1, le_refl _⟩, .action⟩, rfl, ?_⟩
   intro e₂ rfl
-  simp [Core.Time.Interval.precedes, Ev.τ]
+  simp [Core.Time.Interval.precedes, Event.τ]
 
 /-- Scenario: "The bomb exploded₅ before anyone defused it" (nobody defused it).
     O&ST predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
 theorem scenario_before_counterfactual :
-    let explode : Ev ℤ := ⟨⟨5, 5, le_refl _⟩, .action⟩
+    let explode : Event ℤ := ⟨⟨5, 5, le_refl _⟩, .action⟩
     AnscombeEvent.before (· = explode) (fun _ => False) := by
   exact ⟨⟨⟨5, 5, le_refl _⟩, .action⟩, rfl, fun _ h => h.elim⟩
 
@@ -482,15 +482,15 @@ theorem scenario_before_counterfactual :
 /-- The punctual after-scenario projects correctly through eventDenotation:
     O&ST.after implies Anscombe.after on the projected interval sets. -/
 theorem scenario_after_projects :
-    let leave : Ev ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Ev ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
     Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.after_implies_anscombe _ _ scenario_after_punctual
 
 /-- The punctual before-scenario projects correctly through eventDenotation. -/
 theorem scenario_before_projects :
-    let leave : Ev ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Ev ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
+    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
     Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
 
@@ -732,7 +732,7 @@ theorem non_csip_lacks_completion
 theorem progressive_before_modal_resolution
     {W Time : Type*} [LinearOrder Time]
     (P Q : EventPred W Time)
-    (alternatives : Eventuality Time → Set W)
+    (alternatives : Event Time → Set W)
     (w : W) (t : Core.Time.Interval Time)
     (hIMPF : IMPF P w t)
     (hContinuation : ∀ e, P w e → t.properSubinterval e.τ →

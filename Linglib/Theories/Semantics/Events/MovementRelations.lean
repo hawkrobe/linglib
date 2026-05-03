@@ -22,8 +22,8 @@ file and instantiate the predicates on paper-specific data.
 
 ## Sections
 
-1. **Event adjacency and precedence** — `Ev.adjacent` and `Ev.precedes`,
-   defined on `Ev Time` via runtime intervals.
+1. **Event adjacency and precedence** — `Event.adjacent` and `Event.precedes`,
+   defined on `Event Time` via runtime intervals.
 2. **Initial/final parts** — `IsInitialPart`/`IsFinalPart`, generic
    over a partial order and a precedence relation. K98 eq. 36.
 3. **Expansion (EXP)** — K98 eq. 63: temporally-following sub-events
@@ -57,7 +57,7 @@ file and instantiate the predicates on paper-specific data.
   and Echternach movements (K98 §4.3).
 - **Full ADJ axioms** for adjacency on a part-mereology (K98 §2.3
   eq. 14.b: adjacency-doesn't-overlap and adjacency-propagates-under-
-  part). The concrete `Path.adjacent` and `Ev.adjacent` defined here
+  part). The concrete `Path.adjacent` and `Event.adjacent` defined here
   satisfy these but the propositional theorems are not added.
 - **Cross-dimensional movements** (K98 §4.6: heat, bake, whip in
   directed temperature/done-ness paths) — requires a `DirectedPath`
@@ -71,7 +71,7 @@ open Mereology
 open Semantics.Events.ThematicRoleProperties (MO)
 open Semantics.Spatial.Path (Path)
 
--- Event adjacency (`Ev.adjacent`/`Ev.precedes`) and initial/final
+-- Event adjacency (`Event.adjacent`/`Event.precedes`) and initial/final
 -- parts (`IsInitialPart`/`IsFinalPart`) are now in their own focused
 -- files (`EventAdjacency.lean` and `InitialFinalParts.lean`); imported
 -- above. Movement-relation-specific content begins here.
@@ -238,7 +238,7 @@ def GOAL {α β : Type*} [PartialOrder α] [PartialOrder β]
 def km' {Loc Time α : Type*} [LinearOrder Time]
     [_cem : EventCEM Time] [_psup : SemilatticeSup (Path Loc)]
     [st : SpatialTrace Loc Time]
-    (KM : Path Loc → α) : Ev Time → α :=
+    (KM : Path Loc → α) : Event Time → α :=
   fun e => KM (st.σ e)
 
 -- ════════════════════════════════════════════════════

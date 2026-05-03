@@ -140,23 +140,23 @@ Given a speech act event sa, we construct an `AnchoringFn` where:
 This models the clause structure: the speech event anchoring is
 provided by ASSERT at the top; the described event anchoring comes
 from the verb's event structure lower in the clause. -/
-def speechActAnchoring {Ev W : Type*}
+def speechActAnchoring {Event W : Type*}
     (sa : SpeechActEvent W)
-    (describedBg : Ev → W → List ((W → Bool))) : AnchoringFn (Unit ⊕ Ev) W
+    (describedBg : Event → W → List ((W → Bool))) : AnchoringFn (Unit ⊕ Event) W
   | .inl (), w => sa.content w
   | .inr ev, w => describedBg ev w
 
 /-- The speech event slot of `speechActAnchoring` reduces to the
 speech act's content. -/
-theorem speech_slot_is_content {Ev W : Type*}
+theorem speech_slot_is_content {Event W : Type*}
     (sa : SpeechActEvent W)
-    (bg : Ev → W → List ((W → Bool))) (w : W) :
+    (bg : Event → W → List ((W → Bool))) (w : W) :
     speechActAnchoring sa bg (.inl ()) w = sa.content w := rfl
 
 /-- The described event slot passes through to the verb's background. -/
-theorem described_slot_passthrough {Ev W : Type*}
+theorem described_slot_passthrough {Event W : Type*}
     (sa : SpeechActEvent W)
-    (bg : Ev → W → List ((W → Bool))) (ev : Ev) (w : W) :
+    (bg : Event → W → List ((W → Bool))) (ev : Event) (w : W) :
     speechActAnchoring sa bg (.inr ev) w = bg ev w := rfl
 
 
@@ -270,7 +270,7 @@ theorem different_speech_acts :
 The speech event's content provides the conversational background.
 
 NB: These are defined directly rather than via `speechActAnchoring`
-(§3) to avoid type inference issues with the generic `Ev` parameter.
+(§3) to avoid type inference issues with the generic `Event` parameter.
 The result is equivalent: `fDecl w = speechActAnchoring
 declarativeEvidence (λ _ _ => []) (.inl) w`. -/
 private def fDecl : AnchoringFn Unit LeaveWorld :=

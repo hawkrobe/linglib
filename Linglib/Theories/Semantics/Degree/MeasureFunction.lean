@@ -101,7 +101,7 @@ abbrev MeasureFunction (α : Type*) (δ : Type*) (Time : Type*) :=
     `MeasurableSpace α` (typeclass providing `MeasurableSet`). The
     typeclass enables instance synthesis — any verb declaring a
     `[HasMeasureFunction α δ Time]` instance automatically gets
-    `[HasScalarResult α δ (Ev Time)]` and `[HasLatentScale α (Ev Time)]`
+    `[HasScalarResult α δ (Event Time)]` and `[HasLatentScale α (Event Time)]`
     via the auto-synthesis instances in §5 below, opening Beavers'
     affectedness typeclass chain to the verb without explicit smart
     constructor calls.
@@ -169,7 +169,7 @@ theorem differenceFunction_eq_measure {α δ Time : Type*} [LinearOrder δ]
     The Lean signature takes the initial and final times explicitly
     rather than an event, keeping the substrate event-type-agnostic.
     The convenience overload `measureOfChangeOnEvent` specialises to
-    `Ev Time` events with the runtime-interval projections. -/
+    `Event Time` events with the runtime-interval projections. -/
 def measureOfChange {α δ Time : Type*} [LinearOrder δ]
     (m : MeasureFunction α δ Time) (x : α) (initT finT : Time) : δ :=
   differenceFunction m (m x initT) x finT
@@ -200,10 +200,10 @@ theorem measureOfChange_eq_final {α δ Time : Type*} [LinearOrder δ]
 -- § 4. Event-specialised Measure of Change
 -- ════════════════════════════════════════════════════
 
-/-- Specialisation of `measureOfChange` to `Ev Time` events: extract
+/-- Specialisation of `measureOfChange` to `Event Time` events: extract
     init/fin times from the event's runtime interval. -/
 def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Time]
-    (m : MeasureFunction α δ Time) (x : α) (e : Ev Time) : δ :=
+    (m : MeasureFunction α δ Time) (x : α) (e : Event Time) : δ :=
   measureOfChange m x e.runtime.start e.runtime.finish
 
 -- ════════════════════════════════════════════════════
@@ -230,13 +230,13 @@ def measureOfChangeOnEvent {α δ Time : Type*} [LinearOrder δ] [LinearOrder Ti
     a specific framework's typeclass). -/
 instance HasScalarResult.ofHasMeasureFunction
     {α δ Time : Type*} [LinearOrder Time] [HasMeasureFunction α δ Time] :
-    HasScalarResult α δ (Ev Time) where
+    HasScalarResult α δ (Event Time) where
   resultAt x g e := HasMeasureFunction.measure x e.runtime.finish = g
 
 /-- Companion smart constructor: `HasMeasureFunction`-backed verbs
     can also be given a Beavers `HasLatentScale` instance via this
     function. NOT an `instance` because `δ` doesn't appear in the
-    `HasLatentScale α (Ev Time)` conclusion — Lean's typeclass
+    `HasLatentScale α (Event Time)` conclusion — Lean's typeclass
     synthesiser cannot infer which dimension's measure function to
     use, so the instance arrow can't fire automatically.
 
@@ -254,7 +254,7 @@ instance HasScalarResult.ofHasMeasureFunction
 @[reducible]
 def HasLatentScale.ofHasMeasureFunction
     {α δ Time : Type*} [LinearOrder Time] [HasMeasureFunction α δ Time] :
-    HasLatentScale α (Ev Time) where
+    HasLatentScale α (Event Time) where
   latentScale _ _ := True
 
 end Semantics.Degree.MeasureFunction

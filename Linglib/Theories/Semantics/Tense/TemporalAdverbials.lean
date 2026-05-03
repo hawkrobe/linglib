@@ -32,6 +32,7 @@ import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 namespace Semantics.Tense.TemporalAdverbials
 
 open Core.Time
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.TenseAspectComposition
 

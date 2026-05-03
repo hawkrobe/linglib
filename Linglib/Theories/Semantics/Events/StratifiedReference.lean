@@ -138,13 +138,13 @@ def SSRGranularity {Time : Type*} [LinearOrder Time]
     have SSR. "John ran for an hour" → run has SSR.
 
     Genuine instance of `SR` with `d := τ` and `γ := SSRGranularity`. -/
-def SSR {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (P : Ev Time → Prop) (e : Ev Time) : Prop :=
-  SR (fun e' : Ev Time => e'.runtime) SSRGranularity P e
+def SSR {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (P : Event Time → Prop) (e : Event Time) : Prop :=
+  SR (fun e' : Event Time => e'.runtime) SSRGranularity P e
 
 /-- Universal SSR: every P-event has SSR. -/
-def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (P : Ev Time → Prop) : Prop :=
+def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (P : Event Time → Prop) : Prop :=
   ∀ e, P e → SSR P e
 
 -- ════════════════════════════════════════════════════
@@ -206,8 +206,8 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- "for"-adverbials require SSR: the predicate must have stratified
     subinterval reference (atelicity).
     Map = τ, granularity = proper subinterval. -/
-abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    (Share : Ev Time → Prop) (e : Ev Time) : Prop :=
+abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    (Share : Event Time → Prop) (e : Event Time) : Prop :=
   SSR Share e
 
 -- ════════════════════════════════════════════════════
@@ -306,9 +306,9 @@ theorem sr_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     These are axiomatized following the CLAUDE.md convention: prefer sorry
     over weakening, since the proofs require model-theoretic content. -/
 class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
-    [SemilatticeSup (Ev Time)] [PartialOrder Entity]
-    (agentOf themeOf : Ev Time → Entity)
-    (see kill meet : Ev Time → Prop) where
+    [SemilatticeSup (Event Time)] [PartialOrder Entity]
+    (agentOf themeOf : Event Time → Entity)
+    (see kill meet : Event Time → Prop) where
   /-- "see" has SDR along the agent role. -/
   see_agent_sdr : SDR_univ agentOf see
   /-- "see" has SDR along the theme role. -/
@@ -330,8 +330,8 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
     "John ran for an hour" is felicitous because "run" has SSR.
     "* John arrived for an hour" is infelicitous because "arrive" lacks SSR. -/
 theorem forAdverbial_requires_ssr
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {P : Ev Time → Prop}
+    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    {P : Event Time → Prop}
     (h_for_ok : SSR_univ P) :
     ∀ e, P e → SSR P e :=
   h_for_ok
@@ -347,10 +347,10 @@ theorem forAdverbial_requires_ssr
     mereological axioms (SSR_univ → CUM is false in general: P = "events
     with runtime length ≤ 1" has SSR_univ but not CUM over dense time). -/
 theorem qua_incompatible_with_ssr
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {P : Ev Time → Prop}
+    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    {P : Event Time → Prop}
     (hQua : QUA P)
-    {e : Ev Time} (he : P e) (hSSR : SSR P e) :
+    {e : Event Time} (he : P e) (hSSR : SSR P e) :
     False := by
   obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSSR
   have hne : a ≠ e := by
@@ -366,18 +366,18 @@ theorem qua_incompatible_with_ssr
     and requires the predicate to have SSR (eq. 39).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SSR(V)(e). -/
 def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
-    [SemilatticeSup (Ev Time)]
-    (V : Ev Time → Prop) (duration : Interval Time) (e : Ev Time) : Prop :=
+    [SemilatticeSup (Event Time)]
+    (V : Event Time → Prop) (duration : Interval Time) (e : Event Time) : Prop :=
   V e ∧ e.runtime = duration ∧ SSR V e
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).
     §5.4: "V in δ" requires QUA, which is incompatible
     with SSR. Any P-event with SSR has a strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_ssr
-    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
-    {P : Ev Time → Prop}
+    {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
+    {P : Event Time → Prop}
     (hQua : QUA P)
-    {e₁ e₂ : Ev Time} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
+    {e₁ e₂ : Event Time} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SSR_univ P := by
   intro hSSR
   exact qua_incompatible_with_ssr hQua he₁ (hSSR e₁ he₁)

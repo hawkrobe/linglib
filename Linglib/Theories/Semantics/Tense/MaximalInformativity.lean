@@ -55,6 +55,7 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 namespace Semantics.Tense.MaximalInformativity
 
 open Core.Time
+open Semantics.Events
 open Semantics.Tense.Aspect.Core
 open Features
 open Semantics.Tense.Aspect.SubintervalProperty
@@ -153,8 +154,8 @@ def pts (n : ℕ) (μ : MeasureFun Time) (s : Time)
     in the time denoted by the measure phrase.
 
     Type: (e → Interval Time) → Time → (e → Prop)
-    Instantiation for E-TIA: M = Eventuality.τ -/
-def inETIA (e : Eventuality Time) (bound : Interval Time) : Prop :=
+    Instantiation for E-TIA: M = Event.τ -/
+def inETIA (e : Event Time) (bound : Interval Time) : Prop :=
   e.τ.subinterval bound
 
 /-- E-TIA derived property: for each number n, the property that at world w
@@ -165,7 +166,7 @@ def inETIA (e : Eventuality Time) (bound : Interval Time) : Prop :=
 def eTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
     (g1 : Interval Time) : ℕ → W → Prop :=
   fun n w => ∃ t : Interval Time, μ.μ t = n ∧
-    ∃ e : Eventuality Time, P w e ∧ e.τ.subinterval g1 ∧ e.τ.subinterval t
+    ∃ e : Event Time, P w e ∧ e.τ.subinterval g1 ∧ e.τ.subinterval t
 
 -- ════════════════════════════════════════════════════
 -- § 5. G-TIA Semantics
@@ -179,7 +180,7 @@ def gTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
     (s : Time) : ℕ → W → Prop :=
   fun n w => ∃ interval : Interval Time,
     pts n μ s interval ∧
-    ∃ e : Eventuality Time, P w e ∧ e.τ.subinterval interval
+    ∃ e : Event Time, P w e ∧ e.τ.subinterval interval
 
 -- ════════════════════════════════════════════════════
 -- § 6. The Maximal Informativity Principle
@@ -244,7 +245,8 @@ theorem eTIA_atelic_collapse (P : EventPred W Time) (μ : MeasureFun Time)
   intro n m w ⟨_, _, e, hP, hg1, _⟩
   rcases le_total m (μ.μ e.τ) with hle | hge
   · obtain ⟨j, hj_sub, hj_μ⟩ := μ.subdivisible e.τ m hle
-    exact ⟨j, hj_μ, ⟨j⟩, hSub e w hP j hj_sub ⟨j⟩ rfl,
+    -- sort defaults to .action; the proof doesn't reference .sort
+    exact ⟨j, hj_μ, ⟨j, .action⟩, hSub e w hP j hj_sub ⟨j, .action⟩ rfl,
       ⟨le_trans hg1.1 hj_sub.1, le_trans hj_sub.2 hg1.2⟩, ⟨le_refl _, le_refl _⟩⟩
   · obtain ⟨j, hj_sup, hj_μ⟩ := μ.extensible e.τ m hge
     exact ⟨j, hj_μ, e, hP, hg1, hj_sup⟩
@@ -440,11 +442,11 @@ theorem eTIA_expression_upward_monotone (P : EventPred W Time) (μ : MeasureFun 
     then any subinterval of a P-event's runtime that is itself some
     event's runtime is a P-event's runtime. -/
 theorem div_implies_subintervalProp (P : EventPred W Time) :
-    (∀ (e₁ e₂ : Eventuality Time) (w : W),
+    (∀ (e₁ e₂ : Event Time) (w : W),
       P w e₁ → e₂.τ.subinterval e₁.τ → P w e₂) →
     HasSubintervalProp P := by
   intro hDiv e₁ w hP t hsub e₂ hτ
-  have : e₂.τ = t := by simp [Eventuality.τ]; exact hτ
+  have : e₂.τ = t := by simp [Event.τ]; exact hτ
   exact hDiv e₁ e₂ w hP (this ▸ hsub)
 
 end Semantics.Tense.MaximalInformativity

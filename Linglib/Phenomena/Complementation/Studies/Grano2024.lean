@@ -8,7 +8,7 @@ import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Portuguese.MoodChoice
 
 /-!
-# Grano 2024: Intention Reports and Eventuality Abstraction @cite{grano-2024}
+# Grano 2024: Intention Reports and Event Abstraction @cite{grano-2024}
 
 Cross-linguistic mood choice data and bridge theorems connecting
 @cite{grano-2024}'s analysis of intention reports to the mood and
@@ -42,7 +42,7 @@ indicative rejected.
 Subjunctive mood uniformly signals a departure from the default clausal
 semantics of unembedded assertions. Two kinds of departure:
 - **Comparison** (ordering semantics): 'want', 'hope' (@cite{portner-rubinstein-2020})
-- **Eventuality abstraction**: 'intend', causatives, aspectuals (this paper)
+- **Event abstraction**: 'intend', causatives, aspectuals (this paper)
 
 When neither departure is present, only indicative mood is possible.
 -/
@@ -213,7 +213,7 @@ theorem subj_enables_eventuality_abstraction :
     GramMood.subjunctive.effect.eventualityOpen = true := rfl
 
 /-- The three-premise argument chain:
-    1. `intentionHolds` requires P : E → W → Ev Time → Prop (open event arg)
+    1. `intentionHolds` requires P : E → W → Event Time → Prop (open event arg)
     2. IND closes the event argument (eventualityOpen = false)
     3. SBJV leaves it open (eventualityOpen = true)
     → intention reports require SBJV, reject IND -/
@@ -236,7 +236,7 @@ theorem grano_argument_chain :
     Two kinds of departure trigger SBJV:
     - **Comparison**: ordering semantics with two modal backgrounds
       (want, hope; @cite{portner-rubinstein-2020})
-    - **Eventuality abstraction**: open event argument for CAUSE* or
+    - **Event abstraction**: open event argument for CAUSE* or
       aspect (intend, causatives, aspectuals; this paper)
 
     Predicates like 'hope' involve comparison only (variable mood).
@@ -265,7 +265,7 @@ inductive DepartureKind where
       simplification of two modal backgrounds into one can license IND
       in some languages (French *espérer*). This yields cross-linguistic
       variation for 'hope'-type verbs.
-    - **Eventuality abstraction** (± comparison): SBJV is robust because
+    - **Event abstraction** (± comparison): SBJV is robust because
       IND existentially closes the event argument, making it
       type-incompatible with CAUSE* / aspect / perception. No
       simplification can rescue IND here. -/
@@ -275,7 +275,7 @@ def DepartureKind.moodPrediction : DepartureKind → MoodSelector
   | .eventualityAbstraction    => .subjunctiveSelecting
   | .comparisonAndAbstraction  => .subjunctiveSelecting
 
-/-- Eventuality abstraction robustly predicts subjunctive selection
+/-- Event abstraction robustly predicts subjunctive selection
     (IND is type-incompatible with open event argument). -/
 theorem eventuality_abstraction_robust :
     DepartureKind.eventualityAbstraction.moodPrediction = .subjunctiveSelecting ∧
