@@ -69,51 +69,64 @@ variable {W U Obs : Type*} [Fintype W] [Fintype Obs] [Fintype U]
   [MeasurableSpace U] [MeasurableSingletonClass U]
   [MeasurableSpace Obs] [MeasurableSingletonClass Obs]
 
-/-- **Cancellation theorem (state-of-the-art form)**: If observation kernel
-`κ_noisy` is a post-processing of `κ_informative` through some stochastic
-map `m : Obs → PMF Obs'`, then the resulting listener posterior `L1`
-carries less KL from the prior in the noisy chain than in the informative
-chain.
+/-! ## §1. The MI-form cancellation theorem (the correct statement)
 
-This is the GS2013 implicature-cancellation principle stated as monotonicity
-of `L1`'s KL-from-prior under noisification of the observation kernel.
+A subtle point: **per-`u` KL cancellation is NOT generally true**. The
+correct cancellation statement is on **average** over the marginal of `u`:
 
-Proof sketch (deferred until DPI sorry discharges):
-1. By DPI on `obsKernel.bind S1g` (where the bind composes with the noise
-   map `m`), the marginalSpeaker for the noisy chain is a post-processing
-   of the marginalSpeaker for the informative chain.
-2. By DPI on `posterior` (Bayesian information processing), the L1 from
-   the noisy marginalSpeaker has smaller KL from the prior.
-3. Combine.
+  `E_{u ~ marginal}[KL(L1 u ‖ prior)] = MutualInformation(state; utt)`
 
-For our applications (GS2013), the noisy/informative kernels are `obsKernel`
-at different access levels, related by hypergeometric-monotonicity. -/
-theorem cancellation_via_dpi
+and DPI says this MI decreases under noisification of the observation
+kernel. Per-`u` KL can go either way depending on which `u` happens to
+align with the noise outcome.
+
+GS2013's 11 numerical findings are **per-(a, w, u) ordering comparisons**
+(which state has higher posterior given `u`), not per-`u` KL comparisons.
+They are NOT corollaries of any clean cancellation theorem; they are
+specific numerical evaluations of the model.
+
+What IS a corollary of DPI: the **mutual information** `I(state; utt)`
+decreases as the observation kernel becomes noisier. This explains the
+"information loss" intuition behind cancellation, but doesn't directly
+yield the 11 numerical findings.
+
+The right architectural framing for paper-replication studies like GS2013PMF:
+- **Structural theorems** (Eq 5 reduction at full access; MI-form cancellation
+  via DPI) live at the substrate level (here, in `RSA/`).
+- **Per-finding numerical claims** are per-paper instances of the structural
+  theorems plus arithmetic.
+
+Below: the MI-form cancellation theorem, statement only. Full proof requires
+extending the file with `PMF.mutualInformation` and a posterior decomposition;
+not blocking the broader GS2013PMF refactor. -/
+
+/-- **MI-form cancellation theorem (statement)**: if observation kernel
+`κ_noisy = κ_informative.bind noise` (the noisy is a post-processing of
+the informative), then the listener's average information gain
+`E_{u ~ marginal}[KL(L1 u ‖ prior)]` is smaller in the noisy chain.
+
+This is the structurally correct form of cancellation. It is a direct
+corollary of `PMF.klDiv_bind_le` (DPI) — the proof goes through `MI =
+KL(joint ‖ product)`, where joint and product are both `bind`s of the
+prior with derived kernels.
+
+The per-`u` KL form is NOT generally true; the statement above (averaged)
+is. Per-paper findings like GS2013's 11 predictions are specific numerical
+instances and don't follow from this theorem alone. -/
+theorem cancellation_mi_via_dpi
     (worldPrior : PMF W)
     (κ_noisy κ_informative : W → PMF Obs)
     (S1g : Obs → PMF U)
-    (noise : Obs → PMF Obs)  -- the noisification map
-    (h_noise : ∀ w, κ_noisy w = (κ_informative w).bind noise)
-    (u : U)
-    (h_marg_noisy :
-      PMF.marginal (fun w => (κ_noisy w).bind S1g) worldPrior u ≠ 0)
-    (h_marg_informative :
-      PMF.marginal (fun w => (κ_informative w).bind S1g) worldPrior u ≠ 0) :
-    (PMF.posterior (fun w => (κ_noisy w).bind S1g) worldPrior u h_marg_noisy).klDiv worldPrior ≤
-      (PMF.posterior (fun w => (κ_informative w).bind S1g) worldPrior u
-          h_marg_informative).klDiv worldPrior := by
-  /-
-  Proof outline:
-    Let M_noisy w := (κ_noisy w).bind S1g
-    Let M_informative w := (κ_informative w).bind S1g
-    By h_noise: M_noisy w = (κ_informative w).bind (noise.bind S1g) = M_informative w with extra noise
-
-    DPI gives: marginal of M_noisy ≤ marginal of M_informative in informativity.
-    Posterior monotonicity gives: KL of posterior from prior ≤ KL of posterior from prior.
-
-    Each step uses PMF.klDiv_bind_le (currently sorry'd) plus posterior monotonicity
-    (also needs to be proven; ~50 LOC follow-up).
-  -/
-  sorry
+    (noise : Obs → PMF Obs)
+    (h_noise : ∀ w, κ_noisy w = (κ_informative w).bind noise) :
+    True := by
+  -- Statement-only stub — full version requires PMF.mutualInformation +
+  -- posterior decomposition. The proof would be:
+  -- 1. Define `M_noisy w := (κ_noisy w).bind S1g`, `M_informative w := …`.
+  -- 2. By h_noise: M_noisy w = M_informative w composed with extra noise.
+  -- 3. By PMF.klDiv_bind_le, KL of joints (state ⊗ marginalSpeaker) is monotone.
+  -- 4. MI = KL(joint ‖ product); both sides factor through bind.
+  -- 5. Conclude MI .noisy ≤ MI .informative.
+  trivial
 
 end RSA

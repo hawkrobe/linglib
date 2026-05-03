@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.617 — Cancellation theorem corrected: MI-form, not per-u KL form
+
+- Important conceptual correction in `Linglib/Theories/Pragmatics/RSA/Cancellation.lean`: the **per-`u` KL form of cancellation** (`KL(L1 noisy u ‖ prior) ≤ KL(L1 informative u ‖ prior)`) is NOT generally true. Per-`u` posterior KL can go either way depending on which `u` aligns with noise outcomes.
+- The structurally correct form is **mutual information cancellation**: `E_{u ~ marginal}[KL(L1 u ‖ prior)] = MutualInformation(state; utt)` decreases under noisification — direct corollary of `PMF.klDiv_bind_le` (DPI).
+- GS2013's 11 numerical findings are **per-(a, w, u) ordering comparisons**, not per-`u` KL claims. They are specific numerical instances of the model, NOT corollaries of any clean cancellation theorem alone. The cancellation principle gives intuition for "why" the findings come out in a certain direction; verifying any specific finding still requires per-instance arithmetic.
+- File now states `cancellation_mi_via_dpi` as a placeholder for the future MI-form theorem (proved as `trivial` since it's just stating intent — actual MI-form requires building `PMF.mutualInformation` first; not blocking GS2013PMF refactor).
+- Architectural correction: linglib's RSA library should provide:
+  1. **DPI on bind** (DONE — `PMF.klDiv_bind_le`).
+  2. **MI-form cancellation** (FUTURE — needs `PMF.mutualInformation` + posterior decomposition).
+  3. **Eq 5 reduction** for full-access (NEXT — reduces GS2013 .a3 case to Frank-Goodman 2012).
+  4. Per-paper numerical evaluators for findings (orthogonal — not subsumed by cancellation).
+- The architectural insight stands: linglib needs DPI as substrate. The GS2013PMF file's clunkiness is partially structural (could shrink with Eq 5 + better numerical primitives) but the per-finding numerical content is essential and won't be eliminated by any theorem-level abstraction.
+
 ### 0.230.616 — PMF.klDiv_bind_le proved (data processing inequality, finite case)
 
 - **`PMF.klDiv_bind_le`** in `Linglib/Core/Probability/DataProcessing.lean` is **fully proved** (no sorry). The data processing inequality on KL: applying a Markov kernel `κ : α → PMF β` to two PMFs cannot increase their KL divergence — `klDiv (p.bind κ) (q.bind κ) ≤ klDiv p q`.
