@@ -433,10 +433,17 @@ theorem literal_correct :
   -- Step 2: apply structural decomposition substrate to strip the posterior
   unfold vagueL1 L1
   rw [PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt]
-  -- Goal: ∑ w ∈ filter (·.1 = .whale), worldPmf w * mixedS1(.person | w.2)
-  --      < ∑ w ∈ filter (·.1 = .person), worldPmf w * mixedS1(.person | w.2)
-  -- The numerical leaf: 99x catPrior asymmetry vs ≤ 1x speaker contribution.
-  sorry
+  -- Step 3: structural bound chain — `bound` propagates per-summand bounds
+  -- through the Finset.sum and product structure.
+  --
+  -- Strategy: LHS ≤ catPmf .whale = 1/100, RHS ≥ (99/100) * S_min where
+  -- S_min is a uniform lower bound on `mixedS1(.person | f)` over f.
+  -- The "S_min > 1/99" leaf is the genuine paper-specific computation.
+  --
+  -- To demo the `bound` mechanics, suppose we have a lower bound s_min on
+  -- mixedS1 and an upper bound on featurePmf.toOuterMeasure (= 1) — `bound`
+  -- chains them through the `Σ * *` structure.
+  sorry  -- TODO: full chain via `bound` + concrete `mixedS1_lower` lemma.
 
 /-! ## §10. Cross-paper engagement
 
@@ -455,5 +462,30 @@ identical RSA architecture for hyperbole (with `quantity` rather than
 `category` as the literally-false dimension). Migration of the hyperbole
 file would reuse most of this file's substrate.
 -/
+
+/-! ## §11. Structural bound chains via `gcongr`
+
+`gcongr` propagates per-summand bounds through `Finset.sum` + product
+structure on Kao-shaped goals. Building blocks for full numerical-leaf
+proofs: each finding's leaf decomposes as "structural bound chain" +
+"scalar arithmetic". Neither needs a ℚ-shadow.
+
+`mathlib.Tactic.Bound` would also apply here (it builds on `gcongr` +
+`linarith` + tagged lemmas), but `gcongr` is sufficient for these shapes
+and avoids the extra dependency. -/
+
+/-- **Upper bound for the LHS-side sum** (the `.whale`-fibre of L1):
+each summand `worldPmf w * mixedS1(...|w.2)` is bounded by `worldPmf w`
+since `mixedS1` values are PMF-valued (≤ 1).
+
+`gcongr` chains the per-summand bound `PMF.coe_le_one` through the
+`Σ` and `*` structure in one line. -/
+theorem whale_fibre_sum_le_worldPmf_sum :
+    ∑ w ∈ Finset.univ.filter (fun w : World => w.1 = Cat.whale),
+        worldPmf w * mixedS1 αKao αKao_nonneg vaguePrior w.2 .person
+      ≤ ∑ w ∈ Finset.univ.filter (fun w : World => w.1 = Cat.whale),
+        worldPmf w * 1 := by
+  gcongr with w
+  exact PMF.coe_le_one _ _
 
 end Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF
