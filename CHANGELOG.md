@@ -4,6 +4,39 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.632 — post-migration stabilization: project-rule violations + stale refs
+
+Follow-up to the Theories/Interfaces/ migration (phases 1–9, 0.230.616–629). Mathlib-discipline audit identified five project-rule violations introduced in-flight, plus three stale `CaseContainment.lean` docstring references the migration didn't update.
+
+Project-rule fixes:
+
+- `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean` §§2–3 placeholders converted from `theorem ... : True := by trivial` to `theorem case_aab_attested_falsifies_dm` / `number_aab_attested_falsifies_dm : ∃ p, p.IsContiguous := sorry`. The `True` placeholders were invisible to `grep sorry` and read as proven theorems — exactly the anti-pattern CLAUDE.md flags ("Prefer `sorry` over weakening theorem statements").
+- `Core/Morphology/Containment.lean` line 93: bare `simp` (project rule violation) → `cases violatesABA l <;> decide`.
+- `Core/Case/Allomorphy.lean` line 128: `fun _ _ =>` → `λ _ _ =>`.
+- `Theories/Morphology/DM/VocabSimple.lean` lines 125–126: two `fun` → `λ`.
+- `Theories/Syntax/Minimalist/Linearization/LCA.lean` lines 289, 293: two `native_decide` → `decide` in `section Examples` (audit caught these; not in the migration's deferred-list).
+
+Stale-reference fixes — the dissolved `Theories/Interfaces/Morphosyntax/CaseContainment.lean` is no longer the canonical home for any of these:
+
+- `Theories/Morphology/Nanosyntax/Core.lean` line 81: `CaseContainment.containmentRank` → `Core.Case.Order.containmentRank`.
+- `Theories/Morphology/Nanosyntax/Core.lean` line 278: section banner `§6: Connection to CaseContainment` → `Connection to Core.Case.Allomorphy`.
+- `Theories/Syntax/Case/Dependent.lean` docstrings (two sites): point at `Core/Case/Order.lean` + `Core/Case/Allomorphy.lean` + `Caha2009.lean` instead of dissolved `CaseContainment.lean`.
+- `Phenomena/Case/Studies/Caha2009.lean` lines 85, 255: docstrings updated to reflect the `RespectsCahaContainment` relocation into the file itself.
+
+Build green for the 8-file closure (693 jobs). Two `sorry` warnings expected (SmithMoskalEtAl2019 §§2–3 placeholders — now properly grep-able).
+
+Migration-shipped-clean now: zero `True := by trivial` placeholders, zero new `native_decide` instances, zero stale `CaseContainment.lean` docstring refs. Remaining follow-ups (queued, not shipped here): CyclicLinearization namespace + 11 native_decide; Bool→Prop substrate-wide migration; the parametric `NAryPattern n` consolidation the audit recommended as the obvious next move.
+
+### 0.230.632 — Strata-theory unification: one substrate, named specializations
+
+- `StratifiedReference.lean`: extracted `AtomicGranularity` as the shared γ between `SDR` (thematic-role distributivity) and the predicate-level form of Bennett-Partee/Zhao stativity. SDR refactored to use it (no semantic change).
+- New `StratifiedReference/Specializations.lean`: names the four oppositions per @cite{champollion-2017} §1.2 — `IsAtelic` (aspect, dim=τ, γ=proper-subinterval), `IsStativePred` (stativity, dim=τ, γ=point-interval), `IsDistributive` (dim=θ, γ=atomic), `IsMassReference` (dim=μ, γ=strict-less-than). Each a thin `def`/`abbrev` over `SR_univ` at a specific (dimension, granularity).
+- `Core/Time/AtomDist.lean`: added `champollionLift : (Event → Prop) → EvQuant Event` (the Champollion 2015 quantifier lift), reframed docstring to recognize `AtomDist τ V` as the quantifier-level form of stratified reference at point-interval granularity. Cite hygiene: "Def. 5.3" corrected to "Def. 5.36, p. 165" (PDF-verified).
+- `SubintervalProperty.lean`: docstring now points to the new `IsStativePred`/`IsAtelic` substrate and notes the type-level barrier (this file uses `Eventuality Time`, the new substrate uses `Ev Time`) deferring a formal iff bridge.
+- `isStativePred_implies_isAtelic` and `isStativePred_implies_atomDist_lift` carry `sorry` with explicit TODOs — bridge proofs deferred per plan's risk register (universal-witness vs decomposition framings differ in detail).
+- No framework-tagged duplicates introduced: no `IsStative_Zhao`, no `IsAtelic_Champollion`. Mathlib pattern: one primary `def` (`SR`), named specializations only when the parameter combination has literature traction, framework attribution recorded in iff/implies theorems.
+- Build: 4 modules (`StratifiedReference`, `Specializations`, `AtomDist`, `SubintervalProperty`) green; `lake build` full project has unrelated pre-existing failures from concurrent in-flight Typology restructuring (0.230.623–625).
+
 ### 0.230.617 — Cancellation theorem corrected: MI-form, not per-u KL form
 
 - Important conceptual correction in `Linglib/Theories/Pragmatics/RSA/Cancellation.lean`: the **per-`u` KL form of cancellation** (`KL(L1 noisy u ‖ prior) ≤ KL(L1 informative u ‖ prior)`) is NOT generally true. Per-`u` posterior KL can go either way depending on which `u` aligns with noise outcomes.
