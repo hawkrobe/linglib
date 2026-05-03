@@ -4,6 +4,22 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.634 — QBSML state-extension lemmas + emptyTeam fully proved
+
+Continuation of QBSML substrate validation. Anttila 2.2.8's empty-team property fully discharged for QBSML; union closure and downward closure remain as sorry'd TODOs (substantive proof work, not architectural).
+
+- `Theories/Semantics/QBSML/Defs.lean`: state-extension distributive lemmas added
+  - `State.extendUniversal_empty`: `(∅).extendUniversal x = ∅`
+  - `State.extendFunctional_empty`: `(∅).extendFunctional x h = ∅`
+  - `State.extendUniversal_subset_mono`: `s ⊆ t → s.extendUniversal x ⊆ t.extendUniversal x`
+  - `State.extendUniversal_union_distrib`: `(s ∪ t).extendUniversal x = s.extendUniversal x ∪ t.extendUniversal x`
+- `Theories/Semantics/QBSML/Properties.lean`: `emptyTeam_support_of_isNEFree` **fully proved** via joint bilateral induction over all 8 QBSMLFormula constructors. Quantifier cases (`exi`, `univ`) discharge cleanly using the new `extendFunctional_empty` and `extendUniversal_empty` lemmas:
+  - For `support (∃x ψ) ∅`: take `h := fun _ => ∅` (vacuous nonempty since no i ∈ ∅), then `support ψ (∅.extendFunctional x h) = support ψ ∅` by IH.
+  - For `support (∀x ψ) ∅ = support ψ (∅.extendUniversal x) = support ψ ∅` by IH.
+  - Anti-support cases dual.
+- Substrate validation: bilateral mutual induction PATTERN works identically for QBSML's added quantifier cases. The state-extension lemmas are the only quantifier-specific machinery needed; the rest is shared with BSML.
+- Build clean (704 jobs); 2 sorrys remain (`unionClosed_support` and `downwardClosed_support_of_isNEFree`) — bigger structural inductions with function-merging for the existential's union closure, deferred.
+
 ### 0.230.633 — Core/Logic/Team/Bilateral.lean: generic polarity-flip theorems
 
 Phase A2 of the foundational refactor. Extracts the bilateral polarity-flip pattern from BSML/QBSML to a generic Core file, parameterized over the eval function and negation constructor.

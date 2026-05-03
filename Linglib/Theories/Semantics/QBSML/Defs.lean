@@ -160,6 +160,51 @@ def State.modalLift (X : Finset W) (g : Assignment Var Domain) :
     Finset (Index W Var Domain) :=
   X.image (fun v => (v, g))
 
+-- ============================================================================
+-- §2b State-extension distributive lemmas
+-- ============================================================================
+
+/-- Universal extension of empty team is empty. -/
+theorem State.extendUniversal_empty [Fintype Domain] (x : Var) :
+    State.extendUniversal (∅ : Finset (Index W Var Domain)) x = ∅ := by
+  unfold State.extendUniversal State.extendIndividual
+  ext; simp
+
+/-- Functional extension of empty team is empty. -/
+theorem State.extendFunctional_empty (x : Var)
+    (h : Index W Var Domain → Finset Domain) :
+    State.extendFunctional (∅ : Finset (Index W Var Domain)) x h = ∅ := by
+  unfold State.extendFunctional
+  simp
+
+/-- Universal extension is monotone in the team. -/
+theorem State.extendUniversal_subset_mono [Fintype Domain]
+    {s t : Finset (Index W Var Domain)} (x : Var) (hsub : s ⊆ t) :
+    State.extendUniversal s x ⊆ State.extendUniversal t x := by
+  unfold State.extendUniversal State.extendIndividual
+  intro i hi
+  simp only [Finset.mem_biUnion, Finset.mem_image, Finset.mem_univ, true_and] at hi ⊢
+  obtain ⟨d, j, hj, hupd⟩ := hi
+  exact ⟨d, j, hsub hj, hupd⟩
+
+/-- Universal extension distributes over union. -/
+theorem State.extendUniversal_union_distrib [Fintype Domain]
+    (s t : Finset (Index W Var Domain)) (x : Var) :
+    State.extendUniversal (s ∪ t) x =
+      State.extendUniversal s x ∪ State.extendUniversal t x := by
+  unfold State.extendUniversal State.extendIndividual
+  ext i
+  simp only [Finset.mem_biUnion, Finset.mem_union, Finset.mem_image,
+             Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨d, j, hj, hupd⟩
+    cases hj with
+    | inl hjs => exact Or.inl ⟨d, j, hjs, hupd⟩
+    | inr hjt => exact Or.inr ⟨d, j, hjt, hupd⟩
+  · rintro (⟨d, j, hjs, hupd⟩ | ⟨d, j, hjt, hupd⟩)
+    · exact ⟨d, j, Or.inl hjs, hupd⟩
+    · exact ⟨d, j, Or.inr hjt, hupd⟩
+
 end Semantics.QBSML
 
 -- ============================================================================
