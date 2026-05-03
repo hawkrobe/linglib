@@ -52,16 +52,24 @@ structure VocabEntry where
     Matching means every feature in the entry is present (with matching
     type) in the target bundle. This is subset matching — the entry
     need not specify all features of the target. -/
-def VocabEntry.matchesFeatures (entry : VocabEntry) (target : FeatureBundle) : Bool :=
-  entry.features.all λ ef =>
-    target.any λ tf => ef == tf
+def VocabEntry.MatchesFeatures (entry : VocabEntry) (target : FeatureBundle) : Prop :=
+  entry.features.all (λ ef => target.any (λ tf => ef == tf)) = true
 
-/-- Does this entry match a target bundle in a given syntactic context? -/
-def VocabEntry.matches (entry : VocabEntry) (target : FeatureBundle) (ctx : Option Cat) : Bool :=
-  entry.matchesFeatures target &&
-  match entry.context with
-  | none => true
-  | some c => ctx == some c
+instance (entry : VocabEntry) (target : FeatureBundle) :
+    Decidable (entry.MatchesFeatures target) :=
+  inferInstanceAs (Decidable (_ = true))
+
+/-- Does this entry match a target bundle in a given syntactic context?
+    Combines feature-bundle subset matching with the optional context
+    restriction. -/
+def VocabEntry.Matches (entry : VocabEntry) (target : FeatureBundle)
+    (ctx : Option Cat) : Prop :=
+  entry.MatchesFeatures target ∧
+  (entry.context = none ∨ entry.context = ctx)
+
+instance (entry : VocabEntry) (target : FeatureBundle) (ctx : Option Cat) :
+    Decidable (entry.Matches target ctx) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Specificity of a vocabulary entry: the number of features it specifies.
     Used for Elsewhere ordering — more specific entries take priority. -/
@@ -81,8 +89,9 @@ abbrev Vocabulary := List VocabEntry
 
     Implements the Elsewhere Condition: among all matching entries,
     the one with the most features wins. Ties are broken by list order. -/
-def bestMatch (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) : Option VocabEntry :=
-  let candidates := vocab.filter (·.matches target ctx)
+def bestMatch (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) :
+    Option VocabEntry :=
+  let candidates := vocab.filter (λ e => decide (e.Matches target ctx))
   -- Pick the most specific (most features) among matching entries
   match candidates with
   | [] => none
@@ -104,8 +113,8 @@ def spellout (vocab : Vocabulary) (target : FeatureBundle) (ctx : Option Cat) : 
 /-- A vocabulary entry with no features matches any target (Elsewhere entry). -/
 theorem empty_features_matches_any (entry : VocabEntry)
     (h : entry.features = []) (target : FeatureBundle) :
-    entry.matchesFeatures target = true := by
-  simp only [VocabEntry.matchesFeatures, h, List.all_nil]
+    entry.MatchesFeatures target := by
+  simp only [VocabEntry.MatchesFeatures, h, List.all_nil]
 
 -- ============================================================================
 -- § 4: Vocabulary Builders
