@@ -4,6 +4,53 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.659 — FG2012: parametric reference-game substrate + slim instance
+
+`Theories/Pragmatics/RSA/ReferenceGame.lean` (NEW, 264 LOC): parametric
+reference-game architecture. Every RSA paper using a "speaker normalises
+inverse-extension-size" pattern inherits these theorems unchanged.
+
+The architectural theorems:
+- `IsCovering meaning` — typeclass capturing covering hypothesis
+- `partition w` + `partition_eq_filter_sum` — size-principle weight at world
+- `S1_apply_of_appliesTo` — the size principle (paper Eq. S4)
+- `S1_lt_of_partition_gt` — pragmatic-narrowing theorem (parametric)
+- `S1_lt_of_appliesTo_only` — cross-base unique-extension form
+- `L1_gt_iff_S1_lt_uniform` — narrowing transfers L1 ← S1 (uniform prior)
+- `L1_eq_one_of_unique_extension` — unique reference: L1 concentrates fully
+
+`Phenomena/Reference/Studies/FrankGoodman2012PMF.lean` (187 LOC, replaces
+582+195 = 777 LOC across two retired files): the FG12 stimulus + 4 paper
+findings as one-line corollaries via the substrate.
+
+Retires `Phenomena/Reference/Studies/FrankGoodman2012.lean` (rsa_predict
+version). The "context types" extension (7 experimental conditions) is
+dropped — it was empirical-fit machinery; the architectural finding
+(pragmatic narrowing) subsumes the per-condition predictions.
+
+Net: 777 LOC → 187 LOC paper-specific + 264 LOC reusable substrate.
+The substrate immediately serves any other RSA paper using size-principle
+speaker over Boolean meaning — drop-in via the IsCovering instance.
+
+### 0.230.666 — Phase 1 Group A: dissolve FarkasAdapter, fix FarkasBruce docstring + drop unused imports
+
+Phase 1 of the Dialogue/ end-state plan. Three sub-tasks in one commit
+since they all touch FarkasBruce.lean.
+
+- **P1.1** — `Theories/Dialogue/FarkasAdapter.lean` deleted (textbook
+  bridge file per CLAUDE.md "no bridge files"). Its 5 theorems
+  (`assert_adds_to_dcS`, `assert_preserves_cg`, `assert_not_stable`,
+  `accept_adds_to_cg`, `accept_restores_stability`) moved into a new
+  `§ Bridge theorems` section in `FarkasBruce.lean` alongside the
+  operators they characterize. Consumer fixes in
+  `QuotationFBOntology.lean` (import + 2 docstring references) and
+  `Linglib.lean` (import dropped).
+- **P1.7** — `FarkasBruce.lean` docstring: changed `/-` (block
+  comment) to `/-!` (module docstring) and moved below imports per
+  CLAUDE.md.
+- **P1.9** — Dropped unused imports from `FarkasBruce.lean`:
+  `Mathlib.Data.Fintype.Basic`, `Mathlib.Data.Rat.Defs`.
+
 ### 0.230.665 — Booth Fact 5 (Compactness equations) per BilatInqProp constructor
 
 - Per-constructor compactness equations `(... constructor ...).pos = ⨆ p ∈ alt _.pos, declarative p` (Booth Fact 5 form), discharged via `Question.eq_iSup_declarative_alt_of_exists_alt`. Section §7 in `Booth2022.lean`.
