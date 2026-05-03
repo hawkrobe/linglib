@@ -69,7 +69,7 @@ namespace ConnesKreimer
 open scoped TensorProduct
 open Finsupp
 
-variable {R : Type*} [CommSemiring R] {α : Type} [DecidableEq α]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ## §1: Tree-level coproduct
 
@@ -143,8 +143,11 @@ Lemma 1.2.10. -/
 
 /-- `comulForest`, packaged as a `Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α)`
     monoid hom. Multiplication on `Multiplicative (Forest α)`
-    corresponds to addition on `Forest α` (disjoint union ⊔). -/
-noncomputable def comulMonoidHom :
+    corresponds to addition on `Forest α` (disjoint union ⊔).
+
+    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
+    callers should use `comulAlgHom` (the `AlgHom`-shaped public API). -/
+private noncomputable def comulMonoidHom :
     Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForest (R := R) F.toAdd
   map_one' := comulForest_zero
@@ -179,8 +182,10 @@ private lemma multiset_add_eq_zero_iff {β : Type*} (a b : Multiset β) :
   · rintro ⟨ha, hb⟩
     rw [ha, hb, add_zero]
 
-/-- The counit, as a `Multiplicative (Forest α) →* R` monoid hom. -/
-noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
+/-- The counit, as a `Multiplicative (Forest α) →* R` monoid hom.
+    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
+    callers should use `counit` (the `AlgHom`-shaped public API). -/
+private noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
   toFun F := if F.toAdd = 0 then 1 else 0
   map_one' := by
     show (if (1 : Multiplicative (Forest α)).toAdd = 0 then (1 : R) else 0) = 1
@@ -256,8 +261,10 @@ noncomputable def comulForestDel (F : Forest α) : Hc R α ⊗[R] Hc R α :=
   unfold comulForestDel
   rw [Multiset.map_add, Multiset.prod_add]
 
-/-- `comulForestDel`, packaged as a multiplicative monoid hom. -/
-noncomputable def comulDelMonoidHom :
+/-- `comulForestDel`, packaged as a multiplicative monoid hom.
+    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
+    callers should use `comulDelAlgHom` (the `AlgHom`-shaped public API). -/
+private noncomputable def comulDelMonoidHom :
     Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForestDel (R := R) F.toAdd
   map_one' := comulForestDel_zero

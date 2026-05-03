@@ -4,6 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.661 — Stage 1.5/1.6: mathlib-PR cleanup pass on CK substrate
+
+Audit-driven cleanup (mathlib-reviewer + integration-auditor on the post-Stage-1 state). Two stages folded into one commit:
+
+**Stage 1.5: cleanup**
+- **Demoted `instBialgebra` → `def bialgebraStructure`** in `Bialgebra.lean`. Per mathlib-reviewer audit, registering an `instance` whose proof obligations are `sorry` is unacceptable practice — downstream typeclass-resolved code would silently inherit unproven laws. Demoted to `def` until Stage 1a/1b discharge the three sorries; downstream opts in via `letI := ConnesKreimer.bialgebraStructure (R := R) (α := α)`. Direct access to operators (`comulAlgHom`, `comulDelAlgHom`, `counit`) by name remains. Re-promote to `instance` once laws are proven.
+- **Dropped dead/redundant Hc forwarders** in `Defs.lean`: removed `instSemiring` (CommSemiring extends Semiring; auto-derives), `instRing`/`instCommRing` (zero downstream consumers per integration auditor grep). Kept: `instCommSemiring`, `instAlgebra`, `instFunLike`. Renamed without `Hc.` prefix (already in `namespace ConnesKreimer`). Forwarder count: 6 → 3.
+- **Marked `comulMonoidHom`, `counitMonoidHom`, `comulDelMonoidHom` as `private`** in `Coproduct.lean`. They're plumbing for `AddMonoidAlgebra.lift`; downstream callers should use `comulAlgHom`/`counit`/`comulDelAlgHom` (the AlgHom-shaped public API).
+- **Lightened import** in `Decorated.lean`: `Mathlib.Algebra.Order.Group.Multiset` → `Mathlib.Data.Multiset.Basic` (only `Multiset` as `abbrev` for `Forest` is used; the heavier import was overkill).
+- **Fixed stale Decorated.lean docstring**: "Namespace remains `Minimalist.Hopf` for now ... namespace rename is a separate follow-up" → "Namespace is `ConnesKreimer` (renamed from `Minimalist.Hopf` in Stage 0.7)".
+- **Trimmed plan**: removed superseded "Stage 1 — Coassoc + Bialgebra instance (original plan; superseded above)" block from `scratch/mcb_stage1_plan.md`. Single Stage 1 section remains.
+
+**Stage 1.6: universe polymorphism**
+- **Reworked `CutShape` inductive** in `AdmissibleCut.lean` from `inductive CutShape : {α : Type} → DecoratedTree α → Type where` (per-constructor `{α : Type}` indices, partial polymorphism worse than uniform) to `inductive CutShape {α : Type*} : DecoratedTree α → Type _ where` (α as parameter, `Type*` polymorphic). Constructors no longer re-bind α.
+- **Propagated `α : Type*`** to `Coproduct.lean:72` and `Bialgebra.lean:71` variable declarations.
+- **Propagated** through `Hopf/Merge.lean:38` variable declaration.
+
+**Build**: 5755 jobs green. One harmless linter warning at `Bialgebra.lean:114` about `def bialgebraStructure` returning a class type — intentional per the demotion (we want explicit `letI` opt-in, not auto-resolution). Sorrys unchanged: 3 in Bialgebra.lean (counit_rTensor, counit_lTensor, comul_coassoc) + 2 pre-existing in Hopf/MergeAction.lean + 1 in Derivation.lean.
+
+**Deferred to upstream-PR time**: rename `Hc → ConnesKreimerHc` (or similar descriptive name) — touches ~67 sites, mechanical but non-trivial. Mathlib reviewer flagged as blocker for upstream; not blocker for further linglib work.
+
 ### 0.230.661 — Booth 2022 bilateral inquisitive minimal-cover semantics; sixth `IsBilateral` consumer
 
 - New `Phenomena/Modality/Studies/Booth2022.lean` (~330 LOC): `BilatInqProp W` record (paired `Question W` + `no_overlap`), `negate`/`isBilateral`/`atom`/`disj`/`conj`/`necessity`/`possibility` constructors, `IsCover`/`IsMinCover` substrate, truth/falsity wrappers, 4-world worked example.

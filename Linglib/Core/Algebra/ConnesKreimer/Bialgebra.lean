@@ -68,7 +68,7 @@ namespace ConnesKreimer
 
 open scoped TensorProduct
 
-variable {R : Type*} [CommSemiring R] {α : Type} [DecidableEq α]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-- Coassociativity of the Connes-Kreimer contraction coproduct Δ^c.
     @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10.
@@ -113,11 +113,20 @@ theorem counit_lTensor :
 
 /-- The Connes-Kreimer bialgebra structure on `Hc R α`.
 
-    Registered as an `instance` because `Hc R α` is `def`-wrapped
-    (not `abbrev`-wrapped) — no conflict with mathlib's group-like
-    `AddMonoidAlgebra.instBialgebra` which applies only to the
-    underlying `AddMonoidAlgebra R (Forest α)`. -/
-noncomputable instance instBialgebra : Bialgebra R (Hc R α) :=
+    **Currently a `def`, not an `instance`.** The mathlib-PR audit
+    flagged registering an `instance` whose proof obligations are
+    `sorry` as unacceptable practice (downstream typeclass-resolved
+    code would silently inherit unproven laws). Demoted to `def` until
+    Stage 1a/1b discharge the three sorries.
+
+    Downstream code that wants the Bialgebra structure can opt in
+    locally via `letI := ConnesKreimer.bialgebraStructure (R := R) (α := α)`.
+    Direct access to the algebraic operators stays available by name:
+    `comulAlgHom`, `comulDelAlgHom`, `counit`.
+
+    Once `comul_coassoc`, `counit_rTensor`, `counit_lTensor` are
+    proven, promote back to `instance`. -/
+noncomputable def bialgebraStructure : Bialgebra R (Hc R α) :=
   Bialgebra.ofAlgHom comulAlgHom counit comul_coassoc counit_rTensor counit_lTensor
 
 end ConnesKreimer

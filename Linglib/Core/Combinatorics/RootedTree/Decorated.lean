@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Free
-import Mathlib.Algebra.Order.Group.Multiset
+import Mathlib.Data.Multiset.Basic
 
 /-!
 # Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
@@ -75,9 +75,8 @@ forces self-reference in the inductive — hence the third constructor
 `[UPSTREAM]` candidate. Future home is something like
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.DecoratedTree`. This
 file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
-(per `scratch/mcb_stage1_plan.md`). Namespace remains `Minimalist.Hopf`
-for now to keep the migration low-risk; namespace rename is a separate
-follow-up.
+(per `scratch/mcb_stage1_plan.md`). Namespace is `ConnesKreimer`
+(renamed from `Minimalist.Hopf` in Stage 0.7).
 -/
 
 namespace ConnesKreimer

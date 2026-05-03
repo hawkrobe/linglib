@@ -30,9 +30,10 @@ to `AddMonoidAlgebra` via `to_additive_dont_translate`): the wrapper
 wrong coproduct.
 
 The mathlib pattern: a `def`-wrapped algebra type forwards needed
-foundational instances (Semiring, Algebra, FunLike) manually so the
-typeclass slot for the discriminated structure (Bialgebra, here) is
-unambiguous.
+foundational instances (Algebra, FunLike) manually so the typeclass
+slot for the discriminated structure (Bialgebra, here) is unambiguous.
+We forward only `CommSemiring` (which auto-derives `Semiring`),
+`Algebra`, `FunLike` — keeping the surface minimal.
 
 ## Layer status
 
@@ -40,6 +41,10 @@ unambiguous.
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.Defs`. This file is
 part of the Stage 0.5/0.7/1 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 (per `scratch/mcb_stage1_plan.md`).
+
+**Naming TODO** (Stage 1.7 or upstream): the one-letter `Hc` violates
+mathlib naming hygiene. Rename to `ConnesKreimerHc R α` or similar
+when upstreaming.
 -/
 
 namespace ConnesKreimer
@@ -56,32 +61,22 @@ def Hc (R : Type*) [CommSemiring R] (α : Type*) [DecidableEq α] : Type _ :=
 /-! ## Mathlib instances forwarded for `Hc R α`
 
 Since `Hc` is `def`, mathlib instances on `AddMonoidAlgebra R (Forest α)`
-need explicit forwarding to be visible on `Hc R α`. -/
+need explicit forwarding to be visible on `Hc R α`. Minimal surface:
+`CommSemiring` auto-derives `Semiring`; `Ring`/`CommRing` not
+forwarded (no current consumers requires `[CommRing R]`). -/
 
-noncomputable instance Hc.instSemiring (R : Type*) [CommSemiring R]
-    (α : Type*) [DecidableEq α] : Semiring (Hc R α) :=
-  inferInstanceAs (Semiring (AddMonoidAlgebra R (Forest α)))
-
-noncomputable instance Hc.instCommSemiring (R : Type*) [CommSemiring R]
+noncomputable instance instCommSemiring (R : Type*) [CommSemiring R]
     (α : Type*) [DecidableEq α] : CommSemiring (Hc R α) :=
   inferInstanceAs (CommSemiring (AddMonoidAlgebra R (Forest α)))
 
-noncomputable instance Hc.instRing (R : Type*) [CommRing R]
-    (α : Type*) [DecidableEq α] : Ring (Hc R α) :=
-  inferInstanceAs (Ring (AddMonoidAlgebra R (Forest α)))
-
-noncomputable instance Hc.instCommRing (R : Type*) [CommRing R]
-    (α : Type*) [DecidableEq α] : CommRing (Hc R α) :=
-  inferInstanceAs (CommRing (AddMonoidAlgebra R (Forest α)))
-
-noncomputable instance Hc.instAlgebra (R : Type*) [CommSemiring R]
+noncomputable instance instAlgebra (R : Type*) [CommSemiring R]
     (α : Type*) [DecidableEq α] : Algebra R (Hc R α) :=
   inferInstanceAs (Algebra R (AddMonoidAlgebra R (Forest α)))
 
 /-- Forward the `Finsupp.funLike` instance so that elements of `Hc R α`
     can be applied as functions `Forest α → R`. Needed for `counit`
     and other finsupp-flavored lemmas. -/
-instance Hc.instFunLike (R : Type*) [CommSemiring R]
+instance instFunLike (R : Type*) [CommSemiring R]
     (α : Type*) [DecidableEq α] : FunLike (Hc R α) (Forest α) R :=
   inferInstanceAs (FunLike (Forest α →₀ R) (Forest α) R)
 

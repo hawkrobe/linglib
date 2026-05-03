@@ -35,7 +35,7 @@ namespace Minimalist.Hopf
 open scoped TensorProduct
 open ConnesKreimer
 
-variable {R : Type*} [CommSemiring R] {α : Type} [DecidableEq α]
+variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ## §1: γ_{S,S'} matching projection (M-C-B Def 1.3.1)
 

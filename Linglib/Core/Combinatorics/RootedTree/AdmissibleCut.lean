@@ -46,31 +46,30 @@ file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 
 namespace ConnesKreimer
 
-variable {α : Type}
+variable {α : Type*}
 
 /-! ## §1: Cut shape
 
-Universe-monomorphic for now (`α : Type`, not `Type*`). Universe
-polymorphism is deferred to a follow-up; mathlib upstream will need
-it but the partial parameterization here is enough to get the
-generic structure right and keep downstream code working. -/
+Universe-polymorphic in `α : Type*` since Stage 1.6. The inductive
+takes `α` as a parameter (not a per-constructor index), which lets
+mathlib upstream reuse this construction over arbitrary leaf types. -/
 
 /-- An admissible cut on a decorated tree `T : DecoratedTree α`. -/
-inductive CutShape : {α : Type} → DecoratedTree α → Type where
+inductive CutShape {α : Type*} : DecoratedTree α → Type _ where
   /-- An α-leaf admits only the empty cut (no edges to cut). -/
-  | atLeaf {α : Type} {a : α} : CutShape (.leaf a)
+  | atLeaf {a : α} : CutShape (.leaf a)
   /-- A trace leaf admits only the empty cut. -/
-  | atTrace {α : Type} {t : DecoratedTree α} : CutShape (.trace t)
+  | atTrace {t : DecoratedTree α} : CutShape (.trace t)
   /-- Cut both child edges of this node. -/
-  | bothCut {α : Type} {l r : DecoratedTree α} : CutShape (.node l r)
+  | bothCut {l r : DecoratedTree α} : CutShape (.node l r)
   /-- Cut the left child edge, recurse into `r` with sub-cut `cr`. -/
-  | onlyLeftCut {α : Type} {l r : DecoratedTree α} (cr : CutShape r) :
+  | onlyLeftCut {l r : DecoratedTree α} (cr : CutShape r) :
       CutShape (.node l r)
   /-- Recurse into `l` with sub-cut `cl`, cut the right child edge. -/
-  | onlyRightCut {α : Type} {l r : DecoratedTree α} (cl : CutShape l) :
+  | onlyRightCut {l r : DecoratedTree α} (cl : CutShape l) :
       CutShape (.node l r)
   /-- Don't cut at this node; recurse in both children. -/
-  | bothRecurse {α : Type} {l r : DecoratedTree α} (cl : CutShape l)
+  | bothRecurse {l r : DecoratedTree α} (cl : CutShape l)
       (cr : CutShape r) : CutShape (.node l r)
 
 namespace CutShape
