@@ -40,7 +40,15 @@ inductive Step where
   /-- Wholesale Late Merger: countercyclically merge `restrictor` (the NP
       complement of a determiner) into the bare determiner `target` at a
       chain position. The bare D is replaced by `{D, restrictor}`.
-      @cite{takahashi-hulsey-2009} @cite{lebeaux-1988} -/
+      @cite{takahashi-hulsey-2009} @cite{lebeaux-1988}
+
+      TODO: per the §1.7 discussion in `Algebra.lean`'s module docstring,
+      @cite{marcolli-chomsky-berwick-2025} argue (book pp. 73-80, via
+      the Lie/Hopf duality of Lemma 1.7.2 + Milnor-Moore) that
+      countercyclic-insertion outputs are derivable from EM/IM (with
+      possibly Sideward Merge per ref. [142]). If that argument lands
+      as a constructive rederivation, this `Step.wlm` constructor
+      becomes definable in terms of EM/IM/SM and can be eliminated. -/
   | wlm (restrictor : SyntacticObject) (target : SyntacticObject)
   deriving Repr
 

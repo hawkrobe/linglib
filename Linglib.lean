@@ -1853,6 +1853,10 @@ import Linglib.Core.Computability.CFGFragment
 import Linglib.Core.Computability.PumpingLemma
 import Linglib.Core.Computability.NonContextFree
 import Linglib.Core.Computability.WeightedCFG
+import Linglib.Core.Combinatorics.RootedTree.Decorated
+import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
+import Linglib.Core.Algebra.ConnesKreimer.Defs
+import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -2112,10 +2116,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.Properties.BinaryOptimality
-import Linglib.Core.Combinatorics.RootedTree.Decorated
-import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
-import Linglib.Core.Algebra.ConnesKreimer.Defs
-import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
 import Linglib.Theories.Syntax.Minimalist.Hopf.AdmissibleCut
 import Linglib.Theories.Syntax.Minimalist.Hopf.Comul
