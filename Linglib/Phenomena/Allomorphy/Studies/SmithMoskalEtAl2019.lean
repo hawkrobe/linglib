@@ -183,59 +183,65 @@ theorem case_aab_attested_falsifies_dm :
   ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
 
 -- ============================================================================
--- § 3: Number side — §4 reports AAB attested
+-- § 3: Number side — §4 attested AAB witnesses (Table 46)
 -- ============================================================================
 
 /-! @cite{smith-moskal-xu-kang-bobaljik-2019} §4 surveys pronominal
-number suppletion and reports the same AAB-attestation pattern that
+number suppletion and finds the same AAB-attestation profile that
 §3.6 reports for case: "we find extremely clear-cut examples of ABB,
 ABC and AAB patterns, alongside AAA. We do not find any unambiguously
-robust evidence of ABA patterns." (§4.2)
+robust evidence of ABA patterns." Table 32 quantifies: 3 attested AAB
+number paradigms (vs 48 ABB, 19 ABC, numerous AAA, 1 dubious ABA from
+Yagua).
 
-The number paradigms are 3-cell over SG/PL/DUAL (or richer in
-languages with paucal, trial, etc.), with cell-ordering reflecting
-the containment structure: SG–PL–DUAL or SG–DUAL–PL depending on the
-language (the paper notes both orderings are attested, motivating the
-§4.3.1 reanalysis of number representation that connects to Harbour's
-@cite{harbour-2014} feature recursion).
+§4 Table 46 lists the three concrete AAB number witnesses:
 
-TODO: encode a specific attested AAB number-suppletion pattern from
-the paper's §4 tables. The case-side `wardamanThirdSg` shape `[0, 0, 1]`
-generalizes to number patterns where SG and PL share a root (or stem)
-distinct from DUAL. The substrate to use is again
-`Morphology.Containment.IsContiguous` over a 3-cell `List Nat`; the
-domain-specific structure (Harbour's number-feature geometry) lives
-separately in `Theories/Syntax/Minimalist/Agreement/FeatureRecursion.lean`.
+- **Wambaya 1INCL** (@cite{nordlinger-1998}):
+  SG=*ngawu(miji)*, PL=*ngurruwani*, DL=*mrindiyani*
+- **Yagua 2** (@cite{payne-payne-1990}):
+  SG=*jiy*, PL=*jiry-éy*, DL=*sáada*
+- **Dehu 3M** (Smith 2011):
+  SG=*angeice*, PL=*angate*, DL=*nyido*
 
-The placeholder below witnesses an AAB-shaped number pattern via the
-same `[0, 0, 1]` shape — substantively identical to the case witness,
-since the paper's Table-9-equivalent for number reports the same
-AAB-attested cross-linguistic profile. A concrete language attribution
-(Sursurunga? Mokilese? cf. Tables 51-52) requires §4.x reading. -/
+We encode Yagua 2 — the cleanest morphological case: PL *jiryéy*
+transparently contains the SG root *jiy* plus a plural suffix *-éy*,
+while DL *sáada* is suppletive (no shared formative). This projects
+to `[0, 0, 1]` over the SG/PL/DL hierarchy: positions 0 (SG) and 1
+(PL) share root-class 0 (the *jiy* root); position 2 (DL) takes
+root-class 1 (the *sáada* root).
 
-/-- Schematic AAB-shaped 3-cell number paradigm. Stand-in for a
-    specific attested witness from §4 once a concrete language
-    attribution is encoded. Same structural shape as the case witness
-    `wardamanThirdSg`; the divergence theorem follows analogously. -/
-def attestedNumberAAB : List Nat := [0, 0, 1]
+The number paradigms are 3-cell over SG/PL/DL; the cell-ordering
+reflects the containment structure SG–PL–DL or SG–DL–PL depending on
+the language (the paper notes both orderings are attested, motivating
+the §4.3.1 reanalysis of number representation that connects to
+Harbour's @cite{harbour-2014} feature recursion). For Yagua, the
+SG–PL–DL ordering matches the table caption directly. -/
 
-theorem attested_number_aab_contiguous :
-    Morphology.Containment.IsContiguous attestedNumberAAB := by decide
+/-- Yagua 2nd person number paradigm: SG=*jiy*, PL=*jiry-éy*,
+    DL=*sáada*. @cite{smith-moskal-xu-kang-bobaljik-2019} Table 46
+    (data from @cite{payne-payne-1990}). The PL is transparently
+    *jiy* + *-éy*; the DL is suppletive. Projects to `[0, 0, 1]`
+    over SG/PL/DL. -/
+def yaguaSecond : List Nat := [0, 0, 1]
 
-theorem attested_number_aab_is_aab :
-    attestedNumberAAB[1]? ≠ attestedNumberAAB[2]? := by decide
+theorem yagua_2_contiguous :
+    Morphology.Containment.IsContiguous yaguaSecond := by decide
+
+theorem yagua_2_is_aab :
+    yaguaSecond[1]? ≠ yaguaSecond[2]? := by decide
 
 /-- §4 number-side analog of `case_aab_attested_falsifies_dm`. Same
     structural divergence: AAB is attested in pronominal number
-    suppletion, falsifying the DM derivation lifted to number. The
-    `attestedNumberAAB` witness is currently schematic (placeholder
-    `[0, 0, 1]` shape); upgrade to a specific §4 language attribution
-    once that section is read. -/
+    suppletion (3 instances per Table 32, with Wambaya / Yagua / Dehu
+    listed in Table 46), falsifying the DM derivation lifted to number.
+    The Yagua 2 witness is morphologically transparent — PL = SG +
+    suffix; DL is suppletive — exactly the AAB shape that
+    `vi_cmpr_eq_sprl` would predict cannot arise. -/
 theorem number_aab_attested_falsifies_dm :
     ∃ (cells : List Nat),
       Morphology.Containment.IsContiguous cells ∧
       cells[1]? ≠ cells[2]? :=
-  ⟨attestedNumberAAB, attested_number_aab_contiguous, attested_number_aab_is_aab⟩
+  ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
 
 -- ============================================================================
 -- § 4: §3.7 — Domain-based locality (substrate addition)
