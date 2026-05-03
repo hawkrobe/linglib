@@ -4,6 +4,59 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.654 — Magri 2009 audit fixes: R machinery (eq. 41-43), correct .exhIE mechanism
+
+Audit of 0.230.651 Magri bridge against the actual paper found three
+issues. All three fixed.
+
+**Mechanism corrected** (`magriToImplicature`): `mechanism := .exhIE`
+(was wrongly `.exhIEII`). @cite{magri-2009} uses Fox 2007 IE only
+(`innocent.exh` = `Excluder.exh` with the innocent excluder); the
+Bar-Lev–Fox 2020 IE+II extension postdates Magri by 11 years.
+
+**R machinery added** (`Magri2009.lean §1b`, ~80 LOC): Magri's §3.2.5
+introduces a contextual relevance variable R + two postulates that
+explain *why* mismatching SIs are mandatory while standard SIs are not.
+Without this machinery, the formalization captured only the *outcome*
+(eq. 33) and over-predicted deviance.
+- `RelevantBlindScenario`: extends `BlindScenario` with `relevant : Finset W → Bool`,
+  `uttered_relevant` (eq. 43a), `relevant_ck_closed` (eq. 43b).
+- `strengthenedR`: R-relativized EXH (eq. 42).
+- `mismatching_alt_relevant`: theorem that CK-equivalent target +
+  alternative ⇒ alternative is mandatorily relevant (the formal core
+  of @cite{magri-2009} p. 263 mandatoriness argument).
+- Worked instance: `italianRelevantScenario` — lifts `italianScenario`
+  with canonical R, plus `example` showing `all_` is mandatorily
+  relevant when `some_` is uttered.
+
+**Docstrings updated** (mandatoriness as load-bearing premise):
+- Module docstring now lists three core pieces (BH, MH, mandatoriness),
+  not just two; explains the substrate split (`BlindScenario` =
+  outcome; `RelevantBlindScenario` = mechanism).
+- `magri_blindOdd_no_ck_realizer` docstring now states explicitly:
+  the deviance is NOT Sadock cancellation failure; @cite{magri-2009}'s
+  "robustness" claim (§1) corresponds to *mandatoriness* of EXH (eq. 41),
+  not to truth-conditional non-cancellability.
+- `BPSWorld` (Bare Plural Subjects, Magri §4) disambiguated from BPS =
+  Bassi–Del Pinal–Sauerland 2021 (`bpsToImplicature`).
+
+**Verified citations**: bib entry `magri-2009` matches PDF cover
+exactly (NLS 17(3): 245–297; DOI 10.1007/s11050-009-9042-x).
+
+### 0.230.653 — Krifka audit fixes: bipolar symmetry, ContextualEvidence dedupe, IsCommit→Prop, Table 1 to Acceptability
+
+Six bug fixes + one docstring clarification surfaced by a 4-agent re-audit of the just-landed Krifka work (0.230.652).
+
+- **`bipolarQuestion` `no` propagation** (`Theories/Dialogue/CommitmentSpace.lean`): Krifka eq. 23 is symmetric in φ/¬φ; substrate was mapping prior continuations through `yes` only. Fix maps through both branches.
+- **`ContextualEvidence` deduplication** (`Phenomena/Assertion/Studies/Krifka2015.lean`): `Core/Discourse/Commitment.lean:243` already defines this enum (anchored on `bring-gunlogson-2000`); local redefinition removed, `open Core.Discourse.Commitment (ContextualEvidence)`.
+- **`IsCommit : Prop` + `DecidablePred`** (`Core/Discourse/Commitment.lean`): per project rule against intrinsic Bool. Was `isCommit : IndexedCommitment W → Bool`.
+- **Table 1 to `Features.Acceptability`** (`Krifka2015.lean`): paper p. 341 has 3 columns, not 4 — drop the noNegMono/noNegBi cell-split, encode the (mono)/(bi)/(both fail) licensing tags as a separate `NoNegReading` enum + `noNegLicensing` function. Use `Acceptability` (`ok`/`marginal`/`anomalous`) instead of Bool to capture Krifka's `(#)` parenthesised-degraded vs bare `#` infelicitous distinction.
+- **`applyComplex .disj`**: silent stub returning first conjunct → explicit `sorry` per "prefer sorry over weakening". Reverse-tag worked examples now blocked on this; structural theorem `reverse_tag_is_disjunction` does not depend on it.
+- **Bare `simp` → `simp only`** in `bipolar_continuations_not_internally_contradictory` and the `vsGinzburg2012` section.
+- **`CommitmentSpace` docstring √C correspondence note**: explains how the list-shape `root :: continuations` represents Krifka's set-theoretic commitment space, where `{√C}` operands in eqs. 23/27 correspond to keeping `root` as the always-present floor. Defuses recurring auditor confusion (a previous HIGH flag turned out to rest on misreading `{√C}` as a state inside the resulting set rather than a singleton-set commitment-space operand of ∪).
+
+Full Linglib build green; only intentional `sorry` is on `applyComplex .disj`.
+
 ### 0.230.653 — Implicature.bps: substantive projection theorem; trim audit dead-substrate
 
 Audit of 0.230.651 found `bps_not_cancellable` was structurally

@@ -11,17 +11,37 @@ import Linglib.Fragments.German.BarePluralWordOrder
 @cite{magri-2009}
 
 @cite{magri-2009}. Natural Language Semantics 17(3): 245–297.
+DOI: 10.1007/s11050-009-9042-x.
 
-Two hypotheses form the core of the paper:
+Three pieces form the substantive core of the paper:
 
-1. **Blindness Hypothesis (BH)** (§3.2.2): The exhaustivity operator EXH
-   computes the strengthened meaning using *logical* entailment (→_W),
-   not entailment given common knowledge (→_{W_ck}). That is, whether
-   an alternative is excludable is determined without consulting CK.
+1. **Blindness Hypothesis (BH)** (§3.2.2, eq. (32)): The exhaustivity
+   operator EXH computes the strengthened meaning using *logical*
+   entailment (→_W), not entailment given common knowledge (→_{W_ck}).
 
-2. **Mismatch Hypothesis (MH)** (§3.2.2, item (33)): If the blind strengthened meaning
-   EXH(φ) is a contradiction given common knowledge (EXH(φ) ∩ W_ck = ∅),
-   then φ sounds odd.
+2. **Mismatch Hypothesis (MH)** (§3.2.2, eq. (33)): If the blind
+   strengthened meaning EXH(φ) is a contradiction given common knowledge
+   (EXH(φ) ∩ W_ck = ∅), then φ sounds odd.
+
+3. **Mandatoriness machinery** (§3.2.5, eq. (41)–(43)): EXH is mandatory
+   in matrix clauses (eq. 41); a contextual relevance variable R subject
+   to (43a) "uttered ⇒ relevant" and (43b) "relevance closed under
+   contextual equivalence" makes mismatching SIs mandatory while leaving
+   standard SIs non-mandatory. The mandatoriness is the load-bearing
+   premise — without it, the SI could be cancelled and the deviance
+   rescued (Magri's §1 "robustness" claim).
+
+## Substrate split
+
+`BlindScenario` + `strengthened` + `blindOdd` capture (1) and (2): the
+*outcome* of mismatching SIs. The deviance prediction is correct under
+mandatoriness as an external assumption.
+
+`RelevantBlindScenario` adds R as a structure field with (43a)/(43b) as
+laws, and `strengthenedR` implements the R-relativized EXH (eq. (42)).
+The substantive theorem `mismatching_alt_relevant` proves Magri's
+mandatoriness consequence: when target and alternative are
+CK-equivalent, R cannot block the alternative — the SI is mandatory.
 
 ## Introductory Example
 
@@ -30,6 +50,8 @@ Two hypotheses form the core of the paper:
 - Strengthened (blind, via BH): some BUT NOT ALL Italians come from a warm country
 - CK: Italy is warm → all Italians come from a warm country
 - Strengthened ∩ CK = ∅ → odd (via MH)
+- "Some" and "all" are CK-equivalent (both denote {allWarm} in CK) →
+  R(all) = R(some) = 1 → SI is mandatory (eq. 43a + 43b consequence).
 
 ## Application to Individual-Level Predicates
 
@@ -46,6 +68,14 @@ German word order (§4.5). See §5 below for the Q-adverb formalization.
 The ILP/SLP distinction is @cite{carlson-1977}'s `PredicateLevel`:
 individual-level predicates trigger homogeneity (assumption (70)), while
 stage-level predicates do not.
+
+## Naming note: `BPSWorld`
+
+Section §6 below uses `BPSWorld` for **Bare Plural Subjects**, the
+empirical phenomenon @cite{magri-2009} extends his account to. This is
+unrelated to the Bassi–Del Pinal–Sauerland 2021 *Presuppositional EXH*
+abbreviation also used in this project (`bpsToImplicature`,
+`.bpsPresuppositional`). Different `BPS`, different file.
 -/
 
 namespace Magri2009
@@ -151,6 +181,108 @@ def ignoranceContradictsCK (u : U) : Bool :=
 end BlindScenario
 
 -- ═══════════════════════════════════════════════════════════════════════
+-- §1b  R-Relativized EXH and Mandatoriness (@cite{magri-2009} §3.2.5)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ## R-relativized exhaustification: the mandatoriness mechanism
+
+§3.2.2 (BH+MH above) states the *outcome* of @cite{magri-2009}'s account:
+blind EXH mismatches CK, sentence sounds odd. §3.2.5 is the *mechanism*
+explaining why mismatching SIs are mandatory while standard SIs (e.g.
+the answer to (40c) "John is usually available after dinner") are not.
+The key is a contextually-supplied relevance predicate `R`, an
+R-relativized EXH operator (eq. (42)), and two postulates on R
+(eq. (43)).
+
+The mandatoriness consequence (p. 263): for *mismatching* SIs, the
+target φ and its scalar alternative ψ are contextually equivalent
+(φ ↔_{W_ck} ψ — common knowledge forces them to denote the same set
+within W_ck). By postulate (43b), R is closed under contextual
+equivalence, so R(ψ) = R(φ). By postulate (43a), R(φ) = 1 (the
+uttered proposition is always relevant). Hence R(ψ) = 1, and
+EXHᴿ(φ) negates ψ no matter how the context assigns R to other
+propositions. The SI is *mandatory*.
+
+For *standard* SIs (φ and alternatives NOT contextually equivalent),
+R can be set independently — the context can make ψ irrelevant
+(R(ψ) = 0), in which case EXHᴿ(φ) does not negate ψ and the SI is
+not derived. Hence the SI is non-mandatory.
+
+Without this machinery, `BlindScenario`'s `blindOdd` over-predicts
+deviance: it fires whenever any logically stronger CK-incompatible
+alternative exists, regardless of whether R would block it. The
+substrate below adds R as a field with the postulates as structure
+laws, and proves that for CK-equivalent (target, alternative) pairs
+the SI is mandatory. -/
+
+/-- Magri's relevance predicate, contextually supplied
+(@cite{magri-2009} §3.2.5). A property `R : Finset W → Bool` of
+propositions (extensions, as Finsets of CK-compatible-or-not worlds)
+satisfying:
+
+- **(43a)** *Maximize Relevance*: an uttered proposition's denotation
+  is relevant. Hardwires the Gricean Maxim of Relevance.
+- **(43b)** *Contextual closure*: if two propositions are equivalent
+  given common knowledge (`p ∩ W_ck = q ∩ W_ck`), they share their
+  relevance status. Captures that R is a contextual variable.
+
+Together with mandatory EXH (eq. (41), an external assumption — Magri
+states it as a stipulation about matrix clauses), R determines whether
+SIs are mandatory: see `mismatching_alt_relevant` below. -/
+structure RelevantBlindScenario (W U : Type) [Fintype W] [DecidableEq W]
+    extends BlindScenario W U where
+  /-- R: which propositions (as Finsets of worlds) are contextually relevant. -/
+  relevant : Finset W → Bool
+  /-- @cite{magri-2009} eq. (43a): every uttered proposition's denotation
+      is relevant. -/
+  uttered_relevant : ∀ u, relevant (predToFinset (toBlindScenario.meaning u)) = true
+  /-- @cite{magri-2009} eq. (43b): R is closed under common-knowledge
+      equivalence. Two propositions agreeing on every CK-compatible world
+      have the same R-value. -/
+  relevant_ck_closed : ∀ p q : Finset W,
+    p ∩ toBlindScenario.cWorlds = q ∩ toBlindScenario.cWorlds →
+    relevant p = relevant q
+
+namespace RelevantBlindScenario
+
+variable {W U : Type} [Fintype W] [DecidableEq W] (s : RelevantBlindScenario W U)
+
+/-- @cite{magri-2009} eq. (42): R-relativized exhaustification.
+`EXHᴿ(φ) := φ ∧ ⋀_{ψ ∈ Excl(φ)} (¬ψ ∨ ¬R(ψ))`. A world `w` survives
+iff `w ∈ φ` AND, for every excludable alternative ψ, either `w ∉ ψ`
+or ψ is irrelevant. Equivalently: `w ∈ φ` and every *relevant*
+excludable alternative is false at `w`.
+
+Reduces to plain `strengthened` (Fox 2007 IE) when all excludable
+alternatives are relevant. -/
+def strengthenedR (u : U) (w : W) : Bool :=
+  let alts := altsFromPreds ((s.alternatives u).map s.meaning)
+  let φ := predToFinset (s.meaning u)
+  decide (w ∈ φ ∧ ∀ ψ ∈ innocent.excluded alts φ,
+                    s.relevant ψ = true → w ∉ ψ)
+
+/-- **Mandatoriness consequence of (43a) + (43b)** for mismatching SIs.
+When the uttered prejacent's denotation and an alternative's denotation
+are contextually equivalent (= agree on every CK-compatible world),
+postulate (43b) lifts the alternative's relevance to match the prejacent's,
+and (43a) forces the prejacent's relevance to 1. So the alternative
+is *mandatorily relevant* — no contextual choice of R can block it.
+
+This is the formal core of @cite{magri-2009}'s argument on p. 263:
+mismatching SIs are mandatory because the alternative cannot be
+R-blocked. The contrast with non-mismatching SIs (where φ and ψ are
+*not* CK-equivalent, so R(ψ) is free) explains why standard SIs are
+non-mandatory. -/
+theorem mismatching_alt_relevant (u alt : U)
+    (h_ck_equiv : predToFinset (s.meaning u) ∩ s.cWorlds =
+                   predToFinset (s.meaning alt) ∩ s.cWorlds) :
+    s.relevant (predToFinset (s.meaning alt)) = true := by
+  rw [← s.relevant_ck_closed _ _ h_ck_equiv]
+  exact s.uttered_relevant u
+
+end RelevantBlindScenario
+
+-- ═══════════════════════════════════════════════════════════════════════
 -- §2  Italian Warmth Example
 -- ═══════════════════════════════════════════════════════════════════════
 
@@ -171,7 +303,7 @@ inductive ItalyWorld₃ where
 
 inductive ItalyUtt where
   | some_ | all_
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 open ItalyWorld₃ ItalyUtt in
 def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
@@ -183,6 +315,38 @@ def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
     | all_  => [some_]
   context
     | allWarm => true | someNotAll => false | noneWarm => false
+
+/-- Lift `italianScenario` to a `RelevantBlindScenario` by adding a
+canonical relevance predicate: `R(p) := 1` iff `p`'s CK-projection
+matches that of some uttered alternative. This is the *minimal* R
+satisfying both (43a) and (43b) — and crucially, it forces R(meaning all_)
+= R(meaning some_) = 1 because both denote `{allWarm}` in CK. -/
+def italianRelevantScenario : RelevantBlindScenario ItalyWorld₃ ItalyUtt where
+  toBlindScenario := italianScenario
+  -- p is relevant iff its CK-projection equals that of some utterance.
+  relevant p := decide (∃ u : ItalyUtt,
+    p ∩ italianScenario.cWorlds =
+      predToFinset (italianScenario.meaning u) ∩ italianScenario.cWorlds)
+  uttered_relevant u := by
+    -- exhibit u as the witness
+    refine decide_eq_true ?_
+    exact ⟨u, rfl⟩
+  relevant_ck_closed p q hpq := by
+    -- relevant unfolds to `decide (∃ u, p ∩ cWorlds = …)`; rewriting
+    -- the `p ∩ cWorlds` occurrences via hpq makes both sides identical.
+    rw [show p ∩ italianScenario.cWorlds = q ∩ italianScenario.cWorlds from hpq]
+
+/-- **Mandatoriness consequence on the Italian example** (Magri eq. 43
+applied). The scalar alternative `all_` is mandatorily relevant when
+`some_` is uttered, because both denote `{allWarm}` in CK
+(the only CK-compatible world). The `R(meaning all_) = 1` conclusion
+follows from `mismatching_alt_relevant`, parametric in the choice of
+relevance variable — no contextual escape hatch exists. -/
+example : italianRelevantScenario.relevant
+    (predToFinset (italianRelevantScenario.meaning .all_)) = true := by
+  apply italianRelevantScenario.mismatching_alt_relevant .some_ .all_
+  -- show: predToFinset (meaning some_) ∩ cWorlds = predToFinset (meaning all_) ∩ cWorlds
+  decide
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3  Core Predictions
@@ -1112,23 +1276,34 @@ variable {W U : Type} [Fintype W] [DecidableEq W]
 
 /-- Wrap a `BlindScenario`-derived strengthened meaning as an
 `Implicature W Prop`. The `content` is `s.strengthened u · = true`
-(the EXH'd meaning at each world); the `mechanism` is `.exhIEII`
-(Magri uses Fox's innocent-exclusion EXH; the Bar-Lev–Fox unification
-of IE+II is the project-canonical successor). -/
+(the EXH'd meaning at each world); the `mechanism` is `.exhIE` —
+@cite{magri-2009} uses Fox's innocent-exclusion operator only
+(`innocent.exh` in `Theories/Semantics/Exhaustification/Excluder.lean`,
+implementing @cite{fox-2007}'s IE algorithm), not the Bar-Lev–Fox
+2020 IE+II extension that postdates the paper by 11 years. -/
 def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop where
   kind      := .scalar
   content   := fun w => s.strengthened u w = true
   altsUsed  := { p | ∃ alt ∈ s.alternatives u, p = fun w => s.meaning alt w = true }
-  mechanism := .exhIEII
+  mechanism := .exhIE
 
-/-- **Magri's blindness diagnostic, restated against the implicature spine.**
-`blindOdd` ⇒ the strengthened-meaning content has *no* CK-compatible
-realizer. This is a *deviance* claim, distinct from non-cancellability:
-the implicature is contextually cancellable in the Sadock sense (witness:
-"in fact all" at the CK world), but the strengthened meaning cannot be
-true at any CK world at all. The "#" diacritic on Magri's example is
-the linguistic correlate of *this* property, not of cancellability
-failure. -/
+/-- **Magri's mismatch consequence, restated against the implicature
+spine.** When EXH is applied to φ blind to CK (@cite{magri-2009} §3.2.2
+eq. (32), the Blindness Hypothesis), and the resulting strengthened
+meaning has no CK-realizer (eq. (33), the Mismatch Hypothesis), then
+the wrapped implicature's content has no CK-compatible realizer.
+
+The deviance @cite{magri-2009} predicts is **not** Sadock truth-conditional
+non-cancellability — for the "Some Italians" example, the continuation
+"in fact all" IS truth-conditionally consistent with the literal "some"
+and DOES contradict the EXH'd "not all" implicature, so `IsCancellable`
+holds. The load-bearing premise is @cite{magri-2009} §3.2.5 eq. (41)
+"EXH is mandatory in matrix clauses" combined with the R-postulates
+(43a)/(43b): the speaker is grammatically committed to the SI even
+when uttering a cancellation continuation, and this commitment is what
+creates the deviance. The mandatoriness machinery is formalized below
+in `RelevantBlindScenario`; this theorem only states the *outcome*
+(eq. (33) antecedent) translated to the implicature spine. -/
 theorem magri_blindOdd_no_ck_realizer
     (s : BlindScenario W U) (u : U) (h : s.blindOdd u = true) :
     ¬ ∃ w, s.context w = true ∧ (magriToImplicature s u).content w := by
