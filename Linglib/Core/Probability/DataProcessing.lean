@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.Entropy
+import Linglib.Core.Probability.PMFPosterior
 import Mathlib.Analysis.Convex.Jensen
 
 /-!
@@ -104,6 +105,8 @@ namespace PMF
 
 open Finset InformationTheory
 
+open scoped ENNReal
+
 variable {α β : Type*} [Fintype α] [Fintype β]
 
 /-- **Data Processing Inequality for `PMF.klDiv` (finite case)**:
@@ -136,38 +139,182 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
   -- Convert both KL divergences to discrete sums via `klDiv_eq_sum_klFun`.
   rw [klDiv_eq_sum_klFun (p.bind κ) (q.bind κ) h_bind_ac,
       klDiv_eq_sum_klFun p q h_ac]
-  /-
-  TODO: Discharge via `Real.klFun_logSum_le` applied per `b`, then swap sums.
-
-  Goal shape:
-    `∑ b, (q.bind κ) b * ofReal(klFun((p.bind κ b / q.bind κ b).toReal))`
-    `  ≤ ∑ a, q a * ofReal(klFun((p a / q a).toReal))`
-
-  Proof sketch (~80 LOC of careful ENNReal/Real bridging):
-
-  1. For each `b ∈ Finset.univ`, apply `Real.klFun_logSum_le` with weights
-     `y_a = (q a * κ a b).toReal` and points `x_a = (p a * κ a b).toReal`.
-     Note `(q a * κ a b).toReal / (q a * κ a b).toReal = (p a / q a).toReal`
-     when `κ a b ≠ 0`; the `κ a b = 0` terms contribute `0` on both sides
-     and can be filtered via `h_κ_pos`.
-
-  2. The log-sum gives, per `b`:
-       `(q.bind κ b).toReal * klFun((p.bind κ b / q.bind κ b).toReal)`
-         `≤ ∑ a, (q a * κ a b).toReal * klFun((p a / q a).toReal)`
-
-  3. Lift to ENNReal via `ENNReal.ofReal_le_ofReal_iff` (both sides non-neg by
-     `klFun_nonneg`), then multiply through by `1` and re-arrange to match the
-     LHS sum form.
-
-  4. Swap `∑_b ∑_a → ∑_a ∑_b` via `Finset.sum_comm`.
-
-  5. Pull `q a * ofReal(klFun((p a / q a).toReal))` out of the inner sum
-     (it doesn't depend on `b`), leaving `∑_b κ a b = 1` (since `κ a` is a PMF).
-
-  Each step is mechanical but the ENNReal/.toReal bookkeeping is substantial.
-  Tracked separately; once proved, the cancellation theorem (this file's
-  raison d'être) follows in ~30 LOC.
-  -/
-  sorry
+  -- Standing facts that get used throughout
+  have hp_ne_top : ∀ a, p a ≠ ∞ := PMF.apply_ne_top p
+  have hq_ne_top : ∀ a, q a ≠ ∞ := PMF.apply_ne_top q
+  have hκ_ne_top : ∀ a b, κ a b ≠ ∞ := fun a b => PMF.apply_ne_top (κ a) b
+  have hbq_ne_top : ∀ b, (q.bind κ) b ≠ ∞ := PMF.apply_ne_top (q.bind κ)
+  have hbp_ne_top : ∀ b, (p.bind κ) b ≠ ∞ := PMF.apply_ne_top (p.bind κ)
+  have hp_nn : ∀ a, (0 : ℝ) ≤ (p a).toReal := fun _ => ENNReal.toReal_nonneg
+  have hq_nn : ∀ a, (0 : ℝ) ≤ (q a).toReal := fun _ => ENNReal.toReal_nonneg
+  have hκ_nn : ∀ a b, (0 : ℝ) ≤ (κ a b).toReal := fun _ _ => ENNReal.toReal_nonneg
+  -- toReal of the bind: (q.bind κ b).toReal = ∑ a, (q a).toReal * (κ a b).toReal
+  have h_bind_toReal_q : ∀ b,
+      ((q.bind κ) b).toReal = ∑ a, (q a).toReal * (κ a b).toReal := by
+    intro b
+    rw [bind_apply_eq_finset_sum,
+        ENNReal.toReal_sum (fun a _ =>
+          ENNReal.mul_ne_top (hq_ne_top a) (hκ_ne_top a b))]
+    refine Finset.sum_congr rfl (fun a _ => ?_)
+    exact ENNReal.toReal_mul
+  have h_bind_toReal_p : ∀ b,
+      ((p.bind κ) b).toReal = ∑ a, (p a).toReal * (κ a b).toReal := by
+    intro b
+    rw [bind_apply_eq_finset_sum,
+        ENNReal.toReal_sum (fun a _ =>
+          ENNReal.mul_ne_top (hp_ne_top a) (hκ_ne_top a b))]
+    refine Finset.sum_congr rfl (fun a _ => ?_)
+    exact ENNReal.toReal_mul
+  -- κ a is a PMF: ∑_b κ a b = 1 (in ENNReal)
+  have h_κ_sum_one : ∀ a, ∑ b, κ a b = 1 := fun a =>
+    (PMF.tsum_coe (κ a) ▸ tsum_eq_sum (fun b (h : b ∉ Finset.univ) =>
+      absurd (Finset.mem_univ b) h)).symm
+  -- The classical klFun_nonneg, used in lifts to ENNReal
+  have h_klFun_nn : ∀ x, 0 ≤ x → 0 ≤ _root_.InformationTheory.klFun x :=
+    fun _ hx => _root_.InformationTheory.klFun_nonneg hx
+  -- Strategy:
+  --   Step 1. Rewrite RHS sum: each term q a * ofReal(klFun((p a / q a).toReal))
+  --           equals ∑_b (q a * κ a b) * ofReal(klFun((p a / q a).toReal))
+  --           via `1 = ∑_b κ a b` lifted into ENNReal.
+  --   Step 2. Swap ∑_a ∑_b → ∑_b ∑_a.
+  --   Step 3. Per-b inequality: split on `(q.bind κ) b = 0` vs `≠ 0`.
+  --           If = 0: both sides zero (each q a * κ a b = 0).
+  --           Else:   apply log-sum on ℝ side with weights y_a = (q a * κ a b).toReal,
+  --                   points x_a = (p a * κ a b).toReal. Then lift via ofReal.
+  -- ============================================================================
+  -- Step 1: expand q a = q a * (∑_b κ a b) on RHS, then push sum inside.
+  -- ============================================================================
+  have h_RHS_expand : (∑ a, q a * ENNReal.ofReal
+        (_root_.InformationTheory.klFun ((p a / q a).toReal)))
+      = ∑ a, ∑ b, (q a * κ a b) * ENNReal.ofReal
+        (_root_.InformationTheory.klFun ((p a / q a).toReal)) := by
+    refine Finset.sum_congr rfl (fun a _ => ?_)
+    -- Distribute: ∑_b (q a * κ a b) * X = (∑_b q a * κ a b) * X = (q a * ∑_b κ a b) * X = q a * X.
+    rw [show (∑ b, (q a * κ a b) * ENNReal.ofReal
+              (_root_.InformationTheory.klFun ((p a / q a).toReal)))
+          = (∑ b, q a * κ a b) * ENNReal.ofReal
+              (_root_.InformationTheory.klFun ((p a / q a).toReal)) from
+            (Finset.sum_mul (s := Finset.univ) ..).symm,
+        ← Finset.mul_sum, h_κ_sum_one a, mul_one]
+  rw [h_RHS_expand, Finset.sum_comm]
+  -- ============================================================================
+  -- Step 2: pointwise per b.
+  -- ============================================================================
+  refine Finset.sum_le_sum (fun b _ => ?_)
+  -- Per-b goal:
+  --   (q.bind κ) b * ofReal(klFun (((p.bind κ) b / (q.bind κ) b).toReal))
+  --     ≤ ∑ a, (q a * κ a b) * ofReal(klFun ((p a / q a).toReal))
+  by_cases hbq_zero : (q.bind κ) b = 0
+  · -- LHS = 0, and each q a * κ a b = 0 in the RHS (since their sum vanishes).
+    rw [hbq_zero, zero_mul]
+    -- Show RHS ≥ 0 (trivially from non-negativity).
+    refine zero_le _
+  · -- (q.bind κ) b ≠ 0. By h_κ_pos and h_q_pos, κ a b ≠ 0 for all a.
+    have h_κ_ne : ∀ a, κ a b ≠ 0 := fun a =>
+      h_κ_pos a b (h_q_pos a) hbq_zero
+    -- Hence q a * κ a b ≠ 0 (q a ≠ 0 by h_q_pos).
+    have hq_κ_ne : ∀ a, q a * κ a b ≠ 0 := fun a =>
+      mul_ne_zero (h_q_pos a) (h_κ_ne a)
+    -- Strict positivity in ℝ:
+    have hqκ_real_pos : ∀ a, 0 < (q a).toReal * (κ a b).toReal := by
+      intro a
+      refine mul_pos ?_ ?_
+      · refine ENNReal.toReal_pos (h_q_pos a) (hq_ne_top a)
+      · refine ENNReal.toReal_pos (h_κ_ne a) (hκ_ne_top a b)
+    -- (p a / q a).toReal = (p a).toReal / (q a).toReal under hyps.
+    have h_pdivq_toReal : ∀ a, ((p a) / (q a)).toReal = (p a).toReal / (q a).toReal :=
+      fun a => ENNReal.toReal_div _ _
+    -- ((p.bind κ) b / (q.bind κ) b).toReal = (p.bind κ b).toReal / (q.bind κ b).toReal
+    have h_bdivb_toReal :
+        (((p.bind κ) b) / ((q.bind κ) b)).toReal
+          = ((p.bind κ) b).toReal / ((q.bind κ) b).toReal :=
+      ENNReal.toReal_div _ _
+    -- Total weight Y in ℝ:
+    have hY_eq : ((q.bind κ) b).toReal = ∑ a, (q a).toReal * (κ a b).toReal :=
+      h_bind_toReal_q b
+    have hX_eq : ((p.bind κ) b).toReal = ∑ a, (p a).toReal * (κ a b).toReal :=
+      h_bind_toReal_p b
+    -- Apply log-sum inequality on ℝ.
+    have h_logsum := Real.klFun_logSum_le (Finset.univ : Finset α)
+        (fun a => (p a).toReal * (κ a b).toReal)
+        (fun a => (q a).toReal * (κ a b).toReal)
+        (fun a _ => mul_nonneg (hp_nn a) (hκ_nn a b))
+        (fun a _ => hqκ_real_pos a)
+    -- Rewrite ∑_a x_a / ∑_a y_a in the log-sum into ((p.bind κ) b / (q.bind κ) b).toReal.
+    rw [← hX_eq, ← hY_eq] at h_logsum
+    -- Per-a: y_a * klFun(x_a / y_a) = (q a * κ a b).toReal * klFun((p a / q a).toReal).
+    -- The κ a b's cancel inside klFun's argument.
+    have h_per_a : ∀ a,
+        ((q a).toReal * (κ a b).toReal) *
+          _root_.InformationTheory.klFun
+            (((p a).toReal * (κ a b).toReal) / ((q a).toReal * (κ a b).toReal))
+        = ((q a).toReal * (κ a b).toReal) *
+          _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal) := by
+      intro a
+      have hκ_real_ne : (κ a b).toReal ≠ 0 :=
+        ne_of_gt (ENNReal.toReal_pos (h_κ_ne a) (hκ_ne_top a b))
+      have hq_real_ne : (q a).toReal ≠ 0 :=
+        ne_of_gt (ENNReal.toReal_pos (h_q_pos a) (hq_ne_top a))
+      have h_div_eq :
+          ((p a).toReal * (κ a b).toReal) / ((q a).toReal * (κ a b).toReal)
+            = (p a).toReal / (q a).toReal := by
+        field_simp
+      rw [h_div_eq]
+    -- Bridge: the ℝ-side log-sum bound.
+    have h_real_bound :
+        ((q.bind κ) b).toReal *
+          _root_.InformationTheory.klFun
+            ((((p.bind κ) b) / ((q.bind κ) b)).toReal)
+        ≤ ∑ a, ((q a).toReal * (κ a b).toReal) *
+            _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal) := by
+      rw [h_bdivb_toReal]
+      calc ((q.bind κ) b).toReal *
+              _root_.InformationTheory.klFun
+                (((p.bind κ) b).toReal / ((q.bind κ) b).toReal)
+          ≤ _ := h_logsum
+        _ = _ := by simp_rw [h_per_a]
+    -- Step 3a: lift the ℝ-side bound to ENNReal via ofReal.
+    -- LHS to lift:
+    --   (q.bind κ b) * ofReal(klFun (((p.bind κ) b / (q.bind κ) b).toReal))
+    --   = ofReal((q.bind κ b).toReal * klFun(...))
+    have h_LHS_ofReal : ((q.bind κ) b) * ENNReal.ofReal
+        (_root_.InformationTheory.klFun
+          ((((p.bind κ) b) / ((q.bind κ) b)).toReal))
+        = ENNReal.ofReal (((q.bind κ) b).toReal *
+            _root_.InformationTheory.klFun
+              ((((p.bind κ) b) / ((q.bind κ) b)).toReal)) := by
+      rw [show ((q.bind κ) b) * ENNReal.ofReal
+              (_root_.InformationTheory.klFun
+                ((((p.bind κ) b) / ((q.bind κ) b)).toReal))
+            = ENNReal.ofReal ((q.bind κ) b).toReal * ENNReal.ofReal
+              (_root_.InformationTheory.klFun
+                ((((p.bind κ) b) / ((q.bind κ) b)).toReal)) from by
+            congr 1
+            exact (ENNReal.ofReal_toReal (hbq_ne_top b)).symm,
+          ← ENNReal.ofReal_mul ENNReal.toReal_nonneg]
+    -- RHS to lift:
+    --   ∑_a (q a * κ a b) * ofReal(klFun((p a / q a).toReal))
+    --   = ofReal(∑_a (q a * κ a b).toReal * klFun((p a / q a).toReal))
+    have h_summand_RHS : ∀ a, (q a * κ a b) * ENNReal.ofReal
+        (_root_.InformationTheory.klFun ((p a / q a).toReal))
+        = ENNReal.ofReal ((q a).toReal * (κ a b).toReal *
+            _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal)) := by
+      intro a
+      have h1 : q a * κ a b = ENNReal.ofReal ((q a).toReal * (κ a b).toReal) := by
+        rw [← ENNReal.toReal_mul, ENNReal.ofReal_toReal
+              (ENNReal.mul_ne_top (hq_ne_top a) (hκ_ne_top a b))]
+      rw [h_pdivq_toReal a, h1,
+          ← ENNReal.ofReal_mul (mul_nonneg (hq_nn a) (hκ_nn a b))]
+    have h_RHS_ofReal :
+        (∑ a, (q a * κ a b) * ENNReal.ofReal
+            (_root_.InformationTheory.klFun ((p a / q a).toReal)))
+          = ENNReal.ofReal (∑ a, ((q a).toReal * (κ a b).toReal *
+              _root_.InformationTheory.klFun ((p a).toReal / (q a).toReal))) := by
+      simp_rw [h_summand_RHS]
+      rw [← ENNReal.ofReal_sum_of_nonneg
+            (fun a _ => mul_nonneg (mul_nonneg (hq_nn a) (hκ_nn a b))
+              (h_klFun_nn _ (div_nonneg (hp_nn a) (hq_nn a))))]
+    rw [h_LHS_ofReal, h_RHS_ofReal]
+    refine ENNReal.ofReal_le_ofReal h_real_bound
 
 end PMF

@@ -4,6 +4,21 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.616 — PMF.klDiv_bind_le proved (data processing inequality, finite case)
+
+- **`PMF.klDiv_bind_le`** in `Linglib/Core/Probability/DataProcessing.lean` is **fully proved** (no sorry). The data processing inequality on KL: applying a Markov kernel `κ : α → PMF β` to two PMFs cannot increase their KL divergence — `klDiv (p.bind κ) (q.bind κ) ≤ klDiv p q`.
+- Proof structure (~180 LOC, no `native_decide`):
+  1. `klDiv_eq_sum_klFun` rewrites both sides to discrete sums (uses absolute-continuity hypotheses).
+  2. RHS expansion via `q a = q a * (∑ b, κ a b) = ∑ b, q a * κ a b` (using PMF total mass = 1).
+  3. `Finset.sum_comm` swaps `∑_b ∑_a → ∑_a ∑_b` so both sides index over `b`.
+  4. `Finset.sum_le_sum` reduces to per-`b` inequality.
+  5. Per-`b`, case-split on `(q.bind κ) b = 0` (LHS trivially 0) vs `≠ 0` (apply log-sum).
+  6. Log-sum branch invokes `Real.klFun_logSum_le` (proved in 0.230.614) with weights `y_a = (q a * κ a b).toReal`, lifts back to ENNReal via `ENNReal.ofReal_le_ofReal`.
+- Hypothesis pair `h_q_pos` + `h_κ_pos` is exactly strong enough to avoid filtering — every `a` contributes positively per `b`, so log-sum applies on `Finset.univ` directly.
+- File: `Linglib/Core/Probability/DataProcessing.lean`, 320 LOC, 0 sorrys, builds cleanly.
+- DPI is the structural foundation that drives RSA's cancellation principle, generalized variance bounds, and any "post-processing destroys information" claim. Mathlib gap closed (klDiv had chain rule but not DPI for marginals/bind).
+- Next: posterior monotonicity lemma + GS2013PMF refactor around the cancellation theorem.
+
 ### 0.230.630–631 — Smith-Moskal-Bobaljik et al. (2019) skeleton + bib
 
 First payoff of the `Theories/Interfaces/` migration (phases 1–9, 0.230.616–629). A study file that uses BOTH sides of the cross-framework substrate the migration created.
