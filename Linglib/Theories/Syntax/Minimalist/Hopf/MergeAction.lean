@@ -58,6 +58,7 @@ proofs need to track terms through the linear-algebraic chain).
 namespace Minimalist.Hopf
 
 open scoped TensorProduct
+open ConnesKreimer
 
 /-! ## §1: Workspace-level bridge predicates
 

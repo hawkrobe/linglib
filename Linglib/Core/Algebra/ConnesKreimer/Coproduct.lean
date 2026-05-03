@@ -64,12 +64,12 @@ is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 - `Finsupp.lapply` for the counit (value at the empty-forest index)
 -/
 
-namespace Minimalist.Hopf
+namespace ConnesKreimer
 
 open scoped TensorProduct
 open Finsupp
 
-variable {R : Type*} [CommRing R] {α : Type} [DecidableEq α]
+variable {R : Type*} [CommSemiring R] {α : Type} [DecidableEq α]
 
 /-! ## §1: Tree-level coproduct
 
@@ -276,4 +276,4 @@ noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (Forest α)
     comulDelMonoidHom
 
-end Minimalist.Hopf
+end ConnesKreimer

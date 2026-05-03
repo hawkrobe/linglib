@@ -6,39 +6,45 @@ import Linglib.Core.Combinatorics.RootedTree.Decorated
 @cite{marcolli-chomsky-berwick-2025}
 
 The `[LINGLIB]` half of the original `Hopf/Defs.lean`: specialization
-of the generic Connes-Kreimer substrate (now in `Core/`) to the
-Minimalism instantiation with `α := LIToken`, plus the bridge to plain
-`SyntacticObject` via the `toSyntacticObject?` forgetful map.
+of the generic Connes-Kreimer substrate (in `Core/`, namespace
+`ConnesKreimer`) to the Minimalism instantiation with `α := LIToken`,
+plus the bridge to plain `SyntacticObject` via the `toSyntacticObject?`
+forgetful map.
 
-## Where the substrate lives now
+## Where the substrate lives
 
-The `[UPSTREAM]` portions are hoisted to:
+The `[UPSTREAM]` portions are in:
 
 - `Linglib/Core/Combinatorics/RootedTree/Decorated.lean` —
-  `DecoratedTree α`, `Forest α`, `Mul` instance, `recOnMul`, `leafCount*`
+  `ConnesKreimer.DecoratedTree α`, `ConnesKreimer.Forest α`, `Mul`
+  instance, `recOnMul`, `leafCount*`
+- `Linglib/Core/Combinatorics/RootedTree/AdmissibleCut.lean` —
+  `ConnesKreimer.CutShape T` and friends
 - `Linglib/Core/Algebra/ConnesKreimer/Defs.lean` —
-  `Hc R α := AddMonoidAlgebra R (Forest α)` + Algebra/Semiring
-  forwarding instances
+  `ConnesKreimer.Hc R α := AddMonoidAlgebra R (Forest α)` + Algebra/
+  Semiring forwarding instances
+- `Linglib/Core/Algebra/ConnesKreimer/Coproduct.lean` —
+  `ConnesKreimer.{forestToHc, comulAlgHom, comulDelAlgHom, counit}`
 
-This file re-exports them by `import` so existing `Minimalist.Hopf.X`
-qualified references continue to resolve. The namespace remains
-`Minimalist.Hopf` in the Core/ files for now — namespace rename is a
-separate follow-up. See `scratch/mcb_stage1_plan.md` Stage 0.5.
+This file (and `Hopf/Merge.lean`, `Hopf/MergeAction.lean`) bring those
+into scope via `open ConnesKreimer`.
 
 ## Linguistic specialization
 
 `SyntacticObjectH := DecoratedTree LIToken` is the Minimalism-side
 alias (M-C-B §1.1.2 + Def 1.2.4 with leaf type `LIToken`). The
 forgetful maps `SyntacticObject.toH` (lossless embed of plain SO into
-the Hopf side) and `DecoratedTree.toSyntacticObject?` (option-valued
-projection back, returning `none` if any trace leaf survives) bridge
-the two encodings.
+the Hopf side) and `treeToSyntacticObject?` (option-valued projection
+back, returning `none` if any trace leaf survives) bridge the two
+encodings.
 
-The `toSyntacticObject?_ofSO` round-trip theorem confirms
+The `treeToSyntacticObject?_ofSO` round-trip theorem confirms
 trace-free SOs survive embedding-then-projection.
 -/
 
 namespace Minimalist.Hopf
+
+open ConnesKreimer
 
 /-! ## Linguistic specialization to `α := LIToken` -/
 
@@ -59,35 +65,37 @@ def Minimalist.SyntacticObject.toH :
 
 namespace Minimalist.Hopf
 
+open ConnesKreimer
+
 /-- Forgetful map from `SyntacticObjectH = DecoratedTree LIToken` back
     to plain `SyntacticObject`: returns `none` if any trace leaf
     survives, otherwise `some` the reconstructed trace-free tree.
     Used by `MergeAction.lean` to bridge the Hopf side to `Step.apply`
     (which operates on `SyntacticObject`).
 
-    Lives on `DecoratedTree` rather than `SyntacticObjectH` so that
-    dot notation `(l : SyntacticObjectH).toSyntacticObject?` resolves
-    correctly (Lean's dot notation looks at the head type, which is
-    `DecoratedTree` after unfolding the `SyntacticObjectH` abbrev). -/
-def DecoratedTree.toSyntacticObject? :
+    Plain function rather than dot-notation extension on
+    `ConnesKreimer.DecoratedTree` (which would mix LIToken-specific
+    Minimalism content into the generic Core namespace). Callers use
+    `Minimalist.Hopf.treeToSyntacticObject? t` qualified. -/
+def treeToSyntacticObject? :
     DecoratedTree LIToken → Option Minimalist.SyntacticObject
   | .leaf tok => some (.leaf tok)
   | .trace _  => none
   | .node l r => do
-      let l' ← DecoratedTree.toSyntacticObject? l
-      let r' ← DecoratedTree.toSyntacticObject? r
+      let l' ← treeToSyntacticObject? l
+      let r' ← treeToSyntacticObject? r
       pure (.node l' r')
 
 /-- Round-trip: embedding a trace-free SO and forgetting the trace
     structure recovers the original. -/
-@[simp] theorem DecoratedTree.toSyntacticObject?_ofSO
+@[simp] theorem treeToSyntacticObject?_ofSO
     (so : Minimalist.SyntacticObject) :
-    DecoratedTree.toSyntacticObject? so.toH = some so := by
+    treeToSyntacticObject? so.toH = some so := by
   induction so with
   | leaf _ => rfl
   | node l r ihl ihr =>
-    show DecoratedTree.toSyntacticObject? (.node l.toH r.toH) = _
-    rw [DecoratedTree.toSyntacticObject?, ihl]
+    show treeToSyntacticObject? (.node l.toH r.toH) = _
+    rw [treeToSyntacticObject?, ihl]
     rw [ihr]
     rfl
 

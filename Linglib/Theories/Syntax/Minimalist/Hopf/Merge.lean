@@ -1,4 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Hopf.Comul
+import Linglib.Core.Algebra.ConnesKreimer.Coproduct
+import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
 import Mathlib.LinearAlgebra.Finsupp.Defs
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
@@ -32,8 +33,9 @@ file (`MergeAction.lean`, which will replace the legacy version).
 namespace Minimalist.Hopf
 
 open scoped TensorProduct
+open ConnesKreimer
 
-variable {R : Type*} [CommRing R] {α : Type} [DecidableEq α]
+variable {R : Type*} [CommSemiring R] {α : Type} [DecidableEq α]
 
 /-! ## §1: γ_{S,S'} matching projection (M-C-B Def 1.3.1)
 

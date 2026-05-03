@@ -4,6 +4,49 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.657 — Audit cleanups + Condoravdi-Lauer 2012 imperatives (force = .preferential first consumer)
+
+Three threads landed: 8 audit cleanups, three new substrate variants, and the first study consumer of the substrate's `force = .preferential` axis.
+
+**Cleanups:**
+- Krifka2015 §∞ "no denegate operator" comment now accurate (denegate landed 0.230.656; CohenKrifka2014 is the first consumer).
+- `Compare.lean` matrix split: separate rows for Krifka 2015 / Krifka 2020 / Cohen-Krifka 2014, new `metaSpeechActs : Bool` column. Theorem `only_cohen_krifka_has_meta_speech_acts` pins the column. Matrix length up to 8.
+- `denegate` API expanded: `denegate_idempotent`, `denegate_continuation_count_le`, `denegate_no_match_eq_self` (cheap structural lemmas).
+- **`denegate` signature refactor**: `actMarker : … → Bool` → `actMarker : … → Prop` with `[DecidablePred actMarker]` per project's `feedback_no_intrinsic_bool` discipline. Implementation uses `decide` internally for `List.filter`. CohenKrifka2014's marker functions migrated to Prop+DecidablePred (with explicit `DecidablePred` instances pattern-matching the 4 committer × force × constructor cells).
+- CohenKrifka2014 §6 docstring: pivot superlative-quantifier sketch from the literal eq. 44 (iterated `~GRANT`, blocked by substrate's non-composing denegation) to eq. 46 (conjoined `ASSERT(≠n)`, the paper's own implementable form).
+- Theorem renames: `assert_strictly_stronger_than_grant` → `assert_grant_root_length_differs`, `assert_eq_double_denegation_observational` → `assert_eq_double_denegation_lengths`. Names now match what the theorems actually prove (component lengths, not full entailment/equivalence).
+- CohenKrifka2014 docstring adds `G = Bool` justification: `Classical.dec` would lose the `decide`-proven worked examples since substrate `denegate.filter.marker` reduction goes through Bool BEq comparisons.
+- Substrate `denegate` docstring credits Cohen-Krifka 2014 §2 eq. 26 p. 51 as the original source; Krifka 2015 inherits.
+
+**Substrate (`Theories/Dialogue/CommitmentSpace.lean`):**
+- New force-aware projections `toDoxasticContextSet` and `toPreferentialContextSet` (binary, `G = Prop`). Filter the root by `IndexedWeightedCommitment.force` before projecting via `IndexedCommitment.toCommitment`. Models @cite{condoravdi-lauer-2012}'s `PB_w(Sp, p)` and `PEP_w(Sp, p)` separately.
+- Theorem `toContextSet_eq_doxastic_and_preferential`: the conflated projection is the conjunction of the two force-projections.
+- `KrifkaState.assert` gained a `force : CommitmentForce := .doxastic` parameter; declarative call sites unchanged via the default.
+- New polymorphic helper `IndexedWeightedCommitment.contentBinary : IndexedWeightedCommitment W G → (W → Prop)`.
+
+**New study file (`Phenomena/Directives/Studies/CondoravdiLauer2012.lean`):**
+First consumer of `force = .preferential` (axis stipulated 200+ commits ago, now exercised). 5 sections covering the paper's central declarative-vs-imperative distinction (PB vs PEP per §3.2-3.3): declarative-as-doxastic, imperative-as-preferential, doxastic-vs-preferential CG divergence, vs Krifka 2015 (same substrate, different force). Headline theorem `dox_pref_dual` shows declarative narrows doxastic but not preferential and imperative narrows preferential but not doxastic. ~210 LOC.
+
+**The substrate's three-axis decomposition (committer × force × grade) is now FULLY consumed**: Krifka2015 exercises `committer = .speaker/.addressee` and `force = .doxastic`; CohenKrifka2014 adds `G = Bool`; CondoravdiLauer2012 adds `force = .preferential`. Every axis has a concrete study consumer.
+
+Targeted builds of all touched files green; full Linglib build deferred to concurrent session.
+
+### 0.230.659 — Stage 0.7: Connes-Kreimer namespace + abbrev Hc + CommSemiring weakening
+
+Per `scratch/mcb_stage1_plan.md` Stage 0.7 (the deferred cleanups from the 0.230.657 audit). Four moves landed:
+
+**1. Namespace rename**: `namespace Minimalist.Hopf` → `namespace ConnesKreimer` in the 4 Core/ files (Decorated, AdmissibleCut, Defs, Coproduct). Removes the layering inversion the mathlib-reviewer flagged in 0.230.657 ("Core/ file declaring a Minimalist.X namespace inverts the dependency-arrow rhetoric"). Hopf/Defs.lean, Merge.lean, MergeAction.lean now `open ConnesKreimer` to bring the substrate names into scope unqualified within `namespace Minimalist.Hopf`.
+
+**2. Re-export shims deleted**: `Hopf/AdmissibleCut.lean` (15 LOC) and `Hopf/Comul.lean` (19 LOC) were pure re-export bridges that violated CLAUDE.md's "every file is anchored, no bridge files." `Hopf/Merge.lean` retargeted to `import Linglib.Core.Algebra.ConnesKreimer.Coproduct` directly. Linglib.lean dropped the shim imports.
+
+**3. `def Hc → abbrev Hc`**: `Linglib/Core/Algebra/ConnesKreimer/Defs.lean` 80 → 54 LOC. The 6 manual instance forwarders (Hc.instSemiring, instCommSemiring, instRing, instCommRing, instAlgebra, instFunLike) were redundant once `Hc R α := AddMonoidAlgebra R (Forest α)` is `abbrev` — all `AddMonoidAlgebra` instances apply automatically. **Caveat**: this also activates mathlib's group-like `Bialgebra (AddMonoidAlgebra R M)` instance (Δ(F) = F ⊗ F), which is NOT the Connes-Kreimer coproduct. Connes-Kreimer's `comulAlgHom`/`comulDelAlgHom` are reachable BY NAME only, never as typeclass instances. Until the (1 - α) quotient lands and the Connes-Kreimer Hopf structure is registered as the canonical instance, downstream code must call `comulAlgHom`/`comulDelAlgHom` explicitly rather than `Coalgebra.comul`. Verified zero current code uses Coalgebra/Bialgebra/HopfAlgebra typeclass projections on Hc, so the activation is dormant.
+
+**4. `CommRing R → CommSemiring R` weakening** in `Coproduct.lean:72` and `Hopf/Merge.lean:38`. Verified no negation/subtraction usage in either file; mathlib's `AddMonoidAlgebra.lift`, `Algebra.TensorProduct.lmul'`, and `TensorProduct R Hc Hc` all work over `CommSemiring`. Per CLAUDE.md "maximum generality available."
+
+**Build**: 5751 jobs green. 2 pre-existing sorrys in `Hopf/MergeAction.lean` (Stage 1 work) and 1 in `Derivation.lean:133` are untouched.
+
+**Stage 0.5/0.6/0.7 net effect**: the Connes-Kreimer substrate (790 LOC across 4 Core/ files) is now in a clean `namespace ConnesKreimer` at the right directory, with `abbrev Hc`, weakened typeclass requirements, and no shim files. The Hopf/ directory shrank from ~836 LOC across 5 files (pre-Stage-0.5) to 368 LOC across 3 files (Defs + Merge + MergeAction), all genuinely linguistic specialization. Ready for Stage 1 (coassoc proof + Bialgebra instance).
+
 ### 0.230.658 — Bilateral substrate Path A: `of_iff` helper, fold Polarity, ICDRTConnectives uptake
 
 Path A from the audit follow-up (changes bundled into commit `db41d8ed` under

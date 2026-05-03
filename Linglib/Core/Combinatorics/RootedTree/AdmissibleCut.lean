@@ -44,7 +44,7 @@ file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 - **No sorries**, no `noncomputable`, no `decide`.
 -/
 
-namespace Minimalist.Hopf
+namespace ConnesKreimer
 
 variable {α : Type}
 
@@ -287,4 +287,4 @@ genuine multiplicity contributions. -/
 
 end CutShape
 
-end Minimalist.Hopf
+end ConnesKreimer

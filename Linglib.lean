@@ -2117,8 +2117,6 @@ import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.Properties.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
-import Linglib.Theories.Syntax.Minimalist.Hopf.AdmissibleCut
-import Linglib.Theories.Syntax.Minimalist.Hopf.Comul
 import Linglib.Theories.Syntax.Minimalist.Hopf.Merge
 import Linglib.Theories.Syntax.Minimalist.Hopf.MergeAction
 import Linglib.Theories.Syntax.Minimalist.Properties.MinimalSearch

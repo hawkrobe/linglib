@@ -80,7 +80,7 @@ for now to keep the migration low-risk; namespace rename is a separate
 follow-up.
 -/
 
-namespace Minimalist.Hopf
+namespace ConnesKreimer
 
 /-! ## DecoratedTree -/
 
@@ -164,4 +164,4 @@ corresponds to `· + ·` on multisets (commutative, ∅ = 0).
 /-- A decorated forest: a multiset of decorated trees. -/
 abbrev Forest (α : Type*) := Multiset (DecoratedTree α)
 
-end Minimalist.Hopf
+end ConnesKreimer
