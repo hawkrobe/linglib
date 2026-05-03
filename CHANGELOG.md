@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.633–640 — Item 2: Bool→Prop substrate-wide migration + naming polish
+
+Eight commits closing audit-flagged Bool/Prop discipline issues across the migration's substrate.
+
+**0.230.633 — CyclicLinearization namespace + spellout rename + native_decide cleanup.** Wrap body in `namespace Minimalist.Linearization` (was top-level pollution: `Prec`/`OrderingTable`/`spellout` exposed at root). Internal `spellout` (Bool, ordering-table extension) renamed `extendOrderingTable` to disambiguate from `Minimalist.spellout` (the VI exponent-realization op in DM/VocabSimple). 11 `native_decide` → `decide`. Updated 2 consumers.
+
+**0.230.634 — polish: alphabetize Caha2009, smoke tests as examples, drop named rfl bridges, S→§.** Caha2009 imports alphabetized. Typology/Extraction.lean section banners `S 1` → `§ 1`. ~30 unconsumed smoke-test theorems demoted to `example` across Containment/Allomorphy/DegreeContainment substrate. Two `rfl`-bridge theorems dropped (`case_violatesABA_iff_generic`, `degree_violatesABA_eq_generic`) — by-construction `rfl` doesn't earn a name.
+
+**0.230.635 — Bool→Prop migration Group A: degree predicates.** `containedIn` inlined and deleted (one-operator wrapper, no domain vocabulary; consumers use `≤` on `rank` directly). `DegreePattern.{violatesABA, isContiguous}` Bool defs dropped (Prop wrappers `ViolatesABA`/`IsContiguous` were already there). `isRegular`/`cmprSuppletive`/`sprlSuppletive` → `IsRegular`/`CmprSuppletive`/`SprlSuppletive` (Prop+Decidable, conjunctions of `=` / `≠` rather than Bool boilerplate). `LocalVIRule.matches` → `Matches` (Prop+Decidable, body is `condGrade.rank ≤ g.rank` inlining containedIn). All theorems and `viWinner.filter` updated to use `decide`-wrapped form. Bobaljik2012 + Latin/Adjectives consumer theorems rewritten in `∀ ∈` Prop form.
+
+**0.230.636 — drop english_no_synthetic_inferior, no native_decide rationalizing.** Caught: 0.230.635 retained `native_decide` on this theorem with a "String.startsWith decidability exception" justification — that was rationalization, not a real exception. Project rule is no `native_decide`, period. Dropped the theorem (the lesslessness empirical claim survives in the docstring section header above; no other theorem depends on it).
+
+**0.230.637 — Bool→Prop migration Group B: VocabEntry predicates.** `VocabEntry.{matchesFeatures, matches}` → `MatchesFeatures`/`Matches` (Prop+Decidable). `bestMatch.filter` callsite uses `decide`-wrap. `empty_features_matches_any` returns Prop directly. 3 consumer Studies build clean.
+
+**0.230.638 — Bool→Prop migration Group C: ExtractionProfile predicates.** `marks` → `Marks` (Prop+Decidable, `t ∈ p.markedPositions`). `hasOvertMarking` → `HasOvertMarking` (`p.strategy ≠ .unmarked`). 5 consumers updated. Plus Phase-5a leftover fix: `chol_extraction_consistent` was using `.none` (renamed to `.unmarked` in 0.230.622); fixed.
+
+**0.230.639 — Bool→Prop migration Group D: CyclicLinearization predicates.** `hasContradiction` → `HasContradiction` (Prop+Decidable, real `∃` over the table). `isConsistent` → `Consistent`. `spelloutAndCheck` → `SpelloutAndCheck`. `hasCycle` → `HasCycle` (`∃ edge ∈ table, Reachable ...`). `reachable` → `Reachable` (Prop wrapping the private `reachGo` BFS engine). `reachGo` marked private. `single_phase_consistent` rewritten in Prop form. ~17 `spelloutAndCheck = true` consumers in ErlewineSommerlot2025 → `SpelloutAndCheck` direct; `= false` → negation. ShenHuang2026 `binding_preserves_consistency` updated.
+
+**0.230.640 — rename CyclicLinearization.lean → Cyclic.lean.** Mathlib pattern: drop the directory's prefix from the file name. Sibling `LCA.lean` already follows this. Namespace stays `Minimalist.Linearization`. 3 import sites + 2 docstring path refs updated.
+
+Net Bool→Prop conversions: 13 predicates migrated. 1 inlined-and-deleted (`containedIn`). 1 stays Bool, marked private (`reachGo`). All theorem statements about these predicates now read in Prop form (`p.IsContiguous` instead of `p.isContiguous = true`; `¬ SpelloutAndCheck p` instead of `spelloutAndCheck p = false`). Computational sites that pass predicates to `List.filter` use `decide`-wrap (mathlib pattern).
+
+Out of scope: pre-existing build failure in `Theories/Semantics/Events/Basic.lean` from concurrent-session work blocking some downstream builds. Each migration commit's local closure builds green.
+
 ### 0.230.636 — Strata-theory unification: seed consumer migrations
 
 Three study files migrated to use the four-opposition API from `Theories/Semantics/Events/StratifiedReference/Specializations.lean` (`IsAtelic`, `IsStative`, `IsRoleDistributive`, `IsMassReference`) at the user-facing docstring level, demonstrating the consumption pattern for other study-file authors.
