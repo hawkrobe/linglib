@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.641 — SmithMoskal §3.6 case AAB witness encoded
+
+The two `sorry`'d placeholders in `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean` (`case_aab_attested_falsifies_dm`, `number_aab_attested_falsifies_dm`) now have real proofs. Both theorems take the shape `∃ cells : List Nat, IsContiguous cells ∧ cells[1]? ≠ cells[2]?` — witnessing the cross-framework divergence the migration substrate enables.
+
+- **Case side (§2)**: encoded two genuine AAB witnesses from §3.6 of `@cite{smith-moskal-xu-kang-bobaljik-2019}`:
+  - Wardaman 3SG (Table 25, `@cite{merlan-1994}`): ABS=narnaj, ERG=narnaj-(j)i, DAT=gunga. Root narnaj shared between ABS and ERG (ergative bears suffix -(j)i); DAT gunga suppletive.
+  - Khinalugh 2SG (Table 24, Nakh-Daghestanian): ABS=vi, ERG=va, DAT=oX(ir). Same AAB shape.
+  Both project to `[0, 0, 1]` in the substrate's framework-neutral 3-cell form. The paper's contribution at §3.6 is distinguishing these genuine AAB witnesses (root-sharing without case syncretism) from the syncretic AAB of Table 20 (Aghul, Tsez, Hinuq, Archi 2SG: ABS = ERG morphologically), which is modeled by impoverishment rather than genuine 3-cell suppletion.
+- **Number side (§3)**: same theorem shape, schematic `[0, 0, 1]` witness for `attestedNumberAAB` with TODO docstring noting that a concrete §4.x language attribution (Sursurunga? Mokilese? cf. Tables 51-52) requires further reading. The theorem is proven, not sorry'd; the schematic data is honest about its provenance.
+- **Cross-domain divergence**: the DM derivation in `Theories/Morphology/DegreeContainment.vi_cmpr_eq_sprl` predicts `cmpr = sprl` for any VI-generable root pattern. Lifted to the 3-cell ABS-ERG-DAT case projection, this would exclude AAB. The Wardaman witness falsifies that lift. The paper's §3.7 positive proposal (domain-based locality) is now stubbed in §4 of the study file as the substrate addition this divergence motivates.
+- **Bib**: added `merlan-1994` (Mouton, 1994 — A grammar of Wardaman). Bibliography regenerated (2048 → 2049 entries).
+
+Two `sorry`s gone; zero `sorry`s remain in the file. The migration's first concrete cross-framework theorem is shipped.
+
 ### 0.230.633–640 — Item 2: Bool→Prop substrate-wide migration + naming polish
 
 Eight commits closing audit-flagged Bool/Prop discipline issues across the migration's substrate.
