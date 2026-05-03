@@ -18,6 +18,7 @@ import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Properties
+import Linglib.Core.Logic.Team.Bilateral
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD

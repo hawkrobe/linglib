@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.633 — Core/Logic/Team/Bilateral.lean: generic polarity-flip theorems
+
+Phase A2 of the foundational refactor. Extracts the bilateral polarity-flip pattern from BSML/QBSML to a generic Core file, parameterized over the eval function and negation constructor.
+
+- `dne_of_polarity_flip`: generic Double Negation Elimination from Anttila 2021 Fact 6 / Aloni 2022 Fact 6 — given any `eval : Model → Bool → Form → Finset Point → Prop` and `negate : Form → Form` such that `eval pol (negate φ) ↔ eval (!pol) φ`, then `eval pol (negate (negate φ)) ↔ eval pol φ`.
+- `support_negate_of_polarity_flip` and `antiSupport_negate_of_polarity_flip`: generic polarity unfolding.
+- **Pure-function rather than typeclass approach**: a typeclass `BilateralTeamLogic Form Model Point` ran into Lean's typeclass-resolution limitations (with three orthogonal type parameters, projection calls couldn't infer Model and Point from `φ : Form` alone). The parametric-function version sidesteps this: caller passes eval/negate explicitly at one-time call site, and gets DNE / unfolding generically. Mirrors mathlib's pattern when typeclasses can't relate parameters via `outParam`.
+- Documents what's NOT extractable: the bilateral mutual induction PATTERN (used in BSML's and QBSML's Properties.lean) is a proof technique, not a theorem — requires inducting over a specific formula type, which is logic-specific.
+- Build clean (593 jobs).
+
+Justified by two consumers (BSML, QBSML); truthmaker semantics would be the natural third. The polarity-flip pattern is the foundational invariant; deeper unification (conjunction, disjunction, etc.) is deferred because connective sets vary across team-semantic logics.
+
+### 0.230.635 — Strata-theory unification cleanup pass: audit blockers fixed
+
+Follow-up to `0.230.632` after multi-agent audit (mathlib + integration) flagged a namespace collision, two false-as-stated sorry'd theorems, and several mathlib-discipline issues.
+
+Blockers:
+- **`IsDistributive` namespace collision fixed.** Renamed to `IsRoleDistributive` to avoid collision with `Semantics.Dynamic.Core.IsDistributive` in `Connectives/CCP.lean:607` (CCP per-element distributivity, widely consumed by Charlow2019/Charlow2021/Hofmann2025).
+- **Two false-as-stated `sorry`'d theorems dropped.** `isStativePred_implies_isAtelic` fails for degenerate point-interval outer events (the AlgClosure base case for a non-degenerate state event gives a decomposition into the event itself, whose runtime isn't a point). `isStativePred_implies_atomDist_lift` docstring conceded the universal-witness vs decomposition mismatch made it unprovable as stated. Replaced both with a `§ 5. Parameter-space relationships` docstring section explaining `IsStative` and `IsAtelic` correspond to different points in Champollion's parameter space without claiming direct entailment.
+
+Majors:
+- **`PointIntervalGranularity` moved to substrate.** Now `Interval.IsPoint (i : Interval Time) : Prop := i.start = i.finish` in `Core/Time/Interval/Basic.lean` next to `subinterval`/`properSubinterval`. The granularity binary derives at the use site via `fun inner _ => inner.IsPoint`.
+- **`champollionLift` renamed to `EvQuant.ofPred`.** Author-attribution-in-symbol-name is exactly the anti-pattern flagged in the Specializations docstring. Added `EvQuant.ofPred_apply : ofPred P f ↔ ∃ e, P e ∧ f e := Iff.rfl` marked `@[simp]`.
+- **`IsStativePred` renamed to `IsStative`.** Mathlib uses carrier namespace not Hungarian `_Pred` suffix; the rename is mechanical with one consumer.
+- **All four specializations now `abbrev` for consistency.** Was: 3 `abbrev` + 1 `def`. Now uniform `abbrev` for typeclass-resolution and simp-rewriting symmetry.
+- **`SubintervalProperty.lean` docstring corrected.** No longer claims a "deferred iff bridge" — the audit revealed the universal-witness form (Bennett-Partee) and the decomposition form (SR) are NOT directly interderivable. New docstring states they're cousin formulations at the same parameter-space point with different universal-quantification structures.
+
+Minors:
+- `AtomicGranularity` docstring corrected — no longer claims to be shared with stativity (stativity now uses `Interval.IsPoint` directly because `Interval Time` lacks a `PartialOrder` instance).
+- Module docstring in Specializations.lean trimmed.
+- Build: 5 modules clean, 0 sorrys, 0 new warnings.
+
 ### 0.230.631 — QBSML scaffolding (Aloni & van Ormondt 2023): substrate empirically validated
 
 Phase 1 of QBSML — first-order extension of BSML per Aloni & van Ormondt 2023 (J Logic Lang Inf 32:539). Tests that `Core/Logic/Team/` is genuinely point-polymorphic by instantiating with `Point := W × Assignment` (vs BSML's `Point := W`).
