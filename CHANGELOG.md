@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.613 — GS2013PMF: parameterized over Access via PMF.hypergeometric — all 11 findings sorry-free
+
+- **Architectural refactor**: replaced flat `Obs` enum (`.o0a1 | .o1a1 | ... | .o3a3`) with parameterized `Fin (a.toNat + 1)` everywhere downstream. The substrate now has *one* definition each for `obsKernel`, `speakerBelief`, `qualityOk`, `s1Score`, `S1g`, `marginalSpeaker`, `L1` — all parameterized over `(a : Access)` and `(k : Fin (a.toNat + 1))`. No more per-`.a1`/`.a2`/`.a3` separation.
+- `obsKernel` is now a one-line definition: `PMF.hypergeometric 3 w.toNat a.toNat`. Uses the new `Core/Probability/Hypergeometric.lean` primitive (landed 0.230.612).
+- `marginalSpeaker` uses `PMF.bind` (not `bindOnSupport`) — possible because `WithSilence` makes `S1g` total via `cover_silent`. Eliminates ~300 LOC of `bindOnSupport`-pattern bookkeeping.
+- All 11 paper findings now proven sorry-free using the parameterized substrate. Each finding ~10-30 lines using `marginalSpeaker_a*_apply` (bind expansion via `Fin.sum_univ_two/three/four`) + per-(a, w, k) `obsKernel_*` + per-(a, k, u) `S1g_*_eq` helpers.
+- Added a generic `s1Score_uniform_apply` helper that handles `softmaxBelief_uniform_on_support` instantiation for ALL `(a, k, u)` cases where qOk passes — reduces per-case `lex` proofs from ~10 LOC each to one-liners.
+- File: 1847 → 1692 LOC. Despite gaining 4 new findings (now 11 vs 7), the file is shorter. ~55% net efficiency gain per finding.
+- Headline (Finding 10, `one_partial_1v3_sil`) reduces cleanly to `ENNReal.ofReal (8/21) > ENNReal.ofReal (4/13)` (= 104/273 > 84/273) via the 3-element bind expansion.
+- Added `Access.toNat`, `Access.toNat_le_three`, `WorldState.toNat_le_three` to the `GoodmanStuhlmuller2013` namespace (used by both `obsKernel` definition and the `PMF.hypergeometric` arity proofs).
+- Adds `cover_silent (m : ...) (a : Access) : ∀ k : Fin (a.toNat + 1), ∃ u : WithSilence U, qualityOk (liftMeaning m) a k u` — universal cover discharge, parameterized over `a`.
+
 ### 0.230.612 — PMF.hypergeometric primitive + GS2013PMF .a1 findings + Bool→Prop softmaxBelief
 
 - Add `PMF.hypergeometric (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N) : PMF (Fin (n + 1))` in `Linglib/Core/Probability/Hypergeometric.lean` (NEW). Sum-to-1 via `Nat.add_choose_eq` (Chu-Vandermonde) + `Finset.Nat.sum_antidiagonal_eq_sum_range_succ`. Plus `hypergeometric_apply` and `hypergeometric_apply_ne_zero_iff` (feasibility characterization).
