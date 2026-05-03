@@ -4,6 +4,64 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.653 — TeamPred α: drop decorative Form/Model parameters
+
+Path 3 of the substrate-grounding plan (after 0.230.652's lattice-fact
+flatness theorem). Closure predicates now take a `TeamPred α` directly;
+parametric `Form/Model` wrapping survives only as a deprecated shim.
+
+**`Core/Logic/Team/Closure.lean`** (~90 LOC added):
+- `TeamPred α := Finset α → Prop` (the natural team-predicate type)
+- `TeamPred.{IsDownward, IsSupClosed, HasEmpty, IsFlat}` — closure
+  predicates wrapping mathlib's `IsLowerSet`, `SupClosed` (etc.) on
+  `{ t | P t }`. The wrapper layer lets consumers say
+  `TeamPred.IsSupClosed (support M φ)` without unfolding mathlib's
+  `Set`-builder.
+- `TeamPred.isFlat_iff` — Anttila Prop 2.2.2 at TeamPred level.
+- Constructor `isFlat_of_isDownward_isSupClosed_hasEmpty` and forward
+  extractors `IsFlat.{isDownward, isSupClosed, hasEmpty}`.
+- Pointwise unfolding lemmas for proof ergonomics.
+
+**`Core/Logic/Team/Properties.lean`** (-34 LOC net): module is now a
+re-export shim. Parametric defs (`downwardClosed support φ` etc.) are
+deprecated one-line wrappers around `∀ M, TeamPred.IsX (support M φ)`.
+Migration guide in module docstring.
+
+**Consumer refactor**: `BSML/Properties.lean`, `QBSML/Properties.lean`,
+`Question/Flatness.lean` — wrapper theorems updated for the new shape
+(`SupClosed` interleaves `a, ha, b, hb`; `IsLowerSet` uses `b ≤ a`, not
+`t ⊆ s`). Internal joint-induction lemmas unchanged.
+
+The audit-flagged "decorative parameters" objection
+(mathlib-reviewer + linglib-integration-auditor) is closed: while the
+parametric form survives for backward compatibility, all *content* now
+lives at the `TeamPred` level using mathlib primitives. New consumers
+should prefer `TeamPred.IsX (support M φ)`.
+
+**What's still per-formula-type**: BSML and QBSML's
+`enrichment_strengthens_both` joint induction. Abstracting requires a
+`TeamFormula` typeclass with `ne / conj / disj` constructors and a
+bilateral-eval shape. Defer until a 4th team-semantic consumer lands.
+
+### 0.230.654 — Krifka2015: vsFarkasBruce2010 contrast + Dialogue Completeness observation
+
+Bundled cross-framework expansion + two audit-queued substrate cleanups.
+
+**New `vsFarkasBruce2010` section** (`Phenomena/Assertion/Studies/Krifka2015.lean`):
+
+- `krifka_eager_vs_farkasBruce_lazy_intermediate` — divergence at the assert-only state. Krifka root narrows immediately to `[commit speaker φ]`; F&B `cg = []`, `dcS = [φ]`, `table.length = 1`. Engages Krifka's own cited inspiration (paper p. 331).
+- `krifka_double_assert_eq_farkasBruce_assert_accept` — bridge at the completed-trace state. After `assert; addressee-accept` in Krifka and `assertDeclarative; acceptTop` in F&B, both frameworks have φ in joint CG (Krifka: indexed entries in root + per-agent slates; F&B: bare φ in cg + dcL with table emptied).
+- `krifka_contextSet_at_completed_trace` — Krifka's `contextSet` projection at the completed trace is exactly `isRaining`. The companion F&B-side projection follows by definitional unfolding of `DiscourseState.toContextSet`.
+
+**Deep-structure section (`§ ∞`)**: prose statement of the **Dialogue Completeness observation** — the conjecture that any two commitment-tracking dialogue frameworks `F₁, F₂` over the same world type `W`, sharing an event signature + step + contextSet projection + completed predicate, agree on `contextSet` at any completed event trace. Frameworks differ in journey, agree on observable destination. Coalgebraic shape: bisimilarity at the `Set W` observable for coalgebras of `X ↦ (DialogueEvent → X) × (Set W)`. Path to typeclass-mediated universal version mapped: `DialogueState` typeclass + per-framework instances + per-pair or generic theorem; the framework that *refuses the instance* (e.g. @cite{lauer-2013}'s gradient credences) is the most informative.
+
+**Substrate cleanups** (`Theories/Dialogue/CommitmentSpace.lean`):
+
+- `inductive KAgent` collapsed to `abbrev KAgent := DiscourseRole`. The bridge function `KAgent.toDiscourseRole` removed (now identity-by-definition); call site in `applyAtom` simplified.
+- `applyAtom`/`applyComplex` moved inside `namespace KrifkaState ... end` per Lean 4 convention.
+
+Full Linglib build green (5741 jobs); only intentional `sorry` is on `applyComplex .disj`.
+
 ### 0.230.652 — Mathlib-grounded team-set closure substrate
 
 The Anttila Prop 2.2.2 flatness theorem hoisted from a parametric
