@@ -4,6 +4,54 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.656 — PMF.softmax substrate (Boltzmann/Gibbs at PMF level)
+
+`Linglib/Core/Probability/Softmax.lean` (212 LOC). Replaces the per-paper
+`PMF.normalize ∘ exp ∘ score` pattern across RSA migrations.
+
+- `PMF.softmax β score : PMF α` for `[Fintype α] [Nonempty α]`. Defined
+  directly via `PMF.normalize` of `ENNReal.ofReal (exp (β · score a))`;
+  both partition-non-zero and partition-finite preconditions discharge
+  automatically.
+- Workhorse: `softmax_lt_iff_score_lt` — score comparison lifts to
+  softmax comparison at positive temperature. Foundation lemma for
+  "speaker prefers utterance u₂ over u₁" RSA claims.
+- Companion API: `softmax_apply`, `softmax_pos`, `support_softmax (= univ)`,
+  `softmax_lt_iff_weight_lt` (without exp/log), `≤` companions, plus
+  `softmax_zero` / `softmax_const` (degenerate cases collapse to uniform).
+- Module docstring positions softmax as the uniform-prior case of mathlib's
+  `MeasureTheory.Measure.tilted` (Esscher transform). The general
+  PMF-level Esscher transform is deferred — add when a consumer needs
+  `prior · exp(score)` shape that doesn't reduce to softmax.
+
+Out of scope: bridge theorem `PMF.softmax_toMeasure_eq` (would import
+the full mathlib Tilted API for free); not load-bearing yet.
+
+### 0.230.656 — Substrate denegation `~A` + first non-Prop-graded study (CohenKrifka2014)
+
+Cleanups + denegation primitive + first study consumer of the polymorphic substrate at `G ≠ Prop`.
+
+**Audit cleanups (`Theories/Dialogue/CommitmentSpace.lean`, `Core/Discourse/Commitment.lean`):**
+- Substrate-scope tightening docstring: out of scope are Brandom-style scorecards (per-keeper-per-scorer), Searle's full 5-force taxonomy (collapsed to doxastic/preferential), time-indexing of commitments (Lauer 2013 PB/PEP needs `t`), and Anderson 2021's `weight_nonneg` (would need `[OrderedAddCommMonoid G]` constraint).
+- Citation-discipline note attesting that all Krifka-2015 equation/page citations were verified against the SALT 25 PDF when added (cf. CHANGELOG 0.230.652–0.230.654).
+- `@[match_pattern]` attribute on `IndexedCommitment.commit/refuse` smart-constructor abbrevs — pattern-position calls now resolve through the abbrev cleanly.
+- `force` field docstring "next demand: @cite{condoravdi-lauer-2012}" pointer (currently no consumer passes `force` explicitly).
+- Underscored unused `_weight` params in `assert_preserves_no_open` and `monopolar_opens` proofs.
+
+**Substrate addition (`Theories/Dialogue/CommitmentSpace.lean`):**
+- New `denegate (cs) (actMarker : IndexedWeightedCommitment W G → Bool) : CommitmentSpace W G` operator. Filters continuations that contain a commitment matching `actMarker` — implements Krifka 2015 eq. 5 / @cite{cohen-krifka-2014} §2's `C + ~A = C — [C+A]`. Polymorphic in `G`. The predicate-based formulation avoids the soundness issue of trying to decide function equality on `W → G`.
+- `denegate_preserves_root` theorem (Krifka p. 330: "denegation does not change the root, but prunes its legal developments").
+
+**New study file (`Phenomena/Assertion/Studies/CohenKrifka2014.lean`):**
+- First substrate consumer at `G = Bool` (the polymorphic grade axis exercised end-to-end with a non-`Prop` grade). Bool chosen because the marker functions need `BEq`-able per-world commitment values; `Weather → Bool` has `BEq`, `Weather → Prop` doesn't.
+- Sections: 2-world fixture · speech-act conjunction reuse · denegation via the new substrate op · GRANT(φ) := `~ASSERT(¬φ)` (paper eq. 38) · GRANT-vs-ASSERT strength contrast · modal-logic equivalence sketch (paper eq. 40, observational form).
+- `grant_isRaining_filters_choice : grant_isRaining s_choice = ⟨[], [[commit speaker isRaining]]⟩ := rfl` — the central worked example. Definitional reduction goes all the way through `denegate`'s filter, marker-evaluation, and Bool comparisons.
+- §6 docstring sketches superlative-quantifier formalisation (`at most n` / `at least n` via iterated `denegate`); deferred pending a numeric-content fixture.
+
+**Bib:** no new entries; `cohen-krifka-2014` already in bib (added 0.230.652).
+
+Full Linglib build green (5749 jobs); only intentional `sorry` remains the documented `applyComplex .disj` placeholder in `CommitmentSpace.lean:626`.
+
 ### 0.230.655 — HerbstrittFranke2019 → PMF migration; retire RSAConfig version
 
 PMF version (594 LOC) replaces the RSAConfig file (588 LOC) at the same
