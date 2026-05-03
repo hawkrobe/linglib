@@ -1099,6 +1099,7 @@ import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
+import Linglib.Phenomena.Assertion.Studies.CohenKrifka2014
 import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Assertion.Studies.Krifka2020
@@ -1456,7 +1457,7 @@ import Linglib.Phenomena.Modality.Studies.Rubinstein2014
 import Linglib.Phenomena.Modality.Studies.Boylan2023
 import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
-import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
+import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019PMF
 import Linglib.Phenomena.Modality.Studies.Huijsmans2025
 import Linglib.Theories.Semantics.BSML.Defs
 import Linglib.Theories.Semantics.BSML.Enrichment
