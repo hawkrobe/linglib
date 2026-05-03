@@ -1,6 +1,7 @@
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Theories.Pragmatics.RSA.QUD
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
@@ -202,23 +203,23 @@ where
 /-- QUD-projected L0: sum of `L0Weight u w'` over worlds `w'` in the
 QUD-equivalence class of `w` under goal `g`.
 
-This is the architectural quantity from the Kao family — the speaker's
-"informativeness" along the QUD dimension. -/
+Built from the parametric `RSA.QUD.proj` substrate — same primitive as
+Kao 2014 hyperbole, with the irony-vs-hyperbole distinction living
+entirely in the prior structure (arousal U-curve) and the QUD inventory
+(arousal as a goal). -/
 noncomputable def qudProjL0 (g : Goal) (u : Weather) (w : World) : ℝ≥0∞ :=
-  ∑ w' ∈ (Finset.univ : Finset World).filter (fun w' => project g w' = project g w),
-    L0Weight u w'
+  RSA.QUD.proj project (L0Weight u) g w
 
 /-- **Headline support theorem**: qudProjL0 is positive iff some world in
-the QUD-equivalence class has positive L0 weight. Direct application of
-`Finset.sum_pos_iff_of_nonneg` — same shape as Kao 2014 hyperbole. -/
+the QUD-equivalence class has positive L0 weight. Direct instance of the
+parametric `RSA.QUD.proj_pos_iff_exists_class_member`. -/
 theorem qudProjL0_pos_iff_exists_qud_class_member
     (g : Goal) (u : Weather) (w : World) :
     0 < qudProjL0 g u w ↔
       ∃ w' ∈ (Finset.univ : Finset World).filter
               (fun w' => project g w' = project g w),
-        0 < L0Weight u w' := by
-  unfold qudProjL0
-  exact Finset.sum_pos_iff_of_nonneg (fun _ _ => zero_le _)
+        0 < L0Weight u w' :=
+  RSA.QUD.proj_pos_iff_exists_class_member project (L0Weight u) g w
 
 /-! ## §4. The irony-vs-hyperbole architectural distinction
 
@@ -243,8 +244,7 @@ matching arousal are QUD-equivalent — even if they have OPPOSITE valences
 or DIFFERENT weather states. -/
 theorem arousal_QUD_equivalence_iff (w w' : World) :
     project .arousal w = project .arousal w' ↔ w.2.2 = w'.2.2 := by
-  obtain ⟨_, _, a⟩ := w
-  obtain ⟨_, _, a'⟩ := w'
+  obtain ⟨_, _, a⟩ := w; obtain ⟨_, _, a'⟩ := w'
   cases a <;> cases a' <;> simp [project]
 
 /-- **Headline lemma**: `.terrible` and `.amazing` are arousal-equivalent

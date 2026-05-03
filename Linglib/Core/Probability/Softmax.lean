@@ -217,6 +217,31 @@ Pivotal for RSA findings discharged via `gcongr`/`norm_num`/`bound`:
 the EReal form makes the substrate paper-faithful, but the rpow form
 makes the values computable rationals when `w` is. -/
 
+/-! ## Finite-coefficient times log: finiteness lemmas
+
+The score `(α : EReal) * ENNReal.log x` is the canonical RSA speaker score
+shape. It is finite (`∈ (⊥, ⊤)`) under the natural side conditions: `α`
+real-valued (so neither `⊤` nor `⊥`), `α ≥ 0`, and `x` either non-zero or
+non-top respectively. -/
+
+/-- For `α : ℝ` non-negative and `x : ℝ≥0∞` with `x ≠ ⊤`, the EReal
+product `(α : EReal) * ENNReal.log x` is bounded above (≠ ⊤). -/
+theorem coe_mul_log_ne_top {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hx_ne_top : x ≠ ⊤) :
+    ((α : EReal) * ENNReal.log x) ≠ ⊤ := by
+  rw [EReal.mul_ne_top]
+  refine ⟨Or.inl (EReal.coe_ne_bot _), Or.inl (EReal.coe_nonneg.mpr hα),
+          Or.inl (EReal.coe_ne_top _),
+          Or.inr (fun h => hx_ne_top (ENNReal.log_eq_top_iff.mp h))⟩
+
+/-- For `α : ℝ` non-negative and `x : ℝ≥0∞` with `x ≠ 0`, the EReal
+product `(α : EReal) * ENNReal.log x` is bounded below (≠ ⊥). -/
+theorem coe_mul_log_ne_bot {α : ℝ} (hα : 0 ≤ α) {x : ℝ≥0∞} (hx_ne_zero : x ≠ 0) :
+    ((α : EReal) * ENNReal.log x) ≠ ⊥ := by
+  rw [EReal.mul_ne_bot]
+  refine ⟨Or.inl (EReal.coe_ne_bot _),
+          Or.inr (fun h => hx_ne_zero (ENNReal.log_eq_bot_iff.mp h)),
+          Or.inl (EReal.coe_ne_top _), Or.inl (EReal.coe_nonneg.mpr hα)⟩
+
 /-- **EReal-softmax weight equals natural-power weight** at each atom,
 when the underlying weight is in `ℝ≥0∞`. -/
 theorem softmaxWeight_natMul_log_eq_pow {α : Type*} (n : ℕ) (w : α → ℝ≥0∞)

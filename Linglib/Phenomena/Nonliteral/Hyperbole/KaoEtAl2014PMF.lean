@@ -1,6 +1,7 @@
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Theories.Pragmatics.RSA.QUD
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
@@ -171,13 +172,20 @@ This places the cost INSIDE the softmax score, where it modulates
 utterance choice without leaving the substrate. No new primitive needed —
 just a different score function. -/
 
-/-- Utterance cost. Sharp numbers cost more; the cost ratio is fitted to
-the halo data (≈ 3.4 in the paper, robust in [1.1, 3.7]). -/
+/-- Sharp-utterance cost (paper-fitted ≈ 3.4, robust in [1.1, 3.7]). -/
+noncomputable def costSharp : ℝ := 17 / 5
+
+theorem costSharp_pos : 0 < costSharp := by unfold costSharp; norm_num
+
+/-- Utterance cost. Round numbers have unit cost; sharp numbers carry
+`costSharp ≈ 3.4` (fitted to halo data). -/
 noncomputable def cost (u : PriceState) : ℝ :=
-  if u.isRound then 1 else 34/10
+  if u.isRound then 1 else costSharp
 
 theorem cost_pos (u : PriceState) : 0 < cost u := by
-  unfold cost; split <;> norm_num
+  unfold cost; split
+  · norm_num
+  · exact costSharp_pos
 
 theorem cost_nonneg (u : PriceState) : 0 ≤ cost u :=
   le_of_lt (cost_pos u)
@@ -238,19 +246,17 @@ def project (g : Goal) (w : World) : ℕ :=
   | .approxPriceValence => w.1.round.value * 2 + (match w.2 with | .none => 0 | .notable => 1)
 
 /-- QUD-projected L0: sum of L0Weight over the QUD-equivalence class of `w`
-under goal `g`. The denominator of the speaker softmax (Eq. 6 of paper). -/
+under goal `g`. The denominator of the speaker softmax (Eq. 6 of paper).
+
+Built from the parametric `RSA.QUD.proj` substrate. -/
 noncomputable def qudProjL0 (g : Goal) (u : PriceState) (w : World) : ℝ≥0∞ :=
-  ∑ w' ∈ (Finset.univ : Finset World).filter (fun w' => project g w' = project g w),
-    L0Weight u w'
+  RSA.QUD.proj project (L0Weight u) g w
 
 /-- Self-membership: `w` is in its own QUD-equivalence class, so `qudProjL0`
 is bounded below by `L0Weight u w`. -/
 theorem L0Weight_le_qudProjL0 (g : Goal) (u : PriceState) (w : World) :
-    L0Weight u w ≤ qudProjL0 g u w := by
-  unfold qudProjL0
-  refine Finset.single_le_sum (f := fun w' => L0Weight u w') (fun _ _ => zero_le _) ?_
-  rw [Finset.mem_filter]
-  exact ⟨Finset.mem_univ _, rfl⟩
+    L0Weight u w ≤ qudProjL0 g u w :=
+  RSA.QUD.self_le_proj project (L0Weight u) g w
 
 /-! ## §5. The headline theorem — what enables nonliteral interpretation
 
@@ -279,9 +285,8 @@ theorem qudProjL0_pos_iff_exists_qud_class_member
     0 < qudProjL0 g u w ↔
       ∃ w' ∈ (Finset.univ : Finset World).filter
               (fun w' => project g w' = project g w),
-        0 < L0Weight u w' := by
-  unfold qudProjL0
-  exact Finset.sum_pos_iff_of_nonneg (fun _ _ => zero_le _)
+        0 < L0Weight u w' :=
+  RSA.QUD.proj_pos_iff_exists_class_member project (L0Weight u) g w
 
 /-- **Specialization for nonliteral interpretation**: a literally-false
 meaning `(s, a)` (with `L0Weight u (s, a) = 0`) can have positive
@@ -292,7 +297,7 @@ This is the precondition for the speaker softmax (and hence L1) to
 assign positive mass to `(s, a)` as an interpretation of `u`. -/
 theorem qudProjL0_pos_of_nonliteral
     (g : Goal) (u : PriceState) (w : World)
-    (h_not_literal : L0Weight u w = 0)
+    (_h_not_literal : L0Weight u w = 0)
     (h_qud_witness : ∃ w' ∈ (Finset.univ : Finset World).filter
                             (fun w' => project g w' = project g w),
                        w' ≠ w ∧ w'.1 = u) :
@@ -325,11 +330,10 @@ theorem hyperbole_emerges_at_valence_goal :
     0 < qudProjL0 .valence .s10000 (.s50, .notable) := by
   refine qudProjL0_pos_of_nonliteral .valence .s10000 (.s50, .notable) ?_ ?_
   · -- L0Weight at (.s50, .notable) for utterance .s10000 is 0 (literal mismatch)
-    unfold L0Weight; rw [if_neg]; intro h; cases h
+    unfold L0Weight; rw [if_neg]; decide
   · -- QUD class of (.s50, .notable) under .valence includes (.s10000, .notable)
-    refine ⟨(.s10000, .notable), ?_, ?_, rfl⟩
-    · rw [Finset.mem_filter]; exact ⟨Finset.mem_univ _, rfl⟩
-    · intro h; have := (Prod.mk.inj h).1; cases this
+    exact ⟨(.s10000, .notable),
+           Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩, by decide, rfl⟩
 
 /-! ## §7. Paper findings (sorried — empirical-fit content)
 

@@ -1,6 +1,7 @@
 import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
+import Linglib.Theories.Pragmatics.RSA.QUD
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
@@ -67,22 +68,14 @@ open scoped ENNReal
     Categories double as utterance types. -/
 inductive Cat where
   | whale | person
-  deriving DecidableEq, Repr
-
-instance : Fintype Cat where
-  elems := {.whale, .person}
-  complete := fun x => by cases x <;> simp
+  deriving DecidableEq, Repr, Fintype
 
 instance : Nonempty Cat := ⟨.whale⟩
 
 /-- QUDs: which feature is the speaker trying to communicate? -/
 inductive Goal where
   | large | graceful | majestic
-  deriving DecidableEq, Repr
-
-instance : Fintype Goal where
-  elems := {.large, .graceful, .majestic}
-  complete := fun x => by cases x <;> simp
+  deriving DecidableEq, Repr, Fintype
 
 instance : Nonempty Goal := ⟨.large⟩
 
@@ -135,8 +128,7 @@ theorem catPriorℕ_sum : (∑ c, catPriorℕ c) = 100 := by decide
 drives every positivity proof in the file. -/
 theorem featurePriorℕ_pos (c : Cat) (f : Features) : 0 < featurePriorℕ c f := by
   obtain ⟨a, b, d⟩ := f
-  cases c <;> cases a <;> cases b <;> cases d <;>
-    (unfold featurePriorℕ; norm_num)
+  cases c <;> cases a <;> cases b <;> cases d <;> decide
 
 /-! ## §2. PMF construction -/
 
@@ -203,31 +195,27 @@ def projectFeature : Goal → Features → Bool
   | .graceful, (_, g, _) => g
   | .majestic, (_, _, m) => m
 
-/-- The QUD-projected L0 marginal at `(g, u, f⃗)`: outer-measure of the
-QUD equivalence class containing `f⃗` under `featurePmf u`. -/
+/-- The QUD-projected L0 marginal at `(g, u, f⃗)`: sum of `featurePmf u f'`
+over the QUD-equivalence class of `f⃗`.
+
+Built from the parametric `RSA.QUD.proj` substrate — the same primitive
+shared with Kao 2014 hyperbole and Kao 2015 irony. -/
 noncomputable def qudProjL0 (g : Goal) (u : Cat) (f : Features) : ℝ≥0∞ :=
-  (featurePmf u).toOuterMeasure {f' | projectFeature g f' = projectFeature g f}
+  RSA.QUD.proj projectFeature (⇑(featurePmf u)) g f
 
 theorem qudProjL0_le_one (g : Goal) (u : Cat) (f : Features) :
     qudProjL0 g u f ≤ 1 :=
-  PMF.toOuterMeasure_apply_le_one _ _
+  RSA.QUD.proj_le_one_of_pmf projectFeature (featurePmf u) g f
 
 theorem qudProjL0_ne_top (g : Goal) (u : Cat) (f : Features) :
     qudProjL0 g u f ≠ ∞ :=
-  (lt_of_le_of_lt (qudProjL0_le_one g u f) ENNReal.one_lt_top).ne
+  RSA.QUD.proj_ne_top_of_pmf projectFeature (featurePmf u) g f
 
 /-- The QUD-projected L0 marginal at `(g, u, f⃗)` is bounded below by
 `featurePmf u f⃗` (since `f⃗` is in its own equivalence class). -/
 theorem qudProjL0_ge_apply (g : Goal) (u : Cat) (f : Features) :
-    featurePmf u f ≤ qudProjL0 g u f := by
-  unfold qudProjL0
-  -- f ∈ {f' | projectFeature g f' = projectFeature g f}, and the singleton
-  -- {f}'s outer measure equals featurePmf u f.
-  rw [show featurePmf u f
-        = (featurePmf u).toOuterMeasure {f} from
-        (PMF.toOuterMeasure_apply_singleton _ _).symm]
-  exact MeasureTheory.OuterMeasure.mono _
-    (Set.singleton_subset_iff.mpr (rfl : projectFeature g f = projectFeature g f))
+    featurePmf u f ≤ qudProjL0 g u f :=
+  RSA.QUD.self_le_proj projectFeature (⇑(featurePmf u)) g f
 
 theorem qudProjL0_pos (g : Goal) (u : Cat) (f : Features) : 0 < qudProjL0 g u f :=
   lt_of_lt_of_le (featurePmf_pos u f) (qudProjL0_ge_apply g u f)
@@ -250,41 +238,17 @@ default for the general RSA pattern. -/
 noncomputable def s1Score (α : ℝ) (g : Goal) (f : Features) (u : Cat) : EReal :=
   (α : EReal) * ENNReal.log (qudProjL0 g u f)
 
-/-- The score is never `+∞`: `qudProjL0 ≤ 1` so `log ≤ 0`, and we'll
-restrict to `λ ≥ 0` so the product `≤ 0 < +∞`. -/
+/-- The score is never `+∞`: direct from substrate
+`PMF.coe_mul_log_ne_top` (real coefficient × `log` of finite ENNReal). -/
 theorem s1Score_ne_top (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) (u : Cat) :
-    s1Score α g f u ≠ ⊤ := by
-  unfold s1Score
-  rcases eq_or_lt_of_le hα with rfl | hα_pos
-  · -- λ = 0
-    simp [EReal.coe_zero, zero_mul]
-  · -- λ > 0: λ · log(qudProjL0) ≠ ⊤ since log ≠ ⊤ (as qudProjL0 ≠ ⊤)
-    intro h
-    -- (α : EReal) > 0 and product = ⊤ implies log = ⊤
-    have h_log_top : ENNReal.log (qudProjL0 g u f) = ⊤ := by
-      by_contra h_log_ne_top
-      -- finite λ * finite log = finite
-      apply h_log_ne_top
-      -- if λ > 0 and λ · log = ⊤, then log = ⊤
-      sorry  -- TODO: positive coercion times finite = finite
-    rw [ENNReal.log_eq_top_iff] at h_log_top
-    exact qudProjL0_ne_top g u f h_log_top
+    s1Score α g f u ≠ ⊤ :=
+  PMF.coe_mul_log_ne_top hα (qudProjL0_ne_top g u f)
 
-/-- For Kao's parameters, `qudProjL0 > 0` so `log > ⊥`, and `λ ≥ 0` keeps
-the score finite-below. -/
+/-- The score is never `−∞`: direct from substrate
+`PMF.coe_mul_log_ne_bot` (real coefficient × `log` of nonzero ENNReal). -/
 theorem s1Score_ne_bot (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) (u : Cat) :
-    s1Score α g f u ≠ ⊥ := by
-  unfold s1Score
-  rcases eq_or_lt_of_le hα with rfl | hα_pos
-  · -- λ = 0
-    simp [EReal.coe_zero, zero_mul]
-  · -- λ > 0: λ · log(qudProjL0) ≠ ⊥ since log ≠ ⊥ (as qudProjL0 ≠ 0)
-    intro h
-    have h_log_bot : ENNReal.log (qudProjL0 g u f) = ⊥ := by
-      by_contra h_log_ne_bot
-      sorry  -- TODO: positive coercion times finite-below = finite-below
-    rw [ENNReal.log_eq_bot_iff] at h_log_bot
-    exact qudProjL0_ne_zero g u f h_log_bot
+    s1Score α g f u ≠ ⊥ :=
+  PMF.coe_mul_log_ne_bot hα (qudProjL0_ne_zero g u f)
 
 /-- **Speaker S1**: softmax of QUD-projected log-utility (Eq. 1-2). -/
 noncomputable def s1 (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) : PMF Cat :=
@@ -493,12 +457,9 @@ remaining inner-sum inequality (the empirical-fit content). -/
 theorem literal_correct :
     (vagueL1 .person).toOuterMeasure {w | w.1 = .person} >
     (vagueL1 .person).toOuterMeasure {w | w.1 = .whale} := by
-  have h_setEq : ∀ c : Cat,
-      ({w : World | w.1 = c} : Set World)
-        = ↑(Finset.univ.filter (fun w : World => w.1 = c)) := fun c => by
-    ext; simp
-  rw [gt_iff_lt, h_setEq .whale, h_setEq .person]
-  rw [L1_cat_fibre_lt_iff_inner_sum_lt]
+  rw [gt_iff_lt, ← Finset.coe_filter_univ (fun w : World => w.1 = .whale),
+      ← Finset.coe_filter_univ (fun w : World => w.1 = .person),
+      L1_cat_fibre_lt_iff_inner_sum_lt]
   -- Goal reduced to:
   -- ∑ w ∈ filter (·.1 = .whale), worldPmf w * mixedS1 ... w.2 .person <
   -- ∑ w ∈ filter (·.1 = .person), worldPmf w * mixedS1 ... w.2 .person

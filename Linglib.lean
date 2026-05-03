@@ -2530,6 +2530,7 @@ import Linglib.Theories.Pragmatics.RSA.Defs
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.ReferenceGame
+import Linglib.Theories.Pragmatics.RSA.QUD
 import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Theories.Pragmatics.RSA.Compositional
 import Linglib.Theories.Pragmatics.RSA.EmbeddedSI

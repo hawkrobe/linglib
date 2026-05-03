@@ -4,6 +4,101 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.612 — RSA.QUD substrate + audit-driven cleanup of 3 Kao PMF papers
+
+Mathlib-quality audit of the RSA → PMF migration identified the highest-leverage refactor: promote `qudProjL0` (re-declared in 3 Kao papers) to a parametric substrate.
+
+- **New substrate `Theories/Pragmatics/RSA/QUD.lean`** (101 LOC): `RSA.QUD.proj project weight g w` aggregates a non-negative weight over a QUD-equivalence class. Headline `proj_pos_iff_exists_class_member` proved once via `Finset.sum_pos_iff_of_nonneg`; siblings `self_le_proj`, `proj_le_total`, `proj_le_one_of_pmf`, `proj_ne_top_of_pmf`. Twin of `ReferenceGame.lean` for the size-principle pattern.
+- **Metaphor / Hyperbole / Irony refactored as substrate instances** — each `qudProjL0` is now a one-liner `RSA.QUD.proj project weight g w`; the headline support lemma collapses to a substrate call.
+- **`PMF.coe_mul_log_ne_top` / `_ne_bot`** added to `Core/Probability/Softmax.lean`: discharges the canonical RSA score-finiteness pattern `(α : EReal) * ENNReal.log x` directly via mathlib's `EReal.mul_ne_top` / `_ne_bot`. Eliminates 2 Metaphor `sorry`s; collapses `s1Score_ne_top`/`_ne_bot` from ~30 LOC to one-liners.
+- **C-level cleanups** (audit findings): `deriving Fintype` instead of hand-rolled `Fintype` instances in Metaphor; `decide` for `featurePriorℕ_pos`; `Finset.coe_filter_univ` substituting Metaphor's `h_setEq` boilerplate; `costSharp` named constant in Hyperbole replacing `34/10`; tighter Hyperbole `hyperbole_emerges_at_valence_goal` proof.
+
+Net: −96 LOC across the 3 Kao papers, +126 LOC substrate (reusable). 7 sorrys remain in Metaphor (paper findings — empirical-fit content, not architectural). Substrate is mathlib-PR-shaped.
+
+### 0.230.669 — Stage 1b: comul_coassoc_tree closed; sole sorry isolated to lhs_eq_sum_DoubleCut
+
+- **`Linglib/Core/Algebra/ConnesKreimer/Bialgebra.lean`: 0 sorrys**. Both `comul_coassoc` and `comul_coassoc_tree` now proved.
+- New `lhs_eq_sum_DoubleCut` theorem in `DoubleCut.lean` (sorry'd) — the substantive Foissy cut-commutation bijection. Docstring spells out the bijection's structure: `(ac₁ = extractWhole, section_ac = extractWhole) ↔ DoubleCut.extractWhole`; `(ac₁ = extractWhole, section_ac = real C) ↔ DoubleCut.real C extractWhole`; `(ac₁ = real C₁, section) ↔ DoubleCut.real C₂ ac₂` with `remainder C₂ = remainder C₁` (the cut-commutation core).
+- `comul_coassoc_tree` proof in Bialgebra.lean: 6 LOC. Strategy: `comulAlgHom (forestToHc {T}) = comulTree T`, then `rw [lhs_eq_sum_DoubleCut, ← rhs_eq_sum_DoubleCut]`.
+- Bialgebra.lean docstring updated: 8-step Stage 1b plan now shows steps 1-5,7,8 ✅, only step 6 (`lhs_eq_sum_DoubleCut`) ⏳. Sole remaining sorry in the chain.
+- Sorry count unchanged at 1, but **architecturally migrated** from Bialgebra.lean's `comul_coassoc_tree` to DoubleCut.lean's `lhs_eq_sum_DoubleCut`. The high-level bialgebra obligation is fully discharged modulo the cleanly-isolated combinatorial bijection.
+
+### 0.230.673 — Phase 1 P1.4b: KOS operational Bool predicates → Prop+Decidable
+
+Closes the final Phase 1 gap from the audit: 5 KOS substrate
+predicates whose semantic content is propositional but were typed Bool.
+
+- **`KOS.Grounding.LocProp.isFullyResolved`** — was `: Bool := lp.cparams.isEmpty`,
+  now `: Prop := lp.cparams.length = 0` with Decidable instance.
+  Two consuming theorems (`resolved_always_grounds`,
+  `resolved_grounds_via_ccur`) updated to take Prop hypothesis.
+- **`KOS.Basic.DGB.nonResolveCond`** — was `: Bool` over `List.all` /
+  `List.any` Bool combinators, now `: Prop := ∀ is ∈ qud, ¬ ∃ f ∈ facts, f ⊨ is.q`
+  with Decidable via `List.decidableBAll`. Helper `all_filter_self`
+  deleted (no longer needed). `initial_nonResolveCond` and
+  `downdateQud_restores_nonResolveCond` rewritten as Prop proofs.
+- **`KOS.Genre.outcomeFulfilled`** — was `: Bool := dgb.qud.all ...`,
+  now `: Prop := ∀ is ∈ dgb.qud, is.q ∈ genre.qnud` with Decidable
+  via `List.decidableBAll`.
+- **`KOS.Genre.genreRelevant`** — was `: Bool` dispatching on
+  `qudConstraint : Option (List QContent → Bool)`. Now `: Prop`,
+  with the Bool callback wrapped as `constraint x = true`.
+  Decidability follows from Bool decEq. Note: `qudConstraint` itself
+  stays `Bool`-valued (it's a user-supplied procedural hook, the
+  legitimate Bool case per the project's Bool-migration policy).
+- **`KOS.Genre.genreRelevantViaQnud`** — was `: Bool := ... .all`,
+  now `: Prop := ∀ q' ∈ ..., q' ∈ genre.qnud`.
+
+**Downstream sites updated**:
+- `Phenomena/Dialogue/Studies/Ginzburg2012.lean` — 3 sites:
+  `genre_discriminates`, `qnud_rejects_weather`, `grammar_jo_unresolved`
+  switched from `= true`/`= false` to direct Prop / `¬ ...`.
+- `Theories/Dialogue/KOS/Grammar.lean` — 2 sites:
+  `jo_needs_grounding`, `who_no_grounding_needed`.
+
+The cross-theorem `genreRelevantViaQnud_preserves_outcomeFulfilled`
+got slightly cleaner (the outcomeFulfilled hypothesis is now unused
+in the proof body — `_h` underscore-marked).
+
+Phase 1 of the Dialogue/ end-state plan is now complete (10 of 10
+sub-tasks done; CHANGELOG entries 0.230.666-673).
+
+### 0.230.668 — Stage 1b multi-tree substrate: comulForest_eq_sum_sections via Multiset.Sections
+
+- Added §3 to `Linglib/Core/Algebra/ConnesKreimer/AugmentedCut.lean` (~50 LOC, 0 sorrys).
+- `comulTreeMS R T : Multiset (Hc R α ⊗[R] Hc R α)` — `comulTree T` reformulated as a Multiset.sum (matches mathlib's `Multiset.prod_map_sum` shape).
+- `comulTree_eq_sum_comulTreeMS T : comulTree T = (comulTreeMS R T).sum` — proved by `comulTree_eq_sum_AugCutShape` + `Finset.sum_eq_multiset_sum` (which is `rfl`).
+- `comulForest_eq_sum_sections F` — proved: `comulForest F = ((Multiset.Sections (F.map comulTreeMS)).map Multiset.prod).sum`. Direct application of mathlib's `Multiset.prod_map_sum` after rewriting `F.map comulTree` as `(F.map comulTreeMS).map Multiset.sum`. ~7 LOC of actual proof work.
+- This is the **multi-tree expansion** substrate needed for the LHS direction of `comul_coassoc_tree`. Each section of `F.map comulTreeMS` represents a choice of augmented cut for each tree in `F`; the prod of the section's tensors collapses (via `tmul_mul_tmul` + `forestToHc` multiplicativity) to a single `forestToHc(...) ⊗ forestToHc(...)` term.
+- Mathlib infrastructure leveraged: `Multiset.Sections` (mathlib's "choice multisets"), `Multiset.prod_map_sum` (in `Algebra.BigOperators.Ring.Multiset`), `Finset.sum_eq_multiset_sum` (definitional bridge from Finset.sum to Multiset.sum).
+- Sorry count unchanged (1, on `comul_coassoc_tree`); next session uses this substrate to prove `lhs_eq_sum_DoubleCut` and conclude the bijection.
+
+### 0.230.672 — Phase 1 P1.5: KOS Type → Type* sweep (Cont/SignT/Fact stay Type, TTR-pinned)
+
+Migrate KOS type-parameter sort declarations from `Type` to `Type*`
+where possible. Three parameters stay at `Type` because of cascading
+TTR substrate constraints — documented in `Defs.lean`'s § Universe
+pinning section.
+
+- **Migrated to `Type*`**: `Participant`, `Fact`, `QContent` in
+  `DGB`, `TIS`, `IllocMove`, `InfoStruc`, `GenreType`, `PrivateState`;
+  `R` in `TTRQuestionB`; the `α` of `all_filter_self`. ~13 files
+  touched.
+- **Stayed at `Type`** (universe-pinned by TTR): `Cont` (flows into
+  `TTRSign String Cont` via `LocProp.toTTRSign`); `S R` in Austinian
+  (flow into `BCheckableAustinian` / `TTRQuestionB`); `SignT Fact`
+  in `CooperInfoState.tisToInfoState` (flow into `InfoState SignT
+  (List Fact)`).
+- Mixed binder lists split (e.g.
+  `(Participant Fact QContent : Type*) (Cont : Type)`) where Cont
+  appears alongside `Type*` parameters.
+
+Migrating `Cont` to `Type*` would require lifting the entire TTR
+substrate (`Theories/Semantics/TypeTheoretic/`) to universe
+polymorphism — out of scope. Mathlib reviewer's audit
+recommendation: "or document that `DGB` is universe-pinned for a
+specific reason." This is the documentation.
+
 ### 0.230.611 — Kao 2015 Irony PMF migration (headline architectural)
 
 `Phenomena/Nonliteral/Irony/KaoEtAl2015PMF.lean` (new, 344 LOC) — paper-faithful
