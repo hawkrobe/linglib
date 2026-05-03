@@ -97,4 +97,28 @@ theorem posterior_fst_le_iff
   rw [← not_lt, ← not_lt, not_iff_not]
   exact posterior_fst_lt_iff κ joint c h a₂ a₁
 
+/-- **Closed form for the second-marginalized joint posterior**.
+Companion of `posterior_fst_apply` for the second component. Used by
+L&G2017 for the threshold-marginal posterior `P_L1(θ | u)` (Fig. 5 left
+panel) — analogous to the world-marginal `P_L1(h | u)` from `posterior_fst_apply`. -/
+theorem posterior_snd_apply [DecidableEq β]
+    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
+    (h : marginal κ joint c ≠ 0) (b : β) :
+    (posterior κ joint c h).snd b
+      = (∑ a : α, joint (a, b) * κ (a, b) c) / marginal κ joint c := by
+  rw [snd_apply]
+  simp_rw [posterior_apply]
+  rw [← Finset.sum_mul, ← div_eq_mul_inv]
+
+/-- **Comparison decomposition for the second-marginalized joint posterior**.
+Companion of `posterior_fst_lt_iff`. -/
+theorem posterior_snd_lt_iff [DecidableEq β]
+    (κ : (α × β) → PMF γ) (joint : PMF (α × β)) (c : γ)
+    (h : marginal κ joint c ≠ 0) (b₁ b₂ : β) :
+    (posterior κ joint c h).snd b₁ < (posterior κ joint c h).snd b₂
+      ↔ (∑ a : α, joint (a, b₁) * κ (a, b₁) c)
+          < ∑ a : α, joint (a, b₂) * κ (a, b₂) c := by
+  rw [posterior_snd_apply, posterior_snd_apply]
+  exact ENNReal.div_lt_div_iff_left h (marginal_ne_top κ joint c)
+
 end PMF

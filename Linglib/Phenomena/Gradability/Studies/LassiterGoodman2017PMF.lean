@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Core.Probability.JointPosterior
 import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform
 
@@ -25,25 +26,37 @@ context-sensitivity via prior shape (§4.4, Fig. 7, "tall building" vs.
 sorites trichotomy (§5, Eqs. 36/38/41-44) — all live in that joint
 posterior.
 
-**This file does not formalise the joint posterior.** What it does:
+**What this file captures:**
 
-1. Provides L&G-anchored *interpretive wrappers* for generic PMF
-   theorems already promoted to `Core/Probability/Posterior.lean`
-   (the structural sorites bound, the borderline-as-intermediate-measure
-   schema, posterior concentration).
-2. Captures L&G's Eq. 32 outer-measure metalinguistic-probability
-   formula directly via `PMF.toOuterMeasure`.
-3. Documents the Frank-&-Goodman 2012 scalar-implicature mechanism that
-   L&G use as a §3 warmup — clearly labelled as not L&G's novel
-   contribution.
+1. **§3.5 (NEW): The joint (world × threshold) posterior architecture
+   (L&G Eqs. 26-30) — the paper's novel contribution.** Built on
+   `PMF.posterior` instantiated at product type `α := W × T`, with
+   marginalization formulas via `PMF.posterior_fst_apply` /
+   `posterior_snd_apply` from `Core/Probability/JointPosterior.lean`.
+   `worldPosterior_apply` is L&G's Eq. 30 (height marginalization);
+   `thresholdPosterior_apply` is the Fig. 5 left-panel marginal.
+2. L&G-anchored *interpretive wrappers* for generic PMF theorems already
+   promoted to `Core/Probability/Posterior.lean` (the structural sorites
+   bound, the borderline-as-intermediate-measure schema, posterior
+   concentration).
+3. L&G's Eq. 32 outer-measure metalinguistic-probability formula directly
+   via `PMF.toOuterMeasure`.
+4. The Frank-&-Goodman 2012 scalar-implicature mechanism that L&G use as
+   a §3 warmup — clearly labelled as not L&G's novel contribution.
 
-**Not yet captured (substrate gaps):**
+**Not yet captured (paper-specific evaluative content, not structural gaps):**
 
-- Joint inference over `(world, threshold)` (Eqs. 26-29).
-- Height marginalisation (Eq. 30) producing the height posterior of §4.3.
-- The MC/PC/free-variable trichotomy on sorites premises (Eqs. 36/38/41-44).
-- Antonym symmetry (Eqs. 22-23, Fig. 6).
-- The "informativity-prior tradeoff" balancing process (§4.3 prose).
+- The MC/PC/free-variable trichotomy on sorites premises (Eqs. 36/38/41-44)
+  — distinct ways of evaluating the joint L1 at a sorites premise; the
+  joint architecture above is the substrate, the trichotomy is per-paper
+  application.
+- Antonym symmetry (Eqs. 22-23, Fig. 6) — comparison of `tall` and `short`
+  posteriors via scale-flipping.
+- The "informativity-prior tradeoff" (§4.3 prose) — qualitative claim
+  about how the joint posterior balances informativity against prior
+  shape; not a sharp formal theorem.
+- Numerical Fig. 5/6/7/8 simulations — Metropolis-Hastings approximations
+  of the integrals, beyond the structural skeleton's scope.
 - Adams's bound (`adams_uncertainty_bound`, deferred — verbose generic
   probability theorem, not RSA-specific; cf. § Note on Adams below).
 
@@ -289,6 +302,85 @@ module docstring).
 The generic Bayes-weighting result is `PMF.posterior_lt_iff_score_lt` in
 `Core/Probability/Posterior.lean` and is reusable for any consumer;
 no L&G-specific wrapper here. -/
+
+/-! ## §3.5. **The joint (world × threshold) posterior — L&G's novel contribution**
+
+L&G 2017's central architectural innovation (§4.2, Eqs. 26-29): the
+pragmatic listener jointly infers the world `A` and the free threshold
+variable `V`, with marginalisation over `V` (Eq. 30) yielding the
+height posterior of §4.3 (Fig. 5).
+
+**No new definition needed**: the joint posterior is `PMF.posterior`
+instantiated at the product type `α := W × T`. The structural content
+is the marginalisation formulas — which are direct instantiations of
+`PMF.posterior_fst_apply` / `posterior_snd_apply` from
+`Core/Probability/JointPosterior.lean`.
+
+**This section captures the architectural skeleton.** Per-paper
+numerical simulations (Fig. 5/6/7/8) are deliberately out of scope —
+they are MCMC approximations of the integrals, not structural theorems
+about the model class. The structural theorems below apply to ANY
+choice of `(W, T, Utt, S1, prior)` instantiating L&G's joint chain. -/
+
+section JointPosterior
+
+variable {W T Utt : Type*} [Fintype W] [Fintype T] [Fintype Utt] [DecidableEq W]
+
+/-- **L&G 2017 Eq. 29: the joint posterior over (world, threshold)**.
+`P_L1(W, T | u) ∝ P_S1(u | W, T) · P(W, T)`.
+
+This is just `PMF.posterior` at α := W × T — no new definition. The
+structural content lives in the marginalization theorems below. -/
+noncomputable def jointL1
+    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T))
+    (u : Utt) (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) :
+    PMF (W × T) :=
+  PMF.posterior S1 worldThresholdPrior u h_marg
+
+/-- **L&G 2017 Eq. 30: the world (height) marginal of the joint posterior**.
+`P_L1(w | u) = ∑_θ P_L1(w, θ | u) = (∑_θ P(w, θ) · S1(u | w, θ)) / Z`.
+
+The height-marginalisation formula (paper Fig. 5 right panel — height
+posterior). Direct corollary of `PMF.posterior_fst_apply`. -/
+theorem worldPosterior_apply
+    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
+    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (w : W) :
+    (jointL1 S1 worldThresholdPrior u h_marg).fst w
+      = (∑ θ : T, worldThresholdPrior (w, θ) * S1 (w, θ) u)
+          / PMF.marginal S1 worldThresholdPrior u :=
+  PMF.posterior_fst_apply S1 worldThresholdPrior u h_marg w
+
+/-- **L&G 2017 Fig. 5 left panel: the threshold marginal of the joint posterior**.
+`P_L1(θ | u) = ∑_w P_L1(w, θ | u) = (∑_w P(w, θ) · S1(u | w, θ)) / Z`.
+
+The threshold-marginalisation formula. The threshold posterior is what
+yields the metalinguistic probability of Eq. 32 (cf. §4 below). -/
+theorem thresholdPosterior_apply [DecidableEq T]
+    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
+    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (θ : T) :
+    (jointL1 S1 worldThresholdPrior u h_marg).snd θ
+      = (∑ w : W, worldThresholdPrior (w, θ) * S1 (w, θ) u)
+          / PMF.marginal S1 worldThresholdPrior u :=
+  PMF.posterior_snd_apply S1 worldThresholdPrior u h_marg θ
+
+/-- **Comparison decomposition for the height posterior**.
+For two heights `w₁, w₂`, the L1 height posterior favours `w₂` over `w₁`
+iff the conditional-joint sums favour it. Generalises
+`PMF.posterior_lt_iff_score_lt` to the marginalised case.
+
+Useful for paper claims of the shape "L1 favours height h₂ > h₁ given
+'tall'" — reduces to comparing per-height conditional joint masses.
+Direct corollary of `PMF.posterior_fst_lt_iff`. -/
+theorem worldPosterior_lt_iff
+    (S1 : (W × T) → PMF Utt) (worldThresholdPrior : PMF (W × T)) (u : Utt)
+    (h_marg : PMF.marginal S1 worldThresholdPrior u ≠ 0) (w₁ w₂ : W) :
+    (jointL1 S1 worldThresholdPrior u h_marg).fst w₁
+      < (jointL1 S1 worldThresholdPrior u h_marg).fst w₂
+      ↔ (∑ θ : T, worldThresholdPrior (w₁, θ) * S1 (w₁, θ) u)
+          < ∑ θ : T, worldThresholdPrior (w₂, θ) * S1 (w₂, θ) u :=
+  PMF.posterior_fst_lt_iff S1 worldThresholdPrior u h_marg w₁ w₂
+
+end JointPosterior
 
 /-! ## §4. L&G Eq. 32 — metalinguistic probability as outer measure
 
