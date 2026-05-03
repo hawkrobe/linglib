@@ -528,7 +528,7 @@ theorem hellingerDistSq_nonneg (P Q : PMF α)
 /-! ### Bretagnolle–Huber substrate (private helpers)
 
 Pure real-arithmetic helpers for the BH inequality `2 · H²(P, Q) ≤ KL(P ‖ Q)`.
-Inlined here (not in `Core.InformationTheory`) so that PMFEntropy is
+Inlined here (not in `Core.InformationTheory`) so that Entropy is
 self-contained against Core deletion. -/
 
 /-- Pointwise: `(√x − 1)² ≤ klFun(x)` for `x ≥ 0`. Identity:

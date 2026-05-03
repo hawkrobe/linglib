@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.CFGTree
 import Linglib.Core.Computability.WeightedCFG
-import Linglib.Core.Probability.PMFEntropy
+import Linglib.Core.Probability.Entropy
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -257,7 +257,7 @@ noncomputable def uniform : MultinomialPCFG G where
 
 noncomputable instance : Inhabited (MultinomialPCFG G) := ⟨uniform⟩
 
-/-! ## Information-theoretic primitives (bridge to `PMFEntropy`)
+/-! ## Information-theoretic primitives (bridge to `Entropy`)
 
 The per-LHS PMFs let us inherit mathlib's PMF entropy / KL machinery
 directly. These primitives are the integration bridge to processing-cost

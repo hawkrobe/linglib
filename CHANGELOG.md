@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.614 — Entropy.lean rename + Real.klFun_logSum_le + DPI scaffolding (sorry'd discharge)
+
+- Rename `Linglib/Core/Probability/PMFEntropy.lean` → `Linglib/Core/Probability/Entropy.lean`. Per consolidation discipline (all entropy in linglib is on PMF). Updates Linglib.lean import + 3 consumers (Paradigm, ChannelCapacity, MultinomialPCFG).
+- New `Linglib/Core/Probability/DataProcessing.lean` (NEW, 130 LOC):
+  - `Real.klFun_logSum_le` (proved, ~30 LOC): the log-sum inequality for `klFun`. For non-negative reals `x_i`, positive `y_i`: `(∑ y_i) * klFun((∑ x_i) / (∑ y_i)) ≤ ∑ y_i * klFun(x_i / y_i)`. Proved via `InformationTheory.convexOn_klFun` + `ConvexOn.map_sum_le` (Jensen for finset-sum, weights `y_i / ∑ y_j`).
+  - `PMF.klDiv_bind_le` (statement only, sorry'd): finite-case data processing inequality on KL — `(p.bind κ).klDiv (q.bind κ) ≤ p.klDiv q` for finite-fintype PMFs and Markov kernel `κ`. Sorry has detailed proof sketch (~80 LOC of ENNReal/.toReal bookkeeping). Once discharged, the cancellation theorem in @cite{goodman-stuhlmuller-2013}-style RSA models follows generically.
+- Architectural framing (audit): the GS2013PMF clunkiness is structural — the file is proving 11 numerical findings instance-by-instance, when it should be deriving them from the **cancellation principle** (KL of L1 from prior monotone in speaker access). The cancellation principle is a direct corollary of DPI applied to nested observation kernels. With DPI as a primitive in linglib, GS2013PMF can drop from ~1700 LOC to ~500 LOC and every downstream RSA-with-noisy-observation paper inherits cancellation as a corollary.
+- Tracking: log-sum lemma is real math content (proved). DPI itself has 1 sorry; cancellation theorem builds on it (next entry).
+
 ### 0.230.626 — Phase 7: Spellout → Theories/Morphology/DM/VocabSimple.lean
 
 Migration phase 7/9.

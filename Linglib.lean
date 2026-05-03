@@ -311,6 +311,7 @@ import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Probability.Entropy
 import Linglib.Core.Probability.PMFPosterior
 import Linglib.Core.Probability.Hypergeometric
+import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.ProductOfExperts
 import Linglib.Core.Probability.DirichletMultinomial
 import Linglib.Core.Probability.PolyaUrn

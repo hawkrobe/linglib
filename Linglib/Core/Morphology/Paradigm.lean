@@ -19,7 +19,7 @@ cell** of a paradigm with its features and form; `ParadigmSystem` here is the
 the surface-form type. Most consumers use `Form := String` (the natural
 representation for actual morphological forms in @cite{ackerman-malouf-2013}'s
 A&M language sample). The Rathi 2026 toy paradigms use a small `[Fintype]`
-form alphabet so that PMF-based entropy operators (`PMFEntropy.lean`) apply
+form alphabet so that PMF-based entropy operators (`Entropy.lean`) apply
 to cell distributions; that integration lives in a sibling
 `PMFCellDistribution.lean` file added in a later phase of the unification
 refactor.

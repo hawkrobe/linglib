@@ -140,17 +140,15 @@ tsum_fintype]` ritual that arises in every PMF-bind consumer. -/
 theorem bind_apply_eq_finset_sum {α β : Type*} [Fintype α]
     (p : PMF α) (f : α → PMF β) (b : β) :
     (p.bind f) b = ∑ a, p a * f a b := by
-  rw [PMF.bind_apply, tsum_fintype]
+  rw [PMF.bind_apply]
+  exact tsum_eq_sum (s := Finset.univ) (fun a h => absurd (Finset.mem_univ a) h)
 
 /-- **`PMF.bind` of `pure`** collapses to direct application: when the prior
-is concentrated on `a₀`, the bind picks out `f a₀ b`. The natural
-specialization of `PMF.bind_apply` for deterministic priors. -/
+is concentrated on `a₀`, the bind picks out `f a₀ b`. The natural pointwise
+specialization of `PMF.pure_bind` (which gives the PMF-level equality). -/
 theorem bind_pure_apply {α β : Type*} (a₀ : α) (f : α → PMF β) (b : β) :
     ((PMF.pure a₀).bind f) b = f a₀ b := by
-  rw [PMF.bind_apply]
-  refine tsum_eq_single a₀ ?_
-  intro a' h
-  simp [PMF.pure_apply, h.symm]
+  rw [PMF.pure_bind]
 
 /-- **Closed-form value of `PMF.normalize`**: when both the numerator `f a`
 and the partition `tsum f` are known, the normalized PMF takes the explicit

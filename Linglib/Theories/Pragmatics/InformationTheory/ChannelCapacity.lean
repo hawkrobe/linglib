@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.InformationTheory.Channel
-import Linglib.Core.Probability.PMFEntropy
+import Linglib.Core.Probability.Entropy
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
