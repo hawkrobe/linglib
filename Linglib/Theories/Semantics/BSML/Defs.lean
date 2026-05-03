@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Core.Logic.Team.Algebra
+import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core Definitions
@@ -215,6 +216,16 @@ theorem dne_antiSupport (M : BSMLModel W Atom)
 @[simp] lemma antiSupport_neg (M : BSMLModel W Atom)
     (φ : BSMLFormula Atom) (t : Finset W) :
     antiSupport M (.neg φ) t ↔ support M φ t := Iff.rfl
+
+/-- BSML's `support` and `antiSupport` form a paraconsistent bilateral
+    logic (`Core.Logic.Bilateral.IsBilateral`) under `BSMLFormula.neg`.
+    The polarity-flip axioms are `Iff.rfl` pointwise (`support_neg` /
+    `antiSupport_neg`), lifted to function equality via `funext + propext`. -/
+theorem isBilateral (M : BSMLModel W Atom) :
+    Core.Logic.Bilateral.IsBilateral
+      (support M) (antiSupport M) BSMLFormula.neg where
+  positive_negate φ := funext fun t => propext (support_neg M φ t)
+  negative_negate φ := funext fun t => propext (antiSupport_neg M φ t)
 
 @[simp] lemma support_conj (M : BSMLModel W Atom)
     (φ ψ : BSMLFormula Atom) (t : Finset W) :

@@ -16,6 +16,9 @@ import Linglib.Typology.Pronouns
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
+import Linglib.Core.Logic.Bilateral.Defs
+import Linglib.Core.Logic.Bilateral.Polarity
+import Linglib.Core.Logic.Bilateral.Classical
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Properties
@@ -2108,6 +2111,10 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.Properties.BinaryOptimality
+import Linglib.Core.Combinatorics.RootedTree.Decorated
+import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
+import Linglib.Core.Algebra.ConnesKreimer.Defs
+import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
 import Linglib.Theories.Syntax.Minimalist.Hopf.AdmissibleCut
 import Linglib.Theories.Syntax.Minimalist.Hopf.Comul

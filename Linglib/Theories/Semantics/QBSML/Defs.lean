@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Lattice.Union
 import Linglib.Core.Logic.Team.Algebra
+import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
 # Quantified Bilateral State-based Modal Logic (QBSML) — Core Definitions
@@ -380,6 +381,18 @@ theorem dne_antiSupport (M : QBSMLModel W Domain Pred)
 @[simp] lemma antiSupport_neg (M : QBSMLModel W Domain Pred)
     (φ : QBSMLFormula Var Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
+
+/-- QBSML's `support` and `antiSupport` form a paraconsistent bilateral
+    logic (`Core.Logic.Bilateral.IsBilateral`) under `QBSMLFormula.neg`.
+    Same shape as BSML's `isBilateral`, lifted to the `Index W Var Domain`
+    carrier — point-polymorphism at work. -/
+theorem isBilateral (M : QBSMLModel W Domain Pred) :
+    Core.Logic.Bilateral.IsBilateral
+      (Form := QBSMLFormula Var Pred)
+      (Result := Finset (Index W Var Domain) → Prop)
+      (support M) (antiSupport M) QBSMLFormula.neg where
+  positive_negate φ := funext fun s => propext (support_neg M φ s)
+  negative_negate φ := funext fun s => propext (antiSupport_neg M φ s)
 
 -- ============================================================================
 -- §7 Frame conditions via s↓ projection

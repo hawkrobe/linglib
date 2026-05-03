@@ -1,4 +1,5 @@
 import Linglib.Core.Mereology
+import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.UpperLower.CompleteLattice
 
@@ -333,6 +334,20 @@ theorem neg_involutive : Function.Involutive (@neg S) := neg_neg
 instance : InvolutiveNeg (BilProp S) where
   neg := neg
   neg_neg := neg_neg
+
+/-- Fine-style truthmaker `BilProp` is a paraconsistent bilateral logic
+    (`Core.Logic.Bilateral.IsBilateral`). The BilProp *value* IS the
+    formula; `ver`/`fal` are field projections; `neg` swaps them by
+    definition. Both axioms reduce to `rfl`. Cross-references the
+    `InvolutiveNeg` instance above and `BilateralDen.isBilateral`
+    (BUS) — three frameworks share the substrate. -/
+theorem isBilateral :
+    Core.Logic.Bilateral.IsBilateral
+      (Form := BilProp S)
+      (Result := S → Prop)
+      (·.ver) (·.fal) neg where
+  positive_negate _ := rfl
+  negative_negate _ := rfl
 
 variable [SemilatticeSup S]
 

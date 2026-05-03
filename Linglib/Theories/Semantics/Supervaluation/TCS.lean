@@ -746,7 +746,7 @@ theorem tcsConsequence.cc_iff_ct_restricted
     the satisfaction mode via `dual`: `M ⊨ᵐ ¬φ ↔ ¬ M ⊨^{dual m} φ`.
     Definitionally true from `Sat.neg_eq`.
 
-    Note: the abstract `Core.Logic.Consequence.SatDuality` structure
+    Note: the abstract `Core.Logic.Bilateral.SatDuality` structure
     requires `neg` to be a syntactic involution (`¬¬φ = φ`). TCSFormula
     negation is NOT syntactically involutive (we have `.neg (.neg φ)`,
     not `φ`), so the abstract structure does not literally apply. The

@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Basic
+import Linglib.Core.Logic.Bilateral.Classical
 
 /-!
 # Mixed Consequence Relations
@@ -23,7 +24,8 @@ notions — not on the specific logic.
 - `MixedConsequence`: Γ ⊨ᵐⁿ φ iff every model m-satisfying all
   of Γ also n-satisfies φ
 - `SatImplies`: one satisfaction notion implies another
-- `SatDuality`: satisfaction duality via negation and mode-swapping
+- `consequence_dual`: (Cobreros Lemma 6) consequence under the
+  satisfaction duality of `Core.Logic.Bilateral.SatDuality`
 
 ## Key Results
 
@@ -140,28 +142,13 @@ section Duality
 
 variable {Model Formula Mode : Type*}
 
-/-- Satisfaction duality: a negation operation on formulas and a
-    dual operation on modes such that:
-    - `dual` is an involution (d(d(m)) = m)
-    - `neg` is an involution (¬¬φ = φ)
-    - Negation swaps modes: M ⊨ᵐ ¬φ ↔ M ⊭^{d(m)} φ
-
-    In TCS, d(t) = s, d(s) = t, d(c) = c, and negation is
-    formula negation. -/
-structure SatDuality (sat : Model → Mode → Formula → Prop)
-    (neg : Formula → Formula) (dual : Mode → Mode) : Prop where
-  dual_invol : ∀ m : Mode, dual (dual m) = m
-  neg_invol : ∀ φ : Formula, neg (neg φ) = φ
-  neg_swap : ∀ (M : Model) (m : Mode) (φ : Formula),
-    sat M m (neg φ) ↔ ¬sat M (dual m) φ
-
 /-- **Consequence duality** (Lemma 6 of @cite{cobreros-etal-2012}).
 
     If φ ⊨ᵐⁿ ψ, then ¬ψ ⊨^{d(n)d(m)} ¬φ.
     Duality swaps premise/conclusion modes and negates formulas. -/
 theorem consequence_dual {sat : Model → Mode → Formula → Prop}
     {neg : Formula → Formula} {dual : Mode → Mode}
-    (hd : SatDuality sat neg dual)
+    (hd : Core.Logic.Bilateral.SatDuality sat neg dual)
     {m n : Mode} {φ ψ : Formula}
     (hc : MixedConsequence sat m n [φ] ψ) :
     MixedConsequence sat (dual n) (dual m) [neg ψ] (neg φ) := by

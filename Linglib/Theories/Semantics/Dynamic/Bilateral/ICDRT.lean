@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Intensional
+import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
 # Bilateral Denotations for ICDRT Contexts
@@ -79,6 +80,18 @@ def neg (φ : BilateralICDRT W E) : BilateralICDRT W E where
 /-- Double negation elimination (definitional). -/
 @[simp]
 theorem neg_neg (φ : BilateralICDRT W E) : φ.neg.neg = φ := rfl
+
+/-- ICDRT-bilateral is a paraconsistent bilateral logic
+    (`Core.Logic.Bilateral.IsBilateral`). The BilateralICDRT *value* IS
+    the formula; `positive` and `negative` are field projections; `neg`
+    swaps them by definition. Both axioms reduce to `rfl`. -/
+theorem isBilateral :
+    Core.Logic.Bilateral.IsBilateral
+      (Form := BilateralICDRT W E)
+      (Result := IContext W E → IContext W E)
+      (·.positive) (·.negative) neg where
+  positive_negate _ := rfl
+  negative_negate _ := rfl
 
 /-- Atomic proposition -/
 def atom (prop : W → Prop) : BilateralICDRT W E where

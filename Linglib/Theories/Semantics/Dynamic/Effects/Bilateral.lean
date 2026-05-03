@@ -44,6 +44,7 @@ sentence) is in `Phenomena/Anaphora/Studies/Dekker2012.lean`.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Algebra.Group.Defs
 
 namespace Semantics.Dynamic.Core
@@ -452,6 +453,18 @@ def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive
 instance : InvolutiveNeg (BilateralDen W E) where
   neg := neg
   neg_neg := neg_neg
+
+/-- BUS's `BilateralDen` is itself a paraconsistent bilateral logic
+    (`Core.Logic.Bilateral.IsBilateral`): the BilateralDen *value* IS the
+    formula; `positive` and `negative` are the field projections; `neg`
+    swaps them by definition. Both axioms reduce to `rfl`. -/
+theorem isBilateral :
+    Core.Logic.Bilateral.IsBilateral
+      (Form := BilateralDen W E)
+      (Result := InfoState W E → InfoState W E)
+      (·.positive) (·.negative) neg where
+  positive_negate _ := rfl
+  negative_negate _ := rfl
 
 
 -- ============================================================================
