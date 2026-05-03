@@ -4,6 +4,35 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.648 — Trim Specializations.lean: speculative SR aliases deleted
+
+The four `IsAtelic`/`IsStative`/`IsRoleDistributive`/`IsMassReference`
+aliases in `StratifiedReference/Specializations.lean` were docstring
+cross-references only — no file called them as functions. `IsAtelic` /
+`IsStative` as defined (SR-decomposition form) were also wrong math for
+the existing IMPF/PRFV theorems, which need the witness-universal
+`HasSubintervalProp` form (∀-projection over hypothetical witnesses,
+not ∃-decomposition over P-parts).
+
+- Deleted `Linglib/Theories/Semantics/Events/StratifiedReference/Specializations.lean`
+- `SDR_univ` / `SSR_univ` / `SMR_univ` remain in `StratifiedReference.lean`
+  (genuine SR instances, with three real consumers for `SDR_univ` via
+  `VerbDistributivity` / Champollion2017 plurals / Siloni2012 symmetric
+  verbs)
+- `HasSubintervalProp` / `HasClosedSubintervalProp` remain canonical for
+  τ-dimension witness-universal stativity/atelicity (used by IMPF/PRFV
+  duality theorems)
+- `AtomDist` remains canonical for the quantifier-restriction form
+- `StratifiedReference.lean` docstring acknowledges Champollion 2017 §1.2's
+  four-opposition framing as literature exposition; substrate exposes only
+  what has consumers
+- Champollion2017 plurals study, Siloni2012, Zhao2025, SubintervalProperty,
+  AtomDist docstrings updated to drop `Is*` cross-pointers
+
+Mathlib pattern enforced: no aliases for substrate that nothing imports;
+parallel formulations (witness-universal vs decomposition) get distinct
+names rather than being aliased into each other.
+
 ### 0.230.646 — QBSML: closed unionClosed + downwardClosed via 4-property joint induction
 
 QBSML/Properties.lean's two `sorry`'d theorems are now fully proved.
