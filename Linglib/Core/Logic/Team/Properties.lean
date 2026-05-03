@@ -1,46 +1,41 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Lattice.Union
-import Mathlib.Data.Finset.Insert
+import Linglib.Core.Logic.Team.Closure
 
 /-!
-# Team-semantic properties of formulas (Anttila 2021 §2.2)
+# Team-semantic properties of formulas (Anttila 2021 §2.2) — consumer wrapper
 
 @cite{anttila-2021}
 
 The four canonical properties of formulas in a team-semantic logic, from
-Anttila's "The Logic of Free Choice Axiomatizations of State-based Modal
-Logics" (MSc Thesis, ILLC 2021), Definition 2.2.1:
+Anttila Definition 2.2.1, exposed in **parametric form** for consumer
+ergonomics:
 
 - **Downward closure**: support survives subset
-- **Union closure**: support survives binary union (binary; n-ary follows by induction)
+- **Union closure**: support survives binary union
 - **Empty team property**: support holds vacuously on the empty team
 - **Flatness**: support equivalent to pointwise support at each point in the team
 
-The central technical theorem is **Proposition 2.2.2**: φ is flat iff φ has all
-three of downward closure, union closure, and the empty team property.
+Each predicate here takes `(support : Model → Form → Finset W → Prop) (φ : Form)`
+and asserts the closure property of `support M φ` for every model `M`. This is
+the shape consumers (BSML, QBSML, ...) actually invoke.
 
-This file is the foundational substrate for all team-semantic logics in linglib
-— BSML and BSML* currently; QBSML (Aloni & van Ormondt 2023), inquisitive,
-dependence logic, modal team logic when added. Each logic provides its own
-`support : Model → Form → Finset Point → Prop` function; this file delivers
-the properties + flatness theorem generically over the support relation.
+## Relationship to `Core/Logic/Team/Closure.lean`
+
+The deep mathematical content is in `Core/Logic/Team/Closure.lean`: the
+flatness theorem is a fact about subsets of `Finset α` (mathlib `IsLowerSet`,
+`SupClosed`, plus `∅ ∈ T`). The `Form / Model` parameters here are
+**ergonomic wrappers** — they curry the substrate fact across formulas and
+models. The theorem `flat_iff_downwardClosed_unionClosed_emptyTeam` reduces
+to `Closure.isTeamFlat_iff_isLowerSet_supClosed_empty` instantiated at
+`{ t | support M φ t }` for every `M`.
 
 ## Provenance
 
 Anttila axiomatizes six team-semantic logics (PT⁺, MDᵂ, SMLᵂ, SGMLᵂ, BSML,
 BSMLᵂ) using this chassis. Anttila Proposition 2.2.8 (NE-free formulas have
 downward + empty; ⨼-free formulas are union closed) becomes a per-logic theorem
-proved against this substrate; the corollary "NE-free + ⨼-free → flat" is then
-a direct application of `flat_iff_downwardClosed_unionClosed_emptyState` below.
-
-## Mathlib-shape rationale
-
-The properties are NOT a typeclass — they are predicates parameterized over a
-support relation. Different consumers can speak about the same formula under
-different support relations (e.g., support vs anti-support in bilateral logics).
-A typeclass would either commit to a canonical support relation per Form (too
-rigid) or require disambiguation at every site (more friction than the
-parameter-passing). Parametric polymorphism fits cleanly.
+proved against this substrate; the corollary "NE-free + ⨼-free → flat" follows
+from `flat_iff_downwardClosed_unionClosed_emptyTeam` below — which itself
+delegates to `Closure.lean`'s lattice-level statement.
 
 ## Naming: "team" vs "state"
 
@@ -103,62 +98,47 @@ def flat (support : Model → Form → Finset W → Prop) (φ : Form) : Prop :=
 -- §2 Anttila Proposition 2.2.2: flatness ↔ downward + union + empty
 -- ============================================================================
 
-/-- **Anttila Proposition 2.2.2**: A formula has the flatness property if and
-    only if it has the downward closure, union closure, and empty team
-    properties.
+/-- **Anttila Proposition 2.2.2** (parametric form): A formula has the
+    flatness property iff it has downward closure, union closure, and the
+    empty team property.
 
-    This is the central technical lemma derivative results across all
-    team-semantic logics depend on. The conservative-extension theorem
-    (Anttila Proposition 2.2.13/2.2.15: SGMLᵂ and BSMLᵂ both extend ML)
-    follows from this + per-logic proofs that NE-free formulas have all
-    three properties. -/
+    Delegates to the substrate-level statement
+    `Closure.isTeamFlat_iff_isLowerSet_supClosed_empty` instantiated at
+    `{ t | support M φ t }` for each model. The deep content — flatness
+    iff `IsLowerSet ∧ SupClosed ∧ ∅ ∈ T` for any team-set — is proved
+    once at the lattice level; this theorem just curries it across all
+    `(M, φ)`.
+
+    Conservative-extension theorems (Anttila 2.2.13/2.2.15) follow from
+    this + per-logic NE-free witnesses for the three properties. -/
 theorem flat_iff_downwardClosed_unionClosed_emptyTeam
     (support : Model → Form → Finset W → Prop) (φ : Form) :
     flat support φ ↔
       downwardClosed support φ ∧ unionClosed support φ ∧ emptyTeam support φ := by
   constructor
-  · -- Forward direction: flatness gives all three properties
-    intro hFlat
+  · intro hFlat
     refine ⟨?_, ?_, ?_⟩
-    · -- Downward closure
-      intro M s t hsub hsupp
-      rw [hFlat]
-      intro w hw
-      exact (hFlat M s).mp hsupp w (hsub hw)
-    · -- Union closure
-      intro M s t hs ht
-      rw [hFlat]
-      intro w hw
-      simp only [Finset.mem_union] at hw
-      cases hw with
-      | inl h => exact (hFlat M s).mp hs w h
-      | inr h => exact (hFlat M t).mp ht w h
-    · -- Empty team property
-      intro M
-      rw [hFlat]
-      intro w hw
-      simp at hw
-  · -- Reverse direction: three properties give flatness
-    rintro ⟨hd, hu, he⟩ M s
-    constructor
-    · -- support s → ∀ w ∈ s, support {w}
-      intro hsupp w hw
-      exact hd M s {w} (Finset.singleton_subset_iff.mpr hw) hsupp
-    · -- (∀ w ∈ s, support {w}) → support s
-      intro h
-      induction s using Finset.induction_on with
-      | empty => exact he M
-      | @insert w t hw ih =>
-        have hw_supp : support M φ {w} := h w (Finset.mem_insert_self w t)
-        have ht_supp : support M φ t := by
-          apply ih
-          intro v hv
-          exact h v (Finset.mem_insert_of_mem hv)
-        have heq : insert w t = ({w} : Finset W) ∪ t := by
-          ext x
-          simp only [Finset.mem_insert, Finset.mem_union, Finset.mem_singleton]
-        rw [heq]
-        exact hu M {w} t hw_supp ht_supp
+    · intro M
+      have h := (isTeamFlat_iff_isLowerSet_supClosed_empty
+        (T := { t : Finset W | support M φ t })).mp (fun s => hFlat M s)
+      intro s t hsub
+      exact h.1 hsub
+    · intro M s t hs ht
+      have h := (isTeamFlat_iff_isLowerSet_supClosed_empty
+        (T := { t : Finset W | support M φ t })).mp (fun s => hFlat M s)
+      exact h.2.1 hs ht
+    · intro M
+      have h := (isTeamFlat_iff_isLowerSet_supClosed_empty
+        (T := { t : Finset W | support M φ t })).mp (fun s => hFlat M s)
+      exact h.2.2
+  · rintro ⟨hd, hu, he⟩ M s
+    have h_lower : IsLowerSet { t : Finset W | support M φ t } :=
+      fun a b hba ha => hd M a b hba ha
+    have h_sup : SupClosed { t : Finset W | support M φ t } :=
+      fun a ha b hb => hu M a b ha hb
+    have h_empty : ∅ ∈ { t : Finset W | support M φ t } := he M
+    exact (isTeamFlat_iff_isLowerSet_supClosed_empty
+      (T := { t : Finset W | support M φ t })).mpr ⟨h_lower, h_sup, h_empty⟩ s
 
 -- ============================================================================
 -- §3 Convenience corollaries

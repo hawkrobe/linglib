@@ -1,5 +1,7 @@
 import Linglib.Core.Question.Basic
 import Linglib.Core.Logic.Team.Properties
+import Mathlib.Order.UpperLower.Basic
+import Mathlib.Order.SupClosed
 
 /-!
 # Flatness of Question — Anttila Proposition 2.2.16 specialised to inquisitive content
@@ -202,5 +204,28 @@ theorem teamSupport_flat_of_isDeclarative [DecidableEq W] (P : Question W)
     (teamSupport_downwardClosed P)
     (teamSupport_unionClosed_of_isDeclarative P hdecl)
     (teamSupport_emptyTeam P)
+
+-- ============================================================================
+-- §5 Mathlib-aligned restatements: Question's structure IS IsLowerSet + bot
+-- ============================================================================
+
+/-- **Question's `downward_closed` axiom IS `IsLowerSet`** at the `Set W`
+    carrier. The mathlib primitive `IsLowerSet (s : Set α) [LE α]` says
+    `b ≤ a → a ∈ s → b ∈ s`; for `Set W` the `LE` instance is `⊆`, so this
+    is exactly `Question.downward_closed`. -/
+theorem isLowerSet_props (P : Question W) : IsLowerSet P.props :=
+  fun _ _ hba ha => P.downward_closed _ ha _ hba
+
+/-- **Mathlib-aligned binary union closure** for declarative `Question`s:
+    `SupClosed P.props` (mathlib's binary-`⊔` closure on `Set α`, where
+    `⊔ = ∪`). Direct corollary of `isDeclarative_imp_binary_union_closed`
+    rewrapped in mathlib's predicate. -/
+theorem supClosed_props_of_isDeclarative (P : Question W)
+    (hdecl : P.isDeclarative) : SupClosed P.props :=
+  fun s hs t ht => isDeclarative_imp_binary_union_closed P hdecl s t hs ht
+
+/-- **Question's `contains_empty` IS `⊥ ∈ P.props`**. For `Set W`, `⊥ = ∅`. -/
+theorem bot_mem_props (P : Question W) : (⊥ : Set W) ∈ P.props :=
+  P.contains_empty
 
 end Core.Question
