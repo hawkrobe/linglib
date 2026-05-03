@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.630–631 — Smith-Moskal-Bobaljik et al. (2019) skeleton + bib
+
+First payoff of the `Theories/Interfaces/` migration (phases 1–9, 0.230.616–629). A study file that uses BOTH sides of the cross-framework substrate the migration created.
+
+- Added `smith-moskal-xu-kang-bobaljik-2019` to `blog/data/references.bib` (DOI 10.1007/s11049-018-9425-0 verified from PDF first page); regenerated `bibliography.md` (2047 → 2048 entries).
+- Created `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean`. Anchors on Smith, Moskal, Xu, Kang & Bobaljik 2019 *Case and number suppletion in pronouns* (NLLT 37:1029–1101) — the canonical recent paper that extends `@cite{bobaljik-2012}`'s structural-containment account from adjectival degree to pronominal case + number, and identifies §3.6 AAB-attestation as the cross-domain divergence point.
+- § 1 proven from substrate: `dm_excludes_cmpr_sprl_distinct` (general) and `dm_excludes_aab` (specific corollary), both immediate from `Theories.Morphology.DegreeContainment.vi_cmpr_eq_sprl`. The DM derivation predicts AAB exclusion in EVERY domain; the paper's empirical claim is that this prediction fails in case + number.
+- §§ 2–3 stubbed (TODOs): need to encode specific attested AAB patterns from §3.6's typological survey before the prediction-falsification theorem can be stated non-vacuously.
+- § 4 stubbed: §3.7's domain-based locality refactor (`@cite{moskal-2015}`) would land as a substrate addition under `Core/Morphology/`, parallel to `Containment.lean`.
+- Root index: 0.230.630 missed Linglib.lean (concurrent edit lock); 0.230.631 fixup adds it.
+
+This file deliberately keeps the @cite{caha-2009} side and the framework-divergence theorem itself stubbed — those land once §3.6's empirical witnesses are encoded. The substrate move from the migration is what made this skeleton stateable as a 4-line proof rather than a re-implementation.
+
 ### 0.230.630 — Anttila 2021 Proposition 2.2.8 fully proved for BSML
 
 Empirical validation of the Core/Logic/Team substrate (landed 0.230.629). The three structural properties from Anttila Proposition 2.2.8 are proved for BSML's `support` relation; the flatness corollary derives from `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam`.
