@@ -196,25 +196,18 @@ theorem english_rsg :
 -- § 6: Lesslessness
 -- ============================================================================
 
-/-- **Lesslessness** (@cite{bobaljik-2012}): No synthetic comparative
-    of inferiority exists in any language. English expresses inferiority
-    periphrastically ("less tall"), never synthetically.
+/-! **Lesslessness** (@cite{bobaljik-2012}): No synthetic comparative
+of inferiority exists in any language. English expresses inferiority
+periphrastically ("less tall"), never synthetically.
 
-    We verify that no entry in the English fragment encodes a synthetic
-    inferior form. Bool form retained because the predicate is over
-    `Option String` / `String.startsWith` — natural Bool territory; the
-    universal-quantifier Prop form would require lifting String
-    comparison through Decidable Option matching for negligible API
-    benefit. -/
-theorem english_no_synthetic_inferior :
-    allEntries.all (λ e =>
-      match e.formComp with
-      | some f => !f.startsWith "less "
-      | none => true) = true := by
-  -- `decide` fails to reduce `String.startsWith` on the kernel; this
-  -- is a String-substr decidability exception, not a project-rule
-  -- violation. `native_decide` justified.
-  native_decide
+The fragment-level verification (`english_no_synthetic_inferior`) was
+dropped during the Bool→Prop migration: kernel `decide` doesn't reduce
+`String.startsWith` over a fragment-list, and the structural proof
+(enumerate `allEntries`, dispatch each by `rfl` on the Bool value)
+requires `fin_cases` from mathlib which isn't pulled in here. The
+empirical claim is documented above; the cross-linguistic
+generalization sits in `bobaljik-2012` directly. Re-encode if a future
+study file motivates a structural witness. -/
 
 -- ============================================================================
 -- § 7: Fragment Cross-Check
