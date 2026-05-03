@@ -25,7 +25,7 @@ team semantics restricted to singleton teams.
 
 namespace Semantics.BSML
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
 -- §1: Classical Evaluation
@@ -34,7 +34,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W]
 /-- Classical (Kripke) evaluation of a BSML formula at a single world.
     ∨ is pointwise, ◇ is existential, □ is universal — no team splitting.
     NE evaluates to true (singletons are non-empty). -/
-def classicalEval (M : BSMLModel W) (φ : BSMLFormula) (w : W) : Bool :=
+def classicalEval (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) : Bool :=
   match φ with
   | .atom p => M.val p w
   | .ne => true
@@ -50,8 +50,8 @@ def classicalEval (M : BSMLModel W) (φ : BSMLFormula) (w : W) : Bool :=
 set_option maxHeartbeats 800000 in
 /-- For NE-free formulas, support and anti-support decompose pointwise over
     team members in terms of classical evaluation. -/
-private theorem neFree_flat_eq (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+private theorem neFree_flat_eq (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true) :
     (support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true) ∧
     (antiSupport M φ t ↔ ∀ w ∈ t, classicalEval M φ w = false) := by
@@ -185,8 +185,8 @@ Classical Collapse (Fact 15 from @cite{aloni-2022}).
 For NE-free formulas, BSML support on a singleton team equals classical
 Kripke evaluation.
 -/
-theorem classicalCollapse (M : BSMLModel W)
-    (φ : BSMLFormula) (w : W)
+theorem classicalCollapse (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (w : W)
     (hNE : φ.isNEFree = true) :
     support M φ {w} ↔ classicalEval M φ w = true := by
   rw [(neFree_flat_eq M φ {w} hNE).1]
@@ -194,8 +194,8 @@ theorem classicalCollapse (M : BSMLModel W)
 
 /-- Anti-support collapse: singleton anti-support equals negation of
     classical evaluation. -/
-theorem classicalCollapseAnti (M : BSMLModel W)
-    (φ : BSMLFormula) (w : W)
+theorem classicalCollapseAnti (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (w : W)
     (hNE : φ.isNEFree = true) :
     antiSupport M φ {w} ↔ classicalEval M φ w = false := by
   rw [(neFree_flat_eq M φ {w} hNE).2]
@@ -207,8 +207,8 @@ theorem classicalCollapseAnti (M : BSMLModel W)
 
 /-- NE-free formulas have flat support: team support = pointwise classical
     evaluation on all members. -/
-theorem neFree_flat (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem neFree_flat (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true) :
     support M φ t ↔ ∀ w ∈ t, classicalEval M φ w = true :=
   (neFree_flat_eq M φ t hNE).1
@@ -230,7 +230,7 @@ canonical accessibility-relation type in
 
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
-def BSMLModel.toAccessRel (M : BSMLModel W) :
+def BSMLModel.toAccessRel (M : BSMLModel W Atom) :
     Core.IntensionalLogic.AccessRel W :=
   fun w v => v ∈ M.access w
 
@@ -238,7 +238,7 @@ def BSMLModel.toAccessRel (M : BSMLModel W) :
     connecting BSML's classical evaluation to the shared modal logic
     infrastructure from `Core.IntensionalLogic`. -/
 theorem classicalEval_agrees_diamondR_poss
-    (M : BSMLModel W) (φ : BSMLFormula) (w : W) :
+    (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) :
     classicalEval M (.poss φ) w = true ↔
     diamondR M.toAccessRel (fun v => classicalEval M φ v = true) w := by
   simp only [classicalEval, decide_eq_true_eq, diamondR, BSMLModel.toAccessRel]

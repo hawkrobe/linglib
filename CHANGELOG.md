@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.620 — Core/StateAlgebra hoist + BSML atom polymorphism + FreeChoice/ consolidation
+
+Architectural refactor toward point-polymorphic team semantics, prepping for QBSML (Aloni & van Ormondt 2023, JoLLI 32:539).
+
+- New `Phenomena/FreeChoice/` top-level: `Atoms.lean` (typed `FCAtom`), `Worlds.lean` (`PowerSet2World` — Aloni Figure 1's 4-world model, previously reinvented in 4+ files), `Basic.lean` (moved from `Modality/FreeChoice.lean`), `Divergences.lean` (cross-framework theorems). 8 FC-primary Studies moved from `Modality/Studies/` → `FreeChoice/Studies/`.
+- New `Core/Logic/StateAlgebra/`: theory-neutral `Partition.lean` (`splitsAs`, `splitsAsNE` over `Finset α`) and `Frames.lean` (`isStateBased`, `isIndisputable` over `W → Finset W`). BSML consumes via parametric polymorphism; QBSML/inquisitive/dependence logic will reuse identically (QBSML's `s↓` projection is composition with `Finset.image Prod.fst`).
+- BSML substrate atom polymorphism: `BSMLFormula (Atom : Type*)` and `BSMLModel (W Atom : Type*)`. Eliminates String-keyed valuation's silent-typo trap. Enables typed predicates for first-order extension.
+- `Aloni2022.lean` (146 → 254 lines): typed `FCAtom` throughout — `λ p w => w.holds p` replaces triplicated String-match with `_ => false` fallthrough. Each `#guard decide` replaced by a named theorem invoking substrate (`narrowScopeFC`, `wideScopeFC`, `modalDisjunction`, `dualProhibition`, `doubleNegationFC`). Dead duplicate at lines 117-118 fixed; `looseDeonticModel` exhibits genuine WS FC implication failure (premise+ ∧ conclusion-, not vacuous).
+- 2 cross-framework divergence theorems in `Divergences.lean`: `aloni_predicts_FC_deontic_but_HM_orthologic_predicts_FC_failure_epistemic` (promotes `HollidayMandelkern2024.lean:469-490` prose — the only previously-existing cross-framework FC comment in linglib — to a Lean theorem); `bsml_plus_WS_FC_sensitive_to_indisputability` (Aloni §6.1 intra-framework contrast). 3 blockers documented honestly: BSML+/Fox 2007 Dual Prohibition (structural — different math universes), BSML+/BSML* Negative FC (substrate gap — `supportStar` negation placeholder), Modal Disjunction (same structural blocker).
+- Bib `aloni-2022` `sources` field corrected (was stale, pointed to non-existent `Comparisons/FreeChoice/Aloni2022.lean`).
+- Build clean: 5724 jobs, only pre-existing sorrys. Transparent on what's deferred (BSML*/BSML◇/BSML∅ system variants, QBSML, atom polymorphism for Dynamic/PLA + Composition/Glue substrates).
+
 ### 0.230.620–621 — Phase 4: DegreeContainment three-way dissolution
 
 Migration phase 4/9. Two commits (a Phase 4 commit captured only the deletion; the fixup added the new substrate files + retargeted consumers).

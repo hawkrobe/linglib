@@ -29,7 +29,7 @@ Free choice is DERIVED from three independent principles:
 
 namespace Semantics.BSML
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
 -- §1: Flatness
@@ -40,12 +40,12 @@ def isFlat (prop : Finset W → Prop) : Prop :=
   ∀ t t' : Finset W, t' ⊆ t → prop t → prop t'
 
 /-- Atoms are flat. -/
-theorem atom_is_flat (M : BSMLModel W) (p : String) :
+theorem atom_is_flat (M : BSMLModel W Atom) (p : Atom) :
     isFlat (λ t => support M (.atom p) t) :=
   fun _ _ hSub hSupp w hw => hSupp w (hSub hw)
 
 /-- NE is NOT flat. -/
-theorem ne_not_flat [Nonempty W] (M : BSMLModel W) :
+theorem ne_not_flat [Nonempty W] (M : BSMLModel W Atom) :
     ¬isFlat (λ t => support M .ne t) := by
   intro hFlat
   have hFull : (Finset.univ : Finset W).Nonempty := Finset.univ_nonempty
@@ -66,8 +66,8 @@ two non-empty parts (by enrichment + NE). Each part supports its
 respective disjunct (by `enrichment_strengthens_support`), and each
 is a subset of R[w] (via the union), yielding ◇α and ◇β.
 -/
-theorem narrowScopeFC (M : BSMLModel W)
-    (α β : BSMLFormula) (t : Finset W)
+theorem narrowScopeFC (M : BSMLModel W Atom)
+    (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
     (h : support M (enrich (.poss (.disj α β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
@@ -100,8 +100,8 @@ The disjunction splits t = t₁ ∪ t₂. From t₁ pick w₁ — it has a subte
 s_a ⊆ R[w₁] supporting α. By indisputability R[w] = R[w₁] for all w ∈ t,
 so s_a ⊆ R[w], yielding ◇α at every world. Symmetrically for β.
 -/
-theorem wideScopeFC (M : BSMLModel W)
-    (α β : BSMLFormula) (t : Finset W)
+theorem wideScopeFC (M : BSMLModel W Atom)
+    (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
     (hInd : M.isIndisputable t)
     (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
@@ -140,8 +140,8 @@ The proof: enriched disjunction splits into two **non-empty** substates
 (by enrichment + NE). By state-basedness R[w] = t, so each substate is
 a non-empty subset of R[w], yielding ◇α and ◇β.
 -/
-theorem modalDisjunction (M : BSMLModel W)
-    (α β : BSMLFormula) (t : Finset W)
+theorem modalDisjunction (M : BSMLModel W Atom)
+    (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
     (hSB : M.isStateBased t)
     (h : support M (enrich (.disj α β)) t) :
@@ -180,8 +180,8 @@ of the disjunction entails prohibition of each disjunct. The proof
 strips enrichment from the anti-supported disjuncts using Fact 1
 (`enrichment_strengthens_antiSupport`).
 -/
-theorem dualProhibition (M : BSMLModel W)
-    (α β : BSMLFormula) (t : Finset W)
+theorem dualProhibition (M : BSMLModel W Atom)
+    (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
     (h : support M (enrich (.neg (.poss (.disj α β)))) t) :
     support M (.neg (.poss α)) t ∧
@@ -210,8 +210,8 @@ Under double negation, FC effects re-emerge. Stripping the enrichment
 around ¬ reveals `support M (enrich (◇(α∨β))) t` (by bilateral negation
 swap), and narrow-scope FC (Fact 4) applies.
 -/
-theorem doubleNegationFC (M : BSMLModel W)
-    (α β : BSMLFormula) (t : Finset W)
+theorem doubleNegationFC (M : BSMLModel W Atom)
+    (α β : BSMLFormula Atom) (t : Finset W)
     (hα : α.isNEFree = true) (hβ : β.isNEFree = true)
     (h : support M (enrich (.neg (.neg (.poss (.disj α β))))) t) :
     support M (.poss α) t ∧ support M (.poss β) t := by
@@ -237,7 +237,7 @@ Counterexample: single world w where a=true, b=false, R[w]={w}, team={w}.
 - [◇¬a]⁺ fails: the only accessible subteam {w} has a(w)=true,
   so no non-empty subteam anti-supports a
 -/
-private def negFCModel : BSMLModel Unit where
+private def negFCModel : BSMLModel Unit String where
   access := fun _ => Finset.univ
   val := fun p _ => match p with
     | "a" => true
@@ -245,10 +245,10 @@ private def negFCModel : BSMLModel Unit where
 
 private def negFCTeam : Finset Unit := Finset.univ
 
-private def negFC_poss_premise : BSMLFormula :=
+private def negFC_poss_premise : BSMLFormula String :=
   .poss (.neg (.conj (.atom "a") (.atom "b")))
 
-private def negFC_poss_conclusion : BSMLFormula :=
+private def negFC_poss_conclusion : BSMLFormula String :=
   .poss (.neg (.atom "a"))
 
 /-- ◇¬(a ∧ b): enriched premise IS supported on the counterexample team. -/
@@ -264,16 +264,16 @@ theorem negFC_poss_conclusion_fails :
 /-- Fact 14 (◇ version): ◇¬(α ∧ β) ⊭_{BSML+} ◇¬α.
     Negative FC does not hold under pragmatic enrichment. -/
 theorem negativeFC_poss_fails_bsmlPlus :
-    ¬consequencePlus (W := Unit)
+    ¬consequencePlus (W := Unit) (Atom := String)
       (.poss (.neg (.conj (.atom "a") (.atom "b"))))
       (.poss (.neg (.atom "a"))) := by
   intro h
   exact negFC_poss_conclusion_fails (h negFCModel negFCTeam negFC_poss_premise_holds)
 
-private def negFC_nec_premise : BSMLFormula :=
+private def negFC_nec_premise : BSMLFormula String :=
   .neg (BSMLFormula.nec (.conj (.atom "a") (.atom "b")))
 
-private def negFC_nec_conclusion : BSMLFormula :=
+private def negFC_nec_conclusion : BSMLFormula String :=
   .neg (BSMLFormula.nec (.atom "a"))
 
 /-- ¬□(a ∧ b): enriched premise IS supported on the counterexample team. -/
@@ -289,7 +289,7 @@ theorem negFC_nec_conclusion_fails :
 /-- Fact 14 (□ version): ¬□(α ∧ β) ⊭_{BSML+} ¬□α.
     Negative FC with necessity also fails under pragmatic enrichment. -/
 theorem negativeFC_nec_fails_bsmlPlus :
-    ¬consequencePlus (W := Unit)
+    ¬consequencePlus (W := Unit) (Atom := String)
       (.neg (BSMLFormula.nec (.conj (.atom "a") (.atom "b"))))
       (.neg (BSMLFormula.nec (.atom "a"))) := by
   intro h

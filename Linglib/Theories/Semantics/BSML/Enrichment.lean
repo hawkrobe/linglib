@@ -26,7 +26,7 @@ non-empty witnesses — yielding free choice.
 
 namespace Semantics.BSML
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
 -- §1: Pragmatic Enrichment (Definition 6)
@@ -44,7 +44,7 @@ Recursively adds non-emptiness constraints at every level:
 - `[◇φ]⁺ = ◇[φ]⁺ ∧ NE`
 - `[□φ]⁺ = □[φ]⁺ ∧ NE`
 -/
-def enrich : BSMLFormula → BSMLFormula
+def enrich : BSMLFormula Atom → BSMLFormula Atom
   | .atom p => .conj (.atom p) .ne
   | .ne => .ne
   | .neg φ => .conj (.neg (enrich φ)) .ne
@@ -56,16 +56,16 @@ def enrich : BSMLFormula → BSMLFormula
 -- §2: Structure Lemmas
 -- ============================================================================
 
-theorem enrich_neg_structure (φ : BSMLFormula) :
+theorem enrich_neg_structure (φ : BSMLFormula Atom) :
     enrich (.neg φ) = .conj (.neg (enrich φ)) .ne := rfl
 
-theorem enrich_conj_structure (φ ψ : BSMLFormula) :
+theorem enrich_conj_structure (φ ψ : BSMLFormula Atom) :
     enrich (.conj φ ψ) = .conj (.conj (enrich φ) (enrich ψ)) .ne := rfl
 
-theorem enrich_disj_structure (φ ψ : BSMLFormula) :
+theorem enrich_disj_structure (φ ψ : BSMLFormula Atom) :
     enrich (.disj φ ψ) = .conj (.disj (enrich φ) (enrich ψ)) .ne := rfl
 
-theorem enrich_poss_structure (φ : BSMLFormula) :
+theorem enrich_poss_structure (φ : BSMLFormula Atom) :
     enrich (.poss φ) = .conj (.poss (enrich φ)) .ne := rfl
 
 -- ============================================================================
@@ -73,8 +73,8 @@ theorem enrich_poss_structure (φ : BSMLFormula) :
 -- ============================================================================
 
 /-- If an enriched formula is supported, the team is non-empty. -/
-theorem enriched_support_implies_nonempty (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enriched_support_implies_nonempty (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (h : support M (enrich φ) t) : t.Nonempty := by
   cases φ with
   | ne => exact h
@@ -86,16 +86,16 @@ theorem enriched_support_implies_nonempty (M : BSMLModel W)
 
 /-- If disjunction is supported, there exists a split where both parts
     support their disjuncts. -/
-theorem split_exists (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W)
+theorem split_exists (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W)
     (h : support M (.disj φ ψ) t) :
     ∃ t₁ t₂ : Finset W, support M φ t₁ ∧ support M ψ t₂ := by
   obtain ⟨t₁, t₂, _, h₁, h₂⟩ := h
   exact ⟨t₁, t₂, h₁, h₂⟩
 
 /-- Enriched disjunction forces both parts of split to be non-empty. -/
-theorem enriched_split_forces_both_nonempty (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W)
+theorem enriched_split_forces_both_nonempty (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W)
     (h : support M (.disj (enrich φ) (enrich ψ)) t) :
     ∃ t₁ t₂ : Finset W,
       t₁.Nonempty ∧ t₂.Nonempty ∧
@@ -113,8 +113,8 @@ theorem enriched_split_forces_both_nonempty (M : BSMLModel W)
 /-- Anti-support of (φ ∧ NE) implies anti-support of φ.
     From the SPLIT, one part anti-supports φ and the other (anti-supporting NE)
     is empty, so the first part is the whole team. -/
-theorem antiSupport_strip_ne (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem antiSupport_strip_ne (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (h : antiSupport M (.conj φ .ne) t) :
     antiSupport M φ t := by
   obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
@@ -123,15 +123,15 @@ theorem antiSupport_strip_ne (M : BSMLModel W)
 
 /-- Anti-support of φ implies anti-support of (φ ∧ NE).
     Use the trivial split (t, ∅). -/
-theorem antiSupport_conj_ne_of_antiSupport (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem antiSupport_conj_ne_of_antiSupport (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (h : antiSupport M φ t) :
     antiSupport M (.conj φ .ne) t :=
   ⟨t, ∅, by simp, h, rfl⟩
 
 /-- Anti-support of (φ ∧ NE) ↔ anti-support of φ. -/
-theorem antiSupport_conj_ne_iff (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W) :
+theorem antiSupport_conj_ne_iff (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W) :
     antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t :=
   ⟨antiSupport_strip_ne M φ t, antiSupport_conj_ne_of_antiSupport M φ t⟩
 
@@ -141,8 +141,8 @@ theorem antiSupport_conj_ne_iff (M : BSMLModel W)
 
 /-- Anti-support monotonicity for ◇: if antiSupport of φ implies antiSupport of ψ
     for all teams, then ◇φ anti-support implies ◇ψ anti-support. -/
-theorem antiSupport_poss_weaken (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W)
+theorem antiSupport_poss_weaken (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W)
     (hmono : ∀ t' : Finset W, antiSupport M φ t' → antiSupport M ψ t')
     (h : antiSupport M (.poss φ) t) :
     antiSupport M (.poss ψ) t :=
@@ -154,8 +154,8 @@ theorem antiSupport_poss_weaken (M : BSMLModel W)
 
 /-- Both directions of Fact 1 (enrichment strengthens), proved by simultaneous
     induction on formula structure. -/
-private theorem enrichment_strengthens_both (M : BSMLModel W)
-    (φ : BSMLFormula) (hNE : φ.isNEFree = true) :
+private theorem enrichment_strengthens_both (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (hNE : φ.isNEFree = true) :
     (∀ t, support M (enrich φ) t → support M φ t) ∧
     (∀ t, antiSupport M (enrich φ) t → antiSupport M φ t) := by
   induction φ with
@@ -208,16 +208,16 @@ Enrichment strengthens: [α]⁺ ⊨ α (Fact 1 from @cite{aloni-2022}).
 For NE-free α, if a team supports the enriched formula [α]⁺, it also
 supports the original α.
 -/
-theorem enrichment_strengthens_support (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enrichment_strengthens_support (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true)
     (h : support M (enrich φ) t) :
     support M φ t :=
   (enrichment_strengthens_both M φ hNE).1 t h
 
 /-- Enrichment strengthens (anti-support direction of Fact 1). -/
-theorem enrichment_strengthens_antiSupport (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enrichment_strengthens_antiSupport (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true)
     (h : antiSupport M (enrich φ) t) :
     antiSupport M φ t :=
@@ -230,8 +230,8 @@ theorem enrichment_strengthens_antiSupport (M : BSMLModel W)
 /--
 Fact 2 from @cite{aloni-2022}: [α]⁺ ⊨ α ∧ NE for NE-free α.
 -/
-theorem enrichment_entails_conj_ne (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enrichment_entails_conj_ne (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hNE : φ.isNEFree = true)
     (h : support M (enrich φ) t) :
     support M (.conj φ .ne) t :=
@@ -248,8 +248,8 @@ Pragmatic enrichment is vacuous under single negation for positive formulas
 
 For positive α (no negation): ¬[α]⁺ ≡ ¬α (both support and anti-support).
 -/
-theorem enrichment_vacuous_under_negation (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enrichment_vacuous_under_negation (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hPos : φ.isPositive = true) :
     antiSupport M (enrich φ) t ↔ antiSupport M φ t := by
   induction φ generalizing t with
@@ -286,8 +286,8 @@ theorem enrichment_vacuous_under_negation (M : BSMLModel W)
            fun h w hw => (ih _ hPos).mpr (h w hw)⟩
 
 /-- Fact 9, support direction: support M (.neg (enrich φ)) t ↔ support M (.neg φ) t. -/
-theorem enrichment_vacuous_under_negation_support (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+theorem enrichment_vacuous_under_negation_support (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hPos : φ.isPositive = true) :
     support M (.neg (enrich φ)) t ↔ support M (.neg φ) t :=
   enrichment_vacuous_under_negation M φ t hPos
@@ -298,8 +298,8 @@ theorem enrichment_vacuous_under_negation_support (M : BSMLModel W)
 
 /-- BSML+ consequence: consequence between enriched formulas.
     α ⊨_{BSML+} β iff [α]⁺ ⊨_{BSML} [β]⁺ (@cite{aloni-2022} §6.3.1). -/
-def consequencePlus (φ ψ : BSMLFormula) : Prop :=
-  ∀ (M : BSMLModel W) (t : Finset W), support M (enrich φ) t → support M (enrich ψ) t
+def consequencePlus (φ ψ : BSMLFormula Atom) : Prop :=
+  ∀ (M : BSMLModel W Atom) (t : Finset W), support M (enrich φ) t → support M (enrich ψ) t
 
 -- ============================================================================
 -- §11: BSML* ↔ BSML+ for Classical Positive Formulas (Fact 13)
@@ -308,15 +308,15 @@ def consequencePlus (φ ψ : BSMLFormula) : Prop :=
 /-- A formula is classical positive: no NE atom and no negation.
     These are the formulas for which BSML* and BSML+ consequence coincide
     (@cite{aloni-2022} Fact 13). -/
-def BSMLFormula.isClassicalPositive (φ : BSMLFormula) : Bool :=
+def BSMLFormula.isClassicalPositive (φ : BSMLFormula Atom) : Bool :=
   φ.isNEFree && φ.isPositive
 
 /-- For classical positive formulas, enriched support is equivalent to BSML*
     support plus non-emptiness. The key insight is that enrichment adds NE at
     every level, which exactly matches BSML*'s exclusion of ∅ from all
     intermediate states (including disjunction splits). -/
-private theorem enriched_iff_star_nonempty (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W)
+private theorem enriched_iff_star_nonempty (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W)
     (hCP : φ.isClassicalPositive = true) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with
@@ -352,8 +352,8 @@ private theorem enriched_iff_star_nonempty (M : BSMLModel W)
     · intro ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩
       have ⟨hs₁, hne₁⟩ := (ih₁ t₁ hψ₁).mp h₁
       have ⟨hs₂, hne₂⟩ := (ih₂ t₂ hψ₂).mp h₂
-      exact ⟨⟨t₁, t₂, hu, hne₁, hne₂, hs₁, hs₂⟩, hne⟩
-    · intro ⟨⟨t₁, t₂, hu, hne₁, hne₂, hs₁, hs₂⟩, hne⟩
+      exact ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, hs₁, hs₂⟩, hne⟩
+    · intro ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, hs₁, hs₂⟩, hne⟩
       exact ⟨⟨t₁, t₂, hu, (ih₁ t₁ hψ₁).mpr ⟨hs₁, hne₁⟩,
               (ih₂ t₂ hψ₂).mpr ⟨hs₂, hne₂⟩⟩, hne⟩
   | poss ψ ih =>
@@ -379,7 +379,7 @@ If we restrict to positive formulas without NE or ¬, then ruling out the
 empty state syntactically (via [·]⁺ enrichment) is equivalent to ruling
 it out model-theoretically (via BSML* non-empty restriction).
 -/
-theorem bsmlStar_iff_bsmlPlus (φ ψ : BSMLFormula)
+theorem bsmlStar_iff_bsmlPlus (φ ψ : BSMLFormula Atom)
     (hφ : φ.isClassicalPositive = true) (hψ : ψ.isClassicalPositive = true) :
     consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ := by
   constructor
@@ -407,7 +407,7 @@ support p ∧ NE (the NE conjunct fails).
 -/
 theorem enrichment_not_vacuous_under_double_negation :
     ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (M : BSMLModel W) (t : Finset W),
+      (M : BSMLModel W String) (t : Finset W),
       -- ¬¬p holds on ∅ (by DNE, = vacuous support of p)
       support M (.neg (.neg (.atom "p"))) t ∧
       -- but ¬¬[p]⁺ fails on ∅ (= p ∧ NE requires non-emptiness)

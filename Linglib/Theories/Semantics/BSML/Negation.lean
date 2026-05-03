@@ -25,20 +25,20 @@ negation as incompatibility. Fact 8 demonstrates NE's non-classical behavior.
 
 namespace Semantics.BSML
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 -- ============================================================================
 -- §1: Box-Diamond Duality (Fact 6, @cite{aloni-2022})
 -- ============================================================================
 
 /-- Box-diamond duality (support): definitionally equal since □ := ¬◇¬. -/
-theorem box_diamond_duality_support (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W) :
+theorem box_diamond_duality_support (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W) :
     support M φ.nec t ↔ support M (.neg (.poss (.neg φ))) t := Iff.rfl
 
 /-- Box-diamond duality (anti-support): definitionally equal. -/
-theorem box_diamond_duality_antiSupport (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Finset W) :
+theorem box_diamond_duality_antiSupport (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (t : Finset W) :
     antiSupport M φ.nec t ↔ antiSupport M (.neg (.poss (.neg φ))) t := Iff.rfl
 
 -- ============================================================================
@@ -47,26 +47,26 @@ theorem box_diamond_duality_antiSupport (M : BSMLModel W)
 
 /-- De Morgan for conjunction (support): ¬(φ ∧ ψ) ≡ ¬φ ∨ ¬ψ.
     Both sides reduce to the same SPLIT existential. -/
-theorem deMorgan_conj_support (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W) :
+theorem deMorgan_conj_support (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W) :
     support M (.neg (.conj φ ψ)) t ↔
     support M (.disj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for conjunction (anti-support). -/
-theorem deMorgan_conj_antiSupport (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W) :
+theorem deMorgan_conj_antiSupport (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W) :
     antiSupport M (.neg (.conj φ ψ)) t ↔
     antiSupport M (.disj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for disjunction (support): ¬(φ ∨ ψ) ≡ ¬φ ∧ ¬ψ. -/
-theorem deMorgan_disj_support (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W) :
+theorem deMorgan_disj_support (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W) :
     support M (.neg (.disj φ ψ)) t ↔
     support M (.conj (.neg φ) (.neg ψ)) t := Iff.rfl
 
 /-- De Morgan for disjunction (anti-support). -/
-theorem deMorgan_disj_antiSupport (M : BSMLModel W)
-    (φ ψ : BSMLFormula) (t : Finset W) :
+theorem deMorgan_disj_antiSupport (M : BSMLModel W Atom)
+    (φ ψ : BSMLFormula Atom) (t : Finset W) :
     antiSupport M (.neg (.disj φ ψ)) t ↔
     antiSupport M (.conj (.neg φ) (.neg ψ)) t := Iff.rfl
 
@@ -75,22 +75,22 @@ theorem deMorgan_disj_antiSupport (M : BSMLModel W)
 -- ============================================================================
 
 /-- DNE is a full bilateral equivalence. -/
-theorem dne_equivalent (φ : BSMLFormula) :
+theorem dne_equivalent (φ : BSMLFormula Atom) :
     equivalent (W := W) (.neg (.neg φ)) φ :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- Box-diamond duality is a full bilateral equivalence. -/
-theorem box_diamond_equivalent (φ : BSMLFormula) :
+theorem box_diamond_equivalent (φ : BSMLFormula Atom) :
     equivalent (W := W) φ.nec (.neg (.poss (.neg φ))) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- De Morgan for conjunction is a full bilateral equivalence. -/
-theorem deMorgan_conj_equivalent (φ ψ : BSMLFormula) :
+theorem deMorgan_conj_equivalent (φ ψ : BSMLFormula Atom) :
     equivalent (W := W) (.neg (.conj φ ψ)) (.disj (.neg φ) (.neg ψ)) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
 /-- De Morgan for disjunction is a full bilateral equivalence. -/
-theorem deMorgan_disj_equivalent (φ ψ : BSMLFormula) :
+theorem deMorgan_disj_equivalent (φ ψ : BSMLFormula Atom) :
     equivalent (W := W) (.neg (.disj φ ψ)) (.conj (.neg φ) (.neg ψ)) :=
   fun _ _ => ⟨Iff.rfl, Iff.rfl⟩
 
@@ -100,8 +100,8 @@ theorem deMorgan_disj_equivalent (φ ψ : BSMLFormula) :
 
 /-- Core incompatibility: anti-support and support cannot overlap at any world.
     This is the engine behind Fact 7 — proved by structural induction on φ. -/
-private theorem support_antiSupport_incompatible (M : BSMLModel W)
-    (φ : BSMLFormula) :
+private theorem support_antiSupport_incompatible (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) :
     ∀ (s t : Finset W),
       antiSupport M φ s → support M φ t →
       ∀ w, w ∈ s → w ∉ t := by
@@ -143,8 +143,8 @@ Negation and incompatibility (Fact 7 from @cite{aloni-2022}).
 
 If s supports ¬φ, then s and any t supporting φ are disjoint.
 -/
-theorem negation_incompatibility (M : BSMLModel W)
-    (φ : BSMLFormula) (s t : Finset W)
+theorem negation_incompatibility (M : BSMLModel W Atom)
+    (φ : BSMLFormula Atom) (s t : Finset W)
     (hs : support M (.neg φ) s) (ht : support M φ t) :
     Disjoint s t := by
   rw [Finset.disjoint_left]
@@ -162,7 +162,7 @@ and ⊥₂ = ¬NE are equivalent, but ¬⊥₁ ≠ ¬⊥₂.
 -/
 theorem replacement_failure_counterexample :
     ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (M : BSMLModel W) (t : Finset W),
+      (M : BSMLModel W String) (t : Finset W),
       (support M (.conj (.atom "p") (.neg (.atom "p"))) t ↔
        support M (.neg .ne) t) ∧
       ¬(support M (.neg (.conj (.atom "p") (.neg (.atom "p")))) t ↔
