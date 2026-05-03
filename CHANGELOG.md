@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.649 — Substrate cleanup: splitsAs abbrev + isFlat shadow + Question/Team flatness
+
+Four-item cleanup pass following multi-agent audit of team-semantic substrate.
+
+- **`splitsAs` / `splitsAsNE` `def → abbrev`**: eliminates the `unfold
+  Core.Logic.Team.splitsAs` chain in 8 BSML/QBSML proof sites; the
+  underlying `Finset` union equation now reduces transparently. Drops
+  `splitsAs_iff` / `splitsAsNE_iff` (now `Iff.rfl` on the abbrev).
+  One BSML/Enrichment.lean simp call broke (line 122) — replaced with
+  explicit `Finset.union_empty` rewrite.
+- **`BSML/FreeChoice.lean:isFlat` shadow fix**: local `isFlat` was
+  misnamed downward-closure (subset-monotonicity), distinct from
+  substrate's `flat` (pointwise iff). Renamed to
+  `atom_downwardClosed` / `ne_not_downwardClosed`; docstrings point to
+  `flat_support_of_isNEFree` for true flatness.
+- **`Linglib.lean`**: removed dangling import of (already-deleted)
+  `Linglib.Core.Logic.Team.Bilateral`.
+- **`Core/Question/Flatness.lean`** (NEW, ~200 LOC): Anttila Prop 2.2.16
+  specialised to `Question`. Three substrate-property identifications
+  (`teamSupport_downwardClosed`, `teamSupport_emptyTeam`,
+  `teamSupport_unionClosed_of_isDeclarative`) plus the capstone
+  `teamSupport_flat_of_isDeclarative` deriving substrate flatness via
+  `flat_of_downwardClosed_unionClosed_emptyTeam`. Inquisitive
+  declarativity and team-semantic flatness are visibly the same fact.
+
+Audit context: three-agent audit (mathlib-reviewer +
+linglib-integration-auditor + cross-framework-reconciler) flagged
+Bilateral.lean as dead code (deleted in 0.230.648), `splitsAs`
+over-naming, `isFlat` shadow, and the Question/Team unification as the
+single most-leverageable cross-framework move. This commit lands all
+non-Bilateral items.
+
 ### 0.230.649 — DM/ContainmentVI PART II collapse: subtype refinement
 
 Replaces PART II's hand-rolled `LocalVIRule` structure (4 fields:
