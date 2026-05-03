@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.618 — Architectural audit: per-(a,w,u) lemmas are wrong; Option D is the fix
+
+- New `scratch/pmf_eval_design.md` and `scratch/gs2013pmf_clunkiness_audit.md` (already committed earlier) plus a fresh **mathlib-architect audit** (in conversation, archived to scratch). Verdict:
+  - Per-(a, w, u) named lemmas in GS2013PMF (like `obsKernel_a1_s2_k1`, `s1Score_lbLifted_a3_s2_two`) are **memoized partial evaluations** named after enum coordinates, not theorems in any mathematical sense. Mathlib's pattern: closed-form universal lemmas + `decide`/`simp`/`norm_num` on demand. No precedent in mathlib for per-tuple value lemma proliferation.
+  - The proposed ℚ-shadow approach (Option B in `pmf_eval_design.md`) is **non-mathlib-shaped substrate** — parallel computable definitions for decidability that mathlib has historically refused (no `binomialQ`, `lebesgueQ`, `piQ`).
+  - The right fix is **Option D**: delete the per-(a,w,u) lemmas, mark universal evaluators as a `pmf_eval_simps` simp set, inline-prove each finding via `simp only [pmf_eval_simps]; push_cast; norm_num`. If simp is unreliable, build a `pmf_eval` tactic (~150 LOC, reusable).
+- This refactor is the next entry. Estimated LOC: 1692 → ~650-700.
+- 4 small in-progress compressions to §18 (using `s1Score_uniform_apply`) included in this commit; they fit Option D and will survive the refactor.
+
 ### 0.230.642 — SmithMoskal §4 number AAB witness encoded (Yagua 2)
 
 Replaced the schematic placeholder `attestedNumberAAB` in `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean` with concrete data from §4 Table 46 of `@cite{smith-moskal-xu-kang-bobaljik-2019}`.

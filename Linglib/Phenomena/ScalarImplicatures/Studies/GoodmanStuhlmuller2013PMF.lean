@@ -599,11 +599,9 @@ private theorem s1Score_concentrated_apply
 
 private theorem s1Score_qLifted_a3_s2_silent :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) := by
-  have := s1Score_concentrated_apply qMeaning .s2 (none : WithSilence QUtt)
-    (fun _ => by rw [lexReal_qLifted_silent]; norm_num)
-  show s1Score (liftMeaning qMeaning) 1 .a3 ⟨(WorldState.s2).toNat, by decide⟩ none = _
-  rw [this, if_pos (by simp [qualityOk]), lexReal_qLifted_silent]
+      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
+  s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ none 4 (by norm_num)
+    (by decide) extensionOf_qLifted_silent_card
 
 private theorem s1Score_qLifted_a3_s2_none :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
@@ -612,11 +610,9 @@ private theorem s1Score_qLifted_a3_s2_none :
 
 private theorem s1Score_qLifted_a3_s2_some :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) := by
-  have := s1Score_concentrated_apply qMeaning .s2 (some QUtt.some_)
-    (fun _ => by rw [lexReal_qLifted_some _ (by decide)]; norm_num)
-  show s1Score (liftMeaning qMeaning) 1 .a3 ⟨(WorldState.s2).toNat, by decide⟩ (some QUtt.some_) = _
-  rw [this, if_pos (by decide), lexReal_qLifted_some _ (by decide)]
+      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
+  s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ (some QUtt.some_) 3 (by norm_num)
+    (by decide) extensionOf_qLifted_some_card
 
 private theorem s1Score_qLifted_a3_s2_all :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
@@ -625,11 +621,9 @@ private theorem s1Score_qLifted_a3_s2_all :
 
 private theorem s1Score_qLifted_a3_s3_silent :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) := by
-  have := s1Score_concentrated_apply qMeaning .s3 (none : WithSilence QUtt)
-    (fun _ => by rw [lexReal_qLifted_silent]; norm_num)
-  show s1Score (liftMeaning qMeaning) 1 .a3 ⟨(WorldState.s3).toNat, by decide⟩ none = _
-  rw [this, if_pos (by simp [qualityOk]), lexReal_qLifted_silent]
+      (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
+  s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ none 4 (by norm_num)
+    (by decide) extensionOf_qLifted_silent_card
 
 private theorem s1Score_qLifted_a3_s3_none :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
@@ -638,19 +632,16 @@ private theorem s1Score_qLifted_a3_s3_none :
 
 private theorem s1Score_qLifted_a3_s3_some :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
-      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) := by
-  have := s1Score_concentrated_apply qMeaning .s3 (some QUtt.some_)
-    (fun _ => by rw [lexReal_qLifted_some _ (by decide)]; norm_num)
-  show s1Score (liftMeaning qMeaning) 1 .a3 ⟨(WorldState.s3).toNat, by decide⟩ (some QUtt.some_) = _
-  rw [this, if_pos (by decide), lexReal_qLifted_some _ (by decide)]
+      (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
+  s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.some_) 3 (by norm_num)
+    (by decide) extensionOf_qLifted_some_card
 
 private theorem s1Score_qLifted_a3_s3_all :
     s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
       (some QUtt.all) = ENNReal.ofReal (1 : ℝ) := by
-  have := s1Score_concentrated_apply qMeaning .s3 (some QUtt.all)
-    (fun _ => by rw [lexReal_qLifted_all_s3]; norm_num)
-  show s1Score (liftMeaning qMeaning) 1 .a3 ⟨(WorldState.s3).toNat, by decide⟩ (some QUtt.all) = _
-  rw [this, if_pos (by decide), lexReal_qLifted_all_s3]
+  rw [s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.all) 1 (by norm_num)
+        (by decide) extensionOf_qLifted_all_card]
+  norm_num
 
 -- NumUtt evaluations at `.a3 ⟨w.toNat, _⟩` for all `w`.
 
