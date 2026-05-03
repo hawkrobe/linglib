@@ -456,21 +456,25 @@ private theorem beliefReal_a3_diag (w : WorldState) (s : WorldState) :
 
 Cardinalities of utterance extensions, lex values, used downstream. -/
 
-@[pmf_eval_simps]
 private theorem extensionOf_qLifted_some_card :
     (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.some_)).card = 3 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_qLifted_all_card :
     (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.all)).card = 1 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_qLifted_none_card :
     (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.none_)).card = 1 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_qLifted_silent_card :
     (RSA.extensionOf (liftMeaning qMeaning) (none : WithSilence QUtt)).card = 4 := by decide
+
+-- File-scoped tagging keeps these private paper-specific cards out of the
+-- substrate simp set (audit hygiene rule).
+attribute [local pmf_eval_simps]
+  extensionOf_qLifted_some_card
+  extensionOf_qLifted_all_card
+  extensionOf_qLifted_none_card
+  extensionOf_qLifted_silent_card
 
 private theorem lexReal_qLifted_some (s : WorldState) (h : qMeaning .some_ s = true) :
     lexReal (liftMeaning qMeaning) (some QUtt.some_) s = 1/3 := by
@@ -490,21 +494,23 @@ private theorem lexReal_qLifted_silent (s : WorldState) :
   rw [if_pos (RSA.liftMeaning_none qMeaning s), extensionOf_qLifted_silent_card]
   norm_num
 
-@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_one_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.one)).card = 3 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_two_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.two)).card = 2 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_three_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.three)).card = 1 := by decide
 
-@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_silent_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (none : WithSilence NumUtt)).card = 4 := by decide
+
+attribute [local pmf_eval_simps]
+  extensionOf_lbLifted_one_card
+  extensionOf_lbLifted_two_card
+  extensionOf_lbLifted_three_card
+  extensionOf_lbLifted_silent_card
 
 private theorem lexReal_lbLifted_one (s : WorldState) (h : lbMeaning .one s = true) :
     lexReal (liftMeaning lbMeaning) (some NumUtt.one) s = 1/3 := by
@@ -587,66 +593,102 @@ private theorem s1Score_uniform_apply
     field_simp
   · positivity
 
-/-! ## §17b. `pmf_eval`-friendly if-form for qLifted/lbLifted s1Score
+/-! ## §17b. Universal `pmf_eval`-friendly if-form for `s1Score (liftMeaning _)`
 
 The universal `s1Score_uniform_apply` is hypothesis-laden (h_qok, h_card, h_pos)
-so `simp` can't use it. The per-meaning if-form below has only decidable
-side-conditions (extension card via `decide`), making it pure simp fodder.
+so `simp` can't use it. `s1Score_liftMeaning_apply_eq_ite` below is parameterized
+over the meaning function `m` and has no free preconditions — the qOk branch is
+encoded as a decidable `if`, and extension nonemptiness is proved universally
+via the `witnessWorld` helper.
 
-When tagged `@[pmf_eval_simps]`, simp can iteratively rewrite each `s1Score`
-expression to `if qOk then ofReal(1/c) else 0`, then `decide` the `qOk`
-predicate to fire `if_pos`/`if_neg`, leaving pure ENNReal arithmetic for
-`norm_num`. -/
+This collapses what previously required two paper-tagged lemmas (one per meaning)
+into one polymorphic lemma. The `local attribute [pmf_eval_simps]` keeps the
+tag file-scoped so it does not pollute the substrate set with a private paper
+lemma (audit hygiene rule). -/
 
-@[pmf_eval_simps]
-private theorem s1Score_qLifted_eval (a : Access) (k : Fin (a.toNat + 1))
-    (u : WithSilence QUtt) :
-    s1Score (liftMeaning qMeaning) 1 a k u =
-      if qualityOk (liftMeaning qMeaning) a k u = true
-      then ENNReal.ofReal (((RSA.extensionOf (liftMeaning qMeaning) u).card : ℝ)⁻¹)
+/-- The witness world for `k.val` is `obsCompatible` at any `(a, k)`. This is
+the geometric foundation behind extension nonemptiness when qOk holds: qOk
+asserts the meaning is true at every compatible world; the witnessWorld is one. -/
+private theorem witnessWorld_obsCompatible (a : Access) (k : Fin (a.toNat + 1)) :
+    obsCompatible a k (witnessWorld k.val) = true := by
+  unfold obsCompatible
+  obtain ⟨n, hn⟩ := k
+  have hn' : n ≤ a.toNat := Nat.lt_succ_iff.mp hn
+  have ha : a.toNat ≤ 3 := a.toNat_le_three
+  rw [Bool.and_eq_true]
+  refine ⟨?_, ?_⟩
+  all_goals
+    match n, hn' with
+    | 0, _ => first | (simp [witnessWorld, WorldState.toNat]; omega) | simp [witnessWorld, WorldState.toNat]
+    | 1, _ => first | (simp [witnessWorld, WorldState.toNat]; omega) | simp [witnessWorld, WorldState.toNat]
+    | 2, _ => first | (simp [witnessWorld, WorldState.toNat]; omega) | simp [witnessWorld, WorldState.toNat]
+    | 3, _ => first | (simp [witnessWorld, WorldState.toNat]; omega) | simp [witnessWorld, WorldState.toNat]
+    | n+4, h => omega
+
+/-- When qOk holds at `(m, a, k, u)`, the extension of `liftMeaning m u` is
+nonempty: the witnessWorld for `k.val` is obsCompatible (above), and qOk
+forces meaning at compatible worlds. -/
+private theorem extensionOf_liftMeaning_nonempty_of_qok
+    {U : Type*} [Fintype U] [DecidableEq U]
+    (m : U → WorldState → Bool) (a : Access) (k : Fin (a.toNat + 1))
+    (u : WithSilence U) (h_qok : qualityOk (liftMeaning m) a k u = true) :
+    (RSA.extensionOf (liftMeaning m) u).Nonempty := by
+  refine ⟨witnessWorld k.val, ?_⟩
+  rw [RSA.mem_extensionOf]
+  have hcompat := witnessWorld_obsCompatible a k
+  unfold qualityOk at h_qok
+  rw [List.all_eq_true] at h_qok
+  have hmem : witnessWorld k.val ∈ ([WorldState.s0, .s1, .s2, .s3] : List _) := by
+    cases (witnessWorld k.val) <;> simp
+  have := h_qok (witnessWorld k.val) hmem
+  simp [hcompat] at this
+  exact this
+
+/-- **Universal if-form for `s1Score (liftMeaning m)`** — paper-independent
+closed-form variant of `s1Score_uniform_apply` with the qOk hypothesis encoded
+as a decidable `if`. Replaces per-meaning duplication with one lemma
+parameterized over `m : U → WorldState → Bool`. -/
+private theorem s1Score_liftMeaning_apply_eq_ite
+    {U : Type*} [Fintype U] [DecidableEq U]
+    (m : U → WorldState → Bool) (a : Access) (k : Fin (a.toNat + 1))
+    (u : WithSilence U) :
+    s1Score (liftMeaning m) 1 a k u =
+      if qualityOk (liftMeaning m) a k u = true
+      then ENNReal.ofReal (((RSA.extensionOf (liftMeaning m) u).card : ℝ)⁻¹)
       else 0 := by
-  by_cases h : qualityOk (liftMeaning qMeaning) a k u = true
+  by_cases h : qualityOk (liftMeaning m) a k u = true
   · rw [if_pos h]
-    have hc : (RSA.extensionOf (liftMeaning qMeaning) u).card ≠ 0 := by
-      rcases u with _ | u' <;> [decide; (cases u' <;> decide)]
-    rw [s1Score_uniform_apply qMeaning a k u
-          (RSA.extensionOf (liftMeaning qMeaning) u).card hc h rfl]
+    have h_ne : (RSA.extensionOf (liftMeaning m) u).card ≠ 0 :=
+      Finset.card_ne_zero.mpr (extensionOf_liftMeaning_nonempty_of_qok m a k u h)
+    rw [s1Score_uniform_apply m a k u
+          (RSA.extensionOf (liftMeaning m) u).card h_ne h rfl]
     congr 1; field_simp
   · rw [if_neg h]
     exact RSA.softmaxBelief_eq_zero_of_not_qOk h
 
-@[pmf_eval_simps]
-private theorem s1Score_lbLifted_eval (a : Access) (k : Fin (a.toNat + 1))
-    (u : WithSilence NumUtt) :
-    s1Score (liftMeaning lbMeaning) 1 a k u =
-      if qualityOk (liftMeaning lbMeaning) a k u = true
-      then ENNReal.ofReal (((RSA.extensionOf (liftMeaning lbMeaning) u).card : ℝ)⁻¹)
-      else 0 := by
-  by_cases h : qualityOk (liftMeaning lbMeaning) a k u = true
-  · rw [if_pos h]
-    have hc : (RSA.extensionOf (liftMeaning lbMeaning) u).card ≠ 0 := by
-      rcases u with _ | u' <;> [decide; (cases u' <;> decide)]
-    rw [s1Score_uniform_apply lbMeaning a k u
-          (RSA.extensionOf (liftMeaning lbMeaning) u).card hc h rfl]
-    congr 1; field_simp
-  · rw [if_neg h]
-    exact RSA.softmaxBelief_eq_zero_of_not_qOk h
+-- File-scoped: the if-form depends on Access/WorldState/qualityOk, so we keep
+-- the simp tag local rather than polluting the substrate set with a private
+-- paper lemma (audit hygiene rule).
+attribute [local pmf_eval_simps] s1Score_liftMeaning_apply_eq_ite
 
-/-- Per-meaning sum unfolders. Required because `WithSilence QUtt = Option QUtt`
-and `QUtt` is a derived Fintype with no generic `Fin.sum_univ_*`-style lemma. -/
-@[pmf_eval_simps]
-private theorem WithSilence_QUtt_sum_univ {β} [AddCommMonoid β]
+/-- Sum unfolder for `WithSilence U` over a derived-Fintype `U`. Required
+because `Fin.sum_univ_*` doesn't apply to custom enums; users supply this
+at-call-site with their specific `U`. Local-tagged for `pmf_eval_simps`
+in this file. -/
+private theorem WithSilence_QUtt_sum_univ {β : Type*} [AddCommMonoid β]
     (f : WithSilence QUtt → β) :
     ∑ i, f i =
       f none + (f (some .none_) + (f (some .some_) + (f (some .all) + 0))) := by
   rfl
 
-@[pmf_eval_simps]
-private theorem WithSilence_NumUtt_sum_univ {β} [AddCommMonoid β]
+private theorem WithSilence_NumUtt_sum_univ {β : Type*} [AddCommMonoid β]
     (f : WithSilence NumUtt → β) :
     ∑ i, f i =
       f none + (f (some .one) + (f (some .two) + (f (some .three) + 0))) := by
   rfl
+
+attribute [local pmf_eval_simps]
+  WithSilence_QUtt_sum_univ WithSilence_NumUtt_sum_univ
 
 /-! ### `pmf_eval` smoke tests for the if-form variants -/
 
@@ -1495,15 +1537,15 @@ theorem some_full_implicature_sil
   · rw [tsum_fintype, tsum_fintype, sum_s1Score_qLifted_a3_s2, sum_s1Score_qLifted_a3_s3]
     exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
--- pmf_eval validation: Finding 1 inline using the macro + paper-tagged if-form
--- variants (see §17b above). Result: ~25 LOC vs factored ~22 LOC, but eliminates
--- ~64 LOC of per-(meaning, a, w, u) s1Score helpers (those reusable across all
--- qLifted findings; absorbed by `s1Score_qLifted_eval` if-form + tagged card
--- lemmas). Architecture scales: ~50 LOC of substrate (Core/Probability/PMFEval*)
--- + ~25 LOC of paper-tagged variants → all findings close in ~25 LOC each
--- modulo the residual ENNReal arithmetic at the end (`gcongr` doesn't apply on
--- ENNReal `<` due to no `AddLeftStrictMono` instance, so combine via ofReal_add
--- and finish with norm_num — ~3 lines).
+-- pmf_eval validation: Finding 1 inline using the macro + universal if-form
+-- (`s1Score_liftMeaning_apply_eq_ite`, §17b) + locally-tagged card lemmas.
+-- Result: ~25 LOC vs factored ~22 LOC, but eliminates ~64 LOC of per-(meaning,
+-- a, w, u) s1Score helpers. Architecture scales: ~50 LOC of substrate
+-- (Core/Probability/PMFEval*) + ~10 LOC of paper-tagged variants per paper →
+-- all findings close in ~25 LOC each modulo the residual ENNReal arithmetic
+-- at the end (`gcongr` doesn't apply on ENNReal `<` due to no
+-- `AddLeftStrictMono` instance, so combine via ofReal_add and finish with
+-- norm_num — ~3 lines).
 private theorem some_full_implicature_sil_v3_pmf_eval
     (hMarg : PMF.marginal
               (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
