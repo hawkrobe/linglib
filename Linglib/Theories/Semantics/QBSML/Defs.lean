@@ -205,6 +205,21 @@ theorem State.extendUniversal_union_distrib [Fintype Domain]
     · exact ⟨d, j, Or.inl hjs, hupd⟩
     · exact ⟨d, j, Or.inr hjt, hupd⟩
 
+/-- Functional extension distributes over union of teams. -/
+theorem State.extendFunctional_union_distrib (s t : Finset (Index W Var Domain))
+    (x : Var) (h : Index W Var Domain → Finset Domain) :
+    State.extendFunctional (s ∪ t) x h =
+      State.extendFunctional s x h ∪ State.extendFunctional t x h := by
+  unfold State.extendFunctional
+  exact Finset.union_biUnion
+
+/-- Functional extension is monotone in the team (for fixed `h`). -/
+theorem State.extendFunctional_subset_mono {s t : Finset (Index W Var Domain)}
+    (x : Var) (h : Index W Var Domain → Finset Domain) (hsub : s ⊆ t) :
+    State.extendFunctional s x h ⊆ State.extendFunctional t x h := by
+  unfold State.extendFunctional
+  exact Finset.biUnion_subset_biUnion_of_subset_left _ hsub
+
 end Semantics.QBSML
 
 -- ============================================================================
