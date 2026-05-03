@@ -4,6 +4,16 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.625 — Phase 6: Relativization → Typology/Relativization/ExtractionBridge
+
+Migration phase 6/9.
+
+- `git mv Theories/Interfaces/Morphosyntax/Relativization.lean → Typology/Relativization/ExtractionBridge.lean` (new sibling of `Defs.lean` and `Basic.lean`; not appended into Defs.lean to keep the WALS-122/123/90D + Keenan-Comrie 1977 anchor clean).
+- Namespace `Interfaces` → `Typology.Relativization`.
+- 3 `targets.all`-style theorems rewritten as `cases ... <;> rfl` for compile-time exhaustivity over the constructors. Adding a new `ExtractionTarget` or `AHPosition` constructor now breaks the build at the right line instead of silently passing a stale literal-list `decide`.
+- Importer updated (`Phenomena/FillerGap/Studies/Erlewine2018.lean`): import + body refs `Interfaces.extractionTargetToAH` → `Typology.Relativization.extractionTargetToAH`. Linglib.lean root index updated.
+- `Theories/Interfaces/Morphosyntax/` is now empty (Phase 9 cleanup will `rmdir`).
+
 ### 0.230.623 — Phase 5b: Extraction → Typology/Extraction.lean
 
 Migration phase 5b/9.
