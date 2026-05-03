@@ -40,7 +40,7 @@ open Semantics.TypeTheoretic (InfoState)
 
 The projection loses QUD, Pending, and genre information — these are
 the components that @cite{ginzburg-2012} adds beyond @cite{cooper-2023}. -/
-def tisToInfoState {P Fact QContent Cont SignT : Type}
+def tisToInfoState {P QContent : Type*} {Fact Cont SignT : Type}
     (tis : TIS P Fact QContent Cont)
     (moveToSign : IllocMove Fact QContent → SignT) :
     InfoState SignT (List Fact) where
@@ -49,17 +49,17 @@ def tisToInfoState {P Fact QContent Cont SignT : Type}
   commitments := tis.dgb.facts
 
 /-- The projection preserves commitments (= FACTS). -/
-theorem tisToInfoState_commitments {P Fact QContent Cont SignT : Type}
+theorem tisToInfoState_commitments {P QContent : Type*} {Fact Cont SignT : Type}
     (tis : TIS P Fact QContent Cont) (f : IllocMove Fact QContent → SignT) :
     (tisToInfoState tis f).commitments = tis.dgb.facts := rfl
 
 /-- The projection preserves the agenda map. -/
-theorem tisToInfoState_agenda {P Fact QContent Cont SignT : Type}
+theorem tisToInfoState_agenda {P QContent : Type*} {Fact Cont SignT : Type}
     (tis : TIS P Fact QContent Cont) (f : IllocMove Fact QContent → SignT) :
     (tisToInfoState tis f).agenda = tis.priv.agenda.map f := rfl
 
 /-- The projection preserves the latest utterance. -/
-theorem tisToInfoState_latest {P Fact QContent Cont SignT : Type}
+theorem tisToInfoState_latest {P QContent : Type*} {Fact Cont SignT : Type}
     (tis : TIS P Fact QContent Cont) (f : IllocMove Fact QContent → SignT) :
     (tisToInfoState tis f).latestUtterance = tis.dgb.latestMove.map f := rfl
 

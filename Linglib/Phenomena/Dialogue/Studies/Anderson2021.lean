@@ -2,6 +2,8 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Semantics.CommonGround
+import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Theories.Dialogue.DistributionalCG
 
 /-!
 # Anderson (2021): Conversation Update for RSA
@@ -117,53 +119,17 @@ theorem studyHumanity_partition :
     (mfMeaning .studyHumanity .katie = false) := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 2. Distributional Common Ground
+-- § 2. Distributional Common Ground (re-exported from substrate)
 -- ════════════════════════════════════════════════════
 
-/-- A distributional common ground: a non-negative weight function over worlds.
+/-! `DistributionalCG`, its `HasContextSet` instance, the `HasSupport ℝ`
+    instance, the `toCommitmentSpace` bridge, and the support-equivalence
+    theorem are all hosted in the substrate file
+    `Theories/Dialogue/DistributionalCG.lean` (extracted from this file
+    in CHANGELOG 0.230.670). The Anderson study below builds on those
+    primitives. The substrate file is opened via the `Dialogue` namespace. -/
 
-This is the probabilistic counterpart of @cite{stalnaker-2002}'s context set.
-Instead of a sharp membership predicate (`W → Prop`), a distributional CG
-assigns graded plausibility (`W → ℝ`). -/
-structure DistributionalCG (W : Type*) where
-  weight : W → ℝ
-  weight_nonneg : ∀ w, 0 ≤ weight w
-
-namespace DistributionalCG
-
-variable {W : Type*}
-
-/-- Uniform distributional CG: all worlds equally plausible (empty CG). -/
-noncomputable def uniform : DistributionalCG W where
-  weight _ := 1
-  weight_nonneg _ := le_of_lt one_pos
-
-/-- Bridge to classical context set: a world is "in the context" iff its
-weight is positive. This recovers @cite{stalnaker-2002}'s set-membership
-view from the distributional representation. -/
-def toContextSet (cg : DistributionalCG W) : ContextSet W :=
-  λ w => 0 < cg.weight w
-
-/-- Uniform distributional CG maps to the trivial context set. -/
-theorem uniform_toContextSet :
-    (uniform : DistributionalCG W).toContextSet = ContextSet.trivial := by
-  funext w
-  simp only [toContextSet, uniform, ContextSet.trivial]
-  exact propext ⟨λ _ => True.intro, λ _ => one_pos⟩
-
-/-- A world with zero weight is excluded from the classical context set. -/
-theorem zero_weight_excluded (cg : DistributionalCG W) (w : W)
-    (h : cg.weight w = 0) : ¬cg.toContextSet w := by
-  intro hpos
-  simp only [toContextSet] at hpos
-  linarith
-
-end DistributionalCG
-
-open Core.CommonGround in
-/-- A distributional CG projects to a context set: worlds with positive weight. -/
-instance {W : Type*} : HasContextSet (DistributionalCG W) W where
-  toContextSet := DistributionalCG.toContextSet
+open Dialogue (DistributionalCG)
 
 -- ════════════════════════════════════════════════════
 -- § 3. CG Update

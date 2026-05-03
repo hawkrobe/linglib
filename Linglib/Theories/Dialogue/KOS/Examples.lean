@@ -26,10 +26,6 @@ for utterance content (since the worked examples don't exercise the
 LocProp Pending pipeline). See `KOS/Austinian.lean` for the TTR-typed
 counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
-**Native_decide caveat**: several theorems below use `native_decide`. This
-is inherited from when these examples were inline in Rules.lean; per
-project policy (CLAUDE.md proof style) these should be migrated to `decide`
-or structural proofs. Migration scheduled for a follow-up cleanup phase.
 -/
 
 namespace Dialogue.KOS.Examples
@@ -78,12 +74,12 @@ theorem inquiry_step2_qud_empty : tis₂.dgb.qud = [] := by decide
 
 /-- After Accept, the fact appears twice (once from assert, once from accept). -/
 theorem inquiry_step3_facts : tis₃.dgb.facts = ["Bo is here", "Bo is here"] := by
-  native_decide
+  decide
 
 /-- Moves accumulate through the inquiry cycle. -/
 theorem inquiry_cycle_moves :
     tis₃.dgb.moves = [.ask "Bo is here", .assert "Bo is here", .accept "Bo is here"] := by
-  native_decide
+  decide
 
 end InquiryExample
 
@@ -110,7 +106,7 @@ def checkTIS₃ : TIS String String String String :=
 theorem check_pushes :
     checkTIS₂.dgb.qud =
       [(InfoStruc.fromQuestion "Bo is in Essen" : InfoStruc String String)] := by
-  native_decide
+  decide
 
 /-- After Confirm, the fact is in FACTS and QUD is resolved. -/
 theorem confirm_resolves : checkTIS₃.dgb.qud = [] := by decide

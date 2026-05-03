@@ -75,11 +75,11 @@ is unused; use `BCheckableAustinian S` for full TTR-typed CRification).
 
 @cite{ginzburg-2012} Ch. 4: FACTS is a set of Austinian propositions
 `[sit = s, sit-type = T]`. QUD is a poset of questions. -/
-abbrev AustinianDGB (S R Cont : Type) :=
+abbrev AustinianDGB (S R : Type) (Cont : Type) :=
   DGB String (BCheckableAustinian S) (TTRQuestionB R) Cont
 
 /-- A TIS with Austinian content types. -/
-abbrev AustinianTIS (S R Cont : Type) :=
+abbrev AustinianTIS (S R : Type) (Cont : Type) :=
   TIS String (BCheckableAustinian S) (TTRQuestionB R) Cont
 
 -- ════════════════════════════════════════════════════

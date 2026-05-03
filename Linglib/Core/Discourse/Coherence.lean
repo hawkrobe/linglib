@@ -56,22 +56,42 @@ inductive CoherenceClass where
 
     @cite{umbach-2004} §3: CONTRAST and CORRECTION are distinct resemblance
     relations that both require similarity+dissimilarity in their alternatives
-    but differ in their exclusion type. -/
+    but differ in their exclusion type.
+
+    @cite{asher-lascarides-2003} §4.6 contributes BACKGROUND, CONSEQUENCE,
+    and ALTERNATION. SDRT's "Narration" relation is the same as Hobbs/Kehler's
+    `occasion` — both denote temporal succession of events. Use `occasion`
+    in code; the `Narration` alias below is provided for SDRT-flavored
+    code that prefers Asher-Lascarides terminology. -/
 inductive CoherenceRelation where
   | explanation   -- "because": effect → cause (backward causal)
   | result        -- "so": cause → effect (forward causal)
-  | occasion      -- "and then": event₁ → event₂ (temporal sequence)
+  | occasion      -- "and then": event₁ → event₂ (= SDRT's Narration)
   | elaboration   -- further detail on the same event
   | parallel      -- structural similarity between segments
   | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
   | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
+  | background    -- @cite{asher-lascarides-2003} §4.6: scene-setting; β provides setting for α
+  | consequence   -- @cite{asher-lascarides-2003} p. 150 ex. (23): discourse-level conditional
+  | alternation   -- @cite{asher-lascarides-2003} preface "What's New": discourse-level disjunction
   deriving DecidableEq, Repr
+
+/-- Asher-Lascarides "Narration" = Hobbs/Kehler "Occasion".
+    Provided so SDRT-flavored code can write `.Narration` if desired.
+    Both names refer to the same underlying relation (temporal succession). -/
+abbrev CoherenceRelation.Narration : CoherenceRelation := .occasion
 
 -- ════════════════════════════════════════════════════
 -- § 3. Properties
 -- ════════════════════════════════════════════════════
 
-/-- Classify each relation into its coherence class. -/
+/-- Classify each relation into its coherence class.
+
+    SDRT additions: `background` is a contiguity relation (β provides
+    spatiotemporal setting for α); `consequence` is a causal relation
+    (the discourse-level analog of "if A then B"); `alternation` is
+    a resemblance relation (alternatives sharing a common integrator
+    but with exclusion). -/
 def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
   | .explanation  => .causeEffect
   | .result       => .causeEffect
@@ -80,6 +100,9 @@ def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
   | .parallel     => .resemblance
   | .contrast     => .resemblance
   | .correction   => .resemblance
+  | .background   => .contiguity     -- scene-setting: spatiotemporal adjacency
+  | .consequence  => .causeEffect    -- discourse-level conditional
+  | .alternation  => .resemblance    -- discourse-level disjunction
 
 /-- Causal direction: does the relation seek a cause in the prior segment? -/
 inductive CausalDirection where
@@ -97,6 +120,9 @@ def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
   | .parallel     => .none        -- structural, not causal
   | .contrast     => .none        -- resemblance, not causal
   | .correction   => .none        -- resemblance, not causal
+  | .background   => .none        -- scene-setting, not causal
+  | .consequence  => .forward     -- discourse-level conditional, hypothetical-causal
+  | .alternation  => .none        -- discourse-level disjunction, not causal
 
 /-- Does this relation trigger a search for a cause? -/
 def CoherenceRelation.selectsCause (r : CoherenceRelation) : Bool :=

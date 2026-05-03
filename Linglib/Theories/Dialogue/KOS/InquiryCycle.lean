@@ -47,7 +47,7 @@ open Core.Question
 /-- **Ask rule**: a question utterance pushes onto QUD and records the move.
 
 Ch. 4, "Ask QUD-incrementation" (p. 95, ex. 66). -/
-def TIS.ask {P Fact QContent Cont : Type}
+def TIS.ask {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -58,7 +58,7 @@ def TIS.ask {P Fact QContent Cont : Type}
 This version does not push About(p) onto QUD. For the full
 Assert protocol with QUD-incrementation,
 use `TIS.assertWithQUD`. -/
-def TIS.assertRule {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+def TIS.assertRule {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -73,7 +73,7 @@ Ch. 4 (p. 95, ex. 66): when A asserts p:
 
 The `aboutP` parameter converts the asserted fact to its corresponding
 question, since this conversion is domain-specific. -/
-def TIS.assertWithQUD {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+def TIS.assertWithQUD {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) (aboutP : QContent) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -87,7 +87,7 @@ Ch. 4, "Accept" (p. 95, ex. 66 step 4a).
 **Known simplification**: the book's Accept rule (ex. 42) swaps spkr/addr
 in the effects (the acceptor becomes the new speaker). We don't model
 this because our worked examples don't track individual participants. -/
-def TIS.accept {P Fact QContent Cont : Type}
+def TIS.accept {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     TIS P Fact QContent Cont :=
   { tis with dgb := (tis.dgb.addFact p).recordMove (.accept p) }
@@ -98,7 +98,7 @@ Precondition: q₂ influences some q₁ on QUD (q₂ is a subquestion).
 Effect: push q₂ onto QUD (it becomes the new MaxQud).
 
 Ch. 4, "QSPEC" (p. 95, ex. 66 step 2). -/
-def TIS.qspec {P Fact QContent Cont : Type}
+def TIS.qspec {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -108,7 +108,7 @@ def TIS.qspec {P Fact QContent Cont : Type}
 
 Ch. 4 (p. 95, ex. 68): a Check move pushes
 a polar question about the asserted content onto QUD. -/
-def TIS.check {P Fact QContent Cont : Type}
+def TIS.check {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) (aboutP : QContent) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -120,7 +120,7 @@ Ch. 4 (p. 95, ex. 68 step 2).
 
 **Known simplification**: the book's Confirm rule (ex. 43) swaps spkr/addr,
 as with Accept. See `TIS.accept` for details. -/
-def TIS.confirm {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+def TIS.confirm {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -133,7 +133,7 @@ up an initial question with a non-influencing question, where the initial
 question remains QUD-maximal.
 
 Effect: push q onto QUD without displacing the current maximal question. -/
-def TIS.qcoord {P Fact QContent Cont : Type}
+def TIS.qcoord {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     TIS P Fact QContent Cont :=
   { tis with
@@ -145,7 +145,7 @@ def TIS.qcoord {P Fact QContent Cont : Type}
 
 Ch. 4, ex. 85 (p. 103): when Accept occurs,
 FACTS is updated and resolved questions are downdated from QUD. -/
-def TIS.factUpdateQudDowndate {P Fact QContent Cont : Type}
+def TIS.factUpdateQudDowndate {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     TIS P Fact QContent Cont :=
@@ -154,7 +154,7 @@ def TIS.factUpdateQudDowndate {P Fact QContent Cont : Type}
 /-- **Greeting**: conversation initialization.
 
 Ch. 4 (p. 75, ex. 17): precondition is MOVES = ⟨⟩. -/
-def TIS.greet {P Fact QContent Cont : Type}
+def TIS.greet {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) :
     TIS P Fact QContent Cont :=
   { tis with dgb := tis.dgb.recordMove .greet }
@@ -164,56 +164,56 @@ def TIS.greet {P Fact QContent Cont : Type}
 -- ════════════════════════════════════════════════════
 
 /-- Ask pushes exactly one question onto QUD (wrapped in InfoStruc). -/
-theorem ask_pushes_qud {P Fact QContent Cont : Type}
+theorem ask_pushes_qud {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     (tis.ask q).dgb.qud = (.fromQuestion q : InfoStruc QContent Cont) :: tis.dgb.qud := rfl
 
 /-- Ask does not modify FACTS. -/
-theorem ask_preserves_facts {P Fact QContent Cont : Type}
+theorem ask_preserves_facts {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     (tis.ask q).dgb.facts = tis.dgb.facts := rfl
 
 /-- Ask records the move. -/
-theorem ask_records_move {P Fact QContent Cont : Type}
+theorem ask_records_move {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     (tis.ask q).dgb.moves = tis.dgb.moves ++ [.ask q] := rfl
 
 /-- Assert adds the fact to FACTS. -/
-theorem assert_adds_fact {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+theorem assert_adds_fact {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     p ∈ (tis.assertRule p).dgb.facts := by
   simp [TIS.assertRule, DGB.assertFact, DGB.downdateQud, DGB.addFact, DGB.recordMove]
 
 /-- assertWithQUD adds the fact to FACTS. -/
-theorem assertWithQUD_adds_fact {P Fact QContent Cont : Type}
+theorem assertWithQUD_adds_fact {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
     (tis : TIS P Fact QContent Cont) (p : Fact) (aboutP : QContent) :
     p ∈ (tis.assertWithQUD p aboutP).dgb.facts := by
   simp [TIS.assertWithQUD, DGB.downdateQud, DGB.pushQud, DGB.addFact, DGB.recordMove]
 
 /-- Accept adds a fact without changing QUD. -/
-theorem accept_preserves_qud {P Fact QContent Cont : Type}
+theorem accept_preserves_qud {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     (tis.accept p).dgb.qud = tis.dgb.qud := rfl
 
 /-- Accept adds the fact to FACTS. -/
-theorem accept_adds_fact {P Fact QContent Cont : Type}
+theorem accept_adds_fact {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) :
     (tis.accept p).dgb.facts = p :: tis.dgb.facts := rfl
 
 /-- QSPEC pushes a subquestion. -/
-theorem qspec_pushes {P Fact QContent Cont : Type}
+theorem qspec_pushes {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (q : QContent) :
     (tis.qspec q).dgb.qud = (.fromQuestion q : InfoStruc QContent Cont) :: tis.dgb.qud := rfl
 
 /-- Check pushes a question onto QUD. -/
-theorem check_pushes_qud {P Fact QContent Cont : Type}
+theorem check_pushes_qud {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (p : Fact) (aboutP : QContent) :
     (tis.check p aboutP).dgb.qud =
       (.fromQuestion aboutP : InfoStruc QContent Cont) :: tis.dgb.qud := rfl
 
 /-- Greeting requires empty moves (precondition check). -/
-theorem greet_precond_empty_moves {P Fact QContent Cont : Type}
+theorem greet_precond_empty_moves {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (h : tis.dgb.moves = []) :
     (tis.greet).dgb.moves = [.greet] := by
   simp [TIS.greet, DGB.recordMove, h]
@@ -234,14 +234,14 @@ Pairwise and sequential M-Coherence extend this to move pairs and sequences. -/
 
 Ch. 4 summary (p. 112): "a mapping that indicates
 how one DGB can be modified by a conversationally related action." -/
-abbrev ConvRule (P Fact QContent Cont : Type) :=
+abbrev ConvRule (P Fact QContent : Type*) (Cont : Type) :=
   DGB P Fact QContent Cont → DGB P Fact QContent Cont
 
 /-- A move is M-Coherent with respect to a DGB if some conversational rule
 produces a DGB whose latest move is that move.
 
 ex. 70a (p. 96). -/
-def mCoherent {P Fact QContent Cont : Type}
+def mCoherent {P Fact QContent : Type*} {Cont : Type}
     (rules : List (ConvRule P Fact QContent Cont))
     (dgb₀ : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Prop :=
   ∃ rule, rule ∈ rules ∧ (rule dgb₀).latestMove = some m

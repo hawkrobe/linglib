@@ -1,4 +1,7 @@
-/-
+import Mathlib.Data.Set.Basic
+import Linglib.Core.Semantics.CommonGround
+
+/-!
 # Discourse State
 
 Formalizes the discourse state model from @cite{farkas-bruce-2010} "On Reacting
@@ -29,12 +32,14 @@ This module provides explicit types for these components, making the
 theoretical distinctions clear while maintaining computational compatibility
 with existing RSA infrastructure.
 
--/
+## Architecture note
 
-import Mathlib.Data.Set.Basic
-import Linglib.Core.Semantics.CommonGround
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
+`§ Bridge theorems` (formerly `Theories/Dialogue/FarkasAdapter.lean`,
+dissolved per CLAUDE.md "no bridge files"): assertion vs acceptance
+properties — `assert_adds_to_dcS`, `assert_preserves_cg`,
+`assert_not_stable`, `accept_adds_to_cg`, `accept_restores_stability`.
+
+-/
 
 namespace Dialogue.FarkasBruce
 
@@ -137,7 +142,10 @@ Check if the table is empty (stable state).
 A discourse state is stable when the table is empty, meaning all
 issues have been resolved and there's nothing pending.
 -/
-def isStable (ds : DiscourseState W) : Bool := ds.table.isEmpty
+def isStable (ds : DiscourseState W) : Prop := ds.table.length = 0
+
+instance (ds : DiscourseState W) : Decidable (isStable ds) :=
+  inferInstanceAs (Decidable (_ = _))
 
 /--
 Check if a world is compatible with speaker's commitments.
@@ -284,6 +292,64 @@ jointly accepted). L1 infers which cg state the speaker is acting on.
 Accommodation is updating one's model of the common ground.
 -/
 
+-- ════════════════════════════════════════════════════
+-- § Bridge theorems (formerly FarkasAdapter.lean)
+-- ════════════════════════════════════════════════════
+
+/-! Assertion-vs-acceptance properties for `assertDeclarative` and
+    `acceptTop`. These were previously hosted in a separate
+    `FarkasAdapter.lean` "bridge file"; CLAUDE.md prohibits bridge
+    files, so the content lives here alongside the operators it
+    characterizes. -/
+
+/-- Assertion adds to dcS, not directly to cg.
+    This is the key F&B insight: assertion first commits the speaker,
+    then the listener can accept (moving to cg) or reject. -/
+theorem assert_adds_to_dcS (ds : DiscourseState W) (p : Set W) :
+    (ds.assertDeclarative p).dcS = p :: ds.dcS := rfl
+
+/-- Assertion does not immediately change the common ground. -/
+theorem assert_preserves_cg (ds : DiscourseState W) (p : Set W) :
+    (ds.assertDeclarative p).cg = ds.cg := rfl
+
+/-- Assertion is not stable: it pushes an issue onto the table. -/
+theorem assert_not_stable (ds : DiscourseState W) (p : Set W) :
+    ¬ (ds.assertDeclarative p).isStable := by
+  simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
+             DiscourseState.addToDcS, DiscourseState.isStable, List.length_cons]
+  exact Nat.succ_ne_zero _
+
+/-- Acceptance moves the proposition to the common ground. -/
+theorem accept_adds_to_cg (ds : DiscourseState W) (p : Set W) :
+    ((ds.assertDeclarative p).acceptTop).cg = p :: ds.cg := by
+  simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
+             DiscourseState.addToDcS, DiscourseState.acceptTop]
+  rfl
+
+/-- After acceptance, the state returns to stable (table is popped). -/
+theorem accept_restores_stability (ds : DiscourseState W) (p : Set W)
+    (hStable : ds.isStable) :
+    ((ds.assertDeclarative p).acceptTop).isStable := by
+  simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
+             DiscourseState.addToDcS, DiscourseState.acceptTop,
+             DiscourseState.isStable] at *
+  exact hStable
+
 end DiscourseState
+
+-- ════════════════════════════════════════════════════
+-- HasContextSet instance
+-- ════════════════════════════════════════════════════
+
+open Core.CommonGround in
+/-- F&B states project to a context set via `cg`-only intersection
+    (`toContextSet`). Note: this projection deliberately ignores
+    `dcS`/`dcL` and `table` — F&B's whole point is that assertion
+    operates on those layers without (yet) reaching `cg`. As a
+    consequence, F&B does NOT instantiate `Assertable` (assertion
+    doesn't narrow the projected context set in one step). See the
+    `Assertable.lean` module docstring. -/
+instance {W : Type*} : HasContextSet (DiscourseState W) W where
+  toContextSet := DiscourseState.toContextSet
 
 end Dialogue.FarkasBruce

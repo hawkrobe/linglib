@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Quotation.Demonstration
 import Linglib.Theories.Dialogue.FarkasBruce
-import Linglib.Theories.Dialogue.FarkasAdapter
 
 /-!
 # Farkas-Bruce Performance Ontology Bridge
@@ -30,8 +29,9 @@ to compute its discourse effect:
 performance `Commits` iff its update adds its content to dcS; it
 `RaisesIssue` iff its update grows the table. Verb-class meaning
 postulates in `SpeechVerbs` see the same Commits / RaisesIssue that
-the F&B adapter (`FarkasAdapter.lean`) reasons about — the connection
-is true by construction, not provable as an equivalence.
+the F&B bridge theorems (in `FarkasBruce.lean` § Bridge theorems)
+reason about — the connection is true by construction, not provable
+as an equivalence.
 
 ## Why this matters
 
@@ -252,9 +252,9 @@ theorem raises_issue_always (u : FBPerformance W) : u.RaisesIssue := by
   · simp only [DiscourseState.pushIssue, DiscourseState.empty]
     intro h; cases h
 
-/-- Bridge to `FarkasAdapter`: when the performance is a non-rising
+/-- Bridge to `FarkasBruce`: when the performance is a non-rising
     declarative, its update equals `assertDeclarative content`, so
-    `FarkasAdapter.assert_adds_to_dcS` applies directly. -/
+    `Dialogue.FarkasBruce.assert_adds_to_dcS` applies directly. -/
 theorem update_decl_eq_assert (u : FBPerformance W)
     (hr : u.rising = false) (hf : u.form = .declarative)
     (s : DiscourseState W) :

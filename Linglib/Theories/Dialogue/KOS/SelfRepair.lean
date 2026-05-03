@@ -42,7 +42,7 @@ namespace Dialogue.KOS
 
 /-- The current MaxPending: the head of `dgb.pending`, if any.
 @cite{ginzburg-2012} §6.3 footnote 31 p. 168. -/
-def TIS.maxPending {P Fact QContent Cont : Type}
+def TIS.maxPending {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) : Option (LocProp Cont) :=
   tis.dgb.pending.head?
 
@@ -53,14 +53,14 @@ def TIS.maxPending {P Fact QContent Cont : Type}
 /-- Push a fresh LocProp onto Pending (start a new in-construction
 utterance, becoming the new MaxPending). Equivalent to `DGB.pushPending`
 lifted to TIS. -/
-def TIS.pushMaxPending {P Fact QContent Cont : Type}
+def TIS.pushMaxPending {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (lp : LocProp Cont) :
     TIS P Fact QContent Cont :=
   { tis with dgb := tis.dgb.pushPending lp }
 
 /-- Drop the current MaxPending (abandon the in-construction or ungrounded
 LocProp at the head of Pending). -/
-def TIS.clearMaxPending {P Fact QContent Cont : Type}
+def TIS.clearMaxPending {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) : TIS P Fact QContent Cont :=
   { tis with dgb := { tis.dgb with pending := tis.dgb.pending.tail } }
 
@@ -77,7 +77,7 @@ referent) and updates it to a candidate replacement.
 
 If Pending is empty, this initializes it with the supplied form
 (lenient default — Ginzburg's rule presupposes a MaxPending to repair). -/
-def TIS.replaceMaxPending {P Fact QContent Cont : Type}
+def TIS.replaceMaxPending {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
     TIS P Fact QContent Cont :=
   { tis with dgb := { tis.dgb with
@@ -90,24 +90,24 @@ def TIS.replaceMaxPending {P Fact QContent Cont : Type}
 -- ════════════════════════════════════════════════════
 
 /-- `pushMaxPending` makes the pushed LocProp the new MaxPending. -/
-@[simp] theorem pushMaxPending_becomes_max {P Fact QContent Cont : Type}
+@[simp] theorem pushMaxPending_becomes_max {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (lp : LocProp Cont) :
     (tis.pushMaxPending lp).maxPending = some lp := rfl
 
 /-- `clearMaxPending` removes the head of Pending. -/
-@[simp] theorem clearMaxPending_drops_head {P Fact QContent Cont : Type}
+@[simp] theorem clearMaxPending_drops_head {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) :
     (tis.clearMaxPending).dgb.pending = tis.dgb.pending.tail := rfl
 
 /-- `replaceMaxPending` makes the replacement the new MaxPending. -/
-@[simp] theorem replaceMaxPending_becomes_max {P Fact QContent Cont : Type}
+@[simp] theorem replaceMaxPending_becomes_max {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
     (tis.replaceMaxPending replacement).maxPending = some replacement := by
   unfold TIS.replaceMaxPending TIS.maxPending
   cases tis.dgb.pending <;> rfl
 
 /-- `replaceMaxPending` preserves the rest of Pending (only the head changes). -/
-@[simp] theorem replaceMaxPending_preserves_tail {P Fact QContent Cont : Type}
+@[simp] theorem replaceMaxPending_preserves_tail {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) (replacement : LocProp Cont) :
     (tis.replaceMaxPending replacement).dgb.pending.tail = tis.dgb.pending.tail := by
   unfold TIS.replaceMaxPending

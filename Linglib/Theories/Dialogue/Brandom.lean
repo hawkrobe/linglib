@@ -216,4 +216,18 @@ theorem scorekeepers_can_disagree :
       { commitments := ⟨[λ _ => True]⟩, entitlements := CommitmentSlate.empty }
     else NormativeStatus.empty⟩, by decide⟩
 
+-- ════════════════════════════════════════════════════
+-- § 7. HasContextSet instance
+-- ════════════════════════════════════════════════════
+
+open Core.CommonGround in
+/-- Brandom states project to a context set via `effectiveContextSet`
+    (the lossy Brandom → Stalnaker projection: intersection of all
+    self-attributed commitments). The lossy projection is the price of
+    the typeclass — Brandom's per-scorekeeper disagreement is
+    invisible at the `HasContextSet` API level (cf.
+    `scorekeepers_can_disagree`). -/
+instance {W : Type*} : HasContextSet (BrandomState W) W where
+  toContextSet := BrandomState.effectiveContextSet
+
 end Dialogue.Brandom

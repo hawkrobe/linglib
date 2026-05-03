@@ -66,8 +66,11 @@ namespace Dialogue.KOS
 
 /-- Whether a LocProp has all contextual parameters resolved.
 A fully resolved LocProp can be grounded directly. -/
-def LocProp.isFullyResolved {Cont : Type} (lp : LocProp Cont) : Bool :=
-  lp.cparams.isEmpty
+def LocProp.isFullyResolved {Cont : Type} (lp : LocProp Cont) : Prop :=
+  lp.cparams.length = 0
+
+instance {Cont : Type} (lp : LocProp Cont) : Decidable (lp.isFullyResolved) :=
+  inferInstanceAs (Decidable (_ = _))
 
 
 -- ════════════════════════════════════════════════════
@@ -76,7 +79,7 @@ def LocProp.isFullyResolved {Cont : Type} (lp : LocProp Cont) : Bool :=
 
 /-- The result of integrating a LocProp into a DGB.
 Either grounded (content → FACTS) or CRified (CR question → QUD). -/
-inductive IntegrationResult (Cont QContent : Type) where
+inductive IntegrationResult (Cont : Type) (QContent : Type*) where
   /-- All cparams resolved: content enters FACTS. -/
   | grounded (content : Cont)
   /-- Some cparam unresolved: CR question pushed onto QUD. -/
@@ -84,7 +87,7 @@ inductive IntegrationResult (Cont QContent : Type) where
   deriving Repr
 
 /-- Is this integration result a grounding? -/
-def IntegrationResult.isGrounded {Cont QContent : Type} :
+def IntegrationResult.isGrounded {Cont : Type} {QContent : Type*} :
     IntegrationResult Cont QContent → Bool
   | .grounded _ => true
   | .crification _ _ => false
@@ -102,7 +105,7 @@ question — this is domain-specific (e.g., "Who do you mean by 'Bo'?").
 integration is a multi-stage pipeline (Pending Update → Contextual
 Instantiation → CCURs); use `integrateLocPropCCUR` for the faithful
 version that consults addressee beliefs. -/
-def integrateLocProp {Cont QContent : Type}
+def integrateLocProp {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (toCR : CParam → QContent) :
     IntegrationResult Cont QContent :=
   match lp.cparams with
@@ -110,16 +113,16 @@ def integrateLocProp {Cont QContent : Type}
   | p :: _ => .crification (toCR p) p
 
 /-- A fully resolved LocProp always grounds. -/
-theorem resolved_always_grounds {Cont QContent : Type}
+theorem resolved_always_grounds {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (toCR : CParam → QContent)
-    (h : lp.isFullyResolved = true) :
+    (h : lp.isFullyResolved) :
     (integrateLocProp lp toCR).isGrounded = true := by
-  simp only [LocProp.isFullyResolved, List.isEmpty_iff] at h
+  simp only [LocProp.isFullyResolved, List.length_eq_zero_iff] at h
   simp only [integrateLocProp, h, IntegrationResult.isGrounded]
 
 /-- If there are no coercion options and the LocProp has unresolved params,
 integration produces a CRification — there is no silent fallback. -/
-theorem no_coercion_fallback {Cont QContent : Type}
+theorem no_coercion_fallback {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (toCR : CParam → QContent) (p : CParam) (ps : CParamSet)
     (h : lp.cparams = p :: ps) :
     (integrateLocProp lp toCR).isGrounded = false := by
@@ -203,7 +206,7 @@ correspondence: `parameterFocussing` (2004) ↔ `parameterFocussing` (2012);
 `parameterIdentification` (both); `existentialGeneralization` (2004) has
 no 2012 CCUR analog (the 2012 framework handles it via contextual
 instantiation succeeding without a CR being needed). -/
-inductive CCUR (Cont QContent : Type) where
+inductive CCUR (Cont : Type) (QContent : Type*) where
   /-- Parameter Identification (Ginzburg ex. 31 p. 167): target one
       unresolved cparam, ask "What is the intended reference of u_i?"
       (constituent CR). -/
@@ -218,7 +221,7 @@ inductive CCUR (Cont QContent : Type) where
   deriving Repr
 
 /-- Project a CCUR back to its CR question content. -/
-def CCUR.crQuestion {Cont QContent : Type} :
+def CCUR.crQuestion {Cont : Type} {QContent : Type*} :
     CCUR Cont QContent → QContent
   | .parameterIdentification _ q => q
   | .parameterFocussing _ q => q
@@ -248,7 +251,7 @@ The `toCR` function constructs the CR question for an unresolved param.
 
 This replaces `integrateLocProp` for substrate uses requiring the
 contextual-instantiation step. -/
-def integrateLocPropCCUR {Cont QContent : Type}
+def integrateLocPropCCUR {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (beliefs : BeliefBase) (toCR : CParam → QContent) :
     IntegrationResult Cont QContent :=
   match contextualInstantiate lp beliefs with
@@ -261,11 +264,11 @@ def integrateLocPropCCUR {Cont QContent : Type}
 /-- A fully-resolved LocProp grounds via the CCUR pipeline regardless of
 beliefs (since contextual instantiation trivially succeeds with empty
 cparams). -/
-theorem resolved_grounds_via_ccur {Cont QContent : Type}
+theorem resolved_grounds_via_ccur {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (beliefs : BeliefBase) (toCR : CParam → QContent)
-    (h : lp.isFullyResolved = true) :
+    (h : lp.isFullyResolved) :
     (integrateLocPropCCUR lp beliefs toCR).isGrounded = true := by
-  simp only [LocProp.isFullyResolved, List.isEmpty_iff] at h
+  simp only [LocProp.isFullyResolved, List.length_eq_zero_iff] at h
   unfold integrateLocPropCCUR contextualInstantiate
   simp [h, IntegrationResult.isGrounded]
 
@@ -304,7 +307,7 @@ private theorem contextualInstantiate_fullyInstantiated_of_all_witnessed
 pipeline. This is the substantive difference from the one-shot stub:
 unresolved cparams aren't an automatic CRification trigger when
 addressee beliefs witness them. -/
-theorem belief_resolution_grounds_via_ccur {Cont QContent : Type}
+theorem belief_resolution_grounds_via_ccur {Cont : Type} {QContent : Type*}
     (lp : LocProp Cont) (beliefs : BeliefBase) (toCR : CParam → QContent)
     (h : ∀ cp ∈ lp.cparams, (cp.instantiate beliefs).isSome) :
     (integrateLocPropCCUR lp beliefs toCR).isGrounded = true := by

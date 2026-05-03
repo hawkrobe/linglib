@@ -38,15 +38,15 @@ open Core.Question
 -- ════════════════════════════════════════════════════
 
 /-- An empty DGB has no moves. -/
-theorem DGB.initial_no_moves {Participant Fact QContent Cont : Type} :
+theorem DGB.initial_no_moves {Participant Fact QContent : Type*} {Cont : Type} :
     (DGB.initial : DGB Participant Fact QContent Cont).moves = [] := rfl
 
 /-- An empty DGB has empty QUD. -/
-theorem DGB.initial_no_qud {Participant Fact QContent Cont : Type} :
+theorem DGB.initial_no_qud {Participant Fact QContent : Type*} {Cont : Type} :
     (DGB.initial : DGB Participant Fact QContent Cont).qud = [] := rfl
 
 /-- An empty DGB has no latest move. -/
-theorem DGB.initial_no_latestMove {Participant Fact QContent Cont : Type} :
+theorem DGB.initial_no_latestMove {Participant Fact QContent : Type*} {Cont : Type} :
     (DGB.initial : DGB Participant Fact QContent Cont).latestMove = none := rfl
 
 -- ════════════════════════════════════════════════════
@@ -59,7 +59,7 @@ theorem DGB.initial_no_latestMove {Participant Fact QContent Cont : Type} :
 Ch. 4: when a question is asked, it becomes the maximal element of QUD.
 For questions paired with focus-establishing constituents, use
 `pushQudInfoStruc` directly. -/
-def DGB.pushQud {P Fact QContent Cont : Type}
+def DGB.pushQud {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (q : QContent) :
     DGB P Fact QContent Cont :=
   { dgb with qud := (.fromQuestion q) :: dgb.qud }
@@ -67,7 +67,7 @@ def DGB.pushQud {P Fact QContent Cont : Type}
 /-- Push a fully-formed `InfoStruc` (question + FECs) onto QUD.
 Used when the introducing utterance carries focus-establishing constituents
 that downstream NSU resolution will consume (Ch. 7). -/
-def DGB.pushQudInfoStruc {P Fact QContent Cont : Type}
+def DGB.pushQudInfoStruc {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (is : InfoStruc QContent Cont) :
     DGB P Fact QContent Cont :=
   { dgb with qud := is :: dgb.qud }
@@ -77,25 +77,25 @@ def DGB.pushQudInfoStruc {P Fact QContent Cont : Type}
 Ch. 4: QUD-downdate removes a question q from QUD when FACTS contextually
 entail an answer to q. Now QUD entries are `InfoStruc`s; the support check
 projects through `is.q`. -/
-def DGB.downdateQud {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+def DGB.downdateQud {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) : DGB P Fact QContent Cont :=
   { dgb with
     qud := dgb.qud.filter fun is => !dgb.facts.any fun f => decide (f ⊨ is.q) }
 
 /-- Add a fact to the DGB's FACTS. -/
-def DGB.addFact {P Fact QContent Cont : Type}
+def DGB.addFact {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (p : Fact) :
     DGB P Fact QContent Cont :=
   { dgb with facts := p :: dgb.facts }
 
 /-- Record a move in the DGB's MOVES list. -/
-def DGB.recordMove {P Fact QContent Cont : Type}
+def DGB.recordMove {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) :
     DGB P Fact QContent Cont :=
   { dgb with moves := dgb.moves ++ [m] }
 
 /-- Push a LocProp onto Pending (Ch. 6 ungrounded utterance). -/
-def DGB.pushPending {P Fact QContent Cont : Type}
+def DGB.pushPending {P Fact QContent : Type*} {Cont : Type}
     (dgb : DGB P Fact QContent Cont) (lp : LocProp Cont) :
     DGB P Fact QContent Cont :=
   { dgb with pending := lp :: dgb.pending }
@@ -104,7 +104,7 @@ def DGB.pushPending {P Fact QContent Cont : Type}
 
 Ch. 4 (p. 95, ex. 66): assertion adds content to FACTS, pushes
 About(p,?) onto QUD, and any resolved question is removed. -/
-def DGB.assertFact {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+def DGB.assertFact {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) (p : Fact) :
     DGB P Fact QContent Cont :=
   (dgb.addFact p).downdateQud
@@ -114,7 +114,7 @@ def DGB.assertFact {P Fact QContent Cont : Type} [DecidableSupport Fact QContent
 -- ════════════════════════════════════════════════════
 
 /-- Map over a DGB's fact type, preserving structure. -/
-def DGB.mapFacts {Participant Fact Fact' QContent Cont : Type} (f : Fact → Fact')
+def DGB.mapFacts {Participant Fact Fact' QContent : Type*} {Cont : Type} (f : Fact → Fact')
     (dgb : DGB Participant Fact QContent Cont) :
     DGB Participant Fact' QContent Cont where
   spkr := dgb.spkr
@@ -126,7 +126,7 @@ def DGB.mapFacts {Participant Fact Fact' QContent Cont : Type} (f : Fact → Fac
 
 /-- Map over a DGB's question type, preserving structure (FECs are dropped
 since they reference the same Cont). -/
-def DGB.mapQud {Participant Fact QContent QContent' Cont : Type}
+def DGB.mapQud {Participant Fact QContent QContent' : Type*} {Cont : Type}
     (f : QContent → QContent')
     (dgb : DGB Participant Fact QContent Cont) :
     DGB Participant Fact QContent' Cont where
@@ -138,7 +138,7 @@ def DGB.mapQud {Participant Fact QContent QContent' Cont : Type}
   qud := dgb.qud.map (fun is => { q := f is.q, fec := is.fec })
 
 /-- Mapping facts preserves fact count. -/
-theorem DGB.mapFacts_length {Participant Fact Fact' QContent Cont : Type}
+theorem DGB.mapFacts_length {Participant Fact Fact' QContent : Type*} {Cont : Type}
     (f : Fact → Fact') (dgb : DGB Participant Fact QContent Cont) :
     (dgb.mapFacts f).facts.length = dgb.facts.length := by
   simp only [DGB.mapFacts, List.length_map]
@@ -150,19 +150,19 @@ theorem DGB.mapFacts_length {Participant Fact Fact' QContent Cont : Type}
 open Core.CommonGround in
 /-- DGB with `Set W` facts projects to a context set.
     @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
-instance {W Participant QContent Cont : Type} :
+instance {W Participant QContent : Type*} {Cont : Type} :
     HasContextSet (DGB Participant (Set W) QContent Cont) W where
   toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
 
 open Core.CommonGround in
 /-- TIS with `Set W` facts inherits the DGB's context set. -/
-instance {W Participant QContent Cont : Type} :
+instance {W Participant QContent : Type*} {Cont : Type} :
     HasContextSet (TIS Participant (Set W) QContent Cont) W where
   toContextSet tis := λ w => ∀ p ∈ tis.dgb.facts, p w
 
 open Core.CommonGround in
 /-- TIS context set is extracted from the DGB. -/
-theorem tis_contextSet_eq_dgb {W Participant QContent Cont : Type}
+theorem tis_contextSet_eq_dgb {W Participant QContent : Type*} {Cont : Type}
     (tis : TIS Participant (Set W) QContent Cont) :
     HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
 
@@ -171,7 +171,7 @@ theorem tis_contextSet_eq_dgb {W Participant QContent Cont : Type}
 -- ════════════════════════════════════════════════════
 
 /-- Downdate never increases QUD size. -/
-theorem downdateQud_length_le {P Fact QContent Cont : Type}
+theorem downdateQud_length_le {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) :
     dgb.downdateQud.qud.length ≤ dgb.qud.length := by
@@ -179,7 +179,7 @@ theorem downdateQud_length_le {P Fact QContent Cont : Type}
   exact List.length_filter_le _ _
 
 /-- If a fact resolves the only question on QUD, downdate removes it. -/
-theorem downdateQud_removes_resolved {P Fact QContent Cont : Type}
+theorem downdateQud_removes_resolved {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) (is : InfoStruc QContent Cont) (f : Fact)
     (hq : dgb.qud = [is]) (hf : f ∈ dgb.facts) (hr : f ⊨ is.q) :
@@ -200,35 +200,38 @@ on QUD — they should be downdated. -/
 
 /-- The non-resolve-cond: no question on QUD is resolved by FACTS.
 @cite{ginzburg-2012} ex. 100 (p. 111). -/
-def DGB.nonResolveCond {P Fact QContent Cont : Type}
+def DGB.nonResolveCond {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
-    (dgb : DGB P Fact QContent Cont) : Bool :=
-  dgb.qud.all fun is => !(dgb.facts.any fun f => decide (f ⊨ is.q))
+    (dgb : DGB P Fact QContent Cont) : Prop :=
+  ∀ is ∈ dgb.qud, ¬ ∃ f ∈ dgb.facts, f ⊨ is.q
+
+instance {P Fact QContent : Type*} {Cont : Type}
+    [DecidableSupport Fact QContent]
+    (dgb : DGB P Fact QContent Cont) : Decidable (dgb.nonResolveCond) := by
+  unfold DGB.nonResolveCond
+  exact List.decidableBAll _ _
 
 /-- An empty DGB trivially satisfies non-resolve-cond. -/
-theorem DGB.initial_nonResolveCond {P Fact QContent Cont : Type}
+theorem DGB.initial_nonResolveCond {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent] :
-    (DGB.initial : DGB P Fact QContent Cont).nonResolveCond = true := rfl
-
-/-- Filtering by p then checking all satisfy p is trivially true. -/
-private theorem all_filter_self {α : Type} (l : List α) (p : α → Bool) :
-    (l.filter p).all p = true := by
-  induction l with
-  | nil => rfl
-  | cons x xs ih =>
-    unfold List.filter
-    cases hx : p x with
-    | true => simp only [List.all_cons, hx, Bool.true_and, ih]
-    | false => exact ih
+    (DGB.initial : DGB P Fact QContent Cont).nonResolveCond := by
+  intro is hist
+  exact absurd hist List.not_mem_nil
 
 /-- After QUD-downdate, non-resolve-cond holds: all remaining questions
 are unresolved by FACTS. -/
 theorem downdateQud_restores_nonResolveCond
-    {P Fact QContent Cont : Type} [DecidableSupport Fact QContent]
+    {P Fact QContent : Type*} {Cont : Type} [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) :
-    dgb.downdateQud.nonResolveCond = true := by
-  simp only [DGB.nonResolveCond, DGB.downdateQud]
-  exact all_filter_self _ _
+    dgb.downdateQud.nonResolveCond := by
+  intro is hist ⟨f, hf, hsupp⟩
+  simp only [DGB.downdateQud, List.mem_filter] at hist
+  obtain ⟨_, hist2⟩ := hist
+  -- hist2 : decide (¬ dgb.facts.any fun f' => decide (f' ⊨ is.q)) = true
+  -- but f ∈ dgb.facts and f ⊨ is.q, so the any IS true, contradiction
+  have : (dgb.facts.any fun f' => decide (f' ⊨ is.q)) = true :=
+    List.any_eq_true.mpr ⟨f, hf, decide_eq_true hsupp⟩
+  simp [this] at hist2
 
 -- ════════════════════════════════════════════════════
 -- § 6. Partition-Based Answerhood
@@ -248,13 +251,13 @@ partition cell. -/
 /-- A `Set W` resolves a `QUD W` if all fact-worlds are in the same
 partition cell. Prop-valued; `Decidable` via the bundled per-pair
 predicate decidability. -/
-def PropResolvesQUD {W : Type} (worlds : List W)
+def PropResolvesQUD {W : Type*} (worlds : List W)
     (fact : Set W) [DecidablePred fact] (q : QUD W) : Prop :=
   ∀ w₁ ∈ worlds.filter (fun w => decide (fact w)),
     ∀ w₂ ∈ worlds.filter (fun w => decide (fact w)),
       q.sameAnswer w₁ w₂ = true
 
-instance {W : Type} (worlds : List W) (fact : Set W) [DecidablePred fact]
+instance {W : Type*} (worlds : List W) (fact : Set W) [DecidablePred fact]
     (q : QUD W) : Decidable (PropResolvesQUD worlds fact q) := by
   unfold PropResolvesQUD; infer_instance
 

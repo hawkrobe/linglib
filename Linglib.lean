@@ -1132,6 +1132,7 @@ import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Attitudes.Studies.BondarenkoElliott2026
 import Linglib.Phenomena.Attitudes.Studies.Pasternak2019
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
+import Linglib.Phenomena.Anaphora.Studies.AsherLascarides2003
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
@@ -1857,6 +1858,8 @@ import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Algebra.ConnesKreimer.Defs
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
+import Linglib.Core.Algebra.ConnesKreimer.AugmentedCut
+import Linglib.Core.Algebra.ConnesKreimer.DoubleCut
 import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
@@ -1935,6 +1938,9 @@ import Linglib.Theories.Discourse.Centering.Rule2
 import Linglib.Theories.Discourse.Centering.Transition
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
+-- Theories: Discourse — SDRT
+import Linglib.Theories.Discourse.SDRT.Defs
+import Linglib.Theories.Discourse.SDRT.RightFrontier
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Theories.Interfaces.SemanticsDiscourse.CenteringDRSExpr
 -- Theories: Dynamic Semantics
@@ -2565,6 +2571,7 @@ import Linglib.Phenomena.Ellipsis.Studies.Steedman2000Gapping
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 import Linglib.Phenomena.Dialogue.Studies.HardingGerstenbergIcard2025
+import Linglib.Phenomena.Dialogue.Studies.FarkasRoelofsen2017
 import Linglib.Phenomena.Dialogue.Studies.Ginzburg2012
 import Linglib.Phenomena.Dialogue.Studies.PurverGinzburg2004
 -- Nouwen2024RSA merged into Nouwen2024
@@ -2596,14 +2603,14 @@ import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Dialogue.Stalnaker
 import Linglib.Theories.Dialogue.ReasonableInference
 import Linglib.Theories.Dialogue.FarkasBruce
-import Linglib.Theories.Dialogue.FarkasAdapter
 import Linglib.Theories.Dialogue.QuotationFBOntology
 import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Theories.Dialogue.DistributionalCG
 import Linglib.Theories.Dialogue.Assertable
 import Linglib.Theories.Dialogue.LayeredAssertion
 import Linglib.Theories.Dialogue.Brandom
 import Linglib.Theories.Dialogue.Gunlogson
-import Linglib.Theories.Dialogue.Lauer
+import Linglib.Theories.Dialogue.CredenceThreshold
 import Linglib.Theories.Dialogue.DisjunctiveUpdate
 -- Theories: Dialogue (KOS)
 import Linglib.Theories.Dialogue.KOS.Defs

@@ -152,6 +152,40 @@ theorem leafCount_pos {α : Type*} (t : DecoratedTree α) : 0 < t.leafCount := b
     simp only [leafCount]
     omega
 
+/-! ## `IsNotTrace` predicate
+
+For Connes-Kreimer coassociativity to hold (M-C-B Lemma 1.2.10), cuts that
+extract a child subtree (`bothCut`, `onlyLeftCut`, `onlyRightCut` on `.node`)
+must NOT be allowed when the relevant child is a `.trace` marker. Without this
+restriction, iterated cuts on the remainder accumulate `.trace (.trace _)`
+nesting, breaking the cuts-of-cuts bijection — see `scratch/mcb_stage1_plan.md`
+or `Linglib/Scratch/CoassocCheck.lean` for the full analysis.
+
+`IsNotTrace t : Prop` is `True` for `.leaf` and `.node`, `False` for `.trace`.
+Decidable; used as a hypothesis in `CutShape`'s extracting constructors. -/
+
+/-- A tree is "not a trace marker" — required for cuts that extract this tree
+    as a subtree. Predicate is decidable. -/
+def IsNotTrace {α : Type*} : DecoratedTree α → Prop
+  | .leaf _   => True
+  | .trace _  => False
+  | .node _ _ => True
+
+instance {α : Type*} : DecidablePred (@IsNotTrace α) := fun t =>
+  match t with
+  | .leaf _   => isTrue trivial
+  | .trace _  => isFalse id
+  | .node _ _ => isTrue trivial
+
+@[simp] theorem isNotTrace_leaf {α : Type*} (a : α) :
+    IsNotTrace (DecoratedTree.leaf a) := trivial
+
+@[simp] theorem isNotTrace_node {α : Type*} (l r : DecoratedTree α) :
+    IsNotTrace (DecoratedTree.node l r) := trivial
+
+@[simp] theorem not_isNotTrace_trace {α : Type*} (t : DecoratedTree α) :
+    ¬ IsNotTrace (DecoratedTree.trace t) := id
+
 end DecoratedTree
 
 /-! ## Forest

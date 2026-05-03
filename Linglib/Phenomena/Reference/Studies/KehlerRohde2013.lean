@@ -180,6 +180,11 @@ def perfective_model : NextMentionModel where
     | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  6
     | .parallel    =>  2
+    -- SDRT additions (background, consequence, alternation) not in
+    -- K&R 2013 coding scheme; 0% weight in mixture.
+    | .background  =>  0
+    | .consequence =>  0
+    | .alternation =>  0
   pSourceGivenCR := fun
     | .occasion    => 18
     | .elaboration => 98
@@ -188,6 +193,10 @@ def perfective_model : NextMentionModel where
     | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  8
     | .parallel    => 50
+    -- SDRT additions; not assigned a Source-bias by K&R 2013.
+    | .background  =>  0
+    | .consequence =>  0
+    | .alternation =>  0
 
 -- ════════════════════════════════════════════════════
 -- § 5. Instruction Manipulation: P(CR) Shift (Tables 3, 5)
@@ -400,7 +409,10 @@ theorem passive_prediction_accurate :
     Result is in basis points (×10000); divide by 100 for percentage. -/
 def NextMentionModel.sourceBasisPts (m : NextMentionModel) : Nat :=
   let crs : List CoherenceRelation :=
-    [.occasion, .elaboration, .explanation, .contrast, .correction, .result, .parallel]
+    [.occasion, .elaboration, .explanation, .contrast, .correction, .result, .parallel,
+     -- SDRT additions: contribute 0 to the mixture under K&R's coding,
+     -- but listed for exhaustiveness over the unified enum.
+     .background, .consequence, .alternation]
   crs.foldl (λ acc cr => acc + m.pCR cr * m.pSourceGivenCR cr) 0
 
 /-- The instruction manipulation models from Tables 3–4.
@@ -414,6 +426,10 @@ private def sharedBias : CoherenceRelation → Nat
   | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
   | .result      =>  9
   | .parallel    => 50
+  -- SDRT additions, not in K&R 2013 coding scheme.
+  | .background  =>  0
+  | .consequence =>  0
+  | .alternation =>  0
 
 def whatNext_model : NextMentionModel where
   pCR := fun
@@ -424,6 +440,10 @@ def whatNext_model : NextMentionModel where
     | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  5
     | .parallel    => 10
+    -- SDRT additions, 0% weight in K&R 2013 mixture.
+    | .background  =>  0
+    | .consequence =>  0
+    | .alternation =>  0
   pSourceGivenCR := sharedBias
 
 def why_model : NextMentionModel where
@@ -435,6 +455,10 @@ def why_model : NextMentionModel where
     | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  0
     | .parallel    =>  0
+    -- SDRT additions, 0% weight in K&R 2013 mixture.
+    | .background  =>  0
+    | .consequence =>  0
+    | .alternation =>  0
   pSourceGivenCR := sharedBias
 
 /-- **Structural invariant**: the two instruction models share the same

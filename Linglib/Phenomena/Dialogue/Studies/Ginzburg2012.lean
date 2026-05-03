@@ -256,16 +256,16 @@ def casualGenre : GenreType String String where
 theorem genre_discriminates :
     let dgb : DGB String String String String := DGB.initial
     let askWeather : IllocMove String String := .ask "What's the weather?"
-    genreRelevant bakeryGenre dgb askWeather = false ∧
-    genreRelevant casualGenre dgb askWeather = true := by
-  refine ⟨?_, ?_⟩ <;> rfl
+    ¬ genreRelevant bakeryGenre dgb askWeather ∧
+    genreRelevant casualGenre dgb askWeather := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- The qnud-based variant agrees with the qudConstraint variant on the
 bakery example: weather questions aren't in the anticipated set. -/
 theorem qnud_rejects_weather :
     let dgb : DGB String String String String := DGB.initial
     let askWeather : IllocMove String String := .ask "What's the weather?"
-    genreRelevantViaQnud bakeryGenre dgb askWeather = false := by decide
+    ¬ genreRelevantViaQnud bakeryGenre dgb askWeather := by decide
 
 end GenreRelevance
 
@@ -547,7 +547,7 @@ theorem e2e_exhaustive (lp : LocProp String) (b : BeliefBase) :
 /-- The Grammar.jo lexical entry's `toLocProp` itself has unresolved
 cparams (it's a referential proper name). -/
 theorem grammar_jo_unresolved :
-    Dialogue.KOS.Grammar.jo.toLocProp.isFullyResolved = false := rfl
+    ¬ Dialogue.KOS.Grammar.jo.toLocProp.isFullyResolved := by decide
 
 end EndToEnd
 

@@ -26,6 +26,22 @@ inheritance when parent fields involve free type parameters, so we keep
 The structural commitment is unchanged: every `LocProp` projects to a
 `TTRSign`, dischargeable via the typeclass.)
 
+## Universe pinning
+
+`Participant`, `Fact`, `QContent` are universe-polymorphic (`Type*`).
+`Cont` is **pinned to `Type` (= `Type 0`)** because it flows into the
+`TTRSign String Cont` projection (`LocProp.toTTRSign`), and TTRSign is
+itself `Type`-pinned in `Theories/Semantics/TypeTheoretic/Core.lean`
+(Cooper's "type-is-a-type" semantics requires `Type 0` for the carrier).
+Same pinning applies in `KOS/Austinian.lean` (where `BCheckableAustinian`
+and `TTRQuestionB` similarly require `Type`) and in
+`KOS/CooperInfoState.lean` (where `InfoState` from TypeTheoretic requires
+all type parameters at `Type`).
+
+Migrating `Cont` to `Type*` requires lifting the entire TTR substrate
+to universe polymorphism — out of scope for this layer's cleanup.
+Document, don't migrate.
+
 ## Architecture
 
 This file collects the load-bearing KOS types in dependency order:
@@ -76,7 +92,7 @@ The `Fact` and `QContent` parameters match the DGB's content types.
 (situated speech events). Here we keep `IllocMove` for case-analysis
 convenience — every constructor tag is a proper inductive case, which
 downstream pattern-matching consumers depend on. -/
-inductive IllocMove (Fact QContent : Type) where
+inductive IllocMove (Fact QContent : Type*) where
   /-- An assertion: speaker commits to propositional content. -/
   | assert : Fact → IllocMove Fact QContent
   /-- A query: speaker raises a question. -/
@@ -94,12 +110,12 @@ inductive IllocMove (Fact QContent : Type) where
   deriving Repr, DecidableEq
 
 /-- Extract the propositional content from a move, if any. -/
-def IllocMove.factContent {Fact QContent : Type} : IllocMove Fact QContent → Option Fact
+def IllocMove.factContent {Fact QContent : Type*} : IllocMove Fact QContent → Option Fact
   | .assert p | .accept p | .check p | .confirm p => some p
   | _ => none
 
 /-- Extract the question content from a move, if any. -/
-def IllocMove.questionContent {Fact QContent : Type} : IllocMove Fact QContent → Option QContent
+def IllocMove.questionContent {Fact QContent : Type*} : IllocMove Fact QContent → Option QContent
   | .ask q => some q
   | _ => none
 
@@ -225,7 +241,7 @@ Example: "Who left?" pushes an InfoStruc with:
 - q = "who left?"
 - fec = [the LocProp for "who"]
 A subsequent fragment "Bo" resolves the question by filling the FEC slot. -/
-structure InfoStruc (QContent Cont : Type) where
+structure InfoStruc (QContent : Type*) (Cont : Type) where
   /-- The question under discussion -/
   q : QContent
   /-- Focus-establishing constituents from the utterance that introduced q -/
@@ -233,12 +249,12 @@ structure InfoStruc (QContent Cont : Type) where
   deriving Repr, DecidableEq
 
 /-- Create an InfoStruc from a bare question (no FECs). -/
-def InfoStruc.fromQuestion {QContent Cont : Type} (q : QContent) :
+def InfoStruc.fromQuestion {QContent : Type*} {Cont : Type} (q : QContent) :
     InfoStruc QContent Cont where
   q := q
 
 /-- Create an InfoStruc from a question and a wh-word sub-utterance. -/
-def InfoStruc.withFEC {QContent Cont : Type}
+def InfoStruc.withFEC {QContent : Type*} {Cont : Type}
     (q : QContent) (fec : LocProp Cont) : InfoStruc QContent Cont where
   q := q
   fec := [fec]
@@ -268,7 +284,7 @@ This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175):
 - `moves` keeps `IllocMove` for case-analysis convenience (the book's
   final form uses LocProps; converting incurs no fidelity cost since
   IllocMove constructors carry information LocProps would have to recover) -/
-structure DGB (Participant Fact QContent Cont : Type) where
+structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
   /-- Current speaker (@cite{ginzburg-2012} ex. 100) -/
   spkr : Option Participant := none
   /-- Current addressee (@cite{ginzburg-2012} ex. 100) -/
@@ -289,12 +305,12 @@ structure DGB (Participant Fact QContent Cont : Type) where
   qud : List (InfoStruc QContent Cont) := []
 
 /-- The latest move is the last element of the moves list. -/
-def DGB.latestMove {Participant Fact QContent Cont : Type}
+def DGB.latestMove {Participant Fact QContent : Type*} {Cont : Type}
     (dgb : DGB Participant Fact QContent Cont) : Option (IllocMove Fact QContent) :=
   dgb.moves.getLast?
 
 /-- An empty DGB. -/
-def DGB.initial {Participant Fact QContent Cont : Type} :
+def DGB.initial {Participant Fact QContent : Type*} {Cont : Type} :
     DGB Participant Fact QContent Cont := {}
 
 -- ════════════════════════════════════════════════════
@@ -323,7 +339,7 @@ machinery that we defer to consumer-driven enrichment.
 
 The relevance check (ex. 90 p. 105) and outcome predicate live in
 `KOS/Genre.lean`. -/
-structure GenreType (Fact QContent : Type) where
+structure GenreType (Fact QContent : Type*) where
   /-- Genre name for identification -/
   name : String
   /-- Anticipated questions in this genre (Ginzburg eq. 88 `qnud` field).
@@ -339,7 +355,7 @@ structure GenreType (Fact QContent : Type) where
 
 /-- The generic DGBType — the supertype of all genre types.
 @cite{ginzburg-2012} ex. 86 (p. 103): `DGBTypefin GenreType`. -/
-def GenreType.generic {Fact QContent : Type} : GenreType Fact QContent where
+def GenreType.generic {Fact QContent : Type*} : GenreType Fact QContent where
   name := "generic"
 
 -- ════════════════════════════════════════════════════
@@ -365,7 +381,7 @@ extended, no separate "phonSoFar" field needed. -/
 @cite{ginzburg-2012} ex. 93 (p. 107): PRType has genre, beliefs, and agenda.
 Agenda is a list of illocutionary propositions that the participant plans
 to realize. Beliefs are private (non-public) propositional attitudes. -/
-structure PrivateState (Fact QContent : Type) where
+structure PrivateState (Fact QContent : Type*) where
   /-- The conversational genre the participant takes the interaction to be. -/
   genre : Option (GenreType Fact QContent) := none
   /-- The participant's agenda: planned illocutionary moves. -/
@@ -376,14 +392,14 @@ structure PrivateState (Fact QContent : Type) where
 @cite{ginzburg-2012} ex. 93 (p. 107): the TIS consists of the public DGB
 and a private component (genre, beliefs, agenda). The `Cont` parameter
 threads through to the DGB's pending and qud fields. -/
-structure TIS (Participant Fact QContent Cont : Type) where
+structure TIS (Participant Fact QContent : Type*) (Cont : Type) where
   /-- The public dialogue gameboard -/
   dgb : DGB Participant Fact QContent Cont := {}
   /-- Private state: genre, agenda -/
   priv : PrivateState Fact QContent := {}
 
 /-- An empty TIS. -/
-def TIS.initial {Participant Fact QContent Cont : Type} :
+def TIS.initial {Participant Fact QContent : Type*} {Cont : Type} :
     TIS Participant Fact QContent Cont := {}
 
 end Dialogue.KOS

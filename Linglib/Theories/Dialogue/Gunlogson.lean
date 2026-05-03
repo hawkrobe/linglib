@@ -98,9 +98,12 @@ def contextSet (s : GunlogsonState W) : ContextSet W :=
 
 /-- Stability: stable when neither participant has unresolved
     other-generated commitments. -/
-def isStable (s : GunlogsonState W) : Bool :=
-  s.speakerSlate.otherGenerated.isEmpty &&
-  s.addresseeSlate.otherGenerated.isEmpty
+def isStable (s : GunlogsonState W) : Prop :=
+  s.speakerSlate.otherGenerated.length = 0 ∧
+  s.addresseeSlate.otherGenerated.length = 0
+
+instance (s : GunlogsonState W) : Decidable (isStable s) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Can the given role challenge a commitment?
 
@@ -315,13 +318,29 @@ theorem rising_confirm_has_both {W : Type*} (p : Set W) :
     the other-generated commitment on the addressee's slate is
     unresolved. -/
 theorem rising_from_empty_unstable {W : Type*} (p : Set W) :
-    (GunlogsonState.empty.risingDeclarative p).isStable = false := rfl
+    ¬ (GunlogsonState.empty.risingDeclarative p).isStable := by
+  rintro ⟨_, h⟩
+  -- h : (...).addresseeSlate.otherGenerated.length = 0
+  -- but it's 1 (the single .otherGenerated entry from risingDeclarative).
+  exact Nat.succ_ne_zero _ h
 
 /-- Confirm does NOT restore stability: the other-generated commitment
     remains alongside the new self-generated one. Full resolution would
     require removing the other-generated entry. -/
 theorem confirm_still_unstable {W : Type*} (p : Set W) :
-    let s := GunlogsonState.empty.risingDeclarative p
-    (s.confirm p).isStable = false := rfl
+    ¬ ((GunlogsonState.empty.risingDeclarative p).confirm p).isStable := by
+  rintro ⟨_, h⟩
+  exact Nat.succ_ne_zero _ h
+
+-- ════════════════════════════════════════════════════
+-- HasContextSet instance
+-- ════════════════════════════════════════════════════
+
+open Core.CommonGround in
+/-- Gunlogson states project to a context set via `contextSet` —
+    the intersection of both participants' commitment contexts
+    (regardless of source). -/
+instance {W : Type*} : HasContextSet (GunlogsonState W) W where
+  toContextSet := GunlogsonState.contextSet
 
 end Dialogue.Gunlogson

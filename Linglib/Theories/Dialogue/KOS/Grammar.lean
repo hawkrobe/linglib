@@ -144,14 +144,14 @@ def left : DialogueSign String where
 -- ════════════════════════════════════════════════════
 
 /-- "Jo" needs grounding: it has non-empty DGB-PARAMS. -/
-theorem jo_needs_grounding : jo.toLocProp.isFullyResolved = false := rfl
+theorem jo_needs_grounding : ¬ jo.toLocProp.isFullyResolved := by decide
 
 /-- "who" has Q-PARAMS (it's interrogative). -/
 theorem who_has_qparams : who.qParams ≠ [] := by
   simp [who]
 
 /-- "who" doesn't need grounding (Q-PARAMS ≠ DGB-PARAMS). -/
-theorem who_no_grounding_needed : who.toLocProp.isFullyResolved = true := rfl
+theorem who_no_grounding_needed : who.toLocProp.isFullyResolved := by decide
 
 /-- "left" has no dialogue features. -/
 theorem left_plain : left.dgbParams = [] ∧ left.qParams = [] := ⟨rfl, rfl⟩

@@ -94,11 +94,14 @@ theorem rising_response_dynamics {W : Type*}
     let s₁ := s₀.risingDeclarative p
     let s₂ := s₁.confirm p
     let s₃ := s₁.reject
-    s₀.isStable = true ∧
-    s₁.isStable = false ∧
-    s₂.isStable = false ∧  -- confirm doesn't remove other-generated
-    s₃.isStable = false :=  -- reject is identity
-  ⟨rfl, rfl, rfl, rfl⟩
+    s₀.isStable ∧
+    ¬ s₁.isStable ∧
+    ¬ s₂.isStable ∧  -- confirm doesn't remove other-generated
+    ¬ s₃.isStable :=  -- reject is identity
+  ⟨⟨rfl, rfl⟩,
+   fun ⟨_, h⟩ => Nat.succ_ne_zero _ h,
+   fun ⟨_, h⟩ => Nat.succ_ne_zero _ h,
+   fun ⟨_, h⟩ => Nat.succ_ne_zero _ h⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Rising Declaratives ≠ Questions

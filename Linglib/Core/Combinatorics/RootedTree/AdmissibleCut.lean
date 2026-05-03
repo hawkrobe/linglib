@@ -54,21 +54,40 @@ Universe-polymorphic in `α : Type*` since Stage 1.6. The inductive
 takes `α` as a parameter (not a per-constructor index), which lets
 mathlib upstream reuse this construction over arbitrary leaf types. -/
 
-/-- An admissible cut on a decorated tree `T : DecoratedTree α`. -/
+/-- An admissible cut on a decorated tree `T : DecoratedTree α`.
+
+    **Trace-extraction restriction (substrate fix for coassoc).** The cuts that
+    EXTRACT a child subtree (`bothCut`, `onlyLeftCut`, `onlyRightCut`) require
+    that child to NOT be a `.trace` marker (`IsNotTrace`). Without this
+    restriction, iterated cuts on the remainder of an outer cut would
+    accumulate `.trace (.trace _)` nesting, breaking the cuts-of-cuts bijection
+    (M-C-B Lemma 1.2.10 / Foissy 2002 §2).
+
+    The `bothRecurse` constructor — which doesn't extract anything at this node —
+    has no restriction; it composes recursively into the children's CutShapes.
+    The atomic `atLeaf` / `atTrace` constructors are also unrestricted.
+
+    See `Linglib/Scratch/CoassocCheck.lean` for the explicit verification that
+    the unrestricted version (no `IsNotTrace` hypotheses) breaks coassoc. -/
 inductive CutShape {α : Type*} : DecoratedTree α → Type _ where
   /-- An α-leaf admits only the empty cut (no edges to cut). -/
   | atLeaf {a : α} : CutShape (.leaf a)
   /-- A trace leaf admits only the empty cut. -/
   | atTrace {t : DecoratedTree α} : CutShape (.trace t)
-  /-- Cut both child edges of this node. -/
-  | bothCut {l r : DecoratedTree α} : CutShape (.node l r)
-  /-- Cut the left child edge, recurse into `r` with sub-cut `cr`. -/
-  | onlyLeftCut {l r : DecoratedTree α} (cr : CutShape r) :
-      CutShape (.node l r)
-  /-- Recurse into `l` with sub-cut `cl`, cut the right child edge. -/
-  | onlyRightCut {l r : DecoratedTree α} (cl : CutShape l) :
-      CutShape (.node l r)
-  /-- Don't cut at this node; recurse in both children. -/
+  /-- Cut both child edges of this node. Requires both children to be
+      non-trace (cuts cannot extract `.trace` markers). -/
+  | bothCut {l r : DecoratedTree α} (hl : DecoratedTree.IsNotTrace l)
+      (hr : DecoratedTree.IsNotTrace r) : CutShape (.node l r)
+  /-- Cut the left child edge, recurse into `r` with sub-cut `cr`. Requires
+      the left child to be non-trace. -/
+  | onlyLeftCut {l r : DecoratedTree α} (hl : DecoratedTree.IsNotTrace l)
+      (cr : CutShape r) : CutShape (.node l r)
+  /-- Recurse into `l` with sub-cut `cl`, cut the right child edge. Requires
+      the right child to be non-trace. -/
+  | onlyRightCut {l r : DecoratedTree α} (hr : DecoratedTree.IsNotTrace r)
+      (cl : CutShape l) : CutShape (.node l r)
+  /-- Don't cut at this node; recurse in both children. No restrictions
+      since nothing is extracted at this level. -/
   | bothRecurse {l r : DecoratedTree α} (cl : CutShape l)
       (cr : CutShape r) : CutShape (.node l r)
 
@@ -94,32 +113,34 @@ instance decEq [DecidableEq α] :
       have _ : DecidableEq (CutShape l) := decEq l
       have _ : DecidableEq (CutShape r) := decEq r
       match a, b with
-      | .bothCut, .bothCut => isTrue rfl
-      | .bothCut, .onlyLeftCut _ => isFalse (by intro h; cases h)
-      | .bothCut, .onlyRightCut _ => isFalse (by intro h; cases h)
-      | .bothCut, .bothRecurse _ _ => isFalse (by intro h; cases h)
-      | .onlyLeftCut _, .bothCut => isFalse (by intro h; cases h)
-      | .onlyLeftCut cr₁, .onlyLeftCut cr₂ =>
+      | .bothCut _ _, .bothCut _ _ => isTrue rfl
+      | .bothCut _ _, .onlyLeftCut _ _ => isFalse (by intro h; cases h)
+      | .bothCut _ _, .onlyRightCut _ _ => isFalse (by intro h; cases h)
+      | .bothCut _ _, .bothRecurse _ _ => isFalse (by intro h; cases h)
+      | .onlyLeftCut _ _, .bothCut _ _ => isFalse (by intro h; cases h)
+      | .onlyLeftCut _ cr₁, .onlyLeftCut _ cr₂ =>
           if h : cr₁ = cr₂ then isTrue (by subst h; rfl)
           else isFalse (by intro heq; cases heq; exact h rfl)
-      | .onlyLeftCut _, .onlyRightCut _ => isFalse (by intro h; cases h)
-      | .onlyLeftCut _, .bothRecurse _ _ => isFalse (by intro h; cases h)
-      | .onlyRightCut _, .bothCut => isFalse (by intro h; cases h)
-      | .onlyRightCut _, .onlyLeftCut _ => isFalse (by intro h; cases h)
-      | .onlyRightCut cl₁, .onlyRightCut cl₂ =>
+      | .onlyLeftCut _ _, .onlyRightCut _ _ => isFalse (by intro h; cases h)
+      | .onlyLeftCut _ _, .bothRecurse _ _ => isFalse (by intro h; cases h)
+      | .onlyRightCut _ _, .bothCut _ _ => isFalse (by intro h; cases h)
+      | .onlyRightCut _ _, .onlyLeftCut _ _ => isFalse (by intro h; cases h)
+      | .onlyRightCut _ cl₁, .onlyRightCut _ cl₂ =>
           if h : cl₁ = cl₂ then isTrue (by subst h; rfl)
           else isFalse (by intro heq; cases heq; exact h rfl)
-      | .onlyRightCut _, .bothRecurse _ _ => isFalse (by intro h; cases h)
-      | .bothRecurse _ _, .bothCut => isFalse (by intro h; cases h)
-      | .bothRecurse _ _, .onlyLeftCut _ => isFalse (by intro h; cases h)
-      | .bothRecurse _ _, .onlyRightCut _ => isFalse (by intro h; cases h)
+      | .onlyRightCut _ _, .bothRecurse _ _ => isFalse (by intro h; cases h)
+      | .bothRecurse _ _, .bothCut _ _ => isFalse (by intro h; cases h)
+      | .bothRecurse _ _, .onlyLeftCut _ _ => isFalse (by intro h; cases h)
+      | .bothRecurse _ _, .onlyRightCut _ _ => isFalse (by intro h; cases h)
       | .bothRecurse cl₁ cr₁, .bothRecurse cl₂ cr₂ =>
           if h₁ : cl₁ = cl₂ then
             if h₂ : cr₁ = cr₂ then isTrue (by subst h₁; subst h₂; rfl)
             else isFalse (by intro heq; cases heq; exact h₂ rfl)
           else isFalse (by intro heq; cases heq; exact h₁ rfl)
 
-/-- The finite set of all cut shapes on T. -/
+/-- The finite set of all cut shapes on T. The `bothCut` / `onlyLeftCut` /
+    `onlyRightCut` constructors are conditionally included based on whether the
+    relevant children pass `IsNotTrace`. -/
 def all [DecidableEq α] : (T : DecoratedTree α) → Finset (CutShape T)
   | .leaf _  => {.atLeaf}
   | .trace _ => {.atTrace}
@@ -127,9 +148,20 @@ def all [DecidableEq α] : (T : DecoratedTree α) → Finset (CutShape T)
       have _ : DecidableEq (CutShape (.node l r)) := decEq (.node l r)
       have allL : Finset (CutShape l) := all l
       have allR : Finset (CutShape r) := all r
-      {CutShape.bothCut}
-        ∪ allR.image (fun cr => CutShape.onlyLeftCut cr)
-        ∪ allL.image (fun cl => CutShape.onlyRightCut cl)
+      have bothCutSet : Finset (CutShape (.node l r)) :=
+        if hl : DecoratedTree.IsNotTrace l then
+          if hr : DecoratedTree.IsNotTrace r then {CutShape.bothCut hl hr}
+          else ∅
+        else ∅
+      have leftCutSet : Finset (CutShape (.node l r)) :=
+        if hl : DecoratedTree.IsNotTrace l then
+          allR.image (fun cr => CutShape.onlyLeftCut hl cr)
+        else ∅
+      have rightCutSet : Finset (CutShape (.node l r)) :=
+        if hr : DecoratedTree.IsNotTrace r then
+          allL.image (fun cl => CutShape.onlyRightCut hr cl)
+        else ∅
+      bothCutSet ∪ leftCutSet ∪ rightCutSet
         ∪ ((allL ×ˢ allR).image (fun p => CutShape.bothRecurse p.1 p.2))
 
 /-- Every cut shape on T is in `all T`. -/
@@ -137,18 +169,26 @@ theorem mem_all [DecidableEq α] :
     ∀ (T : DecoratedTree α) (c : CutShape T), c ∈ all T
   | .leaf _, .atLeaf => by simp [all]
   | .trace _, .atTrace => by simp [all]
-  | .node l r, .bothCut => by simp [all]
-  | .node l r, .onlyLeftCut cr => by
+  | .node l r, .bothCut hl hr => by
       simp only [all, Finset.mem_union, Finset.mem_image,
-        Finset.mem_singleton, Finset.mem_product]
-      refine Or.inl (Or.inl (Or.inr ⟨cr, mem_all r cr, rfl⟩))
-  | .node l r, .onlyRightCut cl => by
+        Finset.mem_product]
+      refine Or.inl (Or.inl (Or.inl ?_))
+      simp [hl, hr]
+  | .node l r, .onlyLeftCut hl cr => by
       simp only [all, Finset.mem_union, Finset.mem_image,
-        Finset.mem_singleton, Finset.mem_product]
-      refine Or.inl (Or.inr ⟨cl, mem_all l cl, rfl⟩)
+        Finset.mem_product]
+      refine Or.inl (Or.inl (Or.inr ?_))
+      simp only [hl, ↓reduceDIte, Finset.mem_image]
+      exact ⟨cr, mem_all r cr, rfl⟩
+  | .node l r, .onlyRightCut hr cl => by
+      simp only [all, Finset.mem_union, Finset.mem_image,
+        Finset.mem_product]
+      refine Or.inl (Or.inr ?_)
+      simp only [hr, ↓reduceDIte, Finset.mem_image]
+      exact ⟨cl, mem_all l cl, rfl⟩
   | .node l r, .bothRecurse cl cr => by
       simp only [all, Finset.mem_union, Finset.mem_image,
-        Finset.mem_singleton, Finset.mem_product]
+        Finset.mem_product]
       refine Or.inr ⟨(cl, cr), ⟨mem_all l cl, mem_all r cr⟩, rfl⟩
 
 instance fintype [DecidableEq α] (T : DecoratedTree α) :
@@ -175,10 +215,10 @@ no placeholder, no unsoundness. -/
 def cutForest : ∀ {T : DecoratedTree α}, CutShape T → Forest α
   | .leaf _, .atLeaf => 0
   | .trace _, .atTrace => 0
-  | .node l r, .bothCut => ({l, r} : Multiset (DecoratedTree α))
-  | .node l _, .onlyLeftCut cr =>
+  | .node l r, .bothCut _ _ => ({l, r} : Multiset (DecoratedTree α))
+  | .node l _, .onlyLeftCut _ cr =>
       ({l} : Multiset (DecoratedTree α)) + cutForest cr
-  | .node _ r, .onlyRightCut cl =>
+  | .node _ r, .onlyRightCut _ cl =>
       cutForest cl + ({r} : Multiset (DecoratedTree α))
   | .node _ _, .bothRecurse cl cr => cutForest cl + cutForest cr
 
@@ -186,13 +226,17 @@ def cutForest : ∀ {T : DecoratedTree α}, CutShape T → Forest α
     T with each cut subtree replaced by a `.trace` leaf carrying the
     cut subtree as metadata. The `DecoratedTree.trace` constructor
     takes any subtree (including trace-bearing ones), so iterated
-    cuts compose without any fallback or placeholder. Used by Δ^c. -/
+    cuts compose without any fallback or placeholder. Used by Δ^c.
+
+    Note: by the `IsNotTrace` constraint on the extracting constructors, the
+    children getting wrapped with `.trace` here are guaranteed to NOT already
+    be `.trace` markers — so no `.trace (.trace _)` nesting can occur. -/
 def remainder : ∀ {T : DecoratedTree α}, CutShape T → DecoratedTree α
   | .leaf tok, .atLeaf => .leaf tok
   | .trace t,  .atTrace => .trace t
-  | .node l r, .bothCut => .node (.trace l) (.trace r)
-  | .node l _, .onlyLeftCut cr => .node (.trace l) (remainder cr)
-  | .node _ r, .onlyRightCut cl => .node (remainder cl) (.trace r)
+  | .node l r, .bothCut _ _ => .node (.trace l) (.trace r)
+  | .node l _, .onlyLeftCut _ cr => .node (.trace l) (remainder cr)
+  | .node _ r, .onlyRightCut _ cl => .node (remainder cl) (.trace r)
   | .node _ _, .bothRecurse cl cr => .node (remainder cl) (remainder cr)
 
 /-- The remainder of a cut (deletion-with-rebinarization, M-C-B
@@ -218,9 +262,9 @@ def remainderDeletion : ∀ {T : DecoratedTree α},
     CutShape T → Option (DecoratedTree α)
   | .leaf tok, .atLeaf => some (.leaf tok)
   | .trace t,  .atTrace => some (.trace t)
-  | .node _ _, .bothCut => none
-  | .node _ _, .onlyLeftCut cr => remainderDeletion cr
-  | .node _ _, .onlyRightCut cl => remainderDeletion cl
+  | .node _ _, .bothCut _ _ => none
+  | .node _ _, .onlyLeftCut _ cr => remainderDeletion cr
+  | .node _ _, .onlyRightCut _ cl => remainderDeletion cl
   | .node _ _, .bothRecurse cl cr =>
       match remainderDeletion cl, remainderDeletion cr with
       | some l', some r' => some (.node l' r')
@@ -250,9 +294,26 @@ def remainderDeletion : ∀ {T : DecoratedTree α},
       rw [remainder, remainder_empty l, remainder_empty r]
 
 /-- Cut both child edges of a node: extracts both children. -/
-@[simp] theorem cutForest_bothCut {l r : DecoratedTree α} :
-    (bothCut : CutShape (.node l r)).cutForest =
+@[simp] theorem cutForest_bothCut {l r : DecoratedTree α}
+    (hl : DecoratedTree.IsNotTrace l) (hr : DecoratedTree.IsNotTrace r) :
+    (bothCut hl hr : CutShape (.node l r)).cutForest =
       ({l, r} : Multiset (DecoratedTree α)) := rfl
+
+/-- The unique cut on a leaf has empty `cutForest`. -/
+@[simp] theorem cutForest_atLeaf {a : α} :
+    (atLeaf : CutShape (.leaf a)).cutForest = (0 : Forest α) := rfl
+
+/-- The unique cut on a leaf leaves the leaf unchanged. -/
+@[simp] theorem remainder_atLeaf {a : α} :
+    (atLeaf : CutShape (.leaf a)).remainder = .leaf a := rfl
+
+/-- The unique cut on a trace has empty `cutForest`. -/
+@[simp] theorem cutForest_atTrace {t : DecoratedTree α} :
+    (atTrace : CutShape (.trace t)).cutForest = (0 : Forest α) := rfl
+
+/-- The unique cut on a trace leaves the trace unchanged. -/
+@[simp] theorem remainder_atTrace {t : DecoratedTree α} :
+    (atTrace : CutShape (.trace t)).remainder = .trace t := rfl
 
 /-! ## §6: Position vs. value: cutForest is NOT injective (and that's correct)
 

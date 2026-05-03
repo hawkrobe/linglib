@@ -57,6 +57,14 @@ def CoherenceRelation.preferredTransition : CoherenceRelation → Transition
   | .parallel     => .retaining
   | .contrast     => .shifting
   | .correction   => .shifting
+  -- SDRT additions (no Centering-Theory data on these; predictions
+  -- assigned by analogy: background patterns with elaboration/contiguity
+  -- relations; consequence patterns with cause-effect; alternation with
+  -- resemblance-shifting). Empirical data may refine these; flagged
+  -- as predictions-by-analogy, not Grosz-Joshi-Weinstein assertions.
+  | .background   => .continuation   -- scene-setting like elaboration
+  | .consequence  => .continuation   -- causal like explanation/result
+  | .alternation  => .shifting       -- disjunction shifts the Cb-candidate space
 
 -- ════════════════════════════════════════════════════
 -- § Rule-2-aligned predictions

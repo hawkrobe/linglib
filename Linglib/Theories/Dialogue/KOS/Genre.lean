@@ -63,10 +63,15 @@ are all anticipated (i.e., in `genre.qnud`).
 fulfilled when its trajectory is consistent with the genre's anticipated
 question stack. The full version also requires move sequence to be
 consistent with `anticipatedMoves`; we model the QUD half here. -/
-def GenreType.outcomeFulfilled {P Fact QContent Cont : Type}
+def GenreType.outcomeFulfilled {P Fact QContent : Type*} {Cont : Type}
     [DecidableEq QContent]
-    (genre : GenreType Fact QContent) (dgb : DGB P Fact QContent Cont) : Bool :=
-  dgb.qud.all fun is => is.q ∈ genre.qnud
+    (genre : GenreType Fact QContent) (dgb : DGB P Fact QContent Cont) : Prop :=
+  ∀ is ∈ dgb.qud, is.q ∈ genre.qnud
+
+instance {P Fact QContent : Type*} {Cont : Type} [DecidableEq QContent]
+    (genre : GenreType Fact QContent) (dgb : DGB P Fact QContent Cont) :
+    Decidable (genre.outcomeFulfilled dgb) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 -- ════════════════════════════════════════════════════
 -- § 2. Genre relevance — thin variant
@@ -80,15 +85,22 @@ iff A believes that outcome(dgb0 ⊕moves m0, G0) will be fulfilled."
 This thin variant uses the genre's `qudConstraint` field (a procedural
 predicate on the projected QUD content). For a `qnud`-list-based variant,
 see `genreRelevantViaQnud`. -/
-def genreRelevant {P Fact QContent Cont : Type}
+def genreRelevant {P Fact QContent : Type*} {Cont : Type}
     (genre : GenreType Fact QContent)
-    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Bool :=
+    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Prop :=
   match genre.qudConstraint with
-  | none => true  -- unrestricted genre: all moves are relevant
+  | none => True  -- unrestricted genre: all moves are relevant
   | some constraint =>
     match m.questionContent with
-    | some q => constraint (q :: dgb.qud.map (·.q))
-    | none => true  -- non-question moves don't violate QUD constraints
+    | some q => constraint (q :: dgb.qud.map (·.q)) = true
+    | none => True  -- non-question moves don't violate QUD constraints
+
+instance {P Fact QContent : Type*} {Cont : Type}
+    (genre : GenreType Fact QContent)
+    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) :
+    Decidable (genreRelevant genre dgb m) := by
+  unfold genreRelevant
+  cases genre.qudConstraint <;> cases m.questionContent <;> infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 3. Genre relevance — qnud variant
@@ -99,12 +111,19 @@ def genreRelevant {P Fact QContent Cont : Type}
 Ex. 90 reduced to the operational form: simulating the move's
 QUD-incrementation, the resulting QUD must consist entirely of anticipated
 questions. -/
-def genreRelevantViaQnud {P Fact QContent Cont : Type} [DecidableEq QContent]
+def genreRelevantViaQnud {P Fact QContent : Type*} {Cont : Type} [DecidableEq QContent]
     (genre : GenreType Fact QContent)
-    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Bool :=
+    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Prop :=
   match m.questionContent with
-  | none => true  -- non-question moves don't change QUD via this predicate
-  | some q => (q :: dgb.qud.map (·.q)).all (· ∈ genre.qnud)
+  | none => True  -- non-question moves don't change QUD via this predicate
+  | some q => ∀ q' ∈ q :: dgb.qud.map (·.q), q' ∈ genre.qnud
+
+instance {P Fact QContent : Type*} {Cont : Type} [DecidableEq QContent]
+    (genre : GenreType Fact QContent)
+    (dgb : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) :
+    Decidable (genreRelevantViaQnud genre dgb m) := by
+  unfold genreRelevantViaQnud
+  cases m.questionContent <;> infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 4. Coherence: outcome fulfillment is post-relevance closure
@@ -116,12 +135,12 @@ is fulfilled (qud entries are all anticipated). This is a structural
 witness that the qnud-based predicate genuinely tracks ex. 91's outcome
 relation. -/
 theorem genreRelevantViaQnud_preserves_outcomeFulfilled
-    {P Fact QContent Cont : Type} [DecidableEq QContent]
+    {P Fact QContent : Type*} {Cont : Type} [DecidableEq QContent]
     (genre : GenreType Fact QContent)
     (dgb : DGB P Fact QContent Cont)
-    (h : genre.outcomeFulfilled dgb = true)
+    (_h : genre.outcomeFulfilled dgb)
     (m : IllocMove Fact QContent)
-    (hm : genreRelevantViaQnud genre dgb m = true) :
+    (hm : genreRelevantViaQnud genre dgb m) :
     -- After pushing m's question content (if any), the resulting QUD is
     -- still in qnud — that's the ex. 89 outcome relation maintained.
     (match m.questionContent with
@@ -131,7 +150,8 @@ theorem genreRelevantViaQnud_preserves_outcomeFulfilled
   cases hq : m.questionContent with
   | none => simp [hq]
   | some q =>
-    simp [hq] at hm
-    simp [hq, hm.1]
+    rw [hq] at hm
+    -- hm : ∀ q' ∈ q :: dgb.qud.map (·.q), q' ∈ genre.qnud
+    exact hm q List.mem_cons_self
 
 end Dialogue.KOS

@@ -74,4 +74,15 @@ theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Set W) :
 /-- Stalnaker states are always stable. -/
 theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 
+-- ════════════════════════════════════════════════════
+-- HasContextSet (re-export via abbrev)
+-- ════════════════════════════════════════════════════
+
+/-- Theorem (not instance — the `CG W` instance from `Core.CommonGround`
+    already resolves through the `StalnakerState W := CG W` abbrev): the
+    `HasContextSet` projection on a Stalnaker state agrees with the
+    local `Stalnaker.contextSet` def. Documents the bridge for grep. -/
+theorem hasContextSet_eq_contextSet {W : Type*} (s : StalnakerState W) :
+    Core.CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
+
 end Dialogue.Stalnaker

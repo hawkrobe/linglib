@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.Stalnaker
 import Linglib.Theories.Dialogue.ReasonableInference
+import Linglib.Theories.Dialogue.Assertable
 
 /-!
 # Stalnaker 1975 @cite{stalnaker-1975}
@@ -31,6 +32,14 @@ import Linglib.Theories.Dialogue.ReasonableInference
 5. **Fatalism failure** (§V): sketched in `fatalism_remark` as a docstring;
    the formal point is that constructive dilemma is valid only for
    entailments, not for reasonable inferences.
+
+6. **Polymorphic lift via `Dialogue.Assertable`** (§ 4 below): the
+   Stalnaker-1975 change-function calculus is shown to be the
+   Stalnaker-instance projection of the framework-generic
+   `Assertable.speakerAssert`. The direct-argument theorem then lifts
+   to: for ANY `Assertable` framework, the direct argument from
+   `A∨B` to `if ¬A, B` is a reasonable inference. Stalnaker's
+   pragmatic claim is framework-generic, not Stalnaker-representation-specific.
 
 The two universal pragmatic postulates from the Appendix
 (`respectsCompatibility`, `changeFn_eq`) are stated in
@@ -216,7 +225,113 @@ theorem direct_argument_holds_under_indicative_selection :
   · exact ⟨.gardener, by decide, by decide, by decide⟩
   · exact ⟨by decide, by decide⟩
 
--- § 3. Note on contraposition, hypothetical syllogism, and fatalism
+-- ════════════════════════════════════════════════════════════════
+-- § 3. Polymorphic version via Assertable
+-- ════════════════════════════════════════════════════════════════
+
+/-! Stalnaker 1975's change-function calculus uses `changeFn p k`
+(set intersection) as the post-assertion update operator. The
+`Theories/Dialogue/Assertable.lean` typeclass abstracts over
+*any* dialogue-state representation that admits Stalnakerian
+narrowing. This section shows that:
+
+1. The `changeFn` operator IS the Stalnaker-instance projection of
+   `Assertable.speakerAssert` (a 1-line bridge by `Set.inter_comm`).
+2. The direct-argument theorem lifts to be polymorphic over
+   `[Assertable S W]` — Stalnaker's "reasonable inference" claim
+   doesn't depend on Stalnaker's particular state representation.
+3. The lifted theorem applies cleanly to both the Stalnaker
+   instance (the original framework) and the Krifka instance (a
+   commitment-space representation with a radically different
+   internal structure but the same projected context-set behavior).
+
+This is the consumer that earns the `Dialogue.Assertable`
+typeclass's existence: a substantive philosophical claim
+(reasonable inference is framework-generic) given a
+substrate-level proof (the typeclass's narrowing law is
+sufficient). -/
+
+open Dialogue (Assertable)
+open Core.CommonGround (HasContextSet)
+
+/-- **Bridge theorem**: Stalnaker's `changeFn` operator equals the
+    `HasContextSet`-projection of `Assertable.speakerAssert` at the
+    Stalnaker instance.
+
+    `changeFn p k = k ∩ p` (Stalnaker 1975 Appendix postulate 2);
+    `HasContextSet.toContextSet (Stalnaker.assert s p) = p ∩ s.contextSet`.
+    They're equal up to `Set.inter_comm`. -/
+theorem stalnaker_speakerAssert_eq_changeFn {W : Type*}
+    (s : Dialogue.Stalnaker.StalnakerState W) (p : Set W) :
+    HasContextSet.toContextSet (Assertable.speakerAssert s p) =
+    changeFn p (HasContextSet.toContextSet s) := Set.inter_comm _ _
+
+/-- **Polymorphic direct argument**: for ANY `Assertable` framework,
+    asserting `A∨B` yields a context set in which the indicative
+    conditional `if ¬A, B` holds at every world.
+
+    The proof is shorter than its single-framework predecessor
+    (`direct_argument_reasonable`) because the Assertable typeclass
+    provides one of the hypotheses for free: every world surviving
+    the assertion satisfies `AorB` (the typeclass law
+    `speakerAssert_narrows`). Compare with the Stalnaker-specific
+    version, which had to take this as a hypothesis (`h_C_AorB`). -/
+theorem direct_argument_reasonable_polymorphic
+    {S W : Type*} [Assertable S W]
+    (s : S) (sel : SelectionFunction W)
+    (notA B AorB : W → Prop)
+    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
+    (h_constraint : pragmaticConstraint sel
+      (HasContextSet.toContextSet (Assertable.speakerAssert s AorB)))
+    (h_open_notA : ∃ w' ∈ {w' | notA w'},
+      HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w') :
+    ∀ w, HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w →
+      moodedConditional .indicative sel notA B w := by
+  apply direct_argument_reasonable sel _ notA B AorB h_constraint
+    _ h_AorB_decomp h_open_notA
+  -- The post-assertion context set ⊆ {w | AorB w}, by the typeclass law.
+  intro w hw
+  exact Assertable.speakerAssert_narrows s AorB w hw
+
+/-- **Stalnaker instance application**: the polymorphic lift fires on
+    the Stalnaker framework. Recovers the framework-specific
+    `direct_argument_reasonable` for the post-assertion context. -/
+theorem direct_argument_reasonable_stalnaker {W : Type*}
+    (s : Dialogue.Stalnaker.StalnakerState W) (sel : SelectionFunction W)
+    (notA B AorB : W → Prop)
+    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
+    (h_constraint : pragmaticConstraint sel
+      (HasContextSet.toContextSet (Assertable.speakerAssert s AorB)))
+    (h_open_notA : ∃ w' ∈ {w' | notA w'},
+      HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w') :
+    ∀ w, HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w →
+      moodedConditional .indicative sel notA B w :=
+  direct_argument_reasonable_polymorphic s sel notA B AorB
+    h_AorB_decomp h_constraint h_open_notA
+
+/-- **Krifka instance application**: the polymorphic lift fires on
+    the commitment-space framework too. Krifka's `KrifkaState`
+    represents the same dialogue state as a tree of indexed
+    commitments rather than a flat list of propositions, but the
+    direct-argument inference is equally valid — the Assertable
+    typeclass abstracts over the representational difference. -/
+theorem direct_argument_reasonable_krifka {W : Type*}
+    (s : Dialogue.Krifka.KrifkaState W) (sel : SelectionFunction W)
+    (notA B AorB : W → Prop)
+    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
+    (h_constraint : pragmaticConstraint sel
+      (HasContextSet.toContextSet (Assertable.speakerAssert s AorB)))
+    (h_open_notA : ∃ w' ∈ {w' | notA w'},
+      HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w') :
+    ∀ w, HasContextSet.toContextSet (Assertable.speakerAssert s AorB) w →
+      moodedConditional .indicative sel notA B w :=
+  direct_argument_reasonable_polymorphic s sel notA B AorB
+    h_AorB_decomp h_constraint h_open_notA
+
+-- ════════════════════════════════════════════════════════════════
+-- § 4. Note on contraposition, hypothetical syllogism, and fatalism
+-- ════════════════════════════════════════════════════════════════
+
 
 /-! ### Contraposition / hypothetical syllogism
 

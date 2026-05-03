@@ -184,7 +184,7 @@ P(concept | role, context) ∝ P_sel(concept | role) × P_scen(concept | context
 ## SDS disambiguation via Product of Experts
 
 For combining selectional and scenario constraints, use mathlib's
-`PMF.productOfExperts` (`Core/Probability/PMFPosterior.lean`) on PMFs
+`PMF.productOfExperts` (`Core/Probability/Posterior.lean`) on PMFs
 constructed from each constraint via `PMF.normalize`. The illustrative
 ℚ-valued helpers that previously lived here (`sdsDisambiguate`,
 `sdsDisambiguateWithUncertainty`) were removed in favor of the canonical

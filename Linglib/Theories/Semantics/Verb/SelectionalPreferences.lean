@@ -11,7 +11,7 @@ This file provides ℚ-valued selectional preferences (`Concept → ℚ`)
 suitable for decidable computation in Fragment definitions. For
 probabilistic disambiguation combining selectional and scenario
 constraints, use mathlib's `PMF.productOfExperts`
-(`Core/Probability/PMFPosterior.lean`) on PMFs constructed via
+(`Core/Probability/Posterior.lean`) on PMFs constructed via
 `PMF.normalize` from the score functions defined here. The newer SDS
 substrate (`Theories/Semantics/Probabilistic/SDS/ConceptNode.lean`)
 provides the PMF-typed `Role → PMF Concept` form for paper replications.
@@ -193,7 +193,7 @@ end Frames
 /-! ## Disambiguation
 
 For sense disambiguation combining selectional + scenario constraints,
-use `PMF.productOfExperts` (`Core/Probability/PMFPosterior.lean`) on
+use `PMF.productOfExperts` (`Core/Probability/Posterior.lean`) on
 PMFs constructed via `PMF.normalize` from the score functions in this
 file. The illustrative ℚ-valued helpers that previously lived here
 (`disambiguateBySelection`, `sdsDisambiguate`, `bladeDisambiguated`)

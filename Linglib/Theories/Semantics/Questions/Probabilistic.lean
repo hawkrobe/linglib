@@ -1,5 +1,5 @@
 import Linglib.Core.Question.Basic
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 import Linglib.Theories.Semantics.Questions.Resolution
 
 /-!

@@ -91,6 +91,13 @@ admissible cut, since there is no edge above the root to remove. -/
 noncomputable def forestToHc (F : Forest α) : Hc R α :=
   Finsupp.single F (1 : R)
 
+/-- The empty forest embeds as the multiplicative unit:
+    `forestToHc 0 = (1 : Hc R α)`. Direct from `AddMonoidAlgebra.one_def`. -/
+@[simp] lemma forestToHc_zero : (forestToHc (R := R) (0 : Forest α) : Hc R α) = 1 := by
+  show (Finsupp.single (0 : Forest α) (1 : R) : AddMonoidAlgebra R (Forest α))
+     = (1 : AddMonoidAlgebra R (Forest α))
+  exact AddMonoidAlgebra.one_def.symm
+
 /-- The tree-level Connes-Kreimer coproduct.
     Δ^c(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ ({remainder c}). -/
 noncomputable def comulTree (T : DecoratedTree α) : Hc R α ⊗[R] Hc R α :=
@@ -164,6 +171,14 @@ noncomputable def comulMonoidHom :
 noncomputable def comulAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (Forest α)
     comulMonoidHom
+
+/-- `comulAlgHom` applied to the basis vector `Finsupp.single F 1`
+    equals `comulForest F`. Follows from `AddMonoidAlgebra.lift_single`. -/
+@[simp] theorem comulAlgHom_apply_single (F : Forest α) :
+    comulAlgHom (R := R) (α := α) (Finsupp.single F 1) = comulForest F := by
+  show AddMonoidAlgebra.lift R _ _ comulMonoidHom (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
 
 /-! ## §5: Counit (also an algebra hom)
 
