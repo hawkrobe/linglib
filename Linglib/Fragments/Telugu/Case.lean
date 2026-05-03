@@ -1,7 +1,8 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-open Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Order
+import Linglib.Core.Case.Allomorphy
+open Core.Case.Allomorphy
 
 /-!
 # Telugu Case Inventory

@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-open Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Allomorphy
+open Core.Case.Allomorphy
 
 /-!
 # Tamil Case Inventory
@@ -27,7 +27,7 @@ def caseInventory : Finset Core.Case :=
 example : Core.Case.IsValidInventory caseInventory := by decide
 
 /-- Tamil COM/INST syncretism (-ōṭu covers both functions).
-    Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/
+    Uses the cross-linguistic pattern from `Core.Case.Allomorphy`. -/
 def tamilComInstSync : Syncretism := comInstSyncretism
 
 /-- COM/INST are strictly adjacent (ranks 1, 2). -/

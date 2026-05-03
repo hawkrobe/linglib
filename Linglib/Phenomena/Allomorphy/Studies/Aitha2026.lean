@@ -1,6 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Order
+import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
@@ -8,7 +9,7 @@ import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
-open Interfaces.Morphosyntax.CaseContainment
+open Core.Case.Allomorphy
 
 /-!
 # The Nouns that Say *-ni* @cite{aitha-2026}

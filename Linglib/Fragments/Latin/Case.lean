@@ -1,8 +1,8 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Grammaticalization
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-open Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Allomorphy
+open Core.Case.Allomorphy
 
 /-!
 # Latin Case Inventory @cite{blake-1994}
@@ -58,7 +58,7 @@ example : Core.Case.IsValidInventory inventoryWithLocative := by decide
 -- ============================================================================
 
 /-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
-    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
+    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Allomorphy`. -/
 def neuterSyncretism : Syncretism := nomAccSyncretism
 
 /-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/

@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
-open Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Allomorphy
+open Core.Case.Allomorphy
 
 /-!
 # German Case Inventory @cite{blake-1994}
@@ -28,7 +28,7 @@ def caseInventory : Finset Core.Case :=
 example : Core.Case.IsValidInventory caseInventory := by decide
 
 /-- NOM/ACC syncretism in neuter and feminine.
-    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
+    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Allomorphy`. -/
 def neuterSyncretism : Syncretism := nomAccSyncretism
 
 end Fragments.German.Case

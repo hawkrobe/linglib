@@ -1,4 +1,5 @@
-import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
+import Linglib.Core.Case.Order
+import Linglib.Core.Case.Allomorphy
 
 /-!
 # Nanosyntax: Core
@@ -38,7 +39,7 @@ Because the tree is strictly right-branching, each case is fully
 characterized by its **rank** (depth): NOM = 0, ACC = 1, GEN = 2,
 DAT = 3, etc. A lexical entry storing a tree of rank r contains
 all sub-constituents of rank ≤ r. This is exactly the containment
-hierarchy formalized in `Interfaces.Morphosyntax.CaseContainment`.
+hierarchy formalized in `Core.Case.Allomorphy`.
 
 ## Deriving *ABA
 
@@ -54,13 +55,13 @@ Result: β–β–α. There is no way to get α–β–α, because any entry
 that beats α for the intermediate case Y also beats α for all
 cases below Y (it matches them too, and it's smaller).
 
-See `Interfaces.Morphosyntax.CaseContainment` for the *ABA constraint
+See `Core.Case.Allomorphy` for the *ABA constraint
 formalized independently via `AllomorphyPattern`.
 -/
 
 namespace Morphology.Nanosyntax
 
-open Interfaces.Morphosyntax.CaseContainment
+open Core.Case.Allomorphy
 
 -- ============================================================================
 -- §1: Lexical Entries on the fseq
