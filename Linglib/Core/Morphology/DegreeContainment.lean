@@ -44,39 +44,14 @@ inductive DegreeGrade where
   | sprl  -- superlative: ADJ + CMPR + SPRL
   deriving DecidableEq, Repr
 
-/-- Containment rank: POS < CMPR < SPRL. -/
+/-- Containment rank: POS < CMPR < SPRL. The "containment" relation
+    reduces to `rank ≤ rank` on `DegreeGrade`; we don't introduce a
+    named `containedIn` wrapper, since `Nat.le_refl` and `Nat.le_trans`
+    already provide the algebraic content. -/
 def DegreeGrade.rank : DegreeGrade → Nat
   | .pos  => 0
   | .cmpr => 1
   | .sprl => 2
-
-/-- Does grade `inner` have a representation contained within `outer`?
-    True when `inner.rank ≤ outer.rank`. -/
-def containedIn (inner outer : DegreeGrade) : Bool :=
-  inner.rank ≤ outer.rank
-
-/-- POS is contained in every grade. -/
-theorem pos_contained_in_cmpr : containedIn .pos .cmpr = true := rfl
-theorem pos_contained_in_sprl : containedIn .pos .sprl = true := rfl
-
-/-- CMPR is contained in SPRL but not POS. -/
-theorem cmpr_contained_in_sprl : containedIn .cmpr .sprl = true := rfl
-theorem cmpr_not_in_pos : containedIn .cmpr .pos = false := rfl
-
-/-- SPRL is not contained in CMPR or POS. -/
-theorem sprl_not_in_cmpr : containedIn .sprl .cmpr = false := rfl
-theorem sprl_not_in_pos : containedIn .sprl .pos = false := rfl
-
-/-- Every grade contains itself. -/
-theorem containment_reflexive (g : DegreeGrade) :
-    containedIn g g = true := by
-  cases g <;> rfl
-
-/-- Containment is transitive. -/
-theorem containment_transitive (a b c : DegreeGrade)
-    (hab : containedIn a b = true) (hbc : containedIn b c = true) :
-    containedIn a c = true := by
-  cases a <;> cases b <;> cases c <;> first | rfl | (simp_all [containedIn, DegreeGrade.rank])
 
 -- ============================================================================
 -- § 2: DegreePattern + *ABA
@@ -96,51 +71,46 @@ structure DegreePattern where
   sprl : Nat
   deriving DecidableEq, Repr
 
-/-- Bool decision: does a pattern violate *ABA? Defined as the generic
-    contiguity predicate applied to the 3-position projection. -/
-def DegreePattern.violatesABA (p : DegreePattern) : Bool :=
-  Morphology.Containment.violatesABA [p.pos, p.cmpr, p.sprl]
-
-/-- Bool decision: is a pattern contiguous? Equivalent to ¬violatesABA. -/
-def DegreePattern.isContiguous (p : DegreePattern) : Bool :=
-  !p.violatesABA
-
-/-- Prop wrapper: a pattern violates *ABA. By construction reduces by
-    `rfl` to the generic `Morphology.Containment.ViolatesABA`. -/
+/-- A pattern violates the *ABA constraint. By construction the
+    case-projection of the generic predicate `Morphology.Containment.ViolatesABA`. -/
 def DegreePattern.ViolatesABA (p : DegreePattern) : Prop :=
   Morphology.Containment.ViolatesABA [p.pos, p.cmpr, p.sprl]
 
 instance (p : DegreePattern) : Decidable p.ViolatesABA :=
   inferInstanceAs (Decidable (Morphology.Containment.ViolatesABA _))
 
-/-- Prop wrapper: a pattern is contiguous. -/
+/-- A pattern is contiguous: each form class occupies a contiguous span
+    on the hierarchy. Equivalent to `¬ ViolatesABA`. -/
 def DegreePattern.IsContiguous (p : DegreePattern) : Prop :=
   ¬ p.ViolatesABA
 
 instance (p : DegreePattern) : Decidable p.IsContiguous :=
   inferInstanceAs (Decidable (¬ _))
 
-/-! `degree_violatesABA_eq_generic` was previously a named `rfl`
-    bridge here. Dropped: by construction `DegreePattern.violatesABA`
-    *is* the generic predicate applied to the 3-cell projection, so
-    the equality is `rfl` at every use site. Naming a `rfl` bridge
-    polluted the API surface for no benefit. -/
-
 -- ============================================================================
 -- § 3: Pattern Classification
 -- ============================================================================
 
 /-- All three grades share the same root (regular paradigm). -/
-def DegreePattern.isRegular (p : DegreePattern) : Bool :=
-  p.pos == p.cmpr && p.cmpr == p.sprl
+def DegreePattern.IsRegular (p : DegreePattern) : Prop :=
+  p.pos = p.cmpr ∧ p.cmpr = p.sprl
+
+instance (p : DegreePattern) : Decidable p.IsRegular :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Comparative is suppletive (root differs from positive). -/
-def DegreePattern.cmprSuppletive (p : DegreePattern) : Bool :=
-  p.pos != p.cmpr
+def DegreePattern.CmprSuppletive (p : DegreePattern) : Prop :=
+  p.pos ≠ p.cmpr
+
+instance (p : DegreePattern) : Decidable p.CmprSuppletive :=
+  inferInstanceAs (Decidable (_ ≠ _))
 
 /-- Superlative is suppletive (root differs from positive). -/
-def DegreePattern.sprlSuppletive (p : DegreePattern) : Bool :=
-  p.pos != p.sprl
+def DegreePattern.SprlSuppletive (p : DegreePattern) : Prop :=
+  p.pos ≠ p.sprl
+
+instance (p : DegreePattern) : Decidable p.SprlSuppletive :=
+  inferInstanceAs (Decidable (_ ≠ _))
 
 -- ============================================================================
 -- § 4: Concrete Pattern Constants + Verification
@@ -167,15 +137,15 @@ def aab : DegreePattern := ⟨0, 0, 1⟩
     Demoted from `theorem` to `example` because nothing in the
     codebase references them by name. -/
 
-example : aaa.isContiguous = true := by decide
-example : aaa.isRegular = true := by decide
-example : abb.isContiguous = true := by decide
-example : abb.cmprSuppletive = true := by decide
-example : abb.sprlSuppletive = true := by decide
-example : abc.isContiguous = true := by decide
-example : aba.violatesABA = true := by decide
-example : aba.isContiguous = false := by decide
-example : aab.isContiguous = true := by decide
+example : aaa.IsContiguous := by decide
+example : aaa.IsRegular := by decide
+example : abb.IsContiguous := by decide
+example : abb.CmprSuppletive := by decide
+example : abb.SprlSuppletive := by decide
+example : abc.IsContiguous := by decide
+example : aba.ViolatesABA := by decide
+example : ¬ aba.IsContiguous := by decide
+example : aab.IsContiguous := by decide
 
 -- ============================================================================
 -- § 5: CSG Part I (from Contiguity Alone)
@@ -187,13 +157,15 @@ example : aab.isContiguous = true := by decide
     alone — if POS ≠ CMPR, then a contiguous pattern cannot have
     POS = SPRL (that would be ABA). -/
 theorem csg_part1 (p : DegreePattern)
-    (h_contig : p.isContiguous = true)
-    (h_cmpr_suppl : p.cmprSuppletive = true) :
-    p.sprlSuppletive = true := by
-  simp only [DegreePattern.isContiguous, DegreePattern.violatesABA,
-    DegreePattern.cmprSuppletive, DegreePattern.sprlSuppletive,
-    Morphology.Containment.violatesABA_three] at *
-  cases h : (p.pos != p.sprl) <;> simp_all
+    (h_contig : p.IsContiguous) (h_cmpr_suppl : p.CmprSuppletive) :
+    p.SprlSuppletive := by
+  intro h_pos_eq_sprl
+  apply h_contig
+  show Morphology.Containment.ViolatesABA [p.pos, p.cmpr, p.sprl]
+  unfold Morphology.Containment.ViolatesABA
+  rw [Morphology.Containment.violatesABA_three]
+  simp only [Bool.and_eq_true, beq_iff_eq, bne_iff_ne]
+  exact ⟨h_pos_eq_sprl, h_cmpr_suppl⟩
 
 -- ============================================================================
 -- § 6: Deriving a Pattern from Surface Forms

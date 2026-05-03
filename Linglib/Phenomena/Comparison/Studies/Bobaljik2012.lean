@@ -123,21 +123,21 @@ theorem bad_abb : bad.suppletion = abb := rfl
 /-- **CSG**: All English adjective entries satisfy contiguity
     (no *ABA violations). -/
 theorem english_no_aba :
-    allEntries.all (λ e => e.suppletion.isContiguous) = true := by native_decide
+    ∀ e ∈ allEntries, e.suppletion.IsContiguous := by decide
 
 /-- CSG Part I applied to English data: "good" and "bad" have
     suppletive comparatives, so by `csg_part1` their superlatives
     must be suppletive too — and they are. -/
-theorem good_csg : good.suppletion.sprlSuppletive = true :=
-  csg_part1 good.suppletion (by native_decide) (by native_decide)
+theorem good_csg : good.suppletion.SprlSuppletive :=
+  csg_part1 good.suppletion (by decide) (by decide)
 
-theorem bad_csg : bad.suppletion.sprlSuppletive = true :=
-  csg_part1 bad.suppletion (by native_decide) (by native_decide)
+theorem bad_csg : bad.suppletion.SprlSuppletive :=
+  csg_part1 bad.suppletion (by decide) (by decide)
 
 /-- CSG Part II via VI locality: if the superlative is suppletive,
     the comparative is too. -/
-theorem good_csg_part2 : good.suppletion.cmprSuppletive = true := by native_decide
-theorem bad_csg_part2 : bad.suppletion.cmprSuppletive = true := by native_decide
+theorem good_csg_part2 : good.suppletion.CmprSuppletive := by decide
+theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
 
 -- ============================================================================
 -- § 3: Attestedness Verification (English)
@@ -151,9 +151,9 @@ theorem bad_csg_part2 : bad.suppletion.cmprSuppletive = true := by native_decide
     derivation is visible at use site, rather than packaged as a
     stipulated `isAttested` field. -/
 theorem english_all_attested :
-    allEntries.all (λ e =>
-      e.suppletion.isContiguous && (e.suppletion.cmpr == e.suppletion.sprl)) = true := by
-  native_decide
+    ∀ e ∈ allEntries,
+      e.suppletion.IsContiguous ∧ e.suppletion.cmpr = e.suppletion.sprl := by
+  decide
 
 -- ============================================================================
 -- § 4: SSG (Synthetic Superlative Generalization)
@@ -163,9 +163,7 @@ theorem english_all_attested :
     superlative form, it also has a synthetic comparative form.
     No English adjective has `-est` without `-er`. -/
 theorem english_ssg :
-    allEntries.all (λ e =>
-      !e.formSuper.isSome || e.formComp.isSome) = true := by
-  native_decide
+    ∀ e ∈ allEntries, e.formSuper.isSome → e.formComp.isSome := by decide
 
 -- ============================================================================
 -- § 5: RSG (Root Suppletion Generalization)
@@ -191,9 +189,8 @@ def isSyntheticComp (e : AdjModifierEntry) : Bool :=
     Contrast: "expensive" → "more expensive" (periphrastic, but
     non-suppletive root — AAA, not ABB). -/
 theorem english_rsg :
-    allEntries.all (λ e =>
-      !e.suppletion.cmprSuppletive || isSyntheticComp e) = true := by
-  native_decide
+    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → isSyntheticComp e = true := by
+  decide
 
 -- ============================================================================
 -- § 6: Lesslessness
@@ -204,12 +201,20 @@ theorem english_rsg :
     periphrastically ("less tall"), never synthetically.
 
     We verify that no entry in the English fragment encodes a synthetic
-    inferior form. -/
+    inferior form. Bool form retained because the predicate is over
+    `Option String` / `String.startsWith` — natural Bool territory; the
+    universal-quantifier Prop form would require lifting String
+    comparison through Decidable Option matching for negligible API
+    benefit. -/
 theorem english_no_synthetic_inferior :
     allEntries.all (λ e =>
       match e.formComp with
       | some f => !f.startsWith "less "
-      | none => true) = true := by native_decide
+      | none => true) = true := by
+  -- `decide` fails to reduce `String.startsWith` on the kernel; this
+  -- is a String-substr decidability exception, not a project-rule
+  -- violation. `native_decide` justified.
+  native_decide
 
 -- ============================================================================
 -- § 7: Fragment Cross-Check
@@ -245,11 +250,10 @@ def attestedPatterns : List (String × DegreePattern) :=
 
 /-- All attested patterns are contiguous. -/
 theorem attested_all_contiguous :
-    attestedPatterns.all (λ ⟨_, p⟩ => p.isContiguous) = true := by native_decide
+    ∀ pair ∈ attestedPatterns, pair.2.IsContiguous := by decide
 
 /-- The unattested *ABA pattern is not contiguous. -/
-theorem aba_unattested :
-    aba.isContiguous = false := by native_decide
+theorem aba_unattested : ¬ aba.IsContiguous := by decide
 
 -- ============================================================================
 -- § 10: Cross-Linguistic Verification (Latin)
@@ -258,8 +262,8 @@ theorem aba_unattested :
 open Fragments.Latin.Adjectives in
 /-- **Latin CSG**: All Latin adjective entries satisfy contiguity. -/
 theorem latin_no_aba :
-    Fragments.Latin.Adjectives.allEntries.all
-      (λ e => e.suppletion.isContiguous) = true := by native_decide
+    ∀ e ∈ Fragments.Latin.Adjectives.allEntries, e.suppletion.IsContiguous := by
+  decide
 
 open Fragments.Latin.Adjectives in
 /-- Latin *bonus – melior – optimus* derives ABC. -/
@@ -273,7 +277,7 @@ theorem latin_all_three_patterns :
     Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == aaa) = true ∧
     Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == abb) = true ∧
     Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == abc) = true := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 11: Generic Containment Bridge
@@ -284,10 +288,10 @@ theorem latin_all_three_patterns :
     suppletion pattern, when converted to a list, satisfies
     the domain-independent `isContiguous`. -/
 theorem english_generic_contiguity :
-    allEntries.all (λ e =>
-      Morphology.Containment.isContiguous
-        [e.suppletion.pos, e.suppletion.cmpr, e.suppletion.sprl]) = true := by
-  native_decide
+    ∀ e ∈ allEntries,
+      Morphology.Containment.IsContiguous
+        [e.suppletion.pos, e.suppletion.cmpr, e.suppletion.sprl] := by
+  decide
 
 -- ============================================================================
 -- § 12: Scale Generation from Degree Paradigms

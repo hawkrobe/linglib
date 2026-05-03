@@ -53,9 +53,12 @@ structure LocalVIRule where
   locality : condGrade.rank ≤ DegreeGrade.cmpr.rank
 
 /-- A local VI rule matches at a given grade when the conditioning
-    grade's features are present (containment). -/
-def LocalVIRule.matches (r : LocalVIRule) (g : DegreeGrade) : Bool :=
-  containedIn r.condGrade g
+    grade is contained in (i.e. has rank `≤`) the target grade. -/
+def LocalVIRule.Matches (r : LocalVIRule) (g : DegreeGrade) : Prop :=
+  r.condGrade.rank ≤ g.rank
+
+instance (r : LocalVIRule) (g : DegreeGrade) : Decidable (r.Matches g) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
 -- ============================================================================
 -- § 2: VI Locality Theorems
@@ -64,9 +67,9 @@ def LocalVIRule.matches (r : LocalVIRule) (g : DegreeGrade) : Bool :=
 /-- Under locality, a root VI rule that matches at one of CMPR/SPRL
     matches at both — both representations contain the CMPR layer,
     and the rule is conditioned on ≤ CMPR features. -/
-theorem matches_cmpr_eq_sprl (r : LocalVIRule) :
-    r.matches .cmpr = r.matches .sprl := by
-  simp only [LocalVIRule.matches, containedIn]
+theorem matches_cmpr_iff_sprl (r : LocalVIRule) :
+    r.Matches .cmpr ↔ r.Matches .sprl := by
+  unfold LocalVIRule.Matches
   cases h : r.condGrade
   · decide   -- pos: 0 ≤ 1 ↔ 0 ≤ 2
   · decide   -- cmpr: 1 ≤ 1 ↔ 1 ≤ 2
@@ -76,13 +79,16 @@ theorem matches_cmpr_eq_sprl (r : LocalVIRule) :
     omega
 
 /-- The filter of local VI rules that match CMPR equals the filter
-    that match SPRL — same rules compete at both grades. -/
+    that match SPRL — same rules compete at both grades. The Bool
+    `decide`-wrap bridges the Prop predicate `Matches` to `List.filter`'s
+    Bool argument; mathlib pattern. -/
 theorem vi_filter_cmpr_eq_sprl (rules : List LocalVIRule) :
-    rules.filter (·.matches .cmpr) = rules.filter (·.matches .sprl) := by
+    rules.filter (λ r => decide (r.Matches .cmpr)) =
+      rules.filter (λ r => decide (r.Matches .sprl)) := by
   induction rules with
   | nil => rfl
   | cons r rs ih =>
-    simp only [List.filter, matches_cmpr_eq_sprl r, ih]
+    simp only [List.filter, decide_eq_decide.mpr (matches_cmpr_iff_sprl r), ih]
 
 -- ============================================================================
 -- § 3: VI Competition
@@ -92,7 +98,7 @@ theorem vi_filter_cmpr_eq_sprl (rules : List LocalVIRule) :
     highest-specificity matching rule, or the default. -/
 def viWinner (rules : List LocalVIRule) (defaultForm : Nat)
     (g : DegreeGrade) : Nat :=
-  let matching := rules.filter (·.matches g)
+  let matching := rules.filter (λ r => decide (r.Matches g))
   let sorted := matching.mergeSort (λ a b => a.specificity ≥ b.specificity)
   match sorted.head? with
   | some r => r.formClass
@@ -121,18 +127,16 @@ theorem vi_cmpr_eq_sprl (rules : List LocalVIRule) (defaultForm : Nat) :
 
 /-- **CSG Part I from VI**: root suppletive at CMPR ⇒ root suppletive at SPRL. -/
 theorem csg_part1_vi (rules : List LocalVIRule) (defaultForm : Nat)
-    (h : (viPattern rules defaultForm).cmprSuppletive = true) :
-    (viPattern rules defaultForm).sprlSuppletive = true := by
-  simp only [viPattern, DegreePattern.cmprSuppletive,
-    DegreePattern.sprlSuppletive] at *
+    (h : (viPattern rules defaultForm).CmprSuppletive) :
+    (viPattern rules defaultForm).SprlSuppletive := by
+  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive viPattern at *
   rwa [← vi_cmpr_eq_sprl]
 
 /-- **CSG Part II from VI**: root suppletive at SPRL ⇒ root suppletive at CMPR. -/
 theorem csg_part2_vi (rules : List LocalVIRule) (defaultForm : Nat)
-    (h : (viPattern rules defaultForm).sprlSuppletive = true) :
-    (viPattern rules defaultForm).cmprSuppletive = true := by
-  simp only [viPattern, DegreePattern.cmprSuppletive,
-    DegreePattern.sprlSuppletive] at *
+    (h : (viPattern rules defaultForm).SprlSuppletive) :
+    (viPattern rules defaultForm).CmprSuppletive := by
+  unfold DegreePattern.CmprSuppletive DegreePattern.SprlSuppletive viPattern at *
   rwa [vi_cmpr_eq_sprl]
 
 /-- VI-generated root suppletion patterns are AAA or ABB only. *ABA is

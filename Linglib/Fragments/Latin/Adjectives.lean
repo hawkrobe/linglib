@@ -97,7 +97,7 @@ def allEntries : List LatinAdjEntry :=
 
 /-- All Latin entries satisfy contiguity (no *ABA). -/
 theorem latin_no_aba :
-    allEntries.all (λ e => e.suppletion.isContiguous) = true := by native_decide
+    ∀ e ∈ allEntries, e.suppletion.IsContiguous := by decide
 
 /-- Regular entries derive AAA patterns. -/
 theorem longus_aaa : longus.suppletion = aaa := rfl
