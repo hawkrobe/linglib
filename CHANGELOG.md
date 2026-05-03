@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.631 — QBSML scaffolding (Aloni & van Ormondt 2023): substrate empirically validated
+
+Phase 1 of QBSML — first-order extension of BSML per Aloni & van Ormondt 2023 (J Logic Lang Inf 32:539). Tests that `Core/Logic/Team/` is genuinely point-polymorphic by instantiating with `Point := W × Assignment` (vs BSML's `Point := W`).
+
+- New `Theories/Semantics/QBSML/Defs.lean` (~340 lines):
+  - `Assignment Var Domain := Var → Option Domain` — partial assignment
+  - `Index W Var Domain := W × Assignment Var Domain` — Aloni & van Ormondt §4 Definition 4.2
+  - `State.worldProj : Finset Index → Finset W` — the `s↓` projection
+  - State extensions: `Index.update`, `State.extendIndividual` (s[x/d]), `State.extendUniversal` (s[x]), `State.extendFunctional` (s[x/h])
+  - `State.modalLift X g` — modal pairing `R(wᵢ)[gᵢ]`
+  - Polymorphic formula type `QBSMLFormula Var Pred` — extends BSML's connectives with monadic predicates + `exi` / `univ` quantifiers
+  - `QBSMLModel W Domain Pred` — Kripke + per-world predicate interpretation
+  - `eval : QBSMLModel → Bool → Form → Finset Index → Prop` — bilateral evaluation per Aloni & van Ormondt Definition 4.9
+  - DNE definitional, basic unfolding lemmas
+  - `QBSMLModel.isStateBased` and `isIndisputable` defined via `Core.Logic.Team.isStateBased ∘ State.worldProj` — **specialization-via-composition** exemplar of the foundational mathlib pattern: same Core function, different instantiation through projection
+- New `Theories/Semantics/QBSML/Properties.lean`: states Anttila Proposition 2.2.8 for QBSML (3 properties: union closure for all formulas, empty-team and downward closure for NE-free); derives `flat_support_of_isNEFree` corollary via `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam`. The corollary proof is **bit-identical to BSML's** modulo formula type — substrate validation.
+- Three property proofs `sorry`'d as substantive future work (same bilateral mutual induction pattern as BSML's `Properties.lean`, plus quantifier cases requiring state-extension distributivity lemmas: `extendUniversal_union_distrib`, `extendFunctional_subset_mono`, etc.).
+- Simplifications vs the paper: monadic predicates only (no constants, no general arity), polymorphic single domain. The substrate abstraction doesn't change with these added.
+- Build clean (704 jobs); QBSML files compile.
+
 ### 0.230.632 — post-migration stabilization: project-rule violations + stale refs
 
 Follow-up to the Theories/Interfaces/ migration (phases 1–9, 0.230.616–629). Mathlib-discipline audit identified five project-rule violations introduced in-flight, plus three stale `CaseContainment.lean` docstring references the migration didn't update.

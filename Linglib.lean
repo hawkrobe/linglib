@@ -1458,6 +1458,8 @@ import Linglib.Theories.Semantics.BSML.FreeChoice
 import Linglib.Theories.Semantics.BSML.Negation
 import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Theories.Semantics.BSML.Properties
+import Linglib.Theories.Semantics.QBSML.Defs
+import Linglib.Theories.Semantics.QBSML.Properties
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
 import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Phenomena.Modality.Studies.Cariani2013
@@ -2285,6 +2287,7 @@ import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.EventRelations
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
+import Linglib.Theories.Semantics.Events.StratifiedReference.Specializations
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.ScalarResult
 import Linglib.Theories.Semantics.Events.AffectednessHierarchy
