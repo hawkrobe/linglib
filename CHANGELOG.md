@@ -4,6 +4,62 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.658 — Bilateral substrate Path A: `of_iff` helper, fold Polarity, ICDRTConnectives uptake
+
+Path A from the audit follow-up (changes bundled into commit `db41d8ed` under
+a parallel-session title; this entry surfaces the substrate work). Makes the
+substrate minimally load-bearing without forcing decorative refactors of
+consumers' DNE proofs (which were correctly `Iff.rfl`/`rfl` by design).
+
+**`Bilateral/Defs.lean` changes**:
+- Drop `universe u v` boilerplate; use `Type*` per CLAUDE.md.
+- Add `IsBilateral.of_iff`: lifts pointwise `Iff` lemmas to function-level
+  `IsBilateral` via `funext + propext`. The common-case constructor for
+  consumers whose `positive`/`negative` produce `Form → α → Prop`.
+- Fold `Polarity.lean`'s 4 derived theorems (`positive_negate_three`,
+  `negative_negate_three`, `negate_congr_negative`, `negate_congr_positive`)
+  into `Defs.lean` §4-§5. Split-file form had 0 consumers and violated
+  mathlib's "don't split until forced" discipline.
+
+**`Bilateral/Polarity.lean` deleted**; `Linglib.lean` import removed.
+
+**Consumer refactors**:
+- `BSML/Defs.lean`: `isBilateral` now one-line `of_iff` invocation.
+- `QBSML/Defs.lean`: `isBilateral` now uses `of_iff` (Form/Result hints
+  preserved for QBSML's first-order type-parameter ambiguity).
+- `ICDRTConnectives.lean`: `dne_equality` refactored to invoke
+  `isBilateral.{positive,negative}_negate_negate` via `congrFun`. The
+  first genuine downstream consumer of substrate's derived theorems.
+
+**Operational test** "if I deleted `Defs.lean`, what breaks?":
+- Before Path A: 5 instance declarations only (decorative substrate)
+- After Path A: 5 instances + 2 `of_iff` invocations + 1 `dne_equality` use
+
+The substrate is now minimally load-bearing — substantively used in ~8
+sites, not theatrically. The deeper "make mathematically essential"
+direction would require a structurally-different bilateral consumer or
+a cross-framework theorem quoting `IsBilateral` abstractly (Phase B/C);
+deferred.
+
+### 0.230.657 — Stage 0.5 audit fixes: Foissy bib entry + § reference + lost faithfulness-gap discussion
+
+3-agent audit (mathlib-reviewer, integration-auditor, syntax linguistics-domain-expert) on the Stage 0.5 hoist (0.230.656) surfaced 5 must-fix issues. All addressed in this commit; the namespace rename / shim deletion / def→abbrev are deferred to Stage 0.7 per integration-auditor recommendation.
+
+**Fixes**:
+- **Foissy 2002 bib entry added** (Bull. Sci. math. 126, 193-239, doi 10.1016/S0007-4497(02)01108-9, verified against publisher PDF). Part II reference (pp. 249-288, doi 10.1016/S0007-4497(02)01113-2) noted in the entry comment. The `@cite{foissy-2002}` in `Decorated.lean` was a pre-existing dangling cite from the original `Hopf/Defs.lean`; Stage 0.5 propagated it. Also reframed the docstring attribution: M-C-B themselves don't cite Foissy (they appeal to Connes-Kreimer-Feynman per book p. 38), so "à la Foissy" is the formaliser's reading of the closest mathematical predecessor for the *decorated* binary case — flagged as such in the docstring.
+- **§ reference in `AdmissibleCut.lean:23-25` corrected**. Was "§1.3.4" (which is M-C-B's `was/eaten/the/apple` IM example); the α/β/γ accessible-terms example actually lives on book p. 35 (inline in §1.2 just before §1.2.1), with T = α∧(β∧γ) where α="eat(en)", β="the", γ="apple". Verified against the PDF.
+- **Lost faithfulness-gap discussion restored** in `Decorated.lean` docstring. The original `Hopf/Defs.lean` had a substantive two-paragraph treatment of (1) the planar-vs-nonplanar gap with M-C-B p. 23 visual example, (2) the set-vs-multiset singleton-collapse with the explicit M-C-B p. 25 "very mild" disambiguation that landed via 0.230.449's audit correction. Stage 0.5 trimmed this to a one-paragraph paraphrase, losing both the visual-example anchor and the audit-corrected p. 25 attribution. Restored as two distinct numbered "Gap 1 / Gap 2" sections; the trace-constructor self-reference discussion gets its own subsection.
+- **Unused import dropped** in `Hopf/Defs.lean:3` (`Linglib.Core.Algebra.ConnesKreimer.Defs` — `Hc` only appeared in docstring, not in code).
+- **Linglib.lean import ordering fixed**. The 4 new Core imports were inside the Minimalist block (line 2115); moved up to the Core block immediately after `Core.Computability.WeightedCFG` (now line 1856).
+
+**Deferred to Stage 0.7** (per integration-auditor recommendation):
+- Namespace rename `Minimalist.Hopf` → `ConnesKreimer.X` in the new Core/ files. Mathlib-reviewer wanted this fixed now; integration-auditor argued it's a substantial diff that should land separately. User chose defer.
+- Re-export shim deletion (`Hopf/AdmissibleCut.lean` 15 LOC, `Hopf/Comul.lean` 19 LOC). Both flagged as anti-pattern per CLAUDE.md "every file is anchored, no bridge files." Deletion requires updating `Hopf/Merge.lean:1` and `Hopf/MergeAction.lean:1` import paths.
+- `def Hc → abbrev Hc` (couples to Stage 1 coassoc proof).
+- `CommRing R → CommSemiring R` weakening in Coproduct.lean per "maximum generality available."
+
+**Build**: 1272 jobs green. 2 pre-existing sorrys in `Hopf/MergeAction.lean` (Stage 1 work) untouched.
+
 ### 0.230.656 — PMF.softmax substrate (Boltzmann/Gibbs at PMF level)
 
 `Linglib/Core/Probability/Softmax.lean` (212 LOC). Replaces the per-paper
