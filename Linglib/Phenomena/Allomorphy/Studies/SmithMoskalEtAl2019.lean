@@ -244,31 +244,124 @@ theorem number_aab_attested_falsifies_dm :
   ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
 
 -- ============================================================================
--- § 4: §3.7 — Domain-based locality (substrate addition)
+-- § 4: §3.7 — Domain-based locality (case + number partitions)
 -- ============================================================================
 
 /-! @cite{smith-moskal-xu-kang-bobaljik-2019} §3.7 proposes that the
 locality predicate driving suppletion contiguity is *not* structural
-adjacency (@cite{bobaljik-2012}) or linear adjacency (@cite{embick-2010}),
-but *domain-based* (@cite{moskal-2015}). Under domain locality, the
-relevant locality unit is a phase / spellout domain, not a head-to-head
-structural distance.
+adjacency (@cite{bobaljik-2012}) or linear adjacency
+(@cite{embick-2010}), but *domain-based*
+(@cite{moskal-2015a-dissertation}). The substrate for this lives in
+`Core/Morphology/DomainLocality.lean` (`DomainPartition`,
+`SameDomain`, `ViolatesABAWithin`, `IsContiguousWithin`,
+`DomainPartition.trivial`).
 
-Architecturally this would land as a substrate addition in
-`Core/Morphology/` parallel to `Containment.lean`'s `violatesABA` —
-something like a domain-relativized `violatesABA_within_domain` whose
-projection back to the universal `violatesABA` recovers Bobaljik's
-stronger predicate, but which permits AAB across domain boundaries.
-The DM derivation in `Theories/Morphology/DegreeContainment.lean`
-would then be a domain-locality instantiation that happens to coincide
-with the universal predicate when the degree paradigm fits in one
-domain.
+This section instantiates the substrate for the case and number
+domains the paper discusses. The partitions are anchored on
+independently-motivated linguistic content (per `mathlib-reviewer`
+audit recommendation: "must derive from an independently-motivated
+case-hierarchy split, not threshold-on-cell-index"):
 
-TODO: design the domain-relativized substrate, hoist into
-`Core/Morphology/DomainLocality.lean`, prove the equivalence to
-`Containment.violatesABA` under the single-domain assumption, then
-apply to case + number suppletion to derive the AAB-attestation gap
-non-vacuously.
+- **Case partition (`caseDomainPartition`)**: positions 0 (ABS) and 1
+  (ERG) in the **non-oblique** domain; position 2 (DAT) in the
+  **oblique** domain. The boundary is the @cite{caha-2009}
+  Unmarked-Dependent vs Oblique split (the same containment
+  hierarchy the paper itself adopts at §3.1; @cite{smith-moskal-xu-kang-bobaljik-2019}
+  §3.7 does not pin down the boundary location explicitly but the
+  Caha hierarchy is the natural one given the paper's case-side
+  framework).
+
+- **Number partition (`numberDomainPartition`)**: positions 0 (SG)
+  and 1 (PL) in the **non-dual** domain; position 2 (DL) in the
+  **dual** domain. The boundary corresponds to @cite{harbour-2014}'s
+  feature-recursion split where dual is the marked extension over
+  the SG/PL base.
+
+## Scope of the formalization
+
+The substrate's converse-direction theorem — "domain-aware DM
+generates AAB patterns when positions are split" — requires
+extending `LocalVIRule` (`Theories.Morphology.DegreeContainment`)
+with a domain field so that a rule's locality bound becomes
+partition-aware rather than the unconditional Bobaljik bound
+`condGrade.rank ≤ DegreeGrade.cmpr.rank`. That's a separate substrate
+addition deferred to a follow-up.
+
+What this section ships:
+- The two partition definitions above, with citations
+- Structural facts about the partitions (cells 1 and 2 lie in
+  different domains under both)
+- Documentation of where the converse-direction theorem would land
+-/
+
+open Morphology.DomainLocality
+
+/-- Case partition: ABS (position 0) + ERG (position 1) in domain
+    `false` (non-oblique); DAT (position 2) in domain `true` (oblique).
+    The boundary corresponds to @cite{caha-2009}'s
+    Unmarked-Dependent vs Oblique split. -/
+def caseDomainPartition : DomainPartition Bool := λ i => i ≥ 2
+
+/-- Number partition: SG (position 0) + PL (position 1) in domain
+    `false` (non-dual); DL (position 2) in domain `true` (dual).
+    The boundary corresponds to @cite{harbour-2014}'s feature-recursion
+    split where dual is the marked extension over SG/PL. -/
+def numberDomainPartition : DomainPartition Bool := λ i => i ≥ 2
+
+/-- Under the case partition, ERG and DAT (positions 1 and 2) lie in
+    DIFFERENT domains. This is the structural feature that makes the
+    partition admit AAB patterns like Wardaman 3SG `[0, 0, 1]`. -/
+theorem case_partition_splits_erg_dat :
+    ¬ SameDomain caseDomainPartition 1 2 := by decide
+
+/-- Under the number partition, PL and DL (positions 1 and 2) lie in
+    DIFFERENT domains. -/
+theorem number_partition_splits_pl_dl :
+    ¬ SameDomain numberDomainPartition 1 2 := by decide
+
+/-- The case AAB witness (Wardaman 3SG) is contiguous under the case
+    partition. (Trivially so — `[0, 0, 1]` is *ABA-contiguous in the
+    universal sense, and `IsContiguousWithin` is strictly weaker.
+    The substantive claim — that domain-aware DM generates this
+    pattern — requires the deferred `LocalVIRule` extension.) -/
+theorem wardaman_3sg_within_case_domain :
+    IsContiguousWithin caseDomainPartition wardamanThirdSg := by decide
+
+/-- The number AAB witness (Yagua 2) is contiguous under the number
+    partition. Same caveat as the case-side. -/
+theorem yagua_2_within_number_domain :
+    IsContiguousWithin numberDomainPartition yaguaSecond := by decide
+
+/-! ## What's deferred
+
+The substrate above sets up the partition + the structural facts
+that the partitions split the relevant cells. The substantive
+converse-direction theorem — "under the case partition, there exist
+domain-aware VI rule lists generating Wardaman 3SG-shape patterns"
+— requires `Theories.Morphology.DegreeContainment.LocalVIRule` to
+be extended with a domain field so its locality bound becomes
+partition-relativized. The current `LocalVIRule.locality` field
+is structurally Bobaljik-style (`condGrade.rank ≤ cmpr.rank`,
+unconditional) and forces `vi_cmpr_eq_sprl` regardless of partition
+— see `Theories.Morphology.DegreeContainment.vi_cmpr_eq_sprl_under_domain`
+for the domain-aware framing that proves the same result with an
+unused `SameDomain` hypothesis.
+
+A concrete `DomainLocalVIRule` shape for that follow-up:
+
+```
+structure DomainLocalVIRule {Tag : Type*} [DecidableEq Tag]
+    (π : DomainPartition Tag) where
+  formClass : Nat
+  condGrade : DegreeGrade
+  specificity : Nat
+  domainLocality : ∃ targetGrade : DegreeGrade,
+    SameDomain π condGrade.rank targetGrade.rank
+```
+
+with `viWinner_eq_within_domain` proving the conditional analog of
+`vi_cmpr_eq_sprl` and a constructive `domain_locality_admits_aab`
+showing AAB rule lists exist when positions are split.
 -/
 
 end Phenomena.Allomorphy.Studies.SmithMoskalEtAl2019
