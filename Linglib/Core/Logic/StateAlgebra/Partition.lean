@@ -32,7 +32,7 @@ disjointness — `t₁ ∩ t₂` may be non-empty.
 
 namespace Core.Logic.StateAlgebra
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
 /-- Binary cover: `s` is the union of `t₁` and `t₂`. The two substates may
     overlap; only their union must equal `s`. This is the structural
@@ -62,37 +62,37 @@ theorem splitsAsNE_imp_splitsAs (s t₁ t₂ : Finset α)
 
 /-- The trivial split: `s = s ∪ ∅`. Used by classical formulas, which are
     supported on the empty state vacuously, allowing degenerate splits. -/
-theorem splitsAs_self_empty (s : Finset α) : splitsAs s s ∅ := by
-  simp [splitsAs]
+theorem splitsAs_self_empty (s : Finset α) : splitsAs s s ∅ :=
+  Finset.union_empty s
 
-theorem splitsAs_empty_self (s : Finset α) : splitsAs s ∅ s := by
-  simp [splitsAs]
+theorem splitsAs_empty_self (s : Finset α) : splitsAs s ∅ s :=
+  Finset.empty_union s
 
 /-- The reflexive split: `s = s ∪ s` (parts may overlap). -/
-theorem splitsAs_self_self (s : Finset α) : splitsAs s s s := by
-  simp [splitsAs]
+theorem splitsAs_self_self (s : Finset α) : splitsAs s s s :=
+  Finset.union_idempotent s
 
 theorem splitsAs_symm {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : splitsAs s t₂ t₁ := by
-  rw [splitsAs] at h ⊢; rw [Finset.union_comm]; exact h
+    (h : splitsAs s t₁ t₂) : splitsAs s t₂ t₁ :=
+  (Finset.union_comm t₂ t₁).trans h
 
 theorem splitsAsNE_symm {s t₁ t₂ : Finset α}
-    (h : splitsAsNE s t₁ t₂) : splitsAsNE s t₂ t₁ :=
+    (h : splitsAsNE s t₁ t₂) : splitsAs s t₂ t₁ ∧ t₂.Nonempty ∧ t₁.Nonempty :=
   ⟨splitsAs_symm h.1, h.2.2, h.2.1⟩
 
 /-- Substate property: if `splitsAs s t₁ t₂`, then `t₁ ⊆ s`. -/
 theorem splitsAs_left_subset {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : t₁ ⊆ s := by
-  rw [splitsAs] at h; exact h ▸ Finset.subset_union_left
+    (h : splitsAs s t₁ t₂) : t₁ ⊆ s :=
+  h ▸ Finset.subset_union_left
 
 theorem splitsAs_right_subset {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : t₂ ⊆ s := by
-  rw [splitsAs] at h; exact h ▸ Finset.subset_union_right
+    (h : splitsAs s t₁ t₂) : t₂ ⊆ s :=
+  h ▸ Finset.subset_union_right
 
-instance (s t₁ t₂ : Finset α) [DecidableEq α] : Decidable (splitsAs s t₁ t₂) := by
-  unfold splitsAs; infer_instance
+instance (s t₁ t₂ : Finset α) : Decidable (splitsAs s t₁ t₂) :=
+  decEq _ _
 
-instance (s t₁ t₂ : Finset α) [DecidableEq α] : Decidable (splitsAsNE s t₁ t₂) := by
-  unfold splitsAsNE; infer_instance
+instance (s t₁ t₂ : Finset α) : Decidable (splitsAsNE s t₁ t₂) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Core.Logic.StateAlgebra

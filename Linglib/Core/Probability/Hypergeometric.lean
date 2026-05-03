@@ -112,9 +112,7 @@ theorem hypergeometric_apply_ne_zero_iff (N K n : ℕ) (h_n : n ≤ N) (h_K : K 
     exact_mod_cast Nat.mul_ne_zero h1 h2
 
 /-- **`ENNReal.ofReal`-friendly closed form**: lifts the value to a single
-`ENNReal.ofReal (rational)`, suitable for `norm_num` discharge. The
-hypothesis `0 < N.choose n` is implied by `n ≤ N` but stated separately
-to keep the theorem simp-friendly. -/
+`ENNReal.ofReal (rational)`, suitable for `norm_num` discharge. -/
 theorem hypergeometric_apply_eq_ofReal (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N)
     (k : Fin (n + 1)) :
     hypergeometric N K n h_n h_K k =
@@ -123,11 +121,12 @@ theorem hypergeometric_apply_eq_ofReal (N K n : ℕ) (h_n : n ≤ N) (h_K : K �
   rw [hypergeometric_apply]
   have h_pos : (0 : ℝ) < N.choose n := by exact_mod_cast Nat.choose_pos h_n
   rw [show ((K.choose k.val * (N - K).choose (n - k.val) : ℕ) : ℝ≥0∞) =
-        ENNReal.ofReal ((K.choose k.val * (N - K).choose (n - k.val) : ℝ)) from by
-      push_cast; exact (ENNReal.ofReal_natCast _).symm,
+        ENNReal.ofReal ((K.choose k.val * (N - K).choose (n - k.val) : ℕ) : ℝ) from
+        (ENNReal.ofReal_natCast _).symm,
       show ((N.choose n : ℕ) : ℝ≥0∞) = ENNReal.ofReal (N.choose n : ℝ) from
         (ENNReal.ofReal_natCast _).symm,
       ← ENNReal.ofReal_div_of_pos h_pos]
+  congr 1; push_cast; ring
 
 /-- The kernel value at `k = 0`: `C(N - K, n) / C(N, n)`. -/
 theorem hypergeometric_apply_zero (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N) :
@@ -149,10 +148,10 @@ theorem hypergeometric_symm (N K n : ℕ) (h_n : n ≤ N) (h_K : K ≤ N)
     hypergeometric N (N - K) n h_n (Nat.sub_le _ _) k =
       hypergeometric N K n h_n h_K ⟨n - k.val, by omega⟩ := by
   rw [hypergeometric_apply, hypergeometric_apply]
-  congr 1
-  · push_cast
-    rw [show N - (N - K) = K from by omega,
-        show n - (n - k.val) = k.val from by have := k.isLt; omega,
-        Nat.mul_comm]
+  congr 2
+  push_cast
+  rw [show N - (N - K) = K from by omega,
+      show n - (n - k.val) = k.val from by have := k.isLt; omega]
+  ring
 
 end PMF

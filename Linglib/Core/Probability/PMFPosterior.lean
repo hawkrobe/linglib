@@ -134,6 +134,38 @@ private theorem marginal_ne_top (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≠ ∞ :=
   (lt_of_le_of_lt (marginal_le_one κ μ b) ENNReal.one_lt_top).ne
 
+/-- **`PMF.bind` over a `Fintype` is a `Finset.sum`**: the convenience
+`tsum_fintype` form of `PMF.bind_apply`. Saves the `rw [PMF.bind_apply,
+tsum_fintype]` ritual that arises in every PMF-bind consumer. -/
+theorem bind_apply_eq_finset_sum {α β : Type*} [Fintype α]
+    (p : PMF α) (f : α → PMF β) (b : β) :
+    (p.bind f) b = ∑ a, p a * f a b := by
+  rw [PMF.bind_apply, tsum_fintype]
+
+/-- **`PMF.bind` of `pure`** collapses to direct application: when the prior
+is concentrated on `a₀`, the bind picks out `f a₀ b`. The natural
+specialization of `PMF.bind_apply` for deterministic priors. -/
+theorem bind_pure_apply {α β : Type*} (a₀ : α) (f : α → PMF β) (b : β) :
+    ((PMF.pure a₀).bind f) b = f a₀ b := by
+  rw [PMF.bind_apply]
+  refine tsum_eq_single a₀ ?_
+  intro a' h
+  simp [PMF.pure_apply, h.symm]
+
+/-- **Closed-form value of `PMF.normalize`**: when both the numerator `f a`
+and the partition `tsum f` are known, the normalized PMF takes the explicit
+ratio. The equality companion to the existing inequality family
+(`normalize_lt_of_apply_eq_of_sum_lt`, `normalize_le_of_apply_eq_and_sum_ge`,
+`normalize_eq_of_apply_eq_and_sum_eq`).
+
+The hypothesis `tsum f ≠ ∞` is implicit via `hF` from the `PMF.normalize`
+constructor; the `tsum f ≠ 0` hypothesis comes from `h0`. -/
+theorem normalize_apply_of_apply_eq_of_sum_eq
+    {α : Type*} (f : α → ℝ≥0∞) (h0 : tsum f ≠ 0) (hF : tsum f ≠ ∞)
+    (a : α) (x y : ℝ≥0∞) (hf : f a = x) (hsum : tsum f = y) :
+    PMF.normalize f h0 hF a = x / y := by
+  rw [PMF.normalize_apply, hf, hsum, ENNReal.div_eq_inv_mul, mul_comm]
+
 /-- **`PMF.normalize` collapses to `pure`** when only one element has positive
 weight. Mirror of `posterior_eq_pure_of_singleton_score_support` for the
 prior-free `normalize` constructor — useful for "deterministic kernel"

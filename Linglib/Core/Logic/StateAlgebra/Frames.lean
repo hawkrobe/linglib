@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Frame conditions on accessibility — generic over point type
