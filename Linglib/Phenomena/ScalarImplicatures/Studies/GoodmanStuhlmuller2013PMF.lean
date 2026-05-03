@@ -417,61 +417,30 @@ private theorem obsKernel_a1_off (w : WorldState) (k : Fin 2)
 
 At full access, `obsKernel .a3 w` puts all mass on a single `k = w.toNat`,
 so `marginalSpeaker = (obsKernel .a3 w).bind (S1g .a3 _)` collapses to a
-single `S1g` evaluation at the diagonal `k`. -/
+single `S1g` evaluation at the diagonal `k`. **Polymorphic over `w`** —
+replaces what was previously 4 per-world specializations. -/
 
-private theorem marginalSpeaker_a3_s0_apply
-    {U : Type*} [Fintype U] (m : U → WorldState → Bool)
-    (hCov : ∀ k : Fin (Access.a3.toNat + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
-    marginalSpeaker m 1 .a3 .s0 hCov u =
-      S1g m 1 .a3 ⟨0, by decide⟩
-        (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨0, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a3 .s0).bind _) u = _
-  rw [PMF.bind_apply, tsum_eq_single ⟨0, by decide⟩]
-  · rw [obsKernel_a3_s0_diag, one_mul]
-  · intro k hk
-    have h := obsKernel_a3_off .s0 k (by
-      intro heq; apply hk; apply Fin.ext; simpa [WorldState.toNat] using heq)
-    rw [h, zero_mul]
+/-- Diagonal `obsKernel .a3 w ⟨w.toNat, _⟩ = 1` for any world. -/
+private theorem obsKernel_a3_diag (w : WorldState) :
+    obsKernel .a3 w ⟨w.toNat, by cases w <;> decide⟩ = 1 := by
+  cases w
+  · exact obsKernel_a3_s0_diag
+  · exact obsKernel_a3_s1_diag
+  · exact obsKernel_a3_s2_diag
+  · exact obsKernel_a3_s3_diag
 
-private theorem marginalSpeaker_a3_s1_apply
-    {U : Type*} [Fintype U] (m : U → WorldState → Bool)
+private theorem marginalSpeaker_a3_apply
+    {U : Type*} [Fintype U] (m : U → WorldState → Bool) (w : WorldState)
     (hCov : ∀ k : Fin (Access.a3.toNat + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
-    marginalSpeaker m 1 .a3 .s1 hCov u =
-      S1g m 1 .a3 ⟨1, by decide⟩
-        (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨1, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a3 .s1).bind _) u = _
-  rw [PMF.bind_apply, tsum_eq_single ⟨1, by decide⟩]
-  · rw [obsKernel_a3_s1_diag, one_mul]
+    marginalSpeaker m 1 .a3 w hCov u =
+      S1g m 1 .a3 ⟨w.toNat, by cases w <;> decide⟩
+        (RSA.softmaxBelief_tsum_ne_zero_of_witness
+          (hCov ⟨w.toNat, by cases w <;> decide⟩).choose_spec) u := by
+  show ((obsKernel .a3 w).bind _) u = _
+  rw [PMF.bind_apply, tsum_eq_single ⟨w.toNat, by cases w <;> decide⟩]
+  · rw [obsKernel_a3_diag, one_mul]
   · intro k hk
-    have h := obsKernel_a3_off .s1 k (by
-      intro heq; apply hk; apply Fin.ext; simpa [WorldState.toNat] using heq)
-    rw [h, zero_mul]
-
-private theorem marginalSpeaker_a3_s2_apply
-    {U : Type*} [Fintype U] (m : U → WorldState → Bool)
-    (hCov : ∀ k : Fin (Access.a3.toNat + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
-    marginalSpeaker m 1 .a3 .s2 hCov u =
-      S1g m 1 .a3 ⟨2, by decide⟩
-        (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨2, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a3 .s2).bind _) u = _
-  rw [PMF.bind_apply, tsum_eq_single ⟨2, by decide⟩]
-  · rw [obsKernel_a3_s2_diag, one_mul]
-  · intro k hk
-    have h := obsKernel_a3_off .s2 k (by
-      intro heq; apply hk; apply Fin.ext; simpa [WorldState.toNat] using heq)
-    rw [h, zero_mul]
-
-private theorem marginalSpeaker_a3_s3_apply
-    {U : Type*} [Fintype U] (m : U → WorldState → Bool)
-    (hCov : ∀ k : Fin (Access.a3.toNat + 1), ∃ u : U, qualityOk m .a3 k u) (u : U) :
-    marginalSpeaker m 1 .a3 .s3 hCov u =
-      S1g m 1 .a3 ⟨3, by decide⟩
-        (RSA.softmaxBelief_tsum_ne_zero_of_witness (hCov ⟨3, by decide⟩).choose_spec) u := by
-  show ((obsKernel .a3 .s3).bind _) u = _
-  rw [PMF.bind_apply, tsum_eq_single ⟨3, by decide⟩]
-  · rw [obsKernel_a3_s3_diag, one_mul]
-  · intro k hk
-    have h := obsKernel_a3_off .s3 k (by
+    have h := obsKernel_a3_off w k (by
       intro heq; apply hk; apply Fin.ext; simpa [WorldState.toNat] using heq)
     rw [h, zero_mul]
 
@@ -1289,7 +1258,7 @@ theorem some_full_implicature_sil
         (some QUtt.some_) hMarg) .s3 := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
-      marginalSpeaker_a3_s2_apply, marginalSpeaker_a3_s3_apply]
+      marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
   show (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
         (some QUtt.some_) <
        (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
@@ -1312,7 +1281,7 @@ theorem two_full_upper_bounded_sil
         (some NumUtt.two) hMarg) .s3 := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  rw [marginalSpeaker_a3_s2_apply, marginalSpeaker_a3_s3_apply]
+  rw [marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
   show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
         (some NumUtt.two) <
        (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
@@ -1335,7 +1304,7 @@ theorem one_full_1v2_sil
         (some NumUtt.one) hMarg) .s2 := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  rw [marginalSpeaker_a3_s1_apply, marginalSpeaker_a3_s2_apply]
+  rw [marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
   show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
         (some NumUtt.one) <
        (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩) _ _)
@@ -1358,7 +1327,7 @@ theorem one_full_1v3_sil
         (some NumUtt.one) hMarg) .s3 := by
   unfold L1 worldPrior
   rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  rw [marginalSpeaker_a3_s1_apply, marginalSpeaker_a3_s3_apply]
+  rw [marginalSpeaker_a3_apply, marginalSpeaker_a3_apply]
   show (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
         (some NumUtt.one) <
        (PMF.normalize (s1Score (liftMeaning lbMeaning) 1 .a3 ⟨1, by decide⟩) _ _)
