@@ -59,39 +59,39 @@ def AllomorphyPattern.IsContiguous (p : AllomorphyPattern) : Prop :=
 instance (p : AllomorphyPattern) : Decidable p.IsContiguous :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- Bridge: case-specific `ViolatesABA` is the generic predicate
-    applied to the 4-position projection. Holds by definition. -/
-theorem case_violatesABA_iff_generic (p : AllomorphyPattern) :
-    p.ViolatesABA ↔
-      Morphology.Containment.violatesABA [p.nom, p.acc, p.gen, p.dat] = true :=
-  Iff.rfl
+/-! `case_violatesABA_iff_generic` was previously a named `Iff.rfl`
+    bridge here. Dropped: by construction `AllomorphyPattern.ViolatesABA`
+    *is* the generic predicate applied to the 4-cell projection
+    (definitionally), so the bridge unfolds for free at every use site
+    via `Iff.rfl` or `rfl`-shaped `simp` rewrites. Naming a `rfl`
+    bridge polluted the API surface for no benefit. -/
 
 -- ============================================================================
 -- § 2: *ABA Verification on Concrete Patterns
 -- ============================================================================
 
 def abbPattern : AllomorphyPattern := ⟨0, 1, 1, 1⟩
-theorem abb_contiguous : abbPattern.IsContiguous := by decide
-theorem abb_no_aba : ¬ abbPattern.ViolatesABA := by decide
-
 def aabPattern : AllomorphyPattern := ⟨0, 0, 0, 1⟩
-theorem aab_contiguous : aabPattern.IsContiguous := by decide
-
 def aabbPattern : AllomorphyPattern := ⟨0, 0, 1, 1⟩
-theorem aabb_contiguous : aabbPattern.IsContiguous := by decide
-
 def ababPattern : AllomorphyPattern := ⟨0, 1, 0, 1⟩
-theorem abab_violates_aba : ababPattern.ViolatesABA := by decide
-theorem abab_not_contiguous : ¬ ababPattern.IsContiguous := by decide
-
 def abaPattern : AllomorphyPattern := ⟨0, 1, 0, 0⟩
-theorem aba_violates : abaPattern.ViolatesABA := by decide
-
 def babPattern : AllomorphyPattern := ⟨1, 0, 1, 0⟩
-theorem bab_violates : babPattern.ViolatesABA := by decide
-
 def uniformPattern : AllomorphyPattern := ⟨0, 0, 0, 0⟩
-theorem uniform_contiguous : uniformPattern.IsContiguous := by decide
+
+/-! Smoke tests for the named patterns: each evaluates as the
+    AllomorphyPattern shape its name implies. Demoted from `theorem`
+    to `example` because nothing in the codebase consumes them by
+    name. -/
+
+example : abbPattern.IsContiguous := by decide
+example : ¬ abbPattern.ViolatesABA := by decide
+example : aabPattern.IsContiguous := by decide
+example : aabbPattern.IsContiguous := by decide
+example : ababPattern.ViolatesABA := by decide
+example : ¬ ababPattern.IsContiguous := by decide
+example : abaPattern.ViolatesABA := by decide
+example : babPattern.ViolatesABA := by decide
+example : uniformPattern.IsContiguous := by decide
 
 -- ============================================================================
 -- § 3: Containment Rank vs. Blake Hierarchy Rank
@@ -152,22 +152,29 @@ def comInstSyncretism : Syncretism :=
 -- § 6: Adjacency Theorems
 -- ============================================================================
 
-theorem nom_acc_adjacent : HierarchyAdjacent .nom .acc := by decide
-theorem com_inst_adjacent : HierarchyAdjacent .com .inst := by decide
-theorem dat_loc_adjacent : HierarchyAdjacent .dat .loc := by decide
-theorem gen_dat_adjacent : HierarchyAdjacent .gen .dat := by decide
+/-! Adjacency-on-canonical-hierarchy smoke tests. The named theorems
+    below have no codebase consumers (Tamil/Case.lean defines its own
+    locally-named `com_inst_adjacent`, not a use of this one); all are
+    `example`s. The one consumed lemma is `same_tier_adjacent`, kept
+    as `theorem` because it is parametric over the hierarchy ranks
+    (not a fixed pair). -/
 
-/-- ERG/INST hierarchy non-adjacency (ranks 6, 2). Blake's known
+example : HierarchyAdjacent .nom .acc := by decide
+example : HierarchyAdjacent .com .inst := by decide
+example : HierarchyAdjacent .dat .loc := by decide
+example : HierarchyAdjacent .gen .dat := by decide
+
+/-- ERG/INST hierarchy non-adjacency (ranks 6, 2): Blake's known
     exception, explained by historical derivation. -/
-theorem erg_inst_not_strictly_adjacent :
-    ¬ HierarchyAdjacent .erg .inst := by decide
+example : ¬ HierarchyAdjacent .erg .inst := by decide
 
-/-- ERG/INST IS inventory-adjacent in a system with only {ERG, ABS, INST}. -/
-theorem erg_inst_inv_adjacent :
-    InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
+/-- ERG/INST IS inventory-adjacent in a system with only
+    {ERG, ABS, INST}. -/
+example : InventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst := by
   decide
 
-/-- Same-tier cases are always strictly adjacent. -/
+/-- Same-tier cases are always strictly adjacent. (Parametric over
+    the rank — kept as named `theorem` for downstream re-use.) -/
 theorem same_tier_adjacent (c1 c2 : Case)
     (h : c1.hierarchyRank = c2.hierarchyRank) :
     HierarchyAdjacent c1 c2 := Or.inl h
@@ -176,19 +183,14 @@ theorem same_tier_adjacent (c1 c2 : Case)
 -- § 7: *ABA and Syncretism Examples
 -- ============================================================================
 
-theorem neuter_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 0 1 1).IsContiguous := by decide
+/-! Five fixed `AllomorphyPattern` shapes that show up in the
+    syncretism literature. Demoted to `example` for the same reason as
+    the smoke tests above: no by-name consumers. -/
 
-theorem nom_gen_without_acc_violates_aba :
-    (AllomorphyPattern.mk 0 1 0 1).ViolatesABA := by decide
-
-theorem acc_gen_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 1 1 2).IsContiguous := by decide
-
-theorem gen_dat_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 1 2 2).IsContiguous := by decide
-
-theorem nom_dat_syncretism_violates_aba :
-    (AllomorphyPattern.mk 0 1 1 0).ViolatesABA := by decide
+example : (AllomorphyPattern.mk 0 0 1 1).IsContiguous := by decide
+example : (AllomorphyPattern.mk 0 1 0 1).ViolatesABA := by decide
+example : (AllomorphyPattern.mk 0 1 1 2).IsContiguous := by decide
+example : (AllomorphyPattern.mk 0 1 2 2).IsContiguous := by decide
+example : (AllomorphyPattern.mk 0 1 1 0).ViolatesABA := by decide
 
 end Core.Case.Allomorphy

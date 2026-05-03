@@ -20,7 +20,7 @@ Languages vary dramatically in whether and how they track extraction:
 namespace Typology
 
 -- ============================================================================
--- S 1: Extraction Marking Strategy
+-- § 1: Extraction Marking Strategy
 -- ============================================================================
 
 /-- How a language morphologically marks extraction (A-bar-movement).
@@ -60,7 +60,7 @@ in `Phenomena/FillerGap/Studies/` files anchored on the specific
 paper. They are not enum cases here. -/
 
 -- ============================================================================
--- S 2: Extraction Target
+-- § 2: Extraction Target
 -- ============================================================================
 
 /-- The grammatical position from which extraction occurs.
@@ -120,7 +120,7 @@ inductive Extractee where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- S 3: Extraction Profile
+-- § 3: Extraction Profile
 -- ============================================================================
 
 /-- A language's extraction morphology profile: what strategy it uses,
@@ -146,7 +146,7 @@ structure ExtractionProfile where
   deriving Repr
 
 -- ============================================================================
--- S 4: Helpers
+-- § 4: Helpers
 -- ============================================================================
 
 /-- Does this profile mark extraction from a given position? -/

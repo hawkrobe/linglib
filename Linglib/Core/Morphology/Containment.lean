@@ -116,26 +116,18 @@ theorem violatesABA_four (a b c d : Nat) :
 -- § 4: Verification on Concrete Patterns
 -- ============================================================================
 
-/-- ABA: the canonical violation. -/
-theorem aba_violates : violatesABA [0, 1, 0] = true := by decide
+/-! Smoke tests: every cell-pattern shape this substrate's downstream
+    consumers care about resolves correctly under the predicates above.
+    These are `example`s rather than named theorems because nothing in
+    the codebase references them by name; the named-theorem shape would
+    pollute the public API surface of `Morphology.Containment`. -/
 
-/-- AAA: regular throughout. -/
-theorem aaa_contiguous : isContiguous [0, 0, 0] = true := by decide
-
-/-- ABB: suppletive at CMPR+SPRL. -/
-theorem abb_contiguous : isContiguous [0, 1, 1] = true := by decide
-
-/-- ABC: three distinct forms. -/
-theorem abc_contiguous : isContiguous [0, 1, 2] = true := by decide
-
-/-- AAB: contiguous (but excluded by VI locality in the degree domain;
-    see `Theories/Morphology/DegreeContainment.lean`). -/
-theorem aab_contiguous : isContiguous [0, 0, 1] = true := by decide
-
-/-- ABAB: violates on 4-position hierarchy. -/
-theorem abab_violates : violatesABA [0, 1, 0, 1] = true := by decide
-
-/-- AABB: contiguous on 4-position hierarchy. -/
-theorem aabb_contiguous : isContiguous [0, 0, 1, 1] = true := by decide
+example : violatesABA [0, 1, 0] = true := by decide      -- ABA: canonical violation
+example : isContiguous [0, 0, 0] = true := by decide     -- AAA: regular
+example : isContiguous [0, 1, 1] = true := by decide     -- ABB: suppletive CMPR+SPRL
+example : isContiguous [0, 1, 2] = true := by decide     -- ABC: three distinct forms
+example : isContiguous [0, 0, 1] = true := by decide     -- AAB: contiguous (excluded by VI locality, not by ABA)
+example : violatesABA [0, 1, 0, 1] = true := by decide   -- ABAB: violates on 4-position hierarchy
+example : isContiguous [0, 0, 1, 1] = true := by decide  -- AABB: contiguous on 4-position hierarchy
 
 end Morphology.Containment

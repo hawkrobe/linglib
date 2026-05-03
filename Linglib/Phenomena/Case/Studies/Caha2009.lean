@@ -1,11 +1,5 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Order
-import Linglib.Fragments.Slavic.Case
-import Linglib.Fragments.Slavic.Belarusian.Case
-import Linglib.Fragments.Slavic.Cassubian.Case
-import Linglib.Fragments.Slavic.Czech.Case
-import Linglib.Fragments.Slavic.Slovak.Case
-import Linglib.Fragments.Slavic.Sorbian.Case
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.German.Case
@@ -17,15 +11,21 @@ import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Mongolian.Case
+import Linglib.Fragments.Slavic.Belarusian.Case
+import Linglib.Fragments.Slavic.Case
+import Linglib.Fragments.Slavic.Cassubian.Case
+import Linglib.Fragments.Slavic.Czech.Case
 import Linglib.Fragments.Slavic.Polish.Case
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Fragments.Slavic.Serbian.Case
+import Linglib.Fragments.Slavic.Slovak.Case
 import Linglib.Fragments.Slavic.Slovenian.Case
+import Linglib.Fragments.Slavic.Sorbian.Case
+import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Turkish.Case
-import Linglib.Fragments.Slavic.Ukrainian.Case
 import Linglib.Fragments.Yakut.Case
 
 /-!

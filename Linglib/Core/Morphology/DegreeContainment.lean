@@ -120,11 +120,11 @@ def DegreePattern.IsContiguous (p : DegreePattern) : Prop :=
 instance (p : DegreePattern) : Decidable p.IsContiguous :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- Bridge: the degree-specific `violatesABA` is the generic predicate
-    applied to the 3-position projection. Holds by definition. -/
-theorem degree_violatesABA_eq_generic (p : DegreePattern) :
-    p.violatesABA =
-      Morphology.Containment.violatesABA [p.pos, p.cmpr, p.sprl] := rfl
+/-! `degree_violatesABA_eq_generic` was previously a named `rfl`
+    bridge here. Dropped: by construction `DegreePattern.violatesABA`
+    *is* the generic predicate applied to the 3-cell projection, so
+    the equality is `rfl` at every use site. Naming a `rfl` bridge
+    polluted the API surface for no benefit. -/
 
 -- ============================================================================
 -- § 3: Pattern Classification
@@ -148,29 +148,34 @@ def DegreePattern.sprlSuppletive (p : DegreePattern) : Bool :=
 
 /-- AAA: regular throughout. -/
 def aaa : DegreePattern := ⟨0, 0, 0⟩
-theorem aaa_contiguous : aaa.isContiguous = true := by decide
-theorem aaa_regular : aaa.isRegular = true := by decide
 
 /-- ABB: suppletive comparative; superlative shares comparative root.
     English `good – better – best`. -/
 def abb : DegreePattern := ⟨0, 1, 1⟩
-theorem abb_contiguous : abb.isContiguous = true := by decide
-theorem abb_cmpr_suppletive : abb.cmprSuppletive = true := by decide
-theorem abb_sprl_suppletive : abb.sprlSuppletive = true := by decide
 
 /-- ABC: three distinct roots. Latin `bonus – melior – optimus`. -/
 def abc : DegreePattern := ⟨0, 1, 2⟩
-theorem abc_contiguous : abc.isContiguous = true := by decide
 
 /-- *ABA: the unattested pattern (`*good – better – goodest`). -/
 def aba : DegreePattern := ⟨0, 1, 0⟩
-theorem aba_violates : aba.violatesABA = true := by decide
-theorem aba_not_contiguous : aba.isContiguous = false := by decide
 
 /-- *AAB: contiguous by the generic ABA checker, but excluded by VI
     locality in the DM analysis (see `Theories/Morphology/DegreeContainment.lean`). -/
 def aab : DegreePattern := ⟨0, 0, 1⟩
-theorem aab_contiguous : aab.isContiguous = true := by decide
+
+/-! Smoke tests confirming each named pattern resolves correctly.
+    Demoted from `theorem` to `example` because nothing in the
+    codebase references them by name. -/
+
+example : aaa.isContiguous = true := by decide
+example : aaa.isRegular = true := by decide
+example : abb.isContiguous = true := by decide
+example : abb.cmprSuppletive = true := by decide
+example : abb.sprlSuppletive = true := by decide
+example : abc.isContiguous = true := by decide
+example : aba.violatesABA = true := by decide
+example : aba.isContiguous = false := by decide
+example : aab.isContiguous = true := by decide
 
 -- ============================================================================
 -- § 5: CSG Part I (from Contiguity Alone)
@@ -206,15 +211,11 @@ def patternFromForms (pos cmpr sprl : String) : DegreePattern :=
     else if cmprIdx == 1 then 2 else 1
   ⟨posIdx, cmprIdx, sprlIdx⟩
 
-theorem patternFromForms_aaa :
-    patternFromForms "tall" "tall" "tall" = aaa := by decide
+/-! Smoke tests for `patternFromForms` covering the three attested
+    pattern types. -/
 
-/-- ABB: comparative and superlative share the same suppletive root. -/
-theorem patternFromForms_abb :
-    patternFromForms "A" "B" "B" = abb := by decide
-
-/-- ABC: three distinct roots (Latin bonus–melior–optimus). -/
-theorem patternFromForms_abc :
-    patternFromForms "A" "B" "C" = abc := by decide
+example : patternFromForms "tall" "tall" "tall" = aaa := by decide
+example : patternFromForms "A" "B" "B" = abb := by decide
+example : patternFromForms "A" "B" "C" = abc := by decide
 
 end Core.Morphology.DegreeContainment
