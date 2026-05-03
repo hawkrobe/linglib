@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.622 — Phase 5a: trim ExtractionMarkingStrategy enum
+
+Migration phase 5a (pre-step for the file move in 5b).
+
+Two analytical-conclusion enum cases removed from `ExtractionMarkingStrategy`:
+
+- `structuralRestriction` → `voiceAlternation` (descriptive surface category for Toba Batak's Actor/Object voice). Erlewine 2018's predicate-fronting + anti-locality account is one analysis among several; it belongs in `Studies/Erlewine2018.lean` as a paper-specific theorem, not a typological primitive.
+- `agentFocusAlternation` → `dedicatedMorpheme` (descriptive surface category for Mayan AF morphology). The SSAL-repair analysis (Erlewine 2016/2018) coexists with Coon-Mateo Pedro-Preminger's absolutive-licensing account and Coon-Keine's Feature Gluttony — encoding any one of them as a typological enum case is the project's "encoding conclusions as definitions" anti-pattern at the substrate level.
+
+Plus rename: `ExtractionMarkingStrategy.none` → `unmarked` (avoids `Option.none` shadowing).
+
+Touches 12 files: 7 Mayan Fragment files (Chol, K'iche', Mam, Tseltal, Tsotsil, Q'anjob'al, Kaqchikel), TobaBatak/Basic, and 3 Studies (Erlewine2016, Erlewine2018, ColeHermon2008). Mam/Agreement.lean docstring updated to point at the rival analyses. Extraction.lean trailing prose moved into a module docstring block.
+
 ### 0.230.620 — Core/StateAlgebra hoist + BSML atom polymorphism + FreeChoice/ consolidation
 
 Architectural refactor toward point-polymorphic team semantics, prepping for QBSML (Aloni & van Ormondt 2023, JoLLI 32:539).
