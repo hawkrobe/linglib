@@ -286,11 +286,11 @@ private def exampleTree : SyntacticObject :=
 example : linearize exampleTree = [⟨.simple .D [] "the", 1⟩,
                                     ⟨.simple .V [.D] "saw", 2⟩,
                                     ⟨.simple .N [] "Mary", 3⟩] := by
-  native_decide
+  decide
 
 /-- The phonological yield matches. -/
 example : exampleTree.phonYield = ["the", "saw", "Mary"] := by
-  native_decide
+  decide
 
 /-- Spec c-commands head within the example tree. -/
 example : cCommandsIn exampleTree specTok headTok :=

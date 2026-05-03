@@ -82,8 +82,8 @@ instance (inv : Finset Case) : Decidable (RespectsCahaContainment inv) := by
 /-! ## Slavic substrate: containment lemmas
 
 Decoupled from `Fragments/Slavic/Case.lean` so that the Fragment
-substrate file does not pull in the `CaseContainment` Theory
-predicate. -/
+substrate file does not pull in the Caha-specific containment
+predicate (which lives here in this study file, not in `Core/`). -/
 
 theorem slavicCore_respectsCaha :
     RespectsCahaContainment Fragments.Slavic.Case.coreInventory := by decide
@@ -252,8 +252,8 @@ abbrev Paradigm := Fin 6 → Nat
 /-- Caha's Universal Contiguity (@cite{caha-2009} (10), p. 10) on a
     Slavic paradigm. Defers to the domain-independent
     `Morphology.Containment.isContiguous` substrate (which
-    `CaseContainment.lean`'s `AllomorphyPattern.IsContiguous`
-    specializes at n=4 — same engine, n=6 specialization here). -/
+    `Core.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes
+    at n=4 — same engine, n=6 specialization here). -/
 def IsContiguous (p : Paradigm) : Prop :=
   Morphology.Containment.isContiguous [p 0, p 1, p 2, p 3, p 4, p 5] = true
 

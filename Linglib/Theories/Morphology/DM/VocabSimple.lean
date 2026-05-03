@@ -122,8 +122,8 @@ theorem empty_features_matches_any (entry : VocabEntry)
     `Option Cat` shape; default `none` admits unrestricted contexts. -/
 def makePersonVocab {PN : Type*} (cells : List PN) (toPhi : PN → List PhiFeature)
     (exponentOf : PN → String) (ctx : Option Cat := none) : Vocabulary :=
-  cells.map fun pn =>
-    { features := (toPhi pn).map (fun p => .valued (.phi p))
+  cells.map λ pn =>
+    { features := (toPhi pn).map (λ p => .valued (.phi p))
     , exponent := exponentOf pn
     , context := ctx }
 

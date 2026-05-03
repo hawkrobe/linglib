@@ -43,11 +43,11 @@ cross-linguistic validation, and competing analyses live in
   the source of dyadic unaccusatives, with lexical ABL from *kara*
   bleeding dependent case
 - `Studies/Caha2009.lean` — typological prediction at the inventory level,
-  using the `PartialOrder Core.Case` instance from
-  `Theories/Interfaces/Morphosyntax/CaseContainment.lean`. The dependent
-  case algorithm produces values in `Core.Case`; their relative ranking
-  is the canonical containment order, which Caha's *ABA constraint
-  applies to.
+  using the `PartialOrder Core.Case` instance from `Core/Case/Order.lean`
+  and the `RespectsCahaContainment` predicate now defined in `Caha2009.lean`
+  itself. The dependent case algorithm produces values in `Core.Case`;
+  their relative ranking is the canonical containment order, which
+  Caha's *ABA constraint applies to.
 
 ## Companion Infrastructure
 
@@ -60,9 +60,11 @@ cross-linguistic validation, and competing analyses live in
   framework: one obligatory primary licenser per clause + secondary
   licensers as a last-resort response to convergence failure, deriving
   DOM patterns as the surface signature of secondary-licenser activation
-- `Theories/Interfaces/Morphosyntax/CaseContainment.lean` — the
-  containment hierarchy (`PartialOrder Core.Case`) and
-  `respectsCahaContainment` predicate that consume `Core.Case` values
+- `Core/Case/Order.lean` — the containment hierarchy (`PartialOrder
+  Core.Case`); `Core/Case/Allomorphy.lean` — the framework-neutral
+  `AllomorphyPattern` and *ABA substrate; `Phenomena/Case/Studies/
+  Caha2009.lean` — the Caha-specific `RespectsCahaContainment`
+  predicate that consumes `Core.Case` values
 
 -/
 

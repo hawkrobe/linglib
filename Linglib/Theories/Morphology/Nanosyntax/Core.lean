@@ -78,7 +78,7 @@ open Core.Case.Allomorphy
     (not necessarily contiguous on the fseq). -/
 structure LexEntry where
   /-- The rank (depth) of the stored tree on the fseq.
-      Corresponds to `CaseContainment.containmentRank`. -/
+      Corresponds to `Core.Case.Order.containmentRank`. -/
   rank : Nat
   /-- The phonological exponent. -/
   exponent : String
@@ -275,7 +275,7 @@ theorem three_entry_is_aba :
 end CaseExamples
 
 -- ============================================================================
--- §6: Connection to CaseContainment
+-- §6: Connection to Core.Case.Allomorphy
 -- ============================================================================
 
 /-- Map a `Core.Case` to a Nanosyntax target rank via the existing

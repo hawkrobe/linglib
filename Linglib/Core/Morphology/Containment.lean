@@ -90,7 +90,7 @@ instance (l : List Nat) : Decidable (IsContiguous l) :=
 theorem isContiguous_iff_not_violatesABA (l : List Nat) :
     isContiguous l = true ↔ ¬ ViolatesABA l := by
   unfold isContiguous ViolatesABA
-  cases h : violatesABA l <;> simp
+  cases violatesABA l <;> decide
 
 -- ============================================================================
 -- § 3: Closed-Form Lemmas for Small Lists

@@ -59,6 +59,7 @@ as substrate-addition TODOs.
 namespace Phenomena.Allomorphy.Studies.SmithMoskalEtAl2019
 
 open Core.Morphology.DegreeContainment
+open Core.Case.Allomorphy
 open Theories.Morphology.DegreeContainment
 
 -- ============================================================================
@@ -120,12 +121,22 @@ theorem case_aab_attested : attestedCaseAAB.IsContiguous := by decide
 ```
 -/
 
-/-- Placeholder: the paper reports attested AAB patterns in pronominal
-    case suppletion (§3.6). A concrete witness from the paper's data
-    tables would replace this. -/
-theorem case_aab_attested_in_some_language : True := by trivial
--- TODO: replace with a concrete `AllomorphyPattern` witness drawn
--- from §3.6's typological survey, plus the empirical citation.
+/-- §3.6 placeholder. The full claim should look like:
+
+        ∃ p : AllomorphyPattern,
+          p ∈ paper.attestedCasePatterns ∧
+          ¬ ∃ rules defaultForm,
+            (vi_lifted_to_case rules defaultForm = p)
+
+    where `paper.attestedCasePatterns` encodes a witness from §3.6's
+    typological survey and `vi_lifted_to_case` is the DM derivation
+    from `Theories.Morphology.DegreeContainment` adapted to the
+    4-position case paradigm. The current sorry'd statement just
+    asserts the existence of a contiguous case pattern (trivially
+    inhabited by `uniformPattern`); replace with the divergence claim
+    once §3.6's data is encoded. -/
+theorem case_aab_attested_falsifies_dm :
+    ∃ (p : AllomorphyPattern), p.IsContiguous := sorry
 
 -- ============================================================================
 -- § 3: Number side — §3.6 reports AAB attested
@@ -145,11 +156,16 @@ recursion (§4.3.1) hits exactly the substrate that recursion file
 already provides.
 -/
 
-/-- Placeholder: the paper reports attested AAB patterns in pronominal
-    number suppletion (§3.6). -/
-theorem number_aab_attested_in_some_language : True := by trivial
--- TODO: replace with a concrete witness over Harbour-2014 number
--- categories, drawn from §3.6's typological survey.
+/-- §3.6 placeholder for the number side. Same shape as
+    `case_aab_attested_falsifies_dm` but over Harbour-2014 number
+    categories rather than Caha case positions. The full claim
+    should witness an attested number-suppletion AAB pattern that
+    cannot be VI-generated under the DM derivation lifted to a
+    number paradigm. The sorry'd statement just asserts non-empty
+    contiguous case patterns exist (a stand-in for the eventual
+    Harbour-`Category`-shaped witness). -/
+theorem number_aab_attested_falsifies_dm :
+    ∃ (p : AllomorphyPattern), p.IsContiguous := sorry
 
 -- ============================================================================
 -- § 4: §3.7 — Domain-based locality (substrate addition)

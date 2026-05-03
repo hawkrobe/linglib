@@ -125,7 +125,7 @@ def HierarchyAdjacent (c1 c2 : Case) : Prop :=
   c1.hierarchyRank + 1 = c2.hierarchyRank ∨
   c2.hierarchyRank + 1 = c1.hierarchyRank
 
-instance : DecidableRel HierarchyAdjacent := fun _ _ =>
+instance : DecidableRel HierarchyAdjacent := λ _ _ =>
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- Relaxed adjacency: no case in the inventory falls strictly between
