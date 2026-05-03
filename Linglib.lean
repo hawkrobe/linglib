@@ -267,8 +267,9 @@ import Linglib.Core.Case.Grammaticalization
 import Linglib.Core.Case.Comparative
 import Linglib.Core.AgreementTarget
 import Linglib.Core.Morphology.Containment
+import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Case.Allomorphy
-import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
+import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Core.Relativization.Basic
 import Linglib.Theories.Interfaces.Morphosyntax.Relativization
 import Linglib.Core.Relativization.Hierarchy

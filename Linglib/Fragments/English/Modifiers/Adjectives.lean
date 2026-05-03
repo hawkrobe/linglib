@@ -21,7 +21,7 @@ Both share scale type and antonym information, but serve different grammatical f
 import Linglib.Core.Word
 import Linglib.Features.PropertyDomain
 import Linglib.Core.Morphology.Exponence
-import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
+import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Theories.Semantics.Gradability.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
@@ -66,7 +66,7 @@ structure AdjModifierEntry where
       throughout). Set to `abb` for suppletive entries like *good/better/best*.
       See `DegreeContainment.lean` for pattern definitions and the *ABA
       constraint. -/
-  suppletion : Interfaces.Morphosyntax.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
+  suppletion : Core.Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
   deriving Repr, BEq
 
 -- ============================================================================

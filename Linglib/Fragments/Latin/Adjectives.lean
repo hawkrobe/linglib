@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
+import Linglib.Core.Morphology.DegreeContainment
 
 /-!
 # Latin Adjective Degree Forms
@@ -19,7 +19,7 @@ No Latin adjective shows an *ABA pattern.
 
 namespace Fragments.Latin.Adjectives
 
-open Interfaces.Morphosyntax.DegreeContainment
+open Core.Morphology.DegreeContainment
 
 -- ============================================================================
 -- § 1: Latin Adjective Entry

@@ -1,4 +1,5 @@
-import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
+import Linglib.Core.Morphology.DegreeContainment
+import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Core.Morphology.Exponence
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Degree.Superlative
@@ -96,7 +97,7 @@ end Core.Morphology.ScaleFromParadigm
 
 namespace Bobaljik2012
 
-open Interfaces.Morphosyntax.DegreeContainment
+open Core.Morphology.DegreeContainment
 open Fragments.English.Modifiers.Adjectives
 
 -- ============================================================================
@@ -142,10 +143,17 @@ theorem bad_csg_part2 : bad.suppletion.cmprSuppletive = true := by native_decide
 -- § 3: Attestedness Verification (English)
 -- ============================================================================
 
-/-- All English entries have attested root suppletion patterns
-    (AAA or ABB — satisfying both contiguity and VI consistency). -/
+/-- All English root suppletion patterns satisfy both contiguity (no
+    *ABA — `csg_part1`) and VI locality (CMPR cell = SPRL cell — the
+    DM-locality conjunction `vi_cmpr_eq_sprl` of `Theories/Morphology/
+    DegreeContainment.lean`). The conjunction restricts root patterns
+    to AAA / ABB. Stated as the explicit conjunction so the underlying
+    derivation is visible at use site, rather than packaged as a
+    stipulated `isAttested` field. -/
 theorem english_all_attested :
-    allEntries.all (λ e => e.suppletion.isAttested) = true := by native_decide
+    allEntries.all (λ e =>
+      e.suppletion.isContiguous && (e.suppletion.cmpr == e.suppletion.sprl)) = true := by
+  native_decide
 
 -- ============================================================================
 -- § 4: SSG (Synthetic Superlative Generalization)
