@@ -245,6 +245,6 @@ def kicheanExtractionProfile : Typology.ExtractionProfile :=
              "on overt complementizer in embedded clause" }
 
 theorem kichean_marks_oblique :
-    kicheanExtractionProfile.marks .oblique = true := by native_decide
+    kicheanExtractionProfile.Marks .oblique := by decide
 
 end Fragments.Mayan.Kiche

@@ -208,7 +208,7 @@ theorem extraction_profile_relativization_chain :
       | .dpArg _ => d.extractsPivot == (d.judgment == .grammatical)
       | .adjunct => true)) ∧
     -- Link 2: pivot position (subject) is in markedPositions
-    (tbExtractionProfile.marks .subject) ∧
+    (tbExtractionProfile.Marks .subject) ∧
     -- Link 3: every marked position is relativizable via AH
     (tbExtractionProfile.markedPositions.all (λ et =>
       let ahPos := Typology.Relativization.extractionTargetToAH et

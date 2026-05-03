@@ -369,8 +369,8 @@ def mamExtractionProfile : Typology.ExtractionProfile :=
              "temporal obliques exempt (§8.1); island-sensitive (§7.1)" }
 
 theorem mam_marks_oblique :
-    mamExtractionProfile.marks .oblique = true := by native_decide
+    mamExtractionProfile.Marks .oblique := by decide
 theorem mam_no_mark_subject :
-    mamExtractionProfile.marks .subject = false := by native_decide
+    ¬ mamExtractionProfile.Marks .subject := by decide
 
 end Fragments.Mayan.Mam

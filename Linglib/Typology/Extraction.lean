@@ -150,11 +150,17 @@ structure ExtractionProfile where
 -- ============================================================================
 
 /-- Does this profile mark extraction from a given position? -/
-def ExtractionProfile.marks (p : ExtractionProfile) (t : ExtractionTarget) : Bool :=
-  p.markedPositions.any (· == t)
+def ExtractionProfile.Marks (p : ExtractionProfile) (t : ExtractionTarget) : Prop :=
+  t ∈ p.markedPositions
+
+instance (p : ExtractionProfile) (t : ExtractionTarget) : Decidable (p.Marks t) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 /-- Does this profile use any overt extraction marking? -/
-def ExtractionProfile.hasOvertMarking (p : ExtractionProfile) : Bool :=
-  p.strategy != .unmarked
+def ExtractionProfile.HasOvertMarking (p : ExtractionProfile) : Prop :=
+  p.strategy ≠ .unmarked
+
+instance (p : ExtractionProfile) : Decidable p.HasOvertMarking :=
+  inferInstanceAs (Decidable (_ ≠ _))
 
 end Typology

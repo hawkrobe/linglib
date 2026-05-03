@@ -373,12 +373,12 @@ theorem mayan_tada (lang : Fragments.Mayan.MayanLang) :
     transitives). The substantive claim lives at `extractionProfile`'s
     `markedPositions := [.subject]` field. -/
 theorem qanjobal_extraction_consistent :
-    Fragments.Mayan.Qanjobal.extractionProfile.marks .subject = true := rfl
+    Fragments.Mayan.Qanjobal.extractionProfile.Marks .subject := by decide
 
 /-- Chol's extraction data is consistent: no Agent Focus morphology
     required (every argument extracts freely under the absent strategy). -/
 theorem chol_extraction_consistent :
-    Fragments.Mayan.Chol.extractionProfile.strategy = .none := rfl
+    Fragments.Mayan.Chol.extractionProfile.strategy = .unmarked := rfl
 
 /-- Q'anjob'al's AF form carries the intransitive status suffix, matching
     the prediction that AF Voice is non-phasal (intransitive v⁰). -/
@@ -742,8 +742,10 @@ theorem shared_phase_problem :
     asymmetries: agent extraction is blocked without AF in both. -/
 theorem both_have_extraction_asymmetries :
     Fragments.Mayan.Qanjobal.absPosition = .high ∧
-    Fragments.Mayan.Qanjobal.extractionProfile.marks .subject = true ∧
-    Fragments.Mayan.Kaqchikel.kaqAFType = .afLanguage := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Qanjobal.extractionProfile.Marks .subject ∧
+    Fragments.Mayan.Kaqchikel.kaqAFType = .afLanguage := by
+  refine ⟨rfl, ?_, rfl⟩
+  decide
 
 /-- Kaqchikel AF loses Set A agreement (the agent never enters Spec,TP).
     Q'anjob'al AF also loses Set A agreement.
