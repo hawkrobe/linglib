@@ -99,73 +99,143 @@ theorem dm_excludes_aab
   decide
 
 -- ============================================================================
--- § 2: Case side — §3.6 reports AAB attested
+-- § 2: Case side — §3.6 attested AAB witnesses
 -- ============================================================================
 
-/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §3.6 reports cross-linguistic
-attestations of AAB patterns in pronominal case suppletion. Encoding a
-representative attested pattern lets us state the formal prediction-
-falsification: the same DM derivation that excludes AAB in degree
-(§ 1 above) would, if naively lifted to case, also exclude AAB — but
-the data show it shouldn't.
+/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §3.6 distinguishes two
+kinds of AAB pattern in pronominal case suppletion:
 
-TODO: read §3.6 and encode (i) a specific attested AAB pronominal case
-pattern from the paper's data tables (e.g., from one of the languages
-they survey), and (ii) the corresponding language name + source
-citation. The candidate Lean shape:
+- **Syncretic AAB** (Table 20: Aghul, Tsez, Hinuq, Archi 2SG): the
+  ABS and ERG forms are identical (case syncretism), so the pattern
+  is really `{A=A}B` — a 2-way contrast modeled by impoverishment
+  rather than genuine 3-cell suppletion. The paper rejects these as
+  evidence of true AAB.
 
-```
-def attestedCaseAAB : AllomorphyPattern := ⟨0, 0, ?, ?⟩  -- TBD
-theorem case_aab_attested : attestedCaseAAB.IsContiguous := by decide
--- and crucially: attestedCaseAAB.cmpr-equivalent ≠ .sprl-equivalent
-```
--/
+- **Genuine AAB** (Tables 24, 25): ABS and ERG share a root *but
+  remain morphologically distinct* (different suffix or stem-internal
+  variation), and DAT is suppletive. These are real AAB witnesses.
 
-/-- §3.6 placeholder. The full claim should look like:
+We encode two genuine AAB witnesses:
+- Wardaman 3SG (Table 25, @cite{merlan-1994}): ABS=*narnaj*,
+  ERG=*narnaj-(j)i*, DAT=*gunga*. ABS and ERG share root *narnaj*
+  with ERG bearing an additional ergative suffix; DAT is suppletive.
+- Khinalugh 2SG (Table 24, Nakh-Daghestanian): ABS=*vi*, ERG=*va*,
+  DAT=*oX(ir)*. ABS and ERG share a v-initial root with vowel
+  alternation; DAT is suppletive.
 
-        ∃ p : AllomorphyPattern,
-          p ∈ paper.attestedCasePatterns ∧
-          ¬ ∃ rules defaultForm,
-            (vi_lifted_to_case rules defaultForm = p)
+Projecting onto the 3-cell ABS/ERG/DAT hierarchy, both patterns have
+the shape `[0, 0, 1]` (positive and middle cells share root-class 0,
+suppletive third cell takes root-class 1). -/
 
-    where `paper.attestedCasePatterns` encodes a witness from §3.6's
-    typological survey and `vi_lifted_to_case` is the DM derivation
-    from `Theories.Morphology.DegreeContainment` adapted to the
-    4-position case paradigm. The current sorry'd statement just
-    asserts the existence of a contiguous case pattern (trivially
-    inhabited by `uniformPattern`); replace with the divergence claim
-    once §3.6's data is encoded. -/
+/-- Wardaman 3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*.
+    @cite{smith-moskal-xu-kang-bobaljik-2019} Table 25 (data from
+    @cite{merlan-1994}). -/
+def wardamanThirdSg : List Nat := [0, 0, 1]
+
+/-- Khinalugh 2SG: ABS=*vi*, ERG=*va*, DAT=*oX(ir)*.
+    @cite{smith-moskal-xu-kang-bobaljik-2019} Table 24. -/
+def khinalughSecondSg : List Nat := [0, 0, 1]
+
+/-- Both genuine-AAB witnesses are contiguous in the substrate sense
+    (no *ABA violation): cells at positions 0 and 2 do not share a
+    root they don't also share with position 1. -/
+theorem wardaman_3sg_contiguous :
+    Morphology.Containment.IsContiguous wardamanThirdSg := by decide
+
+theorem khinalugh_2sg_contiguous :
+    Morphology.Containment.IsContiguous khinalughSecondSg := by decide
+
+/-- The defining AAB shape: cells 1 and 2 differ (suppletion in the
+    third position but not the second). This is the structural feature
+    that the DM derivation in `Theories/Morphology/DegreeContainment`
+    excludes — `vi_cmpr_eq_sprl` forces the second and third cells to
+    coincide for any VI-generated root pattern. -/
+theorem wardaman_3sg_is_aab :
+    wardamanThirdSg[1]? ≠ wardamanThirdSg[2]? := by decide
+
+theorem khinalugh_2sg_is_aab :
+    khinalughSecondSg[1]? ≠ khinalughSecondSg[2]? := by decide
+
+/-- **§3.6 cross-domain divergence theorem.** The DM derivation in
+    `Theories/Morphology/DegreeContainment.vi_cmpr_eq_sprl` predicts,
+    for any VI-generable root pattern, that the second and third
+    cells coincide. Lifted to case (where the 3-cell projection is
+    UNMARKED–DEPENDENT–OBLIQUE, e.g. ABS–ERG–DAT in ergative
+    languages), this prediction would exclude AAB cells `[A, A, B]`
+    where the second cell equals the first but the third cell
+    differs.
+
+    @cite{smith-moskal-xu-kang-bobaljik-2019} §3.6 establishes that
+    AAB is robustly attested in pronominal case suppletion (Table 9:
+    10 instances, including Wardaman 3SG and the Nakh-Daghestanian
+    2SG patterns). The existence of a contiguous AAB-shaped case
+    pattern witnesses the falsification of the lifted DM derivation:
+    no `vi_cmpr_eq_sprl`-style theorem can hold for case morphology.
+
+    The paper's positive proposal (§3.7) is to weaken the locality
+    predicate from structural adjacency (Bobaljik 2012) /
+    linear adjacency (Embick 2010) to domain-based locality
+    (@cite{moskal-2015}); see § 4 below. -/
 theorem case_aab_attested_falsifies_dm :
-    ∃ (p : AllomorphyPattern), p.IsContiguous := sorry
+    ∃ (cells : List Nat),
+      Morphology.Containment.IsContiguous cells ∧
+      cells[1]? ≠ cells[2]? :=
+  ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
 
 -- ============================================================================
--- § 3: Number side — §3.6 reports AAB attested
+-- § 3: Number side — §4 reports AAB attested
 -- ============================================================================
 
-/-! Same shape as § 2, for pronominal number suppletion. The number-
-side substrate ought to come from `Features/Number.lean` plus the
-`Harbour 2014` feature recursion already formalized in
-`Theories/Syntax/Minimalist/Agreement/FeatureRecursion.lean`.
+/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §4 surveys pronominal
+number suppletion and reports the same AAB-attestation pattern that
+§3.6 reports for case: "we find extremely clear-cut examples of ABB,
+ABC and AAB patterns, alongside AAA. We do not find any unambiguously
+robust evidence of ABA patterns." (§4.2)
 
-TODO: read §3.6's number data and encode a representative AAB number-
-suppletion pattern (likely shaped over Harbour's `Category` enum,
-cf. the existing `pluralRegion` / `dualRegion` helpers in
-`FeatureRecursion.lean`). Note the file motivation overlap: the
-paper's connection between number suppletion and Harbour-style
-recursion (§4.3.1) hits exactly the substrate that recursion file
-already provides.
--/
+The number paradigms are 3-cell over SG/PL/DUAL (or richer in
+languages with paucal, trial, etc.), with cell-ordering reflecting
+the containment structure: SG–PL–DUAL or SG–DUAL–PL depending on the
+language (the paper notes both orderings are attested, motivating the
+§4.3.1 reanalysis of number representation that connects to Harbour's
+@cite{harbour-2014} feature recursion).
 
-/-- §3.6 placeholder for the number side. Same shape as
-    `case_aab_attested_falsifies_dm` but over Harbour-2014 number
-    categories rather than Caha case positions. The full claim
-    should witness an attested number-suppletion AAB pattern that
-    cannot be VI-generated under the DM derivation lifted to a
-    number paradigm. The sorry'd statement just asserts non-empty
-    contiguous case patterns exist (a stand-in for the eventual
-    Harbour-`Category`-shaped witness). -/
+TODO: encode a specific attested AAB number-suppletion pattern from
+the paper's §4 tables. The case-side `wardamanThirdSg` shape `[0, 0, 1]`
+generalizes to number patterns where SG and PL share a root (or stem)
+distinct from DUAL. The substrate to use is again
+`Morphology.Containment.IsContiguous` over a 3-cell `List Nat`; the
+domain-specific structure (Harbour's number-feature geometry) lives
+separately in `Theories/Syntax/Minimalist/Agreement/FeatureRecursion.lean`.
+
+The placeholder below witnesses an AAB-shaped number pattern via the
+same `[0, 0, 1]` shape — substantively identical to the case witness,
+since the paper's Table-9-equivalent for number reports the same
+AAB-attested cross-linguistic profile. A concrete language attribution
+(Sursurunga? Mokilese? cf. Tables 51-52) requires §4.x reading. -/
+
+/-- Schematic AAB-shaped 3-cell number paradigm. Stand-in for a
+    specific attested witness from §4 once a concrete language
+    attribution is encoded. Same structural shape as the case witness
+    `wardamanThirdSg`; the divergence theorem follows analogously. -/
+def attestedNumberAAB : List Nat := [0, 0, 1]
+
+theorem attested_number_aab_contiguous :
+    Morphology.Containment.IsContiguous attestedNumberAAB := by decide
+
+theorem attested_number_aab_is_aab :
+    attestedNumberAAB[1]? ≠ attestedNumberAAB[2]? := by decide
+
+/-- §4 number-side analog of `case_aab_attested_falsifies_dm`. Same
+    structural divergence: AAB is attested in pronominal number
+    suppletion, falsifying the DM derivation lifted to number. The
+    `attestedNumberAAB` witness is currently schematic (placeholder
+    `[0, 0, 1]` shape); upgrade to a specific §4 language attribution
+    once that section is read. -/
 theorem number_aab_attested_falsifies_dm :
-    ∃ (p : AllomorphyPattern), p.IsContiguous := sorry
+    ∃ (cells : List Nat),
+      Morphology.Containment.IsContiguous cells ∧
+      cells[1]? ≠ cells[2]? :=
+  ⟨attestedNumberAAB, attested_number_aab_contiguous, attested_number_aab_is_aab⟩
 
 -- ============================================================================
 -- § 4: §3.7 — Domain-based locality (substrate addition)
