@@ -269,6 +269,7 @@ import Linglib.Core.Case.Comparative
 import Linglib.Core.AgreementTarget
 import Linglib.Core.Morphology.Containment
 import Linglib.Core.Morphology.DegreeContainment
+import Linglib.Core.Morphology.DomainLocality
 import Linglib.Core.Case.Allomorphy
 import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Core.Relativization.Basic
