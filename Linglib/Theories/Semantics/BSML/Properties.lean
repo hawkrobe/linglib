@@ -145,9 +145,9 @@ private theorem support_and_antiSupport_unionClosed
     disjunction ⨼ — Anttila Proposition 2.2.8 part 2 specializes to "all
     formulas" in this case. -/
 theorem unionClosed_support (φ : BSMLFormula Atom) :
-    Core.Logic.Team.unionClosed (support (W := W)) φ :=
-  fun M s t hs ht =>
-    (support_and_antiSupport_unionClosed φ M).1 s t hs ht
+    Core.Logic.Team.unionClosed (support (W := W)) φ := by
+  intro M a ha b hb
+  exact (support_and_antiSupport_unionClosed φ M).1 a b ha hb
 
 -- ============================================================================
 -- §2 NE-free BSML formulas have the empty team property (Anttila 2.2.8 part 1)
@@ -294,9 +294,11 @@ private theorem support_and_antiSupport_downward_of_isNEFree
     subsets of the team. -/
 theorem downwardClosed_support_of_isNEFree {φ : BSMLFormula Atom}
     (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.downwardClosed (support (W := W)) φ :=
-  fun M s t hsub hsupp =>
-    (support_and_antiSupport_downward_of_isNEFree φ hNE M).1 s t hsub hsupp
+    Core.Logic.Team.downwardClosed (support (W := W)) φ := by
+  -- IsLowerSet shape: b ≤ a → a ∈ T → b ∈ T (a is bigger, b is smaller).
+  -- Helper signature: ∀ s t, t ⊆ s → support s → support t (s bigger, t smaller).
+  intro M a b hab hb
+  exact (support_and_antiSupport_downward_of_isNEFree φ hNE M).1 a b hab hb
 
 -- ============================================================================
 -- §4 Corollary: NE-free BSML formulas are flat (Anttila 2.2.16 / Fact 15)

@@ -78,9 +78,10 @@ def teamSupport (P : Question W) : Unit → Unit → Finset W → Prop :=
     in `Core.Logic.Team.downwardClosed`'s sense. The proof IS just
     `P.downward_closed` lifted through `Finset.coe_subset`. -/
 theorem teamSupport_downwardClosed (P : Question W) :
-    Core.Logic.Team.downwardClosed (teamSupport P) () :=
-  fun _ _ _ hsub hsupp =>
-    P.downward_closed _ hsupp _ (Finset.coe_subset.mpr hsub)
+    Core.Logic.Team.downwardClosed (teamSupport P) () := by
+  intro _ a b hab hb
+  -- IsLowerSet shape: b ≤ a → support a → support b. For Finset, b ≤ a is b ⊆ a.
+  exact P.downward_closed _ hb _ (Finset.coe_subset.mpr hab)
 
 /-- **Substrate fact**: every `Question`'s `teamSupport` has the empty-team
     property. The proof IS `P.contains_empty` (modulo `Finset.coe_empty`). -/
@@ -180,10 +181,11 @@ theorem isDeclarative_of_binary_union_closed_of_finite_props
 theorem teamSupport_unionClosed_of_isDeclarative [DecidableEq W] (P : Question W)
     (hdecl : P.isDeclarative) :
     Core.Logic.Team.unionClosed (teamSupport P) () := by
-  intro _ s t hs ht
-  show (↑(s ∪ t) : Set W) ∈ P.props
+  -- SupClosed shape: ∀ ⦃a⦄, a ∈ T → ∀ ⦃b⦄, b ∈ T → a ⊔ b ∈ T (a ⊔ b = a ∪ b on Finset)
+  intro _ a ha b hb
+  show (↑(a ∪ b) : Set W) ∈ P.props
   rw [Finset.coe_union]
-  exact isDeclarative_imp_binary_union_closed P hdecl _ _ hs ht
+  exact isDeclarative_imp_binary_union_closed P hdecl _ _ ha hb
 
 /-- **Capstone bridge** (Anttila Proposition 2.2.16 instantiated for
     inquisitive content): a declarative `Question` is *flat* in the

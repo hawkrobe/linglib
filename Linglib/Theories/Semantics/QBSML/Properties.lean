@@ -378,9 +378,10 @@ private theorem support_and_antiSupport_dc_uc_of_isNEFree
     extended to first-order). -/
 theorem downwardClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.downwardClosed (support (W := W) (Domain := Domain)) φ :=
-  fun M s t hsub hsupp =>
-    (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).1 s t hsub hsupp
+    Core.Logic.Team.downwardClosed (support (W := W) (Domain := Domain)) φ := by
+  intro M a b hab hb
+  -- IsLowerSet shape: b ≤ a → support a → support b. Helper: s t (t ⊆ s).
+  exact (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).1 a b hab hb
 
 /-- NE-free QBSML formulas are union-closed.
 
@@ -390,9 +391,9 @@ theorem downwardClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     consumes NE-free anyway. -/
 theorem unionClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.unionClosed (support (W := W) (Domain := Domain)) φ :=
-  fun M s t hs ht =>
-    (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).2.1 s t hs ht
+    Core.Logic.Team.unionClosed (support (W := W) (Domain := Domain)) φ := by
+  intro M a ha b hb
+  exact (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).2.1 a b ha hb
 
 -- ============================================================================
 -- §3 Corollary: NE-free QBSML formulas are flat

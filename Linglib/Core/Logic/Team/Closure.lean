@@ -166,4 +166,93 @@ theorem IsTeamFlat.supClosed {T : TeamSet α} (h : IsTeamFlat T) :
 theorem IsTeamFlat.hasEmpty {T : TeamSet α} (h : IsTeamFlat T) :
     ∅ ∈ T := ((isTeamFlat_iff_isLowerSet_supClosed_empty T).mp h).2.2
 
+-- ============================================================================
+-- §4 TeamPred α: the predicate-of-team-membership form
+-- ============================================================================
+
+/-- A **team predicate**: a `Finset α → Prop`. Equivalent to `TeamSet α` via
+    set-builder, but more ergonomic for consumers who think of `support M φ`
+    as a function from teams to propositions.
+
+    The closure properties on a `TeamPred` are defined as the corresponding
+    properties on `{ t | P t } : TeamSet α`. -/
+abbrev TeamPred (α : Type*) := Finset α → Prop
+
+namespace TeamPred
+
+variable {α : Type*} [DecidableEq α]
+
+/-- A team-predicate is **downward-closed** iff `{ t | P t }` is a lower set
+    under inclusion. Wraps mathlib's `IsLowerSet`; the underlying definition
+    is `∀ a b, a ⊆ b → P b → P a`. -/
+def IsDownward (P : TeamPred α) : Prop := IsLowerSet { t : Finset α | P t }
+
+/-- A team-predicate is **sup-closed** iff `{ t | P t }` is closed under
+    binary union. Wraps mathlib's `SupClosed` (with `⊔ = ∪` on `Finset`);
+    underlying: `∀ a b, P a → P b → P (a ∪ b)`. -/
+def IsSupClosed (P : TeamPred α) : Prop := SupClosed { t : Finset α | P t }
+
+/-- A team-predicate **has empty** iff the empty team satisfies it. -/
+def HasEmpty (P : TeamPred α) : Prop := P ∅
+
+/-- A team-predicate is **flat** iff its membership reduces pointwise:
+    `P s ↔ ∀ w ∈ s, P {w}`. Wraps `IsTeamFlat` on `{ t | P t }`. -/
+def IsFlat (P : TeamPred α) : Prop := IsTeamFlat { t : Finset α | P t }
+
+-- ============================================================================
+-- §5 Anttila Prop 2.2.2 at the TeamPred level
+-- ============================================================================
+
+/-- **Anttila Proposition 2.2.2** in `TeamPred` form: a team-predicate is
+    flat iff it is downward-closed, sup-closed, and has the empty team.
+    Direct corollary of the `TeamSet`-level theorem. -/
+theorem isFlat_iff (P : TeamPred α) :
+    P.IsFlat ↔ P.IsDownward ∧ P.IsSupClosed ∧ P.HasEmpty := by
+  unfold IsFlat IsDownward IsSupClosed HasEmpty
+  exact isTeamFlat_iff_isLowerSet_supClosed_empty _
+
+/-- Constructor: combine the three closure properties to get flatness. -/
+theorem isFlat_of_isDownward_isSupClosed_hasEmpty (P : TeamPred α)
+    (h_down : P.IsDownward) (h_sup : P.IsSupClosed) (h_empty : P.HasEmpty) :
+    P.IsFlat :=
+  (isFlat_iff P).mpr ⟨h_down, h_sup, h_empty⟩
+
+/-- Forward extraction: flat team-predicates are downward-closed. -/
+theorem IsFlat.isDownward {P : TeamPred α} (h : P.IsFlat) : P.IsDownward :=
+  ((isFlat_iff P).mp h).1
+
+/-- Forward extraction: flat team-predicates are sup-closed. -/
+theorem IsFlat.isSupClosed {P : TeamPred α} (h : P.IsFlat) : P.IsSupClosed :=
+  ((isFlat_iff P).mp h).2.1
+
+/-- Forward extraction: flat team-predicates have the empty team. -/
+theorem IsFlat.hasEmpty {P : TeamPred α} (h : P.IsFlat) : P.HasEmpty :=
+  ((isFlat_iff P).mp h).2.2
+
+-- ============================================================================
+-- §6 Pointwise unfoldings (for proof ergonomics)
+-- ============================================================================
+
+/-- Pointwise form of `IsDownward`: a team-predicate is downward-closed iff
+    `∀ a b, a ⊆ b → P b → P a`. Just unfolds `IsLowerSet` for the
+    `{ t | P t }` instance — `Finset α`'s `≤` is `⊆`. -/
+theorem isDownward_iff_pointwise (P : TeamPred α) :
+    P.IsDownward ↔ ∀ ⦃a b : Finset α⦄, a ⊆ b → P b → P a := by
+  constructor
+  · intro h a b hab hb; exact h hab hb
+  · intro h a b hab hb; exact h hab hb
+
+/-- Pointwise form of `IsSupClosed`: `∀ a b, P a → P b → P (a ∪ b)`. -/
+theorem isSupClosed_iff_pointwise (P : TeamPred α) :
+    P.IsSupClosed ↔ ∀ ⦃a⦄, P a → ∀ ⦃b⦄, P b → P (a ∪ b) := by
+  constructor
+  · intro h a ha b hb; exact h ha hb
+  · intro h a ha b hb; exact h ha hb
+
+/-- Pointwise form of `IsFlat`: `∀ s, P s ↔ ∀ w ∈ s, P {w}`. -/
+theorem isFlat_iff_pointwise (P : TeamPred α) :
+    P.IsFlat ↔ ∀ s, P s ↔ ∀ w ∈ s, P {w} := Iff.rfl
+
+end TeamPred
+
 end Core.Logic.Team
