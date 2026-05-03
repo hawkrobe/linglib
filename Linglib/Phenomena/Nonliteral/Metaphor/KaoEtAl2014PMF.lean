@@ -1,38 +1,58 @@
+import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.Posterior
-import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Probability.ProbabilityMassFunction.Monad
+import Linglib.Core.Probability.JointPosterior
+import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
-# @cite{kao-etal-2014-metaphor} on mathlib `PMF` (Phase 2 stress test)
-@cite{kao-etal-2014-hyperbole} @cite{kao-etal-2014-metaphor}
+# @cite{kao-etal-2014-metaphor} on mathlib `PMF`
+@cite{kao-etal-2014-metaphor}
 
-Stress test for the Phase-2 architecture: the metaphor model differs from
-@cite{frank-goodman-2012} on **every** axis that mattered for the FG2012
-pilot — α = 3 not 1, weighted (non-uniform) world prior, latent QUDs that
-project the speaker's utility, predicate-marginal predictions.
+"Formalizing the Pragmatics of Metaphor Understanding"
+*Proceedings of the Annual Meeting of the Cognitive Science Society* 36, 719-724.
 
-Where FG2012 collapsed onto `PMF.uniformOfFinset` (because Eq. S3 of its
-supplement IS uniform-on-extension), this model has real-valued meaning
-(the feature prior baked into L0), so we keep `PMF.normalize`. The PMF
-machinery still carries the construction:
+## Model (verified against paper)
 
-* `PMF.normalize` for S1 at each `(g, w)` — Eq. 5 of @cite{kao-etal-2014-hyperbole}
-  with α = 3, no utterance cost.
-* `PMF.bind` against a goal prior to marginalise over QUDs — the key
-  payoff over the FG2012 pilot, which had no latent variable.
-* `PMF.posterior` for L1 — Bayesian inversion against the world prior.
+- L0 (Eq. before 1): `L0(c, f⃗ | u) = P(f⃗|c) if c = u, else 0`
+- Speaker utility (Eq. 1): `U(u | g, f⃗) = log Σ_{c, f⃗' : g(f⃗') = g(f⃗)} L0(c, f⃗' | u)`
+- Speaker (Eq. 2): `S1(u | g, f⃗) ∝ exp(λ · U(u | g, f⃗))`
+- Pragmatic listener: `L1(c, f⃗ | u) ∝ P(c) · P(f⃗|c) · Σ_g P(g) · S1(u | g, f⃗)`
 
-All positivity bookkeeping flows from one fact: every world's own category
-gives a nonzero meaning value (the feature prior is strictly positive on
-all 16 cells). That single witness drives all four `≠ 0` hypotheses
-(`projectedMeaning > 0`, `S1g support`, marginal speaker support, L1
-marginal positivity).
+Parameters (paper §"Model Evaluation"):
+- λ = 3 (speaker rationality)
+- P(whale) = 0.01, P(person) = 0.99 (category prior)
+- Vague QUD: uniform P(g) = 1/3
+- Specific QUD (`f₁`): P(g₁) = 0.6, P(g₂) = P(g₃) = 0.2
 
-## Reused from `KaoEtAl2014.lean`
+## Softmax-of-log at the root, not rpow workaround
 
-* `Cat`, `Goal`, `World`, `featurePrior`, `catPrior`, `project` — the
-  empirical priors and QUD projection.
+The speaker utility `U = log Σ L0` returns `-∞` when the QUD-projected L0
+marginal is 0. Mathlib's `Real.log 0 = 0` would silently break this —
+`exp(λ · 0) = 1` would give nonzero weight to impossible utterances.
+
+The substrate fix: `PMF.softmax` takes `score : α → EReal`, with
+`EReal.exp(⊥) = 0` correctly handling impossible utterances. The Kao S1
+is then `PMF.softmax (fun u => (α : EReal) * ENNReal.log (qudProjL0 g u f⃗))`
+— directly the paper's formula with no rpow workaround. Mathematically
+equivalent to `(qudProjL0)^λ` (via `ENNReal.rpow_eq_exp_mul_log`) when
+`qudProjL0 > 0`, but the EReal form makes the boundary case explicit.
+
+For Kao's empirical priors (Experiment 1b), all `featurePriorℕ` entries
+are strictly positive (min = 379), so all QUD-marginals are positive and
+the boundary doesn't bite numerically. The substrate handles the general
+case correctly anyway — RSA papers with sparser literal-listener support
+inherit the right behaviour.
+
+## Joint posterior over `(World × Goal)`
+
+Kao's L1 jointly infers the speaker's category-and-features and
+marginalises over goal. PMF-natively: posterior of `World × Goal`
+projected to the `World`-marginal — exactly `PMF.posterior_fst_apply`
+from `Core/Probability/JointPosterior.lean`.
+
+This file uses the equivalent kernel-form: `World → PMF Cat` defined as
+`goalPrior.bind ∘ s1`, folding the goal-marginalisation into the kernel.
+The two formulations agree by associativity of `bind`.
 -/
 
 set_option autoImplicit false
@@ -40,169 +60,376 @@ set_option autoImplicit false
 namespace Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF
 
 open scoped ENNReal
-open Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 
-instance : Fintype World := by unfold World; infer_instance
-instance : Nonempty World := ⟨(.whale, false, false, false)⟩
+/-! ## §0. Domain types -/
 
-/-! ## §1. Lifted priors -/
+/-- Categories: whale (metaphor vehicle) and person (literal referent).
+    Categories double as utterance types. -/
+inductive Cat where
+  | whale | person
+  deriving DecidableEq, Repr
 
-/-- ENNReal lift of `featurePrior`. -/
-noncomputable def featurePriorE (c : Cat) (large graceful majestic : Bool) : ℝ≥0∞ :=
-  ENNReal.ofReal (featurePrior c large graceful majestic)
+instance : Fintype Cat where
+  elems := {.whale, .person}
+  complete := fun x => by cases x <;> simp
 
-/-- ENNReal lift of `catPrior`. -/
-noncomputable def catPriorE : Cat → ℝ≥0∞
+instance : Nonempty Cat := ⟨.whale⟩
+
+/-- QUDs: which feature is the speaker trying to communicate? -/
+inductive Goal where
+  | large | graceful | majestic
+  deriving DecidableEq, Repr
+
+instance : Fintype Goal where
+  elems := {.large, .graceful, .majestic}
+  complete := fun x => by cases x <;> simp
+
+instance : Nonempty Goal := ⟨.large⟩
+
+/-- Feature vector: 3 booleans (e.g. {large, graceful, majestic} for whale). -/
+abbrev Features := Bool × Bool × Bool
+
+/-- World = (category, feature vector). 2 × 8 = 16 worlds. -/
+abbrev World := Cat × Features
+
+instance : Nonempty World := ⟨(.whale, (true, true, true))⟩
+
+/-! ## §1. Empirical priors (Experiment 1b counts ×10000) -/
+
+/-- Feature prior `P(f⃗ | c)` as integer counts (×10000). Both per-category
+sums = 10000 by construction. -/
+def featurePriorℕ : Cat → Features → ℕ
+  -- whale: large/graceful/majestic biased
+  | .whale,  (true,  true,  true)  => 3059
+  | .whale,  (true,  true,  false) => 1381
+  | .whale,  (true,  false, true)  => 1791
+  | .whale,  (true,  false, false) => 1310
+  | .whale,  (false, true,  true)  => 947
+  | .whale,  (false, true,  false) => 531
+  | .whale,  (false, false, true)  => 602
+  | .whale,  (false, false, false) => 379
+  -- person: roughly uniform across feature vectors
+  | .person, (true,  true,  true)  => 1169
+  | .person, (true,  true,  false) => 1058
+  | .person, (true,  false, true)  => 1157
+  | .person, (true,  false, false) => 1308
+  | .person, (false, true,  true)  => 1529
+  | .person, (false, true,  false) => 1281
+  | .person, (false, false, true)  => 1147
+  | .person, (false, false, false) => 1351
+
+/-- Category prior `P(c)` as integer counts: 1% whale, 99% person. -/
+def catPriorℕ : Cat → ℕ
   | .whale => 1
   | .person => 99
 
-/-- The unnormalised joint world prior `P(cat) · P(features | cat)`. -/
-noncomputable def worldPriorRaw (w : World) : ℝ≥0∞ :=
-  catPriorE w.1 * featurePriorE w.1 w.2.1 w.2.2.1 w.2.2.2
+theorem featurePriorℕ_sum_whale :
+    (∑ f, featurePriorℕ .whale f) = 10000 := by decide
 
-/-! ## §2. Meaning function
+theorem featurePriorℕ_sum_person :
+    (∑ f, featurePriorℕ .person f) = 10000 := by decide
 
-@cite{kao-etal-2014-metaphor}'s `meaning` bakes the feature prior into L0:
-`meaning(u, w) = featurePrior(w) if u = w.cat else 0`. -/
+theorem catPriorℕ_sum : (∑ c, catPriorℕ c) = 100 := by decide
 
-noncomputable def meaningE (u : Cat) (w : World) : ℝ≥0∞ :=
-  if u = w.1 then featurePriorE w.1 w.2.1 w.2.2.1 w.2.2.2 else 0
-
-/-! ## §3. Coverage — the witness that drives every positivity proof
-
-The metaphor analogue of @cite{frank-goodman-2012}'s `covering` lemma:
-every world's own category gives positive meaning at that world. -/
-
-/-- Every entry of `featurePrior` is strictly positive. Verified per cell. -/
-theorem featurePriorE_pos (c : Cat) (a b d : Bool) : featurePriorE c a b d ≠ 0 := by
-  unfold featurePriorE
-  simp only [ENNReal.ofReal_ne_zero_iff]
+/-- Every entry of the feature prior is strictly positive. The witness that
+drives every positivity proof in the file. -/
+theorem featurePriorℕ_pos (c : Cat) (f : Features) : 0 < featurePriorℕ c f := by
+  obtain ⟨a, b, d⟩ := f
   cases c <;> cases a <;> cases b <;> cases d <;>
-    (unfold featurePrior; norm_num)
+    (unfold featurePriorℕ; norm_num)
 
-/-- Coverage: the speaker can always describe a world by its own category. -/
-theorem meaningE_self_ne_zero (w : World) : meaningE w.1 w ≠ 0 := by
-  unfold meaningE; simp [featurePriorE_pos]
+/-! ## §2. PMF construction -/
+
+/-- Feature prior as a PMF over `Features`, parametric in category. -/
+noncomputable def featurePmf (c : Cat) : PMF Features :=
+  PMF.ofFintype (fun f => (featurePriorℕ c f : ℝ≥0∞) / 10000)
+    (by
+      have h_div : ∀ f, ((featurePriorℕ c f : ℝ≥0∞) / 10000)
+              = (featurePriorℕ c f : ℝ≥0∞) * (10000 : ℝ≥0∞)⁻¹ := fun f =>
+        ENNReal.div_eq_inv_mul.trans (mul_comm _ _)
+      simp_rw [h_div]
+      rw [← Finset.sum_mul]
+      cases c
+      · rw [show (∑ f, ((featurePriorℕ .whale f : ℕ) : ℝ≥0∞))
+              = ((10000 : ℕ) : ℝ≥0∞) from by
+              rw [← Nat.cast_sum]; exact_mod_cast featurePriorℕ_sum_whale]
+        exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num)
+      · rw [show (∑ f, ((featurePriorℕ .person f : ℕ) : ℝ≥0∞))
+              = ((10000 : ℕ) : ℝ≥0∞) from by
+              rw [← Nat.cast_sum]; exact_mod_cast featurePriorℕ_sum_person]
+        exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
+
+theorem featurePmf_apply (c : Cat) (f : Features) :
+    featurePmf c f = (featurePriorℕ c f : ℝ≥0∞) / 10000 := rfl
+
+theorem featurePmf_pos (c : Cat) (f : Features) : 0 < featurePmf c f := by
+  rw [featurePmf_apply]
+  refine ENNReal.div_pos ?_ (by norm_num)
+  exact_mod_cast (featurePriorℕ_pos c f).ne'
+
+/-- Category prior as a PMF over `Cat`. -/
+noncomputable def catPmf : PMF Cat :=
+  PMF.ofFintype (fun c => (catPriorℕ c : ℝ≥0∞) / 100)
+    (by
+      have h_div : ∀ c, ((catPriorℕ c : ℝ≥0∞) / 100)
+              = (catPriorℕ c : ℝ≥0∞) * (100 : ℝ≥0∞)⁻¹ := fun c =>
+        ENNReal.div_eq_inv_mul.trans (mul_comm _ _)
+      simp_rw [h_div]
+      rw [← Finset.sum_mul]
+      rw [show (∑ c, ((catPriorℕ c : ℕ) : ℝ≥0∞)) = ((100 : ℕ) : ℝ≥0∞) from by
+            rw [← Nat.cast_sum]; exact_mod_cast catPriorℕ_sum]
+      exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
+
+theorem catPmf_apply (c : Cat) : catPmf c = (catPriorℕ c : ℝ≥0∞) / 100 := rfl
+
+/-- Joint world prior `P(c, f⃗) = P(c) · P(f⃗|c)`. -/
+noncomputable def worldPmf : PMF World :=
+  catPmf.bind (fun c => (featurePmf c).map (fun f => (c, f)))
+
+/-! ## §3. Literal listener L0
+
+`L0(c, f⃗ | u) = P(f⃗|c) if c = u, else 0`. PMF-form: deterministic embedding
+of `featurePmf u` into worlds with category `u`. -/
+
+/-- Literal listener: PMF over `World` concentrated on `c = u`. -/
+noncomputable def L0 (u : Cat) : PMF World :=
+  (featurePmf u).map (fun f => (u, f))
 
 /-! ## §4. QUD projection -/
 
-/-- Equivalence class of `w` under goal `g` — the worlds matching on the
-QUD-relevant feature. -/
-def qudClass (g : Goal) (w : World) : Finset World :=
-  (Finset.univ : Finset World).filter (fun w' => project w' g = project w g)
+/-- Project a feature vector onto the QUD-relevant component. -/
+def projectFeature : Goal → Features → Bool
+  | .large,    (l, _, _) => l
+  | .graceful, (_, g, _) => g
+  | .majestic, (_, _, m) => m
 
-theorem self_mem_qudClass (g : Goal) (w : World) : w ∈ qudClass g w := by
-  simp [qudClass]
+/-- The QUD-projected L0 marginal at `(g, u, f⃗)`: outer-measure of the
+QUD equivalence class containing `f⃗` under `featurePmf u`. -/
+noncomputable def qudProjL0 (g : Goal) (u : Cat) (f : Features) : ℝ≥0∞ :=
+  (featurePmf u).toOuterMeasure {f' | projectFeature g f' = projectFeature g f}
 
-/-- Sum of meaning over the QUD-equivalence class — the input to S1's rpow. -/
-noncomputable def projectedMeaning (g : Goal) (u : Cat) (w : World) : ℝ≥0∞ :=
-  (qudClass g w).sum (fun w' => meaningE u w')
+theorem qudProjL0_le_one (g : Goal) (u : Cat) (f : Features) :
+    qudProjL0 g u f ≤ 1 :=
+  PMF.toOuterMeasure_apply_le_one _ _
 
-/-- Coverage at the projection level: at least one term in the sum is positive. -/
-theorem projectedMeaning_self_ne_zero (g : Goal) (w : World) :
-    projectedMeaning g w.1 w ≠ 0 := by
-  refine fun h => meaningE_self_ne_zero w ?_
-  have hle : meaningE w.1 w ≤ projectedMeaning g w.1 w :=
-    Finset.single_le_sum (f := fun w' => meaningE w.1 w')
-      (fun _ _ => zero_le _) (self_mem_qudClass g w)
-  exact le_antisymm (h ▸ hle) (zero_le _)
+theorem qudProjL0_ne_top (g : Goal) (u : Cat) (f : Features) :
+    qudProjL0 g u f ≠ ∞ :=
+  (lt_of_le_of_lt (qudProjL0_le_one g u f) ENNReal.one_lt_top).ne
 
-/-! ## §5. Speaker (Eq. 5 of @cite{kao-etal-2014-hyperbole}, no cost)
+/-- The QUD-projected L0 marginal at `(g, u, f⃗)` is bounded below by
+`featurePmf u f⃗` (since `f⃗` is in its own equivalence class). -/
+theorem qudProjL0_ge_apply (g : Goal) (u : Cat) (f : Features) :
+    featurePmf u f ≤ qudProjL0 g u f := by
+  unfold qudProjL0
+  -- f ∈ {f' | projectFeature g f' = projectFeature g f}, and the singleton
+  -- {f}'s outer measure equals featurePmf u f.
+  rw [show featurePmf u f
+        = (featurePmf u).toOuterMeasure {f} from
+        (PMF.toOuterMeasure_apply_singleton _ _).symm]
+  exact MeasureTheory.OuterMeasure.mono _
+    (Set.singleton_subset_iff.mpr (rfl : projectFeature g f = projectFeature g f))
 
-Goal-conditioned speaker `S1(u | g, w) ∝ projectedMeaning(g, u, w)^α`.
-With `α > 0` the rpow preserves the positivity witness, so both
-hypotheses to `PMF.normalize` are derivable from `projectedMeaning_self_ne_zero`. -/
+theorem qudProjL0_pos (g : Goal) (u : Cat) (f : Features) : 0 < qudProjL0 g u f :=
+  lt_of_lt_of_le (featurePmf_pos u f) (qudProjL0_ge_apply g u f)
 
-theorem projectedMeaning_rpow_tsum_ne_zero {α : ℝ} (hα : 0 < α) (g : Goal) (w : World) :
-    ∑' u, projectedMeaning g u w ^ α ≠ 0 := by
-  refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨w.1, ?_⟩
-  exact (not_congr (ENNReal.rpow_eq_zero_iff_of_pos hα)).mpr (projectedMeaning_self_ne_zero g w)
+theorem qudProjL0_ne_zero (g : Goal) (u : Cat) (f : Features) :
+    qudProjL0 g u f ≠ 0 :=
+  (qudProjL0_pos g u f).ne'
 
-theorem meaningE_ne_top (u : Cat) (w : World) : meaningE u w ≠ ∞ := by
-  unfold meaningE; split
-  · exact ENNReal.ofReal_ne_top
-  · exact ENNReal.zero_ne_top
+/-! ## §5. Speaker S1 (softmax of log-utility, Eq. 1-2)
 
-theorem projectedMeaning_ne_top (g : Goal) (u : Cat) (w : World) :
-    projectedMeaning g u w ≠ ∞ :=
-  ENNReal.sum_ne_top.mpr fun w' _ => meaningE_ne_top u w'
+Score `s1Score α g f u = (α : EReal) * ENNReal.log (qudProjL0 g u f)`.
+EReal-valued: `-∞` when `qudProjL0 = 0`, finite otherwise. The softmax
+substrate `PMF.softmax` correctly handles `-∞` (gives 0 mass).
 
-theorem projectedMeaning_rpow_tsum_ne_top {α : ℝ} (hα : 0 ≤ α) (g : Goal) (w : World) :
-    ∑' u, projectedMeaning g u w ^ α ≠ ∞ :=
-  ENNReal.tsum_ne_top_of_fintype fun u =>
-    ENNReal.rpow_ne_top_of_nonneg hα (projectedMeaning_ne_top g u w)
+For Kao's data, `qudProjL0 > 0` always, so the score is always finite —
+the substrate's `-∞` handling isn't load-bearing here, but is the right
+default for the general RSA pattern. -/
 
-/-- Goal-conditioned speaker as a PMF (one normalisation per `(g, w)`). -/
-noncomputable def S1g (α : ℝ) (hα : 0 < α) (g : Goal) (w : World) : PMF Cat :=
-  PMF.normalize (fun u => projectedMeaning g u w ^ α)
-    (projectedMeaning_rpow_tsum_ne_zero hα g w)
-    (projectedMeaning_rpow_tsum_ne_top hα.le g w)
+/-- Speaker score `s1Score α g f u = λ · log(qudProjL0 g u f) : EReal`. -/
+noncomputable def s1Score (α : ℝ) (g : Goal) (f : Features) (u : Cat) : EReal :=
+  (α : EReal) * ENNReal.log (qudProjL0 g u f)
 
-theorem mem_support_S1g_iff {α : ℝ} (hα : 0 < α) (g : Goal) (w : World) (u : Cat) :
-    u ∈ (S1g α hα g w).support ↔ projectedMeaning g u w ≠ 0 := by
-  rw [S1g, PMF.mem_support_normalize_iff]
-  exact not_congr (ENNReal.rpow_eq_zero_iff_of_pos hα)
+/-- The score is never `+∞`: `qudProjL0 ≤ 1` so `log ≤ 0`, and we'll
+restrict to `λ ≥ 0` so the product `≤ 0 < +∞`. -/
+theorem s1Score_ne_top (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) (u : Cat) :
+    s1Score α g f u ≠ ⊤ := by
+  unfold s1Score
+  rcases eq_or_lt_of_le hα with rfl | hα_pos
+  · -- λ = 0
+    simp [EReal.coe_zero, zero_mul]
+  · -- λ > 0: λ · log(qudProjL0) ≠ ⊤ since log ≠ ⊤ (as qudProjL0 ≠ ⊤)
+    intro h
+    -- (α : EReal) > 0 and product = ⊤ implies log = ⊤
+    have h_log_top : ENNReal.log (qudProjL0 g u f) = ⊤ := by
+      by_contra h_log_ne_top
+      -- finite λ * finite log = finite
+      apply h_log_ne_top
+      -- if λ > 0 and λ · log = ⊤, then log = ⊤
+      sorry  -- TODO: positive coercion times finite = finite
+    rw [ENNReal.log_eq_top_iff] at h_log_top
+    exact qudProjL0_ne_top g u f h_log_top
 
-/-! ## §6. Goal-marginalised speaker via `PMF.bind` -/
+/-- For Kao's parameters, `qudProjL0 > 0` so `log > ⊥`, and `λ ≥ 0` keeps
+the score finite-below. -/
+theorem s1Score_ne_bot (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) (u : Cat) :
+    s1Score α g f u ≠ ⊥ := by
+  unfold s1Score
+  rcases eq_or_lt_of_le hα with rfl | hα_pos
+  · -- λ = 0
+    simp [EReal.coe_zero, zero_mul]
+  · -- λ > 0: λ · log(qudProjL0) ≠ ⊥ since log ≠ ⊥ (as qudProjL0 ≠ 0)
+    intro h
+    have h_log_bot : ENNReal.log (qudProjL0 g u f) = ⊥ := by
+      by_contra h_log_ne_bot
+      sorry  -- TODO: positive coercion times finite-below = finite-below
+    rw [ENNReal.log_eq_bot_iff] at h_log_bot
+    exact qudProjL0_ne_zero g u f h_log_bot
 
-/-- Marginalised speaker: bind `S1g` over the goal prior. The kernel input
-to L1 is `marginalSpeaker w u = Σ_g goalPrior(g) · S1g(u | g, w)` — exactly
-`goalPrior.bind (fun g => S1g α hα g w)`. -/
-noncomputable def marginalSpeaker (α : ℝ) (hα : 0 < α) (goalPrior : PMF Goal)
-    (w : World) : PMF Cat :=
-  goalPrior.bind (fun g => S1g α hα g w)
+/-- **Speaker S1**: softmax of QUD-projected log-utility (Eq. 1-2). -/
+noncomputable def s1 (α : ℝ) (hα : 0 ≤ α) (g : Goal) (f : Features) : PMF Cat :=
+  PMF.softmax (s1Score α g f)
+    (fun u => s1Score_ne_top α hα g f u)
+    ⟨.whale, s1Score_ne_bot α hα g f .whale⟩
 
-theorem marginalSpeaker_self_ne_zero {α : ℝ} (hα : 0 < α)
-    {goalPrior : PMF Goal} {g : Goal} (hg : goalPrior g ≠ 0) (w : World) :
-    marginalSpeaker α hα goalPrior w w.1 ≠ 0 := by
-  unfold marginalSpeaker
-  rw [PMF.bind_apply]
-  refine ENNReal.summable.tsum_ne_zero_iff.mpr ⟨g, mul_ne_zero hg ?_⟩
-  rw [← PMF.mem_support_iff, mem_support_S1g_iff]
-  exact projectedMeaning_self_ne_zero g w
+/-! ## §6. Goal-marginalised speaker -/
 
-/-! ## §7. World prior as PMF -/
+/-- **Goal-marginalised speaker**: `Σ_g P(g) · S1(· | g, f⃗)`. -/
+noncomputable def mixedS1 (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    (f : Features) : PMF Cat :=
+  goalPrior.bind (fun g => s1 α hα g f)
 
-theorem worldPriorRaw_tsum_ne_zero : ∑' w, worldPriorRaw w ≠ 0 :=
-  ENNReal.summable.tsum_ne_zero_iff.mpr
-    ⟨(.whale, true, true, true), by
-      unfold worldPriorRaw catPriorE
-      exact mul_ne_zero one_ne_zero (featurePriorE_pos _ _ _ _)⟩
+/-! ## §7. Pragmatic listener L1
 
-theorem worldPriorRaw_tsum_ne_top : ∑' w, worldPriorRaw w ≠ ∞ := by
-  refine ENNReal.tsum_ne_top_of_fintype fun w => ?_
-  unfold worldPriorRaw catPriorE
-  refine ENNReal.mul_ne_top ?_ ENNReal.ofReal_ne_top
-  cases w.1 <;> simp
+`L1(c, f⃗ | u) ∝ worldPmf(c, f⃗) · mixedS1(u | f⃗)`.
 
-noncomputable def worldPrior : PMF World :=
-  PMF.normalize worldPriorRaw worldPriorRaw_tsum_ne_zero worldPriorRaw_tsum_ne_top
+PMF: posterior of the kernel `(c, f⃗) ↦ mixedS1(· | f⃗)` against `worldPmf`. -/
 
-theorem worldPrior_ne_zero (w : World) : worldPrior w ≠ 0 := by
-  rw [worldPrior, ← PMF.mem_support_iff, PMF.mem_support_normalize_iff]
-  unfold worldPriorRaw catPriorE
-  refine mul_ne_zero ?_ (featurePriorE_pos _ _ _ _)
-  cases w.1 <;> simp
+/-- The kernel for L1: `(c, f⃗) ↦ mixedS1(· | f⃗)`. Independent of `c`. -/
+noncomputable def L1Kernel (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal) :
+    World → PMF Cat :=
+  fun w => mixedS1 α hα goalPrior w.2
 
-/-! ## §8. L1 — Bayesian inversion -/
+/-- L1 marginal at `u` is non-zero — needed for `posterior` discharge. -/
+theorem L1Kernel_marginal_ne_zero (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) :
+    PMF.marginal (L1Kernel α hα goalPrior) worldPmf u ≠ 0 := by
+  sorry  -- TODO: pick witness world (u, (true, true, true)); both prior > 0 and
+         -- kernel(u | (u, ...)) > 0 since softmax has full support and goal g has prior > 0.
 
-theorem L1_marginal_ne_zero {α : ℝ} (hα : 0 < α)
-    {goalPrior : PMF Goal} {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) :
-    PMF.marginal (marginalSpeaker α hα goalPrior) worldPrior u ≠ 0 := by
-  -- Witness: pick any world with `u = w.1`. For `u = .whale`, take `(.whale, …)`;
-  -- for `u = .person`, take `(.person, …)`.
-  refine PMF.marginal_ne_zero _ worldPrior u
-    (worldPrior_ne_zero (u, true, true, true)) ?_
-  -- `marginalSpeaker` at world `(u, …)` is nonzero on `u` because `u = w.1`.
-  have h := marginalSpeaker_self_ne_zero hα hg (u, true, true, true)
-  exact h
+/-- **Pragmatic listener L1**: posterior over `World` given utterance `u`. -/
+noncomputable def L1 (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) : PMF World :=
+  PMF.posterior (L1Kernel α hα goalPrior) worldPmf u
+    (L1Kernel_marginal_ne_zero α hα goalPrior hg u)
 
-/-- Pragmatic listener: `PMF.posterior` of the goal-marginalised speaker
-against the world prior. The "L1 = Bayesian inversion" claim is true by
-construction. -/
-noncomputable def L1 {α : ℝ} (hα : 0 < α)
-    {goalPrior : PMF Goal} {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) : PMF World :=
-  PMF.posterior (marginalSpeaker α hα goalPrior) worldPrior u
-    (L1_marginal_ne_zero hα hg u)
+/-! ## §8. Standard goal priors -/
+
+/-- Vague QUD: uniform goal prior ("What is he like?"). -/
+noncomputable def vaguePrior : PMF Goal := PMF.uniformOfFintype Goal
+
+theorem vaguePrior_pos (g : Goal) : vaguePrior g ≠ 0 := by
+  rw [vaguePrior, PMF.uniformOfFintype_apply]
+  exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+
+/-- Specific QUD targeting `f₁` ("Is he `f₁`?"): P(g₁) = 0.6, P(g₂) = P(g₃) = 0.2. -/
+noncomputable def specificF1Prior : PMF Goal :=
+  PMF.ofFintype
+    (fun g => match g with
+      | .large => (6 : ℝ≥0∞) / 10
+      | .graceful => (2 : ℝ≥0∞) / 10
+      | .majestic => (2 : ℝ≥0∞) / 10)
+    (by
+      rw [show (Finset.univ : Finset Goal)
+            = {.large, .graceful, .majestic} from rfl]
+      rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+          Finset.sum_singleton]
+      rw [show (6 : ℝ≥0∞) / 10 + ((2 : ℝ≥0∞) / 10 + (2 : ℝ≥0∞) / 10) = 1 from by
+        rw [show ((2 : ℝ≥0∞) / 10 + (2 : ℝ≥0∞) / 10) = 4 / 10 from by
+              rw [ENNReal.div_add_div_same]; norm_num,
+            show ((6 : ℝ≥0∞) / 10 + 4 / 10) = 10 / 10 from by
+              rw [ENNReal.div_add_div_same]; norm_num]
+        exact ENNReal.div_self (by norm_num) (by norm_num)])
+
+theorem specificF1Prior_large_pos : specificF1Prior .large ≠ 0 := by
+  unfold specificF1Prior PMF.ofFintype
+  simp [ne_eq]
+
+/-! ## §9. Empirical findings (paper §"Model Evaluation")
+
+Each finding stated as an outer-measure inequality on the L1 posterior.
+
+Speaker rationality λ = 3 (paper §"Model Evaluation"). -/
+
+/-- Speaker rationality (paper §"Model Evaluation"). -/
+def αKao : ℝ := 3
+
+theorem αKao_pos : 0 < αKao := by unfold αKao; norm_num
+theorem αKao_nonneg : 0 ≤ αKao := le_of_lt αKao_pos
+
+/-- L1 with vague QUD (the most common condition in §"Model Evaluation"). -/
+noncomputable abbrev vagueL1 (u : Cat) : PMF World :=
+  L1 αKao αKao_nonneg vaguePrior (vaguePrior_pos .large) u
+
+/-- L1 with specific-`f₁` QUD. -/
+noncomputable abbrev specificL1 (u : Cat) : PMF World :=
+  L1 αKao αKao_nonneg specificF1Prior specificF1Prior_large_pos u
+
+/-- **Finding 1 (Nonliteral interpretation)**: hearing "whale", listener
+infers `person`, not literally `whale`. Paper: P(c_p|u_whale) = 0.994. -/
+theorem nonliteral :
+    (vagueL1 .whale).toOuterMeasure {w | w.1 = .person} >
+    (vagueL1 .whale).toOuterMeasure {w | w.1 = .whale} := by
+  sorry  -- 99x catPrior dominates speaker's whale-preference.
+
+/-- **Finding 2 (Feature elevation: large)**: P(large=T | "whale") > P(large=F | "whale"). -/
+theorem feature_large :
+    (vagueL1 .whale).toOuterMeasure {w | w.2.1 = true} >
+    (vagueL1 .whale).toOuterMeasure {w | w.2.1 = false} := by
+  sorry  -- featurePriorℕ shows large=T mass dominant for whales (3059+1381+1791+1310 = 7541 vs 947+531+602+379 = 2459).
+
+/-- **Finding 3 (Feature elevation: graceful)**. -/
+theorem feature_graceful :
+    (vagueL1 .whale).toOuterMeasure {w | w.2.2.1 = true} >
+    (vagueL1 .whale).toOuterMeasure {w | w.2.2.1 = false} := by
+  sorry
+
+/-- **Finding 4 (Feature elevation: majestic)**. -/
+theorem feature_majestic :
+    (vagueL1 .whale).toOuterMeasure {w | w.2.2.2 = true} >
+    (vagueL1 .whale).toOuterMeasure {w | w.2.2.2 = false} := by
+  sorry
+
+/-- **Finding 5 (Context sensitivity)**: specific QUD raises P(large=T)
+above the vague-QUD value. Cross-config comparison. -/
+theorem context_sensitivity :
+    (specificL1 .whale).toOuterMeasure {w | w.2.1 = true} >
+    (vagueL1 .whale).toOuterMeasure {w | w.2.1 = true} := by
+  sorry  -- specific goal sharpens speaker's preference along f₁.
+
+/-- **Finding 6 (Literal correctness)**: hearing "person", listener
+correctly infers `person`. -/
+theorem literal_correct :
+    (vagueL1 .person).toOuterMeasure {w | w.1 = .person} >
+    (vagueL1 .person).toOuterMeasure {w | w.1 = .whale} := by
+  sorry  -- both prior AND speaker preferences agree on .person.
+
+/-! ## §10. Cross-paper engagement
+
+@cite{frank-goodman-2012} is the architectural ancestor — basic L0/S1/L1
+without QUD inference. Kao's contribution is the joint inference over
+goals, opening the door to nonliteral interpretations.
+
+@cite{goodman-stuhlmuller-2013} (`Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013PMF.lean`)
+shares the hypergeometric-kernel architecture with Kao's L0 (both use
+"P(features|category) if categories match"). The architectural difference:
+G&S2013 is one-step Bayesian (no goal inference); Kao's L1 is two-stage
+(joint goal-inference enables metaphorical readings).
+
+@cite{kao-etal-2014-hyperbole} (sister paper, same conference) uses the
+identical RSA architecture for hyperbole (with `quantity` rather than
+`category` as the literally-false dimension). Migration of the hyperbole
+file would reuse most of this file's substrate.
+-/
 
 end Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF

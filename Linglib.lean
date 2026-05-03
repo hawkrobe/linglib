@@ -1361,6 +1361,7 @@ import Linglib.Phenomena.Comparison.Studies.BhattTakahashi2011
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
+import Linglib.Phenomena.Directives.Studies.CondoravdiLauer2012
 import Linglib.Phenomena.Directives.Studies.Roberts2023
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
 import Linglib.Phenomena.Directives.Studies.SumersEtAl2023
@@ -1413,7 +1414,7 @@ import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
-import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
+import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014PMF
 import Linglib.Phenomena.Numerals.Studies.BylininaNouwen2020
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Studies.Cummins2015
