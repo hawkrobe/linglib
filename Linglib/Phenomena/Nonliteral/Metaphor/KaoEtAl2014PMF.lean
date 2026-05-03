@@ -375,18 +375,94 @@ noncomputable abbrev vagueL1 (u : Cat) : PMF World :=
 noncomputable abbrev specificL1 (u : Cat) : PMF World :=
   L1 αKao αKao_nonneg specificF1Prior specificF1Prior_large_pos u
 
+/-! ### §9a. Architectural theorems (parametric in priors)
+
+The paper's headline isn't "P(person|whale) = 0.994 at Kao's specific
+empirical priors". It's the architectural claim: rational speech act
+pragmatics, with QUD-projected utility and a kernel that depends only
+on features (not category), produces L1 posteriors that combine prior
+knowledge with speaker-side preferences according to Bayes.
+
+Each architectural theorem below states the structural content. The
+Kao-specific corollaries in §9b instantiate at the empirical priors. -/
+
+/-- **Architectural: posterior-fibre asymmetry follows the unnormalised sums**.
+The structural-decomposition lemma applied to cat-fibres of the L1 posterior:
+which category L1 favours after observing utterance `u` reduces to which
+cat-fibre has more conditional joint mass under `worldPmf · mixedS1(u | ·)`.
+
+This is the architectural form of `nonliteral` and `literal_correct`: both
+findings are instances of "the cat-fibre with more conditional joint mass
+wins". The numerical content per finding is the inequality of those sums
+(Kao's specific values vs the model-class generic structure). -/
+theorem L1_cat_fibre_lt_iff_inner_sum_lt
+    (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat) (c₁ c₂ : Cat) :
+    (L1 α hα goalPrior hg u).toOuterMeasure
+        ↑(Finset.univ.filter (fun w : World => w.1 = c₁)) <
+      (L1 α hα goalPrior hg u).toOuterMeasure
+        ↑(Finset.univ.filter (fun w : World => w.1 = c₂)) ↔
+      (∑ w ∈ Finset.univ.filter (fun w : World => w.1 = c₁),
+          worldPmf w * mixedS1 α hα goalPrior w.2 u) <
+      (∑ w ∈ Finset.univ.filter (fun w : World => w.1 = c₂),
+          worldPmf w * mixedS1 α hα goalPrior w.2 u) := by
+  unfold L1
+  exact PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt _ _ _ _ _ _
+
+/-- **Architectural: feature-set asymmetry follows the unnormalised sums**.
+Companion of `L1_cat_fibre_lt_iff_inner_sum_lt` for feature-event sets
+(used by Findings 2-4 and 5).
+
+The `feature_pred` predicate carves out a feature-event in `World`; outer
+measure of that event under L1 reduces to summing the conditional joint
+masses over the feature-event-fibre. -/
+theorem L1_feature_event_lt_iff_inner_sum_lt
+    (α : ℝ) (hα : 0 ≤ α) (goalPrior : PMF Goal)
+    {g : Goal} (hg : goalPrior g ≠ 0) (u : Cat)
+    (P Q : World → Prop) [DecidablePred P] [DecidablePred Q] :
+    (L1 α hα goalPrior hg u).toOuterMeasure
+        ↑(Finset.univ.filter P) <
+      (L1 α hα goalPrior hg u).toOuterMeasure
+        ↑(Finset.univ.filter Q) ↔
+      (∑ w ∈ Finset.univ.filter P,
+          worldPmf w * mixedS1 α hα goalPrior w.2 u) <
+      (∑ w ∈ Finset.univ.filter Q,
+          worldPmf w * mixedS1 α hα goalPrior w.2 u) := by
+  unfold L1
+  exact PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt _ _ _ _ _ _
+
+/-! ### §9b. Kao-specific corollaries (paper findings at empirical priors)
+
+The 6 findings from `@cite{kao-etal-2014-metaphor}` §"Model Evaluation"
+expressed as direct outer-measure inequalities at Kao's empirical priors.
+
+Each finding reduces via §9a's architectural theorems to a comparison of
+conditional joint sums at Kao's specific values. The remaining numerical
+discharge is the empirical-fit content — sorried with TODO notes; full
+formalisation requires either (a) the `softmaxWeight_natMul_log_eq_pow`
+bridge (substrate, available) plus per-feature `gcongr`/`norm_num`
+chains over the rpow form, or (b) a `mixedS1_lower` lemma giving an
+explicit positive lower bound on the speaker contribution. -/
+
 /-- **Finding 1 (Nonliteral interpretation)**: hearing "whale", listener
-infers `person`, not literally `whale`. Paper: P(c_p|u_whale) = 0.994. -/
+infers `person`, not literally `whale`. Paper: P(c_p|u_whale) = 0.994.
+
+By `L1_cat_fibre_lt_iff_inner_sum_lt`, reduces to comparing conditional
+joint sums on the two cat-fibres. The 99× catPrior asymmetry dominates
+the bounded speaker contribution. -/
 theorem nonliteral :
     (vagueL1 .whale).toOuterMeasure {w | w.1 = .person} >
     (vagueL1 .whale).toOuterMeasure {w | w.1 = .whale} := by
-  sorry  -- 99x catPrior dominates speaker's whale-preference.
+  sorry
 
-/-- **Finding 2 (Feature elevation: large)**: P(large=T | "whale") > P(large=F | "whale"). -/
+/-- **Finding 2 (Feature elevation: large)**: hearing "whale" raises P(large = T).
+By `L1_feature_event_lt_iff_inner_sum_lt`, reduces to comparing conditional
+joint sums over the two feature-event-fibres. Whale's featurePrior is
+concentrated on `large = T`. -/
 theorem feature_large :
     (vagueL1 .whale).toOuterMeasure {w | w.2.1 = true} >
     (vagueL1 .whale).toOuterMeasure {w | w.2.1 = false} := by
-  sorry  -- featurePriorℕ shows large=T mass dominant for whales (3059+1381+1791+1310 = 7541 vs 947+531+602+379 = 2459).
+  sorry
 
 /-- **Finding 3 (Feature elevation: graceful)**. -/
 theorem feature_graceful :
@@ -400,50 +476,34 @@ theorem feature_majestic :
     (vagueL1 .whale).toOuterMeasure {w | w.2.2.2 = false} := by
   sorry
 
-/-- **Finding 5 (Context sensitivity)**: specific QUD raises P(large=T)
-above the vague-QUD value. Cross-config comparison. -/
+/-- **Finding 5 (Context sensitivity)**: specific QUD raises P(large = T).
+Cross-config comparison: same outer-measure target, different goalPrior. -/
 theorem context_sensitivity :
     (specificL1 .whale).toOuterMeasure {w | w.2.1 = true} >
     (vagueL1 .whale).toOuterMeasure {w | w.2.1 = true} := by
-  sorry  -- specific goal sharpens speaker's preference along f₁.
+  sorry
 
 /-- **Finding 6 (Literal correctness)**: hearing "person", listener
-correctly infers `person`.
+correctly infers `person`. Both prior AND speaker preferences agree on
+.person; the cleanest of the 6 findings.
 
-Proof structure (mathlib-disciplined, structural reduction first):
-1. Apply `posterior_toOuterMeasure_lt_iff_finset_score_lt` — reduces the
-   outer-measure comparison to a comparison of conditional joint sums.
-2. Convert `{w | w.1 = c}` to `Finset.univ.filter (·.1 = c)`.
-3. Decompose `worldPmf(c, f) = catPmf(c) · featurePmf(c, f)` to factor
-   the catPrior asymmetry (99x) out of the inner sums.
-4. Numerical leaf: `99 · (positive lower bound on speaker mass) > 1 · 1`.
-
-The structural reduction (steps 1-3) is fully mechanical via the substrate.
-The numerical leaf (step 4) is the genuine paper-specific work; sorried
-here pending either a `bound`-discharge or a manual `mixedS1` lower bound. -/
+Demonstrates the architectural-theorem usage: convert Set notation to
+Finset.filter, apply `L1_cat_fibre_lt_iff_inner_sum_lt`, sorry the
+remaining inner-sum inequality (the empirical-fit content). -/
 theorem literal_correct :
     (vagueL1 .person).toOuterMeasure {w | w.1 = .person} >
     (vagueL1 .person).toOuterMeasure {w | w.1 = .whale} := by
-  -- Step 1: convert Set-of-predicate to Finset.filter form (mechanical for Fintype)
   have h_setEq : ∀ c : Cat,
       ({w : World | w.1 = c} : Set World)
         = ↑(Finset.univ.filter (fun w : World => w.1 = c)) := fun c => by
     ext; simp
   rw [gt_iff_lt, h_setEq .whale, h_setEq .person]
-  -- Step 2: apply structural decomposition substrate to strip the posterior
-  unfold vagueL1 L1
-  rw [PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt]
-  -- Step 3: structural bound chain — `bound` propagates per-summand bounds
-  -- through the Finset.sum and product structure.
-  --
-  -- Strategy: LHS ≤ catPmf .whale = 1/100, RHS ≥ (99/100) * S_min where
-  -- S_min is a uniform lower bound on `mixedS1(.person | f)` over f.
-  -- The "S_min > 1/99" leaf is the genuine paper-specific computation.
-  --
-  -- To demo the `bound` mechanics, suppose we have a lower bound s_min on
-  -- mixedS1 and an upper bound on featurePmf.toOuterMeasure (= 1) — `bound`
-  -- chains them through the `Σ * *` structure.
-  sorry  -- TODO: full chain via `bound` + concrete `mixedS1_lower` lemma.
+  rw [L1_cat_fibre_lt_iff_inner_sum_lt]
+  -- Goal reduced to:
+  -- ∑ w ∈ filter (·.1 = .whale), worldPmf w * mixedS1 ... w.2 .person <
+  -- ∑ w ∈ filter (·.1 = .person), worldPmf w * mixedS1 ... w.2 .person
+  -- The empirical-fit content: 99x catPrior asymmetry + speaker positivity.
+  sorry
 
 /-! ## §10. Cross-paper engagement
 
@@ -462,30 +522,5 @@ identical RSA architecture for hyperbole (with `quantity` rather than
 `category` as the literally-false dimension). Migration of the hyperbole
 file would reuse most of this file's substrate.
 -/
-
-/-! ## §11. Structural bound chains via `gcongr`
-
-`gcongr` propagates per-summand bounds through `Finset.sum` + product
-structure on Kao-shaped goals. Building blocks for full numerical-leaf
-proofs: each finding's leaf decomposes as "structural bound chain" +
-"scalar arithmetic". Neither needs a ℚ-shadow.
-
-`mathlib.Tactic.Bound` would also apply here (it builds on `gcongr` +
-`linarith` + tagged lemmas), but `gcongr` is sufficient for these shapes
-and avoids the extra dependency. -/
-
-/-- **Upper bound for the LHS-side sum** (the `.whale`-fibre of L1):
-each summand `worldPmf w * mixedS1(...|w.2)` is bounded by `worldPmf w`
-since `mixedS1` values are PMF-valued (≤ 1).
-
-`gcongr` chains the per-summand bound `PMF.coe_le_one` through the
-`Σ` and `*` structure in one line. -/
-theorem whale_fibre_sum_le_worldPmf_sum :
-    ∑ w ∈ Finset.univ.filter (fun w : World => w.1 = Cat.whale),
-        worldPmf w * mixedS1 αKao αKao_nonneg vaguePrior w.2 .person
-      ≤ ∑ w ∈ Finset.univ.filter (fun w : World => w.1 = Cat.whale),
-        worldPmf w * 1 := by
-  gcongr with w
-  exact PMF.coe_le_one _ _
 
 end Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF

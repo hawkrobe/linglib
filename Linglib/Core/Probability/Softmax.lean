@@ -206,4 +206,36 @@ theorem softmax_const [Fintype α] [Nonempty α] (c : EReal) (hc_ne_top : c ≠ 
   nth_rewrite 1 [show EReal.exp c = 1 * EReal.exp c from (one_mul _).symm]
   rw [ENNReal.mul_div_mul_right _ _ h_pos.ne' h_ne_top, one_div]
 
+/-! ## Bridge to nat-power form
+
+For natural exponent `n`, the EReal-softmax of `n · log w` is the
+natural-power softmax of `w` — a finite ratio of `w(a)^n` over the
+partition `Σ_b w(b)^n`. Mathlib's `ENNReal.rpow_eq_exp_mul_log` and
+`ENNReal.rpow_natCast` together give the per-weight identity.
+
+Pivotal for RSA findings discharged via `gcongr`/`norm_num`/`bound`:
+the EReal form makes the substrate paper-faithful, but the rpow form
+makes the values computable rationals when `w` is. -/
+
+/-- **EReal-softmax weight equals natural-power weight** at each atom,
+when the underlying weight is in `ℝ≥0∞`. -/
+theorem softmaxWeight_natMul_log_eq_pow {α : Type*} (n : ℕ) (w : α → ℝ≥0∞)
+    (a : α) :
+    softmaxWeight (fun b => (n : EReal) * ENNReal.log (w b)) a = w a ^ n := by
+  -- Direct via mathlib's `EReal.exp_nmul: exp (n * x) = (exp x) ^ n`
+  -- and `ENNReal.exp_log: exp (log x) = x`.
+  show EReal.exp ((n : EReal) * ENNReal.log (w a)) = w a ^ n
+  rw [EReal.exp_nmul, ENNReal.exp_log]
+
+/-- **Apply formula for natural-power softmax**: `softmax (n · log w) a =
+w(a)^n / Σ_b w(b)^n`. Direct rewrite of `softmax_apply` via
+`softmaxWeight_natMul_log_eq_pow`. -/
+theorem softmax_natMul_log_apply {α : Type*} [Fintype α] (n : ℕ) (w : α → ℝ≥0∞)
+    (h_no_top : ∀ a, ((n : EReal) * ENNReal.log (w a)) ≠ ⊤)
+    (h_some_finite : ∃ a, ((n : EReal) * ENNReal.log (w a)) ≠ ⊥) (a : α) :
+    softmax (fun b => (n : EReal) * ENNReal.log (w b)) h_no_top h_some_finite a
+      = w a ^ n / ∑ b, w b ^ n := by
+  rw [softmax_apply]
+  simp_rw [softmaxWeight_natMul_log_eq_pow]
+
 end PMF
