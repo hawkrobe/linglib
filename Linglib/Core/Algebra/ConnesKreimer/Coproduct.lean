@@ -145,9 +145,11 @@ Lemma 1.2.10. -/
     monoid hom. Multiplication on `Multiplicative (Forest α)`
     corresponds to addition on `Forest α` (disjoint union ⊔).
 
-    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
-    callers should use `comulAlgHom` (the `AlgHom`-shaped public API). -/
-private noncomputable def comulMonoidHom :
+    Public (not `private`) so `Bialgebra.lean`'s helper lemma
+    `comulAlgHom_apply_single` can reference it. Downstream callers
+    should generally use `comulAlgHom` (the `AlgHom`-shaped public API)
+    rather than this monoid hom directly. -/
+noncomputable def comulMonoidHom :
     Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForest (R := R) F.toAdd
   map_one' := comulForest_zero
@@ -183,9 +185,10 @@ private lemma multiset_add_eq_zero_iff {β : Type*} (a b : Multiset β) :
     rw [ha, hb, add_zero]
 
 /-- The counit, as a `Multiplicative (Forest α) →* R` monoid hom.
-    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
-    callers should use `counit` (the `AlgHom`-shaped public API). -/
-private noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
+    Public so `Bialgebra.lean`'s helper lemma `counit_apply_single`
+    can reference it; downstream callers should generally use `counit`
+    (the `AlgHom`-shaped public API). -/
+noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
   toFun F := if F.toAdd = 0 then 1 else 0
   map_one' := by
     show (if (1 : Multiplicative (Forest α)).toAdd = 0 then (1 : R) else 0) = 1
@@ -262,9 +265,11 @@ noncomputable def comulForestDel (F : Forest α) : Hc R α ⊗[R] Hc R α :=
   rw [Multiset.map_add, Multiset.prod_add]
 
 /-- `comulForestDel`, packaged as a multiplicative monoid hom.
-    `private`: plumbing for `AddMonoidAlgebra.lift` only; downstream
-    callers should use `comulDelAlgHom` (the `AlgHom`-shaped public API). -/
-private noncomputable def comulDelMonoidHom :
+    Public so consistency with `comulMonoidHom` / `counitMonoidHom`
+    (also public to support `Bialgebra.lean` helper lemmas).
+    Downstream callers should generally use `comulDelAlgHom`
+    (the `AlgHom`-shaped public API). -/
+noncomputable def comulDelMonoidHom :
     Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForestDel (R := R) F.toAdd
   map_one' := comulForestDel_zero

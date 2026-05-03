@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.662 — Stage 1a partial: comulAlgHom_apply_single + counit_apply_single helpers; full counit-law proofs deferred
+
+Stage 1a goal was to prove `counit_rTensor` + `counit_lTensor` to close 2 of the 3 sorries in `ConnesKreimer/Bialgebra.lean`. **Partial progress**: the two foundational helper lemmas landed; the actual counit-law proofs hit a Lean elaboration friction point that needs a focused session.
+
+**Landed**:
+- `comulAlgHom_apply_single (F : Forest α) : comulAlgHom (Finsupp.single F 1) = comulForest F` — `@[simp]`. Reduces the LHS of the counit/coassoc laws on basis vectors. Proof: `AddMonoidAlgebra.lift_single` + `one_smul` + `rfl`.
+- `counit_apply_single (F : Forest α) : counit (Finsupp.single F 1) = if F = 0 then 1 else 0` — `@[simp]`. Reduces the counit projection. Same proof skeleton.
+- Reverted Stage 1.5's `private` markers on `comulMonoidHom`/`counitMonoidHom`/`comulDelMonoidHom` (Coproduct.lean) — they're needed for the helper lemmas above to typecheck.
+- Updated `counit_rTensor` proof body from "sorry + outline" to "sorry + 4-step strategy + Lean-elaboration obstacle note". Strategy: `AddMonoidAlgebra.algHom_ext` + `Multiset.induction` on F + singleton-tree case via `comulTree` term-by-term + only-empty-cut-survives counit projection.
+
+**Why deferred**: the empty-case proof reaches `(1 : Hc R α) = (Finsupp.single 0 1 : Hc R α)` via `AddMonoidAlgebra.one_def`, and Lean's elaborator stumbles on the `def Hc → AddMonoidAlgebra → Finsupp` boundary when synthesizing `OfNat (Forest α →₀ R) 1`. The cleaner proof path — write the proof at the `AddMonoidAlgebra R (Forest α)` level throughout, then conclude via the `def Hc` definitional equality — needs careful staging that hit context limits this session.
+
+**State**: 3 sorries in Bialgebra.lean unchanged (counit_rTensor, counit_lTensor, comul_coassoc); `def bialgebraStructure` unchanged. The 2 helper lemmas reduce the next session's work to the singleton-tree case + multiplicativity step.
+
+**Build**: 1317-job CK cone green. Unrelated Softmax errors from concurrent session don't affect this commit.
+
+**Stage 1a/1b updated estimates**: counit_rTensor + counit_lTensor now ~20-30 LOC each (helpers cut the work) given a focused session that can iterate on Lean errors. Coassoc unchanged (multi-session, hundreds of LOC + DoubleCut combinatorial helpers).
+
 ### 0.230.662 — Booth 2022 polish + Independence witness on worked 3-world model
 
 - `IsMinCover` migrated to `Minimal (IsCover · S) C` using mathlib's `Minimal` predicate (mirrors `Question.alt`'s `Maximal` pattern).

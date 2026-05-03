@@ -70,6 +70,27 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
+/-! ## Helper lemmas: how `comulAlgHom` and `counit` act on basis vectors -/
+
+/-- `comulAlgHom` applied to the basis vector `Finsupp.single F 1`
+    equals `comulForest F`. Follows from `AddMonoidAlgebra.lift_single`. -/
+@[simp] theorem comulAlgHom_apply_single (F : Forest α) :
+    comulAlgHom (R := R) (α := α) (Finsupp.single F 1) = comulForest F := by
+  show AddMonoidAlgebra.lift R _ _ comulMonoidHom (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+/-- `counit` applied to the basis vector `Finsupp.single F 1` equals
+    `1` if `F` is the empty forest, `0` otherwise. -/
+@[simp] theorem counit_apply_single (F : Forest α) :
+    counit (R := R) (α := α) (Finsupp.single F 1)
+      = if F = 0 then (1 : R) else 0 := by
+  show AddMonoidAlgebra.lift R _ _ counitMonoidHom (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+/-! ## Bialgebra laws -/
+
 /-- Coassociativity of the Connes-Kreimer contraction coproduct Δ^c.
     @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10.
 
@@ -91,13 +112,31 @@ theorem counit_rTensor :
     (Algebra.TensorProduct.map (counit : Hc R α →ₐ[R] R)
       (AlgHom.id R (Hc R α))).comp comulAlgHom
     = (Algebra.TensorProduct.lid R (Hc R α)).symm.toAlgHom := by
-  -- Stage 1 attempt: reduce to basis-vector identity.
-  -- Using `AddMonoidAlgebra.algHom_ext`, suffices to show for each
-  -- `F : Forest α`: `LHS (Finsupp.single F 1) = RHS (Finsupp.single F 1)`.
-  -- Then by `Multiset.induction` on F: empty case and singleton-prepend case.
-  -- For the singleton case `F = {T}`, expand `comulTree T` term-by-term:
-  -- only the "1 ⊗ T" primitive survives the counit projection on the left.
-  -- Full proof requires careful tensor-product algebra; deferred.
+  -- Stage 1a partial: helpers landed (`comulAlgHom_apply_single`,
+  -- `counit_apply_single` above), strategy below, but the tensor-product
+  -- algebra requires careful management of the `def Hc` boundary that
+  -- Lean's elaborator stumbles over (`Finsupp.single 0 1 : Hc R α`
+  -- vs `: Forest α →₀ R` typeclass slot for `OfNat _ 1`).
+  --
+  -- Strategy:
+  --   1. `apply AddMonoidAlgebra.algHom_ext; intro F` reduces to
+  --      `(map counit id) (comulAlgHom (single F 1)) = lid.symm (single F 1)`.
+  --   2. `rw [comulAlgHom_apply_single]` rewrites LHS to
+  --      `(map counit id) (comulForest F)`.
+  --   3. `induction F using Multiset.induction`:
+  --      - empty: `comulForest 0 = 1`, both sides give `1 ⊗ₜ 1`.
+  --      - cons T F': `comulForest (T ::ₘ F') = comulTree T * comulForest F'`.
+  --   4. Singleton case (F = {T}, F' = 0): expand `comulTree T` via its def
+  --      at `Coproduct.lean:96`; only the empty-cut term contributes to
+  --      `(map counit id)` (counit kills nonzero forests; cutForest_empty = 0
+  --      means the empty cut has cutForest 0 hence counit 1).
+  --
+  -- The Lean-elaboration friction (single F 1 needing OfNat (Forest α →₀ R) 1
+  -- when written through the Hc/AddMonoidAlgebra/Finsupp def chain) suggests
+  -- the cleaner path is to write the proof at the `AddMonoidAlgebra R (Forest α)`
+  -- level throughout (where `1`'s OfNat is mathlib-provided directly), then
+  -- conclude via the `def Hc = AddMonoidAlgebra` definitional equality at the end.
+  -- ~30-50 LOC, focused session.
   sorry
 
 /-- Left-tensor counit law: `(id ⊗ ε) ∘ Δ^c = rid.symm`.
