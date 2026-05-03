@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Entropy
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Mathlib.Analysis.Convex.Jensen
 
 /-!

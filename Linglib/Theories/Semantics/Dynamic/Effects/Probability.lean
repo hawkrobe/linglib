@@ -382,7 +382,7 @@ This is exactly Lassiter & Goodman's "threshold + uncertainty = graded".
 -/
 
 -- `Pr[φ] = E_i[1_{φ(i)}]` is `PMF.probOfSet` (mathlib `PMF ι` +
--- `Linglib.Core.Probability.PMFFin`). Use that rather than re-stipulating
+-- `Linglib.Core.Probability.Finite`). Use that rather than re-stipulating
 -- a bare-`mass` variant here.
 
 -- ════════════════════════════════════════════════════════════════

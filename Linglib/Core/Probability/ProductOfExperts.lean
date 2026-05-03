@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 
 /-!
 # Product of Experts on `PMF`
@@ -13,10 +13,10 @@ when fusing concept-cue and context-cue distributions
 PoE is **not** a posterior — there is no observation, no kernel, no
 direction. It is the symmetric pointwise product of two PMFs over a shared
 type, which is why this construction lives in its own file rather than in
-`PMFPosterior.lean`.
+`Posterior.lean`.
 
 The construction factors through `PMF.reweight` (defined in
-`PMFPosterior.lean`): `productOfExperts p q = p.reweight q`.
+`Posterior.lean`): `productOfExperts p q = p.reweight q`.
 
 ## Main definitions
 

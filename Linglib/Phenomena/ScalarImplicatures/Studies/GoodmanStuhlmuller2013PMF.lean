@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Hypergeometric
-import Linglib.Core.Probability.PMFEvalLemmas
+import Linglib.Core.Probability.EvalLemmas
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Silence
 import Mathlib.Probability.ProbabilityMassFunction.Monad

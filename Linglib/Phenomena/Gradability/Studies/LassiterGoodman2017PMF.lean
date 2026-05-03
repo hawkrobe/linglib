@@ -28,7 +28,7 @@ posterior.
 **This file does not formalise the joint posterior.** What it does:
 
 1. Provides L&G-anchored *interpretive wrappers* for generic PMF
-   theorems already promoted to `Core/Probability/PMFPosterior.lean`
+   theorems already promoted to `Core/Probability/Posterior.lean`
    (the structural sorites bound, the borderline-as-intermediate-measure
    schema, posterior concentration).
 2. Captures L&G's Eq. 32 outer-measure metalinguistic-probability
@@ -287,7 +287,7 @@ posterior of Eqs. 28-29, which lives in the substrate gap (§4 of the
 module docstring).
 
 The generic Bayes-weighting result is `PMF.posterior_lt_iff_score_lt` in
-`Core/Probability/PMFPosterior.lean` and is reusable for any consumer;
+`Core/Probability/Posterior.lean` and is reusable for any consumer;
 no L&G-specific wrapper here. -/
 
 /-! ## §4. L&G Eq. 32 — metalinguistic probability as outer measure
@@ -338,7 +338,7 @@ When only one world has positive `prior · kernel` mass at observation
 deterministic limit of Bayesian update.
 
 The theorem `posterior_eq_one_of_singleton_score_support` is in
-`Core/Probability/PMFPosterior.lean`; it generalises the L&G "fully
+`Core/Probability/Posterior.lean`; it generalises the L&G "fully
 informative L1 update" intuition without L&G framing. -/
 
 example {Utt World : Type*}

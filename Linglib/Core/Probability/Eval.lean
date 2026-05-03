@@ -18,7 +18,7 @@ A `simp` attribute + macro for evaluating PMF expressions of the form
   composed with the standard arithmetic glue (if-collapse, sum unfolders,
   ENNReal arithmetic) listed explicitly in the macro body, then a closer
   attempt.
-* **`PMFEvalLemmas.lean`**: tags the universal lemmas (`PMF.pure_apply`,
+* **`EvalLemmas.lean`**: tags the universal lemmas (`PMF.pure_apply`,
   `bind_apply_eq_finset_sum`, `hypergeometric_apply_eq_ofReal`, etc.).
 
 ## Domain

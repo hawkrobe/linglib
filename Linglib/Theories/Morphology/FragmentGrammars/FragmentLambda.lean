@@ -1,5 +1,5 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!

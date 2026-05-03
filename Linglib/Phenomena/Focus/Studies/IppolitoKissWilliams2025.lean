@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Probabilistic
 import Linglib.Core.Question.Relevance
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2022
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!

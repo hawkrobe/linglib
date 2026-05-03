@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.DirichletMultinomial
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 
 /-!
 # Scenario-mix marginal for SDS

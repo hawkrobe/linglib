@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 
 /-!
 # Parameterized Predicates

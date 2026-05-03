@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Probabilistic.SDS.GraphicalModel
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 
 /-!
 # Joint posterior for an SDS graphical model

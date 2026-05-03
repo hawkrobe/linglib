@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Conditionals.WillConditional
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Tactic.DeriveFintype
 

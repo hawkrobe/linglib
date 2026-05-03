@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Opposition.Aristotelian
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 
 /-!
 # Probabilistic Aristotelian relations
@@ -65,7 +65,7 @@ variable {W : Type*} [Fintype W]
 -- ============================================================================
 
 /-- The probability of a Boolean predicate `φ : W → Bool` under `μ : PMF W`,
-    i.e. `μ({w | φ w = true})`. Built on `PMFFin.probOfSet`. -/
+    i.e. `μ({w | φ w = true})`. Built on `Finite.probOfSet`. -/
 noncomputable def boolProb (μ : PMF W) (φ : W → Bool) : ℝ≥0∞ :=
   PMF.probOfSet μ {w | φ w = true}
 

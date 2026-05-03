@@ -490,7 +490,7 @@ with prior-weighted likelihoods. With `π_S = 1/2`, this reduces to
 
 The SDT observer's hypothesis space is binary (`{signal, noise} = Fin 2`)
 and finite, but the *observation* `x : ℝ` is *continuous* (a real-valued
-internal response). Mathlib's `PMF.posterior` (`Core/Probability/PMFPosterior.lean`)
+internal response). Mathlib's `PMF.posterior` (`Core/Probability/Posterior.lean`)
 operates on countable observation spaces; it does not natively handle
 continuous observations. The right mathlib substrate for the continuous
 binary case is `MeasureTheory.Kernel` + `condCDF`, which we have not set

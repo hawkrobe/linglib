@@ -1,5 +1,5 @@
-import Linglib.Core.Probability.PMFFin
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Finite
+import Linglib.Core.Probability.Posterior
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.InformationTheory.KullbackLeibler.Basic
@@ -85,7 +85,7 @@ theorem toRealFn_le_one {α : Type*} (p : PMF α) (a : α) : p.toRealFn a ≤ 1 
 /-- For a `[Fintype α]` PMF, the sum of `toReal`-coerced masses is 1. -/
 theorem sum_toRealFn_eq_one (p : PMF α) :
     ∑ a, p.toRealFn a = 1 := by
-  -- Step 1: ∑ a, p a = 1 in ℝ≥0∞ (use the pattern from PMFFin.lean line 73)
+  -- Step 1: ∑ a, p a = 1 in ℝ≥0∞ (use the pattern from Finite.lean line 73)
   have h_sum_ennreal : ∑ a : α, p a = 1 :=
     (PMF.tsum_coe p ▸ tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
       absurd (Finset.mem_univ a) h)).symm

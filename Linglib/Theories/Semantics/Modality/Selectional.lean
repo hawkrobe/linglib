@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 
 /-!
 # Selectional Semantics for *will*

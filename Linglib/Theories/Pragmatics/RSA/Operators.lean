@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Probability.Distributions.Uniform
@@ -51,7 +51,7 @@ that strip off the normalisation factor — the workhorses for migrating
 
 For the common case where the world prior is uniform, see
 `PMF.posterior_lt_iff_kernel_lt_of_uniform` / `_le_iff_kernel_le` in
-`Core/Probability/PMFPosterior.lean` — those cancel both the marginal
+`Core/Probability/Posterior.lean` — those cancel both the marginal
 denominator AND the uniform prior in one move.
 
 ## Relationship to `RSAConfig`
@@ -325,7 +325,7 @@ true by construction.
 
 Mathlib calls this operator `posterior` (`Mathlib/Probability/Kernel/Posterior.lean`,
 notation `κ†μ`). At the PMF level — without measure-theoretic typeclasses —
-it is `PMF.posterior` from `Core/Probability/PMFPosterior.lean`. This file
+it is `PMF.posterior` from `Core/Probability/Posterior.lean`. This file
 gives it the linguistically familiar name `L1`. -/
 noncomputable def L1 (speaker : W → PMF U) (worldPrior : PMF W) (u : U)
     (h : PMF.marginal speaker worldPrior u ≠ 0) : PMF W :=

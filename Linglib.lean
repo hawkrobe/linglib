@@ -309,9 +309,9 @@ import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Pragmatics.Efficiency
 import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Theories.Pragmatics.RSA.Distributions
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Entropy
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.ProductOfExperts

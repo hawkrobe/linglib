@@ -303,7 +303,7 @@ giving the multiplicative joint score and `normalizedPosterior` doing
 the explicit ℚ-valued normalization. For the canonical mathlib mechanism
 (PMF-typed, ENNReal-valued, with measure-theoretic foundation), see
 `Mathlib.Probability.ProbabilityMassFunction.Constructions` (`PMF.normalize`)
-and `Core/Probability/PMFPosterior.lean` (`PMF.productOfExperts`,
+and `Core/Probability/Posterior.lean` (`PMF.productOfExperts`,
 `PMF.posterior`). The SDS typeclass favors decidable ℚ computation for
 study-file replications; PMF is canonical for general probability work.
 -/

@@ -1,14 +1,14 @@
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Topology.Algebra.InfiniteSum.Real
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 
 /-!
 # Bayesian Observation Models and Posterior Update
 
 The ergonomic `ℝ`-typed interface for finite Bayesian inference with
 explicit experiment indexing. Provides the same algorithm as mathlib's
-canonical `PMF.posterior` (`Core/Probability/PMFPosterior.lean`):
+canonical `PMF.posterior` (`Core/Probability/Posterior.lean`):
 `P(w|o,e) = prior(w) · P(o|w,e) / Σ_w' prior(w') · P(o|w',e)`.
 
 ## Relationship to `PMF.posterior`

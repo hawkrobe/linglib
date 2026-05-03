@@ -83,7 +83,7 @@ relationship:
 * Nouwen 2024 PMF (this file): chained `posterior κ₂ (posterior κ₁ μ b₁) b₂`
 
 The chained-posterior decomposition lemma `PMF.posterior_chained_lt_iff_score_lt`
-in `Core/Probability/PMFPosterior.lean` (modeled on mathlib's
+in `Core/Probability/Posterior.lean` (modeled on mathlib's
 `Mathlib.Probability.Kernel.Posterior.posterior_comp`) characterises this
 shape; the headline below uses it.
 

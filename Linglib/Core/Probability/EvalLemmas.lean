@@ -1,6 +1,6 @@
-import Linglib.Core.Probability.PMFEval
+import Linglib.Core.Probability.Eval
 import Linglib.Core.Probability.Hypergeometric
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 
@@ -8,7 +8,7 @@ import Mathlib.Probability.Distributions.Uniform
 # `pmf_eval_simps` lemma tags
 
 Universal closed-form PMF reductions tagged for the `pmf_eval` simp set.
-This is the consumer file for the attribute registered in `PMFEval.lean`.
+This is the consumer file for the attribute registered in `Eval.lean`.
 Tagging is split out because Lean requires `register_simp_attr` and
 `attribute [...]` to live in different files.
 

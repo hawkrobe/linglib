@@ -1,5 +1,5 @@
 import Linglib.Core.Question.Hamblin
-import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.Finite
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.SymmDiff
 import Mathlib.Order.SetNotation

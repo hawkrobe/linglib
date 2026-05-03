@@ -239,7 +239,7 @@ def CondMeasure.inducedCondGe {W : Type*} (m : CondMeasure W)
 -- § 6. Conditioning Mode Relationships
 -- ══════════════════════════════════════════════════════════════════════
 
--- **PMF** (BayesianSemantics.lean + `Linglib.Core.Probability.PMFFin`):
+-- **PMF** (BayesianSemantics.lean + `Linglib.Core.Probability.Finite`):
 -- `pmf.probOfSet event` computes P(event) = Σ_θ mass(θ) · 1[event(θ)].
 -- Conditioning a `PMF` on evidence B is `pmf.condProbSet B A`, the
 -- ratio construction P(A|B) = P(A ∩ B)/P(B); this is the same construction

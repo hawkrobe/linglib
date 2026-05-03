@@ -1,4 +1,4 @@
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Probability.ProbabilityMassFunction.Monad

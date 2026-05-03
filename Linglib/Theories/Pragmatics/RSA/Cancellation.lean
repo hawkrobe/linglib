@@ -1,6 +1,6 @@
 import Linglib.Core.Probability.DataProcessing
 import Linglib.Core.Probability.Entropy
-import Linglib.Core.Probability.PMFPosterior
+import Linglib.Core.Probability.Posterior
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Silence
 
