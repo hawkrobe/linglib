@@ -4,6 +4,41 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.629 — Phase 9 (final): Theories/Interfaces/Morphosyntax/ + SyntaxPhonology/ dissolved
+
+Migration phases 1-8 of dissolving `Theories/Interfaces/Morphosyntax/` (5 files, 1118 LOC) and `Theories/Interfaces/SyntaxPhonology/Minimalist/` (3 files, 739 LOC) are complete.
+
+Cleanup:
+- `rmdir Theories/Interfaces/Morphosyntax/` (empty after Phase 6)
+- `rmdir Theories/Interfaces/SyntaxPhonology/Minimalist/` (empty after Phase 8)
+- `rmdir Theories/Interfaces/SyntaxPhonology/` (empty after the Minimalist subdir was removed)
+- Final grep audit: zero stale `Theories.Interfaces.Morphosyntax` or `Theories.Interfaces.SyntaxPhonology` references anywhere in `Linglib/`.
+
+Build sanity: full dependency closure of all 9 migrated/created files green (663 jobs).
+
+Remaining `Theories/Interfaces/` subdirectories (PragmaticsDiscourse, SemanticsDiscourse, SyntaxSemantics) are explicitly out of scope for this migration; they get their own planning rounds.
+
+### Migration summary (commits 0.230.616 – 0.230.629)
+
+Architectural principle (decided pre-migration, not relitigated): Theories/Syntax/ houses theories whose primary objects are hierarchical structures over morphosyntactic units; Theories/Morphology/ houses theories whose primary objects are form/exponent realization given hierarchical structure as input. There is no Interfaces/ directory — cross-component content goes (a) down to Core/, (b) into one Theory framework, or (c) up to Phenomena/{X}/Studies/.
+
+Per-phase summary:
+
+| Phase | Source → Destination | Notes |
+|-------|---------------------|-------|
+| 1 | StarABA → Core/Morphology/Containment | + Prop/Decidable wrappers, drop 3 aggregate-counts, neutral docstring |
+| 2 | CaseContainment substrate → Core/Case/Allomorphy | + ViolatesABA defined via generic so bridge is rfl |
+| 3 | CaseContainment paper-specific → Studies/Caha2009 | RespectsCahaContainment moved to Caha2009 (its anchor); §8 Anderson dropped |
+| 4 | DegreeContainment 3-way split | Substrate → Core/Morphology/, VI → Theories/Morphology/, paper → Bobaljik2012; §11 conclusion-encoded defs dropped |
+| 5a | ExtractionMarkingStrategy enum trim | structuralRestriction → voiceAlternation; agentFocusAlternation → dedicatedMorpheme; .none → .unmarked |
+| 5b | Extraction → Typology/Extraction | namespace Interfaces → Typology |
+| 6 | Relativization → Typology/Relativization/ExtractionBridge | + cases-based exhaustivity for roundtrip theorems |
+| 7 | Spellout → Theories/Morphology/DM/VocabSimple | rename away from Spellout overload (Y-model vs VI distinction); kept VocabEntry as Minimalist specialization |
+| 8 | LCA + CyclicLinearization → Theories/Syntax/Minimalist/Linearization | linearization is syntax-side per linguistics-expert + integration-auditor |
+| 9 | rmdir empty dirs + final audit | zero stale references |
+
+Out of scope (deferred to follow-ups): native_decide cleanup in Bobaljik2012 (13 instances) and CyclicLinearization (11); namespace pollution in CyclicLinearization; equivalence lemma between VocabSimple.VocabEntry and DM.VI.VocabItem; the three remaining Interfaces/ subdirectories.
+
 ### 0.230.628 — Phase 8: LCA + CyclicLinearization → Theories/Syntax/Minimalist/Linearization/
 
 Migration phase 8/9.
