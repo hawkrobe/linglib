@@ -1,8 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Core.Logic.StateAlgebra.Partition
-import Linglib.Core.Logic.StateAlgebra.Frames
+import Linglib.Core.Logic.Team.Algebra
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core Definitions
@@ -35,7 +34,7 @@ predicates with terms.
 
 The split-disjunction predicate `splitsAs` and the frame-condition
 predicates `isStateBased` / `isIndisputable` live in
-`Core.Logic.StateAlgebra` (theory-neutral `Finset` combinatorics) and
+`Core.Logic.Team` (theory-neutral `Finset` combinatorics) and
 are consumed below. This is the same machinery QBSML reuses via the
 `s↓` projection from `Finset (W × Assignment)` to `Finset W`.
 
@@ -163,7 +162,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W]
     `eval M true (.neg (.neg φ)) t` = `eval M true φ t` by computation.
 
     Split disjunction and split conjunction-anti-support clauses use
-    `Core.Logic.StateAlgebra.splitsAs` (= `t₁ ∪ t₂ = t`); the recursion is
+    `Core.Logic.Team.splitsAs` (= `t₁ ∪ t₂ = t`); the recursion is
     the same shape QBSML reuses at the `Finset (W × Assignment)` carrier. -/
 def eval (M : BSMLModel W Atom) : Bool → BSMLFormula Atom → Finset W → Prop
   | true,  .atom p,       t => ∀ w ∈ t, M.val p w = true
@@ -174,10 +173,10 @@ def eval (M : BSMLModel W Atom) : Bool → BSMLFormula Atom → Finset W → Pro
   | false, .neg ψ,        t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,  t => eval M true ψ₁ t ∧ eval M true ψ₂ t
   | false, .conj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+                                Core.Logic.Team.splitsAs t t₁ t₂ ∧
                                 eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
   | true,  .disj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+                                Core.Logic.Team.splitsAs t t₁ t₂ ∧
                                 eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
   | false, .disj ψ₁ ψ₂,  t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true,  .poss ψ,       t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ eval M true ψ s
@@ -237,17 +236,17 @@ lemma empty_supports_atom (M : BSMLModel W Atom) (p : Atom) :
 /-- Indisputable accessibility: all worlds in team see the same accessible worlds.
     Required for wide-scope FC (Fact 5, @cite{aloni-2022}).
 
-    Defined via `Core.Logic.StateAlgebra.isIndisputable` to share substrate
+    Defined via `Core.Logic.Team.isIndisputable` to share substrate
     with QBSML and any other state-based logic. -/
 def BSMLModel.isIndisputable (M : BSMLModel W Atom) (t : Finset W) : Prop :=
-  Core.Logic.StateAlgebra.isIndisputable M.access t
+  Core.Logic.Team.isIndisputable M.access t
 
 /-- State-based accessibility: every world in team has the team itself as
     accessible worlds. Strictly stronger than indisputability.
 
-    Defined via `Core.Logic.StateAlgebra.isStateBased`. -/
+    Defined via `Core.Logic.Team.isStateBased`. -/
 def BSMLModel.isStateBased (M : BSMLModel W Atom) (t : Finset W) : Prop :=
-  Core.Logic.StateAlgebra.isStateBased M.access t
+  Core.Logic.Team.isStateBased M.access t
 
 instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.isIndisputable t) := by
   unfold BSMLModel.isIndisputable; infer_instance
@@ -287,7 +286,7 @@ def supportStar (M : BSMLModel W Atom) : BSMLFormula Atom → Finset W → Prop
   | .neg _, _ => True
   | .conj φ ψ, t => supportStar M φ t ∧ supportStar M ψ t
   | .disj φ ψ, t => ∃ t₁ t₂ : Finset W,
-      Core.Logic.StateAlgebra.splitsAsNE t t₁ t₂ ∧
+      Core.Logic.Team.splitsAsNE t t₁ t₂ ∧
       supportStar M φ t₁ ∧ supportStar M ψ t₂
   | .poss φ, t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ supportStar M φ s
 
@@ -317,10 +316,10 @@ def decidableEval (M : BSMLModel W Atom) :
       unfold eval
       exact @Fintype.decidableExistsFintype (Finset W)
         (fun t₁ => ∃ t₂ : Finset W,
-            Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+            Core.Logic.Team.splitsAs t t₁ t₂ ∧
             eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂)
         (fun t₁ => @Fintype.decidableExistsFintype (Finset W)
-          (fun t₂ => Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+          (fun t₂ => Core.Logic.Team.splitsAs t t₁ t₂ ∧
                      eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂)
           (fun t₂ => @instDecidableAnd _ _
             inferInstance
@@ -333,10 +332,10 @@ def decidableEval (M : BSMLModel W Atom) :
       unfold eval
       exact @Fintype.decidableExistsFintype (Finset W)
         (fun t₁ => ∃ t₂ : Finset W,
-            Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+            Core.Logic.Team.splitsAs t t₁ t₂ ∧
             eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂)
         (fun t₁ => @Fintype.decidableExistsFintype (Finset W)
-          (fun t₂ => Core.Logic.StateAlgebra.splitsAs t t₁ t₂ ∧
+          (fun t₂ => Core.Logic.Team.splitsAs t t₁ t₂ ∧
                      eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂)
           (fun t₂ => @instDecidableAnd _ _
             inferInstance
