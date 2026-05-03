@@ -1094,9 +1094,8 @@ import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
-import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
 import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
-import Linglib.Phenomena.Assertion.Studies.Krifka2015
+import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
 import Linglib.Phenomena.Assertion.Studies.Rudin2025
 import Linglib.Typology.Case
 import Linglib.Phenomena.Case.Studies.Caha2009
@@ -1462,7 +1461,9 @@ import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Theories.Semantics.BSML.Properties
 import Linglib.Theories.Semantics.QBSML.Defs
 import Linglib.Theories.Semantics.QBSML.Properties
+import Linglib.Theories.Semantics.QBSML.Enrichment
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
+import Linglib.Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
 import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Phenomena.Modality.Studies.Cariani2013
 import Linglib.Phenomena.Modality.Studies.Heim1992
