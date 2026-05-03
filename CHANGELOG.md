@@ -4,6 +4,156 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.660 — Kao 2014 hyperbole: PMF migration, headline architectural theorem
+
+Replaces 347-LOC rsa_predict version with 364-LOC PMF version focused on
+the headline architectural theorem.
+
+**Headline**: `qudProjL0_pos_iff_exists_qud_class_member` —
+
+    qudProjL0 g u w > 0  ↔  ∃ w' ∈ QUD-equiv-class, L0Weight u w' > 0
+
+The architectural mechanism enabling nonliteral interpretation: with
+proper goal projection (e.g., affect-only), the QUD equivalence class
+enlarges, so qudProjL0 can be positive at literally-false meanings.
+Without goal inference, the equivalence class is just {w} itself, so
+qudProjL0 > 0 ↔ literally-true meaning — i.e., vanilla RSA gives
+mass 0 to nonliteral interpretations.
+
+Specialised to nonliteral support via `qudProjL0_pos_of_nonliteral`
++ a concrete demonstration (`hyperbole_emerges_at_valence_goal`): under
+the .valence goal, (.s50, .notable) and (.s10000, .notable) are
+QUD-equivalent, so saying "$10K" can be interpreted as
+"(.s50, .notable)" — "the kettle was overpriced, not literally $10K."
+
+The 6 paper findings are described in §7 prose with discharge path
+sketched (structural decomposition + numerical comparison at Kao's
+empirical priors); not stated as theorems. Empirical-fit content;
+architectural payoff is the headline.
+
+**Substrate validation**: utterance costs slot into EReal-softmax via
+`score = log(qudProjL0) - cost`, NO new substrate primitive needed.
+Costs are simply a different score function within the existing softmax
+substrate — first migration testing this generalisation.
+
+### 0.230.671 — Phase 1 P1.4a: Bool → Prop+Decidable for FarkasBruce.isStable + Gunlogson.isStable
+
+The two `isStable` predicates whose semantic content is propositional
+(no pending issues / no unresolved other-generated commitments)
+migrated to Prop + Decidable, matching the `Stalnaker.isStable` shape.
+
+- `FarkasBruce.DiscourseState.isStable : Prop := ds.table.length = 0`
+  (Decidable via `Nat.decEq`). Bridge theorems updated:
+  `assert_not_stable : ¬(...).isStable` (via `Nat.succ_ne_zero`),
+  `accept_restores_stability : (...).isStable → (...).isStable`.
+- `Gunlogson.GunlogsonState.isStable : Prop := otherGenerated.length = 0
+  ∧ ...` (Decidable via conjunction). Bridge theorems
+  `rising_from_empty_unstable` and `confirm_still_unstable` rewritten
+  with explicit `Nat.succ_ne_zero` proofs (since `decide` can't reduce
+  through free `p`).
+
+Out of scope (split to P1.4b): KOS operational Bool predicates
+(`outcomeFulfilled`, `genreRelevant`, `genreRelevantViaQnud`,
+`nonResolveCond`, `isFullyResolved`) and the cascading downstream
+update in `Ginzburg2012.lean` (4 sites) — those are operational/computational
+and the migration touches `GenreType.qudConstraint` typing.
+
+### 0.230.666 — Stage 1b substrate: AugCutShape T + comulTree as unified sum
+
+- New file `Linglib/Core/Algebra/ConnesKreimer/AugmentedCut.lean` (~130 LOC, 0 sorrys).
+- `AugCutShape T := CutShape T ⊕ Unit` — `abbrev` so mathlib's `Sum.fintype` and `DecidableEq Sum` apply automatically. The unit case represents the explicit `T ⊗ 1` virtual "extract-whole" cut from the Δ^c definition.
+- Projections `cutForest_aug` (extracted forest) and `remainderForest` (right-channel forest), with `@[simp]` lemmas at both constructors.
+- `comulTree_eq_sum_AugCutShape T : comulTree T = ∑ ac : AugCutShape T, forestToHc (cutForest_aug ac) ⊗ forestToHc (remainderForest ac)`. Proof is fully definitional after `Fintype.sum_sum_type + add_comm + rfl` — clean unification works at the kernel level (`AddMonoidAlgebra.one_def : (1 : R[M]) = single 1 1` is `rfl`).
+- Bialgebra.lean docstring updated: 5-step Stage 1b plan now shows steps 1-2 ✅, steps 3-5 ⏳. Estimated remaining 250-400 LOC, 2 sessions.
+- Sorry count unchanged (1, on `comul_coassoc_tree`); substrate is purely additive.
+
+### 0.230.670 — Phase 1 P1.3: extract DistributionalCG to Theories/ substrate
+
+Closes the layering gap: `HasSupport ℝ` and `DistributionalCG` were
+in `Phenomena/Dialogue/Studies/Anderson2021.lean`, but they're pure
+substrate. Any future Theory consumer wanting these would have had to
+`import Linglib.Phenomena.*`, violating the layer rule.
+
+- New `Theories/Dialogue/DistributionalCG.lean` hosts:
+  - `DistributionalCG W` struct + `weight_nonneg`
+  - `uniform`, `toContextSet`, `uniform_toContextSet`,
+    `zero_weight_excluded` helpers
+  - `HasContextSet (DistributionalCG W) W` instance
+  - `HasSupport ℝ` instance (NOT `CommitmentGrade ℝ` — involution
+    law fails on unrestricted reals)
+  - `DistributionalCG.toCommitmentSpace` bridge to
+    `Krifka.CommitmentSpace W ℝ`
+  - `DistributionalCG.toCommitmentSpace_support` equivalence theorem
+- `Phenomena/Dialogue/Studies/Anderson2021.lean` now imports the
+  substrate and `open Dialogue (DistributionalCG)`. Conversation-update
+  (`updateCG`, `conversationStep`, etc.) and RSA-bridge content stays
+  in the study file.
+- `Linglib.lean` import added.
+
+### 0.230.669 — Phase 1 P1.10: HasContextSet instances for 4 dialogue states + Stalnaker bridge theorem
+
+Closes the integration-audit gap: dialogue-state types each had a
+`contextSet`/`effectiveContextSet`/`toContextSet` def but only 2 of 7
+instantiated `HasContextSet`. Now 6 of 7 do (KOS DGB unchanged; pending
+Phase 1.5 sweep for KOS).
+
+- **Brandom** — `instance : HasContextSet (BrandomState W) W` via the
+  lossy `effectiveContextSet` projection (per-scorekeeper disagreement
+  is invisible at the `HasContextSet` API level).
+- **Gunlogson** — `instance : HasContextSet (GunlogsonState W) W` via
+  both-participants intersection.
+- **CredenceThreshold** — `instance : HasContextSet (State W) W` via
+  the asserted-list intersection.
+- **FarkasBruce** — `instance : HasContextSet (DiscourseState W) W`
+  via `cg`-only intersection (deliberate: F&B's whole point is that
+  assertion writes `dcS`/`table` without touching `cg`, which is why
+  it doesn't instantiate `Assertable`).
+- **Stalnaker** — adds `hasContextSet_eq_contextSet` documentation
+  theorem (no instance needed: `StalnakerState W := CG W` abbrev
+  resolves through the existing `Core.CommonGround` instance).
+
+Unblocks any future cross-framework theorem quantifying over
+`[HasContextSet S W]`.
+
+### 0.230.668 — Phase 1 P1.6 + P1.8: native_decide → decide in KOS/Examples + split Assertable law into 2 fields
+
+- **P1.6** — `KOS/Examples.lean`: 3 `native_decide` invocations
+  (`inquiry_step3_facts`, `inquiry_cycle_moves`, `check_pushes`)
+  replaced with `decide`. Removes the "Native_decide caveat" header
+  the file used to carry.
+- **P1.8** — `Theories/Dialogue/Assertable.lean`: split the
+  `speakerAssert_monotone` typeclass field into two fields
+  (`speakerAssert_subset_prior` + `speakerAssert_narrows`); the
+  conjoined form is now a derived theorem of the same name. Mathlib
+  convention: `_monotone` is for monotonicity alone. Per-instance
+  proofs become two short focused proofs instead of one conjunctive
+  one. Stalnaker and Krifka instances rewritten accordingly; derived
+  cross-framework theorems unchanged.
+
+### 0.230.665 — Stage 1b prep: comul_coassoc reduces via algHom_ext_tree to comul_coassoc_tree
+
+- `Linglib/Core/Algebra/ConnesKreimer/Bialgebra.lean`: `comul_coassoc` now PROVED structurally; new sorry on `comul_coassoc_tree` (single-tree obligation). Sorry count unchanged (1) but the substantive content is now isolated.
+- New `algHom_ext_tree` lemma: AlgHoms out of `Hc R α` are determined by their values on tree-singleton workspaces `forestToHc {T}`. Multiplicativity + `AddMonoidAlgebra.algHom_ext` deliver the extension. ~30 LOC.
+- Architectural insight: `Hc R α = AddMonoidAlgebra R (Forest α)` is the free commutative algebra on `DecoratedTree α` (Multiset = polynomial-monomial structure), so multiplicative generators = single-tree workspaces.
+- `comul_coassoc` proof shrinks to 2 lines: `apply algHom_ext_tree; exact comul_coassoc_tree`.
+- Updated module docstring with the explicit cuts-of-cuts strategy: 5-step plan via `AugCutShape T := CutShape T ⊕ Unit` + `DoubleCut T` (left/right-iterated or 3-level partition; design choice deferred to Stage 1b proper).
+- Out-of-scope: the bijection itself + DoubleCut data type. Estimated 300-500 LOC, 2-3 sessions for the full proof.
+
+### 0.230.667 — Phase 1 P1.2: rename Lauer.lean → CredenceThreshold.lean
+
+The file's content is a credence-gated assertability model, not Lauer
+2013's headline doxastic / preferential commitment split (which lives
+in `Core/Discourse/Commitment.lean` `CommitmentForce` + consumed by
+`CommitmentSpace.lean` and the CondoravdiLauer2012 study).
+
+- `git mv` Lauer.lean → CredenceThreshold.lean
+- Namespace `Dialogue.Lauer` → `Dialogue.CredenceThreshold`
+- Type `LauerState` → `State` (mathlib pattern: type name = `State`
+  within framework namespace; no external consumers)
+- Module docstring rewritten with explicit "naming history" header
+  pointing to where the actual Lauer 2013 framework lives
+- `Linglib.lean` import updated
+
 ### 0.230.659 — FG2012: parametric reference-game substrate + slim instance
 
 `Theories/Pragmatics/RSA/ReferenceGame.lean` (NEW, 264 LOC): parametric
