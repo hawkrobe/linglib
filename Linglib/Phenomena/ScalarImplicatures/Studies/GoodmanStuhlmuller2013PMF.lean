@@ -1567,11 +1567,7 @@ private theorem some_full_implicature_sil_v3_pmf_eval
   -- Whatever `pmf_eval` doesn't close: the partition comparison residual.
   rw [tsum_fintype, tsum_fintype]
   pmf_eval_only
-  -- Residual: `ofReal((↑4)⁻¹) + ofReal((↑3)⁻¹) < same + ofReal((↑1)⁻¹)`.
-  rw [← ENNReal.ofReal_add (by positivity) (by positivity),
-      ← ENNReal.ofReal_add (by positivity) (by positivity),
-      ← ENNReal.ofReal_add (by positivity) (by positivity)]
-  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+  ennreal_close
 
 -- Architecture probe: inline Option-D version of Finding 1 using ONLY universal
 -- lemmas (`s1Score_uniform_apply` + `softmaxBelief_eq_zero_of_not_qOk`), with no

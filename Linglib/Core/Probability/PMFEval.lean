@@ -94,3 +94,26 @@ macro "pmf_eval_only" : tactic => `(tactic|
        [pmf_eval_simps, if_true, if_false, ↓reduceIte,
         add_zero, zero_add, ENNReal.ofReal_zero,
         Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_four])
+
+/-! ## `ennreal_close` — residual closer for `ofReal` arithmetic comparisons
+
+After `pmf_eval_only`, residuals of the form
+`ofReal a + ofReal b + ... < ofReal x + ofReal y + ...` (or `≤` / `=`) appear
+when the partition functions of two PMFs are compared. The standard close is:
+
+1. Combine each `ofReal a + ofReal b` into `ofReal (a + b)` via
+   `← ENNReal.ofReal_add` (with positivity side-conditions).
+2. Apply `ENNReal.ofReal_{lt,le,eq}_ofReal_iff` to reduce to a real comparison.
+3. Finish with `norm_num`.
+
+`ennreal_close` packages this. `gcongr` doesn't apply because `ENNReal` lacks
+an `AddLeftStrictMono` instance (⊤ + a = ⊤ + b would block strict cancellation).
+-/
+
+macro "ennreal_close" : tactic => `(tactic|
+  (repeat rw [← ENNReal.ofReal_add (by positivity) (by positivity)];
+   first
+     | exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+     | exact (ENNReal.ofReal_le_ofReal_iff (by norm_num)).mpr (by norm_num)
+     | (congr 1; norm_num)
+     | norm_num))
