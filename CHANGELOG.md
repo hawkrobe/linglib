@@ -4,6 +4,14 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.663 — Booth Fact 9 (Independence inference) discharged for atomic disjunctions
+
+- `independence_p_not_q` now PROVED (was `sorry`): when `p ∨ q` is non-Hurford, `□(atom Vp ∨ atom Vq)` truth at `w` entails `◇(atom Vp ∧ ¬ atom Vq)` truth at `w`, over arbitrary `R : W → Set W` and `W`.
+- Proof technique: from `IsMinCover {Vp, Vq} (R w)`, use `Minimal.le_of_le` to derive that `{Vq}` alone fails to cover (else `Vp = Vq`, contradicting non-Hurford), giving `∃ v ∈ R w, v ∉ Vq`. Combined with the cover, `v ∈ Vp \ Vq`, witnessing the `◇` existential.
+- Three new polymorphic helpers (private): `declarative_inf` (`declarative A ⊓ declarative B = declarative (A ∩ B)`), `alt_disj_atom_eq_pair` (alt of non-Hurford disjuncts is the pair), `alt_conj_atom_negate_eq_singleton`. BoothExample's W4-specific helpers refactored to one-liners using these.
+- File 472 → 544 LOC. Booth2022.lean now sorry-free; the only remaining "sorry" string is in the docstring as historical commentary, now updated to reflect the discharged state.
+- Out-of-scope clarified: `independence_p_not_q` is for atomic disjunctions; general `φ ∨ ψ` over arbitrary BSML formulas still needs a Compactness-of-Alternatives lemma not yet in linglib.
+
 ### 0.230.658 — Kao 2014 refactored to architectural theorems + nat-pow softmax bridge
 
 The 6 Kao findings were originally stated as direct outer-measure

@@ -45,12 +45,12 @@ combine both.
   proposal not formalized here.
 - Booth's restrictor conditional and accessibility-update operator
   (Definitions 15–16) are out of scope for this initial formalization.
-- The general Independence theorem (Booth Fact 9) is sketched but
-  carried as a documented `sorry` — its proof relies on
-  non-Hurford-disjunction reasoning (Fact 6) plus finite-alt machinery
-  that goes beyond a self-contained study file. The companion concrete
-  example (`BoothExample.boothExample_independence`) hand-verifies
-  Independence on a 3-world deontic model.
+- The general Independence theorem (Booth Fact 9) for *arbitrary* φ
+  requires Compactness-of-Alternatives over the full BSML language. We
+  prove it for **atomic disjunctions** (`atom Vp ∨ atom Vq`) over
+  arbitrary `R` and `W` (`independence_p_not_q`), which captures the
+  structural content. Generalizing to `φ ∨ ψ` for arbitrary `φ, ψ`
+  requires a separate Compactness lemma we don't yet have.
 -/
 
 namespace Phenomena.Modality.Studies.Booth2022
@@ -233,7 +233,68 @@ theorem not_isTrue_and_isFalse (φ : BilatInqProp W) (w : W) :
     ¬ (isTrue φ w ∧ isFalse φ w) := fun ⟨ht, hf⟩ =>
   Set.singleton_ne_empty w (φ.no_overlap {w} ht hf)
 
-/-! ### §5 Worked example: Independence inference on a 3-world model
+/-! ### §5 Algebra of atomic constructions
+
+Three private helpers that express how `Question.alt`, `⊓`, `⊔` interact
+with `BilatInqProp.atom` and `BilatInqProp.negate`. Used in both the
+worked example (§6) and the general Independence theorem (§7). All three
+are polymorphic in `W`.
+
+(Future: when a 2nd consumer of these patterns appears, hoist
+`declarative_inf` to `Core/Question/Basic.lean`.) -/
+
+/-- Inf of two declaratives is the declarative of the intersection. -/
+private lemma declarative_inf (A B : Set W) :
+    Question.declarative A ⊓ Question.declarative B = Question.declarative (A ∩ B) := by
+  apply Question.ext
+  intro q
+  show q ⊆ A ∧ q ⊆ B ↔ q ⊆ A ∩ B
+  rw [Set.subset_inter_iff]
+
+/-- The alternatives of `atom Vp ∨ atom Vq` are `{Vp, Vq}` when neither
+    is contained in the other (Booth's "non-Hurford" condition,
+    Definition 22). -/
+private lemma alt_disj_atom_eq_pair (Vp Vq : Set W)
+    (hpq : ¬ Vp ⊆ Vq) (hqp : ¬ Vq ⊆ Vp) :
+    Question.alt
+        (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq)).pos
+      = ({Vp, Vq} : Set (Set W)) := by
+  show Question.alt (Question.declarative Vp ⊔ Question.declarative Vq) = _
+  apply Set.eq_of_subset_of_subset
+  · intro q hq
+    have h := Question.alt_sup_subset_union (Question.declarative Vp)
+              (Question.declarative Vq) hq
+    rcases h with h | h
+    · rw [Question.alt_declarative] at h
+      rcases Set.mem_singleton_iff.mp h with rfl
+      exact Set.mem_insert _ _
+    · rw [Question.alt_declarative] at h
+      rcases Set.mem_singleton_iff.mp h with rfl
+      exact Set.mem_insert_of_mem _ rfl
+  · intro q hq
+    rcases Set.mem_insert_iff.mp hq with rfl | hq'
+    · apply Question.mem_alt_sup_of_alt_left
+      · rw [Question.alt_declarative]; rfl
+      · intro r hr hVpr
+        exact absurd (hVpr.trans hr) hpq
+    · rcases Set.mem_singleton_iff.mp hq' with rfl
+      apply Question.mem_alt_sup_of_alt_right
+      · rw [Question.alt_declarative]; rfl
+      · intro r hr hVqr
+        exact absurd (hVqr.trans hr) hqp
+
+/-- The alternatives of `atom Vp ∧ ¬ atom Vq` are `{Vp ∩ Vqᶜ}` — the meet
+    of two declaratives collapses to a single declarative. -/
+private lemma alt_conj_atom_negate_eq_singleton (Vp Vq : Set W) :
+    Question.alt
+        (BilatInqProp.conj (BilatInqProp.atom Vp)
+          (BilatInqProp.negate (BilatInqProp.atom Vq))).pos
+      = ({Vp ∩ Vqᶜ} : Set (Set W)) := by
+  show Question.alt (Question.declarative Vp ⊓ Question.declarative Vqᶜ) = _
+  rw [declarative_inf]
+  exact Question.alt_declarative _
+
+/-! ### §6 Worked example: Independence inference on a 3-world model
 
 A concrete witness that the m-cover semantics derives Booth Fact 9
 (Independence Inferences). We work on `W₄ = Bool × Bool` (subsets of
@@ -294,56 +355,15 @@ private lemma Vq_nsub_Vp : ¬ Vq ⊆ Vp :=
 private lemma R₃_nonempty (w : W4) : (R₃ w).Nonempty :=
   ⟨(true, true), Or.inl true_true_in_Vp⟩
 
-/-! #### Question-algebraic helpers -/
+/-! #### Question-algebraic helpers (specializations of §5 helpers) -/
 
-/-- Inf of two declaratives is the declarative of the intersection. Inline
-    helper; mathlib has no analogue at `Question` level (and one isn't
-    needed substrate-wide until a second consumer). -/
-private lemma declarative_inf (A B : Set W4) :
-    Question.declarative A ⊓ Question.declarative B = Question.declarative (A ∩ B) := by
-  apply Question.ext
-  intro q
-  show q ⊆ A ∧ q ⊆ B ↔ q ⊆ A ∩ B
-  rw [Set.subset_inter_iff]
-
-/-- The alternatives of `(declarative Vp) ⊔ (declarative Vq)` are exactly
-    `{Vp, Vq}` in our model — both are maximal because neither is a
-    subset of the other (`Vp_nsub_Vq`, `Vq_nsub_Vp`). -/
 private lemma alt_p_or_q_pos :
-    Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) := by
-  show Question.alt (Question.declarative Vp ⊔ Question.declarative Vq) = _
-  apply Set.eq_of_subset_of_subset
-  · intro q hq
-    have h := Question.alt_sup_subset_union (Question.declarative Vp)
-              (Question.declarative Vq) hq
-    rcases h with h | h
-    · rw [Question.alt_declarative] at h
-      rcases Set.mem_singleton_iff.mp h with rfl
-      exact Set.mem_insert _ _
-    · rw [Question.alt_declarative] at h
-      rcases Set.mem_singleton_iff.mp h with rfl
-      exact Set.mem_insert_of_mem _ rfl
-  · intro q hq
-    rcases Set.mem_insert_iff.mp hq with rfl | hq'
-    · apply Question.mem_alt_sup_of_alt_left
-        (P := Question.declarative Vp) (Q := Question.declarative Vq)
-      · rw [Question.alt_declarative]; rfl
-      · intro r hr hVpr
-        exact absurd (hVpr.trans hr) Vp_nsub_Vq
-    · rcases Set.mem_singleton_iff.mp hq' with rfl
-      apply Question.mem_alt_sup_of_alt_right
-        (P := Question.declarative Vp) (Q := Question.declarative Vq)
-      · rw [Question.alt_declarative]; rfl
-      · intro r hr hVqr
-        exact absurd (hVqr.trans hr) Vq_nsub_Vp
+    Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) :=
+  alt_disj_atom_eq_pair Vp Vq Vp_nsub_Vq Vq_nsub_Vp
 
-/-- The alternatives of `(declarative Vp) ⊓ (declarative Vqᶜ)` are
-    exactly `{Vp ∩ Vqᶜ}` — the meet collapses to a single declarative. -/
 private lemma alt_p_and_not_q_pos :
-    Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) := by
-  show Question.alt (Question.declarative Vp ⊓ Question.declarative Vqᶜ) = _
-  rw [declarative_inf]
-  exact Question.alt_declarative _
+    Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) :=
+  alt_conj_atom_negate_eq_singleton Vp Vq
 
 /-! #### The Independence-witness theorems -/
 
@@ -429,44 +449,96 @@ theorem boothExample_independence :
 
 end BoothExample
 
-/-! ### §6 The Independence inference, general meta-language form (Booth Fact 9)
+/-! ### §7 The Independence inference, general meta-language form (Booth Fact 9)
 
-The headline theorem of @cite{booth-2022}: necessity-modal sentences
-with disjunctive complements (and non-Hurford disjuncts) license
-Independence — `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and `□(p ∨ q) ⊨ ◇(q ∧ ¬p)`.
+The headline theorem of @cite{booth-2022}: when `p ∨ q` is non-Hurford
+(neither disjunct entails the other), `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and
+`□(p ∨ q) ⊨ ◇(q ∧ ¬p)`.
 
-The general meta-language theorem (over the class of non-Hurford
-models) requires Booth's Compactness-of-Alternatives lemma (Fact 5)
-and the non-Hurford characterization (Definition 22), which go beyond
-the scope of this initial study file. We state the theorem and carry
-a documented `sorry`; the worked-example specialization
-(`BoothExample.boothExample_independence`) discharges it on the 3-world
-model. -/
+We prove this for atomic disjunctions `atom Vp ∨ atom Vq` over an
+arbitrary accessibility relation `R` and arbitrary world type `W`. The
+proof uses minimality of the `{Vp, Vq}` cover to derive `∃ v ∈ R w,
+v ∈ Vp \ Vq` — exactly the witness needed for the possibility
+existential. (Booth Fact 9 in full generality requires
+Compactness-of-Alternatives over arbitrary `φ`; the atomic case here
+captures the structural content for `□` on disjunctions of atoms.) -/
 
-/-- **Booth Fact 9 (Object-Language Independence)**: under the model
-    class where `p ∨ q` is non-Hurford, `□(p ∨ q)` truth at `w` entails
-    `◇(p ∧ ¬q)` truth at `w`.
+/-- **Booth Fact 9 (Object-Language Independence, atomic case)**: when
+    `p ∨ q` is non-Hurford (`¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp`), the truth of
+    `□(p ∨ q)` at `w` entails the truth of `◇(p ∧ ¬q)` at `w`.
 
-    The proof Booth gives proceeds via Fact 6 (Meta-Language
-    Independence) using non-Hurford-disjunction reasoning + the
-    Compactness-of-Alternatives lemma (Fact 5). Carried as a
-    documented `sorry` until those substrates land. -/
+    Proof: from `IsMinCover {Vp, Vq} (R w)`, minimality forces `{Vq}`
+    alone to NOT cover `R w` (else by `Minimal.le_of_le`, `{Vp, Vq} ⊆
+    {Vq}`, so `Vp = Vq`, contradicting non-Hurford). Hence `∃ v ∈ R w,
+    v ∉ Vq`. Combined with the cover `R w ⊆ Vp ∪ Vq`, we get
+    `v ∈ Vp \ Vq`. Then `R' := {v}` witnesses the existential in
+    `◇(p ∧ ¬q)`'s positive-side definition. -/
 theorem independence_p_not_q
     (R : W → Set W) (Vp Vq : Set W)
-    (_h_non_hurford : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp)
+    (h_non_hurford : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp)
     (w : W) :
     isTrue (BilatInqProp.necessity R
       (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w →
     isTrue (BilatInqProp.possibility R
       (BilatInqProp.conj (BilatInqProp.atom Vp)
         (BilatInqProp.negate (BilatInqProp.atom Vq)))) w := by
-  -- TODO: requires Fact 5 (Compactness of Alternatives) + Fact 6
-  -- (Meta-Language Independence) substrate; see Booth 2022 §3.2.
-  -- Proof sketch: from m-cover of R(w) by {Vp, Vq} (alt⁺), pick a
-  -- world v ∈ R(w) ∩ (Vp \ Vq) — minimality forces this; then {v}
-  -- witnesses the existential in possibility's negative-side def.
-  -- The worked example `BoothExample.boothExample_independence`
-  -- discharges this for the constant `R₃ = Vp ∪ Vq` accessibility.
-  sorry
+  intro h
+  -- Step 1: extract the conjunction at w from h's subset semantics.
+  have hw_in : w ∈ {w' : W | (R w').Nonempty ∧
+      IsMinCover (Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
+        (BilatInqProp.atom Vq)).pos) (R w')} :=
+    h (Set.mem_singleton_iff.mpr rfl)
+  obtain ⟨_hRne, hMinCover⟩ := hw_in
+  rw [alt_disj_atom_eq_pair Vp Vq h_non_hurford.1 h_non_hurford.2] at hMinCover
+  -- Step 2: derive ∃ v ∈ R w, v ∉ Vq via minimality.
+  -- If {Vq} alone covered R w, then by minimality {Vp, Vq} ⊆ {Vq},
+  -- forcing Vp = Vq, contradicting non-Hurford.
+  have hVq_alone_no_cover : ¬ IsCover ({Vq} : Set (Set W)) (R w) := by
+    intro hcover
+    have hsub : ({Vq} : Set (Set W)) ⊆ ({Vp, Vq} : Set (Set W)) :=
+      Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl)
+    have hsup : ({Vp, Vq} : Set (Set W)) ⊆ ({Vq} : Set (Set W)) :=
+      hMinCover.le_of_le hcover hsub
+    have hVp_in : Vp ∈ ({Vq} : Set (Set W)) := hsup (Set.mem_insert _ _)
+    rcases Set.mem_singleton_iff.mp hVp_in with rfl
+    exact h_non_hurford.1 (subset_refl Vp)
+  -- Unpack the negation of cover into ∃ v ∈ R w, v ∉ Vq.
+  unfold IsCover at hVq_alone_no_cover
+  rw [Set.sUnion_singleton] at hVq_alone_no_cover
+  rw [Set.not_subset] at hVq_alone_no_cover
+  obtain ⟨v, hvR, hvNotVq⟩ := hVq_alone_no_cover
+  -- Step 3: combined with the cover R w ⊆ Vp ∪ Vq, get v ∈ Vp.
+  have hCover : (R w) ⊆ Vp ∪ Vq := by
+    have hcov : (R w) ⊆ ⋃₀ ({Vp, Vq} : Set (Set W)) := hMinCover.isCover
+    rwa [show (⋃₀ ({Vp, Vq} : Set (Set W))) = Vp ∪ Vq by
+      rw [Set.sUnion_insert, Set.sUnion_singleton]] at hcov
+  have hvVp : v ∈ Vp := (hCover hvR).resolve_right hvNotVq
+  -- Step 4: construct R' := {v} as the existential witness in possibility.
+  -- `possibility := negate ∘ necessity ∘ negate` makes (possibility _).pos
+  -- definitionally equal to a `Question.declarative` whose witness set
+  -- references `(conj _ _).pos` (after the two negations cancel).
+  show ({w} : Set W) ⊆
+       {w' : W | ∃ R' : Set W, R' ⊆ R w' ∧ R'.Nonempty ∧
+                  IsMinCover (Question.alt (BilatInqProp.conj
+                    (BilatInqProp.atom Vp)
+                    (BilatInqProp.negate (BilatInqProp.atom Vq))).pos) R'}
+  intro x hx
+  rcases Set.mem_singleton_iff.mp hx with rfl
+  refine ⟨{v}, ?_, ⟨v, rfl⟩, ?_⟩
+  · intro y hy
+    rcases Set.mem_singleton_iff.mp hy with rfl
+    exact hvR
+  · rw [alt_conj_atom_negate_eq_singleton]
+    refine ⟨?_, ?_⟩
+    · intro y hy
+      rcases Set.mem_singleton_iff.mp hy with rfl
+      exact ⟨Vp ∩ Vqᶜ, Set.mem_singleton _, hvVp, hvNotVq⟩
+    · intro Y hYcov hYsub X hXmem
+      rcases Set.mem_singleton_iff.mp hXmem with rfl
+      have h1 : v ∈ ({v} : Set W) := Set.mem_singleton_iff.mpr rfl
+      obtain ⟨Z, hZY, _hZmem⟩ := hYcov h1
+      have hZ_in : Z ∈ ({Vp ∩ Vqᶜ} : Set (Set W)) := hYsub hZY
+      rcases Set.mem_singleton_iff.mp hZ_in with rfl
+      exact hZY
 
 end Phenomena.Modality.Studies.Booth2022
