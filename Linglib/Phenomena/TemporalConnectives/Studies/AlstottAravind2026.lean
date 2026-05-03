@@ -122,23 +122,18 @@ theorem after_telicity_data_agree :
 -- § 3: Durative Selectional Restriction ↔ VendlerClass
 -- ============================================================================
 
-/-- The `satisfiesDurativeRestriction` predicate from the data layer
-    picks out exactly the SIP-having Vendler classes (states and
-    activities), grounding the data-level predicate in the
-    theory-level aspectual class system. -/
-theorem durative_restriction_picks_state_or_activity (c : VendlerClass) :
-    satisfiesDurativeRestriction c = true ↔ c = .state ∨ c = .activity :=
-  durative_restriction_iff_state_or_activity c
-
-/-- The *until* interaction data matches VendlerClass predictions:
-    acceptable iff state or activity. -/
+/-- The *until* interaction data is grounded in the durative selectional
+    restriction: each main-clause `acceptableWithout` value tracks
+    `satisfiesDurativeRestriction` on its VendlerClass. The data layer
+    (Fragment-level acceptability judgments) and the predicate layer
+    (theory-level SIP-class membership, see
+    `AspectInteractionData.durative_restriction_iff_state_or_activity`)
+    agree by construction. -/
 theorem until_selectional_restriction_grounded :
-    -- Acceptable: state or activity (SIP-having classes)
-    until_state_main.acceptableWithout = true ∧
-    until_activity_main.acceptableWithout = true ∧
-    -- Degraded: achievement and accomplishment (lack SIP)
-    until_achievement_main.acceptableWithout = false ∧
-    until_accomplishment_main.acceptableWithout = false :=
+    until_state_main.acceptableWithout = satisfiesDurativeRestriction .state ∧
+    until_activity_main.acceptableWithout = satisfiesDurativeRestriction .activity ∧
+    until_achievement_main.acceptableWithout = satisfiesDurativeRestriction .achievement ∧
+    until_accomplishment_main.acceptableWithout = satisfiesDurativeRestriction .accomplishment :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

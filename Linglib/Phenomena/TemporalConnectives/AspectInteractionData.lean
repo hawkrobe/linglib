@@ -29,7 +29,6 @@ aspectual class (Vendler class) of their complement and main clauses.
 namespace Phenomena.TemporalConnectives.AspectInteractionData
 
 open Features
-open Features
 
 -- ============================================================================
 -- § 1: Connective × Aspect Interaction Judgments
@@ -261,7 +260,7 @@ theorem accomplishment_fails : satisfiesDurativeRestriction .accomplishment = fa
     activities — the Vendler/Dowty SIP-having classes. -/
 theorem durative_restriction_iff_state_or_activity (c : VendlerClass) :
     satisfiesDurativeRestriction c = true ↔ c = .state ∨ c = .activity := by
-  cases c <;> simp [satisfiesDurativeRestriction]
+  cases c <;> decide
 
 -- ============================================================================
 -- § 7: Coercion Network Transitions (@cite{moens-steedman-1988}, Fig. 2)

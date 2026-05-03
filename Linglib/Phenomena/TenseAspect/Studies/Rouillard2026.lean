@@ -322,14 +322,12 @@ theorem surviving_is_neg_gtia_pfv :
 -- § 7. Cross-Domain Bridge: Homogeneity ↔ Scale Openness
 -- ════════════════════════════════════════════════════
 
-/-- The subinterval property (homogeneity) corresponds to open-scale
-    boundedness in the Kennedy–Rouillard isomorphism. The hypothesis
-    `p.toVendlerClass ∈ {.state, .activity}` is the SIP-having class
-    condition (formerly stated as `p.isHomogeneous = true` before the
-    Aktionsart Bool predictors were dissolved). Combined with
-    `atelic_open` (from MaximalInformativity.lean) it forms the bridge
-    chain: state ∨ activity → atelic → open scale → E-TIA blocked. -/
-theorem homogeneous_implies_open_scale (p : AspectualProfile)
+/-- The SIP-having Vendler classes (states and activities — what
+    Vendler/Dowty call "homogeneous") map to open-scale boundedness in the
+    Kennedy–Rouillard isomorphism. Combined with `atelic_open` (from
+    MaximalInformativity.lean) this forms the bridge chain:
+    state ∨ activity → atelic → open scale → E-TIA blocked. -/
+theorem state_or_activity_implies_open_scale (p : AspectualProfile)
     (h : p.toVendlerClass = .state ∨ p.toVendlerClass = .activity) :
     scaleBoundedness p.toVendlerClass = .open_ := by
   rcases h with hc | hc <;> rw [hc] <;> decide

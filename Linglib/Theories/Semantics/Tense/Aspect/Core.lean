@@ -255,14 +255,6 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
   intro ⟨pts, tLB, hmem, hLB, hRB, hp⟩
   exact ⟨pts, tLB, hSub hmem, hLB, hRB, hp⟩
 
-end Semantics.Tense.Aspect.Core
-
-namespace Semantics.Tense.Aspect.Core
-
-open Core.Time
-
-variable {Time : Type*} [LinearOrder Time] {W : Type*}
-
 -- ════════════════════════════════════════════════════
 -- § Entailment Properties
 -- ════════════════════════════════════════════════════

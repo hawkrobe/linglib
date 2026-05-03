@@ -33,7 +33,6 @@ temporal feature clashes with the verb constellation's, the adverbial wins.
 namespace Semantics.Tense.Aspect.Composition
 
 open Features
-open Features
 open _root_ (MassCount)
 
 -- ════════════════════════════════════════════════════

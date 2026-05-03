@@ -4,72 +4,35 @@ import Linglib.Core.Scales.Scale
 # Features.Aktionsart
 @cite{vendler-1957} @cite{smith-1997}
 
-Per-verb-entry feature taxonomy for lexical aspect: the three orthogonal
+Per-verb-entry feature taxonomy for lexical aspect: three orthogonal
 binary features (telicity, duration, dynamicity), the five-way Vendler
 class projection, the bundled `AspectualProfile`, and aspectual-shift
 operations modeling compositional coercion.
 
-This file is **descriptive vocabulary** Fragment authors use to label
-lexical entries (`verb.aspectualProfile = activityProfile`). Predictions
-about how a labelled verb's denotation behaves live in `Theories/`
-(consequence theorems) or framework-specific `Studies/` files, not here.
+**Descriptive vocabulary** Fragment authors use to label lexical entries
+(`verb.aspectualProfile = activityProfile`); predictions about how a
+labelled verb's denotation behaves live in `Theories/` (consequence
+theorems) or framework-specific `Studies/` files.
 
-## Provenance
-
-Moved from `Core/Lexical/VerbClass.lean` (the inductives + class theorems)
-and `Theories/Semantics/Tense/Aspect/LexicalAspect.lean` (the shift
-methods + `Telicity.toMereoTag`) in the cleanup that dissolved
-`Core/Lexical/`. Per-verb-entry classifications belong with the other
-feature taxonomies (Person, Number, Polarity, Definiteness…) — not in
-`Core/` (substrate) and not in `Theories/` (which would imply
-framework-specific theorem content). The shift methods co-locate with
-the type definitions per the dot-notation rule (`(p : AspectualProfile).telicize`
-must be declared in `namespace Features.AspectualProfile`).
-
-## Framework commitment
-
-The 5-way classification (`VendlerClass`) and the orthogonal-binary
-parameterization (`AspectualProfile`) follow @cite{vendler-1957} as
-extended by Smith 1991 *The Parameter of Aspect* (1st ed.; both the
-binary-feature decomposition and the 5-cell map including semelfactives
-appear there — the @cite{smith-1997} 2nd ed. cited here is a revision).
-The semelfactive category predates Smith — it comes from Slavic
-aspectology and was introduced into the typological literature by
-Comrie 1976 *Aspect* (Cambridge UP; not currently in `references.bib`).
-
-## Substrate primacy
+The 5-way classification follows the Vendler taxonomy as extended by
+Smith 1991 / @cite{smith-1997} (binary feature decomposition + 5-cell map
+including semelfactives — both first appear in the 1991 1st ed., not the
+1997 2nd ed. cited here). The semelfactive category itself comes from
+Slavic aspectology (Comrie 1976 *Aspect*, not in `references.bib`).
 
 `Telicity.toMereoTag` projects this file's binary `Telicity` onto
 `Core.Scales.Scale.MereoTag`, the canonical cumulative/quantized tag.
-The mereological algebra of CUM/QUA/DIV event predicates lives in
-`Theories/Semantics/Events/Mereology.lean`; this file's `Telicity` is
-the Smith-flavored derived label, not the primary notion. Reversing
-the projection — defining `Telicity` as a quotient of the substrate —
-is a follow-up.
+The CUM/QUA/DIV algebra over event predicates lives in
+`Theories/Semantics/Events/Mereology.lean` — that is the substrate; the
+`Telicity` here is the Smith-flavored derived label.
 
-## Sibling formalizations elsewhere in linglib
-
-- @cite{vendler-1957}: the original 4-way is `VendlerClass` minus
-  `.semelfactive`.
-- @cite{bach-1986}: `EventSort = action | state` in
-  `Theories/Semantics/Events/Basic.lean`, with `dynamicityToEventSort`
-  round-trip against this file's `Dynamicity`.
-- @cite{krifka-1989}, @cite{krifka-1998}: full CUM/QUA/DIV algebra in
-  `Theories/Semantics/Events/Mereology.lean`, plus study files
-  `Phenomena/TenseAspect/Studies/Krifka1989.lean` and `Krifka1998.lean`.
-- @cite{dowty-1979}: subinterval property as `HasSubintervalProp` in
-  `Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`.
-- @cite{rothstein-2004}: complex-event analysis of accomplishments —
-  partial coverage in `Phenomena/ArgumentStructure/Studies/Dowty1991.lean`
-  and `Theories/Semantics/Verb/Affectedness.lean`.
-- @cite{filip-2012}: three-way CUM/QUA/neither classification in
-  `Phenomena/TenseAspect/Studies/Filip2012.lean`, with a
-  `three_way_exhaustive` theorem refuting the binary `Telicity` here
-  for incremental verbs (no refutation theorem yet ties back to this file).
-
-Bridges between this vocabulary and those substrate formalizations
-(e.g., "a verb of class `.state` has a denotation satisfying
-`HasSubintervalProp`") are not yet landed.
+Sibling formalizations of competitor lexical-aspect frameworks:
+@cite{bach-1986} `EventSort` in `Theories/Semantics/Events/Basic.lean`;
+@cite{krifka-1989}/@cite{krifka-1998} CUM/QUA/DIV in
+`Theories/Semantics/Events/Mereology.lean`; @cite{dowty-1979} SIP in
+`Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`;
+@cite{filip-2012} three-way refutation of binary telicity in
+`Phenomena/TenseAspect/Studies/Filip2012.lean`.
 -/
 
 namespace Features
@@ -101,6 +64,7 @@ namespace Telicity
 /-- Telicity → MereoTag: telic = quantized.
     Telic predicates are QUA (no proper part of a telic event is telic);
     atelic predicates are CUM (the sum of two atelic events is atelic). -/
+@[simp]
 def toMereoTag : Telicity → Core.Scale.MereoTag
   | .telic  => .qua
   | .atelic => .cum
@@ -126,6 +90,7 @@ inductive VendlerClass where
 namespace VendlerClass
 
 /-- Get the telicity of a Vendler class (states treated as atelic). -/
+@[simp]
 def telicity : VendlerClass → Telicity
   | .state => .atelic
   | .activity => .atelic
@@ -134,6 +99,7 @@ def telicity : VendlerClass → Telicity
   | .semelfactive => .atelic
 
 /-- Get the duration of a Vendler class. -/
+@[simp]
 def duration : VendlerClass → Duration
   | .state => .durative
   | .activity => .durative
@@ -142,6 +108,7 @@ def duration : VendlerClass → Duration
   | .semelfactive => .punctual
 
 /-- Get the dynamicity of a Vendler class. -/
+@[simp]
 def dynamicity : VendlerClass → Dynamicity
   | .state => .stative
   | .activity => .dynamic
@@ -215,6 +182,7 @@ namespace AspectualProfile
 
 /-- Convert an aspectual profile to a situation type.
     All five [±dynamic, ±durative, ±telic] combinations are distinguished. -/
+@[simp]
 def toVendlerClass (p : AspectualProfile) : VendlerClass :=
   match p.dynamicity, p.duration, p.telicity with
   | .stative, _, _ => .state
@@ -244,6 +212,7 @@ end AspectualProfile
 namespace VendlerClass
 
 /-- Convert a Vendler class to its canonical aspectual profile. -/
+@[simp]
 def toProfile (c : VendlerClass) : AspectualProfile :=
   { telicity := c.telicity
   , duration := c.duration
@@ -272,23 +241,29 @@ def semelfactiveProfile : AspectualProfile :=
   { telicity := .atelic, duration := .punctual, dynamicity := .dynamic }
 
 /-- Converting a situation type to a profile and back is identity. -/
+@[simp]
 theorem vendler_profile_roundtrip (c : VendlerClass) :
     c.toProfile.toVendlerClass = c := by
   cases c <;> rfl
 
 /-- The canonical state profile maps to the state class. -/
+@[simp]
 theorem stateProfile_toClass : stateProfile.toVendlerClass = .state := rfl
 
 /-- The canonical activity profile maps to the activity class. -/
+@[simp]
 theorem activityProfile_toClass : activityProfile.toVendlerClass = .activity := rfl
 
 /-- The canonical achievement profile maps to the achievement class. -/
+@[simp]
 theorem achievementProfile_toClass : achievementProfile.toVendlerClass = .achievement := rfl
 
 /-- The canonical accomplishment profile maps to the accomplishment class. -/
+@[simp]
 theorem accomplishmentProfile_toClass : accomplishmentProfile.toVendlerClass = .accomplishment := rfl
 
 /-- The canonical semelfactive profile maps to the semelfactive class. -/
+@[simp]
 theorem semelfactiveProfile_toClass : semelfactiveProfile.toVendlerClass = .semelfactive := rfl
 
 -- ════════════════════════════════════════════════════
