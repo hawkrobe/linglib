@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.615 — RSA cancellation theorem stated; full DPI + Blackwell deferred
+
+- New `Linglib/Theories/Pragmatics/RSA/Cancellation.lean` (NEW, ~95 LOC):
+  - `RSA.cancellation_via_dpi` (statement, sorry'd): the @cite{goodman-stuhlmuller-2013} cancellation principle as a general theorem about RSA models with noisy observation kernels. Stated for any kernel noisification: `KL(L1 noisy u ‖ prior) ≤ KL(L1 informative u ‖ prior)`.
+  - The proof reduces cancellation to (1) `PMF.klDiv_bind_le` (DPI on bind, in `DataProcessing.lean`, sorry'd) + (2) posterior monotonicity under more-informative likelihood. Both are general probability-theory results.
+- The cancellation theorem is the structural foundation that should drive every RSA-with-noisy-observation paper's findings. GS2013PMF's 11 numerical findings are corollaries (per-paper instances of cancellation).
+- **Status of the DPI/cancellation chain**: log-sum lemma (`Real.klFun_logSum_le`) is proved. DPI statement and cancellation statement have proof-sketch sorries. Full discharge is multi-session work: (a) ~80 LOC of careful ENNReal manipulation in DPI; (b) ~50 LOC for posterior monotonicity in cancellation; (c) ~150 LOC for Blackwell ordering on hypergeometric (needed to instantiate cancellation for GS2013).
+- **Architectural verdict**: the GS2013PMF clunkiness is structural — the file proves 11 numerical findings instance-by-instance because linglib lacks the cancellation primitive. With cancellation as a general theorem, the file shrinks from 1700 → ~500 LOC and every downstream RSA-with-noise paper inherits cancellation as a 1-line corollary. Mathlib gap: `klDiv_map_le`, `klDiv_bind_le`, Blackwell ordering — none in mathlib, all natural follow-ons to existing chain-rule machinery.
+
 ### 0.230.629 — Phase 9 (final): Theories/Interfaces/Morphosyntax/ + SyntaxPhonology/ dissolved
 
 Migration phases 1-8 of dissolving `Theories/Interfaces/Morphosyntax/` (5 files, 1118 LOC) and `Theories/Interfaces/SyntaxPhonology/Minimalist/` (3 files, 739 LOC) are complete.

@@ -2525,6 +2525,7 @@ import Linglib.Theories.Pragmatics.RSA.Noisy
 import Linglib.Theories.Pragmatics.RSA.Composition
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
 import Linglib.Theories.Pragmatics.RSA.Silence
+import Linglib.Theories.Pragmatics.RSA.Cancellation
 import Linglib.Phenomena.ArealTypology.Studies.Haspelmath2001
 import Linglib.Theories.Diachronic.Areal
 import Linglib.Theories.Diachronic.Grammaticalization
