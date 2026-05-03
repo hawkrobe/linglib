@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.628 — Phase 8: LCA + CyclicLinearization → Theories/Syntax/Minimalist/Linearization/
+
+Migration phase 8/9.
+
+- `git mv Theories/Interfaces/SyntaxPhonology/Minimalist/{LCA,CyclicLinearization}.lean → Theories/Syntax/Minimalist/Linearization/{LCA,CyclicLinearization}.lean` (new subdir).
+- Destination per linguistics-expert + integration-auditor: linearization is a PF-side / Y-model operation whose primary object remains the hierarchical syntactic structure (LCA derives precedence FROM asymmetric c-command on the tree; Cyclic Linearization operates on phase Spell-Out output). Brief's proposed Theories/Morphology/Linearization/ was a layer error — these files don't realize exponents from features.
+- Sibling to the existing `Theories/Syntax/Minimalist/SpellOut.lean` (the Y-model junction operation).
+- Namespaces unchanged (LCA in `namespace Minimalist`; CL still top-level — namespace cleanup deferred).
+- 2 importer files updated (ErlewineSommerlot2025, ShenHuang2026); ColeHermon2008 docstring path ref updated. Linglib.lean root index updated.
+- `Theories/Interfaces/SyntaxPhonology/Minimalist/` is now empty (Phase 9 will `rmdir`).
+
+Out of scope: 11 native_decide instances in CyclicLinearization (lines 190, 197, 205, 213, 220, 224, 244, 251, 259, 302, 309) and the top-level namespace pollution (Prec, OrderingTable, spellout, etc. exposed at root) — both belong to a follow-up code-quality commit to keep structural moves separate from proof-style + namespace surgery.
+
+### 0.230.629 — Core/Logic/Team/: Anttila 2021 §2.2 substrate (flatness theorem) + StateAlgebra rename
+
+Foundational refactor: hoist Anttila's state-semantic property algebra to Core, renamed under the established team-semantics umbrella.
+
+- New `Core/Logic/Team/Properties.lean`: Anttila 2021 Definition 2.2.1 (downward closure, union closure, empty team, flatness) parameterized over `support : Model → Form → Finset W → Prop`. Anttila Proposition 2.2.2 (flatness ↔ downward + union + empty) proved generically — central technical lemma all team-semantic logics depend on.
+- N-ary union closure (`unionClosed_finset`) derived from binary + empty by `Finset.induction_on`; matches Anttila's original n-ary statement of union closure.
+- Mathlib-shape rationale documented: properties are predicates parameterized over the support relation, NOT a typeclass — different consumers can speak about the same formula under different support relations (e.g., `support` vs `antiSupport` in bilateral logics).
+- **Rename `Core/Logic/StateAlgebra/{Partition, Frames}.lean` → `Core/Logic/Team/Algebra.lean`** (merged); **`Core/Logic/StateSemantic/Properties.lean` → `Core/Logic/Team/Properties.lean`**. Old empty dirs deleted.
+- Naming choice — "team" (Hodges 1997, Väänänen 2007) over "state-based" (Aloni / Anttila): the foundational umbrella term that generalizes uniformly across BSML (team = set of worlds), QBSML (team = set of indices), dependence logic (team = set of assignments). Anttila §2.1 uses "states" but inherits the chassis from team semantics. The property `isStateBased` keeps its Aloni-literature name (it's a property of the accessibility relation, not the team).
+- BSML/Defs.lean updated to consume new path/namespace.
+- Build clean for the StateBased+BSML+FreeChoice scope (756 jobs); pre-existing failures elsewhere are concurrent in-flight migrations (CoonMateoPedroPreminger2014, AgreementTarget, ParasiticAttitudes).
+
+Next: refactor BSML to prove Anttila Proposition 2.2.8 (NE-free formulas have downward + empty; all BSML formulas have union closure since BSML lacks ⨼) — corollary "NE-free BSML formula → flat" follows from the new flatness theorem.
+
 ### 0.230.614 — Entropy.lean rename + Real.klFun_logSum_le + DPI scaffolding (sorry'd discharge)
 
 - Rename `Linglib/Core/Probability/PMFEntropy.lean` → `Linglib/Core/Probability/Entropy.lean`. Per consolidation discipline (all entropy in linglib is on PMF). Updates Linglib.lean import + 3 consumers (Paradigm, ChannelCapacity, MultinomialPCFG).
