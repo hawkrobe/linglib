@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.642 — SmithMoskal §4 number AAB witness encoded (Yagua 2)
+
+Replaced the schematic placeholder `attestedNumberAAB` in `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean` with concrete data from §4 Table 46 of `@cite{smith-moskal-xu-kang-bobaljik-2019}`.
+
+Yagua 2nd person (`@cite{payne-payne-1990}`): SG=*jiy*, PL=*jiry-éy*, DL=*sáada*. PL transparently *jiy* + suffix; DL suppletive. Projects to `[0, 0, 1]` over SG/PL/DL.
+
+Per Table 32, number-side AAB has 3 attestations (vs 48 ABB, 19 ABC, numerous AAA, 1 dubious ABA). Table 46 lists Wambaya 1INCL, Yagua 2, Dehu 3M. Yagua 2 is the morphologically cleanest case.
+
+`number_aab_attested_falsifies_dm` now witnesses Yagua 2 directly — same theorem shape as the case-side `wardamanThirdSg`-based witness, same divergence content. DM derivation `vi_cmpr_eq_sprl` predicts `cmpr = sprl`; Yagua 2 PL ≠ DL falsifies the lift to number.
+
+Bib: added `payne-payne-1990` (Yagua chapter, Handbook of Amazonian Languages vol. 2) and `nordlinger-1998` (A grammar of Wambaya, Pacific Linguistics — cited in the module docstring as the Wambaya source). Bibliography regenerated (2049 → 2051 entries).
+
+Both §2 case-side and §3 number-side AAB witnesses now have concrete attestation. Zero `sorry`s in the file. The §4 substrate addition (domain-based locality, the §3.7 "weaken locality" proposal) remains stubbed prose-only — that's the next substantive lift.
+
 ### 0.230.641 — SmithMoskal §3.6 case AAB witness encoded
 
 The two `sorry`'d placeholders in `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019.lean` (`case_aab_attested_falsifies_dm`, `number_aab_attested_falsifies_dm`) now have real proofs. Both theorems take the shape `∃ cells : List Nat, IsContiguous cells ∧ cells[1]? ≠ cells[2]?` — witnessing the cross-framework divergence the migration substrate enables.
