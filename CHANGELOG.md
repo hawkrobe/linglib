@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.645 — Core/IntensionalLogic → Core/Logic/Intensional rename completion
+
+Followup to 0.230.643 (`ac8dc731`, which moved the directory but left
+import paths and docstring text references stale across consumers and at
+the root index).
+
+- `Linglib.lean` — 13 root imports updated from `Core.IntensionalLogic.X`
+  to `Core.Logic.Intensional.X`.
+- 15 consumer files — docstring text references updated:
+  `Core.IntensionalLogic` → `Core.Logic.Intensional` (namespace style)
+  and `Core/IntensionalLogic` → `Core/Logic/Intensional` (path style).
+
+The 13 moved files themselves had their internal `namespace` declarations
+updated in `ac8dc731`; this commit closes the cleanup. Mathlib-style
+algebraic-hierarchy organization: all logic substrates now sit under
+`Core/Logic/` (Team, Intensional, Opposition, Quantification, ...)
+rather than as top-level Core entries.
+
 ### 0.230.644 — retrofit + SmithMoskal §4: domain-aware framing + case/number partitions
 
 **#1 Retrofit** (`Theories/Morphology/DegreeContainment.lean`):
