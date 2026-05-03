@@ -23,7 +23,7 @@ construction.
 
 ## Reuse
 
-Built on `Core.Intension W τ` (`Core/IntensionalLogic/Rigidity.lean`) — no
+Built on `Core.Intension W τ` (`Core/Logic/Intensional/Rigidity.lean`) — no
 parallel `Concept` type is introduced. The acquaintance predicate is
 `Set.image`-membership; cover exhaustiveness is `Set.SurjOn`. Both are
 mathlib idioms — the only genuinely new content here is naming.

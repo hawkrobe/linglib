@@ -14,7 +14,7 @@ and lumping all rest, but they have no built-in commitment to "worlds" vs.
 "situations" vs. "times": they make sense for any `Index : Type*` of points
 at which propositions are evaluated.
 
-## Why this lives in `Core/IntensionalLogic/`
+## Why this lives in `Core/Logic/Intensional/`
 
 A premise set is a `List (Index → Prop)`. The notions of *consistency*,
 *following from*, and *compatibility* are purely set-theoretic facts about

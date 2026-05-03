@@ -10,7 +10,7 @@ Toy examples in Montague's PTQ-style intensional logic:
 - De dicto vs de re readings
 
 Uses the infrastructure from
-`Core/IntensionalLogic/Examples.lean`. -/
+`Core/Logic/Intensional/Examples.lean`. -/
 
 namespace Phenomena.Attitudes.Studies.Montague1973
 

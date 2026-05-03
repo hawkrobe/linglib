@@ -273,7 +273,7 @@ example :
 /-- **Architectural payoff via `Intension` functoriality** (the deep
     structural claim). Rigidity transfers across `Res` types via
     post-composition with ANY function — by the general
-    `Intension.IsRigid.map` lemma in `Core/IntensionalLogic/Rigidity.lean`.
+    `Intension.IsRigid.map` lemma in `Core/Logic/Intensional/Rigidity.lean`.
 
     Concretely: @cite{anand-nevins-2004}'s Kaplan-compliant `kaplanI`
     (rigid at `Res = Agent`) yields, for any `f : Agent → ℤ` (e.g.

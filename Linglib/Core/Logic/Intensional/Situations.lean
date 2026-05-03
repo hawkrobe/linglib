@@ -25,7 +25,7 @@ literally `Monotone : (S → Prop) → Prop` from mathlib. Possible-worlds
 semantics is the special case where `≤` is the discrete order
 (`s ≤ s' ↔ s = s'`), so every index is maximal.
 
-Putting the abstraction in `Core/IntensionalLogic/` lets all higher
+Putting the abstraction in `Core/Logic/Intensional/` lets all higher
 modules opt in by adding `[PartialOrder Index]`, without forcing a
 choice of "worlds vs. situations" anywhere in `Frame`.
 
@@ -42,7 +42,7 @@ choice of "worlds vs. situations" anywhere in `Frame`.
 
 The relation **lumping** between propositions and the distinction
 between accidental and non-accidental generalizations belong in
-`Core/IntensionalLogic/Lumping.lean`; those are theory-laden and
+`Core/Logic/Intensional/Lumping.lean`; those are theory-laden and
 depend on a chosen modal base. This file keeps only the order-theoretic
 core.
 -/

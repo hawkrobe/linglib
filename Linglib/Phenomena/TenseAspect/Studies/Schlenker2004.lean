@@ -373,7 +373,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     Kaplan-stable from shifted readings uniformly across all three
     frameworks at the substrate level. The same closure lemmas
     (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
-    from `Core/IntensionalLogic/Rigidity.lean`) apply uniformly:
+    from `Core/Logic/Intensional/Rigidity.lean`) apply uniformly:
 
     | Framework                  | Kaplan-stable      | Shifted          |
     |----------------------------|--------------------|------------------|

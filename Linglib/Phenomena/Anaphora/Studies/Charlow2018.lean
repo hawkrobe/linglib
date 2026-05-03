@@ -35,7 +35,7 @@ bridges them to the `Frame`/`DenotG` infrastructure.
 ## Key results
 
 1. `constDenot`/`applyG` satisfy the four applicative functor laws
-   (`Core/IntensionalLogic/Variables.lean`)
+   (`Core/Logic/Intensional/Variables.lean`)
 2. `denotGJoin` satisfies the monad laws (ibid.)
 3. H&K's `⟦·⟧` decomposes as ρ + ⊛ (`hk_decomposition`)
 4. Λᵢ as a categorematic operation (`lambdaAbsG`)

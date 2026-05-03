@@ -230,7 +230,7 @@ theorem local_updates (ap : AccessPattern C R) (hd : ap.depth = .local)
     IS an `Intension (ContextTower C) R` via its `resolve` method. The
     substrate's `Intension`-based machinery (`Core.Intension.IsRigid`,
     `IsRigidOn`, the functoriality lemmas in
-    `Core/IntensionalLogic/Rigidity.lean`) thereby applies to access
+    `Core/Logic/Intensional/Rigidity.lean`) thereby applies to access
     patterns. The push-invariance of origin-depth access (`origin_stable`
     above) is the access-pattern analog of the substrate's `IsRigidOn`
     on tower-shift orbits. -/

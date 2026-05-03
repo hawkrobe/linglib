@@ -39,7 +39,7 @@ The truth conditions are then:
 ## Architectural placement
 
 This is the **first** formal consumer of the `Lumps` API in
-`Core/IntensionalLogic/Lumping.lean` — closing the orphan-API problem
+`Core/Logic/Intensional/Lumping.lean` — closing the orphan-API problem
 flagged in earlier reviews. The crucial-set closure condition
 (condition (iii)) literally calls `Lumps q r w`, so the operator
 cannot exist without the lumping API; conversely, the API earns its

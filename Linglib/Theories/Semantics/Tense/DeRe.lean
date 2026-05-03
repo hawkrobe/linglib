@@ -32,7 +32,7 @@ live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
 
 ## Reuse
 
-- `Core.Intension W τ` (`Core/IntensionalLogic/Rigidity.lean`) — substrate
+- `Core.Intension W τ` (`Core/Logic/Intensional/Rigidity.lean`) — substrate
   for time-concepts. `IsRigid` captures the "same time across alternatives"
   property that distinguishes de re from de dicto temporal anaphora.
   `IsRigidOn` (set-relativized) is the workhorse for modal-alternative
