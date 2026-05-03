@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
@@ -1057,5 +1058,74 @@ theorem strengthened_eq_alternativeSource :
   intro w; cases w <;> decide
 
 end AlternativeSourceBridge
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §  Implicature spine bridge — magriToImplicature + honest diagnostic
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ## Bridge: blind SI as `Implicature W Prop`
+
+Wraps a `BlindScenario`-derived strengthened meaning as an `Implicature`
+value over the same world type, exercising the cross-mechanism spine in
+`Theories/Pragmatics/Implicature/Defs.lean`. The `Bool`-valued
+strengthening becomes a `Prop`-valued implicature `content` via
+`s.strengthened u w = true`.
+
+### Why NOT a non-cancellability theorem
+
+The @cite{magri-2009} obligatoriness claim does *not* translate cleanly
+into `Implicature.IsCancellable` failure, even CK-relativized. For
+"#Some Italians come from a warm country" with CK = {allWarm},
+*"in fact all"* is a consistent continuation at the CK world that
+contradicts the EXH'd implicature — so `IsCancellable` (and
+`IsCancellableInContext`) both *hold*. The contentful Magri claim
+is a *different* diagnostic: **the strengthened meaning has no
+CK-realizer.** That is the theorem delivered here. See
+`Theories/Pragmatics/Implicature/Diagnostics.lean` docstring for the
+extended discussion of why Magri obligatoriness ≠ IsCancellable failure.
+-/
+
+section ImplicatureSpineBridge
+
+variable {W U : Type} [Fintype W] [DecidableEq W]
+
+/-- Wrap a `BlindScenario`-derived strengthened meaning as an
+`Implicature W Prop`. The `content` is `s.strengthened u · = true`
+(the EXH'd meaning at each world); the `mechanism` is `.exhIEII`
+(Magri uses Fox's innocent-exclusion EXH; the Bar-Lev–Fox unification
+of IE+II is the project-canonical successor). -/
+def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop where
+  kind      := .scalar
+  content   := fun w => s.strengthened u w = true
+  altsUsed  := { p | ∃ alt ∈ s.alternatives u, p = fun w => s.meaning alt w = true }
+  mechanism := .exhIEII
+
+/-- **Magri's blindness diagnostic, restated against the implicature spine.**
+`blindOdd` ⇒ the strengthened-meaning content has *no* CK-compatible
+realizer. This is a *deviance* claim, distinct from non-cancellability:
+the implicature is contextually cancellable in the Sadock sense (witness:
+"in fact all" at the CK world), but the strengthened meaning cannot be
+true at any CK world at all. The "#" diacritic on Magri's example is
+the linguistic correlate of *this* property, not of cancellability
+failure. -/
+theorem magri_blindOdd_no_ck_realizer
+    (s : BlindScenario W U) (u : U) (h : s.blindOdd u = true) :
+    ¬ ∃ w, s.context w = true ∧ (magriToImplicature s u).content w := by
+  rintro ⟨w, hctx, hcontent⟩
+  -- hcontent : s.strengthened u w = true, by definition of magriToImplicature
+  -- unfold to: w ∈ innocent.exh ...
+  simp only [magriToImplicature, BlindScenario.strengthened,
+             decide_eq_true_eq] at hcontent
+  -- unpack blindOdd: second conjunct gives ∀ w ∈ cWorlds, w ∉ exh ...
+  simp only [BlindScenario.blindOdd, Bool.and_eq_true,
+             decide_eq_true_eq] at h
+  obtain ⟨_, hCK_excludes⟩ := h
+  -- show w ∈ s.cWorlds, then apply
+  have hMem : w ∈ s.cWorlds := by
+    simp only [BlindScenario.cWorlds, Finset.mem_filter, Finset.mem_univ,
+               true_and, hctx]
+  exact hCK_excludes w hMem hcontent
+
+end ImplicatureSpineBridge
 
 end Magri2009

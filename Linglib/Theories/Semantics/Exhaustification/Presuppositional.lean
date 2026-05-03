@@ -1,4 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
+import Linglib.Theories.Pragmatics.Implicature.Diagnostics
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 
@@ -250,5 +251,53 @@ the embedded FC puzzles that exh cannot.
 For the concrete worked example over `FCWorld` and the embedded FC
 puzzles, see `Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
 -/
+
+-- ============================================================================
+-- SECTION 8: Implicature Spine Bridge — BPS-style non-cancellability
+-- ============================================================================
+
+/-!
+## Bridge: pex outputs as `Implicature W Prop`
+
+Wraps a `PrProp W` (the pex output type) as an `Implicature W Prop` whose
+`content` is the presupposed component. The non-cancellability of the
+inferred content follows from the structural fact that
+`PrProp.holds w p ↔ p.presup w ∧ p.assertion w` — i.e., the assertion
+already entails the presupposition by construction, which discharges
+`IsCancellable.false_of_assertion_implies_content`.
+
+This is the formal cash-out of the @cite{bassi-delpinal-sauerland-2021}
+critique: pex-derived inferences fail Sadock's cancellability test, *as
+a theorem*, rather than as a stipulation.
+-/
+
+open Core.Presupposition
+
+/-- Wrap a `PrProp W` (e.g. a pex output) as an `Implicature W Prop` whose
+content is the presupposed component. The `mechanism` is fixed to
+`.bpsPresuppositional`. -/
+def bpsToImplicature {W : Type*} (kind : ImplicatureKind)
+    (alts : Set (W → Prop)) (p : PrProp W) : Implicature W Prop where
+  kind      := kind
+  content   := p.presup
+  altsUsed  := alts
+  mechanism := .bpsPresuppositional
+
+/-- Holding of a `PrProp` entails its presupposition: the structural fact
+underlying BPS non-cancellability. -/
+theorem bps_holds_implies_presup {W : Type*} (p : PrProp W) :
+    ∀ w, PrProp.holds w p → p.presup w :=
+  fun _ h => h.1
+
+/-- **BPS non-cancellability theorem**: when the assertion is `pex.holds`
+and the implicature content is `pex.presup`, no continuation can cancel
+the inferred content. The marquee result the @cite{bassi-delpinal-sauerland-2021}
+docstring of `Diagnostics.lean` advertises. -/
+theorem bps_not_cancellable {W : Type*} (kind : ImplicatureKind)
+    (alts : Set (W → Prop)) (p : PrProp W) :
+    ¬ Implicature.IsCancellable (fun w => PrProp.holds w p)
+                                (bpsToImplicature kind alts p) :=
+  Implicature.IsCancellable.false_of_assertion_implies_content
+    (bps_holds_implies_presup p)
 
 end Exhaustification.Presuppositional

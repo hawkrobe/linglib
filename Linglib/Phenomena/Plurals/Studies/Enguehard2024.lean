@@ -4,7 +4,7 @@ import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.Sauerland2003
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
+import Linglib.Theories.Semantics.Exhaustification.Presuppositional
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
@@ -507,7 +507,7 @@ This explains the empirical asymmetry:
 
 ### Connection to pex infrastructure
 
-`pexIEII` (from `PresuppositionalExhaustification.lean`) produces a
+`pexIEII` (from `Presuppositional.lean`) produces a
 `PrProp` with:
 - **assertion** = φ (the prejacent)
 - **presupposition** = ¬IE ∧ homog(II)

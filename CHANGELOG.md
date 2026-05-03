@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.651 — Implicature spine: BPS non-cancellability cashed; S=Prop default dropped
+
+Multi-agent audit found `Diagnostics.lean`'s docstring claim — "BPS
+provably fails IsCancellable" — was aspirational. This change delivers
+the theorem and surfaces an honest Magri framing.
+
+**Substrate** (`Theories/Pragmatics/Implicature/{Defs,Diagnostics}.lean`):
+- `ImplicatureMechanism` gains `.bpsPresuppositional`.
+- `Implicature W S`: `S := Prop` default dropped, `S` now `Type*`. Two
+  callers (`somePassedSI`, `localReadingExistsExp1`) migrated.
+- New `IsCancellable.false_of_assertion_implies_content` — the
+  load-bearing principle.
+- New `IsCancellableInContext` (CK-relativized cancellability).
+- `_hKind` dropped; theorem renamed `lexical_not_calculable`. Bare
+  `simp` and `exact id` patterns replaced.
+- Docstring honest about what's delivered for BPS vs Magri.
+
+**Bridge**: `Exhaustification/PresuppositionalExhaustification.lean`
+renamed to `Presuppositional.lean` (namespace already matched). Adds
+`bpsToImplicature : PrProp W → Implicature W Prop` and
+`bps_not_cancellable` (one-line via the principle).
+
+**Worked instance** (`DelPinalBassiSauerland2024.lean`): defines
+`fcImplicature := bpsToImplicature .freeChoice fcALT pexFC` and proves
+`pexFC_not_cancellable` — the marquee FCWorld theorem.
+
+**Magri honest diagnostic** (`Magri2009.lean`): adds `magriToImplicature`
+(Bool→Prop) and `magri_blindOdd_no_ck_realizer`. Not a cancellability
+theorem — Magri's example IS contextually cancellable ("in fact all"
+witness at the CK world); the deviance is "no CK-realizer of the
+strengthened meaning," a different diagnostic.
+
+**Citations** (verified from author-supplied PDFs): `sadock-1978`,
+`hirschberg-1985`, `horn-1991` added to `references.bib`.
+
+**Out of scope**: `Is*`-prefix renames; RSA/IBR mechanism cashing;
+recent-literature engagement (van Tiel 2016, Mayol & Castroviejo 2013,
+Tonhauser 2013).
+
 ### 0.230.650 — AloniVanOrmondt2023 study file: Fact 10 + QBSML/Enrichment substrate
 
 First QBSML consumer study file. The honest substrate (post 0.230.646

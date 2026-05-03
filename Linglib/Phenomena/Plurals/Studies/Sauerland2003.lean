@@ -425,7 +425,7 @@ is non-atomic (more than one).
 On the modern (2020s) account (@cite{delpinal-bassi-sauerland-2024}),
 this is derived via presuppositional exhaustification (pex): pex over
 {⟦Sg⟧, ⟦Pl⟧} presupposes the negation of [Sg]'s presupposition (= ¬Atom).
-See `Theories/Semantics/Exhaustification/PresuppositionalExhaustification.lean`.
+See `Theories/Semantics/Exhaustification/Presuppositional.lean`.
 
 ## Bridge to `Phenomena.Plurals.Multiplicity`
 

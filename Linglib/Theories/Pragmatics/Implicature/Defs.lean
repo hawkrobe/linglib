@@ -5,6 +5,7 @@ import Mathlib.Data.Set.Basic
 @cite{grice-1975} @cite{horn-1972} @cite{gazdar-1979} @cite{sauerland-2004}
 @cite{chierchia-fox-spector-2012} @cite{bar-lev-fox-2020}
 @cite{frank-goodman-2012} @cite{goodman-stuhlmuller-2013}
+@cite{delpinal-bassi-sauerland-2024}
 
 Defines the central `Implicature W S` type — the cross-mechanism
 representation of a pragmatic inference, parameterized by a **world type
@@ -35,10 +36,13 @@ requires explicit projection (thresholding a posterior), which is itself
 a contestable empirical claim that should be formalized as such, not
 hidden in a coercion.
 
-## Default `S := Prop`
+## Strength type is explicit
 
-Most consumers want categorical implicatures. The default keeps
-existing call sites unchanged: `Implicature W` means `Implicature W Prop`.
+Callers must supply `S` explicitly: `Implicature W Prop` for the
+categorical / Gricean / grammaticalist ontology, `Implicature W ℝ≥0`
+for graded / RSA-style. There is no default — making the strength
+commitment visible at every use site is part of the
+make-incompatibilities-visible discipline.
 
 ## Bridge architecture
 
@@ -116,6 +120,8 @@ strength types (the `S` parameter of `Implicature`):
   outputs (`S := Prop`)
 - **rsa** — graded posterior (`S := ℝ≥0` or similar)
 - **ibr** — discrete fixed-point output (`S := Prop`)
+- **bpsPresuppositional** — pex output: assertion + presupposition
+  (`S := Prop`); the inferred content is the presupposed component
 - **lexical** — discrete; encoded in the lexical entry (`S := Prop`)
 
 The mechanism field tracks provenance regardless of strength type.
@@ -130,6 +136,10 @@ Citations:
 - **rsa** — Bayesian listener-speaker recursion
   (@cite{frank-goodman-2012}, @cite{goodman-stuhlmuller-2013})
 - **ibr** — Iterated Best Response (@cite{franke-2011})
+- **bpsPresuppositional** — Presuppositional EXH (pex), the
+  assertion/presupposition split that makes the inferred content
+  project like a presupposition (@cite{bassi-delpinal-sauerland-2021},
+  @cite{delpinal-bassi-sauerland-2024})
 - **lexical** — encoded in lexical entries (@cite{potts-2005})
 -/
 inductive ImplicatureMechanism where
@@ -139,6 +149,7 @@ inductive ImplicatureMechanism where
   | exhIEII
   | rsa
   | ibr
+  | bpsPresuppositional
   | lexical
   deriving DecidableEq, Repr
 
@@ -160,7 +171,7 @@ docstring. For `S = Prop`, `content` is a discrete proposition and the
 Gricean diagnostics in `Diagnostics.lean` apply directly. For
 `S = ℝ≥0` (RSA), the diagnostics require an interpretive projection.
 -/
-structure Implicature (W : Type*) (S : Type := Prop) where
+structure Implicature (W : Type*) (S : Type*) where
   /-- Taxonomic classification (scalar / freeChoice / ignorance / ...). -/
   kind : ImplicatureKind
   /-- The inferred per-world strength. For `S = Prop`, a discrete
@@ -173,7 +184,7 @@ structure Implicature (W : Type*) (S : Type := Prop) where
 
 namespace Implicature
 
-variable {W : Type*} {S : Type}
+variable {W : Type*} {S : Type*}
 
 /-- Is this inference a conversational implicature? Lifts
 `ImplicatureKind.isConversational` to `Implicature`. Polymorphic in

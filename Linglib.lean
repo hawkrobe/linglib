@@ -2479,7 +2479,7 @@ import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
-import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
+import Linglib.Theories.Semantics.Exhaustification.Presuppositional
 import Linglib.Theories.Semantics.Exhaustification.Relevance
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Theories.Semantics.Exhaustification.Tolerant

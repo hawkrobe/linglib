@@ -891,7 +891,7 @@ open SomeAllWorld
 context (paper §1's ∅-condition). Mechanism is the Sauerland Standard
 Recipe / neo-Gricean derivation; the SI content is `notUniversal`
 (= the canonical "not all" inference from `SomeAllWorld`). -/
-def somePassedSI : Implicature SomeAllWorld :=
+def somePassedSI : Implicature SomeAllWorld Prop :=
   { kind := .scalar
   , content := notUniversal
   , altsUsed := {universal}

@@ -149,7 +149,7 @@ def epHolds (hamblin : List (World → Bool)) (w : World) : Bool :=
     proposition in the singular alternative's Hamblin set is true.
 
     Connects to `pexIEII` in
-    `Theories.Semantics.Exhaustification.PresuppositionalExhaustification`. -/
+    `Theories.Semantics.Exhaustification.Presuppositional`. -/
 def exhPAntiUniq (singularIndivH : List (World → Bool)) (w : World) : Bool :=
   (singularIndivH.filter (· w)).length > 1
 

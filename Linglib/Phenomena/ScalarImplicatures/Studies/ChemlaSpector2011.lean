@@ -732,7 +732,7 @@ theorem cs_gp_agree_on_de_local_far_below_baseline :
 expressed as an `Implicature Picture6`: scalar SI, content = the local
 reading extension, alternative = the global reading, mechanism = exhIE
 (the @cite{fox-2007}-style localist EXH family that T2 represents). -/
-def localReadingExistsExp1 : Implicature Picture6 :=
+def localReadingExistsExp1 : Implicature Picture6 Prop :=
   { kind := .scalar
   , content := Exp1Some.local_
   , altsUsed := {Exp1Some.global}
