@@ -1,4 +1,5 @@
 import Linglib.Core.Probability.Hypergeometric
+import Linglib.Core.Probability.PMFEvalLemmas
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Silence
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
@@ -455,12 +456,19 @@ private theorem beliefReal_a3_diag (w : WorldState) (s : WorldState) :
 
 Cardinalities of utterance extensions, lex values, used downstream. -/
 
+@[pmf_eval_simps]
 private theorem extensionOf_qLifted_some_card :
     (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.some_)).card = 3 := by decide
 
+@[pmf_eval_simps]
 private theorem extensionOf_qLifted_all_card :
     (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.all)).card = 1 := by decide
 
+@[pmf_eval_simps]
+private theorem extensionOf_qLifted_none_card :
+    (RSA.extensionOf (liftMeaning qMeaning) (some QUtt.none_)).card = 1 := by decide
+
+@[pmf_eval_simps]
 private theorem extensionOf_qLifted_silent_card :
     (RSA.extensionOf (liftMeaning qMeaning) (none : WithSilence QUtt)).card = 4 := by decide
 
@@ -482,15 +490,19 @@ private theorem lexReal_qLifted_silent (s : WorldState) :
   rw [if_pos (RSA.liftMeaning_none qMeaning s), extensionOf_qLifted_silent_card]
   norm_num
 
+@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_one_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.one)).card = 3 := by decide
 
+@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_two_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.two)).card = 2 := by decide
 
+@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_three_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (some NumUtt.three)).card = 1 := by decide
 
+@[pmf_eval_simps]
 private theorem extensionOf_lbLifted_silent_card :
     (RSA.extensionOf (liftMeaning lbMeaning) (none : WithSilence NumUtt)).card = 4 := by decide
 
@@ -574,6 +586,81 @@ private theorem s1Score_uniform_apply
     rw [if_pos hmu, h_card]
     field_simp
   · positivity
+
+/-! ## §17b. `pmf_eval`-friendly if-form for qLifted/lbLifted s1Score
+
+The universal `s1Score_uniform_apply` is hypothesis-laden (h_qok, h_card, h_pos)
+so `simp` can't use it. The per-meaning if-form below has only decidable
+side-conditions (extension card via `decide`), making it pure simp fodder.
+
+When tagged `@[pmf_eval_simps]`, simp can iteratively rewrite each `s1Score`
+expression to `if qOk then ofReal(1/c) else 0`, then `decide` the `qOk`
+predicate to fire `if_pos`/`if_neg`, leaving pure ENNReal arithmetic for
+`norm_num`. -/
+
+@[pmf_eval_simps]
+private theorem s1Score_qLifted_eval (a : Access) (k : Fin (a.toNat + 1))
+    (u : WithSilence QUtt) :
+    s1Score (liftMeaning qMeaning) 1 a k u =
+      if qualityOk (liftMeaning qMeaning) a k u = true
+      then ENNReal.ofReal (((RSA.extensionOf (liftMeaning qMeaning) u).card : ℝ)⁻¹)
+      else 0 := by
+  by_cases h : qualityOk (liftMeaning qMeaning) a k u = true
+  · rw [if_pos h]
+    have hc : (RSA.extensionOf (liftMeaning qMeaning) u).card ≠ 0 := by
+      rcases u with _ | u' <;> [decide; (cases u' <;> decide)]
+    rw [s1Score_uniform_apply qMeaning a k u
+          (RSA.extensionOf (liftMeaning qMeaning) u).card hc h rfl]
+    congr 1; field_simp
+  · rw [if_neg h]
+    exact RSA.softmaxBelief_eq_zero_of_not_qOk h
+
+@[pmf_eval_simps]
+private theorem s1Score_lbLifted_eval (a : Access) (k : Fin (a.toNat + 1))
+    (u : WithSilence NumUtt) :
+    s1Score (liftMeaning lbMeaning) 1 a k u =
+      if qualityOk (liftMeaning lbMeaning) a k u = true
+      then ENNReal.ofReal (((RSA.extensionOf (liftMeaning lbMeaning) u).card : ℝ)⁻¹)
+      else 0 := by
+  by_cases h : qualityOk (liftMeaning lbMeaning) a k u = true
+  · rw [if_pos h]
+    have hc : (RSA.extensionOf (liftMeaning lbMeaning) u).card ≠ 0 := by
+      rcases u with _ | u' <;> [decide; (cases u' <;> decide)]
+    rw [s1Score_uniform_apply lbMeaning a k u
+          (RSA.extensionOf (liftMeaning lbMeaning) u).card hc h rfl]
+    congr 1; field_simp
+  · rw [if_neg h]
+    exact RSA.softmaxBelief_eq_zero_of_not_qOk h
+
+/-- Per-meaning sum unfolders. Required because `WithSilence QUtt = Option QUtt`
+and `QUtt` is a derived Fintype with no generic `Fin.sum_univ_*`-style lemma. -/
+@[pmf_eval_simps]
+private theorem WithSilence_QUtt_sum_univ {β} [AddCommMonoid β]
+    (f : WithSilence QUtt → β) :
+    ∑ i, f i =
+      f none + (f (some .none_) + (f (some .some_) + (f (some .all) + 0))) := by
+  rfl
+
+@[pmf_eval_simps]
+private theorem WithSilence_NumUtt_sum_univ {β} [AddCommMonoid β]
+    (f : WithSilence NumUtt → β) :
+    ∑ i, f i =
+      f none + (f (some .one) + (f (some .two) + (f (some .three) + 0))) := by
+  rfl
+
+/-! ### `pmf_eval` smoke tests for the if-form variants -/
+
+example : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+            (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) := by
+  pmf_eval
+
+example : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+            (some QUtt.none_) = 0 := by
+  pmf_eval
+
+example : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+            (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) := by
+  pmf_eval
 
 /-! ## §18. s1Score evaluations at `.a3` — concentrated belief
 
@@ -1406,6 +1493,126 @@ theorem some_full_implicature_sil
   · rw [s1Score_qLifted_a3_s2_some]; exact ENNReal.ofReal_ne_zero_iff.mpr (by norm_num)
   · rw [s1Score_qLifted_a3_s2_some]; exact ENNReal.ofReal_ne_top
   · rw [tsum_fintype, tsum_fintype, sum_s1Score_qLifted_a3_s2, sum_s1Score_qLifted_a3_s3]
+    exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+
+-- pmf_eval validation: Finding 1 inline using the macro + paper-tagged if-form
+-- variants (see §17b above). Result: ~25 LOC vs factored ~22 LOC, but eliminates
+-- ~64 LOC of per-(meaning, a, w, u) s1Score helpers (those reusable across all
+-- qLifted findings; absorbed by `s1Score_qLifted_eval` if-form + tagged card
+-- lemmas). Architecture scales: ~50 LOC of substrate (Core/Probability/PMFEval*)
+-- + ~25 LOC of paper-tagged variants → all findings close in ~25 LOC each
+-- modulo the residual ENNReal arithmetic at the end (`gcongr` doesn't apply on
+-- ENNReal `<` due to no `AddLeftStrictMono` instance, so combine via ofReal_add
+-- and finish with norm_num — ~3 lines).
+private theorem some_full_implicature_sil_v3_pmf_eval
+    (hMarg : PMF.marginal
+              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
+                          (cover_silent qMeaning .a3))
+              worldPrior (some QUtt.some_) ≠ 0) :
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s2 >
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s3 := by
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform,
+      marginalSpeaker_a3_s2_apply, marginalSpeaker_a3_s3_apply]
+  show (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
+        (some QUtt.some_) <
+       (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
+        (some QUtt.some_)
+  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some QUtt.some_)
+  all_goals try pmf_eval
+  -- Whatever `pmf_eval` doesn't close: the partition comparison residual.
+  rw [tsum_fintype, tsum_fintype]
+  pmf_eval_only
+  -- Residual: `ofReal((↑4)⁻¹) + ofReal((↑3)⁻¹) < same + ofReal((↑1)⁻¹)`.
+  rw [← ENNReal.ofReal_add (by positivity) (by positivity),
+      ← ENNReal.ofReal_add (by positivity) (by positivity),
+      ← ENNReal.ofReal_add (by positivity) (by positivity)]
+  exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
+
+-- Architecture probe: inline Option-D version of Finding 1 using ONLY universal
+-- lemmas (`s1Score_uniform_apply` + `softmaxBelief_eq_zero_of_not_qOk`), with no
+-- per-(meaning, a, w, u) intermediate lemmas. Result: ~75 LOC vs the factored
+-- ~22 LOC + ~64 LOC of shared per-instance helpers. Inlining doesn't shrink the
+-- proof; it just relocates the per-utterance evaluations from named top-level
+-- lemmas (reusable across findings sharing a (meaning, a, w)) into the finding
+-- body. Aggressive simp-style chains (`rw [s1Score_uniform_apply ..., ...]` in
+-- one block) hit heartbeat timeout. Conclusion: the audit's "delete per-instance
+-- lemmas" recommendation does not deliver substantial savings without a custom
+-- `pmf_eval` tactic; the current factoring is honest about what's irreducible.
+private theorem some_full_implicature_sil_v2_inline
+    (hMarg : PMF.marginal
+              (fun w => marginalSpeaker (liftMeaning qMeaning) 1 .a3 w
+                          (cover_silent qMeaning .a3))
+              worldPrior (some QUtt.some_) ≠ 0) :
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s2 >
+    (L1 (liftMeaning qMeaning) 1 .a3 (cover_silent qMeaning .a3)
+        (some QUtt.some_) hMarg) .s3 := by
+  -- Inline-discharged per-utterance s1Score values at .a3 ⟨2, _⟩ (s2 diagonal)
+  have h2_silent : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+                     (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
+    s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ none 4 (by norm_num)
+      (by decide) extensionOf_qLifted_silent_card
+  have h2_none : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+                   (some QUtt.none_) = 0 := RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
+  have h2_some : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+                   (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
+    s1Score_uniform_apply qMeaning .a3 ⟨2, by decide⟩ (some QUtt.some_) 3 (by norm_num)
+      (by decide) extensionOf_qLifted_some_card
+  have h2_all : s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩
+                  (some QUtt.all) = 0 := RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
+  -- Inline-discharged per-utterance s1Score values at .a3 ⟨3, _⟩ (s3 diagonal)
+  have h3_silent : s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
+                     (none : WithSilence QUtt) = ENNReal.ofReal (1/4 : ℝ) :=
+    s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ none 4 (by norm_num)
+      (by decide) extensionOf_qLifted_silent_card
+  have h3_none : s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
+                   (some QUtt.none_) = 0 := RSA.softmaxBelief_eq_zero_of_not_qOk (by decide)
+  have h3_some : s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
+                   (some QUtt.some_) = ENNReal.ofReal (1/3 : ℝ) :=
+    s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.some_) 3 (by norm_num)
+      (by decide) extensionOf_qLifted_some_card
+  have h3_all : s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩
+                  (some QUtt.all) = ENNReal.ofReal (1 : ℝ) := by
+    rw [s1Score_uniform_apply qMeaning .a3 ⟨3, by decide⟩ (some QUtt.all) 1 (by norm_num)
+          (by decide) extensionOf_qLifted_all_card]; norm_num
+  -- Sums at the two worlds
+  have sum2 : (∑ u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ u) =
+                ENNReal.ofReal (7/12 : ℝ) := by
+    show s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ none +
+          (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ (some QUtt.none_) +
+            (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ (some QUtt.some_) +
+              (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩ (some QUtt.all) + 0))) = _
+    rw [h2_silent, h2_none, h2_some, h2_all]
+    simp only [add_zero, zero_add]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    congr 1; norm_num
+  have sum3 : (∑ u : WithSilence QUtt, s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ u) =
+                ENNReal.ofReal (19/12 : ℝ) := by
+    show s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ none +
+          (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ (some QUtt.none_) +
+            (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ (some QUtt.some_) +
+              (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩ (some QUtt.all) + 0))) = _
+    rw [h3_silent, h3_none, h3_some, h3_all]
+    simp only [add_zero, zero_add]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+        ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    congr 1; norm_num
+  -- Structural backbone
+  unfold L1 worldPrior
+  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
+  rw [marginalSpeaker_a3_s2_apply, marginalSpeaker_a3_s3_apply]
+  show (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨3, by decide⟩) _ _)
+        (some QUtt.some_) <
+       (PMF.normalize (s1Score (liftMeaning qMeaning) 1 .a3 ⟨2, by decide⟩) _ _)
+        (some QUtt.some_)
+  apply PMF.normalize_lt_of_apply_eq_of_sum_lt (a := some QUtt.some_)
+  · rw [h2_some, h3_some]
+  · rw [h2_some]; exact ENNReal.ofReal_ne_zero_iff.mpr (by norm_num)
+  · rw [h2_some]; exact ENNReal.ofReal_ne_top
+  · rw [tsum_fintype, tsum_fintype, sum2, sum3]
     exact (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).mpr (by norm_num)
 
 /-- Finding 4: at full access, `two` favors `s2 > s3` (upper-bounded reading). -/
