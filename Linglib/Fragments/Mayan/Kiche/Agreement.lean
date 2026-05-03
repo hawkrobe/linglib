@@ -397,7 +397,7 @@ theorem p3sg_abs_null : setBExponent .p3sg = "∅" := rfl
     structurally analogous to Kaqchikel. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "K'iche'"
-  , strategy := .agentFocusAlternation
+  , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]
   , distinguishesPosition := true
   , notes := "AF (-n) for A-extraction; HIGH-ABS K'ichean (Mondloch 2017 Lesson 22)" }

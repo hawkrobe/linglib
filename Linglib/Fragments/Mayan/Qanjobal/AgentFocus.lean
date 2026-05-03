@@ -217,7 +217,7 @@ theorem crazy_ap_all_persons :
 /-- Q'anjob'al's extraction morphology profile. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Q'anjob'al"
-  , strategy := .agentFocusAlternation
+  , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]
   , distinguishesPosition := true
   , notes := "AF (*-on*) for 3rd person agent extraction; Coon, Mateo Pedro & Preminger 2014" }

@@ -145,7 +145,7 @@ def absPosition : Fragments.Mayan.ABSPosition := .low
     'Who saw the man?' / 'Who did the man see?' -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Chol"
-  , strategy := .none
+  , strategy := .unmarked
   , markedPositions := []
   , distinguishesPosition := false
   , notes := "No Agent Focus morphology required for A-extraction @cite{coon-mateo-pedro-preminger-2014}" }

@@ -410,12 +410,15 @@ def setBLinearity : MarkerLinearity := .prefixal
     Lesson 22 — no extra AF morpheme).
 
     For the cross-Mayan typology, we mark the strategy as
-    `agentFocusAlternation` to parallel Q'anjob'al/Kaqchikel/K'iche';
-    the morphological discontinuity (`-(a)n` + `-ta` vs bare `-n`)
-    is noted but doesn't surface in the strategy enum. -/
+    `dedicatedMorpheme` (the descriptive surface category) to parallel
+    Q'anjob'al/Kaqchikel/K'iche'. The analytical claim that AF is an
+    SSAL repair (Erlewine-line) lives in
+    `Phenomena/FillerGap/Studies/Erlewine2016.lean`; rival accounts
+    (Coon-Mateo Pedro-Preminger absolutive licensing, Coon-Keine
+    Feature Gluttony) are not encoded in the typology enum. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Mam (SJA)"
-  , strategy := .agentFocusAlternation
+  , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]
   , distinguishesPosition := true
   , notes := "AF (-(a)n + -ta) for A-extraction; HIGH-ABS tripartite Mam (Scott 2023 §2.5.4.1)" }

@@ -126,7 +126,7 @@ theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
     A-extraction, consistent with Tsotsil being LOW-ABS. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Tsotsil"
-  , strategy := .none
+  , strategy := .unmarked
   , markedPositions := []
   , distinguishesPosition := false
   , notes := "LOW-ABS Tseltalan; no AF morphology" }

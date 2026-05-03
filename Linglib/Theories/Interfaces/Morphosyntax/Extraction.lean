@@ -28,38 +28,36 @@ namespace Interfaces
     This is a descriptive typology of the *surface* strategy; different
     syntactic theories will derive these differently. -/
 inductive ExtractionMarkingStrategy where
-  /-- No overt marking of extraction. The extracted position is a silent gap.
-      E.g., English "What did you buy __?" -/
-  | none
-  /-- Voice alternation: the verbal voice morphology changes to mark which
-      argument has been extracted. E.g., Tagalog Actor/Patient/Locative voice. -/
+  /-- No overt morphology marks extraction. The extracted position is a
+      silent gap. E.g., English "What did you buy __?". (Renamed from
+      `none` to avoid shadowing `Option.none`.) -/
+  | unmarked
+  /-- Voice alternation: verbal voice morphology changes to mark which
+      argument has been extracted. E.g., Tagalog Actor/Patient/Locative
+      voice; Toba Batak Actor/Object voice. -/
   | voiceAlternation
-  /-- A dedicated morpheme appears on the verbal complex when extraction occurs.
-      E.g., Mam =(y)a' on Voice0/Dir0, K'iche' *wi*, Irish complementizer *aL*. -/
+  /-- A dedicated morpheme appears on the verbal complex when extraction
+      occurs. E.g., Mam =(y)a' on Voice0/Dir0, K'iche' *wi*, Kaqchikel
+      AF *-Vn*, Irish complementizer *aL*. -/
   | dedicatedMorpheme
   /-- Agreement morphology on the verb tracks the extracted position.
       E.g., Chamorro wh-agreement. -/
   | agreementTracking
   /-- The complementizer changes form depending on whether extraction has
-      occurred through its clause. E.g., Irish *aL* (direct) vs. *aN* (indirect). -/
+      occurred through its clause. E.g., Irish *aL* (direct) vs. *aN*
+      (indirect). -/
   | complementizerChange
-  /-- Extraction is structurally restricted to a designated position (the
-      "pivot"), not by surface morphology but by clause-structural factors
-      such as predicate fronting + anti-locality. Voice morphology determines
-      *which* argument occupies the pivot, but the restriction itself is
-      structural. E.g., Toba Batak. -/
-  | structuralRestriction
-  /-- Clause-local extraction of a specific argument role (typically
-      agent/ergative) triggers an alternation in clause structure --- a
-      "repair" that avoids a locality crash. The canonical case is
-      Kaqchikel Agent Focus: clause-local agent extraction
-      crashes the normal transitive because movement from Spec,TP to
-      Spec,CP violates Spec-to-Spec Anti-Locality (SSAL), so the grammar
-      selects an intransitive-like AF structure with distinct verbal
-      morphology (*-Vn*, no Set A). Long-distance agent extraction does
-      NOT trigger AF --- the repair is locality-sensitive. -/
-  | agentFocusAlternation
   deriving DecidableEq, Repr
+
+/-! The 5 cases above are descriptive surface-typology categories. The
+*analytical* claims that competing accounts give for *why* a language
+has the surface pattern it does — e.g., Erlewine `@cite{erlewine-2016}`
+`@cite{erlewine-2018}` on Kaqchikel/Mayan AF as Spec-to-Spec
+Anti-Locality repair; Erlewine 2018 on Toba Batak extraction as a
+structural pivot restriction; Aldridge, Coon, Coon & Mateo Pedro &
+Preminger, Coon & Keine, Henderson, etc. with rival analyses — live
+in `Phenomena/FillerGap/Studies/` files anchored on the specific
+paper. They are not enum cases here. -/
 
 -- ============================================================================
 -- S 2: Extraction Target
@@ -157,6 +155,6 @@ def ExtractionProfile.marks (p : ExtractionProfile) (t : ExtractionTarget) : Boo
 
 /-- Does this profile use any overt extraction marking? -/
 def ExtractionProfile.hasOvertMarking (p : ExtractionProfile) : Bool :=
-  p.strategy != .none
+  p.strategy != .unmarked
 
 end Interfaces

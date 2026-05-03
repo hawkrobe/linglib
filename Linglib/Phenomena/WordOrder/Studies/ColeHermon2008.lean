@@ -408,7 +408,7 @@ This section bridges the derivational analysis to that data.
     for the extraction restriction. -/
 theorem vp_raising_drives_extraction :
     tobaBatak_wo.eppStrategy = .vpRaising ∧
-    Fragments.TobaBatak.tbExtractionProfile.strategy = .structuralRestriction :=
+    Fragments.TobaBatak.tbExtractionProfile.strategy = .voiceAlternation :=
   ⟨rfl, rfl⟩
 
 /-- The extraction profile marks only the subject position as extractable.

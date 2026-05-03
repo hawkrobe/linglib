@@ -138,7 +138,7 @@ def extractionData : List ExtractionDatum :=
 /-- Toba Batak extraction profile: structural restriction (pivot-only). -/
 def tbExtractionProfile : Interfaces.ExtractionProfile :=
   { language := "Toba Batak"
-    strategy := .structuralRestriction
+    strategy := .voiceAlternation
     markedPositions := [.subject]
     distinguishesPosition := true
     notes := "Only the pivot (= surface subject) can be extracted; " ++

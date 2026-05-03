@@ -126,7 +126,7 @@ theorem setB_is_suffixal : setBLinearity = .suffixal := rfl
     A-extraction, consistent with Tseltal being LOW-ABS. -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Tseltal"
-  , strategy := .none
+  , strategy := .unmarked
   , markedPositions := []
   , distinguishesPosition := false
   , notes := "LOW-ABS Tseltalan; no AF morphology" }

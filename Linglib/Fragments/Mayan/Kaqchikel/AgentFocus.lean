@@ -74,19 +74,19 @@ structure ExtractionDatum where
 def agentExtractionAF : ExtractionDatum :=
   { extracted := .agent
   , verbForm := .agentFocus
-  , judgment := .agentFocusAlternation }
+  , judgment := .dedicatedMorpheme }
 
 /-- Agent extraction with normal transitive (clause-local) is ungrammatical. -/
 def agentExtractionTrans : ExtractionDatum :=
   { extracted := .agent
   , verbForm := .transitive
-  , judgment := .agentFocusAlternation }
+  , judgment := .dedicatedMorpheme }
 
 /-- Patient extraction uses normal transitive. -/
 def patientExtractionTrans : ExtractionDatum :=
   { extracted := .patient
   , verbForm := .transitive
-  , judgment := .none }  -- no special morphology needed
+  , judgment := .unmarked }  -- no special morphology needed
 
 /-- Long-distance agent extraction uses normal transitive, NOT AF.
     When the agent extracts from an embedded clause, it passes through
@@ -100,7 +100,7 @@ def patientExtractionTrans : ExtractionDatum :=
 def longDistanceAgentExtraction : ExtractionDatum :=
   { extracted := .agent
   , verbForm := .transitive
-  , judgment := .none }
+  , judgment := .unmarked }
 
 -- ============================================================================
 -- § 3: Extraction Profile
@@ -110,7 +110,7 @@ def longDistanceAgentExtraction : ExtractionDatum :=
     Canonical name `extractionProfile` (uniform with Chol, Q'anjob'al). -/
 def extractionProfile : Interfaces.ExtractionProfile :=
   { language := "Kaqchikel"
-  , strategy := .agentFocusAlternation
+  , strategy := .dedicatedMorpheme
   , markedPositions := [.subject]
   , distinguishesPosition := true
   , notes := "AF (*-Vn*) obligatory for clause-local agent extraction; Erlewine 2016" }

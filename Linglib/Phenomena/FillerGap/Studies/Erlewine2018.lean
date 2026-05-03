@@ -156,7 +156,7 @@ theorem voice_symmetry :
 /-- TB uses structural restriction, not dedicated morpheme or voice
     alternation in the Tagalog sense. -/
 theorem tb_strategy :
-    tbExtractionProfile.strategy = .structuralRestriction := rfl
+    tbExtractionProfile.strategy = .voiceAlternation := rfl
 
 /-- TB distinguishes extracted positions via voice (which role is pivot). -/
 theorem tb_distinguishes :
