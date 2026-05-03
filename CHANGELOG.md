@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.630 — Anttila 2021 Proposition 2.2.8 fully proved for BSML
+
+Empirical validation of the Core/Logic/Team substrate (landed 0.230.629). The three structural properties from Anttila Proposition 2.2.8 are proved for BSML's `support` relation; the flatness corollary derives from `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam`.
+
+- New `Theories/Semantics/BSML/Properties.lean` (~250 lines, zero sorrys):
+  - `unionClosed_support`: ALL BSML formulas are union-closed (BSML lacks ⨼; Anttila 2.2.8 part 2 specializes to "all formulas")
+  - `emptyTeam_support_of_isNEFree`: NE-free formulas have the empty-team property (Anttila 2.2.8 part 1)
+  - `downwardClosed_support_of_isNEFree`: NE-free formulas are downward-closed (Anttila 2.2.8 part 1)
+  - `flat_support_of_isNEFree`: corollary via `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam` — NE-free BSML formulas are flat. Equivalent to Aloni 2022 Fact 15 / Anttila Proposition 2.2.16; the existing `Bridge.lean.neFree_flat_eq` proves the same conclusion via the classical-evaluation bridge directly. This file's proof routes through the foundational decomposition; both are now available.
+- Each property uses **bilateral mutual induction** on `(support, antiSupport)` for the negation case — the polarity-flip pattern that mathlib-shape extracts naturally as a typeclass `BilateralEval` once a second consumer (BSML*, QBSML, truthmaker) needs it.
+- Substrate validation: the parametric `Core.Logic.Team.flat_iff_downwardClosed_unionClosed_emptyTeam` works for BSML's specific `support` exactly as designed. QBSML can now slot in identically (its `support` will instantiate the same template).
+- Build clean for the BSML scope (718 jobs); pre-existing failures elsewhere are concurrent in-flight migrations.
+
 ### 0.230.615 — RSA cancellation theorem stated; full DPI + Blackwell deferred
 
 - New `Linglib/Theories/Pragmatics/RSA/Cancellation.lean` (NEW, ~95 LOC):

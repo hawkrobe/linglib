@@ -1457,6 +1457,7 @@ import Linglib.Theories.Semantics.BSML.Enrichment
 import Linglib.Theories.Semantics.BSML.FreeChoice
 import Linglib.Theories.Semantics.BSML.Negation
 import Linglib.Theories.Semantics.BSML.Bridge
+import Linglib.Theories.Semantics.BSML.Properties
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
 import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Phenomena.Modality.Studies.Cariani2013
