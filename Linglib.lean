@@ -1686,7 +1686,6 @@ import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
-import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012PMF
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.Ney2026
@@ -2529,6 +2528,7 @@ import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Defs
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Operators
+import Linglib.Theories.Pragmatics.RSA.ReferenceGame
 import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Theories.Pragmatics.RSA.Compositional
 import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
@@ -2599,6 +2599,7 @@ import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Theories.Dialogue.FarkasAdapter
 import Linglib.Theories.Dialogue.QuotationFBOntology
 import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Theories.Dialogue.Assertable
 import Linglib.Theories.Dialogue.LayeredAssertion
 import Linglib.Theories.Dialogue.Brandom
 import Linglib.Theories.Dialogue.Gunlogson

@@ -1,195 +1,187 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
-import Mathlib.Probability.Distributions.Uniform
+import Linglib.Theories.Pragmatics.RSA.ReferenceGame
 
 /-!
-# @cite{frank-goodman-2012} on mathlib `PMF` (Phase 2 pilot)
+# @cite{frank-goodman-2012} reference game (concrete instance)
 @cite{frank-goodman-2012}
 
-The reference game ported to mathlib `PMF` directly. `extension` and `L0`
-are paper-named aliases for the generic `RSA.extensionOf` and
-`RSA.L0OfBoolMeaning` operators in `Theories/Pragmatics/RSA/Operators.lean`.
+"Predicting Pragmatic Reasoning in Language Games", Science 336, 998.
 
-The key observation: Eq. S3 of the supplementary materials states that the
-literal listener for utterance `w` is uniform on `{o : w(o) = true}`. That is
-*exactly* `PMF.uniformOfFinset (extension w)`. Once we say so, all of the
-positivity bookkeeping collapses into two coverage facts:
+## What this file is
 
-* every word covers some object (`extension_nonempty`)
-* every object is covered by some word (`covering`)
+A **concrete instance** of the parametric reference-game substrate
+(`Theories/Pragmatics/RSA/ReferenceGame.lean`). Everything architectural —
+the size principle, pragmatic narrowing, unique reference — is proved
+generically there, parametric in the meaning matrix and world prior. Here
+we only need to:
 
-S1 is then `PMF.normalize` of `λ u => L0 u w` (Eq. S4 with α = 1, unit cost),
-and L1 is `PMF.posterior` of S1 against the uniform world prior.
+1. Define the specific stimulus (3 objects, 4 features, denotation matrix).
+2. Verify it satisfies `IsCovering`.
+3. Compute three partition function values.
+4. Derive the 4 paper findings as one-liner corollaries.
 
-## Reused from `FrankGoodman2012.lean`
+## Why split it this way
 
-* `Object`, `Feature`, `Feature.appliesTo` — the Boolean denotation matrix.
+Every RSA paper using a "speaker normalises inverse-extension-size" pattern
+inherits the substrate theorems unchanged. The pragmatic-narrowing theorem
+is proved **once**, parametric in everything; FG12's specific findings are
+its instantiation at the paper's stimulus. Per-stimulus arithmetic is a
+small section of bookkeeping; the architectural content lives in the
+substrate.
+
+For RSA practitioners: this is the version where you don't re-derive
+Eq. S1 → S4 per paper. You instantiate.
 -/
 
 set_option autoImplicit false
 
-namespace FrankGoodman2012.PMF
+namespace FrankGoodman2012
 
 open scoped ENNReal
-open FrankGoodman2012
+open RSA.ReferenceGame
 
-/-! ## Coverage — the only data this file needs from the matrix
+/-! ## §1. Stimulus
 
-`extension` and `L0` are paper-named aliases for the generic
-`RSA.extensionOf` and `RSA.L0OfBoolMeaning` operators. -/
+Fig. 1C of the paper: three objects (blue square, blue circle, green
+square) and four feature-words (blue, green, square, circle). Two features
+("green", "circle") are uniquely identifying; two ("blue", "square") are
+ambiguous between two objects each. -/
 
-/-- Extension of a feature: the Finset of objects it applies to. -/
-abbrev extension (u : Feature) : Finset Object :=
-  RSA.extensionOf Feature.appliesTo u
+/-- The three objects in the reference context. -/
+inductive Object where
+  | blue_square | blue_circle | green_square
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Every feature covers at least one object — checked by `decide` per case. -/
-theorem extension_nonempty (u : Feature) : (extension u).Nonempty := by
-  cases u
-  · exact ⟨.blue_square,  RSA.mem_extensionOf.mpr (by decide)⟩
-  · exact ⟨.green_square, RSA.mem_extensionOf.mpr (by decide)⟩
-  · exact ⟨.blue_square,  RSA.mem_extensionOf.mpr (by decide)⟩
-  · exact ⟨.blue_circle,  RSA.mem_extensionOf.mpr (by decide)⟩
+/-- The four feature-word utterances. -/
+inductive Feature where
+  | blue | green | square | circle
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Every object is named by at least one feature. -/
-theorem covering (w : Object) : ∃ u : Feature, u.appliesTo w = true := by
-  cases w
-  · exact ⟨.blue,  rfl⟩
-  · exact ⟨.blue,  rfl⟩
-  · exact ⟨.green, rfl⟩
+/-- The denotation matrix: which feature applies to which object. -/
+def Feature.appliesTo : Feature → Object → Bool
+  | .blue,   .blue_square  => true
+  | .blue,   .blue_circle  => true
+  | .green,  .green_square => true
+  | .square, .blue_square  => true
+  | .square, .green_square => true
+  | .circle, .blue_circle  => true
+  | _, _ => false
 
-/-! ## L0 — literal listener is uniform on the extension (Eq. S3)
+/-- The stimulus is **covering**: every feature names some object, and
+every object is named by some feature. -/
+instance instCovering : IsCovering Feature.appliesTo where
+  extension_nonempty u := by
+    cases u
+    · exact ⟨.blue_square,  RSA.mem_extensionOf.mpr rfl⟩
+    · exact ⟨.green_square, RSA.mem_extensionOf.mpr rfl⟩
+    · exact ⟨.blue_square,  RSA.mem_extensionOf.mpr rfl⟩
+    · exact ⟨.blue_circle,  RSA.mem_extensionOf.mpr rfl⟩
+  covering w := by
+    cases w
+    · exact ⟨.blue,  rfl⟩
+    · exact ⟨.blue,  rfl⟩
+    · exact ⟨.green, rfl⟩
 
-Paper-named alias for `RSA.L0OfBoolMeaning`, supplying the `extension_nonempty`
-witness internally so callers don't have to thread it. -/
+/-- Local notation: refer to the substrate's `S1` at this stimulus's
+meaning matrix without spelling out `Feature.appliesTo` everywhere. -/
+local notation "S1fg" => S1 Feature.appliesTo
 
-noncomputable def L0 (u : Feature) : PMF Object :=
-  RSA.L0OfBoolMeaning Feature.appliesTo u (extension_nonempty u)
+/-! ## §2. Numerical bookkeeping (partition function values)
 
-@[simp] theorem mem_support_L0_iff (u : Feature) (w : Object) :
-    w ∈ (L0 u).support ↔ u.appliesTo w = true :=
-  RSA.mem_support_L0OfBoolMeaning_iff _ _
+The partition function `partition w = Σ_u L0 u w` measures the
+size-principle weight of all alternatives at world `w`. Three distinct
+values arise on this stimulus, each corresponding to a different
+alternative-set composition. -/
 
-@[simp] theorem L0_apply_of_appliesTo {u : Feature} {w : Object} (h : u.appliesTo w = true) :
-    L0 u w = ((extension u).card : ℝ≥0∞)⁻¹ :=
-  RSA.L0OfBoolMeaning_apply_of_mem _ h
+/-- The applicable-feature filter at each world is concrete and `decide`-able. -/
+private theorem filter_applies_blue_square :
+    Finset.univ.filter (fun u : Feature => u.appliesTo .blue_square = true)
+      = {.blue, .square} := by decide
 
-@[simp] theorem L0_apply_of_not_appliesTo {u : Feature} {w : Object} (h : u.appliesTo w ≠ true) :
-    L0 u w = 0 :=
-  RSA.L0OfBoolMeaning_apply_of_not_mem _ h
+private theorem filter_applies_blue_circle :
+    Finset.univ.filter (fun u : Feature => u.appliesTo .blue_circle = true)
+      = {.blue, .circle} := by decide
 
-/-! ## S1 — pragmatic speaker (α = 1, unit cost ⇒ size principle by Eq. S4) -/
+private theorem filter_applies_green_square :
+    Finset.univ.filter (fun u : Feature => u.appliesTo .green_square = true)
+      = {.green, .square} := by decide
 
-theorem L0_tsum_utterance_ne_zero (w : Object) : ∑' u, (L0 u w : ℝ≥0∞) ≠ 0 :=
-  let ⟨u, hu⟩ := covering w
-  PMF.tsum_apply_ne_zero L0 (by rw [← PMF.mem_support_iff, mem_support_L0_iff]; exact hu)
+/-- Extension cardinalities. -/
+private theorem extension_card_blue   : (extension Feature.appliesTo .blue).card   = 2 := by decide
+private theorem extension_card_green  : (extension Feature.appliesTo .green).card  = 1 := by decide
+private theorem extension_card_square : (extension Feature.appliesTo .square).card = 2 := by decide
+private theorem extension_card_circle : (extension Feature.appliesTo .circle).card = 1 := by decide
 
-theorem L0_tsum_utterance_ne_top (w : Object) : ∑' u, (L0 u w : ℝ≥0∞) ≠ ∞ :=
-  PMF.tsum_apply_ne_top (fun u => L0 u) w
+/-- Partition at `.blue_square`: alternatives `{blue, square}` each with
+extension size 2 contribute `1/2` each; total `1`. -/
+theorem partition_blue_square : partition Feature.appliesTo .blue_square = 1 := by
+  rw [partition_eq_filter_sum, filter_applies_blue_square,
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      extension_card_blue, extension_card_square]
+  show ((2 : ℕ) : ℝ≥0∞)⁻¹ + ((2 : ℕ) : ℝ≥0∞)⁻¹ = 1
+  rw [Nat.cast_ofNat]; exact ENNReal.inv_two_add_inv_two
 
-noncomputable def S1 (w : Object) : PMF Feature :=
-  PMF.normalize (fun u => L0 u w)
-    (L0_tsum_utterance_ne_zero w) (L0_tsum_utterance_ne_top w)
+/-- ENNReal arithmetic helper: `2⁻¹ + 1 = 3/2`. -/
+private theorem two_inv_add_one : (2 : ℝ≥0∞)⁻¹ + 1 = 3 / 2 := by
+  rw [show (1 : ℝ≥0∞) = 2 / 2 from
+        (ENNReal.div_self (by norm_num) (by norm_num)).symm,
+      show ((2 : ℝ≥0∞))⁻¹ = 1 / 2 from by rw [one_div],
+      ENNReal.div_add_div_same]; norm_num
 
-@[simp] theorem mem_support_S1_iff (w : Object) (u : Feature) :
-    u ∈ (S1 w).support ↔ u.appliesTo w = true := by
-  rw [S1, PMF.mem_support_normalize_iff, ← PMF.mem_support_iff, mem_support_L0_iff]
+/-- Partition at `.blue_circle`: `{blue, circle}` with extension sizes 2 and 1
+— `circle` is uniquely identifying; total `1/2 + 1 = 3/2`. -/
+theorem partition_blue_circle : partition Feature.appliesTo .blue_circle = 3 / 2 := by
+  rw [partition_eq_filter_sum, filter_applies_blue_circle,
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      extension_card_blue, extension_card_circle]
+  show ((2 : ℕ) : ℝ≥0∞)⁻¹ + ((1 : ℕ) : ℝ≥0∞)⁻¹ = 3 / 2
+  rw [Nat.cast_one, Nat.cast_ofNat, inv_one, two_inv_add_one]
 
-/-! ## L1 — Bayesian inversion against the uniform world prior -/
+/-- Partition at `.green_square`: `{green, square}` with extension sizes 1 and 2
+— `green` is uniquely identifying; total `1 + 1/2 = 3/2`. -/
+theorem partition_green_square : partition Feature.appliesTo .green_square = 3 / 2 := by
+  rw [partition_eq_filter_sum, filter_applies_green_square,
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      extension_card_green, extension_card_square]
+  show ((1 : ℕ) : ℝ≥0∞)⁻¹ + ((2 : ℕ) : ℝ≥0∞)⁻¹ = 3 / 2
+  rw [Nat.cast_one, Nat.cast_ofNat, inv_one, add_comm, two_inv_add_one]
 
-noncomputable def worldPrior : PMF Object := PMF.uniformOfFintype Object
+/-! ## §3. The four paper findings — one-liner corollaries
 
-theorem worldPrior_ne_zero (w : Object) : worldPrior w ≠ 0 :=
-  (worldPrior.mem_support_iff w).mp (PMF.mem_support_uniformOfFintype w)
+Each finding follows from one architectural theorem in the substrate
+applied to one partition comparison. -/
 
-theorem L1_marginal_ne_zero (u : Feature) :
-    PMF.marginal S1 worldPrior u ≠ 0 := by
-  obtain ⟨w, hw⟩ := extension_nonempty u
-  refine PMF.marginal_ne_zero S1 worldPrior u (worldPrior_ne_zero w) ?_
-  rw [← PMF.mem_support_iff, mem_support_S1_iff]
-  exact RSA.mem_extensionOf.mp hw
+/-- **Pragmatic narrowing for "blue"**: a speaker wanting `.blue_circle`
+would say "circle" (uniquely identifying — its partition contribution is
+`1`). Saying "blue" instead signals `.blue_square`, where the alternative-
+set partition is smaller. -/
+theorem blue_pragmatic_narrowing :
+    S1fg .blue_circle .blue < S1fg .blue_square .blue := by
+  -- "blue" applies at both; reduce to comparing partitions.
+  apply S1_lt_of_partition_gt _ rfl rfl
+  -- partition .blue_square (= 1) < partition .blue_circle (= 3/2).
+  show partition _ _ < partition _ _
+  rw [partition_blue_square, partition_blue_circle]
+  exact ENNReal.lt_div_iff_mul_lt (by norm_num) (by norm_num) |>.mpr (by norm_num)
 
-noncomputable def L1 (u : Feature) : PMF Object :=
-  PMF.posterior S1 worldPrior u (L1_marginal_ne_zero u)
-
-/-! ## Mathlib payoff -/
-
-/-- Support of `L1`: a world is supported iff `Feature.appliesTo u w`. The
-uniform prior contributes nothing — every world has `worldPrior w ≠ 0`, so
-support reduces to the speaker condition `u ∈ S1(w).support ↔ appliesTo u w`. -/
-theorem mem_support_L1_iff_appliesTo (u : Feature) (w : Object) :
-    w ∈ (L1 u).support ↔ u.appliesTo w = true := by
-  rw [L1, PMF.mem_support_posterior_iff]
-  refine ⟨fun ⟨_, h⟩ => (mem_support_S1_iff _ _).mp (((S1 w).mem_support_iff u).mpr h),
-          fun h => ⟨worldPrior_ne_zero w,
-                    ((S1 w).mem_support_iff u).mp ((mem_support_S1_iff _ _).mpr h)⟩⟩
-
-/-! ## Pragmatic narrowing findings (parallel to bundled-API `cfg.L1` theorems)
-
-The canonical FG2012 results: an ambiguous utterance is interpreted as
-referring to the object for which it is *most informative* — i.e., the
-object where the speaker would prefer it over the alternatives.
-
-Each finding follows the **canonical migration template** (4 tactic lines):
-1. `unfold L1 worldPrior` — expose primitives
-2. `rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]` — cancel marginal + uniform prior
-3. `exact <per-world S1 leaf>` — reduce to S1 comparison
-
-The leaf is a per-world `S1` comparison reducible to the rational arithmetic
-of the `L0` matrix. Bundled here as a sorry'd helper per finding. -/
-
-/-- Per-world leaf for `blue_pragmatic_narrowing`: the speaker prefers `.blue`
-at `.blue_square` (where `square` is the only alternative) more than at
-`.blue_circle` (where `circle` is uniquely identifying).
-
-**Numeric content**: `S1 .blue_square .blue = 1/2` (partition = 1) and
-`S1 .blue_circle .blue = 1/3` (partition = 3/2). The narrowing direction
-`1/3 < 1/2` is the canonical FG12 result.
-
-**Friction not handled by `normalize_lt_of_apply_eq_pos_and_sum_lt`**: the
-partition functions don't pointwise dominate (`.square` contributes 1/2 at
-`.blue_square` but 0 at `.blue_circle`; `.circle` does the opposite). So
-`tsum_lt_tsum` can't bridge — actual partition function computation needed.
-This motivates a `pmf_partition_compute` helper. Deferred. -/
-theorem S1_blue_circle_lt_blue_square : S1 .blue_circle .blue < S1 .blue_square .blue := by
-  sorry  -- numeric leaf — needs partition function computation infrastructure
-
-/-- L1 of "blue" prefers `.blue_square` over `.blue_circle` — the canonical
-pragmatic narrowing finding. A speaker wanting `.blue_circle` would say
-"circle" (uniquely identifying). -/
-theorem blue_pragmatic_narrowing : L1 .blue .blue_square > L1 .blue .blue_circle := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  exact S1_blue_circle_lt_blue_square
-
-/-- Per-world leaf for `square_pragmatic_narrowing`. -/
-theorem S1_green_square_lt_blue_square_for_square :
-    S1 .green_square .square < S1 .blue_square .square := by
-  sorry  -- per-model rational arithmetic on L0 matrix
-
-/-- L1 of "square" prefers `.blue_square` over `.green_square`. -/
+/-- **Pragmatic narrowing for "square"**: a speaker wanting `.green_square`
+would say "green" (uniquely identifying). Saying "square" instead signals
+`.blue_square`. -/
 theorem square_pragmatic_narrowing :
-    L1 .square .blue_square > L1 .square .green_square := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  exact S1_green_square_lt_blue_square_for_square
+    S1fg .green_square .square < S1fg .blue_square .square := by
+  apply S1_lt_of_partition_gt _ rfl rfl
+  show partition _ _ < partition _ _
+  rw [partition_blue_square, partition_green_square]
+  exact ENNReal.lt_div_iff_mul_lt (by norm_num) (by norm_num) |>.mpr (by norm_num)
 
-/-- Per-world leaf for `green_unique_reference`: at `.blue_square`, the
-speaker assigns ZERO mass to `.green` (since "green" doesn't apply); at
-`.green_square`, S1 mass to `.green` is positive. So `0 < S1 .green_square .green`.
+/-- **Unique reference for "green"**: "green" applies only to `.green_square`,
+so the speaker prefers it there over any other world. -/
+theorem green_unique_reference :
+    S1fg .blue_square .green < S1fg .green_square .green :=
+  S1_lt_of_appliesTo_only Feature.appliesTo (by decide) rfl
 
-1-line discharge via `PMF.normalize_lt_of_apply_zero_pos` (the canonical
-vacuous-zero cross-base lemma). -/
-theorem S1_blue_square_lt_green_square_for_green :
-    S1 .blue_square .green < S1 .green_square .green :=
-  PMF.normalize_lt_of_apply_zero_pos _ _ _ _ _ _ Feature.green
-    (L0_apply_of_not_appliesTo (by decide))
-    (by rw [L0_apply_of_appliesTo (by decide)]
-        simp [extension])
+/-- **Unique reference for "circle"**: "circle" applies only to `.blue_circle`. -/
+theorem circle_unique_reference :
+    S1fg .blue_square .circle < S1fg .blue_circle .circle :=
+  S1_lt_of_appliesTo_only Feature.appliesTo (by decide) rfl
 
-/-- L1 of "green" puts mass only on `.green_square` (the unique applicable world). -/
-theorem green_unique_reference : L1 .green .green_square > L1 .green .blue_square := by
-  unfold L1 worldPrior
-  rw [gt_iff_lt, PMF.posterior_lt_iff_kernel_lt_of_uniform]
-  exact S1_blue_square_lt_green_square_for_green
-
-end FrankGoodman2012.PMF
+end FrankGoodman2012
