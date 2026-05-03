@@ -4,6 +4,43 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+### 0.230.658 — Kao 2014 refactored to architectural theorems + nat-pow softmax bridge
+
+The 6 Kao findings were originally stated as direct outer-measure
+inequalities at Kao's specific empirical priors. This conflated the
+paper's architectural claim ("RSA pragmatics produces metaphor
+interpretation") with empirical-fit verification at one parameter set.
+
+Restructured to two layers:
+
+**§9a — architectural theorems** (parametric in priors, α, goalPrior, u):
+- `L1_cat_fibre_lt_iff_inner_sum_lt` — outer-measure of a cat-fibre
+  under L1 reduces to comparing conditional joint sums on the fibre.
+- `L1_feature_event_lt_iff_inner_sum_lt` — companion for arbitrary
+  feature-event predicates.
+
+Both prove via `PMF.posterior_toOuterMeasure_lt_iff_finset_score_lt`
+(landed 0.230.654's substrate). They are the paper's model-class
+structural content — what L1 does, abstracted from numerics.
+
+**§9b — Kao-specific corollaries**: the 6 findings (`nonliteral`,
+`feature_large/graceful/majestic`, `context_sensitivity`,
+`literal_correct`) restated as instances of §9a.
+`literal_correct` demonstrates the reduction working end-to-end
+(modulo the empirical-fit inner-sum inequality, which is sorried with
+clear path forward).
+
+**Substrate**: `PMF.softmaxWeight_natMul_log_eq_pow` bridge —
+`EReal.exp(n · log w) = w^n` via mathlib's `EReal.exp_nmul` +
+`ENNReal.exp_log`. 2-line proof. Bridges the EReal-softmax form
+(paper-faithful) to nat-power form (decidable for rational inputs)
+for any RSA model with natural rationality parameter.
+
+**Open**: 6 inner-sum inequalities at Kao's specific priors. Each
+discharges via `gcongr` propagation through the structure +
+numerical leaf via the new bridge. Per-finding ~30-50 LOC; not
+load-bearing for the architectural validation.
+
 ### 0.230.662 — Stage 1a partial: comulAlgHom_apply_single + counit_apply_single helpers; full counit-law proofs deferred
 
 Stage 1a goal was to prove `counit_rTensor` + `counit_lTensor` to close 2 of the 3 sorries in `ConnesKreimer/Bialgebra.lean`. **Partial progress**: the two foundational helper lemmas landed; the actual counit-law proofs hit a Lean elaboration friction point that needs a focused session.
