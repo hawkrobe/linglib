@@ -271,7 +271,7 @@ import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Case.Allomorphy
 import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Core.Relativization.Basic
-import Linglib.Theories.Interfaces.Morphosyntax.Relativization
+import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Scales.Roundness
