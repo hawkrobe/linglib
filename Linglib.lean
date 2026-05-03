@@ -1516,6 +1516,7 @@ import Linglib.Phenomena.TemplaticMorphology.Studies.Faust2026
 import Linglib.Phenomena.Allomorphy.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.Studies.Aitha2026
 import Linglib.Phenomena.Allomorphy.Studies.Middleton2026
+import Linglib.Phenomena.Allomorphy.Studies.SmithMoskalEtAl2019
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
 import Linglib.Phenomena.Negation.Studies.Krifka2007
