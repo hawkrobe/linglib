@@ -423,9 +423,7 @@ def beaverEtAl2007_sid : SOFDatum := {
 
     The K&S contrast here is FOCUS marking on otherwise-new material;
     "new" in their (36) means "non-focused new". `FocusMark` (binary
-    focused vs non-focused) captures the relevant axis directly. The
-    pre-Krifka file used `DiscourseStatus` and exploited only the
-    `.focused`/`.new` cases — `.given` was unreachable. -/
+    focused vs non-focused) captures the relevant axis directly. -/
 structure ProsodicTripleDatum where
   /-- First post-verbal phrase focus marking -/
   firstFocus : FocusMark

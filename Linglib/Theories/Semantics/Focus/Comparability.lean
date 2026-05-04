@@ -15,12 +15,11 @@ Theory predicates over the substance taxonomies in `Features/`:
   (`Features.InformationStructure.FocusMark`) and domain givenness
   (`Features.BinaryGivenness`).
 
-The `extractionISClash` signature splits the prior single-`DiscourseStatus`
-parameter pair into a `(filler : FocusMark, domain : BinaryGivenness)`
-pair, making the two-axis structure of the FBC explicit per the
-post-Krifka substrate redesign. (`ExclusionVariety` and
-`PolaritySwitchContext` were collapsed into
-`Core.Discourse.Coherence.CoherenceRelation` in the 0.230.488 cleanup.)
+The `extractionISClash` signature is `(filler : FocusMark, domain :
+BinaryGivenness) → Prop`, making the two-axis structure of the FBC
+explicit. (`ExclusionVariety` and `PolaritySwitchContext` were
+collapsed into `Core.Discourse.Coherence.CoherenceRelation` in the
+0.230.488 cleanup.)
 -/
 
 namespace Semantics.Focus.Comparability
@@ -85,10 +84,7 @@ a backgrounded constituent." -/
 
     The two parameters are independent Krifka axes — filler focus
     marking (`FocusMark`, the binary focus axis) and domain givenness
-    (`BinaryGivenness`, the Prince hearer-status axis). The pre-Krifka
-    `(DiscourseStatus, DiscourseStatus)` signature collapsed both into
-    one enum and required the call site to filter out the irrelevant
-    third value. Under the new substrate the axes are explicit.
+    (`BinaryGivenness`, the Prince hearer-status axis).
 
     Use sites:
     - MoS islands: `extractionISClash .focused domainGivenness` (filler

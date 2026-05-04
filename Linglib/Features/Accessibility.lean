@@ -1,4 +1,6 @@
 import Linglib.Features.Prominence
+import Mathlib.Order.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Accessibility Marking Scale — Referential Form Taxonomy
@@ -36,13 +38,6 @@ them.
 This module connects `Phenomena/Reference/` (form choice) to
 `Phenomena/WordOrder/` (position choice) via the shared dimension of
 NP weight/reduction.
-
-## Migrated location
-
-Was previously `Core/Discourse/Accessibility.lean`. Moved to `Features/`
-because it is a per-entry feature taxonomy, not a discourse-state
-primitive — at-issueness and QUD remain in `Core/Discourse/` because
-those genuinely are discourse-state computations.
 -/
 
 set_option autoImplicit false
@@ -79,7 +74,7 @@ inductive AccessibilityLevel where
   | cliticizedPron       -- "'er", "-la"
   | verbalAgreement      -- person inflection on the verb
   | zero                 -- ∅ (pro-drop)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype, Inhabited
 
 /-- Numeric rank: 0 (lowest accessibility) to 17 (highest).
     Higher rank = higher accessibility = more reduced form. -/
@@ -102,6 +97,18 @@ def AccessibilityLevel.rank : AccessibilityLevel → Nat
   | .cliticizedPron      => 15
   | .verbalAgreement     => 16
   | .zero                => 17
+
+/-- Distinct accessibility levels have distinct ranks. -/
+theorem AccessibilityLevel.rank_injective :
+    Function.Injective AccessibilityLevel.rank := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [AccessibilityLevel.rank]
+
+/-- Total order on `AccessibilityLevel` via the rank pullback,
+    matching the `LinearOrder GivennessStatus` / `BinaryGivenness`
+    pattern in `Features/Givenness.lean`. -/
+instance : LinearOrder AccessibilityLevel :=
+  LinearOrder.lift' AccessibilityLevel.rank AccessibilityLevel.rank_injective
 
 /-- Coarsening: each accessibility level maps to one of the 5
     `DefinitenessLevel` categories used for differential argument marking.

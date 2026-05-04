@@ -645,12 +645,9 @@ theorem english_svo_explained :
 
     STIPULATIVE: pattern-matches on givenness directly. The book
     derives this from [±FOC]/TopP (see § 10 docstring). Focus
-    marking (which under the prior `DiscourseStatus`-typed signature
-    fell into a third case `.focused → .obligatory`) belongs to the
-    Krifka-2008 focus axis (`Features.InformationStructure.Focus`),
-    not the givenness axis; downstream extensions wanting to model
-    focus-driven V2 should add a separate `Focus`-parameterized
-    function. -/
+    marking belongs to a separate axis
+    (`Features.InformationStructure.Focus`); a focus-driven V2
+    extension would parameterize over `Focus α` separately. -/
 def tromsøWhV2Preference : BinaryGivenness → V2Status
   | .given => .impossible  -- given/pronominal subject → non-V2 preferred
   | .new   => .obligatory  -- new/full-DP subject → V2 preferred

@@ -20,11 +20,9 @@ is treated as orthogonal to Krifka's four. Substrate for each:
 - At-issueness: `Core/Discourse/AtIssueness.lean` (gradient `AtIssuenessDegree`).
 - Delimitation: no substrate yet — deferred.
 
-The previous catch-all `DiscourseStatus = focused | given | new` enum
-(plus `DiscourseStatus.rank : Fin 3` and `DiscourseStatus.ofAtIssueness`)
-conflated the focus, givenness, and at-issueness axes; deleted in
-0.230.717. Theme/Rheme and `JudgmentType` (Kuroda 1972) remain here as
-they predate the Krifka decomposition and target distinct phenomena.
+Theme/Rheme and `JudgmentType` (Kuroda 1972) live here too — they
+predate Krifka's decomposition and target distinct phenomena
+(Prague-school packaging, categorical-vs-thetic judgments).
 
 Theory-level predicates over these taxonomies (Umbach's alt-set
 well-formedness, Erteschik-Shir/Abeillé extraction-IS clash) live in

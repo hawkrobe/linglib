@@ -26,12 +26,10 @@ types make these classes a no-op when the data is already in the
 canonical form, and a hook for extension when a theory needs to
 project a richer object down onto one of the dimensions.
 
-The pre-Krifka `HasDiscourseStatus` typeclass (typed against the now-
-deleted `Features.InformationStructure.DiscourseStatus` enum) was
-removed in 0.230.717 along with the conflated enum itself. Per-axis
-typeclasses (`HasGivenness`, `HasFocus`, `HasTopic`, `HasAtIssue`)
-are deferred to a follow-up PR; add them when a real abstraction-
-consumer emerges, per mathlib's small-typeclass convention.
+Per-axis typeclasses for the four Krifka IS notions (`HasGivenness`,
+`HasFocus`, `HasTopic`, `HasAtIssue`) would naturally sit alongside
+`HasAccessibility` and `HasAnimacy`; add them when a real
+abstraction-consumer emerges, per mathlib's small-typeclass convention.
 -/
 
 set_option autoImplicit false

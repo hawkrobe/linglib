@@ -369,9 +369,7 @@ theorem inner_entails_medial (f : EvidentialBiasFlavor W) (p : Set W) (w : W)
 FALSUM targets discourse polarity — whether p *is* or *is not* in the CG.
 Focus on FALSUM generates Rooth alternatives on polarity. The focus
 semantic value of FALSUM is `{λw[p ∉ CG], λw[p ∈ CG]}`, computed by
-`falsumAlternatives` below. (The prior `falsumFocusRequirement :
-DiscourseStatus := .focused` constant was unused and was deleted in
-the DiscourseStatus → Krifka-axes refactor.) -/
+`falsumAlternatives` below. -/
 
 /-- FALSUM generates exactly two alternatives (polarity contrast). -/
 def falsumAlternatives (cg p : Set W) :

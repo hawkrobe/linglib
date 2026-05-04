@@ -5,7 +5,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Givenness — Cognitive Status of Discourse Referents
 @cite{gundel-hedberg-zacharski-1993} @cite{prince-1981} @cite{chafe-1976}
-@cite{ariel-2001}
+@cite{chafe-1987} @cite{ariel-2001}
 
 Substrate type for the **Givenness** axis of information structure.
 @cite{krifka-2008} enumerates four IS notions — focus, givenness,
@@ -39,10 +39,10 @@ This file provides the substrate for both:
   hearer-knowledge: anything the hearer can identify (`inFocus` through
   `uniquelyIdentifiable`) is `given`; anything brand-new to the hearer
   (`referential`, `typeIdentifiable`) is `new`. This is the cut Prince
-  1981 / Strube-Hahn 1999 use. Chafe 1976 has a *three*-way activation
-  taxonomy (active / semi-active / inactive) rather than a binary —
-  not provided here as a primitive. Consumers wanting Chafe's
-  activated-vs-not cut can use `GivennessStatus.isActivated : Bool`.
+  1981 / Strube-Hahn 1999 use. Chafe's later activation-based view
+  (Chafe 1987, elaborated in Chafe 1994) draws a different cut as a
+  three-way active / semi-active / inactive taxonomy; not provided
+  here as a primitive.
 
 ## Critique: Ariel 2001 on GHZ
 
@@ -95,14 +95,6 @@ to lack a substrate source for the inferable / containing-inferable /
 anchored-brand-new tier; GHZ-6's `familiar` and `uniquelyIdentifiable`
 now supply it via `StrubeHahnInfoStatus.ofGivenness`.
 
-## Replaces
-
-`Features.InformationStructure.DiscourseStatus` (the 3-value enum
-`focused | given | new`) was the prior catch-all annotation. It
-conflated focus and givenness, and the `focused` tier was a category
-error (focus is its own axis — `Features.InformationStructure.Focus`).
-Consumers needing focus migrate to that type; consumers needing
-givenness use `GivennessStatus` or `BinaryGivenness` here.
 -/
 
 set_option autoImplicit false
@@ -166,9 +158,10 @@ def GivennessStatus.rank : GivennessStatus → Nat
     hearer can identify (regardless of activation state); `new` covers
     referents the hearer doesn't yet know about.
 
-    This is the cut Prince 1981 / Strube-Hahn 1999 use. Chafe 1976's
-    activation-based binary is a different cut (around `activated` vs
-    `familiar`) and is not provided as a primitive. -/
+    This is the cut Prince 1981 / Strube-Hahn 1999 use. Chafe's
+    activation-based view (Chafe 1987) draws a different
+    *three-way* taxonomy (active / semi-active / inactive); not
+    provided here as a primitive. -/
 inductive BinaryGivenness where
   /-- Given: hearer can identify the referent. Covers GHZ's `inFocus`
       through `uniquelyIdentifiable`. -/
@@ -182,41 +175,6 @@ inductive BinaryGivenness where
 def BinaryGivenness.rank : BinaryGivenness → Nat
   | .given => 1
   | .new   => 0
-
-/-- Project GHZ-6 onto Prince's hearer-status binary. The cut is at
-    `uniquelyIdentifiable` / `referential`: anything the hearer can
-    identify is `given`; brand-new referents are `new`.
-
-    Monotone: higher GHZ rank never maps to lower binary rank
-    (verified by `coarsen_monotone`). -/
-def GivennessStatus.coarsen : GivennessStatus → BinaryGivenness
-  | .inFocus              => .given
-  | .activated            => .given
-  | .familiar             => .given
-  | .uniquelyIdentifiable => .given
-  | .referential          => .new
-  | .typeIdentifiable     => .new
-
-/-- Chafe 1976 activation-based view: is this referent activated in
-    working memory? `inFocus` and `activated` are activated; everything
-    else is not. Provided so consumers needing Chafe's cut don't have
-    to redefine it.
-
-    Anti-pattern check: this is NOT a third primitive enum — it's a
-    derived predicate. If a consumer needs to *parameterize* over
-    Chafe-binary instead of Prince-binary, that's a sign the consumer
-    should accept a `GivennessStatus → Bool` predicate, not that we
-    need a `ChafeGivenness` enum. -/
-def GivennessStatus.isActivated : GivennessStatus → Bool
-  | .inFocus   => true
-  | .activated => true
-  | _          => false
-
-/-- The coarsening preserves order: if a GHZ status outranks another,
-    its binary projection is at least as given. -/
-theorem GivennessStatus.coarsen_monotone (a b : GivennessStatus) :
-    a.rank ≥ b.rank → a.coarsen.rank ≥ b.coarsen.rank := by
-  cases a <;> cases b <;> decide
 
 /-- Distinct GHZ-6 statuses have distinct ranks. -/
 theorem GivennessStatus.rank_injective :

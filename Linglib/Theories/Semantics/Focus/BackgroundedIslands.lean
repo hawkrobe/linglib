@@ -909,10 +909,7 @@ the QUD-determined backgroundedness, not an independent diagnostic. -/
 
 /-- Whether content projects under sentential negation, based on its
 givenness. Backgrounded (given) content projects out of negation scope;
-at-issue (new) content falls within scope. (The pre-Krifka version
-also handled a `.focused` case mapping to False; under the new
-substrate, focus marking is a separate axis and this function takes
-only givenness.) -/
+at-issue (new) content falls within scope. -/
 def projectsUnderNegation : BinaryGivenness → Prop
   | .given => True    -- backgrounded: negation targets the verb, not the complement
   | .new   => False   -- at-issue: negation can target the complement

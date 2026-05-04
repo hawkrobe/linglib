@@ -41,16 +41,9 @@ not exclusivity over IF.
 maps @cite{gundel-hedberg-zacharski-1993}'s 6-tier `GivennessStatus`
 (in `Features/Givenness.lean`) onto Strube-Hahn's 3-tier IS — the
 substantive linguistic bridge the two literatures imply. GHZ's
-`familiar`/`uniquelyIdentifiable` populate the MEDIATED tier (which
-had no source under the prior `DiscourseStatus`-based projection,
-since `DiscourseStatus` lacked any analog of Prince's inferable /
-containing-inferable / anchored-brand-new categories).
-
-The `ofDiscourseStatus` projection that previously lived here was
-deleted in 0.230.708 (along with the `DiscourseStatus` enum it
-projected from); the divergence theorem witnessing its broken
-ordering became meaningless once the substrate moved to the
-properly-aligned `GivennessStatus`.
+`uniquelyIdentifiable`/`referential` populate the MEDIATED tier
+(Prince's inferable / containing-inferable / anchored-brand-new),
+witnessed by `mediated_reachable` below.
 -/
 
 set_option autoImplicit false
@@ -125,6 +118,26 @@ def StrubeHahnInfoStatus.ofGivenness :
   | .uniquelyIdentifiable => .mediated
   | .referential          => .mediated
   | .typeIdentifiable     => .hearerNew
+
+/-! ### MEDIATED-tier dissolution: substrate-anchor examples
+
+The headline of the post-Krifka substrate refactor: GHZ-6's
+`uniquelyIdentifiable` and `referential` finally supply the MEDIATED
+tier that the old `DiscourseStatus`-based projection couldn't reach.
+These `rfl` examples lock the dissolution as grep-anchored facts. -/
+
+example : StrubeHahnInfoStatus.ofGivenness .uniquelyIdentifiable = .mediated := rfl
+example : StrubeHahnInfoStatus.ofGivenness .referential = .mediated := rfl
+example : StrubeHahnInfoStatus.ofGivenness .familiar = .hearerOld := rfl
+example : StrubeHahnInfoStatus.ofGivenness .typeIdentifiable = .hearerNew := rfl
+
+/-- MEDIATED is reachable: there exists a `GivennessStatus` that
+    projects to it (in fact two — `uniquelyIdentifiable` and
+    `referential`). Pre-Krifka the projection was from `DiscourseStatus`,
+    which had no MEDIATED-suitable input. -/
+theorem mediated_reachable :
+    ∃ g : GivennessStatus, StrubeHahnInfoStatus.ofGivenness g = .mediated :=
+  ⟨.uniquelyIdentifiable, rfl⟩
 
 /-- The projection respects the salience ordering: more cognitively
     activated givenness statuses map to higher (or equal) Centering

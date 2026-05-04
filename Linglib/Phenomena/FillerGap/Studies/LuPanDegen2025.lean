@@ -210,15 +210,10 @@ backgroundedness and therefore worse extraction. -/
 /-- Per-verb backgroundedness predicts acceptability: verbs that background
 their complements more strongly also show more degraded extraction.
 The model derives this from manner salience → QUD strength → backgroundedness.
-
-(Pre-refactor versions of this theorem also asserted
-`DiscourseStatus.given.rank < DiscourseStatus.new.rank` as documentation
-of the rank direction. After the DiscourseStatus → Krifka-axes refactor,
-the conceptually-right substrate for "backgroundedness" is
-`Core.Discourse.AtIssuenessDegree`, not the new `BinaryGivenness`
-(whose rank order is INVERTED relative to DiscourseStatus —
-BinaryGivenness orders by salience, given > new). The decidable
-inequality has been dropped as it carried no proof content.) -/
+The conceptually-right substrate for "backgroundedness" is
+`Core.Discourse.AtIssuenessDegree`, not `BinaryGivenness` (which
+orders by salience, given > new); future work could rephrase
+`complementStatus` over AtIssuenessDegree directly. -/
 theorem per_verb_correlation_predicted :
     -- All MoS verbs have manner weight (they all background)
     complementStatus (defaultDimension whisperDecomp) = .given ∧
@@ -324,10 +319,7 @@ open Phenomena.Islands.MannerOfSpeaking in
 /-- **Experimental data matches formal model direction**: the formal model
 predicts that backgrounded complements have degraded extraction.
 Experiments 1, 2b, and 3b all show the predicted anti-correlation:
-higher backgroundedness → lower acceptability. (The earlier
-`DiscourseStatus.given.rank < DiscourseStatus.new.rank` documentation
-conjunct was dropped in the Krifka-axes refactor; see comment on
-`per_verb_correlation_predicted`.) -/
+higher backgroundedness → lower acceptability. -/
 theorem experimental_matches_model :
     -- Exp 2b: MoS verbs are more backgrounded AND less acceptable than *say*
     (exp2b_bg_mos > exp2b_bg_say ∧ exp2b_acc_mos < exp2b_acc_say) ∧

@@ -71,13 +71,10 @@ contradicting the paper's findings.
 - `Core.Constraint.MaxEntGrammar` — the grammar packages as a generic
   MaxEnt grammar (`maxEntGrammar`), making the softmax probability
   machinery available without redefinition.
-- `Features.BinaryGivenness` — discourse-status
-  partition. The paper collapses @cite{prince-1981}'s three-way
-  given/inferable/new into two categories (inferable → given). Focus
-  marking, which under the prior `DiscourseStatus` schema would have
-  appeared as a third `.focused` value the constraints had to filter
-  out, lives on its own axis (`Features.InformationStructure.Focus`)
-  in the post-refactor substrate.
+- `Features.BinaryGivenness` — discourse-status partition. The paper
+  collapses @cite{prince-1981}'s three-way given/inferable/new into
+  two categories (inferable → given). Focus marking is on a separate
+  axis (`Features.InformationStructure.Focus`) and not consumed here.
 - `Theories.Syntax.DependencyGrammar.Formal.DependencyLength` —
   Dependency Locality (@cite{futrell-gibson-2020}) provides the
   *positive* derivation of the heaviness signal: §9 below shows
@@ -160,10 +157,7 @@ def heavyFirst : NamedConstraint Candidate where
 /-- `*NEW-FIRST`: violated when the first constituent is discourse-new
     while the second is discourse-given. A markedness encoding of the
     given-before-new principle the paper draws from
-    @cite{prince-1981}/@cite{gundel-hedberg-zacharski-1993}.
-    `BinaryGivenness` is binary by design (given/new); focus marking,
-    which used to require filtering out a `.focused` case under the
-    prior `DiscourseStatus` schema, lives on its own axis now. -/
+    @cite{prince-1981}/@cite{gundel-hedberg-zacharski-1993}. -/
 def newFirst : NamedConstraint Candidate where
   name := "*NEW-FIRST"
   family := .markedness
@@ -540,9 +534,7 @@ active). UID therefore prefers placing the new constituent last — exactly
 the direction `*NEW-FIRST` operationalizes.
 
 Unlike the DLM/heaviness bridge, this is an *implication* rather than a
-biconditional. The prior `DiscourseStatus`-typed version of this file
-also handled a `.focused` case (mapped to surprisal 0); after the
-DiscourseStatus → Krifka-axes refactor, focus marking is its own axis
+biconditional. Focus marking lives on its own axis
 (`Features.InformationStructure.Focus`) and would enter UID via a
 separate Focus-parameterized cost, not by extending this givenness
 surprisal. Whenever `newDiff p > 0`, UID strictly prefers the same
