@@ -485,22 +485,15 @@ theorem lhsIndex_univ_eq_bind (T : TraceTree α Unit) :
 theorem lhsRealCuts_eq_lhsIndexSum (T : TraceTree α Unit) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = (Finset.univ : Finset (LhsIndex T)).val.map (LhsIndex.tripleTensor R) := by
-  rw [lhsRealCuts_eq_perLayerContrib_top]
-  unfold perLayerContrib
-  rw [Multiset.map_bind]
-  rw [lhsIndex_univ_eq_bind, Multiset.map_bind]
+  rw [lhsRealCuts_bind_sections, lhsIndex_univ_eq_bind, Multiset.map_bind]
   refine Multiset.bind_congr (fun cl_outer _ => ?_)
-  -- Note: (univ : AugCutShape T').val.map (cf_aug, rem) IS pairsMS T' (definitionally).
-  rw [show ((CutShape.cutForest cl_outer).map fun T' =>
-              (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                (AugCutShape.cutForest_aug ac', AugCutShape.remainderForest ac'))
-          = ((CutShape.cutForest cl_outer).map (pairsMS (α := α))) from rfl]
-  rw [Multiset.map_map]
   -- Reformulate via composition through (s.fsts.sum, s.snds.sum):
   rw [show ((Multiset.Sections ((CutShape.cutForest cl_outer).map (pairsMS (α := α)))).map
-            ((ChildSlots.toTriple R) ∘ fun s : Multiset (TraceForest α Unit × TraceForest α Unit) =>
-              (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-                CutShape.remainder cl_outer⟩ : ChildSlots α)))
+            fun s =>
+              (forestToHc (R := R) (s.map Prod.fst).sum)
+                ⊗ₜ[R] ((forestToHc (R := R) (s.map Prod.snd).sum)
+                  ⊗ₜ[R] forestToHc (R := R)
+                    ({CutShape.remainder cl_outer} : TraceForest α Unit)))
           = ((Multiset.Sections ((CutShape.cutForest cl_outer).map (pairsMS (α := α)))).map
               fun s => ((s.map Prod.fst).sum, (s.map Prod.snd).sum)).map
               fun p =>

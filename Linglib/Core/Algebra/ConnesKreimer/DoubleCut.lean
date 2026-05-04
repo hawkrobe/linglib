@@ -828,37 +828,6 @@ noncomputable def ChildSlots.toTriple (R : Type*) [CommSemiring R]
 theorem geoCutToTriple_eq {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
     geoCutToTriple R g = (geoToChildSlots g).toTriple R := rfl
 
-/-! ### `perLayerContrib`: per-layer LHS contribution
-
-Used by Session 2's `lhsRealCuts_eq_lhsIndexSum` (in `LhsBridge.lean`) via the
-algebraic bridge `lhsRealCuts_eq_perLayerContrib_top` below. The substantive
-GeoCut bijection lives in `LhsEquiv.lean` and bypasses this hub entirely. -/
-
-/-- Per-layer LHS contribution at the subtree level.
-- `.bot`: parent extracts T whole + inner = extractWhole. Single ChildSlots
-  `⟨{T}, 0, .trace ()⟩`.
-- `.mid`: parent extracts T whole + inner = real cl_inner. One ChildSlots per
-  `cl_inner ∈ CutShape T`: `⟨cutForest cl_inner, {remainder cl_inner}, .trace ()⟩`.
-- `.top`: parent recurses with `cl_outer ∈ CutShape T` + per-tree inner section.
-  `⟨recursive BOT, recursive MID, remainder cl_outer⟩`. -/
-noncomputable def perLayerContrib (T : TraceTree α Unit) :
-    Layer → Multiset (ChildSlots α)
-  | .bot =>
-      ({⟨({T} : TraceForest α Unit), 0, .trace ()⟩} : Multiset (ChildSlots α))
-  | .mid =>
-      (Finset.univ : Finset (CutShape T)).val.map fun cl_inner =>
-        ⟨CutShape.cutForest cl_inner,
-         ({CutShape.remainder cl_inner} : TraceForest α Unit),
-         .trace ()⟩
-  | .top =>
-      (Finset.univ : Finset (CutShape T)).val.bind fun cl_outer =>
-        (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
-          (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-            ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
-             (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
-          ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-           CutShape.remainder cl_outer⟩
-
 /-! #### `botGeoCut`: the canonical .bot-rooted GeoCut -/
 
 /-- For `myL = .bot`, the layer constraint `lL ≤ .bot` forces `lL = .bot`. -/
@@ -1522,13 +1491,12 @@ By induction on `T`:
 - `.leaf` / `.trace`: definitional reduction (`rfl`).
 - `.node l r`: substantive Foissy bijection. Sub-sessions 2.10b / 2.11. -/
 
-/-! #### Algebraic identity bridge: `lhsRealCuts T = perLayerContrib T .top |>.map ChildSlots.toTriple`
+/-! #### Algebraic identity bridge: `lhsRealCuts_bind_sections`
 
-This bridge holds at any T (independent of the Foissy bijection). Once proved,
-`lhsRealCuts_eq_geoMultiset` follows from `perLayerContrib_top` via the chain:
-`lhsRealCuts T = perLayerContrib T .top |>.map (ChildSlots.toTriple R)
-   = (univ : Finset (GeoCut T .top)).val.map (ChildSlots.toTriple R ∘ geoToChildSlots)
-   = (univ).val.map geoCutToTriple = geoMultiset T`. -/
+Bridges `lhsRealCuts T` (definition: bind over `CutShape T` of `Sections` over
+`comulTreeMS`-tensorized pairs) to a more directly-matchable form: bind over
+`CutShape T` of `Sections` over `pairsMS`-pairs, projected via `forestToHc`
+tensor. Used by `LhsBridge.lean`'s `lhsRealCuts_eq_lhsIndexSum` proof. -/
 
 /-- Product of pair-tensor map distributes through pair sums:
     `prod (s.map (forestToHc fst ⊗ forestToHc snd)) = forestToHc(sum fst) ⊗ forestToHc(sum snd)`.
@@ -1566,19 +1534,24 @@ theorem _root_.Multiset.Sections_map_map {β γ : Type*} (h : β → γ)
     refine Multiset.map_congr rfl (fun s _ => ?_)
     rw [Function.comp_apply, Function.comp_apply, Multiset.map_cons]
 
-/-- The algebraic bridge: the LHS triple-tensors equal the per-layer .top
-    ChildSlots projected via `ChildSlots.toTriple`. Per-element identity holds
-    by tensor-product associativity. -/
-theorem lhsRealCuts_eq_perLayerContrib_top (T : TraceTree α Unit) :
+/-- The algebraic bridge: `lhsRealCuts T` factors as a bind over `CutShape T`
+    of `Sections` of `pairsMS`, projected via `forestToHc` tensor. Per-element
+    identity holds by tensor-product associativity (`forestToHc_pair_prod`).
+    Used by `LhsBridge.lean`'s `lhsRealCuts_eq_lhsIndexSum`. -/
+theorem lhsRealCuts_bind_sections (T : TraceTree α Unit) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
-      = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
-  unfold lhsRealCuts perLayerContrib
-  rw [Multiset.map_bind]
+      = (Finset.univ : Finset (CutShape T)).val.bind fun cl_outer =>
+          (Multiset.Sections ((CutShape.cutForest cl_outer).map (pairsMS (α := α)))).map
+            fun s =>
+              (forestToHc (R := R) (s.map Prod.fst).sum)
+                ⊗ₜ[R] ((forestToHc (R := R) (s.map Prod.snd).sum)
+                  ⊗ₜ[R] forestToHc (R := R)
+                    ({CutShape.remainder cl_outer} : TraceForest α Unit)) := by
+  unfold lhsRealCuts
   refine Multiset.bind_congr (fun cl_outer _ => ?_)
-  -- LHS sections are over `(cutForest cl_outer).map comulTreeMS`; expand
-  -- via `comulTreeMS = pairsMS.map tensorize`, then lift the per-element map
-  -- through `Sections` via `Multiset.Sections_map_map`, and align with the RHS
-  -- pair-section structure (which IS `pairsMS`).
+  -- LHS sections are over `(cutForest cl_outer).map comulTreeMS`; expand via
+  -- `comulTreeMS = pairsMS.map tensorize`, lift through `Sections` via
+  -- `Multiset.Sections_map_map`, then match per-section via `forestToHc_pair_prod`.
   simp only [comulTreeMS_eq_pairsMS_map]
   rw [show ((CutShape.cutForest cl_outer).map fun T' =>
              (pairsMS T').map fun p =>
@@ -1587,10 +1560,9 @@ theorem lhsRealCuts_eq_perLayerContrib_top (T : TraceTree α Unit) :
             (Multiset.map (fun p =>
               (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2))) from by
        rw [Multiset.map_map]; rfl]
-  rw [Multiset.Sections_map_map, Multiset.map_map, Multiset.map_map]
-  -- Per-section identity: apply forestToHc_pair_prod + assoc_tmul.
+  rw [Multiset.Sections_map_map, Multiset.map_map]
   refine Multiset.map_congr rfl (fun s _ => ?_)
-  rw [Function.comp_apply, Function.comp_apply, forestToHc_pair_prod]
+  rw [Function.comp_apply, forestToHc_pair_prod]
   rfl
 
 /-- Per-element triple agreement: for each `(C₁, C₂)`, the RHS double-cut's
