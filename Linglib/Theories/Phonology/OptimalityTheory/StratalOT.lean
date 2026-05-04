@@ -1,5 +1,8 @@
 import Mathlib.Order.Nat
+import Mathlib.Data.List.Dedup
+import Mathlib.Logic.Relation
 import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Stratal Optimality Theory
@@ -242,19 +245,30 @@ instance (spec : RankingSpec) (a b : String) :
     Decidable (immediatelyDominates spec a b) := by
   unfold immediatelyDominates; infer_instance
 
-/-- Does constraint `a` dominate `b` (reflexive transitive closure,
-    depth ≤ 3)? Sufficient for the ranking chains encountered in
-    practice (typically 5–8 constraints per stratum). -/
-def dominates (spec : RankingSpec) (a b : String) : Prop :=
-  a = b ∨
-  immediatelyDominates spec a b ∨
-  ∃ p ∈ spec, p.1 = a ∧
-    ∃ q ∈ spec, immediatelyDominates spec p.1 q.1 ∧
-      (q.1 = b ∨ immediatelyDominates spec q.1 b)
+/-- Does constraint `a` dominate `b`? Reflexive-transitive closure of
+    `immediatelyDominates`, decidable on any concrete `spec` via the
+    `Core.Relation.ReflTransGen` substrate using the spec's vertex
+    universe as the finite carrier. Captures dominance chains of any
+    length (the previous depth-3 hardcoded version was incomplete for
+    longer chains). -/
+def dominates (spec : RankingSpec) : String → String → Prop :=
+  Relation.ReflTransGen (immediatelyDominates spec)
+
+/-- All constraints mentioned by `spec` — the finite universe for the
+    substrate's `decidable_of_finite`. -/
+private def specVerts (spec : RankingSpec) : List String :=
+  (spec.map (·.1) ++ spec.map (·.2)).dedup
+
+private theorem immediatelyDominates_dst_mem_specVerts (spec : RankingSpec) :
+    ∀ a b, immediatelyDominates spec a b → b ∈ specVerts spec := by
+  intro a b ⟨p, hp, _, hp2⟩
+  simp only [specVerts, List.mem_dedup, List.mem_append, List.mem_map]
+  exact Or.inr ⟨p, hp, hp2⟩
 
 instance (spec : RankingSpec) (a b : String) :
-    Decidable (dominates spec a b) := by
-  unfold dominates; infer_instance
+    Decidable (dominates spec a b) :=
+  Relation.ReflTransGen.decidable_of_finite (r := immediatelyDominates spec)
+    (specVerts spec) (immediatelyDominates_dst_mem_specVerts spec) a b
 
 -- ============================================================================
 -- § 6: Cross-Stratal Properties

@@ -1,3 +1,7 @@
+import Linglib.Core.Relation.ReflTransGen
+import Mathlib.Data.List.Dedup
+import Mathlib.Logic.Relation
+
 /-!
 # Cyclic Linearization of Syntactic Structure
 @cite{fox-pesetsky-2005}
@@ -273,36 +277,45 @@ theorem object_shift_without_verb_movement :
 /-! ### Full cycle detection via reachability
 
 `HasContradiction` detects direct ordering cycles (a < b ∧ b < a).
-For completeness, `HasCycle` detects cycles of any length via BFS
-reachability. For all current applications (Malayic voice, Holmberg's
-Generalization), contradictions are direct, so both predicates agree.
-`HasCycle` is provided for future applications involving transitive cycles.
+For completeness, `HasCycle` detects cycles of any length via the
+`Relation.ReflTransGen` reachability over the directed precedence
+graph (with `Decidable` derived from
+`Core.Relation.ReflTransGen.decidable_of_finite`). For all current
+applications (Malayic voice, Holmberg's Generalization), contradictions
+are direct, so both predicates agree.
 -/
 
-/-- BFS step for reachability in the directed precedence graph. Private
-    implementation detail for `Reachable`'s decidability instance. -/
-private def reachGo (table : OrderingTable) (dst : String) :
-    Nat → List String → List String → Bool
-  | 0, _, _ => false
-  | fuel + 1, worklist, visited =>
-    match worklist with
-    | [] => false
-    | x :: rest =>
-      if x == dst then true
-      else if visited.contains x then reachGo table dst fuel rest visited
-      else
-        let next := (table.filter (·.before == x)).map (·.after)
-        reachGo table dst fuel (rest ++ next) (x :: visited)
+/-- One-step precedence relation in `table`: there exists an entry
+    `⟨src, dst⟩`. -/
+def precedeStep (table : OrderingTable) (src dst : String) : Prop :=
+  ⟨src, dst⟩ ∈ table
+
+instance (table : OrderingTable) (src dst : String) :
+    Decidable (precedeStep table src dst) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 /-- `dst` is reachable from `src` via directed edges in `table`. The
-    Bool engine `reachGo` is private; this Prop wraps it via Decidable.
-    A future cleanup may replace the BFS-with-fuel decision procedure
-    with a structural path-existence formulation. -/
+    relation is `Relation.ReflTransGen` of the one-step `precedeStep`.
+    Decidability is supplied by the `Core.Relation.ReflTransGen` substrate
+    using the table's vertex universe as the finite carrier. -/
 def Reachable (table : OrderingTable) (src dst : String) : Prop :=
-  reachGo table dst (2 * table.length + 1) [src] [] = true
+  Relation.ReflTransGen (precedeStep table) src dst
 
-instance (table : OrderingTable) (src dst : String) : Decidable (Reachable table src dst) :=
-  inferInstanceAs (Decidable (_ = true))
+/-- All vertices mentioned by `table`: every successor of `precedeStep`
+    sits here. -/
+private def tableVerts (table : OrderingTable) : List String :=
+  (table.map (·.before) ++ table.map (·.after)).dedup
+
+private theorem precedeStep_dst_mem_tableVerts (table : OrderingTable) :
+    ∀ src dst, precedeStep table src dst → dst ∈ tableVerts table := by
+  intro src dst h
+  simp only [tableVerts, List.mem_dedup, List.mem_append, List.mem_map]
+  exact Or.inr ⟨⟨src, dst⟩, h, rfl⟩
+
+instance (table : OrderingTable) (src dst : String) :
+    Decidable (Reachable table src dst) :=
+  Relation.ReflTransGen.decidable_of_finite (r := precedeStep table)
+    (tableVerts table) (precedeStep_dst_mem_tableVerts table) src dst
 
 /-- An Ordering Table contains a directed cycle of any length: some
     edge a → b such that b can reach a via other edges. -/
