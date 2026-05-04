@@ -866,6 +866,7 @@ Following the audit, split `lhsAnyChildContrib_eq_geoCutAny` into three smaller
 per-layer equalities. The `.bot` and `.mid` cases reduce to direct multiset
 computation; `.top` is the substantive recursive content. -/
 
+omit [DecidableEq α] in
 /-- All `g : GeoCut T .bot` give the same `ChildSlots`: `⟨{T}, 0, .trace T⟩`.
     Because for `myL = .bot` all the geo* helpers return the constant value
     determined by `T` alone. -/
@@ -888,6 +889,7 @@ def botGeoCut : ∀ (T : DecoratedTree α), GeoCut T Layer.bot
       GeoCut.node (le_refl _) (le_refl _) (Or.inr rfl) (Or.inr rfl)
         (botGeoCut l) (botGeoCut r)
 
+omit [DecidableEq α] in
 /-- Every `g : GeoCut T .bot` equals `botGeoCut T`. Combined with `Inhabited` via
     `botGeoCut`, gives `Unique (GeoCut T .bot)`. -/
 theorem botGeoCut_unique : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.bot),
@@ -985,43 +987,46 @@ def fromMidGeoCut : ∀ {T : DecoratedTree α}, GeoCut T Layer.mid → CutShape 
 
 /-! #### Helper lemmas: `geoToChildSlots ∘ midGeoCut` matches `(cutForest, {remainder}, .trace T)`. -/
 
+omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoBotForest (midGeoCut T cl) = cutForest cl`. -/
 theorem geoBotForest_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
     geoBotForest (midGeoCut T cl) = CutShape.cutForest cl
   | _, .atLeaf => rfl
   | _, .atTrace => rfl
   | .node _ _, .bothCut _ _ => by
-      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest]
+      simp only [midGeoCut, geoBotForest, CutShape.cutForest]
       rfl
   | .node _ _, .onlyLeftCut _ cr_in => by
       have ih := geoBotForest_midGeoCut _ cr_in
-      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest, ih]
+      simp only [midGeoCut, geoBotForest, CutShape.cutForest, ih]
   | .node _ _, .onlyRightCut _ cl_in => by
       have ih := geoBotForest_midGeoCut _ cl_in
-      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest, ih]
+      simp only [midGeoCut, geoBotForest, CutShape.cutForest, ih]
   | .node _ _, .bothRecurse cl_in cr_in => by
       have ihl := geoBotForest_midGeoCut _ cl_in
       have ihr := geoBotForest_midGeoCut _ cr_in
       simp only [midGeoCut, geoBotForest, CutShape.cutForest, ihl, ihr]
 
+omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoOuterSkeleton (midGeoCut T cl) = remainder cl`. -/
 theorem geoOuterSkeleton_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
     geoOuterSkeleton (midGeoCut T cl) = CutShape.remainder cl
   | _, .atLeaf => rfl
   | _, .atTrace => rfl
   | .node _ _, .bothCut _ _ => by
-      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder]
+      simp only [midGeoCut, geoOuterSkeleton, CutShape.remainder]
   | .node _ _, .onlyLeftCut _ cr_in => by
       have ih := geoOuterSkeleton_midGeoCut _ cr_in
-      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder, ih]
+      simp only [midGeoCut, geoOuterSkeleton, CutShape.remainder, ih]
   | .node _ _, .onlyRightCut _ cl_in => by
       have ih := geoOuterSkeleton_midGeoCut _ cl_in
-      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder, ih]
+      simp only [midGeoCut, geoOuterSkeleton, CutShape.remainder, ih]
   | .node _ _, .bothRecurse cl_in cr_in => by
       have ihl := geoOuterSkeleton_midGeoCut _ cl_in
       have ihr := geoOuterSkeleton_midGeoCut _ cr_in
       simp only [midGeoCut, geoOuterSkeleton, CutShape.remainder, ihl, ihr]
 
+omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoMidForest (midGeoCut T cl) = {remainder cl}`. -/
 theorem geoMidForest_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
     geoMidForest (midGeoCut T cl) = ({CutShape.remainder cl} : Forest α) := by
@@ -1031,12 +1036,14 @@ theorem geoMidForest_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
        cases cl <;> rfl,
       geoOuterSkeleton_midGeoCut]
 
+omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoStackItem (midGeoCut T cl) = .trace T`. -/
 theorem geoStackItem_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
     geoStackItem (midGeoCut T cl) = .trace T := by
   -- For myL = mid, geoStackItem = .trace T always.
   cases cl <;> rfl
 
+omit [DecidableEq α] in
 /-- The combined fact: `geoToChildSlots (midGeoCut T cl)` matches the LHS triple. -/
 theorem geoToChildSlots_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
     geoToChildSlots (midGeoCut T cl)
@@ -1050,6 +1057,7 @@ The forward (`midGeoCut`) and backward (`fromMidGeoCut`) directions are mutually
 inverse on `.node l r`. Proofs by case analysis on the constructor + IH on
 recursive sub-CutShapes / sub-GeoCuts. -/
 
+omit [DecidableEq α] in
 /-- Roundtrip 1: `fromMidGeoCut ∘ midGeoCut = id`. -/
 theorem fromMidGeoCut_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
     fromMidGeoCut (midGeoCut T cl) = cl
@@ -1067,6 +1075,18 @@ theorem fromMidGeoCut_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
                                 (fromMidGeoCut (midGeoCut r cr_in)) = _
       rw [fromMidGeoCut_midGeoCut l cl_in, fromMidGeoCut_midGeoCut r cr_in]
 
+omit [DecidableEq α] in
+/-- Helper: when the `IsNotTrace ∨ lL = myL` disjunction's right disjunct is
+    impossible (`lL ≠ myL`), it must equal `Or.inl ...`. Eliminates copy-paste
+    in the `midGeoCut_fromMidGeoCut` dispatch. -/
+private theorem trace_nt_eq_inl {T : DecoratedTree α} {lL myL : Layer}
+    (h : DecoratedTree.IsNotTrace T ∨ lL = myL) (hne : lL ≠ myL) :
+    h = Or.inl (h.resolve_right hne) := by
+  rcases h with _ | hne'
+  · rfl
+  · exact absurd hne' hne
+
+omit [DecidableEq α] in
 /-- Roundtrip 2: `midGeoCut ∘ fromMidGeoCut = id`. Uses `botGeoCut_unique`
     for `gl/gr` at layer `.bot`, IH for `gl/gr` at layer `.mid`. -/
 theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.mid),
@@ -1081,30 +1101,15 @@ theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer
         cases rL with
         | top => exact absurd hr (by decide)
         | bot =>
-          -- gl : GeoCut l .bot, gr : GeoCut r .bot. Use Unique.
           have hlEq : gl = botGeoCut l := botGeoCut_unique gl
           have hrEq : gr = botGeoCut r := botGeoCut_unique gr
           subst hlEq; subst hrEq
-          -- hlNT must be Or.inl _ since (Or.inr) would say bot = mid (false).
-          have : hlNT = Or.inl (hlNT.resolve_right (by decide)) := by
-            rcases hlNT with hLT | hbot
-            · rfl
-            · exact absurd hbot (by decide)
-          rw [this]
-          have : hrNT = Or.inl (hrNT.resolve_right (by decide)) := by
-            rcases hrNT with hRT | hbot
-            · rfl
-            · exact absurd hbot (by decide)
-          rw [this]
+          rw [trace_nt_eq_inl hlNT (by decide), trace_nt_eq_inl hrNT (by decide)]
           rfl
         | mid =>
           have hlEq : gl = botGeoCut l := botGeoCut_unique gl
           subst hlEq
-          have : hlNT = Or.inl (hlNT.resolve_right (by decide)) := by
-            rcases hlNT with hLT | hbot
-            · rfl
-            · exact absurd hbot (by decide)
-          rw [this]
+          rw [trace_nt_eq_inl hlNT (by decide)]
           have ihr := midGeoCut_fromMidGeoCut gr
           show GeoCut.node _ _ _ _ _ (midGeoCut r (fromMidGeoCut gr)) = _
           rw [ihr]
@@ -1114,11 +1119,7 @@ theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer
         | bot =>
           have hrEq : gr = botGeoCut r := botGeoCut_unique gr
           subst hrEq
-          have : hrNT = Or.inl (hrNT.resolve_right (by decide)) := by
-            rcases hrNT with hRT | hbot
-            · rfl
-            · exact absurd hbot (by decide)
-          rw [this]
+          rw [trace_nt_eq_inl hrNT (by decide)]
           have ihl := midGeoCut_fromMidGeoCut gl
           show GeoCut.node _ _ _ _ (midGeoCut l (fromMidGeoCut gl)) _ = _
           rw [ihl]
