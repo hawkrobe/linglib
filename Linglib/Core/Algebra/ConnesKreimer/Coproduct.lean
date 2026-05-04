@@ -5,7 +5,7 @@ import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.Data.Finsupp.Basic
 
 /-!
-# Connes-Kreimer Coproduct on the Bialgebra of Decorated Forests
+# Connes-Kreimer Coproduct on the Bialgebra of Trace-Anonymized Forests
 @cite{marcolli-chomsky-berwick-2025}
 
 Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.8, the
@@ -20,6 +20,22 @@ remainder (Definition 1.2.4).
 Equivalently, identifying the empty cut with the `1 ⊗ T` term:
 
   Δ^c(T) = T ⊗ 1 + Σ_{c : CutShape T} (cutForest c) ⊗ (remainder c)
+
+## Carrier: TraceTree α Unit (not DecoratedTree α)
+
+This file builds Δ^c on `TraceTree α Unit` (the trace-anonymized carrier),
+NOT on `DecoratedTree α` (the linguistic-data carrier). Per
+@cite{marcolli-skigin-2025} §10.1, the bialgebra structure requires
+trace labels to be scalars from a disjoint marked copy of the leaf
+alphabet (specialized here to `β = Unit`), not recursive subtrees.
+The bialgebra instance lives on the object whose elements are the
+equivalence classes — i.e., on the trace-anonymized carrier — per the
+mathlib idiom that algebraic structures live on quotients, not on
+preimages with projections.
+
+Linguistic-layer code that maintains `DecoratedTree α` data should
+project via `Forest.anon (fun _ => ())` at the boundary before invoking
+`comulAlgHom`. See `Decorated.lean` for the projection.
 
 This file builds:
 
@@ -55,9 +71,9 @@ is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 
 ## Mathlib infra leveraged
 
-- `Hc = AddMonoidAlgebra R Forest = (Forest →₀ R)` (from `Defs.lean`)
+- `Hc = AddMonoidAlgebra R (TraceForest α Unit) = (TraceForest α Unit →₀ R)` (from `Defs.lean`)
 - `TensorProduct R Hc Hc` with `⊗ₜ` notation
-- `Finsupp.single F z : Hc` for basis elements
+- `Finsupp.single F z : Hc` for basis elements (F : TraceForest α Unit)
 - `Finsupp.linearCombination` for linear extension from a function on
   basis elements
 - `Multiset.prod` for the multiplicative-on-forests extension
@@ -73,7 +89,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ## §1: Tree-level coproduct
 
-For a single tree `T : DecoratedTree α`, define the contraction
+For a single tree `T : TraceTree α Unit`, define the contraction
 coproduct as the explicit primitive `T ⊗ 1` plus the sum over
 admissible cuts:
 
@@ -87,36 +103,41 @@ admissible cut, since there is no edge above the root to remove. -/
 
 /-- Inject a forest into the bialgebra as a basis element. The
     singleton-workspace embedding for a single tree `T` is
-    `forestToHc {T}`. -/
-noncomputable def forestToHc (F : Forest α) : Hc R α :=
+    `forestToHc {T}`. Takes `TraceForest α Unit` (the bialgebra
+    carrier basis); for `Forest α`-bearing callers, project via
+    `Forest.anon (fun _ => ())` first. -/
+noncomputable def forestToHc (F : TraceForest α Unit) : Hc R α :=
   Finsupp.single F (1 : R)
 
 /-- The empty forest embeds as the multiplicative unit:
     `forestToHc 0 = (1 : Hc R α)`. Direct from `AddMonoidAlgebra.one_def`. -/
-@[simp] lemma forestToHc_zero : (forestToHc (R := R) (0 : Forest α) : Hc R α) = 1 := by
-  show (Finsupp.single (0 : Forest α) (1 : R) : AddMonoidAlgebra R (Forest α))
-     = (1 : AddMonoidAlgebra R (Forest α))
+@[simp] lemma forestToHc_zero :
+    (forestToHc (R := R) (0 : TraceForest α Unit) : Hc R α) = 1 := by
+  show (Finsupp.single (0 : TraceForest α Unit) (1 : R)
+          : AddMonoidAlgebra R (TraceForest α Unit))
+     = (1 : AddMonoidAlgebra R (TraceForest α Unit))
   exact AddMonoidAlgebra.one_def.symm
 
 /-- Disjoint union of forests corresponds to multiplication of their `forestToHc`
     images: `forestToHc (F + G) = forestToHc F * forestToHc G`.
     Direct from `AddMonoidAlgebra.single_mul_single` at coefficient 1. -/
-@[simp] lemma forestToHc_add (F G : Forest α) :
+@[simp] lemma forestToHc_add (F G : TraceForest α Unit) :
     forestToHc (R := R) (F + G) = forestToHc (R := R) F * forestToHc (R := R) G := by
   show (forestToHc (R := R) (F + G) : Hc R α)
      = (forestToHc (R := R) F * forestToHc (R := R) G : Hc R α)
   unfold forestToHc
-  exact (AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α) F G 1 1
+  exact (AddMonoidAlgebra.single_mul_single
+    (R := R) (M := TraceForest α Unit) F G 1 1
     |>.trans (by rw [mul_one])).symm
 
 /-- The tree-level Connes-Kreimer coproduct.
     Δ^c(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ ({remainder c}). -/
-noncomputable def comulTree (T : DecoratedTree α) : Hc R α ⊗[R] Hc R α :=
-  forestToHc (R := R) ({T} : Forest α) ⊗ₜ[R] (1 : Hc R α)
+noncomputable def comulTree (T : TraceTree α Unit) : Hc R α ⊗[R] Hc R α :=
+  forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
   +
   ∑ c : CutShape T,
     forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-    forestToHc (R := R) ({CutShape.remainder c} : Forest α)
+    forestToHc (R := R) ({CutShape.remainder c} : TraceForest α Unit)
 
 /-! ## §2: Forest-level coproduct (multiplicative extension)
 
@@ -131,7 +152,7 @@ multiplicative extension correctly distributes ⊔ on both channels. -/
 
 /-- The forest-level Connes-Kreimer coproduct: product of tree-level
     coproducts over the components of the forest. -/
-noncomputable def comulForest (F : Forest α) : Hc R α ⊗[R] Hc R α :=
+noncomputable def comulForest (F : TraceForest α Unit) : Hc R α ⊗[R] Hc R α :=
   (F.map (comulTree (R := R))).prod
 
 /-! ## §3: Multiplicativity of `comulForest`
@@ -141,10 +162,11 @@ is the product of coproducts on its components. With `comulForest`
 defined as `Multiset.prod (F.map comulTree)`, this is structurally
 true: `Multiset.prod` is multiplicative under `+ ↦ +`/`map ↦ map`. -/
 
-@[simp] theorem comulForest_zero : comulForest (R := R) (0 : Forest α) = 1 := by
+@[simp] theorem comulForest_zero :
+    comulForest (R := R) (0 : TraceForest α Unit) = 1 := by
   simp only [comulForest, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForest_add (F G : Forest α) :
+@[simp] theorem comulForest_add (F G : TraceForest α Unit) :
     comulForest (R := R) (F + G) =
       comulForest (R := R) F * comulForest (R := R) G := by
   unfold comulForest
@@ -159,33 +181,33 @@ algebra hom `Hc R α →ₐ[R] Hc R α ⊗ Hc R α`. The algebra-hom property
 is exactly what's needed for the bialgebra structure per M-C-B
 Lemma 1.2.10. -/
 
-/-- `comulForest`, packaged as a `Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α)`
-    monoid hom. Multiplication on `Multiplicative (Forest α)`
-    corresponds to addition on `Forest α` (disjoint union ⊔).
+/-- `comulForest`, packaged as a `Multiplicative (TraceForest α Unit) →* (Hc R α ⊗[R] Hc R α)`
+    monoid hom. Multiplication on `Multiplicative (TraceForest α Unit)`
+    corresponds to addition on `TraceForest α Unit` (disjoint union ⊔).
 
     Public (not `private`) so `Bialgebra.lean`'s helper lemma
     `comulAlgHom_apply_single` can reference it. Downstream callers
     should generally use `comulAlgHom` (the `AlgHom`-shaped public API)
     rather than this monoid hom directly. -/
 noncomputable def comulMonoidHom :
-    Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
+    Multiplicative (TraceForest α Unit) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForest (R := R) F.toAdd
   map_one' := comulForest_zero
   map_mul' F G := comulForest_add F.toAdd G.toAdd
 
-/-- The Connes-Kreimer coproduct on the bialgebra of decorated forests,
+/-- The Connes-Kreimer coproduct on the bialgebra of trace-anonymized forests,
     as an **algebra hom**. M-C-B Definition 1.2.8 (with ω = c).
 
     Naming: short name `comul` is reserved for the eventual
     `Coalgebra` typeclass instance field, which takes the linear-map
     projection `comulAlgHom.toLinearMap`. -/
 noncomputable def comulAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
-  AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (Forest α)
+  AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
     comulMonoidHom
 
 /-- `comulAlgHom` applied to the basis vector `Finsupp.single F 1`
     equals `comulForest F`. Follows from `AddMonoidAlgebra.lift_single`. -/
-@[simp] theorem comulAlgHom_apply_single (F : Forest α) :
+@[simp] theorem comulAlgHom_apply_single (F : TraceForest α Unit) :
     comulAlgHom (R := R) (α := α) (Finsupp.single F 1) = comulForest F := by
   show AddMonoidAlgebra.lift R _ _ comulMonoidHom (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
@@ -210,15 +232,15 @@ private lemma multiset_add_eq_zero_iff {β : Type*} (a b : Multiset β) :
   · rintro ⟨ha, hb⟩
     rw [ha, hb, add_zero]
 
-/-- The counit, as a `Multiplicative (Forest α) →* R` monoid hom.
+/-- The counit, as a `Multiplicative (TraceForest α Unit) →* R` monoid hom.
     Public so `Bialgebra.lean`'s helper lemma `counit_apply_single`
     can reference it; downstream callers should generally use `counit`
     (the `AlgHom`-shaped public API). -/
-noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
+noncomputable def counitMonoidHom : Multiplicative (TraceForest α Unit) →* R where
   toFun F := if F.toAdd = 0 then 1 else 0
   map_one' := by
-    show (if (1 : Multiplicative (Forest α)).toAdd = 0 then (1 : R) else 0) = 1
-    show (if (0 : Forest α) = 0 then (1 : R) else 0) = 1
+    show (if (1 : Multiplicative (TraceForest α Unit)).toAdd = 0 then (1 : R) else 0) = 1
+    show (if (0 : TraceForest α Unit) = 0 then (1 : R) else 0) = 1
     rw [if_pos rfl]
   map_mul' F G := by
     show (if (F * G).toAdd = 0 then (1 : R) else 0)
@@ -237,10 +259,10 @@ noncomputable def counitMonoidHom : Multiplicative (Forest α) →* R where
           hF ((multiset_add_eq_zero_iff _ _).mp h).1
         simp [hF, hG, h]
 
-/-- The counit on the bialgebra of decorated forests, as an
+/-- The counit on the bialgebra of trace-anonymized forests, as an
     **algebra hom**. -/
 noncomputable def counit : Hc R α →ₐ[R] R :=
-  AddMonoidAlgebra.lift R R (Forest α) counitMonoidHom
+  AddMonoidAlgebra.lift R R (TraceForest α Unit) counitMonoidHom
 
 /-! ## §6: Δ^d (deletion coproduct)
 
@@ -255,21 +277,21 @@ When `remainderDeletion c = none` (the cut consumed the entire root
 component — only happens for `CutShape.bothCut`), the right channel
 of the coproduct term becomes `1` (the empty workspace). -/
 
-/-- Helper: convert an `Option (DecoratedTree α)` remainder to the
+/-- Helper: convert an `Option (TraceTree α Unit)` remainder to the
     corresponding right-channel value in `Hc R α`. `Option.none` →
     `(1 : Hc R α)` (empty workspace); `Option.some t` → `forestToHc {t}`
     (singleton workspace). -/
 private noncomputable def deletionRightChannel
-    (m : Option (DecoratedTree α)) : Hc R α :=
+    (m : Option (TraceTree α Unit)) : Hc R α :=
   match m with
   | Option.none   => (1 : Hc R α)
-  | Option.some t => forestToHc (R := R) ({t} : Forest α)
+  | Option.some t => forestToHc (R := R) ({t} : TraceForest α Unit)
 
 /-- The tree-level Δ^d coproduct.
     Δ^d(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ (deletion-remainder c). -/
-noncomputable def comulTreeDel (T : DecoratedTree α) :
+noncomputable def comulTreeDel (T : TraceTree α Unit) :
     Hc R α ⊗[R] Hc R α :=
-  forestToHc (R := R) ({T} : Forest α) ⊗ₜ[R] (1 : Hc R α)
+  forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
   +
   ∑ c : CutShape T,
     forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
@@ -277,14 +299,14 @@ noncomputable def comulTreeDel (T : DecoratedTree α) :
 
 /-- The forest-level Δ^d coproduct: product of tree-level coproducts
     over the components. Same multiplicative extension as Δ^c. -/
-noncomputable def comulForestDel (F : Forest α) : Hc R α ⊗[R] Hc R α :=
+noncomputable def comulForestDel (F : TraceForest α Unit) : Hc R α ⊗[R] Hc R α :=
   (F.map (comulTreeDel (R := R))).prod
 
 @[simp] theorem comulForestDel_zero :
-    comulForestDel (R := R) (0 : Forest α) = 1 := by
+    comulForestDel (R := R) (0 : TraceForest α Unit) = 1 := by
   simp only [comulForestDel, Multiset.map_zero, Multiset.prod_zero]
 
-@[simp] theorem comulForestDel_add (F G : Forest α) :
+@[simp] theorem comulForestDel_add (F G : TraceForest α Unit) :
     comulForestDel (R := R) (F + G) =
       comulForestDel (R := R) F * comulForestDel (R := R) G := by
   unfold comulForestDel
@@ -296,7 +318,7 @@ noncomputable def comulForestDel (F : Forest α) : Hc R α ⊗[R] Hc R α :=
     Downstream callers should generally use `comulDelAlgHom`
     (the `AlgHom`-shaped public API). -/
 noncomputable def comulDelMonoidHom :
-    Multiplicative (Forest α) →* (Hc R α ⊗[R] Hc R α) where
+    Multiplicative (TraceForest α Unit) →* (Hc R α ⊗[R] Hc R α) where
   toFun F := comulForestDel (R := R) F.toAdd
   map_one' := comulForestDel_zero
   map_mul' F G := comulForestDel_add F.toAdd G.toAdd
@@ -311,7 +333,7 @@ noncomputable def comulDelMonoidHom :
     needed for the linguistic Merge operator, which lives elsewhere
     (next file: `MergeAction.lean`). -/
 noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
-  AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (Forest α)
+  AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
     comulDelMonoidHom
 
 end ConnesKreimer

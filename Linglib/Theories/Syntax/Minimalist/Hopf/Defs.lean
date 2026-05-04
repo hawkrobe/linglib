@@ -16,12 +16,12 @@ forgetful map.
 The `[UPSTREAM]` portions are in:
 
 - `Linglib/Core/Combinatorics/RootedTree/Decorated.lean` —
-  `ConnesKreimer.DecoratedTree α`, `ConnesKreimer.Forest α`, `Mul`
+  `ConnesKreimer.TraceTree α Unit`, `ConnesKreimer.TraceForest α Unit`, `Mul`
   instance, `recOnMul`, `leafCount*`
 - `Linglib/Core/Combinatorics/RootedTree/AdmissibleCut.lean` —
   `ConnesKreimer.CutShape T` and friends
 - `Linglib/Core/Algebra/ConnesKreimer/Defs.lean` —
-  `ConnesKreimer.Hc R α := AddMonoidAlgebra R (Forest α)` + Algebra/
+  `ConnesKreimer.Hc R α := AddMonoidAlgebra R (TraceForest α Unit)` + Algebra/
   Semiring forwarding instances
 - `Linglib/Core/Algebra/ConnesKreimer/Coproduct.lean` —
   `ConnesKreimer.{forestToHc, comulAlgHom, comulDelAlgHom, counit}`
@@ -62,6 +62,19 @@ def Minimalist.SyntacticObject.toH :
     Minimalist.SyntacticObject → Minimalist.Hopf.SyntacticObjectH
   | .leaf tok => .leaf tok
   | .node l r => .node l.toH r.toH
+
+/-- Project a `SyntacticObject` directly to the bialgebra carrier
+    `TraceTree LIToken Unit`. Composes `.toH` (lossless embed to
+    `SyntacticObjectH := DecoratedTree LIToken`) with the trivial
+    extractor `(fun _ => ())` (drop trace data, project to
+    `TraceTree`-with-Unit-trace). The single boundary function consumers
+    should use when entering the bialgebra layer. -/
+def Minimalist.SyntacticObject.toHc (so : Minimalist.SyntacticObject) :
+    ConnesKreimer.TraceTree LIToken Unit :=
+  so.toH.anon (fun _ => ())
+
+@[simp] theorem Minimalist.SyntacticObject.toHc_eq (so : Minimalist.SyntacticObject) :
+    so.toHc = so.toH.anon (fun _ => ()) := rfl
 
 namespace Minimalist.Hopf
 

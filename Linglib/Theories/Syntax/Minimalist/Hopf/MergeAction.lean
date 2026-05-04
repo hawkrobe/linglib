@@ -27,7 +27,7 @@ proofs require:
 
 1. Translating between `SyntacticObject` and `SyntacticObjectH`
    (= `DecoratedTree LIToken`) via `.toH` and `toSyntacticObject?`.
-2. Computing the explicit form of `mergeOp S S' (forestToHc {T.toH})` —
+2. Computing the explicit form of `mergeOp S S' (forestToHc {T.toHc})` —
    expanding `comulDelAlgHom` (a sum over `CutShape T.toH`), then
    `deltaMatch` (filtering to terms with cut forest = `{S, S'}`),
    then `graftBinaryAt` (replacing with `.node S S'`), then
@@ -66,10 +66,10 @@ A "bridge predicate" relates a linguistic `Step` to its algebraic
 realization via `mergeOp`. -/
 
 /-- The singleton workspace containing the embedding of `so` as the
-    sole tree. The basis vector `forestToHc {so.toH}` in `Hc ℤ LIToken`. -/
+    sole tree. The basis vector `forestToHc {so.toHc}` in `Hc ℤ LIToken`. -/
 noncomputable def singletonWorkspace (so : Minimalist.SyntacticObject) :
     Hc ℤ LIToken :=
-  forestToHc ({so.toH} : Forest LIToken)
+  forestToHc ({so.toHc} : TraceForest LIToken Unit)
 
 /-! ## §2: External Merge bridge
 
@@ -84,20 +84,21 @@ produce the singleton workspace of `.node current item`. -/
     `.node current item` = `(Step.emR item).apply current`. -/
 theorem mergeOp_emR_matches_Step
     (current item : Minimalist.SyntacticObject) :
-    mergeOp (R := ℤ) current.toH item.toH
-        (forestToHc ({current.toH, item.toH} : Forest LIToken))
-      = forestToHc (R := ℤ) ({((Step.emR item).apply current).toH} : Forest LIToken) := by
+    mergeOp (R := ℤ) current.toHc item.toHc
+        (forestToHc ({current.toHc, item.toHc} : TraceForest LIToken Unit))
+      = forestToHc (R := ℤ) ({((Step.emR item).apply current).toH.anon (fun _ => ())}
+        : TraceForest LIToken Unit) := by
   -- Proof strategy:
   -- 1. Unfold mergeOp = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d
-  -- 2. Δ^d on the 2-tree workspace expands as Δ^d({current.toH}) * Δ^d({item.toH})
+  -- 2. Δ^d on the 2-tree workspace expands as Δ^d({current.toHc}) * Δ^d({item.toHc})
   --    by multiplicativity (comulDelAlgHom is an algebra hom)
   -- 3. Δ^d on a singleton tree T includes the primitive T ⊗ 1 + 1 ⊗ T
   --    plus admissible cuts of T
   -- 4. Multiplying the two singleton coproducts and filtering via
-  --    δ_{S,S'} (= projection to {current.toH, item.toH} ⊗ ...)
-  --    leaves a single term: {current.toH, item.toH} ⊗ 1
-  -- 5. Applying B replaces {current.toH, item.toH} with .node current.toH item.toH
-  -- 6. Multiplying by 1 (the right channel) gives {.node current.toH item.toH}
+  --    δ_{S,S'} (= projection to {current.toHc, item.toHc} ⊗ ...)
+  --    leaves a single term: {current.toHc, item.toHc} ⊗ 1
+  -- 5. Applying B replaces {current.toHc, item.toHc} with .node current.toH item.toH
+  -- 6. Multiplying by 1 (the right channel) gives {.node current.toH item.toHc}
   -- 7. Step.emR item current = .node current item, and (.node current item).toH
   --    = .node current.toH item.toH (by SyntacticObject.toH definition)
   sorry
@@ -106,9 +107,10 @@ theorem mergeOp_emR_matches_Step
     Symmetric to `mergeOp_emR_matches_Step`. -/
 theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) :
-    mergeOp (R := ℤ) item.toH current.toH
-        (forestToHc ({item.toH, current.toH} : Forest LIToken))
-      = forestToHc (R := ℤ) ({((Step.emL item).apply current).toH} : Forest LIToken) := by
+    mergeOp (R := ℤ) item.toHc current.toHc
+        (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
+      = forestToHc (R := ℤ) ({((Step.emL item).apply current).toH.anon (fun _ => ())}
+        : TraceForest LIToken Unit) := by
   -- Same strategy as mergeOp_emR_matches_Step with item/current swapped.
   -- Step.emL item current = .node item current
   sorry

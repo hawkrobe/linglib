@@ -53,7 +53,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
     `abbrev` so mathlib's `Sum.fintype` and `Sigma.fintype` (via
     `instFintypeSigma`) apply automatically. -/
-abbrev DoubleCut (T : DecoratedTree α) : Type _ :=
+abbrev DoubleCut (T : TraceTree α Unit) : Type _ :=
   (Σ C : CutShape T, AugCutShape (CutShape.remainder C)) ⊕ Unit
 
 namespace DoubleCut
@@ -61,14 +61,14 @@ namespace DoubleCut
 /-- An outer real cut `C` paired with an augmented inner cut on
     `remainder C`. The triple-tensor is
     `(cutForest C) ⊗ (extracted by ac₂) ⊗ (remainder of ac₂)`. -/
-abbrev real {T : DecoratedTree α} (C : CutShape T)
+abbrev real {T : TraceTree α Unit} (C : CutShape T)
     (ac₂ : AugCutShape (CutShape.remainder C)) : DoubleCut T :=
   Sum.inl ⟨C, ac₂⟩
 
 /-- The trivial double cut: the entire tree at `BOT`. The triple-tensor
     is `forestToHc {T} ⊗ 1 ⊗ 1` (mirroring `AugCutShape.extractWhole`
     at the outer level). -/
-abbrev extractWhole {T : DecoratedTree α} : DoubleCut T := Sum.inr ()
+abbrev extractWhole {T : TraceTree α Unit} : DoubleCut T := Sum.inr ()
 
 /-- The triple-tensor associated with a double cut, in the right-iterated
     form `(Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))`. Mirrors the structure
@@ -80,28 +80,28 @@ abbrev extractWhole {T : DecoratedTree α} : DoubleCut T := Sum.inr ()
     For `extractWhole`: triple is `forestToHc {T} ⊗ 1 ⊗ 1` (with both `1`s
     being `forestToHc 0`). -/
 noncomputable def tripleTensor (R : Type*) [CommSemiring R]
-    {T : DecoratedTree α} : DoubleCut T → (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))
+    {T : TraceTree α Unit} : DoubleCut T → (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))
   | .inl ⟨C, ac₂⟩ =>
       forestToHc (R := R) (CutShape.cutForest C)
         ⊗ₜ[R] (forestToHc (R := R) (AugCutShape.cutForest_aug ac₂)
                 ⊗ₜ[R] forestToHc (R := R) (AugCutShape.remainderForest ac₂))
   | .inr _ =>
-      forestToHc (R := R) ({T} : Forest α)
-        ⊗ₜ[R] (forestToHc (R := R) (0 : Forest α)
-                ⊗ₜ[R] forestToHc (R := R) (0 : Forest α))
+      forestToHc (R := R) ({T} : TraceForest α Unit)
+        ⊗ₜ[R] (forestToHc (R := R) (0 : TraceForest α Unit)
+                ⊗ₜ[R] forestToHc (R := R) (0 : TraceForest α Unit))
 
-@[simp] lemma tripleTensor_real {T : DecoratedTree α} (C : CutShape T)
+@[simp] lemma tripleTensor_real {T : TraceTree α Unit} (C : CutShape T)
     (ac₂ : AugCutShape (CutShape.remainder C)) :
     tripleTensor R (real C ac₂)
       = forestToHc (R := R) (CutShape.cutForest C)
           ⊗ₜ[R] (forestToHc (R := R) (AugCutShape.cutForest_aug ac₂)
                   ⊗ₜ[R] forestToHc (R := R) (AugCutShape.remainderForest ac₂)) := rfl
 
-@[simp] lemma tripleTensor_extractWhole {T : DecoratedTree α} :
+@[simp] lemma tripleTensor_extractWhole {T : TraceTree α Unit} :
     tripleTensor R (extractWhole : DoubleCut T)
-      = forestToHc (R := R) ({T} : Forest α)
-          ⊗ₜ[R] (forestToHc (R := R) (0 : Forest α)
-                  ⊗ₜ[R] forestToHc (R := R) (0 : Forest α)) := rfl
+      = forestToHc (R := R) ({T} : TraceForest α Unit)
+          ⊗ₜ[R] (forestToHc (R := R) (0 : TraceForest α Unit)
+                  ⊗ₜ[R] forestToHc (R := R) (0 : TraceForest α Unit)) := rfl
 
 end DoubleCut
 
@@ -118,7 +118,7 @@ as a multi-tree product. -/
 
 /-- The RHS of `comul_coassoc_tree` reorganized as a single sum over
     double cuts. -/
-theorem rhs_eq_sum_DoubleCut (T : DecoratedTree α) :
+theorem rhs_eq_sum_DoubleCut (T : TraceTree α Unit) :
     (Algebra.TensorProduct.map (AlgHom.id R (Hc R α)) comulAlgHom)
         (comulTree T : Hc R α ⊗[R] Hc R α)
       = ∑ dc : DoubleCut T, dc.tripleTensor R := by
@@ -157,7 +157,7 @@ theorem rhs_eq_sum_DoubleCut (T : DecoratedTree α) :
     --     = ∑ ac2, tripleTensor R (real C ac2)
     show (Algebra.TensorProduct.map (AlgHom.id R (Hc R α)) comulAlgHom)
             ((forestToHc (R := R) (CutShape.cutForest C)
-              ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder C} : Forest α))
+              ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder C} : TraceForest α Unit))
               : Hc R α ⊗[R] Hc R α)
         = ∑ ac2 : AugCutShape (CutShape.remainder C),
             DoubleCut.tripleTensor R (DoubleCut.real C ac2)
@@ -165,9 +165,9 @@ theorem rhs_eq_sum_DoubleCut (T : DecoratedTree α) :
     -- Goal: forestToHc (cutForest C) ⊗ Δ(forestToHc {remainder C})
     --     = ∑ ac2, ...
     -- comulAlgHom (forestToHc {remainder C}) = comulForest {remainder C} = comulTree (remainder C)
-    have hΔ : comulAlgHom (forestToHc (R := R) ({CutShape.remainder C} : Forest α))
+    have hΔ : comulAlgHom (forestToHc (R := R) ({CutShape.remainder C} : TraceForest α Unit))
             = comulTree (CutShape.remainder C) := by
-      show comulAlgHom (Finsupp.single ({CutShape.remainder C} : Forest α) (1 : R))
+      show comulAlgHom (Finsupp.single ({CutShape.remainder C} : TraceForest α Unit) (1 : R))
          = comulTree (CutShape.remainder C)
       rw [comulAlgHom_apply_single]
       -- comulForest {x} = comulTree x via Multiset.map_singleton + prod_singleton
@@ -197,9 +197,9 @@ theorem rhs_eq_sum_DoubleCut (T : DecoratedTree α) :
     rw [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id_eq]
     -- Goal: forestToHc {T} ⊗ Δ(forestToHc 0) = forestToHc {T} ⊗ (forestToHc 0 ⊗ forestToHc 0)
     -- Δ(forestToHc 0) = Δ(1) = 1 = forestToHc 0 ⊗ forestToHc 0
-    have h1 : (forestToHc (R := R) (0 : Forest α) : Hc R α) = 1 := by
-      show (Finsupp.single (0 : Forest α) (1 : R) : AddMonoidAlgebra R (Forest α))
-         = (1 : AddMonoidAlgebra R (Forest α))
+    have h1 : (forestToHc (R := R) (0 : TraceForest α Unit) : Hc R α) = 1 := by
+      show (Finsupp.single (0 : TraceForest α Unit) (1 : R) : AddMonoidAlgebra R (TraceForest α Unit))
+         = (1 : AddMonoidAlgebra R (TraceForest α Unit))
       exact AddMonoidAlgebra.one_def.symm
     rw [h1, map_one, Algebra.TensorProduct.one_def]
 
@@ -243,10 +243,10 @@ lemma comul_coassoc_of_primitive (y : Hc R α)
     (as for leaf and trace trees), then the LHS direction of the cuts-of-cuts
     bijection holds for `T`. Composes `comul_coassoc_of_primitive` with the
     `comulAlgHom (forestToHc {T}) = comulTree T` bridge and `rhs_eq_sum_DoubleCut`. -/
-lemma lhs_eq_sum_DoubleCut_of_primitive_tree (T : DecoratedTree α)
+lemma lhs_eq_sum_DoubleCut_of_primitive_tree (T : TraceTree α Unit)
     (hPrim : (comulTree (R := R) T : Hc R α ⊗[R] Hc R α)
-           = forestToHc (R := R) ({T} : Forest α) ⊗ₜ[R] (1 : Hc R α)
-             + (1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : Forest α)) :
+           = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
+             + (1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit)) :
     (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
         ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
           (AlgHom.id R (Hc R α))) (comulTree T : Hc R α ⊗[R] Hc R α))
@@ -254,11 +254,11 @@ lemma lhs_eq_sum_DoubleCut_of_primitive_tree (T : DecoratedTree α)
   rw [← rhs_eq_sum_DoubleCut]
   -- Bridge: comulTree T = comulAlgHom (forestToHc {T})
   have hbridge : (comulTree (R := R) T : Hc R α ⊗[R] Hc R α)
-               = comulAlgHom (forestToHc (R := R) ({T} : Forest α)) := by
+               = comulAlgHom (forestToHc (R := R) ({T} : TraceForest α Unit)) := by
     show (comulTree T : Hc R α ⊗[R] Hc R α)
-       = comulAlgHom (Finsupp.single ({T} : Forest α) (1 : R))
+       = comulAlgHom (Finsupp.single ({T} : TraceForest α Unit) (1 : R))
     rw [comulAlgHom_apply_single]
-    show comulTree T = ((({T} : Forest α).map (comulTree (R := R))).prod : Hc R α ⊗[R] Hc R α)
+    show comulTree T = ((({T} : TraceForest α Unit).map (comulTree (R := R))).prod : Hc R α ⊗[R] Hc R α)
     rw [Multiset.map_singleton, Multiset.prod_singleton]
   rw [hbridge]
   apply comul_coassoc_of_primitive
@@ -278,7 +278,7 @@ multiset on the RHS. -/
     `(ac : AugCutShape T, s ∈ Sections((cutForest_aug ac).map comulTreeMS))`.
     Outer bind iterates over `ac`; inner map iterates over the multiset of
     sections. Multiplicity matters — same as `Sections` produces. -/
-noncomputable def lhsMultiset (T : DecoratedTree α) :
+noncomputable def lhsMultiset (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (AugCutShape T)).val.bind fun ac =>
     (Multiset.Sections ((AugCutShape.cutForest_aug ac).map (comulTreeMS R))).map fun s =>
@@ -304,7 +304,7 @@ theorem _root_.TensorProduct.sum_tmul_multiset {M N : Type*}
     the `AugCutShape`-indexed sum from `comulTree_eq_sum_AugCutShape`, then
     applies `comulForest_eq_sum_sections` per outer cut to expand into
     `Sections`. Combines via `Multiset.sum_bind`. -/
-theorem lhs_eq_sum_lhsMultiset (T : DecoratedTree α) :
+theorem lhs_eq_sum_lhsMultiset (T : TraceTree α Unit) :
     (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
         ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
           (AlgHom.id R (Hc R α))) (comulTree T : Hc R α ⊗[R] Hc R α))
@@ -334,25 +334,25 @@ from the `real C` contributions (a bind over `CutShape T`). -/
     singleton workspace `{T}.map comulTreeMS`. Each section is a singleton
     `{x}` for `x ∈ comulTreeMS T`, so this multiset has `|AugCutShape T|`
     elements. -/
-noncomputable def lhsExtractWhole (T : DecoratedTree α) :
+noncomputable def lhsExtractWhole (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
-  (Multiset.Sections (({T} : Forest α).map (comulTreeMS R))).map fun s =>
+  (Multiset.Sections (({T} : TraceForest α Unit).map (comulTreeMS R))).map fun s =>
     (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
-      (s.prod ⊗ₜ[R] forestToHc (R := R) (0 : Forest α))
+      (s.prod ⊗ₜ[R] forestToHc (R := R) (0 : TraceForest α Unit))
 
 /-- The "real cuts" contributions to `lhsMultiset`: for each `C : CutShape T`,
     sections over the multi-tree forest `(cutForest C).map comulTreeMS`.
     Outer bind iterates over `C`. -/
-noncomputable def lhsRealCuts (T : DecoratedTree α) :
+noncomputable def lhsRealCuts (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (CutShape T)).val.bind fun C =>
     (Multiset.Sections ((CutShape.cutForest C).map (comulTreeMS R))).map fun s =>
       (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
-        (s.prod ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder C} : Forest α))
+        (s.prod ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder C} : TraceForest α Unit))
 
 /-- `lhsMultiset T = lhsRealCuts T + lhsExtractWhole T`. Decomposes the bind
     over `AugCutShape T = CutShape T ⊕ Unit` into its two halves. -/
-theorem lhsMultiset_decomp (T : DecoratedTree α) :
+theorem lhsMultiset_decomp (T : TraceTree α Unit) :
     (lhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = lhsRealCuts T + lhsExtractWhole T := by
   unfold lhsMultiset lhsRealCuts lhsExtractWhole
@@ -376,12 +376,12 @@ theorem lhsMultiset_decomp (T : DecoratedTree α) :
     The shape of each element matches the `tripleTensor` of either
     `DoubleCut.extractWhole` (when ac' = extractWhole) or
     `DoubleCut.real C extractWhole_(remainder C)` (when ac' = real C). -/
-theorem lhsExtractWhole_eq (T : DecoratedTree α) :
+theorem lhsExtractWhole_eq (T : TraceTree α Unit) :
     (lhsExtractWhole T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = (Finset.univ : Finset (AugCutShape T)).val.map fun ac' =>
           forestToHc (R := R) (AugCutShape.cutForest_aug ac')
             ⊗ₜ[R] (forestToHc (R := R) (AugCutShape.remainderForest ac')
-              ⊗ₜ[R] forestToHc (R := R) (0 : Forest α)) := by
+              ⊗ₜ[R] forestToHc (R := R) (0 : TraceForest α Unit)) := by
   unfold lhsExtractWhole
   rw [Multiset.map_singleton]
   -- Sections of a singleton list of multisets = bind structure.
@@ -411,12 +411,12 @@ substantive bijection lemma `lhsMultiset = rhsMultiset` cleanly statable. -/
 
 /-- The RHS-side multiset of triple-tensors: enumerate `DoubleCut T` and project
     each to its `tripleTensor`. -/
-noncomputable def rhsMultiset (T : DecoratedTree α) :
+noncomputable def rhsMultiset (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (DoubleCut T)).val.map (·.tripleTensor R)
 
 /-- The RHS Finset.sum equals the `rhsMultiset` Multiset.sum. -/
-theorem rhs_eq_sum_rhsMultiset (T : DecoratedTree α) :
+theorem rhs_eq_sum_rhsMultiset (T : TraceTree α Unit) :
     (∑ dc : DoubleCut T, dc.tripleTensor R) = (rhsMultiset T).sum := by
   rw [Finset.sum_eq_multiset_sum]
   rfl
@@ -434,19 +434,19 @@ giving 3 pieces:
 
 /-- The "outer extractWhole" contribution to rhsMultiset: a singleton for
     `DoubleCut.extractWhole`, with triple `forestToHc{T} ⊗ (1 ⊗ 1)`. -/
-noncomputable def rhsExtractWhole (T : DecoratedTree α) :
+noncomputable def rhsExtractWhole (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   ({(DoubleCut.extractWhole : DoubleCut T).tripleTensor R} : Multiset _)
 
 /-- The "outer real C, inner extractWhole" contribution: one triple per
     `C : CutShape T`. -/
-noncomputable def rhsRealExtractInner (T : DecoratedTree α) :
+noncomputable def rhsRealExtractInner (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (CutShape T)).val.map fun C =>
     (DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R
 
 /-- The "outer real C, inner real C₂" contribution: bind over `(C, C₂)`. -/
-noncomputable def rhsRealRealInner (T : DecoratedTree α) :
+noncomputable def rhsRealRealInner (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (CutShape T)).val.bind fun C =>
     (Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
@@ -465,7 +465,7 @@ splitting into `CutShape T ⊕ Unit`. -/
 /-- **Easy half of the cuts-of-cuts bijection**: the LHS extractWhole-outer
     contribution matches the RHS extractWhole + (real C, extractWhole_inner)
     contributions. -/
-theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : DecoratedTree α) :
+theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : TraceTree α Unit) :
     (lhsExtractWhole T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsExtractWhole T + rhsRealExtractInner T := by
   rw [lhsExtractWhole_eq]
@@ -486,7 +486,7 @@ That proof requires the GeoCut substrate (defined later); see the theorem in §3
 below (`lhsRealCuts_eq_rhsRealRealInner`). -/
 
 /-- Helper: `rhsMultiset T` split by outer `DoubleCut = Σ ⊕ Unit` ctor. -/
-private theorem rhsMultiset_split_outer (T : DecoratedTree α) :
+private theorem rhsMultiset_split_outer (T : TraceTree α Unit) :
     (rhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = ((Finset.univ : Finset (Σ C : CutShape T,
           AugCutShape (CutShape.remainder C))).val.map fun ⟨C, ac₂⟩ =>
@@ -501,7 +501,7 @@ private theorem rhsMultiset_split_outer (T : DecoratedTree α) :
   rfl
 
 /-- Helper: the per-`(C, ac₂)` Sigma sum, split by inner `AugCutShape = CutShape ⊕ Unit`. -/
-private theorem rhsRealSigma_split_inner (T : DecoratedTree α) :
+private theorem rhsRealSigma_split_inner (T : TraceTree α Unit) :
     ((Finset.univ : Finset (Σ C : CutShape T,
         AugCutShape (CutShape.remainder C))).val.map fun ⟨C, ac₂⟩ =>
           (DoubleCut.real C ac₂).tripleTensor R)
@@ -571,7 +571,7 @@ private theorem rhsRealSigma_split_inner (T : DecoratedTree α) :
 /-- `rhsMultiset` decomposition: the 3-way split by `DoubleCut` ctor structure.
     `DoubleCut T = (Σ C, AugCutShape (rem C)) ⊕ Unit`; the Sigma further splits
     via `ac₂ : AugCutShape (rem C) = CutShape (rem C) ⊕ Unit`. -/
-theorem rhsMultiset_decomp (T : DecoratedTree α) :
+theorem rhsMultiset_decomp (T : TraceTree α Unit) :
     (rhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsExtractWhole T + rhsRealExtractInner T + rhsRealRealInner T := by
   rw [rhsMultiset_split_outer, rhsRealSigma_split_inner]
@@ -638,13 +638,13 @@ end Layer
     For T = .node l r, the root has layer `myL`, and `l`, `r` have GeoCuts
     with their own root layers `lL`, `rL` satisfying `lL ≤ myL`, `rL ≤ myL`,
     plus the `.trace` constraint above. -/
-inductive GeoCut : DecoratedTree α → Layer → Type _
+inductive GeoCut : TraceTree α Unit → Layer → Type _
   | leaf {a : α} (myL : Layer) : GeoCut (.leaf a) myL
-  | trace {t : DecoratedTree α} (myL : Layer) : GeoCut (.trace t) myL
-  | node {l r : DecoratedTree α} {myL lL rL : Layer}
+  | trace {b : Unit} (myL : Layer) : GeoCut (.trace b) myL
+  | node {l r : TraceTree α Unit} {myL lL rL : Layer}
       (hl : lL ≤ myL) (hr : rL ≤ myL)
-      (hlNT : DecoratedTree.IsNotTrace l ∨ lL = myL)
-      (hrNT : DecoratedTree.IsNotTrace r ∨ rL = myL)
+      (hlNT : TraceTree.IsNotTrace l ∨ lL = myL)
+      (hrNT : TraceTree.IsNotTrace r ∨ rL = myL)
       (gl : GeoCut l lL) (gr : GeoCut r rL) : GeoCut (.node l r) myL
 
 /-! ### `Fintype (GeoCut T myL)`
@@ -666,9 +666,9 @@ via `Finset.map_univ_equiv` downstream. -/
 /-- Equivalence: `GeoCut (.node l r) myL ≃ Σ (lL, rL) constrained, GeoCut l × GeoCut r`.
     The constraint Subtype combines `lL ≤ myL` with the `IsNotTrace l ∨ lL = myL`
     `.trace`-layer match (and symmetrically for `rL`). -/
-def nodeGeoCutEquiv (l r : DecoratedTree α) (myL : Layer) :
-    (Σ (lL : {x : Layer // x ≤ myL ∧ (DecoratedTree.IsNotTrace l ∨ x = myL)})
-       (rL : {x : Layer // x ≤ myL ∧ (DecoratedTree.IsNotTrace r ∨ x = myL)}),
+def nodeGeoCutEquiv (l r : TraceTree α Unit) (myL : Layer) :
+    (Σ (lL : {x : Layer // x ≤ myL ∧ (TraceTree.IsNotTrace l ∨ x = myL)})
+       (rL : {x : Layer // x ≤ myL ∧ (TraceTree.IsNotTrace r ∨ x = myL)}),
       GeoCut l lL.1 × GeoCut r rL.1)
     ≃ GeoCut (.node l r) myL where
   toFun := fun ⟨lL, rL, gl, gr⟩ =>
@@ -685,7 +685,7 @@ def nodeGeoCutEquiv (l r : DecoratedTree α) (myL : Layer) :
     - `.node l r`: `Fintype.ofEquiv` via `nodeGeoCutEquiv` (above), where the
       source's `Fintype` follows from the recursive IHs `Fintype (GeoCut l _)`,
       `Fintype (GeoCut r _)`. -/
-instance instFintypeGeoCut : ∀ (T : DecoratedTree α) (myL : Layer),
+instance instFintypeGeoCut : ∀ (T : TraceTree α Unit) (myL : Layer),
     Fintype (GeoCut T myL)
   | .leaf _, myL =>
       Fintype.ofEquiv Unit
@@ -711,8 +711,8 @@ For each `g : GeoCut T myL` we extract three pieces:
 - `geoMidForest g`: the MID subtrees (extracted at the INNER cut, each represented as
   its outer-remainder skeleton — i.e., with its own BOT subtrees as `.trace` markers).
 - `geoStackItem g`: the contribution this subtree makes to the **parent's** TOP slot.
-  - `myL = .bot`: `.trace T` (the whole subtree is BOT-extracted; appears as a trace).
-  - `myL = .mid`: `.trace T` (the whole subtree appears as a trace whose data is the
+  - `myL = .bot`: `.trace ()` (the whole subtree is BOT-extracted; appears as a trace).
+  - `myL = .mid`: `.trace ()` (the whole subtree appears as a trace whose data is the
     original `T` — slot 3 only sees the outer cut, and the outer cut extracts T as
     a unit; T's MID-vs-BOT internal split is orthogonal).
   - `myL = .top`: recursive — for `.node l r`, becomes `.node (geoStackItem gl) (geoStackItem gr)`.
@@ -723,11 +723,11 @@ this matches the LHS-style triple from `lhsRealCuts T` (and the RHS-style from
 `rhsRealRealInner T` after the substantive Foissy bijection). -/
 
 /-- `T` with each BOT subtree replaced by a `.trace` marker carrying the cut
-    subtree as data. (For `myL = .bot`, the whole `T` is BOT, becomes `.trace T`.) -/
-def geoOuterSkeleton {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
-    DecoratedTree α :=
+    subtree as data. (For `myL = .bot`, the whole `T` is BOT, becomes `.trace ()`.) -/
+def geoOuterSkeleton {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
+    TraceTree α Unit :=
   match myL, g with
-  | .bot, _ => .trace T
+  | .bot, _ => .trace ()
   | .mid, .leaf _ => T
   | .mid, .trace _ => T
   | .mid, .node _ _ _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
@@ -737,25 +737,25 @@ def geoOuterSkeleton {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
 
 /-- The contribution this subtree makes to its **parent's** TOP slot — i.e., what
     appears at this subtree's position in the parent's slot-3 (outer-remainder) tree.
-    - `myL ∈ {.bot, .mid}`: `.trace T` — the **whole** original subtree T as trace
+    - `myL ∈ {.bot, .mid}`: `.trace ()` — the **whole** original subtree T as trace
       data. This matches the LHS-reading semantics: the outer cut extracts T as a
       unit (whether T's MID structure goes through inner-cut decomposition is
       orthogonal — slot 3 only sees the outer cut).
     - `myL = .top`: recursive — vertices kept at top form the structure; deeper
       BOT/MID positions become `.trace` via `geoStackItem` on subtrees. -/
-def geoStackItem {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
-    DecoratedTree α :=
+def geoStackItem {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
+    TraceTree α Unit :=
   match myL, g with
-  | .bot, _ => .trace T
-  | .mid, _ => .trace T
+  | .bot, _ => .trace ()
+  | .mid, _ => .trace ()
   | .top, .leaf _ => T
   | .top, .trace _ => T
   | .top, .node _ _ _ _ gl gr => .node (geoStackItem gl) (geoStackItem gr)
 
 /-- The BOT-slot forest contributed by this GeoCut: subtrees rooted at BOT vertices. -/
-def geoBotForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Forest α :=
+def geoBotForest {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) : TraceForest α Unit :=
   match myL, g with
-  | .bot, _ => ({T} : Forest α)
+  | .bot, _ => ({T} : TraceForest α Unit)
   | .mid, .leaf _ => 0
   | .mid, .trace _ => 0
   | .mid, .node _ _ _ _ gl gr => geoBotForest gl + geoBotForest gr
@@ -765,10 +765,10 @@ def geoBotForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Fores
 
 /-- The MID-slot forest contributed by this GeoCut: each MID-rooted subtree
     contributes its outer-remainder skeleton (BOT positions become traces). -/
-def geoMidForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Forest α :=
+def geoMidForest {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) : TraceForest α Unit :=
   match myL, g with
   | .bot, _ => 0
-  | .mid, _ => ({geoOuterSkeleton g} : Forest α)
+  | .mid, _ => ({geoOuterSkeleton g} : TraceForest α Unit)
   | .top, .leaf _ => 0
   | .top, .trace _ => 0
   | .top, .node _ _ _ _ gl gr => geoMidForest gl + geoMidForest gr
@@ -777,17 +777,17 @@ def geoMidForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Fores
     this equals both the LHS-style triple from `lhsRealCuts` and the RHS-style
     triple from `rhsRealRealInner` (the substantive cuts-of-cuts identity). -/
 noncomputable def geoCutToTriple (R : Type*) [CommSemiring R]
-    {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
     (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α)) :=
   forestToHc (R := R) (geoBotForest g) ⊗ₜ[R]
     (forestToHc (R := R) (geoMidForest g) ⊗ₜ[R]
-      forestToHc (R := R) ({geoStackItem g} : Forest α))
+      forestToHc (R := R) ({geoStackItem g} : TraceForest α Unit))
 
 /-- The "GeoCut multiset" on `T`: enumerate `GeoCut T Layer.top` and project each
     to its triple-tensor via `geoCutToTriple`. This is the canonical 3-coloring
     enumeration that both `lhsRealCuts T` and `rhsRealRealInner T` will be shown
     to factor through. -/
-noncomputable def geoMultiset (T : DecoratedTree α) :
+noncomputable def geoMultiset (T : TraceTree α Unit) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (GeoCut T Layer.top)).val.map (geoCutToTriple R)
 
@@ -795,9 +795,9 @@ noncomputable def geoMultiset (T : DecoratedTree α) :
 
 A `ChildSlots α` triple `⟨BOT, MID, stack⟩` represents one subtree's contribution
 to a parent's triple-tensor:
-- `bot : Forest α` — subtrees of T that go to the BOT slot.
-- `mid : Forest α` — subtrees of T (each as outer-skeleton) that go to the MID slot.
-- `stack : DecoratedTree α` — what appears at T's position in the parent's slot-3 tree.
+- `bot : TraceForest α Unit` — subtrees of T that go to the BOT slot.
+- `mid : TraceForest α Unit` — subtrees of T (each as outer-skeleton) that go to the MID slot.
+- `stack : TraceTree α Unit` — what appears at T's position in the parent's slot-3 tree.
 
 The triple-tensor for a subtree equals `forestToHc(bot) ⊗ (forestToHc(mid) ⊗ forestToHc({stack}))`.
 
@@ -809,12 +809,12 @@ hypothesis. -/
     `BOT`/`MID` are forests; `stack` is the single tree at this subtree's position
     in the parent's slot-3 tree. -/
 structure ChildSlots (α : Type*) where
-  bot   : Forest α
-  mid   : Forest α
-  stack : DecoratedTree α
+  bot   : TraceForest α Unit
+  mid   : TraceForest α Unit
+  stack : TraceTree α Unit
 
 /-- Project a GeoCut to its child-slot triple. -/
-def geoToChildSlots {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+def geoToChildSlots {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
     ChildSlots α :=
   ⟨geoBotForest g, geoMidForest g, geoStackItem g⟩
 
@@ -822,15 +822,15 @@ def geoToChildSlots {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
 noncomputable def ChildSlots.toTriple (R : Type*) [CommSemiring R]
     (cs : ChildSlots α) : (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α)) :=
   forestToHc (R := R) cs.bot ⊗ₜ[R]
-    (forestToHc (R := R) cs.mid ⊗ₜ[R] forestToHc (R := R) ({cs.stack} : Forest α))
+    (forestToHc (R := R) cs.mid ⊗ₜ[R] forestToHc (R := R) ({cs.stack} : TraceForest α Unit))
 
 /-- `geoCutToTriple` factors as `ChildSlots.toTriple ∘ geoToChildSlots`. -/
-theorem geoCutToTriple_eq {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+theorem geoCutToTriple_eq {T : TraceTree α Unit} {myL : Layer} (g : GeoCut T myL) :
     geoCutToTriple R g = (geoToChildSlots g).toTriple R := rfl
 
 /-- The "any-layer GeoCut child contribution" multiset on `T`: enumerate all
     `(myL, g : GeoCut T myL)` pairs and project each to its child slots. -/
-noncomputable def geoCutAnyChildContrib (T : DecoratedTree α) :
+noncomputable def geoCutAnyChildContrib (T : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset (Σ myL : Layer, GeoCut T myL)).val.map
     fun ⟨_, g⟩ => geoToChildSlots g
@@ -844,32 +844,32 @@ Following the mathlib-audit recommendation, the LHS-side child contribution on
 
 /-- Per-layer LHS contribution at the subtree level.
 - `.bot`: parent extracts T whole + inner = extractWhole. Single ChildSlots
-  `⟨{T}, 0, .trace T⟩`.
+  `⟨{T}, 0, .trace ()⟩`.
 - `.mid`: parent extracts T whole + inner = real cl_inner. One ChildSlots per
-  `cl_inner ∈ CutShape T`: `⟨cutForest cl_inner, {remainder cl_inner}, .trace T⟩`.
+  `cl_inner ∈ CutShape T`: `⟨cutForest cl_inner, {remainder cl_inner}, .trace ()⟩`.
 - `.top`: parent recurses with `cl_outer ∈ CutShape T` + per-tree inner section.
   `⟨recursive BOT, recursive MID, remainder cl_outer⟩`. -/
-noncomputable def perLayerContrib (T : DecoratedTree α) :
+noncomputable def perLayerContrib (T : TraceTree α Unit) :
     Layer → Multiset (ChildSlots α)
   | .bot =>
-      ({⟨({T} : Forest α), 0, .trace T⟩} : Multiset (ChildSlots α))
+      ({⟨({T} : TraceForest α Unit), 0, .trace ()⟩} : Multiset (ChildSlots α))
   | .mid =>
       (Finset.univ : Finset (CutShape T)).val.map fun cl_inner =>
         ⟨CutShape.cutForest cl_inner,
-         ({CutShape.remainder cl_inner} : Forest α),
-         .trace T⟩
+         ({CutShape.remainder cl_inner} : TraceForest α Unit),
+         .trace ()⟩
   | .top =>
       (Finset.univ : Finset (CutShape T)).val.bind fun cl_outer =>
         (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
           (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-            ((AugCutShape.cutForest_aug ac' : Forest α),
-             (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+            ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+             (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
           ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
            CutShape.remainder cl_outer⟩
 
 /-- The LHS-side child contribution multiset on `T` (any-layer): bind of
     `perLayerContrib T` over `Layer`. Equals `geoCutAnyChildContrib T` (key IH). -/
-noncomputable def lhsAnyChildContrib (T : DecoratedTree α) :
+noncomputable def lhsAnyChildContrib (T : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset Layer).val.bind (perLayerContrib T)
 
@@ -880,11 +880,11 @@ per-layer equalities. The `.bot` and `.mid` cases reduce to direct multiset
 computation; `.top` is the substantive recursive content. -/
 
 omit [DecidableEq α] in
-/-- All `g : GeoCut T .bot` give the same `ChildSlots`: `⟨{T}, 0, .trace T⟩`.
+/-- All `g : GeoCut T .bot` give the same `ChildSlots`: `⟨{T}, 0, .trace ()⟩`.
     Because for `myL = .bot` all the geo* helpers return the constant value
     determined by `T` alone. -/
-theorem geoToChildSlots_bot {T : DecoratedTree α} (g : GeoCut T Layer.bot) :
-    geoToChildSlots g = ⟨({T} : Forest α), 0, .trace T⟩ := by
+theorem geoToChildSlots_bot {T : TraceTree α Unit} (g : GeoCut T Layer.bot) :
+    geoToChildSlots g = ⟨({T} : TraceForest α Unit), 0, .trace ()⟩ := by
   unfold geoToChildSlots geoBotForest geoMidForest geoStackItem
   rfl
 
@@ -895,7 +895,7 @@ private theorem Layer.le_bot_iff (lL : Layer) : lL ≤ Layer.bot ↔ lL = Layer.
   · intro h; subst h; exact le_refl _
 
 /-- The canonical "all-bot" GeoCut on T. -/
-def botGeoCut : ∀ (T : DecoratedTree α), GeoCut T Layer.bot
+def botGeoCut : ∀ (T : TraceTree α Unit), GeoCut T Layer.bot
   | .leaf _ => GeoCut.leaf Layer.bot
   | .trace _ => GeoCut.trace Layer.bot
   | .node l r =>
@@ -905,7 +905,7 @@ def botGeoCut : ∀ (T : DecoratedTree α), GeoCut T Layer.bot
 omit [DecidableEq α] in
 /-- Every `g : GeoCut T .bot` equals `botGeoCut T`. Combined with `Inhabited` via
     `botGeoCut`, gives `Unique (GeoCut T .bot)`. -/
-theorem botGeoCut_unique : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.bot),
+theorem botGeoCut_unique : ∀ {T : TraceTree α Unit} (g : GeoCut T Layer.bot),
     g = botGeoCut T
   | .leaf _, .leaf _ => rfl
   | .trace _, .trace _ => rfl
@@ -918,18 +918,18 @@ theorem botGeoCut_unique : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.bot),
       subst el; subst er
       rfl
 
-instance instUniqueGeoCutBot (T : DecoratedTree α) : Unique (GeoCut T Layer.bot) where
+instance instUniqueGeoCutBot (T : TraceTree α Unit) : Unique (GeoCut T Layer.bot) where
   default := botGeoCut T
   uniq := botGeoCut_unique
 
-/-- The `.bot` case: a single `ChildSlots ⟨{T}, 0, .trace T⟩`. -/
-theorem perLayerContrib_bot (T : DecoratedTree α) :
+/-- The `.bot` case: a single `ChildSlots ⟨{T}, 0, .trace ()⟩`. -/
+theorem perLayerContrib_bot (T : TraceTree α Unit) :
     perLayerContrib (α := α) T .bot
       = (Finset.univ : Finset (GeoCut T Layer.bot)).val.map
           (fun g => geoToChildSlots g) := by
-  -- LHS unfolds to {⟨{T}, 0, .trace T⟩}.
+  -- LHS unfolds to {⟨{T}, 0, .trace ()⟩}.
   -- RHS: univ has a unique element (botGeoCut T) via `instUniqueGeoCutBot`,
-  -- so univ.val = {botGeoCut T}, mapped via geoToChildSlots → {⟨{T}, 0, .trace T⟩}.
+  -- so univ.val = {botGeoCut T}, mapped via geoToChildSlots → {⟨{T}, 0, .trace ()⟩}.
   rw [show (Finset.univ : Finset (GeoCut T Layer.bot)).val
         = ({botGeoCut T} : Multiset _) by
        rw [show (Finset.univ : Finset (GeoCut T Layer.bot))
@@ -948,7 +948,7 @@ preserves the (BOT, MID, stack) data: extracted subtrees → BOT, kept subtrees 
 MID structure, T-vertex → MID. -/
 
 /-- Forward: convert `cl_inner : CutShape T` to the corresponding `GeoCut T .mid`. -/
-def midGeoCut : ∀ (T : DecoratedTree α), CutShape T → GeoCut T Layer.mid
+def midGeoCut : ∀ (T : TraceTree α Unit), CutShape T → GeoCut T Layer.mid
   | .leaf _, .atLeaf => GeoCut.leaf Layer.mid
   | .trace _, .atTrace => GeoCut.trace Layer.mid
   | .node l r, .bothCut hl hr =>
@@ -966,7 +966,7 @@ def midGeoCut : ∀ (T : DecoratedTree α), CutShape T → GeoCut T Layer.mid
         (midGeoCut l cl_in) (midGeoCut r cr_in)
 
 /-- Inverse: convert `g : GeoCut T .mid` to the corresponding `CutShape T`. -/
-def fromMidGeoCut : ∀ {T : DecoratedTree α}, GeoCut T Layer.mid → CutShape T
+def fromMidGeoCut : ∀ {T : TraceTree α Unit}, GeoCut T Layer.mid → CutShape T
   | _, .leaf _ => CutShape.atLeaf
   | _, .trace _ => CutShape.atTrace
   | .node l r, .node hl hr hlNT hrNT gl gr => by
@@ -982,27 +982,27 @@ def fromMidGeoCut : ∀ {T : DecoratedTree α}, GeoCut T Layer.mid → CutShape 
         cases rL with
         | bot =>
           -- hlNT : IsNotTrace l ∨ bot = mid → IsNotTrace l (since bot ≠ mid).
-          have hLT : DecoratedTree.IsNotTrace l := hlNT.resolve_right (by decide)
-          have hRT : DecoratedTree.IsNotTrace r := hrNT.resolve_right (by decide)
+          have hLT : TraceTree.IsNotTrace l := hlNT.resolve_right (by decide)
+          have hRT : TraceTree.IsNotTrace r := hrNT.resolve_right (by decide)
           exact CutShape.bothCut hLT hRT
         | mid =>
-          have hLT : DecoratedTree.IsNotTrace l := hlNT.resolve_right (by decide)
+          have hLT : TraceTree.IsNotTrace l := hlNT.resolve_right (by decide)
           exact CutShape.onlyLeftCut hLT (fromMidGeoCut gr)
         | top => exact absurd hr (by decide)
       | mid =>
         cases rL with
         | bot =>
-          have hRT : DecoratedTree.IsNotTrace r := hrNT.resolve_right (by decide)
+          have hRT : TraceTree.IsNotTrace r := hrNT.resolve_right (by decide)
           exact CutShape.onlyRightCut hRT (fromMidGeoCut gl)
         | mid => exact CutShape.bothRecurse (fromMidGeoCut gl) (fromMidGeoCut gr)
         | top => exact absurd hr (by decide)
       | top => exact absurd hl (by decide)
 
-/-! #### Helper lemmas: `geoToChildSlots ∘ midGeoCut` matches `(cutForest, {remainder}, .trace T)`. -/
+/-! #### Helper lemmas: `geoToChildSlots ∘ midGeoCut` matches `(cutForest, {remainder}, .trace ())`. -/
 
 omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoBotForest (midGeoCut T cl) = cutForest cl`. -/
-theorem geoBotForest_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+theorem geoBotForest_midGeoCut : ∀ (T : TraceTree α Unit) (cl : CutShape T),
     geoBotForest (midGeoCut T cl) = CutShape.cutForest cl
   | _, .atLeaf => rfl
   | _, .atTrace => rfl
@@ -1022,7 +1022,7 @@ theorem geoBotForest_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
 
 omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoOuterSkeleton (midGeoCut T cl) = remainder cl`. -/
-theorem geoOuterSkeleton_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+theorem geoOuterSkeleton_midGeoCut : ∀ (T : TraceTree α Unit) (cl : CutShape T),
     geoOuterSkeleton (midGeoCut T cl) = CutShape.remainder cl
   | _, .atLeaf => rfl
   | _, .atTrace => rfl
@@ -1041,26 +1041,26 @@ theorem geoOuterSkeleton_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T
 
 omit [DecidableEq α] in
 /-- For `myL = .mid`, `geoMidForest (midGeoCut T cl) = {remainder cl}`. -/
-theorem geoMidForest_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
-    geoMidForest (midGeoCut T cl) = ({CutShape.remainder cl} : Forest α) := by
-  -- For myL = mid, geoMidForest = ({geoOuterSkeleton g} : Forest α).
+theorem geoMidForest_midGeoCut (T : TraceTree α Unit) (cl : CutShape T) :
+    geoMidForest (midGeoCut T cl) = ({CutShape.remainder cl} : TraceForest α Unit) := by
+  -- For myL = mid, geoMidForest = ({geoOuterSkeleton g} : TraceForest α Unit).
   rw [show geoMidForest (midGeoCut T cl)
-        = ({geoOuterSkeleton (midGeoCut T cl)} : Forest α) by
+        = ({geoOuterSkeleton (midGeoCut T cl)} : TraceForest α Unit) by
        cases cl <;> rfl,
       geoOuterSkeleton_midGeoCut]
 
 omit [DecidableEq α] in
-/-- For `myL = .mid`, `geoStackItem (midGeoCut T cl) = .trace T`. -/
-theorem geoStackItem_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
-    geoStackItem (midGeoCut T cl) = .trace T := by
-  -- For myL = mid, geoStackItem = .trace T always.
+/-- For `myL = .mid`, `geoStackItem (midGeoCut T cl) = .trace ()`. -/
+theorem geoStackItem_midGeoCut (T : TraceTree α Unit) (cl : CutShape T) :
+    geoStackItem (midGeoCut T cl) = .trace () := by
+  -- For myL = mid, geoStackItem = .trace () always.
   cases cl <;> rfl
 
 omit [DecidableEq α] in
 /-- The combined fact: `geoToChildSlots (midGeoCut T cl)` matches the LHS triple. -/
-theorem geoToChildSlots_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
+theorem geoToChildSlots_midGeoCut (T : TraceTree α Unit) (cl : CutShape T) :
     geoToChildSlots (midGeoCut T cl)
-      = ⟨CutShape.cutForest cl, ({CutShape.remainder cl} : Forest α), .trace T⟩ := by
+      = ⟨CutShape.cutForest cl, ({CutShape.remainder cl} : TraceForest α Unit), .trace ()⟩ := by
   unfold geoToChildSlots
   rw [geoBotForest_midGeoCut, geoMidForest_midGeoCut, geoStackItem_midGeoCut]
 
@@ -1072,7 +1072,7 @@ recursive sub-CutShapes / sub-GeoCuts. -/
 
 omit [DecidableEq α] in
 /-- Roundtrip 1: `fromMidGeoCut ∘ midGeoCut = id`. -/
-theorem fromMidGeoCut_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+theorem fromMidGeoCut_midGeoCut : ∀ (T : TraceTree α Unit) (cl : CutShape T),
     fromMidGeoCut (midGeoCut T cl) = cl
   | _, .atLeaf => rfl
   | _, .atTrace => rfl
@@ -1092,8 +1092,8 @@ omit [DecidableEq α] in
 /-- Helper: when the `IsNotTrace ∨ lL = myL` disjunction's right disjunct is
     impossible (`lL ≠ myL`), it must equal `Or.inl ...`. Eliminates copy-paste
     in the `midGeoCut_fromMidGeoCut` dispatch. -/
-private theorem trace_nt_eq_inl {T : DecoratedTree α} {lL myL : Layer}
-    (h : DecoratedTree.IsNotTrace T ∨ lL = myL) (hne : lL ≠ myL) :
+private theorem trace_nt_eq_inl {T : TraceTree α Unit} {lL myL : Layer}
+    (h : TraceTree.IsNotTrace T ∨ lL = myL) (hne : lL ≠ myL) :
     h = Or.inl (h.resolve_right hne) := by
   rcases h with _ | hne'
   · rfl
@@ -1102,7 +1102,7 @@ private theorem trace_nt_eq_inl {T : DecoratedTree α} {lL myL : Layer}
 omit [DecidableEq α] in
 /-- Roundtrip 2: `midGeoCut ∘ fromMidGeoCut = id`. Uses `botGeoCut_unique`
     for `gl/gr` at layer `.bot`, IH for `gl/gr` at layer `.mid`. -/
-theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.mid),
+theorem midGeoCut_fromMidGeoCut : ∀ {T : TraceTree α Unit} (g : GeoCut T Layer.mid),
     midGeoCut T (fromMidGeoCut g) = g
   | _, .leaf .mid => rfl
   | _, .trace .mid => rfl
@@ -1144,7 +1144,7 @@ theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer
           rw [ihl, ihr]
 
 /-- The Equivalence `CutShape T ≃ GeoCut T Layer.mid`. -/
-def midGeoCutEquiv (T : DecoratedTree α) : CutShape T ≃ GeoCut T Layer.mid where
+def midGeoCutEquiv (T : TraceTree α Unit) : CutShape T ≃ GeoCut T Layer.mid where
   toFun := midGeoCut T
   invFun := fromMidGeoCut
   left_inv := fromMidGeoCut_midGeoCut T
@@ -1161,7 +1161,7 @@ has 9 sub-cases (4 for `bothRecurse cl cr`, 2 for `onlyLeftCut`, 2 for `onlyRigh
 1 for `bothCut`), matching the 9 (lL, rL) cells of `GeoCut .node`. -/
 
 /-- Forward: `(C₁, C₂)` double-cut to its `GeoCut` 3-coloring. -/
-noncomputable def rhsToGeoCut : ∀ {T : DecoratedTree α}
+noncomputable def rhsToGeoCut : ∀ {T : TraceTree α Unit}
     (C₁ : CutShape T) (_C₂ : CutShape (CutShape.remainder C₁)),
     GeoCut T Layer.top
   | .leaf _, .atLeaf, c2 =>
@@ -1216,7 +1216,7 @@ noncomputable def rhsToGeoCut : ∀ {T : DecoratedTree α}
 
 /-- Inverse: `GeoCut T .top` to its `(C₁, C₂)` double-cut representation.
     Inverts `rhsToGeoCut` by case analysis on the GeoCut node's child layers `(lL, rL)`. -/
-noncomputable def geoCutToRhs : ∀ {T : DecoratedTree α} (_g : GeoCut T Layer.top),
+noncomputable def geoCutToRhs : ∀ {T : TraceTree α Unit} (_g : GeoCut T Layer.top),
     Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁)
   | .leaf _, .leaf _ => ⟨.atLeaf, .atLeaf⟩
   | .trace _, .trace _ => ⟨.atTrace, .atTrace⟩
@@ -1285,7 +1285,7 @@ omit [DecidableEq α] in
     By structural induction on T + case analysis on (C₁ ctor, C₂ ctor). For each of
     the 9 .node sub-cases, the roundtrip is `rfl` after `simp only` unfolding and
     application of IH on subtrees and `fromMidGeoCut_midGeoCut` on .mid GeoCuts. -/
-theorem geoCutToRhs_rhsToGeoCut : ∀ {T : DecoratedTree α}
+theorem geoCutToRhs_rhsToGeoCut : ∀ {T : TraceTree α Unit}
     (C₁ : CutShape T) (C₂ : CutShape (CutShape.remainder C₁)),
     geoCutToRhs (rhsToGeoCut C₁ C₂) = ⟨C₁, C₂⟩
   | .leaf _, .atLeaf, c2 => by
@@ -1327,7 +1327,7 @@ omit [DecidableEq α] in
     children, `midGeoCut_fromMidGeoCut` to round-trip `.mid` layers, and IH for
     `.top` layers. The `Or.inl (resolve_right _)` reconstructions collapse via
     `or_inl_resolve_right_eq_self`. -/
-theorem rhsToGeoCut_geoCutToRhs : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.top),
+theorem rhsToGeoCut_geoCutToRhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Layer.top),
     rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g
   | .leaf _, .leaf _ => rfl
   | .trace _, .trace _ => rfl
@@ -1411,15 +1411,162 @@ theorem rhsToGeoCut_geoCutToRhs : ∀ {T : DecoratedTree α} (g : GeoCut T Layer
         rw [ihl, ihr]
 
 /-- The RHS-side substantive Foissy bijection as an `Equiv`. -/
-noncomputable def rhsGeoCutEquiv (T : DecoratedTree α) :
+noncomputable def rhsGeoCutEquiv (T : TraceTree α Unit) :
     (Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁)) ≃ GeoCut T Layer.top where
   toFun := fun ⟨C₁, C₂⟩ => rhsToGeoCut C₁ C₂
   invFun := geoCutToRhs
   left_inv := fun ⟨C₁, C₂⟩ => geoCutToRhs_rhsToGeoCut C₁ C₂
   right_inv := rhsToGeoCut_geoCutToRhs
 
+/-! ### Per-element forest agreement under `rhsToGeoCut`
+
+The Equiv `rhsGeoCutEquiv` between `(C₁, C₂)`-pairs and `GeoCut T .top`
+preserves the triple-tensor data, which means the substantive Foissy
+identity reduces to per-element agreement on each forest projection. -/
+
+omit [DecidableEq α] in
+/-- `geoBotForest (rhsToGeoCut C₁ C₂) = cutForest C₁`. By structural
+    induction on T with case analysis on the (C₁, C₂) constructor pair. -/
+theorem geoBotForest_rhsToGeoCut :
+    ∀ {T : TraceTree α Unit} (C₁ : CutShape T)
+      (C₂ : CutShape (CutShape.remainder C₁)),
+    geoBotForest (rhsToGeoCut C₁ C₂) = CutShape.cutForest C₁
+  | .leaf _, .atLeaf, c2 => by
+      have hc : c2 = .atLeaf := match c2 with | .atLeaf => rfl
+      subst hc; rfl
+  | .trace _, .atTrace, c2 => by
+      have hc : c2 = .atTrace := match c2 with | .atTrace => rfl
+      subst hc; rfl
+  | .node l r, .bothCut hl hr, .bothRecurse .atTrace .atTrace => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rfl
+  | .node l r, .onlyLeftCut hl cr, .bothRecurse .atTrace cr2 => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_rhsToGeoCut cr cr2]
+  | .node l r, .onlyLeftCut hl cr, .onlyRightCut hr2 .atTrace => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_midGeoCut r cr]
+  | .node l r, .onlyRightCut hr cl, .bothRecurse cl2 .atTrace => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_rhsToGeoCut cl cl2]
+  | .node l r, .onlyRightCut hr cl, .onlyLeftCut hl2 .atTrace => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_midGeoCut l cl]
+  | .node l r, .bothRecurse cl cr, .bothRecurse cl2 cr2 => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_rhsToGeoCut cl cl2, geoBotForest_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .bothCut hl2 hr2 => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_midGeoCut l cl, geoBotForest_midGeoCut r cr]
+  | .node l r, .bothRecurse cl cr, .onlyLeftCut hl2 cr2 => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_midGeoCut l cl, geoBotForest_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .onlyRightCut hr2 cl2 => by
+      simp only [rhsToGeoCut, geoBotForest, CutShape.cutForest]
+      rw [geoBotForest_rhsToGeoCut cl cl2, geoBotForest_midGeoCut r cr]
+
+omit [DecidableEq α] in
+/-- `geoMidForest (rhsToGeoCut C₁ C₂) = cutForest C₂`. -/
+theorem geoMidForest_rhsToGeoCut :
+    ∀ {T : TraceTree α Unit} (C₁ : CutShape T)
+      (C₂ : CutShape (CutShape.remainder C₁)),
+    geoMidForest (rhsToGeoCut C₁ C₂) = CutShape.cutForest C₂
+  | .leaf _, .atLeaf, c2 => by
+      have hc : c2 = .atLeaf := match c2 with | .atLeaf => rfl
+      subst hc; rfl
+  | .trace _, .atTrace, c2 => by
+      have hc : c2 = .atTrace := match c2 with | .atTrace => rfl
+      subst hc; rfl
+  | .node l r, .bothCut hl hr, .bothRecurse .atTrace .atTrace => by
+      simp only [rhsToGeoCut, geoMidForest, CutShape.cutForest]
+      rfl
+  | .node l r, .onlyLeftCut hl cr, .bothRecurse .atTrace cr2 => by
+      simp only [rhsToGeoCut, geoMidForest, CutShape.cutForest]
+      rw [geoMidForest_rhsToGeoCut cr cr2]
+      rfl
+  | .node l r, .onlyLeftCut hl cr, .onlyRightCut hr2 .atTrace => by
+      simp only [rhsToGeoCut, CutShape.cutForest]
+      show geoMidForest (.node _ _ _ _ _ _) = _
+      simp only [geoMidForest]
+      rw [geoOuterSkeleton_midGeoCut r cr]
+      rfl
+  | .node l r, .onlyRightCut hr cl, .bothRecurse cl2 .atTrace => by
+      simp only [rhsToGeoCut, geoMidForest, CutShape.cutForest]
+      rw [geoMidForest_rhsToGeoCut cl cl2]
+      rfl
+  | .node l r, .onlyRightCut hr cl, .onlyLeftCut hl2 .atTrace => by
+      simp only [rhsToGeoCut, CutShape.cutForest]
+      show geoMidForest (.node _ _ _ _ _ _) = _
+      simp only [geoMidForest]
+      rw [geoOuterSkeleton_midGeoCut l cl]
+      rfl
+  | .node l r, .bothRecurse cl cr, .bothRecurse cl2 cr2 => by
+      simp only [rhsToGeoCut, geoMidForest, CutShape.cutForest]
+      rw [geoMidForest_rhsToGeoCut cl cl2, geoMidForest_rhsToGeoCut cr cr2]
+      rfl
+  | .node l r, .bothRecurse cl cr, .bothCut hl2 hr2 => by
+      simp only [rhsToGeoCut, CutShape.cutForest]
+      show geoMidForest (.node _ _ _ _ _ _) = _
+      simp only [geoMidForest]
+      rw [geoOuterSkeleton_midGeoCut l cl, geoOuterSkeleton_midGeoCut r cr]
+      rfl
+  | .node l r, .bothRecurse cl cr, .onlyLeftCut hl2 cr2 => by
+      simp only [rhsToGeoCut, CutShape.cutForest]
+      show geoMidForest (.node _ _ _ _ _ _) = _
+      simp only [geoMidForest]
+      rw [geoOuterSkeleton_midGeoCut l cl, geoMidForest_rhsToGeoCut cr cr2]
+      rfl
+  | .node l r, .bothRecurse cl cr, .onlyRightCut hr2 cl2 => by
+      simp only [rhsToGeoCut, CutShape.cutForest]
+      show geoMidForest (.node _ _ _ _ _ _) = _
+      simp only [geoMidForest]
+      rw [geoMidForest_rhsToGeoCut cl cl2, geoOuterSkeleton_midGeoCut r cr]
+      rfl
+
+omit [DecidableEq α] in
+/-- `geoStackItem (rhsToGeoCut C₁ C₂) = remainder C₂`.
+
+    Now provable post-migration: with `β = Unit`, both sides only produce
+    `.trace ()` markers (no recursive trace data), so the structural shapes
+    match. Pre-migration this failed because LHS had `.trace T` (whole
+    subtree) while RHS had `.trace (remainder cr)` (cut-remainder of
+    subtree). The trace-data anonymization restores the bijection. -/
+theorem geoStackItem_rhsToGeoCut :
+    ∀ {T : TraceTree α Unit} (C₁ : CutShape T)
+      (C₂ : CutShape (CutShape.remainder C₁)),
+    geoStackItem (rhsToGeoCut C₁ C₂) = CutShape.remainder C₂
+  | .leaf _, .atLeaf, c2 => by
+      have hc : c2 = .atLeaf := match c2 with | .atLeaf => rfl
+      subst hc; rfl
+  | .trace _, .atTrace, c2 => by
+      have hc : c2 = .atTrace := match c2 with | .atTrace => rfl
+      subst hc; rfl
+  | .node l r, .bothCut hl hr, .bothRecurse .atTrace .atTrace => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder]
+  | .node l r, .onlyLeftCut hl cr, .bothRecurse .atTrace cr2 => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder]
+      rw [geoStackItem_rhsToGeoCut cr cr2]
+  | .node l r, .onlyLeftCut hl cr, .onlyRightCut hr2 .atTrace => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder, geoStackItem_midGeoCut]
+  | .node l r, .onlyRightCut hr cl, .bothRecurse cl2 .atTrace => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder]
+      rw [geoStackItem_rhsToGeoCut cl cl2]
+  | .node l r, .onlyRightCut hr cl, .onlyLeftCut hl2 .atTrace => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder, geoStackItem_midGeoCut]
+  | .node l r, .bothRecurse cl cr, .bothRecurse cl2 cr2 => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder]
+      rw [geoStackItem_rhsToGeoCut cl cl2, geoStackItem_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .bothCut hl2 hr2 => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder, geoStackItem_midGeoCut]
+  | .node l r, .bothRecurse cl cr, .onlyLeftCut hl2 cr2 => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder, geoStackItem_midGeoCut]
+      rw [geoStackItem_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .onlyRightCut hr2 cl2 => by
+      simp only [rhsToGeoCut, geoStackItem, CutShape.remainder, geoStackItem_midGeoCut]
+      rw [geoStackItem_rhsToGeoCut cl cl2]
+
 /-- The `.mid` case: enumerate `CutShape T` for inner cuts. -/
-theorem perLayerContrib_mid (T : DecoratedTree α) :
+theorem perLayerContrib_mid (T : TraceTree α Unit) :
     perLayerContrib (α := α) T .mid
       = (Finset.univ : Finset (GeoCut T Layer.mid)).val.map
           (fun g => geoToChildSlots g) := by
@@ -1471,10 +1618,10 @@ def nodeChildSlots (cs_l cs_r : ChildSlots α) : ChildSlots α :=
 
 omit [DecidableEq α] in
 /-- For `myL = .top` on `.node`, `geoToChildSlots (.node ... gl gr) = nodeChildSlots ...`. -/
-theorem geoToChildSlots_node_top {l r : DecoratedTree α} {lL rL : Layer}
+theorem geoToChildSlots_node_top {l r : TraceTree α Unit} {lL rL : Layer}
     (hl : lL ≤ Layer.top) (hr : rL ≤ Layer.top)
-    (hlNT : DecoratedTree.IsNotTrace l ∨ lL = Layer.top)
-    (hrNT : DecoratedTree.IsNotTrace r ∨ rL = Layer.top)
+    (hlNT : TraceTree.IsNotTrace l ∨ lL = Layer.top)
+    (hrNT : TraceTree.IsNotTrace r ∨ rL = Layer.top)
     (gl : GeoCut l lL) (gr : GeoCut r rL) :
     geoToChildSlots (GeoCut.node hl hr hlNT hrNT gl gr)
       = nodeChildSlots (geoToChildSlots gl) (geoToChildSlots gr) := by
@@ -1488,23 +1635,23 @@ over `(lL, rL, gl, gr)` with `nodeChildSlots` combined per-pair. -/
 
 omit [DecidableEq α] in
 /-- The RHS for `.node l r` at `.top` factored via Sigma decomposition. -/
-theorem geoMultiset_node_factored (l r : DecoratedTree α) :
+theorem geoMultiset_node_factored (l r : TraceTree α Unit) :
     (Finset.univ : Finset (GeoCut (.node l r) Layer.top)).val.map
         (fun g => geoToChildSlots g)
       = (Finset.univ : Finset
             (Σ (lL : {x : Layer // x ≤ Layer.top ∧
-                  (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+                  (TraceTree.IsNotTrace l ∨ x = Layer.top)})
                (rL : {x : Layer // x ≤ Layer.top ∧
-                  (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+                  (TraceTree.IsNotTrace r ∨ x = Layer.top)}),
               GeoCut l lL.1 × GeoCut r rL.1)).val.map
           (fun ⟨_, _, gl, gr⟩ =>
             nodeChildSlots (geoToChildSlots gl) (geoToChildSlots gr)) := by
   rw [show (Finset.univ : Finset (GeoCut (.node l r) Layer.top))
         = (Finset.univ : Finset (Σ
             (lL : {x : Layer // x ≤ Layer.top ∧
-                  (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+                  (TraceTree.IsNotTrace l ∨ x = Layer.top)})
             (rL : {x : Layer // x ≤ Layer.top ∧
-                  (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+                  (TraceTree.IsNotTrace r ∨ x = Layer.top)}),
             GeoCut l lL.1 × GeoCut r rL.1)).map
             (nodeGeoCutEquiv l r Layer.top).toEmbedding from
        (Finset.map_univ_equiv (nodeGeoCutEquiv l r Layer.top)).symm]
@@ -1516,12 +1663,12 @@ theorem geoMultiset_node_factored (l r : DecoratedTree α) :
     `(lL, rL, cs_l, cs_r)` of `nodeChildSlots`-combined ChildSlots, with per-l/per-r
     data drawn from `perLayerContrib l lL` / `perLayerContrib r rL` respectively.
     The trace constraint is encoded in the Subtype on layers. -/
-noncomputable def perLayerContribDecomposed (l r : DecoratedTree α) :
+noncomputable def perLayerContribDecomposed (l r : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
-        (DecoratedTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
+        (TraceTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
     (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
-        (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
+        (TraceTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
       (perLayerContrib (α := α) l lL.1).bind fun cs_l =>
         (perLayerContrib (α := α) r rL.1).map fun cs_r =>
           nodeChildSlots cs_l cs_r
@@ -1546,7 +1693,7 @@ For `bothRecurse cl_in cr_in`:
 
 For `bothCut hl hr`:
   cutForest = {l, r}. `Multiset.sections_cons` (twice) decomposes Sections.
-  Per (a, b) pair: `(a.fst + b.fst, a.snd + b.snd, .node (.trace l) (.trace r))`.
+  Per (a, b) pair: `(a.fst + b.fst, a.snd + b.snd, .node (.trace ()) (.trace ()))`.
   Match to `(lL ∈ {bot, mid}, rL ∈ {bot, mid})` via `comulPairs ↔ perLayerContrib .bot ⊕ .mid`.
 
 For `onlyLeftCut hl cr_in`: hybrid. cutForest = {l} + cutForest cr_in. Match to
@@ -1564,34 +1711,34 @@ The `bothRecurse cl cr` ctor of `CutShape (.node l r)` contributes to
 then Fubini-swap the (cl, cr, s_l, s_r) bind. -/
 
 /-- The bothRecurse ctor's contribution to `perLayerContrib (.node l r) .top`. -/
-private noncomputable def perLayerContribTopBothRecurse (l r : DecoratedTree α) :
+private noncomputable def perLayerContribTopBothRecurse (l r : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
     (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
       (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map fun T' =>
         (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-          ((AugCutShape.cutForest_aug ac' : Forest α),
-           (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+          ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+           (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
         ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
          .node (CutShape.remainder cl) (CutShape.remainder cr)⟩
 
 /-- Per-cl-cr Sections-add reorganization for the bothRecurse case. -/
-private theorem perLayerContribTopBothRecurse_per_cl_cr (l r : DecoratedTree α)
+private theorem perLayerContribTopBothRecurse_per_cl_cr (l r : TraceTree α Unit)
     (cl : CutShape l) (cr : CutShape r) :
     (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map fun T' =>
         (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-          ((AugCutShape.cutForest_aug ac' : Forest α),
-           (AugCutShape.remainderForest ac' : Forest α)))).map (fun s =>
+          ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+           (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map (fun s =>
         (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
           .node (CutShape.remainder cl) (CutShape.remainder cr)⟩ : ChildSlots α))
     = (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
         (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-          ((AugCutShape.cutForest_aug ac' : Forest α),
-           (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+          ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+           (AugCutShape.remainderForest ac' : TraceForest α Unit)))).bind fun s_l =>
         (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
           (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-            ((AugCutShape.cutForest_aug ac' : Forest α),
-             (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+            ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+             (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s_r =>
           nodeChildSlots
             ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
             ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ := by
@@ -1604,7 +1751,7 @@ private theorem perLayerContribTopBothRecurse_per_cl_cr (l r : DecoratedTree α)
 
 /-- The bothRecurse contribution equals the (.top, .top) cell of perLayerContribDecomposed.
     Closed via per-cl-cr lemma + Fubini-swap of the (cl, cr, s_l, s_r) bind. -/
-private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
+private theorem perLayerContribTopBothRecurse_eq (l r : TraceTree α Unit) :
     perLayerContribTopBothRecurse (α := α) l r
       = (perLayerContrib (α := α) l .top).bind fun cs_l =>
           (perLayerContrib (α := α) r .top).map fun cs_r =>
@@ -1616,20 +1763,20 @@ private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
               (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
                 (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map
                     fun T' => (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                      ((AugCutShape.cutForest_aug ac' : Forest α),
-                       (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                      ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                       (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
                   (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
                     .node (CutShape.remainder cl) (CutShape.remainder cr)⟩ : ChildSlots α))
             = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
               (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
                 (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
                   (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                    ((AugCutShape.cutForest_aug ac' : Forest α),
-                     (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+                    ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                     (AugCutShape.remainderForest ac' : TraceForest α Unit)))).bind fun s_l =>
                   (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
                     (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                      ((AugCutShape.cutForest_aug ac' : Forest α),
-                       (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                      ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                       (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s_r =>
                     nodeChildSlots
                       ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
                       ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from
@@ -1640,25 +1787,25 @@ private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
             (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
               (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
                 (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                  ((AugCutShape.cutForest_aug ac' : Forest α),
-                   (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+                  ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                   (AugCutShape.remainderForest ac' : TraceForest α Unit)))).bind fun s_l =>
                 (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
                   (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                    ((AugCutShape.cutForest_aug ac' : Forest α),
-                     (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                    ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                     (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s_r =>
                   nodeChildSlots
                     ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
                     ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩)
         = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
             (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
               (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                ((AugCutShape.cutForest_aug ac' : Forest α),
-                 (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+                ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                 (AugCutShape.remainderForest ac' : TraceForest α Unit)))).bind fun s_l =>
               (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
                 (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
                   (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                    ((AugCutShape.cutForest_aug ac' : Forest α),
-                     (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                    ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                     (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s_r =>
                   nodeChildSlots
                     ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
                     ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from by
@@ -1668,15 +1815,15 @@ private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
   show _ = ((Finset.univ : Finset (CutShape l)).val.bind fun cl_outer =>
               (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
                 (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                  ((AugCutShape.cutForest_aug ac' : Forest α),
-                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                  ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                   (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
                 (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
                   : ChildSlots α)).bind fun cs_l =>
             ((Finset.univ : Finset (CutShape r)).val.bind fun cl_outer =>
               (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
                 (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                  ((AugCutShape.cutForest_aug ac' : Forest α),
-                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                  ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                   (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
                 (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
                   : ChildSlots α)).map fun cs_r =>
               nodeChildSlots cs_l cs_r
@@ -1701,14 +1848,14 @@ The `pairsMS l` reformulation collapses `AugCutShape l = CutShape l ⊕ Unit` in
 a single Multiset of `(Forest, Forest)` pairs (used for the LHS bridge below). -/
 
 /-- Per-layer .bot + .mid contribution = pairsMS wrapped as ChildSlots. -/
-private theorem perLayerContrib_bot_add_mid_eq_pairsWrap (T : DecoratedTree α) :
+private theorem perLayerContrib_bot_add_mid_eq_pairsWrap (T : TraceTree α Unit) :
     (perLayerContrib (α := α) T .bot) + (perLayerContrib (α := α) T .mid)
-    = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace T⟩ : ChildSlots α) := by
-  show ((({⟨({T} : Forest α), 0, .trace T⟩} : Multiset (ChildSlots α))) +
+    = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace ()⟩ : ChildSlots α) := by
+  show ((({⟨({T} : TraceForest α Unit), 0, .trace ()⟩} : Multiset (ChildSlots α))) +
         ((Finset.univ : Finset (CutShape T)).val.map fun cl =>
-          (⟨CutShape.cutForest cl, ({CutShape.remainder cl} : Forest α), .trace T⟩
+          (⟨CutShape.cutForest cl, ({CutShape.remainder cl} : TraceForest α Unit), .trace ()⟩
             : ChildSlots α)))
-       = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace T⟩ : ChildSlots α)
+       = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace ()⟩ : ChildSlots α)
   unfold pairsMS
   rw [show ((Finset.univ : Finset (AugCutShape T)).val
             : Multiset (CutShape T ⊕ Unit))
@@ -1720,14 +1867,14 @@ private theorem perLayerContrib_bot_add_mid_eq_pairsWrap (T : DecoratedTree α) 
   rfl
 
 /-- The bothCut ctor's contribution to perLayerContrib (.node l r) `.top` (raw form). -/
-private noncomputable def perLayerContribTopBothCut (l r : DecoratedTree α) :
+private noncomputable def perLayerContribTopBothCut (l r : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
-  (Multiset.Sections (({l, r} : Forest α).map (pairsMS (α := α)))).map fun s =>
-    ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, .node (.trace l) (.trace r)⟩
+  (Multiset.Sections (({l, r} : TraceForest α Unit).map (pairsMS (α := α)))).map fun s =>
+    ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, .node (.trace ()) (.trace ())⟩
 
 /-- The bothCut contribution equals the (.bot + .mid) × (.bot + .mid) cells of
     perLayerContribDecomposed. -/
-private theorem perLayerContribTopBothCut_eq (l r : DecoratedTree α) :
+private theorem perLayerContribTopBothCut_eq (l r : TraceTree α Unit) :
     perLayerContribTopBothCut (α := α) l r
       = ((perLayerContrib (α := α) l .bot) + (perLayerContrib (α := α) l .mid)).bind fun cs_l =>
           ((perLayerContrib (α := α) r .bot) + (perLayerContrib (α := α) r .mid)).map fun cs_r =>
@@ -1737,22 +1884,22 @@ private theorem perLayerContribTopBothCut_eq (l r : DecoratedTree α) :
   rw [Multiset.bind_map]
   show (Multiset.Sections (((l ::ₘ r ::ₘ 0 : Multiset _)).map (pairsMS (α := α)))).map
         (fun s => (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-                    DecoratedTree.node (.trace l) (.trace r)⟩ : ChildSlots α))
+                    TraceTree.node (.trace ()) (.trace ())⟩ : ChildSlots α))
       = (pairsMS (α := α) l).bind fun a_l =>
-          ((pairsMS (α := α) r).map fun p => (⟨p.1, p.2, .trace r⟩ : ChildSlots α)).map fun cs_r =>
-              nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩ cs_r
+          ((pairsMS (α := α) r).map fun p => (⟨p.1, p.2, .trace ()⟩ : ChildSlots α)).map fun cs_r =>
+              nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩ cs_r
   rw [Multiset.map_cons, Multiset.map_cons, Multiset.map_zero,
       Multiset.sections_cons, Multiset.sections_cons, Multiset.sections_zero]
   conv_lhs => rw [Multiset.map_bind]
   refine Multiset.bind_congr (fun a_l _ => ?_)
   rw [Multiset.map_map, Multiset.map_bind]
-  rw [show (fun a_r : Forest α × Forest α =>
-            (({0} : Multiset (Multiset (Forest α × Forest α))).map (Multiset.cons a_r)).map
+  rw [show (fun a_r : TraceForest α Unit × TraceForest α Unit =>
+            (({0} : Multiset (Multiset (TraceForest α Unit × TraceForest α Unit))).map (Multiset.cons a_r)).map
               ((fun s => (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-                          .node (DecoratedTree.trace l) (DecoratedTree.trace r)⟩ : ChildSlots α))
+                          .node (TraceTree.trace ()) (TraceTree.trace ())⟩ : ChildSlots α))
                 ∘ Multiset.cons a_l))
-          = fun a_r => ({(nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
-                          ⟨a_r.1, a_r.2, .trace r⟩ : ChildSlots α)} : Multiset _) from by
+          = fun a_r => ({(nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩
+                          ⟨a_r.1, a_r.2, .trace ()⟩ : ChildSlots α)} : Multiset _) from by
       funext a_r
       simp only [Multiset.map_singleton, Multiset.map_cons, Multiset.map_zero,
                  Multiset.sum_cons, Multiset.sum_zero, Function.comp_apply]
@@ -1762,28 +1909,28 @@ private theorem perLayerContribTopBothCut_eq (l r : DecoratedTree α) :
   rfl
 
 /-- The onlyLeftCut ctor's contribution: `cutForest = {l} + cutForest cr`. -/
-private noncomputable def perLayerContribTopOnlyLeftCut (l r : DecoratedTree α) :
+private noncomputable def perLayerContribTopOnlyLeftCut (l r : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
-    (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map (pairsMS (α := α)))).map
+    (Multiset.Sections ((({l} + CutShape.cutForest cr : TraceForest α Unit)).map (pairsMS (α := α)))).map
       fun s =>
         ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-         .node (.trace l) (CutShape.remainder cr)⟩
+         .node (.trace ()) (CutShape.remainder cr)⟩
 
 /-- Per-cr lemma: section reorganization for onlyLeftCut. -/
-private theorem perLayerContribTopOnlyLeftCut_per_cr (l r : DecoratedTree α)
+private theorem perLayerContribTopOnlyLeftCut_per_cr (l r : TraceTree α Unit)
     (cr : CutShape r) :
-    (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map
+    (Multiset.Sections ((({l} + CutShape.cutForest cr : TraceForest α Unit)).map
         (pairsMS (α := α)))).map (fun s =>
         (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-          .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α))
+          .node (.trace ()) (CutShape.remainder cr)⟩ : ChildSlots α))
     = (pairsMS (α := α) l).bind fun a_l =>
         (Multiset.Sections ((CutShape.cutForest cr).map (pairsMS (α := α)))).map fun s_r =>
-          nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+          nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩
             ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ := by
   rw [Multiset.map_add, Multiset.sections_add]
-  rw [show (({l} : Forest α).map (pairsMS (α := α)))
-          = (pairsMS (α := α) l ::ₘ (0 : Multiset (Multiset (Forest α × Forest α)))) from rfl,
+  rw [show (({l} : TraceForest α Unit).map (pairsMS (α := α)))
+          = (pairsMS (α := α) l ::ₘ (0 : Multiset (Multiset (TraceForest α Unit × TraceForest α Unit)))) from rfl,
       Multiset.sections_cons, Multiset.sections_zero]
   rw [Multiset.bind_assoc, Multiset.map_bind]
   refine Multiset.bind_congr (fun a_l _ => ?_)
@@ -1791,8 +1938,8 @@ private theorem perLayerContribTopOnlyLeftCut_per_cr (l r : DecoratedTree α)
   refine Multiset.map_congr rfl (fun s_r _ => ?_)
   show (⟨((a_l ::ₘ (0 : Multiset _) + s_r).map Prod.fst).sum,
          ((a_l ::ₘ (0 : Multiset _) + s_r).map Prod.snd).sum,
-         .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α)
-       = nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+         .node (.trace ()) (CutShape.remainder cr)⟩ : ChildSlots α)
+       = nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩
             ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩
   rw [Multiset.map_add, Multiset.map_add, Multiset.sum_add, Multiset.sum_add,
       Multiset.map_cons, Multiset.map_zero, Multiset.map_cons, Multiset.map_zero,
@@ -1802,7 +1949,7 @@ private theorem perLayerContribTopOnlyLeftCut_per_cr (l r : DecoratedTree α)
   rfl
 
 /-- The onlyLeftCut contribution equals the (.bot + .mid, .top) sub-bind. -/
-private theorem perLayerContribTopOnlyLeftCut_eq (l r : DecoratedTree α) :
+private theorem perLayerContribTopOnlyLeftCut_eq (l r : TraceTree α Unit) :
     perLayerContribTopOnlyLeftCut (α := α) l r
       = ((perLayerContrib (α := α) l .bot) + (perLayerContrib (α := α) l .mid)).bind fun cs_l =>
           (perLayerContrib (α := α) r .top).map fun cs_r =>
@@ -1811,14 +1958,14 @@ private theorem perLayerContribTopOnlyLeftCut_eq (l r : DecoratedTree α) :
   unfold perLayerContribTopOnlyLeftCut
   conv_lhs =>
     rw [show ((Finset.univ : Finset (CutShape r)).val.bind fun cr =>
-              (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map
+              (Multiset.Sections ((({l} + CutShape.cutForest cr : TraceForest α Unit)).map
                   (pairsMS (α := α)))).map fun s =>
                 (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-                  .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α))
+                  .node (.trace ()) (CutShape.remainder cr)⟩ : ChildSlots α))
             = (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
               (pairsMS (α := α) l).bind fun a_l =>
                 (Multiset.Sections ((CutShape.cutForest cr).map (pairsMS (α := α)))).map fun s_r =>
-                  nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+                  nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩
                     ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from
          Multiset.bind_congr (fun cr _ => perLayerContribTopOnlyLeftCut_per_cr l r cr)]
   rw [Multiset.bind_bind, Multiset.bind_map]
@@ -1826,40 +1973,40 @@ private theorem perLayerContribTopOnlyLeftCut_eq (l r : DecoratedTree α) :
   show _ = ((Finset.univ : Finset (CutShape r)).val.bind fun cl_outer =>
               (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
                 (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-                  ((AugCutShape.cutForest_aug ac' : Forest α),
-                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                  ((AugCutShape.cutForest_aug ac' : TraceForest α Unit),
+                   (AugCutShape.remainderForest ac' : TraceForest α Unit)))).map fun s =>
                 (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
                   : ChildSlots α)).map fun cs_r =>
-              nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩ cs_r
+              nodeChildSlots ⟨a_l.1, a_l.2, .trace ()⟩ cs_r
   rw [Multiset.map_bind]
   refine Multiset.bind_congr (fun cr _ => ?_)
   rw [Multiset.map_map]
   rfl
 
 /-- The onlyRightCut ctor's contribution: `cutForest = cutForest cl + {r}`. -/
-private noncomputable def perLayerContribTopOnlyRightCut (l r : DecoratedTree α) :
+private noncomputable def perLayerContribTopOnlyRightCut (l r : TraceTree α Unit) :
     Multiset (ChildSlots α) :=
   (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
-    (Multiset.Sections ((CutShape.cutForest cl + {r} : Forest α).map (pairsMS (α := α)))).map
+    (Multiset.Sections ((CutShape.cutForest cl + {r} : TraceForest α Unit).map (pairsMS (α := α)))).map
       fun s =>
         ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-         .node (CutShape.remainder cl) (.trace r)⟩
+         .node (CutShape.remainder cl) (.trace ())⟩
 
 /-- Per-cl lemma: section reorganization for onlyRightCut. -/
-private theorem perLayerContribTopOnlyRightCut_per_cl (l r : DecoratedTree α)
+private theorem perLayerContribTopOnlyRightCut_per_cl (l r : TraceTree α Unit)
     (cl : CutShape l) :
-    (Multiset.Sections (((CutShape.cutForest cl + {r} : Forest α)).map
+    (Multiset.Sections (((CutShape.cutForest cl + {r} : TraceForest α Unit)).map
         (pairsMS (α := α)))).map (fun s =>
         (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-          .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α))
+          .node (CutShape.remainder cl) (.trace ())⟩ : ChildSlots α))
     = (Multiset.Sections ((CutShape.cutForest cl).map (pairsMS (α := α)))).bind fun s_l =>
         (pairsMS (α := α) r).map fun a_r =>
           nodeChildSlots
             ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
-            ⟨a_r.1, a_r.2, .trace r⟩ := by
+            ⟨a_r.1, a_r.2, .trace ()⟩ := by
   rw [Multiset.map_add, Multiset.sections_add]
-  rw [show (({r} : Forest α).map (pairsMS (α := α)))
-          = (pairsMS (α := α) r ::ₘ (0 : Multiset (Multiset (Forest α × Forest α)))) from rfl,
+  rw [show (({r} : TraceForest α Unit).map (pairsMS (α := α)))
+          = (pairsMS (α := α) r ::ₘ (0 : Multiset (Multiset (TraceForest α Unit × TraceForest α Unit)))) from rfl,
       Multiset.sections_cons, Multiset.sections_zero]
   rw [Multiset.map_bind]
   refine Multiset.bind_congr (fun s_l _ => ?_)
@@ -1867,11 +2014,11 @@ private theorem perLayerContribTopOnlyRightCut_per_cl (l r : DecoratedTree α)
   rw [show ((pairsMS (α := α) r).map fun a_r =>
               nodeChildSlots
                 ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
-                ⟨a_r.1, a_r.2, .trace r⟩)
+                ⟨a_r.1, a_r.2, .trace ()⟩)
           = (pairsMS (α := α) r).bind fun a_r =>
               ({nodeChildSlots
                 ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
-                ⟨a_r.1, a_r.2, .trace r⟩} : Multiset _) from
+                ⟨a_r.1, a_r.2, .trace ()⟩} : Multiset _) from
         (Multiset.bind_singleton _ _).symm]
   refine Multiset.bind_congr (fun a_r _ => ?_)
   rw [Multiset.map_singleton, Multiset.map_singleton, Multiset.map_singleton]
@@ -1879,10 +2026,10 @@ private theorem perLayerContribTopOnlyRightCut_per_cl (l r : DecoratedTree α)
   congr 1
   show (⟨((s_l + (a_r ::ₘ (0 : Multiset _))).map Prod.fst).sum,
          ((s_l + (a_r ::ₘ (0 : Multiset _))).map Prod.snd).sum,
-         .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α)
+         .node (CutShape.remainder cl) (.trace ())⟩ : ChildSlots α)
        = nodeChildSlots
           ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
-          ⟨a_r.1, a_r.2, .trace r⟩
+          ⟨a_r.1, a_r.2, .trace ()⟩
   rw [Multiset.map_add, Multiset.map_add, Multiset.sum_add, Multiset.sum_add,
       Multiset.map_cons, Multiset.map_zero, Multiset.map_cons, Multiset.map_zero,
       Multiset.sum_cons, Multiset.sum_zero, Multiset.sum_cons, Multiset.sum_zero,
@@ -1891,7 +2038,7 @@ private theorem perLayerContribTopOnlyRightCut_per_cl (l r : DecoratedTree α)
   rfl
 
 /-- The onlyRightCut contribution equals the (.top, .bot + .mid) sub-bind. -/
-private theorem perLayerContribTopOnlyRightCut_eq (l r : DecoratedTree α) :
+private theorem perLayerContribTopOnlyRightCut_eq (l r : TraceTree α Unit) :
     perLayerContribTopOnlyRightCut (α := α) l r
       = (perLayerContrib (α := α) l .top).bind fun cs_l =>
           ((perLayerContrib (α := α) r .bot) + (perLayerContrib (α := α) r .mid)).map fun cs_r =>
@@ -1900,16 +2047,16 @@ private theorem perLayerContribTopOnlyRightCut_eq (l r : DecoratedTree α) :
   unfold perLayerContribTopOnlyRightCut
   conv_lhs =>
     rw [show ((Finset.univ : Finset (CutShape l)).val.bind fun cl =>
-              (Multiset.Sections (((CutShape.cutForest cl + {r} : Forest α)).map
+              (Multiset.Sections (((CutShape.cutForest cl + {r} : TraceForest α Unit)).map
                   (pairsMS (α := α)))).map fun s =>
                 (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
-                  .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α))
+                  .node (CutShape.remainder cl) (.trace ())⟩ : ChildSlots α))
             = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
               (Multiset.Sections ((CutShape.cutForest cl).map (pairsMS (α := α)))).bind fun s_l =>
                 (pairsMS (α := α) r).map fun a_r =>
                   nodeChildSlots
                     ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
-                    ⟨a_r.1, a_r.2, .trace r⟩ from
+                    ⟨a_r.1, a_r.2, .trace ()⟩ from
          Multiset.bind_congr (fun cl _ => perLayerContribTopOnlyRightCut_per_cl l r cl)]
   unfold perLayerContrib
   rw [Multiset.bind_assoc]
@@ -1920,7 +2067,7 @@ private theorem perLayerContribTopOnlyRightCut_eq (l r : DecoratedTree α) :
   rfl
 
 /-- The decomposed form equals the RHS Sigma-bind. -/
-theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
+theorem geoMultiset_node_eq_decomposed (l r : TraceTree α Unit)
     (ihl : ∀ layer, perLayerContrib (α := α) l layer
             = (Finset.univ : Finset (GeoCut l layer)).val.map (fun g => geoToChildSlots g))
     (ihr : ∀ layer, perLayerContrib (α := α) r layer
@@ -1934,26 +2081,26 @@ theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
   -- LHS: bind over (lL) (rL) (cs_l ∈ perLayerContrib l lL.1) (cs_r ∈ perLayerContrib r rL.1).
   -- Apply IH to convert perLayerContrib X layer → univ_GeoCut.map geoToChildSlots.
   rw [show ((Finset.univ : Finset (Σ (lL : {x : Layer // x ≤ Layer.top ∧
-              (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+              (TraceTree.IsNotTrace l ∨ x = Layer.top)})
             (rL : {x : Layer // x ≤ Layer.top ∧
-              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+              (TraceTree.IsNotTrace r ∨ x = Layer.top)}),
             GeoCut l lL.1 × GeoCut r rL.1)).val
         : Multiset _)
       = (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
-              (DecoratedTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
+              (TraceTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
           ((Finset.univ : Finset (Σ (rL : {x : Layer // x ≤ Layer.top ∧
-                (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+                (TraceTree.IsNotTrace r ∨ x = Layer.top)}),
                 GeoCut l lL.1 × GeoCut r rL.1)).val).map (Sigma.mk lL) from rfl]
   rw [Multiset.map_bind]
   refine Multiset.bind_congr (fun lL _ => ?_)
   simp only [Multiset.map_map, Function.comp_def]
   -- Now per-lL: rewrite the inner Sigma similarly.
   rw [show ((Finset.univ : Finset (Σ (rL : {x : Layer // x ≤ Layer.top ∧
-              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+              (TraceTree.IsNotTrace r ∨ x = Layer.top)}),
               GeoCut l lL.1 × GeoCut r rL.1)).val
         : Multiset _)
       = (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
-              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
+              (TraceTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
           ((Finset.univ : Finset (GeoCut l lL.1 × GeoCut r rL.1)).val).map (Sigma.mk rL) from rfl]
   rw [Multiset.map_bind]
   refine Multiset.bind_congr (fun rL _ => ?_)
@@ -1996,7 +2143,7 @@ theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
     l r))).val` (with conditional inclusion based on `IsNotTrace l, IsNotTrace r`),
     then case analysis on `IsNotTrace` to match the conditional ctor contributions to
     the conditional Subtype-bound (lL, rL) cells in `perLayerContribDecomposed`. -/
-theorem perLayerContrib_top (T : DecoratedTree α) :
+theorem perLayerContrib_top (T : TraceTree α Unit) :
     perLayerContrib (α := α) T .top
       = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
           (fun g => geoToChildSlots g) := by
@@ -2033,7 +2180,7 @@ theorem perLayerContrib_top (T : DecoratedTree α) :
 
 /-- **Per-subtree IH** (any layer): combines the three per-layer sub-lemmas via
     Sigma decomposition + the per-layer bijections. -/
-theorem lhsAnyChildContrib_eq_geoCutAny (T : DecoratedTree α) :
+theorem lhsAnyChildContrib_eq_geoCutAny (T : TraceTree α Unit) :
     lhsAnyChildContrib T = geoCutAnyChildContrib T := by
   unfold lhsAnyChildContrib geoCutAnyChildContrib
   -- Step 1: decompose `(univ : Finset (Σ myL, GeoCut T myL)).val` via `Multiset.sigma`,
@@ -2074,7 +2221,7 @@ This bridge holds at any T (independent of the Foissy bijection). Once proved,
 /-- Product of pair-tensor map distributes through pair sums:
     `prod (s.map (forestToHc fst ⊗ forestToHc snd)) = forestToHc(sum fst) ⊗ forestToHc(sum snd)`.
     Combines `Algebra.TensorProduct.tmul_mul_tmul` and `forestToHc_add`. -/
-private lemma forestToHc_pair_prod (s : Multiset (Forest α × Forest α)) :
+private lemma forestToHc_pair_prod (s : Multiset (TraceForest α Unit × TraceForest α Unit)) :
     (s.map (fun p => (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2))).prod
     = (forestToHc (R := R) (s.map Prod.fst).sum)
         ⊗ₜ[R] (forestToHc (R := R) (s.map Prod.snd).sum) := by
@@ -2097,7 +2244,8 @@ theorem _root_.Multiset.Sections_map_map {β γ : Type*} (h : β → γ)
     Multiset.Sections (M.map (Multiset.map h))
     = (Multiset.Sections M).map (Multiset.map h) := by
   induction M using Multiset.induction with
-  | empty => simp
+  | empty => simp only [Multiset.map_zero, Multiset.sections_zero, Multiset.map_singleton,
+                        Multiset.map_zero]
   | cons m M ih =>
     rw [Multiset.map_cons, Multiset.sections_cons, Multiset.sections_cons,
         Multiset.bind_map, ih, Multiset.map_bind]
@@ -2109,7 +2257,7 @@ theorem _root_.Multiset.Sections_map_map {β γ : Type*} (h : β → γ)
 /-- The algebraic bridge: the LHS triple-tensors equal the per-layer .top
     ChildSlots projected via `ChildSlots.toTriple`. Per-element identity holds
     by tensor-product associativity. -/
-theorem lhsRealCuts_eq_perLayerContrib_top (T : DecoratedTree α) :
+theorem lhsRealCuts_eq_perLayerContrib_top (T : TraceTree α Unit) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
   unfold lhsRealCuts perLayerContrib
@@ -2135,7 +2283,7 @@ theorem lhsRealCuts_eq_perLayerContrib_top (T : DecoratedTree α) :
 
 /-- **LHS bijection**: `lhsRealCuts T` enumerates the same multiset of triples
     as `geoMultiset T`. Reduced to the algebraic bridge + `perLayerContrib_top`. -/
-theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
+theorem lhsRealCuts_eq_geoMultiset (T : TraceTree α Unit) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = geoMultiset T := by
   rw [lhsRealCuts_eq_perLayerContrib_top, perLayerContrib_top]
@@ -2143,20 +2291,74 @@ theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
   rw [Multiset.map_map]
   rfl
 
+/-- Per-element triple agreement: for each `(C₁, C₂)`, the RHS double-cut's
+    triple-tensor equals the GeoCut triple-tensor of the corresponding
+    `rhsToGeoCut C₁ C₂`. Combines the three forest-agreement lemmas. -/
+theorem tripleTensor_real_real_eq_geoCutToTriple {T : TraceTree α Unit}
+    (C₁ : CutShape T) (C₂ : CutShape (CutShape.remainder C₁)) :
+    (DoubleCut.real C₁ (AugCutShape.real C₂)).tripleTensor R
+      = geoCutToTriple R (rhsToGeoCut C₁ C₂) := by
+  unfold DoubleCut.tripleTensor geoCutToTriple
+  simp only [AugCutShape.cutForest_aug_real, AugCutShape.remainderForest_real]
+  rw [geoBotForest_rhsToGeoCut, geoMidForest_rhsToGeoCut,
+      geoStackItem_rhsToGeoCut]
+
+/-- **RHS bijection**: `rhsRealRealInner T` enumerates the same multiset of
+    triples as `geoMultiset T`. Direct via `rhsGeoCutEquiv` and the per-element
+    triple agreement, bypassing the `perLayerContrib` hub. -/
+theorem rhsRealRealInner_eq_geoMultiset_direct (T : TraceTree α Unit) :
+    (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = geoMultiset T := by
+  unfold rhsRealRealInner geoMultiset
+  -- Step 1: rewrite the bind over CutShape T as a map over Sigma.
+  rw [show ((Finset.univ : Finset (CutShape T)).val.bind fun C =>
+            (Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+              (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+        = ((Finset.univ : Finset
+              (Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁))).val).map
+            fun ⟨C₁, C₂⟩ =>
+              (DoubleCut.real C₁ (AugCutShape.real C₂)).tripleTensor R from by
+       rw [show ((Finset.univ : Finset
+              (Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁))).val)
+             = (Finset.univ : Finset (CutShape T)).val.bind fun C₁ =>
+                 (Finset.univ : Finset
+                    (CutShape (CutShape.remainder C₁))).val.map
+                   fun C₂ => (⟨C₁, C₂⟩ : Σ C, CutShape (CutShape.remainder C))
+             from rfl]
+       rw [Multiset.map_bind]
+       refine Multiset.bind_congr (fun C _ => ?_)
+       rw [Multiset.map_map]
+       rfl]
+  -- Step 2: convert univ Sigma to (univ GeoCut).map symm via rhsGeoCutEquiv.
+  rw [show (Finset.univ : Finset
+              (Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁)))
+        = (Finset.univ : Finset (GeoCut T Layer.top)).map
+            (rhsGeoCutEquiv T).symm.toEmbedding from
+       (Finset.map_univ_equiv (rhsGeoCutEquiv T).symm).symm]
+  rw [Finset.map_val, Multiset.map_map]
+  -- Step 3: per-element identity via tripleTensor_real_real_eq_geoCutToTriple.
+  refine Multiset.map_congr rfl (fun g _ => ?_)
+  rw [Function.comp_apply]
+  -- (rhsGeoCutEquiv T).symm g destructures to (C₁, C₂). Apply the per-element
+  -- identity, then use right_inv (rhsToGeoCut_geoCutToRhs) to collapse.
+  show (DoubleCut.real (geoCutToRhs g).fst
+            (AugCutShape.real (geoCutToRhs g).snd)).tripleTensor R = geoCutToTriple R g
+  rw [tripleTensor_real_real_eq_geoCutToTriple, rhsToGeoCut_geoCutToRhs]
+
 /-- The RHS algebraic bridge: `rhsRealRealInner T` triples equal the per-layer
-    `.top` ChildSlots projected via `ChildSlots.toTriple`. -/
-theorem rhsRealRealInner_eq_perLayerContrib_top (T : DecoratedTree α) :
+    `.top` ChildSlots projected via `ChildSlots.toTriple`. Now derived from the
+    direct Equiv-based proof + perLayerContrib_top. -/
+theorem rhsRealRealInner_eq_perLayerContrib_top (T : TraceTree α Unit) :
     (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
-  -- RHS rhsRealRealInner is bind over (C₁, C₂) ∈ CutShape T × CutShape (rem C₁).
-  -- The triple: forestToHc(cutForest C₁) ⊗ (forestToHc(cutForest C₂) ⊗ forestToHc({remainder C₂})).
-  -- Per-layer .top maps cl_outer + section to similar structure.
-  -- Pending — symmetric to lhsRealCuts_eq_perLayerContrib_top.
-  sorry
+  rw [rhsRealRealInner_eq_geoMultiset_direct, perLayerContrib_top]
+  unfold geoMultiset
+  rw [Multiset.map_map]
+  rfl
 
 /-- **RHS bijection**: `rhsRealRealInner T` enumerates the same multiset of
     triples as `geoMultiset T`. Reduced to the algebraic bridge + `perLayerContrib_top`. -/
-theorem rhsRealRealInner_eq_geoMultiset (T : DecoratedTree α) :
+theorem rhsRealRealInner_eq_geoMultiset (T : TraceTree α Unit) :
     (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = geoMultiset T := by
   rw [rhsRealRealInner_eq_perLayerContrib_top, perLayerContrib_top]
@@ -2173,7 +2375,7 @@ are stated, we close the substantive identity by chaining them through `geoMulti
     GeoCut chain `(LHS).trans (RHS).symm`. For T = .leaf, .trace this is `rfl`
     via the leaf/trace cases of the bijection theorems; for T = .node l r this
     is the substantive Foissy content delegated to the GeoCut bijection. -/
-theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
+theorem lhsRealCuts_eq_rhsRealRealInner (T : TraceTree α Unit) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsRealRealInner T :=
   (lhsRealCuts_eq_geoMultiset T).trans (rhsRealRealInner_eq_geoMultiset T).symm
@@ -2183,7 +2385,7 @@ theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
     and the RHS-DoubleCut multiset are equal as multisets of triple-tensors.
 
     Composes the easy half + substantive half + `rhsMultiset_decomp`. -/
-theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
+theorem lhsMultiset_eq_rhsMultiset_node (l r : TraceTree α Unit) :
     (lhsMultiset (.node l r) : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsMultiset (.node l r) := by
   rw [lhsMultiset_decomp,
@@ -2202,7 +2404,7 @@ theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
       `lhs_eq_sum_DoubleCut_of_primitive_tree`.
     - `.node l r`: substantive Foissy "cut-commutation" bijection, reduces to
       `lhsMultiset_eq_rhsMultiset_node`. -/
-theorem lhs_eq_sum_DoubleCut (T : DecoratedTree α) :
+theorem lhs_eq_sum_DoubleCut (T : TraceTree α Unit) :
     (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
         ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
           (AlgHom.id R (Hc R α))) (comulTree T : Hc R α ⊗[R] Hc R α))

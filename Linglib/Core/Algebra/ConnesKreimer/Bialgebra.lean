@@ -32,7 +32,7 @@ code silently inherit unproven laws.
 ## Why this works typeclass-wise
 
 `Hc R α` is `def`-defined (not `abbrev`) in `Defs.lean`, giving us a
-distinct typeclass slot from the underlying `AddMonoidAlgebra R (Forest α)`.
+distinct typeclass slot from the underlying `AddMonoidAlgebra R (TraceForest α Unit)`.
 mathlib's `AddMonoidAlgebra.instBialgebra` (group-like coproduct
 Δ(F) = F ⊗ F) applies to the underlying type only; our
 Connes-Kreimer instance applies to the wrapper. No conflict — this
@@ -43,7 +43,7 @@ is the mathlib `MonoidAlgebra` pattern.
 The proofs reduce via `AddMonoidAlgebra.algHom_ext` to checking on
 basis vectors `Finsupp.single F 1`, then evaluate `comulAlgHom` on
 that basis vector through `comulAlgHom_apply_single` (= `comulForest F`),
-then induct on `F : Forest α` (a `Multiset`). The cons step uses
+then induct on `F : TraceForest α Unit` (a `Multiset`). The cons step uses
 multiplicativity of `comulForest` (`comulForest_add`) and reduces to
 the singleton-tree case.
 
@@ -120,7 +120,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-- `counit` applied to the basis vector `Finsupp.single F 1` equals
     `1` if `F` is the empty forest, `0` otherwise. -/
-@[simp] theorem counit_apply_single (F : Forest α) :
+@[simp] theorem counit_apply_single (F : TraceForest α Unit) :
     counit (R := R) (α := α) (Finsupp.single F 1)
       = if F = 0 then (1 : R) else 0 := by
   show AddMonoidAlgebra.lift R _ _ counitMonoidHom (Finsupp.single F 1) = _
@@ -148,16 +148,16 @@ omit [DecidableEq α] in
     is the empty cut on `T`. Used to isolate the surviving term in
     the `(ε ⊗ id) ∘ Δ^c` sum (only the empty cut has cutForest = 0,
     so only that term has nonzero counit projection on the left
-    channel). Inducts on `T : DecoratedTree α`. -/
+    channel). Inducts on `T : TraceTree α Unit`. -/
 private lemma cutForest_eq_zero_imp_empty :
-    ∀ {T : DecoratedTree α} (c : CutShape T),
+    ∀ {T : TraceTree α Unit} (c : CutShape T),
       CutShape.cutForest c = 0 → c = CutShape.empty T
   | .leaf _, .atLeaf, _ => rfl
   | .trace _, .atTrace, _ => rfl
   | .node l r, .bothCut _ _, h => by
       exfalso
-      change ({l, r} : Multiset (DecoratedTree α)) = 0 at h
-      have hcard : Multiset.card ({l, r} : Multiset (DecoratedTree α)) = 0 := by
+      change ({l, r} : Multiset (TraceTree α Unit)) = 0 at h
+      have hcard : Multiset.card ({l, r} : Multiset (TraceTree α Unit)) = 0 := by
         rw [h]; rfl
       rw [Multiset.card_pair] at hcard
       omega
@@ -176,23 +176,23 @@ private lemma cutForest_eq_zero_imp_empty :
 /-- Singleton-tree case of `counit_rTensor`: `(ε ⊗ id) (Δ^c T) = 1 ⊗ {T}`.
     Only the empty cut contributes; explicit `T ⊗ 1` term and all
     nonempty cuts get killed by counit (= 0 on non-empty forests). -/
-private lemma counit_rTensor_apply_comulTree (T : DecoratedTree α) :
+private lemma counit_rTensor_apply_comulTree (T : TraceTree α Unit) :
     (Algebra.TensorProduct.map (counit (R := R) (α := α))
         (AlgHom.id R (Hc R α))) (comulTree T)
-      = (1 : R) ⊗ₜ[R] forestToHc (R := R) ({T} : Forest α) := by
+      = (1 : R) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit) := by
   unfold comulTree
   rw [map_add]
   unfold forestToHc
   rw [Algebra.TensorProduct.map_tmul]
   simp only [counit_apply_single, AlgHom.coe_id, id_eq]
   -- Explicit `forestToHc {T} ⊗ 1` term: counit({T}) = 0 since {T} ≠ 0.
-  have hT : ({T} : Forest α) ≠ 0 := Multiset.singleton_ne_zero _
+  have hT : ({T} : TraceForest α Unit) ≠ 0 := Multiset.singleton_ne_zero _
   rw [if_neg hT, TensorProduct.zero_tmul, zero_add]
   -- Sum: only `c = empty T` contributes (others have cutForest c ≠ 0).
   rw [map_sum, Finset.sum_eq_single (CutShape.empty T)]
   · rw [Algebra.TensorProduct.map_tmul, counit_apply_single, AlgHom.coe_id, id_eq,
         CutShape.cutForest_empty, CutShape.remainder_empty]
-    simp
+    simp only [if_pos rfl, ↓reduceIte]
   · intro c _ hne
     rw [Algebra.TensorProduct.map_tmul, counit_apply_single, AlgHom.coe_id, id_eq]
     have hc : CutShape.cutForest c ≠ 0 := fun h => hne (cutForest_eq_zero_imp_empty c h)
@@ -203,7 +203,7 @@ private lemma counit_rTensor_apply_comulTree (T : DecoratedTree α) :
 /-- Forest-level `counit_rTensor`: `(ε ⊗ id) (Δ^c F) = 1 ⊗ forestToHc F`.
     Multiset induction on `F`; cons case uses multiplicativity of
     `comulForest` and the singleton-tree lemma. -/
-private lemma counit_rTensor_apply_comulForest (F : Forest α) :
+private lemma counit_rTensor_apply_comulForest (F : TraceForest α Unit) :
     (Algebra.TensorProduct.map (counit (R := R) (α := α))
         (AlgHom.id R (Hc R α))) (comulForest F)
       = (1 : R) ⊗ₜ[R] forestToHc (R := R) F := by
@@ -212,9 +212,9 @@ private lemma counit_rTensor_apply_comulForest (F : Forest α) :
     rw [comulForest_zero, map_one, Algebra.TensorProduct.one_def]
     rfl
   | cons T F'' ih =>
-    set F' : Forest α := F''
-    rw [show (T ::ₘ F' : Forest α) = ({T} : Forest α) + F' from rfl, comulForest_add]
-    have h1 : comulForest (R := R) ({T} : Forest α) = comulTree T := by
+    set F' : TraceForest α Unit := F''
+    rw [show (T ::ₘ F' : TraceForest α Unit) = ({T} : TraceForest α Unit) + F' from rfl, comulForest_add]
+    have h1 : comulForest (R := R) ({T} : TraceForest α Unit) = comulTree T := by
       unfold comulForest
       simp only [Multiset.map_singleton, Multiset.prod_singleton]
     rw [h1, map_mul, counit_rTensor_apply_comulTree, ih,
@@ -224,10 +224,10 @@ private lemma counit_rTensor_apply_comulForest (F : Forest α) :
     Only the explicit `T ⊗ 1` term survives; every cut term has
     `forestToHc {remainder c}` on the right channel, which is a
     singleton workspace and therefore non-zero, so counit kills it. -/
-private lemma counit_lTensor_apply_comulTree (T : DecoratedTree α) :
+private lemma counit_lTensor_apply_comulTree (T : TraceTree α Unit) :
     (Algebra.TensorProduct.map (AlgHom.id R (Hc R α))
         (counit (R := R) (α := α))) (comulTree T)
-      = forestToHc (R := R) ({T} : Forest α) ⊗ₜ[R] (1 : R) := by
+      = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : R) := by
   unfold comulTree
   rw [map_add, Algebra.TensorProduct.map_tmul]
   simp only [AlgHom.coe_id, id_eq, map_one]
@@ -236,11 +236,11 @@ private lemma counit_lTensor_apply_comulTree (T : DecoratedTree α) :
   rw [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id_eq]
   unfold forestToHc
   rw [counit_apply_single]
-  have hne : ({CutShape.remainder c} : Forest α) ≠ 0 := Multiset.singleton_ne_zero _
+  have hne : ({CutShape.remainder c} : TraceForest α Unit) ≠ 0 := Multiset.singleton_ne_zero _
   rw [if_neg hne, TensorProduct.tmul_zero]
 
 /-- Forest-level `counit_lTensor`: `(id ⊗ ε) (Δ^c F) = forestToHc F ⊗ 1`. -/
-private lemma counit_lTensor_apply_comulForest (F : Forest α) :
+private lemma counit_lTensor_apply_comulForest (F : TraceForest α Unit) :
     (Algebra.TensorProduct.map (AlgHom.id R (Hc R α))
         (counit (R := R) (α := α))) (comulForest F)
       = forestToHc (R := R) F ⊗ₜ[R] (1 : R) := by
@@ -249,9 +249,9 @@ private lemma counit_lTensor_apply_comulForest (F : Forest α) :
     rw [comulForest_zero, map_one, Algebra.TensorProduct.one_def]
     rfl
   | cons T F'' ih =>
-    set F' : Forest α := F''
-    rw [show (T ::ₘ F' : Forest α) = ({T} : Forest α) + F' from rfl, comulForest_add]
-    have h1 : comulForest (R := R) ({T} : Forest α) = comulTree T := by
+    set F' : TraceForest α Unit := F''
+    rw [show (T ::ₘ F' : TraceForest α Unit) = ({T} : TraceForest α Unit) + F' from rfl, comulForest_add]
+    have h1 : comulForest (R := R) ({T} : TraceForest α Unit) = comulTree T := by
       unfold comulForest
       simp only [Multiset.map_singleton, Multiset.prod_singleton]
     rw [h1, map_mul, counit_lTensor_apply_comulTree, ih,
@@ -259,9 +259,9 @@ private lemma counit_lTensor_apply_comulForest (F : Forest α) :
 
 /-! ## Reduction: AlgHom equality from agreement on tree-singleton workspaces
 
-`Hc R α = AddMonoidAlgebra R (Forest α)` is, as an algebra, the free
-commutative algebra on `DecoratedTree α` (since `Forest α = Multiset
-(DecoratedTree α)` with multiset-addition as multiplication). So an
+`Hc R α = AddMonoidAlgebra R (TraceForest α Unit)` is, as an algebra, the free
+commutative algebra on `TraceTree α Unit` (since `TraceForest α Unit = Multiset
+(TraceTree α Unit)` with multiset-addition as multiplication). So an
 `AlgHom` from `Hc R α` is determined by its values on the single-tree
 workspaces `forestToHc {T} = single {T} 1`, which are the multiplicative
 generators.
@@ -272,14 +272,14 @@ remaining substantive obligation. -/
 
 /-- Agreement of two `AlgHom`s out of `Hc R α` reduces to agreement on
     single-tree workspaces `forestToHc {T}`. The multiplicative generators
-    of `Hc R α = AddMonoidAlgebra R (Forest α)` are exactly the basis
-    vectors `single {T} 1` for `T : DecoratedTree α`; multiplicativity
+    of `Hc R α = AddMonoidAlgebra R (TraceForest α Unit)` are exactly the basis
+    vectors `single {T} 1` for `T : TraceTree α Unit`; multiplicativity
     extends agreement on these to all `single F 1`, then
     `AddMonoidAlgebra.algHom_ext` extends to all of `Hc R α`. -/
 lemma algHom_ext_tree {X : Type*} [Semiring X] [Algebra R X]
     {f g : Hc R α →ₐ[R] X}
-    (h : ∀ T : DecoratedTree α, f (forestToHc ({T} : Forest α))
-                              = g (forestToHc ({T} : Forest α))) :
+    (h : ∀ T : TraceTree α Unit, f (forestToHc ({T} : TraceForest α Unit))
+                              = g (forestToHc ({T} : TraceForest α Unit))) :
     f = g := by
   apply AddMonoidAlgebra.algHom_ext
   intro F
@@ -288,7 +288,7 @@ lemma algHom_ext_tree {X : Type*} [Semiring X] [Algebra R X]
   | empty =>
     rw [forestToHc_zero, map_one, map_one]
   | cons T F' ih =>
-    have heq : (T ::ₘ F' : Forest α) = ({T} : Forest α) + (F' : Forest α) := rfl
+    have heq : (T ::ₘ F' : TraceForest α Unit) = ({T} : TraceForest α Unit) + (F' : TraceForest α Unit) := rfl
     rw [heq, forestToHc_add, map_mul, map_mul, h T, ih]
 
 /-! ## Bialgebra laws -/
@@ -300,24 +300,24 @@ lemma algHom_ext_tree {X : Type*} [Semiring X] [Algebra R X]
       bijection content; currently sorry)
     - `rhs_eq_sum_DoubleCut` (`DoubleCut.lean` — easier direction, fully
       proved). -/
-theorem comul_coassoc_tree (T : DecoratedTree α) :
+theorem comul_coassoc_tree (T : TraceTree α Unit) :
     ((Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom.comp
       ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
         (AlgHom.id R (Hc R α))).comp comulAlgHom))
-       (forestToHc (R := R) ({T} : Forest α))
+       (forestToHc (R := R) ({T} : TraceForest α Unit))
     = ((Algebra.TensorProduct.map (AlgHom.id R (Hc R α)) comulAlgHom).comp comulAlgHom)
-       (forestToHc (R := R) ({T} : Forest α)) := by
+       (forestToHc (R := R) ({T} : TraceForest α Unit)) := by
   -- LHS: assoc ((map Δ id) (Δ (forestToHc {T}))) = assoc ((map Δ id) (comulTree T))
   -- RHS: (map id Δ) (Δ (forestToHc {T}))        = (map id Δ) (comulTree T)
   -- Both equal ∑ dc : DoubleCut T, dc.tripleTensor R.
   show (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
         ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _) (AlgHom.id R (Hc R α)))
-          (comulAlgHom (forestToHc (R := R) ({T} : Forest α))))
+          (comulAlgHom (forestToHc (R := R) ({T} : TraceForest α Unit))))
       = (Algebra.TensorProduct.map (AlgHom.id R (Hc R α)) comulAlgHom)
-          (comulAlgHom (forestToHc (R := R) ({T} : Forest α)))
+          (comulAlgHom (forestToHc (R := R) ({T} : TraceForest α Unit)))
   -- comulAlgHom (forestToHc {T}) = comulForest {T} = comulTree T
-  have hcomul : comulAlgHom (forestToHc (R := R) ({T} : Forest α)) = comulTree T := by
-    show comulAlgHom (Finsupp.single ({T} : Forest α) (1 : R)) = comulTree T
+  have hcomul : comulAlgHom (forestToHc (R := R) ({T} : TraceForest α Unit)) = comulTree T := by
+    show comulAlgHom (Finsupp.single ({T} : TraceForest α Unit) (1 : R)) = comulTree T
     rw [comulAlgHom_apply_single]
     unfold comulForest
     simp only [Multiset.map_singleton, Multiset.prod_singleton]

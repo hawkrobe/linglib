@@ -1,5 +1,6 @@
 import Mathlib.Algebra.Free
 import Mathlib.Data.Multiset.Basic
+import Mathlib.Data.Multiset.MapFold
 
 /-!
 # Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
@@ -64,11 +65,18 @@ the comm-quotient + singleton-collapse are wired in (Stage 4a/4b per
 
 Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.4, the
 contraction quotient T/^c T_v carries a trace label *T_v* that holds
-the contracted subtree as data. To support iterated coproducts
-`(Δ ⊗ id) ∘ Δ` (per the proof of Lemma 1.2.10), the trace must be
-able to carry a `DecoratedTree α` that itself contains traces. This
-forces self-reference in the inductive — hence the third constructor
-`trace : DecoratedTree α → DecoratedTree α`.
+the contracted subtree as data. The recursive `.trace t` constructor
+here is retained for **CI-side / FormCopy** consumers — operations
+that need to inspect the original moved subtree at the
+Conceptual-Intensional interface. Per @cite{marcolli-skigin-2025}
+§10.1 (which clarifies and disambiguates the brief discussion in
+M-C-B's §1.3), the recursive payload is **not** required for the
+bialgebra structure itself: M-S Lemma 10.4 proves coassociativity of
+Δ^c with scalar trace labels (see `TraceTree α β` below). The
+recursive `DecoratedTree α → DecoratedTree α` shape is kept here
+because FormCopy and similar linguistic operations consume the
+contracted subtree as data; the bialgebra carrier (`Hc R α`) projects
+through `.anon` to a scalar-trace `TraceTree α Unit`.
 
 ## Layer status
 
@@ -188,6 +196,135 @@ instance {α : Type*} : DecidablePred (@IsNotTrace α) := fun t =>
 
 end DecoratedTree
 
+/-! ## TraceTree — trace label as a first-class scalar
+
+The `.trace t` constructor of `DecoratedTree α` carries the contracted
+subtree `t` as metadata, motivated by the linguistic FormCopy operation
+(@cite{marcolli-chomsky-berwick-2025} Definition 1.2.4). However, the
+Hopf algebra coassociativity proof in the M-C-B book Lemma 1.2.10 appeals
+to @cite{connes-kreimer-1998} for the Feynman-graph CK Hopf algebra,
+where contraction markers carry no recursive payload. Treating `.trace t`
+literally as a data-carrying basis element of `Hc R α` would break
+coassociativity: iterated coproducts produce `.trace _` markers whose
+contents differ between the two iteration orders, even though the
+underlying combinatorial "3-coloring" structures match. (A concrete
+counterexample for `T = .node l (.node a b)` is verified kernel-checked
+in `scratch/SlotThreeMismatch.lean`.)
+
+@cite{marcolli-skigin-2025} §10.1 ("Labels of traces of movement")
+explicitly addresses this. M-S frame their §10 as clarifying and
+disambiguating M-C-B's §1.3, observing: the trace label "in fact does
+not have to retain the full structure of T_v as a syntactic object …
+the extracted term T_v is still present, on the other side of the
+coproduct, so that information is not lost." Their Definition 10.3
+redefines the trace label as a scalar `α̅_{h_T(v)}` — the *struck-through*
+head label, an element of `̄SO₀ := {̄α | α ∈ SO₀}` (a **disjoint marked
+copy** of the leaf alphabet, NOT just an element of `SO₀`). The leaf
+alphabet is enlarged to the disjoint union `SO₀ ⊔ ̄SO₀`. M-S Lemma 10.4
+proves Δ^c coassociativity under this scheme via **head-function
+transparency**: `h_{T_v}(w) = h_T(w)` for `w ∈ T_v`, so iterated traces
+all resolve to the same label as the original subtree.
+
+`TraceTree α β` realizes the disjoint-leaf-and-trace shape with a
+polymorphic trace-label type `β`:
+- `.leaf (a : α)`: a leaf carrying a label of type `α`.
+- `.trace (b : β)`: a trace marker carrying a scalar label of type `β`
+  (NOT a recursive subtree). The constructor distinction encodes the
+  disjoint-copy structure of `SO₀ ⊔ ̄SO₀`: even when `β = α`, the
+  `.trace`-vs-`.leaf` distinction marks the struck-through copy.
+- `.node l r`: an internal binary vertex.
+
+`Hc R α` is fixed to `Multiset (TraceTree α Unit)` — the **simplest**
+realization, where trace labels carry no information at all. This is
+sufficient for coassociativity (M-S Lemma 10.4 holds vacuously when the
+extractor is constant) but is a strict simplification of M-S, who use a
+non-trivial scalar label via the head function. The polymorphism stays
+available so linguistic-layer code can use `TraceTree α α` (M-S aligned)
+or richer label types when head-function infrastructure lands.
+
+The projection `DecoratedTree.anon (h : DecoratedTree α → β)` takes an
+extractor function for the trace label. For `Hc`-level coassoc to behave,
+`h` must be **transparent under contraction**: `h (.trace t) = h t`.
+This is an explicit hypothesis on theorems that need it (mathlib idiom:
+unbundled function plus side-condition, since trace-label choice is not
+canonical). Examples of transparent extractors:
+- `fun _ => ()` (trivial) — used by `Hc R α` itself.
+- `DecoratedTree.leftmostLeaf` (when defined) — recursive descent through
+  `.trace`, picking the leftmost actual leaf label.
+- The M-S head function (when head-function infrastructure lands).
+
+The labelled `.trace t` data remains available at the `DecoratedTree`
+level for linguistic operations (FormCopy, cancellation-of-deeper-copies). -/
+
+/-- A binary rooted tree with leaf labels in `α` and scalar trace labels
+    in `β`. Used as the basis-key type of `Hc R α` (with `β = Unit`).
+    The polymorphic `β` accommodates richer linguistic-layer projections
+    (e.g., `β = α` plus a head function realizes
+    @cite{marcolli-skigin-2025} Definition 10.3, modulo the
+    head-function-transparency requirement on the extractor). -/
+inductive TraceTree (α : Type*) (β : Type*) where
+  | leaf  (a : α) : TraceTree α β
+  | trace (b : β) : TraceTree α β
+  | node  (l r : TraceTree α β) : TraceTree α β
+  deriving Repr, DecidableEq
+
+namespace TraceTree
+
+/-- A `TraceTree` is "not a trace marker" — required for cuts that extract
+    this tree as a subtree. Predicate is decidable. Same shape as
+    `DecoratedTree.IsNotTrace`. -/
+def IsNotTrace {α β : Type*} : TraceTree α β → Prop
+  | .leaf _   => True
+  | .trace _  => False
+  | .node _ _ => True
+
+instance {α β : Type*} : DecidablePred (@IsNotTrace α β) := fun t =>
+  match t with
+  | .leaf _   => isTrue trivial
+  | .trace _  => isFalse id
+  | .node _ _ => isTrue trivial
+
+@[simp] theorem isNotTrace_leaf {α β : Type*} (a : α) :
+    IsNotTrace (TraceTree.leaf a : TraceTree α β) := trivial
+
+@[simp] theorem isNotTrace_node {α β : Type*} (l r : TraceTree α β) :
+    IsNotTrace (TraceTree.node l r) := trivial
+
+@[simp] theorem not_isNotTrace_trace {α β : Type*} (b : β) :
+    ¬ IsNotTrace (TraceTree.trace b : TraceTree α β) := id
+
+end TraceTree
+
+namespace DecoratedTree
+
+/-- Project a `DecoratedTree α` to a `TraceTree α β`, computing each
+    trace's label via the extractor `h`. Recurses through `.node`;
+    applies `h` once at each `.trace`.
+
+    For Hc-level coassoc (`forestToHc`-respecting equality of iterated
+    coproducts), `h` must satisfy the **transparency** condition
+    `∀ t, h (.trace t) = h t` so that nested traces resolve to the same
+    label as the original subtree. The condition is stated as an
+    explicit hypothesis on theorems that need it. -/
+def anon {α β : Type*} (h : DecoratedTree α → β) :
+    DecoratedTree α → TraceTree α β
+  | .leaf a   => .leaf a
+  | .trace t  => .trace (h t)
+  | .node l r => .node (anon h l) (anon h r)
+
+@[simp] theorem anon_leaf {α β : Type*} (h : DecoratedTree α → β) (a : α) :
+    DecoratedTree.anon h (.leaf a) = TraceTree.leaf a := rfl
+
+@[simp] theorem anon_trace {α β : Type*} (h : DecoratedTree α → β)
+    (t : DecoratedTree α) :
+    DecoratedTree.anon h (.trace t) = TraceTree.trace (h t) := rfl
+
+@[simp] theorem anon_node {α β : Type*} (h : DecoratedTree α → β)
+    (l r : DecoratedTree α) :
+    DecoratedTree.anon h (.node l r) = TraceTree.node (anon h l) (anon h r) := rfl
+
+end DecoratedTree
+
 /-! ## Forest
 
 A forest is a multiset of decorated trees. Disjoint union ⊔
@@ -196,5 +333,38 @@ corresponds to `· + ·` on multisets (commutative, ∅ = 0).
 
 /-- A decorated forest: a multiset of decorated trees. -/
 abbrev Forest (α : Type*) := Multiset (DecoratedTree α)
+
+/-- A forest of `TraceTree`s with leaf labels in `α` and trace labels
+    in `β`. Used as the basis-key type of `Hc R α` (with `β = Unit`). -/
+abbrev TraceForest (α : Type*) (β : Type*) := Multiset (TraceTree α β)
+
+/-- Project a forest to a `TraceForest α β` via the per-tree `anon h` map.
+
+    Defined as prefix `Forest.anon h F` rather than dot-notation `F.anon`,
+    because `Forest` is an `abbrev` for `Multiset (DecoratedTree α)` and
+    dot-notation on abbrevs routes to the underlying type's namespace. -/
+def Forest.anon {α β : Type*} (h : DecoratedTree α → β) (F : Forest α) :
+    TraceForest α β :=
+  F.map (DecoratedTree.anon h)
+
+@[simp] theorem Forest.anon_zero {α β : Type*} (h : DecoratedTree α → β) :
+    Forest.anon h (0 : Forest α) = (0 : TraceForest α β) :=
+  Multiset.map_zero _
+
+@[simp] theorem Forest.anon_add {α β : Type*} (h : DecoratedTree α → β)
+    (F G : Forest α) :
+    Forest.anon h (F + G) = Forest.anon h F + Forest.anon h G :=
+  Multiset.map_add _ _ _
+
+@[simp] theorem Forest.anon_singleton {α β : Type*} (h : DecoratedTree α → β)
+    (T : DecoratedTree α) :
+    Forest.anon h ({T} : Forest α) = ({DecoratedTree.anon h T} : TraceForest α β) :=
+  Multiset.map_singleton _ _
+
+@[simp] theorem Forest.anon_cons {α β : Type*} (h : DecoratedTree α → β)
+    (T : DecoratedTree α) (F : Forest α) :
+    Forest.anon h (T ::ₘ F : Forest α)
+      = DecoratedTree.anon h T ::ₘ Forest.anon h F :=
+  Multiset.map_cons _ _ _
 
 end ConnesKreimer

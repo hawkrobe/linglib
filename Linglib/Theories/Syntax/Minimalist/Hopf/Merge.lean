@@ -9,7 +9,7 @@ import Mathlib.RingTheory.TensorProduct.Maps
 @cite{marcolli-chomsky-berwick-2025}
 
 Per M-C-B 2025 §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4), the linguistic
-**Merge operator** `M_{S,S'}` for a pair `(S, S') : DecoratedTree α`
+**Merge operator** `M_{S,S'}` for a pair `(S, S') : TraceTree α Unit`
 of accessible terms is the composition
 
   M_{S,S'} = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d
@@ -39,7 +39,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ## §1: γ_{S,S'} matching projection (M-C-B Def 1.3.1)
 
-For a fixed pair `(S, S') : DecoratedTree α`, `gammaMatch S S'` is the
+For a fixed pair `(S, S') : TraceTree α Unit`, `gammaMatch S S'` is the
 linear endomorphism of `Hc R α` that projects onto the basis element
 `single {S, S'} 1`:
 
@@ -50,10 +50,10 @@ Built as `Finsupp.lsingle ∘ Finsupp.lapply` on the matching forest. -/
 /-- The matching projection γ_{S,S'} (M-C-B Def 1.3.1): keeps the
     coefficient of the `{S, S'}` basis element, sends everything else
     to zero. -/
-noncomputable def gammaMatch (S S' : DecoratedTree α) :
+noncomputable def gammaMatch (S S' : TraceTree α Unit) :
     Hc R α →ₗ[R] Hc R α :=
-  let target : Forest α := ({S, S'} : Multiset (DecoratedTree α))
-  show (Forest α →₀ R) →ₗ[R] (Forest α →₀ R) from
+  let target : TraceForest α Unit := ({S, S'} : Multiset (TraceTree α Unit))
+  show (TraceForest α Unit →₀ R) →ₗ[R] (TraceForest α Unit →₀ R) from
     (Finsupp.lsingle target).comp (Finsupp.lapply target)
 
 /-! ## §2: δ_{S,S'} matching on the left tensor channel (M-C-B Def 1.3.1)
@@ -63,7 +63,7 @@ to act on the left channel of `Hc R α ⊗ Hc R α`. -/
 
 /-- The matching operator δ_{S,S'} on tensored coproduct output: applies
     `gammaMatch S S'` to the left channel and identity to the right. -/
-noncomputable def deltaMatch (S S' : DecoratedTree α) :
+noncomputable def deltaMatch (S S' : TraceTree α Unit) :
     (Hc R α ⊗[R] Hc R α) →ₗ[R] (Hc R α ⊗[R] Hc R α) :=
   TensorProduct.map (gammaMatch (R := R) S S') LinearMap.id
 
@@ -78,11 +78,11 @@ restricts the left channel to multiples of `{S, S'}` anyway. -/
 /-- The grafting operator B specialized at the pair `(S, S')`: maps the
     basis element `{S, S'}` to `.node S S'`, all other basis elements
     to zero. M-C-B Lemma 1.3.3 for binary Merge. -/
-noncomputable def graftBinaryAt (S S' : DecoratedTree α) :
+noncomputable def graftBinaryAt (S S' : TraceTree α Unit) :
     Hc R α →ₗ[R] Hc R α :=
-  let source : Forest α := ({S, S'} : Multiset (DecoratedTree α))
-  let target : Forest α := ({.node S S'} : Multiset (DecoratedTree α))
-  show (Forest α →₀ R) →ₗ[R] (Forest α →₀ R) from
+  let source : TraceForest α Unit := ({S, S'} : Multiset (TraceTree α Unit))
+  let target : TraceForest α Unit := ({.node S S'} : Multiset (TraceTree α Unit))
+  show (TraceForest α Unit →₀ R) →ₗ[R] (TraceForest α Unit →₀ R) from
     (Finsupp.lsingle target).comp (Finsupp.lapply source)
 
 /-! ## §4: Merge operator (M-C-B Def 1.3.4)
@@ -108,7 +108,7 @@ noncomputable def hcMulLin : Hc R α ⊗[R] Hc R α →ₗ[R] Hc R α :=
 
 /-- The Merge operator `M_{S,S'}` per M-C-B Def 1.3.4. Composes
     `Δ^d`, `δ_{S,S'}`, `B ⊗ id`, and `⊔`. -/
-noncomputable def mergeOp (S S' : DecoratedTree α) : Hc R α →ₗ[R] Hc R α :=
+noncomputable def mergeOp (S S' : TraceTree α Unit) : Hc R α →ₗ[R] Hc R α :=
   hcMulLin (R := R) (α := α)
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'

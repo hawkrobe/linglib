@@ -44,9 +44,9 @@ abbrev Atom := ULift (Fin 2)
 abbrev a : Atom := ⟨0⟩
 abbrev b : Atom := ⟨1⟩
 
-abbrev T : DecoratedTree Atom := .node (.leaf a) (.leaf b)
-abbrev Tprime : DecoratedTree Atom :=
-  .node (.trace (.leaf a)) (.trace (.leaf b))
+abbrev T : TraceTree Atom Unit := .node (.leaf a) (.leaf b)
+abbrev Tprime : TraceTree Atom Unit :=
+  .node (.trace ()) (.trace ())
 
 /-! ## Post-refactor cardinality
 

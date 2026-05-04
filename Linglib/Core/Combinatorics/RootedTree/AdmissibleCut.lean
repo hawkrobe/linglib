@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Multiset.Basic
 
 /-!
-# Admissible Cuts on Decorated Trees @cite{marcolli-chomsky-berwick-2025}
+# Admissible Cuts on Trees @cite{marcolli-chomsky-berwick-2025}
 
 Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.6, an
 **admissible cut** of a binary rooted tree T is a removal of a
@@ -13,7 +13,25 @@ path. Equivalently (Lemma 1.2.7), the data of an admissible cut on T
 is the same as a forest F_v = T_{v₁} ⊔ ⋯ ⊔ T_{vₙ} of disjoint
 accessible terms of T.
 
-This file is **[UPSTREAM]** — generic over the leaf type `α`.
+## Trees with scalar trace labels
+
+This file defines `CutShape` on `TraceTree α β` (not on `DecoratedTree α`).
+The `TraceTree` carrier has scalar trace labels (`.trace (b : β)`)
+rather than recursive subtree data. This is the carrier the bialgebra
+of @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10 actually inhabits;
+see `Decorated.lean` for the rationale: per @cite{marcolli-skigin-2025}
+§10.1 (clarifying the brief discussion in M-C-B §1.3), trace labels
+are elements of a disjoint marked copy `̄SO₀` of the leaf alphabet,
+NOT recursive subtrees, for the bialgebra structure to be well-formed.
+
+For the bialgebra layer, `β = Unit` (no informative trace label) — the
+minimal instance, sufficient for coassoc but a strict simplification
+of M-S. For the linguistic layer (CI interpretation, FormCopy), a
+richer `β` plus a head-function-transparent extractor realizes
+@cite{marcolli-skigin-2025} Definition 10.3 (head function projects
+each contracted subtree to its head leaf's struck-through label).
+
+This file is **[UPSTREAM]** — generic over `α : Type*` and `β : Type*`.
 
 ## Crucial M-C-B reading: leaves ARE accessible terms
 
@@ -21,14 +39,11 @@ Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.2, accessible
 terms are subtrees `T_v` for `v ∈ V_int(T) := V(T) \ {root of T}`.
 M-C-B's "internal" excludes the root vertex but **includes leaves** —
 so leaves of `T` are accessible terms. (Verified against the worked
-example on book p. 35, inline in §1.2 just before §1.2.1: for
-T = α∧(β∧γ) with α="eat(en)", β="the", γ="apple", the Δ^c expansion
-has α, β, γ all appearing as extractable accessible terms in the left
-channel.)
+example on book p. 35, inline in §1.2 just before §1.2.1.)
 
 ## Representation: 5-constructor enum
 
-A `CutShape T` for `T : DecoratedTree α` records cut choices position-
+A `CutShape T` for `T : TraceTree α β` records cut choices position-
 by-position. Leaves admit only the trivial pass-through (no edges to
 cut); nodes have four choices based on (cut left edge?) × (cut right
 edge?). The antichain condition (M-C-B Def 1.2.6: no two cuts on the
@@ -46,49 +61,48 @@ file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
 
 namespace ConnesKreimer
 
-variable {α : Type*}
+variable {α β : Type*}
 
 /-! ## §1: Cut shape
 
-Universe-polymorphic in `α : Type*` since Stage 1.6. The inductive
-takes `α` as a parameter (not a per-constructor index), which lets
-mathlib upstream reuse this construction over arbitrary leaf types. -/
+Universe-polymorphic in `α : Type*` and `β : Type*`. The inductive
+takes both as parameters (not per-constructor indices), letting mathlib
+upstream reuse this construction over arbitrary leaf-and-trace-label types. -/
 
-/-- An admissible cut on a decorated tree `T : DecoratedTree α`.
+/-- An admissible cut on a tree `T : TraceTree α β`.
 
     **Trace-extraction restriction (substrate fix for coassoc).** The cuts that
     EXTRACT a child subtree (`bothCut`, `onlyLeftCut`, `onlyRightCut`) require
     that child to NOT be a `.trace` marker (`IsNotTrace`). Without this
     restriction, iterated cuts on the remainder of an outer cut would
-    accumulate `.trace (.trace _)` nesting, breaking the cuts-of-cuts bijection
-    (M-C-B Lemma 1.2.10 / Foissy 2002 §2).
+    accumulate `.trace`-of-`.trace` nesting, breaking the cuts-of-cuts bijection
+    (M-C-B Lemma 1.2.10 / Foissy 2002 §2). With scalar trace labels (β not
+    DecoratedTree), this nesting is what causes the basis cardinality to blow
+    up; the `IsNotTrace` constraint prevents it.
 
     The `bothRecurse` constructor — which doesn't extract anything at this node —
     has no restriction; it composes recursively into the children's CutShapes.
-    The atomic `atLeaf` / `atTrace` constructors are also unrestricted.
-
-    See `Linglib/Scratch/CoassocCheck.lean` for the explicit verification that
-    the unrestricted version (no `IsNotTrace` hypotheses) breaks coassoc. -/
-inductive CutShape {α : Type*} : DecoratedTree α → Type _ where
+    The atomic `atLeaf` / `atTrace` constructors are also unrestricted. -/
+inductive CutShape {α β : Type*} : TraceTree α β → Type _ where
   /-- An α-leaf admits only the empty cut (no edges to cut). -/
   | atLeaf {a : α} : CutShape (.leaf a)
   /-- A trace leaf admits only the empty cut. -/
-  | atTrace {t : DecoratedTree α} : CutShape (.trace t)
+  | atTrace {b : β} : CutShape (.trace b)
   /-- Cut both child edges of this node. Requires both children to be
       non-trace (cuts cannot extract `.trace` markers). -/
-  | bothCut {l r : DecoratedTree α} (hl : DecoratedTree.IsNotTrace l)
-      (hr : DecoratedTree.IsNotTrace r) : CutShape (.node l r)
+  | bothCut {l r : TraceTree α β} (hl : TraceTree.IsNotTrace l)
+      (hr : TraceTree.IsNotTrace r) : CutShape (.node l r)
   /-- Cut the left child edge, recurse into `r` with sub-cut `cr`. Requires
       the left child to be non-trace. -/
-  | onlyLeftCut {l r : DecoratedTree α} (hl : DecoratedTree.IsNotTrace l)
+  | onlyLeftCut {l r : TraceTree α β} (hl : TraceTree.IsNotTrace l)
       (cr : CutShape r) : CutShape (.node l r)
   /-- Recurse into `l` with sub-cut `cl`, cut the right child edge. Requires
       the right child to be non-trace. -/
-  | onlyRightCut {l r : DecoratedTree α} (hr : DecoratedTree.IsNotTrace r)
+  | onlyRightCut {l r : TraceTree α β} (hr : TraceTree.IsNotTrace r)
       (cl : CutShape l) : CutShape (.node l r)
   /-- Don't cut at this node; recurse in both children. No restrictions
       since nothing is extracted at this level. -/
-  | bothRecurse {l r : DecoratedTree α} (cl : CutShape l)
+  | bothRecurse {l r : TraceTree α β} (cl : CutShape l)
       (cr : CutShape r) : CutShape (.node l r)
 
 namespace CutShape
@@ -96,15 +110,15 @@ namespace CutShape
 /-! ## §2: The empty (trivial) cut -/
 
 /-- The empty cut on T: extract nothing, leave T unchanged. -/
-def empty : (T : DecoratedTree α) → CutShape T
+def empty : (T : TraceTree α β) → CutShape T
   | .leaf _  => .atLeaf
   | .trace _ => .atTrace
   | .node l r => .bothRecurse (empty l) (empty r)
 
 /-! ## §3: Decidable equality and finite enumeration -/
 
-instance decEq [DecidableEq α] :
-    (T : DecoratedTree α) → DecidableEq (CutShape T)
+instance decEq [DecidableEq α] [DecidableEq β] :
+    (T : TraceTree α β) → DecidableEq (CutShape T)
   | .leaf _  => fun
       | .atLeaf, .atLeaf => isTrue rfl
   | .trace _ => fun
@@ -141,7 +155,7 @@ instance decEq [DecidableEq α] :
 /-- The finite set of all cut shapes on T. The `bothCut` / `onlyLeftCut` /
     `onlyRightCut` constructors are conditionally included based on whether the
     relevant children pass `IsNotTrace`. -/
-def all [DecidableEq α] : (T : DecoratedTree α) → Finset (CutShape T)
+def all [DecidableEq α] [DecidableEq β] : (T : TraceTree α β) → Finset (CutShape T)
   | .leaf _  => {.atLeaf}
   | .trace _ => {.atTrace}
   | .node l r =>
@@ -149,24 +163,24 @@ def all [DecidableEq α] : (T : DecoratedTree α) → Finset (CutShape T)
       have allL : Finset (CutShape l) := all l
       have allR : Finset (CutShape r) := all r
       have bothCutSet : Finset (CutShape (.node l r)) :=
-        if hl : DecoratedTree.IsNotTrace l then
-          if hr : DecoratedTree.IsNotTrace r then {CutShape.bothCut hl hr}
+        if hl : TraceTree.IsNotTrace l then
+          if hr : TraceTree.IsNotTrace r then {CutShape.bothCut hl hr}
           else ∅
         else ∅
       have leftCutSet : Finset (CutShape (.node l r)) :=
-        if hl : DecoratedTree.IsNotTrace l then
+        if hl : TraceTree.IsNotTrace l then
           allR.image (fun cr => CutShape.onlyLeftCut hl cr)
         else ∅
       have rightCutSet : Finset (CutShape (.node l r)) :=
-        if hr : DecoratedTree.IsNotTrace r then
+        if hr : TraceTree.IsNotTrace r then
           allL.image (fun cl => CutShape.onlyRightCut hr cl)
         else ∅
       bothCutSet ∪ leftCutSet ∪ rightCutSet
         ∪ ((allL ×ˢ allR).image (fun p => CutShape.bothRecurse p.1 p.2))
 
 /-- Every cut shape on T is in `all T`. -/
-theorem mem_all [DecidableEq α] :
-    ∀ (T : DecoratedTree α) (c : CutShape T), c ∈ all T
+theorem mem_all [DecidableEq α] [DecidableEq β] :
+    ∀ (T : TraceTree α β) (c : CutShape T), c ∈ all T
   | .leaf _, .atLeaf => by simp [all]
   | .trace _, .atTrace => by simp [all]
   | .node l r, .bothCut hl hr => by
@@ -191,7 +205,7 @@ theorem mem_all [DecidableEq α] :
         Finset.mem_product]
       refine Or.inr ⟨(cl, cr), ⟨mem_all l cl, mem_all r cr⟩, rfl⟩
 
-instance fintype [DecidableEq α] (T : DecoratedTree α) :
+instance fintype [DecidableEq α] [DecidableEq β] (T : TraceTree α β) :
     Fintype (CutShape T) where
   elems := all T
   complete := mem_all T
@@ -199,44 +213,44 @@ instance fintype [DecidableEq α] (T : DecoratedTree α) :
 /-! ## §4: Pruned forest `F_v` and remainder `T/^c F_v`
 
 For an admissible cut `c : CutShape T`:
-- `cutForest c : Forest α` is the multiset of subtrees being extracted
+- `cutForest c : TraceForest α β` is the multiset of subtrees being extracted
   (M-C-B's F_v in Def 1.2.4 / Lemma 1.2.7)
-- `remainder c : DecoratedTree α` is the tree obtained by replacing
+- `remainder c : TraceTree α β` is the tree obtained by replacing
   each cut subtree with a `.trace` leaf labelled with what was cut
   (M-C-B's T/^c F_v in Def 1.2.4)
 
-The trace label is first-class: extracting `T` produces a remainder
-containing `.trace T`, and `T` itself can already contain trace
-leaves (from a previous coproduct iteration). No fallback,
-no placeholder, no unsoundness. -/
+The trace label is a SCALAR `β` (not a recursive subtree). For `β = Unit`,
+the trace marker carries no information; for `β = α`, it carries a head
+label per @cite{marcolli-skigin-2025} Definition 10.3. -/
 
 /-- The pruned forest of a cut: the multiset of extracted subtrees.
     M-C-B Definition 1.2.4: F_v = T_{v_1} ⊔ ⋯ ⊔ T_{v_n}. -/
-def cutForest : ∀ {T : DecoratedTree α}, CutShape T → Forest α
+def cutForest : ∀ {T : TraceTree α β}, CutShape T → TraceForest α β
   | .leaf _, .atLeaf => 0
   | .trace _, .atTrace => 0
-  | .node l r, .bothCut _ _ => ({l, r} : Multiset (DecoratedTree α))
+  | .node l r, .bothCut _ _ => ({l, r} : Multiset (TraceTree α β))
   | .node l _, .onlyLeftCut _ cr =>
-      ({l} : Multiset (DecoratedTree α)) + cutForest cr
+      ({l} : Multiset (TraceTree α β)) + cutForest cr
   | .node _ r, .onlyRightCut _ cl =>
-      cutForest cl + ({r} : Multiset (DecoratedTree α))
+      cutForest cl + ({r} : Multiset (TraceTree α β))
   | .node _ _, .bothRecurse cl cr => cutForest cl + cutForest cr
 
 /-- The remainder of a cut (contraction-with-trace, M-C-B Def 1.2.4):
-    T with each cut subtree replaced by a `.trace` leaf carrying the
-    cut subtree as metadata. The `DecoratedTree.trace` constructor
-    takes any subtree (including trace-bearing ones), so iterated
-    cuts compose without any fallback or placeholder. Used by Δ^c.
+    T with each cut subtree replaced by a `.trace` leaf. The trace label
+    is `default : β` from `[Inhabited β]` (e.g., `()` for the bialgebra
+    layer with `β = Unit`). For richer trace labels (head function, etc.),
+    use a different projection at the bialgebra boundary; this default
+    suffices for `Hc R α := AddMonoidAlgebra R (TraceForest α Unit)`.
 
     Note: by the `IsNotTrace` constraint on the extracting constructors, the
     children getting wrapped with `.trace` here are guaranteed to NOT already
-    be `.trace` markers — so no `.trace (.trace _)` nesting can occur. -/
-def remainder : ∀ {T : DecoratedTree α}, CutShape T → DecoratedTree α
+    be `.trace` markers. -/
+def remainder [Inhabited β] : ∀ {T : TraceTree α β}, CutShape T → TraceTree α β
   | .leaf tok, .atLeaf => .leaf tok
-  | .trace t,  .atTrace => .trace t
-  | .node l r, .bothCut _ _ => .node (.trace l) (.trace r)
-  | .node l _, .onlyLeftCut _ cr => .node (.trace l) (remainder cr)
-  | .node _ r, .onlyRightCut _ cl => .node (remainder cl) (.trace r)
+  | .trace b,  .atTrace => .trace b
+  | .node _ _, .bothCut _ _ => .node (.trace default) (.trace default)
+  | .node _ _, .onlyLeftCut _ cr => .node (.trace default) (remainder cr)
+  | .node _ _, .onlyRightCut _ cl => .node (remainder cl) (.trace default)
   | .node _ _, .bothRecurse cl cr => .node (remainder cl) (remainder cr)
 
 /-- The remainder of a cut (deletion-with-rebinarization, M-C-B
@@ -245,10 +259,10 @@ def remainder : ∀ {T : DecoratedTree α}, CutShape T → DecoratedTree α
     that linguistic Merge uses, per M-C-B Definition 1.3.4 p. 42:
     "consider the coproduct Δ = Δ^d of (1.2.8)").
 
-    Returns `Option (DecoratedTree α)` because cutting both children
-    of a node leaves a vertex with no children — neither a leaf nor
-    a binary node. Such a vertex collapses (returns `None`); upstream
-    binders absorb the collapse via edge contraction:
+    Returns `Option (TraceTree α β)` because cutting both children of a
+    node leaves a vertex with no children — neither a leaf nor a binary
+    node. Such a vertex collapses (returns `None`); upstream binders absorb
+    the collapse via edge contraction:
 
     - At a node, if BOTH children's deletion-remainder collapse, the
       node itself collapses.
@@ -258,10 +272,10 @@ def remainder : ∀ {T : DecoratedTree α}, CutShape T → DecoratedTree α
 
     This handling is faithful to M-C-B Def 1.2.5's "unique maximal
     binary rooted tree obtainable via contraction." -/
-def remainderDeletion : ∀ {T : DecoratedTree α},
-    CutShape T → Option (DecoratedTree α)
+def remainderDeletion : ∀ {T : TraceTree α β},
+    CutShape T → Option (TraceTree α β)
   | .leaf tok, .atLeaf => some (.leaf tok)
-  | .trace t,  .atTrace => some (.trace t)
+  | .trace b,  .atTrace => some (.trace b)
   | .node _ _, .bothCut _ _ => none
   | .node _ _, .onlyLeftCut _ cr => remainderDeletion cr
   | .node _ _, .onlyRightCut _ cl => remainderDeletion cl
@@ -275,17 +289,17 @@ def remainderDeletion : ∀ {T : DecoratedTree α},
 /-! ## §5: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
-@[simp] theorem cutForest_empty : ∀ (T : DecoratedTree α),
-    (empty T).cutForest = (0 : Forest α)
+@[simp] theorem cutForest_empty : ∀ (T : TraceTree α β),
+    (empty T).cutForest = (0 : TraceForest α β)
   | .leaf _ => rfl
   | .trace _ => rfl
   | .node l r => by
-      show (CutShape.bothRecurse (empty l) (empty r)).cutForest = (0 : Forest α)
+      show (CutShape.bothRecurse (empty l) (empty r)).cutForest = (0 : TraceForest α β)
       rw [cutForest, cutForest_empty l, cutForest_empty r]
       rfl
 
 /-- The empty cut leaves T unchanged. -/
-@[simp] theorem remainder_empty : ∀ (T : DecoratedTree α),
+@[simp] theorem remainder_empty [Inhabited β] : ∀ (T : TraceTree α β),
     (empty T).remainder = T
   | .leaf _ => rfl
   | .trace _ => rfl
@@ -294,30 +308,31 @@ def remainderDeletion : ∀ {T : DecoratedTree α},
       rw [remainder, remainder_empty l, remainder_empty r]
 
 /-- Cut both child edges of a node: extracts both children. -/
-@[simp] theorem cutForest_bothCut {l r : DecoratedTree α}
-    (hl : DecoratedTree.IsNotTrace l) (hr : DecoratedTree.IsNotTrace r) :
+@[simp] theorem cutForest_bothCut {l r : TraceTree α β}
+    (hl : TraceTree.IsNotTrace l) (hr : TraceTree.IsNotTrace r) :
     (bothCut hl hr : CutShape (.node l r)).cutForest =
-      ({l, r} : Multiset (DecoratedTree α)) := rfl
+      ({l, r} : Multiset (TraceTree α β)) := rfl
 
 /-- The unique cut on a leaf has empty `cutForest`. -/
 @[simp] theorem cutForest_atLeaf {a : α} :
-    (atLeaf : CutShape (.leaf a)).cutForest = (0 : Forest α) := rfl
+    (atLeaf : CutShape (.leaf a : TraceTree α β)).cutForest = (0 : TraceForest α β) := rfl
 
 /-- The unique cut on a leaf leaves the leaf unchanged. -/
-@[simp] theorem remainder_atLeaf {a : α} :
-    (atLeaf : CutShape (.leaf a)).remainder = .leaf a := rfl
+@[simp] theorem remainder_atLeaf [Inhabited β] {a : α} :
+    (atLeaf : CutShape (.leaf a : TraceTree α β)).remainder = .leaf a := rfl
 
 /-- The unique cut on a trace has empty `cutForest`. -/
-@[simp] theorem cutForest_atTrace {t : DecoratedTree α} :
-    (atTrace : CutShape (.trace t)).cutForest = (0 : Forest α) := rfl
+@[simp] theorem cutForest_atTrace {b : β} :
+    (atTrace : CutShape (.trace b : TraceTree α β)).cutForest =
+      (0 : TraceForest α β) := rfl
 
 /-- The unique cut on a trace leaves the trace unchanged. -/
-@[simp] theorem remainder_atTrace {t : DecoratedTree α} :
-    (atTrace : CutShape (.trace t)).remainder = .trace t := rfl
+@[simp] theorem remainder_atTrace [Inhabited β] {b : β} :
+    (atTrace : CutShape (.trace b : TraceTree α β)).remainder = .trace b := rfl
 
 /-! ## §6: Position vs. value: cutForest is NOT injective (and that's correct)
 
-A natural question: is `cutForest : CutShape T → Forest α` injective
+A natural question: is `cutForest : CutShape T → TraceForest α β` injective
 (per M-C-B Lemma 1.2.7's bijection)? The answer is **no in general**,
 and that's actually consistent with M-C-B.
 
@@ -345,7 +360,7 @@ exactly what M-C-B's sum is supposed to track.
 over CutShape is the right semantics, and value-level collisions are
 genuine multiplicity contributions. -/
 
-/-! ## §6: `IsNotTrace` is preserved by `remainder`
+/-! ## §7: `IsNotTrace` is preserved by `remainder`
 
 For `cl : CutShape l`, `remainder cl` has the same top-level constructor as `l`
 (modulo `.trace` markers introduced for extracted children). In particular,
@@ -353,8 +368,8 @@ For `cl : CutShape l`, `remainder cl` has the same top-level constructor as `l`
 shaped tree's only CutShape is `atTrace`, whose remainder is the same `.trace`. -/
 
 /-- `IsNotTrace` is preserved by `remainder` in both directions. -/
-theorem isNotTrace_remainder_iff {l : DecoratedTree α} (cl : CutShape l) :
-    DecoratedTree.IsNotTrace (remainder cl) ↔ DecoratedTree.IsNotTrace l := by
+theorem isNotTrace_remainder_iff [Inhabited β] {l : TraceTree α β} (cl : CutShape l) :
+    TraceTree.IsNotTrace (remainder cl) ↔ TraceTree.IsNotTrace l := by
   cases l with
   | leaf _ => cases cl; exact Iff.rfl
   | trace _ => cases cl; exact Iff.rfl
@@ -362,13 +377,13 @@ theorem isNotTrace_remainder_iff {l : DecoratedTree α} (cl : CutShape l) :
 
 /-- Forward direction: if `l` is not a trace marker, neither is its remainder
     after any cut. -/
-theorem isNotTrace_remainder {l : DecoratedTree α} (cl : CutShape l)
-    (h : DecoratedTree.IsNotTrace l) : DecoratedTree.IsNotTrace (remainder cl) :=
+theorem isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape l)
+    (h : TraceTree.IsNotTrace l) : TraceTree.IsNotTrace (remainder cl) :=
   (isNotTrace_remainder_iff cl).mpr h
 
 /-- Backward direction: if `remainder cl` is not a trace marker, neither is `l`. -/
-theorem isNotTrace_of_isNotTrace_remainder {l : DecoratedTree α} (cl : CutShape l)
-    (h : DecoratedTree.IsNotTrace (remainder cl)) : DecoratedTree.IsNotTrace l :=
+theorem isNotTrace_of_isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape l)
+    (h : TraceTree.IsNotTrace (remainder cl)) : TraceTree.IsNotTrace l :=
   (isNotTrace_remainder_iff cl).mp h
 
 end CutShape
