@@ -1266,6 +1266,40 @@ noncomputable def perLayerContribDecomposed (l r : DecoratedTree α) :
         (perLayerContrib (α := α) r rL.1).map fun cs_r =>
           nodeChildSlots cs_l cs_r
 
+/-- Multiset bind commutativity (Fubini-style swap). -/
+private theorem multiset_bind_swap {β₁ β₂ γ : Type*} (s : Multiset β₁) (t : Multiset β₂)
+    (f : β₁ → β₂ → Multiset γ) :
+    s.bind (fun a => t.bind (fun b => f a b))
+      = t.bind (fun b => s.bind (fun a => f a b)) := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih =>
+    rw [Multiset.cons_bind, ih, ← Multiset.bind_add]
+    refine Multiset.bind_congr (fun b _ => ?_)
+    rw [Multiset.cons_bind]
+
+/-! #### `perLayerContrib_top` `.node` case sub-lemmas: per-CutShape-ctor contributions
+
+Each CutShape ctor for `(.node l r)` contributes a specific (lL, rL) sub-bind to
+`perLayerContrib (.node l r) .top`. The 4 sub-lemmas (one per ctor) match the
+4 cases of `perLayerContribDecomposed`.
+
+**Proof strategy** (using `multiset_bind_swap` for Fubini reordering):
+
+For `bothRecurse cl_in cr_in`:
+  cutForest = cutForest cl_in + cutForest cr_in.
+  By `Multiset.sections_add`, sections decompose as bind over (m_l, m_r).
+  Each section's triple = nodeChildSlots ⟨m_l-data, remainder cl_in⟩ ⟨m_r-data, remainder cr_in⟩.
+  Reorder binds via `multiset_bind_swap` to factor as
+    `(perLayerContrib l .top).bind fun per-l => (perLayerContrib r .top).map (nodeChildSlots per-l ·)`.
+
+For `bothCut hl hr`:
+  cutForest = {l, r}. Sections enumerate (a, b) ∈ comulPairs l × comulPairs r.
+  Each (a, b, .trace l, .trace r) triple = nodeChildSlots ⟨a, .trace l⟩ ⟨b, .trace r⟩.
+  Match to (perLayerContrib l .bot ⊕ .mid).bind ((perLayerContrib r .bot ⊕ .mid).map ...).
+
+For `onlyLeftCut hl cr_in` and `onlyRightCut hr cl_in`: hybrid of bothRecurse + bothCut. -/
+
 /-- The decomposed form equals the RHS Sigma-bind. -/
 theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
     (ihl : ∀ layer, perLayerContrib (α := α) l layer
