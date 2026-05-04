@@ -479,14 +479,28 @@ theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : DecoratedTr
   rfl
 
 /-- The substantive half: per-`C` matching of LHS sections vs RHS inner cuts.
-    For T = .node l r, both sides are `Multiset.bind` over `CutShape T`. The
-    per-C contributions are different (LHS: sections of `cutForest C`; RHS:
-    cuts of `remainder C`), but their TOTAL bind-sums match via the cuts-of-
-    cuts bijection. -/
+    Both sides are `Multiset.bind` over `CutShape T`. The per-C contributions
+    are different (LHS: sections of `cutForest C`; RHS: cuts of `remainder C`),
+    but their TOTAL bind-sums match.
+
+    For T = .leaf, .trace: trivial (both sides are singleton multisets matching).
+    For T = .node l r: the substantive cut-commutation content. -/
 theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsRealRealInner T := by
-  sorry
+  match T with
+  | .leaf a =>
+    -- |CutShape (.leaf a)| = 1 (atLeaf); cutForest = 0, remainder = .leaf a.
+    -- LHS: bind over {atLeaf}, inner = (Sections 0).map (assoc(1 ⊗ {leaf a})) = singleton.
+    -- RHS: bind over {atLeaf}, inner = univ_CutShape (.leaf a).map (...) = singleton.
+    unfold lhsRealCuts rhsRealRealInner
+    rfl
+  | .trace t =>
+    unfold lhsRealCuts rhsRealRealInner
+    rfl
+  | .node l r =>
+    -- The substantive cuts-of-cuts content: cut-commutation bijection.
+    sorry
 
 /-- Helper: `rhsMultiset T` split by outer `DoubleCut = Σ ⊕ Unit` ctor. -/
 private theorem rhsMultiset_split_outer (T : DecoratedTree α) :
