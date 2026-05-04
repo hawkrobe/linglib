@@ -327,11 +327,29 @@ noncomputable def comulDelMonoidHom :
     M-C-B Definition 1.2.8 with ω = d. This is the coproduct used by
     the action of Merge per Definition 1.3.4 (p. 42).
 
-    Algebraically Δ^d only satisfies a weaker coassoc relation than
-    Δ^c (Lemma 1.2.12), so it does not directly give a Bialgebra
-    instance — that comes from `comulAlgHom` (= Δ^c). But Δ^d is
-    needed for the linguistic Merge operator, which lives elsewhere
-    (next file: `MergeAction.lean`). -/
+    **Δ^d is NOT a coassociative coalgebra** in the standard sense.
+    M-C-B Lemma 1.2.12 (p. 39) proves only that the *terms* of `(1 ⊗ Δ^d) ∘
+    Δ^d(T)` and `(Δ^d ⊗ 1) ∘ Δ^d(T)` match for cuts at distance ≤ 1 — but
+    they appear "with different multiplicity" (Figure 1.3, p. 40), and pairs
+    at distance > 1 differ. Remark 1.2.9 (p. 34) explicitly calls this "a
+    weaker version of the coassociativity relation". The proper algebraic
+    structure for Δ^d is deferred by M-C-B to Marcolli-Walton ("Generalized
+    Quasi-Hopf Algebras and Merge", in preparation, ref [146]).
+
+    Hence `comulDelAlgHom` is NOT registered as `Bialgebra.comul` for
+    `Hc R α`. The `instBialgebraHc` typeclass uses `comulAlgHom` (= Δ^c,
+    Connes-Kreimer canonical, Foissy 2002 ref [19]); see `Bialgebra.lean`.
+
+    **Derivation from Δ^c (M-C-B p. 44):** Δ^d can be expressed as
+    `Δ^d = (id ⊗ Π_{d,c}) ∘ Δ^c` where `Π_{d,c}` is the linear projection
+    that removes `.trace` markers and edge-contracts. We currently define
+    `comulDelAlgHom` directly (parallel to `comulAlgHom`) rather than
+    deriving it via this projection — see TODO note in `Bialgebra.lean`
+    for the future refactor.
+
+    Δ^d is consumed by Minimalism's Merge operator
+    (`Theories/Syntax/Minimalist/Hopf/Merge.lean`); it does NOT participate
+    in the Bialgebra typeclass mediation. -/
 noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
     comulDelMonoidHom

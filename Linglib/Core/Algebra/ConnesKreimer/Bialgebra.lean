@@ -367,16 +367,32 @@ theorem counit_lTensor :
     The two coexist without conflict — the wrapper pattern is the same as mathlib's
     `MonoidAlgebra`.
 
-    **Δ^d vs Δ^c.** Minimalism's `mergeOp` (M-C-B Def 1.3.4) uses the **deletion**
-    coproduct Δ^d (`comulDelAlgHom`), NOT Δ^c. Δ^d also satisfies coassoc + counit
-    laws but is a *different* coalgebra structure on `Hc R α`. Only one of Δ^c, Δ^d
-    can be the canonical `Bialgebra` typeclass instance; this file picks Δ^c (the
-    Connes-Kreimer canonical form, Foissy/CK reference). Consumers needing Δ^d
-    (Minimalism Merge) access `comulDelAlgHom` by name — they do not benefit from
-    the Bialgebra typeclass mediation.
+    **Δ^d vs Δ^c — the design choice.** Minimalism's `mergeOp` (M-C-B Def 1.3.4,
+    p. 42) uses the **deletion** coproduct Δ^d (`comulDelAlgHom`), NOT Δ^c.
+    Crucially, **Δ^d is NOT itself a coassociative coalgebra**: M-C-B Lemma 1.2.12
+    (p. 39) only matches terms up to multiplicity (see Figure 1.3, p. 40), and
+    Remark 1.2.9 (p. 34) labels it "a weaker version of the coassociativity
+    relation". The proper algebraic structure for Δ^d is deferred by M-C-B to
+    Marcolli-Walton ("Generalized Quasi-Hopf Algebras and Merge", in preparation,
+    ref [146]).
+
+    Hence the choice is **forced**, not a trade-off: only Δ^c is a bialgebra
+    in the standard sense. M-C-B's own framing (§3.1.2.1, p. 206) treats
+    `(V(F_SO_0), ⊔, Δ^c, S)` as THE Hopf algebra; Δ^d is "a form of the
+    coproduct… when needed" for substructure comparisons. M-C-B p. 44 also
+    gives the explicit derivation `Δ^d = (id ⊗ Π_{d,c}) ∘ Δ^c` where Π_{d,c}
+    is the linear "remove-trace-and-edge-contract" projection.
+
+    **TODO (future refactor):** Define `Π_{d,c} : Hc R α →ₗ[R] Hc R α` and
+    derive `comulDelLin = (LinearMap.id ⊗ Π_{d,c}) ∘ comulAlgHom.toLinearMap`,
+    matching M-C-B p. 44 — eliminates the parallel `comulDelAlgHom` def and
+    expresses Δ^d as a *derivation* from the canonical Bialgebra structure.
+    Loses the AlgHom shape on Δ^d (Π_{d,c} is only linear, not multiplicative)
+    but matches M-C-B's structural framing.
 
     Direct access to operators stays available by name:
-    `comulAlgHom` (Δ^c), `comulDelAlgHom` (Δ^d), `counit`. -/
+    `comulAlgHom` (Δ^c, Bialgebra-mediated), `comulDelAlgHom` (Δ^d,
+    name-mediated), `counit`. -/
 noncomputable instance instBialgebraHc : Bialgebra R (Hc R α) :=
   Bialgebra.ofAlgHom comulAlgHom counit comul_coassoc counit_rTensor counit_lTensor
 
