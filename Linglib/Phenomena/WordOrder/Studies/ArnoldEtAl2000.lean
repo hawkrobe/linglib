@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.MaxEnt
 import Linglib.Core.Constraint.Variation
-import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
@@ -71,11 +71,13 @@ contradicting the paper's findings.
 - `Core.Constraint.MaxEntGrammar` — the grammar packages as a generic
   MaxEnt grammar (`maxEntGrammar`), making the softmax probability
   machinery available without redefinition.
-- `Features.InformationStructure.DiscourseStatus` — discourse-status
+- `Features.BinaryGivenness` — discourse-status
   partition. The paper collapses @cite{prince-1981}'s three-way
-  given/inferable/new into two categories (inferable → given);
-  `DiscourseStatus.focused` is irrelevant for this construction (it
-  satisfies neither side of `newFirst`'s pattern, evaluating to 0).
+  given/inferable/new into two categories (inferable → given). Focus
+  marking, which under the prior `DiscourseStatus` schema would have
+  appeared as a third `.focused` value the constraints had to filter
+  out, lives on its own axis (`Features.InformationStructure.Focus`)
+  in the post-refactor substrate.
 - `Theories.Syntax.DependencyGrammar.Formal.DependencyLength` —
   Dependency Locality (@cite{futrell-gibson-2020}) provides the
   *positive* derivation of the heaviness signal: §9 below shows
@@ -102,7 +104,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Core.Constraint.OT Core.Constraint Features.InformationStructure
+open Core.Constraint.OT Core.Constraint Features
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================
@@ -116,7 +118,7 @@ open DepGrammar DepGrammar.DependencyLength
     paper's regressions condition on. -/
 structure Phrase where
   wordCount : Nat
-  discourse : DiscourseStatus
+  discourse : BinaryGivenness
   deriving DecidableEq, Repr
 
 /-- The two constituents of a binary postverbal alternation. For the
@@ -159,8 +161,9 @@ def heavyFirst : NamedConstraint Candidate where
     while the second is discourse-given. A markedness encoding of the
     given-before-new principle the paper draws from
     @cite{prince-1981}/@cite{gundel-hedberg-zacharski-1993}.
-    `DiscourseStatus.focused` doesn't satisfy either side of the
-    pattern, so focused constituents contribute zero violations. -/
+    `BinaryGivenness` is binary by design (given/new); focus marking,
+    which used to require filtering out a `.focused` case under the
+    prior `DiscourseStatus` schema, lives on its own axis now. -/
 def newFirst : NamedConstraint Candidate where
   name := "*NEW-FIRST"
   family := .markedness
@@ -235,7 +238,7 @@ lemma newDiff_pos_iff {p : Pair} :
     have hn : ¬ (p.2.discourse = .new ∧ p.1.discourse = .given) := by
       rintro ⟨_, hr⟩
       rw [h1] at hr
-      exact DiscourseStatus.noConfusion hr
+      exact BinaryGivenness.noConfusion hr
     simp [h1, h2]
 
 -- ============================================================================
@@ -312,9 +315,9 @@ probability shift. -/
 
 /-- **Constraint-interaction theorem (heaviness side).** When the
     newness constraint is neutral on a pair (`newDiff p = 0`, i.e., the
-    two constituents share the same discourse status, or one is
-    `.focused`), the harmony difference between orderings is determined
-    entirely by the weighted heaviness term. -/
+    two constituents share the same givenness status), the harmony
+    difference between orderings is determined entirely by the weighted
+    heaviness term. -/
 theorem heaviness_dominates_when_newness_neutral
     (wH wN : ℚ) {p : Pair} (hN : newDiff p = 0) :
     harmonyScore (grammar wH wN) (p, .themeLast) -
@@ -357,9 +360,9 @@ def newThemeContrast : Pair :=
   rw [if_neg (by decide), if_pos (by decide)]; norm_num
 
 @[simp] lemma newDiff_heavyGoalContrast : newDiff heavyGoalContrast = 0 := by
-  show (if (DiscourseStatus.new = .new ∧ DiscourseStatus.new = .given)
+  show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
           then (1:ℚ) else 0) -
-       (if (DiscourseStatus.new = .new ∧ DiscourseStatus.new = .given)
+       (if (BinaryGivenness.new = .new ∧ BinaryGivenness.new = .given)
           then (1:ℚ) else 0) = 0
   simp
 
@@ -369,9 +372,9 @@ def newThemeContrast : Pair :=
   simp
 
 @[simp] lemma newDiff_newThemeContrast : newDiff newThemeContrast = 1 := by
-  show (if (DiscourseStatus.new = .new ∧ DiscourseStatus.given = .given)
+  show (if (BinaryGivenness.new = .new ∧ BinaryGivenness.given = .given)
           then (1:ℚ) else 0) -
-       (if (DiscourseStatus.given = .new ∧ DiscourseStatus.new = .given)
+       (if (BinaryGivenness.given = .new ∧ BinaryGivenness.new = .given)
           then (1:ℚ) else 0) = 1
   rw [if_pos ⟨rfl, rfl⟩, if_neg (by rintro ⟨h, _⟩; cases h)]; norm_num
 
@@ -537,21 +540,21 @@ active). UID therefore prefers placing the new constituent last — exactly
 the direction `*NEW-FIRST` operationalizes.
 
 Unlike the DLM/heaviness bridge, this is an *implication* rather than a
-biconditional: UID over a richer surprisal scale ({.new, .given,
-.focused}) makes finer-grained predictions than the binary
-new-vs-given distinction `*NEW-FIRST` operationalizes. Whenever
-`newDiff p > 0`, however, UID strictly prefers the same ordering. -/
+biconditional. The prior `DiscourseStatus`-typed version of this file
+also handled a `.focused` case (mapped to surprisal 0); after the
+DiscourseStatus → Krifka-axes refactor, focus marking is its own axis
+(`Features.InformationStructure.Focus`) and would enter UID via a
+separate Focus-parameterized cost, not by extending this givenness
+surprisal. Whenever `newDiff p > 0`, UID strictly prefers the same
+ordering as `*NEW-FIRST`. -/
 
-/-- A coarse two-level surprisal proxy keyed on discourse status:
-    `.new` is high-information (1), `.given` is low (0). `.focused`
-    contributes 0 here — focused material has been activated by an
-    explicit cue and is not surprising in the UID sense. This matches
+/-- A coarse two-level surprisal proxy keyed on givenness:
+    `.new` is high-information (1), `.given` is low (0). This matches
     the asymmetric pattern of Arnold's `*NEW-FIRST` constraint, which
     fires only when one side is `.new` and the other is `.given`. -/
-def discourseSurprisal : DiscourseStatus → ℚ
+def discourseSurprisal : BinaryGivenness → ℚ
   | .new => 1
   | .given => 0
-  | .focused => 0
 
 /-- UID cost for the binary postverbal pair: the surprisal of whichever
     constituent occupies the verb-adjacent (first) position. UID prefers
@@ -562,10 +565,7 @@ def uidCost (p : Pair) : Order → ℚ
 
 /-- **Newness is UID, in the direction `*NEW-FIRST` cares about.**
     Whenever the MaxEnt grammar's `newDiff` signal favors `themeLast`
-    (theme new + goal given), UID strictly prefers the same order. The
-    converse fails because UID makes finer distinctions than `newDiff`
-    (e.g., UID still prefers `themeLast` when theme is new and goal is
-    focused, but `newDiff = 0` there). -/
+    (theme new + goal given), UID strictly prefers the same order. -/
 theorem newDiff_pos_implies_uid_prefers_themeLast {p : Pair}
     (h : 0 < newDiff p) :
     uidCost p .themeLast < uidCost p .goalLast := by
