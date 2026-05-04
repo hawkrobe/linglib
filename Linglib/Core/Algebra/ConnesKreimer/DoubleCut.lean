@@ -211,13 +211,9 @@ term-by-term into the same sum over `DoubleCut T` as the RHS.
 A "double cut" admits two natural enumerations (right-iterated and
 left-iterated); the bijection identifies them with the same triple-tensor.
 
-**Status**:
-- Generic primitive coassoc: ✅ `comul_coassoc_of_primitive`.
-- Wrapper for primitive trees (leaf, trace): ✅ `lhs_eq_sum_DoubleCut_of_primitive_tree`.
-- Leaf and trace cases of `lhs_eq_sum_DoubleCut`: ✅.
-- Node case of `lhs_eq_sum_DoubleCut`: ⏳ sorry. The substantive Foissy
-  content; uses `comulForest_eq_sum_sections` + the `AugCutShape (.node l r) ≅
-  AugCutShape l × AugCutShape r ⊎ Unit` decomposition. Estimated 200-300 LOC. -/
+The leaf and trace cases dispatch via `comul_coassoc_of_primitive`. The
+substantive `.node` case is `lhsMultiset_eq_rhsMultiset_node` (currently
+`sorry` — the @cite{foissy-2002} cut-commutation content). -/
 
 /-! ### Generic primitive coassoc
 
@@ -268,28 +264,246 @@ lemma lhs_eq_sum_DoubleCut_of_primitive_tree (T : DecoratedTree α)
   rw [← hbridge]
   exact hPrim
 
-/-! ### LHS direction of the cuts-of-cuts bijection -/
+/-! ### §3a: `lhsMultiset` — the LHS as a `Multiset.sum`
+
+For the substantive `.node` case of `lhs_eq_sum_DoubleCut`, we re-express the LHS
+as a sum over `(ac, section)` pairs via `comulForest_eq_sum_sections`. Each pair
+indexes a triple-tensor in `Hc ⊗ (Hc ⊗ Hc)`. The cuts-of-cuts bijection
+(future sub-sessions) will identify this multiset with the `DoubleCut`-indexed
+multiset on the RHS. -/
+
+/-- The LHS-side multiset of triple-tensors. Each element is
+    `assoc(s.prod ⊗ forestToHc(remainderForest ac))` for some
+    `(ac : AugCutShape T, s ∈ Sections((cutForest_aug ac).map comulTreeMS))`.
+    Outer bind iterates over `ac`; inner map iterates over the multiset of
+    sections. Multiplicity matters — same as `Sections` produces. -/
+noncomputable def lhsMultiset (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (AugCutShape T)).val.bind fun ac =>
+    (Multiset.Sections ((AugCutShape.cutForest_aug ac).map (comulTreeMS R))).map fun s =>
+      (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
+        (s.prod ⊗ₜ[R] forestToHc (R := R) (AugCutShape.remainderForest ac))
+
+/-- `(Multiset.sum) ⊗ y = Multiset.sum (map (· ⊗ y))`. Tensor product on the
+    left distributes over a multiset sum.
+
+    Generic helper; mathlib-PR-able. Public so future modules can reuse. -/
+theorem TensorProduct.sum_tmul_multiset {M N : Type*}
+    [AddCommMonoid M] [Module R M] [AddCommMonoid N] [Module R N]
+    (s : Multiset M) (y : N) :
+    (s.sum : M) ⊗ₜ[R] y = (s.map (fun x => x ⊗ₜ[R] y)).sum := by
+  induction s using Multiset.induction_on with
+  | empty => simp [_root_.TensorProduct.zero_tmul]
+  | cons x xs ih => simp [Multiset.sum_cons, _root_.TensorProduct.add_tmul, ih]
+
+/-- LHS reduction: `assoc((map Δ id)(comulTree T)) = (lhsMultiset T).sum`.
+
+    The proof distributes the algebra-hom maps `(map Δ id)` and `assoc` over
+    the `AugCutShape`-indexed sum from `comulTree_eq_sum_AugCutShape`, then
+    applies `comulForest_eq_sum_sections` per outer cut to expand into
+    `Sections`. Combines via `Multiset.sum_bind`. -/
+theorem lhs_eq_sum_lhsMultiset (T : DecoratedTree α) :
+    (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
+        ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
+          (AlgHom.id R (Hc R α))) (comulTree T : Hc R α ⊗[R] Hc R α))
+      = (lhsMultiset T).sum := by
+  rw [comulTree_eq_sum_AugCutShape T]
+  rw [map_sum, map_sum]
+  unfold lhsMultiset
+  rw [Multiset.sum_bind, ← Finset.sum_eq_multiset_sum]
+  refine Finset.sum_congr rfl fun ac _ => ?_
+  rw [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id_eq]
+  have hcomul : comulAlgHom (forestToHc (R := R) (AugCutShape.cutForest_aug ac))
+              = comulForest (R := R) (AugCutShape.cutForest_aug ac) := by
+    show comulAlgHom (Finsupp.single _ (1 : R)) = _
+    rw [comulAlgHom_apply_single]
+  rw [hcomul, comulForest_eq_sum_sections, TensorProduct.sum_tmul_multiset]
+  -- Now: assoc((Sections.map prod).map (·⊗ y)).sum = (Sections.map (...)).sum
+  rw [map_multiset_sum]
+  simp only [Multiset.map_map, Function.comp_def]
+
+/-! ### §3b: `lhsMultiset` decomposition by AugCutShape ctor
+
+`AugCutShape T = CutShape T ⊕ Unit`. Splitting the bind by ctor isolates the
+`extractWhole_T` contribution (a single `ac` summand whose section is over `{T}`)
+from the `real C` contributions (a bind over `CutShape T`). -/
+
+/-- The "extract whole T" contribution to `lhsMultiset`: sections over the
+    singleton workspace `{T}.map comulTreeMS`. Each section is a singleton
+    `{x}` for `x ∈ comulTreeMS T`, so this multiset has `|AugCutShape T|`
+    elements. -/
+noncomputable def lhsExtractWhole (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Multiset.Sections (({T} : Forest α).map (comulTreeMS R))).map fun s =>
+    (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
+      (s.prod ⊗ₜ[R] forestToHc (R := R) (0 : Forest α))
+
+/-- The "real cuts" contributions to `lhsMultiset`: for each `C : CutShape T`,
+    sections over the multi-tree forest `(cutForest C).map comulTreeMS`.
+    Outer bind iterates over `C`. -/
+noncomputable def lhsRealCuts (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (CutShape T)).val.bind fun C =>
+    (Multiset.Sections ((CutShape.cutForest C).map (comulTreeMS R))).map fun s =>
+      (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
+        (s.prod ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder C} : Forest α))
+
+/-- `lhsMultiset T = lhsRealCuts T + lhsExtractWhole T`. Decomposes the bind
+    over `AugCutShape T = CutShape T ⊕ Unit` into its two halves. -/
+theorem lhsMultiset_decomp (T : DecoratedTree α) :
+    (lhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = lhsRealCuts T + lhsExtractWhole T := by
+  unfold lhsMultiset lhsRealCuts lhsExtractWhole
+  -- AugCutShape T = CutShape T ⊕ Unit, so univ.val = (univ_CutShape).val.map Sum.inl + {Sum.inr ()}
+  rw [show ((Finset.univ : Finset (CutShape T ⊕ Unit)).val)
+        = (Finset.univ : Finset (CutShape T)).val.map Sum.inl
+          + (Finset.univ : Finset Unit).val.map Sum.inr from rfl]
+  rw [Multiset.add_bind]
+  congr 1
+  · rw [Multiset.bind_map]
+    rfl
+  · -- (univ : Finset Unit).val.map Sum.inr = {Sum.inr ()}
+    show (({()} : Multiset Unit).map Sum.inr).bind _ = _
+    rw [Multiset.map_singleton, Multiset.singleton_bind]
+    rfl
+
+/-- Closed form for `lhsExtractWhole T`: the sections over `{T}.map comulTreeMS`
+    are precisely the singletons indexed by `AugCutShape T`, so the resulting
+    multiset is `(univ : Finset (AugCutShape T)).val.map (fun ac' => ...)`.
+
+    The shape of each element matches the `tripleTensor` of either
+    `DoubleCut.extractWhole` (when ac' = extractWhole) or
+    `DoubleCut.real C extractWhole_(remainder C)` (when ac' = real C). -/
+theorem lhsExtractWhole_eq (T : DecoratedTree α) :
+    (lhsExtractWhole T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = (Finset.univ : Finset (AugCutShape T)).val.map fun ac' =>
+          forestToHc (R := R) (AugCutShape.cutForest_aug ac')
+            ⊗ₜ[R] (forestToHc (R := R) (AugCutShape.remainderForest ac')
+              ⊗ₜ[R] forestToHc (R := R) (0 : Forest α)) := by
+  unfold lhsExtractWhole
+  rw [Multiset.map_singleton]
+  -- Sections of a singleton list of multisets = bind structure.
+  show (Multiset.Sections ((comulTreeMS R T) ::ₘ (0 : Multiset (Multiset _)))).map _ = _
+  rw [Multiset.sections_cons, Multiset.sections_zero]
+  show ((comulTreeMS R T).bind fun a => (({(0 : Multiset _)} : Multiset _).map (Multiset.cons a))).map _ = _
+  -- {0}.map (cons a) = {a ::ₘ 0} = {{a}}
+  simp only [Multiset.map_singleton]
+  -- Now we have `(comulTreeMS R T).bind (fun a => {a ::ₘ 0})` ↦ map ↦ ...
+  -- By Multiset.bind_singleton: bind a => {f a} = map f
+  rw [Multiset.bind_singleton]
+  -- Now: (comulTreeMS R T).map (fun a => a ::ₘ 0)).map (...)
+  rw [Multiset.map_map]
+  -- Now one combined map: (comulTreeMS R T).map (fun a => assoc((a ::ₘ 0).prod ⊗ ...))
+  unfold comulTreeMS
+  rw [Multiset.map_map]
+  refine Multiset.map_congr rfl fun ac' _ => ?_
+  -- Compute the composition
+  simp only [Function.comp_apply, Multiset.prod_cons, Multiset.prod_zero, mul_one]
+  rfl
+
+/-! ### §3c: `rhsMultiset` — the RHS as a `Multiset` of `tripleTensor`s
+
+The RHS sum `∑ dc, dc.tripleTensor R` is itself a `Multiset.sum` (via
+`Finset.sum_eq_multiset_sum`). Naming the underlying multiset makes the
+substantive bijection lemma `lhsMultiset = rhsMultiset` cleanly statable. -/
+
+/-- The RHS-side multiset of triple-tensors: enumerate `DoubleCut T` and project
+    each to its `tripleTensor`. -/
+noncomputable def rhsMultiset (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (DoubleCut T)).val.map (·.tripleTensor R)
+
+/-- The RHS Finset.sum equals the `rhsMultiset` Multiset.sum. -/
+theorem rhs_eq_sum_rhsMultiset (T : DecoratedTree α) :
+    (∑ dc : DoubleCut T, dc.tripleTensor R) = (rhsMultiset T).sum := by
+  rw [Finset.sum_eq_multiset_sum]
+  rfl
+
+/-! ### §3d: `rhsMultiset` pieces by `DoubleCut` ctor
+
+`DoubleCut T = (Σ C : CutShape T, AugCutShape (remainder C)) ⊕ Unit`. The Sigma
+splits further by `ac₂ : AugCutShape (remainder C) = CutShape (remainder C) ⊕ Unit`,
+giving 3 pieces:
+- `rhsExtractWhole T`: from `DoubleCut.extractWhole`. Single element.
+- `rhsRealExtractInner T`: from `DoubleCut.real C extractWhole` (ac₂ = extractWhole).
+  One element per `C : CutShape T`.
+- `rhsRealRealInner T`: from `DoubleCut.real C (real C₂)` (ac₂ = real C₂).
+  Bind over `(C, C₂)`. -/
+
+/-- The "outer extractWhole" contribution to rhsMultiset: a singleton for
+    `DoubleCut.extractWhole`, with triple `forestToHc{T} ⊗ (1 ⊗ 1)`. -/
+noncomputable def rhsExtractWhole (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  ({(DoubleCut.extractWhole : DoubleCut T).tripleTensor R} : Multiset _)
+
+/-- The "outer real C, inner extractWhole" contribution: one triple per
+    `C : CutShape T`. -/
+noncomputable def rhsRealExtractInner (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (CutShape T)).val.map fun C =>
+    (DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R
+
+/-- The "outer real C, inner real C₂" contribution: bind over `(C, C₂)`. -/
+noncomputable def rhsRealRealInner (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (CutShape T)).val.bind fun C =>
+    (Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+      (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R
+
+/-! ### §3e: The "easy half" of the cuts-of-cuts bijection
+
+The `extractWhole_T` outer cut on the LHS contributes one element per
+`AugCutShape T` choice for the inner section. These exactly match the
+`DoubleCut.extractWhole` (one element) plus `DoubleCut.real C extractWhole_(remainder C)`
+(one element per `C : CutShape T`) entries on the RHS.
+
+This is the "structural" half — no cut commutation needed; just `AugCutShape T`
+splitting into `CutShape T ⊕ Unit`. -/
+
+/-- **Easy half of the cuts-of-cuts bijection**: the LHS extractWhole-outer
+    contribution matches the RHS extractWhole + (real C, extractWhole_inner)
+    contributions. -/
+theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : DecoratedTree α) :
+    (lhsExtractWhole T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsExtractWhole T + rhsRealExtractInner T := by
+  rw [lhsExtractWhole_eq]
+  unfold rhsExtractWhole rhsRealExtractInner
+  -- AugCutShape T = CutShape T ⊕ Unit; split univ.val on Sum, then split the map.
+  rw [show ((Finset.univ : Finset (AugCutShape T)).val)
+        = (Finset.univ : Finset (CutShape T)).val.map Sum.inl
+          + (Finset.univ : Finset Unit).val.map Sum.inr from rfl]
+  rw [Multiset.map_add, Multiset.map_map, Multiset.map_map]
+  -- After splitting: `map (...) ∘ Sum.inl + map (...) ∘ Sum.inr = singleton + map ...`
+  -- The maps reduce by rfl; just need to swap order.
+  rw [add_comm]
+  rfl
+
+/-- **The substantive cuts-of-cuts identity** (@cite{foissy-2002} §2 /
+    @cite{connes-kreimer-1998}): for `T = .node l r`, the LHS-section multiset
+    and the RHS-DoubleCut multiset are equal as multisets of triple-tensors.
+
+    The cardinalities match by `0.230.680` substrate refactor (verified for
+    `T = .node leaf leaf` in `Linglib/Scratch/CoassocCheck.lean`: both = 14).
+    The proof constructs the explicit cut-commutation bijection.
+
+    Specialized to `.node l r`: leaf and trace cases of `lhs_eq_sum_DoubleCut`
+    are dispatched via `lhs_eq_sum_DoubleCut_of_primitive_tree` (primitive
+    coassoc), so the multiset-equality formulation is only needed here. -/
+theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
+    (lhsMultiset (.node l r) : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsMultiset (.node l r) := by
+  sorry
+
+/-! ### §3f: LHS direction of the cuts-of-cuts bijection -/
 
 /-- LHS direction of the cuts-of-cuts bijection: the left-iterated
     coproduct on a single-tree workspace, after the canonical associator,
     reorganizes as a sum over `DoubleCut T`.
 
-    Cases on `T`:
-    - `.leaf`: primitive (only the trivial cut) → apply
+    - `.leaf`, `.trace`: primitive (only the trivial cut) → apply
       `lhs_eq_sum_DoubleCut_of_primitive_tree`.
-    - `.trace`: same as leaf (also only the trivial cut).
-    - `.node l r`: substantive Foissy "cut-commutation" bijection;
-      currently sorry.
-
-    Plan for the deferred `.node` case (a "less clunky" version of the
-    legacy 1500-LOC list-based proof):
-    Use the multiplicative AugCutShape decomposition
-    `AugCutShape (.node l r) ≅ AugCutShape l × AugCutShape r ⊎ Unit`
-    and `Multiset.Sections` for multi-tree expansion (already in place).
-    The bijection between LHS-natural data `(ac₁, section)` and `DoubleCut T`
-    is the cut-commutation core: a "double cut" admits two enumerations
-    (outer-then-sub-on-extracted vs outer-then-sub-on-remainder), and the
-    bijection identifies them. Estimated 200-300 LOC. -/
+    - `.node l r`: substantive Foissy "cut-commutation" bijection, reduces to
+      `lhsMultiset_eq_rhsMultiset_node`. -/
 theorem lhs_eq_sum_DoubleCut (T : DecoratedTree α) :
     (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
         ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
@@ -313,6 +527,6 @@ theorem lhs_eq_sum_DoubleCut (T : DecoratedTree α) :
                CutShape.cutForest_atTrace, CutShape.remainder_atTrace, forestToHc_zero]
     abel
   | .node l r =>
-    sorry
+    rw [lhs_eq_sum_lhsMultiset, rhs_eq_sum_rhsMultiset, lhsMultiset_eq_rhsMultiset_node]
 
 end ConnesKreimer
