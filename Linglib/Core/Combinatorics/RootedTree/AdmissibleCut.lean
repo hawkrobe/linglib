@@ -345,6 +345,32 @@ exactly what M-C-B's sum is supposed to track.
 over CutShape is the right semantics, and value-level collisions are
 genuine multiplicity contributions. -/
 
+/-! ## §6: `IsNotTrace` is preserved by `remainder`
+
+For `cl : CutShape l`, `remainder cl` has the same top-level constructor as `l`
+(modulo `.trace` markers introduced for extracted children). In particular,
+`IsNotTrace l` holds iff `IsNotTrace (remainder cl)` holds — the only `.trace`-
+shaped tree's only CutShape is `atTrace`, whose remainder is the same `.trace`. -/
+
+/-- `IsNotTrace` is preserved by `remainder` in both directions. -/
+theorem isNotTrace_remainder_iff {l : DecoratedTree α} (cl : CutShape l) :
+    DecoratedTree.IsNotTrace (remainder cl) ↔ DecoratedTree.IsNotTrace l := by
+  cases l with
+  | leaf _ => cases cl; exact Iff.rfl
+  | trace _ => cases cl; exact Iff.rfl
+  | node _ _ => cases cl <;> exact Iff.rfl
+
+/-- Forward direction: if `l` is not a trace marker, neither is its remainder
+    after any cut. -/
+theorem isNotTrace_remainder {l : DecoratedTree α} (cl : CutShape l)
+    (h : DecoratedTree.IsNotTrace l) : DecoratedTree.IsNotTrace (remainder cl) :=
+  (isNotTrace_remainder_iff cl).mpr h
+
+/-- Backward direction: if `remainder cl` is not a trace marker, neither is `l`. -/
+theorem isNotTrace_of_isNotTrace_remainder {l : DecoratedTree α} (cl : CutShape l)
+    (h : DecoratedTree.IsNotTrace (remainder cl)) : DecoratedTree.IsNotTrace l :=
+  (isNotTrace_remainder_iff cl).mp h
+
 end CutShape
 
 end ConnesKreimer
