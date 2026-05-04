@@ -478,21 +478,121 @@ theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : DecoratedTr
   rw [add_comm]
   rfl
 
+/-- The substantive half: per-`C` matching of LHS sections vs RHS inner cuts.
+    For T = .node l r, both sides are `Multiset.bind` over `CutShape T`. The
+    per-C contributions are different (LHS: sections of `cutForest C`; RHS:
+    cuts of `remainder C`), but their TOTAL bind-sums match via the cuts-of-
+    cuts bijection. -/
+theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
+    (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsRealRealInner T := by
+  sorry
+
+/-- Helper: `rhsMultiset T` split by outer `DoubleCut = Σ ⊕ Unit` ctor. -/
+private theorem rhsMultiset_split_outer (T : DecoratedTree α) :
+    (rhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = ((Finset.univ : Finset (Σ C : CutShape T,
+          AugCutShape (CutShape.remainder C))).val.map fun ⟨C, ac₂⟩ =>
+            (DoubleCut.real C ac₂).tripleTensor R)
+        + rhsExtractWhole T := by
+  unfold rhsMultiset rhsExtractWhole
+  rw [show ((Finset.univ : Finset (DoubleCut T)).val)
+        = (Finset.univ : Finset (Σ C : CutShape T,
+            AugCutShape (CutShape.remainder C))).val.map Sum.inl
+          + (Finset.univ : Finset Unit).val.map Sum.inr from rfl]
+  rw [Multiset.map_add, Multiset.map_map, Multiset.map_map]
+  rfl
+
+/-- Helper: the per-`(C, ac₂)` Sigma sum, split by inner `AugCutShape = CutShape ⊕ Unit`. -/
+private theorem rhsRealSigma_split_inner (T : DecoratedTree α) :
+    ((Finset.univ : Finset (Σ C : CutShape T,
+        AugCutShape (CutShape.remainder C))).val.map fun ⟨C, ac₂⟩ =>
+          (DoubleCut.real C ac₂).tripleTensor R)
+      = rhsRealRealInner T + rhsRealExtractInner T := by
+  unfold rhsRealRealInner rhsRealExtractInner
+  -- Step 1: re-express the Sigma univ as a bind over CutShape T.
+  rw [show ((Finset.univ : Finset (Σ C : CutShape T,
+              AugCutShape (CutShape.remainder C))).val)
+        = (Finset.univ : Finset (CutShape T)).val.bind fun C =>
+            (Finset.univ : Finset (AugCutShape (CutShape.remainder C))).val.map
+              fun ac₂ => (⟨C, ac₂⟩ : Σ C : CutShape T,
+                AugCutShape (CutShape.remainder C)) from rfl]
+  -- Step 2: distribute outer map over the bind.
+  rw [Multiset.map_bind]
+  -- Step 3: per-C, split the inner univ (AugCutShape = CutShape ⊕ Unit) and distribute.
+  -- Use Multiset.bind_congr to apply per-C transformations.
+  rw [show (fun C : CutShape T =>
+              ((Finset.univ : Finset (AugCutShape (CutShape.remainder C))).val.map
+                (fun ac₂ => (⟨C, ac₂⟩ : Σ C : CutShape T,
+                  AugCutShape (CutShape.remainder C)))).map
+                (fun x => match x with | ⟨C, ac₂⟩ => (DoubleCut.real C ac₂).tripleTensor R))
+          = fun C : CutShape T =>
+              ((Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+                (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+              + ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                : Multiset _) from ?_]
+  · -- Now bind over `f + g` distributes via `Multiset.bind_add`.
+    rw [show (fun C : CutShape T =>
+              ((Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+                (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+              + ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                : Multiset _))
+            = fun C : CutShape T =>
+              (((Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+                (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+              + ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                : Multiset _)) from rfl]
+    -- bind over `f + g` = bind f + bind g
+    rw [show (Finset.univ : Finset (CutShape T)).val.bind
+            (fun C => (((Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+                  (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+                + ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                  : Multiset _)))
+          = ((Finset.univ : Finset (CutShape T)).val.bind fun C =>
+              (Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map fun C₂ =>
+                (DoubleCut.real C (AugCutShape.real C₂)).tripleTensor R)
+            + ((Finset.univ : Finset (CutShape T)).val.bind fun C =>
+              ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                : Multiset _)) from Multiset.bind_add _ _ _]
+    -- Second bind is bind over singletons = map.
+    rw [show ((Finset.univ : Finset (CutShape T)).val.bind fun C =>
+              ({(DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R}
+                : Multiset _))
+          = (Finset.univ : Finset (CutShape T)).val.map fun C =>
+              (DoubleCut.real C (AugCutShape.extractWhole : AugCutShape _)).tripleTensor R from
+        Multiset.bind_singleton _ _]
+  · -- Per-C: (univ_AcS.map ⟨C,·⟩).map (match...) = univ_AcS.map (DoubleCut.real C ·).tripleTensor
+    -- Then split AugCutShape (rem C) = CutShape (rem C) ⊕ Unit.
+    funext C
+    rw [Multiset.map_map]
+    rw [show ((Finset.univ : Finset (AugCutShape (CutShape.remainder C))).val)
+          = (Finset.univ : Finset (CutShape (CutShape.remainder C))).val.map Sum.inl
+            + (Finset.univ : Finset Unit).val.map Sum.inr from rfl]
+    rw [Multiset.map_add, Multiset.map_map, Multiset.map_map]
+    rfl
+
+/-- `rhsMultiset` decomposition: the 3-way split by `DoubleCut` ctor structure.
+    `DoubleCut T = (Σ C, AugCutShape (rem C)) ⊕ Unit`; the Sigma further splits
+    via `ac₂ : AugCutShape (rem C) = CutShape (rem C) ⊕ Unit`. -/
+theorem rhsMultiset_decomp (T : DecoratedTree α) :
+    (rhsMultiset T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsExtractWhole T + rhsRealExtractInner T + rhsRealRealInner T := by
+  rw [rhsMultiset_split_outer, rhsRealSigma_split_inner]
+  abel
+
 /-- **The substantive cuts-of-cuts identity** (@cite{foissy-2002} §2 /
     @cite{connes-kreimer-1998}): for `T = .node l r`, the LHS-section multiset
     and the RHS-DoubleCut multiset are equal as multisets of triple-tensors.
 
-    The cardinalities match by `0.230.680` substrate refactor (verified for
-    `T = .node leaf leaf` in `Linglib/Scratch/CoassocCheck.lean`: both = 14).
-    The proof constructs the explicit cut-commutation bijection.
-
-    Specialized to `.node l r`: leaf and trace cases of `lhs_eq_sum_DoubleCut`
-    are dispatched via `lhs_eq_sum_DoubleCut_of_primitive_tree` (primitive
-    coassoc), so the multiset-equality formulation is only needed here. -/
+    Composes the easy half + substantive half + `rhsMultiset_decomp`. -/
 theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
     (lhsMultiset (.node l r) : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = rhsMultiset (.node l r) := by
-  sorry
+  rw [lhsMultiset_decomp,
+      lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner,
+      lhsRealCuts_eq_rhsRealRealInner,
+      rhsMultiset_decomp]
+  abel
 
 /-! ### §3f: LHS direction of the cuts-of-cuts bijection -/
 
