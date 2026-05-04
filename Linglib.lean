@@ -331,8 +331,8 @@ import Linglib.Theories.Pragmatics.AsymmetricCommunication
 import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
-import Linglib.Core.Inheritance.BestFit
-import Linglib.Core.Inheritance.Prototype
+import Linglib.Core.Inheritance.Order
+import Linglib.Core.Prototype
 import Linglib.Core.Dependency.Basic
 import Linglib.Core.Dependency.Projection
 import Linglib.Core.Dependency.Dominance
@@ -1862,6 +1862,9 @@ import Linglib.Core.Algebra.ConnesKreimer.Defs
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Core.Algebra.ConnesKreimer.AugmentedCut
 import Linglib.Core.Algebra.ConnesKreimer.DoubleCut
+import Linglib.Core.Algebra.ConnesKreimer.LhsIndex
+import Linglib.Core.Algebra.ConnesKreimer.LhsBridge
+import Linglib.Core.Algebra.ConnesKreimer.LhsEquiv
 import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
