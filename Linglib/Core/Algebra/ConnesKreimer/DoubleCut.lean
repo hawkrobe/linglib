@@ -1395,51 +1395,58 @@ By induction on `T`:
 - `.leaf` / `.trace`: definitional reduction (`rfl`).
 - `.node l r`: substantive Foissy bijection. Sub-sessions 2.10b / 2.11. -/
 
+/-! #### Algebraic identity bridge: `lhsRealCuts T = perLayerContrib T .top |>.map ChildSlots.toTriple`
+
+This bridge holds at any T (independent of the Foissy bijection). Once proved,
+`lhsRealCuts_eq_geoMultiset` follows from `perLayerContrib_top` via the chain:
+`lhsRealCuts T = perLayerContrib T .top |>.map (ChildSlots.toTriple R)
+   = (univ : Finset (GeoCut T .top)).val.map (ChildSlots.toTriple R ∘ geoToChildSlots)
+   = (univ).val.map geoCutToTriple = geoMultiset T`. -/
+
+/-- The algebraic bridge: the LHS triple-tensors equal the per-layer .top
+    ChildSlots projected via `ChildSlots.toTriple`. Per-element identity holds
+    by tensor-product associativity. -/
+theorem lhsRealCuts_eq_perLayerContrib_top (T : DecoratedTree α) :
+    (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
+  -- Both sides bind over CutShape T. Per-cl_outer Sections types differ
+  -- (Hc-tensor vs Forest pair) but related by per-element forestToHc:
+  -- Sections (... |>.map (forestPairToHcTensor)) ↔ Sections (... pairs).
+  -- The triple correspondence: assoc((forestToHc F ⊗ forestToHc R) ⊗ {rem})
+  --                          = forestToHc F ⊗ (forestToHc R ⊗ {rem}) = ChildSlots.toTriple.
+  -- Pending proof — substantive Multiset.Sections manipulation.
+  sorry
+
 /-- **LHS bijection**: `lhsRealCuts T` enumerates the same multiset of triples
-    as `geoMultiset T`. Substantive content for `.node l r`; `.leaf` and `.trace`
-    are by definitional reduction. -/
+    as `geoMultiset T`. Reduced to the algebraic bridge + `perLayerContrib_top`. -/
 theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = geoMultiset T := by
-  match T with
-  | .leaf a =>
-    -- |CutShape (.leaf a)| = 1 (atLeaf, with cutForest = 0).
-    -- Sections of (0.map comulTreeMS) = singleton (one empty section).
-    -- LHS: one triple = assoc(1 ⊗ {.leaf a}) = forestToHc 0 ⊗ (forestToHc 0 ⊗ {.leaf a}).
-    -- RHS: |GeoCut .leaf a top| = 1 element = .leaf .top.
-    -- geoCutToTriple (.leaf .top) = forestToHc 0 ⊗ (forestToHc 0 ⊗ forestToHc {.leaf a}).
-    unfold lhsRealCuts geoMultiset
-    rfl
-  | .trace t =>
-    unfold lhsRealCuts geoMultiset
-    rfl
-  | .node l r =>
-    -- The substantive content: the per-(lL, rL, gl, gr) bijection between
-    -- LHS data (CutShape (.node l r) ctors + sections) and GeoCut indexings.
-    -- Forward map: outer extracting BOT subtrees + inner choices for each
-    -- outer-extracted tree (extractWhole→BOT, real cl_inner→MID).
-    -- Algebraic tools: `Multiset.sections_add`, `Multiset.map_add`, `Multiset.bind_map`.
-    sorry
+  rw [lhsRealCuts_eq_perLayerContrib_top, perLayerContrib_top]
+  unfold geoMultiset
+  rw [Multiset.map_map]
+  rfl
+
+/-- The RHS algebraic bridge: `rhsRealRealInner T` triples equal the per-layer
+    `.top` ChildSlots projected via `ChildSlots.toTriple`. -/
+theorem rhsRealRealInner_eq_perLayerContrib_top (T : DecoratedTree α) :
+    (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
+  -- RHS rhsRealRealInner is bind over (C₁, C₂) ∈ CutShape T × CutShape (rem C₁).
+  -- The triple: forestToHc(cutForest C₁) ⊗ (forestToHc(cutForest C₂) ⊗ forestToHc({remainder C₂})).
+  -- Per-layer .top maps cl_outer + section to similar structure.
+  -- Pending — symmetric to lhsRealCuts_eq_perLayerContrib_top.
+  sorry
 
 /-- **RHS bijection**: `rhsRealRealInner T` enumerates the same multiset of
-    triples as `geoMultiset T`. Substantive content for `.node l r`. -/
+    triples as `geoMultiset T`. Reduced to the algebraic bridge + `perLayerContrib_top`. -/
 theorem rhsRealRealInner_eq_geoMultiset (T : DecoratedTree α) :
     (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = geoMultiset T := by
-  match T with
-  | .leaf a =>
-    -- |CutShape (.leaf a)| = 1 (atLeaf), |CutShape (rem atLeaf)| = |CutShape (.leaf a)| = 1.
-    -- RHS-real-real: 1 triple. Triple: forestToHc 0 ⊗ (forestToHc 0 ⊗ forestToHc {.leaf a}).
-    -- Matches geoMultiset (.leaf a) (singleton).
-    unfold rhsRealRealInner geoMultiset
-    rfl
-  | .trace t =>
-    unfold rhsRealRealInner geoMultiset
-    rfl
-  | .node l r =>
-    -- The substantive RHS bijection. Outer C₁ extracts BOT, inner C₂ on remainder
-    -- C₁ extracts MID. Each (C₁, C₂) corresponds to a unique GeoCut g with root=top.
-    sorry
+  rw [rhsRealRealInner_eq_perLayerContrib_top, perLayerContrib_top]
+  unfold geoMultiset
+  rw [Multiset.map_map]
+  rfl
 
 /-! ### §3g: The substantive cuts-of-cuts identity (via GeoCut chain)
 
