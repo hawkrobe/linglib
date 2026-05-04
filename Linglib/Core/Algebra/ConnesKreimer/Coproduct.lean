@@ -354,4 +354,33 @@ noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
     comulDelMonoidHom
 
+/-- `comulDelAlgHom` applied to the basis vector `Finsupp.single F 1`
+    equals `comulForestDel F`. Analog of `comulAlgHom_apply_single`. -/
+@[simp] theorem comulDelAlgHom_apply_single (F : TraceForest α Unit) :
+    comulDelAlgHom (R := R) (α := α) (Finsupp.single F 1) = comulForestDel F := by
+  show AddMonoidAlgebra.lift R _ _ comulDelMonoidHom (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+/-- `comulForestDel` on the singleton forest `{T}` reduces to `comulTreeDel T`. -/
+@[simp] theorem comulForestDel_singleton (T : TraceTree α Unit) :
+    comulForestDel (R := R) ({T} : TraceForest α Unit) = comulTreeDel T := by
+  show ((({T} : TraceForest α Unit)).map (comulTreeDel (R := R))).prod = _
+  rw [Multiset.map_singleton, Multiset.prod_singleton]
+
+/-- **Δ^d on a 2-tree workspace** (M-C-B Def 1.2.8 with ω = d, applied
+    to `F = {T1, T2}`). Multiplicativity of `comulDelAlgHom` gives
+    `Δ^d({T1, T2}) = Δ^d(T1) · Δ^d(T2)` — the load-bearing fact for
+    the algebraic Merge bridge in `MergeAction.lean`. -/
+theorem comulDelAlgHom_pair (T1 T2 : TraceTree α Unit) :
+    comulDelAlgHom (R := R) (α := α)
+        (forestToHc ({T1, T2} : TraceForest α Unit))
+      = comulTreeDel T1 * comulTreeDel T2 := by
+  unfold forestToHc
+  rw [comulDelAlgHom_apply_single]
+  show ((({T1, T2} : TraceForest α Unit)).map (comulTreeDel (R := R))).prod = _
+  rw [show (({T1, T2} : TraceForest α Unit).map (comulTreeDel (R := R)))
+      = ({comulTreeDel T1, comulTreeDel T2} : Multiset _) from rfl]
+  exact Multiset.prod_pair _ _
+
 end ConnesKreimer

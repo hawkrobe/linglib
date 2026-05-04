@@ -56,6 +56,23 @@ noncomputable def gammaMatch (S S' : TraceTree α Unit) :
   show (TraceForest α Unit →₀ R) →ₗ[R] (TraceForest α Unit →₀ R) from
     (Finsupp.lsingle target).comp (Finsupp.lapply target)
 
+/-- **γ_{S,S'} acts as a basis-vector projection**: on the basis element
+    `forestToHc F`, it returns `forestToHc F` if `F = {S, S'}` and `0`
+    otherwise. M-C-B Def 1.3.1. -/
+theorem gammaMatch_apply_singleton (S S' : TraceTree α Unit)
+    (F : TraceForest α Unit) :
+    gammaMatch (R := R) S S' (forestToHc F) =
+      if F = ({S, S'} : TraceForest α Unit) then forestToHc F else 0 := by
+  show (Finsupp.lsingle ({S, S'} : TraceForest α Unit)).comp
+        (Finsupp.lapply ({S, S'} : TraceForest α Unit))
+        (Finsupp.single F (1 : R))
+      = _
+  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
+    Finsupp.single_apply]
+  split_ifs with h
+  · subst h; rfl
+  · exact Finsupp.single_zero _
+
 /-! ## §2: δ_{S,S'} matching on the left tensor channel (M-C-B Def 1.3.1)
 
 `deltaMatch S S' = gammaMatch S S' ⊗ id` lifts the matching projection
