@@ -350,15 +350,15 @@ theorem cutForest_ne_singleton_self {T : TraceTree α β} (c : CutShape T) :
     forces a strict size decrease versus `S` (resp. `S'`), so `S ∉ cutForest c`
     and `S' ∉ cutForest c'`. This forces `S ∈ cutForest c'` and `S' ∈ cutForest c`,
     yielding `S.size < S'.size` and `S'.size < S.size` — contradiction. -/
-theorem cutForest_add_pair_ne_pair {S S' : TraceTree α β}
+theorem cutForest_add_ne_insert_pair {S S' : TraceTree α β}
     (c : CutShape S) (c' : CutShape S') :
     CutShape.cutForest c + CutShape.cutForest c'
       ≠ ({S, S'} : Multiset (TraceTree α β)) := by
   intro h
-  have hSmem : S ∈ ({S, S'} : Multiset (TraceTree α β)) := by
-    simp [Multiset.insert_eq_cons]
-  have hS'mem : S' ∈ ({S, S'} : Multiset (TraceTree α β)) := by
-    simp [Multiset.insert_eq_cons]
+  have hSmem : S ∈ ({S, S'} : Multiset (TraceTree α β)) :=
+    Multiset.mem_cons_self _ _
+  have hS'mem : S' ∈ ({S, S'} : Multiset (TraceTree α β)) :=
+    Multiset.mem_cons_of_mem (Multiset.mem_singleton.mpr rfl)
   rw [← h, Multiset.mem_add] at hSmem hS'mem
   rcases hSmem with hSc | hSc'
   · exact absurd (size_lt_of_mem_cutForest c S hSc) (lt_irrefl _)

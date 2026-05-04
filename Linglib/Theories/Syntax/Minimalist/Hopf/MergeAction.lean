@@ -24,8 +24,11 @@ for the corresponding linguistic step.
 
 External Merge bridges (`mergeOp_emR_matches_Step`,
 `mergeOp_emL_matches_Step`) are **proven sorry-free** as of Phase 7a
-(commits 0.230.741-0.230.743). Internal Merge is documented as a
-composition gap (see §3 below).
+(commits 0.230.741-0.230.743). What's actually established is the
+**F̂ = ∅ subcase of M-C-B Lemma 1.4.1** (External Merge, p. 49): the
+workspace is exactly `{S, S'}`, with no spectator components. The full
+Lemma 1.4.1 with arbitrary residual workspace `F̂` is queued for
+Phase 7b-A. Internal Merge is documented as a composition gap (see §3).
 
 Both EM bridges specialize a general algebraic result `mergeOp_pair`,
 which proves `mergeOp S S' (forestToHc {S, S'}) = forestToHc {.node S S'}`
@@ -36,10 +39,11 @@ semiring `R`. The proof factors through:
 - `mergePost_basis_tensor` (`Merge.lean`): basis-tensor evaluation of
   `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` returns `forestToHc {.node S S'} * r` if
   the LEFT channel is `{S, S'}`, else `0`.
-- 4 cross-term reductions (`mergePost_pair_*`): expand `Δ^d(S) · Δ^d(S')`
-  into `(prim + sum) · (prim + sum)`, prove each cross-category
-  contributes 0 except `prim · prim`. Cross-term elimination uses
-  `cutForest_ne_singleton_self` and `cutForest_add_pair_ne_pair` from
+- 4 cross-term reductions (inlined as `have` blocks in `mergeOp_pair`):
+  expand `Δ^d(S) · Δ^d(S')` into `(prim + sum) · (prim + sum)`, prove
+  each cross-category contributes 0 except `prim · prim`. Cross-term
+  elimination uses `cutForest_ne_singleton_self` and
+  `cutForest_add_ne_insert_pair` from
   `Core/Combinatorics/RootedTree/AdmissibleCut.lean`.
 
 ## What changed from the legacy version
@@ -75,86 +79,157 @@ noncomputable def singletonWorkspace (so : Minimalist.SyntacticObject) :
     Hc ℤ LIToken :=
   forestToHc ({so.toHc} : TraceForest LIToken Unit)
 
-/-! ## §2: External Merge bridge
+/-! ## §2: External Merge bridge — the F̂ = ∅ subcase
 
 For `Step.emR item` applied to `current`, the result is
-`.node current item`. The algebraic side: `mergeOp current.toH item.toH`
-applied to a workspace containing both `current` and `item` should
-produce the singleton workspace of `.node current item`.
+`.node current item`. The algebraic side: `mergeOp current.toHc item.toHc`
+applied to the 2-tree workspace `{current.toHc, item.toHc}` produces
+`forestToHc {.node current item}`.
 
-**Proof strategy** (M-C-B Lemma 1.3.6):
+**Scope (verified against M-C-B 2025 p. 49):**
+This file proves M-C-B Lemma 1.4.1 (External Merge) **specialized to the
+case where the workspace `F̂` of spectator components is empty**. The
+full Lemma 1.4.1 statement is:
+
+  𝔐_{T_i, T_j}(F) = 𝔐(T_i, T_j) ⊔ F̂
+
+for `F = T_i ⊔ T_j ⊔ F̂` where T_i, T_j match two connected components.
+Our `mergeOp_pair` handles `F̂ = ∅` (workspace = exactly `{S, S'}`); the
+generalization to nonempty `F̂` is queued for Phase 7b-A. The full
+Lemma 1.3.6 (M-C-B p. 44) is the parent claim covering Cases 1, 2, 3 of
+§1.4.1; Cases 2/3 (where S or S' is an *accessible term inside* a
+component, not a member) require non-primitive coproduct terms and
+trace machinery, which are tied to the IM gap.
+
+**Proof strategy:**
 
 1. Unfold `mergeOp = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d`.
 2. Apply `comulDelAlgHom_pair`: `Δ^d({S, S'}) = Δ^d(S) · Δ^d(S')`.
 3. Expand each `Δ^d(T) = T ⊗ 1 + ∑_c (cutForest c) ⊗ rChan(c)`.
-4. Multiply: 4 cross-categories of terms. For each elementary tensor
-   `forestToHc F ⊗ r` produced, `mergePost_basis_tensor` gives
+4. Multiply: 4 cross-categories of terms. `mergePost_basis_tensor`
+   evaluates each elementary tensor `forestToHc F ⊗ r` to
    `forestToHc {.node S S'} * r` if `F = {S, S'}`, else `0`.
-5. **Cross-term elimination** via the structural lemmas:
+5. Cross-term elimination via the structural lemmas:
    - `prim_S * prim_{S'}`: `F = {S, S'}` ✓ — contributes the answer.
    - `prim_S * cut_{c'}`: `F = {S} + cutForest c'`. For this to equal
      `{S, S'}`, need `cutForest c' = {S'}` — impossible by
-     `cutForest_ne_singleton_self` (a cut on `S'` cannot extract `S'` itself).
-   - `cut_c * prim_{S'}`: symmetric, `cutForest c = {S}` impossible.
-   - `cut_c * cut_{c'}`: `F = cutForest c + cutForest c'`. Cannot equal
-     `{S, S'}` by `cutForest_add_pair_ne_pair` (size argument).
-6. Only the primitive term survives, giving `forestToHc {.node S S'} * 1
-   = forestToHc {.node S S'}`.
+     `cutForest_ne_singleton_self`.
+   - `cut_c * prim_{S'}`: symmetric.
+   - `cut_c * cut_{c'}`: `F = cutForest c + cutForest c'`. Impossible by
+     `cutForest_add_ne_insert_pair` (size argument).
 
-The proof is structured around a general `mergeOp_pair` lemma that
-proves the result for any pair `(S, S') : TraceTree α Unit` over any
-commutative semiring `R`. The Minimalism-specific bridges
-(`mergeOp_emR_matches_Step`, `mergeOp_emL_matches_Step`) specialize
-this and handle the `SyntacticObject ↔ TraceTree` translation. -/
+The Minimalism-specific bridges (`mergeOp_emR/L_matches_Step`)
+specialize `mergeOp_pair` to `R = ℤ`, `α = LIToken`, with `rfl`
+bridging `(.node current item).toH.anon (·) = .node current.toHc item.toHc`. -/
 
-/-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.3.6,
-    general substrate version). For any pair `(S, S') : TraceTree α Unit`,
+/-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.4.1,
+    F̂ = ∅ subcase, p. 49). For any pair `(S, S') : TraceTree α Unit`,
     `mergeOp S S'` applied to the basis vector `forestToHc {S, S'}`
-    yields `forestToHc {.node S S'}`. -/
+    yields `forestToHc {.node S S'}`.
+
+    The 4 cross-term reductions are inlined as `have` blocks below
+    (each consumed exactly once); the substrate-level structural lemmas
+    `cutForest_ne_singleton_self` and `cutForest_add_ne_insert_pair` do
+    the load-bearing elimination work. -/
 theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (S S' : TraceTree α Unit) :
     mergeOp (R := R) S S' (forestToHc ({S, S'} : TraceForest α Unit))
       = forestToHc ({.node S S'} : TraceForest α Unit) := by
-  -- Step 1: reduce mergeOp to the post-coproduct chain on
-  -- `comulTreeDel S * comulTreeDel S'`.
+  -- Step 1: reduce mergeOp to the post-coproduct chain.
   show (hcMulLin (R := R) (α := α)
          ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
          ∘ₗ deltaMatch (R := R) S S' ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc ({S, S'} : TraceForest α Unit)) = _
   rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
-      AlgHom.toLinearMap_apply, comulDelAlgHom_pair]
-  -- Step 2: define abbreviations for the coproduct decomposition.
-  set primS : Hc R α ⊗[R] Hc R α :=
-    forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α) with hprimS
-  set primS' : Hc R α ⊗[R] Hc R α :=
-    forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α) with hprimS'
-  set sumS : Hc R α ⊗[R] Hc R α :=
-    ∑ c : CutShape S,
-      forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-        deletionRightChannel (R := R) (CutShape.remainderDeletion c) with hsumS
-  set sumS' : Hc R α ⊗[R] Hc R α :=
-    ∑ c' : CutShape S',
-      forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-        deletionRightChannel (R := R) (CutShape.remainderDeletion c') with hsumS'
-  have hcompS : comulTreeDel (R := R) S = primS + sumS := rfl
-  have hcompS' : comulTreeDel (R := R) S' = primS' + sumS' := rfl
-  rw [hcompS, hcompS']
-  -- Step 3: distribute multiplication into 4 cross-terms and push linearity
-  -- through the 3-layer chain (hcMulLin ∘ TensorProduct.map ∘ deltaMatch).
+      AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
+      comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
+  -- Step 2: distribute and push linearity through the 3-layer chain.
   rw [add_mul, mul_add, mul_add]
   simp only [map_add]
-  -- Step 4: each of the 4 cross-terms reduces via the per-term lemmas.
-  rw [mergePost_pair_prim_prim S S',
-      mergePost_pair_prim_sum S S',
-      mergePost_pair_sum_prim S S',
-      mergePost_pair_sum_sum S S']
-  -- Cleanup: answer + 0 + 0 + 0 = answer.
-  rw [add_zero, add_zero, add_zero]
+  -- Step 3: each of the 4 cross-terms reduces (inlined as `have`s).
+  -- Term 1 (prim × prim): the only surviving term, contributes the answer.
+  have h_pp :
+      hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+                * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+        = forestToHc (R := R) ({.node S S'} : TraceForest α Unit) := by
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [show ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit)
+        = ({S, S'} : TraceForest α Unit) from rfl]
+    rw [mergePost_basis_tensor, if_pos rfl, mul_one]
+  -- Term 2 (prim × sum): zero (cuts on S' can't produce {S'}).
+  have h_ps :
+      hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+                * ∑ c' : CutShape S',
+                    forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                      deletionRightChannel (R := R) (CutShape.remainderDeletion c'))))
+        = 0 := by
+    rw [Finset.mul_sum]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c' _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul,
+        mergePost_basis_tensor, if_neg]
+    intro h
+    apply CutShape.cutForest_ne_singleton_self c'
+    have : ({S} : TraceForest α Unit) + CutShape.cutForest c'
+          = ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit) := h
+    exact Multiset.add_right_inj.mp this
+  -- Term 3 (sum × prim): zero (symmetric).
+  have h_sp :
+      hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              ((∑ c : CutShape S,
+                  forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                    deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+                * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+        = 0 := by
+    rw [Finset.sum_mul]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one,
+        mergePost_basis_tensor, if_neg]
+    intro h
+    apply CutShape.cutForest_ne_singleton_self c
+    have : ({S, S'} : TraceForest α Unit)
+         = ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit) := rfl
+    rw [this] at h
+    exact Multiset.add_left_inj.mp h
+  -- Term 4 (sum × sum): zero (combined cut-forest can't be {S, S'}).
+  have h_ss :
+      hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              ((∑ c : CutShape S,
+                  forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                    deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+                * (∑ c' : CutShape S',
+                    forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                      deletionRightChannel (R := R) (CutShape.remainderDeletion c')))))
+        = 0 := by
+    rw [Fintype.sum_mul_sum]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    apply Finset.sum_eq_zero
+    intro c' _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add,
+        mergePost_basis_tensor, if_neg]
+    exact CutShape.cutForest_add_ne_insert_pair c c'
+  rw [h_pp, h_ps, h_sp, h_ss]
+  simp only [add_zero]
 
-/-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.3.6).
-    `mergeOp current.toHc item.toHc` applied to the 2-tree workspace
-    `{current.toHc, item.toHc}` yields the singleton workspace of
-    `.node current item` = `(Step.emR item).apply current`. -/
+/-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.4.1, p. 49,
+    F̂ = ∅ subcase). `mergeOp current.toHc item.toHc` applied to the
+    2-tree workspace `{current.toHc, item.toHc}` yields the singleton
+    workspace of `.node current item` = `(Step.emR item).apply current`. -/
 theorem mergeOp_emR_matches_Step
     (current item : Minimalist.SyntacticObject) :
     mergeOp (R := ℤ) current.toHc item.toHc
@@ -164,9 +239,9 @@ theorem mergeOp_emR_matches_Step
   rw [mergeOp_pair]
   rfl
 
-/-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.3.6,
-    symmetric pair). `mergeOp item.toHc current.toHc` applied to
-    `{item.toHc, current.toHc}` yields `.node item current`. -/
+/-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, p. 49,
+    F̂ = ∅ subcase, symmetric pair). `mergeOp item.toHc current.toHc`
+    applied to `{item.toHc, current.toHc}` yields `.node item current`. -/
 theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) :
     mergeOp (R := ℤ) item.toHc current.toHc

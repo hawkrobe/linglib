@@ -282,9 +282,10 @@ of the coproduct term becomes `1` (the empty workspace). -/
     `(1 : Hc R α)` (empty workspace); `Option.some t` → `forestToHc {t}`
     (singleton workspace).
 
-    Public so downstream proofs (e.g., the algebraic Merge bridge in
-    `Theories/Syntax/Minimalist/Hopf/MergeAction.lean`) can reference
-    the right-channel value when destructuring `comulTreeDel` summands. -/
+    Public because `comulTreeDel_eq_prim_add_sum` (the structural
+    decomposition lemma below) names it in its statement: any consumer
+    that uses that lemma to destructure `comulTreeDel` summands needs
+    the symbol to be in scope. -/
 noncomputable def deletionRightChannel
     (m : Option (TraceTree α Unit)) : Hc R α :=
   match m with
@@ -300,6 +301,19 @@ noncomputable def comulTreeDel (T : TraceTree α Unit) :
   ∑ c : CutShape T,
     forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
     deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+
+/-- The structural decomposition of `comulTreeDel T` into its primitive
+    `T ⊗ 1` term and the sum of admissible-cut terms. Stated as a named
+    `rfl` lemma so downstream proofs (e.g., the algebraic Merge bridge in
+    `Theories/Syntax/Minimalist/Hopf/MergeAction.lean`) are robust under
+    refactors of `comulTreeDel`'s body. Lives in `ConnesKreimer` (where
+    `deletionRightChannel` is in scope) rather than at the consumer. -/
+theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
+    comulTreeDel (R := R) T
+      = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
+        + ∑ c : CutShape T,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c) := rfl
 
 /-- The forest-level Δ^d coproduct: product of tree-level coproducts
     over the components. Same multiplicative extension as Δ^c. -/
@@ -359,8 +373,13 @@ noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
     comulDelMonoidHom
 
 /-- `comulDelAlgHom` applied to the basis vector `Finsupp.single F 1`
-    equals `comulForestDel F`. Analog of `comulAlgHom_apply_single`. -/
-@[simp] theorem comulDelAlgHom_apply_single (F : TraceForest α Unit) :
+    equals `comulForestDel F`. Analog of `comulAlgHom_apply_single`.
+
+    Not `@[simp]`: `AddMonoidAlgebra.lift_single` already fires on this
+    LHS leaving `comulDelMonoidHom F.toAdd`, and rewriting through this
+    lemma jumps several normalization steps in one move — fragile if
+    callers are reasoning about partial unfoldings. Invoke explicitly. -/
+theorem comulDelAlgHom_apply_single (F : TraceForest α Unit) :
     comulDelAlgHom (R := R) (α := α) (Finsupp.single F 1) = comulForestDel F := by
   show AddMonoidAlgebra.lift R _ _ comulDelMonoidHom (Finsupp.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
@@ -369,8 +388,7 @@ noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
 /-- `comulForestDel` on the singleton forest `{T}` reduces to `comulTreeDel T`. -/
 @[simp] theorem comulForestDel_singleton (T : TraceTree α Unit) :
     comulForestDel (R := R) ({T} : TraceForest α Unit) = comulTreeDel T := by
-  show ((({T} : TraceForest α Unit)).map (comulTreeDel (R := R))).prod = _
-  rw [Multiset.map_singleton, Multiset.prod_singleton]
+  simp only [comulForestDel, Multiset.map_singleton, Multiset.prod_singleton]
 
 /-- **Δ^d on a 2-tree workspace** (M-C-B Def 1.2.8 with ω = d, applied
     to `F = {T1, T2}`). Multiplicativity of `comulDelAlgHom` gives
@@ -380,11 +398,9 @@ theorem comulDelAlgHom_pair (T1 T2 : TraceTree α Unit) :
     comulDelAlgHom (R := R) (α := α)
         (forestToHc ({T1, T2} : TraceForest α Unit))
       = comulTreeDel T1 * comulTreeDel T2 := by
-  unfold forestToHc
+  show comulDelAlgHom (Finsupp.single ({T1, T2} : TraceForest α Unit) 1) = _
   rw [comulDelAlgHom_apply_single]
   show ((({T1, T2} : TraceForest α Unit)).map (comulTreeDel (R := R))).prod = _
-  rw [show (({T1, T2} : TraceForest α Unit).map (comulTreeDel (R := R)))
-      = ({comulTreeDel T1, comulTreeDel T2} : Multiset _) from rfl]
   exact Multiset.prod_pair _ _
 
 end ConnesKreimer
