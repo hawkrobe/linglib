@@ -1,3 +1,4 @@
+import Linglib.Features.Givenness
 import Linglib.Features.InformationStructure
 
 /-!
@@ -5,23 +6,27 @@ import Linglib.Features.InformationStructure
 
 @cite{umbach-2004} @cite{erteschik-shir-1973} @cite{abeille-et-al-2020}
 
-Theory predicates over the substance taxonomies in
-`Features/InformationStructure.lean` — Umbach 2004 alternative-set
-well-formedness (similarity + dissimilarity) and the Erteschik-Shir /
-Abeillé extraction-IS clash constraint.
+Theory predicates over the substance taxonomies in `Features/`:
+- @cite{umbach-2004} alternative-set well-formedness (similarity +
+  dissimilarity).
+- @cite{erteschik-shir-1973} / @cite{abeille-et-al-2020} extraction-IS
+  clash constraint, parameterized over the **two** Krifka axes the
+  paper conflates: filler focus marking
+  (`Features.InformationStructure.FocusMark`) and domain givenness
+  (`Features.BinaryGivenness`).
 
-The substance enums (`DiscourseStatus`, …) live in
-`Features/InformationStructure.lean`; this file provides the *theory*
-layered on top of them. (`ExclusionVariety` and `PolaritySwitchContext`
-were collapsed into `Core.Discourse.Coherence.CoherenceRelation` in
-the 0.230.488 cleanup — the IS-vocabulary "additional vs substitution"
-and "polarity contrast vs correction" pairs are now populated directly
-with `CoherenceRelation.contrast` and `CoherenceRelation.correction`.)
+The `extractionISClash` signature splits the prior single-`DiscourseStatus`
+parameter pair into a `(filler : FocusMark, domain : BinaryGivenness)`
+pair, making the two-axis structure of the FBC explicit per the
+post-Krifka substrate redesign. (`ExclusionVariety` and
+`PolaritySwitchContext` were collapsed into
+`Core.Discourse.Coherence.CoherenceRelation` in the 0.230.488 cleanup.)
 -/
 
 namespace Semantics.Focus.Comparability
 
-open Features.InformationStructure (DiscourseStatus)
+open Features (BinaryGivenness)
+open Features.InformationStructure (FocusMark)
 
 /-! ## Alternative-Set Well-Formedness (@cite{umbach-2004} §2.2)
 
@@ -74,32 +79,43 @@ a backgrounded constituent." -/
 
 /-- **Information-structural extraction clash** (@cite{erteschik-shir-1973},
     @cite{abeille-et-al-2020}): a focused filler extracted from a
-    backgrounded domain creates an incompatibility between the filler's
-    discourse function (addressing the QUD) and the domain's discourse
-    status (QUD-invisible).
+    given/backgrounded domain creates an incompatibility between the
+    filler's discourse function (addressing the QUD) and the domain's
+    discourse status (QUD-invisible).
 
-    Both parameters are free, enabling use in:
-    - MoS islands: `extractionISClash .focused domainStatus` (filler always focused)
-    - Subject islands: `extractionISClash (fillerIS c) (subjectIS c)` (filler varies by construction)
-    - General FBC: `extractionISClash extractedStatus governorStatus` -/
-def extractionISClash (fillerStatus domainStatus : DiscourseStatus) : Prop :=
-  fillerStatus = .focused ∧ domainStatus = .given
+    The two parameters are independent Krifka axes — filler focus
+    marking (`FocusMark`, the binary focus axis) and domain givenness
+    (`BinaryGivenness`, the Prince hearer-status axis). The pre-Krifka
+    `(DiscourseStatus, DiscourseStatus)` signature collapsed both into
+    one enum and required the call site to filter out the irrelevant
+    third value. Under the new substrate the axes are explicit.
 
-instance (fillerStatus domainStatus : DiscourseStatus) :
-    Decidable (extractionISClash fillerStatus domainStatus) :=
+    Use sites:
+    - MoS islands: `extractionISClash .focused domainGivenness` (filler
+      always focused; only the domain varies)
+    - Subject islands: `extractionISClash (fillerFocus c) (subjectGivenness c)`
+      (filler focus and domain givenness both vary by construction)
+    - General FBC: same shape, varying both arguments. -/
+def extractionISClash (filler : FocusMark) (domain : BinaryGivenness) :
+    Prop :=
+  filler = .focused ∧ domain = .given
+
+instance (f : FocusMark) (d : BinaryGivenness) :
+    Decidable (extractionISClash f d) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Extraction of a focused element from a backgrounded domain clashes. -/
+/-- Extraction of a focused filler from a given/backgrounded domain clashes. -/
 theorem extractionISClash_focused_given :
     extractionISClash .focused .given := ⟨rfl, rfl⟩
 
-/-- Extraction from an at-issue domain does not clash. -/
+/-- Extraction from a non-given (new) domain does not clash, even when
+    the filler is focused. -/
 theorem extractionISClash_focused_new :
     ¬ extractionISClash .focused .new := by decide
 
-/-- Non-focused extraction from a backgrounded domain does not clash
-    (e.g., relative clause heads, topics). -/
-theorem extractionISClash_given_given :
-    ¬ extractionISClash .given .given := by decide
+/-- Non-focused extraction (e.g., relative clause heads, topics) does
+    not clash, even when the domain is given. -/
+theorem extractionISClash_nonFocused_given :
+    ¬ extractionISClash .nonFocused .given := by decide
 
 end Semantics.Focus.Comparability

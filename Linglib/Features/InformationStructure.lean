@@ -50,6 +50,19 @@ structure Rheme (P : Type) where
 
 /-! ## Focus and Background -/
 
+/-- Binary focus marking — whether a constituent bears focus or not.
+    The simplest categorical encoding of the focus axis (Krifka 2008
+    one of four IS notions). Mirror of `Features.TopicMark` for the
+    topic axis. Use `FocusMark` when a study only needs the binary
+    focus-vs-not distinction; use `Focus α` (below) when the
+    Roothian alternative-set structure is needed. -/
+inductive FocusMark where
+  /-- Constituent is focus-marked (pitch accent / contrast). -/
+  | focused
+  /-- Constituent is not focus-marked. -/
+  | nonFocused
+  deriving DecidableEq, Repr, Inhabited
+
 /-- Focus: the contrasted element(s) within theme or rheme.
 
     Focus is marked by pitch accent and:

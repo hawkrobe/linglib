@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
-import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Linglib.Theories.Semantics.Focus.Comparability
 
 /-!
@@ -61,7 +61,8 @@ inductive ExtractionPosition where
   | object
   deriving DecidableEq, Repr
 
-open Features.InformationStructure
+open Features (BinaryGivenness)
+open Features.InformationStructure (FocusMark)
 open Semantics.Focus.Comparability
 
 namespace CartnerEtAl2026
@@ -74,41 +75,46 @@ namespace CartnerEtAl2026
 (the displaced element) and its extraction domain. These profiles determine
 whether the FBC predicts an IS clash.
 
-For the FBC, what matters is whether the filler is *focused*. WHQ fillers
-are focused (at-issue, introducing new information); RC and TOP fillers are
-not (the paper says both are "given" — RC heads are presupposed, topics
-are discourse-old). The specific non-focused status (`.given` vs `.new`)
-is immaterial: the FBC fires only on `.focused`. -/
+The Krifka decomposition forces these into TWO axes: filler focus
+marking (a focus-axis fact) and domain givenness (a givenness-axis
+fact). WHQ fillers are focused (at-issue, introducing new
+information); RC and TOP fillers are not (RC heads are presupposed,
+topics are discourse-old). All three subjects are given/backgrounded.
+Pre-Krifka versions of this file collapsed both into one
+`DiscourseStatus → DiscourseStatus` map and had to filter the
+`.focused` case for the domain. -/
 
-/-- IS status of the filler in each construction.
+/-- Focus marking of the filler in each construction.
 @cite{abeille-et-al-2020}, §2; @cite{winckel-et-al-2025}. -/
-def fillerIS : FGDConstruction → DiscourseStatus
-  | .whQuestion     => .focused  -- wh-phrase is focused (at-issue)
-  | .relativeClause => .given    -- RC head is given/presupposed
-  | .topicalization => .given    -- topic is discourse-old
+def fillerFocus : FGDConstruction → FocusMark
+  | .whQuestion     => .focused      -- wh-phrase is focused (at-issue)
+  | .relativeClause => .nonFocused   -- RC head is given/presupposed
+  | .topicalization => .nonFocused   -- topic is discourse-old
 
-/-- IS status of the extraction domain (subject position).
-Subjects are typically backgrounded across all three constructions. -/
-def subjectIS : FGDConstruction → DiscourseStatus
+/-- Givenness of the extraction domain (subject position).
+Subjects are typically given/backgrounded across all three
+constructions. -/
+def subjectGivenness : FGDConstruction → BinaryGivenness
   | .whQuestion     => .given
   | .relativeClause => .given
   | .topicalization => .given
 
-/-- **Subjects have uniform IS status across all constructions.**
+/-- **Subjects have uniform givenness across all constructions.**
 This uniformity is what makes the cross-constructional comparison
 informative: the extraction domain is held constant while the filler's
-IS status varies. -/
-theorem subjectIS_uniform :
-    subjectIS .whQuestion = subjectIS .relativeClause ∧
-    subjectIS .relativeClause = subjectIS .topicalization := ⟨rfl, rfl⟩
+focus marking varies. -/
+theorem subjectGivenness_uniform :
+    subjectGivenness .whQuestion = subjectGivenness .relativeClause ∧
+    subjectGivenness .relativeClause = subjectGivenness .topicalization :=
+  ⟨rfl, rfl⟩
 
-/-- **Fillers differ in IS status across constructions.**
-WHQ fillers are focused; RC and TOP fillers are given. This is the
+/-- **Fillers differ in focus marking across constructions.**
+WHQ fillers are focused; RC and TOP fillers are not. This is the
 variable that the FBC claims should modulate island effects. -/
-theorem fillerIS_varies :
-    fillerIS .whQuestion ≠ fillerIS .relativeClause ∧
-    fillerIS .whQuestion ≠ fillerIS .topicalization := by
-  constructor <;> simp [fillerIS]
+theorem fillerFocus_varies :
+    fillerFocus .whQuestion ≠ fillerFocus .relativeClause ∧
+    fillerFocus .whQuestion ≠ fillerFocus .topicalization := by
+  constructor <;> simp [fillerFocus]
 
 -- ============================================================================
 -- §2. The Focus Background Constraint (@cite{abeille-et-al-2020})
@@ -123,7 +129,7 @@ domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean
 which unifies this constraint with @cite{erteschik-shir-1973}'s Dominance
 Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Prop :=
-  extractionISClash (fillerIS c) (subjectIS c)
+  extractionISClash (fillerFocus c) (subjectGivenness c)
 
 instance (c : FGDConstruction) : Decidable (fbcPredictsIsland c) :=
   inferInstanceAs (Decidable (extractionISClash _ _))
@@ -132,24 +138,36 @@ instance (c : FGDConstruction) : Decidable (fbcPredictsIsland c) :=
 -- §2b. Revised FBC (@cite{winckel-et-al-2025})
 -- ============================================================================
 
+/-- Focus marking of the subject (governor) in each construction.
+Across all three constructions in @cite{cartner-et-al-2026}'s
+materials, subjects are non-focused — the experimental design holds
+the governor's focus marking constant while varying the filler's. -/
+def subjectFocus : FGDConstruction → FocusMark
+  | .whQuestion     => .nonFocused
+  | .relativeClause => .nonFocused
+  | .topicalization => .nonFocused
+
 /-- The revised FBC (formulation (11) of @cite{winckel-et-al-2025}):
 
     "An extracted element should not be more focused than its (non-local)
     governor."
 
-This is gradient: the greater the focus difference between filler and
-governor, the more degraded the dependency. Uses `DiscourseStatus.rank`
-from `Core/Discourse/InformationStructure.lean`. -/
-def fbcRevisedViolation (extractedStatus governorStatus : DiscourseStatus) : Prop :=
-  extractedStatus.rank > governorStatus.rank
+@cite{winckel-et-al-2025} state this as gradient (greater focus
+difference → more degraded dependency), but in @cite{cartner-et-al-2026}'s
+materials both filler and governor are coded as binary focus marks
+(`FocusMark`), so the gradient version reduces to: filler is focused
+AND governor is not. Modelling the gradient case requires a richer
+focus-prominence type than the binary `FocusMark`; deferred. -/
+def fbcRevisedViolation (filler governor : FocusMark) : Prop :=
+  filler = .focused ∧ governor = .nonFocused
 
-instance (a b : DiscourseStatus) : Decidable (fbcRevisedViolation a b) :=
-  inferInstanceAs (Decidable (a.rank > b.rank))
+instance (a b : FocusMark) : Decidable (fbcRevisedViolation a b) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Revised FBC predicts a subject island effect for a given construction
 iff the filler is more focused than the subject governor. -/
 def fbcRevisedPredictsIsland (c : FGDConstruction) : Prop :=
-  fbcRevisedViolation (fillerIS c) (subjectIS c)
+  fbcRevisedViolation (fillerFocus c) (subjectFocus c)
 
 instance (c : FGDConstruction) : Decidable (fbcRevisedPredictsIsland c) :=
   inferInstanceAs (Decidable (fbcRevisedViolation _ _))
@@ -462,9 +480,9 @@ Conclusions:
 - The direct backgroundedness account (BCI) is not tested -/
 theorem argument_chain :
     -- Structural premise: subjects uniform, fillers vary
-    subjectIS .whQuestion = subjectIS .relativeClause ∧
-    subjectIS .relativeClause = subjectIS .topicalization ∧
-    fillerIS .whQuestion ≠ fillerIS .relativeClause ∧
+    subjectGivenness .whQuestion = subjectGivenness .relativeClause ∧
+    subjectGivenness .relativeClause = subjectGivenness .topicalization ∧
+    fillerFocus .whQuestion ≠ fillerFocus .relativeClause ∧
     -- FBC predictions (original and revised agree)
     fbcPredictsIsland .whQuestion ∧
     ¬ fbcPredictsIsland .relativeClause ∧
@@ -484,7 +502,7 @@ theorem argument_chain :
     cartnerTestsTheory .directBackgroundedness = false := by
   refine ⟨rfl, rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_,
           ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩
-  · simp [fillerIS]
+  · simp [fillerFocus]
   · decide
   · decide
   · decide
