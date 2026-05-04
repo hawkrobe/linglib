@@ -1,5 +1,5 @@
 import Linglib.Theories.Discourse.Centering.Defs
-import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Mathlib.Order.Basic
 
 /-!
@@ -37,40 +37,32 @@ instantiation verifies Rule 2 only at the .05 level (PSDH §4.4.1
 end). The .01-vs-.05 elevation is what STRUBE-HAHN ranking buys —
 not exclusivity over IF.
 
-**Relation to existing linglib enums.**
-- `Features.InformationStructure.DiscourseStatus` (`focused | given
-  | new`) and Strube-Hahn's IS taxonomy share a 3-tier shape but use
-  different cuts: Strube-Hahn treat focus as **orthogonal** to old/new
-  (their §4) and have no `focused` tier. The lossy `ofDiscourseStatus`
-  projection below maps `given → hearerOld`, `focused → hearerOld`
-  (the typical case for already-activated entities), `new → hearerNew`.
-  This deliberately disagrees with `DiscourseStatus.rank` (which puts
-  `focused` highest, `given` lowest) — the disagreement is captured as
-  `ofDiscourseStatus_disagrees_with_DiscourseStatus_rank` below so the
-  cross-file inversion is a theorem, not a buried gotcha.
-- @cite{gundel-hedberg-zacharski-1993}'s **Givenness Hierarchy** (in
-  focus > activated > familiar > uniquely identifiable > referential
-  > type identifiable) is the principal 6-way alternative to
-  Strube-Hahn's 3-way IS ranking. Linglib's GHZ enum lives at
-  `Phenomena/Reference/Studies/Ariel2001.lean` (`GivennessStatus`);
-  its middle tiers (`familiar`, `uniquelyIdentifiable`) cover the
-  conceptual neighborhood of Strube-Hahn's MEDIATED. A
-  `StrubeHahnInfoStatus.ofGivenness` projection would dissolve the
-  MEDIATED orphan but requires GHZ's promotion to substrate (currently
-  stuck behind Theories-cannot-import-Phenomena layering).
+**Substrate source for IS.** The `ofGivenness` projection below
+maps @cite{gundel-hedberg-zacharski-1993}'s 6-tier `GivennessStatus`
+(in `Features/Givenness.lean`) onto Strube-Hahn's 3-tier IS — the
+substantive linguistic bridge the two literatures imply. GHZ's
+`familiar`/`uniquelyIdentifiable` populate the MEDIATED tier (which
+had no source under the prior `DiscourseStatus`-based projection,
+since `DiscourseStatus` lacked any analog of Prince's inferable /
+containing-inferable / anchored-brand-new categories).
+
+The `ofDiscourseStatus` projection that previously lived here was
+deleted in 0.230.708 (along with the `DiscourseStatus` enum it
+projected from); the divergence theorem witnessing its broken
+ordering became meaningless once the substrate moved to the
+properly-aligned `GivennessStatus`.
 -/
 
 set_option autoImplicit false
 
 namespace Discourse.Centering
 
+open Features (GivennessStatus)
+
 /-- @cite{strube-hahn-1999}'s information-status taxonomy as a
-    Centering-instance-private enum. The existing
-    `Features.InformationStructure.DiscourseStatus` (`focused | given |
-    new`) uses different labels and treats `focused` as orthogonal to
-    old/new — collapsing them into a single rank misrepresents
-    Strube-Hahn. The lossy `ofDiscourseStatus` projection below bridges
-    when needed, with the disagreement made explicit as a theorem.
+    Centering-instance-private enum. The 3-tier shape (HEARER-OLD /
+    MEDIATED / HEARER-NEW) is preserved as the Strube-Hahn-native
+    surface; the substrate source is GHZ-6 (see `ofGivenness` below).
 
     Strube-Hahn's HEARER-OLD covers @cite{prince-1981}'s discourse-old
     + unused/evoked entities (e.g. *Margaret Thatcher* in a UK political
@@ -104,55 +96,41 @@ instance : CfRanker StrubeHahnInfoStatus where
     GrammaticalRole` instance in the sibling file. -/
 instance : LinearOrder StrubeHahnInfoStatus := CfRanker.toLinearOrder _
 
-/-- Lossy projection from `Features.InformationStructure.DiscourseStatus`
-    to Strube-Hahn's IS taxonomy:
+/-- Project @cite{gundel-hedberg-zacharski-1993}'s 6-tier
+    `Features.GivennessStatus` onto Strube-Hahn's 3-tier IS:
 
-    * `given → hearerOld` — already in the discourse.
-    * `focused → hearerOld` — focused entities are typically activated,
-      so they project to the hearer-old tier in the dominant case.
-      Strube-Hahn themselves bracket focus from the IS hierarchy
-      (their §4); this projection is genuinely undefined for the
-      atypical case of focus-marked discourse-new entities (e.g.,
-      contrastive answers to wh-questions), where `hearerNew` would
-      arguably be the better target.
-    * `new → hearerNew` — brand-new.
+    * `inFocus`, `activated` → `hearerOld` (currently activated /
+      already in the discourse).
+    * `familiar`, `uniquelyIdentifiable` → `mediated` (in long-term
+      memory, but requiring some inference to anchor — Prince's
+      "unused" + inferable cluster).
+    * `referential`, `typeIdentifiable` → `hearerNew` (brand-new to
+      the hearer; @cite{prince-1981}'s discourse-new categories).
 
-    The MEDIATED tier is **not produced** by this projection — Prince
-    1981's inferable / containing-inferable / anchored-brand-new
-    distinctions have no analog in `DiscourseStatus`. Bridging from
-    @cite{gundel-hedberg-zacharski-1993}'s 6-tier `GivennessStatus`
-    (currently in `Phenomena/Reference/Studies/Ariel2001.lean`) would
-    populate MEDIATED but requires that enum's promotion to substrate. -/
-def StrubeHahnInfoStatus.ofDiscourseStatus :
-    Features.InformationStructure.DiscourseStatus → StrubeHahnInfoStatus
-  | .given   => .hearerOld
-  | .focused => .hearerOld
-  | .new     => .hearerNew
+    The 4-2-2 vs 2-2-2 split here is one defensible mapping among
+    several; @cite{prince-1981}'s text and PSDH §2.4.3 fn 10 admit
+    that the GHZ-to-Prince correspondence is approximate. The MEDIATED
+    tier finally has a substrate source (the prior projection from
+    `DiscourseStatus` had no source for it, leaving MEDIATED
+    unreachable). -/
+def StrubeHahnInfoStatus.ofGivenness :
+    GivennessStatus → StrubeHahnInfoStatus
+  | .inFocus              => .hearerOld
+  | .activated            => .hearerOld
+  | .familiar             => .mediated
+  | .uniquelyIdentifiable => .mediated
+  | .referential          => .hearerNew
+  | .typeIdentifiable     => .hearerNew
 
-/-- Sanity-anchor for the `focused → hearerOld` mapping: a stable
-    grep target for the projection's typical case. -/
-example :
-    StrubeHahnInfoStatus.ofDiscourseStatus .focused = .hearerOld := rfl
-
-/-- The Strube-Hahn IS ranking and `DiscourseStatus.rank` (used by
-    `LuPanDegen2025`, `CartnerEtAl2026`, `BackgroundedIslands` for
-    extraction-acceptability and focus-comparison) **disagree** as
-    orderings on the three shared values. `DiscourseStatus.rank` puts
-    `given` lowest (0) and `focused` highest (2); under the projection,
-    `given` becomes HEARER-OLD (highest rank 2) and `focused` collapses
-    onto the same tier. The two cannot be reconciled by a monotone
-    relabelling — IS-ranking and focus-prominence ranking are
-    genuinely different orderings, not notational variants of one. -/
-theorem ofDiscourseStatus_disagrees_with_DiscourseStatus_rank :
-    ¬ (∀ a b : Features.InformationStructure.DiscourseStatus,
-        a.rank ≤ b.rank ↔
-        (StrubeHahnInfoStatus.ofDiscourseStatus a).rank ≤
-          (StrubeHahnInfoStatus.ofDiscourseStatus b).rank) := by
-  -- Witness: `given` and `new`. Under `DiscourseStatus.rank`,
-  -- `given (= 0) ≤ new (= 1)` holds. After projection, `given` becomes
-  -- `hearerOld` (rank 2) and `new` becomes `hearerNew` (rank 0); the
-  -- corresponding inequality `2 ≤ 0` fails.
-  intro h
-  exact absurd ((h .given .new).mp (by decide)) (by decide)
+/-- The projection respects the salience ordering: more cognitively
+    activated givenness statuses map to higher (or equal) Centering
+    ranks. Sanity check on the substantive linguistic claim that the
+    GHZ-6 hierarchy and Strube-Hahn's IS scale agree about which
+    referents are more salient. -/
+theorem ofGivenness_monotone (a b : GivennessStatus) :
+    a.rank ≥ b.rank →
+    (StrubeHahnInfoStatus.ofGivenness a).rank ≥
+      (StrubeHahnInfoStatus.ofGivenness b).rank := by
+  cases a <;> cases b <;> decide
 
 end Discourse.Centering
