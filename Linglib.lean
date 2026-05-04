@@ -344,7 +344,7 @@ import Linglib.Core.Morphology.Exponence
 import Linglib.Core.Morphology.MorphWord
 import Linglib.Theories.Semantics.Verb.Roots.Operators
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.Discourse.Accessibility
+import Linglib.Features.Accessibility
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment

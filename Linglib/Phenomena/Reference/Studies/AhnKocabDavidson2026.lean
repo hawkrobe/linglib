@@ -51,7 +51,7 @@ set_option autoImplicit false
 namespace AhnKocabDavidson2026
 
 open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
-open Core.Discourse.Accessibility (AccessibilityLevel)
+open Features (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
 open Pragmatics.Expressives (TwoDimProp)
 open Features.SelectionalPreferences (SemClass)

@@ -3,7 +3,7 @@ import Linglib.Theories.Discourse.Centering.Transition
 import Linglib.Theories.Discourse.Centering.Rule1
 import Linglib.Theories.Discourse.Centering.Rule2
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Core.Discourse.Accessibility
+import Linglib.Features.Accessibility
 import Linglib.Phenomena.Reference.Studies.Sidner1983
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
@@ -409,7 +409,7 @@ theorem korean_subject_bias_for_null_exceeds_chance :
 -- § 7. Bridge to @cite{ariel-2001} (Accessibility Marking)
 -- ════════════════════════════════════════════════════
 
-open Core.Discourse.Accessibility
+open Features
 
 /-- Centering's Cb (the "currently centered" entity) corresponds to a
     high-accessibility referent on @cite{ariel-2001}'s scale. Rule 1

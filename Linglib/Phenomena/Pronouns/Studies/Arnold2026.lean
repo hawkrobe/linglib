@@ -1,7 +1,7 @@
 import Linglib.Features.Gender
 import Linglib.Typology.Pronouns
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.Accessibility
+import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
 
 /-!
@@ -64,7 +64,7 @@ namespace Arnold2026
 
 open Features (GenderInfo SurfaceGender)
 open Typology (PronounSpec)
-open Core.Discourse.Accessibility (DiscourseElaboration AccessibilityLevel)
+open Features (DiscourseElaboration AccessibilityLevel)
 open Fragments.English.Pronouns (GenderParadigm)
 
 -- ============================================================================

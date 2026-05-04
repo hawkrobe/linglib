@@ -1,33 +1,53 @@
 import Linglib.Features.Prominence
 
 /-!
-# Referential Form in Production
+# Accessibility Marking Scale — Referential Form Taxonomy
 @cite{ariel-2001} @cite{arnold-wasow-losongco-ginstrom-2000}
 
-Speakers choose between reduced (pronoun) and full (name, description) forms
-when referring to discourse entities. This choice is governed by the
-**accessibility** of the referent: more accessible/predictable referents
-license more reduced forms (@cite{ariel-2001}).
+Per-entry feature taxonomy classifying referring expressions by
+**accessibility** — the degree to which the referent's mental
+representation is available to the addressee. Speakers choose between
+reduced (pronoun) and full (name, description) forms based on this
+accessibility (@cite{ariel-2001}).
 
 ## The Accessibility Marking Scale
 
-The canonical referential form type is `AccessibilityLevel`, @cite{ariel-2001}'s
-18-level ordering from least accessible (full name + modifier) to most
-accessible (zero/pro-drop). This replaces the earlier conflation with
-`DefinitenessLevel` — the accessibility and definiteness scales are
-**non-monotonically** related (names are less accessible than definite
-descriptions but more prominent for DOM), so they must be separate types.
-A coarsening function `toDefLevel` bridges to the DOM/DSM scale when needed.
+`AccessibilityLevel` is @cite{ariel-2001}'s 18-level ordering from
+least accessible (full name + modifier) to most accessible (zero /
+pro-drop). This replaces the earlier conflation with `DefinitenessLevel`
+— the accessibility and definiteness scales are **non-monotonically**
+related (names are less accessible than definite descriptions but more
+prominent for DOM), so they must be separate types. A coarsening
+function `toDefLevel` bridges to the DOM/DSM scale when needed.
 
-This module provides the link between accessibility/predictability and
-referential form, connecting `Phenomena/Reference/` (form choice) to
+## Layer position
+
+`Features/`. Sibling of `Features/Givenness.lean` (the GHZ-6
+hierarchy). Both are per-entry feature taxonomies for cognitive
+status: `AccessibilityLevel` classifies *forms* by their
+accessibility-marking behavior; `GivennessStatus` classifies *entities*
+by cognitive status. Ariel argues (her chapter pp. 62-65) that
+`AccessibilityLevel`'s 18 tiers are better empirically supported than
+GHZ-6's 6 tiers; both retained as substrate because they serve
+different consumer profiles. The `GivennessStatus.toAccessibility`
+projection (in `Phenomena/Reference/Studies/Ariel2001.lean`) bridges
+them.
+
+This module connects `Phenomena/Reference/` (form choice) to
 `Phenomena/WordOrder/` (position choice) via the shared dimension of
 NP weight/reduction.
+
+## Migrated location
+
+Was previously `Core/Discourse/Accessibility.lean`. Moved to `Features/`
+because it is a per-entry feature taxonomy, not a discourse-state
+primitive — at-issueness and QUD remain in `Core/Discourse/` because
+those genuinely are discourse-state computations.
 -/
 
 set_option autoImplicit false
 
-namespace Core.Discourse.Accessibility
+namespace Features
 
 open Features.Prominence
 
@@ -230,4 +250,4 @@ theorem pronoun_implies_elaborated :
 theorem fullName_implies_underspecified :
     AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
 
-end Core.Discourse.Accessibility
+end Features

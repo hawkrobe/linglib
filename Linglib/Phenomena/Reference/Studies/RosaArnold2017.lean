@@ -1,6 +1,6 @@
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.Discourse.Accessibility
+import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
@@ -65,7 +65,7 @@ set_option autoImplicit false
 namespace RosaArnold2017
 
 open Core.Discourse.Coherence
-open Core.Discourse.Accessibility
+open Features
 open Features.Prominence
 
 -- ════════════════════════════════════════════════════

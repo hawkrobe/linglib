@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Accessibility
+import Linglib.Features.Accessibility
 import Linglib.Features.PronounStrength
 
 /-!
@@ -52,9 +52,9 @@ distinction, not the full range of referring expressions).
 
 set_option autoImplicit false
 
--- Extend the Core namespace with study-specific form-function criteria.
+-- Extend the Features namespace with study-specific form-function criteria.
 -- This enables dot notation (e.g., AccessibilityLevel.zero.informativity).
-namespace Core.Discourse.Accessibility
+namespace Features
 
 /-- Informativity: approximate lexical content, encoded as an ordinal
     ranking (0–4). Anti-correlated with accessibility (more informative
@@ -112,12 +112,12 @@ def AccessibilityLevel.all : List AccessibilityLevel :=
    .stressedPronGesture, .stressedPron, .unstressedPron,
    .cliticizedPron, .verbalAgreement, .zero]
 
-end Core.Discourse.Accessibility
+end Features
 
 namespace Phenomena.Reference.Studies.Ariel2001
 
 open Features.Prominence (DefinitenessLevel)
-open Core.Discourse.Accessibility
+open Features
 
 -- ════════════════════════════════════════════════════
 -- § 1. Form-Function Criteria
