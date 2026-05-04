@@ -3,6 +3,7 @@ import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Theories.Semantics.Focus.Interpretation
@@ -42,7 +43,8 @@ foregrounding it and backgrounding the other. We derive:
 
 -/
 
-open Features.InformationStructure
+open Features.InformationStructure (FocusMark)
+open Features (BinaryGivenness)
 open Semantics.Focus.Comparability
 open Core.Discourse.AtIssueness
 
@@ -367,7 +369,7 @@ theorem extraction_filler_is_focus_alternative
    ⊆ the answer's focus value, then every filler is a focus alternative.
    Focus alternatives are generated at the focused position, so filler = focused.
 4. Foreground = [FoC] in @cite{kratzer-selkirk-2020}'s two-feature system -/
-def extractedFillerStatus : DiscourseStatus := .focused
+def extractedFillerStatus : FocusMark := .focused
 
 /-- **Extraction from a backgrounded clause creates an IS clash**:
 the extracted filler is [FoC] (derived from `extractedFillerStatus`) but
@@ -400,20 +402,32 @@ verbs without manner weight activate the content QUD (foregrounding content). -/
 def defaultDimension (v : VerbDecomp) : CommDimension :=
   if v.hasMannerWeight then .manner else .content
 
-/-- Discourse status of the complement content under a given QUD.
+/-- Givenness of the complement content under a given QUD.
 
-Under manner QUD: content is backgrounded (K&S `DiscourseStatus.given`).
-Under content QUD: content is foregrounded (K&S `DiscourseStatus.new`). -/
-def complementStatus (dim : CommDimension) : DiscourseStatus :=
+Under manner QUD: content is backgrounded (K&S `[G]`-marked, given).
+Under content QUD: content is foregrounded (new / at-issue). -/
+def complementStatus (dim : CommDimension) : BinaryGivenness :=
   match dim with
   | .manner  => .given   -- backgrounded: invisible to QUD
   | .content => .new     -- discourse-new: at issue
 
-/-- Discourse status of the matrix verb under a given QUD. -/
-def verbStatus (dim : CommDimension) : DiscourseStatus :=
+/-- Focus marking of the matrix verb under a given QUD.
+
+Under manner QUD: verb is foregrounded ([FoC], addresses QUD).
+Under content QUD: verb is non-focused. -/
+def verbFocus (dim : CommDimension) : FocusMark :=
   match dim with
-  | .manner  => .focused  -- foregrounded: FoC-marked, addresses QUD
-  | .content => .given    -- backgrounded
+  | .manner  => .focused
+  | .content => .nonFocused
+
+/-- Givenness of the matrix verb under a given QUD.
+
+Under manner QUD: verb is at-issue (new — addresses the QUD).
+Under content QUD: verb is backgrounded (given). -/
+def verbGivenness (dim : CommDimension) : BinaryGivenness :=
+  match dim with
+  | .manner  => .new
+  | .content => .given
 
 /-! ## §6. The MoS Island Effect: Main Derivation
 
@@ -467,11 +481,12 @@ theorem bridge_no_extraction_clash (v : VerbDecomp) (h : ¬ v.hasMannerWeight) :
   simp only [defaultDimension, if_neg h, complementStatus, extractedFillerStatus]
   decide
 
-/-- `DiscourseStatus.rank` is injective: distinct statuses have distinct ranks.
-Subsumes the pairwise chain `backgrounded_lt_new` / `new_lt_focused`. -/
-theorem DiscourseStatus.rank_injective (a b : DiscourseStatus)
+/-- `BinaryGivenness.rank` is injective: distinct values have distinct ranks.
+Replaces the pre-Krifka `DiscourseStatus.rank_injective` (the old enum had
+3 cases including `.focused`; the new one is binary). -/
+theorem BinaryGivenness.rank_injective (a b : BinaryGivenness)
     (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [DiscourseStatus.rank]
+  cases a <;> cases b <;> simp_all [BinaryGivenness.rank]
 
 
 /-! ## §7. Prosodic Amelioration (Experiments 1 & 3b)
@@ -525,17 +540,25 @@ theorem unfocused_mos_complement_backgrounded
   simp only [defaultDimension, if_pos h, complementStatus]
 
 /-- **Amelioration improves extraction**: Extraction from prosodically focused
-complement is better than extraction from default-backgrounded complement. -/
+complement is better than extraction from default-backgrounded complement.
+Stated as `complementStatus .manner > complementStatus .content` on
+`BinaryGivenness.rank` because BinaryGivenness orders by salience
+(`.given = 1 > .new = 0`) — content is at-issue (`.new`, lower
+givenness rank), manner is backgrounded (`.given`, higher rank), and
+"more backgrounded" predicts "harder extraction". -/
 theorem amelioration_improves_extraction :
-    (complementStatus .content).rank >
-    (complementStatus .manner).rank := by
+    (complementStatus .manner).rank >
+    (complementStatus .content).rank := by
   decide
 
 /-- **Focus sensitivity for MoS verbs**: Prosodic focus changes the extraction
-prediction for MoS verbs from degraded (backgrounded) to acceptable (new). -/
+prediction for MoS verbs from degraded (backgrounded) to acceptable (new).
+Direction note: see `amelioration_improves_extraction` — BinaryGivenness
+ranks given > new, so the more-backgrounded-default outranks the
+prosodically-focused alternative. -/
 theorem mos_focus_sensitivity (v : VerbDecomp) (h : v.hasMannerWeight) :
-    (complementStatus (activeDimension v true)).rank >
-    (complementStatus (activeDimension v false)).rank := by
+    (complementStatus (activeDimension v false)).rank >
+    (complementStatus (activeDimension v true)).rank := by
   unfold activeDimension defaultDimension
   simp only [↓reduceIte, if_pos h, complementStatus]
   decide
@@ -582,16 +605,22 @@ theorem say_vs_say_softly_status :
     complementStatus (defaultDimension saySoftlyDecomp) := by
   decide
 
-/-- *say* extraction is better than *say softly* extraction. -/
+/-- *say* extraction is better than *say softly* extraction. Stated as
+`say softly > say` on `BinaryGivenness.rank` because rank orders by
+salience: *say softly*'s complement is `.given` (rank 1, more
+backgrounded), *say*'s complement is `.new` (rank 0, at-issue);
+higher rank = more backgrounded = harder extraction. -/
 theorem say_vs_say_softly_acceptability :
-    (complementStatus (defaultDimension sayDecomp)).rank >
-    (complementStatus (defaultDimension saySoftlyDecomp)).rank := by
+    (complementStatus (defaultDimension saySoftlyDecomp)).rank >
+    (complementStatus (defaultDimension sayDecomp)).rank := by
   decide
 
-/-- The say+adverb island is also focus-sensitive (like the MoS island). -/
+/-- The say+adverb island is also focus-sensitive (like the MoS island).
+Direction: prosodically focused complement is `.new` (rank 0); the
+unfocused default is `.given` (rank 1). -/
 theorem say_adverb_focus_sensitive :
-    (complementStatus (activeDimension saySoftlyDecomp true)).rank >
-    (complementStatus (activeDimension saySoftlyDecomp false)).rank := by
+    (complementStatus (activeDimension saySoftlyDecomp false)).rank >
+    (complementStatus (activeDimension saySoftlyDecomp true)).rank := by
   decide
 
 /-! ## §9. Theory Comparison
@@ -718,23 +747,21 @@ dimension simultaneously. Extended here to cross-dimensional complementarity:
 foregrounding one dimension of a communication event necessarily backgrounds
 the other, given the single-QUD-at-a-time constraint. -/
 theorem qud_complementarity :
-    (verbStatus .manner = .focused ∧ complementStatus .manner = .given) ∧
-    (verbStatus .content = .given ∧ complementStatus .content = .new) := by
+    (verbFocus .manner = .focused ∧ complementStatus .manner = .given) ∧
+    (verbGivenness .content = .given ∧ complementStatus .content = .new) := by
   exact ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-/-- **Backgroundedness = DiscourseStatus.given**: The paper's notion of
-"backgrounded" maps directly to Kratzer & Selkirk's [G]-marked status
-in the existing @cite{kratzer-selkirk-2020} formalization.
-
-This grounds the paper's informal notion of backgroundedness in the
-formal two-feature system already in the codebase. -/
+/-- **Backgroundedness = BinaryGivenness.given**: The paper's notion of
+"backgrounded" maps directly to Kratzer & Selkirk's [G]-marked status,
+which is the Prince hearer-status `given` value in the new substrate. -/
 theorem backgroundedness_is_given :
-    complementStatus .manner = DiscourseStatus.given := rfl
+    complementStatus .manner = BinaryGivenness.given := rfl
 
-/-- **Foregrounding = DiscourseStatus.focused**: The paper's notion of
-"foregrounded" maps to Kratzer & Selkirk's [FoC]-marked status. -/
+/-- **Foregrounding = FocusMark.focused**: The paper's notion of
+"foregrounded" maps to Kratzer & Selkirk's [FoC]-marked status,
+which is the binary-focus axis value in the new substrate. -/
 theorem foregrounding_is_focused :
-    verbStatus .manner = DiscourseStatus.focused := rfl
+    verbFocus .manner = FocusMark.focused := rfl
 
 /-! ## §11. Gradient Manner Weight: Lexical vs. Compositional
 
@@ -888,13 +915,17 @@ negation scope. Under the content QUD, complement content is at-issue and
 falls within negation scope. The negation test is thus a consequence of
 the QUD-determined backgroundedness, not an independent diagnostic. -/
 
-/-- Whether content projects under sentential negation, based on discourse status. -/
-def projectsUnderNegation : DiscourseStatus → Prop
-  | .given   => True    -- backgrounded: negation targets the verb, not the complement
-  | .new     => False   -- at-issue: negation can target the complement
-  | .focused => False   -- focused: negation directly targets this constituent
+/-- Whether content projects under sentential negation, based on its
+givenness. Backgrounded (given) content projects out of negation scope;
+at-issue (new) content falls within scope. (The pre-Krifka version
+also handled a `.focused` case mapping to False; under the new
+substrate, focus marking is a separate axis and this function takes
+only givenness.) -/
+def projectsUnderNegation : BinaryGivenness → Prop
+  | .given => True    -- backgrounded: negation targets the verb, not the complement
+  | .new   => False   -- at-issue: negation can target the complement
 
-instance instDecidableProjectsUnderNegation (s : DiscourseStatus) :
+instance instDecidableProjectsUnderNegation (s : BinaryGivenness) :
     Decidable (projectsUnderNegation s) := by
   cases s <;> unfold projectsUnderNegation <;> exact inferInstance
 
@@ -1034,10 +1065,15 @@ acceptability. -/
 structure IslandPrediction where
   /-- Whether the complement constitutes an island (extraction degraded). -/
   isIsland : Bool
-  /-- Discourse status: `.given` (backgrounded) or `.new` (at-issue). -/
-  status : DiscourseStatus
-  /-- Ordinal extraction acceptability (0 = most degraded, 2 = best). -/
-  rank : Fin 3
+  /-- Givenness: `.given` (backgrounded) or `.new` (at-issue). -/
+  status : BinaryGivenness
+  /-- Ordinal extraction acceptability (0 = most degraded, 1 = best).
+      Note: this is the ACCEPTABILITY rank, *opposite* in direction
+      from `BinaryGivenness.rank` (which orders by salience: given >
+      new). Backgrounded complements (`.given`) are harder to extract
+      from, so they get acceptability 0; at-issue complements (`.new`)
+      get acceptability 1. -/
+  rank : Fin 2
   deriving DecidableEq, Repr
 
 /-- Derive island predictions from at-issueness degree and threshold.
@@ -1047,7 +1083,7 @@ def predictIsland (d : AtIssuenessDegree)
     (θ : AtIssuenessThreshold := defaultThreshold) : IslandPrediction where
   isIsland := !decide (isAtIssue d θ)
   status := if isAtIssue d θ then .new else .given
-  rank := (if isAtIssue d θ then DiscourseStatus.new else DiscourseStatus.given).rank
+  rank := if isAtIssue d θ then 1 else 0
 
 /-- Factive complement at-issueness: above threshold (presupposed content is
 backgrounded qua presupposition, but the *propositional content* is at-issue
@@ -1100,16 +1136,14 @@ theorem predict_factive :
 theorem mos_rank_le_factive :
     (predictIsland (complementAtIssueness .lexical)).rank ≤
     (predictIsland factiveComplementAI).rank := by
-  simp only [predictIsland, if_neg isAtIssue_lexical, if_pos isAtIssue_factive,
-             DiscourseStatus.rank]
+  simp only [predictIsland, if_neg isAtIssue_lexical, if_pos isAtIssue_factive]
   decide
 
 /-- Factive extraction rank ≤ bridge extraction rank. -/
 theorem factive_rank_le_bridge :
     (predictIsland factiveComplementAI).rank ≤
     (predictIsland (complementAtIssueness .none)).rank := by
-  simp only [predictIsland, if_pos isAtIssue_factive, if_pos isAtIssue_none,
-             DiscourseStatus.rank]
+  simp only [predictIsland, if_pos isAtIssue_factive, if_pos isAtIssue_none]
   decide
 
 -- ── Monotonicity ─────────────────────────────────────────────────────
@@ -1122,7 +1156,7 @@ irrelevant once at-issueness is known. -/
 theorem predictIsland_monotone (d₁ d₂ : AtIssuenessDegree)
     (θ : AtIssuenessThreshold) (h : d₁.val ≤ d₂.val) :
     (predictIsland d₁ θ).rank ≤ (predictIsland d₂ θ).rank := by
-  simp only [predictIsland, DiscourseStatus.rank]
+  simp only [predictIsland]
   by_cases h₁ : isAtIssue d₁ θ <;> by_cases h₂ : isAtIssue d₂ θ <;>
     simp [h₁, h₂]
   -- Contradictory case: d₁ at-issue but d₂ not, yet d₁.val ≤ d₂.val
