@@ -721,8 +721,9 @@ For each `g : GeoCut T myL` we extract three pieces:
   its outer-remainder skeleton — i.e., with its own BOT subtrees as `.trace` markers).
 - `geoStackItem g`: the contribution this subtree makes to the **parent's** TOP slot.
   - `myL = .bot`: `.trace T` (the whole subtree is BOT-extracted; appears as a trace).
-  - `myL = .mid`: `.trace (geoOuterSkeleton g)` (the subtree is MID-extracted; appears
-    as a trace whose data is the outer-remainder skeleton).
+  - `myL = .mid`: `.trace T` (the whole subtree appears as a trace whose data is the
+    original `T` — slot 3 only sees the outer cut, and the outer cut extracts T as
+    a unit; T's MID-vs-BOT internal split is orthogonal).
   - `myL = .top`: recursive — for `.node l r`, becomes `.node (geoStackItem gl) (geoStackItem gr)`.
 
 The triple is then `(geoBotForest g, geoMidForest g, {geoStackItem g})` — assembled
@@ -1462,19 +1463,112 @@ This bridge holds at any T (independent of the Foissy bijection). Once proved,
    = (univ : Finset (GeoCut T .top)).val.map (ChildSlots.toTriple R ∘ geoToChildSlots)
    = (univ).val.map geoCutToTriple = geoMultiset T`. -/
 
+/-- Pair-multiset for `AugCutShape`: enumerate `ac' : AugCutShape T'` and project
+    to `(cutForest_aug ac', remainderForest ac')`. The "Forest-pair" sibling of
+    `comulTreeMS R T'`, which factors as `(pairsMS T').map tensorize`. -/
+private def pairsMS (T' : DecoratedTree α) : Multiset (Forest α × Forest α) :=
+  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+    (AugCutShape.cutForest_aug ac', AugCutShape.remainderForest ac')
+
+/-- `comulTreeMS` factors through `pairsMS` via per-pair `forestToHc`-tensorize. -/
+private lemma comulTreeMS_eq_pairsMS_map (T' : DecoratedTree α) :
+    (comulTreeMS R T') = (pairsMS T').map fun p =>
+      (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2) := by
+  unfold comulTreeMS pairsMS
+  rw [Multiset.map_map]
+  rfl
+
+/-- `forestToHc` on a sum of forests = product of `forestToHc`. The
+    `AddMonoidAlgebra.single_mul_single` identity at `r₁ = r₂ = 1`. -/
+private lemma forestToHc_add (F G : Forest α) :
+    forestToHc (R := R) (F + G) = forestToHc (R := R) F * forestToHc (R := R) G := by
+  show (forestToHc (R := R) (F + G) : Hc R α)
+     = (forestToHc (R := R) F * forestToHc (R := R) G : Hc R α)
+  unfold forestToHc
+  exact (AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α) F G 1 1
+    |>.trans (by rw [mul_one])).symm
+
+/-- Product of pair-tensor map distributes through pair sums:
+    `prod (s.map (forestToHc fst ⊗ forestToHc snd)) = forestToHc(sum fst) ⊗ forestToHc(sum snd)`.
+    Combines `Algebra.TensorProduct.tmul_mul_tmul` and `forestToHc_add`. -/
+private lemma forestToHc_pair_prod (s : Multiset (Forest α × Forest α)) :
+    (s.map (fun p => (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2))).prod
+    = (forestToHc (R := R) (s.map Prod.fst).sum)
+        ⊗ₜ[R] (forestToHc (R := R) (s.map Prod.snd).sum) := by
+  induction s using Multiset.induction with
+  | empty =>
+    simp only [Multiset.map_zero, Multiset.prod_zero, Multiset.sum_zero, forestToHc_zero,
+               Algebra.TensorProduct.one_def]
+  | cons p s ih =>
+    simp only [Multiset.map_cons, Multiset.prod_cons, Multiset.sum_cons]
+    rw [ih, Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, ← forestToHc_add]
+
+omit [DecidableEq α] in
+/-- Sections distribute through per-element map:
+    `Sections (M.map (Multiset.map h)) = (Sections M).map (Multiset.map h)`. -/
+private lemma multiset_sections_map_map {β γ : Type*} (h : β → γ)
+    (M : Multiset (Multiset β)) :
+    Multiset.Sections (M.map (Multiset.map h))
+    = (Multiset.Sections M).map (Multiset.map h) := by
+  induction M using Multiset.induction with
+  | empty => simp
+  | cons m M ih =>
+    rw [Multiset.map_cons, Multiset.sections_cons, Multiset.sections_cons,
+        Multiset.bind_map, ih, Multiset.map_bind]
+    refine Multiset.bind_congr (fun a _ => ?_)
+    rw [Multiset.map_map, Multiset.map_map]
+    refine Multiset.map_congr rfl (fun s _ => ?_)
+    rw [Function.comp_apply, Function.comp_apply, Multiset.map_cons]
+
 /-- The algebraic bridge: the LHS triple-tensors equal the per-layer .top
     ChildSlots projected via `ChildSlots.toTriple`. Per-element identity holds
     by tensor-product associativity. -/
 theorem lhsRealCuts_eq_perLayerContrib_top (T : DecoratedTree α) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = (perLayerContrib (α := α) T .top).map (ChildSlots.toTriple R) := by
-  -- Both sides bind over CutShape T. Per-cl_outer Sections types differ
-  -- (Hc-tensor vs Forest pair) but related by per-element forestToHc:
-  -- Sections (... |>.map (forestPairToHcTensor)) ↔ Sections (... pairs).
-  -- The triple correspondence: assoc((forestToHc F ⊗ forestToHc R) ⊗ {rem})
-  --                          = forestToHc F ⊗ (forestToHc R ⊗ {rem}) = ChildSlots.toTriple.
-  -- Pending proof — substantive Multiset.Sections manipulation.
-  sorry
+  unfold lhsRealCuts perLayerContrib
+  rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun cl_outer _ => ?_)
+  -- Step 1: rewrite LHS comulTreeMS via pairsMS factoring.
+  conv_lhs =>
+    rw [show ((CutShape.cutForest cl_outer).map (comulTreeMS R)
+            : Multiset (Multiset ((Hc R α) ⊗[R] (Hc R α))))
+            = (CutShape.cutForest cl_outer).map (fun T' =>
+                 (pairsMS T').map fun p =>
+                   (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2)) from
+         Multiset.map_congr rfl (fun T' _ => comulTreeMS_eq_pairsMS_map T')]
+  -- Step 2: outer Multiset.map_map factors so we can apply sections_map_map.
+  rw [show ((CutShape.cutForest cl_outer).map fun T' =>
+             (pairsMS T').map fun p =>
+               (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2))
+        = ((CutShape.cutForest cl_outer).map (pairsMS (α := α))).map
+            (Multiset.map (fun p =>
+              (forestToHc (R := R) p.1) ⊗ₜ[R] (forestToHc (R := R) p.2))) from by
+       rw [Multiset.map_map]; rfl]
+  rw [multiset_sections_map_map]
+  rw [Multiset.map_map]
+  -- Step 3: identify the RHS pair-multiset with pairsMS.
+  conv_rhs =>
+    rw [show ((CutShape.cutForest cl_outer).map fun T' =>
+             (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+              ((AugCutShape.cutForest_aug ac' : Forest α),
+               (AugCutShape.remainderForest ac' : Forest α)))
+            = (CutShape.cutForest cl_outer).map (pairsMS (α := α)) from rfl]
+  rw [Multiset.map_map]
+  -- Step 4: per-section identity; apply forestToHc_pair_prod + assoc_tmul.
+  refine Multiset.map_congr rfl (fun s _ => ?_)
+  rw [Function.comp_apply, Function.comp_apply, forestToHc_pair_prod]
+  -- LHS: assoc((forestToHc BOT ⊗ forestToHc MID) ⊗ forestToHc({rem cl_outer}))
+  -- RHS: ChildSlots.toTriple R ⟨BOT, MID, rem cl_outer⟩
+  --     = forestToHc(BOT) ⊗ (forestToHc(MID) ⊗ forestToHc({rem cl_outer}))
+  show (Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom
+        ((forestToHc (R := R) (s.map Prod.fst).sum
+            ⊗ₜ[R] forestToHc (R := R) (s.map Prod.snd).sum)
+          ⊗ₜ[R] forestToHc (R := R) ({CutShape.remainder cl_outer} : Forest α))
+      = ChildSlots.toTriple R ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+          CutShape.remainder cl_outer⟩
+  unfold ChildSlots.toTriple
+  rfl
 
 /-- **LHS bijection**: `lhsRealCuts T` enumerates the same multiset of triples
     as `geoMultiset T`. Reduced to the algebraic bridge + `perLayerContrib_top`. -/
