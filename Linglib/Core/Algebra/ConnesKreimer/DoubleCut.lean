@@ -732,18 +732,19 @@ def geoOuterSkeleton {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
   | .top, .trace _ => T
   | .top, .node _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
 
-/-- The contribution this subtree makes to its **parent's** TOP slot — i.e., the
-    inner-remainder skeleton in the parent's triple.
-    - `myL = .bot`: `.trace T` (subtree extracted at outer level).
-    - `myL = .mid`: `.trace (geoOuterSkeleton g)` (subtree extracted at inner level,
-      with outer-remainder skeleton as trace data).
-    - `myL = .top`: recursive on tree structure (vertices kept at top, deeper BOT/MID
-      become `.trace` via `geoStackItem` on subtrees). -/
+/-- The contribution this subtree makes to its **parent's** TOP slot — i.e., what
+    appears at this subtree's position in the parent's slot-3 (outer-remainder) tree.
+    - `myL ∈ {.bot, .mid}`: `.trace T` — the **whole** original subtree T as trace
+      data. This matches the LHS-reading semantics: the outer cut extracts T as a
+      unit (whether T's MID structure goes through inner-cut decomposition is
+      orthogonal — slot 3 only sees the outer cut).
+    - `myL = .top`: recursive — vertices kept at top form the structure; deeper
+      BOT/MID positions become `.trace` via `geoStackItem` on subtrees. -/
 def geoStackItem {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
     DecoratedTree α :=
   match myL, g with
   | .bot, _ => .trace T
-  | .mid, _ => .trace (geoOuterSkeleton g)
+  | .mid, _ => .trace T
   | .top, .leaf _ => T
   | .top, .trace _ => T
   | .top, .node _ _ gl gr => .node (geoStackItem gl) (geoStackItem gr)

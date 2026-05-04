@@ -85,4 +85,45 @@ example :
         (.leaf .mid) (.leaf .top)
     geoStackItem g = .node (.trace (.leaf a)) (.leaf b) := by decide
 
+/-! ### Deeper test: `.node`-rooted subtree at MID
+
+This test case caught a bug in geoStackItem where `myL = .mid` on a `.node`-rooted
+subtree wrongly used `.trace (geoOuterSkeleton g)` instead of `.trace T`. The fix:
+slot 3 trace data must be the **whole** original subtree T (since the outer cut
+extracts T untouched; the inner cut's decomposition of T is orthogonal). -/
+
+abbrev c : Atom := ⟨0⟩
+abbrev d : Atom := ⟨1⟩
+abbrev lDeep : DecoratedTree Atom := .node (.leaf c) (.leaf d)
+abbrev TDeep : DecoratedTree Atom := .node lDeep (.leaf b)
+
+example :
+    let gl : GeoCut lDeep Layer.mid :=
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+        (.leaf .bot) (.leaf .bot)
+    let g : GeoCut TDeep Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        gl (.leaf .top)
+    geoStackItem g = .node (.trace lDeep) (.leaf b) := by decide
+
+example :
+    let gl : GeoCut lDeep Layer.mid :=
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+        (.leaf .bot) (.leaf .bot)
+    let g : GeoCut TDeep Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        gl (.leaf .top)
+    geoBotForest g = ({.leaf c, .leaf d} : Forest Atom) := by decide
+
+example :
+    let gl : GeoCut lDeep Layer.mid :=
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+        (.leaf .bot) (.leaf .bot)
+    let g : GeoCut TDeep Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        gl (.leaf .top)
+    geoMidForest g
+      = ({(.node (.trace (.leaf c)) (.trace (.leaf d)) : DecoratedTree Atom)} :
+          Forest Atom) := by decide
+
 end ConnesKreimer.GeoCutCheck
