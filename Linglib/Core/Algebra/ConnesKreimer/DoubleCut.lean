@@ -620,37 +620,35 @@ then collapses to: both sides enumerate the same multiset of triple-tensors
 indexed by `GeoCut T Layer.top` with `myL = Layer.top` (the "root in TOP"
 subset, since `lhsRealCuts` excludes the outer-extractWhole case). -/
 
-/-- Three layers for a "geometric double cut": `top` (kept in trunk), `mid`
-    (extracted at outer cut, kept by inner), `bot` (extracted at inner cut). -/
+/-- Three layers for a "geometric double cut": `bot` (extracted at inner cut),
+    `mid` (extracted at outer cut, kept by inner), `top` (kept in trunk).
+    Carries `LinearOrder` via the order embedding into `Fin 3` —
+    `bot < mid < top` matches the monotone child-`≤`-parent constraint. -/
 inductive Layer
-  | top
-  | mid
   | bot
+  | mid
+  | top
   deriving DecidableEq, Repr
 
+namespace Layer
+
 instance : Fintype Layer where
-  elems := {Layer.top, Layer.mid, Layer.bot}
+  elems := {Layer.bot, Layer.mid, Layer.top}
   complete := fun a => by cases a <;> decide
 
-/-- `bot < mid < top` ordering on `Layer`. Used as the monotone constraint:
-    child layer `≤` parent layer along any root-to-leaf path. -/
-def Layer.le : Layer → Layer → Prop
-  | .bot, _ => True
-  | .mid, .bot => False
-  | .mid, _ => True
-  | .top, .top => True
-  | .top, _ => False
+/-- Order-preserving embedding into `Fin 3`. Used to derive `LinearOrder`. -/
+def toFin : Layer → Fin 3
+  | .bot => 0
+  | .mid => 1
+  | .top => 2
 
-instance : LE Layer := ⟨Layer.le⟩
-instance : DecidableRel ((· ≤ ·) : Layer → Layer → Prop) := fun a b =>
-  match a, b with
-  | .bot, _ => isTrue trivial
-  | .mid, .bot => isFalse id
-  | .mid, .mid => isTrue trivial
-  | .mid, .top => isTrue trivial
-  | .top, .bot => isFalse id
-  | .top, .mid => isFalse id
-  | .top, .top => isTrue trivial
+theorem toFin_injective : Function.Injective toFin := by
+  intro a b h
+  cases a <;> cases b <;> first | rfl | (simp [toFin] at h)
+
+instance : LinearOrder Layer := LinearOrder.lift' toFin toFin_injective
+
+end Layer
 
 /-- A geometric double cut on `T`: a monotone 3-coloring of `T`'s vertices.
     Indexed by the root vertex's layer `myL`. Children's layers must be `≤ myL`.
@@ -664,6 +662,45 @@ inductive GeoCut : DecoratedTree α → Layer → Type _
   | node {l r : DecoratedTree α} {myL lL rL : Layer}
       (hl : lL ≤ myL) (hr : rL ≤ myL)
       (gl : GeoCut l lL) (gr : GeoCut r rL) : GeoCut (.node l r) myL
+
+/-! ### `Fintype (GeoCut T myL)`
+
+Structural recursion on `T`:
+- `.leaf` / `.trace`: `GeoCut` has a unique element (root layer is `myL`).
+- `.node l r`: `GeoCut (.node l r) myL` is in bijection with
+  `Σ (lL : {x // x ≤ myL}) (rL : {x // x ≤ myL}), GeoCut l lL.1 × GeoCut r rL.1`,
+  which has `Fintype` via mathlib's `Sigma` / `Prod` / `Subtype` instances combined
+  with the recursive `Fintype (GeoCut subtree _)`. -/
+
+@[reducible] private def geoCutFintype :
+    ∀ (T : DecoratedTree α) (myL : Layer), Fintype (GeoCut T myL)
+  | .leaf _, myL =>
+      Fintype.ofEquiv Unit
+        { toFun := fun _ => GeoCut.leaf myL
+          invFun := fun _ => ()
+          left_inv := fun _ => rfl
+          right_inv := fun g => by cases g; rfl }
+  | .trace _, myL =>
+      Fintype.ofEquiv Unit
+        { toFun := fun _ => GeoCut.trace myL
+          invFun := fun _ => ()
+          left_inv := fun _ => rfl
+          right_inv := fun g => by cases g; rfl }
+  | .node l r, myL =>
+      letI _ihl : ∀ lL, Fintype (GeoCut l lL) := geoCutFintype l
+      letI _ihr : ∀ rL, Fintype (GeoCut r rL) := geoCutFintype r
+      Fintype.ofEquiv
+        (Σ (lL : {x : Layer // x ≤ myL}) (rL : {x : Layer // x ≤ myL}),
+          GeoCut l lL.1 × GeoCut r rL.1)
+        { toFun := fun ⟨lL, rL, gl, gr⟩ => GeoCut.node lL.2 rL.2 gl gr
+          invFun := fun g => match g with
+            | .node hl hr gl gr => ⟨⟨_, hl⟩, ⟨_, hr⟩, gl, gr⟩
+          left_inv := fun ⟨_, _, _, _⟩ => rfl
+          right_inv := fun g => by cases g; rfl }
+
+instance instFintypeGeoCut (T : DecoratedTree α) (myL : Layer) :
+    Fintype (GeoCut T myL) :=
+  geoCutFintype T myL
 
 /-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
 
