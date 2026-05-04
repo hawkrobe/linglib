@@ -1442,6 +1442,243 @@ private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
   rw [Multiset.map_map]
   rfl
 
+/-! #### `bothCut`, `onlyLeftCut`, `onlyRightCut` ctor cases
+
+The other 3 CutShape ctors of `(.node l r)` each produce a contribution to
+`perLayerContrib (.node l r) .top` that matches a specific (lL, rL) sub-bind
+of `perLayerContribDecomposed l r`. Following the pattern of `bothRecurse`,
+these are proved by `Multiset.sections_add` + `Multiset.bind_singleton` +
+per-(s_l, s_r) `nodeChildSlots`-recognition.
+
+The `pairsMS l` reformulation collapses `AugCutShape l = CutShape l ⊕ Unit` into
+a single Multiset of `(Forest, Forest)` pairs (used for the LHS bridge below). -/
+
+/-- Pair-multiset for `AugCutShape`: enumerate `ac' : AugCutShape T'` and project
+    to `(cutForest_aug ac', remainderForest ac')`. The "Forest-pair" sibling of
+    `comulTreeMS R T'`, which factors as `(pairsMS T').map tensorize`. -/
+private def pairsMS (T' : DecoratedTree α) : Multiset (Forest α × Forest α) :=
+  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+    (AugCutShape.cutForest_aug ac', AugCutShape.remainderForest ac')
+
+/-- Per-layer .bot + .mid contribution = pairsMS wrapped as ChildSlots. -/
+private theorem perLayerContrib_bot_add_mid_eq_pairsWrap (T : DecoratedTree α) :
+    (perLayerContrib (α := α) T .bot) + (perLayerContrib (α := α) T .mid)
+    = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace T⟩ : ChildSlots α) := by
+  show ((({⟨({T} : Forest α), 0, .trace T⟩} : Multiset (ChildSlots α))) +
+        ((Finset.univ : Finset (CutShape T)).val.map fun cl =>
+          (⟨CutShape.cutForest cl, ({CutShape.remainder cl} : Forest α), .trace T⟩
+            : ChildSlots α)))
+       = (pairsMS (α := α) T).map fun p => (⟨p.1, p.2, .trace T⟩ : ChildSlots α)
+  unfold pairsMS
+  rw [show ((Finset.univ : Finset (AugCutShape T)).val
+            : Multiset (CutShape T ⊕ Unit))
+        = (Finset.univ : Finset (CutShape T)).val.map Sum.inl
+          + (Finset.univ : Finset Unit).val.map Sum.inr from rfl,
+      Multiset.map_add, Multiset.map_add, Multiset.map_map, Multiset.map_map,
+      Multiset.map_map, Multiset.map_map]
+  rw [add_comm]
+  rfl
+
+/-- The bothCut ctor's contribution to perLayerContrib (.node l r) `.top` (raw form). -/
+private noncomputable def perLayerContribTopBothCut (l r : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Multiset.Sections (({l, r} : Forest α).map (pairsMS (α := α)))).map fun s =>
+    ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, .node (.trace l) (.trace r)⟩
+
+/-- The bothCut contribution equals the (.bot + .mid) × (.bot + .mid) cells of
+    perLayerContribDecomposed. -/
+private theorem perLayerContribTopBothCut_eq (l r : DecoratedTree α) :
+    perLayerContribTopBothCut (α := α) l r
+      = ((perLayerContrib (α := α) l .bot) + (perLayerContrib (α := α) l .mid)).bind fun cs_l =>
+          ((perLayerContrib (α := α) r .bot) + (perLayerContrib (α := α) r .mid)).map fun cs_r =>
+            nodeChildSlots cs_l cs_r := by
+  rw [perLayerContrib_bot_add_mid_eq_pairsWrap, perLayerContrib_bot_add_mid_eq_pairsWrap]
+  unfold perLayerContribTopBothCut
+  rw [Multiset.bind_map]
+  show (Multiset.Sections (((l ::ₘ r ::ₘ 0 : Multiset _)).map (pairsMS (α := α)))).map
+        (fun s => (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+                    DecoratedTree.node (.trace l) (.trace r)⟩ : ChildSlots α))
+      = (pairsMS (α := α) l).bind fun a_l =>
+          ((pairsMS (α := α) r).map fun p => (⟨p.1, p.2, .trace r⟩ : ChildSlots α)).map fun cs_r =>
+              nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩ cs_r
+  rw [Multiset.map_cons, Multiset.map_cons, Multiset.map_zero,
+      Multiset.sections_cons, Multiset.sections_cons, Multiset.sections_zero]
+  conv_lhs => rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun a_l _ => ?_)
+  rw [Multiset.map_map, Multiset.map_bind]
+  rw [show (fun a_r : Forest α × Forest α =>
+            (({0} : Multiset (Multiset (Forest α × Forest α))).map (Multiset.cons a_r)).map
+              ((fun s => (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+                          .node (DecoratedTree.trace l) (DecoratedTree.trace r)⟩ : ChildSlots α))
+                ∘ Multiset.cons a_l))
+          = fun a_r => ({(nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+                          ⟨a_r.1, a_r.2, .trace r⟩ : ChildSlots α)} : Multiset _) from by
+      funext a_r
+      simp only [Multiset.map_singleton, Multiset.map_cons, Multiset.map_zero,
+                 Multiset.sum_cons, Multiset.sum_zero, Function.comp_apply]
+      unfold nodeChildSlots
+      simp only [add_zero]]
+  rw [Multiset.bind_singleton, Multiset.map_map]
+  rfl
+
+/-- The onlyLeftCut ctor's contribution: `cutForest = {l} + cutForest cr`. -/
+private noncomputable def perLayerContribTopOnlyLeftCut (l r : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+    (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map (pairsMS (α := α)))).map
+      fun s =>
+        ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+         .node (.trace l) (CutShape.remainder cr)⟩
+
+/-- Per-cr lemma: section reorganization for onlyLeftCut. -/
+private theorem perLayerContribTopOnlyLeftCut_per_cr (l r : DecoratedTree α)
+    (cr : CutShape r) :
+    (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map
+        (pairsMS (α := α)))).map (fun s =>
+        (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+          .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α))
+    = (pairsMS (α := α) l).bind fun a_l =>
+        (Multiset.Sections ((CutShape.cutForest cr).map (pairsMS (α := α)))).map fun s_r =>
+          nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+            ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ := by
+  rw [Multiset.map_add, Multiset.sections_add]
+  rw [show (({l} : Forest α).map (pairsMS (α := α)))
+          = (pairsMS (α := α) l ::ₘ (0 : Multiset (Multiset (Forest α × Forest α)))) from rfl,
+      Multiset.sections_cons, Multiset.sections_zero]
+  rw [Multiset.bind_assoc, Multiset.map_bind]
+  refine Multiset.bind_congr (fun a_l _ => ?_)
+  rw [Multiset.map_singleton, Multiset.singleton_bind, Multiset.map_map]
+  refine Multiset.map_congr rfl (fun s_r _ => ?_)
+  show (⟨((a_l ::ₘ (0 : Multiset _) + s_r).map Prod.fst).sum,
+         ((a_l ::ₘ (0 : Multiset _) + s_r).map Prod.snd).sum,
+         .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α)
+       = nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+            ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩
+  rw [Multiset.map_add, Multiset.map_add, Multiset.sum_add, Multiset.sum_add,
+      Multiset.map_cons, Multiset.map_zero, Multiset.map_cons, Multiset.map_zero,
+      Multiset.sum_cons, Multiset.sum_zero, Multiset.sum_cons, Multiset.sum_zero,
+      add_zero, add_zero]
+  unfold nodeChildSlots
+  rfl
+
+/-- The onlyLeftCut contribution equals the (.bot + .mid, .top) sub-bind. -/
+private theorem perLayerContribTopOnlyLeftCut_eq (l r : DecoratedTree α) :
+    perLayerContribTopOnlyLeftCut (α := α) l r
+      = ((perLayerContrib (α := α) l .bot) + (perLayerContrib (α := α) l .mid)).bind fun cs_l =>
+          (perLayerContrib (α := α) r .top).map fun cs_r =>
+            nodeChildSlots cs_l cs_r := by
+  rw [perLayerContrib_bot_add_mid_eq_pairsWrap]
+  unfold perLayerContribTopOnlyLeftCut
+  conv_lhs =>
+    rw [show ((Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+              (Multiset.Sections ((({l} + CutShape.cutForest cr : Forest α)).map
+                  (pairsMS (α := α)))).map fun s =>
+                (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+                  .node (.trace l) (CutShape.remainder cr)⟩ : ChildSlots α))
+            = (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+              (pairsMS (α := α) l).bind fun a_l =>
+                (Multiset.Sections ((CutShape.cutForest cr).map (pairsMS (α := α)))).map fun s_r =>
+                  nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩
+                    ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from
+         Multiset.bind_congr (fun cr _ => perLayerContribTopOnlyLeftCut_per_cr l r cr)]
+  rw [Multiset.bind_bind, Multiset.bind_map]
+  refine Multiset.bind_congr (fun a_l _ => ?_)
+  show _ = ((Finset.univ : Finset (CutShape r)).val.bind fun cl_outer =>
+              (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
+                (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                  ((AugCutShape.cutForest_aug ac' : Forest α),
+                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
+                  : ChildSlots α)).map fun cs_r =>
+              nodeChildSlots ⟨a_l.1, a_l.2, .trace l⟩ cs_r
+  rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun cr _ => ?_)
+  rw [Multiset.map_map]
+  rfl
+
+/-- The onlyRightCut ctor's contribution: `cutForest = cutForest cl + {r}`. -/
+private noncomputable def perLayerContribTopOnlyRightCut (l r : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+    (Multiset.Sections ((CutShape.cutForest cl + {r} : Forest α).map (pairsMS (α := α)))).map
+      fun s =>
+        ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+         .node (CutShape.remainder cl) (.trace r)⟩
+
+/-- Per-cl lemma: section reorganization for onlyRightCut. -/
+private theorem perLayerContribTopOnlyRightCut_per_cl (l r : DecoratedTree α)
+    (cl : CutShape l) :
+    (Multiset.Sections (((CutShape.cutForest cl + {r} : Forest α)).map
+        (pairsMS (α := α)))).map (fun s =>
+        (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+          .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α))
+    = (Multiset.Sections ((CutShape.cutForest cl).map (pairsMS (α := α)))).bind fun s_l =>
+        (pairsMS (α := α) r).map fun a_r =>
+          nodeChildSlots
+            ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+            ⟨a_r.1, a_r.2, .trace r⟩ := by
+  rw [Multiset.map_add, Multiset.sections_add]
+  rw [show (({r} : Forest α).map (pairsMS (α := α)))
+          = (pairsMS (α := α) r ::ₘ (0 : Multiset (Multiset (Forest α × Forest α)))) from rfl,
+      Multiset.sections_cons, Multiset.sections_zero]
+  rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun s_l _ => ?_)
+  rw [Multiset.map_bind, Multiset.map_bind]
+  rw [show ((pairsMS (α := α) r).map fun a_r =>
+              nodeChildSlots
+                ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                ⟨a_r.1, a_r.2, .trace r⟩)
+          = (pairsMS (α := α) r).bind fun a_r =>
+              ({nodeChildSlots
+                ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                ⟨a_r.1, a_r.2, .trace r⟩} : Multiset _) from
+        (Multiset.bind_singleton _ _).symm]
+  refine Multiset.bind_congr (fun a_r _ => ?_)
+  rw [Multiset.map_singleton, Multiset.map_singleton, Multiset.map_singleton]
+  show ({(_ : ChildSlots α)} : Multiset _) = _
+  congr 1
+  show (⟨((s_l + (a_r ::ₘ (0 : Multiset _))).map Prod.fst).sum,
+         ((s_l + (a_r ::ₘ (0 : Multiset _))).map Prod.snd).sum,
+         .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α)
+       = nodeChildSlots
+          ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+          ⟨a_r.1, a_r.2, .trace r⟩
+  rw [Multiset.map_add, Multiset.map_add, Multiset.sum_add, Multiset.sum_add,
+      Multiset.map_cons, Multiset.map_zero, Multiset.map_cons, Multiset.map_zero,
+      Multiset.sum_cons, Multiset.sum_zero, Multiset.sum_cons, Multiset.sum_zero,
+      add_zero, add_zero]
+  unfold nodeChildSlots
+  rfl
+
+/-- The onlyRightCut contribution equals the (.top, .bot + .mid) sub-bind. -/
+private theorem perLayerContribTopOnlyRightCut_eq (l r : DecoratedTree α) :
+    perLayerContribTopOnlyRightCut (α := α) l r
+      = (perLayerContrib (α := α) l .top).bind fun cs_l =>
+          ((perLayerContrib (α := α) r .bot) + (perLayerContrib (α := α) r .mid)).map fun cs_r =>
+            nodeChildSlots cs_l cs_r := by
+  rw [perLayerContrib_bot_add_mid_eq_pairsWrap]
+  unfold perLayerContribTopOnlyRightCut
+  conv_lhs =>
+    rw [show ((Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+              (Multiset.Sections (((CutShape.cutForest cl + {r} : Forest α)).map
+                  (pairsMS (α := α)))).map fun s =>
+                (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+                  .node (CutShape.remainder cl) (.trace r)⟩ : ChildSlots α))
+            = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+              (Multiset.Sections ((CutShape.cutForest cl).map (pairsMS (α := α)))).bind fun s_l =>
+                (pairsMS (α := α) r).map fun a_r =>
+                  nodeChildSlots
+                    ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                    ⟨a_r.1, a_r.2, .trace r⟩ from
+         Multiset.bind_congr (fun cl _ => perLayerContribTopOnlyRightCut_per_cl l r cl)]
+  unfold perLayerContrib
+  rw [Multiset.bind_assoc]
+  refine Multiset.bind_congr (fun cl _ => ?_)
+  rw [Multiset.bind_map]
+  refine Multiset.bind_congr (fun s_l _ => ?_)
+  rw [Multiset.map_map]
+  rfl
+
 /-- The decomposed form equals the RHS Sigma-bind. -/
 theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
     (ihl : ∀ layer, perLayerContrib (α := α) l layer
@@ -1595,13 +1832,6 @@ This bridge holds at any T (independent of the Foissy bijection). Once proved,
 `lhsRealCuts T = perLayerContrib T .top |>.map (ChildSlots.toTriple R)
    = (univ : Finset (GeoCut T .top)).val.map (ChildSlots.toTriple R ∘ geoToChildSlots)
    = (univ).val.map geoCutToTriple = geoMultiset T`. -/
-
-/-- Pair-multiset for `AugCutShape`: enumerate `ac' : AugCutShape T'` and project
-    to `(cutForest_aug ac', remainderForest ac')`. The "Forest-pair" sibling of
-    `comulTreeMS R T'`, which factors as `(pairsMS T').map tensorize`. -/
-private def pairsMS (T' : DecoratedTree α) : Multiset (Forest α × Forest α) :=
-  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
-    (AugCutShape.cutForest_aug ac', AugCutShape.remainderForest ac')
 
 /-- `comulTreeMS` factors through `pairsMS` via per-pair `forestToHc`-tensorize. -/
 private lemma comulTreeMS_eq_pairsMS_map (T' : DecoratedTree α) :
