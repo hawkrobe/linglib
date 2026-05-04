@@ -653,14 +653,24 @@ end Layer
 /-- A geometric double cut on `T`: a monotone 3-coloring of `T`'s vertices.
     Indexed by the root vertex's layer `myL`. Children's layers must be `≤ myL`.
 
+    **`.trace` constraint** (matches `IsNotTrace` in `CutShape`'s extracting
+    constructors): when a child is a `.trace t` marker, its layer must EQUAL
+    the parent's layer (not just `≤`). Reason: cuts can never separate a
+    `.trace` from its enclosing maximal extracted subtree (per the substrate
+    refactor 0.230.680), so in the GeoCut interpretation `.trace`'s layer
+    is forced to match its surrounding context.
+
     For T = .leaf or .trace, only the root layer matters.
     For T = .node l r, the root has layer `myL`, and `l`, `r` have GeoCuts
-    with their own root layers `lL`, `rL` satisfying `lL ≤ myL`, `rL ≤ myL`. -/
+    with their own root layers `lL`, `rL` satisfying `lL ≤ myL`, `rL ≤ myL`,
+    plus the `.trace` constraint above. -/
 inductive GeoCut : DecoratedTree α → Layer → Type _
   | leaf {a : α} (myL : Layer) : GeoCut (.leaf a) myL
   | trace {t : DecoratedTree α} (myL : Layer) : GeoCut (.trace t) myL
   | node {l r : DecoratedTree α} {myL lL rL : Layer}
       (hl : lL ≤ myL) (hr : rL ≤ myL)
+      (hlNT : DecoratedTree.IsNotTrace l ∨ lL = myL)
+      (hrNT : DecoratedTree.IsNotTrace r ∨ rL = myL)
       (gl : GeoCut l lL) (gr : GeoCut r rL) : GeoCut (.node l r) myL
 
 /-! ### `Fintype (GeoCut T myL)`
@@ -690,11 +700,16 @@ Structural recursion on `T`:
       letI _ihl : ∀ lL, Fintype (GeoCut l lL) := geoCutFintype l
       letI _ihr : ∀ rL, Fintype (GeoCut r rL) := geoCutFintype r
       Fintype.ofEquiv
-        (Σ (lL : {x : Layer // x ≤ myL}) (rL : {x : Layer // x ≤ myL}),
+        (Σ (lL : {x : Layer // x ≤ myL ∧
+              (DecoratedTree.IsNotTrace l ∨ x = myL)})
+           (rL : {x : Layer // x ≤ myL ∧
+              (DecoratedTree.IsNotTrace r ∨ x = myL)}),
           GeoCut l lL.1 × GeoCut r rL.1)
-        { toFun := fun ⟨lL, rL, gl, gr⟩ => GeoCut.node lL.2 rL.2 gl gr
+        { toFun := fun ⟨lL, rL, gl, gr⟩ =>
+            GeoCut.node lL.2.1 rL.2.1 lL.2.2 rL.2.2 gl gr
           invFun := fun g => match g with
-            | .node hl hr gl gr => ⟨⟨_, hl⟩, ⟨_, hr⟩, gl, gr⟩
+            | .node hl hr hlNT hrNT gl gr =>
+                ⟨⟨_, hl, hlNT⟩, ⟨_, hr, hrNT⟩, gl, gr⟩
           left_inv := fun ⟨_, _, _, _⟩ => rfl
           right_inv := fun g => by cases g; rfl }
 
@@ -727,10 +742,10 @@ def geoOuterSkeleton {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
   | .bot, _ => .trace T
   | .mid, .leaf _ => T
   | .mid, .trace _ => T
-  | .mid, .node _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
+  | .mid, .node _ _ _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
   | .top, .leaf _ => T
   | .top, .trace _ => T
-  | .top, .node _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
+  | .top, .node _ _ _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
 
 /-- The contribution this subtree makes to its **parent's** TOP slot — i.e., what
     appears at this subtree's position in the parent's slot-3 (outer-remainder) tree.
@@ -747,7 +762,7 @@ def geoStackItem {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
   | .mid, _ => .trace T
   | .top, .leaf _ => T
   | .top, .trace _ => T
-  | .top, .node _ _ gl gr => .node (geoStackItem gl) (geoStackItem gr)
+  | .top, .node _ _ _ _ gl gr => .node (geoStackItem gl) (geoStackItem gr)
 
 /-- The BOT-slot forest contributed by this GeoCut: subtrees rooted at BOT vertices. -/
 def geoBotForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Forest α :=
@@ -755,10 +770,10 @@ def geoBotForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Fores
   | .bot, _ => ({T} : Forest α)
   | .mid, .leaf _ => 0
   | .mid, .trace _ => 0
-  | .mid, .node _ _ gl gr => geoBotForest gl + geoBotForest gr
+  | .mid, .node _ _ _ _ gl gr => geoBotForest gl + geoBotForest gr
   | .top, .leaf _ => 0
   | .top, .trace _ => 0
-  | .top, .node _ _ gl gr => geoBotForest gl + geoBotForest gr
+  | .top, .node _ _ _ _ gl gr => geoBotForest gl + geoBotForest gr
 
 /-- The MID-slot forest contributed by this GeoCut: each MID-rooted subtree
     contributes its outer-remainder skeleton (BOT positions become traces). -/
@@ -768,7 +783,7 @@ def geoMidForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Fores
   | .mid, _ => ({geoOuterSkeleton g} : Forest α)
   | .top, .leaf _ => 0
   | .top, .trace _ => 0
-  | .top, .node _ _ gl gr => geoMidForest gl + geoMidForest gr
+  | .top, .node _ _ _ _ gl gr => geoMidForest gl + geoMidForest gr
 
 /-- The triple-tensor extracted from a GeoCut. For a top-rooted GeoCut on `T`,
     this equals both the LHS-style triple from `lhsRealCuts` and the RHS-style

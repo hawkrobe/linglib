@@ -21,67 +21,67 @@ Verify the 3-slot computation for a few specific GeoCut examples on `.node l r`.
 -- All-top GeoCut: gl=.leaf top, gr=.leaf top, root=top.
 example :
     let g : GeoCut T Layer.top :=
-      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+      .node (le_refl _) (le_refl _) (Or.inl trivial) (Or.inl trivial) (.leaf .top) (.leaf .top)
     geoBotForest g = (0 : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+      .node (le_refl _) (le_refl _) (Or.inl trivial) (Or.inl trivial) (.leaf .top) (.leaf .top)
     geoMidForest g = (0 : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+      .node (le_refl _) (le_refl _) (Or.inl trivial) (Or.inl trivial) (.leaf .top) (.leaf .top)
     geoStackItem g = T := by decide
 
 -- All-bot GeoCut on T = .node leaf leaf: gl=.leaf bot, gr=.leaf bot, root=top.
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     geoBotForest g = ({.leaf a, .leaf b} : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     geoMidForest g = (0 : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     geoStackItem g = .node (.trace (.leaf a)) (.trace (.leaf b)) := by decide
 
 -- Mixed GeoCut: lL=bot, rL=top.
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .top)
     geoBotForest g = ({.leaf a} : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .top)
     geoStackItem g = .node (.trace (.leaf a)) (.leaf b) := by decide
 
 -- Mixed GeoCut: lL=mid, rL=top.
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .mid) (.leaf .top)
     geoBotForest g = (0 : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .mid) (.leaf .top)
     geoMidForest g = ({.leaf a} : Forest Atom) := by decide
 
 example :
     let g : GeoCut T Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         (.leaf .mid) (.leaf .top)
     geoStackItem g = .node (.trace (.leaf a)) (.leaf b) := by decide
 
@@ -99,28 +99,28 @@ abbrev TDeep : DecoratedTree Atom := .node lDeep (.leaf b)
 
 example :
     let gl : GeoCut lDeep Layer.mid :=
-      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     let g : GeoCut TDeep Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         gl (.leaf .top)
     geoStackItem g = .node (.trace lDeep) (.leaf b) := by decide
 
 example :
     let gl : GeoCut lDeep Layer.mid :=
-      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     let g : GeoCut TDeep Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         gl (.leaf .top)
     geoBotForest g = ({.leaf c, .leaf d} : Forest Atom) := by decide
 
 example :
     let gl : GeoCut lDeep Layer.mid :=
-      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid)
+      .node (by decide : Layer.bot ≤ Layer.mid) (by decide : Layer.bot ≤ Layer.mid) (Or.inl trivial) (Or.inl trivial)
         (.leaf .bot) (.leaf .bot)
     let g : GeoCut TDeep Layer.top :=
-      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top) (Or.inl trivial) (Or.inl trivial)
         gl (.leaf .top)
     geoMidForest g
       = ({(.node (.trace (.leaf c)) (.trace (.leaf d)) : DecoratedTree Atom)} :
