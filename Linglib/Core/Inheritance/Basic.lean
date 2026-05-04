@@ -35,9 +35,11 @@ This module distinguishes three link kinds at the type level:
 - `IsA` — the canonical reflexive-transitive `isA`, defined as
   `Relation.ReflTransGen` of the parent edge
 
-`IsA` is the API; `parents`/`ancestors` are computational evidence producers
-(`b ∈ ancestors net a → IsA net a b` via `IsA.of_mem_ancestors`). Termination
-of `ancestors` is bounded by `nodeUniverse.length`, not a magic constant.
+`IsA` is the API; `parents`/`ancestors` are computational evidence
+producers. `IsA` is decidable for any concrete network via the
+`Relation.ReflTransGen.decidable_of_finite_step` substrate, so positive and
+negative `IsA` claims both reduce by `decide`. Termination of `ancestors`
+is bounded by `nodeUniverse.length`, not a magic constant.
 -/
 
 set_option autoImplicit false

@@ -43,7 +43,7 @@ universe u
 
 namespace Relation.ReflTransGen
 
-variable {α : Type u} [DecidableEq α]
+variable {α : Type u}
 
 -- ----------------------------------------------------------------------------
 -- Path: chain of intermediates witnessing ReflTransGen
@@ -143,7 +143,7 @@ theorem Path.dedup_interior {r : α → α → Prop} {a b : α} :
     · obtain ⟨xs', hlen, hxs'⟩ := Path.dedup_interior hr hxs_not_nodup
       exact ⟨x :: xs', by simp only [List.length_cons]; omega, hax, hxs'⟩
 
-private theorem Path.compress_aux {r : α → α → Prop} {a b : α} :
+private theorem Path.compress_aux [DecidableEq α] {r : α → α → Prop} {a b : α} :
     ∀ (n : Nat) (chain : List α), chain.length = n → Path r a chain b →
         ∃ chain' : List α, Path r a chain' b ∧ chain'.Nodup ∧
             a ∉ chain' ∧ b ∉ chain' := by
@@ -164,7 +164,7 @@ private theorem Path.compress_aux {r : α → α → Prop} {a b : α} :
 
 /-- **Chain compression**: any path reduces to one with no repeats whose
 intermediates are disjoint from `{a, b}`. -/
-theorem Path.compress {r : α → α → Prop} {a b : α} {chain : List α}
+theorem Path.compress [DecidableEq α] {r : α → α → Prop} {a b : α} {chain : List α}
     (h : Path r a chain b) :
     ∃ chain' : List α, Path r a chain' b ∧ chain'.Nodup ∧
         a ∉ chain' ∧ b ∉ chain' :=
@@ -195,7 +195,7 @@ theorem Path.endpoint_mem {r : α → α → Prop} {a b : α} {s : List α}
 
 /-- Length bound: a `Nodup` path with `b` not in the chain is bounded by the
 size of any successor-closed list. -/
-theorem Path.length_lt_of_nodup {r : α → α → Prop} {a b : α} {s : List α}
+theorem Path.length_lt_of_nodup [DecidableEq α] {r : α → α → Prop} {a b : α} {s : List α}
     (succ_in_s : ∀ x y, r x y → y ∈ s)
     {chain : List α} (h : Path r a chain b)
     (hnodup : chain.Nodup) (hb_notin : b ∉ chain) :
@@ -264,7 +264,7 @@ theorem mem_stepBFS_iff_path (step : α → List α) (a b : α) :
 
 /-- **Decidability of `Relation.ReflTransGen` on a finite carrier**, given an
 explicit step function and a successor-bound list `s`. -/
-def decidable_of_finite_step {r : α → α → Prop}
+def decidable_of_finite_step [DecidableEq α] {r : α → α → Prop}
     (step : α → List α) (s : List α)
     (step_eq : ∀ a b, r a b ↔ b ∈ step a)
     (step_in_s : ∀ a b, b ∈ step a → b ∈ s)
@@ -298,7 +298,7 @@ def decidable_of_finite_step {r : α → α → Prop}
 from a `[DecidableRel r]` instance and a successor-bound list. A convenience
 wrapper around `decidable_of_finite_step` for callers that have `r` decidable
 but no natural step function. -/
-def decidable_of_finite {r : α → α → Prop} [DecidableRel r]
+def decidable_of_finite [DecidableEq α] {r : α → α → Prop} [DecidableRel r]
     (s : List α)
     (succ_in_s : ∀ a b, r a b → b ∈ s)
     (a b : α) : Decidable (Relation.ReflTransGen r a b) :=
