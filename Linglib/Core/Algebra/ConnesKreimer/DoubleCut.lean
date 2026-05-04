@@ -692,6 +692,27 @@ instance instFintypeGeoCut : ∀ (T : DecoratedTree α) (myL : Layer),
           left_inv := fun ⟨_, _, _, _⟩ => rfl
           right_inv := fun g => by cases g; rfl }
 
+/-! ### `GeoCut.node` Sigma decomposition
+
+The `GeoCut.node` constructor's data is exactly a Σ over (constrained) child layers
+× per-child GeoCuts. Naming this Equiv lets us decompose `Finset.univ : Finset (GeoCut .node ...)`
+via `Finset.map_univ_equiv`. -/
+
+/-- Equivalence: `GeoCut (.node l r) myL ≃ Σ (lL, rL) constrained, GeoCut l × GeoCut r`.
+    Mirrors the Σ used in the `Fintype` derivation. -/
+def nodeGeoCutEquiv (l r : DecoratedTree α) (myL : Layer) :
+    (Σ (lL : {x : Layer // x ≤ myL ∧ (DecoratedTree.IsNotTrace l ∨ x = myL)})
+       (rL : {x : Layer // x ≤ myL ∧ (DecoratedTree.IsNotTrace r ∨ x = myL)}),
+      GeoCut l lL.1 × GeoCut r rL.1)
+    ≃ GeoCut (.node l r) myL where
+  toFun := fun ⟨lL, rL, gl, gr⟩ =>
+    GeoCut.node lL.2.1 rL.2.1 lL.2.2 rL.2.2 gl gr
+  invFun := fun g => match g with
+    | .node hl hr hlNT hrNT gl gr =>
+        ⟨⟨_, hl, hlNT⟩, ⟨_, hr, hrNT⟩, gl, gr⟩
+  left_inv := fun ⟨_, _, _, _⟩ => rfl
+  right_inv := fun g => by cases g; rfl
+
 /-! ### `GeoCut` semantics — projecting to the triple-tensor
 
 For each `g : GeoCut T myL` we extract three pieces:
@@ -1199,7 +1220,51 @@ theorem geoToChildSlots_node_top {l r : DecoratedTree α} {lL rL : Layer}
       = nodeChildSlots (geoToChildSlots gl) (geoToChildSlots gr) := by
   simp only [geoToChildSlots, geoBotForest, geoMidForest, geoStackItem, nodeChildSlots]
 
-/-- The `.top` case: substantive recursive content. -/
+/-! #### RHS Sigma factoring: `geoMultiset_node_factored`
+
+The RHS `(univ : Finset (GeoCut (.node l r) .top)).val.map geoToChildSlots`
+factors via `nodeGeoCutEquiv` + `geoToChildSlots_node_top` into a Sigma-bind
+over `(lL, rL, gl, gr)` with `nodeChildSlots` combined per-pair. -/
+
+omit [DecidableEq α] in
+/-- The RHS for `.node l r` at `.top` factored via Sigma decomposition. -/
+theorem geoMultiset_node_factored (l r : DecoratedTree α) :
+    (Finset.univ : Finset (GeoCut (.node l r) Layer.top)).val.map
+        (fun g => geoToChildSlots g)
+      = (Finset.univ : Finset
+            (Σ (lL : {x : Layer // x ≤ Layer.top ∧
+                  (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+               (rL : {x : Layer // x ≤ Layer.top ∧
+                  (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+              GeoCut l lL.1 × GeoCut r rL.1)).val.map
+          (fun ⟨_, _, gl, gr⟩ =>
+            nodeChildSlots (geoToChildSlots gl) (geoToChildSlots gr)) := by
+  rw [show (Finset.univ : Finset (GeoCut (.node l r) Layer.top))
+        = (Finset.univ : Finset (Σ
+            (lL : {x : Layer // x ≤ Layer.top ∧
+                  (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+            (rL : {x : Layer // x ≤ Layer.top ∧
+                  (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+            GeoCut l lL.1 × GeoCut r rL.1)).map
+            (nodeGeoCutEquiv l r Layer.top).toEmbedding from
+       (Finset.map_univ_equiv (nodeGeoCutEquiv l r Layer.top)).symm]
+  rw [Finset.map_val, Multiset.map_map]
+  refine Multiset.map_congr rfl (fun ⟨_, _, gl, gr⟩ _ => ?_)
+  exact geoToChildSlots_node_top _ _ _ _ gl gr
+
+/-- The `.top` case: substantive recursive content.
+
+    **Proof outline** (~150-200 LOC of focused work):
+    1. Apply `geoMultiset_node_factored` to the RHS, getting a Sigma-bind form.
+    2. Decompose the LHS perLayerContrib (.node l r) .top by CutShape ctor:
+       - bothCut → per-l × per-r both extract-whole (lL, rL ∈ {bot, mid}).
+       - onlyLeftCut → per-l extract-whole, per-r .top (cl_outer recurses into r).
+       - onlyRightCut → symmetric.
+       - bothRecurse → per-l × per-r both .top.
+    3. For each ctor, show its contribution is a specific (lL, rL) sub-bind of RHS.
+    4. Sum over ctors: gives the full (lL, rL, gl, gr) bind = RHS.
+    5. Apply `lhsAnyChildContrib_eq_geoCutAny l/r` to convert per-l/per-r data
+       between LHS form (CutShape + section) and RHS form (GeoCut). -/
 theorem perLayerContrib_top (T : DecoratedTree α) :
     perLayerContrib (α := α) T .top
       = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
@@ -1208,16 +1273,25 @@ theorem perLayerContrib_top (T : DecoratedTree α) :
   | .leaf a => rfl
   | .trace t => rfl
   | .node l r =>
-    -- Substantive: factor both sides into bind over (cs_l, cs_r) ChildSlots pairs
-    -- combined via `nodeChildSlots`. Use `lhsAnyChildContrib_eq_geoCutAny l/r` as IH.
-    -- Plan:
-    -- 1. RHS: decompose via Σ (lL, rL, gl, gr) → per-(cs_l, cs_r) pairs filtered
-    --    by trace constraint.
-    -- 2. LHS: per CutShape ctor, factor section into per-l × per-r AugCutShape
-    --    choices. Each ctor restricts (cs_l, cs_r) to a subset.
-    -- 3. Show union over LHS ctors = filtered (cs_l, cs_r) pairs from GeoCut.
-    -- 4. Apply `lhsAnyChildContrib_eq_geoCutAny l/r` to convert per-l/per-r data
-    --    to GeoCut form.
+    -- RHS: factor via Sigma decomposition.
+    rw [geoMultiset_node_factored]
+    -- LHS: bind over CutShape (.node l r) ctors. Each ctor's contribution
+    -- corresponds to a specific (lL, rL) sub-bind on the RHS:
+    --   bothCut hl hr → (lL ∈ {bot, mid}, rL ∈ {bot, mid}, gated by IsNotTrace l ∧ r).
+    --   onlyLeftCut hl cr_in → (lL ∈ {bot, mid}, rL = top, gated by IsNotTrace l).
+    --   onlyRightCut hr cl_in → (lL = top, rL ∈ {bot, mid}, gated by IsNotTrace r).
+    --   bothRecurse cl_in cr_in → (lL = top, rL = top).
+    --
+    -- For each ctor, the section data factors into per-l × per-r AugCutShape choices.
+    -- Each per-l AugCutShape choice corresponds to a GeoCut l at lL ∈ {bot, mid}
+    -- (extractWhole→bot, real cl_inner→mid). For "recurse" cases, per-l = LHS data
+    -- on l with lL = top, which by the IH (perLayerContrib_top l) matches GeoCut l top.
+    --
+    -- Sum over all 4 ctors gives the full Sigma sum.
+    --
+    -- This is the substantive Foissy bijection. The proof is ~100-150 LOC of
+    -- careful Multiset.bind + Multiset.sections_add manipulation. Pending dedicated
+    -- focus session.
     sorry
 
 /-- **Per-subtree IH** (any layer): combines the three per-layer sub-lemmas via
