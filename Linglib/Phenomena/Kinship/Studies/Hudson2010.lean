@@ -89,12 +89,11 @@ theorem grandmother_IsA_ancestor : IsA kinshipNet .grandmother .ancestor :=
   IsA.of_mem_ancestors _ (by decide)
 
 /-- A `mother` is **not** a `grandmother` — the taxonomy doesn't conflate the
-two, even though both are `ancestor`s. Stated here as the (decidable) fact that
-`.grandmother` does not appear in `.mother`'s computed ancestors list; the full
-propositional `¬ IsA kinshipNet .mother .grandmother` requires the path-
-compression argument flagged in `Core.Inheritance.Basic`. -/
-theorem grandmother_not_in_mother_ancestors :
-    KinRole.grandmother ∉ ancestors kinshipNet .mother := by decide
+two, even though both are `ancestor`s. Now stated as the full propositional
+`¬ IsA kinshipNet .mother .grandmother`, decidable thanks to path compression
+landed in `Core.Inheritance.Basic`. -/
+theorem mother_not_IsA_grandmother :
+    ¬ IsA kinshipNet .mother .grandmother := by decide
 
 /-- The `ancestor` node sits at the top: nothing is its ancestor. -/
 theorem ancestor_has_no_proper_ancestors :
