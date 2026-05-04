@@ -183,6 +183,78 @@ theorem mergePost_basis_tensor (S S' : TraceTree α Unit)
   · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
     simp only [map_zero]
 
+/-- **General γ_{S,S'}-vanishing on a left-multiplied forest**: if `{S, S'}` cannot
+    be decomposed as `F + d` for any `d`, then `γ_{S,S'}(forestToHc F * a) = 0`
+    for any `a`. The condition `¬ ∃ d, {S, S'} = F + d` says `F` is NOT a
+    left-divisor of `{S, S'}` in the multiset additive semigroup. -/
+theorem gammaMatch_mul_eq_zero_of_no_decomp (S S' : TraceTree α Unit)
+    (F : TraceForest α Unit)
+    (h_no_decomp : ¬ ∃ d : TraceForest α Unit,
+                      ({S, S'} : TraceForest α Unit) = F + d) (a : Hc R α) :
+    gammaMatch (R := R) S S' (forestToHc F * a) = 0 := by
+  show ((Finsupp.lsingle ({S, S'} : TraceForest α Unit)).comp
+        (Finsupp.lapply ({S, S'} : TraceForest α Unit)))
+      (forestToHc (R := R) F * a) = 0
+  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply]
+  show Finsupp.single ({S, S'} : TraceForest α Unit)
+        ((forestToHc (R := R) F * a) ({S, S'} : TraceForest α Unit)) = 0
+  rw [show (forestToHc (R := R) F * a) ({S, S'} : TraceForest α Unit) = 0 from
+    AddMonoidAlgebra.single_mul_apply_of_not_exists_add (M := TraceForest α Unit)
+      (R := R) (1 : R) a h_no_decomp]
+  exact Finsupp.single_zero _
+
+/-- **Disjoint-singleton vanishing of γ_{S,S'}** (corollary): if `T ≠ S` and
+    `T ≠ S'`, then `γ_{S,S'}(forestToHc {T} * a) = 0`. -/
+theorem gammaMatch_singleton_mul_eq_zero (S S' T : TraceTree α Unit)
+    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S') (a : Hc R α) :
+    gammaMatch (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * a) = 0 := by
+  apply gammaMatch_mul_eq_zero_of_no_decomp
+  rintro ⟨d, hd⟩
+  have hT_mem : T ∈ ({T} : TraceForest α Unit) + d := by
+    rw [Multiset.mem_add]; exact Or.inl (Multiset.mem_singleton.mpr rfl)
+  rw [← hd] at hT_mem
+  have : T = S ∨ T = S' := by
+    rw [show ({S, S'} : TraceForest α Unit) = S ::ₘ ({S'} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
+    exact hT_mem
+  rcases this with h | h
+  · exact hT_ne_S h
+  · exact hT_ne_S' h
+
+/-- **Vanishing of mergePost on left-multiplied disjoint factors**: if `F` is not
+    a left-divisor of `{S, S'}` and `b : Hc R α` is arbitrary, then for any
+    `z : Hc R α ⊗[R] Hc R α`:
+
+      mergePost ((forestToHc F ⊗ b) * z) = 0.
+
+    Used to eliminate cross-terms in the F̂-residual generalization of
+    `mergeOp_pair`: any term in `comulTreeDel T * comulDelAlgHom w` whose LEFT
+    contribution is a forest `F` not in `{S, S'}` (e.g., `prim_T` with `F = {T}`
+    when `T ≠ S, S'`, or non-empty cuts of `T` under disjointness) vanishes after
+    `mergePost`. -/
+theorem mergePost_left_mul_eq_zero_of_no_decomp (S S' : TraceTree α Unit)
+    (F : TraceForest α Unit) (b : Hc R α)
+    (h_no_decomp : ¬ ∃ d : TraceForest α Unit,
+                      ({S, S'} : TraceForest α Unit) = F + d)
+    (z : Hc R α ⊗[R] Hc R α) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((forestToHc (R := R) F ⊗ₜ[R] b) * z)))
+      = 0 := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b' =>
+    rw [Algebra.TensorProduct.tmul_mul_tmul]
+    unfold deltaMatch
+    rw [TensorProduct.map_tmul, LinearMap.id_apply,
+        gammaMatch_mul_eq_zero_of_no_decomp _ _ _ h_no_decomp,
+        TensorProduct.zero_tmul, map_zero, map_zero]
+  | add z1 z2 ih1 ih2 =>
+    rw [mul_add]
+    simp only [map_add]
+    rw [ih1, ih2, add_zero]
+
 /-- **Right-multiplicativity of the post-coproduct chain** by a "pure right-channel"
     factor `1 ⊗ y`. For any `z : Hc R α ⊗[R] Hc R α` and any `y : Hc R α`:
 
