@@ -253,10 +253,7 @@ theorem perCutShape_pair_bridge {T : TraceTree α Unit} (cl_outer : CutShape T) 
     -- LHS: (pairsMS l).bind a => (pairsMS r).map (b => (a.1 + b.1, a.2 + b.2))
     -- RHS:
     show _ = (lhsAllWithMS (CutShape.bothCut hl hr) : Multiset _).map _
-    rw [show (lhsAllWithMS (CutShape.bothCut hl hr) : Multiset (LhsIndex (.node l r)))
-          = ((Finset.univ : Finset (AugCutShape l)).val.bind fun ac_l =>
-              (Finset.univ : Finset (AugCutShape r)).val.map fun ac_r =>
-                LhsIndex.bothCut hl hr ac_l ac_r) from rfl]
+    simp only [lhsAllWithMS]
     rw [Multiset.map_bind]
     -- RHS: univ_l.val.bind ac_l => (univ_r.val.map ac_r => bothCut hl hr ac_l ac_r).map (botForest, midForest)
     --    = univ_l.val.bind ac_l => univ_r.val.map ac_r => (botForest (bothCut hl hr ac_l ac_r), midForest (...))
@@ -320,10 +317,7 @@ theorem perCutShape_pair_bridge {T : TraceTree α Unit} (cl_outer : CutShape T) 
     -- After: (pairsMS l).bind (a => (lhsAllWithMS cr).map (botForest, midForest) .map (p => (a.1 + p.1, a.2 + p.2)))
     -- RHS:
     show _ = (lhsAllWithMS (CutShape.onlyLeftCut hl cr) : Multiset _).map _
-    rw [show (lhsAllWithMS (CutShape.onlyLeftCut hl cr) : Multiset (LhsIndex (.node l r)))
-          = ((Finset.univ : Finset (AugCutShape l)).val.bind fun ac_l =>
-              (lhsAllWithMS cr).map fun rhs =>
-                LhsIndex.onlyLeftCut hl ac_l rhs) from rfl]
+    simp only [lhsAllWithMS]
     rw [Multiset.map_bind]
     -- After RHS: univ_l.val.bind (ac_l => (lhsAllWithMS cr).map (rhs => onlyLeftCut hl ac_l rhs).map (botForest, midForest))
     -- Match: pairsMS l = univ_l.val.map (cf_aug, rem)
@@ -381,10 +375,7 @@ theorem perCutShape_pair_bridge {T : TraceTree α Unit} (cl_outer : CutShape T) 
     -- After: (lhsAllWithMS cl).bind (lhs => Multiset.map (a => (botForest lhs + a.1, midForest lhs + a.2)) (pairsMS r))
     -- RHS:
     show _ = (lhsAllWithMS (CutShape.onlyRightCut hr cl) : Multiset _).map _
-    rw [show (lhsAllWithMS (CutShape.onlyRightCut hr cl) : Multiset (LhsIndex (.node l r)))
-          = ((lhsAllWithMS cl).bind fun lhs =>
-              (Finset.univ : Finset (AugCutShape r)).val.map fun ac_r =>
-                LhsIndex.onlyRightCut hr lhs ac_r) from rfl]
+    simp only [lhsAllWithMS]
     rw [Multiset.map_bind]
     refine Multiset.bind_congr (fun lhs _ => ?_)
     -- Per lhs: Multiset.map (a => (botForest lhs + a.1, midForest lhs + a.2)) (pairsMS r)
@@ -444,10 +435,7 @@ theorem perCutShape_pair_bridge {T : TraceTree α Unit} (cl_outer : CutShape T) 
     -- Now: (lhsAllWithMS cl).bind (lhs => Multiset.map (p_r => (botForest lhs + p_r.1, midForest lhs + p_r.2)) ((lhsAllWithMS cr).map (botForest, midForest)))
     -- RHS:
     show _ = (lhsAllWithMS (CutShape.bothRecurse cl cr) : Multiset _).map _
-    rw [show (lhsAllWithMS (CutShape.bothRecurse cl cr) : Multiset (LhsIndex (.node l r)))
-          = ((lhsAllWithMS cl).bind fun lhs =>
-              (lhsAllWithMS cr).map fun rhs =>
-                LhsIndex.bothRecurse lhs rhs) from rfl]
+    simp only [lhsAllWithMS]
     rw [Multiset.map_bind]
     refine Multiset.bind_congr (fun lhs _ => ?_)
     -- Per lhs: Multiset.map (p_r => (botForest lhs + p_r.1, midForest lhs + p_r.2)) ((lhsAllWithMS cr).map (botForest, midForest))
