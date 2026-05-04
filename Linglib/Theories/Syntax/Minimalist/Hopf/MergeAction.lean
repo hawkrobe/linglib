@@ -281,7 +281,105 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     (w : Hc R α) :
     mergeOp (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * w)
       = forestToHc ({T} : TraceForest α Unit) * mergeOp (R := R) S S' w := by
-  sorry
+  -- Step 1: unfold mergeOp = mergePost ∘ comulDelAlgHom
+  show (hcMulLin (R := R) (α := α)
+         ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+         ∘ₗ deltaMatch (R := R) S S' ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc (R := R) ({T} : TraceForest α Unit) * w) = _
+  rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
+      AlgHom.toLinearMap_apply]
+  -- comulDelAlgHom is an alg-hom, so it splits the product.
+  rw [map_mul]
+  -- comulDelAlgHom(forestToHc {T}) = comulTreeDel T (via single + singleton).
+  rw [show comulDelAlgHom (R := R) (α := α)
+            (forestToHc (R := R) ({T} : TraceForest α Unit))
+          = comulTreeDel (R := R) T from by
+        unfold forestToHc
+        rw [comulDelAlgHom_apply_single, comulForestDel_singleton]]
+  -- Decompose comulTreeDel T = prim + sumCut.
+  rw [comulTreeDel_eq_prim_add_sum]
+  -- Distribute multiplication.
+  rw [add_mul, Finset.sum_mul]
+  -- Push linearity through the 3-layer chain.
+  simp only [map_add, map_sum]
+  -- Now LHS = mergePost(prim_T * cdaH w) + ∑ c, mergePost(cut_c * cdaH w).
+  -- Term 1 (prim × cdaH w): vanishes via mergePost_left_mul_eq_zero_of_no_decomp.
+  rw [show hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+              * comulDelAlgHom w)))
+        = 0 from by
+      apply mergePost_left_mul_eq_zero_of_no_decomp
+      rintro ⟨d, hd⟩
+      have hT_mem : T ∈ ({T} : TraceForest α Unit) + d :=
+        Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
+      rw [← hd] at hT_mem
+      have : T = S ∨ T = S' := by
+        rw [show ({S, S'} : TraceForest α Unit) = S ::ₘ ({S'} : TraceForest α Unit) from rfl,
+            Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
+        exact hT_mem
+      rcases this with h | h
+      · exact hT_ne_S h
+      · exact hT_ne_S' h]
+  rw [zero_add]
+  -- Term 2 (∑ c, cut_c × cdaH w): only c = empty T contributes nontrivially.
+  rw [Finset.sum_eq_single (CutShape.empty T)]
+  · -- Empty cut term: (1 ⊗ forestToHc {T}) * cdaH w.
+    -- By comm + mergePost_right_one_tmul, gives forestToHc {T} * mergeOp w.
+    rw [show CutShape.cutForest (CutShape.empty T)
+          = (0 : TraceForest α Unit) from CutShape.cutForest_empty T]
+    show hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              ((forestToHc (R := R) (0 : TraceForest α Unit) ⊗ₜ[R]
+                deletionRightChannel (R := R)
+                  (CutShape.remainderDeletion (CutShape.empty T)))
+                * comulDelAlgHom w)))
+        = forestToHc (R := R) ({T} : TraceForest α Unit) * _
+    rw [forestToHc_zero]
+    -- deletionRightChannel of remainderDeletion of empty cut = forestToHc {T}.
+    rw [show CutShape.remainderDeletion (CutShape.empty T) = some T from
+          CutShape.remainderDeletion_empty T]
+    show hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S'
+              (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit))
+                * comulDelAlgHom w)))
+        = forestToHc (R := R) ({T} : TraceForest α Unit) * _
+    -- (1 ⊗ forestToHc {T}) * cdaH w = cdaH w * (1 ⊗ forestToHc {T}) by comm
+    rw [mul_comm ((1 : Hc R α) ⊗ₜ[R] _) _]
+    rw [mergePost_right_one_tmul]
+    -- mergePost(cdaH w) = mergeOp S S' w by definition; commute with forestToHc {T}.
+    show _ = forestToHc (R := R) ({T} : TraceForest α Unit) *
+              (mergeOp (R := R) S S' w)
+    rw [mul_comm]
+    rfl
+  · -- For c ≠ empty T: cf c ≠ 0 (by cutForest_eq_zero_iff), and S, S' ∉ cf c.
+    -- Hence cf c ⊄ {S, S'}, so mergePost vanishes.
+    intro c _ hc_ne_empty
+    apply mergePost_left_mul_eq_zero_of_no_decomp
+    rintro ⟨d, hd⟩
+    have hcf_subset : CutShape.cutForest c ⊆ ({S, S'} : TraceForest α Unit) := by
+      rw [hd]; exact Multiset.subset_of_le (Multiset.le_add_right _ _)
+    have hcf_S : S ∉ CutShape.cutForest c := h_no_S_in_T_cuts c
+    have hcf_S' : S' ∉ CutShape.cutForest c := h_no_S'_in_T_cuts c
+    -- Every element of cf c is in {S, S'}, but neither S nor S' is in cf c.
+    -- So cf c is empty. Contradicts hc_ne_empty (via cutForest_eq_zero_iff).
+    have hcf_empty : CutShape.cutForest c = 0 := by
+      apply Multiset.eq_zero_of_forall_notMem
+      intro x hx_mem
+      have : x ∈ ({S, S'} : TraceForest α Unit) := hcf_subset hx_mem
+      rw [show ({S, S'} : TraceForest α Unit) = S ::ₘ ({S'} : TraceForest α Unit) from rfl,
+          Multiset.mem_cons, Multiset.mem_singleton] at this
+      rcases this with h | h
+      · subst h; exact hcf_S hx_mem
+      · subst h; exact hcf_S' hx_mem
+    have : c = CutShape.empty T := (CutShape.cutForest_eq_zero_iff c).mp hcf_empty
+    exact hc_ne_empty this
+  · -- c ∈ univ.
+    intro h
+    exact absurd (Finset.mem_univ _) h
 
 /-! ## §3: Internal Merge bridge
 

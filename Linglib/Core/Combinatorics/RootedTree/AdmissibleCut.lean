@@ -445,6 +445,17 @@ theorem cutForest_eq_zero_iff {T : TraceTree α β} (c : CutShape T) :
       show (CutShape.bothRecurse (empty l) (empty r)).remainder = .node l r
       rw [remainder, remainder_empty l, remainder_empty r]
 
+/-- The empty cut's deletion-remainder is `some T` — the whole tree, unchanged.
+    Used by the algebraic Merge bridge's factor-out lemma to identify the
+    empty-cut term in `comulTreeDel T` as `1 ⊗ forestToHc {T}`. -/
+@[simp] theorem remainderDeletion_empty : ∀ (T : TraceTree α β),
+    (empty T).remainderDeletion = some T
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r => by
+      show (CutShape.bothRecurse (empty l) (empty r)).remainderDeletion = some (.node l r)
+      simp only [remainderDeletion, remainderDeletion_empty l, remainderDeletion_empty r]
+
 /-- Cut both child edges of a node: extracts both children. -/
 @[simp] theorem cutForest_bothCut {l r : TraceTree α β}
     (hl : TraceTree.IsNotTrace l) (hr : TraceTree.IsNotTrace r) :
