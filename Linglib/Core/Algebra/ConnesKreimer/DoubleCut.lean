@@ -1271,6 +1271,74 @@ noncomputable def geoCutToRhs : ∀ {T : DecoratedTree α} (_g : GeoCut T Layer.
         let ⟨cr, cr2⟩ := geoCutToRhs (T := r) gr
         ⟨CutShape.bothRecurse cl cr, CutShape.bothRecurse cl2 cr2⟩
 
+/-- Helper: `Or.inl ∘ resolve_right` with the right disjunct being false equals the
+    original disjunction (by Or-induction + proof irrelevance). -/
+private theorem or_inl_resolve_right_eq_self
+    {p q : Prop} (h : p ∨ q) (hne : ¬ q) :
+    Or.inl (h.resolve_right hne) = h := by
+  rcases h with h1 | h2
+  · rfl
+  · exact absurd h2 hne
+
+omit [DecidableEq α] in
+/-- Left inverse: `geoCutToRhs (rhsToGeoCut C₁ C₂) = ⟨C₁, C₂⟩`.
+    By structural induction on T + case analysis on (C₁ ctor, C₂ ctor). For each of
+    the 9 .node sub-cases, the roundtrip is `rfl` after `simp only` unfolding and
+    application of IH on subtrees and `fromMidGeoCut_midGeoCut` on .mid GeoCuts. -/
+theorem geoCutToRhs_rhsToGeoCut : ∀ {T : DecoratedTree α}
+    (C₁ : CutShape T) (C₂ : CutShape (CutShape.remainder C₁)),
+    geoCutToRhs (rhsToGeoCut C₁ C₂) = ⟨C₁, C₂⟩
+  | .leaf _, .atLeaf, c2 => by
+      have hc : c2 = .atLeaf := match c2 with | .atLeaf => rfl
+      subst hc; rfl
+  | .trace _, .atTrace, c2 => by
+      have hc : c2 = .atTrace := match c2 with | .atTrace => rfl
+      subst hc; rfl
+  | .node l r, .bothCut hl hr, .bothRecurse .atTrace .atTrace => rfl
+  | .node l r, .onlyLeftCut hl cr, .bothRecurse .atTrace cr2 => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [geoCutToRhs_rhsToGeoCut cr cr2]
+  | .node l r, .onlyLeftCut hl cr, .onlyRightCut hr2 .atTrace => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [fromMidGeoCut_midGeoCut r cr]
+  | .node l r, .onlyRightCut hr cl, .bothRecurse cl2 .atTrace => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [geoCutToRhs_rhsToGeoCut cl cl2]
+  | .node l r, .onlyRightCut hr cl, .onlyLeftCut hl2 .atTrace => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [fromMidGeoCut_midGeoCut l cl]
+  | .node l r, .bothRecurse cl cr, .bothRecurse cl2 cr2 => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [geoCutToRhs_rhsToGeoCut cl cl2, geoCutToRhs_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .bothCut hl2 hr2 => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [fromMidGeoCut_midGeoCut l cl, fromMidGeoCut_midGeoCut r cr]
+  | .node l r, .bothRecurse cl cr, .onlyLeftCut hl2 cr2 => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [fromMidGeoCut_midGeoCut l cl, geoCutToRhs_rhsToGeoCut cr cr2]
+  | .node l r, .bothRecurse cl cr, .onlyRightCut hr2 cl2 => by
+      simp only [rhsToGeoCut, geoCutToRhs]
+      rw [geoCutToRhs_rhsToGeoCut cl cl2, fromMidGeoCut_midGeoCut r cr]
+
+omit [DecidableEq α] in
+/-- Right inverse: `rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g`.
+    By structural induction on T + case analysis on the GeoCut.node `(lL, rL)`. -/
+theorem rhsToGeoCut_geoCutToRhs : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.top),
+    rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g := by
+  -- TODO: 9-way case analysis on (lL, rL); each case uses `botGeoCut_unique` for `.bot`
+  -- layers, `midGeoCut_fromMidGeoCut` for `.mid` layers, and IH for `.top` layers.
+  -- Each case requires `change` to expose `Or.inl (resolve_right ...)` then
+  -- `or_inl_resolve_right_eq_self` to collapse. Tractable but verbose (~100 LOC).
+  sorry
+
+/-- The RHS-side substantive Foissy bijection as an `Equiv`. -/
+noncomputable def rhsGeoCutEquiv (T : DecoratedTree α) :
+    (Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁)) ≃ GeoCut T Layer.top where
+  toFun := fun ⟨C₁, C₂⟩ => rhsToGeoCut C₁ C₂
+  invFun := geoCutToRhs
+  left_inv := fun ⟨C₁, C₂⟩ => geoCutToRhs_rhsToGeoCut C₁ C₂
+  right_inv := rhsToGeoCut_geoCutToRhs
+
 /-- The `.mid` case: enumerate `CutShape T` for inner cuts. -/
 theorem perLayerContrib_mid (T : DecoratedTree α) :
     perLayerContrib (α := α) T .mid
