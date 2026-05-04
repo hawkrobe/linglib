@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
 import Linglib.Theories.Syntax.HPSG.Inversion
-import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder
@@ -75,7 +75,7 @@ NOT @cite{laka-1990}'s ΣP
 namespace Westergaard2009
 
 open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
-open Features.InformationStructure (DiscourseStatus)
+open Features (BinaryGivenness)
 
 -- Fragment data (theory-neutral)
 open Fragments.Norwegian (stdNorwegian nordmoreNorwegian)
@@ -640,15 +640,20 @@ theorem english_svo_explained :
     current version captures the correct *empirical mapping* but does
     not explain *why* the mapping holds — the TopP mechanism does. -/
 
-/-- Preferred V2 status given subject discourse status in Tromsø
+/-- Preferred V2 status given subject givenness in Tromsø
     monosyllabic *wh*-questions.
 
-    STIPULATIVE: pattern-matches on discourse status directly.
-    The book derives this from [±FOC]/TopP (see § 10 docstring). -/
-def tromsøWhV2Preference : DiscourseStatus → V2Status
-  | .given   => .impossible  -- given/pronominal subject → non-V2 preferred
-  | .new     => .obligatory  -- new/full-DP subject → V2 preferred
-  | .focused => .obligatory  -- focused subject → V2 preferred
+    STIPULATIVE: pattern-matches on givenness directly. The book
+    derives this from [±FOC]/TopP (see § 10 docstring). Focus
+    marking (which under the prior `DiscourseStatus`-typed signature
+    fell into a third case `.focused → .obligatory`) belongs to the
+    Krifka-2008 focus axis (`Features.InformationStructure.Focus`),
+    not the givenness axis; downstream extensions wanting to model
+    focus-driven V2 should add a separate `Focus`-parameterized
+    function. -/
+def tromsøWhV2Preference : BinaryGivenness → V2Status
+  | .given => .impossible  -- given/pronominal subject → non-V2 preferred
+  | .new   => .obligatory  -- new/full-DP subject → V2 preferred
 
 /-- Given subjects predict non-V2 in Tromsø short *wh*-questions. -/
 theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
