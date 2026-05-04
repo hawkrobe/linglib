@@ -5,6 +5,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Givenness — Cognitive Status of Discourse Referents
 @cite{gundel-hedberg-zacharski-1993} @cite{prince-1981} @cite{chafe-1976}
+@cite{ariel-2001}
 
 Substrate type for the **Givenness** axis of information structure, one of
 the four IS notions identified in @cite{krifka-2008} and adopted as the
@@ -32,10 +33,51 @@ This file provides the substrate for both:
   hearer-knowledge: anything the hearer can identify (`inFocus` through
   `uniquelyIdentifiable`) is `given`; anything brand-new to the hearer
   (`referential`, `typeIdentifiable`) is `new`. This is the cut Prince
-  1981 / Strube-Hahn 1999 use; Chafe 1976's *activation*-based binary
-  is a different cut (around `activated`/`familiar`) and is not
-  provided as a primitive — consumers wanting Chafe's distinction can
-  use `GivennessStatus.isActivated`.
+  1981 / Strube-Hahn 1999 use. Chafe 1976 has a *three*-way activation
+  taxonomy (active / semi-active / inactive) rather than a binary —
+  not provided here as a primitive. Consumers wanting Chafe's
+  activated-vs-not cut can use `GivennessStatus.isActivated : Bool`.
+
+## Critique: Ariel 2001 on GHZ
+
+@cite{ariel-2001} (pp. 62-65) raises four substantive critiques of the
+GHZ-6 hierarchy that consumers should know about:
+
+1. **Limited psychological evidence.** Ariel argues (p. 64) that
+   psychological evidence supports the scalar relation between
+   `inFocus` and `activated` only — the four lower tiers (`familiar`
+   through `typeIdentifiable`) lack independent experimental support
+   as a distinct scalar order.
+2. **Internally disjunctive tiers.** `uniquelyIdentifiable` and
+   `referential` each cover two cognitively different processes
+   (retrieve vs construct an existing/new representation; Ariel p. 63).
+3. **Many-many form-function.** A given GHZ status maps to many
+   surface forms, and a given form maps to many statuses (Mulkern 1996
+   on partial vs full proper names; Ariel p. 64).
+4. **Implicationality counterexample.** Ziv 1996 — pronouns
+   (`inFocus`) are predicted by the implicational hierarchy to also
+   be `uniquelyIdentifiable`, but Ziv exhibits cases of unidentified
+   inferred role players where this fails.
+
+Ariel's own account uses the 18-tier `Features.AccessibilityLevel`
+(see below) which Ariel argues is the better-grounded scale. **GHZ-6 is
+nonetheless retained as substrate** because it is what the IS
+literature widely cites (Krifka 2008 / Féry-Ishihara 2016 list it as
+the canonical scalar givenness theory), and because Centering's
+@cite{strube-hahn-1999} information-status taxonomy projects naturally
+from GHZ-style categories. Discrete enough for `decide`-based
+theorems, where AccessibilityLevel's 18 tiers can be unwieldy.
+
+## Relation to AccessibilityLevel
+
+`Features.AccessibilityLevel` (@cite{ariel-2001}) is the
+empirically-better-supported sibling: 18 tiers of NP-form-marking
+with informativity, rigidity, and attenuation criteria. Ariel's `toAccessibility` projection from GHZ-6
+to AccessibilityLevel lives in `Phenomena/Reference/Studies/Ariel2001.lean`
+(Ariel-specific bridge). Use AccessibilityLevel when finer distinctions
+matter (proximate vs distal demonstratives; clitic vs unstressed vs zero
+pronouns); use GivennessStatus when the IS-literature 6-tier shape is
+the right granularity.
 
 ## Layer position
 
@@ -81,7 +123,12 @@ namespace Features
     comparison. The Ariel-specific projection
     (`GivennessStatus.toAccessibility`) stays in `Ariel2001.lean`. -/
 inductive GivennessStatus where
-  /-- Unstressed pronoun: referent currently in attention. -/
+  /-- Unstressed pronoun: referent currently in attention. Per
+      @cite{ariel-2001} p. 64 (citing Ziv 1996), the implicational
+      claim that `inFocus` entities are also `uniquelyIdentifiable`
+      has counterexamples (unidentified inferred role players); this
+      enum's ordinal placement is the GHZ-claimed order, not a proven
+      cognitive fact. -/
   | inFocus
   /-- Activated: that/this/this-N — referent in working memory. -/
   | activated
