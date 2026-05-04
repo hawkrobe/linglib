@@ -14,4 +14,75 @@ example : Fintype.card (GeoCut T Layer.top) = 9 := by decide
 example : Fintype.card (GeoCut T Layer.mid) = 4 := by decide  -- 2×2: lL∈{bot,mid}, rL∈{bot,mid}
 example : Fintype.card (GeoCut T Layer.bot) = 1 := by decide  -- 1×1: only bot
 
+/-! ### Sanity checks on geo-projection helpers
+
+Verify the 3-slot computation for a few specific GeoCut examples on `.node l r`. -/
+
+-- All-top GeoCut: gl=.leaf top, gr=.leaf top, root=top.
+example :
+    let g : GeoCut T Layer.top :=
+      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+    geoBotForest g = (0 : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+    geoMidForest g = (0 : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (le_refl _) (le_refl _) (.leaf .top) (.leaf .top)
+    geoStackItem g = T := by decide
+
+-- All-bot GeoCut on T = .node leaf leaf: gl=.leaf bot, gr=.leaf bot, root=top.
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+        (.leaf .bot) (.leaf .bot)
+    geoBotForest g = ({.leaf a, .leaf b} : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+        (.leaf .bot) (.leaf .bot)
+    geoMidForest g = (0 : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.bot ≤ Layer.top)
+        (.leaf .bot) (.leaf .bot)
+    geoStackItem g = .node (.trace (.leaf a)) (.trace (.leaf b)) := by decide
+
+-- Mixed GeoCut: lL=bot, rL=top.
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        (.leaf .bot) (.leaf .top)
+    geoBotForest g = ({.leaf a} : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.bot ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        (.leaf .bot) (.leaf .top)
+    geoStackItem g = .node (.trace (.leaf a)) (.leaf b) := by decide
+
+-- Mixed GeoCut: lL=mid, rL=top.
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        (.leaf .mid) (.leaf .top)
+    geoBotForest g = (0 : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        (.leaf .mid) (.leaf .top)
+    geoMidForest g = ({.leaf a} : Forest Atom) := by decide
+
+example :
+    let g : GeoCut T Layer.top :=
+      .node (by decide : Layer.mid ≤ Layer.top) (by decide : Layer.top ≤ Layer.top)
+        (.leaf .mid) (.leaf .top)
+    geoStackItem g = .node (.trace (.leaf a)) (.leaf b) := by decide
+
 end ConnesKreimer.GeoCutCheck

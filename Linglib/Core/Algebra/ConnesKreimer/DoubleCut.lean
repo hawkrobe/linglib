@@ -702,6 +702,83 @@ instance instFintypeGeoCut (T : DecoratedTree α) (myL : Layer) :
     Fintype (GeoCut T myL) :=
   geoCutFintype T myL
 
+/-! ### `GeoCut` semantics — projecting to the triple-tensor
+
+For each `g : GeoCut T myL` we extract three pieces:
+- `geoBotForest g`: the BOT subtrees (extracted at the OUTER cut).
+- `geoMidForest g`: the MID subtrees (extracted at the INNER cut, each represented as
+  its outer-remainder skeleton — i.e., with its own BOT subtrees as `.trace` markers).
+- `geoStackItem g`: the contribution this subtree makes to the **parent's** TOP slot.
+  - `myL = .bot`: `.trace T` (the whole subtree is BOT-extracted; appears as a trace).
+  - `myL = .mid`: `.trace (geoOuterSkeleton g)` (the subtree is MID-extracted; appears
+    as a trace whose data is the outer-remainder skeleton).
+  - `myL = .top`: recursive — for `.node l r`, becomes `.node (geoStackItem gl) (geoStackItem gr)`.
+
+The triple is then `(geoBotForest g, geoMidForest g, {geoStackItem g})` — assembled
+into `Hc ⊗ (Hc ⊗ Hc)` via `forestToHc` and `⊗ₜ`. For a top-rooted GeoCut on `T`
+this matches the LHS-style triple from `lhsRealCuts T` (and the RHS-style from
+`rhsRealRealInner T` after the substantive Foissy bijection). -/
+
+/-- `T` with each BOT subtree replaced by a `.trace` marker carrying the cut
+    subtree as data. (For `myL = .bot`, the whole `T` is BOT, becomes `.trace T`.) -/
+def geoOuterSkeleton {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    DecoratedTree α :=
+  match myL, g with
+  | .bot, _ => .trace T
+  | .mid, .leaf _ => T
+  | .mid, .trace _ => T
+  | .mid, .node _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
+  | .top, .leaf _ => T
+  | .top, .trace _ => T
+  | .top, .node _ _ gl gr => .node (geoOuterSkeleton gl) (geoOuterSkeleton gr)
+
+/-- The contribution this subtree makes to its **parent's** TOP slot — i.e., the
+    inner-remainder skeleton in the parent's triple.
+    - `myL = .bot`: `.trace T` (subtree extracted at outer level).
+    - `myL = .mid`: `.trace (geoOuterSkeleton g)` (subtree extracted at inner level,
+      with outer-remainder skeleton as trace data).
+    - `myL = .top`: recursive on tree structure (vertices kept at top, deeper BOT/MID
+      become `.trace` via `geoStackItem` on subtrees). -/
+def geoStackItem {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    DecoratedTree α :=
+  match myL, g with
+  | .bot, _ => .trace T
+  | .mid, _ => .trace (geoOuterSkeleton g)
+  | .top, .leaf _ => T
+  | .top, .trace _ => T
+  | .top, .node _ _ gl gr => .node (geoStackItem gl) (geoStackItem gr)
+
+/-- The BOT-slot forest contributed by this GeoCut: subtrees rooted at BOT vertices. -/
+def geoBotForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Forest α :=
+  match myL, g with
+  | .bot, _ => ({T} : Forest α)
+  | .mid, .leaf _ => 0
+  | .mid, .trace _ => 0
+  | .mid, .node _ _ gl gr => geoBotForest gl + geoBotForest gr
+  | .top, .leaf _ => 0
+  | .top, .trace _ => 0
+  | .top, .node _ _ gl gr => geoBotForest gl + geoBotForest gr
+
+/-- The MID-slot forest contributed by this GeoCut: each MID-rooted subtree
+    contributes its outer-remainder skeleton (BOT positions become traces). -/
+def geoMidForest {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) : Forest α :=
+  match myL, g with
+  | .bot, _ => 0
+  | .mid, _ => ({geoOuterSkeleton g} : Forest α)
+  | .top, .leaf _ => 0
+  | .top, .trace _ => 0
+  | .top, .node _ _ gl gr => geoMidForest gl + geoMidForest gr
+
+/-- The triple-tensor extracted from a GeoCut. For a top-rooted GeoCut on `T`,
+    this equals both the LHS-style triple from `lhsRealCuts` and the RHS-style
+    triple from `rhsRealRealInner` (the substantive cuts-of-cuts identity). -/
+noncomputable def geoCutToTriple (R : Type*) [CommSemiring R]
+    {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α)) :=
+  forestToHc (R := R) (geoBotForest g) ⊗ₜ[R]
+    (forestToHc (R := R) (geoMidForest g) ⊗ₜ[R]
+      forestToHc (R := R) ({geoStackItem g} : Forest α))
+
 /-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
 
 /-- LHS direction of the cuts-of-cuts bijection: the left-iterated
