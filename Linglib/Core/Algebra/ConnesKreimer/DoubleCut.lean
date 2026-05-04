@@ -780,6 +780,41 @@ noncomputable def geoCutToTriple (R : Type*) [CommSemiring R]
     (forestToHc (R := R) (geoMidForest g) ⊗ₜ[R]
       forestToHc (R := R) ({geoStackItem g} : Forest α))
 
+/-- The "GeoCut multiset" on `T`: enumerate `GeoCut T Layer.top` and project each
+    to its triple-tensor via `geoCutToTriple`. This is the canonical 3-coloring
+    enumeration that both `lhsRealCuts T` and `rhsRealRealInner T` will be shown
+    to factor through. -/
+noncomputable def geoMultiset (T : DecoratedTree α) :
+    Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
+  (Finset.univ : Finset (GeoCut T Layer.top)).val.map (geoCutToTriple R)
+
+/-! ### Bijection: `lhsRealCuts T = geoMultiset T`
+
+The substantive Foissy claim, LHS direction. By induction on `T`. -/
+
+/-- **LHS bijection**: `lhsRealCuts T` enumerates the same multiset of triples
+    as `geoMultiset T`. Substantive content for `.node l r`; `.leaf` and `.trace`
+    are by definitional reduction (`decide`-checkable). -/
+theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
+    (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = geoMultiset T := by
+  match T with
+  | .leaf a =>
+    -- |CutShape (.leaf a)| = 1 (atLeaf, with cutForest = 0).
+    -- Sections of (0.map comulTreeMS) = singleton (one empty section).
+    -- LHS: one triple = assoc(1 ⊗ {.leaf a}) = forestToHc 0 ⊗ (forestToHc 0 ⊗ {.leaf a}).
+    -- RHS: |GeoCut .leaf a top| = 1 element = .leaf .top.
+    -- geoCutToTriple (.leaf .top) = forestToHc 0 ⊗ (forestToHc 0 ⊗ forestToHc {.leaf a}).
+    unfold lhsRealCuts geoMultiset
+    rfl
+  | .trace t =>
+    unfold lhsRealCuts geoMultiset
+    rfl
+  | .node l r =>
+    -- The substantive content: the per-(lL, rL, gl, gr) bijection between
+    -- LHS data (CutShape (.node l r) ctors + sections) and GeoCut indexings.
+    sorry
+
 /-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
 
 /-- LHS direction of the cuts-of-cuts bijection: the left-iterated
