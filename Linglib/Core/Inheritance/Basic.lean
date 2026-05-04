@@ -43,6 +43,8 @@ of `ancestors` is bounded by `nodeUniverse.length`, not a magic constant.
 
 set_option autoImplicit false
 
+universe u v
+
 namespace Core.Inheritance
 
 -- ============================================================================
@@ -62,7 +64,7 @@ inductive LinkKind where
 /-- A labeled directed edge: `source --[kind, label]--> target`.
 In WG, all knowledge is encoded as links between nodes: "cat isA mammal",
 "bird --front-limb--> wing", "male or female". -/
-structure Link (α R : Type) where
+structure Link (α : Type u) (R : Type v) where
   kind : LinkKind
   source : α
   target : α
@@ -75,12 +77,12 @@ structure Link (α R : Type) where
 
 /-- A WG inheritance network: nodes connected by labeled directed links.
 Parameterized over node type `α` and relation-label type `R`. -/
-structure Network (α R : Type) [DecidableEq α] [DecidableEq R] where
+structure Network (α : Type u) (R : Type v) [DecidableEq α] [DecidableEq R] where
   links : List (Link α R)
 
 section NetworkOps
 
-variable {α R : Type} [DecidableEq α] [DecidableEq R]
+variable {α : Type u} {R : Type v} [DecidableEq α] [DecidableEq R]
 
 /-- The finite set of nodes mentioned by the network's links.
 Used as the natural termination bound for traversals — the longest acyclic
@@ -271,6 +273,15 @@ def IsAChain (net : Network α R) (a : α) : List α → α → Prop
   | [], b => isAEdge net a b
   | x :: xs, b => isAEdge net a x ∧ IsAChain net x xs b
 
+/-- Constructor view of `IsAChain` on a `cons` chain — an `Iff.rfl` lemma so
+consumers can `rw` instead of pattern-match. -/
+@[simp] theorem IsAChain.cons_iff (net : Network α R) (a x b : α) (xs : List α) :
+    IsAChain net a (x :: xs) b ↔ isAEdge net a x ∧ IsAChain net x xs b := Iff.rfl
+
+/-- Constructor view of `IsAChain` on the empty chain. -/
+@[simp] theorem IsAChain.nil_iff (net : Network α R) (a b : α) :
+    IsAChain net a [] b ↔ isAEdge net a b := Iff.rfl
+
 /-- Membership in `ancestorsBound (n+1)` is equivalent to existence of an
 intermediate chain of length `≤ n`. -/
 theorem mem_ancestorsBound_iff_chain (net : Network α R) (a b : α) :
@@ -343,10 +354,10 @@ theorem IsAChain.truncate_at_target (net : Network α R) {a b : α} :
   | [], _, hb_in => by simp at hb_in
   | x :: xs, ⟨hax, hr⟩, hb_in => by
     rcases List.mem_cons.mp hb_in with rfl | hb_in_xs
-    · exact ⟨[], by simp, hax⟩
+    · exact ⟨[], List.length_nil ▸ Nat.zero_lt_succ _, hax⟩
     · obtain ⟨chain', hlen, hc'⟩ := IsAChain.truncate_at_target net hr hb_in_xs
       refine ⟨x :: chain', ?_, hax, hc'⟩
-      simp; omega
+      simp only [List.length_cons]; omega
 
 /-- Helper: if a chain `IsAChain net x chain b` contains node `y`, the suffix
 from `y`'s first occurrence is itself a chain `IsAChain net y _ b` of strictly
@@ -357,9 +368,9 @@ theorem IsAChain.suffix_from (net : Network α R) {x b : α} (y : α) :
   | [], _, h_in => by simp at h_in
   | z :: zs, ⟨_, hr⟩, h_in => by
     rcases List.mem_cons.mp h_in with rfl | h_in_zs
-    · exact ⟨zs, by simp, hr⟩
+    · exact ⟨zs, by simp only [List.length_cons]; omega, hr⟩
     · obtain ⟨tail, hlen, htail⟩ := IsAChain.suffix_from net y hr h_in_zs
-      exact ⟨tail, by simp; omega, htail⟩
+      exact ⟨tail, by simp only [List.length_cons]; omega, htail⟩
 
 /-- **Chain compression** (skip-to-self): if `a` appears as an intermediate,
 take the suffix from `a`'s reappearance. -/
@@ -370,9 +381,9 @@ theorem IsAChain.skip_to_self (net : Network α R) {a b : α}
   match chain, h with
   | x :: xs, ⟨_, hr⟩ =>
     rcases List.mem_cons.mp ha_in with rfl | ha_in_xs
-    · exact ⟨xs, by simp, hr⟩
+    · exact ⟨xs, by simp only [List.length_cons]; omega, hr⟩
     · obtain ⟨tail, hlen, htail⟩ := IsAChain.suffix_from net a hr ha_in_xs
-      exact ⟨tail, by simp; omega, htail⟩
+      exact ⟨tail, by simp only [List.length_cons]; omega, htail⟩
 
 /-- **Chain compression** (interior duplication): if some node appears twice
 in the chain, splice out the cycle. Uses `suffix_from` on the duplicate. -/
@@ -386,15 +397,14 @@ theorem IsAChain.dedup_interior (net : Network α R) {a b : α} :
     · -- x appears in xs; can splice via suffix_from
       simp only [not_not] at hx_in_xs
       obtain ⟨tail, hlen, htail⟩ := IsAChain.suffix_from net x hr hx_in_xs
-      exact ⟨x :: tail, by simp; omega, hax, htail⟩
+      exact ⟨x :: tail, by simp only [List.length_cons]; omega, hax, htail⟩
     · -- xs itself has duplicates; recurse
       obtain ⟨xs', hlen, hxs'⟩ := IsAChain.dedup_interior net hr hxs_not_nodup
-      exact ⟨x :: xs', by simp; omega, hax, hxs'⟩
+      exact ⟨x :: xs', by simp only [List.length_cons]; omega, hax, hxs'⟩
 
-/-- The full compression: any chain reduces to one with no repeats and
-disjoint from `{a, b}`. Strong induction on chain length, applying the three
-truncation forms in order. -/
-theorem IsAChain.compress (net : Network α R) {a b : α} :
+/-- Strong-induction helper for `IsAChain.compress`. The explicit `n` parameter
+threads chain-length through `Nat.strongRecOn`. -/
+private theorem IsAChain.compress_aux (net : Network α R) {a b : α} :
     ∀ (n : Nat) (chain : List α), chain.length = n → IsAChain net a chain b →
         ∃ chain' : List α, IsAChain net a chain' b ∧ chain'.Nodup ∧
             a ∉ chain' ∧ b ∉ chain' := by
@@ -413,17 +423,18 @@ theorem IsAChain.compress (net : Network α R) {a b : α} :
     · obtain ⟨chain', hlen', hc'⟩ := h.dedup_interior net hnd
       exact ih chain'.length (hlen ▸ hlen') chain' rfl hc'
 
-/-- Convenience wrapper around `compress` without the explicit length. -/
-theorem IsAChain.compress' (net : Network α R) {a b : α} {chain : List α}
+/-- **Chain compression**: any `IsAChain` from `a` to `b` reduces to one with
+no repeats whose intermediates are disjoint from `{a, b}`. -/
+theorem IsAChain.compress (net : Network α R) {a b : α} {chain : List α}
     (h : IsAChain net a chain b) :
     ∃ chain' : List α, IsAChain net a chain' b ∧ chain'.Nodup ∧
         a ∉ chain' ∧ b ∉ chain' :=
-  IsAChain.compress net chain.length chain rfl h
+  IsAChain.compress_aux net chain.length chain rfl h
 
 /-- Length bound: a `Nodup` chain whose intermediates lie in `nodeUniverse`,
 and whose target `b` is also in `nodeUniverse` and not in the chain, has
 length `< nodeUniverse.length`. -/
-theorem IsAChain.compressed_length_lt (net : Network α R) {a b : α}
+theorem IsAChain.length_lt_nodeUniverse_of_nodup (net : Network α R) {a b : α}
     {chain : List α} (h : IsAChain net a chain b)
     (hnodup : chain.Nodup) (hb_notin : b ∉ chain) :
     chain.length < net.nodeUniverse.length := by
@@ -447,9 +458,9 @@ theorem mem_ancestors_of_mem_ancestorsBound (net : Network α R) (a b : α) :
     ∀ n, b ∈ ancestorsBound net a n → b ∈ ancestors net a := by
   intro n h
   obtain ⟨chain, _, hc⟩ := (mem_ancestorsBound_iff_chain net a b n).mp h
-  obtain ⟨chain', hc', hnodup', _, hb_notin'⟩ := hc.compress' net
+  obtain ⟨chain', hc', hnodup', _, hb_notin'⟩ := hc.compress net
   have hlen : chain'.length < net.nodeUniverse.length :=
-    hc'.compressed_length_lt net hnodup' hb_notin'
+    hc'.length_lt_nodeUniverse_of_nodup net hnodup' hb_notin'
   exact (mem_ancestorsBound_iff_chain net a b net.nodeUniverse.length).mpr
     ⟨chain', hlen, hc'⟩
 
@@ -458,9 +469,9 @@ theorem mem_ancestors_of_isA (net : Network α R) {a b : α} (h : IsA net a b) :
     a = b ∨ b ∈ ancestors net a := by
   rcases h.cases_chain net with heq | ⟨chain, hc⟩
   · exact Or.inl heq
-  · obtain ⟨chain', hc', hnodup', _, hb_notin'⟩ := hc.compress' net
+  · obtain ⟨chain', hc', hnodup', _, hb_notin'⟩ := hc.compress net
     have hlen : chain'.length < net.nodeUniverse.length :=
-      hc'.compressed_length_lt net hnodup' hb_notin'
+      hc'.length_lt_nodeUniverse_of_nodup net hnodup' hb_notin'
     exact Or.inr ((mem_ancestorsBound_iff_chain net a b net.nodeUniverse.length).mpr
       ⟨chain', hlen, hc'⟩)
 
@@ -474,7 +485,7 @@ theorem isA_iff_eq_or_mem_ancestors (net : Network α R) (a b : α) :
 
 /-- `IsA` is decidable on finite networks (no `Fintype α` required —
 the network's own `nodeUniverse` provides the bound). -/
-instance isA_decidable (net : Network α R) (a b : α) : Decidable (IsA net a b) :=
+instance IsA.decidable (net : Network α R) (a b : α) : Decidable (IsA net a b) :=
   decidable_of_iff _ (isA_iff_eq_or_mem_ancestors net a b).symm
 
 end NetworkOps

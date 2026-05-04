@@ -95,6 +95,14 @@ landed in `Core.Inheritance.Basic`. -/
 theorem mother_not_IsA_grandmother :
     ¬ IsA kinshipNet .mother .grandmother := by decide
 
+/-- Sanity: reflexive case. `IsA.refl` gives this directly, but exercising the
+`Decidable` instance on it confirms the reflexive disjunct fires. -/
+example : IsA kinshipNet .mother .mother := by decide
+
+/-- Sanity: `ancestor` has no proper ancestors, so `¬ IsA ancestor mother`
+follows. Exercises the BFS-side of the decision procedure (no chain exists). -/
+example : ¬ IsA kinshipNet .ancestor .mother := by decide
+
 /-- The `ancestor` node sits at the top: nothing is its ancestor. -/
 theorem ancestor_has_no_proper_ancestors :
     ancestors kinshipNet .ancestor = [] := by decide
