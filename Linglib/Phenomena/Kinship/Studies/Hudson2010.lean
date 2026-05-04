@@ -77,16 +77,13 @@ def kinshipNet : Network KinRole Empty where
 -- ============================================================================
 
 /-- A `mother` is a `parent` (one step). -/
-theorem mother_IsA_parent : IsA kinshipNet .mother .parent :=
-  IsA.of_mem_ancestors _ (by decide)
+theorem mother_IsA_parent : IsA kinshipNet .mother .parent := by decide
 
 /-- A `mother` is an `ancestor` (two steps via `parent`). -/
-theorem mother_IsA_ancestor : IsA kinshipNet .mother .ancestor :=
-  IsA.of_mem_ancestors _ (by decide)
+theorem mother_IsA_ancestor : IsA kinshipNet .mother .ancestor := by decide
 
 /-- A `grandmother` is an `ancestor` (two steps via `grandparent`). -/
-theorem grandmother_IsA_ancestor : IsA kinshipNet .grandmother .ancestor :=
-  IsA.of_mem_ancestors _ (by decide)
+theorem grandmother_IsA_ancestor : IsA kinshipNet .grandmother .ancestor := by decide
 
 /-- A `mother` is **not** a `grandmother` — the taxonomy doesn't conflate the
 two, even though both are `ancestor`s. Now stated as the full propositional

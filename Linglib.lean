@@ -328,6 +328,7 @@ import Linglib.Core.Probability.Gaussian
 import Linglib.Theories.Pragmatics.InformationTheory.Channel
 import Linglib.Theories.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Theories.Pragmatics.AsymmetricCommunication
+import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default

@@ -18,6 +18,7 @@ provides the PMF-typed `Role → PMF Concept` form for paper replications.
 -/
 
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Relation.ReflTransGen
 
 namespace Features.SelectionalPreferences
 
@@ -49,14 +50,23 @@ def SubclassOf : SemClass → SemClass → Prop
 instance : ∀ a b, Decidable (SubclassOf a b) := fun a b => by
   cases a <;> cases b <;> unfold SubclassOf <;> infer_instance
 
-/-- Transitive closure of subclass relation. -/
-def IsA (c₁ c₂ : SemClass) : Prop :=
-  c₁ = c₂ ∨ SubclassOf c₁ c₂ ∨
-    ∃ c ∈ [SemClass.animate, .inanimate, .human, .animal, .plant, .artifact],
-      SubclassOf c₁ c ∧ SubclassOf c c₂
+/-- Transitive closure of subclass relation, defined as
+`Relation.ReflTransGen` of `SubclassOf`. Decidability comes from
+`Relation.ReflTransGen.decidable_of_finite` since `SemClass` has finitely
+many inhabitants. -/
+def IsA : SemClass → SemClass → Prop := Relation.ReflTransGen SubclassOf
 
-instance : ∀ a b, Decidable (IsA a b) := fun a b => by
-  unfold IsA; infer_instance
+/-- Enumeration of all `SemClass` constructors — the finite carrier the
+substrate's `decidable_of_finite` needs as a successor-bound. -/
+private def semClassUniv : List SemClass :=
+  [.animate, .inanimate, .human, .animal, .plant, .artifact,
+   .abstract_, .event, .location, .time]
+
+instance : ∀ a b, Decidable (IsA a b) := fun a b =>
+  Relation.ReflTransGen.decidable_of_finite (r := SubclassOf) semClassUniv
+    (fun c₁ c₂ h => by
+      cases c₁ <;> cases c₂ <;> simp_all [SubclassOf, semClassUniv])
+    a b
 
 end Classes
 

@@ -30,6 +30,13 @@ def IsAncestor (G : CausalGraph V) : V → V → Prop :=
 def IsStrictAncestor (G : CausalGraph V) : V → V → Prop :=
   Relation.TransGen (fun u v => u ∈ G.parents v)
 
+/-! `Decidable (G.IsAncestor u v)` is available via
+`Relation.ReflTransGen.decidable_of_finite_step` whenever the caller can
+supply an explicit `List V` bound. For `V := Fin n` use `List.finRange n`;
+for arbitrary `[Fintype V]` the conversion `Finset.univ.toList` is
+noncomputable (uses choice), so callers that want `decide` to reduce must
+supply a computable list themselves. -/
+
 /-- **Acyclicity mixin**: the strict-ancestor relation is well-founded —
     no infinite chain of parents. Required by `topologicalOrder`,
     `develop` fixpoint, and well-founded recursion over the parent
