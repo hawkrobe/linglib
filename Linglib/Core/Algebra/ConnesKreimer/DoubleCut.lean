@@ -1160,19 +1160,64 @@ theorem perLayerContrib_mid (T : DecoratedTree α) :
     refine Multiset.map_congr rfl (fun cl _ => ?_)
     exact (geoToChildSlots_midGeoCut _ cl).symm
 
+/-! ### `perLayerContrib_top` — the substantive Foissy `.node` case
+
+Per the mathlib audit, the `.top` case is proven by **structural induction** on
+`T`, NOT by another `Equiv` (the `(cl_outer, section)` data type is too dependent
+to admit clean helper lemmas).
+
+For `T = .node l r` at `.top`:
+- LHS data: bind over `cl_outer : CutShape (.node l r)` of section choices
+  per tree in `cutForest cl_outer`. Each section element corresponds to an
+  `AugCutShape T'` choice.
+- RHS data: `(univ : Finset (GeoCut (.node l r) .top)).val.map geoToChildSlots`.
+  GeoCut `.node` ctor decomposes as `(lL, rL, gl, gr)` with constraints.
+
+**Both sides** factor through per-l × per-r `ChildSlots` pairs combined via
+`nodeChildSlots`. The key inductive hypothesis is `lhsAnyChildContrib_eq_geoCutAny l`
+and `... r`, which gives the per-subtree any-layer matching.
+
+The CutShape ctor's gating naturally implements the `.trace` constraint:
+- `bothCut`/`onlyLeftCut` (require `IsNotTrace l`): per-l ∈ {bot, mid layers}.
+- `onlyRightCut`/`bothRecurse`: per-l = top layer.
+
+This gating matches the `hlNT : IsNotTrace l ∨ lL = .top` constraint on
+`GeoCut.node`. -/
+
+/-- Combine per-l and per-r ChildSlots into a `.node`-combined ChildSlots. -/
+def nodeChildSlots (cs_l cs_r : ChildSlots α) : ChildSlots α :=
+  ⟨cs_l.bot + cs_r.bot, cs_l.mid + cs_r.mid, .node cs_l.stack cs_r.stack⟩
+
+omit [DecidableEq α] in
+/-- For `myL = .top` on `.node`, `geoToChildSlots (.node ... gl gr) = nodeChildSlots ...`. -/
+theorem geoToChildSlots_node_top {l r : DecoratedTree α} {lL rL : Layer}
+    (hl : lL ≤ Layer.top) (hr : rL ≤ Layer.top)
+    (hlNT : DecoratedTree.IsNotTrace l ∨ lL = Layer.top)
+    (hrNT : DecoratedTree.IsNotTrace r ∨ rL = Layer.top)
+    (gl : GeoCut l lL) (gr : GeoCut r rL) :
+    geoToChildSlots (GeoCut.node hl hr hlNT hrNT gl gr)
+      = nodeChildSlots (geoToChildSlots gl) (geoToChildSlots gr) := by
+  simp only [geoToChildSlots, geoBotForest, geoMidForest, geoStackItem, nodeChildSlots]
+
 /-- The `.top` case: substantive recursive content. -/
 theorem perLayerContrib_top (T : DecoratedTree α) :
     perLayerContrib (α := α) T .top
       = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
           (fun g => geoToChildSlots g) := by
-  -- The `.top` case is the substantive Foissy bijection between
-  -- (cl_outer : CutShape T, section) data and GeoCut T top.
-  -- Recursive proof: factor cl_outer + section per (lL, rL, gl, gr).
   match T with
   | .leaf a => rfl
   | .trace t => rfl
   | .node l r =>
-    -- Substantive: bijection (cl_outer : CutShape T, section) ↔ GeoCut T top.
+    -- Substantive: factor both sides into bind over (cs_l, cs_r) ChildSlots pairs
+    -- combined via `nodeChildSlots`. Use `lhsAnyChildContrib_eq_geoCutAny l/r` as IH.
+    -- Plan:
+    -- 1. RHS: decompose via Σ (lL, rL, gl, gr) → per-(cs_l, cs_r) pairs filtered
+    --    by trace constraint.
+    -- 2. LHS: per CutShape ctor, factor section into per-l × per-r AugCutShape
+    --    choices. Each ctor restricts (cs_l, cs_r) to a subset.
+    -- 3. Show union over LHS ctors = filtered (cs_l, cs_r) pairs from GeoCut.
+    -- 4. Apply `lhsAnyChildContrib_eq_geoCutAny l/r` to convert per-l/per-r data
+    --    to GeoCut form.
     sorry
 
 /-- **Per-subtree IH** (any layer): combines the three per-layer sub-lemmas via
