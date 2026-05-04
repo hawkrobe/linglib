@@ -97,29 +97,33 @@ instance : CfRanker StrubeHahnInfoStatus where
 instance : LinearOrder StrubeHahnInfoStatus := CfRanker.toLinearOrder _
 
 /-- Project @cite{gundel-hedberg-zacharski-1993}'s 6-tier
-    `Features.GivennessStatus` onto Strube-Hahn's 3-tier IS:
+    `Features.GivennessStatus` onto Strube-Hahn's 3-tier IS, following
+    the GHZ→Prince→Strube-Hahn chain documented in
+    @cite{poesio-stevenson-eugenio-hitzeman-2004} §2.4.3 fn 10:
 
-    * `inFocus`, `activated` → `hearerOld` (currently activated /
-      already in the discourse).
-    * `familiar`, `uniquelyIdentifiable` → `mediated` (in long-term
-      memory, but requiring some inference to anchor — Prince's
-      "unused" + inferable cluster).
-    * `referential`, `typeIdentifiable` → `hearerNew` (brand-new to
-      the hearer; @cite{prince-1981}'s discourse-new categories).
+    * `inFocus`, `activated`, `familiar` → `hearerOld` (Prince's
+      Evoked + Unused: currently activated, in working memory, or in
+      long-term memory). Strube-Hahn's HEARER-OLD includes Prince's
+      Unused tier — entities like *Margaret Thatcher* that are part
+      of shared knowledge but not currently activated.
+    * `uniquelyIdentifiable`, `referential` → `mediated` (Prince's
+      Inferable + Containing-Inferable + Anchored Brand-new — entities
+      requiring inference or anchoring to be identified).
+    * `typeIdentifiable` → `hearerNew` (Prince's bare Brand-new).
 
-    The 4-2-2 vs 2-2-2 split here is one defensible mapping among
-    several; @cite{prince-1981}'s text and PSDH §2.4.3 fn 10 admit
-    that the GHZ-to-Prince correspondence is approximate. The MEDIATED
-    tier finally has a substrate source (the prior projection from
+    The 3-2-1 split is the linguistically-defensible cut implied by
+    Strube-Hahn's own definition. The previous 2-2-2 implementation
+    here mistakenly pushed GHZ's `familiar` into MEDIATED. The
+    MEDIATED tier has a substrate source (the prior projection from
     `DiscourseStatus` had no source for it, leaving MEDIATED
     unreachable). -/
 def StrubeHahnInfoStatus.ofGivenness :
     GivennessStatus → StrubeHahnInfoStatus
   | .inFocus              => .hearerOld
   | .activated            => .hearerOld
-  | .familiar             => .mediated
+  | .familiar             => .hearerOld
   | .uniquelyIdentifiable => .mediated
-  | .referential          => .hearerNew
+  | .referential          => .mediated
   | .typeIdentifiable     => .hearerNew
 
 /-- The projection respects the salience ordering: more cognitively

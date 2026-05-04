@@ -6,8 +6,12 @@ import Mathlib.Tactic.DeriveFintype
 @cite{reinhart-1981} @cite{buring-2003} @cite{krifka-2008}
 
 Substrate type for the **Topic** axis of information structure, one
-of the four IS notions in @cite{krifka-2008} (per @cite{fery-ishihara-2016}
-§1.3.4). Krifka 2008's definition (their (3)):
+of the four IS notions Krifka 2008 enumerates (focus, givenness,
+topic, delimitation; see `Features/Givenness.lean` for the broader
+discussion of how at-issueness sits orthogonally to Krifka's four).
+@cite{fery-ishihara-2016} (Oxford Handbook of Information Structure)
+follows Krifka in treating topic as a primitive notion, defined per
+@cite{krifka-2008}:
 
 > The topic constituent identifies the entity or set of entities
 > under which the information expressed in the comment constituent

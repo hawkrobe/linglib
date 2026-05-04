@@ -7,12 +7,18 @@ import Mathlib.Tactic.DeriveFintype
 @cite{gundel-hedberg-zacharski-1993} @cite{prince-1981} @cite{chafe-1976}
 @cite{ariel-2001}
 
-Substrate type for the **Givenness** axis of information structure, one of
-the four IS notions identified in @cite{krifka-2008} and adopted as the
-unifying definitional baseline in @cite{fery-ishihara-2016} (Oxford
-Handbook of Information Structure §1.3).
+Substrate type for the **Givenness** axis of information structure.
+@cite{krifka-2008} enumerates four IS notions — focus, givenness,
+topic, and **delimitation** (frame-setting). At-issueness (Roberts /
+Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen) is a
+separate axis from the QUD tradition that the post-2008 literature
+treats as orthogonal to Krifka's four. @cite{fery-ishihara-2016}
+(Oxford Handbook of Information Structure introduction) adopts
+Krifka's definitions as the unifying baseline. Linglib currently
+provides substrate for focus, givenness, topic, and at-issueness;
+delimitation has no substrate yet.
 
-The handbook §1.3.3 names two interpretive modes for givenness:
+The handbook section on givenness names two interpretive modes:
 
 - **Scalar / hierarchical** — Prince 1981, Chafe 1976,
   @cite{gundel-hedberg-zacharski-1993} (GHZ), @cite{lambrecht-1994}. The
@@ -212,12 +218,14 @@ theorem GivennessStatus.coarsen_monotone (a b : GivennessStatus) :
     a.rank ≥ b.rank → a.coarsen.rank ≥ b.coarsen.rank := by
   cases a <;> cases b <;> decide
 
-private theorem GivennessStatus.rank_injective :
+/-- Distinct GHZ-6 statuses have distinct ranks. -/
+theorem GivennessStatus.rank_injective :
     Function.Injective GivennessStatus.rank := by
   intro a b h
   cases a <;> cases b <;> simp_all [GivennessStatus.rank]
 
-private theorem BinaryGivenness.rank_injective :
+/-- Distinct binary-givenness values have distinct ranks. -/
+theorem BinaryGivenness.rank_injective :
     Function.Injective BinaryGivenness.rank := by
   intro a b h
   cases a <;> cases b <;> simp_all [BinaryGivenness.rank]

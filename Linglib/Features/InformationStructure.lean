@@ -8,13 +8,17 @@ Theory-neutral substance taxonomies for Information Structure: theme/
 rheme partitions, focus/background (binary `FocusMark` + structured
 Roothian `Focus α`), focus-marking strategies, judgment type.
 
-The Krifka 2008 / Féry-Ishihara 2016 four-axis decomposition splits IS
-into focus, givenness, topic, and at-issueness. Each axis has its own
-substrate file:
+@cite{krifka-2008} enumerates four IS notions — focus, givenness,
+topic, and **delimitation** (frame-setting); @cite{fery-ishihara-2016}
+(Oxford Handbook of Information Structure) adopts Krifka's
+definitions as the unifying baseline. At-issueness (the QUD-tradition
+axis from Roberts / Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen)
+is treated as orthogonal to Krifka's four. Substrate for each:
 - Focus: `FocusMark` + `Focus α` (this file).
 - Givenness: `Features/Givenness.lean` (`GivennessStatus` + `BinaryGivenness`).
 - Topic: `Features/Topic.lean` (`TopicMark` + `ContrastiveTopic α`).
 - At-issueness: `Core/Discourse/AtIssueness.lean` (gradient `AtIssuenessDegree`).
+- Delimitation: no substrate yet — deferred.
 
 The previous catch-all `DiscourseStatus = focused | given | new` enum
 (plus `DiscourseStatus.rank : Fin 3` and `DiscourseStatus.ofAtIssueness`)

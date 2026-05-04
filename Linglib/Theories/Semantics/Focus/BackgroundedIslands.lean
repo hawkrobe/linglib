@@ -481,14 +481,6 @@ theorem bridge_no_extraction_clash (v : VerbDecomp) (h : ¬ v.hasMannerWeight) :
   simp only [defaultDimension, if_neg h, complementStatus, extractedFillerStatus]
   decide
 
-/-- `BinaryGivenness.rank` is injective: distinct values have distinct ranks.
-Replaces the pre-Krifka `DiscourseStatus.rank_injective` (the old enum had
-3 cases including `.focused`; the new one is binary). -/
-theorem BinaryGivenness.rank_injective (a b : BinaryGivenness)
-    (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [BinaryGivenness.rank]
-
-
 /-! ## §7. Prosodic Amelioration (Experiments 1 & 3b)
 
 Prosodic focus ([FoC]) on the embedded object overrides the default manner
