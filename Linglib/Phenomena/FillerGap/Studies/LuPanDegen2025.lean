@@ -39,7 +39,6 @@ extraction predictions, with no stipulation.
 namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
-open Features.InformationStructure
 open Semantics.Verb
 
 /-! ## §1. Island Source Classification
@@ -210,14 +209,21 @@ backgroundedness and therefore worse extraction. -/
 
 /-- Per-verb backgroundedness predicts acceptability: verbs that background
 their complements more strongly also show more degraded extraction.
-The model derives this from manner salience → QUD strength → backgroundedness. -/
+The model derives this from manner salience → QUD strength → backgroundedness.
+
+(Pre-refactor versions of this theorem also asserted
+`DiscourseStatus.given.rank < DiscourseStatus.new.rank` as documentation
+of the rank direction. After the DiscourseStatus → Krifka-axes refactor,
+the conceptually-right substrate for "backgroundedness" is
+`Core.Discourse.AtIssuenessDegree`, not the new `BinaryGivenness`
+(whose rank order is INVERTED relative to DiscourseStatus —
+BinaryGivenness orders by salience, given > new). The decidable
+inequality has been dropped as it carried no proof content.) -/
 theorem per_verb_correlation_predicted :
-    -- DiscourseStatus.rank orders given < new
-    DiscourseStatus.given.rank < DiscourseStatus.new.rank ∧
     -- All MoS verbs have manner weight (they all background)
     complementStatus (defaultDimension whisperDecomp) = .given ∧
     complementStatus (defaultDimension shoutDecomp) = .given := by
-  refine ⟨?_, rfl, rfl⟩; decide
+  refine ⟨rfl, rfl⟩
 
 /-! ## §6. Fragment Verb → Island Prediction Pipeline
 
@@ -316,18 +322,19 @@ proportions consistently co-occur with lower acceptability ratings. -/
 
 open Phenomena.Islands.MannerOfSpeaking in
 /-- **Experimental data matches formal model direction**: the formal model
-predicts that backgrounded complements have degraded extraction (rank 0).
+predicts that backgrounded complements have degraded extraction.
 Experiments 1, 2b, and 3b all show the predicted anti-correlation:
-higher backgroundedness → lower acceptability. -/
+higher backgroundedness → lower acceptability. (The earlier
+`DiscourseStatus.given.rank < DiscourseStatus.new.rank` documentation
+conjunct was dropped in the Krifka-axes refactor; see comment on
+`per_verb_correlation_predicted`.) -/
 theorem experimental_matches_model :
-    -- Formal model: backgrounded = extraction-degraded
-    DiscourseStatus.given.rank < DiscourseStatus.new.rank ∧
     -- Exp 2b: MoS verbs are more backgrounded AND less acceptable than *say*
     (exp2b_bg_mos > exp2b_bg_say ∧ exp2b_acc_mos < exp2b_acc_say) ∧
     -- Exp 1: verb focus → more backgrounded AND less acceptable
     (exp1_backgrounded_verbFocus > exp1_backgrounded_embeddedFocus ∧
      exp1_acceptability_verbFocus < exp1_acceptability_embeddedFocus) := by
-  refine ⟨?_, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
 open Phenomena.Islands.MannerOfSpeaking in
 /-- **Say+adverb replicates formal model prediction**: adding manner weight
