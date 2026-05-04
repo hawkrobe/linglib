@@ -788,13 +788,18 @@ noncomputable def geoMultiset (T : DecoratedTree α) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (GeoCut T Layer.top)).val.map (geoCutToTriple R)
 
-/-! ### Bijection: `lhsRealCuts T = geoMultiset T`
+/-! ### Bijection: `lhsRealCuts T = geoMultiset T = rhsRealRealInner T`
 
-The substantive Foissy claim, LHS direction. By induction on `T`. -/
+The substantive Foissy claim. Both sides factor through `geoMultiset T`,
+so the equality follows by chaining two GeoCut bijections (LHS and RHS).
+
+By induction on `T`:
+- `.leaf` / `.trace`: definitional reduction (`rfl`).
+- `.node l r`: substantive Foissy bijection. Sub-sessions 2.10b / 2.11. -/
 
 /-- **LHS bijection**: `lhsRealCuts T` enumerates the same multiset of triples
     as `geoMultiset T`. Substantive content for `.node l r`; `.leaf` and `.trace`
-    are by definitional reduction (`decide`-checkable). -/
+    are by definitional reduction. -/
 theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
     (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
       = geoMultiset T := by
@@ -813,6 +818,29 @@ theorem lhsRealCuts_eq_geoMultiset (T : DecoratedTree α) :
   | .node l r =>
     -- The substantive content: the per-(lL, rL, gl, gr) bijection between
     -- LHS data (CutShape (.node l r) ctors + sections) and GeoCut indexings.
+    -- Forward map: outer extracting BOT subtrees + inner choices for each
+    -- outer-extracted tree (extractWhole→BOT, real cl_inner→MID).
+    -- Algebraic tools: `Multiset.sections_add`, `Multiset.map_add`, `Multiset.bind_map`.
+    sorry
+
+/-- **RHS bijection**: `rhsRealRealInner T` enumerates the same multiset of
+    triples as `geoMultiset T`. Substantive content for `.node l r`. -/
+theorem rhsRealRealInner_eq_geoMultiset (T : DecoratedTree α) :
+    (rhsRealRealInner T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = geoMultiset T := by
+  match T with
+  | .leaf a =>
+    -- |CutShape (.leaf a)| = 1 (atLeaf), |CutShape (rem atLeaf)| = |CutShape (.leaf a)| = 1.
+    -- RHS-real-real: 1 triple. Triple: forestToHc 0 ⊗ (forestToHc 0 ⊗ forestToHc {.leaf a}).
+    -- Matches geoMultiset (.leaf a) (singleton).
+    unfold rhsRealRealInner geoMultiset
+    rfl
+  | .trace t =>
+    unfold rhsRealRealInner geoMultiset
+    rfl
+  | .node l r =>
+    -- The substantive RHS bijection. Outer C₁ extracts BOT, inner C₂ on remainder
+    -- C₁ extracts MID. Each (C₁, C₂) corresponds to a unique GeoCut g with root=top.
     sorry
 
 /-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
