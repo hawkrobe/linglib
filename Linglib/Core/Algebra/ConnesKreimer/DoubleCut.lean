@@ -1150,6 +1150,127 @@ def midGeoCutEquiv (T : DecoratedTree α) : CutShape T ≃ GeoCut T Layer.mid wh
   left_inv := fromMidGeoCut_midGeoCut T
   right_inv := midGeoCut_fromMidGeoCut
 
+/-! ### `rhsToGeoCut` and `geoCutToRhs` — the RHS-side substantive Foissy bijection
+
+The RHS-style "double cut" indexing `(C₁ : CutShape T, C₂ : CutShape (remainder C₁))`
+bijections to `GeoCut T .top`. This IS the substantive Foissy cut-commutation content,
+named honestly as a bijection of indexing types — not as an algebraic-bridge "equality".
+
+By structural recursion on T with case analysis on C₁ and C₂'s ctors. The .node case
+has 9 sub-cases (4 for `bothRecurse cl cr`, 2 for `onlyLeftCut`, 2 for `onlyRightCut`,
+1 for `bothCut`), matching the 9 (lL, rL) cells of `GeoCut .node`. -/
+
+/-- Forward: `(C₁, C₂)` double-cut to its `GeoCut` 3-coloring. -/
+noncomputable def rhsToGeoCut : ∀ {T : DecoratedTree α}
+    (C₁ : CutShape T) (_C₂ : CutShape (CutShape.remainder C₁)),
+    GeoCut T Layer.top
+  | .leaf _, .atLeaf, c2 =>
+      have : c2 = .atLeaf := match c2 with | .atLeaf => rfl
+      GeoCut.leaf Layer.top
+  | .trace _, .atTrace, c2 =>
+      have : c2 = .atTrace := match c2 with | .atTrace => rfl
+      GeoCut.trace Layer.top
+  | .node l r, .bothCut hl hr, .bothRecurse .atTrace .atTrace =>
+      GeoCut.node (by decide : Layer.bot ≤ Layer.top)
+        (by decide : Layer.bot ≤ Layer.top)
+        (Or.inl hl) (Or.inl hr)
+        (botGeoCut l) (botGeoCut r)
+  | .node l r, .onlyLeftCut hl cr, .bothRecurse .atTrace cr2 =>
+      GeoCut.node (by decide : Layer.bot ≤ Layer.top) (le_refl _)
+        (Or.inl hl) (Or.inr rfl)
+        (botGeoCut l) (rhsToGeoCut (T := r) cr cr2)
+  | .node l r, .onlyLeftCut hl cr, .onlyRightCut hr2 .atTrace =>
+      GeoCut.node (by decide : Layer.bot ≤ Layer.top)
+        (by decide : Layer.mid ≤ Layer.top)
+        (Or.inl hl) (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cr hr2))
+        (botGeoCut l) (midGeoCut r cr)
+  | .node l r, .onlyRightCut hr cl, .bothRecurse cl2 .atTrace =>
+      GeoCut.node (le_refl _) (by decide : Layer.bot ≤ Layer.top)
+        (Or.inr rfl) (Or.inl hr)
+        (rhsToGeoCut (T := l) cl cl2) (botGeoCut r)
+  | .node l r, .onlyRightCut hr cl, .onlyLeftCut hl2 .atTrace =>
+      GeoCut.node (by decide : Layer.mid ≤ Layer.top)
+        (by decide : Layer.bot ≤ Layer.top)
+        (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cl hl2)) (Or.inl hr)
+        (midGeoCut l cl) (botGeoCut r)
+  | .node l r, .bothRecurse cl cr, .bothRecurse cl2 cr2 =>
+      GeoCut.node (le_refl _) (le_refl _)
+        (Or.inr rfl) (Or.inr rfl)
+        (rhsToGeoCut (T := l) cl cl2) (rhsToGeoCut (T := r) cr cr2)
+  | .node l r, .bothRecurse cl cr, .bothCut hl2 hr2 =>
+      GeoCut.node (by decide : Layer.mid ≤ Layer.top)
+        (by decide : Layer.mid ≤ Layer.top)
+        (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cl hl2))
+        (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cr hr2))
+        (midGeoCut l cl) (midGeoCut r cr)
+  | .node l r, .bothRecurse cl cr, .onlyLeftCut hl2 cr2 =>
+      GeoCut.node (by decide : Layer.mid ≤ Layer.top) (le_refl _)
+        (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cl hl2))
+        (Or.inr rfl)
+        (midGeoCut l cl) (rhsToGeoCut (T := r) cr cr2)
+  | .node l r, .bothRecurse cl cr, .onlyRightCut hr2 cl2 =>
+      GeoCut.node (le_refl _) (by decide : Layer.mid ≤ Layer.top)
+        (Or.inr rfl)
+        (Or.inl (CutShape.isNotTrace_of_isNotTrace_remainder cr hr2))
+        (rhsToGeoCut (T := l) cl cl2) (midGeoCut r cr)
+
+/-- Inverse: `GeoCut T .top` to its `(C₁, C₂)` double-cut representation.
+    Inverts `rhsToGeoCut` by case analysis on the GeoCut node's child layers `(lL, rL)`. -/
+noncomputable def geoCutToRhs : ∀ {T : DecoratedTree α} (_g : GeoCut T Layer.top),
+    Σ C₁ : CutShape T, CutShape (CutShape.remainder C₁)
+  | .leaf _, .leaf _ => ⟨.atLeaf, .atLeaf⟩
+  | .trace _, .trace _ => ⟨.atTrace, .atTrace⟩
+  | .node l r, .node (lL := lL) (rL := rL) _ _ hlNT hrNT gl gr =>
+    match lL, rL, hlNT, hrNT, gl, gr with
+    | .bot, .bot, hlNT, hrNT, _, _ =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        let hr_NT := hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        ⟨CutShape.bothCut hl_NT hr_NT, CutShape.bothRecurse .atTrace .atTrace⟩
+    | .bot, .mid, hlNT, hrNT, _, gr =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        let hr_NT := hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let cr := fromMidGeoCut gr
+        ⟨CutShape.onlyLeftCut hl_NT cr,
+         CutShape.onlyRightCut (CutShape.isNotTrace_remainder cr hr_NT) .atTrace⟩
+    | .bot, .top, hlNT, _, _, gr =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        let ⟨cr, cr2⟩ := geoCutToRhs (T := r) gr
+        ⟨CutShape.onlyLeftCut hl_NT cr, CutShape.bothRecurse .atTrace cr2⟩
+    | .mid, .bot, hlNT, hrNT, gl, _ =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let hr_NT := hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        let cl := fromMidGeoCut gl
+        ⟨CutShape.onlyRightCut hr_NT cl,
+         CutShape.onlyLeftCut (CutShape.isNotTrace_remainder cl hl_NT) .atTrace⟩
+    | .mid, .mid, hlNT, hrNT, gl, gr =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let hr_NT := hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let cl := fromMidGeoCut gl
+        let cr := fromMidGeoCut gr
+        ⟨CutShape.bothRecurse cl cr,
+         CutShape.bothCut (CutShape.isNotTrace_remainder cl hl_NT)
+           (CutShape.isNotTrace_remainder cr hr_NT)⟩
+    | .mid, .top, hlNT, _, gl, gr =>
+        let hl_NT := hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let cl := fromMidGeoCut gl
+        let ⟨cr, cr2⟩ := geoCutToRhs (T := r) gr
+        ⟨CutShape.bothRecurse cl cr,
+         CutShape.onlyLeftCut (CutShape.isNotTrace_remainder cl hl_NT) cr2⟩
+    | .top, .bot, _, hrNT, gl, _ =>
+        let hr_NT := hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)
+        let ⟨cl, cl2⟩ := geoCutToRhs (T := l) gl
+        ⟨CutShape.onlyRightCut hr_NT cl, CutShape.bothRecurse cl2 .atTrace⟩
+    | .top, .mid, _, hrNT, gl, gr =>
+        let hr_NT := hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)
+        let ⟨cl, cl2⟩ := geoCutToRhs (T := l) gl
+        let cr := fromMidGeoCut gr
+        ⟨CutShape.bothRecurse cl cr,
+         CutShape.onlyRightCut (CutShape.isNotTrace_remainder cr hr_NT) cl2⟩
+    | .top, .top, _, _, gl, gr =>
+        let ⟨cl, cl2⟩ := geoCutToRhs (T := l) gl
+        let ⟨cr, cr2⟩ := geoCutToRhs (T := r) gr
+        ⟨CutShape.bothRecurse cl cr, CutShape.bothRecurse cl2 cr2⟩
+
 /-- The `.mid` case: enumerate `CutShape T` for inner cuts. -/
 theorem perLayerContrib_mid (T : DecoratedTree α) :
     perLayerContrib (α := α) T .mid
