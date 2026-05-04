@@ -183,4 +183,38 @@ theorem mergePost_basis_tensor (S S' : TraceTree α Unit)
   · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
     simp only [map_zero]
 
+/-- **Right-multiplicativity of the post-coproduct chain** by a "pure right-channel"
+    factor `1 ⊗ y`. For any `z : Hc R α ⊗[R] Hc R α` and any `y : Hc R α`:
+
+      mergePost (z * (1 ⊗ y)) = mergePost(z) * y.
+
+    Load-bearing for the F̂-residual generalization of `mergeOp_pair`
+    (M-C-B Lemma 1.4.1 in full): the all-empty-cut term of `comulForestDel F̂`
+    has the form `1 ⊗ forestToHc F̂`, so this lemma propagates the residual
+    workspace `F̂` through the post-coproduct chain unchanged. -/
+theorem mergePost_right_one_tmul (S S' : TraceTree α Unit)
+    (z : Hc R α ⊗[R] Hc R α) (y : Hc R α) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S' (z * ((1 : Hc R α) ⊗ₜ[R] y))))
+      = hcMulLin (R := R) (α := α)
+          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+            (deltaMatch (R := R) S S' z)) * y := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
+    unfold deltaMatch
+    rw [TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.map_tmul,
+        LinearMap.id_apply, TensorProduct.map_tmul, LinearMap.id_apply,
+        TensorProduct.map_tmul, LinearMap.id_apply]
+    show Algebra.TensorProduct.lmul' (S := Hc R α) R _
+       = Algebra.TensorProduct.lmul' (S := Hc R α) R _ * _
+    rw [Algebra.TensorProduct.lmul'_apply_tmul,
+        Algebra.TensorProduct.lmul'_apply_tmul, mul_assoc]
+  | add z1 z2 ih1 ih2 =>
+    rw [add_mul]
+    simp only [map_add]
+    rw [ih1, ih2, add_mul]
+
 end Minimalist.Hopf
