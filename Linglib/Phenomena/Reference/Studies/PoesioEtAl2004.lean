@@ -33,7 +33,7 @@ claims true.
 | `previous utterance` (Kameyama vs Suri-McCoy adjunct treatment) | not formalized | – |
 | `realization` (direct vs indirect/bridging) | `Realizes` typeclass | direct only (`utteranceRealizes`); bridging not formalized |
 | `CF-filter` (1st/2nd person, predicative NPs) | not formalized | – |
-| `rank` (CfRanker choice) | `CfRankerOf E R` typeclass | `GrammaticalRole` (Kameyama 1986), `DiscourseStatus` (Strube-Hahn 1999); LinearOrder (Rambow 1993) deferred — substrate gap (Realization lacks position field) |
+| `rank` (CfRanker choice) | `CfRankerOf E R` typeclass | `GrammaticalRole` (Kameyama 1986), `StrubeHahnInfoStatus` (Strube-Hahn 1999, projecting from `Features.GivennessStatus` per the post-Krifka substrate); LinearOrder (Rambow 1993) deferred — substrate gap (Realization lacks position field) |
 | `prodef` (which "pronouns" count for Rule 1) | `Pronominalizes` typeclass | utterance's `isPronoun` flag |
 | `segmentation` | not formalized | – |
 
@@ -384,12 +384,11 @@ theorem psdh_5_2_2_entity_coherence_dissociable_on_23 :
     produces a *different* Cf order from `GrammaticalRole` on the
     same realizations — the parametric story PSDH §4.4.3 evaluate.
 
-    The IS ranker uses `Features.InformationStructure.DiscourseStatus`
-    as the role type, projecting through the existing 3-way enum
-    (focused/given/new). On a sentence where the grammatical subject
-    is HEARER-NEW (a freshly introduced entity) and the object is
-    HEARER-OLD (already in the discourse), the two rankers disagree
-    on which entity has the highest Cf rank. -/
+    The IS ranker uses `StrubeHahnInfoStatus` (HEARER-OLD / MEDIATED
+    / HEARER-NEW) directly as the role type. On a sentence where the
+    grammatical subject is HEARER-NEW (a freshly introduced entity)
+    and the object is HEARER-OLD (already in the discourse), the two
+    rankers disagree on which entity has the highest Cf rank. -/
 
 abbrev IsUtt : Type := Utterance String StrubeHahnInfoStatus
 
@@ -662,12 +661,14 @@ theorem beaver_cohere_invariant_under_cb_equiv_candidates
       under that map, replacing stipulation with derivation. Queued
       as a separate commit.
 
-    - **`HasDiscourseStatus`-typed IS ranker**: currently the
-      Strube-Hahn ranker is `instance : CfRanker StrubeHahnInfoStatus`
-      (role-typed). The deeper move is `instance [HasDiscourseStatus E]
-      : CfRankerOf E R` — ranking ANY entity-typed thing that has
-      discourse status, decoupled from `R`. Lets non-English fragments
-      use IS ranking without changing their role type. Queued.
+    - **`HasGivenness`-typed IS ranker**: currently the Strube-Hahn
+      ranker is `instance : CfRanker StrubeHahnInfoStatus` (role-
+      typed). The deeper move is `instance [HasGivenness E] :
+      CfRankerOf E R` — ranking ANY entity-typed thing whose
+      givenness can be projected, decoupled from `R`. Lets non-
+      English fragments use IS ranking without changing their role
+      type. Awaits the per-axis `HasGivenness` typeclass deferred
+      from the post-Krifka substrate redesign.
 
     - **Hybrid Continuity** (PSDH §5.3.3): the disjunction of entity
       coherence ∨ rhetorical relation ∨ temporal coherence as the

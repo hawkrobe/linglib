@@ -1,5 +1,6 @@
 import Linglib.Core.Discourse.Coherence
 import Linglib.Typology.PolarityMarking
+import Mathlib.Tactic.NormNum
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.French.PolarityMarking

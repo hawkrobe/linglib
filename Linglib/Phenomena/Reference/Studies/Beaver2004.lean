@@ -121,8 +121,10 @@ structure Candidate (E : Type) (R : Type) where
   /-- FAM-DEF: every definite NP is familiar (has antecedent in prev)?
       (Substrate gap: Realization E R lacks definiteness marking.
       `Linglib/Features/Definiteness.lean` defines the enum; an
-      `[HasDefiniteness E]` typeclass + `[HasDiscourseStatus E]`
-      from `Core/Salience/Defs.lean` would let `famDefOK` be derived.
+      `[HasDefiniteness E]` typeclass + a `[HasGivenness E]`
+      typeclass (the latter not yet defined; deferred to a follow-up
+      PR per the post-Krifka substrate redesign) would let `famDefOK`
+      be derived from `Features.GivennessStatus`.
       Queued.) -/
   famDefOK : Bool
   deriving Repr

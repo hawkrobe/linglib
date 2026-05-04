@@ -1,5 +1,3 @@
-import Linglib.Core.Discourse.AtIssueness
-
 /-!
 # Features.InformationStructure
 
@@ -7,8 +5,22 @@ import Linglib.Core.Discourse.AtIssueness
 @cite{umbach-2004} @cite{turco-braun-dimroth-2014}
 
 Theory-neutral substance taxonomies for Information Structure: theme/
-rheme partitions, focus/background, discourse status, polarity-switch
-contexts, focus-marking strategies, exclusion variety, judgment type.
+rheme partitions, focus/background (binary `FocusMark` + structured
+Roothian `Focus α`), focus-marking strategies, judgment type.
+
+The Krifka 2008 / Féry-Ishihara 2016 four-axis decomposition splits IS
+into focus, givenness, topic, and at-issueness. Each axis has its own
+substrate file:
+- Focus: `FocusMark` + `Focus α` (this file).
+- Givenness: `Features/Givenness.lean` (`GivennessStatus` + `BinaryGivenness`).
+- Topic: `Features/Topic.lean` (`TopicMark` + `ContrastiveTopic α`).
+- At-issueness: `Core/Discourse/AtIssueness.lean` (gradient `AtIssuenessDegree`).
+
+The previous catch-all `DiscourseStatus = focused | given | new` enum
+(plus `DiscourseStatus.rank : Fin 3` and `DiscourseStatus.ofAtIssueness`)
+conflated the focus, givenness, and at-issueness axes; deleted in
+0.230.717. Theme/Rheme and `JudgmentType` (Kuroda 1972) remain here as
+they predate the Krifka decomposition and target distinct phenomena.
 
 Theory-level predicates over these taxonomies (Umbach's alt-set
 well-formedness, Erteschik-Shir/Abeillé extraction-IS clash) live in
@@ -111,45 +123,6 @@ structure InfoStructure (P : Type) where
   foci : List P := []
   /-- Background elements (given) -/
   background : List P := []
-
-/-! ## Discourse Status -/
-
-/-- The three-way partition of discourse status.
-
-    Descriptive type used across multiple theories
-    (@cite{kratzer-selkirk-2020}, @cite{arnold-wasow-losongco-ginstrom-2000},
-    backgrounded islands). -/
-inductive DiscourseStatus where
-  /-- Contrasted with discourse referent -/
-  | focused
-  /-- Given, matching discourse referent -/
-  | given
-  /-- Unmarked: merely new information -/
-  | new
-  deriving DecidableEq, Repr
-
-/-- Ordinal rank: given < new < focused.
-
-    Used by extraction-acceptability theories (@cite{lu-pan-degen-2025}) and
-    focus-comparison constraints (@cite{winckel-et-al-2025}). -/
-def DiscourseStatus.rank : DiscourseStatus → Fin 3
-  | .given   => 0
-  | .new     => 1
-  | .focused => 2
-
-/-- Map gradient at-issueness to discourse status.
-
-    High at-issueness content is foregrounded (new or focused);
-    low at-issueness content is backgrounded (given). This connects
-    the at-issue/not-at-issue distinction to the Focus/Background partition.
-
-    - At-issue → `.new` (unmarked foreground; `.focused` requires
-      additional evidence of contrast)
-    - Not-at-issue → `.given` (backgrounded) -/
-def DiscourseStatus.ofAtIssueness (d : Core.Discourse.AtIssueness.AtIssuenessDegree)
-    (θ : Core.Discourse.AtIssueness.AtIssuenessThreshold :=
-      Core.Discourse.AtIssueness.defaultThreshold) : DiscourseStatus :=
-  if Core.Discourse.AtIssueness.isAtIssue d θ then .new else .given
 
 /-! ## Focus Interpretation Principle (Rooth 1992) -/
 

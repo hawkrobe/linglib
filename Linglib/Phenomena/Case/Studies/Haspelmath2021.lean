@@ -495,7 +495,7 @@ open Features (BinaryGivenness)
     be new (focal). S is excluded (Haspelmath fn. 15, p. 138 — the paper
     does not analyze intransitive constructions); querying S is therefore
     not defined. -/
-def usualDiscourseStatus : ArgumentRole → Option BinaryGivenness
+def usualGivenness : ArgumentRole → Option BinaryGivenness
   | .A | .R => some .given
   | .P | .T => some .new
   | .S      => none
@@ -504,7 +504,7 @@ def usualDiscourseStatus : ArgumentRole → Option BinaryGivenness
     if the role has a defined "usual" status and the actual status
     differs from it. S returns `false` (not analyzed). -/
 def deviatesFromUsual (role : ArgumentRole) (status : BinaryGivenness) : Bool :=
-  match usualDiscourseStatus role with
+  match usualGivenness role with
   | some usual => status != usual
   | none       => false
 
@@ -524,8 +524,8 @@ def alternantPreferredLong
     over the role pair so U13 (A,P) and U14 (R,T) instantiate it. -/
 theorem universal12_alternation
     (highRole lowRole : ArgumentRole)
-    (h_high_given : usualDiscourseStatus highRole = some .given)
-    (h_low_new   : usualDiscourseStatus lowRole  = some .new) :
+    (h_high_given : usualGivenness highRole = some .given)
+    (h_low_new   : usualGivenness lowRole  = some .new) :
     -- Deviant: high is new, low is given → longer alternant preferred
     alternantPreferredLong true highRole lowRole .new .given = true ∧
     -- Usual: high is given, low is new → longer alternant dispreferred

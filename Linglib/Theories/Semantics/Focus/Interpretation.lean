@@ -33,6 +33,7 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 
 import Linglib.Features.InformationStructure
 import Mathlib.Data.Set.Basic
+import Mathlib.Tactic.Tauto
 
 open Features.InformationStructure
 
