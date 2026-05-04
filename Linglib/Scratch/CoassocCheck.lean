@@ -108,4 +108,9 @@ For T = .node (.leaf a) (.leaf b):
 Matches DoubleCut T cardinality. So `lhs_eq_sum_DoubleCut (.node l r)` is now
 provable in principle (the bijection exists). -/
 
+/-! ## Typeclass resolution: `Bialgebra ℚ (Hc ℚ Atom)` -/
+
+/-- Confirms `instBialgebra` is found by typeclass synthesis. -/
+noncomputable example : Bialgebra ℚ (Hc ℚ Atom) := inferInstance
+
 end ConnesKreimer.CoassocCheck

@@ -21,11 +21,8 @@ chain in `LhsEquiv.lean`.
 - `counit_rTensor` — proved (Stage 1a).
 - `counit_lTensor` — proved (Stage 1a).
 
-Stage 1 obligation chain is sorry-free as of 0.230.728.
-
-`bialgebraStructure` is currently a `def`. It can be promoted to `instance`
-now that all coassoc/counit obligations are discharged; left as `def`
-pending an audit of downstream typeclass-resolution implications.
+Stage 1 obligation chain is sorry-free as of 0.230.728. `instBialgebra`
+is registered as an `instance` (promoted from `def` at 0.230.729).
 
 ## Why this works typeclass-wise
 
@@ -186,7 +183,7 @@ private lemma counit_rTensor_apply_comulTree (T : TraceTree α Unit) :
   rw [map_sum, Finset.sum_eq_single (CutShape.empty T)]
   · rw [Algebra.TensorProduct.map_tmul, counit_apply_single, AlgHom.coe_id, id_eq,
         CutShape.cutForest_empty, CutShape.remainder_empty]
-    simp only [if_pos rfl, ↓reduceIte]
+    simp only [↓reduceIte]
   · intro c _ hne
     rw [Algebra.TensorProduct.map_tmul, counit_apply_single, AlgHom.coe_id, id_eq]
     have hc : CutShape.cutForest c ≠ 0 := fun h => hne (cutForest_eq_zero_imp_empty c h)
@@ -374,20 +371,18 @@ theorem counit_lTensor :
 
 /-- The Connes-Kreimer bialgebra structure on `Hc R α`.
 
-    **Currently a `def`, not an `instance`.** The mathlib-PR audit
-    flagged registering an `instance` whose proof obligations are
-    `sorry` as unacceptable practice. All Stage 1 obligations
-    (`comul_coassoc`, `counit_rTensor`, `counit_lTensor`) are now
-    discharged (sorry-free as of 0.230.728), so this can be promoted
-    to `instance`; left as `def` pending a downstream-impact audit.
+    All Stage 1 obligations (`comul_coassoc`, `counit_rTensor`,
+    `counit_lTensor`) are sorry-free, so this is registered as an
+    `instance`. Typeclass resolution finds it on `Hc R α` because
+    `Hc` is a `def` (not `abbrev`), giving a distinct typeclass slot
+    from mathlib's `AddMonoidAlgebra.instBialgebra` on the underlying
+    `AddMonoidAlgebra R (TraceForest α Unit)` (group-like coproduct
+    Δ(F) = F ⊗ F). The two coexist without conflict — the wrapper
+    pattern is the same as mathlib's `MonoidAlgebra`.
 
-    Downstream code that wants the Bialgebra structure can opt in
-    locally via `letI := ConnesKreimer.bialgebraStructure (R := R) (α := α)`.
     Direct access to the algebraic operators stays available by name:
-    `comulAlgHom`, `comulDelAlgHom`, `counit`.
-
-    Once `comul_coassoc` is proven, promote back to `instance`. -/
-noncomputable def bialgebraStructure : Bialgebra R (Hc R α) :=
+    `comulAlgHom`, `comulDelAlgHom`, `counit`. -/
+noncomputable instance instBialgebra : Bialgebra R (Hc R α) :=
   Bialgebra.ofAlgHom comulAlgHom counit comul_coassoc counit_rTensor counit_lTensor
 
 end ConnesKreimer
