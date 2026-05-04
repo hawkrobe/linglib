@@ -251,6 +251,38 @@ theorem mergeOp_emL_matches_Step
   rw [mergeOp_pair]
   rfl
 
+/-! ## §2.5: Toward the full Lemma 1.4.1 (residual workspace F̂)
+
+The factor-out lemma below extends `mergeOp_pair` from `F̂ = ∅` toward the full
+Lemma 1.4.1 statement (workspace `{S, S'} ⊔ F̂`, arbitrary residual `F̂`). It says:
+when `T : TraceTree α Unit` satisfies disjointness from `S, S'` (T ≠ S, T ≠ S',
+no cut on T extracts S or S'), `mergeOp S S'` "factors through" multiplication
+by `forestToHc {T}`. By induction on `F̂`'s cardinality, this assembles into the
+full Lemma 1.4.1 result (queued as Phase 7b-A.3). -/
+
+/-- **Factor-out lemma**: under disjointness on `T` (T ≠ S, T ≠ S', and no cut
+    on T extracts S or S'), `mergeOp S S'` commutes with multiplication by
+    `forestToHc {T}` on the workspace:
+
+      mergeOp S S' (forestToHc {T} * w) = forestToHc {T} * mergeOp S S' w.
+
+    Proof: expand `comulDelAlgHom (forestToHc {T} * w) = comulTreeDel T *
+    comulDelAlgHom w`. Decompose `comulTreeDel T` into prim + cut sum. The
+    prim term and non-empty cuts vanish under disjointness via
+    `mergePost_left_mul_eq_zero_of_no_decomp`. The empty cut contributes
+    `(1 ⊗ forestToHc {T}) * comulDelAlgHom w`, which by Hc-commutativity and
+    `mergePost_right_one_tmul` evaluates to `forestToHc {T} * mergeOp S S' w`. -/
+theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (S S' T : TraceTree α Unit)
+    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S')
+    (h_no_S_in_T_cuts : ∀ c : CutShape T, S ∉ CutShape.cutForest c)
+    (h_no_S'_in_T_cuts : ∀ c : CutShape T, S' ∉ CutShape.cutForest c)
+    (w : Hc R α) :
+    mergeOp (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * w)
+      = forestToHc ({T} : TraceForest α Unit) * mergeOp (R := R) S S' w := by
+  sorry
+
 /-! ## §3: Internal Merge bridge
 
 **Important architectural note (per M-C-B Proposition 1.4.2, p. 50):**

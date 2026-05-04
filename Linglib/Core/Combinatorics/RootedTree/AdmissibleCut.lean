@@ -368,6 +368,62 @@ theorem cutForest_add_ne_insert_pair {S S' : TraceTree α β}
       omega
     · exact absurd (size_lt_of_mem_cutForest c' S' hS'c') (lt_irrefl _)
 
+/-- **Empty-cut characterization**: `cutForest c = 0` iff `c = empty T`.
+
+    Used in the algebraic Merge bridge's factor-out lemma to identify the unique
+    LEFT-empty contributor in `comulTreeDel T`. -/
+theorem eq_empty_of_cutForest_eq_zero :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      CutShape.cutForest c = (0 : Multiset (TraceTree α β)) → c = CutShape.empty T
+  | .leaf _, .atLeaf, _ => rfl
+  | .trace _, .atTrace, _ => rfl
+  | .node l r, .bothCut hl hr, h => by
+      simp only [CutShape.cutForest] at h
+      have : l ∈ ({l, r} : Multiset (TraceTree α β)) :=
+        Multiset.mem_cons_self _ _
+      rw [h] at this
+      exact absurd this (Multiset.notMem_zero _)
+  | .node l r, .onlyLeftCut hl cr, h => by
+      simp only [CutShape.cutForest] at h
+      have hl_mem : l ∈ ({l} : Multiset (TraceTree α β)) + cr.cutForest :=
+        Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
+      rw [h] at hl_mem
+      exact absurd hl_mem (Multiset.notMem_zero _)
+  | .node l r, .onlyRightCut hr cl, h => by
+      simp only [CutShape.cutForest] at h
+      have hr_mem : r ∈ cl.cutForest + ({r} : Multiset (TraceTree α β)) :=
+        Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
+      rw [h] at hr_mem
+      exact absurd hr_mem (Multiset.notMem_zero _)
+  | .node l r, .bothRecurse cl cr, h => by
+      simp only [CutShape.cutForest] at h
+      have hcards : (cl.cutForest + cr.cutForest).card
+                  = (0 : Multiset (TraceTree α β)).card := by rw [h]
+      rw [Multiset.card_add, Multiset.card_zero] at hcards
+      have hcl_card : cl.cutForest.card = 0 := by omega
+      have hcr_card : cr.cutForest.card = 0 := by omega
+      have hcl : cl.cutForest = 0 := Multiset.card_eq_zero.mp hcl_card
+      have hcr : cr.cutForest = 0 := Multiset.card_eq_zero.mp hcr_card
+      have ihl : cl = CutShape.empty l := eq_empty_of_cutForest_eq_zero cl hcl
+      have ihr : cr = CutShape.empty r := eq_empty_of_cutForest_eq_zero cr hcr
+      subst ihl; subst ihr
+      rfl
+
+/-- **Combined empty-cut characterization**: `cutForest c = 0 ↔ c = empty T`.
+    The `mpr` direction restates `cutForest_empty` (in §6 below). -/
+theorem cutForest_eq_zero_iff {T : TraceTree α β} (c : CutShape T) :
+    CutShape.cutForest c = (0 : Multiset (TraceTree α β)) ↔ c = CutShape.empty T := by
+  refine ⟨eq_empty_of_cutForest_eq_zero c, fun h => ?_⟩
+  subst h
+  -- Show (empty T).cutForest = 0 by induction on T.
+  induction T with
+  | leaf _ => rfl
+  | trace _ => rfl
+  | node l r ihl ihr =>
+    show (CutShape.bothRecurse (CutShape.empty l) (CutShape.empty r)).cutForest = 0
+    rw [CutShape.cutForest, ihl, ihr]
+    rfl
+
 /-! ## §6: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
