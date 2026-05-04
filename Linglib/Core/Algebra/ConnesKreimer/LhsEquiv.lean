@@ -400,7 +400,7 @@ theorem geoStackItem_lhsToGeoCut : ∀ {T : TraceTree α Unit} (idx : LhsIndex T
 
 /-- Per-element triple agreement: `LhsIndex.tripleTensor` matches `geoCutToTriple`
     after applying `lhsToGeoCut`. Combines the three forest-agreement lemmas. -/
-theorem tripleTensor_lhsIndex_eq_geoCutToTriple
+theorem LhsIndex.tripleTensor_eq
     {R : Type*} [CommSemiring R]
     {T : TraceTree α Unit} (idx : LhsIndex T) :
     LhsIndex.tripleTensor R idx = geoCutToTriple R (lhsToGeoCut idx) := by
@@ -410,7 +410,7 @@ theorem tripleTensor_lhsIndex_eq_geoCutToTriple
 /-! ## §6: Cuts-of-cuts identity via the GeoCut chain
 
 `lhsRealCuts T = geoMultiset T` proven directly via `lhsRealCuts_eq_lhsIndexSum`
-(Session 2) + `tripleTensor_lhsIndex_eq_geoCutToTriple` (Session 4) +
+(Session 2) + `LhsIndex.tripleTensor_eq` (Session 4) +
 `lhsGeoCutEquiv` (Session 3). This bypasses the `perLayerContrib_top` hub
 entirely — the substantive Foissy bijection is now sorry-free.
 
@@ -442,7 +442,7 @@ theorem lhsRealCuts_eq_geoMultiset (T : TraceTree α Unit) :
   refine Multiset.map_congr rfl (fun g _ => ?_)
   rw [Function.comp_apply]
   show LhsIndex.tripleTensor R (geoCutToLhs g) = geoCutToTriple R g
-  rw [tripleTensor_lhsIndex_eq_geoCutToTriple, lhsToGeoCut_geoCutToLhs]
+  rw [LhsIndex.tripleTensor_eq, lhsToGeoCut_geoCutToLhs]
 
 /-- The substantive cuts-of-cuts identity at the section level: LHS sections
     and RHS double-cut innermost real-real triples agree. Chains through
