@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Features.InformationStructure
+import Linglib.Features.Givenness
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Marantz1991
@@ -488,14 +488,14 @@ theorem universal11_inverse :
     role/discourse-status pairing; U13 and U14 instantiate it for
     A/P (passive) and R/T (dative). -/
 
-open Features.InformationStructure
+open Features (BinaryGivenness)
 
 /-- Usual discourse-status association for the four core argument roles.
     A/R (high-rank) tend to be given (topical); P/T (low-rank) tend to
     be new (focal). S is excluded (Haspelmath fn. 15, p. 138 — the paper
     does not analyze intransitive constructions); querying S is therefore
     not defined. -/
-def usualDiscourseStatus : ArgumentRole → Option DiscourseStatus
+def usualDiscourseStatus : ArgumentRole → Option BinaryGivenness
   | .A | .R => some .given
   | .P | .T => some .new
   | .S      => none
@@ -503,7 +503,7 @@ def usualDiscourseStatus : ArgumentRole → Option DiscourseStatus
 /-- An argument's discourse status deviates from the usual association
     if the role has a defined "usual" status and the actual status
     differs from it. S returns `false` (not analyzed). -/
-def deviatesFromUsual (role : ArgumentRole) (status : DiscourseStatus) : Bool :=
+def deviatesFromUsual (role : ArgumentRole) (status : BinaryGivenness) : Bool :=
   match usualDiscourseStatus role with
   | some usual => status != usual
   | none       => false
@@ -515,7 +515,7 @@ def deviatesFromUsual (role : ArgumentRole) (status : DiscourseStatus) : Bool :=
 def alternantPreferredLong
     (sensitiveToGivenness : Bool)
     (highRole lowRole : ArgumentRole)
-    (highStatus lowStatus : DiscourseStatus) : Bool :=
+    (highStatus lowStatus : BinaryGivenness) : Bool :=
   sensitiveToGivenness &&
     (deviatesFromUsual highRole highStatus || deviatesFromUsual lowRole lowStatus)
 
@@ -558,7 +558,7 @@ theorem universal12_alternation
     `alternantPreferredLong _ .A .P _ _` — no bridge or readout theorems
     needed; U12 instantiated at `(.A, .P)` carries the content. -/
 abbrev passivePreferredGivenSensitive
-    (sensitiveToGivenness : Bool) (statusA statusP : DiscourseStatus) : Bool :=
+    (sensitiveToGivenness : Bool) (statusA statusP : BinaryGivenness) : Bool :=
   alternantPreferredLong sensitiveToGivenness .A .P statusA statusP
 
 -- ============================================================================
@@ -580,7 +580,7 @@ abbrev passivePreferredGivenSensitive
     `abbrev` for the same reason as `passivePreferredGivenSensitive`: U14
     is *literally* `alternantPreferredLong _ .R .T _ _`. -/
 abbrev ppDativePreferredGivenSensitive
-    (sensitiveToGivenness : Bool) (statusR statusT : DiscourseStatus) : Bool :=
+    (sensitiveToGivenness : Bool) (statusR statusT : BinaryGivenness) : Bool :=
   alternantPreferredLong sensitiveToGivenness .R .T statusR statusT
 
 -- ============================================================================
