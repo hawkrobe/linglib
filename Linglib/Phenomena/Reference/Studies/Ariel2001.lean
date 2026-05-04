@@ -1,5 +1,6 @@
 import Linglib.Features.Accessibility
 import Linglib.Features.PronounStrength
+import Linglib.Features.Givenness
 
 /-!
 # @cite{ariel-2001}
@@ -234,38 +235,30 @@ theorem strength_coarsening_agrees :
 -- § 5. Givenness Hierarchy (@cite{gundel-hedberg-zacharski-1993})
 -- ════════════════════════════════════════════════════
 
-/-- Gundel, Hedberg & Zacharski (1993): six cognitive statuses organized
-    as an implicational hierarchy. Each status implies all lower ones.
+-- `GivennessStatus` and `GivennessStatus.rank` were promoted to
+-- `Features/Givenness.lean` (the substrate layer) so Centering and
+-- other non-Phenomena consumers can import them. The Ariel-specific
+-- `toAccessibility` projection below remains here as the
+-- study-specific bridge.
 
-    in focus > activated > familiar > uniquely identifiable >
-    referential > type identifiable -/
-inductive GivennessStatus where
-  | inFocus              -- unstressed pronoun
-  | activated            -- that, this, this N
-  | familiar             -- that N
-  | uniquelyIdentifiable -- the N
-  | referential          -- indefinite this N
-  | typeIdentifiable     -- a N
-  deriving DecidableEq, Repr
+end Phenomena.Reference.Studies.Ariel2001
 
-def GivennessStatus.rank : GivennessStatus → Nat
-  | .inFocus              => 5
-  | .activated            => 4
-  | .familiar             => 3
-  | .uniquelyIdentifiable => 2
-  | .referential          => 1
-  | .typeIdentifiable     => 0
+namespace Features
 
-/-- Prototypical accessibility level for each givenness status.
+/-- Prototypical accessibility level for each givenness status —
+    Ariel's GHZ→AccessibilityLevel projection. Lives in `Features`
+    namespace so dot notation `(g : GivennessStatus).toAccessibility`
+    works after the `Features/Givenness.lean` substrate promotion.
 
-    **Caveat**: Gundel et al.'s lower statuses (`referential` = "indefinite
-    this N", `typeIdentifiable` = "a N") correspond to **indefinite**
-    expressions, which do not appear on Ariel's accessibility marking
-    scale (which covers Given/definite referential forms). The mapping
-    for these two is by approximate accessibility degree, not by form
-    identity. Ariel herself notes (p. 63) that the Givenness Hierarchy's
-    coverage is "suspiciously compatible with the distribution of just
-    those referring expressions linguists have tended to focus on." -/
+    **Caveat**: Gundel et al.'s lower statuses (`referential` =
+    "indefinite this N", `typeIdentifiable` = "a N") correspond to
+    **indefinite** expressions, which do not appear on Ariel's
+    accessibility marking scale (which covers Given/definite
+    referential forms). The mapping for these two is by approximate
+    accessibility degree, not by form identity. @cite{ariel-2001}
+    (p. 63) notes that the Givenness Hierarchy's coverage is
+    "suspiciously compatible with the distribution of just those
+    referring expressions linguists have tended to focus on." -/
 def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
   | .inFocus              => .unstressedPron
   | .activated            => .proxDem
@@ -273,6 +266,13 @@ def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
   | .uniquelyIdentifiable => .shortDefDescription
   | .referential          => .longDefDescription
   | .typeIdentifiable     => .fullNameMod
+
+end Features
+
+namespace Phenomena.Reference.Studies.Ariel2001
+
+open Features.Prominence (DefinitenessLevel)
+open Features
 
 /-- The Givenness→Accessibility mapping IS monotone: higher givenness
     status maps to higher or equal accessibility rank. The Givenness
