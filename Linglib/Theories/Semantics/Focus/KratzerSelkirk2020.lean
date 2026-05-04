@@ -419,12 +419,18 @@ def beaverEtAl2007_sid : SOFDatum := {
 }
 
 /-- @cite{katz-selkirk-2011} FoC-New vs New-FoC vs New-New triples.
-    K&S (36): Phonetic evidence distinguishing [FoC] from newness. -/
+    K&S (36): Phonetic evidence distinguishing [FoC] from newness.
+
+    The K&S contrast here is FOCUS marking on otherwise-new material;
+    "new" in their (36) means "non-focused new". `FocusMark` (binary
+    focused vs non-focused) captures the relevant axis directly. The
+    pre-Krifka file used `DiscourseStatus` and exploited only the
+    `.focused`/`.new` cases — `.given` was unreachable. -/
 structure ProsodicTripleDatum where
-  /-- First post-verbal phrase status -/
-  firstStatus : DiscourseStatus
-  /-- Second post-verbal phrase status -/
-  secondStatus : DiscourseStatus
+  /-- First post-verbal phrase focus marking -/
+  firstFocus : FocusMark
+  /-- Second post-verbal phrase focus marking -/
+  secondFocus : FocusMark
   /-- Description of the pitch pattern -/
   pitchPattern : String
   /-- Source -/
@@ -432,22 +438,22 @@ structure ProsodicTripleDatum where
   deriving Repr
 
 def katzSelkirk2011_focNew : ProsodicTripleDatum := {
-  firstStatus := .focused
-  secondStatus := .new
+  firstFocus := .focused
+  secondFocus := .nonFocused
   pitchPattern := "Considerable downstep (⇓H) between phrases"
   source := "Katz & Selkirk (2011), K&S (36a)"
 }
 
 def katzSelkirk2011_newFoc : ProsodicTripleDatum := {
-  firstStatus := .new
-  secondStatus := .focused
+  firstFocus := .nonFocused
+  secondFocus := .focused
   pitchPattern := "Optional small upstep (↑H) on focused phrase"
   source := "Katz & Selkirk (2011), K&S (36b)"
 }
 
 def katzSelkirk2011_newNew : ProsodicTripleDatum := {
-  firstStatus := .new
-  secondStatus := .new
+  firstFocus := .nonFocused
+  secondFocus := .nonFocused
   pitchPattern := "Small default downstep (↓H) between phrases"
   source := "Katz & Selkirk (2011), K&S (36c)"
 }
