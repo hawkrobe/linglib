@@ -293,6 +293,26 @@ instance {α β : Type*} : DecidablePred (@IsNotTrace α β) := fun t =>
 @[simp] theorem not_isNotTrace_trace {α β : Type*} (b : β) :
     ¬ IsNotTrace (TraceTree.trace b : TraceTree α β) := id
 
+/-- Size measure on `TraceTree`: count of constructors (each `.leaf` /
+    `.trace` / `.node` adds 1). Used as the structural-recursion measure
+    for proving `cutForest` extracts proper subtrees. -/
+def size {α β : Type*} : TraceTree α β → Nat
+  | .leaf _   => 1
+  | .trace _  => 1
+  | .node l r => 1 + l.size + r.size
+
+@[simp] theorem size_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).size = 1 := rfl
+
+@[simp] theorem size_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).size = 1 := rfl
+
+@[simp] theorem size_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).size = 1 + l.size + r.size := rfl
+
+theorem size_pos {α β : Type*} (t : TraceTree α β) : 0 < t.size := by
+  cases t <;> simp only [size] <;> omega
+
 end TraceTree
 
 namespace DecoratedTree

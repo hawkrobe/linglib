@@ -286,7 +286,58 @@ def remainderDeletion : ∀ {T : TraceTree α β},
       | none,    some r' => some r'
       | none,    none    => none
 
-/-! ## §5: Sanity checks -/
+/-! ## §5: Structural facts about `cutForest` -/
+
+/-- Every subtree extracted by a cut on `T` is a proper subtree of `T` —
+    its `size` is strictly less than `T.size`. Used to prove `T ∉ cutForest c`,
+    which in turn drives the term-elimination in algebraic Merge bridge proofs
+    (`Theories/Syntax/Minimalist/Hopf/MergeAction.lean`). -/
+theorem size_lt_of_mem_cutForest :
+    ∀ {T : TraceTree α β} (c : CutShape T) (t : TraceTree α β),
+      t ∈ CutShape.cutForest c → t.size < T.size
+  | .leaf _, .atLeaf, _, h => by simp [cutForest] at h
+  | .trace _, .atTrace, _, h => by simp [cutForest] at h
+  | .node l r, .bothCut _ _, t, h => by
+      simp only [cutForest] at h
+      rw [show ({l, r} : Multiset (TraceTree α β)) = l ::ₘ ({r} : Multiset _) from rfl]
+        at h
+      simp only [Multiset.mem_cons, Multiset.mem_singleton] at h
+      rcases h with rfl | rfl <;> simp [TraceTree.size] <;> omega
+  | .node l r, .onlyLeftCut _ cr, t, h => by
+      simp only [cutForest, Multiset.mem_add, Multiset.mem_singleton] at h
+      rcases h with rfl | hcr
+      · simp [TraceTree.size]; omega
+      · have ihr := size_lt_of_mem_cutForest cr t hcr
+        simp only [TraceTree.size]; omega
+  | .node l r, .onlyRightCut _ cl, t, h => by
+      simp only [cutForest, Multiset.mem_add, Multiset.mem_singleton] at h
+      rcases h with hcl | rfl
+      · have ihl := size_lt_of_mem_cutForest cl t hcl
+        simp only [TraceTree.size]; omega
+      · simp [TraceTree.size]; omega
+  | .node l r, .bothRecurse cl cr, t, h => by
+      simp only [cutForest, Multiset.mem_add] at h
+      rcases h with hcl | hcr
+      · have ihl := size_lt_of_mem_cutForest cl t hcl
+        simp only [TraceTree.size]; omega
+      · have ihr := size_lt_of_mem_cutForest cr t hcr
+        simp only [TraceTree.size]; omega
+
+/-- A tree is not a member of any of its own cut forests (proper subtrees). -/
+theorem not_mem_cutForest_self {T : TraceTree α β} (c : CutShape T) :
+    T ∉ CutShape.cutForest c := by
+  intro h
+  exact absurd (size_lt_of_mem_cutForest c T h) (lt_irrefl _)
+
+/-- A cut forest never equals the singleton multiset of the source tree. -/
+theorem cutForest_ne_singleton_self {T : TraceTree α β} (c : CutShape T) :
+    CutShape.cutForest c ≠ ({T} : Multiset (TraceTree α β)) := by
+  intro h
+  apply not_mem_cutForest_self c
+  rw [h]
+  exact Multiset.mem_singleton.mpr rfl
+
+/-! ## §6: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
 @[simp] theorem cutForest_empty : ∀ (T : TraceTree α β),
