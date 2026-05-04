@@ -1322,14 +1322,93 @@ theorem geoCutToRhs_rhsToGeoCut : ∀ {T : DecoratedTree α}
 
 omit [DecidableEq α] in
 /-- Right inverse: `rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g`.
-    By structural induction on T + case analysis on the GeoCut.node `(lL, rL)`. -/
+    By structural induction on T + case analysis on the GeoCut.node `(lL, rL)`.
+    For each of the 9 (lL, rL) cells: use `botGeoCut_unique` to fix `.bot`-layer
+    children, `midGeoCut_fromMidGeoCut` to round-trip `.mid` layers, and IH for
+    `.top` layers. The `Or.inl (resolve_right _)` reconstructions collapse via
+    `or_inl_resolve_right_eq_self`. -/
 theorem rhsToGeoCut_geoCutToRhs : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.top),
-    rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g := by
-  -- TODO: 9-way case analysis on (lL, rL); each case uses `botGeoCut_unique` for `.bot`
-  -- layers, `midGeoCut_fromMidGeoCut` for `.mid` layers, and IH for `.top` layers.
-  -- Each case requires `change` to expose `Or.inl (resolve_right ...)` then
-  -- `or_inl_resolve_right_eq_self` to collapse. Tractable but verbose (~100 LOC).
-  sorry
+    rhsToGeoCut (geoCutToRhs g).fst (geoCutToRhs g).snd = g
+  | .leaf _, .leaf _ => rfl
+  | .trace _, .trace _ => rfl
+  | .node l r, .node (lL := lL) (rL := rL) hl hr hlNT hrNT gl gr => by
+    cases lL with
+    | bot =>
+      have hglEq : gl = botGeoCut l := botGeoCut_unique gl
+      subst hglEq
+      cases rL with
+      | bot =>
+        have hgrEq : gr = botGeoCut r := botGeoCut_unique gr
+        subst hgrEq
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top))) _ _ = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top),
+            or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top)]
+      | mid =>
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top))) _
+                              (midGeoCut r (fromMidGeoCut gr)) = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top),
+            or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+            midGeoCut_fromMidGeoCut gr]
+      | top =>
+        have ihr := rhsToGeoCut_geoCutToRhs gr
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
+                              hrNT _
+                              (rhsToGeoCut (geoCutToRhs gr).fst (geoCutToRhs gr).snd) = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top), ihr]
+    | mid =>
+      cases rL with
+      | bot =>
+        have hgrEq : gr = botGeoCut r := botGeoCut_unique gr
+        subst hgrEq
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
+                              (midGeoCut l (fromMidGeoCut gl)) _ = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
+            or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top),
+            midGeoCut_fromMidGeoCut gl]
+      | mid =>
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
+                              (midGeoCut l (fromMidGeoCut gl))
+                              (midGeoCut r (fromMidGeoCut gr)) = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
+            or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+            midGeoCut_fromMidGeoCut gl, midGeoCut_fromMidGeoCut gr]
+      | top =>
+        have ihr := rhsToGeoCut_geoCutToRhs gr
+        show GeoCut.node _ _ (Or.inl (hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
+                              hrNT
+                              (midGeoCut l (fromMidGeoCut gl))
+                              (rhsToGeoCut (geoCutToRhs gr).fst (geoCutToRhs gr).snd) = _
+        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
+            midGeoCut_fromMidGeoCut gl, ihr]
+    | top =>
+      cases rL with
+      | bot =>
+        have hgrEq : gr = botGeoCut r := botGeoCut_unique gr
+        subst hgrEq
+        have ihl := rhsToGeoCut_geoCutToRhs gl
+        show GeoCut.node _ _ hlNT
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
+                              (rhsToGeoCut (geoCutToRhs gl).fst (geoCutToRhs gl).snd) _ = _
+        rw [or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top), ihl]
+      | mid =>
+        have ihl := rhsToGeoCut_geoCutToRhs gl
+        show GeoCut.node _ _ hlNT
+                              (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
+                              (rhsToGeoCut (geoCutToRhs gl).fst (geoCutToRhs gl).snd)
+                              (midGeoCut r (fromMidGeoCut gr)) = _
+        rw [or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+            ihl, midGeoCut_fromMidGeoCut gr]
+      | top =>
+        have ihl := rhsToGeoCut_geoCutToRhs gl
+        have ihr := rhsToGeoCut_geoCutToRhs gr
+        show GeoCut.node _ _ hlNT hrNT
+                              (rhsToGeoCut (geoCutToRhs gl).fst (geoCutToRhs gl).snd)
+                              (rhsToGeoCut (geoCutToRhs gr).fst (geoCutToRhs gr).snd) = _
+        rw [ihl, ihr]
 
 /-- The RHS-side substantive Foissy bijection as an `Equiv`. -/
 noncomputable def rhsGeoCutEquiv (T : DecoratedTree α) :
