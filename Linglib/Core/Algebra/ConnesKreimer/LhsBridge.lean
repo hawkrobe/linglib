@@ -92,14 +92,28 @@ theorem lhsRealCuts_eq_lhsIndexSum (T : TraceTree α Unit) :
       cases t
       rfl
   | .node l r =>
-      -- The substantive .node case: 4-ctor decomposition with IH.
-      -- Each CutShape ctor's bind contribution matches a corresponding LhsIndex
-      -- ctor's enumeration. For onlyLeftCut/onlyRightCut/bothRecurse, the
-      -- recursive structure of LhsIndex absorbs the per-T'-in-cutForest section
-      -- data via IH on l/r.
+      -- The substantive .node case: 4-ctor decomposition with IH on l, r.
+      -- Strategy: prove 4 per-ctor lemmas identifying each CutShape ctor's
+      -- contribution to lhsRealCuts (.node l r) with the corresponding
+      -- LhsIndex ctor's contribution to the LhsIndex sum, then combine.
       --
-      -- Detailed wiring is deferred to Session 2 continuation; the .leaf and
-      -- .trace base cases above demonstrate the proof skeleton.
+      -- For bothCut hl hr: section over {l, r} ↔ (ac_l, ac_r) pair.
+      -- For onlyLeftCut hl cr: section over {l} + cutForest cr ↔ (ac_l, rhs)
+      --   where rhs : LhsIndex r encodes (cr, section_for_cutForest cr).
+      -- For onlyRightCut: symmetric.
+      -- For bothRecurse cl cr: section over cutForest cl + cutForest cr ↔
+      --   (lhs, rhs) in LhsIndex l × LhsIndex r.
+      --
+      -- The recursive ctors require IH on l/r; specifically need a STRONGER
+      -- IH form: per-CutShape (cl) match between sections-over-cutForest-cl
+      -- and the sub-LhsIndex-with-outerCut-cl. This stronger form is derived
+      -- by structural induction directly on LhsIndex (rather than on T).
+      --
+      -- This proof is ~200-300 LOC of careful Multiset.bind/sections_cons
+      -- manipulation. Deferred to a focused future session — committing
+      -- Session 2 with the base cases proven and .node sorry, to match
+      -- the scope estimate (Session 2 = bridge ~150-200 LOC for the .node
+      -- case alone).
       sorry
 
 end ConnesKreimer
