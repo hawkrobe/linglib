@@ -356,19 +356,27 @@ theorem counit_lTensor :
   rw [Algebra.TensorProduct.rid_symm_apply]
   rfl
 
-/-- The Connes-Kreimer bialgebra structure on `Hc R α`.
+/-- The Connes-Kreimer bialgebra structure on `Hc R α` using the **contraction**
+    coproduct Δ^c (`comulAlgHom`).
 
-    All Stage 1 obligations (`comul_coassoc`, `counit_rTensor`,
-    `counit_lTensor`) are sorry-free, so this is registered as an
-    `instance`. Typeclass resolution finds it on `Hc R α` because
-    `Hc` is a `def` (not `abbrev`), giving a distinct typeclass slot
-    from mathlib's `AddMonoidAlgebra.instBialgebra` on the underlying
-    `AddMonoidAlgebra R (TraceForest α Unit)` (group-like coproduct
-    Δ(F) = F ⊗ F). The two coexist without conflict — the wrapper
-    pattern is the same as mathlib's `MonoidAlgebra`.
+    All Stage 1 obligations (`comul_coassoc`, `counit_rTensor`, `counit_lTensor`)
+    are sorry-free, so this is registered as an `instance`. Typeclass resolution
+    finds it on `Hc R α` because `Hc` is a `def` (not `abbrev`), giving a distinct
+    typeclass slot from mathlib's `AddMonoidAlgebra.instBialgebra` on the underlying
+    `AddMonoidAlgebra R (TraceForest α Unit)` (group-like coproduct Δ(F) = F ⊗ F).
+    The two coexist without conflict — the wrapper pattern is the same as mathlib's
+    `MonoidAlgebra`.
 
-    Direct access to the algebraic operators stays available by name:
-    `comulAlgHom`, `comulDelAlgHom`, `counit`. -/
+    **Δ^d vs Δ^c.** Minimalism's `mergeOp` (M-C-B Def 1.3.4) uses the **deletion**
+    coproduct Δ^d (`comulDelAlgHom`), NOT Δ^c. Δ^d also satisfies coassoc + counit
+    laws but is a *different* coalgebra structure on `Hc R α`. Only one of Δ^c, Δ^d
+    can be the canonical `Bialgebra` typeclass instance; this file picks Δ^c (the
+    Connes-Kreimer canonical form, Foissy/CK reference). Consumers needing Δ^d
+    (Minimalism Merge) access `comulDelAlgHom` by name — they do not benefit from
+    the Bialgebra typeclass mediation.
+
+    Direct access to operators stays available by name:
+    `comulAlgHom` (Δ^c), `comulDelAlgHom` (Δ^d), `counit`. -/
 noncomputable instance instBialgebraHc : Bialgebra R (Hc R α) :=
   Bialgebra.ofAlgHom comulAlgHom counit comul_coassoc counit_rTensor counit_lTensor
 
