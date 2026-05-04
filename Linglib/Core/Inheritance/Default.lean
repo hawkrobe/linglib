@@ -1,15 +1,19 @@
 import Linglib.Core.Inheritance.Basic
 
 /-!
-# Default Inheritance — Local Properties + BFS Lookup
+# Default Inheritance — Local Properties + BFS Lookup + Best Fit Principle
 
-@cite{hudson-2010} §2.5, §3.5
+@cite{hudson-2010} §2.5, §3.5, §4.6.4
 
 A node's value for a relation `r` is determined by:
 
 1. Its **local** value if one is specified (`localProps net node r`).
 2. Otherwise, the value of its **nearest ancestor** in the isA chain that
-   has a local value for `r` (Best Fit Principle, see `BestFit.lean`).
+   has a local value for `r` — the **Best Fit Principle**:
+   "When a default conflicts with a more specific fact, the specific
+   fact wins" @cite{hudson-2010} §4.6.4. Hudson attributes the principle
+   to Winograd's earlier work on frame-based defaults but generalises it
+   from frames to a property of the cognitive network as a whole.
 
 Like `ancestors`, the BFS recursion is bounded by `nodeUniverse.length`
 rather than a magic constant — finite networks always reach a fixpoint.
@@ -71,5 +75,28 @@ theorem bestFit_local (net : Network α R) (node : α) (r : R)
   · split
     · contradiction
     · rfl
+
+/-- Every value returned by `localProps` is the target of a `prop` link
+from `node` labelled `r`. The "kind discipline" — `localProps` only ever
+returns the targets of property links, never of isA or or links. -/
+theorem localProps_via_prop_link (net : Network α R) (node : α) (r : R)
+    (a : α) (h : a ∈ localProps net node r) :
+    ∃ l ∈ net.links, l.kind = .prop ∧ l.source = node ∧ l.label = some r ∧
+      l.target = a := by
+  simp only [localProps, List.mem_map, List.mem_filter] at h
+  obtain ⟨l, ⟨hmem, hcond⟩, htgt⟩ := h
+  simp only [beq_iff_eq, Bool.and_eq_true] at hcond
+  exact ⟨l, hmem, hcond.1.1, hcond.1.2, hcond.2, htgt⟩
+
+/-- The `inherited` BFS is monotone in the link list: adding new property
+links for `r` to `node` can only add to (never remove from) `localProps`. This
+is a sanity check on the network update semantics. -/
+theorem localProps_monotone_in_links (net₁ net₂ : Network α R) (node : α) (r : R)
+    (hsub : net₁.links ⊆ net₂.links) (a : α)
+    (hmem : a ∈ localProps net₁ node r) :
+    a ∈ localProps net₂ node r := by
+  simp only [localProps, List.mem_map, List.mem_filter] at hmem ⊢
+  obtain ⟨l, ⟨hmem₁, hcond⟩, htgt⟩ := hmem
+  exact ⟨l, ⟨hsub hmem₁, hcond⟩, htgt⟩
 
 end Core.Inheritance

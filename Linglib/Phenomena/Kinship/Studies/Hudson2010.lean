@@ -9,9 +9,10 @@ import Linglib.Theories.Syntax.WordGrammar.Network
 The "one network" thesis: Word Grammar models all conceptual knowledge —
 linguistic and non-linguistic alike — as a single inheritance network of
 isA links and labelled property relations. The kinship system is Hudson's
-running non-linguistic example (§3.2 referenced from §7.2.6, p. 160) and
-serves as the foil for the syntactic triangle of Figure 7.6 (p. 161,
-"A triangle in syntax and in kinship").
+running non-linguistic example (§3.2 with Fig 3.7, cross-referenced from
+§7.2.6 "Syntactic triangles" on p. 160) and serves as the foil for the
+syntactic triangle of Figure 7.6 (p. 161, "A triangle in syntax and in
+kinship").
 
 This study file is the Phenomena-level demonstration that the *same*
 `Core.Inheritance.Network` infrastructure used by `WordGrammar.englishAuxNet`
@@ -135,8 +136,8 @@ section KinshipTriangle
 variable {α : Type} (parentOf : ParentRel α)
 
 /-- The triangle for kinship commutes by definition. This is the formal
-counterpart of Hudson's prose on p. 160: "my grandmother is someone who
-is the mother of one of my parents". -/
+counterpart of Hudson's prose on p. 160 (§7.2.6): "my grandmother is
+someone who is the mother of one of my parents". -/
 theorem kinship_triangle_commutes :
     ∀ a c, grandparentOf parentOf a c ↔ ∃ b, parentOf a b ∧ parentOf b c :=
   fun _ _ => Iff.rfl

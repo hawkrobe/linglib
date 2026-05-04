@@ -12,12 +12,12 @@ to nodes — they ARE links between nodes. "Bird has wing" is a link labeled
 `front-limb` from `bird` to `wing`. IsA links form a taxonomy; properties flow
 down the taxonomy by default inheritance.
 
-## Hudson's six primitive relations (Ch 3 summary, p. 68)
+## Hudson's six primitive relations (Ch 3 summary box, p. 68)
 
 `isA`, `argument`, `value`, `or` (choice), `quantity`, `identity` —
-listed in the Chapter 3 summary box on p. 68 of @cite{hudson-2010}
-(under "Links between concepts are therefore of two types: primitive
-relations / conceptual relations").
+listed verbatim in @cite{hudson-2010}'s Ch 3 summary box on p. 68 under
+"Links between concepts are therefore of two types: primitive relations /
+conceptual relations".
 
 This module distinguishes three link kinds at the type level:
 

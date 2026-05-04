@@ -6,10 +6,20 @@ import Mathlib.Order.Defs.PartialOrder
 
 @cite{hudson-2010}'s isA backbone is reflexive and transitive (`IsA.refl`,
 `IsA.trans` in `Core.Inheritance.Basic`), which makes it a `Preorder` on the
-node type. mathlib's `Preorder` typeclass is the right home for this fact:
-once the instance is in place, every preorder lemma (`le_trans`, `le_refl`,
-`Antichain`, `LowerSet`, `UpperSet`, `OrderHom`) becomes available for free
-to downstream WG / kinship / HPSG hierarchies.
+node type. Once the instance is in place, every preorder lemma (`le_trans`,
+`le_refl`, `Antichain`, `LowerSet`, `UpperSet`, `OrderHom`) is available for
+free over the isA backbone of any concrete network.
+
+**Important caveat: structural backbone, not entailment over properties.**
+This `Preorder` reflects only the *structural* isA relation. It is **not**
+the entailment order on inherited properties: `a ≤ b` does NOT imply
+`inherited net a r ⊆ inherited net b r`, because Hudson WG is *default*-
+inheritance and children may override parents (see `Default.lean`). The
+Best Fit Principle is a procedural tiebreaker over the same backbone, not
+a monotone propagation along it. HPSG-style monotonic subsumption requires
+an `Acyclic` hypothesis plus appropriateness conditions this substrate
+does not impose; do not assume `IsAOrder` reuse on the HPSG side without
+those.
 
 The instance is placed on a wrapper type `IsAOrder net` rather than directly
 on `α`, because a single node type may participate in multiple unrelated

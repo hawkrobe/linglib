@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Core.Inheritance.Prototype
+import Linglib.Core.Prototype
 import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 
 /-!
@@ -147,7 +147,7 @@ inductive BananaColor where
 /-- Stored knowledge: yellow is the prototypical banana color.
     These values encode the contrast that drives color mention —
     a blue banana violates stored expectations. -/
-def bananaPrototype : Core.Inheritance.Prototype BananaColor where
+def bananaPrototype : Core.Prototype BananaColor where
   category := .yellow
   typicality
     | .yellow => 9/10
@@ -155,7 +155,9 @@ def bananaPrototype : Core.Inheritance.Prototype BananaColor where
 
 /-- Yellow (typical) is more prototypical than blue (atypical). -/
 theorem typical_more_prototypical :
-    bananaPrototype.moreTypical .yellow .blue = true := by native_decide
+    bananaPrototype.MoreTypical .yellow .blue := by
+  show (1/10 : ℚ) < 9/10
+  norm_num
 
 /-- Maps stored color typicality to bare noun recognition effectiveness.
     Linear: `bareEffectiveness(t) = 9/20 + t/2`.
@@ -515,12 +517,12 @@ theorem consistent_direction :
     3. `S1_colorMention_decreasing` (strictly decreasing rational function)
     The composition reverses the ordering: more typical → less color mention. -/
 theorem prototype_predicts_color_mention :
-    bananaPrototype.moreTypical .yellow .blue = true ∧
+    bananaPrototype.MoreTypical .yellow .blue ∧
     bareEffectiveness (bananaPrototype.typicality .blue) <
       bareEffectiveness (bananaPrototype.typicality .yellow) ∧
     S1_q φ_typical .withColor .target < S1_q φ_atypical .withColor .target :=
   ⟨typical_more_prototypical,
-   bareEffectiveness_strictMono _ _ (by native_decide),
+   bareEffectiveness_strictMono _ _ typical_more_prototypical,
    atypical_more_color⟩
 
 -- ============================================================================
