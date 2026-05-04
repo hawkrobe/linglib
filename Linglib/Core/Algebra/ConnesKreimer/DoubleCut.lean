@@ -608,7 +608,64 @@ theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
       rhsMultiset_decomp]
   abel
 
-/-! ### §3f: LHS direction of the cuts-of-cuts bijection -/
+/-! ### §3f: `Layer` and `GeoCut` — the canonical "geometric double cut" type
+
+`GeoCut T myL` represents a **monotone 3-coloring** of `T`'s vertices:
+each vertex gets one of three layers (`top`, `mid`, `bot`), with the constraint
+that child layers are `≤` their parent's layer. The root of `T` is colored
+with `myL`.
+
+The substantive cut-commutation lemma `lhsRealCuts T = rhsRealRealInner T`
+then collapses to: both sides enumerate the same multiset of triple-tensors
+indexed by `GeoCut T Layer.top` with `myL = Layer.top` (the "root in TOP"
+subset, since `lhsRealCuts` excludes the outer-extractWhole case). -/
+
+/-- Three layers for a "geometric double cut": `top` (kept in trunk), `mid`
+    (extracted at outer cut, kept by inner), `bot` (extracted at inner cut). -/
+inductive Layer
+  | top
+  | mid
+  | bot
+  deriving DecidableEq, Repr
+
+instance : Fintype Layer where
+  elems := {Layer.top, Layer.mid, Layer.bot}
+  complete := fun a => by cases a <;> decide
+
+/-- `bot < mid < top` ordering on `Layer`. Used as the monotone constraint:
+    child layer `≤` parent layer along any root-to-leaf path. -/
+def Layer.le : Layer → Layer → Prop
+  | .bot, _ => True
+  | .mid, .bot => False
+  | .mid, _ => True
+  | .top, .top => True
+  | .top, _ => False
+
+instance : LE Layer := ⟨Layer.le⟩
+instance : DecidableRel ((· ≤ ·) : Layer → Layer → Prop) := fun a b =>
+  match a, b with
+  | .bot, _ => isTrue trivial
+  | .mid, .bot => isFalse id
+  | .mid, .mid => isTrue trivial
+  | .mid, .top => isTrue trivial
+  | .top, .bot => isFalse id
+  | .top, .mid => isFalse id
+  | .top, .top => isTrue trivial
+
+/-- A geometric double cut on `T`: a monotone 3-coloring of `T`'s vertices.
+    Indexed by the root vertex's layer `myL`. Children's layers must be `≤ myL`.
+
+    For T = .leaf or .trace, only the root layer matters.
+    For T = .node l r, the root has layer `myL`, and `l`, `r` have GeoCuts
+    with their own root layers `lL`, `rL` satisfying `lL ≤ myL`, `rL ≤ myL`. -/
+inductive GeoCut : DecoratedTree α → Layer → Type _
+  | leaf {a : α} (myL : Layer) : GeoCut (.leaf a) myL
+  | trace {t : DecoratedTree α} (myL : Layer) : GeoCut (.trace t) myL
+  | node {l r : DecoratedTree α} {myL lL rL : Layer}
+      (hl : lL ≤ myL) (hr : rL ≤ myL)
+      (gl : GeoCut l lL) (gr : GeoCut r rL) : GeoCut (.node l r) myL
+
+/-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
 
 /-- LHS direction of the cuts-of-cuts bijection: the left-iterated
     coproduct on a single-tree workspace, after the canonical associator,
