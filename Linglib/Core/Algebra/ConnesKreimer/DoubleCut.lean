@@ -1309,6 +1309,139 @@ For `onlyRightCut hr cl_in`: symmetric.
 
 Sum of all 4 = full perLayerContribDecomposed. -/
 
+/-! #### `bothRecurse` ctor case: closed.
+
+The `bothRecurse cl cr` ctor of `CutShape (.node l r)` contributes to
+`perLayerContrib (.node l r) .top` exactly the (lL = .top, rL = .top) cell of
+`perLayerContribDecomposed l r`. Strategy: per-(cl, cr) split via `sections_add`,
+then Fubini-swap the (cl, cr, s_l, s_r) bind. -/
+
+/-- The bothRecurse ctor's contribution to `perLayerContrib (.node l r) .top`. -/
+private noncomputable def perLayerContribTopBothRecurse (l r : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+    (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+      (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map fun T' =>
+        (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+          ((AugCutShape.cutForest_aug ac' : Forest α),
+           (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+        ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+         .node (CutShape.remainder cl) (CutShape.remainder cr)⟩
+
+/-- Per-cl-cr Sections-add reorganization for the bothRecurse case. -/
+private theorem perLayerContribTopBothRecurse_per_cl_cr (l r : DecoratedTree α)
+    (cl : CutShape l) (cr : CutShape r) :
+    (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map fun T' =>
+        (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+          ((AugCutShape.cutForest_aug ac' : Forest α),
+           (AugCutShape.remainderForest ac' : Forest α)))).map (fun s =>
+        (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+          .node (CutShape.remainder cl) (CutShape.remainder cr)⟩ : ChildSlots α))
+    = (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
+        (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+          ((AugCutShape.cutForest_aug ac' : Forest α),
+           (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+        (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
+          (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+            ((AugCutShape.cutForest_aug ac' : Forest α),
+             (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+          nodeChildSlots
+            ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+            ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ := by
+  rw [Multiset.map_add, Multiset.sections_add, Multiset.map_bind]
+  refine Multiset.bind_congr (fun s_l _ => ?_)
+  rw [Multiset.map_map]
+  refine Multiset.map_congr rfl (fun s_r _ => ?_)
+  rw [Function.comp_apply, Multiset.map_add, Multiset.map_add, Multiset.sum_add, Multiset.sum_add]
+  rfl
+
+/-- The bothRecurse contribution equals the (.top, .top) cell of perLayerContribDecomposed.
+    Closed via per-cl-cr lemma + Fubini-swap of the (cl, cr, s_l, s_r) bind. -/
+private theorem perLayerContribTopBothRecurse_eq (l r : DecoratedTree α) :
+    perLayerContribTopBothRecurse (α := α) l r
+      = (perLayerContrib (α := α) l .top).bind fun cs_l =>
+          (perLayerContrib (α := α) r .top).map fun cs_r =>
+            nodeChildSlots cs_l cs_r := by
+  unfold perLayerContribTopBothRecurse
+  -- Step 1: apply per-cl-cr lemma to split sections.
+  conv_lhs =>
+    rw [show ((Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+              (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+                (Multiset.Sections ((CutShape.cutForest cl + CutShape.cutForest cr).map
+                    fun T' => (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                      ((AugCutShape.cutForest_aug ac' : Forest α),
+                       (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                  (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+                    .node (CutShape.remainder cl) (CutShape.remainder cr)⟩ : ChildSlots α))
+            = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+              (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+                (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
+                  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                    ((AugCutShape.cutForest_aug ac' : Forest α),
+                     (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+                  (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
+                    (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                      ((AugCutShape.cutForest_aug ac' : Forest α),
+                       (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                    nodeChildSlots
+                      ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                      ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from
+         Multiset.bind_congr (fun cl _ => Multiset.bind_congr (fun cr _ =>
+           perLayerContribTopBothRecurse_per_cl_cr l r cl cr))]
+  -- Step 2: Fubini-swap (cl, cr, s_l) → (cl, s_l, cr).
+  rw [show ((Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+            (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+              (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
+                (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                  ((AugCutShape.cutForest_aug ac' : Forest α),
+                   (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+                (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
+                  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                    ((AugCutShape.cutForest_aug ac' : Forest α),
+                     (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                  nodeChildSlots
+                    ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                    ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩)
+        = (Finset.univ : Finset (CutShape l)).val.bind fun cl =>
+            (Multiset.Sections ((CutShape.cutForest cl).map fun T' =>
+              (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                ((AugCutShape.cutForest_aug ac' : Forest α),
+                 (AugCutShape.remainderForest ac' : Forest α)))).bind fun s_l =>
+              (Finset.univ : Finset (CutShape r)).val.bind fun cr =>
+                (Multiset.Sections ((CutShape.cutForest cr).map fun T' =>
+                  (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                    ((AugCutShape.cutForest_aug ac' : Forest α),
+                     (AugCutShape.remainderForest ac' : Forest α)))).map fun s_r =>
+                  nodeChildSlots
+                    ⟨(s_l.map Prod.fst).sum, (s_l.map Prod.snd).sum, CutShape.remainder cl⟩
+                    ⟨(s_r.map Prod.fst).sum, (s_r.map Prod.snd).sum, CutShape.remainder cr⟩ from by
+       refine Multiset.bind_congr (fun cl _ => ?_)
+       exact Multiset.bind_bind _ _]
+  -- Step 3: Recognize bind cl (bind s_l ⟨..., rem cl⟩) = perLayerContrib l .top.
+  show _ = ((Finset.univ : Finset (CutShape l)).val.bind fun cl_outer =>
+              (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
+                (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                  ((AugCutShape.cutForest_aug ac' : Forest α),
+                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
+                  : ChildSlots α)).bind fun cs_l =>
+            ((Finset.univ : Finset (CutShape r)).val.bind fun cl_outer =>
+              (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
+                (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+                  ((AugCutShape.cutForest_aug ac' : Forest α),
+                   (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+                (⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum, CutShape.remainder cl_outer⟩
+                  : ChildSlots α)).map fun cs_r =>
+              nodeChildSlots cs_l cs_r
+  rw [Multiset.bind_assoc]
+  refine Multiset.bind_congr (fun cl _ => ?_)
+  conv_rhs => rw [Multiset.bind_map]
+  refine Multiset.bind_congr (fun s_l _ => ?_)
+  conv_rhs => rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun cr _ => ?_)
+  rw [Multiset.map_map]
+  rfl
+
 /-- The decomposed form equals the RHS Sigma-bind. -/
 theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
     (ihl : ∀ layer, perLayerContrib (α := α) l layer
