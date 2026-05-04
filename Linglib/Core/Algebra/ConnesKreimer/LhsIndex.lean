@@ -285,20 +285,117 @@ noncomputable def tripleTensor {T : TraceTree α Unit} (idx : LhsIndex T) :
 
 end TripleTensor
 
+/-! ## §5: Per-`outerCut` enumeration
+
+For the bridge `lhsRealCuts_eq_lhsIndexSum`, we factor the LhsIndex
+enumeration by outer cut: for each `cl_outer : CutShape T`, the subset of
+LhsIndex values with `outerCut = cl_outer`. This subset has a clean
+recursive structure mirroring the LhsIndex constructors, and admits
+direct multiset comparison with the `(Sections ((cutForest cl_outer).map
+pairsMS))` form on the LHS-of-bridge. -/
+
+/-- The finite set of LhsIndex values with `outerCut = cl_outer`. Defined
+    by structural recursion on `cl_outer` (= equivalently, on T). -/
+def allWith : ∀ (T : TraceTree α Unit) (cl_outer : CutShape T), Finset (LhsIndex T)
+  | .leaf _, .atLeaf => {.atLeaf}
+  | .trace _, .atTrace => {.atTrace}
+  | .node l r, .bothCut hl hr =>
+      ((Finset.univ : Finset (AugCutShape l)) ×ˢ (Finset.univ : Finset (AugCutShape r))).image
+        (fun p => LhsIndex.bothCut hl hr p.1 p.2)
+  | .node l r, .onlyLeftCut hl cr =>
+      ((Finset.univ : Finset (AugCutShape l)) ×ˢ (allWith r cr)).image
+        (fun p => LhsIndex.onlyLeftCut hl p.1 p.2)
+  | .node l r, .onlyRightCut hr cl =>
+      ((allWith l cl) ×ˢ (Finset.univ : Finset (AugCutShape r))).image
+        (fun p => LhsIndex.onlyRightCut hr p.1 p.2)
+  | .node l r, .bothRecurse cl cr =>
+      ((allWith l cl) ×ˢ (allWith r cr)).image
+        (fun p => LhsIndex.bothRecurse p.1 p.2)
+
+/-- `outerCut` projects every element of `allWith T cl_outer` back to `cl_outer`. -/
+theorem outerCut_of_mem_allWith :
+    ∀ (T : TraceTree α Unit) (cl_outer : CutShape T) (rhs : LhsIndex T),
+      rhs ∈ allWith T cl_outer → outerCut rhs = cl_outer
+  | .leaf _, .atLeaf, _, h => by
+      simp only [allWith, Finset.mem_singleton] at h
+      subst h; rfl
+  | .trace _, .atTrace, _, h => by
+      simp only [allWith, Finset.mem_singleton] at h
+      subst h; rfl
+  | .node l r, .bothCut hl hr, rhs, h => by
+      simp only [allWith, Finset.mem_image, Finset.mem_product] at h
+      obtain ⟨⟨ac_l, ac_r⟩, _, hrhs⟩ := h
+      subst hrhs; rfl
+  | .node l r, .onlyLeftCut hl cr, rhs, h => by
+      simp only [allWith, Finset.mem_image, Finset.mem_product] at h
+      obtain ⟨⟨ac_l, rhs'⟩, ⟨_, hmem⟩, hrhs⟩ := h
+      subst hrhs
+      have hcr := outerCut_of_mem_allWith r cr rhs' hmem
+      show CutShape.onlyLeftCut hl (outerCut rhs') = _
+      rw [hcr]
+  | .node l r, .onlyRightCut hr cl, rhs, h => by
+      simp only [allWith, Finset.mem_image, Finset.mem_product] at h
+      obtain ⟨⟨lhs', ac_r⟩, ⟨hmem, _⟩, hrhs⟩ := h
+      subst hrhs
+      have hcl := outerCut_of_mem_allWith l cl lhs' hmem
+      show CutShape.onlyRightCut hr (outerCut lhs') = _
+      rw [hcl]
+  | .node l r, .bothRecurse cl cr, rhs, h => by
+      simp only [allWith, Finset.mem_image, Finset.mem_product] at h
+      obtain ⟨⟨lhs', rhs'⟩, ⟨hmemL, hmemR⟩, hrhs⟩ := h
+      subst hrhs
+      have hcl := outerCut_of_mem_allWith l cl lhs' hmemL
+      have hcr := outerCut_of_mem_allWith r cr rhs' hmemR
+      show CutShape.bothRecurse (outerCut lhs') (outerCut rhs') = _
+      rw [hcl, hcr]
+
+/-- Every LhsIndex value belongs to the `allWith` set for its own `outerCut`. -/
+theorem mem_allWith : ∀ (T : TraceTree α Unit) (rhs : LhsIndex T),
+    rhs ∈ allWith T (outerCut rhs)
+  | .leaf _, .atLeaf => Finset.mem_singleton.mpr rfl
+  | .trace _, .atTrace => Finset.mem_singleton.mpr rfl
+  | .node l r, .bothCut hl hr ac_l ac_r => by
+      show _ ∈ allWith (.node l r) (CutShape.bothCut hl hr)
+      unfold allWith
+      refine Finset.mem_image.mpr ⟨(ac_l, ac_r), ?_, rfl⟩
+      exact Finset.mem_product.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩
+  | .node l r, .onlyLeftCut hl ac_l rhs => by
+      show _ ∈ allWith (.node l r) (CutShape.onlyLeftCut hl (outerCut rhs))
+      unfold allWith
+      refine Finset.mem_image.mpr ⟨(ac_l, rhs), ?_, rfl⟩
+      exact Finset.mem_product.mpr ⟨Finset.mem_univ _, mem_allWith r rhs⟩
+  | .node l r, .onlyRightCut hr lhs ac_r => by
+      show _ ∈ allWith (.node l r) (CutShape.onlyRightCut hr (outerCut lhs))
+      unfold allWith
+      refine Finset.mem_image.mpr ⟨(lhs, ac_r), ?_, rfl⟩
+      exact Finset.mem_product.mpr ⟨mem_allWith l lhs, Finset.mem_univ _⟩
+  | .node l r, .bothRecurse lhs rhs => by
+      show _ ∈ allWith (.node l r) (CutShape.bothRecurse (outerCut lhs) (outerCut rhs))
+      unfold allWith
+      refine Finset.mem_image.mpr ⟨(lhs, rhs), ?_, rfl⟩
+      exact Finset.mem_product.mpr ⟨mem_allWith l lhs, mem_allWith r rhs⟩
+
+/-- The `allWith T cl_outer` sets are pairwise disjoint across `cl_outer`. Combined
+    with `mem_allWith` and `outerCut_of_mem_allWith`, this gives the partition
+    `(univ : LhsIndex T) = ⋃ cl_outer, allWith T cl_outer` (disjoint union). -/
+theorem allWith_disjoint {T : TraceTree α Unit} {cl₁ cl₂ : CutShape T}
+    (hne : cl₁ ≠ cl₂) : Disjoint (allWith T cl₁) (allWith T cl₂) := by
+  rw [Finset.disjoint_iff_ne]
+  intro a ha b hb hab
+  subst hab
+  have h1 := outerCut_of_mem_allWith T cl₁ a ha
+  have h2 := outerCut_of_mem_allWith T cl₂ a hb
+  exact hne (h1.symm.trans h2)
+
 end LhsIndex
 
 end ConnesKreimer
 
 /-!
-## §5: Bridge to `lhsRealCuts` (Session 2)
+## §6: Bridge to `lhsRealCuts` (Session 2)
 
 The bridge theorem `lhsRealCuts T = (Finset.univ : Finset (LhsIndex T)).val.map
-(LhsIndex.tripleTensor R)` is proven in `LhsBridge.lean` (next session). It
-relates the existing Sections-based `lhsRealCuts` definition (defined in
-`DoubleCut.lean`) to the new structurally-indexed enumeration here.
-
-The proof is by structural induction on T with 4-ctor matching for the
-`.node l r` case, using IH on `l` and `r` for recursive ctors
-(`onlyLeftCut`, `onlyRightCut`, `bothRecurse`). Estimated ~150-200 LOC.
+(LhsIndex.tripleTensor R)` is proven in `LhsBridge.lean`, factored through the
+per-`outerCut` enumeration `LhsIndex.allWith` defined above.
 -/
 
