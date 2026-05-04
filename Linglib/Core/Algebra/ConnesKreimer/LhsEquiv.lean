@@ -296,70 +296,70 @@ to `geoBotForest_rhsToGeoCut` / `geoMidForest_rhsToGeoCut` /
 `geoStackItem_rhsToGeoCut` in DoubleCut.lean. -/
 
 omit [DecidableEq α] in
-/-- `geoBotForest (lhsToGeoCut idx) = LhsIndex.slot1 idx`. By structural
+/-- `geoBotForest (lhsToGeoCut idx) = LhsIndex.botForest idx`. By structural
     induction on `idx` with case analysis on the AugCutShape Sum decomposition. -/
 theorem geoBotForest_lhsToGeoCut : ∀ {T : TraceTree α Unit} (idx : LhsIndex T),
-    geoBotForest (lhsToGeoCut idx) = LhsIndex.slot1 idx
+    geoBotForest (lhsToGeoCut idx) = LhsIndex.botForest idx
   | .leaf _, .atLeaf => rfl
   | .trace _, .atTrace => rfl
   | .node l r, .bothCut _ _ (.inl C_l) (.inl C_r) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_midGeoCut l C_l, geoBotForest_midGeoCut r C_r]
   | .node l r, .bothCut _ _ (.inl C_l) (.inr ()) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_midGeoCut l C_l]
   | .node l r, .bothCut _ _ (.inr ()) (.inl C_r) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_midGeoCut r C_r]
   | .node l r, .bothCut _ _ (.inr ()) (.inr ()) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
   | .node l r, .onlyLeftCut _ (.inl C_l) rhs => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_midGeoCut l C_l, geoBotForest_lhsToGeoCut rhs]
   | .node l r, .onlyLeftCut _ (.inr ()) rhs => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_lhsToGeoCut rhs]
   | .node l r, .onlyRightCut _ lhs (.inl C_r) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_lhsToGeoCut lhs, geoBotForest_midGeoCut r C_r]
   | .node l r, .onlyRightCut _ lhs (.inr ()) => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1, AugCutShape.cutForest_aug]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest, AugCutShape.cutForest_aug]
       rw [geoBotForest_lhsToGeoCut lhs]
   | .node l r, .bothRecurse lhs rhs => by
-      simp only [lhsToGeoCut, geoBotForest, LhsIndex.slot1]
+      simp only [lhsToGeoCut, geoBotForest, LhsIndex.botForest]
       rw [geoBotForest_lhsToGeoCut lhs, geoBotForest_lhsToGeoCut rhs]
 
 omit [DecidableEq α] in
-/-- `geoMidForest (lhsToGeoCut idx) = LhsIndex.slot2 idx`. -/
+/-- `geoMidForest (lhsToGeoCut idx) = LhsIndex.midForest idx`. -/
 theorem geoMidForest_lhsToGeoCut : ∀ {T : TraceTree α Unit} (idx : LhsIndex T),
-    geoMidForest (lhsToGeoCut idx) = LhsIndex.slot2 idx
+    geoMidForest (lhsToGeoCut idx) = LhsIndex.midForest idx
   | .leaf _, .atLeaf => rfl
   | .trace _, .atTrace => rfl
   | .node l r, .bothCut _ _ (.inl C_l) (.inl C_r) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoOuterSkeleton_midGeoCut l C_l, geoOuterSkeleton_midGeoCut r C_r]
   | .node l r, .bothCut _ _ (.inl C_l) (.inr ()) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoOuterSkeleton_midGeoCut l C_l]
   | .node l r, .bothCut _ _ (.inr ()) (.inl C_r) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoOuterSkeleton_midGeoCut r C_r]
   | .node l r, .bothCut _ _ (.inr ()) (.inr ()) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
   | .node l r, .onlyLeftCut _ (.inl C_l) rhs => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoOuterSkeleton_midGeoCut l C_l, geoMidForest_lhsToGeoCut rhs]
   | .node l r, .onlyLeftCut _ (.inr ()) rhs => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoMidForest_lhsToGeoCut rhs]
   | .node l r, .onlyRightCut _ lhs (.inl C_r) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoMidForest_lhsToGeoCut lhs, geoOuterSkeleton_midGeoCut r C_r]
   | .node l r, .onlyRightCut _ lhs (.inr ()) => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2, AugCutShape.remainderForest]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest, AugCutShape.remainderForest]
       rw [geoMidForest_lhsToGeoCut lhs]
   | .node l r, .bothRecurse lhs rhs => by
-      simp only [lhsToGeoCut, geoMidForest, LhsIndex.slot2]
+      simp only [lhsToGeoCut, geoMidForest, LhsIndex.midForest]
       rw [geoMidForest_lhsToGeoCut lhs, geoMidForest_lhsToGeoCut rhs]
 
 omit [DecidableEq α] in

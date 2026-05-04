@@ -217,8 +217,8 @@ For each `LhsIndex T` value, extract the triple-tensor
 that the LHS-side coproduct produces.
 
 The triple's three slots:
-- **slot1**: union of `cutForest_aug ac'` over all per-T'-in-cutForest AugCutShape choices.
-- **slot2**: union of `remainderForest ac'`.
+- **botForest**: union of `cutForest_aug ac'` over all per-T'-in-cutForest AugCutShape choices.
+- **midForest**: union of `remainderForest ac'`.
 - **slot3**: `{remainder cl_outer}` — the outer cut's tree-with-trace-markers.
 
 For the inductive constructors, these slots accumulate via the
@@ -236,16 +236,16 @@ open scoped TensorProduct
     For each per-T' AugCutShape choice, take its `cutForest_aug` (the
     "left channel" of that choice's coproduct contribution). Sum over
     all per-T' choices in the index. -/
-def slot1 : ∀ {T : TraceTree α Unit}, LhsIndex T → TraceForest α Unit
+def botForest : ∀ {T : TraceTree α Unit}, LhsIndex T → TraceForest α Unit
   | .leaf _, .atLeaf => 0
   | .trace _, .atTrace => 0
   | .node _ _, .bothCut _ _ ac_l ac_r =>
       AugCutShape.cutForest_aug ac_l + AugCutShape.cutForest_aug ac_r
   | .node _ _, .onlyLeftCut _ ac_l rhs =>
-      AugCutShape.cutForest_aug ac_l + slot1 rhs
+      AugCutShape.cutForest_aug ac_l + botForest rhs
   | .node _ _, .onlyRightCut _ lhs ac_r =>
-      slot1 lhs + AugCutShape.cutForest_aug ac_r
-  | .node _ _, .bothRecurse lhs rhs => slot1 lhs + slot1 rhs
+      botForest lhs + AugCutShape.cutForest_aug ac_r
+  | .node _ _, .bothRecurse lhs rhs => botForest lhs + botForest rhs
 
 /-- The MID-extracted forest contributed by an `LhsIndex T` value.
 
@@ -253,16 +253,16 @@ def slot1 : ∀ {T : TraceTree α Unit}, LhsIndex T → TraceForest α Unit
     "right channel" of that choice's coproduct contribution — singleton
     `{remainder C'}` for `real C'`, empty for `extractWhole`). Sum over
     all per-T' choices. -/
-def slot2 : ∀ {T : TraceTree α Unit}, LhsIndex T → TraceForest α Unit
+def midForest : ∀ {T : TraceTree α Unit}, LhsIndex T → TraceForest α Unit
   | .leaf _, .atLeaf => 0
   | .trace _, .atTrace => 0
   | .node _ _, .bothCut _ _ ac_l ac_r =>
       AugCutShape.remainderForest ac_l + AugCutShape.remainderForest ac_r
   | .node _ _, .onlyLeftCut _ ac_l rhs =>
-      AugCutShape.remainderForest ac_l + slot2 rhs
+      AugCutShape.remainderForest ac_l + midForest rhs
   | .node _ _, .onlyRightCut _ lhs ac_r =>
-      slot2 lhs + AugCutShape.remainderForest ac_r
-  | .node _ _, .bothRecurse lhs rhs => slot2 lhs + slot2 rhs
+      midForest lhs + AugCutShape.remainderForest ac_r
+  | .node _ _, .bothRecurse lhs rhs => midForest lhs + midForest rhs
 
 /-- The outer cut `cl_outer : CutShape T` extracted from an `LhsIndex T`
     value. The constructor structure determines `cl_outer` directly. -/
@@ -275,11 +275,11 @@ def outerCut : ∀ {T : TraceTree α Unit}, LhsIndex T → CutShape T
   | .node _ _, .bothRecurse lhs rhs => .bothRecurse (outerCut lhs) (outerCut rhs)
 
 /-- The triple-tensor for an `LhsIndex T` value:
-    `forestToHc slot1 ⊗ (forestToHc slot2 ⊗ forestToHc {remainder outerCut})`. -/
+    `forestToHc botForest ⊗ (forestToHc midForest ⊗ forestToHc {remainder outerCut})`. -/
 noncomputable def tripleTensor {T : TraceTree α Unit} (idx : LhsIndex T) :
     Hc R α ⊗[R] (Hc R α ⊗[R] Hc R α) :=
-  forestToHc (R := R) (slot1 idx)
-    ⊗ₜ[R] (forestToHc (R := R) (slot2 idx)
+  forestToHc (R := R) (botForest idx)
+    ⊗ₜ[R] (forestToHc (R := R) (midForest idx)
             ⊗ₜ[R] forestToHc (R := R)
               ({CutShape.remainder (outerCut idx)} : TraceForest α Unit))
 
