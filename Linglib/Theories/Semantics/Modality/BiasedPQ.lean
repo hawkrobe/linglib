@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Features.InformationStructure
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
@@ -365,14 +364,14 @@ theorem inner_entails_medial (f : EvidentialBiasFlavor W) (p : Set W) (w : W)
 -- §8: Focus Requirement on FALSUM (@cite{romero-2024} §3.2, Staňková 2026 §4)
 -- ============================================================================
 
-/-- Outer negation (FALSUM) is obligatorily focused (Staňková 2026 §3.2, §4).
+/-! Outer negation (FALSUM) is obligatorily focused (Staňková 2026 §3.2, §4).
 
 FALSUM targets discourse polarity — whether p *is* or *is not* in the CG.
-Focus on FALSUM generates Rooth alternatives on polarity.
-
-The focus semantic value of FALSUM: {λw[p ∉ CG], λw[p ∈ CG]}. -/
-def falsumFocusRequirement : Features.InformationStructure.DiscourseStatus :=
-  .focused
+Focus on FALSUM generates Rooth alternatives on polarity. The focus
+semantic value of FALSUM is `{λw[p ∉ CG], λw[p ∈ CG]}`, computed by
+`falsumAlternatives` below. (The prior `falsumFocusRequirement :
+DiscourseStatus := .focused` constant was unused and was deleted in
+the DiscourseStatus → Krifka-axes refactor.) -/
 
 /-- FALSUM generates exactly two alternatives (polarity contrast). -/
 def falsumAlternatives (cg p : Set W) :
