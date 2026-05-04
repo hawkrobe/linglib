@@ -280,8 +280,12 @@ of the coproduct term becomes `1` (the empty workspace). -/
 /-- Helper: convert an `Option (TraceTree α Unit)` remainder to the
     corresponding right-channel value in `Hc R α`. `Option.none` →
     `(1 : Hc R α)` (empty workspace); `Option.some t` → `forestToHc {t}`
-    (singleton workspace). -/
-private noncomputable def deletionRightChannel
+    (singleton workspace).
+
+    Public so downstream proofs (e.g., the algebraic Merge bridge in
+    `Theories/Syntax/Minimalist/Hopf/MergeAction.lean`) can reference
+    the right-channel value when destructuring `comulTreeDel` summands. -/
+noncomputable def deletionRightChannel
     (m : Option (TraceTree α Unit)) : Hc R α :=
   match m with
   | Option.none   => (1 : Hc R α)

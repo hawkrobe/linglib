@@ -102,6 +102,25 @@ noncomputable def graftBinaryAt (S S' : TraceTree α Unit) :
   show (TraceForest α Unit →₀ R) →ₗ[R] (TraceForest α Unit →₀ R) from
     (Finsupp.lsingle target).comp (Finsupp.lapply source)
 
+/-- **B grafts on basis vectors**: on `forestToHc F`, returns
+    `forestToHc {.node S S'}` if `F = {S, S'}`, and `0` otherwise.
+    Same shape as `gammaMatch_apply_singleton` with a different target. -/
+theorem graftBinaryAt_apply_singleton (S S' : TraceTree α Unit)
+    (F : TraceForest α Unit) :
+    graftBinaryAt (R := R) S S' (forestToHc F) =
+      if F = ({S, S'} : TraceForest α Unit)
+        then forestToHc ({.node S S'} : TraceForest α Unit)
+        else 0 := by
+  show (Finsupp.lsingle ({.node S S'} : TraceForest α Unit)).comp
+        (Finsupp.lapply ({S, S'} : TraceForest α Unit))
+        (Finsupp.single F (1 : R))
+      = _
+  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
+    Finsupp.single_apply]
+  split_ifs with h
+  · subst h; rfl
+  · exact Finsupp.single_zero _
+
 /-! ## §4: Merge operator (M-C-B Def 1.3.4)
 
 `mergeOp S S' = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d`
@@ -130,5 +149,134 @@ noncomputable def mergeOp (S S' : TraceTree α Unit) : Hc R α →ₗ[R] Hc R α
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'
     ∘ₗ comulDelAlgHom.toLinearMap
+
+/-! ## §5: Post-coproduct chain on basis tensors
+
+The composition `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` evaluated on an elementary
+tensor `forestToHc F ⊗ r` is:
+- `forestToHc {.node S S'} * r` if `F = {S, S'}`
+- `0` otherwise
+
+This is the **load-bearing fact** for proving that algebraic Merge agrees
+with linguistic `Step.apply`: every basis-tensor term in the expansion
+of `Δ^d({S, S'})` either matches the merge target (only the primitive
+`{S, S'} ⊗ 1` term) or is annihilated by `δ_{S,S'}`. -/
+
+/-- The post-coproduct chain `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` evaluated on a
+    basis tensor `forestToHc F ⊗ r`. -/
+theorem mergePost_basis_tensor (S S' : TraceTree α Unit)
+    (F : TraceForest α Unit) (r : Hc R α) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S' (forestToHc F ⊗ₜ[R] r)))
+      = if F = ({S, S'} : TraceForest α Unit)
+          then forestToHc ({.node S S'} : TraceForest α Unit) * r
+          else 0 := by
+  unfold deltaMatch
+  rw [TensorProduct.map_tmul, LinearMap.id_apply, gammaMatch_apply_singleton]
+  by_cases hF : F = ({S, S'} : TraceForest α Unit)
+  · subst hF
+    rw [if_pos rfl, TensorProduct.map_tmul, LinearMap.id_apply,
+        graftBinaryAt_apply_singleton, if_pos rfl, if_pos rfl]
+    show Algebra.TensorProduct.lmul' (S := Hc R α) R _ = _
+    exact Algebra.TensorProduct.lmul'_apply_tmul _ _
+  · rw [if_neg hF, TensorProduct.zero_tmul, map_zero, map_zero, if_neg hF]
+
+/-! ## §6: Per-cross-term reductions for `mergeOp_pair`
+
+For the bridge proof `mergeOp_pair S S' (forestToHc {S, S'}) = forestToHc {.node S S'}`,
+we expand `comulTreeDel S * comulTreeDel S' = (primS + sumS) * (primS' + sumS')`
+into 4 cross-terms and analyze each via `mergePost_basis_tensor`.
+
+The four lemmas below cover the four cross-categories:
+- `mergePost_pair_prim_prim`: the primitive×primitive term contributes the answer.
+- `mergePost_pair_prim_sum`: primitive×sum vanishes (cuts cannot produce `{S}` alone).
+- `mergePost_pair_sum_prim`: sum×primitive vanishes (symmetric).
+- `mergePost_pair_sum_sum`: sum×sum vanishes (cuts cannot together produce `{S, S'}`).
+
+These pre-compute all the cross-terms once so `mergeOp_pair` just rewrites
+4× and finishes with `add_zero`. -/
+
+/-- **Term 1: primitive × primitive** = the answer. -/
+theorem mergePost_pair_prim_prim (S S' : TraceTree α Unit) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+              * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+      = forestToHc (R := R) ({.node S S'} : TraceForest α Unit) := by
+  rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+  rw [show ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit)
+      = ({S, S'} : TraceForest α Unit) from rfl]
+  rw [mergePost_basis_tensor, if_pos rfl, mul_one]
+
+/-- **Term 2: primitive × sum** = `0`.
+    `{S} + cutForest c' = {S, S'}` would require `cutForest c' = {S'}`,
+    impossible by `cutForest_ne_singleton_self`. -/
+theorem mergePost_pair_prim_sum (S S' : TraceTree α Unit) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+              * ∑ c' : CutShape S',
+                  forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                    deletionRightChannel (R := R) (CutShape.remainderDeletion c'))))
+      = 0 := by
+  rw [Finset.mul_sum, map_sum, map_sum, map_sum]
+  apply Finset.sum_eq_zero
+  intro c' _
+  rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul,
+      mergePost_basis_tensor, if_neg]
+  intro h
+  -- {S, S'} = {S} + {S'} (rfl via insert_eq_cons), so {S} + cutForest c' = {S} + {S'}
+  -- forces cutForest c' = {S'} by Multiset.add_right_inj — impossible.
+  apply CutShape.cutForest_ne_singleton_self c'
+  have : ({S} : TraceForest α Unit) + CutShape.cutForest c'
+        = ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit) := h
+  exact (Multiset.add_right_inj.mp this)
+
+/-- **Term 3: sum × primitive** = `0`. Symmetric to `mergePost_pair_prim_sum`. -/
+theorem mergePost_pair_sum_prim (S S' : TraceTree α Unit) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((∑ c : CutShape S,
+                forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                  deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+              * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+      = 0 := by
+  rw [Finset.sum_mul, map_sum, map_sum, map_sum]
+  apply Finset.sum_eq_zero
+  intro c _
+  rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one,
+      mergePost_basis_tensor, if_neg]
+  intro h
+  have : CutShape.cutForest c = ({S} : TraceForest α Unit) := by
+    rw [show ({S, S'} : TraceForest α Unit) = ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit) from rfl] at h
+    exact Multiset.add_left_inj.mp h
+  exact CutShape.cutForest_ne_singleton_self c this
+
+/-- **Term 4: sum × sum** = `0`. The sum-of-cuts cross-terms cannot
+    produce `{S, S'}` as their combined cut-forest. -/
+theorem mergePost_pair_sum_sum (S S' : TraceTree α Unit) :
+    hcMulLin (R := R) (α := α)
+        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+          (deltaMatch (R := R) S S'
+            ((∑ c : CutShape S,
+                forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                  deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+              * (∑ c' : CutShape S',
+                  forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                    deletionRightChannel (R := R) (CutShape.remainderDeletion c')))))
+      = 0 := by
+  rw [Fintype.sum_mul_sum, map_sum, map_sum, map_sum]
+  apply Finset.sum_eq_zero
+  intro c _
+  rw [map_sum, map_sum, map_sum]
+  apply Finset.sum_eq_zero
+  intro c' _
+  rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add,
+      mergePost_basis_tensor, if_neg]
+  exact CutShape.cutForest_add_pair_ne_pair c c'
 
 end Minimalist.Hopf

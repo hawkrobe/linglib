@@ -22,21 +22,25 @@ for the corresponding linguistic step.
 
 ## Status
 
-Bridge **statements** are written here; **proofs are sorry'd**. The
-proofs require:
+External Merge bridges (`mergeOp_emR_matches_Step`,
+`mergeOp_emL_matches_Step`) are **proven sorry-free** as of Phase 7a
+(commits 0.230.741-0.230.743). Internal Merge is documented as a
+composition gap (see §3 below).
 
-1. Translating between `SyntacticObject` and `SyntacticObjectH`
-   (= `DecoratedTree LIToken`) via `.toH` and `toSyntacticObject?`.
-2. Computing the explicit form of `mergeOp S S' (forestToHc {T.toHc})` —
-   expanding `comulDelAlgHom` (a sum over `CutShape T.toH`), then
-   `deltaMatch` (filtering to terms with cut forest = `{S, S'}`),
-   then `graftBinaryAt` (replacing with `.node S S'`), then
-   multiplication.
-3. Showing the only surviving term matches `(Step.apply step T).toH`.
+Both EM bridges specialize a general algebraic result `mergeOp_pair`,
+which proves `mergeOp S S' (forestToHc {S, S'}) = forestToHc {.node S S'}`
+for any pair `(S, S') : TraceTree α Unit` over any commutative
+semiring `R`. The proof factors through:
 
-This is substantial linear-algebra-on-Finsupp work. Deferring to a
-focused future session. The `mergeOp` definition (in `Merge.lean`) is
-fully complete and usable — only the bridge proofs are pending.
+- `comulDelAlgHom_pair` (substrate): `Δ^d({S, S'}) = Δ^d(S) · Δ^d(S')`.
+- `mergePost_basis_tensor` (`Merge.lean`): basis-tensor evaluation of
+  `⊔ ∘ (B ⊗ id) ∘ δ_{S,S'}` returns `forestToHc {.node S S'} * r` if
+  the LEFT channel is `{S, S'}`, else `0`.
+- 4 cross-term reductions (`mergePost_pair_*`): expand `Δ^d(S) · Δ^d(S')`
+  into `(prim + sum) · (prim + sum)`, prove each cross-category
+  contributes 0 except `prim · prim`. Cross-term elimination uses
+  `cutForest_ne_singleton_self` and `cutForest_add_pair_ne_pair` from
+  `Core/Combinatorics/RootedTree/AdmissibleCut.lean`.
 
 ## What changed from the legacy version
 
@@ -76,11 +80,80 @@ noncomputable def singletonWorkspace (so : Minimalist.SyntacticObject) :
 For `Step.emR item` applied to `current`, the result is
 `.node current item`. The algebraic side: `mergeOp current.toH item.toH`
 applied to a workspace containing both `current` and `item` should
-produce the singleton workspace of `.node current item`. -/
+produce the singleton workspace of `.node current item`.
 
-/-- **External Merge bridge (right-complement)** [SORRY-STUB].
-    `mergeOp current.toH item.toH` applied to the 2-tree workspace
-    `{current, item}` yields the singleton workspace of
+**Proof strategy** (M-C-B Lemma 1.3.6):
+
+1. Unfold `mergeOp = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d`.
+2. Apply `comulDelAlgHom_pair`: `Δ^d({S, S'}) = Δ^d(S) · Δ^d(S')`.
+3. Expand each `Δ^d(T) = T ⊗ 1 + ∑_c (cutForest c) ⊗ rChan(c)`.
+4. Multiply: 4 cross-categories of terms. For each elementary tensor
+   `forestToHc F ⊗ r` produced, `mergePost_basis_tensor` gives
+   `forestToHc {.node S S'} * r` if `F = {S, S'}`, else `0`.
+5. **Cross-term elimination** via the structural lemmas:
+   - `prim_S * prim_{S'}`: `F = {S, S'}` ✓ — contributes the answer.
+   - `prim_S * cut_{c'}`: `F = {S} + cutForest c'`. For this to equal
+     `{S, S'}`, need `cutForest c' = {S'}` — impossible by
+     `cutForest_ne_singleton_self` (a cut on `S'` cannot extract `S'` itself).
+   - `cut_c * prim_{S'}`: symmetric, `cutForest c = {S}` impossible.
+   - `cut_c * cut_{c'}`: `F = cutForest c + cutForest c'`. Cannot equal
+     `{S, S'}` by `cutForest_add_pair_ne_pair` (size argument).
+6. Only the primitive term survives, giving `forestToHc {.node S S'} * 1
+   = forestToHc {.node S S'}`.
+
+The proof is structured around a general `mergeOp_pair` lemma that
+proves the result for any pair `(S, S') : TraceTree α Unit` over any
+commutative semiring `R`. The Minimalism-specific bridges
+(`mergeOp_emR_matches_Step`, `mergeOp_emL_matches_Step`) specialize
+this and handle the `SyntacticObject ↔ TraceTree` translation. -/
+
+/-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.3.6,
+    general substrate version). For any pair `(S, S') : TraceTree α Unit`,
+    `mergeOp S S'` applied to the basis vector `forestToHc {S, S'}`
+    yields `forestToHc {.node S S'}`. -/
+theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (S S' : TraceTree α Unit) :
+    mergeOp (R := R) S S' (forestToHc ({S, S'} : TraceForest α Unit))
+      = forestToHc ({.node S S'} : TraceForest α Unit) := by
+  -- Step 1: reduce mergeOp to the post-coproduct chain on
+  -- `comulTreeDel S * comulTreeDel S'`.
+  show (hcMulLin (R := R) (α := α)
+         ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
+         ∘ₗ deltaMatch (R := R) S S' ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc ({S, S'} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
+      AlgHom.toLinearMap_apply, comulDelAlgHom_pair]
+  -- Step 2: define abbreviations for the coproduct decomposition.
+  set primS : Hc R α ⊗[R] Hc R α :=
+    forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α) with hprimS
+  set primS' : Hc R α ⊗[R] Hc R α :=
+    forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α) with hprimS'
+  set sumS : Hc R α ⊗[R] Hc R α :=
+    ∑ c : CutShape S,
+      forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+        deletionRightChannel (R := R) (CutShape.remainderDeletion c) with hsumS
+  set sumS' : Hc R α ⊗[R] Hc R α :=
+    ∑ c' : CutShape S',
+      forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+        deletionRightChannel (R := R) (CutShape.remainderDeletion c') with hsumS'
+  have hcompS : comulTreeDel (R := R) S = primS + sumS := rfl
+  have hcompS' : comulTreeDel (R := R) S' = primS' + sumS' := rfl
+  rw [hcompS, hcompS']
+  -- Step 3: distribute multiplication into 4 cross-terms and push linearity
+  -- through the 3-layer chain (hcMulLin ∘ TensorProduct.map ∘ deltaMatch).
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- Step 4: each of the 4 cross-terms reduces via the per-term lemmas.
+  rw [mergePost_pair_prim_prim S S',
+      mergePost_pair_prim_sum S S',
+      mergePost_pair_sum_prim S S',
+      mergePost_pair_sum_sum S S']
+  -- Cleanup: answer + 0 + 0 + 0 = answer.
+  rw [add_zero, add_zero, add_zero]
+
+/-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.3.6).
+    `mergeOp current.toHc item.toHc` applied to the 2-tree workspace
+    `{current.toHc, item.toHc}` yields the singleton workspace of
     `.node current item` = `(Step.emR item).apply current`. -/
 theorem mergeOp_emR_matches_Step
     (current item : Minimalist.SyntacticObject) :
@@ -88,32 +161,20 @@ theorem mergeOp_emR_matches_Step
         (forestToHc ({current.toHc, item.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emR item).apply current).toH.anon (fun _ => ())}
         : TraceForest LIToken Unit) := by
-  -- Proof strategy:
-  -- 1. Unfold mergeOp = ⊔ ∘ (B ⊗ id) ∘ δ_{S,S'} ∘ Δ^d
-  -- 2. Δ^d on the 2-tree workspace expands as Δ^d({current.toHc}) * Δ^d({item.toHc})
-  --    by multiplicativity (comulDelAlgHom is an algebra hom)
-  -- 3. Δ^d on a singleton tree T includes the primitive T ⊗ 1 + 1 ⊗ T
-  --    plus admissible cuts of T
-  -- 4. Multiplying the two singleton coproducts and filtering via
-  --    δ_{S,S'} (= projection to {current.toHc, item.toHc} ⊗ ...)
-  --    leaves a single term: {current.toHc, item.toHc} ⊗ 1
-  -- 5. Applying B replaces {current.toHc, item.toHc} with .node current.toH item.toH
-  -- 6. Multiplying by 1 (the right channel) gives {.node current.toH item.toHc}
-  -- 7. Step.emR item current = .node current item, and (.node current item).toH
-  --    = .node current.toH item.toH (by SyntacticObject.toH definition)
-  sorry
+  rw [mergeOp_pair]
+  rfl
 
-/-- **External Merge bridge (left-specifier)** [SORRY-STUB].
-    Symmetric to `mergeOp_emR_matches_Step`. -/
+/-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.3.6,
+    symmetric pair). `mergeOp item.toHc current.toHc` applied to
+    `{item.toHc, current.toHc}` yields `.node item current`. -/
 theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) :
     mergeOp (R := ℤ) item.toHc current.toHc
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emL item).apply current).toH.anon (fun _ => ())}
         : TraceForest LIToken Unit) := by
-  -- Same strategy as mergeOp_emR_matches_Step with item/current swapped.
-  -- Step.emL item current = .node item current
-  sorry
+  rw [mergeOp_pair]
+  rfl
 
 /-! ## §3: Internal Merge bridge
 

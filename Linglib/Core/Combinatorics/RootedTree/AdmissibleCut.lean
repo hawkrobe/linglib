@@ -337,6 +337,37 @@ theorem cutForest_ne_singleton_self {T : TraceTree α β} (c : CutShape T) :
   rw [h]
   exact Multiset.mem_singleton.mpr rfl
 
+/-- **Pair-cross elimination**: for cuts `c : CutShape S` and `c' : CutShape S'`,
+    the multiset sum `cutForest c + cutForest c'` cannot equal `{S, S'}`.
+
+    Used in the algebraic Merge bridge (`Theories/Syntax/Minimalist/Hopf/MergeAction.lean`)
+    to eliminate cross-terms in the expansion of `Δ^d({S, S'})`: any cut on one
+    side combined with any cut on the other side produces a cut-forest different
+    from `{S, S'}`, so `δ_{S,S'}` zeroes that term.
+
+    Proof: if the sum were `{S, S'}`, then `S` and `S'` are each in either
+    `cutForest c` or `cutForest c'`. Membership in `cutForest c` (resp. `c'`)
+    forces a strict size decrease versus `S` (resp. `S'`), so `S ∉ cutForest c`
+    and `S' ∉ cutForest c'`. This forces `S ∈ cutForest c'` and `S' ∈ cutForest c`,
+    yielding `S.size < S'.size` and `S'.size < S.size` — contradiction. -/
+theorem cutForest_add_pair_ne_pair {S S' : TraceTree α β}
+    (c : CutShape S) (c' : CutShape S') :
+    CutShape.cutForest c + CutShape.cutForest c'
+      ≠ ({S, S'} : Multiset (TraceTree α β)) := by
+  intro h
+  have hSmem : S ∈ ({S, S'} : Multiset (TraceTree α β)) := by
+    simp [Multiset.insert_eq_cons]
+  have hS'mem : S' ∈ ({S, S'} : Multiset (TraceTree α β)) := by
+    simp [Multiset.insert_eq_cons]
+  rw [← h, Multiset.mem_add] at hSmem hS'mem
+  rcases hSmem with hSc | hSc'
+  · exact absurd (size_lt_of_mem_cutForest c S hSc) (lt_irrefl _)
+  · rcases hS'mem with hS'c | hS'c'
+    · have h1 : S.size < S'.size := size_lt_of_mem_cutForest c' S hSc'
+      have h2 : S'.size < S.size := size_lt_of_mem_cutForest c S' hS'c
+      omega
+    · exact absurd (size_lt_of_mem_cutForest c' S' hS'c') (lt_irrefl _)
+
 /-! ## §6: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
