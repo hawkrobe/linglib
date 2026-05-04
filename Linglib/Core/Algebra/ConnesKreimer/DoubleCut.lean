@@ -1252,19 +1252,82 @@ theorem geoMultiset_node_factored (l r : DecoratedTree α) :
   refine Multiset.map_congr rfl (fun ⟨_, _, gl, gr⟩ _ => ?_)
   exact geoToChildSlots_node_top _ _ _ _ gl gr
 
+/-- "Decomposed" form for `perLayerContrib (.node l r) .top`: bind over
+    `(lL, rL, cs_l, cs_r)` of `nodeChildSlots`-combined ChildSlots, with per-l/per-r
+    data drawn from `perLayerContrib l lL` / `perLayerContrib r rL` respectively.
+    The trace constraint is encoded in the Subtype on layers. -/
+noncomputable def perLayerContribDecomposed (l r : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
+        (DecoratedTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
+    (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
+        (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
+      (perLayerContrib (α := α) l lL.1).bind fun cs_l =>
+        (perLayerContrib (α := α) r rL.1).map fun cs_r =>
+          nodeChildSlots cs_l cs_r
+
+/-- The decomposed form equals the RHS Sigma-bind. -/
+theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
+    (ihl : ∀ layer, perLayerContrib (α := α) l layer
+            = (Finset.univ : Finset (GeoCut l layer)).val.map (fun g => geoToChildSlots g))
+    (ihr : ∀ layer, perLayerContrib (α := α) r layer
+            = (Finset.univ : Finset (GeoCut r layer)).val.map (fun g => geoToChildSlots g)) :
+    (Finset.univ : Finset (GeoCut (.node l r) Layer.top)).val.map
+        (fun g => geoToChildSlots g)
+      = perLayerContribDecomposed l r := by
+  rw [geoMultiset_node_factored]
+  unfold perLayerContribDecomposed
+  -- RHS: Sigma over (lL, rL) of (gl × gr) → nodeChildSlots-combined.
+  -- LHS: bind over (lL) (rL) (cs_l ∈ perLayerContrib l lL.1) (cs_r ∈ perLayerContrib r rL.1).
+  -- Apply IH to convert perLayerContrib X layer → univ_GeoCut.map geoToChildSlots.
+  rw [show ((Finset.univ : Finset (Σ (lL : {x : Layer // x ≤ Layer.top ∧
+              (DecoratedTree.IsNotTrace l ∨ x = Layer.top)})
+            (rL : {x : Layer // x ≤ Layer.top ∧
+              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+            GeoCut l lL.1 × GeoCut r rL.1)).val
+        : Multiset _)
+      = (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
+              (DecoratedTree.IsNotTrace l ∨ x = Layer.top)}).val.bind fun lL =>
+          ((Finset.univ : Finset (Σ (rL : {x : Layer // x ≤ Layer.top ∧
+                (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+                GeoCut l lL.1 × GeoCut r rL.1)).val).map (Sigma.mk lL) from rfl]
+  rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun lL _ => ?_)
+  simp only [Multiset.map_map, Function.comp_def]
+  -- Now per-lL: rewrite the inner Sigma similarly.
+  rw [show ((Finset.univ : Finset (Σ (rL : {x : Layer // x ≤ Layer.top ∧
+              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}),
+              GeoCut l lL.1 × GeoCut r rL.1)).val
+        : Multiset _)
+      = (Finset.univ : Finset {x : Layer // x ≤ Layer.top ∧
+              (DecoratedTree.IsNotTrace r ∨ x = Layer.top)}).val.bind fun rL =>
+          ((Finset.univ : Finset (GeoCut l lL.1 × GeoCut r rL.1)).val).map (Sigma.mk rL) from rfl]
+  rw [Multiset.map_bind]
+  refine Multiset.bind_congr (fun rL _ => ?_)
+  simp only [Multiset.map_map, Function.comp_def]
+  -- Per (lL, rL): rewrite univ_(gl × gr) as univ_gl ×ˢ univ_gr → bind.
+  rw [show ((Finset.univ : Finset (GeoCut l lL.1 × GeoCut r rL.1)).val
+        : Multiset _)
+      = (Finset.univ : Finset (GeoCut l lL.1)).val.bind fun gl =>
+          ((Finset.univ : Finset (GeoCut r rL.1)).val).map (Prod.mk gl) from rfl]
+  rw [Multiset.map_bind]
+  rw [ihl lL.1]
+  -- Now: ((univ_GeoCut_l_lL).map geoToChildSlots).bind ...
+  rw [Multiset.bind_map]
+  refine Multiset.bind_congr (fun gl _ => ?_)
+  rw [Multiset.map_map]
+  rw [ihr rL.1]
+  rw [Multiset.map_map]
+  rfl
+
 /-- The `.top` case: substantive recursive content.
 
-    **Proof outline** (~150-200 LOC of focused work):
-    1. Apply `geoMultiset_node_factored` to the RHS, getting a Sigma-bind form.
-    2. Decompose the LHS perLayerContrib (.node l r) .top by CutShape ctor:
-       - bothCut → per-l × per-r both extract-whole (lL, rL ∈ {bot, mid}).
-       - onlyLeftCut → per-l extract-whole, per-r .top (cl_outer recurses into r).
-       - onlyRightCut → symmetric.
-       - bothRecurse → per-l × per-r both .top.
-    3. For each ctor, show its contribution is a specific (lL, rL) sub-bind of RHS.
-    4. Sum over ctors: gives the full (lL, rL, gl, gr) bind = RHS.
-    5. Apply `lhsAnyChildContrib_eq_geoCutAny l/r` to convert per-l/per-r data
-       between LHS form (CutShape + section) and RHS form (GeoCut). -/
+    **Proof outline** (~100-150 LOC of focused work):
+    1. Apply `geoMultiset_node_eq_decomposed` to convert the RHS to the
+       decomposed form (with IH on l, r).
+    2. Show LHS perLayerContrib (.node l r) .top = perLayerContribDecomposed l r.
+       This requires per-CutShape-ctor decomposition + matching to (lL, rL) sub-binds.
+       Substantive Foissy content. -/
 theorem perLayerContrib_top (T : DecoratedTree α) :
     perLayerContrib (α := α) T .top
       = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
@@ -1273,25 +1336,31 @@ theorem perLayerContrib_top (T : DecoratedTree α) :
   | .leaf a => rfl
   | .trace t => rfl
   | .node l r =>
-    -- RHS: factor via Sigma decomposition.
-    rw [geoMultiset_node_factored]
-    -- LHS: bind over CutShape (.node l r) ctors. Each ctor's contribution
-    -- corresponds to a specific (lL, rL) sub-bind on the RHS:
-    --   bothCut hl hr → (lL ∈ {bot, mid}, rL ∈ {bot, mid}, gated by IsNotTrace l ∧ r).
-    --   onlyLeftCut hl cr_in → (lL ∈ {bot, mid}, rL = top, gated by IsNotTrace l).
-    --   onlyRightCut hr cl_in → (lL = top, rL ∈ {bot, mid}, gated by IsNotTrace r).
-    --   bothRecurse cl_in cr_in → (lL = top, rL = top).
-    --
-    -- For each ctor, the section data factors into per-l × per-r AugCutShape choices.
-    -- Each per-l AugCutShape choice corresponds to a GeoCut l at lL ∈ {bot, mid}
-    -- (extractWhole→bot, real cl_inner→mid). For "recurse" cases, per-l = LHS data
-    -- on l with lL = top, which by the IH (perLayerContrib_top l) matches GeoCut l top.
-    --
-    -- Sum over all 4 ctors gives the full Sigma sum.
-    --
-    -- This is the substantive Foissy bijection. The proof is ~100-150 LOC of
-    -- careful Multiset.bind + Multiset.sections_add manipulation. Pending dedicated
-    -- focus session.
+    -- Use IH on l, r to convert RHS to decomposed form.
+    rw [geoMultiset_node_eq_decomposed l r
+          (fun layer => match layer with
+            | .bot => perLayerContrib_bot l
+            | .mid => perLayerContrib_mid l
+            | .top => perLayerContrib_top l)
+          (fun layer => match layer with
+            | .bot => perLayerContrib_bot r
+            | .mid => perLayerContrib_mid r
+            | .top => perLayerContrib_top r)]
+    -- Goal: perLayerContrib (.node l r) .top = perLayerContribDecomposed l r.
+    -- This is the substantive Foissy content:
+    -- - LHS: bind over CutShape (.node l r) ctors with section data.
+    -- - RHS (decomposed): bind over (lL, rL, cs_l, cs_r) with per-layer ChildSlots.
+    -- The bijection: each CutShape ctor's contribution matches a specific (lL, rL)
+    -- sub-bind. For each (lL, rL):
+    --   (bot, bot): bothCut hl hr (requires IsNotTrace l, IsNotTrace r).
+    --   (bot, mid): bothCut hl hr (per-r picks real cl_inner).
+    --   (mid, bot): bothCut hl hr (per-l picks real cl_inner).
+    --   (mid, mid): bothCut hl hr.
+    --   (bot, top): onlyLeftCut hl cr_in.
+    --   (mid, top): onlyLeftCut.
+    --   (top, bot): onlyRightCut hr cl_in.
+    --   (top, mid): onlyRightCut.
+    --   (top, top): bothRecurse cl_in cr_in.
     sorry
 
 /-- **Per-subtree IH** (any layer): combines the three per-layer sub-lemmas via
