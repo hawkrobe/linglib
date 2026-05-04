@@ -143,18 +143,8 @@ direction is per-LhsIndex-ctor with `simp only` unfolding + IH for recursive
 ctors + `fromMidGeoCut_midGeoCut` for `.mid` AugCut choices. The
 `lhsToGeoCut ∘ geoCutToLhs` direction is per-`(lL, rL)` cell with
 `botGeoCut_unique` for `.bot`, `midGeoCut_fromMidGeoCut` for `.mid`, IH for
-`.top`, and `or_inl_resolve_right_eq_self` to collapse the `Or.inl ∘ resolve_right`
+`.top`, and `Or.inl_resolve_right_eq` to collapse the `Or.inl ∘ resolve_right`
 disjunction reconstructions. -/
-
-/-- Helper: `Or.inl ∘ resolve_right` collapses to the original disjunction
-    when the right disjunct is impossible. Local copy — the corresponding
-    private helper in `DoubleCut.lean` is not exported. -/
-private theorem or_inl_resolve_right_eq_self
-    {p q : Prop} (h : p ∨ q) (hne : ¬ q) :
-    Or.inl (h.resolve_right hne) = h := by
-  rcases h with h1 | h2
-  · rfl
-  · exact absurd h2 hne
 
 omit [DecidableEq α] in
 /-- Left inverse: `geoCutToLhs (lhsToGeoCut idx) = idx`.
@@ -197,7 +187,7 @@ omit [DecidableEq α] in
     For each of the 9 `(lL, rL)` cells: `botGeoCut_unique` for `.bot`,
     `midGeoCut_fromMidGeoCut` for `.mid`, IH for `.top`. The
     `Or.inl ∘ resolve_right` reconstructions collapse via
-    `or_inl_resolve_right_eq_self`. -/
+    `Or.inl_resolve_right_eq`. -/
 theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Layer.top),
     lhsToGeoCut (geoCutToLhs g) = g
   | .leaf _, .leaf _ => rfl
@@ -214,22 +204,22 @@ theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Laye
         show GeoCut.node _ _
               (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
               (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top))) _ _ = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top),
-            or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top)]
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.bot ≠ Layer.top),
+            Or.inl_resolve_right_eq hrNT (by decide : Layer.bot ≠ Layer.top)]
       | mid =>
         show GeoCut.node _ _
               (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
               (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top))) _
               (midGeoCut r (fromMidGeoCut gr)) = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top),
-            or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.bot ≠ Layer.top),
+            Or.inl_resolve_right_eq hrNT (by decide : Layer.mid ≠ Layer.top),
             midGeoCut_fromMidGeoCut gr]
       | top =>
         have ihr := lhsToGeoCut_geoCutToLhs gr
         show GeoCut.node _ _
               (Or.inl (hlNT.resolve_right (by decide : Layer.bot ≠ Layer.top))) hrNT _
               (lhsToGeoCut (geoCutToLhs gr)) = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.bot ≠ Layer.top), ihr]
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.bot ≠ Layer.top), ihr]
     | mid =>
       cases rL with
       | bot =>
@@ -239,8 +229,8 @@ theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Laye
               (Or.inl (hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
               (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
               (midGeoCut l (fromMidGeoCut gl)) _ = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
-            or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top),
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.mid ≠ Layer.top),
+            Or.inl_resolve_right_eq hrNT (by decide : Layer.bot ≠ Layer.top),
             midGeoCut_fromMidGeoCut gl]
       | mid =>
         show GeoCut.node _ _
@@ -248,8 +238,8 @@ theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Laye
               (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
               (midGeoCut l (fromMidGeoCut gl))
               (midGeoCut r (fromMidGeoCut gr)) = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
-            or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.mid ≠ Layer.top),
+            Or.inl_resolve_right_eq hrNT (by decide : Layer.mid ≠ Layer.top),
             midGeoCut_fromMidGeoCut gl, midGeoCut_fromMidGeoCut gr]
       | top =>
         have ihr := lhsToGeoCut_geoCutToLhs gr
@@ -257,7 +247,7 @@ theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Laye
               (Or.inl (hlNT.resolve_right (by decide : Layer.mid ≠ Layer.top))) hrNT
               (midGeoCut l (fromMidGeoCut gl))
               (lhsToGeoCut (geoCutToLhs gr)) = _
-        rw [or_inl_resolve_right_eq_self hlNT (by decide : Layer.mid ≠ Layer.top),
+        rw [Or.inl_resolve_right_eq hlNT (by decide : Layer.mid ≠ Layer.top),
             midGeoCut_fromMidGeoCut gl, ihr]
     | top =>
       cases rL with
@@ -268,14 +258,14 @@ theorem lhsToGeoCut_geoCutToLhs : ∀ {T : TraceTree α Unit} (g : GeoCut T Laye
         show GeoCut.node _ _ hlNT
               (Or.inl (hrNT.resolve_right (by decide : Layer.bot ≠ Layer.top)))
               (lhsToGeoCut (geoCutToLhs gl)) _ = _
-        rw [or_inl_resolve_right_eq_self hrNT (by decide : Layer.bot ≠ Layer.top), ihl]
+        rw [Or.inl_resolve_right_eq hrNT (by decide : Layer.bot ≠ Layer.top), ihl]
       | mid =>
         have ihl := lhsToGeoCut_geoCutToLhs gl
         show GeoCut.node _ _ hlNT
               (Or.inl (hrNT.resolve_right (by decide : Layer.mid ≠ Layer.top)))
               (lhsToGeoCut (geoCutToLhs gl))
               (midGeoCut r (fromMidGeoCut gr)) = _
-        rw [or_inl_resolve_right_eq_self hrNT (by decide : Layer.mid ≠ Layer.top),
+        rw [Or.inl_resolve_right_eq hrNT (by decide : Layer.mid ≠ Layer.top),
             ihl, midGeoCut_fromMidGeoCut gr]
       | top =>
         have ihl := lhsToGeoCut_geoCutToLhs gl

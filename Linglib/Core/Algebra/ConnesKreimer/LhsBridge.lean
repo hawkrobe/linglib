@@ -73,8 +73,10 @@ def lhsAllWithMS : ∀ {T : TraceTree α Unit} (_ : CutShape T), Multiset (LhsIn
       (lhsAllWithMS cl).bind fun lhs =>
         (lhsAllWithMS cr).map fun rhs => LhsIndex.bothRecurse lhs rhs
 
-/-- Helper: `(s ×ˢ t).map (fun p => f p.1 p.2) = s.bind fun a => t.map fun b => f a b`. -/
-private lemma multiset_product_map {α β γ : Type*} (s : Multiset α) (t : Multiset β)
+/-- Mapping a binary function across a multiset product equals binding then
+    mapping per-component. Mathlib gap (parallel to `_root_.Multiset.Sections_map_map`
+    in `DoubleCut.lean` — both `[UPSTREAM]` candidates). -/
+theorem _root_.Multiset.map_product_eq_bind {α β γ : Type*} (s : Multiset α) (t : Multiset β)
     (f : α → β → γ) :
     (s ×ˢ t).map (fun p => f p.1 p.2) = s.bind fun a => t.map fun b => f a b := by
   show (s.bind fun a => t.map (Prod.mk a)).map (fun p => f p.1 p.2) = _
@@ -105,7 +107,7 @@ theorem lhsAllWithMS_eq_allWith_val {T : TraceTree α Unit} (cl_outer : CutShape
           cases h
           rfl)]
     rw [Finset.product_val]
-    exact (multiset_product_map _ _ _).symm
+    exact (Multiset.map_product_eq_bind _ _ _).symm
   | @onlyLeftCut l r hl cr ih =>
     show ((Finset.univ : Finset (AugCutShape l)).val.bind fun ac_l =>
           (lhsAllWithMS cr).map fun rhs =>
@@ -122,7 +124,7 @@ theorem lhsAllWithMS_eq_allWith_val {T : TraceTree α Unit} (cl_outer : CutShape
           cases h
           rfl)]
     rw [Finset.product_val]
-    exact (multiset_product_map _ _ _).symm
+    exact (Multiset.map_product_eq_bind _ _ _).symm
   | @onlyRightCut l r hr cl ih =>
     show ((lhsAllWithMS cl).bind fun lhs =>
           (Finset.univ : Finset (AugCutShape r)).val.map fun ac_r =>
@@ -139,7 +141,7 @@ theorem lhsAllWithMS_eq_allWith_val {T : TraceTree α Unit} (cl_outer : CutShape
           cases h
           rfl)]
     rw [Finset.product_val]
-    exact (multiset_product_map _ _ _).symm
+    exact (Multiset.map_product_eq_bind _ _ _).symm
   | @bothRecurse l r cl cr ih_l ih_r =>
     show ((lhsAllWithMS cl).bind fun lhs =>
           (lhsAllWithMS cr).map fun rhs =>
@@ -156,7 +158,7 @@ theorem lhsAllWithMS_eq_allWith_val {T : TraceTree α Unit} (cl_outer : CutShape
           cases h
           rfl)]
     rw [Finset.product_val]
-    exact (multiset_product_map _ _ _).symm
+    exact (Multiset.map_product_eq_bind _ _ _).symm
 
 /-! ## §2: Per-`cl_outer` bridge lemma at the `(slot1, slot2)` pair level
 
