@@ -110,8 +110,11 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 (`comulAlgHom_apply_single` lives in `Coproduct.lean` next to the definition.) -/
 
 /-- `counit` applied to the basis vector `Finsupp.single F 1` equals
-    `1` if `F` is the empty forest, `0` otherwise. -/
-@[simp] theorem counit_apply_single (F : TraceForest α Unit) :
+    `1` if `F` is the empty forest, `0` otherwise. Not `@[simp]`: the
+    `if F = 0` form requires F to be concrete or the equality to be
+    in scope, so simp can't fire it on symbolic `F`. Callers split
+    on `F = 0` then invoke this manually. -/
+theorem counit_apply_single (F : TraceForest α Unit) :
     counit (R := R) (α := α) (Finsupp.single F 1)
       = if F = 0 then (1 : R) else 0 := by
   show AddMonoidAlgebra.lift R _ _ counitMonoidHom (Finsupp.single F 1) = _
@@ -119,20 +122,6 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
   rfl
 
 /-! ## Helpers for the counit-law proofs -/
-
-/-- A multiset sum is zero iff both summands are zero (cardinality
-    argument). Local copy of `Coproduct.lean`'s private helper, kept
-    private here too — purely to avoid coupling Bialgebra.lean to
-    Coproduct.lean's internal namespace. -/
-private lemma multiset_add_eq_zero_iff {β : Type*} (a b : Multiset β) :
-    a + b = 0 ↔ a = 0 ∧ b = 0 := by
-  constructor
-  · intro h
-    rw [← Multiset.card_eq_zero, Multiset.card_add] at h
-    exact ⟨Multiset.card_eq_zero.mp (by omega),
-           Multiset.card_eq_zero.mp (by omega)⟩
-  · rintro ⟨ha, hb⟩
-    rw [ha, hb, add_zero]
 
 omit [DecidableEq α] in
 /-- Structural fact about admissible cuts: `cutForest c = 0` iff `c`
@@ -154,12 +143,12 @@ private lemma cutForest_eq_zero_imp_empty :
       omega
   | .node _ _, .onlyLeftCut _ _, h => by
       exfalso
-      exact Multiset.singleton_ne_zero _ ((multiset_add_eq_zero_iff _ _).mp h).1
+      exact Multiset.singleton_ne_zero _ (add_eq_zero.mp h).1
   | .node _ _, .onlyRightCut _ _, h => by
       exfalso
-      exact Multiset.singleton_ne_zero _ ((multiset_add_eq_zero_iff _ _).mp h).2
+      exact Multiset.singleton_ne_zero _ (add_eq_zero.mp h).2
   | .node _ _, .bothRecurse cl cr, h => by
-      obtain ⟨hl, hr⟩ := (multiset_add_eq_zero_iff _ _).mp h
+      obtain ⟨hl, hr⟩ := add_eq_zero.mp h
       have ihl := cutForest_eq_zero_imp_empty cl hl
       have ihr := cutForest_eq_zero_imp_empty cr hr
       subst ihl; subst ihr; rfl
@@ -202,8 +191,7 @@ private lemma counit_rTensor_apply_comulForest (F : TraceForest α Unit) :
   | empty =>
     rw [comulForest_zero, map_one, Algebra.TensorProduct.one_def]
     rfl
-  | cons T F'' ih =>
-    set F' : TraceForest α Unit := F''
+  | cons T F' ih =>
     rw [show (T ::ₘ F' : TraceForest α Unit) = ({T} : TraceForest α Unit) + F' from rfl, comulForest_add]
     have h1 : comulForest (R := R) ({T} : TraceForest α Unit) = comulTree T := by
       unfold comulForest
@@ -239,8 +227,7 @@ private lemma counit_lTensor_apply_comulForest (F : TraceForest α Unit) :
   | empty =>
     rw [comulForest_zero, map_one, Algebra.TensorProduct.one_def]
     rfl
-  | cons T F'' ih =>
-    set F' : TraceForest α Unit := F''
+  | cons T F' ih =>
     rw [show (T ::ₘ F' : TraceForest α Unit) = ({T} : TraceForest α Unit) + F' from rfl, comulForest_add]
     have h1 : comulForest (R := R) ({T} : TraceForest α Unit) = comulTree T := by
       unfold comulForest
