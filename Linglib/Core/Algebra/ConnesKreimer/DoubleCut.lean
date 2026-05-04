@@ -1281,24 +1281,32 @@ private theorem multiset_bind_swap {β₁ β₂ γ : Type*} (s : Multiset β₁)
 /-! #### `perLayerContrib_top` `.node` case sub-lemmas: per-CutShape-ctor contributions
 
 Each CutShape ctor for `(.node l r)` contributes a specific (lL, rL) sub-bind to
-`perLayerContrib (.node l r) .top`. The 4 sub-lemmas (one per ctor) match the
-4 cases of `perLayerContribDecomposed`.
+`perLayerContrib (.node l r) .top`. Mathlib provides `Multiset.bind_bind` (Fubini
+commutativity for nested binds) and `Multiset.bind_map` (`(s.map f).bind g = s.bind (g ∘ f)`)
+which are the foundational tools. -/
 
-**Proof strategy** (using `multiset_bind_swap` for Fubini reordering):
+/-! **Per-ctor proof outline** (each ~50-80 LOC, total ~200-300 LOC for full `.node` proof):
 
 For `bothRecurse cl_in cr_in`:
-  cutForest = cutForest cl_in + cutForest cr_in.
-  By `Multiset.sections_add`, sections decompose as bind over (m_l, m_r).
-  Each section's triple = nodeChildSlots ⟨m_l-data, remainder cl_in⟩ ⟨m_r-data, remainder cr_in⟩.
-  Reorder binds via `multiset_bind_swap` to factor as
-    `(perLayerContrib l .top).bind fun per-l => (perLayerContrib r .top).map (nodeChildSlots per-l ·)`.
+  1. `Multiset.bind_map` → `univ_(l × r).bind ...`.
+  2. `Finset.product` decomposes `univ_(l × r)` into nested `univ_l.bind univ_r`.
+  3. `Multiset.bind_assoc` for nested structure.
+  4. cutForest = cutForest cl_in + cutForest cr_in. Apply `Multiset.map_add` + `Multiset.sections_add`.
+  5. Decompose into bind over (m_l, m_r) via `Multiset.map_bind` + `Multiset.bind_map`.
+  6. `Multiset.bind_bind` (Fubini) to reorder `(cl_in cr_in m_l m_r)` → `(cl_in m_l cr_in m_r)`.
+  7. Match to perLayerContrib via its definition. Match to `(lL=top, rL=top)` sub-bind.
 
 For `bothCut hl hr`:
-  cutForest = {l, r}. Sections enumerate (a, b) ∈ comulPairs l × comulPairs r.
-  Each (a, b, .trace l, .trace r) triple = nodeChildSlots ⟨a, .trace l⟩ ⟨b, .trace r⟩.
-  Match to (perLayerContrib l .bot ⊕ .mid).bind ((perLayerContrib r .bot ⊕ .mid).map ...).
+  cutForest = {l, r}. `Multiset.sections_cons` (twice) decomposes Sections.
+  Per (a, b) pair: `(a.fst + b.fst, a.snd + b.snd, .node (.trace l) (.trace r))`.
+  Match to `(lL ∈ {bot, mid}, rL ∈ {bot, mid})` via `comulPairs ↔ perLayerContrib .bot ⊕ .mid`.
 
-For `onlyLeftCut hl cr_in` and `onlyRightCut hr cl_in`: hybrid of bothRecurse + bothCut. -/
+For `onlyLeftCut hl cr_in`: hybrid. cutForest = {l} + cutForest cr_in. Match to
+  `(lL ∈ {bot, mid}, rL = top)`.
+
+For `onlyRightCut hr cl_in`: symmetric.
+
+Sum of all 4 = full perLayerContribDecomposed. -/
 
 /-- The decomposed form equals the RHS Sigma-bind. -/
 theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
