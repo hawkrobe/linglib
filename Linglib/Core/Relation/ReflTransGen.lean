@@ -71,6 +71,13 @@ theorem Path.toReflTransGen {r : α → α → Prop} {a b : α} :
   | [], h => Relation.ReflTransGen.single h
   | _ :: _, ⟨hax, hr⟩ => Relation.ReflTransGen.head hax (Path.toReflTransGen hr)
 
+/-- `Path` is monotonic in the relation: pointwise iff lifts to path iff. -/
+theorem Path.congr {r r' : α → α → Prop} (h : ∀ x y, r x y ↔ r' x y) :
+    ∀ {a b : α} {chain : List α}, Path r a chain b ↔ Path r' a chain b
+  | _, _, [] => h _ _
+  | _, _, x :: xs => by
+    rw [Path.cons_iff, Path.cons_iff, h, Path.congr h]
+
 /-- Extend a path by one edge at the END. -/
 theorem Path.snoc {r : α → α → Prop} {a b c : α} :
     ∀ {chain : List α}, Path r a chain b → r b c → Path r a (chain ++ [b]) c
@@ -78,7 +85,7 @@ theorem Path.snoc {r : α → α → Prop} {a b c : α} :
   | _ :: _, ⟨hax, hr⟩, hbc => ⟨hax, Path.snoc hr hbc⟩
 
 /-- `ReflTransGen r a b` decomposes either as `a = b` or as a `Path`. -/
-theorem _root_.Relation.ReflTransGen.eq_or_path {r : α → α → Prop} {a b : α}
+theorem eq_or_path {r : α → α → Prop} {a b : α}
     (h : Relation.ReflTransGen r a b) : a = b ∨ ∃ chain : List α, Path r a chain b := by
   induction h with
   | refl => exact Or.inl rfl
@@ -143,7 +150,11 @@ theorem Path.dedup_interior {r : α → α → Prop} {a b : α} :
     · obtain ⟨xs', hlen, hxs'⟩ := Path.dedup_interior hr hxs_not_nodup
       exact ⟨x :: xs', by simp only [List.length_cons]; omega, hax, hxs'⟩
 
-private theorem Path.compress_aux [DecidableEq α] {r : α → α → Prop} {a b : α} :
+/-- Strong-induction helper for `Path.compress`. The explicit length parameter
+threads chain-length through `Nat.strongRecOn`. Public for callers that want
+to recurse explicitly on chain length without paying for `Path.compress`'s
+implicit `chain.length` evaluation. -/
+theorem Path.compress_aux [DecidableEq α] {r : α → α → Prop} {a b : α} :
     ∀ (n : Nat) (chain : List α), chain.length = n → Path r a chain b →
         ∃ chain' : List α, Path r a chain' b ∧ chain'.Nodup ∧
             a ∉ chain' ∧ b ∉ chain' := by
@@ -219,21 +230,22 @@ theorem Path.length_lt_of_nodup [DecidableEq α] {r : α → α → Prop} {a b :
 -- ----------------------------------------------------------------------------
 
 /-- Bounded BFS over a step function. `stepBFS step a n` collects all nodes
-reachable from `a` via at most `n` step-applications. -/
-def stepBFS (step : α → List α) (a : α) : Nat → List α
+reachable from `a` via at most `n` step-applications. Internal helper for
+`decidable_of_finite_step`. -/
+private def stepBFS (step : α → List α) (a : α) : Nat → List α
   | 0 => []
   | n + 1 =>
     let ps := step a
     ps ++ ps.flatMap (fun p => stepBFS step p n)
 
-theorem mem_stepBFS_succ_iff (step : α → List α) (a x : α) (n : Nat) :
+private theorem mem_stepBFS_succ_iff (step : α → List α) (a x : α) (n : Nat) :
     x ∈ stepBFS step a (n + 1) ↔
       x ∈ step a ∨ ∃ p ∈ step a, x ∈ stepBFS step p n := by
   simp only [stepBFS, List.mem_append, List.mem_flatMap]
 
 /-- BFS membership corresponds to existence of a `Path` of bounded length,
 where the relation is `fun a b => b ∈ step a`. -/
-theorem mem_stepBFS_iff_path (step : α → List α) (a b : α) :
+private theorem mem_stepBFS_iff_path (step : α → List α) (a b : α) :
     ∀ n, b ∈ stepBFS step a n ↔
         ∃ chain : List α, chain.length < n ∧ Path (fun a b => b ∈ step a) a chain b
   | 0 => by
@@ -271,27 +283,21 @@ def decidable_of_finite_step [DecidableEq α] {r : α → α → Prop}
     (a b : α) : Decidable (Relation.ReflTransGen r a b) := by
   have key : Relation.ReflTransGen r a b ↔
       a = b ∨ b ∈ stepBFS step a s.length := by
-    have hr_eq : r = fun x y => y ∈ step x := by
-      ext x y; exact step_eq x y
     constructor
     · intro h
-      rcases h.eq_or_path with rfl | ⟨chain, hc⟩
+      rcases eq_or_path h with rfl | ⟨chain, hc⟩
       · exact Or.inl rfl
-      · have hc' : Path (fun x y => y ∈ step x) a chain b := hr_eq ▸ hc
+      · have hc' : Path (fun x y => y ∈ step x) a chain b :=
+          (Path.congr step_eq).mp hc
         obtain ⟨chain', hc'', hnodup, _, hb_notin⟩ := hc'.compress
-        have succ_in_s : ∀ x y, (fun x y => y ∈ step x) x y → y ∈ s :=
-          step_in_s
         have hlen : chain'.length < s.length :=
-          hc''.length_lt_of_nodup succ_in_s hnodup hb_notin
+          hc''.length_lt_of_nodup step_in_s hnodup hb_notin
         exact Or.inr ((mem_stepBFS_iff_path step a b s.length).mpr
           ⟨chain', hlen, hc''⟩)
     · rintro (rfl | hmem)
       · exact Relation.ReflTransGen.refl
       · obtain ⟨chain, _, hc⟩ := (mem_stepBFS_iff_path step a b s.length).mp hmem
-        have hc' : Path r a chain b := by
-          have hr_eq' : (fun x y => y ∈ step x) = r := hr_eq.symm
-          exact hr_eq' ▸ hc
-        exact hc'.toReflTransGen
+        exact ((Path.congr fun a b => (step_eq a b).symm).mp hc).toReflTransGen
   exact decidable_of_iff _ key.symm
 
 /-- **Decidability of `Relation.ReflTransGen` on a finite carrier**, derived
