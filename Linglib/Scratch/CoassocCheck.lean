@@ -110,7 +110,7 @@ provable in principle (the bijection exists). -/
 
 /-! ## Typeclass resolution: `Bialgebra ℚ (Hc ℚ Atom)` -/
 
-/-- Confirms `instBialgebra` is found by typeclass synthesis. -/
+/-- Confirms `instBialgebraHc` is found by typeclass synthesis. -/
 noncomputable example : Bialgebra ℚ (Hc ℚ Atom) := inferInstance
 
 end ConnesKreimer.CoassocCheck

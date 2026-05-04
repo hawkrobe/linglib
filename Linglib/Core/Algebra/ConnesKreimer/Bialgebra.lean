@@ -21,7 +21,7 @@ chain in `LhsEquiv.lean`.
 - `counit_rTensor` — proved (Stage 1a).
 - `counit_lTensor` — proved (Stage 1a).
 
-Stage 1 obligation chain is sorry-free as of 0.230.728. `instBialgebra`
+Stage 1 obligation chain is sorry-free as of 0.230.728. `instBialgebraHc`
 is registered as an `instance` (promoted from `def` at 0.230.729).
 
 ## Why this works typeclass-wise
@@ -369,7 +369,7 @@ theorem counit_lTensor :
 
     Direct access to the algebraic operators stays available by name:
     `comulAlgHom`, `comulDelAlgHom`, `counit`. -/
-noncomputable instance instBialgebra : Bialgebra R (Hc R α) :=
+noncomputable instance instBialgebraHc : Bialgebra R (Hc R α) :=
   Bialgebra.ofAlgHom comulAlgHom counit comul_coassoc counit_rTensor counit_lTensor
 
 end ConnesKreimer
