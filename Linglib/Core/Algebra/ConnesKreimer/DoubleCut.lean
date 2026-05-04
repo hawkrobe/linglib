@@ -13,7 +13,8 @@ two iterated coproducts:
 
 Both expand into sums of triple-tensors `(BOT ⊗ MID ⊗ TOP)` indexed by
 "double cuts" of `T` — equivalently, 3-level partitions of T's vertices
-where each root-to-leaf path is monotone (`Top ≤ Mid ≤ Bot`).
+where each root-to-leaf path is monotone in the **child ≤ parent** sense:
+`bot ≤ mid ≤ top`, with the root at `top` and BOT vertices deepest.
 
 This file uses the **right-iterated form** (which directly matches the
 RHS structure):
@@ -478,29 +479,10 @@ theorem lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner (T : DecoratedTr
   rw [add_comm]
   rfl
 
-/-- The substantive half: per-`C` matching of LHS sections vs RHS inner cuts.
-    Both sides are `Multiset.bind` over `CutShape T`. The per-C contributions
-    are different (LHS: sections of `cutForest C`; RHS: cuts of `remainder C`),
-    but their TOTAL bind-sums match.
-
-    For T = .leaf, .trace: trivial (both sides are singleton multisets matching).
-    For T = .node l r: the substantive cut-commutation content. -/
-theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
-    (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
-      = rhsRealRealInner T := by
-  match T with
-  | .leaf a =>
-    -- |CutShape (.leaf a)| = 1 (atLeaf); cutForest = 0, remainder = .leaf a.
-    -- LHS: bind over {atLeaf}, inner = (Sections 0).map (assoc(1 ⊗ {leaf a})) = singleton.
-    -- RHS: bind over {atLeaf}, inner = univ_CutShape (.leaf a).map (...) = singleton.
-    unfold lhsRealCuts rhsRealRealInner
-    rfl
-  | .trace t =>
-    unfold lhsRealCuts rhsRealRealInner
-    rfl
-  | .node l r =>
-    -- The substantive cuts-of-cuts content: cut-commutation bijection.
-    sorry
+/-! The "substantive half" `lhsRealCuts T = rhsRealRealInner T` is proven via the
+GeoCut chain: `(lhsRealCuts_eq_geoMultiset).trans (rhsRealRealInner_eq_geoMultiset).symm`.
+That proof requires the GeoCut substrate (defined later); see the theorem in §3g
+below (`lhsRealCuts_eq_rhsRealRealInner`). -/
 
 /-- Helper: `rhsMultiset T` split by outer `DoubleCut = Σ ⊕ Unit` ctor. -/
 private theorem rhsMultiset_split_outer (T : DecoratedTree α) :
@@ -594,19 +576,10 @@ theorem rhsMultiset_decomp (T : DecoratedTree α) :
   rw [rhsMultiset_split_outer, rhsRealSigma_split_inner]
   abel
 
-/-- **The substantive cuts-of-cuts identity** (@cite{foissy-2002} §2 /
-    @cite{connes-kreimer-1998}): for `T = .node l r`, the LHS-section multiset
-    and the RHS-DoubleCut multiset are equal as multisets of triple-tensors.
-
-    Composes the easy half + substantive half + `rhsMultiset_decomp`. -/
-theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
-    (lhsMultiset (.node l r) : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
-      = rhsMultiset (.node l r) := by
-  rw [lhsMultiset_decomp,
-      lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner,
-      lhsRealCuts_eq_rhsRealRealInner,
-      rhsMultiset_decomp]
-  abel
+/-! `lhsMultiset_eq_rhsMultiset_node` is also moved to §3g (after the GeoCut
+substrate), so the chain `lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner +
+lhsRealCuts_eq_rhsRealRealInner + rhsMultiset_decomp` can complete via the
+GeoCut bijections. -/
 
 /-! ### §3f: `Layer` and `GeoCut` — the canonical "geometric double cut" type
 
@@ -682,8 +655,14 @@ Structural recursion on `T`:
   which has `Fintype` via mathlib's `Sigma` / `Prod` / `Subtype` instances combined
   with the recursive `Fintype (GeoCut subtree _)`. -/
 
-@[reducible] private def geoCutFintype :
-    ∀ (T : DecoratedTree α) (myL : Layer), Fintype (GeoCut T myL)
+/-- Recursive `Fintype` instance for `GeoCut T myL`. Mathlib pattern: declare
+    as recursive `instance` directly (no `private def + wrapper`).
+    - `.leaf` / `.trace`: 1 element via `Fintype.ofEquiv Unit`.
+    - `.node l r`: bijection with `Σ (lL with constraint) (rL with constraint),
+      GeoCut l × GeoCut r`. The constraint subtype combines `≤ myL` with the
+      `IsNotTrace ∨ = myL` `.trace`-layer match. -/
+instance instFintypeGeoCut : ∀ (T : DecoratedTree α) (myL : Layer),
+    Fintype (GeoCut T myL)
   | .leaf _, myL =>
       Fintype.ofEquiv Unit
         { toFun := fun _ => GeoCut.leaf myL
@@ -697,8 +676,8 @@ Structural recursion on `T`:
           left_inv := fun _ => rfl
           right_inv := fun g => by cases g; rfl }
   | .node l r, myL =>
-      letI _ihl : ∀ lL, Fintype (GeoCut l lL) := geoCutFintype l
-      letI _ihr : ∀ rL, Fintype (GeoCut r rL) := geoCutFintype r
+      letI _ihl : ∀ lL, Fintype (GeoCut l lL) := instFintypeGeoCut l
+      letI _ihr : ∀ rL, Fintype (GeoCut r rL) := instFintypeGeoCut r
       Fintype.ofEquiv
         (Σ (lL : {x : Layer // x ≤ myL ∧
               (DecoratedTree.IsNotTrace l ∨ x = myL)})
@@ -712,10 +691,6 @@ Structural recursion on `T`:
                 ⟨⟨_, hl, hlNT⟩, ⟨_, hr, hrNT⟩, gl, gr⟩
           left_inv := fun ⟨_, _, _, _⟩ => rfl
           right_inv := fun g => by cases g; rfl }
-
-instance instFintypeGeoCut (T : DecoratedTree α) (myL : Layer) :
-    Fintype (GeoCut T myL) :=
-  geoCutFintype T myL
 
 /-! ### `GeoCut` semantics — projecting to the triple-tensor
 
@@ -803,6 +778,425 @@ noncomputable def geoMultiset (T : DecoratedTree α) :
     Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))) :=
   (Finset.univ : Finset (GeoCut T Layer.top)).val.map (geoCutToTriple R)
 
+/-! ### Per-subtree "child slots": substrate for the .node bijection
+
+A `ChildSlots α` triple `⟨BOT, MID, stack⟩` represents one subtree's contribution
+to a parent's triple-tensor:
+- `bot : Forest α` — subtrees of T that go to the BOT slot.
+- `mid : Forest α` — subtrees of T (each as outer-skeleton) that go to the MID slot.
+- `stack : DecoratedTree α` — what appears at T's position in the parent's slot-3 tree.
+
+The triple-tensor for a subtree equals `forestToHc(bot) ⊗ (forestToHc(mid) ⊗ forestToHc({stack}))`.
+
+For the .node l r bijection, both the LHS and the (any-layer) GeoCut enumerate
+the SAME multiset of `ChildSlots` per subtree — this is the key inductive
+hypothesis. -/
+
+/-- Per-subtree child-slot data: the `(BOT, MID, stack)` triple in named-field form.
+    `BOT`/`MID` are forests; `stack` is the single tree at this subtree's position
+    in the parent's slot-3 tree. -/
+structure ChildSlots (α : Type*) where
+  bot   : Forest α
+  mid   : Forest α
+  stack : DecoratedTree α
+
+/-- Project a GeoCut to its child-slot triple. -/
+def geoToChildSlots {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    ChildSlots α :=
+  ⟨geoBotForest g, geoMidForest g, geoStackItem g⟩
+
+/-- Convert a child-slot triple to its triple-tensor. -/
+noncomputable def ChildSlots.toTriple (R : Type*) [CommSemiring R]
+    (cs : ChildSlots α) : (Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α)) :=
+  forestToHc (R := R) cs.bot ⊗ₜ[R]
+    (forestToHc (R := R) cs.mid ⊗ₜ[R] forestToHc (R := R) ({cs.stack} : Forest α))
+
+/-- `geoCutToTriple` factors as `ChildSlots.toTriple ∘ geoToChildSlots`. -/
+theorem geoCutToTriple_eq {T : DecoratedTree α} {myL : Layer} (g : GeoCut T myL) :
+    geoCutToTriple R g = (geoToChildSlots g).toTriple R := rfl
+
+/-- The "any-layer GeoCut child contribution" multiset on `T`: enumerate all
+    `(myL, g : GeoCut T myL)` pairs and project each to its child slots. -/
+noncomputable def geoCutAnyChildContrib (T : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset (Σ myL : Layer, GeoCut T myL)).val.map
+    fun ⟨_, g⟩ => geoToChildSlots g
+
+/-! ### Per-layer formulation of LHS child contribution
+
+Following the mathlib-audit recommendation, the LHS-side child contribution on
+`T` is split per-layer rather than per-case. The trichotomy "parent-extracts-with-extractWhole"
+/ "parent-extracts-with-real-cl_inner" / "parent-recurses" IS the trichotomy
+`Layer = bot/mid/top`. -/
+
+/-- Per-layer LHS contribution at the subtree level.
+- `.bot`: parent extracts T whole + inner = extractWhole. Single ChildSlots
+  `⟨{T}, 0, .trace T⟩`.
+- `.mid`: parent extracts T whole + inner = real cl_inner. One ChildSlots per
+  `cl_inner ∈ CutShape T`: `⟨cutForest cl_inner, {remainder cl_inner}, .trace T⟩`.
+- `.top`: parent recurses with `cl_outer ∈ CutShape T` + per-tree inner section.
+  `⟨recursive BOT, recursive MID, remainder cl_outer⟩`. -/
+noncomputable def perLayerContrib (T : DecoratedTree α) :
+    Layer → Multiset (ChildSlots α)
+  | .bot =>
+      ({⟨({T} : Forest α), 0, .trace T⟩} : Multiset (ChildSlots α))
+  | .mid =>
+      (Finset.univ : Finset (CutShape T)).val.map fun cl_inner =>
+        ⟨CutShape.cutForest cl_inner,
+         ({CutShape.remainder cl_inner} : Forest α),
+         .trace T⟩
+  | .top =>
+      (Finset.univ : Finset (CutShape T)).val.bind fun cl_outer =>
+        (Multiset.Sections ((CutShape.cutForest cl_outer).map fun T' =>
+          (Finset.univ : Finset (AugCutShape T')).val.map fun ac' =>
+            ((AugCutShape.cutForest_aug ac' : Forest α),
+             (AugCutShape.remainderForest ac' : Forest α)))).map fun s =>
+          ⟨(s.map Prod.fst).sum, (s.map Prod.snd).sum,
+           CutShape.remainder cl_outer⟩
+
+/-- The LHS-side child contribution multiset on `T` (any-layer): bind of
+    `perLayerContrib T` over `Layer`. Equals `geoCutAnyChildContrib T` (key IH). -/
+noncomputable def lhsAnyChildContrib (T : DecoratedTree α) :
+    Multiset (ChildSlots α) :=
+  (Finset.univ : Finset Layer).val.bind (perLayerContrib T)
+
+/-! ### Per-layer bijection sub-lemmas
+
+Following the audit, split `lhsAnyChildContrib_eq_geoCutAny` into three smaller
+per-layer equalities. The `.bot` and `.mid` cases reduce to direct multiset
+computation; `.top` is the substantive recursive content. -/
+
+/-- All `g : GeoCut T .bot` give the same `ChildSlots`: `⟨{T}, 0, .trace T⟩`.
+    Because for `myL = .bot` all the geo* helpers return the constant value
+    determined by `T` alone. -/
+theorem geoToChildSlots_bot {T : DecoratedTree α} (g : GeoCut T Layer.bot) :
+    geoToChildSlots g = ⟨({T} : Forest α), 0, .trace T⟩ := by
+  unfold geoToChildSlots geoBotForest geoMidForest geoStackItem
+  rfl
+
+/-- For `myL = .bot`, the layer constraint `lL ≤ .bot` forces `lL = .bot`. -/
+private theorem Layer.le_bot_iff (lL : Layer) : lL ≤ Layer.bot ↔ lL = Layer.bot := by
+  constructor
+  · intro h; cases lL <;> first | rfl | (exact absurd h (by decide))
+  · intro h; subst h; exact le_refl _
+
+/-- The canonical "all-bot" GeoCut on T. -/
+def botGeoCut : ∀ (T : DecoratedTree α), GeoCut T Layer.bot
+  | .leaf _ => GeoCut.leaf Layer.bot
+  | .trace _ => GeoCut.trace Layer.bot
+  | .node l r =>
+      GeoCut.node (le_refl _) (le_refl _) (Or.inr rfl) (Or.inr rfl)
+        (botGeoCut l) (botGeoCut r)
+
+/-- Every `g : GeoCut T .bot` equals `botGeoCut T`. Combined with `Inhabited` via
+    `botGeoCut`, gives `Unique (GeoCut T .bot)`. -/
+theorem botGeoCut_unique : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.bot),
+    g = botGeoCut T
+  | .leaf _, .leaf _ => rfl
+  | .trace _, .trace _ => rfl
+  | .node l r, .node hl hr _ _ gl gr => by
+      have hlEq : (_ : Layer) = Layer.bot := (Layer.le_bot_iff _).mp hl
+      have hrEq : (_ : Layer) = Layer.bot := (Layer.le_bot_iff _).mp hr
+      subst hlEq; subst hrEq
+      have el := botGeoCut_unique gl
+      have er := botGeoCut_unique gr
+      subst el; subst er
+      rfl
+
+instance instUniqueGeoCutBot (T : DecoratedTree α) : Unique (GeoCut T Layer.bot) where
+  default := botGeoCut T
+  uniq := botGeoCut_unique
+
+/-- The `.bot` case: a single `ChildSlots ⟨{T}, 0, .trace T⟩`. -/
+theorem perLayerContrib_bot (T : DecoratedTree α) :
+    perLayerContrib (α := α) T .bot
+      = (Finset.univ : Finset (GeoCut T Layer.bot)).val.map
+          (fun g => geoToChildSlots g) := by
+  -- LHS unfolds to {⟨{T}, 0, .trace T⟩}.
+  -- RHS: univ has a unique element (botGeoCut T) via `instUniqueGeoCutBot`,
+  -- so univ.val = {botGeoCut T}, mapped via geoToChildSlots → {⟨{T}, 0, .trace T⟩}.
+  rw [show (Finset.univ : Finset (GeoCut T Layer.bot)).val
+        = ({botGeoCut T} : Multiset _) by
+       rw [show (Finset.univ : Finset (GeoCut T Layer.bot))
+             = ({botGeoCut T} : Finset _) from
+           Finset.eq_singleton_iff_unique_mem.mpr
+             ⟨Finset.mem_univ _, fun g _ => botGeoCut_unique g⟩]
+       rfl]
+  rw [Multiset.map_singleton, geoToChildSlots_bot]
+  rfl
+
+/-! #### `midGeoCut`: bijection `CutShape T ≃ GeoCut T Layer.mid`
+
+For each `cl_inner : CutShape T`, the corresponding `GeoCut T Layer.mid` represents
+"T at MID with `cl_inner` determining the BOT-extraction within T". The bijection
+preserves the (BOT, MID, stack) data: extracted subtrees → BOT, kept subtrees →
+MID structure, T-vertex → MID. -/
+
+/-- Forward: convert `cl_inner : CutShape T` to the corresponding `GeoCut T .mid`. -/
+def midGeoCut : ∀ (T : DecoratedTree α), CutShape T → GeoCut T Layer.mid
+  | .leaf _, .atLeaf => GeoCut.leaf Layer.mid
+  | .trace _, .atTrace => GeoCut.trace Layer.mid
+  | .node l r, .bothCut hl hr =>
+      GeoCut.node (by decide : Layer.bot ≤ Layer.mid)
+        (by decide : Layer.bot ≤ Layer.mid)
+        (Or.inl hl) (Or.inl hr) (botGeoCut l) (botGeoCut r)
+  | .node l r, .onlyLeftCut hl cr_in =>
+      GeoCut.node (by decide : Layer.bot ≤ Layer.mid) (le_refl _)
+        (Or.inl hl) (Or.inr rfl) (botGeoCut l) (midGeoCut r cr_in)
+  | .node l r, .onlyRightCut hr cl_in =>
+      GeoCut.node (le_refl _) (by decide : Layer.bot ≤ Layer.mid)
+        (Or.inr rfl) (Or.inl hr) (midGeoCut l cl_in) (botGeoCut r)
+  | .node l r, .bothRecurse cl_in cr_in =>
+      GeoCut.node (le_refl _) (le_refl _) (Or.inr rfl) (Or.inr rfl)
+        (midGeoCut l cl_in) (midGeoCut r cr_in)
+
+/-- Inverse: convert `g : GeoCut T .mid` to the corresponding `CutShape T`. -/
+def fromMidGeoCut : ∀ {T : DecoratedTree α}, GeoCut T Layer.mid → CutShape T
+  | _, .leaf _ => CutShape.atLeaf
+  | _, .trace _ => CutShape.atTrace
+  | .node l r, .node hl hr hlNT hrNT gl gr => by
+      -- Layer constraint: lL ≤ mid ⇒ lL ∈ {bot, mid}. Trace constraint: IsNotTrace l ∨ lL = mid.
+      -- For each combination, dispatch to appropriate ctor.
+      -- (lL=bot, rL=bot): bothCut. Requires IsNotTrace l, IsNotTrace r — extracted from hlNT/hrNT.
+      -- (lL=bot, rL=mid): onlyLeftCut. Requires IsNotTrace l.
+      -- (lL=mid, rL=bot): onlyRightCut. Requires IsNotTrace r.
+      -- (lL=mid, rL=mid): bothRecurse.
+      rename_i lL rL
+      cases lL with
+      | bot =>
+        cases rL with
+        | bot =>
+          -- hlNT : IsNotTrace l ∨ bot = mid → IsNotTrace l (since bot ≠ mid).
+          have hLT : DecoratedTree.IsNotTrace l := hlNT.resolve_right (by decide)
+          have hRT : DecoratedTree.IsNotTrace r := hrNT.resolve_right (by decide)
+          exact CutShape.bothCut hLT hRT
+        | mid =>
+          have hLT : DecoratedTree.IsNotTrace l := hlNT.resolve_right (by decide)
+          exact CutShape.onlyLeftCut hLT (fromMidGeoCut gr)
+        | top => exact absurd hr (by decide)
+      | mid =>
+        cases rL with
+        | bot =>
+          have hRT : DecoratedTree.IsNotTrace r := hrNT.resolve_right (by decide)
+          exact CutShape.onlyRightCut hRT (fromMidGeoCut gl)
+        | mid => exact CutShape.bothRecurse (fromMidGeoCut gl) (fromMidGeoCut gr)
+        | top => exact absurd hr (by decide)
+      | top => exact absurd hl (by decide)
+
+/-! #### Helper lemmas: `geoToChildSlots ∘ midGeoCut` matches `(cutForest, {remainder}, .trace T)`. -/
+
+/-- For `myL = .mid`, `geoBotForest (midGeoCut T cl) = cutForest cl`. -/
+theorem geoBotForest_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+    geoBotForest (midGeoCut T cl) = CutShape.cutForest cl
+  | _, .atLeaf => rfl
+  | _, .atTrace => rfl
+  | .node _ _, .bothCut _ _ => by
+      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest]
+      rfl
+  | .node _ _, .onlyLeftCut _ cr_in => by
+      have ih := geoBotForest_midGeoCut _ cr_in
+      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest, ih]
+  | .node _ _, .onlyRightCut _ cl_in => by
+      have ih := geoBotForest_midGeoCut _ cl_in
+      simp only [midGeoCut, geoBotForest, botGeoCut, CutShape.cutForest, ih]
+  | .node _ _, .bothRecurse cl_in cr_in => by
+      have ihl := geoBotForest_midGeoCut _ cl_in
+      have ihr := geoBotForest_midGeoCut _ cr_in
+      simp only [midGeoCut, geoBotForest, CutShape.cutForest, ihl, ihr]
+
+/-- For `myL = .mid`, `geoOuterSkeleton (midGeoCut T cl) = remainder cl`. -/
+theorem geoOuterSkeleton_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+    geoOuterSkeleton (midGeoCut T cl) = CutShape.remainder cl
+  | _, .atLeaf => rfl
+  | _, .atTrace => rfl
+  | .node _ _, .bothCut _ _ => by
+      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder]
+  | .node _ _, .onlyLeftCut _ cr_in => by
+      have ih := geoOuterSkeleton_midGeoCut _ cr_in
+      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder, ih]
+  | .node _ _, .onlyRightCut _ cl_in => by
+      have ih := geoOuterSkeleton_midGeoCut _ cl_in
+      simp only [midGeoCut, geoOuterSkeleton, botGeoCut, CutShape.remainder, ih]
+  | .node _ _, .bothRecurse cl_in cr_in => by
+      have ihl := geoOuterSkeleton_midGeoCut _ cl_in
+      have ihr := geoOuterSkeleton_midGeoCut _ cr_in
+      simp only [midGeoCut, geoOuterSkeleton, CutShape.remainder, ihl, ihr]
+
+/-- For `myL = .mid`, `geoMidForest (midGeoCut T cl) = {remainder cl}`. -/
+theorem geoMidForest_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
+    geoMidForest (midGeoCut T cl) = ({CutShape.remainder cl} : Forest α) := by
+  -- For myL = mid, geoMidForest = ({geoOuterSkeleton g} : Forest α).
+  rw [show geoMidForest (midGeoCut T cl)
+        = ({geoOuterSkeleton (midGeoCut T cl)} : Forest α) by
+       cases cl <;> rfl,
+      geoOuterSkeleton_midGeoCut]
+
+/-- For `myL = .mid`, `geoStackItem (midGeoCut T cl) = .trace T`. -/
+theorem geoStackItem_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
+    geoStackItem (midGeoCut T cl) = .trace T := by
+  -- For myL = mid, geoStackItem = .trace T always.
+  cases cl <;> rfl
+
+/-- The combined fact: `geoToChildSlots (midGeoCut T cl)` matches the LHS triple. -/
+theorem geoToChildSlots_midGeoCut (T : DecoratedTree α) (cl : CutShape T) :
+    geoToChildSlots (midGeoCut T cl)
+      = ⟨CutShape.cutForest cl, ({CutShape.remainder cl} : Forest α), .trace T⟩ := by
+  unfold geoToChildSlots
+  rw [geoBotForest_midGeoCut, geoMidForest_midGeoCut, geoStackItem_midGeoCut]
+
+/-! #### Bijection: midGeoCut ↔ fromMidGeoCut
+
+The forward (`midGeoCut`) and backward (`fromMidGeoCut`) directions are mutually
+inverse on `.node l r`. Proofs by case analysis on the constructor + IH on
+recursive sub-CutShapes / sub-GeoCuts. -/
+
+/-- Roundtrip 1: `fromMidGeoCut ∘ midGeoCut = id`. -/
+theorem fromMidGeoCut_midGeoCut : ∀ (T : DecoratedTree α) (cl : CutShape T),
+    fromMidGeoCut (midGeoCut T cl) = cl
+  | _, .atLeaf => rfl
+  | _, .atTrace => rfl
+  | .node l r, .bothCut _ _ => rfl
+  | .node l r, .onlyLeftCut _ cr_in => by
+      show CutShape.onlyLeftCut _ (fromMidGeoCut (midGeoCut r cr_in)) = _
+      rw [fromMidGeoCut_midGeoCut r cr_in]
+  | .node l r, .onlyRightCut _ cl_in => by
+      show CutShape.onlyRightCut _ (fromMidGeoCut (midGeoCut l cl_in)) = _
+      rw [fromMidGeoCut_midGeoCut l cl_in]
+  | .node l r, .bothRecurse cl_in cr_in => by
+      show CutShape.bothRecurse (fromMidGeoCut (midGeoCut l cl_in))
+                                (fromMidGeoCut (midGeoCut r cr_in)) = _
+      rw [fromMidGeoCut_midGeoCut l cl_in, fromMidGeoCut_midGeoCut r cr_in]
+
+/-- Roundtrip 2: `midGeoCut ∘ fromMidGeoCut = id`. Uses `botGeoCut_unique`
+    for `gl/gr` at layer `.bot`, IH for `gl/gr` at layer `.mid`. -/
+theorem midGeoCut_fromMidGeoCut : ∀ {T : DecoratedTree α} (g : GeoCut T Layer.mid),
+    midGeoCut T (fromMidGeoCut g) = g
+  | _, .leaf .mid => rfl
+  | _, .trace .mid => rfl
+  | .node l r, .node (lL := lL) (rL := rL) hl hr hlNT hrNT gl gr => by
+      -- Dispatch by (lL, rL).
+      cases lL with
+      | top => exact absurd hl (by decide)
+      | bot =>
+        cases rL with
+        | top => exact absurd hr (by decide)
+        | bot =>
+          -- gl : GeoCut l .bot, gr : GeoCut r .bot. Use Unique.
+          have hlEq : gl = botGeoCut l := botGeoCut_unique gl
+          have hrEq : gr = botGeoCut r := botGeoCut_unique gr
+          subst hlEq; subst hrEq
+          -- hlNT must be Or.inl _ since (Or.inr) would say bot = mid (false).
+          have : hlNT = Or.inl (hlNT.resolve_right (by decide)) := by
+            rcases hlNT with hLT | hbot
+            · rfl
+            · exact absurd hbot (by decide)
+          rw [this]
+          have : hrNT = Or.inl (hrNT.resolve_right (by decide)) := by
+            rcases hrNT with hRT | hbot
+            · rfl
+            · exact absurd hbot (by decide)
+          rw [this]
+          rfl
+        | mid =>
+          have hlEq : gl = botGeoCut l := botGeoCut_unique gl
+          subst hlEq
+          have : hlNT = Or.inl (hlNT.resolve_right (by decide)) := by
+            rcases hlNT with hLT | hbot
+            · rfl
+            · exact absurd hbot (by decide)
+          rw [this]
+          have ihr := midGeoCut_fromMidGeoCut gr
+          show GeoCut.node _ _ _ _ _ (midGeoCut r (fromMidGeoCut gr)) = _
+          rw [ihr]
+      | mid =>
+        cases rL with
+        | top => exact absurd hr (by decide)
+        | bot =>
+          have hrEq : gr = botGeoCut r := botGeoCut_unique gr
+          subst hrEq
+          have : hrNT = Or.inl (hrNT.resolve_right (by decide)) := by
+            rcases hrNT with hRT | hbot
+            · rfl
+            · exact absurd hbot (by decide)
+          rw [this]
+          have ihl := midGeoCut_fromMidGeoCut gl
+          show GeoCut.node _ _ _ _ (midGeoCut l (fromMidGeoCut gl)) _ = _
+          rw [ihl]
+        | mid =>
+          have ihl := midGeoCut_fromMidGeoCut gl
+          have ihr := midGeoCut_fromMidGeoCut gr
+          show GeoCut.node _ _ _ _ (midGeoCut l (fromMidGeoCut gl))
+                                   (midGeoCut r (fromMidGeoCut gr)) = _
+          rw [ihl, ihr]
+
+/-- The Equivalence `CutShape T ≃ GeoCut T Layer.mid`. -/
+def midGeoCutEquiv (T : DecoratedTree α) : CutShape T ≃ GeoCut T Layer.mid where
+  toFun := midGeoCut T
+  invFun := fromMidGeoCut
+  left_inv := fromMidGeoCut_midGeoCut T
+  right_inv := midGeoCut_fromMidGeoCut
+
+/-- The `.mid` case: enumerate `CutShape T` for inner cuts. -/
+theorem perLayerContrib_mid (T : DecoratedTree α) :
+    perLayerContrib (α := α) T .mid
+      = (Finset.univ : Finset (GeoCut T Layer.mid)).val.map
+          (fun g => geoToChildSlots g) := by
+  match T with
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r =>
+    -- Use midGeoCutEquiv to rewrite univ_GeoCut_mid as univ_CutShape mapped.
+    rw [show (Finset.univ : Finset (GeoCut (.node l r) Layer.mid)).val
+          = (Finset.univ : Finset (CutShape (.node l r))).val.map
+              (midGeoCut (.node l r)) by
+         rw [show (Finset.univ : Finset (GeoCut (.node l r) Layer.mid))
+               = (Finset.univ : Finset (CutShape (.node l r))).map
+                   (midGeoCutEquiv (.node l r)).toEmbedding from
+             (Finset.map_univ_equiv (midGeoCutEquiv (.node l r))).symm]
+         rfl]
+    rw [Multiset.map_map]
+    -- Now: univ_CutShape.val.map (geoToChildSlots ∘ midGeoCut) = perLayerContrib mid.
+    refine Multiset.map_congr rfl (fun cl _ => ?_)
+    exact (geoToChildSlots_midGeoCut _ cl).symm
+
+/-- The `.top` case: substantive recursive content. -/
+theorem perLayerContrib_top (T : DecoratedTree α) :
+    perLayerContrib (α := α) T .top
+      = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
+          (fun g => geoToChildSlots g) := by
+  -- The `.top` case is the substantive Foissy bijection between
+  -- (cl_outer : CutShape T, section) data and GeoCut T top.
+  -- Recursive proof: factor cl_outer + section per (lL, rL, gl, gr).
+  match T with
+  | .leaf a => rfl
+  | .trace t => rfl
+  | .node l r =>
+    -- Substantive: bijection (cl_outer : CutShape T, section) ↔ GeoCut T top.
+    sorry
+
+/-- **Per-subtree IH** (any layer): combines the three per-layer sub-lemmas via
+    Sigma decomposition + the per-layer bijections. -/
+theorem lhsAnyChildContrib_eq_geoCutAny (T : DecoratedTree α) :
+    lhsAnyChildContrib T = geoCutAnyChildContrib T := by
+  unfold lhsAnyChildContrib geoCutAnyChildContrib
+  -- Step 1: decompose `(univ : Finset (Σ myL, GeoCut T myL)).val` via `Multiset.sigma`,
+  -- which by definition is `bind ... ∘ map (Sigma.mk _)`.
+  rw [show ((Finset.univ : Finset (Σ myL : Layer, GeoCut T myL)).val
+        : Multiset (Σ myL : Layer, GeoCut T myL))
+      = (Finset.univ : Finset Layer).val.bind
+          (fun myL => (Finset.univ : Finset (GeoCut T myL)).val.map (Sigma.mk myL)) from rfl]
+  -- Step 2: the outer map distributes over the bind.
+  rw [Multiset.map_bind]
+  -- Step 3: per-layer, simplify (X.map (Sigma.mk myL)).map (fun ⟨_, g⟩ => geoToChildSlots g)
+  -- = X.map geoToChildSlots.
+  simp only [Multiset.map_map, Function.comp_def]
+  -- Step 4: use the per-layer bijections to rewrite each layer.
+  refine Multiset.bind_congr (fun layer _ => ?_)
+  rcases layer with _ | _ | _
+  · exact perLayerContrib_bot T
+  · exact perLayerContrib_mid T
+  · exact perLayerContrib_top T
+
 /-! ### Bijection: `lhsRealCuts T = geoMultiset T = rhsRealRealInner T`
 
 The substantive Foissy claim. Both sides factor through `geoMultiset T`,
@@ -858,7 +1252,35 @@ theorem rhsRealRealInner_eq_geoMultiset (T : DecoratedTree α) :
     -- C₁ extracts MID. Each (C₁, C₂) corresponds to a unique GeoCut g with root=top.
     sorry
 
-/-! ### §3g: LHS direction of the cuts-of-cuts bijection -/
+/-! ### §3g: The substantive cuts-of-cuts identity (via GeoCut chain)
+
+Now that both `lhsRealCuts_eq_geoMultiset` and `rhsRealRealInner_eq_geoMultiset`
+are stated, we close the substantive identity by chaining them through `geoMultiset`. -/
+
+/-- The substantive half: `lhsRealCuts T = rhsRealRealInner T`, proven via the
+    GeoCut chain `(LHS).trans (RHS).symm`. For T = .leaf, .trace this is `rfl`
+    via the leaf/trace cases of the bijection theorems; for T = .node l r this
+    is the substantive Foissy content delegated to the GeoCut bijection. -/
+theorem lhsRealCuts_eq_rhsRealRealInner (T : DecoratedTree α) :
+    (lhsRealCuts T : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsRealRealInner T :=
+  (lhsRealCuts_eq_geoMultiset T).trans (rhsRealRealInner_eq_geoMultiset T).symm
+
+/-- **The substantive cuts-of-cuts identity** (@cite{foissy-2002} §2 /
+    @cite{connes-kreimer-1998}): for `T = .node l r`, the LHS-section multiset
+    and the RHS-DoubleCut multiset are equal as multisets of triple-tensors.
+
+    Composes the easy half + substantive half + `rhsMultiset_decomp`. -/
+theorem lhsMultiset_eq_rhsMultiset_node (l r : DecoratedTree α) :
+    (lhsMultiset (.node l r) : Multiset ((Hc R α) ⊗[R] ((Hc R α) ⊗[R] (Hc R α))))
+      = rhsMultiset (.node l r) := by
+  rw [lhsMultiset_decomp,
+      lhsExtractWhole_eq_rhsExtractWhole_add_realExtractInner,
+      lhsRealCuts_eq_rhsRealRealInner,
+      rhsMultiset_decomp]
+  abel
+
+/-! ### §3h: LHS direction of the cuts-of-cuts bijection -/
 
 /-- LHS direction of the cuts-of-cuts bijection: the left-iterated
     coproduct on a single-tree workspace, after the canonical associator,
