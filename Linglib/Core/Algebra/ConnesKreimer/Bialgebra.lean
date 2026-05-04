@@ -1,4 +1,4 @@
-import Linglib.Core.Algebra.ConnesKreimer.DoubleCut
+import Linglib.Core.Algebra.ConnesKreimer.LhsEquiv
 import Mathlib.RingTheory.Bialgebra.Basic
 
 /-!
@@ -10,24 +10,22 @@ Registers the Connes-Kreimer bialgebra structure on `Hc R α` via
 `comul_coassoc_tree` via `algHom_ext_tree` (algebra-hom multiplicativity).
 The cuts-of-cuts bijection itself (@cite{foissy-2002} §2 for decorated
 planar trees; @cite{connes-kreimer-1998} for Feynman graphs, the M-C-B
-Lemma 1.2.10 reference) remains a `sorry` pending Stage 1b proper.
+Lemma 1.2.10 reference) is closed via the `lhsGeoCutEquiv` direct
+chain in `LhsEquiv.lean`.
 
 ## Status
 
-- `comul_coassoc` — proved by reduction via `algHom_ext_tree`.
+- `comul_coassoc` — proved by reduction via `algHom_ext_tree` + `comul_coassoc_tree`.
 - `comul_coassoc_tree` — proved via `lhs_eq_sum_DoubleCut + rhs_eq_sum_DoubleCut`
-  (both in `DoubleCut.lean`).
+  (the LHS in `LhsEquiv.lean`, the RHS in `DoubleCut.lean`).
 - `counit_rTensor` — proved (Stage 1a).
 - `counit_lTensor` — proved (Stage 1a).
 
-The single remaining `sorry` in the Stage 1 obligation chain is on
-`lhs_eq_sum_DoubleCut` in `DoubleCut.lean` — the substantive Foissy
-"cut-commutation" bijection.
+Stage 1 obligation chain is sorry-free as of 0.230.728.
 
-`bialgebraStructure` stays a `def` (not `instance`) until
-`comul_coassoc` is discharged: per the audit, an `instance` whose
-proof obligations include a `sorry` lets downstream typeclass-resolved
-code silently inherit unproven laws.
+`bialgebraStructure` is currently a `def`. It can be promoted to `instance`
+now that all coassoc/counit obligations are discharged; left as `def`
+pending an audit of downstream typeclass-resolution implications.
 
 ## Why this works typeclass-wise
 
@@ -96,16 +94,12 @@ Substrate progress:
    — defined in `DoubleCut.lean`. Right-iterated form. `tripleTensor`
    projection to `Hc ⊗ (Hc ⊗ Hc)`.
 5. ✅ `rhs_eq_sum_DoubleCut` — proved in `DoubleCut.lean`.
-6. ⏳ `lhs_eq_sum_DoubleCut` — leaf and trace cases proved (via
-   primitive coassoc); only the `.node l r` case remains as a sorry —
-   the substantive Foissy "cut-commutation" bijection that maps each LHS
-   pair `(ac₁ : AugCutShape T, section : Sections (...))` to a
-   `DoubleCut T` with matching triple-tensor.
+6. ✅ `lhs_eq_sum_DoubleCut` — proved in `LhsEquiv.lean` via the
+   `lhsGeoCutEquiv` direct chain (Sessions 2-5).
 7. ✅ `comul_coassoc_tree` — proved via (5)+(6)+`comulAlgHom_apply_single`.
 8. ✅ `comul_coassoc` — proved via `algHom_ext_tree` + (7).
 
-Sole remaining sorry in Stage 1 chain: `lhs_eq_sum_DoubleCut`. Estimated
-100-200 LOC of dependent-type-heavy combinatorial work.
+Stage 1 obligation chain sorry-free as of 0.230.728.
 -/
 
 namespace ConnesKreimer
@@ -296,10 +290,9 @@ lemma algHom_ext_tree {X : Type*} [Semiring X] [Algebra R X]
 /-- **Tree-level coassociativity** of Δ^c. Both sides reorganize as
     sums over `DoubleCut T` (right-iterated form), with the same
     triple-tensor terms. Reduces to:
-    - `lhs_eq_sum_DoubleCut` (`DoubleCut.lean` — the substantive Foissy
-      bijection content; currently sorry)
-    - `rhs_eq_sum_DoubleCut` (`DoubleCut.lean` — easier direction, fully
-      proved). -/
+    - `lhs_eq_sum_DoubleCut` (`LhsEquiv.lean` — the substantive Foissy
+      bijection content, proved via `lhsGeoCutEquiv`)
+    - `rhs_eq_sum_DoubleCut` (`DoubleCut.lean` — easier direction). -/
 theorem comul_coassoc_tree (T : TraceTree α Unit) :
     ((Algebra.TensorProduct.assoc R R R (Hc R α) (Hc R α) (Hc R α)).toAlgHom.comp
       ((Algebra.TensorProduct.map (comulAlgHom : Hc R α →ₐ[R] _)
@@ -383,10 +376,10 @@ theorem counit_lTensor :
 
     **Currently a `def`, not an `instance`.** The mathlib-PR audit
     flagged registering an `instance` whose proof obligations are
-    `sorry` as unacceptable practice (downstream typeclass-resolved
-    code would silently inherit unproven laws). Stage 1a closed
-    `counit_rTensor` and `counit_lTensor`; `comul_coassoc` remains a
-    `sorry`, so this stays a `def` until Stage 1b discharges it.
+    `sorry` as unacceptable practice. All Stage 1 obligations
+    (`comul_coassoc`, `counit_rTensor`, `counit_lTensor`) are now
+    discharged (sorry-free as of 0.230.728), so this can be promoted
+    to `instance`; left as `def` pending a downstream-impact audit.
 
     Downstream code that wants the Bialgebra structure can opt in
     locally via `letI := ConnesKreimer.bialgebraStructure (R := R) (α := α)`.
