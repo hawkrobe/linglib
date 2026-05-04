@@ -1322,12 +1322,29 @@ theorem geoMultiset_node_eq_decomposed (l r : DecoratedTree α)
 
 /-- The `.top` case: substantive recursive content.
 
-    **Proof outline** (~100-150 LOC of focused work):
-    1. Apply `geoMultiset_node_eq_decomposed` to convert the RHS to the
-       decomposed form (with IH on l, r).
-    2. Show LHS perLayerContrib (.node l r) .top = perLayerContribDecomposed l r.
-       This requires per-CutShape-ctor decomposition + matching to (lL, rL) sub-binds.
-       Substantive Foissy content. -/
+    **Proof plan** (~100-150 LOC of focused Multiset manipulation):
+
+    Step 1 (DONE in this version): Apply `geoMultiset_node_eq_decomposed` to convert
+    the RHS to `perLayerContribDecomposed l r` form, using `perLayerContrib_X`
+    (for X ∈ {bot, mid, top}) as IH on subtrees l and r.
+
+    Step 2 (TODO): Show `perLayerContrib (.node l r) .top = perLayerContribDecomposed l r`.
+    This is the substantive Foissy bijection. The strategy is per-CutShape-ctor
+    decomposition with matching to (lL, rL) sub-binds:
+
+    - Decompose `Finset.univ : Finset (CutShape (.node l r))` into 4 disjoint pieces
+      (bothCut / onlyLeftCut / onlyRightCut / bothRecurse), via the `CutShape.all`
+      definition's `∪ ∪ ∪ image` structure. Use `Multiset.add_bind` to split.
+    - For each ctor, compute the bind contribution using `Multiset.sections_cons`
+      / `Multiset.sections_add` to decompose Sections of the cutForest.
+    - Match each ctor to specific (lL, rL) sub-binds on the RHS:
+      * `bothCut hl hr`: (lL ∈ {bot, mid}, rL ∈ {bot, mid}). Per-l/per-r
+        AugCutShape choices ↔ `perLayerContrib X .bot ⊕ .mid`.
+      * `onlyLeftCut hl cr_in`: (lL ∈ {bot, mid}, rL = top). Per-l = AugCutShape l.
+        Per-r = (cr_in, section over cutForest cr_in) ∈ `perLayerContrib r .top`.
+      * `onlyRightCut hr cl_in`: symmetric.
+      * `bothRecurse cl_in cr_in`: (lL = top, rL = top). Per-l = `perLayerContrib l .top`.
+    - Combine via Multiset.add_bind (sum over ctors) = full RHS bind. -/
 theorem perLayerContrib_top (T : DecoratedTree α) :
     perLayerContrib (α := α) T .top
       = (Finset.univ : Finset (GeoCut T Layer.top)).val.map
