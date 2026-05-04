@@ -98,6 +98,17 @@ noncomputable def forestToHc (F : Forest α) : Hc R α :=
      = (1 : AddMonoidAlgebra R (Forest α))
   exact AddMonoidAlgebra.one_def.symm
 
+/-- Disjoint union of forests corresponds to multiplication of their `forestToHc`
+    images: `forestToHc (F + G) = forestToHc F * forestToHc G`.
+    Direct from `AddMonoidAlgebra.single_mul_single` at coefficient 1. -/
+@[simp] lemma forestToHc_add (F G : Forest α) :
+    forestToHc (R := R) (F + G) = forestToHc (R := R) F * forestToHc (R := R) G := by
+  show (forestToHc (R := R) (F + G) : Hc R α)
+     = (forestToHc (R := R) F * forestToHc (R := R) G : Hc R α)
+  unfold forestToHc
+  exact (AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α) F G 1 1
+    |>.trans (by rw [mul_one])).symm
+
 /-- The tree-level Connes-Kreimer coproduct.
     Δ^c(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ ({remainder c}). -/
 noncomputable def comulTree (T : DecoratedTree α) : Hc R α ⊗[R] Hc R α :=

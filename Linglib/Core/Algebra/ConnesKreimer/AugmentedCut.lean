@@ -129,7 +129,7 @@ theorem comulTree_eq_sum_AugCutShape (T : DecoratedTree α) :
   --   because `forestToHc 0 = single 0 1 = (1 : Hc R α)` and `Unit` summing collapses.
   rfl
 
-/-! ## §3: `comulForest` as sum over multi-tree sections
+/-! ## §3: `pairsMS` and `comulTreeMS` for multi-tree sections
 
 For the LHS direction of `comul_coassoc_tree` we need to expand
 `comulForest F = (F.map comulTree).prod` (a product of sums) as a sum
@@ -138,26 +138,51 @@ and `Multiset.Sections`:
 
   `prod (s.map sum) = sum ((Sections s).map prod)`
 
-To apply this, we view each `comulTree T` as the sum of an explicit
-multiset `comulTreeMS T`, then `Sections (F.map comulTreeMS)` enumerates
-the multi-tree cut data on `F`. -/
+We separate the data into two layers:
+
+- `pairsMS T : Multiset (Forest α × Forest α)` is the **Forest-pair primitive**:
+  enumerate `ac : AugCutShape T` and project to `(cutForest_aug ac, remainderForest ac)`.
+  Pure combinatorial data, no algebra.
+- `comulTreeMS R T : Multiset ((Hc R α) ⊗[R] (Hc R α))` is the algebraic image:
+  `(pairsMS T).map (forestToHc tensorize)`. The form needed by
+  `Multiset.prod_map_sum` for the multi-tree expansion.
+
+Both `Sections (F.map (pairsMS · ))` (Forest-pair sections) and
+`Sections (F.map (comulTreeMS R · ))` (Hc-tensor sections) are useful — the
+former for `ChildSlots`-style downstream consumers (see `DoubleCut.lean`), the
+latter for direct `Multiset.prod` aggregation in the algebra. The two are related
+via `Sections.map_map_pair` (in `DoubleCut.lean`). -/
+
+/-- The `(cutForest_aug, remainderForest)` pair multiset for `AugCutShape T`:
+    enumerate all augmented cuts and project to the `(left-channel, right-channel)`
+    Forest pair. The Forest-pair primitive that `comulTreeMS R T` builds upon. -/
+def pairsMS (T : DecoratedTree α) : Multiset (Forest α × Forest α) :=
+  (Finset.univ : Finset (AugCutShape T)).val.map fun ac =>
+    (AugCutShape.cutForest_aug ac, AugCutShape.remainderForest ac)
 
 /-- `comulTree T` reformulated as the **sum** of an explicit multiset of
     pure tensors. Equivalent to `comulTree_eq_sum_AugCutShape T` but
     using `Multiset.sum` instead of `Finset.sum` — the form needed by
-    mathlib's `Multiset.prod_map_sum`. -/
+    mathlib's `Multiset.prod_map_sum`. Built from `pairsMS T` by tensorizing
+    each Forest-pair via `forestToHc`. -/
 noncomputable def comulTreeMS (R : Type*) [CommSemiring R]
     (T : DecoratedTree α) : Multiset ((Hc R α) ⊗[R] (Hc R α)) :=
-  (Finset.univ : Finset (AugCutShape T)).val.map
-    (fun ac => forestToHc (R := R) (AugCutShape.cutForest_aug ac)
-                ⊗ₜ[R] forestToHc (R := R) (AugCutShape.remainderForest ac))
+  (pairsMS T).map fun p => forestToHc (R := R) p.1 ⊗ₜ[R] forestToHc (R := R) p.2
+
+/-- The factoring lemma `comulTreeMS = pairsMS.map tensorize` made explicit.
+    Holds by `rfl` because of the new `comulTreeMS` definition; kept as a named
+    lemma so downstream callers don't need to know it's definitional. -/
+@[simp] lemma comulTreeMS_eq_pairsMS_map (T : DecoratedTree α) :
+    (comulTreeMS R T : Multiset ((Hc R α) ⊗[R] (Hc R α)))
+      = (pairsMS T).map fun p => forestToHc (R := R) p.1 ⊗ₜ[R] forestToHc (R := R) p.2 := rfl
 
 /-- `comulTree T = (comulTreeMS R T).sum`. Direct from
-    `comulTree_eq_sum_AugCutShape` and `Finset.sum_eq_multiset_sum`
-    (which is `rfl`). -/
+    `comulTree_eq_sum_AugCutShape` and `Finset.sum_eq_multiset_sum`. -/
 theorem comulTree_eq_sum_comulTreeMS (T : DecoratedTree α) :
     (comulTree T : Hc R α ⊗[R] Hc R α) = (comulTreeMS R T).sum := by
   rw [comulTree_eq_sum_AugCutShape T]
+  unfold comulTreeMS pairsMS
+  rw [Multiset.map_map]
   rfl
 
 /-- **Multi-tree expansion**: `comulForest F` as a sum over multi-tree

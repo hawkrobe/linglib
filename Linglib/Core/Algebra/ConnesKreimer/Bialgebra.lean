@@ -218,14 +218,7 @@ private lemma counit_rTensor_apply_comulForest (F : Forest α) :
       unfold comulForest
       simp only [Multiset.map_singleton, Multiset.prod_singleton]
     rw [h1, map_mul, counit_rTensor_apply_comulTree, ih,
-        Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-    congr 1
-    show (forestToHc (R := R) ({T} : Forest α) * forestToHc (R := R) F' : Hc R α)
-        = forestToHc (R := R) (({T} : Forest α) + F')
-    unfold forestToHc
-    exact AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α)
-            ({T} : Forest α) F' 1 1
-      |>.trans (by rw [mul_one])
+        Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← forestToHc_add]
 
 /-- Singleton-tree case of `counit_lTensor`: `(id ⊗ ε) (Δ^c T) = {T} ⊗ 1`.
     Only the explicit `T ⊗ 1` term survives; every cut term has
@@ -262,14 +255,7 @@ private lemma counit_lTensor_apply_comulForest (F : Forest α) :
       unfold comulForest
       simp only [Multiset.map_singleton, Multiset.prod_singleton]
     rw [h1, map_mul, counit_lTensor_apply_comulTree, ih,
-        Algebra.TensorProduct.tmul_mul_tmul, mul_one]
-    congr 1
-    show (forestToHc (R := R) ({T} : Forest α) * forestToHc (R := R) F' : Hc R α)
-        = forestToHc (R := R) (({T} : Forest α) + F')
-    unfold forestToHc
-    exact AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α)
-            ({T} : Forest α) F' 1 1
-      |>.trans (by rw [mul_one])
+        Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← forestToHc_add]
 
 /-! ## Reduction: AlgHom equality from agreement on tree-singleton workspaces
 
@@ -300,24 +286,10 @@ lemma algHom_ext_tree {X : Type*} [Semiring X] [Algebra R X]
   show f (forestToHc (R := R) F) = g (forestToHc (R := R) F)
   induction F using Multiset.induction with
   | empty =>
-    have h0 : (forestToHc (R := R) (0 : Forest α) : Hc R α) = 1 := by
-      show (Finsupp.single (0 : Forest α) (1 : R) : AddMonoidAlgebra R (Forest α))
-         = (1 : AddMonoidAlgebra R (Forest α))
-      exact AddMonoidAlgebra.one_def.symm
-    rw [h0, map_one, map_one]
+    rw [forestToHc_zero, map_one, map_one]
   | cons T F' ih =>
-    have hcons : (forestToHc (R := R) (T ::ₘ F' : Forest α) : Hc R α)
-               = forestToHc (R := R) ({T} : Forest α) * forestToHc (R := R) F' := by
-      symm
-      show (forestToHc (R := R) ({T} : Forest α) * forestToHc (R := R) F' : Hc R α)
-         = forestToHc (R := R) (T ::ₘ F' : Forest α)
-      have heq : (T ::ₘ F' : Forest α) = ({T} : Forest α) + (F' : Forest α) := rfl
-      rw [heq]
-      unfold forestToHc
-      exact AddMonoidAlgebra.single_mul_single (R := R) (M := Forest α)
-              ({T} : Forest α) F' 1 1
-        |>.trans (by rw [mul_one])
-    rw [hcons, map_mul, map_mul, h T, ih]
+    have heq : (T ::ₘ F' : Forest α) = ({T} : Forest α) + (F' : Forest α) := rfl
+    rw [heq, forestToHc_add, map_mul, map_mul, h T, ih]
 
 /-! ## Bialgebra laws -/
 
