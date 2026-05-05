@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
+import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Theories.Semantics.Homogeneity.Basic
 import Linglib.Theories.Semantics.Plurality.Distributivity
 
@@ -755,7 +756,80 @@ theorem kriz_overgenerates_conjunction_nonmax :
 end ConjunctionOvergeneration
 
 -- ============================================================================
--- Section 9: Cohen 1999 generics — equivocal "homogeneity"
+-- Section 9: Križ vs Magri formal divergence on the gap's value
+-- ============================================================================
+
+/-! @cite{magri-2014} derives homogeneity from double-strengthening on
+alternative geometry (`MYSTERY`/`WEAK`/`STRONG` roles, Horn-mate structure).
+Magri's `doubleExh .mystery` on a gap scenario is FALSE (theorem
+`Magri2014.gap_positive_false`). This is bivalent-FALSE: the gap is
+collapsed to the negative extension by the alternative-exhaustification
+machinery, before any pragmatics applies.
+
+@cite{kriz-2016}'s `barePluralTV` on the same gap pattern returns `.indet`
+(homogeneity gap), and the gap is then PRAGMATICALLY recoverable via
+`gap_enables_nonmax` under a coarse QUD. This is the central Križ vs.
+Magri disagreement: Magri puts the gap-collapse INSIDE the semantics
+(via doubleExh); Križ keeps the gap and lets pragmatics (sufficient truth +
+addressing) decide whether non-maximal use is licensed.
+
+Empirically Križ has the upper hand: non-maximal readings DO occur (see the
+finite model's `smithNeutral_usable_coarse`). Under Magri's bivalent-FALSE,
+the sentence at the gap is unutterable in standard Gricean terms (false
+sentences violate Quality); to recover non-maximal readings, Magri needs
+additional downstream pragmatic machinery beyond what the alternative-
+geometry account itself provides.
+
+This is the cross-framework reconciler's core point: the SAME empirical
+gap data (`Phenomena.Plurals.Homogeneity.switchesExample`) gets two
+incompatible derivations, and the formalization makes the incompatibility
+kernel-checked. -/
+
+section MagriDivergence
+
+open Magri2014
+
+/-- A 3-atom Magri scenario where 2 of 3 atoms satisfy the predicate —
+    the count-abstraction analogue of the `smithNeutral` world (Smith
+    didn't smile, Jones and Lee did). -/
+def magriGapScenario : Scenario :=
+  { total := 3, satisfying := 2, valid := by omega }
+
+theorem magriGapScenario_isGap : isGap magriGapScenario = true := by decide
+
+/-- Magri's `doubleExh .mystery` returns FALSE on a 2-of-3 gap. This is the
+    bivalent-FALSE assignment: the gap is collapsed semantically. -/
+theorem magri_2of3_gap_is_bivalent_false :
+    doubleExh .mystery magriGapScenario = false :=
+  gap_positive_false magriGapScenario magriGapScenario_isGap
+
+/-- **Križ vs. Magri formal divergence on the gap's status**.
+
+    On the same 2-of-3 gap pattern:
+    - **Magri**: `doubleExh .mystery` returns FALSE — the gap is collapsed
+      semantically by alternative-exhaustification, pre-pragmatics. False
+      sentences are unutterable (violate Quality).
+    - **Križ**: `barePluralTV` returns INDET (`bare_smithNeutral`), and the
+      bare plural IS USABLE under a coarse QUD (`smithNeutral_usable_coarse`).
+      The gap is preserved and pragmatically recoverable.
+
+    Both predictions cannot be right about the empirical fact that
+    non-maximal readings exist for plural definites at gap-worlds. The
+    theorem packages the disagreement as a kernel-checked conjunction;
+    its existence is the formal incompatibility between alternative-geometry
+    derivations and supervaluation derivations of homogeneity. -/
+theorem kriz_vs_magri_alternative_geometry :
+    -- Magri: bivalent-FALSE on the 2-of-3 gap (doubleExh .mystery)
+    doubleExh .mystery magriGapScenario = false ∧
+    -- Križ: trivalent-INDET on the analogous world AND pragmatically usable
+    barePluralTV smiled profs .smithNeutral = .indet ∧
+    usable coarseQ (barePluralTV smiled profs) .smithNeutral :=
+  ⟨magri_2of3_gap_is_bivalent_false, bare_smithNeutral, smithNeutral_usable_coarse⟩
+
+end MagriDivergence
+
+-- ============================================================================
+-- Section 10: Cohen 1999 generics — equivocal "homogeneity"
 -- ============================================================================
 
 /-! @cite{kriz-2016} §6.3 claims the homogeneity-plus-pragmatics machinery
