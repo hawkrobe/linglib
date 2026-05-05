@@ -507,6 +507,98 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [Decidab
     -- Apply ih' via congrArg on multiplication.
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
+/-! ## §2.6: Phase 7d limit theorem (cost-based Sideward elimination)
+
+**Phase 7d.4** (M-C-B §1.5.3 + Prop 1.5.1): the cost-weighted Merge operator
+`mergeOp_eps 0` evaluates the EM Case-1 contribution **without** the cut
+disjointness clauses. The two no-cut clauses of `MergeTargetFreeWorkspace`
+are derived from cost minimization (Sideward weights `ε^d → 0` as `ε → 0`);
+only the no-duplicate-component clauses remain as a stipulated hypothesis.
+
+This is the principled M-C-B formulation: Sideward Merge is eliminated by
+ε → 0 cost ordering, not by syntactic stipulation. -/
+
+/-- **Limit theorem (F̂ = ∅ case)**: at ε = 0, the cost-weighted Merge
+    operator on the 2-tree workspace `{S, S'}` produces exactly
+    `forestToHc {.node S S'}` — Case 1 only. The proof expands the
+    weighted coproduct (which at ε = 0 reduces to the primitive part
+    `(T ⊗ 1) + (1 ⊗ T)` per `comulTreeDel_eps_zero`) and shows only the
+    `prim_S × prim_S'` cross-term contributes via `mergePost_basis_tensor`. -/
+theorem mergeOp_eps_zero_pair {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α] (S S' : TraceTree α Unit) :
+    mergeOp_eps (R := R) 0 S S' (forestToHc ({S, S'} : TraceForest α Unit))
+      = forestToHc ({.node S S'} : TraceForest α Unit) := by
+  -- Step 1: reduce mergeOp_eps to mergePost ∘ comulDelAlgHom_eps 0.
+  show (mergePost (R := R) (α := α) S S' ∘ₗ
+        (comulDelAlgHom_eps (0 : R)).toLinearMap)
+       (forestToHc ({S, S'} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  -- Step 2: comulDelAlgHom_eps 0 on basis vector = comulForestDel_eps 0.
+  show mergePost (R := R) (α := α) S S'
+        (comulDelAlgHom_eps (R := R) (α := α) (0 : R)
+          (Finsupp.single ({S, S'} : TraceForest α Unit) (1 : R))) = _
+  rw [comulDelAlgHom_eps_apply_single]
+  -- Step 3: comulForestDel_eps 0 on a 2-tree forest = product of singletons.
+  show mergePost (R := R) (α := α) S S'
+        ((({S, S'} : TraceForest α Unit).map (comulTreeDel_eps (R := R) 0)).prod) = _
+  rw [show (({S, S'} : TraceForest α Unit).map (comulTreeDel_eps (R := R) 0)).prod
+      = comulTreeDel_eps (R := R) 0 S * comulTreeDel_eps (R := R) 0 S' from
+    Multiset.prod_pair _ _]
+  -- Step 4: each comulTreeDel_eps 0 = primitive part (T ⊗ 1 + 1 ⊗ T).
+  rw [comulTreeDel_eps_zero, comulTreeDel_eps_zero]
+  -- Step 5: distribute multiplication into 4 cross-terms.
+  rw [add_mul, mul_add, mul_add]
+  -- Step 6: push linearity through mergePost.
+  simp only [map_add]
+  -- Step 7: each cross-term reduces via mergePost_basis_tensor.
+  -- Helper: cardinality argument used in terms 2-4 to show LEFT ≠ {S, S'}.
+  have h_card_ne : ∀ (k : ℕ), k ≠ 2 →
+      ∀ {F : TraceForest α Unit}, F.card = k →
+        F ≠ ({S, S'} : TraceForest α Unit) := by
+    intros k hk_ne F hF_card hF_eq
+    have h2 : F.card = (({S, S'} : TraceForest α Unit)).card := by
+      rw [hF_eq]
+    have : k = 2 := by
+      rw [← hF_card, h2]
+      rfl
+    exact hk_ne this
+  -- Term 1 (prim S × prim S'): the only surviving term.
+  rw [show mergePost (R := R) (α := α) S S'
+        ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = forestToHc (R := R) ({.node S S'} : TraceForest α Unit) from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+      rw [show ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit)
+          = ({S, S'} : TraceForest α Unit) from rfl]
+      rw [mergePost_basis_tensor, if_pos rfl, mul_one]]
+  -- Term 2 (prim S × empty-cut S'): LEFT = {S}, cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) S S'
+        ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({S'} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor,
+          if_neg (h_card_ne 1 (by decide) (Multiset.card_singleton S))]]
+  -- Term 3 (empty-cut S × prim S'): LEFT = {S'}, cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) S S'
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({S} : TraceForest α Unit))
+          * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor,
+          if_neg (h_card_ne 1 (by decide) (Multiset.card_singleton S'))]]
+  -- Term 4 (empty-cut S × empty-cut S'): LEFT = ∅ (= forestToHc 0), card 0 ≠ 2.
+  rw [show mergePost (R := R) (α := α) S S'
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({S} : TraceForest α Unit))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({S'} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul,
+          show (1 : Hc R α) = forestToHc (R := R) (0 : TraceForest α Unit) from
+            forestToHc_zero.symm,
+          mergePost_basis_tensor,
+          if_neg (h_card_ne 0 (by decide) Multiset.card_zero)]]
+  rw [add_zero, add_zero, add_zero]
+
 /-! ## §3: Internal Merge bridge
 
 **Important architectural note (per M-C-B Proposition 1.4.2, p. 50):**

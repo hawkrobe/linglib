@@ -160,6 +160,27 @@ noncomputable def mergePost (S S' : TraceTree α Unit) :
 noncomputable def mergeOp (S S' : TraceTree α Unit) : Hc R α →ₗ[R] Hc R α :=
   mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap
 
+/-- **The cost-weighted Merge operator `M^ε_{S, S'}`** per M-C-B Def 1.5.1
+    (p. 60). Factors as `mergePost S S' ∘ comulDelAlgHom_eps ε`. Each
+    coproduct contribution gets weighted by `ε^{cutTotalDepth c}` per cut.
+
+    At ε = 1: collapses to `mergeOp` (unweighted).
+    At ε = 0: only Case 1 (members-only matching) survives — Sideward
+    contributions all carry positive cost and vanish.
+
+    The ε → 0 limit theorem (in `MergeAction.lean`) recovers
+    `mergeOp_pair_residual` WITHOUT requiring the `MergeTargetFreeWorkspace`
+    hypothesis: cost minimization automatically excludes Sideward Merge. -/
+noncomputable def mergeOp_eps (ε : R) (S S' : TraceTree α Unit) :
+    Hc R α →ₗ[R] Hc R α :=
+  mergePost (R := R) (α := α) S S' ∘ₗ (comulDelAlgHom_eps ε).toLinearMap
+
+/-- At ε = 1, the weighted Merge operator collapses to the unweighted one. -/
+theorem mergeOp_eps_one (S S' : TraceTree α Unit) :
+    mergeOp_eps (R := R) 1 S S' = mergeOp (R := R) S S' := by
+  unfold mergeOp_eps mergeOp
+  rw [comulDelAlgHom_eps_one_eq]
+
 /-! ## §5: Post-coproduct chain on basis tensors
 
 `mergePost S S'` evaluated on an elementary tensor `forestToHc F ⊗ r` is:
