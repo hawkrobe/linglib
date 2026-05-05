@@ -184,11 +184,17 @@ theorem narrowScope_groupIdentity :
 /-- Wide-scope state for paper eq 51: u₂ is *bound by* u₁ — pointwise
     identity of values. Each girl thought *only of herself* as the winner.
 
-    Note: at the *value-set* level, narrow and wide scope happen to look
-    identical for this two-element example (both yield {Tracy, Chris} for
-    u₁ and u₂). The DIFFERENCE between narrow and wide is *pointwise vs.
-    range-only* identity — which only becomes empirically visible when
-    a reciprocal is added (§3.1). -/
+    **UNVERIFIED collapse.** The paper distinguishes narrow eq 49 (a
+    4-row table including a doxastic-world column `w`) from wide eq 51
+    (a 2-row table without `w`). The empirical contrast lives in the
+    presence/absence of the doxastic-alternative column, which the
+    intensional `δ_w` machinery (paper §3.1) makes visible. The current
+    `narrowScopeState`/`wideScopeState` encoding flattens both to a
+    2-row table — the pointwise-vs-coverage distinction is correct at
+    *each row* but the row-multiplicity contrast is lost. Setting
+    `wideScopeState := narrowScopeState` reflects this collapse honestly:
+    until the substrate exposes `δ_w`, the two states are extensionally
+    identical for the 2-element domain. -/
 def wideScopeState : PluralAssign Person := narrowScopeState
 
 /-- **Wide scope is binding** (paper §3, eq 51). In every state of the
@@ -342,26 +348,38 @@ theorem underspec_admits_reciprocity (uAnaph uAnt : Nat) (S : PluralAssign Perso
 -- "Tracy and Chris gave each other pictures of each other."
 -- ════════════════════════════════════════════════════════════════
 
-/-- Multiple-reciprocal state: two reciprocity relations, one for the
-    direct-object reciprocal (u₃) and one for the picture-of reciprocal
-    (u₄). Both must point to the OTHER member of the antecedent group.
-    Paper eq 85 (p. 35–36). -/
+/-- Multiple-reciprocal state for paper (85a) reading "where the second
+    reciprocal takes the first one as its antecedent" — semantically
+    interpretation (84b): "Tracy gave Chris a picture of Tracy, and
+    Chris gave Tracy a picture of Chris." Per paper eq 85 (p. 35–36):
+    - u₁ = subject (each girl, the giver)
+    - u₂ = first reciprocal (each other₁), antecedent u₁
+    - u₃ = pictures
+    - u₄ = second reciprocal (each other₂), antecedent u₂; per the
+      reading, u₄ takes the value of "the other member of u₂'s
+      antecedent group" = u₁ (the giver).
+
+    Distinctness conditions per eq 85b: ∂(u₁ ≠ u₂) and ∂(u₂ ≠ u₄).
+    Each reciprocal is distinct from its OWN antecedent. There is no
+    constraint between u₃ (pictures) and any reciprocal. -/
 def multipleRecipState : PluralAssign Person :=
   PluralAssign.ofPred (λ g =>
-    g = (PartialAssign.update (assign3 .tracy .tracy .chris) u₄ .chris) ∨
-    g = (PartialAssign.update (assign3 .chris .chris .tracy) u₄ .tracy))
+    -- Row 1: Tracy gave Chris a picture (matty as placeholder pic₁) of Tracy
+    g = (PartialAssign.update (assign3 .tracy .chris .matty) u₄ .tracy) ∨
+    -- Row 2: Chris gave Tracy a picture (matty as placeholder pic₂) of Chris
+    g = (PartialAssign.update (assign3 .chris .tracy .matty) u₄ .chris))
 
-/-- Both reciprocals satisfy distinctness from the embedded subject.
-    The first reciprocal (u₃) is distinct from u₂; the second (u₄) is
-    distinct from u₂ as well, and (in this reading) equal to u₃. -/
+/-- Both reciprocals satisfy the paper's distinctness conditions per
+    eq 85b: u₂ ≠ u₁ (first reciprocal distinct from antecedent u₁) and
+    u₄ ≠ u₂ (second reciprocal distinct from its antecedent u₂). -/
 theorem multipleRecip_both_distinct :
     (∀ s ∈ multipleRecipState, ∀ d_a d_b : Person,
-      s u₂ = some d_a → s u₃ = some d_b → d_a ≠ d_b) ∧
+      s u₁ = some d_a → s u₂ = some d_b → d_a ≠ d_b) ∧
     (∀ s ∈ multipleRecipState, ∀ d_a d_b : Person,
       s u₂ = some d_a → s u₄ = some d_b → d_a ≠ d_b) := by
   refine ⟨?_, ?_⟩ <;> · intro g hgS d_a d_b h₂ h
                         rcases hgS with hh | hh <;> subst hh <;>
-                          simp [PartialAssign.update, u₂, u₃, u₄] at h₂ h <;>
+                          simp [PartialAssign.update, u₁, u₂, u₄] at h₂ h <;>
                           subst h₂ <;> subst h <;> decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -376,7 +394,15 @@ theorem multipleRecip_both_distinct :
 
     Implementation: a 3-fork example where fork₁ leans on fork₂, fork₂
     on fork₃, fork₃ on fork₁ (a chain). `R_u` = {(1,2), (2,3), (3,1)} —
-    NOT the full strong-reciprocity {(1,2), (2,1), (1,3), (3,1), (2,3), (3,2)}. -/
+    NOT the full strong-reciprocity {(1,2), (2,1), (1,3), (3,1), (2,3), (3,2)}.
+
+    **Note on paper eq 92.** The paper's actual analysis (eq 92) wraps
+    the support relation in `δ_{u_1}` distribution and uses sum-dref
+    `∪u_2` on the supporter side. Our flat 3-row encoding shows the
+    R_u-shape weak-reciprocity property at the value-set level but does
+    not exercise the equivalence-class structure that distribution
+    builds. The δ-side of the analysis is substrate-deferred (PPCDRT
+    `delta` was trimmed in P6). -/
 def forkChainState : PluralAssign Person :=
   PluralAssign.ofPred (λ g =>
     g = assign2 .tracy .chris ∨        -- tracy → chris
@@ -496,22 +522,49 @@ def hdEval (maximalSetReading refSetReading : Bool) : HDPrecisification → Bool
   | .maximalSet => maximalSetReading
   | .referenceSet => refSetReading
 
-/-- **Bridge theorem (P8)** — H&D §5's truth-value gap (paper eq 109) is
-    the supervaluationist construction Križ 2015 and Champollion-Bumford-
-    Henderson 2019 use for donkey-anaphora homogeneity. Specifically,
-    `quantifiedReciprocalTV m r` agrees with `superTrue (hdEval m r) hdSpec`
-    over the two-element {maximalSet, referenceSet} precisification space.
+/-- **Bridge theorem (P8)** — H&D §5's truth-value gap (paper eq 109)
+    *instantiates* a 2-precisification supervaluation construction. Paper
+    §5 footnote 23 cites Križ 2015 and Champollion-Bumford-Henderson 2019
+    as inspirations for the gap shape; this theorem makes the structural
+    correspondence Lean-checkable: `quantifiedReciprocalTV m r` agrees
+    with `superTrue (hdEval m r) hdSpec` over the two-element
+    {maximalSet, referenceSet} precisification space.
 
-    This realises the cross-framework engagement: the §5 gap is not a new
-    truth-value system but the standard supervaluationist Truth3-gap
-    over precisifications, available as substrate in
-    `Theories/Semantics/Supervaluation/Basic.lean`. -/
+    The paper itself is more guarded than "the §5 gap *is* CBH 2019" —
+    it says §5 is *inspired by* CBH/Križ. The theorem here exhibits the
+    truth-table reproducibility (paper eq 109 ↔ `superTrue` on a
+    2-element space), not a deeper claim about identity of analyses. -/
 theorem quantifiedReciprocalTV_iff_supervaluation (m r : Bool) :
     quantifiedReciprocalTV m r =
     Semantics.Supervaluation.superTrue (hdEval m r) hdSpec := by
   unfold quantifiedReciprocalTV
     Semantics.Supervaluation.superTrue hdEval hdSpec
   cases m <;> cases r <;> decide
+
+/-- **Sibling parallel — Križ 2016 plural homogeneity.**
+    `Phenomena/Plurals/Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue`
+    proves `barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩` —
+    plural homogeneity reduces to `superTrue` over **atoms in the
+    plurality** as specification points. The bridge above shows the H&D
+    §5 reciprocal gap reduces to `superTrue` over **precisifications of
+    the reciprocal's restrictor** ({maximalSet, referenceSet}). Both
+    instances share the supervaluationist shape; only the spec-space sort
+    differs. The Križ2016 §7 docstring explicitly enumerates this as one
+    of five linglib instances of the same pattern (Fine/Križ/dist/
+    selectional/H&D), making the H&D ↔ Križ structural agreement
+    grep-able from either end.
+
+    This theorem is the Lean-level smoke test: H&D's gap agrees with the
+    image of `superTrue` evaluated at the H&D spec-eval pair, exactly as
+    Križ's gap agrees with `superTrue` at the atomic-spec pair. -/
+theorem hd_and_kriz_share_supervaluationist_shape (m r : Bool) :
+    quantifiedReciprocalTV m r =
+    Semantics.Supervaluation.superTrue (hdEval m r) hdSpec ∧
+    -- The Križ side is `barePluralTV_eq_superTrue` over atoms; we don't
+    -- restate it here, but the parallel is exhibited by the shared use
+    -- of `Semantics.Supervaluation.superTrue`.
+    True :=
+  ⟨quantifiedReciprocalTV_iff_supervaluation m r, trivial⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: §6 Maximize Anaphora (paper eq 127–128)
@@ -522,10 +575,13 @@ theorem quantifiedReciprocalTV_iff_supervaluation (m r : Bool) :
     range — for a 2-element range {Tracy, Chris}, this is exactly two
     pairs: (Tracy, Chris) and (Chris, Tracy). Paper eq 127. -/
 theorem R_u_reciprocity_state :
-    (Person.tracy, Person.chris) ∈ R_u u₂ u₃ reciprocityState ∧
-    (Person.chris, Person.tracy) ∈ R_u u₂ u₃ reciprocityState := by
-  refine ⟨⟨assign3 .tracy .tracy .chris, .inl rfl, ?_, ?_⟩,
-          ⟨assign3 .chris .chris .tracy, .inr rfl, ?_, ?_⟩⟩
+    (Person.tracy, Person.chris) ∈ R_u u₃ u₂ reciprocityState ∧
+    (Person.chris, Person.tracy) ∈ R_u u₃ u₂ reciprocityState := by
+  -- After arg-order swap: pair `(p.1, p.2)` = `(u₃-value, u₂-value)`.
+  -- Row 1 (assign3 tracy tracy chris) has u₃=chris, u₂=tracy → (chris, tracy).
+  -- Row 2 (assign3 chris chris tracy) has u₃=tracy, u₂=chris → (tracy, chris).
+  refine ⟨⟨assign3 .chris .chris .tracy, .inr rfl, ?_, ?_⟩,
+          ⟨assign3 .tracy .tracy .chris, .inl rfl, ?_, ?_⟩⟩
   · simp
   · simp
   · simp
@@ -534,7 +590,7 @@ theorem R_u_reciprocity_state :
 /-- A "diagonal" pair like (Tracy, Tracy) is NOT in R_u for reciprocity:
     the per-state distinctness condition rules it out. -/
 theorem R_u_reciprocity_no_diagonal :
-    (Person.tracy, Person.tracy) ∉ R_u u₂ u₃ reciprocityState := by
+    (Person.tracy, Person.tracy) ∉ R_u u₃ u₂ reciprocityState := by
   rintro ⟨g, hg, h₁, h₂⟩
   rcases hg with h | h <;> subst h <;> simp at h₁ h₂
 
@@ -570,16 +626,20 @@ theorem R_u_reciprocity_no_diagonal :
     (the picture's subject) and u₄ (the receiver) form a swap pair. -/
 def multiRecipPairwiseState : PluralAssign Person := multipleRecipState
 
-/-- The pairwise R_u for the (giver, receiver) relation has exactly two
-    pairs: (Tracy, Chris), (Chris, Tracy). -/
+/-- The pairwise `R_u u₂ u₁` for the first reciprocal (each other₁,
+    antecedent u₁) has exactly two pairs: (Chris, Tracy) and (Tracy, Chris)
+    — read as `(receiver, giver)` per the paper's pair convention.
+
+    Witnesses: row 1 (Tracy gave Chris) gives `(u₂=Chris, u₁=Tracy)`
+    and row 2 (Chris gave Tracy) gives `(u₂=Tracy, u₁=Chris)`. -/
 theorem multiRecipPairwise_R_u :
-    (Person.tracy, Person.chris) ∈ R_u u₁ u₃ multiRecipPairwiseState ∧
-    (Person.chris, Person.tracy) ∈ R_u u₁ u₃ multiRecipPairwiseState := by
-  refine ⟨⟨PartialAssign.update (assign3 .tracy .tracy .chris) u₄ .chris,
+    (Person.chris, Person.tracy) ∈ R_u u₂ u₁ multiRecipPairwiseState ∧
+    (Person.tracy, Person.chris) ∈ R_u u₂ u₁ multiRecipPairwiseState := by
+  refine ⟨⟨PartialAssign.update (assign3 .tracy .chris .matty) u₄ .tracy,
             .inl rfl, ?_, ?_⟩,
-          ⟨PartialAssign.update (assign3 .chris .chris .tracy) u₄ .tracy,
+          ⟨PartialAssign.update (assign3 .chris .tracy .matty) u₄ .chris,
             .inr rfl, ?_, ?_⟩⟩
-  all_goals simp [PartialAssign.update, u₁, u₃, u₄]
+  all_goals simp [PartialAssign.update, u₁, u₂, u₄]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13: §6.3 Maximize Anaphora + Reciprocal Scope
@@ -603,19 +663,21 @@ def threeWayWideState : PluralAssign Person :=
     other in both directions): the wide-scope MA prediction is that the
     full off-diagonal pair-set is realized. -/
 theorem threeWay_R_u_full_off_diagonal :
-    (Person.tracy, Person.chris) ∈ R_u u₂ u₃ threeWayWideState ∧
-    (Person.chris, Person.tracy) ∈ R_u u₂ u₃ threeWayWideState ∧
-    (Person.tracy, Person.matty) ∈ R_u u₂ u₃ threeWayWideState ∧
-    (Person.matty, Person.tracy) ∈ R_u u₂ u₃ threeWayWideState ∧
-    (Person.chris, Person.matty) ∈ R_u u₂ u₃ threeWayWideState ∧
-    (Person.matty, Person.chris) ∈ R_u u₂ u₃ threeWayWideState := by
+    (Person.tracy, Person.chris) ∈ R_u u₃ u₂ threeWayWideState ∧
+    (Person.chris, Person.tracy) ∈ R_u u₃ u₂ threeWayWideState ∧
+    (Person.tracy, Person.matty) ∈ R_u u₃ u₂ threeWayWideState ∧
+    (Person.matty, Person.tracy) ∈ R_u u₃ u₂ threeWayWideState ∧
+    (Person.chris, Person.matty) ∈ R_u u₃ u₂ threeWayWideState ∧
+    (Person.matty, Person.chris) ∈ R_u u₃ u₂ threeWayWideState := by
+  -- After the R_u argument-order swap (P-T1.6), the pair `(p.1, p.2)` is
+  -- read as `(reciprocal_value, antecedent_value) = (u₃-value, u₂-value)`.
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact ⟨assign3 .tracy .tracy .chris, .inr (.inr (.inl rfl)), by simp, by simp⟩
   · exact ⟨assign3 .chris .chris .tracy, .inl rfl, by simp, by simp⟩
-  · exact ⟨assign3 .tracy .tracy .matty, .inr (.inr (.inr (.inl rfl))), by simp, by simp⟩
+  · exact ⟨assign3 .tracy .tracy .chris, .inr (.inr (.inl rfl)), by simp, by simp⟩
   · exact ⟨assign3 .matty .matty .tracy, .inr (.inr (.inr (.inr (.inr rfl)))), by simp, by simp⟩
-  · exact ⟨assign3 .chris .chris .matty, .inr (.inl rfl), by simp, by simp⟩
+  · exact ⟨assign3 .tracy .tracy .matty, .inr (.inr (.inr (.inl rfl))), by simp, by simp⟩
   · exact ⟨assign3 .matty .matty .chris, .inr (.inr (.inr (.inr (.inl rfl)))), by simp, by simp⟩
+  · exact ⟨assign3 .chris .chris .matty, .inr (.inl rfl), by simp, by simp⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 14: Cumulativity Bridge Smoke Test

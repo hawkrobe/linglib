@@ -610,14 +610,19 @@ theorem switches_all_on_clearly_true :
     super-true iff satisfied by all atoms, super-false iff by none, and
     indefinite when some-but-not-all satisfy it (the homogeneity gap).
 
-    This unifies two independent literatures:
+    This unifies several independent literatures, each contributing a
+    different specification-space sort:
+
     - @cite{fine-1975}: varying the *threshold* for vague predicates
     - @cite{kriz-2016}: varying the *atom* for plural predicates
-
-    Both are instances of `Semantics.Supervaluation.superTrue`. The `dist`
-    operator in `Core.Duality` is a third implementation of the same pattern
-    over `List Bool`; `selectional_eq_dist` in `Counterfactual.lean` proves
-    yet another instance for closest worlds. -/
+    - `dist` in `Core.Duality`: a third implementation of the same pattern
+      over `List Bool`
+    - `selectional_eq_dist` in `Counterfactual.lean`: closest worlds
+    - @cite{haug-dalrymple-2020} §5 (paper eq 109): varying the
+      *precisification of the reciprocal's restrictor* (maximal-set vs
+      reference-set) for quantified-antecedent reciprocals — see
+      `Phenomena/Anaphora/Studies/HaugDalrymple2020.lean`'s
+      `quantifiedReciprocalTV_iff_supervaluation`. -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)
 

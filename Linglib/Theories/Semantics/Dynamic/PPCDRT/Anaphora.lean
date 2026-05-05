@@ -71,26 +71,30 @@ def bindingCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
 -- § 2: Group Identity (∪) — @cite{haug-dalrymple-2020} §2.3
 -- ════════════════════════════════════════════════════════════════
 
-/-- Asymmetric coverage `∪u_a → ∪u_b`: every value `u_a` takes across the
-    plural state is also a value `u_b` takes. @cite{haug-dalrymple-2020}
-    eq 29/42 (van den Berg-style asymmetric `→`).
+/-- One-direction sum-dref coverage: every value `uAnaph` takes across
+    the plural state is also a value `uAnt` takes.
 
-    The asymmetry distinguishes the **anaphor** side (which uses the local
-    equivalence class `[s]_Δ` in the full Δ-relativized version) from the
-    **antecedent** side (which uses the whole state `S`). At the
-    unrelativized layer (Δ = ∅) both reduce to whole-state value-set
-    inclusion. -/
+    *Note*: this is NOT @cite{haug-dalrymple-2020} eq 29 (the asymmetric
+    `→`). Paper eq 29 is `λS.λΔ.∀s ∈ S. u_anaph(s,[s]_Δ) = u_ant(s,S)` —
+    an *equation* between two evaluations, not a subset relation. At
+    Δ = ∅ paper eq 29 reduces to pointwise `bindingCond`, not to
+    `coverCond`. The closer paper match is the SUM-dref equality of
+    eq 37 (p. 16), but eq 37 is also bidirectional.
+
+    `coverCond` is a derived auxiliary used solely by the bidirectional
+    bridge `groupIdentityCond_iff_bidir_coverCond` below — it spells
+    out one direction of the value-set equality so consumers can reason
+    about it directly. It is not itself paper-stipulated. -/
 def coverCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
   Core.PluralAssign.sumDref S uAnaph ⊆ Core.PluralAssign.sumDref S uAnt
 
-/-- Group identity (`∪u_anaph = ∪u_ant`): bidirectional `coverCond`. The
-    value-sets of the two drefs across the plural state are equal.
+/-- Group identity (`∪u_anaph = ∪u_ant`): the value-sets of the two
+    drefs across the plural state are equal.
 
     @cite{haug-dalrymple-2020} eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
-    other* — symmetric set equality, derivable as `coverCond uAnaph uAnt
-    ∧ coverCond uAnt uAnaph`. The asymmetric `→` of paper eq 29/42 is the
-    primitive coverage relation; this symmetric version is what the
-    reciprocal expression's presupposition imposes. -/
+    other* — exactly this symmetric equality on sum-drefs. Bidirectional
+    `coverCond` is an alternative formulation provable via
+    `groupIdentityCond_iff_bidir_coverCond` below. -/
 def groupIdentityCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
   Core.PluralAssign.sumDref S uAnaph = Core.PluralAssign.sumDref S uAnt
 

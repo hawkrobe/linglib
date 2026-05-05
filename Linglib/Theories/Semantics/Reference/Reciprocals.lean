@@ -195,38 +195,33 @@ def quantificationalPrediction (props : AntecedentProperties) : List RecipScope 
   else if props.isBound then [.wide]
   else [.narrow, .wide]
 
-/-- The Strongest Meaning Hypothesis (@cite{dalrymple-et-al-1998}):
-    when multiple readings are available, the reciprocal sentence
-    expresses the *logically strongest* one. For scope, narrow scope
-    is logically stronger than wide scope (narrow asserts mutual
-    knowledge of the group; wide asserts only that each thinks they're
-    in a relationship), so when both are available SMH commits to narrow.
+/-- A *synthetic* Strongest Meaning Hypothesis at the scope-ambiguity
+    layer (@cite{dalrymple-et-al-1998}'s SMH idea, applied to the choice
+    between narrow and wide scope): when both readings are available,
+    pick the logically stronger one. Narrow scope is stronger than wide
+    in the sense that the narrow-scope reciprocity reading is more
+    restrictive on doxastic alternatives.
 
-    @cite{haug-dalrymple-2020} §6.1 (paper p. 55, eq 132–133) argues that
-    SMH over-strengthens in cases where Maximize Anaphora gives a
-    weaker, contextually-correct reading. The example "If the team
-    members knew each other in advance, they won" requires a *pairwise*
-    reading that SMH cannot deliver.
-
-    On the relational analysis with MA, both readings remain available
-    when the property bundle does not force a unique scope; SMH eliminates
-    that ambiguity, predicting `[.narrow]` only. This is the §6.1
-    divergence captured by `SMH_diverges_from_relational` below. -/
+    **Caveat.** This is NOT what @cite{haug-dalrymple-2020} §6.1 actually
+    argues against. The paper's §6.1 contrast (eq 132–133) is about
+    SMH applied to **reciprocal-reading STRENGTH** (Strong vs Weak
+    Reciprocity) under downward-entailing contexts — a different
+    dimension from scope. Properly formalising the §6.1 argument would
+    require a Strong/Weak Reciprocity gradation in the substrate, which
+    PPCDRT does not currently expose. The `SMH_diverges_from_relational`
+    theorem below is *synthetic divergence at the scope layer* — a Lean
+    fact, not a paper-faithful refutation. -/
 def strongestMeaningPrediction (props : AntecedentProperties) : List RecipScope :=
   match relationalPrediction props with
   | [.narrow, .wide] => [.narrow]   -- both available: narrow is stronger, SMH commits
   | other            => other        -- otherwise: trivially strongest
 
-/-- @cite{haug-dalrymple-2020} §6.1 (paper eq 132–133): SMH and the
-    relational analysis (with MA) diverge on the property bundle where
-    *both* readings are pragmatically available. SMH commits to the
-    strongest (narrow only); the relational analysis leaves both
-    available, matching the empirical observation that wide-scope
-    readings ARE attested even when narrow is also available.
-
-    Witness: the "default" property bundle (no construction-type
-    constraint) — the relational analysis predicts both readings;
-    SMH predicts narrow only. -/
+/-- Synthetic SMH-vs-relational divergence at the scope layer. On the
+    default property bundle, the relational analysis leaves both
+    readings available; the synthetic SMH commits to narrow only. See
+    the `caveat` on `strongestMeaningPrediction` — this is not the
+    paper's §6.1 argument, which is about Strong/Weak Reciprocity not
+    formalised here. -/
 theorem SMH_diverges_from_relational :
     ∃ props : AntecedentProperties,
       strongestMeaningPrediction props ≠ relationalPrediction props := by

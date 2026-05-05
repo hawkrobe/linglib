@@ -153,16 +153,8 @@ theorem binding_compatible_with_singleton (e : E) (uAnaph uAnt : Nat) :
   intro g hg
   simp only [PluralAssign.singleton, Membership.mem] at hg
   subst hg
-  -- Goal: outer update at uAnt of (inner update at uAnaph) gives the same
-  -- thing for both lookups.
-  show PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e uAnaph
-     = PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e uAnt
-  -- Right side reduces immediately: outer update fires at uAnt → some e.
-  -- Left side: outer update fires at uAnaph iff uAnaph = uAnt, else inner
-  -- update fires at uAnaph → some e. Both branches give some e.
-  unfold PartialAssign.update
   by_cases h : uAnaph = uAnt
   · subst h; rfl
-  · simp only [h, if_false, if_true]
+  · simp [PartialAssign.update_at, h]
 
 end Semantics.Reference.PluralityLicensing

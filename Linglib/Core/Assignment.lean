@@ -115,6 +115,12 @@ def update (g : PartialAssign D) (n : Nat) (d : D) : PartialAssign D :=
 def valued (g : PartialAssign D) (n : Nat) : Bool :=
   (g n).isSome
 
+@[simp] theorem update_at (g : PartialAssign D) (n : Nat) (d : D) :
+    (g.update n d) n = some d := by simp [update]
+
+@[simp] theorem update_ne (g : PartialAssign D) {n m : Nat} (d : D)
+    (h : m ≠ n) : (g.update n d) m = g m := by simp [update, h]
+
 @[simp] theorem valued_update_at (g : PartialAssign D) (n : Nat) (d : D) :
     (g.update n d).valued n = true := by simp [update, valued]
 
