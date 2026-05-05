@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Reference.Reciprocals
+import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
@@ -47,6 +48,8 @@ cases, while the quantificational analysis fails for distributive operators
 namespace DalrympleHaug2024
 
 open Semantics.Reference.Reciprocals
+open Theories.Semantics.Dynamic.PPCDRT
+open Core
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Scope Judgment Data
@@ -497,23 +500,24 @@ theorem wan_log_is_at_least_pivot :
 -- § 11: Connection to Formal Semantics (@cite{haug-dalrymple-2020})
 -- ════════════════════════════════════════════════════════════════
 
-/-- The bound antecedent case (Hungarian) uses the `bindingSem` relation,
-    which implies `groupIdentitySem`. Since binding forces an individual
-    denotation for the local antecedent, only wide scope is possible.
-    This connects the scope predictions to the formal semantics
-    of @cite{haug-dalrymple-2020} §§2.2--3. -/
-theorem bound_implies_wide_via_formal_semantics {S E : Type*}
-    {u_ant u_pro : S → E}
-    (h : bindingSem u_ant u_pro) : groupIdentitySem u_ant u_pro :=
-  binding_implies_groupIdentity h
+/-- The bound antecedent case (Hungarian) uses the `bindingCond` relation,
+    which implies `groupIdentityCond`. Since binding forces equal values
+    pointwise, the value-sets are equal, so wide scope is the natural
+    reading. Connects the scope predictions to the formal semantics of
+    @cite{haug-dalrymple-2020} §§2.2--3, now over the PPCDRT substrate
+    (`Theories/Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
+theorem bound_implies_wide_via_formal_semantics {E : Type}
+    (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
+    (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ :=
+  binding_implies_groupIdentity uAnaph uAnt S Δ h
 
 /-- The logophoric restriction (Wan) is modeled at the enum level:
-    `isLogophoric = true` restricts to narrow scope, which corresponds to
-    the `groupIdentitySem` relation. The logophor's discourse referent is
-    confined to the report context, preventing the `bindingSem` relation
-    that would yield wide scope. -/
+    `isLogophoric = true` restricts to narrow scope, whose antecedent
+    relation is group identity (∪). The logophor's discourse referent is
+    confined to the report context, preventing the binding relation that
+    would yield wide scope. -/
 theorem logophoric_forces_groupIdentity_relation :
     relationalPrediction logophoricProps = [.narrow] ∧
-    narrowScopeRelations.1 = .groupIdentity := ⟨rfl, rfl⟩
+    narrowScopeReading.antecedentRel = .groupIdentity := ⟨rfl, rfl⟩
 
 end DalrympleHaug2024

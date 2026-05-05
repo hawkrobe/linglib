@@ -1993,6 +1993,9 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism
 import Linglib.Theories.Semantics.Dynamic.Effects.Probability
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Fragment
+import Linglib.Theories.Semantics.Dynamic.PPCDRT.Defs
+import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
+import Linglib.Theories.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Basic
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.UpdateTheoretic
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.HigherOrder
@@ -2447,6 +2450,7 @@ import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Reference.Reciprocals
+import Linglib.Theories.Semantics.Reference.PluralityLicensing
 import Linglib.Theories.Semantics.Reference.Acquaintance
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Dynamic

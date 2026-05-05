@@ -1,5 +1,6 @@
 import Linglib.Typology.Pronouns
 import Linglib.Theories.Semantics.Reference.Reciprocals
+import Linglib.Theories.Semantics.Reference.PluralityLicensing
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -41,6 +42,7 @@ namespace Fragments.Hungarian.Reciprocals
 
 open Typology
 open Semantics.Reference.Reciprocals
+open Semantics.Reference.PluralityLicensing
 
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.

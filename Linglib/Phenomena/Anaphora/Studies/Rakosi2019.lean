@@ -1,4 +1,6 @@
 import Linglib.Theories.Semantics.Reference.Reciprocals
+import Linglib.Theories.Semantics.Reference.PluralityLicensing
+import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Fragments.Hungarian.Reciprocals
 
 /-!
@@ -34,20 +36,25 @@ a morphosyntactic mechanism.
 
 ## Connections
 
-- `Theories/Semantics/Reference/Reciprocals.lean` §§9–10 — the
-  `PluralityRequirement` type and semantic justification theorems
+- `Theories/Semantics/Reference/PluralityLicensing.lean` — the
+  `PluralityRequirement` substrate (anchored on this paper).
+- `Theories/Semantics/Dynamic/PPCDRT/Anaphora.lean` — the formal-semantic
+  reciprocity / binding conditions over plural assignments.
 - `Fragments/Hungarian/Reciprocals.lean` — `AntecedentConfig`,
-  `reciprocalLicensed`, `pluralReflexiveLicensed`, verification
+  `reciprocalLicensed`, `pluralReflexiveLicensed`, verification.
 - `Phenomena/Anaphora/Studies/DalrympleHaug2024.lean` §2 — the
   bound-variable case (§6 here) is also discussed there as evidence
-  for the relational analysis of reciprocal scope
+  for the relational analysis of reciprocal scope.
 - `Phenomena/Anaphora/Coreference.lean` — the `reciprocalPattern`
-  notes that syntactically singular antecedents are possible
+  notes that syntactically singular antecedents are possible.
 -/
 
 namespace Rakosi2019
 
 open Semantics.Reference.Reciprocals
+open Semantics.Reference.PluralityLicensing
+open Theories.Semantics.Dynamic.PPCDRT
+open Core
 open Fragments.Hungarian.Reciprocals
 
 -- ════════════════════════════════════════════════════════════════
@@ -186,19 +193,35 @@ theorem semantic_justification :
 
 /-- The formal semantics connection: reciprocity (R) presupposes
     multiple individuals in the range of the discourse referent function.
-    This is derived in `Reciprocals.lean` §10:
-    `reciprocity_implies_multiple_individuals`. -/
+    This is derived in `PluralityLicensing.lean`:
+    `reciprocity_implies_multiple_individuals`. The PPCDRT version uses
+    plural information states; the witness here is the *contrapositive* —
+    if both anaphor and antecedent are mapped to the same value `0` in a
+    singleton state, the distinctness clause of `reciprocityCond` rules
+    out reciprocity. -/
 theorem recip_needs_multiple_individuals :
-    reciprocitySem (fun (_ : Unit) => (0 : Nat)) (fun (_ : Unit) => (0 : Nat)) →
-    False :=
-  fun h => h.2 () rfl
+    ¬ reciprocityCond (E := Nat) 0 1
+        (PluralAssign.singleton (PartialAssign.update
+          (PartialAssign.update PartialAssign.empty 0 0) 1 0)) ∅ := by
+  intro h
+  have hg : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) ∈
+            (PluralAssign.singleton (PartialAssign.update
+              (PartialAssign.update PartialAssign.empty 0 0) 1 0) : PluralAssign Nat) := by
+    simp [PluralAssign.singleton, Membership.mem]
+  have h0 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 0 = some 0 := by
+    simp [PartialAssign.update]
+  have h1 : (PartialAssign.update (PartialAssign.update PartialAssign.empty 0 0) 1 0) 1 = some 0 := by
+    simp [PartialAssign.update]
+  exact h.2 _ hg 0 0 h0 h1 rfl
 
-/-- Binding (=) is compatible with a single individual —
-    explaining why reflexives don't impose a semantic plurality
-    requirement. -/
+/-- Binding (=) is compatible with a singleton state where both drefs
+    point to the same value — explaining why reflexives don't impose a
+    semantic plurality requirement. -/
 theorem binding_ok_with_singleton :
-    bindingSem (fun (_ : Unit) => (42 : Nat)) (fun (_ : Unit) => 42) :=
-  binding_compatible_with_singleton 42
+    bindingCond (E := Nat) 0 1
+      (PluralAssign.singleton (PartialAssign.update
+        (PartialAssign.update PartialAssign.empty 0 42) 1 42)) ∅ :=
+  binding_compatible_with_singleton 42 0 1
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Cross-References to Existing Formalization
