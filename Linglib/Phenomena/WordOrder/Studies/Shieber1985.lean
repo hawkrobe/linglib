@@ -35,9 +35,28 @@ Theorems 7.24, 7.27).
 
 ## What Is Formalized Here
 
-Shieber's full theorem — Swiss German is not weakly CF — is
-`swiss_german_not_contextFree` below. Proof bottoms out at the two CFL
-closure theorems in `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
+`swiss_german_not_contextFree` proves: **Swiss German subordinate clauses are
+not weakly context-free**. The language `swissGermanLang` allows any token
+sequence whose cross-serial core (after stripping `matrix` boundary tokens —
+matrix subjects, complementizers, auxiliaries, finite verbs of the embedding
+clause) has shape `nps ++ vs` with case counts matched. Matrix tokens may
+appear interleaved anywhere; Shieber's homomorphism erases them.
+
+The proof exercises both legs of the Bar-Hillel schema
+(`Language.not_isContextFree_via_witness` from `Closure.lean`):
+
+* **Homomorphism leg** (`tokenStringHom`): cross-serial NPs and Vs map to
+  singleton {a,b,c,d} letters; matrix tokens map to `[]` (Shieber's ε-erasure).
+* **Regular-intersection leg** (`caseSorted = a*b*c*d*`): selects only
+  case-sorted images, isolating the canonical cross-serial shape from any
+  source-string interleaving of cross-serial tokens.
+
+The witness language `stringMap h L ⊓ R = ambncmdn` — non-CF by
+`ambncmdn_not_contextFree` (two-parameter pumping). Per the Bar-Hillel
+schema, source SG is non-CF.
+
+Proof bottoms out at the two CFL closure theorems in
+`Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
 (homomorphism + intersection-with-regular, both proven; see those files for
 @cite{bar-hillel-perles-shamir-1961} / @cite{hopcroft-motwani-ullman-2000}
 construction details) and `ambncmdn_not_contextFree` (the two-parameter
@@ -45,7 +64,18 @@ pumping result) in `Linglib.Core.Computability.NonContextFree`.
 
 A weaker pedagogical waypoint, `swiss_german_diagonal_not_contextFree`, uses
 only the simpler one-parameter `anbncndn` substrate; it covers just the
-diagonal (`m = n`) subset of SG clauses.
+diagonal (`m = n`) subset of SG clauses with no matrix material.
+
+## Remaining idealizations
+
+The `matrix` token is a single abstract constructor, not a richer model of
+SG matrix material's internal structure (specific lexical items, agreement,
+finite-verb fronting). For Shieber's purpose — showing non-CFness of the
+string set — this abstraction is faithful: he too treats matrix material as
+an erasable substring under the homomorphism. A richer model that ties
+matrix-token positions to specific SG fragment data would be a substantive
+extension; the current formalization captures Shieber's full argument
+without it.
 
 ## Contrast with @cite{bresnan-etal-1982}
 
@@ -84,7 +114,16 @@ open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
 /-- A Swiss German subordinate clause token, abstracting over specific lexical
     items to their role in the cross-serial construction.
 
-    @cite{shieber-1985}'s proof only needs to distinguish NPs and Vs by case. -/
+    @cite{shieber-1985}'s argument projects SG sentences to four case-marked
+    classes (DAT-NP / ACC-NP / DAT-V / ACC-V) plus boundary material. The
+    `matrix` constructor abstracts non-cross-serial tokens — matrix subjects,
+    complementizers, auxiliaries, finite verbs of the embedding clause, etc.
+    Shieber's homomorphism erases these to ε; our `tokenStringHom` does the
+    same by mapping `matrix` to `[]`. This is what makes the proof apply to
+    full Swiss German rather than just the NP*V* sub-shape — matrix tokens
+    can appear interleaved anywhere in a sentence, and the homomorphism
+    strips them, so the regex-filtered image picks up the cross-serial
+    core regardless of how it's wrapped in the source string. -/
 inductive Token where
   /-- Dative NP (e.g., *em Hans*) -/
   | datNP
@@ -94,19 +133,42 @@ inductive Token where
   | datV
   /-- Accusative-subcategorizing verb (e.g., *lönd* "let", *aastriiche* "paint") -/
   | accV
+  /-- Boundary material: matrix subject, complementizer, auxiliary, finite
+      verb of the embedding clause, etc. Erased by `tokenStringHom`
+      (Shieber's projection). -/
+  | matrix
   deriving DecidableEq, Repr
 
-/-- The case that a token bears or requires. -/
+/-- The case that a token bears or requires. Matrix tokens have no case;
+    the field is total at `.dat` as a default (never consulted on matrix
+    tokens in any consumer — case-matching predicates filter via `isNP` / `isV`
+    first). -/
 def Token.caseValue : Token → Case
   | .datNP => .dat
   | .accNP => .acc
   | .datV  => .dat
   | .accV  => .acc
+  | .matrix => .dat  -- arbitrary; matrix has no real case
 
-/-- Whether a token is an NP (vs a verb). -/
+/-- Whether a token is a case-marked NP (vs a verb or matrix material). -/
 def Token.isNP : Token → Bool
   | .datNP | .accNP => true
   | .datV  | .accV  => false
+  | .matrix         => false
+
+/-- Whether a token is a case-subcategorizing verb (vs an NP or matrix material). -/
+def Token.isV : Token → Bool
+  | .datNP | .accNP => false
+  | .datV  | .accV  => true
+  | .matrix         => false
+
+/-- Whether a token is matrix (boundary) material (vs a cross-serial NP/V). -/
+def Token.isMatrix : Token → Bool
+  | .datNP  => false
+  | .accNP  => false
+  | .datV   => false
+  | .accV   => false
+  | .matrix => true
 
 -- ============================================================================
 -- §2: Case-Sorted Cross-Serial Clauses
@@ -152,21 +214,25 @@ def arbitraryDepth (m n : Nat) : CaseMatchedClause :=
 -- ============================================================================
 
 /-- Shieber's homomorphism *f*: maps Swiss German cross-serial clause tokens
-    to the abstract alphabet {a, b, c, d}.
-
-    - DAT-NPs → `a`
-    - ACC-NPs → `b`
-    - DAT-Vs  → `c`
-    - ACC-Vs  → `d` -/
+    to the abstract alphabet {a, b, c, d}. Matrix tokens have no meaningful
+    image; the placeholder `.a` is never observed by any consumer (every use
+    site filters via `isMatrix` or constructs from non-matrix tokens). The
+    real homomorphism `tokenStringHom` ERASES matrix tokens to `[]`. -/
 def tokenToSymbol : Token → FourSymbol
-  | .datNP => .a
-  | .accNP => .b
-  | .datV  => .c
-  | .accV  => .d
+  | .datNP  => .a
+  | .accNP  => .b
+  | .datV   => .c
+  | .accV   => .d
+  | .matrix => .a  -- placeholder; never consumed
 
-/-- Letter-to-letter lift of `tokenToSymbol` to a `StringHom`: each input
-    token maps to a singleton output string. -/
-def tokenStringHom : StringHom Token FourSymbol := fun t => [tokenToSymbol t]
+/-- Shieber's homomorphism, lifted to lists. Cross-serial NPs and Vs map to
+    singleton {a,b,c,d} letters; matrix tokens are erased. This `[]`-valued
+    case is essential for full-SG fidelity: it lets the schema apply to
+    sentences with arbitrary boundary material wrapping the cross-serial
+    core. The function is no longer a `StringHom.letterMap` for that reason. -/
+def tokenStringHom : StringHom Token FourSymbol := fun
+  | .matrix => []
+  | t       => [tokenToSymbol t]
 
 /-- The token sequence corresponding to a case-matched clause: NPs first
     (DAT then ACC), then Vs (DAT then ACC). -/
@@ -245,34 +311,48 @@ theorem swiss_german_diagonal_not_contextFree :
 -- ============================================================================
 -- §4: The full Swiss German language and Shieber's schema
 -- ============================================================================
--- Shieber's actual paper structure: the SG language is the FREE language
--- (NPs in any internal order, then Vs in any internal order, with case-
--- matched counts), and the proof uses BOTH the homomorphism leg (project
--- tokens to {a,b,c,d}) AND the regular-intersection leg (filter to
--- case-sorted shape `a*b*c*d*`). We mechanize this faithfully via
--- `Language.not_isContextFree_via_witness` from `Closure.lean`.
+-- Shieber's actual paper structure projects FULL Swiss German sentences
+-- (including matrix material like subjects, complementizers, auxiliaries)
+-- to {a,b,c,d} via a homomorphism that erases boundary words to ε. The
+-- regex filter then selects sentences whose stripped image is the canonical
+-- case-sorted core. We mechanize this by:
+--   * allowing `matrix` tokens interleaved anywhere in `swissGermanLang`,
+--   * defining `tokenStringHom` to map matrix tokens to `[]`,
+--   * proving the intersection of (image-of-SG) with `caseSorted` equals
+--     `ambncmdn`, then applying `not_isContextFree_via_witness`.
+-- This makes the headline theorem `swiss_german_not_contextFree` a faithful
+-- statement about FULL Swiss German, not just its NP*V* sub-shape.
 
-/-- The Swiss German cross-serial language: token sequences with NPs in any
-    *internal* order, then Vs in any internal order, with case counts matched
-    (#DAT-NP = #DAT-V, #ACC-NP = #ACC-V). The case-sorted subset
-    (`caseSortedTokens (arbitraryDepth m n)`) is properly contained. -/
+/-- The Swiss German cross-serial language. A token list `ts` is in this
+    language iff:
+
+    * stripping matrix tokens leaves a list of form `nps ++ vs` (NPs precede
+      Vs in the cross-serial core), and
+    * the case counts match (#DAT-NP = #DAT-V, #ACC-NP = #ACC-V).
+
+    Matrix tokens (subjects, complementizers, auxiliaries) may appear anywhere
+    interleaved with cross-serial NPs/Vs — Shieber's homomorphism erases them.
+    The case-sorted canonical form `caseSortedTokens (arbitraryDepth m n)`
+    (no matrix tokens, NPs and Vs each in canonical case order) is properly
+    contained. -/
 def swissGermanLang : Language Token :=
   { ts | ∃ nps vs : List Token,
-      ts = nps ++ vs ∧
+      ts.filter (fun t => !t.isMatrix) = nps ++ vs ∧
       (∀ t ∈ nps, t.isNP = true) ∧
-      (∀ t ∈ vs, t.isNP = false) ∧
-      nps.countP (fun t => decide (t.caseValue = .dat)) =
-        vs.countP (fun t => decide (t.caseValue = .dat)) ∧
-      nps.countP (fun t => decide (t.caseValue = .acc)) =
-        vs.countP (fun t => decide (t.caseValue = .acc)) }
+      (∀ t ∈ vs, t.isV = true) ∧
+      nps.countP (· == .datNP) = vs.countP (· == .datV) ∧
+      nps.countP (· == .accNP) = vs.countP (· == .accV) }
 
-/-- Every case-matched, case-sorted clause is in the (more general) free SG
-    language. -/
+/-- Every case-matched, case-sorted clause (no matrix material) is in the
+    (more general) free SG language. -/
 theorem caseSortedTokens_in_swissGermanLang (m n : Nat) :
     caseSortedTokens (arbitraryDepth m n) ∈ swissGermanLang := by
   refine ⟨List.replicate m .datNP ++ List.replicate n .accNP,
           List.replicate m .datV ++ List.replicate n .accV, ?_, ?_, ?_, ?_, ?_⟩
-  · simp [caseSortedTokens, arbitraryDepth, List.append_assoc]
+  · -- caseSortedTokens has no matrix tokens, so filter is identity.
+    show List.filter _ (caseSortedTokens (arbitraryDepth m n)) = _
+    simp [caseSortedTokens, arbitraryDepth, List.filter_append,
+          List.filter_replicate, Token.isMatrix, List.append_assoc]
   · intro t ht
     rcases List.mem_append.mp ht with h | h
     · obtain rfl := List.eq_of_mem_replicate h; rfl
@@ -281,8 +361,8 @@ theorem caseSortedTokens_in_swissGermanLang (m n : Nat) :
     rcases List.mem_append.mp ht with h | h
     · obtain rfl := List.eq_of_mem_replicate h; rfl
     · obtain rfl := List.eq_of_mem_replicate h; rfl
-  · simp [List.countP_append, List.countP_replicate, Token.caseValue]
-  · simp [List.countP_append, List.countP_replicate, Token.caseValue]
+  · simp [List.countP_append, List.countP_replicate]
+  · simp [List.countP_append, List.countP_replicate]
 
 -- ----------------------------------------------------------------------------
 -- The regular filter `caseSorted` on FourSymbol: a*b*c*d*.
@@ -534,195 +614,150 @@ theorem caseSorted_decomp (xs : List FourSymbol) (h : xs ∈ caseSorted) :
                     List.replicate r .c ++ List.replicate u .d :=
   sA_decomp xs h
 
--- Token-image counting lemmas. The map `tokenToSymbol` is a bijection on
--- letters: each Token type corresponds to a unique FourSymbol. So filter
--- counts on the image equal filter counts on the source.
+-- Token-image counting lemmas. `tokenStringHom` maps cross-serial NPs/Vs to
+-- singleton {a,b,c,d} letters and matrix tokens to `[]`; counting on the
+-- flattened image gives back the source token-equality count.
 
 private lemma count_a_image_eq_count_datNP (ts : List Token) :
-    (ts.map tokenToSymbol).countP (· == .a) =
-      ts.countP (· == .datNP) := by
+    (ts.flatMap tokenStringHom).countP (· == .a) = ts.countP (· == .datNP) := by
   induction ts with
   | nil => rfl
   | cons t ts ih =>
-    simp only [List.map_cons, List.countP_cons, ih]
-    cases t <;> rfl
+    cases t <;>
+      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_b_image_eq_count_accNP (ts : List Token) :
-    (ts.map tokenToSymbol).countP (· == .b) = ts.countP (· == .accNP) := by
+    (ts.flatMap tokenStringHom).countP (· == .b) = ts.countP (· == .accNP) := by
   induction ts with
   | nil => rfl
   | cons t ts ih =>
-    simp only [List.map_cons, List.countP_cons, ih]
-    cases t <;> rfl
+    cases t <;>
+      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_c_image_eq_count_datV (ts : List Token) :
-    (ts.map tokenToSymbol).countP (· == .c) = ts.countP (· == .datV) := by
+    (ts.flatMap tokenStringHom).countP (· == .c) = ts.countP (· == .datV) := by
   induction ts with
   | nil => rfl
   | cons t ts ih =>
-    simp only [List.map_cons, List.countP_cons, ih]
-    cases t <;> rfl
+    cases t <;>
+      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
 
 private lemma count_d_image_eq_count_accV (ts : List Token) :
-    (ts.map tokenToSymbol).countP (· == .d) = ts.countP (· == .accV) := by
+    (ts.flatMap tokenStringHom).countP (· == .d) = ts.countP (· == .accV) := by
   induction ts with
   | nil => rfl
   | cons t ts ih =>
-    simp only [List.map_cons, List.countP_cons, ih]
-    cases t <;> rfl
+    cases t <;>
+      simp [List.flatMap_cons, List.countP_cons, ih, tokenStringHom, tokenToSymbol]
 
--- Connect token-list NP/V partitioning with caseValue counts for use in the
--- main intersection equality.
+-- Filter-by-non-matrix preserves token-equality counts for cross-serial
+-- tokens (matrix is the only token that gets filtered out, and matrix is
+-- different from each cross-serial token).
 
-private lemma countP_caseValue_dat_of_isNP {ts : List Token}
-    (h : ∀ t ∈ ts, t.isNP = true) :
-    ts.countP (fun t => decide (t.caseValue = .dat)) =
+private lemma countP_filter_notMatrix_datNP (ts : List Token) :
+    (ts.filter (fun t => !t.isMatrix)).countP (· == .datNP) =
       ts.countP (· == .datNP) := by
-  apply List.countP_congr
-  intro t ht
-  have := h t ht
-  cases t <;> simp_all [Token.isNP, Token.caseValue]
-
-private lemma countP_caseValue_acc_of_isNP {ts : List Token}
-    (h : ∀ t ∈ ts, t.isNP = true) :
-    ts.countP (fun t => decide (t.caseValue = .acc)) =
-      ts.countP (· == .accNP) := by
-  apply List.countP_congr
-  intro t ht
-  have := h t ht
-  cases t <;> simp_all [Token.isNP, Token.caseValue]
-
-private lemma countP_caseValue_dat_of_isV {ts : List Token}
-    (h : ∀ t ∈ ts, t.isNP = false) :
-    ts.countP (fun t => decide (t.caseValue = .dat)) =
-      ts.countP (· == .datV) := by
-  apply List.countP_congr
-  intro t ht
-  have := h t ht
-  cases t <;> simp_all [Token.isNP, Token.caseValue]
-
-private lemma countP_caseValue_acc_of_isV {ts : List Token}
-    (h : ∀ t ∈ ts, t.isNP = false) :
-    ts.countP (fun t => decide (t.caseValue = .acc)) =
-      ts.countP (· == .accV) := by
-  apply List.countP_congr
-  intro t ht
-  have := h t ht
-  cases t <;> simp_all [Token.isNP, Token.caseValue]
-
-/-- Direct-replicate filter counts: `(replicate n x).countP p = if p x then n else 0`.
-    Specialized for `aᵖbᵠcʳdˢ`-shaped strings. -/
-private lemma countP_replicate_filter (n : Nat) (x : FourSymbol) (y : FourSymbol) :
-    (List.replicate n x).countP (· == y) = if x = y then n else 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [List.replicate_succ, List.countP_cons, ih]
-    by_cases h : x = y
-    · subst h; simp
-    · simp [h, beq_iff_eq]
-
-/-- `tokenStringHom` is letter-to-letter, so its `apply` reduces to `List.map`. -/
-private lemma tokenStringHom_apply_eq_map (ts : List Token) :
-    ts.map tokenToSymbol = StringHom.apply tokenStringHom ts := by
   induction ts with
   | nil => rfl
   | cons t ts ih =>
-    show tokenToSymbol t :: ts.map tokenToSymbol =
-         List.flatMap tokenStringHom (t :: ts)
-    rw [List.flatMap_cons]
-    show tokenToSymbol t :: ts.map tokenToSymbol =
-         tokenStringHom t ++ List.flatMap tokenStringHom ts
-    show tokenToSymbol t :: ts.map tokenToSymbol =
-         [tokenToSymbol t] ++ List.flatMap tokenStringHom ts
-    rw [List.singleton_append, ih]
-    rfl
+    rw [List.filter_cons]
+    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
 
-/-- The Bar-Hillel-style intersection equality: free SG, projected to {a,b,c,d}
-    and filtered to case-sorted shape, equals exactly the non-CF language
-    `aᵐbⁿcᵐdⁿ`. -/
+private lemma countP_filter_notMatrix_accNP (ts : List Token) :
+    (ts.filter (fun t => !t.isMatrix)).countP (· == .accNP) =
+      ts.countP (· == .accNP) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    rw [List.filter_cons]
+    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+
+private lemma countP_filter_notMatrix_datV (ts : List Token) :
+    (ts.filter (fun t => !t.isMatrix)).countP (· == .datV) =
+      ts.countP (· == .datV) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    rw [List.filter_cons]
+    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+
+private lemma countP_filter_notMatrix_accV (ts : List Token) :
+    (ts.filter (fun t => !t.isMatrix)).countP (· == .accV) =
+      ts.countP (· == .accV) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    rw [List.filter_cons]
+    cases t <;> simp_all [Token.isMatrix, List.countP_cons]
+
+-- countP_caseValue_* lemmas removed: the new `swissGermanLang` definition uses
+-- direct token-equality counting (`· == .datNP` etc.) instead of going
+-- through `caseValue`, so the bridge lemmas are no longer needed.
+
+/-- The Bar-Hillel-style intersection equality: full SG (with arbitrary matrix
+    material), projected to {a,b,c,d} and filtered to case-sorted shape,
+    equals exactly the non-CF language `aᵐbⁿcᵐdⁿ`. -/
 theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     Language.stringMap tokenStringHom swissGermanLang ⊓ caseSorted = ambncmdn := by
   ext w
   refine ⟨?_, ?_⟩
-  · -- Forward: free-SG image filtered to case-sorted shape ⊆ ambncmdn.
+  · -- Forward: SG image filtered to case-sorted shape ⊆ ambncmdn.
     rintro ⟨⟨ts, hts_in, hApply⟩, hw_cs⟩
     -- Decompose the case-sorted image into a^p b^q c^r d^s.
     obtain ⟨p, q, r, s, hw_decomp⟩ := caseSorted_decomp w hw_cs
-    -- ts = nps ++ vs with case-matched counts.
-    obtain ⟨nps, vs, hts_eq, h_nps, h_vs, h_dat, h_acc⟩ := hts_in
-    -- w = ts.map tokenToSymbol (since tokenStringHom is letterMap):
-    have hw_map : w = ts.map tokenToSymbol := by
-      rw [← hApply]; exact (tokenStringHom_apply_eq_map ts).symm
-    -- Counts in w: p = #a, q = #b, r = #c, s = #d.
-    have h_p : (w.countP (· == .a)) = p := by
-      rw [hw_decomp]
-      simp [List.countP_append, countP_replicate_filter]
-    have h_q : (w.countP (· == .b)) = q := by
-      rw [hw_decomp]
-      simp [List.countP_append, countP_replicate_filter]
-    have h_r : (w.countP (· == .c)) = r := by
-      rw [hw_decomp]
-      simp [List.countP_append, countP_replicate_filter]
-    have h_s : (w.countP (· == .d)) = s := by
-      rw [hw_decomp]
-      simp [List.countP_append, countP_replicate_filter]
-    -- Token counts via the bijection:
-    -- p = #DAT-NP in ts = #DAT-NP in nps (Vs map to c,d so don't contribute to a-count).
-    -- r = #DAT-V in ts = #DAT-V in vs.
-    -- Case matching: #DAT-NP in nps = #DAT-V in vs ⇒ p = r.
-    have h_p_eq : p = (nps).countP (· == .datNP) := by
-      have : ts.countP (· == .datNP) = nps.countP (· == .datNP) := by
-        rw [hts_eq, List.countP_append]
-        have hvs_zero : vs.countP (· == .datNP) = 0 := by
-          apply List.countP_eq_zero.mpr
-          intro t ht
-          have := h_vs t ht
-          cases t <;> simp_all [Token.isNP]
-        rw [hvs_zero]; simp
-      rw [hw_map, count_a_image_eq_count_datNP] at h_p
+    -- ts has cross-serial core (nps ++ vs after stripping matrix) with case-
+    -- matched counts on cross-serial tokens.
+    obtain ⟨nps, vs, hts_filter, h_nps, h_vs, h_dat, h_acc⟩ := hts_in
+    -- w = StringHom.apply tokenStringHom ts = ts.flatMap tokenStringHom.
+    have hw_flatMap : w = ts.flatMap tokenStringHom := hApply.symm
+    -- Counts in w: p = #a, q = #b, r = #c, s = #d (from the decomposition).
+    have h_p : w.countP (· == .a) = p := by
+      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
+    have h_q : w.countP (· == .b) = q := by
+      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
+    have h_r : w.countP (· == .c) = r := by
+      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
+    have h_s : w.countP (· == .d) = s := by
+      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
+    -- Bridge image-counts to source token-counts (matrix tokens contribute 0).
+    have h_p_eq : p = ts.countP (· == .datNP) := by
+      rw [hw_flatMap, count_a_image_eq_count_datNP] at h_p; omega
+    have h_q_eq : q = ts.countP (· == .accNP) := by
+      rw [hw_flatMap, count_b_image_eq_count_accNP] at h_q; omega
+    have h_r_eq : r = ts.countP (· == .datV) := by
+      rw [hw_flatMap, count_c_image_eq_count_datV] at h_r; omega
+    have h_s_eq : s = ts.countP (· == .accV) := by
+      rw [hw_flatMap, count_d_image_eq_count_accV] at h_s; omega
+    -- Filter-then-decompose gives nps ++ vs structure on the cross-serial core.
+    -- Bridge ts-counts (full string) to filter-counts (cross-serial only) via
+    -- the no-op-on-NP/V filter, then split via append.
+    have h_p_nps : p = nps.countP (· == .datNP) := by
+      rw [h_p_eq, ← countP_filter_notMatrix_datNP, hts_filter, List.countP_append]
+      have hvs_zero : vs.countP (· == .datNP) = 0 := by
+        apply List.countP_eq_zero.mpr
+        intro t ht; have := h_vs t ht; cases t <;> simp_all [Token.isV]
       omega
-    have h_r_eq : r = (vs).countP (· == .datV) := by
-      have : ts.countP (· == .datV) = vs.countP (· == .datV) := by
-        rw [hts_eq, List.countP_append]
-        have hnps_zero : nps.countP (· == .datV) = 0 := by
-          apply List.countP_eq_zero.mpr
-          intro t ht
-          have := h_nps t ht
-          cases t <;> simp_all [Token.isNP]
-        rw [hnps_zero]; simp
-      rw [hw_map, count_c_image_eq_count_datV] at h_r
+    have h_r_vs : r = vs.countP (· == .datV) := by
+      rw [h_r_eq, ← countP_filter_notMatrix_datV, hts_filter, List.countP_append]
+      have hnps_zero : nps.countP (· == .datV) = 0 := by
+        apply List.countP_eq_zero.mpr
+        intro t ht; have := h_nps t ht; cases t <;> simp_all [Token.isNP]
       omega
-    have h_q_eq : q = (nps).countP (· == .accNP) := by
-      have : ts.countP (· == .accNP) = nps.countP (· == .accNP) := by
-        rw [hts_eq, List.countP_append]
-        have hvs_zero : vs.countP (· == .accNP) = 0 := by
-          apply List.countP_eq_zero.mpr
-          intro t ht
-          have := h_vs t ht
-          cases t <;> simp_all [Token.isNP]
-        rw [hvs_zero]; simp
-      rw [hw_map, count_b_image_eq_count_accNP] at h_q
+    have h_q_nps : q = nps.countP (· == .accNP) := by
+      rw [h_q_eq, ← countP_filter_notMatrix_accNP, hts_filter, List.countP_append]
+      have hvs_zero : vs.countP (· == .accNP) = 0 := by
+        apply List.countP_eq_zero.mpr
+        intro t ht; have := h_vs t ht; cases t <;> simp_all [Token.isV]
       omega
-    have h_s_eq : s = (vs).countP (· == .accV) := by
-      have : ts.countP (· == .accV) = vs.countP (· == .accV) := by
-        rw [hts_eq, List.countP_append]
-        have hnps_zero : nps.countP (· == .accV) = 0 := by
-          apply List.countP_eq_zero.mpr
-          intro t ht
-          have := h_nps t ht
-          cases t <;> simp_all [Token.isNP]
-        rw [hnps_zero]; simp
-      rw [hw_map, count_d_image_eq_count_accV] at h_s
+    have h_s_vs : s = vs.countP (· == .accV) := by
+      rw [h_s_eq, ← countP_filter_notMatrix_accV, hts_filter, List.countP_append]
+      have hnps_zero : nps.countP (· == .accV) = 0 := by
+        apply List.countP_eq_zero.mpr
+        intro t ht; have := h_nps t ht; cases t <;> simp_all [Token.isNP]
       omega
-    have h_pr : p = r := by
-      rw [h_p_eq, h_r_eq]
-      rw [← countP_caseValue_dat_of_isNP h_nps, ← countP_caseValue_dat_of_isV h_vs]
-      exact h_dat
-    have h_qs : q = s := by
-      rw [h_q_eq, h_s_eq]
-      rw [← countP_caseValue_acc_of_isNP h_nps, ← countP_caseValue_acc_of_isV h_vs]
-      exact h_acc
+    -- Case matching: #DAT-NP in nps = #DAT-V in vs ⇒ p = r; similarly q = s.
+    have h_pr : p = r := by rw [h_p_nps, h_r_vs]; exact h_dat
+    have h_qs : q = s := by rw [h_q_nps, h_s_vs]; exact h_acc
     -- Now w = a^p b^q c^p d^q = makeString_ambncmdn p q ∈ ambncmdn.
     refine (mem_ambncmdn_iff w).mpr ⟨p, q, ?_⟩
     rw [hw_decomp, h_pr, h_qs]
@@ -733,6 +768,8 @@ theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     refine ⟨?_, makeString_ambncmdn_in_caseSorted m n⟩
     refine ⟨caseSortedTokens (arbitraryDepth m n),
             caseSortedTokens_in_swissGermanLang m n, ?_⟩
+    -- The canonical preimage has no matrix tokens, so flatMap = map.
+    show StringHom.apply tokenStringHom _ = _
     rw [← clauseImage_eq_apply, clauseImage_shape]
     rfl
 
@@ -753,19 +790,15 @@ theorem swiss_german_not_contextFree :
   rw [stringMap_swissGerman_inter_caseSorted_eq_ambncmdn]
   exact ambncmdn_not_contextFree
 
--- ============================================================================
--- §5: Strong Context-Freeness Corollary
--- ============================================================================
-
-/-- Swiss German is not strongly context-free either. Shieber §3: any
-    strongly-CF analysis induces a weakly-CF string set; since the string
-    set isn't weakly CF (`swiss_german_not_contextFree` above), no such
-    strongly-CF analysis exists. -/
-theorem not_strongly_context_free :
-    ¬ swissGermanLang.IsContextFree := swiss_german_not_contextFree
+-- (Shieber §3 also notes that strong context-freeness fails as a corollary —
+-- any strongly-CF analysis induces a weakly-CF string set. Since the string
+-- set isn't weakly CF, no strongly-CF analysis exists. We don't separately
+-- formalize this as a theorem because we have no `IsStronglyContextFree`
+-- predicate distinct from `IsContextFree`; the meta-theoretic implication
+-- would just be a renamed alias of `swiss_german_not_contextFree`.)
 
 -- ============================================================================
--- §6: Grounding in the Swiss German Fragment
+-- §5: Grounding in the Swiss German Fragment
 -- ============================================================================
 
 /-- Verbs in the Swiss German fragment have case requirements that match
@@ -777,7 +810,7 @@ theorem fragment_case_grounding :
     verbObjectCase .aastriiche = Token.caseValue .accV := by decide
 
 -- ============================================================================
--- §7: Examples from the Paper
+-- §6: Examples from the Paper
 -- ============================================================================
 
 /-- Example (1): *mer em Hans es huus hälfed aastriiche*
