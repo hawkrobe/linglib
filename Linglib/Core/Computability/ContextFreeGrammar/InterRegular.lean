@@ -657,3 +657,258 @@ theorem product_language_subset (G : ContextFreeGrammar T) (M : DFA T σ) :
       simp at hmem
 
 end ContextFreeGrammar
+
+-- ============================================================================
+-- Backward direction: G ⊓ M ⊆ G' language
+-- ============================================================================
+
+namespace ContextFreeGrammar
+
+variable {G : ContextFreeGrammar T} {σ : Type} [Fintype σ] [DecidableEq σ] {M : DFA T σ}
+
+/-- Extract the list of nonterminal "exit states" from a G' symbol-list, in
+    order. Used to invert `annotateOutput` — given a consistent annotation,
+    the path of exit-state choices is recoverable. -/
+private def extractPath : List (Symbol T (productNT G σ)) → List σ
+  | [] => []
+  | .terminal _ :: rest => extractPath rest
+  | .nonterminal (.inl (_, _, q)) :: rest => q :: extractPath rest
+  | .nonterminal (.inr _) :: rest => extractPath rest
+
+omit [Fintype σ] [DecidableEq σ] in
+private lemma extractPath_length_of_projects {β' : List (Symbol T (productNT G σ))}
+    {out : List (Symbol T G.NT)} (hp : Projects β' out) :
+    (extractPath β').length = nonterminalCount out := by
+  induction hp with
+  | nil => rfl
+  | terminal h ih =>
+    simp only [extractPath, nonterminalCount, List.countP_cons]
+    rw [ih]
+    simp [nonterminalCount]
+  | nonterminal h ih =>
+    simp only [extractPath, List.length_cons, nonterminalCount,
+               List.countP_cons]
+    rw [ih]
+    simp [nonterminalCount]
+
+omit [Fintype σ] [DecidableEq σ] in
+/-- Reconstruction lemma: given a `Projects + Consistent` annotation `β'` of
+    `out`, walking `annotateOutput` along the extracted path recovers `β'` and
+    the end state. -/
+private lemma annotateOutput_reconstruct
+    {p q : σ} {out : List (Symbol T G.NT)}
+    {β' : List (Symbol T (productNT G σ))}
+    (hp : Projects β' out) (hc : Consistent M p β' q) :
+    annotateOutput M p out (extractPath β') = (q, β') := by
+  induction hp generalizing p with
+  | nil =>
+    cases hc
+    rfl
+  | @terminal a rest rest' h ih =>
+    cases hc with
+    | terminal _ hc' =>
+      simp only [extractPath, annotateOutput]
+      rw [ih hc']
+  | @nonterminal p₀ A q₀ rest rest' h ih =>
+    cases hc with
+    | @nonterminal p p' q' A _ hc' =>
+      simp only [extractPath, annotateOutput]
+      rw [ih hc']
+
+omit [Fintype σ] [DecidableEq σ] in
+/-- Any consistent annotation corresponds to an `(start, path_fn)` choice in
+    the rule-generation enumeration. -/
+private lemma exists_path_fn_of_consistent {r : ContextFreeRule T G.NT}
+    {p q : σ} {β' : List (Symbol T (productNT G σ))}
+    (hp : Projects β' r.output) (hc : Consistent M p β' q) :
+    ∃ path_fn : Fin (nonterminalCount r.output) → σ,
+      generatedRule M r p (List.ofFn path_fn) =
+        { input := .inl (p, r.input, q), output := β' } := by
+  have hlen : (extractPath β').length = nonterminalCount r.output :=
+    extractPath_length_of_projects hp
+  refine ⟨fun i => (extractPath β').get (i.cast hlen.symm), ?_⟩
+  have h_ofFn : List.ofFn (fun i : Fin (nonterminalCount r.output) =>
+      (extractPath β').get (i.cast hlen.symm)) = extractPath β' := by
+    apply List.ext_get
+    · simp [hlen]
+    · intro i hi₁ hi₂
+      simp; rfl
+  rw [h_ofFn]
+  unfold generatedRule
+  rw [annotateOutput_reconstruct hp hc]
+
+/-- The G' rule corresponding to any consistent annotation of a G-rule's body
+    is in `(G.product M).rules`. -/
+lemma rule_exists_of_consistent {r : ContextFreeRule T G.NT}
+    (hr_mem : r ∈ G.rules) {p q : σ} {β' : List (Symbol T (productNT G σ))}
+    (hp : Projects β' r.output) (hc : Consistent M p β' q) :
+    ({ input := .inl (p, r.input, q), output := β' } :
+        ContextFreeRule T (productNT G σ)) ∈
+      (G.product M).rules := by
+  show _ ∈ (startRules M G ∪ G.rules.biUnion (rulesFromRule M))
+  rw [Finset.mem_union]
+  right
+  rw [Finset.mem_biUnion]
+  refine ⟨r, hr_mem, ?_⟩
+  rw [mem_rulesFromRule]
+  obtain ⟨path_fn, h_eq⟩ := exists_path_fn_of_consistent hp hc
+  exact ⟨p, path_fn, h_eq.symm⟩
+
+/-- The start rule for an accepting state `qf` is in `(G.product M).rules`. -/
+lemma start_rule_mem (G : ContextFreeGrammar T) (M : DFA T σ) {qf : σ}
+    (hqf : qf ∈ M.accept) :
+    ({ input := .inr (),
+       output := [.nonterminal (.inl (M.start, G.initial, qf))] } :
+        ContextFreeRule T (productNT G σ)) ∈
+      (G.product M).rules := by
+  show _ ∈ (startRules M G ∪ G.rules.biUnion (rulesFromRule M))
+  rw [Finset.mem_union]
+  left
+  rw [mem_startRules]
+  exact ⟨qf, hqf, rfl⟩
+
+-- ============================================================================
+-- Backward main lemma: lift any G derivation to G' via head induction.
+-- ============================================================================
+-- (Same `namespace ContextFreeGrammar` continues from above — no re-opening.)
+
+/-- **Annotation-existence lemma** (the heart of the backward direction).
+    For any G derivation of `s` to `(w.map .terminal)`, and any starting
+    DFA state `p`, there exists a Projects+Consistent annotation `s'` of `s`
+    such that `(G.product M).Derives s' (w.map .terminal)`.
+
+    Proved by `head_induction_on` on the G derivation: the refl case takes
+    `s' = w.map .terminal`; the head case constructs the annotation by
+    extracting a Projects+Consistent decomposition of the IH's annotation
+    of `mid` (the post-step sentential form), then applies the corresponding
+    G' rule (which exists by `rule_exists_of_consistent`). -/
+lemma exists_annotation_of_derives {s : List (Symbol T G.NT)} {w : List T}
+    (h_drv : G.Derives s (w.map .terminal)) (p : σ) :
+    ∃ s' : List (Symbol T (productNT G σ)),
+      Projects s' s ∧ Consistent M p s' (M.evalFrom p w) ∧
+      (G.product M).Derives s' (w.map .terminal) := by
+  induction h_drv using Relation.ReflTransGen.head_induction_on with
+  | refl =>
+    -- s = w.map .terminal. Take s' to be the same list at the productNT level.
+    refine ⟨w.map .terminal, Projects.map_terminal w, Consistent.map_terminal p w, ?_⟩
+    exact .refl _
+  | @head s mid step rest ih =>
+    -- step : G.Produces s mid; rest : G.Derives mid (w.map .terminal); ih : ∃ ann of mid.
+    obtain ⟨mid', hp_mid, hc_mid, hd_mid⟩ := ih
+    -- The step rewrites s to mid via some rule r ∈ G.rules.
+    obtain ⟨r, hr_mem, hrw⟩ := step
+    obtain ⟨pre, post, hs_eq, hmid_eq⟩ := hrw.exists_parts
+    -- mid = pre ++ r.output ++ post.
+    rw [hmid_eq] at hp_mid
+    -- Decompose mid' along this 3-way concat (parsed as (pre ++ r.output) ++ post).
+    obtain ⟨pre_ann, post', hmid'_eq, hp_pre_ann, hp_post⟩ := Projects.split_right hp_mid
+    obtain ⟨pre', ann_r_output, hpre_ann_eq, hp_pre, hp_ann⟩ := Projects.split_right hp_pre_ann
+    -- Decompose Consistent the same way: rewrite hc_mid using mid' decomposition.
+    rw [hmid'_eq, hpre_ann_eq] at hc_mid
+    obtain ⟨p_right, hc_pre_ann, hc_post⟩ := hc_mid.split
+    obtain ⟨p_left, hc_pre, hc_ann⟩ := hc_pre_ann.split
+    -- Construct s' = pre' ++ [.nonterminal (.inl (p_left, r.input, p_right))] ++ post'.
+    refine ⟨pre' ++ [.nonterminal (.inl (p_left, r.input, p_right))] ++ post', ?_, ?_, ?_⟩
+    · -- Projects s' s.
+      rw [hs_eq]
+      exact (hp_pre.append (.nonterminal .nil)).append hp_post
+    · -- Consistent M p s' (M.evalFrom p w).
+      exact (hc_pre.append (.nonterminal _ (.nil _))).append hc_post
+    · -- (G.product M).Derives s' (w.map .terminal).
+      -- Step: G' Produces s' mid' via rule {input := .inl (p_left, r.input, p_right), output := ann_r_output}.
+      have h_rule_mem :
+          ({ input := .inl (p_left, r.input, p_right), output := ann_r_output } :
+              ContextFreeRule T (productNT G σ)) ∈ (G.product M).rules :=
+        rule_exists_of_consistent hr_mem hp_ann hc_ann
+      have h_rewrite : ({ input := .inl (p_left, r.input, p_right),
+                          output := ann_r_output } :
+              ContextFreeRule T (productNT G σ)).Rewrites
+            (pre' ++ [.nonterminal (.inl (p_left, r.input, p_right))] ++ post')
+            (pre' ++ ann_r_output ++ post') :=
+        ContextFreeRule.rewrites_of_exists_parts _ pre' post'
+      have h_step : (G.product M).Produces
+            (pre' ++ [.nonterminal (.inl (p_left, r.input, p_right))] ++ post')
+            (pre' ++ ann_r_output ++ post') :=
+        ⟨_, h_rule_mem, h_rewrite⟩
+      -- mid' = pre' ++ ann_r_output ++ post' by hmid'_eq + hpre_ann_eq.
+      have h_mid' : mid' = pre' ++ ann_r_output ++ post' := by
+        rw [hmid'_eq, hpre_ann_eq]
+      rw [h_mid'] at hd_mid
+      exact h_step.trans_derives hd_mid
+
+/-- **Backward inclusion** (Bar-Hillel): every word in `G.language ⊓ M.accepts`
+    is generated by `G.product M`. -/
+theorem product_language_supset (G : ContextFreeGrammar T) (M : DFA T σ) :
+    G.language ⊓ M.accepts ≤ (G.product M).language := by
+  rintro w ⟨hG, hM⟩
+  -- hG : G.Derives [.nonterminal G.initial] (w.map .terminal)
+  -- hM : M.eval w ∈ M.accept
+  show (G.product M).Derives [.nonterminal (G.product M).initial] (w.map .terminal)
+  -- (G.product M).initial = .inr ()
+  -- Apply the start rule {input := .inr (), output := [.nonterminal (.inl (M.start, G.initial, qf))]}
+  -- with qf = M.eval w.
+  set qf := M.eval w with hqf_def
+  have hqf : qf ∈ M.accept := hM
+  -- Step 1: start rule application.
+  have h_start_mem :
+      ({ input := .inr (),
+         output := [.nonterminal (.inl (M.start, G.initial, qf))] } :
+            ContextFreeRule T (productNT G σ)) ∈ (G.product M).rules :=
+    start_rule_mem G M hqf
+  have h_start_rewrite :
+      ({ input := .inr (),
+         output := [.nonterminal (.inl (M.start, G.initial, qf))] } :
+            ContextFreeRule T (productNT G σ)).Rewrites
+        [.nonterminal (.inr ())] [.nonterminal (.inl (M.start, G.initial, qf))] := by
+    have := ContextFreeRule.rewrites_of_exists_parts
+      ({ input := .inr (),
+         output := [.nonterminal (.inl (M.start, G.initial, qf))] } :
+            ContextFreeRule T (productNT G σ)) [] []
+    simpa using this
+  have h_step : (G.product M).Produces
+        ([.nonterminal (.inr ())] : List (Symbol T (productNT G σ)))
+        [.nonterminal (.inl (M.start, G.initial, qf))] :=
+    ⟨_, h_start_mem, h_start_rewrite⟩
+  -- Step 2: lift the G derivation [.nonterminal G.initial] ⇒* (w.map .terminal) to G'.
+  obtain ⟨s', hp_s', hc_s', hd_s'⟩ := exists_annotation_of_derives hG M.start
+  -- s' annotates [.nonterminal G.initial]; by Projects.singleton, it's a single .nonterminal.
+  obtain ⟨p₀, q₀, hs'_eq⟩ := hp_s'.singleton_nonterminal
+  subst hs'_eq
+  -- s' = [.nonterminal (.inl (p₀, G.initial, q₀))].
+  -- From Consistent: [.nonterminal (.inl (p₀, G.initial, q₀))] is consistent from M.start to M.evalFrom M.start w.
+  -- This forces p₀ = M.start and q₀ = M.evalFrom M.start w = qf.
+  cases hc_s' with
+  | @nonterminal _ _ _ A _ h_inner =>
+    cases h_inner
+    -- Now p₀ = M.start, q₀ = qf (by def).
+    -- hd_s' : (G.product M).Derives [.nonterminal (.inl (M.start, G.initial, qf))] (w.map .terminal).
+    -- Combine: start step + derivation.
+    show (G.product M).Derives [.nonterminal (.inr ())] (w.map .terminal)
+    exact h_step.trans_derives hd_s'
+
+/-- **Bar-Hillel theorem**: `(G.product M).language = G.language ⊓ M.accepts`. -/
+theorem product_language (G : ContextFreeGrammar T) (M : DFA T σ) :
+    (G.product M).language = G.language ⊓ M.accepts :=
+  le_antisymm (product_language_subset G M) (product_language_supset G M)
+
+end ContextFreeGrammar
+
+-- ============================================================================
+-- Headline: closure of `IsContextFree` under intersection with regular languages.
+-- ============================================================================
+
+namespace Language.IsContextFree
+
+/-- **CFL closure under intersection with a regular language**
+    (Bar-Hillel, Perles & Shamir 1961; @cite{hopcroft-ullman-1979} Theorem 6.5):
+    if `L` is context-free and `R` is regular, then `L ∩ R` is context-free. -/
+theorem inter_isRegular {α : Type*} {L R : Language α}
+    (hL : L.IsContextFree) (hR : R.IsRegular) : (L ⊓ R).IsContextFree := by
+  obtain ⟨G, rfl⟩ := hL
+  -- R is regular: by `Language.IsRegular`, ∃ σ : Type (Type 0), Fintype σ, M : DFA, M.accepts = R.
+  obtain ⟨σ, _hFin, M, hM⟩ := hR
+  classical
+  refine ⟨G.product M, ?_⟩
+  rw [ContextFreeGrammar.product_language, hM]
+
+end Language.IsContextFree

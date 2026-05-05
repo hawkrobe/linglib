@@ -2,6 +2,7 @@ import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Computability.DFA
 import Linglib.Core.StringHom
 import Linglib.Core.Computability.ContextFreeGrammar.Map
+import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 
 /-!
 # Closure Properties of Context-Free Languages
@@ -9,9 +10,10 @@ import Linglib.Core.Computability.ContextFreeGrammar.Map
 CFLs are closed under several operations relevant to non-context-freeness
 arguments: string homomorphism, intersection with regular languages, and
 reversal. Mathlib (as of this writing) proves only `Language.IsContextFree.reverse`;
-homomorphism closure is proved in `Map.lean` (`Language.IsContextFree.stringMap`),
-and intersection-with-regular closure remains as an `axiom` here, pending
-in-house proof or upstream contribution to mathlib.
+homomorphism closure is proved in `Map.lean` (`Language.IsContextFree.stringMap`)
+and intersection-with-regular closure is proved in `InterRegular.lean`
+(`Language.IsContextFree.inter_isRegular`, via the Bar-Hillel triple-product).
+This file owns the contrapositive corollaries that consume both.
 
 ## What this file enables
 
@@ -28,18 +30,6 @@ ARE proved here:
   the result. Used by Swiss German non-CF (Shieber 1985), Dutch non-CF
   (Huybregts 1976 / Bresnan et al. 1982), and any future natural-language
   non-CF argument.
-
-## Proof obligations (deferred)
-
-The remaining axiom admits a standard textbook construction:
-
-* **Regular-intersection closure** (Bar-Hillel, Perles & Shamir 1961;
-  Hopcroft–Ullman 1979 Thm 6.5): triple-product construction. Pair each
-  CFG nonterminal `A` with a pair of DFA states `(p, q)` to track that the
-  yield of `A` drives the DFA from `p` to `q`.
-
-Either constructed in linglib or contributed upstream to mathlib (the
-natural home).
 -/
 
 /-- **Bridge to mathlib's `Language.map`.** When `h` is the letter-to-letter
@@ -59,24 +49,10 @@ natural home).
   · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
 
 -- ============================================================================
--- Closure axioms (Hopcroft–Ullman 1979) — `stringMap` proven in `Map.lean`
--- ============================================================================
-
-/-- **CFL closure under intersection with a regular language**
-    (@cite{hopcroft-ullman-1979} Theorem 6.5; Bar-Hillel, Perles & Shamir
-    1961): if `L` is context-free and `R` is regular, then `L ∩ R` is
-    context-free.
-
-    Proof obligation: Bar-Hillel triple-product construction. Deferred —
-    see the module docstring of `Linglib/Core/Computability/ContextFreeGrammar/Closure.lean`. -/
-axiom Language.IsContextFree.inter_isRegular {α : Type*}
-    {L R : Language α}
-    (hL : L.IsContextFree) (hR : R.IsRegular) :
-    (L ⊓ R).IsContextFree
-
--- ============================================================================
 -- Contrapositive corollaries (the useful direction for non-CF arguments)
 -- ============================================================================
+-- The closure theorems themselves: `Language.IsContextFree.stringMap` lives in
+-- `Map.lean`; `Language.IsContextFree.inter_isRegular` lives in `InterRegular.lean`.
 
 /-- Contrapositive of homomorphism closure: if the homomorphic image of `L`
     is not context-free, then `L` is not context-free. -/
