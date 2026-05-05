@@ -410,6 +410,57 @@ noncomputable def comulForestDel (F : TraceForest α Unit) : Hc R α ⊗[R] Hc R
   unfold comulForestDel
   rw [Multiset.map_add, Multiset.prod_add]
 
+/-- The ε-weighted forest-level Δ^d coproduct: product of `comulTreeDel_eps ε`
+    across components. Joint-cut weights multiply: `ε^{Σ d_i} = ∏ ε^{d_i}`. -/
+noncomputable def comulForestDel_eps (ε : R) (F : TraceForest α Unit) :
+    Hc R α ⊗[R] Hc R α :=
+  (F.map (comulTreeDel_eps (R := R) ε)).prod
+
+@[simp] theorem comulForestDel_eps_zero_forest (ε : R) :
+    comulForestDel_eps (R := R) ε (0 : TraceForest α Unit) = 1 := by
+  simp only [comulForestDel_eps, Multiset.map_zero, Multiset.prod_zero]
+
+@[simp] theorem comulForestDel_eps_add (ε : R) (F G : TraceForest α Unit) :
+    comulForestDel_eps (R := R) ε (F + G) =
+      comulForestDel_eps (R := R) ε F * comulForestDel_eps (R := R) ε G := by
+  unfold comulForestDel_eps
+  rw [Multiset.map_add, Multiset.prod_add]
+
+/-- At ε = 1, the weighted forest coproduct collapses to the unweighted one. -/
+theorem comulForestDel_eps_one (F : TraceForest α Unit) :
+    comulForestDel_eps (R := R) 1 F = comulForestDel (R := R) F := by
+  unfold comulForestDel_eps comulForestDel
+  congr 1
+  apply Multiset.map_congr rfl
+  intro T _
+  exact comulTreeDel_eps_one T
+
+/-- `comulForestDel_eps ε`, packaged as a multiplicative monoid hom. -/
+noncomputable def comulDelMonoidHom_eps (ε : R) :
+    Multiplicative (TraceForest α Unit) →* (Hc R α ⊗[R] Hc R α) where
+  toFun F := comulForestDel_eps (R := R) ε F.toAdd
+  map_one' := comulForestDel_eps_zero_forest ε
+  map_mul' F G := comulForestDel_eps_add ε F.toAdd G.toAdd
+
+/-- The ε-weighted Δ^d coproduct as an algebra hom `Hc R α →ₐ[R] Hc R α ⊗ Hc R α`.
+    Parallel to `comulDelAlgHom`; collapses at ε = 1. -/
+noncomputable def comulDelAlgHom_eps (ε : R) :
+    Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
+  AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
+    (comulDelMonoidHom_eps ε)
+
+/-- `comulDelAlgHom_eps ε` on the basis vector `Finsupp.single F 1` equals
+    `comulForestDel_eps ε F`. Analog of `comulDelAlgHom_apply_single`. -/
+theorem comulDelAlgHom_eps_apply_single (ε : R) (F : TraceForest α Unit) :
+    comulDelAlgHom_eps (R := R) (α := α) ε (Finsupp.single F 1)
+      = comulForestDel_eps ε F := by
+  show AddMonoidAlgebra.lift R _ _ (comulDelMonoidHom_eps ε) (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+-- The ε = 1 collapse `comulDelAlgHom_eps 1 = comulDelAlgHom` is stated AFTER
+-- `comulDelAlgHom` is defined; see `comulDelAlgHom_eps_one_eq` below.
+
 /-- `comulForestDel`, packaged as a multiplicative monoid hom.
     Public so consistency with `comulMonoidHom` / `counitMonoidHom`
     (also public to support `Bialgebra.lean` helper lemmas).
@@ -482,5 +533,17 @@ theorem comulDelAlgHom_pair (T1 T2 : TraceTree α Unit) :
   rw [comulDelAlgHom_apply_single]
   show ((({T1, T2} : TraceForest α Unit)).map (comulTreeDel (R := R))).prod = _
   exact Multiset.prod_pair _ _
+
+/-- **At ε = 1, the weighted algebra hom collapses to the unweighted one**:
+    `comulDelAlgHom_eps 1 = comulDelAlgHom`. By `AddMonoidAlgebra.algHom_ext`,
+    suffices to verify on basis vectors `single F 1`. -/
+theorem comulDelAlgHom_eps_one_eq :
+    comulDelAlgHom_eps (R := R) (α := α) 1 = comulDelAlgHom (R := R) (α := α) := by
+  apply AddMonoidAlgebra.algHom_ext
+  intro F
+  show comulDelAlgHom_eps (R := R) (α := α) 1 (Finsupp.single F (1 : R))
+     = comulDelAlgHom (R := R) (α := α) (Finsupp.single F (1 : R))
+  rw [comulDelAlgHom_eps_apply_single, comulDelAlgHom_apply_single,
+      comulForestDel_eps_one]
 
 end ConnesKreimer
