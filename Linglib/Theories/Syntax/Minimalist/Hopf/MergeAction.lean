@@ -27,20 +27,21 @@ External Merge bridges (`mergeOp_emR_matches_Step`,
 (commits 0.230.741-0.230.743). The full Lemma 1.4.1 with arbitrary
 residual workspace `Fhat` (`mergeOp_pair_residual`) is also **proven
 sorry-free** as of Phase 7b-A (commits 0.230.747-0.230.751), under the
-disjointness hypothesis that pins the workspace to **Case 1 of §1.4.1**
-(p. 48): S, S' are members of the workspace (not duplicated), and no
-admissible cut on a spectator component extracts S or S' as a subforest
-element. The cut conditions explicitly exclude **Sideward Merge** —
-Cases 2(b), 3(a), 3(b) of §1.4.1 which M-C-B formalize in Lemmas 1.4.4
-(p. 54) and 1.4.5 (p. 55).
+`MergeTargetFreeWorkspace S S' Fhat` predicate (bundled at 0.230.753)
+that pins the workspace to **Case 1 of §1.4.1** (p. 48): S, S' are
+members of the workspace (not duplicated), and no admissible cut on
+a spectator component extracts S or S' as a subforest element. The
+cut conditions explicitly exclude **Sideward Merge** — Cases 2(b),
+3(a), 3(b) of §1.4.1 which M-C-B formalize in Lemmas 1.4.4 (p. 54)
+and 1.4.5 (p. 55).
 
 This is a **pre-Minimal-Search shortcut**: M-C-B's own elimination of
 Sideward (§1.5, pp. 56-59) uses **cost-based ordering** (ε-weighted
 derivation cost in the ε → 0 limit) rather than stipulating disjointness.
 The unconditional sum-over-matchings analog (eq. 1.3.11, p. 45) is
 queued for Phase 7b-A.2; Phase 7d will derive Case-1 dominance from
-the Minimal Search cost ordering, turning the disjointness hypothesis
-from a stipulation into a theorem.
+the Minimal Search cost ordering, turning `MergeTargetFreeWorkspace`
+from a stipulated hypothesis into a derived theorem.
 
 Internal Merge is documented as a composition gap (Phase 7c, see §3).
 
@@ -85,7 +86,84 @@ open ConnesKreimer
 /-! ## §1: Workspace-level bridge predicates
 
 A "bridge predicate" relates a linguistic `Step` to its algebraic
-realization via `mergeOp`. -/
+realization via `mergeOp`.
+
+The `MergeTargetFree` predicate captures M-C-B's "Case 1 only" condition
+on the workspace (§1.4.1, p. 48): the spectator components of the workspace
+admit no Sideward Merge target for the pair (S, S'). This bundles the
+4-clause disjointness hypothesis used by `mergeOp_factor_out_singleton`
+and `mergeOp_pair_residual` into a single named predicate, and gives a
+parallel slot for the IM bridge (Phase 7c) to add its own variant. -/
+
+/-- A single tree `T` is "merge-target-free" for the pair `(S, S')`: it
+    is not itself `S` or `S'`, and no admissible cut on `T` extracts `S`
+    or `S'` as a subforest element. Geometrically, `T` contributes nothing
+    to `δ_{S, S'}`'s output via either member-level or accessible-term-level
+    matching. Polymorphic in the leaf alphabet `α`. -/
+structure MergeTargetFree {α : Type*} [DecidableEq α]
+    (S S' T : TraceTree α Unit) : Prop where
+  /-- T is not the left merge operand. -/
+  ne_left  : T ≠ S
+  /-- T is not the right merge operand. -/
+  ne_right : T ≠ S'
+  /-- No admissible cut on T extracts S as a subforest element. -/
+  no_cut_left  : ∀ c : CutShape T, S ∉ CutShape.cutForest c
+  /-- No admissible cut on T extracts S' as a subforest element. -/
+  no_cut_right : ∀ c : CutShape T, S' ∉ CutShape.cutForest c
+
+/-- A workspace forest `F̂` is "merge-target-free" for `(S, S')`: every
+    component of `F̂` satisfies `MergeTargetFree`. Equivalent to:
+    `S, S' ∉ F̂` (no member-level matching with components) AND no
+    admissible cut on any `T ∈ F̂` extracts `S` or `S'` (no accessible-term
+    matching, i.e., no Sideward Merge per §1.4.1 Cases 2(b), 3(a), 3(b)).
+    Captures the "Case 1 only" reading of M-C-B Lemma 1.4.1 (p. 49). -/
+def MergeTargetFreeWorkspace {α : Type*} [DecidableEq α]
+    (S S' : TraceTree α Unit) (F : TraceForest α Unit) : Prop :=
+  ∀ T ∈ F, MergeTargetFree S S' T
+
+namespace MergeTargetFreeWorkspace
+
+variable {α : Type*} [DecidableEq α]
+  {S S' : TraceTree α Unit} {F : TraceForest α Unit}
+
+/-- Workspace-level: `S` is not a member of `F`. -/
+lemma not_mem_left (h : MergeTargetFreeWorkspace S S' F) : S ∉ F := by
+  intro hS_mem
+  exact (h S hS_mem).ne_left rfl
+
+/-- Workspace-level: `S'` is not a member of `F`. -/
+lemma not_mem_right (h : MergeTargetFreeWorkspace S S' F) : S' ∉ F := by
+  intro hS'_mem
+  exact (h S' hS'_mem).ne_right rfl
+
+/-- Workspace-level: no cut on any component extracts `S`. -/
+lemma no_cut_left (h : MergeTargetFreeWorkspace S S' F) :
+    ∀ T ∈ F, ∀ c : CutShape T, S ∉ CutShape.cutForest c :=
+  fun T hT => (h T hT).no_cut_left
+
+/-- Workspace-level: no cut on any component extracts `S'`. -/
+lemma no_cut_right (h : MergeTargetFreeWorkspace S S' F) :
+    ∀ T ∈ F, ∀ c : CutShape T, S' ∉ CutShape.cutForest c :=
+  fun T hT => (h T hT).no_cut_right
+
+/-- Empty workspace is trivially merge-target-free. -/
+lemma empty (S S' : TraceTree α Unit) :
+    MergeTargetFreeWorkspace S S' (0 : TraceForest α Unit) := fun _ h => by
+  simp at h
+
+/-- Cons preservation: if `T ::ₘ F` is merge-target-free then so is `F`. -/
+lemma of_cons {T : TraceTree α Unit}
+    (h : MergeTargetFreeWorkspace S S' (T ::ₘ F)) :
+    MergeTargetFreeWorkspace S S' F :=
+  fun U hU => h U (Multiset.mem_cons_of_mem hU)
+
+/-- Cons head: if `T ::ₘ F` is merge-target-free then `T` is. -/
+lemma head {T : TraceTree α Unit}
+    (h : MergeTargetFreeWorkspace S S' (T ::ₘ F)) :
+    MergeTargetFree S S' T :=
+  h T (Multiset.mem_cons_self _ _)
+
+end MergeTargetFreeWorkspace
 
 /-- The singleton workspace containing the embedding of `so` as the
     sole tree. The basis vector `forestToHc {so.toHc}` in `Hc ℤ LIToken`. -/
@@ -277,13 +355,13 @@ full Lemma 1.4.1 result (queued as Phase 7b-A.3). -/
     `mergePost_right_one_tmul` evaluates to `forestToHc {T} * mergeOp S S' w`. -/
 theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
-    (S S' T : TraceTree α Unit)
-    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S')
-    (h_no_S_in_T_cuts : ∀ c : CutShape T, S ∉ CutShape.cutForest c)
-    (h_no_S'_in_T_cuts : ∀ c : CutShape T, S' ∉ CutShape.cutForest c)
+    {S S' T : TraceTree α Unit}
+    (hT : MergeTargetFree S S' T)
     (w : Hc R α) :
     mergeOp (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * w)
       = forestToHc ({T} : TraceForest α Unit) * mergeOp (R := R) S S' w := by
+  -- Project the bundled hypothesis into the four clauses.
+  obtain ⟨hT_ne_S, hT_ne_S', h_no_S_in_T_cuts, h_no_S'_in_T_cuts⟩ := hT
   -- Step 1: unfold mergeOp = mergePost ∘ comulDelAlgHom
   show (mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc (R := R) ({T} : TraceForest α Unit) * w) = _
@@ -370,16 +448,13 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
 /-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, p. 49 —
     formalization restricted to **Case 1** of §1.4.1, p. 48). For any pair
     `(S, S') : TraceTree α Unit` and any residual workspace
-    `Fhat : TraceForest α Unit` such that:
+    `Fhat : TraceForest α Unit` such that `MergeTargetFreeWorkspace S S' Fhat`
+    (S, S' ∉ Fhat as components, no cut on any T ∈ Fhat extracts S or S' —
+    excludes secondary member-level matchings per eq. (1.3.3) and the
+    accessible-terms-inside Sideward cases 2(b), 3(a), 3(b) per Lemmas 1.4.4
+    (p. 54) and 1.4.5 (p. 55)), we have
 
-    - `S ∉ Fhat` and `S' ∉ Fhat` as multiset members (no duplicate components —
-      excludes secondary member-level matchings per eq. (1.3.3), p. 41), and
-    - no admissible cut on any `T ∈ Fhat` extracts `S` or `S'` as a subforest
-      element (excludes the accessible-terms-inside-components matchings of
-      Cases 2(b), 3(a), 3(b) — what M-C-B classify as **Sideward Merge** in
-      §1.4.5/§1.4.6, formalized in their Lemmas 1.4.4 (p. 54) and 1.4.5 (p. 55)),
-
-    we have `mergeOp S S' (forestToHc ({S, S'} + Fhat)) = forestToHc ({.node S S'} + Fhat)`.
+      `mergeOp S S' (forestToHc ({S, S'} + Fhat)) = forestToHc ({.node S S'} + Fhat)`.
 
     **Why these exact conditions.** M-C-B Remark 1.3.8 (p. 47) clarifies that
     External Merge picks out the *primitive part* of the coproduct (member-level
@@ -393,16 +468,14 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     Sideward (per §1.5, pp. 56-59) is via **Minimal Search cost weighting** in
     the ε → 0 limit, NOT via stipulation of disjointness. A future Phase 7d
     will derive (rather than stipulate) Case-1 dominance from a cost-ordering
-    argument; for now, the disjointness hypothesis is the well-defined
-    bridge to single-output `Step.emR/emL` semantics. -/
+    argument; for now, the `MergeTargetFreeWorkspace` predicate is the
+    well-defined bridge to single-output `Step.emR/emL` semantics. -/
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
-    (S S' : TraceTree α Unit) (Fhat : TraceForest α Unit)
-    (hS_not_Fhat : S ∉ Fhat) (hS'_not_Fhat : S' ∉ Fhat)
-    (h_no_S : ∀ T ∈ Fhat, ∀ c : CutShape T, S ∉ CutShape.cutForest c)
-    (h_no_S' : ∀ T ∈ Fhat, ∀ c : CutShape T, S' ∉ CutShape.cutForest c) :
+    {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
+    (hF : MergeTargetFreeWorkspace S S' Fhat) :
     mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) := by
-  -- Strong induction on Fhat via Multiset.induction; carry disjointness as args.
+  -- Strong induction on Fhat via Multiset.induction.
   induction Fhat using Multiset.induction with
   | empty =>
     -- Base case: Fhat = ∅. forestToHc({S,S'} + 0) = forestToHc {S, S'}.
@@ -410,30 +483,12 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [Decidab
     exact mergeOp_pair S S'
   | cons T Fhat' ih =>
     -- Inductive case: Fhat = T ::ₘ Fhat'.
-    -- T satisfies disjointness because S, S' ∉ T ::ₘ Fhat' and the cut conditions
-    -- apply to T (T is one of the elements of T ::ₘ Fhat').
-    have hT_ne_S : T ≠ S := by
-      intro h
-      apply hS_not_Fhat
-      rw [h]
-      exact Multiset.mem_cons_self _ _
-    have hT_ne_S' : T ≠ S' := by
-      intro h
-      apply hS'_not_Fhat
-      rw [h]
-      exact Multiset.mem_cons_self _ _
-    have h_no_S_T : ∀ c : CutShape T, S ∉ CutShape.cutForest c :=
-      h_no_S T (Multiset.mem_cons_self _ _)
-    have h_no_S'_T : ∀ c : CutShape T, S' ∉ CutShape.cutForest c :=
-      h_no_S' T (Multiset.mem_cons_self _ _)
-    -- The IH applies to Fhat' under the smaller disjointness conditions.
-    have hS_not_Fhat' : S ∉ Fhat' := fun h => hS_not_Fhat (Multiset.mem_cons_of_mem h)
-    have hS'_not_Fhat' : S' ∉ Fhat' := fun h => hS'_not_Fhat (Multiset.mem_cons_of_mem h)
-    have h_no_S_Fhat' : ∀ U ∈ Fhat', ∀ c : CutShape U, S ∉ CutShape.cutForest c :=
-      fun U hU => h_no_S U (Multiset.mem_cons_of_mem hU)
-    have h_no_S'_Fhat' : ∀ U ∈ Fhat', ∀ c : CutShape U, S' ∉ CutShape.cutForest c :=
-      fun U hU => h_no_S' U (Multiset.mem_cons_of_mem hU)
-    have ih' := ih hS_not_Fhat' hS'_not_Fhat' h_no_S_Fhat' h_no_S'_Fhat'
+    -- The bundled hypothesis decomposes: T satisfies MergeTargetFree, Fhat' satisfies
+    -- MergeTargetFreeWorkspace, by the head + of_cons projections.
+    have hT : MergeTargetFree S S' T := MergeTargetFreeWorkspace.head hF
+    have ih' : mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat'))
+              = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat') :=
+      ih (MergeTargetFreeWorkspace.of_cons hF)
     -- forestToHc ({S, S'} + T ::ₘ Fhat') = forestToHc {T} * forestToHc ({S, S'} + Fhat')
     -- (using Multiset commutativity and forestToHc_add).
     have h_lhs_eq : ({S, S'} : TraceForest α Unit) + T ::ₘ Fhat'
@@ -446,7 +501,7 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [Decidab
       abel
     rw [h_lhs_eq, h_rhs_eq, forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
         forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
-    rw [mergeOp_factor_out_singleton _ _ _ hT_ne_S hT_ne_S' h_no_S_T h_no_S'_T]
+    rw [mergeOp_factor_out_singleton hT]
     -- Goal: forestToHc {T} * mergeOp(forestToHc({S,S'} + Fhat'))
     --     = forestToHc {T} * forestToHc({.node S S'} + Fhat')
     -- Apply ih' via congrArg on multiplication.
