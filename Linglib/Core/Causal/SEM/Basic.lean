@@ -358,6 +358,302 @@ theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableV
   rw [developDet_hasValue_iff]
   exact developDetVtx_of_developDetOn_hasValue h
 
+-- ════════════════════════════════════════════════════
+-- § Bridge: developDet ↦ developDetOn (completeness)
+-- ════════════════════════════════════════════════════
+
+/-! Completeness counterpart to the soundness bridge above. For a
+    `Fintype V + IsDAG + IsDeterministic` SEM, `Fintype.card V`
+    iterations of `stepOnceDetOn` over any vertex list covering all of
+    `V` produce the canonical answer at every vertex.
+
+    Proof outline:
+    1. Monotonicity: `s.le (singleStepAtDet M s v)`, etc.
+    2. Single-step progress: undetermined+ready ⇒ determined after step.
+    3. IsDAG min: nonempty undetermined set has a `WellFounded.has_min`
+       member whose strict ancestors (and so parents) are all determined,
+       hence ready.
+    4. Pass-progress: every non-fixed pass strictly decreases `undetCount`.
+    5. Bound: after `Fintype.card V` passes, `undetCount = 0`. -/
+
+section Completeness
+
+variable [DecidableEq V] [DecidableValuation α]
+variable (M : SEM V α) [IsDeterministic M]
+
+/-- `singleStepAtDet` only extends the valuation. -/
+private lemma singleStepAtDet_le (s : Valuation α) (v : V) :
+    s.le (singleStepAtDet M s v) := by
+  intro w x hwx
+  by_cases hSome : (s.get v).isSome
+  · rw [singleStepAtDet_skip_determined M s v hSome]; exact hwx
+  · rw [Option.not_isSome_iff_eq_none] at hSome
+    by_cases hR : ready M s v
+    · rw [singleStepAtDet_extend M s v (Option.isNone_iff_eq_none.mpr hSome) hR]
+      by_cases hwv : w = v
+      · subst hwv
+        rw [Valuation.hasValue, hSome] at hwx
+        exact absurd hwx (by simp)
+      · rw [Valuation.hasValue, Valuation.extend_get_ne hwv]; exact hwx
+    · rw [singleStepAtDet_skip_not_ready M s v hR]; exact hwx
+
+omit [DecidableEq V] in
+/-- `Valuation.le` is transitive. -/
+private lemma Valuation.le_trans {s₁ s₂ s₃ : Valuation α}
+    (h₁₂ : s₁.le s₂) (h₂₃ : s₂.le s₃) : s₁.le s₃ :=
+  fun w x hwx => h₂₃ w x (h₁₂ w x hwx)
+
+/-- `stepOnceDetOn` only extends the valuation. -/
+private lemma stepOnceDetOn_le (s : Valuation α) (vs : List V) :
+    s.le (stepOnceDetOn M vs s) := by
+  unfold stepOnceDetOn
+  induction vs generalizing s with
+  | nil => intro w x h; exact h
+  | cons v vs ih =>
+    simp only [List.foldl_cons]
+    exact Valuation.le_trans (singleStepAtDet_le M s v) (ih (singleStepAtDet M s v))
+
+/-- `developDetOn` only extends the valuation. -/
+private lemma developDetOn_le (s : Valuation α) (vs : List V) (n : ℕ) :
+    s.le (developDetOn M vs n s) := by
+  induction n generalizing s with
+  | zero => intro w x h; exact h
+  | succ n ih =>
+    rw [developDetOn_succ]
+    exact Valuation.le_trans (stepOnceDetOn_le M s vs) (ih (stepOnceDetOn M vs s))
+
+omit [DecidableEq V] [IsDeterministic M] in
+/-- `ready` is monotone in the valuation: extending a valuation only
+    determines more parents, preserving readiness. -/
+private lemma ready_mono {s s' : Valuation α} (hLe : s.le s') (v : V)
+    (hR : ready M s v) : ready M s' v := by
+  intro u hu
+  have hSome : (s.get u).isSome := hR u hu
+  have hVal : s.hasValue u ((s.get u).get hSome) := (Option.some_get hSome).symm
+  have hVal' : s'.hasValue u ((s.get u).get hSome) := hLe u _ hVal
+  rw [Valuation.hasValue] at hVal'
+  rw [hVal']
+  rfl
+
+/-- After firing `singleStepAtDet` at `v` with `v` undetermined and ready,
+    `v` is determined. -/
+private lemma singleStepAtDet_isSome_self
+    (s : Valuation α) (v : V)
+    (hN : (s.get v).isNone) (hR : ready M s v) :
+    ((singleStepAtDet M s v).get v).isSome := by
+  rw [singleStepAtDet_extend M s v hN hR]
+  rw [Valuation.extend_get_same]; rfl
+
+/-- A foldl pass over a list containing `v` determines `v`, provided `v`
+    is undetermined and ready in the starting state.
+
+    Proof: induct on the list. If `v` is the head, fire there and propagate
+    via `stepOnceDetOn_le`. If not, the head's step preserves `v`'s
+    undeterminedness and ready-ness (monotonicity), then apply IH. -/
+private lemma stepOnceDetOn_isSome_of_mem_undet_ready
+    (s : Valuation α) (vs : List V) (v : V)
+    (hMem : v ∈ vs) (hN : (s.get v).isNone) (hR : ready M s v) :
+    ((stepOnceDetOn M vs s).get v).isSome := by
+  induction vs generalizing s with
+  | nil => exact absurd hMem (List.not_mem_nil)
+  | cons w vs ih =>
+    rw [stepOnceDetOn_cons]
+    by_cases hwv : v = w
+    · -- Fire at v on this step; propagate via stepOnceDetOn_le.
+      subst hwv
+      have hSome := singleStepAtDet_isSome_self M s v hN hR
+      have hVal : (singleStepAtDet M s v).hasValue v
+          ((singleStepAtDet M s v).get v |>.get hSome) :=
+        (Option.some_get hSome).symm
+      have hVal' :
+          (stepOnceDetOn M vs (singleStepAtDet M s v)).hasValue v _ :=
+        stepOnceDetOn_le M (singleStepAtDet M s v) vs _ _ hVal
+      rw [Valuation.hasValue] at hVal'
+      rw [hVal']; rfl
+    · -- v is later in the list; preserve undet+ready, then IH.
+      have hMem' : v ∈ vs := by
+        rcases List.mem_cons.mp hMem with h | h
+        · exact absurd h hwv
+        · exact h
+      apply ih
+      · exact hMem'
+      · -- (singleStepAtDet M s w).get v = s.get v = none
+        by_cases hwSome : (s.get w).isSome
+        · rw [singleStepAtDet_skip_determined M s w hwSome]; exact hN
+        · rw [Option.not_isSome_iff_eq_none] at hwSome
+          by_cases hwReady : ready M s w
+          · rw [singleStepAtDet_extend M s w (Option.isNone_iff_eq_none.mpr hwSome) hwReady]
+            rw [Valuation.extend_get_ne hwv]; exact hN
+          · rw [singleStepAtDet_skip_not_ready M s w hwReady]; exact hN
+      · exact ready_mono M (singleStepAtDet_le M s w) v hR
+
+omit [DecidableEq V] [DecidableValuation α] [IsDeterministic M] in
+/-- For an `IsDAG`, any nonempty set of undetermined vertices contains a
+    member whose strict ancestors are all determined — hence ready.
+
+    Proof: apply `WellFounded.has_min` to `IsStrictAncestor` and the set
+    `{v | (s.get v).isNone}`. The minimum vertex `a` has no undet strict
+    ancestor; in particular all its parents are determined. -/
+private lemma exists_undet_ready [hDag : CausalGraph.IsDAG M.graph]
+    (s : Valuation α) (hExists : ∃ v, (s.get v).isNone) :
+    ∃ v, (s.get v).isNone ∧ ready M s v := by
+  obtain ⟨v₀, hv₀⟩ := hExists
+  let S : Set V := {v | (s.get v).isNone}
+  have hS_nonempty : S.Nonempty := ⟨v₀, hv₀⟩
+  obtain ⟨a, haS, ha_min⟩ := hDag.wf.has_min S hS_nonempty
+  refine ⟨a, haS, ?_⟩
+  intro u hu
+  by_contra hNotSome
+  rw [Option.not_isSome_iff_eq_none] at hNotSome
+  have huS : u ∈ S := show (s.get u).isNone = true by
+    rw [hNotSome]; rfl
+  have hAnc : M.graph.IsStrictAncestor u a := Relation.TransGen.single hu
+  exact ha_min u huS hAnc
+
+omit [IsDeterministic M] in
+/-- Count of undetermined vertices. Strictly decreases when any vertex
+    becomes determined. -/
+private def undetCount [Fintype V] (s : Valuation α) : ℕ :=
+  (Finset.univ.filter (fun v => (s.get v).isNone = true)).card
+
+omit [IsDeterministic M] in
+/-- Pointwise progress at any vertex strictly decreases `undetCount`. -/
+private lemma undetCount_lt_of_progress [Fintype V]
+    {s s' : Valuation α} (hLe : s.le s') (v : V)
+    (hN : (s.get v).isNone) (hS : (s'.get v).isSome) :
+    undetCount s' < undetCount s := by
+  unfold undetCount
+  apply Finset.card_lt_card
+  rw [Finset.ssubset_iff]
+  refine ⟨v, ?_, ?_⟩
+  · -- v ∉ undet(s')
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [Option.isNone_iff_eq_none]
+    exact Option.ne_none_iff_isSome.mpr hS
+  · -- insert v (undet s') ⊆ undet s
+    intro u hu
+    simp only [Finset.mem_insert, Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
+    rcases hu with rfl | hu'
+    · exact hN
+    · -- (s'.get u).isNone = true ⇒ (s.get u).isNone = true
+      rw [Option.isNone_iff_eq_none] at hu' ⊢
+      match hsu : s.get u with
+      | none => rfl
+      | some y =>
+        have h1 : s.hasValue u y := hsu
+        have h2 : s'.hasValue u y := hLe u y h1
+        rw [Valuation.hasValue, hu'] at h2
+        exact absurd h2 (by simp)
+
+/-- **Existence**: after `n ≥ undetCount s` iterations of `stepOnceDetOn`
+    over a list covering `V`, every vertex is determined.
+
+    Proof: induct on `n`. If no undet vertex, done by `developDetOn_le`.
+    Otherwise, `exists_undet_ready` produces an undet+ready vertex `v`;
+    `stepOnceDetOn_isSome_of_mem_undet_ready` determines it on this pass;
+    `undetCount_lt_of_progress` bounds the count for IH. -/
+private lemma developDetOn_isSome_of_card_le [Fintype V]
+    [hDag : CausalGraph.IsDAG M.graph]
+    (vs : List V) (hCovers : ∀ v : V, v ∈ vs) :
+    ∀ (s : Valuation α) (n : ℕ), undetCount s ≤ n → ∀ v : V,
+      ((developDetOn M vs n s).get v).isSome := by
+  intro s n
+  induction n generalizing s with
+  | zero =>
+    intro hN v
+    -- undetCount s = 0 means filter is empty
+    have hCount : undetCount s = 0 := Nat.le_zero.mp hN
+    rw [developDetOn_zero]
+    -- ¬ ((s.get v).isNone)
+    by_contra hNotSome
+    rw [Option.not_isSome_iff_eq_none] at hNotSome
+    have hvUndet : v ∈ Finset.univ.filter (fun w => (s.get w).isNone = true) := by
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+                 Option.isNone_iff_eq_none]
+      exact hNotSome
+    have : Finset.univ.filter (fun w => (s.get w).isNone = true) = ∅ :=
+      Finset.card_eq_zero.mp hCount
+    rw [this] at hvUndet
+    exact absurd hvUndet (Finset.notMem_empty v)
+  | succ n ih =>
+    intro hN v
+    rw [developDetOn_succ]
+    by_cases hExists : ∃ w, (s.get w).isNone = true
+    · obtain ⟨w, hw, hRw⟩ := exists_undet_ready M s hExists
+      have hSomeAfter : ((stepOnceDetOn M vs s).get w).isSome :=
+        stepOnceDetOn_isSome_of_mem_undet_ready M s vs w (hCovers w) hw hRw
+      have hCountLt : undetCount (stepOnceDetOn M vs s) < undetCount s :=
+        undetCount_lt_of_progress (stepOnceDetOn_le M s vs) w hw hSomeAfter
+      have hN' : undetCount (stepOnceDetOn M vs s) ≤ n :=
+        Nat.lt_succ_iff.mp (Nat.lt_of_lt_of_le hCountLt hN)
+      exact ih (stepOnceDetOn M vs s) hN' v
+    · -- No undet vertices in s; v is determined in s, propagated via _le.
+      push Not at hExists
+      have hSv : (s.get v).isSome := by
+        by_contra h
+        rw [Option.not_isSome_iff_eq_none] at h
+        exact hExists v (Option.isNone_iff_eq_none.mpr h)
+      let xv : α v := (s.get v).get hSv
+      have hVal : s.hasValue v xv := (Option.some_get hSv).symm
+      have hValStep : (stepOnceDetOn M vs s).hasValue v xv :=
+        stepOnceDetOn_le M s vs v xv hVal
+      have hVal' : (developDetOn M vs n (stepOnceDetOn M vs s)).hasValue v xv :=
+        developDetOn_le M (stepOnceDetOn M vs s) vs n v xv hValStep
+      rw [Valuation.hasValue] at hVal'
+      rw [hVal']; rfl
+
+end Completeness
+
+/-- **Headline completeness theorem**: under `Fintype V`, `IsDAG`, and
+    `IsDeterministic`, the iteration form `developDetOn` reaches the
+    canonical `developDetVtx` value at every vertex, given a covering
+    list and at least `Fintype.card V` iterations.
+
+    Proof: combine existence (`developDetOn_isSome_of_card_le`, bounded
+    by `Fintype.card V` since `undetCount s ≤ Fintype.card V`) with
+    soundness (`developDetVtx_of_developDetOn_hasValue`). -/
+theorem developDetOn_hasValue_developDetVtx [DecidableEq V] [DecidableValuation α] [Fintype V]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
+    {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) :
+    (developDetOn M vs n s).hasValue v (developDetVtx M s v) := by
+  have hCardLe : undetCount s ≤ Fintype.card V := by
+    unfold undetCount
+    exact Finset.card_filter_le _ _
+  have hSome : ((developDetOn M vs n s).get v).isSome :=
+    developDetOn_isSome_of_card_le M vs hCovers s n (Nat.le_trans hCardLe hN) v
+  have hVal : (developDetOn M vs n s).hasValue v
+      ((developDetOn M vs n s).get v |>.get hSome) :=
+    (Option.some_get hSome).symm
+  have hCanon := developDetVtx_of_developDetOn_hasValue hVal
+  rw [Valuation.hasValue] at hVal
+  rw [Valuation.hasValue, hVal, hCanon]
+
+/-- **Iff form of the bridge**: under `IsDAG + IsDeterministic + Fintype`
+    with sufficient iterations, `developDetOn` membership and
+    `developDetVtx` equality coincide. Soundness gives `→`; completeness
+    gives `←` via the headline theorem. -/
+theorem developDetOn_hasValue_iff [DecidableEq V] [DecidableValuation α] [Fintype V]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
+    {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) (x : α v) :
+    (developDetOn M vs n s).hasValue v x ↔ developDetVtx M s v = x := by
+  refine ⟨developDetVtx_of_developDetOn_hasValue, fun hEq => ?_⟩
+  rw [← hEq]
+  exact developDetOn_hasValue_developDetVtx hCovers hN v
+
+/-- **Consumer Iff**: `developDet` (canonical, opaque) and `developDetOn`
+    (computational, decide-friendly) agree as `hasValue` predicates under
+    `IsDAG + IsDeterministic + Fintype + sufficient iterations`. The
+    `decide`-shaped form for `(M.developDet s).hasValue v x` proofs. -/
+theorem developDet_hasValue_iff_developDetOn_hasValue
+    [DecidableEq V] [DecidableValuation α] [Fintype V]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s : Valuation α} {vs : List V} (hCovers : ∀ v : V, v ∈ vs)
+    {n : ℕ} (hN : Fintype.card V ≤ n) (v : V) (x : α v) :
+    (M.developDet s).hasValue v x ↔ (developDetOn M vs n s).hasValue v x := by
+  rw [developDet_hasValue_iff, developDetOn_hasValue_iff hCovers hN]
+
 /-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
     with `cause` undetermined in `s`, Pearl-intervening to set
     `cause := xC` is equivalent (at the level of `developDet`) to
