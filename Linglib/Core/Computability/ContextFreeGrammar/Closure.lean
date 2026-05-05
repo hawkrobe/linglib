@@ -9,18 +9,9 @@ import Linglib.Core.Computability.ContextFreeGrammar.Map
 CFLs are closed under several operations relevant to non-context-freeness
 arguments: string homomorphism, intersection with regular languages, and
 reversal. Mathlib (as of this writing) proves only `Language.IsContextFree.reverse`;
-the other two are declared here as `axiom`s with citations to
-@cite{hopcroft-ullman-1979} (Theorems 6.2 and 6.5), pending in-house proof
-or upstream contribution to mathlib.
-
-## Why axioms (and not `def : Prop`)
-
-`axiom` makes the gap honest: the assumption surfaces in `#print axioms` for
-any downstream consumer, and consumers obtain the closure facts as
-*propositions in scope*, not as quantified hypotheses they have to thread
-manually. A `def : Prop` (the previous shape, in `Phenomena.WordOrder.Studies.Shieber1985`)
-satisfies neither requirement — it is dead Prop that no consumer ever has
-to discharge.
+homomorphism closure is proved in `Map.lean` (`Language.IsContextFree.stringMap`),
+and intersection-with-regular closure remains as an `axiom` here, pending
+in-house proof or upstream contribution to mathlib.
 
 ## What this file enables
 
@@ -40,19 +31,15 @@ ARE proved here:
 
 ## Proof obligations (deferred)
 
-The two axioms admit standard textbook constructions:
+The remaining axiom admits a standard textbook construction:
 
-* **Homomorphism closure** (Hopcroft–Ullman 1979 Thm 6.2): terminal
-  substitution. Rewrite each rule `A → α` of a CFG `G` to `A → h(α)`,
-  treating each terminal symbol's image as a fixed string. Polynomial-size
-  construction.
 * **Regular-intersection closure** (Bar-Hillel, Perles & Shamir 1961;
   Hopcroft–Ullman 1979 Thm 6.5): triple-product construction. Pair each
   CFG nonterminal `A` with a pair of DFA states `(p, q)` to track that the
   yield of `A` drives the DFA from `p` to `q`.
 
 Either constructed in linglib or contributed upstream to mathlib (the
-natural home for both).
+natural home).
 -/
 
 /-- **Bridge to mathlib's `Language.map`.** When `h` is the letter-to-letter
