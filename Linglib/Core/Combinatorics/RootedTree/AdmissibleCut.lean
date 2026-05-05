@@ -424,6 +424,92 @@ theorem cutForest_eq_zero_iff {T : TraceTree α β} (c : CutShape T) :
     rw [CutShape.cutForest, ihl, ihr]
     rfl
 
+/-! ## §5.5: Cut depth (cost weighting for Minimal Search)
+@cite{marcolli-chomsky-berwick-2025} §1.5
+
+Per @cite{marcolli-chomsky-berwick-2025} Definition in §1.5.2 (p. 59), each
+extracted accessible term `T_v ⊂ T` carries a weight `ε^{d_v}` where
+`d_v = dist(v, v_T)` is the depth of vertex `v` from the root of `T`.
+
+`cutTotalDepth c` computes the sum `Σ d_v` over all subtrees extracted by
+`c`. This is the load-bearing quantity for the Minimal Search cost
+function: `c(M(α, β)) = depth(α) + depth(β)` per M-C-B rule 5 (p. 59), and
+the cost of a single mergeOp call equals `cutTotalDepth` of the joint cut
+producing `(α, β)`.
+
+The empty cut contributes 0 (no extractions). The non-empty cut on a node
+adds 1 (depth of immediate children) plus recursive contributions shifted
+by 1.
+
+Phase 7d (Minimal Search) consumes this for the weighted Merge operator
+`M^ε` and Proposition 1.5.1 (p. 60) — EM/IM are zero-cost; Sideward is
+positive-cost.
+
+Note: this captures only the EXTRACTION-side depth (positive contributions
+per M-C-B rule 1). Quotient depth (rule 2, with `ε^{-d}` weights) cancels
+the extraction depth in the IM composition; we don't track it separately
+here because the cancellation-aware ℕ cost function we'll build computes
+the final `c(M)` directly. -/
+
+/-- The total depth of a cut: the sum, over all subtrees extracted by `c`,
+    of the depth at which each subtree was extracted (= distance from
+    the root of the source tree to the vertex where the cut occurred).
+
+    For a cut on `.node l r`:
+    - `bothCut`: extracts `l` and `r` each at depth 1 → total = 2.
+    - `onlyLeftCut hl cr`: extracts `l` at depth 1, plus `cr`'s extractions
+      from inside `r` (each shifted +1) → 1 + (cutTotalDepth cr + |cutForest cr|).
+    - `onlyRightCut hr cl`: symmetric.
+    - `bothRecurse cl cr`: shifted contributions from both children. -/
+def cutTotalDepth : ∀ {T : TraceTree α β}, CutShape T → ℕ
+  | .leaf _,   .atLeaf       => 0
+  | .trace _,  .atTrace      => 0
+  | .node _ _, .bothCut _ _  => 2
+  | .node _ _, .onlyLeftCut _ cr =>
+      1 + (cutTotalDepth cr + (CutShape.cutForest cr).card)
+  | .node _ _, .onlyRightCut _ cl =>
+      (cutTotalDepth cl + (CutShape.cutForest cl).card) + 1
+  | .node _ _, .bothRecurse cl cr =>
+      (cutTotalDepth cl + (CutShape.cutForest cl).card) +
+      (cutTotalDepth cr + (CutShape.cutForest cr).card)
+
+/-! ## §5.5.1: Sanity checks for `cutTotalDepth` -/
+
+/-- Helper: the empty cut's `cutForest` is empty (this matches `cutForest_empty`
+    in §6 below; restated here as a `private` because §5.5 precedes §6). -/
+private theorem cutForest_empty_aux : ∀ (T : TraceTree α β),
+    CutShape.cutForest (CutShape.empty T) = (0 : Multiset (TraceTree α β))
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r => by
+      show CutShape.cutForest
+              (CutShape.bothRecurse (CutShape.empty l) (CutShape.empty r))
+            = (0 : Multiset (TraceTree α β))
+      rw [CutShape.cutForest, cutForest_empty_aux l, cutForest_empty_aux r]
+      rfl
+
+/-- The empty cut has depth 0 (no extractions). -/
+@[simp] theorem cutTotalDepth_empty : ∀ (T : TraceTree α β),
+    cutTotalDepth (CutShape.empty T) = 0
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r => by
+      show cutTotalDepth (CutShape.bothRecurse (CutShape.empty l) (CutShape.empty r)) = 0
+      rw [cutTotalDepth, cutTotalDepth_empty l, cutTotalDepth_empty r,
+          cutForest_empty_aux l, cutForest_empty_aux r,
+          Multiset.card_zero]
+
+/-- A cut has depth 0 iff its cut-forest is empty (extracts nothing).
+    Combined with `cutForest_eq_zero_iff`, this gives `cutTotalDepth c = 0
+    ↔ c = empty T`. The cost-weighted Minimal Search formalism uses this
+    to characterize "no actual extraction" cases. -/
+theorem cutTotalDepth_eq_zero_of_cutForest_eq_zero
+    {T : TraceTree α β} (c : CutShape T) (h : CutShape.cutForest c = 0) :
+    cutTotalDepth c = 0 := by
+  have : c = CutShape.empty T := (cutForest_eq_zero_iff c).mp h
+  subst this
+  exact cutTotalDepth_empty T
+
 /-! ## §6: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
