@@ -1,6 +1,7 @@
 import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Computability.DFA
 import Linglib.Core.StringHom
+import Linglib.Core.Computability.ContextFreeGrammar.Map
 
 /-!
 # Closure Properties of Context-Free Languages
@@ -54,20 +55,6 @@ Either constructed in linglib or contributed upstream to mathlib (the
 natural home for both).
 -/
 
-/-- The homomorphic image of a language under a string homomorphism.
-
-    Given `h : Core.StringHom α β` (a letterwise free-monoid homomorphism)
-    and a language `L : Language α`, this is the language `{ h(v) | v ∈ L }`
-    over the target alphabet `β`.
-
-    Definitionally equivalent to mathlib's letter-to-letter `Language.map`
-    when `h` is letter-singleton (`fun a => [f a]`), but `StringHom` is
-    strictly more general (each input letter can map to a multi-letter output,
-    including the empty string). -/
-def Language.stringMap {α β : Type*}
-    (h : Core.StringHom α β) (L : Language α) : Language β :=
-  {w | ∃ v ∈ L, Core.StringHom.apply h v = w}
-
 /-- **Bridge to mathlib's `Language.map`.** When `h` is the letter-to-letter
     `StringHom.letterMap f` (each input symbol → singleton output), the
     homomorphic image collapses to mathlib's `Language.map f`, the
@@ -85,19 +72,8 @@ def Language.stringMap {α β : Type*}
   · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
 
 -- ============================================================================
--- Closure axioms (Hopcroft–Ullman 1979)
+-- Closure axioms (Hopcroft–Ullman 1979) — `stringMap` proven in `Map.lean`
 -- ============================================================================
-
-/-- **CFL closure under string homomorphism** (@cite{hopcroft-ullman-1979}
-    Theorem 6.2): if `L` is context-free and `h` is a string homomorphism,
-    then `h(L)` is context-free.
-
-    Proof obligation: terminal-substitution construction. Deferred — see the
-    module docstring of `Linglib/Core/Computability/ContextFreeGrammar/Closure.lean`. -/
-axiom Language.IsContextFree.stringMap {α β : Type*}
-    (h : Core.StringHom α β) {L : Language α}
-    (hL : L.IsContextFree) :
-    (Language.stringMap h L).IsContextFree
 
 /-- **CFL closure under intersection with a regular language**
     (@cite{hopcroft-ullman-1979} Theorem 6.5; Bar-Hillel, Perles & Shamir
