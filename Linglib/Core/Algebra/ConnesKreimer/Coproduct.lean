@@ -315,6 +315,86 @@ theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
             forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
               deletionRightChannel (R := R) (CutShape.remainderDeletion c) := rfl
 
+/-! ## §6.5: Cost-weighted Δ^d for Minimal Search
+@cite{marcolli-chomsky-berwick-2025} §1.5
+
+Per @cite{marcolli-chomsky-berwick-2025} Definition in §1.5.2 / §1.5.3
+(p. 59-60), the **cost-weighted** Merge operator `M^ε_{S, S'}` weights each
+admissible cut's contribution by `ε^{depth}`. At the coproduct layer this
+corresponds to weighting `comulTreeDel`'s cut sum by `ε^{cutTotalDepth c}`.
+
+`comulTreeDel_eps ε T` is the ε-parameterized version. Two key facts:
+
+- **At ε = 1**: weights collapse to 1, recovering `comulTreeDel T`.
+- **At ε = 0**: only cost-0 contributions (= empty cut, by 7d.1's
+  `cutTotalDepth_eq_zero_of_cutForest_eq_zero`) survive, leaving just the
+  primitive part `T ⊗ 1 + 1 ⊗ T`. This matches M-C-B Remark 1.3.8 (p. 47):
+  "External Merge picks out the primitive part of the coproduct."
+
+Phase 7d's punchline: in the ε → 0 limit, mergeOp_eps 0 produces only
+Case 1 of §1.4.1 (External Merge member-level matching), automatically
+suppressing all Sideward Merge contributions. This DERIVES the disjointness
+hypothesis from `mergeOp_pair_residual` rather than stipulating it. -/
+
+/-- The ε-weighted tree-level Δ^d coproduct. Each cut `c` contributes its
+    usual term scaled by `ε^{cutTotalDepth c}`. The primitive `T ⊗ 1` term
+    has cost 0 (no extraction) and is unweighted. -/
+noncomputable def comulTreeDel_eps (ε : R) (T : TraceTree α Unit) :
+    Hc R α ⊗[R] Hc R α :=
+  forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
+  +
+  ∑ c : CutShape T,
+    ε ^ (CutShape.cutTotalDepth c) •
+      (forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+        deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+
+/-- At ε = 1, the weighted coproduct collapses to the unweighted one
+    (since `1^n = 1` and `1 • x = x`). -/
+theorem comulTreeDel_eps_one (T : TraceTree α Unit) :
+    comulTreeDel_eps (R := R) 1 T = comulTreeDel (R := R) T := by
+  unfold comulTreeDel_eps comulTreeDel
+  congr 1
+  apply Finset.sum_congr rfl
+  intro c _
+  rw [one_pow, one_smul]
+
+/-- At ε = 0, only the empty cut's contribution survives the weighting
+    (since `0^0 = 1` and `0^k = 0` for `k ≥ 1`). The empty cut has
+    `cutForest = 0` and `remainderDeletion = some T`, so its contribution
+    is `1 ⊗ forestToHc {T}`. Combined with the unweighted primitive
+    `T ⊗ 1`, the result is the **primitive part** of M-C-B Remark 1.3.8. -/
+theorem comulTreeDel_eps_zero (T : TraceTree α Unit) :
+    comulTreeDel_eps (R := R) 0 T
+      = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
+        + (1 : Hc R α) ⊗ₜ[R]
+            forestToHc (R := R) ({T} : TraceForest α Unit) := by
+  unfold comulTreeDel_eps
+  congr 1
+  -- Show the cut sum reduces to the empty-cut contribution.
+  rw [show (∑ c : CutShape T, (0 : R) ^ (CutShape.cutTotalDepth c) •
+            (forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c)))
+      = (forestToHc (R := R) (CutShape.cutForest (CutShape.empty T)) ⊗ₜ[R]
+          deletionRightChannel (R := R)
+            (CutShape.remainderDeletion (CutShape.empty T))) from ?_]
+  · -- empty cut: cutForest = 0 → forestToHc 0 = 1; remainderDeletion = some T → forestToHc {T}.
+    rw [CutShape.cutForest_empty, forestToHc_zero,
+        CutShape.remainderDeletion_empty]
+    rfl
+  · -- Sum reduction: only c = empty T has nonzero coefficient.
+    rw [Finset.sum_eq_single (CutShape.empty T)]
+    · -- For empty cut: 0^0 = 1, 1 • x = x.
+      rw [CutShape.cutTotalDepth_empty, pow_zero, one_smul]
+    · -- For c ≠ empty T: cutTotalDepth c > 0 (by cutTotalDepth_eq_zero_iff),
+      -- so 0^k = 0, contribution vanishes.
+      intro c _ hc_ne
+      have hcost_ne : CutShape.cutTotalDepth c ≠ 0 := by
+        intro h_zero
+        exact hc_ne ((CutShape.cutTotalDepth_eq_zero_iff c).mp h_zero)
+      rw [zero_pow hcost_ne, zero_smul]
+    · intro h_not_mem
+      exact absurd (Finset.mem_univ _) h_not_mem
+
 /-- The forest-level Δ^d coproduct: product of tree-level coproducts
     over the components. Same multiplicative extension as Δ^c. -/
 noncomputable def comulForestDel (F : TraceForest α Unit) : Hc R α ⊗[R] Hc R α :=

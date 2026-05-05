@@ -510,6 +510,41 @@ theorem cutTotalDepth_eq_zero_of_cutForest_eq_zero
   subst this
   exact cutTotalDepth_empty T
 
+/-- Converse: `cutTotalDepth c = 0` forces `c = empty T`. The non-empty
+    cut constructors all contribute strictly positive depth (extracting
+    at least one subtree at depth ≥ 1). -/
+theorem eq_empty_of_cutTotalDepth_eq_zero :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      cutTotalDepth c = 0 → c = CutShape.empty T
+  | .leaf _, .atLeaf, _ => rfl
+  | .trace _, .atTrace, _ => rfl
+  | .node _ _, .bothCut _ _, h => by
+      simp only [cutTotalDepth] at h
+      omega
+  | .node _ _, .onlyLeftCut _ _, h => by
+      simp only [cutTotalDepth] at h
+      omega
+  | .node _ _, .onlyRightCut _ _, h => by
+      simp only [cutTotalDepth] at h
+      omega
+  | .node l r, .bothRecurse cl cr, h => by
+      simp only [cutTotalDepth] at h
+      have hcl_zero : cutTotalDepth cl = 0 := by omega
+      have hcl_card_zero : (CutShape.cutForest cl).card = 0 := by omega
+      have hcr_zero : cutTotalDepth cr = 0 := by omega
+      have hcr_card_zero : (CutShape.cutForest cr).card = 0 := by omega
+      have ihl : cl = CutShape.empty l := eq_empty_of_cutTotalDepth_eq_zero cl hcl_zero
+      have ihr : cr = CutShape.empty r := eq_empty_of_cutTotalDepth_eq_zero cr hcr_zero
+      subst ihl; subst ihr
+      rfl
+
+/-- The full characterization: `cutTotalDepth c = 0 ↔ c = empty T`. -/
+theorem cutTotalDepth_eq_zero_iff
+    {T : TraceTree α β} (c : CutShape T) :
+    cutTotalDepth c = 0 ↔ c = CutShape.empty T :=
+  ⟨eq_empty_of_cutTotalDepth_eq_zero c,
+   fun h => h ▸ cutTotalDepth_empty T⟩
+
 /-! ## §6: Sanity checks -/
 
 /-- The empty cut extracts nothing. -/
