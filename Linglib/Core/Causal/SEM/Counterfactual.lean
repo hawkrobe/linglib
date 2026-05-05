@@ -226,9 +226,7 @@ noncomputable def sufficientCause [Fintype V] [DecidableEq V] [DecidableValuatio
 
 /-- Bridge: under `IsDeterministic`, `counterfactualSimulate` is the Dirac
     of the per-vertex counterfactual valuation `developDet M (cfSeed ...)`.
-    Follows immediately from `develop_eq_pure_of_deterministic` (Basic.lean,
-    currently sorry'd pending the per-vertex `developDet` proof — same
-    chain as before the refactor, no new sorrys introduced). -/
+    Follows immediately from `develop_eq_pure_of_deterministic` (Basic.lean). -/
 theorem counterfactualSimulate_eq_pure_of_deterministic
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]

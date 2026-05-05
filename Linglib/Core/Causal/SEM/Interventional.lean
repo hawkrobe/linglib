@@ -32,10 +32,8 @@ substrate, distinct files for distinct mathematical questions.
 
 `probabilisticSuf` is `noncomputable` (uses `tsum` over PMF). The
 deterministic-collapse bridge `probabilisticSuf_of_deterministic` reduces
-it to a {0,1} indicator under `IsDeterministic`. The bridge currently
-relies on `develop_eq_pure_of_deterministic` (sorry'd in `Basic.lean`
-pending the per-vertex `developDet` proof), so the chain has one
-substrate sorry. Documented; not a regression from the pre-refactor state.
+it to a {0,1} indicator under `IsDeterministic` via
+`develop_eq_pure_of_deterministic` (Basic.lean). Sorry-free.
 -/
 
 namespace Core.Causal.SEM
