@@ -829,26 +829,43 @@ noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
     Under `IsDeterministic`, the joint collapses to a Dirac at the
     valuation produced by per-vertex recursion.
 
-    **Proof status**: deferred (`sorry`). The previous proof went via
-    `stepOnce_eq_pure_of_deterministic` chained over the iteration
-    count, working because the old `developDet` was definitionally the
-    iteration. The new per-vertex `developDet` requires a substantively
-    different argument: induct on `IsStrictAncestor` to show that PMF
-    iteration's fixpoint at vertex `v` matches the per-vertex
-    recursion's value. Real theorem; tractable but not blocking the
-    current substrate refactor.
-
-    The downstream consumer (`probabilisticSuf_of_deterministic` →
-    `CaoWhiteLassiter2025.probabilisticSuf_eq_deterministicSuf`) is now
-    blocked solely on this `develop_eq_pure_of_deterministic` sorry —
-    the sibling `developDet_intervene_eq_developDet_extend` was closed
-    in 0.230.782 via per-vertex `IsDAG.wf.induction`. Closing this final
-    sorry would unblock the full chain. -/
+    Proof: PMF iteration collapses to `PMF.pure ((stepOnceDet M)^[n] s)`
+    by induction on `n` (using `stepOnce_eq_pure_of_deterministic` +
+    `PMF.pure_bind`). The pointwise equality with `developDet M s`
+    follows from the completeness bridge `developDetOn_hasValue_developDetVtx`
+    over the `Fintype.elems.toList` covering with `Fintype.card V`
+    iterations: every vertex's iterated value equals
+    `some (developDetVtx M s v)`, definitionally `developDet M s v`. -/
 theorem develop_eq_pure_of_deterministic
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
     develop M s = PMF.pure (developDet M s) := by
-  sorry
+  -- Step 1: PMF iteration collapses to the Dirac of `stepOnceDet` iteration.
+  have hIter : ∀ (n : ℕ) (s' : Valuation α),
+      (fun p => p.bind (stepOnce M))^[n] (PMF.pure s')
+        = PMF.pure ((stepOnceDet M)^[n] s') := by
+    intro n
+    induction n with
+    | zero => intro s'; rfl
+    | succ k ih =>
+      intro s'
+      rw [Function.iterate_succ_apply, PMF.pure_bind,
+          stepOnce_eq_pure_of_deterministic, ih,
+          ← Function.iterate_succ_apply]
+  -- Step 2: `Fintype.elems.toList` covers every vertex.
+  have hCovers : ∀ v : V, v ∈ (Fintype.elems : Finset V).toList := fun v => by
+    rw [Finset.mem_toList]; exact Fintype.complete v
+  -- Step 3: Reduce to pointwise equality and apply the completeness bridge.
+  unfold develop
+  rw [hIter]
+  congr 1
+  funext v
+  -- `(stepOnceDet M)^[n] s v` reduces to `developDetOn M Fintype.elems.toList n s v`
+  -- by eta on `stepOnceDet M = stepOnceDetOn M Fintype.elems.toList`; the RHS
+  -- `developDet M s v = some (developDetVtx M s v)` is definitional.
+  show developDetOn M (Fintype.elems : Finset V).toList (Fintype.card V) s v
+        = some (developDetVtx M s v)
+  exact developDetOn_hasValue_developDetVtx hCovers (le_refl _) v
 
 /-! ### Topological-order independence (deferred)
 
