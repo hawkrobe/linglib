@@ -656,4 +656,124 @@ theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
   | inr h => rw [h]; decide
 
 
+-- ============================================================================
+-- Section 8: Conjunction overgeneration (cross-framework divergence)
+-- ============================================================================
+
+/-! @cite{kriz-2016} §6.2 considers (and explicitly offers no resolution for)
+the puzzle that conjunctions of proper names exhibit homogeneity but resist
+non-maximal readings. If we model "Bert, Claire and Dora went there" as a
+plural-style supervaluation over atoms {Bert, Claire, Dora}, Križ's
+`gap_enables_nonmax` predicts non-maximal use at a gap-world that's
+QUD-equivalent to a true-world. Empirically (cf.
+`Phenomena.Plurals.Homogeneity.coworkersExample.conjunctionPermitsNonMax`),
+this prediction fails — the conjunction sentence does NOT permit non-maximality
+in the same gap context where the corresponding plural definite does.
+
+Križ acknowledges this in §6.2 and speculates about "team credit" but offers
+no formalization. The theorem `kriz_overgenerates_conjunction_nonmax` below
+makes the divergence kernel-visible: a Lean prediction (the plural-style
+model says non-maximal IS usable) and the empirical record (it isn't)
+co-existing in a single statement. -/
+
+section ConjunctionOvergeneration
+
+inductive ConjAtom where | bert | claire | dora
+  deriving DecidableEq, Repr
+
+inductive ConjWorld where | allWent | dorasMissing | onlyBert | noneWent
+  deriving DecidableEq, Repr
+
+instance : Fintype ConjAtom where
+  elems := {.bert, .claire, .dora}
+  complete := by intro x; cases x <;> simp
+
+instance : Fintype ConjWorld where
+  elems := {.allWent, .dorasMissing, .onlyBert, .noneWent}
+  complete := by intro x; cases x <;> simp
+
+def wentThere : ConjAtom → ConjWorld → Bool
+  | .bert,   .allWent       => true
+  | .bert,   .dorasMissing  => true
+  | .bert,   .onlyBert      => true
+  | .bert,   .noneWent      => false
+  | .claire, .allWent       => true
+  | .claire, .dorasMissing  => true
+  | .claire, .onlyBert      => false
+  | .claire, .noneWent      => false
+  | .dora,   .allWent       => true
+  | .dora,   .dorasMissing  => false
+  | .dora,   .onlyBert      => false
+  | .dora,   .noneWent      => false
+
+def threeCoworkers : Finset ConjAtom := Finset.univ
+
+/-- Coarse "did anyone go?" issue: groups all worlds where someone went
+into a single cell, vs. the noneWent cell. -/
+inductive ConjPartition where | someWent | noneWent
+  deriving DecidableEq
+
+def someWentPartition : ConjWorld → ConjPartition
+  | .allWent => .someWent
+  | .dorasMissing => .someWent
+  | .onlyBert => .someWent
+  | .noneWent => .noneWent
+
+def coarseConjQ : QUD ConjWorld := QUD.ofDecEq someWentPartition
+
+theorem conj_dorasMissing_gap :
+    barePluralTV wentThere threeCoworkers .dorasMissing = .indet := by decide
+
+/-- Lean prediction: if we model the conjunction "Bert, Claire and Dora went"
+as a plural over {Bert, Claire, Dora}, Križ's machinery predicts usability
+at the gap-world `dorasMissing` (where Dora missed but the others went),
+under the coarse "did someone go?" issue. -/
+theorem conj_modeled_as_plural_predicts_nonmax :
+    usable coarseConjQ (barePluralTV wentThere threeCoworkers) .dorasMissing := by
+  refine ⟨?_, ⟨.allWent, ?_, ?_⟩, ?_⟩
+  · decide
+  · decide
+  · decide
+  · intro ⟨w₁, w₂, hEq, hTrue, hFalse⟩
+    cases w₁ <;> cases w₂ <;>
+      (first | exact absurd hTrue (by decide)
+             | exact absurd hFalse (by decide)
+             | exact absurd hEq (by decide))
+
+/-- **Križ overgenerates non-maximality for conjunctions** (kernel-checked
+divergence theorem). The Lean prediction (`conj_modeled_as_plural_predicts_nonmax`)
+asserts non-maximal usability at the gap-world; the empirical record
+(`coworkersExample.conjunctionPermitsNonMax = false`) asserts it is unacceptable.
+Both clauses hold simultaneously in this conjunction; the theorem's existence
+is the formal disagreement. @cite{kriz-2016} §6.2 acknowledges the puzzle and
+speculates about "team credit" but provides no formalization. -/
+theorem kriz_overgenerates_conjunction_nonmax :
+    usable coarseConjQ (barePluralTV wentThere threeCoworkers) .dorasMissing ∧
+    Phenomena.Plurals.Homogeneity.coworkersExample.conjunctionPermitsNonMax = false :=
+  ⟨conj_modeled_as_plural_predicts_nonmax, rfl⟩
+
+end ConjunctionOvergeneration
+
+-- ============================================================================
+-- Section 9: Cohen 1999 generics — equivocal "homogeneity"
+-- ============================================================================
+
+/-! @cite{kriz-2016} §6.3 claims the homogeneity-plus-pragmatics machinery
+extends to bare-plural generics ("Israelis live on the coastal plain" — true
+despite exceptions), with subkinds as the specification points. The
+`Theories.Semantics.Homogeneity.Basic` substrate docstring records this as a
+candidate spec-point instantiation.
+
+However, `Phenomena.Generics.Studies.Cohen1999` uses the word "homogeneity"
+for a *different* equation: presupposition failure when conditional probabilities
+diverge across partitions of the domain. Cohen's homogeneity returns
+"undefined" via *presupposition failure*; Križ's returns `Truth3.indet` via
+*supervaluation gap on subkinds*.
+
+A formal `kriz_vs_cohen_generic_homogeneity` divergence theorem would require
+lifting Cohen's presupposition-style machinery into the `Truth3` framework —
+not done here. The substrate docstring's claim that "the framework extends to
+generics" should be read with this caveat: it extends to a Križ-style
+treatment of generics, which is NOT what `Cohen1999` formalizes. -/
+
 end Phenomena.Plurals.Studies.Kriz2016
