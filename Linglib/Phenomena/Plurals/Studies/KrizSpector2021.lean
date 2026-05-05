@@ -95,28 +95,28 @@ theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
 an all-true world with a not-all-true world, the `all`-sentence fails to
 address the issue, so `all` cannot be used non-maximally. -/
 
-omit [DecidableEq Atom] in
 /-- For `all`-sentences, Addressing ↔ `allSatisfy` is strongly relevant.
 
 This bridges Križ 2016's pragmatic mechanism (Addressing) to K&S 2021's
 filtering mechanism (strong relevance) for the specific case of universal
-quantification over pluralities. -/
+quantification over pluralities. After the @cite{kriz-2016} §3.1 refactor
+that derives `allPluralTV` from `removeGap`, the bridge becomes a
+pointwise-equality result via `bivalentPred_allPluralTV_eq_allSatisfy`. -/
 theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Bool)
     (x : Finset Atom) :
     addressesIssue q (allPluralTV P x) ↔
     isStronglyRelevantProp q (allSatisfy P x) := by
   rw [bivalent_addressing_iff_stronglyRelevant q _ (all_bivalent P x)]
-  constructor <;> intro h w₁ w₂ hEquiv
-  · have := h w₁ w₂ hEquiv
-    simp only [bivalentPred, allPluralTV] at this
-    split_ifs at this with h₁ h₂
-    · simp_all
-    · exact absurd this (by decide)
-    · exact absurd this (by decide)
-    · simp_all
-  · have := h w₁ w₂ hEquiv
-    simp only [bivalentPred, allPluralTV]
-    congr 1; split_ifs with h₁ h₂ <;> (first | rfl | simp_all)
+  constructor
+  · intro h w₁ w₂ hEquiv
+    have := h w₁ w₂ hEquiv
+    rwa [bivalentPred_allPluralTV_eq_allSatisfy P x w₁,
+         bivalentPred_allPluralTV_eq_allSatisfy P x w₂] at this
+  · intro h w₁ w₂ hEquiv
+    have := h w₁ w₂ hEquiv
+    rw [bivalentPred_allPluralTV_eq_allSatisfy P x w₁,
+        bivalentPred_allPluralTV_eq_allSatisfy P x w₂]
+    exact this
 
 -- ============================================================================
 -- Section 3: Candidate Conjunction = Trivalent Semantics (General Bridge)
