@@ -143,7 +143,9 @@ theorem removeGap_plural_true_iff (P : Atom → W → Bool)
   show Truth3.metaAssert (pluralTruthValue P x w) = .true ↔
        pluralTruthValue P x w = .true
   generalize pluralTruthValue P x w = t
-  cases t <;> simp
+  cases t <;>
+    simp only [Truth3.metaAssert_true, Truth3.metaAssert_false, Truth3.metaAssert_indet,
+      iff_self, reduceCtorEq]
 
 /-- `bivalentPred` of an `all`-sentence equals `allSatisfy` pointwise.
     Bridge between the trivalent encoding of `allPluralTV` and the
@@ -361,22 +363,22 @@ def fineQ : QUD ProfWorld := QUD.ofDecEq id
 -- Truth values at each world
 
 theorem bare_allSmiled :
-    barePluralTV smiled profs .allSmiled = .true := by native_decide
+    barePluralTV smiled profs .allSmiled = .true := by decide
 
 theorem bare_smithNeutral :
-    barePluralTV smiled profs .smithNeutral = .indet := by native_decide
+    barePluralTV smiled profs .smithNeutral = .indet := by decide
 
 theorem bare_onlyLeeSmiled :
-    barePluralTV smiled profs .onlyLeeSmiled = .indet := by native_decide
+    barePluralTV smiled profs .onlyLeeSmiled = .indet := by decide
 
 theorem bare_noneSmiled :
-    barePluralTV smiled profs .noneSmiled = .false := by native_decide
+    barePluralTV smiled profs .noneSmiled = .false := by decide
 
 /-- The bare plural sentence about the professors IS homogeneous —
 smithNeutral is in the extension gap. -/
 theorem bare_profs_homogeneous :
     isHomogeneous (barePluralTV smiled profs) :=
-  bare_plural_homogeneous smiled profs .smithNeutral (by native_decide)
+  bare_plural_homogeneous smiled profs .smithNeutral (by decide)
 
 -- End-to-end predictions
 
@@ -385,13 +387,13 @@ Smith's failure to smile is irrelevant to whether the talk was well-received,
 so the sentence is "true enough." -/
 theorem smithNeutral_usable_coarse :
     usable coarseQ (barePluralTV smiled profs) .smithNeutral :=
-  ⟨ by native_decide
-  , ⟨.allSmiled, by native_decide, by native_decide⟩
+  ⟨ by decide
+  , ⟨.allSmiled, by decide, by decide⟩
   , by intro ⟨w₁, w₂, hEq, hTrue, hFalse⟩
        cases w₁ <;> cases w₂ <;>
-         (first | exact absurd hTrue (by native_decide)
-                | exact absurd hFalse (by native_decide)
-                | exact absurd hEq (by native_decide))
+         (first | exact absurd hTrue (by decide)
+                | exact absurd hFalse (by decide)
+                | exact absurd hEq (by decide))
   ⟩
 
 /-- The bare plural is NOT usable at smithNeutral under the fine QUD.
@@ -401,15 +403,15 @@ theorem smithNeutral_not_usable_fine :
     ¬usable fineQ (barePluralTV smiled profs) .smithNeutral := by
   intro ⟨_, ⟨w', hEq, hTrue⟩, _⟩
   cases w' <;>
-    (first | exact absurd hTrue (by native_decide)
-           | exact absurd hEq (by native_decide))
+    (first | exact absurd hTrue (by decide)
+           | exact absurd hEq (by decide))
 
 /-- The `all`-sentence is never usable at smithNeutral (under any QUD),
 because Smith didn't smile. Concrete instance of `all_prevents_nonmax`. -/
 theorem all_not_usable_smithNeutral (q : QUD ProfWorld)
     (h : usable q (allPluralTV smiled profs) .smithNeutral) : False := by
   have := all_prevents_nonmax q smiled profs .smithNeutral h
-  revert this; native_decide
+  revert this; decide
 
 /-- Concrete instance of `all_exceptions_unmentionable`: Smith's exception
 cannot be mentioned because Smith did smile in every world where the
@@ -423,15 +425,15 @@ theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
 smithNeutral — the non-maximal reading is communicated. -/
 theorem coarse_communicates_gap :
     .smithNeutral ∈ communicatedContent coarseQ (barePluralTV smiled profs) :=
-  ⟨.allSmiled, by native_decide, by native_decide⟩
+  ⟨.allSmiled, by decide, by decide⟩
 
 /-- Communicated content under the fine QUD does NOT include smithNeutral. -/
 theorem fine_does_not_communicate_gap :
     .smithNeutral ∉ communicatedContent fineQ (barePluralTV smiled profs) := by
   intro ⟨w', hEq, hTrue⟩
   cases w' <;>
-    (first | exact absurd hTrue (by native_decide)
-           | exact absurd hEq (by native_decide))
+    (first | exact absurd hTrue (by decide)
+           | exact absurd hEq (by decide))
 
 -- ----------------------------------------------------------------------------
 -- §4.2: What exceptions DO matters (Smith neutral vs. Smith angry)
@@ -452,7 +454,7 @@ theorem fine_does_not_communicate_gap :
     with individual behavior. -/
 
 theorem bare_smithAngry :
-    barePluralTV smiled profs .smithAngry = .indet := by native_decide
+    barePluralTV smiled profs .smithAngry = .indet := by decide
 
 /-- §4.2 distinctive prediction: bare plural is NOT usable at `smithAngry`
 under the coarse QUD, even though it IS usable at `smithNeutral` under the
@@ -464,8 +466,8 @@ theorem bare_smithAngry_not_usable_coarse :
     ¬ usable coarseQ (barePluralTV smiled profs) .smithAngry := by
   intro ⟨_, ⟨w', hEq, hTrue⟩, _⟩
   cases w' <;>
-    (first | exact absurd hTrue (by native_decide)
-           | exact absurd hEq (by native_decide))
+    (first | exact absurd hTrue (by decide)
+           | exact absurd hEq (by decide))
 
 /-- Together, `smithNeutral_usable_coarse` and `bare_smithAngry_not_usable_coarse`
 demonstrate Križ §4.2: the SAME bare plural sentence under the SAME QUD is
