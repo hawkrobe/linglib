@@ -26,12 +26,23 @@ External Merge bridges (`mergeOp_emR_matches_Step`,
 `mergeOp_emL_matches_Step`) are **proven sorry-free** as of Phase 7a
 (commits 0.230.741-0.230.743). The full Lemma 1.4.1 with arbitrary
 residual workspace `Fhat` (`mergeOp_pair_residual`) is also **proven
-sorry-free** as of Phase 7b-A (commits 0.230.747-0.230.751), modulo
-the disjointness hypothesis that makes M-C-B's implicit "Case 1 only"
-reading explicit: S, S' ∉ Fhat as components AND no cut on Fhat
-extracts S or S'. The unconditional sum-over-matchings result
-(eq. 1.3.11 without disjointness) is queued for Phase 7b-A.2.
-Internal Merge is documented as a composition gap (see §3).
+sorry-free** as of Phase 7b-A (commits 0.230.747-0.230.751), under the
+disjointness hypothesis that pins the workspace to **Case 1 of §1.4.1**
+(p. 48): S, S' are members of the workspace (not duplicated), and no
+admissible cut on a spectator component extracts S or S' as a subforest
+element. The cut conditions explicitly exclude **Sideward Merge** —
+Cases 2(b), 3(a), 3(b) of §1.4.1 which M-C-B formalize in Lemmas 1.4.4
+(p. 54) and 1.4.5 (p. 55).
+
+This is a **pre-Minimal-Search shortcut**: M-C-B's own elimination of
+Sideward (§1.5, pp. 56-59) uses **cost-based ordering** (ε-weighted
+derivation cost in the ε → 0 limit) rather than stipulating disjointness.
+The unconditional sum-over-matchings analog (eq. 1.3.11, p. 45) is
+queued for Phase 7b-A.2; Phase 7d will derive Case-1 dominance from
+the Minimal Search cost ordering, turning the disjointness hypothesis
+from a stipulation into a theorem.
+
+Internal Merge is documented as a composition gap (Phase 7c, see §3).
 
 Both EM bridges specialize a general algebraic result `mergeOp_pair`,
 which proves `mergeOp S S' (forestToHc {S, S'}) = forestToHc {.node S S'}`
@@ -138,13 +149,10 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (S S' : TraceTree α Unit) :
     mergeOp (R := R) S S' (forestToHc ({S, S'} : TraceForest α Unit))
       = forestToHc ({.node S S'} : TraceForest α Unit) := by
-  -- Step 1: reduce mergeOp to the post-coproduct chain.
-  show (hcMulLin (R := R) (α := α)
-         ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-         ∘ₗ deltaMatch (R := R) S S' ∘ₗ comulDelAlgHom.toLinearMap)
+  -- Step 1: reduce mergeOp to mergePost ∘ comulDelAlgHom, apply to {S, S'}.
+  show (mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc ({S, S'} : TraceForest α Unit)) = _
-  rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
-      AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
       comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
   -- Step 2: distribute and push linearity through the 3-layer chain.
   rw [add_mul, mul_add, mul_add]
@@ -152,11 +160,9 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
   -- Step 3: each of the 4 cross-terms reduces (inlined as `have`s).
   -- Term 1 (prim × prim): the only surviving term, contributes the answer.
   have h_pp :
-      hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
-                * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+      mergePost (R := R) (α := α) S S'
+          ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+            * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
         = forestToHc (R := R) ({.node S S'} : TraceForest α Unit) := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
     rw [show ({S} : TraceForest α Unit) + ({S'} : TraceForest α Unit)
@@ -164,13 +170,11 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     rw [mergePost_basis_tensor, if_pos rfl, mul_one]
   -- Term 2 (prim × sum): zero (cuts on S' can't produce {S'}).
   have h_ps :
-      hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
-                * ∑ c' : CutShape S',
-                    forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-                      deletionRightChannel (R := R) (CutShape.remainderDeletion c'))))
+      mergePost (R := R) (α := α) S S'
+          ((forestToHc (R := R) ({S} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+            * ∑ c' : CutShape S',
+                forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                  deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
         = 0 := by
     rw [Finset.mul_sum]
     simp only [map_sum]
@@ -185,13 +189,11 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     exact Multiset.add_right_inj.mp this
   -- Term 3 (sum × prim): zero (symmetric).
   have h_sp :
-      hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              ((∑ c : CutShape S,
-                  forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-                    deletionRightChannel (R := R) (CutShape.remainderDeletion c))
-                * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))))
+      mergePost (R := R) (α := α) S S'
+          ((∑ c : CutShape S,
+              forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+            * (forestToHc (R := R) ({S'} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
         = 0 := by
     rw [Finset.sum_mul]
     simp only [map_sum]
@@ -207,15 +209,13 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     exact Multiset.add_left_inj.mp h
   -- Term 4 (sum × sum): zero (combined cut-forest can't be {S, S'}).
   have h_ss :
-      hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              ((∑ c : CutShape S,
-                  forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-                    deletionRightChannel (R := R) (CutShape.remainderDeletion c))
-                * (∑ c' : CutShape S',
-                    forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-                      deletionRightChannel (R := R) (CutShape.remainderDeletion c')))))
+      mergePost (R := R) (α := α) S S'
+          ((∑ c : CutShape S,
+              forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+            * (∑ c' : CutShape S',
+                forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                  deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
         = 0 := by
     rw [Fintype.sum_mul_sum]
     simp only [map_sum]
@@ -272,7 +272,7 @@ full Lemma 1.4.1 result (queued as Phase 7b-A.3). -/
     Proof: expand `comulDelAlgHom (forestToHc {T} * w) = comulTreeDel T *
     comulDelAlgHom w`. Decompose `comulTreeDel T` into prim + cut sum. The
     prim term and non-empty cuts vanish under disjointness via
-    `mergePost_left_mul_eq_zero_of_no_decomp`. The empty cut contributes
+    `mergePost_left_mul_eq_zero_of_not_le`. The empty cut contributes
     `(1 ⊗ forestToHc {T}) * comulDelAlgHom w`, which by Hc-commutativity and
     `mergePost_right_one_tmul` evaluates to `forestToHc {T} * mergeOp S S' w`. -/
 theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
@@ -285,12 +285,9 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     mergeOp (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * w)
       = forestToHc ({T} : TraceForest α Unit) * mergeOp (R := R) S S' w := by
   -- Step 1: unfold mergeOp = mergePost ∘ comulDelAlgHom
-  show (hcMulLin (R := R) (α := α)
-         ∘ₗ TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-         ∘ₗ deltaMatch (R := R) S S' ∘ₗ comulDelAlgHom.toLinearMap)
+  show (mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc (R := R) ({T} : TraceForest α Unit) * w) = _
-  rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
-      AlgHom.toLinearMap_apply]
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
   -- comulDelAlgHom is an alg-hom, so it splits the product.
   rw [map_mul]
   -- comulDelAlgHom(forestToHc {T}) = comulTreeDel T (via single + singleton).
@@ -306,18 +303,14 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
   -- Push linearity through the 3-layer chain.
   simp only [map_add, map_sum]
   -- Now LHS = mergePost(prim_T * cdaH w) + ∑ c, mergePost(cut_c * cdaH w).
-  -- Term 1 (prim × cdaH w): vanishes via mergePost_left_mul_eq_zero_of_no_decomp.
-  rw [show hcMulLin (R := R) (α := α)
-        (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-          (deltaMatch (R := R) S S'
-            ((forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
-              * comulDelAlgHom w)))
-        = 0 from by
-      apply mergePost_left_mul_eq_zero_of_no_decomp
-      rintro ⟨d, hd⟩
-      have hT_mem : T ∈ ({T} : TraceForest α Unit) + d :=
-        Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
-      rw [← hd] at hT_mem
+  -- Term 1 (prim × cdaH w): vanishes via mergePost_left_mul_eq_zero_of_not_le.
+  rw [show mergePost (R := R) (α := α) S S'
+        ((forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * comulDelAlgHom w) = 0 from by
+      apply mergePost_left_mul_eq_zero_of_not_le
+      intro h_le
+      have hT_mem : T ∈ ({S, S'} : TraceForest α Unit) :=
+        Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
       have : T = S ∨ T = S' := by
         rw [show ({S, S'} : TraceForest α Unit) = S ::ₘ ({S'} : TraceForest α Unit) from rfl,
             Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
@@ -332,23 +325,13 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     -- By comm + mergePost_right_one_tmul, gives forestToHc {T} * mergeOp w.
     rw [show CutShape.cutForest (CutShape.empty T)
           = (0 : TraceForest α Unit) from CutShape.cutForest_empty T]
-    show hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              ((forestToHc (R := R) (0 : TraceForest α Unit) ⊗ₜ[R]
-                deletionRightChannel (R := R)
-                  (CutShape.remainderDeletion (CutShape.empty T)))
-                * comulDelAlgHom w)))
-        = forestToHc (R := R) ({T} : TraceForest α Unit) * _
     rw [forestToHc_zero]
     -- deletionRightChannel of remainderDeletion of empty cut = forestToHc {T}.
     rw [show CutShape.remainderDeletion (CutShape.empty T) = some T from
           CutShape.remainderDeletion_empty T]
-    show hcMulLin (R := R) (α := α)
-          (TensorProduct.map (graftBinaryAt (R := R) S S') LinearMap.id
-            (deltaMatch (R := R) S S'
-              (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit))
-                * comulDelAlgHom w)))
+    show mergePost (R := R) (α := α) S S'
+          (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit))
+            * comulDelAlgHom w)
         = forestToHc (R := R) ({T} : TraceForest α Unit) * _
     -- (1 ⊗ forestToHc {T}) * cdaH w = cdaH w * (1 ⊗ forestToHc {T}) by comm
     rw [mul_comm ((1 : Hc R α) ⊗ₜ[R] _) _]
@@ -359,12 +342,12 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     rw [mul_comm]
     rfl
   · -- For c ≠ empty T: cf c ≠ 0 (by cutForest_eq_zero_iff), and S, S' ∉ cf c.
-    -- Hence cf c ⊄ {S, S'}, so mergePost vanishes.
+    -- Hence cf c ⊄ {S, S'} (as sub-multiset), so mergePost vanishes.
     intro c _ hc_ne_empty
-    apply mergePost_left_mul_eq_zero_of_no_decomp
-    rintro ⟨d, hd⟩
-    have hcf_subset : CutShape.cutForest c ⊆ ({S, S'} : TraceForest α Unit) := by
-      rw [hd]; exact Multiset.subset_of_le (Multiset.le_add_right _ _)
+    apply mergePost_left_mul_eq_zero_of_not_le
+    intro h_le
+    have hcf_subset : CutShape.cutForest c ⊆ ({S, S'} : TraceForest α Unit) :=
+      Multiset.subset_of_le h_le
     have hcf_S : S ∉ CutShape.cutForest c := h_no_S_in_T_cuts c
     have hcf_S' : S' ∉ CutShape.cutForest c := h_no_S'_in_T_cuts c
     -- Every element of cf c is in {S, S'}, but neither S nor S' is in cf c.
@@ -384,24 +367,34 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     intro h
     exact absurd (Finset.mem_univ _) h
 
-/-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, p. 49 — full
-    statement under the disjointness hypothesis that captures M-C-B's implicit
-    "Case 1 only" reading of "the term"). For any pair `(S, S') : TraceTree α Unit`
-    and any residual workspace `Fhat : TraceForest α Unit` such that:
+/-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, p. 49 —
+    formalization restricted to **Case 1** of §1.4.1, p. 48). For any pair
+    `(S, S') : TraceTree α Unit` and any residual workspace
+    `Fhat : TraceForest α Unit` such that:
 
-    - `S ∉ Fhat` and `S' ∉ Fhat` as multiset members (no duplicate components — this
-      rules out alternative δ-selections at component level), and
-    - no admissible cut on any `T ∈ Fhat` extracts `S` or `S'` (this rules out
-      Cases 2/3 of §1.4.1 — accessible-terms-inside matchings),
+    - `S ∉ Fhat` and `S' ∉ Fhat` as multiset members (no duplicate components —
+      excludes secondary member-level matchings per eq. (1.3.3), p. 41), and
+    - no admissible cut on any `T ∈ Fhat` extracts `S` or `S'` as a subforest
+      element (excludes the accessible-terms-inside-components matchings of
+      Cases 2(b), 3(a), 3(b) — what M-C-B classify as **Sideward Merge** in
+      §1.4.5/§1.4.6, formalized in their Lemmas 1.4.4 (p. 54) and 1.4.5 (p. 55)),
 
     we have `mergeOp S S' (forestToHc ({S, S'} + Fhat)) = forestToHc ({.node S S'} + Fhat)`.
 
-    M-C-B's text uses "the term" language (p. 49) implicitly assuming the
-    matching is unique; the disjointness hypothesis makes this explicit.
-    Without these, the analog is a sum over multiple matchings (eq. 1.3.11,
-    p. 45), which the current `Step.emR/emL` semantics (single-tree output)
-    cannot bridge to without additional infrastructure (queued as 7b-A.2,
-    "unconditional sum-over-matchings"). -/
+    **Why these exact conditions.** M-C-B Remark 1.3.8 (p. 47) clarifies that
+    External Merge picks out the *primitive part* of the coproduct (member-level
+    matchings only); the cut conditions enforce this restriction at the
+    formalization layer by excluding the non-primitive contributions that would
+    otherwise survive `δ_{S,S'}`.
+
+    **Pre-Minimal-Search shortcut.** This is the conditional EM result. Without
+    the disjointness, `mergeOp` produces the sum-over-matchings of eq. (1.3.11),
+    p. 45 — including Sideward contributions. M-C-B's own elimination of
+    Sideward (per §1.5, pp. 56-59) is via **Minimal Search cost weighting** in
+    the ε → 0 limit, NOT via stipulation of disjointness. A future Phase 7d
+    will derive (rather than stipulate) Case-1 dominance from a cost-ordering
+    argument; for now, the disjointness hypothesis is the well-defined
+    bridge to single-output `Step.emR/emL` semantics. -/
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (S S' : TraceTree α Unit) (Fhat : TraceForest α Unit)
     (hS_not_Fhat : S ∉ Fhat) (hS'_not_Fhat : S' ∉ Fhat)
