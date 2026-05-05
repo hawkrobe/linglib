@@ -352,7 +352,7 @@ theorem question_settled_by_shieber :
     (∀ n, Shieber1985.clauseImage
         (Shieber1985.arbitraryDepth n n) ∈ anbncndn) ∧
     ¬ HasCFLPumpingProperty anbncndn :=
-  Shieber1985.swiss_german_not_context_free
+  ⟨Shieber1985.diagonal_in_language, anbncndn_not_pumpable⟩
 
 -- ============================================================================
 -- §8: IsContextFree Results (Mathlib Integration)

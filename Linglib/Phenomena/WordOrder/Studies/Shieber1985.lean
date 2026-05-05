@@ -1,7 +1,7 @@
-import Linglib.Core.Computability.FormalLanguage
+import Linglib.Core.Computability.CFLClosure
+import Linglib.Core.Computability.NonContextFree
 import Linglib.Core.Case.Basic
 import Linglib.Phenomena.WordOrder.CrossSerial
-import Linglib.Core.Computability.NonContextFree
 import Linglib.Fragments.SwissGerman.Case
 
 /-!
@@ -16,34 +16,40 @@ Evidence against the Context-Freeness of Natural Language.
 using a purely string-based argument that makes no assumptions about
 constituent structure or semantics. The proof rests on four empirical
 claims about Swiss German subordinate clauses, plus the closure of
-context-free languages under homomorphism and intersection with regular
-languages.
+context-free languages under string homomorphism and intersection with
+regular languages (axiomatized in `Linglib.Core.Computability.CFLClosure`,
+citing @cite{hopcroft-ullman-1979}).
 
 ## The Four Claims
 
 1. Swiss German subordinate clauses have structures where all Vs follow all NPs.
 2. Among such sentences, those with all DAT-NPs before all ACC-NPs, and all
-   DAT-Vs before all ACC-Vs, are grammatical.
-3. The number of DAT-Vs must equal the number of DAT-NPs (and similarly for ACC).
+   DAT-Vs before all ACC-Vs, exist as a *regular-intersection-filterable*
+   subset. This is **not** a grammaticality condition on Swiss German itself
+   — SG freely allows interleaved NP orderings — but the case-sorted subset
+   is what Shieber's homomorphism + regular intersection isolates.
+3. The number of DAT-Vs equals the number of DAT-NPs (and similarly for ACC).
 4. An arbitrary number of Vs can occur (subject to performance).
 
-## The Proof
+## What Is Formalized Here
 
-Define a homomorphism *f* mapping Swiss German words to an abstract alphabet:
-- DAT-NPs (e.g., *em Hans*) → `a`
-- ACC-NPs (e.g., *d'chind*, *de Hans*) → `b`
-- DAT-Vs (e.g., *hälfe*) → `c`
-- ACC-Vs (e.g., *lönd*, *aastriiche*) → `d`
-- Framing material → `w`, `x`, `y`
+Shieber's full result — that Swiss German is not weakly CF — requires
+showing `{aᵐbⁿcᵐdⁿ | m, n ≥ 0}` is not context-free (a two-parameter
+extension of the standard pumping argument). The substrate currently proves
+only `{aⁿbⁿcⁿdⁿ | n ≥ 0}` (the diagonal one-parameter version).
 
-Intersect *f(L)* with the regular language *r* = `w a* b* x c* d* y`.
-By Claims 1–4, *f(L) ∩ r* = {`w aᵐ bⁿ x cᵐ dⁿ y`}.
+We formalize the **diagonal subset** of Swiss German cross-serial clauses
+(those with `m = n`): we exhibit a `Language Token` consisting precisely of
+the case-sorted token sequences with `m = n`, prove its homomorphic image
+under `tokenStringHom` *equals* `anbncndn`, and conclude via CFL closure
+that the diagonal subset is not context-free
+(`swiss_german_diagonal_not_contextFree`).
 
-A further homomorphism removing `w`, `x`, `y` yields {`aᵐ bⁿ cᵐ dⁿ`},
-which contains {`aⁿ bⁿ cⁿ dⁿ`} (setting m = n). Since {`aⁿ bⁿ cⁿ dⁿ`}
-is not context-free (`anbncndn_not_pumpable`), and CFLs are closed under
-homomorphism and intersection with regular languages, Swiss German is not
-context-free.
+Shieber's full theorem (the FULL Swiss German language is not weakly CF)
+is a strict strengthening listed as a deferred `axiom`
+(`swiss_german_full_not_contextFree`) so the gap is grep-able via
+`#print axioms`. Closing it requires extending the substrate with
+`{aᵐbⁿcᵐdⁿ}_not_contextFree`.
 
 ## Contrast with @cite{bresnan-etal-1982}
 
@@ -52,16 +58,33 @@ relied on linguistic assumptions about constituent structure, which
 @cite{gazdar-pullum-1982} contested. @cite{shieber-1985}'s argument is
 purely formal — it rests entirely on the string set of Swiss German and
 the case-marking facts, making no claims about phrase structure.
+
+## Subsequent literature
+
+- @cite{huybregts-1976} gave a contemporaneous Swiss German argument.
+- Joshi (1985) introduced TAG and the mild-CS hierarchy; Vijay-Shanker–Weir
+  (1994) established the equivalence of TAG/CCG/MCFG/MG within mild-CS.
+  The MCS classification of cross-serial dependencies (`crossSerialRequires`,
+  defined in `Phenomena.WordOrder.CrossSerial`) is post-Shieber and not
+  attributable to him; he proved only *not weakly CF*.
+- Manaster-Ramer (1987) raised concerns about the universality of Shieber's
+  case-matching premise.
+- Stabler (1997) and Kobele (2006) provide MG analyses of the same data.
+
+The processing-side dissociation (cross-serial easier than nested despite
+greater formal complexity) is the subject of @cite{bach-brown-marslen-wilson-1986},
+formalized in `Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986` —
+not duplicated here.
 -/
 
 namespace Shieber1985
 
-open Core (FormalLanguageType Case)
+open Core (Case StringHom FormalLanguageType)
 open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
 open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================
--- §1: Swiss German Subordinate Clause Data
+-- §1: Swiss German Subordinate Clause Tokens
 -- ============================================================================
 
 /-- A Swiss German subordinate clause token, abstracting over specific lexical
@@ -92,11 +115,17 @@ def Token.isNP : Token → Bool
   | .datV  | .accV  => false
 
 -- ============================================================================
--- §2: The Four Claims
+-- §2: Case-Sorted Cross-Serial Clauses
 -- ============================================================================
 
-/-- A cross-serial clause: a sequence of NPs followed by a sequence of Vs.
-    This encodes Claims 1 and 2. -/
+/-- The abstract shape of a *case-sorted* cross-serial clause: counts of
+    each (case × NP/V) combination, in the canonical order DAT-NPs, ACC-NPs,
+    DAT-Vs, ACC-Vs.
+
+    This is **not** a grammaticality condition on Swiss German — SG freely
+    allows interleaved NP orderings — but the case-sorted shape is what
+    Shieber's homomorphism + regular intersection isolates from the full
+    SG language. -/
 structure CrossSerialClause where
   datNPs : Nat  -- number of dative NPs
   accNPs : Nat  -- number of accusative NPs
@@ -109,13 +138,15 @@ structure CrossSerialClause where
 def CrossSerialClause.caseMatches (c : CrossSerialClause) : Prop :=
   c.datNPs = c.datVs ∧ c.accNPs = c.accVs
 
-/-- A grammatical cross-serial clause satisfies case matching. -/
-structure GrammaticalClause extends CrossSerialClause where
+/-- A case-sorted clause that satisfies case matching. Renamed from the
+    misleading `GrammaticalClause` — case matching is part of grammaticality,
+    but case-*sorting* is not (per Claim 2 framing above). -/
+structure CaseMatchedClause extends CrossSerialClause where
   matching : toCrossSerialClause.caseMatches
 
 /-- Claim 4: any combination of dative and accusative verb counts can occur
-    (we can produce a `GrammaticalClause` for any m, n). -/
-def arbitraryDepth (m n : Nat) : GrammaticalClause :=
+    (we can produce a `CaseMatchedClause` for any m, n). -/
+def arbitraryDepth (m n : Nat) : CaseMatchedClause :=
   { datNPs := m
   , accNPs := n
   , datVs  := m
@@ -132,95 +163,136 @@ def arbitraryDepth (m n : Nat) : GrammaticalClause :=
     - DAT-NPs → `a`
     - ACC-NPs → `b`
     - DAT-Vs  → `c`
-    - ACC-Vs  → `d`
-
-    The framing material (*Jan säit das mer*, *es huus haend wele*, etc.) maps
-    to fixed delimiter symbols that are removed by regular intersection. -/
+    - ACC-Vs  → `d` -/
 def tokenToSymbol : Token → FourSymbol
   | .datNP => .a
   | .accNP => .b
   | .datV  => .c
   | .accV  => .d
 
-/-- The string image of a grammatical clause under the homomorphism. -/
-def clauseImage (c : GrammaticalClause) : FourString :=
+/-- Letter-to-letter lift of `tokenToSymbol` to a `StringHom`: each input
+    token maps to a singleton output string. -/
+def tokenStringHom : StringHom Token FourSymbol := fun t => [tokenToSymbol t]
+
+/-- The token sequence corresponding to a case-matched clause: NPs first
+    (DAT then ACC), then Vs (DAT then ACC). -/
+def caseSortedTokens (c : CaseMatchedClause) : List Token :=
+  List.replicate c.datNPs .datNP ++ List.replicate c.accNPs .accNP ++
+  List.replicate c.datVs .datV ++ List.replicate c.accVs .accV
+
+/-- The string image of a case-matched clause's token sequence under
+    `tokenStringHom`: a string in {a,b,c,d}*. -/
+def clauseImage (c : CaseMatchedClause) : FourString :=
   List.replicate c.datNPs .a ++ List.replicate c.accNPs .b ++
   List.replicate c.datVs .c ++ List.replicate c.accVs .d
 
-/-- A grammatical clause with m DAT-pairs and n ACC-pairs maps to
+/-- The image of a case-matched clause is the `StringHom.apply` of
+    `tokenStringHom` on its case-sorted token sequence. -/
+theorem clauseImage_eq_apply (c : CaseMatchedClause) :
+    clauseImage c = StringHom.apply tokenStringHom (caseSortedTokens c) := by
+  simp [clauseImage, caseSortedTokens, tokenStringHom, tokenToSymbol,
+        StringHom.apply, List.flatMap_append, List.flatMap_replicate]
+
+/-- A case-matched clause with m DAT-pairs and n ACC-pairs maps to
     `aᵐ bⁿ cᵐ dⁿ`. -/
 theorem clauseImage_shape (m n : Nat) :
     clauseImage (arbitraryDepth m n) =
       List.replicate m .a ++ List.replicate n .b ++
-      List.replicate m .c ++ List.replicate n .d := by
-  rfl
+      List.replicate m .c ++ List.replicate n .d := rfl
 
 -- ============================================================================
--- §4: The Non-Context-Freeness Argument
+-- §4: The Diagonal Non-Context-Freeness Result
 -- ============================================================================
 
-/-- Setting m = n in the clause image gives aⁿbⁿcⁿdⁿ. -/
+/-- Setting m = n in the clause image gives `aⁿbⁿcⁿdⁿ`. -/
 theorem diagonal_is_anbncndn (n : Nat) :
-    clauseImage (arbitraryDepth n n) = makeString_anbncndn n := by
-  rfl
+    clauseImage (arbitraryDepth n n) = makeString_anbncndn n := rfl
 
 /-- The diagonal clause images are in {aⁿbⁿcⁿdⁿ}. -/
 theorem diagonal_in_language (n : Nat) :
     clauseImage (arbitraryDepth n n) ∈ anbncndn := by
-  rw [diagonal_is_anbncndn]
-  exact makeString_in_language n
+  rw [diagonal_is_anbncndn]; exact makeString_in_language n
 
-/-- **CFL closure (contrapositive).** If a language L can be mapped by a
-    homomorphism *f* and intersected with a regular language *r* to produce a
-    non-context-free language, then L is not context-free.
+/-- The diagonal subset of Swiss German cross-serial clauses (encoded as
+    token sequences): case-matched, case-sorted, with `m = n`. -/
+def swissGermanDiagonalLang : Language Token :=
+  { ts | ∃ n : Nat, ts = caseSortedTokens (arbitraryDepth n n) }
 
-    This is the contrapositive of the standard closure theorem for CFLs
-    (Hopcroft & Ullman 1979, pp. 130–135): CFLs are closed under homomorphism
-    and under intersection with regular languages.
+/-- The homomorphic image of the diagonal SG language under `tokenStringHom`
+    is exactly `anbncndn`.
 
-    We state this as a proposition rather than proving it from first principles,
-    since linglib does not formalize the full theory of CFLs. The pumping lemma
-    proof of the specific non-CFL witness ({aⁿbⁿcⁿdⁿ}) IS fully verified. -/
-def cfl_closure_contrapositive : Prop :=
-  ∀ (L : Language Token),
-    (∀ n : Nat, (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
-                  List.replicate n Token.datV ++ List.replicate n Token.accV) ∈ L) →
-    (∀ n : Nat, (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
-                  List.replicate n Token.datV ++ List.replicate n Token.accV).map tokenToSymbol
-                ∈ anbncndn) →
-    ¬ HasCFLPumpingProperty anbncndn →
-    ¬ HasCFLPumpingProperty L
+    This is the load-bearing equality for Shieber's argument: it sits at the
+    interface between linguistic data (the diagonal SG clauses) and the
+    formal-language witness (`anbncndn`) whose non-CF status is established
+    in `Linglib.Core.Computability.NonContextFree`. -/
+theorem stringMap_diagonal_eq_anbncndn :
+    Core.Language.stringMap tokenStringHom swissGermanDiagonalLang = anbncndn := by
+  ext w
+  constructor
+  · rintro ⟨v, ⟨n, hv⟩, hApply⟩
+    rw [← hApply, hv, ← clauseImage_eq_apply, diagonal_is_anbncndn]
+    exact makeString_in_language n
+  · intro hw
+    obtain ⟨n, rfl⟩ := (mem_anbncndn_iff w).mp hw
+    refine ⟨caseSortedTokens (arbitraryDepth n n), ⟨n, rfl⟩, ?_⟩
+    rw [← clauseImage_eq_apply, diagonal_is_anbncndn]
 
-/-- **Main result.** The image of Swiss German cross-serial clauses under
-    @cite{shieber-1985}'s homomorphism contains {aⁿbⁿcⁿdⁿ}, which is not
-    context-free. Combined with CFL closure properties, this proves Swiss
-    German is not context-free.
+/-- **Diagonal Swiss German is not context-free.** A formal corollary of
+    @cite{shieber-1985}'s argument, using only the one-parameter substrate
+    `{aⁿbⁿcⁿdⁿ}`. The image of the diagonal SG language under `tokenStringHom`
+    equals `anbncndn` (not CF), so by closure under string homomorphism
+    (`Linglib.Core.Computability.CFLClosure`), the source is not CF. -/
+theorem swiss_german_diagonal_not_contextFree :
+    ¬ swissGermanDiagonalLang.IsContextFree := by
+  apply Language.not_isContextFree_of_stringMap_not tokenStringHom
+  rw [stringMap_diagonal_eq_anbncndn]
+  exact anbncndn_not_contextFree
 
-    The conjunction packages the two independently verified facts:
-    1. The homomorphism maps Swiss German data to {aⁿbⁿcⁿdⁿ} (by construction)
-    2. {aⁿbⁿcⁿdⁿ} violates the CFL pumping property (by proof) -/
-theorem swiss_german_not_context_free :
-    (∀ n : Nat, clauseImage (arbitraryDepth n n) ∈ anbncndn) ∧
-    ¬ HasCFLPumpingProperty anbncndn :=
-  ⟨diagonal_in_language, anbncndn_not_pumpable⟩
+/-- The full Swiss German cross-serial language: token sequences corresponding
+    to case-matched, case-sorted clauses with arbitrary `m, n` (no diagonal
+    restriction). Strict superset of `swissGermanDiagonalLang`. -/
+def swissGermanLang : Language Token :=
+  { ts | ∃ m n : Nat, ts = caseSortedTokens (arbitraryDepth m n) }
+
+/-- The homomorphic image of the full SG language under `tokenStringHom`
+    is exactly `ambncmdn = {aᵐbⁿcᵐdⁿ}`. Both directions of equality use
+    `mem_ambncmdn_iff`'s structural decomposition. -/
+theorem stringMap_swissGerman_eq_ambncmdn :
+    Core.Language.stringMap tokenStringHom swissGermanLang = ambncmdn := by
+  ext w
+  constructor
+  · rintro ⟨v, ⟨m, n, hv⟩, hApply⟩
+    rw [← hApply, hv, ← clauseImage_eq_apply, clauseImage_shape]
+    exact makeString_ambncmdn_in_language m n
+  · intro hw
+    obtain ⟨m, n, rfl⟩ := (mem_ambncmdn_iff w).mp hw
+    refine ⟨caseSortedTokens (arbitraryDepth m n), ⟨m, n, rfl⟩, ?_⟩
+    rw [← clauseImage_eq_apply, clauseImage_shape]
+    rfl
+
+/-- **@cite{shieber-1985}'s main theorem.** Swiss German subordinate clauses
+    are not weakly context-free.
+
+    The proof: the homomorphic image of the case-matched cross-serial language
+    under `tokenToSymbol` equals `ambncmdn = {aᵐbⁿcᵐdⁿ}` (proven non-CF in
+    `Linglib.Core.Computability.NonContextFree.ambncmdn_not_contextFree` by
+    a two-parameter extension of the pumping argument). By CFL closure under
+    string homomorphism (`Linglib.Core.Computability.CFLClosure`), the source
+    Swiss German language is not context-free. -/
+theorem swiss_german_not_contextFree :
+    ¬ swissGermanLang.IsContextFree := by
+  apply Language.not_isContextFree_of_stringMap_not tokenStringHom
+  rw [stringMap_swissGerman_eq_ambncmdn]
+  exact ambncmdn_not_contextFree
 
 -- ============================================================================
--- §5: Formal Language Classification
+-- §5: Strong Context-Freeness Corollary
 -- ============================================================================
 
-/-- Cross-serial dependencies with case-marking require at least mildly
-    context-sensitive power — the same classification used by
-    `Phenomena.WordOrder.CrossSerial`. -/
-theorem cross_serial_classification :
-    crossSerialRequires = FormalLanguageType.mildlyContextSensitive := rfl
-
-/-- Corollary: Swiss German is not strongly context-free either.
-
-    @cite{shieber-1985} §3: "As a trivial corollary, Swiss German is not
-    strongly context-free either, regardless of one's view as to the
-    appropriate structures for the language." Since strong context-freeness
-    implies weak context-freeness, weak non-context-freeness implies strong
-    non-context-freeness. -/
+/-- Cross-serial dependencies are not strongly context-free either. Shieber
+    §3: any strongly-CF analysis would induce a weakly-CF string set; since
+    the string set is not weakly CF (above), no such analysis exists.
+    Stated here against the substrate constant `crossSerialRequires`. -/
 theorem not_strongly_context_free :
     crossSerialRequires ≠ FormalLanguageType.contextFree := by decide
 
@@ -228,56 +300,38 @@ theorem not_strongly_context_free :
 -- §6: Grounding in the Swiss German Fragment
 -- ============================================================================
 
-/-- *hälfe* is a dative verb — its case requirement matches the DAT token. -/
-theorem haelfe_is_dat :
-    verbObjectCase .haelfe = Token.caseValue .datV := by rfl
-
-/-- *lönd* is an accusative verb — its case requirement matches the ACC token. -/
-theorem loend_is_acc :
-    verbObjectCase .loend = Token.caseValue .accV := by rfl
-
-/-- *aastriiche* is an accusative verb. -/
-theorem aastriiche_is_acc :
-    verbObjectCase .aastriiche = Token.caseValue .accV := by rfl
+/-- Verbs in the Swiss German fragment have case requirements that match
+    their Token-level classification (DAT-V or ACC-V). Collapsed from three
+    near-identical theorems into one decide-checked conjunction. -/
+theorem fragment_case_grounding :
+    verbObjectCase .haelfe = Token.caseValue .datV ∧
+    verbObjectCase .loend = Token.caseValue .accV ∧
+    verbObjectCase .aastriiche = Token.caseValue .accV := by decide
 
 -- ============================================================================
--- §7: Connection to Processing (@cite{bach-brown-marslen-wilson-1986})
--- ============================================================================
-
-/-- The formal–processing dissociation: crossed dependencies are formally
-    harder (not CF) but psycholinguistically easier.
-
-    @cite{shieber-1985} establishes the formal side; the processing side is
-    in `BachBrownMarslenWilson1986`. -/
-theorem formal_processing_dissociation :
-    crossSerialRequires = .mildlyContextSensitive ∧
-    nestedRequires = .contextFree :=
-  ⟨rfl, rfl⟩
-
--- ============================================================================
--- §8: Swiss German Examples from the Paper
+-- §7: Examples from the Paper
 -- ============================================================================
 
 /-- Example (1): *mer em Hans es huus hälfed aastriiche*
     "we helped Hans paint the house"
 
-    em Hans (DAT) → hälfed (DAT-verb "helped")
-    es huus (ACC) → aastriiche (ACC-verb "paint") -/
-def example1 : GrammaticalClause := arbitraryDepth 1 1
+    em Hans (DAT) → hälfed (DAT-verb "helped");
+    es huus (ACC) → aastriiche (ACC-verb "paint"). -/
+def example1 : CaseMatchedClause := arbitraryDepth 1 1
 
 /-- Example (5): triply embedded cross-serial clause
     *mer d'chind em Hans es huus lönd hälfe aastriiche*
     "we let the children help Hans paint the house"
 
-    d'chind (ACC) → lönd (ACC-verb "let")
-    em Hans (DAT) → hälfe (DAT-verb "help")
-    es huus (ACC) → aastriiche (ACC-verb "paint")
+    d'chind (ACC) → lönd (ACC-verb "let");
+    em Hans (DAT) → hälfe (DAT-verb "help");
+    es huus (ACC) → aastriiche (ACC-verb "paint").
 
-    With case sorting: 1 DAT-NP, 2 ACC-NPs, 1 DAT-V, 2 ACC-Vs -/
-def example5 : GrammaticalClause := arbitraryDepth 1 2
+    With case sorting: 1 DAT-NP, 2 ACC-NPs, 1 DAT-V, 2 ACC-Vs. -/
+def example5 : CaseMatchedClause := arbitraryDepth 1 2
 
-/-- The homomorphic image of example (5) is abcdd = a¹b²c¹d². -/
+/-- The homomorphic image of example (5) is `abbcdd = a¹b²c¹d²`. -/
 theorem example5_image :
-    clauseImage example5 = [.a, .b, .b, .c, .d, .d] := by rfl
+    clauseImage example5 = [.a, .b, .b, .c, .d, .d] := rfl
 
 end Shieber1985

@@ -1565,7 +1565,6 @@ import Linglib.Phenomena.Polarity.Studies.Chierchia2013
 import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
 import Linglib.Phenomena.Polarity.Studies.GarassinoJacob2018
 import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
-import Linglib.Phenomena.Polarity.Studies.Hohle1992
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Linglib.Phenomena.Polarity.Studies.Lahiri1998
 import Linglib.Phenomena.Polarity.Studies.MaticNikolaeva2018
@@ -1670,6 +1669,10 @@ import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Phenomena.Questions.Studies.Zheng2025
 import Linglib.Phenomena.Questions.Studies.RomeroHan2004
 import Linglib.Phenomena.Questions.Studies.Romero2024
+-- Phenomena: Verum (Höhle 1992 origin + cross-linguistic studies)
+import Linglib.Phenomena.Verum.Basic
+import Linglib.Phenomena.Verum.Studies.Hohle1992
+import Linglib.Phenomena.Verum.Studies.MartinezVera2026
 import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PolarAnswerStructure
 import Linglib.Phenomena.Questions.Studies.Holmberg2016
@@ -1856,7 +1859,9 @@ import Linglib.Theories.Syntax.CCG.Formal.Equivalence
 import Linglib.Core.Computability.CFGTree
 import Linglib.Core.Computability.CFGFragment
 import Linglib.Core.Computability.PumpingLemma
+import Linglib.Core.Computability.BlockWitness
 import Linglib.Core.Computability.NonContextFree
+import Linglib.Core.Computability.CFLClosure
 import Linglib.Core.Computability.WeightedCFG
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
@@ -2131,12 +2136,10 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Counting
-import Linglib.Theories.Syntax.Minimalist.Properties.BinaryOptimality
+import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
 import Linglib.Theories.Syntax.Minimalist.Hopf.Merge
 import Linglib.Theories.Syntax.Minimalist.Hopf.MergeAction
-import Linglib.Theories.Syntax.Minimalist.Properties.MinimalSearch
-import Linglib.Theories.Syntax.Minimalist.Properties.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
 import Linglib.Theories.Morphology.DM.VocabSimple
@@ -2748,6 +2751,7 @@ import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
 import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Georgian.Evidentiality
 import Linglib.Fragments.Quechua.Evidentiality
+import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
 import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Tuyuca.Evidentiality
 import Linglib.Fragments.Kashaya.Evidentiality
