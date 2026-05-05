@@ -599,6 +599,124 @@ theorem mergeOp_eps_zero_pair {R : Type*} [CommSemiring R]
           if_neg (h_card_ne 0 (by decide) Multiset.card_zero)]]
   rw [add_zero, add_zero, add_zero]
 
+/-- **Factor-out for `mergeOp_eps 0`**: at ε = 0, mergeOp factors through
+    `forestToHc {T}` multiplication for any `T ≠ S, S'` — without requiring
+    the `no_cut_*` clauses on T (which were needed for the unweighted
+    `mergeOp_factor_out_singleton`). The cut conditions are derived from
+    cost minimization here: at ε = 0, all cuts vanish from `comulTreeDel_eps 0 T`,
+    leaving only the primitive part `(T ⊗ 1) + (1 ⊗ T)`. -/
+theorem mergeOp_eps_zero_factor_out_singleton {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    {S S' T : TraceTree α Unit}
+    (hT_ne_S : T ≠ S) (hT_ne_S' : T ≠ S')
+    (w : Hc R α) :
+    mergeOp_eps (R := R) 0 S S' (forestToHc ({T} : TraceForest α Unit) * w)
+      = forestToHc ({T} : TraceForest α Unit) * mergeOp_eps (R := R) 0 S S' w := by
+  -- Step 1: unfold mergeOp_eps = mergePost ∘ comulDelAlgHom_eps 0.
+  show (mergePost (R := R) (α := α) S S' ∘ₗ
+        (comulDelAlgHom_eps (0 : R)).toLinearMap)
+       (forestToHc (R := R) ({T} : TraceForest α Unit) * w) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  -- Alg hom mult: comulDelAlgHom_eps 0 (forestToHc {T} * w)
+  --             = comulDelAlgHom_eps 0 (forestToHc {T}) * comulDelAlgHom_eps 0 w
+  rw [map_mul]
+  -- comulDelAlgHom_eps 0 (forestToHc {T}) = comulTreeDel_eps 0 T (singleton).
+  rw [show comulDelAlgHom_eps (R := R) (α := α) (0 : R)
+            (forestToHc (R := R) ({T} : TraceForest α Unit))
+          = comulTreeDel_eps (R := R) 0 T from by
+        unfold forestToHc
+        rw [comulDelAlgHom_eps_apply_single]
+        show ((({T} : TraceForest α Unit)).map (comulTreeDel_eps (R := R) 0)).prod = _
+        rw [Multiset.map_singleton, Multiset.prod_singleton]]
+  -- Decompose comulTreeDel_eps 0 T = primitive part (T ⊗ 1 + 1 ⊗ T).
+  rw [comulTreeDel_eps_zero]
+  -- Distribute multiplication.
+  rw [add_mul]
+  simp only [map_add]
+  -- Term 1 (T ⊗ 1) * comulDelAlgHom_eps 0 w: vanishes since {T} ⊄ {S, S'}.
+  rw [show mergePost (R := R) (α := α) S S'
+        ((forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * comulDelAlgHom_eps (R := R) 0 w) = 0 from by
+      apply mergePost_left_mul_eq_zero_of_not_le
+      intro h_le
+      have hT_mem : T ∈ ({S, S'} : TraceForest α Unit) :=
+        Multiset.subset_of_le h_le (Multiset.mem_singleton.mpr rfl)
+      have : T = S ∨ T = S' := by
+        rw [show ({S, S'} : TraceForest α Unit) = S ::ₘ ({S'} : TraceForest α Unit) from rfl,
+            Multiset.mem_cons, Multiset.mem_singleton] at hT_mem
+        exact hT_mem
+      rcases this with h | h
+      · exact hT_ne_S h
+      · exact hT_ne_S' h]
+  rw [zero_add]
+  -- Term 2 (1 ⊗ T) * comulDelAlgHom_eps 0 w: by Hc comm + right-mult helper.
+  show mergePost (R := R) (α := α) S S'
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit))
+          * comulDelAlgHom_eps (R := R) 0 w)
+      = forestToHc (R := R) ({T} : TraceForest α Unit) * _
+  rw [mul_comm ((1 : Hc R α) ⊗ₜ[R] _) _,
+      mergePost_right_one_tmul]
+  -- Goal: mergePost (comulDelAlgHom_eps 0 w) * forestToHc {T}
+  --     = forestToHc {T} * (mergePost ∘ comulDelAlgHom_eps 0) w
+  -- LHS uses Hc commutativity; RHS uses the def of mergeOp_eps.
+  show mergePost (R := R) (α := α) S S'
+        (comulDelAlgHom_eps (R := R) 0 w) * _
+      = _ * mergeOp_eps (R := R) 0 S S' w
+  rw [mul_comm]
+  rfl
+
+/-- **Phase 7d limit theorem (general F̂)**: at ε = 0, the cost-weighted Merge
+    operator on workspace `{S, S'} + F̂` produces `forestToHc ({.node S S'} + F̂)`
+    under just the **no-duplicate-component** hypothesis (`S, S' ∉ F̂`) — the
+    `no_cut_*` clauses of `MergeTargetFreeWorkspace` are derived from cost
+    minimization. -/
+theorem mergeOp_eps_zero_residual {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
+    (hS : S ∉ Fhat) (hS' : S' ∉ Fhat) :
+    mergeOp_eps (R := R) 0 S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) := by
+  -- Induction on Fhat. Parallel to mergeOp_pair_residual but using
+  -- mergeOp_eps_zero_factor_out_singleton (no cut hypotheses needed).
+  induction Fhat using Multiset.induction with
+  | empty =>
+    rw [add_zero, add_zero]
+    exact mergeOp_eps_zero_pair S S'
+  | cons T Fhat' ih =>
+    -- T ≠ S and T ≠ S' (since S, S' ∉ T ::ₘ Fhat').
+    have hT_ne_S : T ≠ S := fun h => hS (h ▸ Multiset.mem_cons_self _ _)
+    have hT_ne_S' : T ≠ S' := fun h => hS' (h ▸ Multiset.mem_cons_self _ _)
+    -- Apply IH on the smaller workspace.
+    have hS_Fhat' : S ∉ Fhat' := fun h => hS (Multiset.mem_cons_of_mem h)
+    have hS'_Fhat' : S' ∉ Fhat' := fun h => hS' (Multiset.mem_cons_of_mem h)
+    have ih' := ih hS_Fhat' hS'_Fhat'
+    -- Multiset rearrangement.
+    have h_lhs_eq : ({S, S'} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit) + (({S, S'} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]
+      abel
+    have h_rhs_eq : ({.node S S'} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit) + (({.node S S'} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]
+      abel
+    rw [h_lhs_eq, h_rhs_eq, forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
+    rw [mergeOp_eps_zero_factor_out_singleton hT_ne_S hT_ne_S']
+    exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
+
+/-- **Corollary: `mergeOp_pair_residual` under the weaker no-duplicate-only
+    hypothesis** (the `no_cut_*` clauses of `MergeTargetFreeWorkspace` are
+    derivable from cost minimization, per the limit theorem). This shows the
+    full `MergeTargetFreeWorkspace` is stronger than necessary for the EM
+    Case-1 result; only the `not_mem_*` clauses are essential. -/
+theorem mergeOp_pair_residual_from_cost {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
+    (hS : S ∉ Fhat) (hS' : S' ∉ Fhat) :
+    mergeOp_eps (R := R) 0 S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) :=
+  mergeOp_eps_zero_residual hS hS'
+
 /-! ## §3: Internal Merge bridge
 
 **Important architectural note (per M-C-B Proposition 1.4.2, p. 50):**
