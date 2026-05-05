@@ -15,6 +15,20 @@ plural-definite analysis (atoms as specification points; `all` as gap remover)
 to the substrate operators (`removeGap`, `addressesIssue`, `usable`,
 `communicatedContent`).
 
+## Related literature engaged
+
+@cite{lasersohn-1999} (the "townspeople asleep" original observation),
+@cite{brisson-1998} (non-maximality terminology + `but`/`although` exception
+diagnostics), @cite{schwarz-2013} (processing evidence that maximal is the
+default reading), @cite{malamud-2012} (decision-theoretic precursor with
+issue partitions, criticised in Appendix A.3 of the paper),
+@cite{spector-2013} (embedded-plural projection),
+@cite{kriz-chemla-2015} (companion experimental data),
+@cite{magri-2014} (alternative gap-derivation via double EXH),
+@cite{cobreros-etal-2012} (Tolerant/Classical/Strict trivalence; Appendix A.2),
+@cite{gajewski-2005} (homogeneity-as-presupposition view, rejected in §4.4),
+@cite{roberts-1996} (QUD-stack tradition the §4.5 caveat distinguishes from).
+
 ## Core Contributions
 
 Non-maximal readings of plural definites ("The professors smiled" true even if
@@ -32,19 +46,50 @@ and negative extensions complementary. This prevents non-maximal readings
 because the pragmatic mechanism (Sufficient Truth + Addressing) has no gap
 to exploit.
 
+## §4.4 caveat — homogeneity is NOT a presupposition
+
+@cite{kriz-2016} §4.4 argues against the @cite{gajewski-2005} (and Schwarzschild
+1994, Löbner 2000) view that the homogeneity gap is a presupposition. Križ's
+arguments include local accommodation behaviour and projection from conditional
+antecedents differing from standard presupposition behaviour. This file
+adopts the trivalent-but-not-presuppositional reading: gap-worlds are
+"between" true and false, not undefined-in-the-presupposition sense.
+
+## §4.5 caveat — current issue ≠ immediate-last QUD
+
+The variable name `QUD W` here is a substrate convenience and is NOT the
+@cite{roberts-1996} QUD-stack notion. @cite{kriz-2016} §4.5 is explicit
+(eq. 39, 40 examples) that identifying the current issue with the
+immediate-last question on the stack makes wrong predictions. Križ instead
+treats the current issue as referring to overarching goals of participants,
+underdetermined by linguistic material and not directly manipulable. The
+`coarseQ`/`fineQ` partitions in our finite model are pedagogical constructions;
+they are NOT meant as a commitment to the manipulable-QUD theory the paper
+rejects.
+
+## §4.6 puzzle — numerals block non-maximality
+
+@cite{kriz-2016} §4.6 flags as an unsolved puzzle that "the ten professors
+smiled" cannot get non-maximal readings, even though "the professors smiled"
+can. The paper offers only speculation. Križ also notes (43a-b) that French
+patterns differently. We do not address this puzzle here.
+
 ## Contents
 
 - `barePluralTV`, `allPluralTV`: plural-specific instantiations
 - Theorems linking gap-removal to `all` semantics
-- A 4-world finite model demonstrating end-to-end predictions
+- A 5-world finite model demonstrating end-to-end predictions
+  (including §4.2 angry-Smith vs. neutral-Smith distinction)
 - §5/§6 bridges to data records in `Plurals.NonMaximality` and `Plurals.Homogeneity`
 - §7 connection back to the supervaluation framework
 
 ## Finite Model
 
-A concrete 4-world model demonstrates end-to-end predictions: "the professors
-smiled" is usable at a gap-world under a coarse issue but not under a fine one,
-and adding "all" blocks non-maximal use entirely.
+A concrete 5-world model demonstrates end-to-end predictions: "the professors
+smiled" is usable at a gap-world (smithNeutral) under a coarse issue but not
+under a fine one, AND not at a gap-world (smithAngry) where Smith's anger is
+issue-relevant — capturing @cite{kriz-2016} §4.2's distinctive prediction.
+Adding "all" blocks non-maximal use entirely.
 -/
 
 namespace Phenomena.Plurals.Studies.Kriz2016
@@ -610,47 +655,5 @@ theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
   | inl h => rw [h]; decide
   | inr h => rw [h]; decide
 
-
--- ============================================================================
--- Restrictor vs nuclear-scope plural readings
--- ============================================================================
-
-/-! Plurals in the restrictor of a quantifier permit existential readings
-    not available in nuclear scope. Data structure relocated from
-    `Phenomena/Imprecision/Projection.lean` (then `Studies/Haslinger2025.lean`)
-    at 0.230.521 — the empirical observation is anchored in @cite{kriz-2016}. -/
-
-/-- Plurals in restrictor vs nuclear scope behave differently. -/
-structure RestrictorScopeDatum where
-  /-- Sentence -/
-  sentence : String
-  /-- Position of plural -/
-  pluralPosition : String  -- "restrictor" or "scope"
-  /-- Universal reading available? -/
-  universalReading : Bool
-  /-- Existential reading available? -/
-  existentialReading : Bool
-  /-- Notes -/
-  notes : String
-  deriving Repr
-
-def pluralInRestrictor : RestrictorScopeDatum :=
-  { sentence := "Every immigrant who lives in the five Nordic countries is worried."
-  , pluralPosition := "restrictor"
-  , universalReading := true   -- "lives in all five"
-  , existentialReading := true -- "lives in one of the five"
-  , notes := "Existential reading: quantify over immigrants living in at least one Nordic country"
-  }
-
-def pluralInScope : RestrictorScopeDatum :=
-  { sentence := "Every student read the books."
-  , pluralPosition := "scope"
-  , universalReading := true
-  , existentialReading := false  -- not a default reading
-  , notes := "Default is universal; existential requires special context"
-  }
-
-def restrictorScopeData : List RestrictorScopeDatum :=
-  [pluralInRestrictor, pluralInScope]
 
 end Phenomena.Plurals.Studies.Kriz2016
