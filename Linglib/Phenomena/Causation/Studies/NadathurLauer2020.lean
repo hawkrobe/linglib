@@ -131,19 +131,6 @@ theorem make_infelicitous_for_fire :
   rw [Valuation.hasValue] at h hFalse
   exact Bool.noConfusion (Option.some.inj (h.symm.trans hFalse))
 
-/-- Computing developDetVtx fireSEM at root vertices and downstream
-    vertices, given a valuation. Helper for Fire's cause-side proofs. -/
-private theorem dev_F_eq (s : Valuation _) :
-    developDetVtx fireSEM s .F =
-      ((s.get .F).getD
-        (developDetVtx fireSEM s .G &&
-         developDetVtx fireSEM s .P &&
-         developDetVtx fireSEM s .L)) := by
-  rw [developDetVtx_unfold]
-  match h : s.get .F with
-  | none => simp [h]; rfl
-  | some _ => simp [h]
-
 /-- (31b, with extended background s_b1 where L is also known) `Restoring
     power caused the field to catch fire.` Both *make* and *cause* hold.
     With s_b1 fixing D=G=L=1, P=true is both sufficient and necessary
@@ -472,26 +459,12 @@ theorem permission_violates_volitional_constraint :
   -- Specialize to W_D
   apply h .WD rfl
   refine ⟨?_, ?_⟩
-  · -- makeSem permissionSEM (bg + G:=true) WD false D false
-    -- ie developDetVtx ... D = false when WD=false, G=true
+  · -- makeSem permissionSEM (bg + G:=true) WD false D false. With bg fully
+    -- concrete (Valuation.empty.extend .WD true), the developDetOn iteration
+    -- decides directly via the canonical bridge.
     unfold makeSem SEM.causallySufficient developsToValue
-    rw [developDet_hasValue_iff, developDetVtx_unfold]
-    -- Compute: bg + G:=true + WD:=false → D mech = WD ∧ G = false ∧ true = false
-    -- The match on D's value: D undetermined, recurse on parents
-    have hWD : developDetVtx permissionSEM (((bg.extend .G true).extend .WD false)) .WD = false := by
-      rw [developDetVtx_unfold, Valuation.extend_get_same]
-    have hG : developDetVtx permissionSEM (((bg.extend .G true).extend .WD false)) .G = true := by
-      rw [developDetVtx_unfold]
-      rw [Valuation.extend_get_ne (by decide : V.G ≠ V.WD)]
-      rw [Valuation.extend_get_same]
-    have hDnone : (((bg.extend .G true).extend .WD false)).get .D = none := by
-      rw [Valuation.extend_get_ne (by decide : V.D ≠ V.WD)]
-      rw [Valuation.extend_get_ne (by decide : V.D ≠ V.G)]
-      rfl
-    rw [hDnone]
-    change (developDetVtx permissionSEM ((bg.extend V.G true).extend V.WD false) V.WD &&
-            developDetVtx permissionSEM ((bg.extend V.G true).extend V.WD false) V.G) = false
-    rw [hWD, hG]; rfl
+    exact developDet_hasValue_of_developDetOn_hasValue
+      (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
   · -- (bg.remove .G).get .WD ≠ none. bg fixes .WD=true; removing .G doesn't change that.
     intro hNone
     -- (bg.remove .G).get .WD: .WD ≠ .G so remove doesn't touch it; equals bg.get .WD = some true.
@@ -572,28 +545,16 @@ theorem command_satisfies_volitional_constraint :
   cases hWE
   intro ⟨hSuf, _⟩
   -- hSuf : makeSem commandSEM (empty + G:=true) .WD false .D false
-  -- ie developDetVtx ((empty.extend G:=true).extend WD:=false) .D = false
-  -- Compute: D mech = WD ∨ G = false ∨ true = true ≠ false. CONTRADICTION.
+  --      ≡ developDet of D = some false on the concrete valuation.
+  -- But D mech = WD ∨ G = false ∨ true = true, so the canonical value is true.
+  -- Use the decide-machinery to obtain the true witness, then contradict hSuf.
   unfold makeSem SEM.causallySufficient developsToValue at hSuf
-  rw [developDet_hasValue_iff, developDetVtx_unfold] at hSuf
-  let s' : Valuation (fun _ : V => Bool) :=
-    (Valuation.empty.extend V.G true).extend V.WD false
-  have hDnone : s'.get V.D = none := by
-    show ((Valuation.empty.extend V.G true).extend V.WD false).get V.D = none
-    rw [Valuation.extend_get_ne (by decide : V.D ≠ V.WD)]
-    rw [Valuation.extend_get_ne (by decide : V.D ≠ V.G)]
-    rfl
-  rw [hDnone] at hSuf
-  have hWD : developDetVtx commandSEM s' V.WD = false := by
-    rw [developDetVtx_unfold, Valuation.extend_get_same]
-  have hG : developDetVtx commandSEM s' V.G = true := by
-    rw [developDetVtx_unfold]
-    rw [Valuation.extend_get_ne (by decide : V.G ≠ V.WD)]
-    rw [Valuation.extend_get_same]
-  change (developDetVtx commandSEM s' V.WD ||
-          developDetVtx commandSEM s' V.G) = false at hSuf
-  rw [hWD, hG] at hSuf
-  exact Bool.noConfusion hSuf
+  have hTrue :
+      (commandSEM.developDet ((Valuation.empty.extend V.G true).extend V.WD false)).hasValue V.D true :=
+    developDet_hasValue_of_developDetOn_hasValue
+      (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
+  rw [Valuation.hasValue] at hSuf hTrue
+  exact Bool.noConfusion (Option.some.inj (hSuf.symm.trans hTrue))
 
 /-- (41a)/(42a) Combined: command scenario gives BOTH bare sufficiency
     AND volitional constraint satisfaction → make-felicitous. -/
