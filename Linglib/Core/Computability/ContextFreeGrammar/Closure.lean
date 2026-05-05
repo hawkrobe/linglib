@@ -54,8 +54,6 @@ Either constructed in linglib or contributed upstream to mathlib (the
 natural home for both).
 -/
 
-universe u v
-
 /-- The homomorphic image of a language under a string homomorphism.
 
     Given `h : Core.StringHom α β` (a letterwise free-monoid homomorphism)
@@ -66,7 +64,7 @@ universe u v
     when `h` is letter-singleton (`fun a => [f a]`), but `StringHom` is
     strictly more general (each input letter can map to a multi-letter output,
     including the empty string). -/
-def Language.stringMap {α : Type u} {β : Type v}
+def Language.stringMap {α β : Type*}
     (h : Core.StringHom α β) (L : Language α) : Language β :=
   {w | ∃ v ∈ L, Core.StringHom.apply h v = w}
 

@@ -215,7 +215,7 @@ theorem pump_breaks_ambncmdn (p : Nat) (_hp : p > 0) :
       have hay : FourSymbol.a ∉ y :=
         fun h => ha (List.mem_append_right _ h)
       rw [filter_eq_nil_of_not_mem v .a hav, filter_eq_nil_of_not_mem y .a hay]
-      simp
+      simp only [List.length_nil, Nat.add_zero]
   have hb_vy_zero : (v.filter (· == .b)).length + (y.filter (· == .b)).length = 0 := by
     by_cases hb : FourSymbol.b ∈ v ++ x ++ y
     · have hd_notin : FourSymbol.d ∉ v ++ x ++ y := fun hd => hbd ⟨hb, hd⟩
@@ -230,7 +230,7 @@ theorem pump_breaks_ambncmdn (p : Nat) (_hp : p > 0) :
       have hby : FourSymbol.b ∉ y :=
         fun h => hb (List.mem_append_right _ h)
       rw [filter_eq_nil_of_not_mem v .b hbv, filter_eq_nil_of_not_mem y .b hby]
-      simp
+      simp only [List.length_nil, Nat.add_zero]
   have hc_vy_zero : (v.filter (· == .c)).length + (y.filter (· == .c)).length = 0 := by
     omega
   have hd_vy_zero : (v.filter (· == .d)).length + (y.filter (· == .d)).length = 0 := by
