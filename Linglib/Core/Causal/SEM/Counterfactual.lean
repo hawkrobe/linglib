@@ -348,8 +348,53 @@ noncomputable instance (M : BoolSEM V) [SEM.IsDeterministic M]
     Decidable (completesForEffectOn M vs bg n cause effect) := Classical.dec _
 
 -- ════════════════════════════════════════════════════
--- § Nadathur 2024 Def 10b: causallyNecessary (polymorphic)
+-- § Bridges: manipulates from developDetOn computation
 -- ════════════════════════════════════════════════════
+
+omit [Fintype V] in
+/-- **Positive `manipulates` bridge**: if `developDetOn` produces different
+    explicit values `y1 ≠ y2` for cause=true vs cause=false, then
+    `manipulates` holds.
+
+    `y1`, `y2` are explicit (not implicit) so consumers can write
+    `exact manipulates_of_developDetOn_ne M (vs := …) (n := …) true false (by decide) (by decide) (by decide)`
+    without `(by decide)` running into metavariable inference issues. -/
+theorem manipulates_of_developDetOn_ne (M : BoolSEM V)
+    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    {s : Valuation (fun _ : V => Bool)} (vs : List V) (n : ℕ)
+    {cause effect : V} (y1 y2 : Bool)
+    (h1 : (SEM.developDetOn M vs n (s.extend cause true)).hasValue effect y1)
+    (h2 : (SEM.developDetOn M vs n (s.extend cause false)).hasValue effect y2)
+    (hne : y1 ≠ y2) :
+    manipulates M s cause effect := by
+  unfold manipulates SEM.manipulates
+  have h1' := SEM.developDet_hasValue_of_developDetOn_hasValue h1
+  have h2' := SEM.developDet_hasValue_of_developDetOn_hasValue h2
+  unfold Valuation.hasValue at h1' h2'
+  rw [h1', h2']
+  exact fun heq => hne (Option.some.inj heq)
+
+omit [Fintype V] in
+/-- **Negative `manipulates` bridge**: if `developDetOn` produces the same
+    explicit value `y` for cause=true and cause=false, then `manipulates`
+    is false.
+
+    `y` is explicit (not implicit) so consumers can write
+    `exact not_manipulates_of_developDetOn_eq M (vs := …) (n := …) true (by decide) (by decide)`
+    without metavariable issues. -/
+theorem not_manipulates_of_developDetOn_eq (M : BoolSEM V)
+    [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+    {s : Valuation (fun _ : V => Bool)} (vs : List V) (n : ℕ)
+    {cause effect : V} (y : Bool)
+    (h1 : (SEM.developDetOn M vs n (s.extend cause true)).hasValue effect y)
+    (h2 : (SEM.developDetOn M vs n (s.extend cause false)).hasValue effect y) :
+    ¬ manipulates M s cause effect := by
+  unfold manipulates SEM.manipulates
+  have h1' := SEM.developDet_hasValue_of_developDetOn_hasValue h1
+  have h2' := SEM.developDet_hasValue_of_developDetOn_hasValue h2
+  unfold Valuation.hasValue at h1' h2'
+  rw [h1', h2']
+  exact fun h => h rfl
 
 end Core.Causal.BoolSEM
 

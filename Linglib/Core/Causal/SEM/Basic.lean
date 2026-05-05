@@ -213,6 +213,151 @@ theorem developDetOn_succ [DecidableEq V] [DecidableValuation α]
     developDetOn M vs (n + 1) s = developDetOn M vs n (stepOnceDetOn M vs s) := by
   simp [developDetOn, Function.iterate_succ_apply]
 
+-- ════════════════════════════════════════════════════
+-- § Bridge: developDetOn ↦ developDet (soundness)
+-- ════════════════════════════════════════════════════
+
+/-! Soundness bridge connecting the iteration form (`developDetOn`,
+    computable, `decide`-friendly) to the canonical per-vertex form
+    (`developDet`, abstract, `WellFounded.fix`-based).
+
+    **Direction**: `developDetOn → developDet`. If iteration produces
+    `some x` at `v`, then the canonical `developDetVtx M s v = x`. Lets
+    consumers prove `(M.developDet s).hasValue v x` by computing the
+    matching `developDetOn` claim with `decide`, then applying the bridge.
+
+    The reverse direction (completeness) requires proving that
+    `Fintype.card V` iterations always reach all reachable values —
+    deferred (would need induction on topological depth).
+
+    **Mathlib analogue**: `Multiset.sum_toList`, `Filter.tendsto_atTop_iff`
+    — bridges between an abstract canonical form and its computational
+    specialization, providing the connecting API. -/
+
+/-- **Consistency invariant** (private): `s'` is a refinement of `s`
+    every value of which agrees with the canonical `developDetVtx M s`.
+    Used as the load-bearing invariant on `developDetOn` iteration. -/
+private def isConsistentDev [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s s' : Valuation α) : Prop :=
+  s.le s' ∧ ∀ v x, s'.get v = some x → developDetVtx M s v = x
+
+/-- The starting valuation is consistent with itself. -/
+private lemma isConsistentDev_self [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) : isConsistentDev M s s := by
+  refine ⟨fun _ _ h => h, fun v x h => ?_⟩
+  exact developDetVtx_extended M s v x h
+
+/-- One step of `singleStepAtDet` preserves the consistency invariant. -/
+private lemma isConsistentDev_singleStepAtDet [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s s' : Valuation α} (h : isConsistentDev M s s') (v : V) :
+    isConsistentDev M s (singleStepAtDet M s' v) := by
+  obtain ⟨hLe, hCons⟩ := h
+  -- Case: v is already determined in s'
+  by_cases hSome : (s'.get v).isSome
+  · rw [singleStepAtDet_skip_determined M s' v hSome]
+    exact ⟨hLe, hCons⟩
+  -- Case: v is undetermined in s'
+  · rw [Option.not_isSome_iff_eq_none] at hSome
+    by_cases hReady : ready M s' v
+    · -- Mechanism fires; new value at v matches developDetVtx M s v
+      rw [singleStepAtDet_extend M s' v (Option.isNone_iff_eq_none.mpr hSome) hReady]
+      have hsv : s.get v = none := by
+        cases hsv : s.get v with
+        | none => rfl
+        | some y =>
+          have h1 : s'.hasValue v y := hLe v y hsv
+          rw [Valuation.hasValue, hSome] at h1
+          exact absurd h1 (by simp)
+      -- Compute the new value
+      let newVal : α v :=
+        Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s' v hReady)
+      have hNewVal : newVal = developDetVtx M s v := by
+        show Mechanism.IsDeterministic.toFun (M.mech v) (parentAssignment M s' v hReady) =
+             developDetVtx M s v
+        rw [developDetVtx_undet M s v hsv]
+        congr 1
+        funext u
+        -- (parentAssignment M s' v hReady) u = developDetVtx M s u.val
+        unfold parentAssignment
+        have hReadyU := hReady u.val u.property
+        -- hReadyU : (s'.get u.val).isSome
+        exact hCons u.val ((s'.get u.val).get hReadyU) (Option.some_get hReadyU).symm |>.symm
+      refine ⟨?_, ?_⟩
+      · -- s.le (s'.extend v newVal)
+        intro w x hwx
+        have h1 : s'.hasValue w x := hLe w x hwx
+        by_cases hwv : w = v
+        · subst hwv
+          rw [Valuation.hasValue, hSome] at h1
+          exact absurd h1 (by simp)
+        · rw [Valuation.hasValue, Valuation.extend_get_ne hwv]; exact h1
+      · -- ∀ w x, (s'.extend v newVal).get w = some x → developDetVtx M s w = x
+        intro w x hwx
+        by_cases hwv : w = v
+        · subst hwv
+          rw [Valuation.extend_get_same] at hwx
+          have : x = newVal := (Option.some.inj hwx).symm
+          rw [this, hNewVal]
+        · rw [Valuation.extend_get_ne hwv] at hwx
+          exact hCons w x hwx
+    · -- Skip not ready
+      rw [singleStepAtDet_skip_not_ready M s' v hReady]
+      exact ⟨hLe, hCons⟩
+
+/-- One sweep of `stepOnceDetOn` preserves the consistency invariant. -/
+private lemma isConsistentDev_stepOnceDetOn [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s s' : Valuation α} (h : isConsistentDev M s s') (vs : List V) :
+    isConsistentDev M s (stepOnceDetOn M vs s') := by
+  unfold stepOnceDetOn
+  induction vs generalizing s' with
+  | nil => simpa
+  | cons v vs ih =>
+    simp only [List.foldl_cons]
+    exact ih (isConsistentDev_singleStepAtDet M h v)
+
+/-- Iteration of `developDetOn` preserves the consistency invariant. -/
+private lemma isConsistentDev_developDetOn [DecidableEq V] [DecidableValuation α]
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) (vs : List V) (n : ℕ) :
+    isConsistentDev M s (developDetOn M vs n s) := by
+  induction n with
+  | zero => exact isConsistentDev_self M s
+  | succ n ih =>
+    show isConsistentDev M s ((stepOnceDetOn M vs)^[n + 1] s)
+    rw [Function.iterate_succ_apply']
+    exact isConsistentDev_stepOnceDetOn M ih vs
+
+/-- **Soundness bridge**: if iteration produces value `x` at `v`, then
+    the canonical `developDetVtx M s v = x`.
+
+    Lets consumers prove abstract `developDet`-flavored claims by
+    computing the corresponding `developDetOn` form with `decide` and
+    lifting via this bridge.
+
+    The reverse direction (completeness — every vertex eventually
+    determined) requires substrate work on topological depth and is
+    deferred. -/
+theorem developDetVtx_of_developDetOn_hasValue [DecidableEq V] [DecidableValuation α]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s : Valuation α} {vs : List V} {n : ℕ} {v : V} {x : α v}
+    (h : (developDetOn M vs n s).hasValue v x) :
+    developDetVtx M s v = x :=
+  (isConsistentDev_developDetOn M s vs n).2 v x h
+
+/-- **`Valuation`-form bridge**: if iteration's hasValue claim holds, so
+    does the canonical `developDet`'s. -/
+theorem developDet_hasValue_of_developDetOn_hasValue [DecidableEq V] [DecidableValuation α]
+    {M : SEM V α} [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    {s : Valuation α} {vs : List V} {n : ℕ} {v : V} {x : α v}
+    (h : (developDetOn M vs n s).hasValue v x) :
+    (M.developDet s).hasValue v x := by
+  rw [developDet_hasValue_iff]
+  exact developDetVtx_of_developDetOn_hasValue h
+
 /-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
     with `cause` undetermined in `s`, Pearl-intervening to set
     `cause := xC` is equivalent (at the level of `developDet`) to

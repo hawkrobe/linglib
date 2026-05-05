@@ -331,28 +331,31 @@ noncomputable def game : ExplanationGame V World where
 theorem T_manipulates_in_mT : game.worldManipulates V.T .mT := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semT lateBg V.T V.C
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semT
+    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- Forgotten birthday does NOT manipulate crossness in M_T (B doesn't
     appear in C's mechanism in M_T). -/
 theorem B_doesnt_manipulate_in_mT : ¬ game.worldManipulates V.B .mT := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semT lateBg V.B V.C
-  unfold BoolSEM.manipulates SEM.manipulates
-  intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semT
+    (vs := [V.T, V.B, V.C]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- Tardiness manipulates crossness in M_∧ (with B = 1 fixed by `lateBg`). -/
 theorem T_manipulates_in_mConj : game.worldManipulates V.T .mConj := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semConj lateBg V.T V.C
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semConj
+    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- Forgotten birthday manipulates crossness in M_∧ (with T = 1 fixed
     by `lateBg`, flipping B flips C from `true` to `false`). -/
 theorem B_manipulates_in_mConj : game.worldManipulates V.B .mConj := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semConj lateBg V.B V.C
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semConj
+    (vs := [V.T, V.B, V.C]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- The "because T" message is true at the actual world M_T:
     T = 1 is an actual cause of C = 1 there. -/
@@ -502,19 +505,22 @@ noncomputable def game : ExplanationGame V World where
 theorem R_manipulates_in_mR : game.worldManipulates V.R .mR := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semR roofBg V.R V.F
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semR
+    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- R does NOT manipulate F in M_D (only D matters there). -/
 theorem R_doesnt_manipulate_in_mD : ¬ game.worldManipulates V.R .mD := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semD roofBg V.R V.F
-  unfold BoolSEM.manipulates SEM.manipulates; intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semD
+    (vs := [V.R, V.D, V.F]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- R manipulates F in M_∧ (both are needed; with D = 1 fixed, R is but-for). -/
 theorem R_manipulates_in_mConj : game.worldManipulates V.R .mConj := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semConj roofBg V.R V.F
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semConj
+    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- R does NOT manipulate F in M_∨ at the actual context (overdetermination:
     D = 1 alone fires F regardless of R). -/
@@ -522,13 +528,15 @@ theorem R_doesnt_manipulate_in_mDisj :
     ¬ game.worldManipulates V.R .mDisj := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semDisj roofBg V.R V.F
-  unfold BoolSEM.manipulates SEM.manipulates; intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
+    (vs := [V.R, V.D, V.F]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- D manipulates F in M_D (the symmetric case). -/
 theorem D_manipulates_in_mD : game.worldManipulates V.D .mD := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semD roofBg V.D V.F
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semD
+    (vs := [V.R, V.D, V.F]) (n := 3) true false (by decide) (by decide) (by decide)
 
 end RoofReplacement
 
@@ -605,13 +613,15 @@ noncomputable def game : ExplanationGame V World where
 theorem Ch_manipulates_in_uC : game.worldManipulates V.Ch .uC := by
   unfold ExplanationGame.worldManipulates
   show BoolSEM.manipulates semDisj bgC V.Ch V.M
-  unfold BoolSEM.manipulates SEM.manipulates; decide
+  exact BoolSEM.manipulates_of_developDetOn_ne semDisj
+    (vs := [V.Ch, V.Da, V.M]) (n := 3) true false (by decide) (by decide) (by decide)
 
 /-- Dana does NOT manipulate M when only Charlie drank (Dana = 0 in u_C). -/
 theorem Da_doesnt_manipulate_in_uC : ¬ game.worldManipulates V.Da .uC := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semDisj bgC V.Da V.M
-  unfold BoolSEM.manipulates SEM.manipulates; intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
+    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- Overdetermination: Charlie does NOT manipulate M when both drank
     (Da = 1 still fires M regardless of Ch). The paper's Milk-Theft
@@ -619,13 +629,15 @@ theorem Da_doesnt_manipulate_in_uC : ¬ game.worldManipulates V.Da .uC := by
 theorem Ch_doesnt_manipulate_in_uBoth : ¬ game.worldManipulates V.Ch .uBoth := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semDisj bgBoth V.Ch V.M
-  unfold BoolSEM.manipulates SEM.manipulates; intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
+    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- Symmetric overdetermination: Dana does NOT manipulate M when both drank. -/
 theorem Da_doesnt_manipulate_in_uBoth : ¬ game.worldManipulates V.Da .uBoth := by
   unfold ExplanationGame.worldManipulates
   show ¬ BoolSEM.manipulates semDisj bgBoth V.Da V.M
-  unfold BoolSEM.manipulates SEM.manipulates; intro h; apply h; rfl
+  exact BoolSEM.not_manipulates_of_developDetOn_eq semDisj
+    (vs := [V.Ch, V.Da, V.M]) (n := 3) (y := true) (by decide) (by decide)
 
 /-- "Charlie because M" is true at u_C: Charlie's drinking actually caused
     M (sole cause; lateBg-as-witness suffices). -/

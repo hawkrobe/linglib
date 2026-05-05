@@ -124,9 +124,12 @@ noncomputable def s_b1 : Valuation (fun _ : V => Bool) := s_b.extend .L true
 theorem make_infelicitous_for_fire :
     ¬ makeSem fireSEM s_b .P true .F true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff]
-  rw [developDetVtx_unfold]
-  intro h; exact Bool.false_ne_true h
+  intro h
+  have hFalse : (fireSEM.developDet (s_b.extend V.P true)).hasValue V.F false :=
+    developDet_hasValue_of_developDetOn_hasValue
+      (vs := [V.D, V.G, V.L, V.P, V.F]) (n := 5) (by decide)
+  rw [Valuation.hasValue] at h hFalse
+  exact Bool.noConfusion (Option.some.inj (h.symm.trans hFalse))
 
 /-- Computing developDetVtx fireSEM at root vertices and downstream
     vertices, given a valuation. Helper for Fire's cause-side proofs. -/
@@ -148,9 +151,8 @@ private theorem dev_F_eq (s : Valuation _) :
 theorem make_felicitous_for_fire_with_known_line :
     makeSem fireSEM s_b1 .P true .F true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff]
-  rw [developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.D, V.G, V.L, V.P, V.F]) (n := 5) (by decide)
 
 end Fire
 
@@ -211,9 +213,8 @@ noncomputable def s_b : Valuation (fun _ : V => Bool) :=
 theorem make_felicitous_for_bus :
     makeSem busSEM s_b .Tr true .Bs true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff]
-  rw [developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.Vis, V.Tr, V.Rn, V.Bk, V.Bs]) (n := 5) (by decide)
 
 /-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side:
     fails N&L's Def 24 / project-canonical Def 10b necessity.
@@ -238,8 +239,8 @@ theorem cause_infelicitous_for_bus :
   -- But under eager-default semantics, dev .Bs from s_b = Rn ∨ Bk =
   -- true ∨ (Vis ∧ default Tr) = true ∨ (true ∧ false) = true.
   apply hPre
-  rw [developDetVtx_unfold]
-  rfl
+  exact developDetVtx_of_developDetOn_hasValue
+    (vs := [V.Vis, V.Tr, V.Rn, V.Bk, V.Bs]) (n := 5) (by decide)
 
 end Bus
 
@@ -305,9 +306,8 @@ def validBackgroundFor (idx : V → Nat) (t : Nat)
 theorem make_felicitous_for_storms :
     makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff]
-  rw [developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.Q, V.S, V.L]) (n := 3) (by decide)
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
     Def 28 temporal-location constraint: the only background under which
@@ -458,8 +458,8 @@ def intentions : IntentionMap V := fun
 theorem permission_makeSem :
     makeSem permissionSEM bg .G true .D true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff, developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
 
 /-- (40a) `??Gurung made the children dance.` Volitional-action
     constraint VIOLATED: with W_D fixed in bg, W_D := false is sufficient
@@ -558,8 +558,8 @@ def intentions : IntentionMap V := fun
 theorem command_makeSem :
     makeSem commandSEM Valuation.empty .G true .D true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff, developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.WD, V.G, V.D]) (n := 3) (by decide)
 
 /-- (41a)/(42a) `Gurung made the children dance` (in command context).
     Volitional-action constraint SATISFIED: W_D := false is NOT sufficient
@@ -648,8 +648,8 @@ def intentions : IntentionMap V := fun
 theorem persuasion_makeSem :
     makeSem persuasionSEM Valuation.empty .G true .D true := by
   unfold makeSem SEM.causallySufficient developsToValue
-  rw [developDet_hasValue_iff, developDetVtx_unfold]
-  rfl
+  exact developDet_hasValue_of_developDetOn_hasValue
+    (vs := [V.G, V.WD, V.D]) (n := 3) (by decide)
 
 /-- (44a) `Gurung made the children dance (by playing their favourite song).`
     Volitional-action constraint SATISFIED: although W_D := false is
