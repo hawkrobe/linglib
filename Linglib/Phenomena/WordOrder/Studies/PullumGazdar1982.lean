@@ -1,4 +1,3 @@
-import Linglib.Core.Computability.FormalLanguage
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.WordOrder.Studies.Shieber1985
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
@@ -66,27 +65,13 @@ Two constructive results are formalized here:
 
 ## Architectural Note
 
-This file bridges linglib's `Core.FormalLanguageType` enum with mathlib's
-`ContextFreeGrammar` and `Language.IsContextFree`. The existing formal language
-infrastructure in linglib (pumping lemma proofs, `FormalLanguageType` hierarchy)
-is disconnected from mathlib's automata theory (`DFA`, `NFA`, `Language`,
-`ContextFreeGrammar`). Mathlib provides:
-
-- `Language α := Set (List α)` vs linglib's `List α → Bool`
-- `Language.IsContextFree` (∃ CFG generating L) — no analogue in linglib
-- `Language.IsRegular` (∃ DFA accepting L) — no analogue in linglib
-- `ContextFreeGrammar` with `Derives`/`Generates` — linglib has no CFG type
-- DFA/NFA pumping lemma — linglib reproves it for specific languages
-
-Linglib now uses mathlib's `Language α` natively throughout its formal
-language theory, with `HasCFLPumpingProperty` defined over `Language α`,
-and `anbncndn_not_contextFree` / `anbnc_not_contextFree` stated using
-`Language.IsContextFree`
+This file uses mathlib's `Language α` and `Language.IsContextFree` /
+`Language.IsRegular` natively. linglib's CFG-extension machinery
+(`ContextFreeGrammar.Tree`, `ContextFreeGrammar.Pumping`, etc.) layers on
+top of `Mathlib.Computability.ContextFreeGrammar`.
 -/
 
 namespace PullumGazdar1982
-
-open Core (FormalLanguageType)
 
 -- ============================================================================
 -- §2: xy Languages Can Be Context-Free

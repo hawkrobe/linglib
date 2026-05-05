@@ -189,7 +189,7 @@ private theorem Nodup.getElem?_inj {l : List α} (h : l.Nodup) {i j : Nat} {a : 
     `|vxy| ≤ p`, so their block indices differ by at most 1 — contradicting
     `j ≥ i + 2`. -/
 theorem not_both_in_vxy [DecidableEq α]
-    {symbols : List α} (hnd : symbols.Nodup) {p : Nat} (hp : 0 < p)
+    {symbols : List α} (hnd : symbols.Nodup) {p : Nat}
     {s t : α} {i j : Nat}
     (hi : symbols[i]? = some s)
     (hj : symbols[j]? = some t)
@@ -199,6 +199,16 @@ theorem not_both_in_vxy [DecidableEq α]
     (hvxy : vxy.length ≤ p) :
     ¬ (s ∈ vxy ∧ t ∈ vxy) := by
   intro ⟨hs, ht⟩
+  -- p = 0 case: witness is empty, so vxy = [], hence vacuously no s ∈ vxy
+  by_cases hp : p = 0
+  · subst hp
+    rw [zero] at hw
+    have : vxy = [] := by
+      have hlen := congr_arg List.length hw.symm
+      simp only [List.length_nil, List.length_append] at hlen
+      exact List.eq_nil_of_length_eq_zero (by omega)
+    rw [this] at hs; exact List.not_mem_nil hs
+  have hp : 0 < p := Nat.pos_of_ne_zero hp
   -- Positions of s and t within vxy
   have hks : vxy.idxOf s < vxy.length := List.idxOf_lt_length_iff.mpr hs
   have hkt : vxy.idxOf t < vxy.length := List.idxOf_lt_length_iff.mpr ht

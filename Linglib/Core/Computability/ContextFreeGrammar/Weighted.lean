@@ -33,14 +33,14 @@ future weighted-CFG consumer share one definition.
 
 namespace ContextFreeGrammar
 
-variable {T : Type} (G : ContextFreeGrammar T) [DecidableEq G.NT]
+variable {T : Type*} (G : ContextFreeGrammar T) [DecidableEq G.NT]
 
 /-- The subtype of grammar rules whose left-hand side equals `a`.
     The natural index for per-LHS analyses (PMFs, Pólya urns,
     productivity comparisons): a value of type `G.RulesWithLHS a` is
     a rule paired with a proof that its `input` is `a` and that it
     sits in `G.rules`. -/
-abbrev RulesWithLHS (a : G.NT) : Type :=
+abbrev RulesWithLHS (a : G.NT) :=
   { r : ContextFreeRule T G.NT // r ∈ G.rules.filter (·.input = a) }
 
 end ContextFreeGrammar
@@ -62,8 +62,8 @@ etc.: the substrate doesn't fix the value type, leaving consumers to
 choose `ℝ`, `ℝ≥0∞`, `NNReal`, or anything with the required structure.
 -/
 @[ext]
-structure WeightedCFG {T : Type} (G : ContextFreeGrammar T)
-    (W : Type) [Zero W] [LE W] where
+structure WeightedCFG {T : Type*} (G : ContextFreeGrammar T)
+    (W : Type*) [Zero W] [LE W] where
   /-- Per-rule weight. -/
   weight : ContextFreeRule T G.NT → W
   /-- Weights are nonnegative. -/

@@ -19,7 +19,6 @@ namespace Steedman2000CrossSerial
 open CCG
 open CCG.CrossSerial
 open Phenomena.WordOrder.CrossSerial
-open Core (FormalLanguageType)
 open Features (VerbClusterBinding)
 
 /--
@@ -103,29 +102,5 @@ CCG correctly predicts the pattern type for Dutch.
 theorem ccg_predicts_dutch_pattern :
     dutch_3np_3v.binding.pattern = .crossSerial := by
   decide
-
--- Generative Capacity Classification
-
-/-- CCG is mildly context-sensitive (not just context-free) -/
-theorem ccg_is_mildly_context_sensitive :
-    crossSerialRequires = FormalLanguageType.mildlyContextSensitive := by
-  rfl
-
-/-- Nested dependencies (German) ARE context-free -/
-theorem nested_is_context_free :
-    nestedRequires = FormalLanguageType.contextFree := by
-  rfl
-
-/--
-CCG can generate both:
-- Cross-serial (Dutch) via generalized composition
-- Nested (German) via standard composition
-
-CCG occupies the mildly context-sensitive level of the Chomsky hierarchy.
--/
-theorem ccg_handles_both_patterns :
-    crossSerialRequires = .mildlyContextSensitive ∧
-    nestedRequires = .contextFree := by
-  constructor <;> rfl
 
 end Steedman2000CrossSerial

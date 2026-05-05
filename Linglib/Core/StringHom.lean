@@ -59,6 +59,17 @@ def apply (h : StringHom α β) : List α → List β :=
 /-- Monoid-hom law: `h` sends the empty word to the empty word. -/
 @[simp] theorem apply_nil (h : StringHom α β) : apply h [] = [] := rfl
 
+/-- The letter-to-letter homomorphism induced by `f : α → β`: each input
+    symbol maps to a singleton output. The image of `apply (letterMap f)`
+    coincides with `List.map f`; see `apply_letterMap`. -/
+def letterMap (f : α → β) : StringHom α β := fun a => [f a]
+
+/-- Letter-to-letter homomorphism applied to a list is `List.map`. -/
+@[simp] theorem apply_letterMap (f : α → β) (xs : List α) :
+    apply (letterMap f) xs = xs.map f := by
+  show List.flatMap (fun a => [f a]) xs = xs.map f
+  exact List.map_eq_flatMap.symm
+
 end StringHom
 
 -- ============================================================================

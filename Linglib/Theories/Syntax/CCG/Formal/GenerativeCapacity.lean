@@ -30,7 +30,6 @@ the "mildly context-sensitive" property (polynomial parsing).
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Core.Computability.FormalLanguage
 import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Core.Basic
 
@@ -38,7 +37,6 @@ namespace CCG.GenerativeCapacity
 
 open FourSymbol
 
-open Core (FormalLanguageType)
 
 -- CCG Generates {aⁿbⁿcⁿdⁿ}
 
@@ -114,12 +112,13 @@ theorem ccg_strictly_more_expressive_than_cfg :
     ¬ HasCFLPumpingProperty anbncndn :=
   ⟨makeString_in_language, anbncndn_not_pumpable⟩
 
--- CCG's Position in the Chomsky Hierarchy
+-- CCG's Position Beyond the Context-Free Tier
 
-/-- CCG strictly exceeds context-free power: it generates {aⁿbⁿcⁿdⁿ},
-    which is not context-free. -/
-theorem ccg_exceeds_cfg :
-    FormalLanguageType.contextFree < FormalLanguageType.mildlyContextSensitive := by
-  decide
+/-- CCG strictly exceeds context-free power: it generates `anbncndn`,
+    which is not context-free. The classical Chomsky-hierarchy claim
+    "CCG > CFG" reduces to the predicate-level claim that this specific
+    witness language is non-CF. -/
+theorem ccg_exceeds_cfg : ¬ Language.IsContextFree anbncndn :=
+  anbncndn_not_contextFree
 
 end CCG.GenerativeCapacity

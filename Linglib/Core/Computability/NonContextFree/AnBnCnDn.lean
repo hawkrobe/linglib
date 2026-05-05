@@ -104,18 +104,10 @@ private theorem not_both_in_vxy_FourSymbol {s t : FourSymbol} {i j : Nat}
     (hj : ([FourSymbol.a, .b, .c, .d] : List FourSymbol)[j]? = some t)
     (hij : j ≥ i + 2) (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬ (s ∈ vxy ∧ t ∈ vxy) := by
-  by_cases hp : p = 0
-  · subst hp
-    intro ⟨hs, _⟩
-    have hwlen := congr_arg List.length hw
-    simp [makeString_anbncndn, List.length_append] at hwlen
-    have : vxy = [] := List.eq_nil_of_length_eq_zero (by omega)
-    rw [this] at hs; exact List.not_mem_nil hs
-  exact BlockWitness.not_both_in_vxy
+    ¬ (s ∈ vxy ∧ t ∈ vxy) :=
+  BlockWitness.not_both_in_vxy
     (by decide : ([FourSymbol.a, .b, .c, .d] : List FourSymbol).Nodup)
-    (Nat.pos_of_ne_zero hp) hi hj hij
-    (makeString_anbncndn_eq_blockwitness p ▸ hw) hvxy
+    hi hj hij (makeString_anbncndn_eq_blockwitness p ▸ hw) hvxy
 
 theorem not_a_and_d_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :

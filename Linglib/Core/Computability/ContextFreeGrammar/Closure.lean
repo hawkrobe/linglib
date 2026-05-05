@@ -70,6 +70,22 @@ def Language.stringMap {α : Type u} {β : Type v}
     (h : Core.StringHom α β) (L : Language α) : Language β :=
   {w | ∃ v ∈ L, Core.StringHom.apply h v = w}
 
+/-- **Bridge to mathlib's `Language.map`.** When `h` is the letter-to-letter
+    `StringHom.letterMap f` (each input symbol → singleton output), the
+    homomorphic image collapses to mathlib's `Language.map f`, the
+    letter-by-letter image. Lifts mathlib's existing ringHom structure to
+    the letter-map case of `stringMap` automatically. -/
+@[simp] theorem Language.stringMap_letterMap {α β : Type*}
+    (f : α → β) (L : Language α) :
+    Language.stringMap (Core.StringHom.letterMap f) L = Language.map f L := by
+  ext w
+  simp only [Language.stringMap, Set.mem_setOf_eq, Core.StringHom.apply_letterMap,
+             Language.map, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk,
+             Set.mem_image]
+  constructor
+  · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
+  · rintro ⟨v, hv, rfl⟩; exact ⟨v, hv, rfl⟩
+
 -- ============================================================================
 -- Closure axioms (Hopcroft–Ullman 1979)
 -- ============================================================================

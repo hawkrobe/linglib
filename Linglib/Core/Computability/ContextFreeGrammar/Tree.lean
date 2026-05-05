@@ -18,13 +18,13 @@ children. The file provides:
 /-- A derivation tree for a context-free grammar.
     Leaves hold terminal symbols; internal nodes hold a nonterminal
     and a list of children (matching a production rule's RHS). -/
-inductive CFGTree (T N : Type) where
+inductive CFGTree (T N : Type*) where
   | leaf (t : T) : CFGTree T N
   | node (nt : N) (children : List (CFGTree T N)) : CFGTree T N
 
 namespace CFGTree
 
-variable {T N : Type}
+variable {T N : Type*}
 
 /-- The root symbol of a subtree. -/
 def rootSymbol : CFGTree T N → Symbol T N
@@ -118,7 +118,7 @@ end CFGTree
 -- CFL Pumping Lemma — Helper Lemmas
 -- ============================================================================
 
-private theorem CFGTree.height_le_heightMax {T N : Type}
+private theorem CFGTree.height_le_heightMax {T N : Type*}
     {t : CFGTree T N} {ts : List (CFGTree T N)}
     (ht : t ∈ ts) : t.height ≤ CFGTree.heightMax ts := by
   induction ts with
@@ -156,22 +156,22 @@ private theorem le_foldl_max_of_mem (l : List Nat) (x : Nat) (init : Nat) (hx : 
     We take the max over all rules' output lengths, floored at 2 to ensure
     the branching factor is nontrivial (a tree of branching ≥ 2 and height h
     has at most b^h leaves). -/
-noncomputable def ContextFreeGrammar.maxBranch {T : Type}
+noncomputable def ContextFreeGrammar.maxBranch {T : Type*}
     (g : ContextFreeGrammar T) : Nat :=
   max 2 (g.rules.val.toList.map (·.output.length) |>.foldl max 0)
 
 /-- The pumping constant for a CFG: b^(k+1) where b = maxBranch ≥ 2
     and k = number of rules (upper bound on distinct nonterminals). -/
-noncomputable def ContextFreeGrammar.pumpingConstant {T : Type}
+noncomputable def ContextFreeGrammar.pumpingConstant {T : Type*}
     (g : ContextFreeGrammar T) : Nat :=
   g.maxBranch ^ (g.rules.card + 1)
 
 /-- maxBranch is at least 2. -/
-theorem ContextFreeGrammar.maxBranch_ge_two {T : Type}
+theorem ContextFreeGrammar.maxBranch_ge_two {T : Type*}
     (g : ContextFreeGrammar T) : g.maxBranch ≥ 2 := le_max_left _ _
 
 /-- The pumping constant is positive (b ≥ 2 so b^(k+1) ≥ 2). -/
-theorem ContextFreeGrammar.pumpingConstant_pos {T : Type}
+theorem ContextFreeGrammar.pumpingConstant_pos {T : Type*}
     (g : ContextFreeGrammar T) : g.pumpingConstant > 0 :=
   Nat.pos_of_ne_zero (by
     unfold pumpingConstant
@@ -179,7 +179,7 @@ theorem ContextFreeGrammar.pumpingConstant_pos {T : Type}
       (Nat.one_le_pow _ _ (by have := g.maxBranch_ge_two; omega))))
 
 /-- Any rule's RHS length is at most `maxBranch`. -/
-private theorem ContextFreeGrammar.maxBranch_ge_output {T : Type} (g : ContextFreeGrammar T)
+private theorem ContextFreeGrammar.maxBranch_ge_output {T : Type*} (g : ContextFreeGrammar T)
     (r : ContextFreeRule T g.NT) (hr : r ∈ g.rules) :
     r.output.length ≤ g.maxBranch := by
   unfold maxBranch
@@ -189,7 +189,7 @@ private theorem ContextFreeGrammar.maxBranch_ge_output {T : Type} (g : ContextFr
     ⟨r, Multiset.mem_toList.mpr (Finset.mem_val.mpr hr), rfl⟩
 
 /-- Sum of children's yields is at most `|children| * b ^ heightMax`. -/
-private theorem CFGTree.yieldList_le {T N : Type} (b : Nat) (_hb : b ≥ 2)
+private theorem CFGTree.yieldList_le {T N : Type*} (b : Nat) (_hb : b ≥ 2)
     (ts : List (CFGTree T N))
     (hbound : ∀ c ∈ ts, c.yield.length ≤ b ^ c.height) :
     (CFGTree.yieldList ts).length ≤ ts.length * b ^ CFGTree.heightMax ts := by
@@ -218,7 +218,7 @@ private theorem CFGTree.yieldList_le {T N : Type} (b : Nat) (_hb : b ≥ 2)
 
 namespace ContextFreeGrammar
 
-variable {T : Type} {g : ContextFreeGrammar T}
+variable {T : Type*} {g : ContextFreeGrammar T}
 
 /-- A rewriting step at any position: applying a rule's RHS in place. -/
 private theorem Rewrites.at_position {r : ContextFreeRule T g.NT}
@@ -319,7 +319,7 @@ private theorem yieldList_leaves (w : List T) :
     simp only [List.map_cons, CFGTree.yieldList, CFGTree.yield, List.singleton_append, ih]
 
 /-- `yieldList` distributes over list concatenation. -/
-private theorem yieldList_append {N : Type} (xs ys : List (CFGTree T N)) :
+private theorem yieldList_append {N : Type*} (xs ys : List (CFGTree T N)) :
     CFGTree.yieldList (xs ++ ys) = CFGTree.yieldList xs ++ CFGTree.yieldList ys := by
   induction xs with
   | nil => simp [CFGTree.yieldList]
@@ -423,7 +423,7 @@ end ContextFreeGrammar
     `forest_exists` lemma generalizes to all sentential forms by induction
     on the derivation, with each `Produces` step "folding" the children of
     the rewritten nonterminal back into a single node tree. -/
-theorem exists_valid_tree {T : Type} (g : ContextFreeGrammar T)
+theorem exists_valid_tree {T : Type*} (g : ContextFreeGrammar T)
     (w : List T) (hw : w ∈ g.language) :
     ∃ t : CFGTree T g.NT,
       t.ValidFor g ∧ t.yield = w ∧ t.rootSymbol = .nonterminal g.initial := by
@@ -449,7 +449,7 @@ set_option maxHeartbeats 400000 in
     Proof: well-founded recursion on tree size. A leaf has height 0 and
     1 = b⁰ leaves. A node with children c₁...cₖ (k ≤ b) has
     |yield| = Σᵢ |yield(cᵢ)| ≤ k · b^(max heights) ≤ b · b^(h-1) = b^h. -/
-theorem yield_length_le_of_height {T : Type} (g : ContextFreeGrammar T)
+theorem yield_length_le_of_height {T : Type*} (g : ContextFreeGrammar T)
     (t : CFGTree T g.NT) (ht : t.ValidFor g) :
     t.yield.length ≤ g.maxBranch ^ t.height := by
   match t, ht with
@@ -480,7 +480,7 @@ termination_by sizeOf t
 
 namespace CFGTree
 
-variable {T N : Type}
+variable {T N : Type*}
 
 /-- A position in a tree: list of child indices to follow from the root. -/
 abbrev Pos := List Nat
@@ -1074,7 +1074,7 @@ theorem exists_repeat_root {g : ContextFreeGrammar T}
 -- Soundness: valid tree ⇒ grammar derives its yield
 -- ============================================================================
 
-private theorem derives_yieldList {T : Type} {g : ContextFreeGrammar T}
+private theorem derives_yieldList {T : Type*} {g : ContextFreeGrammar T}
     (ts : List (CFGTree T g.NT))
     (hvalid : ∀ t ∈ ts, g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal)) :
     g.Derives (ts.map CFGTree.rootSymbol) ((CFGTree.yieldList ts).map Symbol.terminal) := by
@@ -1087,7 +1087,7 @@ private theorem derives_yieldList {T : Type} {g : ContextFreeGrammar T}
     exact ((hvalid c (List.mem_cons_self ..)).append_right _).trans
       ((ih (fun t ht => hvalid t (List.mem_cons_of_mem _ ht))).append_left _)
 
-theorem validFor_derives {T : Type} {g : ContextFreeGrammar T}
+theorem validFor_derives {T : Type*} {g : ContextFreeGrammar T}
     (t : CFGTree T g.NT) (ht : t.ValidFor g) :
     g.Derives [t.rootSymbol] (t.yield.map Symbol.terminal) := by
   match t, ht with

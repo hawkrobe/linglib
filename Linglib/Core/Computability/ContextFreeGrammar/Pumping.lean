@@ -24,7 +24,7 @@ The proof follows the standard textbook argument via derivation trees:
 
     Every context-free language satisfies this property — the pumping lemma
     for CFLs. Showing a language lacks it proves it is not context-free. -/
-def HasCFLPumpingProperty {α : Type} (L : Language α) : Prop :=
+def HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
     ∃ p : Nat, p > 0 ∧
     ∀ w : List α, w ∈ L → w.length ≥ p →
       ∃ u v x y z : List α,
@@ -34,7 +34,7 @@ def HasCFLPumpingProperty {α : Type} (L : Language α) : Prop :=
         ∀ i : Nat, (u ++ List.flatten (List.replicate i v) ++ x ++
                     List.flatten (List.replicate i y) ++ z) ∈ L
 
-private theorem flatten_replicate_succ_right {T : Type} (l : List T) (n : Nat) :
+private theorem flatten_replicate_succ_right {T : Type*} (l : List T) (n : Nat) :
     (List.replicate (n + 1) l).flatten = (List.replicate n l).flatten ++ l := by
   induction n with
   | zero => simp
@@ -44,7 +44,7 @@ private theorem flatten_replicate_succ_right {T : Type} (l : List T) (n : Nat) :
     rw [List.append_assoc]
 
 set_option maxHeartbeats 800000 in
-theorem pumping_from_tall_tree {T : Type} (g : ContextFreeGrammar T)
+theorem pumping_from_tall_tree {T : Type*} (g : ContextFreeGrammar T)
     (t : CFGTree T g.NT) (ht : t.ValidFor g)
     (hroot : t.rootSymbol = .nonterminal g.initial)
     (hyield_long : t.yield.length ≥ g.pumpingConstant) :
@@ -332,7 +332,7 @@ theorem pumping_from_tall_tree {T : Type} (g : ContextFreeGrammar T)
     2. `yield_length_le_of_height` (contrapositive): |w| ≥ p = b^(k+1)
        forces t.height > k = g.rules.card.
     3. `pumping_from_tall_tree`: the tall tree yields the decomposition. -/
-theorem cfl_pumping_lemma {T : Type} (L : Language T)
+theorem cfl_pumping_lemma {T : Type*} (L : Language T)
     (hcf : L.IsContextFree) : HasCFLPumpingProperty L := by
   obtain ⟨g, rfl⟩ := hcf
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, ?_⟩
@@ -345,7 +345,7 @@ theorem cfl_pumping_lemma {T : Type} (L : Language T)
 
 /-- Contrapositive of the CFL pumping lemma: if a language lacks the pumping
     property, it is not context-free. -/
-theorem not_isContextFree_of_not_pumpable {T : Type} (L : Language T)
+theorem not_isContextFree_of_not_pumpable {T : Type*} (L : Language T)
     (h : ¬ HasCFLPumpingProperty L) : ¬ L.IsContextFree :=
   fun hcf => h (cfl_pumping_lemma L hcf)
 

@@ -1,5 +1,4 @@
 import Linglib.Features.VerbCluster
-import Linglib.Core.Computability.FormalLanguage
 
 /-!
 # Cross-Serial Dependencies
@@ -128,23 +127,6 @@ def german_3np_3v : VerbClusterExample :=
   , verbs := ["schwimmen", "helfen", "sah"]
   , binding := VerbClusterBinding.reverse 3
   }
-
--- The Formal Language Connection
-
-open Core (FormalLanguageType)
-
-/-- Cross-serial dependencies with case agreement require mild
-    context-sensitivity.
-
-    Cross-serial word ORDER alone is context-free
-    (@cite{gazdar-pullum-1982} grammar 29). The mildly context-sensitive
-    classification applies to the full pattern with case-matching,
-    proven formally for Swiss German in
-    `Shieber1985` via the pumping lemma. -/
-def crossSerialRequires : FormalLanguageType := .mildlyContextSensitive
-
-/-- Nested dependencies are context-free. -/
-def nestedRequires : FormalLanguageType := .contextFree
 
 -- Collected Data
 

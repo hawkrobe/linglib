@@ -247,7 +247,6 @@ import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.Genericity
-import Linglib.Core.Computability.FormalLanguage
 import Linglib.Core.Computability.Subregular.Basic
 import Linglib.Core.Computability.Subregular.StrictlyLocal
 import Linglib.Core.Computability.Subregular.LocallyTestable

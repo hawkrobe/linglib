@@ -60,7 +60,6 @@ namespace BachBrownMarslenWilson1986
 open Features (VerbClusterBinding)
 open Features.VerbClusterBinding (identity reverse unintegratedCount npVerbDist
   identity_unintegratedCount reverse_unintegratedCount)
-open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
 
 -- ============================================================================
 -- §1: Incremental Integration Model
@@ -175,10 +174,8 @@ theorem dep_length_equal (n : Nat) :
     2. Dutch is *easier* than German at Level 3+
        (a PDA predicts nested should be easier or equal) -/
 theorem formal_processing_dissociation :
-    crossSerialRequires = .mildlyContextSensitive ∧
-    nestedRequires = .contextFree ∧
-    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) :=
-  ⟨rfl, rfl, by decide⟩
+    totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) := by
+  decide
 
 /-- Integration cost difference is NOT explained by dependency length. -/
 theorem cost_differs_despite_equal_dep_length :
@@ -312,15 +309,13 @@ theorem dutch_np3_advantage :
     The data refutes this: crossed is empirically easier at n ≥ 3.
     This is the paper's central argument against stack-based parsing. -/
 theorem pda_refuted :
-    -- PDA prediction: nested should be easier (CF-parsable by a PDA)
-    nestedRequires < crossSerialRequires ∧
     -- Empirical reality: crossed is easier (lower integration cost)
     totalIntegrationCost (identity 3) < totalIntegrationCost (reverse 3) ∧
     -- Confirmed by comprehensibility ratings
     testRating .dutch 2 < testRating .germanInf 2 ∧
     -- Confirmed by comprehension accuracy
     testComprehension .dutch 1 > testComprehension .germanInf 1 :=
-  ⟨by decide, by decide, by decide, by decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- §9: Summary

@@ -51,17 +51,10 @@ private theorem makeString_anbnc_eq_blockwitness (n : Nat) :
 /-- Adjacency in the ThreeSymbol witness via the unified `BlockWitness.not_both_in_vxy`. -/
 private theorem not_a_and_c_in_vxy3 (p : Nat) (u vxy z : List ThreeSymbol)
     (hw : makeString_anbnc p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(ThreeSymbol.a ∈ vxy ∧ ThreeSymbol.c ∈ vxy) := by
-  by_cases hp : p = 0
-  · subst hp
-    intro ⟨ha, _⟩
-    have hwlen := congr_arg List.length hw
-    simp [makeString_anbnc, List.length_append] at hwlen
-    have : vxy = [] := List.eq_nil_of_length_eq_zero (by omega)
-    rw [this] at ha; exact List.not_mem_nil ha
-  exact BlockWitness.not_both_in_vxy
+    ¬(ThreeSymbol.a ∈ vxy ∧ ThreeSymbol.c ∈ vxy) :=
+  BlockWitness.not_both_in_vxy
     (by decide : ([ThreeSymbol.a, .b, .c] : List ThreeSymbol).Nodup)
-    (Nat.pos_of_ne_zero hp) (i := 0) (j := 2) rfl rfl (by decide)
+    (i := 0) (j := 2) rfl rfl (by decide)
     (makeString_anbnc_eq_blockwitness p ▸ hw) hvxy
 
 private theorem filter_count3 (n : Nat) (s : ThreeSymbol) :

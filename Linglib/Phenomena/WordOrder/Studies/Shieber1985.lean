@@ -3,7 +3,6 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Case.Basic
-import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Fragments.SwissGerman.Case
 
 /-!
@@ -59,8 +58,7 @@ the case-marking facts, making no claims about phrase structure.
 - @cite{huybregts-1976} gave a contemporaneous Swiss German argument.
 - Joshi (1985) introduced TAG and the mild-CS hierarchy; Vijay-Shanker–Weir
   (1994) established the equivalence of TAG/CCG/MCFG/MG within mild-CS.
-  The MCS classification of cross-serial dependencies (`crossSerialRequires`,
-  defined in `Phenomena.WordOrder.CrossSerial`) is post-Shieber and not
+  The MCS classification of cross-serial dependencies is post-Shieber and not
   attributable to him; he proved only *not weakly CF*.
 - Manaster-Ramer (1987) raised concerns about the universality of Shieber's
   case-matching premise.
@@ -74,8 +72,7 @@ not duplicated here.
 
 namespace Shieber1985
 
-open Core (Case StringHom FormalLanguageType)
-open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
+open Core (Case StringHom)
 open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================
@@ -284,12 +281,12 @@ theorem swiss_german_not_contextFree :
 -- §5: Strong Context-Freeness Corollary
 -- ============================================================================
 
-/-- Cross-serial dependencies are not strongly context-free either. Shieber
-    §3: any strongly-CF analysis would induce a weakly-CF string set; since
-    the string set is not weakly CF (above), no such analysis exists.
-    Stated here against the substrate constant `crossSerialRequires`. -/
+/-- Swiss German is not strongly context-free either. Shieber §3: any
+    strongly-CF analysis induces a weakly-CF string set; since the string
+    set isn't weakly CF (`swiss_german_not_contextFree` above), no such
+    strongly-CF analysis exists. -/
 theorem not_strongly_context_free :
-    crossSerialRequires ≠ FormalLanguageType.contextFree := by decide
+    ¬ swissGermanLang.IsContextFree := swiss_german_not_contextFree
 
 -- ============================================================================
 -- §6: Grounding in the Swiss German Fragment
