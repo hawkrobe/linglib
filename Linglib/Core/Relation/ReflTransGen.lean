@@ -154,9 +154,9 @@ theorem Path.dedup_interior {r : α → α → Prop} {a b : α} :
       exact ⟨x :: xs', by simp only [List.length_cons]; omega, hax, hxs'⟩
 
 /-- Strong-induction helper for `Path.compress`. The explicit length parameter
-threads chain-length through `Nat.strongRecOn`. Public for callers that want
-to recurse explicitly on chain length without paying for `Path.compress`'s
-implicit `chain.length` evaluation. -/
+threads chain-length through `Nat.strongRecOn`. Public so external callers
+that already have a `Nat`-bound on the chain in hand can avoid `Path.compress`'s
+implicit `chain.length` evaluation; in practice all uses go through `compress`. -/
 theorem Path.compress_aux [DecidableEq α] {r : α → α → Prop} {a b : α} :
     ∀ (n : Nat) (chain : List α), chain.length = n → Path r a chain b →
         ∃ chain' : List α, Path r a chain' b ∧ chain'.Nodup ∧
@@ -208,13 +208,13 @@ theorem Path.endpoint_satisfies {r : α → α → Prop} {a b : α}
   | [], h => succ_satisfies _ _ h
   | _ :: _, ⟨_, hr⟩ => Path.endpoint_satisfies succ_satisfies hr
 
-/-- List specialisation: intermediates lie in any list of successors. -/
+/-- List specialisation of `Path.intermediates_satisfy` with `P := (· ∈ s)`. -/
 theorem Path.intermediates_subset {r : α → α → Prop} {a b : α} {s : List α}
     (succ_in_s : ∀ x y, r x y → y ∈ s)
     {chain : List α} (h : Path r a chain b) (y : α) (hy : y ∈ chain) : y ∈ s :=
   Path.intermediates_satisfy succ_in_s h y hy
 
-/-- List specialisation: endpoint lies in any list of successors. -/
+/-- List specialisation of `Path.endpoint_satisfies` with `P := (· ∈ s)`. -/
 theorem Path.endpoint_mem {r : α → α → Prop} {a b : α} {s : List α}
     (succ_in_s : ∀ x y, r x y → y ∈ s)
     {chain : List α} (h : Path r a chain b) : b ∈ s :=
