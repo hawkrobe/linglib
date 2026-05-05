@@ -654,6 +654,35 @@ theorem developDet_hasValue_iff_developDetOn_hasValue
     (M.developDet s).hasValue v x ↔ (developDetOn M vs n s).hasValue v x := by
   rw [developDet_hasValue_iff, developDetOn_hasValue_iff hCovers hN]
 
+-- Helper: PMF.pure injectivity. Two Diracs agree iff their points agree.
+private theorem PMF.pure_inj {β : Type*} {a b : β}
+    (h : PMF.pure a = PMF.pure b) : a = b := by
+  by_contra hne
+  have h1 : PMF.pure a b = 0 := PMF.pure_apply_of_ne _ _ (Ne.symm hne)
+  have h2 : PMF.pure a b = 1 := h ▸ PMF.pure_apply_self b
+  exact one_ne_zero (h1 ▸ h2).symm
+
+-- Helper: `IsDeterministic.toFun` is determined by the mechanism (not the
+-- typeclass instance). Routes through `run_eq` + `PMF.pure_inj`, bypassing
+-- the dependent-typeclass motive issues that block direct `rw [m₁ = m₂]`.
+-- Both instance arguments are explicit so callers can pin them when
+-- automatic resolution doesn't unify the underlying mechanism term.
+private theorem Mechanism.toFun_eq_of_mech_eq
+    {V : Type*} {α : V → Type*} {G : CausalGraph V} {v : V}
+    {m m' : Mechanism G α v}
+    (im : Mechanism.IsDeterministic m) (im' : Mechanism.IsDeterministic m')
+    (h : m = m') (ρ : ∀ u : G.parents v, α u.val) :
+    @Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ
+      = @Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ := by
+  have e1 : m.run ρ = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ) :=
+    im.run_eq ρ
+  have e2 : m'.run ρ = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ) :=
+    im'.run_eq ρ
+  have : PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im ρ)
+       = PMF.pure (@Mechanism.IsDeterministic.toFun _ _ _ _ _ im' ρ) := by
+    rw [← e1, ← e2, h]
+  exact PMF.pure_inj this
+
 /-- **Intervention-as-Extend bridge**: for an acyclic deterministic SEM
     with `cause` undetermined in `s`, Pearl-intervening to set
     `cause := xC` is equivalent (at the level of `developDet`) to
@@ -661,23 +690,59 @@ theorem developDet_hasValue_iff_developDetOn_hasValue
     original mechanisms.
 
     Load-bearing substrate fact connecting `probabilisticSuf`
-    (intervene-based) to `causallySufficient` (extend-based). Under the
-    per-vertex `developDet`, the proof goes by induction on
-    `IsStrictAncestor` showing that the intervened mechanism at `cause`
-    fires `xC` regardless of recursive parent values, matching the
-    extended-valuation case which short-circuits via `developDetVtx_extended`.
+    (intervene-based) to `causallySufficient` (extend-based). The proof
+    goes by `IsDAG.wf.induction` on vertices: at `cause` both sides
+    produce `xC` (LHS via the constant intervention mechanism; RHS via
+    `developDetVtx_extended` short-circuit on the extended valuation);
+    off-cause both sides reduce to the same mechanism applied to
+    recursively-equal parent values via the IH.
 
-    **Proof deferred** — same TODO status as before the per-vertex
-    refactor; the consumer (`probabilisticSuf_eq_deterministicSuf` in
-    CaoWhiteLassiter2025) relies on this as a single substrate sorry
-    rather than re-deriving at each call site. -/
+    The dependent-typeclass equality (`toFun ((M.intervene cause xC).mech w)
+    ρ = toFun (M'.mech w) ρ` for `M' = M.intervene cause xC` or `M`) is
+    discharged via the `Mechanism.toFun_eq_of_mech_eq` helper above,
+    which routes through `run_eq` to bypass motive-not-type-correct
+    issues that block direct rewriting of the mechanism. -/
 theorem developDet_intervene_eq_developDet_extend
     [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) (cause : V) (xC : α cause)
     (h : s.get cause = none) :
     (M.intervene cause xC).developDet s = M.developDet (s.extend cause xC) := by
-  sorry
+  funext v
+  show some (developDetVtx (M.intervene cause xC) s v) =
+       some (developDetVtx M (s.extend cause xC) v)
+  congr 1
+  induction v using hDag.wf.induction with
+  | _ w ih =>
+    rw [developDetVtx_unfold (M.intervene cause xC) s w]
+    rw [developDetVtx_unfold M (s.extend cause xC) w]
+    by_cases hwc : w = cause
+    · subst hwc
+      simp only [h, Valuation.extend_get_same]
+      -- Goal: toFun ((M.intervene w xC).mech w) (...) = xC
+      -- Resolve via helper: pin both instances explicitly to bypass synth issues.
+      rw [Mechanism.toFun_eq_of_mech_eq
+            (IsDeterministic.mech_det (M := M.intervene w xC) w)
+            (inferInstanceAs (Mechanism.IsDeterministic
+              (Mechanism.const (G := M.graph) xC)))
+            (intervene_mech_self M w xC)]
+      rfl
+    · have hExt : (s.extend cause xC).get w = s.get w :=
+        Valuation.extend_get_ne hwc
+      rw [hExt]
+      cases hsw : s.get w with
+      | some y => rfl
+      | none =>
+        -- Reduce the match-on-none on both sides
+        show Mechanism.IsDeterministic.toFun ((M.intervene cause xC).mech w) _
+          = Mechanism.IsDeterministic.toFun (M.mech w) _
+        rw [Mechanism.toFun_eq_of_mech_eq
+              (IsDeterministic.mech_det (M := M.intervene cause xC) w)
+              (IsDeterministic.mech_det (M := M) w)
+              (intervene_mech_other M xC hwc)]
+        congr 1
+        funext u
+        exact ih u.val (Relation.TransGen.single u.property)
 
 -- ════════════════════════════════════════════════════
 -- § PMF-valued forward propagation (canonical)
@@ -773,11 +838,12 @@ noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
     recursion's value. Real theorem; tractable but not blocking the
     current substrate refactor.
 
-    The downstream consumer
-    (`probabilisticSuf_of_deterministic` →
-    `CaoWhiteLassiter2025.probabilisticSuf_eq_deterministicSuf`) was
-    already broken by `developDet_intervene_eq_developDet_extend`'s
-    sorry; this defers the same chain. No new regression. -/
+    The downstream consumer (`probabilisticSuf_of_deterministic` →
+    `CaoWhiteLassiter2025.probabilisticSuf_eq_deterministicSuf`) is now
+    blocked solely on this `develop_eq_pure_of_deterministic` sorry —
+    the sibling `developDet_intervene_eq_developDet_extend` was closed
+    in 0.230.782 via per-vertex `IsDAG.wf.induction`. Closing this final
+    sorry would unblock the full chain. -/
 theorem develop_eq_pure_of_deterministic
     [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M] (s : Valuation α) :
