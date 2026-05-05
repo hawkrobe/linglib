@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Plurality.ExistentialPL
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Phenomena.Plurals.Studies.Kriz2016
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Mathlib.Data.Set.Basic
 
@@ -863,6 +864,84 @@ theorem positive_negative_asymmetry :
     -- Negative: universality is automatic (no exhaustification)
     (∀ w, ¬someLaughed w → ¬kellyLaughed w ∧ ¬janeLaughed w) := by
   exact ⟨⟨.onlyKelly, trivial, fun ⟨_, h⟩ => h⟩, negative_universal⟩
+
+
+-- ============================================================
+-- SECTION 12: Formal divergence with Križ (2016)
+-- ============================================================
+
+/-! The §11 prose comparison is upgraded here to a kernel-checked divergence
+theorem: lift the BarLev `Set HomWorld` predicates into Bool-valued versions,
+instantiate Križ's `barePluralTV` over them, and demonstrate that at the
+gap-world `onlyKelly`:
+
+- Križ's bare-plural is `.indet` (gap), and its Strong-Kleene negation is
+  ALSO `.indet` (gap). So Križ's `gap_enables_nonmax` makes non-maximal
+  use of the *negation* available in principle.
+- Bar-Lev's `negative_universal` (above) makes `¬someLaughed` straightforwardly
+  bivalent — at `onlyKelly` it's FALSE (since some kid did laugh). No gap
+  to exploit, so non-maximal use of negation is forbidden.
+
+The two predictions cannot both be right: this is the kernel-visible form
+of the §11 polarities-symmetric vs. polarities-asymmetric disagreement. -/
+
+/-- Bool-lifted version of `laughed`, for use with Križ's
+    `barePluralTV : (Atom → World → Bool) → Finset Atom → SentenceTV W`. -/
+def laughedBool : Kid → HomWorld → Bool
+  | .kelly, .neither    => false
+  | .kelly, .onlyKelly  => true
+  | .kelly, .onlyJane   => false
+  | .kelly, .both       => true
+  | .jane,  .neither    => false
+  | .jane,  .onlyKelly  => false
+  | .jane,  .onlyJane   => true
+  | .jane,  .both       => true
+
+/-- The Bool lift agrees with the Set version of `laughed`. -/
+theorem laughedBool_iff_laughed (k : Kid) (w : HomWorld) :
+    laughedBool k w = true ↔ laughed k w := by
+  cases k <;> cases w <;> simp [laughedBool, laughed, kellyLaughed, janeLaughed]
+
+/-- At `onlyKelly`, Križ's bare-plural denotation of "the kids laughed" is
+    a homogeneity gap (.indet) — Kelly laughed, Jane didn't. -/
+theorem kriz_bare_kids_onlyKelly_gap :
+    Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+      .onlyKelly = .indet := by decide
+
+/-- Križ's Strong-Kleene negation of a gap is also a gap. So the negation
+    "the kids didn't laugh" at `onlyKelly` is `.indet` under Križ. -/
+theorem kriz_neg_bare_kids_onlyKelly_gap :
+    Core.Duality.Truth3.neg
+      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+        .onlyKelly) = .indet := by
+  rw [kriz_bare_kids_onlyKelly_gap]; decide
+
+/-- Bar-Lev's `negative_universal` derives `¬someLaughed` as bivalent:
+    at `onlyKelly`, `¬someLaughed .onlyKelly` is FALSE (Kelly laughed). -/
+theorem barlev_neg_someLaughed_onlyKelly_false :
+    ¬ ¬ someLaughed .onlyKelly :=
+  fun h => h trivial
+
+/-- **Križ vs. Bar-Lev formal divergence on negative non-maximality**.
+    At the gap-world `onlyKelly`:
+
+    - **Križ**: negation of "the kids laughed" is `.indet` (Strong-Kleene
+      preserves the gap). So `gap_enables_nonmax` makes non-maximal use of
+      the *negation* in principle available — symmetric with the positive.
+    - **Bar-Lev**: `¬someLaughed` is straightforwardly bivalent (¬∃ = ∀¬).
+      At `onlyKelly`, `¬someLaughed` is FALSE — no gap to exploit. The
+      negation cannot be used non-maximally — asymmetric with positive.
+
+    The two clauses below cannot both be the right semantics for "the kids
+    didn't laugh" at `onlyKelly`. The theorem's existence packages the
+    formal disagreement that §11 §`positive_negative_asymmetry` describes
+    in prose. -/
+theorem kriz_vs_barlev_negative_nonmax :
+    Core.Duality.Truth3.neg
+      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+        .onlyKelly) = .indet ∧
+    ¬ ¬ someLaughed .onlyKelly :=
+  ⟨kriz_neg_bare_kids_onlyKelly_gap, barlev_neg_someLaughed_onlyKelly_false⟩
 
 
 end BarLev2021
