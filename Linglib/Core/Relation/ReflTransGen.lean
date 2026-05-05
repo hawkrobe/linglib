@@ -2,6 +2,9 @@ import Mathlib.Logic.Relation
 import Mathlib.Data.List.Defs
 import Mathlib.Data.List.Dedup
 import Mathlib.Data.List.Perm.Subperm
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Union
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Decidability of `Relation.ReflTransGen` on a finite carrier
@@ -185,24 +188,37 @@ theorem Path.compress [DecidableEq α] {r : α → α → Prop} {a b : α} {chai
 -- Subset bound: path intermediates contained in any successor-closed list
 -- ----------------------------------------------------------------------------
 
-/-- All intermediates of a path are contained in any list that contains
-`r`-successors. -/
-theorem Path.intermediates_subset {r : α → α → Prop} {a b : α} {s : List α}
-    (succ_in_s : ∀ x y, r x y → y ∈ s) :
-    ∀ {chain : List α}, Path r a chain b → ∀ y ∈ chain, y ∈ s
+/-- All intermediates of a path satisfy any predicate that holds of
+`r`-successors. Stated abstractly so it specialises to both List and
+Finset universes. -/
+theorem Path.intermediates_satisfy {r : α → α → Prop} {a b : α}
+    {P : α → Prop} (succ_satisfies : ∀ x y, r x y → P y) :
+    ∀ {chain : List α}, Path r a chain b → ∀ y ∈ chain, P y
   | [], _, _, hy => by simp at hy
   | _ :: xs, ⟨hax, hr⟩, y, hy => by
     rcases List.mem_cons.mp hy with rfl | hy_tail
-    · exact succ_in_s _ _ hax
-    · exact Path.intermediates_subset succ_in_s hr y hy_tail
+    · exact succ_satisfies _ _ hax
+    · exact Path.intermediates_satisfy succ_satisfies hr y hy_tail
 
-/-- The endpoint of a path is contained in any list that contains
+/-- The endpoint of a path satisfies any predicate that holds of
 `r`-successors. -/
+theorem Path.endpoint_satisfies {r : α → α → Prop} {a b : α}
+    {P : α → Prop} (succ_satisfies : ∀ x y, r x y → P y) :
+    ∀ {chain : List α}, Path r a chain b → P b
+  | [], h => succ_satisfies _ _ h
+  | _ :: _, ⟨_, hr⟩ => Path.endpoint_satisfies succ_satisfies hr
+
+/-- List specialisation: intermediates lie in any list of successors. -/
+theorem Path.intermediates_subset {r : α → α → Prop} {a b : α} {s : List α}
+    (succ_in_s : ∀ x y, r x y → y ∈ s)
+    {chain : List α} (h : Path r a chain b) (y : α) (hy : y ∈ chain) : y ∈ s :=
+  Path.intermediates_satisfy succ_in_s h y hy
+
+/-- List specialisation: endpoint lies in any list of successors. -/
 theorem Path.endpoint_mem {r : α → α → Prop} {a b : α} {s : List α}
-    (succ_in_s : ∀ x y, r x y → y ∈ s) :
-    ∀ {chain : List α}, Path r a chain b → b ∈ s
-  | [], h => succ_in_s _ _ h
-  | _ :: _, ⟨_, hr⟩ => Path.endpoint_mem succ_in_s hr
+    (succ_in_s : ∀ x y, r x y → y ∈ s)
+    {chain : List α} (h : Path r a chain b) : b ∈ s :=
+  Path.endpoint_satisfies succ_in_s h
 
 /-- Length bound: a `Nodup` path with `b` not in the chain is bounded by the
 size of any successor-closed list. -/
@@ -315,6 +331,184 @@ def decidable_of_finite [DecidableEq α] {r : α → α → Prop} [DecidableRel 
       simp only [List.mem_filter, decide_eq_true_eq]
       exact ⟨fun h => ⟨succ_in_s a b h, h⟩, fun h => h.2⟩)
     (fun _ _ h => (List.mem_filter.mp h).1)
+    a b
+
+-- ----------------------------------------------------------------------------
+-- Finset / Fintype variants
+-- ----------------------------------------------------------------------------
+
+/-! The List-based API above suits callers whose universe is naturally a
+`List α` (e.g., `Network.nodeUniverse` derived from links via `.dedup`).
+The Finset variants below suit callers whose universe is a `Finset α`
+(e.g., `CausalGraph.parents : V → Finset V` with `[Fintype V]`). The
+shared mathematical content (`Path`, compression, `length_lt_of_nodup`)
+applies to both — only the BFS engine and the headline iff differ. -/
+
+/-- `Finset` length-bound variant. Goes through `List.toFinset` (computable
+since `List.dedup` is computable) and `Finset.card_le_card`. -/
+theorem Path.length_lt_of_nodup_finset [DecidableEq α] {r : α → α → Prop}
+    {a b : α} {s : Finset α}
+    (succ_in_s : ∀ x y, r x y → y ∈ s)
+    {chain : List α} (h : Path r a chain b)
+    (hnodup : chain.Nodup) (hb_notin : b ∉ chain) :
+    chain.length < s.card := by
+  have h_subset : ∀ x ∈ chain, x ∈ s :=
+    fun x hx => h.intermediates_satisfy succ_in_s x hx
+  have hb_in_s : b ∈ s := h.endpoint_satisfies succ_in_s
+  have hbchain_nodup : (b :: chain).Nodup := List.nodup_cons.mpr ⟨hb_notin, hnodup⟩
+  have hbchain_in_s : ∀ x ∈ (b :: chain), x ∈ s := by
+    intro x hx
+    rcases List.mem_cons.mp hx with rfl | hx_tail
+    · exact hb_in_s
+    · exact h_subset x hx_tail
+  have h_card_le : (b :: chain).toFinset.card ≤ s.card := by
+    apply Finset.card_le_card
+    intro x hx
+    exact hbchain_in_s x (List.mem_toFinset.mp hx)
+  have h_len_eq : (b :: chain).toFinset.card = (b :: chain).length :=
+    List.toFinset_card_of_nodup hbchain_nodup
+  have : (b :: chain).length ≤ s.card := h_len_eq ▸ h_card_le
+  simpa using this
+
+/-- Bounded BFS over a `Finset`-valued step function. Internal helper for
+`decidable_of_finset_step`. -/
+private def finsetBFS [DecidableEq α] (step : α → Finset α) (a : α) : Nat → Finset α
+  | 0 => ∅
+  | n + 1 =>
+    let ps := step a
+    ps ∪ ps.biUnion (fun p => finsetBFS step p n)
+
+private theorem mem_finsetBFS_succ_iff [DecidableEq α]
+    (step : α → Finset α) (a x : α) (n : Nat) :
+    x ∈ finsetBFS step a (n + 1) ↔
+      x ∈ step a ∨ ∃ p ∈ step a, x ∈ finsetBFS step p n := by
+  simp only [finsetBFS, Finset.mem_union, Finset.mem_biUnion]
+
+private theorem mem_finsetBFS_iff_path [DecidableEq α] (step : α → Finset α) (a b : α) :
+    ∀ n, b ∈ finsetBFS step a n ↔
+        ∃ chain : List α, chain.length < n ∧ Path (fun a b => b ∈ step a) a chain b
+  | 0 => by
+    simp only [finsetBFS, Finset.notMem_empty, false_iff, not_exists]
+    intro chain ⟨h, _⟩
+    exact Nat.not_lt_zero _ h
+  | n + 1 => by
+    rw [mem_finsetBFS_succ_iff]
+    constructor
+    · rintro (hpar | ⟨p, hp_par, hp_anc⟩)
+      · exact ⟨[], Nat.zero_lt_succ _, hpar⟩
+      · obtain ⟨chain, hlen, hc⟩ := (mem_finsetBFS_iff_path step p b n).mp hp_anc
+        refine ⟨p :: chain, ?_, hp_par, hc⟩
+        simpa using Nat.succ_lt_succ hlen
+    · rintro ⟨chain, hlen, hc⟩
+      match chain, hc with
+      | [], h => exact Or.inl h
+      | x :: xs, ⟨hax, hr⟩ =>
+        right
+        refine ⟨x, hax, ?_⟩
+        have hxs_lt : xs.length < n := by simpa using Nat.lt_of_succ_lt_succ hlen
+        exact (mem_finsetBFS_iff_path step x b n).mpr ⟨xs, hxs_lt, hr⟩
+
+/-- **Decidability of `Relation.ReflTransGen` on a `Finset`-bounded carrier**,
+given an explicit `Finset`-valued step function. -/
+def decidable_of_finset_step [DecidableEq α] {r : α → α → Prop}
+    (step : α → Finset α) (s : Finset α)
+    (step_eq : ∀ a b, r a b ↔ b ∈ step a)
+    (step_in_s : ∀ a b, b ∈ step a → b ∈ s)
+    (a b : α) : Decidable (Relation.ReflTransGen r a b) := by
+  have key : Relation.ReflTransGen r a b ↔
+      a = b ∨ b ∈ finsetBFS step a s.card := by
+    constructor
+    · intro h
+      rcases eq_or_path h with rfl | ⟨chain, hc⟩
+      · exact Or.inl rfl
+      · have hc' : Path (fun x y => y ∈ step x) a chain b :=
+          (Path.congr step_eq).mp hc
+        obtain ⟨chain', hc'', hnodup, _, hb_notin⟩ := hc'.compress
+        have hlen : chain'.length < s.card :=
+          hc''.length_lt_of_nodup_finset step_in_s hnodup hb_notin
+        exact Or.inr ((mem_finsetBFS_iff_path step a b s.card).mpr
+          ⟨chain', hlen, hc''⟩)
+    · rintro (rfl | hmem)
+      · exact Relation.ReflTransGen.refl
+      · obtain ⟨chain, _, hc⟩ := (mem_finsetBFS_iff_path step a b s.card).mp hmem
+        exact ((Path.congr fun a b => (step_eq a b).symm).mp hc).toReflTransGen
+  exact decidable_of_iff _ key.symm
+
+/-- **Decidability of `Relation.ReflTransGen` on a `[Fintype]` carrier** —
+the convenience headline most callers want. Takes no explicit universe;
+uses `Finset.univ` as the bound. -/
+def decidable_of_fintype_step [Fintype α] [DecidableEq α] {r : α → α → Prop}
+    (step : α → Finset α)
+    (step_eq : ∀ a b, r a b ↔ b ∈ step a)
+    (a b : α) : Decidable (Relation.ReflTransGen r a b) :=
+  decidable_of_finset_step step Finset.univ step_eq
+    (fun _ x _ => Finset.mem_univ x) a b
+
+/-- **Decidability of `Relation.ReflTransGen` on a `[Fintype]` carrier**
+given only a `[DecidableRel r]` instance. The convenience parallel to
+mathlib's `SimpleGraph.Reachable.decidable`. -/
+def decidable_of_fintype [Fintype α] [DecidableEq α] {r : α → α → Prop}
+    [DecidableRel r] (a b : α) : Decidable (Relation.ReflTransGen r a b) :=
+  decidable_of_fintype_step
+    (fun a => Finset.univ.filter (fun b => decide (r a b)))
+    (fun a b => by simp [decide_eq_true_eq])
+    a b
+
+-- ----------------------------------------------------------------------------
+-- TransGen siblings (drop the reflexive disjunct)
+-- ----------------------------------------------------------------------------
+
+/-- `TransGen r a b` decomposes as a `Path` (one or more edges). -/
+theorem _root_.Relation.TransGen.exists_path {r : α → α → Prop} {a b : α}
+    (h : Relation.TransGen r a b) : ∃ chain : List α, Path r a chain b := by
+  induction h with
+  | single hab => exact ⟨[], hab⟩
+  | @tail b' c _ hbc ih =>
+    obtain ⟨chain, hc⟩ := ih
+    exact ⟨chain ++ [b'], hc.snoc hbc⟩
+
+/-- A `Path` realises `TransGen` (always at least one edge). -/
+theorem Path.toTransGen {r : α → α → Prop} {a b : α} :
+    ∀ {chain : List α}, Path r a chain b → Relation.TransGen r a b
+  | [], h => Relation.TransGen.single h
+  | _ :: _, ⟨hax, hr⟩ => Relation.TransGen.head hax (Path.toTransGen hr)
+
+/-- **Decidability of `Relation.TransGen` on a `Finset`-bounded carrier**. -/
+def decidable_TransGen_of_finset_step [DecidableEq α] {r : α → α → Prop}
+    (step : α → Finset α) (s : Finset α)
+    (step_eq : ∀ a b, r a b ↔ b ∈ step a)
+    (step_in_s : ∀ a b, b ∈ step a → b ∈ s)
+    (a b : α) : Decidable (Relation.TransGen r a b) := by
+  have key : Relation.TransGen r a b ↔ b ∈ finsetBFS step a s.card := by
+    constructor
+    · intro h
+      obtain ⟨chain, hc⟩ := h.exists_path
+      have hc' : Path (fun x y => y ∈ step x) a chain b :=
+        (Path.congr step_eq).mp hc
+      obtain ⟨chain', hc'', hnodup, _, hb_notin⟩ := hc'.compress
+      have hlen : chain'.length < s.card :=
+        hc''.length_lt_of_nodup_finset step_in_s hnodup hb_notin
+      exact (mem_finsetBFS_iff_path step a b s.card).mpr ⟨chain', hlen, hc''⟩
+    · intro hmem
+      obtain ⟨chain, _, hc⟩ := (mem_finsetBFS_iff_path step a b s.card).mp hmem
+      exact ((Path.congr fun a b => (step_eq a b).symm).mp hc).toTransGen
+  exact decidable_of_iff _ key.symm
+
+/-- **Decidability of `Relation.TransGen` on a `[Fintype]` carrier**. -/
+def decidable_TransGen_of_fintype_step [Fintype α] [DecidableEq α] {r : α → α → Prop}
+    (step : α → Finset α)
+    (step_eq : ∀ a b, r a b ↔ b ∈ step a)
+    (a b : α) : Decidable (Relation.TransGen r a b) :=
+  decidable_TransGen_of_finset_step step Finset.univ step_eq
+    (fun _ x _ => Finset.mem_univ x) a b
+
+/-- **Decidability of `Relation.TransGen` on a `[Fintype]` carrier** given
+`[DecidableRel r]`. -/
+def decidable_TransGen_of_fintype [Fintype α] [DecidableEq α] {r : α → α → Prop}
+    [DecidableRel r] (a b : α) : Decidable (Relation.TransGen r a b) :=
+  decidable_TransGen_of_fintype_step
+    (fun a => Finset.univ.filter (fun b => decide (r a b)))
+    (fun a b => by simp [decide_eq_true_eq])
     a b
 
 end Relation.ReflTransGen

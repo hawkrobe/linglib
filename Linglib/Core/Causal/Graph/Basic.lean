@@ -1,4 +1,5 @@
 import Linglib.Core.Causal.Graph.Defs
+import Linglib.Core.Relation.ReflTransGen
 import Mathlib.Order.RelClasses
 import Mathlib.Logic.Relation
 
@@ -30,12 +31,21 @@ def IsAncestor (G : CausalGraph V) : V → V → Prop :=
 def IsStrictAncestor (G : CausalGraph V) : V → V → Prop :=
   Relation.TransGen (fun u v => u ∈ G.parents v)
 
-/-! `Decidable (G.IsAncestor u v)` is available via
-`Relation.ReflTransGen.decidable_of_finite_step` whenever the caller can
-supply an explicit `List V` bound. For `V := Fin n` use `List.finRange n`;
-for arbitrary `[Fintype V]` the conversion `Finset.univ.toList` is
-noncomputable (uses choice), so callers that want `decide` to reduce must
-supply a computable list themselves. -/
+/-- `Decidable (G.IsAncestor u v)` via the `Core.Relation.ReflTransGen`
+substrate's `Fintype` headline. The relation `fun u v => u ∈ G.parents v`
+has decidable successors `G.children u` (already defined as
+`Finset.univ.filter (v ∈ G.parents ·)` in `Defs.lean`). -/
+instance IsAncestor.decidable [Fintype V] [DecidableEq V] (G : CausalGraph V)
+    (u v : V) : Decidable (G.IsAncestor u v) :=
+  Relation.ReflTransGen.decidable_of_fintype_step G.children
+    (fun a b => by simp [G.mem_children_iff]) u v
+
+/-- `Decidable (G.IsStrictAncestor u v)` via the substrate's `TransGen`
+`Fintype` headline. -/
+instance IsStrictAncestor.decidable [Fintype V] [DecidableEq V] (G : CausalGraph V)
+    (u v : V) : Decidable (G.IsStrictAncestor u v) :=
+  Relation.ReflTransGen.decidable_TransGen_of_fintype_step G.children
+    (fun a b => by simp [G.mem_children_iff]) u v
 
 /-- **Acyclicity mixin**: the strict-ancestor relation is well-founded —
     no infinite chain of parents. Required by `topologicalOrder`,

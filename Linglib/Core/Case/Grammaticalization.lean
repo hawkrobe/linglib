@@ -1,6 +1,7 @@
 import Mathlib.Order.Nat
 import Mathlib.Logic.Relation
 import Linglib.Core.Case.Basic
+import Linglib.Core.Relation.ReflTransGen
 /-!
 # Case Grammaticalization
 @cite{heine-2009}
@@ -112,6 +113,14 @@ theorem chain_loc_com_inst :
     extension path of any finite length. -/
 abbrev Case.ExtensionReachable : Case → Case → Prop :=
   Relation.TransGen Case.Extends
+
+/-- `Case.ExtensionReachable` is decidable via the
+`Core.Relation.ReflTransGen` substrate's `TransGen` `Fintype` headline.
+The step function is `Case.extensionTargets`. -/
+instance : DecidableRel Case.ExtensionReachable := fun c₁ c₂ =>
+  Relation.ReflTransGen.decidable_TransGen_of_fintype_step
+    Case.extensionTargets
+    (fun a b => (Case.mem_extensionTargets (c₁ := a) (c₂ := b)).symm) c₁ c₂
 
 /-- Accusative is reachable from allative via dative (chain 2b). -/
 theorem acc_reachable_from_all : Case.ExtensionReachable .all .acc :=
