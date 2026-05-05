@@ -1808,12 +1808,13 @@ import Linglib.Phenomena.Phonology.Studies.MarcoRasin2026
 import Linglib.Phenomena.Phonology.Studies.MeinhardtEtAl2024
 import Linglib.Phenomena.Phonology.Studies.RoseWalker2004
 import Linglib.Phenomena.Phonology.Studies.Sagey1986
+import Linglib.Phenomena.Phonology.Studies.SandeClemDabkowski2026
 import Linglib.Phenomena.Phonology.Studies.SPEDerivations
 import Linglib.Phenomena.Phonology.Studies.Storme2026
 import Linglib.Phenomena.Phonology.Studies.Zuraw2010
 import Linglib.Phenomena.Phonology.Studies.ZurawHayes2017
 import Linglib.Phenomena.Reduplication.Studies.McCarthyPrince1995
-import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
+import Linglib.Phenomena.Phonology.Studies.SiptarTorkenczy2000
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
@@ -1857,6 +1858,8 @@ import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
+import Linglib.Core.Computability.ContextFreeGrammar.Map
+import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
@@ -2074,7 +2077,9 @@ import Linglib.Theories.Syntax.Minimalist.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Bulgarian
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
 import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Amalgamation
+import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
 import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Theories.Phonology.OptimalityTheory.CophonologyByPhrase
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
 import Linglib.Phenomena.Politeness.Studies.Wang2023
 import Linglib.Phenomena.SentenceMood.Studies.Gutzmann2015

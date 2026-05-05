@@ -18,8 +18,9 @@ using a purely string-based argument that makes no assumptions about
 constituent structure or semantics. The proof rests on four empirical
 claims about Swiss German subordinate clauses, plus the closure of
 context-free languages under string homomorphism and intersection with
-regular languages (axiomatized in `Linglib.Core.Computability.ContextFreeGrammar.Closure`,
-citing @cite{hopcroft-ullman-1979}).
+regular languages (proven in `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
+following @cite{bar-hillel-perles-shamir-1961} / @cite{hopcroft-motwani-ullman-2000}
+Theorems 7.24, 7.27).
 
 ## The Four Claims
 
@@ -36,10 +37,11 @@ citing @cite{hopcroft-ullman-1979}).
 
 Shieber's full theorem — Swiss German is not weakly CF — is
 `swiss_german_not_contextFree` below. Proof bottoms out at the two CFL
-closure axioms in `Linglib.Core.Computability.ContextFreeGrammar.Closure`
-(homomorphism + intersection-with-regular, cited Hopcroft–Ullman 1979) and
-`ambncmdn_not_contextFree` (the two-parameter pumping result) in
-`Linglib.Core.Computability.NonContextFree`.
+closure theorems in `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
+(homomorphism + intersection-with-regular, both proven; see those files for
+@cite{bar-hillel-perles-shamir-1961} / @cite{hopcroft-motwani-ullman-2000}
+construction details) and `ambncmdn_not_contextFree` (the two-parameter
+pumping result) in `Linglib.Core.Computability.NonContextFree`.
 
 A weaker pedagogical waypoint, `swiss_german_diagonal_not_contextFree`, uses
 only the simpler one-parameter `anbncndn` substrate; it covers just the
@@ -240,41 +242,515 @@ theorem swiss_german_diagonal_not_contextFree :
   rw [stringMap_diagonal_eq_anbncndn]
   exact anbncndn_not_contextFree
 
-/-- The full Swiss German cross-serial language: token sequences corresponding
-    to case-matched, case-sorted clauses with arbitrary `m, n` (no diagonal
-    restriction). Strict superset of `swissGermanDiagonalLang`. -/
-def swissGermanLang : Language Token :=
-  { ts | ∃ m n : Nat, ts = caseSortedTokens (arbitraryDepth m n) }
+-- ============================================================================
+-- §4: The full Swiss German language and Shieber's schema
+-- ============================================================================
+-- Shieber's actual paper structure: the SG language is the FREE language
+-- (NPs in any internal order, then Vs in any internal order, with case-
+-- matched counts), and the proof uses BOTH the homomorphism leg (project
+-- tokens to {a,b,c,d}) AND the regular-intersection leg (filter to
+-- case-sorted shape `a*b*c*d*`). We mechanize this faithfully via
+-- `Language.not_isContextFree_via_witness` from `Closure.lean`.
 
-/-- The homomorphic image of the full SG language under `tokenStringHom`
-    is exactly `ambncmdn = {aᵐbⁿcᵐdⁿ}`. Both directions of equality use
-    `mem_ambncmdn_iff`'s structural decomposition. -/
-theorem stringMap_swissGerman_eq_ambncmdn :
-    Language.stringMap tokenStringHom swissGermanLang = ambncmdn := by
+/-- The Swiss German cross-serial language: token sequences with NPs in any
+    *internal* order, then Vs in any internal order, with case counts matched
+    (#DAT-NP = #DAT-V, #ACC-NP = #ACC-V). The case-sorted subset
+    (`caseSortedTokens (arbitraryDepth m n)`) is properly contained. -/
+def swissGermanLang : Language Token :=
+  { ts | ∃ nps vs : List Token,
+      ts = nps ++ vs ∧
+      (∀ t ∈ nps, t.isNP = true) ∧
+      (∀ t ∈ vs, t.isNP = false) ∧
+      nps.countP (fun t => decide (t.caseValue = .dat)) =
+        vs.countP (fun t => decide (t.caseValue = .dat)) ∧
+      nps.countP (fun t => decide (t.caseValue = .acc)) =
+        vs.countP (fun t => decide (t.caseValue = .acc)) }
+
+/-- Every case-matched, case-sorted clause is in the (more general) free SG
+    language. -/
+theorem caseSortedTokens_in_swissGermanLang (m n : Nat) :
+    caseSortedTokens (arbitraryDepth m n) ∈ swissGermanLang := by
+  refine ⟨List.replicate m .datNP ++ List.replicate n .accNP,
+          List.replicate m .datV ++ List.replicate n .accV, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [caseSortedTokens, arbitraryDepth, List.append_assoc]
+  · intro t ht
+    rcases List.mem_append.mp ht with h | h
+    · obtain rfl := List.eq_of_mem_replicate h; rfl
+    · obtain rfl := List.eq_of_mem_replicate h; rfl
+  · intro t ht
+    rcases List.mem_append.mp ht with h | h
+    · obtain rfl := List.eq_of_mem_replicate h; rfl
+    · obtain rfl := List.eq_of_mem_replicate h; rfl
+  · simp [List.countP_append, List.countP_replicate, Token.caseValue]
+  · simp [List.countP_append, List.countP_replicate, Token.caseValue]
+
+-- ----------------------------------------------------------------------------
+-- The regular filter `caseSorted` on FourSymbol: a*b*c*d*.
+-- ----------------------------------------------------------------------------
+
+/-- DFA states for the case-sorted shape `a*b*c*d*`. -/
+inductive CaseSortedState | sA | sB | sC | sD | sDead
+  deriving DecidableEq, Fintype, Repr
+
+/-- DFA recognizing `a*b*c*d*` over `FourSymbol`. -/
+def caseSortedDFA : DFA FourSymbol CaseSortedState where
+  start := .sA
+  accept := { .sA, .sB, .sC, .sD }
+  step
+    | .sA, .a => .sA  | .sA, .b => .sB  | .sA, .c => .sC  | .sA, .d => .sD
+    | .sB, .a => .sDead | .sB, .b => .sB | .sB, .c => .sC | .sB, .d => .sD
+    | .sC, .a => .sDead | .sC, .b => .sDead | .sC, .c => .sC | .sC, .d => .sD
+    | .sD, .a => .sDead | .sD, .b => .sDead | .sD, .c => .sDead | .sD, .d => .sD
+    | .sDead, _ => .sDead
+
+/-- The case-sorted shape language `a*b*c*d*` on `FourSymbol`. -/
+def caseSorted : Language FourSymbol := caseSortedDFA.accepts
+
+theorem caseSorted_isRegular : caseSorted.IsRegular :=
+  ⟨CaseSortedState, inferInstance, caseSortedDFA, rfl⟩
+
+-- DFA evaluation step lemmas: each replicate kᵢ block stabilises in the
+-- corresponding state once started or already past it.
+
+private lemma evalFrom_replicate_a (k : Nat) :
+    caseSortedDFA.evalFrom .sA (List.replicate k .a) = .sA := by
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [List.replicate_succ, DFA.evalFrom_cons]; exact ih
+
+private lemma evalFrom_replicate_b (k : Nat) (s : CaseSortedState)
+    (h : s = .sA ∨ s = .sB) :
+    caseSortedDFA.evalFrom s (List.replicate k .b) =
+      (if k = 0 then s else .sB) := by
+  induction k generalizing s with
+  | zero => simp
+  | succ k ih =>
+    rw [List.replicate_succ, DFA.evalFrom_cons]
+    rcases h with rfl | rfl
+    · -- step sA b = sB
+      show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
+      rw [ih .sB (.inr rfl)]; cases k <;> simp
+    · -- step sB b = sB
+      show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
+      rw [ih .sB (.inr rfl)]; cases k <;> simp
+
+private lemma evalFrom_replicate_c (k : Nat) (s : CaseSortedState)
+    (h : s = .sA ∨ s = .sB ∨ s = .sC) :
+    caseSortedDFA.evalFrom s (List.replicate k .c) =
+      (if k = 0 then s else .sC) := by
+  induction k generalizing s with
+  | zero => simp
+  | succ k ih =>
+    rw [List.replicate_succ, DFA.evalFrom_cons]
+    rcases h with rfl | rfl | rfl
+    all_goals (
+      show caseSortedDFA.evalFrom .sC (List.replicate k .c) = _
+      rw [ih .sC (.inr (.inr rfl))]; cases k <;> simp)
+
+private lemma evalFrom_replicate_d (k : Nat) (s : CaseSortedState)
+    (h : s = .sA ∨ s = .sB ∨ s = .sC ∨ s = .sD) :
+    caseSortedDFA.evalFrom s (List.replicate k .d) =
+      (if k = 0 then s else .sD) := by
+  induction k generalizing s with
+  | zero => simp
+  | succ k ih =>
+    rw [List.replicate_succ, DFA.evalFrom_cons]
+    rcases h with rfl | rfl | rfl | rfl
+    all_goals (
+      show caseSortedDFA.evalFrom .sD (List.replicate k .d) = _
+      rw [ih .sD (.inr (.inr (.inr rfl)))]; cases k <;> simp)
+
+/-- Concrete witness: every `aᵐbⁿcᵐdⁿ` is case-sorted. -/
+theorem makeString_ambncmdn_in_caseSorted (m n : Nat) :
+    makeString_ambncmdn m n ∈ caseSorted := by
+  show caseSortedDFA.eval (makeString_ambncmdn m n) ∈ caseSortedDFA.accept
+  show caseSortedDFA.evalFrom .sA _ ∈ _
+  simp only [makeString_ambncmdn, DFA.evalFrom_of_append, evalFrom_replicate_a]
+  rw [evalFrom_replicate_b n .sA (.inl rfl)]
+  set s_after_b := if n = 0 then CaseSortedState.sA else .sB
+  have hs_after_b : s_after_b = .sA ∨ s_after_b = .sB := by
+    by_cases hn : n = 0 <;> simp [s_after_b, hn]
+  rw [evalFrom_replicate_c m s_after_b (hs_after_b.imp_right (.inl ·))]
+  set s_after_c := if m = 0 then s_after_b else .sC
+  have hs_after_c : s_after_c = .sA ∨ s_after_c = .sB ∨ s_after_c = .sC := by
+    by_cases hm : m = 0
+    · simp only [s_after_c, hm, if_true]
+      exact hs_after_b.imp_right .inl
+    · simp only [s_after_c, hm, if_false]
+      right; right; trivial
+  rw [evalFrom_replicate_d n s_after_c
+    (hs_after_c.imp_right (·.imp_right .inl))]
+  -- Final state ∈ accept (which is {.sA, .sB, .sC, .sD}).
+  rcases hs_after_c with hSA | hSB | hSC <;>
+    by_cases hn : n = 0 <;>
+    simp_all (config := { decide := true }) [DFA.accepts, caseSortedDFA]
+  all_goals
+    first
+    | (show CaseSortedState.sA ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
+    | (show CaseSortedState.sB ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
+    | (show CaseSortedState.sC ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
+    | (show CaseSortedState.sD ∈ ({.sA, .sB, .sC, .sD} : Set _); simp)
+
+-- ----------------------------------------------------------------------------
+-- The intersection equality: stringMap free SG ⊓ caseSorted = ambncmdn.
+-- This is the meat of Shieber's argument: the homomorphism collapses cases
+-- to letter identity, the regular filter forces letter-sort to be canonical
+-- (a*b*c*d*), and case-matching forces equal counts of a/c and b/d.
+-- ----------------------------------------------------------------------------
+
+-- Decomposition substrate: an accepted DFA trajectory partitions the input
+-- as a sorted block sequence aᵖbᵠcʳdˢ.
+
+private lemma evalFrom_sDead (xs : List FourSymbol) :
+    caseSortedDFA.evalFrom .sDead xs = .sDead := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [DFA.evalFrom_cons]
+    show caseSortedDFA.evalFrom .sDead xs = .sDead
+    exact ih
+
+private lemma sDead_not_accept : .sDead ∉ caseSortedDFA.accept := by
+  intro h
+  -- caseSortedDFA.accept is {.sA, .sB, .sC, .sD} as a Set.
+  rcases h with h | h | h | h <;> exact CaseSortedState.noConfusion h
+
+private lemma not_dead_of_accept {s : CaseSortedState} {xs : List FourSymbol}
+    (h : caseSortedDFA.evalFrom s xs ∈ caseSortedDFA.accept) :
+    caseSortedDFA.evalFrom s xs ≠ .sDead := by
+  intro h_eq; rw [h_eq] at h; exact sDead_not_accept h
+
+private lemma sD_decomp (xs : List FourSymbol)
+    (h : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept) :
+    ∃ u, xs = List.replicate u .d := by
+  induction xs with
+  | nil => exact ⟨0, rfl⟩
+  | cons x xs ih =>
+    rw [DFA.evalFrom_cons] at h
+    cases x with
+    | a =>
+      have := not_dead_of_accept h
+      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
+      exact absurd heq this
+    | b =>
+      have := not_dead_of_accept h
+      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
+      exact absurd heq this
+    | c =>
+      have := not_dead_of_accept h
+      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
+      exact absurd heq this
+    | d =>
+      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
+      obtain ⟨u, rfl⟩ := ih h'
+      exact ⟨u + 1, by rw [List.replicate_succ]⟩
+
+private lemma sC_decomp (xs : List FourSymbol)
+    (h : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept) :
+    ∃ r u, xs = List.replicate r .c ++ List.replicate u .d := by
+  induction xs with
+  | nil => exact ⟨0, 0, rfl⟩
+  | cons x xs ih =>
+    rw [DFA.evalFrom_cons] at h
+    cases x with
+    | a =>
+      have := not_dead_of_accept h
+      exact absurd (evalFrom_sDead xs) this
+    | b =>
+      have := not_dead_of_accept h
+      exact absurd (evalFrom_sDead xs) this
+    | c =>
+      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
+      obtain ⟨r, u, rfl⟩ := ih h'
+      refine ⟨r + 1, u, ?_⟩
+      rw [List.replicate_succ]; rfl
+    | d =>
+      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
+      obtain ⟨u, rfl⟩ := sD_decomp xs h'
+      refine ⟨0, u + 1, ?_⟩
+      rw [List.replicate_succ]; rfl
+
+private lemma sB_decomp (xs : List FourSymbol)
+    (h : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept) :
+    ∃ q r u, xs = List.replicate q .b ++ List.replicate r .c ++ List.replicate u .d := by
+  induction xs with
+  | nil => exact ⟨0, 0, 0, rfl⟩
+  | cons x xs ih =>
+    rw [DFA.evalFrom_cons] at h
+    cases x with
+    | a =>
+      have := not_dead_of_accept h
+      exact absurd (evalFrom_sDead xs) this
+    | b =>
+      have h' : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept := h
+      obtain ⟨q, r, u, rfl⟩ := ih h'
+      refine ⟨q + 1, r, u, ?_⟩
+      rw [List.replicate_succ]; rfl
+    | c =>
+      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
+      obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
+      refine ⟨0, r + 1, u, ?_⟩
+      simp [List.replicate_succ, List.replicate]
+    | d =>
+      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
+      obtain ⟨u, rfl⟩ := sD_decomp xs h'
+      refine ⟨0, 0, u + 1, ?_⟩
+      simp [List.replicate_succ, List.replicate]
+
+private lemma sA_decomp (xs : List FourSymbol)
+    (h : caseSortedDFA.evalFrom .sA xs ∈ caseSortedDFA.accept) :
+    ∃ p q r u, xs = List.replicate p .a ++ List.replicate q .b ++
+                    List.replicate r .c ++ List.replicate u .d := by
+  induction xs with
+  | nil => exact ⟨0, 0, 0, 0, rfl⟩
+  | cons x xs ih =>
+    rw [DFA.evalFrom_cons] at h
+    cases x with
+    | a =>
+      have h' : caseSortedDFA.evalFrom .sA xs ∈ caseSortedDFA.accept := h
+      obtain ⟨p, q, r, u, rfl⟩ := ih h'
+      refine ⟨p + 1, q, r, u, ?_⟩
+      rw [List.replicate_succ]; rfl
+    | b =>
+      have h' : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept := h
+      obtain ⟨q, r, u, rfl⟩ := sB_decomp xs h'
+      refine ⟨0, q + 1, r, u, ?_⟩
+      simp [List.replicate_succ, List.replicate]
+    | c =>
+      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
+      obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
+      refine ⟨0, 0, r + 1, u, ?_⟩
+      simp [List.replicate_succ, List.replicate]
+    | d =>
+      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
+      obtain ⟨u, rfl⟩ := sD_decomp xs h'
+      refine ⟨0, 0, 0, u + 1, ?_⟩
+      simp [List.replicate_succ, List.replicate]
+
+/-- Any case-sorted FourString decomposes uniquely into block-sorted
+    `aᵖ ++ bᵠ ++ cʳ ++ dˢ`. -/
+theorem caseSorted_decomp (xs : List FourSymbol) (h : xs ∈ caseSorted) :
+    ∃ p q r u, xs = List.replicate p .a ++ List.replicate q .b ++
+                    List.replicate r .c ++ List.replicate u .d :=
+  sA_decomp xs h
+
+-- Token-image counting lemmas. The map `tokenToSymbol` is a bijection on
+-- letters: each Token type corresponds to a unique FourSymbol. So filter
+-- counts on the image equal filter counts on the source.
+
+private lemma count_a_image_eq_count_datNP (ts : List Token) :
+    (ts.map tokenToSymbol).countP (· == .a) =
+      ts.countP (· == .datNP) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    simp only [List.map_cons, List.countP_cons, ih]
+    cases t <;> rfl
+
+private lemma count_b_image_eq_count_accNP (ts : List Token) :
+    (ts.map tokenToSymbol).countP (· == .b) = ts.countP (· == .accNP) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    simp only [List.map_cons, List.countP_cons, ih]
+    cases t <;> rfl
+
+private lemma count_c_image_eq_count_datV (ts : List Token) :
+    (ts.map tokenToSymbol).countP (· == .c) = ts.countP (· == .datV) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    simp only [List.map_cons, List.countP_cons, ih]
+    cases t <;> rfl
+
+private lemma count_d_image_eq_count_accV (ts : List Token) :
+    (ts.map tokenToSymbol).countP (· == .d) = ts.countP (· == .accV) := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    simp only [List.map_cons, List.countP_cons, ih]
+    cases t <;> rfl
+
+-- Connect token-list NP/V partitioning with caseValue counts for use in the
+-- main intersection equality.
+
+private lemma countP_caseValue_dat_of_isNP {ts : List Token}
+    (h : ∀ t ∈ ts, t.isNP = true) :
+    ts.countP (fun t => decide (t.caseValue = .dat)) =
+      ts.countP (· == .datNP) := by
+  apply List.countP_congr
+  intro t ht
+  have := h t ht
+  cases t <;> simp_all [Token.isNP, Token.caseValue]
+
+private lemma countP_caseValue_acc_of_isNP {ts : List Token}
+    (h : ∀ t ∈ ts, t.isNP = true) :
+    ts.countP (fun t => decide (t.caseValue = .acc)) =
+      ts.countP (· == .accNP) := by
+  apply List.countP_congr
+  intro t ht
+  have := h t ht
+  cases t <;> simp_all [Token.isNP, Token.caseValue]
+
+private lemma countP_caseValue_dat_of_isV {ts : List Token}
+    (h : ∀ t ∈ ts, t.isNP = false) :
+    ts.countP (fun t => decide (t.caseValue = .dat)) =
+      ts.countP (· == .datV) := by
+  apply List.countP_congr
+  intro t ht
+  have := h t ht
+  cases t <;> simp_all [Token.isNP, Token.caseValue]
+
+private lemma countP_caseValue_acc_of_isV {ts : List Token}
+    (h : ∀ t ∈ ts, t.isNP = false) :
+    ts.countP (fun t => decide (t.caseValue = .acc)) =
+      ts.countP (· == .accV) := by
+  apply List.countP_congr
+  intro t ht
+  have := h t ht
+  cases t <;> simp_all [Token.isNP, Token.caseValue]
+
+/-- Direct-replicate filter counts: `(replicate n x).countP p = if p x then n else 0`.
+    Specialized for `aᵖbᵠcʳdˢ`-shaped strings. -/
+private lemma countP_replicate_filter (n : Nat) (x : FourSymbol) (y : FourSymbol) :
+    (List.replicate n x).countP (· == y) = if x = y then n else 0 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [List.replicate_succ, List.countP_cons, ih]
+    by_cases h : x = y
+    · subst h; simp
+    · simp [h, beq_iff_eq]
+
+/-- `tokenStringHom` is letter-to-letter, so its `apply` reduces to `List.map`. -/
+private lemma tokenStringHom_apply_eq_map (ts : List Token) :
+    ts.map tokenToSymbol = StringHom.apply tokenStringHom ts := by
+  induction ts with
+  | nil => rfl
+  | cons t ts ih =>
+    show tokenToSymbol t :: ts.map tokenToSymbol =
+         List.flatMap tokenStringHom (t :: ts)
+    rw [List.flatMap_cons]
+    show tokenToSymbol t :: ts.map tokenToSymbol =
+         tokenStringHom t ++ List.flatMap tokenStringHom ts
+    show tokenToSymbol t :: ts.map tokenToSymbol =
+         [tokenToSymbol t] ++ List.flatMap tokenStringHom ts
+    rw [List.singleton_append, ih]
+    rfl
+
+/-- The Bar-Hillel-style intersection equality: free SG, projected to {a,b,c,d}
+    and filtered to case-sorted shape, equals exactly the non-CF language
+    `aᵐbⁿcᵐdⁿ`. -/
+theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
+    Language.stringMap tokenStringHom swissGermanLang ⊓ caseSorted = ambncmdn := by
   ext w
-  constructor
-  · rintro ⟨v, ⟨m, n, hv⟩, hApply⟩
-    rw [← hApply, hv, ← clauseImage_eq_apply, clauseImage_shape]
-    exact makeString_ambncmdn_in_language m n
-  · intro hw
+  refine ⟨?_, ?_⟩
+  · -- Forward: free-SG image filtered to case-sorted shape ⊆ ambncmdn.
+    rintro ⟨⟨ts, hts_in, hApply⟩, hw_cs⟩
+    -- Decompose the case-sorted image into a^p b^q c^r d^s.
+    obtain ⟨p, q, r, s, hw_decomp⟩ := caseSorted_decomp w hw_cs
+    -- ts = nps ++ vs with case-matched counts.
+    obtain ⟨nps, vs, hts_eq, h_nps, h_vs, h_dat, h_acc⟩ := hts_in
+    -- w = ts.map tokenToSymbol (since tokenStringHom is letterMap):
+    have hw_map : w = ts.map tokenToSymbol := by
+      rw [← hApply]; exact (tokenStringHom_apply_eq_map ts).symm
+    -- Counts in w: p = #a, q = #b, r = #c, s = #d.
+    have h_p : (w.countP (· == .a)) = p := by
+      rw [hw_decomp]
+      simp [List.countP_append, countP_replicate_filter]
+    have h_q : (w.countP (· == .b)) = q := by
+      rw [hw_decomp]
+      simp [List.countP_append, countP_replicate_filter]
+    have h_r : (w.countP (· == .c)) = r := by
+      rw [hw_decomp]
+      simp [List.countP_append, countP_replicate_filter]
+    have h_s : (w.countP (· == .d)) = s := by
+      rw [hw_decomp]
+      simp [List.countP_append, countP_replicate_filter]
+    -- Token counts via the bijection:
+    -- p = #DAT-NP in ts = #DAT-NP in nps (Vs map to c,d so don't contribute to a-count).
+    -- r = #DAT-V in ts = #DAT-V in vs.
+    -- Case matching: #DAT-NP in nps = #DAT-V in vs ⇒ p = r.
+    have h_p_eq : p = (nps).countP (· == .datNP) := by
+      have : ts.countP (· == .datNP) = nps.countP (· == .datNP) := by
+        rw [hts_eq, List.countP_append]
+        have hvs_zero : vs.countP (· == .datNP) = 0 := by
+          apply List.countP_eq_zero.mpr
+          intro t ht
+          have := h_vs t ht
+          cases t <;> simp_all [Token.isNP]
+        rw [hvs_zero]; simp
+      rw [hw_map, count_a_image_eq_count_datNP] at h_p
+      omega
+    have h_r_eq : r = (vs).countP (· == .datV) := by
+      have : ts.countP (· == .datV) = vs.countP (· == .datV) := by
+        rw [hts_eq, List.countP_append]
+        have hnps_zero : nps.countP (· == .datV) = 0 := by
+          apply List.countP_eq_zero.mpr
+          intro t ht
+          have := h_nps t ht
+          cases t <;> simp_all [Token.isNP]
+        rw [hnps_zero]; simp
+      rw [hw_map, count_c_image_eq_count_datV] at h_r
+      omega
+    have h_q_eq : q = (nps).countP (· == .accNP) := by
+      have : ts.countP (· == .accNP) = nps.countP (· == .accNP) := by
+        rw [hts_eq, List.countP_append]
+        have hvs_zero : vs.countP (· == .accNP) = 0 := by
+          apply List.countP_eq_zero.mpr
+          intro t ht
+          have := h_vs t ht
+          cases t <;> simp_all [Token.isNP]
+        rw [hvs_zero]; simp
+      rw [hw_map, count_b_image_eq_count_accNP] at h_q
+      omega
+    have h_s_eq : s = (vs).countP (· == .accV) := by
+      have : ts.countP (· == .accV) = vs.countP (· == .accV) := by
+        rw [hts_eq, List.countP_append]
+        have hnps_zero : nps.countP (· == .accV) = 0 := by
+          apply List.countP_eq_zero.mpr
+          intro t ht
+          have := h_nps t ht
+          cases t <;> simp_all [Token.isNP]
+        rw [hnps_zero]; simp
+      rw [hw_map, count_d_image_eq_count_accV] at h_s
+      omega
+    have h_pr : p = r := by
+      rw [h_p_eq, h_r_eq]
+      rw [← countP_caseValue_dat_of_isNP h_nps, ← countP_caseValue_dat_of_isV h_vs]
+      exact h_dat
+    have h_qs : q = s := by
+      rw [h_q_eq, h_s_eq]
+      rw [← countP_caseValue_acc_of_isNP h_nps, ← countP_caseValue_acc_of_isV h_vs]
+      exact h_acc
+    -- Now w = a^p b^q c^p d^q = makeString_ambncmdn p q ∈ ambncmdn.
+    refine (mem_ambncmdn_iff w).mpr ⟨p, q, ?_⟩
+    rw [hw_decomp, h_pr, h_qs]
+    rfl
+  · -- Backward: every aᵐbⁿcᵐdⁿ is the image of canonical SG and is case-sorted.
+    intro hw
     obtain ⟨m, n, rfl⟩ := (mem_ambncmdn_iff w).mp hw
-    refine ⟨caseSortedTokens (arbitraryDepth m n), ⟨m, n, rfl⟩, ?_⟩
+    refine ⟨?_, makeString_ambncmdn_in_caseSorted m n⟩
+    refine ⟨caseSortedTokens (arbitraryDepth m n),
+            caseSortedTokens_in_swissGermanLang m n, ?_⟩
     rw [← clauseImage_eq_apply, clauseImage_shape]
     rfl
 
 /-- **@cite{shieber-1985}'s main theorem.** Swiss German subordinate clauses
     are not weakly context-free.
 
-    The proof: the homomorphic image of the case-matched cross-serial language
-    under `tokenToSymbol` equals `ambncmdn = {aᵐbⁿcᵐdⁿ}` (proven non-CF in
-    `Linglib.Core.Computability.NonContextFree.ambncmdn_not_contextFree` by
-    a two-parameter extension of the pumping argument). By CFL closure under
-    string homomorphism (`Linglib.Core.Computability.ContextFreeGrammar.Closure`), the source
-    Swiss German language is not context-free. -/
+    Proof structure (the actual Shieber schema, both legs exercised):
+    apply `Language.not_isContextFree_via_witness` with the `tokenStringHom`
+    homomorphism + `caseSorted` regular filter; the witness is that
+    `stringMap h L ⊓ R = ambncmdn`, which is non-CF by
+    `ambncmdn_not_contextFree` (two-parameter pumping). The R-leg matters:
+    `swissGermanLang` allows interleaved NP/V orderings, and the regular
+    filter forces the case-sorted canonical shape needed to land in ambncmdn. -/
 theorem swiss_german_not_contextFree :
     ¬ swissGermanLang.IsContextFree := by
-  apply Language.not_isContextFree_of_stringMap_not tokenStringHom
-  rw [stringMap_swissGerman_eq_ambncmdn]
+  apply Language.not_isContextFree_via_witness tokenStringHom caseSorted
+    caseSorted_isRegular
+  rw [stringMap_swissGerman_inter_caseSorted_eq_ambncmdn]
   exact ambncmdn_not_contextFree
 
 -- ============================================================================

@@ -27171,3 +27171,537 @@
   role      = {foundational},
   sources   = {Core/Computability/CFLClosure.lean}
 }
+
+@article{bar-hillel-perles-shamir-1961,
+  author    = {Bar-Hillel, Yehoshua and Perles, M. and Shamir, Eliahu},
+  year      = {1961},
+  title     = {On formal properties of simple phrase structure grammars},
+  journal   = {Zeitschrift f\"ur Phonetik, Sprachwissenschaft und Kommunikationsforschung},
+  volume    = {14},
+  number    = {2},
+  pages     = {143--172},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Core/Computability/ContextFreeGrammar/InterRegular.lean}
+}
+
+@book{hopcroft-motwani-ullman-2000,
+  author    = {Hopcroft, John E. and Motwani, Rajeev and Ullman, Jeffrey D.},
+  year      = {2000},
+  title     = {Introduction to Automata Theory, Languages, and Computation},
+  edition   = {2},
+  publisher = {Addison-Wesley},
+  address   = {Boston},
+  isbn      = {0-201-44124-1},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Core/Computability/ContextFreeGrammar/InterRegular.lean; Core/Computability/ContextFreeGrammar/Closure.lean; Core/Computability/ContextFreeGrammar/Map.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  syntax-phonology interface (cyclic spell-out, discontinuous harmony)
+
+% REF: Sande, Clem & Dąbkowski (2026). Discontinuous vowel harmony in Guébie:
+% Cyclic interleaving of syntax and phonology. Language. doi:10.1017/S009785072600007X
+@article{sande-clem-dabkowski-2026,
+  author    = {Sande, Hannah and Clem, Emily and D\k{a}bkowski, Maksymilian},
+  year      = {2026},
+  title     = {Discontinuous vowel harmony in {Gu\'ebie}: Cyclic interleaving of syntax and phonology},
+  journal   = {Language},
+  pages     = {1--32},
+  doi       = {10.1017/S009785072600007X},
+  subfield  = {phonology},
+  role      = {primary},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean;Theories/Syntax/Minimalist/Phase.lean;Theories/Syntax/Minimalist/Linearization/Cyclic.lean;Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean;Theories/Syntax/Minimalist/Movement/Remnant.lean}
+}
+
+% REF: Sande, Jenks & Inkelas (2020). Cophonologies by Ph(r)ase. NLLT 38(4):1211-1261.
+@article{sande-jenks-inkelas-2020,
+  author    = {Sande, Hannah and Jenks, Peter and Inkelas, Sharon},
+  year      = {2020},
+  title     = {Cophonologies by {Ph(r)ase}},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {38},
+  number    = {4},
+  pages     = {1211--1261},
+  doi       = {10.1007/s11049-020-09467-x},
+  subfield  = {phonology},
+  role      = {primary},
+  validated = {true},
+  sources   = {Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sande (2019). A unified account of conditioned phonological alternations:
+% Evidence from Guébie. Language 95(3):456-497.
+@article{sande-2019,
+  author    = {Sande, Hannah},
+  year      = {2019},
+  title     = {A unified account of conditioned phonological alternations: Evidence from {Gu\'ebie}},
+  journal   = {Language},
+  volume    = {95},
+  number    = {3},
+  pages     = {456--497},
+  doi       = {10.1353/lan.2019.0053},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean;Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean}
+}
+
+% REF: Sande (2018). Cross-word morphologically conditioned scalar tone shift in
+% Guébie. Morphology 28(3):253-295.
+@article{sande-2018,
+  author    = {Sande, Hannah},
+  year      = {2018},
+  title     = {Cross-word morphologically conditioned scalar tone shift in {Gu\'ebie}},
+  journal   = {Morphology},
+  volume    = {28},
+  number    = {3},
+  pages     = {253--295},
+  doi       = {10.1007/s11525-018-9327-1},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sande (2022). The phonology of Guébie. Language and Linguistics Compass 16(8):e12468.
+@article{sande-2022,
+  author    = {Sande, Hannah},
+  year      = {2022},
+  title     = {The phonology of {Gu\'ebie}},
+  journal   = {Language and Linguistics Compass},
+  volume    = {16},
+  number    = {8},
+  pages     = {e12468},
+  doi       = {10.1111/lnc3.12468},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sande (2017). Distributing Morphologically Conditioned Phonology: Three case
+% studies from Guébie. UC Berkeley dissertation. https://escholarship.org/uc/item/38g4f01q
+@phdthesis{sande-2017,
+  author    = {Sande, Hannah},
+  year      = {2017},
+  title     = {Distributing Morphologically Conditioned Phonology: Three case studies from {Gu\'ebie}},
+  school    = {University of California, Berkeley},
+  url       = {https://escholarship.org/uc/item/38g4f01q},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sande (2020). Guébie (Côte d'Ivoire, Ivory Coast)—Language snapshot.
+% Language Documentation and Conservation 19:35-46.
+@article{sande-2020,
+  author    = {Sande, Hannah},
+  year      = {2020},
+  title     = {{Gu\'ebie} ({C\^ote d'Ivoire}, {Ivory Coast})---{L}anguage snapshot},
+  journal   = {Language Documentation and Conservation},
+  volume    = {19},
+  pages     = {35--46},
+  doi       = {10.25894/ldd63},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sande, Baier & Jenks (2019). The syntactic diversity of SAuxOV in West Africa.
+% In Theory and description in African Linguistics, ed. by Clem, Jenks & Sande, 667-701.
+@incollection{sande-baier-jenks-2019,
+  author    = {Sande, Hannah and Baier, Nico and Jenks, Peter},
+  year      = {2019},
+  title     = {The syntactic diversity of {SAuxOV} in {West Africa}},
+  booktitle = {Theory and description in {African Linguistics}: Selected papers from the 47th Annual Conference on {African Linguistics}},
+  editor    = {Clem, Emily and Jenks, Peter and Sande, Hannah},
+  pages     = {667--701},
+  publisher = {Language Science Press},
+  address   = {Berlin},
+  doi       = {10.5281/zenodo.3367195},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Koopman (1997). Unifying predicate cleft constructions. BLS 23(2):71-85.
+@inproceedings{koopman-1997,
+  author    = {Koopman, Hilda},
+  year      = {1997},
+  title     = {Unifying predicate cleft constructions},
+  booktitle = {Annual Meeting of the {Berkeley Linguistics Society}},
+  volume    = {23},
+  number    = {2},
+  pages     = {71--85},
+  doi       = {10.3765/bls.v23i2.1315},
+  subfield  = {syntax},
+  role      = {primary},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Movement/Remnant.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Koopman (1984). The syntax of verbs: From verb movement rules in the Kru
+% languages to universal grammar. Foris.
+@book{koopman-1984,
+  author    = {Koopman, Hilda},
+  year      = {1984},
+  title     = {The syntax of verbs: From verb movement rules in the {Kru} languages to universal grammar},
+  publisher = {Foris},
+  address   = {Dordrecht},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Harizanov & Gribanova (2017). Post-syntactic head movement in Russian
+% predicate fronting. Paper presented at LSA 91. (manuscript)
+@unpublished{harizanov-gribanova-2017,
+  author    = {Harizanov, Boris and Gribanova, Vera},
+  year      = {2017},
+  title     = {Post-syntactic head movement in {Russian} predicate fronting},
+  note      = {Paper presented at the 91st annual meeting of the Linguistic Society of America, Austin, TX, 5--8 January},
+  url       = {https://stanford.edu/~bharizan/pdfs/Harizanov_Gribanova_2017_LSA.pdf},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Hansson (2014). (Dis)agreement by (non)correspondence: Inspecting the
+% foundations. Paper at ABC Conference, UC Berkeley. (manuscript)
+@unpublished{hansson-2014,
+  author    = {Hansson, Gunnar \'Olafur},
+  year      = {2014},
+  title     = {{(Dis)agreement} by {(non)correspondence}: Inspecting the foundations},
+  note      = {Paper presented at the ABC Conference, UC Berkeley},
+  url       = {https://linguistics.berkeley.edu/phonlab/documents/2014/ABCC/Hansson.pdf},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean;Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean}
+}
+
+% REF: Walker (2016). Surface correspondence and discrete harmony triggers.
+% Proceedings of the 2014 Annual Meeting on Phonology.
+@inproceedings{walker-2016,
+  author    = {Walker, Rachel},
+  year      = {2016},
+  title     = {Surface correspondence and discrete harmony triggers},
+  booktitle = {Proceedings of the 2014 Annual Meeting on {Phonology}},
+  doi       = {10.3765/amp.v2i0.3744},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Nevins (2010). Locality in vowel harmony. MIT Press.
+@book{nevins-2010,
+  author    = {Nevins, Andrew},
+  year      = {2010},
+  title     = {Locality in vowel harmony},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Ohala (1994). Towards a universal, phonetically-based, theory of vowel
+% harmony. ICSLP 1994.
+@inproceedings{ohala-1994,
+  author    = {Ohala, John J.},
+  year      = {1994},
+  title     = {Towards a universal, phonetically-based, theory of vowel harmony},
+  booktitle = {Proceedings of the 3rd International Conference on Spoken Language Processing ({ICSLP} 1994)},
+  pages     = {491--494},
+  doi       = {10.21437/ICSLP.1994-113},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Sy (2005). Ultra long-distance ATR agreement in Wolof. BLS 31(2):95-106.
+@inproceedings{sy-2005,
+  author    = {Sy, Mariame},
+  year      = {2005},
+  title     = {Ultra long-distance {ATR} agreement in {Wolof}},
+  booktitle = {Annual Meeting of the {Berkeley Linguistics Society} (Special session on languages of {West Africa})},
+  volume    = {31},
+  number    = {2},
+  pages     = {95--106},
+  doi       = {10.3765/bls.v31i2.824},
+  subfield  = {phonology},
+  role      = {primary},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Russell (2023). The phonology of Atchan. Language and Linguistics Compass 17(4):e12488.
+@article{russell-2023,
+  author    = {Russell, Katherine},
+  year      = {2023},
+  title     = {The phonology of {Atchan}},
+  journal   = {Language and Linguistics Compass},
+  volume    = {17},
+  number    = {4},
+  pages     = {e12488},
+  doi       = {10.1111/lnc3.12488},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Simpson & Wu (2002). IP-raising, tone sandhi and the creation of S-final
+% particles: Evidence for cyclic spell-out. JEAL 11(1):67-99.
+@article{simpson-wu-2002,
+  author    = {Simpson, Andrew and Wu, Zoe},
+  year      = {2002},
+  title     = {{IP}-raising, tone sandhi and the creation of {S}-final particles: Evidence for cyclic spell-out},
+  journal   = {Journal of East Asian Linguistics},
+  volume    = {11},
+  number    = {1},
+  pages     = {67--99},
+  doi       = {10.1023/A:1013710111615},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: van Urk & Richards (2015). Two components of long-distance extraction:
+% Successive cyclicity in Dinka. LI 46(1):113-155.
+@article{van-urk-richards-2015,
+  author    = {van Urk, Coppe and Richards, Norvin},
+  year      = {2015},
+  title     = {Two components of long-distance extraction: Successive cyclicity in {Dinka}},
+  journal   = {Linguistic Inquiry},
+  volume    = {46},
+  number    = {1},
+  pages     = {113--155},
+  doi       = {10.1162/LING_a_00177},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: van Urk (2024). Constraining predicate fronting. LI 55(2):327-373.
+@article{van-urk-2024,
+  author    = {van Urk, Coppe},
+  year      = {2024},
+  title     = {Constraining predicate fronting},
+  journal   = {Linguistic Inquiry},
+  volume    = {55},
+  number    = {2},
+  pages     = {327--373},
+  doi       = {10.1162/ling_a_00466},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Movement/Remnant.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: D'Alessandro & Scheer (2015). Modular PIC. LI 46(4):593-624.
+@article{d-alessandro-scheer-2015,
+  author    = {D'Alessandro, Roberta and Scheer, Tobias},
+  year      = {2015},
+  title     = {Modular {PIC}},
+  journal   = {Linguistic Inquiry},
+  volume    = {46},
+  number    = {4},
+  pages     = {593--624},
+  doi       = {10.1162/LING_a_00195},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Phase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Branan & Davis (2019). Agreement and unlocking at the edge. PLSA 4:16.
+@article{branan-davis-2019,
+  author    = {Branan, Kenyon and Davis, Colin},
+  year      = {2019},
+  title     = {Agreement and unlocking at the edge},
+  journal   = {Proceedings of the {Linguistic Society of America}},
+  volume    = {4},
+  pages     = {16},
+  doi       = {10.3765/plsa.v4i1.4512},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Theories/Syntax/Minimalist/Phase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Lee & Yip (2024). Hyperraising, evidentiality, and phase deactivation. NLLT 42:1527-1578.
+@article{lee-yip-2024,
+  author    = {Lee, Tommy Tsz-Ming and Yip, Ka-Fai},
+  year      = {2024},
+  title     = {Hyperraising, evidentiality, and phase deactivation},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {42},
+  pages     = {1527--1578},
+  doi       = {10.1007/s11049-023-09604-2},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Phase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Martinović (2019). Interleaving syntax and postsyntax: Spellout before
+% syntactic movement. Syntax 22(4):378-418.
+@article{martinovic-2019,
+  author    = {Martinovi\'c, Martina},
+  year      = {2019},
+  title     = {Interleaving syntax and postsyntax: Spellout before syntactic movement},
+  journal   = {Syntax},
+  volume    = {22},
+  number    = {4},
+  pages     = {378--418},
+  doi       = {10.1111/synt.12169},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Bermúdez-Otero (2012). The architecture of grammar and the division of
+% labor in exponence. In The morphology and phonology of exponence, ed. Trommer.
+@incollection{bermudez-otero-2012,
+  author    = {Berm\'udez-Otero, Ricardo},
+  year      = {2012},
+  title     = {The architecture of grammar and the division of labor in exponence},
+  booktitle = {The morphology and phonology of exponence},
+  editor    = {Trommer, Jochen},
+  pages     = {8--83},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  doi       = {10.1093/acprof:oso/9780199573721.003.0002},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Halpert (2019). Raising, unphased. NLLT 37(1):123-165.
+@article{halpert-2019,
+  author    = {Halpert, Claire},
+  year      = {2019},
+  title     = {Raising, unphased},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {37},
+  number    = {1},
+  pages     = {123--165},
+  doi       = {10.1007/s11049-018-9407-2},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Phase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Aboh & Dyakonova (2009). Predicate doubling and parallel chains. Lingua 119:1035-1065.
+@article{aboh-dyakonova-2009,
+  author    = {Aboh, Enoch O. and Dyakonova, Marina},
+  year      = {2009},
+  title     = {Predicate doubling and parallel chains},
+  journal   = {Lingua},
+  volume    = {119},
+  pages     = {1035--1065},
+  doi       = {10.1016/j.lingua.2008.11.004},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalist/Movement/Remnant.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Newell (2008). Aspects of the morphology and phonology of phases. McGill dissertation.
+@phdthesis{newell-2008,
+  author    = {Newell, Heather},
+  year      = {2008},
+  title     = {Aspects of the morphology and phonology of phases},
+  school    = {McGill University},
+  address   = {Montreal},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Newell (2017). Nested phase interpretation and the PIC. In The structure
+% of words at the interfaces, ed. Newell, Noonan, Piggott & Travis, 20-40.
+@incollection{newell-2017,
+  author    = {Newell, Heather},
+  year      = {2017},
+  title     = {Nested phase interpretation and the {PIC}},
+  booktitle = {The structure of words at the interfaces},
+  editor    = {Newell, Heather and Noonan, M\'aire and Piggott, Glyne and Travis, Lisa deMena},
+  pages     = {20--40},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  doi       = {10.1093/oso/9780198778264.003.0002},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Theories/Syntax/Minimalist/Phase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Gafos (1998). Eliminating Long-Distance Consonantal Spreading. NLLT 16(2):223-278.
+@article{gafos-1998,
+  author    = {Gafos, Diamandis},
+  year      = {1998},
+  title     = {Eliminating Long-Distance Consonantal Spreading},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {16},
+  number    = {2},
+  pages     = {223--278},
+  doi       = {10.1023/A:1005968600965},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Landau (2006). Chain Resolution in Hebrew V(P)-fronting. Syntax 9(1):32-66.
+@article{landau-2006,
+  author    = {Landau, Idan},
+  year      = {2006},
+  title     = {Chain resolution in {Hebrew} {V(P)}-fronting},
+  journal   = {Syntax},
+  volume    = {9},
+  number    = {1},
+  pages     = {32--66},
+  doi       = {10.1111/j.1467-9612.2006.00084.x},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/WordOrder/Studies/HarizanovGribanova2019Amalgamation.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean;Theories/Syntax/Minimalist/Movement/Remnant.lean}
+}
+
+% REF: Embick & Noyer (2007). Distributed Morphology and the Syntax-Morphology
+% Interface. In The Oxford Handbook of Linguistic Interfaces, ed. Ramchand & Reiss.
+@incollection{embick-noyer-2007,
+  author    = {Embick, David and Noyer, Rolf},
+  year      = {2007},
+  title     = {Distributed Morphology and the syntax-morphology interface},
+  booktitle = {The Oxford Handbook of Linguistic Interfaces},
+  editor    = {Ramchand, Gillian and Reiss, Charles},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  doi       = {10.1093/oxfordhb/9780199247455.013.0010},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}
+
+% REF: Harley & Noyer (1999). Distributed Morphology. Glot International 4(4):3-9.
+@article{harley-noyer-1999,
+  author    = {Harley, Heidi and Noyer, Rolf},
+  year      = {1999},
+  title     = {Distributed Morphology},
+  journal   = {Glot International},
+  volume    = {4},
+  number    = {4},
+  pages     = {3--9},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean;Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean}
+}

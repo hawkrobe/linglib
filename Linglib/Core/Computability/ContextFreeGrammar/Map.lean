@@ -13,7 +13,7 @@ Owns the `Language.stringMap` definition and proves
 proof in `InterRegular.lean`, this dissolves the closure axioms previously
 in `Closure.lean`.
 
-@cite{hopcroft-ullman-1979} Theorem 6.2.
+@cite{hopcroft-motwani-ullman-2000} Theorem 7.24 (homomorphism case).
 -/
 
 open scoped Classical
@@ -345,7 +345,7 @@ private lemma liftMapTerminal {h : T → List T'} {N : Type*} :
     of some `G`-generated preimage under `h`. The construction lifts
     G'-derivations to G-derivations step-by-step using `decompose_applyHomList`
     and `liftMapTerminal`. Standard textbook construction
-    (@cite{hopcroft-ullman-1979} Theorem 6.2). -/
+    (@cite{hopcroft-motwani-ullman-2000} Theorem 7.24 (homomorphism case)). -/
 theorem applyHom_language_subset_inv (h : T → List T') (G : ContextFreeGrammar T) :
     (G.applyHom h).language ≤ Language.stringMap h G.language := by
   intro w' hw'
