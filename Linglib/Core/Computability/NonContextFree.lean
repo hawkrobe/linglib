@@ -1,4 +1,5 @@
 import Linglib.Core.Computability.PumpingLemma
+import Linglib.Core.Computability.BlockWitness
 
 /-!
 # Non-Context-Free Witness Languages
@@ -89,146 +90,47 @@ private theorem filter_count (n : Nat) (s : FourSymbol) :
   simp only [makeString_anbncndn, List.filter_append, List.filter_replicate, List.length_append]
   cases s <;> simp (config := { decide := true })
 
-/--.a cannot appear in the suffix of aᵖbᵖcᵖdᵖ past position p. -/
-private theorem a_not_in_vxy_of_u_ge_p (p : Nat) (u vxy z : FourString)
-    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hu : u.length ≥ p) :
-    FourSymbol.a ∉ vxy := by
-  intro ha
-  have hsuffix : vxy ++ z = (makeString_anbncndn p).drop u.length := by
-    have : u ++ (vxy ++ z) = makeString_anbncndn p := by rw [hw, List.append_assoc]
-    rw [← this, List.drop_left]
-  have hx : FourSymbol.a ∈ (makeString_anbncndn p).drop u.length :=
-    hsuffix ▸ List.mem_append_left z ha
-  rw [show makeString_anbncndn p =
-    List.replicate p FourSymbol.a ++ (List.replicate p FourSymbol.b ++
-    List.replicate p FourSymbol.c ++ List.replicate p FourSymbol.d) by
-    simp [makeString_anbncndn, List.append_assoc]] at hx
-  rw [List.drop_append] at hx
-  simp only [List.mem_append, List.drop_replicate, List.mem_replicate,
-             List.length_replicate] at hx
-  rcases hx with ⟨h, _⟩ | h
-  · omega
-  · have := List.mem_of_mem_drop h
-    simp only [List.mem_append, List.mem_replicate] at this
-    obtain (⟨_, h⟩ | ⟨_, h⟩) | ⟨_, h⟩ := this <;> exact absurd h (by decide)
+/-- The four-symbol witness is structurally `BlockWitness [a, b, c, d] n`. -/
+private theorem makeString_anbncndn_eq_blockwitness (n : Nat) :
+    makeString_anbncndn n =
+      BlockWitness ([FourSymbol.a, .b, .c, .d] : List FourSymbol) n := by
+  simp [makeString_anbncndn, BlockWitness, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc]
 
-/--.d cannot appear in the prefix of aᵖbᵖcᵖdᵖ up to position 3p. -/
-private theorem d_not_in_vxy_of_end_le_3p (p : Nat) (u vxy z : FourString)
-    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hend : u.length + vxy.length ≤ 3 * p) :
-    FourSymbol.d ∉ vxy := by
-  intro hd
-  have hpre : u ++ vxy = (makeString_anbncndn p).take (u.length + vxy.length) := by
-    have heq : (u ++ vxy) ++ z = makeString_anbncndn p := by rw [hw, List.append_assoc]
-    rw [show u.length + vxy.length = (u ++ vxy).length from by simp]
-    rw [← heq, List.take_left]
-  have hd_pre : FourSymbol.d ∈ u ++ vxy := List.mem_append_right _ hd
-  rw [hpre] at hd_pre
-  rw [show (makeString_anbncndn p).take (u.length + vxy.length) =
-    ((makeString_anbncndn p).take (3 * p)).take (u.length + vxy.length) by
-    rw [List.take_take]; congr 1; omega] at hd_pre
-  have hd_3p := List.mem_of_mem_take hd_pre
-  have htake3p : (makeString_anbncndn p).take (3 * p) =
-      List.replicate p .a ++ List.replicate p .b ++ List.replicate p .c := by
-    unfold makeString_anbncndn
-    conv_lhs => rw [show List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b ++
-        List.replicate p FourSymbol.c ++ List.replicate p FourSymbol.d =
-        (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b ++
-        List.replicate p FourSymbol.c) ++ List.replicate p FourSymbol.d from
-      by simp [List.append_assoc]]
-    have hlen : (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b ++
-        List.replicate p FourSymbol.c).length = 3 * p := by
-      simp [List.length_append, List.length_replicate]; omega
-    rw [← hlen, List.take_left]
-  rw [htake3p] at hd_3p
-  simp only [List.mem_append, List.mem_replicate] at hd_3p
-  obtain (⟨_, h⟩ | ⟨_, h⟩) | ⟨_, h⟩ := hd_3p <;> exact absurd h (by decide)
+/-- Adjacency in the FourSymbol witness via the unified `BlockWitness.not_both_in_vxy`.
+    Each instance is a one-line invocation parameterized by symbol indices. -/
+private theorem not_both_in_vxy_FourSymbol {s t : FourSymbol} {i j : Nat}
+    (hi : ([FourSymbol.a, .b, .c, .d] : List FourSymbol)[i]? = some s)
+    (hj : ([FourSymbol.a, .b, .c, .d] : List FourSymbol)[j]? = some t)
+    (hij : j ≥ i + 2) (p : Nat) (u vxy z : FourString)
+    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
+    ¬ (s ∈ vxy ∧ t ∈ vxy) := by
+  by_cases hp : p = 0
+  · subst hp
+    intro ⟨hs, _⟩
+    have hwlen := congr_arg List.length hw
+    simp [makeString_anbncndn, List.length_append] at hwlen
+    have : vxy = [] := List.eq_nil_of_length_eq_zero (by omega)
+    rw [this] at hs; exact List.not_mem_nil hs
+  exact BlockWitness.not_both_in_vxy
+    (by decide : ([FourSymbol.a, .b, .c, .d] : List FourSymbol).Nodup)
+    (Nat.pos_of_ne_zero hp) hi hj hij
+    (makeString_anbncndn_eq_blockwitness p ▸ hw) hvxy
 
 private theorem not_a_and_d_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.d ∈ vxy) := by
-  intro ⟨ha, hd⟩
-  have hu : u.length < p := by
-    by_contra h; push Not at h
-    exact a_not_in_vxy_of_u_ge_p p u vxy z hw h ha
-  exact d_not_in_vxy_of_end_le_3p p u vxy z hw (by omega) hd
+    ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.d ∈ vxy) :=
+  not_both_in_vxy_FourSymbol (i := 0) (j := 3) rfl rfl (by decide) p u vxy z hw hvxy
 
-/--.b cannot appear past position 2p of aᵖbᵖcᵖdᵖ. -/
-private theorem b_not_in_vxy_of_u_ge_2p (p : Nat) (u vxy z : FourString)
-    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hu : u.length ≥ 2 * p) :
-    FourSymbol.b ∉ vxy := by
-  intro hb
-  have hsuffix : vxy ++ z = (makeString_anbncndn p).drop u.length := by
-    have : u ++ (vxy ++ z) = makeString_anbncndn p := by rw [hw, List.append_assoc]
-    rw [← this, List.drop_left]
-  have hx : FourSymbol.b ∈ (makeString_anbncndn p).drop u.length :=
-    hsuffix ▸ List.mem_append_left z hb
-  -- Decompose witness as (a-block ++ b-block) ++ (c-block ++ d-block)
-  rw [show makeString_anbncndn p =
-    (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b) ++
-    (List.replicate p FourSymbol.c ++ List.replicate p FourSymbol.d) by
-    simp [makeString_anbncndn, List.append_assoc]] at hx
-  rw [List.drop_append] at hx
-  simp only [List.mem_append] at hx
-  rcases hx with h | h
-  · -- b in drop u.length (a-block ++ b-block) — but u.length ≥ 2p = length, so drop is []
-    have hlen : (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b).length ≤ u.length := by
-      simp [List.length_append, List.length_replicate]; omega
-    rw [List.drop_eq_nil_of_le hlen] at h
-    exact List.not_mem_nil h
-  · -- b in drop _ (c-block ++ d-block) — impossible since b ∉ c-block ++ d-block
-    have := List.mem_of_mem_drop h
-    simp only [List.mem_append, List.mem_replicate] at this
-    obtain ⟨_, h⟩ | ⟨_, h⟩ := this <;> exact absurd h (by decide)
-
-/--.c cannot appear in the prefix up to position 2p of aᵖbᵖcᵖdᵖ. -/
-private theorem c_not_in_vxy_of_end_le_2p (p : Nat) (u vxy z : FourString)
-    (hw : makeString_anbncndn p = u ++ vxy ++ z) (hend : u.length + vxy.length ≤ 2 * p) :
-    FourSymbol.c ∉ vxy := by
-  intro hc
-  have hpre : u ++ vxy = (makeString_anbncndn p).take (u.length + vxy.length) := by
-    have heq : (u ++ vxy) ++ z = makeString_anbncndn p := by rw [hw, List.append_assoc]
-    rw [show u.length + vxy.length = (u ++ vxy).length from by simp]
-    rw [← heq, List.take_left]
-  have hc_pre : FourSymbol.c ∈ u ++ vxy := List.mem_append_right _ hc
-  rw [hpre] at hc_pre
-  rw [show (makeString_anbncndn p).take (u.length + vxy.length) =
-    ((makeString_anbncndn p).take (2 * p)).take (u.length + vxy.length) by
-    rw [List.take_take]; congr 1; omega] at hc_pre
-  have hc_2p := List.mem_of_mem_take hc_pre
-  have htake2p : (makeString_anbncndn p).take (2 * p) =
-      List.replicate p .a ++ List.replicate p .b := by
-    unfold makeString_anbncndn
-    conv_lhs => rw [show List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b ++
-        List.replicate p FourSymbol.c ++ List.replicate p FourSymbol.d =
-        (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b) ++
-        (List.replicate p FourSymbol.c ++ List.replicate p FourSymbol.d) from
-      by simp [List.append_assoc]]
-    have hlen : (List.replicate p FourSymbol.a ++ List.replicate p FourSymbol.b).length = 2 * p := by
-      simp [List.length_append, List.length_replicate]; omega
-    rw [← hlen, List.take_left]
-  rw [htake2p] at hc_2p
-  simp only [List.mem_append, List.mem_replicate] at hc_2p
-  obtain ⟨_, h⟩ | ⟨_, h⟩ := hc_2p <;> exact absurd h (by decide)
-
-/-- Adjacency: a and c are 2 blocks apart, so vxy of length ≤ p can't contain both. -/
 private theorem not_a_and_c_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.c ∈ vxy) := by
-  intro ⟨ha, hc⟩
-  have hu : u.length < p := by
-    by_contra h; push Not at h
-    exact a_not_in_vxy_of_u_ge_p p u vxy z hw h ha
-  exact c_not_in_vxy_of_end_le_2p p u vxy z hw (by omega) hc
+    ¬(FourSymbol.a ∈ vxy ∧ FourSymbol.c ∈ vxy) :=
+  not_both_in_vxy_FourSymbol (i := 0) (j := 2) rfl rfl (by decide) p u vxy z hw hvxy
 
-/-- Adjacency: b and d are 2 blocks apart. -/
 private theorem not_b_and_d_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(FourSymbol.b ∈ vxy ∧ FourSymbol.d ∈ vxy) := by
-  intro ⟨hb, hd⟩
-  have hu : u.length < 2 * p := by
-    by_contra h; push Not at h
-    exact b_not_in_vxy_of_u_ge_2p p u vxy z hw h hb
-  exact d_not_in_vxy_of_end_le_3p p u vxy z hw (by omega) hd
+    ¬(FourSymbol.b ∈ vxy ∧ FourSymbol.d ∈ vxy) :=
+  not_both_in_vxy_FourSymbol (i := 1) (j := 3) rfl rfl (by decide) p u vxy z hw hvxy
 
 private theorem filter_eq_nil_of_not_mem (l : FourString) (s : FourSymbol) (h : s ∉ l) :
     l.filter (· == s) = [] := by
@@ -649,64 +551,28 @@ def makeString_anbnc (n : Nat) : List ThreeSymbol :=
 /-- The language {aⁿbⁿcⁿ | n ≥ 0} as a mathlib `Language`. -/
 def anbnc : Language ThreeSymbol := {w | isInLanguage_anbnc w = true}
 
-private theorem a_not_in_vxy3 (p : Nat) (u vxy z : List ThreeSymbol)
-    (hw : makeString_anbnc p = u ++ vxy ++ z) (hu : u.length ≥ p) :
-    ThreeSymbol.a ∉ vxy := by
-  intro ha
-  have hsuffix : vxy ++ z = (makeString_anbnc p).drop u.length := by
-    have : u ++ (vxy ++ z) = makeString_anbnc p := by rw [hw, List.append_assoc]
-    rw [← this, List.drop_left]
-  have hx : ThreeSymbol.a ∈ (makeString_anbnc p).drop u.length :=
-    hsuffix ▸ List.mem_append_left z ha
-  rw [show makeString_anbnc p =
-    List.replicate p ThreeSymbol.a ++ (List.replicate p ThreeSymbol.b ++
-    List.replicate p ThreeSymbol.c) by
-    simp [makeString_anbnc, List.append_assoc]] at hx
-  rw [List.drop_append] at hx
-  simp only [List.mem_append, List.drop_replicate, List.mem_replicate,
-             List.length_replicate] at hx
-  rcases hx with ⟨h, _⟩ | h
-  · omega
-  · have := List.mem_of_mem_drop h
-    simp only [List.mem_append, List.mem_replicate] at this
-    obtain ⟨_, h⟩ | ⟨_, h⟩ := this <;> exact absurd h (by decide)
+/-- The three-symbol witness is structurally `BlockWitness [a, b, c] n`. -/
+private theorem makeString_anbnc_eq_blockwitness (n : Nat) :
+    makeString_anbnc n =
+      BlockWitness ([ThreeSymbol.a, .b, .c] : List ThreeSymbol) n := by
+  simp [makeString_anbnc, BlockWitness, List.flatMap_cons, List.flatMap_nil,
+        List.append_nil, List.append_assoc]
 
-private theorem c_not_in_vxy3 (p : Nat) (u vxy z : List ThreeSymbol)
-    (hw : makeString_anbnc p = u ++ vxy ++ z) (hend : u.length + vxy.length ≤ 2 * p) :
-    ThreeSymbol.c ∉ vxy := by
-  intro hc
-  have hpre : u ++ vxy = (makeString_anbnc p).take (u.length + vxy.length) := by
-    have heq : (u ++ vxy) ++ z = makeString_anbnc p := by rw [hw, List.append_assoc]
-    rw [show u.length + vxy.length = (u ++ vxy).length from by simp]
-    rw [← heq, List.take_left]
-  have hc_pre : ThreeSymbol.c ∈ u ++ vxy := List.mem_append_right _ hc
-  rw [hpre] at hc_pre
-  rw [show (makeString_anbnc p).take (u.length + vxy.length) =
-    ((makeString_anbnc p).take (2 * p)).take (u.length + vxy.length) by
-    rw [List.take_take]; congr 1; omega] at hc_pre
-  have hc_2p := List.mem_of_mem_take hc_pre
-  have htake2p : (makeString_anbnc p).take (2 * p) =
-      List.replicate p .a ++ List.replicate p .b := by
-    unfold makeString_anbnc
-    conv_lhs => rw [show List.replicate p ThreeSymbol.a ++ List.replicate p ThreeSymbol.b ++
-        List.replicate p ThreeSymbol.c =
-        (List.replicate p ThreeSymbol.a ++ List.replicate p ThreeSymbol.b) ++
-        List.replicate p ThreeSymbol.c from by simp [List.append_assoc]]
-    have hlen : (List.replicate p ThreeSymbol.a ++
-        List.replicate p ThreeSymbol.b).length = 2 * p := by
-      simp [List.length_append, List.length_replicate]; omega
-    rw [← hlen, List.take_left]
-  rw [htake2p] at hc_2p
-  simp only [List.mem_append, List.mem_replicate] at hc_2p
-  obtain ⟨_, h⟩ | ⟨_, h⟩ := hc_2p <;> exact absurd h (by decide)
-
+/-- Adjacency in the ThreeSymbol witness via the unified `BlockWitness.not_both_in_vxy`. -/
 private theorem not_a_and_c_in_vxy3 (p : Nat) (u vxy z : List ThreeSymbol)
     (hw : makeString_anbnc p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
     ¬(ThreeSymbol.a ∈ vxy ∧ ThreeSymbol.c ∈ vxy) := by
-  intro ⟨ha, hc⟩
-  have hu : u.length < p := by
-    by_contra h; push Not at h; exact a_not_in_vxy3 p u vxy z hw h ha
-  exact c_not_in_vxy3 p u vxy z hw (by omega) hc
+  by_cases hp : p = 0
+  · subst hp
+    intro ⟨ha, _⟩
+    have hwlen := congr_arg List.length hw
+    simp [makeString_anbnc, List.length_append] at hwlen
+    have : vxy = [] := List.eq_nil_of_length_eq_zero (by omega)
+    rw [this] at ha; exact List.not_mem_nil ha
+  exact BlockWitness.not_both_in_vxy
+    (by decide : ([ThreeSymbol.a, .b, .c] : List ThreeSymbol).Nodup)
+    (Nat.pos_of_ne_zero hp) (i := 0) (j := 2) rfl rfl (by decide)
+    (makeString_anbnc_eq_blockwitness p ▸ hw) hvxy
 
 private theorem filter_count3 (n : Nat) (s : ThreeSymbol) :
     ((makeString_anbnc n).filter (· == s)).length = n := by
