@@ -300,6 +300,7 @@ import Linglib.Core.Agent.Emotion
 import Linglib.Theories.Semantics.Spatial.Path
 import Linglib.Core.Assignment
 import Linglib.Theories.Semantics.Composition.Continuation
+import Linglib.Theories.Semantics.Composition.Layered
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
@@ -1947,6 +1948,8 @@ import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
 import Linglib.Theories.Discourse.SDRT.Defs
 import Linglib.Theories.Discourse.SDRT.RightFrontier
+-- Theories: Discourse — Faller/Murray illocutionary operators
+import Linglib.Theories.Discourse.EvidentialIllocution
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Theories.Interfaces.SemanticsDiscourse.CenteringDRSExpr
 -- Theories: Dynamic Semantics
@@ -2246,6 +2249,7 @@ import Linglib.Theories.Semantics.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Noun.Kind.GenericsDynamic
 import Linglib.Theories.Semantics.Noun.Kind.Krifka2004
 import Linglib.Theories.Semantics.Noun.Kind.Mendia2020
+import Linglib.Theories.Semantics.Homogeneity.Basic
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 import Linglib.Theories.Semantics.Plurality.Cover
 import Linglib.Theories.Semantics.Plurality.Cumulativity
@@ -2493,6 +2497,7 @@ import Linglib.Theories.Semantics.Alternatives.Pronounceable
 import Linglib.Theories.Semantics.Alternatives.Source
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Theories.Semantics.Highlighting
 import Linglib.Theories.Semantics.Exhaustification.Combinators
 import Linglib.Theories.Semantics.Exhaustification.Excluder
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice

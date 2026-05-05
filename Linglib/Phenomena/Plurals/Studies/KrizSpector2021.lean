@@ -314,11 +314,11 @@ theorem upward_homogeneity_gap
     (x : Finset Atom)
     (hPx : P x = false)
     (b : Finset Atom) (hb : b ∈ domain)
-    (hov : Semantics.Homogeneity.overlaps x b = true)
+    (hov : Semantics.Homogeneity.overlaps x b)
     (hPb : P b = true) :
     generalisedTV P domain x = .indet := by
   simp only [generalisedTV, hPx, Bool.false_eq_true, ite_false]
-  have : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b = true ∧ P b = true :=
+  have : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b ∧ P b = true :=
     ⟨b, hb, hov, hPb⟩
   simp [decide_eq_true this]
 
