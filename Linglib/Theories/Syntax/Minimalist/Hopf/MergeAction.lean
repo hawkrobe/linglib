@@ -24,11 +24,14 @@ for the corresponding linguistic step.
 
 External Merge bridges (`mergeOp_emR_matches_Step`,
 `mergeOp_emL_matches_Step`) are **proven sorry-free** as of Phase 7a
-(commits 0.230.741-0.230.743). What's actually established is the
-**F̂ = ∅ subcase of M-C-B Lemma 1.4.1** (External Merge, p. 49): the
-workspace is exactly `{S, S'}`, with no spectator components. The full
-Lemma 1.4.1 with arbitrary residual workspace `F̂` is queued for
-Phase 7b-A. Internal Merge is documented as a composition gap (see §3).
+(commits 0.230.741-0.230.743). The full Lemma 1.4.1 with arbitrary
+residual workspace `Fhat` (`mergeOp_pair_residual`) is also **proven
+sorry-free** as of Phase 7b-A (commits 0.230.747-0.230.751), modulo
+the disjointness hypothesis that makes M-C-B's implicit "Case 1 only"
+reading explicit: S, S' ∉ Fhat as components AND no cut on Fhat
+extracts S or S'. The unconditional sum-over-matchings result
+(eq. 1.3.11 without disjointness) is queued for Phase 7b-A.2.
+Internal Merge is documented as a composition gap (see §3).
 
 Both EM bridges specialize a general algebraic result `mergeOp_pair`,
 which proves `mergeOp S S' (forestToHc {S, S'}) = forestToHc {.node S S'}`
@@ -79,7 +82,7 @@ noncomputable def singletonWorkspace (so : Minimalist.SyntacticObject) :
     Hc ℤ LIToken :=
   forestToHc ({so.toHc} : TraceForest LIToken Unit)
 
-/-! ## §2: External Merge bridge — the F̂ = ∅ subcase
+/-! ## §2: External Merge bridge — the Fhat = ∅ subcase
 
 For `Step.emR item` applied to `current`, the result is
 `.node current item`. The algebraic side: `mergeOp current.toHc item.toHc`
@@ -88,14 +91,14 @@ applied to the 2-tree workspace `{current.toHc, item.toHc}` produces
 
 **Scope (verified against M-C-B 2025 p. 49):**
 This file proves M-C-B Lemma 1.4.1 (External Merge) **specialized to the
-case where the workspace `F̂` of spectator components is empty**. The
+case where the workspace `Fhat` of spectator components is empty**. The
 full Lemma 1.4.1 statement is:
 
-  𝔐_{T_i, T_j}(F) = 𝔐(T_i, T_j) ⊔ F̂
+  𝔐_{T_i, T_j}(F) = 𝔐(T_i, T_j) ⊔ Fhat
 
-for `F = T_i ⊔ T_j ⊔ F̂` where T_i, T_j match two connected components.
-Our `mergeOp_pair` handles `F̂ = ∅` (workspace = exactly `{S, S'}`); the
-generalization to nonempty `F̂` is queued for Phase 7b-A. The full
+for `F = T_i ⊔ T_j ⊔ Fhat` where T_i, T_j match two connected components.
+Our `mergeOp_pair` handles `Fhat = ∅` (workspace = exactly `{S, S'}`); the
+generalization to nonempty `Fhat` is queued for Phase 7b-A. The full
 Lemma 1.3.6 (M-C-B p. 44) is the parent claim covering Cases 1, 2, 3 of
 §1.4.1; Cases 2/3 (where S or S' is an *accessible term inside* a
 component, not a member) require non-primitive coproduct terms and
@@ -123,7 +126,7 @@ specialize `mergeOp_pair` to `R = ℤ`, `α = LIToken`, with `rfl`
 bridging `(.node current item).toH.anon (·) = .node current.toHc item.toHc`. -/
 
 /-- **Algebraic Merge on a 2-tree workspace** (M-C-B Lemma 1.4.1,
-    F̂ = ∅ subcase, p. 49). For any pair `(S, S') : TraceTree α Unit`,
+    Fhat = ∅ subcase, p. 49). For any pair `(S, S') : TraceTree α Unit`,
     `mergeOp S S'` applied to the basis vector `forestToHc {S, S'}`
     yields `forestToHc {.node S S'}`.
 
@@ -227,7 +230,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
   simp only [add_zero]
 
 /-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.4.1, p. 49,
-    F̂ = ∅ subcase). `mergeOp current.toHc item.toHc` applied to the
+    Fhat = ∅ subcase). `mergeOp current.toHc item.toHc` applied to the
     2-tree workspace `{current.toHc, item.toHc}` yields the singleton
     workspace of `.node current item` = `(Step.emR item).apply current`. -/
 theorem mergeOp_emR_matches_Step
@@ -240,7 +243,7 @@ theorem mergeOp_emR_matches_Step
   rfl
 
 /-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, p. 49,
-    F̂ = ∅ subcase, symmetric pair). `mergeOp item.toHc current.toHc`
+    Fhat = ∅ subcase, symmetric pair). `mergeOp item.toHc current.toHc`
     applied to `{item.toHc, current.toHc}` yields `.node item current`. -/
 theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) :
@@ -251,13 +254,13 @@ theorem mergeOp_emL_matches_Step
   rw [mergeOp_pair]
   rfl
 
-/-! ## §2.5: Toward the full Lemma 1.4.1 (residual workspace F̂)
+/-! ## §2.5: Toward the full Lemma 1.4.1 (residual workspace Fhat)
 
-The factor-out lemma below extends `mergeOp_pair` from `F̂ = ∅` toward the full
-Lemma 1.4.1 statement (workspace `{S, S'} ⊔ F̂`, arbitrary residual `F̂`). It says:
+The factor-out lemma below extends `mergeOp_pair` from `Fhat = ∅` toward the full
+Lemma 1.4.1 statement (workspace `{S, S'} ⊔ Fhat`, arbitrary residual `Fhat`). It says:
 when `T : TraceTree α Unit` satisfies disjointness from `S, S'` (T ≠ S, T ≠ S',
 no cut on T extracts S or S'), `mergeOp S S'` "factors through" multiplication
-by `forestToHc {T}`. By induction on `F̂`'s cardinality, this assembles into the
+by `forestToHc {T}`. By induction on `Fhat`'s cardinality, this assembles into the
 full Lemma 1.4.1 result (queued as Phase 7b-A.3). -/
 
 /-- **Factor-out lemma**: under disjointness on `T` (T ≠ S, T ≠ S', and no cut
@@ -380,6 +383,81 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
   · -- c ∈ univ.
     intro h
     exact absurd (Finset.mem_univ _) h
+
+/-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, p. 49 — full
+    statement under the disjointness hypothesis that captures M-C-B's implicit
+    "Case 1 only" reading of "the term"). For any pair `(S, S') : TraceTree α Unit`
+    and any residual workspace `Fhat : TraceForest α Unit` such that:
+
+    - `S ∉ Fhat` and `S' ∉ Fhat` as multiset members (no duplicate components — this
+      rules out alternative δ-selections at component level), and
+    - no admissible cut on any `T ∈ Fhat` extracts `S` or `S'` (this rules out
+      Cases 2/3 of §1.4.1 — accessible-terms-inside matchings),
+
+    we have `mergeOp S S' (forestToHc ({S, S'} + Fhat)) = forestToHc ({.node S S'} + Fhat)`.
+
+    M-C-B's text uses "the term" language (p. 49) implicitly assuming the
+    matching is unique; the disjointness hypothesis makes this explicit.
+    Without these, the analog is a sum over multiple matchings (eq. 1.3.11,
+    p. 45), which the current `Step.emR/emL` semantics (single-tree output)
+    cannot bridge to without additional infrastructure (queued as 7b-A.2,
+    "unconditional sum-over-matchings"). -/
+theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (S S' : TraceTree α Unit) (Fhat : TraceForest α Unit)
+    (hS_not_Fhat : S ∉ Fhat) (hS'_not_Fhat : S' ∉ Fhat)
+    (h_no_S : ∀ T ∈ Fhat, ∀ c : CutShape T, S ∉ CutShape.cutForest c)
+    (h_no_S' : ∀ T ∈ Fhat, ∀ c : CutShape T, S' ∉ CutShape.cutForest c) :
+    mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) := by
+  -- Strong induction on Fhat via Multiset.induction; carry disjointness as args.
+  induction Fhat using Multiset.induction with
+  | empty =>
+    -- Base case: Fhat = ∅. forestToHc({S,S'} + 0) = forestToHc {S, S'}.
+    rw [add_zero, add_zero]
+    exact mergeOp_pair S S'
+  | cons T Fhat' ih =>
+    -- Inductive case: Fhat = T ::ₘ Fhat'.
+    -- T satisfies disjointness because S, S' ∉ T ::ₘ Fhat' and the cut conditions
+    -- apply to T (T is one of the elements of T ::ₘ Fhat').
+    have hT_ne_S : T ≠ S := by
+      intro h
+      apply hS_not_Fhat
+      rw [h]
+      exact Multiset.mem_cons_self _ _
+    have hT_ne_S' : T ≠ S' := by
+      intro h
+      apply hS'_not_Fhat
+      rw [h]
+      exact Multiset.mem_cons_self _ _
+    have h_no_S_T : ∀ c : CutShape T, S ∉ CutShape.cutForest c :=
+      h_no_S T (Multiset.mem_cons_self _ _)
+    have h_no_S'_T : ∀ c : CutShape T, S' ∉ CutShape.cutForest c :=
+      h_no_S' T (Multiset.mem_cons_self _ _)
+    -- The IH applies to Fhat' under the smaller disjointness conditions.
+    have hS_not_Fhat' : S ∉ Fhat' := fun h => hS_not_Fhat (Multiset.mem_cons_of_mem h)
+    have hS'_not_Fhat' : S' ∉ Fhat' := fun h => hS'_not_Fhat (Multiset.mem_cons_of_mem h)
+    have h_no_S_Fhat' : ∀ U ∈ Fhat', ∀ c : CutShape U, S ∉ CutShape.cutForest c :=
+      fun U hU => h_no_S U (Multiset.mem_cons_of_mem hU)
+    have h_no_S'_Fhat' : ∀ U ∈ Fhat', ∀ c : CutShape U, S' ∉ CutShape.cutForest c :=
+      fun U hU => h_no_S' U (Multiset.mem_cons_of_mem hU)
+    have ih' := ih hS_not_Fhat' hS'_not_Fhat' h_no_S_Fhat' h_no_S'_Fhat'
+    -- forestToHc ({S, S'} + T ::ₘ Fhat') = forestToHc {T} * forestToHc ({S, S'} + Fhat')
+    -- (using Multiset commutativity and forestToHc_add).
+    have h_lhs_eq : ({S, S'} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit) + (({S, S'} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]
+      abel
+    have h_rhs_eq : ({.node S S'} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit) + (({.node S S'} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]
+      abel
+    rw [h_lhs_eq, h_rhs_eq, forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
+    rw [mergeOp_factor_out_singleton _ _ _ hT_ne_S hT_ne_S' h_no_S_T h_no_S'_T]
+    -- Goal: forestToHc {T} * mergeOp(forestToHc({S,S'} + Fhat'))
+    --     = forestToHc {T} * forestToHc({.node S S'} + Fhat')
+    -- Apply ih' via congrArg on multiplication.
+    exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
 /-! ## §3: Internal Merge bridge
 
