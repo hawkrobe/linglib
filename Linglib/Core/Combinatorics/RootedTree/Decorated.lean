@@ -1,6 +1,7 @@
 import Mathlib.Algebra.Free
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
+import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 /-!
 # Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
@@ -313,6 +314,32 @@ def size {α β : Type*} : TraceTree α β → Nat
 theorem size_pos {α β : Type*} (t : TraceTree α β) : 0 < t.size := by
   cases t <;> simp only [size] <;> omega
 
+/-- Leaf count of a `TraceTree`. The Hopf-algebra grading on
+    `Hc R α = AddMonoidAlgebra R (TraceForest α Unit)` per
+    @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64):
+    `deg(a) = #L(T_a)`. Both `.leaf` and `.trace` count as 1 (a trace marker
+    occupies a leaf position in the tree); `.node l r` sums children. Same
+    shape as `DecoratedTree.leafCount`. -/
+def leafCount {α β : Type*} : TraceTree α β → Nat
+  | .leaf _   => 1
+  | .trace _  => 1
+  | .node l r => l.leafCount + r.leafCount
+
+@[simp] theorem leafCount_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).leafCount = 1 := rfl
+
+@[simp] theorem leafCount_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).leafCount = 1 := rfl
+
+@[simp] theorem leafCount_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).leafCount = l.leafCount + r.leafCount := rfl
+
+theorem leafCount_pos {α β : Type*} (t : TraceTree α β) : 0 < t.leafCount := by
+  induction t with
+  | leaf _ => simp
+  | trace _ => simp
+  | node l r ihl _ => simp only [leafCount]; omega
+
 end TraceTree
 
 namespace DecoratedTree
@@ -357,6 +384,44 @@ abbrev Forest (α : Type*) := Multiset (DecoratedTree α)
 /-- A forest of `TraceTree`s with leaf labels in `α` and trace labels
     in `β`. Used as the basis-key type of `Hc R α` (with `β = Unit`). -/
 abbrev TraceForest (α : Type*) (β : Type*) := Multiset (TraceTree α β)
+
+/-- The total leaf count of a `TraceForest`: sum of `TraceTree.leafCount`
+    over its components. The Hopf-algebra grading on `Hc R α` per
+    @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64):
+    `deg(F) = #L(F)`. M-C-B's degree-conservation observation (book p. 64,
+    paragraph after Def 1.6.2): `deg(F)` is conserved across any Merge
+    operation since no lexical items are removed. -/
+def TraceForest.degForest {α β : Type*} (F : TraceForest α β) : Nat :=
+  Multiset.sum (Multiset.map TraceTree.leafCount F)
+
+@[simp] theorem TraceForest.degForest_zero {α β : Type*} :
+    TraceForest.degForest (0 : TraceForest α β) = 0 := rfl
+
+@[simp] theorem TraceForest.degForest_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.degForest ({T} : TraceForest α β) = T.leafCount := by
+  simp only [degForest, Multiset.map_singleton, Multiset.sum_singleton]
+
+@[simp] theorem TraceForest.degForest_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.degForest (F + G : TraceForest α β) =
+      TraceForest.degForest F + TraceForest.degForest G := by
+  unfold degForest
+  rw [Multiset.map_add, Multiset.sum_add]
+
+@[simp] theorem TraceForest.degForest_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.degForest (T ::ₘ F : TraceForest α β) =
+      T.leafCount + TraceForest.degForest F := by
+  unfold degForest
+  rw [Multiset.map_cons, Multiset.sum_cons]
+
+/-- Pair forest: `degForest {l, r} = l.leafCount + r.leafCount`. Avoids
+    repeating the `({l, r} : Multiset _) = l ::ₘ {r}` rewrite + `_cons` +
+    `_singleton` chain at each call site (notably in
+    `AdmissibleCut.cut_leafCount_conservation`'s bothCut arm). -/
+@[simp] theorem TraceForest.degForest_pair {α β : Type*} (l r : TraceTree α β) :
+    TraceForest.degForest ({l, r} : TraceForest α β) = l.leafCount + r.leafCount := by
+  show TraceForest.degForest (l ::ₘ ({r} : TraceForest α β)) = _
+  rw [TraceForest.degForest_cons, TraceForest.degForest_singleton]
 
 /-- Project a forest to a `TraceForest α β` via the per-tree `anon h` map.
 

@@ -291,7 +291,7 @@ def remainderDeletion : ∀ {T : TraceTree α β},
 /-- Every subtree extracted by a cut on `T` is a proper subtree of `T` —
     its `size` is strictly less than `T.size`. Used to prove `T ∉ cutForest c`,
     which in turn drives the term-elimination in algebraic Merge bridge proofs
-    (`Theories/Syntax/Minimalist/Hopf/MergeAction.lean`). -/
+    (`Theories/Syntax/Minimalist/Merge/Action.lean`). -/
 theorem size_lt_of_mem_cutForest :
     ∀ {T : TraceTree α β} (c : CutShape T) (t : TraceTree α β),
       t ∈ CutShape.cutForest c → t.size < T.size
@@ -340,7 +340,7 @@ theorem cutForest_ne_singleton_self {T : TraceTree α β} (c : CutShape T) :
 /-- **Pair-cross elimination**: for cuts `c : CutShape S` and `c' : CutShape S'`,
     the multiset sum `cutForest c + cutForest c'` cannot equal `{S, S'}`.
 
-    Used in the algebraic Merge bridge (`Theories/Syntax/Minimalist/Hopf/MergeAction.lean`)
+    Used in the algebraic Merge bridge (`Theories/Syntax/Minimalist/Merge/Action.lean`)
     to eliminate cross-terms in the expansion of `Δ^d({S, S'})`: any cut on one
     side combined with any cut on the other side produces a cut-forest different
     from `{S, S'}`, so `δ_{S,S'}` zeroes that term.
@@ -655,6 +655,130 @@ theorem isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape
 theorem isNotTrace_of_isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape l)
     (h : TraceTree.IsNotTrace (remainder cl)) : TraceTree.IsNotTrace l :=
   (isNotTrace_remainder_iff cl).mp h
+
+/-! ## §8: Δ^d leafCount conservation (M-C-B Def 1.6.2 + book p. 64 remark)
+
+For any admissible cut `c` on `T`, the deletion-coproduct's two channels
+together account for all of `T`'s leaves:
+
+  c.cutForest.degForest + (deletionLeafCount c) = T.leafCount
+
+where `deletionLeafCount c` is `(t.leafCount)` if `c.remainderDeletion =
+some t`, else `0`. This is M-C-B's degree-conservation observation
+(book p. 64, paragraph after Def 1.6.2): "the overall deg(F) = #L(F) of
+the workspace F ∈ 𝔉_{SO_0} is a conserved quantity throughout all the
+forms of Merge described by (1.3.7)."
+
+Load-bearing for the IM positive direction of Prop 1.6.10
+(`im_satisfiesNCL` in `Hopf/MergeAction.lean §2.7`): the IM workspace
+transformation `{T} → {.node Q β}` preserves total leafCount because
+`β.leafCount + Q.leafCount = T.leafCount` for `Q = T/β` via this lemma. -/
+
+/-- Total leafCount of the deletion-remainder, defined structurally on the
+    cut. For each cut constructor, the remainder leaf count is computed
+    directly: extracted leaves count as 1 (atLeaf/atTrace), edge contractions
+    contribute 0 (bothCut), recursive cases pass through (only*Cut), and
+    bothRecurse adds children's contributions.
+
+    Equivalent to `Option.elim 0 leafCount ∘ remainderDeletion` but
+    structurally tractable for proofs. -/
+def deletionLeafCount : ∀ {T : TraceTree α β}, CutShape T → Nat
+  | .leaf _,   .atLeaf => 1
+  | .trace _,  .atTrace => 1
+  | .node _ _, .bothCut _ _ => 0
+  | .node _ _, .onlyLeftCut _ cr => deletionLeafCount cr
+  | .node _ _, .onlyRightCut _ cl => deletionLeafCount cl
+  | .node _ _, .bothRecurse cl cr => deletionLeafCount cl + deletionLeafCount cr
+
+/-- **Δ^d analog of M-C-B's degree-conservation remark, book p. 64**: the
+    deletion-coproduct preserves total leafCount. For any cut `c` on `T`:
+    `c.cutForest.degForest + deletionLeafCount c = T.leafCount`.
+
+    M-C-B (book p. 64, paragraph after Def 1.6.2): "Observe that the overall
+    degree deg(F) = #L(F) of the workspace … is a conserved quantity
+    throughout all the forms of Merge described by (1.3.7), as none of the
+    lexical items originally in the workspace is ever removed."
+
+    Note: this is the `leafCount` (= `#L`) slice only. M-C-B's **Lemma 1.6.3**
+    (book p. 65) and **Proposition 1.6.4** (book p. 66) concern α (accessible
+    terms count) and σ (= b₀ + α), which are different counting functions and
+    are NOT formalized here. Those would be needed for the Sideward NCL
+    negative directions (per Remark 1.6.9, leafCount alone cannot distinguish
+    Sideward 2(b) from IM).
+
+    Structural induction on the cut: each constructor's contribution
+    balances out so the total leafCount is conserved. -/
+theorem cut_leafCount_conservation :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      TraceForest.degForest c.cutForest + deletionLeafCount c = T.leafCount
+  | .leaf _, .atLeaf => by
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_leaf,
+                 TraceForest.degForest_zero, Nat.zero_add]
+  | .trace _, .atTrace => by
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_trace,
+                 TraceForest.degForest_zero, Nat.zero_add]
+  | .node l r, .bothCut _ _ => by
+      -- cutForest = {l, r}, deletionLeafCount = 0; collapses via degForest_pair
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_node,
+                 TraceForest.degForest_pair, add_zero]
+  | .node l r, .onlyLeftCut _ cr => by
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_node,
+                 TraceForest.degForest_add, TraceForest.degForest_singleton]
+      have ih := cut_leafCount_conservation cr
+      omega
+  | .node l r, .onlyRightCut _ cl => by
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_node,
+                 TraceForest.degForest_add, TraceForest.degForest_singleton]
+      have ih := cut_leafCount_conservation cl
+      omega
+  | .node l r, .bothRecurse cl cr => by
+      simp only [cutForest, deletionLeafCount, TraceTree.leafCount_node,
+                 TraceForest.degForest_add]
+      have ihl := cut_leafCount_conservation cl
+      have ihr := cut_leafCount_conservation cr
+      omega
+
+/-- **Master bridge**: the structural `deletionLeafCount` agrees with the
+    `Option.elim 0 leafCount` of `remainderDeletion`. Both encode "leaves
+    surviving in the deletion-quotient", but `deletionLeafCount` is
+    structural (induction-friendly) while `remainderDeletion` is the actual
+    Δ^d output (Option-valued). -/
+theorem deletionLeafCount_eq_option_elim :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      deletionLeafCount c = (c.remainderDeletion).elim 0 TraceTree.leafCount
+  | .leaf _, .atLeaf => by
+      simp only [deletionLeafCount, remainderDeletion, TraceTree.leafCount_leaf,
+                 Option.elim]
+  | .trace _, .atTrace => by
+      simp only [deletionLeafCount, remainderDeletion, TraceTree.leafCount_trace,
+                 Option.elim]
+  | .node _ _, .bothCut _ _ => by
+      simp only [deletionLeafCount, remainderDeletion, Option.elim]
+  | .node _ _, .onlyLeftCut _ cr => by
+      simp only [deletionLeafCount]
+      exact deletionLeafCount_eq_option_elim cr
+  | .node _ _, .onlyRightCut _ cl => by
+      simp only [deletionLeafCount]
+      exact deletionLeafCount_eq_option_elim cl
+  | .node _ _, .bothRecurse cl cr => by
+      simp only [deletionLeafCount]
+      have ihl := deletionLeafCount_eq_option_elim cl
+      have ihr := deletionLeafCount_eq_option_elim cr
+      -- Reduce remainderDeletion (.bothRecurse cl cr) by case-split on the children
+      cases hcl : remainderDeletion cl <;> cases hcr : remainderDeletion cr <;>
+        simp only [hcl, hcr, remainderDeletion, TraceTree.leafCount_node,
+                   Option.elim] at ihl ihr ⊢ <;>
+        omega
+
+/-- Corollary: when a cut has a non-trivial Δ^d remainder `some t`, the
+    structural `deletionLeafCount` agrees with `t.leafCount`. The IM-NCL
+    theorem in `Hopf/MergeAction.lean §2.7` uses this to identify
+    `Q.leafCount = deletionLeafCount c0` for `c0.remainderDeletion = some Q`. -/
+theorem deletionLeafCount_eq_of_remainderDeletion_some {T : TraceTree α β}
+    (c : CutShape T) (t : TraceTree α β) (h : c.remainderDeletion = some t) :
+    deletionLeafCount c = t.leafCount := by
+  rw [deletionLeafCount_eq_option_elim, h]
+  rfl
 
 end CutShape
 

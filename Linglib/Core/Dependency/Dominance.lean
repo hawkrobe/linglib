@@ -88,7 +88,7 @@ private theorem hasUniqueHeads_count (t : DepTree)
 private theorem depth_le_of_edge (t : DepTree)
     (hwf : hasUniqueHeads t = true) {u p : Nat}
     (hp_lt : p < t.words.length)
-    (hedge : ∃ d ∈ t.deps, d.headIdx = u ∧ d.depIdx = p)
+    (hedge : parentEdge t.deps u p)
     (k : Nat) : depth t u (k + 1) ≤ depth t p (k + 1) := by
   obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
   have hspec := hasUniqueHeads_count t hwf p hp_lt
@@ -145,9 +145,9 @@ private theorem dominates_depth_le (t : DepTree)
     (h_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {v w : Nat} (h : Dominates t.deps v w) :
     depth t v t.words.length ≤ depth t w t.words.length := by
-  induction h with
+  induction h using Dominates.head_induction_on with
   | refl => exact Nat.le_refl _
-  | step v w' x hedge dom_w'_x ih =>
+  | @step v w' hedge _ ih =>
     obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
     have hw'_lt : w' < t.words.length := hd_dep ▸ h_wf d hd_mem
     have hk : t.words.length - 1 + 1 = t.words.length := by omega
@@ -333,7 +333,7 @@ private theorem parentOf_eq_find_uh (t : DepTree) (x : Nat) {dep : Dependency}
 /-- Under unique heads, if edge(v, c) exists, then `parentOf c = v`. -/
 theorem parentOf_of_edge_uh (t : DepTree)
     (hwf : t.WF)
-    {v c : Nat} (hedge : ∃ d ∈ t.deps, d.headIdx = v ∧ d.depIdx = c) :
+    {v c : Nat} (hedge : parentEdge t.deps v c) :
     parentOf_uh t c = v := by
   obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
   have hfind_some : (t.deps.find? (fun d => d.depIdx == c)).isSome = true :=
@@ -372,10 +372,12 @@ theorem dominates_iterParent_uh (t : DepTree)
     ∃ k : Nat, k > 0 ∧ iterParent_uh t w k = v ∧
       (∀ i, i < k → ∃ dep, t.deps.find? (fun d => d.depIdx == iterParent_uh t w i) = some dep ∧
                             dep.headIdx = iterParent_uh t w (i + 1)) := by
-  induction hdom with
-  | refl => exact absurd rfl hne
-  | step u c x hedge hcx ih =>
-    by_cases hc_eq : c = x
+  revert hne
+  induction hdom using Dominates.head_induction_on with
+  | refl => intro hne; exact absurd rfl hne
+  | @step u c hedge hcx ih =>
+    intro _
+    by_cases hc_eq : c = w
     · -- One step: edge(u, c). parentOf c = u.
       subst hc_eq
       have hpo := parentOf_of_edge_uh t hwf hedge
@@ -389,11 +391,11 @@ theorem dominates_iterParent_uh (t : DepTree)
           exact List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
         obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
         exact ⟨f, hf_find, (parentOf_eq_find_uh t c hf_find).symm⟩
-    · -- Multiple steps: by IH, ∃ k, iterParent x k = c
+    · -- Multiple steps: by IH, ∃ k, iterParent w k = c
       obtain ⟨k, hk, hiter, hchain⟩ := ih hc_eq
       have hpo := parentOf_of_edge_uh t hwf hedge
       refine ⟨k + 1, by omega, ?_, ?_⟩
-      · show parentOf_uh t (iterParent_uh t x k) = u
+      · show parentOf_uh t (iterParent_uh t w k) = u
         rw [hiter, hpo]
       · intro i hi
         by_cases hi_lt : i < k
@@ -406,7 +408,7 @@ theorem dominates_iterParent_uh (t : DepTree)
             exact List.find?_isSome.mpr ⟨d, hd_mem, beq_iff_eq.mpr hd_dep⟩
           obtain ⟨f, hf_find⟩ := Option.isSome_iff_exists.mp hfind_some
           exact ⟨f, hf_find, by
-            show f.headIdx = parentOf_uh t (iterParent_uh t x i)
+            show f.headIdx = parentOf_uh t (iterParent_uh t w i)
             rw [hiter]; exact (parentOf_eq_find_uh t c hf_find).symm⟩
 
 /-- If `Dominates v w` with v ≠ w, then w is a depIdx in some edge, hence < n. -/
@@ -414,10 +416,12 @@ private theorem dominates_depIdx_lt (t : DepTree)
     (h_dep_wf : ∀ d ∈ t.deps, d.depIdx < t.words.length)
     {v w : Nat} (hdom : Dominates t.deps v w) (hne : v ≠ w) :
     w < t.words.length := by
-  induction hdom with
-  | refl => exact absurd rfl hne
-  | step u c x hedge _ ih =>
-    by_cases hcx : c = x
+  revert hne
+  induction hdom using Dominates.head_induction_on with
+  | refl => intro hne; exact absurd rfl hne
+  | @step _ c hedge _ ih =>
+    intro _
+    by_cases hcx : c = w
     · subst hcx
       obtain ⟨d, hd_mem, _, hd_dep⟩ := hedge
       exact hd_dep ▸ h_dep_wf d hd_mem
@@ -634,19 +638,20 @@ theorem dominates_to_parent {deps : List Dependency} {v c a : Nat}
     (hdom : Dominates deps v c) (hne : v ≠ c)
     (hparent : ∀ d ∈ deps, d.depIdx = c → d.headIdx = a) :
     Dominates deps v a := by
-  induction hdom with
-  | refl => exact absurd rfl hne
-  | step u w x hedge hdom_wc ih =>
-    -- edge(u, w) and Dominates deps w x, need Dominates deps u a
-    -- x is the target node (= c from original statement)
-    by_cases hw_eq_x : w = x
-    · -- w = x: edge(u, x), so u = a by unique parent
+  revert hne
+  induction hdom using Dominates.head_induction_on with
+  | refl => intro hne; exact absurd rfl hne
+  | @step u w hedge _ ih =>
+    intro _
+    -- edge(u, w) and Dominates deps w c, need Dominates deps u a
+    by_cases hw_eq_c : w = c
+    · -- w = c: edge(u, c), so u = a by unique parent
       obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
       have hu_eq_a : u = a := by
-        rw [← hd_head]; exact hparent d hd_mem (hw_eq_x ▸ hd_dep)
-      exact hu_eq_a ▸ Dominates.refl u
-    · -- w ≠ x: by IH, Dominates deps w a; then step gives Dominates deps u a
-      exact Dominates.step u w a hedge (ih hw_eq_x hparent)
+        rw [← hd_head]; exact hparent d hd_mem (hw_eq_c ▸ hd_dep)
+      exact hu_eq_a ▸ Dominates.refl
+    · -- w ≠ c: by IH, Dominates deps w a; then step gives Dominates deps u a
+      exact Dominates.step hedge (ih hw_eq_c)
 
 end DominanceUnderUniqueHeads
 

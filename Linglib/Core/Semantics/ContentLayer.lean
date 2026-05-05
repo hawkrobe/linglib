@@ -44,6 +44,16 @@ layers are offensive = inconsistent with a correction). The directed
 reverse anaphora (RA*) mechanism that uses `Off` to selectively retract
 conditions is defined in `Theories.Semantics.Dynamic.DRT.Basic` as
 `LDRS.directedRA`.
+
+## See also: `Theories/Semantics/Composition/Layered.BiLayered`
+
+`Theories/Semantics/Composition/Layered.lean` defines a 2-layer Prop-valued
+sibling `BiLayered W` (atIssue / notAtIssue, both `W → Prop`) with
+@cite{martinez-vera-2026}'s composition rules I/II/III. Use `LayeredProp`
+when LDRT's offensive-layer machinery is needed; use `BiLayered` when
+the analysis only distinguishes at-issue from not-at-issue and operates
+over `Set W` (verum, evidential illocution, biased polar questions). A
+future `Layered n` parameterised refactor would consolidate the two.
 -/
 
 set_option linter.dupNamespace false

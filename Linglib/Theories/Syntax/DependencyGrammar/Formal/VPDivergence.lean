@@ -81,7 +81,7 @@ theorem tree9_non_constituent_catenae_count :
     2. `projection deps v ≠ [v]` — v has a child w, so projection is strictly larger -/
 theorem exists_catena_not_constituent
     (deps : List Dependency) (v w : Nat) (hvw : v ≠ w)
-    (hedge : ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) :
+    (hedge : parentEdge deps v w) :
     isCatena deps [v] = true ∧ ¬ (projection deps v = [v]) := by
   constructor
   · exact singleton_isCatena deps v

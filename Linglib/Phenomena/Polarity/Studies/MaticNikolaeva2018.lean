@@ -46,7 +46,7 @@ docstring) with a back-pointer here.
   form-class encoding M&N reject; docstring acknowledges the rejection.
 - `Phenomena/Polarity/Studies/GarassinoJacob2018.lean` — same volume;
   G&J explicitly endorse M&N (their fn 13).
-- `Phenomena/Polarity/Studies/Hohle1992.lean` — the verum-focus origin
+- `Phenomena/Verum/Studies/Hohle1992.lean` — the verum-focus origin
   M&N argue against in §2.2 ("the reduction of salient polarity to
   accented finite verbs is neither empirically nor conceptually valid").
 - `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean` — the

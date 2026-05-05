@@ -628,10 +628,10 @@ private theorem dominates_comparable (t : DepTree)
     (hwf : t.WF)
     {u v x : Nat} (hux : Dominates t.deps u x) (hvx : Dominates t.deps v x) :
     Dominates t.deps u v ∨ Dominates t.deps v u := by
-  induction hvx with
+  induction hvx using Dominates.head_induction_on with
   | refl => exact Or.inl hux
-  | step v' w _ hedge _ ih =>
-    rcases ih hux with huw | hwu
+  | @step v' w hedge _ ih =>
+    rcases ih with huw | hwu
     · by_cases huw_eq : u = w
       · subst huw_eq; exact Or.inr (Dominates.edge hedge)
       · obtain ⟨e, he_mem, he_head, he_dep⟩ := hedge
@@ -641,7 +641,7 @@ private theorem dominates_comparable (t : DepTree)
           have h := unique_parent_of_hasUniqueHeads hwf hw_lt he_mem hd he_dep hd_dep_eq
           rw [he_head] at h; exact h.symm
         exact Or.inl (dominates_to_parent huw huw_eq hparent)
-    · exact Or.inr (Dominates.step v' w u hedge hwu)
+    · exact Or.inr (Dominates.step hedge hwu)
 
 /-- Disjoint nodes have disjoint projections: if neither u ∈ π(v) nor
     v ∈ π(u), then no x can be in both π(u) and π(v).
@@ -668,9 +668,11 @@ private theorem exists_spanning_edge_down {deps : List Dependency}
     ∃ p c, linked deps p c = true ∧
       p ∈ projection deps root ∧ c ∈ projection deps root ∧
       p < k ∧ k ≤ c := by
-  induction hdom generalizing k with
-  | refl => omega
-  | step r w y hedg _ ih =>
+  revert hroot hx
+  induction hdom using Dominates.head_induction_on with
+  | refl => intros; omega
+  | @step r w hedg _ ih =>
+    intro hroot hx
     have hw_mem := child_mem_projection deps r w hedg
     by_cases hw : w < k
     · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedg
@@ -680,9 +682,9 @@ private theorem exists_spanning_edge_down {deps : List Dependency}
     · have hw' : k ≤ w := by omega
       obtain ⟨p, c, hlinked, hp_mem, hc_mem, hp_lt, hc_ge⟩ := ih hw' hx
       exact ⟨p, c, hlinked,
-        mem_projection_of_dominates (Dominates.step r w p hedg
+        mem_projection_of_dominates (Dominates.step hedg
           (dominates_of_mem_projection hp_mem)),
-        mem_projection_of_dominates (Dominates.step r w c hedg
+        mem_projection_of_dominates (Dominates.step hedg
           (dominates_of_mem_projection hc_mem)),
         hp_lt, hc_ge⟩
 
@@ -694,9 +696,11 @@ private theorem exists_spanning_edge_up {deps : List Dependency}
     ∃ p c, linked deps p c = true ∧
       p ∈ projection deps root ∧ c ∈ projection deps root ∧
       p < k ∧ k ≤ c := by
-  induction hdom generalizing k with
-  | refl => omega
-  | step r w y hedg _ ih =>
+  revert hroot hx
+  induction hdom using Dominates.head_induction_on with
+  | refl => intros; omega
+  | @step r w hedg _ ih =>
+    intro hroot hx
     have hw_mem := child_mem_projection deps r w hedg
     by_cases hw : k ≤ w
     · obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedg
@@ -706,9 +710,9 @@ private theorem exists_spanning_edge_up {deps : List Dependency}
     · have hw' : w < k := by omega
       obtain ⟨p, c, hlinked, hp_mem, hc_mem, hp_lt, hc_ge⟩ := ih hw' hx
       exact ⟨p, c, hlinked,
-        mem_projection_of_dominates (Dominates.step r w p hedg
+        mem_projection_of_dominates (Dominates.step hedg
           (dominates_of_mem_projection hp_mem)),
-        mem_projection_of_dominates (Dominates.step r w c hedg
+        mem_projection_of_dominates (Dominates.step hedg
           (dominates_of_mem_projection hc_mem)),
         hp_lt, hc_ge⟩
 

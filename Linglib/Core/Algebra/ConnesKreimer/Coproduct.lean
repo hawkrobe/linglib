@@ -305,7 +305,7 @@ noncomputable def comulTreeDel (T : TraceTree α Unit) :
 /-- The structural decomposition of `comulTreeDel T` into its primitive
     `T ⊗ 1` term and the sum of admissible-cut terms. Stated as a named
     `rfl` lemma so downstream proofs (e.g., the algebraic Merge bridge in
-    `Theories/Syntax/Minimalist/Hopf/MergeAction.lean`) are robust under
+    `Theories/Syntax/Minimalist/Merge/Action.lean`) are robust under
     refactors of `comulTreeDel`'s body. Lives in `ConnesKreimer` (where
     `deletionRightChannel` is in scope) rather than at the consumer. -/
 theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
@@ -318,8 +318,8 @@ theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
 /-! ## §6.5: Cost-weighted Δ^d for Minimal Search
 @cite{marcolli-chomsky-berwick-2025} §1.5
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition in §1.5.2 / §1.5.3
-(p. 59-60), the **cost-weighted** Merge operator `M^ε_{S, S'}` weights each
+Per @cite{marcolli-chomsky-berwick-2025} rules 1-5, p. 59 + eq. (1.5.1)-(1.5.2)
+(§1.5.2 / §1.5.3), the **cost-weighted** Merge operator `M^ε_{S, S'}` weights each
 admissible cut's contribution by `ε^{depth}`. At the coproduct layer this
 corresponds to weighting `comulTreeDel`'s cut sum by `ε^{cutTotalDepth c}`.
 
@@ -497,7 +497,7 @@ noncomputable def comulDelMonoidHom :
     for the future refactor.
 
     Δ^d is consumed by Minimalism's Merge operator
-    (`Theories/Syntax/Minimalist/Hopf/Merge.lean`); it does NOT participate
+    (`Theories/Syntax/Minimalist/Merge/Basic.lean`); it does NOT participate
     in the Bialgebra typeclass mediation. -/
 noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)

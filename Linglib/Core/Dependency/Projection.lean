@@ -1,4 +1,5 @@
 import Linglib.Core.Dependency.Basic
+import Mathlib.Logic.Relation
 
 /-!
 @cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
@@ -19,6 +20,13 @@ namespace DepGrammar
 -- ============================================================================
 
 section Projection
+
+/-- Parent edge predicate: there is a head→dep dependency `(v → w)` in `deps`.
+    The atomic relation whose reflexive-transitive closure is `Dominates`
+    (defined below). Sites that need to express "v is a head with dep w"
+    should use this rather than re-spelling the existential. -/
+def parentEdge (deps : List Dependency) (v w : Nat) : Prop :=
+  ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w
 
 /-- **Projection** π(i): the yield of node i — all nodes it transitively
     dominates, including itself — sorted in ascending order.
@@ -263,7 +271,7 @@ theorem projection_nodup (deps : List Dependency) (root : Nat) :
     Proof: BFS from v processes v first (adding children to queue),
     w is a child of v (by the edge), so w enters the queue and is processed. -/
 theorem child_mem_projection (deps : List Dependency) (v w : Nat)
-    (hedge : ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) :
+    (hedge : parentEdge deps v w) :
     w ∈ projection deps v := by
   unfold projection
   set goResult := projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
@@ -545,27 +553,59 @@ theorem interval_mem_between (l : List Nat)
 -- Prop-level Dominance (for mathematical proofs about projections)
 -- ============================================================================
 
-/-- Prop-level dominance: `Dominates deps v x` iff v transitively dominates x
+/-- Prop-level dominance: `Dominates deps v x` iff `v` transitively dominates `x`
     via dependency edges (head → dep). Defined as the reflexive-transitive
-    closure of the parent relation. -/
-inductive Dominates (deps : List Dependency) : Nat → Nat → Prop where
-  | refl : (v : Nat) → Dominates deps v v
-  | step : (v w x : Nat) → (∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) →
-           Dominates deps w x → Dominates deps v x
+    closure of `parentEdge`. -/
+def Dominates (deps : List Dependency) (v x : Nat) : Prop :=
+  Relation.ReflTransGen (parentEdge deps) v x
+
+/-- Unfolding bridge to mathlib's `Relation.ReflTransGen` for ad-hoc access to
+    its lemma corpus (`lift`, `mono`, `closed`, etc.) without manual `unfold`. -/
+theorem Dominates_def {deps : List Dependency} {v x : Nat} :
+    Dominates deps v x ↔ Relation.ReflTransGen (parentEdge deps) v x :=
+  Iff.rfl
+
+/-- Reflexive case: `v` dominates itself. -/
+@[refl]
+theorem Dominates.refl {deps : List Dependency} {v : Nat} : Dominates deps v v :=
+  Relation.ReflTransGen.refl
+
+/-- Head-style step: edge `(v → w)` plus dominance from `w` gives dominance from `v`. -/
+theorem Dominates.step {deps : List Dependency} {v w x : Nat}
+    (hedge : parentEdge deps v w) (h : Dominates deps w x) : Dominates deps v x :=
+  Relation.ReflTransGen.head hedge h
 
 /-- Dominance is transitive. -/
 theorem Dominates.trans {deps : List Dependency} {u v w : Nat}
     (huv : Dominates deps u v) (hvw : Dominates deps v w) :
-    Dominates deps u w := by
-  induction huv with
-  | refl => exact hvw
-  | step v' w' _ hedge _ ih => exact .step v' w' w hedge (ih hvw)
+    Dominates deps u w :=
+  Relation.ReflTransGen.trans huv hvw
 
-/-- If there is a direct edge (v, w), then v dominates w. -/
+/-- If there is a direct edge `(v, w)`, then `v` dominates `w`. -/
 theorem Dominates.edge {deps : List Dependency} {v w : Nat}
-    (h : ∃ d ∈ deps, d.headIdx = v ∧ d.depIdx = w) :
-    Dominates deps v w :=
-  .step v w w h (.refl w)
+    (h : parentEdge deps v w) : Dominates deps v w :=
+  Relation.ReflTransGen.single h
+
+/-- Head-style induction principle for `Dominates`: prove a property of
+    `Dominates deps v x` (target `x` fixed) by handling the reflexive case
+    `motive x Dominates.refl` and the head-step case
+    `parentEdge v w → Dominates w x → motive w → motive v`.
+
+    Case binders are named `refl` and `step` to mirror the prior inductive's
+    constructor names. The `v` and `w` arguments of `step` are implicit
+    (use `| @step v w hedge h_tail ih` to bind, or `obtain ⟨..⟩ := hedge`). -/
+@[elab_as_elim]
+theorem Dominates.head_induction_on {deps : List Dependency} {x : Nat}
+    {motive : (v : Nat) → Dominates deps v x → Prop} {v : Nat}
+    (h : Dominates deps v x)
+    (refl : motive x Dominates.refl)
+    (step : ∀ {v w : Nat} (hedge : parentEdge deps v w)
+              (h_tail : Dominates deps w x), motive w h_tail →
+              motive v (Dominates.step hedge h_tail)) :
+    motive v h := by
+  induction h using Relation.ReflTransGen.head_induction_on with
+  | refl => exact refl
+  | head hedge h_tail ih => exact step hedge h_tail ih
 
 /-- BFS soundness: every node in the BFS output is either in the initial
     visited set or dominated by some node in the initial queue. -/
@@ -593,18 +633,18 @@ private theorem go_dominates_of_mem (deps : List Dependency)
           (node :: visited) x hx with h | ⟨q, hq, hdom⟩
         · -- x ∈ node :: visited
           rcases List.mem_cons.mp h with rfl | hv
-          · exact Or.inr ⟨x, List.mem_cons.mpr (Or.inl rfl), Dominates.refl x⟩
+          · exact Or.inr ⟨x, List.mem_cons.mpr (Or.inl rfl), Dominates.refl⟩
           · exact Or.inl hv
         · -- q ∈ rest ++ children
           rcases List.mem_append.mp hq with hr | hc
           · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hr), hdom⟩
           · -- q ∈ children: edge (node, q)
-            have hq_child : ∃ d ∈ deps, d.headIdx = node ∧ d.depIdx = q := by
+            have hq_child : parentEdge deps node q := by
               obtain ⟨d, hd_filter, hd_dep⟩ := List.mem_map.mp hc
               obtain ⟨hd_mem, hd_head⟩ := List.mem_filter.mp hd_filter
               exact ⟨d, hd_mem, beq_iff_eq.mp hd_head, hd_dep⟩
             exact Or.inr ⟨node, List.mem_cons.mpr (Or.inl rfl),
-              Dominates.step node q x hq_child hdom⟩
+              Dominates.step hq_child hdom⟩
 
 /-- Backward bridge: BFS membership implies dominance. -/
 theorem dominates_of_mem_projection {deps : List Dependency} {v x : Nat}
@@ -762,7 +802,7 @@ private theorem go_children_complete (deps : List Dependency)
     `(w, c)` is a dependency edge, then `c ∈ projection deps r`. -/
 theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
     (hw : w ∈ projection deps r)
-    (hedge : ∃ d ∈ deps, d.headIdx = w ∧ d.depIdx = c) :
+    (hedge : parentEdge deps w c) :
     c ∈ projection deps r := by
   unfold projection at hw ⊢
   rw [List.mem_mergeSort] at hw ⊢
@@ -783,10 +823,12 @@ theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
 private theorem mem_projection_of_dominated_member (deps : List Dependency)
     {r w x : Nat} (hw : w ∈ projection deps r) (h : Dominates deps w x) :
     x ∈ projection deps r := by
-  induction h with
-  | refl => exact hw
-  | step _ w' _ hedge _ ih =>
-    exact ih (projection_closed_under_children deps r _ w' hw hedge)
+  revert hw
+  induction h using Dominates.head_induction_on with
+  | refl => intro hw; exact hw
+  | step hedge _ ih =>
+    intro hw
+    exact ih (projection_closed_under_children deps r _ _ hw hedge)
 
 /-- Forward bridge: dominance implies BFS membership. -/
 theorem mem_projection_of_dominates {deps : List Dependency} {v x : Nat}

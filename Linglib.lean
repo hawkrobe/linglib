@@ -2138,9 +2138,9 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
-import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
-import Linglib.Theories.Syntax.Minimalist.Hopf.Merge
-import Linglib.Theories.Syntax.Minimalist.Hopf.MergeAction
+import Linglib.Theories.Syntax.Minimalist.Merge.Defs
+import Linglib.Theories.Syntax.Minimalist.Merge.Basic
+import Linglib.Theories.Syntax.Minimalist.Merge.Action
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
 import Linglib.Theories.Morphology.DM.VocabSimple

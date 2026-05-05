@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
-import Linglib.Theories.Syntax.Minimalist.Hopf.Defs
+import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Mathlib.LinearAlgebra.Finsupp.Defs
 import Mathlib.LinearAlgebra.TensorProduct.Basic
 import Mathlib.RingTheory.TensorProduct.Maps
@@ -30,7 +30,7 @@ linguistic Merge (`Step.apply` from `Basic.lean`) lives in the next
 file (`MergeAction.lean`, which will replace the legacy version).
 -/
 
-namespace Minimalist.Hopf
+namespace Minimalist.Merge
 
 open scoped TensorProduct
 open ConnesKreimer
@@ -160,9 +160,10 @@ noncomputable def mergePost (S S' : TraceTree α Unit) :
 noncomputable def mergeOp (S S' : TraceTree α Unit) : Hc R α →ₗ[R] Hc R α :=
   mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap
 
-/-- **The cost-weighted Merge operator `M^ε_{S, S'}`** per M-C-B Def 1.5.1
-    (p. 60). Factors as `mergePost S S' ∘ comulDelAlgHom_eps ε`. Each
-    coproduct contribution gets weighted by `ε^{cutTotalDepth c}` per cut.
+/-- **The cost-weighted Merge operator `M^ε_{S, S'}`** per M-C-B
+    eq. (1.5.1), §1.5.3 (p. 60). Factors as
+    `mergePost S S' ∘ comulDelAlgHom_eps ε`. Each coproduct contribution
+    gets weighted by `ε^{cutTotalDepth c}` per cut.
 
     At ε = 1: collapses to `mergeOp` (unweighted).
     At ε = 0: only Case 1 (members-only matching) survives — Sideward
@@ -317,4 +318,123 @@ theorem mergePost_right_one_tmul (S S' : TraceTree α Unit)
     simp only [map_add]
     rw [ih1, ih2, add_mul]
 
-end Minimalist.Hopf
+/-! ## §6: M_{β, 1} substrate (single-element matching, no grafting)
+
+Per @cite{marcolli-chomsky-berwick-2025} §1.4.3.1 (book p. 50), the operator
+`M_{β, 1}` is the "first half" of Internal Merge per Prop 1.4.2:
+
+  IM = M_{T/β, β} ∘ M_{β, 1}
+
+It pulls `β` from the right channel of the coproduct to the left,
+leaving `T/β` on the right; the disjoint-union product then forms
+`{β, T/β}` in the workspace. **The grafting step disappears**:
+`B(β ⊔ 1) = M(β, 1) = β` acts as identity (book p. 50). So
+
+  mergeOpUnit β = ⊔ ∘ δ_{β, 1} ∘ Δ^d
+
+with no `B` step.
+
+**Important caveat (book p. 52):** "Internal Merge cannot be further
+decomposed" — `M_{β, 1}` is not in itself a Merge operation; it only
+exists *as part of the composition* (the "virtual particles" analogy on
+book p. 68). This file gives `mergeOpUnit` a name for substrate-level
+algebraic manipulation; that name does NOT signal a stand-alone Merge. -/
+
+/-- The single-element matching projection `γ_{β, 1}`: keeps the
+    coefficient of the `{β}` basis element, sends everything else to zero.
+    Same shape as `gammaMatch` but with a singleton target. -/
+noncomputable def gammaMatchSingle (β : TraceTree α Unit) :
+    Hc R α →ₗ[R] Hc R α :=
+  let target : TraceForest α Unit := ({β} : Multiset (TraceTree α Unit))
+  show (TraceForest α Unit →₀ R) →ₗ[R] (TraceForest α Unit →₀ R) from
+    (Finsupp.lsingle target).comp (Finsupp.lapply target)
+
+/-- **`γ_{β, 1}` acts as a basis-vector projection**: on `forestToHc F`, it
+    returns `forestToHc F` if `F = {β}`, and `0` otherwise. Singleton
+    counterpart of `gammaMatch_apply_singleton`. -/
+theorem gammaMatchSingle_apply_singleton (β : TraceTree α Unit)
+    (F : TraceForest α Unit) :
+    gammaMatchSingle (R := R) β (forestToHc F) =
+      if F = ({β} : TraceForest α Unit) then forestToHc F else 0 := by
+  show (Finsupp.lsingle ({β} : TraceForest α Unit)).comp
+        (Finsupp.lapply ({β} : TraceForest α Unit))
+        (Finsupp.single F (1 : R))
+      = _
+  rw [LinearMap.comp_apply, Finsupp.lapply_apply, Finsupp.lsingle_apply,
+    Finsupp.single_apply]
+  split_ifs with h
+  · subst h; rfl
+  · exact Finsupp.single_zero _
+
+/-- The matching operator `δ_{β, 1}` on tensored coproduct output: applies
+    `gammaMatchSingle β` to the left channel, identity to the right. -/
+noncomputable def deltaMatchSingle (β : TraceTree α Unit) :
+    (Hc R α ⊗[R] Hc R α) →ₗ[R] (Hc R α ⊗[R] Hc R α) :=
+  TensorProduct.map (gammaMatchSingle (R := R) β) LinearMap.id
+
+/-- Post-coproduct chain for `M_{β, 1}`: `⊔ ∘ δ_{β, 1}`. NO grafting step
+    (book p. 50: `B(β ⊔ 1) = β` is the identity). Parallel to `mergePost`
+    for the binary-Merge case. -/
+noncomputable def mergePostUnit (β : TraceTree α Unit) :
+    Hc R α ⊗[R] Hc R α →ₗ[R] Hc R α :=
+  hcMulLin (R := R) (α := α) ∘ₗ deltaMatchSingle (R := R) β
+
+/-- The "Merge-with-unit" operator `M_{β, 1}` per
+    @cite{marcolli-chomsky-berwick-2025} Prop 1.4.2 (book p. 50). The first
+    half of Internal Merge. Factors as `mergePostUnit β ∘ comulDelAlgHom`.
+
+    NOT a Merge operation in its own right: book p. 52 emphasizes "the
+    apparent composite nature is purely illusory" — `M_{β,1}` only exists
+    as part of `M_{T/β, β} ∘ M_{β, 1}`, like virtual particles in physics.
+    The name here is a substrate convenience for stating Prop 1.4.2's
+    composition equation algebraically. -/
+noncomputable def mergeOpUnit (β : TraceTree α Unit) :
+    Hc R α →ₗ[R] Hc R α :=
+  mergePostUnit (R := R) (α := α) β ∘ₗ comulDelAlgHom.toLinearMap
+
+/-- `mergePostUnit` evaluated on a basis tensor `forestToHc F ⊗ r`:
+    - returns `forestToHc {β} * r` if `F = {β}`
+    - returns `0` otherwise.
+
+    Singleton counterpart of `mergePost_basis_tensor`; one fewer step
+    (no `graftBinaryAt`). -/
+theorem mergePostUnit_basis_tensor (β : TraceTree α Unit)
+    (F : TraceForest α Unit) (r : Hc R α) :
+    mergePostUnit (R := R) (α := α) β (forestToHc F ⊗ₜ[R] r)
+      = if F = ({β} : TraceForest α Unit)
+          then forestToHc ({β} : TraceForest α Unit) * r
+          else 0 := by
+  unfold mergePostUnit deltaMatchSingle
+  rw [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
+      gammaMatchSingle_apply_singleton]
+  by_cases hF : F = ({β} : TraceForest α Unit)
+  · subst hF
+    rw [if_pos rfl, if_pos rfl]
+    show Algebra.TensorProduct.lmul' (S := Hc R α) R _ = _
+    exact Algebra.TensorProduct.lmul'_apply_tmul _ _
+  · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
+    show Algebra.TensorProduct.lmul' (S := Hc R α) R 0 = 0
+    exact map_zero _
+
+/-- **Sanity check**: `mergeOpUnit β` on the empty workspace `(1 : Hc R α)`
+    is zero. `1 = forestToHc 0` is the multiplicative unit / empty
+    workspace; `δ_{β, 1}` projects on `{β} ≠ 0`, so all cuts are killed
+    and only the primitive `1 ⊗ 1` term survives, which also fails the
+    projection. Confirms M-C-B's caveat: `M_{β, 1}` requires β to be
+    actually present somewhere in the workspace. -/
+theorem mergeOpUnit_one (β : TraceTree α Unit) :
+    mergeOpUnit (R := R) β (1 : Hc R α) = 0 := by
+  show mergePostUnit (R := R) (α := α) β (comulDelAlgHom (1 : Hc R α)) = 0
+  rw [map_one]
+  -- 1 ⊗ 1 = forestToHc 0 ⊗ 1; reduce via mergePostUnit_basis_tensor.
+  show mergePostUnit (R := R) (α := α) β
+        (forestToHc (R := R) (0 : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)) = 0
+  rw [mergePostUnit_basis_tensor]
+  rw [if_neg (by
+    intro h
+    -- 0 ≠ {β} as multisets: 0 has card 0, {β} has card 1.
+    have : (0 : TraceForest α Unit).card = ({β} : TraceForest α Unit).card := by rw [h]
+    simp only [Multiset.card_zero, Multiset.card_singleton] at this
+    omega)]
+
+end Minimalist.Merge

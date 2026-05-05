@@ -155,9 +155,9 @@ private theorem bidir_lift {deps : List Dependency} {allowed allowed' : List Nat
 private theorem bidir_of_dominates (deps : List Dependency) (root x : Nat)
     (hdom : Dominates deps root x) :
     BidirReachable deps (projection deps root) root x := by
-  induction hdom with
-  | refl v => exact .here v (root_mem_projection deps v)
-  | step v w _ hedge hdomWX ih =>
+  induction hdom using Dominates.head_induction_on with
+  | refl => exact .here x (root_mem_projection deps x)
+  | @step v w hedge _ ih =>
     -- ih is about (projection deps w), lift to (projection deps v)
     have hsubset : ∀ z, z ∈ projection deps w → z ∈ projection deps v := by
       intro z hz

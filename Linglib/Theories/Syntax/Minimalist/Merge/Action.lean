@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Hopf.Merge
+import Linglib.Theories.Syntax.Minimalist.Merge.Basic
 import Linglib.Theories.Syntax.Minimalist.Derivation
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Theories.Syntax.Minimalist.Derivation
 
 This file connects two views of the Merge operation:
 
-- **Algebraic Merge** (Hopf-side): `Minimalist.Hopf.mergeOp S S' : Hc R α →ₗ[R] Hc R α`
+- **Algebraic Merge** (Hopf-side): `Minimalist.Merge.mergeOp S S' : Hc R α →ₗ[R] Hc R α`
   defined in `Merge.lean` per M-C-B Definition 1.3.4. Acts on workspaces
   (multisets of trees) viewed as elements of the bialgebra `Hc R α`.
 
@@ -78,7 +78,7 @@ mathematically more meaningful but technically more involved (the
 proofs need to track terms through the linear-algebraic chain).
 -/
 
-namespace Minimalist.Hopf
+namespace Minimalist.Merge
 
 open scoped TensorProduct
 open ConnesKreimer
@@ -310,14 +310,19 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 /-- **External Merge bridge (right-complement)** (M-C-B Lemma 1.4.1, p. 49,
     Fhat = ∅ subcase). `mergeOp current.toHc item.toHc` applied to the
     2-tree workspace `{current.toHc, item.toHc}` yields the singleton
-    workspace of `.node current item` = `(Step.emR item).apply current`. -/
+    workspace of `.node current item` = `(Step.emR item).apply current`.
+
+    Both sides use the new trace-aware `toHc` (Phase 7c.3). For EM, neither
+    `current` nor `item` introduces trace markers, so `toHc_node` reduces
+    `((Step.emR item).apply current).toHc = .node current.toHc item.toHc`. -/
 theorem mergeOp_emR_matches_Step
     (current item : Minimalist.SyntacticObject) :
     mergeOp (R := ℤ) current.toHc item.toHc
         (forestToHc ({current.toHc, item.toHc} : TraceForest LIToken Unit))
-      = forestToHc (R := ℤ) ({((Step.emR item).apply current).toH.anon (fun _ => ())}
+      = forestToHc (R := ℤ) ({((Step.emR item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
+  -- Step.emR item current = .node current item; toHc_node gives .node current.toHc item.toHc
   rfl
 
 /-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, p. 49,
@@ -327,7 +332,7 @@ theorem mergeOp_emL_matches_Step
     (item current : Minimalist.SyntacticObject) :
     mergeOp (R := ℤ) item.toHc current.toHc
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
-      = forestToHc (R := ℤ) ({((Step.emL item).apply current).toH.anon (fun _ => ())}
+      = forestToHc (R := ℤ) ({((Step.emL item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
   rfl
@@ -704,50 +709,413 @@ theorem mergeOp_eps_zero_residual {R : Type*} [CommSemiring R]
     rw [mergeOp_eps_zero_factor_out_singleton hT_ne_S hT_ne_S']
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
-/-- **Corollary: `mergeOp_pair_residual` under the weaker no-duplicate-only
-    hypothesis** (the `no_cut_*` clauses of `MergeTargetFreeWorkspace` are
-    derivable from cost minimization, per the limit theorem). This shows the
-    full `MergeTargetFreeWorkspace` is stronger than necessary for the EM
-    Case-1 result; only the `not_mem_*` clauses are essential. -/
-theorem mergeOp_pair_residual_from_cost {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq α]
-    {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
-    (hS : S ∉ Fhat) (hS' : S' ∉ Fhat) :
-    mergeOp_eps (R := R) 0 S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
-      = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) :=
-  mergeOp_eps_zero_residual hS hS'
+/-! ## §2.7: No Complexity Loss (M-C-B Proposition 1.6.10, book p. 72)
 
-/-! ## §3: Internal Merge bridge
+Per @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64), a
+workspace transformation Φ : 𝔉_{SO_0} → 𝔉_{SO_0} satisfies the **No
+Complexity Loss** principle if the induced component map Φ_0 (sending each
+component a to the new component containing the image of the root vertex
+of T_a) has nondecreasing degree, where deg(a) = #L(T_a) — that is, the
+**Hopf algebra grading** = `TraceTree.leafCount`.
 
-**Important architectural note (per M-C-B Proposition 1.4.2, p. 50):**
-Internal Merge is realized in M-C-B's framework as a **composition of
-two External Merge operations**, NOT as a single `mergeOp` call:
+Prop 1.6.10 (book p. 72): only EM and IM satisfy NCL; Sideward 2(b), 3(a),
+3(b), 𝔐_{S,1} all violate it. **In particular, NCL distinguishes IM from
+Sideward 2(b)** — Minimal Search alone cannot, because the ε-cost ordering
+gives them the same leading order (book Remark 1.6.9, p. 71).
 
-  IM(β, T) = M_{T/β, β} ∘ M_{β, 1}
+**Status of this section.**
+- Substrate: `NCLBetween` predicate, grounded in `TraceForest` and
+  `TraceTree.leafCount` (the Hopf-grading basis), faithful to Def 1.6.2 modulo
+  the existential weakening below.
+- EM Case 1: proven via direct construction of the component map on top of
+  `mergeOp_eps_zero_residual` (Phase 7d).
+- IM: substrate `mergeOp_im_composition` (Phase 7c.2) + IM-NCL
+  `im_satisfiesNCL` (Phase A2, sorry-free). Quotient-leafCount conservation
+  proved as `CutShape.cut_leafCount_conservation` (the Δ^d analog of M-C-B's
+  degree-conservation remark, book p. 64; the leafCount/#L slice only —
+  M-C-B's Lemma 1.6.3 (p. 65) and Prop 1.6.4 (p. 66) cover α and σ which
+  are not formalized here). The bridge lemma
+  `CutShape.deletionLeafCount_eq_of_remainderDeletion_some` connects the
+  structural `deletionLeafCount` to the Option-valued `remainderDeletion`.
+- Sideward 2(b), 3(a), 3(b), 𝔐_{T,1}: blocked on identifying which
+  `comulDelAlgHom` cuts produce each Sideward output forest (currently the
+  Sideward contributions are present in `mergeOp` as ε-suppressed terms but
+  are not named individually).
+
+**Existential weakening of Def 1.6.2.** M-C-B's Φ_0 is the **induced** map
+from root-vertex tracking; ours is existentially quantified over component
+maps. For the EM/IM positive directions the existential is satisfied by the
+induced map itself (no information lost). For the Sideward negative
+directions the existential is HARDER to refute (must rule out every
+component map, not just the induced one); when those theorems are added,
+they will need the additional argument that no compensating map exists. -/
+
+/-- **M-C-B Definition 1.6.2 (book p. 64), existential form.** A
+    workspace transformation `F → F'` satisfies No Complexity Loss if some
+    component map `Φ₀ : ∀ T ∈ F, TraceTree α Unit` lands in `F'` and never
+    decreases `leafCount`. The Hopf grading `deg(a) = #L(T_a)` is
+    `TraceTree.leafCount` (M-C-B identifies these on book p. 64).
+
+    See the section docstring for the relationship to M-C-B's induced
+    component map (a strengthening this version doesn't enforce). -/
+def NCLBetween {α : Type*} [DecidableEq α]
+    (F F' : TraceForest α Unit) : Prop :=
+  ∃ (Φ₀ : ∀ T, T ∈ F → TraceTree α Unit),
+    (∀ T (h : T ∈ F), Φ₀ T h ∈ F') ∧
+    (∀ T (h : T ∈ F), (Φ₀ T h).leafCount ≥ T.leafCount)
+
+/-- **M-C-B Prop 1.6.10, EM Case-1 direction.** The EM workspace equation
+    proved by `mergeOp_eps_zero_residual` carries a component map satisfying
+    NCL: `S, S' ↦ .node S S'` (degree increases by the other operand's
+    positive `leafCount`); each `T ∈ F̂` ↦ itself (degree preserved).
+
+    Quoting M-C-B (book p. 72): "deg(𝔐(T_i, T_j)) = deg(T_i) + deg(T_j),
+    which is greater than or equal to both deg(T_i) and deg(T_j). All the
+    remaining components of the workspace not used by Merge maintain the
+    same degree." -/
+theorem em_case1_satisfiesNCL {α : Type*} [DecidableEq α]
+    (S S' : TraceTree α Unit) (Fhat : TraceForest α Unit) :
+    NCLBetween (({S, S'} : TraceForest α Unit) + Fhat)
+               (({.node S S'} : TraceForest α Unit) + Fhat) := by
+  refine ⟨fun T _ => if T = S ∨ T = S' then .node S S' else T, ?_, ?_⟩
+  -- (a) image is in F'
+  · intro T hT
+    show (if T = S ∨ T = S' then TraceTree.node S S' else T)
+            ∈ ({.node S S'} : TraceForest α Unit) + Fhat
+    by_cases hcase : T = S ∨ T = S'
+    · rw [if_pos hcase]
+      exact Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
+    · rw [if_neg hcase]
+      have hT_Fhat : T ∈ Fhat := by
+        rcases Multiset.mem_add.mp hT with hT_pair | hT_Fhat
+        · exfalso; apply hcase
+          have h_eq : ({S, S'} : TraceForest α Unit) = S ::ₘ {S'} := rfl
+          rw [h_eq, Multiset.mem_cons, Multiset.mem_singleton] at hT_pair
+          exact hT_pair
+        · exact hT_Fhat
+      exact Multiset.mem_add.mpr (Or.inr hT_Fhat)
+  -- (b) leafCount nondecreasing
+  · intro T _
+    show (if T = S ∨ T = S' then TraceTree.node S S' else T).leafCount ≥ T.leafCount
+    by_cases hcase : T = S ∨ T = S'
+    · rw [if_pos hcase, TraceTree.leafCount_node]
+      rcases hcase with rfl | rfl
+      · have := TraceTree.leafCount_pos S'; omega
+      · have := TraceTree.leafCount_pos S; omega
+    · rw [if_neg hcase]
+
+/-- **M-C-B Prop 1.6.10, IM positive direction.** The IM workspace
+    transformation `{T} → {.node Q β}` (where Q = T/β is the deletion-
+    quotient via the unique cut `c0` extracting β) carries a component map
+    satisfying NCL: `T ↦ .node Q β`, with `(.node Q β).leafCount = T.leafCount`
+    by leafCount conservation under Δ^d (`cut_leafCount_conservation`,
+    the Δ^d analog of M-C-B's degree-conservation remark, book p. 64 —
+    paragraph after Def 1.6.2).
+
+    Quoting M-C-B (book p. 72): "For Internal Merge, similarly,
+    deg(T_v, T/T_v) = deg(T)."
+
+    The substrate hypotheses match the ones for `mergeOp_im_composition`:
+    `c0` is the unique cut with `cutForest = {β}` and `remainderDeletion =
+    some Q`.
+
+    Note: no `T ≠ β` hypothesis is required (cf. `mergeOp_im_composition`
+    which does require it for non-degeneracy of the algebraic sum). For NCL
+    the diagonal case is fine — the component map sends `T ↦ .node Q β`
+    with leafCount equality holding regardless. -/
+theorem im_satisfiesNCL {α : Type*} [DecidableEq α]
+    (β T Q : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_remainder : c0.remainderDeletion = some Q) :
+    NCLBetween (({T} : TraceForest α Unit))
+               (({.node Q β} : TraceForest α Unit)) := by
+  refine ⟨fun _ _ => .node Q β, ?_, ?_⟩
+  -- (a) image (.node Q β) is in {.node Q β}
+  · intro _ _
+    exact Multiset.mem_singleton.mpr rfl
+  -- (b) leafCount nondecreasing: (.node Q β).leafCount ≥ T.leafCount, in fact equal.
+  · intro T' hT'
+    -- T' ∈ {T}, so T' = T
+    rw [Multiset.mem_singleton] at hT'
+    subst hT'
+    -- Goal: (.node Q β).leafCount ≥ T.leafCount
+    rw [TraceTree.leafCount_node]
+    -- By cut_leafCount_conservation: c0.cutForest.degForest + deletionLeafCount c0 = T.leafCount
+    -- c0.cutForest = {β}, so .degForest = β.leafCount
+    -- deletionLeafCount c0 = Q.leafCount (by deletionLeafCount_eq_of_remainderDeletion_some)
+    -- Therefore β.leafCount + Q.leafCount = T.leafCount, so .leafCount Q + β.leafCount = T.leafCount ≥ T.leafCount.
+    have h_cons := CutShape.cut_leafCount_conservation c0
+    rw [h_cf] at h_cons
+    rw [TraceForest.degForest_singleton] at h_cons
+    rw [CutShape.deletionLeafCount_eq_of_remainderDeletion_some c0 Q h_remainder] at h_cons
+    omega
+
+/-! ## §3: Internal Merge bridge (M-C-B Proposition 1.4.2, book p. 50)
+
+Internal Merge is realized in M-C-B's framework as a **composition of two
+operators** — one a Merge, the other a "virtual" auxiliary that only exists
+inside the composition:
+
+  IM = M_{T/β, β} ∘ M_{β, 1}
 
 where:
-- `M_{β, 1}` is a "virtual" External Merge with the unit, which
-  conceptually moves `β` from the right channel to the left channel
-  of the coproduct (where it can be grafted).
-- `M_{T/β, β}` is the actual External Merge that combines the (now
-  available) `β` with the contracted `T/β` (where `β`'s position has
-  been replaced by a trace).
+- `M_{β, 1}` (= `mergeOpUnit β`, defined in `Merge/Basic.lean §6`) extracts
+  β from the right channel of the coproduct and pulls it to the left,
+  yielding the workspace `{β, T/β}` from the singleton `{T}`. NOT a Merge
+  in its own right (book p. 52 "virtual particles" caveat).
+- `M_{T/β, β}` is the actual External Merge that combines β with T/β,
+  yielding the workspace `{.node (T/β) β}`.
 
-This means a faithful Internal Merge bridge cannot be a theorem of the
-form `mergeOp _ _ _ = forestToHc {...}` — it would have to compose two
-`mergeOp` calls. The previous `True`-stubbed theorem was a structural
-lie.
+Phase 7c.2 lands the algebraic composition theorem at the substrate level
+(no SyntacticObject bridge yet — that's 7c.4). The proof factors through
+a per-cut reduction lemma for `mergeOpUnit β (forestToHc {T})`:
+the result is a sum over admissible cuts c of T whose cut-forest is `{β}`,
+each contributing `forestToHc {β} * deletionRightChannel c.remainderDeletion`.
 
-We leave this as a documented gap. The composition formulation is
-substantial:
-1. Define a `mergeOp_chain : List (DecoratedTree × DecoratedTree) →
-   Hc → Hc` operator that sequences `mergeOp` calls.
-2. State the IM bridge as `mergeOp_chain [(β, 1), (T/β, β)] {current}
-   = forestToHc {(Step.im mover _).apply current}` (modulo trace-id
-   naming).
-3. Prove via Prop 1.4.2's structural argument.
+Under a "β is uniquely positioned in T" hypothesis (encoded as a unique
+cut c0 with `cutForest c0 = {β}`), the sum collapses to a single
+contribution, and the full IM composition reduces to EM Case 1
+(`mergeOp_pair_residual` with empty F̂). -/
 
-Deferred to a focused future session.
--/
+/-- **Per-cut reduction of `mergeOpUnit β (forestToHc {T})`.** Unfolds the
+    operator chain through `comulTreeDel`'s primitive-plus-cut-sum
+    decomposition; each cut's contribution is filtered by `mergePostUnit`'s
+    `δ_{β, 1}` projection, surviving only when the cut-forest equals `{β}`.
 
-end Minimalist.Hopf
+    The primitive `T ⊗ 1` term contributes `forestToHc {β}` if `T = β`,
+    else 0. -/
+theorem mergeOpUnit_apply_singleton {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R] (β T : TraceTree α Unit) :
+    mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit))
+      = (if T = β then forestToHc ({β} : TraceForest α Unit) else 0)
+        + ∑ c : CutShape T,
+            if c.cutForest = ({β} : TraceForest α Unit)
+              then forestToHc (R := R) ({β} : TraceForest α Unit)
+                * deletionRightChannel (R := R) c.remainderDeletion
+              else 0 := by
+  -- Step 1: unfold mergeOpUnit and reduce to mergePostUnit (comulTreeDel T).
+  show mergePostUnit (R := R) (α := α) β
+        (comulDelAlgHom (Finsupp.single ({T} : TraceForest α Unit) (1 : R))) = _
+  rw [comulDelAlgHom_apply_single, comulForestDel_singleton,
+      comulTreeDel_eq_prim_add_sum]
+  -- Step 2: distribute mergePostUnit through the (primitive + sum).
+  rw [map_add, map_sum]
+  -- Step 3: reduce primitive part via mergePostUnit_basis_tensor.
+  rw [mergePostUnit_basis_tensor]
+  congr 1
+  · -- Primitive part: if {T} = {β} then forestToHc {β} * 1 else 0
+    --              ↔ if T = β       then forestToHc {β}     else 0
+    by_cases hTβ : T = β
+    · rw [if_pos hTβ, if_pos (by rw [hTβ]), mul_one]
+    · rw [if_neg hTβ, if_neg (by intro h; exact hTβ (Multiset.singleton_inj.mp h))]
+  · -- Cut sum: each cut term reduces via mergePostUnit_basis_tensor.
+    apply Finset.sum_congr rfl
+    intro c _
+    rw [mergePostUnit_basis_tensor]
+
+/-- **Unique-cut specialization of `mergeOpUnit_apply_singleton`.** Under
+    the hypotheses that
+    1. `T ≠ β` (β is not the whole tree, so the primitive part vanishes), and
+    2. `c0` is the *unique* admissible cut on T whose cut-forest is `{β}`,
+
+    the per-cut sum collapses to a single contribution. This is the form used
+    by the IM composition theorem: it pulls β out of T and leaves the
+    deletion-remainder of c0 on the right channel.
+
+    **Note: uniqueness is a substrate convenience, NOT a M-C-B requirement.**
+    M-C-B's Prop 1.4.2 (book p. 50) only requires "β is an accessible term
+    of a connected component of F isomorphic to T" — it does NOT stipulate
+    uniqueness, and multi-occurrence is genuinely allowed (yielding a sum
+    output, structurally parallel to the EM multi-matching issue resolved
+    for the F̂-residual case in Phase 7b-A). The unique-cut hypothesis here
+    matches the *worked example* on book pp. 52–53 (which happens to have a
+    single occurrence) but specializes the proposition. Generalizing to the
+    sum-output case is queued. -/
+theorem mergeOpUnit_apply_singleton_unique
+    {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R]
+    (β T : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_unique : ∀ c : CutShape T,
+      c.cutForest = ({β} : TraceForest α Unit) → c = c0)
+    (hTβ : T ≠ β) :
+    mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit))
+      = forestToHc (R := R) ({β} : TraceForest α Unit)
+          * deletionRightChannel (R := R) c0.remainderDeletion := by
+  rw [mergeOpUnit_apply_singleton]
+  rw [if_neg hTβ, zero_add]
+  rw [Finset.sum_eq_single c0]
+  · rw [if_pos h_cf]
+  · intro c _ hc_ne
+    rw [if_neg]
+    intro h
+    exact hc_ne (h_unique c h)
+  · intro h
+    exact absurd (Finset.mem_univ c0) h
+
+/-- **M-C-B Proposition 1.4.2 (book p. 50): Internal Merge as composition.**
+
+    The two-step composition `mergeOp Q β ∘ mergeOpUnit β` applied to the
+    singleton workspace `{T}` produces the merged tree `.node Q β`, where
+    `Q = T/β` is identified via the deletion-remainder of the unique cut
+    extracting β from T.
+
+    **Hypotheses:**
+    - `c0` is the unique admissible cut on T with `cutForest = {β}` (the
+      "β is uniquely positioned in T" hypothesis; multi-occurrence case
+      defers to a sum-output formulation).
+    - `c0.remainderDeletion = some Q` (the cut produces a non-trivial
+      remainder; for IM we always have at least the trace-replaced root).
+    - `T ≠ β` (β is a proper subtree, not the whole workspace).
+
+    Note: no `β ≠ Q` hypothesis is required — `mergeOp_pair` handles the
+    diagonal case `Q = β` correctly (the workspace becomes `{β, β}` and
+    the merged tree is `.node β β`).
+
+    Quotient-structure note: under `comulDelAlgHom` (the deletion variant
+    Δ^d, which `mergeOp` uses), the deeper copy of β is *removed* from T
+    via edge contraction — book p. 53 eq. (1.4.2) shows `T₁ = T/^d T₂`
+    with `{the, apple}` struck through, not replaced by a trace. Trace
+    replacement is the Δ^c story (book p. 53 bottom). So the algebraic
+    quotient `Q = T/β` here has β's leaves removed entirely, which makes
+    `β ≠ Q` typical but not enforced by the substrate. The Step.im
+    bridge (Phase 7c.4) reconciles this with the linguistic-layer
+    `mkTrace` sentinel via a trace-aware `SyntacticObject.toHc`
+    projection.
+
+    The proof is two steps:
+    1. Apply `mergeOpUnit_apply_singleton_unique` to reduce the inner
+       `mergeOpUnit β (forestToHc {T})` to `forestToHc {β, Q}`.
+    2. Apply EM Case 1 (`mergeOp_eps_zero_pair` after collapsing to the
+       unweighted form via `mergeOp_eps_one`) to merge `Q` and `β` into
+       `.node Q β`.
+
+    **Caveat (book p. 52):** This composition is the algebraic realization
+    of IM, but `mergeOpUnit` (= `M_{β, 1}`) is NOT itself a Merge operation —
+    it only exists as the first half of this composition, like virtual
+    particles in physics. -/
+theorem mergeOp_im_composition
+    {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R]
+    (β T Q : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_remainder : c0.remainderDeletion = some Q)
+    (h_unique : ∀ c : CutShape T,
+      c.cutForest = ({β} : TraceForest α Unit) → c = c0)
+    (hTβ : T ≠ β) :
+    mergeOp (R := R) Q β
+        (mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit)))
+      = forestToHc (R := R) ({.node Q β} : TraceForest α Unit) := by
+  -- Step 1: mergeOpUnit β (forestToHc {T}) = forestToHc {β} * forestToHc {Q}
+  --                                        = forestToHc ({β} + {Q})
+  --                                        = forestToHc {β, Q}
+  rw [mergeOpUnit_apply_singleton_unique β T c0 h_cf h_unique hTβ,
+      h_remainder]
+  -- Now: mergeOp Q β (forestToHc {β} * deletionRightChannel (some Q)) = ...
+  -- deletionRightChannel (some Q) = forestToHc {Q}.
+  show mergeOp (R := R) Q β
+        (forestToHc ({β} : TraceForest α Unit) *
+         forestToHc ({Q} : TraceForest α Unit)) = _
+  rw [← forestToHc_add]
+  -- Goal: mergeOp Q β (forestToHc ({β} + {Q})) = forestToHc {.node Q β}
+  -- Rewrite {β} + {Q} = {Q, β} (multiset).
+  -- Multiset add commutes; {Q, β} = {Q} + {β} = {β} + {Q} definitionally.
+  have h_swap : ({β} : TraceForest α Unit) + ({Q} : TraceForest α Unit)
+              = ({Q, β} : TraceForest α Unit) :=
+    add_comm _ _
+  rw [h_swap]
+  -- Now apply EM Case 1: mergeOp Q β (forestToHc {Q, β}) = forestToHc {.node Q β}
+  -- Use mergeOp_eps_zero_pair (which is for ε = 0) and mergeOp_eps_one to bridge.
+  -- Actually the cleanest is to use mergeOp_pair directly. Let me check what's available.
+  -- Since mergeOp = mergeOp_eps 1, we use mergeOp_pair (the ε=1 EM Case 1 theorem).
+  exact mergeOp_pair Q β
+
+/-- **Step.im argument-order variant of `mergeOp_im_composition`.**
+
+    `Step.im mover traceId current = .node mover (current.replace mover (mkTrace traceId))`
+    has mover LEFT, traced (= the algebraic Q) RIGHT. M-C-B's `M_{T/β, β}`
+    has Q LEFT, β RIGHT (the convention `mergeOp_im_composition` follows).
+
+    This swap-variant produces `forestToHc {.node β Q}` instead of
+    `{.node Q β}`, matching `Step.im`'s constructor order. The proof is
+    structurally simpler than the swap-needing version:
+    `{β} + {Q} = {β, Q}` definitionally (no `add_comm` needed). -/
+theorem mergeOp_im_composition_moverLeft
+    {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R]
+    (β T Q : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_remainder : c0.remainderDeletion = some Q)
+    (h_unique : ∀ c : CutShape T,
+      c.cutForest = ({β} : TraceForest α Unit) → c = c0)
+    (hTβ : T ≠ β) :
+    mergeOp (R := R) β Q
+        (mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit)))
+      = forestToHc (R := R) ({.node β Q} : TraceForest α Unit) := by
+  rw [mergeOpUnit_apply_singleton_unique β T c0 h_cf h_unique hTβ, h_remainder]
+  show mergeOp (R := R) β Q
+        (forestToHc ({β} : TraceForest α Unit) *
+         forestToHc ({Q} : TraceForest α Unit)) = _
+  rw [← forestToHc_add]
+  -- {β} + {Q} = {β, Q} definitionally (no swap needed for mover-LEFT order)
+  show mergeOp (R := R) β Q
+        (forestToHc ({β, Q} : TraceForest α Unit)) = _
+  exact mergeOp_pair β Q
+
+/-! ## §3.2: Step.im bridge (Phase 7c.4)
+
+`Step.im mover traceId current` produces `.node mover (current.replace mover
+(mkTrace traceId))` at the linguistic surface. The trace-aware `toHc`
+(Phase 7c.3) maps `mkTrace`-leaves to algebraic `.trace ()` constructors.
+
+The bridge below states that `mergeOp mover.toHc Q ∘ mergeOpUnit mover.toHc`
+applied to the singleton workspace `{current.toHc}` produces the same
+TraceTree as `(Step.im mover traceId).apply current` projected via `toHc`.
+
+**Hypotheses required (substrate-level):** `c0` is the unique cut on
+`current.toHc` extracting `mover.toHc`, with deletion-remainder
+`(current.replace mover (mkTrace traceId)).toHc`. Auto-deriving these
+hypotheses from the `Step.im` structure (i.e., showing that there IS a
+canonical cut on `current.toHc` for any `mover` accessible in `current`,
+and its deletion-remainder is the trace-replaced quotient) is non-trivial
+substrate work and is **deferred** — these would be standalone substrate
+lemmas relating `SyntacticObject.replace` to `CutShape.remainderDeletion`. -/
+
+/-- **Step.im algebraic bridge (M-C-B Prop 1.4.2 specialization).**
+
+    Given the cut data `c0` linking the algebraic deletion-quotient on
+    `current.toHc` to the trace-replaced linguistic quotient
+    `(current.replace mover (mkTrace traceId)).toHc`, the IM composition
+    `mergeOp mover.toHc Q ∘ mergeOpUnit mover.toHc` reproduces
+    `((Step.im mover traceId).apply current).toHc`.
+
+    Closes the IM gap in the algebraic-↔-linguistic Merge bridge,
+    completing Phase 7c. -/
+theorem mergeOp_im_matches_Step
+    (current mover : Minimalist.SyntacticObject) (traceId : Nat)
+    (c0 : CutShape current.toHc)
+    (h_cf : c0.cutForest = ({mover.toHc} : TraceForest LIToken Unit))
+    (h_remainder : c0.remainderDeletion =
+      some (current.replace mover (Minimalist.mkTrace traceId)).toHc)
+    (h_unique : ∀ c : CutShape current.toHc,
+      c.cutForest = ({mover.toHc} : TraceForest LIToken Unit) → c = c0)
+    (h_curr_ne_mover : current.toHc ≠ mover.toHc) :
+    mergeOp (R := ℤ) mover.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc
+        (mergeOpUnit (R := ℤ) mover.toHc
+          (forestToHc ({current.toHc} : TraceForest LIToken Unit)))
+      = forestToHc (R := ℤ)
+          ({((Step.im mover traceId).apply current).toHc}
+            : TraceForest LIToken Unit) := by
+  -- Apply the mover-LEFT IM composition with β = mover.toHc, T = current.toHc,
+  -- Q = (current.replace mover (mkTrace traceId)).toHc.
+  rw [mergeOp_im_composition_moverLeft mover.toHc current.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc
+        c0 h_cf h_remainder h_unique h_curr_ne_mover]
+  -- Result: forestToHc {.node mover.toHc (current.replace mover (mkTrace _)).toHc}
+  -- Need: forestToHc {((Step.im mover traceId).apply current).toHc}
+  -- Step.im mover traceId current = .node mover (current.replace mover (mkTrace traceId))
+  -- toHc_node: (.node a b).toHc = .node a.toHc b.toHc
+  rfl
+
+end Minimalist.Merge
