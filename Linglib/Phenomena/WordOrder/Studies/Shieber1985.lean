@@ -1,5 +1,7 @@
-import Linglib.Core.Computability.CFLClosure
-import Linglib.Core.Computability.NonContextFree
+import Linglib.Core.Computability.ContextFreeGrammar.Closure
+import Linglib.Core.Computability.NonContextFree.AnBnCnDn
+import Linglib.Core.Computability.NonContextFree.AmBnCmDn
+import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Case.Basic
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Fragments.SwissGerman.Case
@@ -17,7 +19,7 @@ using a purely string-based argument that makes no assumptions about
 constituent structure or semantics. The proof rests on four empirical
 claims about Swiss German subordinate clauses, plus the closure of
 context-free languages under string homomorphism and intersection with
-regular languages (axiomatized in `Linglib.Core.Computability.CFLClosure`,
+regular languages (axiomatized in `Linglib.Core.Computability.ContextFreeGrammar.Closure`,
 citing @cite{hopcroft-ullman-1979}).
 
 ## The Four Claims
@@ -33,23 +35,16 @@ citing @cite{hopcroft-ullman-1979}).
 
 ## What Is Formalized Here
 
-Shieber's full result — that Swiss German is not weakly CF — requires
-showing `{aᵐbⁿcᵐdⁿ | m, n ≥ 0}` is not context-free (a two-parameter
-extension of the standard pumping argument). The substrate currently proves
-only `{aⁿbⁿcⁿdⁿ | n ≥ 0}` (the diagonal one-parameter version).
+Shieber's full theorem — Swiss German is not weakly CF — is
+`swiss_german_not_contextFree` below. Proof bottoms out at the two CFL
+closure axioms in `Linglib.Core.Computability.ContextFreeGrammar.Closure`
+(homomorphism + intersection-with-regular, cited Hopcroft–Ullman 1979) and
+`ambncmdn_not_contextFree` (the two-parameter pumping result) in
+`Linglib.Core.Computability.NonContextFree`.
 
-We formalize the **diagonal subset** of Swiss German cross-serial clauses
-(those with `m = n`): we exhibit a `Language Token` consisting precisely of
-the case-sorted token sequences with `m = n`, prove its homomorphic image
-under `tokenStringHom` *equals* `anbncndn`, and conclude via CFL closure
-that the diagonal subset is not context-free
-(`swiss_german_diagonal_not_contextFree`).
-
-Shieber's full theorem (the FULL Swiss German language is not weakly CF)
-is a strict strengthening listed as a deferred `axiom`
-(`swiss_german_full_not_contextFree`) so the gap is grep-able via
-`#print axioms`. Closing it requires extending the substrate with
-`{aᵐbⁿcᵐdⁿ}_not_contextFree`.
+A weaker pedagogical waypoint, `swiss_german_diagonal_not_contextFree`, uses
+only the simpler one-parameter `anbncndn` substrate; it covers just the
+diagonal (`m = n`) subset of SG clauses.
 
 ## Contrast with @cite{bresnan-etal-1982}
 
@@ -226,7 +221,7 @@ def swissGermanDiagonalLang : Language Token :=
     formal-language witness (`anbncndn`) whose non-CF status is established
     in `Linglib.Core.Computability.NonContextFree`. -/
 theorem stringMap_diagonal_eq_anbncndn :
-    Core.Language.stringMap tokenStringHom swissGermanDiagonalLang = anbncndn := by
+    Language.stringMap tokenStringHom swissGermanDiagonalLang = anbncndn := by
   ext w
   constructor
   · rintro ⟨v, ⟨n, hv⟩, hApply⟩
@@ -241,7 +236,7 @@ theorem stringMap_diagonal_eq_anbncndn :
     @cite{shieber-1985}'s argument, using only the one-parameter substrate
     `{aⁿbⁿcⁿdⁿ}`. The image of the diagonal SG language under `tokenStringHom`
     equals `anbncndn` (not CF), so by closure under string homomorphism
-    (`Linglib.Core.Computability.CFLClosure`), the source is not CF. -/
+    (`Linglib.Core.Computability.ContextFreeGrammar.Closure`), the source is not CF. -/
 theorem swiss_german_diagonal_not_contextFree :
     ¬ swissGermanDiagonalLang.IsContextFree := by
   apply Language.not_isContextFree_of_stringMap_not tokenStringHom
@@ -258,7 +253,7 @@ def swissGermanLang : Language Token :=
     is exactly `ambncmdn = {aᵐbⁿcᵐdⁿ}`. Both directions of equality use
     `mem_ambncmdn_iff`'s structural decomposition. -/
 theorem stringMap_swissGerman_eq_ambncmdn :
-    Core.Language.stringMap tokenStringHom swissGermanLang = ambncmdn := by
+    Language.stringMap tokenStringHom swissGermanLang = ambncmdn := by
   ext w
   constructor
   · rintro ⟨v, ⟨m, n, hv⟩, hApply⟩
@@ -277,7 +272,7 @@ theorem stringMap_swissGerman_eq_ambncmdn :
     under `tokenToSymbol` equals `ambncmdn = {aᵐbⁿcᵐdⁿ}` (proven non-CF in
     `Linglib.Core.Computability.NonContextFree.ambncmdn_not_contextFree` by
     a two-parameter extension of the pumping argument). By CFL closure under
-    string homomorphism (`Linglib.Core.Computability.CFLClosure`), the source
+    string homomorphism (`Linglib.Core.Computability.ContextFreeGrammar.Closure`), the source
     Swiss German language is not context-free. -/
 theorem swiss_german_not_contextFree :
     ¬ swissGermanLang.IsContextFree := by

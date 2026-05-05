@@ -1,7 +1,9 @@
 import Linglib.Core.Computability.FormalLanguage
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.WordOrder.Studies.Shieber1985
-import Linglib.Core.Computability.NonContextFree
+import Linglib.Core.Computability.NonContextFree.AnBnCnDn
+import Linglib.Core.Computability.NonContextFree.AmBnCmDn
+import Linglib.Core.Computability.NonContextFree.AnBnCn
 
 /-!
 # Pullum & Gazdar (1982) @cite{gazdar-pullum-1982}

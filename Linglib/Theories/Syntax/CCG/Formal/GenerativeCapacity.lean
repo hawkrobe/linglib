@@ -27,7 +27,9 @@ the "mildly context-sensitive" property (polynomial parsing).
 
 -/
 
-import Linglib.Core.Computability.NonContextFree
+import Linglib.Core.Computability.NonContextFree.AnBnCnDn
+import Linglib.Core.Computability.NonContextFree.AmBnCmDn
+import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.FormalLanguage
 import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Core.Basic

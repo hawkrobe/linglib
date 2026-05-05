@@ -1,5 +1,5 @@
-import Linglib.Core.Computability.CFGTree
-import Linglib.Core.Computability.WeightedCFG
+import Linglib.Core.Computability.ContextFreeGrammar.Tree
+import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Probability.Entropy
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
