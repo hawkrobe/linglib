@@ -55,18 +55,52 @@ variable {E : Type u}
 -- ════════════════════════════════════════════════════════════════
 
 /-- Binding (`u_anaph = u_ant`): pointwise dref equality across the plural
-    state. Both must be defined (with the same value) at every state. -/
+    state. The two drefs hold the same `Option E` value at every state —
+    either both defined and equal, or both undefined.
+
+    Per @cite{haug-dalrymple-2020} eq 30: `u_anaph = u_ant ≡ ∀ s ∈ S.
+    v(s)(u_anaph) = v(s)(u_ant)`. The pointwise `Option` equality matches
+    this — both drefs hold the same value (defined or undefined) at every
+    state. Stronger than the *coreference* presupposition (the eq-29 `→`
+    abbreviation), which only requires defined-and-equal where both are
+    defined. -/
 def bindingCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
-  ∀ s ∈ S, ∃ d, s uAnaph = some d ∧ s uAnt = some d
+  ∀ s ∈ S, s uAnaph = s uAnt
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Group Identity (∪) — @cite{haug-dalrymple-2020} §2.3
 -- ════════════════════════════════════════════════════════════════
 
-/-- Group identity (`∪u_anaph = ∪u_ant`): the value-sets of the two drefs
-    across the plural state are identical. -/
+/-- Asymmetric coverage `∪u_a → ∪u_b`: every value `u_a` takes across the
+    plural state is also a value `u_b` takes. @cite{haug-dalrymple-2020}
+    eq 29/42 (van den Berg-style asymmetric `→`).
+
+    The asymmetry distinguishes the **anaphor** side (which uses the local
+    equivalence class `[s]_Δ` in the full Δ-relativized version) from the
+    **antecedent** side (which uses the whole state `S`). At the
+    unrelativized layer (Δ = ∅) both reduce to whole-state value-set
+    inclusion. -/
+def coverCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
+  Core.PluralAssign.sumDref S uAnaph ⊆ Core.PluralAssign.sumDref S uAnt
+
+/-- Group identity (`∪u_anaph = ∪u_ant`): bidirectional `coverCond`. The
+    value-sets of the two drefs across the plural state are equal.
+
+    @cite{haug-dalrymple-2020} eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
+    other* — symmetric set equality, derivable as `coverCond uAnaph uAnt
+    ∧ coverCond uAnt uAnaph`. The asymmetric `→` of paper eq 29/42 is the
+    primitive coverage relation; this symmetric version is what the
+    reciprocal expression's presupposition imposes. -/
 def groupIdentityCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
   Core.PluralAssign.sumDref S uAnaph = Core.PluralAssign.sumDref S uAnt
+
+/-- Group identity is the bidirectional version of `coverCond`. -/
+theorem groupIdentityCond_iff_bidir_coverCond (uAnaph uAnt : Nat)
+    (S : PluralAssign E) (Δ : Set Nat) :
+    groupIdentityCond uAnaph uAnt S Δ ↔
+    coverCond uAnaph uAnt S Δ ∧ coverCond uAnt uAnaph S Δ := by
+  unfold groupIdentityCond coverCond
+  exact ⟨fun h => ⟨h.le, h.ge⟩, fun ⟨h₁, h₂⟩ => Set.Subset.antisymm h₁ h₂⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Reciprocity (R) — @cite{haug-dalrymple-2020} eq 41
@@ -94,32 +128,35 @@ def underspecifiedCond (uAnaph uAnt : Nat) : PPDRSCond E :=
 -- relationships from the substrate definitions
 -- ════════════════════════════════════════════════════════════════
 
-/-- Binding implies group identity: pointwise equality of values yields
-    range equality. @cite{haug-dalrymple-2020} fig 1. -/
+/-- Binding implies group identity: pointwise `Option` equality of dref
+    values yields equality of value-sets. @cite{haug-dalrymple-2020} fig 1. -/
 theorem binding_implies_groupIdentity (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
     (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ := by
+  unfold groupIdentityCond
   ext d
   constructor
-  · rintro ⟨g, hgS, hgEq⟩
-    obtain ⟨d', hAnaph, hAnt⟩ := h g hgS
-    refine ⟨g, hgS, ?_⟩
-    rw [hgEq] at hAnaph
-    rw [hAnt]; exact hAnaph.symm
-  · rintro ⟨g, hgS, hgEq⟩
-    obtain ⟨d', hAnaph, hAnt⟩ := h g hgS
-    refine ⟨g, hgS, ?_⟩
-    rw [hgEq] at hAnt
-    rw [hAnaph]; exact hAnt.symm
+  · rintro ⟨g, hgS, hgu⟩
+    exact ⟨g, hgS, by rw [← h g hgS]; exact hgu⟩
+  · rintro ⟨g, hgS, hgu⟩
+    exact ⟨g, hgS, by rw [h g hgS]; exact hgu⟩
 
-/-- Reciprocity excludes binding: per-state distinctness contradicts
-    pointwise equality, so any nonempty plural state cannot satisfy both. -/
+/-- Reciprocity excludes binding *when there is some state where both
+    drefs are defined*: per-state distinctness then contradicts pointwise
+    equality. The `hdef` hypothesis is necessary because PPCDRT allows
+    both drefs to be undefined at a state, in which case binding (Option
+    `none = none`) and reciprocity (vacuous distinctness) trivially
+    co-exist. -/
 theorem reciprocity_excludes_binding (uAnaph uAnt : Nat)
-    (S : PluralAssign E) (Δ : Set Nat) (hne : S.IsNonempty)
+    (S : PluralAssign E) (Δ : Set Nat)
+    (hdef : ∃ s ∈ S, ∃ d, s uAnaph = some d)
     (h : reciprocityCond uAnaph uAnt S Δ) :
     ¬ bindingCond uAnaph uAnt S Δ := by
   intro hb
-  obtain ⟨g, hgS⟩ := hne
-  obtain ⟨d, hAnaph, hAnt⟩ := hb g hgS
+  obtain ⟨g, hgS, d, hAnaph⟩ := hdef
+  have hEq := hb g hgS
+  rw [hAnaph] at hEq
+  -- hEq : some d = g uAnt; so g uAnt = some d
+  have hAnt : g uAnt = some d := hEq.symm
   exact h.2 g hgS d d hAnaph hAnt rfl
 
 /-- Reciprocity strengthens underspecified: reciprocity = underspecified

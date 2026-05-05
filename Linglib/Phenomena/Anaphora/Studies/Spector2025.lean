@@ -1039,15 +1039,6 @@ grep-able anchors.
   `section AbstractTransparency` above) has no consumer; §4 examples
   like (16) — `∃xP(x).∃xQ(x)` collapsing to `∃x(P(x) ∧ Q(x))` — are
   not ruled out by any current theorem in this file.
-
-- **`PluralAssign` promotion to `Core`.** Currently paper-local under
-  `Spector2025.PluralAssign`. Per the project's N≥2 promotion
-  discipline, promotion needs a second consumer. Mandelkern (2022) is
-  NOT a candidate (Spector p. 10 confirms Mandelkern uses individual
-  assignments). Brasoveanu (2010) structured indices, Charlow plural
-  dynamic, and PIP/Keshet–Abney all use plural-assignment-flavored
-  state but with non-trivially different shapes; aligning shapes for a
-  shared Core type is a separate substrate-design task.
 -/
 
 end Spector2025

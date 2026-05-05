@@ -151,14 +151,18 @@ theorem binding_compatible_with_singleton (e : E) (uAnaph uAnt : Nat) :
     bindingCond uAnaph uAnt
       (PluralAssign.singleton (PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e)) ∅ := by
   intro g hg
-  -- g is the unique extension; both drefs map to e
-  simp [PluralAssign.singleton] at hg
+  simp only [PluralAssign.singleton, Membership.mem] at hg
   subst hg
+  -- Goal: outer update at uAnt of (inner update at uAnaph) gives the same
+  -- thing for both lookups.
+  show PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e uAnaph
+     = PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e uAnt
+  -- Right side reduces immediately: outer update fires at uAnt → some e.
+  -- Left side: outer update fires at uAnaph iff uAnaph = uAnt, else inner
+  -- update fires at uAnaph → some e. Both branches give some e.
+  unfold PartialAssign.update
   by_cases h : uAnaph = uAnt
-  · -- Same dref index: trivially equal
-    refine ⟨e, ?_, ?_⟩ <;> simp [PartialAssign.update, h]
-  · refine ⟨e, ?_, ?_⟩
-    · simp [PartialAssign.update, h]
-    · simp [PartialAssign.update]
+  · subst h; rfl
+  · simp only [h, if_false, if_true]
 
 end Semantics.Reference.PluralityLicensing

@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Theories.Semantics.Dynamic.PPCDRT.Cumulativity
 import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Homogeneity.Basic
+import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 
 /-!
@@ -38,9 +39,10 @@ the PPCDRT substrate (`Theories/Semantics/Dynamic/PPCDRT/`):
 
 Sections paper-acknowledged but not formalised (out of scope for a
 study-file size budget): the full §2.3 Δ-relativised distribution
-machinery (it lives in `PPCDRT/Defs.lean` as `delta`/`equivClass` but is
-not exercised at sentence level here); the §5.2 empirical-fit table; the
-§7 typological excursus.
+machinery (deferred — the substrate-trimming pass removed the prototyped
+`delta`/`⨟`/`∂`/`max^u` operators since no consumer exercised them; they
+will return alongside a Brasoveanu 2007 / Dotlačil 2013 study file);
+the §5.2 empirical-fit table; the §7 typological excursus.
 
 ## Connections to existing linglib substrate
 
@@ -100,19 +102,22 @@ def assign3 (a b c : Person) : PartialAssign Person :=
   PartialAssign.update (assign2 a b) u₃ c
 
 @[simp] theorem assign2_u₁ (a b : Person) : assign2 a b u₁ = some a := by
-  simp [assign2, PartialAssign.update, u₁, u₂]
+  simp only [assign2, PartialAssign.update, u₁, u₂]
+  rfl
 
 @[simp] theorem assign2_u₂ (a b : Person) : assign2 a b u₂ = some b := by
-  simp [assign2, PartialAssign.update, u₁, u₂]
+  simp only [assign2, PartialAssign.update, u₂, if_true]
 
 @[simp] theorem assign3_u₁ (a b c : Person) : assign3 a b c u₁ = some a := by
-  simp [assign3, assign2, PartialAssign.update, u₁, u₂, u₃]
+  simp only [assign3, assign2, PartialAssign.update, u₁, u₂, u₃]
+  rfl
 
 @[simp] theorem assign3_u₂ (a b c : Person) : assign3 a b c u₂ = some b := by
-  simp [assign3, assign2, PartialAssign.update, u₁, u₂, u₃]
+  simp only [assign3, assign2, PartialAssign.update, u₂, u₃]
+  rfl
 
 @[simp] theorem assign3_u₃ (a b c : Person) : assign3 a b c u₃ = some c := by
-  simp [assign3, PartialAssign.update, u₃]
+  simp only [assign3, PartialAssign.update, u₃, if_true]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Narrow Scope (paper §3, eq 49–50)
@@ -138,11 +143,13 @@ theorem narrowScope_sumDref_u₁ :
   ext d
   constructor
   · rintro ⟨g, hgS, hgu⟩
-    rcases hgS with h | h <;> subst h <;> simp at hgu <;> subst hgu <;> simp
+    rcases hgS with h | h <;> subst h <;>
+      simp only [assign2_u₁, Option.some.injEq] at hgu <;> subst hgu <;>
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
   · intro hd
     rcases hd with h | h
     · subst h; exact ⟨assign2 .tracy .tracy, .inl rfl, assign2_u₁ ..⟩
-    · simp at h; subst h
+    · simp only [Set.mem_singleton_iff] at h; subst h
       exact ⟨assign2 .chris .chris, .inr rfl, assign2_u₁ ..⟩
 
 /-- The summed value of u₂ across the narrow-scope state is {tracy, chris}. -/
@@ -151,11 +158,13 @@ theorem narrowScope_sumDref_u₂ :
   ext d
   constructor
   · rintro ⟨g, hgS, hgu⟩
-    rcases hgS with h | h <;> subst h <;> simp at hgu <;> subst hgu <;> simp
+    rcases hgS with h | h <;> subst h <;>
+      simp only [assign2_u₂, Option.some.injEq] at hgu <;> subst hgu <;>
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
   · intro hd
     rcases hd with h | h
     · subst h; exact ⟨assign2 .tracy .tracy, .inl rfl, assign2_u₂ ..⟩
-    · simp at h; subst h
+    · simp only [Set.mem_singleton_iff] at h; subst h
       exact ⟨assign2 .chris .chris, .inr rfl, assign2_u₂ ..⟩
 
 /-- **Narrow scope is group identity** (paper §3, eq 49). The matrix
@@ -184,13 +193,11 @@ def wideScopeState : PluralAssign Person := narrowScopeState
 
 /-- **Wide scope is binding** (paper §3, eq 51). In every state of the
     plural information state, the embedded subject pronoun's value
-    equals the matrix subject's value pointwise. -/
+    equals the matrix subject's value as `Option E`. -/
 theorem wideScope_binding :
     bindingCond u₁ u₂ wideScopeState ∅ := by
   intro g hgS
-  rcases hgS with h | h <;> subst h
-  · exact ⟨.tracy, by simp, by simp⟩
-  · exact ⟨.chris, by simp, by simp⟩
+  rcases hgS with h | h <;> subst h <;> rfl
 
 /-- Wide scope also satisfies group identity (binding ⊆ group identity).
     This is the substrate-level fact `binding_implies_groupIdentity`
@@ -222,22 +229,27 @@ theorem recip_sumDref_u₂ :
   ext d
   constructor
   · rintro ⟨g, hgS, hgu⟩
-    rcases hgS with h | h <;> subst h <;> simp at hgu <;> subst hgu <;> simp
+    rcases hgS with h | h <;> subst h <;>
+      simp only [assign3_u₂, Option.some.injEq] at hgu <;> subst hgu <;>
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
   · intro hd
     rcases hd with h | h
     · subst h; exact ⟨_, .inl rfl, assign3_u₂ ..⟩
-    · simp at h; subst h; exact ⟨_, .inr rfl, assign3_u₂ ..⟩
+    · simp only [Set.mem_singleton_iff] at h; subst h
+      exact ⟨_, .inr rfl, assign3_u₂ ..⟩
 
 theorem recip_sumDref_u₃ :
     PluralAssign.sumDref reciprocityState u₃ = {Person.tracy, Person.chris} := by
   ext d
   constructor
   · rintro ⟨g, hgS, hgu⟩
-    rcases hgS with h | h <;> subst h <;> simp at hgu <;> subst hgu <;> simp
+    rcases hgS with h | h <;> subst h <;>
+      simp only [assign3_u₃, Option.some.injEq] at hgu <;> subst hgu <;>
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
   · intro hd
     rcases hd with h | h
     · subst h; exact ⟨assign3 .chris .chris .tracy, .inr rfl, assign3_u₃ ..⟩
-    · simp at h; subst h
+    · simp only [Set.mem_singleton_iff] at h; subst h
       exact ⟨assign3 .tracy .tracy .chris, .inl rfl, assign3_u₃ ..⟩
 
 /-- **Reciprocity satisfies group identity** between subject pronoun
@@ -253,7 +265,8 @@ theorem reciprocity_distinct :
       s u₂ = some d_a → s u₃ = some d_b → d_a ≠ d_b := by
   intro g hgS d_a d_b h₂ h₃
   rcases hgS with h | h <;> subst h <;>
-    simp at h₂ h₃ <;> subst h₂ <;> subst h₃ <;> decide
+    simp only [assign3_u₂, assign3_u₃, Option.some.injEq] at h₂ h₃ <;>
+    subst h₂ <;> subst h₃ <;> decide
 
 /-- **The full reciprocity condition holds** for this state. -/
 theorem reciprocity_full :
@@ -287,9 +300,9 @@ theorem classified_matches_readings :
 theorem no_low_bound_reading :
     ¬ ∃ r ∈ recipReadings, r.locus = .low ∧ r.antecedentRel = .binding := by
   rintro ⟨r, hrM, hLow, hBound⟩
-  simp [recipReadings, narrowScopeReading, wideScopeReading, crossedReading] at hrM
-  rcases hrM with rfl | rfl | rfl
-  all_goals simp at hLow hBound
+  simp only [recipReadings, narrowScopeReading, wideScopeReading, crossedReading,
+             List.mem_cons, List.not_mem_nil, or_false] at hrM
+  rcases hrM with rfl | rfl | rfl <;> simp_all
 
 /-- Crossed readings (paper §3.3, eq 56): high locus + group-identity
     antecedent + group-identity reciprocal slot. The reciprocity comes
@@ -376,7 +389,8 @@ theorem forkChain_R_u_size_three :
     (Person.chris, Person.matty) ∈ R_u u₁ u₂ forkChainState ∧
     (Person.matty, Person.tracy) ∈ R_u u₁ u₂ forkChainState := by
   refine ⟨⟨_, .inl rfl, ?_, ?_⟩, ⟨_, .inr (.inl rfl), ?_, ?_⟩,
-          ⟨_, .inr (.inr rfl), ?_, ?_⟩⟩ <;> simp
+          ⟨_, .inr (.inr rfl), ?_, ?_⟩⟩ <;>
+    simp only [assign2_u₁, assign2_u₂]
 
 /-- Strong reciprocity would require each fork to lean on EVERY other —
     e.g., `(tracy, matty)` would also need to be in R_u. The fork-chain
@@ -412,26 +426,27 @@ def collectiveState : PluralAssign Person :=
 theorem collective_groupIdentity_no_distinct :
     groupIdentityCond u₁ u₃ collectiveState ∅ ∧
     ∃ s ∈ collectiveState, ∃ d, s u₁ = some d ∧ s u₃ = some d := by
-  refine ⟨?_, assign3 .tracy .tracy .tracy, .inl rfl, .tracy, by simp, by simp⟩
+  refine ⟨?_, assign3 .tracy .tracy .tracy, .inl rfl, .tracy,
+          assign3_u₁ .., assign3_u₃ ..⟩
   unfold groupIdentityCond
   ext d
   constructor
   · rintro ⟨g, hg, hgu⟩
     rcases hg with h | h | h
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .tracy .tracy .tracy, .inl rfl, by simp⟩
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .chris .chris .chris, .inr (.inl rfl), by simp⟩
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .matty .matty .matty, .inr (.inr rfl), by simp⟩
+    · subst h; simp only [assign3_u₁, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .tracy .tracy .tracy, .inl rfl, assign3_u₃ ..⟩
+    · subst h; simp only [assign3_u₁, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .chris .chris .chris, .inr (.inl rfl), assign3_u₃ ..⟩
+    · subst h; simp only [assign3_u₁, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .matty .matty .matty, .inr (.inr rfl), assign3_u₃ ..⟩
   · rintro ⟨g, hg, hgu⟩
     rcases hg with h | h | h
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .tracy .tracy .tracy, .inl rfl, by simp⟩
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .chris .chris .chris, .inr (.inl rfl), by simp⟩
-    · subst h; simp at hgu; subst hgu
-      exact ⟨assign3 .matty .matty .matty, .inr (.inr rfl), by simp⟩
+    · subst h; simp only [assign3_u₃, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .tracy .tracy .tracy, .inl rfl, assign3_u₁ ..⟩
+    · subst h; simp only [assign3_u₃, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .chris .chris .chris, .inr (.inl rfl), assign3_u₁ ..⟩
+    · subst h; simp only [assign3_u₃, Option.some.injEq] at hgu; subst hgu
+      exact ⟨assign3 .matty .matty .matty, .inr (.inr rfl), assign3_u₁ ..⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9: §5 Quantified Antecedents + Truth-Value Gap
@@ -459,28 +474,44 @@ def quantifiedReciprocalTV (maximalSetReading refSetReading : Bool) : Truth3 :=
   | false, false => .false
   | _, _         => .indet
 
-/-- Strict truth: both readings agree affirmatively. -/
-theorem quantifiedReciprocalTV_true :
-    quantifiedReciprocalTV true true = .true := rfl
+/-- The two precisifications H&D §5 makes available for a
+    quantified-antecedent reciprocal sentence: the **maximal set**
+    reading (`u` ranges over the largest restrictor-satisfying set) and
+    the **reference set** reading (`u` ranges over the largest set such
+    that the scope-plus-reciprocal relation holds). Paper §5.1, eq 99. -/
+inductive HDPrecisification where
+  | maximalSet
+  | referenceSet
+  deriving DecidableEq, Repr
 
-/-- Strict falsity: both readings agree negatively. -/
-theorem quantifiedReciprocalTV_false :
-    quantifiedReciprocalTV false false = .false := rfl
+/-- The two-element specification space for H&D §5: both precisifications
+    are admissible. -/
+def hdSpec : Semantics.Supervaluation.SpecSpace HDPrecisification where
+  admissible := {.maximalSet, .referenceSet}
+  nonempty := ⟨.maximalSet, Finset.mem_insert_self _ _⟩
 
-/-- The truth-value gap (paper "Neither" cases, eq 109): readings disagree. -/
-theorem quantifiedReciprocalTV_indet_when_disagree :
-    quantifiedReciprocalTV true false = .indet ∧
-    quantifiedReciprocalTV false true = .indet := ⟨rfl, rfl⟩
+/-- Lift a (maximal-set-reading, reference-set-reading) pair of Booleans
+    to a Bool-valued evaluation over the H&D precisification space. -/
+def hdEval (maximalSetReading refSetReading : Bool) : HDPrecisification → Bool
+  | .maximalSet => maximalSetReading
+  | .referenceSet => refSetReading
 
-/-- Pragmatic resolution via meta-assertion (`Truth3.metaAssert`,
-    @cite{beaver-krahmer-2001}): the indeterminate "Neither" case is
-    pragmatically resolved by collapsing to true under the relevant
-    Question Under Discussion (per @cite{champollion-bumford-henderson-2019}'s
-    treatment of donkey-anaphora truth gaps). -/
-theorem quantifiedReciprocalTV_metaAssert_collapse :
-    Truth3.metaAssert (quantifiedReciprocalTV true false) = .false ∧
-    Truth3.metaAssert (quantifiedReciprocalTV true true) = .true := by
-  constructor <;> rfl
+/-- **Bridge theorem (P8)** — H&D §5's truth-value gap (paper eq 109) is
+    the supervaluationist construction Križ 2015 and Champollion-Bumford-
+    Henderson 2019 use for donkey-anaphora homogeneity. Specifically,
+    `quantifiedReciprocalTV m r` agrees with `superTrue (hdEval m r) hdSpec`
+    over the two-element {maximalSet, referenceSet} precisification space.
+
+    This realises the cross-framework engagement: the §5 gap is not a new
+    truth-value system but the standard supervaluationist Truth3-gap
+    over precisifications, available as substrate in
+    `Theories/Semantics/Supervaluation/Basic.lean`. -/
+theorem quantifiedReciprocalTV_iff_supervaluation (m r : Bool) :
+    quantifiedReciprocalTV m r =
+    Semantics.Supervaluation.superTrue (hdEval m r) hdSpec := by
+  unfold quantifiedReciprocalTV
+    Semantics.Supervaluation.superTrue hdEval hdSpec
+  cases m <;> cases r <;> decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: §6 Maximize Anaphora (paper eq 127–128)
@@ -512,24 +543,19 @@ theorem R_u_reciprocity_no_diagonal :
 -- (@cite{dalrymple-et-al-1998}, paper eq 132–133, @cite{sauerland-2012})
 -- ════════════════════════════════════════════════════════════════
 
-/-- Paper §6.1 (p. 55) argues that the Strongest Meaning Hypothesis
-    (SMH) of @cite{dalrymple-et-al-1998} *over*-strengthens in cases
-    where Maximize Anaphora gives the right reading.
+/-! Paper §6.1 (p. 55) argues SMH over-strengthens. The substrate-level
+    refutation lives in `Reciprocals.lean` as `SMH_diverges_from_relational`
+    — the relational analysis with MA leaves both readings available on
+    the default property bundle, while SMH commits to narrow only.
 
-    @cite{sauerland-2012} is the empirical evidence: applying SMH at the
-    matrix level produces the wrong meaning for sentences like (132)
-    "If the team members knew each other in advance, they won." MA
-    correctly predicts this is a contextual / pairwise condition.
-
-    The substrate-level fact: MA (locally maximizing R_u) is strictly
-    weaker than SMH (globally maximizing the propositional content), so
-    states satisfying MA do not always satisfy SMH and vice versa. We
-    encode the divergence as the *fact* that R_u-maximization does not
-    determine sentence-level strength. -/
-theorem MA_orthogonal_to_sentence_strength :
-    -- Trivial: MA's content is in the R_u set, not in propositional
-    -- strength; the §6.1 contrast is that these are different objects.
-    True := trivial
+    Related principles cited by paper §6: the Maximal Interpretation
+    Hypothesis of @cite{sabato-winter-2012} and @cite{winter-2001}
+    (p. 54), the typicality-constrained MA of @cite{poortman-struiksma-kerem-friedmann-winter-2018}
+    (p. 54), the anaphora-as-exhaustive principle of @cite{kadmon-1990}
+    (p. 54), and the experimental evidence of @cite{majewski-2014}
+    (paper §6 docstring reference). The trio MIH/MA/SMH form the natural
+    scaffold for a principled treatment of the §4.5 reciprocal-strength
+    typology — see the open work in the future-directions note below. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 12: §6.2 Multi-Reciprocal Pairwise Prediction
@@ -613,19 +639,25 @@ theorem cumulativity_bridge_smoke :
     rw [narrowScope_sumDref_u₁]
     constructor
     · intro hd
-      simp [Finset.mem_insert, Finset.mem_singleton] at hd
-      rcases hd with h | h <;> subst h <;> simp
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hd
+      rcases hd with h | h <;> subst h <;>
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
     · rintro (h | h)
-      · subst h; simp
-      · simp at h; subst h; simp
+      · subst h
+        simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
+      · simp only [Set.mem_singleton_iff] at h; subst h
+        simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   · intro d
     rw [narrowScope_sumDref_u₂]
     constructor
     · intro hd
-      simp [Finset.mem_insert, Finset.mem_singleton] at hd
-      rcases hd with h | h <;> subst h <;> simp
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hd
+      rcases hd with h | h <;> subst h <;>
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
     · rintro (h | h)
-      · subst h; simp
-      · simp at h; subst h; simp
+      · subst h
+        simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
+      · simp only [Set.mem_singleton_iff] at h; subst h
+        simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
 
 end HaugDalrymple2020

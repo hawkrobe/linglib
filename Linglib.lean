@@ -2449,8 +2449,8 @@ import Linglib.Theories.Semantics.Reference.PersonFeatures
 import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
-import Linglib.Theories.Semantics.Reference.Reciprocals
 import Linglib.Theories.Semantics.Reference.PluralityLicensing
+import Linglib.Theories.Semantics.Reference.Reciprocals
 import Linglib.Theories.Semantics.Reference.Acquaintance
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.Dynamic

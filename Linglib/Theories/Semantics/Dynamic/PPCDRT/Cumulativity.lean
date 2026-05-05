@@ -26,8 +26,11 @@ namespace Theories.Semantics.Dynamic.PPCDRT
 open Core
 open Semantics.Plurality.Cumulativity
 
-universe u
-
+-- Note: monomorphic `Type` (universe 0) here — `Plurality.Cumulativity.cumulativeOp`
+-- is itself monomorphic, so the bridge theorem can only operate at the default
+-- universe. PPCDRT/Defs and PPCDRT/Anaphora are universe-polymorphic; if
+-- `cumulativeOp` is ever lifted to `Type u`, this `variable` declaration should
+-- track it.
 variable {E : Type}
 
 -- ════════════════════════════════════════════════════════════════
@@ -65,9 +68,9 @@ theorem cumulativeOp_eq_iff_finset_eq [DecidableEq E] (x y : Finset E) :
     rw [cumulativeOp, Bool.and_eq_true, decide_eq_true_iff, decide_eq_true_iff]
     refine ⟨?_, ?_⟩
     · intro a hax
-      exact ⟨a, h ▸ hax, by simp⟩
+      exact ⟨a, h ▸ hax, decide_eq_true rfl⟩
     · intro b hby
-      exact ⟨b, h ▸ hby, by simp⟩
+      exact ⟨b, h ▸ hby, decide_eq_true rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Bridge: groupIdentityCond ↔ cumulativeOp

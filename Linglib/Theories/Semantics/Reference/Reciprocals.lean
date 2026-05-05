@@ -195,6 +195,48 @@ def quantificationalPrediction (props : AntecedentProperties) : List RecipScope 
   else if props.isBound then [.wide]
   else [.narrow, .wide]
 
+/-- The Strongest Meaning Hypothesis (@cite{dalrymple-et-al-1998}):
+    when multiple readings are available, the reciprocal sentence
+    expresses the *logically strongest* one. For scope, narrow scope
+    is logically stronger than wide scope (narrow asserts mutual
+    knowledge of the group; wide asserts only that each thinks they're
+    in a relationship), so when both are available SMH commits to narrow.
+
+    @cite{haug-dalrymple-2020} §6.1 (paper p. 55, eq 132–133) argues that
+    SMH over-strengthens in cases where Maximize Anaphora gives a
+    weaker, contextually-correct reading. The example "If the team
+    members knew each other in advance, they won" requires a *pairwise*
+    reading that SMH cannot deliver.
+
+    On the relational analysis with MA, both readings remain available
+    when the property bundle does not force a unique scope; SMH eliminates
+    that ambiguity, predicting `[.narrow]` only. This is the §6.1
+    divergence captured by `SMH_diverges_from_relational` below. -/
+def strongestMeaningPrediction (props : AntecedentProperties) : List RecipScope :=
+  match relationalPrediction props with
+  | [.narrow, .wide] => [.narrow]   -- both available: narrow is stronger, SMH commits
+  | other            => other        -- otherwise: trivially strongest
+
+/-- @cite{haug-dalrymple-2020} §6.1 (paper eq 132–133): SMH and the
+    relational analysis (with MA) diverge on the property bundle where
+    *both* readings are pragmatically available. SMH commits to the
+    strongest (narrow only); the relational analysis leaves both
+    available, matching the empirical observation that wide-scope
+    readings ARE attested even when narrow is also available.
+
+    Witness: the "default" property bundle (no construction-type
+    constraint) — the relational analysis predicts both readings;
+    SMH predicts narrow only. -/
+theorem SMH_diverges_from_relational :
+    ∃ props : AntecedentProperties,
+      strongestMeaningPrediction props ≠ relationalPrediction props := by
+  refine ⟨{
+    isBound := false, hasCollectiveConjunct := false,
+    isExhaustiveControl := false, controllerIsCollective := false,
+    forcesGroupIdentity := false, isLogophoric := false,
+    hasDistributiveOperator := false }, ?_⟩
+  decide
+
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Reciprocal Reading — Locus + Two Anaphoric Relations
 -- (@cite{haug-dalrymple-2020} §3, §3.3)
@@ -239,66 +281,13 @@ def crossedReading : RecipReading :=
 def recipReadings : List RecipReading :=
   [narrowScopeReading, wideScopeReading, crossedReading]
 
-/-- Narrow and wide scope are distinct (different locus, different
-    antecedent relation). -/
-theorem narrow_ne_wide : narrowScopeReading ≠ wideScopeReading := by decide
-
-/-- Crossed reading is distinct from both narrow and wide. -/
-theorem crossed_ne_narrow_and_wide :
+/-- The three readings are pairwise distinct as `RecipReading` records.
+    Sanity check that the four-cell classification produces three
+    *different* cells (not three name-aliases for the same cell). -/
+theorem readings_pairwise_distinct :
+    narrowScopeReading ≠ wideScopeReading ∧
     crossedReading ≠ narrowScopeReading ∧
-    crossedReading ≠ wideScopeReading := by decide
-
-/-- Narrow scope has low locus; wide scope and crossed reading have high
-    locus. The locus distinguishes narrow from {wide, crossed}. -/
-theorem narrow_low_others_high :
-    narrowScopeReading.locus = .low ∧
-    wideScopeReading.locus = .high ∧
-    crossedReading.locus = .high := ⟨rfl, rfl, rfl⟩
-
-/-- Wide scope is the only reading using `.binding` for the antecedent
-    relation. Narrow and crossed both use group identity for the
-    antecedent relation. -/
-theorem only_wide_uses_binding :
-    narrowScopeReading.antecedentRel = .groupIdentity ∧
-    wideScopeReading.antecedentRel = .binding ∧
-    crossedReading.antecedentRel = .groupIdentity := ⟨rfl, rfl, rfl⟩
-
-/-- Crossed is the only reading using `.groupIdentity` for the reciprocal
-    slot — narrow and wide both use `.reciprocity` there. -/
-theorem only_crossed_uses_groupIdentity_recipSlot :
-    narrowScopeReading.reciprocalRel = .reciprocity ∧
-    wideScopeReading.reciprocalRel = .reciprocity ∧
-    crossedReading.reciprocalRel = .groupIdentity := ⟨rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════════════════
--- § 7: Anaphoric-Relation Dispatch over PPCDRT
--- ════════════════════════════════════════════════════════════════
-
-/-- Maps each `AnaphoricRelation` constructor to its formal semantics in
-    the PPCDRT substrate (`Theories/Semantics/Dynamic/PPCDRT/Anaphora.lean`).
-    The three relations are distinguished propositions on plural
-    information states `PluralAssign E`, parameterised by anaphor and
-    antecedent dref indices. -/
-def AnaphoricRelation.denotes (r : AnaphoricRelation) {E : Type}
-    (uAnaph uAnt : Nat) : PPDRSCond E :=
-  match r with
-  | .binding       => bindingCond uAnaph uAnt
-  | .groupIdentity => groupIdentityCond uAnaph uAnt
-  | .reciprocity   => reciprocityCond uAnaph uAnt
-
-/-- The narrow-scope antecedent relation denotes group identity. -/
-theorem narrow_antecedent_denotes {E : Type} (uAnaph uAnt : Nat) :
-    narrowScopeReading.antecedentRel.denotes (E := E) uAnaph uAnt =
-    groupIdentityCond uAnaph uAnt := rfl
-
-/-- The wide-scope antecedent relation denotes binding. -/
-theorem wide_antecedent_denotes {E : Type} (uAnaph uAnt : Nat) :
-    wideScopeReading.antecedentRel.denotes (E := E) uAnaph uAnt =
-    bindingCond uAnaph uAnt := rfl
-
-/-- The crossed-reading antecedent relation denotes group identity. -/
-theorem crossed_antecedent_denotes {E : Type} (uAnaph uAnt : Nat) :
-    crossedReading.antecedentRel.denotes (E := E) uAnaph uAnt =
-    groupIdentityCond uAnaph uAnt := rfl
+    crossedReading ≠ wideScopeReading := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Semantics.Reference.Reciprocals
