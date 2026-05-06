@@ -43,32 +43,53 @@ open List
 
 variable {α : Type*}
 
-/-- The set of length-`k` subsequences of `w`. The PT indistinguishability
-relation `w₁ ~_PT w₂` is equality of `subseqSet k w₁` and
-`subseqSet k w₂`. Unlike `factorSet`, no boundary augmentation: SP/PT
-are insensitive to position. -/
+/-- The set of subsequences of `w` of length **at most** `k`. The PT
+indistinguishability relation `w₁ ~_PT w₂` is equality of
+`subseqSet k w₁` and `subseqSet k w₂`.
+
+The "up to `k`" semantics matches @cite{simon-1975} and the Heinz/Lambert
+literature (@cite{lambert-2026} Def 11; @cite{heinz-2018}). The "exactly
+`k`" alternative would mis-classify languages that distinguish strings
+of length less than `k` (e.g. Luganda high-tone plateauing
+@cite{lambert-2026} (37) distinguishes `[h]` from `[ℓ]` while their
+length-3 subsequence sets are both empty). Unlike `factorSet`, no
+boundary augmentation: SP/PT are insensitive to position. -/
 def subseqSet (k : ℕ) (w : List α) : Set (List α) :=
-  { s | s <+ w ∧ s.length = k }
+  { s | s <+ w ∧ s.length ≤ k }
 
 @[simp] lemma mem_subseqSet {k : ℕ} {s w : List α} :
-    s ∈ subseqSet k w ↔ s <+ w ∧ s.length = k :=
+    s ∈ subseqSet k w ↔ s <+ w ∧ s.length ≤ k :=
   Iff.rfl
 
 /-- A language is **piecewise `k`-testable** iff strings with the same set
-of `k`-subsequences are either both in `L` or both out. -/
+of length-≤-`k` subsequences are either both in `L` or both out. -/
 def IsPiecewiseTestable (k : ℕ) (L : Language α) : Prop :=
   ∀ w₁ w₂ : List α, subseqSet k w₁ = subseqSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L)
 
+/-- Subsequences of length at most `k` are interchangeable across strings
+sharing their `subseqSet k`. The standard ratchet for proving
+`IsPiecewiseTestable k L` from a predicate that depends only on
+length-≤-`k` subsequence presence. -/
+lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
+    (heq : subseqSet k w₁ = subseqSet k w₂) {s : List α} (hlen : s.length ≤ k) :
+    s <+ w₁ ↔ s <+ w₂ := by
+  refine ⟨fun hs => ?_, fun hs => ?_⟩
+  · have h₁ : s ∈ subseqSet k w₁ := ⟨hs, hlen⟩
+    rw [heq] at h₁
+    exact h₁.1
+  · have h₂ : s ∈ subseqSet k w₂ := ⟨hs, hlen⟩
+    rw [← heq] at h₂
+    exact h₂.1
+
 /-- **SP_k ⊆ PT_k**: every strictly-`k`-piecewise language is piecewise
 `k`-testable. The SP test ("every length-`k` subsequence is permitted")
-trivially depends only on the *set* of subsequences. -/
+trivially depends only on the *set* of subsequences of that length. -/
 theorem IsStrictlyPiecewise.toIsPiecewiseTestable {k : ℕ} {L : Language α}
     (h : IsStrictlyPiecewise k L) : IsPiecewiseTestable k L := by
   obtain ⟨G, rfl⟩ := h
   intro w₁ w₂ heq
-  have key : ∀ w, w ∈ G.lang ↔ ∀ s ∈ subseqSet k w, s ∈ G.permitted := by
-    intro w
-    refine ⟨fun hw s hs => hw s hs.2 hs.1, fun h s hlen hs => h s ⟨hs, hlen⟩⟩
-  rw [key, key, heq]
+  refine ⟨fun hw s hlen hs => hw s hlen ?_, fun hw s hlen hs => hw s hlen ?_⟩
+  · exact (subseqSet_eq_iff heq hlen.le).mpr hs
+  · exact (subseqSet_eq_iff heq hlen.le).mp hs
 
 end Core.Computability.Subregular

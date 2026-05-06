@@ -101,6 +101,7 @@ docstrings.
 namespace Phenomena.Phonotactics.Studies.Lambert2026
 
 open Core.Computability.Subregular
+open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -232,24 +233,33 @@ theorem karanga_shona_verb_stem_isBTLI :
 inductive TsuutinaSeg | anterior | nonAnterior | other
   deriving DecidableEq, Repr
 
-/-- The Tsuut'ina asymmetric sibilant harmony language @cite{cook-1978}
-@cite{lambert-2026} §4.2: anterior sibilants are forbidden anywhere
-preceding a non-anterior sibilant on the sibilant tier. The forbidden
-2-subsequence on the projected tier is `[anterior, nonAnterior]`. -/
-def tsuutinaLang : Language TsuutinaSeg :=
-  Set.univ -- placeholder; see tsuutina_isTSL2 TODO
+/-- The sibilant tier predicate: keep `anterior` and `nonAnterior`,
+discard everything else. -/
+def tsuutinaTier (s : TsuutinaSeg) : Prop :=
+  s = .anterior ∨ s = .nonAnterior
 
-/-- **Tsuut'ina asymmetric harmony ∈ TSL_2** (Lambert 2026 §4.2). The
-witness is the TSL_2 grammar projecting onto `{anterior, nonAnterior}`
-and forbidding the 2-factor `[some anterior, some nonAnterior]`.
+instance : DecidablePred tsuutinaTier := fun s => by
+  cases s <;> simp [tsuutinaTier] <;> infer_instance
 
-TODO: discharge the TSL_2 witness explicitly via `TSLGrammar` and
-`forbiddenPairsSet`. The negative direction (`tsuutina_not_isBTLI`)
-requires a parametrised-word counterexample: `ʃᵏxsᵏ` is accepted while
-`ʃᵏsʃᵏ` is rejected, but the two share all length-`k` prefixes,
-suffixes, and tier-affixes — so no BTLI formula can distinguish them. -/
-theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang := by
-  sorry
+/-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony
+@cite{cook-1978} @cite{lambert-2026} §4.2: project onto the sibilant
+tier, then forbid the length-2 factor `[anterior, nonAnterior]` (an
+anterior sibilant immediately preceding a non-anterior sibilant on the
+tier — which on the un-projected string means anterior preceding
+non-anterior at any distance). -/
+def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg where
+  tier := tsuutinaTier
+  permitted := { f | f ≠ [some .anterior, some .nonAnterior] }
+
+/-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
+language of the TSL_2 witness so that the membership theorem is
+definitional. -/
+def tsuutinaLang : Language TsuutinaSeg := tsuutinaTSLGrammar.lang
+
+/-- **Tsuut'ina asymmetric harmony ∈ TSL_2** (Lambert 2026 §4.2).
+Definitional witness: the TSL_2 grammar `tsuutinaTSLGrammar`. -/
+theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang :=
+  ⟨tsuutinaTSLGrammar, rfl⟩
 
 /-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert 2026 §4.2, parametrised
 counterexample). -/
@@ -266,21 +276,44 @@ in the input. -/
 inductive LugandaTone | low | high
   deriving DecidableEq, Repr
 
-/-- Luganda high-tone plateauing @cite{hyman-katamba-2010}
-@cite{lambert-2026} §5.1: at most one high-tone span (no `h..ℓ..h`
-subsequence), and forms ending in high tones must have a later low
-(`h → h..ℓ`). -/
-def lugandaLang : Language LugandaTone :=
-  Set.univ -- placeholder; see luganda_isPT TODO
+/-- The Luganda high-tone plateauing predicate @cite{lambert-2026} (37):
+no `[h, ℓ, h]` subsequence (at most one high span), and if any high tone
+appears then there is a later low (`[h, ℓ]` is a subsequence). -/
+def lugandaPred (w : List LugandaTone) : Prop :=
+  ¬ ([LugandaTone.high, .low, .high] <+ w) ∧
+    (LugandaTone.high ∈ w → [LugandaTone.high, .low] <+ w)
 
-/-- **Luganda high-tone plateauing ∈ J (piecewise testable)** (Lambert
-2026 (37)): `¬h..ℓ..h ∧ (h → h..ℓ)`. The two conjuncts are length-3
-piecewise-testable predicates over the tone alphabet.
+/-- The Luganda high-tone plateauing language. -/
+def lugandaLang : Language LugandaTone := { w | lugandaPred w }
 
-TODO: discharge the PT witness as the conjunction of two `SPGrammar 3`
-tests, lifted to `IsPiecewiseTestable 3` via the SP→PT cast. -/
+/-- Membership in `lugandaLang` is membership in `lugandaPred`. -/
+@[simp] lemma mem_lugandaLang (w : List LugandaTone) :
+    w ∈ lugandaLang ↔ lugandaPred w := Iff.rfl
+
+/-- **Luganda high-tone plateauing ∈ PT_3** (Lambert 2026 (37)). The
+predicate depends only on length-≤-3 subsequence presence: the
+length-3 `[h, ℓ, h]`, the length-2 `[h, ℓ]`, and the length-1 `[h]`.
+
+The proof reduces each conjunct of `lugandaPred` to the corresponding
+`subseqSet 3` membership question, then transfers via
+`subseqSet_eq_iff`. -/
 theorem luganda_isPT : IsPiecewiseTestable 3 lugandaLang := by
-  sorry
+  intro w₁ w₂ heq
+  simp only [mem_lugandaLang, lugandaPred]
+  -- Bridge: `LugandaTone.high ∈ w` ↔ `[high] <+ w`
+  have mem_iff_sublist : ∀ (w : List LugandaTone),
+      LugandaTone.high ∈ w ↔ [LugandaTone.high] <+ w := by
+    intro w; exact ⟨fun h => List.singleton_sublist.mpr h, fun h => List.singleton_sublist.mp h⟩
+  have h3 : ([LugandaTone.high, .low, .high] <+ w₁) ↔
+            ([LugandaTone.high, .low, .high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
+  have h2 : ([LugandaTone.high, .low] <+ w₁) ↔
+            ([LugandaTone.high, .low] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (2 : ℕ) ≤ 3)
+  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
+  rw [mem_iff_sublist, mem_iff_sublist]
+  exact and_congr (not_congr h3) (imp_congr h1 h2)
 
 /-- **Luganda high-tone plateauing ∉ BTLI** (Lambert 2026 §5.1).
 Parametrised-word witness: `ℓᵏhhℓᵏ` is accepted while `ℓᵏhℓhℓᵏ` is
