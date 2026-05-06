@@ -52,26 +52,24 @@ contradiction). The sidecondition `s ≠ 1` is the categorical lift of
 
 ## Main results (status)
 
-* `Language.isDefinite_iff_satisfies_kDefiniteEquation` — Lambert's
-  Prop 53 bidirectional. **Both directions sorry'd**; this PR is the
-  scaffolding + design-validation, with the proofs queued for follow-up.
+* `Language.IsDefinite.satisfies_kDefiniteEquation` — **forward
+  direction PROVEN**: a `k`-definite language's syntactic monoid
+  satisfies the equation. Proof works by extracting `FreeMonoid`
+  representatives for each syntactic-monoid argument (each non-identity
+  class has a non-empty representative; ~20 LOC `exists_rep_list_of_ne_one`
+  helper) and applying the right-`k`-suffix-absorption argument at the
+  representative level.
 
-  Forward direction proof sketch (paper p. 23): given `IsDefinite k L`
-  via grammar `G`, take representatives `s', w_1, …, w_k` of the
-  syntactic-monoid arguments. Each `w_i ≠ 1` implies `|w_i| ≥ 1`, so
-  `|w_1 … w_k| ≥ k`. Then for any left context `x` and right context
-  `y`, the right-`k`-suffix of `x ++ s' ++ w_1 ++ … ++ w_k ++ y` is
-  determined by `w_1 ++ … ++ w_k ++ y` alone (since that part is
-  already length-`≥ k`); same for `x ++ w_1 ++ … ++ w_k ++ y`. So the
-  two strings have the same `k`-suffix, hence the same membership in
-  `L`. The list-of-quotient-elements representative extraction is
-  mechanically complex but straightforward.
-
-  Reverse direction proof sketch (paper p. 23, Lambert's "Suppose
+* `Language.isDefinite_of_satisfies_kDefiniteEquation` — **reverse
+  direction sorry'd**. Proof sketch (paper p. 23, Lambert's "Suppose
   strings a and b have the same k-suffix…"): given the equation,
   construct a `DefiniteGrammar k α` for `L` whose permitted set is
-  `{takeAt right k w | w ∈ L}`. Show `G.lang = L` by case analysis on
-  string length.
+  `{Edge.right.takeAt k w | w ∈ L}`. Show `G.lang = L` by case analysis
+  on string length, using the equation to handle the long-string case.
+
+* `Language.isDefinite_iff_satisfies_kDefiniteEquation` — Lambert
+  Prop 53 bidirectional bundling. Forward half proven; reverse
+  half sorry'd until the grammar construction lands.
 
 ## Out of scope (queued for follow-up files)
 
@@ -114,23 +112,130 @@ namespace Language
 
 variable {α : Type*}
 
-/-- **Lambert Prop 53 (forward direction, scaffolding)**: a `k`-definite
-language's syntactic monoid satisfies the `k`-definite equation. Proof
-deferred — see file docstring "Main results (status)" for the sketch.
+/-- Helper: extract a `FreeMonoid α` representative for each element of
+a list of syntactic-monoid elements, preserving the non-identity
+property. Each non-identity class has a non-empty representative
+(else the class would be `1`). -/
+private lemma exists_rep_list_of_ne_one {L : Language α}
+    (xs : List L.syntacticMonoid) (hxs : ∀ x ∈ xs, x ≠ 1) :
+    ∃ ws : List (FreeMonoid α),
+      ws.map L.toSyntacticMonoid = xs ∧
+      ws.length = xs.length ∧
+      (∀ w ∈ ws, w ≠ 1) := by
+  induction xs with
+  | nil => exact ⟨[], rfl, rfl, fun _ h => absurd h List.not_mem_nil⟩
+  | cons x xs' ih =>
+    have hx_ne : x ≠ 1 := hxs x List.mem_cons_self
+    have hxs'_ne : ∀ y ∈ xs', y ≠ 1 :=
+      fun y hy => hxs y (List.mem_cons_of_mem _ hy)
+    obtain ⟨ws', hws'_map, hws'_len, hws'_ne⟩ := ih hxs'_ne
+    obtain ⟨x', hx'_rep⟩ := Quotient.exists_rep x
+    have hx_eq : L.toSyntacticMonoid x' = x := hx'_rep
+    have hx'_ne : x' ≠ (1 : FreeMonoid α) := by
+      intro hcontra
+      apply hx_ne
+      rw [← hx_eq, hcontra]
+      exact L.toSyntacticMonoid.map_one
+    refine ⟨x' :: ws', ?_, ?_, ?_⟩
+    · simp [List.map_cons, hx_eq, hws'_map]
+    · simp [hws'_len]
+    · intro w hw
+      rcases List.mem_cons.mp hw with rfl | hw'
+      · exact hx'_ne
+      · exact hws'_ne w hw'
 
-Implementation note: a first attempt at this proof was 60 lines using
-explicit `Quotient.exists_rep` extraction for `xs : List L.syntacticMonoid`,
-but ran into `Con.toQuotient` vs `Language.toSyntacticMonoid` coercion
-fights with mathlib's `MonoidHom.map_list_prod`. A clean version
-requires either (a) an `@[simp] toSyntacticMonoid_apply` API expansion,
-or (b) staging the proof at the FreeMonoid representative level first
-(`SyntacticEquiv L (s' * ws.prod) ws.prod`) and then transferring once
-via `Quotient.sound`. Queued for a follow-up; the equation definition
-above is the substantive design choice. -/
+/-- Helper: a list of non-empty words has total length ≥ the list length. -/
+private lemma list_prod_length_ge {α : Type*} (ws : List (FreeMonoid α))
+    (hws : ∀ w ∈ ws, w ≠ 1) : (FreeMonoid.toList ws.prod).length ≥ ws.length := by
+  induction ws with
+  | nil => simp
+  | cons w ws' ih =>
+    have hw_ne : w ≠ 1 := hws w List.mem_cons_self
+    have hw_pos : (1 : ℕ) ≤ (FreeMonoid.toList w).length := by
+      rcases hwl : (FreeMonoid.toList w) with _ | _
+      · exact absurd (show w = 1 from hwl) hw_ne
+      · simp
+    have hih := ih (fun w' hw' => hws w' (List.mem_cons_of_mem _ hw'))
+    show (FreeMonoid.toList ((w :: ws').prod)).length ≥ (w :: ws').length
+    rw [List.prod_cons]
+    show (FreeMonoid.toList (w * ws'.prod)).length ≥ (w :: ws').length
+    show (FreeMonoid.toList w ++ FreeMonoid.toList ws'.prod).length ≥
+         (w :: ws').length
+    simp only [List.length_append, List.length_cons]
+    omega
+
+/-- Helper: the right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix
+of `rest` whenever `rest.length ≥ k`. -/
+private lemma takeAt_right_append_left_absorb {α : Type*}
+    (x rest : List α) {k : ℕ} (h : k ≤ rest.length) :
+    Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest := by
+  show (x ++ rest).drop ((x ++ rest).length - k) =
+       rest.drop (rest.length - k)
+  rw [List.length_append,
+      show x.length + rest.length - k = x.length + (rest.length - k) by omega,
+      List.drop_length_add_append]
+
+/-- Helper: at the `FreeMonoid` representative level, the `k`-definite
+equation holds via the right-`k`-suffix-absorption argument. -/
+private lemma definite_freeMonoid_satisfiesEq {L : Language α} {k : ℕ}
+    (G : DefiniteGrammar k α) (hG : G.lang = L)
+    (s : FreeMonoid α) (_hs : s ≠ 1)
+    (ws : List (FreeMonoid α)) (hws_len : ws.length = k)
+    (hws_ne : ∀ w ∈ ws, w ≠ 1) :
+    SyntacticEquiv L (s * ws.prod) ws.prod := by
+  intro x y
+  -- Goal: x ++ (s * ws.prod : FreeMonoid α) ++ y ∈ L ↔ x ++ ws.prod ++ y ∈ L
+  -- Bridge `*` to `++` on lists.
+  show x ++ FreeMonoid.toList (s * ws.prod) ++ y ∈ L ↔
+       x ++ FreeMonoid.toList ws.prod ++ y ∈ L
+  have hsmul : FreeMonoid.toList (s * ws.prod) =
+               FreeMonoid.toList s ++ FreeMonoid.toList ws.prod := rfl
+  rw [hsmul, ← hG]
+  show Edge.right.takeAt k
+        (x ++ (FreeMonoid.toList s ++ FreeMonoid.toList ws.prod) ++ y) ∈
+        G.permitted ↔
+       Edge.right.takeAt k (x ++ FreeMonoid.toList ws.prod ++ y) ∈ G.permitted
+  have hprod_len : (FreeMonoid.toList ws.prod).length ≥ k := by
+    have := list_prod_length_ge ws hws_ne; omega
+  have hsuf_eq :
+      Edge.right.takeAt k
+          (x ++ (FreeMonoid.toList s ++ FreeMonoid.toList ws.prod) ++ y) =
+      Edge.right.takeAt k (x ++ FreeMonoid.toList ws.prod ++ y) := by
+    rw [show x ++ (FreeMonoid.toList s ++ FreeMonoid.toList ws.prod) ++ y =
+            (x ++ FreeMonoid.toList s) ++ (FreeMonoid.toList ws.prod ++ y) by
+          simp [List.append_assoc],
+        show x ++ FreeMonoid.toList ws.prod ++ y =
+            x ++ (FreeMonoid.toList ws.prod ++ y) by simp [List.append_assoc]]
+    have h_combined_len : k ≤ (FreeMonoid.toList ws.prod ++ y).length := by
+      rw [List.length_append]; omega
+    rw [takeAt_right_append_left_absorb (x ++ FreeMonoid.toList s)
+          (FreeMonoid.toList ws.prod ++ y) h_combined_len,
+        takeAt_right_append_left_absorb x
+          (FreeMonoid.toList ws.prod ++ y) h_combined_len]
+  rw [hsuf_eq]
+
+/-- **Lambert Prop 53 (forward direction)**: a `k`-definite language's
+syntactic monoid satisfies the `k`-definite equation
+`⟦sx₁ … xₖ = x₁ … xₖ⟧`. -/
 theorem IsDefinite.satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ} (hL : IsDefinite k L) :
     Lambert.Equations.kDefiniteEquation k L.syntacticMonoid := by
-  sorry
+  obtain ⟨G, hG⟩ := hL
+  intro s hs xs hxs_len hxs_ne
+  -- Extract representatives.
+  obtain ⟨s', hs'_rep⟩ := Quotient.exists_rep s
+  have hs'_eq : L.toSyntacticMonoid s' = s := hs'_rep
+  have hs'_ne : s' ≠ (1 : FreeMonoid α) := by
+    intro hcontra; apply hs
+    rw [← hs'_eq, hcontra]; exact L.toSyntacticMonoid.map_one
+  obtain ⟨ws, hws_map, hws_len, hws_ne⟩ := exists_rep_list_of_ne_one xs hxs_ne
+  -- Bridge xs.prod = L.toSyntacticMonoid ws.prod via map_list_prod.
+  have hxs_prod : xs.prod = L.toSyntacticMonoid ws.prod := by
+    rw [← hws_map, ← MonoidHom.map_list_prod]
+  rw [← hs'_eq, hxs_prod, ← MonoidHom.map_mul]
+  -- Goal: L.toSyntacticMonoid (s' * ws.prod) = L.toSyntacticMonoid ws.prod
+  exact Quotient.sound
+    (definite_freeMonoid_satisfiesEq G hG s' hs'_ne ws (by omega) hws_ne)
 
 /-- **Lambert Prop 53 (reverse direction, scaffolding)**: if a language's
 syntactic monoid satisfies the `k`-definite equation, then the language
